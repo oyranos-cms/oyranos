@@ -1,3 +1,4 @@
+{% load gsoc_extensions %}
 {% include "source_file_header.txt" %}
 
 #include "{{ class.name }}.h"
@@ -70,7 +71,7 @@ OYAPI int OYEXPORT
 
   s = *{{ class.baseName|lower }};
 
-  oyCheckType__m( {{ class.enumName }}, return 1 )
+  oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 1 )
 
   *{{ class.baseName|lower }} = 0;
 

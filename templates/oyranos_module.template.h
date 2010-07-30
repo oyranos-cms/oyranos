@@ -1,7 +1,8 @@
+{% load gsoc_extensions %}
 {% include "source_file_header.txt" %}
 
-#ifndef OYRANOS_MODULE_H
-#define OYRANOS_MODULE_H
+#ifndef {{ file_name|underscores|upper|tr:". _" }}
+#define {{ file_name|underscores|upper|tr:". _" }}
 
 {% include "cpp_begin.h" %}
 
@@ -52,4 +53,4 @@ typedef int      (*oyCMMMessageFuncSet_f)( oyMessage_f     message_func );
 
 {% include "cpp_end.h" %}
 
-#endif /* OYRANOS_OBJECT_H */
+#endif /* {{ file_name|underscores|upper|tr:". _" }} */

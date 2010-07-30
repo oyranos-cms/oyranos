@@ -1,3 +1,4 @@
+{% load gsoc_extensions %}
 #ifndef OY_TEST_H
 #define OY_TEST_H
 

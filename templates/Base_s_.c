@@ -1,3 +1,4 @@
+{% load gsoc_extensions %}
 {% include "source_file_header.txt" %}
 
 {% block GlobalIncludeFiles %}{% endblock %}  
@@ -27,7 +28,7 @@
 {{ class.privName }} * oy{{ class.baseName }}_New_ ( oyObject_s object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_e type = {{ class.enumName }};
+  oyOBJECT_e type = oyOBJECT_{{ class.baseName|underscores|upper }}_S;
 # define STRUCT_TYPE {{ class.privName }} // FIXME Why is this needed?
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );

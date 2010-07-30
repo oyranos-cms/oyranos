@@ -1,7 +1,8 @@
+{% load gsoc_extensions %}
 {% include "source_file_header.txt" %}
 
-#ifndef OY_{{ class.underscoreName|upper }}_S_H
-#define OY_{{ class.underscoreName|upper }}_S_H
+#ifndef {{ file_name|underscores:"strict"|upper|tr:". _" }}
+#define {{ file_name|underscores|upper|tr:". _" }}
 
 {% include "cpp_begin.h" %}
 
@@ -34,4 +35,4 @@ struct {{ class.name }} {
 {% endblock %}
 
 {% include "cpp_end.h" %}
-#endif /* OY_{{ class.underscoreName|upper }}_S_H */
+#endif /* {{ file_name|underscores|upper|tr:". _" }} */

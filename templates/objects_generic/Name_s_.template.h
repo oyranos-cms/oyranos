@@ -1,7 +1,8 @@
+{% load gsoc_extensions %}
 {% include "source_file_header.txt" %}
 
-#ifndef OY_{{ class.underscoreName|upper }}_S__H
-#define OY_{{ class.underscoreName|upper }}_S__H
+#ifndef {{ file_name|underscores|upper|tr:". _" }}
+#define {{ file_name|underscores|upper|tr:". _" }}
 
 #include <oyranos_object.h>
 
@@ -23,4 +24,4 @@ const char * oyName_get_             ( const oyName_s    * obj,
 int          oyName_releaseMembers   ( oyName_s          * obj,
                                        oyDeAlloc_f         deallocateFunc );
 
-#endif /* OY_{{ class.underscoreName|upper }}_S__H */
+#endif /* {{ file_name|underscores|upper|tr:". _" }} */

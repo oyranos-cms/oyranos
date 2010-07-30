@@ -1,7 +1,8 @@
+{% load gsoc_extensions %}
 {% include "source_file_header.txt" %}
 
-#ifndef OY_{{ class.underscoreName|upper }}_S__H
-#define OY_{{ class.underscoreName|upper }}_S__H
+#ifndef {{ file_name|underscores|upper|tr:". _" }}
+#define {{ file_name|underscores|upper|tr:". _" }}
 
 #include <oyranos_object.h>
 
@@ -13,4 +14,4 @@
 /* } Include "{{ class.private_methods_declarations_h }}" */
 {% endblock %}
 
-#endif /* OY_{{ class.underscoreName|upper }}_S__H */
+#endif /* {{ file_name|underscores|upper|tr:". _" }} */

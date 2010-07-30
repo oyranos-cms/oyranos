@@ -1,7 +1,8 @@
+{% load gsoc_extensions %}
 {% include "source_file_header.txt" %}
 
-#ifndef OY_{{ class.underscoreName|upper }}_S__H
-#define OY_{{ class.underscoreName|upper }}_S__H
+#ifndef {{ file_name|underscores|upper|tr:". _" }}
+#define {{ file_name|underscores|upper|tr:". _" }}
 
 #include <oyranos_object.h>
 
@@ -44,4 +45,4 @@ int
 {% endblock %}
 {# TODO Remove uneeded pointer in oyClass_s* #}
 
-#endif /* OY_{{ class.underscoreName|upper }}_S__H */
+#endif /* {{ file_name|underscores|upper|tr:". _" }} */

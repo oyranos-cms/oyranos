@@ -1,3 +1,4 @@
+{% load gsoc_extensions %}
 {% include "source_file_header.txt" %}
 
 #ifndef {{ file_name|cut:".h"|upper }}_H

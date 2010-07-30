@@ -1,4 +1,5 @@
 {% extends "Base_s.c" %}
+{% load gsoc_extensions %}
 
 {% block LocalIncludeFiles %}
 {{ block.super }}
@@ -28,10 +29,10 @@ OYAPI int  OYEXPORT
   int error = 0;
 
   if(s)
-    oyCheckType__m( {{ class.enumName }}, return 1 )
+    oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 1 )
 
   if(obj && *obj &&
-      {% block MoveIn_CheckTypes %}(*obj)->type_ == {{ class.content.enumName }}{% endblock %})
+      {% block MoveIn_CheckTypes %}(*obj)->type_ == oyOBJECT_{{ class.content.baseName|underscores|upper }}_S{% endblock %})
   {
     if(!list)
     {
@@ -71,9 +72,9 @@ OYAPI int  OYEXPORT
   {{ class.privName }} * s = ({{ class.privName }}*)list;
 
   if(!error)
-    oyCheckType__m( {{ class.enumName }}, return 1 )
+    oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 1 )
 
-  if(!error && list->type_ != {{ class.enumName }})
+  if(!error && list->type_ != oyOBJECT_{{ class.baseName|underscores|upper }}_S)
     error = 1;
   
   if(!error)
@@ -101,10 +102,10 @@ OYAPI {{ class.listOf }} * OYEXPORT
   {{ class.privName }} * s = ({{ class.privName }}*)list;
 
   if(!error)
-    oyCheckType__m( {{ class.enumName }}, return 0 )
+    oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
 
   if(!error)
-    return ({{ class.listOf }} *) oyStructList_GetRefType( s->list_, pos, {{ class.content.enumName }} ); 
+    return ({{ class.listOf }} *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_{{ class.content.baseName|underscores|upper }}_S );
   else
     return 0;
 }   
@@ -127,7 +128,7 @@ OYAPI int  OYEXPORT
   {{ class.privName }} * s = ({{ class.privName }}*)list;
 
   if(!error)
-    oyCheckType__m( {{ class.enumName }}, return 0 )
+    oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
 
   if(!error)
     return oyStructList_Count( s->list_ );

@@ -1,4 +1,5 @@
 {% extends "Struct_s.template.c" %}
+{% load gsoc_extensions %}
 
 {% block LocalIncludeFiles %}
 #include "{{ class.name }}_.h"
@@ -72,7 +73,7 @@ OYAPI int OYEXPORT
 
   s = ({{ class.privName }}*) *{{ class.baseName|lower }};
 
-  oyCheckType__m( {{ class.enumName }}, return 1 )
+  oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 1 )
 
   *{{ class.baseName|lower }} = 0;
 
