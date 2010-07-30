@@ -1,4 +1,4 @@
-{% load grantlee_gsoc_extensions %}
+{% load gsoc_extensions %}
 {% include "source_file_header.txt" %}
 
 #ifndef OYRANOS_OBJECT_H
