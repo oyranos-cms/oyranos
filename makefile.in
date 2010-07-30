@@ -361,7 +361,7 @@ SUB_OBJECTS = \
 INCL_DEP = $(SOURCES) $(CXXFILES_Flmm) \
 	test.c test2.cpp tests/test_oyranos.c
 
-.PHONY:	docu examples oforms
+.PHONY:	check_environment docu examples oforms
 
 TEST  = test
 TEST2 = test2
@@ -391,7 +391,7 @@ ALL_FILES = \
 	test.c test2.cpp
 
 # build all what is needed to run the libraries, helpers
-all:	config.log.h mkdepend \
+all:	check_environment config.log.h mkdepend \
 	$(LIBSONAMEFULL) \
 	$(LIB_FORMS_FLTK_NAME) \
 	$(TARGET)-monitor $(X11) \
@@ -406,6 +406,13 @@ all:	config.log.h mkdepend \
 	         echo "$${prof} profile directory is not found - ignoring"; \
 	done; ) || echo "default_profiles directory is not found - ignoring"
 	echo ... $@ done
+
+check_environment:
+	if [ "$(build_dir)" != "$(src_dir)" ] && [ -f "$(SRCDIR)/config.h" ]; then\
+	  echo Found a "$(build_dir)/config.h", which will cause problems.; \
+	  echo Please remove before continuing. Exit; \
+	  exit 1; \
+	fi
 
 $(X11): $(TARGET)-monitor-nvidia
 
@@ -1003,6 +1010,7 @@ clean:
 # configure if the file config is not available
 config.log.h:	$(CONFIG_FILES) ./config.log
 	./config.log
+	test -f error.tmp && ($(RM) error.tmp; exit 1)
 
 # try to resolve dependencies
 depend:	cdepend

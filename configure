@@ -9,6 +9,14 @@ WARNING=0
 ROOT_DIR="$0"
 ROOT_DIR=`echo $ROOT_DIR | sed 's%/configure%%1'`
 ROOT_DIR=`(cd $ROOT_DIR; pwd)`
+BUILD_DIR="`pwd`"
+
+if [ "$ROOT_DIR" != "$BUILD_DIR" ] && [ -f "$ROOT_DIR/config.h" ]; then
+  echo Found a "$ROOT_DIR/config.h", which will cause problems.
+  echo Please remove before continuing. Exit
+  echo Found a "$ROOT_DIR/config.h", which will cause problems. > error.tmp
+  exit 1
+fi
 
 CONF_H=config.h
 CONF=makefile
@@ -358,8 +366,6 @@ test -n "$RPMECHO" && $RPMECHO "# generated $SPEC automatically by configure fro
 test -n "$RPMECHO" && $RPMECHO "" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "" > $SPECICC
 
-
-build_dir="`pwd`"
 
 #prefix
 if [ -z "$prefix" ]; then
@@ -1072,7 +1078,7 @@ if [ -n "$ECHO" ]; then
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
 
-test -n "$ECHO" && $ECHO "build_dir = $build_dir" >> $CONF
+test -n "$ECHO" && $ECHO "build_dir = $BUILD_DIR" >> $CONF
 test -n "$ECHO" && $ECHO "prefix=$prefix" >> $CONF
 test -n "$ECHO" && $ECHO "exec_prefix=$exec_prefix" >> $CONF
 test -n "$ECHO" && $ECHO "bindir=$bindir" >> $CONF
@@ -1118,8 +1124,8 @@ test -n "$ECHO" && $ECHO "#define OY_ICCDIRNAME     \"$iccdirname\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_SETTINGSDIRNAME \"$settingsdirname\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_TARGETDIRNAME  \"$targetdirname\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_LOCALEDIR      \"$datadir/locale\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_SRCDIR         \"$build_dir\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_SRC_LOCALEDIR  \"$build_dir/po\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_SRCDIR         \"$BUILD_DIR\"" >> $CONF_H
+test -n "$ECHO" && $ECHO "#define OY_SRC_LOCALEDIR  \"$BUILD_DIR/po\"" >> $CONF_H
 test -n "$ECHO" && $ECHO "" >> $CONF_H
 test -n "$ECHO" && $ECHO $OYAPI >> $VERS_H
 test -n "$ECHO" && $ECHO $OYEXPORT >> $VERS_H
