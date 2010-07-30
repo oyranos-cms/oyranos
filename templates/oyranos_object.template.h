@@ -1,3 +1,4 @@
+{% load gsoc_extensions %}
 {% include "source_file_header.txt" %}
 
 #ifndef OYRANOS_OBJECT_H
@@ -36,7 +37,7 @@ typedef enum {
   oyOBJECT_NONE,
   oyOBJECT_NAMED_COLOURS_S,
 {% for class in classes %}
-  {{ class.enumName }},   /**< {{ class.name }} */
+  oyOBJECT_{{ class.baseName|underscores|upper }}_S,   /**< {{ class.name }} */
 {% endfor %}
   oyOBJECT_MAX
 } oyOBJECT_e;

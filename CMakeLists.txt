@@ -23,6 +23,8 @@ CONFIGURE_FILE(
   ${PROJECT_BINARY_DIR}/grantlee_paths.h
 )
 
+ADD_SUBDIRECTORY(grantlee_extensions)
+
 #Setup MOC
 set( MOC_HEADERS ClassInfo.h )
 qt4_wrap_cpp( MOC_SOURCES ${MOC_HEADERS} )

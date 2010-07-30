@@ -46,7 +46,7 @@ Grantlee::Engine* getEngine( const QStringList& tmplDirs )
   loader->setTemplateDirs( allTmplDirs );
 
   engine->addTemplateLoader( loader );
-  engine->setPluginPaths( QStringList() << GRANTLEE_PLUGIN_PATH );
+  engine->setPluginPaths( QStringList() << "." << GRANTLEE_PLUGIN_PATH );
   return engine;
 }
 

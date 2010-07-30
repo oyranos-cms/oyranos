@@ -1,4 +1,5 @@
 NOW:
+- Use the FindOyranos.cmake from KolorManager
 - Make the camel2under() function a grantlee filter.
 3 Move the grantlee template creation code to a new class.
 1 Create new template scheme for full public structures and adopt oyObject,
