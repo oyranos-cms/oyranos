@@ -20,6 +20,7 @@ class GSoCPluginLibrary : public QObject, public Grantlee::TagLibraryInterface
       QHash<QString, Grantlee::Filter*> filters;
 
       filters.insert( "underscores", new CamelcaseToUnderscoreFilter() );
+      filters.insert( "tr", new trFilter() );
 
       return filters;
     }

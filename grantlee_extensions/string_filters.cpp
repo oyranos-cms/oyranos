@@ -1,4 +1,5 @@
 #include <QVariant>
+#include <QtDebug>
 #include <grantlee/util.h>
 
 #include "string_filters.h"
@@ -49,4 +50,20 @@ CamelcaseToUnderscoreFilter::doFilter( const QVariant& input, const QVariant& ar
   under += cur;
 
   return markSafe( under );
+}
+
+QVariant
+trFilter::doFilter( const QVariant& input, const QVariant& argument, bool autoescape ) const
+{
+  Q_UNUSED( autoescape )
+
+  QString inputString = getSafeString( input );
+  QString arg = getSafeString( argument );
+
+  if (arg.size() != 3 || arg.at(1) != ' ') {
+    qWarning() << "Argument" << arg << arg.size()<< "to tr filter has wrong format";
+    return markSafe( inputString );
+  }
+
+  return markSafe( inputString.replace( arg.at(0), arg.at(2) ) );
 }

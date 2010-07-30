@@ -16,4 +16,15 @@ class CamelcaseToUnderscoreFilter : public Filter
   }
 };
 
+class trFilter: public Filter
+{
+  public:
+    QVariant
+      doFilter( const QVariant &input, const QVariant &argument = QVariant(), bool autoescape = false ) const;
+
+  bool isSafe() const {
+    return true;
+  }
+};
+
 #endif // STRING_FILTERS_H
