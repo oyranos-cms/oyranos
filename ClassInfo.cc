@@ -9,37 +9,6 @@
 
 #include "ClassInfo.h"
 
-QString camel2under( const QString& camel )
-{
-  QString under;
-
-  QChar pre, cur;
-  int idx = 1;
-  bool upword = false;
-  while (idx < camel.size()) {
-    pre = camel.at(idx-1);
-    cur = camel.at(idx);
-    if (pre.isLower() && cur.isLower()) {
-      under += pre;
-    } else if (pre.isLower() && cur.isUpper()) {
-      under += pre;
-      under += "_";
-    } else if (pre.isUpper() && cur.isUpper()) {
-      under += pre;
-      upword = true;
-    } else if (pre.isUpper() && cur.isLower()) {
-      under += upword ? "_" : "";
-      pre = pre.toLower();
-      under += pre;
-      upword = false;
-    }
-    idx++;
-  }
-  under += cur;
-
-  return under;
-}
-
 QList<ClassInfo*> ClassInfo::getAllClasses( const QString& directory )
 {
   QDir sourceDir( directory );
