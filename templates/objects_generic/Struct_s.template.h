@@ -1,7 +1,7 @@
 {% load gsoc_extensions %}
 {% include "source_file_header.txt" %}
 
-#ifndef {{ file_name|underscores:"strict"|upper|tr:". _" }}
+#ifndef {{ file_name|underscores|upper|tr:". _" }}
 #define {{ file_name|underscores|upper|tr:". _" }}
 
 {% include "cpp_begin.h" %}
