@@ -3,6 +3,7 @@
 {% block LocalIncludeFiles %}
 {{ block.super }}
 #include "oyranos_module.h"
+#include "oyCMMInfo_s_.h"
 {% endblock %}
 
 {% block ChildMembers %}
