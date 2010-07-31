@@ -79,6 +79,14 @@ int oyCMMInfo_Copy__Members( oyCMMInfo_s_ * dst, oyCMMInfo_s_ * src)
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
+  error = !memcpy(dst->cmm, src->cmm, 8);
+
+  if(src->backend_version)
+    dst->backend_version = oyStringCopy_( src->backend_version, allocateFunc_ );
+
+  dst->getText = src->getText;
+
+  dst->oy_compatibility = src->oy_compatibility;
 
   return 0;
 }
