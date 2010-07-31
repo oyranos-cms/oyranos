@@ -28,6 +28,9 @@ void oyCMMInfo_Release__Members( oyCMMInfo_s_ * cmminfo )
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( cmminfo->member );
      */
+
+    if(cmminfo->backend_version)
+      deallocateFunc( cmminfo->backend_version );
   }
 }
 
