@@ -8,5 +8,5 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    {% now "r" %}
+ *  @since    {% now "yyyy/MM/dd" %}
  */
