@@ -51,6 +51,25 @@ typedef int      (*oyCMMMessageFuncSet_f)( oyMessage_f     message_func );
 #define oyCOLOUR_ICC_DEVICE_LINK "oyDL"
 
 
+/**
+ *  type:
+ *  - oyNAME_NICK: compact, e.g. "GPU"
+ *  - oyNAME_NAME: a short explanation, e.g. "Rendering with GPU"
+ *  - oyNAME_DESCRIPTION: a long explanation, e.g. "Accelerated calculations on a GPU"
+ *
+ *  @param         select              one from "name", "manufacturer" or "copyright"
+ *  @param         type                select flavour
+ *  @return                            text string or zero
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/23 (Oyranos: 0.1.10)
+ *  @date    2008/12/23
+ */
+typedef
+const char *    (* oyCMMGetText_f)   ( const char        * select,
+                                       oyNAME_e            type );
+
+
 {% include "cpp_end.h" %}
 
 #endif /* {{ file_name|underscores|upper|tr:". _" }} */
