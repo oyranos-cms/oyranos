@@ -17808,6 +17808,50 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
   return texts;
 }
 
+/** Function oyProfileTag_GetBlock
+ *  @memberof oyProfileTag_s
+ *
+ *  Get the raw memory block of the tag.
+ *
+ *  @param[in]     tag                 the tag to read
+ *  @param[out]    tag_block           the raw data owned by the user; on success the block if it has a size; else undefined
+ *  @param[out]    tag_size            the data size; mandatory arg; on success the size returned in tag_block else undefined
+ *  @param[in]     allocateFunc        the user allocator
+ *  @return                            0 - success, >= 1 - error
+ *
+ *  @version Oyranos: 0.2.0
+ *  @since   2010/01/31 (Oyranos: 0.2.0)
+ *  @date    2010/06/31
+ */
+int            oyProfileTag_GetBlock ( oyProfileTag_s    * tag,
+                                       oyPointer         * tag_block,
+                                       size_t            * tag_size,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyProfileTag_s * s = tag;
+  int error = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
+
+  if(error <= 0)
+  {
+    if(!allocateFunc)
+      allocateFunc = oyAllocateFunc_;
+
+    if(tag->size_ && tag->block_ && tag_block)
+    {
+      *tag_block = allocateFunc( tag->size_ + 1 );
+      memcpy( *tag_block, tag->block_, tag->size_ );
+    }
+    if(tag_size)
+      *tag_size = tag->size_;
+  }
+
+  return error;
+}
 
 
 
@@ -19632,10 +19676,10 @@ oyImage_CombinePixelLayout2Mask_ (
                   image->resolution_x,
                   image->resolution_y);
   hashTextAdd_m( text );
-  if(oy_debug)
+  /*if(oy_debug)*/
     oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NAME));
-  else
-    oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NICK));
+  /*else
+    oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NICK));*/
   hashTextAdd_m( text );
   oySprintf_( text, "    <channels all=\"%d\" colour=\"%d\" />\n", n, cchan_n );
   hashTextAdd_m( text );
