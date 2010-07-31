@@ -11,10 +11,11 @@ CamelcaseToUnderscoreFilter::doFilter( const QVariant& input, const QVariant& ar
   Q_UNUSED( autoescape )
 
   QString inputString = getSafeString( input );
+  QString arg = getSafeString( argument );
   QString under;
 
   bool strict = false;
-  if (argument.toString() == "strict")
+  if (arg == "strict")
     strict = true;
 
   QChar pre, cur;
