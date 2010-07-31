@@ -13,8 +13,8 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s_        * api )
   int module_api = api->module_api[0]*10000 + api->module_api[1]*100
                     + api->module_api[2];
 
-  if(api->type <= oyOBJECT_CMM_API_S ||
-     api->type >= oyOBJECT_CMM_API_MAX)
+  if(api->type_ <= oyOBJECT_CMM_API_S ||
+     api->type_ >= oyOBJECT_CMM_API_MAX)
     error = 1;
   else
   {
@@ -22,14 +22,14 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s_        * api )
        OYRANOS_VERSION < module_api)
     {
       error = 1;
-      WARNc2_S("Wrong API for: %s %s", oyStructTypeToText(api->type),
+      WARNc2_S("Wrong API for: %s %s", oyStructTypeToText(api->type_),
                oyNoEmptyString_m_(api->registration));
       return type;
     }
   }
 
   if(error <= 0)
-  switch(api->type)
+  switch(api->type_)
   {
     case oyOBJECT_CMM_API1_S:
     {
@@ -61,7 +61,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s_        * api )
       {
         error = 1;
         WARNc2_S("Incomplete module header: %s %s",
-                 oyStructTypeToText(api->type),
+                 oyStructTypeToText(api->type_),
                  oyNoEmptyString_m_(api->registration));
       }
       if(!(s->oyCMMInit && s->ui))
@@ -74,7 +74,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s_        * api )
           OYRANOS_VERSION < ui_module_api)
         {
           error = 1;
-          WARNc2_S("Wrong UI API for: %s %s", oyStructTypeToText(api->type),
+          WARNc2_S("Wrong UI API for: %s %s", oyStructTypeToText(api->type_),
                    oyNoEmptyString_m_(api->registration));
           return type;
         }
@@ -84,7 +84,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s_        * api )
       {
         error = 1;
         WARNc2_S("Incomplete module UI function set: %s %s",
-                 oyStructTypeToText(api->type),
+                 oyStructTypeToText(api->type_),
                  oyNoEmptyString_m_(api->registration));
       }
       if(s->context_type && s->context_type[0] &&
@@ -92,7 +92,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s_        * api )
       {
         error = 1;
         WARNc2_S("context_type provided but no oyCMMFilterNode_ContextToMem: %s %s",
-                 oyStructTypeToText(api->type),
+                 oyStructTypeToText(api->type_),
                  oyNoEmptyString_m_(api->registration));
       }
       if(!(s->ui && s->ui->texts &&
@@ -100,21 +100,21 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s_        * api )
       {
         error = 1;
         WARNc2_S("Missed module name: %s %s",
-                 oyStructTypeToText(api->type),
+                 oyStructTypeToText(api->type_),
                  oyNoEmptyString_m_(api->registration));
       }
       if(!(s->ui && s->ui->category && s->ui->category[0]))
       {
         error = 1;
         WARNc2_S("Missed module category: %s %s",
-                 oyStructTypeToText(api->type),
+                 oyStructTypeToText(api->type_),
                  oyNoEmptyString_m_(api->registration));
       }
       if(s->ui && s->ui->options && s->ui->options[0] && !s->ui->oyCMMuiGet)
       {
         error = 1;
         WARNc2_S("options provided without oyCMMuiGet: %s %s",
-                 oyStructTypeToText(api->type),
+                 oyStructTypeToText(api->type_),
                  oyNoEmptyString_m_(api->registration));
       }
     } break;
@@ -216,9 +216,9 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s_        * api )
   }
 
   if(error <= 0)
-    type = api->type;
+    type = api->type_;
   else
-    WARNc2_S("Found problems with: %s %s", oyStructTypeToText(api->type),
+    WARNc2_S("Found problems with: %s %s", oyStructTypeToText(api->type_),
               oyNoEmptyString_m_(api->registration));
 
 
@@ -273,19 +273,19 @@ oyOBJECT_e   oyCMMapi_selectFilter_  ( oyCMMInfo_s_      * info,
     reg_filter = (oyRegistrationData_s*) data;
 
   if(error <= 0 &&
-     api->type == reg_filter->type)
+     api->type_ == reg_filter->type_)
   {
     if(reg_filter->registration)
     {
       if(oyFilterRegistrationMatch( cmm_api->registration,
-                                    reg_filter->registration, api->type ))
+                                    reg_filter->registration, api->type_ ))
         found = 1;
     } else
       found = 1;
 
     if( found )
     {
-      type = api->type;
+      type = api->type_;
       if(rank)
         *rank = 1;
       else
