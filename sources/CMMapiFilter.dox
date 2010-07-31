@@ -1,0 +1,13 @@
+/** @struct  oyCMMapiFilter_s
+ *  @ingroup module_api
+ *  @extends oyCMMapi_s
+ *  @brief   the module API 4,6,7 interface base
+ *  @internal
+ *  
+ *  The registration should provide keywords for selection.
+ *  The api5_ member is missed for oyCMMapi5_s.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/28 (Oyranos: 0.1.10)
+ *  @date    2008/12/28
+ */
