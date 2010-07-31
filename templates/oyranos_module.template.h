@@ -70,6 +70,24 @@ const char *    (* oyCMMGetText_f)   ( const char        * select,
                                        oyNAME_e            type );
 
 
+/** @brief   icon data
+ *  @ingroup cmm_handling
+ *  @extends oyStruct_s
+ *
+ *  Since: 0.1.8
+ */
+typedef struct {
+  oyOBJECT_e       type;               /*!< struct type oyOBJECT_ICON_S */
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyPointer        dummy;              /**< keep to zero */
+  int              width;              /**< */
+  int              height;             /**< */
+  float          * data;               /*!< should be sRGB matched */
+  char           * file_list;          /*!< colon ':' delimited list of icon file names, SVG, PNG */
+} oyIcon_s;
+
+
 {% include "cpp_end.h" %}
 
 #endif /* {{ file_name|underscores|upper|tr:". _" }} */
