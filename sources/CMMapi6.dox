@@ -1,0 +1,27 @@
+/** @struct  oyCMMapi6_s
+ *  @ingroup module_api
+ *  @extends oyCMMapiFilter_s
+ *  @brief   Context convertor
+ *  @internal
+ *  
+ *  The context provided by a filter can be exotic. The API provides the means
+ *  to get him into a known format. With this format connector it is possible to
+ *  interface otherwise divergine formats.
+ *
+ \dot
+digraph G {
+  rankdir=LR
+  node [shape=record, fontname=Helvetica, fontsize=10];
+  edge [fontname=Helvetica, fontsize=10];
+
+  a [ label="ICC device link - oyDL" ];
+  b [ label="littleCMS specific device link - lcCC" ];
+
+  a -> b [arrowtail=none, arrowhead=normal];
+}
+ \enddot
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/15 (Oyranos: 0.1.9)
+ *  @date    2008/12/27
+ */
