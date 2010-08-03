@@ -1,4 +1,11 @@
 NOW:
+- oyCMMInfo_s:
+  a) oyCMMInfo_Release -> oyranos_alpha.c:28223
+  b) undrescore:"strict"
+- FIX oyCMMapiFilter_s: 3 ways to loop parent classes inside a template.
+  a.  {% for parent in parents %}
+  b.  {% while parent.name != "oyStruct_s" %}
+  c.* {% extend parent %}{% block ... %}
 - Mark all CMM structs as @internal
 - Use the FindOyranos.cmake from KolorManager
 3 Move the grantlee template creation code to a new class.
