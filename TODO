@@ -1,4 +1,5 @@
 NOW:
+- Some comments of inherited member variables are different in parent and child class!
 - oyCMMInfo_s:
   a) oyCMMInfo_Release -> oyranos_alpha.c:28223
   b) undrescore:"strict"
