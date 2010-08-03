@@ -25,6 +25,7 @@ class ClassInfo: public QObject
   Q_PROPERTY(QString private_methods_declarations_h READ private_methods_declarations_h)
   Q_PROPERTY(QString private_methods_definitions_c READ private_methods_definitions_c)
   Q_PROPERTY(QString public_h READ public_h)
+  Q_PROPERTY(QString private_h READ private_h)
   Q_PROPERTY(QString public_methods_declarations_h READ public_methods_declarations_h)
   Q_PROPERTY(QString public_methods_definitions_c READ public_methods_definitions_c)
 
@@ -89,6 +90,8 @@ class ClassInfo: public QObject
     QString private_methods_definitions_c() const { return base + "." + "private_methods_definitions.c"; }
     /// Get the source file public.h
     QString public_h() const { return base + "." + "public.h"; }
+    /// Get the source file private.h
+    QString private_h() const { return base + "." + "private.h"; }
     /// Get the source file public_methods_declarations.h
     QString public_methods_declarations_h() const { return base + "." + "public_methods_declarations.h"; }
     /// Get the source file public_methods_definitions.c

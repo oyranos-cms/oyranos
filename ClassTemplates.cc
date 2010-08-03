@@ -11,6 +11,7 @@
 
 const QStringList ClassTemplates::sourceFiles = QStringList()
   << "members.h"
+  << "private.h"
   << "private_methods_declarations.h"
   << "private_methods_definitions.c"
   << "public.h"

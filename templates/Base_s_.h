@@ -13,6 +13,9 @@
 #include "{{ class.name }}.h"
 
 typedef struct {{ class.privName }} {{ class.privName }};
+/* Include "{{ class.private_h }}" { */
+{% include class.private_h %}
+/* } Include "{{ class.private_h }}" */
 
 /** @internal
  *  @struct   {{ class.privName }}
