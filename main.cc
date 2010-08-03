@@ -22,6 +22,25 @@
 
 using namespace std;
 
+void getTemplateParents( const QString& tmplPath, QVariantList& parentList )
+{
+  //TODO
+  //Get the templateDir (templates root)
+  //search recursively for tmplParentPath
+  QFile tmpl( tmplPath );
+  tmpl.open( QIODevice::ReadOnly|QIODevice::Text );
+  QString text = tmpl.readAll();
+
+  QRegExp extends("{%\\s+extends\\s+\"(\\w+)\"\\s+%}");
+
+  if (extends.indexIn( text ) != -1) {
+    QString tmplParentName = extends.cap(1);
+    templates << tmplParentName;
+    getParents( tmplParentPath, parentList );
+  else
+    return;
+}
+
 typedef Grantlee::FileSystemTemplateLoader GFSLoader;
 
 Grantlee::Engine* getEngine( const QStringList& tmplDirs )
@@ -132,9 +151,15 @@ int main(int argc, char *argv[])
     QFile sourceFile( outputDir.filePath( sourceName ) );
     QFileInfo sourceFileInfo(sourceFile);
 
+    // Get the template parent list
+    QVariantList parents;
+    parents << templateFileInfo.fileName();
+    getTemplateParents( templateFileInfo.filePath(), parents );
+
     c.insert( "file_name", sourceName );
     c.insert( "classes", classes );
     c.insert( "class", classinfo );
+    c.insert( "parents", parents);
 
     QString newFileContents = t->render( &c );
 
