@@ -777,7 +777,7 @@ install_mime:
 	for mime in $(MIME_TYPES); do \
 	  $(INSTALL) -m 644 $(SRCDIR)/$${mime} \
 	    $(DESTDIR)$(datadir)/mime/packages/$${mime}; \
-	  -xdg-mime install $(SRCDIR)/$${mime}; \
+	  test `which xdg-mime | wc -l` && xdg-mime install $(SRCDIR)/$${mime}; \
 	done
 	echo adding icons to $(DESTDIR)$(pixmapdir) ...
 	mkdir -p $(DESTDIR)$(pixmapdir)
