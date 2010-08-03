@@ -1,6 +1,11 @@
 /** @file {{ file_name }}
  *
  *  Oyranos is an open source Colour Management System
+{% for file in parents %}
+ * {{ file }}{% if not forloop.last %}
+ *      ^
+ *      |
+{% endif %}{% endfor %}
  *
  *  @par Copyright:
  *            2004-2009 (C) Kai-Uwe Behrmann
