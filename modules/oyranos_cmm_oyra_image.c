@@ -90,18 +90,11 @@ int      oyraFilterPlug_ImageLoadRun (
                                        oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
-  int x = 0, y = 0, n = 0, i;
-  int result = 0, l_result = 0, error = 0;
-  int is_allocated = 0;
-  oyPointer * ptr = 0;
+  int x = 0, y = 0;
+  int result = 0, error = 0;
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyFilterNode_s * input_node = 0,
-                 * node = socket->node;
+  oyFilterNode_s * node = socket->node;
   oyImage_s * image = (oyImage_s*)socket->data;
-  oyOption_s * o = 0;
-  oyRectangle_s * r;
-  oyPixelAccess_s * new_ticket = 0;
-  int dirty = 0;
   oyCMMapiFilter_s * api = 0;
   oyCMMapiFilters_s * apis = 0;
 
@@ -111,11 +104,8 @@ int      oyraFilterPlug_ImageLoadRun (
   image = (oyImage_s*)socket->data;
   if(!image)
   {
-    uint32_t count = 0,
-             i, j, n,
+    uint32_t i, j, n,
            * rank_list = 0;
-    char ** texts = 0,
-          * val = 0;
     const char * filename = oyOptions_FindString( node->core->options_, "filename", 0 );
     const char * fileext = 0;
 

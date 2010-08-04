@@ -259,7 +259,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
       int attr_n, i, j;
       char ** colourKeyWords = 0,
             * tmp = 0;
-      int colourKeyWords_n = 0, tmp_n = 0;
+      int colourKeyWords_n = 0;
 
       if(!device_name)
       {
