@@ -58,7 +58,12 @@ class ClassInfo: public QObject
     /// Get the baseName of the parent class
     QString parentBaseName() const { return parentBase; }
     /// Get the full name of the parent class
-    QString parentName() const { return "oy" + parentBase + "_s"; }
+    QString parentName() const {
+      if (parentBase.is Empty())
+        return "";
+      else
+        return "oy" + parentBase + "_s";
+    }
     /// Get the group this class belongs to
     QString group() const { return groupName; }
     /// Get the class brief description
