@@ -135,6 +135,7 @@ int main(int argc, char *argv[])
     c.insert( "file_name", sourceName );
     c.insert( "classes", classes );
     c.insert( "class", classinfo );
+    c.insert( "struct", tpl.getStructClass() );
 
     QString newFileContents = t->render( &c );
 
