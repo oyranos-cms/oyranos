@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <lcms.h>
+//#include <lcms.h>
 
 #include "oyranos.h"
 #include "config.h"
@@ -2976,7 +2976,7 @@ oyTESTRESULT_e testCMMnmRun ()
     "oyConversion_RunPixels()                           " );
   }
 
-
+#if 0
   cmsHPROFILE lp_in = cmsOpenProfileFromMem( p_in->block_, p_in->size_ ),
               lp_out = cmsOpenProfileFromMem( p_out->block_, p_out->size_ );
   cmsHTRANSFORM xform = cmsCreateTransform( lp_in, TYPE_XYZ_DBL,
@@ -3005,6 +3005,7 @@ oyTESTRESULT_e testCMMnmRun ()
   cmsDeleteTransform( xform );
 
   printf("%d,%g %g\n",i,clck, clck2);
+#endif
 
   if( !error )
   {
@@ -3023,7 +3024,7 @@ oyTESTRESULT_e testCMMnmRun ()
     "cmsDoTransform() lcms                              " );
   }
 
-
+#if 0
   lp_in = cmsOpenProfileFromMem( p_in->block_, p_in->size_ );
   lp_out = cmsOpenProfileFromMem( p_out->block_, p_out->size_ );
   clck = oyClock();
@@ -3051,6 +3052,7 @@ oyTESTRESULT_e testCMMnmRun ()
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "cmsCreateTransform() lcms                          " );
   }
+#endif
 
 
   clck = oyClock();
