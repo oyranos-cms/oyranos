@@ -1106,7 +1106,10 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
                  oyStructList_AddName( texts,
                       oyICCTagDescription(icSigMultiLocalizedUnicodeType), -1 );
-                 oyStructList_MoveInName( texts, &tmp, -1 );
+                 if(tmp)
+                   oyStructList_MoveInName( texts, &tmp, -1 );
+                 else
+                   oyStructList_AddName( texts, OY_PROFILE_NONE, -1 );
                } else
                  error = 1;
              }
