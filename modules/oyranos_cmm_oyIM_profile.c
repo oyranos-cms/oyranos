@@ -732,7 +732,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  len = oyValueUInt32( len );
                  off += 4 + 67;
                }
-             size_ = off;
+             tag->size_check_ = off;
            }
            break;
       case icSigMultiLocalizedUnicodeType:
@@ -888,6 +888,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
              int off = 8;
              uint32_t i=0;
              icDescStruct * desc = 0;
+             char mfg_local[5] = {0,0,0,0,0},
+                  model_local[5] = {0,0,0,0,0};
              const char * mfg = 0;
              const char * model = 0;
              const char * tech = 0;
@@ -925,7 +927,11 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  oyStructList_MoveInName( texts, &tmp, -1 );
 
                  mfg = oyICCTagName( oyValueUInt32(desc->deviceMfg) );
+                 memcpy( mfg_local, mfg, 4 );
+                 mfg = mfg_local;
                  model = oyICCTagName( oyValueUInt32(desc->deviceModel) );
+                 memcpy( model_local, model, 4 );
+                 model = model_local;
                  tech = oyICCTechnologyDescription( oyValueUInt32(desc->technology ));
                }
 
@@ -944,9 +950,10 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  name = 0;
                  name = (oyName_s*) oyStructList_GetRefType( mfg_tmp,
                                                    0, oyOBJECT_NAME_S );
-                 if(name)
+                 if(name &&  name->name && name->name[0] )
                    mfg = name->name;
                }
+               size = tmptag->size_check_;
                oyProfileTag_Release( &tmptag );
                tmp = 0;
 
@@ -962,15 +969,16 @@ oyStructList_s * oyIMProfileTag_GetValues(
                oyProfileTag_Set( tmptag, icSigDeviceModelDescTag,
                                          tag_sig, oyOK,
                                          tag->size_ - off, tmp );
-               mfg_tmp = oyIMProfileTag_GetValues( tmptag );
+               model_tmp = oyIMProfileTag_GetValues( tmptag );
                if(oyStructList_Count( model_tmp ) )
                {
                  name = 0;
                  name = (oyName_s*) oyStructList_GetRefType( model_tmp,
                                                    0, oyOBJECT_NAME_S );
-                 if(name)
+                 if(name &&  name->name && name->name[0] )
                    model = name->name;
                }
+               size = tmptag->size_check_;
                oyProfileTag_Release( &tmptag );
                tmp = 0;
 
@@ -978,33 +986,21 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  off += size;
 
                /* write to string */
+               oyStructList_AddName( texts, _("Manufacturer:"), -1 );
                if(mfg && oyStrlen_(mfg))
-               {
-                 oyStructList_AddName( texts, _("Manufacturer:"), -1 );
                  oyStructList_AddName( texts, mfg, -1 );
-               } else
-               {
+               else
                  oyStructList_AddName( texts, 0, -1 );
-                 oyStructList_AddName( texts, 0, -1 );
-               }
+               oyStructList_AddName( texts, _("Modell:"), -1 );
                if(model && oyStrlen_(model))
-               {
-                 oyStructList_AddName( texts, _("Modell:"), -1 );
                  oyStructList_AddName( texts, model, -1 );
-               } else
-               {
+               else
                  oyStructList_AddName( texts, 0, -1 );
-                 oyStructList_AddName( texts, 0, -1 );
-               }
+               oyStructList_AddName( texts, _("Technology:"), -1 );
                if(tech && oyStrlen_(tech))
-               {
-                 oyStructList_AddName( texts, _("Technology:"), -1 );
                  oyStructList_AddName( texts, tech, -1 );
-               } else
-               {
+               else
                  oyStructList_AddName( texts, 0, -1 );
-                 oyStructList_AddName( texts, 0, -1 );
-               }
 
                oyStructList_Release( &mfg_tmp );
                oyStructList_Release( &model_tmp );
