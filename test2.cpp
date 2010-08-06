@@ -3080,7 +3080,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   clck = oyClock();
 
-  for(i = 0; i < n*100; ++i)
+  for(i = 0; i < n*100 && error <= 0; ++i)
   {
     l_error = oyNamedColour_SetColourStd ( c, oyASSUMED_WEB,
                                            (oyPointer)d, oyDOUBLE, 0, options );
