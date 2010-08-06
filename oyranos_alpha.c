@@ -17757,7 +17757,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
                (k == 0 && language && language[0] &&
                           oyStrcmp_( language, t_l ) == 0 &&
                           country  && country[0] &&
-                          oyStrcmp_( country, t_c ) )       ||
+                          oyStrcmp_( country, t_c ) == 0 )              ||
                (k == 1 && language && language[0] &&
                           oyStrcmp_( language, t_l ) == 0 &&
                           (!country || implicite_i18n ))                ||
