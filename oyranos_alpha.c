@@ -27647,6 +27647,7 @@ int               oyNamedColour_SetColourStd ( oyNamedColour_s * colour,
   oyNamedColour_s * s = colour;
   int error = !s || !colour_space || !channels;
   oyProfile_s * p_in = 0;
+  oyProfile_s * p_out = 0;
 
   /* abreviate */
   if(error <= 0 && channels_type == oyDOUBLE)
@@ -27696,16 +27697,19 @@ int               oyNamedColour_SetColourStd ( oyNamedColour_s * colour,
   /* convert */
   if(error <= 0)
   {
-    oyProfile_s * p_out = s->profile_;
-    oyColourConvert_( p_in, p_out,
-                      channels, s->channels_,
-                      channels_type , oyDOUBLE, options );
+    p_out = s->profile_;
+    error = oyColourConvert_( p_in, p_out,
+                              channels, s->channels_,
+                              channels_type , oyDOUBLE, options );
     oyProfile_Release ( &p_out );
+  }
 
+  if(error <= 0)                               
+  {  
     p_out = oyProfile_FromStd( oyEDITING_XYZ, 0 );
-    oyColourConvert_( p_in, p_out,
-                      channels, s->XYZ_,
-                      channels_type , oyDOUBLE, options );
+    error = oyColourConvert_( p_in, p_out,
+                              channels, s->XYZ_,
+                              channels_type , oyDOUBLE, options );
     oyProfile_Release ( &p_out );
   }
 
