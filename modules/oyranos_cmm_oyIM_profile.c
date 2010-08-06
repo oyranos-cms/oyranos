@@ -1079,24 +1079,33 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  offset += 16;
 
                  /* 'mluc' type - desc */
-                 tmptag = oyProfileTag_New(0);
-                 tmp = oyAllocateFunc_(tag->size_ - offset);
-                 error = !memcpy(tmp, &mem[offset], tag->size_ - offset);
-                 oyProfileTag_Set( tmptag, icSigProfileDescriptionTag,
+                 memcpy( &sig,  &mem[offset], 4 );
+                 sig = oyValueUInt32( sig );
+                 if(sig != icSigMultiLocalizedUnicodeType)
+                   message( oyMSG_WARN,0, OY_DBG_FORMAT_"\n"
+                   "psid description not of icSigMultiLocalizedUnicodeType: %d",
+                            OY_DBG_ARGS_, i );
+                 else
+                 {
+                   tmptag = oyProfileTag_New(0);
+                   tmp = oyAllocateFunc_(tag->size_ - offset);
+                   error = !memcpy(tmp, &mem[offset], tag->size_ - offset);
+                   oyProfileTag_Set( tmptag, icSigProfileDescriptionTag,
                                            icSigMultiLocalizedUnicodeType, oyOK,
                                            tag->size_ - offset, tmp );
-                 tmp = 0;
-                 desc_tmp_n = 0;
-                 desc_tmp = oyIMProfileTag_GetValues( tmptag );
-                 if(oyStructList_Count( desc_tmp ) )
-                 {
-                   name = 0;
-                   name = (oyName_s*) oyStructList_GetRefType( desc_tmp,
+                   tmp = 0;
+                   desc_tmp_n = 0;
+                   desc_tmp = oyIMProfileTag_GetValues( tmptag );
+                   if(oyStructList_Count( desc_tmp ) )
+                   {
+                     name = 0;
+                     name = (oyName_s*) oyStructList_GetRefType( desc_tmp,
                                                      0, oyOBJECT_NAME_S );
-                   if(name)
-                     tmp = name->name;
+                     if(name)
+                       tmp = name->name;
+                   }
+                   oyProfileTag_Release( &tmptag );
                  }
-                 oyProfileTag_Release( &tmptag );
 
                  if(size_ < offset + mluc_size)
                    size_ = offset + mluc_size;
