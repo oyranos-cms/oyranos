@@ -24916,13 +24916,24 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                 ptr = s->api4_->oyCMMFilterNode_ContextToMem( node, &size,
                                                               oyAllocateFunc_ );
 
-                error = oyCMMptr_Set_( cmm_ptr, s->api4_->id_,
-                                       s->api4_->context_type,
-                                     ptr, "oyPointerRelease", oyPointerRelease);
-                cmm_ptr->size = size;
+                if(!ptr || !size)
+                {
+                  oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*) node, 
+                  OY_DBG_FORMAT_ "no device link for caching", OY_DBG_ARGS_);
+                  error = 1;
+                  oyCMMptr_Release( &cmm_ptr );
+                }
 
-                /* 3b.1. update cache entry */
-                error = oyHash_SetPointer_( hash, (oyStruct_s*) cmm_ptr);
+                if(!error)
+                {
+                  error = oyCMMptr_Set_( cmm_ptr, s->api4_->id_,
+                                         s->api4_->context_type,
+                                    ptr, "oyPointerRelease", oyPointerRelease);
+                  cmm_ptr->size = size;
+
+                  /* 3b.1. update cache entry */
+                  error = oyHash_SetPointer_( hash, (oyStruct_s*) cmm_ptr);
+                }
               }
 
               if(error <= 0 && cmm_ptr && cmm_ptr->ptr)
