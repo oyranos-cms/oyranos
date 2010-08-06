@@ -5064,6 +5064,8 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                   )
                 )
               {
+                if(cmm_info->oy_compatibility == OYRANOS_VERSION)
+                  ++rank;
                 if(rank > max_rank)
                 {
                   api = tmp;
