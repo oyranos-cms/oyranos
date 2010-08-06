@@ -17657,7 +17657,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
   int error = !s;
   oyCMMProfileTag_GetValues_f funcP = 0;
   char cmm[] = {0,0,0,0,0}, 
-       t_l[8], t_c[8], *t_ptr;
+       t_l[8] = {0,0,0,0,0,0,0,0}, t_c[8] = {0,0,0,0,0,0,0,0}, *t_ptr;
   int implicite_i18n = 0;
   char ** texts = 0, * text = 0, * text_tmp = 0, * temp = 0;
   oyStructList_s * values = 0;
@@ -17752,7 +17752,6 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
                 text = text_tmp;
             }
 
-            if(text)
             /* select by language and/or country or best i18n match or all */
             if(
                (k == 0 && language && language[0] &&
