@@ -1501,6 +1501,7 @@ struct oyProfileTag_s {
 
   size_t               offset_orig;    /**< information from profile read */
   size_t               size_;          /**< @private data block size */
+  size_t               size_check_;    /**< @private calculated data block size */
   oyPointer            block_;         /**< @private the data to interprete */
 
   char                 profile_cmm_[5];/**< @private the profile prefered CMM */
