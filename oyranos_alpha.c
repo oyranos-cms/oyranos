@@ -16152,15 +16152,17 @@ const char *       oyProfile_GetFileName (
 
       if(hash)
       {
+        char * key = oyAllocateFunc_(80);
         txt = oyFindProfile_( name );
-        sprintf( hash, "//imaging/profile.icc/psid_%d", dl_pos );
+        sprintf( key, "//imaging/profile.icc/psid_%d", dl_pos );
         oyOptions_SetFromText( &s->oy_->handles_,
-                               hash,
+                               key,
                                txt,
                                OY_CREATE_NEW );
         oyDeAllocateFunc_( txt );
         name = oyOptions_FindString( s->oy_->handles_,
-                                     hash, 0 );
+                                     key, 0 );
+        oyFree_m_( key );
       } else
       {
         s->file_name_ = oyFindProfile_( name );
