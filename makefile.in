@@ -24,6 +24,7 @@ LIB_CMM_END = $(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
 
 CMMS = \
 	$(TARGET)_lcms$(OY_MODULE_NAME) \
+	$(TARGET)_lcm2$(OY_MODULE_NAME) \
 	$(TARGET)_lraw$(OY_MODULE_NAME) \
 	$(TARGET)_oicc$(OY_MODULE_NAME) \
 	$(TARGET)_oyra$(OY_MODULE_NAME) \
@@ -40,6 +41,7 @@ LIB_CMM_CUPS = $(LIB_CMM_START)_CUPS$(LIB_CMM_END)
 #endif
 LIB_CMM_oydi = $(LIB_CMM_START)_oydi$(LIB_CMM_END)
 LIB_CMM_lcms = $(LIB_CMM_START)_lcms$(LIB_CMM_END)
+LIB_CMM_lcm2 = $(LIB_CMM_START)_lcm2$(LIB_CMM_END)
 #ifdef LRAW_LIBS
 LIB_CMM_lraw = $(LIB_CMM_START)_lraw$(LIB_CMM_END)
 #endif
@@ -52,6 +54,7 @@ LIBS_CMM = \
 	$(LIB_CMM_oyX1) \
 	$(LIB_CMM_oyra) \
 	$(LIB_CMM_lcms) \
+	$(LIB_CMM_lcm2) \
 	$(LIB_CMM_lraw)
 
 
@@ -127,6 +130,8 @@ CFILES_CS = \
 
 CFILES_CMM_lcms = \
 	modules/$(TARGET)_cmm_lcms.c
+CFILES_CMM_lcm2 = \
+	modules/$(TARGET)_cmm_lcm2.c
 CPPFILES_CMM_lraw = \
 	modules/$(TARGET)_cmm_lraw.cpp
 CFILES_CMM_oydi = \
@@ -146,7 +151,7 @@ CFILES_CMM_oyIM = \
 CFILES_CMM_oicc = \
 	modules/$(TARGET)_cmm_oicc.c
 CFILES_MODULES = \
-	$(CFILES_CMM_lcms) $(CFILES_CMM_raw) \
+	$(CFILES_CMM_lcms) $(CFILES_CMM_lcm2) $(CFILES_CMM_raw) \
 	$(CFILES_CMM_oydi) $(CFILES_CMM_oyra) \
 	$(CFILES_MODULES_DEVICES) $(CFILES_CMM_oyIM) \
 	$(CFILES_CMM_oicc)
@@ -318,6 +323,7 @@ CXXOBJECTS =	$(CXXFILES) $(FLTK_OFORMS_OBJECTS)
 
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o) $(CFILES_OFORMS:.c=.o) $(OBJECTS_CS)
 CMM_lcms_OBJECTS = $(CFILES_CMM_lcms:.c=.o)
+CMM_lcm2_OBJECTS = $(CFILES_CMM_lcm2:.c=.o)
 CMM_lraw_OBJECTS = $(CPPFILES_CMM_lraw:.cpp=.o)
 CMM_oydi_OBJECTS = $(CFILES_CMM_oydi:.c=.o)
 CMM_oyX1_OBJECTS = $(CFILES_CMM_oyX1:.c=.o)
@@ -333,6 +339,7 @@ FLTK_OFORMS_OBJECTS = $(CXXFILES_OFORMS_FLTK:.cxx=.o)
 CLEAN_OBJECTS = $(OBJECTS) \
 	$(MONI_OBJECTS) \
 	$(CMM_lcms_OBJECTS) \
+	$(CMM_lcm2_OBJECTS) \
 	$(CMM_lraw_OBJECTS) \
 	$(CMM_oydi_OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
@@ -348,6 +355,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 
 SUB_OBJECTS = \
 	$(CMM_lcms_OBJECTS) \
+	$(CMM_lcm2_OBJECTS) \
 	$(CMM_lraw_OBJECTS) \
 	$(CMM_oydi_OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
@@ -444,6 +452,19 @@ $(LIB_CMM_lcms): $(LIBSONAMEFULL) $(CMM_lcms_OBJECTS)
 	$(LNK) $@ lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_lcms$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+
+$(CMM_lcm2_OBJECTS):	$(SRCDIR)/$(CFILES_CMM_lcm2)
+	$(CC) -I./ -I$(SRCDIR) -std=c99 $(CFLAGS) $(INCL) -c -o $*.o $(SRCDIR)/$*.c
+
+$(LIB_CMM_lcm2): $(LIBSONAMEFULL) $(CMM_lcm2_OBJECTS)
+	echo Linking $@ ...
+	$(CC) -I./ $(CFLAGS) -std=c99 $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
+	-o $@ \
+	$(CMM_lcm2_OBJECTS) $(LCMS2_LIBS) $(MODULE_LDLIBS) $(OPENMP)
+	$(RM)  lib$(TARGET)_lcm2$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_lcm2$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  lib$(TARGET)_lcm2$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_lcm2$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
 modules/oyranos_cmm_lraw.o:	$(SRCDIR)/modules/oyranos_cmm_lraw.cpp
 	echo Compiling modules/oyranos_cmm_lraw.o without "--pedantic" ...
@@ -584,10 +605,10 @@ $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 test2:	test2.o $(LIBSONAMEFULL)
 	echo Linking dynamic $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2_dyn \
-	test2.o -L./ `./oyranos-config --ldflags` $(LCMS_LIBS)
+	test2.o -L./ `./oyranos-config --ldflags`
 	echo Linking static $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2 \
-	test2.o -L./ `./oyranos-config --ldstaticflags` $(LCMS_LIBS) $(dl)
+	test2.o -L./ `./oyranos-config --ldstaticflags` $(dl)
 
 $(SRCDIR)/test2.c.c:
 	test -f $(SRCDIR)/test2.c.c || ln -s $(SRCDIR)/test2.cpp $(SRCDIR)/test2.c.c
@@ -596,7 +617,7 @@ test2.c.o:	$(SRCDIR)/test2.c.c
 	$(CC) -I./ -I$(SRCDIR) $(CFLAGS) $(INCL) -c -o $*.o $(SRCDIR)/$*.c
 test2c:	test2.c.o
 	$(CC) -I./ `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -o test2c \
-	test2.c.o -L./ `./oyranos-config --ldstaticflags` $(LCMS_LIBS)
+	test2.c.o -L./ `./oyranos-config --ldstaticflags`
 
 check:	all install_bin install-icc tests/test_oyranos $(TEST2) examples oforms
 	echo current git version is:
