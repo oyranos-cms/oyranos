@@ -59,7 +59,7 @@ class ClassInfo: public QObject
     QString parentBaseName() const { return parentBase; }
     /// Get the full name of the parent class
     QString parentName() const {
-      if (parentBase.is Empty())
+      if (parentBase.isEmpty())
         return "";
       else
         return "oy" + parentBase + "_s";
