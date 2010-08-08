@@ -124,9 +124,44 @@
 
   if(!error) {
     {% block copyConstructor %}
+    {% ifequal class.parent.name "oyStruct_s" %}
     /* ---- start of custom {{ class.baseName }} copy constructor ----- */
     error = oy{{ class.baseName }}_Copy__Members( s, {{ class.baseName|lower }} );
     /* ---- end of custom {{ class.baseName }} copy constructor ------- */
+    {% endifequal %}
+    {% ifequal class.parent.parent.name "oyStruct_s" %}
+    /* ---- start of custom {{ class.parent.baseName }} copy constructor ----- */
+    error = oy{{ class.parent.baseName }}_Copy__Members( s, {{ class.baseName|lower }} );
+    /* ---- end of custom {{ class.parent.baseName }} copy constructor ------- */
+    /* ---- start of custom {{ class.baseName }} copy constructor ----- */
+    error = oy{{ class.baseName }}_Copy__Members( s, {{ class.baseName|lower }} );
+    /* ---- end of custom {{ class.baseName }} copy constructor ------- */
+    {% endifequal %}
+    {% ifequal class.parent.parent.parent.name "oyStruct_s" %}
+    /* ---- start of custom {{ class.parent.parent.baseName }} copy constructor ----- */
+    error = oy{{ class.parent.parent.baseName }}_Copy__Members( s, {{ class.baseName|lower }} );
+    /* ---- end of custom {{ class.parent.parent.baseName }} copy constructor ------- */
+    /* ---- start of custom {{ class.parent.baseName }} copy constructor ----- */
+    error = oy{{ class.parent.baseName }}_Copy__Members( s, {{ class.baseName|lower }} );
+    /* ---- end of custom {{ class.parent.baseName }} copy constructor ------- */
+    /* ---- start of custom {{ class.baseName }} copy constructor ----- */
+    error = oy{{ class.baseName }}_Copy__Members( s, {{ class.baseName|lower }} );
+    /* ---- end of custom {{ class.baseName }} copy constructor ------- */
+    {% endifequal %}
+    {% ifequal class.parent.parent.parent.parent.name "oyStruct_s" %}
+    /* ---- start of custom {{ class.parent.parent.parent.baseName }} copy constructor ----- */
+    error = oy{{ class.parent.parent.parent.baseName }}_Copy__Members( s, {{ class.baseName|lower }} );
+    /* ---- end of custom {{ class.parent.parent.parent.baseName }} copy constructor ------- */
+    /* ---- start of custom {{ class.parent.parent.baseName }} copy constructor ----- */
+    error = oy{{ class.parent.parent.baseName }}_Copy__Members( s, {{ class.baseName|lower }} );
+    /* ---- end of custom {{ class.parent.parent.baseName }} copy constructor ------- */
+    /* ---- start of custom {{ class.parent.baseName }} copy constructor ----- */
+    error = oy{{ class.parent.baseName }}_Copy__Members( s, {{ class.baseName|lower }} );
+    /* ---- end of custom {{ class.parent.baseName }} copy constructor ------- */
+    /* ---- start of custom {{ class.baseName }} copy constructor ----- */
+    error = oy{{ class.baseName }}_Copy__Members( s, {{ class.baseName|lower }} );
+    /* ---- end of custom {{ class.baseName }} copy constructor ------- */
+    {% endifequal %}
     {% endblock copyConstructor %}
   }
 
