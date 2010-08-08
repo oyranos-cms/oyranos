@@ -159,6 +159,7 @@ typedef struct {
   Atom netColorRegions;
   Atom netColorTarget;
   Atom netColorDesktop;
+  Atom netDesktopGeometry;
 } PrivDisplay;
 
 typedef struct {
@@ -1222,7 +1223,11 @@ static void pluginHandleEvent(CompDisplay *d, XEvent *event)
         if(!ignore_profile)
           updateOutputConfiguration( s, FALSE );
       }
-    }
+
+    /* update for changing geometry */
+    } else if (event->xproperty.atom == pd->netDesktopGeometry)
+      updateOutputConfiguration(s, TRUE);
+
     break;
   case ClientMessage:
     if (event->xclient.message_type == pd->netColorManagement)
@@ -1766,6 +1771,7 @@ static CompBool pluginInitDisplay(CompPlugin *plugin, CompObject *object, void *
   pd->netColorRegions = XInternAtom(d->display, "_NET_COLOR_REGIONS", False);
   pd->netColorTarget = XInternAtom(d->display, "_NET_COLOR_TARGET", False);
   pd->netColorDesktop = XInternAtom(d->display, "_NET_COLOR_DESKTOP", False);
+  pd->netDesktopGeometry = XInternAtom(d->display, "_NET_DESKTOP_GEOMETRY", False);
 
   return TRUE;
 }
