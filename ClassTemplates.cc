@@ -20,10 +20,12 @@ const QStringList ClassTemplates::sourceFiles = QStringList()
 
 ClassTemplates::ClassTemplates( const QString& src, const QString& tpl )
   : updateTemplates(false),
-    sources(src),
-    templates(tpl),
-    structClassInfo(new ClassInfo("Struct", src))
+    sources(src), templates(tpl),
+    structClassInfo(new ClassInfo("Struct", src)), nullClassInfo(new ClassInfo("Null", src))
 {
+  structClassInfo->setParent( nullClassInfo );
+  nullClassInfo->setParent( nullClassInfo );
+
   // 1. Get all classes that have a *.dox file
   // (oyStruct_s is ommited)
   allClassesInfo = ClassInfo::getAllClasses( sources );
@@ -47,6 +49,7 @@ ClassTemplates::ClassTemplates( const QString& src, const QString& tpl )
 ClassTemplates::~ClassTemplates()
 {
   delete structClassInfo;
+  delete nullClassInfo;
   for (int i=0; i<allClassesInfo.size(); i++)
     delete allClassesInfo.at( i );
 }

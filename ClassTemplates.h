@@ -37,6 +37,7 @@ class ClassTemplates
     QString sources,                        ///< Directory that holds the sources
             templates;                      ///< Directory that holds the templates
     ClassInfo* structClassInfo;             ///< Info for the oyStruct_s class is kept here
+    ClassInfo* nullClassInfo;               ///< Info for the null class is kept here
     QList<ClassInfo*> allClassesInfo;       ///< Info list of all classes in sources directory
     static const QStringList sourceFiles;   ///< List of source file types for each class
 };
