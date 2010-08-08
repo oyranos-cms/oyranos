@@ -230,9 +230,44 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
   /* ---- end of common object destructor ------- */
 
 {% block customDestructor %}
+  {% ifequal class.parent.name "oyStruct_s" %}
   /* ---- start of custom {{ class.baseName }} destructor ----- */
   oy{{ class.baseName }}_Release__Members( s );
   /* ---- end of custom {{ class.baseName }} destructor ------- */
+  {% endifequal %}
+  {% ifequal class.parent.parent.name "oyStruct_s" %}
+  /* ---- start of custom {{ class.parent.baseName }} destructor ----- */
+  oy{{ class.parent.baseName }}_Release__Members( s );
+  /* ---- end of custom {{ class.parent.baseName }} destructor ------- */
+  /* ---- start of custom {{ class.baseName }} destructor ----- */
+  oy{{ class.baseName }}_Release__Members( s );
+  /* ---- end of custom {{ class.baseName }} destructor ------- */
+  {% endifequal %}
+  {% ifequal class.parent.parent.parent.name "oyStruct_s" %}
+  /* ---- start of custom {{ class.parent.parent.baseName }} destructor ----- */
+  oy{{ class.parent.parent.baseName }}_Release__Members( s );
+  /* ---- end of custom {{ class.parent.parent.baseName }} destructor ------- */
+  /* ---- start of custom {{ class.parent.baseName }} destructor ----- */
+  oy{{ class.parent.baseName }}_Release__Members( s );
+  /* ---- end of custom {{ class.parent.baseName }} destructor ------- */
+  /* ---- start of custom {{ class.baseName }} destructor ----- */
+  oy{{ class.baseName }}_Release__Members( s );
+  /* ---- end of custom {{ class.baseName }} destructor ------- */
+  {% endifequal %}
+  {% ifequal class.parent.parent.parent.parent.name "oyStruct_s" %}
+  /* ---- start of custom {{ class.parent.parent.parent.baseName }} destructor ----- */
+  oy{{ class.parent.parent.parent.baseName }}_Release__Members( s );
+  /* ---- end of custom {{ class.parent.parent.parent.baseName }} destructor ------- */
+  /* ---- start of custom {{ class.parent.parent.baseName }} destructor ----- */
+  oy{{ class.parent.parent.baseName }}_Release__Members( s );
+  /* ---- end of custom {{ class.parent.parent.baseName }} destructor ------- */
+  /* ---- start of custom {{ class.parent.baseName }} destructor ----- */
+  oy{{ class.parent.baseName }}_Release__Members( s );
+  /* ---- end of custom {{ class.parent.baseName }} destructor ------- */
+  /* ---- start of custom {{ class.baseName }} destructor ----- */
+  oy{{ class.baseName }}_Release__Members( s );
+  /* ---- end of custom {{ class.baseName }} destructor ------- */
+  {% endifequal %}
 {% endblock customDestructor %}
 
   if(s->oy_->deallocateFunc_)
