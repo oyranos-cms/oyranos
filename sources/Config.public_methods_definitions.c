@@ -489,9 +489,9 @@ OYAPI int  OYEXPORT
   return rank;
 }
 
-/** Function oyConfig_FindString
- *  @brief   search in data sets for a key/value
+/** Function  oyConfig_FindString
  *  @memberof oyConfig_s
+ *  @brief    Search in data sets for a key/value
  *
  *  @param[in]     config              the configuration to be checked
  *                                     wether or not the module can make
@@ -510,16 +510,16 @@ OYAPI const char * OYEXPORT
                                        const char        * value )
 {
   const char * text = 0;
-  oyConfig_s * s = config;
+  oyConfig_s_ * s = (oyConfig_s_*)config;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
 
-  text = oyOptions_FindString( config->data, key, value );
+  text = oyOptions_FindString( s->data, key, value );
   if(!text)
-    text = oyOptions_FindString( config->backend_core, key, value );
+    text = oyOptions_FindString( s->backend_core, key, value );
   if(!text)
-    text = oyOptions_FindString( config->db, key, value );
+    text = oyOptions_FindString( s->db, key, value );
 
   return text;
 }
