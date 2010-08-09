@@ -1,4 +1,7 @@
 NOW:
+- All oyOBJECT_e members are grouped by their @ingroup attrubute.
+  Add a oyOBJECT_CMM_HANDLE_S = 50 & oyOBJECT_CMM_API_MAX equivalent to all groups.
+- grantlee filter argument "strict" does not work
 - Some comments of inherited member variables are different in parent and child class!
 - oyCMMInfo_s:
   a) oyCMMInfo_Release -> oyranos_alpha.c:28223
@@ -38,6 +41,7 @@ LATER:
   oyClass_s_ as arguments should be member of oyClass_s_
 - Create a visualisation of a file template hierarchy and put it in
   the files doxygen header, like Struct_s.template.h -> Base_s.h -> Option_s.template.h
+  In the [get_parent_templates] branch
 - Consider Putting all sources/* in the template files.
 - BUG Dynamic QObject properties are not used by grantlee(!?)
 - How to remove the ending \n in sources/* files?
