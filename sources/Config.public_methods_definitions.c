@@ -81,8 +81,8 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyConfig_GetDB
- *  @brief   search a configuration in the DB for a configuration from module
+/** Function  oyConfig_GetDB
+ *  @brief    Search a configuration in the DB for a configuration from module
  *  @memberof oyConfig_s
  *
  *  @param[in]     device              the to be checked configuration from
@@ -104,13 +104,14 @@ OYAPI int  OYEXPORT
   int rank = 0, max_rank = 0, i, n;
   oyConfigs_s * configs = 0;
   oyConfig_s * config = 0, * max_config = 0;
+  oyConfig_s_ * device_ = (oyConfig_s_*)device;
   oyConfig_s * s = device;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   if(error <= 0)
   {
-    error = oyConfigs_FromDB( device->registration, &configs, 0 );
+    error = oyConfigs_FromDB( device_->registration, &configs, 0 );
 
     n = oyConfigs_Count( configs );
 
@@ -136,8 +137,8 @@ OYAPI int  OYEXPORT
 
   if(error <= 0 && max_config)
   {
-    oyOptions_Release( &device->db );
-    device->db = oyOptions_Copy( max_config->db, 0 );
+    oyOptions_Release( &device_->db );
+    device_->db = oyOptions_Copy( oyConfigPriv_m(max_config)->db, 0 );
     oyConfig_Release( &max_config );
   }
 
