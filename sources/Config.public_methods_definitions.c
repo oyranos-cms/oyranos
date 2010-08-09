@@ -145,9 +145,9 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyConfig_SaveToDB
+/** Function  oyConfig_SaveToDB
  *  @memberof oyConfig_s
- *  @brief   store a oyConfig_s in DB
+ *  @brief    Store a oyConfig_s in DB
  *
  *  @param[in]     config              the configuration
  *  @return                            0 - good, 1 >= error
@@ -162,6 +162,7 @@ OYAPI int  OYEXPORT
   int error = !config;
   oyOptions_s * opts = 0;
   oyConfig_s * s = config;
+  oyConfig_s_ * config_ = (oyConfig_s_*)config;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
@@ -170,10 +171,10 @@ OYAPI int  OYEXPORT
   if(error <= 0)
   {
     opts = oyOptions_New( 0 );
-    oyOptions_AppendOpts( opts, config->db );
-    oyOptions_AppendOpts( opts, config->backend_core );
+    oyOptions_AppendOpts( opts, config_->db );
+    oyOptions_AppendOpts( opts, config_->backend_core );
 
-    error = oyOptions_SaveToDB( opts, config->registration );
+    error = oyOptions_SaveToDB( opts, config_->registration );
 
     oyOptions_Release( &opts );
   }
