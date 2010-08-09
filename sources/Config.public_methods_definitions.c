@@ -25,13 +25,13 @@ OYAPI int  OYEXPORT
 {
   int error = !config || !key;
   char * tmp = 0;
-  oyConfig_s * s = config;
+  oyConfig_s_ * s = (oyConfig_s_*)config;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   if(error <= 0)
   {
-    STRING_ADD( tmp, config->registration );
+    STRING_ADD( tmp, s->registration );
     if(tmp[oyStrlen_(tmp)-1] != OY_SLASH_C)
       STRING_ADD( tmp, OY_SLASH );
 
@@ -41,7 +41,7 @@ OYAPI int  OYEXPORT
       STRING_ADD( tmp, key );
 
     /** We provide basically a wrapper for oyOptions_SetFromText(). */
-    error = oyOptions_SetFromText( &config->db, tmp, value, flags );
+    error = oyOptions_SetFromText( &s->db, tmp, value, flags );
 
     oyFree_m_( tmp );
   }
