@@ -183,9 +183,9 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyConfig_EraseFromDB
+/** Function  oyConfig_EraseFromDB
  *  @memberof oyConfig_s
- *  @brief   remove a oyConfig_s from DB
+ *  @brief    Remove a oyConfig_s from DB
  *
  *  @param[in]     config              the configuration
  *  @return                            0 - good, 1 >= error
@@ -202,7 +202,7 @@ OYAPI int  OYEXPORT
   int i;
   char * text = 0,
        * tmp = 0;
-  oyConfig_s * s = config;
+  oyConfig_s_ * s = (oyConfig_s_*)config;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
@@ -212,25 +212,25 @@ OYAPI int  OYEXPORT
   if(error <= 0)
   {
     i = 0;
-    text = config->registration;
+    text = s->registration;
     if(text)
       while( (text = oyStrchr_(++text, OY_SLASH_C)) != 0)
         ++i;
 
     if(i != 4)
     {
-      o = oyOptions_Get( config->db, 0 );
+      o = oyOptions_Get( s->db, 0 );
       i = 0;
       text = 0;
       if(o)
-        text = o->registration;
+        text = oyOptionPriv_m(o)->registration;
       if(text)
         while( (text = oyStrchr_(++text, OY_SLASH_C)) != 0)
           ++i;
 
       if(i == 5)
       {
-        tmp = oyStringCopy_( o->registration, oyAllocateFunc_ );
+        tmp = oyStringCopy_( oyOptionPriv_m(o)->registration, oyAllocateFunc_ );
         text = oyStrrchr_(tmp, OY_SLASH_C);
         text[0] = 0;
         text = tmp;
@@ -238,7 +238,7 @@ OYAPI int  OYEXPORT
 
     }
     else
-      text = config->registration;
+      text = s->registration;
 
     error = oyEraseKey_( text );
 
