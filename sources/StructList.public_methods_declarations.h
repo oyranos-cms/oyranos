@@ -1,8 +1,3 @@
-oyStructList_s * oyStructList_New    ( oyObject_s          object );
-oyStructList_s * oyStructList_Copy   ( oyStructList_s    * list,
-                                       oyObject_s          obj );
-int              oyStructList_Release( oyStructList_s   ** list );
-
 int              oyStructList_MoveIn ( oyStructList_s    * list,
                                        oyStruct_s       ** ptr,
                                        int                 pos,
