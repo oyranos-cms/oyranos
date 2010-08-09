@@ -1,4 +1,11 @@
 #include "oyCMMapi3_s_.h"
+#include "oyCMMapi4_s_.h"
+#include "oyCMMapi5_s_.h"
+#include "oyCMMapi6_s_.h"
+#include "oyCMMapi7_s_.h"
+#include "oyCMMapi8_s_.h"
+#include "oyCMMapi9_s_.h"
+#include "oyCMMapi10_s_.h"
 
 /** @internal
  *  @memberof oyCMMapi_s_
