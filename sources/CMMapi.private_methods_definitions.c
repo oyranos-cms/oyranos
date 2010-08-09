@@ -1,3 +1,5 @@
+#include "oyCMMapi3_s_.h"
+
 /** @internal
  *  @memberof oyCMMapi_s_
  *  @brief   check for completeness
