@@ -524,9 +524,9 @@ OYAPI const char * OYEXPORT
   return text;
 }
 
-/** Function oyConfig_Has
- *  @brief   search in data sets for a key
+/** Function  oyConfig_Has
  *  @memberof oyConfig_s
+ *  @brief    Search in data sets for a key
  *
  *  @param[in]     config              the configuration to be checked
  *                                     wether or not the module can make
@@ -544,15 +544,15 @@ OYAPI int  OYEXPORT
 {
   oyOption_s * o = 0;
   int has_option = 0;
-  oyConfig_s * s = config;
+  oyConfig_s_ * s = (oyConfig_s_*)config;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
-  o = oyOptions_Find( config->data, key );
+  o = oyOptions_Find( s->data, key );
   if(!o)
-    o = oyOptions_Find( config->backend_core, key );
+    o = oyOptions_Find( s->backend_core, key );
   if(!o)
-    o = oyOptions_Find( config->db, key );
+    o = oyOptions_Find( s->db, key );
 
   if(o)
     has_option = 1;
