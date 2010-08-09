@@ -707,3 +707,26 @@ oyRankPad *        oyRankMapCopy     ( const oyRankPad   * rank_map,
   return map;
 }
 
+/** Function  oyConfig_FromRegistration
+ *  @memberof oyConfig_s
+ *  @brief    New config with registration
+ *
+ *  @param         registration        no or full qualified registration
+ *  @param         object              the optional object
+ *  @return                            the config
+ *
+ *  @version Oyranos: 0.1.11
+ *  @since   2010/08/09 (Oyranos: 0.1.11)
+ *  @date    2010/08/09
+ */
+OYAPI oyConfig_s * OYEXPORT
+               oyConfig_FromRegistration( const char        * registration,
+                                          oyObject_s          object )
+{
+  oyConfig_s_ *s = (oyConfig_s_*)oyConfig_New( object );
+
+  if(registration)
+    s->registration = oyStringCopy_( registration, s->oy_->allocateFunc_ );
+
+  return s;
+}
