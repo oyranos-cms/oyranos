@@ -167,6 +167,28 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration1,
                                        oyOBJECT_e          api_number );
 
 
+/** @struct  oyRankPad
+ *  @brief   a means to rank the result of comparing two key's
+ *
+ *  The structure is part of an other data structure and to be maintained by
+ *  that. So it is not a full member of the oyStruct_s object familiy.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/27 (Oyranos: 0.1.10)
+ *  @date    2009/01/27
+*/
+typedef struct {
+  char *  key;                         /**< key name to evaluate with this pad*/
+  int32_t match_value;                 /**< add to rank sum when matching */
+  int32_t none_match_value;            /**< add to rank sum when not matching*/
+  int32_t not_found_value;             /**< add to rank sum when entry is not found */
+} oyRankPad;
+
+oyRankPad *        oyRankMapCopy     ( const oyRankPad   * rank_map,
+                                       oyAlloc_f           allocateFunc );
+
+
+
 {% include "cpp_end.h" %}
 
 #endif /* OYRANOS_OBJECT_H */
