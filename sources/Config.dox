@@ -1,0 +1,9 @@
+/** @struct  oyConfig_s
+ *  @ingroup objects_value
+ *  @extends oyStruct_s
+ *  @brief   A group of options for a device
+ *  
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/15 (Oyranos: 0.1.10)
+ *  @date    2009/01/15
+ */
