@@ -48,6 +48,10 @@ void oyConfig_Release__Members( oyConfig_s_ * config )
  */
 int oyConfig_Init__Members( oyConfig_s_ * config )
 {
+  config->db = oyOptions_New( 0 );
+  config->backend_core = oyOptions_New( 0 );
+  config->data = oyOptions_New( 0 );
+
   return 0;
 }
 
