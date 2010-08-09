@@ -21,6 +21,10 @@ void oyConfig_Release__Members( oyConfig_s_ * config )
    * E.g: oyXXX_Release( &config->member );
    */
 
+  oyOptions_Release( &config->db );
+  oyOptions_Release( &config->backend_core );
+  oyOptions_Release( &config->data );
+
   if(config->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = config->oy_->deallocateFunc_;
@@ -28,6 +32,13 @@ void oyConfig_Release__Members( oyConfig_s_ * config )
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( config->member );
      */
+    int i = 0;
+    if(config->rank_map)
+    {
+      while(config->rank_map[i].key)
+        deallocateFunc( config->rank_map[i++].key );
+      deallocateFunc( config->rank_map );
+    }
   }
 }
 
