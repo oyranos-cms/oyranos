@@ -421,9 +421,9 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
   return error;
 }
 
-/** Function oyConfig_DomainRank
- *  @brief   check for being recognised by a given module
+/** Function  oyConfig_DomainRank
  *  @memberof oyConfig_s
+ *  @brief    Check for being recognised by a given module
  *
  *  @param[in]     config              the configuration to be checked
  *                                     wether or not the module can make
@@ -444,7 +444,7 @@ OYAPI int  OYEXPORT
   uint32_t * rank_list = 0,
            max_rank = 0;
   uint32_t apis_n = 0;
-  oyCMMapi8_s * cmm_api8 = 0;
+  oyCMMapi8_s_ * cmm_api8 = 0;
   oyConfig_s * s = config;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
@@ -453,7 +453,7 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
-    apis = oyCMMsGetFilterApis_( 0, config->registration,
+    apis = oyCMMsGetFilterApis_( 0, oyConfigPriv_m(config)->registration,
                                  oyOBJECT_CMM_API8_S,
                                  &rank_list, &apis_n);
     error = !apis;
@@ -463,7 +463,7 @@ OYAPI int  OYEXPORT
   {
     for(i = 0; i < apis_n; ++i)
     {
-      cmm_api8 = (oyCMMapi8_s*) oyCMMapiFilters_Get( apis, i );
+      cmm_api8 = (oyCMMapi8_s_*) oyCMMapiFilters_Get( apis, i );
 
       error = !cmm_api8->oyConfig_Rank;
       if(error <= 0)
