@@ -73,6 +73,7 @@ int oyConfig_Init__Members( oyConfig_s_ * config )
  */
 int oyConfig_Copy__Members( oyConfig_s_ * dst, oyConfig_s_ * src)
 {
+  int error = 0;
   oyAlloc_f allocateFunc_ = 0;
   oyDeAlloc_f deallocateFunc_ = 0;
 
@@ -83,6 +84,12 @@ int oyConfig_Copy__Members( oyConfig_s_ * dst, oyConfig_s_ * src)
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
+  dst->db = oyOptions_Copy( src->db, dst->oy_ );
+  dst->backend_core = oyOptions_Copy( src->backend_core, dst->oy_ );
+  dst->data = oyOptions_Copy( src->data, dst->oy_ );
+  error = !memcpy( dst->version, src->version, 3*sizeof(int) );
 
-  return 0;
+  dst->rank_map = oyRankMapCopy( src->rank_map, allocateFunc_ );
+
+  return error;
 }
