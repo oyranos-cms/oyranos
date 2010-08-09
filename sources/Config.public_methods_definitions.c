@@ -49,9 +49,9 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyConfig_ClearDBCache
+/** Function  oyConfig_ClearDBData
  *  @memberof oyConfig_s
- *  @brief   remove all additional data from the oyConfig_s::db object cache
+ *  @brief    Remove all additional data from the oyConfig_s::db object cache
  *
  *  Clear the local DB cache. The function will be called as well from
  *  oyConfig_GetDB().
@@ -67,14 +67,15 @@ OYAPI int  OYEXPORT
                oyConfig_ClearDBData    ( oyConfig_s        * config )
 {
   int error = !config;
+  oyConfig_s_ * config_ = (oyConfig_s_*)config;
   oyConfig_s * s = config;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   if(error <= 0)
   {
-    error = oyOptions_Release( &config->db );
-    config->db = oyOptions_New( config->oy_ );
+    error = oyOptions_Release( &config_->db );
+    config_->db = oyOptions_New( config_->oy_ );
   }
 
   return error;
