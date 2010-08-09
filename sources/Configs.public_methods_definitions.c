@@ -83,9 +83,9 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyConfigs_FromDeviceClass
- *  @brief   ask a module for device informations or other direct calls
+/** Function  oyConfigs_FromDeviceClass
  *  @memberof oyConfigs_s
+ *  @brief    Ask a module for device informations or other direct calls
  *
  *  @param[in]     device_type     the device type ::oyFILTER_REG_TYPE,
  *                                     defaults to OY_TYPE_STD (optional)
