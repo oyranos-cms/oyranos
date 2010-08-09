@@ -629,9 +629,9 @@ OYAPI int  OYEXPORT
   return n;
 }
 
-/** Function oyConfig_Get
- *  @brief   get one option
+/** Function  oyConfig_Get
  *  @memberof oyConfig_s
+ *  @brief    Get one option
  *
  *  @param[in]     config              the configuration
  *  @param[in]     pos                 option position
@@ -648,7 +648,7 @@ OYAPI oyOption_s * OYEXPORT
   int error = !config;
   oyOption_s * o = 0;
   oyOptions_s * opts = 0;
-  oyConfig_s * s = config;
+  oyConfig_s_ * s = (oyConfig_s_*)config;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
@@ -656,9 +656,9 @@ OYAPI oyOption_s * OYEXPORT
   {
     opts = oyOptions_New( 0 );
 
-    oyOptions_AppendOpts( opts, config->db );
-    oyOptions_AppendOpts( opts, config->backend_core );
-    oyOptions_AppendOpts( opts, config->data );
+    oyOptions_AppendOpts( opts, s->db );
+    oyOptions_AppendOpts( opts, s->backend_core );
+    oyOptions_AppendOpts( opts, s->data );
 
     o = oyOptions_Get( opts, pos );
 
