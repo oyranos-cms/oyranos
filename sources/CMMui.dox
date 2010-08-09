@@ -1,0 +1,10 @@
+/** @struct  oyCMMui_s
+ *  @ingroup module_api
+ *  @extends oyStruct_s
+ *  @brief   The CMM API UI part
+ *  @internal
+ *  
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/09/06 (Oyranos: 0.1.10)
+ *  @date    2009/12/17
+ */
