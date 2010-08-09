@@ -44,6 +44,7 @@ typedef enum {
   oyOBJECT_CMM_API2_S,                /**< oyCMMapi2_s */
 {% for class in classes %}{% ifequal class.group "module_api" %}
   oyOBJECT_{{ class.baseName|underscores|upper }}_S,   /**< {{ class.name }} */{% endifequal %}{% endfor %}
+  oyOBJECT_CMM_API_MAX,               /**< not defined */
 {% for class in classes %}{% ifequal class.group "cmm_handling" %}
   {% ifequal class.baseName "Info" %}
   oyOBJECT_{{ class.baseName|underscores:"strict"|upper }}_S,   /**< {{ class.name }} */
