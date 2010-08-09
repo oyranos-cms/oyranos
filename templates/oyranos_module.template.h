@@ -63,6 +63,29 @@ typedef struct {
 } oyIcon_s;
 
 
+/** typedef  oyCMMFilter_ValidateOptions_f
+ *  @brief    a function to check and validate options
+ *  @ingroup  module_api
+ *  @memberof oyCMMapi4_s
+ *  @memberof oyCMMapi5_s
+ *
+ *  @param[in]     filter              the filter
+ *  @param[in]     validate            to validate
+ *  @param[in]     statical            convert to a statical version
+ *  @param[out]    ret                 0 if nothing changed otherwise >=1
+ *  @return                            corrected options or zero
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/01/02 (Oyranos: 0.1.8)
+ *  @date    2008/11/02
+ */
+typedef oyOptions_s * (*oyCMMFilter_ValidateOptions_f)
+                                     ( oyFilterCore_s    * filter,
+                                       oyOptions_s       * validate,
+                                       int                 statical,
+                                       uint32_t          * result );
+
+
 {% include "cpp_end.h" %}
 
 #endif /* {{ file_name|underscores|upper|tr:". _" }} */
