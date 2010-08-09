@@ -668,9 +668,9 @@ OYAPI oyOption_s * OYEXPORT
   return o;
 }
 
-/** Function oyRankMapCopy
+/** Function  oyRankMapCopy
  *  @memberof oyConfig_s
- *  @brief   copy a rank map
+ *  @brief    Copy a rank map
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/27 (Oyranos: 0.1.10)
@@ -706,3 +706,4 @@ oyRankPad *        oyRankMapCopy     ( const oyRankPad   * rank_map,
 
   return map;
 }
+
