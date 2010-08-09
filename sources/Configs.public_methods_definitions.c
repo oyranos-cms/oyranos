@@ -219,9 +219,9 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyConfigs_FromDB
+/** Function  oyConfigs_FromDB
  *  @memberof oyConfigs_s
- *  @brief   get all oyConfigs_s from DB
+ *  @brief    Get all oyConfigs_s from DB
  *
  *  @param[in]     registration        the filter
  *  @param[out]    configs             the found configuration list
@@ -238,7 +238,7 @@ OYAPI int OYEXPORT
                                        oyObject_s          object )
 {
   oyConfigs_s * s = 0;
-  oyConfig_s * config = 0;
+  oyConfig_s_ * config = 0;
   oyOption_s * o = 0;
   char ** texts = 0,
        ** key_set_names = 0,
@@ -247,7 +247,7 @@ OYAPI int OYEXPORT
          * d_rank_list = 0;
   int error = !registration;
   int i, j, k, n = 0, k_n = 0;
-  oyCMMapi8_s * cmm_api8 = 0;
+  oyCMMapi8_s_ * cmm_api8 = 0;
 
   /** 0. setup Elektra */
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
@@ -260,7 +260,7 @@ OYAPI int OYEXPORT
       s = oyConfigs_New( 0 );
 
     if(error <= 0 && count && texts)
-      cmm_api8 = (oyCMMapi8_s*) oyCMMsGetFilterApi_( 0, texts[0],
+      cmm_api8 = (oyCMMapi8_s_*) oyCMMsGetFilterApi_( 0, texts[0],
                                                      oyOBJECT_CMM_API8_S );
 
     for(i = 0; i < count; ++i)
@@ -274,7 +274,7 @@ OYAPI int OYEXPORT
         /** 3. obtain all keys from one configuration directory */
         config_key_names = oyKeySetGetNames_( key_set_names[j], &k_n );
 
-        config = oyConfig_New( texts[i], object );
+        config = (oyConfig_s_*)oyConfig_New( texts[i], object );
         error = !config;
 
         for(k = 0; k < k_n; ++k)
@@ -295,7 +295,7 @@ OYAPI int OYEXPORT
         }
 
         /* add information about the data's origin */
-        oyConfig_AddDBData( config, "key_set_name", key_set_names[j],
+        oyConfig_AddDBData( (oyConfig_s*)config, "key_set_name", key_set_names[j],
                             OY_CREATE_NEW );
 
         /* add a rank map to allow for comparisions */
@@ -303,7 +303,7 @@ OYAPI int OYEXPORT
           config->rank_map = oyRankMapCopy( cmm_api8->rank_map,
                                             config->oy_->allocateFunc_ );
 
-        oyConfigs_MoveIn( s, &config, -1 );
+        oyConfigs_MoveIn( s, (oyConfig_s**)&config, -1 );
       }
     }
 
