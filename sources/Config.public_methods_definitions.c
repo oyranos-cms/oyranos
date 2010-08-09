@@ -252,9 +252,9 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyConfig_Compare
- *  @brief   check for matching to a given pattern
+/** Function  oyConfig_Compare
  *  @memberof oyConfig_s
+ *  @brief    Check for matching to a given pattern
  *
  *  @param[in]     module_device       the to be checked configuration from
  *                                     oyConfigs_FromPattern_f;
@@ -286,8 +286,8 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
   char * d_opt = 0, * d_val = 0,
        * p_opt = 0, * p_val = 0,
        * check_opt = 0, * check_val = 0;
-  oyConfig_s * pattern = db_pattern,
-             * device = module_device;
+  oyConfig_s_ * pattern = (oyConfig_s_*)db_pattern,
+              * device  = (oyConfig_s_*)module_device;
   oyRankPad  * rank_map = 0;
   oyConfig_s * s = module_device;
 
@@ -317,7 +317,7 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
     for(i = 0; i < domain_n; ++i)
     {
       d = oyOptions_Get( dopts, i );
-      d_opt = oyFilterRegistrationToText( d->registration, oyFILTER_REG_MAX, 0);
+      d_opt = oyFilterRegistrationToText( oyOptionPriv_m(d)->registration, oyFILTER_REG_MAX, 0);
       d_val = oyOption_GetValueText( d, oyAllocateFunc_ );
       has_opt = 0;
 
@@ -325,7 +325,7 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
       for(l = 0; l < i; ++l)
       {
         check = oyOptions_Get( dopts, l );
-        check_opt = oyFilterRegistrationToText( check->registration,
+        check_opt = oyFilterRegistrationToText( oyOptionPriv_m(check)->registration,
                                                 oyFILTER_REG_MAX, 0);
         if(oyStrcmp_(d_opt, check_opt) == 0)
         {
@@ -339,13 +339,13 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
         oyFree_m_( check_opt );
       }
 
-      d_rank = oyConfig_DomainRank( device );
+      d_rank = oyConfig_DomainRank( (oyConfig_s*)device );
       if(d_rank > 0 && d_val && d_opt)
       for( j = 0; j < pattern_n; ++j )
       {
         p = oyOptions_Get( pattern->db, j );
 
-        p_opt = oyFilterRegistrationToText( p->registration, oyFILTER_REG_MAX,
+        p_opt = oyFilterRegistrationToText( oyOptionPriv_m(p)->registration, oyFILTER_REG_MAX,
                                             0 );
 
         if(p_opt && oyStrstr_(p_opt, d_opt))
