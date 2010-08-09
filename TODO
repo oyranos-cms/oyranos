@@ -1,4 +1,6 @@
 NOW:
+- No oyranos_object.template.c file yet!
+  Or oyranos_object_internal.template.c, oyranos_module.template.h ...
 - All oyOBJECT_e members are grouped by their @ingroup attrubute.
   Add a oyOBJECT_CMM_HANDLE_S = 50 & oyOBJECT_CMM_API_MAX equivalent to all groups.
 - grantlee filter argument "strict" does not work
