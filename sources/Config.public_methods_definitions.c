@@ -594,9 +594,9 @@ OYAPI oyOption_s * OYEXPORT
   return o;
 }
 
-/** Function oyConfig_Count
- *  @brief   number of all options
+/** Function  oyConfig_Count
  *  @memberof oyConfig_s
+ *  @brief    Number of all options
  *
  *  @param[in]     config              the configuration
  *  @return                            the options count
@@ -611,7 +611,7 @@ OYAPI int  OYEXPORT
   int error = !config;
   int n = 0;
   oyOptions_s * opts = 0;
-  oyConfig_s * s = config;
+  oyConfig_s_ * s = (oyConfig_s_*)config;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
@@ -619,9 +619,9 @@ OYAPI int  OYEXPORT
   {
     opts = oyOptions_New( 0 );
 
-    oyOptions_AppendOpts( opts, config->db );
-    oyOptions_AppendOpts( opts, config->backend_core );
-    oyOptions_AppendOpts( opts, config->data );
+    oyOptions_AppendOpts( opts, s->db );
+    oyOptions_AppendOpts( opts, s->backend_core );
+    oyOptions_AppendOpts( opts, s->data );
     n = oyOptions_Count( opts );
     oyOptions_Release( &opts );
   }
