@@ -35,10 +35,22 @@ typedef struct oyObject_s_* oyObject_s;
  */
 typedef enum {
   oyOBJECT_NONE,
-  oyOBJECT_NAMED_COLOURS_S,
-{% for class in classes %}
+{% for class in classes %}{% ifequal class.group "objects_generic" %}
+  oyOBJECT_{{ class.baseName|underscores|upper }}_S,   /**< {{ class.name }} */{% endifequal %}{% endfor %}
+{% for class in classes %}{% ifequal class.group "objects_value" %}
+  oyOBJECT_{{ class.baseName|underscores|upper }}_S,   /**< {{ class.name }} */{% endifequal %}{% endfor %}
+  oyOBJECT_CMM_HANDLE_S      = 50,    /**< oyCMMhandle_s */
+  oyOBJECT_CMM_API1_S,                 /**< oyCMMapi_s */
+  oyOBJECT_CMM_API2_S,                /**< oyCMMapi2_s */
+{% for class in classes %}{% ifequal class.group "module_api" %}
+  oyOBJECT_{{ class.baseName|underscores|upper }}_S,   /**< {{ class.name }} */{% endifequal %}{% endfor %}
+{% for class in classes %}{% ifequal class.group "cmm_handling" %}
+  {% ifequal class.baseName "Info" %}
+  oyOBJECT_{{ class.baseName|underscores:"strict"|upper }}_S,   /**< {{ class.name }} */
+  {% else %}
   oyOBJECT_{{ class.baseName|underscores|upper }}_S,   /**< {{ class.name }} */
-{% endfor %}
+  {% endifequal %}{% endifequal %}{% endfor %}
+  oyOBJECT_NAMED_COLOURS_S,
   oyOBJECT_MAX
 } oyOBJECT_e;
 
