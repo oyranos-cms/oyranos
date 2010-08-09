@@ -47,7 +47,7 @@ OYAPI int  OYEXPORT
     }
       
     if(!error)
-      {% block MoveIn_Observed %}error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos );{% endblock %}
+      {% block MoveIn_Observed %}error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos, 0 );{% endblock %}
   }   
 
   return error;
