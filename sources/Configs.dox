@@ -1,0 +1,12 @@
+/** @struct  oyConfigs_s
+ *  @ingroup objects_value
+ *  @extends oyStruct_s
+ *  @brief   A Configs list
+ *  
+ *  Managing the plural of oyConfig_s for the sake of typesafty.
+ *  @note This class holds a list of objects [list]
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/19 (Oyranos: 0.1.10)
+ *  @date    2009/01/19
+ */
