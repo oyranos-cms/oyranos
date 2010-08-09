@@ -69,6 +69,7 @@ int oy{{ class.baseName }}_Init__Members( {{ class.privName }} * {{ class.baseNa
  */
 int oy{{ class.baseName }}_Copy__Members( {{ class.privName }} * dst, {{ class.privName }} * src)
 {
+  int error = 0;
   oyAlloc_f allocateFunc_ = 0;
   oyDeAlloc_f deallocateFunc_ = 0;
 
@@ -80,5 +81,5 @@ int oy{{ class.baseName }}_Copy__Members( {{ class.privName }} * dst, {{ class.p
 
   /* Copy each value of src to dst here */
 
-  return 0;
+  return error;
 }
