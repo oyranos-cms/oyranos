@@ -1,6 +1,6 @@
-/** Function oyConfigs_FromDomain
+/** Function  oyConfigs_FromDomain
  *  @memberof oyConfigs_s
- *  @brief   send a request to a configuration module
+ *  @brief    Send a request to a configuration module
  *
  *  The convention an empty options argument should be send an Warning message
  *  containing intructions on how to talk with the module as a fallback for
@@ -32,7 +32,7 @@ OYAPI int  OYEXPORT
   oyConfig_s * config = 0;
   int error = !registration_domain,
       l_error = 0;
-  oyCMMapi8_s * cmm_api8 = 0;
+  oyCMMapi8_s_ * cmm_api8 = 0;
   int i, n;
 
   oyExportStart_(EXPORT_CHECK_NO);
@@ -45,7 +45,7 @@ OYAPI int  OYEXPORT
    */
   if(error <= 0)
   {
-    cmm_api8 = (oyCMMapi8_s*) oyCMMsGetFilterApi_( 0, registration_domain,
+    cmm_api8 = (oyCMMapi8_s_*) oyCMMsGetFilterApi_( 0, registration_domain,
                                                    oyOBJECT_CMM_API8_S );
     error = !cmm_api8;
   }
@@ -63,9 +63,9 @@ OYAPI int  OYEXPORT
     {
       config = oyConfigs_Get( s, i );
 
-      l_error = oyOptions_SetSource( config->backend_core,
+      l_error = oyOptions_SetSource( oyConfigPriv_m(config)->backend_core,
                                      oyOPTIONSOURCE_FILTER); OY_ERR
-      l_error = oyOptions_SetSource( config->data,
+      l_error = oyOptions_SetSource( oyConfigPriv_m(config)->data,
                                      oyOPTIONSOURCE_FILTER ); OY_ERR
 
       oyConfig_Release( &config );
