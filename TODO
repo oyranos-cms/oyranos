@@ -1,4 +1,7 @@
 NOW:
+- It might be possible that private member functions have a
+  not up to date signature in the <class>.private_members_declarations.h file,
+  because of changed arguments, from public to private.
 - Check all [review] for additional '*var_' and replace them.
   They can be dangerous when '*var' gets reassigned!
 - No oyranos_object.template.c file yet!
