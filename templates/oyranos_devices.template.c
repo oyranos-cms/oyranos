@@ -6,6 +6,7 @@
 
 #include "oyranos_devices.h"
 #include "oyranos_devices_internal.h"
+#include "oyranos_object_internal.h"
 #include "oyOptions_s_.h"
 
 
