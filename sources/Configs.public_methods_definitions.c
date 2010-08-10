@@ -403,14 +403,14 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyConfigs_SelectSimiliars
+/** Function  oyConfigs_SelectSimilars
  *  @memberof oyConfigs_s
- *  @brief   filter similiar configs compared by a pattern
+ *  @brief    Filter similar configs compared by a pattern
  *
  *  This is a simple convenience function to select from a list existing 
  *  configurations.
  *
- *  @varbatim
+ *  @verbatim
     const char * pattern[][2] = {{"device_name",0},
                                  {"manufacturer",0},
                                  {"model",0},
@@ -418,7 +418,7 @@ OYAPI int  OYEXPORT
                                  {0,0}};
     oyConfigs_s * devices = 0, * filtered = 0;
     int error = oyConfigs_FromDB( registration, &devices, 0 );
-    error = oyConfigs_SelectSimiliars( devices, pattern, &filtered )
+    error = oyConfigs_SelectSimilars( devices, pattern, &filtered )
  *  @endverbatim
  *
  *  @param[in]     list                the list
@@ -434,7 +434,7 @@ OYAPI int  OYEXPORT
  *  @date    2009/02/26
  */
 OYAPI int  OYEXPORT
-                 oyConfigs_SelectSimiliars (
+                 oyConfigs_SelectSimilars (
                                        oyConfigs_s       * list,
                                        const char        * pattern[][2],
                                        oyConfigs_s      ** filtered )
