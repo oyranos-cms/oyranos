@@ -410,7 +410,7 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
                                    device_name, OY_CREATE_NEW );
 
     /** 2.2 send the query to a module */
-    error = oyConfigs_FromDomain( device->registration, options, 0, 0 );
+    error = oyConfigs_FromDomain( oyConfigPriv_m(device)->registration, options, 0, 0 );
 
     oyOptions_Release( &options );
     /* 3.1 send the query to a module */
