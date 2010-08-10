@@ -48,6 +48,9 @@ void oyProfile_Release__Members( oyProfile_s_ * profile )
  */
 int oyProfile_Init__Members( oyProfile_s_ * profile )
 {
+  profile->tags_ = oyStructList_Create( profile->type_, 0, 0 );
+  profile->tags_modified_ = 0;
+
   return 0;
 }
 
