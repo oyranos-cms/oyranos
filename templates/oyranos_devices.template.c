@@ -500,8 +500,8 @@ OYAPI int  OYEXPORT
                                        oyAlloc_f           allocateFunc )
 {
   int error = !device || !info_text;
+  oyConfig_s_ * device_ = (oyConfig_s_*)device;
   oyOption_s * o = 0;
-  oyConfig_s * config = 0;
   const char * tmp = 0;
   static char * num = 0;
   char * text = 0;
@@ -525,7 +525,7 @@ OYAPI int  OYEXPORT
 
   if(type == oyNAME_NICK)
   {
-    tmp = oyOptions_FindString( device->backend_core,"device_name", 0 );
+    tmp = oyOptions_FindString( device_->backend_core,"device_name", 0 );
     *info_text = oyStringCopy_( tmp, allocateFunc );
     return error;
   }
@@ -533,7 +533,7 @@ OYAPI int  OYEXPORT
   if(type == oyNAME_DESCRIPTION)
   {
     /* get expensive infos */
-    if(oyOptions_Count( device->backend_core ) < 2)
+    if(oyOptions_Count( device_->backend_core ) < 2)
     {
       error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
@@ -544,16 +544,16 @@ OYAPI int  OYEXPORT
 
     if(error <= 0)
     {
-      n = oyOptions_Count( device->backend_core );
+      n = oyOptions_Count( device_->backend_core );
       for( i = 0; i < n; ++i )
       {
-        o = oyOptions_Get( device->backend_core, i );
+        o = oyOptions_Get( device_->backend_core, i );
         
-        STRING_ADD( text, oyStrrchr_( o->registration, OY_SLASH_C ) + 1 );
+        STRING_ADD( text, oyStrrchr_( oyOptionPriv_m(o)->registration, OY_SLASH_C ) + 1 );
         STRING_ADD( text, ":\n" );
-        STRING_ADD( text, o->value->string );
+        STRING_ADD( text, oyOptionPriv_m(o)->value->string );
         STRING_ADD( text, "\n" );
-             
+
         oyOption_Release( &o );
       }
     }
@@ -576,16 +576,16 @@ OYAPI int  OYEXPORT
   if(error <= 0)
   {
     /* add "list" call to module arguments */
-    error = oyOptions_SetRegistrationTextKey_( options,
-                                               device->registration,
+    error = oyOptions_SetRegistrationTextKey_( (oyOptions_s_*)options,
+                                               device_->registration,
                                                "command", "list" );
   }
 
   if(error <= 0)
   {
     if(type == oyNAME_NAME)
-    error = oyOptions_SetRegistrationTextKey_( options,
-                                               device->registration,
+    error = oyOptions_SetRegistrationTextKey_( (oyOptions_s_*)options,
+                                               device_->registration,
                                                "oyNAME_NAME", "true" );
   }
 
@@ -594,22 +594,21 @@ OYAPI int  OYEXPORT
   if(error <= 0)
     error = oyDeviceBackendCall( device, options );
 
-  if(error <= 0 && device->backend_core)
+  if(error <= 0 && device_->backend_core)
   {
     /** 1.2.1 add device_name to the string list */
     if(type == oyNAME_NICK)
-      tmp = oyOptions_FindString( device->backend_core,"device_name",0);
+      tmp = oyOptions_FindString( device_->backend_core,"device_name",0);
     else if(type == oyNAME_NAME)
-      tmp = oyOptions_FindString( device->data, "oyNAME_NAME", 0 );
+      tmp = oyOptions_FindString( device_->data, "oyNAME_NAME", 0 );
     else if(type == oyNAME_DESCRIPTION)
-      tmp = oyOptions_FindString( device->data, "oyNAME_DESCRIPTION", 0 );
+      tmp = oyOptions_FindString( device_->data, "oyNAME_DESCRIPTION", 0 );
   }
 
   *info_text = oyStringCopy_( tmp, allocateFunc );
 
   if(own_options)
     oyOptions_Release( &options );
-  oyConfig_Release( &config );
 
   return error;
 }
