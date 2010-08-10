@@ -101,7 +101,7 @@ int    oyOptions_SetDeviceTextKey_   ( oyOptions_s_      * options,
  *  @date    2009/02/09
  */
 int    oyOptions_SetRegistrationTextKey_(
-                                       oyOptions_s       * options,
+                                       oyOptions_s_      * options,
                                        const char        * registration,
                                        const char        * key,
                                        const char        * value )
@@ -113,7 +113,7 @@ int    oyOptions_SetRegistrationTextKey_(
   STRING_ADD( text, "/" );
   STRING_ADD( text, key );
 
-  error = oyOptions_SetFromText( &options, text, value, OY_CREATE_NEW );
+  error = oyOptions_SetFromText( (oyOptions_s**)&options, text, value, OY_CREATE_NEW );
 
   oyFree_m_( text );
 

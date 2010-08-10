@@ -13,7 +13,7 @@ int    oyOptions_SetDeviceTextKey_   ( oyOptions_s_      * options,
                                        const char        * key,
                                        const char        * value );
 int    oyOptions_SetRegistrationTextKey_(
-                                       oyOptions_s       * options,
+                                       oyOptions_s_      * options,
                                        const char        * registration,
                                        const char        * key,
                                        const char        * value );
