@@ -307,8 +307,8 @@ OYAPI int  OYEXPORT
     if(!profile_name)
     {
       oyOptions_s * fallback = oyOptions_New( 0 );
-      error = oyOptions_SetRegistrationTextKey_( fallback,
-                                                 device->registration,
+      error = oyOptions_SetRegistrationTextKey_( oyOptionsPriv_m(fallback),
+                                                 oyConfigPriv_m(device)->registration,
                                                  "icc_profile.fallback","true");
       /* 2.1.1 try fallback for rescue */
       error = oyDeviceAskProfile2( device, fallback, &p );
