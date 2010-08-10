@@ -319,9 +319,9 @@ OYAPI int OYEXPORT
   return error;
 }
 
-/** Function oyConfigs_Modify
- *  @brief   ask a module for device informations or other direct calls
+/** Function  oyConfigs_Modify
  *  @memberof oyConfigs_s
+ *  @brief    Ask a module for device informations or other direct calls
  *
  *
  *  @param[in,out] configs             The passed configs first member is used
@@ -345,14 +345,14 @@ OYAPI int  OYEXPORT
                                        oyOptions_s       * options )
 {
   int error = !oyConfigs_Count( configs );
-  oyConfig_s * config = 0;
+  oyConfig_s_ * config = 0;
   oyConfigs_s * s = configs;
   int i;
   uint32_t count = 0,
          * rank_list = 0;
   char ** texts = 0,
         * registration_domain = 0;
-  oyCMMapi8_s * cmm_api8 = 0;
+  oyCMMapi8_s_ * cmm_api8 = 0;
 
   if(error > 0)
   {
@@ -367,12 +367,12 @@ OYAPI int  OYEXPORT
   if(error <= 0)
   {
     /** 1.  pick the first device to select a registration */
-    config = oyConfigs_Get( configs, 0 );
+    config = (oyConfig_s_*)oyConfigs_Get( configs, 0 );
     /** 1.2 get all device class module names from the firsts oyConfig_s
       *     registration */
     error = oyConfigDomainList  ( config->registration, &texts, &count,
                                   &rank_list, 0 );
-    oyConfig_Release( &config );
+    oyConfig_Release( (oyConfig_s**)&config );
   }
 
 
@@ -383,7 +383,7 @@ OYAPI int  OYEXPORT
 
     if(error <= 0)
     {
-      cmm_api8 = (oyCMMapi8_s*) oyCMMsGetFilterApi_( 0, registration_domain,
+      cmm_api8 = (oyCMMapi8_s_*) oyCMMsGetFilterApi_( 0, registration_domain,
                                                      oyOBJECT_CMM_API8_S );
       error = !cmm_api8;
     }
