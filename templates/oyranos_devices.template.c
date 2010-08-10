@@ -713,15 +713,15 @@ OYAPI int  OYEXPORT
   if(error <= 0)
   {
     /* add "list" call to module arguments */
-    error = oyOptions_SetRegistrationTextKey_( options,
-                                               device->registration,
+    error = oyOptions_SetRegistrationTextKey_( (oyOptions_s_*)options,
+                                               oyConfigPriv_m(device)->registration,
                                                "command", "list" );
   }
 
   if(error <= 0)
   {
-    error = oyOptions_SetRegistrationTextKey_( options,
-                                                 device->registration,
+    error = oyOptions_SetRegistrationTextKey_( (oyOptions_s_*)options,
+                                                 oyConfigPriv_m(device)->registration,
                                                  "icc_profile", "true" );
   }
 
