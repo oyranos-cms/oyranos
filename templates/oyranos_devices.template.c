@@ -239,8 +239,8 @@ OYAPI int  OYEXPORT
     l_error = !options; OY_ERR
     /** 1.1 add "properties" call to module arguments */
     if(error <= 0)
-    l_error = oyOptions_SetRegistrationTextKey_( options,
-                                                 device->registration,
+    l_error = oyOptions_SetRegistrationTextKey_( oyOptionsPriv_m(options),
+                                                 oyConfigPriv_m(device)->registration,
                                                  "command", "properties" ); OY_ERR
     new_options = 1;
   }
