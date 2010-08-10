@@ -1,6 +1,12 @@
 {% include "source_file_header.txt" %}
 
+#include <string.h>
+
+#include <oyranos_helper.h>
+
 #include "oyranos_devices.h"
+#include "oyranos_devices_internal.h"
+#include "oyOptions_s_.h"
 
 
 /** \addtogroup devices_handling Device API

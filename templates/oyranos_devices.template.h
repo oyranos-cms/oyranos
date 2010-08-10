@@ -5,6 +5,13 @@
 
 {% include "cpp_begin.h" %}
 
+#include <oyranos_object.h>
+
+#include "oyConfig_s.h"
+#include "oyProfile_s.h"
+#include "oyConfigs_s.h"
+#include "oyOptions_s.h"
+
 OYAPI int  OYEXPORT
            oyDevicesGet              ( const char        * device_type,
                                        const char        * device_class,
