@@ -21,6 +21,17 @@ void oyProfile_Release__Members( oyProfile_s_ * profile )
    * E.g: oyXXX_Release( &profile->member );
    */
 
+  int i;
+  if(profile->names_chan_)
+    for(i = 0; i < profile->channels_n_; ++i)
+      if(profile->names_chan_[i])
+        oyObject_Release( &profile->names_chan_[i] );
+  /*oyOptions_Release( profile->options );*/
+
+  profile->sig_ = (icColorSpaceSignature)0;
+
+  oyStructList_Release(&profile->tags_);
+
   if(profile->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = profile->oy_->deallocateFunc_;
@@ -28,6 +39,15 @@ void oyProfile_Release__Members( oyProfile_s_ * profile )
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( profile->member );
      */
+    if(profile->names_chan_)
+      deallocateFunc( profile->names_chan_ ); profile->names_chan_ = 0;
+
+    if(profile->block_)
+      deallocateFunc( profile->block_ ); profile->block_ = 0; profile->size_ = 0;
+
+    if(profile->file_name_)
+      deallocateFunc( profile->file_name_ ); profile->file_name_ = 0;
+
   }
 }
 
