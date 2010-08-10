@@ -17,7 +17,6 @@
 #include <stdio.h>
 #include <string.h>
 
-//#include <lcms.h>
 
 #include "oyranos.h"
 #include "config.h"
@@ -2975,84 +2974,6 @@ oyTESTRESULT_e testCMMnmRun ()
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyConversion_RunPixels()                           " );
   }
-
-#if 0
-  cmsHPROFILE lp_in = cmsOpenProfileFromMem( p_in->block_, p_in->size_ ),
-              lp_out = cmsOpenProfileFromMem( p_out->block_, p_out->size_ );
-  cmsHTRANSFORM xform = cmsCreateTransform( lp_in, TYPE_XYZ_DBL,
-                                            lp_out, TYPE_RGB_DBL, 1, 0 );
-  double * dbl = (double*)calloc(sizeof(double), 10000*3);
-  clck = oyClock();
-  for(i = 0; i < 1000; ++i)
-  {
-    cmsDoTransform( xform, dbl, dbl, 1000 );
-  }
-  clck = oyClock() - clck;
-
-#if HAVE_OPENMP
-  clck2 = oyClock();
-#pragma omp parallel for
-  for(i = 0; i < 1000; ++i)
-  {
-    cmsDoTransform( xform, dbl, dbl, 1000 );
-  }
-  clck2 = oyClock() - clck2;
-#endif
-
-  free(dbl); dbl = 0;
-  cmsCloseProfile( lp_in );
-  cmsCloseProfile( lp_out );
-  cmsDeleteTransform( xform );
-
-  printf("%d,%g %g\n",i,clck, clck2);
-
-  if( !error )
-  {
-#if HAVE_OPENMP
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "cmsDoTransform() lcms               %s%s",
-            oyProfilingToString(1000000,clck/(double)CLOCKS_PER_SEC, "Pixel"),
-            oyProfilingToString(1000000,clck2/(double)CLOCKS_PER_SEC, "Pixel"));
-#else
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "cmsDoTransform() lcms               %s",
-                  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
-#endif
-  } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
-    "cmsDoTransform() lcms                              " );
-  }
-#endif
-
-#if 0
-  lp_in = cmsOpenProfileFromMem( p_in->block_, p_in->size_ );
-  lp_out = cmsOpenProfileFromMem( p_out->block_, p_out->size_ );
-  clck = oyClock();
-  for(i = 0; i < n; ++i)
-  {
-    xform = cmsCreateTransform( lp_in, TYPE_XYZ_DBL,
-                                              lp_out, TYPE_RGB_DBL, 1, 0 );
-    cmsDoTransform( xform, &d[0], &d[3], 1 );
-    cmsDeleteTransform( xform );
-    fprintf(stdout, "." ); fflush(stdout);
-  }
-  clck = oyClock() - clck;
-  cmsCloseProfile( lp_in );
-  cmsCloseProfile( lp_out );
-  fprintf(stdout, "\n" );
-
-  oyProfile_Release( &p_in );
-  oyProfile_Release( &p_out );
-
-  if( !error )
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "cmsCreateTransform() lcms           %s",
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "xform"));
-  } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
-    "cmsCreateTransform() lcms                          " );
-  }
-#endif
 
 
   clck = oyClock();
