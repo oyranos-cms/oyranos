@@ -73,6 +73,11 @@ MUCH LATER:
   - Comment formatter
 
 FAQ
+Q. Some list objects like oyCMMapiFilters_s,
+   use oyStructList_GetRef() instead of oyStructList_GetRefType().
+A. oyStructList_GetRefType() seems to be a higer level function, so the
+   templates use that.
+
 Q. Should all oyClass_XXX() public functions have a private
    oyClass_XXX_() - where the public does only checking? Like:
 int oyClass_XXX( oyClass_s * class )
