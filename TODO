@@ -1,4 +1,6 @@
 NOW:
+- Check all [review] for additional '*var_' and replace them.
+  They can be dangerous when '*var' gets reassigned!
 - No oyranos_object.template.c file yet!
   Or oyranos_object_internal.template.c, oyranos_module.template.h ...
 - All oyOBJECT_e members are grouped by their @ingroup attrubute.
