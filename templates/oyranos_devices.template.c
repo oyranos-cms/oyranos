@@ -1060,8 +1060,8 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
                                        uint32_t            flags,
                                        oyConfigs_s      ** matched_devices )
 {
-  oyOption_s * odh = 0,
-             * od = 0;
+  oyOption_s_ * odh = 0,
+              * od = 0;
   int error  = !pattern || !matched_devices;
   char * od_key = 0,
        * od_val = 0,
@@ -1109,7 +1109,7 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
       for(j = 0; j < j_n; ++j)
       {
         match = 1;
-        od = oyConfig_Get( pattern, j );
+        od = (oyOption_s_*)oyConfig_Get( pattern, j );
         od_key = oyFilterRegistrationToText( od->registration,
                                              oyFILTER_REG_MAX, 0);
 
@@ -1143,7 +1143,7 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
         if(oyStrcmp_(od_key,"profile_name") == 0)
           continue;
 
-        odh = oyOptions_Find( dh->db, od_key );
+        odh = (oyOption_s_*)oyOptions_Find( oyConfigPriv_m(dh)->db, od_key );
 
         if(odh && odh->value_type == oyVAL_STRING &&
            odh->value && odh->value->string && odh->value->string[0])
@@ -1158,9 +1158,9 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
         /*printf("pruefe: %s=%s match = %d flags=%d\n", od_key, od_val, match, flags);*/
 
 
-        oyOption_Release( &od );
+        oyOption_Release( (oyOption_s**)&od );
 
-        oyOption_Release( &odh );
+        oyOption_Release( (oyOption_s**)&odh );
 
         if(match == 0)
           break;
