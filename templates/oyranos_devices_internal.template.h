@@ -5,6 +5,8 @@
 
 #include "oyOptions_s_.h"
 
+#define OY_ERR if(l_error != 0) error = l_error;
+
 char * oyDeviceRegistrationCreate_   ( const char        * device_type,
                                        const char        * device_class,
                                        const char        * key,
