@@ -130,7 +130,7 @@ int oyProfile_Copy__Members( oyProfile_s_ * dst, oyProfile_s_ * src)
   }
 
   if(error <= 0)
-    dst->file_name_ = oyStringCopy_( src->file_name_, allocateFunc );
+    dst->file_name_ = oyStringCopy_( src->file_name_, allocateFunc_ );
 
   if(error <= 0)
     dst->use_default_ = src->use_default_;
