@@ -101,7 +101,7 @@ OYAPI int  OYEXPORT
   {
     options = oyOptions_New( 0 );
     /** 1.1 add "list" call to module arguments */
-    error = oyOptions_SetDeviceTextKey_( options, device_type,
+    error = oyOptions_SetDeviceTextKey_( (oyOptions_s_*)options, device_type,
                                              device_class,
                                              "command", "list" );
   }
