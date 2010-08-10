@@ -793,8 +793,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   oyOption_s * od = 0;
   oyOptions_s * options = 0;
   oyConfigs_s * configs = 0;
-  oyConfig_s * config = 0,
-             * device_tmp = 0;
+  oyConfig_s * config = 0;
   oyProfile_s * p = 0;
   int i, j, n, j_n, equal;
   char * d_opt = 0;
@@ -814,7 +813,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
 
 
   /** 1. obtain detailed and expensive device informations */
-  if(oyOptions_Count( device->backend_core ) < 2)
+  if(oyOptions_Count( oyConfigPriv_m(device)->backend_core ) < 2)
   { 
     /** 1.1 add "properties" call to module arguments */
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
@@ -828,7 +827,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   }
 
   if(error <= 0)
-    error = !oyOptions_Count( device->backend_core );
+    error = !oyOptions_Count( oyConfigPriv_m(device)->backend_core );
 
   if(error <= 0)
   {
@@ -840,7 +839,6 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   if(error)
   {
     WARNc2_S( "%s: \"%s\"", _("Could not open device"), device_name );
-    goto cleanup;
   }
 
   /** 3 load profile from file name argument */
@@ -851,7 +849,6 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   if(error)
   {
     WARNc2_S( "%s: \"%s\"", _("Could not open profile"), profile_name );
-    goto cleanup;
   }
 
   /** 4. Now remove all those DB configurations fully matching the selected
@@ -859,7 +856,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   if(error <= 0)
   {
     /** 4.1 get stored DB's configurations */
-    error = oyConfigs_FromDB( device->registration, &configs, 0 );
+    error = oyConfigs_FromDB( oyConfigPriv_m(device)->registration, &configs, 0 );
 
     n = oyConfigs_Count( configs );
     for( i = 0; i < n; ++i )
@@ -868,11 +865,11 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
 
       equal = 0;
 
-      j_n = oyOptions_Count( device->backend_core );
+      j_n = oyOptions_Count( oyConfigPriv_m(device)->backend_core );
       for(j = 0; j < j_n; ++j)
       {
-        od = oyOptions_Get( device->backend_core, j );
-        d_opt = oyFilterRegistrationToText( od->registration,
+        od = oyOptions_Get( oyConfigPriv_m(device)->backend_core, j );
+        d_opt = oyFilterRegistrationToText( oyOptionPriv_m(od)->registration,
                                             oyFILTER_REG_MAX, 0 );
         d_val = oyConfig_FindString( device, d_opt, 0 );
 
@@ -916,9 +913,6 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   /** 5.3 reload the DB part */
   if(error <= 0)
     error = oyConfig_GetDB( device, 0 );
-
-  cleanup:
-  oyConfig_Release( &device_tmp );
 
   return error;
 }
