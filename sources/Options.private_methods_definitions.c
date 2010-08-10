@@ -134,6 +134,10 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
 }
 #endif /* OY_FILTER_CORE_S_H */
 
+/** \addtogroup devices_handling Device API
+ *  @{
+ */
+
 /** @internal
  *  Function oyOptions_SetDeviceTextKey_
  *  @brief   set a device option
@@ -202,6 +206,10 @@ int    oyOptions_SetRegistrationTextKey_(
 
   return error;
 }
+
+/**
+ *  @} *//* devices_handling
+ */
 
 /**
  *  @internal
