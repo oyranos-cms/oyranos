@@ -51,6 +51,8 @@ typedef enum {
   {% else %}
   oyOBJECT_{{ class.baseName|underscores|upper }}_S,   /**< {{ class.name }} */
   {% endifequal %}{% endifequal %}{% endfor %}
+{% for class in classes %}{% ifequal class.group "objects_profile" %}
+  oyOBJECT_{{ class.baseName|underscores|upper }}_S,   /**< {{ class.name }} */{% endifequal %}{% endfor %}
   oyOBJECT_NAMED_COLOURS_S,
   oyOBJECT_MAX
 } oyOBJECT_e;
