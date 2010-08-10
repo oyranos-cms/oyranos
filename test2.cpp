@@ -3160,7 +3160,8 @@ oyTESTRESULT_e testCMMnmRun ()
   oyConversion_s * conv   = oyConversion_CreateBasicPixels( input,output, 0,0 );
 
   /* conversion->out_ has to be linear, so we access only the first plug */
-  plug = oyFilterNode_GetPlug( conv->out_, 0 );
+  if(conv)
+    plug = oyFilterNode_GetPlug( conv->out_, 0 );
 
   /* create a very simple pixel iterator as job ticket */
   if(plug)
@@ -3169,6 +3170,7 @@ oyTESTRESULT_e testCMMnmRun ()
   error  = oyConversion_RunPixels( conv, pixel_access );
 
   clck = oyClock();
+  if(pixel_access)
   for(i = 0; i < n*10000; ++i)
   {
     int error = 0;
