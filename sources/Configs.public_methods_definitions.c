@@ -495,9 +495,9 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyConfigDomainList
+/** Function  oyConfigDomainList
  *  @memberof oyConfigs_s
- *  @brief   count and show the global oyConfigs_s suppliers
+ *  @brief    Count and show the global oyConfigs_s suppliers
  *
  *  @verbatim
     uint32_t count = 0,
@@ -559,7 +559,7 @@ OYAPI int  OYEXPORT
                                        oyAlloc_f           allocateFunc )
 {
   oyCMMapiFilters_s * apis = 0;
-  oyCMMapiFilter_s * api = 0;
+  oyCMMapiFilter_s_ * api = 0;
   int error = !list || !count;
   char ** reg_lists = 0;
   int i = 0,
@@ -583,7 +583,7 @@ OYAPI int  OYEXPORT
 
     for(i = 0; i < apis_n; ++i)
     {
-      api = oyCMMapiFilters_Get( apis, i );
+      api = (oyCMMapiFilter_s_*)oyCMMapiFilters_Get( apis, i );
       oyStringListAddStaticString_( &reg_lists, &reg_list_n,
                                     oyNoEmptyString_m_( api->registration ),
                                     oyAllocateFunc_, oyDeAllocateFunc_ );
