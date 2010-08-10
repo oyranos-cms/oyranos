@@ -11,6 +11,7 @@
 #include <oyranos_texts.h>
 
 #include "oyranos_object.h"
+#include "oyCMMapiFilters_s.h"
 
 #define oyCheckType_m( typ, action ) \
   if( !s || s->type != typ) \
@@ -28,5 +29,12 @@
               oyStructTypeToText( type )) \
     action; \
   }
+
+oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_required,
+                                         const char        * registration,
+                                         oyOBJECT_e          type,
+                                         uint32_t         ** rank_list,
+                                         uint32_t          * count );
+
 
 #endif /* {{ file_name|cut:".h"|upper }}_H */
