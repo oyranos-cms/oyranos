@@ -25,6 +25,7 @@
  *  modify them.
  *  It is adviced to let Oyranos ask the module in advance through 
  *  oyConfig_Rank_f, if the modified oyConfig_s object is still valid.
+ *  @note New templates will not be created automaticly [notemplates]
  *
  *  @Future directions:
  *  For automatic UI's this module API should provide a XFORMS UI about the
