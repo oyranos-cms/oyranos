@@ -27704,7 +27704,7 @@ int               oyNamedColour_SetColourStd ( oyNamedColour_s * colour,
     error = oyColourConvert_( p_in, p_out,
                               channels, s->channels_,
                               channels_type , oyDOUBLE, options );
-    oyProfile_Release ( &p_out );
+    p_out = 0;
   }
 
   if(error <= 0)                               
