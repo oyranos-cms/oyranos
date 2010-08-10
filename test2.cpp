@@ -3005,7 +3005,6 @@ oyTESTRESULT_e testCMMnmRun ()
   cmsDeleteTransform( xform );
 
   printf("%d,%g %g\n",i,clck, clck2);
-#endif
 
   if( !error )
   {
@@ -3023,6 +3022,7 @@ oyTESTRESULT_e testCMMnmRun ()
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "cmsDoTransform() lcms                              " );
   }
+#endif
 
 #if 0
   lp_in = cmsOpenProfileFromMem( p_in->block_, p_in->size_ );
