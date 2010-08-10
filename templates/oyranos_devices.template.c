@@ -169,14 +169,14 @@ OYAPI int  OYEXPORT
     error = !options;
     /** 1.1 add "list" call to module arguments */
     if(error <= 0)
-    error = oyOptions_SetDeviceTextKey_( options, device_type,
+    error = oyOptions_SetDeviceTextKey_( (oyOptions_s_*)options, device_type,
                                              device_class,
                                              "command", "list" );
   }
 
   /** 1.1.2 set device filter */
   if(error <= 0)
-    error = oyOptions_SetDeviceTextKey_( options, device_type,
+    error = oyOptions_SetDeviceTextKey_( (oyOptions_s_*)options, device_type,
                                              device_class,
                                              "device_name",device_name);
 
