@@ -83,6 +83,51 @@ int oyProfile_Copy__Members( oyProfile_s_ * dst, oyProfile_s_ * src)
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
+  if(src->block_ && src->size_)
+  {
+    dst->block_ = allocateFunc_( src->size_ );
+    if(!dst->block_)
+      error = 1;
+    else
+    {
+      dst->size_ = src->size_;
+      error = !memcpy( dst->block_, src->block_, src->size_ );
+    }
+  }
+
+  if(error <= 0)
+  {
+    if(!oyProfile_Hashed_(dst))
+      error = oyProfile_GetHash_( dst );
+  }
+
+  if(error <= 0)
+  {
+    if(src->sig_)
+      dst->sig_ = src->sig_;
+    else
+      error = !oyProfile_GetSignature( (oyProfile_s*)dst, oySIGNATURE_COLOUR_SPACE );
+  }
+
+  if(error <= 0)
+    dst->file_name_ = oyStringCopy_( src->file_name_, allocateFunc );
+
+  if(error <= 0)
+    dst->use_default_ = src->use_default_;
+
+  if(error <= 0)
+  {
+    dst->channels_n_ = oyProfile_GetChannelsCount( (oyProfile_s*)dst );
+    error = (dst->channels_n_ <= 0);
+  }
+
+  if(error <= 0)
+    oyProfile_SetChannelNames( (oyProfile_s*)dst, src->names_chan_ );
+
+  if(error)
+  {
+    WARNc_S("Could not create structure for profile.")
+  }
 
   return error;
 }
