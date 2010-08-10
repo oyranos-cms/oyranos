@@ -5,6 +5,7 @@
  *  @internal
  *  
  *  @note This class holds a list of objects [list]
+ *  @note New templates will not be created automaticly [notemplates]
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/30 (Oyranos: 0.1.10)
