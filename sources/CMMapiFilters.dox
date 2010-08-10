@@ -1,0 +1,12 @@
+/** @struct  oyCMMapiFilters_s
+ *  @ingroup module_api
+ *  @extends oyStruct_s
+ *  @brief   A CMMapiFilters list
+ *  @internal
+ *  
+ *  @note This class holds a list of objects [list]
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/30 (Oyranos: 0.1.10)
+ *  @date    2009/01/30
+ */
