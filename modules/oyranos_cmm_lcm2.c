@@ -602,7 +602,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
          if(profiles_n == 1)
     {
         /* we have to erase the colour space */
-#if 0
+#if 1
         int csp = T_COLORSPACE(lcm2_pixel_layout_in);
         lcm2_pixel_layout_in &= (~COLORSPACE_SH( csp ));
         csp = T_COLORSPACE(lcm2_pixel_layout_out);
