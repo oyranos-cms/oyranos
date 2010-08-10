@@ -155,7 +155,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
  *  @since   2009/01/30 (Oyranos: 0.1.10)
  *  @date    2009/01/30
  */
-int    oyOptions_SetDeviceTextKey_   ( oyOptions_s       * options,
+int    oyOptions_SetDeviceTextKey_   ( oyOptions_s_      * options,
                                        const char        * device_type,
                                        const char        * device_class,
                                        const char        * key,
@@ -166,7 +166,7 @@ int    oyOptions_SetDeviceTextKey_   ( oyOptions_s       * options,
 
   text = oyDeviceRegistrationCreate_( device_type, device_class,
                                           key, text );
-  error = oyOptions_SetFromText( &options, text, value, OY_CREATE_NEW );
+  error = oyOptions_SetFromText( (oyOptions_s**)&options, text, value, OY_CREATE_NEW );
 
   oyFree_m_( text );
 
@@ -188,7 +188,7 @@ int    oyOptions_SetDeviceTextKey_   ( oyOptions_s       * options,
  *  @date    2009/02/09
  */
 int    oyOptions_SetRegistrationTextKey_(
-                                       oyOptions_s       * options,
+                                       oyOptions_s_      * options,
                                        const char        * registration,
                                        const char        * key,
                                        const char        * value )
@@ -200,7 +200,7 @@ int    oyOptions_SetRegistrationTextKey_(
   STRING_ADD( text, "/" );
   STRING_ADD( text, key );
 
-  error = oyOptions_SetFromText( &options, text, value, OY_CREATE_NEW );
+  error = oyOptions_SetFromText( (oyOptions_s**)&options, text, value, OY_CREATE_NEW );
 
   oyFree_m_( text );
 
@@ -223,7 +223,7 @@ int    oyOptions_SetRegistrationTextKey_(
  *  @since   2008/11/17 (Oyranos: 0.1.9)
  *  @date    2009/09/01
  */
-void           oyOptions_ParseXML_   ( oyOptions_s       * s,
+void           oyOptions_ParseXML_   ( oyOptions_s_      * s,
                                        char            *** texts,
                                        int               * texts_n,
                                        xmlDocPtr           doc,
@@ -276,7 +276,7 @@ void           oyOptions_ParseXML_   ( oyOptions_s       * s,
 
       oyOption_UpdateFlags_( (oyOption_s*)o );
 
-      oyOptions_MoveIn( s, &(oyOption_s*)o, -1 );
+      oyOptions_MoveIn( (oyOptions_s*)s, &(oyOption_s*)o, -1 );
 
       clean_stage:
       if(tmp)
