@@ -1,5 +1,10 @@
 {% extends "Base_s.c" %}
 
+{% block GlobalIncludeFiles %}
+{{ block.super }}
+#include <oyranos_sentinel.h>
+{% endblock %}
+
 {% block LocalIncludeFiles %}
 {{ block.super }}
 #include "oyConfigs_s.h"
