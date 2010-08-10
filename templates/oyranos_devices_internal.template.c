@@ -68,7 +68,7 @@ char * oyDeviceRegistrationCreate_   ( const char        * device_type,
  *  @since   2009/01/30 (Oyranos: 0.1.10)
  *  @date    2009/01/30
  */
-int    oyOptions_SetDeviceTextKey_   ( oyOptions_s       * options,
+int    oyOptions_SetDeviceTextKey_   ( oyOptions_s_      * options,
                                        const char        * device_type,
                                        const char        * device_class,
                                        const char        * key,
@@ -79,7 +79,7 @@ int    oyOptions_SetDeviceTextKey_   ( oyOptions_s       * options,
 
   text = oyDeviceRegistrationCreate_( device_type, device_class,
                                           key, text );
-  error = oyOptions_SetFromText( &options, text, value, OY_CREATE_NEW );
+  error = oyOptions_SetFromText( (oyOptions_s**)&options, text, value, OY_CREATE_NEW );
 
   oyFree_m_( text );
 

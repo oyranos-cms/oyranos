@@ -7,7 +7,7 @@ char * oyDeviceRegistrationCreate_   ( const char        * device_type,
                                        const char        * device_class,
                                        const char        * key,
                                        char              * old_text );
-int    oyOptions_SetDeviceTextKey_   ( oyOptions_s       * options,
+int    oyOptions_SetDeviceTextKey_   ( oyOptions_s_      * options,
                                        const char        * device_type,
                                        const char        * device_class,
                                        const char        * key,
