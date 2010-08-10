@@ -24,6 +24,7 @@
  *
  *  The api field is a placeholder to get a real api struct assigned. If the CMM
  *  wants to provide more than one API, they can be chained.
+ *  @note New templates will not be created automaticly [notemplates]
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/05 (Oyranos: 0.1.8)
