@@ -938,7 +938,7 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
                                        char             ** profile_name,
                                        oyAlloc_f           allocateFunc )
 {
-  oyOption_s * o = 0;
+  oyOption_s_ * o = 0;
   oyOptions_s * options = 0;
   int error = !device || !profile_name;
   const char * device_name = 0;
@@ -953,7 +953,7 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
 
   if(error <= 0)
   {
-    o = oyConfig_Find( device, "profile_name" );
+    o = (oyOption_s_*)oyConfig_Find( device, "profile_name" );
     device_name = oyConfig_FindString( device, "device_name", 0);
 
     /* 1. obtain detailed and expensive device informations */
@@ -975,20 +975,20 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
       oyOptions_Release( &options );
 
       /* renew outdated string */
-      o = oyConfig_Find( device, "profile_name" );
+      o = (oyOption_s_*)oyConfig_Find( device, "profile_name" );
       device_name = oyConfig_FindString( device, "device_name", 0);
-      oyOption_Release( &o );
+      oyOption_Release( (oyOption_s**)&o );
     }
 
     if(!o)
     {
       error = oyConfig_GetDB( device, &rank_value );
-      o = oyConfig_Find( device, "profile_name" );
+      o = (oyOption_s_*)oyConfig_Find( device, "profile_name" );
     }
 
     if(!o)
     {
-      o = oyOptions_Get( device->db, 0 );
+      o = (oyOption_s_*)oyOptions_Get( oyConfigPriv_m(device)->db, 0 );
       if(o)
         tmp = oyStringCopy_(o->registration, oyAllocateFunc_);
       if(tmp && oyStrrchr_( tmp, OY_SLASH_C))
@@ -1002,7 +1002,7 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
                 (int)rank_value )
       if(tmp)
         oyFree_m_(tmp); tmp2 = 0;
-      oyOption_Release( &o );
+      oyOption_Release( (oyOption_s**)&o );
       error = -1;
     } else if(o->value_type != oyVAL_STRING ||
             !(o->value && o->value->string && o->value->string[0]) )
