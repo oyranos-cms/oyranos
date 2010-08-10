@@ -728,5 +728,5 @@ OYAPI oyConfig_s * OYEXPORT
   if(registration)
     s->registration = oyStringCopy_( registration, s->oy_->allocateFunc_ );
 
-  return s;
+  return (oyConfig_s*)s;
 }
