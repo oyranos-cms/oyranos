@@ -61,7 +61,7 @@ extern oyCMMapi7_s   oydi_api7_image_display;
 
 /* OY_IMAGE_DISPLAY_REGISTRATION ---------------------------------------------*/
 
-#if defined(HAVE_X11) && defined(HAVE_Xcolor)
+#if defined(HAVE_X11) && defined(HAVE_XCM)
 #include <X11/Xlib.h>
 #include <X11/extensions/Xfixes.h>
 #include <X11/Xcm.h>
@@ -129,7 +129,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
   display_id = (oyBlob_s*) oyOptions_GetType( image->tags, -1, "display_id",
                                           oyOBJECT_BLOB_S );
 
-# if defined(HAVE_X11) && defined (HAVE_Xcolor)
+# if defined(HAVE_X11) && defined (HAVE_XCM)
   if(win_id && display_id)
   {
     int x,y, i,j;

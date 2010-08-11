@@ -484,7 +484,7 @@ $(LIB_CMM_oydi): $(LIBSONAMEFULL) $(CMM_oydi_OBJECTS)
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
 	-o $@ \
-	$(CMM_oydi_OBJECTS) $(X11_LIBS) $(Xcolor) $(Xfixes) $(MODULE_LDLIBS)
+	$(CMM_oydi_OBJECTS) $(X11_LIBS) $(Xcm) $(Xfixes) $(MODULE_LDLIBS)
 	$(RM)  lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO)$(LIBEXT)
