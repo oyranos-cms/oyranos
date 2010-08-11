@@ -4794,13 +4794,13 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
 
           /* for equal registration compare rank and version */
           if(oyStrcmp_( api->registration,  api2->registration ) == 0 &&
-             (rank_list_[i] < rank_list_[j] ||
-              api->version[0] < api2->version[0] ||
-              (api->version[0] == api2->version[0] &&
-               api->version[1] < api2->version[1]) ||
-              (api->version[0] == api2->version[0] && 
-               api->version[1] == api2->version[1] &&
-               api->version[2] < api2->version[2])))
+             (rank_list_[i] == rank_list_[j] &&
+              (api->version[0] < api2->version[0] ||
+               (api->version[0] == api2->version[0] &&
+                api->version[1] < api2->version[1]) ||
+               (api->version[0] == api2->version[0] && 
+                api->version[1] == api2->version[1] &&
+                api->version[2] < api2->version[2]))))
             accept = 0;
 
           if(api2->release)
