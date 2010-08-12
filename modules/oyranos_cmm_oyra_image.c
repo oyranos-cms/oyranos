@@ -123,7 +123,8 @@ int      oyraFilterPlug_ImageLoadRun (
       return result;
     }
 
-    apis = oyCMMsGetFilterApis_( 0, "//" OY_TYPE_STD "/file_read",
+    apis = oyCMMsGetFilterApis_( 0, "//" OY_TYPE_STD "/file_read", 
+                                 oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                  oyOBJECT_CMM_API7_S, &rank_list,0 );
 
     n = oyCMMapiFilters_Count( apis );
@@ -246,7 +247,7 @@ oyConnectorImaging_s oyra_imageLoad_socket = {
 oyConnectorImaging_s *oyra_imageLoad_sockets[2] = {&oyra_imageLoad_socket,0};
 
 
-#define OY_IMAGE_LOAD_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_read.meta." CMM_NICK
+#define OY_IMAGE_LOAD_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_read.meta._" CMM_NICK
 /** @instance oyra_api7
  *  @brief    oyra oyCMMapi7_s implementation
  *

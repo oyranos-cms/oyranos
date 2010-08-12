@@ -1776,9 +1776,9 @@ char lcms_extra_options[] = {
   <" OY_TOP_SHARED ">\n\
    <" OY_DOMAIN_INTERNAL ">\n\
     <" OY_TYPE_STD ">\n\
-     <" "icc." CMM_NICK ">\n\
+     <" "icc" ">\n\
       <cmyk_cmyk_black_preservation.advanced>0</cmyk_cmyk_black_preservation.advanced>\n\
-     </" "icc." CMM_NICK ">\n\
+     </" "icc" ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
   </" OY_TOP_SHARED ">\n"
@@ -1819,7 +1819,7 @@ int lcmsGetOptionsUI                 ( oyOptions_s        * options,
     <td>\n");
 #endif
   A("\
-     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc." CMM_NICK "/cmyk_cmyk_black_preservation\">\n\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc/cmyk_cmyk_black_preservation\">\n\
       <xf:label>" );
   A(          _("Black Preservation"));
   A(                              "</xf:label>\n\
@@ -1971,7 +1971,7 @@ int          lcmsMOptions_Handle     ( oyOptions_s       * options,
                     oyOption_GetValueDouble(o,6), oyOption_GetValueDouble(o,7));
       oyOption_Release( &o );
 
-      o = oyOption_New( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profile.colour_matrix." CMM_NICK,
+      o = oyOption_New( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profile.colour_matrix._" CMM_NICK,
                         0 );
       error = oyOption_StructMoveIn( o, (oyStruct_s**) &prof );
       if(!*result)
@@ -2041,7 +2041,7 @@ oyCMMapi10_s    lcms_api10_cmm = {
   lcmsCMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "create_profile.colour_matrix.icc." CMM_NICK ".CPU",
+  "create_profile.colour_matrix.icc._" CMM_NICK "._CPU",
 
   CMM_VERSION,
   {0,1,10},                  /**< int32_t module_api[3] */
@@ -2074,7 +2074,7 @@ oyCMMapi6_s   lcms_api6_cmm = {
   lcmsCMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc." CMM_NICK ".CPU." oyCOLOUR_ICC_DEVICE_LINK "_" lcmsTRANSFORM,
+  "icc._" CMM_NICK "._CPU." oyCOLOUR_ICC_DEVICE_LINK "_" lcmsTRANSFORM,
 
   CMM_VERSION,
   {0,1,10},                  /**< int32_t module_api[3] */
@@ -2106,7 +2106,7 @@ oyCMMapi7_s   lcms_api7_cmm = {
   lcmsCMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc.colour." CMM_NICK "._CPU._ACCEL",
+  "icc.colour._" CMM_NICK "._CPU._ACCEL",
 
   CMM_VERSION,
   {0,1,10},                  /**< int32_t module_api[3] */
@@ -2208,7 +2208,7 @@ oyCMMapi4_s   lcms_api4_cmm = {
   lcmsCMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc.colour." CMM_NICK "._CPU._NOACCEL",
+  "icc.colour._" CMM_NICK "._CPU._NOACCEL",
 
   CMM_VERSION,
   {0,1,10},                  /**< int32_t module_api[3] */

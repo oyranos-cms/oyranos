@@ -591,10 +591,10 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
 
   if(oy_debug)
     message( oyMSG_WARN,0, OY_DBG_FORMAT_"\n"
-             "  proof: %d  bpc: %d  gamut_warning: %d  high_precission: %d\n"
+    "  intent: %d proof: %d  bpc: %d  gamut_warning: %d  high_precission: %d\n"
              "  profiles_n: %d",
              OY_DBG_ARGS_,
-                proof_n,   bpc,     gamut_warning,     high_precission,
+       intent,    proof_n,   bpc,     gamut_warning,     high_precission,
                 profiles_n );
 
   if(!error)
@@ -1053,7 +1053,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       cmsWriteTag( gmt, icSigProfileDescriptionTag, (char*)"proofing");
       cmsWriteTag( gmt, icSigCopyrightTag, (char*)"no copyright; use freely" );
       cmsWriteTag( gmt, icSigMediaWhitePointTag, cmsD50_XYZ() );
-      cmsWriteTag( gmt, icSigAToB0Tag, gmt_lut );
+      cmsWriteTag( gmt, cmsSigDToB0Tag, gmt_lut );
 
   if(oy_debug)
   {
@@ -1809,9 +1809,9 @@ char lcm2_extra_options[] = {
   <" OY_TOP_SHARED ">\n\
    <" OY_DOMAIN_INTERNAL ">\n\
     <" OY_TYPE_STD ">\n\
-     <" "icc." CMM_NICK ">\n\
+     <" "icc" ">\n\
       <cmyk_cmyk_black_preservation.advanced>0</cmyk_cmyk_black_preservation.advanced>\n\
-     </" "icc." CMM_NICK ">\n\
+     </" "icc" ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
   </" OY_TOP_SHARED ">\n"
@@ -1852,7 +1852,7 @@ int lcm2GetOptionsUI                 ( oyOptions_s        * options,
     <td>\n");
 #endif
   A("\
-     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc." CMM_NICK "/cmyk_cmyk_black_preservation\">\n\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc/cmyk_cmyk_black_preservation\">\n\
       <xf:label>" );
   A(          _("Black Preservation"));
   A(                              "</xf:label>\n\
@@ -2004,7 +2004,7 @@ int          lcm2MOptions_Handle     ( oyOptions_s       * options,
                     oyOption_GetValueDouble(o,6), oyOption_GetValueDouble(o,7));
       oyOption_Release( &o );
 
-      o = oyOption_New( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profile.colour_matrix." CMM_NICK,
+      o = oyOption_New( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profile.colour_matrix._" CMM_NICK,
                         0 );
       error = oyOption_StructMoveIn( o, (oyStruct_s**) &prof );
       if(!*result)
@@ -2074,7 +2074,7 @@ oyCMMapi10_s    lcm2_api10_cmm = {
   lcm2CMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "create_profile.colour_matrix.icc." CMM_NICK ".CPU",
+  "create_profile.colour_matrix.icc._" CMM_NICK "._CPU",
 
   CMM_VERSION,
   {0,1,10},                  /**< int32_t module_api[3] */
@@ -2107,7 +2107,7 @@ oyCMMapi6_s   lcm2_api6_cmm = {
   lcm2CMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc." CMM_NICK ".CPU." oyCOLOUR_ICC_DEVICE_LINK "_" lcm2TRANSFORM,
+  "icc._" CMM_NICK "._CPU." oyCOLOUR_ICC_DEVICE_LINK "_" lcm2TRANSFORM,
 
   CMM_VERSION,
   {0,1,10},                  /**< int32_t module_api[3] */
@@ -2139,7 +2139,7 @@ oyCMMapi7_s   lcm2_api7_cmm = {
   lcm2CMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc.colour." CMM_NICK "._CPU._ACCEL",
+  "icc.colour._" CMM_NICK "._CPU._ACCEL",
 
   CMM_VERSION,
   {0,1,10},                  /**< int32_t module_api[3] */
@@ -2241,7 +2241,7 @@ oyCMMapi4_s   lcm2_api4_cmm = {
   lcm2CMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc.colour." CMM_NICK "._CPU._NOACCEL",
+  "icc.colour._" CMM_NICK "._CPU._NOACCEL",
 
   CMM_VERSION,
   {0,1,10},                  /**< int32_t module_api[3] */

@@ -289,9 +289,9 @@ const char ppm_write_extra_options[] = {
   <" OY_TOP_SHARED ">\n\
    <" OY_DOMAIN_INTERNAL ">\n\
     <" OY_TYPE_STD ">\n\
-     <" "file_write." CMM_NICK ">\n\
+     <" "file_write" ">\n\
       <filename></filename>\n\
-     </" "file_write." CMM_NICK ">\n\
+     </" "file_write" ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
   </" OY_TOP_SHARED ">\n"
@@ -467,7 +467,7 @@ oyCMMapi4_s   oyra_api4_image_write_ppm = {
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_ppm.file_write._CPU",
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_ppm.file_write._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
   {0,1,10},                  /**< int32_t module_api[3] */
@@ -503,7 +503,7 @@ oyCMMapi7_s   oyra_api7_image_write_ppm = {
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_ppm.file_write._CPU",
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_ppm.file_write._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
   {0,1,10},                  /**< int32_t module_api[3] */
@@ -1008,8 +1008,8 @@ int      oyraFilterPlug_ImageInputPPMRun (
   }
 
   error = oyOptions_SetFromText( &image_in->tags,
-                                 "//" OY_TYPE_STD "/input_ppm.file_read."
-                                                           CMM_NICK "/filename",
+                                 "//" OY_TYPE_STD "/input_ppm.file_read"
+                                                                    "/filename",
                                  filename, OY_CREATE_NEW );
 
   if(error <= 0)
@@ -1039,9 +1039,9 @@ const char ppm_read_extra_options[] = {
   <" OY_TOP_SHARED ">\n\
    <" OY_DOMAIN_INTERNAL ">\n\
     <" OY_TYPE_STD ">\n\
-     <" "file_read." CMM_NICK ">\n\
+     <" "file_read" ">\n\
       <filename></filename>\n\
-     </" "file_read." CMM_NICK ">\n\
+     </" "file_read" ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
   </" OY_TOP_SHARED ">\n"
@@ -1186,7 +1186,7 @@ oyCMMapi4_s   oyra_api4_image_input_ppm = {
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_ppm.file_read._CPU",
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_ppm.file_read._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
   {0,1,10},                  /**< int32_t module_api[3] */
@@ -1232,7 +1232,7 @@ oyCMMapi7_s   oyra_api7_image_input_ppm = {
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_ppm.file_read._CPU",
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_ppm.file_read._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
   {0,1,10},                  /**< int32_t module_api[3] */
