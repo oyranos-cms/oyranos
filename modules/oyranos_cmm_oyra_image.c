@@ -124,8 +124,9 @@ int      oyraFilterPlug_ImageLoadRun (
     }
 
     apis = oyCMMsGetFilterApis_( 0, "//" OY_TYPE_STD "/file_read", 
+                                 oyOBJECT_CMM_API7_S,
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
-                                 oyOBJECT_CMM_API7_S, &rank_list,0 );
+                                 &rank_list,0 );
 
     n = oyCMMapiFilters_Count( apis );
     if(apis)
