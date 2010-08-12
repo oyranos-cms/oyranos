@@ -658,7 +658,9 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
       oyCMMapi9_s * cmm_api9 = 0;
       char * api_reg = 0;
 
-      apis = oyCMMsGetFilterApis_( 0, api_reg, oyOBJECT_CMM_API9_S, 0, 0);
+      apis = oyCMMsGetFilterApis_( 0, api_reg, oyOBJECT_CMM_API9_S, 
+                                   oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                                   0, 0);
       apis_n = oyCMMapiFilters_Count( apis );
       for(i = 0; i < apis_n; ++i)
       {
@@ -4606,6 +4608,7 @@ oyOBJECT_e   oyCMMapi4_selectFilter_ ( oyCMMapi_s        * api,
  *    - use of the desired CMM for the task at hand
  *    - provide fallbacks for incapabilities
  *    - process in different ways and by different modules through the same API
+ *    - select complementing API's
  *
  *  We have modules with well defined capabilities and some with fuzzy ones.\n
  *  For instance the X11 API's is well defined and we can use it, once it is
@@ -4623,6 +4626,9 @@ oyOBJECT_e   oyCMMapi4_selectFilter_ ( oyCMMapi_s        * api,
  *                                     simplifies and speeds up the search
  *  @param[in]   registration          point'.' separated list of identifiers
  *  @param[in]   type                  CMM API
+ *  @param[in]   flags                 supported is 
+ *                                     - oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR 
+ *                                       for omitting implementation attributes
  *  @param[out]  rank_list             the ranks matching the returned list;
  *                                     without that only the most matching API  
  *                                     is returned at position 0
@@ -4636,6 +4642,7 @@ oyOBJECT_e   oyCMMapi4_selectFilter_ ( oyCMMapi_s        * api,
 oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
                                        const char        * registration,
                                        oyOBJECT_e          type,
+                                       uint32_t            flags,
                                        uint32_t         ** rank_list,
                                        uint32_t          * count )
 {
@@ -4731,7 +4738,8 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
               if(!api)
                 continue;
 
-              api->id_ = oyStringCopy_( files[i], oyAllocateFunc_ );
+              if(!api->id_)
+                api->id_ = oyStringCopy_( files[i], oyAllocateFunc_ );
               api->api5_ = api5;
               if(!apis)
                 apis = oyCMMapiFilters_New( 0 );
@@ -4767,7 +4775,8 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
     {
       apis2 = oyCMMapiFilters_New( 0 );
       api = api5->oyCMMFilterLoad( 0,0, files[match_i], type, match_j );
-      api->id_ = oyStringCopy_( files[match_i], oyAllocateFunc_ );
+      if(!api->id_)
+        api->id_ = oyStringCopy_( files[match_i], oyAllocateFunc_ );
       api->api5_ = api5;
       oyCMMapiFilters_MoveIn( apis2, &api, -1 );
       if(count)
@@ -4782,17 +4791,31 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
       k = 0;
       for(i = 0 ; i < n; ++i)
       {
+        char * apir = 0;
+
         api = oyCMMapiFilters_Get( apis, i );
+        if(flags | oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR)
+          oyFilterRegistrationModify( api->registration,
+                                    oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                                      &apir, 0 );
         accept = 1;
 
         for(j = i+1; j < n; ++j)
         {
+          char * api2r = 0;
+
           api2 = oyCMMapiFilters_Get( apis, j );
+          if(flags | oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR)
+            oyFilterRegistrationModify( api2->registration,
+                                    oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                                        &api2r, 0 );
 
           /* for equal registration compare rank and version */
-          if(oyStrcmp_( api->registration,  api2->registration ) == 0 &&
+          if(oyStrcmp_( apir,  api2r ) == 0 &&
              rank_list_[i] <= rank_list_[j])
             accept = 0;
+
+          oyFree_m_(api2r);
 
           if(api2->release)
             api2->release( (oyStruct_s**)&api2 );
@@ -4806,6 +4829,8 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
           oyCMMapiFilters_MoveIn( apis2, &api, -1 );
           rank_list2_[k++] = rank_list_[i];
         }
+
+        oyFree_m_(apir);
 
         if(api && api->release)
           api->release( (oyStruct_s**)&api );
@@ -4885,7 +4910,8 @@ oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
     return api;
 #endif
 
-  apis = oyCMMsGetFilterApis_( cmm_required, registration, type, 0,0 );
+  apis = oyCMMsGetFilterApis_( cmm_required, registration, type, 
+                               oyFILTER_REG_MODE_NONE, 0,0 );
 
   if(apis)
   {
@@ -9413,7 +9439,8 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
       s = oyOptions_New( 0 );
 
       apis = oyCMMsGetFilterApis_( 0, api_reg,
-                                   oyOBJECT_CMM_API9_S,
+                                   oyOBJECT_CMM_API9_S, 
+                                   oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                    &rank_list, 0);
       apis_n = oyCMMapiFilters_Count( apis );
       for(i = 0; i < apis_n; ++i)
@@ -11770,7 +11797,8 @@ OYAPI int  OYEXPORT
   if(error <= 0)
   {
     apis = oyCMMsGetFilterApis_( 0, config->registration,
-                                 oyOBJECT_CMM_API8_S,
+                                 oyOBJECT_CMM_API8_S, 
+                                 oyFILTER_REG_MODE_NONE,
                                  &rank_list, &apis_n);
     error = !apis;
   }
@@ -12836,7 +12864,8 @@ OYAPI int  OYEXPORT
   if(error <= 0)
   {
     apis = oyCMMsGetFilterApis_( 0, registration_pattern,
-                                 oyOBJECT_CMM_API8_S,
+                                 oyOBJECT_CMM_API8_S, 
+                                 oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                  rank_list, &apis_n);
     error = !apis;
   }
@@ -22634,6 +22663,87 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration_a,
   return match;
 }
 
+/** Function oyFilterRegistrationModify
+ *  @brief   process a registration string
+ *
+ *  A semantical overview is given in @ref module_api.
+ *
+ *  @param[in]     registration        registration key
+ *  @param[in]     mode                the processing rule
+ *  @param[out]    result              allocated by allocateFunc
+ *  @param[in]     allocateFunc        optional user allocator; defaults to 
+ *                                     oyAllocateFunc_
+ *  @return                            0 - good; >= 1 - error; < 0 issue
+ *
+ *  @version Oyranos: 0.1.11
+ *  @since   2010/08/12 (Oyranos: 0.1.11)
+ *  @date    2010/08/12
+ */
+char   oyFilterRegistrationModify    ( const char        * registration,
+                                       oyFILTER_REG_MODE_e mode,
+                                       char             ** result,
+                                       oyAlloc_f           allocateFunc )
+{
+  if(!result) return 1;
+  if(!registration) return -1;
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  switch(mode)
+  {
+  case oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR:
+  {
+    char ** reg_texts = 0;
+    int     reg_texts_n = 0;
+    char ** regc_texts = 0;
+    int     regc_texts_n = 0;
+    char  * reg_text = 0;
+    int     i,j;
+ 
+    reg_texts = oyStringSplit_( registration, OY_SLASH_C, &reg_texts_n,
+                                oyAllocateFunc_);
+
+    for( i = 0; i < reg_texts_n; ++i)
+    {
+      regc_texts_n = 0;
+
+      /* level by level */
+      regc_texts = oyStringSplit_( reg_texts[i],'.',&regc_texts_n,
+                                   oyAllocateFunc_);
+
+      if(i > 0)
+        STRING_ADD( reg_text, OY_SLASH );
+
+      for( j = 0; j < regc_texts_n; ++j)
+      {
+        /* '_' underbar is the feature char; omit such attributes */
+        if(regc_texts[j][0] != '_')
+        {
+          if(j > 0)
+            STRING_ADD( reg_text, "." );
+          STRING_ADD( reg_text, regc_texts[j] );
+        }
+      }
+
+      oyStringListRelease_( &regc_texts, regc_texts_n, oyDeAllocateFunc_ );
+    }
+    oyStringListRelease_( &reg_texts, reg_texts_n, oyDeAllocateFunc_ );
+
+
+    if(allocateFunc != oyAllocateFunc_)
+      *result = oyStringCopy_( reg_text, allocateFunc );
+    else
+      *result = reg_text;
+  }
+  break;
+
+  default: return -1;
+  }
+
+  return 0;
+}
+
 /**
  *  @internal
  *  Function oyFilterCore_New_
@@ -24308,7 +24418,9 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
     STRING_ADD( api_reg, class );
     oyFree_m_( class );
 
-    apis = oyCMMsGetFilterApis_( 0, api_reg, oyOBJECT_CMM_API9_S, 0, 0);
+    apis = oyCMMsGetFilterApis_( 0, api_reg, oyOBJECT_CMM_API9_S, 
+                                 oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                                 0,0 );
     apis_n = oyCMMapiFilters_Count( apis );
     for(i = 0; i < apis_n; ++i)
     {
@@ -24930,6 +25042,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                 }
               }
 
+
               if(error <= 0 && cmm_ptr && cmm_ptr->ptr)
               {
                 if(node->backend_data && node->backend_data->release)
@@ -24953,15 +25066,15 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                   node->backend_data = oyCMMptr_Copy_( cmm_ptr, 0 );
               }
 
+              if(oy_debug == 1)
+              {
+                if(ptr && size && node->backend_data)
+                  oyWriteMemToFile_( "test_dbg_colour_dl.icc", ptr, size );
+              }
+
             } else
               node->backend_data = cmm_ptr_out;
 
-          }
-
-          if(oy_debug == 1)
-          {
-            if(ptr && size && node->backend_data)
-              oyWriteMemToFile_( "test_dbg_colour_dl.icc", ptr, size );
           }
 
 
@@ -27235,7 +27348,9 @@ int                oyConversion_Correct (
     STRING_ADD( api_reg, class );
     oyFree_m_( class );
 
-    apis = oyCMMsGetFilterApis_( 0, api_reg, oyOBJECT_CMM_API9_S, 0, 0);
+    apis = oyCMMsGetFilterApis_( 0, api_reg, oyOBJECT_CMM_API9_S, 
+                                 oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                                 0,0 );
     apis_n = oyCMMapiFilters_Count( apis );
     for(i = 0; i < apis_n; ++i)
     {
@@ -28818,7 +28933,9 @@ int             oyOptions_Handle     ( const char        * registration,
     if(command && command[0])
       STRING_ADD( test, command );
 
-    apis = oyCMMsGetFilterApis_( 0, api_reg, oyOBJECT_CMM_API10_S, 0, 0);
+    apis = oyCMMsGetFilterApis_( 0, api_reg, oyOBJECT_CMM_API10_S, 
+                                 oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                                 0,0 );
     apis_n = oyCMMapiFilters_Count( apis );
     if(test)
       for(i = 0; i < apis_n; ++i)

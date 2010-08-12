@@ -210,6 +210,7 @@ oyCMMapi5_s *oyCMMGetMetaApi_        ( const char        * cmm_required,
 oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
                                        const char        * registration,
                                        oyOBJECT_e          type,
+                                       uint32_t            flags,
                                        uint32_t         ** rank_list,
                                        uint32_t          * count );
 oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,

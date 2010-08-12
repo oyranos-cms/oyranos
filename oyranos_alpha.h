@@ -755,6 +755,24 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration1,
                                        const char        * registration2,
                                        oyOBJECT_e          api_number );
 
+
+/** 
+ *  @ingroup objects_conversion
+ *
+ *  @version Oyranos: 0.1.11
+ *  @since   2010/08/12 (Oyranos: 0.1.11)
+ *  @date    2010/08/12
+ */
+typedef enum {
+  oyFILTER_REG_MODE_NONE = 0,
+  /** segments starting with underbar are implementation attributes */
+  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR = 0x0100
+} oyFILTER_REG_MODE_e;
+char   oyFilterRegistrationModify    ( const char        * registration,
+                                       oyFILTER_REG_MODE_e mode,
+                                       char             ** result,
+                                       oyAlloc_f           allocateFunc );
+
 /** @enum    oyOPTIONSOURCE_e
  *  @brief   a option source type
  *

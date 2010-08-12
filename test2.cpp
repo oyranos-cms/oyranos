@@ -2175,6 +2175,7 @@ oyTESTRESULT_e testCMMsShow ()
               for(j = oyOBJECT_CMM_API4_S; j <= (int)oyOBJECT_CMM_API10_S; j++)
               {
                 apis = oyCMMsGetFilterApis_( 0, api_reg, (oyOBJECT_e)j,
+                                             oyFILTER_REG_MODE_NONE,
                                              &rank_list, &apis_n );
 
                 apis_n = oyCMMapiFilters_Count( apis );
@@ -2592,6 +2593,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
       apis = oyCMMsGetFilterApis_( 0, api_reg,
                                    oyOBJECT_CMM_API9_S,
+                                   oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                    &rank_list, 0);
       apis_n = oyCMMapiFilters_Count( apis );
       for(i = 0; i < apis_n; ++i)
