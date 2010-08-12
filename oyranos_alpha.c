@@ -4629,9 +4629,9 @@ oyOBJECT_e   oyCMMapi4_selectFilter_ ( oyCMMapi_s        * api,
  *  @param[out]  count                 count of returned modules
  *  @return                            a zero terminated list of modules
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.1.11
  *  @since   2008/12/19 (Oyranos: 0.1.10)
- *  @date    2008/12/19
+ *  @date    2010/08/12
  */
 oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
                                        const char        * registration,
@@ -4785,22 +4785,13 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
         api = oyCMMapiFilters_Get( apis, i );
         accept = 1;
 
-        for(j = 0; j < n; ++j)
+        for(j = i+1; j < n; ++j)
         {
-          if(j == i)
-            continue;
-
           api2 = oyCMMapiFilters_Get( apis, j );
 
           /* for equal registration compare rank and version */
           if(oyStrcmp_( api->registration,  api2->registration ) == 0 &&
-             (rank_list_[i] == rank_list_[j] &&
-              (api->version[0] < api2->version[0] ||
-               (api->version[0] == api2->version[0] &&
-                api->version[1] < api2->version[1]) ||
-               (api->version[0] == api2->version[0] && 
-                api->version[1] == api2->version[1] &&
-                api->version[2] < api2->version[2]))))
+             rank_list_[i] <= rank_list_[j])
             accept = 0;
 
           if(api2->release)
