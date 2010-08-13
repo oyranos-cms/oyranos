@@ -1021,6 +1021,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       cmsHTRANSFORM tr1 = 0;
       cmsStage /*LPLUT*/ * gmt_lut = 0;
       oyPointer ptr[2] = {0,0};
+      int r = 0;
 
       if(!(flags & cmsFLAGS_GAMUTCHECK || flags & cmsFLAGS_SOFTPROOFING))
         return gmt;
@@ -1047,13 +1048,19 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       cmsStageSampleCLutFloat( gmt_lut, gamutCheckSampler, &ptr, 0 );
 
       gmt = cmsCreateProfilePlaceholder( 0 );
+      if(!gmt) goto clean;
       cmsSetDeviceClass( gmt, icSigAbstractClass );
       cmsSetColorSpace( gmt, icSigLabData );
       cmsSetPCS( gmt, icSigLabData );
-      cmsWriteTag( gmt, icSigProfileDescriptionTag, (char*)"proofing");
-      cmsWriteTag( gmt, icSigCopyrightTag, (char*)"no copyright; use freely" );
-      cmsWriteTag( gmt, icSigMediaWhitePointTag, cmsD50_XYZ() );
-      cmsWriteTag( gmt, cmsSigDToB0Tag, gmt_lut );
+#define E if(!r) { message( oyMSG_ERROR, (oyStruct_s*)proof, \
+                   OY_DBG_FORMAT_ "could not write tag", OY_DBG_ARGS_); \
+                   if(gmt) cmsCloseProfile( gmt ); gmt = 0; \
+                   goto clean; }
+      r = cmsWriteTag( gmt, icSigProfileDescriptionTag, (char*)"proofing");E
+      r=cmsWriteTag( gmt, icSigCopyrightTag,(char*)"no copyright; use freely");E
+      r = cmsWriteTag( gmt, icSigMediaWhitePointTag, cmsD50_XYZ() );E
+      r = cmsWriteTag( gmt, cmsSigDToB0Tag, gmt_lut );E
+#undef E
 
   if(oy_debug)
   {
@@ -1063,6 +1070,8 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       oyWriteMemToFile_( "dbg_dl_proof.icc", data, size );
       if(data) oyDeAllocateFunc_( data ); data = 0;
   }
+
+  clean:
 
       if(hLab) cmsCloseProfile( hLab ); hLab = 0;
       if(tr1) cmsDeleteTransform( tr1 ); tr1 = 0;
