@@ -1,7 +1,7 @@
-/**
- *  @internal
- *  @brief   create from in memory blob
+/** Function  oyProfile_FromMemMove_
  *  @memberof oyProfile_s
+ *  @brief    Create from in memory blob
+ *  @internal
  *
  *  @param[in]    size           buffer size
  *  @param[in]    block          pointer to memory containing a profile
@@ -11,12 +11,12 @@
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
  */
-oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
+oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
                                        oyPointer         * block,
                                        int                 flags,
                                        oyObject_s          object)
 {
-  oyProfile_s * s = oyProfile_New_( object );
+  oyProfile_s_ * s = oyProfile_New_( object );
   int error = 0;
 
   if(block  && *block && size)
@@ -58,7 +58,7 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
   }
 
   if(error <= 0)
-    error = !oyProfile_GetSignature ( s, oySIGNATURE_COLOUR_SPACE );
+    error = !oyProfile_GetSignature ( (oyProfile_s*)s, oySIGNATURE_COLOUR_SPACE );
 
   if(error)
   {
@@ -70,7 +70,7 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
   {
     s->names_chan_ = 0;
     s->channels_n_ = 0;
-    s->channels_n_ = oyProfile_GetChannelsCount( s );
+    s->channels_n_ = oyProfile_GetChannelsCount( (oyProfile_s*)s );
     error = (s->channels_n_ <= 0);
   }
 

@@ -1,4 +1,4 @@
-oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
+oyProfile_s_* oyProfile_FromMemMove_ ( size_t              size,
                                        oyPointer         * block,
                                        int                 flags,
                                        oyObject_s          object);
