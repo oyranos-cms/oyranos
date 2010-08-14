@@ -8,6 +8,8 @@
 {% block LocalIncludeFiles %}
 {{ block.super }}
 #include "oyStructList_s.h"
+#include "oyProfileTag_s.h"
+#include "oyConfig_s.h"
 {% endblock %}
 
 {% block ChildMembers %}
