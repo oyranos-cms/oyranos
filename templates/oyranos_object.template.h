@@ -189,6 +189,16 @@ typedef struct {
 oyRankPad *        oyRankMapCopy     ( const oyRankPad   * rank_map,
                                        oyAlloc_f           allocateFunc );
 
+/** @enum     oySTATUS_e
+ *  @ingroup  objects_profile
+ *  @brief    File status type
+ */
+typedef enum {
+  oyOK,
+  oyCORRUPTED,
+  oyUNDEFINED
+} oySTATUS_e;
+
 
 
 {% include "cpp_end.h" %}
