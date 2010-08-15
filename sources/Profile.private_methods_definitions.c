@@ -629,10 +629,10 @@ int                oyProfile_GetTagCount_ ( oyProfile_s_      * profile )
   return n;
 }
 
-/** @internal
- *  Function oyProfile_TagMoveIn_
+/** Function  oyProfile_TagMoveIn_
  *  @memberof oyProfile_s
- *  @brief   add a tag to a profile
+ *  @brief    Add a tag to a profile
+ *  @internal
  *
  *  non thread save
  *
@@ -643,11 +643,11 @@ int                oyProfile_GetTagCount_ ( oyProfile_s_      * profile )
  *  @since   2009/01/06 (Oyranos: 0.1.10)
  *  @date    2009/12/29
  */
-int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
+int          oyProfile_TagMoveIn_    ( oyProfile_s_      * profile,
                                        oyProfileTag_s   ** obj,
                                        int                 pos )
 {
-  oyProfile_s * s = profile;
+  oyProfile_s_ * s = profile;
   int error = !s;
 
   if(!s)
