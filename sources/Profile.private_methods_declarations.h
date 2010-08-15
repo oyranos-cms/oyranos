@@ -25,7 +25,7 @@ int          oyProfile_TagReleaseAt_ ( oyProfile_s_      * profile,
                                        int                 pos );
 int               oyProfile_DeviceAdd_(oyProfile_s_      * profile,
                                        oyConfig_s        * config );
-oyPointer    oyProfile_WriteHeader_  ( oyProfile_s       * profile,
+oyPointer    oyProfile_WriteHeader_  ( oyProfile_s_      * profile,
                                        size_t            * size );
 oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
                                        size_t            * size,

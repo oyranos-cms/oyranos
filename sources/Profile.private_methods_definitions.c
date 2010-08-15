@@ -747,17 +747,16 @@ int                oyProfile_DeviceAdd_(oyProfile_s_      * profile,
   return error;
 }
 
-/**
- *  @internal
- *  Function oyProfile_WriteHeader_
+/** Function  oyProfile_WriteHeader_
  *  @memberof oyProfile_s
- *  @brief   get the parsed ICC profile back into memory
+ *  @brief    Get the parsed ICC profile back into memory
+ *  @internal
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/01/30
  *  @since   2008/01/30 (Oyranos: 0.1.8)
  */
-oyPointer    oyProfile_WriteHeader_  ( oyProfile_s       * profile,
+oyPointer    oyProfile_WriteHeader_  ( oyProfile_s_      * profile,
                                        size_t            * size )
 {
   oyPointer block = 0;
@@ -768,7 +767,7 @@ oyPointer    oyProfile_WriteHeader_  ( oyProfile_s       * profile,
      profile->tags_)
   {
     int n = oyProfile_GetTagCount_( profile );
-    oyProfileTag_s * tag = oyProfile_GetTagByPos_ ( profile, 0 );
+    oyProfileTag_s_ * tag = (oyProfileTag_s_*)oyProfile_GetTagByPos_ ( profile, 0 );
 
     if(n && tag->use == *hi && tag->block_ && tag->size_ >= 128)
     {
@@ -780,7 +779,7 @@ oyPointer    oyProfile_WriteHeader_  ( oyProfile_s       * profile,
       }
     }
 
-    oyProfileTag_Release( &tag );
+    oyProfileTag_Release( (oyProfileTag_s**)&tag );
   }
 
   return block;
