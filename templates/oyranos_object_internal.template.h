@@ -30,11 +30,10 @@
     action; \
   }
 
-oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_required,
-                                         const char        * registration,
-                                         oyOBJECT_e          type,
-                                         uint32_t         ** rank_list,
-                                         uint32_t          * count );
+
+oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
+                                       uint32_t            flags,
+                                       const char        * hash_text );
 
 
 #endif /* {{ file_name|cut:".h"|upper }}_H */
