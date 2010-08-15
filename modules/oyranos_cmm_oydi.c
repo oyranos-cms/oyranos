@@ -533,7 +533,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
     error = oyOptions_FindInt( node->core->options_, "datatype", 0, &datatype );
     if(error == 0)
     {
-      message( oyMSG_WARN, (oyStruct_s*)image, OY_DBG_FORMAT_
+      message( oyMSG_DBG, (oyStruct_s*)image, OY_DBG_FORMAT_
                  "datatype opt found: %d",
                  OY_DBG_ARGS_, datatype);
       pixel_layout &= (~oyDataType_m(data_type));
@@ -542,7 +542,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
     error = oyOptions_FindInt( node->core->options_,"preserve_alpha",0, &alpha);
     if(error == 0)
     {
-      message( oyMSG_WARN, (oyStruct_s*)image,
+      message( oyMSG_DBG, (oyStruct_s*)image,
                OY_DBG_FORMAT_"preserve_alpha opt found: %d",
                OY_DBG_ARGS_, alpha);
       pixel_layout &= (~oyChannels_m( oyToChannels_m(pixel_layout) ));
