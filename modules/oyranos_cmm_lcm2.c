@@ -49,7 +49,7 @@ void  oyDeAllocateFunc_         (void *        data);
 /* --- internal definitions --- */
 
 #define CMM_NICK "lcm2"
-#define CMMProfileOpen_M    cmsOpenProfileFromMem
+#define CMMProfileOpen_M    cmsOpenProfileFromMemTHR
 #define CMMProfileRelease_M cmsCloseProfile
 #define CMMToString_M(text) #text
 #define CMMMaxChannels_M 16
@@ -314,7 +314,7 @@ int          lcm2CMMData_Open        ( oyStruct_s        * data,
     s->size = size;
     s->block = block;
 
-    s->lcm2 = CMMProfileOpen_M( block, size );
+    s->lcm2 = CMMProfileOpen_M( data, block, size );
     oy->ptr = s;
     snprintf( oy->func_name, 32, "%s", CMMToString_M(CMMProfileOpen_M) );
     snprintf( oy->resource, 5, lcm2PROFILE ); 
@@ -893,7 +893,7 @@ cmsHPROFILE  lcm2AddProofProfile     ( oyProfile_s       * proof,
     s->block = block;
 
     /* reopen */
-    s->lcm2 = CMMProfileOpen_M( block, size );
+    s->lcm2 = CMMProfileOpen_M( proof, block, size );
     oy->ptr = s;
     snprintf( oy->func_name, 32, "%s", CMMToString_M(CMMProfileOpen_M) );
     snprintf( oy->resource, 5, lcm2PROFILE ); 
@@ -1064,6 +1064,12 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
           error = 0;
       cmsMLU * mlu[2] = {0,0};
       cmsCurveSegment seg[2];
+      oyOption_s * id = oyOption_New( OY_TOP_SHARED OY_SLASH 
+                              OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+                                      "gmt_pl.TYPE_Lab_FLT." CMM_NICK, 0);
+      oyOption_s * id16 = oyOption_New( OY_TOP_SHARED OY_SLASH 
+                               OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+                                        "gmt_pl.TYPE_Lab_16." CMM_NICK, 0);
 
       if(!(flags & cmsFLAGS_GAMUTCHECK || flags & cmsFLAGS_SOFTPROOFING))
         return gmt;
@@ -1080,7 +1086,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
   {
     if(i)
     {
-      tr = cmsCreateProofingTransformTHR  ( 0, hLab, TYPE_Lab_FLT,
+      tr = cmsCreateProofingTransformTHR ( id, hLab, TYPE_Lab_FLT,
                                                hLab, TYPE_Lab_FLT,
                                                hproof,
                                                intent,
@@ -1097,7 +1103,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       ptr[1] = flags & cmsFLAGS_GAMUTCHECK ? (oyPointer)1 : 0;
       if(!error)
       {
-        gmt_lut = cmsStageAllocCLutFloat( 0, lcm2PROOF_LUT_GRID_RASTER, 3,3, 0);
+        gmt_lut = cmsStageAllocCLutFloat( 0,lcm2PROOF_LUT_GRID_RASTER, 3,3, 0);
         r = cmsStageSampleCLutFloat( gmt_lut, gamutCheckSamplerFloat, ptr, 0 );
         if(!r) { message( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
                           "cmsStageSampleCLutFloat() failed", OY_DBG_ARGS_);
@@ -1106,7 +1112,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
 
     } else
     {
-      tr16 = cmsCreateProofingTransformTHR( 0, hLab, TYPE_Lab_16,
+      tr16 = cmsCreateProofingTransformTHR( id16, hLab, TYPE_Lab_16,
                                                hLab, TYPE_Lab_16,
                                                hproof,
                                                intent,
@@ -1211,6 +1217,8 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       if(mlu[1]) cmsMLUfree( mlu[1] ); mlu[1] = 0;
 
   oyProfile_Release( &proof );
+  oyOption_Release( &id );
+  oyOption_Release( &id16 );
 
   return gmt;
 }
@@ -1709,7 +1717,7 @@ int  lcm2CMMdata_Convert             ( oyCMMptr_s        * data_in,
 
   if(!error)
   {
-    lps[0] = CMMProfileOpen_M( cmm_ptr_in->ptr, cmm_ptr_in->size );
+    lps[0] = CMMProfileOpen_M( node, cmm_ptr_in->ptr, cmm_ptr_in->size );
     xform = lcm2CMMConversionContextCreate_( lps, 1, 0,0,0,
                                            image_input->layout_[0],
                                            image_output->layout_[0],
@@ -1889,11 +1897,18 @@ int lcm2CMMWarnFunc( int code, const oyStruct_s * context, const char * format, 
   va_list list;
   const char * type_name = "";
   int id = -1;
+  const char * id_text = 0;
 
   if(context && oyOBJECT_NONE < context->type_)
   {
     type_name = oyStructTypeToText( context->type_ );
     id = oyObject_GetId( context->oy_ );
+    if(context->type_ == oyOBJECT_OPTION_S)
+    {
+      id_text = oyOption_GetText( (oyOption_s*)context, oyNAME_NAME );
+      if(!id_text)
+        id_text = ((oyOption_s*)context)->registration;
+    }
   }
 
   va_start( list, format);
@@ -1910,7 +1925,8 @@ int lcm2CMMWarnFunc( int code, const oyStruct_s * context, const char * format, 
          break;
   }
 
-  fprintf( stderr, "%s[%d] ", type_name, id );
+  fprintf( stderr, "%s[%d]%s%s ", type_name, id,
+           id_text ? "=" : "", id_text ? id_text : "" );
 
   fprintf( stderr, "%s", text ); fprintf( stderr, "\n" );
   free( text );
@@ -1931,7 +1947,7 @@ void lcm2ErrorHandlerFunction        ( cmsContext          ContextID,
 {
   int code = 0;
   code = oyMSG_ERROR;
-  message( code, 0, CMM_NICK ": %s", ErrorText );
+  message( code, ContextID, CMM_NICK ": %s", ErrorText );
 }
 
 /** Function lcm2CMMMessageFuncSet
