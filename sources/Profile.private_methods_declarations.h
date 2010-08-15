@@ -5,7 +5,7 @@ oyProfile_s_* oyProfile_FromMemMove_ ( size_t              size,
 oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
                                        uint32_t            flags,
                                        oyObject_s          object );
-oyPointer    oyProfile_TagsToMem_    ( oyProfile_s       * profile,
+oyPointer    oyProfile_TagsToMem_    ( oyProfile_s_      * profile,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
 int          oyProfile_ToFile_       ( oyProfile_s       * profile,

@@ -203,19 +203,18 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
   return s;
 }
 
-/**
- *  @internal
- *  Function oyProfile_TagsToMem_
+/** Function  oyProfile_TagsToMem_
  *  @memberof oyProfile_s
- *  @brief   get the parsed ICC profile back into memory
+ *  @brief    Get the parsed ICC profile back into memory
+ *  @internal
  *
- *  non thread save
+ *  Non thread save
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/01/30
  *  @since   2008/01/30 (Oyranos: 0.1.8)
  */
-oyPointer    oyProfile_TagsToMem_    ( oyProfile_s       * profile,
+oyPointer    oyProfile_TagsToMem_    ( oyProfile_s_      * profile,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc )
 {
