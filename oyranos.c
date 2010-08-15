@@ -81,21 +81,28 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   size_t sz = 256;
   pid_t pid = 0;
   FILE * fp = 0;
+  const char * id_text = 0;
 
   if(code == oyMSG_DBG && !oy_debug)
     return 0;
 
-  if(context && oyOBJECT_NONE < context->type_) 
+  if(context && oyOBJECT_NONE < context->type_)
   {
     type_name = oyStructTypeToText( context->type_ );
     id = oyObject_GetId( context->oy_ );
+    if(context->type_ == oyOBJECT_OPTION_S)
+    {
+      id_text = oyOption_GetText( (oyOption_s*)context, oyNAME_NAME );
+      if(!id_text)
+        id_text = ((oyOption_s*)context)->registration;
+    }
   }
 
   text = calloc( sizeof(char), sz );
   if(!text)
   {
     fprintf(stderr,
-     "oyranos.c:80 oyMessageFunc_() Could not allocate 256 byte of memory.\n");
+    "oyranos.c:101 oyMessageFunc_() Could not allocate 256 byte of memory.\n");
     return 1;
   }
 
@@ -138,7 +145,8 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   if( id > 0 || (oyMSG_ERROR <= code && code <= 399) )
   {
     fprintf( stderr, " %03f: ", DBG_UHR_);
-    fprintf( stderr, "%s[%d] ", type_name, id );
+    fprintf( stderr, "%s[%d]%s%s ", type_name, id,
+             id_text ? "=" : "", id_text ? id_text : "" );
   }
 
   i = 0;
