@@ -96,6 +96,8 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
       if(!id_text)
         id_text = ((oyOption_s*)context)->registration;
     }
+    if(context->type_ == oyOBJECT_PROFILE_S)
+      id_text = oyProfile_GetText( (oyProfile_s*)context, oyNAME_DESCRIPTION );
   }
 
   text = calloc( sizeof(char), sz );
@@ -145,8 +147,8 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   if( id > 0 || (oyMSG_ERROR <= code && code <= 399) )
   {
     fprintf( stderr, " %03f: ", DBG_UHR_);
-    fprintf( stderr, "%s[%d]%s%s ", type_name, id,
-             id_text ? "=" : "", id_text ? id_text : "" );
+    fprintf( stderr, "%s[%d]%s%s%s ", type_name, id,
+             id_text ? "=\"" : "", id_text ? id_text : "", id_text ? "\"" : "");
   }
 
   i = 0;
