@@ -1074,14 +1074,16 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       if(!(flags & cmsFLAGS_GAMUTCHECK || flags & cmsFLAGS_SOFTPROOFING))
         return gmt;
 
-      hLab  = cmsCreateLab2Profile(cmsD50_xyY());
+      hLab  = cmsCreateLab4Profile(cmsD50_xyY());
       hproof = lcm2AddProfile( proof );
       if(!hLab || !hproof)
       { message( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
                  "hLab or hproof failed", OY_DBG_ARGS_);
                  goto clean; }
 
+#if 0
 #pragma omp parallel for
+#endif
   for(i = 0; i < 2; ++i)
   {
     if(i)
@@ -1997,7 +1999,7 @@ int lcm2GetOptionsUI                 ( oyOptions_s        * options,
     return 0;
 
   tmp = oyStringCopy_( "\
-  <h3>little CMS ", oyAllocateFunc_ );
+  <h3>little CMS 2 ", oyAllocateFunc_ );
 
   A(       _("Extended Options"));
   A(                         ":</h3>\n");
