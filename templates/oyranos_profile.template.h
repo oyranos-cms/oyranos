@@ -6,6 +6,29 @@
 {% include "cpp_begin.h" %}
 
 
+/** \addtogroup objects_profile Profile API
+ *
+ *  To open a profile exist several methods in the oyProfile_Fromxxx APIs.
+ *  oyProfile_FromStd(), oyProfile_FromFile() and oyProfile_FromMem() are basic
+ *  profile open functions. oyProfile_FromSignature() is used for creating a
+ *  dummy profile during profile filtering.
+ *  oyProfile_FromMD5() is a lookup function from a profile hash, e.g. as
+ *  provided by a 'psid' tag. \n
+ *  Profile properties can be obtained from oyProfile_GetSignature(), like
+ *  colour spaces, date, magic number and so on.
+ *  oyProfile_GetChannelNames(), oyProfile_GetText() and oyProfile_GetID()
+ *  provide additional informations. \n
+ *  The profile element functions have Tag in their names. They work together
+ *  with the oyProfileTag_s APIs. \n
+ *  oyProfile_GetFileName is a reverse lookup to obtain the name of a installed
+ *  file from a profile, e.g. find the name of a reachable display profile.
+
+ *  @{
+ */
+
+
+
+
 /** @brief general profile infos
  *  @ingroup objects_profile
  *
@@ -36,6 +59,8 @@ typedef enum {
   oySIGNATURE_DATETIME_SECONDS,        /**< creation time in UTC */
   oySIGNATURE_MAX
 } oySIGNATURE_TYPE_e;
+
+/** @} *//* objects_profile */
 
 
 {% include "cpp_end.h" %}
