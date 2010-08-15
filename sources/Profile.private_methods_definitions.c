@@ -438,12 +438,12 @@ char *       oyProfile_GetFileName_r ( oyProfile_s_      * profile,
   return name;
 }
 
-/** @internal
- *  Function oyProfile_GetTagByPos_
+/** Function  oyProfile_GetTagByPos_
  *  @memberof oyProfile_s
- *  @brief   get a profile tag
+ *  @brief    Get a profile tag
+ *  @internal
  *
- *  non thread save
+ *  Non thread save
  *
  *  @param[in]     profile             the profile
  *  @param[in]     pos                 header + tag position
@@ -452,11 +452,11 @@ char *       oyProfile_GetFileName_r ( oyProfile_s_      * profile,
  *  @date    2008/01/01
  *  @since   2008/01/01 (Oyranos: 0.1.8)
  */
-oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
+oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
                                        int                 pos )
 {
   oyProfileTag_s * tag = 0;
-  oyProfile_s * s = profile;
+  oyProfile_s_ * s = profile;
   int error = !profile;
   int n = 0;
 
@@ -483,8 +483,8 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
   /* parse the ICC profile struct */
   if(error <= 0 && s->block_)
   {
-    icSignature magic = oyProfile_GetSignature( s, oySIGNATURE_MAGIC );
-    icSignature profile_cmmId = oyProfile_GetSignature( s, oySIGNATURE_CMM );
+    icSignature magic = oyProfile_GetSignature( (oyProfile_s*)s, oySIGNATURE_MAGIC );
+    icSignature profile_cmmId = oyProfile_GetSignature( (oyProfile_s*)s, oySIGNATURE_CMM );
     char profile_cmm[5] = {0,0,0,0,0};
     icProfile * ic_profile = s->block_;
     int min_icc_size = 132 + sizeof(icTag);
@@ -501,25 +501,26 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
       uint32_t tag_count = 0;
       icTag *tag_list = 0;
       int i = 0;
-      oyProfileTag_s * tag_ = oyProfileTag_New( 0 );
+      oyProfileTag_s_ * tag_ = oyProfileTag_New_( 0 );
       char h[5] = {"head"};
       uint32_t * hi = (uint32_t*)&h;
       char *tag_block = 0;
 
       oyAllocHelper_m_( tag_block, char, 132, 0, return 0 );
       error = !memcpy( tag_block, s->block_, 132 );
-      error = oyProfileTag_Set( tag_, (icTagSignature)*hi,
+      error = oyProfileTag_Set( (oyProfileTag_s*)tag_,
+                                (icTagSignature)*hi,
                                 (icTagTypeSignature)*hi,
                                 oyOK, 132, tag_block );
       if(error <= 0)
         error = !memcpy( tag_->profile_cmm_, profile_cmm, 4 );
 
       if(0 == pos)
-        tag = oyProfileTag_Copy( tag_, 0 );
+        tag = oyProfileTag_Copy( (oyProfileTag_s*)tag_, 0 );
       error = oyProfile_TagMoveIn_( s, &tag_, -1 );
 
 
-      size = oyProfile_GetSignature( s, oySIGNATURE_SIZE );
+      size = oyProfile_GetSignature( (oyProfile_s*)s, oySIGNATURE_SIZE );
       tag_count = oyValueUInt32( ic_profile->count );
 
       tag_list = (icTag*)&((char*)s->block_)[132];
@@ -540,7 +541,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
         icTagSignature sig = oyValueUInt32( ic_tag->sig );
         icTagTypeSignature tag_type = 0;
 
-        oyProfileTag_s * tag_ = oyProfileTag_New( 0 );
+        oyProfileTag_s_ * tag_ = oyProfileTag_New_( 0 ); //FIXME Redeclaration
 
         tag_block = 0;
 
@@ -558,7 +559,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
           tag_type = oyValueUInt32( tag_base->sig );
         }
 
-        error = oyProfileTag_Set( tag_, sig, tag_type,
+        error = oyProfileTag_Set( (oyProfileTag_s*)tag_, sig, tag_type,
                                   status, tag_size, tag_block );
         tag_->offset_orig = offset;
         if(error <= 0)
@@ -571,7 +572,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
             i, (int)tag_->size_, (int)tag_->offset_orig,
             oyICCTagTypeName( tag_->tag_type_ ),
             oyICCTagDescription( tag_->use ) );
-          texts = oyProfileTag_GetText(tag_,&texts_n,0,0,0,0);
+          texts = oyProfileTag_GetText((oyProfileTag_s*)tag_,&texts_n,0,0,0,0);
           for(j = 0; j < texts_n; ++j)
             DBG_PROG2_S("%s: %s", tag_->last_cmm_, texts[j]?texts[j]:"");
           if(texts_n && texts)
@@ -580,7 +581,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
 #endif
 
         if(i == pos-1)
-          tag = oyProfileTag_Copy( tag_, 0 );
+          tag = oyProfileTag_Copy( (oyProfileTag_s*)tag_, 0 );
 
         if(error <= 0)
           error = oyProfile_TagMoveIn_( s, &tag_, -1 );

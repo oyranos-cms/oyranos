@@ -15,7 +15,7 @@ int32_t      oyProfile_Match_        ( oyProfile_s_      * pattern,
 int32_t      oyProfile_Hashed_       ( oyProfile_s_      * s );
 char *       oyProfile_GetFileName_r ( oyProfile_s_      * profile,
                                        oyAlloc_f           allocateFunc );
-oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
+oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
                                        int                 pos );
 int                oyProfile_GetTagCount_ (
                                        oyProfile_s       * profile );
