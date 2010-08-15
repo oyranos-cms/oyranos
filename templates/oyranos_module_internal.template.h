@@ -11,6 +11,4 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_required,
                                          uint32_t          * count );
 
 
-{% include "cpp_end.h" %}
-
 #endif /* {{ file_name|underscores|upper|tr:". _" }} */
