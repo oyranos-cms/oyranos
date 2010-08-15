@@ -350,11 +350,10 @@ int32_t      oyProfile_Hashed_       ( oyProfile_s_      * s )
     return 0;
 }
 
-/**
- *  @internal
- *  Function oyProfile_GetFileName_r
+/** Function  oyProfile_GetFileName_r
  *  @memberof oyProfile_s
- *  @brief   get the ICC profile location in the filesystem
+ *  @brief    get the ICC profile location in the filesystem
+ *  @internal
  *
  *  This function tries to find a profile on disk matching a possibly memory
  *  only profile. In case the profile was previously opened from file or
@@ -368,11 +367,12 @@ int32_t      oyProfile_Hashed_       ( oyProfile_s_      * s )
  *  @since   2008/02/01 (Oyranos: 0.1.8)
  *  @date    2008/02/01
  */
-char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
+char *       oyProfile_GetFileName_r ( oyProfile_s_      * profile,
                                        oyAlloc_f           allocateFunc )
 {
   char * name = 0;
-  oyProfile_s * s = profile, * tmp = 0;
+  oyProfile_s * tmp = 0;
+  oyProfile_s_ * s = profile;
   int error = !s;
   char ** names = 0;
   uint32_t count = 0, i = 0;
@@ -413,7 +413,7 @@ char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
               break;
             }
           } else
-          if(oyProfile_Equal( s, tmp ))
+          if(oyProfile_Equal( (oyProfile_s*)s, tmp ))
           {
             name = names[i];
             break;
