@@ -31,9 +31,4 @@
   }
 
 
-oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
-                                       uint32_t            flags,
-                                       const char        * hash_text );
-
-
 #endif /* {{ file_name|cut:".h"|upper }}_H */
