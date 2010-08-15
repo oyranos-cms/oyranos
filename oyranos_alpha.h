@@ -217,7 +217,7 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
                                        oyNAME_e            name_type,
                                        uint32_t            flags );
 const char * oyStructTypeToText      ( oyOBJECT_e          type );
-
+int          oyStruct_GetId          ( oyStruct_s        * st );
 
 
 /** @enum    oySIGNAL_e

@@ -694,6 +694,15 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
   return text;
 }
 
+int          oyStruct_GetId          ( oyStruct_s        * st )
+{
+  int id = -1;
+
+  if(st && st->oy_)
+    id = oyObject_GetId(st->oy_);
+
+  return id;
+}
 
 const char *       oySignalToString  ( oySIGNAL_e          signal_type )
 {
@@ -20406,20 +20415,29 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     )
   {
     oyArray2d_Release( array );
-    a = oyArray2d_Create_( array_rectangle_.width, array_rectangle_.height,
-                           data_type, obj );
-    error = !a;
+
+    /* array creation is not possible */
+    if(!(array_rectangle_.width && array_rectangle_.height))
+      error = -1;
+
     if(!error)
     {
-      if(array_rectangle_.x)
-        a->data_area.x = -array_rectangle_.x;
-      /* allocate each single line */
-      if(do_copy == 1 || do_copy == 2)
-        a->own_lines = 2;
+      a = oyArray2d_Create_( array_rectangle_.width, array_rectangle_.height,
+                             data_type, obj );
+      error = !a;
+      if(!error)
+      {
+        if(array_rectangle_.x)
+          a->data_area.x = -array_rectangle_.x;
+        /* allocate each single line */
+        if(do_copy == 1 || do_copy == 2)
+          a->own_lines = 2;
+      }
     }
   }
 
-  if( !a )
+  /* a array should have been created */
+  if( !a && array_rectangle_.width && array_rectangle_.height )
   {
     WARNc_S("Could not create array.")
   }
