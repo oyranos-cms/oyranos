@@ -4452,7 +4452,8 @@ oyCMMapis_s* oyCMMGetMetaApis_       ( const char        * registration )
 
   meta_apis = oyCMMsGetApis_( 0 );
 
-  oyFree_m_( api_reg );
+  if(api_reg)
+    oyFree_m_( api_reg );
 
   if(0 && s)
   {
