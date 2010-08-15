@@ -8,7 +8,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
 oyPointer    oyProfile_TagsToMem_    ( oyProfile_s_      * profile,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
-int          oyProfile_ToFile_       ( oyProfile_s       * profile,
+int          oyProfile_ToFile_       ( oyProfile_s_      * profile,
                                        const char        * file_name );
 int32_t      oyProfile_Match_        ( oyProfile_s       * pattern,
                                        oyProfile_s       * profile );

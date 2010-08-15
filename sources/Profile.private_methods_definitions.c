@@ -260,16 +260,19 @@ oyPointer    oyProfile_TagsToMem_    ( oyProfile_s_      * profile,
   return block;
 }
 
-/** @internal
+/** Function  oyProfile_FromMemMove_
  *  @memberof oyProfile_s
+ *  @internal
+ *
+ *  @brief    Save from in memory profile to file
  *
  *  @since Oyranos: version 0.1.8
  *  @date  20 december 2007 (API 0.1.8)
  */
-int          oyProfile_ToFile_       ( oyProfile_s       * profile,
+int          oyProfile_ToFile_       ( oyProfile_s_      * profile,
                                        const char        * file_name )
 {
-  oyProfile_s * s = profile;
+  oyProfile_s_ * s = profile;
   int error = !s || !file_name;
   oyPointer buf = 0;
   size_t size = 0;
@@ -281,7 +284,7 @@ int          oyProfile_ToFile_       ( oyProfile_s       * profile,
 
   if(error <= 0)
   {
-    buf = oyProfile_GetMem ( s, &size, 0, 0 );
+    buf = oyProfile_GetMem ( (oyProfile_s*)s, &size, 0, 0 );
     if(buf && size)
     error = oyWriteMemToFile_( file_name, buf, size );
 
