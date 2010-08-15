@@ -915,12 +915,26 @@ int      oyraFilterPlug_ImageInputPPMRun (
   /* the following code is almost completely taken from ku.b's ppm CP plug-in */
   {
     int h, j_h = 0, p, n_samples, n_bytes;
-    int byte_swap = !oyBigEndian();
+    int byte_swap = 0;
     unsigned char *d_8 = 0;
     unsigned char *src = &data[fpos];
 
     uint16_t *d_16;
     float  *d_f;
+
+    if(oyBigEndian())
+    {
+      if(maxval < 0 && byteps == 4)
+        byte_swap = 1;
+    } else
+    {
+      if( (byteps == 2) ||
+        (maxval > 0 && byteps == 4)  ) {
+        byte_swap = 1;
+      }
+    }
+
+    maxval = abs(maxval);
 
     for(h = 0; h < height; ++h)
     {
