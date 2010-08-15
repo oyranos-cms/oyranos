@@ -920,17 +920,16 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s_      * profile,
   return block;
 }
 
-/**
- *  @internal
- *  Function oyProfile_WriteTagTable_
+/** Function  oyProfile_WriteTagTable_
  *  @memberof oyProfile_s
- *  @brief   get the parsed ICC profile back into memory
+ *  @brief    Get the parsed ICC profile back into memory
+ *  @internal
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/01/30
  *  @since   2008/01/30 (Oyranos: 0.1.8)
  */
-oyPointer    oyProfile_WriteTagTable_( oyProfile_s       * profile,
+oyPointer    oyProfile_WriteTagTable_( oyProfile_s_      * profile,
                                        size_t            * size )
 {
   oyPointer block = 0;

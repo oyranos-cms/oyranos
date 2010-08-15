@@ -32,5 +32,5 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s_      * profile,
                                        oyPointer           icc_header,
                                        oyPointer           icc_list,
                                        oyAlloc_f           allocateFunc );
-oyPointer    oyProfile_WriteTagTable_( oyProfile_s       * profile,
+oyPointer    oyProfile_WriteTagTable_( oyProfile_s_      * profile,
                                        size_t            * size );
