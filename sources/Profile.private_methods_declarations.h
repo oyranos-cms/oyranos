@@ -27,7 +27,7 @@ int               oyProfile_DeviceAdd_(oyProfile_s_      * profile,
                                        oyConfig_s        * config );
 oyPointer    oyProfile_WriteHeader_  ( oyProfile_s_      * profile,
                                        size_t            * size );
-oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
+oyPointer    oyProfile_WriteTags_    ( oyProfile_s_      * profile,
                                        size_t            * size,
                                        oyPointer           icc_header,
                                        oyPointer           icc_list,

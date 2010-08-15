@@ -785,11 +785,10 @@ oyPointer    oyProfile_WriteHeader_  ( oyProfile_s_      * profile,
   return block;
 }
 
-/**
- *  @internal
- *  Function oyProfile_WriteTags_
+/** Function  oyProfile_WriteTags_
  *  @memberof oyProfile_s
- *  @brief   get the parsed ICC profile back into memory
+ *  @brief    Get the parsed ICC profile back into memory
+ *  @internal
  *
  *  Call in following order:
  *         -  oyProfile_WriteHeader_
@@ -800,7 +799,7 @@ oyPointer    oyProfile_WriteHeader_  ( oyProfile_s_      * profile,
  *  @date    2008/02/01
  *  @since   2008/01/30 (Oyranos: 0.1.8)
  */
-oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
+oyPointer    oyProfile_WriteTags_    ( oyProfile_s_      * profile,
                                        size_t            * size,
                                        oyPointer           icc_header,
                                        oyPointer           icc_list,
@@ -839,7 +838,7 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
       uint32_t * hi = (uint32_t*)&h;
       char * temp = 0;
       icTagList* list = (icTagList*) &block[128];
-      oyProfileTag_s * tag = oyProfile_GetTagByPos_ ( profile, i + 1 );
+      oyProfileTag_s_ * tag = (oyProfileTag_s_*)oyProfile_GetTagByPos_ ( profile, i + 1 );
       size_t size = 0;
 
       if(error <= 0)
@@ -850,7 +849,7 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
 
       if(error <= 0 && tag->use == *hi)
       {
-        oyProfileTag_Release( &tag );
+        oyProfileTag_Release( (oyProfileTag_s**)&tag );
         continue;
       }
 
@@ -878,7 +877,7 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
         oyDeAllocateFunc_(block);
         block = temp;
 
-        oyProfileTag_Release( &tag );
+        oyProfileTag_Release( (oyProfileTag_s**)&tag );
       }
       temp = 0;
     }
