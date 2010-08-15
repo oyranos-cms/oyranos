@@ -8,4 +8,6 @@
 {% block LocalIncludeFiles %}
 {{ block.super }}
 #include "oyranos_profile.h"
+#include "oyProfileTag_s.h"
+#include "oyConfig_s.h"
 {% endblock %}
