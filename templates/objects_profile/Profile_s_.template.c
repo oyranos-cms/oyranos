@@ -2,5 +2,5 @@
 
 {% block LocalIncludeFiles %}
 {{ block.super }}
-#include "oyHash_s.h"
+#include "oyHash_s_.h"
 {% endblock %}
