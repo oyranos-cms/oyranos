@@ -517,7 +517,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
 
       if(0 == pos)
         tag = oyProfileTag_Copy( (oyProfileTag_s*)tag_, 0 );
-      error = oyProfile_TagMoveIn_( s, &tag_, -1 );
+      error = oyProfile_TagMoveIn_( s, (oyProfileTag_s**)&tag_, -1 );
 
 
       size = oyProfile_GetSignature( (oyProfile_s*)s, oySIGNATURE_SIZE );
@@ -584,7 +584,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
           tag = oyProfileTag_Copy( (oyProfileTag_s*)tag_, 0 );
 
         if(error <= 0)
-          error = oyProfile_TagMoveIn_( s, &tag_, -1 );
+          error = oyProfile_TagMoveIn_( s, (oyProfileTag_s**)&tag_, -1 );
       }
     }
   }
@@ -738,7 +738,7 @@ int                oyProfile_DeviceAdd_(oyProfile_s_      * profile,
 
         if(pddt)
         {
-          error = oyProfile_TagMoveIn_( s, &pddt, -1 );
+          error = oyProfile_TagMoveIn_( s, (oyProfileTag_s**)&pddt, -1 );
           ++s->tags_modified_;
         }
       }
