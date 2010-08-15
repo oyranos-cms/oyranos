@@ -665,21 +665,21 @@ int          oyProfile_TagMoveIn_    ( oyProfile_s_      * profile,
   return error;
 }
 
-/** @internal
- *  Function oyProfile_TagReleaseAt_
+/** Function  oyProfile_TagReleaseAt_
  *  @memberof oyProfile_s
- *  @brief   remove a tag from a profile
+ *  @brief    Remove a tag from a profile
+ *  @internal
  *
- *  non thread save
+ *  Non thread save
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/03/11 (Oyranos: 0.1.8)
  *  @date    2009/12/29
  */
-int          oyProfile_TagReleaseAt_ ( oyProfile_s       * profile,
+int          oyProfile_TagReleaseAt_ ( oyProfile_s_      * profile,
                                        int                 pos )
 {
-  oyProfile_s * s = profile;
+  oyProfile_s_ * s = profile;
   return oyStructList_ReleaseAt ( s->tags_, pos );
 }
 
