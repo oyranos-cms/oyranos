@@ -17,8 +17,7 @@ char *       oyProfile_GetFileName_r ( oyProfile_s_      * profile,
                                        oyAlloc_f           allocateFunc );
 oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
                                        int                 pos );
-int                oyProfile_GetTagCount_ (
-                                       oyProfile_s       * profile );
+int             oyProfile_GetTagCount_ ( oyProfile_s_      * profile );
 int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
                                        oyProfileTag_s   ** obj,
                                        int                 pos );

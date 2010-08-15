@@ -592,21 +592,20 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
   return tag;
 }
 
-/** |internal
- *  Function oyProfile_GetTagCount_
+/** Function  oyProfile_GetTagCount_
  *  @memberof oyProfile_s
+ *  @internal
  *
- *  non thread save
+ *  Non thread save
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/01/01 (Oyranos: 0.1.8)
  *  @date    2009/12/29
  */
-int                oyProfile_GetTagCount_ (
-                                       oyProfile_s       * profile )
+int                oyProfile_GetTagCount_ ( oyProfile_s_      * profile )
 {
   int n = 0;
-  oyProfile_s *s = profile;
+  oyProfile_s_ *s = profile;
   int error = !s;
 
   if(!s)
