@@ -91,6 +91,8 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
   return s;
 }
 
+static oyStructList_s_ * oy_profile_s_file_cache_ = 0;
+
 /** Function  oyProfile_FromFile_
  *  @memberof oyProfile_s
  *  @brief    Create from file
@@ -117,7 +119,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
   size_t size = 0;
   oyPointer block = 0;
   oyAlloc_f allocateFunc = 0;
-  oyHash_s * entry = 0;
+  oyHash_s_ * entry = 0;
   char * file_name = 0;
 
   if(object)
@@ -126,7 +128,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
   if(!oyToNoCacheRead_m(flags) || !oyToNoCacheWrite_m(flags))
   {
     if(!oy_profile_s_file_cache_)
-      oy_profile_s_file_cache_ = oyStructList_New( 0 );
+      oy_profile_s_file_cache_ = oyStructList_New_( 0 );
 
     if(!object)
     {
@@ -188,12 +190,12 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
     } else {
       int i = 0, n = 0, pos = -1;
 
-      n = oyStructList_Count( oy_profile_s_file_cache_ );
+      n = oyStructList_Count( (oyStructList_s*)oy_profile_s_file_cache_ );
       for( i = 0; i < n; ++i )
         if((oyStruct_s*)entry == oyStructList_Get_( oy_profile_s_file_cache_,i))
           pos = i;
       if(pos >= 0)
-        oyStructList_ReleaseAt( oy_profile_s_file_cache_, pos );
+        oyStructList_ReleaseAt( (oyStructList_s*)oy_profile_s_file_cache_, pos );
 #endif
     }
   }
