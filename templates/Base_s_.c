@@ -7,6 +7,7 @@
 
 #include "oyObject_s.h"
 #include "oyranos_object_internal.h"
+{% ifequal class.group "module_api" %}#include "oyranos_module_internal.h"{% endifequal %}
 {% block LocalIncludeFiles %}{% endblock %}  
 
 {% block CustomPrivateMethodsDefinitions %}
