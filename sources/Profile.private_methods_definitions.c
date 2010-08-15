@@ -297,17 +297,17 @@ int          oyProfile_ToFile_       ( oyProfile_s_      * profile,
   return error;
 }
 
-/** @internal
- *  Function oyProfile_Match_
+/** Function  oyProfile_Match_
  *  @memberof oyProfile_s
- *  @brief   check if a profiles matches by some properties
+ *  @brief    Check if a profiles matches by some properties
+ *  @internal
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/06/20
  *  @since   2008/06/20 (Oyranos: 0.1.8)
  */
-int32_t      oyProfile_Match_        ( oyProfile_s       * pattern,
-                                       oyProfile_s       * profile )
+int32_t      oyProfile_Match_        ( oyProfile_s_      * pattern,
+                                       oyProfile_s_      * profile )
 {
   int32_t match = 0;
   int i;
@@ -321,8 +321,8 @@ int32_t      oyProfile_Match_        ( oyProfile_s       * pattern,
       match = 1;
       for( i = 0; i < (int)oySIGNATURE_MAX; ++i)
       {
-        pattern_sig = oyProfile_GetSignature( pattern, (oySIGNATURE_TYPE_e) i );
-        profile_sig = oyProfile_GetSignature( profile, (oySIGNATURE_TYPE_e) i );
+        pattern_sig = oyProfile_GetSignature( (oyProfile_s*)pattern, (oySIGNATURE_TYPE_e) i );
+        profile_sig = oyProfile_GetSignature( (oyProfile_s*)profile, (oySIGNATURE_TYPE_e) i );
 
         if(pattern_sig && profile_sig && pattern_sig != profile_sig)
           match = 0;

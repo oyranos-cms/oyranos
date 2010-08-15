@@ -10,8 +10,8 @@ oyPointer    oyProfile_TagsToMem_    ( oyProfile_s_      * profile,
                                        oyAlloc_f           allocateFunc );
 int          oyProfile_ToFile_       ( oyProfile_s_      * profile,
                                        const char        * file_name );
-int32_t      oyProfile_Match_        ( oyProfile_s       * pattern,
-                                       oyProfile_s       * profile );
+int32_t      oyProfile_Match_        ( oyProfile_s_      * pattern,
+                                       oyProfile_s_      * profile );
 int32_t      oyProfile_Hashed_       ( oyProfile_s       * s );
 char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
                                        oyAlloc_f           allocateFunc );
