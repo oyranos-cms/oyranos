@@ -91,10 +91,10 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
   return s;
 }
 
-/**
- *  @internal
- *  @brief   create from file
+/** Function  oyProfile_FromFile_
  *  @memberof oyProfile_s
+ *  @brief    Create from file
+ *  @internal
  *
  *  @param[in]    name           profile file name
  *  @param[in]    flags          for future extension
@@ -108,11 +108,11 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
  *  @since   2007/11/0 (Oyranos: 0.1.9)
  *  @date    2010/05/18
  */
-oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
+oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
                                        uint32_t            flags,
                                        oyObject_s          object )
 {
-  oyProfile_s * s = 0;
+  oyProfile_s_ * s = 0;
   int error = 0;
   size_t size = 0;
   oyPointer block = 0;
@@ -134,8 +134,8 @@ oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
 
       if(!oyToNoCacheRead_m(flags))
       {
-        s = (oyProfile_s*) oyHash_GetPointer_( entry, oyOBJECT_PROFILE_S);
-        s = oyProfile_Copy( s, 0 );
+        s = (oyProfile_s_*) oyHash_GetPointer_( entry, oyOBJECT_PROFILE_S);
+        s = (oyProfile_s_*) oyProfile_Copy( (oyProfile_s*)s, 0 );
         if(s)
           return s;
       }

@@ -2,7 +2,7 @@ oyProfile_s_* oyProfile_FromMemMove_ ( size_t              size,
                                        oyPointer         * block,
                                        int                 flags,
                                        oyObject_s          object);
-oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
+oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
                                        uint32_t            flags,
                                        oyObject_s          object );
 oyPointer    oyProfile_TagsToMem_    ( oyProfile_s       * profile,
