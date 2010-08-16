@@ -1256,9 +1256,9 @@ const char *       oyProfile_GetFileName ( oyProfile_s       * profile,
   return name;
 }
 
-/** Function oyProfile_DeviceGet
+/** Function  oyProfile_DeviceGet
  *  @memberof oyProfile_s
- *  @brief   obtain device informations from a profile
+ *  @brief    Obtain device informations from a profile
  *
  *  @verbatim
     oyConfig_s * device = oyConfig_New( "//" OY_TYPE_STD "/config", object );
@@ -1273,10 +1273,11 @@ const char *       oyProfile_GetFileName ( oyProfile_s       * profile,
  *  @date    2009/05/23
  */
 int                oyProfile_DeviceGet ( oyProfile_s     * profile,
-                                       oyConfig_s        * device )
+                                         oyConfig_s      * device )
 {
   int error = !profile, l_error = 0;
   oyProfile_s * s = profile;
+  oyConfig_s_ * device_ = (oyConfig_s_*)device;
   oyProfileTag_s * tag = 0;
   char ** texts = 0;
   int32_t texts_n = 0;
@@ -1298,9 +1299,9 @@ int                oyProfile_DeviceGet ( oyProfile_s     * profile,
         if(strcmp(texts[i+0],"model") == 0) dmdd_found = 1;
         if(strcmp(texts[i+0],"manufacturer") == 0) dmnd_found = 1;
 
-        error = oyOptions_SetRegistrationTextKey_( device->backend_core,
-                                                 device->registration,
-                                                 texts[i+0], texts[i+1] );
+        error = oyOptions_SetRegistrationTextKey_( device_->backend_core,
+                                                   device_->registration,
+                                                   texts[i+0], texts[i+1] );
       }
   }
 
@@ -1309,8 +1310,8 @@ int                oyProfile_DeviceGet ( oyProfile_s     * profile,
     tag = oyProfile_GetTagById( s, icSigDeviceModelDescTag );
     texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
     if(texts && texts[0] && texts[0][0] && texts_n == 1 && !dmdd_found)
-      error = oyOptions_SetRegistrationTextKey_( device->backend_core, 
-                                                 device->registration,
+      error = oyOptions_SetRegistrationTextKey_( device_->backend_core,
+                                                 device_->registration,
                                                  "model", texts[0] );
     if(texts_n && texts)
       oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
@@ -1321,17 +1322,15 @@ int                oyProfile_DeviceGet ( oyProfile_s     * profile,
     tag = oyProfile_GetTagById( s, icSigDeviceMfgDescTag );
     texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
     if(texts && texts[0] && texts[0][0] && texts_n == 1 && !dmnd_found)
-      error = oyOptions_SetRegistrationTextKey_( device->backend_core, 
-                                                 device->registration,
+      error = oyOptions_SetRegistrationTextKey_( device_->backend_core,
+                                                 device_->registration,
                                                  "manufacturer", texts[0] );
     if(texts_n && texts)
       oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
   }
 
-  l_error = oyOptions_SetSource( device->backend_core,
-                                     oyOPTIONSOURCE_FILTER); OY_ERR
+  l_error = oyOptions_SetSource( device_->backend_core,
+                                 oyOPTIONSOURCE_FILTER); OY_ERR
 
   return error;
 }
-
-

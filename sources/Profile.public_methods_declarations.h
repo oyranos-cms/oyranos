@@ -62,6 +62,6 @@ int                oyProfile_AddTagText ( oyProfile_s       * profile,
 const char   *     oyProfile_GetFileName ( oyProfile_s   * profile,
                                            int             dl_pos );
 int                oyProfile_DeviceGet ( oyProfile_s     * profile,
-                                       oyConfig_s        * device );
+                                         oyConfig_s      * device );
 
 
