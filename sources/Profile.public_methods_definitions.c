@@ -1034,9 +1034,9 @@ int                oyProfile_TagMoveIn(oyProfile_s       * profile,
   return error;
 }
 
-/** Function oyProfile_TagReleaseAt
+/** Function  oyProfile_TagReleaseAt
  *  @memberof oyProfile_s
- *  @brief   remove a tag from a profile
+ *  @brief    Remove a tag from a profile
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/03/11
@@ -1045,7 +1045,7 @@ int                oyProfile_TagMoveIn(oyProfile_s       * profile,
 int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
                                        int                 pos )
 {
-  oyProfile_s * s = profile;
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
   int error = !s;
 
   if(!s)
