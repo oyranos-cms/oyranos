@@ -150,8 +150,9 @@ OYAPI oyProfile_s * OYEXPORT
   return (oyProfile_s*)s;
 }
 
-/** @brief   look up a profile from it's md5 hash sum
+/** Function  oyProfile_FromMD5
  *  @memberof oyProfile_s
+ *  @brief    Look up a profile from it's md5 hash sum
  *
  *  @param[in]    md5            hash sum
  *  @param[in]    object         the optional base
