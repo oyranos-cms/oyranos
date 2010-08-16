@@ -886,9 +886,9 @@ oyProfileTag_s * oyProfile_GetTagByPos(oyProfile_s       * profile,
   return tag;
 }
 
-/** Function oyProfile_GetTagById
+/** Function  oyProfile_GetTagById
  *  @memberof oyProfile_s
- *  @brief   get a profile tag by its tag signature
+ *  @brief    Get a profile tag by its tag signature
  *
  *  @param[in]     profile             the profile
  *  @param[in]     id                  icTagSignature
@@ -899,7 +899,7 @@ oyProfileTag_s * oyProfile_GetTagByPos(oyProfile_s       * profile,
 oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
                                        icTagSignature      id )
 {
-  oyProfile_s * s = profile;
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
   int error = !s;
   oyProfileTag_s * tag = 0,
                  * tmp = 0;
@@ -923,7 +923,7 @@ oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
       tag_id_ = 0;
 
       if(tmp)
-        tag_id_ = tmp->use;
+        tag_id_ = oyProfileTagPriv_m(tmp)->use;
 
       if(tag_id_ == id)
       {
