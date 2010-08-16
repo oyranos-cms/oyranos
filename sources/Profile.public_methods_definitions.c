@@ -430,8 +430,9 @@ OYAPI int OYEXPORT
   return error;
 }
 
-/** @brief   set channel names
+/** Function  oyProfile_SetChannelNames
  *  @memberof oyProfile_s
+ *  @brief    Set channel names
  *
  *  The function should be used to specify extra channels or unusual colour
  *  layouts like CMYKRB. The number of elements in names_chan should fit to the
@@ -450,7 +451,7 @@ void
 oyProfile_SetChannelNames            ( oyProfile_s       * profile,
                                        oyObject_s        * names_chan )
 {
-  oyProfile_s * s = profile;
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
   int n = oyProfile_GetChannelsCount( profile );
   int error = !s;
 
