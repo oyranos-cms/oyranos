@@ -22,6 +22,38 @@
 
 using namespace std;
 
+static QDir templateDir, sourceDir, outputDir;
+
+void getTemplateParents( const QString& tmplPath, QVariantList& parentList )
+{
+  QFile tmpl( tmplPath );
+  tmpl.open( QIODevice::ReadOnly|QIODevice::Text );
+  QString text = tmpl.readAll();
+
+  QRegExp extends("\\{%\\s+extends\\s+\"((?:\\w+\\.?)+)\"\\s+%\\}");
+
+  if (extends.indexIn( text ) != -1) {
+    QString tmplParentName = extends.cap(1);
+    parentList << tmplParentName;
+
+    QString tmplParentPath;
+    QDirIterator templateFile( templateDir, QDirIterator::Subdirectories );
+    while (templateFile.hasNext()) {
+      templateFile.next();
+      if (templateFile.fileName() == tmplParentName) {
+        tmplParentPath = templateFile.filePath();
+        break;
+      }
+    }
+    if (!tmplParentPath.isEmpty())
+      getTemplateParents( tmplParentPath, parentList );
+    else
+      qWarning() << "Could not find template" << tmplParentName;
+  }
+
+  return;
+}
+
 typedef Grantlee::FileSystemTemplateLoader GFSLoader;
 
 Grantlee::Engine* getEngine( const QStringList& tmplDirs )
@@ -65,9 +97,10 @@ int main(int argc, char *argv[])
     cout << "Usage: " << argv[0] << " [template dir]" << " [sources dir]" << " [output dir]" << endl;
     return 0;
   }
-  QDir templateDir( argc > 1 ? argv[1] : TEMPALTE_DIR );
-  QDir sourceDir  ( argc > 2 ? argv[2] : SOURCE_DIR   );
-  QDir outputDir  ( argc > 3 ? argv[3] : API_DIR      );
+  templateDir.setPath( argc > 1 ? argv[1] : TEMPALTE_DIR );
+  sourceDir.setPath  ( argc > 2 ? argv[2] : SOURCE_DIR   );
+  outputDir.setPath  ( argc > 3 ? argv[3] : API_DIR      );
+
   if (!templateDir.exists()) {
     qCritical() << "Directory" << templateDir.path() << "does not exist";
     return 1;
@@ -132,10 +165,16 @@ int main(int argc, char *argv[])
     QFile sourceFile( outputDir.filePath( sourceName ) );
     QFileInfo sourceFileInfo(sourceFile);
 
+    // Get the template parent list
+    QVariantList parents;
+    parents << templateFileInfo.fileName();
+    getTemplateParents( templateFileInfo.filePath(), parents );
+
     c.insert( "file_name", sourceName );
     c.insert( "classes", classes );
     c.insert( "class", classinfo );
     c.insert( "struct", tpl.getStructClass() );
+    c.insert( "parents", parents);
 
     QString newFileContents = t->render( &c );
 
