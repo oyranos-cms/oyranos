@@ -331,8 +331,9 @@ oyProfile_GetSignature ( oyProfile_s * profile,
   return sig;
 }
 
-/** @brief   set signature
+/** Function  oyProfile_SetSignature
  *  @memberof oyProfile_s
+ *  @brief    Set signature
  *
  *  @param[in]     profile             the profile
  *  @param[in]     sig                 signature
@@ -347,7 +348,7 @@ OYAPI int OYEXPORT
                                        icSignature         sig,
                                        oySIGNATURE_TYPE_e  type )
 {
-  oyProfile_s * s = profile;
+  oyProfile_s_ * s = profile;
   int error = !s;
   oyPointer block_ = 0;
   size_t size_ = 128;
