@@ -195,6 +195,7 @@
   if({{ class.baseName|lower }} && !object)
   {
     s = {{ class.baseName|lower }};
+    {% block oyClass_Copy_notObject %}{% endblock %}
     oyObject_Copy( s->oy_ );
     return s;
   }
