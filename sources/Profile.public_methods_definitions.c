@@ -124,8 +124,9 @@ oyProfile_FromMem             ( size_t            size,
   return (oyProfile_s*)s;
 }
 
-/** @brief   create a fractional profile from signature
+/** Function  oyProfile_FromSignature
  *  @memberof oyProfile_s
+ *  @brief    Create a fractional profile from signature
  *
  *  @param[in]    sig            signature
  *  @param[in]    type           type of signature to set
@@ -140,13 +141,13 @@ OYAPI oyProfile_s * OYEXPORT
                                        oySIGNATURE_TYPE_e  type,
                                        oyObject_s          object )
 {
-  oyProfile_s * s = oyProfile_New_( object );
+  oyProfile_s_ * s = oyProfile_New_( object );
   int error = !s;
 
   if(error <= 0)
-    error = oyProfile_SetSignature( s, sig, type );
+    error = oyProfile_SetSignature( (oyProfile_s*)s, sig, type );
 
-  return s;
+  return (oyProfile_s*)s;
 }
 
 /** @brief   create a fractional profile from signature
