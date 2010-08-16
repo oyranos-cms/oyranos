@@ -853,9 +853,9 @@ OYAPI oyPointer OYEXPORT
   return block;
 }
 
-/** Function oyProfile_GetTagByPos
+/** Function  oyProfile_GetTagByPos
  *  @memberof oyProfile_s
- *  @brief   get a profile tag
+ *  @brief    Get a profile tag
  *
  *  @param[in]     profile             the profile
  *  @param[in]     pos                 header + tag position
@@ -868,7 +868,7 @@ oyProfileTag_s * oyProfile_GetTagByPos(oyProfile_s       * profile,
                                        int                 pos )
 {
   oyProfileTag_s * tag = 0;
-  oyProfile_s * s = profile;
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
 
   if(!s)
     return 0;
