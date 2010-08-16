@@ -1,4 +1,7 @@
 NOW:
+- ProfileTag copy constructor needs to lock/unlock the object.
+  That implies that probably oyClass_Copy_() body should be inside a block?
+  If so, then also replace {% block oyClass_Copy_notObject %}{% endblock %}
 - It might be possible that private member functions have a
   not up to date signature in the <class>.private_members_declarations.h file,
   because of changed arguments, from public to private.
