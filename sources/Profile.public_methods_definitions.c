@@ -562,8 +562,9 @@ oyProfile_GetChannelName           ( oyProfile_s   * profile,
   return text;
 }
 
-/** @brief   get unique name
+/** Function  oyProfile_GetID
  *  @memberof oyProfile_s
+ *  @brief    Get unique name
  *
  *  the returned string is identical to oyNAME_ID
  *
@@ -571,8 +572,9 @@ oyProfile_GetChannelName           ( oyProfile_s   * profile,
  *  @date  26 november 2007 (API 0.1.8)
  */
 OYAPI const oyChar* OYEXPORT
-                   oyProfile_GetID   ( oyProfile_s       * s )
+                   oyProfile_GetID   ( oyProfile_s       * profile )
 {
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
   int error = !s;
   const oyChar * text = 0;
 
@@ -612,7 +614,7 @@ OYAPI const oyChar* OYEXPORT
     /* Do we have a hash_? */
     if(!found && error <= 0)
     {
-      if(!oyProfile_Hashed_(s))
+      if(!oyProfile_Hashed_((oyProfile_s*)s))
         error = oyProfile_GetHash_( s );
 
       if(error <= 0)
