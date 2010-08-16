@@ -1,5 +1,5 @@
-oyHash_s *   oyHash_CopyRef_         ( oyHash_s          * entry,
-                                       oyObject_s          object );
+oyHash_s_ *   oyHash_CopyRef_         ( oyHash_s_         * entry,
+                                        oyObject_s          object );
 oyHash_s *         oyHash_Get_       ( const char        * hash_text,
                                        oyObject_s          object );
 int                oyHash_IsOf_      ( oyHash_s          * hash,

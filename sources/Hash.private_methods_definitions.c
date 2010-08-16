@@ -1,14 +1,15 @@
-/** @internal
+/** Function  oyHash_CopyRef_
  *  @memberof oyHash_s
- *  @brief   copy a Oyranos cache entry
+ *  @brief    Copy a Oyranos cache entry
+ *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  24 november 2007 (API 0.1.8)
  */
-oyHash_s *   oyHash_CopyRef_         ( oyHash_s          * entry,
-                                       oyObject_s          object )
+oyHash_s_ *   oyHash_CopyRef_         ( oyHash_s_         * entry,
+                                        oyObject_s          object )
 {
-  oyHash_s * s = entry;
+  oyHash_s_ * s = entry;
   int error = !s;
 
   if(error <= 0)
