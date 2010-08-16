@@ -231,8 +231,9 @@ oyProfile_GetChannelsCount( oyProfile_s * profile )
   return s->channels_n_;
 }
 
-/** @brief   get ICC colour space signature
+/** Function  oyProfile_GetSignature
  *  @memberof oyProfile_s
+ *  @brief    Get ICC colour space signature
  *
  *  \verbatim
     // show some profile properties
@@ -260,11 +261,12 @@ oyProfile_GetChannelsCount( oyProfile_s * profile )
  *  @date  november 2007 (API 0.1.8)
  */
 OYAPI icSignature OYEXPORT
-oyProfile_GetSignature ( oyProfile_s * s,
+oyProfile_GetSignature ( oyProfile_s * profile,
                          oySIGNATURE_TYPE_e type )
 {
   icHeader *h = 0;
   icSignature sig = 0;
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
 
   if(!s)
     return 0;
