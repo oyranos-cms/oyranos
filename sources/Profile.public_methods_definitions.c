@@ -1071,18 +1071,17 @@ int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
   return error;
 }
 
-/** Function oyProfile_AddTagText
+/** Function  oyProfile_AddTagText
  *  @memberof oyProfile_s
- *  @brief   add a text tag
+ *  @brief    Add a text tag
  *
  *  @version Oyranos: 0.1.10
  *  @date    2009/10/18
  *  @since   2009/10/18 (Oyranos: 0.1.10)
  */
-int                oyProfile_AddTagText (
-                                       oyProfile_s       * profile,
-                                       icSignature         signature,
-                                       const char        * text )
+int                oyProfile_AddTagText ( oyProfile_s       * profile,
+                                          icSignature         signature,
+                                          const char        * text )
 {
   oyStructList_s * list = 0;
   oyName_s * name = oyName_new(0);
@@ -1123,7 +1122,7 @@ int                oyProfile_AddTagText (
   }
 
   if(!error)
-    tag->use = signature;
+    oyProfileTagPriv_m(tag)->use = signature;
 
   oyStructList_Release( &list );
 
