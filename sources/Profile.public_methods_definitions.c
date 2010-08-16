@@ -644,11 +644,9 @@ OYAPI const oyChar* OYEXPORT
   return text;
 }
 
-/**
- *  @internal
- *  Function oyProfile_Equal
+/** Function  oyProfile_Equal
  *  @memberof oyProfile_s
- *  @brief   check if two profiles are qual by their hash sum
+ *  @brief    Check if two profiles are equal by their hash sum
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/02/03 (Oyranos: 0.1.8)
