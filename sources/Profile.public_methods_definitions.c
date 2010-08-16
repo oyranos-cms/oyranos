@@ -213,7 +213,7 @@ OYAPI oyProfile_s * OYEXPORT
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
  */
-int
+OYAPI int OYEXPORT
 oyProfile_GetChannelsCount( oyProfile_s * profile )
 {
   oyProfile_s_ * s = (oyProfile_s_*)profile;
@@ -447,7 +447,7 @@ OYAPI int OYEXPORT
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
  */
-void
+OYAPI void OYEXPORT
 oyProfile_SetChannelNames            ( oyProfile_s       * profile,
                                        oyObject_s        * names_chan )
 {
@@ -480,7 +480,7 @@ oyProfile_SetChannelNames            ( oyProfile_s       * profile,
  *  @since Oyranos: version 0.1.8
  *  @date  october 2007 (API 0.1.8)
  */
-const oyObject_s *
+OYAPI const oyObject_s * OYEXPORT
 oyProfile_GetChannelNames           ( oyProfile_s   * profile )
 {
   oyProfile_s_ * s = (oyProfile_s_*)profile;
@@ -536,7 +536,7 @@ oyProfile_GetChannelNames           ( oyProfile_s   * profile )
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
  */
-const oyChar *
+OYAPI const char   * OYEXPORT
 oyProfile_GetChannelName           ( oyProfile_s   * profile,
                                      int                pos,
                                      oyNAME_e           type )
@@ -864,7 +864,8 @@ OYAPI oyPointer OYEXPORT
  *  @date    2008/02/06
  *  @since   2008/02/06 (Oyranos: 0.1.8)
  */
-oyProfileTag_s * oyProfile_GetTagByPos(oyProfile_s       * profile,
+OYAPI oyProfileTag_s * OYEXPORT
+                 oyProfile_GetTagByPos(oyProfile_s       * profile,
                                        int                 pos )
 {
   oyProfileTag_s * tag = 0;
@@ -896,7 +897,8 @@ oyProfileTag_s * oyProfile_GetTagByPos(oyProfile_s       * profile,
  *  @since Oyranos: version 0.1.8
  *  @date  2 january 2008 (API 0.1.8)
  */
-oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
+OYAPI oyProfileTag_s * OYEXPORT
+                 oyProfile_GetTagById( oyProfile_s       * profile,
                                        icTagSignature      id )
 {
   oyProfile_s_ * s = (oyProfile_s_*)profile;
@@ -945,7 +947,8 @@ oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
  *  @since   2008/01/01 (Oyranos: 0.1.8)
  *  @date    2009/12/29
  */
-int                oyProfile_GetTagCount( oyProfile_s    * profile )
+OYAPI int OYEXPORT
+                   oyProfile_GetTagCount( oyProfile_s    * profile )
 {
   int n = 0;
   oyProfile_s_ * s = (oyProfile_s_*)profile;
@@ -987,7 +990,8 @@ int                oyProfile_GetTagCount( oyProfile_s    * profile )
  *  @since   2008/02/01 (Oyranos: 0.1.8)
  *  @date    2009/12/29
  */
-int                oyProfile_TagMoveIn(oyProfile_s       * profile,
+OYAPI int OYEXPORT
+                   oyProfile_TagMoveIn(oyProfile_s       * profile,
                                        oyProfileTag_s   ** obj,
                                        int                 pos )
 {
@@ -1042,7 +1046,8 @@ int                oyProfile_TagMoveIn(oyProfile_s       * profile,
  *  @date    2008/03/11
  *  @since   2008/03/11 (Oyranos: 0.1.8)
  */
-int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
+OYAPI int OYEXPORT
+                   oyProfile_TagReleaseAt ( oyProfile_s  * profile,
                                        int                 pos )
 {
   oyProfile_s_ * s = (oyProfile_s_*)profile;
@@ -1079,7 +1084,8 @@ int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
  *  @date    2009/10/18
  *  @since   2009/10/18 (Oyranos: 0.1.10)
  */
-int                oyProfile_AddTagText ( oyProfile_s       * profile,
+OYAPI int OYEXPORT
+                   oyProfile_AddTagText ( oyProfile_s       * profile,
                                           icSignature         signature,
                                           const char        * text )
 {
@@ -1148,7 +1154,8 @@ int                oyProfile_AddTagText ( oyProfile_s       * profile,
  *  @since   2008/02/01 (Oyranos: 0.1.8)
  *  @date    2008/02/01
  */
-const char *       oyProfile_GetFileName ( oyProfile_s       * profile,
+OYAPI const char * OYEXPORT
+                   oyProfile_GetFileName ( oyProfile_s       * profile,
                                            int                 dl_pos )
 {
   const char * name = 0;
@@ -1272,7 +1279,8 @@ const char *       oyProfile_GetFileName ( oyProfile_s       * profile,
  *  @since   2009/05/22 (Oyranos: 0.1.10)
  *  @date    2009/05/23
  */
-int                oyProfile_DeviceGet ( oyProfile_s     * profile,
+OYAPI int OYEXPORT
+                   oyProfile_DeviceGet ( oyProfile_s     * profile,
                                          oyConfig_s      * device )
 {
   int error = !profile, l_error = 0;
