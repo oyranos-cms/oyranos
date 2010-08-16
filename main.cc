@@ -22,23 +22,36 @@
 
 using namespace std;
 
+static QDir templateDir, sourceDir, outputDir;
+
 void getTemplateParents( const QString& tmplPath, QVariantList& parentList )
 {
-  //TODO
-  //Get the templateDir (templates root)
-  //search recursively for tmplParentPath
   QFile tmpl( tmplPath );
   tmpl.open( QIODevice::ReadOnly|QIODevice::Text );
   QString text = tmpl.readAll();
 
-  QRegExp extends("{%\\s+extends\\s+\"(\\w+)\"\\s+%}");
+  QRegExp extends("\\{%\\s+extends\\s+\"((?:\\w+\\.?)+)\"\\s+%\\}");
 
   if (extends.indexIn( text ) != -1) {
     QString tmplParentName = extends.cap(1);
     parentList << tmplParentName;
-    getTemplateParents( tmplParentPath, parentList );
-  else
-    return;
+
+    QString tmplParentPath;
+    QDirIterator templateFile( templateDir, QDirIterator::Subdirectories );
+    while (templateFile.hasNext()) {
+      templateFile.next();
+      if (templateFile.fileName() == tmplParentName) {
+        tmplParentPath = templateFile.filePath();
+        break;
+      }
+    }
+    if (!tmplParentPath.isEmpty())
+      getTemplateParents( tmplParentPath, parentList );
+    else
+      qWarning() << "Could not find template" << tmplParentName;
+  }
+
+  return;
 }
 
 typedef Grantlee::FileSystemTemplateLoader GFSLoader;
@@ -76,8 +89,6 @@ const QStringList templateSuffixes(
     "*.template.cc" <<
     "*.template.txt"
 );
-
-QDir templateDir, sourceDir, outputDir;
 
 int main(int argc, char *argv[])
 {
