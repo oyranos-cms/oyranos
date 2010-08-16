@@ -48,8 +48,9 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
   return (oyProfile_s*)s;
 }
 
-/** @brief   create from file
+/** Function  oyProfile_FromFile
  *  @memberof oyProfile_s
+ *  @brief    Create from file
  *
  *  Supported are profiles with absolute path names, profiles in OpenICC 
  *  profile paths and profiles relative to the current working path. 
@@ -72,13 +73,13 @@ oyProfile_FromFile            ( const char      * name,
                                 uint32_t          flags,
                                 oyObject_s        object)
 {
-  oyProfile_s * s = 0;
+  oyProfile_s_ * s = 0;
 
   s = oyProfile_FromFile_( name, flags, object );
 
-  oyProfile_GetID( s );
+  oyProfile_GetID( (oyProfile_s*)s );
 
-  return s;
+  return (oyProfile_s*)s;
 }
 
 /** @brief   create from in memory blob
