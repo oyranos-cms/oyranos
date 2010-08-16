@@ -471,8 +471,9 @@ oyProfile_SetChannelNames            ( oyProfile_s       * profile,
   }
 }
 
-/** @brief   get channel names
+/** Function  oyProfile_GetChannelNames
  *  @memberof oyProfile_s
+ *  @brief    Get channel names
  *
  *  @param[in]     profile             the profile
  *
@@ -482,7 +483,7 @@ oyProfile_SetChannelNames            ( oyProfile_s       * profile,
 const oyObject_s *
 oyProfile_GetChannelNames           ( oyProfile_s   * profile )
 {
-  oyProfile_s * s = profile;
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
   int n = oyProfile_GetChannelsCount( profile );
   int error = 0;
   icColorSpaceSignature sig = oyProfile_GetSignature( profile, oySIGNATURE_COLOUR_SPACE );
