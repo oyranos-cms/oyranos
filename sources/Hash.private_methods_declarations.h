@@ -6,5 +6,5 @@ int                oyHash_IsOf_      ( oyHash_s_         * hash,
                                        oyOBJECT_e          type );
 int                oyHash_SetPointer_( oyHash_s_         * hash,
                                        oyStruct_s        * obj );
-oyStruct_s *       oyHash_GetPointer_( oyHash_s          * hash,
+oyStruct_s *       oyHash_GetPointer_( oyHash_s_         * hash,
                                        oyOBJECT_e          type );

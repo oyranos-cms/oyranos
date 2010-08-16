@@ -104,13 +104,14 @@ int                oyHash_SetPointer_( oyHash_s_         * hash,
     return 1;
 }
 
-/** @internal
+/** Function  oyHash_GetPointer_
  *  @memberof oyHash_s
+ *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  3 december 2007 (API 0.1.8)
  */
-oyStruct_s *       oyHash_GetPointer_( oyHash_s          * hash,
+oyStruct_s *       oyHash_GetPointer_( oyHash_s_         * hash,
                                        oyOBJECT_e          type )
 {
   if(oyHash_IsOf_( hash, type))
