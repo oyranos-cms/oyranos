@@ -64,14 +64,15 @@ oyHash_s_ *         oyHash_Get_       ( const char        * hash_text,
   return s;
 }
 
-/** @internal
+/** Function  oyHash_IsOf_
  *  @memberof oyHash_s
- *  @brief hash is of type
+ *  @brief    Hash is of type
+ *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  3 december 2007 (API 0.1.8)
  */
-int                oyHash_IsOf_      ( oyHash_s          * hash,
+int                oyHash_IsOf_      ( oyHash_s_         * hash,
                                        oyOBJECT_e          type )
 {
   return (hash && hash->entry && hash->entry->type_ == type);
