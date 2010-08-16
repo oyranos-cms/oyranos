@@ -523,8 +523,9 @@ oyProfile_GetChannelNames           ( oyProfile_s   * profile )
     return 0;
 }
 
-/** @brief   get a channels name
+/** Function  oyProfile_GetChannelName
  *  @memberof oyProfile_s
+ *  @brief    Get a channels name
  *
  *  A convinience function to get a single name with a certain type.
  *
@@ -537,11 +538,11 @@ oyProfile_GetChannelNames           ( oyProfile_s   * profile )
  */
 const oyChar *
 oyProfile_GetChannelName           ( oyProfile_s   * profile,
-                                        int                pos,
-                                        oyNAME_e           type )
+                                     int                pos,
+                                     oyNAME_e           type )
 {
-  oyProfile_s * s = profile;
-  int n = oyProfile_GetChannelsCount( s );
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
+  int n = oyProfile_GetChannelsCount( (oyProfile_s*)s );
   const oyChar * text = 0;
 
   if(!s)
@@ -553,7 +554,7 @@ oyProfile_GetChannelName           ( oyProfile_s   * profile,
     return "-";
 
   if(!s->names_chan_)
-    oyProfile_GetChannelNames ( s );
+    oyProfile_GetChannelNames ( (oyProfile_s*)s );
 
   if(s->names_chan_ && s->names_chan_[pos])
     text = oyObject_GetName( s->names_chan_[pos], type );
