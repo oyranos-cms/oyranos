@@ -938,7 +938,7 @@ oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
   return tag;
 }
 
-/** Function oyProfile_GetTagCount
+/** Function  oyProfile_GetTagCount
  *  @memberof oyProfile_s
  *
  *  @version Oyranos: 0.1.10
@@ -948,7 +948,7 @@ oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
 int                oyProfile_GetTagCount( oyProfile_s    * profile )
 {
   int n = 0;
-  oyProfile_s *s = profile;
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
   int error = !s;
 
   if(!s)
