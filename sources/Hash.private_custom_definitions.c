@@ -21,6 +21,10 @@ void oyHash_Release__Members( oyHash_s_ * hash )
    * E.g: oyXXX_Release( &hash->member );
    */
 
+  /* should not happen */
+  if(hash->entry && hash->entry->release)
+    hash->entry->release( &hash->entry );
+
   if(hash->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = hash->oy_->deallocateFunc_;
