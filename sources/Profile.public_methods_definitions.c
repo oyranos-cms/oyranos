@@ -206,8 +206,9 @@ OYAPI oyProfile_s * OYEXPORT
   return s;
 }
 
-/** @brief   number of channels in a colour space
+/** Function  oyProfile_GetChannelsCount
  *  @memberof oyProfile_s
+ *  @brief    Number of channels in a colour space
  *
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
@@ -215,19 +216,19 @@ OYAPI oyProfile_s * OYEXPORT
 int
 oyProfile_GetChannelsCount( oyProfile_s * profile )
 {
-  oyProfile_s * s = profile;
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
 
   if(!s)
     return 0;
 
   oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
 
-  if(profile->channels_n_)
-    return profile->channels_n_;
+  if(s->channels_n_)
+    return s->channels_n_;
 
-  profile->channels_n_ = oyICCColourSpaceGetChannelCount( profile->sig_ );
+  s->channels_n_ = oyICCColourSpaceGetChannelCount( s->sig_ );
 
-  return profile->channels_n_;
+  return s->channels_n_;
 }
 
 /** @brief   get ICC colour space signature
