@@ -664,8 +664,9 @@ OYAPI int OYEXPORT
   return equal;
 }
 
-/** @brief   get a presentable name
+/** Function  oyProfile_GetText
  *  @memberof oyProfile_s
+ *  @brief    Get a presentable name
  *
  *  The type argument should select the following string in return: \n
  *  - oyNAME_NAME - a readable XML element
@@ -677,14 +678,15 @@ OYAPI int OYEXPORT
  *  @date    2008/06/23
  */
 OYAPI const oyChar* OYEXPORT
-                   oyProfile_GetText ( oyProfile_s       * s,
+                   oyProfile_GetText ( oyProfile_s       * profile,
                                        oyNAME_e            type )
 {
-  int error = !s;
   const char * text = 0;
   char ** texts = 0;
   int32_t texts_n = 0;
   oyProfileTag_s * tag = 0;
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
+  int error = !s;
 
   if(!s)
     return 0;
@@ -692,7 +694,7 @@ OYAPI const oyChar* OYEXPORT
   oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
 
   if(error <= 0 && type == oyNAME_NICK)
-    text = oyProfile_GetID( s );
+    text = oyProfile_GetID( (oyProfile_s*)s );
 
   if(error <= 0 && !text)
     if(type <= oyNAME_DESCRIPTION)
@@ -711,7 +713,7 @@ OYAPI const oyChar* OYEXPORT
        type == oyNAME_DESCRIPTION)
     {
       {
-        tag = oyProfile_GetTagById( s, icSigProfileDescriptionTag );
+        tag = oyProfile_GetTagById( (oyProfile_s*)s, icSigProfileDescriptionTag );
         texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
 
         if(texts_n && texts[0] && texts[0][0])
@@ -765,7 +767,7 @@ OYAPI const oyChar* OYEXPORT
 
     if(!found)
     {
-      text = oyProfile_GetID( s );
+      text = oyProfile_GetID( (oyProfile_s*)s );
       if(text[0])
         found = 1;
     }
