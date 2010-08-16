@@ -799,9 +799,9 @@ OYAPI const oyChar* OYEXPORT
   return text;
 }
 
-/** Function oyProfile_GetMem
+/** Function  oyProfile_GetMem
  *  @memberof oyProfile_s
- *  @brief   get the ICC profile in memory
+ *  @brief    Get the ICC profile in memory
  *
  *  The prefered memory comes from the unmodified original memory.
  *  Otherwise a previously modified tag list is serialised into memory.
@@ -817,7 +817,7 @@ OYAPI oyPointer OYEXPORT
                                        oyAlloc_f           allocateFunc )
 {
   oyPointer block = 0;
-  oyProfile_s * s = profile;
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
   int error = !s;
 
   if(!s)
@@ -843,7 +843,7 @@ OYAPI oyPointer OYEXPORT
     } else
     if( oyStructList_Count( s->tags_ ))
     {
-      block = oyProfile_TagsToMem_ ( profile, size, allocateFunc );
+      block = oyProfile_TagsToMem_ ( s, size, allocateFunc );
     }
   }
 
