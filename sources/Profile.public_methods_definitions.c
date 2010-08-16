@@ -1,5 +1,6 @@
-/** @brief   create from default colour space settings
+/** Function  oyProfile_FromStd
  *  @memberof oyProfile_s
+ *  @brief    Create from default colour space settings
  *
  *  @param[in]    type           default colour space
  *  @param[in]    object         the optional base
@@ -7,11 +8,11 @@
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
  */
-oyProfile_s *
+OYAPI oyProfile_s * OYEXPORT
 oyProfile_FromStd     ( oyPROFILE_e       type,
                         oyObject_s        object)
 {
-  oyProfile_s * s = 0;
+  oyProfile_s_ * s = 0;
   char * name = 0;
   oyAlloc_f allocateFunc = 0;
   int pos = type - oyDEFAULT_PROFILE_START;
@@ -40,11 +41,11 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
     s->use_default_ = type;
 
   if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
-    oy_profile_s_std_cache_[pos] = oyProfile_Copy( s, 0 );
+    oy_profile_s_std_cache_[pos] = oyProfile_Copy( (oyProfile_s*)s, 0 );
 
-  oyProfile_GetID( s );
+  oyProfile_GetID( (oyProfile_s*)s );
 
-  return s;
+  return (oyProfile_s*)s;
 }
 
 /** @brief   create from file
