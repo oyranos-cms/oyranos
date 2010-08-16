@@ -150,31 +150,6 @@ OYAPI oyProfile_s * OYEXPORT
   return (oyProfile_s*)s;
 }
 
-/** @brief   create a fractional profile from signature
- *  @memberof oyProfile_s
- *
- *  @param[in]    sig            signature
- *  @param[in]    type           type of signature to set
- *  @param[in]    object         the optional base
- *
- *  @version Oyranos: 0.1.8
- *  @date    2008/06/20
- *  @since   2007/06/20 (Oyranos: 0.1.8)
- */
-OYAPI oyProfile_s * OYEXPORT
-             oyProfile_FromSignature(  icSignature         sig,
-                                       oySIGNATURE_TYPE_e  type,
-                                       oyObject_s          object )
-{
-  oyProfile_s * s = oyProfile_New_( object );
-  int error = !s;
-
-  if(error <= 0)
-    error = oyProfile_SetSignature( s, sig, type );
-
-  return s;
-}
-
 /** @brief   look up a profile from it's md5 hash sum
  *  @memberof oyProfile_s
  *
