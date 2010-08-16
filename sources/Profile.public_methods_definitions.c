@@ -979,9 +979,9 @@ int                oyProfile_GetTagCount( oyProfile_s    * profile )
   return n;
 }
 
-/** Function oyProfile_TagMoveIn
+/** Function  oyProfile_TagMoveIn
  *  @memberof oyProfile_s
- *  @brief   add a tag to a profile
+ *  @brief    Add a tag to a profile
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/02/01 (Oyranos: 0.1.8)
@@ -991,7 +991,7 @@ int                oyProfile_TagMoveIn(oyProfile_s       * profile,
                                        oyProfileTag_s   ** obj,
                                        int                 pos )
 {
-  oyProfile_s * s = profile;
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
   int error = !s, i,n;
   oyProfileTag_s * tag = 0;
 
@@ -1016,7 +1016,7 @@ int                oyProfile_TagMoveIn(oyProfile_s       * profile,
     for( i = 0; i < n; ++i )
     {
       tag = oyProfile_GetTagByPos_( s, i );
-      if(tag->use == (*obj)->use)
+      if(oyProfileTagPriv_m(tag)->use == oyProfileTagPriv((*obj))->use)
       {
         oyProfile_TagReleaseAt_(s, i);
         n = oyProfile_GetTagCount_( s );
