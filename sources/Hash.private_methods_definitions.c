@@ -22,17 +22,18 @@ oyHash_s_ *   oyHash_CopyRef_         ( oyHash_s_         * entry,
   return s;
 }
 
-/** @internal
+/** Function  oyHash_Get_
  *  @memberof oyHash_s
- *  @brief   get a new Oyranos cache entry
+ *  @brief    Get a new Oyranos cache entry
+ *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  24 november 2007 (API 0.1.8)
  */
-oyHash_s *         oyHash_Get_       ( const char        * hash_text,
-                                       oyObject_s          object )
+oyHash_s_ *         oyHash_Get_       ( const char        * hash_text,
+                                        oyObject_s          object )
 {
-  oyHash_s * s = 0;
+  oyHash_s_ * s = 0;
   int error = !hash_text;
   uint32_t * val = 0;
 
