@@ -1132,9 +1132,9 @@ int                oyProfile_AddTagText ( oyProfile_s       * profile,
   return error;
 }
 
-/** Function oyProfile_GetFileName
+/** Function  oyProfile_GetFileName
  *  @memberof oyProfile_s
- *  @brief   get the ICC profile location in the filesystem
+ *  @brief    Get the ICC profile location in the filesystem
  *
  *  This function tries to find a profile on disk matching a possibly memory
  *  only profile. In case the profile was previously opened from file or as a
@@ -1148,12 +1148,12 @@ int                oyProfile_AddTagText ( oyProfile_s       * profile,
  *  @since   2008/02/01 (Oyranos: 0.1.8)
  *  @date    2008/02/01
  */
-const char *       oyProfile_GetFileName (
-                                       oyProfile_s       * profile,
-                                       int                 dl_pos )
+const char *       oyProfile_GetFileName ( oyProfile_s       * profile,
+                                           int                 dl_pos )
 {
   const char * name = 0;
-  oyProfile_s * s = profile, * tmp = 0;
+  oyProfile_s * tmp = 0;
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
   int error = !s;
   char ** names = 0;
   uint32_t count = 0, i = 0;
@@ -1174,7 +1174,7 @@ const char *       oyProfile_GetFileName (
   {
     if(dl_pos >= 0)
     {
-      psid = oyProfile_GetTagById( s, icSigProfileSequenceIdentifierTag );
+      psid = oyProfile_GetTagById( (oyProfile_s*)s, icSigProfileSequenceIdentifierTag );
       texts = oyProfileTag_GetText( psid, &texts_n, 0,0,0,0);
 
       if(texts && texts_n > 1+dl_pos*5+2)
@@ -1214,7 +1214,7 @@ const char *       oyProfile_GetFileName (
                 break;
               }
             } else
-            if(oyProfile_Equal( s, tmp ))
+            if(oyProfile_Equal( (oyProfile_s*)s, tmp ))
             {
               name = names[i];
               break;
