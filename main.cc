@@ -35,8 +35,8 @@ void getTemplateParents( const QString& tmplPath, QVariantList& parentList )
 
   if (extends.indexIn( text ) != -1) {
     QString tmplParentName = extends.cap(1);
-    templates << tmplParentName;
-    getParents( tmplParentPath, parentList );
+    parentList << tmplParentName;
+    getTemplateParents( tmplParentPath, parentList );
   else
     return;
 }
@@ -77,6 +77,8 @@ const QStringList templateSuffixes(
     "*.template.txt"
 );
 
+QDir templateDir, sourceDir, outputDir;
+
 int main(int argc, char *argv[])
 {
   if (QString(argv[1]) == "-h" ||
@@ -84,9 +86,10 @@ int main(int argc, char *argv[])
     cout << "Usage: " << argv[0] << " [template dir]" << " [sources dir]" << " [output dir]" << endl;
     return 0;
   }
-  QDir templateDir( argc > 1 ? argv[1] : TEMPALTE_DIR );
-  QDir sourceDir  ( argc > 2 ? argv[2] : SOURCE_DIR   );
-  QDir outputDir  ( argc > 3 ? argv[3] : API_DIR      );
+  templateDir.setPath( argc > 1 ? argv[1] : TEMPALTE_DIR );
+  sourceDir.setPath  ( argc > 2 ? argv[2] : SOURCE_DIR   );
+  outputDir.setPath  ( argc > 3 ? argv[3] : API_DIR      );
+
   if (!templateDir.exists()) {
     qCritical() << "Directory" << templateDir.path() << "does not exist";
     return 1;
