@@ -8,6 +8,7 @@
  *  can be used in a oyStructList_s for a hash map or searchable cache.
  *  @see oyCacheListNew_ oyHashGet_
  *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
+ *  @note New templates will not be created automaticly [notemplates]
  *
  *  @since Oyranos: version 0.1.8
  *  @date  24 november 2007 (API 0.1.8)
