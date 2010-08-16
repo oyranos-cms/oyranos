@@ -78,8 +78,9 @@ int                oyHash_IsOf_      ( oyHash_s_         * hash,
   return (hash && hash->entry && hash->entry->type_ == type);
 }
 
-/** @internal
+/** Function  oyHash_SetPointer_
  *  @memberof oyHash_s
+ *  @internal
  *
  *  @param[in,out] hash                the to be set hash
  *  @param[in,out] obj                 the to be referenced object
@@ -89,7 +90,7 @@ int                oyHash_IsOf_      ( oyHash_s_         * hash,
  *  @since   2007/12/03 (Oyranos: 0.1.8)
  *  @date    2009/11/05
  */
-int                oyHash_SetPointer_( oyHash_s          * hash,
+int                oyHash_SetPointer_( oyHash_s_         * hash,
                                        oyStruct_s        * obj )
 {
   if(hash)
