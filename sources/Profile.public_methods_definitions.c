@@ -82,8 +82,9 @@ oyProfile_FromFile            ( const char      * name,
   return (oyProfile_s*)s;
 }
 
-/** @brief   create from in memory blob
+/** Function  oyProfile_FromMem
  *  @memberof oyProfile_s
+ *  @brief    Create from in memory blob
  *
  *  @param[in]    size           buffer size
  *  @param[in]    block          pointer to memory containing a profile
@@ -99,7 +100,7 @@ oyProfile_FromMem             ( size_t            size,
                                 uint32_t          flags,
                                 oyObject_s        object)
 {
-  oyProfile_s * s = 0;
+  oyProfile_s_ * s = 0;
   int error = 0;
   oyPointer block_ = 0;
   size_t size_ = 0;
@@ -118,9 +119,9 @@ oyProfile_FromMem             ( size_t            size,
 
   s = oyProfile_FromMemMove_( size_, &block_, flags, object );
 
-  oyProfile_GetID( s );
+  oyProfile_GetID( (oyProfile_s*)s );
 
-  return s;
+  return (oyProfile_s*)s;
 }
 
 /** @brief   create a fractional profile from signature
