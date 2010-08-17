@@ -82,6 +82,7 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   pid_t pid = 0;
   FILE * fp = 0;
   const char * id_text = 0;
+  char * id_text_tmp = 0;
 
   if(code == oyMSG_DBG && !oy_debug)
     return 0;
@@ -98,6 +99,9 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
     }
     if(context->type_ == oyOBJECT_PROFILE_S)
       id_text = oyProfile_GetText( (oyProfile_s*)context, oyNAME_DESCRIPTION );
+    if(id_text)
+      id_text_tmp = strdup(id_text);
+    id_text = id_text_tmp;
   }
 
   text = calloc( sizeof(char), sz );
@@ -174,6 +178,8 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   }
 
   free( text );
+  if(id_text_tmp) free(id_text_tmp);
+
   return 0;
 }
 
