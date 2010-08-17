@@ -803,11 +803,38 @@ if [ -n "$ECHO" ]; then
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
 
+export CFLAGS CXXFLAGS LDFLAGS
+
 test -n "$ECHO" && $ECHO "#!/bin/sh" > $CONF_SH
 test -n "$ECHO" && $ECHO "# generated auomatically by configure" >> $CONF_SH
 test -n "$ECHO" && $ECHO "" >> $CONF_SH
 
 test -n "$INFOECHO" && $INFOECHO ""
+
+# build sub project
+pkg-config  --atleast-version=0.7 elektra 2>/dev/null
+if [ $? != 0 ] && [ 0 -eq $rpm ]; then
+  ELEKTRA_VERSION="elektra-0.7.1"
+  test -n "$ECHO" && $ECHO "#define HAVE_ELEKTRA 1" >> $CONF_H
+  test -n "$ECHO" && $ECHO "ELEKTRA = 1" >> $CONF
+  test -n "$ECHO" && $ECHO "ELEKTRA_H = -I$ELEKTRA_VERSION/src/include -I$ROOT_DIR/$ELEKTRA_VERSION/src/include" >> $CONF
+  test -n "$ECHO" && $ECHO "ELEKTRA_LIBS = \$(ELEKTRA_OBJ)" >> $CONF
+  test -n "$ECHO" && $ECHO "ELEKTRA_VERSION = $ELEKTRA_VERSION" >> $CONF
+  test -n "$ECHO" && $ECHO "Elektra internal        $ELEKTRA_VERSION"
+  if [ -n $ECHO ]; then
+    dir="$PWD"
+    test -d $ELEKTRA_VERSION || mkdir $ELEKTRA_VERSION
+    cd $ELEKTRA_VERSION
+    sh -c "$ROOT_DIR/$ELEKTRA_VERSION/configure --enable-static $nodeps_config_opt --prefix=$prefix"
+    cd "$dir"
+  fi
+  test -n "$ECHO" && $ECHO "ltdl=-lltdl" >> $PKGC
+  test -n "$ECHO" && $ECHO ""
+  test -n "$ECHO" && $ECHO "... $ELEKTRA_VERSION configured"
+else
+  test -n "$ECHO" && $ECHO "ltdl=" >> $PKGC
+fi
+
 
 # tell about required libs
 new_libs=$LIBS_TEST_1
@@ -833,7 +860,9 @@ if [ -n "$ECHO" ]; then
   DSO_LINKING=1; export DSO_LINKING
   test "1" = "$openmp" && OPENMP_LINKING=1; export OPENMP_LINKING
   CUPS=2; export CUPS
-  ELEKTRA=1; export ELEKTRA
+  if [ -z "$ELEKTRA_VERSION" ]; then
+  ELEKTRA=2; export ELEKTRA
+  fi
   #OYRANOS=1; export OYRANOS
   LCMS=1; export LCMS
   LCMS2=2; export LCMS2
@@ -952,6 +981,9 @@ test -n "$ECHO" && $ECHO "targetdirname=$targetdirname" >> $CONF_SH
 test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "oyranos_add=\"$oyranos_add\"" >> $CONF_SH
+if [ -z "$ELEKTRA_VERSION" ]; then
+  test -n "$ECHO" && $ECHO "elektra_dyn=\"`pkg-config --libs elektra`\"" >> $CONF_SH
+fi
 test -n "$INFOECHO" && $INFOECHO ""
 test -n "$ECHO" && cat  "$ROOT_DIR/$CONF_SH.in" >> $CONF_SH
 chmod 0755 "$CONF_SH"
@@ -994,6 +1026,12 @@ test -n "$RPMECHO" && $RPMECHO "%define settingsdirname $settingsdirname" >> $SP
 test -n "$RPMECHO" && $RPMECHO "%define targetdirname   $targetdirname" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define pixmapdir       $pixmapdir" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define desktopdir      $desktopdir" >> $SPEC
+if [ -z "$ELEKTRA_VERSION" ]; then
+test -n "$RPMECHO" && $RPMECHO "" >> $SPEC
+test -n "$RPMECHO" && $RPMECHO "Requires: elektra 0.7" >> $SPEC
+test -n "$RPMECHO" && $RPMECHO "BuildRequires: elektra-devel" >> $SPEC
+test -n "$RPMECHO" && $RPMECHO "" >> $SPEC
+fi
 test -n "$RPMECHO" && cat  "$SPEC" >> $SPECICC
 test -n "$RPMECHO" && cat  $ROOT_DIR/"$SPECICC.in" >> $SPECICC
 test -n "$RPMECHO" && cat  $ROOT_DIR/"$SPEC.in" >> $SPEC

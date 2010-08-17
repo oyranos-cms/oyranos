@@ -67,12 +67,18 @@ LIB_XNVCTRL = $(LIB_XNVCTRL_STATIC)
 LIB_XNVCTRL_NAME = $(LIB_XNVCTRL_NAME_STATIC)
 #endif
 LIBFL_I18N = fl_i18n/libfl_i18n.a
+#ifdef ELEKTRA_VERSION
+LIBLTDL=$(ltdl)
+ELEKTRA_OBJ = \
+	$(ELEKTRA_VERSION)/src/libelektra/libelektra.a
+#endif
 
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(SRCDIR) \
-	$(LCMS_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) $(LIBXML2_H)
+	$(LCMS_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) $(LIBXML2_H) $(XCM_H)
 
 LDLIBS = $(LDFLAGS) -L$(libdir) -L. \
-	$(ELEKTRA_LIBS) $(LIBXML2_LIBS) -lc $(I18N_LIB)
+	$(ELEKTRA_LIBS) $(LIBXML2_LIBS) -lc $(I18N_LIB) $(LIBLTDL)
+
 
 MODULE_LDLIBS =	-l$(TARGET) $(lc) 
 
@@ -369,7 +375,7 @@ SUB_OBJECTS = \
 INCL_DEP = $(SOURCES) $(CXXFILES_Flmm) \
 	test.c test2.cpp tests/test_oyranos.c
 
-.PHONY:	check_environment docu examples oforms
+.PHONY:	check_environment docu examples oforms $(ELEKTRA_VERSION)
 
 TEST  = test
 TEST2 = test2
@@ -432,7 +438,7 @@ time:
 	echo $(MTIME)
 
 # build all objects and libraries, link the headers to $(TARGET)
-$(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME) $(DEVEL_LIBS)
+$(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME) $(DEVEL_LIBS) $(ELEKTRA_VERSION)
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_libdir)$(LIBSONAME) \
 	-o $(LIBSONAMEFULL) \
@@ -588,6 +594,11 @@ $(LIBNAME):	$(OBJECTS)
 		$(OBJECTS)
 	$(RANLIB) $(LIBNAME)
 
+$(ELEKTRA_VERSION):
+	echo building DB ...
+	cd $(ELEKTRA_VERSION); \
+	test -f Makefile && make || (./configure --enable-static $(nodeps_config_opt) --prefix=$(prefix); make)
+
 # the monitor profile tool
 $(TARGET)-monitor:	$(LIBSONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
@@ -606,9 +617,13 @@ test2:	test2.o $(LIBSONAMEFULL)
 	echo Linking dynamic $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2_dyn \
 	test2.o -L./ `./oyranos-config --ldflags`
+#ifdef ELEKTRA_VERSION
+	$(COPY) test2_dyn test2
+#else
 	echo Linking static $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2 \
 	test2.o -L./ `./oyranos-config --ldstaticflags` $(dl)
+#endif
 
 $(SRCDIR)/test2.c.c:
 	test -f $(SRCDIR)/test2.c.c || ln -s $(SRCDIR)/test2.cpp $(SRCDIR)/test2.c.c
@@ -1178,6 +1193,19 @@ copy_files:
 	  test -f $(SRCDIR)/po/$${ling}.po \
 	  && $(COPY) $(SRCDIR)/po/$${ling}.po $(DESTDIR)/po/; \
 	done;
+	if [ -n "$(ELEKTRA_VERSION)" ] && \
+	   [ -d "$(SRCDIR)/$(ELEKTRA_VERSION)" ] && \
+	   [ -d $(build_dir)/$(ELEKTRA_VERSION) ]; then \
+          cd $(build_dir)/$(ELEKTRA_VERSION); \
+	  make dist-gzip; \
+	  cd $(DESTDIR); \
+	  test -f $(build_dir)/$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz && \
+	    tar xzf $(build_dir)/$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz; \
+	else \
+	  test -d $(SRCDIR)/elektra-0.7.1/ && ( \
+	    cp -avr $(SRCDIR)/elektra-0.7.1/ $(DESTDIR) ) || \
+	    echo "no elektra"; \
+	fi
 	echo ... $@ done
 
 help:

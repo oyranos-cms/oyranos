@@ -74,7 +74,7 @@ if [ "$echo_help" = "yes" ]; then
   echo "  $0 --settingsdirname   Oyranos settings directory name"
 fi
 
-  elektra_dyn="`pkg-config --libs elektra`"
+  #elektra_dyn="`pkg-config --libs elektra`"
   if [ -f $libdir/libelektra.a ]; then
     elektra="$libdir/libelektra.a"
     if [ -f $libdir/libelektra-filesys.a ]; then
