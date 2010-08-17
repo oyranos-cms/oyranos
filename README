@@ -1,5 +1,6 @@
 1. Install Grantlee from http://www.gitorious.org/grantlee/pages/Home
-   Use the 0.1 branch as with instructions above.
-2. $ cmake .
+   Use the 0.1 branch as with instructions above from git.
+   Or, alternatively use latest 0.1.x tarball.
+2. $ cmake -DGrantlee_DIR="/grantlee/install/dir" .
 3. $ make
 4. $ ./extract_sources.sh
