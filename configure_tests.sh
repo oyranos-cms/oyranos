@@ -532,7 +532,7 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
       if [ -n "$MAKEFILE_DIR" ]; then
         for i in $MAKEFILE_DIR; do
           test -f "$ROOT_DIR/$i/makefile".in && echo "XCM = 1" >> "$i/makefile"
-          test -f "$ROOT_DIR/$i/makefile".in && echo "XCM_INC = $found" >> "$i/makefile"
+          test -f "$ROOT_DIR/$i/makefile".in && echo "XCM_H = $found" >> "$i/makefile"
         done
       fi
     elif [ $OSUNAME = "Linux" ]; then
@@ -1055,6 +1055,7 @@ if [ -n "$DEBUG" ] && [ $DEBUG -gt 0 ]; then
       fi
       if [ "$verbose" -eq "0" ]; then
         test -f "$ROOT_DIR/$i/makefile".in && echo ".SILENT:"  >> "$i/makefile"
+        test -f "$ROOT_DIR/$i/makefile".in && echo ""  >> "$i/makefile"
       fi
     done
   fi
