@@ -1,5 +1,5 @@
-{% load gsoc_extensions %}
 {% include "source_file_header.txt" %}
+{% load gsoc_extensions %}
 
 {% block GlobalIncludeFiles %}{% endblock %}  
 #include "{{ class.name }}.h"

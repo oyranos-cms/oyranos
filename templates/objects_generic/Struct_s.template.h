@@ -1,5 +1,5 @@
-{% load gsoc_extensions %}
 {% include "source_file_header.txt" %}
+{% load gsoc_extensions %}
 
 #ifndef {{ file_name|underscores|upper|tr:". _" }}
 #define {{ file_name|underscores|upper|tr:". _" }}
