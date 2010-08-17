@@ -1290,7 +1290,6 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
              mluc_len += len + (len%4 ? len%4 : 0);
            }
          }
-         printf("%s:%d mluc_len: %d\n",__FILE__,__LINE__, mluc_len);
 
          if(!error)
            oyStruct_AllocHelper_m_( mem, char, mluc_len, s, error = 1 );
