@@ -17,8 +17,10 @@ LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)$(LIBEXT)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)$(LIBEXT)
 LIBSO = lib$(TARGET)$(SO)$(LIBEXT)
 LIBNAME = lib$(TARGET).a
+#ifdef FLTK
 LIB_FORMS_FLTK = oyforms_fltk
 LIB_FORMS_FLTK_NAME = lib$(LIB_FORMS_FLTK).a
+#endif
 LIB_CMM_START = lib$(TARGET)
 LIB_CMM_END = $(OY_MODULE_NAME)$(SO).$(VERSION)$(LIBEXT)
 
@@ -180,8 +182,10 @@ CFILES_GAMMA = \
 
 CFILES_POLICY = \
 	$(TARGET)_policy.c
+#ifdef FLTK
 CXXFILES_FLTK = \
 	$(TARGET)_config_fltk.cxx
+#endif
 
 CFILES_OFORMS = \
 	oforms/$(TARGET)_forms_cmd_line.c \
@@ -190,12 +194,14 @@ CFILES_OFORMS_CLI = \
 	oforms/$(TARGET)_xforms.c
 CHEADERS_OFORMS = \
 	oforms/$(TARGET)_forms.h
+#ifdef FLTK
 HEADERS_OFORMS_FLTK = \
 	oforms/$(TARGET)_widgets_fltk.h
 CXXFILES_OFORMS_FLTK = \
 	oforms/$(TARGET)_forms_fltk.cxx \
 	oforms/$(TARGET)_widgets_fltk.cxx \
 	oforms/$(TARGET)_xforms_fltk.cxx
+#endif
 OFORMS_FILES = \
 	oforms/oyranos_xforms.makefile
 
@@ -273,6 +279,7 @@ POT_SCRIPT = oyranos_xml_to_po.sh
 
 SCRIPTS = $(POT_SCRIPT)
 
+#ifdef FLTK
 FLTK_GUI = $(TARGET)-config-fltk
 
 FLTK_FILES = \
@@ -289,6 +296,7 @@ Flmm_FILES = \
 	FL/COPYING \
 	FL/CREDITS \
 	FL/README
+#endif
 
 TOP_SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \

@@ -106,6 +106,7 @@ openmp=1
 rpm=0
 static=1
 verbose=1
+fltk=1
 X11=0
 X_ADD_2="X11 Xext Xinerama Xxf86vm Xrandr"
 LIBS_TEST="ltdl dl iconv intl m xml2 Xcm Xfixes cups sane XNVCtrl"
@@ -199,6 +200,10 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       desktopdir="`echo $1 | sed s/--$switch=//`"
     fi
+    switch=disable-fltk
+    if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
+      fltk=0
+    fi
     switch=with-fltk-config
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       fltkconfig="`echo $1 | sed s/--$switch=//`"
@@ -280,6 +285,7 @@ test -n "$INFOECHO" && $INFOECHO "   --targetdirname=[target]             Oyrano
 test -n "$INFOECHO" && $INFOECHO "   --pixmapdir=[\$datadir/pixmaps]       icon installation path"
 test -n "$INFOECHO" && $INFOECHO "   --desktopdir=[\$datadir/applications] xdg installation path"
 test -n "$INFOECHO" && $INFOECHO ""
+test -n "$INFOECHO" && $INFOECHO "   --disable-fltk                       skip FLTK parts"
 test -n "$INFOECHO" && $INFOECHO "   --with-fltk-config=[fltk-config]     alternative fltk version"
 test -n "$INFOECHO" && $INFOECHO "   --with-x                             use X11 on Darwin"
 test -n "$INFOECHO" && $INFOECHO "   --with-rpath                         use rpath for ELF linking"
@@ -626,7 +632,7 @@ if [ -z "$desktopdir" ]; then
 fi
 export prefix exec_prefix bindir sbindir libdir includedir datadir mandir
 export syscolordir usercolordir pixmapdir desktopdir
-export debug static verbose fltkconfig
+export debug static verbose fltkconfig fltk
 
 PATH=$bindir:$PATH
 export PATH
@@ -873,7 +879,11 @@ if [ -n "$ECHO" ]; then
   LIBOPENEXR=2; export LIBOPENEXR
   SANE=2; export SANE
   #FTGL=1; export FTGL
+if [ $fltk = 1 ]; then
   FLTK=2; export FLTK
+else
+  FLTK=0; export FLTK
+fi
   CAIRO=1; export CAIRO
 if [ $OSUNAME != "Darwin" ] ; then
   X11=1; 
