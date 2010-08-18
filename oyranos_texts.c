@@ -1520,8 +1520,8 @@ char * oyPathContructAndTest_(char * path_, const char * subdir)
  *  @param[in]     data        oyYES/oyNO/oyALL data or config text
  *  @param[in]     owner       oyUSER/oySYS/oyUSER_SYS
  *
- *  @version Oyranos: 0.1.10
- *  @date    2010/06/28
+ *  @version Oyranos: 0.1.11
+ *  @date    2010/08/18
  *  @since   2007/11/00 (Oyranos: 0.1.x)
  */
 char**
@@ -1537,7 +1537,7 @@ oyDataPathsGet_       (int             * count,
 
   /* the OpenICC agreed upon *nix default paths */
   {
-    int xdg_n = 0, oy_n = 0, tmp_n = 0, i;
+    int xdg_n = 0, oy_n = 0, tmp_n = 0, i,j,has;
     char ** oy_paths = 0;
     char ** xdg_paths = 0;
     char ** tmp_paths = 0;
@@ -1581,9 +1581,24 @@ oyDataPathsGet_       (int             * count,
     text = oyPathContructAndTest_( OY_DATADIR, subdir );
     if(text) oy_paths[oy_n++] = text;
 
-    paths = oyStringListAppend_((const char**)oy_paths, oy_n,
-                                (const char**)xdg_paths, xdg_n,
+    paths = oyStringListAppend_(0,0, (const char**)oy_paths, oy_n,
                                 &ndp, allocateFunc);
+    for(i = 0; i < xdg_n; ++i)
+    {
+      has = 0;
+      text = xdg_paths[i];
+
+      for(j = 0; j < oy_n; ++j)
+        if(text && oyStrcmp_( text, oy_paths[j] ) == 0)
+        {
+          has = 1;
+          break;
+        }
+
+      if(!has)
+        oyStringListAddStaticString_( &paths, &ndp, text,
+                                      oyAllocateFunc_, oyDeAllocateFunc_ );
+    }
 
     oyStringListRelease_(&oy_paths, oy_n, oyDeAllocateFunc_);
     oyStringListRelease_(&xdg_paths, xdg_n, oyDeAllocateFunc_);
