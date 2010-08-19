@@ -352,23 +352,6 @@ Option::Option( int x, int y, int w, int h, const char *name,
     button->callback( showDefaultProfile_callback );
     button->tooltip(_("Show in external Viewer"));
 
-    // Set choice
-    const char* default_p = NULL;
-      if(current >= 0)
-        default_p = choices[current];
-    if(default_p) {
-      DBG_PROG_S( (default_p) )
-    } else
-      default_p = "";
-
-    for (i = 0; i < choices_n; ++i)
-      choice->add( choices[i] );
-
-    /* show the default profile */
-    choice->value( choice->find_item( default_p ) );
-
-    DBG_PROG_V((choice->size()))
-
     // identify
     choice->user_data( (void*)(intptr_t)option );
   }
@@ -413,13 +396,6 @@ Option::Option( int x, int y, int w, int h, const char *name,
                             SELECT_WIDTH + BUTTON_HEIGHT + H_SPACING, h );
     choice->callback( selectBehaviourCallback );
     choice->tooltip( tooltip );
-
-    // Set choice
-    for (i = 0; i < choices_n; ++i)
-    {
-      choice->add( choices[i] );
-    }
-    choice->value( current );
 
     // identify
     choice->user_data( (void*)(intptr_t)option );
@@ -721,31 +697,8 @@ static void refreshOptions() {
             Fl_Choice * choice = dynamic_cast <Fl_Choice*>( wid );
             Fl_Box * box = dynamic_cast <Fl_Box*>( wid );
             Fl_Pack * pack = dynamic_cast <Fl_Pack*>( wid );
-            if(box || choice)
+            if(!box && !choice)
             {
-              if(choice)
-              {
-                int j;
-                choice->clear();
-                for(j = 0; j < count; ++j)
-                  choice->add( names[j] );
-                if(current >= 0)
-                {
-                  for(j = 0; j < choice->size() - 1; ++j)
-                    if(strcmp(choice->text(j),names[current]) == 0)
-                      choice->value( j );
-                } else {
-                  choice->value( -1 );
-                }
-              }
-              if(box)
-              {
-                if( current >= 0 )
-                  box->label( names[current] );
-                else
-                  box->label( "" );
-              }
-            } else {
               if(pack)
               {
                 op = dynamic_cast <Option*>( pack );
@@ -761,7 +714,8 @@ static void refreshOptions() {
                   const char *nn[2] = { "","" };
                   op = new Option( w->x(), by, w->w() - Fl::box_dw(w->box()),
                          2*bh, "",
-                         oywid, type, 1,nn,1,"", OY_LAYOUT_NO_CHOICES | flags );
+                         oyWIDGET_BEHAVIOUR_START,
+                         type, 1,nn,1,"", OY_LAYOUT_NO_CHOICES | flags );
                 }
 
                 op = new Option( w->x(), by, Fl_Group::current()->w()
@@ -769,6 +723,36 @@ static void refreshOptions() {
                          bh, name,
                          oywid, type, count, names, current, tooltip, flags );
               w->end();
+            }
+
+            // fill in the data
+            if(!pack)
+            {
+              wid = getWidget( top_tabs, oywid );
+              choice = dynamic_cast <Fl_Choice*>( wid );
+              box = dynamic_cast <Fl_Box*>( wid );
+              if(box || choice)
+              {
+                if(choice)
+                {
+                  int j;
+                  choice->clear();
+                  for(j = 0; j < count; ++j)
+                    choice->add( names[j] );
+
+                  if(current >= 0 && names[current])
+                    choice->value( choice->find_item( names[current] ) );
+                  else
+                    choice->value( -1 );
+                }
+                if(box)
+                {
+                  if( current >= 0 )
+                    box->label( names[current] );
+                  else
+                    box->label( "" );
+                }
+              }
             }
           }
         }
