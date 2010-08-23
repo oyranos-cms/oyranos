@@ -9296,7 +9296,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
  *  @param[out]    count               the number of matching options
  *  @param[in]     flags               for inbuild defaults 
  *                                     | oyOPTIONSOURCE_FILTER
- *  @param[in]     type                support are oyBOOLEAN_INTERSECTION and
+ *  @param[in]     type                supported are oyBOOLEAN_INTERSECTION and
  *                                     oyBOOLEAN_DIFFERENZ
  *  @param[in]     registration        a registration which shall be matched
  *  @param[in]     src_list            the options to select from

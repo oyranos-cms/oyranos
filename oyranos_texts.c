@@ -440,24 +440,6 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_RENDERING_BPC,
       "oyBEHAVIOUR_RENDERING_BPC", 1,0)
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_GAMUT_WARNING, 2,
-      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
-      _("Gamut Warning"),
-      _("Mark Out Of Gamut colours"),
-      2, /* choices */
-      _("No"),_("Yes"),NULL,NULL,
-      OY_DEFAULT_RENDERING_GAMUT_WARNING,
-      "oyBEHAVIOUR_RENDERING_GAMUT_WARNING", 1,0)
-
-    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_HIGH_PRECISSION, 2,
-      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
-      _("High Precission"),
-      _("Rendering with High Precission in opposite to fast processing"),
-      2, /* choices */
-      _("No"),_("Yes"),NULL,NULL,
-      OY_DEFAULT_RENDERING_HIGH_PRECISSION,
-      "oyBEHAVIOUR_RENDERING_HIGH_PRECISSION", 1,0)
-
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_INTENT_PROOF, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("Proofing Rendering Intent"),
@@ -484,6 +466,24 @@ oyOptionStringsTranslate_ ()
       _("No"),_("Yes"),NULL,NULL,
       OY_DEFAULT_PROOF_HARD,
       "oyBEHAVIOUR_PROOF_HARD", 0,0)
+
+    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_GAMUT_WARNING, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
+      _("Gamut Warning"),
+      _("Mark Out Of Gamut colours"),
+      2, /* choices */
+      _("No"),_("Yes"),NULL,NULL,
+      OY_DEFAULT_RENDERING_GAMUT_WARNING,
+      "oyBEHAVIOUR_RENDERING_GAMUT_WARNING", 1,0)
+
+    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_HIGH_PRECISSION, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
+      _("High Precission"),
+      _("Rendering with High Precission in opposite to fast processing"),
+      2, /* choices */
+      _("No"),_("Yes"),NULL,NULL,
+      OY_DEFAULT_RENDERING_HIGH_PRECISSION,
+      "oyBEHAVIOUR_RENDERING_HIGH_PRECISSION", 1,0)
 
 /*#   undef oySET_OPTIONS_M_*/
   }

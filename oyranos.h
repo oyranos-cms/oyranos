@@ -250,11 +250,11 @@ typedef enum  {
   oyWIDGET_MIXED_MOD_DOCUMENTS_SCREEN,/**< Convert befor save for Screen? */
   oyWIDGET_RENDERING_INTENT,          /**< Standard colour transformations */
   oyWIDGET_RENDERING_BPC,             /**< use BlackPointCompensation */
-  oyWIDGET_RENDERING_GAMUT_WARNING,   /**< mark out of gamut colours */
-  oyWIDGET_RENDERING_HIGH_PRECISSION, /**< higher then normal precission */
   oyWIDGET_RENDERING_INTENT_PROOF,    /**< Proofing colour transformations */
   oyWIDGET_PROOF_SOFT,                /**< Proofing by default for screen */
   oyWIDGET_PROOF_HARD,                /**< Proofing by default for printing */
+  oyWIDGET_RENDERING_GAMUT_WARNING,   /**< mark out of gamut colours */
+  oyWIDGET_RENDERING_HIGH_PRECISSION, /**< higher then normal precission */
   oyWIDGET_BEHAVIOUR_END,             /**< just for easen Gui design */
 
   oyWIDGET_DEFAULT_PROFILE_START = 100,
