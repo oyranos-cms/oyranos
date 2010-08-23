@@ -42,8 +42,12 @@ LIB_CMM_oyX1 = $(LIB_CMM_START)_oyX1$(LIB_CMM_END)
 LIB_CMM_CUPS = $(LIB_CMM_START)_CUPS$(LIB_CMM_END)
 #endif
 LIB_CMM_oydi = $(LIB_CMM_START)_oydi$(LIB_CMM_END)
+#ifdef LCMS
 LIB_CMM_lcms = $(LIB_CMM_START)_lcms$(LIB_CMM_END)
+#endif
+#ifdef LCMS2
 LIB_CMM_lcm2 = $(LIB_CMM_START)_lcm2$(LIB_CMM_END)
+#endif
 #ifdef LRAW_LIBS
 LIB_CMM_lraw = $(LIB_CMM_START)_lraw$(LIB_CMM_END)
 #endif
