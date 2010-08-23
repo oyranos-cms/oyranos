@@ -7,13 +7,12 @@
 
 TARGET1 = image_display/image_display
 TARGET2 = xcmsevents/xcmsevents
-TARGET3 = colour_desktop/libcolour_desktop.so
 TARGET4 = image2pdf/image2pdf
 TARGET5 = dummy_device/liboyranos_dDev_cmm_module.so
 TARGET6 = dummy_filter/liboyranos_dFil_cmm_module.so
 TARGET7 = oymd5icc/oymd5icc
 TARGET8 = xcmsevents/qcmsevents
-TARGETS = $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) \
+TARGETS = $(TARGET1) $(TARGET2) $(TARGET4) $(TARGET5) $(TARGET6) \
 	$(TARGET7) $(TARGET8) ../oyranos_logo.ppm
 OY_CFLAGS := $(shell (oyranos-config --cflags))
 OY_LDFLAGS := $(shell (oyranos-config --ldflags))
@@ -25,7 +24,6 @@ XCM_CFLAGS := $(shell (pkg-config --cflags xcm))
 XCM_LDFLAGS := $(shell (pkg-config --libs xcm))
 TARGET2_FLAGS = ../modules/devices/oyranos_monitor.o \
 		../modules/devices/oyranos_edid_parse.o $(XCM_CFLAGS)
-TARGET3_FLAGS := $(shell (pkg-config --cflags --libs compiz oyranos xcm))
 TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo lcms oyranos xcm))
 LDFLAGS = $(LIBS)
 DEBUG = -Wall -g -pedantic -O0
@@ -58,10 +56,6 @@ endif
 CAIRO := $(shell (pkg-config --modversion cairo-pdf))
 ifndef CAIRO
   TARGET4 =
-endif
-COMPIZ := $(shell (pkg-config --modversion compiz))
-ifndef COMPIZ
-  TARGET3 =
 endif
 ifeq ($(strip $(UNAME)),Linux)
 X11 = -DHAVE_X11
@@ -96,12 +90,6 @@ $(TARGET2):	$(SRCDIR)$(TARGET2).c
 	 $(XCM_LDFLAGS) -lXmu -lXinerama -lXrandr -lXxf86vm -lm \
 	-DTARGET=\"xcmsevents\" -o $@
 
-$(TARGET3):	$(SRCDIR)colour_desktop/colour_desktop.c
-	mkdir -p colour_desktop
-	echo Compiling $@ ...
-	-$(CC) $(CFLAGS) -std=c99 -fPIC -shared $< $(LDFLAGS) $(OY_LDFLAGS) \
-	$(TARGET3_FLAGS)  $(XCM_LDFLAGS) -o $@
-
 $(TARGET4):	$(SRCDIR)$(TARGET4).c
 	mkdir -p image2pdf
 	echo Compiling $@ ...
@@ -135,15 +123,6 @@ clean:
 	$(RM) $(TARGETS)
 	$(RM) $(TARGET8_OBJECTS) $(TARGET8_GENERATED_SOURCES)
 	echo ... clean done
-
-install:	$(TARGET3)
-	mkdir -p $(HOME)/.compiz/plugins
-	mkdir -p $(HOME)/.compiz/metadata
-	mkdir -p $(HOME)/.local/share/icons
-	-install -v $(TARGET3) $(HOME)/.compiz/plugins/libcolour_desktop.so
-	-install -v $(SRCDIR)colour_desktop/colour_desktop.xml $(HOME)/.compiz/metadata/
-	-install -v $(SRCDIR)colour_desktop/plugin-colour_desktop.svg $(HOME)/.local/share/icons/
-
 
 xcmsevents/qrc_qcmsevents.cpp:
 	echo "	RCC:	$@ ..."

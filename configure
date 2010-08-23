@@ -888,10 +888,9 @@ fi
 if [ $OSUNAME != "Darwin" ] ; then
   X11=1; 
   XCM=1
-  COMPIZ=1
   QT=1
 fi
-  export X11 XCM COMPIZ QT
+  export X11 XCM QT
   XINERAMA=2; export XINERAMA
   XRANDR=2; export XRANDR
   XF86VMODE=2; export XF86VMODE
@@ -937,7 +936,7 @@ fi
   #FTGL=0; export FTGL
   FLTK=0; export FLTK
   CAIRO=0; export CAIRO
-  X11=0; XCM=0; COMPIZ=0; QT=0; export X11 XCM COMPIZ QT
+  X11=0; XCM=0; QT=0; export X11 XCM QT
   XINERAMA=0; export XINERAMA
   XRANDR=0; export XRANDR
   XF86VMODE=0; export XF86VMODE
