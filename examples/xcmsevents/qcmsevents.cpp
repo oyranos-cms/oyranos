@@ -78,13 +78,13 @@ void QcmseDialog::log( const char * text, int code )
     if(pid == 0)
     {
       colour.setHsvF( 0.6, 0.4, 0.9 );
-      QIcon ic(":/plugin-colour_desktop_gray.svg");
+      QIcon ic(":/plugin-compicc_gray.svg");
       icon->setIcon( ic );
     } else
     if(pid > 0)
     {
       colour.setHsvF( 0.41, 0.5, 0.9 );
-      QIcon ic(":/colour_desktop/plugin-colour_desktop.svg");
+      QIcon ic(":/plugin-compicc.svg");
       icon->setIcon( ic );
     }
     item->setBackground( QBrush( colour ) );
@@ -115,13 +115,13 @@ void QcmseDialog::log( const char * text, int code )
     if(pid == 0)
     {
       colour.setHsvF( 0.6, 0.4, 0.9 );
-      QIcon ic(":/plugin-colour_desktop_gray.svg");
+      QIcon ic(":/plugin-compicc_gray.svg");
       icon->setIcon( ic );
     } else
     if(pid > 0)
     {
       colour.setHsvF( 0.41, 0.5, 0.9 );
-      QIcon ic(":/colour_desktop/plugin-colour_desktop.svg");
+      QIcon ic(":/plugin-compicc.svg");
       icon->setIcon( ic );
     }
   }
