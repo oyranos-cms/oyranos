@@ -233,7 +233,6 @@ CXXFILES =
 TEST_FILES = $(TEST_CPP) $(TEST_H)
 
 EXAMPLE_SOURCES = \
-	examples/colour_desktop/colour_desktop.c \
 	examples/dummy_device/oyranos_cmm_dDev.c \
 	examples/dummy_filter/oyranos_cmm_dFil.c \
 	examples/image2pdf/image2pdf.c \
@@ -249,9 +248,8 @@ EXAMPLE_FILES = \
 	$(EXAMPLE_SOURCES) \
 	examples/README \
 	examples/makefile \
-	examples/colour_desktop/colour_desktop.xml \
-	examples/colour_desktop/plugin-colour_desktop.svg \
-	examples/xcmsevents/plugin-colour_desktop_gray.svg \
+	examples/xcmsevents/plugin-compicc.svg \
+	examples/xcmsevents/plugin-compicc_gray.svg \
 	examples/xcmsevents/qcmsevents.qrc
 
 MAN1 = oyranos-config-fltk.1 oyranos-monitor.1 oyranos-policy.1
