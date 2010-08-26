@@ -90,6 +90,8 @@ char * printfNetColorDesktop ( xcmseContext_s * c, int verbose )
          * atom_capabilities_text = (char*)malloc(1024);
     struct tm * gmt;
 
+    atom_time_text[0]= atom_colour_server_name[0]= atom_capabilities_text[0]= 0;
+
     if(n && data && strlen((char*)data))
     {
       time_t time;
