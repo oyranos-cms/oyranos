@@ -182,13 +182,8 @@ ldconfig
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-policy
 %{_mandir}/man1/%{name}-policy*
-%{_datadir}/mime/packages/*.xml
 %{pixmapdir}/oyranos_logo.*
 %{pixmapdir}/lcms_logo2.png
-%{pixmapdir}/application-vnd.iccprofile.png
-%{pixmapdir}/text-vnd.cgats.png
-%dir %{syscolordir}/
-%dir %{syscolordir}/%{settingsdirname}/
 %{syscolordir}/%{settingsdirname}/*.policy.xml
 
 %files -n lib%{name}0

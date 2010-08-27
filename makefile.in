@@ -801,8 +801,10 @@ install_bin:	all uninstall_bin install_gui
 install:	uninstall install-main
 	echo ... $@ done
 
-install-main:	install_bin install_mime install_linguas install_docu
-
+install-main:	install_bin install_linguas install_docu
+	mkdir -p $(DESTDIR)$(pixmapdir)
+	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_logo.png $(DESTDIR)$(pixmapdir)/$(TARGET)_logo.png
+	$(INSTALL) -m 644 $(SRCDIR)/lcms_logo2.png $(DESTDIR)$(pixmapdir)/lcms_logo2.png
 
 # synonymes
 doc:		docu
