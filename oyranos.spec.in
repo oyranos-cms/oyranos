@@ -11,7 +11,7 @@ Vendor: Kai-Uwe Behrmann
 BuildRoot: %{_tmppath}/%{name}-root
 Prefix:    %{_prefix}
 
-Requires:       oyranos-icc-printing oyranos-icc-Cineon oyranos-icc-LStar-RGB oyranos-icc-lcmsLAB oyranos-icc-RGB oyranos-target-fogra oyranos-target-npes
+Requires:      icc-profiles-basiccolor-lstarrgb icc-profiles-lcms-lab icc-profiles-openicc-printing icc-profiles-openicc-rgb
 
 %if 0%{?suse_version} > 0
 BuildRequires:     gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg-devel xorg-x11-Mesa xorg-x11-Mesa-devel libtiff-devel libxml2-devel cairo-devel liblcms-devel xdg-utils cups-devel libqt4-devel compiz-devel libXcm-devel netpbm
@@ -52,6 +52,7 @@ Requires:  lib%{name}-devel
 %package      -n lib%{name}0-monitor
 Summary:    Oyranos Monitor dependent Libraries
 Group:      Development/Libraries/Other
+Requires:   icc-profiles-openicc-rgb
 
 %package      monitor
 Summary:    Oyranos Monitor Tools

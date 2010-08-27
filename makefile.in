@@ -262,9 +262,6 @@ DOKU =  AUTHORS \
         ChangeLog \
         COPYING \
         README
-MIME_TYPES = \
-	x-colour-cgats.xml \
-	x-colour-icc.xml
 DOC_TEMPLATES = \
 	Doxyfile \
 	Doxyfile_alpha \
@@ -398,14 +395,12 @@ CONFIG_FILES = \
 	$(SRCDIR)/makefile.in \
 	$(SRCDIR)/$(TARGET).pc.in \
 	$(SRCDIR)/$(TARGET).spec.in \
-	$(SRCDIR)/$(TARGET)-icc.spec.in \
 	$(SRCDIR)/$(TARGET)_control.in \
 	$(SRCDIR)/$(TARGET)-config.in
 
 ALL_FILES = \
 	$(DOKU) \
 	$(ICONS) \
-	$(MIME_TYPES) \
 	$(TOP_SOURCES) \
 	$(CHEADERS) \
 	$(SCRIPTS) \
@@ -422,13 +417,6 @@ all:	check_environment config.log.h mkdepend \
 	$(LIBS_CMM) \
 	$(TARGET)-policy $(FLTK_GUI) \
 	$(LINGUAS_SRC)
-	test -d default_profiles && \
-	( cd default_profiles; \
-	for prof in $(DEFAULT_PROFILES); do \
-	     test -d $${prof} && \
-	         echo "$${prof} profiles will be included" || \
-	         echo "$${prof} profile directory is not found - ignoring"; \
-	done; ) || echo "default_profiles directory is not found - ignoring"
 	echo ... $@ done
 
 check_environment:
@@ -644,7 +632,7 @@ test2c:	test2.c.o
 	$(CC) -I./ `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -o test2c \
 	test2.c.o -L./ `./oyranos-config --ldstaticflags`
 
-check:	all install_bin install-icc tests/test_oyranos $(TEST2) examples oforms
+check:	all install_bin tests/test_oyranos $(TEST2) examples oforms
 	echo current git version is:
 	n=0; for i in `cd $(SRCDIR); git rev-list master`; do if [ $${n} -eq 0 ]; then echo git id:$${i}; fi; n=1; done
 	echo run tests/test_oyranos
@@ -810,34 +798,11 @@ install_bin:	all uninstall_bin install_gui
 	echo ... binary Installation finished
 
 # install recursive
-install:	uninstall install-main install-icc
+install:	uninstall install-main
 	echo ... $@ done
 
 install-main:	install_bin install_mime install_linguas install_docu
 
-install-icc:	install_profiles
-
-install_mime:
-	echo installing mime types into $(DESTDIR)$(datadir)/mime/packages ...
-	mkdir -p $(DESTDIR)$(datadir)/mime/packages/
-	for mime in $(MIME_TYPES); do \
-	  $(INSTALL) -m 644 $(SRCDIR)/$${mime} \
-	    $(DESTDIR)$(datadir)/mime/packages/$${mime}; \
-	  test `which xdg-mime | wc -l` != 0 \
-		&& xdg-mime install $(SRCDIR)/$${mime} \
-		|| echo "no xdg-mime found - skipping"; \
-	done
-	echo adding icons to $(DESTDIR)$(pixmapdir) ...
-	mkdir -p $(DESTDIR)$(pixmapdir)
-	$(COPY) $(SRCDIR)/$(TARGET)_logo.png application-vnd.iccprofile.png
-	$(COPY) $(SRCDIR)/$(TARGET)_logo.png text-vnd.cgats.png
-	-xdg-icon-resource install --size 128 --novendor application-vnd.iccprofile.png
-	-xdg-icon-resource install --size 128 --novendor text-vnd.cgats.png
-	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_logo.png $(DESTDIR)$(pixmapdir)/text-vnd.cgats.png
-	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_logo.png $(DESTDIR)$(pixmapdir)/application-vnd.iccprofile.png
-	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_logo.png $(DESTDIR)$(pixmapdir)/$(TARGET)_logo.png
-	$(INSTALL) -m 644 $(SRCDIR)/lcms_logo2.png $(DESTDIR)$(pixmapdir)/lcms_logo2.png
-	echo ... done installing mime types and icons
 
 # synonymes
 doc:		docu
@@ -869,15 +834,6 @@ install_gui:	$(TARGET)-config-fltk
 	$(INSTALL) -m 755 $(TARGET)-config-fltk $(DESTDIR)$(bindir)
 	(cd $(DESTDIR)$(bindir)/; $(POST) $(DESTDIR)$(bindir)/$(TARGET)-config-fltk)
 
-install_profiles:
-	test -d default_profiles && \
-	( cd default_profiles; \
-	for prof in $(DEFAULT_PROFILES); do \
-	     test -d $${prof} && \
-	         (cd $${prof}; $(MAKE) DESTDIR="$(DESTDIR)" SYSCOLORDIR=$(syscolordir) ICCDIRNAME=$(iccdirname) install) || \
-	         echo "$${prof} profile directory is not found - ignoring"; \
-	done; ) || echo "default_profiles directory is not found - ignoring"
-
 install_linguas:
 	echo Install linguas ...
 	for ling in $(LINGUAS); do \
@@ -904,7 +860,6 @@ rpm:	dist
 	rpmdir/RPMS/$(RPMARCH)
 	$(COPY) -f $(TARGET)-$(VERSION).tar.gz rpmdir/SOURCES
 	rpmbuild --clean -ba $(build_dir)/$(TARGET).spec --define "_topdir $$PWD/rpmdir"
-	rpmbuild --clean -ba $(build_dir)/$(TARGET)-icc.spec --define "_topdir $$PWD/rpmdir"
 	@echo "============================================================"
 	@echo "Finished - the packages are in rpmdir/RPMS and rpmdir/SRPMS!"
 
@@ -922,7 +877,7 @@ deb:	dist
 	echo ... $@ done
 
 # remove everything previously installed
-uninstall:	uninstall_bin uninstall_docu uninstall-icc uninstall_linguas
+uninstall:	uninstall_bin uninstall_docu uninstall_linguas
 	echo ... $@ done
 
 uninstall_bin:
@@ -954,29 +909,7 @@ uninstall_bin:
 	$(RM)   -R $(DESTDIR)$(includedir)/$(TARGET)
 	echo ... done uninstalling binaries
 	
-uninstall_profiles:
-	echo Uninstalling profiles ...
-	test -d default_profiles && \
-	(  cd default_profiles; \
-	   for prof in $(DEFAULT_PROFILES); do \
-	     test -d $${prof} && \
-	         (cd $${prof}; $(MAKE)  DESTDIR="$(DESTDIR)" SYSCOLORDIR=$(syscolordir) ICCDIRNAME=$(iccdirname) uninstall) || \
-	         echo "$${prof} profile directory is not found - ignoring"; \
-	   done; \
-        ) || echo "no profile directory found"
-	echo ... done uninstalling profiles
 
-uninstall-icc:	uninstall_mime uninstall_profiles
-
-uninstall_mime:
-	echo uninstalling mime types from $(DESTDIR)$(datadir)/mime/packages ...
-	for mime in $(MIME_TYPES); do \
-	  $(RM) $(DESTDIR)$(datadir)/mime/packages/$${mime}; \
-	done
-	echo removing icons from $(DESTDIR)$(pixmapdir) ...
-	$(RM) $(DESTDIR)$(pixmapdir)/$(TARGET)_logo.png
-	$(RM) $(DESTDIR)$(pixmapdir)/lcms_logo2.png
-	echo ... done uninstalling mime types
 
 uninstall_linguas:
 	echo Uninstalling linguas ...
@@ -1015,10 +948,8 @@ distclean: clean
 	-$(RM) libXNVCtrl/Makefile \
 		libXNVCtrl/NVCtrl.o libXNVCtrl.a
 #endif
-	-$(RM) default_profiles/base/Makefile
-	-$(RM) default_profiles/printing/Makefile
 	-$(RM) mkdepend cobjects config.h oyranos.pc oyranos.spec
-	-$(RM) oyranos-icc.spec config.log oyranos_version.h oyranos-config
+	-$(RM) config.log oyranos_version.h oyranos-config
 	-$(RM) config.log.h config.tmp.sh testset.txt
 	(cd fl_i18n/po; $(RM) -R ar de eo fr hy ja ru uk zh_CN)
 	-$(RM) -R doc/html
@@ -1140,13 +1071,6 @@ tgz:
 targz:
 	test -d $(TARGET)-$(VERSION) && $(RM) -R $(TARGET)-$(VERSION) || echo -e "\c"
 	$(MAKE) DESTDIR=$(build_dir)/$(TARGET)-$(VERSION) copy_files
-	cd default_profiles; \
-	for prof in $(DEFAULT_PROFILES); do \
-	     test -d $${prof} && \
-	         mkdir -p ../$(TARGET)-$(VERSION)/default_profiles/$${prof}; \
-	         (cd $${prof}; echo bin in `pwd`; $(MAKE) DESTDIR=$(build_dir)/$(TARGET)-$(VERSION)/default_profiles/$${prof} copy_files; $(RM) $(build_dir)/$(TARGET)-$(VERSION)/default_profiles/$${prof}/Makefile) || \
-	         echo "$${prof} profile directory is not found - ignoring"; \
-	done;
 	tar cf - $(TARGET)-$(VERSION)/ \
 	| gzip > $(build_dir)/$(TARGET)-$(MTIME).tgz
 	test -d $(build_dir)/$(TARGET)-$(VERSION) && \
@@ -1230,7 +1154,6 @@ help:
 	echo "... "
 	echo "... install :    install the binaries, include files and data"
 	echo "... install_bin: install only binaries"
-	echo "... install-icc: install only profiles and targets"
 	echo "... uninstall"
 	echo "... clean :      remove binaries, object files and most processed data"
 	echo "... distclean :  remove all files processed from configure scripts"

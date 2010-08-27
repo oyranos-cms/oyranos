@@ -31,15 +31,7 @@ DEB="$TARGET"_control
 PKGC=$TARGET.pc
 VERS_H="$TARGET"_version.h
 zeile="$0 $@"
-if [ -f $ROOT_DIR/default_profiles/printing/makefile.in ]; then
-  PRINT_CONF=default_profiles/printing/makefile
-  BASE_CONF=default_profiles/base/makefile
-  PROFILE_DIR="default_profiles/printing default_profiles/base"
-else
-  PRINT_CONF=error.txt
-  BASE_CONF=error.txt
-fi
-MAKEFILE_DIR=". fl_i18n libXNVCtrl $PROFILE_DIR"; export MAKEFILE_DIR
+MAKEFILE_DIR=". fl_i18n libXNVCtrl"; export MAKEFILE_DIR
 
 if [ `uname` = "Linux" ]; then
   v=-v
@@ -52,8 +44,6 @@ if [ "$ROOT_DIR" != "." ]; then
   mkdir -p modules/devices
   mkdir -p examples/
   cp $v $ROOT_DIR/examples/makefile examples/
-  mkdir -p default_profiles/base
-  mkdir -p default_profiles/printing
   mkdir -p oforms/
   cp $v $ROOT_DIR/oforms/oyranos_xforms.makefile oforms/
 fi
@@ -364,8 +354,6 @@ test -n "$ECHO" && $ECHO "" > $CONF
 test -n "$ECHO" && $ECHO "" > $CONF_H
 test -n "$ECHO" && $ECHO "" > $CONF_I18N
 test -n "$ECHO" && $ECHO "" > $CONF_NV
-test -n "$ECHO" && $ECHO "" > $PRINT_CONF
-test -n "$ECHO" && $ECHO "" > $BASE_CONF
 test -n "$ECHO" && $ECHO "# generated $PKGC automatically by configure from $PKGC.in" > $PKGC
 test -n "$ECHO" && $ECHO "" >> $PKGC
 test -n "$RPMECHO" && $RPMECHO "# generated $SPEC automatically by configure from $ROOT_DIR/$SPEC.in" > $SPEC
@@ -1150,12 +1138,6 @@ test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $CONF
 test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $CONF
 test -n "$ECHO" && $ECHO "" >> $CONF
 
-test -n "$ECHO" && $ECHO "syscolordir = $syscolordir" >> $PRINT_CONF
-test -n "$ECHO" && $ECHO "iccdirname = $iccdirname" >> $PRINT_CONF
-test -n "$ECHO" && $ECHO "targetdirname = $targetdirname" >> $PRINT_CONF
-test -n "$ECHO" && $ECHO "syscolordir = $syscolordir" >> $BASE_CONF
-test -n "$ECHO" && $ECHO "iccdirname = $iccdirname" >> $BASE_CONF
-test -n "$ECHO" && $ECHO "targetdirname = $targetdirname" >> $BASE_CONF
 
 test -n "$ECHO" && $ECHO "" >> $CONF_H
 test -n "$ECHO" && $ECHO "#define OY_PREFIX         \"$prefix\"" >> $CONF_H
@@ -1203,8 +1185,6 @@ test -n "$ECHO" && $ECHO "CXXFLAGS = $CXXFLAGS">>$CONF
 test -n "$ECHO" && $ECHO "DEVEL_LIBS = $DEVEL_LIBS" >> $CONF
 test -n "$ECHO" && $ECHO "LDFLAGS = $LDFLAGS" >> $CONF
 test -n "$ECHO" && $ECHO "INSTALL = $INSTALL" >> $CONF
-test -n "$ECHO" && $ECHO "INSTALL = $INSTALL" >> $PRINT_CONF
-test -n "$ECHO" && $ECHO "INSTALL = $INSTALL" >> $BASE_CONF
 
 
 test -n "$ECHO" && $ECHO "" >> $CONF
