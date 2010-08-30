@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2009 (C) Yiannis Belias
+ *            2009-2010 (C) Yiannis Belias
  *
  *  @brief    Oyranos SANE device backend for Oyranos
  *  @internal
@@ -13,7 +13,7 @@
  *  @since    2009/07/05
  */
 
-#include <oyranos/oyranos_cmm.h>
+#include <oyranos_cmm.h>
 #include <sane/sane.h>
 #include <lcms.h>
 

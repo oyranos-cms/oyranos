@@ -183,7 +183,8 @@ CFILES_MODULES_DEVICES = \
 	$(CFILES_CMM_oyX1) \
 	$(CFILES_MONI) \
 	$(CFILES_CMM_CUPS) \
-	$(CFILES_CMM_SANE)
+	$(CFILES_CMM_SANE) \
+	modules/devices/SANE_help.c
 CFILES_MONI = \
 	modules/devices/$(TARGET)_monitor.c \
 	modules/devices/$(TARGET)_edid_parse.c
