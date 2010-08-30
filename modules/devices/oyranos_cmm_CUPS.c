@@ -257,9 +257,9 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
       const char * keyword = 0;
       ppd_attr_t * attrs = 0;
       int attr_n, i, j;
-      char ** colourKeyWords = 0,
+      char ** colour_key_words = 0,
             * tmp = 0;
-      int colourKeyWords_n = 0;
+      int colour_key_words_n = 0;
 
       if(!device_name)
       {
@@ -334,7 +334,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
           }
         }
 
-        /* Collect all colourKeyWords. */
+        /* Collect all ColorKeyWords. */
         attr_n = ppd->num_attrs;
 
         for(i = 0; i < attr_n; i++)
@@ -343,12 +343,12 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
 
           keyword = ppd->attrs[i]->name;
 
-          /* we support keys beginning with colourKeyWords, e.g.
-             "colourKeyWords1" "colourKeyWords2" ... */
+          /* we support keys beginning with ColorKeyWords, e.g.
+             "ColorKeyWords1" "ColorKeyWords2" ... */
           snprintf( &key[0], 16, "%s", keyword );
           key[14] = 0;
         
-          if (strcmp(key, "colourKeyWords") == 0)
+          if (strcmp(key, "ColorKeyWords") == 0)
           {
             if( tmp && tmp[oyStrlen_(tmp) - 1] != ';' )
               STRING_ADD( tmp, ";" );
@@ -356,18 +356,18 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
           }
         }
 
-        colourKeyWords = oyStringSplit_( tmp, ';', &colourKeyWords_n,
+        colour_key_words = oyStringSplit_( tmp, ';', &colour_key_words_n,
                                          oyAllocateFunc_);
         oyDeAllocateFunc_( tmp );
 
-        /* Scan PPD attributes for matching the colourKeyWords and
+        /* Scan PPD attributes for matching the ColorKeyWords and
          * add the key/value pairs to the devices backend_core options. */
         for(i = 0; i < attr_n; i++)
         {
           keyword = ppd->attrs[i]->name;
-          for(j = 0; j < colourKeyWords_n; ++j)
+          for(j = 0; j < colour_key_words_n; ++j)
           {
-            if(oyStrcmp_( colourKeyWords[j], keyword ) == 0)
+            if(oyStrcmp_( colour_key_words[j], keyword ) == 0)
             {
               if(!error && ppd->attrs[i]->value)
               {
@@ -384,8 +384,8 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
           }
         }
 
-        if( colourKeyWords && colourKeyWords_n)
-          oyStringListRelease_( &colourKeyWords, colourKeyWords_n,
+        if( colour_key_words && colour_key_words_n)
+          oyStringListRelease_( &colour_key_words, colour_key_words_n,
                                 oyDeAllocateFunc_ );
       }
     }
