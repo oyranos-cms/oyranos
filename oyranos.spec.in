@@ -69,6 +69,11 @@ Summary:    CUPS device support
 Group:      Development/Libraries/Other
 Requires:   cups
 
+%package      -n lib%{name}0-sane
+Summary:    SANE device support
+Group:      Development/Libraries/Other
+Requires:   sane
+
 %package      ui-fltk
 Summary:    Example Configuration Panel
 Group:      System/GUI/Other
@@ -142,6 +147,10 @@ The nvidia EDID configuration part.
 
 %description  -n lib%{name}0-cups
 CUPS device support for the
+Oyranos colour management system.
+
+%description  -n lib%{name}0-sane
+SANE device support for the
 Oyranos colour management system.
 
 %description  ui-fltk
@@ -251,6 +260,13 @@ ldconfig
 %dir %{_libdir}/%{cmmsubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_CUPS_cmm_module*
 
+%files -n lib%{name}0-sane
+%defattr(-, root, root)
+%doc AUTHORS COPYING ChangeLog README
+%dir %{_libdir}/colour/
+%dir %{_libdir}/%{cmmsubpath}/
+%{_libdir}/%{cmmsubpath}/lib%{name}_SANE_cmm_module*
+
 %files ui-fltk
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
@@ -263,6 +279,9 @@ ldconfig
 %{_libdir}/liboyforms_fltk.a
 
 %changelog
+* Mon Aug 30 2010 Kai-Uwe Behrmann
+- add SANE
+
 * Fri Oct 16 2009 Kai-Uwe Behrmann
 - add oyranos-forms-fltk-devel
 
