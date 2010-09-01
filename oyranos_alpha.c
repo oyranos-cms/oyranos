@@ -27415,7 +27415,7 @@ int                oyConversion_Correct (
  *  @param[in]     chan                pointer to channel data with a number of elements specified in sig or channels_n
  *  @param[in]     blob                CGATS or other reference data
  *  @param[in]     blob_len            length of the data blob
- *  @param[in]     ref                 possibly a ICC profile, allowed abreviations are 'sRGB' 'XYZ' 'Lab'(D50)
+ *  @param[in]     ref                 possibly a ICC profile
  *  @param         object              the optional object
  * 
  */
