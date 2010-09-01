@@ -68,6 +68,7 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
          case icSigDeviceSettingsType:
          case icSigDescriptiveNameValueMuArrayType_:
          case icSigMakeAndModelType:
+         case icSigNativeDisplayInfoType:
          case icSigDictType:
          case icSigMultiLocalizedUnicodeType:
          case icSigWCSProfileTag:
@@ -140,12 +141,16 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
  *      - a value string in in 2 + i * 2 + 1
  *
  *  - icSigMakeAndModelType:
- *    - since Oyranos 0.1.8 (API 0.1.8)
- *    - returns four strings each originating from a uint32_t
+ *    - since Oyranos 0.1.8 (API 0.1.10)
+ *    - returns eigth strings, uneven is descriptive, even from a uint32_t
  *      - manufacturer id
  *      - model id
  *      - serialNumber id
  *      - manufacturer date id
+ *
+ *  - icSigNativeDisplayInfoType:
+ *    - since Oyranos 0.1.11 (API 0.1.11)
+ *    - returns a list of strings, uneven is descriptive, even contains values
  *
  *  - icSigDictType:
  *    - since Oyranos 0.1.10 (API 0.1.10)
@@ -257,6 +262,30 @@ oyStructList_s * oyIMProfileTag_GetValues(
     - a value string in in 2 + i * 2 + 1"
     };
 
+    oyName_s description_mmod = {
+      oyOBJECT_NAME_S, 0,0,0,
+      CMM_NICK,
+      "mmod",
+      "\
+- icSigMakeAndModelType:\
+  - since Oyranos 0.1.8 (API 0.1.10)\
+  - returns eigth strings, uneven is descriptive, even from a uint32_t\
+    - manufacturer id\
+    - model id\
+    - serialNumber id\
+    - manufacturer date id"
+    };
+
+    oyName_s description_ndin = {
+      oyOBJECT_NAME_S, 0,0,0,
+      CMM_NICK,
+      "ndin",
+      "\
+- icSigNativeDisplayInfoType:\
+  - since Oyranos 0.1.11 (API 0.1.11)\
+  - returns a list of strings, uneven is descriptive, even contains values"
+    };
+
     oyName_s description_psid = {
       oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
@@ -332,6 +361,14 @@ oyStructList_s * oyIMProfileTag_GetValues(
     error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_nvmt;
+    if(!error)
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
+
+    description = (oyStruct_s*) &description_mmod;
+    if(!error)
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
+
+    description = (oyStruct_s*) &description_ndin;
     if(!error)
       error = oyStructList_MoveIn( list, &description, -1, 0 );
 
@@ -875,11 +912,83 @@ oyStructList_s * oyIMProfileTag_GetValues(
              for(i = 0; i < 4; ++i)
              {
                val = oyValueUInt32( (uint32_t)*((uint32_t*)&mem[8 + i*4]) );
-               oySprintf_(num, "%u              ", *((uint32_t*)&mem[8 + i*4]));
-               error = !memcpy (&num[16], &mem[8 + i*4], 4);
+               oySprintf_(num, "%u", val);
+               if(i==0)
+                 oyStructList_AddName( texts, _("Manufacturer:"), -1 );
+               if(i==1)
+                 oyStructList_AddName( texts, _("Model:"), -1 );
+               if(i==2)
+                 oyStructList_AddName( texts, _("Serial:"), -1 );
+               if(i==3)
+                 oyStructList_AddName( texts, _("Date:"), -1 );
                oyStructList_AddName( texts, num, -1 );
              }
              size_ = 8 + 32;
+           }
+           break;
+      case icSigNativeDisplayInfoType:
+           if(tag->size_ < 56)
+           { return texts; }
+           else
+           {
+             uint32_t val = 0, i, tag_size;
+             double dval[2];
+
+             tag_size = val = oyValueUInt32( (uint32_t)*((uint32_t*)&mem[8]) );
+             oySprintf_(num, "%u", val);
+             oyStructList_AddName( texts, _("Size:"), -1 );
+             oyStructList_AddName( texts, num, -1 );
+             
+             /* primaries */
+             for(i = 0; i < 4; ++i)
+             {
+               val = oyValueUInt32( (uint32_t)*((uint32_t*)&mem[12 + i*2*4]) );
+               dval[0] = val/65536.0;
+               val = oyValueUInt32( (uint32_t)*((uint32_t*)&mem[12 + i*2*4+4]));
+               dval[1] = val/65536.0;
+               oySprintf_(num, "%.03g %.03g", dval[0], dval[1]);
+               if(i==0)
+                 oyStructList_AddName( texts, _("Red xy:"), -1 );
+               if(i==1)
+                 oyStructList_AddName( texts, _("Green xy:"), -1 );
+               if(i==2)
+                 oyStructList_AddName( texts, _("Blue xy:"), -1 );
+               if(i==3)
+                 oyStructList_AddName( texts, _("White xy:"), -1 );
+               oyStructList_AddName( texts, num, -1 );
+             }
+             /* gamma value */
+             for(i = 0; i < 3; ++i)
+             {
+               val = oyValueUInt32( (uint32_t)*((uint32_t*)&mem[44 + i*4]) );
+               dval[0] = val/65536.0;
+               oySprintf_(num, "%.03g", dval[0]);
+               if(i==0)
+                 oyStructList_AddName( texts, _("Red Gamma:"), -1 );
+               if(i==1)
+                 oyStructList_AddName( texts, _("Green Gamma:"), -1 );
+               if(i==2)
+                 oyStructList_AddName( texts, _("Blue Gamma:"), -1 );
+               oyStructList_AddName( texts, num, -1 );
+             }
+             size_ = 8 + 56;
+             /* gamma table */
+             if(tag_size >= 62 && tag->size_ >= 62)
+             {
+               for(i = 0; i < 3; ++i)
+               {
+                 val = oyValueUInt16( (uint16_t)*((uint16_t*)&mem[56 + i*2]) );
+                 oySprintf_(num, "%d", val);
+                 if(i==0)
+                   oyStructList_AddName( texts, _("Curve Channels:"), -1 );
+                 if(i==1)
+                   oyStructList_AddName( texts, _("Curve Segments:"), -1 );
+                 if(i==2)
+                   oyStructList_AddName( texts, _("Curve Precission:"), -1 );
+                 oyStructList_AddName( texts, num, -1 );
+               }
+               size_ += 6;
+             }
            }
            break;
       case icSigProfileSequenceDescType:
