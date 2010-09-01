@@ -3235,8 +3235,9 @@ int                oyConversion_Correct (
  *
  *  It has the complexity of a object, and should not be accessed directly.
  *
- *  @since Oyranos: version 0.1.8
- *  @date  october 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/10/00 (Oyranos: 0.1.8)
+ *  @date    2007/10/00
  *
  *  TODO: needs to be Xatom compatible
  */
