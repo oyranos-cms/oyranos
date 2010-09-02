@@ -47,6 +47,8 @@ NOW:
 - Fix templates/Base_s.c:67,72 (!?)
 
 LATER:
+- oyFilterNode_s for now extends oyStruct_s, while it should extend oyNode_s
+  When oyNode_s is added in Oyranos git import it and update oyFilterNode_s.
 - oyClass_XXX_() private functions - or functions that take
   oyClass_s_ as arguments should be member of oyClass_s_
 - Create a visualisation of a file template hierarchy and put it in
