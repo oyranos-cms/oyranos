@@ -6,6 +6,8 @@
 
 {% include "cpp_begin.h" %}
 
+#include "oyOptions_s.h"
+#include "oyFilterCore_s.h"
 
 //#include "oyStruct_s.h"
 /** @brief   CMM capabilities query enum
