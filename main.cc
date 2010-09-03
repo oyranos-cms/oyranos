@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
     QFile sourceFile( outputDir.filePath( sourceName ) );
     QFileInfo sourceFileInfo(sourceFile);
 
-    // Get the template parent list
+    // Get the template file parent list (do not confuse with class parent list)
     QVariantList parents;
     parents << templateFileInfo.fileName();
     getTemplateParents( templateFileInfo.filePath(), parents );
