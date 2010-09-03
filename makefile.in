@@ -590,9 +590,9 @@ FL/Flmm_Tabs.o:	$(SRCDIR)/FL/Flmm_Tabs.cxx
 	$(CXX) -I./ -I./FL -I$(SRCDIR)/FL $(CXXFLAGS) $(INCL) $(FLTK_H) -o $@ -c $<
 
 # general configuration tool example
-$(TARGET)-config-fltk:	$(FLTK_OBJECTS) $(LIBFL_I18N) $(LIBSONAMEFULL)
+$(FLTK_GUI):	$(FLTK_OBJECTS) $(LIBFL_I18N) $(LIBSONAMEFULL)
 	echo Linking $@ ...
-	$(CXX) -I./ $(CXXFLAGS) -o $(TARGET)-config-fltk \
+	$(CXX) -I./ $(CXXFLAGS) -o $(FLTK_GUI) \
 	$(FLTK_OBJECTS) \
 	$(LIBSONAMEFULL) $(LINK_LIB_PATH) \
 	$(LDLIBS) $(FLTK_LIBS) $(PNG_LIBS) $(I18N_LIB) $(LIBFL_I18N)
@@ -681,7 +681,9 @@ tests/test_oyranos:	tests/test_oyranos.o
         $(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
 
 $(LIBFL_I18N):	fl_i18n/Makefile
+#ifdef FLTK
 	cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH)
+#endif
 
 $(LINGUAS_SRC):	$(SRCDIR)/$(POT_FILE)
 	echo Linguas ... $(@:.gmo=)
@@ -853,11 +855,13 @@ install_docu: docu
 	  $(INSTALL) $(SCRIPTS) $(DESTDIR)$(docdir)
 	
 
-install_gui:	$(TARGET)-config-fltk
+install_gui:	$(FLTK_GUI)
 	echo Installing UI ...
 	mkdir -p $(DESTDIR)$(bindir)
-	$(INSTALL) -m 755 $(TARGET)-config-fltk $(DESTDIR)$(bindir)
-	(cd $(DESTDIR)$(bindir)/; $(POST) $(DESTDIR)$(bindir)/$(TARGET)-config-fltk)
+#ifdef $(FLTK_GUI)
+	$(INSTALL) -m 755 $(FLTK_GUI) $(DESTDIR)$(bindir)
+	(cd $(DESTDIR)$(bindir)/; $(POST) $(DESTDIR)$(bindir)/$(FLTK_GUI))
+#endif
 
 install_linguas:
 	echo Install linguas ...
@@ -909,7 +913,9 @@ uninstall_bin:
 	echo Uninstalling binaries ...
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-monitor
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config
-	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config-fltk
+#ifdef FLTK_GUI
+	$(RM)   $(DESTDIR)$(bindir)/$(FLTK_GUI)
+#endif
 	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-policy
 	-$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-monitor-nvidia
 	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET).pc
@@ -985,7 +991,7 @@ clean:
 	$(TARGET)-policy \
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
 	test2 test tests/test_oyranos \
-	$(TARGET)-config-fltk \
+	$(FLTK_GUI) \
 	oforms/$(TARGET)-xforms oforms/$(TARGET)-xforms-fltk; \
 	for ling in $(LINGUAS); do \
 	  test -f po/$${ling}.gmo \
