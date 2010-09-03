@@ -56,11 +56,7 @@ ClassTemplates::~ClassTemplates()
 
 void ClassTemplates::createSources() const
 {
-  QDir sourceDir( sources );
-  sourceDir.setFilter( QDir::Files | QDir::Readable );
   for (int i=0; i<allClassesInfo.size(); i++) {
-    sourceDir.setNameFilters( QStringList() << allClassesInfo.at(i)->baseName() + ".*" );
-    QStringList classSourceFiles = sourceDir.entryList();
     for (int s=0; s<sourceFiles.size(); s++) {
       QString classSourceFile = allClassesInfo.at(i)->baseName() + "." + sourceFiles.at(s);
       QFile f( sources + "/" + classSourceFile );
