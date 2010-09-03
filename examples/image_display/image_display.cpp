@@ -39,6 +39,8 @@
 #ifdef USE_GETTEXT
 #include "config.h" /* I18N */
 #include "fl_i18n/fl_i18n.H"
+#else
+#define _(text) text
 #endif
 
 #define USE_RESOLVE
