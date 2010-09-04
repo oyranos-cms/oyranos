@@ -76,7 +76,7 @@ void ClassGenerator::render( const QFileInfo& templateFileInfo, const QString& d
       }
     }
     if (i == classes.size())
-      qDebug() << "No class found for" << templateFileInfo.fileName();
+      qDebug() << templateFileInfo.fileName() << "is not a base class file.";
   }
   sourceName = oy + templateFileInfo.baseName() + "." + templateFileInfo.suffix();
   QFile sourceFile( dstDir + "/" + sourceName );
