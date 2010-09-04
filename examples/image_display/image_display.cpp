@@ -2,14 +2,14 @@
  *  Oyranos is an open source Colour Management System 
  * 
  *  @par Copyright:
- *            2009 (C) Kai-Uwe Behrmann
+ *            2009-2010 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2009/02/19
  *
- *  The given example displays a 8/16-bit PPM file on screen.
+ *  The given example displays a 8/16-bit PPM file or float on screen.
  */
 
 #include <ctime>
