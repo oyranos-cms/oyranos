@@ -43,6 +43,7 @@ void ClassGenerator::initTemplates()
 
   //create missing constructor/destructor source files
   QList<ClassInfo*> newClassesInfo = tpl.getNewClasses();
+  QString classRendered;
   QString genericTemplate = templatesPath + "/Class_s_private_custom_definitions.c";
   for (int i=0; i<newClassesInfo.size(); i++) {
     // If this is a list class, ignore it
@@ -51,15 +52,21 @@ void ClassGenerator::initTemplates()
     QString classTemplate = sourcesPath +
                             "/" +
                             newClassesInfo.at(i)->baseName() +
-                            ".template.private_custom_definitions.c";
+                            "_s.template.c";
+    QString classSource = sourcesPath +
+                          "/" +
+                          newClassesInfo.at(i)->baseName() +
+                          ".private_custom_definitions.c";
     if (QFile::copy( genericTemplate, classTemplate )) {
-      render( classTemplate, sourcesPath );
+      classRendered = render( classTemplate, sourcesPath );
     } else {
       qWarning() << "Could not create file" << classTemplate;
       continue;
     }
     if (not QFile::remove( classTemplate ))
       qWarning() << "Could not remove file" << classTemplate;
+    if (not QFile::rename( classRendered, classSource ))
+      qWarning() << "Could not rename file" << classRendered;
   }
 }
 
