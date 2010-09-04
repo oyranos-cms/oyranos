@@ -170,3 +170,14 @@ QVariant ClassTemplates::getStructClass() const
 {
   return QVariant( QVariant::fromValue( static_cast<QObject*>(structClassInfo) ) );
 }
+
+QList<ClassInfo*> ClassTemplates::getNewClasses() const
+{
+  QList<ClassInfo*> newClassesInfo;
+  for (int i=0; i<allClassesInfo.size(); i++) {
+    if (allClassesInfo.at(i)->doxOnly())
+      newClassesInfo << allClassesInfo.at(i);
+  }
+
+  return newClassesInfo;
+}

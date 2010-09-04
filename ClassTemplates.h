@@ -30,6 +30,8 @@ class ClassTemplates
     /// Return a QVariant for use with grantlee
     QVariant getStructClass() const;
 
+    /// Return all classes that only have a .dox file
+    QList<ClassInfo*> getNewClasses() const;
 
     bool updateTemplates;                   ///< Not only create new, but update all .*template*. files, too
 
