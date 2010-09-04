@@ -75,6 +75,7 @@ oyRankPad _rank_map[];
 int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options);
 int CreateRankMap_(SANE_Handle device_handle, oyRankPad ** rank_map);
 int sane_release_handle(oyPointer * handle_ptr);
+int check_driver_version(oyOptions_s *options, oyOption_s **version_opt_p, int *call_sane_exit);
 
 /* --- implementations --- */
 
@@ -223,13 +224,13 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    int i, num_devices, g_error = 0, status, call_sane_exit = 0;
    const char *device_name = 0, *command_list = 0, *command_properties = 0;
    const SANE_Device **device_list = NULL;
+   int rank;
+   oyAlloc_f allocateFunc = malloc;
 
    printf(PRFX "Entering %s(). Options:\n%s", __func__, oyOptions_GetText(options, oyNAME_NICK));
 
-   int rank = oyFilterRegistrationMatch(_api8.registration, registration,
+   rank = oyFilterRegistrationMatch(_api8.registration, registration,
                                         oyOBJECT_CMM_API8_S);
-   oyAlloc_f allocateFunc = malloc;
-
    command_list = oyOptions_FindString(options, "command", "list");
    command_properties = oyOptions_FindString(options, "command", "properties");
    device_name = oyOptions_FindString(options, "device_name", 0);
@@ -479,9 +480,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
  */
 int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 {
-   oyOption_s *context_opt = NULL,
-              *handle_opt = NULL,
-              *version_opt = NULL;
+   oyOption_s *version_opt = NULL;
    oyOption_s *version_opt_dev = NULL;
    oyConfig_s *device = NULL;
    int num_devices, g_error = 0;
@@ -563,10 +562,8 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          /*Handle "driver_version" option [OUT] */
          version_opt_dev = oyConfig_Find(device, "driver_version");
-         if (!version_opt_dev && version_opt) {
-            oyOption_s *tmp = oyOption_Copy(version_opt, 0);
-            oyOptions_MoveIn(device->backend_core, &tmp, -1);
-         }
+         if (!version_opt_dev && version_opt)
+            oyOptions_MoveIn(device->backend_core, &version_opt, -1);
          oyOption_Release(&version_opt_dev);
 
          /*Handle "device_context" option */
@@ -1003,7 +1000,7 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
    SANE_Int num_options = 0;
    SANE_Status status;
    int error = 0, i;
-   unsigned int opt_num = 0, count;
+   unsigned int opt_num = 0;
    char cmm_base_reg[] = CMM_BASE_REG OY_SLASH;
    char *value_str = NULL;
    const size_t value_size = 100; /*Better not allow more than 100 characters in the option value string*/
@@ -1023,9 +1020,9 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
       opt = sane_get_option_descriptor(device_handle, opt_num);
       if ((opt->cap & SANE_CAP_COLOUR) /*&& !(opt->cap & SANE_CAP_INACTIVE)*/) {
          void *value = malloc(opt->size);
-         char *registration = malloc(sizeof(cmm_base_reg)+strlen(opt->name));
+         char *registration = malloc(sizeof(cmm_base_reg)+strlen(opt->name)+1);
 
-         sprintf(registration, "%s%s", cmm_base_reg, opt->name); //FIXME not optimal
+         sprintf(registration, "%s%s", cmm_base_reg, opt->name);
 
          sane_control_option(device_handle, opt_num, SANE_ACTION_GET_VALUE, value, 0);
          switch (opt->type) {
@@ -1119,7 +1116,7 @@ int CreateRankMap_(SANE_Handle device_handle, oyRankPad ** rank_map)
    SANE_Int num_options = 0;
    SANE_Status status;
 
-   unsigned int opt_num = 0, i = 0, chars = 0;
+   unsigned int opt_num = 0, i = 0;
 
    /* Get the nuber of scanner options */
    status = sane_control_option(device_handle, 0, SANE_ACTION_GET_VALUE, &num_options, 0);
@@ -1211,7 +1208,7 @@ int check_driver_version(oyOptions_s *options, oyOption_s **version_opt_p, int *
             ) {                           /*when we are over*/
             *call_sane_exit = 1;
          } else {
-            *version_opt_p = oyOption_New(CMM_BASE_REG OY_SLASH "driver_version", 0); //TODO deallocate
+            *version_opt_p = oyOption_New(CMM_BASE_REG OY_SLASH "driver_version", 0);
             oyOption_SetFromInt(*version_opt_p, driver_version, 0, 0);
          }
       } else {
