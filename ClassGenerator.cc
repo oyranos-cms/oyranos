@@ -1,0 +1,192 @@
+#include <QDir>
+#include <QDirIterator>
+#include <QDateTime>
+#include <QVariant>
+#include <QStringList>
+
+#include <QtDebug>
+
+#include "grantlee_paths.h"
+#include "ClassGenerator.h"
+
+const QStringList ClassGenerator::templateSuffixes(
+    QStringList() <<
+    "*.template.h" <<
+    "*.template.c" <<
+    "*.template.cc" <<
+    "*.template.txt"
+);
+
+ClassGenerator::ClassGenerator( const QString& tmpl, const QString& src, const QString& dst ) :
+  templatesPath(tmpl), sourcesPath(src), destinationPath(dst),
+  tpl( sourcesPath, templatesPath )
+{
+  //Setup grantlee
+  engine = getEngine( QStringList() << templatesPath << sourcesPath );
+
+  classes = tpl.getAllClasses();
+}
+
+ClassGenerator::~ClassGenerator()
+{
+  delete engine;
+}
+
+void ClassGenerator::initTemplates()
+{
+  //Check for newly added classes and create missing templates
+  tpl.updateTemplates = true;
+  tpl.createTemplates();
+  tpl.createSources();
+  //TODO render( "<class>_s_private_custom_definitions.c", sourcesPath );
+}
+
+void ClassGenerator::render( const QString& templateFile, const QString& dstDir )
+{
+  
+  render( QFileInfo( templateFile ), dstDir );
+}
+
+void ClassGenerator::render( const QString& templateFile )
+{
+  render( templateFile, destinationPath );
+}
+
+void ClassGenerator::render( const QFileInfo& templateFileInfo, const QString& dstDir )
+{
+  Grantlee::Template t = engine->loadByName( templateFileInfo.fileName() );
+  Grantlee::Context c;
+
+  QString class_base_name = templateFileInfo.baseName();
+  int idx = class_base_name.indexOf("_");
+  class_base_name.truncate(idx);
+
+  QVariant classinfo;
+  QString sourceName, oy;
+  if (class_base_name == "Struct") {
+    classinfo = tpl.getStructClass();
+    oy = "oy";
+  } else {
+    int i;
+    for (i=0; i<classes.size(); i++) {
+      if (class_base_name == classes.at( i ).value<QObject*>()->property("baseName").toString()) {
+        classinfo = classes.at( i );
+        oy = "oy";
+        break;
+      }
+    }
+    if (i == classes.size())
+      qDebug() << "No class found for" << templateFileInfo.fileName();
+  }
+  sourceName = oy + templateFileInfo.baseName() + "." + templateFileInfo.suffix();
+  QFile sourceFile( dstDir + "/" + sourceName );
+  QFileInfo sourceFileInfo(sourceFile);
+
+  // Get the template file parent list (do not confuse with class parent list)
+  QVariantList parents;
+  parents << templateFileInfo.fileName();
+  getTemplateParents( templateFileInfo.filePath(), parents );
+
+  c.insert( "file_name", sourceName );
+  c.insert( "classes", classes );
+  c.insert( "class", classinfo );
+  c.insert( "struct", tpl.getStructClass() );
+  c.insert( "parents", parents);
+
+  QString newFileContents = t->render( &c );
+
+  //1. There is no source file yet
+  if (not sourceFile.exists()) {
+    sourceFile.open(QIODevice::WriteOnly | QIODevice::Text);
+    sourceFile.write( newFileContents.toUtf8() );
+    qDebug() << "Creating" << sourceFile.fileName();
+  } else
+  //2. The template file is more recent
+  if (templateFileInfo.lastModified() > sourceFileInfo.lastModified()) {
+    sourceFile.open(QIODevice::WriteOnly | QIODevice::Text);
+    sourceFile.write( newFileContents.toUtf8() );
+    qDebug() << "Updating" << sourceFile.fileName();
+  } else {
+    sourceFile.open(QIODevice::ReadOnly | QIODevice::Text);
+    QString oldFileContents = sourceFile.readAll();
+    //4. The souce file has changed //TODO
+    if (oldFileContents != newFileContents)
+      qWarning() << "Warning:" << sourceFile.fileName() << "has changed!";
+    else
+    //3. There is no difference in file contents -> do nothing
+      qDebug() << "Skipping" << sourceFile.fileName();
+  }
+
+  //5. Both have changed //TODO
+}
+
+void ClassGenerator::render()
+{
+  QDirIterator templateFiles( templatesPath,
+               templateSuffixes,
+               QDir::Files|QDir::Readable,
+               QDirIterator::Subdirectories );
+
+  while (templateFiles.hasNext()) {
+    templateFiles.next();
+    QFileInfo templateFileInfo = templateFiles.fileInfo();
+
+    render( templateFileInfo, destinationPath );
+  }
+}
+
+void ClassGenerator::getTemplateParents( const QString& tmplPath, QVariantList& parentList )
+{
+  QFile tmpl( tmplPath );
+  tmpl.open( QIODevice::ReadOnly|QIODevice::Text );
+  QString text = tmpl.readAll();
+
+  QRegExp extends("\\{%\\s+extends\\s+\"((?:\\w+\\.?)+)\"\\s+%\\}");
+
+  if (extends.indexIn( text ) != -1) {
+    QString tmplParentName = extends.cap(1);
+    parentList << tmplParentName;
+
+    QString tmplParentPath;
+    QDirIterator templateFile( templatesPath, QDirIterator::Subdirectories );
+    while (templateFile.hasNext()) {
+      templateFile.next();
+      if (templateFile.fileName() == tmplParentName) {
+        tmplParentPath = templateFile.filePath();
+        break;
+      }
+    }
+    if (!tmplParentPath.isEmpty())
+      getTemplateParents( tmplParentPath, parentList );
+    else
+      qWarning() << "Could not find template" << tmplParentName;
+  }
+}
+
+typedef Grantlee::FileSystemTemplateLoader GFSLoader;
+
+Grantlee::Engine* ClassGenerator::getEngine( const QStringList& tmplDirs )
+{
+  QStringList allTmplDirs( tmplDirs );
+
+  //Get all template subdirectories
+  foreach (QString dir, tmplDirs) {
+    QDirIterator subdir( dir,
+                         QDir::AllDirs|QDir::NoDotAndDotDot|QDir::Readable|QDir::Executable,
+                         QDirIterator::Subdirectories );
+    while (subdir.hasNext()) {
+      subdir.next();
+      allTmplDirs << dir + "/" + subdir.fileName();
+    }
+  }
+  qDebug() << "Loading templates from:";
+  qDebug() << allTmplDirs;
+
+  Grantlee::Engine *engine = new Grantlee::Engine();
+  GFSLoader::Ptr loader = GFSLoader::Ptr( new GFSLoader() );
+  loader->setTemplateDirs( allTmplDirs );
+
+  engine->addTemplateLoader( loader );
+  engine->setPluginPaths( QStringList() << "." << GRANTLEE_PLUGIN_PATH );
+  return engine;
+}
