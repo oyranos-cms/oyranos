@@ -33,7 +33,8 @@ set( MOC_HEADERS ClassInfo.h )
 qt4_wrap_cpp( MOC_SOURCES ${MOC_HEADERS} )
 
 # ... Application sources etc.
-ADD_EXECUTABLE( oyAPIGenerator "main.cc" "ClassTemplates.cc" "ClassInfo.cc" ${MOC_SOURCES} )
+SET( GeneratorSrc "main.cc" "ClassTemplates.cc" "ClassInfo.cc" "ClassGenerator.cc" )
+ADD_EXECUTABLE( oyAPIGenerator ${GeneratorSrc} ${MOC_SOURCES} )
 TARGET_LINK_LIBRARIES(
    oyAPIGenerator
    ${QT_LIBRARIES}
