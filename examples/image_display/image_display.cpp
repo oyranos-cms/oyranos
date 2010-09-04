@@ -338,29 +338,91 @@ public:
     Fl_Box::damage( c );
   }
 
-  void setImage( oyImage_s * image_in )
+  oyFilterNode_s * setImage( const char * file_name );
+
+  void observeICC( oyFilterNode_s * icc,
+                     int(*observator)( oyObserver_s      * observer,
+                                       oySIGNAL_e          signal_type,
+                                       oyStruct_s        * signal_data ) )
   {
-  oyFilterNode_s * in, * out;
+  /* observe the icc node */
+  oyBlob_s * b = oyBlob_New(0);
+  b->ptr = this;
+  oyStruct_ObserverAdd( (oyStruct_s*)icc, (oyStruct_s*)context,
+                        (oyStruct_s*)b,
+                        observator );
+  oyBlob_Release( &b );
+  }
+};
+
+Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box);
+void setWindowMenue                  ( Oy_Fl_Double_Window      * win,
+                                       Fl_Oy_Box         * oy_box,
+                                       oyFilterNode_s    * node );
+
+extern "C" {
+int      conversionObserve           ( oyObserver_s      * observer,
+                                       oySIGNAL_e          signal_type,
+                                       oyStruct_s        * signal_data )
+{
+  int handled = 0;
+  oyObserver_s * obs = observer;
+
+  if(observer && observer->model &&
+     observer->model->type_ == oyOBJECT_FILTER_NODE_S)
+  {
+    /*if(oy_debug_signals)*/
+      printf("%s:%d INFO: \n\t%s %s: %s[%d]->%s[%d]\n",
+                    strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
+                    __LINE__, _("Signal"),
+                    oySignalToString(signal_type),
+                    oyStruct_GetText( obs->model, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->model->oy_),
+                    oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->observer->oy_) );
+
+    oyConversion_Correct( (oyConversion_s*)obs->observer,
+                          "//" OY_TYPE_STD "/icc", 0 );
+
+    Fl_Oy_Box * oy_box = (Fl_Oy_Box*) ((oyBlob_s*)observer->user_data)->ptr;
+    oy_box->damage( FL_DAMAGE_USER1 );
+
+  }
+
+  return handled;
+}
+}
+
+oyFilterNode_s * Fl_Oy_Box::setImage( const char * file_name )
+{
+  oyFilterNode_s * in, * out, * icc;
   int error = 0;
   oyConversion_s * conversion = 0;
   oyOptions_s * options = 0;
+  oyImage_s * image_in = 0;
 
-  if(!image_in)
-    return;
+  if(!file_name)
+    return 0;
 
-#if 0
-  conversion = oyConversion_CreateBasicPixels( image_in, image_out, options,0 );
-#else
   /* start with an empty conversion object */
   conversion = oyConversion_New( 0 );
   /* create a filter node */
-  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0, 0 );
+  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/file_read.meta", 0, 0 );
   /* set the above filter node as the input */
   oyConversion_Set( conversion, in, 0 );
 
+  /* add a file name argument */
+  /* get the options of the input node */
+  if(in)
+  options = oyFilterNode_OptionsGet( in, OY_SELECT_FILTER );
+  /* add a new option with the appropriate value */
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
+                                 file_name, OY_CREATE_NEW );
+  /* release the options object, this means its not any more refered from here*/
+  oyOptions_Release( &options );
 
   /* create a new filter node */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
+  icc = out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
@@ -403,7 +465,6 @@ public:
                                 out, "//" OY_TYPE_STD "/data", 0 );
   /* set the output node of the conversion */
   oyConversion_Set( conversion, 0, out );
-#endif
 
   /* apply policies */
   /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
@@ -414,57 +475,20 @@ public:
 
   setConversion( conversion );
 
-  /* release unneeded objects; in C style */
+   /* release unneeded objects; in C style */
   oyConversion_Release( &conversion );
+
+  return icc;
   }
-};
-
-Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box, oyFilterNode_s *node);
-
-extern "C" {
-int      conversionObserve           ( oyObserver_s      * observer,
-                                       oySIGNAL_e          signal_type,
-                                       oyStruct_s        * signal_data )
-{
-  int handled = 0;
-  oyObserver_s * obs = observer;
-
-  if(observer && observer->model &&
-     observer->model->type_ == oyOBJECT_FILTER_NODE_S)
-  {
-    /*if(oy_debug_signals)*/
-      printf("%s:%d INFO: \n\t%s %s: %s[%d]->%s[%d]\n",
-                    strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
-                    __LINE__, _("Signal"),
-                    oySignalToString(signal_type),
-                    oyStruct_GetText( obs->model, oyNAME_NAME, 1),
-                    oyObject_GetId(   obs->model->oy_),
-                    oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
-                    oyObject_GetId(   obs->observer->oy_) );
-
-    oyConversion_Correct( (oyConversion_s*)obs->observer,
-                          "//" OY_TYPE_STD "/icc", 0 );
-
-    Fl_Oy_Box * oy_box = (Fl_Oy_Box*) ((oyBlob_s*)observer->user_data)->ptr;
-    oy_box->damage( FL_DAMAGE_USER1 );
-
-  }
-
-  return handled;
-}
-}
 
 int
 main(int argc, char** argv)
 {
   /* some Oyranos types */
-  oyConversion_s * conversion = 0;
-  oyFilterNode_s * in, * out, * icc;
-  oyOptions_s * options = 0;
-  oyImage_s * image_in = 0, * image_out = 0;
-  int error = 0,
-      file_pos = 1;
-  const char * file_name = 0;
+
+  oyFilterNode_s * icc;
+  int file_pos = 1;
+  const char * file_name = NULL;
 
 
 #ifdef USE_GETTEXT
@@ -496,13 +520,7 @@ main(int argc, char** argv)
 #endif
 
 
-  /* start with an empty conversion object */
-  conversion = oyConversion_New( 0 );
-  /* create a filter node */
-  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/file_read.meta", 0, 0 );
-  /* set the above filter node as the input */
-  oyConversion_Set( conversion, in, 0 );
-
+  /* handle arguments */
   if(argc > 1 && strcmp(argv[1], "-v") == 0)
   {
     verbose = 1;
@@ -513,147 +531,18 @@ main(int argc, char** argv)
   else
     file_name = "../../oyranos_logo.ppm";
 
-  /* add a file name argument */
-  /* get the options of the input node */
-  if(in)
-  options = oyFilterNode_OptionsGet( in, OY_SELECT_FILTER );
-  /* add a new option with the appropriate value */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
-                                 file_name, OY_CREATE_NEW );
-  /* release the options object, this means its not any more refered from here*/
-  oyOptions_Release( &options );
-
-#if !defined(USE_RESOLVE)
-  /* ask for the input image, here it will be loaded from the input filter */
-  if(in)
-  image_in = oyConversion_GetImage( conversion, OY_INPUT );
-
-  if(!image_in)
-    return 1;
-
-  /* create an output image */
-  /* FLTK needs a 8-bit image */
-  oyPixel_t pixel_layout = 0;
-  pixel_layout = oyImage_PixelLayoutGet( image_in );
-  oyDATATYPE_e data_type = oyUINT8;
-  data_type = oyToDataType_m(pixel_layout);
-  pixel_layout &= (~oyDataType_m(data_type));
-  pixel_layout |= oyDataType_m(oyUINT8);
-  pixel_layout &= (~oyChannels_m( oyToChannels_m(pixel_layout) ));
-  pixel_layout |= oyChannels_m(3);
-  /* eigther copy the input image with a oyObject_s argument or
-   * create it as follows */
-  image_out = oyImage_CreateForDisplay( image_in->width, image_in->height,
-                                        0, pixel_layout,
-                                        0, 0,0,0,0, 0 );
-#endif
-
-#if 0
-  // write to ppm image
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/write_ppm", 0, 0 );
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  if(error <= 0)
-  options = oyFilterNode_OptionsGet( out, OY_FILTER_GET_DEFAULT );
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/write_ppm/filename",
-                                 "test_dbg_in.ppm", OY_CREATE_NEW );
-  oyOptions_Release( &options );
-  oyFilterNode_DataSet( out, (oyStruct_s*)image_in, 0, 0 );
-  /*r = oyRectangle_NewWith(0.25,0,0,0,0);
-  o = oyOption_New( "//" OY_TYPE_STD "/input/offset", 0 );
-  error = oyOption_StructMoveIn( o, (oyStruct_s**)&r );
-  error = oyOptions_MoveIn( options, &o, -1 );*/
-  in = out;
-#endif
-
-  /* create a new filter node */
-  icc = out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
-  /* append the new to the previous one */
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc" );
-#if !defined(USE_RESOLVE)
-  /* set the image to the first/only socket of the filter node */
-  oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
-#endif
-  /* swap in and out */
-  in = out;
-
-  /* create a node for preparing the image for displaying */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, 0 );
-#if defined(USE_RESOLVE)
-  options = oyFilterNode_OptionsGet( out, OY_SELECT_FILTER );
-  /* 8 bit data for FLTK */
-  error = oyOptions_SetFromInt( &options,
-                                "//" OY_TYPE_STD "/display/datatype",
-                                oyUINT8, 0, OY_CREATE_NEW );
-  /* alpha might be support once by FLTK? */
-  error = oyOptions_SetFromInt( &options,
-                                "//" OY_TYPE_STD "/display/preserve_alpha",
-                                1, 0, OY_CREATE_NEW );
-  oyOptions_Release( &options );
-#endif
-  /* append the node */
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
-  in = out;
 
 
-
-#if 0
-  // write to ppm image
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/write_ppm", 0, 0 );
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  if(error <= 0)
-  options = oyFilterNode_OptionsGet( out, OY_FILTER_GET_DEFAULT );
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/write_ppm/filename",
-                                 "test_dbg_out.ppm", OY_CREATE_NEW );
-  oyOptions_Release( &options );
-  oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
-  in = out;
-#endif
-
-  /* add a closing node */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, 0 );
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-#if !defined(USE_RESOLVE)
-  oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
-#endif
-  /* set the output node of the conversion */
-  oyConversion_Set( conversion, 0, out );
-
-  /* apply policies */
-  /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
-                                 "true", OY_CREATE_NEW );*/
-  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", options );
-  oyOptions_Release( &options );
-
-
-  /* the colour conversion is done in oy_box::draw() with
-   * oyConversion_RunPixels() */
-
-
+  /* setup the drawing box */
   Fl_Oy_Box * oy_box = 0;
-  Oy_Fl_Double_Window * win = createWindow( &oy_box, icc );
-  /* observe the node */
-  oyBlob_s * b = oyBlob_New(0);
-  b->ptr = oy_box;
-  oyStruct_ObserverAdd( (oyStruct_s*)icc, (oyStruct_s*)conversion,
-                        (oyStruct_s*)b,
-                        conversionObserve );
-  oyBlob_Release( &b );
-
-  oy_box->setConversion( conversion );
-
-  /* release unneeded objects; in C style */
-  oyConversion_Release( &conversion );
-  oyImage_Release( &image_in );
-  oyImage_Release( &image_out );
+  Oy_Fl_Double_Window * win = createWindow( &oy_box );
+  icc = oy_box->setImage( file_name );
+  if(icc)
+  {
+    setWindowMenue( win, oy_box, icc  );
+    /* observe the node */
+    oy_box->observeICC( icc, conversionObserve );
+  }
 
 
   win->show();
@@ -739,13 +628,11 @@ callback ( Fl_Widget* w, void* daten )
     printf("could not find a suitable program structure\n");
 }
 
-Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box,
-                                    oyFilterNode_s * node)
+Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box)
 {
   int w = 640,
       h = 480;
 
-  struct box_n_opts * arg = new box_n_opts;
 
   Fl::get_system_colors();
   Oy_Fl_Double_Window *win = new Oy_Fl_Double_Window( w, h+100, TARGET );
@@ -764,6 +651,19 @@ Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box,
         o->image(image_oyranos_logo);
         o->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
       }
+  win->end();
+  win->resizable(*oy_box);
+
+  return win;
+}
+
+void setWindowMenue                  ( Oy_Fl_Double_Window * win,
+                                       Fl_Oy_Box         * oy_box,
+                                       oyFilterNode_s    * node )
+{
+  struct box_n_opts * arg = new box_n_opts;
+
+  win->begin();
       Fl_Menu_Button  *menue_;
       Fl_Menu_Button  *menue_button_;
       menue_button_ = new Fl_Menu_Button(0,0,win->w(),win->h(),0);
@@ -772,13 +672,10 @@ Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box,
       menue_button_->clear();
       menue_ = new Fl_Menu_Button(0,0,win->w(),win->h(),""); menue_->hide();
       arg->node = node;
-      arg->box = *oy_box;
+      arg->box = oy_box;
       menue_->add( _("Edit Options"),
                    FL_CTRL + 'e', callback, (void*)arg, 0 );
       menue_button_->copy(menue_->menu());
   win->end();
-  win->resizable(*oy_box);
-
-  return win;
 }
 
