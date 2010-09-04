@@ -34,11 +34,33 @@ ClassGenerator::~ClassGenerator()
 
 void ClassGenerator::initTemplates()
 {
-  //Check for newly added classes and create missing templates
+  //Check for newly added classes and...
+  //create missing templates
   tpl.updateTemplates = true;
   tpl.createTemplates();
+  //create missing source files
   tpl.createSources();
-  //TODO render( "<class>_s_private_custom_definitions.c", sourcesPath );
+
+  //create missing constructor/destructor source files
+  QList<ClassInfo*> newClassesInfo = tpl.getNewClasses();
+  QString genericTemplate = templatesPath + "/Class_s_private_custom_definitions.c";
+  for (int i=0; i<newClassesInfo.size(); i++) {
+    // If this is a list class, ignore it
+    if (not newClassesInfo.at(i)->listOf().isEmpty())
+      continue;
+    QString classTemplate = sourcesPath +
+                            "/" +
+                            newClassesInfo.at(i)->baseName() +
+                            ".template.private_custom_definitions.c";
+    if (QFile::copy( genericTemplate, classTemplate )) {
+      render( classTemplate, sourcesPath );
+    } else {
+      qWarning() << "Could not create file" << classTemplate;
+      continue;
+    }
+    if (not QFile::remove( classTemplate ))
+      qWarning() << "Could not remove file" << classTemplate;
+  }
 }
 
 void ClassGenerator::render( const QString& templateFile, const QString& dstDir )
