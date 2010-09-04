@@ -63,18 +63,17 @@ void ClassGenerator::initTemplates()
   }
 }
 
-void ClassGenerator::render( const QString& templateFile, const QString& dstDir )
+QString ClassGenerator::render( const QString& templateFile, const QString& dstDir )
 {
-  
-  render( QFileInfo( templateFile ), dstDir );
+  return render( QFileInfo( templateFile ), dstDir );
 }
 
-void ClassGenerator::render( const QString& templateFile )
+QString ClassGenerator::render( const QString& templateFile )
 {
-  render( templateFile, destinationPath );
+  return render( templateFile, destinationPath );
 }
 
-void ClassGenerator::render( const QFileInfo& templateFileInfo, const QString& dstDir )
+QString ClassGenerator::render( const QFileInfo& templateFileInfo, const QString& dstDir )
 {
   Grantlee::Template t = engine->loadByName( templateFileInfo.fileName() );
   Grantlee::Context c;
@@ -140,6 +139,8 @@ void ClassGenerator::render( const QFileInfo& templateFileInfo, const QString& d
   }
 
   //5. Both have changed //TODO
+
+  return sourceFile.fileName();
 }
 
 void ClassGenerator::render()

@@ -18,13 +18,13 @@ class ClassGenerator {
 
     void initTemplates();
     void render();
-    void render( const QString& templateFile );
-    void render( const QString& templateFile, const QString& dstDir );
+    QString render( const QString& templateFile );
+    QString render( const QString& templateFile, const QString& dstDir );
 
   private:
     void getTemplateParents( const QString& tmplPath, QVariantList& parentList );
     Grantlee::Engine* getEngine( const QStringList& tmplDirs );
-    void render( const QFileInfo& templateFileInfo, const QString& dstDir );
+    QString render( const QFileInfo& templateFileInfo, const QString& dstDir );
 
     QString templatesPath, sourcesPath, destinationPath;
     Grantlee::Engine* engine;
