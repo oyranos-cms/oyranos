@@ -23,7 +23,7 @@ QList<ClassInfo*> ClassInfo::getAllClasses( const QString& directory )
     QString ClassName = doxClasses.at( c );
     ClassName.chop(4); //Remove .dox extension
 
-    sourceDir.setNameFilters( QStringList() << ClassName + ".*" );
+    sourceDir.setNameFilters( QStringList() << ClassName + ".*[^~]" );
     if (sourceDir.entryList().size() == 1)
       allClassesInfo << new ClassInfo( ClassName, directory, true );
     else
