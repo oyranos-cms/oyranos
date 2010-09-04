@@ -1029,7 +1029,8 @@ OYAPI int  OYEXPORT
     signalFunc = oyStructSignalForward_;
 
   /* add to model */
-  list = oyStruct_ObserverListGet_( model, OY_SIGNAL_OBSERVERS );
+  if(!error)
+    list = oyStruct_ObserverListGet_( model, OY_SIGNAL_OBSERVERS );
   if(!error && list)
   {
     found = 0;
