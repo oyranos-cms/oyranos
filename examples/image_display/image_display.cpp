@@ -101,11 +101,6 @@ class Oy_Fl_Double_Window : public Fl_Double_Window
 };
 
 
-/*  menu for right mouse click
-    node = oyFilterGraph_GetNode( graph, -1, "//" OY_TYPE_STD "/icc", 0 );
-    The icc.lcms options should include the "oydi" ones.
- */
-
 class Fl_Oy_Box : public Fl_Box
 {
   oyConversion_s * context;
@@ -271,6 +266,8 @@ class Fl_Oy_Box : public Fl_Box
       for(i = 0; i < image->height; ++i)
       {
         image_data = image->getLine( image, i, &height, -1, &is_allocated );
+
+        /* on osX it uses sRGB without alternative */
         fl_draw_image( (const uchar*)image_data, 0, i, image->width, 1,
                        channels, W*channels);
         if(is_allocated)
@@ -393,7 +390,9 @@ int      conversionObserve           ( oyObserver_s      * observer,
 }
 }
 
-oyFilterNode_s * Fl_Oy_Box::setImage( const char * file_name )
+int  graphFromImageFileName          ( const char        * file_name,
+                                       oyConversion_s   ** graph,
+                                       oyFilterNode_s   ** icc_node )
 {
   oyFilterNode_s * in, * out, * icc;
   int error = 0;
@@ -402,7 +401,7 @@ oyFilterNode_s * Fl_Oy_Box::setImage( const char * file_name )
   oyImage_s * image_in = 0;
 
   if(!file_name)
-    return 0;
+    return 1;
 
   /* start with an empty conversion object */
   conversion = oyConversion_New( 0 );
@@ -473,13 +472,27 @@ oyFilterNode_s * Fl_Oy_Box::setImage( const char * file_name )
   oyOptions_Release( &options );
 
 
+  *graph = conversion;
+  *icc_node = icc;
+
+  return 0;
+}
+
+oyFilterNode_s * Fl_Oy_Box::setImage( const char * file_name )
+{
+  oyFilterNode_s * icc = 0;
+  int error = 0;
+  oyConversion_s * conversion = 0;
+
+  error = graphFromImageFileName( file_name, &conversion, &icc);
+
   setConversion( conversion );
 
    /* release unneeded objects; in C style */
   oyConversion_Release( &conversion );
 
   return icc;
-  }
+}
 
 int
 main(int argc, char** argv)
