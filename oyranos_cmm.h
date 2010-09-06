@@ -1399,6 +1399,10 @@ int          oyFilterSocket_MatchImagingPlug (
                                        oyFilterSocket_s  * socket,
                                        oyFilterPlug_s    * plug );
 
+const char * oyCMMgetText            ( const char        * select,
+                                       oyNAME_e            type );
+extern const char * oyCMM_texts[4];
+
 /* miscellaneous helpers */
 int oyCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
 

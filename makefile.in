@@ -29,6 +29,7 @@ CMMS = \
 	$(TARGET)_lcm2$(OY_MODULE_NAME) \
 	$(TARGET)_lraw$(OY_MODULE_NAME) \
 	$(TARGET)_oicc$(OY_MODULE_NAME) \
+	$(TARGET)_oPNG$(OY_MODULE_NAME) \
 	$(TARGET)_oyra$(OY_MODULE_NAME) \
 	$(TARGET)_oydi$(OY_MODULE_NAME) \
 	$(TARGET)_oyX1$(OY_MODULE_NAME) \
@@ -38,6 +39,7 @@ META = \
 	$(TARGET)_oyIM$(OY_MODULE_NAME)
 LIB_CMM_oyIM = $(LIB_CMM_START)_oyIM$(LIB_CMM_END)
 LIB_CMM_oicc = $(LIB_CMM_START)_oicc$(LIB_CMM_END)
+LIB_CMM_oPNG = $(LIB_CMM_START)_oPNG$(LIB_CMM_END)
 LIB_CMM_oyX1 = $(LIB_CMM_START)_oyX1$(LIB_CMM_END)
 #ifdef CUPS
 LIB_CMM_CUPS = $(LIB_CMM_START)_CUPS$(LIB_CMM_END)
@@ -59,6 +61,7 @@ LIB_CMM_oyra = $(LIB_CMM_START)_oyra$(LIB_CMM_END)
 LIBS_CMM = \
 	$(LIB_CMM_oyIM) \
 	$(LIB_CMM_oicc) \
+	$(LIB_CMM_oPNG) \
 	$(LIB_CMM_oydi) \
 	$(LIB_CMM_CUPS) \
 	$(LIB_CMM_SANE) \
@@ -169,11 +172,13 @@ CFILES_CMM_oyIM = \
 	modules/$(TARGET)_cmm_oyIM_profile.c
 CFILES_CMM_oicc = \
 	modules/$(TARGET)_cmm_oicc.c
+CFILES_CMM_oPNG = \
+	modules/$(TARGET)_cmm_oPNG.c
 CFILES_MODULES = \
 	$(CFILES_CMM_lcms) $(CFILES_CMM_lcm2) $(CFILES_CMM_raw) \
 	$(CFILES_CMM_oydi) $(CFILES_CMM_oyra) \
 	$(CFILES_MODULES_DEVICES) $(CFILES_CMM_oyIM) \
-	$(CFILES_CMM_oicc)
+	$(CFILES_CMM_oicc) $(CFILES_CMM_oPNG)
 CPPFILES_MODULES = \
 	$(CPPFILES_CMM_lraw)
 CHEADERS_MODULES = \
@@ -334,6 +339,7 @@ COBJECTS = \
 	$(CMM_oyra_OBJECTS) \
 	$(CMM_oyIM_OBJECTS) \
 	$(CMM_oicc_OBJECTS) \
+	$(CMM_oPNG_OBJECTS) \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
 	tests/test_oyranos.o test.o
@@ -355,6 +361,7 @@ CMM_SANE_OBJECTS = $(CFILES_CMM_SANE:.c=.o)
 CMM_oyra_OBJECTS = $(CFILES_CMM_oyra:.c=.o)
 CMM_oyIM_OBJECTS = $(CFILES_CMM_oyIM:.c=.o)
 CMM_oicc_OBJECTS = $(CFILES_CMM_oicc:.c=.o)
+CMM_oPNG_OBJECTS = $(CFILES_CMM_oPNG:.c=.o)
 MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
 Flmm_OBJECTS = $(CXXFILES_Flmm:.cxx=.o)
 FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
@@ -372,6 +379,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(CMM_oyra_OBJECTS) \
 	$(CMM_oyIM_OBJECTS) \
 	$(CMM_oicc_OBJECTS) \
+	$(CMM_oPNG_OBJECTS) \
 	$(FLTK_OBJECTS) \
 	$(FLTK_OFORMS_OBJECTS) \
 	$(TARGET)_gamma.o \
@@ -389,6 +397,7 @@ SUB_OBJECTS = \
 	$(CMM_oyra_OBJECTS) \
 	$(CMM_oyIM_OBJECTS) \
 	$(CMM_oicc_OBJECTS) \
+	$(CMM_oPNG_OBJECTS) \
 	$(Flmm_OBJECTS) \
 	tests/test_oyranos.o
 
@@ -566,6 +575,17 @@ $(LIB_CMM_oicc): $(LIBSONAMEFULL) $(CMM_oicc_OBJECTS)
 	$(LNK) $@ lib$(TARGET)_oicc$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_oicc$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_oicc$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+
+$(LIB_CMM_oPNG): $(LIBSONAMEFULL) $(CMM_oPNG_OBJECTS)
+	echo Linking $@ ...
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
+	-o $@ \
+	$(CMM_oPNG_OBJECTS) $(MODULE_LDLIBS)
+	$(RM)  lib$(TARGET)_oPNG$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oPNG$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  lib$(TARGET)_oPNG$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oPNG$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+
 
 $(LIB_XNVCTRL).a:
 	echo Building $@ ...

@@ -502,4 +502,42 @@ int          oyFilterSocket_MatchImagingPlug (
   return match;
 }
 
+/**
+ *  This function implements oyCMMInfoGetText_f.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/23 (Oyranos: 0.1.10)
+ *  @date    2010/09/06
+ */
+const char * oyCMMgetText             ( const char        * select,
+                                       oyNAME_e            type )
+{
+         if(strcmp(select, "name")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("NoNo");
+    else if(type == oyNAME_NAME)
+      return _("Oyranos modules");
+    else
+      return _("Oyranos supplied modules");
+  } else if(strcmp(select, "manufacturer")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("Kai-Uwe");
+    else if(type == oyNAME_NAME)
+      return _("Kai-Uwe Behrmann");
+    else
+      return _("Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download");
+  } else if(strcmp(select, "copyright")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("newBSD");
+    else if(type == oyNAME_NAME)
+      return _("Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD");
+    else
+      return _("new BSD license: http://www.opensource.org/licenses/bsd-license.php");
+  }
+  return 0;
+}
+const char *oyCMM_texts[4] = {"name","copyright","manufacturer",0};
 
