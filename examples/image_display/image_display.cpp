@@ -22,6 +22,7 @@
 #include <oyranos_cmm.h>   /* for hacking into module API */
 
 #include "../../oyranos_logo.h"
+#include "oyranos_graph_display_helpers.c"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -122,144 +123,71 @@ class Fl_Oy_Box : public Fl_Box
       int i, height = 0, is_allocated = 0;
       oyPointer image_data = 0;
       int channels = 0;
-      oyImage_s * image = oyConversion_GetImage( context, OY_OUTPUT );
+      oyPixel_t pt;
+      oyDATATYPE_e data_type;
+      oyImage_s * image = 0;
       oyRectangle_s * display_rectangle = 0;
-      oyOptions_s * image_tags = 0;
-      oyDATATYPE_e data_type = oyUINT8;
-      oyPixel_t pt = 0;
-
-      if(!image)
-        return;
-
-      image_tags = oyImage_TagsGet( image );
+      void * display = 0,
+           * window = 0;
 
 #if defined(HAVE_X11)
       /* add X11 window and display identifiers to output image */
-      oyOption_s * o = 0;
-      Window  w = fl_xid(win);
-      int count = oyOptions_CountType( image_tags,
-                                       "//" OY_TYPE_STD "/display/window_id",
-                                       oyOBJECT_BLOB_S );
-      if(!count && w)
+      display = fl_display;
+      window = (void*)fl_xid(win);
+#endif
+
+      /* Inform about the images display coverage.  */
+      display_rectangle = oyRectangle_NewWith( X,Y,W,H, 0 );
+
+      /* Load the image before creating the oyPicelAccess_s object. */
+      image = oyConversion_GetImage( context, OY_OUTPUT );
+
+      if(!ticket)
       {
-        oyBlob_s * win_id = oyBlob_New(0),
-                 * display_id = oyBlob_New(0);
-        if(win_id)
-        {
-          win_id->ptr = (oyPointer)w;
-          o = oyOption_New( "//" OY_TYPE_STD "/display/window_id", 0 );
-          oyOption_StructMoveIn( o, (oyStruct_s**)&win_id );
-          oyOptions_MoveIn( image_tags, &o, -1 );
-
-          display_id->ptr = fl_display;
-          o = oyOption_New( "//" OY_TYPE_STD "/display/display_id", 0 );
-          oyOption_StructMoveIn( o, (oyStruct_s**)&display_id );
-          oyOptions_MoveIn( image_tags, &o, -1 );
-
-          oyOptions_SetFromText( &image_tags,
-                                 "//" OY_TYPE_STD "/display/display_name",
-                                 DisplayString(fl_display), OY_CREATE_NEW );
-
-        } else
-          printf("%s:%d WARNING: no X11 Window obtained or\n"
-                 "   no oyBlob_s allocateable\n", __FILE__,__LINE__);
-
-#if 0
-        size_t size = 0;
-        oyImage_s * image_in = oyConversion_GetImage( context, OY_INPUT );
-        oyPointer data = oyProfile_GetMem( image_in->profile_, &size, 0,malloc);
-        XcolorProfile * xprofile = (XcolorProfile*)malloc(sizeof(XcolorProfile)+                                                          size);
-        oyProfileGetMD5( data, size, xprofile->md5 );
-        xprofile->length = size;
-        memcpy( xprofile + 1, data, size );
-        XcolorProfileUpload( fl_display, xprofile );
-        free( data ); size = 0; free( xprofile );
-
-        oyImage_Release( &image_in );
-#endif
+        oyFilterPlug_s * plug = oyFilterNode_GetPlug( context->out_, 0 );
+        ticket = oyPixelAccess_Create( 0,0, plug, oyPIXEL_ACCESS_IMAGE, 0 );
       }
+
+      if(image)
+      {
+        /* take care to not go over the borders */
+        if(px < W - image->width) px = W - image->width;
+        if(py < H - image->height) py = H - image->height;
+        if(px > 0) px = 0;
+        if(py > 0) py = 0;
+      }
+
+      ticket->start_xy[0] = -px;
+      ticket->start_xy[1] = -py;
+
+#if DEBUG
+      printf( "%s:%d new display rectangle: %s +%d+%d +%d+%d\n", __FILE__,
+        __LINE__, oyRectangle_Show(display_rectangle), x(), y(), px, py );
 #endif
 
-      /* check if the actual data can be displayed */
+      dirty = oyGetScreenImage( context, ticket, display_rectangle,
+                                old_display_rectangle,
+                                old_roi_rectangle, "X11",
+                                display, window, dirty,
+                                image );
+
+      oyRectangle_Release( &display_rectangle );
+
+      if(verbose)
+        oyShowGraph_( context->input, 0 ); verbose = 0;
+
+      /* some error checks */
       pt = oyImage_PixelLayoutGet( image );
       data_type = oyToDataType_m( pt );
       channels = oyToChannels_m( pt );
       if(pt != 0 &&
          ((channels != 4 && channels != 3) || data_type != oyUINT8))
       {
-        printf( "WARNING: wrong image data format: %s\n%s\n"
+        printf( "WARNING: wrong image data format: %s\n"
                 "need 4 or 3 channels with 8-bit\n",
-                oyOptions_FindString( image_tags, "filename", 0 ),
                 image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "" );
         return;
       }
-
-      oyOptions_Release( &image_tags );
-
-      /* Inform about the images display coverage.  */
-      image_tags = oyImage_TagsGet( image );
-      display_rectangle = (oyRectangle_s*) oyOptions_GetType( image_tags, -1,
-                                    "display_rectangle", oyOBJECT_RECTANGLE_S );
-      oyOptions_Release( &image_tags );
-      oyRectangle_SetGeo( display_rectangle, X,Y,W,H );
-
-      if(!ticket)
-      {
-        oyFilterPlug_s * plug = oyFilterNode_GetPlug( context->out_, 0 );
-        ticket = oyPixelAccess_Create( 0,0, plug, oyPIXEL_ACCESS_IMAGE, 0 );
-        //ticket->output_image_roi = oyRectangle_NewWith( 0,0,0,0, 0 );
-      }
-
-#if 0
-      oyRectangle_s window_rectangle = { oyOBJECT_RECTANGLE_S, 0,0,0 };
-      oyRectangle_SetGeo( ticket->output_image_roi, px, py, W, H );
-      oyRectangle_Scale( ticket->output_image_roi, 1.0/image->width );
-      oyRectangle_SetGeo( &window_rectangle, x(), y(), W, H );
-      oyRectangle_Scale( &window_rectangle, 1.0/image->width );
-      if(ticket->output_image_roi->width > image->viewport->width)
-        ticket->output_image_roi->width = image->viewport->width;
-      if(ticket->output_image_roi->height > image->viewport->height)
-        ticket->output_image_roi->height = image->viewport->height;
-      oyRectangle_MoveInside( ticket->output_image_roi, image->viewport );
-      oyRectangle_Trim( ticket->output_image_roi, &window_rectangle );
-#else
-      /* take care to not go over the borders */
-      if(px < W - image->width) px = W - image->width;
-      if(py < H - image->height) py = H - image->height;
-      if(px > 0) px = 0;
-      if(py > 0) py = 0;
-      ticket->start_xy[0] = -px;
-      ticket->start_xy[1] = -py;
-#endif
-
-      /* decide wether to refresh the cached rectangle of our static image */
-      if( context->out_ &&
-         ((!oyRectangle_IsEqual( display_rectangle, old_display_rectangle ) ||
-           !oyRectangle_IsEqual( ticket->output_image_roi, old_roi_rectangle )||
-           ticket->start_xy[0] != ticket->start_xy_old[0] ||
-           ticket->start_xy[1] != ticket->start_xy_old[1]) ||
-           dirty ))
-      {
-#ifdef DEBUG
-        printf( "%s:%d new display rectangle: %s +%d+%d\n", __FILE__,__LINE__,
-                oyRectangle_Show(display_rectangle), x(), y() ),
-#endif
-
-        /* convert the image data */
-        oyConversion_RunPixels( context, ticket );
-
-        /* remember the old rectangle */
-        oyRectangle_SetByRectangle( old_display_rectangle, display_rectangle );
-        oyRectangle_SetByRectangle( old_roi_rectangle,ticket->output_image_roi);
-        ticket->start_xy_old[0] = ticket->start_xy[0];
-        ticket->start_xy_old[1] = ticket->start_xy[1];
-
-        dirty = 0;
-      }
-
-      if(verbose)
-        oyShowGraph_( context->input, 0 ); verbose = 0;
-
 
       /* get the data and draw the image */
       if(image)
@@ -278,9 +206,9 @@ class Fl_Oy_Box : public Fl_Box
     }
   }
 
-    int e, ox, oy, px, py;
-    int edit_object_id;
-    int handle(int event) {
+  int e, ox, oy, px, py;
+  int edit_object_id;
+  int handle(int event) {
       e = event;
       switch(e) {
         case FL_PUSH:
@@ -301,7 +229,7 @@ class Fl_Oy_Box : public Fl_Box
       //printf("e: %d ox:%d px:%d\n",e, ox, px);
       int ret = Fl_Box::handle(e);
       return ret;
-    }
+  }
 
 public:
   Fl_Oy_Box(int x, int y, int w, int h) : Fl_Box(x,y,w,h)
@@ -390,101 +318,13 @@ int      conversionObserve           ( oyObserver_s      * observer,
 }
 }
 
-int  graphFromImageFileName          ( const char        * file_name,
-                                       oyConversion_s   ** graph,
-                                       oyFilterNode_s   ** icc_node )
-{
-  oyFilterNode_s * in, * out, * icc;
-  int error = 0;
-  oyConversion_s * conversion = 0;
-  oyOptions_s * options = 0;
-  oyImage_s * image_in = 0;
-
-  if(!file_name)
-    return 1;
-
-  /* start with an empty conversion object */
-  conversion = oyConversion_New( 0 );
-  /* create a filter node */
-  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/file_read.meta", 0, 0 );
-  /* set the above filter node as the input */
-  oyConversion_Set( conversion, in, 0 );
-
-  /* add a file name argument */
-  /* get the options of the input node */
-  if(in)
-  options = oyFilterNode_OptionsGet( in, OY_SELECT_FILTER );
-  /* add a new option with the appropriate value */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
-                                 file_name, OY_CREATE_NEW );
-  /* release the options object, this means its not any more refered from here*/
-  oyOptions_Release( &options );
-
-  /* create a new filter node */
-  icc = out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
-  /* append the new to the previous one */
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc" );
-
-  /* Set the image to the first/only socket of the filter node.
-   * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
-   * We rely on resolving the image later.
-   */
-  oyFilterNode_DataSet( in, (oyStruct_s*)image_in, 0, 0 );
-
-  /* swap in and out */
-  in = out;
-
-
-  /* create a node for preparing the image for displaying */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, 0 );
-  options = oyFilterNode_OptionsGet( out, OY_SELECT_FILTER );
-  /* 8 bit data for FLTK */
-  error = oyOptions_SetFromInt( &options,
-                                "//" OY_TYPE_STD "/display/datatype",
-                                oyUINT8, 0, OY_CREATE_NEW );
-  /* alpha might be support once by FLTK? */
-  error = oyOptions_SetFromInt( &options,
-                                "//" OY_TYPE_STD "/display/preserve_alpha",
-                                1, 0, OY_CREATE_NEW );
-  oyOptions_Release( &options );
-  /* append the node */
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
-  in = out;
-
-
-  /* add a closing node */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, 0 );
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  /* set the output node of the conversion */
-  oyConversion_Set( conversion, 0, out );
-
-  /* apply policies */
-  /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
-                                 "true", OY_CREATE_NEW );*/
-  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", options );
-  oyOptions_Release( &options );
-
-
-  *graph = conversion;
-  *icc_node = icc;
-
-  return 0;
-}
-
 oyFilterNode_s * Fl_Oy_Box::setImage( const char * file_name )
 {
   oyFilterNode_s * icc = 0;
   int error = 0;
   oyConversion_s * conversion = 0;
 
-  error = graphFromImageFileName( file_name, &conversion, &icc);
+  error = oyGraphFromImageFileName( file_name, &conversion, &icc);
 
   setConversion( conversion );
 
