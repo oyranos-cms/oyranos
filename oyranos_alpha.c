@@ -26449,7 +26449,7 @@ oyPixelAccess_s *  oyPixelAccess_Create (
     {
       /** @todo how can we know about the various module capabilities
        *  - back report the processed number of pixels in the passed pointer
-       *  - restrict for a line interface only, would fit to oyArray2D_s
+       *  - restrict for a line interface only, would fit to oyArray2d_s
        *  - + handle inside an to be created function oyConversion_RunPixels()
        */
     }
