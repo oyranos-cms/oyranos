@@ -1912,12 +1912,13 @@ struct oyArray2d_s {
   int                  height;         /**< height of actual data view */
   oyRectangle_s        data_area;      /**< size of reserve pixels, x,y <= 0, width,height >= data view width,height */
 
-  unsigned char     ** array2d;        /**< sorted data */
-  int                  own_lines;      /**< Is *array2d owned by this object?
+  unsigned char     ** array2d;        /**< sorted data, pointer is always owned
+                                            by the object */
+  int                  own_lines;      /**< Are *array2d rows owned by object?
                                             - 0 not owned by the object
-                                            - 1 one monolithic memory block
+                                            - 1 one own monolithic memory block
                                                 starting in array2d[0]
-                                            - 2 several memory blocks */
+                                            - 2 several owned memory blocks */
   oyStructList_s     * refs_;          /**< references of other arrays to this*/
   oyArray2d_s        * refered_;       /**< array this one refers to */
 };
@@ -1940,6 +1941,10 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                  oyArray2d_DataSet   ( oyArray2d_s       * obj,
                                        oyPointer           data );
+OYAPI int  OYEXPORT
+                 oyArray2d_RowsSet   ( oyArray2d_s       * obj,
+                                       oyPointer         * rows,
+                                       int                 do_copy );
 
 /** @struct  oyImage_s
  *  @brief   a reference struct to gather information for image transformation
