@@ -19323,6 +19323,39 @@ OYAPI oyArray2d_s * OYEXPORT
 
   return s;
 }
+
+/** Function oyArray2d_ReleaseArray
+ *  @memberof oyArray2d_s
+ *  @brief   release Array2d::array member
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.11
+ *  @since   2010/09/07 (Oyranos: 0.1.11)
+ *  @date    2010/09/07
+ */
+int            oyArray2d_ReleaseArray( oyArray2d_s       * obj )
+{
+  int error = 0;
+  oyArray2d_s * s = obj;
+  if(s && s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+    int y;
+    size_t dsize = oySizeofDatatype( s->t );
+
+    for( y = s->data_area.y; y < s->data_area.height; ++y )
+    {
+      if((s->own_lines == 1 && y == 0) ||
+         s->own_lines == 2)
+        deallocateFunc( s->array2d[y] );
+      s->array2d[y] = 0;
+    }
+    deallocateFunc( s->array2d - (size_t)(dsize * -s->data_area.y) );
+    s->array2d = 0;
+  }
+  return error;
+}
  
 /**
  *  Function oyArray2d_Release
@@ -19357,17 +19390,8 @@ OYAPI int  OYEXPORT
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-    int y;
-    size_t dsize = oySizeofDatatype( s->t );
 
-    for( y = s->data_area.y; y < s->data_area.height; ++y )
-    {
-      if((s->own_lines == 1 && y == 0) ||
-         s->own_lines == 2)
-        deallocateFunc( s->array2d[y] );
-      s->array2d[y] = 0;
-    }
-    deallocateFunc( s->array2d - (size_t)(dsize * -s->data_area.y) );
+    oyArray2d_ReleaseArray( s );
 
     oyObject_Release( &s->oy_ );
 
@@ -19384,7 +19408,8 @@ OYAPI int  OYEXPORT
  *  @brief   set the data blob and (re-)initialise the object
  *
  *  @param[in,out] obj                 struct object
- *  @param[in]     data                the data
+ *  @param[in]     data                the data, remains in the property of the
+ *                                     caller
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/08/23 (Oyranos: 0.1.8)
@@ -19420,6 +19445,94 @@ OYAPI int  OYEXPORT
     if(error <= 0)
       for( y = 0; y < s->height; ++y )
         s->array2d[y] = &u8[oySizeofDatatype( s->t ) * s->width * y];
+  }
+
+  return error;
+}
+
+/**
+ *  @internal
+ *  Function oyArray2d_RowsSet
+ *  @memberof oyArray2d_s
+ *  @brief   set the data and (re-)initialise the object
+ *
+ *  @param[in,out] obj                 struct object
+ *  @param[in]     data                the data
+ *  @param[in]     do_copy             - 0 : take the memory as is
+ *                                     - 1 : copy the memory monolithic
+ *                                     - 2 : copy the memory chunky
+ *
+ *  @version Oyranos: 0.1.11
+ *  @since   2010/09/07 (Oyranos: 0.1.11)
+ *  @date    2010/09/07
+ */
+OYAPI int  OYEXPORT
+                 oyArray2d_RowsSet   ( oyArray2d_s       * obj,
+                                       oyPointer         * rows,
+                                       int                 do_copy )
+{
+  oyArray2d_s * s = obj;
+  int error = 0;
+
+  if(!rows)
+    return 1;
+
+  if(!obj || obj->type_ != oyOBJECT_ARRAY2D_S)
+    return 1;
+
+  {
+    int y_len = sizeof(unsigned char *) * (s->height + 1),
+        y;
+    size_t size = 0;
+    oyAlloc_f allocateFunc_ = s->oy_->allocateFunc_;
+
+    error = !s->array2d;
+
+    size = s->width * oySizeofDatatype( s->t );
+
+    oyArray2d_ReleaseArray( s );
+
+    /* allocate the base array */
+    oyAllocHelper_m_( s->array2d, unsigned char *, s->height, allocateFunc_,
+                      error = 1; return 1 );
+    if(error <= 0)
+      error = !memset( s->array2d, 0, y_len );
+
+    s->own_lines = do_copy;
+
+    if(error <= 0 && s->own_lines == 2)
+    {
+      /* allocate each line separately */
+      for(y = 0; y < s->height; ++y)
+      {
+        oyAllocHelper_m_( s->array2d[y], unsigned char, size, allocateFunc_,
+                          error = 1; break );
+        error = !memcpy( s->array2d[y], rows[y], size );
+      }
+
+    } else
+    if(error <= 0 && s->own_lines == 1)
+    {
+      /* allocate all lines at once */
+      unsigned char * u8 = 0;
+      oyAllocHelper_m_( u8, unsigned char, size * s->height, allocateFunc_,
+                        error = 1; return 1 );
+
+      s->own_lines = do_copy;
+      if(error <= 0)
+      for( y = 0; y < s->height; ++y )
+      {
+        s->array2d[y] = &u8[size * y];
+        error = !memcpy( s->array2d[y], rows[y], size );
+      }
+
+    } else
+    if(error <= 0 && s->own_lines == 0)
+    {
+      /* just assign */
+      for( y = 0; y < s->height; ++y )
+        s->array2d[y] = rows[y];
+    }
   }
 
   return error;
