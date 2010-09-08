@@ -29,6 +29,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <png.h>
+
 #define CMM_NICK "oPNG"
 #define CMM_VERSION {0,1,0}
 
@@ -104,6 +106,20 @@ oyCMMInfo_s oPNG_cmm_module = {
 
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
 };
+
+
+void oPNGerror( png_structp png, const char * text )
+{
+  message( oyMSG_ERROR, (oyStruct_s*)NULL/*node*/,
+             OY_DBG_FORMAT_ "%s",
+             OY_DBG_ARGS_, text );
+}
+void oPNGwarn( png_structp png, const char * text )
+{
+  message( oyMSG_WARN, (oyStruct_s*)NULL/*node*/,
+             OY_DBG_FORMAT_ "%s",
+             OY_DBG_ARGS_, text );
+}
 
 
 /* OY_WRITE_PNG_REGISTRATION ---------------------------------------------*/
@@ -626,37 +642,47 @@ int      oPNGFilterPlug_ImageInputPNGRun (
                                        oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
+  /* module variables */
   oyFilterSocket_s * socket = 0;
   oyFilterNode_s * node = 0;
   int error = 0;
+
+  /* file variables */
   const char * filename = 0;
   FILE * fp = 0;
+  int     fsize = 0, size = 0;
+  size_t  fpos = 0;
+  uint8_t * data = 0, * buf = 0;
+  size_t  mem_n = 0;   /* needed memory in bytes */
+
+  int info_good = 1;
+
+  /* general image variables */
   oyDATATYPE_e data_type = oyUINT8;
   oyPROFILE_e profile_type = oyEDITING_RGB;
   oyProfile_s * prof = 0;
   oyImage_s * image_in = 0;
-  oyPixel_t pixel_type = 0;
-  int     fsize = 0;
-  size_t  fpos = 0;
-  uint8_t * data = 0, * buf = 0;
-  size_t  mem_n = 0;   /* needed memory in bytes */
-    
-  int info_good = 1;
-
-  int type = 0;        /* PNM type */
-  int width = 0;
-  int height = 0;
+  oyPixel_t pixel_layout = 0;
+  png_uint_32 width = 0;
+  png_uint_32 height = 0;
   int spp = 0;         /* samples per pixel */
   int byteps = 1;      /* byte per sample */
   double maxval = 0; 
     
   size_t start, end;
 
+  /* PNG image variables */
+  int is_png = 0;
+  png_structp png_ptr = 0;
+  png_infop info_ptr = 0, end_info = 0;
+  png_bytepp row_pointers = 0;
+  int color_type = 0;
+
   /* passing through the data reading */
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S &&
      requestor_plug->remote_socket_->data)
   {
-    error = oPNGFilterPlug_ImageRootRun( requestor_plug, ticket );
+    error = oyFilterPlug_ImageRootRun( requestor_plug, ticket );
 
     return error;
 
@@ -681,7 +707,7 @@ int      oPNGFilterPlug_ImageInputPNGRun (
     filename = oyOptions_FindString( node->core->options_, "filename", 0 );
 
   if(filename)
-    fp = fopen( filename, "rm" );
+    fp = fopen( filename, "rmb" );
 
   if(!fp)
   {
@@ -695,15 +721,135 @@ int      oPNGFilterPlug_ImageInputPNGRun (
   fsize = ftell(fp);
   rewind(fp);
 
-  prof = oyProfile_FromStd( profile_type, 0 );
+  /* read the PNG header */
+  size = 8;
 
-  image_in = oyImage_Create( width, height, buf, pixel_type, prof, 0 );
+  oyAllocHelper_m_( data, uint8_t, size, 0, return 1);
+
+  fpos = fread( data, sizeof(uint8_t), size, fp );
+  if( fpos < size ) {
+    message( oyMSG_WARN, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ " could not read: %s %d %d",
+             OY_DBG_ARGS_, oyNoEmptyString_m_( filename ), size, (int)fpos );
+    oyFree_m_( data )
+    fclose (fp);
+    return FALSE;
+  }
+
+  /* check the PNG header */
+  is_png = !png_sig_cmp(data, 0, size);
+  if (!is_png)
+  {
+    info_good = FALSE;
+    goto png_read_clean;
+  }
+
+  png_ptr = png_create_read_struct( PNG_LIBPNG_VER_STRING,
+                                    (png_voidp)node,
+                                    oPNGerror, oPNGwarn );
+  if(!png_ptr)
+  {
+    info_good = FALSE;
+    goto png_read_clean;
+  }
+
+  info_ptr = png_create_info_struct(png_ptr);
+  if(!info_ptr)
+  {
+    png_destroy_read_struct( &png_ptr, (png_infopp)NULL, (png_infopp)NULL);
+    info_good = FALSE;
+    goto png_read_clean;
+  }
+
+/*  end_info = png_create_info_struct(png_ptr);
+  if(!end_info)
+  {
+    png_destroy_read_struct( &png_ptr, &info_ptr, (png_infopp)NULL);
+    info_good = FALSE;
+    goto png_read_clean;
+  }*/
+
+  if(setjmp(png_jmpbuf(png_ptr)))
+  {
+    /* Free all of the memory associated with the png_ptr and info_ptr */
+    png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
+    fclose(fp);
+    /* If we get here, we had a problem reading the file */
+    goto png_read_clean;
+  }
+
+  rewind(fp);
+  png_init_io(png_ptr, fp);
+  png_read_png( png_ptr, info_ptr, PNG_TRANSFORM_PACKSWAP, NULL );
+  row_pointers = png_get_rows(png_ptr, info_ptr);
+  width = png_get_image_width( png_ptr, info_ptr );
+  height = png_get_image_height( png_ptr, info_ptr );
+  byteps = png_get_bit_depth( png_ptr, info_ptr );
+  color_type = png_get_color_type( png_ptr, info_ptr );
+  
+  fpos = 0;
+  fclose (fp);
+  fp = NULL;
+
+
+  switch( color_type )
+  {
+  case PNG_COLOR_TYPE_GRAY:
+       pixel_layout |= oyChannels_m(1); break;
+  case PNG_COLOR_TYPE_GRAY_ALPHA:
+       pixel_layout |= oyChannels_m(2); break;
+  case PNG_COLOR_TYPE_PALETTE:
+       png_set_expand( png_ptr );
+       pixel_layout |= oyChannels_m(1); break;
+  case PNG_COLOR_TYPE_RGB:
+       pixel_layout |= oyChannels_m(3); break;
+  case PNG_COLOR_TYPE_RGB_ALPHA:
+       pixel_layout |= oyChannels_m(4); break;
+  default: goto png_read_clean;
+  }
+
+  switch(byteps)
+  {
+  case 1:
+  case 2:
+  case 4:
+       png_set_expand( png_ptr );
+  case 8:
+       pixel_layout |= oyDataType_m(oyUINT8);
+       break;
+  case 16:
+       pixel_layout |= oyDataType_m(oyUINT16);
+       break;
+  }
+
+#if defined(PNG_iCCP_SUPPORTED)
+  if( info_ptr->iccp_proflen > 0 )
+  {
+    prof = oyProfile_FromMem( info_ptr->iccp_proflen, info_ptr->iccp_profile,
+                              0,0 );
+  } else
+#endif
+    prof = oyProfile_FromStd( profile_type, 0 );
+
+
+  /* create the image */
+  image_in = oyImage_Create( width, height, NULL, pixel_layout, prof, 0 );
+  if(image_in)
+  {
+    oyArray2d_s * a = oyArray2d_Create( NULL,
+                                 image_in->width * oyToChannels_m(pixel_layout),
+                                        image_in->height,
+                                        oyToDataType_m(pixel_layout),
+                                        0 );
+    oyArray2d_RowsSet( a, row_pointers, 1 );
+    oyImage_DataSet ( image_in, (oyStruct_s**) &a, 0,0,0,0,0,0 );
+  }
 
   if (!image_in)
   {
       message( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ "PNM can't create a new image\n%dx%d %d",
-             OY_DBG_ARGS_,  width, height, pixel_type );
+             OY_DBG_ARGS_,  width, height, pixel_layout );
       oyFree_m_ (data)
     return FALSE;
   }
@@ -728,11 +874,12 @@ int      oPNGFilterPlug_ImageInputPNGRun (
     oyImage_SetCritical( ticket->output_image, image_in->layout_[0], 0,0 );
   }
 
+  png_read_clean:
   oyImage_Release( &image_in );
   oyFree_m_ (data)
 
   /* return an error to cause the graph to retry */
-  return 1;
+  return info_good;
 }
 
 const char png_read_extra_options[] = {
