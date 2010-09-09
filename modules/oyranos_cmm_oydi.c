@@ -268,10 +268,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
           message( oyMSG_WARN, (oyStruct_s*)image,
                    OY_DBG_FORMAT_"removed %d; have still %d", OY_DBG_ARGS_,
                    pos, (int)old_regions_n );
-      } else
-        message( oyMSG_WARN, (oyStruct_s*)image,
-                 OY_DBG_FORMAT_"no region to delete? %d", OY_DBG_ARGS_,
-                 (int)old_regions_n );
+      }
 
       /* upload the new or changed region to the X server */
       error = XcolorRegionInsert( display, w, 0, &region, 1 );
