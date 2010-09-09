@@ -1145,7 +1145,7 @@ const char * oyraApi4ImageInputUiGetText (
     else if(type == oyNAME_NAME)
       return _("Option \"filename\", a valid filename of a existing PPM image");
     else
-      return _("The Option \"filename\" should contain a valid filename to read the ppm data from. If the file does not exist, a error will occure.");
+      return _("The Option \"filename\" should contain a valid filename to read the ppm data from. If the file does not exist, a error will occure.\nThe oyEDITING_RGB ICC profile is attached.");
   }
   return 0;
 }
