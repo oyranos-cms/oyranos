@@ -310,7 +310,7 @@ oyOptionStringsTranslate_ ()
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_GRAY_PROFILE,
-      "oyEDITING_GRAY", 0,"Gray.icc")
+      "oyEDITING_GRAY", 0,"Gray-CIE_L.icc")
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_XYZ, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
@@ -365,7 +365,7 @@ oyOptionStringsTranslate_ ()
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_ASSUMED_GRAY_PROFILE,
-      "oyASSUMED_GRAY" , 0,"Gray.icc")
+      "oyASSUMED_GRAY" , 0,"Gray-CIE_L.icc")
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_PROFILE_PROOF, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
