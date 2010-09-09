@@ -779,8 +779,10 @@ int      oPNGFilterPlug_ImageInputPNGRun (
   switch( color_type )
   {
   case PNG_COLOR_TYPE_GRAY:
+       profile_type = oyASSUMED_GRAY;
        spp = 1; break;
   case PNG_COLOR_TYPE_GRAY_ALPHA:
+       profile_type = oyASSUMED_GRAY;
        spp = 2; break;
   case PNG_COLOR_TYPE_PALETTE:
        png_set_palette_to_rgb( png_ptr );
@@ -1003,7 +1005,7 @@ const char * oPNGApi4ImageInputUiGetText (
     else if(type == oyNAME_NAME)
       return _("Option \"filename\", a valid filename of a existing PNG image");
     else
-      return _("The Option \"filename\" should contain a valid filename to read the png data from. If the file does not exist, a error will occure.\nThe iCCP chunk is searched for or a oyASSUMED_WEB ICC profile will be attached to the resulting image. A embedded renering intent will be ignored.");
+      return _("The Option \"filename\" should contain a valid filename to read the png data from. If the file does not exist, a error will occure.\nThe iCCP chunk is searched for or a oyASSUMED_WEB/oyASSUMED_GRAY ICC profile will be attached to the resulting image. A embedded renering intent will be ignored.");
   }
   return 0;
 }
