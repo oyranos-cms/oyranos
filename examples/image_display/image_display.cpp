@@ -101,18 +101,96 @@ class Oy_Fl_Double_Window : public Fl_Double_Window
   };
 };
 
-
-class Fl_Oy_Box : public Fl_Box
+class Oy_Widget
 {
   oyConversion_s * context;
-  oyPixelAccess_s * ticket;
+
+public:
   oyRectangle_s * old_display_rectangle;
   oyRectangle_s * old_roi_rectangle;
   int dirty;
 
+  Oy_Widget()
+  {
+    context = 0;
+    old_display_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
+    old_roi_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
+    dirty = 0;
+  };
+
+  ~Oy_Widget(void)
+  {
+    oyConversion_Release( &context );
+    oyRectangle_Release( &old_display_rectangle );
+    oyRectangle_Release( &old_roi_rectangle );
+  };
+
+  void conversion( oyConversion_s * c ) 
+  {
+    oyConversion_Release( &context );
+    context = oyConversion_Copy( c, 0 );
+  }
+
+  oyConversion_s * conversion() { return context; }
+
+  oyFilterNode_s * setImage( const char * file_name )
+  {
+    oyFilterNode_s * icc = 0;
+    oyConversion_s * c = oyConversion_FromImageFileName( file_name, &icc, 0 );
+
+    conversion( c );
+
+    oyConversion_Release( &c );
+
+    return icc;
+  }
+
+  void observeICC( oyFilterNode_s * icc,
+                     int(*observator)( oyObserver_s      * observer,
+                                       oySIGNAL_e          signal_type,
+                                       oyStruct_s        * signal_data ) )
+  {
+    /* observe the icc node */
+    oyBlob_s * b = oyBlob_New(0);
+    b->ptr = this;
+    oyStruct_ObserverAdd( (oyStruct_s*)icc, (oyStruct_s*)conversion(),
+                          (oyStruct_s*)b,
+                          observator );
+    oyBlob_Release( &b );
+  }
+};
+
+
+class Fl_Oy_Box : public Fl_Box, public Oy_Widget
+{
+  int e, ox, oy, px, py;
+  int handle(int event)
+  {
+      e = event;
+      switch(e) {
+        case FL_PUSH:
+          ox = x() - Fl::event_x();
+          oy = y() - Fl::event_y();
+          return (1);
+        case FL_RELEASE:
+          return (1);
+        case FL_DRAG:
+          px += ox + Fl::event_x();
+          py += oy + Fl::event_y();
+          ox = x() - Fl::event_x();
+          oy = y() - Fl::event_y();
+          redraw();
+          return (1);
+      }
+      //printf("e: %d ox:%d px:%d\n",e, ox, px);
+      int ret = Fl_Widget::handle(e);
+      return ret;
+  }
+
+  oyPixelAccess_s * ticket;
   void draw()
   {
-    if(context)
+    if(conversion())
     {
       Oy_Fl_Double_Window * win = 0;
       win = dynamic_cast<Oy_Fl_Double_Window*> (window());
@@ -140,11 +218,11 @@ class Fl_Oy_Box : public Fl_Box
       display_rectangle = oyRectangle_NewWith( X,Y,W,H, 0 );
 
       /* Load the image before creating the oyPicelAccess_s object. */
-      image = oyConversion_GetImage( context, OY_OUTPUT );
+      image = oyConversion_GetImage( conversion(), OY_OUTPUT );
 
       if(!ticket)
       {
-        oyFilterPlug_s * plug = oyFilterNode_GetPlug( context->out_, 0 );
+        oyFilterPlug_s * plug = oyFilterNode_GetPlug( conversion()->out_, 0 );
         ticket = oyPixelAccess_Create( 0,0, plug, oyPIXEL_ACCESS_IMAGE, 0 );
       }
 
@@ -165,7 +243,7 @@ class Fl_Oy_Box : public Fl_Box
         __LINE__, oyRectangle_Show(display_rectangle), x(), y(), px, py );
 #endif
 
-      dirty = oyDrawScreenImage(context, ticket, display_rectangle,
+      dirty = oyDrawScreenImage(conversion(), ticket, display_rectangle,
                                 old_display_rectangle,
                                 old_roi_rectangle, "X11",
                                 display, window, dirty,
@@ -174,7 +252,7 @@ class Fl_Oy_Box : public Fl_Box
       oyRectangle_Release( &display_rectangle );
 
       if(verbose)
-        oyShowGraph_( context->input, 0 ); verbose = 0;
+        oyShowGraph_( conversion()->input, 0 ); verbose = 0;
 
       /* some error checks */
       pt = oyImage_PixelLayoutGet( image );
@@ -206,56 +284,7 @@ class Fl_Oy_Box : public Fl_Box
     }
   }
 
-  int e, ox, oy, px, py;
-  int edit_object_id;
-  int handle(int event) {
-      e = event;
-      switch(e) {
-        case FL_PUSH:
-          ox = x() - Fl::event_x();
-          oy = y() - Fl::event_y();
-          return (1);
-        case FL_RELEASE:
-          edit_object_id = -1;
-          return (1);
-        case FL_DRAG:
-          px += ox + Fl::event_x();
-          py += oy + Fl::event_y();
-          ox = x() - Fl::event_x();
-          oy = y() - Fl::event_y();
-          redraw();
-          return (1);
-      }
-      //printf("e: %d ox:%d px:%d\n",e, ox, px);
-      int ret = Fl_Box::handle(e);
-      return ret;
-  }
-
 public:
-  Fl_Oy_Box(int x, int y, int w, int h) : Fl_Box(x,y,w,h)
-  {
-    context = 0;
-    ticket = 0;
-    old_display_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
-    old_roi_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
-    px=py=ox=oy=0;
-    dirty = 0;
-  };
-
-  ~Fl_Oy_Box(void)
-  {
-    oyConversion_Release( &context );
-    oyPixelAccess_Release( &ticket );
-    oyRectangle_Release( &old_display_rectangle );
-    oyRectangle_Release( &old_roi_rectangle );
-  };
-
-  void setConversion( oyConversion_s * c ) 
-  {
-    oyConversion_Release( &context );
-    context = oyConversion_Copy( c, 0 );
-  }
-
   void damage( char c )
   {
     if(c & FL_DAMAGE_USER1)
@@ -263,21 +292,16 @@ public:
     Fl_Box::damage( c );
   }
 
-  oyFilterNode_s * setImage( const char * file_name );
-
-  void observeICC( oyFilterNode_s * icc,
-                     int(*observator)( oyObserver_s      * observer,
-                                       oySIGNAL_e          signal_type,
-                                       oyStruct_s        * signal_data ) )
+  Fl_Oy_Box(int x, int y, int w, int h) : Fl_Box(x,y,w,h)
   {
-  /* observe the icc node */
-  oyBlob_s * b = oyBlob_New(0);
-  b->ptr = this;
-  oyStruct_ObserverAdd( (oyStruct_s*)icc, (oyStruct_s*)context,
-                        (oyStruct_s*)b,
-                        observator );
-  oyBlob_Release( &b );
-  }
+    px=py=ox=oy=0;
+    ticket = 0;
+  };
+
+  ~Fl_Oy_Box(void)
+  {
+    oyPixelAccess_Release( &ticket );
+  };
 };
 
 Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box);
@@ -318,20 +342,6 @@ int      conversionObserve           ( oyObserver_s      * observer,
 }
 }
 
-oyFilterNode_s * Fl_Oy_Box::setImage( const char * file_name )
-{
-  oyFilterNode_s * icc = 0;
-  oyConversion_s * conversion = 0;
-
-  conversion = oyConversion_FromImageFileName( file_name, &icc, 0 );
-
-  setConversion( conversion );
-
-   /* release unneeded objects; in C style */
-  oyConversion_Release( &conversion );
-
-  return icc;
-}
 
 int
 main(int argc, char** argv)
@@ -388,7 +398,8 @@ main(int argc, char** argv)
   /* setup the drawing box */
   Fl_Oy_Box * oy_box = 0;
   Oy_Fl_Double_Window * win = createWindow( &oy_box );
-  icc = oy_box->setImage( file_name );
+  if(oy_box)
+    icc = oy_box->setImage( file_name );
   if(icc)
   {
     setWindowMenue( win, oy_box, icc  );
