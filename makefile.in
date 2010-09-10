@@ -675,7 +675,7 @@ test2c:	test2.c.o
 	$(CC) -I./ `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -o test2c \
 	test2.c.o -L./ `./oyranos-config --ldstaticflags`
 
-check:	all install_bin tests/test_oyranos $(TEST2) examples oforms
+check:	all tests/test_oyranos $(TEST2) examples oforms
 	echo current git version is:
 	n=0; for i in `cd $(SRCDIR); git rev-list master`; do if [ $${n} -eq 0 ]; then echo git id:$${i}; fi; n=1; done
 	echo run tests/test_oyranos
