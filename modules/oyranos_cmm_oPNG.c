@@ -829,6 +829,10 @@ int      oPNGFilterPlug_ImageInputPNGRun (
       message( oyMSG_DBG, (oyStruct_s*)node,
              OY_DBG_FORMAT_ " ICC profile (size: %d): \"%s\"",
              OY_DBG_ARGS_, proflen, oyNoEmptyString_m_( name ) );
+      if(getenv("oPNG_ICC"))
+        printf(
+             OY_DBG_FORMAT_ " ICC profile (size: %d): \"%s\"\n",
+             OY_DBG_ARGS_, proflen, oyNoEmptyString_m_( name ) );
     } else
 #endif
     prof = oyProfile_FromStd( profile_type, 0 );
