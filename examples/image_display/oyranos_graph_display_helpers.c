@@ -21,20 +21,20 @@
 #endif
 
 
-/** Function oyGraphFromImageFileName
+/** Function oyConversion_FromImageFileName
  *  @brief   generate a Oyranos graph from a image file name
  *
  *  @param[in]     file_name           name of image file
- *  @param[out]    graph               generated new graph, owned by caller
  *  @param[out]    icc_node            used icc node, owned by caller
- *  @return                            0 - success, >=  1 - error
+ *  @param[in]     obj                 Oyranos object (optional)
+ *  @return                            generated new graph, owned by caller
  *
  *  @version Oyranos: 0.1.11
  *  @since   2010/09/05 (Oyranos: 0.1.11)
- *  @date    2010/09/05
+ *  @date    2010/09/10
  */
-int  oyGraphFromImageFileName        ( const char        * file_name,
-                                       oyConversion_s   ** graph,
+oyConversion_s * oyConversion_FromImageFileName  (
+                                       const char        * file_name,
                                        oyFilterNode_s   ** icc_node,
                                        oyObject_s          obj )
 {
@@ -45,7 +45,7 @@ int  oyGraphFromImageFileName        ( const char        * file_name,
   oyImage_s * image_in = 0;
 
   if(!file_name)
-    return 1;
+    return NULL;
 
   /* start with an empty conversion object */
   conversion = oyConversion_New( obj );
@@ -116,10 +116,9 @@ int  oyGraphFromImageFileName        ( const char        * file_name,
   oyOptions_Release( &options );
 
 
-  *graph = conversion;
   *icc_node = icc;
 
-  return 0;
+  return conversion;
 }
 
 

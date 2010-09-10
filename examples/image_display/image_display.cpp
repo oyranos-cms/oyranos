@@ -321,10 +321,9 @@ int      conversionObserve           ( oyObserver_s      * observer,
 oyFilterNode_s * Fl_Oy_Box::setImage( const char * file_name )
 {
   oyFilterNode_s * icc = 0;
-  int error = 0;
   oyConversion_s * conversion = 0;
 
-  error = oyGraphFromImageFileName( file_name, &conversion, &icc, 0 );
+  conversion = oyConversion_FromImageFileName( file_name, &icc, 0 );
 
   setConversion( conversion );
 
