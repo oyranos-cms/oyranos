@@ -14,7 +14,7 @@ Prefix:    %{_prefix}
 Requires:      icc-profiles-basiccolor-lstarrgb icc-profiles-lcms-lab icc-profiles-openicc-printing icc-profiles-openicc-rgb
 
 %if 0%{?suse_version} > 0
-BuildRequires:     gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg-devel xorg-x11-Mesa xorg-x11-Mesa-devel libtiff-devel libxml2-devel cairo-devel liblcms-devel xdg-utils cups-devel libqt4-devel compiz-devel libXcm-devel netpbm
+BuildRequires:     gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg-devel xorg-x11-Mesa xorg-x11-Mesa-devel libtiff-devel libxml2-devel cairo-devel liblcms-devel xdg-utils cups-devel libqt4-devel libXcm-devel netpbm
 %endif
 %if 0%{?suse_version} > 910
 #BuildRequires: gcc-c++ gettext doxygen fltk-threaded fltk-threaded-devel xorg-x11 xorg-x11-devel xorg-x11-Mesa-devel  pkgconfig libpng-devel libjpeg-devel
@@ -24,13 +24,13 @@ BuildRequires:  acl autoconf automake bash bind-utils binutils bison bzip2 coreu
 BuildRequires:  Mesa Mesa-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg-devel xorg-x11-fonts-devel xorg-x11-libICE xorg-x11-libICE-devel xorg-x11-libSM xorg-x11 xorg-x11-devel xorg-x11-libSM-devel xorg-x11-libX11 xorg-x11-libX11-devel xorg-x11-libXau xorg-x11-libXau-devel xorg-x11-libXdmcp xorg-x11-libXdmcp-devel xorg-x11-libXext xorg-x11-libXext-devel xorg-x11-libXfixes xorg-x11-libXfixes-devel xorg-x11-libXmu xorg-x11-libXmu-devel xorg-x11-libXp xorg-x11-libXp-devel xorg-x11-libXpm xorg-x11-libXpm-devel xorg-x11-libXprintUtil xorg-x11-libXprintUtil-devel xorg-x11-libXrender xorg-x11-libXrender-devel xorg-x11-libXt xorg-x11-libXt-devel xorg-x11-libXv xorg-x11-libXv-devel xorg-x11-libfontenc xorg-x11-libfontenc-devel xorg-x11-libs xorg-x11-libxkbfile xorg-x11-libxkbfile-devel xorg-x11-proto-devel xorg-x11-util-devel xorg-x11-xtrans-devel
 %endif
 %if 0%{?mandriva_version} > 0
-BuildRequires:  Mesa mesagl-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel  libtiff-devel libxml2-devel cairo-devel lcms-devel xdg-utils cups-devel libqt4-devel compiz-devel libXcm-devel netpbm
+BuildRequires:  Mesa mesagl-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel  libtiff-devel libxml2-devel cairo-devel lcms-devel xdg-utils cups-devel libqt4-devel libXcm-devel netpbm
 %endif
 %if 0%{?fedora_version} > 0
-BuildRequires:  Mesa Mesa-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel xorg-x11-devel xorg-x11-Mesa-devel libXxf86vm-devel  libtiff-devel libxml2-devel cairo-devel liblcms-devel xdg-utils cups-devel libqt4-devel compiz-devel libXcm-devel netpbm
+BuildRequires:  Mesa Mesa-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel xorg-x11-devel xorg-x11-Mesa-devel libXxf86vm-devel  libtiff-devel libxml2-devel cairo-devel liblcms-devel xdg-utils cups-devel libqt4-devel libXcm-devel netpbm
 %endif
 %if 0%{?debian_version} > 0
-BuildRequires: gcc-c++ gettext doxygen graphviz fltk fltk-devel libpng-devel libjpeg-devel pkgconfig xorg-x11 xorg-x11-devel xorg-x11-Mesa-devel xorg-x11-libXext xorg-x11-libXext-devel  xorg-x11-libXpm xorg-x11-libXpm-devel  libtiff-devel libxml2-devel cairo-devel liblcms-devel xdg-utils cups-devel libqt4-devel compiz-devel libXcm-dev netpbm
+BuildRequires: gcc-c++ gettext doxygen graphviz fltk fltk-devel libpng-devel libjpeg-devel pkgconfig xorg-x11 xorg-x11-devel xorg-x11-Mesa-devel xorg-x11-libXext xorg-x11-libXext-devel  xorg-x11-libXpm xorg-x11-libXpm-devel  libtiff-devel libxml2-devel cairo-devel liblcms-devel xdg-utils cups-devel libqt4-devel libXcm-dev netpbm
 %endif
 
 %package -n lib%{name}0
