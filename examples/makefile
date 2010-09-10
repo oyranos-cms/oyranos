@@ -44,7 +44,7 @@ ifeq ($(strip $(UNAME)),Linux)
 # Qt needs somehow -O2 (Why???)
 QT_CFLAGS := $(shell pkg-config --cflags QtGui xcm) -O2 -std=c++0x
 INCL    := $(shell pkg-config --cflags-only-I QtGui)
-TARGET8_LDFLAGS :=  -L./xcmsevents -loyranosedid $(shell pkg-config --libs QtGui x11 xmu xfixes xinerama xrandr xxf86vm oyranos xcm) -lQtXml -lQtCore
+TARGET8_LDFLAGS := $(LDFLAGS)  -L./xcmsevents -loyranosedid $(shell pkg-config --libs QtGui x11 xmu xfixes xinerama xrandr xxf86vm oyranos xcm) -lQtXml -lQtCore
 TARGET8_SOURCES = $(TARGET8).cpp
 TARGET8_GENERATED_SOURCES = \
 	xcmsevents/moc_qcmsevents.cpp \
@@ -67,6 +67,7 @@ all:
 	echo "LIBS=$$LIBS"
 	echo "PKG_CONFIG_PATH=$$PKG_CONFIG_PATH"
 	echo "CFLAGS=$(CFLAGS)"
+	echo "PATH=$$PATH"
 	make $(TARGETS)
 	echo ... all done
 

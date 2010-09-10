@@ -679,10 +679,10 @@ check:	all tests/test_oyranos $(TEST2) examples oforms
 	echo current git version is:
 	n=0; for i in `cd $(SRCDIR); git rev-list master`; do if [ $${n} -eq 0 ]; then echo git id:$${i}; fi; n=1; done
 	echo run tests/test_oyranos
-	LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} tests/test_oyranos
+	OY_MODULE_PATHS=. LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} tests/test_oyranos
 
 examples:
-	cd examples && ($(MAKE) clean; PATH="$(PATH):$(bindir)" LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/examples/ LIBS="-L$(libdir)" $(MAKE))
+	cd examples && ($(MAKE) clean; PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/examples/ LIBS="-L$(libdir) -L../" $(MAKE))
 
 oforms:	$(LIB_FORMS_FLTK_NAME)
 	cd oforms && (PATH="$(PATH):$(bindir)" LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/oforms/ $(MAKE) -f oyranos_xforms.makefile)
