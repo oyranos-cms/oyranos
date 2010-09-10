@@ -324,7 +324,7 @@ oyFilterNode_s * Fl_Oy_Box::setImage( const char * file_name )
   int error = 0;
   oyConversion_s * conversion = 0;
 
-  error = oyGraphFromImageFileName( file_name, &conversion, &icc);
+  error = oyGraphFromImageFileName( file_name, &conversion, &icc, 0 );
 
   setConversion( conversion );
 
