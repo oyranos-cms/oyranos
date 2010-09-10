@@ -165,7 +165,7 @@ class Fl_Oy_Box : public Fl_Box
         __LINE__, oyRectangle_Show(display_rectangle), x(), y(), px, py );
 #endif
 
-      dirty = oyGetScreenImage( context, ticket, display_rectangle,
+      dirty = oyDrawScreenImage(context, ticket, display_rectangle,
                                 old_display_rectangle,
                                 old_roi_rectangle, "X11",
                                 display, window, dirty,

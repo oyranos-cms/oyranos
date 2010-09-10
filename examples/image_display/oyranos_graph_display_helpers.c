@@ -122,7 +122,7 @@ oyConversion_s * oyConversion_FromImageFileName  (
 }
 
 
-/** Function oyGetScreenImage
+/** Function oyDrawScreenImage
  *  @brief   generate a Oyranos image from a given context for display
  *
  *  The function asks the 'oydi' node to provide parameters to render a
@@ -145,9 +145,9 @@ oyConversion_s * oyConversion_FromImageFileName  (
  *
  *  @version Oyranos: 0.1.11
  *  @since   2010/09/05 (Oyranos: 0.1.11)
- *  @date    2010/09/05
+ *  @date    2010/09/10
  */
-int  oyGetScreenImage                ( oyConversion_s    * context,
+int  oyDrawScreenImage               ( oyConversion_s    * context,
                                        oyPixelAccess_s   * ticket,
                                        oyRectangle_s     * display_rectangle,
                                        oyRectangle_s     * old_display_rectangle,
