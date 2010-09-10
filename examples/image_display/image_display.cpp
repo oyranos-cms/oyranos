@@ -161,7 +161,7 @@ public:
 };
 
 
-class Fl_Oy_Box : public Fl_Box, public Oy_Widget
+class Oy_Fl_Box : public Fl_Box, public Oy_Widget
 {
   int e, ox, oy, px, py;
   int handle(int event)
@@ -292,21 +292,21 @@ public:
     Fl_Box::damage( c );
   }
 
-  Fl_Oy_Box(int x, int y, int w, int h) : Fl_Box(x,y,w,h)
+  Oy_Fl_Box(int x, int y, int w, int h) : Fl_Box(x,y,w,h)
   {
     px=py=ox=oy=0;
     ticket = 0;
   };
 
-  ~Fl_Oy_Box(void)
+  ~Oy_Fl_Box(void)
   {
     oyPixelAccess_Release( &ticket );
   };
 };
 
-Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box);
+Oy_Fl_Double_Window * createWindow (Oy_Fl_Box ** oy_box);
 void setWindowMenue                  ( Oy_Fl_Double_Window      * win,
-                                       Fl_Oy_Box         * oy_box,
+                                       Oy_Fl_Box         * oy_box,
                                        oyFilterNode_s    * node );
 
 extern "C" {
@@ -333,7 +333,7 @@ int      conversionObserve           ( oyObserver_s      * observer,
     oyConversion_Correct( (oyConversion_s*)obs->observer,
                           "//" OY_TYPE_STD "/icc", 0 );
 
-    Fl_Oy_Box * oy_box = (Fl_Oy_Box*) ((oyBlob_s*)observer->user_data)->ptr;
+    Oy_Fl_Box * oy_box = (Oy_Fl_Box*) ((oyBlob_s*)observer->user_data)->ptr;
     oy_box->damage( FL_DAMAGE_USER1 );
 
   }
@@ -396,7 +396,7 @@ main(int argc, char** argv)
 
 
   /* setup the drawing box */
-  Fl_Oy_Box * oy_box = 0;
+  Oy_Fl_Box * oy_box = 0;
   Oy_Fl_Double_Window * win = createWindow( &oy_box );
   if(oy_box)
     icc = oy_box->setImage( file_name );
@@ -422,7 +422,7 @@ static Fl_RGB_Image image_oyranos_logo(oyranos_logo, 64, 64, 4, 0);
 
 struct box_n_opts {
   oyFilterNode_s * node;
-  Fl_Oy_Box * box;
+  Oy_Fl_Box * box;
 };
 
 void
@@ -491,7 +491,7 @@ callback ( Fl_Widget* w, void* daten )
     printf("could not find a suitable program structure\n");
 }
 
-Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box)
+Oy_Fl_Double_Window * createWindow (Oy_Fl_Box ** oy_box)
 {
   int w = 640,
       h = 480;
@@ -499,7 +499,7 @@ Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box)
 
   Fl::get_system_colors();
   Oy_Fl_Double_Window *win = new Oy_Fl_Double_Window( w, h+100, TARGET );
-      *oy_box = new Fl_Oy_Box(0,0,w,h);
+      *oy_box = new Oy_Fl_Box(0,0,w,h);
       (*oy_box)->box(FL_FLAT_BOX);
       /* add some text */
       Fl_Box *box = new Fl_Box(0,h,w,100, "Oyranos");
@@ -521,7 +521,7 @@ Oy_Fl_Double_Window * createWindow (Fl_Oy_Box ** oy_box)
 }
 
 void setWindowMenue                  ( Oy_Fl_Double_Window * win,
-                                       Fl_Oy_Box         * oy_box,
+                                       Oy_Fl_Box         * oy_box,
                                        oyFilterNode_s    * node )
 {
   struct box_n_opts * arg = new box_n_opts;
