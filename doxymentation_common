@@ -32,6 +32,9 @@
     @section i18n_vars Internationalisation Variables
     OY_LOCALEDIR is described together with the internal ::oy_domain_codeset.
 
+    @section runtime_vars Runtime Variables
+    OY_MODULE_PATHS can contain paths to meta and normal modules together.
+
     @section debug_vars Debugging Variables
     OYRANOS_DEBUG influences the internal ::oy_debug variable. Its value
     changes the output level. See as well oyranos_debug.[h,c] . The configure
