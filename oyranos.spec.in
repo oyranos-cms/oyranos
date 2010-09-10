@@ -224,7 +224,6 @@ ldconfig
 %{_libdir}/lib%{name}.a
 %{_mandir}/man3/%{name}-config.3*
 %{_mandir}/man3/%{name}.*
-%doc %{name}*.sh
 %doc doc/html
 
 %files -n lib%{name}-alpha-devel

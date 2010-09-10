@@ -290,7 +290,8 @@ LINGUAS_SRC = $(LING:.po=.gmo)
 POT_FILE = po/$(TARGET).pot
 POT_SCRIPT = oyranos_xml_to_po.sh
 
-SCRIPTS = $(POT_SCRIPT)
+SCRIPTS = 
+# $(POT_SCRIPT)
 
 #ifdef FLTK
 FLTK_GUI = $(TARGET)-config-fltk
@@ -872,7 +873,8 @@ install_docu: docu
 	-$(INSTALL) -m 644 doc/html/* $(DESTDIR)$(docdir)/html
 	-$(INSTALL) -m 644 doc_alpha/html/* $(DESTDIR)$(docdir)/html/alpha
 	cd $(SRCDIR) && \
-	  $(INSTALL) $(SCRIPTS) $(DESTDIR)$(docdir)
+	  test -n $(SCRIPTS) && $(INSTALL) $(SCRIPTS) $(DESTDIR)$(docdir) || \
+	  echo ""
 	
 
 install_gui:	$(FLTK_GUI)
