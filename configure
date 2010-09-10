@@ -161,7 +161,7 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       mandir="`echo $1 | sed s/--$switch=//`"
     fi
-    # syscolordir usercolordir iccdirname settingsdirname targetdirname pixmapdir desktopdir
+    # syscolordir usercolordir iccdirname settingsdirname targetdirname pixmapdir icondir desktopdir
     switch=syscolordir
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       syscolordir="`echo $1 | sed s/--$switch=//`"
@@ -185,6 +185,10 @@ if [ $# -gt 0 ]; then
     switch=pixmapdir
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       pixmapdir="`echo $1 | sed s/--$switch=//`"
+    fi
+    switch=icondir
+    if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
+      icondir="`echo $1 | sed s/--$switch=//`"
     fi
     switch=desktopdir
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
@@ -272,7 +276,8 @@ test -n "$INFOECHO" && $INFOECHO "   --usercolordir=[~/.color]            Oyrano
 test -n "$INFOECHO" && $INFOECHO "   --iccdirname=[icc]                   Oyranos ICC profile directory"
 test -n "$INFOECHO" && $INFOECHO "   --settingsdirname=[settings]         Oyranos settings directory"
 test -n "$INFOECHO" && $INFOECHO "   --targetdirname=[target]             Oyranos target directory"
-test -n "$INFOECHO" && $INFOECHO "   --pixmapdir=[\$datadir/pixmaps]       icon installation path"
+test -n "$INFOECHO" && $INFOECHO "   --pixmapdir=[\$datadir/pixmaps]       unthemed icon installation path"
+test -n "$INFOECHO" && $INFOECHO "   --icondir=[\$datadir/icons/hicolor/128x128/mimetypes] icon installation path"
 test -n "$INFOECHO" && $INFOECHO "   --desktopdir=[\$datadir/applications] xdg installation path"
 test -n "$INFOECHO" && $INFOECHO ""
 test -n "$INFOECHO" && $INFOECHO "   --disable-fltk                       skip FLTK parts"
@@ -596,7 +601,7 @@ fi
 if [ -z "$mandir" ]; then
   mandir="$datadir/man"
 fi
-# syscolordir usercolordir iccdirname settingsdirname targetdirname pixmapdir desktopdir
+# syscolordir usercolordir iccdirname settingsdirname targetdirname icondir pixmapdir desktopdir
 if [ -z "$syscolordir" ]; then
   syscolordir="$datadir/color"
 fi
@@ -615,11 +620,14 @@ fi
 if [ -z "$pixmapdir" ]; then
   pixmapdir="$datadir/pixmaps"
 fi
+if [ -z "$icondir" ]; then
+  pixmapdir="$datadir/icons/hicolor/128x128/mimetypes"
+fi
 if [ -z "$desktopdir" ]; then
   desktopdir="$datadir/applications"
 fi
 export prefix exec_prefix bindir sbindir libdir includedir datadir mandir
-export syscolordir usercolordir pixmapdir desktopdir
+export syscolordir usercolordir pixmapdir icondir desktopdir
 export debug static verbose fltkconfig fltk
 
 PATH=$bindir:$PATH
@@ -976,6 +984,7 @@ test -n "$ECHO" && $ECHO "iccdirname=$iccdirname" >> $CONF_SH
 test -n "$ECHO" && $ECHO "settingsdirname=$settingsdirname" >> $CONF_SH
 test -n "$ECHO" && $ECHO "targetdirname=$targetdirname" >> $CONF_SH
 test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $CONF_SH
+test -n "$ECHO" && $ECHO "icondir=$icondir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $CONF_SH
 test -n "$ECHO" && $ECHO "oyranos_add=\"$oyranos_add\"" >> $CONF_SH
 if [ -z "$ELEKTRA_VERSION" ]; then
@@ -1022,6 +1031,7 @@ test -n "$RPMECHO" && $RPMECHO "%define metasubpath     $metasubpath" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define settingsdirname $settingsdirname" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define targetdirname   $targetdirname" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define pixmapdir       $pixmapdir" >> $SPEC
+test -n "$RPMECHO" && $RPMECHO "%define icondir         $icondir" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define desktopdir      $desktopdir" >> $SPEC
 if [ -z "$ELEKTRA_VERSION" ]; then
 test -n "$RPMECHO" && $RPMECHO "" >> $SPEC
@@ -1060,6 +1070,7 @@ test -n "$ECHO" && $ECHO "iccdirname=$iccdirname" >> $PKGC
 test -n "$ECHO" && $ECHO "settingsdirname=$settingsdirname" >> $PKGC
 test -n "$ECHO" && $ECHO "targetdirname=$targetdirname" >> $PKGC
 test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $PKGC
+test -n "$ECHO" && $ECHO "icondir=$icondir" >> $PKGC
 test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $PKGC
 test -n "$ECHO" && cat  "$ROOT_DIR/$PKGC.in" >> $PKGC
 if [ -n "$ECHO" ]; then
@@ -1105,6 +1116,8 @@ if [ -n "$ECHO" ]; then
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="pixmapdir       =       $pixmapdir"
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  echo_="icondir         =       $icondir"
+  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="desktopdir      =       $desktopdir"
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="################################################################"
@@ -1135,6 +1148,7 @@ test -n "$ECHO" && $ECHO "iccdirname=$iccdirname" >> $CONF
 test -n "$ECHO" && $ECHO "settingsdirname=$settingsdirname" >> $CONF
 test -n "$ECHO" && $ECHO "targetdirname=$targetdirname" >> $CONF
 test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $CONF
+test -n "$ECHO" && $ECHO "icondir=$icondir" >> $CONF
 test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $CONF
 test -n "$ECHO" && $ECHO "" >> $CONF
 
