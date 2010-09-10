@@ -19493,7 +19493,7 @@ OYAPI int  OYEXPORT
     oyArray2d_ReleaseArray( s );
 
     /* allocate the base array */
-    oyAllocHelper_m_( s->array2d, unsigned char *, s->height, allocateFunc_,
+    oyAllocHelper_m_( s->array2d, unsigned char *, s->height+1, allocateFunc_,
                       error = 1; return 1 );
     if(error <= 0)
       error = !memset( s->array2d, 0, y_len );

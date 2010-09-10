@@ -878,7 +878,7 @@ install_docu: docu
 install_gui:	$(FLTK_GUI)
 	echo Installing UI ...
 	mkdir -p $(DESTDIR)$(bindir)
-#ifdef $(FLTK_GUI)
+#ifdef FLTK
 	$(INSTALL) -m 755 $(FLTK_GUI) $(DESTDIR)$(bindir)
 	(cd $(DESTDIR)$(bindir)/; $(POST) $(DESTDIR)$(bindir)/$(FLTK_GUI))
 #endif

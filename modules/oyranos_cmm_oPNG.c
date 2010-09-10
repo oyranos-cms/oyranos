@@ -652,14 +652,13 @@ int      oPNGFilterPlug_ImageInputPNGRun (
   FILE * fp = 0;
   int     fsize = 0, size = 0;
   size_t  fpos = 0;
-  uint8_t * data = 0, * buf = 0;
-  size_t  mem_n = 0;   /* needed memory in bytes */
+  uint8_t * data = 0;
 
   int info_good = 1;
 
   /* general image variables */
   oyDATATYPE_e data_type = oyUINT8;
-  oyPROFILE_e profile_type = oyEDITING_RGB;
+  oyPROFILE_e profile_type = oyASSUMED_WEB;
   oyProfile_s * prof = 0;
   oyImage_s * image_in = 0;
   oyPixel_t pixel_layout = 0;
@@ -667,16 +666,14 @@ int      oPNGFilterPlug_ImageInputPNGRun (
   png_uint_32 height = 0;
   int spp = 0;         /* samples per pixel */
   int byteps = 1;      /* byte per sample */
-  double maxval = 0; 
+  /*double maxval = 0;*/
     
-  size_t start, end;
-
   /* PNG image variables */
   int is_png = 0;
   png_structp png_ptr = 0;
-  png_infop info_ptr = 0, end_info = 0;
-  png_bytepp row_pointers = 0;
-  int color_type = 0;
+  png_infop info_ptr = 0;
+  int color_type = 0,
+      num_passes;
 
   /* passing through the data reading */
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S &&
@@ -761,52 +758,42 @@ int      oPNGFilterPlug_ImageInputPNGRun (
     goto png_read_clean;
   }
 
-/*  end_info = png_create_info_struct(png_ptr);
-  if(!end_info)
-  {
-    png_destroy_read_struct( &png_ptr, &info_ptr, (png_infopp)NULL);
-    info_good = FALSE;
-    goto png_read_clean;
-  }*/
-
   if(setjmp(png_jmpbuf(png_ptr)))
   {
     /* Free all of the memory associated with the png_ptr and info_ptr */
     png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
-    fclose(fp);
     /* If we get here, we had a problem reading the file */
+    info_good = FALSE;
     goto png_read_clean;
   }
 
-  rewind(fp);
-  png_init_io(png_ptr, fp);
-  png_read_png( png_ptr, info_ptr, PNG_TRANSFORM_PACKSWAP, NULL );
-  row_pointers = png_get_rows(png_ptr, info_ptr);
+  rewind( fp );
+  png_init_io( png_ptr, fp );
+  png_read_info( png_ptr, info_ptr );
   width = png_get_image_width( png_ptr, info_ptr );
   height = png_get_image_height( png_ptr, info_ptr );
   byteps = png_get_bit_depth( png_ptr, info_ptr );
   color_type = png_get_color_type( png_ptr, info_ptr );
   
-  fpos = 0;
-  fclose (fp);
-  fp = NULL;
-
 
   switch( color_type )
   {
   case PNG_COLOR_TYPE_GRAY:
-       pixel_layout |= oyChannels_m(1); break;
+       profile_type = oyASSUMED_GRAY;
+       spp = 1; break;
   case PNG_COLOR_TYPE_GRAY_ALPHA:
-       pixel_layout |= oyChannels_m(2); break;
+       profile_type = oyASSUMED_GRAY;
+       spp = 2; break;
   case PNG_COLOR_TYPE_PALETTE:
-       png_set_expand( png_ptr );
-       pixel_layout |= oyChannels_m(1); break;
+       png_set_palette_to_rgb( png_ptr );
+       spp = 3; break;
   case PNG_COLOR_TYPE_RGB:
-       pixel_layout |= oyChannels_m(3); break;
+       spp = 3; break;
   case PNG_COLOR_TYPE_RGB_ALPHA:
-       pixel_layout |= oyChannels_m(4); break;
+       spp = 4; break;
   default: goto png_read_clean;
   }
+  pixel_layout |= oyChannels_m(spp);
 
   switch(byteps)
   {
@@ -815,35 +802,62 @@ int      oPNGFilterPlug_ImageInputPNGRun (
   case 4:
        png_set_expand( png_ptr );
   case 8:
-       pixel_layout |= oyDataType_m(oyUINT8);
-       break;
+       data_type = oyUINT8; break;
   case 16:
-       pixel_layout |= oyDataType_m(oyUINT16);
-       break;
+       if(!oyBigEndian())
+         png_set_swap( png_ptr );
+       data_type = oyUINT16; break;
   }
+  pixel_layout |= oyDataType_m(data_type);
 
-#if defined(PNG_iCCP_SUPPORTED)
-  if( info_ptr->iccp_proflen > 0 )
+  num_passes = png_set_interlace_handling( png_ptr );
+  /* update after all the above changes to the png structures */
+  png_read_update_info( png_ptr, info_ptr );
+
+
   {
-    prof = oyProfile_FromMem( info_ptr->iccp_proflen, info_ptr->iccp_profile,
-                              0,0 );
-  } else
+#if defined(PNG_iCCP_SUPPORTED)
+    png_charp name = 0;
+    png_charp profile = 0;
+    png_uint_32 proflen = 0;
+    int compression = 0;
+
+    if( png_get_iCCP( png_ptr, info_ptr, &name, &compression,
+                      &profile, &proflen ) )
+    {
+      prof = oyProfile_FromMem( proflen, profile, 0,0 );
+      message( oyMSG_DBG, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ " ICC profile (size: %d): \"%s\"",
+             OY_DBG_ARGS_, proflen, oyNoEmptyString_m_( name ) );
+    } else
 #endif
     prof = oyProfile_FromStd( profile_type, 0 );
-
+  }
 
   /* create the image */
   image_in = oyImage_Create( width, height, NULL, pixel_layout, prof, 0 );
   if(image_in)
   {
     oyArray2d_s * a = oyArray2d_Create( NULL,
-                                 image_in->width * oyToChannels_m(pixel_layout),
-                                        image_in->height,
+                                        width * oyToChannels_m(pixel_layout),
+                                        height,
                                         oyToDataType_m(pixel_layout),
                                         0 );
-    oyArray2d_RowsSet( a, row_pointers, 1 );
+    int i;
+    for( i = 0; i < num_passes; ++i )
+#if 0
+      /* sequential reading */
+      for( y = 0; y < height; ++y )
+        png_read_rows( png_ptr, &a->array2d[y], NULL, 1 );
+#else
+      png_read_rows( png_ptr, a->array2d, NULL, height );
+#endif
+
     oyImage_DataSet ( image_in, (oyStruct_s**) &a, 0,0,0,0,0,0 );
   }
+
+  png_read_end( png_ptr, info_ptr );
+  png_destroy_read_struct( &png_ptr, &info_ptr, png_infopp_NULL );
 
   if (!image_in)
   {
@@ -877,6 +891,18 @@ int      oPNGFilterPlug_ImageInputPNGRun (
   png_read_clean:
   oyImage_Release( &image_in );
   oyFree_m_ (data)
+
+  if(!info_good)
+  {
+    message( oyMSG_WARN, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ " could not read: %s %d %d",
+             OY_DBG_ARGS_, oyNoEmptyString_m_( filename ), fsize, (int)fpos );
+    oyFree_m_( data )
+  }
+  fpos = 0;
+  fclose (fp);
+  fp = NULL;
+
 
   /* return an error to cause the graph to retry */
   return info_good;
@@ -979,7 +1005,7 @@ const char * oPNGApi4ImageInputUiGetText (
     else if(type == oyNAME_NAME)
       return _("Option \"filename\", a valid filename of a existing PNG image");
     else
-      return _("The Option \"filename\" should contain a valid filename to read the png data from. If the file does not exist, a error will occure.");
+      return _("The Option \"filename\" should contain a valid filename to read the png data from. If the file does not exist, a error will occure.\nThe iCCP chunk is searched for or a oyASSUMED_WEB/oyASSUMED_GRAY ICC profile will be attached to the resulting image. A embedded renering intent will be ignored.");
   }
   return 0;
 }
