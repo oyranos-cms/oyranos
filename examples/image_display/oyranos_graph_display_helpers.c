@@ -35,7 +35,8 @@
  */
 int  oyGraphFromImageFileName        ( const char        * file_name,
                                        oyConversion_s   ** graph,
-                                       oyFilterNode_s   ** icc_node )
+                                       oyFilterNode_s   ** icc_node,
+                                       oyObject_s          obj )
 {
   oyFilterNode_s * in, * out, * icc;
   int error = 0;
@@ -47,9 +48,9 @@ int  oyGraphFromImageFileName        ( const char        * file_name,
     return 1;
 
   /* start with an empty conversion object */
-  conversion = oyConversion_New( 0 );
+  conversion = oyConversion_New( obj );
   /* create a filter node */
-  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/file_read.meta", 0, 0 );
+  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/file_read.meta", 0, obj );
   /* set the above filter node as the input */
   oyConversion_Set( conversion, in, 0 );
 
@@ -64,7 +65,7 @@ int  oyGraphFromImageFileName        ( const char        * file_name,
   oyOptions_Release( &options );
 
   /* create a new filter node */
-  icc = out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
+  icc = out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, obj );
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
@@ -82,7 +83,7 @@ int  oyGraphFromImageFileName        ( const char        * file_name,
 
 
   /* create a node for preparing the image for displaying */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, 0 );
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, obj );
   options = oyFilterNode_OptionsGet( out, OY_SELECT_FILTER );
   /* 8 bit data for FLTK */
   error = oyOptions_SetFromInt( &options,
@@ -102,7 +103,7 @@ int  oyGraphFromImageFileName        ( const char        * file_name,
 
 
   /* add a closing node */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, 0 );
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
   /* set the output node of the conversion */
