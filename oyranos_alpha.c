@@ -27778,15 +27778,18 @@ oyNamedColour_SetChannels( oyNamedColour_s  * colour,
 
 /**
  *  @internal
- *  Function: oyColour_Convert
+ *  Function: oyConvertColour
  *  @memberof oyNamedColour_s
- *  @brief   convert one colour
+ *  @brief   convert colours
  *
  *  The options are passed to oyConversion_CreateBasicPixels();
+ *  The function does the lookups for the profiles and the modules contexts
+ *  in the Oyranos cache on the fly. The allocated oyImage_s and
+ *  oyConversion_s structures are not cheap as they are not cached.
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.1.11
  *  @since   2007/12/23 (Oyranos: 0.1.8)
- *  @date    2009/06/24
+ *  @date    2010/09/10
  */
 int  oyColourConvert_ ( oyProfile_s       * p_in,
                         oyProfile_s       * p_out,
@@ -27794,20 +27797,21 @@ int  oyColourConvert_ ( oyProfile_s       * p_in,
                         oyPointer           buf_out,
                         oyDATATYPE_e        buf_type_in,
                         oyDATATYPE_e        buf_type_out,
-                        oyOptions_s       * options )
+                        oyOptions_s       * options,
+                        int                 count )
 {
   oyImage_s * in  = NULL,
             * out = NULL;
   oyConversion_s * conv = NULL;
   int error = 0;
 
-  in    = oyImage_Create( 1,1, 
+  in    = oyImage_Create( count, 1,
                          buf_in ,
                          oyChannels_m(oyProfile_GetChannelsCount(p_in)) |
                           oyDataType_m(buf_type_in),
                          p_in,
                          0 );
-  out   = oyImage_Create( 1,1, 
+  out   = oyImage_Create( count, 1,
                          buf_out ,
                          oyChannels_m(oyProfile_GetChannelsCount(p_out)) |
                           oyDataType_m(buf_type_out),
@@ -27851,14 +27855,14 @@ int          oyNamedColour_GetColour ( oyNamedColour_s   * colour,
  
     error = oyColourConvert_( p_in, profile,
                               colour->XYZ_, buf,
-                              oyDOUBLE, buf_type, options);
+                              oyDOUBLE, buf_type, options, 1);
 
     oyProfile_Release ( &p_in );
 
   } else if(error <= 0)
     error = oyColourConvert_( p_in, profile,
                               colour->channels_, buf,
-                              oyDOUBLE, buf_type, options);
+                              oyDOUBLE, buf_type, options, 1);
 
   return error;
 }
@@ -27942,7 +27946,7 @@ int               oyNamedColour_SetColourStd ( oyNamedColour_s * colour,
     p_out = s->profile_;
     error = oyColourConvert_( p_in, p_out,
                               channels, s->channels_,
-                              channels_type , oyDOUBLE, options );
+                              channels_type , oyDOUBLE, options, 1 );
     p_out = 0;
   }
 
@@ -27951,7 +27955,7 @@ int               oyNamedColour_SetColourStd ( oyNamedColour_s * colour,
     p_out = oyProfile_FromStd( oyEDITING_XYZ, 0 );
     error = oyColourConvert_( p_in, p_out,
                               channels, s->XYZ_,
-                              channels_type , oyDOUBLE, options );
+                              channels_type , oyDOUBLE, options, 1 );
     oyProfile_Release ( &p_out );
   }
 
