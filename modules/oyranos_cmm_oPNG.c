@@ -631,24 +631,19 @@ oyOptions_s* oPNGFilter_ImageInputPNGValidateOptions
   return 0;
 }
 
-/** @func    oPNGFilterPlug_ImageInputPNGRun
+/** @func    oyImage_FromPNG
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
- *  @version Oyranos: 0.1.10
- *  @since   2009/02/18 (Oyranos: 0.1.10)
- *  @date    2009/02/18
+ *  @version Oyranos: 0.1.11
+ *  @since   2010/09/12 (Oyranos: 0.1.11)
+ *  @date    2010/09/12
  */
-int      oPNGFilterPlug_ImageInputPNGRun (
-                                       oyFilterPlug_s    * requestor_plug,
-                                       oyPixelAccess_s   * ticket )
+oyImage_s *  oyImage_FromPNG         ( const char        * filename,
+                                       oyStruct_s        * object )
 {
-  /* module variables */
-  oyFilterSocket_s * socket = 0;
-  oyFilterNode_s * node = 0;
   int error = 0;
 
   /* file variables */
-  const char * filename = 0;
   FILE * fp = 0;
   int     fsize = 0, size = 0;
   size_t  fpos = 0;
@@ -675,43 +670,16 @@ int      oPNGFilterPlug_ImageInputPNGRun (
   int color_type = 0,
       num_passes;
 
-  /* passing through the data reading */
-  if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S &&
-     requestor_plug->remote_socket_->data)
-  {
-    error = oyFilterPlug_ImageRootRun( requestor_plug, ticket );
-
-    return error;
-
-  } else if(requestor_plug->type_ == oyOBJECT_FILTER_SOCKET_S)
-  {
-    /* To open the a image here seems not so straight forward.
-     * Still the plug-in should be prepared to initialise the image data before
-     * normal processing occurs.
-     */
-    socket = (oyFilterSocket_s*) requestor_plug;
-    requestor_plug = 0;
-    node = socket->node;
-
-  } else {
-    /* second option to open the file */
-    socket = requestor_plug->remote_socket_;
-    node = socket->node;
-  }
-
-
-  if(error <= 0)
-    filename = oyOptions_FindString( node->core->options_, "filename", 0 );
 
   if(filename)
     fp = fopen( filename, "rmb" );
 
   if(!fp)
   {
-    message( oyMSG_WARN, (oyStruct_s*)node,
+    message( oyMSG_WARN, object,
              OY_DBG_FORMAT_ " could not open: %s",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ) );
-    return 1;
+    return NULL;
   }
 
   fseek(fp,0L,SEEK_END);
@@ -721,32 +689,32 @@ int      oPNGFilterPlug_ImageInputPNGRun (
   /* read the PNG header */
   size = 8;
 
-  oyAllocHelper_m_( data, uint8_t, size, 0, return 1);
+  oyAllocHelper_m_( data, uint8_t, size, oyAllocateFunc_, return NULL);
 
   fpos = fread( data, sizeof(uint8_t), size, fp );
-  if( fpos < size ) {
-    message( oyMSG_WARN, (oyStruct_s*)node,
+  if( fpos < (size_t)size ) {
+    message( oyMSG_WARN, object,
              OY_DBG_FORMAT_ " could not read: %s %d %d",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ), size, (int)fpos );
     oyFree_m_( data )
     fclose (fp);
-    return FALSE;
+    return NULL;
   }
 
   /* check the PNG header */
   is_png = !png_sig_cmp(data, 0, size);
   if (!is_png)
   {
-    info_good = FALSE;
+    info_good = 0;
     goto png_read_clean;
   }
 
   png_ptr = png_create_read_struct( PNG_LIBPNG_VER_STRING,
-                                    (png_voidp)node,
+                                    (png_voidp)filename,
                                     oPNGerror, oPNGwarn );
   if(!png_ptr)
   {
-    info_good = FALSE;
+    info_good = 0;
     goto png_read_clean;
   }
 
@@ -754,7 +722,7 @@ int      oPNGFilterPlug_ImageInputPNGRun (
   if(!info_ptr)
   {
     png_destroy_read_struct( &png_ptr, (png_infopp)NULL, (png_infopp)NULL);
-    info_good = FALSE;
+    info_good = 0;
     goto png_read_clean;
   }
 
@@ -763,7 +731,7 @@ int      oPNGFilterPlug_ImageInputPNGRun (
     /* Free all of the memory associated with the png_ptr and info_ptr */
     png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
     /* If we get here, we had a problem reading the file */
-    info_good = FALSE;
+    info_good = 0;
     goto png_read_clean;
   }
 
@@ -826,13 +794,13 @@ int      oPNGFilterPlug_ImageInputPNGRun (
                       &profile, &proflen ) )
     {
       prof = oyProfile_FromMem( proflen, profile, 0,0 );
-      message( oyMSG_DBG, (oyStruct_s*)node,
+      message( oyMSG_DBG, object,
              OY_DBG_FORMAT_ " ICC profile (size: %d): \"%s\"",
              OY_DBG_ARGS_, proflen, oyNoEmptyString_m_( name ) );
       if(getenv("oPNG_ICC"))
         printf(
              OY_DBG_FORMAT_ " ICC profile (size: %d): \"%s\"\n",
-             OY_DBG_ARGS_, proflen, oyNoEmptyString_m_( name ) );
+             OY_DBG_ARGS_, (int)proflen, oyNoEmptyString_m_( name ) );
     } else
 #endif
     prof = oyProfile_FromStd( profile_type, 0 );
@@ -865,17 +833,96 @@ int      oPNGFilterPlug_ImageInputPNGRun (
 
   if (!image_in)
   {
-      message( oyMSG_WARN, (oyStruct_s*)node,
-             OY_DBG_FORMAT_ "PNM can't create a new image\n%dx%d %d",
+      message( oyMSG_WARN, object,
+             OY_DBG_FORMAT_ "PNG can't create a new image\n%dx%d %d",
              OY_DBG_ARGS_,  width, height, pixel_layout );
       oyFree_m_ (data)
-    return FALSE;
+    return NULL;
   }
 
   error = oyOptions_SetFromText( &image_in->tags,
                                  "//" OY_TYPE_STD "/input_png.file_read"
                                                                     "/filename",
                                  filename, OY_CREATE_NEW );
+
+
+  png_read_clean:
+  oyFree_m_ (data)
+
+  if(!info_good)
+  {
+    oyImage_Release( &image_in );
+    message( oyMSG_WARN, object,
+             OY_DBG_FORMAT_ " could not read: %s %d %d",
+             OY_DBG_ARGS_, oyNoEmptyString_m_( filename ), fsize, (int)fpos );
+  }
+  fpos = 0;
+  fclose (fp);
+  fp = NULL;
+
+
+  /* return an error to cause the graph to retry */
+  return image_in;
+}
+
+/** @func    oPNGFilterPlug_ImageInputPNGRun
+ *  @brief   implement oyCMMFilter_GetNext_f()
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/18 (Oyranos: 0.1.10)
+ *  @date    2009/02/18
+ */
+int      oPNGFilterPlug_ImageInputPNGRun (
+                                       oyFilterPlug_s    * requestor_plug,
+                                       oyPixelAccess_s   * ticket )
+{
+  /* module variables */
+  oyFilterSocket_s * socket = 0;
+  oyFilterNode_s * node = 0;
+  int error = 0;
+  oyImage_s * image_in = 0;
+
+  /* file variables */
+  const char * filename = 0;
+
+  int info_good = 1;
+
+  /* passing through the data reading */
+  if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S &&
+     requestor_plug->remote_socket_->data)
+  {
+    error = oyFilterPlug_ImageRootRun( requestor_plug, ticket );
+
+    return error;
+
+  } else if(requestor_plug->type_ == oyOBJECT_FILTER_SOCKET_S)
+  {
+    /* To open the a image here seems not so straight forward.
+     * Still the plug-in should be prepared to initialise the image data before
+     * normal processing occurs.
+     */
+    socket = (oyFilterSocket_s*) requestor_plug;
+    requestor_plug = 0;
+    node = socket->node;
+
+  } else {
+    /* second option to open the file */
+    socket = requestor_plug->remote_socket_;
+    node = socket->node;
+  }
+
+  if(error <= 0)
+    filename = oyOptions_FindString( node->core->options_, "filename", 0 );
+
+  image_in = oyImage_FromPNG( filename, (oyStruct_s*)node );
+
+  if(!image_in)
+  {
+    message( oyMSG_WARN, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ " failed: %s",
+             OY_DBG_ARGS_, oyNoEmptyString_m_( filename ) );
+    return error;
+  }
 
   if(error <= 0)
   {
@@ -892,21 +939,7 @@ int      oPNGFilterPlug_ImageInputPNGRun (
     oyImage_SetCritical( ticket->output_image, image_in->layout_[0], 0,0 );
   }
 
-  png_read_clean:
   oyImage_Release( &image_in );
-  oyFree_m_ (data)
-
-  if(!info_good)
-  {
-    message( oyMSG_WARN, (oyStruct_s*)node,
-             OY_DBG_FORMAT_ " could not read: %s %d %d",
-             OY_DBG_ARGS_, oyNoEmptyString_m_( filename ), fsize, (int)fpos );
-    oyFree_m_( data )
-  }
-  fpos = 0;
-  fclose (fp);
-  fp = NULL;
-
 
   /* return an error to cause the graph to retry */
   return info_good;
