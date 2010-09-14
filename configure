@@ -99,7 +99,7 @@ verbose=1
 fltk=1
 X11=0
 X_ADD_2="X11 Xext Xinerama Xxf86vm Xrandr"
-LIBS_TEST="ltdl dl iconv intl m xml2 Xcm Xfixes cups sane XNVCtrl"
+LIBS_TEST="ltdl dl iconv intl m xml2 Xcm Xfixes cups sane XNVCtrl yajl"
 
 # find a suitable fltk-config script
 fltkconfig="fltk-config"
