@@ -123,7 +123,7 @@ int      oyraFilterPlug_ImageLoadRun (
       return result;
     }
 
-    apis = oyCMMsGetFilterApis_( 0, "//" OY_TYPE_STD "/file_read", 
+    apis = oyCMMsGetFilterApis_( 0,0, "//" OY_TYPE_STD "/file_read", 
                                  oyOBJECT_CMM_API7_S,
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                  &rank_list,0 );

@@ -2160,6 +2160,7 @@ oyTESTRESULT_e testCMMsShow ()
               uint32_t * rank_list = 0;
               uint32_t apis_n = 0;
               char * classe = 0;
+              const char * nick = cmm_info->cmm;
 
               classe = oyFilterRegistrationToText( cmm_filter->registration,
                                                    oyFILTER_REG_TYPE, 0 );
@@ -2174,7 +2175,7 @@ oyTESTRESULT_e testCMMsShow ()
 
               for(j = oyOBJECT_CMM_API4_S; j <= (int)oyOBJECT_CMM_API10_S; j++)
               {
-                apis = oyCMMsGetFilterApis_( 0, api_reg, (oyOBJECT_e)j,
+                apis = oyCMMsGetFilterApis_( nick, 0, api_reg, (oyOBJECT_e)j,
                                              oyFILTER_REG_MODE_NONE,
                                              &rank_list, &apis_n );
 
@@ -2591,7 +2592,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
       s = oyOptions_New( 0 );
 
-      apis = oyCMMsGetFilterApis_( 0, api_reg,
+      apis = oyCMMsGetFilterApis_( 0,0, api_reg,
                                    oyOBJECT_CMM_API9_S,
                                    oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                    &rank_list, 0);

@@ -204,10 +204,9 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        char             ** lib_used,
                                        oyCMMapi_Check_f    apiCheck,
                                        oyPointer           check_pointer );
-oyCMMapis_s *    oyCMMsGetApis_      ( const char        * registration );
-oyCMMapi5_s *oyCMMGetMetaApi_        ( const char        * cmm_required,
-                                       const char        * registration );
-oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_required,
+oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm_required );
+oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_meta,
+                                       const char        * cmm_required,
                                        const char        * registration,
                                        oyOBJECT_e          type,
                                        uint32_t            flags,
