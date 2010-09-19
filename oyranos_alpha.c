@@ -3626,10 +3626,12 @@ int          oyCMMdsoReference_    ( const char        * lib_name,
   for(i = 0; i < n; ++i)
   {
     oyStruct_s * obj = oyStructList_Get_(oy_cmm_handles_, i);
-    oyCMMptr_s * s = 0;
+    oyCMMptr_s * s;
 
     if(obj && obj->type_ == oyOBJECT_CMM_POINTER_S)
       s = (oyCMMptr_s*) obj;
+    else
+      s = 0;
 
     if( s && s->lib_name && lib_name &&
         !oyStrcmp_( s->lib_name, lib_name ) )
@@ -3920,9 +3922,9 @@ int              oyCMMhandle_Set_    ( oyCMMhandle_s     * handle,
   if(error <= 0)
   {
     handle->info = info;
-    oyCMMdsoReference_( handle->lib_name, dso_handle );
     handle->dso_handle = dso_handle;
     handle->lib_name = oyStringCopy_( lib_name, handle->oy_->allocateFunc_ );
+    oyCMMdsoReference_( handle->lib_name, dso_handle );
   }
 
   return error;
