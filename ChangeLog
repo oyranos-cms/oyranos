@@ -1,3 +1,356 @@
+Version 0.1.11
+
+Kai-Uwe Behrmann (127):
+	* [SANE]: Add missing function prototypes and %s in printf
+	* [oyRE]: Change the output format of camera devices
+	* [oyRE]: Better formatting when printing devices_info
+	* [scan]: Add support for getting the profile from DB
+	* [oyRE]: Adopt to api8 changes
+	* [conf]: bump version
+	* [conf]: check src dir config.h and remote build
+	* [build]: change link order in pkg-config --libs
+	* [alpha]: add oyProfileTag_GetBlock()
+	* [build]: make xdg optional for installation
+	* [build]: fix install shell script
+	* [build]: install mime script
+	* [build]: give message for non xdg-mime
+	* [oyra]: and CUPS remove unused variables
+	* [alpha]: more checks in oyFilterNode_ContextSet_
+	* [test]: remove direct lcms calls
+	* [oyIM]: fix copy of empty string for psid tag
+	* [alpha]: give error oyNamedColour_SetColourStd
+	* [alpha]: prefere similiar version modules
+	* [test]: give up on error
+	* [alpha]: fix memory in oyProfile_GetFileName()
+	* [oyIM]: spot non mluc inside psid tag
+	* [alpha]: accept zero in oyProfileTag_GetText
+	* [alpha]: suspected typo correction
+	* [alpha]: add oyProfileTag_s::size_check_
+	* [oyIM]: fix psid and pseq tag reading
+	* [lcm2]: initial littleCMS 2 module
+	* [exmpl]: hotplug for compiz
+	* [docu]: update version infos
+	* [alpha]: skip profile release
+	* [test]: place some checks
+	* [lcm2]: omit colour space check
+	* [test]: remove old lcms results
+	* [test]: clean up
+	* [alpha]: adjust module removal
+	* [oydi]: update macros to libXcm
+	* [alpha]: tweak module selection
+	* [modules]: CMM_NICK is mostly implementation detail
+	* [alpha]: add oyFilterRegistrationModify()
+	* [oyra]: fix parameter exchange
+	* [lcm2]: add some error checks
+	* [lcm2]: support oyFLOAT
+	* [oydi]: turn warnings into debug messages
+	* [alpha]: omit api_reg memory warning
+	* [oyra]: fix float PPM loading
+	* [alpha]: add oyStruct_GetId()
+	* [core]: show oyOption_s in oyMessageFunc_
+	* [lcm2]: use THR profile open
+	* [core]: show oyProfile_s in oyMessageFunc_
+	* [lcm2]: mo OpenMP cmsCreateProofingTransformTHR
+	* [oyIM]: remove debug printf
+	* [build]: switch to XCM_H make variable
+	* [build]: remove external Elektra dependency
+	* [core]: avoid thread issues during messaging
+	* [conf]: add --disable-fltk configure options
+	* [ui-fltk]: fix profile listing
+	* [core]: fix multiple string listing
+	* [ui-fltk]: update during refreshOptions() only
+	* [API]: sync oyWIDGET_e with oyBEHAVIOUR_e
+	* [exmpl]: move colour_desktop to CompIcc
+	* [build]: make lcms2 optional
+	* [exmpl]: fix icons for qcmsevents
+	* [exmpl]: fix typo
+	* [docu]: remove externalised authors
+	* [build]: remove more colour_desktop references
+	* [exmpl]: initialise xcmsevents memory
+	* [build]: remove ICC profiles
+	* [build]: install icons
+	* [CUPS]: change to ColorKeyWords[x]
+	* [build]: add git ignore file
+	* [SANE]: remove currently unused bits
+	* [SANE]: place in tree
+	* [build]: build SANE module
+	* [SANE]: fix includes
+	* [build]: add SANE package to spec file
+	* [docu]: clearify oyNamedColour_Create's ref arg
+	* [oyIM]: correct mmod and add ndin
+	* [docu]: staigthen on mini date
+	* [exmpl]: add missed icon for qcmsevents
+	* [exmpl]: allow non i18n build in image_display
+	* [build]: --disable-fltk left overs
+	* [docu]: update image_display date
+	* [SANE]: clean up code
+	* [alpha]: check arguments in signal setter
+	* [exmpl]: clean Fl_Oy_Box::setImage
+	* [exmpl]: add graphFromImageFileName to image_display
+	* [exmpl]: further split FLTK and Oyranos code
+	* [docu]: fix typo
+	* [oPNG]: initial commit
+	* [oPNG]: add modules/oyranos_cmm_oPNG.c
+	* [build]: link oPNG with libpng
+	* [docu]: more explicite oyArray2d_s::array2d ownership
+	* [alpha]: add oyArray2d_RowsSet()
+	* [oPNG]: basic loading of RGB images
+	* [oPNG]: support inlaced PNG's
+	* [alpha]: fix recent introduced allocation
+	* [docu]: inform about ICC assignment for PPM
+	* [oPNG]: default to oyASSUMED_GRAY for grayscale
+	* [oydi]: remove unneeded warning
+	* [core]: default to Gray-CIE_L.icc
+	* [build]: fix installation of oyranos-config-fltk
+	* [build]: add oPNG to RPM
+	* [exmpl]: add oyObject_s arg to oyGraphFromImageFileName
+	* [exmpl]: adapt image_display to helper changes
+	* [exmpl]: rename to oyConversion_FromImageFileName
+	* [exmpl]: rename to oyDrawScreenImage()
+	* [exmpl]: code reorganisation in image_display
+	* [exmpl]: rename Fl_Oy_Box to Oy_Fl_Box
+	* [build]: decouple uninstall from install target
+	* [build]: link lcms to SANE module
+	* [conf]: add --icondir
+	* [build]: make check without installation
+	* [conf]: fix icondir typo and default install path
+	* [docu]: describe OY_MODULE_PATHS
+	* [build]: support make check without install
+	* [build]: omit oyranos_xml_to_po.sh
+	* [build]: remove compiz RPM build requirement
+	* [exmpl]: split files in image_display
+	* [exmpl]: add oyranos_display_helper_classes_fltk.cpp
+	* [build]: sync infos with examples sub dir
+	* [oPNG]: add oPNG_ICC shell variable
+	* [alpha]: expand oyColourConvert_ for n pixels
+	* [oPN]: extract a oyImage_FromPNG()
+	* [alpha]: add oyCMMsGetFilterApis_() meta select
+	* [build]: detect YAJL
+	* [alpha]: remove unused internal function
+	* [alpha]: fix DSO caching
+
+Pino Toscano (1):
+	* [build]: fix make check
+
+Yiannis Belias (216):
+	first commit
+	add gitignore file
+	add file save to tiff support
+	Add support for ICC profile embedding in tiff
+	Ignore tiff images
+	Ignore scan executable
+	Add scan.c to cmake
+	Add a reference implementation program for SANE
+	Ignore read() error when the full image is downloaded
+	Initial import of SANE & raw/exif backends
+	Just a program to test the provided Oyranos backends
+	update .gitignore
+	cmake support for install & build the backends
+	Rank map for exif/libraw
+	Implement the SANEGetDevices function
+	Function that creates a rank map for SANE options
+	edit SANE rank map
+	edit GetText functions
+	rename .c RAW backend to .cc
+	... and adapt cmake
+	... and adapt oyranos_cmm_oyRE.cc to compile with c++
+	update libraw rank map options
+	Initial LibRaw support
+	hello world for SANE backend
+	cmake: link SANE backend with libsane
+	cmake: add outest executable
+	cmake: add oytest executable: final
+	oytest will perform tests for the backends
+	SANE: InstrumentFromName_(): first implementation
+	oyRE: Fix "deprecated conversion from string constant to char*" warning
+	oyCreateRankMap_() function now creates the final rank map array
+	* [sane/oyRE]: convert instrument to device name
+	* [oytest]: convert test application to C++
+	* [SANE/oyRE]: GetDevices() returns the number of devices
+	Add usefull comments to oyConfigsFromPattern()
+	* [SANE]: Trick to make the pnm backend appear
+	* [oytest]: Add test_backend() function
+	* [SANE]: GetDevices() returns list of names,vendors,models,types.
+	* [cmake]: link oyRE with libexiv2
+	* [SANE]: Implement the "properties" call:
+	* [SANE]: Remove 'hello world' message
+	* [oytest]: Define DBG macro, sometimes usefull...
+	* [online help]: Add support for backend usage help
+	* [cmake]: Link the RAW/EXIF backend with LibRaw-Lite
+	* [online help]: add the *_help.c files
+	* [online help]: ... and not ignore them :)
+	initial camera list support
+	* [oytest]: Select tests from cmdline
+	* [help]: Rearange *help.c files
+	* [SANE]: Add couple TODO comments
+	* [SANE]: Rearange Configs_FromPattern()
+	* [SANE]: Rearange Configs_FromPattern()
+	* [SANE]: Rearange Configs_FromPattern()
+	* [SANE]: Rearange Configs_FromPattern()
+	* [SANE]: Split up and rewrite GetDevices()
+	* [SANE]: Rearange Configs_FromPattern()
+	* [oytest]: Check if no devices were found
+	* [SANE]: Rearange Configs_FromPattern()
+	* [SANE]: Rearange Configs_FromPattern()
+	* [oytest]: Create a convinience function
+	* [oytest]: Add a few helper functions
+	* [SANE]: Rearange Configs_FromPattern()
+	* [oytest]: New helper func & correct registration
+	* [oytest]: Update tests 2,3 to use the new functions
+	* [indent]: Use GNU indent to correct all source files
+	* [SANE]: Rearange Configs_FromPattern()
+	* [SANE]: device_context support to properties call
+	* [SANE]: Correct the usage of driver_version
+	* [SANE]: Complete previous commit
+	* [SANE]: Replace DeviceFromName_ with DeviceFromContext_
+	* [SANE]: Finalize "properties" section.
+	* [indent]: Correct the rank map initializations
+	* [online help]: Handle elinks not present case.
+	* [oyRE]: Rearrange ConfigsFromPattern(), list section
+	* [oyRE]: Rearrange ConfigsFromPattern(), part II
+	* [oyRE]: Rewrite DeviceFromContext()
+	* [oyRE]: Rearrange device_handle section
+	* [oyRE]: "device_handle" proper support
+	* [oyRE]: Implement is_raw() helper function
+	* [oyRE]: Correct numerous small compiler errors
+	* [oyRE]: Copy rank map in properties section, too.
+	* [oyRE]: Remove unused GetDevices() function
+	* [online help]: Update the *_help.html files
+	* [oyRE/SANE]: Update the SetFromDouble() calls.
+	* [oyRE]: Fix segfault. Test for auto_ptr value, too.
+	* [scan]: Import to Oyranos. init() converted first.
+	* [scan]: Fix some compiler errors.
+	* [scan]: Update main().
+	* [scan]: Remove select_device().
+	* [scan]: Get the device hanlde from init().
+	* [scan]: Convert scan_it() to Oyranos. Also,
+	* [raw2tiff]: Print the version number.
+	* [oytest]: Correct missing %s in printf.
+	* [scan]: Correct bugs, add debug output
+	* [scan]: Change the previous options to int
+	* [SANE]: Fix bug where only the first device was found.
+	* [SANE]: Housekeeping.
+	* [scan]: Fix missing "properties" command,
+	* [scan]: Fix not initialised sane handle bug.
+	* [SANE]: Fix error message.
+	* [SANE]: Print proper SANE error messages.
+	* [scan]: Get the SANE parameters before sane_start()
+	* [SANE]: Fix unsigned int underflow bug.
+	* [helper.c]: Add a file with some helper functions.
+	* [sane patch]: This is a patch to apply to the..
+	* [README]: Update README file
+	* [cmake]: Remove harcoded prefix & unused LibRaw vars
+	* [raw2tiff]: Align the class RAW members
+	* [helper]: Add namespace for C++ use.
+	* [raw2tiff]: Add oyranos support.
+	* [oyRE]: Fix: Remove 2 unwanted calls returning error
+	* [RAW]: RAW::GetColorInfo() rearrange a few lines.
+	* [oyRE]: Fix for value increment in macro argument
+	* [oyRE]: Correct DFC_OPT_ADD_FLOAT_ARR macro.
+	* [shiva]: Add 3 simple shiva filters
+	* [cmake]: Now modules install in lib/colour/modules/
+	* [SANE]: Fix negtive index integer bug
+	* [oyRE]: Uncomment the now working double list macros
+	* [README]: Update pnm install instructions.
+	* [SANE]: Configs_FromPattern(): Always "return 0"
+	* [shiva]: Add 2 new filters
+	* [cmake]: Link both backends with liboyranos
+	* [raw2tiff]: Save a 16bit per channel image.
+	* [doc]: Update LibRaw instructions in README
+	* [helper]: Support printing of more oyranos structs:
+	* [SANE]: Replace blob with CMMptr in device handle.
+	* [helper]: Update output formatting in print_option()
+	* [scan]: Add some assertions.
+	* [scan]: Fix missing OY_SLASH
+	* [helper]: Use a custom version of oyValueTypeText()
+	* [helper]: Correct printing of CMMptr handle.
+	* [scan]: Fix to use the right pointer.
+	* [SANE]: Change sane_handle from blob to CMMptr.
+	* [scan]: Fix compiler warning
+	* [SANE]: Update the global driver_version handling.
+	* [SANE]: Add #include for previous commit
+	* [SANE]: Add a CMM name  prefix to printfs
+	* [SANE]: Fix endless loop bug.
+	* [SANE]: Print out a message at sane_exit()
+	Revert "[scan] Add support for getting the profile from DB"
+	* [SANE/oyRE]: Update to Oyranos API addition
+	* [README]: Add tip for faster SANE startup
+	* [oyRE]: Add support for more camera properties.
+	* [raw2tiff]: Print dcraw options to dcraw.txt
+	* [raw2tiff]: Add support for getting the profile
+	* [oyre/SANE]: Update to latest Oyranos API changes
+	Update author/copyrights
+	* [SANE]: Update a comment
+	* [SANE]: Rearrange for Configs_Modify #1
+	* [SANE]: Integrate check_driver_version() to Configs_Modify
+	* [SANE]: Rearrange for Configs_Modify #2
+	* [SANE]: Rearrange for Configs_Modify #2
+	* [SANE]: Deallocate device
+	* [SANE]: Rearrange for Configs_Modify #4
+	* [SANE]: Add g_error variable
+	* [SANE]: Comment cleanup
+	* [SANE]: Fix compile errors
+	* [SANE]: Check if device_context exists
+	* [SANE]: Fix missing if(..) crash
+	* [SANE]: Add Enter/Leave Message
+	* [SANE]: Update Configs_FromPattern #1
+	* [SCAN]: driver_version is now in backend_core
+	* [gitignore]: Ignore ppm files
+	* [SANE]: Update Configs_FromPattern #2
+	* [SANE]: Check for device_context=NULL case
+	* [SANE]: Do not return device_context/device_handle
+	* [SANE]: Add options to info output
+	* [SANE]: Do not return the driver_version option
+	* [SANE]: Add some informative messages
+	* [SANE]: Get device_name from device_name option
+	* [SANE]: inverse if/else
+	* [SANE]: device_handle should be in ->data
+	* [SANE]: Better handling of device_name in Configs_Modify
+	* [SANE]: Remove error variable
+	* [SANE]: Correctly alloc/dealloc for device_name
+	* [SANE]: tmp becomes NULL after oyOptions_MoveIn
+	* [SANE]: *_opt_dev become NULL after oyOptions_MoveIn
+	* [SANE]: Be nice and close not needed SANE devices
+	* [SANE]: Adopt to api8 changes
+	* [Fix]: Add missing closing brace
+	* [SANE]: Fix "strcmp() == 0" checks
+	* [oyRE]: Fix "strcmp() == 0" checks
+	* [SANE]: Create new dir for sane patches
+	* [SANE]: Replace gamma tables with a gamma value
+	* [SANE]: Remove unused variable
+	* [SANE]: Patch for the plustek SANE backend
+	* [SANE/oyRE]: Update CMM_BASE_REG
+	* [scan]: deallocate devices
+	* [SANE]: Replace gamma tables with a gamma value
+	* [cmake]: Copy FindLCMS.cmake from kdelibs trunk
+	* [cmake]: search for lcms and abort if not found
+	* [scan]: Add a printout only option
+	* [SANE]: Do not filter out inactive sane options for now
+	* [SANE]: Save all SANE options as strings.
+	* [SANE]: Fix: device_handle option goes to ::data
+	* [SANE]: Fix: oyNAME_NAME option goes to ::backend_core
+	* [oyRE]: Add "error handling" to Configs_Modify
+	* [oyRE]: Add "help section" to Configs_Modify
+	* [oyRE]: init driver_version for Configs_Modify
+	* [SANE]: Remove context/handle from Configs_Modify
+	* [oyRE]: Configs_Modify(): Scan input
+	* [oyRE]: Configs_Modify(): Add "command_list" section
+	* [oyRE]: Configs_Modify(): Add "command_properties" section
+	* [oyRE]: Add printfs for debugging
+	* [oyRE]: Update DeviceFromHandle()
+	* [oyRE]: device_context holds a pointer, not the libraw object
+	* [oyRE]: Add a DeviceFromHandle_opt() function
+	* [oyRE]: Fix: a device_name is always created by Configs_FromPattern()
+	* [oyRE]: Remove device_handle from the top of...
+	* [SANE]: Shorten prefix for error messages
+	* [RAW]: 3 changes:
+	* [cmake]: Update support for LibRaw-0.9.0
+	Update README instructions for previous commit
+	* [oyRE]: gamma_16bit field has been removed
+	* [oyRE]: Enable filtering_mode, which is now in LibRaw
+	* [cmake]: Remove debug message
+
+
 Version 0.1.10
 
 Joe (5):
