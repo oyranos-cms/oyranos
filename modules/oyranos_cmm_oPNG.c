@@ -729,7 +729,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   if(setjmp(png_jmpbuf(png_ptr)))
   {
     /* Free all of the memory associated with the png_ptr and info_ptr */
-    png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
+    png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
     /* If we get here, we had a problem reading the file */
     info_good = 0;
     goto png_read_clean;
@@ -829,7 +829,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   }
 
   png_read_end( png_ptr, info_ptr );
-  png_destroy_read_struct( &png_ptr, &info_ptr, png_infopp_NULL );
+  png_destroy_read_struct( &png_ptr, &info_ptr, (png_infopp)NULL );
 
   if (!image_in)
   {
