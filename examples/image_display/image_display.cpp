@@ -122,6 +122,7 @@ main(int argc, char** argv)
     setWindowMenue( win, oy_box, icc  );
     /* observe the node */
     oy_box->observeICC( icc, conversionObserve );
+    win->label( file_name );
   }
 
 
