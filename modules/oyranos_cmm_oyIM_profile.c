@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2008-2009 (C) Kai-Uwe Behrmann
+ *            2008-2010 (C) Kai-Uwe Behrmann
  *
  *  @brief    modules for Oyranos
  *  @internal
@@ -65,6 +65,8 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
          break;
     case oyQUERY_PROFILE_TAG_TYPE_READ:
          switch(value) {
+         case icSigColorantOrderType:
+         case icSigColorantTableType:
          case icSigDeviceSettingsType:
          case icSigDescriptiveNameValueMuArrayType_:
          case icSigMakeAndModelType:
@@ -112,6 +114,18 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
  *    - dont copy the list as content may be statically allocated
  *
  *  The output depends on the tags type signature in tag->tag_type_ as follows:
+ *
+ *  - icSigColorantOrderType and icSigColorantTableTag:
+ *    - since Oyranos 0.1.12 (API 0.1.12)
+ *    - returns: text list
+ *      - the number of channels
+ *      - the position of the normal channel names as strings
+ *
+ *  - icSigColorantOrderType:
+ *    - since Oyranos 0.1.12 (API 0.1.12)
+ *    - returns: text list
+ *      - the number of channels
+ *      - the normal channel names as strings
  *
  *  - icSigTextType and icSigWCSProfileTag:
  *    - since Oyranos 0.1.8 (API 0.1.8)
@@ -411,6 +425,34 @@ oyStructList_s * oyIMProfileTag_GetValues(
     if(!error)
     switch( (uint32_t)sig )
     {
+      case icSigColorantOrderType:
+           if (tag->size_ <= 12)
+           { return texts; }
+           else
+           {
+             count = oyValueUInt32( &mem[8] );
+
+             oySprintf_( num, "%d", count );
+             oyStructList_AddName( texts, num, -1);
+
+             size_ = 12 + count;
+
+             error = tag->size_ < size_;
+           }
+
+           if(error <= 0)
+           {
+             int i;
+             for(i = 0; i < count; ++i)
+             {
+               oySprintf_( num, "%d", mem[13 + i] );
+               oyStructList_AddName( texts, num, -1);
+             }
+           }
+
+           break;
+      case icSigColorantTableType:
+           break;
       case icSigDictType:
            error = tag->size_ < 16;
            if(error)
