@@ -115,17 +115,18 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
  *
  *  The output depends on the tags type signature in tag->tag_type_ as follows:
  *
- *  - icSigColorantOrderType and icSigColorantTableTag:
+ *  - icSigColorantOrderType and :
  *    - since Oyranos 0.1.12 (API 0.1.12)
  *    - returns: text list
  *      - the number of channels
- *      - the position of the normal channel names as strings
+ *      - the position of the normal channel names as strings 1 + i
  *
- *  - icSigColorantOrderType:
+ *  - icSigColorantTableTag:
  *    - since Oyranos 0.1.12 (API 0.1.12)
- *    - returns: text list
- *      - the number of channels
- *      - the normal channel names as strings
+ *    - The PCS values are integers in the range of 0-65535.
+ *    - The PCS value interpretation depends on the profiles PCS header field.
+ *      - the short channel name as string in 1 + 2 * i
+ *      - PCS representation as three space separated integers in 1 + 2 * i + 1
  *
  *  - icSigTextType and icSigWCSProfileTag:
  *    - since Oyranos 0.1.8 (API 0.1.8)
@@ -174,7 +175,7 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
  *        key UI translations + value UI translations)
  *      - the number (i) of the found elements as ascii string
  *      - key string in 2 + i * c
- *      - value string in 2 + i * c +1
+ *      - value string in 2 + i * c + 1
  *      - translated key string in 2 + i * c + 2
  *      - translated value string in 2 + i * c + 3
  *
@@ -249,6 +250,33 @@ oyStructList_s * oyIMProfileTag_GetValues(
   if(!tag)
   {
     oyStructList_s * list = oyStructList_New( 0 );
+
+    oyName_s description_clro = {
+      oyOBJECT_NAME_S, 0,0,0,
+      CMM_NICK,
+      "clro",
+      "\
+- icSigColorantOrderType and :\
+  - since Oyranos 0.1.12 (API 0.1.12)\
+  - returns: text list\
+    - the number of channels\
+    - the position of the normal channel names as strings 1 + i"
+    };
+
+    oyName_s description_clrt = {
+      oyOBJECT_NAME_S, 0,0,0,
+      CMM_NICK,
+      "clrt",
+      "\
+- icSigColorantTableTag:\
+ - since Oyranos 0.1.12 (API 0.1.12)\
+ - The PCS values are integers in the range of 0-65535.\
+ - The PCS value interpretation depends on the profiles PCS header field.\
+ - returns: text list\
+    - the number of channels\
+    - the short channel name as string in 1 + 2 * i\
+    - PCS representation as three space separated integers in 1 + 2 * i + 1"
+    };
 
     oyName_s description_mluc = {
       oyOBJECT_NAME_S, 0,0,0,
@@ -374,6 +402,14 @@ oyStructList_s * oyIMProfileTag_GetValues(
     description = (oyStruct_s*) &description_mluc;
     error = oyStructList_MoveIn( list, &description, -1, 0 );
 
+    description = (oyStruct_s*) &description_clro;
+    if(!error)
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
+
+    description = (oyStruct_s*) &description_clrt;
+    if(!error)
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
+
     description = (oyStruct_s*) &description_nvmt;
     if(!error)
       error = oyStructList_MoveIn( list, &description, -1, 0 );
@@ -453,6 +489,40 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
            break;
       case icSigColorantTableType:
+           if (tag->size_ <= 12)
+           { return texts; }
+           else
+           {
+             count = *(icUInt32Number*)(mem+8);
+             count = oyValueUInt32( count );
+
+             oySprintf_( num, "%d", count );
+             oyStructList_AddName( texts, num, -1);
+
+             size_ = 12 + count * 38;
+
+             error = tag->size_ < size_;
+           }
+
+           if(error <= 0)
+           {
+             int i, j;
+             icUInt16Number * pcs;
+             uint16_t pcs_triple[3];
+             for(i = 0; i < count; ++i)
+             {
+               memcpy( num, &mem[12 + i*38], 32 );
+               num[31] = 0;
+               oyStructList_AddName( texts, num, -1);
+               pcs =  (icUInt16Number*)&mem[12 + i*38 + 32];
+               for(j = 0; j < 3; ++j)
+                 pcs_triple[j] = oyValueUInt16(pcs[j]);
+               oySprintf_( num, "%d %d %d", 
+                                pcs_triple[0], pcs_triple[1], pcs_triple[2] );
+               oyStructList_AddName( texts, num, -1);
+             }
+           }
+
            break;
       case icSigDictType:
            error = tag->size_ < 16;
