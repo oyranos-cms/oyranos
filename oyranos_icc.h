@@ -61,11 +61,15 @@ const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
 /* partitially taken from littleCMS */
 
 #ifndef icSigColorantOrderType
-#define icSigColorantOrderType 0x636C726F /* clro */
+#define icSigColorantOrderType 0x636c726f /* clro */
 #endif
 
 #ifndef icSigColorantTableType
-#define icSigColorantTableType 0x636C7274 /* clrt */
+#define icSigColorantTableType 0x636c7274 /* clrt */
+#endif
+
+#ifndef icSigColorantTableOutType
+#define icSigColorantTableOutType 0x636c6f74 /* clot */
 #endif
 
 #ifndef icSigDictType
