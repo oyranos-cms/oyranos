@@ -60,6 +60,14 @@ const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
 /* additionals - not defined in icc34.h */
 /* partitially taken from littleCMS */
 
+#ifndef icSigColorantOrderType
+#define icSigColorantOrderType 0x636C726F /* clro */
+#endif
+
+#ifndef icSigColorantTableType
+#define icSigColorantTableType 0x636C7274 /* clrt */
+#endif
+
 #ifndef icSigDictType
 #define icSigDictType 0x27646963 /* 'dict' */
 #endif
