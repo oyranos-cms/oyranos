@@ -425,9 +425,11 @@ const oyChar *   oyICCTagDescription ( icTagSignature      sig )
     /*chrm*/
     case icSigChromaticityType: return _("Chromaticity"); 
     /*clro*/
-    case 1668051567: return _("Named colour order");
+    case icSigColorantOrderType: return _("Colour channel order");
     /*clrt*/
-    case 1668051572: return _("Named colour names");
+    case icSigColorantTableType: return _("Colour channel names");
+    /*clrt*/
+    case icSigColorantTableOutType: return _("Colour channel output names");
     case 0: return _("----");
     default: { icUInt32Number i = oyValueUInt32(sig);
                static oyChar t[5];
