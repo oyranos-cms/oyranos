@@ -430,7 +430,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
            { return texts; }
            else
            {
-             count = oyValueUInt32( &mem[8] );
+             count = *(icUInt32Number*)(mem+8);
+             count = oyValueUInt32( count );
 
              oySprintf_( num, "%d", count );
              oyStructList_AddName( texts, num, -1);
