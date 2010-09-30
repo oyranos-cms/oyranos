@@ -827,7 +827,7 @@ if [ $? != 0 ] && [ 0 -eq $rpm ]; then
     dir="$PWD"
     test -d $ELEKTRA_VERSION || mkdir $ELEKTRA_VERSION
     cd $ELEKTRA_VERSION
-    sh -c "$ROOT_DIR/$ELEKTRA_VERSION/configure --enable-static $nodeps_config_opt --prefix=$prefix"
+    sh -c "$ROOT_DIR/$ELEKTRA_VERSION/configure --enable-static --enable-shared=false $nodeps_config_opt --prefix=$prefix"
     cd "$dir"
   fi
   test -n "$ECHO" && $ECHO "ltdl=-lltdl" >> $PKGC
