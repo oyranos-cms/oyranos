@@ -84,6 +84,10 @@ Summary:    XFORMS subset rendering
 Group:      Development/Libraries/Other
 Requires:   fltk-devel
 
+%package      qcmsevents
+Summary:    Xorg Colour management Event observer applet
+Group:      System/Applet
+
 %description
 Oyranos is a colour management system.
 Features:
@@ -162,6 +166,9 @@ Render a Oyranos specific subset of XFORMS in FLTK.
 A XFORMS subset is used by Oyranos to describe filter node
 options.
 
+%description  qcmsevents
+The applet shows if a colour server is running through a icon in 
+the system tray.
 
 %prep
 %setup -n %{name}-%{version}
@@ -172,7 +179,7 @@ options.
 %install
 rm -rf %{buildroot}
 make %{_smp_mflags}
-make DESTDIR=%{buildroot} install-main
+make DESTDIR=%{buildroot} install
 rm -fr %{buildroot}/%{_datadir}/doc/%{name}
 %find_lang %{name}       # generate a special file list
 
@@ -277,6 +284,13 @@ ldconfig
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_libdir}/liboyforms_fltk.a
+
+%files qcmsevents
+%defattr(-, root, root)
+%doc AUTHORS COPYING ChangeLog README
+%{_bindir}/qcmsevents
+%{pixmapdir}/qcmsevents.svg
+%{desktopdir}/qcmsevents-applet.desktop
 
 %changelog
 * Mon Aug 30 2010 Kai-Uwe Behrmann

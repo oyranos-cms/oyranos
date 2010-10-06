@@ -6,7 +6,7 @@
 #.SILENT:
 
 TARGET1 = image_display/image_display
-TARGET2 = xcmsevents/xcmsevents
+TARGET2 = 
 TARGET4 = image2pdf/image2pdf
 TARGET5 = dummy_device/liboyranos_dDev_cmm_module.so
 TARGET6 = dummy_filter/liboyranos_dFil_cmm_module.so
@@ -44,7 +44,7 @@ ifeq ($(strip $(UNAME)),Linux)
 # Qt needs somehow -O2 (Why???)
 QT_CFLAGS := $(shell pkg-config --cflags QtGui xcm) -O2 -std=c++0x
 INCL    := $(shell pkg-config --cflags-only-I QtGui)
-TARGET8_LDFLAGS := $(LDFLAGS)  -L./xcmsevents -loyranosedid $(shell pkg-config --libs QtGui x11 xmu xfixes xinerama xrandr xxf86vm oyranos xcm) -lQtXml -lQtCore
+TARGET8_LDFLAGS := $(LDFLAGS)  -L./xcmsevents $(shell pkg-config --libs QtGui x11 xmu xfixes xinerama xrandr xxf86vm oyranos xcm) -lQtXml -lQtCore
 TARGET8_SOURCES = $(TARGET8).cpp
 TARGET8_GENERATED_SOURCES = \
 	xcmsevents/moc_qcmsevents.cpp \
@@ -112,7 +112,8 @@ $(TARGET7):	$(SRCDIR)oymd5icc/oymd5icc.c
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS) $< $(LDFLAGS) $(OY_LDFLAGS) -o $@
 
-$(TARGET8):	$(TARGET8_OBJECTS) xcmsevents/liboyranosedid.a
+$(TARGET8):	$(TARGET8_OBJECTS)
+	mkdir -p xcmsevents
 	echo "	LINK:	$(TARGET8) $(TARGET8_SOURCES) ..."
 	-$(CXX) -Wall -g -o $(TARGET8) $(TARGET8_OBJECTS) $(TARGET8_LDFLAGS)
 
@@ -128,10 +129,6 @@ clean:
 xcmsevents/qrc_qcmsevents.cpp:
 	echo "	RCC:	$@ ..."
 	-rcc $(SRCDIR)$(TARGET8).qrc -o $@
-
-xcmsevents/liboyranosedid.a:	../oyranos_version.h
-	echo "	AR:	$@ ..."
-	-ar cru $@ ../modules/devices/oyranos_edid_parse.o ../modules/devices/oyranos_monitor.o
 
 xcmsevents/moc_qcmsevents.cpp:	$(SRCDIR)$(TARGET8).h
 	echo "	MOC:	$@ ..."

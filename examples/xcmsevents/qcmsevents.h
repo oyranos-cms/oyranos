@@ -22,7 +22,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "xcmsevents_common.h"
+#include <X11/Xcm/XcmEvents.h>
 
 class QcmseDialog : public QDialog
 {
@@ -39,46 +39,48 @@ class QcmseDialog : public QDialog
 
   public:
     QSystemTrayIcon * icon;
-  private:
     void createIcon();
+  private:
     QMenu * iconMenu;
     QAction * quitA;
     QAction * showA;
 
     QListWidget * log_list;
+    QComboBox * icons;
   public:
     void log( const char * text, int code );
+    int init;
 };
 
 extern QcmseDialog * dialog;
 
 class Qcmse : public QApplication
 {
-  xcmseContext_s * c;
+  XcmeContext_s * c;
   public:
     Qcmse(int argc, char ** argv) : QApplication(argc,argv)
     {
-      c = xcmseContext_New( );
+      c = XcmeContext_New( );
     };
     ~Qcmse()
     {
-      xcmseContext_Stop( c );
+      XcmeContext_Release( &c );
     };
     void setup()
     {
       const char * display_name = getenv("DISPLAY");
       QDesktopWidget * d = this->desktop();
       QX11Info i = d->x11Info();
-      c->display = i.display();
-      c->w = dialog->winId();
-      xcmseContext_Setup( c, display_name );
+      XcmeContext_DisplaySet( c, i.display() );
+      XcmeContext_WindowSet( c, dialog->winId() );
+      XcmeContext_Setup( c, display_name );
     };
     bool x11EventFilter( XEvent * event )
     {
       /* set the actual X11 Display, Qt seems to change the old pointer. */
-      c->display = event->xany.display;
+      XcmeContext_DisplaySet( c, event->xany.display );
       /* process the X event */
-      xcmseContext_InLoop( c, event );
+      XcmeContext_InLoop( c, event );
       return false; 
     };
 };

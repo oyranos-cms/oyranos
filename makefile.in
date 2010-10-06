@@ -107,7 +107,6 @@ CHEADERS = \
 	$(TARGET)_config.h \
 	$(TARGET)_debug.h \
 	$(TARGET)_definitions.h \
-	$(TARGET)_edid_parse.h \
 	$(TARGET)_elektra.h \
 	$(TARGET)_helper.h \
 	$(TARGET)_i18n.h \
@@ -191,8 +190,7 @@ CFILES_MODULES_DEVICES = \
 	$(CFILES_CMM_SANE) \
 	modules/devices/SANE_help.c
 CFILES_MONI = \
-	modules/devices/$(TARGET)_monitor.c \
-	modules/devices/$(TARGET)_edid_parse.c
+	modules/devices/$(TARGET)_monitor.c
 CFILES_MONI_NVIDIA = \
 	$(TARGET)_monitor_nvidia.c
 CFILES_GAMMA = \
@@ -251,9 +249,6 @@ EXAMPLE_SOURCES = \
 	examples/dummy_filter/oyranos_cmm_dFil.c \
 	examples/image2pdf/image2pdf.c \
 	examples/image_display/image_display.cpp \
-	examples/xcmsevents/xcmsevents.c \
-	examples/xcmsevents/xcmsevents_common.c \
-	examples/xcmsevents/xcmsevents_common.h \
 	examples/xcmsevents/qcmsevents.cpp \
 	examples/xcmsevents/qcmsevents.h \
 	examples/oymd5icc/oymd5icc.c
@@ -264,7 +259,8 @@ EXAMPLE_FILES = \
 	examples/makefile \
 	examples/xcmsevents/plugin-compicc.svg \
 	examples/xcmsevents/plugin-compicc_gray.svg \
-	examples/xcmsevents/qcmsevents.qrc
+	examples/xcmsevents/qcmsevents.qrc \
+	examples/xcmsevents/qcmsevents-applet.desktop
 
 MAN1 = oyranos-config-fltk.1 oyranos-monitor.1 oyranos-policy.1
 MAN3 = oyranos.3 oyranos-config.3
@@ -511,7 +507,7 @@ $(LIB_CMM_oydi): $(LIBSONAMEFULL) $(CMM_oydi_OBJECTS)
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
 	-o $@ \
-	$(CMM_oydi_OBJECTS) $(X11_LIBS) $(Xcm) $(Xfixes) $(MODULE_LDLIBS)
+	$(CMM_oydi_OBJECTS) $(X11_LIBS) $(Xfixes) $(MODULE_LDLIBS)
 	$(RM)  lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO)$(LIBEXT)
@@ -757,8 +753,6 @@ docu:
 	test -n 'which doxygen' && ( \
 		doxygen Doxyfile; $(COPY) $(SRCDIR)/$(TARGET)_logo.png doc/html/; \
 		doxygen Doxyfile_alpha; $(COPY) $(SRCDIR)/$(TARGET)_logo.png doc_alpha/html/;) || echo "Will not create Documentation because doxygen is missing"
-	test -d doc_intern/html/ && $(COPY) $(SRCDIR)/$(TARGET)_logo.png doc_intern/html/ ||\
-	 echo ""
 	echo ... Documentation done
 
 # the copy part for this directory level
@@ -766,8 +760,8 @@ install_bin:	all install_gui
 	echo Installing binaries ...
 	mkdir -p $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-config     $(DESTDIR)$(bindir)
-	-$(INSTALL) -m 755 $(TARGET)-monitor    $(DESTDIR)$(bindir)
-	-$(INSTALL) -m 755 $(TARGET)-policy     $(DESTDIR)$(bindir)
+	$(INSTALL) -m 755 $(TARGET)-monitor    $(DESTDIR)$(bindir)
+	$(INSTALL) -m 755 $(TARGET)-policy     $(DESTDIR)$(bindir)
 	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(libdir)
 	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
@@ -844,13 +838,17 @@ install_bin:	all install_gui
 	echo ... binary Installation finished
 
 # install recursive
-install:	install-main
+install:	install-main examples
+	$(INSTALL) -m 755 examples/xcmsevents/qcmsevents $(DESTDIR)$(bindir)
+	mkdir -p $(DESTDIR)$(desktopdir)
+	$(INSTALL) -m 644 $(SRCDIR)/examples/xcmsevents/qcmsevents-applet.desktop $(DESTDIR)$(desktopdir)
 	echo ... $@ done
 
 install-main:	install_bin install_linguas install_docu
 	mkdir -p $(DESTDIR)$(pixmapdir)
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_logo.png $(DESTDIR)$(pixmapdir)/$(TARGET)_logo.png
 	$(INSTALL) -m 644 $(SRCDIR)/lcms_logo2.png $(DESTDIR)$(pixmapdir)/lcms_logo2.png
+	$(INSTALL) -m 644 $(SRCDIR)/examples/xcmsevents/plugin-compicc.svg $(DESTDIR)$(pixmapdir)/qcmsevents.svg
 
 # synonymes
 doc:		docu
@@ -860,6 +858,7 @@ install_docu: docu
 	echo Installing policy settings files ...
 	-mkdir -p $(DESTDIR)$(syscolordir)/$(settingsdirname)
 	-$(INSTALL) -m 644 $(SRCDIR)/settings/*.policy.xml $(DESTDIR)$(syscolordir)/$(settingsdirname)
+	echo ... installing policy settings files done
 	mkdir -p $(DESTDIR)$(docdir)
 	cd $(SRCDIR) && \
 	  $(INSTALL) -m 644 $(DOKU) $(DESTDIR)$(docdir)
@@ -873,7 +872,7 @@ install_docu: docu
 	-$(INSTALL) -m 644 doc/html/* $(DESTDIR)$(docdir)/html
 	-$(INSTALL) -m 644 doc_alpha/html/* $(DESTDIR)$(docdir)/html/alpha
 	cd $(SRCDIR) && \
-	  test -n $(SCRIPTS) && $(INSTALL) $(SCRIPTS) $(DESTDIR)$(docdir) || \
+	  test -n "$(SCRIPTS)" && $(INSTALL) $(SCRIPTS) $(DESTDIR)$(docdir) || \
 	  echo ""
 	
 

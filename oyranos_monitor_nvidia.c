@@ -43,13 +43,13 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
+# include <X11/Xcm/XcmEdidParse.h>
 #if HAVE_XIN
 # include <X11/extensions/Xinerama.h>
 #endif
 
 #include "oyranos.h"
 #include "oyranos_monitor_internal.h"
-#include "oyranos_edid_parse.h"
 #include "oyranos_helper.h"
 #include "oyranos_debug.h"
 
@@ -119,7 +119,7 @@ main(int argc, char **argv)
   size_t *size = (size_t*) calloc(sizeof(size_t), 24);
   unsigned char** data = NULL;
   int i, j, ret;
-  XEdid_s * edi=0;
+  XcmEdid_s * edi=0;
   int screen_number = 32;
   int number_of_screens = 1;
   int monitors = 0;
@@ -298,7 +298,7 @@ main(int argc, char **argv)
       t = txt[xineramas[k][1]];
 
       /*/printf( "%d: Edid of size %d found.\n", j, (int)size[j]);*/
-      edi = (XEdid_s*) data[j];
+      edi = (XcmEdid_s*) data[j];
 
       if(size[j] == 128 || size[j] == 256)
       {

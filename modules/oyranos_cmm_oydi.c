@@ -64,7 +64,7 @@ extern oyCMMapi7_s   oydi_api7_image_display;
 #if defined(HAVE_X11) && defined(HAVE_XCM)
 #include <X11/Xlib.h>
 #include <X11/extensions/Xfixes.h>
-#include <X11/Xcm.h>
+#include <X11/Xcm/Xcm.h>
 #endif
 
 

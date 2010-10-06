@@ -27,6 +27,7 @@
 # include <X11/Xlib.h>
 # include <X11/Xutil.h>
 # include <X11/Xatom.h>
+# include <X11/Xcm/XcmEdidParse.h>
 # if HAVE_XIN
 #  include <X11/extensions/Xinerama.h>
 # endif
@@ -52,7 +53,6 @@ char * printCFDictionary( CFDictionaryRef dict );
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_sentinel.h"
-#include "oyranos_edid_parse.h"
 
 /* ---  Helpers  --- */
 
@@ -134,14 +134,14 @@ void         oyUnrollEdid1_          ( void              * edid,
                                        oyAlloc_f           allocate_func)
 {
   int i, count = 0;
-  XEdidKeyValue_s * list = 0;
-  XEDID_ERROR_e err = 0;
+  XcmEdidKeyValue_s * list = 0;
+  XCM_EDID_ERROR_e err = 0;
 
   DBG_PROG_START
 
-  err = XEdidParse( edid, &list, &count );
+  err = XcmEdidParse( edid, &list, &count );
   if(err)
-    WARNc_S(XEdidErrorToString(err));
+    WARNc_S(XcmEdidErrorToString(err));
 
   if(list)
   for(i = 0; i < count; ++i)
@@ -184,7 +184,7 @@ void         oyUnrollEdid1_          ( void              * edid,
       c[8] = list[i].value.dbl;
   }
 
-  XEdidFree( &list );
+  XcmEdidFree( &list );
 
   DBG_PROG_ENDE
 }

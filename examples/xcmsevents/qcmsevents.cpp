@@ -1,20 +1,18 @@
 /** qcmsevents.c
  *
- *  A small X11 colour management event observer.
+ *  Qt based X11 colour management event observer
  *
  *  License: newBSD
  *  Copyright: (c)2009-2010 - Kai-Uwe Behrmann <ku.b@gmx.de>
  *
- *  c++: ar cru liboyranosedid.a ../../modules/devices/oyranos_edid_parse.o ../../modules/devices/oyranos_monitor.o
- *  c++: prefix=/opt/local; g++ -Wall -g -o qcmsevents qcmsevents.cpp `PKG_CONFIG_PATH=$prefix/lib/pkgconfig pkg-config --cflags --libs x11 xmu xfixes xinerama xrandr xxf86vm oyranos QtGui` -DHAVE_X11 -DTARGET=\"xcmsevents\" -I$prefix/include -I../.. -L$prefix/lib -lXcolor -L./ -loyranosedid
  */
 
 #include <cstdio>
 
 #define TARGET "X Color Management Events"
 #include "qcmsevents.h"
-
-#include "xcmsevents_common.c"
+#include "oyranos_alpha.h"
+#include "oyranos_i18n.h"
 
 QcmseDialog * dialog = 0;
 
@@ -25,7 +23,12 @@ QcmseDialog::QcmseDialog()
   showA = new QAction( tr("&Show Window"), this );
   connect( showA, SIGNAL(triggered()), this, SLOT(showNormal()) );
 
-  createIcon();
+  icon = 0;
+  init = 1;
+  icons = new QComboBox;
+  icons->addItem(QIcon(":/plugin-compicc_gray.svg"), tr("none"));
+  icons->addItem(QIcon(":/plugin-compicc.svg"), tr("active"));
+ 
 
   log_list = new QListWidget(this);
 
@@ -33,7 +36,6 @@ QcmseDialog::QcmseDialog()
   vertical_layout->addWidget( log_list );
   setLayout( vertical_layout );
 
-  icon->show();
   setWindowTitle( tr(TARGET) );
 
   resize(400, 250);
@@ -45,19 +47,24 @@ void QcmseDialog::createIcon()
   iconMenu->addAction( showA );
   iconMenu->addAction( quitA );
 
-  icon = new QSystemTrayIcon( this );
+  /* set a first icon */
+  QIcon ic(":/plugin-compicc_gray.svg");
+  icon = new QSystemTrayIcon( ic, this );
   icon->setContextMenu( iconMenu );
+  icon->show();
 }
 
 void QcmseDialog::log( const char * text, int code )
 {
   int pid = -1;
 
+  if(!dialog->icon)
+    dialog->createIcon();
   dialog->icon->setToolTip( text );
 
   QListWidgetItem * item = new QListWidgetItem;
   QColor colour;
-  if(code == oyMSG_DISPLAY_EVENT)
+  if(code == XCME_MSG_DISPLAY_EVENT)
   {
     static int zebra = 0;
     if(zebra)
@@ -78,18 +85,16 @@ void QcmseDialog::log( const char * text, int code )
     if(pid == 0)
     {
       colour.setHsvF( 0.6, 0.4, 0.9 );
-      QIcon ic(":/plugin-compicc_gray.svg");
-      icon->setIcon( ic );
+      icon->setIcon( icons->itemIcon(0) );
     } else
     if(pid > 0)
     {
       colour.setHsvF( 0.41, 0.5, 0.9 );
-      QIcon ic(":/plugin-compicc.svg");
-      icon->setIcon( ic );
+      icon->setIcon( icons->itemIcon(1) );
     }
     item->setBackground( QBrush( colour ) );
   }
-  else if(code == oyMSG_DISPLAY_ERROR)
+  else if(code == XCME_MSG_DISPLAY_ERROR)
   {
     static int zebra = 0;
     if(zebra)
@@ -107,7 +112,7 @@ void QcmseDialog::log( const char * text, int code )
       text = strstr(text, "PropertyNotify : ") + strlen("PropertyNotify : ");
     item->setBackground( QBrush( colour ) );
   }
-  else if (oyMSG_DISPLAY_STATUS)
+  else if (XCME_MSG_DISPLAY_STATUS)
   {
     int i;
     if(strstr(text, "atom: \"_NET_COLOR_DESKTOP\":"))
@@ -115,44 +120,44 @@ void QcmseDialog::log( const char * text, int code )
     if(pid == 0)
     {
       colour.setHsvF( 0.6, 0.4, 0.9 );
-      QIcon ic(":/plugin-compicc_gray.svg");
-      icon->setIcon( ic );
+      icon->setIcon( icons->itemIcon(0) );
     } else
     if(pid > 0)
     {
       colour.setHsvF( 0.41, 0.5, 0.9 );
-      QIcon ic(":/plugin-compicc.svg");
-      icon->setIcon( ic );
+      icon->setIcon( icons->itemIcon(1) );
     }
   }
   item->setText( text );
 
   dialog->log_list->insertItem( dialog->log_list->count(), item );
-  dialog->log_list->scrollToItem( item );
+  if(!dialog->init)
+    dialog->log_list->scrollToItem( item );
 }
 
-int QcmseMessageFunc( int code, const oyStruct_s * context, const char * format, ... )
+int QcmseMessageFunc( XCME_MSG_e code, const void * context, const char * format, ... )
 {
   char* text = 0, *pos = 0;
   va_list list;
   const char * type_name = "";
   int id = -1;
+  const oyStruct_s * s = (oyStruct_s*) context;
 
-  if(code == oyMSG_DBG && !oy_debug)
+  if(code == (XCME_MSG_e)oyMSG_DBG && !oy_debug)
     return 0;
 
 
-  if(context && oyOBJECT_NONE < context->type_)
+  if(s && oyOBJECT_NONE < s->type_)
   {
-    type_name = oyStructTypeToText( context->type_ );
-    id = oyObject_GetId( context->oy_ );
+    type_name = oyStructTypeToText( s->type_ );
+    id = oyObject_GetId( s->oy_ );
   }
 
   text = (char*)calloc(sizeof(char), 4096);
   text[0] = 0;
 
 
-  switch(code)
+  switch((int)code)
   {
     case oyMSG_WARN:
          sprintf( &text[strlen(text)], _("WARNING"));
@@ -187,19 +192,65 @@ int QcmseMessageFunc( int code, const oyStruct_s * context, const char * format,
   return 0;
 }
 
+extern "C" {
+void * fromMD5                       ( const void        * md5_hash,
+                                       size_t            * size,
+                                       void              *(allocate_func)(size_t) )
+{
+  void * data = 0;
+  oyProfile_s * p = oyProfile_FromMD5( (uint32_t*)md5_hash, 0 );
+  data = oyProfile_GetMem( p, size, 0, allocate_func );
+  oyProfile_Release( &p );
+  return data;
+}
+
+char * getName                       ( const void        * data,
+                                       size_t              size,
+                                       void              *(allocate_func)(size_t),
+                                       int                 file_name )
+{
+  char * text = 0;
+  const char * t = 0;
+  oyProfile_s * p = oyProfile_FromMem( size, (void*)data, 0, 0 );
+  if(file_name)
+    t = oyProfile_GetFileName( p, -1 );
+  else
+    t = oyProfile_GetText( p, oyNAME_DESCRIPTION );
+
+  if(t && t[0])
+  {
+    text = (char*)allocate_func( strlen(t) + 1 );
+    strcpy( text, t );
+  }
+
+  oyProfile_Release( &p );
+  return text;
+}
+}
+
 int main(int argc, char *argv[])
 {
+  //Q_INIT_RESOURCE(systray);
+
   Qcmse app(argc,argv);
 
   if( QSystemTrayIcon::isSystemTrayAvailable() )
     QApplication::setQuitOnLastWindowClosed( false );
 
+  XcmMessageFuncSet( QcmseMessageFunc );
+
+  XcmICCprofileFromMD5FuncSet( fromMD5 );
+  XcmICCprofileGetNameFuncSet( getName );
+
   dialog = new QcmseDialog();
   //dialog->show();
 
-  oyMessageFuncSet( QcmseMessageFunc );
-
   app.setup();
+
+  if(!dialog->icon)
+    dialog->createIcon();
+  dialog->init = 0;
+
   return app.exec();
 }
 
