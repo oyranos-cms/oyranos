@@ -774,14 +774,14 @@ oyStructList_s * oyIMProfileTag_GetValues(
            tmp = oyAllocateFunc_( len*2 + 1 );
 
            {
-                 int  dversatz = 8 + 24;
+                 int  offset = 8 + 24;
 
-                 len = len - dversatz;
+                 len = len - offset;
 
                  if(!error)
                  {
                    /* WCS provides UTF-16LE */
-                   error = oyIMIconv( &mem[dversatz], len, tmp, "UTF-16LE" );
+                   error = oyIMIconv( &mem[offset], len, tmp, "UTF-16LE" );
 
                    if(error != 0 || !oyStrlen_(tmp))
                    {
@@ -887,31 +887,33 @@ oyStructList_s * oyIMProfileTag_GetValues(
            break;
       case icSigMultiLocalizedUnicodeType:
            {
-             int anzahl = oyValueUInt32( *(icUInt32Number*)&mem[8] );
-             int groesse = oyValueUInt32( *(icUInt32Number*)&mem[12] ); /* 12 */
+             int count = oyValueUInt32( *(icUInt32Number*)&mem[8] );
+             int size = oyValueUInt32( *(icUInt32Number*)&mem[12] ); /* 12 */
              int i;
              int all = 1;
 
-             error = tag->size_ < 24 + anzahl * groesse;
+             error = tag->size_ < 24 + count * size;
 
              if(!error)
-             for (i = 0; i < anzahl; i++)
+             for (i = 0; i < count; i++)
              {
-               char c = mem[16+ i*groesse],
-                    d = mem[17+ i*groesse];
+               char lang[4] = {0,0,0,0};
                int  g = 0,
-                    dversatz = 0;
+                    offset = 0;
 
-               error = tag->size_ < 20 + i * groesse;
+               error = tag->size_ < 20 + i * size;
                if(!error)
-                 g = oyValueUInt32( *(icUInt32Number*)&mem[20+ i*groesse] );
+                 g = oyValueUInt32( *(icUInt32Number*)&mem[20+ i*size] );
+
+               lang[0] = mem[16+ i*size];
+               lang[1] = mem[17+ i*size];
 
                {
                  oyName_s * name = 0;
                  oyStruct_s * oy_struct = 0;
                  char * t = 0;
 
-                 error = tag->size_ < 20 + i * groesse + g + 4;
+                 error = tag->size_ < 20 + i * size + g + 4;
                  if(!error)
                  {
                    len = (g > 1) ? g : 8;
@@ -922,27 +924,27 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  if(!error && all)
                  {
                    name = oyName_new(0);
-                   oySprintf_( name->lang, "%c%c_%c%c", c, d,
-                               mem[18+ i*groesse], mem[19+ i*groesse] );
+                   oySprintf_( name->lang, "%s_%c%c", lang,
+                               mem[18+ i*size], mem[19+ i*size] );
                  }
 
                  if(!error)
                    t[0] = 0;
 
                  if(!error)
-                   error = (24 + i*groesse + 4) > tag->size_;
+                   error = (24 + i*size + 4) > tag->size_;
 
                  if(!error)
-                   dversatz = oyValueUInt32( *(icUInt32Number*)&mem
-                                                  [24+ i*groesse] );
+                   offset = oyValueUInt32( *(icUInt32Number*)&mem
+                                                  [24+ i*size] );
 
                  if(!error)
-                   error = dversatz + len > tag->size_;
+                   error = offset + len > tag->size_;
 
                  if(!error)
                  {
                    /* ICC says UTF-16BE */
-                   error = oyIMIconv( &mem[dversatz], len, t, "UTF-16BE" );
+                   error = oyIMIconv( &mem[offset], len, t, "UTF-16BE" );
 
                    if(!error)
                      oy_struct = (oyStruct_s*) name;
@@ -956,25 +958,25 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  }
                }
 
-               if(i == anzahl-1 && !error)
+               if(i == count-1 && !error)
                {
                  if(!error)
-                   error = (24 + i*groesse + 4) > tag->size_;
+                   error = (24 + i*size + 4) > tag->size_;
 
-                 dversatz = oyValueUInt32( *(icUInt32Number*)&mem
-                                                  [24+ i*groesse] );
-                 size_ = dversatz + g;
+                 offset = oyValueUInt32( *(icUInt32Number*)&mem
+                                                  [24+ i*size] );
+                 size_ = offset + g;
                }
              }
 
              if (!oyStructList_Count(texts)) /* first entry */
              {
                int g =        oyValueUInt32(*(icUInt32Number*)&mem[20]),
-                   dversatz = oyValueUInt32(*(icUInt32Number*)&mem[24]);
+                   offset = oyValueUInt32(*(icUInt32Number*)&mem[24]);
                char * t = 0;
                int n_;
 
-               error = tag->size_ < dversatz + g;
+               error = tag->size_ < offset + g;
 
                if(!error)
                  t = (char*) oyAllocateFunc_( g + 1 );
@@ -983,7 +985,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                if(!error)
                {
                  for (n_ = 1; n_ < g ; n_ = n_+2)
-                   t[n_/2] = mem[dversatz + n_];
+                   t[n_/2] = mem[offset + n_];
                  t[n_/2] = 0;
                  STRING_ADD( tmp, t );
                  oyStructList_MoveInName( texts, &tmp, -1 );
