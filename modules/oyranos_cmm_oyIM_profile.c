@@ -36,7 +36,7 @@ uint32_t oyGetTableUInt32_           ( const char        * mem,
                                        int                 entry_size,
                                        int                 entry_pos,
                                        int                 pos );
-char *   oyStringFrommluc            ( const char        * mem,
+oyStructList_s *   oyStringsFrommluc ( const char        * mem,
                                        uint32_t            size );
 
 /* --- implementations --- */
@@ -168,7 +168,7 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
  *    - returns a list of strings, uneven is descriptive, even contains values
  *
  *  - icSigDictType:
- *    - since Oyranos 0.1.10 (API 0.1.10)
+ *    - since Oyranos 0.1.10 (API 0.1.12)
  *    - returns four strings each originating from a uint32_t
  *      - the size of components (c) as ascii string (2 - key/value pairs;
  *        3 - key/value pairs + key UI translations, 3 - key/value pairs + 
@@ -176,8 +176,8 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
  *      - the number (i) of the found elements as ascii string
  *      - key string in 2 + i * c
  *      - value string in 2 + i * c + 1
- *      - translated key string in 2 + i * c + 2
- *      - translated value string in 2 + i * c + 3
+ *      - oyStructList_s with language strings in 2 + i * c + 2
+ *      - oyStructList_s with language strings in 2 + i * c + 3
  *
  *  - icSigProfileSequenceDescType:
  *    - since Oyranos 0.1.8 (API 0.1.8)
@@ -539,8 +539,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
            if(error <= 0)
            {
-             oySprintf_( num, "%d", count );
-             oyStructList_AddName( texts, num, -1);
              switch( entry_size )
              {
                case 16: oySprintf_( num, "2" ); break;
@@ -552,6 +550,9 @@ oyStructList_s * oyIMProfileTag_GetValues(
                oyStructList_AddName( texts, num, -1);
              else
               oyStructList_AddName( texts, "unrecoverable parameter found", -1);
+
+             oySprintf_( num, "%d", count );
+             oyStructList_AddName( texts, num, -1);
              /*size_ = 12;*/
            }
 
@@ -596,21 +597,22 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
                if(entry_size == 24 || entry_size == 32)
                {
+                 oyStructList_s * list = 0;
                  key_ui_offset = oyGetTableUInt32_( &mem[16], entry_size, i, 4);
                  key_ui_size = oyGetTableUInt32_( &mem[16], entry_size, i, 5 );
 
-                 tmp = oyStringFrommluc( &mem[key_ui_offset], key_ui_size );
+                 list = oyStringsFrommluc( &mem[key_ui_offset], key_ui_size );
 
-                 oyStructList_MoveInName( texts, &tmp, -1 );
+                 oyStructList_MoveIn( texts, (oyStruct_s**)&list, -1, 0 );
                  
                  if(entry_size == 32)
                  {
                  value_ui_offset = oyGetTableUInt32_( &mem[16], entry_size,i,6);
                  value_ui_size = oyGetTableUInt32_( &mem[16], entry_size, i, 7);
 
-                 tmp = oyStringFrommluc( &mem[value_ui_offset], value_ui_size );
+                 list = oyStringsFrommluc( &mem[value_ui_offset],value_ui_size);
 
-                 oyStructList_MoveInName( texts, &tmp, -1 );
+                 oyStructList_MoveIn( texts, (oyStruct_s**)&list, -1, 0 );
                  }
                }
              }
@@ -1621,7 +1623,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
              if(!error)
              {
                error = oyIMProfileTag_Create( tmptag, tmp_list,
-                                         icSigMultiLocalizedUnicodeType, 0 );
+                                            icSigMultiLocalizedUnicodeType, 0 );
                tmp = 0;
 
                if(!error)
@@ -1898,10 +1900,10 @@ uint32_t oyGetTableUInt32_           ( const char        * mem,
   return value;
 }
 
-char *   oyStringFrommluc            ( const char        * mem,
+oyStructList_s *   oyStringsFrommluc ( const char        * mem,
                                        uint32_t            size )
 {
-  oyStructList_s * desc_tmp = 0;
+  oyStructList_s * desc = 0;
   oyProfileTag_s * tmptag = 0;
   char * tmp = 0;
   oyName_s * name = 0;
@@ -1916,17 +1918,10 @@ char *   oyStringFrommluc            ( const char        * mem,
                             size, tmp );
   tmp = 0;
 
-  desc_tmp = oyIMProfileTag_GetValues( tmptag );
-  if(oyStructList_Count( desc_tmp ) )
-  {
-    name = (oyName_s*) oyStructList_GetRefType( desc_tmp,
-                                                0, oyOBJECT_NAME_S );
-    if(name)
-      tmp = oyStringCopy_( name->name, oyAllocateFunc_ );
-  }
+  desc = oyIMProfileTag_GetValues( tmptag );
   oyProfileTag_Release( &tmptag );
   oyName_release( &name );
 
-  return tmp;
+  return desc;
 }
  
