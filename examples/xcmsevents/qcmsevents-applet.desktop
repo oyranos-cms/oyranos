@@ -1,0 +1,15 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Type=Application
+Categories=System;Applet;
+Comment=State of Colour Server
+Comment[de]=Statusanzeige ifür Farbserver
+Exec=qcmsevents %U
+GenericName=QCmsEvents
+Icon=qcmsevents.svg
+Name=QCmsEvents
+Name[de]=QCmsEvents
+StartupNotify=false
+Terminal=false
+TryExec=qcmsevents
