@@ -249,6 +249,9 @@ EXAMPLE_SOURCES = \
 	examples/dummy_filter/oyranos_cmm_dFil.c \
 	examples/image2pdf/image2pdf.c \
 	examples/image_display/image_display.cpp \
+	examples/image_display/oyranos_display_helper_classes.cpp \
+	examples/image_display/oyranos_display_helper_classes_fltk.cpp \
+	examples/image_display/oyranos_display_helpers.c \
 	examples/xcmsevents/qcmsevents.cpp \
 	examples/xcmsevents/qcmsevents.h \
 	examples/oymd5icc/oymd5icc.c
