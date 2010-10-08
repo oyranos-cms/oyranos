@@ -200,6 +200,7 @@ ldconfig
 %{_mandir}/man1/%{name}-policy*
 %{pixmapdir}/oyranos_logo.*
 %{pixmapdir}/lcms_logo2.png
+%dir %{syscolordir}/%{settingsdirname}
 %{syscolordir}/%{settingsdirname}/*.policy.xml
 
 %files -n lib%{name}0
