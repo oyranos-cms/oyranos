@@ -110,7 +110,7 @@ const char * oyX1_help_list =
       " available devices. The actual device name can be found in option\n"
       " \"device_name\". The call is as lightwight as possible.\n"
       " The option \"display_name\" is optional to pass the X11 display name\n"
-      " and obtain a unfiltered result. It the way to get all monitors\n"
+      " and obtain a unfiltered result. Its the way to get all monitors\n"
       " connected to a display.\n"
       " The option \"oyNAME_NAME\" returns a string containting geometry and\n"
       " if available, the profile name or size.\n"
@@ -127,6 +127,8 @@ const char * oyX1_help_list =
       " call into a expensive one.\n"
       " The bidirectional optional \"edid\" (specific) key word will\n"
       " additionally add the EDID information inside a oyBlob_s struct.\n"
+      " A option \"edid\" key word with value \"refresh\" will \n"
+      " update the EDID atom if possible.\n"
       " The option \"device_name\" may be added as a filter.\n"
       " \"list\" is normally a cheap call, see oyNAME_DESCRIPTION\n"
       " above.\n"
@@ -837,8 +839,9 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           oyFree_m_( text );
         }
 
-        if(oyOptions_FindString( options, "command", "properties" ) &&
-           !oyOptions_FindString( options, "icc_profile.fallback", 0 ))
+        if(!oyOptions_FindString( options, "icc_profile.fallback", 0 ) &&
+           (oyOptions_FindString( options, "command", "properties" ) ||
+            oyOptions_FindString( options, "edid", "refresh" )))
           error = oyX1DeviceFromName_( device_name, options, &device );
 
         /** 3.1.6 add the rank scheme to combine properties */

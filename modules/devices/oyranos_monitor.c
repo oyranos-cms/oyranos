@@ -298,6 +298,7 @@ oyGetMonitorInfo_                 (const char* display_name,
   char *t;
   oyMonitor_s * disp = 0;
   oyBlob_s * prop = 0;
+  oyOptions_s * options = (oyOptions_s*) user_data;
 
   DBG_PROG_START
 
@@ -310,6 +311,13 @@ oyGetMonitorInfo_                 (const char* display_name,
 
   if(!allocate_func)
     allocate_func = oyAllocateFunc_;
+
+  if(options && options->type_ != oyOBJECT_OPTIONS_S)
+  {
+    options = 0;
+    WARNcc2_S(user_data, "\n\t  ",_("unexpected user_data type"),
+                                  oyStructTypeToText( user_data->type_ ));
+  }
 
   if( system_port ) 
   {
@@ -336,7 +344,8 @@ oyGetMonitorInfo_                 (const char* display_name,
                                        xrandr_edids );
 
   if( oyMonitor_infoSource_( disp ) == oyX11INFO_SOURCE_XINERAMA &&
-      (!prop || (prop && prop->size != 128 && prop->size != 256)) )
+      ((!prop || (prop && prop->size != 128 && prop->size != 256)) ||
+       oyOptions_FindString( options, "edid", "refresh" )) )
   {
     int error = 0;
     char * txt = oyAllocateFunc_(1024); txt[0] = 0;
