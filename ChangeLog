@@ -1,3 +1,31 @@
+Version 0.1.12
+
+Kai-Uwe Behrmann (24):
+	* [exmpl]: add window title to image_display
+	* [core]: add clrt and clro tag types
+	* [oyIM]: read 'clro' tag type
+	* [conf]: bump version to 0.1.12
+	* [oyIM]: correct count value for 'clro'
+	* [oyIM]: complete ICC 'clrt' tag type
+	* [core]: add icSigColorantTableOutType
+	* [docu]: adjust colour channel tag names
+	* [conf]: explicite disable internal Elektra shared
+	* [exmpl]: remove xcmsevents
+	* [core]: remove EDID and X CM Events API
+	* [oyX1]: remove EDID parse example code
+	* [oyIM]: variable translations
+	* [oyIM]: modify oyStringFrommluc()
+	* [docu]: remove authors from removed data
+	* [exmpl]: add qcmsevents desktop file
+	* [build]: package image_display files
+	* [build]: own the settings dir in RPM spec
+	* [docu]: add detail about OY_MODULE_PATHS variable
+	* [build]: add libXmu to RPM spec
+	* [build]: add mandriva BuildRequires for RPM
+	* [conf]: fix typo in desktop file
+	* [build]: add suse_update_desktop_file RPM macro
+	* [oyX1]: new "edid":"refresh" option with "list"
+
 Version 0.1.11
 
 Kai-Uwe Behrmann (127):
