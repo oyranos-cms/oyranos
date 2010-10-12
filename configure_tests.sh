@@ -943,7 +943,14 @@ if [ -n "$COMPIZ" ] && [ $COMPIZ -gt 0 ]; then
     echo "COMPIZ_H = `pkg-config --cflags $pc_package | sed \"$STRIPOPT\"`" >> $CONF
     echo "COMPIZ_LIBS = `pkg-config --libs $pc_package | sed \"$STRIPOPT\"`" >> $CONF
   else
-    echo_="  no or too old $pc_package found, need $pc_package to build examples"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo__="  no or too old $pc_package found, need $pc_package";
+    if [ $COMPIZ -eq 1 ]; then
+      ERROR=1
+      echo_="!!! ERROR !!! $echo__"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    else
+      echo_="    Warning   $echo__"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      WARNING=1
+    fi
   fi
 fi
 
