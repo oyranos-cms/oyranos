@@ -182,7 +182,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
     message( oyMSG_DBG, (oyStruct_s*)image,
                OY_DBG_FORMAT_"Display: %s Window id: %d  %s @+%d+%d",
                OY_DBG_ARGS_,
-               display_name, w, oyRectangle_Show(display_rectangle), x,y );
+               display_name, (int)w, oyRectangle_Show(display_rectangle), x,y );
 
     window_rectangle = oyRectangle_NewFrom( display_rectangle, 0 );
     window_rectangle->x -= x;
@@ -214,7 +214,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
                  OY_DBG_FORMAT_
                  "Display: %s Window id: %d  Could not load Xregion:%d",
                  OY_DBG_ARGS_,
-                 display_name, w, (int)reg );
+                 display_name, (int)w, (int)reg );
         
       } else if(rect[0].x != rec[0].x ||
                 rect[0].y != rec[0].y )
@@ -223,13 +223,13 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
                  OY_DBG_FORMAT_
                  "Display: %s Window id: %d  Xregion:%d has wrong position %d,%d",
                  OY_DBG_ARGS_,
-                 display_name, w, (int)reg, rect[0].x, rect[0].y );
+                 display_name, (int)w, (int)reg, rect[0].x, rect[0].y );
       } else
         message( oyMSG_DBG, (oyStruct_s*)image,
                  OY_DBG_FORMAT_
                  "Display: %s Window id: %d  Xregion:%d uploaded %dx%d+%d+%d",
                  OY_DBG_ARGS_,
-                 display_name, w, (int)reg,
+                 display_name, (int)w, (int)reg,
                  rect[0].width, rect[0].height, rect[0].x, rect[0].y );
 
       region.region = htonl(reg);
