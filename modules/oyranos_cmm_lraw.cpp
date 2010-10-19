@@ -758,6 +758,17 @@ oyCMMapi4_s   lraw_api4_image_input_libraw = {
   &oraw_api4_ui_image_input_libraw     /**< oyCMMui_s *ui */
 };
 
+const char * lraw_api7_image_input_raw_properties[] =
+{
+  "file=read",    /* file load|write */
+  "image=pixel",  /* image type, pixel/vector/font */
+  "layers=1",     /* layer count, one for plain images */
+  "icc=0",        /* image type ICC profile support */
+  "ext=CR2", /* supported extensions */
+  0
+};
+
+
 /** @instance lraw_api7
  *  @brief    lraw oyCMMapi7_s implementation
  *
@@ -795,7 +806,9 @@ oyCMMapi7_s   lraw_api7_image_input_libraw = {
   0,   /* plugs_last_add */
   (oyConnector_s**) lraw_imageInputRAW_connectors,   /* sockets */
   1,   /* sockets_n */
-  0    /* sockets_last_add */
+  0,   /* sockets_last_add */
+
+  (char**)lraw_api7_image_input_raw_properties /* char * properties */
 };
 
 
