@@ -15491,7 +15491,6 @@ OYAPI int OYEXPORT
       s->sig_ = sig;
     else
       s->sig_ = icSigXYZData;
-    return error;
   }
 
   if(error <= 0 && !s->block_)
@@ -16181,6 +16180,7 @@ const char *       oyProfile_GetFileName (
  *  @since   2009/05/18 (Oyranos: 0.1.10)
  *  @date    2009/05/18
  */
+#if 0
 int                oyProfile_DeviceAdd(oyProfile_s       * profile,
                                        oyConfig_s        * device )
 {
@@ -16228,7 +16228,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
 
   return error;
 }
-
+#endif
 
 /** Function oyProfile_DeviceGet
  *  @memberof oyProfile_s
@@ -16246,7 +16246,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
  *  @since   2009/05/22 (Oyranos: 0.1.10)
  *  @date    2009/05/23
  */
-int                oyProfile_DeviceGet ( oyProfile_s     * profile,
+int              oyProfile_DeviceGet ( oyProfile_s     * profile,
                                        oyConfig_s        * device )
 {
   int error = !profile, l_error = 0;

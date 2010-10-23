@@ -524,7 +524,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
       cmyk_cmyk_black_preservation = 0,
       gamut_warning = 0,
       high_precission = 0,
-      flags = 0;
+      flags = cmsFLAGS_NOCACHE;
   const char * o_txt = 0;
 
   if(!lps || !profiles_n || !oy_pixel_layout_in || !oy_pixel_layout_out)
