@@ -73,7 +73,7 @@ const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
 #endif
 
 #ifndef icSigDictType
-#define icSigDictType 0x27646963 /* 'dict' */
+#define icSigDictType 0x64696374 /* 'dict' */
 #endif
 
 #ifndef icSigMetaDataTag
@@ -148,6 +148,26 @@ typedef struct {
   uint32_t         data_size;          /**< as follows starting from byte 84 */
   /* with data_size being > zero the byte 84 is the starting one */
 } deviceSettingsType;
+
+typedef struct {
+  icUInt32Number name_string_offset;
+  icUInt32Number name_string_size;
+  icUInt32Number value_string_offset;
+  icUInt32Number value_string_size;
+  icUInt32Number display_name_string_offset;
+  icUInt32Number display_name_string_size;
+  icUInt32Number display_value_string_offset;
+  icUInt32Number display_value_string_size;
+} icNameValueRecord;
+
+typedef struct {
+  icUInt32Number sig;
+  icUInt32Number reserved;
+  icUInt32Number number;
+  icUInt32Number size;
+  /* icNameValueRecord record[0]; */
+} icDictTagType;
+
 
 
 #ifndef HAVE_LCMS
