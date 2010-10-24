@@ -223,6 +223,12 @@ int                oyIconv           ( const char        * input,
                                        char              * output,
                                        const char        * from_codeset,
                                        const char        * to_codeset );
+int          oyIconvGet              ( const char        * text,
+                                       void             ** string,
+                                       int               * len,
+                                       const char        * encoding_from,
+                                       const char        * encoding_to,
+                                       oyAlloc_f           alloc );
 
 
 #ifdef __cplusplus

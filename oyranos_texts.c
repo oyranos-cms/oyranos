@@ -1278,6 +1278,30 @@ int                oyIconv           ( const char        * input,
   return error;
 }
 
+/** @func  oyIconvGet
+ *  @brief convert between codesets
+ *
+ *  @version Oyranos: 0.1.13
+ *  @date    2010/10/23
+ *  @since   2010/10723 (Oyranos: 0.1.13)
+ */
+int          oyIconvGet              ( const char        * text,
+                                       void             ** string,
+                                       int               * len,
+                                       const char        * encoding_from,
+                                       const char        * encoding_to,
+                                       oyAlloc_f           alloc )
+{
+  int error = 0;
+    *len = strlen(text) * 2 + 2;
+    *string = alloc( *len );
+    memset( *string, 0, *len );
+    error = oyIconv( text, *len-2, *string, encoding_from, encoding_to);
+    if(error)
+      printf("something went wrong. %s:%d\n", text, *len);
+    return error;
+}
+
 
 
 
