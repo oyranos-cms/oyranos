@@ -1282,7 +1282,7 @@ int                oyIconv           ( const char        * input,
  *  @brief convert between codesets
  *
  *  @version Oyranos: 0.1.13
- *  @date    2010/10/23
+ *  @date    2010/10/24
  *  @since   2010/10723 (Oyranos: 0.1.13)
  */
 int          oyIconvGet              ( const char        * text,
@@ -1293,7 +1293,7 @@ int          oyIconvGet              ( const char        * text,
                                        oyAlloc_f           alloc )
 {
   int error = 0;
-    *len = strlen(text) * 2 + 2;
+    *len = strlen(text) * 4 + 4;
     *string = alloc( *len );
     memset( *string, 0, *len );
     error = oyIconv( text, *len-2, *string, encoding_from, encoding_to);
