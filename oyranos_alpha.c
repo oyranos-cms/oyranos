@@ -16176,9 +16176,9 @@ const char *       oyProfile_GetFileName (
  *  @param         profile             the profile
  *  @param         device              device and driver informations
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.1.13
  *  @since   2009/05/18 (Oyranos: 0.1.10)
- *  @date    2009/05/18
+ *  @date    2010/10/23
  */
 #if 0
 int                oyProfile_DeviceAdd(oyProfile_s       * profile,
@@ -16227,6 +16227,116 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
   }
 
   return error;
+}
+#else
+int                oyProfile_DeviceAdd(oyProfile_s       * profile,
+                                       oyConfig_s        * device )
+{
+  int error = 0;
+  int i, len, size, block_size, pos;
+
+  char ** keys,
+       ** values,
+        * key, * val;
+  const char * r;
+  void * string = 0;
+
+  /* get just some device */
+  oyOption_s * o = 0;
+  oyConfig_s * d = device;
+
+  oyProfile_s * p = profile;
+  oyProfileTag_s * dict_tag;
+  icDictTagType * dict;
+  icNameValueRecord * record;
+
+  /* count valid entries */
+  int n = oyConfig_Count( d );
+  int count = 0;
+  for(i = 0; i < n; ++i)
+  {
+    char * reg = 0;
+    o = oyConfig_Get( d, i );
+    r = oyOption_GetRegistration(o);
+    reg = oyFilterRegistrationToText( r, oyFILTER_REG_OPTION, oyAllocateFunc_ );
+    if(o->value_type == oyVAL_STRING)
+    {
+      char * val = oyOption_GetValueText( o, oyAllocateFunc_ );
+      if(val)
+      {
+        printf("%s: %s\n", reg, val );
+        oyDeAllocateFunc_(val);
+        ++count;
+      }
+    }
+    if(reg) oyDeAllocateFunc_(reg);
+  }
+
+  /* collect data */
+  size = 16 /* or 24 or 32*/
+         * n + sizeof(icDictTagType),
+  block_size = size;
+  pos = 0;
+
+  keys = oyAllocateFunc_( 2 * count * sizeof(char*));
+  values = oyAllocateFunc_( 2 * count * sizeof(char*));
+  for(i = 0; i < n; ++i)
+  {
+    o = oyConfig_Get( d, i );
+    r = oyOption_GetRegistration(o);
+    key = oyFilterRegistrationToText( r, oyFILTER_REG_OPTION,
+                                             oyAllocateFunc_ );
+    if(o->value_type == oyVAL_STRING)
+    {
+      val = oyOption_GetValueText( o, oyAllocateFunc_ );
+      if(val)
+      {
+        keys[pos] = key;
+        values[pos] = val;
+        printf("%s: %s\n", key, val );
+        block_size += (strlen(key) + strlen(val)) * 2 + 8;
+        ++pos;
+        key = 0;
+      }
+    }
+    if(key) oyDeAllocateFunc_( key ); key = 0;
+  }
+
+  dict = calloc(sizeof(char), block_size);
+  dict->sig = oyValueUInt32( icSigDictType );
+  dict->number = oyValueUInt32( count );
+  dict->size = oyValueUInt32( 16 );
+
+  pos = size;
+  for(i = 0; i < count; ++i)
+  {
+    record = (icNameValueRecord*)((char*)dict + sizeof(icDictTagType) + 16 * i);
+
+    len = 0;
+    string = NULL;
+    error = oyIconvGet( keys[i], &string, &len, "UTF-8", "UTF-16BE",
+                        oyAllocateFunc_ );
+    record->name_string_offset = oyValueUInt32( pos );
+    record->name_string_size =  oyValueUInt32( len );
+    memcpy(((char*)dict)+pos, string, len );
+    pos += oyValueUInt32( record->name_string_size );
+
+    len = 0;
+    string = NULL;
+    error = oyIconvGet( values[i], &string, &len, "UTF-8", "UTF-16BE", 
+                        oyAllocateFunc_ );
+    record->value_string_offset =  oyValueUInt32( pos );
+    record->value_string_size =  oyValueUInt32( len );
+    memcpy(((char*)dict)+pos, string, len );
+    pos += oyValueUInt32( record->value_string_size );
+  }
+
+  dict_tag = oyProfileTag_New(NULL);
+  error = oyProfileTag_Set( dict_tag, icSigMetaDataTag, icSigDictType,
+                            oyOK, block_size, dict );
+  error = oyProfile_TagMoveIn( p, &dict_tag, -1 );
+
+  return 0;
 }
 #endif
 
