@@ -18567,7 +18567,7 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
   oyProfiles_s * s = list;
   int i,n,rank;
   oyProfile_s * p = 0;
-  oyConfig_s * p_device = oyConfig_New( device->registration, 0 );
+  oyConfig_s * p_device = 0;
   oyOptions_s * old_db = 0;
 
   if(!list)
@@ -18578,6 +18578,7 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
 
   oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
 
+  p_device = oyConfig_New( device->registration, 0 );
   n = oyProfiles_Count( list );
 
   error = !memset( rank_list, 0, sizeof(int32_t) * n );
