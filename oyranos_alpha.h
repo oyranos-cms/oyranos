@@ -1449,6 +1449,9 @@ int                oyProfile_AddTagText (
                                        const char        * text );
 const char   *     oyProfile_GetFileName ( oyProfile_s   * profile,
                                        int                 dl_pos );
+int                oyProfile_DeviceAdd(oyProfile_s       * profile,
+                                       oyConfig_s        * device,
+                                       oyOptions_s       * options );
 int                oyProfile_DeviceGet ( oyProfile_s     * profile,
                                        oyConfig_s        * device );
 

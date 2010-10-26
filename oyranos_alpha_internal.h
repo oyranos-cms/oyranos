@@ -120,8 +120,6 @@ int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
                                        int                 pos );
 int          oyProfile_TagReleaseAt_ ( oyProfile_s       * profile,
                                        int                 pos );
-int                oyProfile_DeviceAdd(oyProfile_s       * profile,
-                                       oyConfig_s        * config );
 
 oyFilterCore_s * oyFilterCore_New_   ( oyObject_s          object );
 int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,

@@ -16164,7 +16164,7 @@ const char *       oyProfile_GetFileName (
   return name;
 }
 
-/** @internal
+/**
  *  Function oyProfile_DeviceAdd
  *  @memberof oyProfile_s
  *  @brief   add device and driver informations to a profile
@@ -16172,15 +16172,21 @@ const char *       oyProfile_GetFileName (
  *  oyProfile_DeviceAdd() is for storing device/driver informations in a 
  *  ICC profile. So the profile can be sent over internet and Oyranos, or 
  *  an other CMS, can better match to a device/driver on the new host.
+ *  The convention what to place into the ICC profile is dependent on each
+ *  device class and its actual driver or driver type.
+ *  The meta data is stored in the ICC 'meta' tag of type 'dict'.
  *
- *  @param         profile             the profile
- *  @param         device              device and driver informations
+ *  @param[in,out] profile             the profile
+ *  @param[in]     device              device and driver informations
+ *  @param[in]     options             unused
  *
  *  @version Oyranos: 0.1.13
  *  @since   2009/05/18 (Oyranos: 0.1.10)
- *  @date    2010/10/23
+ *  @date    2010/10/25
  */
 #if 0
+TODO find a general form. Do we want to support the mluc type or is that better
+up to a specialised GUI?
 int                oyProfile_DeviceAdd(oyProfile_s       * profile,
                                        oyConfig_s        * device )
 {
@@ -16230,7 +16236,8 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
 }
 #else
 int                oyProfile_DeviceAdd(oyProfile_s       * profile,
-                                       oyConfig_s        * device )
+                                       oyConfig_s        * device,
+                                       oyOptions_s       * options )
 {
   int error = 0;
   int i, len, size, block_size, pos;
