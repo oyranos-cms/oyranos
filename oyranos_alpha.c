@@ -11614,8 +11614,10 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
       if(domain_n)
         /* fall back for pure DB contructed oyConfig_s */
         dopts = device->db;
-      else
+#ifdef DEBUG
+      else if(oy_debug > 2)
         WARNc1_S("No key/values pairs found in %s", device->registration);
+#endif
     }
 
     pattern_n = oyOptions_Count( pattern->db );
@@ -16361,7 +16363,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/05/22 (Oyranos: 0.1.10)
- *  @date    2009/05/23
+ *  @date    2010/10/26
  */
 int              oyProfile_DeviceGet ( oyProfile_s     * profile,
                                        oyConfig_s        * device )
@@ -16381,7 +16383,7 @@ int              oyProfile_DeviceGet ( oyProfile_s     * profile,
 
   if(!error)
   {
-    tag = oyProfile_GetTagById( s, icSigProfileDetailDescriptionTag_ );
+    tag = oyProfile_GetTagById( s, icSigMetaDataTag );
     texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
     if(texts && texts[0] && texts_n > 0)
       for(i = 2; i+1 < texts_n && error <= 0; i+=2)
@@ -18533,6 +18535,21 @@ int              oyProfiles_Count ( oyProfiles_s   * list )
 /** Function oyProfiles_DeviceRank
  *  @memberof oyProfiles_s
  *  @brief   sort a profile list according to a given device
+ *
+ *  @verbatim
+    oyProfiles_s * p_list = oyProfiles_ForStd( oyASSUMED_RGB, 0,0 );
+    int32_t * rank_list = (int32_t*) malloc( oyProfiles_Count(p_list) *
+                                             sizeof(int32_t) );
+    oyProfiles_DeviceRank( p_list, oy_device, rank_list );
+    n = oyProfiles_Count( p_list );
+    for(i = 0; i < n; ++i)
+    {
+      temp_prof = oyProfiles_Get( p_list, i );
+      printf("%d %d: \"%s\" %s\n", rank_list[i], i,
+             oyProfile_GetText( temp_prof, oyNAME_DESCRIPTION ),
+             oyProfile_GetFileName(temp_prof, 0));
+      oyProfile_Release( &temp_prof );
+    } @endverbatim
  *
  *  @param[in,out] list                the to be manipulated profile list
  *  @param[in]     device              filter pattern
