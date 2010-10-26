@@ -55,9 +55,8 @@
     - @ref profile_lists - provides the search path content as profile lists for your GUI
     - @ref profile_handling - file I/O and more
 
-    The monitor related API is contained in oyranos_monitor.h. Linking against
-    the X11 libraries on Linux is done on runtime.
-    - @ref monitor_api - monitor profile configuration
+    The monitor related API is contained in alpha/oyranos_alpha.h. Loading of
+    the according module for the X11 libraries on Linux is done on runtime.
 
     The key names, which Oyranos uses to store its configuration in an Elektra
     file tree, are defined in oyranos_definitions.h.
