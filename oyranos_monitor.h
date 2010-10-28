@@ -47,6 +47,14 @@ int   oyGetMonitorInfo_lib        (const char* display,
                                    oyAlloc_f     allocate_func,
                                        oyStruct_s        * user_data );
 
+int          oyX1DeviceFillEdid      ( oyConfig_s       ** device,
+                                       oyPointer           edi,
+                                       size_t              edi_size,
+                                       const char        * device_name,
+                                       const char        * host,
+                                       const char        * display_geometry,
+                                       const char        * system_port,
+                                       oyOptions_s       * options );
 int      oyGetAllScreenNames         ( const char        * display_name,
                                        char            *** display_names,
                                        oyAlloc_f           allocateFunc );

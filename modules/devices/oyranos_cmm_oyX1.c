@@ -18,6 +18,7 @@
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
 #include "oyranos_monitor.h"
+#include "oyranos_monitor_internal.h"
 #include "oyranos_texts.h"
 
 #include <string.h>
@@ -93,11 +94,11 @@ int            oyX1CMMMessageFuncSet ( oyMessage_f         message_func )
   return 0;
 }
 
-#define OPTIONS_ADD(opts, name) if(!error && name) \
+#define OPTIONS_ADD(opts, name, clear) if(!error && name) \
         error = oyOptions_SetFromText( &opts, \
                                      OYX1_MONITOR_REGISTRATION OY_SLASH #name, \
                                        name, OY_CREATE_NEW ); \
-        if(name) oyDeAllocateFunc_( name ); name = 0;
+        if(clear && name) { oyDeAllocateFunc_( (char*)name ); name = 0; }
 #define OPTIONS_ADD_INT(opts, name) if(!error && name) { \
         oySprintf_( num, "%d", name ); \
         error = oyOptions_SetFromText( &opts, \
@@ -199,50 +200,27 @@ void     oyX1ConfigsUsage( oyStruct_s        * options )
   return;
 }
 
-int          oyX1DeviceFromName_     ( const char        * device_name,
-                                       oyOptions_s       * options,
-                                       oyConfig_s       ** device )
+int          oyX1DeviceFillEdid      ( oyConfig_s       ** device,
+                                       oyPointer           edi,
+                                       size_t              edi_size,
+                                       const char        * device_name,
+                                       const char        * host,
+                                       const char        * display_geometry,
+                                       const char        * system_port,
+                                       oyOptions_s       * options )
 {
-  const char * value3 = 0;
-  oyOption_s * o = 0;
-  int error = !device;
+  int error = !device || !edi;
   char * text = 0;
 
-    value3 = oyOptions_FindString( options, "edid", 0 );
-
-    if(!error)
-    {
-      char * manufacturer=0, * mnft=0, * model=0, * serial=0, * vendor = 0,
-           * host=0, * display_geometry=0, * system_port=0;
+  if(error <= 0)
+  {
+      char * manufacturer=0, * mnft=0, * model=0, * serial=0, * vendor = 0;
       double colours[9] = {0,0,0,0,0,0,0,0,0};
-      oyBlob_s * edid = 0;
       uint32_t week=0, year=0, mnft_id=0, model_id=0;
       char num[16];
 
-      if(!device_name)
-      {
-        message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
-                "The \"device_name\" argument is\n"
-                " missed to select a appropriate device for the"
-                " \"properties\" call.", OY_DBG_ARGS_ );
-        error = 1;
-      }
-
-      if(error <= 0)
-        error = oyGetMonitorInfo_lib( device_name,
-                                      &manufacturer, &mnft, &model, &serial,
-                                      &vendor, &display_geometry, &system_port,
-                                      &host, &week, &year, &mnft_id, &model_id,
-                                      colours,
-                                      value3 ? &edid : 0,oyAllocateFunc_,
-                                      (oyStruct_s*)options );
-
-      if(error != 0)
-        message( oyMSG_WARN, (oyStruct_s*)options, 
-                 OY_DBG_FORMAT_ "\n  Could not complete \"properties\" call.\n"
-                 "  oyGetMonitorInfo_lib returned with %s; device_name:"
-                 " \"%s\"", OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
-                 oyNoEmptyString_m_( device_name ) );
+      oyUnrollEdid1_( edi, &manufacturer, &mnft, &model, &serial, &vendor,
+                      &week, &year, &mnft_id, &model_id, colours, oyAllocateFunc_);
 
       if(error <= 0)
       {
@@ -254,14 +232,14 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
                                        OYX1_MONITOR_REGISTRATION OY_SLASH "device_name",
                                        device_name, OY_CREATE_NEW );
 
-        OPTIONS_ADD( (*device)->backend_core, manufacturer )
-        OPTIONS_ADD( (*device)->backend_core, mnft )
-        OPTIONS_ADD( (*device)->backend_core, model )
-        OPTIONS_ADD( (*device)->backend_core, serial )
-        OPTIONS_ADD( (*device)->backend_core, vendor )
-        OPTIONS_ADD( (*device)->backend_core, display_geometry )
-        OPTIONS_ADD( (*device)->backend_core, system_port )
-        OPTIONS_ADD( (*device)->backend_core, host )
+        OPTIONS_ADD( (*device)->backend_core, manufacturer, 1 )
+        OPTIONS_ADD( (*device)->backend_core, mnft, 1 )
+        OPTIONS_ADD( (*device)->backend_core, model, 1 )
+        OPTIONS_ADD( (*device)->backend_core, serial, 1 )
+        OPTIONS_ADD( (*device)->backend_core, vendor, 1 )
+        OPTIONS_ADD( (*device)->backend_core, display_geometry, 0 )
+        OPTIONS_ADD( (*device)->backend_core, system_port, 0 )
+        OPTIONS_ADD( (*device)->backend_core, host, 0 )
         OPTIONS_ADD_INT( (*device)->backend_core, week )
         OPTIONS_ADD_INT( (*device)->backend_core, year )
         OPTIONS_ADD_INT( (*device)->backend_core, mnft_id )
@@ -314,6 +292,69 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
           oyDeAllocateFunc_( text ); text = 0;
         }
 
+      }
+  }
+
+  return error;
+}
+
+int          oyX1DeviceFromName_     ( const char        * device_name,
+                                       oyOptions_s       * options,
+                                       oyConfig_s       ** device )
+{
+  const char * value3 = 0;
+  int error = !device;
+  oyOption_s * o = 0;
+
+    value3 = oyOptions_FindString( options, "edid", 0 );
+
+    if(!error)
+    {
+      char * manufacturer=0, * mnft=0, * model=0, * serial=0, * vendor = 0,
+           * host=0, * display_geometry=0, * system_port=0;
+      double colours[9] = {0,0,0,0,0,0,0,0,0};
+      oyBlob_s * edid = 0;
+      uint32_t week=0, year=0, mnft_id=0, model_id=0;
+
+      if(!device_name)
+      {
+        message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
+                "The \"device_name\" argument is\n"
+                " missed to select a appropriate device for the"
+                " \"properties\" call.", OY_DBG_ARGS_ );
+        error = 1;
+      }
+
+      if(error <= 0)
+        error = oyGetMonitorInfo_lib( device_name,
+                                      &manufacturer, &mnft, &model, &serial,
+                                      &vendor, &display_geometry, &system_port,
+                                      &host, &week, &year, &mnft_id, &model_id,
+                                      colours,
+                                      &edid, oyAllocateFunc_,
+                                      (oyStruct_s*)options );
+
+      if(error != 0)
+        message( oyMSG_WARN, (oyStruct_s*)options, 
+                 OY_DBG_FORMAT_ "\n  Could not complete \"properties\" call.\n"
+                 "  oyGetMonitorInfo_lib returned with %s; device_name:"
+                 " \"%s\"", OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
+                 oyNoEmptyString_m_( device_name ) );
+
+      if(error <= 0)
+        error = oyX1DeviceFillEdid( device, edid->ptr, edid->size,
+                                    device_name,
+                                    host, display_geometry, system_port,
+                                    options );
+      if(error != 0)
+        message( oyMSG_WARN, (oyStruct_s*)options,
+                 OY_DBG_FORMAT_ "\n  Could not complete \"properties\" call.\n"
+                 "  oyGetMonitorInfo_lib returned with %s %d; device_name:"
+                 " \"%s\"",OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
+                 error, oyNoEmptyString_m_( device_name ) );
+
+      if(value3)
+      {
         if(!error && edid)
         {
           int has = 0;
@@ -334,8 +375,8 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
               oyOptions_MoveIn( (*device)->data, &o, -1 );
           }
         }
-        oyBlob_Release( &edid );
       }
+      oyBlob_Release( &edid );
     }
 
   return error;
