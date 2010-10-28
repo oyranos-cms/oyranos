@@ -16273,7 +16273,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
       char * val = oyOption_GetValueText( o, oyAllocateFunc_ );
       if(val)
       {
-        printf("%s: %s\n", reg, val );
+        DBG_PROG2_S("%s: %s", reg, val );
         oyDeAllocateFunc_(val);
         ++count;
       }
@@ -16302,7 +16302,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
       {
         keys[pos] = key;
         values[pos] = val;
-        printf("%s: %s\n", key, val );
+        DBG_PROG2_S("%s: %s", key, val );
         block_size += (strlen(key) + strlen(val)) * 2 + 8;
         ++pos;
         key = 0;
