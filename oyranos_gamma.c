@@ -53,6 +53,7 @@ int main( int argc , char** argv )
   char * output = 0;
   int server = 0;
   int net_color_region_target = 0;
+  int device_meta_tag = 0;
 
   char *ptr = NULL;
   int x = 0, y = 0;
@@ -140,6 +141,7 @@ int main( int argc , char** argv )
               case 'c': net_color_region_target = 1; monitor_profile = 0; break;
               case 'f': OY_PARSE_STRING_ARG(format); monitor_profile = 0; break;
               case 'l': list = 1; monitor_profile = 0; break;
+              case 'm': device_meta_tag = 1; break;
               case 'o': OY_PARSE_STRING_ARG(output); monitor_profile = 0; break;
               case 'x': server = 1; OY_PARSE_INT_ARG( x ); break;
               case 'y': server = 1; OY_PARSE_INT_ARG( y ); break;
@@ -161,6 +163,8 @@ int main( int argc , char** argv )
                         { OY_PARSE_STRING_ARG(output); break; }
                         else if(strcmp(&argv[pos][2],"database") == 0)
                         { database = 1; monitor_profile = 0; i=100; break; }
+                        else if(strcmp(&argv[pos][2],"device-meta-tag") == 0)
+                        { device_meta_tag = 1; i=100; break; }
                         else if(strcmp(&argv[pos][2],"list") == 0)
                         { list = 1; monitor_profile = 0; i=100; break; }
                         else if(strcmp(&argv[pos][2],"verbose") == 0)
@@ -192,7 +196,7 @@ int main( int argc , char** argv )
                         printf("      %s -l\n",        argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("Dump data:"));
-                        printf("      %s -f=[edid|icc|edid_icc] -o=edid.bin -x=pos -y=pos\n", argv[0]);
+                        printf("      %s -f=[edid|icc|edid_icc] -o=edid.bin -x=pos -y=pos [-m]\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("General options:"));
                         printf("      %s\n",           _("-v verbose"));
@@ -324,6 +328,8 @@ int main( int argc , char** argv )
                                   oyConfig_FindString( c, "manufacturer", 0 ) );
               error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag,
                                   oyConfig_FindString( c, "model", 0 ) );
+              if(device_meta_tag)
+                error = oyProfile_DeviceAdd( prof, c, 0 );
               data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
               header = (icHeader*) data;
               o = oyConfig_Find( c, "mnft" );
@@ -354,6 +360,8 @@ int main( int argc , char** argv )
             }
             oyDeviceAskProfile2( c, cs_options, &prof );
             oyOptions_Release( &cs_options );
+            if(device_meta_tag)
+              oyProfile_DeviceAdd( prof, c, 0 );
             data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
           }
 

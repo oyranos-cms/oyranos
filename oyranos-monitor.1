@@ -12,7 +12,7 @@ oyranos-monitor \- Oyranos CMS monitor configuration
 .fi 
 \fBoyranos-monitor\fR [ -l [-v] ]
 .fi 
-\fBoyranos-monitor\fR [ -f [edid|icc|edid_icc] -o \fIOUT_FILENAME\fR [-x num] [-y num] [-v] ]
+\fBoyranos-monitor\fR [ -f [edid|icc|edid_icc] -o \fIOUT_FILENAME\fR [-x num] [-y num] [-m] [-v] ]
 .SH DESCRIPTION
 The oyranos-monitor programm let you query and set the monitor profile(s) within the Oyranos colour management system (CMS). Profiles are stored in a data base, the Oyranos DB.
 .SH OPTIONS
@@ -41,6 +41,11 @@ list devices visible to Oyranos
 .TP
 .B \-f, \-\-format [edid|icc|edid_icc]
 Select a data format. Possible are \fBedid\fR for server side EDID data, \fBicc\fR for a server side ICC profile and \fBedid_icc\fR for a ICC profile created from server side EDID. Without the -o/--ouput option the string followed this option will be used as filename.
+
+\fB-m\fR (--device-meta-tag) switch is accepted be the \fB-f=icc\fR and 
+\fB-f=edid_icc\fR option. It embeddes device and driver informations about 
+the actual device for later easier ICC profile to device assignment. 
+This becomes useful for sharing ICC profiles.
 .TP
 .B \-o, \-\-output \fIOUT_FILENAME\fR
 Write data selected by -f/--format to the given filename.
@@ -93,7 +98,7 @@ List all Oyranos monitor devices:
 .B oyranos-monitor -l
 .TP
 Dump data in the format following the -f option:
-.B oyranos-monitor -f=[edid|icc|edid_icc] -o=edid.bin -x=pos -y=pos
+.B oyranos-monitor -f=[edid|icc|edid_icc] -o=edid.bin -x=pos -y=pos -m
 .PP 
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
