@@ -16303,7 +16303,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
         keys[pos] = key;
         values[pos] = val;
         DBG_PROG2_S("%s: %s", key, val );
-        block_size += (strlen(key) + strlen(val)) * 2 + 8;
+        block_size += (strlen(key) + strlen(val)) * 2 + 2;
         ++pos;
         key = 0;
       }
@@ -16326,18 +16326,22 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
     error = oyIconvGet( keys[i], &string, &len, "UTF-8", "UTF-16BE",
                         oyAllocateFunc_ );
     record->name_string_offset = oyValueUInt32( pos );
+    len = strlen( keys[i] ) * 2;
+    len = len + (len%4 ? 4 - len%4 : 0);
     record->name_string_size =  oyValueUInt32( len );
     memcpy(((char*)dict)+pos, string, len );
-    pos += oyValueUInt32( record->name_string_size );
+    pos += len;
 
     len = 0;
     string = NULL;
     error = oyIconvGet( values[i], &string, &len, "UTF-8", "UTF-16BE", 
                         oyAllocateFunc_ );
     record->value_string_offset =  oyValueUInt32( pos );
+    len = strlen( values[i] ) * 2;
+    len = len + (len%4 ? 4 - len%4 : 0);
     record->value_string_size =  oyValueUInt32( len );
     memcpy(((char*)dict)+pos, string, len );
-    pos += oyValueUInt32( record->value_string_size );
+    pos += len;
   }
 
   dict_tag = oyProfileTag_New(NULL);
