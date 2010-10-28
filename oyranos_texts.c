@@ -1225,7 +1225,8 @@ char    oyToupper_( char c_ ) { return toupper(c_); }
  *  @since   2008/07/23 (Oyranos: 0.1.8)
  */
 int                oyIconv           ( const char        * input,
-                                       size_t              len,
+                                       size_t              len_in,
+                                       size_t              len_out,
                                        char              * output,
                                        const char        * from_codeset,
                                        const char        * to_codeset )
@@ -1242,7 +1243,7 @@ int                oyIconv           ( const char        * input,
 # endif
   , *loc = to_codeset;
   iconv_t cd;
-  size_t size, in_left = len, out_left = len;
+  size_t size, in_left = len_in, out_left = len_out;
 
   /* application codeset */
   if(!loc && oy_domain_codeset)
@@ -1260,8 +1261,8 @@ int                oyIconv           ( const char        * input,
 
   if(!from_codeset && !oy_domain_codeset)
   {
-    error = !memcpy(output, input, sizeof(char) * len);
-    output[len] = 0;
+    error = !memcpy(output, input, sizeof(char) * OY_MIN(len_in,len_out));
+    output[len_out] = 0;
     return error;
   }
 
@@ -1296,9 +1297,10 @@ int          oyIconvGet              ( const char        * text,
     *len = strlen(text) * 4 + 4;
     *string = alloc( *len );
     memset( *string, 0, *len );
-    error = oyIconv( text, *len-2, *string, encoding_from, encoding_to);
+    error = oyIconv( text, strlen(text), *len-2, *string,
+                     encoding_from, encoding_to );
     if(error)
-      printf("something went wrong. %s:%d\n", text, *len);
+      WARNc2_S("something went wrong. %s:%d\n", text, *len);
     return error;
 }
 

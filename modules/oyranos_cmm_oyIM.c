@@ -68,7 +68,7 @@ int                oyIMIconv         ( const char        * input,
                                        char              * output,
                                        const char        * from_codeset )
 {
-  return oyIconv(input, len, output, from_codeset, 0);
+  return oyIconv(input, len, len, output, from_codeset, 0);
 }
 
 

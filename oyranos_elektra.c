@@ -312,7 +312,8 @@ oyAddKey_valueComment_ (const char* keyName,
                         const char* value,
                         const char* comment)
 {
-  int rc=0;
+  int rc=0,
+      max_len;
   Key *key;
   char *name = NULL;
   char *value_utf8 = NULL;
@@ -326,11 +327,17 @@ oyAddKey_valueComment_ (const char* keyName,
 
   sprintf(name, "%s%s", oySelectUserSys_(), keyName);
   if(value && oyStrlen_(value))
-    oyIconv( value, strlen(value) < MAX_PATH ? strlen(value) : MAX_PATH,
+  {
+    max_len = strlen(value) < MAX_PATH ? strlen(value) : MAX_PATH;
+    oyIconv( value, max_len, max_len,
              value_utf8, 0, "UTF-8" );
+  }
   if(comment && oyStrlen_(comment))
-    oyIconv( comment, strlen(comment) < MAX_PATH ? strlen(comment) : MAX_PATH,
+  {
+    max_len = strlen(comment) < MAX_PATH ? strlen(comment) : MAX_PATH;
+    oyIconv( comment, max_len, max_len,
              comment_utf8, 0, "UTF-8" );
+  }
 
   if (keyName)
     DBG_PROG_S(( keyName ));
