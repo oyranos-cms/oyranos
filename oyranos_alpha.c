@@ -10311,12 +10311,15 @@ oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
          !oyFilterRegistrationMatch( o->registration, registration, 0 ))
           found = 0;
 
-      if(found && type && 
+      if(found && !(o->value && o->value->oy_struct))
+        error = 1;
+
+      if(found && type && !error &&
          (o->value_type != oyVAL_STRUCT || !o->value ||
           o->value->oy_struct->type_ != type))
         found = 0;
 
-      if(found)
+      if(found && !error)
       if(pos == -1 || ++m == pos)
       {
         if(o->value->oy_struct->copy)
