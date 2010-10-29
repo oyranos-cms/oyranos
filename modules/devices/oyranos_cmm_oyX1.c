@@ -176,6 +176,14 @@ const char * oyX1_help_unset =
       " a device.\n"
       " The option \"device_name\" must be present, see \"list\" above.\n"
 ;
+const char * oyX1_help_add_edid_to_icc =
+      "The presence of option \"command=add-edid-meta-to-icc\" will embedds device\n"
+      " informations from a provided EDID block to a provided ICC profile.\n"
+      " The option \"edid\" must be present and contain an\n"
+      " oyBlob_s object with the valid EDID data block.\n"
+      " The bidirectional option \"icc_profile\" options must be present,\n"
+      " containing a oyProfile_s object.\n"
+;
 const char * oyX1_help =
       "The following help text informs about the communication protocol."
 ;
@@ -189,6 +197,7 @@ void     oyX1ConfigsUsage( oyStruct_s        * options )
     message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_properties );
     message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_setup );
     message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_unset );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_add_edid_to_icc );
 #if 0
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"get\" will provide a oyProfile_s of the\n"
@@ -546,6 +555,43 @@ int            oyX1Configs_FromPattern (
        oyOptions_FindString( options, "command", "help" ))
     {
       oyX1ConfigsUsage( (oyStruct_s*)options );
+
+      goto cleanup;
+    }
+
+    /** 3.6 internal "add-edid-meta-to-icc" call; Embedd infos to ICC profile 
+     *      as meta tag. Might be moved to a oyCMMapi10_s object. */
+    if(error <= 0 &&
+       oyOptions_FindString( options, "command", "add-edid-meta-to-icc" ))
+    {
+      oyProfile_s * prof;
+      oyBlob_s * edid;
+      oyConfig_s * device = 0;
+
+      prof = (oyProfile_s*)oyOptions_GetType( options, -1, "icc_profile",
+                                        oyOBJECT_PROFILE_S );
+      
+      edid = (oyBlob_s*)oyOptions_GetType( options, -1, "edid",
+                                        oyOBJECT_BLOB_S );
+
+      if(!prof || !edid)
+        error = 1;
+      if(error >= 1)
+      {
+        message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+                "\"edid\" or \"icc_profile\" missed:\n%s",
+                OY_DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
+                );
+        oyX1ConfigsUsage( (oyStruct_s*)options );
+      }
+      else
+      {
+        error = oyX1DeviceFillEdid( &device, edid->ptr, edid->size,
+                                    NULL,
+                                    NULL, NULL, NULL,
+                                    options );
+        oyProfile_DeviceAdd( prof, device, 0 );
+      }
 
       goto cleanup;
     }
@@ -1193,10 +1239,12 @@ const char * oyX1GetText             ( const char        * select,
       if(!t)
       {
         t = malloc( strlen(oyX1_help) + strlen(oyX1_help_list)
-                    + strlen(oyX1_help_properties) + strlen(oyX1_help_setup) +
-                    + strlen(oyX1_help_unset) + 1);
-        sprintf( t, "%s\n%s%s%s%s", oyX1_help, oyX1_help_list,
-                 oyX1_help_properties, oyX1_help_setup, oyX1_help_unset );
+                    + strlen(oyX1_help_properties) + strlen(oyX1_help_setup)
+                    + strlen(oyX1_help_unset)
+                    + strlen(oyX1_help_add_edid_to_icc) + 1);
+        sprintf( t, "%s\n%s%s%s%s%s", oyX1_help, oyX1_help_list,
+                 oyX1_help_properties, oyX1_help_setup, oyX1_help_unset,
+                 oyX1_help_add_edid_to_icc );
       }
       return t;
     }
