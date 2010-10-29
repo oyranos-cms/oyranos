@@ -37,7 +37,6 @@ void* oyAllocFunc(size_t size) {return malloc (size);}
 void  oyDeAllocFunc ( oyPointer ptr) { if(ptr) free (ptr); }
 
 
-
 int main( int argc , char** argv )
 {
   char *display_name = getenv("DISPLAY");
@@ -54,6 +53,8 @@ int main( int argc , char** argv )
   int server = 0;
   int net_color_region_target = 0;
   int device_meta_tag = 0;
+  char * add_edid = 0,
+       * prof_name = 0;
 
   char *ptr = NULL;
   int x = 0, y = 0;
@@ -123,11 +124,24 @@ int main( int argc , char** argv )
                           i = 1000; \
                         } else wrong_arg = "-" #opt; \
                         if(oy_debug) printf(#opt "=%s\n",opt)
+#define OY_PARSE_STRING_ARG2( opt, arg ) \
+                        if( pos + 1 < argc && argv[pos][i+strlen(arg)+1] == 0 ) \
+                        { opt = argv[pos+1]; \
+                          ++pos; \
+                          i = 1000; \
+                        } else if(argv[pos][i+strlen(arg)+1] == '=') \
+                        { opt = &argv[pos][i+strlen(arg)+2]; \
+                          i = 1000; \
+                        } else wrong_arg = "-" arg; \
+                        if(oy_debug) printf(arg "=%s\n",opt)
+#define OY_IS_ARG( arg ) \
+                        (strlen(argv[pos])-2 >= strlen(arg) && \
+                         memcmp(&argv[pos][2],arg, strlen(arg)) == 0)
 
   if(argc != 1)
   {
     int pos = 1, i;
-    char *wrong_arg = 0;
+    const char *wrong_arg = 0;
     while(pos < argc)
     {
       switch(argv[pos][0])
@@ -151,23 +165,25 @@ int main( int argc , char** argv )
               case '-':
                         if(i == 1)
                         {
-                             if(strcmp(&argv[pos][2],"unset") == 0)
+                             if(OY_IS_ARG("unset"))
                         { erase = 1; monitor_profile = 0; i=100; break; }
                         else if(strcmp(&argv[pos][2],"net_color_region_target") == 0)
                         { net_color_region_target = 1; i=100; break; }
-                        else if(strcmp(&argv[pos][2],"setup") == 0)
+                        else if(OY_IS_ARG("setup"))
                         { setup = 1; i=100; break; }
-                        else if(strcmp(&argv[pos][2],"format") == 0)
-                        { OY_PARSE_STRING_ARG(format); break; }
-                        else if(strcmp(&argv[pos][2],"output") == 0)
-                        { OY_PARSE_STRING_ARG(output); break; }
-                        else if(strcmp(&argv[pos][2],"database") == 0)
+                        else if(OY_IS_ARG("format"))
+                        { OY_PARSE_STRING_ARG2(format, "format"); break; }
+                        else if(OY_IS_ARG("output"))
+                        { OY_PARSE_STRING_ARG2(output, "output"); break; }
+                        else if(OY_IS_ARG("database"))
                         { database = 1; monitor_profile = 0; i=100; break; }
-                        else if(strcmp(&argv[pos][2],"device-meta-tag") == 0)
-                        { device_meta_tag = 1; i=100; break; }
-                        else if(strcmp(&argv[pos][2],"list") == 0)
+                        else if(OY_IS_ARG("add-edid"))
+                        { OY_PARSE_STRING_ARG2(add_edid,"add-edid"); break; }
+                        else if(OY_IS_ARG("profile"))
+                        { OY_PARSE_STRING_ARG2(prof_name, "profile"); break; }
+                        else if(OY_IS_ARG("list"))
                         { list = 1; monitor_profile = 0; i=100; break; }
-                        else if(strcmp(&argv[pos][2],"verbose") == 0)
+                        else if(OY_IS_ARG("verbose"))
                         { oy_debug += 1; i=100; break; }
                         }
               default:
@@ -224,13 +240,14 @@ int main( int argc , char** argv )
     }
     if(oy_debug) printf( "%s\n", argv[1] );
 
-    if(!erase && !list && !database && !setup && !server && !format)
+    if(!erase && !list && !database && !setup && !server && !format &&
+       !add_edid)
       setup = 1;
 
     oy_display_name = oyGetDisplayNameFromPosition( display_name, x,y,
                                                     oyAllocFunc);
 
-    if(!monitor_profile && !erase && !list && !setup && !format)
+    if(!monitor_profile && !erase && !list && !setup && !format && !add_edid)
     {
       char * fn = 0;
 
@@ -388,8 +405,33 @@ int main( int argc , char** argv )
       }
       oyConfigs_Release( &devices );
       oyOptions_Release( &options );
-    }
 
+    } else
+    if(prof_name && add_edid)
+    {
+      oyBlob_s * edid = oyBlob_New(0);
+      data = oyReadFileToMem_( add_edid, &size, oyAllocateFunc_ );
+      oyBlob_SetFromData( edid, data, size, "edid" );
+      prof = oyProfile_FromFile( prof_name, 0, 0 );
+      device = 0;
+      oyOptions_Release( &options );
+      error = oyOptions_SetFromText( &options,
+                                     "//" OY_TYPE_STD "/config/command",
+                                     "add-edid-meta-to-icc", OY_CREATE_NEW );
+      error = oyOptions_MoveInStruct( &options,
+                                     "//" OY_TYPE_STD "/config/icc_profile",
+                                      (oyStruct_s**)&prof, OY_CREATE_NEW );
+      error = oyOptions_MoveInStruct( &options,
+                                     "//" OY_TYPE_STD "/config/edid",
+                                      (oyStruct_s**)&edid, OY_CREATE_NEW );
+      error = oyDeviceGet( OY_TYPE_STD, "monitor", ":0.0", options, &device );
+      oyConfig_Release( &device );
+      prof = (oyProfile_s*)oyOptions_GetType( options, -1, "icc_profile",
+                                              oyOBJECT_PROFILE_S );
+      oyOptions_Release( &options );
+      oyProfile_ToFile_( prof, prof_name );
+      oyProfile_Release( &prof );
+    }
 
     if(list)
     {

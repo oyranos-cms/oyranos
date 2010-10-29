@@ -50,6 +50,12 @@ This becomes useful for sharing ICC profiles.
 .B \-o, \-\-output \fIOUT_FILENAME\fR
 Write data selected by -f/--format to the given filename.
 .TP
+.B \-\-add-edid \fIEDID_FILENAME\fR
+Embedd EDID keys to a ICC profile as meta tag. Requires --profile.
+.TP
+.B \-\-profile \fIICC_FILENAME\fR
+ICC profile.
+.TP
 .B \-v, \-\-verbose
 increase verbosity
 .SH ENVIRONMENT
@@ -96,14 +102,19 @@ Query the Oyranos device data base profile on the local computer:
 .TP
 List all Oyranos monitor devices:
 .B oyranos-monitor -l
+.PP 
 .TP
 Dump data in the format following the -f option:
 .B oyranos-monitor -f=[edid|icc|edid_icc] -o=edid.bin -x=pos -y=pos -m
 .PP 
+.TP
+Embedd device informations into ICC meta tag:
+.B oyranos-monitor --add-edid=edid_filename --profile=profilename
+.PP 
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH COPYRIGHT
-(c) 2005-2009, Kai-Uwe Behrmann
+(c) 2005-2010, Kai-Uwe Behrmann
 .fi
 License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
 .SH "SEE ALSO"
