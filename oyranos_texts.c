@@ -1992,6 +1992,124 @@ int         oyPolicySet_               (const char    * policy_name,
   return err;
 }
 
+char *       oyPolicyFileNameToDisplay(const char        * file_name )
+{
+  char * pn = NULL,
+       * t = NULL,
+       * text = NULL;
+  if(!file_name)
+    return pn;
+
+  oyAllocString_m_( pn, oyStrlen_(file_name) + 1,
+                        oyAllocateFunc_, return 0 );
+
+  oySprintf_( pn, "%s", file_name );
+
+  if(oyStrstr_(pn,"policy.xml"))
+  {
+    t = oyStrstr_(pn,".policy.xml");
+    *t = 0;
+  } else {
+    t = oyStrrchr_(pn,'.');
+    *t = 0;
+  }
+
+  oyAllocString_m_( text, oyStrblen_(pn), oyAllocateFunc_, return 0 );
+
+  oyStrcpy_(text, oyStrrchr_(pn,OY_SLASH_C) + 1);
+  text[0] = oyToupper_(text[0]);
+
+  oyFree_m_( pn );
+
+  return text;
+}
+
+int          oyPolicyFilesToDisplay  ( int               * choices,
+                                       const char      *** choices_string_list,
+                                       int               * current)
+{
+  int error = 0;
+
+  {
+    int count = 0;
+    char * currentP = oyPolicyNameGet_ ();
+    char ** list = oyPolicyListGet_( &count );
+    int c = -1, i;
+
+    if( !list )
+      return 1;
+
+    if( choices )
+      *choices              = count;
+
+    if(!count)
+    {
+      WARNc_S( "\n  No policy found. Installation incomplete or path missing?" );
+    } else
+    if( choices_string_list )
+    {
+      char ** zl = NULL;
+      char ** sort = NULL;
+      int default_policy[4] = {-1,-1,-1,-1}, pos;
+
+      oyAllocHelper_m_( zl, oyChar*, count,
+                        oyAllocateFunc_, return 0 );
+      for( i = 0; i < count; ++i )
+        zl[i] = oyPolicyFileNameToDisplay( list[i] );
+
+      /* sort policies, the default ones first */
+      for(i = 0; i < count; ++i)
+      {
+             if(strcmp( zl[i], "Office") == 0)
+          default_policy[0] = i;
+        else if(strcmp( zl[i], "Photographer") == 0)
+          default_policy[1] = i;
+        else if(strcmp( zl[i], "Designer") == 0)
+          default_policy[2] = i;
+        else if(strcmp( zl[i], "Prepress") == 0)
+          default_policy[3] = i;
+      }
+      oyAllocHelper_m_( sort, char*, count+1, oyAllocateFunc_, return 0 );
+
+      pos = 0;
+      for(i = 0; i < 4; ++i)
+        if(default_policy[i] >= 0)
+          sort[pos++] = zl[default_policy[i]];
+
+      for(i = 0; i < count; ++i)
+      {
+        if(i != default_policy[0] &&
+           i != default_policy[1] &&
+           i != default_policy[2] &&
+           i != default_policy[3])
+          sort[pos++] = zl[i];
+      }
+
+      if( currentP )
+      {
+        char * name = oyPolicyFileNameToDisplay(currentP);
+        for( i = 0; i < count; ++i )
+        {
+          if( oyStrcmp_( name, sort[i] ) == 0 )
+            c = i;
+        }
+        oyFree_m_( name );
+      }
+
+      oyDeAllocateFunc_(zl);
+      zl = sort; sort = 0;
+
+
+      *choices_string_list  = (const char**) zl;
+
+    }
+    if( current )
+      *current              = c;
+
+  }
+  return error;
+}
+
 int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
                                        int               * choices,
                                        const char      *** choices_string_list,
@@ -2055,63 +2173,7 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
   else
   if( type == oyWIDGET_POLICY )
   {
-    int count = 0;
-    char * currentP = oyPolicyNameGet_ ();
-    char ** list = oyPolicyListGet_( &count );
-    int c = -1, i;
-
-    if( !list )
-      return 1;
-
-    if( currentP )
-      for( i = 0; i < count; ++i )
-      {
-        if( oyStrcmp_( currentP, list[i] ) == 0 )
-          c = i;
-      }
-
-    if( choices )
-      *choices              = count;
-
-    if(!count)
-    {
-      WARNc_S( "\n  No policy found. Installation incomplete or path missing?" );
-    } else
-    if( choices_string_list )
-    {
-      char ** zl = NULL;
-      char * pn = NULL, * t; 
-
-      oyAllocHelper_m_( zl, oyChar*, count,
-                        oyAllocateFunc_, return 0 );
-      oyAllocString_m_( pn, MAX_PATH,
-                        oyAllocateFunc_, return 0 );
-      for( i = 0; i < count; ++i )
-      {
-        oyChar * filename = list[i];
-
-        oySprintf_( pn, "%s", filename );
-
-        if(oyStrstr_(pn,"policy.xml"))
-        {
-          t = oyStrstr_(pn,".policy.xml");
-          *t = 0;
-        } else {
-          t = oyStrrchr_(pn,'.');
-          *t = 0;
-        }
-
-        oyAllocString_m_( zl[i], oyStrblen_(pn), oyAllocateFunc_, return 0 );
-
-        oyStrcpy_(zl[i], oyStrrchr_(pn,OY_SLASH_C) + 1);
-        zl[i][0] = oyToupper_(zl[i][0]);
-      }
-      oyFree_m_( pn );
-
-      *choices_string_list  = (const char**) zl;
-    }
-    if( current )
-      *current              = c;
+    error = oyPolicyFilesToDisplay( choices, choices_string_list, current );
   }
   else
   if( type == oyWIDGET_PATHS )

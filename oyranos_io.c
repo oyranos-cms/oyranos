@@ -833,7 +833,6 @@ oyPolicyListGet_                  (int * size)
   oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
   int count = 0;
   char ** path_names = NULL;
- 
   DBG_PROG_START
  
   path_names = oyDataPathsGet_( &count, "color/settings", oyALL, oyUSER_SYS,
