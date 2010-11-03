@@ -37,10 +37,6 @@ extern "C" {
 #endif /* __cplusplus */
 
 
-/* memory handling for text parsing and writing */
-/* mem with old_leng will be stretched if add dont fits inside */
-
-int         oyMemBlockExtent_  (char **mem, int old_len, int add);
 
 /* gives string bordered by a xml style keyword */
 char*       oyXMLgetValue_     (const char       *xml,
@@ -57,11 +53,11 @@ char**      oyXMLgetArray_     (const char       *xml,
                                 int              *count);
 
 /* write option range to mem, allocating memory on demand */
-char*       oyWriteOptionToXML_(oyGROUP_e           group,
-                                oyWIDGET_e          start,
-                                oyWIDGET_e          end, 
-                                char             *mem,
-                                int               oytmplen);
+void         oyWriteOptionToXML_     ( oyGROUP_e           group,
+                                       oyWIDGET_e          start,
+                                       oyWIDGET_e          end, 
+                                       char             ** text,
+                                       uint32_t            flags );
 
 char*       oyPolicyToXML_     (oyGROUP_e           group,
                                 int               add_header,

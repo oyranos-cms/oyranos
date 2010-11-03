@@ -33,9 +33,6 @@
 #include "oyranos_internal.h"
 
 
-/* memory handling for text parsing and writing */
-/* mem with old_leng will be stretched if add dont fits inside */
-int         oyMemBlockExtent_  (char **mem, int old_len, int add);
 /* gives string bordered by a xml style keyword */
 char*       oyXMLgetValue_     (const char       *xml,
                     const char       *key);
@@ -47,19 +44,7 @@ char* oyXMLgetField_  (const char       *xml,
 char** oyXMLgetArray_  (const char       *xml,
                  const char       *key,
                  int              *count);
-/* write option range to mem, allocating memory on demand */
-char*       oyWriteOptionToXML_(oyGROUP_e           group,
-                    oyWIDGET_e          start,
-                    oyWIDGET_e          end, 
-                    char             *mem,
-                    int               oytmplen);
 
-/* form for write modules */
-typedef oyChar* (*oyOptionWrite_f)     ( oyOption_t_ ** opts,
-                          oyChar    ** values,
-                          int            n,
-                          oyChar     * mem,
-                          int            oytmplen );
 
 /* miscellaneous */
 
@@ -67,26 +52,6 @@ typedef oyChar* (*oyOptionWrite_f)     ( oyOption_t_ ** opts,
 
 /* --- function definitions --- */
 
-
-int
-oyMemBlockExtent_(char **mem, int old_len, int add)
-{
-  int new_len = old_len;
-  DBG_PROG3_S("len1: %d %d %d",(int) strlen(*mem), (int)old_len, add);
-  if( add > (old_len - strlen(*mem)) )
-  {
-    int len = add + strlen(*mem) + ((add > 120) ? add + 50 : 120);
-    char *tmp = NULL;
-
-    oyAllocHelper_m_( tmp, char, len, oyAllocateFunc_, return 0 );
-    DBG_PROG1_S("len2: %d\n",len);
-    memcpy( tmp, *mem, old_len  );
-    oyFree_m_ (*mem);
-    *mem = tmp;
-    new_len = len;
-  }
-  return new_len;
-}
 
 
 /* sscanf is not  useable as it ignores after an empty space sign
@@ -348,12 +313,11 @@ oyXMLgetArray_  (const char       *xml,
 
 /* The function expects one single group to be present, usually the first opt.
    The caller must do sorting for this internal function itself. */
-oyChar*
+char*
 oyWriteOptionsToXML_    ( oyOption_t_ ** opts,
-                          oyChar    ** values,
+                          char        ** values,
                           int            n,
-                          oyChar     * mem,
-                          int            oytmplen )
+                          char         * text )
 {
   int i;
   oyOption_t_ * group_opt = NULL;
@@ -380,14 +344,16 @@ oyWriteOptionsToXML_    ( oyOption_t_ ** opts,
            group_opt = opt;
 
            /* allocate new mem if needed */
-           oytmplen = oyMemBlockExtent_(&mem, oytmplen, 360);
-           oySprintf_( &mem[oyStrlen_(mem)], "<%s>\n",
-                       opt->config_string_xml );
-           oySprintf_( &mem[oyStrlen_(mem)], "<!-- %s \n"
+           oyStringAddPrintf_( &text,  oyAllocateFunc_, oyDeAllocateFunc_,
+                                             "<%s>\n",
+                               opt->config_string_xml );
+           oyStringAddPrintf_( &text,  oyAllocateFunc_, oyDeAllocateFunc_,
+                                             "<!-- %s \n"
                                              "     %s -->\n\n",
                        opt->name,
                        opt->description );
-           oySprintf_( &mem[oyStrlen_(mem)], "<!-- %s \n"
+           oyStringAddPrintf_( &text,  oyAllocateFunc_, oyDeAllocateFunc_,
+                                             "<!-- %s \n"
                                              "     %s -->\n\n",
                        opt->name,
                        opt->description );
@@ -402,21 +368,26 @@ oyWriteOptionsToXML_    ( oyOption_t_ ** opts,
 
   if( group_opt )
   {
-    oytmplen = oyMemBlockExtent_(&mem, oytmplen, 160);
-    oySprintf_( &mem[oyStrlen_(mem)], "</%s>\n\n\n", group_opt->config_string_xml);
+    oyStringAddPrintf_( &text,  oyAllocateFunc_, oyDeAllocateFunc_,
+                                   "</%s>\n\n\n", group_opt->config_string_xml);
   }
 
   DBG_PROG_ENDE
-  return mem;
+  return text;
 }
                           
 
-oyChar*
-oyWriteOptionToXML_(oyGROUP_e           group,
-                    oyWIDGET_e          start,
-                    oyWIDGET_e          end, 
-                    char             *mem,
-                    int               oytmplen)
+/**
+ * write option range to text, allocating memory on demand
+ *
+ * @param[in]      flags               - 1: add group start
+ *                                     - 2: add group end
+ */
+void         oyWriteOptionToXML_     ( oyGROUP_e           group,
+                                       oyWIDGET_e          start,
+                                       oyWIDGET_e          end, 
+                                       char             ** text,
+                                       uint32_t            flags )
 {
   int   i = 0;
   const char  * key = 0;
@@ -425,15 +396,20 @@ oyWriteOptionToXML_(oyGROUP_e           group,
   oyWIDGET_e *tmp = NULL;
   DBG_PROG_START
 
-         /* allocate new mem if needed */
-         oytmplen = oyMemBlockExtent_(&mem, oytmplen, 360);
+  
          opt = oyOptionGet_( (oyWIDGET_e)group );
-         oySprintf_( &mem[strlen(mem)], "<%s>\n",
+
+  if(flags&1)
+  {
+         oyStringAddPrintf_( text,  oyAllocateFunc_, oyDeAllocateFunc_,
+                                        "<%s>\n",
                   opt->config_string_xml );
-         oySprintf_( &mem[strlen(mem)], "<!-- %s \n"
+         oyStringAddPrintf_( text,  oyAllocateFunc_, oyDeAllocateFunc_,
+                                        "<!-- %s \n"
                                      "     %s -->\n\n",
                   opt->name,
                   opt->description );
+  }
 
   tmp = oyWidgetListGet_( group, &n, oyAllocateFunc_ );
 
@@ -448,21 +424,21 @@ oyWriteOptionToXML_(oyGROUP_e           group,
            const oyOption_t_ *t = oyOptionGet_( wt );
            int n = t->choices;
            int group_level = t->category[0];
-           char intent[24] = {""};
+           char indent[24] = {""};
  
            for( j = 0; j < group_level; ++j )
-             oySprintf_( &intent[strlen(intent)], "  " );
+             oySprintf_( &indent[strlen(indent)], "  " );
  
            if( (opt_type == oyWIDGETTYPE_BEHAVIOUR) ||
                (opt_type == oyWIDGETTYPE_DEFAULT_PROFILE))
            {
              key = t->config_string_xml;
-             /* allocate new mem if needed */
-             oytmplen = oyMemBlockExtent_(&mem, oytmplen, 256 + 12+2*strlen(key)+8);
              /* write a short description */
-             oySprintf_( &mem[strlen(mem)], "%s<!-- %s\n", intent,
+             oyStringAddPrintf_( text,  oyAllocateFunc_, oyDeAllocateFunc_,
+                                            "%s<!-- %s\n", indent,
                        t->name );
-             oySprintf_( &mem[strlen(mem)], "%s     %s\n", intent,
+             oyStringAddPrintf_( text,  oyAllocateFunc_, oyDeAllocateFunc_,
+                                            "%s     %s\n", indent,
                        t->description);
              /* write the profile name */
              if(opt_type == oyWIDGETTYPE_DEFAULT_PROFILE)
@@ -471,19 +447,16 @@ oyWriteOptionToXML_(oyGROUP_e           group,
                if( value && strlen( value ) )
                {
                  key = t->config_string_xml;
-                 /* allocate new mem if needed */
-                 oytmplen = oyMemBlockExtent_(&mem, oytmplen,
-                                              strlen(value) + 2*strlen(key) + 8 );
-                 DBG_PROG3_S("pos: %d + %d oytmplen: %d\n",
-                             (int)strlen(mem),(int)strlen(value),oytmplen);
-                 oySprintf_( &mem[strlen(mem)-1], " -->\n");
+                 /* end the coment */
+                 (*text)[strlen(*text)-1] = '\000';
+                 oyStringAdd_( text, " -->\n", oyAllocateFunc_,oyDeAllocateFunc_);
  
                  /* append xml keys and value */
-                 oySprintf_( &mem[strlen(mem)], "%s<%s>%s</%s>\n\n", intent,
+                 oyStringAddPrintf_( text,  oyAllocateFunc_, oyDeAllocateFunc_,
+                                                "%s<%s>%s</%s>\n\n", indent,
                           key, value, key);
-                 DBG_PROG1_S( "%s\n", mem);
                } else
-                 oySprintf_( &mem[strlen(mem)-1], " -->\n" );
+                 oySprintf_( text[strlen(*text)-1], " -->\n" );
                if(value) oyFree_m_(value);
              }
              else if( opt_type == oyWIDGETTYPE_BEHAVIOUR ) 
@@ -491,22 +464,29 @@ oyWriteOptionToXML_(oyGROUP_e           group,
                int val = oyGetBehaviour_( wt );
                /* write a per choice description */
                for( j = 0; j < n; ++j )
-                 oySprintf_( &mem[strlen(mem)], "%s %d %s\n", intent, j,
+                 oyStringAddPrintf_( text,  oyAllocateFunc_, oyDeAllocateFunc_,
+                                     "%s %d %s\n", indent, j,
                           t->choice_list[j] );
-               oySprintf_( &mem[strlen(mem)-1], " -->\n");
+               /* end the coment */
+               (*text)[strlen(*text)-1] = '\000';
+               oyStringAdd_( text, " -->\n", oyAllocateFunc_,oyDeAllocateFunc_);
                /* write the key value */
-               oySprintf_( &mem[strlen(mem)], "%s<%s>%d</%s>\n\n", intent,
+               oyStringAddPrintf_( text,  oyAllocateFunc_, oyDeAllocateFunc_,
+                                              "%s<%s>%d</%s>\n\n", indent,
                         key, val, key );
              }
            }
          }
        }
-       oytmplen = oyMemBlockExtent_(&mem, oytmplen, 160);
-       oySprintf_( &mem[strlen(mem)], "</%s>\n\n\n", opt->config_string_xml );
+  if(flags&2)
+  {
+       oyStringAddPrintf_( text,  oyAllocateFunc_, oyDeAllocateFunc_,
+                                      "</%s>\n\n\n", opt->config_string_xml );
+  }
 
+  if(tmp) oyFree_m_(tmp);
 
   DBG_PROG_ENDE
-  return mem;
 }
 
 char*
@@ -514,81 +494,77 @@ oyPolicyToXML_  (oyGROUP_e           group,
                  int               add_header,
                  oyAlloc_f         allocate_func)
 {
-# define OYTMPLEN_ 80 /*/ TODO handle memory in more a secure way */
   /* allocate memory */
-  int   oytmplen = OYTMPLEN_;
-  char *mem = NULL;
+  char * text = NULL;
   int   i = 0;
 
   DBG_PROG_START
 
-  oyAllocHelper_m_( mem, char, oytmplen, oyAllocateFunc_, return NULL );
-
   /* initialise */
   oyOptionGet_( oyWIDGET_BEHAVIOUR_START );
-  mem[0] = 0;
 
   /* create a XML structure and store there the keys for exporting */
   if( add_header )
   {
          char head[] = { OY_POLICY_HEADER }; 
-         oytmplen = oyMemBlockExtent_( &mem, oytmplen, strlen(head)+24 );
-
-         oySprintf_( mem, "%s\n<body>\n\n\n", head );
+         oyStringAddPrintf_( &text,  oyAllocateFunc_, oyDeAllocateFunc_,
+                          "%s\n<body>\n\n\n", head );
   }
 
 
   /* which group is to save ? */
   switch (group)
   { case oyGROUP_DEFAULT_PROFILES:
-         mem = oyWriteOptionToXML_( group,
+         oyWriteOptionToXML_( group,
                                     oyWIDGET_DEFAULT_PROFILE_START + 1,
                                     oyWIDGET_DEFAULT_PROFILE_END - 1,
-                                    mem, oytmplen );
+                                    &text, 3 );
          break;
     case oyGROUP_BEHAVIOUR_RENDERING:
-         mem = oyWriteOptionToXML_( group,
+         oyWriteOptionToXML_( group,
                                     oyWIDGET_RENDERING_INTENT,
                                     oyWIDGET_RENDERING_HIGH_PRECISSION,
-                                    mem, oytmplen );
+                                    &text, 3 );
          break;
     case oyGROUP_BEHAVIOUR_PROOF:
-         mem = oyWriteOptionToXML_( group,
+         oyWriteOptionToXML_( group,
+                                    oyWIDGET_DEFAULT_PROFILE_START + 1,
+                                    oyWIDGET_DEFAULT_PROFILE_END - 1,
+                                    &text, 1 );
+         oyWriteOptionToXML_( group,
                                     oyWIDGET_RENDERING_INTENT_PROOF,
                                     oyWIDGET_BEHAVIOUR_END - 1,
-                                    mem, oytmplen );
+                                    &text, 2 );
          break;
     case oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS:
-         mem = oyWriteOptionToXML_( group,
+         oyWriteOptionToXML_( group,
                                     oyWIDGET_MIXED_MOD_DOCUMENTS_PRINT,
                                     oyWIDGET_MIXED_MOD_DOCUMENTS_SCREEN,
-                                    mem, oytmplen );
+                                    &text, 3 );
          break;
     case oyGROUP_BEHAVIOUR_MISSMATCH:
-         mem = oyWriteOptionToXML_( group,
+         oyWriteOptionToXML_( group,
                                     oyWIDGET_ACTION_UNTAGGED_ASSIGN,
                                     oyWIDGET_ACTION_OPEN_MISMATCH_CMYK,
-                                    mem, oytmplen );
+                                    &text, 3 );
          break;
     case oyGROUP_ALL:
 
          /* travel through the group of settings and call the func itself */
          for(i = oyGROUP_START + 1; i < oyGROUP_ALL; ++i)
-         { int   pos = strlen(mem);
+         {
            char *value = oyPolicyToXML_(i, 0, oyAllocateFunc_);
            if(value)
            {
-             /* allocate new mem if needed */
-             oytmplen = oyMemBlockExtent_(&mem, oytmplen, strlen(value)+1);
-
-             oySprintf_(&mem[pos], "%s", value);
+             oyStringAddPrintf_( &text,  oyAllocateFunc_, oyDeAllocateFunc_,
+                                   "%s", value);
              oyFree_m_(value);
            }
          }
          break;
     default:
          /* error */
-         /*oytmplen = oyMemBlockExtent_(&mem, oytmplen, 48);
+         /*oytmplen = oyTextExtent_(&mem, oytmplen, 48);
          oySprintf_( mem, "<!-- Group: %d does not exist -->", group );*/
          break;
   }
@@ -596,25 +572,24 @@ oyPolicyToXML_  (oyGROUP_e           group,
   if( add_header )
   {
          const char *end = "\n</body>\n";
-         int   pos = strlen(mem);
-
-         oytmplen = oyMemBlockExtent_( &mem, oytmplen, strlen( end )+1 );
-         oySprintf_( &mem[pos], "%s", end );
+         oyStringAdd_( &text, end, oyAllocateFunc_, oyDeAllocateFunc_ );
+         
   }
 
-  { int len = strlen( mem );
+  if(text)
+  { int len = strlen( text );
     char *tmp = NULL;
 
     if(len)
     {
       oyAllocHelper_m_( tmp, char, len + 1, allocate_func, return NULL );
-      memcpy( tmp, mem, len + 1 );
-      oyFree_m_( mem );
+      memcpy( tmp, text, len + 1 );
+      oyFree_m_( text );
     }
-    mem = tmp;
+    text = tmp;
   }
   DBG_PROG_ENDE
-  return mem;
+  return text;
 }
 
 
