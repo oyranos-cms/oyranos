@@ -636,7 +636,6 @@ char*
 oyFindProfile_ (const char* fileName)
 {
   char  *fullFileName = 0;
-  int len = 0;
   char* path_name = 0;
 
   DBG_PROG_START
@@ -648,6 +647,16 @@ oyFindProfile_ (const char* fileName)
   if (fileName && fileName[0] != OY_SLASH_C)
   {
     path_name = oyGetPathFromProfileName_(fileName, oyAllocateFunc_);
+
+    if(!path_name)
+    {
+      FILE * fp = fopen( fileName, "rb" );
+      if(fp)
+      {
+        path_name = oyStringCopy_( "./", oyAllocateFunc_ );
+        fclose(fp); fp = 0;
+      }
+    }
 
     DBG_PROG
     if(path_name)
@@ -671,10 +680,7 @@ oyFindProfile_ (const char* fileName)
   if(!path_name)
   {
     if (oyIsFileFull_(fileName)) {
-      oyAllocString_m_( fullFileName, MAX_PATH,
-                        oyAllocateFunc_, return 0 );
-      len = oyStrlen_(fileName);
-      memcpy(fullFileName, fileName, len), fullFileName[len] = 0;
+      fullFileName = oyStringCopy_( fileName, oyAllocateFunc_ );
     } else
       fullFileName = oyMakeFullFileDirName_ (fileName);
   }
