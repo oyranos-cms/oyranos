@@ -350,7 +350,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
                  " \"%s\"", OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
                  oyNoEmptyString_m_( device_name ) );
 
-      if(error <= 0)
+      if(error <= 0 && edid)
         error = oyX1DeviceFillEdid( device, edid->ptr, edid->size,
                                     device_name,
                                     host, display_geometry, system_port,
