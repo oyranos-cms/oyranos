@@ -568,19 +568,17 @@ oyModulPrint_   ( const char       *modul )
 
   DBG_PROG_START
 
-  oyAllocHelper_m_( text, char, len, oyAllocateFunc_, return NULL );
-  oyAllocHelper_m_( tmp, char, len, oyAllocateFunc_, return NULL );
-
-# define add_s() { len = oyMemBlockExtent_(&text, len, strlen(tmp) + 1); \
-                   sprintf( &text[strlen(text)], "%s", tmp );  }
+# define add_s() STRING_ADD( text, tmp );
 # define set_m(text_) text_ ? text_ : "(null)"
 
   if(!mod)
   {
-    oySnprintf1_( tmp, 1024, "Could not find %s", set_m(modul) ); add_s()
+    STRING_ADD( text, "Could not find " );
+    STRING_ADD( text, set_m(modul) );
     return text;
   }
 
+  oyAllocHelper_m_( tmp, char, len, oyAllocateFunc_, return NULL );
   oySnprintf1_( tmp, 1024, "Modul: %s\n", set_m(modul) ); add_s()
   oySnprintf1_( tmp, 1024, " Name: %s\n", set_m(mod->name) ); add_s()
   oySnprintf2_( tmp, 1024, "       %d - %d\n", mod->groups_start, mod->groups_end ); add_s()
