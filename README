@@ -33,6 +33,7 @@ Dependencies:
     libxxf86vm-dev
     libxrandr-dev
     libxinerama-dev
+    libxmu-dev
     oyranos-0.1.10 can now be installed successfully.
     doxygen
     graphviz
