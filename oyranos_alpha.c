@@ -13741,6 +13741,21 @@ OYAPI int  OYEXPORT
 }
 
 
+icProfileClassSignature oyDeviceSigGet(oyConfig_s        * device )
+{
+  icProfileClassSignature deviceSignature = 0;
+  if(oyFilterRegistrationMatch( device->registration, "monitor", 0 ))
+    deviceSignature = icSigDisplayClass;
+  else if(oyFilterRegistrationMatch( device->registration, "scanner", 0 ))
+    deviceSignature = icSigInputClass;
+  else if(oyFilterRegistrationMatch( device->registration, "raw-image", 0 ))
+    deviceSignature = icSigInputClass;
+  else if(oyFilterRegistrationMatch( device->registration, "printer", 0 ))
+    deviceSignature = icSigOutputClass;
+
+  return deviceSignature;
+}
+
 /** Function oyDeviceSetup
  *  @brief   activate the device using the stored configuration
  *
@@ -13777,14 +13792,44 @@ OYAPI int  OYEXPORT
     /* 2. query the full device information */
     error = oyDeviceProfileFromDB( device, &profile_name, 0 );
 
-    /* 2.1 for no profile name: skip the "setup" call */
+    /* 2.1 select best match to device from installed profiles */
+    {
+      int size;
+      oyProfile_s * profile = 0;
+      oyProfiles_s * patterns = 0, * iccs = 0;
+      icProfileClassSignature device_signature = oyDeviceSigGet(device);
+      int32_t * rank_list = 0;
+
+      profile = oyProfile_FromSignature( device_signature, oySIGNATURE_CLASS, 0 );
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      iccs = oyProfiles_Create( patterns, 0 );
+      oyProfiles_Release( &patterns );
+ 
+      size = oyProfiles_Count(iccs);
+      oyAllocHelper_m_( rank_list, int32_t, oyProfiles_Count(iccs), 0, error = 1; return error );
+      if(error <= 0)
+        oyProfiles_DeviceRank( iccs, device, rank_list );
+      if(error <= 0 && size && rank_list[0] > 0)
+      {
+        p = oyProfiles_Get( iccs, 0 );
+        profile_name = oyStringCopy_( oyProfile_GetFileName(p, -1),
+                                      oyAllocateFunc_ );
+        WARNc1_S( "implicitely seleczed %s", oyNoEmptyString_m_(profile_name) );
+        oyFree_m_( rank_list );
+      }
+      oyProfile_Release( &p );
+      oyProfiles_Release( &iccs );
+    }
+
+    /* 2.2 for no profile name: skip the "setup" call */
     if(!profile_name)
     {
       oyOptions_s * fallback = oyOptions_New( 0 );
       error = oyOptions_SetRegistrationTextKey_( fallback,
                                                  device->registration,
                                                  "icc_profile.fallback","true");
-      /* 2.1.1 try fallback for rescue */
+      /* 2.2.1 try fallback for rescue */
       error = oyDeviceAskProfile2( device, fallback, &p );
       oyOptions_Release( &fallback );
       if(p)
@@ -13821,7 +13866,7 @@ OYAPI int  OYEXPORT
         return error;
     }
 
-    /* 2.2 get device_name */
+    /* 2.3 get device_name */
     device_name = oyConfig_FindString( device, "device_name", 0);
 
     /* 3. setup the device through the module */
