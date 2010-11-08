@@ -16695,7 +16695,7 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
 
   if(error <= 0)
   {
-    int n = 0, i;
+    int n = 0, i, j;
     size_t len = 0;
 
     n = oyProfile_GetTagCount_( profile );
@@ -16715,6 +16715,7 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
 
     len += sizeof(icTag) * (n-1);
 
+    /* write tags */
     for(i = 0; i < n - 1; ++i)
     {
       char h[5] = {"head"};
@@ -16723,6 +16724,7 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
       icTagList* list = (icTagList*) &block[128];
       oyProfileTag_s * tag = oyProfile_GetTagByPos_ ( profile, i + 1 );
       size_t size = 0;
+      uint32_t dup_offset = 0;
 
       if(error <= 0)
         error = !tag;
@@ -16736,35 +16738,53 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
         continue;
       }
 
+      /* detect duplicate tag contents */
+      for(j = 0; j < i; ++j)
+      {
+        oyProfileTag_s * comp = oyProfile_GetTagByPos_( profile, j + 1 );
+        if(tag->size_ == comp->size_ &&
+           tag->offset_orig == comp->offset_orig &&
+           memcmp(tag->block_, comp->block_, tag->size_) == 0)
+          dup_offset = list->tags[j].offset;
+      }
+
       if(error <= 0)
       {
         list->tags[i].sig = oyValueUInt32( (icTagSignature)tag->use );
-        list->tags[i].offset = oyValueUInt32( (icUInt32Number)len );
-        list->tags[i].size = oyValueUInt32( (icUInt32Number)size );
-        temp = (char*) oyAllocateFunc_ ( len + size + 
+        if(dup_offset)
+          list->tags[i].offset = dup_offset;
+        else
+        {
+          list->tags[i].offset = oyValueUInt32( (icUInt32Number)len );
+          temp = (char*) oyAllocateFunc_ ( len + size + 
                                                (size%4 ? 4 - size%4 : 0));
+        }
+        list->tags[i].size = oyValueUInt32( (icUInt32Number)size );
         if(temp)
           memset( temp, 0, len + size + (size%4 ? 4 - size%4 : 0));
       }
 
       if(temp)
         error = !memcpy( temp, block, len );
-      if(error <= 0)
+      if(temp && error <= 0)
       {
         error = !memcpy( &temp[len], tag->block_, tag->size_);
         len += size + (size%4 ? 4 - size%4 : 0);
       }
 
-      if(error <= 0)
+      if(temp && error <= 0)
       {
         oyDeAllocateFunc_(block);
         block = temp;
-
+      }
+      if(error <= 0)
+      {
         oyProfileTag_Release( &tag );
       }
       temp = 0;
     }
 
+    /* modify header, e.g. size, platform signature  */
     if(error <= 0)
     {
       char h[5] = {OY_MODULE_NICK};
