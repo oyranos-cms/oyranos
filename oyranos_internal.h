@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2004-2009 (C) Kai-Uwe Behrmann
+ *            2004-2010 (C) Kai-Uwe Behrmann
  *
  *  @brief    misc internal API
  *  @internal
@@ -122,16 +122,6 @@ int oyEraseDeviceProfile                  (oyDEVICETYP_e typ,
                                            const char* attrib2,
                                            const char* attrib3);
 
-#ifdef __APPLE__
-#include <Carbon/Carbon.h>
-
-int    oyGetProfileBlockOSX              ( CMProfileRef prof,
-                                           char **block, size_t *size,
-                                           oyAlloc_f     allocate_func);
-char * oyGetProfileNameOSX               ( CMProfileRef prof,
-                                           oyAlloc_f     allocate_func);
-char * oyGetDefaultProfileNameOSX_   ( oyPROFILE_e         type );
-#endif
 
 extern oyStruct_LockCreate_f   oyStruct_LockCreateFunc_;
 extern oyLockRelease_f         oyLockReleaseFunc_;

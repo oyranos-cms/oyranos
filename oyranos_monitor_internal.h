@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Colour Management System 
  *
- *  Copyright (C) 2005-2009  Kai-Uwe Behrmann
+ *  Copyright (C) 2005-2010  Kai-Uwe Behrmann
  *
  */
 
@@ -21,68 +21,11 @@
 #include "oyranos.h"
 #include "oyranos_internal.h"
 #include "oyranos_monitor.h"
-# if HAVE_XRANDR
-#  include <X11/extensions/Xrandr.h>
-# endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-#ifdef HAVE_X
-
-typedef enum {
-  oyX11INFO_SOURCE_SCREEN,
-  oyX11INFO_SOURCE_XINERAMA,
-  oyX11INFO_SOURCE_XRANDR
-} oyX11INFO_SOURCE_e;
-
-/** \internal  platformdependent */
-typedef struct {
-  oyOBJECT_e       type_;              /**< object type oyOBJECT_MONITOR_S */
-  char         *name;        /**< traditional display name - host:0 / :0 */
-  char         *host;        /**< host name only - host */
-  char         *identifier;  /**<  - x_y_wxh */
-  int           geo[6];      /**< display screen x y width height */
-  Display      *display;     /**< logical display */
-  int           screen;      /**< external screen number to call for X */
-# ifdef HAVE_XRANDR
-  XRRScreenResources * res;            /**< XRandR root window struct */
-  RROutput             output;         /**< XRandR output */
-  XRROutputInfo      * output_info;    /**< XRandR output info */
-  int                  active_outputs; /**< outputs with crtc and gamma size */
-# endif
-  char               * system_port;    /**< the operating systems port name */
-  oyBlob_s           * edid;           /**< edid for the device */
-  oyX11INFO_SOURCE_e   info_source; /**< */
-} oyMonitor_s;
-
-Display*     oyMonitor_device_       ( oyMonitor_s       * disp );
-oyX11INFO_SOURCE_e 
-             oyMonitor_infoSource_   ( oyMonitor_s       * disp );
-# ifdef HAVE_XRANDR
-XRRScreenResources *
-             oyMonitor_xrrResource_  ( oyMonitor_s       * disp );
-RROutput     oyMonitor_xrrOutput_    ( oyMonitor_s       * disp );
-XRROutputInfo *
-             oyMonitor_xrrOutputInfo_( oyMonitor_s       * disp );
-int          oyMonitor_activeOutputs_( oyMonitor_s       * disp );
-# endif
-
-#elif defined(__APPLE__)
-/** \internal  platformdependent */
-typedef struct {
-  oyOBJECT_e       type_;              /**< object type oyOBJECT_MONITOR_S */
-  char           * name;               /**< display name, like screen */
-  char           * host;               /**< host name only - host */
-  char           * identifier;         /**<  - _x_y_wxh */
-  int              geo[6];             /**< display screen x y width height */
-  CGDirectDisplayID id;                /**< osX monitor */
-  int              screen;             /**< pos in osX CGGetActiveDisplayList */
-} oyMonitor_s;
-
-CGDirectDisplayID  oyMonitor_device_ ( oyMonitor_s       * disp );
-#endif
 
 oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
                                        int                 expensive );

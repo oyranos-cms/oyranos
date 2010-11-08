@@ -115,6 +115,8 @@ CHEADERS = \
 	$(TARGET)_internal.h \
 	$(TARGET)_monitor.h \
 	$(TARGET)_monitor_internal.h \
+	$(TARGET)_monitor_internal_x11.h \
+	$(TARGET)_monitor_internal_cs.h \
 	$(TARGET)_sentinel.h \
 	$(TARGET)_texts.h \
 	$(TARGET)_xml.h \
@@ -185,12 +187,12 @@ CHEADERS_MODULES = \
 	modules/$(TARGET)_cmm_oyra.h
 CFILES_MODULES_DEVICES = \
 	$(CFILES_CMM_oyX1) \
-	$(CFILES_MONI) \
+	$(CFILES_MONI_X11) \
 	$(CFILES_CMM_CUPS) \
 	$(CFILES_CMM_SANE) \
 	modules/devices/SANE_help.c
-CFILES_MONI = \
-	modules/devices/$(TARGET)_monitor.c
+CFILES_MONI_X11 = \
+	modules/devices/$(TARGET)_monitor_x11.c
 CFILES_MONI_NVIDIA = \
 	$(TARGET)_monitor_nvidia.c
 CFILES_GAMMA = \
@@ -330,7 +332,7 @@ OBJECTS_CS = $(CFILES_CS:.c=.o)
 COBJECTS = \
 	$(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o) \
 	$(CFILES_OFORMS:.c=.o) $(OBJECTS_CS) \
-	$(MONI_OBJECTS) \
+	$(MONI_X11_OBJECTS) \
 	$(CMM_lcms_OBJECTS) \
 	$(CMM_oydi_OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
@@ -362,13 +364,13 @@ CMM_oyra_OBJECTS = $(CFILES_CMM_oyra:.c=.o)
 CMM_oyIM_OBJECTS = $(CFILES_CMM_oyIM:.c=.o)
 CMM_oicc_OBJECTS = $(CFILES_CMM_oicc:.c=.o)
 CMM_oPNG_OBJECTS = $(CFILES_CMM_oPNG:.c=.o)
-MONI_OBJECTS = $(CPPFILES_MONI:.cpp=.o) $(CXXFILESMONI:.cxx=.o) $(CFILES_MONI:.c=.o)
+MONI_X11_OBJECTS = $(CFILES_MONI_X11:.c=.o)
 Flmm_OBJECTS = $(CXXFILES_Flmm:.cxx=.o)
 FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
 FLTK_OFORMS_OBJECTS = $(CXXFILES_OFORMS_FLTK:.cxx=.o)
 
 CLEAN_OBJECTS = $(OBJECTS) \
-	$(MONI_OBJECTS) \
+	$(MONI_X11_OBJECTS) \
 	$(CMM_lcms_OBJECTS) \
 	$(CMM_lcm2_OBJECTS) \
 	$(CMM_lraw_OBJECTS) \
@@ -516,11 +518,11 @@ $(LIB_CMM_oydi): $(LIBSONAMEFULL) $(CMM_oydi_OBJECTS)
 	$(RM)  lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
-$(LIB_CMM_oyX1): $(LIBSONAMEFULL) $(CMM_oyX1_OBJECTS) $(MONI_OBJECTS)
+$(LIB_CMM_oyX1): $(LIBSONAMEFULL) $(CMM_oyX1_OBJECTS) $(MONI_X11_OBJECTS)
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
 	-o $@ \
-	$(CMM_oyX1_OBJECTS) $(MONI_OBJECTS) $(X11_LIBS) $(MODULE_LDLIBS) $(m)
+	$(CMM_oyX1_OBJECTS) $(MONI_X11_OBJECTS) $(X11_LIBS) $(MODULE_LDLIBS) $(m)
 	$(RM)  lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
@@ -593,11 +595,11 @@ $(LIB_XNVCTRL).a:
 	test -L $(LIB_XNVCTRL).a || $(LNK) $(LIB_XNVCTRL)/$(LIB_XNVCTRL).a .
 
 # the twinview library
-$(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL_NAME) $(MONI_OBJECTS)
+$(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL_NAME) $(MONI_X11_OBJECTS)
 	echo Linking $@ $(LIB_XNVCTRL_)1 $(XNVCtrl)2 $(LIB_XNVCTRL)3 $(LIB_XNVCTRL_NAME)4 ...
 	-$(CC) -I./ $(CFLAGS) $(INCL) $(SRCDIR)/$(TARGET)_monitor_nvidia.c \
 	-I$(SRCDIR)/libXNVCtrl \
-	-o $(TARGET)-monitor-nvidia $(MONI_OBJECTS) -L./ \
+	-o $(TARGET)-monitor-nvidia $(MONI_X11_OBJECTS) -L./ \
 	$(LDLIBS) $(X11_LIBS) $(m) \
 	-L./$(LIB_XNVCTRL) -lXNVCtrl $(LIBSONAMEFULL) \
 	$(LINK_LIB_PATH)

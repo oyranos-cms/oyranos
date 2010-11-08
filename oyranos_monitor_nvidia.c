@@ -49,6 +49,7 @@
 #endif
 
 #include "oyranos.h"
+#include "oyranos_monitor_internal_x11.h"
 #include "oyranos_monitor_internal.h"
 #include "oyranos_helper.h"
 #include "oyranos_debug.h"
