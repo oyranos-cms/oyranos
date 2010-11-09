@@ -21,9 +21,8 @@
 #include "oyranos.h"
 #include "oyranos_internal.h"
 #include "oyranos_monitor.h"
-# if HAVE_XRANDR
-#  include <X11/extensions/Xrandr.h>
-# endif
+
+#include <Carbon/Carbon.h>
 
 #ifdef __cplusplus
 extern "C" {

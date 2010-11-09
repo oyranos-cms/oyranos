@@ -34,6 +34,10 @@
 #include "oyranos_texts.h"
 #include "oyranos_xml.h"
 
+#ifdef APPLE
+#include "oyranos_cs.h"
+#endif
+
 /* --- Helpers  --- */
 #if 1
 #define ERR if (rc<=0 && oy_debug) { oyMessageFunc_p(oyMSG_WARN,0,"%s:%d %d\n", __FILE__,__LINE__,rc); perror("Error"); }
