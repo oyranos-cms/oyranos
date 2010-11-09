@@ -27,9 +27,9 @@ TARGET2_FLAGS = ../modules/devices/oyranos_monitor.o \
 TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo lcms oyranos xcm))
 LDFLAGS = $(LIBS)
 DEBUG = -Wall -g -pedantic -O0
-CXXFLAGS = $(OY_CFLAGS) $(INCLUDE) $(DEBUG) -std=c++0x $(XCM_CFLAGS)
-CFLAGS = -std=c99 -D__USE_POSIX2=1 $(OY_CFLAGS) $(INCLUDE) $(DEBUG) $(X11) \
-	$(XCM_CFLAGS)
+CXXFLAGS_ = $(CXXFLAGS) $(OY_CFLAGS) $(INCLUDE) $(DEBUG) -std=c++0x $(XCM_CFLAGS)
+CFLAGS_ = $(CFLAGS) -std=c99 -D__USE_POSIX2=1 $(OY_CFLAGS) $(INCLUDE) $(DEBUG) \
+	$(X11) $(XCM_CFLAGS)
 
 UNAME := $(shell (uname -s))
 
@@ -76,7 +76,7 @@ all:
 $(TARGET1):	$(SRCDIR)$(TARGET1).cpp
 	mkdir -p image_display
 	echo Compiling $@ ...
-	-$(CXX) -DTARGET=\"$(TARGET)\" $(CXXFLAGS) $(FLTK_CFLAGS) $< \
+	-$(CXX) -DTARGET=\"$(TARGET)\" $(CXXFLAGS_) $(FLTK_CFLAGS) $< \
 	$(X11) $(LDFLAGS) $(OY_LDFLAGS) \
 	../fl_i18n/libfl_i18n.a  $(FLTK_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
 	$(PKG_CONFIG_LIBS) -DUSE_GETTEXT=1 \
@@ -86,7 +86,7 @@ $(TARGET1):	$(SRCDIR)$(TARGET1).cpp
 $(TARGET2):	$(SRCDIR)$(TARGET2).c
 	mkdir -p xcmsevents
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS) $< $(TARGET2_FLAGS) $(LDFLAGS) $(OY_LDFLAGS) \
+	-$(CC) $(CFLAGS_) $< $(TARGET2_FLAGS) $(LDFLAGS) $(OY_LDFLAGS) \
 	$(PKG_CONFIG_CFLAGS) $(PKG_CONFIG_LIBS) \
 	 $(XCM_LDFLAGS) -lXmu -lXinerama -lXrandr -lXxf86vm -lm \
 	-DTARGET=\"xcmsevents\" -o $@
@@ -94,23 +94,23 @@ $(TARGET2):	$(SRCDIR)$(TARGET2).c
 $(TARGET4):	$(SRCDIR)$(TARGET4).c
 	mkdir -p image2pdf
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS) $< $(TARGET4_FLAGS) $(LDFLAGS) $(XCM_LDFLAGS) \
+	-$(CC) $(CFLAGS_) $< $(TARGET4_FLAGS) $(LDFLAGS) $(XCM_LDFLAGS) \
 	$(OY_LDFLAGS) -o $@
 
 $(TARGET5):	$(SRCDIR)dummy_device/oyranos_cmm_dDev.c
 	mkdir -p dummy_device
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS) -shared $(LDFLAGS) $(OY_LDFLAGS) -fPIC $< -o $@
+	-$(CC) $(CFLAGS_) -shared $(LDFLAGS) $(OY_LDFLAGS) -fPIC $< -o $@
 
 $(TARGET6):	$(SRCDIR)dummy_filter/oyranos_cmm_dFil.c
 	mkdir -p dummy_filter
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS) -shared $(LDFLAGS) $(OY_LDFLAGS) -fPIC $< -o $@
+	-$(CC) $(CFLAGS_) -shared $(LDFLAGS) $(OY_LDFLAGS) -fPIC $< -o $@
 
 $(TARGET7):	$(SRCDIR)oymd5icc/oymd5icc.c
 	mkdir -p oymd5icc
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS) $< $(LDFLAGS) $(OY_LDFLAGS) -o $@
+	-$(CC) $(CFLAGS_) $< $(LDFLAGS) $(OY_LDFLAGS) -o $@
 
 $(TARGET8):	$(TARGET8_OBJECTS)
 	mkdir -p xcmsevents
@@ -136,7 +136,7 @@ xcmsevents/moc_qcmsevents.cpp:	$(SRCDIR)$(TARGET8).h
 
 $(TARGET8).o:	$(SRCDIR)$(TARGET8).cpp
 	echo "	C++:	$@ ..."
-	-$(CXX) -I. $(CXXFLAGS) $(QT_CFLAGS) $(INCL) -c -o $@ $<
+	-$(CXX) -I. $(CXXFLAGS_) $(QT_CFLAGS) $(INCL) -c -o $@ $<
 
 # Build commands and filename extensions...
 .SUFFIXES:	.c .cxx .cpp .h .o
@@ -144,14 +144,14 @@ $(TARGET8).o:	$(SRCDIR)$(TARGET8).cpp
 
 .c.o:	$(HEADERS)
 	echo "	CC:	$< ..."
-	-$(CC) -I. $(CFLAGS) $(INCL) -c -o $@ $<
+	-$(CC) -I. $(CFLAGS_) $(INCL) -c -o $@ $<
 
 .cxx.o:	$(HEADERS)
 	echo "	C++:	$< ..."
-	-$(CXX) -I. $(CXXFLAGS) $(QT_CFLAGS) $(INCL) -c -o $@ $<
+	-$(CXX) -I. $(CXXFLAGS_) $(QT_CFLAGS) $(INCL) -c -o $@ $<
 
 .cpp.o:	$(HEADERS)
 	echo "	C++:	$< ..."
-	-$(CXX) -I. $(CXXFLAGS) $(INCL) -c -o $@ $<
+	-$(CXX) -I. $(CXXFLAGS_) $(INCL) -c -o $@ $<
 
 
