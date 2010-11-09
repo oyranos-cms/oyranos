@@ -883,9 +883,9 @@ fi
   CAIRO=1; export CAIRO
 if [ $OSUNAME != "Darwin" ] ; then
   X11=1; 
-  XCM=1
   QT=1
 fi
+  XCM=1
   export X11 XCM QT
   XINERAMA=2; export XINERAMA
   XRANDR=2; export XRANDR

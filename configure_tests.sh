@@ -483,35 +483,7 @@ if [ -n "$LRAW" ] && [ $LRAW -gt 0 ]; then
   fi
 fi
 
-if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
-    found=""
-    version=""
-    pc_package=x11
-    if [ -z "$found" ]; then
-      pkg-config  --atleast-version=1.0 $pc_package
-      if [ $? = 0 ]; then
-        found=`pkg-config --cflags $pc_package`
-        version=`pkg-config --modversion $pc_package`
-      fi
-    fi
-    if [ -z "$found" ]; then
-      if [ -f /usr/X11R6/include/X11/Xlib.h ]; then
-        found="-I/usr/X11R6/include"
-      elif [ -f /usr/include/X11/Xlib.h ]; then
-        found="-I/usr/include"
-      elif [ -f $includedir/X11/Xlib.h ]; then
-        found="-I$includedir"
-      fi
-    fi
-    if [ -z "$found" ] && [ $OSUNAME = "Linux" ]; then
-      echo_="X11 header not found in /usr/X11R6/include/X11/Xlib.h or"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-      echo_="  /usr/include/X11/Xlib.h or"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-      echo_="  $pc_package.pc"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-      X11=0
-    fi
-fi
-if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
-  if [ -n "$XCM" ] && [ $XCM -gt 0 ]; then
+if [ -n "$XCM" ] && [ $XCM -gt 0 ]; then
     found=""
     version=""
     pc_package=xcm
@@ -547,8 +519,36 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
       echo_="X CM not found in"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
       echo_="  $pc_package.pc"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     fi
-  fi
+fi
 
+if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
+    found=""
+    version=""
+    pc_package=x11
+    if [ -z "$found" ]; then
+      pkg-config  --atleast-version=1.0 $pc_package
+      if [ $? = 0 ]; then
+        found=`pkg-config --cflags $pc_package`
+        version=`pkg-config --modversion $pc_package`
+      fi
+    fi
+    if [ -z "$found" ]; then
+      if [ -f /usr/X11R6/include/X11/Xlib.h ]; then
+        found="-I/usr/X11R6/include"
+      elif [ -f /usr/include/X11/Xlib.h ]; then
+        found="-I/usr/include"
+      elif [ -f $includedir/X11/Xlib.h ]; then
+        found="-I$includedir"
+      fi
+    fi
+    if [ -z "$found" ] && [ $OSUNAME = "Linux" ]; then
+      echo_="X11 header not found in /usr/X11R6/include/X11/Xlib.h or"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      echo_="  /usr/include/X11/Xlib.h or"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      echo_="  $pc_package.pc"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      X11=0
+    fi
+fi
+if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
   if [ -n "$XF86VMODE" ] && [ $XF86VMODE -gt 0 ]; then
     found=""
     version=""
