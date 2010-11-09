@@ -37,6 +37,7 @@ char * printCFDictionary( CFDictionaryRef dict );
 #include "oyranos.h"
 #include "oyranos_alpha.h"
 #include "oyranos_internal.h"
+#include "oyranos_cs.h"
 #include "oyranos_monitor.h"
 #include "oyranos_monitor_internal_cs.h"
 #include "oyranos_monitor_internal.h"
