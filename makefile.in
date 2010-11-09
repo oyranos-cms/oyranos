@@ -33,6 +33,7 @@ CMMS = \
 	$(TARGET)_oyra$(OY_MODULE_NAME) \
 	$(TARGET)_oydi$(OY_MODULE_NAME) \
 	$(TARGET)_oyX1$(OY_MODULE_NAME) \
+	$(TARGET)_qarz$(OY_MODULE_NAME) \
 	$(TARGET)_CUPS$(OY_MODULE_NAME) \
 	$(TARGET)_SANE$(OY_MODULE_NAME)
 META = \
@@ -40,7 +41,12 @@ META = \
 LIB_CMM_oyIM = $(LIB_CMM_START)_oyIM$(LIB_CMM_END)
 LIB_CMM_oicc = $(LIB_CMM_START)_oicc$(LIB_CMM_END)
 LIB_CMM_oPNG = $(LIB_CMM_START)_oPNG$(LIB_CMM_END)
+#ifdef X11
 LIB_CMM_oyX1 = $(LIB_CMM_START)_oyX1$(LIB_CMM_END)
+#endif
+#ifdef APPLE
+LIB_CMM_qarz = $(LIB_CMM_START)_qarz$(LIB_CMM_END)
+#endif
 #ifdef CUPS
 LIB_CMM_CUPS = $(LIB_CMM_START)_CUPS$(LIB_CMM_END)
 #endif
@@ -66,6 +72,7 @@ LIBS_CMM = \
 	$(LIB_CMM_CUPS) \
 	$(LIB_CMM_SANE) \
 	$(LIB_CMM_oyX1) \
+	$(LIB_CMM_qarz) \
 	$(LIB_CMM_oyra) \
 	$(LIB_CMM_lcms) \
 	$(LIB_CMM_lcm2) \
@@ -159,6 +166,8 @@ CFILES_CMM_oydi = \
 	modules/$(TARGET)_cmm_oydi.c
 CFILES_CMM_oyX1 = \
 	modules/devices/$(TARGET)_cmm_oyX1.c
+CFILES_CMM_qarz = \
+	modules/devices/$(TARGET)_cmm_qarz.c
 CFILES_CMM_CUPS = \
 	modules/devices/$(TARGET)_cmm_CUPS.c
 CFILES_CMM_SANE = \
@@ -187,12 +196,16 @@ CHEADERS_MODULES = \
 	modules/$(TARGET)_cmm_oyra.h
 CFILES_MODULES_DEVICES = \
 	$(CFILES_CMM_oyX1) \
+	$(CFILES_CMM_qarz) \
 	$(CFILES_MONI_X11) \
+	$(CFILES_MONI_CS) \
 	$(CFILES_CMM_CUPS) \
 	$(CFILES_CMM_SANE) \
 	modules/devices/SANE_help.c
 CFILES_MONI_X11 = \
 	modules/devices/$(TARGET)_monitor_x11.c
+CFILES_MONI_CS = \
+	modules/devices/$(TARGET)_monitor_cs.c
 CFILES_MONI_NVIDIA = \
 	$(TARGET)_monitor_nvidia.c
 CFILES_GAMMA = \
@@ -333,9 +346,11 @@ COBJECTS = \
 	$(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o) \
 	$(CFILES_OFORMS:.c=.o) $(OBJECTS_CS) \
 	$(MONI_X11_OBJECTS) \
+	$(MONI_CS_OBJECTS) \
 	$(CMM_lcms_OBJECTS) \
 	$(CMM_oydi_OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
+	$(CMM_qarz_OBJECTS) \
 	$(CMM_CUPS_OBJECTS) \
 	$(CMM_SANE_OBJECTS) \
 	$(CMM_oyra_OBJECTS) \
@@ -358,6 +373,7 @@ CMM_lcm2_OBJECTS = $(CFILES_CMM_lcm2:.c=.o)
 CMM_lraw_OBJECTS = $(CPPFILES_CMM_lraw:.cpp=.o)
 CMM_oydi_OBJECTS = $(CFILES_CMM_oydi:.c=.o)
 CMM_oyX1_OBJECTS = $(CFILES_CMM_oyX1:.c=.o)
+CMM_qarz_OBJECTS = $(CFILES_CMM_qarz:.c=.o)
 CMM_CUPS_OBJECTS = $(CFILES_CMM_CUPS:.c=.o)
 CMM_SANE_OBJECTS = $(CFILES_CMM_SANE:.c=.o)
 CMM_oyra_OBJECTS = $(CFILES_CMM_oyra:.c=.o)
@@ -365,6 +381,7 @@ CMM_oyIM_OBJECTS = $(CFILES_CMM_oyIM:.c=.o)
 CMM_oicc_OBJECTS = $(CFILES_CMM_oicc:.c=.o)
 CMM_oPNG_OBJECTS = $(CFILES_CMM_oPNG:.c=.o)
 MONI_X11_OBJECTS = $(CFILES_MONI_X11:.c=.o)
+MONI_CS_OBJECTS = $(CFILES_MONI_CS:.c=.o)
 Flmm_OBJECTS = $(CXXFILES_Flmm:.cxx=.o)
 FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
 FLTK_OFORMS_OBJECTS = $(CXXFILES_OFORMS_FLTK:.cxx=.o)
@@ -376,6 +393,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(CMM_lraw_OBJECTS) \
 	$(CMM_oydi_OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
+	$(CMM_qarz_OBJECTS) \
 	$(CMM_CUPS_OBJECTS) \
 	$(CMM_SANE_OBJECTS) \
 	$(CMM_oyra_OBJECTS) \
@@ -394,6 +412,7 @@ SUB_OBJECTS = \
 	$(CMM_lraw_OBJECTS) \
 	$(CMM_oydi_OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
+	$(CMM_qarz_OBJECTS) \
 	$(CMM_CUPS_OBJECTS) \
 	$(CMM_SANE_OBJECTS) \
 	$(CMM_oyra_OBJECTS) \
@@ -436,11 +455,11 @@ ALL_FILES = \
 # build all what is needed to run the libraries, helpers
 all:	check_environment config.log.h mkdepend \
 	$(LIBSONAMEFULL) \
-	$(LIB_FORMS_FLTK_NAME) \
 	$(TARGET)-monitor $(X11) \
 	$(LIBS_CMM) \
 	$(TARGET)-policy $(FLTK_GUI) \
-	$(LINGUAS_SRC)
+	$(LINGUAS_SRC) \
+	$(LIB_FORMS_FLTK_NAME)
 	echo ... $@ done
 
 check_environment:
@@ -512,7 +531,7 @@ $(LIB_CMM_oydi): $(LIBSONAMEFULL) $(CMM_oydi_OBJECTS)
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
 	-o $@ \
-	$(CMM_oydi_OBJECTS) $(X11_LIBS) $(Xfixes) $(MODULE_LDLIBS)
+	$(CMM_oydi_OBJECTS) $(X11_LIBS) $(XCM_LIBS) $(Xfixes) $(MODULE_LDLIBS)
 	$(RM)  lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_oydi$(OY_MODULE_NAME)$(SO)$(LIBEXT)
@@ -527,6 +546,16 @@ $(LIB_CMM_oyX1): $(LIBSONAMEFULL) $(CMM_oyX1_OBJECTS) $(MONI_X11_OBJECTS)
 	$(LNK) $@ lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_oyX1$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+
+$(LIB_CMM_qarz): $(LIBSONAMEFULL) $(CMM_qarz_OBJECTS) $(MONI_CS_OBJECTS)
+	echo Linking $@ ...
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
+	-o $@ \
+	$(CMM_qarz_OBJECTS) $(MONI_CS_OBJECTS) $(XCM_LIBS) $(X11_LIBS) $(MODULE_LDLIBS) $(m)
+	$(RM)  lib$(TARGET)_qarz$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_qarz$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  lib$(TARGET)_qarz$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_qarz$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
 $(LIB_CMM_CUPS): $(LIBSONAMEFULL) $(CMM_CUPS_OBJECTS)
 	echo Linking $@ ...
@@ -614,7 +643,7 @@ FL/Flmm_Tabs.o:	$(SRCDIR)/FL/Flmm_Tabs.cxx
 # general configuration tool example
 $(FLTK_GUI):	$(FLTK_OBJECTS) $(LIBFL_I18N) $(LIBSONAMEFULL)
 	echo Linking $@ ...
-	$(CXX) -I./ $(CXXFLAGS) -o $(FLTK_GUI) \
+	$(CXX) -I./ $(FLTK_H) -o $(FLTK_GUI) \
 	$(FLTK_OBJECTS) \
 	$(LIBSONAMEFULL) $(LINK_LIB_PATH) \
 	$(LDLIBS) $(FLTK_LIBS) $(PNG_LIBS) $(I18N_LIB) $(LIBFL_I18N)
@@ -659,13 +688,13 @@ $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 test2:	test2.o $(LIBSONAMEFULL)
 	echo Linking dynamic $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2_dyn \
-	test2.o -L./ `./oyranos-config --ldflags`
+	test2.o -L./ `./oyranos-config --ldflags` -L$(libdir) $(intl)
 #ifdef ELEKTRA_VERSION
 	$(COPY) test2_dyn test2
 #else
 	echo Linking static $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2 \
-	test2.o -L./ `./oyranos-config --ldstaticflags` $(dl)
+	test2.o -L./ `./oyranos-config --ldstaticflags` -L$(libdir) $(intl) $(dl)
 #endif
 
 $(SRCDIR)/test2.c.c:
@@ -684,10 +713,10 @@ check:	all tests/test_oyranos $(TEST2) examples oforms
 	OY_MODULE_PATHS=. LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} tests/test_oyranos
 
 examples:
-	cd examples && ($(MAKE) clean; PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/examples/ LIBS="-L$(libdir) -L../" $(MAKE))
+	cd examples && ($(MAKE) clean; PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/examples/ CFLAGS="$(CFLAGS)" LIBS="-L$(libdir) -L../" $(MAKE))
 
 oforms:	$(LIB_FORMS_FLTK_NAME)
-	cd oforms && (PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/oforms/ LDFLAGS="-L../" $(MAKE) -f oyranos_xforms.makefile)
+	cd oforms && (PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." CFLAGS="$(CFLAGS)" CXXFLAGS="$CXXFLAGS" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/oforms/ LDFLAGS="-L../ $(intl)" $(MAKE) -f oyranos_xforms.makefile)
 
 test:	test.o
 	$(CC) -I./ $(CFLAGS) -o test \
