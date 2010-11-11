@@ -38,6 +38,9 @@ int    oyGetProfileBlockOSX              ( CMProfileRef prof,
 char * oyGetProfileNameOSX               ( CMProfileRef prof,
                                            oyAlloc_f     allocate_func);
 char * oyGetDefaultProfileNameOSX_   ( oyPROFILE_e         type );
+
+int    oyOSxVersionAtRuntime         ( void );
+
 #endif
 
 #ifdef __cplusplus

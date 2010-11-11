@@ -355,6 +355,38 @@ char * oyGetDefaultProfileNameOSX_   ( oyPROFILE_e         type )
   DBG_PROG_ENDE
   return name;
 }
+
+int      oyOSxVersionAtRuntime       ( void )
+{
+  const char * cmd[3] = {
+      "sw_vers -productVersion | sed 's/[.]/ /g' | awk '{print $1}'",
+      "sw_vers -productVersion | sed 's/[.]/ /g' | awk '{print $2}'",
+      "sw_vers -productVersion | sed 's/[.]/ /g' | awk '{print $3}'" };
+  char t[24];
+  size_t len = 0;
+  FILE * po = 0;
+  static int version[3] = {0,0,0};
+  int i;
+
+  if(version[0] == 0)
+  for(i = 0; i < 3; ++i)
+  {
+    len = 0;
+    po = popen(cmd[i], "r");
+    if(po)
+    {
+      len = fread( t, sizeof(char), 24, po );
+      t[23] = 0;
+      pclose(po);
+    }
+    if(len)
+    {
+      version[i] = atoi(t);
+    }
+  }
+
+  return version[0] * 10000 + version[1] * 100 + version[2];
+}
 #endif
 
 
