@@ -685,6 +685,12 @@ $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	$(TARGET)_policy.o \
 	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
 
+$(TARGET)-profiles:	$(TARGET)_profiles.o $(LIBSONAMEFULL)
+	echo Linking $@ ...
+	$(CC) -I./ $(CFLAGS) -o $@ \
+	$< \
+	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
+
 
 test2:	test2.o $(LIBSONAMEFULL)
 	echo Linking dynamic $@ ...
