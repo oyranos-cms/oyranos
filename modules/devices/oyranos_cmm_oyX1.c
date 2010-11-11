@@ -500,7 +500,7 @@ int            oyX1Configs_FromPattern (
       {
         if(devices && oyConfigs_Count(devices))
           error = oyX1Configs_Modify( devices, options );
-        else
+        else if(oy_debug)
           message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                 "No monitor devices found.\n Options:\n%s", OY_DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
