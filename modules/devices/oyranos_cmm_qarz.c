@@ -336,7 +336,7 @@ int          qarzDeviceFromName_     ( const char        * device_name,
       }
 
       if(error <= 0)
-        error = oyGetMonitorInfo_lib( device_name,
+        error = qarzGetMonitorInfo_lib( device_name,
                                       &manufacturer, &mnft, &model, &serial,
                                       &vendor, &display_geometry, &system_port,
                                       &host, &week, &year, &mnft_id, &model_id,
@@ -347,7 +347,7 @@ int          qarzDeviceFromName_     ( const char        * device_name,
       if(error != 0)
         message( oyMSG_WARN, (oyStruct_s*)options, 
                  OY_DBG_FORMAT_ "\n  Could not complete \"properties\" call.\n"
-                 "  oyGetMonitorInfo_lib returned with %s; device_name:"
+                 "  qarzGetMonitorInfo_lib returned with %s; device_name:"
                  " \"%s\"", OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
                  oyNoEmptyString_m_( device_name ) );
 
@@ -359,7 +359,7 @@ int          qarzDeviceFromName_     ( const char        * device_name,
       if(error != 0)
         message( oyMSG_WARN, (oyStruct_s*)options,
                  OY_DBG_FORMAT_ "\n  Could not complete \"properties\" call.\n"
-                 "  oyGetMonitorInfo_lib returned with %s %d; device_name:"
+                 "  qarzGetMonitorInfo_lib returned with %s %d; device_name:"
                  " \"%s\"",OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
                  error, oyNoEmptyString_m_( device_name ) );
 
@@ -474,7 +474,7 @@ int            qarzConfigs_FromPattern (
     if(oyOptions_FindString( options, "command", "list" ) ||
        oyOptions_FindString( options, "command", "properties" ))
     {
-      texts_n = oyGetAllScreenNames( device_name, &texts, allocateFunc );
+      texts_n = qarzGetAllScreenNames( device_name, &texts, allocateFunc );
 
       /** 3.1.1 iterate over all requested devices */
       for( i = 0; i < texts_n; ++i )

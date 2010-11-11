@@ -37,9 +37,41 @@ typedef struct {
   int              geo[6];             /**< display screen x y width height */
   CGDirectDisplayID id;                /**< osX monitor */
   int              screen;             /**< pos in osX CGGetActiveDisplayList */
-} oyMonitor_s;
+} qarzMonitor_s;
 
-CGDirectDisplayID  oyMonitor_device_ ( oyMonitor_s       * disp );
+qarzMonitor_s* qarzMonitor_newFrom_      ( const char        * display_name,
+                                       int                 expensive );
+int          qarzMonitor_release_      ( qarzMonitor_s      ** disp );
+
+const char*  qarzMonitor_name_         ( qarzMonitor_s       * disp );
+const char*  qarzMonitor_hostName_     ( qarzMonitor_s       * disp );
+const char*  qarzMonitor_identifier_   ( qarzMonitor_s       * disp );
+const char * qarzMonitor_systemPort_   ( qarzMonitor_s       * disp );
+oyBlob_s   * qarzMonitor_edid_         ( qarzMonitor_s       * disp );
+char*        qarzMonitor_screenNumber_ ( qarzMonitor_s       * disp );
+int          qarzMonitor_deviceScreenNumber_( qarzMonitor_s  * disp );
+int          qarzMonitor_number_       ( qarzMonitor_s       * disp );
+int          qarzMonitor_screen_       ( qarzMonitor_s       * disp );
+int          qarzMonitor_x_            ( qarzMonitor_s       * disp );
+int          qarzMonitor_y_            ( qarzMonitor_s       * disp );
+int          qarzMonitor_width_        ( qarzMonitor_s       * disp );
+int          qarzMonitor_height_       ( qarzMonitor_s       * disp );
+
+
+void         oyUnrollEdid1_          ( void              * edid,
+                                       char             ** manufacturer,
+                                       char             ** mnft,
+                                       char             ** model,
+                                       char             ** serial,
+                                       char             ** vendor,
+                                       uint32_t          * week,
+                                       uint32_t          * year,
+                                       uint32_t          * mnft_id,
+                                       uint32_t          * model_id,
+                                       double            * c,
+                                       oyAlloc_f           allocate_func);
+
+CGDirectDisplayID  qarzMonitor_device_ ( qarzMonitor_s       * disp );
 
 int          qarzDeviceFillEdid      ( oyConfig_s       ** device,
                                        oyPointer           edi,
@@ -58,6 +90,27 @@ char *       qarzGetMonitorProfile   ( const char        * device_name,
                                        uint32_t            flags,
                                        size_t            * size,
                                        oyAlloc_f           allocate_func );
+int      qarzGetAllScreenNames       ( const char        * display_name,
+                                       char            *** display_names,
+                                       oyAlloc_f           allocateFunc );
+
+int   qarzGetMonitorInfo_lib      (const char* display,
+                                   char**      manufacturer,
+                                       char             ** mnft,
+                                   char**      model,
+                                   char**      serial,
+                                       char             ** vendor,
+                                       char             ** display_geometry,
+                                       char             ** system_port,
+                                       char             ** host,
+                                       uint32_t          * week,
+                                       uint32_t          * year,
+                                       uint32_t          * mnft_id,
+                                       uint32_t          * model_id,
+                                       double            * colours,
+                                       oyBlob_s         ** edid,
+                                   oyAlloc_f     allocate_func,
+                                       oyStruct_s        * user_data );
 
 
 #ifdef __cplusplus

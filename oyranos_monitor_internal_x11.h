@@ -61,18 +61,50 @@ typedef struct {
   char               * system_port;    /**< the operating systems port name */
   oyBlob_s           * edid;           /**< edid for the device */
   oyX11INFO_SOURCE_e   info_source; /**< */
-} oyMonitor_s;
+} oyX1Monitor_s;
 
-Display*     oyMonitor_device_       ( oyMonitor_s       * disp );
+oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
+                                       int                 expensive );
+int          oyX1Monitor_release_      ( oyX1Monitor_s      ** disp );
+
+const char*  oyX1Monitor_name_         ( oyX1Monitor_s       * disp );
+const char*  oyX1Monitor_hostName_     ( oyX1Monitor_s       * disp );
+const char*  oyX1Monitor_identifier_   ( oyX1Monitor_s       * disp );
+const char * oyX1Monitor_systemPort_   ( oyX1Monitor_s       * disp );
+oyBlob_s   * oyX1Monitor_edid_         ( oyX1Monitor_s       * disp );
+char*        oyX1Monitor_screenNumber_ ( oyX1Monitor_s       * disp );
+int          oyX1Monitor_deviceScreenNumber_( oyX1Monitor_s  * disp );
+int          oyX1Monitor_number_       ( oyX1Monitor_s       * disp );
+int          oyX1Monitor_screen_       ( oyX1Monitor_s       * disp );
+int          oyX1Monitor_x_            ( oyX1Monitor_s       * disp );
+int          oyX1Monitor_y_            ( oyX1Monitor_s       * disp );
+int          oyX1Monitor_width_        ( oyX1Monitor_s       * disp );
+int          oyX1Monitor_height_       ( oyX1Monitor_s       * disp );
+
+
+void         oyUnrollEdid1_          ( void              * edid,
+                                       char             ** manufacturer,
+                                       char             ** mnft,
+                                       char             ** model,
+                                       char             ** serial,
+                                       char             ** vendor,
+                                       uint32_t          * week,
+                                       uint32_t          * year,
+                                       uint32_t          * mnft_id,
+                                       uint32_t          * model_id,
+                                       double            * c,
+                                       oyAlloc_f           allocate_func);
+
+Display*     oyX1Monitor_device_       ( oyX1Monitor_s       * disp );
 oyX11INFO_SOURCE_e 
-             oyMonitor_infoSource_   ( oyMonitor_s       * disp );
+             oyX1Monitor_infoSource_   ( oyX1Monitor_s       * disp );
 # ifdef HAVE_XRANDR
 XRRScreenResources *
-             oyMonitor_xrrResource_  ( oyMonitor_s       * disp );
-RROutput     oyMonitor_xrrOutput_    ( oyMonitor_s       * disp );
+             oyX1Monitor_xrrResource_  ( oyX1Monitor_s       * disp );
+RROutput     oyX1Monitor_xrrOutput_    ( oyX1Monitor_s       * disp );
 XRROutputInfo *
-             oyMonitor_xrrOutputInfo_( oyMonitor_s       * disp );
-int          oyMonitor_activeOutputs_( oyMonitor_s       * disp );
+             oyX1Monitor_xrrOutputInfo_( oyX1Monitor_s       * disp );
+int          oyX1Monitor_activeOutputs_( oyX1Monitor_s       * disp );
 # endif
 
 int          oyX1DeviceFillEdid      ( oyConfig_s       ** device,
@@ -92,6 +124,28 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
                                        uint32_t            flags,
                                        size_t            * size,
                                        oyAlloc_f           allocate_func );
+int      oyX1GetAllScreenNames       ( const char        * display_name,
+                                       char            *** display_names,
+                                       oyAlloc_f           allocateFunc );
+
+
+int   oyX1GetMonitorInfo_lib      (const char* display,
+                                   char**      manufacturer,
+                                       char             ** mnft,
+                                   char**      model,
+                                   char**      serial,
+                                       char             ** vendor,
+                                       char             ** display_geometry,
+                                       char             ** system_port,
+                                       char             ** host,
+                                       uint32_t          * week,
+                                       uint32_t          * year,
+                                       uint32_t          * mnft_id,
+                                       uint32_t          * model_id,
+                                       double            * colours,
+                                       oyBlob_s         ** edid,
+                                   oyAlloc_f     allocate_func,
+                                       oyStruct_s        * user_data );
 
 
 #ifdef __cplusplus

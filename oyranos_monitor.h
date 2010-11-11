@@ -29,28 +29,6 @@ extern "C" {
 
 /* monitor names */
 
-int   oyGetMonitorInfo_lib        (const char* display,
-                                   char**      manufacturer,
-                                       char             ** mnft,
-                                   char**      model,
-                                   char**      serial,
-                                       char             ** vendor,
-                                       char             ** display_geometry,
-                                       char             ** system_port,
-                                       char             ** host,
-                                       uint32_t          * week,
-                                       uint32_t          * year,
-                                       uint32_t          * mnft_id,
-                                       uint32_t          * model_id,
-                                       double            * colours,
-                                       oyBlob_s         ** edid,
-                                   oyAlloc_f     allocate_func,
-                                       oyStruct_s        * user_data );
-
-int      oyGetAllScreenNames         ( const char        * display_name,
-                                       char            *** display_names,
-                                       oyAlloc_f           allocateFunc );
-
 
 #ifdef __cplusplus
 } /* extern "C" */

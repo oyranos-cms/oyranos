@@ -45,20 +45,22 @@ char * printCFDictionary( CFDictionaryRef dict );
 #include "oyranos_helper.h"
 #include "oyranos_sentinel.h"
 
+#include "oyranos_monitor.c"
+
 /* ---  Helpers  --- */
 
 /* --- internal API definition --- */
 
 
 
-char**oyGetAllScreenNames_        (const char *display_name, int *n_scr );
-int   oyMonitor_getScreenGeometry_   ( oyMonitor_s       * disp );
+char**qarzGetAllScreenNames_        (const char *display_name, int *n_scr );
+int   qarzMonitor_getScreenGeometry_   ( qarzMonitor_s       * disp );
 /** @internal Display functions */
-const char* oyMonitor_name_( oyMonitor_s *disp ) { return disp->name; }
-const char* oyMonitor_hostName_( oyMonitor_s *disp ) { return disp->host; }
-const char* oyMonitor_identifier_( oyMonitor_s *disp ) { return disp->identifier; }
+const char* qarzMonitor_name_( qarzMonitor_s *disp ) { return disp->name; }
+const char* qarzMonitor_hostName_( qarzMonitor_s *disp ) { return disp->host; }
+const char* qarzMonitor_identifier_( qarzMonitor_s *disp ) { return disp->identifier; }
 /** @internal the screen appendment for the root window properties */
-char*       oyMonitor_screenIdentifier_( oyMonitor_s *disp )
+char*       qarzMonitor_screenIdentifier_( qarzMonitor_s *disp )
 { char *number = 0;
 
   oyAllocHelper_m_( number, char, 24, 0, return "");
@@ -66,86 +68,16 @@ char*       oyMonitor_screenIdentifier_( oyMonitor_s *disp )
   if( disp->geo[1] >= 1 && !disp->screen ) sprintf( number,"_%d", disp->geo[1]);
   return number;
 }
-int oyMonitor_deviceScreen_( oyMonitor_s *disp ) { return disp->screen; }
-int oyMonitor_number_( oyMonitor_s *disp ) { return disp->geo[0]; }
-int oyMonitor_screen_( oyMonitor_s *disp ) { return disp->geo[1]; }
-int oyMonitor_x_( oyMonitor_s *disp ) { return disp->geo[2]; }
-int oyMonitor_y_( oyMonitor_s *disp ) { return disp->geo[3]; }
-int oyMonitor_width_( oyMonitor_s *disp ) { return disp->geo[4]; }
-int oyMonitor_height_( oyMonitor_s *disp ) { return disp->geo[5]; }
-int   oyMonitor_getGeometryIdentifier_(oyMonitor_s       * disp );
-CGDirectDisplayID oyMonitor_device_( oyMonitor_s *disp ) { return disp->id; }
+int qarzMonitor_deviceScreen_( qarzMonitor_s *disp ) { return disp->screen; }
+int qarzMonitor_number_( qarzMonitor_s *disp ) { return disp->geo[0]; }
+int qarzMonitor_screen_( qarzMonitor_s *disp ) { return disp->geo[1]; }
+int qarzMonitor_x_( qarzMonitor_s *disp ) { return disp->geo[2]; }
+int qarzMonitor_y_( qarzMonitor_s *disp ) { return disp->geo[3]; }
+int qarzMonitor_width_( qarzMonitor_s *disp ) { return disp->geo[4]; }
+int qarzMonitor_height_( qarzMonitor_s *disp ) { return disp->geo[5]; }
+int   qarzMonitor_getGeometryIdentifier_(qarzMonitor_s       * disp );
+CGDirectDisplayID qarzMonitor_device_( qarzMonitor_s *disp ) { return disp->id; }
 
-
-/** @internal oyUnrollEdid1_ */
-void         oyUnrollEdid1_          ( void              * edid,
-                                       char             ** manufacturer,
-                                       char             ** mnft,
-                                       char             ** model,
-                                       char             ** serial,
-                                       char             ** vendor,
-                                       uint32_t          * week,
-                                       uint32_t          * year,
-                                       uint32_t          * mnft_id,
-                                       uint32_t          * model_id,
-                                       double            * c,
-                                       oyAlloc_f           allocate_func)
-{
-  int i, count = 0;
-  XcmEdidKeyValue_s * list = 0;
-  XCM_EDID_ERROR_e err = 0;
-
-  DBG_PROG_START
-
-  err = XcmEdidParse( edid, &list, &count );
-  if(err)
-    WARNc_S(XcmEdidErrorToString(err));
-
-  if(list)
-  for(i = 0; i < count; ++i)
-  {
-         if(manufacturer && oyStrcmp_( list[i].key, "manufacturer") == 0)
-      *manufacturer = oyStringCopy_(list[i].value.text, allocate_func);
-    else if(mnft && oyStrcmp_( list[i].key, "mnft") == 0)
-      *mnft = oyStringCopy_(list[i].value.text, allocate_func);
-    else if(model && oyStrcmp_( list[i].key, "model") == 0)
-      *model = oyStringCopy_(list[i].value.text, allocate_func);
-    else if(serial && oyStrcmp_( list[i].key, "serial") == 0)
-      *serial = oyStringCopy_(list[i].value.text, allocate_func);
-    else if(vendor && oyStrcmp_( list[i].key, "vendor") == 0)
-      *vendor = oyStringCopy_(list[i].value.text, allocate_func);
-    else if(week && oyStrcmp_( list[i].key, "week") == 0)
-      *week = list[i].value.integer;
-    else if(year && oyStrcmp_( list[i].key, "year") == 0)
-      *year = list[i].value.integer;
-    else if(mnft_id && oyStrcmp_( list[i].key, "mnft_id") == 0)
-      *mnft_id = list[i].value.integer;
-    else if(model_id && oyStrcmp_( list[i].key, "model_id") == 0)
-      *model_id = list[i].value.integer;
-    else if(c && oyStrcmp_( list[i].key, "redx") == 0)
-      c[0] = list[i].value.dbl;
-    else if(c && oyStrcmp_( list[i].key, "redy") == 0)
-      c[1] = list[i].value.dbl;
-    else if(c && oyStrcmp_( list[i].key, "greenx") == 0)
-      c[2] = list[i].value.dbl;
-    else if(c && oyStrcmp_( list[i].key, "greeny") == 0)
-      c[3] = list[i].value.dbl;
-    else if(c && oyStrcmp_( list[i].key, "bluex") == 0)
-      c[4] = list[i].value.dbl;
-    else if(c && oyStrcmp_( list[i].key, "bluey") == 0)
-      c[5] = list[i].value.dbl;
-    else if(c && oyStrcmp_( list[i].key, "whitex") == 0)
-      c[6] = list[i].value.dbl;
-    else if(c && oyStrcmp_( list[i].key, "whitey") == 0)
-      c[7] = list[i].value.dbl;
-    else if(c && oyStrcmp_( list[i].key, "gamma") == 0)
-      c[8] = list[i].value.dbl;
-  }
-
-  XcmEdidFree( &list );
-
-  DBG_PROG_ENDE
-}
 
 
 
@@ -171,7 +103,7 @@ OSErr oyCMIterateDeviceInfoProc          ( const CMDeviceInfo* dev_info,
 }
 #endif
 
-CGDirectDisplayID oyMonitor_nameToOsxID ( const char        * display_name )
+CGDirectDisplayID qarzMonitor_nameToOsxID ( const char        * display_name )
 {
 #if 0
   DisplayIDType screenID=0;
@@ -248,7 +180,7 @@ char *       qarzGetMonitorProfile   ( const char        * device_name,
   if(flags & 0x01 ||
      version < 100600)
   {
-    screenID = oyMonitor_nameToOsxID( device_name );
+    screenID = qarzMonitor_nameToOsxID( device_name );
 
     CMGetProfileByAVID( (CMDisplayIDType)screenID, &prof );
     NCMGetProfileLocation(prof, &loc, &locationSize );
@@ -285,14 +217,14 @@ char *       qarzGetMonitorProfile   ( const char        * device_name,
 }
 
 
-int      oyGetAllScreenNames         ( const char        * display_name,
+int      qarzGetAllScreenNames       ( const char        * display_name,
                                        char            *** display_names,
                                        oyAlloc_f           allocateFunc )
 {
   int i = 0;
   char** list = 0;
 
-  list = oyGetAllScreenNames_( display_name, &i );
+  list = qarzGetAllScreenNames_( display_name, &i );
 
   *display_names = 0;
 
@@ -307,7 +239,7 @@ int      oyGetAllScreenNames         ( const char        * display_name,
 }
 
 char**
-oyGetAllScreenNames_            (const char *display_name,
+qarzGetAllScreenNames_          (const char *display_name,
                                  int *n_scr)
 {
   int i = 0;
@@ -372,16 +304,16 @@ oyRectangle_s* qarzRectangle_FromDevice ( const char        * device_name )
 
   if(!error)
   {
-    oyMonitor_s * disp = 0;
+    qarzMonitor_s * disp = 0;
 
-    disp = oyMonitor_newFrom_( device_name, 0 );
+    disp = qarzMonitor_newFrom_( device_name, 0 );
     if(!disp)
       return 0;
 
-    rectangle = oyRectangle_NewWith( oyMonitor_x_(disp), oyMonitor_y_(disp),
-                           oyMonitor_width_(disp), oyMonitor_height_(disp), 0 );
+    rectangle = oyRectangle_NewWith( qarzMonitor_x_(disp), qarzMonitor_y_(disp),
+                           qarzMonitor_width_(disp), qarzMonitor_height_(disp), 0 );
 
-    oyMonitor_release_( &disp );
+    qarzMonitor_release_( &disp );
   }
 
   return rectangle;
@@ -393,15 +325,15 @@ oyRectangle_s* qarzRectangle_FromDevice ( const char        * device_name )
     gives a string back for search in the db
  */
 int
-oyMonitor_getGeometryIdentifier_         (oyMonitor_s  *disp)
+qarzMonitor_getGeometryIdentifier_         (qarzMonitor_s  *disp)
 {
   int len = 64;
 
   oyAllocHelper_m_( disp->identifier, char, len, 0, return 1 )
 
   oySnprintf4_( disp->identifier, len, "%dx%d+%d+%d", 
-            oyMonitor_width_(disp), oyMonitor_height_(disp),
-            oyMonitor_x_(disp), oyMonitor_y_(disp) );
+            qarzMonitor_width_(disp), qarzMonitor_height_(disp),
+            qarzMonitor_x_(disp), qarzMonitor_y_(disp) );
 
   return 0;
 }
@@ -449,7 +381,7 @@ int      qarzMonitorProfileSetup     ( const char        * display_name,
       oySnprintf1_( loc.u.pathLoc.path, 255, "%s", profile_fullname);
 
       err = CMOpenProfile ( &prof, &loc );
-      screenID = oyMonitor_nameToOsxID( display_name );
+      screenID = qarzMonitor_nameToOsxID( display_name );
 
       if( screenID && !err )
         err = CMSetProfileByAVID ( (CMDisplayIDType)screenID, prof );
@@ -477,7 +409,7 @@ int      qarzMonitorProfileUnset     ( const char        * display_name )
       CGDirectDisplayID screenID = 0;
 
 
-      screenID = oyMonitor_nameToOsxID( display_name );
+      screenID = qarzMonitor_nameToOsxID( display_name );
 
       if( screenID && !err )
         err = CMSetProfileByAVID ( (CMDisplayIDType)screenID, prof );
@@ -500,19 +432,19 @@ int      qarzMonitorProfileUnset     ( const char        * display_name )
  *  @since   2007/12/17 (Oyranos: 0.1.8)
  *  @date    2009/04/01
  */
-oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
+qarzMonitor_s* qarzMonitor_newFrom_      ( const char        * display_name,
                                        int                 expensive )
 {
   int error = 0;
   int i = 0;
-  oyMonitor_s * disp = 0;
+  qarzMonitor_s * disp = 0;
 
   DBG_PROG_START
 
-  disp = oyAllocateFunc_( sizeof(oyMonitor_s) );
+  disp = oyAllocateFunc_( sizeof(qarzMonitor_s) );
   error = !disp;
   if(!error)
-    error = !memset( disp, 0, sizeof(oyMonitor_s) );
+    error = !memset( disp, 0, sizeof(qarzMonitor_s) );
 
   disp->type_ = oyOBJECT_MONITOR_S;
 
@@ -535,20 +467,20 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
   for( i = 0; i < 6; ++i )
     disp->geo[i] = -1;
 
-  disp->id = oyMonitor_nameToOsxID( display_name );
+  disp->id = qarzMonitor_nameToOsxID( display_name );
 
   if( !error &&
-      oyMonitor_getScreenGeometry_( disp ) != 0 )
+      qarzMonitor_getScreenGeometry_( disp ) != 0 )
     error = 1;
 
   if( error <= 0 )
-    error = oyMonitor_getGeometryIdentifier_( disp );
+    error = qarzMonitor_getGeometryIdentifier_( disp );
 
   /*if( !disp->system_port || !oyStrlen_( disp->system_port ) )
-  if( 0 <= oyMonitor_screen_( disp ) && oyMonitor_screen_( disp ) < 10000 )
+  if( 0 <= qarzMonitor_screen_( disp ) && qarzMonitor_screen_( disp ) < 10000 )
   {
     disp->system_port = (char*)oyAllocateWrapFunc_( 12, oyAllocateFunc_ );
-    oySprintf_( disp->system_port, "%d", oyMonitor_screen_( disp ) );
+    oySprintf_( disp->system_port, "%d", qarzMonitor_screen_( disp ) );
   }*/
 
   DBG_PROG_ENDE
@@ -564,7 +496,7 @@ oyMonitor_s* oyMonitor_newFrom_      ( const char        * display_name,
  *  @since   2007/00/00 (Oyranos: 0.1.8)
  *  @date    2009/04/01
  */
-int  oyMonitor_getScreenGeometry_    ( oyMonitor_s       * disp )
+int  qarzMonitor_getScreenGeometry_    ( qarzMonitor_s       * disp )
 {
   int error = 0;
 
@@ -574,7 +506,7 @@ int  oyMonitor_getScreenGeometry_    ( oyMonitor_s       * disp )
     disp->geo[0] = 0; /* @todo how is display management handled in osX? */
     disp->geo[1] = disp->screen;
 
-    r = CGDisplayBounds( oyMonitor_device_( disp ) );
+    r = CGDisplayBounds( qarzMonitor_device_( disp ) );
 
     disp->geo[2] = r.origin.x;
     disp->geo[3] = r.origin.y;
@@ -592,11 +524,11 @@ int  oyMonitor_getScreenGeometry_    ( oyMonitor_s       * disp )
  *  @since   2007/12/17 (Oyranos: 0.1.8)
  *  @date    2009/04/01
  */
-int          oyMonitor_release_      ( oyMonitor_s      ** obj )
+int          qarzMonitor_release_      ( qarzMonitor_s      ** obj )
 {
   int error = 0;
   /* ---- start of common object destructor ----- */
-  oyMonitor_s * s = 0;
+  qarzMonitor_s * s = 0;
   
   if(!obj || !*obj)
     return 0;
@@ -605,7 +537,7 @@ int          oyMonitor_release_      ( oyMonitor_s      ** obj )
   
   if( s->type_ != oyOBJECT_MONITOR_S)
   { 
-    WARNc_S("Attempt to release a non oyMonitor_s object.")
+    WARNc_S("Attempt to release a non qarzMonitor_s object.")
     return 1;
   }
   /* ---- end of common object destructor ------- */
@@ -641,7 +573,7 @@ int          oyMonitor_release_      ( oyMonitor_s      ** obj )
  *
  */
 int
-oyGetMonitorInfo_lib              (const char* display_name,
+qarzGetMonitorInfo_lib            (const char* display_name,
                                    char**      manufacturer,
                                        char             ** mnft,
                                    char**      model,
@@ -665,10 +597,10 @@ oyGetMonitorInfo_lib              (const char* display_name,
 
   {
     char *t;
-    oyMonitor_s * disp = 0;
+    qarzMonitor_s * disp = 0;
     /*oyBlob_s * prop = 0;*/
 
-    disp = oyMonitor_newFrom_( display_name, 0 );
+    disp = qarzMonitor_newFrom_( display_name, 0 );
     if(!disp)
       return 1;
     if(!allocate_func)
@@ -682,7 +614,7 @@ oyGetMonitorInfo_lib              (const char* display_name,
       CFRange cf_range = {0,256};
       int count = 0;
       io_service_t io_service = CGDisplayIOServicePort (
-                                                    oyMonitor_device_( disp ) );
+                                                    qarzMonitor_device_( disp ) );
 
       t = 0;
       dict = IODisplayCreateInfoDictionary( io_service, 0 );
@@ -732,18 +664,18 @@ oyGetMonitorInfo_lib              (const char* display_name,
     }
     else
       WARNcc3_S( user_data, "\n  %s: \"%s\"\n  %s",
-               _("no oyMonitor_s from"),
+               _("no qarzMonitor_s from"),
                display_name,
                _("Cant read hardware information from device."))
 
 
     if( display_geometry )
-      *display_geometry = oyStringCopy_( oyMonitor_identifier_( disp ),
+      *display_geometry = oyStringCopy_( qarzMonitor_identifier_( disp ),
                                          allocate_func );
 
 
     err = 0;
-    oyMonitor_release_( &disp );
+    qarzMonitor_release_( &disp );
   }
 
   if(*manufacturer)
