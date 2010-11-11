@@ -645,10 +645,11 @@ char*              oyStringAppend_   ( const char        * text,
                       allocateFunc, return 0 );
 
     if(text_len)
-      oySprintf_( text_copy, "%s", text );
+      memcpy( text_copy, text, text_len );
       
     if(append_len)
-      oySprintf_( &text_copy[text_len], "%s", append );
+      memcpy( &text_copy[text_len], append, append_len );
+    text_copy[text_len+append_len] = '\000';
   }
 
   return text_copy;
@@ -1508,7 +1509,7 @@ char**  oyXDGPathsGet_( int             * count,
 char * oyPathContructAndTest_(char * path_, const char * subdir)
 {
   char * text = 0, * tmp = 0;
-  int subdir_len = 0;
+  int subdir_len = 0, len;
 
   if(!path_)
     return 0;
@@ -1516,14 +1517,13 @@ char * oyPathContructAndTest_(char * path_, const char * subdir)
   if(subdir)
     subdir_len = oyStrlen_(subdir);
 
-  oyAllocHelper_m_( text, char, MAX_PATH,
-                    oyAllocateFunc_, return 0);
-  if(subdir && (oyStrlen_(path_) + subdir_len + 10) < MAX_PATH)
-     oySprintf_( text,
-              "%s%s%s", path_, OY_SLASH, subdir );
-  else if((oyStrlen_(path_) + subdir_len + 10) < MAX_PATH)
-    oySprintf_( text,
-                "%s", path_ );
+  len = subdir_len + strlen(path_) + 1;
+  STRING_ADD( text, path_ );
+  if(subdir)
+  {
+     STRING_ADD( text, OY_SLASH );
+     STRING_ADD( text, subdir );
+  }
 
   tmp = oyResolveDirFileName_( text );
   oyDeAllocateFunc_(text); text = tmp; tmp = 0;
@@ -1568,7 +1568,7 @@ oyDataPathsGet_       (int             * count,
     char ** xdg_paths = 0;
     char ** tmp_paths = 0;
     char * text = 0;
-    char * xdg_sub = 0;
+    char * xdg_sub = 0, * x = 0;
 
     init = 1;
 
@@ -1584,7 +1584,8 @@ oyDataPathsGet_       (int             * count,
 
     for(i = 0; i < xdg_n; ++i)
     {
-      text = oyPathContructAndTest_(xdg_paths[i], xdg_sub);
+      x = xdg_paths[i];
+      text = oyPathContructAndTest_(x, xdg_sub);
       if(text)
         tmp_paths[tmp_n++] = text;
     }
