@@ -551,19 +551,25 @@ oyResolveDirFileName_ (const char* name)
     oySprintf_ (newName, "%s%s", home, &name[0]+1);
 
   } else {
-    oyAllocHelper_m_( newName, char, MAX_PATH, oyAllocateFunc_, fprintf(stderr,"oyranos_io.c:371 oyResolveDirFileName_() Could not allocate enough memory.\n"); return 0 );
+    len = strlen(name)+1;
+    oyAllocHelper_m_( newName, char, len, oyAllocateFunc_, fprintf(stderr,"oyranos_io.c:554 oyResolveDirFileName_() Could not allocate enough memory.\n"); return 0 );
     oySprintf_ (newName, "%s", name);
 
     /* relative names - where the first sign is no directory separator */
     if (newName[0] != OY_SLASH_C)
     {
       char* cn = 0;
+      const char * pw = getenv("PWD");
 
-      oyAllocHelper_m_( cn, char, MAX_PATH, oyAllocateFunc_, fprintf(stderr,"oyranos_io.c:379 oyResolveDirFileName_() Could not allocate 4096 byte of memory.\n"); return 0 );
-      oySprintf_ (cn, "%s%s%s", getenv("PWD"), OY_SLASH, name);
+      len += strlen(pw) + 10;
+
+      STRING_ADD(cn, pw);
+      STRING_ADD(cn, OY_SLASH);
+      STRING_ADD(cn, name);
       DBG_MEM1_S("canonoical %s ", cn)
-      oySprintf_ (newName, "%s", cn);
-      if(cn) oyDeAllocateFunc_(cn); cn = 0;
+      oyFree_m_(newName);
+      STRING_ADD(newName, cn);
+      oyFree_m_(cn);
     }
   }
 
