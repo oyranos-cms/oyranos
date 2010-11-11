@@ -239,20 +239,35 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
   int err = 0;
   char * block = NULL;
   UInt32 locationSize = sizeof(CMProfileLocation);
+  int version = oyOSxVersionAtRuntime();
 
   DBG_PROG_START
 
-  screenID = oyMonitor_nameToOsxID( device_name );
+  /* Since osX SL DeviceRGB is set to sRGB. And we handle the native profile 
+   * like the net-color one */
+  if(flags & 0x01 ||
+     version < 100600)
+  {
+    screenID = oyMonitor_nameToOsxID( device_name );
 
-  CMGetProfileByAVID( (CMDisplayIDType)screenID, &prof );
-  NCMGetProfileLocation(prof, &loc, &locationSize );
+    CMGetProfileByAVID( (CMDisplayIDType)screenID, &prof );
+    NCMGetProfileLocation(prof, &loc, &locationSize );
 
-  err = oyGetProfileBlockOSX (prof, &block, size, allocate_func);
-  moni_profile = block;
-  if (prof) CMCloseProfile(prof);
+    err = oyGetProfileBlockOSX (prof, &block, size, allocate_func);
+    moni_profile = block;
+    if (prof) CMCloseProfile(prof);
+  }
+  else
+  {
+    oyProfile_s * p = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+    block = oyProfile_GetMem( p, size, 0, allocate_func );
+    oyProfile_Release( &p );
+    moni_profile = block;
+  }
+
 
 #if 0
-  {
+{
     UInt32 seed = 0,
            count = 0;
     char * my_data = 0;
