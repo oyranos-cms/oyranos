@@ -995,7 +995,7 @@ oyChangeScreenName_                (const char* display_name,
       return host_name;
     }
 
-    if( !strchr( display_name, '.' ) )
+    if( !strchr( txt, '.' ) )
     {
       sprintf( &host_name[ strlen(host_name) ], ".%d", screen );
     } else
