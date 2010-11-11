@@ -54,7 +54,10 @@ int main( int argc , char** argv )
   int net_color_region_target = 0;
   int device_meta_tag = 0;
   char * add_edid = 0,
-       * prof_name = 0;
+       * prof_name = 0,
+       * module_name = 0;
+  char * device_class = 0;
+  int list_modules = 0;
 
   char *ptr = NULL;
   int x = 0, y = 0;
@@ -181,6 +184,10 @@ int main( int argc , char** argv )
                         { OY_PARSE_STRING_ARG2(add_edid,"add-edid"); break; }
                         else if(OY_IS_ARG("profile"))
                         { OY_PARSE_STRING_ARG2(prof_name, "profile"); break; }
+                        else if(OY_IS_ARG("modules"))
+                        { list_modules = 1; i=100; break; }
+                        else if(OY_IS_ARG("module"))
+                        { OY_PARSE_STRING_ARG2(module_name, "module"); break; }
                         else if(OY_IS_ARG("list"))
                         { list = 1; monitor_profile = 0; i=100; break; }
                         else if(OY_IS_ARG("verbose"))
@@ -211,11 +218,15 @@ int main( int argc , char** argv )
                         printf("  %s\n",               _("List devices:"));
                         printf("      %s -l\n",        argv[0]);
                         printf("\n");
+                        printf("  %s\n",               _("List modules:"));
+                        printf("      %s --modules\n",        argv[0]);
+                        printf("\n");
                         printf("  %s\n",               _("Dump data:"));
                         printf("      %s -f=[edid|icc|edid_icc] -o=edid.bin -x=pos -y=pos [-m]\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("General options:"));
                         printf("      %s\n",           _("-v verbose"));
+                        printf("      %s\n",           _("--module name"));
                         printf("\n");
                         printf(_("For more informations read the man page:"));
                         printf("\n");
@@ -241,17 +252,37 @@ int main( int argc , char** argv )
     if(oy_debug) printf( "%s\n", argv[1] );
 
     if(!erase && !list && !database && !setup && !server && !format &&
-       !add_edid)
+       !add_edid && !list_modules)
       setup = 1;
 
     oy_display_name = oyGetDisplayNameFromPosition( display_name, x,y,
                                                     oyAllocFunc);
 
+    STRING_ADD( device_class, "monitor" );
+    if(module_name)
+    {
+      STRING_ADD( device_class, ".");
+      STRING_ADD( device_class, module_name);
+    }
+
+    if(list_modules)
+    {
+       uint32_t count = 0,
+              * rank_list = 0;
+      char ** texts = 0;
+
+      error = oyConfigDomainList( device_class, &texts, &count,
+                                  &rank_list, 0 );
+
+      for(i = 0; i < count; ++i)
+        printf("%s\n", strstr(texts[i],"monitor.") + 8 );
+      return error;
+    }
+
     if(!monitor_profile && !erase && !list && !setup && !format && !add_edid)
     {
       char * fn = 0;
-
-      error = oyDeviceGet( OY_TYPE_STD, "monitor", oy_display_name, 0,
+      error = oyDeviceGet( OY_TYPE_STD, device_class, oy_display_name, 0,
                            &device );
       if(net_color_region_target)
         error = oyOptions_SetFromText( &options,
@@ -308,7 +339,7 @@ int main( int argc , char** argv )
                                        "//"OY_TYPE_STD"/config/display_name",
                                        display_name, OY_CREATE_NEW );
 
-      error = oyDevicesGet( 0, "monitor", options, &devices );
+      error = oyDevicesGet( 0, device_class, options, &devices );
 
       n = oyConfigs_Count( devices );
       if(!error)
@@ -424,7 +455,7 @@ int main( int argc , char** argv )
       error = oyOptions_MoveInStruct( &options,
                                      "//" OY_TYPE_STD "/config/edid",
                                       (oyStruct_s**)&edid, OY_CREATE_NEW );
-      error = oyDeviceGet( OY_TYPE_STD, "monitor", ":0.0", options, &device );
+      error = oyDeviceGet( OY_TYPE_STD, device_class, ":0.0", options, &device);
       oyConfig_Release( &device );
       prof = (oyProfile_s*)oyOptions_GetType( options, -1, "icc_profile",
                                               oyOBJECT_PROFILE_S );
@@ -451,7 +482,7 @@ int main( int argc , char** argv )
       error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
-      error = oyDevicesGet( 0, "monitor", options, &devices );
+      error = oyDevicesGet( 0, device_class, options, &devices );
 
 
       n = oyConfigs_Count( devices );
@@ -528,7 +559,7 @@ int main( int argc , char** argv )
 
     /* make shure the display name is correct including the screen */
     {
-      error = oyDeviceGet( OY_TYPE_STD, "monitor", oy_display_name, 0,
+      error = oyDeviceGet( OY_TYPE_STD, device_class, oy_display_name, 0,
                            &device );
       if(monitor_profile)
         oyDeviceSetProfile( device, monitor_profile );
@@ -552,7 +583,7 @@ int main( int argc , char** argv )
     /* we want a fuzzy look at our display, not as narrow as "device_name"*/
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/display_name",
                                    display_name, OY_CREATE_NEW );
-    error = oyConfigs_FromDeviceClass ( OY_TYPE_STD, "monitor", options,
+    error = oyConfigs_FromDeviceClass ( OY_TYPE_STD, device_class, options,
                                             &devices, 0 );
 
     n = oyConfigs_Count( devices );

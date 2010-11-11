@@ -10,7 +10,9 @@ oyranos-monitor \- Oyranos CMS monitor configuration
 .fi 
 \fBoyranos-monitor\fR [ -e [-x num] [-y num] [-v] ]
 .fi 
-\fBoyranos-monitor\fR [ -l [-v] ]
+\fBoyranos-monitor\fR [ -l [-v] [ --module \fIMODULENAME\R ] ]
+.fi 
+\fBoyranos-monitor\fR [ --modules [-v] ]
 .fi 
 \fBoyranos-monitor\fR [ -f [edid|icc|edid_icc] -o \fIOUT_FILENAME\fR [-x num] [-y num] [-m] [-v] ]
 .SH DESCRIPTION
@@ -39,6 +41,9 @@ query one profile name from the Oyranos device profile data base
 .B \-l, \-\-list
 list devices visible to Oyranos
 .TP
+.B \-\-modules
+list monitor modules
+.TP
 .B \-f, \-\-format [edid|icc|edid_icc]
 Select a data format. Possible are \fBedid\fR for server side EDID data, \fBicc\fR for a server side ICC profile and \fBedid_icc\fR for a ICC profile created from server side EDID. Without the -o/--ouput option the string followed this option will be used as filename.
 
@@ -55,9 +60,13 @@ Embedd EDID keys to a ICC profile as meta tag. Requires --profile.
 .TP
 .B \-\-profile \fIICC_FILENAME\fR
 ICC profile.
+.SH GENERAL OPTIONS
 .TP
 .B \-v, \-\-verbose
 increase verbosity
+.TP
+.B \-\-module
+select module
 .SH ENVIRONMENT
 .TP
 .B DISPLAY
@@ -102,6 +111,10 @@ Query the Oyranos device data base profile on the local computer:
 .TP
 List all Oyranos monitor devices:
 .B oyranos-monitor -l
+.PP 
+.TP
+List all monitor devices through the oyX1 module:
+.B oyranos-monitor -l --module oyX1
 .PP 
 .TP
 Dump data in the format following the -f option:
