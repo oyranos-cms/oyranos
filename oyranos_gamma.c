@@ -518,7 +518,8 @@ int main( int argc , char** argv )
           oyConfig_Release( &c );
         }
 
-        fprintf( stdout, "%s\n", report );
+        if(report)
+          fprintf( stdout, "%s\n", report );
         oyDeAllocFunc( report ); report = 0;
       }
       oyConfigs_Release( &devices );
