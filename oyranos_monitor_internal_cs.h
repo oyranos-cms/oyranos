@@ -41,6 +41,24 @@ typedef struct {
 
 CGDirectDisplayID  oyMonitor_device_ ( oyMonitor_s       * disp );
 
+int          qarzDeviceFillEdid      ( oyConfig_s       ** device,
+                                       oyPointer           edi,
+                                       size_t              edi_size,
+                                       const char        * device_name,
+                                       const char        * host,
+                                       const char        * display_geometry,
+                                       const char        * system_port,
+                                       oyOptions_s       * options );
+int          qarzMonitorProfileSetup ( const char        * display_name,
+                                       const char        * profil_name );
+int          qarzMonitorProfileUnset ( const char        * display_name );
+oyRectangle_s * qarzRectangle_FromDevice (
+                                       const char        * device_name );
+char *       qarzGetMonitorProfile   ( const char        * device_name,
+                                       uint32_t            flags,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func );
+
 
 #ifdef __cplusplus
 } /* extern "C" */

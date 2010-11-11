@@ -1,4 +1,4 @@
-/** @file oyranos_cmm_oyX1.c
+/** @file oyranos_cmm_qarz.c
  *
  *  Oyranos is an open source Colour Management System 
  *
@@ -36,8 +36,8 @@
 
 /* OYX1_MONITOR_REGISTRATION */
 
-int                oyX1CMMInit       ( );
-int            oyX1CMMMessageFuncSet ( oyMessage_f         message_func );
+int                qarzCMMInit       ( );
+int            qarzCMMMessageFuncSet ( oyMessage_f         message_func );
 
 /* OYX1_MONITOR_REGISTRATION -------------------------------------------------*/
 
@@ -45,22 +45,22 @@ int            oyX1CMMMessageFuncSet ( oyMessage_f         message_func );
 
 oyMessage_f message = 0;
 
-extern oyCMMapi8_s oyX1_api8;
-oyRankPad oyX1_rank_map[];
+extern oyCMMapi8_s qarz_api8;
+oyRankPad qarz_rank_map[];
 
-int          oyX1DeviceFromName_     ( const char        * device_name,
+int          qarzDeviceFromName_     ( const char        * device_name,
                                        oyOptions_s       * options,
                                        oyConfig_s       ** device );
-int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
+int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
                                        oyOptions_s       * options );
-const char * oyX1GetText             ( const char        * select,
+const char * qarzGetText             ( const char        * select,
                                        oyNAME_e            type );
-const char * oyX1Api8UiGetText       ( const char        * select,
+const char * qarzApi8UiGetText       ( const char        * select,
                                        oyNAME_e            type );
 
 /* --- implementations --- */
 
-int                oyX1CMMInit       ( oyStruct_s        * filter )
+int                qarzCMMInit       ( oyStruct_s        * filter )
 {
   int error = 0;
   return error;
@@ -82,14 +82,14 @@ void               oyCMMdeallocateFunc ( oyPointer         mem )
     free(mem);
 }*/
 
-/** @func  oyX1CMMMessageFuncSet
+/** @func  qarzCMMMessageFuncSet
  *  @brief API requirement
  *
  *  @version Oyranos: 0.1.8
  *  @date    2007/12/12
  *  @since   2007/12/12 (Oyranos: 0.1.8)
  */
-int            oyX1CMMMessageFuncSet ( oyMessage_f         message_func )
+int            qarzCMMMessageFuncSet ( oyMessage_f         message_func )
 {
   message = message_func;
   return 0;
@@ -107,7 +107,7 @@ int            oyX1CMMMessageFuncSet ( oyMessage_f         message_func )
                                        num, OY_CREATE_NEW ); \
         }
 
-const char * oyX1_help_list = 
+const char * qarz_help_list = 
       "The presence of option \"command=list\" will provide a list of \n"
       " available devices. The actual device name can be found in option\n"
       " \"device_name\". The call is as lightwight as possible.\n"
@@ -135,7 +135,7 @@ const char * oyX1_help_list =
       " \"list\" is normally a cheap call, see oyNAME_DESCRIPTION\n"
       " above.\n"
       " Informations are stored in the returned oyConfig_s::data member.";
-const char * oyX1_help_properties =
+const char * qarz_help_properties =
       "The presence of option \"command=properties\" will provide the devices\n"
       " properties. Requires one device identifier returned with the \n"
       " \"list\" option. The properties may cover following entries:\n"
@@ -166,18 +166,18 @@ const char * oyX1_help_properties =
       " The \"properties\" call might be a expensive one.\n"
       " Informations are stored in the returned oyConfig_s::backend_core member."
 ;
-const char * oyX1_help_setup =
+const char * qarz_help_setup =
       "The presence of option \"command=setup\" will setup the device from a\n"
       " profile.\n"
       " The option \"device_name\" must be present, see \"list\" above.\n"
       " The option \"profile_name\" must be present, containing a ICC profile\n"      " file name."
 ;
-const char * oyX1_help_unset =
+const char * qarz_help_unset =
       "The presence of call \"command=unset\" will invalidate a profile of\n"
       " a device.\n"
       " The option \"device_name\" must be present, see \"list\" above.\n"
 ;
-const char * oyX1_help_add_edid_to_icc =
+const char * qarz_help_add_edid_to_icc =
       "The presence of option \"command=add-edid-meta-to-icc\" will embedds device\n"
       " informations from a provided EDID block to a provided ICC profile.\n"
       " The option \"edid\" must be present and contain an\n"
@@ -185,20 +185,20 @@ const char * oyX1_help_add_edid_to_icc =
       " The bidirectional option \"icc_profile\" options must be present,\n"
       " containing a oyProfile_s object.\n"
 ;
-const char * oyX1_help =
+const char * qarz_help =
       "The following help text informs about the communication protocol."
 ;
 
-void     oyX1ConfigsUsage( oyStruct_s        * options )
+void     qarzConfigsUsage( oyStruct_s        * options )
 {
     /** oyMSG_WARN shall make shure our message will be visible. */
     message( oyMSG_WARN, options, OY_DBG_FORMAT_ "\n %s",
-             OY_DBG_ARGS_, oyX1_help );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_list );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_properties );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_setup );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_unset );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_add_edid_to_icc );
+             OY_DBG_ARGS_, qarz_help );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__, qarz_help_list );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__, qarz_help_properties );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__, qarz_help_setup );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__, qarz_help_unset );
+    message( oyMSG_WARN, options, "%s()\n %s", __func__, qarz_help_add_edid_to_icc );
 #if 0
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"get\" will provide a oyProfile_s of the\n"
@@ -210,7 +210,7 @@ void     oyX1ConfigsUsage( oyStruct_s        * options )
   return;
 }
 
-int          oyX1DeviceFillEdid      ( oyConfig_s       ** device,
+int          qarzDeviceFillEdid      ( oyConfig_s       ** device,
                                        oyPointer           edi,
                                        size_t              edi_size,
                                        const char        * device_name,
@@ -308,7 +308,7 @@ int          oyX1DeviceFillEdid      ( oyConfig_s       ** device,
   return error;
 }
 
-int          oyX1DeviceFromName_     ( const char        * device_name,
+int          qarzDeviceFromName_     ( const char        * device_name,
                                        oyOptions_s       * options,
                                        oyConfig_s       ** device )
 {
@@ -352,7 +352,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
                  oyNoEmptyString_m_( device_name ) );
 
       if(error <= 0 && edid)
-        error = oyX1DeviceFillEdid( device, edid->ptr, edid->size,
+        error = qarzDeviceFillEdid( device, edid->ptr, edid->size,
                                     device_name,
                                     host, display_geometry, system_port,
                                     options );
@@ -393,14 +393,14 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
 }
 
 
-/** Function oyX1Configs_FromPattern
- *  @brief   oyX1 oyCMMapi8_s Xorg monitors
+/** Function qarzConfigs_FromPattern
+ *  @brief   qarz oyCMMapi8_s Xorg monitors
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/01/28
  */
-int            oyX1Configs_FromPattern (
+int            qarzConfigs_FromPattern (
                                        const char        * registration,
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** s )
@@ -416,7 +416,7 @@ int            oyX1Configs_FromPattern (
              * oprofile_name = 0,
              * odisplay_name = 0,
              * device_name = 0;
-  int rank = oyFilterRegistrationMatch( oyX1_api8.registration, registration,
+  int rank = oyFilterRegistrationMatch( qarz_api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
   oyAlloc_f allocateFunc = malloc;
   const char * tmp = 0;
@@ -425,7 +425,7 @@ int            oyX1Configs_FromPattern (
   /** 1. In case no option is provided or something fails, show a message. */
   if(!options || !oyOptions_Count( options ))
   {
-    oyX1ConfigsUsage( (oyStruct_s*)options );
+    qarzConfigsUsage( (oyStruct_s*)options );
     return 0;
   }
 
@@ -499,7 +499,7 @@ int            oyX1Configs_FromPattern (
       if(error <= 0)
       {
         if(devices && oyConfigs_Count(devices))
-          error = oyX1Configs_Modify( devices, options );
+          error = qarzConfigs_Modify( devices, options );
         else
           message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                 "No monitor devices found.\n Options:\n%s", OY_DBG_ARGS_,
@@ -529,7 +529,7 @@ int            oyX1Configs_FromPattern (
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
       else
-        error = oyX1MonitorProfileSetup( odevice_name, oprofile_name );
+        error = qarzMonitorProfileSetup( odevice_name, oprofile_name );
 
       goto cleanup;
 
@@ -546,7 +546,7 @@ int            oyX1Configs_FromPattern (
                 OY_DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
                 );
       else
-        error = oyX1MonitorProfileUnset( odevice_name );
+        error = qarzMonitorProfileUnset( odevice_name );
 
       goto cleanup;
     }
@@ -555,7 +555,7 @@ int            oyX1Configs_FromPattern (
     if(error <= 0 &&
        oyOptions_FindString( options, "command", "help" ))
     {
-      oyX1ConfigsUsage( (oyStruct_s*)options );
+      qarzConfigsUsage( (oyStruct_s*)options );
 
       goto cleanup;
     }
@@ -583,11 +583,11 @@ int            oyX1Configs_FromPattern (
                 "\"edid\" or \"icc_profile\" missed:\n%s",
                 OY_DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
                 );
-        oyX1ConfigsUsage( (oyStruct_s*)options );
+        qarzConfigsUsage( (oyStruct_s*)options );
       }
       else
       {
-        error = oyX1DeviceFillEdid( &device, edid->ptr, edid->size,
+        error = qarzDeviceFillEdid( &device, edid->ptr, edid->size,
                                     NULL,
                                     NULL, NULL, NULL,
                                     options );
@@ -604,7 +604,7 @@ int            oyX1Configs_FromPattern (
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
 
-  oyX1ConfigsUsage( (oyStruct_s*)options );
+  qarzConfigsUsage( (oyStruct_s*)options );
 
 
   cleanup:
@@ -616,14 +616,14 @@ int            oyX1Configs_FromPattern (
 }
 
 
-/** Function oyX1Configs_Modify
- *  @brief   oyX1 oyCMMapi8_s Xorg monitor manipulation
+/** Function qarzConfigs_Modify
+ *  @brief   qarz oyCMMapi8_s Xorg monitor manipulation
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/08/21
  */
-int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
+int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
                                        oyOptions_s       * options )
 {
   oyConfig_s * device = 0;
@@ -646,7 +646,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
   /** 1. In case no option is provided or something fails, show a message. */
   if(!options || !oyOptions_Count( options ))
   {
-    oyX1ConfigsUsage( (oyStruct_s*)options );
+    qarzConfigsUsage( (oyStruct_s*)options );
     return 0;
   }
 
@@ -654,7 +654,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
   for( i = 0; i < n; ++i )
   {
     device = oyConfigs_Get( devices, i );
-    rank += oyFilterRegistrationMatch( oyX1_api8.registration,
+    rank += oyFilterRegistrationMatch( qarz_api8.registration,
                                        device->registration,
                                        oyOBJECT_CMM_API8_S );
     oyConfig_Release( &device );
@@ -673,7 +673,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
       for( i = 0; i < n; ++i )
       {
         device = oyConfigs_Get( devices, i );
-        rank = oyFilterRegistrationMatch( oyX1_api8.registration,
+        rank = oyFilterRegistrationMatch( qarz_api8.registration,
                                           device->registration,
                                           oyOBJECT_CMM_API8_S );
         if(!rank)
@@ -691,7 +691,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
            oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
           has = 0;
-          rect = oyX1Rectangle_FromDevice( device_name );
+          rect = qarzRectangle_FromDevice( device_name );
           if(!rect)
           {
             WARNc1_S( "Could not obtain rectangle information for %s",
@@ -733,7 +733,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                      device_name );
             flags |= 0x01;
           }
-          data = oyX1GetMonitorProfile( device_name, flags, &size,
+          data = qarzGetMonitorProfile( device_name, flags, &size,
                                         allocateFunc );
 
 
@@ -775,7 +775,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                                      OYX1_MONITOR_REGISTRATION OY_SLASH
                                      "edid",
                                      "yes", OY_CREATE_NEW );
-              error = oyX1DeviceFromName_( device_name, options, &device );
+              error = qarzDeviceFromName_( device_name, options, &device );
               o_tmp = oyConfig_Find( device, "colour_matrix."
                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma");
             }
@@ -930,11 +930,11 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
         if(!oyOptions_FindString( options, "icc_profile.fallback", 0 ) &&
            (oyOptions_FindString( options, "command", "properties" ) ||
             oyOptions_FindString( options, "edid", "refresh" )))
-          error = oyX1DeviceFromName_( device_name, options, &device );
+          error = qarzDeviceFromName_( device_name, options, &device );
 
         /** 3.1.6 add the rank scheme to combine properties */
         if(error <= 0 && !device->rank_map)
-          device->rank_map = oyRankMapCopy( oyX1_rank_map,
+          device->rank_map = oyRankMapCopy( qarz_rank_map,
                                             device->oy_->allocateFunc_ );
 
         oyConfig_Release( &device );
@@ -954,7 +954,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
       for( i = 0; i < n; ++i )
       {
         device = oyConfigs_Get( devices, i );
-        rank = oyFilterRegistrationMatch( oyX1_api8.registration,
+        rank = oyFilterRegistrationMatch( qarz_api8.registration,
                                           device->registration,
                                           oyOBJECT_CMM_API8_S );
         if(!rank)
@@ -976,7 +976,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                   oyOptions_GetText( options, oyNAME_NICK )
                   );
         else
-          error = oyX1MonitorProfileSetup( device_name, oprofile_name );
+          error = qarzMonitorProfileSetup( device_name, oprofile_name );
 
         oyConfig_Release( &device );
       }
@@ -995,7 +995,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
       for( i = 0; i < n; ++i )
       {
         device = oyConfigs_Get( devices, i );
-        rank = oyFilterRegistrationMatch( oyX1_api8.registration,
+        rank = oyFilterRegistrationMatch( qarz_api8.registration,
                                           device->registration,
                                           oyOBJECT_CMM_API8_S );
         if(!rank)
@@ -1017,7 +1017,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                   oyOptions_GetText( options, oyNAME_NICK )
                   );
         else
-          error = oyX1MonitorProfileUnset( device_name );
+          error = qarzMonitorProfileUnset( device_name );
 
         oyConfig_Release( &device );
       }
@@ -1029,7 +1029,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
     if(error <= 0 &&
        oyOptions_FindString( options, "command", "help" ))
     {
-      oyX1ConfigsUsage( (oyStruct_s*)options );
+      qarzConfigsUsage( (oyStruct_s*)options );
 
       goto cleanup;
     }
@@ -1041,7 +1041,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
 
-  oyX1ConfigsUsage( (oyStruct_s*)options );
+  qarzConfigsUsage( (oyStruct_s*)options );
 
 
   cleanup:
@@ -1049,8 +1049,8 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
   return error;
 }
 
-/** Function oyX1Config_Rank
- *  @brief   oyX1 oyCMMapi8_s Xorg monitor check
+/** Function qarzConfig_Rank
+ *  @brief   qarz oyCMMapi8_s Xorg monitor check
  *
  *  @param[in]     config              the monitor device configuration
  *  @return                            rank value
@@ -1059,7 +1059,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
  *  @date    2009/01/26
  *  @since   2009/01/26 (Oyranos: 0.1.10)
  */
-int            oyX1Config_Rank       ( oyConfig_s        * config )
+int            qarzConfig_Rank       ( oyConfig_s        * config )
 {
   int error = !config,
       rank = 1;
@@ -1079,14 +1079,14 @@ int            oyX1Config_Rank       ( oyConfig_s        * config )
   return rank;
 }
 
-/** @instance oyX1_rank_map
+/** @instance qarz_rank_map
  *  @brief    oyRankPad map for mapping device to configuration informations
  *
  *  @version Oyranos: 0.1.10
  *  @date    2009/01/27
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  */
-oyRankPad oyX1_rank_map[] = {
+oyRankPad qarz_rank_map[] = {
   {"device_name", 2, -1, 0},           /**< is good */
   {"profile_name", 0, 0, 0},           /**< non relevant for device properties*/
   {"manufacturer", 0, 0, 0},           /**< is nice, covered by mnft_id */
@@ -1103,7 +1103,7 @@ oyRankPad oyX1_rank_map[] = {
   {0,0,0,0}                            /**< end of list */
 };
 
-const char * oyX1Api8UiGetText       ( const char        * select,
+const char * qarzApi8UiGetText       ( const char        * select,
                                        oyNAME_e            type )
 {
   static char * category = 0;
@@ -1112,7 +1112,7 @@ const char * oyX1Api8UiGetText       ( const char        * select,
   {
     /* The "help" and "name" texts are identical, as the module contains only
      * one filter to provide help for. */
-    return oyX1GetText(select,type);
+    return qarzGetText(select,type);
   }
   else if(strcmp(select, "device_class")==0)
   {
@@ -1143,18 +1143,18 @@ const char * oyX1Api8UiGetText       ( const char        * select,
   } 
   return 0;
 }
-const char * oyX1_api8_ui_texts[] = {"name", "help", "device_class", "category", 0};
+const char * qarz_api8_ui_texts[] = {"name", "help", "device_class", "category", 0};
 
-/** @instance oyX1_api8_ui
- *  @brief    oyX1 oyCMMapi8_s::ui implementation
+/** @instance qarz_api8_ui
+ *  @brief    qarz oyCMMapi8_s::ui implementation
  *
- *  The UI for oyX1 devices.
+ *  The UI for qarz devices.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/12/14 (Oyranos: 0.1.10)
  *  @date    2009/12/16
  */
-oyCMMui_s oyX1_api8_ui = {
+oyCMMui_s qarz_api8_ui = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -1168,28 +1168,28 @@ oyCMMui_s oyX1_api8_ui = {
   0,   /* const char * options */
   0,   /* oyCMMuiGet_f oyCMMuiGet */
 
-  oyX1Api8UiGetText,  /* oyCMMGetText_f getText */
-  oyX1_api8_ui_texts  /* (const char**)texts */
+  qarzApi8UiGetText,  /* oyCMMGetText_f getText */
+  qarz_api8_ui_texts  /* (const char**)texts */
 };
 
-oyIcon_s oyX1_api8_icon = {
+oyIcon_s qarz_api8_icon = {
   oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"
 };
 
-/** @instance oyX1_api8
- *  @brief    oyX1 oyCMMapi8_s implementations
+/** @instance qarz_api8
+ *  @brief    qarz oyCMMapi8_s implementations
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/08/21
  */
-oyCMMapi8_s oyX1_api8 = {
+oyCMMapi8_s qarz_api8 = {
   oyOBJECT_CMM_API8_S,
   0,0,0,
   (oyCMMapi_s*) 0, /**< next */
 
-  oyX1CMMInit,               /**< oyCMMInit_f      oyCMMInit */
-  oyX1CMMMessageFuncSet,     /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
+  qarzCMMInit,               /**< oyCMMInit_f      oyCMMInit */
+  qarzCMMMessageFuncSet,     /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
 
   OYX1_MONITOR_REGISTRATION, /**< registration */
   {0,3,0},                   /**< int32_t version[3] */
@@ -1197,14 +1197,14 @@ oyCMMapi8_s oyX1_api8 = {
   0,                         /**< char * id_ */
 
   0,                         /**< oyCMMapi5_s * api5_ */
-  oyX1Configs_FromPattern,   /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
-  oyX1Configs_Modify,        /**< oyConfigs_Modify_f oyConfigs_Modify */
-  oyX1Config_Rank,           /**< oyConfig_Rank_f oyConfig_Rank */
+  qarzConfigs_FromPattern,   /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
+  qarzConfigs_Modify,        /**< oyConfigs_Modify_f oyConfigs_Modify */
+  qarzConfig_Rank,           /**< oyConfig_Rank_f oyConfig_Rank */
 
-  &oyX1_api8_ui,             /**< device class UI name and help */
-  &oyX1_api8_icon,           /**< device icon */
+  &qarz_api8_ui,             /**< device class UI name and help */
+  &qarz_api8_icon,           /**< device icon */
 
-  oyX1_rank_map              /**< oyRankPad ** rank_map */
+  qarz_rank_map              /**< oyRankPad ** rank_map */
 };
 
 /* OYX1_MONITOR_REGISTRATION -------------------------------------------------*/
@@ -1217,7 +1217,7 @@ oyCMMapi8_s oyX1_api8 = {
  *  @since   2008/12/23 (Oyranos: 0.1.10)
  *  @date    2008/12/30
  */
-const char * oyX1GetText             ( const char        * select,
+const char * qarzGetText             ( const char        * select,
                                        oyNAME_e            type )
 {
          if(strcmp(select, "name")==0)
@@ -1234,18 +1234,18 @@ const char * oyX1GetText             ( const char        * select,
          if(type == oyNAME_NICK)
       return "help";
     else if(type == oyNAME_NAME)
-      return _("The oyX1 module supports the generic device protocol.");
+      return _("The qarz module supports the generic device protocol.");
     else
     {
       if(!t)
       {
-        t = malloc( strlen(oyX1_help) + strlen(oyX1_help_list)
-                    + strlen(oyX1_help_properties) + strlen(oyX1_help_setup)
-                    + strlen(oyX1_help_unset)
-                    + strlen(oyX1_help_add_edid_to_icc) + 1);
-        sprintf( t, "%s\n%s%s%s%s%s", oyX1_help, oyX1_help_list,
-                 oyX1_help_properties, oyX1_help_setup, oyX1_help_unset,
-                 oyX1_help_add_edid_to_icc );
+        t = malloc( strlen(qarz_help) + strlen(qarz_help_list)
+                    + strlen(qarz_help_properties) + strlen(qarz_help_setup)
+                    + strlen(qarz_help_unset)
+                    + strlen(qarz_help_add_edid_to_icc) + 1);
+        sprintf( t, "%s\n%s%s%s%s%s", qarz_help, qarz_help_list,
+                 qarz_help_properties, qarz_help_setup, qarz_help_unset,
+                 qarz_help_add_edid_to_icc );
       }
       return t;
     }
@@ -1268,7 +1268,7 @@ const char * oyX1GetText             ( const char        * select,
   }
   return 0;
 }
-const char *oyX1_texts[5] = {"name","copyright","manufacturer","help",0};
+const char *qarz_texts[5] = {"name","copyright","manufacturer","help",0};
 
 /** @instance qarz_cmm_module
  *  @brief    qarz module infos
@@ -1283,11 +1283,11 @@ oyCMMInfo_s qarz_cmm_module = {
   0,0,0,
   CMM_NICK,
   "0.3",
-  oyX1GetText, /* oyCMMInfoGetText_f get Text */
-  (char**)oyX1_texts, /* texts; list of arguments to getText */
+  qarzGetText, /* oyCMMInfoGetText_f get Text */
+  (char**)qarz_texts, /* texts; list of arguments to getText */
   OYRANOS_VERSION,
 
-  (oyCMMapi_s*) & oyX1_api8,
+  (oyCMMapi_s*) & qarz_api8,
 
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
 };

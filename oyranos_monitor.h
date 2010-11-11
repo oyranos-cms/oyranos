@@ -47,27 +47,9 @@ int   oyGetMonitorInfo_lib        (const char* display,
                                    oyAlloc_f     allocate_func,
                                        oyStruct_s        * user_data );
 
-int          oyX1DeviceFillEdid      ( oyConfig_s       ** device,
-                                       oyPointer           edi,
-                                       size_t              edi_size,
-                                       const char        * device_name,
-                                       const char        * host,
-                                       const char        * display_geometry,
-                                       const char        * system_port,
-                                       oyOptions_s       * options );
 int      oyGetAllScreenNames         ( const char        * display_name,
                                        char            *** display_names,
                                        oyAlloc_f           allocateFunc );
-
-int          oyX1MonitorProfileSetup ( const char        * display_name,
-                                       const char        * profil_name );
-int          oyX1MonitorProfileUnset ( const char        * display_name );
-oyRectangle_s * oyX1Rectangle_FromDevice (
-                                       const char        * device_name );
-char *       oyX1GetMonitorProfile   ( const char        * device_name,
-                                       uint32_t            flags,
-                                       size_t            * size,
-                                       oyAlloc_f           allocate_func );
 
 
 #ifdef __cplusplus

@@ -224,7 +224,7 @@ CGDirectDisplayID oyMonitor_nameToOsxID ( const char        * display_name )
 
 
 
-char *       oyX1GetMonitorProfile   ( const char        * device_name,
+char *       qarzGetMonitorProfile   ( const char        * device_name,
                                        uint32_t            flags,
                                        size_t            * size,
                                        oyAlloc_f           allocate_func )
@@ -354,7 +354,7 @@ oyGetAllScreenNames_            (const char *display_name,
 
 
 /** @internal
- *  Function oyX1Rectangle_FromDevice
+ *  Function qarzRectangle_FromDevice
  *  @memberof monitor_api
  *  @brief   value filled a oyStruct_s object
  *
@@ -365,7 +365,7 @@ oyGetAllScreenNames_            (const char *display_name,
  *  @since   2009/01/28 (Oyranos: 0.1.10)
  *  @date    2009/01/28
  */
-oyRectangle_s* oyX1Rectangle_FromDevice ( const char        * device_name )
+oyRectangle_s* qarzRectangle_FromDevice ( const char        * device_name )
 {
   oyRectangle_s * rectangle = 0;
   int error = !device_name;
@@ -408,7 +408,7 @@ oyMonitor_getGeometryIdentifier_         (oyMonitor_s  *disp)
 
 
 
-int      oyX1MonitorProfileSetup     ( const char        * display_name,
+int      qarzMonitorProfileSetup     ( const char        * display_name,
                                        const char        * profil_name )
 {
   int error = 0;
@@ -466,7 +466,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
 }
 
 
-int      oyX1MonitorProfileUnset     ( const char        * display_name )
+int      qarzMonitorProfileUnset     ( const char        * display_name )
 {
   int error = 0;
 
