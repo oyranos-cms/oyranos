@@ -201,7 +201,8 @@ CFILES_MODULES_DEVICES = \
 	$(CFILES_MONI_CS) \
 	$(CFILES_CMM_CUPS) \
 	$(CFILES_CMM_SANE) \
-	modules/devices/SANE_help.c
+	modules/devices/SANE_help.c \
+	modules/devices/$(TARGET)_monitor.c
 CFILES_MONI_X11 = \
 	modules/devices/$(TARGET)_monitor_x11.c
 CFILES_MONI_CS = \
