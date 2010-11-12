@@ -10,17 +10,29 @@ Internet:
 
 
 Dependencies:
-    A prerequisite is Elektra - http://www.libelektra.org
+    Mandatory:
+    libxml2 - http://www.xmlsoft.org/
+    libXinerama, libXrandr, libXfixes and libXxf86vm for X11 support - www.x.org
+    libXcm for X11 and Quarz monitor support - http://www.oyranos.org
+    lcms and/or lcms2 for colour conversions - http://www.littlecms.com
+
+    Optional:
+    Elektra - http://www.libelektra.org
     FLTK (--enable-threads) is needed for the example Gui - http://www.fltk.org
     Xcalib a vcgt loader - http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/
     For the documentation use doxygen, graphviz and graphviz-gd packages.
     Doxygen v1.5.8 or higher is recommended - http://www.doxygen.org
+    Qt for a nice observer utility - http://qt.nokia.com/
+    CUPS for CUPS ICC configuration support - http://www.cups.org
+    libraw for cameraRAW decoding - http://www.libraw.org
+    SANE only with Oyranos SANE_CAP_COLOUR patch - http://www.sane-project.org/
+    Cairo for a example - http://www.cairographics.org/
 
   Debian:
     locales
     build-essential
-    libxml2-dev (if you want xml importing/exporting)
-    elektra-0.7.0 can now be installed successfully.
+    libxml2-dev
+    elektra-0.7.0 - included
 
     pkg-config
     gettext
