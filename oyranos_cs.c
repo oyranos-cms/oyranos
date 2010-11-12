@@ -346,10 +346,10 @@ char * oyGetDefaultProfileNameOSX_   ( oyPROFILE_e         type )
       }
     } else if(!name)
       DBG_PROG2_S( "could not find:%d Profile:%s\n", (int)err, prof ? "no" : "yes" );
-
-    err = CMCloseProfile( prof );
+    if(prof)
+      err = CMCloseProfile( prof );
     if(err)
-      WARNc_S("Problem with CMCloseProfile.");
+      WARNc1_S("Problem with CMCloseProfile: %d", err);
   }
 
   DBG_PROG_ENDE
