@@ -13815,7 +13815,7 @@ OYAPI int  OYEXPORT
         p = oyProfiles_Get( iccs, 0 );
         profile_name = oyStringCopy_( oyProfile_GetFileName(p, -1),
                                       oyAllocateFunc_ );
-        WARNc1_S( "implicitely seleczed %s", oyNoEmptyString_m_(profile_name) );
+        WARNc1_S( "implicitely selected %s", oyNoEmptyString_m_(profile_name) );
         oyFree_m_( rank_list );
       }
       oyProfile_Release( &p );
