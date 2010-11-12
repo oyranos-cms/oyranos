@@ -190,7 +190,7 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
 }
 
 int
-oyGetMonitorInfo_                 (const char* display_name,
+oyX1GetMonitorInfo_               (const char* display_name,
                                    char**      manufacturer,
                                    char**      mnft,
                                    char**      model,
@@ -664,15 +664,15 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       result = XChangeProperty( display, w, atom, XA_CARDINAL,
                        8, PropModeReplace, moni_profile, (int)size );
 
-      /* claim to be compatible with 0.3 
-       * http://www.freedesktop.org/wiki/OpenIcc/ICC_Profiles_in_X_Specification_0.3
+      /* claim to be compatible with 0.4 
+       * http://www.freedesktop.org/wiki/OpenIcc/ICC_Profiles_in_X_Specification_0.4
        */
       atom = XInternAtom( display, "_ICC_PROFILE_IN_X_VERSION", False );
       if(atom)
       {
         Atom a;
-        /* 0.3 == 100*0 + 1*3 = 3 */
-        const unsigned char * value = (const unsigned char*)"3";
+        /* 0.4 == 100*0 + 1*4 = 4 */
+        const unsigned char * value = (const unsigned char*)"4";
         int actual_format_return;
         unsigned long nitems_return=0, bytes_after_return=0;
         unsigned char* prop_return=0;
@@ -682,9 +682,9 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
                      &bytes_after_return, &prop_return );
         /* check if the old value is the same as our intented */
         if(actual_format_return != XA_STRING ||
-           nitems_return != (unsigned int)4)
+           nitems_return == 0)
         {
-          if(prop_return && strcmp( (char*)prop_return, (char*)value ) != 0)
+          if(!prop_return || strcmp( (char*)prop_return, (char*)value ) != 0)
           result = XChangeProperty( display, w, atom, XA_STRING,
                                     8, PropModeReplace,
                                     value, 4 );
@@ -1314,7 +1314,7 @@ int          oyX1Monitor_release_      ( oyX1Monitor_s      ** obj )
  *
  */
 int
-oyGetMonitorInfo_lib              (const char* display_name,
+oyX1GetMonitorInfo_lib            (const char* display_name,
                                    char**      manufacturer,
                                        char             ** mnft,
                                    char**      model,
@@ -1336,7 +1336,7 @@ oyGetMonitorInfo_lib              (const char* display_name,
 
   DBG_PROG_START
 
-  err = oyGetMonitorInfo_( display_name, manufacturer, mnft, model, serial,
+  err = oyX1GetMonitorInfo_(display_name, manufacturer, mnft, model, serial,
                            vendor,
                            display_geometry, system_port, host, week, year,
                            mnft_id, model_id, colours, edid,
