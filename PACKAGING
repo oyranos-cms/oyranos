@@ -1,8 +1,8 @@
 Components
 
 
-Standard profiles
-Make shure the base and ECI profiles are in place. The files in the settings directory rely on them. These settings files are essential to Oyranos.
+Default ICC Profiles
+Make shure the base and printing profiles are in place. The policy files in the settings directory and many other parts rely on them. These settings files are essential to Oyranos.
 
 
 Libraries
@@ -20,8 +20,7 @@ available, a essential part.
 
 
 Sources
-Place only the intended header files into the public include directory.
-Some files contain non stable API's. As an exception oyranos_alpha.h is marked
+Some files contain non stable API's. E.g. oyranos_alpha.h is marked
 as in alpha stage.
 
 
