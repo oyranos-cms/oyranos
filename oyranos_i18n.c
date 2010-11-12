@@ -67,10 +67,16 @@ void oyI18NInit_()
     if(oy_debug_memory)
       oyFree_m_(temp);  /* putenv requires a static string ??? */
 
+    if(oy_debug)
+      WARNc2_S("bindtextdomain( %s, %s )", oy_domain, oy_domain_path );
     bindtextdomain( oy_domain, oy_domain_path );
     DBG_NUM2_S("oy_domain_path %s %s", oy_domain, oy_domain_path)
     if(oy_domain_codeset)
+    {
+      if(oy_debug)
+        WARNc2_S("bindtextdomain( %s, %s )", oy_domain, oy_domain_codeset );
       bind_textdomain_codeset(oy_domain, oy_domain_codeset);
+    }
     DBG_NUM2_S("oy_domain_codeset %s %s", oy_domain, oy_domain_codeset)
 
     /* we use the posix setlocale interface;
