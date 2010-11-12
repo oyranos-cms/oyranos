@@ -71,6 +71,13 @@ int main( int argc , char** argv )
   char * data = 0;
   uint32_t n = 0;
 
+  if(getenv("OYRANOS_DEBUG"))
+  {
+    int value = atoi(getenv("OYRANOS_DEBUG"));
+    if(value > 0)
+      oy_debug += value;
+  }
+
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
 #endif
@@ -84,13 +91,6 @@ int main( int argc , char** argv )
     return error;
   }
 #endif
-
-  if(getenv("OYRANOS_DEBUG"))
-  {
-    int value = atoi(getenv("OYRANOS_DEBUG"));
-    if(value > 0)
-      oy_debug = value;
-  }
 
   /* cut off the screen information */
   if(display_name &&
@@ -198,7 +198,7 @@ int main( int argc , char** argv )
                         printf("oyranos-monitor v%d.%d.%d %s\n",
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
                                 _("is a colour profile administration tool for monitors"));
-                        printf("%s\n",                 _("Usage"));
+                        printf("%s:\n",                 _("Usage"));
                         printf("  %s\n",               _("Set new profile:"));
                         printf("      %s -x pos -y pos %s\n", argv[0],
                                                        _("profile name"));
@@ -255,15 +255,16 @@ int main( int argc , char** argv )
        !add_edid && !list_modules)
       setup = 1;
 
-    oy_display_name = oyGetDisplayNameFromPosition( display_name, x,y,
-                                                    oyAllocFunc);
-
     STRING_ADD( device_class, "monitor" );
     if(module_name)
     {
       STRING_ADD( device_class, ".");
       STRING_ADD( device_class, module_name);
     }
+
+    oy_display_name = oyGetDisplayNameFromPosition2(OY_TYPE_STD, device_class,
+                                                    display_name, x,y,
+                                                    oyAllocFunc);
 
     if(list_modules)
     {
