@@ -29351,6 +29351,82 @@ int      oyGetScreenFromPosition     ( const char        * display_name,
   return screen;
 }
 
+/** Function: oyGetDisplayNameFromPosition2
+ *  @brief   display name from position
+ *
+ *  This function will hit exact results only with Xinerama.
+ *
+ *  @param[in]     device_type         the device type, e.g. OY_TYPE_STD,
+ *                                     defaults to OY_TYPE_STD (optional)
+ *  @param[in]     device_class        registration ::oyFILTER_REG_APPLICATION
+ *                                     part, e.g. "monitor", mandatory
+ *  @param      display_name  raw display string
+ *  @param      x             x position on screen
+ *  @param      y             y position on screen
+ *  @param      allocateFunc  function used to allocate memory for the string
+ *  @return                   display name
+ *
+ *  @version Oyranos: 0.1.13
+ *  @since   2005/00/00 (Oyranos: 0.1.x)
+ *  @date    2010/11/12
+ */
+char *   oyGetDisplayNameFromPosition2(const char        * device_type,
+                                       const char        * device_class,
+                                       const char        * display_name,
+                                       int                 x,
+                                       int                 y,
+                                       oyAlloc_f           allocateFunc )
+{
+  int error = 0;
+  char * text = 0;
+  oyConfig_s * device = 0;
+  oyConfigs_s * devices = 0;
+  oyOptions_s * options = 0;
+  oyOption_s * o = 0;
+  oyRectangle_s * r = 0;
+  int n, i;
+  const char * device_name = 0;
+
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                 "list", OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_rectangle",
+                                 "true", OY_CREATE_NEW );
+  /** we want a fuzzy look at our display, not the narrow "device_name" */
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/display_name",
+                                 display_name, OY_CREATE_NEW );
+
+  error = oyConfigs_FromDeviceClass ( device_type, device_class, options, &devices,
+                                          0 );
+
+  oyOptions_Release( &options );
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  n = oyConfigs_Count( devices );
+  for( i = 0; i < n; ++i )
+  {
+    device = oyConfigs_Get( devices, i );
+    o = oyConfig_Find( device, "device_rectangle" );
+
+    if(o && o->value && o->value->oy_struct &&
+       o->value->oy_struct->type_ == oyOBJECT_RECTANGLE_S)
+      r = (oyRectangle_s*) o->value->oy_struct;
+
+    if(!device_name &&
+       r && oyRectangle_PointIsInside( r, x,y ))
+    {
+      device_name = oyConfig_FindString( device, "device_name", 0 );
+      text = oyStringCopy_( device_name, allocateFunc );
+    }
+    oyConfig_Release( &device );
+  }
+  oyConfigs_Release( &devices );
+
+  return text;
+}
+
+
 /** Function: oyGetDisplayNameFromPosition
  *  @brief   display name from position
  *

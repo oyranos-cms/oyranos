@@ -359,11 +359,17 @@ void           oyI18Nreset           ( void );
 
 
 
+char *   oyGetDisplayNameFromPosition2(const char        * device_type,
+                                       const char        * device_class,
+                                       const char        * display_name,
+                                       int                 x,
+                                       int                 y,
+                                       oyAlloc_f           allocateFunc );
+/* deprecated monitor functions */
 char *   oyGetDisplayNameFromPosition( const char        * display_name,
                                        int                 x,
                                        int                 y,
                                        oyAlloc_f           allocate_func );
-/* deprecated monitor functions */
 int      oyGetScreenFromPosition     ( const char        * display_name,
                                        int                 x,
                                        int                 y );
