@@ -92,6 +92,8 @@ int main( int argc , char** argv )
   }
 #endif
 
+  STRING_ADD( device_class, "monitor" );
+
   /* cut off the screen information */
   if(display_name &&
      (ptr = strchr(display_name,':')) != 0)
@@ -255,7 +257,6 @@ int main( int argc , char** argv )
        !add_edid && !list_modules)
       setup = 1;
 
-    STRING_ADD( device_class, "monitor" );
     if(module_name)
     {
       STRING_ADD( device_class, ".");
