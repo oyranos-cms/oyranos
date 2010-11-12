@@ -34,14 +34,14 @@
 #define CMM_NICK "qarz"
 #define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 
-/* OYX1_MONITOR_REGISTRATION */
+/* QARZ_MONITOR_REGISTRATION */
 
 int                qarzCMMInit       ( );
 int            qarzCMMMessageFuncSet ( oyMessage_f         message_func );
 
-/* OYX1_MONITOR_REGISTRATION -------------------------------------------------*/
+/* QARZ_MONITOR_REGISTRATION -------------------------------------------------*/
 
-#define OYX1_MONITOR_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.device.icc_profile.monitor." CMM_NICK
+#define QARZ_MONITOR_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.device.icc_profile.monitor." CMM_NICK
 
 oyMessage_f message = 0;
 
@@ -97,13 +97,13 @@ int            qarzCMMMessageFuncSet ( oyMessage_f         message_func )
 
 #define OPTIONS_ADD(opts, name, clear) if(!error && name) \
         error = oyOptions_SetFromText( &opts, \
-                                     OYX1_MONITOR_REGISTRATION OY_SLASH #name, \
+                                     QARZ_MONITOR_REGISTRATION OY_SLASH #name, \
                                        name, OY_CREATE_NEW ); \
         if(clear && name) { oyDeAllocateFunc_( (char*)name ); name = 0; }
 #define OPTIONS_ADD_INT(opts, name) if(!error && name) { \
         oySprintf_( num, "%d", name ); \
         error = oyOptions_SetFromText( &opts, \
-                                     OYX1_MONITOR_REGISTRATION OY_SLASH #name, \
+                                     QARZ_MONITOR_REGISTRATION OY_SLASH #name, \
                                        num, OY_CREATE_NEW ); \
         }
 
@@ -235,11 +235,11 @@ int          qarzDeviceFillEdid      ( oyConfig_s       ** device,
       if(error <= 0)
       {
         if(!*device)
-          *device = oyConfig_New( OYX1_MONITOR_REGISTRATION, 0 );
+          *device = oyConfig_New( QARZ_MONITOR_REGISTRATION, 0 );
         error = !*device;
         if(!error && device_name)
         error = oyOptions_SetFromText( &(*device)->backend_core,
-                                       OYX1_MONITOR_REGISTRATION OY_SLASH "device_name",
+                                       QARZ_MONITOR_REGISTRATION OY_SLASH "device_name",
                                        device_name, OY_CREATE_NEW );
 
         OPTIONS_ADD( (*device)->backend_core, manufacturer, 1 )
@@ -265,7 +265,7 @@ int          qarzDeviceFillEdid      ( oyConfig_s       ** device,
           {
             for(i = 0; i < 9; ++i)
               error = oyOptions_SetFromDouble( &(*device)->data,
-                       OYX1_MONITOR_REGISTRATION OY_SLASH "colour_matrix."
+                       QARZ_MONITOR_REGISTRATION OY_SLASH "colour_matrix."
                        "from_edid."
                       "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
                                              colours[i], i, OY_CREATE_NEW );
@@ -294,7 +294,7 @@ int          qarzDeviceFillEdid      ( oyConfig_s       ** device,
               oyFree_m_( save_locale );
 
             error = oyOptions_SetFromText( &(*device)->backend_core,
-                                         OYX1_MONITOR_REGISTRATION OY_SLASH
+                                         QARZ_MONITOR_REGISTRATION OY_SLASH
                                          "colour_matrix_text_from_edid_"
                       "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
                                          text, OY_CREATE_NEW );
@@ -369,11 +369,11 @@ int          qarzDeviceFromName_     ( const char        * device_name,
         {
           int has = 0;
           o = oyConfig_Find( *device,
-                             OYX1_MONITOR_REGISTRATION OY_SLASH "edid" );
+                             QARZ_MONITOR_REGISTRATION OY_SLASH "edid" );
           if(o)
             has = 1;
           else
-            o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH "edid", 0 );
+            o = oyOption_New( QARZ_MONITOR_REGISTRATION OY_SLASH "edid", 0 );
           error = !o;
           if(!error)
           error = oyOption_SetFromData( o, edid->ptr, edid->size );
@@ -483,13 +483,13 @@ int            qarzConfigs_FromPattern (
         if(odevice_name && strcmp(odevice_name, texts[i]) != 0)
           continue;
 
-        device = oyConfig_New( OYX1_MONITOR_REGISTRATION, 0 );
+        device = oyConfig_New( QARZ_MONITOR_REGISTRATION, 0 );
         error = !device;
 
          /** 3.1.2 tell the "device_name" */
         if(error <= 0)
         error = oyOptions_SetFromText( &device->backend_core,
-                                       OYX1_MONITOR_REGISTRATION OY_SLASH
+                                       QARZ_MONITOR_REGISTRATION OY_SLASH
                                        "device_name",
                                        texts[i], OY_CREATE_NEW );
 
@@ -501,10 +501,13 @@ int            qarzConfigs_FromPattern (
         if(devices && oyConfigs_Count(devices))
           error = qarzConfigs_Modify( devices, options );
         else if(oy_debug)
+        {
+          const char * t = oyOptions_GetText( options, oyNAME_NICK );
           message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                 "No monitor devices found.\n Options:\n%s", OY_DBG_ARGS_,
-                oyOptions_GetText( options, oyNAME_NICK )
+                oyNoEmptyString_m_( t )
                 );
+        }
       }
 
       if(error <= 0)
@@ -702,7 +705,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
             if(o)
               has = 1;
             else
-              o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH
+              o = oyOption_New( QARZ_MONITOR_REGISTRATION OY_SLASH
                                 "device_rectangle", 0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &rect );
             if(has)
@@ -725,11 +728,10 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
           {
             if(oy_debug)
               message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
-                     "Try %s(_xxx) from %s",
+                     "Try %s from %s",
                      OY_DBG_ARGS_,
                      oyOptions_FindString(options, "net_color_region_target", 0) ? 
-                     OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE :
-                     OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE,
+                     "ColorSync" : "Base",
                      device_name );
             flags |= 0x01;
           }
@@ -758,9 +760,9 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
             free( data );
             if(has == 0)
             {
-              const char * key = OYX1_MONITOR_REGISTRATION OY_SLASH "icc_profile";
+              const char * key = QARZ_MONITOR_REGISTRATION OY_SLASH "icc_profile";
               if(oyOptions_FindString(options, "net_color_region_target", 0))
-                key = OYX1_MONITOR_REGISTRATION OY_SLASH "icc_profile.net_color_region_target";
+                key = QARZ_MONITOR_REGISTRATION OY_SLASH "icc_profile.net_color_region_target";
               o = oyOption_New( key, 0 );
             }
           } else if(oyOptions_FindString( options, "icc_profile.fallback", 0 ))
@@ -772,7 +774,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
             if(!o_tmp)
             {
               oyOptions_SetFromText( &options,
-                                     OYX1_MONITOR_REGISTRATION OY_SLASH
+                                     QARZ_MONITOR_REGISTRATION OY_SLASH
                                      "edid",
                                      "yes", OY_CREATE_NEW );
               error = qarzDeviceFromName_( device_name, options, &device );
@@ -840,13 +842,13 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
               oyDeAllocateFunc_( data ); data = NULL; size = 0;
             }
             if(has == 0)
-              o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH
+              o = oyOption_New( QARZ_MONITOR_REGISTRATION OY_SLASH
                                 "icc_profile.fallback", 0 );
             error = -1;
           }
 
           if(!o)
-              o = oyOption_New( OYX1_MONITOR_REGISTRATION OY_SLASH
+              o = oyOption_New( QARZ_MONITOR_REGISTRATION OY_SLASH
                                 "icc_profile", 0 );
 
           if(prof)
@@ -859,11 +861,10 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
           /** Warn and return issue on not found profile. */
           {
             message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
-                     "Could not obtain %s(_xxx) information for %s",
+                     "Could not obtain %s information for %s",
                      OY_DBG_ARGS_,
                      oyOptions_FindString(options, "net_color_region_target", 0) ? 
-                     OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE :
-                     OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE,
+                     "ColorSync" : "Base",
                      device_name );
 
             /* Show the "icc_profile" option is understood. */
@@ -918,7 +919,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
           if(error <= 0)
           {
             t_err = oyOptions_SetFromText( &device->data,
-                                         OYX1_MONITOR_REGISTRATION OY_SLASH
+                                         QARZ_MONITOR_REGISTRATION OY_SLASH
                                          "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
             if(t_err > 0)
@@ -1191,7 +1192,7 @@ oyCMMapi8_s qarz_api8 = {
   qarzCMMInit,               /**< oyCMMInit_f      oyCMMInit */
   qarzCMMMessageFuncSet,     /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
 
-  OYX1_MONITOR_REGISTRATION, /**< registration */
+  QARZ_MONITOR_REGISTRATION, /**< registration */
   {0,3,0},                   /**< int32_t version[3] */
   {0,1,10},                  /**< int32_t module_api[3] */
   0,                         /**< char * id_ */
@@ -1207,7 +1208,7 @@ oyCMMapi8_s qarz_api8 = {
   qarz_rank_map              /**< oyRankPad ** rank_map */
 };
 
-/* OYX1_MONITOR_REGISTRATION -------------------------------------------------*/
+/* QARZ_MONITOR_REGISTRATION -------------------------------------------------*/
 
 
 /**
