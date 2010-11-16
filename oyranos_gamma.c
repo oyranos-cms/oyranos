@@ -28,6 +28,7 @@
 #include "oyranos_internal.h"
 #include "oyranos_config.h"
 #include "oyranos_version.h"
+#include "oyranos_string.h"
 #include "oyranos_texts.h"
 #include <stdlib.h>
 #include <stdio.h>

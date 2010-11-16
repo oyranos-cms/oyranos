@@ -32,6 +32,7 @@
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
 #include "oyranos_alpha_internal.h"
+#include "oyranos_string.h"
 
 /* ------------- cmd line XFORMS UI handlers ------------------*/
 

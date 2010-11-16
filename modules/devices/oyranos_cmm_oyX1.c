@@ -20,6 +20,7 @@
 #include "oyranos_monitor.h"
 #include "oyranos_monitor_internal_x11.h"
 #include "oyranos_monitor_internal.h"
+#include "oyranos_string.h"
 #include "oyranos_texts.h"
 
 #include <string.h>

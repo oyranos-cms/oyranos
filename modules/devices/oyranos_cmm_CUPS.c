@@ -29,6 +29,7 @@
 /* internal Oyranos APIs */
 #include "oyranos_texts.h"
 #include "oyranos_helper.h"
+#include "oyranos_string.h"
 
 /* --- internal definitions --- */
 

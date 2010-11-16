@@ -231,6 +231,7 @@ ldconfig
 %{_includedir}/%{name}/%{name}_definitions.h
 %{_includedir}/%{name}/%{name}_icc.h
 %{_includedir}/%{name}/%{name}_version.h
+%{_includedir}/%{name}/%{name}_types.h
 %{_libdir}/pkgconfig/*
 %{_libdir}/lib%{name}.a
 %{_mandir}/man3/%{name}-config.3*
@@ -297,6 +298,9 @@ ldconfig
 %{desktopdir}/qcmsevents-applet.desktop
 
 %changelog
+* Thu Nov 16 2010 Kai-Uwe Behrmann
+- add oyranos_types.h
+
 * Mon Aug 30 2010 Kai-Uwe Behrmann
 - add SANE
 

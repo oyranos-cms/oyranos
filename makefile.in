@@ -125,7 +125,9 @@ CHEADERS = \
 	$(TARGET)_monitor_internal_x11.h \
 	$(TARGET)_monitor_internal_cs.h \
 	$(TARGET)_sentinel.h \
+	$(TARGET)_string.h \
 	$(TARGET)_texts.h \
+	$(TARGET)_types.h \
 	$(TARGET)_xml.h \
 	icc34.h \
 	md5.h \
@@ -144,6 +146,7 @@ CFILES = \
 	$(TARGET)_io.c \
 	$(TARGET)_misc.c \
 	$(TARGET)_sentinel.c \
+	$(TARGET)_string.c \
 	$(TARGET)_texts.c \
 	$(TARGET)_widgets.c \
 	$(TARGET)_xml.c \
@@ -870,6 +873,7 @@ install_bin:	all install_gui
 	done
 	test -d $(DESTDIR)$(includedir)/$(TARGET) || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)/alpha
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET).h $(DESTDIR)$(includedir)/$(TARGET)
+	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_types.h $(DESTDIR)$(includedir)/$(TARGET)
 	-$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_alpha.h $(DESTDIR)$(includedir)/$(TARGET)/alpha
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_cmm.h $(DESTDIR)$(includedir)/$(TARGET)/alpha
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_config.h $(DESTDIR)$(includedir)/$(TARGET)

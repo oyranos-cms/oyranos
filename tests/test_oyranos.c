@@ -18,6 +18,7 @@
 #include <string.h>
 
 #include "oyranos.h"
+#include "oyranos_string.h"
 
 #ifdef __APPLE__
 #include <CoreFoundation/CoreFoundation.h>

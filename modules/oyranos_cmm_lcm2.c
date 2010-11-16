@@ -23,6 +23,7 @@
 #include "oyranos_cmms.h"        /* the API's this CMM uses from Oyranos */
 #include "oyranos_helper.h"      /* oySprintf_ and other local helpers */
 #include "oyranos_alpha_internal.h" /* hashTextAdd_m ... */
+#include "oyranos_string.h"
 
 /*
 oyCMMInfo_s   lcm2_cmm_module;

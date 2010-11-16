@@ -43,6 +43,7 @@
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_sentinel.h"
+#include "oyranos_string.h"
 
 #include "oyranos_monitor.c"
 

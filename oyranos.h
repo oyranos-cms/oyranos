@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2004-2009 (C) Kai-Uwe Behrmann
+ *            2004-2010 (C) Kai-Uwe Behrmann
  *
  *  @brief    public Oyranos API's
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -16,10 +16,10 @@
 #ifndef OYRANOS_H
 #define OYRANOS_H
 
-#include <stdlib.h> /* for linux size_t */
 #include <inttypes.h> /* uint32_t */
 #include "oyranos_definitions.h"
 #include "oyranos_version.h"
+#include "oyranos_types.h"
 
 /** \namespace oyranos
     @brief The Oyranos namespace.
@@ -29,30 +29,6 @@ extern "C" {
 #endif /* __cplusplus */
 
 typedef char oyChar;
-typedef void* oyPointer;
-typedef struct oyStruct_s oyStruct_s;
-
-/**
- * @param[in] size the size to allocate
- *
- * Place here your allocator, like: \code
-   void* myAllocFunc (size_t size)
-   { return malloc (size);
-   }
- * \endcode<br>
- */
-typedef void * (*oyAlloc_f)          ( size_t              size );
-
-/**
- * @param[in] data the pointer to free
- *
- * Place here your deallocator, like: \code
-   void* myDeAllocFunc (void *data)
-   { return free (data);
-   }
- * \endcode<br>
- */
-typedef void (*oyDeAlloc_f)          ( void              * data );
 
 extern int oy_debug;
 

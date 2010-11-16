@@ -18,6 +18,7 @@
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
 #include "oyranos_monitor.h"
+#include "oyranos_string.h"
 #include "oyranos_texts.h"
 
 #include <string.h>

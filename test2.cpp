@@ -19,6 +19,7 @@
 
 
 #include "oyranos.h"
+#include "oyranos_string.h"
 #include "config.h"
 
 /* C++ includes and definitions */

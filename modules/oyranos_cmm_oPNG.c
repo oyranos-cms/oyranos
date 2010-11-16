@@ -21,6 +21,7 @@
 #include "oyranos_i18n.h"
 #include "oyranos_io.h"
 #include "oyranos_definitions.h"
+#include "oyranos_string.h"
 #include "oyranos_texts.h"
 #include <iconv.h>
 #include <math.h>
