@@ -116,6 +116,7 @@ CHEADERS = \
 	$(TARGET)_definitions.h \
 	$(TARGET)_elektra.h \
 	$(TARGET)_helper.h \
+	$(TARGET)_helper_macros.h \
 	$(TARGET)_i18n.h \
 	$(TARGET)_icc.h \
 	$(TARGET)_io.h \
