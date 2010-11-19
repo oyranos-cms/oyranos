@@ -21,7 +21,6 @@
 #include "oyranos.h"
 #include "oyranos_icc.h"
 
-#include <inttypes.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -663,6 +662,13 @@ int              oyStructList_ObserverAdd (
                                        oyStruct_s        * observer,
                                        oyStruct_s        * user_data,
                                        oyObserver_Signal_f signalFunc );
+int              oyStructList_MoveInName (
+                                       oyStructList_s    * texts,
+                                       char             ** text,
+                                       int                 pos );
+int              oyStructList_AddName( oyStructList_s    * texts,
+                                       const char        * text,
+                                       int pos );
 
 
 oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,

@@ -30,7 +30,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef HAVE_POSIX
 #include <stdint.h>  /* UINT32_MAX */
+#endif
 
 /* OY_IMAGE_LOAD_REGISTRATION */
 /* OY_IMAGE_REGIONS_REGISTRATION */
@@ -116,7 +118,7 @@ int      oyraFilterPlug_ImageLoadRun (
         ++fileext;
     } else
     {
-      message( oyMSG_WARN, (oyStruct_s*)requestor_plug,
+      oyra_msg( oyMSG_WARN, (oyStruct_s*)requestor_plug,
          OY_DBG_FORMAT_ "Could not find a filename extension to select module.",
                OY_DBG_ARGS_ );
       result = 1;
@@ -172,7 +174,7 @@ int      oyraFilterPlug_ImageLoadRun (
     }
 
     if( !n )
-      message( oyMSG_WARN, (oyStruct_s*)requestor_plug,
+      oyra_msg( oyMSG_WARN, (oyStruct_s*)requestor_plug,
              OY_DBG_FORMAT_ "Could not find any file_load plugin.",
              OY_DBG_ARGS_ );
 

@@ -1305,7 +1305,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  memcpy( &sig,  &mem[offset], 4 );
                  sig = oyValueUInt32( sig );
                  if(sig != icSigMultiLocalizedUnicodeType)
-                   message( oyMSG_WARN,0, OY_DBG_FORMAT_"\n"
+                   oyIM_msg( oyMSG_WARN,0, OY_DBG_FORMAT_"\n"
                    "psid description not of icSigMultiLocalizedUnicodeType: %d",
                             OY_DBG_ARGS_, i );
                  else

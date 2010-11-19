@@ -34,13 +34,12 @@
 #include <string.h>
 #if !defined(WIN32)
 #include <dlfcn.h>
-#include <inttypes.h>
 #endif
 
 #define CMM_NICK "oicc"
-oyMessage_f message = oyFilterMessageFunc;
+oyMessage_f oicc_msg = oyFilterMessageFunc;
 int            oiccFilterMessageFuncSet( oyMessage_f       message_func );
-int                oiccFilterInit      ( );
+int                oiccFilterInit    ( oyStruct_s        * filter );
 oyWIDGET_EVENT_e   oiccWidgetEvent   ( oyOptions_s       * options,
                                        oyWIDGET_EVENT_e    type,
                                        oyStruct_s        * event );
@@ -54,7 +53,7 @@ oyWIDGET_EVENT_e   oiccWidgetEvent   ( oyOptions_s       * options,
  */
 int          oiccFilterMessageFuncSet( oyMessage_f         message_func )
 {
-  message = message_func;
+  oicc_msg = message_func;
   return 0;
 }
 
@@ -543,7 +542,7 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
               } else
               {
                 tmp = oyOptions_FindString(f_options, key, 0);
-                message( oyMSG_DBG,(oyStruct_s*)f_options,
+                oicc_msg( oyMSG_DBG,(oyStruct_s*)f_options,
                          "%s:%d \"%s\" is already set = %s",
                          strrchr(__FILE__,'/') ?
                                  strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
@@ -720,14 +719,14 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                         (oyStruct_s**)& proofs,
                                         OY_CREATE_NEW );
                 if(verbose)
-                  message( oyMSG_WARN,(oyStruct_s*)node,
+                  oicc_msg( oyMSG_WARN,(oyStruct_s*)node,
                            "%s:%d set \"profiles_simulation\": %s %s",
                            strrchr(__FILE__,'/') ?
                                  strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
                            val?val:"empty profile text", 
                            display_mode ? "for displaying" : "for hard copy" );
               } else if(verbose)
-                message( oyMSG_WARN,(oyStruct_s*)node,
+                oicc_msg( oyMSG_WARN,(oyStruct_s*)node,
                          "%s:%d \"profiles_simulation\" %s, %s",
                          strrchr(__FILE__,'/') ?
                                  strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,

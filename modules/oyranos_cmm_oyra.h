@@ -31,22 +31,16 @@
 #define CMM_NICK "oyra"
 #define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 
-extern oyMessage_f message;
+extern oyMessage_f oyra_msg;
 
 
 
-int                oyraCMMInit       ( );
+int                oyraCMMInit       ( oyStruct_s        * filter );
 int                oyraIconv         ( const char        * input,
                                        size_t              len,
                                        char              * output,
                                        const char        * from_codeset );
 int      oyraCMMMessageFuncSet       ( oyMessage_f         message_func );
-int      oyStructList_MoveInName     ( oyStructList_s    * texts,
-                                       char             ** text,
-                                       int                 pos );
-int      oyStructList_AddName        ( oyStructList_s    * texts,
-                                       const char        * text,
-                                       int pos );
 oyStructList_s * oyraProfileTag_GetValues(
                                        oyProfileTag_s    * tag );
 int      oyraProfileTag_Create       ( oyProfileTag_s    * tag,

@@ -13,6 +13,7 @@
  */
 
 
+#include "oyranos_types.h"
 #include "oyranos_alpha.h"
 #include "oyranos_alpha_internal.h"
 #include "oyranos_cmm.h"
@@ -24,12 +25,12 @@
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
-#if !defined(WIN32)
+#ifdef HAVE_POSIX
 #include <dlfcn.h>
-#include <inttypes.h>
 #endif
 #include <math.h>
 #include <locale.h>   /* LC_NUMERIC */
+#include <limits.h>
 
 #define OY_ERR if(l_error != 0) error = l_error;
 
@@ -3019,6 +3020,68 @@ int              oyStructList_ObserverAdd (
 
 
 /**
+ *  Function oyStructList_MoveInName
+ *  @memberof oyStructList_s
+ *  @brief   add a name to a list
+ *
+ *  The text is added a a oyName_s::name member variable and owned by the list.
+ *
+ *  @version Oyranos: 0.1.13
+ *  @date    2008/10/07
+ *  @since   2008/10/07 (Oyranos: 0.1.13)
+ */
+int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
+{
+  int error = !texts || ! text;
+  oyName_s * name = 0;
+  oyStruct_s * oy_struct = 0;
+  if(!error)
+  {
+     name = oyName_new(0);
+     name->name = *text;
+     *text = 0;
+     oy_struct = (oyStruct_s*) name;
+     oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
+  }
+  return error;
+}
+
+/**
+ *  Function oyStructList_MoveInName
+ *  @memberof oyStructList_s
+ *  @brief   add a name to a list
+ *
+ *  The text is added a a oyName_s::name member variable.
+ *
+ *  @version Oyranos: 0.1.13
+ *  @date    2008/10/07
+ *  @since   2008/10/07 (Oyranos: 0.1.13)
+ */
+int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
+{
+  int error = !texts;
+  oyName_s * name = 0;
+  oyStruct_s * oy_struct = 0;
+  char * tmp = 0;
+  if(!error)
+  {
+     name = oyName_new(0);
+     if(!name) return 1;
+     if(text)
+     {
+       tmp = oyAllocateFunc_( strlen(text) + 1 );
+       if(!tmp) return 1;
+       sprintf( tmp, "%s", text ); 
+       name->name = tmp;
+     }
+     oy_struct = (oyStruct_s*) name;
+     oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
+  }
+  return error;
+}
+
+
+/**
  *  @} *//* objects_generic
  */
 
@@ -3755,9 +3818,10 @@ oyPointer    oyCMMdsoGet_            ( const char        * cmm,
   int found = -1;
   oyPointer dso_handle = 0;
 
-  if(!lib_name)
+if(!lib_name)
     return 0;
 
+#ifdef HAVE_POSIX
   found = oyCMMdsoSearch_(lib_name);
 
   if(found >= 0)
@@ -3784,6 +3848,7 @@ oyPointer    oyCMMdsoGet_            ( const char        * cmm,
     oyCMMdsoReference_( lib_name, dso_handle );
 
   return dso_handle;
+#endif
 }
 
 
@@ -4118,7 +4183,12 @@ char **          oyCMMsGetNames_     ( uint32_t          * n,
 char **          oyCMMsGetLibNames_  ( uint32_t          * n,
                                        const char        * required_cmm )
 {
+#ifdef HAVE_POSIX
   return oyCMMsGetNames_(n, OY_METASUBPATH, 0, required_cmm, oyPATH_MODULE);
+#else
+  *n = 0;
+  return 0;
+#endif
 }
 
 /** @internal

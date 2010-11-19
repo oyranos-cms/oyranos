@@ -203,7 +203,7 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
           snprintf( bytes, 48, "-1.0" );
       }
       else
-        message( oyMSG_WARN, (oyStruct_s*)node,
+        oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ " byteps: %d",
              OY_DBG_ARGS_, byteps );
 
@@ -277,7 +277,7 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
       fflush( fp );
       fclose (fp);
 
-    /*message( oyMSG_WARN, (oyStruct_s*)node,
+    /*oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ "write file %s",
              OY_DBG_ARGS_, filename );*/
   }
@@ -633,7 +633,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
 
   if(!fp)
   {
-    message( oyMSG_WARN, (oyStruct_s*)node,
+    oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ " could not open: %s",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ) );
     return 1;
@@ -647,7 +647,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
 
   fpos = fread( data, sizeof(uint8_t), fsize, fp );
   if( fpos < fsize ) {
-    message( oyMSG_WARN, (oyStruct_s*)node,
+    oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ " could not read: %s %d %d",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ), fsize, (int)fpos );
     oyFree_m_( data )
@@ -875,7 +875,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
 
   if( !info_good )
   {
-    message( oyMSG_WARN, (oyStruct_s*)node,
+    oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ "failed to get info of %s",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ));
     oyFree_m_( data )
@@ -888,7 +888,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
   {
     if (mem_n > fsize-fpos)
     {
-      message( oyMSG_WARN, (oyStruct_s*)node,
+      oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ "\n  storage size of %s is too small: %d",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ),
              (int)mem_n-fsize-fpos );
@@ -899,11 +899,11 @@ int      oyraFilterPlug_ImageInputPPMRun (
   } else
   {
     if (type == 2 || type == 3) {
-      message( oyMSG_WARN, (oyStruct_s*)node,
+      oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ "\n  %s contains ascii data, which are not handled by this pnm reader",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ));
     } else if (type == 1 || type == 4) {
-      message( oyMSG_WARN, (oyStruct_s*)node,
+      oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ "\n  %s contains bitmap data, which are not handled by this pnm reader",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ) );
     }
@@ -1015,7 +1015,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
 
   if (!image_in)
   {
-      message( oyMSG_WARN, (oyStruct_s*)node,
+      oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ "PNM can't create a new image\n%dx%d %d",
              OY_DBG_ARGS_,  width, height, pixel_type );
       oyFree_m_ (data)

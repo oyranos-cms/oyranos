@@ -13,13 +13,20 @@
  *  @since    2004/11/25
  */
 
+#include "oyranos_types.h"
+
+#ifdef HAVE_POSIX
+#include <unistd.h> /* geteuid() */
+#else
+#include <io.h>
+#endif
 
 #include <errno.h>
-#include <kdb.h>
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <kdb.h>
 
 #include "config.h"
 #include "oyranos.h"
@@ -33,6 +40,7 @@
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_xml.h"
+
 
 #ifndef KDB_VERSION_MAJOR
 #define KDB_VERSION_MAJOR 0
@@ -395,10 +403,14 @@ const char*
 oySelectUserSys_()
 {
   /* enable system wide keys for user root */
+#ifdef HAVE_POSIX
   if(geteuid() == 0)
+#endif
     return OY_SYS;
+#ifdef HAVE_POSIX
   else
     return OY_USER;
+#endif
 }
 
 

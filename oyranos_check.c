@@ -14,7 +14,9 @@
  */
 
 #include <sys/stat.h>
+#ifdef HAVE_POSIX
 #include <unistd.h>
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

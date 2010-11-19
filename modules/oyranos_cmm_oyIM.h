@@ -30,22 +30,16 @@
 
 #define CMM_NICK "oyIM"
 
-extern oyMessage_f message;
+extern oyMessage_f oyIM_msg;
 
 
 
-int                oyIMCMMInit       ( );
+int                oyIMCMMInit       ( oyStruct_s        * filter );
 int                oyIMIconv         ( const char        * input,
                                        size_t              len,
                                        char              * output,
                                        const char        * from_codeset );
 int      oyIMCMMMessageFuncSet       ( oyMessage_f         message_func );
-int      oyStructList_MoveInName     ( oyStructList_s    * texts,
-                                       char             ** text,
-                                       int                 pos );
-int      oyStructList_AddName        ( oyStructList_s    * texts,
-                                       const char        * text,
-                                       int pos );
 oyStructList_s * oyIMProfileTag_GetValues(
                                        oyProfileTag_s    * tag );
 int      oyIMProfileTag_Create       ( oyProfileTag_s    * tag,
