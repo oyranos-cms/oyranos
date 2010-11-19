@@ -42,6 +42,10 @@
 #include "oyranos_xml.h"
 
 
+#ifdef HAVE_POSIX
+#include <unistd.h> /* geteuid() */
+#endif
+
 #ifndef KDB_VERSION_MAJOR
 #define KDB_VERSION_MAJOR 0
 #endif
