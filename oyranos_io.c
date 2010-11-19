@@ -15,8 +15,6 @@
 
 #include <errno.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <dirent.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -206,11 +204,15 @@ oyWriteMemToFile_(const char* name, const void* mem, size_t size)
       {
         case EACCES:       WARNc1_S("Permission denied: %s", filename); break;
         case EIO:          WARNc1_S("EIO : %s", filename); break;
+#ifdef HAVE_POSIX
         case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the path: %s", filename); break;
+#endif
         case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG : %s", filename); break;
         case ENOENT:       WARNc1_S("A component of the path/file_name does not exist, or the file_name is an empty string: \"%s\"", filename); break;
         case ENOTDIR:      WARNc1_S("ENOTDIR : %s", filename); break;
+#ifdef HAVE_POSIX
         case EOVERFLOW:    WARNc1_S("EOVERFLOW : %s", filename); break;
+#endif
       }
     }
 
@@ -437,16 +439,23 @@ oyIsFileFull_ (const char* fullFileName)
   {
     case EACCES:       WARNc1_S("EACCES = %d\n",r); break;
     case EIO:          WARNc1_S("EIO = %d\n",r); break;
+#ifdef HAVE_POSIX
     case ELOOP:        WARNc1_S("ELOOP = %d\n",r); break;
+#endif
     case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG = %d\n",r); break;
     case ENOENT:       WARNc1_S("ENOENT = %d\n",r); break;
     case ENOTDIR:      WARNc1_S("ENOTDIR = %d\n",r); break;
+#ifdef HAVE_POSIX
     case EOVERFLOW:    WARNc1_S("EOVERFLOW = %d\n",r); break;
+#endif
   }
 
   r = !r &&
        (   ((status.st_mode & S_IFMT) & S_IFREG)
-        || ((status.st_mode & S_IFMT) & S_IFLNK));
+#ifdef HAVE_POSIX
+        || ((status.st_mode & S_IFMT) & S_IFLNK)
+#endif
+                                                );
 
   DBG_MEM_V( r )
   if (r)
@@ -487,7 +496,9 @@ oyMakeDir_ (const char* path)
        * path_name = 0;
   int rc = !full_name;
 
+#ifdef HAVE_POSIX
   mode_t mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH; /* 0755 */
+#endif
 
   DBG_PROG_START
 
@@ -505,17 +516,25 @@ oyMakeDir_ (const char* path)
         oyDeAllocateFunc_( path_parent );
       }
 
-      rc = mkdir (path_name, mode);
+      rc = mkdir (path_name
+#ifdef HAVE_POSIX
+                            , mode
+#endif
+                                  );
       if(rc)
       switch (errno)
       {
         case EACCES:       WARNc1_S("Permission denied: %s", path); break;
         case EIO:          WARNc1_S("EIO : %s", path); break;
+#ifdef HAVE_POSIX
         case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the path: %s", path); break;
+#endif
         case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG : %s", path); break;
         case ENOENT:       WARNc1_S("A component of the path/file_name does not exist, or the file_name is an empty string: \"%s\"", path); break;
         case ENOTDIR:      WARNc1_S("ENOTDIR : %s", path); break;
+#ifdef HAVE_POSIX
         case EOVERFLOW:    WARNc1_S("EOVERFLOW : %s", path); break;
+#endif
       }
     }
   }
@@ -1016,11 +1035,15 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
       {
         case EACCES:       WARNc2_S("Permission denied: %s %d", path, i); break;
         case EIO:          WARNc2_S("EIO : %s %d", path, i); break;
+#ifdef HAVE_POSIX
         case ELOOP:        WARNc2_S("Too many symbolic links encountered while traversing the path: %s %d", path, i); break;
+#endif
         case ENAMETOOLONG: WARNc2_S("ENAMETOOLONG : %s %d", path, i); break;
         case ENOENT:       DBG_MEM2_S("A component of the path file_name does not exist, or the path is an empty string: \"%s\" %d", path, i); break;
         case ENOTDIR:      WARNc2_S("ENOTDIR : %s %d", path, i); break;
+#ifdef HAVE_POSIX
         case EOVERFLOW:    WARNc2_S("EOVERFLOW : %s %d", path, i); break;
+#endif
       }
       continue;
     }

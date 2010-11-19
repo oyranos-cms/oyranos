@@ -32,7 +32,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#if !defined(WIN32)
+#ifdef HAVE_POSIX
 #include <dlfcn.h>
 #include <inttypes.h>
 #endif
@@ -92,7 +92,9 @@ oyCMMapiFilter_s * oyIMFilterLoad    ( oyPointer           data,
 }
 
 #ifdef NO_OPT
-#define DLOPEN 1
+# ifdef HAVE_POSIX
+# define DLOPEN 1
+# endif
 #endif
 
 /**
@@ -167,7 +169,11 @@ int          oyIMFilterScan          ( oyPointer           data,
 
       if(error)
       {
+#if DLOPEN
         char * errstr = dlerror();
+#else
+        const char * errstr = "----";
+#endif
         WARNc2_S("\n  %s:\n  \"%s\"", lib_name, oyNoEmptyString_m_( errstr ) );
       }
 

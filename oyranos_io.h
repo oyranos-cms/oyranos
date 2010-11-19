@@ -18,14 +18,18 @@
 #ifndef OYRANOS_IO_H
 #define OYRANOS_IO_H
 
+#include "oyranos.h" /* define HAVE_POSIX */
+
 #include <sys/stat.h>
-#include <unistd.h>
+#ifdef HAVE_POSIX
 #include <dirent.h>
+#else
+#include "dirent.h"  /* Posix API must be provided */
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "oyranos.h"
 #include "oyranos_internal.h"
 #include "oyranos_helper.h"
 #include "oyranos_debug.h"

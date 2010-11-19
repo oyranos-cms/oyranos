@@ -30,7 +30,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef HAVE_POSIX
 #include <stdint.h>  /* UINT32_MAX */
+#endif
 
 /* OY_IMAGE_LOAD_REGISTRATION */
 /* OY_IMAGE_REGIONS_REGISTRATION */

@@ -28,9 +28,8 @@
 #include "oyranos/oyranos.h"
 #endif
 
-#include <unistd.h> /* intptr_t */
+
 #include <ctype.h>  /* toupper */
-#include <stdint.h> /* uint32_t */
 
 #ifdef __cplusplus
 extern "C" {

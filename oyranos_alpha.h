@@ -21,7 +21,6 @@
 #include "oyranos.h"
 #include "oyranos_icc.h"
 
-#include <inttypes.h>
 
 #ifdef __cplusplus
 extern "C" {

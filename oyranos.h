@@ -16,7 +16,6 @@
 #ifndef OYRANOS_H
 #define OYRANOS_H
 
-#include <inttypes.h> /* uint32_t */
 #include "oyranos_definitions.h"
 #include "oyranos_version.h"
 #include "oyranos_types.h"

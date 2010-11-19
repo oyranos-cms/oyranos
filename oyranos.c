@@ -13,16 +13,19 @@
  */
 
 
+#include "oyranos.h" /* define HAVE_POSIX */
+
 #include <sys/stat.h>
+#ifdef HAVE_POSIX
 #include <unistd.h>
+#include <langinfo.h>
+#endif
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <langinfo.h>
 
 #include "config.h"
-#include "oyranos.h"
 #include "oyranos_check.h"
 #include "oyranos_cmms.h"
 #include "oyranos_debug.h"
@@ -35,7 +38,7 @@
 #include "oyranos_texts.h"
 #include "oyranos_xml.h"
 
-#ifdef APPLE
+#ifdef __APPLE__
 #include "oyranos_cs.h"
 #endif
 
@@ -84,7 +87,11 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   const char * type_name = "";
   int id = -1;
   size_t sz = 256;
+#ifdef HAVE_POSIX
   pid_t pid = 0;
+#else
+  int pid = 0;
+#endif
   FILE * fp = 0;
   const char * id_text = 0;
   char * id_text_tmp = 0;
@@ -134,7 +141,7 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   len = vsnprintf( text, sz-1, format, list);
   va_end  ( list );
 
-  if (len >= (sz - 1))
+  if (len >= ((int)sz - 1))
   {
     text = realloc( text, (len+1)*sizeof(char) );
     va_start( list, format);
@@ -168,7 +175,9 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   if(oy_backtrace)
   {
 #   define TMP_FILE "/tmp/oyranos_gdb_temp." OYRANOS_VERSION_NAME "txt"
+#ifdef HAVE_POSIX
     pid = (int)getpid();
+#endif
     fp = fopen( TMP_FILE, "w" );
 
     if(fp)
@@ -1822,12 +1831,16 @@ char *       oyVersionString         ( int                 type,
 
   if(type == 4)
   {
+#ifdef HAVE_POSIX
     oyStringAdd_( &text, nl_langinfo(MON_1-1+oyVersion(1)),
                                             oyAllocateFunc_, oyDeAllocateFunc_);
+#endif
     oySprintf_( temp, " %d - ", oyVersion(2) );
     oyStringAdd_( &text, temp, oyAllocateFunc_, oyDeAllocateFunc_);
+#ifdef HAVE_POSIX
     oyStringAdd_( &text, nl_langinfo(MON_1-1+oyVersion(3)),
                                             oyAllocateFunc_, oyDeAllocateFunc_);
+#endif
     oySprintf_( temp, " %d", oyVersion(4) );
     oyStringAdd_( &text, temp, oyAllocateFunc_, oyDeAllocateFunc_);
 
@@ -1836,7 +1849,11 @@ char *       oyVersionString         ( int                 type,
     return tmp;
   }
 
+#ifdef HAVE_POSIX
   return oyStringCopy_(oy_config_log_, allocateFunc);
+#else
+  return oyStringCopy_("----", allocateFunc);
+#endif
 }
 
 

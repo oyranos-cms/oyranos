@@ -16,7 +16,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>  /* system() */
+#ifdef HAVE_POSIX
 #include <unistd.h>  /* getpid() */
+#endif
 
 #include "oyranos_debug.h"
 
@@ -27,7 +29,11 @@ int oy_debug = 0;
 void oy_backtrace_()
 {
 #   define TMP_FILE "/tmp/oyranos_gdb_temp.txt"
+#ifdef __POAIX__
     pid_t pid = (int)getpid();
+#else
+    int pid = 0;
+#endif
     FILE * fp = fopen( TMP_FILE, "w" );
 
     if(fp)

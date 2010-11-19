@@ -13,6 +13,7 @@
  */
 
 
+#include "oyranos_types.h"
 #include "oyranos_alpha.h"
 #include "oyranos_alpha_internal.h"
 #include "oyranos_cmm.h"
@@ -24,12 +25,13 @@
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
-#if !defined(WIN32)
+#ifdef HAVE_POSIX
 #include <dlfcn.h>
 #include <inttypes.h>
 #endif
 #include <math.h>
 #include <locale.h>   /* LC_NUMERIC */
+#include <limits.h>
 
 #define OY_ERR if(l_error != 0) error = l_error;
 
@@ -3755,9 +3757,10 @@ oyPointer    oyCMMdsoGet_            ( const char        * cmm,
   int found = -1;
   oyPointer dso_handle = 0;
 
-  if(!lib_name)
+if(!lib_name)
     return 0;
 
+#ifdef HAVE_POSIX
   found = oyCMMdsoSearch_(lib_name);
 
   if(found >= 0)
@@ -3784,6 +3787,7 @@ oyPointer    oyCMMdsoGet_            ( const char        * cmm,
     oyCMMdsoReference_( lib_name, dso_handle );
 
   return dso_handle;
+#endif
 }
 
 
@@ -4118,7 +4122,12 @@ char **          oyCMMsGetNames_     ( uint32_t          * n,
 char **          oyCMMsGetLibNames_  ( uint32_t          * n,
                                        const char        * required_cmm )
 {
+#ifdef HAVE_POSIX
   return oyCMMsGetNames_(n, OY_METASUBPATH, 0, required_cmm, oyPATH_MODULE);
+#else
+  *n = 0;
+  return 0;
+#endif
 }
 
 /** @internal

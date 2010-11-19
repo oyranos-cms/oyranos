@@ -18,6 +18,20 @@
 
 #include <stdlib.h> /* for size_t */
 
+#if !defined(WIN32) || (defined(WIN32) && (defined(__CYGWIN__) || defined(__MINGW) || defined(__MINGW32)))
+#define HAVE_POSIX 1
+#include <inttypes.h> /* uint32_t */
+#else
+#define uint32_t unsigned __int32
+#define uint16_t unsigned __int16
+#define uint8_t unsigned char
+#define int32_t __int32
+#define int16_t __int16
+#define INT32_MAX  (2147483647)
+#define INT32_MIN  (-2147483647-1)
+#define UINT16_MAX  65535
+#endif
+
 /** \namespace oyranos
     @brief The Oyranos namespace.
  */
