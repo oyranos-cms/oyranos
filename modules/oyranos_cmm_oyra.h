@@ -35,7 +35,7 @@ extern oyMessage_f oyra_msg;
 
 
 
-int                oyraCMMInit       ( );
+int                oyraCMMInit       ( oyStruct_s        * filter );
 int                oyraIconv         ( const char        * input,
                                        size_t              len,
                                        char              * output,

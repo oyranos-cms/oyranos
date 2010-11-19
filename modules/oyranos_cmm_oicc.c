@@ -39,7 +39,7 @@
 #define CMM_NICK "oicc"
 oyMessage_f oicc_msg = oyFilterMessageFunc;
 int            oiccFilterMessageFuncSet( oyMessage_f       message_func );
-int                oiccFilterInit      ( );
+int                oiccFilterInit    ( oyStruct_s        * filter );
 oyWIDGET_EVENT_e   oiccWidgetEvent   ( oyOptions_s       * options,
                                        oyWIDGET_EVENT_e    type,
                                        oyStruct_s        * event );

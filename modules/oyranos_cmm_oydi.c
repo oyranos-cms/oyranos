@@ -34,7 +34,7 @@
 
 /* OY_IMAGE_DISPLAY_REGISTRATION */
 
-int                oydiCMMInit       ( );
+int                oydiCMMInit       ( oyStruct_s        * filter );
 int            oydiCMMMessageFuncSet ( oyMessage_f         message_func );
 oyMessage_f oydi_msg = 0;
 
