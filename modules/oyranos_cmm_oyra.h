@@ -31,7 +31,7 @@
 #define CMM_NICK "oyra"
 #define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 
-extern oyMessage_f message;
+extern oyMessage_f oyra_msg;
 
 
 

@@ -30,7 +30,7 @@
 
 #define CMM_NICK "oyIM"
 
-extern oyMessage_f message;
+extern oyMessage_f oyIM_msg;
 
 
 

@@ -36,7 +36,7 @@
 #define CMM_NICK "oyra"
 
 int oyraCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
-oyMessage_f message = oyraCMMWarnFunc;
+oyMessage_f oyra_msg = oyraCMMWarnFunc;
 
 
 
@@ -127,7 +127,7 @@ int oyraCMMWarnFunc( int code, const oyStruct_s * context, const char * format, 
  */
 int            oyraCMMMessageFuncSet ( oyMessage_f         message_func )
 {
-  message = message_func;
+  oyra_msg = message_func;
   return 0;
 }
 

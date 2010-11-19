@@ -34,7 +34,6 @@
 #include <string.h>
 #ifdef HAVE_POSIX
 #include <dlfcn.h>
-#include <inttypes.h>
 #endif
 
 

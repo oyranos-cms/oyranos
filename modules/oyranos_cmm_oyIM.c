@@ -35,7 +35,7 @@
 
 
 int oyIMCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
-oyMessage_f message = oyIMCMMWarnFunc;
+oyMessage_f oyIM_msg = oyIMCMMWarnFunc;
 
 
 
@@ -126,7 +126,7 @@ int oyIMCMMWarnFunc( int code, const oyStruct_s * context, const char * format, 
  */
 int            oyIMCMMMessageFuncSet ( oyMessage_f         message_func )
 {
-  message = message_func;
+  oyIM_msg = message_func;
   return 0;
 }
 
