@@ -24,7 +24,7 @@
 #ifdef HAVE_POSIX
 #include <dirent.h>
 #else
-#include "dirent.h"  /* Posix API must be provided */
+#include "dirent_custom.h"  /* Posix API must be provided */
 #endif
 #include <stdlib.h>
 #include <stdio.h>
