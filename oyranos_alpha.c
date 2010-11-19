@@ -27,7 +27,6 @@
 #include "oyranos_texts.h"
 #ifdef HAVE_POSIX
 #include <dlfcn.h>
-#include <inttypes.h>
 #endif
 #include <math.h>
 #include <locale.h>   /* LC_NUMERIC */
@@ -3016,6 +3015,68 @@ int              oyStructList_ObserverAdd (
     oyStruct_ObserverAdd( o, (oyStruct_s*)s, 0, 0 );
   }
 
+  return error;
+}
+
+
+/**
+ *  Function oyStructList_MoveInName
+ *  @memberof oyStructList_s
+ *  @brief   add a name to a list
+ *
+ *  The text is added a a oyName_s::name member variable and owned by the list.
+ *
+ *  @version Oyranos: 0.1.13
+ *  @date    2008/10/07
+ *  @since   2008/10/07 (Oyranos: 0.1.13)
+ */
+int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
+{
+  int error = !texts || ! text;
+  oyName_s * name = 0;
+  oyStruct_s * oy_struct = 0;
+  if(!error)
+  {
+     name = oyName_new(0);
+     name->name = *text;
+     *text = 0;
+     oy_struct = (oyStruct_s*) name;
+     oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
+  }
+  return error;
+}
+
+/**
+ *  Function oyStructList_MoveInName
+ *  @memberof oyStructList_s
+ *  @brief   add a name to a list
+ *
+ *  The text is added a a oyName_s::name member variable.
+ *
+ *  @version Oyranos: 0.1.13
+ *  @date    2008/10/07
+ *  @since   2008/10/07 (Oyranos: 0.1.13)
+ */
+int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
+{
+  int error = !texts;
+  oyName_s * name = 0;
+  oyStruct_s * oy_struct = 0;
+  char * tmp = 0;
+  if(!error)
+  {
+     name = oyName_new(0);
+     if(!name) return 1;
+     if(text)
+     {
+       tmp = oyAllocateFunc_( strlen(text) + 1 );
+       if(!tmp) return 1;
+       sprintf( tmp, "%s", text ); 
+       name->name = tmp;
+     }
+     oy_struct = (oyStruct_s*) name;
+     oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
+  }
   return error;
 }
 

@@ -41,12 +41,6 @@ int                oyraIconv         ( const char        * input,
                                        char              * output,
                                        const char        * from_codeset );
 int      oyraCMMMessageFuncSet       ( oyMessage_f         message_func );
-int      oyStructList_MoveInName     ( oyStructList_s    * texts,
-                                       char             ** text,
-                                       int                 pos );
-int      oyStructList_AddName        ( oyStructList_s    * texts,
-                                       const char        * text,
-                                       int pos );
 oyStructList_s * oyraProfileTag_GetValues(
                                        oyProfileTag_s    * tag );
 int      oyraProfileTag_Create       ( oyProfileTag_s    * tag,

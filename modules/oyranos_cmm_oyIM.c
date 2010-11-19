@@ -131,47 +131,6 @@ int            oyIMCMMMessageFuncSet ( oyMessage_f         message_func )
 }
 
 
-int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
-{
-  int error = !texts || ! text;
-  oyName_s * name = 0;
-  oyStruct_s * oy_struct = 0;
-  if(!error)
-  {
-     name = oyName_new(0);
-     name->name = *text;
-     *text = 0;
-     oy_struct = (oyStruct_s*) name;
-     oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
-  }
-  return error;
-}
-
-int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
-{
-  int error = !texts;
-  oyName_s * name = 0;
-  oyStruct_s * oy_struct = 0;
-  char * tmp = 0;
-  if(!error)
-  {
-     name = oyName_new(0);
-     if(!name) return 1;
-     if(text)
-     {
-       tmp = oyAllocateFunc_( strlen(text) + 1 );
-       if(!tmp) return 1;
-       sprintf( tmp, "%s", text ); 
-       name->name = tmp;
-     }
-     oy_struct = (oyStruct_s*) name;
-     oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
-  }
-  return error;
-}
-
-
-
 const char * oyIMWidget_GetDummy     ( const char        * func_name,
                                        uint32_t          * result )
 {return 0;}

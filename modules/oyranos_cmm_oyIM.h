@@ -40,12 +40,6 @@ int                oyIMIconv         ( const char        * input,
                                        char              * output,
                                        const char        * from_codeset );
 int      oyIMCMMMessageFuncSet       ( oyMessage_f         message_func );
-int      oyStructList_MoveInName     ( oyStructList_s    * texts,
-                                       char             ** text,
-                                       int                 pos );
-int      oyStructList_AddName        ( oyStructList_s    * texts,
-                                       const char        * text,
-                                       int pos );
 oyStructList_s * oyIMProfileTag_GetValues(
                                        oyProfileTag_s    * tag );
 int      oyIMProfileTag_Create       ( oyProfileTag_s    * tag,

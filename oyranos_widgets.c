@@ -26,7 +26,6 @@
 #include "oyranos_texts.h"
 #if !defined(WIN32)
 #include <dlfcn.h>
-#include <inttypes.h>
 #endif
 #include <math.h>
 
