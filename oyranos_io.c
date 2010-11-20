@@ -13,6 +13,7 @@
  *  @since    2004/11/25
  */
 
+#include <assert.h>
 #include <errno.h>
 #include <sys/stat.h>
 #include <stdlib.h>
@@ -1086,6 +1087,7 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
       oySprintf_(name, "%s",path);
       for (k=0; k <= l; ++k) {
         int len = strlen(name);
+        assert(entry[k] && entry[k]->d_name);
         if(len+strlen(entry[k]->d_name) < 256)
           oySprintf_(&name[strlen(name)],"/%s", entry[k]->d_name);
         else {

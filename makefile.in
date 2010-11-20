@@ -133,6 +133,7 @@ CHEADERS = \
 	icc34.h \
 	md5.h \
 	lookup3.h \
+	dirent_custom.h \
 	oforms/$(TARGET)_forms.h
 #	fl_$(TARGET).h
 CFILES = \
@@ -456,6 +457,7 @@ ALL_FILES = \
 	$(MAN1) $(MAN3) \
 	$(DOC_TEMPLATES) \
 	$(FLTK_FILES) \
+	dirent.c \
 	test.c test2.cpp
 
 # build all what is needed to run the libraries, helpers
