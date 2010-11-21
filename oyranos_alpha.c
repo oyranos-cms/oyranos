@@ -11662,8 +11662,8 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
              * p = 0,
              * check = 0;
   oyOptions_s * dopts = 0; /* device options */
-  char * d_opt = 0, * d_val = 0,
-       * p_opt = 0, * p_val = 0,
+  char * d_opt = 0, * d_val = 0, /* device variables */
+       * p_opt = 0, * p_val = 0, /* pattern variables */
        * check_opt = 0, * check_val = 0;
   oyConfig_s * pattern = db_pattern,
              * device = module_device;
@@ -11734,7 +11734,12 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
           p_val = oyOption_GetValueText( p, oyAllocateFunc_ );
           has_opt = 1;
 
-          /** Option name is equal and and value matches : increase rank value*/
+          /** Option name is equal and and value matches : increase rank value
+           *  
+           *  TODO: we need a comparision mechanism here. The pattern value
+           *        should be expandable to several values and value ranges.
+           *        Do we need more than the ICC dict style syntax here?
+           */
           if(p_val && oyStrstr_( d_val, p_val ))
           {
             if(rank_map)
@@ -16488,7 +16493,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
  *  @since   2009/05/22 (Oyranos: 0.1.10)
  *  @date    2010/10/26
  */
-int              oyProfile_DeviceGet ( oyProfile_s     * profile,
+int              oyProfile_DeviceGet ( oyProfile_s       * profile,
                                        oyConfig_s        * device )
 {
   int error = !profile, l_error = 0;
@@ -18679,6 +18684,9 @@ int              oyProfiles_Count ( oyProfiles_s   * list )
  *  @memberof oyProfiles_s
  *  @brief   sort a profile list according to a given device
  *
+ *  Profiles which match the device will placed according to a rank value on 
+ *  top of the list followed by the zero ranked profiles.
+ *
  *  @verbatim
     oyProfiles_s * p_list = oyProfiles_ForStd( oyASSUMED_RGB, 0,0 );
     int32_t * rank_list = (int32_t*) malloc( oyProfiles_Count(p_list) *
@@ -18694,7 +18702,7 @@ int              oyProfiles_Count ( oyProfiles_s   * list )
       oyProfile_Release( &temp_prof );
     } @endverbatim
  *
- *  @param[in,out] list                the to be manipulated profile list
+ *  @param[in,out] list                the to be sorted profile list
  *  @param[in]     device              filter pattern
  *  @param[in,out] rank_list           list of rank levels for the profile list
  *
