@@ -27,6 +27,10 @@ extern "C" {
 #define oyNoEmptyName_m_( text_nem ) text_nem?text_nem:"---"
 #define oyNoEmptyString_m_ oyNoEmptyName_m_
 
+int          oyStringToLong          ( const char        * text,
+                                       long              * value );
+int          oyStringToDouble        ( const char        * text,
+                                       double            * value );
 size_t             oyStrblen_        ( const char        * s );
 char*              oyStringCopy_     ( const char        * text,
                                        oyAlloc_f           allocateFunc );

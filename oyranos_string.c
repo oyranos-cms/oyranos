@@ -43,6 +43,37 @@
 
 /* separate from the external functions */
 
+int          oyStringToLong          ( const char        * text,
+                                       long              * value )
+{
+  char * p = 0;
+  *value = strtol( text, &p, 0 );
+  if(*p && p != text)
+    return 0;
+#if 0
+  else if(errno)
+    return errno;
+#endif
+  else
+    return 1;
+}
+
+int          oyStringToDouble        ( const char        * text,
+                                       double            * value )
+{
+  char * p = 0;
+  *value = strtod( text, &p );
+  if(*p && p != text)
+    return 0;
+#if 0
+  else if(errno)
+    return errno;
+#endif
+  else
+    return 1;
+}
+
+
 /* string manipulation */
 
 char*
