@@ -13869,6 +13869,7 @@ OYAPI int  OYEXPORT
     error = oyDeviceProfileFromDB( device, &profile_name, 0 );
 
     /* 2.1 select best match to device from installed profiles */
+    if(!profile_name)
     {
       int size;
       oyProfile_s * profile = 0;
