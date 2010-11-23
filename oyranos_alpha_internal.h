@@ -120,6 +120,8 @@ int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
                                        int                 pos );
 int          oyProfile_TagReleaseAt_ ( oyProfile_s       * profile,
                                        int                 pos );
+int    oyTextIccDictMatch            ( const char        * text,
+                                       const char        * pattern );
 
 oyFilterCore_s * oyFilterCore_New_   ( oyObject_s          object );
 int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
