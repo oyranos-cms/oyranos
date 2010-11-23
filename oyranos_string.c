@@ -48,7 +48,7 @@ int          oyStringToLong          ( const char        * text,
 {
   char * p = 0;
   *value = strtol( text, &p, 0 );
-  if(*p && p != text)
+  if(p && p != text && p[0] == '\000' )
     return 0;
 #if 0
   else if(errno)
@@ -63,7 +63,7 @@ int          oyStringToDouble        ( const char        * text,
 {
   char * p = 0;
   *value = strtod( text, &p );
-  if(*p && p != text)
+  if(p && p != text && p[0] == '\000')
     return 0;
 #if 0
   else if(errno)
