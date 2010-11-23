@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Colour Management System 
  *
- *  Copyright (C) 2004-2009  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2010  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -1506,6 +1506,79 @@ oyTESTRESULT_e testRegistrationMatch ()
   return result;
 }
 
+extern "C" {
+int oyTextIccDictMatch( const char *, const char * ); }
+
+oyTESTRESULT_e test_oyTextIccDictMatch ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  if( oyTextIccDictMatch("ABC",
+                         "ABC"))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "simple text matching                  " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "simple text matching                  " );
+  }
+
+  if(!oyTextIccDictMatch("ABC",
+                         "ABCD"))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "simple text mismatching               " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "simple text mismatching               " );
+  }
+
+  if( oyTextIccDictMatch("abcd,ABC,efgh",
+                         "abcdef,12345,ABC"))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "multiple text matching                " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "multiple text matching                " );
+  }
+
+  if( oyTextIccDictMatch("abcd,ABC,efgh,12345",
+                         "abcdef,12345,ABCD"))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "multiple integer matching             " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "multiple integer matching             " );
+  }
+
+  if(!oyTextIccDictMatch("abcd,ABC,efgh,12345",
+                         "abcdef,12345ABCD"))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "multiple integer mismatching          " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "multiple integer mismatching          " );
+  }
+
+  if( oyTextIccDictMatch("abcd,ABC,efgh,123.45",
+                         "abcdef,123.45,ABCD"))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "multiple float matching               " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "multiple float matching               " );
+  }
+
+  if(!oyTextIccDictMatch("abcd,ABC,efgh,123.45",
+                         "abcdef,123"))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "multiple float mismatching            " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "multiple float mismatching            " );
+  }
+  return result;
+}
 
 oyTESTRESULT_e testPolicy ()
 {
@@ -3220,6 +3293,7 @@ int main(int argc, char** argv)
   //TEST_RUN( testMonitor,  "Monitor profiles" );
   //TEST_RUN( testDevices,  "Devices listing" );
   TEST_RUN( testRegistrationMatch,  "Registration matching" );
+  TEST_RUN( test_oyTextIccDictMatch,  "IccDict matching" );
   TEST_RUN( testPolicy, "Policy handling" );
   TEST_RUN( testCMMDevicesListing, "CMM devices listing" );
   TEST_RUN( testCMMDevicesDetails, "CMM devices details" );
