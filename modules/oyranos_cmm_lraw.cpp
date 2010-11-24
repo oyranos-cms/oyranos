@@ -31,6 +31,7 @@
 #include <cstring>
 
 #include <libraw/libraw.h>
+#include <libraw/libraw_types.h>
 
 /* --- internal definitions --- */
 
@@ -329,6 +330,11 @@ int wread ( unsigned char* data, size_t pos, size_t max, size_t *start, size_t *
   return end_found;
 }
 
+
+extern "C" {
+int              oyArray2d_ToPPM_    ( oyArray2d_s       * array,
+                                       const char        * file_name ); }
+
 /** Function lrawFilterPlug_ImageInputRAWRun
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
@@ -360,9 +366,27 @@ int      lrawFilterPlug_ImageInputRAWRun (
   int spp = 0;         /* samples per pixel */
   int byteps = 1;      /* byte per sample */
   double maxval = 255; 
-    
+  oyConfig_s * device = 0;
+  oyOptions_s * options = 0;
+
   LibRaw rip;
   libraw_processed_image_t * image_rgb = 0;
+
+  libraw_output_params_t * params = rip.output_params_ptr();
+
+  error = oyOptions_SetFromText( &options,
+          "//" OY_TYPE_STD OY_SLASH CMM_NICK "command", "list", OY_CREATE_NEW );
+  //oyDeviceGet();
+
+  printf("output_color was: %d  output_bps: %d no_auto_bright: %d\ng[0] %g g[1] %g\n",
+          params->output_color, params->output_bps, params->no_auto_bright,
+          params->gamm[0], params->gamm[1]);
+  params->output_color = 0;    /* raw_color */
+  params->output_bps = 16;     /* linear space */
+  params->gamm[0] = 1.0; params->gamm[1] = 1.0;
+  params->user_qual = 3;
+  params->use_camera_wb = 1;
+  params->no_auto_bright = 1;
 
   /* passing through the data reading */
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S &&
@@ -419,6 +443,9 @@ int      lrawFilterPlug_ImageInputRAWRun (
       data_type = oyUINT16;
       byteps = 2;
       maxval = 65535;
+      message( oyMSG_WARN, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ " maxval: %g",
+             OY_DBG_ARGS_, maxval );
     }
 
   } else
@@ -544,9 +571,17 @@ int      lrawFilterPlug_ImageInputRAWRun (
   }
 
   pixel_type = oyChannels_m(spp) | oyDataType_m(data_type); 
-  prof = oyProfile_FromStd( profile_type, 0 );
+  oyDeviceAskProfile2( device, 0, &prof );
+  oyConfig_Release( &device );
+  if(!prof)
+    prof = oyProfile_FromStd( profile_type, 0 );
 
   image_in = oyImage_Create( width, height, buf, pixel_type, prof, 0 );
+
+  oyArray2d_ToPPM_    ( (oyArray2d_s*)image_in->pixel_data,
+                        "test_oy_dbg_lraw.ppm" );
+
+  oyProfile_Release( &prof );
 
   if (!image_in)
   {
