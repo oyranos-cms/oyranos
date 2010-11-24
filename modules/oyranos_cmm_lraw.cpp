@@ -330,6 +330,29 @@ int wread ( unsigned char* data, size_t pos, size_t max, size_t *start, size_t *
   return end_found;
 }
 
+oyConfig_s * oyREgetColorInfo        ( const char        * filename,
+                                       libraw_output_params_t * device_context )
+{
+   oyConfig_s * device = NULL;
+   //2.  Get the relevant color information from Oyranos
+   //    This is the "command" -> "properties" call
+   oyOptions_s *options = oyOptions_New(0);
+   //Request the properties call
+   oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "command", "properties", OY_CREATE_NEW);
+   oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "device_name", "dummy", OY_CREATE_NEW);
+   //Pass in the filename
+   oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "device_handle", filename, OY_CREATE_NEW);
+   //Pass in the libraw object with the raw image rendering options
+   oyOption_s *context_opt = oyOption_New( OY_LIBRAW_REGISTRATION OY_SLASH "device_context", 0);
+   oyOption_SetFromData(context_opt, (oyPointer)&device_context, sizeof(libraw_output_params_t*));
+   oyOptions_MoveIn(options, &context_opt, -1);
+
+   /*Call Oyranos*/
+   oyDeviceGet(OY_TYPE_STD, "raw-image", "dummy", options, &device);
+
+   oyOptions_Release(&options);
+  return device;
+}
 
 extern "C" {
 int              oyArray2d_ToPPM_    ( oyArray2d_s       * array,
@@ -571,6 +594,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
   }
 
   pixel_type = oyChannels_m(spp) | oyDataType_m(data_type); 
+  device = oyREgetColorInfo( filename, params );
   oyDeviceAskProfile2( device, 0, &prof );
   oyConfig_Release( &device );
   if(!prof)
