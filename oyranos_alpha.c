@@ -22928,6 +22928,23 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
           {
             regc_text = oyStringSegmentN_( reg_text, reg_len, '.', k,
                                               &regc_len );
+            if(regc_text[0] == '4' ||
+               regc_text[0] == '5' ||
+               regc_text[0] == '6' ||
+               regc_text[0] == '7' ||
+               regc_text[0] == '8' ||
+               regc_text[0] == '9')
+            {
+              ++ regc_text;
+              ++ regc_text;
+              regc_len -= 2;
+            } else
+            if(regc_text[0] == '_' ||
+               regc_text[0] == '-')
+            {
+              ++ regc_text;
+            }
+
             if((!pc_api_num || (pc_api_num && api_num == pc_api_num)) &&
                memcmp( regc_text, pc_text, OY_MIN(regc_len,pc_len) ) == 0 &&
 	       (regc_len == pc_len || !regc_len || !pc_len))
