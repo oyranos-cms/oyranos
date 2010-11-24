@@ -35,7 +35,8 @@ CMMS = \
 	$(TARGET)_oyX1$(OY_MODULE_NAME) \
 	$(TARGET)_qarz$(OY_MODULE_NAME) \
 	$(TARGET)_CUPS$(OY_MODULE_NAME) \
-	$(TARGET)_SANE$(OY_MODULE_NAME)
+	$(TARGET)_SANE$(OY_MODULE_NAME) \
+	$(TARGET)_oyRE$(OY_MODULE_NAME)
 META = \
 	$(TARGET)_oyIM$(OY_MODULE_NAME)
 LIB_CMM_oyIM = $(LIB_CMM_START)_oyIM$(LIB_CMM_END)
@@ -62,6 +63,9 @@ LIB_CMM_lcm2 = $(LIB_CMM_START)_lcm2$(LIB_CMM_END)
 #endif
 #ifdef LRAW_LIBS
 LIB_CMM_lraw = $(LIB_CMM_START)_lraw$(LIB_CMM_END)
+#ifdef EXIV2_LIBS
+LIB_CMM_oyRE = $(LIB_CMM_START)_oyRE$(LIB_CMM_END)
+#endif
 #endif
 LIB_CMM_oyra = $(LIB_CMM_START)_oyra$(LIB_CMM_END)
 LIBS_CMM = \
@@ -70,6 +74,7 @@ LIBS_CMM = \
 	$(LIB_CMM_oPNG) \
 	$(LIB_CMM_oydi) \
 	$(LIB_CMM_CUPS) \
+	$(LIB_CMM_oyRE) \
 	$(LIB_CMM_SANE) \
 	$(LIB_CMM_oyX1) \
 	$(LIB_CMM_qarz) \
@@ -177,6 +182,8 @@ CFILES_CMM_CUPS = \
 	modules/devices/$(TARGET)_cmm_CUPS.c
 CFILES_CMM_SANE = \
 	modules/devices/$(TARGET)_cmm_SANE.c
+CPPFILES_CMM_oyRE = \
+	modules/devices/$(TARGET)_cmm_oyRE.cpp
 CFILES_CMM_oyra = \
 	modules/$(TARGET)_cmm_oyra.c \
 	modules/$(TARGET)_cmm_oyra_image.c \
@@ -195,6 +202,7 @@ CFILES_MODULES = \
 	$(CFILES_MODULES_DEVICES) $(CFILES_CMM_oyIM) \
 	$(CFILES_CMM_oicc) $(CFILES_CMM_oPNG)
 CPPFILES_MODULES = \
+	$(CPPFILES_CMM_oyRE) \
 	$(CPPFILES_CMM_lraw)
 CHEADERS_MODULES = \
 	modules/$(TARGET)_cmm_oyIM.h \
@@ -205,6 +213,8 @@ CFILES_MODULES_DEVICES = \
 	$(CFILES_MONI_X11) \
 	$(CFILES_MONI_CS) \
 	$(CFILES_CMM_CUPS) \
+	modules/devices/oyRE_help.c \
+	modules/devices/helper.c \
 	$(CFILES_CMM_SANE) \
 	modules/devices/SANE_help.c \
 	modules/devices/$(TARGET)_monitor.c
@@ -370,6 +380,7 @@ COBJECTS = \
 #CPP_lraw_OBJECTS = $(CMM_lraw_OBJECTS)
 #endif
 CPPOBJECTS =	test2.o \
+	$(CMM_oyRE_OBJECTS) \
 	$(CPP_lraw_OBJECTS)
 CXXOBJECTS =	$(CXXFILES) $(FLTK_OFORMS_OBJECTS)
 
@@ -382,6 +393,7 @@ CMM_oyX1_OBJECTS = $(CFILES_CMM_oyX1:.c=.o)
 CMM_qarz_OBJECTS = $(CFILES_CMM_qarz:.c=.o)
 CMM_CUPS_OBJECTS = $(CFILES_CMM_CUPS:.c=.o)
 CMM_SANE_OBJECTS = $(CFILES_CMM_SANE:.c=.o)
+CMM_oyRE_OBJECTS = $(CPPFILES_CMM_oyRE:.cpp=.o)
 CMM_oyra_OBJECTS = $(CFILES_CMM_oyra:.c=.o)
 CMM_oyIM_OBJECTS = $(CFILES_CMM_oyIM:.c=.o)
 CMM_oicc_OBJECTS = $(CFILES_CMM_oicc:.c=.o)
@@ -403,6 +415,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(CMM_qarz_OBJECTS) \
 	$(CMM_CUPS_OBJECTS) \
 	$(CMM_SANE_OBJECTS) \
+	$(CMM_oyRE_OBJECTS) \
 	$(CMM_oyra_OBJECTS) \
 	$(CMM_oyIM_OBJECTS) \
 	$(CMM_oicc_OBJECTS) \
@@ -422,6 +435,7 @@ SUB_OBJECTS = \
 	$(CMM_qarz_OBJECTS) \
 	$(CMM_CUPS_OBJECTS) \
 	$(CMM_SANE_OBJECTS) \
+	$(CMM_oyRE_OBJECTS) \
 	$(CMM_oyra_OBJECTS) \
 	$(CMM_oyIM_OBJECTS) \
 	$(CMM_oicc_OBJECTS) \
@@ -584,6 +598,16 @@ $(LIB_CMM_SANE): $(LIBSONAMEFULL) $(CMM_SANE_OBJECTS)
 	$(LNK) $@ lib$(TARGET)_SANE$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_SANE$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_SANE$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+
+$(LIB_CMM_oyRE): $(LIBSONAMEFULL) $(CMM_oyRE_OBJECTS)
+	echo Linking $@ ...
+	-$(CXX) $(CXXFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
+	-o $@ \
+	$(CMM_oyRE_OBJECTS) $(MODULE_LDLIBS) $(LRAW_LIBS) $(EXIV2_LIBS)
+	$(RM)  lib$(TARGET)_oyRE$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oyRE$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
+	$(RM)  lib$(TARGET)_oyRE$(OY_MODULE_NAME)$(SO)$(LIBEXT)
+	$(LNK) $@ lib$(TARGET)_oyRE$(OY_MODULE_NAME)$(SO)$(LIBEXT)
 
 $(LIB_CMM_oyra): $(LIBSONAMEFULL) $(CMM_oyra_OBJECTS)
 	echo Linking $@ ...
