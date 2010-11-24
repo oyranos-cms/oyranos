@@ -483,6 +483,56 @@ if [ -n "$LRAW" ] && [ $LRAW -gt 0 ]; then
   fi
 fi
 
+if [ -n "$EXIV2" ] && [ $EXIV2 -gt 0 ]; then
+  name="exiv2"
+  libname=$name
+  minversion=0.10
+  url="http://www.exiv2.org/"
+  TESTER=$EXIV2
+  ID=EXIV2
+
+  ID_H="$ID"_H
+  ID_LIBS="$ID"_LIBS
+  HAVE_LIB=0
+  version=`pkg-config --modversion $name`
+  pkg-config  --atleast-version=$minversion $name
+  if [ $? = 0 ]; then
+    HAVE_LIB=1
+    echo "#define HAVE_$ID 1" >> $CONF_H
+    echo "$ID = 1" >> $CONF
+    echo "$ID_H = `pkg-config --cflags $name | sed \"$STRIPOPT\"`" >> $CONF
+    echo "$ID_LIBS = `pkg-config --libs $name | sed \"$STRIPOPT\"`" >> $CONF
+  else
+    l=$libname
+    rm -f tests/libtest$EXEC_END
+    $CXX $CXXFLAGS -I$includedir $ROOT_DIR/tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
+    if [ -f tests/libtest ]; then
+      HAVE_LIB=1
+      echo "#define HAVE_$ID 1" >> $CONF_H
+      echo "$ID = 1" >> $CONF
+      echo "$ID_H = -I$includedir" >> $CONF
+      echo "$ID_LIBS =  -L/usr/lib$BARCH -L$libdir -l$l" >> $CONF
+      rm tests/libtest$EXEC_END
+    fi
+  fi
+  if [ $HAVE_LIB -eq 1 ]; then
+    if [ "$version" != "" ]; then
+      echo_="$name $version            detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    else
+      echo_="lib$name                  detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    fi
+  else
+    if [ $TESTER -eq 1 ]; then
+      echo_="!!! ERROR: no or too old $name found, !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      ERROR=1
+    else
+      echo_="    Warning: no or too old $name found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      WARNING=1
+    fi
+    echo_="  need at least version $minversion, download: $url"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+  fi
+fi
+
 if [ -n "$XCM" ] && [ $XCM -gt 0 ]; then
     found=""
     version=""

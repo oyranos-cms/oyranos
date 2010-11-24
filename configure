@@ -865,6 +865,7 @@ if [ -n "$ECHO" ]; then
   if [ -z "$ELEKTRA_VERSION" ]; then
   ELEKTRA=2; export ELEKTRA
   fi
+  EXIV2=2; export EXIV2
   #OYRANOS=1; export OYRANOS
   LCMS=1; export LCMS
   LCMS2=2; export LCMS2
@@ -920,6 +921,7 @@ fi
   OPENMP_LINKING=0; export OPENMP_LINKING
   CUPS=0; export CUPS
   ELEKTRA=0; export ELEKTRA
+  EXIV2=0; export EXIV2
   #OYRANOS=0; export OYRANOS
   LCMS=0; export LCMS
   LCMS2=0; export LCMS2
