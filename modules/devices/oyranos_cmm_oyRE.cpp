@@ -13,7 +13,7 @@
  *  @since    2009/07/05
  */
 
-#include <oyranos/oyranos_cmm.h>
+#include <oyranos_cmm.h>
 
 #include <string.h>
 #include <stdarg.h>
@@ -80,7 +80,7 @@ const char * Api8UiGetText           ( const char        * select,
  *
  *  \todo { Pick better rank fields }
  */
-oyranos::oyRankPad _rank_map[] = {
+oyRankPad _rank_map[] = {
    {const_cast < char *>("device_name"), 0, 0, 0},                   /**< Unused?*/
    {const_cast < char *>("driver_version"), 2, -1, 0},               /**< is good */
    {const_cast < char *>("profile_name"), 0, 0, 0},                  /**< non relevant for device properties*/
@@ -155,19 +155,11 @@ oyranos::oyRankPad _rank_map[] = {
    {0, 0, 0, 0}                                                      /**< end of list */
 };
 
-#ifdef __cplusplus
-extern "C" {
-   namespace oyranos {
-#endif                          /* __cplusplus */
 
       oyMessage_f message = 0;
 
-      extern oyranos::oyCMMapi8_s _api8;
+      extern oyCMMapi8_s _api8;
 
-#ifdef __cplusplus
-} /* extern "C" */ }            /* namespace oyranos */
-#endif                          /* __cplusplus */
-using namespace oyranos;
 
 bool is_raw( int id );
 int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params);
@@ -474,7 +466,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          DeviceFromHandle_opt(device, handle_opt);
       } else { /*Bail out if no "device_handle" given*/
          printf("Missing \"device_handle\" option\n");
-         return 1;
+         return -1;
       }
 
       /*Handle "device_context" option [IN]*/
@@ -617,8 +609,9 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
             oyOptions_MoveIn(device_new->data, &tmp, -1);
             oyOption_Release(&handle_opt_dev);
          } else { /*Ignore device without a "device_handle"*/
-            message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
-                    _DBG_ARGS_, "The \"device_handle\" is missing from config object!");
+           if(oyOptions_Count( device->backend_core ) < 2)
+             message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
+                     _DBG_ARGS_, "The \"device_handle\" is missing from config object!");
             oyConfig_Release(&device);
             oyConfig_Release(&device_new);
             continue;
@@ -768,7 +761,7 @@ oyIcon_s _api8_icon = {
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/12/28
  */
-oyCMMapi8_s oyranos::_api8 = {
+oyCMMapi8_s _api8 = {
    oyOBJECT_CMM_API8_S,
    0, 0, 0,
    (oyCMMapi_s*) 0,                                                   /**< next */
