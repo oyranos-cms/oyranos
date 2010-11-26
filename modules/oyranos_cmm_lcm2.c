@@ -569,7 +569,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
       if(o_txt && oyStrlen_(o_txt))
         gamut_warning = atoi( o_txt );
 
-      o_txt = oyOptions_FindString  ( opts, "rendering_high_precission", 0 );
+      o_txt = oyOptions_FindString  ( opts, "precalculation", 0 );
       if(o_txt && oyStrlen_(o_txt))
         high_precission = atoi( o_txt );
 
@@ -584,8 +584,13 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
                               flags & (~cmsFLAGS_BLACKPOINTCOMPENSATION);
       flags = gamut_warning ? flags | cmsFLAGS_GAMUTCHECK :
                               flags & (~cmsFLAGS_GAMUTCHECK);
-      flags = high_precission ? flags | cmsFLAGS_HIGHRESPRECALC :
-                              flags & (~cmsFLAGS_HIGHRESPRECALC);
+      switch(high_precission)
+      {
+      case 0: flags |= cmsFLAGS_NOOPTIMIZE; break;
+      case 1: flags |= 0; break;
+      case 2: flags |= cmsFLAGS_HIGHRESPRECALC; break;
+      case 3: flags |= cmsFLAGS_LOWRESPRECALC; break;
+      }
       intent = cmyk_cmyk_black_preservation ? intent + 10 : intent;
       if(cmyk_cmyk_black_preservation == 2)
         intent += 13;
@@ -1973,6 +1978,7 @@ char lcm2_extra_options[] = {
     <" OY_TYPE_STD ">\n\
      <" "icc" ">\n\
       <cmyk_cmyk_black_preservation.advanced>0</cmyk_cmyk_black_preservation.advanced>\n\
+      <precalculation.advanced>0</precalculation.advanced>\n\
      </" "icc" ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
@@ -2030,6 +2036,30 @@ int lcm2GetOptionsUI                 ( oyOptions_s        * options,
        <xf:item>\n\
         <xf:value>2</xf:value>\n\
         <xf:label>LCMS_PRESERVE_K_PLANE</xf:label>\n\
+       </xf:item>\n\
+      </xf:choices>\n\
+     </xf:select1>\n");
+  A("\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc/precalculation\">\n\
+      <xf:label>" );
+  A(          _("Optimization"));
+  A(                              "</xf:label>\n\
+      <xf:choices>\n\
+       <xf:item>\n\
+        <xf:value>0</xf:value>\n\
+        <xf:label>LCMS2_NOOPTIMIZE</xf:label>\n\
+       </xf:item>\n\
+       <xf:item>\n\
+        <xf:value>1</xf:value>\n\
+        <xf:label>normal</xf:label>\n\
+       </xf:item>\n\
+       <xf:item>\n\
+        <xf:value>2</xf:value>\n\
+        <xf:label>LCMS2_HIGHRESPRECALC</xf:label>\n\
+       </xf:item>\n\
+       <xf:item>\n\
+        <xf:value>3</xf:value>\n\
+        <xf:label>LCMS2_LOWRESPRECALC</xf:label>\n\
        </xf:item>\n\
       </xf:choices>\n\
      </xf:select1>\n");
@@ -2460,7 +2490,7 @@ const char * lcm2InfoGetText         ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("The lcms \"colour.icc\" filter is a one dimensional colour conversion filter. It can both create a colour conversion context, some precalculated for processing speed up, and the colour conversion with the help of that context. The adaption part of this filter transforms the Oyranos colour context, which is ICC device link based, to the internal lcms format.");
     else
-      return _("The following options are available to create colour contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract colour profiles.\n The following Oyranos options are supported: \"rendering_high_precission\", \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE]." );
+      return _("The following options are available to create colour contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract colour profiles.\n The following Oyranos options are supported: \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE] and \"precalculation\": [0 - cmsFLAGS_NOOPTIMIZE; 1 - normal; 2 - cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC] ." );
   }
   return 0;
 }
