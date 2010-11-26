@@ -754,7 +754,7 @@ examples:
 	cd examples && ($(MAKE) clean; PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/examples/ CFLAGS="$(CFLAGS)" LIBS="-L$(libdir) -L../" $(MAKE))
 
 oforms:	$(LIB_FORMS_FLTK_NAME)
-	cd oforms && (PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." CFLAGS="$(CFLAGS)" CXXFLAGS="$CXXFLAGS" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/oforms/ LDFLAGS="-L../ $(intl)" $(MAKE) -f oyranos_xforms.makefile)
+	cd oforms && (PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/oforms/ LDFLAGS="-L../ $(intl)" $(MAKE) -f oyranos_xforms.makefile)
 
 test:	test.o
 	$(CC) -I./ $(CFLAGS) -o test \
@@ -1150,7 +1150,7 @@ cdepend:
 	for i in $(CXXOBJECTS); do \
 	  echo "$${i}:	\$$(SRCDIR)/$${i}" | sed s/\.o\$$/.cxx/ >> cobjects; \
 	  echo "	echo Compiling $${i} ..." >> cobjects; \
-	  echo '	$$(CXX) -I./ -I$$(SRCDIR) $$(CXXFLAGS) $$(INCL) -c -o $$*.o $$(SRCDIR)/$$*.cxx' >> cobjects; \
+	  echo '	$$(CXX) -I./ -I$$(SRCDIR) $$(CXXFLAGS) $$(INCL) $$(FLTK_H) -c -o $$*.o $$(SRCDIR)/$$*.cxx' >> cobjects; \
 	  echo "" >> cobjects; \
 	done
 
