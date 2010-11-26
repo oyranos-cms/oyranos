@@ -9825,12 +9825,18 @@ int            oyOptions_Add         ( oyOptions_s       * options,
   char * o_opt,
        * o_top,
        * l_opt,  /* l - list */
-       * l_top;
+       * l_top,
+       * t;
 
   if(error <= 0)
   {
     o_opt = oyFilterRegistrationToText( option->registration,
                                         oyFILTER_REG_MAX, 0 );
+    if(strrchr(o_opt, '.' ))
+    {
+      t = strrchr(o_opt, '.' );
+      *t = 0;
+    }
     o_top = oyFilterRegistrationToText( option->registration,
                                         oyFILTER_REG_TOP, 0 );
     n = oyOptions_Count( options );
@@ -9840,6 +9846,11 @@ int            oyOptions_Add         ( oyOptions_s       * options,
       tmp = oyOptions_Get( options, i );
       l_opt = oyFilterRegistrationToText( tmp->registration,
                                           oyFILTER_REG_MAX, 0 );
+      if(strrchr(l_opt, '.' ))
+      {
+        t = strrchr(l_opt, '.' );
+        *t = 0;
+      }
       l_top = oyFilterRegistrationToText( tmp->registration,
                                           oyFILTER_REG_TOP, 0 );
       if(oyStrcmp_(l_opt, o_opt) == 0)
