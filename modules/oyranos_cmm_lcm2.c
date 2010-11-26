@@ -1103,7 +1103,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
                Do we want this?
              */
                                                intent_proof,
-                                               flags | cmsFLAGS_HIGHRESPRECALC);
+                                               flags | cmsFLAGS_KEEP_SEQUENCE);
       if(!tr) { message( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
                           "cmsCreateProofingTransform() failed", OY_DBG_ARGS_);
                 error = 1; }
@@ -1129,7 +1129,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
                Do we want this?
              */
                                                intent_proof,
-                                               flags | cmsFLAGS_HIGHRESPRECALC);
+                                               flags | cmsFLAGS_KEEP_SEQUENCE);
       if(!tr16) { message( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
                           "cmsCreateProofingTransform() failed", OY_DBG_ARGS_);
                   error = 1; }
