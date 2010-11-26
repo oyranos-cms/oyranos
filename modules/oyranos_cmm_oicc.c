@@ -126,7 +126,6 @@ char oicc_default_colour_icc_options[] = {
       <rendering_bpc>1</rendering_bpc>\n\
       <rendering_intent_proof.advanced>0</rendering_intent_proof.advanced>\n\
       <rendering_gamut_warning.advanced>0</rendering_gamut_warning.advanced>\n\
-      <rendering_high_precission.advanced>0</rendering_high_precission.advanced>\n\
      </behaviour>\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_STD ">\n\
@@ -695,8 +694,6 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                     "rendering_intent_proof", s, verbose);
               oiccChangeNodeOption( f_options, db_options,
                                     "rendering_gamut_warning", s, verbose);
-              oiccChangeNodeOption( f_options, db_options,
-                                    "rendering_high_precission", s, verbose);
               if(display_mode)
                 proofing = oyOptions_FindString( f_options, "proof_soft", "1" )
                            ? 1 : 0;
