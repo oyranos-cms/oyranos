@@ -523,7 +523,7 @@ oyPolicyToXML_  (oyGROUP_e           group,
     case oyGROUP_BEHAVIOUR_RENDERING:
          oyWriteOptionToXML_( group,
                                     oyWIDGET_RENDERING_INTENT,
-                                    oyWIDGET_RENDERING_HIGH_PRECISSION,
+                                    oyWIDGET_BEHAVIOUR_END,
                                     &text, 3 );
          break;
     case oyGROUP_BEHAVIOUR_PROOF:

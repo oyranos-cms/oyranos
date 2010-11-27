@@ -476,15 +476,6 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_RENDERING_GAMUT_WARNING,
       "oyBEHAVIOUR_RENDERING_GAMUT_WARNING", 1,0)
 
-    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_HIGH_PRECISSION, 2,
-      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
-      _("High Precission"),
-      _("Rendering with High Precission in opposite to fast processing"),
-      2, /* choices */
-      _("No"),_("Yes"),NULL,NULL,
-      OY_DEFAULT_RENDERING_HIGH_PRECISSION,
-      "oyBEHAVIOUR_RENDERING_HIGH_PRECISSION", 1,0)
-
 /*#   undef oySET_OPTIONS_M_*/
   }
 }
@@ -1727,7 +1718,6 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
            lw[pos++] = oyWIDGET_RENDERING_INTENT;
            lw[pos++] = oyWIDGET_RENDERING_BPC;
            lw[pos++] = oyWIDGET_RENDERING_GAMUT_WARNING;
-           lw[pos++] = oyWIDGET_RENDERING_HIGH_PRECISSION;
 
            *count = pos;
            w = lw;

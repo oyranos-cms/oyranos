@@ -83,7 +83,6 @@ typedef enum  {
   oyBEHAVIOUR_PROOF_SOFT,              /**< Proofing by default for screen */
   oyBEHAVIOUR_PROOF_HARD,              /**< Proofing by default for printing */
   oyBEHAVIOUR_RENDERING_GAMUT_WARNING, /**< mark out of gamut colours */
-  oyBEHAVIOUR_RENDERING_HIGH_PRECISSION,/**< higher then normal precission */
   oyBEHAVIOUR_END                      /**< just for easen Gui design */
 } oyBEHAVIOUR_e;
 
@@ -229,7 +228,6 @@ typedef enum  {
   oyWIDGET_PROOF_SOFT,                /**< Proofing by default for screen */
   oyWIDGET_PROOF_HARD,                /**< Proofing by default for printing */
   oyWIDGET_RENDERING_GAMUT_WARNING,   /**< mark out of gamut colours */
-  oyWIDGET_RENDERING_HIGH_PRECISSION, /**< higher then normal precission */
   oyWIDGET_BEHAVIOUR_END,             /**< just for easen Gui design */
 
   oyWIDGET_DEFAULT_PROFILE_START = 100,

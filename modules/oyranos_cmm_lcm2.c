@@ -524,7 +524,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
       bpc = 0,
       cmyk_cmyk_black_preservation = 0,
       gamut_warning = 0,
-      high_precission = 0,
+      precalculation = 0,
       flags = cmsFLAGS_NOCACHE;
   const char * o_txt = 0;
 
@@ -571,7 +571,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
 
       o_txt = oyOptions_FindString  ( opts, "precalculation", 0 );
       if(o_txt && oyStrlen_(o_txt))
-        high_precission = atoi( o_txt );
+        precalculation = atoi( o_txt );
 
       o_txt = oyOptions_FindString  ( opts, "cmyk_cmyk_black_preservation", 0 );
       if(o_txt && oyStrlen_(o_txt))
@@ -584,7 +584,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
                               flags & (~cmsFLAGS_BLACKPOINTCOMPENSATION);
       flags = gamut_warning ? flags | cmsFLAGS_GAMUTCHECK :
                               flags & (~cmsFLAGS_GAMUTCHECK);
-      switch(high_precission)
+      switch(precalculation)
       {
       case 0: flags |= cmsFLAGS_NOOPTIMIZE; break;
       case 1: flags |= 0; break;
@@ -597,11 +597,11 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
 
   if(oy_debug)
     message( oyMSG_WARN,0, OY_DBG_FORMAT_"\n"
-    "  intent: %d proof: %d  bpc: %d  gamut_warning: %d  high_precission: %d\n"
-             "  profiles_n: %d",
+    "  intent: %d proof: %d  bpc: %d  gamut_warning: %d  precalculation: %d\n"
+             "  profiles_n: %d,  flags: %d",
              OY_DBG_ARGS_,
-       intent,    proof_n,   bpc,     gamut_warning,     high_precission,
-                profiles_n );
+       intent,    proof_n,   bpc,     gamut_warning,     precalculation,
+                profiles_n,      flags );
 
   if(!error)
   {
@@ -1978,7 +1978,7 @@ char lcm2_extra_options[] = {
     <" OY_TYPE_STD ">\n\
      <" "icc" ">\n\
       <cmyk_cmyk_black_preservation.advanced>0</cmyk_cmyk_black_preservation.advanced>\n\
-      <precalculation.advanced>0</precalculation.advanced>\n\
+      <precalculation.advanced>2</precalculation.advanced>\n\
      </" "icc" ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
@@ -2010,15 +2010,6 @@ int lcm2GetOptionsUI                 ( oyOptions_s        * options,
 
   A(       _("Extended Options"));
   A(                         ":</h3>\n");
-#if 0
-  A("\
-  <table>\n\
-   <tr>\n\
-    <td>" );
-  A( _("Cmyk to Cmyk transformation"));
-  A(              ":</td>\n\
-    <td>\n");
-#endif
   A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc/cmyk_cmyk_black_preservation\">\n\
       <xf:label>" );
@@ -2063,13 +2054,6 @@ int lcm2GetOptionsUI                 ( oyOptions_s        * options,
        </xf:item>\n\
       </xf:choices>\n\
      </xf:select1>\n");
-#if 0
-  A("\
-    </td>\n\
-   </tr>\n\
-  </table>\
-" );
-#endif
 
   if(allocateFunc && tmp)
   {
