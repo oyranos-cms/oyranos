@@ -26,16 +26,23 @@
  *
  *  @param[in]     file_name           name of image file
  *  @param[out]    icc_node            used icc node, owned by caller
+ *  @param[in]     flags               for inbuild defaults |
+ *                                     oyOPTIONSOURCE_FILTER;
+ *                                     for options marked as advanced |
+ *                                     oyOPTIONATTRIBUTE_ADVANCED |
+ *                                     OY_SELECT_FILTER |
+ *                                     OY_SELECT_COMMON
  *  @param[in]     obj                 Oyranos object (optional)
  *  @return                            generated new graph, owned by caller
  *
- *  @version Oyranos: 0.1.11
+ *  @version Oyranos: 0.1.13
  *  @since   2010/09/05 (Oyranos: 0.1.11)
- *  @date    2010/09/10
+ *  @date    2010/11/27
  */
 oyConversion_s * oyConversion_FromImageFileName  (
                                        const char        * file_name,
                                        oyFilterNode_s   ** icc_node,
+                                       uint32_t            flags,
                                        oyObject_s          obj )
 {
   oyFilterNode_s * in, * out, * icc;
@@ -112,7 +119,8 @@ oyConversion_s * oyConversion_FromImageFileName  (
   /* apply policies */
   /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
                                  "true", OY_CREATE_NEW );*/
-  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", options );
+  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", flags,
+                        options );
   oyOptions_Release( &options );
 
 

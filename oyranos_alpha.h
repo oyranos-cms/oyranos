@@ -3234,6 +3234,7 @@ char             * oyConversion_ToText (
 int                oyConversion_Correct (
                                        oyConversion_s    * conversion,
                                        const char        * registration,
+                                       uint32_t            flags,
                                        oyOptions_s       * options );
                                        
 

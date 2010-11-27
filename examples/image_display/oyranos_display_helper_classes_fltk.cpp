@@ -256,7 +256,8 @@ int      conversionObserve           ( oyObserver_s      * observer,
                     oyObject_GetId(   obs->observer->oy_) );
 
     oyConversion_Correct( (oyConversion_s*)obs->observer,
-                          "//" OY_TYPE_STD "/icc", 0 );
+                          "//" OY_TYPE_STD "/icc", oyOPTIONATTRIBUTE_ADVANCED,
+                          0 );
 
     Oy_Fl_Box * oy_box = (Oy_Fl_Box*) ((oyBlob_s*)observer->user_data)->ptr;
     oy_box->damage( FL_DAMAGE_USER1 );

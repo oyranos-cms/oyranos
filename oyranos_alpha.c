@@ -27794,6 +27794,12 @@ char             * oyConversion_ToText (
  *
  *  @param   conversion                the to be checked configuration
  *  @param   registration              the to be used policy module
+ *  @param[in]     flags               for inbuild defaults |
+ *                                     oyOPTIONSOURCE_FILTER;
+ *                                     for options marked as advanced |
+ *                                     oyOPTIONATTRIBUTE_ADVANCED |
+ *                                     OY_SELECT_FILTER |
+ *                                     OY_SELECT_COMMON
  *  @param   options                   options to the policy module
  *  @return                            0 - indifferent, >= 1 - error
  *                                     + a message should be sent
@@ -27805,6 +27811,7 @@ char             * oyConversion_ToText (
 int                oyConversion_Correct (
                                        oyConversion_s    * conversion,
                                        const char        * registration,
+                                       uint32_t            flags,
                                        oyOptions_s       * options )
 {
   int error = 0;
@@ -27845,7 +27852,7 @@ int                oyConversion_Correct (
       if(oyFilterRegistrationMatch( cmm_api9->pattern, pattern, 0 ))
       {
         if(cmm_api9->oyConversion_Correct)
-          error = cmm_api9->oyConversion_Correct( s, options );
+          error = cmm_api9->oyConversion_Correct( s, flags, options );
         if(error)
         {
           WARNc2_S( "%s %s",_("error in module:"), cmm_api9->registration );

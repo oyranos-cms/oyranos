@@ -550,6 +550,7 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
 }
 
 int           oiccConversion_Correct ( oyConversion_s    * conversion,
+                                       uint32_t            flags,
                                        oyOptions_s       * options )
 {
   int error = 0, i,j,k,n,m,os_n,
@@ -650,9 +651,9 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
 
               /* apply the found policy settings */
               db_options = oyOptions_ForFilter( node->core->registration_, 0,
-                                                oyOPTIONATTRIBUTE_ADVANCED |
+                                                flags |
                                                 oyOPTIONATTRIBUTE_FRONT, 0 );
-              f_options = oyFilterNode_OptionsGet( node, 0 );
+              f_options = oyFilterNode_OptionsGet( node, flags );
               os_n = oyOptions_Count(f_options);
               if(oy_debug || verbose)
               for(k = 0; k < os_n; k++)

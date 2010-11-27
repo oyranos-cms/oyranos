@@ -57,7 +57,8 @@ public:
   oyFilterNode_s * setImage( const char * file_name )
   {
     oyFilterNode_s * icc = 0;
-    oyConversion_s * c = oyConversion_FromImageFileName( file_name, &icc, 0 );
+    oyConversion_s * c = oyConversion_FromImageFileName( file_name, &icc,
+                                             oyOPTIONATTRIBUTE_ADVANCED, 0 );
 
     conversion( c );
 
