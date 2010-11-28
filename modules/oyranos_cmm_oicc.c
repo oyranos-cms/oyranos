@@ -120,8 +120,8 @@ char oicc_default_colour_icc_options[] = {
       <action_missmatch_rgb.front>1</action_missmatch_rgb.front>\n\
       <mixed_colour_spaces_print_doc_convert.front>1</mixed_colour_spaces_print_doc_convert.front>\n\
       <mixed_colour_spaces_screen_doc_convert.front>2</mixed_colour_spaces_screen_doc_convert.front>\n\
-      <proof_hard.advanced.front>0</proof_hard.advanced.front>\n\
-      <proof_soft.advanced.front>0</proof_soft.advanced.front>\n\
+      <proof_hard.advanced>0</proof_hard.advanced>\n\
+      <proof_soft.advanced>0</proof_soft.advanced>\n\
       <rendering_intent>0</rendering_intent>\n\
       <rendering_bpc>1</rendering_bpc>\n\
       <rendering_intent_proof.advanced>0</rendering_intent_proof.advanced>\n\
@@ -651,8 +651,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
 
               /* apply the found policy settings */
               db_options = oyOptions_ForFilter( node->core->registration_, 0,
-                                                flags |
-                                                oyOPTIONATTRIBUTE_FRONT, 0 );
+                                                flags, 0 );
               f_options = oyFilterNode_OptionsGet( node, flags );
               os_n = oyOptions_Count(f_options);
               if(oy_debug || verbose)
