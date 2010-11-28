@@ -132,6 +132,7 @@ char * lcm2Image_GetText             ( oyImage_s         * image,
 char * lcm2FilterNode_GetText        ( oyFilterNode_s    * node,
                                        oyNAME_e            type,
                                        oyAlloc_f           allocateFunc );
+char * lcm2FlagsToText               ( int                 flags );
 cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
                                        cmsUInt32Number     flags,
                                        int                 intent,
@@ -598,10 +599,10 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
   if(oy_debug)
     message( oyMSG_WARN,0, OY_DBG_FORMAT_"\n"
     "  intent: %d proof: %d  bpc: %d  gamut_warning: %d  precalculation: %d\n"
-             "  profiles_n: %d,  flags: %d",
+             "  profiles_n: %d,  flags: %d(%s)",
              OY_DBG_ARGS_,
        intent,    proof_n,   bpc,     gamut_warning,     precalculation,
-                profiles_n,      flags );
+                profiles_n,      flags,    lcm2FlagsToText(flags) );
 
   if(!error)
   {
@@ -650,6 +651,16 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
       if(flags & cmsFLAGS_GAMUTCHECK)
         flags |= cmsFLAGS_GRIDPOINTS(lcm2PROOF_LUT_GRID_RASTER);
 
+    if(oy_debug)
+    {
+    uint32_t f = lcm2_pixel_layout_in;
+    printf ("%s:%d %s() float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
+    f = lcm2_pixel_layout_out;
+    printf ("%s:%d %s() float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
+      printf("multi_profiles_n: %d intent: %d flags: %d \"%s\" l1 %d, l2 %d\n",
+              multi_profiles_n, intent, flags, lcm2FlagsToText(flags),
+              lcm2_pixel_layout_in, lcm2_pixel_layout_out);
+    }
       xform =   cmsCreateMultiprofileTransform(
                                     lps, 
                                     multi_profiles_n,
@@ -665,9 +676,9 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
   if(!xform)
   {
     uint32_t f = lcm2_pixel_layout_in;
-    printf ("%s:%d %s() float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes%d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
+    printf ("%s:%d %s() float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
     f = lcm2_pixel_layout_out;
-    printf ("%s:%d %s() float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes%d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
+    printf ("%s:%d %s() float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
     error = 1;
   }
 
@@ -1677,6 +1688,43 @@ char * lcm2FilterNode_GetText        ( oyFilterNode_s    * node,
 
   return oyStringCopy_( hash_text, allocateFunc );
 #endif
+}
+
+/** Function lcm2FlagsToText
+ *  @brief   debugging helper
+ *
+ *  @version Oyranos: 0.1.13
+ *  @since   2010/11/28 (Oyranos: 0.1.13)
+ *  @date    2010/11/28
+ */
+char * lcm2FlagsToText               ( int                 flags )
+{
+  char * t = 0;
+  char num[24];
+
+  sprintf(num, "%d", flags);
+  STRING_ADD( t, "flags[" );
+  STRING_ADD( t, num );
+  STRING_ADD( t, "]: " );
+#define STRING_ADD_FLAG( flag_name ) \
+  if(flags & flag_name) \
+    STRING_ADD( t, " " #flag_name );
+  STRING_ADD_FLAG( cmsFLAGS_NOCACHE );
+  STRING_ADD_FLAG( cmsFLAGS_NOOPTIMIZE );
+  STRING_ADD_FLAG( cmsFLAGS_NULLTRANSFORM );
+  STRING_ADD_FLAG( cmsFLAGS_GAMUTCHECK );
+  STRING_ADD_FLAG( cmsFLAGS_SOFTPROOFING );
+  STRING_ADD_FLAG( cmsFLAGS_BLACKPOINTCOMPENSATION );
+  STRING_ADD_FLAG( cmsFLAGS_NOWHITEONWHITEFIXUP );
+  STRING_ADD_FLAG( cmsFLAGS_HIGHRESPRECALC );
+  STRING_ADD_FLAG( cmsFLAGS_LOWRESPRECALC );
+  STRING_ADD_FLAG( cmsFLAGS_8BITS_DEVICELINK );
+  STRING_ADD_FLAG( cmsFLAGS_GUESSDEVICECLASS );
+  STRING_ADD_FLAG( cmsFLAGS_KEEP_SEQUENCE );
+  STRING_ADD_FLAG( cmsFLAGS_FORCE_CLUT );
+  STRING_ADD_FLAG( cmsFLAGS_CLUT_POST_LINEARIZATION );
+  STRING_ADD_FLAG( cmsFLAGS_CLUT_PRE_LINEARIZATION );
+  return t;
 }
 
 /** Function lcm2CMMdata_Convert
