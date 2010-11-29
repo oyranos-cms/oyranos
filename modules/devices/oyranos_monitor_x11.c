@@ -190,6 +190,8 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
   return prop;
 }
 
+/*#define IGNORE_EDID 1*/
+
 int
 oyX1GetMonitorInfo_               (const char* display_name,
                                    char**      manufacturer,
@@ -256,8 +258,10 @@ oyX1GetMonitorInfo_               (const char* display_name,
   if( host )
     *host = oyStringCopy_( oyX1Monitor_hostName_( disp ), allocate_func );
 
+#if !defined(IGNORE_EDID)
   prop = oyX1Monitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
                                        xrandr_edids );
+#endif
 
   if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XINERAMA &&
       ((!prop || (prop && prop->size%128)) ||
@@ -275,8 +279,10 @@ oyX1GetMonitorInfo_               (const char* display_name,
     error = system( txt );
     if(txt) { oyDeAllocateFunc_(txt); txt = 0; }
 
+#if !defined(IGNORE_EDID)
     prop = oyX1Monitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
                                          xrandr_edids );
+#endif
   }
 
   if( prop )
@@ -294,6 +300,84 @@ oyX1GetMonitorInfo_               (const char* display_name,
 
       oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, vendor,
                       week, year, mnft_id, model_id, colours, allocate_func);
+    }
+  } else
+  /* as a last means try Xorg.log for at least some informations */
+  {
+    char * log_file = 0;
+    char * log_text = 0,
+         * t;
+    size_t log_size = 0;
+    int screen = oyX1Monitor_screen_( disp ), i;
+
+    {
+#define X_LOG_PATH  "/var/log/"
+      char num[12];
+      sprintf( num, "%d", oyX1Monitor_number_(disp) );
+      STRING_ADD( log_file, X_LOG_PATH "Xorg." );
+      STRING_ADD( log_file, num );
+      STRING_ADD( log_file, ".log" );
+    }
+
+    if(log_file)
+    {
+      log_text = oyReadFileToMem_( log_file, &log_size, oyAllocateFunc_);
+      t = log_text;
+    }
+
+    if(log_text)
+    {
+      float rx=0,ry=0,gx=0,gy=0,bx=0,by=0,wx=0,wy=0,g=0;
+      int year_ = 0, week_ = 0;
+      const char * t;
+      char mnft_[80] = {0};
+      int model_id_ = 0;
+
+      for(i = 0; i < screen; ++i)
+      {
+        ++t;
+        t = strstr( log_text, "redX:" );
+      }
+
+      if((t = strstr( log_text, "redX:" )) != 0)
+        sscanf( t,"redX: %g redY: %g", &rx,&ry );
+      if((t = strstr( log_text, "greenX:" )) != 0)
+        sscanf( t,"greenX: %g greenY: %g", &gx,&gy );
+      if((t = strstr( log_text, "blueX:" )) != 0)
+        sscanf( t,"blueX: %g blueY: %g", &bx,&by );
+      if((t = strstr( log_text, "whiteX:" )) != 0)
+        sscanf( t,"whiteX: %g whiteY: %g", &wx,&wy );
+      if((t = strstr( log_text, "Gamma:" )) != 0)
+        sscanf( t,"Gamma: %g", &g );
+
+      if((t = strstr( log_text, "Year:" )) != 0)
+      {
+        sscanf( t,"Year: %d  Week: %d", &year_, &week_ );
+      } 
+
+      if((t = strstr( log_text, "Manufacturer:" )) != 0)
+      {
+        sscanf( t,"Manufacturer: %s", mnft_ );
+      }
+
+      if((t = strstr( log_text, "prod id" )) != 0)
+       sscanf( t,"prod id %d", &model_id_ );
+      if(mnft_[0])
+      {
+        *mnft = oyStringCopy_( mnft_, oyAllocateFunc_ );
+        *model_id = model_id_;
+        colours[0] = rx;
+        colours[1] = ry;
+        colours[2] = gx;
+        colours[3] = gy;
+        colours[4] = bx;
+        colours[5] = by;
+        colours[6] = wx;
+        colours[7] = wy;
+        colours[8] = g;
+        *year = year_;
+        *week = week_;
+      }
     }
   }
 
