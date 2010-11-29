@@ -20,6 +20,7 @@
 #include <math.h>
 #include "limits.h"
 #include <unistd.h>  /* intptr_t */
+#include <locale.h>
 
 #include "config.h"
 
@@ -333,6 +334,12 @@ oyX1GetMonitorInfo_               (const char* display_name,
       char mnft_[80] = {0};
       int model_id_ = 0;
 
+      char * save_locale = 0;
+      /* sensible parsing */
+      save_locale = oyStringCopy_( setlocale( LC_NUMERIC, 0 ),
+                                         oyAllocateFunc_ );
+      setlocale( LC_NUMERIC, "C" );
+
       for(i = 0; i < screen; ++i)
       {
         ++t;
@@ -377,6 +384,12 @@ oyX1GetMonitorInfo_               (const char* display_name,
         colours[8] = g;
         *year = year_;
         *week = week_;
+        WARNcc3_S( user_data, "found \"%s\": %s %d",
+                   log_file, mnft_, model_id_);
+
+        setlocale(LC_NUMERIC, save_locale);
+        if(save_locale)
+          oyFree_m_( save_locale );
       }
     }
   }
@@ -395,12 +408,21 @@ oyX1GetMonitorInfo_               (const char* display_name,
     DBG_PROG_ENDE
     return 0;
   } else {
+    const char * log = _("Cant read hardware information from device.");
+    int r = -1;
+
+    if(*mnft && (*mnft)[0])
+    {
+      log = "using Xorg log fallback.";
+      r = 0;
+    }
+
     WARNcc3_S( user_data, "\n  %s:\n  %s\n  %s",
                _("no EDID available from X properties"),
                "\"XFree86_DDC_EDID1_RAWDATA\"/\"EDID_DATA\"",
-               _("Cant read hardware information from device."))
+               oyNoEmptyString_m_(log))
     DBG_PROG_ENDE
-    return -1;
+    return r;
   }
 }
 
