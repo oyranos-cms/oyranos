@@ -353,10 +353,82 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
                  oyNoEmptyString_m_( device_name ) );
 
       if(error <= 0 && edid)
+      {
         error = oyX1DeviceFillEdid( device, edid->ptr, edid->size,
                                     device_name,
                                     host, display_geometry, system_port,
                                     options );
+      } else if(error <= 0)
+      {
+        char num[16];
+        char * text = 0;
+
+        if(!error && device_name)
+        error = oyOptions_SetFromText( &(*device)->backend_core,
+                                       OYX1_MONITOR_REGISTRATION OY_SLASH "device_name",
+                                       device_name, OY_CREATE_NEW );
+
+        OPTIONS_ADD( (*device)->backend_core, manufacturer, 1 )
+        OPTIONS_ADD( (*device)->backend_core, mnft, 1 )
+        OPTIONS_ADD( (*device)->backend_core, model, 1 )
+        OPTIONS_ADD( (*device)->backend_core, serial, 1 )
+        OPTIONS_ADD( (*device)->backend_core, vendor, 1 )
+        OPTIONS_ADD( (*device)->backend_core, display_geometry, 0 )
+        OPTIONS_ADD( (*device)->backend_core, system_port, 0 )
+        OPTIONS_ADD( (*device)->backend_core, host, 0 )
+        OPTIONS_ADD_INT( (*device)->backend_core, week )
+        OPTIONS_ADD_INT( (*device)->backend_core, year )
+        OPTIONS_ADD_INT( (*device)->backend_core, mnft_id )
+        OPTIONS_ADD_INT( (*device)->backend_core, model_id )
+        if(!error)
+        {
+          int i;
+          char * save_locale = 0;
+
+          if(colours[0] != 0.0 && colours[1] != 0.0 && colours[2] != 0.0 &&
+             colours[3] != 0.0 && colours[4] != 0.0 && colours[5] != 0.0 && 
+             colours[6] != 0.0 && colours[7] != 0.0 && colours[8] != 0.0 )
+          {
+            for(i = 0; i < 9; ++i)
+              error = oyOptions_SetFromDouble( &(*device)->data,
+                       OYX1_MONITOR_REGISTRATION OY_SLASH "colour_matrix."
+                       "from_edid."
+                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
+                                             colours[i], i, OY_CREATE_NEW );
+          }
+          else
+          {
+            message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
+                     "  No EDID matrix found; device_name: \"%s\"",OY_DBG_ARGS_,
+                     oyNoEmptyString_m_( device_name ) );
+            error = -1;
+          }
+
+          text = oyAllocateFunc_(1024);
+
+          if(!error && text)
+          {
+            /* sensible printing */
+            save_locale = oyStringCopy_( setlocale( LC_NUMERIC, 0 ),
+                                         oyAllocateFunc_ );
+            setlocale( LC_NUMERIC, "C" );
+            sprintf( text, "%g,%g," "%g,%g," "%g,%g," "%g,%g,%g",
+                     colours[0], colours[1], colours[2], colours[3],
+                     colours[4], colours[5], colours[6], colours[7],colours[8]);
+            setlocale(LC_NUMERIC, save_locale);
+            if(save_locale)
+              oyFree_m_( save_locale );
+
+            error = oyOptions_SetFromText( &(*device)->backend_core,
+                                         OYX1_MONITOR_REGISTRATION OY_SLASH
+                                         "colour_matrix_text_from_edid_"
+                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
+                                         text, OY_CREATE_NEW );
+          }
+          oyDeAllocateFunc_( text ); text = 0;
+        }
+      }
+
       if(error != 0)
         message( oyMSG_WARN, (oyStruct_s*)options,
                  OY_DBG_FORMAT_ "\n  Could not complete \"properties\" call.\n"
