@@ -1216,7 +1216,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       cmsSaveProfileToMem( gmt, 0, &size );
       data = oyAllocateFunc_( size );
       cmsSaveProfileToMem( gmt, data, &size );
-      oyWriteMemToFile_( "dbg_dl_proof.icc", data, size );
+      oyWriteMemToFile_( "dbg_abstract_proof.icc", data, size );
       if(data) oyDeAllocateFunc_( data ); data = 0;
   }
 
