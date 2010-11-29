@@ -842,16 +842,16 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
             /* fallback: try to get EDID to build a profile */
             o_tmp = oyConfig_Find( device, "colour_matrix."
                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma");
-            if(!o_tmp)
             {
               oyOptions_SetFromText( &options,
                                      OYX1_MONITOR_REGISTRATION OY_SLASH
                                      "edid",
                                      "yes", OY_CREATE_NEW );
               error = oyX1DeviceFromName_( device_name, options, &device );
+            }
+            if(!o_tmp)
               o_tmp = oyConfig_Find( device, "colour_matrix."
                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma");
-            }
 
             if(o_tmp)
             {
@@ -869,23 +869,42 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
             if(prof)
             {
               const char * t = 0;
+              oyOption_s * edid = 0;
               t = oyConfig_FindString( device, "model", 0 );
               if(!t)
+              {
+                t = oyConfig_FindString( device, "model_id", 0 );
+                if(t)
+                  STRING_ADD( text, t );
+                else
                 message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
-                "Could not obtain \"manufacturer\" from monitor device for %s",
+                "Could not obtain \"model\" from monitor device for %s",
                      OY_DBG_ARGS_, device_name );
+              }
               else
-                STRING_ADD( text, oyConfig_FindString( device, "model", 0 ) );
-              STRING_ADD( text, "_edid" );
+                STRING_ADD( text, t );
+
+              edid = oyConfig_Find( device, "edid" );
+              if(edid)
+                STRING_ADD( text, "_edid" );
+              else
+                STRING_ADD( text, "_xorg" );
+              oyOption_Release( &edid );
+
               error = oyProfile_AddTagText( prof,
                                             icSigProfileDescriptionTag, text);
               oyDeAllocateFunc_( text ); text = 0;
               t = oyConfig_FindString( device, "manufacturer", 0);
               if(!t)
+              {
+                t = oyConfig_FindString( device, "mnft", 0);
+                if(!t)
+                  error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag, t);
+                else
                 message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
                 "Could not obtain \"manufacturer\" from monitor device for %s",
                      OY_DBG_ARGS_, device_name );
-              else
+              } else
                 error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag, t);
               t = oyConfig_FindString( device, "model", 0 );
               if(!t)
