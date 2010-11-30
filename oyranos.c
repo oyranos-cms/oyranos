@@ -240,7 +240,7 @@ oyGetPathFromProfileNameCb_          ( oyFileList_s      * data,
   }
 
   DBG_MEM_S( search )
-  if(name && strcmp( search, name ) == 0)
+  if(name && l2 && strcmp( search, name ) == 0)
   {
     size_t size = 128;
     char* header = oyReadFileToMem_ (full_name, &size, oyAllocateFunc_);
