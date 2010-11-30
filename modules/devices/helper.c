@@ -2,7 +2,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include <sane/sane.h>
 #include <oyranos_cmm.h>
 #include <oyranos_alpha.h>
 
@@ -38,7 +37,7 @@ static void print_option(oyOption_s * opt, int j)
          case oyOBJECT_BLOB_S:
             blob = (oyBlob_s *)opt_struct;
             printf("\t\t[%s]\n\t\tOption[%d] ID=%d\tblob{%p,%d}\n\n",
-                  opt->registration, j, id, blob->ptr, blob->size);
+                  opt->registration, j, id, blob->ptr, (int)blob->size);
             break;
          default:
             printf("\t\tCan't handle struct of type %d\n", opt_struct->type_);
