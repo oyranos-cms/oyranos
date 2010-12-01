@@ -709,16 +709,25 @@ char**  oyLibPathsGet_( int             * count,
   int     i;
   char  * fix_paths[3] = {0,0,0};
   int     fix_paths_n = 2;
+  char  * full_path = 0;
 
   if(!subdir)
   {
-    fix_paths[0] = OY_LIBDIR OY_SLASH OY_METASUBPATH;
-    fix_paths[1] = OY_USER_PATH OY_SLASH "lib" OY_SLASH OY_METASUBPATH;
+    full_path = oyResolveDirFileName_( OY_LIBDIR OY_SLASH OY_METASUBPATH );
+    fix_paths[0] = full_path;
+    full_path = oyResolveDirFileName_(
+                          OY_USER_PATH OY_SLASH "lib" OY_SLASH OY_METASUBPATH );
+    fix_paths[1] = full_path;
   } else {
-    fix_paths[0] = oyStringCopy_(OY_LIBDIR OY_SLASH, oyAllocateFunc_);
-    oyStringAdd_( &fix_paths[0], subdir, oyAllocateFunc_, oyDeAllocateFunc_);
-    fix_paths[1] = oyStringCopy_(OY_USER_PATH OY_SLASH, oyAllocateFunc_);
-    oyStringAdd_( &fix_paths[1], subdir, oyAllocateFunc_, oyDeAllocateFunc_);
+    full_path = oyResolveDirFileName_( OY_LIBDIR OY_SLASH );
+    STRING_ADD( fix_paths[0], full_path );
+    full_path = 0;
+    STRING_ADD( fix_paths[0], subdir );
+
+    full_path = oyResolveDirFileName_( OY_USER_PATH OY_SLASH );
+    STRING_ADD( fix_paths[1], full_path );
+    full_path = 0;
+    STRING_ADD( fix_paths[1], subdir );
   }
 
   oyStringListAdd_( &paths, &n, (const char**)fix_paths, fix_paths_n,
