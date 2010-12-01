@@ -1097,7 +1097,11 @@ oyTESTRESULT_e testConfDomain ()
 
   fprintf(stdout, "\n" );
 
+#ifdef __APPLE__
+  a = oyConfDomain_FromReg( "shared/freedesktop.org/imaging/config.device.icc_profile.monitor.qarz", 0 );
+#else
   a = oyConfDomain_FromReg( "shared/freedesktop.org/imaging/config.device.icc_profile.monitor.oyX1", 0 );
+#endif
   error = !a;
 
   if(!error)
