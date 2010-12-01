@@ -20,6 +20,7 @@ Dependencies:
     Elektra - http://www.libelektra.org
     FLTK (--enable-threads) is needed for the example Gui - http://www.fltk.org
     Xcalib a vcgt loader - http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/
+    OpenICC-Data is needed with its default ICC profiles
     For the documentation use doxygen, graphviz and graphviz-gd packages.
     Doxygen v1.5.8 or higher is recommended - http://www.doxygen.org
     Qt for a nice observer utility - http://qt.nokia.com/
@@ -56,6 +57,30 @@ Dependencies:
   optional:
     ICC Examin to build afterwards. oyranos-config-fltk uses the profile viewer.
 
+  Fedora 13:
+    git
+    gcc-c++
+    elektra-devel
+    cups-devel
+    sane-backends-devel
+    lcms-devel
+    openicc-data
+    libxml2-devel
+    libpng-devel
+    libtiff-devel
+    LibRaw-devel
+    libXinerama-devel
+    libXrandr-devel
+    libXcm-devel
+    fltk-devel
+    gettext
+    doxygen
+    graphviz
+  optional:
+    cairo-devel
+    libXmu-deve
+    qt-devel
+    netpbm-progs
 
 Building:
     $ configure
