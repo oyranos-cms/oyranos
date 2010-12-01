@@ -373,23 +373,25 @@ int main( int argc , char** argv )
             if(prof)
             {
               uint32_t model_id = 0;
+              const char * t = 0;
               error = oyProfile_AddTagText( prof, icSigProfileDescriptionTag,
                                             (char*) output ? output : format );
-              error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag,
-                                  oyConfig_FindString( c, "manufacturer", 0 ) );
-              error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag,
-                                  oyConfig_FindString( c, "model", 0 ) );
+              t = oyConfig_FindString( c, "EDID_manufacturer", 0 );
+              if(t)
+                error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag, t );
+              t =  oyConfig_FindString( c, "EDID_model", 0 );
+              if(t)
+                error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag, t );
               if(device_meta_tag)
                 error = oyProfile_DeviceAdd( prof, c, 0 );
               data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
               header = (icHeader*) data;
-              o = oyConfig_Find( c, "mnft" );
-              sprintf( (char*)&header->manufacturer, "%s",
-                       oyConfig_FindString( c, "mnft", 0 ) );
-              oyOption_Release( &o );
-              o = oyConfig_Find( c, "model_id" );
-              if(o)
-                model_id = atoi( oyConfig_FindString( c, "model_id", 0 ) );
+              t = oyConfig_FindString( c, "EDID_mnft", 0 );
+              if(t)
+                sprintf( (char*)&header->manufacturer, "%s", t );
+              t = oyConfig_FindString( c, "EDID_model_id", 0 );
+              if(t)
+                model_id = atoi( t );
               model_id = oyValueUInt32( model_id );
               memcpy( &header->model, &model_id, 4 );
               oyOption_Release( &o );

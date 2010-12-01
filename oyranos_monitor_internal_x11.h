@@ -82,19 +82,6 @@ int          oyX1Monitor_width_        ( oyX1Monitor_s       * disp );
 int          oyX1Monitor_height_       ( oyX1Monitor_s       * disp );
 
 
-void         oyUnrollEdid1_          ( void              * edid,
-                                       char             ** manufacturer,
-                                       char             ** mnft,
-                                       char             ** model,
-                                       char             ** serial,
-                                       char             ** vendor,
-                                       uint32_t          * week,
-                                       uint32_t          * year,
-                                       uint32_t          * mnft_id,
-                                       uint32_t          * model_id,
-                                       double            * c,
-                                       oyAlloc_f           allocate_func);
-
 Display*     oyX1Monitor_device_       ( oyX1Monitor_s       * disp );
 oyX11INFO_SOURCE_e 
              oyX1Monitor_infoSource_   ( oyX1Monitor_s       * disp );
@@ -107,14 +94,6 @@ XRROutputInfo *
 int          oyX1Monitor_activeOutputs_( oyX1Monitor_s       * disp );
 # endif
 
-int          oyX1DeviceFillEdid      ( oyConfig_s       ** device,
-                                       oyPointer           edi,
-                                       size_t              edi_size,
-                                       const char        * device_name,
-                                       const char        * host,
-                                       const char        * display_geometry,
-                                       const char        * system_port,
-                                       oyOptions_s       * options );
 int          oyX1MonitorProfileSetup ( const char        * display_name,
                                        const char        * profil_name );
 int          oyX1MonitorProfileUnset ( const char        * display_name );

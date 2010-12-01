@@ -58,18 +58,6 @@ int          qarzMonitor_width_        ( qarzMonitor_s       * disp );
 int          qarzMonitor_height_       ( qarzMonitor_s       * disp );
 
 
-void         oyUnrollEdid1_          ( void              * edid,
-                                       char             ** manufacturer,
-                                       char             ** mnft,
-                                       char             ** model,
-                                       char             ** serial,
-                                       char             ** vendor,
-                                       uint32_t          * week,
-                                       uint32_t          * year,
-                                       uint32_t          * mnft_id,
-                                       uint32_t          * model_id,
-                                       double            * c,
-                                       oyAlloc_f           allocate_func);
 
 CGDirectDisplayID  qarzMonitor_device_ ( qarzMonitor_s       * disp );
 

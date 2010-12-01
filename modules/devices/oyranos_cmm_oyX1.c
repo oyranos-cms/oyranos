@@ -96,18 +96,6 @@ int            oyX1CMMMessageFuncSet ( oyMessage_f         message_func )
   return 0;
 }
 
-#define OPTIONS_ADD(opts, name, clear) if(!error && name) \
-        error = oyOptions_SetFromText( &opts, \
-                                     OYX1_MONITOR_REGISTRATION OY_SLASH #name, \
-                                       name, OY_CREATE_NEW ); \
-        if(clear && name) { oyDeAllocateFunc_( (char*)name ); name = 0; }
-#define OPTIONS_ADD_INT(opts, name) if(!error && name) { \
-        oySprintf_( num, "%d", name ); \
-        error = oyOptions_SetFromText( &opts, \
-                                     OYX1_MONITOR_REGISTRATION OY_SLASH #name, \
-                                       num, OY_CREATE_NEW ); \
-        }
-
 const char * oyX1_help_list = 
       "The presence of option \"command=list\" will provide a list of \n"
       " available devices. The actual device name can be found in option\n"
@@ -140,20 +128,20 @@ const char * oyX1_help_properties =
       "The presence of option \"command=properties\" will provide the devices\n"
       " properties. Requires one device identifier returned with the \n"
       " \"list\" option. The properties may cover following entries:\n"
-      " - \"manufacturer\" description\n"
-      " - \"mnft\" (decoded mnft_id)\n"
-      " - \"model\" textual name\n"
-      " - \"serial\" not always present\n"
+      " - \"EDID_manufacturer\" description\n"
+      " - \"EDID_mnft\" (decoded EDID_mnft_id)\n"
+      " - \"EDID_model\" textual name\n"
+      " - \"EDID_serial\" not always present\n"
       " - \"host\" not always present\n"
       " - \"system_port\"\n"
-      " - \"week\" manufacture date\n"
-      " - \"year\" manufacture year\n"
-      " - \"mnft_id\" manufacturer ID (undecoded mnft)\n"
-      " - \"model_id\" model ID\n"
+      " - \"EDID_date\" manufacture date\n"
+      " - \"EDID_mnft_id\" manufacturer ID (undecoded EDID_mnft)\n"
+      " - \"EDID_model_id\" model ID\n"
       " - \"display_geometry\" (specific) widthxheight+x+y ,e.g."
       " \"1024x786+0+0\"\n"
-      " - \"colour_matrix_text.from_edid."
-                   "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\","
+      " - \"EDID_red_x\" \"EDID_red_y\" \"EDID_green_x\" \"EDID_green_y\" "
+      "   \"EDID_blue_x\" \"EDID_blue_x\" \"EDID_white_x\" \"EDID_white_x\" "
+      "   \"EDID_gamma\","
       " colour characteristics as found in EDID as text\n"
       " - \"colour_matrix.from_edid."
                    "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\","
@@ -211,103 +199,6 @@ void     oyX1ConfigsUsage( oyStruct_s        * options )
   return;
 }
 
-int          oyX1DeviceFillEdid      ( oyConfig_s       ** device,
-                                       oyPointer           edi,
-                                       size_t              edi_size,
-                                       const char        * device_name,
-                                       const char        * host,
-                                       const char        * display_geometry,
-                                       const char        * system_port,
-                                       oyOptions_s       * options )
-{
-  int error = !device || !edi;
-  char * text = 0;
-
-  if(error <= 0)
-  {
-      char * manufacturer=0, * mnft=0, * model=0, * serial=0, * vendor = 0;
-      double colours[9] = {0,0,0,0,0,0,0,0,0};
-      uint32_t week=0, year=0, mnft_id=0, model_id=0;
-      char num[16];
-
-      oyUnrollEdid1_( edi, &manufacturer, &mnft, &model, &serial, &vendor,
-                      &week, &year, &mnft_id, &model_id, colours, oyAllocateFunc_);
-
-      if(error <= 0)
-      {
-        if(!*device)
-          *device = oyConfig_New( OYX1_MONITOR_REGISTRATION, 0 );
-        error = !*device;
-        if(!error && device_name)
-        error = oyOptions_SetFromText( &(*device)->backend_core,
-                                       OYX1_MONITOR_REGISTRATION OY_SLASH "device_name",
-                                       device_name, OY_CREATE_NEW );
-
-        OPTIONS_ADD( (*device)->backend_core, manufacturer, 1 )
-        OPTIONS_ADD( (*device)->backend_core, mnft, 1 )
-        OPTIONS_ADD( (*device)->backend_core, model, 1 )
-        OPTIONS_ADD( (*device)->backend_core, serial, 1 )
-        OPTIONS_ADD( (*device)->backend_core, vendor, 1 )
-        OPTIONS_ADD( (*device)->backend_core, display_geometry, 0 )
-        OPTIONS_ADD( (*device)->backend_core, system_port, 0 )
-        OPTIONS_ADD( (*device)->backend_core, host, 0 )
-        OPTIONS_ADD_INT( (*device)->backend_core, week )
-        OPTIONS_ADD_INT( (*device)->backend_core, year )
-        OPTIONS_ADD_INT( (*device)->backend_core, mnft_id )
-        OPTIONS_ADD_INT( (*device)->backend_core, model_id )
-        if(!error)
-        {
-          int i;
-          char * save_locale = 0;
-
-          if(colours[0] != 0.0 && colours[1] != 0.0 && colours[2] != 0.0 &&
-             colours[3] != 0.0 && colours[4] != 0.0 && colours[5] != 0.0 && 
-             colours[6] != 0.0 && colours[7] != 0.0 && colours[8] != 0.0 )
-          {
-            for(i = 0; i < 9; ++i)
-              error = oyOptions_SetFromDouble( &(*device)->data,
-                       OYX1_MONITOR_REGISTRATION OY_SLASH "colour_matrix."
-                       "from_edid."
-                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
-                                             colours[i], i, OY_CREATE_NEW );
-          }
-          else
-          {
-            message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
-                     "  No EDID matrix found; device_name: \"%s\"",OY_DBG_ARGS_,
-                     oyNoEmptyString_m_( device_name ) );
-            error = -1;
-          }
-
-          text = oyAllocateFunc_(1024);
-
-          if(!error && text)
-          {
-            /* sensible printing */
-            save_locale = oyStringCopy_( setlocale( LC_NUMERIC, 0 ),
-                                         oyAllocateFunc_ );
-            setlocale( LC_NUMERIC, "C" );
-            sprintf( text, "%g,%g," "%g,%g," "%g,%g," "%g,%g,%g",
-                     colours[0], colours[1], colours[2], colours[3],
-                     colours[4], colours[5], colours[6], colours[7],colours[8]);
-            setlocale(LC_NUMERIC, save_locale);
-            if(save_locale)
-              oyFree_m_( save_locale );
-
-            error = oyOptions_SetFromText( &(*device)->backend_core,
-                                         OYX1_MONITOR_REGISTRATION OY_SLASH
-                                         "colour_matrix_text_from_edid_"
-                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
-                                         text, OY_CREATE_NEW );
-          }
-          oyDeAllocateFunc_( text ); text = 0;
-        }
-
-      }
-  }
-
-  return error;
-}
 
 int          oyX1DeviceFromName_     ( const char        * device_name,
                                        oyOptions_s       * options,
@@ -321,11 +212,12 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
 
     if(!error)
     {
-      char * manufacturer=0, * mnft=0, * model=0, * serial=0, * vendor = 0,
+      char * EDID_manufacturer=0, * EDID_mnft=0, * EDID_model=0,
+           * EDID_serial=0, * EDID_vendor = 0,
            * host=0, * display_geometry=0, * system_port=0;
       double colours[9] = {0,0,0,0,0,0,0,0,0};
       oyBlob_s * edid = 0;
-      uint32_t week=0, year=0, mnft_id=0, model_id=0;
+      uint32_t week=0, year=0, EDID_mnft_id=0, EDID_model_id=0;
 
       if(!device_name)
       {
@@ -338,12 +230,12 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
 
       if(error <= 0)
         error = oyX1GetMonitorInfo_lib( device_name,
-                                      &manufacturer, &mnft, &model, &serial,
-                                      &vendor, &display_geometry, &system_port,
-                                      &host, &week, &year, &mnft_id, &model_id,
-                                      colours,
-                                      &edid, oyAllocateFunc_,
-                                      (oyStruct_s*)options );
+                      &EDID_manufacturer, &EDID_mnft, &EDID_model, &EDID_serial,
+                      &EDID_vendor, &display_geometry, &system_port, &host,
+                      &week, &year, &EDID_mnft_id, &EDID_model_id,
+                                        colours,
+                                        &edid, oyAllocateFunc_,
+                                        (oyStruct_s*)options );
 
       if(error != 0)
         message( oyMSG_WARN, (oyStruct_s*)options, 
@@ -354,79 +246,26 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
 
       if(error <= 0 && edid)
       {
-        error = oyX1DeviceFillEdid( device, edid->ptr, edid->size,
+        error = oyDeviceFillEdid(   OYX1_MONITOR_REGISTRATION,
+                                    device, edid->ptr, edid->size,
                                     device_name,
                                     host, display_geometry, system_port,
                                     options );
       } else if(error <= 0)
       {
-        char num[16];
-        char * text = 0;
-
         if(!error && device_name)
         error = oyOptions_SetFromText( &(*device)->backend_core,
                                        OYX1_MONITOR_REGISTRATION OY_SLASH "device_name",
                                        device_name, OY_CREATE_NEW );
 
-        OPTIONS_ADD( (*device)->backend_core, manufacturer, 1 )
-        OPTIONS_ADD( (*device)->backend_core, mnft, 1 )
-        OPTIONS_ADD( (*device)->backend_core, model, 1 )
-        OPTIONS_ADD( (*device)->backend_core, serial, 1 )
-        OPTIONS_ADD( (*device)->backend_core, vendor, 1 )
-        OPTIONS_ADD( (*device)->backend_core, display_geometry, 0 )
-        OPTIONS_ADD( (*device)->backend_core, system_port, 0 )
-        OPTIONS_ADD( (*device)->backend_core, host, 0 )
-        OPTIONS_ADD_INT( (*device)->backend_core, week )
-        OPTIONS_ADD_INT( (*device)->backend_core, year )
-        OPTIONS_ADD_INT( (*device)->backend_core, mnft_id )
-        OPTIONS_ADD_INT( (*device)->backend_core, model_id )
-        if(!error)
-        {
-          int i;
-          char * save_locale = 0;
-
-          if(colours[0] != 0.0 && colours[1] != 0.0 && colours[2] != 0.0 &&
-             colours[3] != 0.0 && colours[4] != 0.0 && colours[5] != 0.0 && 
-             colours[6] != 0.0 && colours[7] != 0.0 && colours[8] != 0.0 )
-          {
-            for(i = 0; i < 9; ++i)
-              error = oyOptions_SetFromDouble( &(*device)->data,
-                       OYX1_MONITOR_REGISTRATION OY_SLASH "colour_matrix."
-                       "from_edid."
-                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
-                                             colours[i], i, OY_CREATE_NEW );
-          }
-          else
-          {
-            message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
-                     "  No EDID matrix found; device_name: \"%s\"",OY_DBG_ARGS_,
-                     oyNoEmptyString_m_( device_name ) );
-            error = -1;
-          }
-
-          text = oyAllocateFunc_(1024);
-
-          if(!error && text)
-          {
-            /* sensible printing */
-            save_locale = oyStringCopy_( setlocale( LC_NUMERIC, 0 ),
-                                         oyAllocateFunc_ );
-            setlocale( LC_NUMERIC, "C" );
-            sprintf( text, "%g,%g," "%g,%g," "%g,%g," "%g,%g,%g",
-                     colours[0], colours[1], colours[2], colours[3],
-                     colours[4], colours[5], colours[6], colours[7],colours[8]);
-            setlocale(LC_NUMERIC, save_locale);
-            if(save_locale)
-              oyFree_m_( save_locale );
-
-            error = oyOptions_SetFromText( &(*device)->backend_core,
-                                         OYX1_MONITOR_REGISTRATION OY_SLASH
-                                         "colour_matrix_text_from_edid_"
-                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
-                                         text, OY_CREATE_NEW );
-          }
-          oyDeAllocateFunc_( text ); text = 0;
-        }
+        error = oyDeviceFillInfos( OYX1_MONITOR_REGISTRATION, device,
+                                   device_name, host, display_geometry,
+                                   system_port,
+                                   EDID_manufacturer, EDID_mnft, EDID_model,
+                                   EDID_serial, EDID_vendor,
+                                   week, year,
+                                   EDID_mnft_id, EDID_model_id,
+                                   colours, options );
       }
 
       if(error != 0)
@@ -459,7 +298,16 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
           }
         }
       }
+
       oyBlob_Release( &edid );
+      if(EDID_manufacturer) oyFree_m_(EDID_manufacturer);
+      if(EDID_mnft) oyFree_m_(EDID_mnft);
+      if(EDID_model) oyFree_m_(EDID_model);
+      if(EDID_serial) oyFree_m_(EDID_serial);
+      if(EDID_vendor) oyFree_m_(EDID_vendor);
+      if(host) oyFree_m_(host);
+      if(display_geometry) oyFree_m_(display_geometry);
+      if(system_port) oyFree_m_(system_port);
     }
 
   return error;
@@ -660,7 +508,8 @@ int            oyX1Configs_FromPattern (
       }
       else
       {
-        error = oyX1DeviceFillEdid( &device, edid->ptr, edid->size,
+        error = oyDeviceFillEdid(   OYX1_MONITOR_REGISTRATION,
+                                    &device, edid->ptr, edid->size,
                                     NULL,
                                     NULL, NULL, NULL,
                                     options );
@@ -870,15 +719,15 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
             {
               const char * t = 0;
               oyOption_s * edid = 0;
-              t = oyConfig_FindString( device, "model", 0 );
+              t = oyConfig_FindString( device, "EDID_model", 0 );
               if(!t)
               {
-                t = oyConfig_FindString( device, "model_id", 0 );
+                t = oyConfig_FindString( device, "EDID_model_id", 0 );
                 if(t)
                   STRING_ADD( text, t );
                 else
                 message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
-                "Could not obtain \"model\" from monitor device for %s",
+                "Could not obtain \"EDID_model\" from monitor device for %s",
                      OY_DBG_ARGS_, device_name );
               }
               else
@@ -894,32 +743,32 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
               error = oyProfile_AddTagText( prof,
                                             icSigProfileDescriptionTag, text);
               oyDeAllocateFunc_( text ); text = 0;
-              t = oyConfig_FindString( device, "manufacturer", 0);
+              t = oyConfig_FindString( device, "EDID_manufacturer", 0);
               if(!t)
               {
-                t = oyConfig_FindString( device, "mnft", 0);
+                t = oyConfig_FindString( device, "EDID_mnft", 0);
                 if(!t)
                   error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag, t);
                 else
                 message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
-                "Could not obtain \"manufacturer\" from monitor device for %s",
+            "Could not obtain \"EDID_manufacturer\" from monitor device for %s",
                      OY_DBG_ARGS_, device_name );
               } else
                 error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag, t);
-              t = oyConfig_FindString( device, "model", 0 );
+              t = oyConfig_FindString( device, "EDID_model", 0 );
               if(!t)
                 message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
-                     "Could not obtain \"model\" from monitor device for %s",
+                   "Could not obtain \"EDID_model\" from monitor device for %s",
                      OY_DBG_ARGS_, device_name );
               else
                 error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag, t);
               data = oyProfile_GetMem( prof, &size, 0, oyAllocateFunc_ );
               header = (icHeader*) data;
-              o_tmp = oyConfig_Find( device, "mnft" );
-              t = oyConfig_FindString( device, "mnft", 0 );
+              o_tmp = oyConfig_Find( device, "EDID_mnft" );
+              t = oyConfig_FindString( device, "EDID_mnft", 0 );
               if(!t)
                 message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
-                     "Could not obtain \"mnft\" from monitor device for %s",
+                    "Could not obtain \"EDID_mnft\" from monitor device for %s",
                      OY_DBG_ARGS_, device_name );
               else
                 sprintf( (char*)&header->manufacturer, "%s", t );
@@ -1181,17 +1030,25 @@ int            oyX1Config_Rank       ( oyConfig_s        * config )
 oyRankPad oyX1_rank_map[] = {
   {"device_name", 2, -1, 0},           /**< is good */
   {"profile_name", 0, 0, 0},           /**< non relevant for device properties*/
-  {"manufacturer", 0, 0, 0},           /**< is nice, covered by mnft_id */
-  {"model", 0, 0, 0},                  /**< important, covered by model_id */
-  {"serial", 10, -2, 0},               /**< important, could slightly fail */
   {"host", 1, 0, 0},                   /**< nice to match */
   {"system_port", 2, 0, 0},            /**< good to match */
-  {"week", 2, 0, 0},                   /**< good to match */
-  {"year", 2, 0, 0},                   /**< good to match */
-  {"mnft", 0, 0, 0},                   /**< is nice, covered by mnft_id */
-  {"mnft_id", 1, -1, 0},               /**< is nice */
-  {"model_id", 5, -5, 0},              /**< important, should not fail */
   {"display_geometry", 3, -1, 0},      /**< important to match, as fallback */
+  {"EDID_manufacturer", 0, 0, 0},      /**< is nice, covered by mnft_id */
+  {"EDID_mnft", 0, 0, 0},              /**< is nice, covered by mnft_id */
+  {"EDID_mnft_id", 1, -1, 0},          /**< is nice */
+  {"EDID_model", 0, 0, 0},             /**< important, covered by model_id */
+  {"EDID_model_id", 5, -5, 0},         /**< important, should not fail */
+  {"EDID_date", 2, 0, 0},              /**< good to match */
+  {"EDID_serial", 10, -2, 0},          /**< important, could slightly fail */
+  {"EDID_red_x", 1, -5, 0},    /**< is nice, should not fail */
+  {"EDID_red_y", 1, -5, 0},    /**< is nice, should not fail */
+  {"EDID_green_x", 1, -5, 0},  /**< is nice, should not fail */
+  {"EDID_green_y", 1, -5, 0},  /**< is nice, should not fail */
+  {"EDID_blue_x", 1, -5, 0},   /**< is nice, should not fail */
+  {"EDID_blue_y", 1, -5, 0},   /**< is nice, should not fail */
+  {"EDID_white_x", 1, -5, 0},  /**< is nice, should not fail */
+  {"EDID_white_y", 1, -5, 0},  /**< is nice, should not fail */
+  {"EDID_gamma", 1, -5, 0},            /**< is nice, should not fail */
   {0,0,0,0}                            /**< end of list */
 };
 
