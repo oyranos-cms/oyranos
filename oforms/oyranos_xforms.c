@@ -26,6 +26,9 @@ void usage(int argc, char ** argv)
   printf("      -h  %s\n",       _("show help texts"));
   printf("      -l  %s\n",       _("list possible choices"));
   printf("\n");
+  printf("  %s\n",               _("Write Results:"));
+  printf("      %s -n \"module_name\" -o \"xml_file\"\n", argv[0]);
+  printf("\n");
   printf("  %s\n",               _("Get XFORMS:"));
   printf("      %s -n \"module_name\" -x \"xhtml_file\"\n", argv[0]);
   printf("\n");
@@ -42,7 +45,10 @@ void usage(int argc, char ** argv)
 int main (int argc, char ** argv)
 {
   const char * node_name = 0;
-  const char * xml_file = 0;
+  const char * output_xml_file = 0,
+             * input_xml_file = 0;
+  const char * output_model_file = 0,
+             * result_xml = 0;
   oyFilterNode_s * node = 0;
   char * ui_text = 0,
       ** namespaces = 0,
@@ -95,8 +101,10 @@ int main (int argc, char ** argv)
             switch (argv[pos][i])
             {
               case 'n': OY_PARSE_STRING_ARG( node_name ); break;
-              case 'x': OY_PARSE_STRING_ARG( xml_file ); break;
+              case 'o': OY_PARSE_STRING_ARG( output_model_file ); break;
               case 'f': front = 1; break;
+              case 'i': OY_PARSE_STRING_ARG( input_xml_file ); break;
+              case 'x': OY_PARSE_STRING_ARG( output_xml_file ); break;
               case 'v': oy_debug += 1; break;
               case 'h': print |= 0x02; break;
               case 'l': print |= 0x04; break;
@@ -149,91 +157,109 @@ int main (int argc, char ** argv)
 
   }
 
-  if(!node_name)
+  if(!node_name && !input_xml_file)
   {
                         usage(argc, argv);
                         exit (0);
   }
 
-  node = oyFilterNode_NewWith( node_name, 0,0 );
-  oyOptions_Release( &node->core->options_ );
-  /* First call for options ... */
+  if(node_name)
+  {
+    node = oyFilterNode_NewWith( node_name, 0,0 );
+    oyOptions_Release( &node->core->options_ );
+    /* First call for options ... */
 
-  attributes = OY_SELECT_FILTER | OY_SELECT_COMMON |
+    attributes = OY_SELECT_FILTER | OY_SELECT_COMMON |
                                     oyOPTIONATTRIBUTE_ADVANCED;
-  if(front)
-    attributes |= oyOPTIONATTRIBUTE_FRONT;
-  opts = oyFilterNode_OptionsGet( node, attributes );
+    if(front)
+      attributes |= oyOPTIONATTRIBUTE_FRONT;
+    opts = oyFilterNode_OptionsGet( node, attributes );
 
   /* ... then get the UI for this filters options. */
-  error = oyFilterNode_UiGet( node, &ui_text, &namespaces, malloc );
-  oyFilterNode_Release( &node );
+    error = oyFilterNode_UiGet( node, &ui_text, &namespaces, malloc );
+    oyFilterNode_Release( &node );
 
-  data = oyOptions_GetText( opts, oyNAME_NAME );
-  opt_names = oyOptions_GetText( opts, oyNAME_DESCRIPTION );
 
-  if(other_args)
-  {
-    for( i = 0; i < other_args_n; i += 2 )
+    data = oyOptions_GetText( opts, oyNAME_NAME );
+    text = oyXFORMsFromModelAndUi( data, ui_text, (const char**)namespaces, 0,
+                                   malloc );
+
+    if(namespaces)
     {
-      /* check for wrong args */
-      if(strstr( opt_names, other_args[i] ) == NULL)
+      i = 0;
+      while(namespaces[i])
       {
-        printf("Unknown option: %s", other_args[i]);
-        usage( argc, argv );
-        exit( 1 );
-
-      } else
-      {
-        o = oyOptions_Find( opts, other_args[i] );
-        if(i + 1 < other_args_n)
-        {
-          ct = oyOption_GetText( o, oyNAME_NICK );
-          printf( "%s => ",
-                  ct ); ct = 0;
-          oyOption_SetFromText( o, other_args[i + 1], 0 );
-          data = oyOption_GetText( o, oyNAME_NICK );
-
-          printf( "%s\n",
-                  oyStrchr_(data, ':') + 1 ); data = 0;
-        }
-        else
-        {
-          printf("%s: --%s  argument missed\n", _("Option"), other_args[i] );
-          exit( 1 );
-        }
-        oyOption_Release( &o );
+        if(oy_debug)
+          printf("namespaces[%d]: %s\n", i, namespaces[i]);
+        free( namespaces[i++] );
       }
+      free(namespaces);
     }
-    print = 0;
+    if(ui_text) free(ui_text); ui_text = 0;
+
   }
-
-  forms_args->print = print;
-
-  data = oyOptions_GetText( opts, oyNAME_NAME );
-  text = oyXFORMsFromModelAndUi( data, ui_text, (const char**)namespaces, 0,
-                                 malloc );
-
-  if(namespaces)
+  /* get Layout file */
+  if(input_xml_file)
   {
-    i = 0;
-    while(namespaces[i])
-    {
-      if(oy_debug)
-        printf("namespaces[%d]: %s\n", i, namespaces[i]);
-      free( namespaces[i++] );
-    }
-    free(namespaces);
+    size_t size = 0;
+    text = oyReadFileToMem_(input_xml_file, &size, oyAllocateFunc_);
   }
-  if(ui_text) free(ui_text); ui_text = 0;
 
   if(oy_debug)
     printf("%s\n", text);
 
-  error = oyXFORMsRenderUi( text, oy_ui_cmd_line_handlers, forms_args );
+  if(other_args)
+  {
+    data = oyOptions_GetText( opts, oyNAME_NAME );
+    opt_names = oyOptions_GetText( opts, oyNAME_DESCRIPTION );
 
-  if(xml_file)
-    oyWriteMemToFile_( xml_file, text, strlen(text) );
+      for( i = 0; i < other_args_n; i += 2 )
+      {
+        /* check for wrong args */
+        if(strstr( opt_names, other_args[i] ) == NULL)
+        {
+          printf("Unknown option: %s", other_args[i]);
+          usage( argc, argv );
+          exit( 1 );
+
+        } else
+        {
+          o = oyOptions_Find( opts, other_args[i] );
+          if(i + 1 < other_args_n)
+          {
+            ct = oyOption_GetText( o, oyNAME_NICK );
+            printf( "%s => ",
+                    ct ); ct = 0;
+            oyOption_SetFromText( o, other_args[i + 1], 0 );
+            data = oyOption_GetText( o, oyNAME_NICK );
+
+            printf( "%s\n",
+                    oyStrchr_(data, ':') + 1 ); data = 0;
+          }
+          else
+          {
+            printf("%s: --%s  argument missed\n", _("Option"), other_args[i] );
+            exit( 1 );
+          }
+          oyOption_Release( &o );
+        }
+      }
+      print = 0;
+  }
+
+  forms_args->print = print;
+
+  if(print)
+    error = oyXFORMsRenderUi( text, oy_ui_cmd_line_handlers, forms_args );
+
+  result_xml = oyFormsArgs_ModelGet( forms_args );
+  if(output_model_file)
+    oyWriteMemToFile_( output_model_file, result_xml, strlen(result_xml) );
+  else
+    printf( "%s\n", result_xml?result_xml:"---" );
+
+  if(output_xml_file)
+    oyWriteMemToFile_( output_xml_file, text, strlen(text) );
 
   /* xmlParseMemory sollte der Ebenen gewahr werden wie oyOptions_FromText. */
   opts = oyOptions_FromText( data, 0,0 );
