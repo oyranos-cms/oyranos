@@ -27,9 +27,9 @@ typedef struct oyFormsArgs_s oyFormsArgs_s;
  *  @brief   a FormsArgs object
  *  @extends oyStruct_s
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.1.13
  *  @since   2009/10/12 (Oyranos: 0.1.10)
- *  @date    2009/10/12
+ *  @date    2010/11/02
  */
 struct oyFormsArgs_s {
   int              type_;
@@ -37,7 +37,7 @@ struct oyFormsArgs_s {
   int              (*release) (oyFormsArgs_s**);
   void           * oy_;
 
-  int              silent;
+  int              print;
   void           * xforms_data_model_;
   void           * data_;
 };

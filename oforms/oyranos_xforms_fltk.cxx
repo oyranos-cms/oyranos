@@ -140,7 +140,7 @@ int main (int argc, char ** argv)
       ** namespaces = 0,
        * text = 0, * t = 0;
   const char * opt_names = 0;
-  oyFormsArgs_s * oy_forms_options = oyFormsArgs_New( 0 );
+  oyFormsArgs_s * forms_args = oyFormsArgs_New( 0 );
   const char * data = 0, * ct = 0;
   char ** other_args = 0;
   int other_args_n = 0;
@@ -149,6 +149,7 @@ int main (int argc, char ** argv)
   oyOptions_s * opts = 0;
   oyOption_s * o = 0;
   int front = 0;  /* front end options */
+  int print = 1;
 
 #ifdef USE_GETTEXT
   const char *locale_paths[2] = {OY_SRC_LOCALEDIR,OY_LOCALEDIR};
@@ -329,8 +330,10 @@ int main (int argc, char ** argv)
           oyOption_Release( &o );
         }
       }
-      oy_forms_options->silent = 1;
+      print = 0;
     }
+
+    forms_args->print = print;
 
 
     data = oyOptions_GetText( opts, oyNAME_NAME );
@@ -382,7 +385,7 @@ int main (int argc, char ** argv)
     help_view->value("");
     callback.data = help_view;
 #endif
-    oyFormsArgs_ResourceSet( oy_forms_options, OYFORMS_FLTK_HELP_VIEW_REG,
+    oyFormsArgs_ResourceSet( forms_args, OYFORMS_FLTK_HELP_VIEW_REG,
                              (oyPointer)&callback);
 
     Fl_Button * done_button = new Fl_Button( 160, 445, 80, 25, _("&Done"));
@@ -392,7 +395,7 @@ int main (int argc, char ** argv)
   scroll->box( FL_NO_BOX ); //FL_THIN_UP_BOX );
     OyFl_Pack_c * pack = new OyFl_Pack_c( 5,1,395,338 );
     pack->spacing(V_SPACING);
-      error = oyXFORMsRenderUi( text, oy_ui_fltk_handlers, oy_forms_options );
+      error = oyXFORMsRenderUi( text, oy_ui_fltk_handlers, forms_args );
 
 
     pack->end();
@@ -404,12 +407,12 @@ int main (int argc, char ** argv)
   Fl::run();
 
 
-  result_xml = oyFormsArgs_ModelGet( oy_forms_options );
+  result_xml = oyFormsArgs_ModelGet( forms_args );
   if(output_model_file)
     oyWriteMemToFile_( output_model_file, result_xml, strlen(result_xml) );
   else
     printf( "%s\n", result_xml?result_xml:"---" );
-  oyFormsArgs_Release( &oy_forms_options );
+  oyFormsArgs_Release( &forms_args );
 
   if(output_xml_file)
     oyWriteMemToFile_( output_xml_file, text, strlen(text) );

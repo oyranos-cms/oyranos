@@ -157,7 +157,7 @@ int        oyXML2XFORMsFLTKSelect1Handler (
              * value,
              * xpath = 0;
   oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
-  int print = forms_args ? !forms_args->silent : 1;
+  int print = forms_args ? forms_args->print : 1;
   int error = 0;
 
   xmlNodePtr select1, choices, items;
@@ -330,7 +330,7 @@ int        oyXML2XFORMsFLTKHtmlHeadlineHandler (
   const char * tmp = 0;
   int size = 0;
   oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
-  int print = forms_args ? !forms_args->silent : 1;
+  int print = forms_args ? forms_args->print : 1;
   OyFl_Box_c * box = 0;
 
   if(!tmp)
@@ -391,7 +391,7 @@ int        oyXML2XFORMsFLTKHtmlHeadline4Handler (
   const char * tmp = 0;
   int size = 0;
   oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
-  int print = forms_args ? !forms_args->silent : 1;
+  int print = forms_args ? forms_args->print : 1;
   OyFl_Box_c * box = 0;
 
   if(!tmp)
