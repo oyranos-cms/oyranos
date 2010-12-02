@@ -54,18 +54,16 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
                                        oyOptions_s       * collected_elements,
                                        oyPointer           user_data )
 {
-  int i,j,j_n,k,k_n,
-      is_default, default_pos = -1,
+  int is_default, default_pos = -1,
       choices_n = 0;
   const char * default_value = 0,
              * tmp,
              * label,
              * value,
              * xpath = 0;
-  char * default_key = 0, *key = 0, * t = 0;
+  char * default_key = 0, *key = 0;
   oyFormsArgs_s * forms_args = user_data;
   int print = forms_args ? forms_args->print : 1;
-  int error = 0;
 
   xmlNodePtr select1, choices = 0, items;
 
@@ -136,8 +134,12 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
              * store the label and value in user_data() for evaluating results*/
             if(print & 0x04)
             {
-              printf( "      --%s=\"%s\"%s\n",
-                      xpath+1, oyNoEmptyString_m_(value), is_default ? "*":"" );
+              tmp = 0;
+              if(print & 0x02)
+                tmp = label;
+              printf( "      --%s=\"%s\"%s%s%s%s\n",
+                      xpath+1, oyNoEmptyString_m_(value), is_default ? " *":"",
+                      tmp ? " [" : "", tmp?tmp:"", tmp?"]":"" );
             }
 
             if( !(print & 0x02) && !(print & 0x04) &&
