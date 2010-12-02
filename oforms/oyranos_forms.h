@@ -37,6 +37,13 @@ struct oyFormsArgs_s {
   int              (*release) (oyFormsArgs_s**);
   void           * oy_;
 
+  /** 0 means keep silent,
+   *  - 0x01 print options and names
+   *  - 0x02 print as well help texts
+   *  - 0x04 print all available options, can be rather long
+   *  A renderer has no obligation to follow iall hints. E.g.
+   *  flags 0x02 and 0x04 have less meaning for a GUI.
+   */
   int              print;
   void           * xforms_data_model_;
   void           * data_;
