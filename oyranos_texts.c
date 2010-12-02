@@ -858,15 +858,19 @@ char**  oyXDGPathsGet_( int             * count,
         if(i == 1)
           oyStringListAddStaticString_( &paths, &n, "~/.config",
                                         oyAllocateFunc_, oyDeAllocateFunc_ );
-        if(i == 2)
-        {
+        if(i == 4)
+          oyStringListAddStaticString_( &paths, &n, "/etc/xdg",
+                                        oyAllocateFunc_, oyDeAllocateFunc_ );
+      }
+
+      /* add the OpenIccDirectoryProposal default paths */
+      if(i == 0)
+      {
           oyStringListAddStaticString_( &paths, &n, "/usr/share",
                                         oyAllocateFunc_, oyDeAllocateFunc_ );
           oyStringListAddStaticString_( &paths, &n, "/usr/local/share",
                                         oyAllocateFunc_, oyDeAllocateFunc_ );
-        }
-        if(i == 4)
-          oyStringListAddStaticString_( &paths, &n, "/etc/xdg",
+          oyStringListAddStaticString_( &paths, &n, "/var/lib",
                                         oyAllocateFunc_, oyDeAllocateFunc_ );
       }
     }
@@ -960,7 +964,7 @@ oyDataPathsGet_       (int             * count,
     oyAllocHelper_m_( xdg_sub, char, MAX_PATH, oyAllocateFunc_, return 0);
     oySprintf_( xdg_sub, "%s", subdir );
 
-    oyAllocHelper_m_( oy_paths, char*, 4, oyAllocateFunc_, return 0);
+    oyAllocHelper_m_( oy_paths, char*, 5, oyAllocateFunc_, return 0);
 
     xdg_paths = oyXDGPathsGet_(&xdg_n, data, owner, oyAllocateFunc_);
 
@@ -985,6 +989,8 @@ oyDataPathsGet_       (int             * count,
     text = oyPathContructAndTest_( "/usr/share", subdir );
     if(text) oy_paths[oy_n++] = text;
     text = oyPathContructAndTest_( "/usr/local/share", subdir );
+    if(text) oy_paths[oy_n++] = text;
+    text = oyPathContructAndTest_( "/val/lib", subdir );
     if(text) oy_paths[oy_n++] = text;
     text = 0;
     if(subdir && strlen(subdir) > 6 && memcmp( subdir,"color/", 6 ) == 0)
