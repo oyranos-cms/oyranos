@@ -802,7 +802,7 @@ oyCMMapi9_s  oicc_api9 = {
   oiccConversion_Correct,
 
   /** const char * pattern; a pattern supported by oiccConversion_Correct */
-  "//" OY_TYPE_STD
+  "//" OY_TYPE_STD "/icc"
 };
 
 
