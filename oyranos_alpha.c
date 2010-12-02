@@ -24912,9 +24912,9 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
     int apis_n = 0, i,j = 0;
     oyCMMapi9_s * cmm_api9 = 0;
     char * class, * api_reg;
-    const char * pattern = node->core->registration_;
+    const char * reg = node->core->registration_;
 
-    class = oyFilterRegistrationToText( pattern, oyFILTER_REG_TYPE, 0 );
+    class = oyFilterRegistrationToText( reg, oyFILTER_REG_TYPE, 0 );
     api_reg = oyStringCopy_("//", oyAllocateFunc_ );
     STRING_ADD( api_reg, class );
     oyFree_m_( class );
@@ -24927,7 +24927,7 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
     {
       cmm_api9 = (oyCMMapi9_s*) oyCMMapiFilters_Get( apis, i );
 
-      if(oyFilterRegistrationMatch( cmm_api9->pattern, pattern, 0 ))
+      if(oyFilterRegistrationMatch( reg, cmm_api9->pattern, 0 ))
       {
         if(cmm_api9->oyCMMuiGet)
           error = cmm_api9->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
