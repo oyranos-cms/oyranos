@@ -54,169 +54,107 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
                                        oyOptions_s       * collected_elements,
                                        oyPointer           user_data )
 {
-  oyOption_s * o  = 0, * o2, *o3;
-  int n = oyOptions_Count( collected_elements ),
-      i,j,j_n,k,k_n,
+  int i,j,j_n,k,k_n,
       is_default, default_pos = -1,
       choices_n = 0;
-  oyOptions_s * opts = 0, * opts2;
   const char * default_value = 0,
              * tmp,
              * label,
-             * value;
+             * value,
+             * xpath = 0;
   char * default_key = 0, *key = 0, * t = 0;
-  char * choices = 0;
-  oyFormsArgs_s * cmd_line_args = user_data;
-  int print = cmd_line_args ? !cmd_line_args->silent : 1;
+  oyFormsArgs_s * forms_args = user_data;
+  int print = forms_args ? forms_args->print : 1;
+  int error = 0;
 
-  default_value = oyOptions_FindString( collected_elements, "xf:select1", 0 );
-  o = oyOptions_Find( collected_elements, "xf:select1" );
-  key = oyStringCopy_( o->registration, oyAllocateFunc_ );
-  t = oyStrrchr_( key, '/' );
-  t = oyStrchr_( t, '.' ); 
-  t[0] = 0;   
+  xmlNodePtr select1, choices = 0, items;
+
 
   if(oy_debug && default_value && print)
     printf( "found default: \"%s\"\n", default_value );
 
-  for(i = 0; i < n; ++i)
+  if(cur)
   {
-    o = oyOptions_Get( collected_elements, i );
-    opts = (oyOptions_s*) oyOption_StructGet( o, oyOBJECT_OPTIONS_S );
-    
-    if(!opts && oyFilterRegistrationMatch( o->registration,"xf:label", 0 ) &&
-       print)
-      printf( " %s:\n", o->value->string );
-
-    if(opts && oyFilterRegistrationMatch( o->registration,"xf:choices", 0 ))
+    if(oyXMLNodeNameIs(cur, "xf:select1"))
     {
-      j_n = oyOptions_Count( opts);
-      for(j = 0; j < j_n; ++j)
+      select1 = cur->children;
+      default_value = oyXFORMsModelGetXPathValue( cur, "ref", &xpath );
+
+    }
+    else
+      select1 = 0;
+
+    while(select1)
+    {
+      if(oyXMLNodeNameIs( select1, "xf:label") && print)
+          printf( "    %s:\n", oyXML2NodeValue(select1) );
+      else
+      if(oyXMLNodeNameIs( select1, "xf:help") && print & 0x02)
       {
-        o2 = oyOptions_Get( opts, j );
-        opts2 = (oyOptions_s*) oyOption_StructGet( o2, oyOBJECT_OPTIONS_S );
-
-        if(!opts2 && oyFilterRegistrationMatch(o2->registration,"xf:label", 0 )
-           && print)
-          printf( "  %s:\n", o2->value->string );
-
-        if(opts2 && oyFilterRegistrationMatch( o2->registration,"xf:item", 0 ))
-        {
-          label = tmp = value = 0;
-          is_default = 0;
-
-          k_n = oyOptions_Count( opts2);
-          for(k = 0; k < k_n; ++k)
-          {
-            o3 = oyOptions_Get( opts2, k );
-            if(oy_debug && print)
-              printf( "    found option: 0x%lx  \"%s\" %s\n",
-                (long)(intptr_t)o3, oyOption_GetText(o3, oyNAME_NICK),
-                oyStruct_TypeToText((oyStruct_s*)o3) );
-
-            oyOption_Release( &o3 );
-          }
-
-          /* collect the understood elements */
-          tmp = oyOptions_FindString( opts2, "xf:label", 0 );
-          if(tmp)
-            label = tmp;
-          tmp = oyOptions_FindString( opts2, "xf:value", 0 );
-          if(tmp)
-            value = tmp;
-
-          if(!value && !label)
-            continue;
-
-          if(value && default_value &&
-             oyStrcmp_(default_value,value) == 0)
-          {
-            is_default = 1;
-            default_pos = choices_n;
-          }
-
-          if(is_default)
-            STRING_ADD( choices, "[" );
-          STRING_ADD( choices, value );
-          if(is_default)
-            STRING_ADD( choices, "]" );
-          if(label)
-          {
-            STRING_ADD( choices, " - \"" );
-            STRING_ADD( choices, label );
-          }
-          STRING_ADD( choices, "\"" );
-          STRING_ADD( choices, "\n" );
-
-          ++choices_n;
-        }
-        else if(oy_debug && print)
-          printf( "  found option: 0x%lx  \"%s\" %s\n",
-                (long)(intptr_t)o2, oyOption_GetText(o2, oyNAME_NICK),
-                oyStruct_TypeToText((oyStruct_s*)o2) );
-
-        oyOptions_Release( &opts2 );
-        oyOption_Release( &o2 );
+          printf( "      [%s]\n", oyXML2NodeValue(select1) );
       }
-    }
-    else if(oy_debug && print)
-      printf( "found option: 0x%lx  \"%s\" %s\n",
-              (long)(intptr_t)o, oyOption_GetText(o, oyNAME_NICK),
-              oyStruct_TypeToText((oyStruct_s*)o) );
-
-    oyOptions_Release( &opts );
-    oyOption_Release( &o );
-  }
-
-  o = oyOptions_Find( collected_elements, "xf:select1" );
-  if(o)
-  {
-    STRING_ADD( default_key, o->registration );
-    t = oyStrstr_( default_key, ".xf:select1" );
-    t[0] = 0;
-
-    if(print)
-    {
-      printf("  ");
-      /* the option follows */
-      printf(_("Option"));
-      printf(":\n");
-      printf("    --%s=[%s]\n    ", default_key, default_value);
-    }
-    i = 0;
-    if(cmd_line_args)
-      oyOptions_SetFromText( (oyOptions_s**)&cmd_line_args->xforms_data_model_,
-                             key, default_value, OY_CREATE_NEW );
-    /* the choices follow */
-    if(print)
-    {
-      printf(_("with following choices"));
-
-      printf(":\n");
-      i = -1;
-      if(choices_n <= 10)
-        printf("%s", choices );
       else
       {
-        while(choices[++i])
-          if(choices[i] != '\n')
-            putc( choices[i], stdout );
-          else
-          {
-            putc( ';', stdout );
-            putc( ' ', stdout );
-          }
-        printf("\n");
+        if(oyXMLNodeNameIs(select1, "xf:choices"))
+          choices = select1->children;
+        else
+          choices = 0;
       }
-      printf("\n");
-    }
 
-    oyOption_Release( &o );
+      while(choices)
+      {
+        label = tmp = value = 0;
+        is_default = 0;
+
+        if(oyXMLNodeNameIs( choices, "xf:item"))
+          items = choices->children;
+        else
+          items = 0;
+        while(items)
+        {
+          if(oyXMLNodeNameIs( items, "xf:label") && print)
+            label = oyXML2NodeValue( items );
+          if(oyXMLNodeNameIs( items, "xf:value") && print)
+            value = oyXML2NodeValue( items );
+
+          items = items->next;
+        }
+        if(value || label)
+        {
+            /* detect default */
+            if(value && default_value &&
+               oyStrcmp_(default_value,value) == 0)
+            {
+              is_default = 1;
+              default_pos = choices_n;
+            }
+
+            if(!value) value = label;
+            if(!label) label = value;
+
+            /* append the choice
+             * store the label and value in user_data() for evaluating results*/
+            if(print & 0x04)
+            {
+              printf( "      --%s=\"%s\"%s\n",
+                      xpath+1, oyNoEmptyString_m_(value), is_default ? "*":"" );
+            }
+
+            if( !(print & 0x02) && !(print & 0x04) &&
+                is_default )
+              printf( "      --%s=\"%s\"\n",
+                      xpath+1, oyNoEmptyString_m_(value) );
+
+            ++choices_n;
+        }
+        choices = choices->next;
+      }
+      select1 = select1->next;
+    }
   }
 
-  if(choices)
-    oyFree_m_( choices );
-  oyFree_m_( default_key );
+  if(default_key)
+    oyFree_m_( default_key );
   if(key)
     oyFree_m_( key );
 
@@ -262,18 +200,21 @@ int        oyXML2XFORMsCmdLineHtmlHeadlineHandler (
 {
   const char * tmp = 0;
   int size = 0;
-  oyFormsArgs_s * cmd_line_args = user_data;
-  int print = cmd_line_args ? !cmd_line_args->silent : 1;
+  oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
+  int print = forms_args ? forms_args->print : 1;
 
   if(!tmp)
   {
-    tmp = oyOptions_FindString( collected_elements, "h3", 0 );
+    if(oyXMLNodeNameIs( cur, "h3") && print)
+      tmp = oyXML2NodeValue(cur);
     if(tmp)
       size = 3;
   }
 
-  if(tmp && print)
+  if(tmp && tmp[0] && print)
+  {
     printf( "%s\n", tmp );
+  }
 
   return 0;
 }
@@ -300,18 +241,21 @@ int        oyXML2XFORMsCmdLineHtmlHeadline4Handler (
 {
   const char * tmp = 0;
   int size = 0;
-  oyFormsArgs_s * cmd_line_args = user_data;
-  int print = cmd_line_args ? !cmd_line_args->silent : 1;
+  oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
+  int print = forms_args ? forms_args->print : 1;
 
   if(!tmp)
   {
-    tmp = oyOptions_FindString( collected_elements, "h4", 0 );
+    if(oyXMLNodeNameIs( cur, "h4") && print)
+      tmp = oyXML2NodeValue(cur);
     if(tmp)
       size = 3;
   }
 
-  if(tmp && print)
-    printf( "%s\n", tmp );
+  if(tmp && tmp[0] && print)
+  {
+    printf( "  %s\n", tmp );
+  }
 
   return 0;
 }
