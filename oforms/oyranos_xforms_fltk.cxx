@@ -214,7 +214,6 @@ int main (int argc, char ** argv)
               case 'i': OY_PARSE_STRING_ARG( input_xml_file ); break;
               case 'x': OY_PARSE_STRING_ARG( output_xml_file ); break;
               case 'v': oy_debug += 1; break;
-              case 'h':
               case '-':
                         if(strcmp(&argv[pos][2],"verbose") == 0)
                         { oy_debug += 1; i=100; break;
