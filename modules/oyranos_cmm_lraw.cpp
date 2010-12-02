@@ -37,7 +37,7 @@
 
 #define CMM_NICK "lraw"
 #define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
-#define OY_LIBRAW_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_read.input_libraw-lite._CPU._NOACCEL"
+#define OY_LIBRAW_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_read._" CMM_NICK "._CPU._NOACCEL"
 
 
 #ifdef __cplusplus
@@ -404,12 +404,6 @@ int      lrawFilterPlug_ImageInputRAWRun (
   printf("output_color was: %d  output_bps: %d no_auto_bright: %d\ng[0] %g g[1] %g\n",
           params->output_color, params->output_bps, params->no_auto_bright,
           params->gamm[0], params->gamm[1]);
-  params->output_color = 0;    /* raw_color */
-  params->output_bps = 16;     /* linear space */
-  params->gamm[0] = 1.0; params->gamm[1] = 1.0;
-  params->user_qual = 3;
-  params->use_camera_wb = 1;
-  params->no_auto_bright = 1;
 
   /* passing through the data reading */
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S &&
@@ -451,6 +445,14 @@ int      lrawFilterPlug_ImageInputRAWRun (
   }
 
   error = rip.unpack();
+
+  params->output_color = 0;    /* raw_color */
+  params->output_bps = 16;     /* linear space */
+  params->gamm[0] = 1.0; params->gamm[1] = 1.0;
+  params->user_qual = 3;
+  params->use_camera_wb = 1;
+  params->no_auto_bright = 1;
+
   error = rip.dcraw_process();
 
   image_rgb = rip.dcraw_make_mem_image();
@@ -647,9 +649,9 @@ const char lraw_extra_options[] = {
   <" OY_TOP_SHARED ">\n\
    <" OY_DOMAIN_INTERNAL ">\n\
     <" OY_TYPE_STD ">\n\
-     <" "file_read." CMM_NICK ">\n\
-      <filename></filename>\n\
-     </" "file_read." CMM_NICK ">\n\
+     <" CMM_NICK ".file_read" ">\n\
+      <filename>----</filename>\n\
+     </" CMM_NICK ".file_read" ">\n\
      <" CMM_NICK ">\n\
       <output_bps>16</output_bps>\n\
      </" CMM_NICK ">\n\
@@ -688,13 +690,64 @@ const char lraw_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
-int  lrawUiGet                       ( oyOptions_s       * opts,
+#define A(long_text) STRING_ADD( tmp, long_text)
+
+/** Function lrawUiGet
+ *  @brief   return XFORMS for matching options
+ *
+ *  @version Oyranos: 0.1.13
+ *  @since   2010/11/29 (Oyranos: 0.1.13)
+ *  @date    2010/11/29
+ */
+int  lrawUiGet                       ( oyOptions_s       * options,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {
-  char * text = (char*)allocateFunc(5);
-  text[0] = 0;
-  *xforms_layout = text;
+  char * tmp = 0;
+
+  tmp = (char *)oyOptions_FindString( options,
+                                      "output_bps", 0 );
+  if(tmp == 0)
+    return 0;
+
+  tmp = oyStringCopy_( "\
+  <h3>libRAW ", oyAllocateFunc_ );
+
+  A(       _("Module Options"));
+  A(                         ":</h3>\n");
+  A("\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" CMM_NICK "/output_bps\">\n\
+      <xf:label>" );
+  A(          _("Bits per Sample"));
+  A(                              "</xf:label>\n\
+      <xf:help>" );
+  A(          _("More bits mean more precission for processing and more size."));
+  A(                              "</xf:help>\n\
+      <xf:choices>\n\
+       <xf:item>\n\
+        <xf:value>8</xf:value>\n\
+        <xf:label>");
+  A(             _("8-bit"));
+  A(                     "</xf:label>\n\
+       </xf:item>\n\
+       <xf:item>\n\
+        <xf:value>16</xf:value>\n\
+        <xf:label>");
+  A(             _("16-bit"));
+  A(                     "</xf:label>\n\
+       </xf:item>\n\
+      </xf:choices>\n\
+     </xf:select1>\n");
+
+  if(allocateFunc && tmp)
+  {
+    char * t = oyStringCopy_( tmp, allocateFunc );
+    oyFree_m_( tmp );
+    tmp = t; t = 0;
+  } else
+    return 1;
+
+  *xforms_layout = tmp;
   return 0;
 };
 
@@ -737,9 +790,9 @@ const char * oyraApi4UiImageInputLibrawGetText (
   if(strcmp(select,"name"))
   {
     if(type == oyNAME_NICK)
-      return "input_libraw-lite";
+      return CMM_NICK;
     else if(type == oyNAME_NAME)
-      return _("Image[input_libraw-lite]");
+      return _("Image[lraw]");
     else if(type == oyNAME_DESCRIPTION)
       return _("Input libraw Image Filter Object");
   } else if(strcmp(select,"help"))
