@@ -10176,6 +10176,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
   int indent = 6; /* base indentation for better looking XFORMS documents */
   int * sort, changed;
   char ** old_levels = 0;
+  int old_levels_n = 0;
 
   if(error <= 0)
   {
@@ -10244,7 +10245,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
         for( j = 0; j < j_n; ++j )
         {
           if(!old_levels ||
-             oyStrcmp_(old_levels[j],list[j]) != 0)
+             (old_levels_n > j && oyStrcmp_(old_levels[j],list[j]) != 0))
             if(min_level > j)
               min_level = j;
         }
@@ -10256,12 +10257,15 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
           if(j+1 < j_n)
             for(k = 0; k < indent+j; ++k)
               STRING_ADD ( text, " " );
-          STRING_ADD ( text, "</" );
-          STRING_ADD ( text, old_levels[j] );
-          if(j)
-            STRING_ADD ( text, ">\n" );
-          else
-            STRING_ADD ( text, ">" );
+          if(old_levels_n > j)
+          {
+            STRING_ADD ( text, "</" );
+            STRING_ADD ( text, old_levels[j] );
+            if(j)
+              STRING_ADD ( text, ">\n" );
+            else
+              STRING_ADD ( text, ">" );
+          }
         }
 
         /* open new levels */
@@ -10281,8 +10285,9 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
         STRING_ADD ( text, tmp );
 
         if(old_levels)
-          oyStringListRelease_( &old_levels, j_n, oyDeAllocateFunc_ );
+          oyStringListRelease_( &old_levels, old_levels_n, oyDeAllocateFunc_ );
         old_levels = list;
+        old_levels_n = j_n;
 
         oyFree_m_( tmp );
       }
@@ -10302,16 +10307,19 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
         if(j+1 < j_n)
           for(k = 0; k < indent+j; ++k)
             STRING_ADD ( text, " " );
-        STRING_ADD ( text, "</" );
-        STRING_ADD ( text, old_levels[j] );
-        if(j)
-          STRING_ADD ( text, ">\n" );
-        else
-          STRING_ADD ( text, ">" );
+        if(old_levels_n > j)
+        {
+          STRING_ADD ( text, "</" );
+          STRING_ADD ( text, old_levels[j] );
+          if(j)
+            STRING_ADD ( text, ">\n" );
+          else
+            STRING_ADD ( text, ">" );
+        }
       }
 
     if(old_levels)
-      oyStringListRelease_( &old_levels, j_n, oyDeAllocateFunc_ );
+      oyStringListRelease_( &old_levels, old_levels_n, oyDeAllocateFunc_ );
 
     error = oyObject_SetName( options->oy_, text, type );
 
@@ -22964,6 +22972,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
           {
             pc_match_type = pc_text[0];
             ++ pc_text;
+            -- pc_len;
           }
 
           for( k = 0; k < regc_n; ++k )
@@ -22985,6 +22994,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
                regc_text[0] == '-')
             {
               ++ regc_text;
+              -- regc_len;
             }
 
             if((!pc_api_num || (pc_api_num && api_num == pc_api_num)) &&
