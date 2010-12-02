@@ -16,23 +16,26 @@
 
 void usage(int argc, char ** argv)
 {
-                        printf("\n");
-                        printf("oyranos-xforms v%d.%d.%d %s\n",
+  printf("\n");
+  printf("oyranos-xforms v%d.%d.%d %s\n",
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
                                 _("is a Oyranos module options tool"));
-                        printf("%s\n",                 _("Usage"));
-                        printf("  %s\n",               _("Show options"));
-                        printf("      %s -n \"module_name\"\n", argv[0]);
-                        printf("\n");
-                        printf("  %s\n",               _("Get XFORMS:"));
-                        printf("      %s -n \"module_name\" -x \"xhtml_file\"\n", argv[0]);
-                        printf("\n");
-                        printf("  %s\n",               _("General options:"));
-                        printf("      %s\n",           _("-v verbose"));
-                        printf("\n");
-                        printf(_("For more informations read the man page:"));
-                        printf("\n");
-                        printf("      man oyranos-xforms_not_yet\n");
+  printf("%s\n",                 _("Usage"));
+  printf("  %s\n",               _("Show options"));
+  printf("      %s -n \"module_name\" [-l] [-h]\n", argv[0]);
+  printf("      -h  %s\n",       _("show help texts"));
+  printf("      -l  %s\n",       _("list possible choices"));
+  printf("\n");
+  printf("  %s\n",               _("Get XFORMS:"));
+  printf("      %s -n \"module_name\" -x \"xhtml_file\"\n", argv[0]);
+  printf("\n");
+  printf("  %s\n",               _("General options:"));
+  printf("      -v  %s\n",       _("verbose"));
+  printf("      -f  %s\n",       _("show policy options"));
+  printf("\n");
+  printf(_("For more informations read the man page:"));
+  printf("\n");
+  printf("      man oyranos-xforms_not_yet\n");
 }
 
 
@@ -51,6 +54,9 @@ int main (int argc, char ** argv)
   int other_args_n = 0;
   int error = 0,
       i;
+  int front = 0;  /* front end options */
+  int attributes = 0;
+  int print = 1;
   oyOptions_s * opts = 0;
   oyOption_s * o = 0;
 
@@ -90,8 +96,10 @@ int main (int argc, char ** argv)
             {
               case 'n': OY_PARSE_STRING_ARG( node_name ); break;
               case 'x': OY_PARSE_STRING_ARG( xml_file ); break;
+              case 'f': front = 1; break;
               case 'v': oy_debug += 1; break;
-              case 'h':
+              case 'h': print |= 0x02; break;
+              case 'l': print |= 0x04; break;
               case '-':
                         if(strcmp(&argv[pos][2],"verbose") == 0)
                         { oy_debug += 1; i=100; break;
@@ -150,10 +158,13 @@ int main (int argc, char ** argv)
   node = oyFilterNode_NewWith( node_name, 0,0 );
   oyOptions_Release( &node->core->options_ );
   /* First call for options ... */
-  opts = oyFilterNode_OptionsGet( node,
-                                  OY_SELECT_FILTER | OY_SELECT_COMMON |
-                                  oyOPTIONATTRIBUTE_ADVANCED |
-                                  oyOPTIONATTRIBUTE_FRONT );
+
+  attributes = OY_SELECT_FILTER | OY_SELECT_COMMON |
+                                    oyOPTIONATTRIBUTE_ADVANCED;
+  if(front)
+    attributes |= oyOPTIONATTRIBUTE_FRONT;
+  opts = oyFilterNode_OptionsGet( node, attributes );
+
   /* ... then get the UI for this filters options. */
   error = oyFilterNode_UiGet( node, &ui_text, &namespaces, malloc );
   oyFilterNode_Release( &node );
@@ -194,9 +205,10 @@ int main (int argc, char ** argv)
         oyOption_Release( &o );
       }
     }
-    forms_args->silent = 1;
+    print = 0;
   }
 
+  forms_args->print = print;
 
   data = oyOptions_GetText( opts, oyNAME_NAME );
   text = oyXFORMsFromModelAndUi( data, ui_text, (const char**)namespaces, 0,
