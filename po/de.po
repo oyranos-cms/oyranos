@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2010-12-02 13:31+0100\n"
+"POT-Creation-Date: 2010-12-02 18:51+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -1335,12 +1335,12 @@ msgstr "Modulliste:"
 msgid "Dump data:"
 msgstr "Schreibe Daten:"
 
-#: oyranos_gamma.c:230 oforms/oyranos_xforms.c:30
+#: oyranos_gamma.c:230 oforms/oyranos_xforms.c:32
 #: oforms/oyranos_xforms_fltk.cxx:48
 msgid "General options:"
 msgstr "Allgemeine Optionen:"
 
-#: oyranos_gamma.c:231 oforms/oyranos_xforms.c:31
+#: oyranos_gamma.c:231
 msgid "-v verbose"
 msgstr "-v plaudernd"
 
@@ -1348,14 +1348,14 @@ msgstr "-v plaudernd"
 msgid "--module name"
 msgstr "--module Name"
 
-#: oyranos_gamma.c:234 oforms/oyranos_xforms.c:33
+#: oyranos_gamma.c:234 oforms/oyranos_xforms.c:36
 #: oforms/oyranos_xforms_fltk.cxx:53
 #, c-format
 msgid "For more informations read the man page:"
 msgstr "Mehr Informationen stehen im Handbuch:"
 
-#: oyranos_gamma.c:250 oyranos_policy.c:138 oforms/oyranos_xforms.c:135
-#: oforms/oyranos_xforms_fltk.cxx:258
+#: oyranos_gamma.c:250 oyranos_policy.c:138 oforms/oyranos_xforms.c:143
+#: oforms/oyranos_xforms_fltk.cxx:259
 msgid "wrong argument to option:"
 msgstr "Falsches Argument für Option:"
 
@@ -1457,9 +1457,8 @@ msgid ""
 "Could not find any meta module. Did you set the OY_MODULE_PATHS variable, to "
 "point to a Oyranos module loader library?"
 msgstr ""
-"Konnte keine Metamodul finden. Ist die OY_MODULE_PATHS Variable "
-"gesetzt? Sie zeigt auf Verzeichnisse in welchen die Moduleladebibliothek "
-"liegt."
+"Konnte keine Metamodul finden. Ist die OY_MODULE_PATHS Variable gesetzt? Sie "
+"zeigt auf Verzeichnisse in welchen die Moduleladebibliothek liegt."
 
 #: oyranos_alpha.c:13770 oyranos_alpha.c:14464 oyranos_alpha.c:29855
 #: oyranos_alpha.c:29938
@@ -1787,9 +1786,9 @@ msgstr ""
 "Geräteprofile einthalten kann zur Simulation.\n"
 " \"profiles_effect\", ist eine Option des Types oyProfiles_s, welche  "
 "Abstrakte Profile enthalten kann.\n"
-" Die folgenden Optionen werden unterstützt: "
-"\"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", "
-"\"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n"
+" Die folgenden Optionen werden unterstützt: \"rendering_gamut_warning\", "
+"\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
+"\"proof_soft\" and \"proof_hard\".\n"
 " The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 "
 "- none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE]."
 
@@ -1839,9 +1838,9 @@ msgstr ""
 "Geräteprofile einthalten kann zur Simulation.\n"
 " \"profiles_effect\", ist eine Option des Types oyProfiles_s, welche  "
 "Abstrakte Profile enthalten kann.\n"
-" Die folgenden Optionen werden unterstützt: "
-"\"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", "
-"\"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n"
+" Die folgenden Optionen werden unterstützt: \"rendering_gamut_warning\", "
+"\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
+"\"proof_soft\" and \"proof_hard\".\n"
 " The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 "
 "- none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE]."
 
@@ -2452,17 +2451,19 @@ msgstr ""
 #: modules/devices/oyranos_cmm_oyRE.cpp:695
 #: modules/devices/oyranos_cmm_oyRE.cpp:697
 msgid "RawCamera"
-msgstr ""
+msgstr "Kamerarohdaten"
 
 #: modules/devices/oyranos_cmm_oyRE.cpp:699
 msgid ""
 "Raw camera data, which are in file containing raw sensor data from a camera "
 "still picture."
 msgstr ""
+"Rohe Kamerasaten, welche in Dateien mit unbearbeiteten Kamerasensordaten "
+"enthalten sind."
 
 #: modules/devices/oyranos_cmm_oyRE.cpp:706
 msgid "CameraRaw"
-msgstr ""
+msgstr "Kamerarohdaten"
 
 #: modules/devices/oyranos_cmm_oyRE.cpp:800
 msgid "Oyranos RAW Image"
@@ -2514,18 +2515,6 @@ msgstr "Der Filter erhält Bilder von libraw."
 msgid "The filter is a libraw image reader."
 msgstr "Der Filter ließt Camera Rohbilder mittels libraw."
 
-#. the option follows
-#: oforms/oyranos_forms_cmd_line.c:182 oforms/oyranos_xforms.c:191
-#: oforms/oyranos_xforms_fltk.cxx:326
-#, c-format
-msgid "Option"
-msgstr "Option"
-
-#: oforms/oyranos_forms_cmd_line.c:193
-#, c-format
-msgid "with following choices"
-msgstr "mit folgenden Alternativen"
-
 #: oforms/oyranos_xforms.c:22 oforms/oyranos_xforms_fltk.cxx:37
 msgid "is a Oyranos module options tool"
 msgstr "ist ein Optionswerkzeug für Oyranosmodule"
@@ -2534,9 +2523,29 @@ msgstr "ist ein Optionswerkzeug für Oyranosmodule"
 msgid "Show options"
 msgstr "Zeige Optionen"
 
-#: oforms/oyranos_xforms.c:27 oforms/oyranos_xforms_fltk.cxx:45
+#: oforms/oyranos_xforms.c:26
+msgid "show help texts"
+msgstr "Zeige einen Hilfetext"
+
+#: oforms/oyranos_xforms.c:27
+msgid "list possible choices"
+msgstr "Liste der verfügbaren Auswahlmöglichkeiten"
+
+#: oforms/oyranos_xforms.c:29 oforms/oyranos_xforms_fltk.cxx:45
 msgid "Get XFORMS:"
 msgstr "Hole XFORMS"
+
+#: oforms/oyranos_xforms.c:33 oforms/oyranos_xforms_fltk.cxx:49
+msgid "verbose"
+msgstr "plaudernd"
+
+#: oforms/oyranos_xforms.c:34 oforms/oyranos_xforms_fltk.cxx:51
+msgid "show policy options"
+msgstr "zeige Richtlinienoptionen"
+
+#: oforms/oyranos_xforms.c:202 oforms/oyranos_xforms_fltk.cxx:327
+msgid "Option"
+msgstr "Option"
 
 #: oforms/oyranos_xforms_fltk.cxx:39
 msgid "Show options [include policy]"
@@ -2546,27 +2555,19 @@ msgstr "Zeige Optionen [mit Richtlinie]"
 msgid "Write Results:"
 msgstr "Schreibe Ergebnisse:"
 
-#: oforms/oyranos_xforms_fltk.cxx:49
-msgid "verbose"
-msgstr "plaudernd"
-
 #: oforms/oyranos_xforms_fltk.cxx:50
 msgid "read XFORMS"
 msgstr "lese XFORMS"
 
-#: oforms/oyranos_xforms_fltk.cxx:51
-msgid "show policy options"
-msgstr "zeige Richtlinienoptionen"
-
-#: oforms/oyranos_xforms_fltk.cxx:247
+#: oforms/oyranos_xforms_fltk.cxx:248
 msgid "Unknown argument"
 msgstr "Unbekanntes Argument"
 
-#: oforms/oyranos_xforms_fltk.cxx:378
+#: oforms/oyranos_xforms_fltk.cxx:381
 msgid "Hints"
 msgstr "Hinweise"
 
-#: oforms/oyranos_xforms_fltk.cxx:388
+#: oforms/oyranos_xforms_fltk.cxx:391
 msgid "&Done"
 msgstr "&Fertig"
 
@@ -2671,6 +2672,9 @@ msgstr "Kann nicht reservieren für:"
 #: oyranos_helper.h:127 oyranos_helper_macros.h:109
 msgid "nothing allocated"
 msgstr "nichts reserviert"
+
+#~ msgid "with following choices"
+#~ msgstr "mit folgenden Alternativen"
 
 #~ msgid "High Precission"
 #~ msgstr "Hohe Präzission"

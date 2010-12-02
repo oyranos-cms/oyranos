@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2010-12-02 13:31+0100\n"
+"POT-Creation-Date: 2010-12-02 18:51+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -1370,12 +1370,12 @@ msgstr "Oyranos-en ezarpenak"
 msgid "Dump data:"
 msgstr "Data"
 
-#: oyranos_gamma.c:230 oforms/oyranos_xforms.c:30
+#: oyranos_gamma.c:230 oforms/oyranos_xforms.c:32
 #: oforms/oyranos_xforms_fltk.cxx:48
 msgid "General options:"
 msgstr ""
 
-#: oyranos_gamma.c:231 oforms/oyranos_xforms.c:31
+#: oyranos_gamma.c:231
 msgid "-v verbose"
 msgstr ""
 
@@ -1384,14 +1384,14 @@ msgstr ""
 msgid "--module name"
 msgstr "Fitxategi-izena"
 
-#: oyranos_gamma.c:234 oforms/oyranos_xforms.c:33
+#: oyranos_gamma.c:234 oforms/oyranos_xforms.c:36
 #: oforms/oyranos_xforms_fltk.cxx:53
 #, c-format
 msgid "For more informations read the man page:"
 msgstr ""
 
-#: oyranos_gamma.c:250 oyranos_policy.c:138 oforms/oyranos_xforms.c:135
-#: oforms/oyranos_xforms_fltk.cxx:258
+#: oyranos_gamma.c:250 oyranos_policy.c:138 oforms/oyranos_xforms.c:143
+#: oforms/oyranos_xforms_fltk.cxx:259
 msgid "wrong argument to option:"
 msgstr ""
 
@@ -2506,18 +2506,6 @@ msgstr ""
 msgid "The filter is a libraw image reader."
 msgstr ""
 
-#. the option follows
-#: oforms/oyranos_forms_cmd_line.c:182 oforms/oyranos_xforms.c:191
-#: oforms/oyranos_xforms_fltk.cxx:326
-#, fuzzy, c-format
-msgid "Option"
-msgstr "Bereizketa"
-
-#: oforms/oyranos_forms_cmd_line.c:193
-#, c-format
-msgid "with following choices"
-msgstr ""
-
 #: oforms/oyranos_xforms.c:22 oforms/oyranos_xforms_fltk.cxx:37
 #, fuzzy
 msgid "is a Oyranos module options tool"
@@ -2527,9 +2515,30 @@ msgstr "Oyranos-en ezarpenak"
 msgid "Show options"
 msgstr ""
 
-#: oforms/oyranos_xforms.c:27 oforms/oyranos_xforms_fltk.cxx:45
+#: oforms/oyranos_xforms.c:26
+msgid "show help texts"
+msgstr ""
+
+#: oforms/oyranos_xforms.c:27
+msgid "list possible choices"
+msgstr ""
+
+#: oforms/oyranos_xforms.c:29 oforms/oyranos_xforms_fltk.cxx:45
 msgid "Get XFORMS:"
 msgstr ""
+
+#: oforms/oyranos_xforms.c:33 oforms/oyranos_xforms_fltk.cxx:49
+msgid "verbose"
+msgstr ""
+
+#: oforms/oyranos_xforms.c:34 oforms/oyranos_xforms_fltk.cxx:51
+msgid "show policy options"
+msgstr ""
+
+#: oforms/oyranos_xforms.c:202 oforms/oyranos_xforms_fltk.cxx:327
+#, fuzzy
+msgid "Option"
+msgstr "Bereizketa"
 
 #: oforms/oyranos_xforms_fltk.cxx:39
 msgid "Show options [include policy]"
@@ -2539,29 +2548,21 @@ msgstr ""
 msgid "Write Results:"
 msgstr ""
 
-#: oforms/oyranos_xforms_fltk.cxx:49
-msgid "verbose"
-msgstr ""
-
 #: oforms/oyranos_xforms_fltk.cxx:50
 msgid "read XFORMS"
 msgstr ""
 
-#: oforms/oyranos_xforms_fltk.cxx:51
-msgid "show policy options"
-msgstr ""
-
-#: oforms/oyranos_xforms_fltk.cxx:247
+#: oforms/oyranos_xforms_fltk.cxx:248
 #, fuzzy
 msgid "Unknown argument"
 msgstr "Aitorpena"
 
-#: oforms/oyranos_xforms_fltk.cxx:378
+#: oforms/oyranos_xforms_fltk.cxx:381
 #, fuzzy
 msgid "Hints"
 msgstr " puntu"
 
-#: oforms/oyranos_xforms_fltk.cxx:388
+#: oforms/oyranos_xforms_fltk.cxx:391
 msgid "&Done"
 msgstr ""
 
