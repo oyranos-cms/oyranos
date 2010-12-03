@@ -877,7 +877,7 @@ const char * lraw_api7_image_input_raw_properties[] =
   "image=pixel",  /* image type, pixel/vector/font */
   "layers=1",     /* layer count, one for plain images */
   "icc=0",        /* image type ICC profile support */
-  "ext=CR2,RAF,sti,nef", /* supported extensions */
+  "ext=cr2,raf,sti,nef,dng", /* supported extensions */
   0
 };
 
