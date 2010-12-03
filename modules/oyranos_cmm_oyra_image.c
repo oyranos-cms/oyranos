@@ -23,6 +23,7 @@
 #include "oyranos_i18n.h"
 #include "oyranos_io.h"
 #include "oyranos_definitions.h"
+#include "oyranos_string.h"
 #include "oyranos_texts.h"
 #include <iconv.h>
 #include <math.h>
@@ -106,10 +107,11 @@ int      oyraFilterPlug_ImageLoadRun (
   image = (oyImage_s*)socket->data;
   if(!image)
   {
-    uint32_t i, j, n,
+    uint32_t i, j, k, n,
            * rank_list = 0;
     const char * filename = oyOptions_FindString( node->core->options_, "filename", 0 );
     const char * fileext = 0;
+    char * file_ext = 0;
 
     if(filename)
     {
@@ -125,6 +127,10 @@ int      oyraFilterPlug_ImageLoadRun (
       return result;
     }
 
+    STRING_ADD( file_ext, fileext );
+    i = 0;
+    while(file_ext[i]) { file_ext[i] = tolower( file_ext[i] ); ++i; }
+
     apis = oyCMMsGetFilterApis_( 0,0, "//" OY_TYPE_STD "/file_read", 
                                  oyOBJECT_CMM_API7_S,
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
@@ -139,6 +145,7 @@ int      oyraFilterPlug_ImageLoadRun (
             image_pixel = 0,
             found = 0;
         oyCMMapi7_s * api7;
+        char * api_ext = 0;
 
         j = 0;
         api = oyCMMapiFilters_Get( apis, i );
@@ -154,12 +161,18 @@ int      oyraFilterPlug_ImageLoadRun (
                strstr( api7->properties[j], "pixel" ) != 0)
               image_pixel = 1;
 
-            if(strstr( api7->properties[j], "ext=" ) != 0 &&
-               strstr( &api7->properties[j][4], fileext ) != 0)
-              found = 1;
-
+            if(strstr( api7->properties[j], "ext=" ) != 0)
+            {
+              STRING_ADD( api_ext,  &api7->properties[j][4] );
+              k = 0;
+              while(api_ext[k]) { api_ext[k] = tolower( api_ext[k] ); ++k; }
+              if(strstr( api_ext, file_ext ) != 0)
+                found = 1;
+              oyFree_m_( api_ext );
+            }
             ++j;
           }
+
 
         if(file_read && image_pixel && found)
         {
@@ -178,6 +191,7 @@ int      oyraFilterPlug_ImageLoadRun (
              OY_DBG_FORMAT_ "Could not find any file_load plugin.",
              OY_DBG_ARGS_ );
 
+    oyFree_m_(file_ext);
   }
 
   /* set the data */
