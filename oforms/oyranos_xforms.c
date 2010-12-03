@@ -22,19 +22,18 @@ void usage(int argc, char ** argv)
                                 _("is a Oyranos module options tool"));
   printf("%s\n",                 _("Usage"));
   printf("  %s\n",               _("Show options"));
-  printf("      %s -n \"module_name\" [-l] [-h]\n", argv[0]);
+  printf("      %s -i \"o(X)FORMS.xhtml\" [-l] [-h]\n", argv[0]);
   printf("      -h  %s\n",       _("show help texts"));
   printf("      -l  %s\n",       _("list possible choices"));
   printf("\n");
   printf("  %s\n",               _("Write Results:"));
-  printf("      %s -n \"module_name\" -o \"xml_file\"\n", argv[0]);
+  printf("      %s -i \"o(X)FORMS.xhtml\" -o \"xml_file\"\n", argv[0]);
   printf("\n");
   printf("  %s\n",               _("Get XFORMS:"));
-  printf("      %s -n \"module_name\" -x \"xhtml_file\"\n", argv[0]);
+  printf("      %s -i \"o(X)FORMS.xhtml\" -x \"xhtml_file\"\n", argv[0]);
   printf("\n");
   printf("  %s\n",               _("General options:"));
   printf("      -v  %s\n",       _("verbose"));
-  printf("      -f  %s\n",       _("show policy options"));
   printf("\n");
   printf(_("For more informations read the man page:"));
   printf("\n");
@@ -44,15 +43,11 @@ void usage(int argc, char ** argv)
 
 int main (int argc, char ** argv)
 {
-  const char * node_name = 0;
   const char * output_xml_file = 0,
              * input_xml_file = 0;
   const char * output_model_file = 0,
              * result_xml = 0;
-  oyFilterNode_s * node = 0;
-  char * ui_text = 0,
-      ** namespaces = 0,
-       * text = 0, * t = 0;
+  char * text = 0, * t = 0;
   const char * opt_names = 0;
   oyFormsArgs_s * forms_args = oyFormsArgs_New( 0 );
   const char * data = 0, * ct = 0;
@@ -60,8 +55,6 @@ int main (int argc, char ** argv)
   int other_args_n = 0;
   int error = 0,
       i;
-  int front = 0;  /* front end options */
-  int attributes = 0;
   int print = 1;
   oyOptions_s * opts = 0;
   oyOption_s * o = 0;
@@ -100,9 +93,7 @@ int main (int argc, char ** argv)
             for(i = 1; i < strlen(argv[pos]); ++i)
             switch (argv[pos][i])
             {
-              case 'n': OY_PARSE_STRING_ARG( node_name ); break;
               case 'o': OY_PARSE_STRING_ARG( output_model_file ); break;
-              case 'f': front = 1; break;
               case 'i': OY_PARSE_STRING_ARG( input_xml_file ); break;
               case 'x': OY_PARSE_STRING_ARG( output_xml_file ); break;
               case 'v': oy_debug += 1; break;
@@ -157,47 +148,12 @@ int main (int argc, char ** argv)
 
   }
 
-  if(!node_name && !input_xml_file)
+  if(!input_xml_file)
   {
                         usage(argc, argv);
                         exit (0);
   }
 
-  if(node_name)
-  {
-    node = oyFilterNode_NewWith( node_name, 0,0 );
-    oyOptions_Release( &node->core->options_ );
-    /* First call for options ... */
-
-    attributes = OY_SELECT_FILTER | OY_SELECT_COMMON |
-                                    oyOPTIONATTRIBUTE_ADVANCED;
-    if(front)
-      attributes |= oyOPTIONATTRIBUTE_FRONT;
-    opts = oyFilterNode_OptionsGet( node, attributes );
-
-  /* ... then get the UI for this filters options. */
-    error = oyFilterNode_UiGet( node, &ui_text, &namespaces, malloc );
-    oyFilterNode_Release( &node );
-
-
-    data = oyOptions_GetText( opts, oyNAME_NAME );
-    text = oyXFORMsFromModelAndUi( data, ui_text, (const char**)namespaces, 0,
-                                   malloc );
-
-    if(namespaces)
-    {
-      i = 0;
-      while(namespaces[i])
-      {
-        if(oy_debug)
-          printf("namespaces[%d]: %s\n", i, namespaces[i]);
-        free( namespaces[i++] );
-      }
-      free(namespaces);
-    }
-    if(ui_text) free(ui_text); ui_text = 0;
-
-  }
   /* get Layout file */
   if(input_xml_file)
   {
