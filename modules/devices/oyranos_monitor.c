@@ -231,7 +231,7 @@ int            oyDeviceFillEdid      ( const char        * registration,
       double colours[9] = {0,0,0,0,0,0,0,0,0};
       uint32_t week=0, year=0, EDID_mnft_id=0, EDID_model_id=0;
 
-      oyUnrollEdid1_( edi, &EDID_manufacturer, &EDID_mnft,
+      error = oyUnrollEdid1_( edi, &EDID_manufacturer, &EDID_mnft,
                       &EDID_model, &EDID_serial, &EDID_vendor,
                       &week, &year, &EDID_mnft_id, &EDID_model_id, colours,
                       oyAllocateFunc_);
@@ -251,7 +251,7 @@ int            oyDeviceFillEdid      ( const char        * registration,
 
 
 /** @internal oyUnrollEdid1_ */
-void         oyUnrollEdid1_          ( void              * edid,
+int          oyUnrollEdid1_          ( void              * edid,
                                        char             ** manufacturer,
                                        char             ** mnft,
                                        char             ** model,
@@ -318,6 +318,7 @@ void         oyUnrollEdid1_          ( void              * edid,
   XcmEdidFree( &list );
 
   DBG_PROG_ENDE
+  return err;
 }
 
 

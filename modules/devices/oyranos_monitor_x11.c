@@ -218,6 +218,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
   oyX1Monitor_s * disp = 0;
   oyBlob_s * prop = 0;
   oyOptions_s * options = (oyOptions_s*) user_data;
+  int error = 0;
 
   DBG_PROG_START
 
@@ -294,15 +295,21 @@ oyX1GetMonitorInfo_               (const char* display_name,
                (int)prop->size,
                "\"XFree86_DDC_EDID1_RAWDATA\"/\"EDID_DATA\"",
                _("Cant read hardware information from device."))
+      error = -1;
     } else
     {
       /* convert to an deployable struct */
       edi = prop->ptr;
 
-      oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, vendor,
+      error = oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, vendor,
                       week, year, mnft_id, model_id, colours, allocate_func);
+
+      if(edid && error != XCM_EDID_OK)
+        oyBlob_Release( &prop );
     }
-  } else
+  }
+
+  if( !prop )
   /* as a last means try Xorg.log for at least some informations */
   {
     char * log_file = 0;

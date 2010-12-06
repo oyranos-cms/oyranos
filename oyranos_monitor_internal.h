@@ -26,7 +26,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-void         oyUnrollEdid1_          ( void              * edid,
+int          oyUnrollEdid1_          ( void              * edid,
                                        char             ** manufacturer,
                                        char             ** mnft,
                                        char             ** model,
