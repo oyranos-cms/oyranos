@@ -118,17 +118,16 @@ int            oyDeviceFillInfos     ( const char        * registration,
              colours[3] != 0.0 && colours[4] != 0.0 && colours[5] != 0.0 && 
              colours[6] != 0.0 && colours[7] != 0.0 && colours[8] != 0.0 )
           {
-            for(i = 0; i < 9; ++i)
-            {
-              STRING_ADD(t, registration);
-              STRING_ADD(t, OY_SLASH );
-              STRING_ADD(t, "colour_matrix.from_edid."
+            STRING_ADD(t, registration);
+            STRING_ADD(t, OY_SLASH );
+            STRING_ADD(t, "colour_matrix.from_edid."
                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma");
               
+            for(i = 0; i < 9; ++i)
               error = oyOptions_SetFromDouble( &(*device)->data, t,
                                              colours[i], i, OY_CREATE_NEW );
-              oyFree_m_( t );
-            }
+
+            oyFree_m_( t );
           }
           else
           {
