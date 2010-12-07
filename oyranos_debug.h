@@ -117,6 +117,7 @@ extern int level_PROG;
 #define WARNcc2_S(ptr,format,arg,arg2) oyMessageFunc_p( oyMSG_WARN,ptr,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2);
 #define WARNcc3_S(ptr,format,arg,arg2,arg3) oyMessageFunc_p( oyMSG_WARN,ptr,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3);
 #define WARNcc4_S(ptr,format,arg,arg2,arg3,arg4) oyMessageFunc_p( oyMSG_WARN,ptr,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4);
+#define WARNcc5_S(ptr,format,arg,arg2,arg3,arg4,arg5) oyMessageFunc_p( oyMSG_WARN,ptr,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5);
 
 #define WARNc          oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_, OY_DBG_ARGS_ );
 #define WARNc_S(txt)   oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_,txt);
