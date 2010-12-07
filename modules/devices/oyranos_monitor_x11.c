@@ -1257,6 +1257,27 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
       Window w = RootWindow(display, oyX1Monitor_screen_(disp));
       XRRScreenResources * res = 0;
       int selected_screen = oyX1Monitor_getScreenFromDisplayName_( disp );
+      int xrand_screen = -1;
+      int geo[4] = {-1,-1,-1,-1};
+
+# if HAVE_XIN
+      /* sync numbering with Xinerama screens */
+      if( XineramaIsActive( display ) )
+      {
+        int n_scr_info = 0;
+        XineramaScreenInfo *scr_info = XineramaQueryScreens( display,
+                                                             &n_scr_info );
+        geo[0] = scr_info[selected_screen].x_org;
+        geo[1] = scr_info[selected_screen].y_org;
+        geo[2] = scr_info[selected_screen].width;
+        geo[3] = scr_info[selected_screen].height;
+        oyPostAllocHelper_m_(scr_info, n_scr_info, return 0 )
+
+        XFree( scr_info );
+
+      }
+# endif /* HAVE_XIN */
+
 
       /* a havily expensive call */
       DBG_NUM_S("going to call XRRGetScreenResources()");
@@ -1274,6 +1295,7 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
         if( output_info && output_info->crtc )
         {
           XRRCrtcGamma * gamma = 0;
+          XRRCrtcInfo * crtc_info = 0;
 
           if(monitors == 0)
           {
@@ -1293,7 +1315,22 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
             }
           }
 
-          if(selected_screen == monitors &&
+          crtc_info = XRRGetCrtcInfo( disp->display, res_temp,
+                                      output_info->crtc );
+          if(crtc_info)
+          {
+            /* compare with Xinerama geometry */
+            if(
+               geo[0] == crtc_info->x &&
+               geo[1] == crtc_info->y &&
+               geo[2] == crtc_info->width &&
+               geo[3] == crtc_info->height )
+              xrand_screen = monitors;
+
+            XRRFreeCrtcInfo( crtc_info );
+          }
+
+          if(xrand_screen == monitors &&
              oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR)
           {
             disp->output_info = output_info;
