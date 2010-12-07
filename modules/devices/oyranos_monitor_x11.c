@@ -214,7 +214,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
 {
   int len;
   char * edi=0;
-  char *t;
+  char *t, * port = 0, * geo = 0;
   oyX1Monitor_s * disp = 0;
   oyBlob_s * prop = 0;
   oyOptions_s * options = (oyOptions_s*) user_data;
@@ -239,7 +239,6 @@ oyX1GetMonitorInfo_               (const char* display_name,
                                   oyStructTypeToText( user_data->type_ ));
   }
 
-  if( system_port ) 
   {
     t = 0;
     if( oyX1Monitor_systemPort_( disp ) &&
@@ -250,13 +249,18 @@ oyX1GetMonitorInfo_               (const char* display_name,
       t = (char*)oyAllocateWrapFunc_( len, allocate_func );
       strcpy(t, oyX1Monitor_systemPort_( disp ));
     }
-    *system_port = t; t = 0;
+    port = t;
+    if( system_port ) 
+      *system_port = port;
+    t = 0;
   }
 
   if( display_geometry )
     *display_geometry = oyStringCopy_( oyX1Monitor_identifier_( disp ),
                                        allocate_func );
-
+  else
+    geo = oyStringCopy_( oyX1Monitor_identifier_( disp ),
+                                       oyAllocateFunc_ );
   if( host )
     *host = oyStringCopy_( oyX1Monitor_hostName_( disp ), allocate_func );
 
@@ -339,7 +343,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
       int year_ = 0, week_ = 0;
       const char * t;
       char mnft_[80] = {0};
-      int model_id_ = 0;
+      unsigned int model_id_ = 0;
 
       char * save_locale = 0;
       /* sensible parsing */
@@ -347,35 +351,45 @@ oyX1GetMonitorInfo_               (const char* display_name,
                                          oyAllocateFunc_ );
       setlocale( LC_NUMERIC, "C" );
 
-      for(i = 0; i < screen; ++i)
+      t = strstr( log_text, "Connected Display" );
+      if(!t) t = log_text;
+      t = strstr( t, port );
+      if(!t)
       {
-        ++t;
-        t = strstr( log_text, "redX:" );
+        t = log_text;
+        for(i = 0; i < screen; ++i)
+        {
+          ++t;
+          t = strstr( t, "redX:" );
+        }
       }
 
-      if((t = strstr( log_text, "redX:" )) != 0)
-        sscanf( t,"redX: %g redY: %g", &rx,&ry );
-      if((t = strstr( log_text, "greenX:" )) != 0)
-        sscanf( t,"greenX: %g greenY: %g", &gx,&gy );
-      if((t = strstr( log_text, "blueX:" )) != 0)
-        sscanf( t,"blueX: %g blueY: %g", &bx,&by );
-      if((t = strstr( log_text, "whiteX:" )) != 0)
-        sscanf( t,"whiteX: %g whiteY: %g", &wx,&wy );
-      if((t = strstr( log_text, "Gamma:" )) != 0)
-        sscanf( t,"Gamma: %g", &g );
-
-      if((t = strstr( log_text, "Year:" )) != 0)
-      {
-        sscanf( t,"Year: %d  Week: %d", &year_, &week_ );
-      } 
-
-      if((t = strstr( log_text, "Manufacturer:" )) != 0)
+      if((t = strstr( t, "Manufacturer:" )) != 0)
       {
         sscanf( t,"Manufacturer: %s", mnft_ );
       }
 
-      if((t = strstr( log_text, "prod id" )) != 0)
-       sscanf( t,"prod id %d", &model_id_ );
+      if((t = strstr( t, "Model:" )) != 0)
+      {
+        sscanf( t,"Model: %x ", &model_id_ );
+      }
+
+      if((t = strstr( t, "Year:" )) != 0)
+      {
+        sscanf( t,"Year: %d  Week: %d", &year_, &week_ );
+      } 
+
+      if((t = strstr( t, "Gamma:" )) != 0)
+        sscanf( t,"Gamma: %g", &g );
+      if((t = strstr( t, "redX:" )) != 0)
+        sscanf( t,"redX: %g redY: %g", &rx,&ry );
+      if((t = strstr( t, "greenX:" )) != 0)
+        sscanf( t,"greenX: %g greenY: %g", &gx,&gy );
+      if((t = strstr( t, "blueX:" )) != 0)
+        sscanf( t,"blueX: %g blueY: %g", &bx,&by );
+      if((t = strstr( t, "whiteX:" )) != 0)
+        sscanf( t,"whiteX: %g whiteY: %g", &wx,&wy );
+
       if(mnft_[0])
       {
         *mnft = oyStringCopy_( mnft_, oyAllocateFunc_ );
@@ -391,8 +405,9 @@ oyX1GetMonitorInfo_               (const char* display_name,
         colours[8] = g;
         *year = year_;
         *week = week_;
-        WARNcc3_S( user_data, "found \"%s\": %s %d",
-                   log_file, mnft_, model_id_);
+        WARNcc5_S( user_data, "found %s in \"%s\": %s %d %s",
+                   log_file, display_name, mnft_, model_id_,
+                   display_geometry?oyNoEmptyString_m_(*display_geometry):geo);
 
         setlocale(LC_NUMERIC, save_locale);
         if(save_locale)
@@ -408,6 +423,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
   }
 
   oyX1Monitor_release_( &disp );
+  if(geo) oyFree_m_(geo);
 
   if(prop || (edid && *edid))
   {
