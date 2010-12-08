@@ -1844,7 +1844,7 @@ int lcmsGetOptionsUI                 ( oyOptions_s        * options,
       <xf:choices>\n\
        <xf:item>\n\
         <xf:value>0</xf:value>\n\
-        <xf:label>LCMS2_NOOPTIMIZE</xf:label>\n\
+        <xf:label>LCMS_NOOPTIMIZE</xf:label>\n\
        </xf:item>\n\
        <xf:item>\n\
         <xf:value>1</xf:value>\n\
@@ -1852,11 +1852,11 @@ int lcmsGetOptionsUI                 ( oyOptions_s        * options,
        </xf:item>\n\
        <xf:item>\n\
         <xf:value>2</xf:value>\n\
-        <xf:label>LCMS2_HIGHRESPRECALC</xf:label>\n\
+        <xf:label>LCMS_HIGHRESPRECALC</xf:label>\n\
        </xf:item>\n\
        <xf:item>\n\
         <xf:value>3</xf:value>\n\
-        <xf:label>LCMS2_LOWRESPRECALC</xf:label>\n\
+        <xf:label>LCMS_LOWRESPRECALC</xf:label>\n\
        </xf:item>\n\
       </xf:choices>\n\
      </xf:select1>\n");

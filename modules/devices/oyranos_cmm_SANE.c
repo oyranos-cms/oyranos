@@ -398,7 +398,8 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          if (GetDevices(&device_list, &num_devices) == 0) {
             device_context = *device_list;
             while (device_context) {
-               if (strcmp(device_name,device_context->name) == 0)
+               if(device_name && device_context->name &&
+                  strcmp(device_name,device_context->name) == 0)
                   break;
                device_context++;
             }
