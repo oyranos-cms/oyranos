@@ -383,7 +383,13 @@ int main( int argc , char** argv )
               if(t)
                 error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag, t );
               if(device_meta_tag)
-                error = oyProfile_DeviceAdd( prof, c, 0 );
+              {
+                oyOptions_s * opts = 0;
+                error = oyOptions_SetFromText( &opts, "///key_prefix_required",
+                                                      "EDID_" , OY_CREATE_NEW );
+                oyProfile_DeviceAdd( prof, c, opts );
+                oyOptions_Release( &opts );
+              }
               data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
               header = (icHeader*) data;
               t = oyConfig_FindString( c, "EDID_mnft", 0 );
@@ -414,7 +420,13 @@ int main( int argc , char** argv )
             oyDeviceAskProfile2( c, cs_options, &prof );
             oyOptions_Release( &cs_options );
             if(device_meta_tag)
-              oyProfile_DeviceAdd( prof, c, 0 );
+            {
+              oyOptions_s * opts = 0;
+              error = oyOptions_SetFromText( &opts, "///key_prefix_required",
+                                                    "EDID_" , OY_CREATE_NEW );
+              oyProfile_DeviceAdd( prof, c, opts );
+              oyOptions_Release( &opts );
+            }
             data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
           }
 
@@ -446,7 +458,9 @@ int main( int argc , char** argv )
     if(prof_name && add_edid)
     {
       oyBlob_s * edid = oyBlob_New(0);
-      data = oyReadFileToMem_( add_edid, &size, oyAllocateFunc_ );
+      char * edid_fn = oyResolveDirFileName_(add_edid);
+      data = oyReadFileToMem_( edid_fn, &size, oyAllocateFunc_ );
+      oyFree_m_(edid_fn);
       oyBlob_SetFromData( edid, data, size, "edid" );
       prof = oyProfile_FromFile( prof_name, 0, 0 );
       device = 0;
