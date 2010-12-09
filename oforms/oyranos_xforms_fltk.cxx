@@ -32,7 +32,7 @@ extern oyUiHandler_s * oy_ui_fltk_handlers[];
 void usage(int argc, char ** argv)
 {
   printf("\n");
-  printf("oyranos-xforms v%d.%d.%d %s\n",
+  printf("oyranos-xforms-fltk v%d.%d.%d %s\n",
                           OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
                                 _("is a Oyranos o(X)FORMS options tool"));
   printf("%s\n",                 _("Usage"));
@@ -138,6 +138,8 @@ int main (int argc, char ** argv)
   const char *locale_paths[2] = {OY_SRC_LOCALEDIR,OY_LOCALEDIR};
   const char *domain = {"oyranos"};
   int is_path = -1;
+
+  Fl::scheme("plastic");
 
   is_path = fl_search_locale_path  ( 2,
                                 locale_paths,
@@ -302,7 +304,7 @@ int main (int argc, char ** argv)
   w->resizable( scroll );
   w->end();
 
-  w->show();
+  w->show(1, argv);
   Fl::run();
 
 
