@@ -1032,12 +1032,20 @@ const char * qarzApi8UiGetText       ( const char        * select,
   else if(strcmp(select, "device_class")==0)
   {
         if(type == oyNAME_NICK)
-            return _("Monitor");
+            return "monitor";
         else if(type == oyNAME_NAME)
             return _("Monitor");
         else
             return _("Monitors, which can be detected through the video card driver and windowing system.");
   }
+  else if(strcmp(select, "icc_profile_class")==0)
+    {
+      return "display";
+    } 
+  else if(strcmp(select, "key_prefix")==0)
+    {
+      return "EDID_";
+    } 
   else if(strcmp(select,"category") == 0)
   {
     if(!category)
@@ -1058,7 +1066,7 @@ const char * qarzApi8UiGetText       ( const char        * select,
   } 
   return 0;
 }
-const char * qarz_api8_ui_texts[] = {"name", "help", "device_class", "category", 0};
+const char * qarz_api8_ui_texts[] = {"name", "help", "device_class", "icc_profile_class", "category", "key_prefix", 0};
 
 /** @instance qarz_api8_ui
  *  @brief    qarz oyCMMapi8_s::ui implementation
@@ -1074,7 +1082,7 @@ oyCMMui_s qarz_api8_ui = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,1,10},                            /**< int32_t module_api[3] */
+  {0,1,13},                            /**< int32_t module_api[3] */
 
   0, /* oyCMMFilter_ValidateOptions_f */
   0, /* oyWidgetEvent_f */
