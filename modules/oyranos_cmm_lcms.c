@@ -929,6 +929,9 @@ cmsHPROFILE  lcmsAddProfile          ( oyProfile_s       * p )
 
   cmm_ptr = oyCMMptrLookUpFromObject( (oyStruct_s*)p, lcmsPROFILE );
 
+  if(!cmm_ptr)
+    return 0;
+
   cmm_ptr->lib_name = CMM_NICK;
 
   if(!cmm_ptr->ptr)
