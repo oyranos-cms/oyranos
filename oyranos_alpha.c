@@ -16114,6 +16114,15 @@ OYAPI oyPointer OYEXPORT
     if( oyStructList_Count( s->tags_ ))
     {
       block = oyProfile_TagsToMem_ ( profile, size, allocateFunc );
+      profile->tags_modified_ = 0;
+      profile->use_default_ = 0;
+      profile->oy_->deallocateFunc_( profile->file_name_ );
+      profile->file_name_ = 0;
+      oyProfile_GetHash_(profile);
+      oyObject_SetNames( profile->oy_, 0,0,0 );
+      oyProfile_GetText(profile, oyNAME_NICK);
+      oyProfile_GetText(profile, oyNAME_NAME);
+      oyProfile_GetText(profile, oyNAME_DESCRIPTION);
     }
   }
 
