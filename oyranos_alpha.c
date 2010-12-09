@@ -27881,7 +27881,7 @@ int                oyConversion_Correct (
     oyCMMapiFilters_Release( &apis );
   }
   
-  return 1;
+  return 0;
 }
 
 
