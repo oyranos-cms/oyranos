@@ -511,12 +511,17 @@ int            oyX1Configs_FromPattern (
       }
       else
       {
+        oyOptions_s * opts = 0;
         error = oyDeviceFillEdid(   OYX1_MONITOR_REGISTRATION,
                                     &device, edid->ptr, edid->size,
                                     NULL,
                                     NULL, NULL, NULL,
                                     options );
-        oyProfile_DeviceAdd( prof, device, 0 );
+        if(error <= 0)
+          error = oyOptions_SetFromText( &opts, "///key_prefix_required",
+                                                "EDID_" , OY_CREATE_NEW );
+        oyProfile_DeviceAdd( prof, device, opts );
+        oyOptions_Release( &opts );
       }
 
       goto cleanup;
@@ -1036,13 +1041,13 @@ oyRankPad oyX1_rank_map[] = {
   {"host", 1, 0, 0},                   /**< nice to match */
   {"system_port", 2, 0, 0},            /**< good to match */
   {"display_geometry", 3, -1, 0},      /**< important to match, as fallback */
-  {"EDID_manufacturer", 0, 0, 0},      /**< is nice, covered by mnft_id */
+  {"manufacturer", 0, 0, 0},           /**< is nice, covered by mnft_id */
   {"EDID_mnft", 0, 0, 0},              /**< is nice, covered by mnft_id */
   {"EDID_mnft_id", 1, -1, 0},          /**< is nice */
-  {"EDID_model", 0, 0, 0},             /**< important, covered by model_id */
+  {"model", 0, 0, 0},                  /**< important, covered by model_id */
   {"EDID_model_id", 5, -5, 0},         /**< important, should not fail */
   {"EDID_date", 2, 0, 0},              /**< good to match */
-  {"EDID_serial", 10, -2, 0},          /**< important, could slightly fail */
+  {"serial", 10, -2, 0},               /**< important, could slightly fail */
   {"EDID_red_x", 1, -5, 0},    /**< is nice, should not fail */
   {"EDID_red_y", 1, -5, 0},    /**< is nice, should not fail */
   {"EDID_green_x", 1, -5, 0},  /**< is nice, should not fail */
