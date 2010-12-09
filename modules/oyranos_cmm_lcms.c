@@ -930,7 +930,11 @@ cmsHPROFILE  lcmsAddProfile          ( oyProfile_s       * p )
   cmm_ptr = oyCMMptrLookUpFromObject( (oyStruct_s*)p, lcmsPROFILE );
 
   if(!cmm_ptr)
+  {
+    lcms_msg( oyMSG_WARN, (oyStruct_s*)p,
+             OY_DBG_FORMAT_" oyCMMptrLookUpFromObject() failed", OY_DBG_ARGS_ );
     return 0;
+  }
 
   cmm_ptr->lib_name = CMM_NICK;
 
