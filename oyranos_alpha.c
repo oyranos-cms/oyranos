@@ -16359,11 +16359,12 @@ const char *       oyProfile_GetFileName (
  *
  *  @param[in,out] profile             the profile
  *  @param[in]     device              device and driver informations
- *  @param[in]     options             unused
+ *  @param[in]     options             - "key_prefix_required" : prefix
+ *                                       accept only key names with the prefix
  *
  *  @version Oyranos: 0.1.13
  *  @since   2009/05/18 (Oyranos: 0.1.10)
- *  @date    2010/10/25
+ *  @date    2010/11/09
  */
 #if 0
 TODO find a general form. Do we want to support the mluc type or is that better
@@ -16428,6 +16429,9 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
         * key, * val;
   const char * r;
   void * string = 0;
+  const char * key_prefix_required = oyOptions_FindString( options,
+                                            "key_prefix_required", 0 );
+  int key_prefix_required_len = 0;
 
   /* get just some device */
   oyOption_s * o = 0;
@@ -16438,9 +16442,13 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
   icDictTagType * dict;
   icNameValueRecord * record;
 
-  /* count valid entries */
   int n = oyConfig_Count( d );
   int count = 0;
+
+  if(key_prefix_required)
+    key_prefix_required_len = strlen(key_prefix_required);
+
+  /* count valid entries */
   for(i = 0; i < n; ++i)
   {
     char * reg = 0;
@@ -16450,12 +16458,24 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
     if(o->value_type == oyVAL_STRING)
     {
       char * val = oyOption_GetValueText( o, oyAllocateFunc_ );
-      if(val)
+      int pass = 1;
+
+      if(key_prefix_required)
+      {
+        int len = strlen( reg );
+        pass = 0;
+        if(len > key_prefix_required_len &&
+           memcmp( key_prefix_required, reg, key_prefix_required_len) == 0)
+          pass = 1;
+      }
+
+      if(val && pass)
       {
         DBG_PROG2_S("%s: %s", reg, val );
         oyDeAllocateFunc_(val);
         ++count;
-      }
+      } else if(val)
+        oyFree_m_(val);
     }
     if(reg) oyDeAllocateFunc_(reg);
   }
@@ -16476,8 +16496,19 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
                                              oyAllocateFunc_ );
     if(o->value_type == oyVAL_STRING)
     {
+      int pass = 1;
+
+      if(key_prefix_required)
+      {
+        int len = strlen( key );
+        pass = 0;
+        if(len > key_prefix_required_len &&
+           memcmp( key_prefix_required, key, key_prefix_required_len) == 0)
+          pass = 1;
+      }
+
       val = oyOption_GetValueText( o, oyAllocateFunc_ );
-      if(val)
+      if(val && pass)
       {
         keys[pos] = key;
         values[pos] = val;
@@ -16485,7 +16516,8 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
         block_size += (strlen(key) + strlen(val)) * 2 + 2;
         ++pos;
         key = 0;
-      }
+      } else if(val)
+        oyFree_m_(val);
     }
     if(key) oyDeAllocateFunc_( key ); key = 0;
   }
@@ -16527,6 +16559,9 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
   error = oyProfileTag_Set( dict_tag, icSigMetaDataTag, icSigDictType,
                             oyOK, block_size, dict );
   error = oyProfile_TagMoveIn( p, &dict_tag, -1 );
+
+  oyStringListRelease_( &keys, count, oyDeAllocateFunc_ );
+  oyStringListRelease_( &values, count, oyDeAllocateFunc_ );
 
   return 0;
 }
