@@ -63,8 +63,8 @@ VERSION_ABI_B=0
 RELEASE=0
 OY_START_MONTH=11
 OY_START_YEAR=2004
-OY_DEVEL_MONTH=10
-OYRANOS_DEVEL_MONTH=10 # numeric
+OY_DEVEL_MONTH=12
+OYRANOS_DEVEL_MONTH=12 # numeric
 OY_DEVEL_YEAR=2010
 OY_GIT_MASTER="`cat $ROOT_DIR/.git/refs/heads/master`"
 time="`date +%y%m%d.%H%M%S`"
@@ -99,7 +99,7 @@ verbose=1
 fltk=1
 X11=0
 X_ADD_2="X11 Xext Xinerama Xxf86vm Xrandr"
-LIBS_TEST="ltdl dl iconv intl m xml2 Xfixes cups sane XNVCtrl yajl"
+LIBS_TEST="ltdl dl iconv intl m xml2 Xfixes cups sane XNVCtrl yajl pthread"
 
 # find a suitable fltk-config script
 fltkconfig="fltk-config"

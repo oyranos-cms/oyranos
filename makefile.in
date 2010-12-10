@@ -678,7 +678,7 @@ $(FLTK_GUI):	$(FLTK_OBJECTS) $(LIBFL_I18N) $(LIBSONAMEFULL)
 	$(CXX) -I./ $(FLTK_H) -o $(FLTK_GUI) \
 	$(FLTK_OBJECTS) \
 	$(LIBSONAMEFULL) $(LINK_LIB_PATH) \
-	$(LDLIBS) $(FLTK_LIBS) $(PNG_LIBS) $(I18N_LIB) $(LIBFL_I18N)
+	$(LDLIBS) $(FLTK_LIBS) $(PNG_LIBS) $(I18N_LIB) $(LIBFL_I18N) $(pthread)
 	$(REZ)
 
 fltk-gui:	oyranos_config_fltk.o
