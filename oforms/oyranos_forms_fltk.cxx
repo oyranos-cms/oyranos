@@ -43,6 +43,7 @@
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
 #include "oyranos_forms.h"
+#include "../fl_i18n/fl_i18n.H"
 
 
 using namespace oyranos;
@@ -197,7 +198,14 @@ int        oyXML2XFORMsFLTKSelect1Handler (
     while(select1)
     {
       if(oyXMLNodeNameIs( select1, "xf:label") && print)
-          box->copy_label( oyXML2NodeValue(select1) );
+      {
+        int len = 0;
+        void * string = 0;
+        oyIconvGet( oyXML2NodeValue(select1), &string, &len,
+                                  "UTF-8", fl_i18n_codeset, malloc );
+        box->copy_label( (const char *)string );
+        if(string) free(string); string = 0;
+      }
       else
       if(oyXMLNodeNameIs( select1, "xf:help") && print)
       {
@@ -265,9 +273,14 @@ int        oyXML2XFORMsFLTKSelect1Handler (
                   cb_data->label[pos++] = '\\';
                 cb_data->label[pos++] = label[k];
               }
-              c->add( (const char *) cb_data->label, 0,
+              len = 0;
+              void * string = 0;
+              error = oyIconvGet( cb_data->label, &string, &len,
+                                  "UTF-8", fl_i18n_codeset, malloc );
+              c->add( (const char *) string, 0,
                       fltkCallback,
                       (void*)cb_data, 0 );
+              if(string) free(string); string = 0;
             }
 
             ++choices_n;
@@ -359,7 +372,12 @@ int        oyXML2XFORMsFLTKHtmlHeadlineHandler (
             y = parent->y(),
             w = parent->w();
         box = new OyFl_Box_c( x,y,w,BUTTON_HEIGHT );
-        box->copy_label( tmp );
+        int len = 0;
+        void * string = 0;
+        oyIconvGet( tmp, &string, &len,
+                                  "UTF-8", fl_i18n_codeset, malloc );
+        box->copy_label( (const char *)string );
+        if(string) free(string); string = 0;
         box->labelfont( FL_BOLD );
         box->align( FL_ALIGN_LEFT | FL_ALIGN_INSIDE );
     }
@@ -417,7 +435,12 @@ int        oyXML2XFORMsFLTKHtmlHeadline4Handler (
             y = parent->y(),
             w = parent->w();
         box = new OyFl_Box_c( x,y,w,BUTTON_HEIGHT );
-        box->copy_label( tmp );
+        int len = 0;
+        void * string = 0;
+        oyIconvGet( tmp, &string, &len,
+                                  "UTF-8", fl_i18n_codeset, malloc );
+        box->copy_label( (const char *)string );
+        if(string) free(string); string = 0;
         box->labelfont( FL_ITALIC );
         box->align( FL_ALIGN_LEFT | FL_ALIGN_INSIDE );
     }
