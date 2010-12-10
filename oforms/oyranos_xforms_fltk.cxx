@@ -9,6 +9,7 @@
 #include <libxml/xpathInternals.h>
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
 
 #include "oyranos_widgets_fltk.h"
 #include "oyranos_forms.h"

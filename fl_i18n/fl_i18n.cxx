@@ -117,7 +117,7 @@ fl_set_codeset_    ( const char* lang, const char* codeset_,
       if(pos != 0)
       {
         /* 1 a. select an appropriate charset (needed for non UTF-8 fltk/gtk1)*/
-        strcpy (codeset, codeset_); DBG_PROG_V( locale <<" "<< strrchr(locale,'.'))
+        strcpy(codeset, codeset_); DBG_PROG_V( locale <<" "<< strrchr(locale,'.'))
  
           /* merge charset with locale string */
         if(set_codeset != FL_I18N_SETCODESET_NO)
@@ -159,14 +159,14 @@ fl_set_codeset_    ( const char* lang, const char* codeset_,
         switch(set_codeset)
         {
         case FL_I18N_SETCODESET_SELECT:
-            ptr = setlocale (lc, locale);
+            ptr = setlocale (lc, "");
             break;
         case FL_I18N_SETCODESET_UTF8:
             ptr = setlocale (lc, locale);
             break;
         default: break;
         }
-        if(ptr) strncpy( locale, ptr, TEXTLEN ); DBG_PROG_V( locale )
+        if(ptr) strncpy( locale, ptr, TEXTLEN); DBG_PROG_V( locale )
         }
       }
     }
@@ -249,6 +249,8 @@ fl_initialise_locale( const char *domain, const char *locale_path,
   CFShow( cfstring );
   DBG_PROG_V( CFStringGetLength(cfstring) )
 
+  sprintf(codeset, "MACROMAN");
+
     // copy to a C buffer
   CFIndex gr = 36;
   char text[36];
@@ -291,11 +293,11 @@ fl_initialise_locale( const char *domain, const char *locale_path,
 
     // .. or take locale info from environment
   if(!strlen(locale) && getenv("LANG"))
-    strncpy(locale, getenv("LANG"),TEXTLEN);
+    strncpy( locale, getenv("LANG"), TEXTLEN );
 # endif
 
   if(set_codeset == FL_I18N_SETCODESET_SELECT &&
-     locale && (strstr(locale, "UTF-8") || !strchr(locale,'.')))
+     locale && strstr(locale, "UTF-8"))
   {
       // add more LINGUAS here
       // borrowed from http://czyborra.com/charsets/iso8859.html
