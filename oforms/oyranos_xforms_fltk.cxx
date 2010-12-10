@@ -31,17 +31,17 @@ extern oyUiHandler_s * oy_ui_fltk_handlers[];
 
 void usage(int argc, char ** argv)
 {
-  printf("\n");
-  printf("oyranos-xforms-fltk v%d.%d.%d %s\n",
+  fprintf(stderr, "\n");
+  fprintf(stderr, "oyranos-xforms-fltk v%d.%d.%d %s\n",
                           OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
                                 _("is a Oyranos o(X)FORMS options tool"));
-  printf("%s\n",                 _("Usage"));
-  printf("  %s\n",               _("General options:"));
-  printf("      -v  %s\n",       _("verbose"));
-  printf("      -i \"xhtml_file\"  %s\n",_("read XFORMS"));
-  printf("\n");
-  puts(_("For more informations read the man page:"));
-  printf("      man oyranos-xforms_not_yet\n");
+  fprintf(stderr, "%s\n",                 _("Usage"));
+  fprintf(stderr, "  %s\n",               _("General options:"));
+  fprintf(stderr, "      -v  %s\n",       _("verbose"));
+  fprintf(stderr, "      -i \"xhtml_file\"  %s\n",_("read XFORMS"));
+  fprintf(stderr, "\n");
+  fprintf(stderr, "%s", _("For more informations read the man page:"));
+  fprintf(stderr, "      man oyranos-xforms_not_yet\n");
 }
 
 void callback_done( Fl_Widget * w, void * )
@@ -123,8 +123,8 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
 
 int main (int argc, char ** argv)
 {
-  const char * output_xml_file = 0,
-             * input_xml_file = 0;
+  int output_model = 0;
+  const char * input_xml_file = 0;
   const char * output_model_file = 0,
              * result_xml = 0;
   char * text = 0, * t = 0;
@@ -134,7 +134,6 @@ int main (int argc, char ** argv)
   int other_args_n = 0;
   int error = 0;
   oyOptions_s * opts = 0;
-  int front = 0;  /* front end options */
   int print = 1;
 
   const char *locale_paths[3] = {0,0,0};
@@ -240,7 +239,7 @@ int main (int argc, char ** argv)
                             wrong_arg = "-" #opt; \
                           i = 1000; \
                         } else wrong_arg = "-" #opt; \
-                        if(oy_debug) printf(#opt "=%s\n",opt)
+                        if(oy_debug) fprintf(stderr, #opt "=%s\n",opt)
 
   if(argc != 1)
   {
@@ -255,10 +254,11 @@ int main (int argc, char ** argv)
             switch (argv[pos][i])
             {
               case 'o': OY_PARSE_STRING_ARG( output_model_file ); break;
-              case 'f': front = 1; break;
+              case 'O': output_model = 1; print = 0; break;
               case 'i': OY_PARSE_STRING_ARG( input_xml_file ); break;
-              case 'x': OY_PARSE_STRING_ARG( output_xml_file ); break;
               case 'v': oy_debug += 1; break;
+              case 'h': /* only for compatibility with cmd line */ break;
+              case 'l': /* only for compatibility with cmd line */ break;
               case '-':
                         if(strcmp(&argv[pos][2],"verbose") == 0)
                         { oy_debug += 1; i=100; break;
@@ -289,7 +289,7 @@ int main (int argc, char ** argv)
                         t = 0;
                         i=100; break;
               default:
-                        printf("%s -%c\n", _("Unknown argument"), argv[pos][i]);
+                        fprintf(stderr, "%s -%c\n", _("Unknown argument"), argv[pos][i]);
                         usage(argc, argv);
                         exit (0);
                         break;
@@ -300,12 +300,12 @@ int main (int argc, char ** argv)
       }
       if( wrong_arg )
       {
-        printf("%s %s\n", _("wrong argument to option:"), wrong_arg);
+        fprintf(stderr, "%s %s\n", _("wrong argument to option:"), wrong_arg);
         exit(1);
       }
       ++pos;
     }
-    if(oy_debug) printf( "%s\n", argv[1] );
+    if(oy_debug) fprintf(stderr,  "%s\n", argv[1] );
 
   }
 
@@ -325,7 +325,7 @@ int main (int argc, char ** argv)
   }
 
   if(oy_debug)
-    printf("%s\n", text);
+    fprintf(stderr, "%s\n", text);
 
   Fl_Double_Window * w = new Fl_Double_Window(400,475,_("XFORMS in FLTK"));
     oyCallback_s callback = {oyOBJECT_CALLBACK_S, 0,0,0,
@@ -368,19 +368,30 @@ int main (int argc, char ** argv)
   w->resizable( scroll );
   w->end();
 
-  w->show(1, argv);
-  Fl::run();
+  if(print)
+  {
+    w->show(1, argv);
+    Fl::run();
+  }
 
 
   result_xml = oyFormsArgs_ModelGet( forms_args );
   if(output_model_file)
-    oyWriteMemToFile_( output_model_file, result_xml, strlen(result_xml) );
-  else
-    printf( "%s\n", result_xml?result_xml:"---" );
-  oyFormsArgs_Release( &forms_args );
+  {
+    if(result_xml)
+      oyWriteMemToFile_( output_model_file, result_xml, strlen(result_xml) );
+    else
+      fprintf( stderr, "%s\n", "no model found" );
+  }
+  else if(output_model)
+  {
+    if(result_xml)
+      printf( "%s\n", result_xml );
+    else
+      fprintf( stderr, "%s\n", "no model found" );
+  }
 
-  if(output_xml_file)
-    oyWriteMemToFile_( output_xml_file, text, strlen(text) );
+  oyFormsArgs_Release( &forms_args );
 
   /* xmlParseMemory sollte der Ebenen gewahr werden wie oyOptions_FromText. */
   opts = oyOptions_FromText( data, 0,0 );
