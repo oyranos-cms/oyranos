@@ -1,7 +1,7 @@
 /*
  * fl_i18n is a internationalisation helper library for FLTK.
  * 
- * Copyright (C) 2004-2010  Kai-Uwe Behrmann 
+ * Copyright (C) 2004-2008  Kai-Uwe Behrmann 
  *
  * Autor: Kai-Uwe Behrmann <ku.b@gmx.de>
  *
@@ -42,9 +42,7 @@
 #endif
 #ifdef USE_GETTEXT
 # include <libintl.h>
-#ifndef APPLE
 #include <FL/x.H>
-#endif
 # ifndef _
 #  define _(text) threadGettext(text)
 # endif
