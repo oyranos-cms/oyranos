@@ -84,6 +84,7 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
       oyIconvGet( help_text, (void**)&string, &n,
                                   "UTF-8", fl_i18n_codeset, malloc );
 
+      
       while( string[i] )
       {
         c = string[i];
@@ -91,11 +92,6 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
         {
           sprintf( &text[ti], "<br>" );
           ti += 4;
-        }
-        else if(c == ' ') /* empty space */
-        {
-          sprintf( &text[ti], "&nbsp;" );
-          ti += 6;
         } else
         {
           text[ti] = c;
@@ -104,7 +100,6 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
         ++i;
       }
       text[ti] = 0;
-      sprintf( &text[ti], "</p>");
 
       help_view->value( (const char *)text );
       if(string) free(string); string = 0;
