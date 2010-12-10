@@ -227,8 +227,9 @@ CFILES_MONI_NVIDIA = \
 CFILES_GAMMA = \
 	$(TARGET)_gamma.c
 
-CFILES_POLICY = \
-	$(TARGET)_policy.c
+CFILES_TOOLS = \
+	$(TARGET)_policy.c \
+	$(TARGET)_profiles.c
 #ifdef FLTK
 CXXFILES_FLTK = \
 	$(TARGET)_config_fltk.cxx
@@ -344,7 +345,7 @@ Flmm_FILES = \
 
 TOP_SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
-		$(CFILES_POLICY) $(CFILES_ALPHA) $(CFILES_CS) \
+		$(CFILES_TOOLS) $(CFILES_ALPHA) $(CFILES_CS) \
 		$(CXXFILES_FLTK)
 SOURCES =  \
 		$(TOP_SOURCES) \
@@ -375,6 +376,7 @@ COBJECTS = \
 	$(CMM_oPNG_OBJECTS) \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
+	$(TARGET)_profiles.o \
 	tests/test_oyranos.o test.o
 #ifdef LRAW_LIBS
 #CPP_lraw_OBJECTS = $(CMM_lraw_OBJECTS)
@@ -424,6 +426,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(FLTK_OFORMS_OBJECTS) \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
+	$(TARGET)_profiles.o \
 	test2.o tests/test_oyranos.o test.o
 
 SUB_OBJECTS = \
@@ -479,7 +482,7 @@ all:	check_environment config.log.h mkdepend \
 	$(LIBSONAMEFULL) \
 	$(TARGET)-monitor $(X11) \
 	$(LIBS_CMM) \
-	$(TARGET)-policy $(FLTK_GUI) \
+	$(TARGET)-policy $(TARGET)-profiles $(FLTK_GUI) \
 	$(LINGUAS_SRC) \
 	$(LIB_FORMS_FLTK_NAME)
 	echo ... $@ done

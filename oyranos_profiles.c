@@ -72,6 +72,11 @@ int main( int argc , char** argv )
   int error = 0;
   int list_profiles = 0, list_paths = 0, list_profile_full_names = 0, 
       list_profile_internal_names = 0;
+  int display = 0,
+      input = 0,
+      output = 0,
+      abstract = 0,
+      named_colour = 0;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -94,6 +99,11 @@ int main( int argc , char** argv )
               case 'f': list_profile_full_names = 1; break;
               case 'i': list_profile_internal_names = 1; break;
               case 'p': list_paths = 1; break;
+              case 'd': display = 1; break;
+              case 's': input = 1; break;
+              case 'o': output = 1; break;
+              case 'a': abstract = 1; break;
+              case 'n': named_colour = 1; break;
               case 'v': oy_debug += 1; break;
               case 'h':
               default:
