@@ -172,7 +172,7 @@ int main (int argc, char ** argv)
       for( i = 0; i < other_args_n; i += 2 )
       {
         /* check for wrong args */
-        if(strstr( opt_names, other_args[i] ) == NULL)
+        if(opt_names && strstr( opt_names, other_args[i] ) == NULL)
         {
           printf("Unknown option: %s", other_args[i]);
           usage( argc, argv );
@@ -185,12 +185,12 @@ int main (int argc, char ** argv)
           {
             ct = oyOption_GetText( o, oyNAME_NICK );
             printf( "%s => ",
-                    ct ); ct = 0;
+                    ct?ct:"---" ); ct = 0;
             oyOption_SetFromText( o, other_args[i + 1], 0 );
             data = oyOption_GetText( o, oyNAME_NICK );
 
             printf( "%s\n",
-                    oyStrchr_(data, ':') + 1 ); data = 0;
+                    data?oyStrchr_(data, ':') + 1:"" ); data = 0;
           }
           else
           {
@@ -209,7 +209,7 @@ int main (int argc, char ** argv)
     error = oyXFORMsRenderUi( text, oy_ui_cmd_line_handlers, forms_args );
 
   result_xml = oyFormsArgs_ModelGet( forms_args );
-  if(output_model_file)
+  if(output_model_file && result_xml)
     oyWriteMemToFile_( output_model_file, result_xml, strlen(result_xml) );
   else
     printf( "%s\n", result_xml?result_xml:"---" );
