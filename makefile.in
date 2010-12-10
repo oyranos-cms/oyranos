@@ -835,6 +835,8 @@ install_bin:	all install_gui
 	$(INSTALL) -m 755 $(TARGET)-monitor    $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-policy     $(DESTDIR)$(bindir)
 	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia $(DESTDIR)$(bindir)
+	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms $(DESTDIR)$(bindir)
+	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms-fltk $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(libdir)
 	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
 	mkdir -p $(DESTDIR)$(metadir)
