@@ -8465,9 +8465,10 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
     oyCheckType__m( oyOBJECT_OPTION_S, return 0; )
 
   if(error <= 0)
+  {
     v = obj->value;
-
-  error = !v;
+    error = !v;
+  }
 
   /** Iterate into oyOptions_s objects. */
   if(error <= 0)
@@ -8558,7 +8559,8 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
     oyFree_m_( text );
   }
 
-  erg = oyObject_GetName( obj->oy_, type );
+  if(error <= 1 && obj)
+    erg = oyObject_GetName( obj->oy_, type );
 
   return erg;
 }
