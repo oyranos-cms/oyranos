@@ -26,11 +26,12 @@ void usage(int argc, char ** argv)
   fprintf(stderr, "      -h  %s\n",       _("show help texts"));
   fprintf(stderr, "      -l  %s\n",       _("list possible choices"));
   fprintf(stderr, "\n");
-  fprintf(stderr, "  %s\n",               _("Write Results:"));
+  fprintf(stderr, "  %s\n",               _("Write Model:"));
   fprintf(stderr, "      %s -i \"o(X)FORMS.xhtml\" -o \"xml_file\"\n", argv[0]);
   fprintf(stderr, "\n");
-  fprintf(stderr, "  %s\n",               _("Get XFORMS:"));
-  fprintf(stderr, "      %s -i \"o(X)FORMS.xhtml\" -x \"xhtml_file\"\n", argv[0]);
+  fprintf(stderr, "  %s\n",               _("Show Model:"));
+  fprintf(stderr, "      %s -i \"o(X)FORMS.xhtml\" -O\n", argv[0]);
+  fprintf(stderr, "      %s -i \"o(X)FORMS.xhtml\" --key=value\n", argv[0]);
   fprintf(stderr, "\n");
   fprintf(stderr, "  %s\n",               _("General options:"));
   fprintf(stderr, "      -v  %s\n",       _("verbose"));
@@ -43,8 +44,8 @@ void usage(int argc, char ** argv)
 
 int main (int argc, char ** argv)
 {
-  const char * output_xml_file = 0,
-             * input_xml_file = 0;
+  int output_model = 0;
+  const char * input_xml_file = 0;
   const char * output_model_file = 0,
              * result_xml = 0;
   char * text = 0, * t = 0;
@@ -94,8 +95,8 @@ int main (int argc, char ** argv)
             switch (argv[pos][i])
             {
               case 'o': OY_PARSE_STRING_ARG( output_model_file ); break;
+              case 'O': output_model = 1; print = 0; break;
               case 'i': OY_PARSE_STRING_ARG( input_xml_file ); break;
-              case 'x': OY_PARSE_STRING_ARG( output_xml_file ); break;
               case 'v': oy_debug += 1; break;
               case 'h': print |= 0x02; break;
               case 'l': print |= 0x04; break;
@@ -215,8 +216,8 @@ int main (int argc, char ** argv)
 
   forms_args->print = print;
 
-  if(print)
-    error = oyXFORMsRenderUi( text, oy_ui_cmd_line_handlers, forms_args );
+  /*if(print) */
+  error = oyXFORMsRenderUi( text, oy_ui_cmd_line_handlers, forms_args );
 
   /* prefere the parsed options from the command line */
   if(opts)
@@ -225,12 +226,19 @@ int main (int argc, char ** argv)
     result_xml = oyFormsArgs_ModelGet( forms_args );
 
   if(output_model_file && result_xml)
-    oyWriteMemToFile_( output_model_file, result_xml, strlen(result_xml) );
-  else if(opts)
-    printf( "%s\n", result_xml?result_xml:"---" );
-
-  if(output_xml_file)
-    oyWriteMemToFile_( output_xml_file, text, strlen(text) );
+  {
+    if(result_xml)
+      oyWriteMemToFile_( output_model_file, result_xml, strlen(result_xml) );
+    else
+      fprintf( stderr, "%s\n", "no model found" );
+  }
+  else if(opts || output_model)
+  {
+    if(result_xml)
+      printf( "%s\n", result_xml );
+    else
+      fprintf( stderr, "%s\n", "no model found" );
+  }
 
   /* xmlParseMemory sollte der Ebenen gewahr werden wie oyOptions_FromText. */
   opts = oyOptions_FromText( data, 0,0 );
