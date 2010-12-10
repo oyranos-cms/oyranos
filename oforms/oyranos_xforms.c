@@ -16,28 +16,28 @@
 
 void usage(int argc, char ** argv)
 {
-  printf("\n");
-  printf("oyranos-xforms v%d.%d.%d %s\n",
+  fprintf(stderr, "\n");
+  fprintf(stderr, "oyranos-xforms v%d.%d.%d %s\n",
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
                                 _("is a Oyranos module options tool"));
-  printf("%s\n",                 _("Usage"));
-  printf("  %s\n",               _("Show options"));
-  printf("      %s -i \"o(X)FORMS.xhtml\" [-l] [-h]\n", argv[0]);
-  printf("      -h  %s\n",       _("show help texts"));
-  printf("      -l  %s\n",       _("list possible choices"));
-  printf("\n");
-  printf("  %s\n",               _("Write Results:"));
-  printf("      %s -i \"o(X)FORMS.xhtml\" -o \"xml_file\"\n", argv[0]);
-  printf("\n");
-  printf("  %s\n",               _("Get XFORMS:"));
-  printf("      %s -i \"o(X)FORMS.xhtml\" -x \"xhtml_file\"\n", argv[0]);
-  printf("\n");
-  printf("  %s\n",               _("General options:"));
-  printf("      -v  %s\n",       _("verbose"));
-  printf("\n");
-  printf(_("For more informations read the man page:"));
-  printf("\n");
-  printf("      man oyranos-xforms_not_yet\n");
+  fprintf(stderr, "%s\n",                 _("Usage"));
+  fprintf(stderr, "  %s\n",               _("Show options"));
+  fprintf(stderr, "      %s -i \"o(X)FORMS.xhtml\" [-l] [-h]\n", argv[0]);
+  fprintf(stderr, "      -h  %s\n",       _("show help texts"));
+  fprintf(stderr, "      -l  %s\n",       _("list possible choices"));
+  fprintf(stderr, "\n");
+  fprintf(stderr, "  %s\n",               _("Write Results:"));
+  fprintf(stderr, "      %s -i \"o(X)FORMS.xhtml\" -o \"xml_file\"\n", argv[0]);
+  fprintf(stderr, "\n");
+  fprintf(stderr, "  %s\n",               _("Get XFORMS:"));
+  fprintf(stderr, "      %s -i \"o(X)FORMS.xhtml\" -x \"xhtml_file\"\n", argv[0]);
+  fprintf(stderr, "\n");
+  fprintf(stderr, "  %s\n",               _("General options:"));
+  fprintf(stderr, "      -v  %s\n",       _("verbose"));
+  fprintf(stderr, "\n");
+  fprintf(stderr, _("For more informations read the man page:"));
+  fprintf(stderr, "\n");
+  fprintf(stderr, "      man oyranos-xforms_not_yet\n");
 }
 
 
@@ -79,7 +79,7 @@ int main (int argc, char ** argv)
                             wrong_arg = "-" #opt; \
                           i = 1000; \
                         } else wrong_arg = "-" #opt; \
-                        if(oy_debug) printf(#opt "=%s\n",opt)
+                        if(oy_debug) fprintf(stderr, #opt "=%s\n",opt)
 
   if(argc != 1)
   {
@@ -139,12 +139,12 @@ int main (int argc, char ** argv)
       }
       if( wrong_arg )
       {
-        printf("%s %s\n", _("wrong argument to option:"), wrong_arg);
+        fprintf( stderr, "%s %s\n", _("wrong argument to option:"), wrong_arg);
         exit(1);
       }
       ++pos;
     }
-    if(oy_debug) printf( "%s\n", argv[1] );
+    if(oy_debug) fprintf( stderr, "%s\n", argv[1] );
 
   }
 
@@ -162,10 +162,17 @@ int main (int argc, char ** argv)
   }
 
   if(oy_debug)
-    printf("%s\n", text);
+    fprintf( stderr, "%s\n", text);
 
   if(other_args)
   {
+    forms_args->print = 0;
+
+    error = oyXFORMsRenderUi( text, oy_ui_cmd_line_handlers, forms_args );
+    result_xml = oyFormsArgs_ModelGet( forms_args );
+
+    opts = oyOptions_FromText( result_xml, 0,0 );
+
     data = oyOptions_GetText( opts, oyNAME_NAME );
     opt_names = oyOptions_GetText( opts, oyNAME_DESCRIPTION );
 
@@ -174,7 +181,7 @@ int main (int argc, char ** argv)
         /* check for wrong args */
         if(opt_names && strstr( opt_names, other_args[i] ) == NULL)
         {
-          printf("Unknown option: %s", other_args[i]);
+          fprintf(stderr, "Unknown option: %s", other_args[i]);
           usage( argc, argv );
           exit( 1 );
 
@@ -184,17 +191,20 @@ int main (int argc, char ** argv)
           if(i + 1 < other_args_n)
           {
             ct = oyOption_GetText( o, oyNAME_NICK );
-            printf( "%s => ",
+            if(oy_debug)
+            fprintf( stderr, "%s => ",
                     ct?ct:"---" ); ct = 0;
             oyOption_SetFromText( o, other_args[i + 1], 0 );
             data = oyOption_GetText( o, oyNAME_NICK );
 
-            printf( "%s\n",
+            if(oy_debug)
+            fprintf( stderr, "%s\n",
                     data?oyStrchr_(data, ':') + 1:"" ); data = 0;
           }
           else
           {
-            printf("%s: --%s  argument missed\n", _("Option"), other_args[i] );
+            fprintf( stderr,
+                    "%s: --%s  argument missed\n", _("Option"), other_args[i] );
             exit( 1 );
           }
           oyOption_Release( &o );
@@ -208,10 +218,15 @@ int main (int argc, char ** argv)
   if(print)
     error = oyXFORMsRenderUi( text, oy_ui_cmd_line_handlers, forms_args );
 
-  result_xml = oyFormsArgs_ModelGet( forms_args );
+  /* prefere the parsed options from the command line */
+  if(opts)
+    result_xml = oyOptions_GetText( opts, oyNAME_NAME );
+  else
+    result_xml = oyFormsArgs_ModelGet( forms_args );
+
   if(output_model_file && result_xml)
     oyWriteMemToFile_( output_model_file, result_xml, strlen(result_xml) );
-  else
+  else if(opts)
     printf( "%s\n", result_xml?result_xml:"---" );
 
   if(output_xml_file)
