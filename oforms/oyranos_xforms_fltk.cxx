@@ -49,6 +49,8 @@ void callback_done( Fl_Widget * w, void * )
   w->window()->hide();
 }
 
+//#define HELP_VIEW_DISPLAY 1
+
 void callback_help_view( oyPointer * ptr, const char * help_text )
 {
   int error = 0;
@@ -77,9 +79,14 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
         text = (char*) malloc( len );
       }
 
-      while( help_text[i] )
+      int n = 0;
+      char * string = 0;
+      oyIconvGet( help_text, (void**)&string, &n,
+                                  "UTF-8", fl_i18n_codeset, malloc );
+
+      while( string[i] )
       {
-        c = help_text[i];
+        c = string[i];
         if(c == '\n')  /* line break */
         {
           sprintf( &text[ti], "<br>" );
@@ -97,8 +104,10 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
         ++i;
       }
       text[ti] = 0;
+      sprintf( &text[ti], "</p>");
 
-      help_view->value(text);
+      help_view->value( (const char *)text );
+      if(string) free(string); string = 0;
     } else
     {
       /* Erase only if the widget needs no scrollbar. */
@@ -117,7 +126,6 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
     error = 1;
 }
 
-
 int main (int argc, char ** argv)
 {
   const char * output_xml_file = 0,
@@ -134,35 +142,93 @@ int main (int argc, char ** argv)
   int front = 0;  /* front end options */
   int print = 1;
 
-#ifdef USE_GETTEXT
-  const char *locale_paths[2] = {OY_SRC_LOCALEDIR,OY_LOCALEDIR};
-  const char *domain = {"oyranos"};
-  int is_path = -1;
+  const char *locale_paths[3] = {0,0,0};
+  signed int is_path = -1;
+  int num_paths = 0;
+# if __APPLE__
+  std::string bdr;
+  // RESOURCESPATH is set in the bundle by "Contents/MacOS/ICC Examin.sh"
+  if(getenv("RESOURCESPATH")) {
+    bdr = getenv("RESOURCESPATH");
+    bdr += "/locale";
+    locale_paths[num_paths] = bdr.c_str(); ++num_paths;
+  }
+  if(!locale_paths[0]) {
+    //bdr = icc_examin_ns::holeBundleResource("locale","");
+    if(bdr.size())
+    {
+      locale_paths[num_paths] = bdr.c_str();
+      ++num_paths;
+    }
+  }
+  locale_paths[num_paths] = OY_LOCALEDIR; ++num_paths;
+  locale_paths[num_paths] = OY_SRC_LOCALEDIR; ++num_paths;
+# else
+  locale_paths[0] = OY_LOCALEDIR; ++num_paths;
+#ifdef WIN32
+#define DIR_SEPARATOR_C '\\'
+#define DIR_SEPARATOR "\\"
+#else
+#define DIR_SEPARATOR_C '/'
+#define DIR_SEPARATOR "/"
+#endif
+  //DBG_NUM_V(( argc <<" "<< argv[0] )
+  if (argc)
+  { const char *reloc_path = {"../share/locale"};
+    int len = (strlen(argv[0]) + strlen(reloc_path)) * 2 + 128;
+    char *path = (char*) malloc( len ); // small one time leak
+    char *text = (char*) malloc( len );
+    text[0] = 0;
+    // whats the path for the executeable ?
+    strncpy (text, argv[0], len-1);
+    if (strrchr(text, DIR_SEPARATOR_C)) {
+      char *tmp = strrchr(text, DIR_SEPARATOR_C);
+      *tmp = 0;
+    } else {
+      FILE *pp = NULL;
 
-  Fl::scheme("plastic");
+      if (text) free (text);
+      text = (char*) malloc( 1024 );
 
-  is_path = fl_search_locale_path  ( 2,
-                                locale_paths,
-                                "de",
-                                domain);
-  if(is_path < 0)
-    fprintf( stderr, "Locale not found\n");
-  else
-  {
+      // Suche das ausfuehrbare Programm
+      // TODO symbolische Verknuepfungen
+      snprintf( text, 1024, "which %s", argv[0]);
+      pp = popen( text, "r" );
+      if (pp) {
+        if (fscanf (pp, "%s", text) != 1)
+        {
+          pclose (pp);
+          WARNc_S( "no executeable path found" );
+        }
+      } else {
+        WARNc_S( "could not ask for executeable path" );
+      }
+    }
+    snprintf (path, len-1, "%s%s%s",text,DIR_SEPARATOR,reloc_path);
+    locale_paths[1] = path; ++num_paths;
+    locale_paths[2] = OY_SRC_LOCALEDIR; ++num_paths;
+    //DBG_NUM_V( path );
+    if (text) free (text);
+  } else {
+    locale_paths[1] = OY_SRC_LOCALEDIR; ++num_paths;
+  }
+# endif
+  is_path = fl_search_locale_path (num_paths, locale_paths, "de", "oyranos");
+
+  if(is_path >= 0) {
 #if defined(_Xutf8_h) || HAVE_FLTK_UTF8
     FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_UTF8;
 #else
     FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_SELECT;
 #endif
-    int err = fl_initialise_locale ( domain, locale_paths[is_path],
+    int err = fl_initialise_locale ( "oyranos", locale_paths[is_path],
                                      set_charset );
+    oy_domain_codeset = fl_i18n_codeset;
     if(err) {
-      fprintf( stderr,"i18n initialisation failed");
-    } /*else
-      fprintf( stderr, "Locale found in %s\n", locale_paths[is_path]);*/
+      WARNc_S("i18n initialisation failed");
+    }
   }
-  oy_domain_codeset = fl_i18n_codeset;
-#endif
+  Fl::scheme("plastic");
 
 
 /* allow "-opt val" and "-opt=val" syntax */
@@ -266,25 +332,28 @@ int main (int argc, char ** argv)
   if(oy_debug)
     printf("%s\n", text);
 
-  Fl_Double_Window * w = new Fl_Double_Window(400,475,"XFORMS in FLTK");
+  Fl_Double_Window * w = new Fl_Double_Window(400,475,_("XFORMS in FLTK"));
     oyCallback_s callback = {oyOBJECT_CALLBACK_S, 0,0,0,
                                   (void(*)())callback_help_view,0};
 #if HELP_VIEW_DISPLAY
     Fl_Text_Display * help_view = new Fl_Text_Display( 0,340,400,100 );
 #else
-    Fl_Help_View * help_view = new Fl_Help_View( 0,340,400,100 );
+    Fl_Group* o = new Fl_Group(0, 340, 400, 100);
+      Fl_Help_View * help_view = new Fl_Help_View( 0,340,400,100 );
 #endif
-    help_view->box(FL_ENGRAVED_BOX);
-    help_view->color(FL_BACKGROUND_COLOR);
-    help_view->selection_color(FL_DARK1);
+      help_view->box(FL_ENGRAVED_BOX);
+      help_view->color(FL_BACKGROUND_COLOR);
+      //help_view->align(FL_ALIGN_LEFT);
+      help_view->selection_color(FL_DARK1);
 #if HELP_VIEW_DISPLAY
       Fl_Text_Buffer * buffer = new Fl_Text_Buffer(0);
       buffer->append( _("Hints") );
     help_view->buffer( buffer );
     callback.data = buffer;
 #else
-    help_view->value("");
-    callback.data = help_view;
+      help_view->value("");
+      callback.data = help_view;
+    o->end(); // Fl_Group* o
 #endif
     oyFormsArgs_ResourceSet( forms_args, OYFORMS_FLTK_HELP_VIEW_REG,
                              (oyPointer)&callback);
