@@ -272,7 +272,7 @@ test -n "$INFOECHO" && $INFOECHO "                                        automa
 test -n "$INFOECHO" && $INFOECHO "   --datadir=[\$prefix/data]             application data base path"
 test -n "$INFOECHO" && $INFOECHO "   --mandir=[\$datadir/man]              manual installation path"
 test -n "$INFOECHO" && $INFOECHO "   --syscolordir=[\$datadir/color]       Oyranos system color path"
-test -n "$INFOECHO" && $INFOECHO "   --usercolordir=[~/.color]            Oyranos user color path"
+test -n "$INFOECHO" && $INFOECHO "   --usercolordir=[~/.config/color]     Oyranos user color path"
 test -n "$INFOECHO" && $INFOECHO "   --iccdirname=[icc]                   Oyranos ICC profile directory"
 test -n "$INFOECHO" && $INFOECHO "   --settingsdirname=[settings]         Oyranos settings directory"
 test -n "$INFOECHO" && $INFOECHO "   --targetdirname=[target]             Oyranos target directory"
@@ -606,7 +606,7 @@ if [ -z "$syscolordir" ]; then
   syscolordir="$datadir/color"
 fi
 if [ -z "$usercolordir" ]; then
-  usercolordir="~/.color"
+  usercolordir="~/.config/color"
 fi
 if [ -z "$iccdirname" ]; then
   iccdirname="icc"
