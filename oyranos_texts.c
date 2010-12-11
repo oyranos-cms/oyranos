@@ -998,7 +998,7 @@ oyDataPathsGet_       (int             * count,
     if(text) oy_paths[oy_n++] = text;
     if(oyIsDir_( OY_PROFILE_PATH_USER_DEFAULT ))
     {
-      text = oyStringCopy_(OY_PROFILE_PATH_USER_DEFAULT, oyAllocateFunc_);
+      text = oyResolveDirFileName_(OY_PROFILE_PATH_USER_DEFAULT);
       if(text) oy_paths[oy_n++] = text;
     }
     text = oyPathContructAndTest_( OY_DATADIR, subdir );
