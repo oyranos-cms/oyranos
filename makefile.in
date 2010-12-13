@@ -463,7 +463,8 @@ CONFIG_FILES = \
 	$(SRCDIR)/$(TARGET).pc.in \
 	$(SRCDIR)/$(TARGET).spec.in \
 	$(SRCDIR)/$(TARGET)_control.in \
-	$(SRCDIR)/$(TARGET)-config.in
+	$(SRCDIR)/$(TARGET)-config.in \
+	$(SRCDIR)/$(TARGET)-monitor-setup.desktop
 
 ALL_FILES = \
 	$(DOKU) \
@@ -913,6 +914,8 @@ install_bin:	all install_gui
 	$(INSTALL) -m 644 $(SRCDIR)/icc34.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_icc.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_version.h $(DESTDIR)$(includedir)/$(TARGET)
+	mkdir -p $(DESTDIR)/etc/xdg/autostart/
+	-$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)-monitor-setup.desktop $(DESTDIR)/etc/xdg/autostart/
 	echo ... binary Installation finished
 
 # install recursive

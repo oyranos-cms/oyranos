@@ -251,6 +251,7 @@ ldconfig
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-monitor
 %{_mandir}/man1/%{name}-monitor*
+/etc/xdg/autostart/%{name}-monitor-setup.desktop
 
 %files -n lib%{name}0-monitor
 %defattr(-, root, root)

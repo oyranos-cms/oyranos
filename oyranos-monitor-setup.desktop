@@ -1,0 +1,12 @@
+[Desktop Entry]
+X-SuSE-translate=true
+Version=1.0
+Encoding=UTF-8
+Type=Application
+Icon=oyranos_logo
+Exec=oyranos-monitor
+Name=Oyranos Monitor ICC Profile Loader
+Name[de]=Oyranos Monitor ICC Profilelader
+Comment=The oyranos-monitor tool sets a available calibration and the profile for each monitor.
+Comment[de]=Das oyranos-monitor Kommandozeilenwerkzeug lädt eine vorhandene Kalibrierung und setzt ein ICC Farbprofil für jeden Bildschirm.
+Terminal=false
