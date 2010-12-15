@@ -2,7 +2,7 @@ Components
 
 
 Default ICC Profiles
-Make shure the base and printing profiles are in place. The policy files in the settings directory and many other parts rely on them. These settings files are essential to Oyranos. OpenICC-data ICC profiles is a must for Oyranos.
+Make shure the OpenICC-data profiles are in place. The policy files in the settings directory and many other parts rely on them. These settings files are essential to Oyranos. OpenICC-data ICC profiles is a must for Oyranos.
 
 
 
