@@ -78,7 +78,7 @@ Dependencies:
     graphviz
   optional:
     cairo-devel
-    libXmu-deve
+    libXmu-devel
     qt-devel
     netpbm-progs
 
