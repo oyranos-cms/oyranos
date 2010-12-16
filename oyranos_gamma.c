@@ -225,7 +225,7 @@ int main( int argc , char** argv )
                         printf("      %s --modules\n",        argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("Dump data:"));
-                        printf("      %s -f=[edid|icc|edid_icc] -o=edid.bin -x=pos -y=pos [-m]\n", argv[0]);
+                        printf("      %s -f=[edid|icc|edid_icc] [-o=edid.bin] -x=pos -y=pos [-m]\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("General options:"));
                         printf("      %s\n",           _("-v verbose"));
