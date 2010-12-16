@@ -432,9 +432,12 @@ int main( int argc , char** argv )
 
           if(data && size)
           {
-            error = oyWriteMemToFile2_( output ? output : format,
-                                        data, size, 0x01,
-                                        &out_name, oyAllocFunc );
+            if(output)
+              error = oyWriteMemToFile2_( output,
+                                          data, size, 0x01,
+                                          &out_name, oyAllocFunc );
+            else
+              fwrite( data, sizeof(char), size, stdout );
             oyDeAllocFunc( data ); size = 0;
           } else
             error = 1;
