@@ -117,6 +117,7 @@ CHEADERS = \
 	$(TARGET)_cmm.h \
 	$(TARGET)_cmms.h \
 	$(TARGET)_config.h \
+	$(TARGET)_cs.h \
 	$(TARGET)_debug.h \
 	$(TARGET)_definitions.h \
 	$(TARGET)_elektra.h \
@@ -202,7 +203,6 @@ CFILES_MODULES = \
 	$(CFILES_MODULES_DEVICES) $(CFILES_CMM_oyIM) \
 	$(CFILES_CMM_oicc) $(CFILES_CMM_oPNG)
 CPPFILES_MODULES = \
-	$(CPPFILES_CMM_oyRE) \
 	$(CPPFILES_CMM_lraw)
 CHEADERS_MODULES = \
 	modules/$(TARGET)_cmm_oyIM.h \
@@ -217,6 +217,7 @@ CFILES_MODULES_DEVICES = \
 	modules/devices/helper.c \
 	$(CFILES_CMM_SANE) \
 	modules/devices/SANE_help.c \
+	$(CPPFILES_CMM_oyRE) \
 	modules/devices/$(TARGET)_monitor.c
 CFILES_MONI_X11 = \
 	modules/devices/$(TARGET)_monitor_x11.c
@@ -227,8 +228,9 @@ CFILES_MONI_NVIDIA = \
 CFILES_GAMMA = \
 	$(TARGET)_gamma.c
 
-CFILES_POLICY = \
-	$(TARGET)_policy.c
+CFILES_TOOLS = \
+	$(TARGET)_policy.c \
+	$(TARGET)_profiles.c
 #ifdef FLTK
 CXXFILES_FLTK = \
 	$(TARGET)_config_fltk.cxx
@@ -238,7 +240,8 @@ CFILES_OFORMS = \
 	oforms/$(TARGET)_forms_cmd_line.c \
 	oforms/$(TARGET)_forms.c
 CFILES_OFORMS_CLI = \
-	oforms/$(TARGET)_xforms.c
+	oforms/$(TARGET)_xforms.c \
+	oforms/$(TARGET)_xforms_modules.c
 CHEADERS_OFORMS = \
 	oforms/$(TARGET)_forms.h
 #ifdef FLTK
@@ -344,7 +347,7 @@ Flmm_FILES = \
 
 TOP_SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
-		$(CFILES_POLICY) $(CFILES_ALPHA) $(CFILES_CS) \
+		$(CFILES_TOOLS) $(CFILES_ALPHA) $(CFILES_CS) \
 		$(CXXFILES_FLTK)
 SOURCES =  \
 		$(TOP_SOURCES) \
@@ -375,6 +378,7 @@ COBJECTS = \
 	$(CMM_oPNG_OBJECTS) \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
+	$(TARGET)_profiles.o \
 	tests/test_oyranos.o test.o
 #ifdef LRAW_LIBS
 #CPP_lraw_OBJECTS = $(CMM_lraw_OBJECTS)
@@ -424,6 +428,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(FLTK_OFORMS_OBJECTS) \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
+	$(TARGET)_profiles.o \
 	test2.o tests/test_oyranos.o test.o
 
 SUB_OBJECTS = \
@@ -460,7 +465,8 @@ CONFIG_FILES = \
 	$(SRCDIR)/$(TARGET).pc.in \
 	$(SRCDIR)/$(TARGET).spec.in \
 	$(SRCDIR)/$(TARGET)_control.in \
-	$(SRCDIR)/$(TARGET)-config.in
+	$(SRCDIR)/$(TARGET)-config.in \
+	$(SRCDIR)/$(TARGET)-monitor-setup.desktop
 
 ALL_FILES = \
 	$(DOKU) \
@@ -479,7 +485,7 @@ all:	check_environment config.log.h mkdepend \
 	$(LIBSONAMEFULL) \
 	$(TARGET)-monitor $(X11) \
 	$(LIBS_CMM) \
-	$(TARGET)-policy $(FLTK_GUI) \
+	$(TARGET)-policy $(TARGET)-profiles $(FLTK_GUI) \
 	$(LINGUAS_SRC) \
 	$(LIB_FORMS_FLTK_NAME)
 	echo ... $@ done
@@ -678,7 +684,7 @@ $(FLTK_GUI):	$(FLTK_OBJECTS) $(LIBFL_I18N) $(LIBSONAMEFULL)
 	$(CXX) -I./ $(FLTK_H) -o $(FLTK_GUI) \
 	$(FLTK_OBJECTS) \
 	$(LIBSONAMEFULL) $(LINK_LIB_PATH) \
-	$(LDLIBS) $(FLTK_LIBS) $(PNG_LIBS) $(I18N_LIB) $(LIBFL_I18N)
+	$(LDLIBS) $(FLTK_LIBS) $(PNG_LIBS) $(I18N_LIB) $(LIBFL_I18N) $(pthread)
 	$(REZ)
 
 fltk-gui:	oyranos_config_fltk.o
@@ -835,6 +841,8 @@ install_bin:	all install_gui
 	$(INSTALL) -m 755 $(TARGET)-monitor    $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(TARGET)-policy     $(DESTDIR)$(bindir)
 	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia $(DESTDIR)$(bindir)
+	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms $(DESTDIR)$(bindir)
+	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms-fltk $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(libdir)
 	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
 	mkdir -p $(DESTDIR)$(metadir)
@@ -908,6 +916,8 @@ install_bin:	all install_gui
 	$(INSTALL) -m 644 $(SRCDIR)/icc34.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_icc.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_version.h $(DESTDIR)$(includedir)/$(TARGET)
+	mkdir -p $(DESTDIR)/etc/xdg/autostart/
+	-$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)-monitor-setup.desktop $(DESTDIR)/etc/xdg/autostart/
 	echo ... binary Installation finished
 
 # install recursive

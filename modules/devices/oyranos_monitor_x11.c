@@ -357,6 +357,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
       if(!t)
       {
         t = log_text;
+        if(t)
         for(i = 0; i < screen; ++i)
         {
           ++t;
@@ -364,30 +365,30 @@ oyX1GetMonitorInfo_               (const char* display_name,
         }
       }
 
-      if((t = strstr( t, "Manufacturer:" )) != 0)
+      if(t && (t = strstr( t, "Manufacturer:" )) != 0)
       {
         sscanf( t,"Manufacturer: %s", mnft_ );
       }
 
-      if((t = strstr( t, "Model:" )) != 0)
+      if(t && (t = strstr( t, "Model:" )) != 0)
       {
         sscanf( t,"Model: %x ", &model_id_ );
       }
 
-      if((t = strstr( t, "Year:" )) != 0)
+      if(t && (t = strstr( t, "Year:" )) != 0)
       {
         sscanf( t,"Year: %d  Week: %d", &year_, &week_ );
       } 
 
-      if((t = strstr( t, "Gamma:" )) != 0)
+      if(t && (t = strstr( t, "Gamma:" )) != 0)
         sscanf( t,"Gamma: %g", &g );
-      if((t = strstr( t, "redX:" )) != 0)
+      if(t && (t = strstr( t, "redX:" )) != 0)
         sscanf( t,"redX: %g redY: %g", &rx,&ry );
-      if((t = strstr( t, "greenX:" )) != 0)
+      if(t && (t = strstr( t, "greenX:" )) != 0)
         sscanf( t,"greenX: %g greenY: %g", &gx,&gy );
-      if((t = strstr( t, "blueX:" )) != 0)
+      if(t && (t = strstr( t, "blueX:" )) != 0)
         sscanf( t,"blueX: %g blueY: %g", &bx,&by );
-      if((t = strstr( t, "whiteX:" )) != 0)
+      if(t && (t = strstr( t, "whiteX:" )) != 0)
         sscanf( t,"whiteX: %g whiteY: %g", &wx,&wy );
 
       if(mnft_[0])

@@ -398,7 +398,8 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          if (GetDevices(&device_list, &num_devices) == 0) {
             device_context = *device_list;
             while (device_context) {
-               if (strcmp(device_name,device_context->name) == 0)
+               if(device_name && device_context->name &&
+                  strcmp(device_name,device_context->name) == 0)
                   break;
                device_context++;
             }
@@ -799,12 +800,16 @@ const char * Api8UiGetText           ( const char        * select,
   else if(strcmp(select, "device_class") == 0)
     {
         if(type == oyNAME_NICK)
-            return _("Scanner");
+            return "scanner";
         else if(type == oyNAME_NAME)
             return _("Scanner");
         else
             return _("Scanner data, which come from SANE library.");
     }
+  else if(strcmp(select, "icc_profile_class")==0)
+    {
+      return "input";
+    } 
   else if(strcmp(select,"category") == 0)
   {
     if(!category)
@@ -827,7 +832,7 @@ const char * Api8UiGetText           ( const char        * select,
   }
   return 0;
 }
-const char * _api8_ui_texts[] = {"name", "help", "device_class", "category", 0};
+const char * _api8_ui_texts[] = {"name", "help", "device_class", "icc_profile_class", "category", 0};
 
 /** @instance _api8_ui
  *  @brief    oydi oyCMMapi4_s::ui implementation
@@ -843,7 +848,7 @@ oyCMMui_s _api8_ui = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,1,10},                            /**< int32_t module_api[3] */
+  {0,1,13},                            /**< int32_t module_api[3] */
 
   0, /* oyCMMFilter_ValidateOptions_f */
   0, /* oyWidgetEvent_f */

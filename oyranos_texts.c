@@ -964,7 +964,7 @@ oyDataPathsGet_       (int             * count,
     oyAllocHelper_m_( xdg_sub, char, MAX_PATH, oyAllocateFunc_, return 0);
     oySprintf_( xdg_sub, "%s", subdir );
 
-    oyAllocHelper_m_( oy_paths, char*, 5, oyAllocateFunc_, return 0);
+    oyAllocHelper_m_( oy_paths, char*, 6, oyAllocateFunc_, return 0);
 
     xdg_paths = oyXDGPathsGet_(&xdg_n, data, owner, oyAllocateFunc_);
 
@@ -996,6 +996,11 @@ oyDataPathsGet_       (int             * count,
     if(subdir && strlen(subdir) > 6 && memcmp( subdir,"color/", 6 ) == 0)
     text = oyPathContructAndTest_( OY_USERCOLORDIR, &subdir[6] );
     if(text) oy_paths[oy_n++] = text;
+    if(oyIsDir_( OY_PROFILE_PATH_USER_DEFAULT ))
+    {
+      text = oyResolveDirFileName_(OY_PROFILE_PATH_USER_DEFAULT);
+      if(text) oy_paths[oy_n++] = text;
+    }
     text = oyPathContructAndTest_( OY_DATADIR, subdir );
     if(text) oy_paths[oy_n++] = text;
 

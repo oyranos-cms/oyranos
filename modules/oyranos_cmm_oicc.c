@@ -745,16 +745,13 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
       if(verbose)
       {
         if(search)
-          printf("%d - ", old_id);
+          printf(OY_DBG_FORMAT_"%d - ", OY_DBG_ARGS_, old_id);
         else
           printf("%d[icc]\n", old_id );
       }
     }
     oyFilterNode_Release( &node );
   }
-
-  if(verbose)
-  WARNc_S("not completely implemented");
 
   return error;
 }

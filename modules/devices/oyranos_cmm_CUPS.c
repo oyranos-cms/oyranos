@@ -722,11 +722,15 @@ const char * Api8UiGetText           ( const char        * select,
   else if(strcmp(select, "device_class")==0)
     {
         if(type == oyNAME_NICK)
-            return _("Printer");
+            return "printer";
         else if(type == oyNAME_NAME)
             return _("Printer");
         else
             return _("Printers, which are accessible through the CUPS spooling system.");
+    } 
+  else if(strcmp(select, "icc_profile_class")==0)
+    {
+      return "output";
     } 
   else if(strcmp(select,"category") == 0)
   {
@@ -748,7 +752,7 @@ const char * Api8UiGetText           ( const char        * select,
   } 
   return 0;
 }
-const char * _api8_ui_texts[] = {"name", "help", "device_class", "category", 0};
+const char * _api8_ui_texts[] = {"name", "help", "device_class", "icc_profile_class", "category", 0};
 
 /** @instance _api8_ui
  *  @brief    oydi oyCMMapi4_s::ui implementation
@@ -764,7 +768,7 @@ oyCMMui_s _api8_ui = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,1,10},                            /**< int32_t module_api[3] */
+  {0,1,13},                            /**< int32_t module_api[3] */
 
   0, /* oyCMMFilter_ValidateOptions_f */
   0, /* oyWidgetEvent_f */

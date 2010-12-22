@@ -519,7 +519,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
   cmsHPROFILE * merge = 0;
   icColorSpaceSignature colour_in = 0;
   icColorSpaceSignature colour_out = 0;
-  icProfileClassSignature profile_class_out = 0;
+  icProfileClassSignature profile_class_in = 0;
   int intent = 0,
       intent_proof = 0,
       bpc = 0,
@@ -540,7 +540,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
       colour_out = cmsGetColorSpace( lps[profiles_n-1] );
     else
       colour_out = cmsGetPCS( lps[profiles_n-1] );
-    profile_class_out = cmsGetDeviceClass( lps[profiles_n-1] );
+    profile_class_in = cmsGetDeviceClass( lps[0] );
   }
 
   lcm2_pixel_layout_in  = oyPixelToCMMPixelLayout_(oy_pixel_layout_in,
@@ -606,7 +606,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
 
   if(!error)
   {
-         if(profiles_n == 1)
+         if(profiles_n == 1 || profile_class_in == icSigLinkClass)
     {
         /* we have to erase the colour space */
 #if 1
@@ -966,6 +966,13 @@ cmsHPROFILE  lcm2AddProfile          ( oyProfile_s       * p )
   }
 
   cmm_ptr = oyCMMptrLookUpFromObject( (oyStruct_s*)p, lcm2PROFILE );
+
+  if(!cmm_ptr)
+  {
+    lcms_msg( oyMSG_WARN, (oyStruct_s*)p,
+             OY_DBG_FORMAT_" oyCMMptrLookUpFromObject() failed", OY_DBG_ARGS_ );
+    return 0;
+  }
 
   cmm_ptr->lib_name = CMM_NICK;
 

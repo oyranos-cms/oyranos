@@ -141,9 +141,12 @@ const char * qarz_help_properties =
       " properties. Requires one device identifier returned with the \n"
       " \"list\" option. The properties may cover following entries:\n"
       " - \"EDID_manufacturer\" description\n"
-      " - \"EDID_mnft\" (decoded mnft_id)\n"
+      " - \"manufacturer\" dupicate of the previous key\n"
+      " - \"EDID_mnft\" (decoded EDID_mnft_id)\n"
       " - \"EDID_model\" textual name\n"
+      " - \"model\" duplicate of the previous key\n"
       " - \"EDID_serial\" not always present\n"
+      " - \"serial\" duplicate of the previous key\n"
       " - \"host\" not always present\n"
       " - \"system_port\"\n"
       " - \"EDID_datek\" manufacture date\n"
@@ -495,12 +498,17 @@ int            qarzConfigs_FromPattern (
       }
       else
       {
+        oyOptions_s * opts = 0;
         error = oyDeviceFillEdid(   QARZ_MONITOR_REGISTRATION,
                                     &device, edid->ptr, edid->size,
                                     NULL,
                                     NULL, NULL, NULL,
                                     options );
-        oyProfile_DeviceAdd( prof, device, 0 );
+        if(error <= 0)
+          error = oyOptions_SetFromText( &opts, "///key_prefix_required",
+                                                "EDID_" , OY_CREATE_NEW );
+        oyProfile_DeviceAdd( prof, device, opts );
+        oyOptions_Release( &opts );
       }
 
       goto cleanup;
@@ -999,13 +1007,13 @@ oyRankPad qarz_rank_map[] = {
   {"host", 1, 0, 0},                   /**< nice to match */
   {"system_port", 2, 0, 0},            /**< good to match */
   {"display_geometry", 3, -1, 0},      /**< important to match, as fallback */
-  {"EDID_manufacturer", 0, 0, 0},      /**< is nice, covered by mnft_id */
+  {"manufacturer", 0, 0, 0},           /**< is nice, covered by mnft_id */
   {"EDID_mnft", 0, 0, 0},              /**< is nice, covered by mnft_id */
   {"EDID_mnft_id", 1, -1, 0},          /**< is nice */
-  {"EDID_model", 0, 0, 0},             /**< important, covered by model_id */
+  {"model", 0, 0, 0},                  /**< important, covered by model_id */
   {"EDID_model_id", 5, -5, 0},         /**< important, should not fail */
   {"EDID_date", 2, 0, 0},              /**< good to match */
-  {"EDID_serial", 10, -2, 0},          /**< important, could slightly fail */
+  {"serial", 10, -2, 0},               /**< important, could slightly fail */
   {"EDID_red_x", 1, -5, 0},    /**< is nice, should not fail */
   {"EDID_red_y", 1, -5, 0},    /**< is nice, should not fail */
   {"EDID_green_x", 1, -5, 0},  /**< is nice, should not fail */
@@ -1032,12 +1040,20 @@ const char * qarzApi8UiGetText       ( const char        * select,
   else if(strcmp(select, "device_class")==0)
   {
         if(type == oyNAME_NICK)
-            return _("Monitor");
+            return "monitor";
         else if(type == oyNAME_NAME)
             return _("Monitor");
         else
             return _("Monitors, which can be detected through the video card driver and windowing system.");
   }
+  else if(strcmp(select, "icc_profile_class")==0)
+    {
+      return "display";
+    } 
+  else if(strcmp(select, "key_prefix")==0)
+    {
+      return "EDID_";
+    } 
   else if(strcmp(select,"category") == 0)
   {
     if(!category)
@@ -1058,7 +1074,7 @@ const char * qarzApi8UiGetText       ( const char        * select,
   } 
   return 0;
 }
-const char * qarz_api8_ui_texts[] = {"name", "help", "device_class", "category", 0};
+const char * qarz_api8_ui_texts[] = {"name", "help", "device_class", "icc_profile_class", "category", "key_prefix", 0};
 
 /** @instance qarz_api8_ui
  *  @brief    qarz oyCMMapi8_s::ui implementation
@@ -1074,7 +1090,7 @@ oyCMMui_s qarz_api8_ui = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,1,10},                            /**< int32_t module_api[3] */
+  {0,1,13},                            /**< int32_t module_api[3] */
 
   0, /* oyCMMFilter_ValidateOptions_f */
   0, /* oyWidgetEvent_f */
