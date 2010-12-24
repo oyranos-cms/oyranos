@@ -19,6 +19,11 @@ oyranos-monitor \- Oyranos CMS monitor configuration
 The oyranos-monitor programm let you query and set the monitor profile(s) within the Oyranos colour management system (CMS). Profiles are stored in a data base, the Oyranos DB.
 .SH OPTIONS
 .TP
+.B \-d\fR=\fINUMBER\fR , \-d\fR \fINUMBER
+position in device list.
+The numbering of monitors starts with zero for the first device. To get the
+number of all available devices use "\fBoyranos-monitor\fR -l | wc -l".
+.TP
 \fB\-x\fR=\fIPOSITION\fR , \-x\fR \fIPOSITION
 select the screen at the x position.
 The Oyranos screens are if possible real devices. A screen position must be unique and not shared by different screens, otherwise it will be ambiguous.
@@ -26,16 +31,16 @@ The Oyranos screens are if possible real devices. A screen position must be uniq
 \fB\-y\fR=\fIPOSITION\fR , \-y\fR \fIPOSITION
 select the screen at the y position
 .TP
-.B \-s, \-\-setup \fR[default] [-x num] [-y num]
+.B \-s, \-\-setup \fR[default] [[-x num] [-y num] | -d number]]
 Set up the X11 server with the Oyranos DB stored monitor ICC profile(s)
 .TP
-\fIPROFILENAME\fR [-x num] [-y num]
+\fIPROFILENAME\fR [[-x num] [-y num] | -d number]]
 Assign a monitor ICC profile to the selected screen and store in the Oyranos DB.
 .TP
-.B \-e, \-\-unset \fR[-x num] [-y num]
+.B \-e, \-\-unset \fR[[-x num] [-y num] | -d number]]
 reset one hardware gamma table to the defaults
 .TP
-.B \-b, \-\-database \fR[-x num] [-y num]
+.B \-b, \-\-database \fR[[-x num] [-y num] | -d number]]
 query one profile name from the Oyranos device profile data base
 .TP
 .B \-l, \-\-list
