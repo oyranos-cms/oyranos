@@ -252,7 +252,7 @@ int main( int argc , char** argv )
     if(user_path || oyranos_path || system_path || machine_path)
     {
         if(user_path)
-          path = OY_USERCOLORDIR "/" OY_ICCDIRNAME;
+          path = OY_USERCOLORDATA "/" OY_ICCDIRNAME;
         if(system_path)
           path = "/usr/share/color/" OY_ICCDIRNAME;
         if(oyranos_path)
