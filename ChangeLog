@@ -1,6 +1,10 @@
-Version 0.1.13
+Version 0.2.0
 
-Kai-Uwe Behrmann (180):
+Kai-Uwe Behrmann (184):
+	* [conf]: bump to 0.2.0
+	* [core]: support cinema and Rgb print proofing
+	* [docu]: move OpenICC-data to reuirements section
+	* [docu]: update ChangeLog
 	* [API]: bump API due to removed key in #45b7ec2f
 	* [oyX1]: require Xcm
 	* [docu]: reverse new Changelog entries
