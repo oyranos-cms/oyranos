@@ -12,6 +12,7 @@ Internet:
 Dependencies:
     Mandatory:
     libxml2 - http://www.xmlsoft.org/
+    OpenICC-Data is needed with its default ICC profiles
     libXinerama, libXrandr, libXfixes and libXxf86vm for X11 support - www.x.org
     libXcm for X11 and Quarz monitor support - http://www.oyranos.org
     lcms and/or lcms2 for colour conversions - http://www.littlecms.com
@@ -20,7 +21,6 @@ Dependencies:
     Elektra - http://www.libelektra.org
     FLTK (--enable-threads) is needed for the example Gui - http://www.fltk.org
     Xcalib a vcgt loader - http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/
-    OpenICC-Data is needed with its default ICC profiles
     For the documentation use doxygen, graphviz and graphviz-gd packages.
     Doxygen v1.5.8 or higher is recommended - http://www.doxygen.org
     Qt for a nice observer utility - http://qt.nokia.com/
