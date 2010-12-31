@@ -18531,6 +18531,19 @@ OYAPI oyProfiles_s * OYEXPORT
       oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
       patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
     }
+    /* support typical output Rgb device for cinema and print proofing */
+    if(type == oyPROFILE_PROOF)
+    {
+      csp = icSigRgbData;
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigOutputClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+    }
     if(type == oyEDITING_CMYK ||
        type == oyASSUMED_CMYK ||
        type == oyPROFILE_PROOF)
