@@ -1,3 +1,190 @@
+Version 0.1.13
+
+Kai-Uwe Behrmann (180):
+	* [API]: bump API due to removed key in #45b7ec2f
+	* [oyX1]: require Xcm
+	* [docu]: reverse new Changelog entries
+	* [core]: differenciate user data and config paths
+	* [oyX1]: add -d option to oyranos-monitor
+	* [docu]: update file header
+	* [build]: package missed source files
+	* [docu]: update oyranos-monitor usage
+	* [oyX1]: write to stdout in oyranos-monitor -f
+	* [build]: install autostart script
+	* [oyX1]: be more careful with pointers
+	* [core]: omit ~ for path name
+	* [exmpl]: support profile filtering
+	* [core]: preserve OY_PROFILE_PATH_USER_DEFAULT
+	* [conf]: switch from ~/.color to ~/.config/color
+	* [build]: oyranos-profiles
+	* [build]: Fedoras FLTK forgot about pthread - add
+	* [i18n]: pick ICC Examin fix for osX locale
+	* [oforms]: add missed header under osX
+	* [build]: install basic oforms tools
+	* [oforms]: sync FLTK with cmd line options
+	* [oforms]: cmd line + -O and - -x option
+	* [oforms]: for args pick options from -i and modify
+	* [oforms]: collect options in the cmd line parser
+	* [oforms]: fix some crashes in oyranos-xforms
+	* [alpha]: fix crashes in oyOption_GetText()
+	* [oforms]: skip &nbsp
+	* [oform]: use oyranos-config-fltk i18n init
+	* [oforms]: convert UTF-8 XML to FLTK locale
+	* [oforms]: switch to plastic for fltk
+	* [oyX1]: switch rank_map partitialy to old keys
+	* [oyX1]: require "EDID_" prefix for meta tag
+	* [alpha]: add option to oyProfile_DeviceAdd()
+	* [oyX1]: duplicate core keys for Oyranos
+	* [devices]: "icc_profile_class" and "key_prefix"
+	* [lcms]: support DL in image conversions
+	* [lcms]: add more debuging informations
+	* [alpha]: clear modified profile informations
+	* [lcms]: check pointer usage
+	* [oicc]: omit outdated warning
+	* [alpha]: correct error in oyConversion_Correct()
+	* [lcms]: fix option names "LCMS2"->"LCMS"
+	* [oyX1]: reduce registration key generation calls
+	* [oyX1]: match XRandR naming the Xinerama one
+	* [oyX1]: parse ATI Xorg log for multiple devices
+	* [core]: add one more warning macro
+	* [oyX1]: check Xcm return value
+	* [oyra]: lowercase file name extension matching
+	* [lraw]: add .dng extension
+	* [build]: add oyranos-xfoms-module in oforms/
+	* [oforms]: add module options -> XFORMS tool
+	* [oforms]: remove node dependency
+	* [build]: omit optimisation in oforms from FLTK
+	* [oforms]: sync with CLI with FLTK arguments #1
+	* [oforms]: render choice labels in CLI renderer
+	* [oforms]: omit unused arg in oyranos-xforms-fltk
+	* [i18n]: update deutsch
+	* [oforms]: add -l -h -f opions to CLI renderer
+	* [oforms]: document new member variable
+	* [oforms]: change silent into print element
+	* [oforms]: one stage parsing in CLI renderer
+	* [alpha]: correct pattern matching
+	* [oicc]: specify pattern to "icc"
+	* [i18n]: update deutsch
+	* [lraw]: add XForms layout and fixes
+	* [core]: add debug warnings for string funcions
+	* [alpha]: check for unsymetric registrations
+	* [exmpl: add oyranos-profile
+	* [core]: support OpenIccDirectoryProposal 0.2
+	* [docu]: list Fedora build requirements
+	* [build]: make Fedora happy with -lpthread
+	* [alpha]: warn for no meta module
+	* [core]: check fixed paths before searching in
+	* [test]: omit oyX1 on Apple
+	* [qarz]: fix compile warnings
+	* [oyX1]: ICC meta Tag for Monitor Profiles - D3
+	* [core]: fix compile warning
+	* [oyRE]: omit sane include
+	* [oyX1]: correct fallback profile name
+	* [oyX1]: use "C" locale for colorimetric parsing
+	* [oyX1]: add device infos, even not from EDID
+	* [oyX1]: add missed EDID workaround
+	* [oyX1]: correct EDID size check
+	* [lcm2]: correct debugging ICC profile name
+	* [lcm2]: add flags debugging informations
+	* [oicc]: clear "front" attribute exception
+	* [alpha]: add oyConversion_Correct() sees flags
+	* [API]: remove OY_DEFAULT_RENDERING_HIGH_PRECISSION
+	* [alpha]: better oyOptions_Add option comparision
+	* [lcm2]: keep sequence in abstract profiles
+	* [lcm2]: precalculation replaces rendering_high_precission
+	* [oicc]: remove common rendering_high_precission
+	* [build]: add FLTK_H to certain oforms files
+	* [alpha]: error message if no OpenICC-data
+	* [docu]: require OpenICC data package
+	* [oyRE]: add missed sources
+	* [lraw]: switch to linear, 16-bit output
+	* [build]: add oyRE
+	* [oyRE]: integrate Yiannis' module
+	* [conf]: detect exiv2
+	* [alpha]: fix oyFilterRegistrationMatch() _-
+	* [test]: a few test cases for oyTextIccDictMatch
+	* [alpha]: support ICC Dict style string matching
+	* [alpha]: add oyTextIccDictMatch ()
+	* [core]: fix string to number conversions #926c96
+	* [alpha]: fix device profile resolving #670c23
+	* [core]: string to number convenience converters
+	* [docu]: add inline comments
+	* [core]: add posix dirent API wrapper
+	* [core]: still need unistd.h
+	* [core]: fix local header conflict
+	* [cmms]: fix oyCMMInit_f declarations
+	* [alpha]: move oyStructList_AddName() convenience
+	* [cmms]: switch message var to individual name
+	* [core]: mark posix calls and includes
+	* [core]: move basic code out of oyranos_helper.h
+	* [core]: split string from text APIs
+	* [oyX1]: fix missed _ICC_PROFILE_IN_X_VERSION
+	* [oyX1]: setup is working again
+	* [alpha]: fix typo
+	* [oyX1]: add common funcion
+	* [docu]: update dependencies
+	* [oyX1]: use oyGetDisplayNameFromPosition2()
+	* [core]: deprecate oyGetDisplayNameFromPosition()
+	* [core]: add i18n setup messages
+	* [qarz]: correct some messages and names
+	* [core]: fix wrong profile warning on osX
+	* [docu]: update PACKAGING file
+	* [oyX1]: add --module(s) to oyranos-monitor
+	* [qarz]: omit message of non found monitors
+	* [qarz]: renaming of oyMonitor structure
+	* [qarz]: separate function names from oyX1
+	* [core]: avoid custom string allocation
+	* [core]: avoid MAX_PATH in a few places
+	* [oyX1]: fix zero memory access
+	* [oyX1]: fix wrong string access
+	* [build]: add new target
+	* [qarz]: sRGB for monitors on osX > 10.6.0
+	* [core]: add oyOSxVersionAtRuntime()
+	* [qarz]: fix compile warning
+	* [oyX1]: split CS parts from oyX1 into qarz
+	* [conf]: detect Xcm even without X11
+	* [i18n]: omit global cflags
+	* [exmpl]: add global make flags
+	* [core]: more osX fixes
+	* [alpha]: build fl_i18n with osX
+	* [alpha]: separate CS code from X11 module
+	* [alpha]: implicite device profile by meta tag
+	* [alpha]: link duplicate tag contents
+	* [docu]: add libxpm-dev dependency in README
+	* [docu]: libxmu-dev is a debian build dependency
+	* [oyX1]: check edid object access
+	* [core]: see local files in oyFindProfile_()
+	* [core]: fix write simulation profile to XML
+	* [core]: use STRING_ADD in elder cmm code
+	* [core]: sort policy list
+	* [oyX1]: add EDID -> ICC meta tag embedding
+	* [oyX1]: add custom "add-edid-meta-to-icc" command
+	* [alpha]: fix wrong struct access in options
+	* [oyX1]: add the --device-meta-tag option
+	* [oyX1]: split out oyX1DeviceFillEdid()
+	* [core]: extent internal iconv wrapper
+	* [alpha]: correct padding of meta tag records
+	* [alpha]: reduce development messages
+	* [alpha]: fix wrong memory access
+	* [alpha]: switch oyProfile_DeviceGet to 'meta' tag
+	* [docu]: fix missed monitor API
+	* [alpha]: move oyProfile_DeviceAdd to public APIs
+	* [alpha]: add device to a oyProfile_s object
+	* [core]: allocate maximum possible character size
+	* [core]: add internal oyIconvGet
+	* [lraw]: add more file types endings
+	* [core]: add ICC dict tag data structure
+	* [alpha]: fix signature setting
+	* [lcm2]: fix threading
+	* [lraw]: update reader properties
+	* [oydi]: explicite printf %d int
+	* [conf]: sync script with CompIcc
+	* [conf]: bump version
+	* [docu]: update ChangeLog
+
+Yiannis Belias (1):
+	* [lraw]: add device query from RAW.cc
+
 Version 0.1.12
 
 Kai-Uwe Behrmann (24):
