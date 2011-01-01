@@ -13903,17 +13903,26 @@ OYAPI int  OYEXPORT
       oyProfiles_s * patterns = 0, * iccs = 0;
       icProfileClassSignature device_signature = oyDeviceSigGet(device);
       int32_t * rank_list = 0;
+      double clck;
 
       profile = oyProfile_FromSignature( device_signature, oySIGNATURE_CLASS, 0 );
       patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
 
+      clck = oyClock();
       iccs = oyProfiles_Create( patterns, 0 );
+      clck = oyClock() - clck;
+      DBG_NUM1_S("oyProfiles_Create(): %g", clck/1000000.0 );
       oyProfiles_Release( &patterns );
  
       size = oyProfiles_Count(iccs);
       oyAllocHelper_m_( rank_list, int32_t, oyProfiles_Count(iccs), 0, error = 1; return error );
       if(error <= 0)
+      {
+        clck = oyClock();
         oyProfiles_DeviceRank( iccs, device, rank_list );
+        clck = oyClock() - clck;
+        DBG_NUM1_S("oyProfiles_DeviceRank(): %g", clck/1000000.0 );
+      }
       if(error <= 0 && size && rank_list[0] > 0)
       {
         p = oyProfiles_Get( iccs, 0 );
@@ -13922,6 +13931,7 @@ OYAPI int  OYEXPORT
         WARNc1_S( "implicitely selected %s", oyNoEmptyString_m_(profile_name) );
         oyFree_m_( rank_list );
       }
+
       oyProfile_Release( &p );
       oyProfiles_Release( &iccs );
     }
@@ -13946,10 +13956,26 @@ OYAPI int  OYEXPORT
           size_t size = 0;
           data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
           if(data && size)
-            error = oyWriteMemToFile2_( "oyranos_tmp.icc", data, size,
+          {
+            char * fn = 0;
+            const char * t = 0;
+            STRING_ADD( fn, OY_USERCOLORDATA OY_SLASH OY_ICCDIRNAME OY_SLASH );
+            STRING_ADD( fn, "devices" OY_SLASH );
+            STRING_ADD( fn, oyICCDeviceClassDescription(
+                             oyProfile_GetSignature( p, oySIGNATURE_CLASS ) ) );
+            STRING_ADD( fn, OY_SLASH );
+            if((t = oyProfile_GetText( p, oyNAME_DESCRIPTION )) != 0)
+              STRING_ADD( fn, t );
+            STRING_ADD( fn, ".icc" );
+            
+            error = oyWriteMemToFile_ ( fn, data, size );
+            if(!error)
+              profile_name = fn;
+            else
+              error = oyWriteMemToFile2_( "oyranos_tmp.icc", data, size,
                                         OY_FILE_NAME_SEARCH | OY_FILE_TEMP_DIR,
                                         &profile_name_temp, oyAllocateFunc_ );
-          else
+          } else
           {
             error = 1;
             WARNc1_S( "%s",_("Could not open profile") );
@@ -13957,7 +13983,7 @@ OYAPI int  OYEXPORT
 
           if(profile_name_temp)
             profile_name = profile_name_temp;
-          else
+          else if( !profile_name )
           {
             error = 1;
             WARNc2_S("%s: \"%s\"(oyranos_tmp.icc)",_("Could not write to file"),
@@ -27532,6 +27558,7 @@ int                oyConversion_RunPixels (
   oyImage_s * image = 0, * image_input = 0;
   int error = 0, result = 0, l_error = 0, i,n, dirty = 0, tmp_ticket = 0;
   oyRectangle_s roi = {oyOBJECT_RECTANGLE_S, 0,0,0};
+  double clck;
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
 
@@ -27550,8 +27577,13 @@ int                oyConversion_RunPixels (
   {
     /* create a very simple pixel iterator as job ticket */
     if(plug)
+    {
+      clck = oyClock();
       pixel_access = oyPixelAccess_Create( 0,0, plug,
                                            oyPIXEL_ACCESS_IMAGE, 0 );
+      clck = oyClock() - clck;
+      DBG_NUM1_S("oyPixelAccess_Create(): %g", clck/1000000.0 );
+    }
     tmp_ticket = 1;
   }
 
@@ -27566,14 +27598,24 @@ int                oyConversion_RunPixels (
     oyRectangle_SetByRectangle( &roi, pixel_access->output_image_roi );
   
   if(error <= 0)
+  {
+    clck = oyClock();
     result = oyImage_FillArray( image, &roi, 2,
                                 &pixel_access->array,
                                 pixel_access->output_image_roi, 0 );
+    clck = oyClock() - clck;
+    DBG_NUM1_S("oyImage_FillArray(): %g", clck/1000000.0 );
+  }
   error = ( result != 0 );
 
   /* run on the graph */
   if(error <= 0)
+  {
+    clck = oyClock();
     error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
+    clck = oyClock() - clck;
+    DBG_NUM1_S("conversion->out_->api7_->oyCMMFilterPlug_Run(): %g", clck/1000000.0 );
+  }
 
   if(error != 0)
   {
@@ -27581,20 +27623,29 @@ int                oyConversion_RunPixels (
             ? 1 : 0;
 
     /* refresh the graph representation */
+    clck = oyClock();
     oyFilterGraph_SetFromNode( pixel_access->graph, conversion->input, 0, 0 );
+    clck = oyClock() - clck;
+    DBG_NUM1_S("oyFilterGraph_SetFromNode(): %g", clck/1000000.0 );
 
     /* resolve missing data */
+    clck = oyClock();
     image_input = oyFilterPlug_ResolveImage( plug, plug->remote_socket_,
                                              pixel_access );
+    clck = oyClock() - clck;
+    DBG_NUM1_S("oyFilterPlug_ResolveImage(): %g", clck/1000000.0 );
     oyImage_Release( &image_input );
 
     n = oyFilterNodes_Count( pixel_access->graph->nodes );
     for(i = 0; i < n; ++i)
     {
+      clck = oyClock();
       l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
       l_error = oyImage_FillArray( image, &roi, 2,
                                    &pixel_access->array,
                                    pixel_access->output_image_roi, 0 ); OY_ERR
+      clck = oyClock() - clck;
+      DBG_NUM1_S("oyImage_FillArray(): %g", clck/1000000.0 );
 
       if(error != 0 &&
          dirty)
@@ -27607,9 +27658,15 @@ int                oyConversion_RunPixels (
           pixel_access->start_xy[1] = pixel_access->start_xy_old[1];
         }
 
+        clck = oyClock();
         oyFilterGraph_PrepareContexts( pixel_access->graph, 0 );
+        clck = oyClock() - clck;
+        DBG_NUM1_S("oyFilterGraph_PrepareContexts(): %g", clck/1000000.0 );
+        clck = oyClock();
         error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug,
                                                               pixel_access);
+        clck = oyClock() - clck;
+        DBG_NUM1_S("conversion->out_->api7_->oyCMMFilterPlug_Run(): %g", clck/1000000.0 );
       }
 
       if(error == 0)
