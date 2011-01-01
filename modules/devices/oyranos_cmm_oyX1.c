@@ -788,6 +788,13 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                      OY_DBG_ARGS_, device_name );
               else
                 error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag, t);
+
+              /* embed meta tag */
+              error = oyOptions_SetFromText( &opts, "///key_prefix_required",
+                                                "EDID_" , OY_CREATE_NEW );
+              oyProfile_DeviceAdd( prof, device, opts );
+              oyOptions_Release( &opts);
+
               data = oyProfile_GetMem( prof, &size, 0, oyAllocateFunc_ );
               header = (icHeader*) data;
               o_tmp = oyConfig_Find( device, "EDID_mnft" );
