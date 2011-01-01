@@ -727,8 +727,13 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
             {
               const char * t = 0;
               oyOption_s * edid = 0;
-              t = oyConfig_FindString( device, "EDID_model", 0 );
-              if(!t)
+              oyOptions_s * opts = NULL;
+
+              if((t = oyConfig_FindString( device, "manufacturer", 0 )) != 0)
+              {
+                STRING_ADD( text, t );
+                STRING_ADD( text, "-" );
+              } else
               {
                 t = oyConfig_FindString( device, "EDID_model_id", 0 );
                 if(t)
@@ -738,8 +743,21 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                 "Could not obtain \"EDID_model\" from monitor device for %s",
                      OY_DBG_ARGS_, device_name );
               }
-              else
+              if((t = oyConfig_FindString( device, "model", 0 )) != 0)
+              {
                 STRING_ADD( text, t );
+                STRING_ADD( text, "-" );
+              }
+              if((t = oyConfig_FindString( device, "serial", 0 )) != 0)
+                STRING_ADD( text, t );
+              else
+              if((t = oyConfig_FindString( device, "model", 0 )) != 0)
+              {
+                if((t = oyConfig_FindString( device, "EDID_year", 0 )) != 0)
+                  STRING_ADD( text, t );
+                if((t = oyConfig_FindString( device, "EDID_week", 0 )) != 0)
+                  STRING_ADD( text, t );
+              }
 
               edid = oyConfig_Find( device, "edid" );
               if(edid)
