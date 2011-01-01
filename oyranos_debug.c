@@ -20,6 +20,20 @@
 #include <unistd.h>  /* getpid() */
 #endif
 
+#          if defined(__GNUC__) || defined(LINUX) || defined(APPLE) || defined(SOLARIS)
+# include <sys/time.h>
+# define   ZEIT_TEILER 10000
+#          else /* WINDOWS TODO */
+# define   ZEIT_TEILER CLOCKS_PER_SEC;
+#          endif
+
+#ifndef WIN32
+# include <unistd.h>
+#endif
+
+#include <math.h>
+#include <time.h>
+
 #include "oyranos_debug.h"
 
 int level_PROG = 0;
@@ -49,4 +63,29 @@ void oy_backtrace_()
       fprintf( stderr, "could not open "TMP_FILE "\n" );
 }
 
+time_t             oyTime            ( )
+{
+           time_t zeit_;
+           double teiler = ZEIT_TEILER;
+#          if defined(__GNUC__) || defined(APPLE) || defined(SOLARIS) || defined(BSD)
+           struct timeval tv;
+           double tmp_d;
+           gettimeofday( &tv, NULL );
+           zeit_ = tv.tv_usec/(1000000/(time_t)teiler)
+                   + (time_t)(modf( (double)tv.tv_sec / teiler,&tmp_d )
+                     * teiler*teiler);
+#          else /* WINDOWS TODO */
+           zeit_ = clock();
+#          endif
+    return zeit_;
+}
+double             oySeconds         ( )
+{
+           time_t zeit_ = oyTime();
+           double teiler = ZEIT_TEILER;
+           double dzeit = zeit_ / teiler;
+    return dzeit;
+}
+double             oyClock           ( )
+{ return oySeconds()*1000000; }
 

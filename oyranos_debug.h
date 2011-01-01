@@ -34,6 +34,9 @@ extern "C" {
 extern clock_t oyranos_clock_;
 extern int level_PROG;
 
+double             oyClock           ( );
+double             oySeconds         ( );
+
 #if defined(__GNUC__)
 # define  OY_DBG_FORMAT_ "%s:%d %s() "
 # define  OY_DBG_ARGS_   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__

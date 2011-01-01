@@ -31,18 +31,6 @@ void* myAllocFunc(size_t size) { return new char [size]; }
 void* myAllocFunc(size_t size) { return calloc(size,1); }
 #endif
 
-#          if defined(__GNUC__) || defined(LINUX) || defined(APPLE) || defined(SOLARIS)
-# include <sys/time.h>
-# define   ZEIT_TEILER 10000
-#          else // WINDOWS TODO
-# define   ZEIT_TEILER CLOCKS_PER_SEC;
-#          endif
-
-#ifndef WIN32
-# include <unistd.h>
-#endif
-
-#include <ctime>
 #include <cmath>
 
 
@@ -117,31 +105,6 @@ const char  *  oyProfilingToString   ( int                 integer,
   return texts[a++];
 }
 
-time_t             oyTime            ( )
-{
-           time_t zeit_;
-           double teiler = ZEIT_TEILER;
-#          if defined(__GNUC__) || defined(APPLE) || defined(SOLARIS) || defined(BSD)
-           struct timeval tv;
-           gettimeofday( &tv, NULL );
-           double tmp_d;
-           zeit_ = tv.tv_usec/(1000000/(time_t)teiler)
-                   + (time_t)(modf( (double)tv.tv_sec / teiler,&tmp_d )
-                     * teiler*teiler);
-#          else // WINDOWS TODO
-           zeit_ = clock();
-#          endif
-    return zeit_;
-}
-double             oySeconds         ( )
-{
-           time_t zeit_ = oyTime();
-           double teiler = ZEIT_TEILER;
-           double dzeit = zeit_ / teiler;
-    return dzeit;
-}
-double             oyClock           ( )
-{ return oySeconds()*1000000; }
 
 oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
                                        const char        * test_name )
@@ -1962,6 +1925,7 @@ oyTESTRESULT_e testCMMMonitorListing ()
 
   int i, k, k_n;
   int error = 0;
+  double clck = 0;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -1974,11 +1938,14 @@ oyTESTRESULT_e testCMMMonitorListing ()
   char * text = 0,
        * val = 0;
 
+  clck = oyClock();
   error = oyDevicesGet( 0, "monitor", 0, &configs );
+  clck = oyClock() - clck;
   devices_n = oyConfigs_Count( configs );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyDevicesGet() \"monitor\": %d     ", devices_n );
+    "oyDevicesGet() \"monitor\": %d                      %s", devices_n,
+                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyDevicesGet() \"monitor\": %d     ", devices_n );
@@ -1989,18 +1956,27 @@ oyTESTRESULT_e testCMMMonitorListing ()
     printf( "  %d oyConfig_FindString(..\"device_name\"..): %s\n", i,
             oyConfig_FindString( config, "device_name",0 ) );
 
+    clck = oyClock();
     error = oyDeviceProfileFromDB( config, &text, myAllocFunc );
+    clck = oyClock() - clck;
     if(text)
-      fprintf( stdout, "  %d oyDeviceProfileFromDB(): %s\n", i, text );
+      fprintf( stdout, "  %d oyDeviceProfileFromDB(): %s %s\n", i, text,
+                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
     else
       fprintf( stdout, "  %d oyDeviceProfileFromDB(): ---\n", i );
 
+    clck = oyClock();
     error = oyDeviceGetInfo( config, oyNAME_NICK, 0, &text, 0 );
-    fprintf( stdout, "  %d oyDeviceGetInfo)(..oyNAME_NICK..): \"%s\"\n",
-             i, text? text:"???");
+    clck = oyClock() - clck;
+    fprintf( stdout, "  %d oyDeviceGetInfo)(..oyNAME_NICK..): \"%s\" %s\n",
+             i, text? text:"???",
+                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
+    clck = oyClock();
     error = oyDeviceGetInfo( config, oyNAME_NAME, 0, &text, 0 );
-    fprintf( stdout, "  %d oyDeviceGetInfo)(..oyNAME_NAME..): \"%s\"\n",
-             i, text? text:"???");
+    clck = oyClock() - clck;
+    fprintf( stdout, "  %d oyDeviceGetInfo)(..oyNAME_NAME..): \"%s\" %s\n",
+             i, text? text:"???",
+                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
 
     oyConfig_Release( &config );
   }
@@ -2087,30 +2063,37 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   int k, k_n;
   int32_t rank = 0;
   int error = 0;
-  oyConfig_s * config = 0,
-             * device = 0;
+  oyConfig_s * device = 0;
   oyOption_s * o = 0;
   char * val = 0;
+  double clck = 0;
 
   fprintf( stdout, "load a device ...\n");
+  clck = oyClock();
   error = oyDeviceGet( 0, "monitor", ":0.0", 0, &device );
-  k_n = oyConfig_Count( config );
+  clck = oyClock() - clck;
+  k_n = oyConfig_Count( device );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyDeviceGet(..\"monitor\" \":0.0\".. &device ) %d", k_n );
+    "oyDeviceGet(..\"monitor\" \":0.0\".. &device ) %d     %s", k_n,
+                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyDeviceGet(..\"monitor\" \":0.0\".. &device) %d", k_n );
   }
 
   fprintf( stdout, "... and search for the devices DB entry ...\n");
+  clck = oyClock();
   error = oyConfig_GetDB( device, &rank );
+  clck = oyClock() - clck;
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConfig_GetDB( device )                       " );
+    "oyConfig_GetDB( device )                         %s",
+                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyConfig_GetDB( device )                       " );
+    "oyConfig_GetDB( device )                         %s",
+                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
   }
   if(device && rank > 0)
   {
