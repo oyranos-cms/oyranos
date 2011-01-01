@@ -721,6 +721,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
               prof = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
                                         oyOBJECT_PROFILE_S );
               oyOptions_Release( &result );
+              oyOptions_Release( &opts );
             }
 
             if(prof)
