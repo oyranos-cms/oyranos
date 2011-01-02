@@ -994,7 +994,7 @@ oyDataPathsGet_       (int             * count,
     if(text) oy_paths[oy_n++] = text;
     text = 0;
     if(subdir && strlen(subdir) > 6 && memcmp( subdir,"color/", 6 ) == 0)
-    text = oyPathContructAndTest_( OY_USERCOLORDIR, &subdir[6] );
+    text = oyPathContructAndTest_( OY_USERCOLORDATA, &subdir[6] );
     if(text) oy_paths[oy_n++] = text;
     if(oyIsDir_( OY_PROFILE_PATH_USER_DEFAULT ))
     {

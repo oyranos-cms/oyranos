@@ -721,14 +721,20 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
               prof = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
                                         oyOBJECT_PROFILE_S );
               oyOptions_Release( &result );
+              oyOptions_Release( &opts );
             }
 
             if(prof)
             {
               const char * t = 0;
               oyOption_s * edid = 0;
-              t = oyConfig_FindString( device, "EDID_model", 0 );
-              if(!t)
+              oyOptions_s * opts = NULL;
+
+              if((t = oyConfig_FindString( device, "manufacturer", 0 )) != 0)
+              {
+                STRING_ADD( text, t );
+                STRING_ADD( text, "-" );
+              } else
               {
                 t = oyConfig_FindString( device, "EDID_model_id", 0 );
                 if(t)
@@ -738,8 +744,21 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                 "Could not obtain \"EDID_model\" from monitor device for %s",
                      OY_DBG_ARGS_, device_name );
               }
-              else
+              if((t = oyConfig_FindString( device, "model", 0 )) != 0)
+              {
                 STRING_ADD( text, t );
+                STRING_ADD( text, "-" );
+              }
+              if((t = oyConfig_FindString( device, "serial", 0 )) != 0)
+                STRING_ADD( text, t );
+              else
+              if((t = oyConfig_FindString( device, "model", 0 )) != 0)
+              {
+                if((t = oyConfig_FindString( device, "EDID_year", 0 )) != 0)
+                  STRING_ADD( text, t );
+                if((t = oyConfig_FindString( device, "EDID_week", 0 )) != 0)
+                  STRING_ADD( text, t );
+              }
 
               edid = oyConfig_Find( device, "edid" );
               if(edid)
@@ -770,6 +789,13 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                      OY_DBG_ARGS_, device_name );
               else
                 error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag, t);
+
+              /* embed meta tag */
+              error = oyOptions_SetFromText( &opts, "///key_prefix_required",
+                                                "EDID_" , OY_CREATE_NEW );
+              oyProfile_DeviceAdd( prof, device, opts );
+              oyOptions_Release( &opts);
+
               data = oyProfile_GetMem( prof, &size, 0, oyAllocateFunc_ );
               header = (icHeader*) data;
               o_tmp = oyConfig_Find( device, "EDID_mnft" );

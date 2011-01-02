@@ -62,6 +62,7 @@ int main( int argc , char** argv )
 
   char *ptr = NULL;
   int x = 0, y = 0;
+  int device_pos = -1;
   char *oy_display_name = NULL;
   oyProfile_s * prof = 0;
   oyConfig_s * device = 0;
@@ -159,6 +160,7 @@ int main( int argc , char** argv )
               case 'e': erase = 1; monitor_profile = 0; break;
               case 'b': database = 1; monitor_profile = 0; break;
               case 'c': net_color_region_target = 1; monitor_profile = 0; break;
+              case 'd': server = 1; OY_PARSE_INT_ARG( device_pos ); break;
               case 'f': OY_PARSE_STRING_ARG(format); monitor_profile = 0; break;
               case 'l': list = 1; monitor_profile = 0; break;
               case 'm': device_meta_tag = 1; break;
@@ -203,20 +205,20 @@ int main( int argc , char** argv )
                                 _("is a colour profile administration tool for monitors"));
                         printf("%s:\n",                 _("Usage"));
                         printf("  %s\n",               _("Set new profile:"));
-                        printf("      %s -x pos -y pos %s\n", argv[0],
+                        printf("      %s [-x pos -y pos | -d number] %s\n", argv[0],
                                                        _("profile name"));
                         printf("\n");
                         printf("  %s\n",               _("Unset profile:"));
-                        printf("      %s -e -x pos -y pos\n", argv[0]);
+                        printf("      %s -e [-x pos -y pos | -d number]\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("Activate profiles:"));
                         printf("      %s\n",           argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("Query server profile:"));
-                        printf("      %s -x pos -y pos\n", argv[0]);
+                        printf("      %s [-x pos -y pos | -d number]\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("Query device data base profile:"));
-                        printf("      %s -b -x pos -y pos\n", argv[0]);
+                        printf("      %s -b [-x pos -y pos | -d number]\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("List devices:"));
                         printf("      %s -l\n",        argv[0]);
@@ -225,11 +227,12 @@ int main( int argc , char** argv )
                         printf("      %s --modules\n",        argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("Dump data:"));
-                        printf("      %s -f=[edid|icc|edid_icc] [-o=edid.bin] -x=pos -y=pos [-m]\n", argv[0]);
+                        printf("      %s -f=[edid|icc|edid_icc] [-o=edid.bin] [-x pos -y pos | -d number] [-m]\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("General options:"));
                         printf("      %s\n",           _("-v verbose"));
                         printf("      %s\n",           _("--module name"));
+                        printf("      %s\n",           _("-d device_position_start_from_zero"));
                         printf("\n");
                         printf(_("For more informations read the man page:"));
                         printf("\n");
@@ -264,7 +267,41 @@ int main( int argc , char** argv )
       STRING_ADD( device_class, module_name);
     }
 
-    oy_display_name = oyGetDisplayNameFromPosition2(OY_TYPE_STD, device_class,
+    if(device_pos != -1)
+    {
+      oyConfigs_s * devices = 0;
+      oyConfig_s * c = 0;
+
+      error = oyOptions_SetFromText( &options,
+                                     "//" OY_TYPE_STD "/config/command",
+                                     "properties", OY_CREATE_NEW );
+      error = oyOptions_SetFromText( &options, "//"OY_TYPE_STD"/config/edid",
+                                       "1", OY_CREATE_NEW );
+      if(server)
+        error = oyOptions_SetFromText( &options,
+                                       "//"OY_TYPE_STD"/config/device_name",
+                                       oy_display_name, OY_CREATE_NEW );
+      else
+        error = oyOptions_SetFromText( &options,
+                                       "//"OY_TYPE_STD"/config/display_name",
+                                       display_name, OY_CREATE_NEW );
+
+      error = oyDevicesGet( 0, device_class, options, &devices );
+
+      n = oyConfigs_Count( devices );
+      if(!error && 0 <= device_pos && device_pos < n )
+      {
+        c = oyConfigs_Get( devices, device_pos );
+        oy_display_name = strdup( oyConfig_FindString( c, "device_name", 0 ));
+        oyConfig_Release( &c );
+      } else
+        fprintf( stderr, "%s %d. %s: %d\n", _("Could not resolve device"),
+                 device_pos, _("Available devices"), n);
+      oyConfigs_Release( &devices );
+      oyOptions_Release( &options );
+    } else
+      oy_display_name = oyGetDisplayNameFromPosition2 ( OY_TYPE_STD,
+                                                    device_class,
                                                     display_name, x,y,
                                                     oyAllocFunc);
 
@@ -519,6 +556,8 @@ int main( int argc , char** argv )
 
           error = oyDeviceGetInfo( c, oyNAME_NICK, cs_options, &text,
                                    oyAllocFunc );
+          oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
+                              "%d: ", i );
           oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
                               "\"%s\" ", text ? text : "???" );
           error = oyDeviceGetInfo( c, oyNAME_NAME, cs_options, &text,

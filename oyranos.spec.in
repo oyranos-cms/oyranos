@@ -53,6 +53,7 @@ Requires:  lib%{name}-devel
 Summary:    Oyranos Monitor dependent Libraries
 Group:      Development/Libraries/Other
 Requires:   icc-profiles-openicc-rgb
+Requires:   xcm
 
 %package      monitor
 Summary:    Oyranos Monitor Tools
