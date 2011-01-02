@@ -23111,7 +23111,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
 #endif
 
 /** Function oyFilterRegistrationMatchKey
- *  @brief   compare tw registration strings, skip key attributes
+ *  @brief   compare two registration strings, skip key attributes
  *
  *  The rules are described in the @ref module_api overview.
  *  The rules in this function map especially to key storage rules for 
@@ -26398,7 +26398,7 @@ OYAPI oyFilterNode_s * OYEXPORT
 
     if(found)
     if(pos == -1 || ++m == pos)
-      break;;
+      break;
 
     oyFilterNode_Release( &node );
   }
@@ -27817,6 +27817,25 @@ oyImage_s        * oyConversion_GetImage (
   }
 
   return image;
+}
+
+/** Function oyConversion_GetGraph
+ *  @memberof oyConversion_s
+ *  @brief   get the filter graph from a conversion context
+ *
+ *  @see oyFilterGraph_GetNode() to obtain a node.
+ *
+ *  @param[in,out] conversion          conversion object
+ *  @return                            the filter graph containing all nodes
+ *
+ *  @version Oyranos: 0.2.1
+ *  @since   2011/01/02 (Oyranos: 0.2.1)
+ *  @date    2011/01/02
+ */
+oyFilterGraph_s  * oyConversion_GetGraph (
+                                       oyConversion_s    * conversion )
+{
+  return oyFilterGraph_FromNode( conversion->input, 0 );
 }
 
 
