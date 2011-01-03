@@ -100,7 +100,8 @@ ELEKTRA_OBJ = \
 #endif
 
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(SRCDIR) \
-	$(LCMS_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) $(LIBXML2_H) $(XCM_H)
+	$(LCMS_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) $(LIBXML2_H) \
+	$(XCM_H) $(LRAW_H)
 
 LDLIBS = $(LDFLAGS) -L$(libdir) -L. \
 	$(ELEKTRA_LIBS) $(LIBXML2_LIBS) -lc $(I18N_LIB) $(LIBLTDL)

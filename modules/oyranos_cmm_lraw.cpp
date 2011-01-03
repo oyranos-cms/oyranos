@@ -30,8 +30,8 @@
 #include <cstdio>
 #include <cstring>
 
-#include <libraw/libraw.h>
-#include <libraw/libraw_types.h>
+#include <libraw.h>
+#include <libraw_types.h>
 
 /* --- internal definitions --- */
 
