@@ -844,6 +844,7 @@ install_bin:	all install_gui
 	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia $(DESTDIR)$(bindir)
 	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms $(DESTDIR)$(bindir)
 	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms-fltk $(DESTDIR)$(bindir)
+	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms-modules $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(libdir)
 	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
 	mkdir -p $(DESTDIR)$(metadir)
@@ -922,7 +923,7 @@ install_bin:	all install_gui
 	echo ... binary Installation finished
 
 # install recursive
-install:	install-main examples
+install:	oforms install-main examples
 	$(INSTALL) -m 755 examples/xcmsevents/qcmsevents $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(desktopdir)
 	$(INSTALL) -m 644 $(SRCDIR)/examples/xcmsevents/qcmsevents-applet.desktop $(DESTDIR)$(desktopdir)
