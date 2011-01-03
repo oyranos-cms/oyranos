@@ -5,7 +5,7 @@ LDFLAGS_ = $$LDFLAGS -L../fl_i18n
 OY_FLAGS := $(shell pkg-config oyranos libxml-2.0 --libs --cflags)
 FLTK_FLAGS := $(shell fltk-config --ldflags --cxxflags | sed s/-O2//) -lpthread
 
-all:	oyranos-xforms oyranos-xforms-fltk oyranos-xforms-module
+all:	oyranos-xforms oyranos-xforms-fltk oyranos-xforms-modules
 	echo ... done
 
 CXXFILES = \
@@ -17,7 +17,7 @@ oyranos-xforms:	$(SRCDIR)oyranos_xforms.c
 	echo "Compiling $(SRCDIR)$< + Linking $@ ..."
 	gcc -Wall -g $(CFLAGS) $(INCL)  $(SRCDIR)oyranos_xforms.c -o oyranos-xforms -pedantic $(OY_FLAGS) $(LDFLAGS_)
 
-oyranos-xforms-module:	$(SRCDIR)oyranos_xforms_modules.c
+oyranos-xforms-modules:	$(SRCDIR)oyranos_xforms_modules.c
 	echo "Compiling $(SRCDIR)$< + Linking $@ ..."
 	gcc -Wall -g $(CFLAGS) $(INCL)  $< -o $@ -pedantic $(OY_FLAGS) $(LDFLAGS_)
 
