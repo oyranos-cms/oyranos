@@ -395,7 +395,7 @@ oyChar *     oyDumpColourToCGATS     ( const double      * channels,
 /** @brief copy pure colours
  *
  *  Handle colour only.
- *  With a empty \r from variable set -1 as default in \r to.
+ *  With a empty \b from variable set -1 as default in \b to.
  *
  *  @since Oyranos: version 0.1.8
  *  @date  september 2007 (API 0.1.8)
@@ -7373,6 +7373,7 @@ void           oyValueCopy           ( oyValue_u         * to,
  *
  *  @param         a                   value a
  *  @param         b                   value b
+ *  @param         type                the value type to comare in a and b
  *  @param         pos                 position in list; -1 compare all
  *  return                             0 - not equal; 1 - equal
  *
@@ -12673,7 +12674,7 @@ OYAPI int  OYEXPORT
  *  This is a simple convenience function to select from a list existing 
  *  configurations.
  *
- *  @varbatim
+ *  @verbatim
     const char * pattern[][2] = {{"device_name",0},
                                  {"manufacturer",0},
                                  {"model",0},
@@ -14132,7 +14133,7 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
  *                                     even lines contain the property key name,
  *                                     odd lines contain the value,
  *                                     lines are separated by newline '\\n'
- *  @param[in]     flags               reserved
+ *  @param[in]     options             defaults to command=properties
  *  @param[out]    info_text           the text
  *  @param[in]     allocateFunc        the user allocator for info_text
  *  @return                            0 - good, 1 >= error, -1 <= issue(s)
