@@ -13,6 +13,8 @@ Prefix:    %{_prefix}
 
 Requires:      icc-profiles-basiccolor-lstarrgb icc-profiles-lcms-lab icc-profiles-openicc-printing icc-profiles-openicc-rgb
 
+BuildRequires: libexiv2-devel libraw-devel
+
 %if 0%{?suse_version} > 0
 BuildRequires:     gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg-devel xorg-x11-Mesa xorg-x11-Mesa-devel libtiff-devel libxml2-devel cairo-devel liblcms-devel xdg-utils cups-devel libqt4-devel libXcm-devel netpbm
 %endif
@@ -80,10 +82,18 @@ Summary:    Example Configuration Panel
 Group:      System/GUI/Other
 Requires:   fltk
 
+%package      forms-fltk
+Summary:    XFORMS subset rendering
+Group:      Development/Libraries/Other
+
 %package      forms-fltk-devel
 Summary:    XFORMS subset rendering
 Group:      Development/Libraries/Other
 Requires:   fltk-devel
+
+%package      forms
+Summary:    XFORMS subset rendering
+Group:      Development/Libraries/Other
 
 %package      qcmsevents
 Summary:    Xorg Colour management Event observer applet
@@ -162,13 +172,23 @@ Oyranos colour management system.
 The example configuration GUI.
 Oyranos is a colour management system.
 
+%description  forms-fltk
+render a oyranos specific subset of xforms in fltk.
+a xforms subset is used by oyranos to describe filter node
+options.
+
 %description  forms-fltk-devel
-Render a Oyranos specific subset of XFORMS in FLTK.
-A XFORMS subset is used by Oyranos to describe filter node
+render a oyranos specific subset of xforms in fltk.
+a xforms subset is used by oyranos to describe filter node
+options.
+
+%description  forms
+render a oyranos specific subset of xforms on cli.
+a xforms subset is used by oyranos to describe filter node
 options.
 
 %description  qcmsevents
-The applet shows if a colour server is running through a icon in 
+the applet shows if a colour server is running through a icon in 
 the system tray.
 
 %prep
@@ -184,7 +204,7 @@ make DESTDIR=%{buildroot} install
 rm -fr %{buildroot}/%{_datadir}/doc/%{name}
 %find_lang %{name}       # generate a special file list
 %if 0%{?suse_version} > 1010
-%suse_update_desktop_file -n  qcmsevents-applet # some openSUSE magic
+%suse_update_desktop_file -n  qcmsevents-applet # some opensuse magic
 %endif
 
 %clean
@@ -200,6 +220,7 @@ ldconfig
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-policy
+%{_bindir}/%{name}-xforms-modules
 %{_mandir}/man1/%{name}-policy*
 %{pixmapdir}/oyranos_logo.*
 %{pixmapdir}/lcms_logo2.png
@@ -214,7 +235,9 @@ ldconfig
 %dir %{_libdir}/colour/
 %dir %{_libdir}/%{cmmsubpath}/
 %dir %{_libdir}/%{metasubpath}/
-%{_libdir}/%{cmmsubpath}/lib%{name}_l*
+%{_libdir}/%{cmmsubpath}/lib%{name}_lcm*
+%{_libdir}/%{cmmsubpath}/lib%{name}_lraw_cmm_module*
+%{_libdir}/%{cmmsubpath}/lib%{name}_oyRE_cmm_module*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oyra_cmm_module*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oicc_cmm_module*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oPNG_cmm_module*
@@ -287,19 +310,32 @@ ldconfig
 %{_bindir}/%{name}-config-fl*
 %{_mandir}/man1/%{name}-config-fltk.1*
 
+%files forms-fltk
+%defattr(-, root, root)
+%doc AUTHORS COPYING ChangeLog README
+%{_bindir}/%{name}-xforms-fltk
+
 %files forms-fltk-devel
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_libdir}/liboyforms_fltk.a
 
+%files forms
+%defattr(-, root, root)
+%doc AUTHORS COPYING ChangeLog README
+%{_bindir}/%{name}-xforms
+
 %files qcmsevents
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/qcmsevents
-%{pixmapdir}/qcmsevents.svg
+%{pixmapdir}/qcmsevents.*
 %{desktopdir}/qcmsevents-applet.desktop
 
 %changelog
+* Mon Jan 03 2011 Kai-Uwe Behrmann
+- add forms and forms-fltk
+
 * Thu Nov 16 2010 Kai-Uwe Behrmann
 - add oyranos_types.h
 
