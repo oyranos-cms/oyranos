@@ -26,7 +26,6 @@ CONF_TEMP_SH=config.tmp.sh
 CONF_LOG=config.log
 CONF_I18N=fl_i18n/makefile
 SPEC=$TARGET.spec
-SPECICC=$TARGET-icc.spec
 DEB="$TARGET"_control
 PKGC=$TARGET.pc
 VERS_H="$TARGET"_version.h
@@ -368,7 +367,6 @@ test -n "$ECHO" && $ECHO "# generated $PKGC automatically by configure from $PKG
 test -n "$ECHO" && $ECHO "" >> $PKGC
 test -n "$RPMECHO" && $RPMECHO "# generated $SPEC automatically by configure from $ROOT_DIR/$SPEC.in" > $SPEC
 test -n "$RPMECHO" && $RPMECHO "" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "" > $SPECICC
 
 
 #prefix
@@ -1051,11 +1049,8 @@ test -n "$RPMECHO" && $RPMECHO "Requires: elektra 0.7" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "BuildRequires: elektra-devel" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "" >> $SPEC
 fi
-test -n "$RPMECHO" && cat  "$SPEC" >> $SPECICC
-test -n "$RPMECHO" && cat  $ROOT_DIR/"$SPECICC.in" >> $SPECICC
 test -n "$RPMECHO" && cat  $ROOT_DIR/"$SPEC.in" >> $SPEC
-echo_="generated $SPEC from $ROOT_DIR/$SPEC.in
-generated $SPECICC from $ROOT_DIR/$SPECICC.in"
+echo_="generated $SPEC from $ROOT_DIR/$SPEC.in"
 test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 
 test -n "$RPMECHO" && $RPMECHO "Version:         $VERSION-$RELEASE" > $DEB
