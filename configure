@@ -1,4 +1,4 @@
-#!/bin/sh 
+#!/bin/sh
 
 TARGET=oyranos
 TARGET_NAME=Oyranos
@@ -825,22 +825,27 @@ test -n "$INFOECHO" && $INFOECHO ""
 pkg-config  --atleast-version=0.7 elektra 2>/dev/null
 if [ $? != 0 ] && [ 0 -eq $rpm ]; then
   ELEKTRA_VERSION="elektra-0.7.1"
-  test -n "$ECHO" && $ECHO "#define HAVE_ELEKTRA 1" >> $CONF_H
-  test -n "$ECHO" && $ECHO "ELEKTRA = 1" >> $CONF
-  test -n "$ECHO" && $ECHO "ELEKTRA_H = -I$ELEKTRA_VERSION/src/include -I$ROOT_DIR/$ELEKTRA_VERSION/src/include" >> $CONF
-  test -n "$ECHO" && $ECHO "ELEKTRA_LIBS = \$(ELEKTRA_OBJ)" >> $CONF
-  test -n "$ECHO" && $ECHO "ELEKTRA_VERSION = $ELEKTRA_VERSION" >> $CONF
-  test -n "$ECHO" && $ECHO "Elektra internal        $ELEKTRA_VERSION"
-  if [ -n $ECHO ]; then
-    dir="$PWD"
-    test -d $ELEKTRA_VERSION || mkdir $ELEKTRA_VERSION
-    cd $ELEKTRA_VERSION
-    sh -c "$ROOT_DIR/$ELEKTRA_VERSION/configure --enable-static --enable-shared=false $nodeps_config_opt --prefix=$prefix"
-    cd "$dir"
+  if [ -d $ELEKTRA_VERSION ]; then
+    test -n "$ECHO" && $ECHO "#define HAVE_ELEKTRA 1" >> $CONF_H
+    test -n "$ECHO" && $ECHO "ELEKTRA = 1" >> $CONF
+    test -n "$ECHO" && $ECHO "ELEKTRA_H = -I$ELEKTRA_VERSION/src/include -I$ROOT_DIR/$ELEKTRA_VERSION/src/include" >> $CONF
+    test -n "$ECHO" && $ECHO "ELEKTRA_LIBS = \$(ELEKTRA_OBJ)" >> $CONF
+    test -n "$ECHO" && $ECHO "ELEKTRA_VERSION = $ELEKTRA_VERSION" >> $CONF
+    test -n "$ECHO" && $ECHO "Elektra internal        $ELEKTRA_VERSION"
+    if [ -n $ECHO ]; then
+      dir="$PWD"
+      cd $ELEKTRA_VERSION && sh -c "$ROOT_DIR/$ELEKTRA_VERSION/configure --enable-static --enable-shared=false $nodeps_config_opt --prefix=$prefix"
+      cd "$dir"
+    fi
+    test -n "$ECHO" && $ECHO "ltdl=-lltdl" >> $PKGC
+    test -n "$ECHO" && $ECHO ""
+    test -n "$ECHO" && $ECHO "... $ELEKTRA_VERSION configured"
+  else
+    echo_="!!! Elektra: !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo_="  no or too old Elektra found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo_="  need a version not greater than $elektra_max, download: elektra.sf.net"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo 1 > error.tmp
   fi
-  test -n "$ECHO" && $ECHO "ltdl=-lltdl" >> $PKGC
-  test -n "$ECHO" && $ECHO ""
-  test -n "$ECHO" && $ECHO "... $ELEKTRA_VERSION configured"
 else
   test -n "$ECHO" && $ECHO "ltdl=" >> $PKGC
 fi
