@@ -13,7 +13,7 @@ Prefix:    %{_prefix}
 
 Requires:      icc-profiles-basiccolor-lstarrgb icc-profiles-lcms-lab icc-profiles-openicc-printing icc-profiles-openicc-rgb
 
-BuildRequires: libexiv2-devel libraw-devel
+BuildRequires: libexiv2-devel libraw-devel libraw-devel-static
 
 %if 0%{?suse_version} > 0
 BuildRequires:     gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg-devel xorg-x11-Mesa xorg-x11-Mesa-devel libtiff-devel libxml2-devel cairo-devel liblcms-devel xdg-utils cups-devel libqt4-devel libXcm-devel netpbm
