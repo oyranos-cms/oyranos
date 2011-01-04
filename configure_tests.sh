@@ -448,18 +448,15 @@ if [ -n "$LRAW" ] && [ $LRAW -gt 0 ]; then
   pkg-config  --atleast-version=$minversion $name
   if [ $? = 0 ]; then
     echo "#define HAVE_$ID 1" >> $CONF_H
-    echo "$ID = 1" >> $CONF
-    echo "$ID_H = `pkg-config --cflags $name | sed \"$STRIPOPT\"`" >> $CONF
-    echo "$ID_LIBS = `pkg-config --libs $name | sed \"$STRIPOPT\"`" >> $CONF
     l=$libname
     rm -f tests/libtest$EXEC_END
-    $CXX $CXXFLAGS -blödsinn -I$includedir $ROOT_DIR/tests/libraw_test.cxx $LDFLAGS -L$libdir -shared `pkg-config --cflags --libs $name` -o tests/libtest 2>>$CONF_LOG
+    $CXX $CXXFLAGS -I$includedir $ROOT_DIR/tests/libraw_test.cxx $LDFLAGS -L$libdir -shared `pkg-config --cflags --libs $name` -o tests/libtest 2>>$CONF_LOG
     if [ -f tests/libtest$EXEC_END ]; then
       HAVE_LIB=1
       echo "#define HAVE_$ID 1" >> $CONF_H
       echo "$ID = 1" >> $CONF
-      echo "$ID_H = -I$includedir" >> $CONF
-      echo "$ID_LIBS =  -L/usr/lib$BARCH -L$libdir -l$l" >> $CONF
+      echo "$ID_H = `pkg-config --cflags $name | sed \"$STRIPOPT\"`" >> $CONF
+      echo "$ID_LIBS = `pkg-config --libs $name | sed \"$STRIPOPT\"`" >> $CONF
       rm tests/libtest$EXEC_END
     fi
   fi
@@ -471,7 +468,7 @@ if [ -n "$LRAW" ] && [ $LRAW -gt 0 ]; then
     fi
   else
     echo_="command was: $CXX $CXXFLAGS -I$includedir $ROOT_DIR/tests/libraw_test.cxx $LDFLAGS -L$libdir -shared -lraw -o tests/libtest"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-    $CXX $CXXFLAGS -I$includedir $ROOT_DIR/tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest
+    $CXX $CXXFLAGS -I$includedir $ROOT_DIR/tests/libraw_test.cxx $LDFLAGS -L$libdir -shared `pkg-config --cflags --libs $name` -o tests/libtest
     if [ $TESTER -eq 1 ]; then
       echo_="!!! ERROR: no or too old $name found, !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
       ERROR=1
