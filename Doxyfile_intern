@@ -4,7 +4,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = Oyranos
-PROJECT_NUMBER         = 0.1.10-devel
+PROJECT_NUMBER         = 0.2.1-devel
 OUTPUT_DIRECTORY       = doc_intern/
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = German
@@ -79,7 +79,8 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 INPUT                  = ./
 FILE_PATTERNS          = *.c *.cxx \
-                         doxymentation \
+                         doxymentation_alpha \
+                         doxymentation_common \
                          *.h
 RECURSIVE              = NO
 EXCLUDE                = oyranos_gamma.c
