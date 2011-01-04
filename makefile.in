@@ -268,6 +268,7 @@ TEST_CPP = \
 	tests/intptr_test.c \
 	tests/lib_test.cxx \
 	tests/library.c \
+	tests/libraw_test.cxx \
 	tests/openmp.c \
 	tests/openmp_main.c \
 	tests/sane_test.cxx \
