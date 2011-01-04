@@ -537,6 +537,8 @@ if [ -f tests/intptr_test ]; then
   elif [ $INTPTR_SIZE -gt 4 ]; then
     echo_="64-bit build            detected"
     BARCH=64
+    FPIC=-fPIC
+    DPIC=-DPIC
     test -n "$ECHO" && $ECHO "BUILD_64 = 1" >> $CONF
   elif [ $INTPTR_SIZE -ne 0 ]; then
     echo_="$INTPTR_SIZE-byte intptr_t          detected"
@@ -713,8 +715,8 @@ if [ $OSUNAME = "Darwin" ]; then
   RM="rm -vf"
   LDFLAGS="$LDFLAGS -L."
   test -n "$ECHO" && $ECHO "MSGMERGE = msgmerge" >> $CONF
-  CFLAGS="$CFLAGS -DPIC -Wunused -fno-exceptions -flat_namespace -undefined suppress"
-  CXXFLAGS="$CXXFLAGS -DPIC -Wunused -fno-exceptions -flat_namespace -undefined suppress"
+  CFLAGS="$CFLAGS $DPIC -Wunused -fno-exceptions -flat_namespace -undefined suppress"
+  CXXFLAGS="$CXXFLAGS $DPIC -Wunused -fno-exceptions -flat_namespace -undefined suppress"
   test -n "$ECHO" && $ECHO "REZ = $fltkconfig --post \$@" >> $CONF
   test -n "$ECHO" && $ECHO "I18N_LIB = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
   test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
@@ -745,8 +747,8 @@ else
       test -n "$ECHO" && $ECHO "LINK_LIB_PATH = -Wl,--rpath -Wl," >> $CONF
       test -n "$ECHO" && $ECHO "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(build_dir)" >> $CONF
     fi
-    CFLAGS="$CFLAGS -fPIC -DPIC -Wno-overlength-strings"
-    CXXFLAGS="$CXXFLAGS -fPIC -DPIC -Wno-overlength-strings"
+    CFLAGS="$CFLAGS $FPIC $DPIC -Wno-overlength-strings"
+    CXXFLAGS="$CXXFLAGS $FPIC $DPIC -Wno-overlength-strings"
     INSTALL="install -p $DEBUG_SWITCH"
   else
     COPY="cp -p"
@@ -769,8 +771,8 @@ else
     fi
     test -n "$ECHO" && $ECHO "I18N_LIB = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
     test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
-    CFLAGS="$CFLAGS -fPIC"
-    CXXFLAGS="$CXXFLAGS -fPIC"
+    CFLAGS="$CFLAGS $FPIC"
+    CXXFLAGS="$CXXFLAGS $FPIC"
   fi
 fi
  
