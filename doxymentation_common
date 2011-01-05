@@ -4,8 +4,15 @@
     Oyranos depends on following libraries:\n
 
     <ul>
-    <li><a href="http://elektra.sf.net">Elektra</a>, this is the configuration module for linux, currently version 0.7 is requierd. </li>
-    <li><a href="http://www.littlecms.com">littleCMS</a> standard CMM</li>
+    <li><a href="http://elektra.sf.net">Elektra</a>, this is the configuration module for linux, currently version 0.7 is requierd and included. </li>
+    <li> libxml2 - http://www.xmlsoft.org/ </li>
+    <li> OpenICC-Data is needed with its default ICC profiles </li>
+    <li> libXinerama, libXrandr, libXfixes and libXxf86vm for X11 support - www.x.org </li>
+    <li> libXcm for X11 and Quarz monitor support - http://www.oyranos.org </li>
+    <li> <a href="http://www.littlecms.com">littleCMS</a> lcms and/or lcms2 for colour conversions - http://www.littlecms.com </li>
+    </ul>
+    Optional:
+    <ul>
     <li><a href="http://www.fltk.org">FLTK</a> version >= 1.1.4 needed for a user interface\n
     you may configure fltk with several options enabled\n
     --enable-threads is needed for threads support (in ICC Examin)\n

@@ -23,7 +23,7 @@
 #include <exiv2/image.hpp>
 #include <exiv2/exif.hpp>
 
-#include <libraw/libraw.h>
+#include <libraw.h>
 
 #include <string>
 #include <sstream>

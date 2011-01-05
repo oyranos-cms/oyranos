@@ -339,6 +339,7 @@ oyConnectorImaging_s dFil_myFilter_connectorSocket = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "My Filter Socket"},
   "//" OY_TYPE_STD "/image", /* connector_type */
+  oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
   dFil_data_types,
   2, /* data_types_n; elements in data_types array */
@@ -369,6 +370,7 @@ oyConnectorImaging_s dFil_myFilter_connectorPlug = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
   {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "My Filter Plug"},
   "//" OY_TYPE_STD "/image", /* connector_type */
+  oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   1, /* is_plug == oyFilterPlug_s */
   dFil_data_types,
   2, /* data_types_n; elements in data_types array */

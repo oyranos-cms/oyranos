@@ -1,4 +1,4 @@
-#!/bin/sh 
+#!/bin/sh
 
 TARGET=oyranos
 TARGET_NAME=Oyranos
@@ -26,7 +26,6 @@ CONF_TEMP_SH=config.tmp.sh
 CONF_LOG=config.log
 CONF_I18N=fl_i18n/makefile
 SPEC=$TARGET.spec
-SPECICC=$TARGET-icc.spec
 DEB="$TARGET"_control
 PKGC=$TARGET.pc
 VERS_H="$TARGET"_version.h
@@ -368,7 +367,6 @@ test -n "$ECHO" && $ECHO "# generated $PKGC automatically by configure from $PKG
 test -n "$ECHO" && $ECHO "" >> $PKGC
 test -n "$RPMECHO" && $RPMECHO "# generated $SPEC automatically by configure from $ROOT_DIR/$SPEC.in" > $SPEC
 test -n "$RPMECHO" && $RPMECHO "" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "" > $SPECICC
 
 
 #prefix
@@ -539,6 +537,8 @@ if [ -f tests/intptr_test ]; then
   elif [ $INTPTR_SIZE -gt 4 ]; then
     echo_="64-bit build            detected"
     BARCH=64
+    FPIC=-fPIC
+    DPIC=-DPIC
     test -n "$ECHO" && $ECHO "BUILD_64 = 1" >> $CONF
   elif [ $INTPTR_SIZE -ne 0 ]; then
     echo_="$INTPTR_SIZE-byte intptr_t          detected"
@@ -715,8 +715,8 @@ if [ $OSUNAME = "Darwin" ]; then
   RM="rm -vf"
   LDFLAGS="$LDFLAGS -L."
   test -n "$ECHO" && $ECHO "MSGMERGE = msgmerge" >> $CONF
-  CFLAGS="$CFLAGS -DPIC -Wunused -fno-exceptions -flat_namespace -undefined suppress"
-  CXXFLAGS="$CXXFLAGS -DPIC -Wunused -fno-exceptions -flat_namespace -undefined suppress"
+  CFLAGS="$CFLAGS $DPIC -Wunused -fno-exceptions -flat_namespace -undefined suppress"
+  CXXFLAGS="$CXXFLAGS $DPIC -Wunused -fno-exceptions -flat_namespace -undefined suppress"
   test -n "$ECHO" && $ECHO "REZ = $fltkconfig --post \$@" >> $CONF
   test -n "$ECHO" && $ECHO "I18N_LIB = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
   test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
@@ -747,8 +747,8 @@ else
       test -n "$ECHO" && $ECHO "LINK_LIB_PATH = -Wl,--rpath -Wl," >> $CONF
       test -n "$ECHO" && $ECHO "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(build_dir)" >> $CONF
     fi
-    CFLAGS="$CFLAGS -fPIC -DPIC -Wno-overlength-strings"
-    CXXFLAGS="$CXXFLAGS -fPIC -DPIC -Wno-overlength-strings"
+    CFLAGS="$CFLAGS $FPIC $DPIC -Wno-overlength-strings"
+    CXXFLAGS="$CXXFLAGS $FPIC $DPIC -Wno-overlength-strings"
     INSTALL="install -p $DEBUG_SWITCH"
   else
     COPY="cp -p"
@@ -771,8 +771,8 @@ else
     fi
     test -n "$ECHO" && $ECHO "I18N_LIB = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
     test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
-    CFLAGS="$CFLAGS -fPIC"
-    CXXFLAGS="$CXXFLAGS -fPIC"
+    CFLAGS="$CFLAGS $FPIC"
+    CXXFLAGS="$CXXFLAGS $FPIC"
   fi
 fi
  
@@ -825,22 +825,27 @@ test -n "$INFOECHO" && $INFOECHO ""
 pkg-config  --atleast-version=0.7 elektra 2>/dev/null
 if [ $? != 0 ] && [ 0 -eq $rpm ]; then
   ELEKTRA_VERSION="elektra-0.7.1"
-  test -n "$ECHO" && $ECHO "#define HAVE_ELEKTRA 1" >> $CONF_H
-  test -n "$ECHO" && $ECHO "ELEKTRA = 1" >> $CONF
-  test -n "$ECHO" && $ECHO "ELEKTRA_H = -I$ELEKTRA_VERSION/src/include -I$ROOT_DIR/$ELEKTRA_VERSION/src/include" >> $CONF
-  test -n "$ECHO" && $ECHO "ELEKTRA_LIBS = \$(ELEKTRA_OBJ)" >> $CONF
-  test -n "$ECHO" && $ECHO "ELEKTRA_VERSION = $ELEKTRA_VERSION" >> $CONF
-  test -n "$ECHO" && $ECHO "Elektra internal        $ELEKTRA_VERSION"
-  if [ -n $ECHO ]; then
-    dir="$PWD"
-    test -d $ELEKTRA_VERSION || mkdir $ELEKTRA_VERSION
-    cd $ELEKTRA_VERSION
-    sh -c "$ROOT_DIR/$ELEKTRA_VERSION/configure --enable-static --enable-shared=false $nodeps_config_opt --prefix=$prefix"
-    cd "$dir"
+  if [ -d $ELEKTRA_VERSION ]; then
+    test -n "$ECHO" && $ECHO "#define HAVE_ELEKTRA 1" >> $CONF_H
+    test -n "$ECHO" && $ECHO "ELEKTRA = 1" >> $CONF
+    test -n "$ECHO" && $ECHO "ELEKTRA_H = -I$ELEKTRA_VERSION/src/include -I$ROOT_DIR/$ELEKTRA_VERSION/src/include" >> $CONF
+    test -n "$ECHO" && $ECHO "ELEKTRA_LIBS = \$(ELEKTRA_OBJ)" >> $CONF
+    test -n "$ECHO" && $ECHO "ELEKTRA_VERSION = $ELEKTRA_VERSION" >> $CONF
+    test -n "$ECHO" && $ECHO "Elektra internal        $ELEKTRA_VERSION"
+    if [ -n $ECHO ]; then
+      dir="$PWD"
+      cd $ELEKTRA_VERSION && sh -c "$ROOT_DIR/$ELEKTRA_VERSION/configure --enable-static --enable-shared=false $nodeps_config_opt --prefix=$prefix"
+      cd "$dir"
+    fi
+    test -n "$ECHO" && $ECHO "ltdl=-lltdl" >> $PKGC
+    test -n "$ECHO" && $ECHO ""
+    test -n "$ECHO" && $ECHO "... $ELEKTRA_VERSION configured"
+  else
+    echo_="!!! Elektra: !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo_="  no or too old Elektra found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo_="  need a version not greater than $elektra_max, download: elektra.sf.net"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo 1 > error.tmp
   fi
-  test -n "$ECHO" && $ECHO "ltdl=-lltdl" >> $PKGC
-  test -n "$ECHO" && $ECHO ""
-  test -n "$ECHO" && $ECHO "... $ELEKTRA_VERSION configured"
 else
   test -n "$ECHO" && $ECHO "ltdl=" >> $PKGC
 fi
@@ -1051,11 +1056,8 @@ test -n "$RPMECHO" && $RPMECHO "Requires: elektra 0.7" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "BuildRequires: elektra-devel" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "" >> $SPEC
 fi
-test -n "$RPMECHO" && cat  "$SPEC" >> $SPECICC
-test -n "$RPMECHO" && cat  $ROOT_DIR/"$SPECICC.in" >> $SPECICC
 test -n "$RPMECHO" && cat  $ROOT_DIR/"$SPEC.in" >> $SPEC
-echo_="generated $SPEC from $ROOT_DIR/$SPEC.in
-generated $SPECICC from $ROOT_DIR/$SPECICC.in"
+echo_="generated $SPEC from $ROOT_DIR/$SPEC.in"
 test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 
 test -n "$RPMECHO" && $RPMECHO "Version:         $VERSION-$RELEASE" > $DEB

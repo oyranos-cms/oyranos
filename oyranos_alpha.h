@@ -3226,6 +3226,8 @@ oyPointer        * oyConversion_GetOnePixel (
 oyImage_s        * oyConversion_GetImage (
                                        oyConversion_s    * conversion,
                                        uint32_t            flags );
+oyFilterGraph_s  * oyConversion_GetGraph (
+                                       oyConversion_s    * conversion );
 char             * oyConversion_ToText (
                                        oyConversion_s    * conversion,
                                        const char        * head_line,

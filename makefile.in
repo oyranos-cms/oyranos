@@ -100,7 +100,8 @@ ELEKTRA_OBJ = \
 #endif
 
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(SRCDIR) \
-	$(LCMS_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) $(LIBXML2_H) $(XCM_H)
+	$(LCMS_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) $(LIBXML2_H) \
+	$(XCM_H) $(LRAW_H)
 
 LDLIBS = $(LDFLAGS) -L$(libdir) -L. \
 	$(ELEKTRA_LIBS) $(LIBXML2_LIBS) -lc $(I18N_LIB) $(LIBLTDL)
@@ -267,6 +268,7 @@ TEST_CPP = \
 	tests/intptr_test.c \
 	tests/lib_test.cxx \
 	tests/library.c \
+	tests/libraw_test.cxx \
 	tests/openmp.c \
 	tests/openmp_main.c \
 	tests/sane_test.cxx \
@@ -843,6 +845,7 @@ install_bin:	all install_gui
 	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia $(DESTDIR)$(bindir)
 	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms $(DESTDIR)$(bindir)
 	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms-fltk $(DESTDIR)$(bindir)
+	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms-modules $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(libdir)
 	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
 	mkdir -p $(DESTDIR)$(metadir)
@@ -921,7 +924,7 @@ install_bin:	all install_gui
 	echo ... binary Installation finished
 
 # install recursive
-install:	install-main examples
+install:	oforms install-main examples
 	$(INSTALL) -m 755 examples/xcmsevents/qcmsevents $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(desktopdir)
 	$(INSTALL) -m 644 $(SRCDIR)/examples/xcmsevents/qcmsevents-applet.desktop $(DESTDIR)$(desktopdir)
@@ -932,6 +935,7 @@ install-main:	install_bin install_linguas install_docu
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_logo.png $(DESTDIR)$(pixmapdir)/$(TARGET)_logo.png
 	$(INSTALL) -m 644 $(SRCDIR)/lcms_logo2.png $(DESTDIR)$(pixmapdir)/lcms_logo2.png
 	$(INSTALL) -m 644 $(SRCDIR)/examples/xcmsevents/plugin-compicc.svg $(DESTDIR)$(pixmapdir)/qcmsevents.svg
+	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_logo.png $(DESTDIR)$(pixmapdir)/qcmsevents.png
 
 # synonymes
 doc:		docu

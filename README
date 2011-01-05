@@ -15,6 +15,7 @@ Dependencies:
     OpenICC-Data is needed with its default ICC profiles
     libXinerama, libXrandr, libXfixes and libXxf86vm for X11 support - www.x.org
     libXcm for X11 and Quarz monitor support - http://www.oyranos.org
+    Xcm for X11 and Quarz monitor support - http://www.oyranos.org
     lcms and/or lcms2 for colour conversions - http://www.littlecms.com
 
     Optional:
@@ -26,6 +27,7 @@ Dependencies:
     Qt for a nice observer utility - http://qt.nokia.com/
     CUPS for CUPS ICC configuration support - http://www.cups.org
     libraw for cameraRAW decoding - http://www.libraw.org
+    exiv2 for cameraRAW decoding - http://www.exiv2.org/
     SANE only with Oyranos SANE_CAP_COLOUR patch - http://www.sane-project.org/
     Cairo for a example - http://www.cairographics.org/
 
@@ -64,7 +66,10 @@ Dependencies:
     cups-devel
     sane-backends-devel
     lcms-devel
-    openicc-data
+    icc-profiles-basiccolor-lstarrgb
+    icc-profiles-lcms-lab
+    icc-profiles-openicc-printing
+    icc-profiles-openicc-rgb
     libxml2-devel
     libpng-devel
     libtiff-devel
@@ -81,6 +86,8 @@ Dependencies:
     libXmu-devel
     qt-devel
     netpbm-progs
+    libexiv2-devel
+    libraw-devel
 
 Building:
     $ configure

@@ -1116,7 +1116,7 @@ typedef int  (*oyConfig_Rank_f)     ( oyConfig_s         * config );
  *  It is adviced to let Oyranos ask the module in advance through 
  *  oyConfig_Rank_f, if the modified oyConfig_s object is still valid.
  *
- *  @Future directions:
+ *  @par Future directions:
  *  For automatic UI's this module API should provide a XFORMS UI about the
  *  result and return a oyConfig_s for a filled form.
  *
