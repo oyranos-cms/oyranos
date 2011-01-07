@@ -890,6 +890,11 @@ if [ -n "$FTGL" ] && [ $FTGL -gt 0 ]; then
     echo "FTGL = 1" >> $CONF
     echo "FTGL_H = `pkg-config --cflags ftgl | sed \"$STRIPOPT\"`" >> $CONF
     echo "FTGL_LIBS = `pkg-config --libs ftgl | sed \"$STRIPOPT\"`" >> $CONF
+    pkg-config  --atleast-version=2.1 ftgl
+    if [ $? = 0 ]; then
+      echo "FTGL_INLCUDE_VER = 20100" >> $CONF
+      echo "#define FTGL_INLCUDE_VER 20100" >> $CONF_H
+    fi
   else
     l=ftgl 
     rm -f tests/libtest$EXEC_END
@@ -939,12 +944,12 @@ if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
     fi
     echo "#define HAVE_FLTK 1" >> $CONF_H
     echo "FLTK = 1" >> $CONF
-    echo "FLTK_H = `$fltkconfig --cxxflags | sed \"$STRIPOPT\"`" >> $CONF
-    echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl $fltkldflags | sed \"$STRIPOPT\"`" >> $CONF
+    echo "FLTK_H = `$fltkconfig --cxxflags $fltkflags | sed \"$STRIPOPT\"`" >> $CONF
+    echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl $fltkldflags $fltkflags | sed \"$STRIPOPT\"`" >> $CONF
     echo "fltkconfig = $fltkconfig" >> $CONF
     echo "FLTK = 1" >> $CONF_I18N
-    echo "FLTK_H = `$fltkconfig --cxxflags | sed \"$STRIPOPT\"`" >> $CONF_I18N
-    echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl $fltkldflags | sed \"$STRIPOPT\"`" >> $CONF_I18N
+    echo "FLTK_H = `$fltkconfig --cxxflags $fltkflags | sed \"$STRIPOPT\"`" >> $CONF_I18N
+    echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl $fltkldflags $fltkflags | sed \"$STRIPOPT\"`" >> $CONF_I18N
     echo "fltkconfig = $fltkconfig" >> $CONF_I18N
 
   else
