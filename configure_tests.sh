@@ -265,16 +265,24 @@ if [ -n "$ARGYLL" ] && [ "$ARGYLL" -gt "0" ]; then
 fi
 
 if [ -n "$OYRANOS" ] && [ "$OYRANOS" != "0" ]; then
-  OY_=`oyranos-config 2>>$CONF_LOG`
+  name="oyranos"
+  minversion=0.2
+  version=`pkg-config --modversion $name`
+  url="http://www.oyranos.org"
+  HAVE_LIB=0
+  ID=OY
+  ID_H="$ID"_H
+  ID_LIBS="$ID"_LIBS
+  pkg-config  --atleast-version=$minversion $name
   if [ $? = 0 ]; then
-    echo_="Oyranos	`oyranos-config --version`		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo_="Oyranos	$version		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     echo "#define HAVE_OY 1" >> $CONF_H
     echo "OY = 1" >> $CONF
-    echo "OYRANOS_H = `oyranos-config --cflags`" >> $CONF
+    echo "OYRANOS_H = `pkg-config oyranos --cflags`" >> $CONF
     if [ -f /usr/X11R6/include/X11/extensions/xf86vmode.h ]; then
-      echo "OYRANOS_LIBS = `oyranos-config --ldflags`" >> $CONF
+      echo "OYRANOS_LIBS = `pkg-config oyranos --libs`" >> $CONF
     else
-      echo "OYRANOS_LIBS = `oyranos-config --ldflags`" >> $CONF
+      echo "OYRANOS_LIBS = `pkg-config oyranos --libs`" >> $CONF
     fi
   else
     if [ $OYRANOS -eq 1 ]; then
