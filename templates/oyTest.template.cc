@@ -29,9 +29,9 @@ void oyTest::{{ class.name }}_generic_methods()
 
   QVERIFY( {{ class.baseName|lower }} != {{ class.baseName|lower }}_new );
 
-  oy{{ name.baseName }}_Release( &{{ class.baseName|lower }} );
-  oy{{ name.baseName }}_Release( &{{ class.baseName|lower }}_copy );
-  oy{{ name.baseName }}_Release( &{{ class.baseName|lower }}_new );
+  oy{{ class.baseName }}_Release( &{{ class.baseName|lower }} );
+  oy{{ class.baseName }}_Release( &{{ class.baseName|lower }}_copy );
+  oy{{ class.baseName }}_Release( &{{ class.baseName|lower }}_new );
 }
 
 {% if class.hiddenStruct %}
