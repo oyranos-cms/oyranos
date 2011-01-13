@@ -29,3 +29,4 @@ int          oyObject_UnSetLocking     ( oyObject_s        object,
                                          int               line );
 int          oyObject_GetId            ( oyObject_s        object );
 int          oyObject_GetRefCount      ( oyObject_s        object );
+int          oyObject_UnRef          ( oyObject_s          obj );

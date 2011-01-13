@@ -73,59 +73,6 @@ int          oyObject_Ref            ( oyObject_s          obj )
   return s->ref_;
 }
 
-/**
- *  @internal
- *  Function oyObject_UnRef
- *  @memberof oyObject_s
- *  @brief   decrease the ref counter and return the above zero ref value
- *
- *  @version Oyranos: 0.1.8
- *  @date    2008/02/07
- *  @since   2008/02/07 (Oyranos: 0.1.8)
- */
-int          oyObject_UnRef          ( oyObject_s          obj )
-{
-  int ref = 0;
-  oyObject_s s = obj;
-  int error = !s;
-
-  if( s->type_ != oyOBJECT_OBJECT_S)
-  {
-    WARNc_S("Attempt to manipulate a non oyObject_s object.")
-    return 1;
-  }
-
-  if(error <= 0)
-  {
-    oyObject_Lock( s, __FILE__, __LINE__ );
-
-    if(s->ref_ < 0)
-      ref = 0;
-
-    if(error <= 0 && --s->ref_ > 0)
-      ref = s->ref_;
-
-#   ifndef DEBUG_OBJECT
-    if(s->ref_ < -1)
-#   else
-    if(s->id_ == 247)
-#   endif
-      WARNc3_S("%s ID: %d refs: %d",
-             oyStructTypeToText( s->parent_type_ ), s->id_, s->ref_)
-
-    if(obj->parent_type_ == oyOBJECT_NAMED_COLOURS_S)
-    {
-      int e_a = error;
-      error = pow(e_a,2.1);
-      error = e_a;
-    }
-
-    oyObject_UnLock( s, __FILE__, __LINE__ );
-  }
-
-  return ref;
-}
-
 /** @internal
  *  Function oyObject_Hashed_
  *  @memberof oyObject_s
