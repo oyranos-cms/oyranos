@@ -8,6 +8,8 @@ int          oyCMMptr_Set            ( oyCMMptr_s        * cmm_ptr,
                                        oyPointer           ptr,
                                        const char        * func_name,
                                        oyPointer_release_f ptrRelease );
-int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
-                                       oyCMMptr_s        * cmm_ptr_out,
-                                       oyFilterNode_s    * node );
+const char * oyCMMptr_GetFuncName    ( oyCMMptr_s        * cmm_ptr );
+const char * oyCMMptr_GetLibName     ( oyCMMptr_s        * cmm_ptr );
+const char * oyCMMptr_GetResourceName( oyCMMptr_s        * cmm_ptr );
+int          oyCMMptr_GetSize        ( oyCMMptr_s        * cmm_ptr );
+oyPointer    oyCMMptr_GetPointer     ( oyCMMptr_s        * cmm_ptr );
