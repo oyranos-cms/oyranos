@@ -5,13 +5,22 @@
 #define {{ file_name|cut:".h"|upper }}_H
 
 #include <string.h>
+#include <math.h>
 
+#include <oyranos_object.h>
 #include <oyranos_helper.h>
 #include <oyranos_debug.h>
+#include <oyranos_i18n.h>
 #include <oyranos_texts.h>
+#include <oyranos_string.h>
 
 #include "oyranos_object.h"
-#include "oyCMMapiFilters_s.h"
+/*#include "oyCMMapiFilters_s.h"*/
+
+#define hashTextAdd_m( text_ ) \
+  oyStringAdd_( &hash_text, text_, s->oy_->allocateFunc_, \
+                            s->oy_->deallocateFunc_ );
+
 
 #define oyCheckType_m( typ, action ) \
   if( !s || s->type != typ) \
