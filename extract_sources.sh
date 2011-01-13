@@ -1,6 +1,7 @@
 #!/bin/bash
 
 function loc {
+  export LANG=en_GB
   echo
   echo
   echo "############# Lines Of Code ############# "
@@ -27,5 +28,5 @@ loc
 
 cd API_generated/
 
-cmake .
+cmake -DCMAKE_C_FLAGS="-Wall -g -pedantic -DUSE_GETTEXT" -Wdev -DCMAKE_BUILD_TYPE=debugfull .
 make
