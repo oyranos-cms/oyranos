@@ -265,16 +265,24 @@ if [ -n "$ARGYLL" ] && [ "$ARGYLL" -gt "0" ]; then
 fi
 
 if [ -n "$OYRANOS" ] && [ "$OYRANOS" != "0" ]; then
-  OY_=`oyranos-config 2>>$CONF_LOG`
+  name="oyranos"
+  minversion=0.2
+  version=`pkg-config --modversion $name`
+  url="http://www.oyranos.org"
+  HAVE_LIB=0
+  ID=OY
+  ID_H="$ID"_H
+  ID_LIBS="$ID"_LIBS
+  pkg-config  --atleast-version=$minversion $name
   if [ $? = 0 ]; then
-    echo_="Oyranos	`oyranos-config --version`		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo_="Oyranos	$version		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     echo "#define HAVE_OY 1" >> $CONF_H
     echo "OY = 1" >> $CONF
-    echo "OYRANOS_H = `oyranos-config --cflags`" >> $CONF
+    echo "OYRANOS_H = `pkg-config oyranos --cflags`" >> $CONF
     if [ -f /usr/X11R6/include/X11/extensions/xf86vmode.h ]; then
-      echo "OYRANOS_LIBS = `oyranos-config --ldflags`" >> $CONF
+      echo "OYRANOS_LIBS = `pkg-config oyranos --libs`" >> $CONF
     else
-      echo "OYRANOS_LIBS = `oyranos-config --ldflags`" >> $CONF
+      echo "OYRANOS_LIBS = `pkg-config oyranos --libs`" >> $CONF
     fi
   else
     if [ $OYRANOS -eq 1 ]; then
@@ -882,6 +890,11 @@ if [ -n "$FTGL" ] && [ $FTGL -gt 0 ]; then
     echo "FTGL = 1" >> $CONF
     echo "FTGL_H = `pkg-config --cflags ftgl | sed \"$STRIPOPT\"`" >> $CONF
     echo "FTGL_LIBS = `pkg-config --libs ftgl | sed \"$STRIPOPT\"`" >> $CONF
+    pkg-config  --atleast-version=2.1 ftgl
+    if [ $? = 0 ]; then
+      echo "FTGL_INLCUDE_VER = 20100" >> $CONF
+      echo "#define FTGL_INLCUDE_VER 20100" >> $CONF_H
+    fi
   else
     l=ftgl 
     rm -f tests/libtest$EXEC_END
@@ -931,12 +944,12 @@ if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
     fi
     echo "#define HAVE_FLTK 1" >> $CONF_H
     echo "FLTK = 1" >> $CONF
-    echo "FLTK_H = `$fltkconfig --cxxflags | sed \"$STRIPOPT\"`" >> $CONF
-    echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl $fltkldflags | sed \"$STRIPOPT\"`" >> $CONF
+    echo "FLTK_H = `$fltkconfig --cxxflags $fltkflags | sed \"$STRIPOPT\"`" >> $CONF
+    echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl $fltkldflags $fltkflags | sed \"$STRIPOPT\"`" >> $CONF
     echo "fltkconfig = $fltkconfig" >> $CONF
     echo "FLTK = 1" >> $CONF_I18N
-    echo "FLTK_H = `$fltkconfig --cxxflags | sed \"$STRIPOPT\"`" >> $CONF_I18N
-    echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl $fltkldflags | sed \"$STRIPOPT\"`" >> $CONF_I18N
+    echo "FLTK_H = `$fltkconfig --cxxflags $fltkflags | sed \"$STRIPOPT\"`" >> $CONF_I18N
+    echo "FLTK_LIBS = `$fltkconfig --use-images --use-gl $fltkldflags $fltkflags | sed \"$STRIPOPT\"`" >> $CONF_I18N
     echo "fltkconfig = $fltkconfig" >> $CONF_I18N
 
   else
