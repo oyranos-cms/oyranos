@@ -34,4 +34,8 @@ int              oyStructList_ObserverAdd (
 oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
                                        const char        * list_name,
                                        oyObject_s          object );
-
+oyStruct_s *     oyStructList_GetType( oyStructList_s    * list,
+                                       int                 pos,
+                                       oyOBJECT_e          type );
+oyOBJECT_e       oyStructList_GetParentObjType (
+                                       oyStructList_s    * list );

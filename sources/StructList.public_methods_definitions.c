@@ -538,3 +538,37 @@ int              oyStructList_ObserverAdd (
 
   return error;
 }
+
+/**
+ *  Function oyStructList_GetType
+ *  @brief oyStructList_s pointer access
+ *
+ *  non thread save; better dont use
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+oyStruct_s *     oyStructList_GetType( oyStructList_s    * list,
+                                       int                 pos,
+                                       oyOBJECT_e          type )
+{
+  oyStruct_s * obj = oyStructList_Get_( list, pos );
+
+  if(obj && obj->type_ != type)
+    obj = 0;
+  return obj;
+}
+
+oyOBJECT_e       oyStructList_GetParentObjType (
+                                       oyStructList_s    * list )
+{
+  oyStructList_s_ * s = (oyStructList_s_*)list;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_STRUCT_LIST_S, return 0 )
+
+  return s->parent_type_;
+}
+

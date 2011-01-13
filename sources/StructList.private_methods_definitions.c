@@ -50,27 +50,6 @@ oyStruct_s *     oyStructList_Get_   ( oyStructList_s    * list,
   return obj;
 }
 
-/**
- *  @internal
- *  Function oyStructList_GetType_
- *  @brief oyStructList_s pointer access
- *
- *  non thread save
- *
- *  @since Oyranos: version 0.1.8
- *  @date  1 january 2008 (API 0.1.8)
- */
-oyStruct_s *     oyStructList_GetType_(oyStructList_s    * list,
-                                       int                 pos,
-                                       oyOBJECT_e          type )
-{
-  oyStruct_s * obj = oyStructList_Get_( list, pos );
-
-  if(obj && obj->type_ != type)
-    obj = 0;
-  return obj;
-}
-
 /** @internal
  *  @brief oyStructList_s pointer referencing
  *
