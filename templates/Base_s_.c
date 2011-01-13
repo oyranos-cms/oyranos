@@ -31,7 +31,7 @@
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_{{ class.baseName|underscores|upper }}_S;
-# define STRUCT_TYPE {{ class.privName }} // FIXME Why is this needed?
+# define STRUCT_TYPE {{ class.privName }} /* FIXME Why is this needed? */
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
   STRUCT_TYPE * s = 0;
