@@ -74,7 +74,7 @@ OYAPI int  OYEXPORT
   if(!error)
     oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 1 )
 
-  if(!error && s->list_->parent_type_ != oyOBJECT_{{ class.baseName|underscores|upper }}_S)
+  if(!error && oyStructList_GetParentObjType(s->list_) != oyOBJECT_{{ class.baseName|underscores|upper }}_S)
     error = 1;
   
   if(!error)
