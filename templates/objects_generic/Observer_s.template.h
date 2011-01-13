@@ -41,6 +41,7 @@ typedef enum {
   oySIGNAL_USER3                       /**< more signal types are possible */
 } oySIGNAL_e;
 
+const char *       oySignalToString  ( oySIGNAL_e          signal_type );
 
 typedef struct {{ class.name }} {{ class.name }};
 
