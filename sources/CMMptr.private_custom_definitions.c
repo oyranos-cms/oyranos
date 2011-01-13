@@ -31,19 +31,23 @@ void oyCMMptr_Release__Members( oyCMMptr_s_ * cmmptr )
     if(--cmmptr->ref)
       return;
 
-    cmmptr->type = 0;
+    cmmptr->type_ = 0;
 
     if(cmmptr->ptr)
     {
       if(cmmptr->ptrRelease)
         cmmptr->ptrRelease( &cmmptr->ptr );
       else
-        oyPointerRelease_m( &cmmptr->ptr );
+      {
+        oyDeAllocateFunc_( cmmptr->ptr );
+        cmmptr->ptr = 0;
+      }
 
-      oyCMMdsoRelease_( cmmptr->lib_name );
+      /*oyCMMdsoRelease_( cmmptr->lib_name );*/
     }
     cmmptr->ptrRelease = 0;
-    oyPointerRelease_m( &cmmptr );
+    oyDeAllocateFunc_( cmmptr );
+    cmmptr = 0;
   }
 }
 
@@ -97,7 +101,7 @@ int oyCMMptr_Copy__Members( oyCMMptr_s_ * dst, oyCMMptr_s_ * src)
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
-  dst->ref = src-ref;
+  dst->ref = src->ref;
 
   return 0;
 }
