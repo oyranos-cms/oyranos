@@ -1,3 +1,5 @@
+#include "oyCMMptr_s.h"
+
 /** Function oyOption_FromRegistration
  *  @memberof oyOption_s
  *  @brief   new option with registration and value filled from DB if available
@@ -230,13 +232,19 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
                                        const char        * text,
                                        uint32_t            flags )
 {
+  int error = 0;
   oyOption_s_ * s = (oyOption_s_*)obj;
   if(!s)
     return -1;
 
   oyCheckType__m( oyOBJECT_OPTION_S, return -1 )
 
-  return oyOption_SetFromText_( s, text, flags );
+  oyOption_SetFromText_( s, text, flags );
+  error = oyOption_SetFromText_( s, text, flags );
+  if(!error)
+    oyOption_UpdateFlags_(s);
+
+  return error;
 }
 
 /** Function oyOption_GetValueText
@@ -542,8 +550,8 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
     if((s->value && s->value_type == oyVAL_STRUCT &&
          (((s->value->oy_struct->type_ == oyOBJECT_BLOB_S &&
            ((oyBlob_s_*)(s->value->oy_struct))->ptr == ptr)) ||
-          (s->value->oy_struct->type_ == oyOBJECT_CMM_POINTER_S &&
-           ((oyCMMptr_s*)(s->value->oy_struct))->ptr == ptr))))
+          (s->value->oy_struct->type_ == oyOBJECT_CMM_PTR_S &&
+           oyCMMptr_GetPointer((oyCMMptr_s*)(s->value->oy_struct)) == ptr))))
       return error;
 
     oyValueClear( s->value, s->value_type, deallocateFunc_ );
@@ -611,7 +619,7 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
     if(!(s->value && s->value_type == oyVAL_STRUCT &&
          (((s->value->oy_struct->type_ == oyOBJECT_BLOB_S &&
            ((oyBlob_s_*)(s->value->oy_struct))->ptr)) ||
-          s->value->oy_struct->type_ == oyOBJECT_CMM_POINTER_S)))
+          s->value->oy_struct->type_ == oyOBJECT_CMM_PTR_S)))
       error = 1;
   }
 
@@ -812,3 +820,28 @@ oyStruct_s *   oyOption_StructGet    ( oyOption_s        * option,
 
   return s;
 }
+
+void           oyOption_SetSource    ( oyOption_s        * option,
+                                       oyOPTIONSOURCE_e    source )
+{
+  oyOption_s_ * s = (oyOption_s_*)option;
+
+  if(!s)
+    return;
+
+  oyCheckType__m( oyOBJECT_OPTION_S, return )
+
+  s->source = source;
+}
+oyOPTIONSOURCE_e oyOption_GetSource  ( oyOption_s        * option )
+{
+  oyOption_s_ * s = (oyOption_s_*)option;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
+
+  return s->source;
+}
+
