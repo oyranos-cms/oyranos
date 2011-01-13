@@ -199,6 +199,9 @@ typedef enum {
   oyUNDEFINED
 } oySTATUS_e;
 
+int          oyTextboolean_          ( const char        * text_a,
+                                       const char        * text_b,
+                                       oyBOOLEAN_e         type );
 
 
 {% include "cpp_end.h" %}
