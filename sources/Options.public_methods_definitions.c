@@ -199,7 +199,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
   {
     s = oyOptions_New(0);
 
-    oyOptions_ParseXML_( s, &texts, &texts_n, doc, cur );
+    oyOptions_ParseXML_( (oyOptions_s_*)s, &texts, &texts_n, doc, cur );
 
     oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
     xmlFreeDoc(doc);
