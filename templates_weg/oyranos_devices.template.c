@@ -1183,7 +1183,6 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
   return error;
 }
 
-
 /**
  *  @} *//* devices_handling
  */

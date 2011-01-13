@@ -28,8 +28,8 @@ ADD_LIBRARY( oyranos_object SHARED
 {% for class in classes %}
   {% if class.hiddenStruct %}"{{ class.name }}.c" "{{ class.privName }}.c"{% else %}"{{ class.name }}.c" "{{ class.name }}_impl.c"{% endif %}
 {% endfor %}
+  "oyranos_devices.c" "oyranos_devices_internal.c"
 )
-# "oyranos_devices.c" "oyranos_devices_internal.c"
 
 # Tests for the auto-generated oyranos object system
 ADD_EXECUTABLE( oyTest "oyTest.cc" ${oyTEST_MOC_SOURCES} )
