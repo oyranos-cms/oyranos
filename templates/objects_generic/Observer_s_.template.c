@@ -172,8 +172,8 @@ int        oyStruct_ObserverRemove_  ( oyStructList_s    * list,
     n = oyStructList_Count( list );
     for(i = n-1; i >= 0; --i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType_( list,
-                                                   i, oyOBJECT_OBSERVER_S );
+      obs = (oyObserver_s*) oyStructList_GetType( list,
+                                                  i, oyOBJECT_OBSERVER_S );
 
       if(obs &&
          ((observer && obj == obs->observer) ||

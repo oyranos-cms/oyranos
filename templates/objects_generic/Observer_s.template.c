@@ -8,6 +8,7 @@
 #include "oyObject_s.h"
 #include "oyOption_s_.h"
 #include "oyOptions_s_.h"
+#include "oyStructList_s_.h" /* not nice but probably faster list access */
 
 
 /* {{ class.name }} common object functions { */
@@ -190,8 +191,8 @@ OYAPI int  OYEXPORT
     n = oyStructList_Count( list );
     for(i = 0; i < n; ++i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType_( list,
-                                                   i, oyOBJECT_OBSERVER_S );
+      obs = (oyObserver_s*) oyStructList_GetType( list,
+                                                  i, oyOBJECT_OBSERVER_S );
       if(observer == obs->observer && obs->signal == signalFunc)
         ++found;
     }
@@ -220,8 +221,8 @@ OYAPI int  OYEXPORT
     n = oyStructList_Count( list );
     for(i = 0; i < n; ++i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType_( list,
-                                                   i, oyOBJECT_OBSERVER_S );
+      obs = (oyObserver_s*) oyStructList_GetType( list,
+                                                  i, oyOBJECT_OBSERVER_S );
       if(model == obs->model && obs->signal == signalFunc)
         ++found;
     }
@@ -321,8 +322,8 @@ OYAPI int  OYEXPORT
     n = oyStructList_Count( observers );
     for(i = 0; i < n; ++i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType_( observers,
-                                                   i, oyOBJECT_OBSERVER_S );
+      obs = (oyObserver_s*) oyStructList_GetType( observers,
+                                                  i, oyOBJECT_OBSERVER_S );
       if(obs)
       {
         if(obs->model == model)
@@ -393,8 +394,8 @@ OYAPI int  OYEXPORT
     n = oyStructList_Count( observers );
     for(i = 0; i < n; ++i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType_( observers,
-                                                   i, oyOBJECT_OBSERVER_S );
+      obs = (oyObserver_s*) oyStructList_GetType( observers,
+                                                  i, oyOBJECT_OBSERVER_S );
       if(obs)
         ++obs->disable_ref;
     }
@@ -437,8 +438,8 @@ OYAPI int  OYEXPORT
     n = oyStructList_Count( observers );
     for(i = 0; i < n; ++i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType_( observers,
-                                                   i, oyOBJECT_OBSERVER_S );
+      obs = (oyObserver_s*) oyStructList_GetType( observers,
+                                                  i, oyOBJECT_OBSERVER_S );
       if(obs)
         --obs->disable_ref;
       if(obs->disable_ref < 0)
@@ -522,8 +523,8 @@ OYAPI int  OYEXPORT
     n = oyStructList_Count( observers );
     for(i = 0; i < n; ++i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType_( observers,
-                                                   i, oyOBJECT_OBSERVER_S );
+      obs = (oyObserver_s*) oyStructList_GetType( observers,
+                                                  i, oyOBJECT_OBSERVER_S );
       if(obs &&
          (!(flags & 0x01) || obs->model == pattern))
       { 
@@ -600,8 +601,8 @@ OYAPI int  OYEXPORT
     n = oyStructList_Count( list );
     for(i = 0; i < n; ++i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType_( list,
-                                                   i, oyOBJECT_OBSERVER_S );
+      obs = (oyObserver_s*) oyStructList_GetType( list,
+                                                  i, oyOBJECT_OBSERVER_S );
       if(obs &&
          (!(flags & 0x01) || obs->observer == pattern))
       { 
@@ -687,7 +688,7 @@ OYAPI int  OYEXPORT
           for(j = 0; j < j_n; ++j)
           {
             oyObserver_s * obs;
-            obs = (oyObserver_s*) oyStructList_GetType_( observers,
+            obs = (oyObserver_s*) oyStructList_GetType( observers,
                                                    j, oyOBJECT_OBSERVER_S );
             if(obs && obs->observer == observer)
             { 
@@ -707,6 +708,39 @@ OYAPI int  OYEXPORT
 
   return observed;
 }
+
+const char *       oySignalToString  ( oySIGNAL_e          signal_type )
+{
+  const char * text = "unknown";
+  switch(signal_type)
+  {
+
+  case oySIGNAL_OK:
+       text = "oySIGNAL_OK"; break;
+  case oySIGNAL_CONNECTED:             /**< connection established */
+       text = "oySIGNAL_CONNECTED: connection established"; break;
+  case oySIGNAL_RELEASED:              /**< released the connection */
+       text = "oySIGNAL_RELEASED: released the connection"; break;
+  case oySIGNAL_DATA_CHANGED:          /**< call to update image views */
+       text = "oySIGNAL_DATA_CHANGED: call to update data views"; break;
+  case oySIGNAL_STORAGE_CHANGED:       /**< new data accessors */
+       text = "oySIGNAL_STORAGE_CHANGED: new data accessors"; break;
+  case oySIGNAL_INCOMPATIBLE_DATA:     /**< can not process image */
+       text = "oySIGNAL_INCOMPATIBLE_DATA: can not process data"; break;
+  case oySIGNAL_INCOMPATIBLE_OPTION:   /**< can not handle option */
+       text = "oySIGNAL_INCOMPATIBLE_OPTION: can not handle option"; break;
+  case oySIGNAL_INCOMPATIBLE_CONTEXT:  /**< can not handle profile */
+       text = "oySIGNAL_INCOMPATIBLE_CONTEXT: can not handle context"; break;
+  case oySIGNAL_USER1:
+       text = "oySIGNAL_USER1"; break;
+  case oySIGNAL_USER2:
+       text = "oySIGNAL_USER2"; break;
+  case oySIGNAL_USER3:                 /**< more signal types are possible */
+       text = "oySIGNAL_USER2"; break;
+  }
+  return text;
+}
+
 
 uint32_t   oy_observer_flags = 0;
 /** Function oyObserverFlagsGet
