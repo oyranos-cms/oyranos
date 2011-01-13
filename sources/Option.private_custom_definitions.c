@@ -1,3 +1,5 @@
+#include "oyStructList_s.h"
+
 /** Function    oyOption_Release__Members
  *  @memberof   oyOption_s
  *  @brief      Custom Option destructor
@@ -25,13 +27,13 @@ void oyOption_Release__Members( oyOption_s_ * option )
 
   if(option->oy_->deallocateFunc_)
   {
-    oyDeAlloc_f deallocateFunc = option->oy_->deallocateFunc_;
+    /*oyDeAlloc_f deallocateFunc = option->oy_->deallocateFunc_;*/
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( option->member );
      */
 
-    oyOption_Clear( option );
+    oyOption_Clear( (oyOption_s*) option );
   }
 }
 
@@ -81,6 +83,7 @@ int oyOption_Copy__Members( oyOption_s_ * dst, oyOption_s_ * src)
 {
   oyAlloc_f allocateFunc_ = 0;
   oyDeAlloc_f deallocateFunc_ = 0;
+  int error = 0;
 
   if(!dst || !src)
     return 1;
@@ -109,5 +112,5 @@ int oyOption_Copy__Members( oyOption_s_ * dst, oyOption_s_ * src)
    dst->flags = src->flags;
    oyStruct_ObserverSignal( (oyStruct_s*)dst, oySIGNAL_DATA_CHANGED, 0 );
 
-  return 0;
+  return error;
 }
