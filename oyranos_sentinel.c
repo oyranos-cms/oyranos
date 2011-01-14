@@ -20,7 +20,6 @@
 #include "config.h"
 #include "oyranos.h"
 #include "oyranos_alpha_internal.h"
-#include "oyranos_cmms.h"
 #include "oyranos_debug.h"
 #include "oyranos_elektra.h"
 #include "oyranos_helper.h"
@@ -55,7 +54,6 @@ int oyExportStart_(int export_check)
      This will change when Monitor support will be a runtime link in module.
    */
   EXPORT_( EXPORT_MONITOR, export_monitor, start = 1 )
-  EXPORT_( EXPORT_CMMS, export_cmm, oyModulesScan_(0) )
 
   oyInit_();
   return start;

@@ -101,9 +101,9 @@ fi
 
 if [ "$echo_ldstaticflags" = "yes" ]; then
   if [ -f liboyranos.a ]; then
-    echo "liboyranos.a $elektra $oyranos_add"
+    echo "liboyranos.a liboyranos_core.a $elektra $oyranos_add"
   else
-    echo "$libdir/liboyranos.a $elektra $oyranos_add"
+    echo "$libdir/liboyranos.a $libdir/liboyranos_core.a $elektra $oyranos_add"
   fi
 fi
 

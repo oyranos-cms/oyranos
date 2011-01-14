@@ -883,6 +883,8 @@ oyTESTRESULT_e testRegistrationMatch ()
   return result;
 }
 
+#include <oyranos_cmm.h>
+
 int myFilterSignalHandler            ( oyObserver_s      * observer,
                                        oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data )
@@ -905,7 +907,9 @@ int myFilterSignalHandler            ( oyObserver_s      * observer,
        if(observer->observer->type_ == oyOBJECT_FILTER_NODE_S)
        {
          node = (oyFilterNode_s*) observer->observer;
-         if(node && node->backend_data && node->backend_data->release)
+         if(node &&
+            node->backend_data &&
+            node->backend_data->release)
          {
            if(observer->model->type_ == oyOBJECT_OPTION_S)
            {

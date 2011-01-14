@@ -18,31 +18,7 @@
 
 #include "oyranos_helper.h"
 #include "oyranos.h"
-#include "oyranos_cmms.h"
 #include "oyranos_sentinel.h"
-
-/** @internal
- *  @brief  read in the declarations of available options and functions 
- *
- *  @param  group        the policy group
- *  @param  xml          xml configuration string
- *  @return              errors
- */
-int
-oyModulRegisterXML       (oyGROUP_e           group,
-                          const char       *xml)
-{
-  int n = 0;
-
-  DBG_PROG_START
-  oyExportStart_(EXPORT_CMMS);
-
-  n = oyModulRegisterXML_(group, xml);
-
-  oyExportEnd_();
-  DBG_PROG_ENDE
-  return n;
-}
 
 
 /* --- internal API definition --- */

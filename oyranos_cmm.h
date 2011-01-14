@@ -130,6 +130,8 @@ typedef icSignature (*oyCMMProfile_GetSignature_f) (
                                        oyCMMptr_s        * cmm_ptr,
                                        int                 pcs);
 
+int              oyCMMlibMatchesCMM  ( const char        * lib_name,
+                                       const char        * cmm );
 
 /*oyPointer          oyCMMallocateFunc ( size_t              size );
 void               oyCMMdeallocateFunc(oyPointer           mem );*/

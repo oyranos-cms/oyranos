@@ -24,7 +24,6 @@
 #endif
 
 #include "oyranos.h"
-#include "oyranos_cmms.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
@@ -159,9 +158,6 @@ void
 oyI18Nrefresh_()
 {
   oyTextsTranslate_ ();
-
-  /* refresh CMM's */
-  oyModulsRefreshI18N_();
 }
 
 

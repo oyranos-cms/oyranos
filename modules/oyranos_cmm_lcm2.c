@@ -20,9 +20,9 @@
 #include <stdarg.h>
 
 #include "oyranos_cmm.h"         /* the API's this CMM implements */
-#include "oyranos_cmms.h"        /* the API's this CMM uses from Oyranos */
 #include "oyranos_helper.h"      /* oySprintf_ and other local helpers */
 #include "oyranos_alpha_internal.h" /* hashTextAdd_m ... */
+#include "oyranos_i18n.h"
 #include "oyranos_string.h"
 
 /*
@@ -969,7 +969,7 @@ cmsHPROFILE  lcm2AddProfile          ( oyProfile_s       * p )
 
   if(!cmm_ptr)
   {
-    lcms_msg( oyMSG_WARN, (oyStruct_s*)p,
+    message( oyMSG_WARN, (oyStruct_s*)p,
              OY_DBG_FORMAT_" oyCMMptrLookUpFromObject() failed", OY_DBG_ARGS_ );
     return 0;
   }

@@ -20,7 +20,6 @@
 
 #include "oyranos_alpha.h"
 #include "oyranos_cmm.h"
-#include "oyranos_cmms.h"
 
 #ifdef __cplusplus
 extern "C" {

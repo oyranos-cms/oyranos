@@ -16,6 +16,7 @@ LIBRARIES = $(TARGET) $(LIB_FORMS_FLTK)
 LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)$(LIBEXT)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)$(LIBEXT)
 LIBSO = lib$(TARGET)$(SO)$(LIBEXT)
+LIBNAME_CORE = lib$(TARGET)_core.a
 LIBNAME = lib$(TARGET).a
 #ifdef FLTK
 LIB_FORMS_FLTK = oyforms_fltk
@@ -116,8 +117,8 @@ CHEADERS = \
 	$(TARGET)_alpha_internal.h \
 	$(TARGET)_check.h \
 	$(TARGET)_cmm.h \
-	$(TARGET)_cmms.h \
 	$(TARGET)_config.h \
+	$(TARGET)_core.h \
 	$(TARGET)_cs.h \
 	$(TARGET)_debug.h \
 	$(TARGET)_definitions.h \
@@ -143,24 +144,25 @@ CHEADERS = \
 	dirent_custom.h \
 	oforms/$(TARGET)_forms.h
 #	fl_$(TARGET).h
-CFILES = \
-	$(TARGET).c \
-	$(TARGET)_check.c \
-	$(TARGET)_cmm.c \
-	$(TARGET)_cmms.c \
-	$(TARGET)_elektra.c \
+CFILES_CORE = \
+	$(TARGET)_core.c \
 	$(TARGET)_helper.c \
 	$(TARGET)_i18n.c \
-	$(TARGET)_icc.c \
 	$(TARGET)_io.c \
 	$(TARGET)_misc.c \
 	$(TARGET)_sentinel.c \
 	$(TARGET)_string.c \
 	$(TARGET)_texts.c \
-	$(TARGET)_widgets.c \
-	$(TARGET)_xml.c \
 	md5.c \
 	lookup3.c
+CFILES = \
+	$(TARGET).c \
+	$(TARGET)_check.c \
+	$(TARGET)_cmm.c \
+	$(TARGET)_elektra.c \
+	$(TARGET)_icc.c \
+	$(TARGET)_widgets.c \
+	$(TARGET)_xml.c
 CFILESC = \
 	$(TARGET)_debug.c
 CFILES_ALPHA = \
@@ -347,7 +349,8 @@ Flmm_FILES = \
 	FL/README
 #endif
 
-TOP_SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES) $(CFILESC) \
+
+TOP_SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES_CORE) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
 		$(CFILES_TOOLS) $(CFILES_ALPHA) $(CFILES_CS) \
 		$(CXXFILES_FLTK)
@@ -364,7 +367,8 @@ OBJECTS_CS = $(CFILES_CS:.c=.o)
 
 # we need these files to generate explicite targets for out of tree builds
 COBJECTS = \
-	$(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o) \
+	$(CFILES_CORE:.c=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) \
+	$(CFILES_ALPHA:.c=.o) \
 	$(CFILES_OFORMS:.c=.o) $(OBJECTS_CS) \
 	$(MONI_X11_OBJECTS) \
 	$(MONI_CS_OBJECTS) \
@@ -390,7 +394,8 @@ CPPOBJECTS =	test2.o \
 	$(CPP_lraw_OBJECTS)
 CXXOBJECTS =	$(CXXFILES) $(FLTK_OFORMS_OBJECTS)
 
-OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) $(CFILES_ALPHA:.c=.o) $(CFILES_OFORMS:.c=.o) $(OBJECTS_CS)
+OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILES_ALPHA:.c=.o) $(CFILES_OFORMS:.c=.o) $(OBJECTS_CS)
+OBJECTS_CORE = $(CFILES_CORE:.c=.o) $(CFILESC:.c=.o)
 CMM_lcms_OBJECTS = $(CFILES_CMM_lcms:.c=.o)
 CMM_lcm2_OBJECTS = $(CFILES_CMM_lcm2:.c=.o)
 CMM_lraw_OBJECTS = $(CPPFILES_CMM_lraw:.cpp=.o)
@@ -411,6 +416,7 @@ FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
 FLTK_OFORMS_OBJECTS = $(CXXFILES_OFORMS_FLTK:.cxx=.o)
 
 CLEAN_OBJECTS = $(OBJECTS) \
+	$(OBJECTS_CORE) \
 	$(MONI_X11_OBJECTS) \
 	$(MONI_CS_OBJECTS) \
 	$(CMM_lcms_OBJECTS) \
@@ -509,11 +515,11 @@ time:
 	echo $(MTIME)
 
 # build all objects and libraries, link the headers to $(TARGET)
-$(LIBSONAMEFULL):	$(OBJECTS) $(LIBNAME) $(DEVEL_LIBS) $(ELEKTRA_VERSION)
+$(LIBSONAMEFULL):	$(LIBNAME_CORE) $(LIBNAME) $(DEVEL_LIBS) $(ELEKTRA_VERSION)
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_libdir)$(LIBSONAME) \
 	-o $(LIBSONAMEFULL) \
-	$(OBJECTS) \
+	$(OBJECTS_CORE) $(OBJECTS) \
 	-L$(libdir) $(LDLIBS) $(m)
 	$(RM)  $(LIBSONAME)
 	$(LNK) $(LIBSONAMEFULL) $(LIBSONAME)
@@ -705,6 +711,12 @@ $(LIBNAME):	$(OBJECTS)
 	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIBNAME) \
 		$(OBJECTS)
 	$(RANLIB) $(LIBNAME)
+$(LIBNAME_CORE):	$(OBJECTS_CORE)
+	echo Linking $@ ...
+	test -f $(LIBNAME_CORE) && $(RM) $(LIBNAME_CORE) || echo ""
+	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIBNAME_CORE) \
+		$(OBJECTS_CORE)
+	$(RANLIB) $(LIBNAME_CORE)
 
 $(ELEKTRA_VERSION):
 	echo building DB ...
@@ -729,6 +741,15 @@ $(TARGET)-profiles:	$(TARGET)_profiles.o $(LIBSONAMEFULL)
 	$(CC) -I./ $(CFLAGS) -o $@ \
 	$< \
 	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
+
+test_core: test_core.o
+	echo Linking dynamic $@ ...
+	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall \
+	  -o test_core_dyn \
+	  $< -L./ `./oyranos-config --ldflags` -L$(libdir) $(intl)
+	echo Linking static $@ ...
+	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o $@ \
+	  $< -L./ $(LIBNAME_CORE) -L$(libdir) $(intl) $(dl)
 
 
 test2:	test2.o $(LIBSONAMEFULL)
@@ -915,6 +936,7 @@ install_bin:	all install_gui
 	-$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_alpha.h $(DESTDIR)$(includedir)/$(TARGET)/alpha
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_cmm.h $(DESTDIR)$(includedir)/$(TARGET)/alpha
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_config.h $(DESTDIR)$(includedir)/$(TARGET)
+	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_core.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_definitions.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(SRCDIR)/icc34.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_icc.h $(DESTDIR)$(includedir)/$(TARGET)

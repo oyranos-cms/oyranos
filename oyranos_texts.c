@@ -22,7 +22,6 @@
 #include "config.h"
 #include "oyranos.h"
 #include "oyranos_alpha.h"
-#include "oyranos_cmms.h"
 #include "oyranos_debug.h"
 #include "oyranos_elektra.h"
 #include "oyranos_helper.h"
@@ -497,8 +496,6 @@ oyOptionGet_                        (oyWIDGET_e          type)
     DBG_PROG_ENDE
     return &oy_option_[type];
   }
-
-  result = oyModulsUIOptionSearch_( type );
 
   DBG_PROG_ENDE
   return result;

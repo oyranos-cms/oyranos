@@ -24,7 +24,6 @@
 #include "config.h"
 #include "oyranos.h"
 #include "oyranos_check.h"
-#include "oyranos_cmms.h"
 #include "oyranos_debug.h"
 #include "oyranos_elektra.h"
 #include "oyranos_helper.h"
