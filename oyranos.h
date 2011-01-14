@@ -17,8 +17,7 @@
 #define OYRANOS_H
 
 #include "oyranos_definitions.h"
-#include "oyranos_version.h"
-#include "oyranos_types.h"
+#include "oyranos_core.h"
 
 /** \namespace oyranos
     @brief The Oyranos namespace.
@@ -26,22 +25,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-typedef char oyChar;
-
-extern int oy_debug;
-
-typedef enum {
-  oyMSG_ERROR = 300,
-  oyMSG_WARN,
-  oyMSG_DBG
-} oyMSG_e;
-typedef int  (*oyMessage_f)          ( int/*oyMSG_e*/      code, 
-                                       const oyStruct_s  * context,
-                                       const char        * format,
-                                       ... );
-int            oyMessageFuncSet      ( oyMessage_f         message_func );
-extern         oyMessage_f             oyMessageFunc_p;
 
 
 /** @brief Widget Groups 
@@ -311,24 +294,6 @@ int    oyProfileGetMD5               ( void       *buffer,
                                        size_t      size,
                                        unsigned char *md5_return );
 
-
-/** @brief codeset for Oyranos
- *
- *  set here the codeset part, e.g. "UTF-8", which shall be delivered from
- *  Oyranos string translations.
- *  Set this variable before any call to Oyranos.
- *  The environment variable OY_LOCALEDIR overrides the static inbuild 
- *  OY_LOCALEDIR macro defined in config.h . OY_LOCALEDIR should match a 
- *  corresponding $prefix/share/locale path.
- */
-extern const char *oy_domain_codeset;
-
-void           oyI18NSet             ( int active,
-                                       int reserved );
-const char *   oyLanguage            ( void );
-const char *   oyCountry             ( void );
-const char *   oyLang                ( void );
-void           oyI18Nreset           ( void );
 
 
 

@@ -1,0 +1,388 @@
+/** @file oyranos.c
+ *
+ *  Oyranos is an open source Colour Management System 
+ *
+ *  @par Copyright:
+ *            2004-2011 (C) Kai-Uwe Behrmann
+ *
+ *  @brief    public Oyranos API's
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @par License:
+ *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2004/11/25
+ */
+
+
+#include "oyranos_core.h" /* define HAVE_POSIX */
+
+#include <sys/stat.h>
+#ifdef HAVE_POSIX
+#include <unistd.h>
+#include <langinfo.h>
+#endif
+#include <stdarg.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "config.h"
+#include "oyranos_debug.h"
+#include "oyranos_helper.h"
+#include "oyranos_internal.h"
+#include "oyranos_io.h"
+#include "oyranos_sentinel.h"
+#include "oyranos_string.h"
+#include "oyranos_texts.h"
+
+
+/* --- Helpers  --- */
+
+/* --- static variables   --- */
+
+/* --- structs, typedefs, enums --- */
+
+/* --- internal API definition --- */
+
+/* --- function definitions --- */
+
+
+/** @func    oyMessageFunc_
+ *  @brief
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/04/03 (Oyranos: 0.1.8)
+ *  @date    2009/07/20
+ */
+int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, ... )
+{
+  char * text = 0;
+  va_list list;
+  int i,len;
+  const char * type_name = "";
+  int id = -1;
+  size_t sz = 256;
+#ifdef HAVE_POSIX
+  pid_t pid = 0;
+#else
+  int pid = 0;
+#endif
+  FILE * fp = 0;
+  const char * id_text = 0;
+  char * id_text_tmp = 0;
+
+  if(code == oyMSG_DBG && !oy_debug)
+    return 0;
+
+  if(context && oyOBJECT_NONE < context->type_)
+  {
+    type_name = oyStructTypeToText( context->type_ );
+    id = oyObject_GetId( context->oy_ );
+    if(context->type_ == oyOBJECT_OPTION_S)
+    {
+      id_text = oyOption_GetText( (oyOption_s*)context, oyNAME_NAME );
+      if(!id_text)
+        id_text = ((oyOption_s*)context)->registration;
+    }
+    if(context->type_ == oyOBJECT_PROFILE_S)
+      id_text = oyProfile_GetText( (oyProfile_s*)context, oyNAME_DESCRIPTION );
+    if(id_text)
+      id_text_tmp = strdup(id_text);
+    id_text = id_text_tmp;
+  }
+
+  text = calloc( sizeof(char), sz );
+  if(!text)
+  {
+    fprintf(stderr,
+    "oyranos.c:101 oyMessageFunc_() Could not allocate 256 byte of memory.\n");
+    return 1;
+  }
+
+  text[0] = 0;
+
+# define MAX_LEVEL 20
+  if(level_PROG < 0)
+    level_PROG = 0;
+  if(level_PROG > MAX_LEVEL)
+    level_PROG = MAX_LEVEL;
+  for (i = 0; i < level_PROG; i++)
+    oySprintf_( &text[oyStrlen_(text)], " ");
+
+  fprintf( stderr, "%s", text );
+
+  text[0] = 0;
+  va_start( list, format);
+  len = vsnprintf( text, sz-1, format, list);
+  va_end  ( list );
+
+  if (len >= ((int)sz - 1))
+  {
+    text = realloc( text, (len+1)*sizeof(char) );
+    va_start( list, format);
+    len = vsnprintf( text, len+1, format, list);
+    va_end  ( list );
+  }
+
+  switch(code)
+  {
+    case oyMSG_WARN:
+         fprintf( stderr, _("WARNING"));
+         break;
+    case oyMSG_ERROR:
+         fprintf( stderr, _("!!! ERROR"));
+         break;
+  }
+
+  /* reduce output for non core messages */
+  if( id > 0 || (oyMSG_ERROR <= code && code <= 399) )
+  {
+    fprintf( stderr, " %03f: ", DBG_UHR_);
+    fprintf( stderr, "%s[%d]%s%s%s ", type_name, id,
+             id_text ? "=\"" : "", id_text ? id_text : "", id_text ? "\"" : "");
+  }
+
+  i = 0;
+  while(text[i])
+    fputc(text[i++], stderr);
+  fprintf( stderr, "\n" );
+
+  if(oy_backtrace)
+  {
+#   define TMP_FILE "/tmp/oyranos_gdb_temp." OYRANOS_VERSION_NAME "txt"
+#ifdef HAVE_POSIX
+    pid = (int)getpid();
+#endif
+    fp = fopen( TMP_FILE, "w" );
+
+    if(fp)
+    {
+      fprintf(fp, "attach %d\n", pid);
+      fprintf(fp, "thread 1\nbacktrace\n"/*thread 2\nbacktrace\nthread 3\nbacktrace\n*/"detach" );
+      fclose(fp);
+      fprintf( stderr, "GDB output:\n" );
+      system("gdb -batch -x " TMP_FILE);
+    } else
+      fprintf( stderr, "could not open " TMP_FILE "\n" );
+  }
+
+  free( text );
+  if(id_text_tmp) free(id_text_tmp);
+
+  return 0;
+}
+
+
+oyMessage_f     oyMessageFunc_p = oyMessageFunc_;
+
+/** @func    oyMessageFuncSet
+ *  @brief
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/04/03
+ *  @since   2008/04/03 (Oyranos: 0.1.8)
+ */
+int            oyMessageFuncSet      ( oyMessage_f         message_func )
+{
+  if(message_func)
+    oyMessageFunc_p = message_func;
+  return 0;
+}
+
+
+/* --- internal API decoupling --- */
+
+
+
+/** \addtogroup misc Miscellaneous
+ *  Miscellaneous stuff.
+
+ *  @{
+ */
+
+/** @brief  switch internationalisation of strings on or off
+ *
+ *  @param  active         bool
+ *  @param  reserved       for future use
+ */
+void 
+oyI18NSet              ( int active,
+                         int reserved )
+{
+  DBG_PROG_START
+  oyExportStart_(EXPORT_CHECK_NO);
+
+  oyI18NSet_(active, reserved);
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+}
+
+/** @brief  get language code
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  26 november 2007 (API 0.1.8)
+ */
+const char *   oyLanguage            ( void )
+{
+  const char * text = 0;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_CHECK_NO);
+
+  text = oyLanguage_();
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+
+  return text;
+}
+
+/** @brief  get country code
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  26 november 2007 (API 0.1.8)
+ */
+const char *   oyCountry             ( void )
+{
+  const char * text = 0;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_CHECK_NO);
+
+  text = oyCountry_();
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+
+  return text;
+}
+
+/** @brief  get LANG code/variable
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  26 november 2007 (API 0.1.8)
+ */
+const char *   oyLang                ( void )
+{
+  const char * text = 0;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_CHECK_NO);
+
+  text = oyLang_();
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+
+  return text;
+}
+
+/** @brief   reset i18n language and  country variables
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/05 (Oyranos: 0.1.10)
+ *  @date    2009/01/05
+ */
+void           oyI18Nreset           ( void )
+{
+  DBG_PROG_START
+  oyExportReset_(EXPORT_I18N);
+  oyExportStart_(EXPORT_CHECK_NO);
+  oyExportEnd_();
+  DBG_PROG_ENDE
+}
+
+
+/** @brief  give the compiled in library version
+ *
+ *  @param[in]  type           0 - Oyranos API
+ *                             1 - start month
+ *                             2 - start year
+ *                             3 - development last month
+ *                             4 - development last year
+ *
+ *  @return                    OYRANOS_VERSION at library compile time
+ */
+int            oyVersion             ( int                 type )
+{
+  if(type == 1)
+    return OYRANOS_START_MONTH;
+  if(type == 2)
+    return OYRANOS_START_YEAR;
+  if(type == 3)
+    return OYRANOS_DEVEL_MONTH;
+  if(type == 4)
+    return OYRANOS_DEVEL_YEAR;
+
+  return OYRANOS_VERSION;
+}
+
+#include "config.log.h"
+/** @brief  give the configure options for Oyranos
+ *
+ *  @param[in] type
+                               - 1  OYRANOS_VERSION_NAME;
+                               - 2  git master hash;
+                               - 3  OYRANOS_CONFIG_DATE,
+                               - 4  development period
+ *  @param     allocateFunc    user allocator, e.g. malloc
+ *
+ *  @return                    Oyranos configure output
+ *
+ *  @since     Oyranos: version 0.1.8
+ *  @date      18 december 2007 (API 0.1.8)
+ */
+char *       oyVersionString         ( int                 type,
+                                       oyAlloc_f           allocateFunc )
+{
+  char * text = 0, * tmp = 0;
+  char temp[24];
+  char * git = OYRANOS_GIT_MASTER;
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  if(type == 1)
+    return oyStringCopy_(OYRANOS_VERSION_NAME, allocateFunc);
+  if(type == 2)
+  {
+    if(git[0])
+      return oyStringCopy_(git, allocateFunc);
+    else
+      return 0;
+  }
+  if(type == 3)
+    return oyStringCopy_(OYRANOS_CONFIG_DATE, allocateFunc);
+
+  if(type == 4)
+  {
+#ifdef HAVE_POSIX
+    oyStringAdd_( &text, nl_langinfo(MON_1-1+oyVersion(1)),
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+#endif
+    oySprintf_( temp, " %d - ", oyVersion(2) );
+    oyStringAdd_( &text, temp, oyAllocateFunc_, oyDeAllocateFunc_);
+#ifdef HAVE_POSIX
+    oyStringAdd_( &text, nl_langinfo(MON_1-1+oyVersion(3)),
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+#endif
+    oySprintf_( temp, " %d", oyVersion(4) );
+    oyStringAdd_( &text, temp, oyAllocateFunc_, oyDeAllocateFunc_);
+
+    tmp = oyStringCopy_( text , allocateFunc);
+    oyDeAllocateFunc_(text);
+    return tmp;
+  }
+
+#ifdef HAVE_POSIX
+  return oyStringCopy_(oy_config_log_, allocateFunc);
+#else
+  return oyStringCopy_("----", allocateFunc);
+#endif
+}
+
+
+/** @} */
+
+
+
