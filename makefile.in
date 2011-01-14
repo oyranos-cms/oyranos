@@ -152,7 +152,6 @@ CFILES_CORE = \
 	$(TARGET)_misc.c \
 	$(TARGET)_sentinel.c \
 	$(TARGET)_string.c \
-	$(TARGET)_texts.c \
 	md5.c \
 	lookup3.c
 CFILES = \
@@ -162,6 +161,7 @@ CFILES = \
 	$(TARGET)_elektra.c \
 	$(TARGET)_icc.c \
 	$(TARGET)_widgets.c \
+	$(TARGET)_texts.c \
 	$(TARGET)_xml.c
 CFILESC = \
 	$(TARGET)_debug.c
@@ -457,7 +457,7 @@ SUB_OBJECTS = \
 	tests/test_oyranos.o
 
 INCL_DEP = $(SOURCES) $(CXXFILES_Flmm) \
-	test.c test2.cpp tests/test_oyranos.c
+	test.c test2.cpp test_core.c tests/test_oyranos.c
 
 .PHONY:	check_environment docu examples oforms $(ELEKTRA_VERSION)
 
