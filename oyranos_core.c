@@ -118,20 +118,8 @@ const char *   oyStruct_GetInfo      ( oyStruct_s        * context,
  *  This default message function is used as a message formatter.
  *  The resulting string can be placed anywhere, e.g. in a GUI.
  *
- *  The following code snippet comes fro mthe default message function.
- *  You might only change the fprintf to print to your own widget.
- *  @verbatim
-  char * text = 0;
-  int error = 0;
-  va_list vlist;
-
-  va_start( vlist, format);
-  error = oyMessageFormat( &text, code, context, format, vlist );
-  va_end  ( vlist );
-
-  fprintf( stderr, "%s\n", text );
-  free( text );
-    @endverbatim
+ *  @see the oyMessageFunc_() needs just to replaxe the fprintf with your 
+ *  favourite GUI call.
  *
  *  @version Oyranos: 0.2.1
  *  @since   2008/04/03 (Oyranos: 0.2.1)
@@ -140,14 +128,12 @@ const char *   oyStruct_GetInfo      ( oyStruct_s        * context,
 int                oyMessageFormat   ( char             ** message_text,
                                        int                 code,
                                        const oyStruct_s  * context,
-                                       const char        * format,
-                                       va_list             list )
+                                       const char        * string )
 {
   char * text = 0, * t = 0;
-  int i,len;
+  int i;
   const char * type_name = "";
   int id = -1;
-  size_t sz = 256;
 #ifdef HAVE_POSIX
   pid_t pid = 0;
 #else
@@ -170,15 +156,7 @@ int                oyMessageFormat   ( char             ** message_text,
     id_text = id_text_tmp;
   }
 
-  text = calloc( sizeof(char), sz );
-  if(!text)
-  {
-    fprintf(stderr,
-    "oyranos.c:101 oyMessageFunc_() Could not allocate 256 byte of memory.\n");
-    return 1;
-  }
-
-  text[0] = 0;
+  text = calloc( sizeof(char), 256 );
 
 # define MAX_LEVEL 20
   if(level_PROG < 0)
@@ -191,13 +169,6 @@ int                oyMessageFormat   ( char             ** message_text,
   STRING_ADD( t, text );
 
   text[0] = 0;
-  len = vsnprintf( text, sz-1, format, list);
-
-  if (len >= ((int)sz - 1))
-  {
-    text = realloc( text, (len+1)*sizeof(char) );
-    len = vsnprintf( text, len+1, format, list);
-  }
 
   switch(code)
   {
@@ -219,7 +190,7 @@ int                oyMessageFormat   ( char             ** message_text,
              id_text ? "=\"" : "", id_text ? id_text : "", id_text ? "\"" : "");
   }
 
-  STRING_ADD( t, text );
+  STRING_ADD( t, string );
 
   if(oy_backtrace)
   {
@@ -240,8 +211,8 @@ int                oyMessageFormat   ( char             ** message_text,
       fprintf( stderr, "could not open " TMP_FILE "\n" );
   }
 
-  free( text );
-  if(id_text_tmp) free(id_text_tmp);
+  free( text ); text = 0;
+  if(id_text_tmp) free(id_text_tmp); id_text_tmp = 0;
 
   *message_text = t;
 
@@ -260,16 +231,39 @@ int                oyMessageFormat   ( char             ** message_text,
  */
 int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, ... )
 {
-  char * text = 0;
+  char * text = 0, * msg = 0;
   int error = 0;
-  va_list vlist;
+  va_list list;
+  size_t sz = 256;
+  int len;
 
-  va_start( vlist, format);
-  error = oyMessageFormat( &text, code, context, format, vlist );
-  va_end  ( vlist );
+  text = calloc( sizeof(char), sz );
+  if(!text)
+  {
+    fprintf(stderr,
+    "oyranos_core.c:257 oyMessageFunc_() Could not allocate 256 byte of memory.\n");
+    return 1;
+  }
 
-  fprintf( stderr, "%s\n", text );
-  free( text );
+  text[0] = 0;
+
+  va_start( list, format);
+  len = vsnprintf( text, sz-1, format, list);
+  va_end  ( list );
+
+  if (len >= ((int)sz - 1))
+  {
+    text = realloc( text, (len+2)*sizeof(char) );
+    va_start( list, format);
+    len = vsnprintf( text, len+1, format, list);
+    va_end  ( list );
+  }
+
+  error = oyMessageFormat( &msg, code, context, text );
+
+  fprintf( stderr, "%s\n", msg );
+  free( text ); text = 0;
+  free( msg ); msg = 0;
 
   return error;
 }

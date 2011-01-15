@@ -44,8 +44,7 @@ typedef int  (*oyMessage_f)          ( int/*oyMSG_e*/      code,
 int            oyMessageFormat       ( char             ** message_text,
                                        int                 code,
                                        const oyStruct_s  * context,
-                                       const char        * format,
-                                       va_list             list );
+                                       const char        * string );
 int            oyMessageFuncSet      ( oyMessage_f         message_func );
 extern         oyMessage_f             oyMessageFunc_p;
 
