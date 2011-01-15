@@ -130,35 +130,13 @@ void oyI18NInit_()
     if(oy_debug_memory && temp) oyDeAllocateFunc_(temp);
   }
 #endif
-  oyTextsCheck_ ();
 
   DBG_PROG_ENDE
 }
 
 
-void
-oyI18NSet_             ( int active,
-                         int reserved )
-{
-  DBG_PROG_START
-
-  if(active)
-    oy_domain = OY_TEXTDOMAIN;
-  else
-    oy_domain = "";
 
 
-  oyI18Nrefresh_();
-
-  DBG_PROG_ENDE
-}
-
-
-void
-oyI18Nrefresh_()
-{
-  oyTextsTranslate_ ();
-}
 
 
 /** @internal
@@ -176,6 +154,7 @@ void           oyI18Nreset_          ( void )
     oyFree_m_( oy_language_ );
   if(oy_country_)
     oyFree_m_( oy_country_ );
+  oyExportResetSentinel_();
 }
 
 /** @internal

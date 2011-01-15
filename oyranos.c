@@ -614,6 +614,7 @@ oyWIDGET_e    * oyWidgetListGet          (oyGROUP_e           group,
 
   DBG_PROG_START
   oyExportStart_(EXPORT_CHECK_NO);
+  oyTextsCheck_ ();
 
   list = oyWidgetListGet_                  ( group, count, allocate_func);
 
@@ -644,6 +645,7 @@ oyWIDGET_TYPE_e oyWidgetTitleGet         (oyWIDGET_e          option,
 
   DBG_PROG_START
   oyExportStart_(EXPORT_CHECK_NO);
+  oyTextsCheck_ ();
 
   type = oyWidgetTitleGet_                 ( option,
                                              categories,
@@ -676,6 +678,7 @@ int         oyOptionChoicesGet         (oyWIDGET_e          option,
 
   DBG_PROG_START
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
+  oyTextsCheck_ ();
 
   error =   oyOptionChoicesGet_            ( option,
                                              choices, choices_string_list,
@@ -734,6 +737,7 @@ oySetBehaviour         (oyBEHAVIOUR_e       type,
 
   DBG_PROG_START
   oyExportStart_(EXPORT_SETTING);
+  oyTextsCheck_ ();
 
   error = oySetBehaviour_(type, choice);
 
@@ -757,6 +761,7 @@ oyGetBehaviour         (oyBEHAVIOUR_e       type)
 
   DBG_PROG_START
   oyExportStart_(EXPORT_SETTING);
+  oyTextsCheck_ ();
 
   n = oyGetBehaviour_(type);
 
@@ -818,6 +823,7 @@ int         oyPolicySaveActual        ( oyGROUP_e         group,
 
   DBG_PROG_START
   oyExportStart_(EXPORT_SETTING);
+  oyTextsCheck_ ();
 
   if(!error)
   {
@@ -868,6 +874,7 @@ oyPolicyToXML          (oyGROUP_e           group,
 
   DBG_PROG_START
   oyExportStart_(EXPORT_SETTING);
+  oyTextsCheck_ ();
 
   text = oyPolicyToXML_(group, add_header, allocate_func);
 
@@ -891,6 +898,7 @@ oyReadXMLPolicy        (oyGROUP_e           group,
 
   DBG_PROG_START
   oyExportStart_(EXPORT_SETTING);
+  oyTextsCheck_ ();
 
   n = oyReadXMLPolicy_(group, xml);
 
@@ -923,6 +931,7 @@ int        oyPolicyFileNameGet       ( const char        * policy_name,
 
   DBG_PROG_START
   oyExportStart_(EXPORT_SETTING);
+  oyTextsCheck_ ();
 
   error = oyPolicyFileNameGet_( policy_name, full_name,
                                 allocateFunc ? allocateFunc : oyAllocateFunc_ );
@@ -949,6 +958,7 @@ oyPolicySet                (const char      * policy_file,
 
   DBG_PROG_START
   oyExportStart_(EXPORT_SETTING);
+  oyTextsCheck_ ();
 
   n = oyPolicySet_(policy_file, full_name);
 
@@ -1100,6 +1110,7 @@ oySetDefaultProfile        (oyPROFILE_e       type,
 
   DBG_PROG_START
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
+  oyTextsCheck_ ();
 
   n = oySetDefaultProfile_ (type, file_name);
 
@@ -1127,6 +1138,7 @@ oySetDefaultProfileBlock   (oyPROFILE_e       type,
 
   DBG_PROG_START
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
+  oyTextsCheck_ ();
 
   n = oySetDefaultProfileBlock_ (type, file_name, mem, size);
 
@@ -1150,6 +1162,7 @@ oyGetDefaultProfileName    (oyPROFILE_e       type,
 
   DBG_PROG_START
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
+  oyTextsCheck_ ();
 
   name = oyGetDefaultProfileName_ (type, allocate_func);
 
@@ -1186,6 +1199,7 @@ char **  oyProfileListGet            ( const char        * coloursig,
 
   DBG_PROG_START
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
+  oyTextsCheck_ ();
 
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
@@ -1226,6 +1240,7 @@ oyCheckProfile (const char* filename, const char* coloursig)
 
   DBG_PROG_START
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
+  oyTextsCheck_ ();
 
   /* coloursig is currently ignored */
   n = oyCheckProfile_ (filename, coloursig);
@@ -1249,6 +1264,7 @@ oyCheckProfileMem (const void* mem, size_t size, const char* coloursig)
 
   DBG_PROG_START
   oyExportStart_(EXPORT_CHECK_NO);
+  oyTextsCheck_ ();
 
   /* coloursig is currently ignored */
   n = oyCheckProfileMem_ (mem, size, coloursig);
@@ -1519,6 +1535,25 @@ oyEraseDeviceProfile              (oyDEVICETYP_e typ,
 
  *  @{
  */
+
+/** @brief  switch internationalisation of strings on or off
+ *
+ *  @param  active         bool
+ *  @param  reserved       for future use
+ */
+void 
+oyI18NSet              ( int active,
+                         int reserved )
+{
+  DBG_PROG_START
+  oyInit_();
+
+  oyI18NSet_(active, reserved);
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+}
+
 
 /** @} */
 

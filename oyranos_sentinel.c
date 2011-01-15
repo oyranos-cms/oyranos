@@ -59,6 +59,11 @@ int oyExportStart_(int export_check)
   return start;
 }
 
+void  oyExportResetSentinel_(void)
+{
+  oy_sentinel_initialised_ = 0;
+}
+
 int oyExportReset_(int export_check)
 {
   int action = 0;

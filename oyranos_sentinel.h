@@ -31,6 +31,7 @@ extern "C" {
 void  oyInit_               (void);
 int   oyExportStart_        (int export_check);
 int   oyExportReset_        (int export_check);
+void  oyExportResetSentinel_(void);
 int   oyExportEnd_          (void);
 void  oyFinish_             (int unused);
 

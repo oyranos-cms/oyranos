@@ -397,24 +397,6 @@ int            oyMessageFuncSet      ( oyMessage_f         message_func )
  *  @{
  */
 
-/** @brief  switch internationalisation of strings on or off
- *
- *  @param  active         bool
- *  @param  reserved       for future use
- */
-void 
-oyI18NSet              ( int active,
-                         int reserved )
-{
-  DBG_PROG_START
-  oyInit_();
-
-  oyI18NSet_(active, reserved);
-
-  oyExportEnd_();
-  DBG_PROG_ENDE
-}
-
 /** @brief  get language code
  *
  *  @since Oyranos: version 0.1.8
@@ -577,6 +559,98 @@ char *       oyVersionString         ( int                 type,
 #else
   return oyStringCopy_("----", allocateFunc);
 #endif
+}
+
+int                oyBigEndian       ( void )
+{
+  int big = 0;
+  char testc[2] = {0,0};
+  uint16_t *testu = (uint16_t*)testc;
+  *testu = 1;
+  big = testc[1];
+  return big;
+}
+
+
+/** @brief MSB<->LSB */
+icUInt16Number
+oyValueUInt16 (icUInt16Number val)
+{
+  if(!oyBigEndian())
+  {
+  # define BYTES 2
+  # define KORB  4
+    unsigned char        *temp  = (unsigned char*) &val;
+    unsigned char  korb[KORB];
+    int i;
+    for (i = 0; i < KORB ; i++ )
+      korb[i] = (int) 0;  /* empty */
+
+    {
+    int klein = 0,
+        gross = BYTES - 1;
+    for (; klein < BYTES ; klein++ ) {
+      korb[klein] = temp[gross--];
+    }
+    }
+
+    {
+    unsigned int *erg = (unsigned int*) &korb[0];
+
+  # undef BYTES
+  # undef KORB
+    return (long)*erg;
+    }
+  } else
+  return (long)val;
+}
+
+icUInt32Number
+oyValueUInt32 (icUInt32Number val)
+{
+  if(!oyBigEndian())
+  {
+    unsigned char        *temp = (unsigned char*) &val;
+
+    unsigned char  uint32[4];
+
+    uint32[0] = temp[3];
+    uint32[1] = temp[2];
+    uint32[2] = temp[1];
+    uint32[3] = temp[0];
+
+    {
+    unsigned int *erg = (unsigned int*) &uint32[0];
+
+
+    return (icUInt32Number) *erg;
+    }
+  } else
+    return (icUInt32Number)val;
+}
+
+unsigned long
+oyValueUInt64 (icUInt64Number val)
+{
+  if(!oyBigEndian())
+  {
+    unsigned char        *temp  = (unsigned char*) &val;
+
+    unsigned char  uint64[8];
+    int little = 0,
+        big    = 8;
+
+    for (; little < 8 ; little++ ) {
+      uint64[little] = temp[big--];
+    }
+
+    {
+    unsigned long *erg = (unsigned long*) &uint64[0];
+
+    return (long)*erg;
+    }
+  } else
+  return (long)val;
 }
 
 

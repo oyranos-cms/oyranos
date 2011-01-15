@@ -1942,4 +1942,21 @@ oyGetBehaviourUITitle_     (oyBEHAVIOUR_e       type,
   return NULL;
 }
 
+/* not  */
+void
+oyI18NSet_             ( int active,
+                         int reserved )
+{
+  DBG_PROG_START
+
+  if(active)
+    oy_domain = OY_TEXTDOMAIN;
+  else
+    oy_domain = "";
+
+
+  oyTextsTranslate_ ();
+
+  DBG_PROG_ENDE
+}
 
