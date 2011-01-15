@@ -930,6 +930,7 @@ install_bin:	all install_gui
 		$(RANLIB) $(DESTDIR)$(cmmdir)/lib$${lib}.a \
 		) || echo ""; \
 	done
+	$(INSTALL) -m 644 $(LIBNAME_CORE)     $(DESTDIR)$(libdir)
 	test -d $(DESTDIR)$(includedir)/$(TARGET) || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)/alpha
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET).h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_types.h $(DESTDIR)$(includedir)/$(TARGET)
