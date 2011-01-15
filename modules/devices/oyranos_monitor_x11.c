@@ -1260,6 +1260,7 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
       int selected_screen = oyX1Monitor_getScreenFromDisplayName_( disp );
       int xrand_screen = -1;
       int geo[4] = {-1,-1,-1,-1};
+      int geo_monitors = 0;
 
 # if HAVE_XIN
       /* sync numbering with Xinerama screens */
@@ -1326,18 +1327,24 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
                geo[1] == crtc_info->y &&
                geo[2] == crtc_info->width &&
                geo[3] == crtc_info->height )
+            {
               xrand_screen = monitors;
+              ++geo_monitors;
+            }
 
             XRRFreeCrtcInfo( crtc_info );
           }
 
           if(xrand_screen == monitors &&
-             oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR)
+             oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR &&
+             (geo_monitors == 1 || geo_monitors-1 == selected_screen))
           {
-            disp->output_info = output_info;
+            if(output_info)
+              disp->output_info = output_info;
             disp->output = res_temp->outputs[i];
             output_info = 0;
-            disp->res = res;
+            if(res) /* only needed for a second geo matching monitor */
+              disp->res = res;
             res = 0;
             if(disp->output_info->name && oyStrlen_(disp->output_info->name))
               disp->system_port = oyStringCopy_( disp->output_info->name,
