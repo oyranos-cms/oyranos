@@ -1,4 +1,4 @@
-/** @file oyranos.c
+/** @file oyranos_core.c
  *
  *  Oyranos is an open source Colour Management System 
  *
@@ -360,7 +360,9 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
 
   error = oyMessageFormat( &msg, code, context, text );
 
-  fprintf( stderr, "%s\n", msg );
+  if(msg)
+    fprintf( stderr, "%s\n", msg );
+
   free( text ); text = 0;
   free( msg ); msg = 0;
 
