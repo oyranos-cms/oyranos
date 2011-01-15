@@ -1233,7 +1233,7 @@ const char * oyX1GetText             ( const char        * select,
         t = malloc( strlen(oyX1_help) + strlen(oyX1_help_list)
                     + strlen(oyX1_help_properties) + strlen(oyX1_help_setup)
                     + strlen(oyX1_help_unset)
-                    + strlen(oyX1_help_add_edid_to_icc) + 1);
+                    + strlen(oyX1_help_add_edid_to_icc) + 2);
         sprintf( t, "%s\n%s%s%s%s%s", oyX1_help, oyX1_help_list,
                  oyX1_help_properties, oyX1_help_setup, oyX1_help_unset,
                  oyX1_help_add_edid_to_icc );

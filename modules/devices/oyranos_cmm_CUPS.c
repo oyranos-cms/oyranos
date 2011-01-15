@@ -867,7 +867,7 @@ const char * GetText                 ( const char        * select,
         {
           t = malloc( strlen(_help) + strlen(_help_list)
                     + strlen(_help_properties) + strlen(_help_setup) +
-                    + strlen(_help_unset) + 1);
+                    + strlen(_help_unset) + 2);
           sprintf( t, "%s\n%s%s%s%s", _help, _help_list,
                  _help_properties, _help_setup, _help_unset );
         }
