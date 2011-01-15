@@ -385,7 +385,7 @@ COBJECTS = \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
 	$(TARGET)_profiles.o \
-	tests/test_oyranos.o test.o
+	tests/test_oyranos.o test.o test_core.o
 #ifdef LRAW_LIBS
 #CPP_lraw_OBJECTS = $(CMM_lraw_OBJECTS)
 #endif
@@ -742,14 +742,14 @@ $(TARGET)-profiles:	$(TARGET)_profiles.o $(LIBSONAMEFULL)
 	$< \
 	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
 
-test_core: test_core.o
+test_core:	$(LIBNAME_CORE) test_core.o
 	echo Linking dynamic $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall \
 	  -o test_core_dyn \
-	  $< -L./ `./oyranos-config --ldflags` -L$(libdir) $(intl)
+	  test_core.o $< -L./ `./oyranos-config --ldflags` -L$(libdir) $(intl)
 	echo Linking static $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o $@ \
-	  $< -L./ $(LIBNAME_CORE) -L$(libdir) $(intl) $(dl)
+	  test_core.o $< -L./ $(LIBNAME_CORE) -L$(libdir) $(intl) $(dl)
 
 
 test2:	test2.o $(LIBSONAMEFULL)
