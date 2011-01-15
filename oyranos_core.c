@@ -405,7 +405,7 @@ oyI18NSet              ( int active,
                          int reserved )
 {
   DBG_PROG_START
-  oyExportStart_(EXPORT_CHECK_NO);
+  oyInit_();
 
   oyI18NSet_(active, reserved);
 
@@ -423,7 +423,7 @@ const char *   oyLanguage            ( void )
   const char * text = 0;
 
   DBG_PROG_START
-  oyExportStart_(EXPORT_CHECK_NO);
+  oyInit_();
 
   text = oyLanguage_();
 
@@ -443,7 +443,7 @@ const char *   oyCountry             ( void )
   const char * text = 0;
 
   DBG_PROG_START
-  oyExportStart_(EXPORT_CHECK_NO);
+  oyInit_();
 
   text = oyCountry_();
 
@@ -463,7 +463,7 @@ const char *   oyLang                ( void )
   const char * text = 0;
 
   DBG_PROG_START
-  oyExportStart_(EXPORT_CHECK_NO);
+  oyInit_();
 
   text = oyLang_();
 
@@ -482,8 +482,8 @@ const char *   oyLang                ( void )
 void           oyI18Nreset           ( void )
 {
   DBG_PROG_START
-  oyExportReset_(EXPORT_I18N);
-  oyExportStart_(EXPORT_CHECK_NO);
+  oyI18Nreset_();
+  oyInit_();
   oyExportEnd_();
   DBG_PROG_ENDE
 }

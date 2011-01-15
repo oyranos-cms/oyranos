@@ -32,7 +32,7 @@ static int export_setting = 1;
 /* static int export_path = 1; */
 static int export_monitor = 1;
 static int export_cmm = 1;
-static int initialised = 0;
+extern int oy_sentinel_initialised_;
 
 int oyExportStart_(int export_check)
 {
@@ -81,54 +81,12 @@ int oyExportReset_(int export_check)
     export_cmm = 1;
   }
 
-  initialised = 0;
+  oy_sentinel_initialised_ = 0;
 
   if(export_check & EXPORT_I18N)
     oyI18Nreset_();
 
   return action;
-}
-
-int oyExportEnd_()
-{
-  static int start = 1;
-  if(start == 1)
-  {
-    start = 0;
-    return 1;
-  }
-  return start;
-}
-
-void oyInit_()
-{
-  DBG_PROG_START
-
-  if(initialised)
-  {
-    DBG_PROG_ENDE
-    return;
-  }
-  initialised = 1;
-
-  if(getenv("OYRANOS_DEBUG"))
-    oy_debug = atoi(getenv("OYRANOS_DEBUG"));
-
-  if(getenv("OYRANOS_DEBUG_MEMORY"))
-    oy_debug_memory = atoi(getenv("OYRANOS_DEBUG_MEMORY"));
-
-  if(getenv("OYRANOS_DEBUG_SIGNALS"))
-    oy_debug_signals = atoi(getenv("OYRANOS_DEBUG_SIGNALS"));
-
-  if(getenv("OYRANOS_BACKTRACE"))
-  {
-    oy_backtrace = getenv("OYRANOS_BACKTRACE");
-    if(!oy_debug)
-      ++oy_debug;
-  }
-
-  oyI18NInit_ ();
-  DBG_PROG_ENDE
 }
 
 void     oyFinish_                   ( int                 unused )

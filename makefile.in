@@ -150,7 +150,7 @@ CFILES_CORE = \
 	$(TARGET)_i18n.c \
 	$(TARGET)_io.c \
 	$(TARGET)_misc.c \
-	$(TARGET)_sentinel.c \
+	$(TARGET)_sentinel_core.c \
 	$(TARGET)_string.c \
 	md5.c \
 	lookup3.c
@@ -161,6 +161,7 @@ CFILES = \
 	$(TARGET)_elektra.c \
 	$(TARGET)_icc.c \
 	$(TARGET)_widgets.c \
+	$(TARGET)_sentinel.c \
 	$(TARGET)_texts.c \
 	$(TARGET)_xml.c
 CFILESC = \
