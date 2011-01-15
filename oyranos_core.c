@@ -112,20 +112,38 @@ const char *   oyStruct_GetInfo      ( oyStruct_s        * context,
   return text;
 }
 
-/** @func    oyMessageFunc_
- *  @brief   default message function to console
+/** @func    oyMessageFormat
+ *  @brief   default function to form a message string
  *
- *  The default message function is used as a message printer to the console 
- *  from library start.
+ *  This default message function is used as a message formatter.
+ *  The resulting string can be placed anywhere, e.g. in a GUI.
  *
- *  @version Oyranos: 0.1.10
- *  @since   2008/04/03 (Oyranos: 0.1.8)
- *  @date    2009/07/20
- */
-int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, ... )
-{
+ *  The following code snippet comes fro mthe default message function.
+ *  You might only change the fprintf to print to your own widget.
+ *  @verbatim
   char * text = 0;
-  va_list list;
+  int error = 0;
+  va_list vlist;
+
+  va_start( vlist, format);
+  error = oyMessageFormat( &text, code, context, format, vlist );
+  va_end  ( vlist );
+
+  fprintf( stderr, "%s\n", text );
+  free( text );
+    @endverbatim
+ *
+ *  @version Oyranos: 0.2.1
+ *  @since   2008/04/03 (Oyranos: 0.2.1)
+ *  @date    2011/01/15
+ */
+int                oyMessageFormat   ( char             ** message_text,
+                                       int                 code,
+                                       const oyStruct_s  * context,
+                                       const char        * format,
+                                       va_list             list )
+{
+  char * text = 0, * t = 0;
   int i,len;
   const char * type_name = "";
   int id = -1;
@@ -170,43 +188,38 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   for (i = 0; i < level_PROG; i++)
     oySprintf_( &text[oyStrlen_(text)], " ");
 
-  fprintf( stderr, "%s", text );
+  STRING_ADD( t, text );
 
   text[0] = 0;
-  va_start( list, format);
   len = vsnprintf( text, sz-1, format, list);
-  va_end  ( list );
 
   if (len >= ((int)sz - 1))
   {
     text = realloc( text, (len+1)*sizeof(char) );
-    va_start( list, format);
     len = vsnprintf( text, len+1, format, list);
-    va_end  ( list );
   }
 
   switch(code)
   {
     case oyMSG_WARN:
-         fprintf( stderr, _("WARNING"));
+         STRING_ADD( t, _("WARNING") );
          break;
     case oyMSG_ERROR:
-         fprintf( stderr, _("!!! ERROR"));
+         STRING_ADD( t, _("!!! ERROR"));
          break;
   }
 
   /* reduce output for non core messages */
   if( id > 0 || (oyMSG_ERROR <= code && code <= 399) )
   {
-    fprintf( stderr, " %03f: ", DBG_UHR_);
-    fprintf( stderr, "%s[%d]%s%s%s ", type_name, id,
+    oyStringAddPrintf_( &t, oyAllocateFunc_,oyDeAllocateFunc_,
+                        " %03f: ", DBG_UHR_);
+    oyStringAddPrintf_( &t, oyAllocateFunc_,oyDeAllocateFunc_,
+                        "%s[%d]%s%s%s ", type_name, id,
              id_text ? "=\"" : "", id_text ? id_text : "", id_text ? "\"" : "");
   }
 
-  i = 0;
-  while(text[i])
-    fputc(text[i++], stderr);
-  fprintf( stderr, "\n" );
+  STRING_ADD( t, text );
 
   if(oy_backtrace)
   {
@@ -230,7 +243,35 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   free( text );
   if(id_text_tmp) free(id_text_tmp);
 
+  *message_text = t;
+
   return 0;
+}
+
+/** @func    oyMessageFunc_
+ *  @brief   default message function to console
+ *
+ *  The default message function is used as a message printer to the console 
+ *  from library start.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/04/03 (Oyranos: 0.1.8)
+ *  @date    2009/07/20
+ */
+int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, ... )
+{
+  char * text = 0;
+  int error = 0;
+  va_list vlist;
+
+  va_start( vlist, format);
+  error = oyMessageFormat( &text, code, context, format, vlist );
+  va_end  ( vlist );
+
+  fprintf( stderr, "%s\n", text );
+  free( text );
+
+  return error;
 }
 
 

@@ -16,6 +16,8 @@
 #ifndef OYRANOS_CORE_H
 #define OYRANOS_CORE_H
 
+#include <stdarg.h>
+
 #include "oyranos_version.h"
 #include "oyranos_types.h"
 
@@ -39,6 +41,11 @@ typedef int  (*oyMessage_f)          ( int/*oyMSG_e*/      code,
                                        const oyStruct_s  * context,
                                        const char        * format,
                                        ... );
+int            oyMessageFormat       ( char             ** message_text,
+                                       int                 code,
+                                       const oyStruct_s  * context,
+                                       const char        * format,
+                                       va_list             list );
 int            oyMessageFuncSet      ( oyMessage_f         message_func );
 extern         oyMessage_f             oyMessageFunc_p;
 
