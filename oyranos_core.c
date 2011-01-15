@@ -35,19 +35,88 @@
 #include "oyranos_texts.h"
 
 
-/* --- Helpers  --- */
+static oyStruct_RegisterStaticMessageFunc_f * oy_static_msg_funcs_ = 0;
+static int oy_msg_func_n_ = 0;
 
-/* --- static variables   --- */
+/** @func    oyStruct_RegisterStaticMessageFunc
+ *  @brief   register a function for verbosity
+ *
+ *  @param[in]     type                the object oyOBJECT_e type 
+ *  @param[in]     f                   the object string function
+ *  @return                            0 - success; >= 1 - error
+ *
+ *  @version Oyranos: 0.2.1
+ *  @since   2011/01/14
+ *  @date    2011/01/14
+ */
+int oyStruct_RegisterStaticMessageFunc (
+                                       int                 type,
+                                       oyStruct_RegisterStaticMessageFunc_f f )
+{
+  int error = 0;
+  if((int)type >= oy_msg_func_n_)
+  {
+    int n = oy_msg_func_n_;
+    oyStruct_RegisterStaticMessageFunc_f * tmp = 0;
 
-/* --- structs, typedefs, enums --- */
+    if(oy_msg_func_n_)
+      n *= 2;
+    else
+      n = (int) oyOBJECT_MAX;
 
-/* --- internal API definition --- */
 
-/* --- function definitions --- */
+    tmp = oyAllocateFunc_(sizeof(oyStruct_RegisterStaticMessageFunc_f) * n);
+    if(tmp && oy_msg_func_n_)
+      memcpy( tmp, oy_static_msg_funcs_, sizeof(oyStruct_RegisterStaticMessageFunc_f) * oy_msg_func_n_ );
+    else if(!tmp)
+    {
+      error = 1;
+      return error;
+    }
 
+    oyDeAllocateFunc_(oy_static_msg_funcs_);
+    oy_static_msg_funcs_ = tmp;
+    tmp = 0;
+    oy_static_msg_funcs_[type] = f;
+    oy_msg_func_n_ = n;
+  }
+  return error;
+}
+                                       
+/** @func    oyStruct_GetInfo
+ *  @brief   get a additional string from a object
+ *
+ *  The content can be provided by object authors by using
+ *  oyStruct_RegisterStaticMessageFunc() typical at the first time of object
+ *  creation.
+ *
+ *  @param[in]     context             the object to get informations about
+ *  @param[in]     flags               currently not used
+ *  @return                            a string or NULL; The pointer might
+ *                                     become invalid after further using the
+ *                                     object pointed to by context.
+ *  @version Oyranos: 0.2.1
+ *  @since   2011/01/15
+ *  @date    2011/01/15
+ */
+const char *   oyStruct_GetInfo      ( oyStruct_s        * context,
+                                       int                 flags )
+{
+  const char * text = 0;
+
+  if(oy_static_msg_funcs_ && oy_static_msg_funcs_[context->type_])
+    text = oy_static_msg_funcs_[context->type_]( (oyStruct_s*)context, 0 );
+  if(!text)
+    text = oyStructTypeToText( context->type_ );
+
+  return text;
+}
 
 /** @func    oyMessageFunc_
- *  @brief
+ *  @brief   default message function to console
+ *
+ *  The default message function is used as a message printer to the console 
+ *  from library start.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/04/03 (Oyranos: 0.1.8)
@@ -77,14 +146,7 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
   {
     type_name = oyStructTypeToText( context->type_ );
     id = oyObject_GetId( context->oy_ );
-    if(context->type_ == oyOBJECT_OPTION_S)
-    {
-      id_text = oyOption_GetText( (oyOption_s*)context, oyNAME_NAME );
-      if(!id_text)
-        id_text = ((oyOption_s*)context)->registration;
-    }
-    if(context->type_ == oyOBJECT_PROFILE_S)
-      id_text = oyProfile_GetText( (oyProfile_s*)context, oyNAME_DESCRIPTION );
+    id_text = oyStruct_GetInfo( (oyStruct_s*)context, 0 );
     if(id_text)
       id_text_tmp = strdup(id_text);
     id_text = id_text_tmp;

@@ -42,6 +42,15 @@ typedef int  (*oyMessage_f)          ( int/*oyMSG_e*/      code,
 int            oyMessageFuncSet      ( oyMessage_f         message_func );
 extern         oyMessage_f             oyMessageFunc_p;
 
+typedef const char * (*oyStruct_RegisterStaticMessageFunc_f)
+                                     ( oyStruct_s        * context,
+                                       int                 flags );
+int            oyStruct_RegisterStaticMessageFunc (
+                                       int                 type,
+                                       oyStruct_RegisterStaticMessageFunc_f f);
+const char *   oyStruct_GetInfo      ( oyStruct_s        * context,
+                                       int                 flags );
+
 
 
 /** @brief codeset for Oyranos

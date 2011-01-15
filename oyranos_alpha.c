@@ -7602,7 +7602,17 @@ const char *   oyValueTypeText       ( oyVALUETYPE_e       type )
 
 
 static int oy_option_id_ = 0;
-
+static int oy_option_first = 0;
+static
+const char * oyOption_Message_       ( oyStruct_s        * o,
+                                       int                 flags )
+{
+  const char * text = oyOption_GetText( (oyOption_s*)o, oyNAME_NAME );
+  if(!text)
+    text = ((oyOption_s*)o)->registration;
+  return text;
+}
+ 
 /** Function oyOption_New
  *  @memberof oyOption_s
  *  @brief   new option
@@ -7659,6 +7669,13 @@ oyOption_s *   oyOption_New          ( const char        * registration,
       return 0;
     } else
       s->registration = oyStringCopy_( registration, s->oy_->allocateFunc_ );
+  }
+
+  if(oy_option_first)
+  {
+    oy_option_first = 1;
+    oyStruct_RegisterStaticMessageFunc( oyOBJECT_OPTION_S,
+                                        oyOption_Message_ );
   }
 
   return s;
@@ -14856,6 +14873,13 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
  *  @{
  */
 
+static int oy_profile_first = 0;
+static
+const char * oyProfile_Message_      ( oyStruct_s        * p,
+                                       int                 flags )
+{
+  return oyProfile_GetText( (oyProfile_s*)p, oyNAME_DESCRIPTION );
+}
 
 /** @internal
  *  @memberof oyProfile_s
@@ -14897,6 +14921,13 @@ oyProfile_New_ ( oyObject_s        object)
 
   s->tags_ = oyStructList_Create( s->type_, 0, 0 );
   s->tags_modified_ = 0;
+
+  if(oy_profile_first)
+  {
+    oy_profile_first = 1;
+    oyStruct_RegisterStaticMessageFunc( oyOBJECT_PROFILE_S,
+                                        oyProfile_Message_ );
+  }
 
   return s;
 }
