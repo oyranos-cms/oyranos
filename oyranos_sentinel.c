@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2006-2009 (C) Kai-Uwe Behrmann
+ *            2006-2011 (C) Kai-Uwe Behrmann
  *
  *  @brief    library sentinels
  *  @internal
@@ -57,11 +57,6 @@ int oyExportStart_(int export_check)
 
   oyInit_();
   return start;
-}
-
-void  oyExportResetSentinel_(void)
-{
-  oy_sentinel_initialised_ = 0;
 }
 
 int oyExportReset_(int export_check)
