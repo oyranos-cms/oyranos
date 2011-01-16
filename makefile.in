@@ -12,12 +12,15 @@ SRCDIR          = $(src_dir)
 BUILDDIR        = $(build_dir)/
 
 OY_MODULE_NAME  =_cmm_module
-LIBRARIES = $(TARGET) $(LIB_FORMS_FLTK)
+LIBRARIES = $(TARGET) $(TARGET)_core $(LIB_FORMS_FLTK)
 LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)$(LIBEXT)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)$(LIBEXT)
 LIBSO = lib$(TARGET)$(SO)$(LIBEXT)
-LIBNAME_CORE = lib$(TARGET)_core.a
 LIBNAME = lib$(TARGET).a
+LIBSONAMECOREFULL = lib$(TARGET)_core$(SO).$(VERSION)$(LIBEXT)
+LIBSONAMECORE = lib$(TARGET)_core$(SO).$(VERSION_A)$(LIBEXT)
+LIBSOCORE = lib$(TARGET)_core$(SO)$(LIBEXT)
+LIBNAME_CORE = lib$(TARGET)_core.a
 #ifdef FLTK
 LIB_FORMS_FLTK = oyforms_fltk
 LIB_FORMS_FLTK_NAME = lib$(LIB_FORMS_FLTK).a
@@ -106,6 +109,8 @@ INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(SRCDIR) \
 
 LDLIBS = $(LDFLAGS) -L$(libdir) -L. \
 	$(ELEKTRA_LIBS) $(LIBXML2_LIBS) -lc $(I18N_LIB) $(LIBLTDL)
+LDLIBSCORE = $(LDFLAGS) -L$(libdir) -L. \
+	$(LIBXML2_LIBS) -lc $(I18N_LIB) $(LIBLTDL)
 
 
 MODULE_LDLIBS =	-l$(TARGET) $(lc) 
@@ -148,7 +153,7 @@ CFILES_CORE = \
 	$(TARGET)_core.c \
 	$(TARGET)_helper.c \
 	$(TARGET)_i18n.c \
-	$(TARGET)_io.c \
+	$(TARGET)_io_core.c \
 	$(TARGET)_misc.c \
 	$(TARGET)_sentinel_core.c \
 	$(TARGET)_string.c \
@@ -160,6 +165,7 @@ CFILES = \
 	$(TARGET)_cmm.c \
 	$(TARGET)_elektra.c \
 	$(TARGET)_icc.c \
+	$(TARGET)_io.c \
 	$(TARGET)_widgets.c \
 	$(TARGET)_sentinel.c \
 	$(TARGET)_texts.c \
@@ -527,6 +533,17 @@ $(LIBSONAMEFULL):	$(LIBNAME_CORE) $(LIBNAME) $(DEVEL_LIBS) $(ELEKTRA_VERSION)
 	$(RM)  $(LIBSO)
 	$(LNK) $(LIBSONAMEFULL) $(LIBSO)
 
+$(LIBSONAMECOREFULL):	$(LIBNAME_CORE) $(DEVEL_LIBS)
+	echo Linking $@ ...
+	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_libdir)$(LIBSONAMECORE) \
+	-o $(LIBSONAMECOREFULL) \
+	$(OBJECTS_CORE) \
+	-L$(libdir) $(LDLIBSCORE) $(m)
+	$(RM)  $(LIBSONAMECORE)
+	$(LNK) $(LIBSONAMECOREFULL) $(LIBSONAMECORE)
+	$(RM)  $(LIBSOCORE)
+	$(LNK) $(LIBSONAMECOREFULL) $(LIBSOCORE)
+
 $(LIB_CMM_lcms): $(LIBSONAMEFULL) $(CMM_lcms_OBJECTS)
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_cmmdir)$@ \
@@ -743,14 +760,15 @@ $(TARGET)-profiles:	$(TARGET)_profiles.o $(LIBSONAMEFULL)
 	$< \
 	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
 
-test_core:	$(LIBNAME_CORE) test_core.o
+test_core:	$(LIBSONAMECOREFULL) $(LIBNAME_CORE) test_core.o
 	echo Linking dynamic $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall \
 	  -o test_core_dyn \
-	  test_core.o $< -L./ `./oyranos-config --ldflags` -L$(libdir) $(intl)
+	  test_core.o -L./ $(LIBSONAMECOREFULL) $(LDLIBSCORE) \
+	  $(LINK_LIB_PATH) -L$(libdir) $(intl)
 	echo Linking static $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o $@ \
-	  test_core.o $< -L./ $(LIBNAME_CORE) -L$(libdir) $(intl) $(dl)
+	  test_core.o -L./ $(LIBNAME_CORE) -L$(libdir) $(intl) $(dl)
 
 
 test2:	test2.o $(LIBSONAMEFULL)

@@ -96,11 +96,6 @@ void oyCloseReal__(void);
 
 
 const char* oySelectUserSys_   ();
-enum {
-  oyUSER_SYS = 0,
-  oyUSER,
-  oySYS
-};
 
 int     oyGetBehaviour_        (oyBEHAVIOUR_e type);
 int     oySetBehaviour_        (oyBEHAVIOUR_e type,

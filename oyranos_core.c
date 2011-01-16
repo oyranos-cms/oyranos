@@ -102,19 +102,25 @@ int oyStruct_RegisterStaticMessageFunc (
 const char *   oyStruct_GetInfo      ( oyPointer           context_object,
                                        int                 flags )
 {
-  const char * text = 0;
+  const char * text = NULL;
   oyStruct_s * c = (oyStruct_s*) context_object;
+  oyStruct_RegisterStaticMessageFunc_f f;
 
   if(!c)
-    return text;
+    return NULL;
 
-  if(oy_static_msg_funcs_ && oy_static_msg_funcs_[c->type_])
-    text = oy_static_msg_funcs_[c->type_]( c, 0 );
-  if(!text)
+  if(oy_static_msg_funcs_ != NULL)
+  {
+    f = oy_static_msg_funcs_[c->type_];
+    if(f)
+      text = f( c, 0 );
+  }
+  if(text != NULL)
     text = oyStructTypeToText( c->type_ );
 
   return text;
 }
+
 
 /** Function oyStructTypeToText
  *  @brief   Objects type to small string
@@ -128,7 +134,6 @@ const char *   oyStruct_GetInfo      ( oyPointer           context_object,
 const char *     oyStructTypeToText  ( oyOBJECT_e          type )
 {
   const char * text = "unknown";
-
   switch(type) {
     case oyOBJECT_NONE: text = "Zero - none"; break;
     case oyOBJECT_OBJECT_S: text = "oyObject_s"; break;
@@ -192,7 +197,6 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_CONF_DOMAIN_S: text = "oyConfDomain_s"; break;
     case oyOBJECT_MAX: text = "Max - none"; break;
   }
-
   return text;
 }
 

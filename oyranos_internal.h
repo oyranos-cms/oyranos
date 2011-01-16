@@ -75,6 +75,11 @@ void  oyPathActivate_           (const char* pathname);*/
 char* oyGetPathFromProfileName_ (const char*   profilename,
                                  oyAlloc_f     allocate_func);
 
+enum {
+  oyUSER_SYS = 0,
+  oyUSER,
+  oySYS
+};
 
 
 /* device profiles */
