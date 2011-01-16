@@ -334,12 +334,12 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
 
 /* private definition */
 int      oyMessageFunc_              ( int                 code,
-                                       const oyStruct_s  * context,
+                                       const oyPointer     context,
                                        const char        * format,
                                        ... );
 
 int      oyFilterMessageFunc         ( int                 code,
-                                       const oyStruct_s  * context,
+                                       const oyPointer     context,
                                        const char        * format,
                                        ... )
 {

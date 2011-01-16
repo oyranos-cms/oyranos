@@ -7508,9 +7508,10 @@ const char *   oyValueTypeText       ( oyVALUETYPE_e       type )
 static int oy_option_id_ = 0;
 static int oy_option_first = 0;
 static
-const char * oyOption_Message_       ( oyStruct_s        * o,
+const char * oyOption_Message_       ( oyPointer           c,
                                        int                 flags )
 {
+  oyStruct_s*o=c;
   const char * text = oyOption_GetText( (oyOption_s*)o, oyNAME_NAME );
   if(!text)
     text = ((oyOption_s*)o)->registration;
@@ -14779,10 +14780,11 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
 
 static int oy_profile_first = 0;
 static
-const char * oyProfile_Message_      ( oyStruct_s        * p,
+const char * oyProfile_Message_      ( oyPointer           profile,
                                        int                 flags )
 {
-  return oyProfile_GetText( (oyProfile_s*)p, oyNAME_DESCRIPTION );
+  oyStruct_s*s = profile;
+  return oyProfile_GetText( (oyProfile_s*)s, oyNAME_DESCRIPTION );
 }
 
 /** @internal

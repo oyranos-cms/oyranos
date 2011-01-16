@@ -46,6 +46,7 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
 int                oyBigEndian       ( void );
 
 typedef struct oyImage_s oyImage_s;
+typedef struct oyStruct_s oyStruct_s;
 
 
 typedef oyStruct_s * (*oyStruct_Copy_f ) ( oyStruct_s *, oyPointer );

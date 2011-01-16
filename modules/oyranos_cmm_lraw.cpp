@@ -46,7 +46,7 @@ extern "C" {
 
 #include <iconv.h>
 
-int lrawCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
+int lrawCMMWarnFunc( int code, const oyPointer context, const char * format, ... );
 oyMessage_f message = lrawCMMWarnFunc;
 
 extern oyCMMapi4_s   lraw_api4_image_input_libraw;
@@ -101,17 +101,18 @@ int                lrawCMMInit       ( oyStruct_s        * filter )
  *  @since   2009/06/14 (Oyranos: 0.1.10)
  */
 extern "C" {
-int lrawCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... )
+int lrawCMMWarnFunc( int code, const oyPointer context, const char * format, ... )
 {
   char* text = (char*)calloc(sizeof(char), 4096);
   va_list list;
   const char * type_name = "";
   int id = -1;
+  oyStruct_s * c = (oyStruct_s*) context;
 
-  if(context && oyOBJECT_NONE < context->type_)
+  if(c && oyOBJECT_NONE < c->type_)
   {
-    type_name = oyStructTypeToText( context->type_ );
-    id = oyObject_GetId( context->oy_ );
+    type_name = oyStructTypeToText( c->type_ );
+    id = oyObject_GetId( c->oy_ );
   }
 
   va_start( list, format);

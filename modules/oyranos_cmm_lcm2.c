@@ -63,8 +63,7 @@ void  oyDeAllocateFunc_         (void *        data);
 
 #define CMM_VERSION {0,1,0}
 
-int lcm2CMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
-oyMessage_f message = lcm2CMMWarnFunc;
+oyMessage_f message = oyFilterMessageFunc;
 
 void lcm2ErrorHandlerFunction         ( cmsContext          ContextID,
                                        cmsUInt32Number     ErrorCode,
@@ -1946,56 +1945,6 @@ void               oyCMMdeallocateFunc ( oyPointer         mem )
   if(mem)
     free(mem);
 }*/
-
-/** Function lcm2CMMWarnFunc
- *  @brief
- *
- *  @version Oyranos: 0.1.8
- *  @date    2007/11/00
- *  @since   2007/11/00 (Oyranos: 0.1.8)
- */
-int lcm2CMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... )
-{
-  char* text = (char*)calloc(sizeof(char), 4096);
-  va_list list;
-  const char * type_name = "";
-  int id = -1;
-  const char * id_text = 0;
-
-  if(context && oyOBJECT_NONE < context->type_)
-  {
-    type_name = oyStructTypeToText( context->type_ );
-    id = oyObject_GetId( context->oy_ );
-    if(context->type_ == oyOBJECT_OPTION_S)
-    {
-      id_text = oyOption_GetText( (oyOption_s*)context, oyNAME_NAME );
-      if(!id_text)
-        id_text = ((oyOption_s*)context)->registration;
-    }
-  }
-
-  va_start( list, format);
-  vsprintf( text, format, list);
-  va_end  ( list );
-
-  switch(code)
-  {
-    case oyMSG_WARN:
-         fprintf( stderr, "WARNING"); fprintf( stderr, ": " );
-         break;
-    case oyMSG_ERROR:
-         fprintf( stderr, "!!! ERROR"); fprintf( stderr, ": " );
-         break;
-  }
-
-  fprintf( stderr, "%s[%d]%s%s ", type_name, id,
-           id_text ? "=" : "", id_text ? id_text : "" );
-
-  fprintf( stderr, "%s", text ); fprintf( stderr, "\n" );
-  free( text );
-
-  return 0;
-}
 
 /** Function lcm2ErrorHandlerFunction
  *  @brief

@@ -38,23 +38,23 @@ typedef enum {
   oyMSG_DBG
 } oyMSG_e;
 typedef int  (*oyMessage_f)          ( int/*oyMSG_e*/      code, 
-                                       const oyStruct_s  * context,
+                                       const oyPointer     context,
                                        const char        * format,
                                        ... );
 int            oyMessageFormat       ( char             ** message_text,
                                        int                 code,
-                                       const oyStruct_s  * context,
+                                       const oyPointer     context,
                                        const char        * string );
 int            oyMessageFuncSet      ( oyMessage_f         message_func );
 extern         oyMessage_f             oyMessageFunc_p;
 
 typedef const char * (*oyStruct_RegisterStaticMessageFunc_f)
-                                     ( oyStruct_s        * context,
+                                     ( oyPointer           context,
                                        int                 flags );
 int            oyStruct_RegisterStaticMessageFunc (
                                        int                 type,
                                        oyStruct_RegisterStaticMessageFunc_f f);
-const char *   oyStruct_GetInfo      ( oyStruct_s        * context,
+const char *   oyStruct_GetInfo      ( oyPointer           context,
                                        int                 flags );
 
 

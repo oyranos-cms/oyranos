@@ -31,9 +31,8 @@
 #define CMM_NICK "dFil"
 #define OY_DUMMY_FILTER_REGISTRATION OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "my_filter"
 
-int dFilCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
 /** The message function pointer to use for messaging. */
-oyMessage_f message = dFilCMMWarnFunc;
+oyMessage_f message = 0;
 
 extern oyCMMapi4_s   dFil_api4_my_filter;
 extern oyCMMapi7_s   dFil_api7_my_filter;
@@ -62,55 +61,10 @@ int                dFilCMMInit       ( )
 
 
 
-/** Function dFilCMMWarnFunc
- *  @brief message handling
- *
- *  A internal implementation of a message function. Oyranos can select a 
- *  different one. Do not call this directly.
- *
- *  @version Oyranos: 0.1.10
- *  @date    2009/06/14
- *  @since   2009/06/14 (Oyranos: 0.1.10)
- */
-int dFilCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... )
-{
-  char* text = (char*)calloc(sizeof(char), 4096);
-  va_list list;
-  const char * type_name = "";
-  int id = -1;
-
-  if(context && oyOBJECT_NONE < context->type_)
-  {
-    type_name = oyStructTypeToText( context->type_ );
-    id = oyObject_GetId( context->oy_ );
-  }
-
-  va_start( list, format);
-  vsprintf( text, format, list);
-  va_end  ( list );
-
-  switch(code)
-  {
-    case oyMSG_WARN:
-         fprintf( stderr, "WARNING"); fprintf( stderr, ": " );
-         break;
-    case oyMSG_ERROR:
-         fprintf( stderr, "!!! ERROR"); fprintf( stderr, ": " );
-         break;
-  }
-
-  fprintf( stderr, "%s[%d] ", type_name, id );
-
-  fprintf( stderr, "%s", text ); fprintf( stderr, "%s", "\n" );
-  free( text );
-
-  return 0;
-}
-
 /** Function dFilCMMMessageFuncSet
  *  @brief API requirement
  *
- *  A Oyranos user might want its own message function and omit our internal
+ *  A Oyranos user might want its own message function and omit the default
  *  one.
  *
  *  @version Oyranos: 0.1.10

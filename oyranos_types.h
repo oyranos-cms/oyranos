@@ -40,7 +40,6 @@ extern "C" {
 #endif /* __cplusplus */
 
 typedef void* oyPointer;
-typedef struct oyStruct_s oyStruct_s;
 
 /**
  * @param[in] size the size to allocate

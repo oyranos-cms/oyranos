@@ -90,7 +90,7 @@ int oyStruct_RegisterStaticMessageFunc (
  *  oyStruct_RegisterStaticMessageFunc() typical at the first time of object
  *  creation.
  *
- *  @param[in]     context             the object to get informations about
+ *  @param[in]     context_object      the object to get informations about
  *  @param[in]     flags               currently not used
  *  @return                            a string or NULL; The pointer might
  *                                     become invalid after further using the
@@ -99,15 +99,19 @@ int oyStruct_RegisterStaticMessageFunc (
  *  @since   2011/01/15
  *  @date    2011/01/15
  */
-const char *   oyStruct_GetInfo      ( oyStruct_s        * context,
+const char *   oyStruct_GetInfo      ( oyPointer           context_object,
                                        int                 flags )
 {
   const char * text = 0;
+  oyStruct_s * c = (oyStruct_s*) context_object;
 
-  if(oy_static_msg_funcs_ && oy_static_msg_funcs_[context->type_])
-    text = oy_static_msg_funcs_[context->type_]( (oyStruct_s*)context, 0 );
+  if(!c)
+    return text;
+
+  if(oy_static_msg_funcs_ && oy_static_msg_funcs_[c->type_])
+    text = oy_static_msg_funcs_[c->type_]( c, 0 );
   if(!text)
-    text = oyStructTypeToText( context->type_ );
+    text = oyStructTypeToText( c->type_ );
 
   return text;
 }
@@ -226,7 +230,7 @@ int            oyObject_GetId        ( oyObject_s          obj )
  */
 int                oyMessageFormat   ( char             ** message_text,
                                        int                 code,
-                                       const oyStruct_s  * context,
+                                       const oyPointer     context_object,
                                        const char        * string )
 {
   char * text = 0, * t = 0;
@@ -241,15 +245,16 @@ int                oyMessageFormat   ( char             ** message_text,
   FILE * fp = 0;
   const char * id_text = 0;
   char * id_text_tmp = 0;
+  oyStruct_s * c = (oyStruct_s*) context_object;
 
   if(code == oyMSG_DBG && !oy_debug)
     return 0;
 
-  if(context && oyOBJECT_NONE < context->type_)
+  if(c && oyOBJECT_NONE < c->type_)
   {
-    type_name = oyStructTypeToText( context->type_ );
-    id = oyObject_GetId( context->oy_ );
-    id_text = oyStruct_GetInfo( (oyStruct_s*)context, 0 );
+    type_name = oyStructTypeToText( c->type_ );
+    id = oyObject_GetId( c->oy_ );
+    id_text = oyStruct_GetInfo( (oyStruct_s*)c, 0 );
     if(id_text)
       id_text_tmp = strdup(id_text);
     id_text = id_text_tmp;
@@ -324,17 +329,25 @@ int                oyMessageFormat   ( char             ** message_text,
  *  The default message function is used as a message printer to the console 
  *  from library start.
  *
+ *  @param         code                a message code understood be your message
+ *                                     handler or oyMSG_e
+ *  @param         context_object      a oyStruct_s is expected from Oyranos
+ *  @param         format              the text format string for following args
+ *  @param         ...                 the variable args fitting to format
+ *  @return                            0 - success; 1 - error
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2008/04/03 (Oyranos: 0.1.8)
  *  @date    2009/07/20
  */
-int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, ... )
+int oyMessageFunc_( int code, const oyPointer context_object, const char * format, ... )
 {
   char * text = 0, * msg = 0;
   int error = 0;
   va_list list;
   size_t sz = 256;
   int len;
+  oyStruct_s * c = (oyStruct_s*) context_object;
 
   text = calloc( sizeof(char), sz );
   if(!text)
@@ -358,7 +371,7 @@ int oyMessageFunc_( int code, const oyStruct_s * context, const char * format, .
     va_end  ( list );
   }
 
-  error = oyMessageFormat( &msg, code, context, text );
+  error = oyMessageFormat( &msg, code, c, text );
 
   if(msg)
     fprintf( stderr, "%s\n", msg );

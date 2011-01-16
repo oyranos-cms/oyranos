@@ -1401,7 +1401,7 @@ struct oyCMMapi10_s {
 int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket );
 int      oyFilterMessageFunc         ( int                 code,
-                                       const oyStruct_s  * context,
+                                       const oyPointer     context,
                                        const char        * format,
                                        ... );
 int          oyFilterSocket_MatchImagingPlug (
