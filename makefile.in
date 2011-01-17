@@ -522,12 +522,12 @@ time:
 	echo $(MTIME)
 
 # build all objects and libraries, link the headers to $(TARGET)
-$(LIBSONAMEFULL):	$(LIBNAME_CORE) $(LIBNAME) $(DEVEL_LIBS) $(ELEKTRA_VERSION)
+$(LIBSONAMEFULL):	$(LIBSONAMECOREFULL) $(LIBNAME) $(DEVEL_LIBS) $(ELEKTRA_VERSION)
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_libdir)$(LIBSONAME) \
 	-o $(LIBSONAMEFULL) \
-	$(OBJECTS_CORE) $(OBJECTS) \
-	-L$(libdir) $(LDLIBS) $(m)
+	$(OBJECTS) \
+	$(LIBSONAMECOREFULL) -L$(libdir) $(LDLIBS) $(m)
 	$(RM)  $(LIBSONAME)
 	$(LNK) $(LIBSONAMEFULL) $(LIBSONAME)
 	$(RM)  $(LIBSO)
