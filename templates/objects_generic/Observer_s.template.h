@@ -7,6 +7,7 @@
 {% include "cpp_begin.h" %}
 
 #include <oyranos_object.h>
+#include <oyranos_definitions.h>
 
 #include "oyStruct_s.h"
 

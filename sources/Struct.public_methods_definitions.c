@@ -2,7 +2,7 @@
  *  @memberof oyStruct_s
  *  @brief   get a text dump
  *
- *  As the object type module for text informations.
+ *  Ask the object type module for text informations.
  *
  *  @param         obj                 the object
  *  @param         name_type           the text type
@@ -30,6 +30,7 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
   {
     type = obj->type_;
 
+#ifdef USE_MODULES
     if(type)
     {
       oyCMMapiFilters_s * apis;
@@ -63,6 +64,7 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
       }
       oyCMMapiFilters_Release( &apis );
     }
+#endif
   }
 
   if(!error && !text)

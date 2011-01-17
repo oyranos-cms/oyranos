@@ -20,7 +20,7 @@
 #define OYRANOS_HELPER_H
 
 #include "oyranos_debug.h"
-#include "oyranos.h"
+#include "oyranos_core.h"
 #include "oyranos_object.h"
 
 

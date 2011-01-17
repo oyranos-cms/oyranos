@@ -1,4 +1,5 @@
-const char * oyStructTypeToText      ( oyOBJECT_e          type );
+#include <oyranos_core.h>
+
 const char * oyStruct_TypeToText     ( const oyStruct_s  * st );
 
 typedef oyStruct_s * (*oyStruct_Copy_f ) ( oyStruct_s *, oyPointer );
@@ -13,10 +14,4 @@ extern oyUnLock_f              oyUnLockFunc_;
 /* } Locking function declarations */
 
 
-typedef int  (*oyMessage_f)          ( int/*oyMSG_e*/      code,
-                                       const oyStruct_s  * context,
-                                       const char        * format,
-                                       ... );
-int            oyMessageFuncSet      ( oyMessage_f         message_func );
-extern         oyMessage_f             oyMessageFunc_p;
 /* } Message function declarations */

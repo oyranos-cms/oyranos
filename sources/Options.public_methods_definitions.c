@@ -1,3 +1,5 @@
+#include "oyranos_definitions.h"
+
 /** Function oyOptions_FromBoolean
  *  @memberof oyOptions_s
  *  @brief   boolean operations on two sets of option
