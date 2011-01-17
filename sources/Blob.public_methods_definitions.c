@@ -99,3 +99,76 @@ int            oyBlob_SetFromStatic  ( oyBlob_s          * blob,
 
   return error;
 }
+
+/** Function oyBlob_GetPointer
+ *  @memberof oyBlob_s
+ *  @brief   get value from a data blob
+ *
+ *  @param[in]     blob                the data blob
+ *  @return                            the data pointer
+ *
+ *  @version Oyranos: 0.2.1
+ *  @since   2011/01/17 (Oyranos: 0.2.1)
+ *  @date    2011/01/17
+ */
+oyPointer          oyBlob_GetPointer ( oyBlob_s          * blob )
+{
+  oyBlob_s_ * s = (oyBlob_s_*)blob;
+  int error = !s;
+
+  oyCheckType__m( oyOBJECT_BLOB_S, return NULL )
+
+  if(error <= 0)
+    return s->ptr;
+
+  return NULL;
+}
+
+/** Function oyBlob_GetSize
+ *  @memberof oyBlob_s
+ *  @brief   get size from a data blob
+ *
+ *  @param[in]     blob                the data blob
+ *  @return                            the data size
+ *
+ *  @version Oyranos: 0.2.1
+ *  @since   2011/01/17 (Oyranos: 0.2.1)
+ *  @date    2011/01/17
+ */
+size_t             oyBlob_GetSize    ( oyBlob_s          * blob )
+{
+  oyBlob_s_ * s = (oyBlob_s_*)blob;
+  int error = !s;
+
+  oyCheckType__m( oyOBJECT_BLOB_S, return 0 )
+
+  if(error <= 0)
+    return s->size;
+
+  return 0;
+}
+
+/** Function oyBlob_GetType
+ *  @memberof oyBlob_s
+ *  @brief   get type from a data blob
+ *
+ *  @param[in]     blob                the data blob
+ *  @return                            the data type
+ *
+ *  @version Oyranos: 0.2.1
+ *  @since   2011/01/17 (Oyranos: 0.2.1)
+ *  @date    2011/01/17
+ */
+const char *       oyBlob_GetType    ( oyBlob_s          * blob )
+{
+  oyBlob_s_ * s = (oyBlob_s_*)blob;
+  int error = !s;
+
+  oyCheckType__m( oyOBJECT_BLOB_S, return 0 )
+
+  if(error <= 0)
+    return s->type;
+
+  return 0;
+}
+
