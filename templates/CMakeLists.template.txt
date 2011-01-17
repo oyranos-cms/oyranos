@@ -1,4 +1,4 @@
-PROJECT(oyranos)
+PROJECT(oyranos_object)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
@@ -28,6 +28,8 @@ ADD_LIBRARY( oyranos_object SHARED
 {% for class in classes %}
   {% if class.hiddenStruct %}"{{ class.name }}.c" "{{ class.privName }}.c"{% else %}"{{ class.name }}.c" "{{ class.name }}_impl.c"{% endif %}
 {% endfor %}
+  "oyStruct_s.c"
+  "oyranos_object.c"
 )
 # "oyranos_devices.c" "oyranos_devices_internal.c"
 
