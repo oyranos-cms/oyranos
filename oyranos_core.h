@@ -57,6 +57,10 @@ int            oyStruct_RegisterStaticMessageFunc (
 const char *   oyStruct_GetInfo      ( oyPointer           context,
                                        int                 flags );
 
+int            oyVersion             ( int                 type );
+char *         oyVersionString       ( int                 type,
+                                       oyAlloc_f           allocateFunc );
+
 
 
 /** @brief codeset for Oyranos

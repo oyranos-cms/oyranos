@@ -285,10 +285,6 @@ int           oyOptionFloatIntRangeGet (oyWIDGET_e        option,
 # endif
 
 
-int            oyVersion             ( int                 type );
-char *         oyVersionString       ( int                 type,
-                                       oyAlloc_f           allocateFunc );
-
 
 int    oyProfileGetMD5               ( void       *buffer,
                                        size_t      size,
