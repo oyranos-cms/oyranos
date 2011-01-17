@@ -3,9 +3,9 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2004-2009 (C) Kai-Uwe Behrmann
+ *            2004-2011 (C) Kai-Uwe Behrmann
  *
- *  @brief    misc alpha APIs
+ *  @brief    object APIs
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
@@ -6608,7 +6608,7 @@ int            oyBlob_SetFromData    ( oyBlob_s          * blob,
                                        const char        * type )
 {
   oyBlob_s * s = blob;
-  int error = !s || s->type_ != oyOBJECT_BLOB_S;
+  int error = !s;
 
   oyCheckType__m( oyOBJECT_BLOB_S, return 1 )
 
@@ -6665,7 +6665,7 @@ int            oyBlob_SetFromStatic  ( oyBlob_s          * blob,
                                        const char        * type )
 {
   oyBlob_s * s = blob;
-  int error = !s || s->type_ != oyOBJECT_BLOB_S;
+  int error = !s;
 
   oyCheckType__m( oyOBJECT_BLOB_S, return 1 )
 
@@ -6687,6 +6687,78 @@ int            oyBlob_SetFromStatic  ( oyBlob_s          * blob,
     error = !memcpy( s->type, type, 8 );
 
   return error;
+}
+
+/** Function oyBlob_GetPointer
+ *  @memberof oyBlob_s
+ *  @brief   get value from a data blob
+ *
+ *  @param[in]     blob                the data blob
+ *  @return                            the data pointer
+ *
+ *  @version Oyranos: 0.2.1
+ *  @since   2011/01/17 (Oyranos: 0.2.1)
+ *  @date    2011/01/17
+ */
+oyPointer          oyBlob_GetPointer ( oyBlob_s          * blob )
+{
+  oyBlob_s * s = blob;
+  int error = !s;
+
+  oyCheckType__m( oyOBJECT_BLOB_S, return NULL )
+
+  if(error <= 0)
+    return s->ptr;
+
+  return NULL;
+}
+
+/** Function oyBlob_GetSize
+ *  @memberof oyBlob_s
+ *  @brief   get size from a data blob
+ *
+ *  @param[in]     blob                the data blob
+ *  @return                            the data size
+ *
+ *  @version Oyranos: 0.2.1
+ *  @since   2011/01/17 (Oyranos: 0.2.1)
+ *  @date    2011/01/17
+ */
+size_t             oyBlob_GetSize    ( oyBlob_s          * blob )
+{
+  oyBlob_s * s = blob;
+  int error = !s;
+
+  oyCheckType__m( oyOBJECT_BLOB_S, return 0 )
+
+  if(error <= 0)
+    return s->size;
+
+  return 0;
+}
+
+/** Function oyBlob_GetType
+ *  @memberof oyBlob_s
+ *  @brief   get type from a data blob
+ *
+ *  @param[in]     blob                the data blob
+ *  @return                            the data type
+ *
+ *  @version Oyranos: 0.2.1
+ *  @since   2011/01/17 (Oyranos: 0.2.1)
+ *  @date    2011/01/17
+ */
+const char *       oyBlob_GetType    ( oyBlob_s          * blob )
+{
+  oyBlob_s * s = blob;
+  int error = !s;
+
+  oyCheckType__m( oyOBJECT_BLOB_S, return 0 )
+
+  if(error <= 0)
+    return s->type;
+
+  return 0;
 }
 
 
