@@ -14,7 +14,7 @@
  */
 
 
-#include "oyranos.h"
+#include "oyranos_core.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
 

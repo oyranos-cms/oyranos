@@ -1,4 +1,4 @@
-/** @file oyranos.h
+/** @file oyranos_core.h
  *
  *  Oyranos is an open source Colour Management System 
  *

@@ -23,7 +23,7 @@
 #include "oyranos_debug.h"
 #include "oyranos_alpha.h"
 #if defined(OY_CONFIG_H)
-#include "oyranos.h"
+#include "oyranos_core.h"
 #else
 #include "oyranos/oyranos.h"
 #endif
