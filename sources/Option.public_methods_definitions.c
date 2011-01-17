@@ -36,6 +36,7 @@ oyOption_s *   oyOption_FromRegistration( const char        * registration,
   return s;
 }
 
+#ifdef HAVE_ELEKTRA
 /** Function oyOption_FromDB
  *  @memberof oyOption_s
  *  @brief   new option with registration and value filled from DB if available
@@ -65,6 +66,7 @@ oyOption_s *   oyOption_FromDB       ( const char        * registration,
 
   return o;
 }
+#endif
 
 /** Function oyOption_GetId
  *  @memberof oyOption_s
@@ -705,7 +707,7 @@ const char *   oyOption_GetRegistration (
   return s->registration;
 }
 
-#ifdef OYRANOS_ELEKTRA_H
+#ifdef HAVE_ELEKTRA
 /** Function oyOption_SetValueFromDB
  *  @memberof oyOption_s
  *  @brief   value filled from DB if available
@@ -844,4 +846,357 @@ oyOPTIONSOURCE_e oyOption_GetSource  ( oyOption_s        * option )
 
   return s->source;
 }
+
+/** Function oyValueCopy
+ *  @memberof oyValue_u
+ *  @brief   copy a oyValue_u union
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+void           oyValueCopy           ( oyValue_u         * to,
+                                       oyValue_u         * from,
+                                       oyVALUETYPE_e       type,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocateFunc )
+{
+  int n = 0, i;
+
+  if(!from || !to)
+    return;
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_; 
+
+  switch(type)
+  {
+  case oyVAL_INT: to->int32 = from->int32; break;
+  case oyVAL_INT_LIST:
+       if(to->int32_list && deallocateFunc)
+       {
+         deallocateFunc(to->int32_list);
+         to->int32_list = 0;
+       }
+
+       if(!from->int32_list)
+         return;
+
+       n = from->int32_list[0];
+
+       to->int32_list = allocateFunc( (n+1) * sizeof(int32_t) );
+       to->int32_list[0] = n;
+       for(i = 1; i <= n; ++i)
+         to->int32_list[i] = from->int32_list[i];
+       break;
+  case oyVAL_DOUBLE: to->dbl = from->dbl; break;
+  case oyVAL_DOUBLE_LIST:
+       if(to->dbl_list && deallocateFunc)
+       {
+         deallocateFunc(to->dbl_list);
+         to->dbl_list = 0;
+       }
+
+       if(!from->dbl_list)
+         return;
+
+       n = from->dbl_list[0];
+
+       to->dbl_list = allocateFunc( (n+1) * sizeof(double));
+
+       to->dbl_list[0] = n;
+       for(i = 1; i <= n; ++i)
+         to->dbl_list[i] = from->dbl_list[i];
+
+       break;
+  case oyVAL_STRING:
+       if(to->string && deallocateFunc)
+       {
+         deallocateFunc(to->string);
+         to->string = 0;
+       }
+
+       to->string = oyStringCopy_(from->string, allocateFunc);
+       break;
+  case oyVAL_STRING_LIST:
+       if(to->string_list && deallocateFunc)
+       {
+         i = 0;
+         while(to->string_list[i])
+           deallocateFunc(to->string_list[i++]);
+         deallocateFunc(to->string_list);
+         to->string_list = 0;
+       }
+
+       if(!from->string_list)
+         return;
+
+       i = 0;
+       n = 0;
+       while((size_t)from->string_list[i])
+         ++n;
+
+       to->string_list = allocateFunc( n * sizeof(char*));
+       memset( to->string_list, 0, n * sizeof(char*) );
+       i = 0;
+       while(from->string_list[i])
+       {
+         to->string_list[i] = oyStringCopy_(from->string_list[i], allocateFunc);
+         ++i;
+       }
+       to->string_list[n] = 0;
+
+       break;
+  case oyVAL_STRUCT:
+       if(to->oy_struct && deallocateFunc)
+       {
+         if(to->oy_struct->release)
+           to->oy_struct->release( &to->oy_struct );
+         to->oy_struct = 0;
+       }
+
+       if(!from->oy_struct)
+         return;
+       if(from->oy_struct->copy)
+         to->oy_struct = from->oy_struct->copy( from->oy_struct,
+                                                from->oy_struct->oy_ );
+       break;
+  }
+}
+
+/** Function  oyValueEqual
+ *  @memberof oyValue_u
+ *  @brief    compare a oyValue_u union
+ *
+ *  @param         a                   value a
+ *  @param         b                   value b
+ *  @param         type                the value type to comare in a and b
+ *  @param         pos                 position in list; -1 compare all
+ *  return                             0 - not equal; 1 - equal
+ *
+ *  @version  Oyranos: 0.1.10
+ *  @since    2010/04/11 (Oyranos: 0.1.10)
+ *  @date     2010/04/11
+ */
+int            oyValueEqual          ( oyValue_u         * a,
+                                       oyValue_u         * b,
+                                       oyVALUETYPE_e       type,
+                                       int                 pos )
+{
+  int n = 0, n2 = 0, i;
+  int equal = 0;
+
+  if(!a && !b)
+    return 1;
+
+  switch(type)
+  {
+  case oyVAL_INT:
+      if(a->int32 == b->int32)
+          return 1;
+      break;
+  case oyVAL_INT_LIST:
+
+      {
+        if(!a->int32_list && !b->int32_list)
+          return 1;
+        if(0 <= pos && pos < a->int32_list[0] &&
+           pos < b->int32_list[0])
+          if(a->int32_list[1 + pos] == b->int32_list[1 + pos])
+            return 1;
+        if(pos < 0)
+        {
+          if(a->int32_list[0] != b->int32_list[0])
+            return 0;
+          n = a->int32_list[0];
+          for(i = 0; i < n; ++i)
+            if(a->int32_list[1 + i] != b->int32_list[1 + i])
+              return 0;
+          return 1;
+        }
+      }
+      break;
+  case oyVAL_DOUBLE: if(a->dbl == b->dbl) return 1; break;
+  case oyVAL_DOUBLE_LIST:
+        if(!a->dbl_list && !b->dbl_list)
+          return 1;
+        if(0 <= pos && pos < a->dbl_list[0] &&
+           pos < b->dbl_list[0])
+          if(a->dbl_list[1 + pos] == b->dbl_list[1 + pos])
+            return 1;
+        if(pos < 0)
+        {
+          if(a->dbl_list[0] != b->dbl_list[0])
+            return 0;
+          n = a->dbl_list[0];
+          for(i = 0; i < n; ++i)
+            if(a->dbl_list[1 + i] != b->dbl_list[1 + i])
+              return 0;
+          return 1;
+        }
+      break;
+  case oyVAL_STRING:
+        if(!a->string && !b->string)
+          return 1;
+        if(a->string && b->string && oyStrcmp_(a->string,b->string) == 0)
+          return 1;
+      break;
+  case oyVAL_STRING_LIST:
+        if(!a->string_list && !b->string_list)
+          return 1;
+        i = 0;
+        n = 0;
+        while((size_t)a->string_list[i])
+          ++n;
+        i = 0;
+        n2 = 0;
+        while((size_t)b->string_list[i])
+          ++n2;
+        if(0 <= pos && pos < n &&
+           pos < n2)
+        {
+          if(a->string_list[pos] && b->dbl_list[1 + pos] &&
+             oyStrcmp_(a->string_list[pos], b->string_list[pos]) == 0)
+            return 1;
+          else
+            return 0;
+        }
+
+        if(pos < 0)
+        {
+          if(n != n2)
+            return 0;
+          for(i = 0; i < n; ++i)
+            if(a->string_list[i] && b->string_list[i] &&
+               oyStrcmp_(a->string_list[i], b->string_list[i]) == 0)
+              return 0;
+          return 1;
+        }
+
+      break;
+  case oyVAL_STRUCT:
+        if(!a->oy_struct && !b->oy_struct)
+          return 1;
+        if(!a->oy_struct || !b->oy_struct)
+          return 0;
+        if(a->oy_struct->type_ == oyOBJECT_BLOB_S &&
+           b->oy_struct->type_ == oyOBJECT_BLOB_S &&
+           oyBlob_GetPointer((oyBlob_s*)(a->oy_struct)) == oyBlob_GetPointer((oyBlob_s*)(b->oy_struct)) )
+          return 1;
+        if(a->oy_struct->type_ == oyOBJECT_CMM_PTR_S &&
+           b->oy_struct->type_ == oyOBJECT_CMM_PTR_S &&
+           oyCMMptr_GetPointer((oyCMMptr_s*)(a->oy_struct)) == oyCMMptr_GetPointer((oyCMMptr_s*)(b->oy_struct)))
+          return 1;
+      break;
+  }
+
+  return equal;
+}
+
+/** Function oyValueClear
+ *  @memberof oyValue_u
+ *  @brief   clear a oyValue_u union
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+void           oyValueClear          ( oyValue_u         * v,
+                                       oyVALUETYPE_e       type,
+                                       oyDeAlloc_f         deallocateFunc )
+{
+  int i;
+
+  if(!v)
+    return;
+
+  if(!deallocateFunc)
+    return; 
+
+  if(v->int32)
+  switch(type)
+  {
+  case oyVAL_INT:
+  case oyVAL_DOUBLE:
+       break;
+  case oyVAL_INT_LIST:
+  case oyVAL_DOUBLE_LIST:
+       if(!v->int32_list)
+         break;
+
+       if(v->int32_list)
+         deallocateFunc(v->int32_list);
+
+       break;
+  case oyVAL_STRING:
+       deallocateFunc( v->string );
+       break;
+  case oyVAL_STRING_LIST:
+       if(!v->string_list)
+         break;
+
+       if(v->string_list)
+       {
+         i = 0;
+         while(v->string_list[i])
+           deallocateFunc(v->string_list[i++]);
+         deallocateFunc(v->string_list);
+       }
+
+       break;
+  case oyVAL_STRUCT:
+       if(v->oy_struct->release)
+         v->oy_struct->release( &v->oy_struct );
+       break;
+  }
+}
+/** Function oyValueRelease
+ *  @memberof oyValue_u
+ *  @brief   release a oyValue_u union
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+void           oyValueRelease        ( oyValue_u        ** v,
+                                       oyVALUETYPE_e       type,
+                                       oyDeAlloc_f         deallocateFunc )
+{
+  if(!v || !*v)
+    return;
+
+  if(!deallocateFunc)
+    return; 
+
+  oyValueClear( *v, type, deallocateFunc );
+
+  deallocateFunc(*v);
+  *v = 0;
+}
+
+/** Function oyValueTypeText
+ *  @memberof oyValue_u
+ *  @brief   obtain a short string about union type
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+const char *   oyValueTypeText       ( oyVALUETYPE_e       type )
+{
+  switch(type)
+  {
+  case oyVAL_INT:         return "xs:integer";
+  case oyVAL_DOUBLE:      return "xs:double";
+  case oyVAL_INT_LIST:    return "xs:integer";
+  case oyVAL_DOUBLE_LIST: return "xs:double";
+  case oyVAL_STRING:      return "xs:string";
+  case oyVAL_STRING_LIST: return "xs:string";
+  case oyVAL_STRUCT:      return "struct";
+  }
+  return 0;
+}
+
+
+
 
