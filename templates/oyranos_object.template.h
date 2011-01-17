@@ -6,7 +6,7 @@
 
 {% include "cpp_begin.h" %}
 
-#include <oyranos.h>
+#include <oyranos_core.h>
 
 /* Function Pointers Definitions Start */
 typedef oyPointer (*oyPointer_copy_f )   ( oyPointer, size_t );
@@ -33,6 +33,7 @@ typedef struct oyObject_s_* oyObject_s;
  *  @since   2007/11/22 (Oyranos: 0.1.x)
  *  @date    2008/07/31
  */
+#if 0
 typedef enum {
   oyOBJECT_NONE,
 {% for class in classes %}{% ifequal class.group "objects_generic" %}
@@ -56,6 +57,74 @@ typedef enum {
   oyOBJECT_NAMED_COLOURS_S,
   oyOBJECT_MAX
 } oyOBJECT_e;
+#else
+typedef enum {
+  oyOBJECT_NONE,
+  oyOBJECT_OBJECT_S,                  /**< oyObject_s */
+  oyOBJECT_MONITOR_S,                 /**< oyMonitor_s */
+  oyOBJECT_NAMED_COLOUR_S,            /*!< oyNamedColour_s */
+  oyOBJECT_NAMED_COLOURS_S,           /*!< oyNamedColours_s */
+  oyOBJECT_PROFILE_S,                 /*!< oyProfile_s */
+  oyOBJECT_PROFILE_TAG_S,             /*!< oyProfileTag_s */
+  oyOBJECT_PROFILES_S,                /*!< oyProfiles_s */
+  oyOBJECT_OPTION_S,                  /*!< oyOption_s */
+  oyOBJECT_OPTIONS_S,                 /*!< oyOptions_s */
+  oyOBJECT_RECTANGLE_S,               /**< oyRectangle_s */
+  oyOBJECT_IMAGE_S,                   /*!< oyImage_s */
+  oyOBJECT_ARRAY2D_S,                 /**< oyArray2d_s */
+  oyOBJECT_COLOUR_CONVERSION_S,       /*!< oyColourConversion_s */
+  oyOBJECT_CONNECTOR_S,               /**< oyConnector_s */
+  oyOBJECT_CONNECTOR_IMAGING_S,       /**< oyConnectorImaging_s */
+  oyOBJECT_FILTER_PLUG_S,             /**< oyFilterPlug_s */
+  oyOBJECT_FILTER_PLUGS_S,            /**< oyFilterPlugs_s */
+  oyOBJECT_FILTER_SOCKET_S,           /**< oyFilterSocket_s */
+  oyOBJECT_FILTER_CORE_S,             /**< oyFilterCore_s */
+  oyOBJECT_FILTER_CORES_S,            /**< oyFilterCores_s */
+  oyOBJECT_FILTER_NODE_S,             /**< oyFilterNode_s */
+  oyOBJECT_FILTER_NODES_S,            /**< oyFilterNodes_s */
+  oyOBJECT_FILTER_GRAPH_S,            /**< oyFilterGraph_s */
+  oyOBJECT_PIXEL_ACCESS_S,            /**< oyPixelAccess_s */
+  oyOBJECT_CONVERSION_S,              /**< oyConversion_s */
+  oyOBJECT_CMM_HANDLE_S      = 50,    /**< oyCMMhandle_s */
+  oyOBJECT_CMM_PTR_S,                 /*!< oyCMMptr_s */
+  oyOBJECT_CMM_INFO_S,                /*!< oyCMMInfo_s */
+  oyOBJECT_CMM_API_S,                 /**< oyCMMapi_s */
+  oyOBJECT_CMM_APIS_S,                /**< oyCMMapis_s */
+  oyOBJECT_CMM_API1_S,                /**< oyCMMapi1_s */
+  oyOBJECT_CMM_API2_S,                /**< oyCMMapi2_s */
+  oyOBJECT_CMM_API3_S,                /**< oyCMMapi3_s */
+  oyOBJECT_CMM_API4_S,                /**< oyCMMapi4_s */
+  oyOBJECT_CMM_API5_S,                /**< oyCMMapi5_s */
+  oyOBJECT_CMM_API6_S,                /**< oyCMMapi6_s */
+  oyOBJECT_CMM_API7_S,                /**< oyCMMapi7_s */
+  oyOBJECT_CMM_DATA_TYPES_S,          /**< oyCMMDataTypes_s */
+  oyOBJECT_CMM_API8_S,                /**< oyCMMapi8_s */
+  oyOBJECT_CMM_API_FILTERS_S,         /**< oyCMMapiFilters_s */
+  oyOBJECT_CMM_API9_S,                /**< oyCMMapi9_s */
+  oyOBJECT_CMM_API10_S,               /**< oyCMMapi10_s */
+  oyOBJECT_CMM_API_MAX,               /**< not defined */
+  oyOBJECT_ICON_S      = 80,          /*!< oyIcon_s */
+  oyOBJECT_MODULE_S,                  /*!< oyModule_s */
+  oyOBJECT_EXTERNFUNC_S,              /*!< oyExternFunc_s */
+  oyOBJECT_NAME_S,                    /*!< oyName_s */
+  oyOBJECT_COMP_S_,                   /*!< oyComp_s_ */
+  oyOBJECT_FILE_LIST_S_,              /*!< oyFileList_s_ */
+  oyOBJECT_HASH_S,                    /**< oyHash_s */
+  oyOBJECT_STRUCT_LIST_S,             /**< oyStructList_s */
+  oyOBJECT_BLOB_S,                    /**< oyBlob_s */
+  oyOBJECT_CONFIG_S,                  /**< oyConfig_s */
+  oyOBJECT_CONFIGS_S,                 /**< oyConfigs_s */
+  oyOBJECT_UI_HANDLER_S,              /**< oyUiHandler_s */
+  oyOBJECT_FORMS_ARGS_S,              /**< oyFormsArgs_s */
+  oyOBJECT_CALLBACK_S,                /**< oyCallback_s */
+  oyOBJECT_OBSERVER_S,                /**< oyObserver_s */
+  oyOBJECT_CONF_DOMAIN_S,             /**< oyConfDomain_s */
+  oyOBJECT_MAX
+} oyOBJECT_e;
+#endif
+
+const char *     oyStructTypeToText  ( oyOBJECT_e          type );
+
 
 /** @enum    oyNAME_e
  *  @brief   describe the base types of a oyObject_s name
@@ -202,6 +271,16 @@ typedef enum {
 int          oyTextboolean_          ( const char        * text_a,
                                        const char        * text_b,
                                        oyBOOLEAN_e         type );
+char * oyFilterRegistrationToText    ( const char        * registration,
+                                       oyFILTER_REG_e      type,
+                                       oyAlloc_f           allocateFunc );
+int    oyFilterRegistrationMatch     ( const char        * registration,
+                                       const char        * pattern,
+                                       oyOBJECT_e          api_number );
+int    oyFilterRegistrationMatchKey  ( const char        * registration1,
+                                       const char        * registration2,
+                                       oyOBJECT_e          api_number );
+
 
 
 {% include "cpp_end.h" %}
