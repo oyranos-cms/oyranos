@@ -231,6 +231,7 @@ ldconfig
 %files -n lib%{name}0
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
+%{_libdir}/lib%{name}_core.so.*
 %{_libdir}/lib%{name}.so.*
 %dir %{_libdir}/colour/
 %dir %{_libdir}/%{cmmsubpath}/
@@ -247,6 +248,7 @@ ldconfig
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-config
+%{_libdir}/lib%{name}_core.so
 %{_libdir}/lib%{name}.so
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/icc34.h
@@ -335,6 +337,9 @@ ldconfig
 %{desktopdir}/qcmsevents-applet.desktop
 
 %changelog
+* Mon Jan 03 2011 Kai-Uwe Behrmann
+- split liboyranos_core from liboyranos
+
 * Mon Jan 03 2011 Kai-Uwe Behrmann
 - add forms and forms-fltk
 
