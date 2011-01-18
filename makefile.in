@@ -444,7 +444,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
 	$(TARGET)_profiles.o \
-	test2.o tests/test_oyranos.o test.o
+	test2.o test_core.o tests/test_oyranos.o test.o
 
 SUB_OBJECTS = \
 	$(CMM_lcms_OBJECTS) \
@@ -493,7 +493,7 @@ ALL_FILES = \
 	$(DOC_TEMPLATES) \
 	$(FLTK_FILES) \
 	dirent.c \
-	test.c test2.cpp
+	test.c test2.cpp test_core.c
 
 # build all what is needed to run the libraries, helpers
 all:	check_environment config.log.h mkdepend \
@@ -1140,7 +1140,7 @@ clean:
 	$(CLEAN_OBJECTS) libXNVCtrl.a \
 	$(TARGET)-policy \
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
-	test2 test tests/test_oyranos \
+	test2 test_core test tests/test_oyranos \
 	$(FLTK_GUI) \
 	oforms/$(TARGET)-xforms oforms/$(TARGET)-xforms-fltk; \
 	for ling in $(LINGUAS); do \
