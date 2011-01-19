@@ -1026,6 +1026,9 @@ install_linguas:
 # build a source distribution package
 dist: targz
 	test -d ../Archiv && mv -v ../Archiv/$(TARGET)-$(MTIME).tgz $(TARGET)-$(VERSION).tar.gz || mv -v $(TARGET)-$(MTIME).tgz $(TARGET)-$(VERSION).tar.gz
+	tar xzf $(TARGET)-$(VERSION).tar.gz
+	tar cjf $(TARGET)-$(VERSION).tar.bz2 $(TARGET)-$(VERSION)/
+	$(RM) -R $(TARGET)-$(VERSION)
 
 dist-gzip:	dist
 
