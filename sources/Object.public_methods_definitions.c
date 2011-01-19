@@ -414,22 +414,6 @@ int          oyObject_UnSetLocking   ( oyObject_s          object,
   return error;
 }
 
-/** Function oyObject_GetId
- *  @memberof oyObject_s
- *  @brief   get the identification number of a object 
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/10 (Oyranos: 0.1.8)
- *  @date    2008/07/10
- */
-int            oyObject_GetId        ( oyObject_s          obj )
-{
-  if(obj)
-    return obj->id_;
-
-  return -1;
-}
-
 /** Function oyObject_GetRefCount
  *  @memberof oyObject_s
  *  @brief   get the identification number of a object 
