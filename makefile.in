@@ -113,7 +113,7 @@ LDLIBSCORE = $(LDFLAGS) -L$(libdir) -L. \
 	$(LIBXML2_LIBS) -lc $(I18N_LIB) $(LIBLTDL)
 
 
-MODULE_LDLIBS =	-l$(TARGET) $(lc) 
+MODULE_LDLIBS =	-l$(TARGET) -$(TARGET)_core $(lc) 
 
 
 CHEADERS = \
@@ -694,7 +694,7 @@ $(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL_NAM
 	-I$(SRCDIR)/libXNVCtrl \
 	-o $(TARGET)-monitor-nvidia $(MONI_X11_OBJECTS) -L./ \
 	$(LDLIBS) $(X11_LIBS) $(m) \
-	-L./$(LIB_XNVCTRL) -lXNVCtrl $(LIBSONAMEFULL) \
+	-L./$(LIB_XNVCTRL) -lXNVCtrl $(MODULE_LDLIBS) \
 	$(LINK_LIB_PATH)
 
 $(TARGET)_config_fltk.o:	$(SRCDIR)/$(TARGET)_config_fltk.cxx
@@ -709,7 +709,7 @@ $(FLTK_GUI):	$(FLTK_OBJECTS) $(LIBFL_I18N) $(LIBSONAMEFULL)
 	echo Linking $@ ...
 	$(CXX) -I./ $(FLTK_H) -o $(FLTK_GUI) \
 	$(FLTK_OBJECTS) \
-	$(LIBSONAMEFULL) $(LINK_LIB_PATH) \
+	$(MODULE_LDLIBS) $(LINK_LIB_PATH) \
 	$(LDLIBS) $(FLTK_LIBS) $(PNG_LIBS) $(I18N_LIB) $(LIBFL_I18N) $(pthread)
 	$(REZ)
 
@@ -746,19 +746,19 @@ $(TARGET)-monitor:	$(LIBSONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) -o $(TARGET)-monitor \
 	$(TARGET)_gamma.o \
-	$(LDLIBS) $(LIBSONAMEFULL) $(LINK_LIB_PATH)
+	$(LDLIBS) $(MODULE_LDLIBS) $(LINK_LIB_PATH)
 
 $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) -o $(TARGET)-policy \
 	$(TARGET)_policy.o \
-	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
+	$(MODULE_LDLIBS) $(LDLIBS) $(LINK_LIB_PATH)
 
 $(TARGET)-profiles:	$(TARGET)_profiles.o $(LIBSONAMEFULL)
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) -o $@ \
 	$< \
-	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_LIB_PATH)
+	$(MODULE_LDLIBS) $(LDLIBS) $(LINK_LIB_PATH)
 
 test_core:	$(LIBSONAMECOREFULL) $(LIBNAME_CORE) test_core.o
 	echo Linking dynamic $@ ...
@@ -807,7 +807,7 @@ oforms:	$(LIB_FORMS_FLTK_NAME)
 test:	test.o
 	$(CC) -I./ $(CFLAGS) -o test \
 	test.o \
-	$(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
+	$(MODULE_LDLIBS) $(LDLIBS) $(LINK_SRC_PATH)
 
 tests/test_oyranos:	tests/test_oyranos.o
 	$(RM) tests/test_oyranos.o
@@ -815,7 +815,7 @@ tests/test_oyranos:	tests/test_oyranos.o
 	echo Linking tests/test_oyranos
 	$(CC) -I./ $(CFLAGS) -o tests/test_oyranos \
         tests/test_oyranos.o \
-        $(LIBSONAMEFULL) $(LDLIBS) $(LINK_SRC_PATH)
+        $(MODULE_LDLIBS) $(LDLIBS) $(LINK_SRC_PATH)
 
 $(LIBFL_I18N):	fl_i18n/Makefile
 #ifdef FLTK
