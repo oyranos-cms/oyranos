@@ -802,7 +802,7 @@ examples:
 	cd examples && ($(MAKE) clean; PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/examples/ CFLAGS="$(CFLAGS)" LIBS="-L$(libdir) -L../" $(MAKE))
 
 oforms:	$(LIB_FORMS_FLTK_NAME)
-	cd oforms && (PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/oforms/ LDFLAGS="-L../ $(intl)" $(MAKE) -f oyranos_xforms.makefile)
+	cd oforms && (PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/oforms/ LDFLAGS="-L../ $(intl) $(LDFLAGS)" $(MAKE) -f oyranos_xforms.makefile)
 
 test:	test.o
 	$(CC) -I./ $(CFLAGS) -o test \
@@ -961,7 +961,7 @@ install_bin:	all install_gui
 	$(INSTALL) -m 644 $(SRCDIR)/icc34.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_icc.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(TARGET)_version.h $(DESTDIR)$(includedir)/$(TARGET)
-	mkdir -p $(DESTDIR)/etc/xdg/autostart/
+	-mkdir -p $(DESTDIR)/etc/xdg/autostart/
 	-$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)-monitor-setup.desktop $(DESTDIR)/etc/xdg/autostart/
 	echo ... binary Installation finished
 
