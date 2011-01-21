@@ -87,8 +87,11 @@ liboyranos$(TARGET_ICC).so: ${OBJECTS_OBJ_ICC} liboyranos$(TARGET_OBJECT).so
 	../../oyranos/liboyranos_core.a \
 	-o liboyranos$(TARGET_icc).so 
 
-API_generated:
+API_generated:	generator/oyAPIGenerator
 	cd generator; ./oyAPIGenerator ../templates ../sources ../API_generated
+
+generator/oyAPIGenerator:
+	cd generator; cmake -DGrantlee_DIR="../../grantlee/install/dir" .; make
 
 test:
 	gcc -Wall -g `pkg-config --cflags oyranos` -IAPI_generated/ object.c -o o -L./ -loyranos$(TARGET_OBJECT) -L/opt/local/lib64/  -lxml2 -lm
