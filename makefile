@@ -6,8 +6,9 @@ XML_INC := $(shell pkg-config --cflags libxml-2.0)
 INCL    = -IAPI_generated/ -Iinclude_core/ $(XML_INC)
 .SILENT:
 
-TARGET_OBJECT = _object_core
+TARGET_OBJECT_CORE = _object_core
 TARGET_ICC = _object_icc
+TARGET_MODULE = _object
 
 SOURCES_OBJ_CORE = \
 	API_generated/oyBlob_s_.c \
@@ -61,31 +62,54 @@ HEADERS_OBJ_CORE = \
 
 SOURCES_OBJ_ICC = \
 	API_generated/oyProfile_s.c \
-	API_generated/oyProfile_s_.c \
+	API_generated/oyProfile_s.c \
+	API_generated/oyProfiles_s_.c \
+	API_generated/oyProfiles_s_.c \
 	API_generated/oyProfileTag_s.c \
 	API_generated/oyProfileTag_s_.c
 HEADERS_OBJ_ICC = \
 	API_generated/oyProfile_s.h \
 	API_generated/oyProfile_s_.h \
+	API_generated/oyProfiles_s.h \
+	API_generated/oyProfiles_s_.h \
 	API_generated/oyProfileTag_s.h \
 	API_generated/oyProfileTag_s_.h
 
+SOURCES_OBJ_MODULE = \
+	API_generated/oyConfig_s.c \
+	API_generated/oyConfig_s_.c \
+	API_generated/oyConfigs_s.c \
+	API_generated/oyConfigs_s_.c
+HEADERS_OBJ_MODULE = \
+	API_generated/oyConfig_s.h \
+	API_generated/oyConfig_s_.h \
+	API_generated/oyConfigs_s.h \
+	API_generated/oyConfigs_s_.h
+
 OBJECTS_OBJ_CORE = ${SOURCES_OBJ_CORE:.c=.o}
 OBJECTS_OBJ_ICC = ${SOURCES_OBJ_ICC:.c=.o}
+OBJECTS_OBJ_MODULE = ${SOURCES_OBJ_MODULE:.c=.o}
 
 .PHONY: API_generated
-all:	API_generated liboyranos$(TARGET_OBJECT).so liboyranos$(TARGET_ICC).so
+all:	API_generated liboyranos$(TARGET_OBJECT_CORE).so liboyranos$(TARGET_MODULE).so
+# liboyranos$(TARGET_ICC).so
 
-liboyranos$(TARGET_OBJECT).so: $(HEADERS_OBJ_CORE) $(OBJECTS_OBJ_CORE)
+liboyranos$(TARGET_OBJECT_CORE).so: $(HEADERS_OBJ_CORE) $(OBJECTS_OBJ_CORE)
 	echo Linking $@ ...
 	$(CC) -shared $(OBJECTS_OBJ_CORE) $(OY_LIBS) \
-	-o liboyranos$(TARGET_OBJECT).so
+	-o liboyranos$(TARGET_OBJECT_CORE).so
 
-liboyranos$(TARGET_ICC).so: $(OBJECTS_OBJ_ICC) liboyranos$(TARGET_OBJECT).so
+liboyranos$(TARGET_ICC).so: $(OBJECTS_OBJ_ICC) liboyranos$(TARGET_OBJECT_CORE).so
 	echo Linking $@ ...
-	$(CC) -shared ${OBJECTS_OBJ_icc} liboyranos$(TARGET_OBJECT).so \
-	../../oyranos/liboyranos_core.a \
-	-o liboyranos$(TARGET_icc).so 
+	$(CC) -shared $(OBJECTS_OBJ_ICC) liboyranos$(TARGET_OBJECT_CORE).so \
+	$(OY_LIBS) \
+	-o liboyranos$(TARGET_ICC).so 
+
+liboyranos$(TARGET_MODULE).so: $(OBJECTS_OBJ_MODULE) liboyranos$(TARGET_MODULE).so
+	echo Linking $@ ...
+	$(CC) -shared $(OBJECTS_OBJ_MODULE) liboyranos$(TARGET_OBJECT_CORE).so \
+	$(OY_LIBS) \
+	-o liboyranos$(TARGET_MODULE).so 
 
 API_generated:	generator/oyAPIGenerator
 	cd generator; ./oyAPIGenerator ../templates ../sources ../API_generated
@@ -94,7 +118,7 @@ generator/oyAPIGenerator:
 	cd generator; cmake -DGrantlee_DIR="../../grantlee/install/dir" .; make
 
 test:
-	gcc -Wall -g `pkg-config --cflags oyranos` -IAPI_generated/ object.c -o o -L./ -loyranos$(TARGET_OBJECT) -L/opt/local/lib64/  -lxml2 -lm
+	gcc -Wall -g `pkg-config --cflags oyranos` -IAPI_generated/ object.c -o o -L./ -loyranos$(TARGET_OBJECT_CORE) -L/opt/local/lib64/  -lxml2 -lm
 
 # Build commands and filename extensions...
 .SUFFIXES:	.c .h .o
@@ -105,5 +129,5 @@ test:
 	$(CC) -I. $(CFLAGS) $(INCL) -c -o $@ $(SRCDIR)/$<
 
 clean:
-	rm $(OBJECTS_OBJ_CORE) $(OBJECTS_OBJ_ICC) liboyranos$(TARGET_OBJECT).so liboyranos$(TARGET_ICC).so
+	rm $(OBJECTS_OBJ_CORE) $(OBJECTS_OBJ_ICC) liboyranos$(TARGET_OBJECT_CORE).so liboyranos$(TARGET_ICC).so
 
