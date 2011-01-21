@@ -1,5 +1,6 @@
 OYAPI oyProfile_s * OYEXPORT
-                   oyProfile_FromStd ( oyPROFILE_e         colour_space,
+                   oyProfile_FromStd ( oyPROFILE_e         type,
+                                       oyObject_s          object);
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromFile( const char*         file_name,
                                        uint32_t            flags,
