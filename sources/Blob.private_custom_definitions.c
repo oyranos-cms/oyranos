@@ -11,7 +11,7 @@
  *
  *  @param[in]  blob  the Blob object
  *
- *  @version Oyranos: x.x.x
+ *  @version Oyranos: 0.2.1
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */

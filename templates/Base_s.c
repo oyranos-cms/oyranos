@@ -9,10 +9,6 @@
 /** Function oy{{ class.baseName }}_New
  *  @memberof {{ class.name }}
  *  @brief   allocate a new {{ class.baseName }} object
- *
- *  @version Oyranos: {{ oyranos_version }}
- *  @since   2010/04/26 (Oyranos: 0.1.10)
- *  @date    2010/04/26
  */
 OYAPI {{ class.name }} * OYEXPORT
   oy{{ class.baseName }}_New( oyObject_s object )
@@ -32,12 +28,12 @@ OYAPI {{ class.name }} * OYEXPORT
  *  @memberof {{ class.name }}
  *  @brief   copy or reference a {{ class.baseName }} object
  *
- *  @param[in]     {{ class.baseName|lower }}                 {{ class.baseName }} struct object
- *  @param         object              the optional object
+ *  The function is for copying and for referencing. The reference is the most
+ *  often used way, which saves resourcs and time.
  *
- *  @version Oyranos: {{ oyranos_version }}
- *  @since   2010/04/26 (Oyranos: 0.1.10)
- *  @date    2010/04/26
+ *  @param[in]     {{ class.baseName|lower }}                 {{ class.baseName }} struct object
+ *  @param         object              NULL - means reference,
+ *                                     the optional object triffers a real copy
  */
 OYAPI {{ class.name }}* OYEXPORT
   oy{{ class.baseName }}_Copy( {{ class.name }} *{{ class.baseName|lower }}, oyObject_s object )
@@ -57,10 +53,6 @@ OYAPI {{ class.name }}* OYEXPORT
  *  @brief   release and possibly deallocate a {{ class.name }} object
  *
  *  @param[in,out] {{ class.baseName|lower }}                 {{ class.baseName }} struct object
- *
- *  @version Oyranos: {{ oyranos_version }}
- *  @since   2010/04/26 (Oyranos: 0.1.10)
- *  @date    2010/04/26
  */
 OYAPI int OYEXPORT
   oy{{ class.baseName }}_Release( {{ class.name }} **{{ class.baseName|lower }} )
