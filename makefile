@@ -1,8 +1,10 @@
 CC      = gcc
 CFLAGS  = -g -Wall -pedantic -DUSE_GETTEXT -fPIC
 SRCDIR  = .
+OY_LIBS = -L../../oyranos -loyranos_core
 XML_INC := $(shell pkg-config --cflags libxml-2.0)
 INCL    = -IAPI_generated/ -Iinclude_core/ $(XML_INC)
+.SILENT:
 
 TARGET_OBJECT = _object_core
 TARGET_ICC = _object_icc
@@ -70,16 +72,17 @@ HEADERS_OBJ_ICC = \
 
 OBJECTS_OBJ_CORE = ${SOURCES_OBJ_CORE:.c=.o}
 OBJECTS_OBJ_ICC = ${SOURCES_OBJ_ICC:.c=.o}
-#.SILENT:
 
 .PHONY: API_generated
 all:	API_generated liboyranos$(TARGET_OBJECT).so liboyranos$(TARGET_ICC).so
 
 liboyranos$(TARGET_OBJECT).so: ${OBJECTS_OBJ_CORE}
-	$(CC) -shared ${OBJECTS_OBJ_CORE} ../../oyranos/liboyranos_core.a \
+	echo Linking $@ ...
+	$(CC) -shared ${OBJECTS_OBJ_CORE} $(OY_LIBS) \
 	-o liboyranos$(TARGET_OBJECT).so
 
 liboyranos$(TARGET_ICC).so: ${OBJECTS_OBJ_ICC} liboyranos$(TARGET_OBJECT).so
+	echo Linking $@ ...
 	$(CC) -shared ${OBJECTS_OBJ_icc} liboyranos$(TARGET_OBJECT).so \
 	../../oyranos/liboyranos_core.a \
 	-o liboyranos$(TARGET_icc).so 
@@ -88,7 +91,7 @@ API_generated:
 	cd generator; ./oyAPIGenerator ../templates ../sources ../API_generated
 
 test:
-	gcc -Wall -g `pkg-config --cflags oyranos` -IAPI_generated/ object.c -o o -L./ -loyranos$(TARGET_OBJECT) -L/opt/local/lib64/ -loyranos_core -lxml2 -lm
+	gcc -Wall -g `pkg-config --cflags oyranos` -IAPI_generated/ object.c -o o -L./ -loyranos$(TARGET_OBJECT) -L/opt/local/lib64/  -lxml2 -lm
 
 # Build commands and filename extensions...
 .SUFFIXES:	.c .h .o
