@@ -76,12 +76,12 @@ OBJECTS_OBJ_ICC = ${SOURCES_OBJ_ICC:.c=.o}
 .PHONY: API_generated
 all:	API_generated liboyranos$(TARGET_OBJECT).so liboyranos$(TARGET_ICC).so
 
-liboyranos$(TARGET_OBJECT).so: ${OBJECTS_OBJ_CORE}
+liboyranos$(TARGET_OBJECT).so: $(HEADERS_OBJ_CORE) $(OBJECTS_OBJ_CORE)
 	echo Linking $@ ...
-	$(CC) -shared ${OBJECTS_OBJ_CORE} $(OY_LIBS) \
+	$(CC) -shared $(OBJECTS_OBJ_CORE) $(OY_LIBS) \
 	-o liboyranos$(TARGET_OBJECT).so
 
-liboyranos$(TARGET_ICC).so: ${OBJECTS_OBJ_ICC} liboyranos$(TARGET_OBJECT).so
+liboyranos$(TARGET_ICC).so: $(OBJECTS_OBJ_ICC) liboyranos$(TARGET_OBJECT).so
 	echo Linking $@ ...
 	$(CC) -shared ${OBJECTS_OBJ_icc} liboyranos$(TARGET_OBJECT).so \
 	../../oyranos/liboyranos_core.a \
@@ -100,10 +100,10 @@ test:
 .SUFFIXES:	.c .h .o
 
 
-.c.o:
+.c.o:	$<
 	echo Compiling $(SRCDIR)/$< ...
 	$(CC) -I. $(CFLAGS) $(INCL) -c -o $@ $(SRCDIR)/$<
 
 clean:
-	rm ${OBJECTS_OBJ_CORE} ${OBJECTS_OBJ_ICC} liboyranos$(TARGET_OBJECT).so liboyranos$(TARGET_ICC).so
+	rm $(OBJECTS_OBJ_CORE) $(OBJECTS_OBJ_ICC) liboyranos$(TARGET_OBJECT).so liboyranos$(TARGET_ICC).so
 
