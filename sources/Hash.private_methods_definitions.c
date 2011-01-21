@@ -1,27 +1,3 @@
-/** Function  oyHash_CopyRef_
- *  @memberof oyHash_s
- *  @brief    Copy a Oyranos cache entry
- *  @internal
- *
- *  @since Oyranos: version 0.1.8
- *  @date  24 november 2007 (API 0.1.8)
- */
-oyHash_s_ *   oyHash_CopyRef_         ( oyHash_s_         * entry,
-                                        oyObject_s          object )
-{
-  oyHash_s_ * s = entry;
-  int error = !s;
-
-  if(error <= 0)
-    if(s->type_ != oyOBJECT_HASH_S)
-      error = 1;
-
-  if(error <= 0)
-    oyObject_Copy( s->oy_ );
-
-  return s;
-}
-
 /** Function  oyHash_Get_
  *  @memberof oyHash_s
  *  @brief    Get a new Oyranos cache entry
