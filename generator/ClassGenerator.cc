@@ -137,9 +137,14 @@ QString ClassGenerator::render( const QFileInfo& templateFileInfo, const QString
   } else {
     sourceFile.open(QIODevice::ReadOnly | QIODevice::Text);
     QString oldFileContents = sourceFile.readAll();
-    //4. The souce file has changed //TODO
+    //4. The souce file has changed
     if (oldFileContents != newFileContents)
+    {
       qWarning() << "Warning:" << sourceFile.fileName() << "has changed!";
+      sourceFile.close();
+      sourceFile.open(QIODevice::WriteOnly | QIODevice::Text);
+      sourceFile.write( newFileContents.toUtf8() );
+    }
     else
     //3. There is no difference in file contents -> do nothing
       qDebug() << "Skipping" << sourceFile.fileName();
