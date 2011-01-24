@@ -9813,7 +9813,7 @@ int            oyOptions_Count       ( oyOptions_s       * list )
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/17 (Oyranos: 0.1.9)
- *  @date    2008/11/17
+ *  @date    2010/11/27
  */
 int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyOption_s        * option,
