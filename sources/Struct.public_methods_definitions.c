@@ -1,3 +1,8 @@
+const char * (*oyStruct_GetTextFromModule_p) (
+                                       oyStruct_s        * obj,
+                                       oyNAME_e            name_type,
+                                       uint32_t            flags ) = NULL;
+
 /** Function oyStruct_GetText
  *  @memberof oyStruct_s
  *  @brief   get a text dump
@@ -30,7 +35,9 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
   {
     type = obj->type_;
 
-#ifdef USE_MODULES
+    if(oyStruct_GetTextFromModule_p)
+      text = oyStruct_GetTextFromModule_p(obj, name_type, flags);
+#ifdef USE_MODULES /* FIXME move to oyStruct_GetTextFromModule_p */
     if(type)
     {
       oyCMMapiFilters_s * apis;
@@ -38,7 +45,9 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
       oyCMMapi9_s * cmm_api9 = 0;
       char * api_reg = 0;
 
-      apis = oyCMMsGetFilterApis_( 0, api_reg, oyOBJECT_CMM_API9_S, 0, 0);
+      apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S,
+                                   oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                                   0, 0);
       apis_n = oyCMMapiFilters_Count( apis );
       for(i = 0; i < apis_n; ++i)
       {

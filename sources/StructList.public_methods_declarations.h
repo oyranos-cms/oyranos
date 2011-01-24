@@ -31,6 +31,14 @@ int              oyStructList_ObserverAdd (
                                        oyStruct_s        * observer,
                                        oyStruct_s        * user_data,
                                        oyObserver_Signal_f signalFunc );
+int              oyStructList_MoveInName (
+                                       oyStructList_s    * texts,
+                                       char             ** text,
+                                       int                 pos );
+int              oyStructList_AddName( oyStructList_s    * texts,
+                                       const char        * text,
+                                       int pos );
+
 oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
                                        const char        * list_name,
                                        oyObject_s          object );

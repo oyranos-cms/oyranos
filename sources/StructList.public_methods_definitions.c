@@ -572,3 +572,93 @@ oyOBJECT_e       oyStructList_GetParentObjType (
   return s->parent_type_;
 }
 
+/**
+ *  Function oyStructList_Create
+ *  @brief   create a new oyStruct_s list
+ *
+ *  @param         parent_type         type of parent object
+ *  @param         list_name           optional list name
+ *  @param         object              the optional object
+ *  @return                            a empty list
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/11/02 (Oyranos: 0.1.8)
+ *  @date    2008/11/02
+ */
+oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
+                                       const char        * list_name,
+                                       oyObject_s          object )
+{
+  oyStructList_s_ * s = (oyStructList_s_*)oyStructList_New(object);
+
+  if(!s)
+    return (oyStructList_s*)s;
+
+  s->parent_type_ = parent_type;
+  if(list_name)
+    s->list_name = oyStringAppend_(0, list_name, s->oy_->allocateFunc_);
+
+  return (oyStructList_s*)s;
+}
+
+/**
+ *  Function oyStructList_MoveInName
+ *  @memberof oyStructList_s
+ *  @brief   add a name to a list
+ *
+ *  The text is added a a oyName_s::name member variable and owned by the list.
+ *
+ *  @version Oyranos: 0.1.13
+ *  @date    2008/10/07
+ *  @since   2008/10/07 (Oyranos: 0.1.13)
+ */
+int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
+{
+  int error = !texts || ! text;
+  oyName_s * name = 0;
+  oyStruct_s * oy_struct = 0;
+  if(!error)
+  {
+     name = oyName_new(0);
+     name->name = *text;
+     *text = 0;
+     oy_struct = (oyStruct_s*) name;
+     oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
+  }
+  return error;
+}
+/**
+ *  Function oyStructList_AddName
+ *  @memberof oyStructList_s
+ *  @brief   add a name to a list
+ *
+ *  The text is added a a oyName_s::name member variable.
+ *
+ *  @version Oyranos: 0.1.13
+ *  @date    2008/10/07
+ *  @since   2008/10/07 (Oyranos: 0.1.13)
+ */
+int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
+{
+  int error = !texts;
+  oyName_s * name = 0;
+  oyStruct_s * oy_struct = 0;
+  char * tmp = 0;
+  if(!error)
+  {
+     name = oyName_new(0);
+     if(!name) return 1;
+     if(text)
+     {
+       tmp = oyAllocateFunc_( strlen(text) + 1 );
+       if(!tmp) return 1;
+       sprintf( tmp, "%s", text );
+       name->name = tmp;
+     }
+     oy_struct = (oyStruct_s*) name;
+     oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
+  }
+  return error;
+}
+
+

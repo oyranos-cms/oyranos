@@ -32,22 +32,16 @@ OYAPI int  OYEXPORT
     oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 1 )
 
   if(obj && *obj &&
-      {% block MoveIn_CheckTypes %}(*obj)->type_ == oyOBJECT_{{ class.content.baseName|underscores|upper }}_S{% endblock %})
+     {% block MoveIn_CheckTypes %}(*obj)->type_ == oyOBJECT_{{ class.content.baseName|underscores|upper }}_S{% endblock %})
   {
-    if(!list)
-    {
-      list = oy{{ class.baseName }}_New(0);
-      error = !list;
-    }                                  
-
-    if(!error && !s->list_)
+    if(!s->list_)
     {
       s->list_ = oyStructList_Create( s->type_, 0, 0 );
       error = !s->list_;
     }
       
     if(!error)
-      {% block MoveIn_Observed %}error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos, 0 );{% endblock %}
+    {% block MoveIn_Observed %}error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos, 0 );{% endblock %}
   }   
 
   return error;

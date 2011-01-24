@@ -225,7 +225,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/17 (Oyranos: 0.1.9)
- *  @date    2008/11/17
+ *  @date    2010/11/27
  */
 int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyOption_s        * option,
@@ -238,12 +238,18 @@ int            oyOptions_Add         ( oyOptions_s       * options,
   char * o_opt,
        * o_top,
        * l_opt,  /* l - list */
-       * l_top;
+       * l_top,
+       * t;
 
   if(error <= 0)
   {
     o_opt = oyFilterRegistrationToText( oyOptionPriv_m(option)->registration,
                                         oyFILTER_REG_MAX, 0 );
+    if(strrchr(o_opt, '.' ))
+    {
+      t = strrchr(o_opt, '.' );
+      *t = 0;
+    }
     o_top = oyFilterRegistrationToText( oyOptionPriv_m(option)->registration,
                                         oyFILTER_REG_TOP, 0 );
     n = oyOptions_Count( options );
@@ -253,6 +259,11 @@ int            oyOptions_Add         ( oyOptions_s       * options,
       tmp = oyOptions_Get( options, i );
       l_opt = oyFilterRegistrationToText( oyOptionPriv_m(tmp)->registration,
                                           oyFILTER_REG_MAX, 0 );
+      if(strrchr(l_opt, '.' ))
+      {
+        t = strrchr(l_opt, '.' );
+        *t = 0;
+      }
       l_top = oyFilterRegistrationToText( oyOptionPriv_m(tmp)->registration,
                                           oyFILTER_REG_TOP, 0 );
       if(oyStrcmp_(l_opt, o_opt) == 0)
@@ -786,6 +797,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
   int indent = 6; /* base indentation for better looking XFORMS documents */
   int * sort, changed;
   char ** old_levels = 0;
+  int old_levels_n = 0;
 
   if(error <= 0)
   {
@@ -854,7 +866,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
         for( j = 0; j < j_n; ++j )
         {
           if(!old_levels ||
-             oyStrcmp_(old_levels[j],list[j]) != 0)
+             (old_levels_n > j && oyStrcmp_(old_levels[j],list[j]) != 0))
             if(min_level > j)
               min_level = j;
         }
@@ -866,12 +878,15 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
           if(j+1 < j_n)
             for(k = 0; k < indent+j; ++k)
               STRING_ADD ( text, " " );
-          STRING_ADD ( text, "</" );
-          STRING_ADD ( text, old_levels[j] );
-          if(j)
-            STRING_ADD ( text, ">\n" );
-          else
-            STRING_ADD ( text, ">" );
+          if(old_levels_n > j)
+          {
+            STRING_ADD ( text, "</" );
+            STRING_ADD ( text, old_levels[j] );
+            if(j)
+              STRING_ADD ( text, ">\n" );
+            else
+              STRING_ADD ( text, ">" );
+          }
         }
 
         /* open new levels */
@@ -891,8 +906,9 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
         STRING_ADD ( text, tmp );
 
         if(old_levels)
-          oyStringListRelease_( &old_levels, j_n, oyDeAllocateFunc_ );
+          oyStringListRelease_( &old_levels, old_levels_n, oyDeAllocateFunc_ );
         old_levels = list;
+        old_levels_n = j_n;
 
         oyFree_m_( tmp );
       }
@@ -912,16 +928,19 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
         if(j+1 < j_n)
           for(k = 0; k < indent+j; ++k)
             STRING_ADD ( text, " " );
-        STRING_ADD ( text, "</" );
-        STRING_ADD ( text, old_levels[j] );
-        if(j)
-          STRING_ADD ( text, ">\n" );
-        else
-          STRING_ADD ( text, ">" );
+        if(old_levels_n > j)
+        {
+          STRING_ADD ( text, "</" );
+          STRING_ADD ( text, old_levels[j] );
+          if(j)
+            STRING_ADD ( text, ">\n" );
+          else
+            STRING_ADD ( text, ">" );
+        }
       }
 
     if(old_levels)
-      oyStringListRelease_( &old_levels, j_n, oyDeAllocateFunc_ );
+      oyStringListRelease_( &old_levels, old_levels_n, oyDeAllocateFunc_ );
 
     error = oyObject_SetName( options->oy_, text, type );
 
@@ -1409,12 +1428,15 @@ oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
          !oyFilterRegistrationMatch( o->registration, registration, 0 ))
           found = 0;
 
-      if(found && type && 
+      if(found && !(o->value && o->value->oy_struct))
+        error = 1;
+
+      if(found && type && !error &&
          (o->value_type != oyVAL_STRUCT || !o->value ||
           o->value->oy_struct->type_ != type))
         found = 0;
 
-      if(found)
+      if(found && !error)
       if(pos == -1 || ++m == pos)
       {
         if(o->value->oy_struct->copy)
@@ -1835,7 +1857,9 @@ int             oyOptions_Handle     ( const char        * registration,
     if(command && command[0])
       STRING_ADD( test, command );
 
-    apis = oyCMMsGetFilterApis_( 0, api_reg, oyOBJECT_CMM_API10_S, 0, 0);
+    apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API10_S,
+                                 oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                                 0, 0);
     apis_n = oyCMMapiFilters_Count( apis );
     if(test)
       for(i = 0; i < apis_n; ++i)

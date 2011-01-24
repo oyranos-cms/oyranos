@@ -59,7 +59,8 @@ oyOption_s *   oyOption_FromDB       ( const char        * registration,
   {
     /** This is merely a wrapper to oyOption_New() and
      *  oyOption_SetValueFromDB(). */
-    o = oyOption_New( object );
+    o = oyOption_FromRegistration( registration, object );
+    error = oyOption_SetFromText( o, 0, 0 );
     error = oyOption_SetValueFromDB( o );
     ((oyOption_s_*)o)->source = oyOPTIONSOURCE_DATA;
   }
@@ -119,9 +120,10 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
     oyCheckType__m( oyOBJECT_OPTION_S, return 0; )
 
   if(error <= 0)
+  {
     v = s->value;
-
-  error = !v;
+    error = !v;
+  }
 
   /** Iterate into oyOptions_s objects. */
   if(error <= 0)
@@ -212,7 +214,8 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
     oyFree_m_( text );
   }
 
-  erg = oyObject_GetName( obj->oy_, type );
+  if(error <= 1 && obj)
+    erg = oyObject_GetName( obj->oy_, type );
 
   return erg;
 }
@@ -221,14 +224,16 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
  *  @memberof oyOption_s
  *  @brief   set a option value from a string
  *
+ *  Update the flags if necessary.
+ *
  *  @param         obj                 the option
  *  @param         text                the text to set
  *  @param         flags               possible is OY_STRING_LIST
  *  @return                            0 - success, 1 - error
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.2.1
  *  @since   2008/11/25 (Oyranos: 0.1.9)
- *  @date    2009/08/21
+ *  @date    2011/01/21
  */
 int            oyOption_SetFromText  ( oyOption_s        * obj,
                                        const char        * text,
@@ -241,7 +246,6 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
 
   oyCheckType__m( oyOBJECT_OPTION_S, return -1 )
 
-  oyOption_SetFromText_( s, text, flags );
   error = oyOption_SetFromText_( s, text, flags );
   if(!error)
     oyOption_UpdateFlags_(s);

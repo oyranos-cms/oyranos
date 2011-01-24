@@ -10,10 +10,6 @@
  *  that were allocated with oy_->allocateFunc_.
  *
  *  @param[in]  structlist  the StructList object
- *
- *  @version Oyranos: x.x.x
- *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
  */
 void oyStructList_Release__Members( oyStructList_s_ * structlist )
 {
@@ -50,10 +46,6 @@ void oyStructList_Release__Members( oyStructList_s_ * structlist )
  *  of the attatced (oyObject_s)oy_ object.
  *
  *  @param[in]  structlist  the StructList object
- *
- *  @version Oyranos: x.x.x
- *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
  */
 int oyStructList_Init__Members( oyStructList_s_ * structlist )
 {
@@ -71,10 +63,6 @@ int oyStructList_Init__Members( oyStructList_s_ * structlist )
  *
  *  @param[in]   src  the oyStructList_s_ input object
  *  @param[out]  dst  the output oyStructList_s_ object
- *
- *  @version Oyranos: x.x.x
- *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
  */
 int oyStructList_Copy__Members( oyStructList_s_ * dst, oyStructList_s_ * src)
 {

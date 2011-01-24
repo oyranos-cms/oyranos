@@ -86,31 +86,3 @@ int              oyStructList_ReferenceAt_( oyStructList_s * list,
   return !p;
 }
 
-/** @internal
- *  Function oyStructList_Create
- *  @brief   create a new oyStruct_s list
- *
- *  @param         parent_type         type of parent object
- *  @param         list_name           optional list name
- *  @param         object              the optional object
- *  @return                            a empty list
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/11/02 (Oyranos: 0.1.8)
- *  @date    2008/11/02
- */
-oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
-                                       const char        * list_name,
-                                       oyObject_s          object )
-{
-  oyStructList_s_ * s = (oyStructList_s_*)oyStructList_New(object);
-
-  if(!s)
-    return (oyStructList_s*)s;
-
-  s->parent_type_ = parent_type;
-  if(list_name)
-    s->list_name = oyStringAppend_(0, list_name, s->oy_->allocateFunc_);
-
-  return (oyStructList_s*)s;
-}
