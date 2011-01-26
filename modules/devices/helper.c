@@ -28,7 +28,7 @@ static void print_option(oyOption_s * opt, int j)
       oyCMMptr_s *cmm = NULL;
       oyBlob_s *blob = NULL;
       switch (opt_struct->type_) {
-         case oyOBJECT_CMM_POINTER_S:
+         case oyOBJECT_CMM_PTR_S:
             cmm = (oyCMMptr_s*)opt_struct;
             if (strcmp(cmm->lib_name,"SANE") == 0)
                printf("\t\t[%s]\n\t\tOption[%d] ID=%d\tCMMptr{%p,%s}\n\n",
