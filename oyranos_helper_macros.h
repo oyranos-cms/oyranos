@@ -132,7 +132,6 @@ extern "C" {
 #define oySscanf_ sscanf
 #define oySprintf_ \
            sprintf
-#ifdef DEBUG
 int     oyStrlen_ ( const char * str_ );
 void    oyStrcpy_ ( char * targ_, const char * src_ );
 char *  oyStrchr_ ( const char * str_, char c_ );
@@ -140,22 +139,6 @@ char *  oyStrrchr_( const char * str_, char c_ );
 char *  oyStrstr_ ( const char * str1_, const char * str2_ );
 int     oyStrcmp_ ( const char * str1_, const char * str2_ );
 char    oyToupper_( char c_ );
-#else
-#define oyStrlen_( str_ ) \
-           strlen( str_ )
-#define oyStrcpy_( targ_, src_ ) \
-           strcpy( targ_, src_ )
-#define oyStrchr_( str_, c_ ) \
-           strchr( str_, c_ )
-#define oyStrrchr_( str_, c_ ) \
-           strrchr( str_, c_ )
-#define oyStrstr_( str1_, str2_ ) \
-           strstr( str1_, str2_ )
-#define oyStrcmp_( str1_, str2_ ) \
-           strcmp( str1_, str2_ )
-#define oyToupper_( c_ ) \
-           toupper( c_ )
-#endif
 
 
 
