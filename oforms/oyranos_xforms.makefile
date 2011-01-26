@@ -3,7 +3,7 @@ CC      = gcc
 DEBUG  = -Wall -g -O0
 LDFLAGS_ = $$LDFLAGS -L../fl_i18n
 OY_LIBS := $(shell pkg-config libxml-2.0 --libs --cflags)
-OY_FLAGS = -L../ -loyranos $(OY_LIBS)
+OY_FLAGS = -L../ -loyranos -loyranos_object -loyranos_core $(OY_LIBS)
 FLTK_FLAGS := $(shell fltk-config --ldflags --cxxflags | sed s/-O2//) -lpthread
 
 all:	oyranos-xforms oyranos-xforms-fltk oyranos-xforms-modules

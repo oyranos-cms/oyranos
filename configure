@@ -42,6 +42,7 @@ if [ "$ROOT_DIR" != "." ]; then
   mkdir -p FL/
   mkdir -p modules/devices
   mkdir -p examples/
+  mkdir -p API_generated/
   cp $v $ROOT_DIR/examples/makefile examples/
   mkdir -p oforms/
   cp $v $ROOT_DIR/oforms/oyranos_xforms.makefile oforms/

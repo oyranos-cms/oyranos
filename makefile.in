@@ -109,7 +109,7 @@ ELEKTRA_OBJ = \
 #endif
 
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(SRCDIR) \
-	-I$(GENDIR) \
+	-I$(SRCDIR)/$(GENDIR) \
 	$(LCMS_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) $(LIBXML2_H) \
 	$(XCM_H) $(LRAW_H)
 
@@ -605,7 +605,7 @@ $(LIB_CMM_lcm2): $(LIBSONAMEFULL) $(CMM_lcm2_OBJECTS)
 
 modules/oyranos_cmm_lraw.o:	$(SRCDIR)/modules/oyranos_cmm_lraw.cpp
 	echo Compiling modules/oyranos_cmm_lraw.o without "--pedantic" ...
-	$(CXX) -I./ -I$(SRCDIR) $(LRAW_H) `echo $(CXXFLAGS) | sed s/--pedantic//g` -c -o $*.o $(SRCDIR)/$*.cpp
+	$(CXX) -I./ -I$(SRCDIR)/$(GENDIR) -I$(SRCDIR) $(LRAW_H) `echo $(CXXFLAGS) | sed s/--pedantic//g` -c -o $*.o $(SRCDIR)/$*.cpp
 
 $(LIB_CMM_lraw): $(LIBSONAMEFULL) $(CMM_lraw_OBJECTS)
 	echo Linking $@ ...
@@ -841,10 +841,10 @@ check:	all tests/test_oyranos $(TEST2) examples oforms
 	OY_MODULE_PATHS=. LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} tests/test_oyranos
 
 examples:
-	cd examples && ($(MAKE) clean; PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." INCLUDE="-I$(includedir) -I$(SRCDIR) -I../ -I../$(GENDIR)" SRCDIR=$(SRCDIR)/examples/ CFLAGS="$(CFLAGS)" LIBS="-L$(libdir) -L../" $(MAKE))
+	cd examples && ($(MAKE) clean; PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." INCLUDE="-I$(includedir) -I$(SRCDIR) -I../ -I$(SRCDIR)/$(GENDIR)" SRCDIR=$(SRCDIR)/examples/ CFLAGS="$(CFLAGS)" LIBS="-L$(libdir) -L../" $(MAKE))
 
 oforms:	$(LIB_FORMS_FLTK_NAME)
-	cd oforms && (PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../ -I../$(GENDIR)" SRCDIR=$(SRCDIR)/oforms/ LDFLAGS="-L../ $(intl) $(LDFLAGS)" $(MAKE) -f oyranos_xforms.makefile)
+	cd oforms && (PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../ -I$(SRCDIR)/$(GENDIR)" SRCDIR=$(SRCDIR)/oforms/ LDFLAGS="-L../ $(intl) $(LDFLAGS)" $(MAKE) -f oyranos_xforms.makefile)
 
 test:	test.o
 	$(CC) -I./ $(CFLAGS) -o test \

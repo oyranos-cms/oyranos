@@ -79,7 +79,7 @@ typedef int      (*oyCMMMessageFuncSet_f)( oyMessage_f     message_func );
  *  @date    2008/07/02
  */
 struct oyCMMptr_s {
-  oyOBJECT_e           type;           /*!< internal struct type oyOBJECT_CMM_POINTER_S */
+  oyOBJECT_e           type;           /*!< internal struct type oyOBJECT_CMM_PTR_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyPointer        dummy;              /**< keep to zero */
