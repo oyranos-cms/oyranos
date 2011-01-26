@@ -679,7 +679,6 @@ void          oyStringListRelease_    ( char          *** l,
   DBG_MEM_ENDE
 }
 
-#ifdef DEBUG
 int     oyStrlen_( const char * str_ )
 {
   if(!str_)
@@ -711,7 +710,6 @@ int     oyStrcmp_( const char * str1_, const char * str2_ )
     WARNc_S("string missed");
   return strcmp(str1_,str2_); }
 char    oyToupper_( char c_ ) { return toupper(c_); }
-#endif
 
 
 /** @internal returns the binary lenth of a string */
