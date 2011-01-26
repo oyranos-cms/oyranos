@@ -20,9 +20,9 @@
 #include "config.h"
 #include "oyranos.h"
 #include "oyranos_version.h"
-#include "oyranos_alpha.h"
 #include "oyranos_i18n.h"
 #include "oyranos_texts.h"
+#include "oyStruct_s.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -127,11 +127,6 @@ int oyEraseDeviceProfile                  (oyDEVICETYP_e typ,
                                            const char* attrib2,
                                            const char* attrib3);
 
-
-extern oyStruct_LockCreate_f   oyStruct_LockCreateFunc_;
-extern oyLockRelease_f         oyLockReleaseFunc_;
-extern oyLock_f                oyLockFunc_;
-extern oyUnLock_f              oyUnLockFunc_;
 
 #ifdef __cplusplus
 } /* extern "C" */

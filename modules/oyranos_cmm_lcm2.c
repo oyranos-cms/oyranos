@@ -293,7 +293,7 @@ int          lcm2CMMData_Open        ( oyStruct_s        * data,
   oyCMMptr_s * s = 0;
   int error = 0;
 
-  if(oy->type != oyOBJECT_CMM_POINTER_S)
+  if(oy->type != oyOBJECT_CMM_PTR_S)
     error = 1;
 
   if(!error)
@@ -348,7 +348,7 @@ int                lcm2CMMCheckPointer(oyCMMptr_s        * cmm_ptr,
 {
   int error = !cmm_ptr;
 
-  if(cmm_ptr && cmm_ptr->type == oyOBJECT_CMM_POINTER_S &&
+  if(cmm_ptr && cmm_ptr->type == oyOBJECT_CMM_PTR_S &&
      cmm_ptr->ptr && strlen(cmm_ptr->resource))
   {
     int * res_id = (int*)cmm_ptr->resource;
@@ -1763,8 +1763,8 @@ int  lcm2CMMdata_Convert             ( oyCMMptr_s        * data_in,
   image_output = (oyImage_s*)socket->data;
 
   if(!error)
-    error = data_in->type != oyOBJECT_CMM_POINTER_S || 
-            data_out->type != oyOBJECT_CMM_POINTER_S;
+    error = data_in->type != oyOBJECT_CMM_PTR_S || 
+            data_out->type != oyOBJECT_CMM_PTR_S;
 
   if(!error)
   {

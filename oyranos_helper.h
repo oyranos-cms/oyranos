@@ -21,7 +21,7 @@
 
 #include "config.h"
 #include "oyranos_debug.h"
-#include "oyranos_alpha.h"
+#include "oyStruct_s.h"
 #if defined(OY_CONFIG_H)
 #include "oyranos_core.h"
 #else

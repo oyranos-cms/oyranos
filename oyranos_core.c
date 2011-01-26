@@ -29,11 +29,14 @@
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
+#include "oyranos_icc.h"
 #include "oyranos_io.h"
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
 
+#include "oyStruct_s.h"
+#include "oyObject_s.h"
 
 static oyStruct_RegisterStaticMessageFunc_f * oy_static_msg_funcs_ = 0;
 static int oy_msg_func_n_ = 0;
@@ -162,7 +165,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_FILTER_GRAPH_S: text = "oyFilterGraph_s"; break;
     case oyOBJECT_PIXEL_ACCESS_S: text = "oyPixelAccess_s"; break;
     case oyOBJECT_CMM_HANDLE_S: text = "oyCMMhandle_s"; break;
-    case oyOBJECT_CMM_POINTER_S: text = "oyCMMptr_s"; break;
+    case oyOBJECT_CMM_PTR_S: text = "oyCMMptr_s"; break;
     case oyOBJECT_CMM_INFO_S: text = "oyCMMInfo_s"; break;
     case oyOBJECT_CMM_API_S: text = "oyCMMapi_s generic"; break;
     case oyOBJECT_CMM_APIS_S: text = "oyCMMapis_s generic"; break;
@@ -209,8 +212,9 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
  *  @since   2008/07/10 (Oyranos: 0.1.8)
  *  @date    2008/07/10
  */
-int            oyObject_GetId        ( oyObject_s          obj )
+int            oyObject_GetId        ( oyObject_s          object )
 {
+  struct oyObject_s_* obj = (struct oyObject_s_*)object;
   if(obj)
     return obj->id_;
 

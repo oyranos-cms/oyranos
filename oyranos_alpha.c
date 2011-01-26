@@ -527,93 +527,7 @@ oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
   return allocateFunc( size );
 }
 
-/** @internal
- *  Function oyStruct_TypeToText
- *  @brief   Objects type to small string
- *  @deprecated
- *
- *  @version Oyranos: 0.1.8
- *  @date    2008/06/24
- *  @since   2008/06/24 (Oyranos: 0.1.8)
- */
-const char * oyStruct_TypeToText     ( const oyStruct_s  * st )
-{ return oyStructTypeToText( st->type_ ); }
 
-
-/** Function oyStruct_GetText
- *  @memberof oyStruct_s
- *  @brief   get a text dump 
- *
- *  As the object type module for text informations.
- *
- *  @param         obj                 the object
- *  @param         name_type           the text type
- *  @param         flags               
- *                                     - 0: get object infos
- *                                     - 1: get object type infos
- *  @return                            the text
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/09/14 (Oyranos: 0.1.10)
- *  @date    2009/09/15
- */
-const char * oyStruct_GetText        ( oyStruct_s        * obj,
-                                       oyNAME_e            name_type,
-                                       uint32_t            flags )
-{
-  int error = !obj;
-  const char * text = 0;
-  oyOBJECT_e type = oyOBJECT_NONE;
-
-  if(!error)
-    text = oyObject_GetName( obj->oy_, oyNAME_NICK );
-
-  if(!error && !text)
-  {
-    type = obj->type_;
-
-    if(type)
-    {
-      oyCMMapiFilters_s * apis;
-      int apis_n = 0, i,j;
-      oyCMMapi9_s * cmm_api9 = 0;
-      char * api_reg = 0;
-
-      apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S, 
-                                   oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
-                                   0, 0);
-      apis_n = oyCMMapiFilters_Count( apis );
-      for(i = 0; i < apis_n; ++i)
-      {
-        cmm_api9 = (oyCMMapi9_s*) oyCMMapiFilters_Get( apis, i );
-
-        j = 0;
-        while( cmm_api9->object_types && cmm_api9->object_types[j] &&
-               cmm_api9->object_types[j]->type == oyOBJECT_CMM_DATA_TYPES_S &&
-               cmm_api9->object_types[j]->oyCMMobjectGetText &&
-               cmm_api9->object_types[j]->id == obj->type_ )
-        {
-          text = cmm_api9->object_types[j]->oyCMMobjectGetText( flags ? 0 : obj,
-                                                   name_type, 0 );
-          if(text)
-            break;
-          ++j;
-        }
-        if(cmm_api9->release)
-          cmm_api9->release( (oyStruct_s**)&cmm_api9 );
-
-        if(text)
-          break;
-      }
-      oyCMMapiFilters_Release( &apis );
-    }
-  }
-
-  if(!error && !text)
-    text = oyStructTypeToText( obj->type_ );
-
-  return text;
-}
 
 int          oyStruct_GetId          ( oyStruct_s        * st )
 {
@@ -3036,7 +2950,7 @@ oyCMMptr_New_ ( oyAlloc_f         allocateFunc )
 
   if(error <= 0)
   {
-    s->type = oyOBJECT_CMM_POINTER_S;
+    s->type = oyOBJECT_CMM_PTR_S;
     s->copy = (oyStruct_Copy_f) oyCMMptr_Copy_;
     s->release = (oyStruct_Release_f) oyCMMptr_Release_;
   }
@@ -3074,7 +2988,7 @@ oyCMMptr_s *       oyCMMptr_Copy_    ( oyCMMptr_s        * cmm_ptr,
 
   error = !s;
 
-  if(error <= 0 && s && s->type != oyOBJECT_CMM_POINTER_S)
+  if(error <= 0 && s && s->type != oyOBJECT_CMM_PTR_S)
     error = 1;
 
   if(error <= 0)
@@ -3135,7 +3049,7 @@ int                oyCMMptr_Release_ ( oyCMMptr_s       ** obj )
 
   error = !s;
 
-  if(error <= 0 && s && s->type != oyOBJECT_CMM_POINTER_S)
+  if(error <= 0 && s && s->type != oyOBJECT_CMM_PTR_S)
     error = 1;
 
   if(error <= 0)
@@ -3611,7 +3525,7 @@ int          oyCMMdsoReference_    ( const char        * lib_name,
     oyStruct_s * obj = oyStructList_Get_(oy_cmm_handles_, i);
     oyCMMptr_s * s;
 
-    if(obj && obj->type_ == oyOBJECT_CMM_POINTER_S)
+    if(obj && obj->type_ == oyOBJECT_CMM_PTR_S)
       s = (oyCMMptr_s*) obj;
     else
       s = 0;
@@ -3676,7 +3590,7 @@ int          oyCMMdsoSearch_         ( const char        * lib_name )
     oyStruct_s * obj = oyStructList_Get_(oy_cmm_handles_, i);
     oyCMMptr_s * s = 0;
 
-    if(obj && obj->type_ == oyOBJECT_CMM_POINTER_S)
+    if(obj && obj->type_ == oyOBJECT_CMM_PTR_S)
       s = (oyCMMptr_s*) obj;
 
     error = !s;
@@ -3746,7 +3660,7 @@ if(!lib_name)
   if(found >= 0)
   {
     oyCMMptr_s * s = (oyCMMptr_s*)oyStructList_GetType_( oy_cmm_handles_, found,
-                                                  oyOBJECT_CMM_POINTER_S );
+                                                  oyOBJECT_CMM_PTR_S );
 
     if(s)
       dso_handle = s->ptr;
@@ -5736,7 +5650,7 @@ oyCMMptr_s * oyCMMptrLookUpFromText  ( const char        * text,
     {
       /* 3. check and 3.a take*/
       cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
-                                                  oyOBJECT_CMM_POINTER_S);
+                                                  oyOBJECT_CMM_PTR_S);
 
       if(!cmm_ptr)
       {
@@ -7461,8 +7375,8 @@ int            oyValueEqual          ( oyValue_u         * a,
            b->oy_struct->type_ == oyOBJECT_BLOB_S &&
            ((oyBlob_s*)(a->oy_struct))->ptr == ((oyBlob_s*)(b->oy_struct))->ptr )
           return 1;
-        if(a->oy_struct->type_ == oyOBJECT_CMM_POINTER_S &&
-           b->oy_struct->type_ == oyOBJECT_CMM_POINTER_S &&
+        if(a->oy_struct->type_ == oyOBJECT_CMM_PTR_S &&
+           b->oy_struct->type_ == oyOBJECT_CMM_PTR_S &&
            ((oyCMMptr_s*)(a->oy_struct))->ptr == ((oyCMMptr_s*)(b->oy_struct))->ptr)
           return 1;
       break;
@@ -8731,7 +8645,7 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
     if((s->value && s->value_type == oyVAL_STRUCT &&
          (((s->value->oy_struct->type_ == oyOBJECT_BLOB_S &&
            ((oyBlob_s*)(option->value->oy_struct))->ptr == ptr)) || 
-          (s->value->oy_struct->type_ == oyOBJECT_CMM_POINTER_S &&
+          (s->value->oy_struct->type_ == oyOBJECT_CMM_PTR_S &&
            ((oyCMMptr_s*)(option->value->oy_struct))->ptr == ptr))))
       return error;
 
@@ -8797,7 +8711,7 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
     if(!(option->value && option->value_type == oyVAL_STRUCT &&
          (((option->value->oy_struct->type_ == oyOBJECT_BLOB_S &&
            ((oyBlob_s*)(option->value->oy_struct))->ptr)) || 
-          option->value->oy_struct->type_ == oyOBJECT_CMM_POINTER_S)))
+          option->value->oy_struct->type_ == oyOBJECT_CMM_PTR_S)))
       error = 1;
   }
 
@@ -25577,7 +25491,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
           {
             /* 3. check and 3.a take*/
             cmm_ptr_out = (oyCMMptr_s*) oyHash_GetPointer_( hash_out,
-                                                        oyOBJECT_CMM_POINTER_S);
+                                                        oyOBJECT_CMM_PTR_S);
 
             if(!(cmm_ptr_out && cmm_ptr_out->ptr) || blob)
             {
@@ -25586,7 +25500,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
               /* 2. query in cache for api4 */
               hash = oyCMMCacheListGetEntry_( hash_text );
               cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( hash,
-                                                        oyOBJECT_CMM_POINTER_S);
+                                                        oyOBJECT_CMM_PTR_S);
 
               if(!cmm_ptr)
               {
@@ -29406,50 +29320,7 @@ icValue_to_icUInt32Number_m( oyValueProfCSig, icProfileClassSignature )
 icValue_to_icUInt32Number_m( oyValueTagSig, icTagSignature )
 
 
-oyPointer  oyStruct_LockCreateDummy_   ( oyStruct_s      * obj )    {return 0;}
-void       oyLockReleaseDummy_         ( oyPointer         lock,
-                                         const char      * marker,
-                                         int               line )   {;}
-void       oyLockDummy_                ( oyPointer         lock,
-                                         const char      * marker,
-                                         int               line )   {;}
-void       oyUnLockDummy_              ( oyPointer         look,
-                                         const char      * marker,
-                                         int               line ) {;}
 
-
-oyStruct_LockCreate_f   oyStruct_LockCreateFunc_ = oyStruct_LockCreateDummy_;
-oyLockRelease_f         oyLockReleaseFunc_ = oyLockReleaseDummy_;
-oyLock_f                oyLockFunc_        = oyLockDummy_;
-oyUnLock_f              oyUnLockFunc_      = oyUnLockDummy_;
-
-
-
-/** Function: oyThreadLockingSet
- *  @brief set locking functions for threaded applications
- *
- *  @since Oyranos: version 0.1.8
- *  @date  14 january 2008 (API 0.1.8)
- */
-void         oyThreadLockingSet        ( oyStruct_LockCreate_f  createLockFunc,
-                                         oyLockRelease_f   releaseLockFunc,
-                                         oyLock_f          lockFunc,
-                                         oyUnLock_f        unlockFunc )
-{
-  oyStruct_LockCreateFunc_ = createLockFunc;
-  oyLockReleaseFunc_ = releaseLockFunc;
-  oyLockFunc_ = lockFunc;
-  oyUnLockFunc_ = unlockFunc;
-
-  if(!oyStruct_LockCreateFunc_ && !oyLockReleaseFunc_ &&
-     !oyLockFunc_ && !oyUnLockFunc_)
-  {
-    oyStruct_LockCreateFunc_ = oyStruct_LockCreateDummy_;
-    oyLockReleaseFunc_ = oyLockReleaseDummy_;
-    oyLockFunc_ = oyLockDummy_;
-    oyUnLockFunc_ = oyUnLockDummy_;
-  }
-}
 
 
 /** typedef  oyOptions_Handle

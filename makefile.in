@@ -10,6 +10,7 @@ MSGFMT = msgfmt -c --statistics
 docdir          = $(datadir)/doc/$(TARGET)
 SRCDIR          = $(src_dir)
 BUILDDIR        = $(build_dir)/
+GENDIR          = API_generated/
 
 OY_MODULE_NAME  =_cmm_module
 LIBRARIES = $(TARGET) $(TARGET)_object $(TARGET)_core $(LIB_FORMS_FLTK)
@@ -108,6 +109,7 @@ ELEKTRA_OBJ = \
 #endif
 
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(SRCDIR) \
+	-I$(GENDIR) \
 	$(LCMS_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) $(LIBXML2_H) \
 	$(XCM_H) $(LRAW_H)
 
@@ -163,6 +165,21 @@ CFILES_CORE = \
 	$(TARGET)_string.c \
 	md5.c \
 	lookup3.c
+CFILES_OBJECT = \
+	$(GENDIR)oyStruct_s.c \
+	$(GENDIR)oyranos_object.c
+CHEADERS_OBJECT_PUBLIC = \
+	$(GENDIR)oyStruct_s.h \
+	$(GENDIR)$(TARGET)_object.h
+CHEADERS_OBJECT = \
+	$(CHEADERS_OBJECT_PUBLIC) \
+	$(GENDIR)oyName_s.h \
+	$(GENDIR)oyObject_s.h \
+	$(GENDIR)oyObject_s_.h \
+	$(GENDIR)oyObserver_s.h \
+	$(GENDIR)oyOption_s.h \
+	$(GENDIR)oyOptions_s.h \
+	$(GENDIR)$(TARGET)_object_internal.h
 CFILES = \
 	$(TARGET).c \
 	$(TARGET)_check.c \
@@ -367,7 +384,8 @@ TOP_SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES_CORE) $(CFILES) $(CFILESC) \
 		$(CXXFILES_FLTK)
 SOURCES =  \
 		$(TOP_SOURCES) \
-		$(CFILES_MODULES) $(CPPFILES_MODULES) $(CFILES_MODULES_DEVICES)\
+		$(CFILES_OBJECT) $(CFILES_MODULES) $(CPPFILES_MODULES) \
+		$(CFILES_MODULES_DEVICES)\
 		$(CFILES_OFORMS) $(CFILES_OFORMS_CLI) $(CXXFILES_OFORMS_FLTK) \
 		$(EXAMPLE_SOURCES)
 
@@ -379,6 +397,7 @@ OBJECTS_CS = $(CFILES_CS:.c=.o)
 # we need these files to generate explicite targets for out of tree builds
 COBJECTS = \
 	$(CFILES_CORE:.c=.o) $(CFILES:.c=.o) $(CFILESC:.c=.o) \
+	$(CFILES_OBJECT:.c=.o) \
 	$(CFILES_ALPHA:.c=.o) \
 	$(CFILES_OFORMS:.c=.o) $(OBJECTS_CS) \
 	$(MONI_X11_OBJECTS) \
@@ -406,6 +425,7 @@ CPPOBJECTS =	test2.o \
 CXXOBJECTS =	$(CXXFILES) $(FLTK_OFORMS_OBJECTS)
 
 OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILES_ALPHA:.c=.o) $(CFILES_OFORMS:.c=.o) $(OBJECTS_CS)
+OBJECTS_OBJECT = $(CFILES_OBJECT:.c=.o)
 OBJECTS_CORE = $(CFILES_CORE:.c=.o) $(CFILESC:.c=.o)
 CMM_lcms_OBJECTS = $(CFILES_CMM_lcms:.c=.o)
 CMM_lcm2_OBJECTS = $(CFILES_CMM_lcm2:.c=.o)
@@ -427,6 +447,7 @@ FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
 FLTK_OFORMS_OBJECTS = $(CXXFILES_OFORMS_FLTK:.cxx=.o)
 
 CLEAN_OBJECTS = $(OBJECTS) \
+	$(OBJECTS_OBJECT) \
 	$(OBJECTS_CORE) \
 	$(MONI_X11_OBJECTS) \
 	$(MONI_CS_OBJECTS) \
@@ -820,10 +841,10 @@ check:	all tests/test_oyranos $(TEST2) examples oforms
 	OY_MODULE_PATHS=. LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} tests/test_oyranos
 
 examples:
-	cd examples && ($(MAKE) clean; PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/examples/ CFLAGS="$(CFLAGS)" LIBS="-L$(libdir) -L../" $(MAKE))
+	cd examples && ($(MAKE) clean; PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." INCLUDE="-I$(includedir) -I$(SRCDIR) -I../ -I../$(GENDIR)" SRCDIR=$(SRCDIR)/examples/ CFLAGS="$(CFLAGS)" LIBS="-L$(libdir) -L../" $(MAKE))
 
 oforms:	$(LIB_FORMS_FLTK_NAME)
-	cd oforms && (PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../" SRCDIR=$(SRCDIR)/oforms/ LDFLAGS="-L../ $(intl) $(LDFLAGS)" $(MAKE) -f oyranos_xforms.makefile)
+	cd oforms && (PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../ -I../$(GENDIR)" SRCDIR=$(SRCDIR)/oforms/ LDFLAGS="-L../ $(intl) $(LDFLAGS)" $(MAKE) -f oyranos_xforms.makefile)
 
 test:	test.o
 	$(CC) -I./ $(CFLAGS) -o test \
@@ -970,10 +991,11 @@ install_bin:	all install_gui
 		$(RANLIB) $(DESTDIR)$(cmmdir)/lib$${lib}.a \
 		) || echo ""; \
 	done
-	test -d $(DESTDIR)$(includedir)/$(TARGET) || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)/alpha
+	test -d $(DESTDIR)$(includedir)/$(TARGET)/alpha/object || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)/alpha/object
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET).h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_types.h $(DESTDIR)$(includedir)/$(TARGET)
-	-$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_alpha.h $(DESTDIR)$(includedir)/$(TARGET)/alpha
+	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_alpha.h $(DESTDIR)$(includedir)/$(TARGET)/alpha
+	(cd $(SRCDIR); $(INSTALL) -m 644 $(CHEADERS_OBJECT_PUBLIC) $(DESTDIR)$(includedir)/$(TARGET)/alpha/object)
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_cmm.h $(DESTDIR)$(includedir)/$(TARGET)/alpha
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_config.h $(DESTDIR)$(includedir)/$(TARGET)
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_core.h $(DESTDIR)$(includedir)/$(TARGET)
@@ -1298,6 +1320,9 @@ copy_files:
 	-(cd libXNVCtrl && $(MAKE) -f Makefile clean)
 	cd $(SRCDIR)
 #endif
+	mkdir $(DESTDIR)/$(GENDIR)
+	cd $(SRCDIR) && \
+	  $(COPY) $(CFILES_OBJECT) $(CHEADERS_OBJECT) $(DESTDIR)/$(GENDIR)
 	mkdir $(DESTDIR)/libXNVCtrl
 	$(COPY) -R $(SRCDIR)/libXNVCtrl $(DESTDIR)
 	mkdir $(DESTDIR)/modules
