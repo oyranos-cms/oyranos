@@ -166,14 +166,17 @@ CFILES_CORE = \
 	md5.c \
 	lookup3.c
 CFILES_OBJECT = \
+	$(GENDIR)oyName_s_.c \
+	$(GENDIR)oyName_s.c \
 	$(GENDIR)oyStruct_s.c \
 	$(GENDIR)oyranos_object.c
 CHEADERS_OBJECT_PUBLIC = \
+	$(GENDIR)oyName_s.h \
 	$(GENDIR)oyStruct_s.h \
 	$(GENDIR)$(TARGET)_object.h
 CHEADERS_OBJECT = \
 	$(CHEADERS_OBJECT_PUBLIC) \
-	$(GENDIR)oyName_s.h \
+	$(GENDIR)oyName_s_.h \
 	$(GENDIR)oyObject_s.h \
 	$(GENDIR)oyObject_s_.h \
 	$(GENDIR)oyObserver_s.h \

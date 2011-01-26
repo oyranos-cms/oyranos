@@ -21,6 +21,7 @@
 #include "oyranos.h"
 #include "oyranos_icc.h"
 #include "oyranos_object.h"
+#include "oyName_s.h"
 #include "oyStruct_s.h"
 
 
@@ -255,44 +256,6 @@ OYAPI int  OYEXPORT
            oyCallback_Release        ( oyCallback_s     ** obj );
 
 
-
-
-/** @brief Oyranos name structure
- *  @ingroup objects_generic
- *  @extends oyStruct_s
- *
- *  @since Oyranos: version 0.1.8
- *  @date  october 2007 (API 0.1.8)
- */
-typedef struct {
-  oyOBJECT_e           type;           /*!< internal struct type oyOBJECT_NAME_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyPointer        dummy;              /**< keep to zero */
-  char               * nick;    /*!< few letters for mass representation, eg. "A1" */
-  char               * name;           /*!< normal visible name, eg. "A1-MySys"*/
-  char               * description;    /*!< full user description, eg. "A1-MySys from Oyranos" */
-  char                 lang[8];        /**< i18n language, eg. "en_GB" */
-} oyName_s;
-
-oyName_s *   oyName_new              ( oyObject_s          object );
-
-oyName_s *   oyName_copy             ( oyName_s          * obj,
-                                       oyObject_s          object );
-int          oyName_release          ( oyName_s         ** obj );
-int          oyName_release_         ( oyName_s         ** name,
-                                       oyDeAlloc_f         deallocateFunc );
-
-int          oyName_copy_            ( oyName_s          * dest,
-                                       oyName_s          * src,
-                                       oyObject_s          object );
-oyName_s *   oyName_set_             ( oyName_s          * obj,
-                                       const char        * text,
-                                       oyNAME_e            type,
-                                       oyAlloc_f           allocateFunc,
-                                       oyDeAlloc_f         deallocateFunc );
-const char * oyName_get_             ( const oyName_s    * obj,
-                                       oyNAME_e            type );
 
 
 int          oyName_boolean          ( oyName_s          * name_a,
