@@ -127,7 +127,6 @@ oyStructList_s * oyStruct_ObserverListGet_(
   oyStructList_s * list = 0;
 
   o = oyOptions_Find( obj->oy_->handles_, reg );
-  o_ = oyOptionPriv_m(o);
 
   if(!o)
   {
@@ -143,7 +142,10 @@ oyStructList_s * oyStruct_ObserverListGet_(
                           reg );
     }
   }
-  if(!error && o && o_->value_type == oyVAL_STRUCT && o_->value)
+
+  o_ = oyOptionPriv_m(o);
+
+  if(!error && o_ && o_->value_type == oyVAL_STRUCT && o_->value)
   {
     if(o_->value->oy_struct &&
        o_->value->oy_struct->type_ == oyOBJECT_STRUCT_LIST_S)
