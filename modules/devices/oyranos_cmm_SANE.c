@@ -335,7 +335,8 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
           * unless we call sane_exit*/
          if (device_list && !call_sane_exit) {
             oyBlob_s *context_blob = oyBlob_New(NULL);
-            oyOption_s *context_opt = oyOption_New(CMM_BASE_REG OY_SLASH "device_context", 0);
+            oyOption_s *context_opt = oyOption_FromRegistration(
+                                     CMM_BASE_REG OY_SLASH "device_context", 0);
 
             oyBlob_SetFromData(context_blob, (oyPointer) device_list[i], sizeof(SANE_Device), "sane");
             oyOption_StructMoveIn(context_opt, (oyStruct_s **) & context_blob);
@@ -427,7 +428,10 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
             g_error++;
          }
       } else {
-         device_handle = (SANE_Handle)((oyCMMptr_s*)handle_opt->value->oy_struct)->ptr;
+        oyCMMptr_s * oy_struct = (oyCMMptr_s*) oyOption_StructGet( handle_opt,
+                                                           oyOBJECT_CMM_PTR_S );
+        device_handle = (SANE_Handle)oy_struct->ptr;
+        oyCMMptr_Release( &oy_struct );
       }
 
       if (device_handle) {
@@ -701,7 +705,10 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          /* If not there, get one from SANE */
          handle_opt_dev = oyConfig_Find(device, "device_handle");
          if (handle_opt_dev) {
-            device_handle = (SANE_Handle)((oyCMMptr_s*)handle_opt_dev->value->oy_struct)->ptr;
+           oyCMMptr_s * oy_struct = (oyCMMptr_s*)oyOption_StructGet(
+                                           handle_opt_dev, oyOBJECT_CMM_PTR_S );
+           device_handle = (SANE_Handle)oy_struct->ptr;
+           oyCMMptr_Release( &oy_struct );
             oyOptions_MoveIn(device_new->data, &handle_opt_dev, -1);
          } else {
             printf(PRFX "Opening sane device \"%s\"..", device_name); fflush(NULL);
@@ -1213,7 +1220,8 @@ int check_driver_version(oyOptions_s *options, oyOption_s **version_opt_p, int *
             ) {                           /*when we are over*/
             *call_sane_exit = 1;
          } else {
-            *version_opt_p = oyOption_New(CMM_BASE_REG OY_SLASH "driver_version", 0);
+            *version_opt_p = oyOption_FromRegistration(
+                                     CMM_BASE_REG OY_SLASH "driver_version", 0);
             oyOption_SetFromInt(*version_opt_p, driver_version, 0, 0);
          }
       } else {

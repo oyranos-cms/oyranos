@@ -344,7 +344,8 @@ oyConfig_s * oyREgetColorInfo        ( const char        * filename,
    //Pass in the filename
    oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "device_handle", filename, OY_CREATE_NEW);
    //Pass in the libraw object with the raw image rendering options
-   oyOption_s *context_opt = oyOption_New( OY_LIBRAW_REGISTRATION OY_SLASH "device_context", 0);
+   oyOption_s *context_opt = oyOption_FromRegistration(
+                           OY_LIBRAW_REGISTRATION OY_SLASH "device_context", 0);
    oyOption_SetFromData(context_opt, (oyPointer)&device_context, sizeof(libraw_output_params_t*));
    oyOptions_MoveIn(options, &context_opt, -1);
 

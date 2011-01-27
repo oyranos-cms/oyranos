@@ -23,8 +23,8 @@ static const char *oyValueTypeText( oyVALUETYPE_e       type )
 static void print_option(oyOption_s * opt, int j)
 {
    int id = oyOption_GetId(opt);
-   if (opt->value_type == oyVAL_STRUCT) {
-      oyStruct_s *opt_struct = opt->value->oy_struct;
+   oyStruct_s *opt_struct = oyOption_StructGet( opt, oyOBJECT_NONE );
+   if (opt_struct) {
       oyCMMptr_s *cmm = NULL;
       oyBlob_s *blob = NULL;
       switch (opt_struct->type_) {
@@ -32,12 +32,14 @@ static void print_option(oyOption_s * opt, int j)
             cmm = (oyCMMptr_s*)opt_struct;
             if (strcmp(cmm->lib_name,"SANE") == 0)
                printf("\t\t[%s]\n\t\tOption[%d] ID=%d\tCMMptr{%p,%s}\n\n",
-                     opt->registration, j, id, cmm->ptr, cmm->lib_name);
+                      oyOption_GetRegistration(opt), j, id, cmm->ptr,
+                      cmm->lib_name);
             break;
          case oyOBJECT_BLOB_S:
             blob = (oyBlob_s *)opt_struct;
             printf("\t\t[%s]\n\t\tOption[%d] ID=%d\tblob{%p,%d}\n\n",
-                  opt->registration, j, id, blob->ptr, (int)blob->size);
+                   oyOption_GetRegistration(opt), j, id, blob->ptr,
+                   (int)blob->size);
             break;
          default:
             printf("\t\tCan't handle struct of type %d\n", opt_struct->type_);
@@ -45,9 +47,9 @@ static void print_option(oyOption_s * opt, int j)
       }
    } else {
       char *text = oyOption_GetValueText(opt, malloc);
-      const char *type = oyValueTypeText(opt->value_type);
+      const char *type = "";/* FIXME: oyValueTypeText(opt->value_type); */
       printf("\t\t[%s]\n\t\tOption[%d] ID=%d\t%s{%s}\n\n",
-            opt->registration, j, id, type, text);
+             oyOption_GetRegistration(opt), j, id, type, text);
       free(text);
    }
 }

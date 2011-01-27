@@ -14,6 +14,7 @@
  */
 
 #include <oyranos_cmm.h>
+#include <oyranos_string.h>
 
 #include <string.h>
 #include <stdarg.h>
@@ -32,7 +33,6 @@
 #include "helper.c"
 /* --- internal definitions --- */
 
-#define DBG printf("%s: %d\n", __FILE__, __LINE__ ); fflush(NULL);
 #define PRFX "raw-image.oyRE: "
 /* select a own four byte identifier string instead of "dDev" and replace the
  * dDev in the below macros.
@@ -315,8 +315,8 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 {
    oyOption_s *context_opt = NULL, *handle_opt = NULL;
 
-   int num_devices, error = 0;
-   const char *device_name = 0, *command_list = 0, *command_properties = 0;
+   int error = 0;
+   const char *command_list = 0, *command_properties = 0;
 
    int rank = oyFilterRegistrationMatch(_api8.registration, registration,
                                         oyOBJECT_CMM_API8_S);
@@ -374,7 +374,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       printf(PRFX "Data:\n%s", oyOptions_GetText(device->data, oyNAME_NICK));
 
       const char **device_list = LibRaw::cameraList();
-      int num_devices = LibRaw::cameraCount();
+      /*int num_devices = LibRaw::cameraCount();*/
 
       /*Handle "driver_version" option [IN] */
       if (version_opt) {
@@ -399,29 +399,16 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
       /*Handle "supported_devices_info" option [OUT:informative]*/
       if (!handle_opt) {
-         oyOption_s *device_list_opt = oyOption_New(CMM_BASE_REG OY_SLASH "supported_devices_info", 0);
-         device_list_opt->value = (oyValue_u*)device_list_opt->oy_->allocateFunc_(sizeof(oyValue_u));
          int i = 0;
          while(device_list[i++]);
          printf("################### Found %d devices #######################\n",i-1);
-         //device_list_opt->value->string_list = const_cast<char**>(device_list);
-         device_list_opt->value->string_list = (char**) device_list_opt->oy_->allocateFunc_(sizeof(char*) * i);
-         memset( device_list_opt->value->string_list, 0, sizeof(char*) * i );
-
+         char *string_list = 0;
          const char ** cameras = device_list;
          i = 0;
          int mnft_n = -1;
          ptrdiff_t len;
          char manufacturer[128] = {0},
               manufacturer_old[128] = {0};
-
-#define STRING_ADD(t_,add) \
-{ int l_[2] = {0,0}; char * tmp = 0; if(t_) l_[0] = strlen(t_); \
-  if(add) l_[1] = strlen(add); \
-  tmp = (char*)device_list_opt->oy_->allocateFunc_(l_[0]+l_[1]+1); \
-  tmp[0] = 0; \
-  if(t_) sprintf(tmp, "%s", t_); sprintf( &tmp[strlen(tmp)], "%s", add ); \
-  if(t_) device_list_opt->oy_->deallocateFunc_(t_); t_ = tmp; tmp = 0; }
 
          if(cameras)
          while(cameras[i])
@@ -433,23 +420,23 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
            {
              mnft_n++;
              if(mnft_n)
-               device_list_opt->value->string_list[mnft_n-1][strlen(device_list_opt->value->string_list[mnft_n-1])-1] = '\000';
-             STRING_ADD(device_list_opt->value->string_list[mnft_n],manufacturer)
-             STRING_ADD(device_list_opt->value->string_list[mnft_n],"\n")
+               STRING_ADD(string_list,"\n");
+             STRING_ADD(string_list,manufacturer);
+             STRING_ADD(string_list,";");
              sprintf( manufacturer_old, "%s", manufacturer );
            }
 
-           STRING_ADD( device_list_opt->value->string_list[mnft_n],
-                       &cameras[i][len+1] )
-           STRING_ADD(device_list_opt->value->string_list[mnft_n],"\n")
+           STRING_ADD( string_list,
+                       &cameras[i][len+1] );
+           STRING_ADD( string_list,";");
            //cout << "  " << &cameras[i][len] << endl;
            ++i;
          }
 
-#undef STRING_ADD
-
-         device_list_opt->value_type = oyVAL_STRING_LIST;
-         oyOptions_MoveIn(device->data, &device_list_opt, -1);
+         oyOptions_SetFromText ( &device->data,
+                                 CMM_BASE_REG OY_SLASH "supported_devices_info",
+                                 string_list,
+                                 OY_CREATE_NEW | OY_STRING_LIST );
       }
 
       /*Copy the rank map*/
@@ -876,8 +863,7 @@ oyCMMInfo_s _cmm_module = {
                                       params->name, 0, OY_CREATE_NEW );
 #define DFC_OPT_ADD_FLOAT_ARR(name, i, n) if(!error) { \
 if (i==n-1) { \
-   oyOption_s *opt = oyOption_New(CMM_BASE_REG OY_SLASH #name, 0); \
-   opt->value_type = oyVAL_DOUBLE_LIST; /*FIXME*/ \
+   oyOption_s *opt = oyOption_FromRegistration(CMM_BASE_REG OY_SLASH #name, 0);\
    oyOption_SetFromDouble(opt, params->name[i], i, 0); \
    oyOptions_MoveIn((*config)->backend_core, &opt, -1); \
 } else { \
@@ -885,7 +871,7 @@ if (i==n-1) { \
    oyOption_SetFromDouble(opt, params->name[i], i, 0); \
 } }
 #define DFC_OPT_ADD_FLOAT(name) if(!error) { \
-        oyOption_s *opt = oyOption_New(CMM_BASE_REG OY_SLASH #name, 0); \
+        oyOption_s *opt = oyOption_FromRegistration(CMM_BASE_REG OY_SLASH #name, 0); \
         oyOption_SetFromDouble(opt, params->name, 0, 0); \
         oyOptions_MoveIn((*config)->backend_core, &opt, -1); \
 }
@@ -938,26 +924,29 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
 {
    Exiv2::Image::AutoPtr device_handle;
    if (handle_opt) {
-      const char *filename = NULL;
-      oyBlob_s *raw_blob = NULL;
+      char * filename = NULL;
+      oyBlob_s *raw_blob = (oyBlob_s *) oyOption_StructGet( handle_opt,
+                                                            oyOBJECT_BLOB_S );
       const Exiv2::byte *raw_data = NULL;
       long size;
-      switch (handle_opt->value_type) {
-         case oyVAL_STRING:
-            filename = handle_opt->value->string;
-            if (is_raw(Exiv2::ImageFactory::getType(filename)))
-               device_handle = Exiv2::ImageFactory::open(filename);
-            break;
-         case oyVAL_STRUCT:
-            raw_blob = (oyBlob_s*)handle_opt->value->oy_struct;
-            raw_data = (Exiv2::byte*)raw_blob->ptr;
-            size = raw_blob->size;
-            if (is_raw(Exiv2::ImageFactory::getType(raw_data, size)))
-               device_handle = Exiv2::ImageFactory::open(raw_data, size);
-            break;
-         default:
-            printf("Option \"device_handle\" is of a wrong type\n");
-            break;
+      if(raw_blob)
+      {
+        raw_data = (Exiv2::byte*)raw_blob->ptr;
+        size = raw_blob->size;
+        if (is_raw(Exiv2::ImageFactory::getType(raw_data, size)))
+           device_handle = Exiv2::ImageFactory::open(raw_data, size);
+        oyBlob_Release( &raw_blob );
+      } else
+      {
+        filename = oyOption_GetValueText( handle_opt, malloc );
+        if(filename)
+        {
+          if (is_raw(Exiv2::ImageFactory::getType(filename)))
+            device_handle = Exiv2::ImageFactory::open(filename);
+          free(filename); filename = 0;
+        }
+        else
+          printf("Option \"device_handle\" is of a wrong type\n");
       }
 
       //The std::auto_ptr::get() method returns the pointer owned by the auto_ptr
