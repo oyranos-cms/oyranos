@@ -834,6 +834,16 @@ $(TARGET)-profiles:	$(TARGET)_profiles.o $(LIBSONAMEFULL)
 	$< \
 	$(MODULE_LDLIBS) $(LDLIBS) $(LINK_LIB_PATH)
 
+.PHONY: API_generated
+generate:	API_generated
+
+API_generated:	generator/oyAPIGenerator
+	cd generator; ./oyAPIGenerator ../templates ../sources ../API_generated
+
+generator/oyAPIGenerator:
+	cd generator; cmake -DGrantlee_DIR="../../grantlee/install/dir" .; make
+
+
 test_core:	$(LIBSONAMECOREFULL) $(LIBNAME_CORE) test_core.o
 	echo Linking dynamic $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall \
@@ -1219,7 +1229,8 @@ clean:
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
 	test2 test_core test tests/test_oyranos \
 	$(FLTK_GUI) \
-	oforms/$(TARGET)-xforms oforms/$(TARGET)-xforms-fltk; \
+	oforms/$(TARGET)-xforms oforms/$(TARGET)-xforms-fltk;
+	-cd generator && $(MAKE) clean
 	for ling in $(LINGUAS); do \
 	  test -f po/$${ling}.gmo \
         && $(RM) po/$${ling}.gmo; \
