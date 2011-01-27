@@ -1,0 +1,40 @@
+/** @struct  oyCMMapi8_s
+ *  @ingroup module_api
+ *  @extends oyCMMapiFilter_s
+ *  @brief   Configuration handler
+ *  @internal
+ *  
+ *  Oyranos knows about configurations sets as oyConfig_s structures.
+ *  These configurations can be created, modified and compared by this module 
+ *  type and stored by Oyranos' core.
+ *  They are stored under the base key path decided by each configuration 
+ *  module individualy in its oyCMMapi8_s::registration string.
+ *
+ *  This API provides weak interface compile time checking.
+ *
+ *  The module knows what to configure. This can be devices, filters or 
+ *  something else. A oyCMMapi8_s module counts the understood endities
+ *  and veryfies a provided oyConfig_s for correctness. Oyranos requires just
+ *  the fourth type string in the registration path starting with "config".
+ *  This requirement is useful to group DB keys alphabetically.
+ *
+ *  In the case of a device, a application can ask Oyranos for all or a subset
+ *  of available devices with oyConfigs_FromPattern.
+ *
+ *  A application can modify a selection of oyConfig_s objects and
+ *  modify them.
+ *  It is adviced to let Oyranos ask the module in advance through 
+ *  oyConfig_Rank_f, if the modified oyConfig_s object is still valid.
+ *  @note New templates will not be created automaticly [notemplates]
+ *
+ *  @Future directions:
+ *  For automatic UI's this module API should provide a XFORMS UI about the
+ *  result and return a oyConfig_s for a filled form.
+ *
+ *  A empty device module is provided with oyranos_cmm_dDev.c in Oyranos'
+ *  examples/ directory.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/16 (Oyranos: 0.1.10)
+ *  @date    2009/12/15
+  */

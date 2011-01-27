@@ -1,0 +1,32 @@
+/** @struct  oyCMMInfo_s 
+ *  @ingroup cmm_handling
+ *  @extends oyStruct_s
+ *  @brief   The CMM API resources struct to implement and set by a CMM
+ *  @internal
+ *  
+ *  Given an example CMM with name "little cms", which wants to use the 
+ *  four-char ID 'lcms', the CMM can register itself to Oyranos as follows:
+ *  The CMM module file must be named
+ *  something_lcms_cmm_module_something.something .
+ *  On Linux this could be "liboyranos_lcms_cmm_module.so.0.1.8".
+ *  The four-chars 'lcms' must be prepended with OY_MODULE_NAME alias
+ *  "_cmm_module".
+ *
+ *  Oyranos will scan the $(libdir)/color/cmms/ path, opens the available 
+ *  CMM's from this directory and extracts the four-chars before OY_MODULE_NAME
+ *  from the library file names. Module paths can be added through the
+ *  OY_MODULE_PATHS environment variable.
+ *  Oyranos looks for a symbol to a oyCMMInfo_s struct of the four-byte ID plus
+ *  OY_MODULE_NAME which results in our example in the name "lcms_cmm_module".
+ *  On Posix system this should be loadable by dlsym.
+ *  The lcms_cmm_module should be of type oyCMMInfo_s with the type field
+ *  and all other fields set appropriately.
+ *
+ *  The api field is a placeholder to get a real api struct assigned. If the CMM
+ *  wants to provide more than one API, they can be chained.
+ *  @note New templates will not be created automaticly [notemplates]
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/12/05 (Oyranos: 0.1.8)
+ *  @date    2008/12/23
+ */

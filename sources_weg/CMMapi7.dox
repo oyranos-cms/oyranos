@@ -1,0 +1,22 @@
+/** @struct  oyCMMapi7_s
+ *  @ingroup module_api
+ *  @extends oyCMMapiFilter_s
+ *  @brief   Data processing node
+ *  @internal
+ *  
+ *  The structure forms a node element in a directed acyclic graph. It's 
+ *  connectors allow to communicate cababilities and semantics. This node type
+ *  acts mostly on data processing. 
+ *
+ *  It is possible to delegate parameter or context creation to other
+ *  specialised filter types.
+ *  The filter context can be stored in oyFilterNode_s::backend_data if the
+ *  oyCMMapi7_s::context_type is filled with a understood format hint.
+ *  The registration should provide keywords to select the processing function.
+ *
+ *  (in CM jargon - interpolator)
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/15 (Oyranos: 0.1.9)
+ *  @date    2008/12/27
+ */

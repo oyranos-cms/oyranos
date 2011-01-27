@@ -1,0 +1,13 @@
+/** @struct oyName_s
+ *  @ingroup objects_generic
+ *  @brief   Oyranos Name structure
+ *
+ *  This class is a public members only class and does not
+ *  belong to the oyranos object model, like all "Generic Objects".
+ *
+ *  @note New templates will not be created automaticly [notemplates]
+ *
+ *  @version Oyranos: x.x.x
+ *  @since   YYYY/MM/DD (Oyranos: x.x.x)
+ *  @date    YYYY/MM/DD
+ */

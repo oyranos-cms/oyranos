@@ -1,0 +1,15 @@
+/** @struct  oyClass_s
+ *  @ingroup some_group
+ *  @extends oyStruct_s
+ *  @brief   Brief description
+ *  @internal
+ *  
+ *  Multi line description
+ *  @note New templates will not be created automaticly [notemplates]
+ *  @note Create templates using "opaque pointer" [opaquepointer]
+ *  @note This class holds a list of objects [list]
+ *
+ *  @version Oyranos: x.x.x
+ *  @since   YYYY/MM/DD (Oyranos: x.x.x)
+ *  @date    YYYY/MM/DD
+ */

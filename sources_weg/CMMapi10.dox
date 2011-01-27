@@ -1,0 +1,13 @@
+/** @struct  oyCMMapi10_s
+ *  @ingroup module_api
+ *  @extends oyCMMapiFilter_s
+ *  @brief   Generic data exchange
+ *  @internal
+ *  
+ *  This API provides a very generic interface to exchange data between Oyranos
+ *  core and a module.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/11 (Oyranos: 0.1.10)
+ *  @date    2009/12/11
+ */

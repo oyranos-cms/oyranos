@@ -1,0 +1,14 @@
+/** @struct  oyCMMapi_s
+ *  @ingroup module_api
+ *  @extends oyStruct_s
+ *  @brief   the basic API interface
+ *  @internal
+ *  
+ *  The registration should provide keywords for selection.
+ *  The api5_ member is missed for oyCMMapi5_s.
+ *  @note New templates will not be created automaticly [notemplates]
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/16 (Oyranos: 0.1.10)
+ *  @date    2009/01/16
+ */

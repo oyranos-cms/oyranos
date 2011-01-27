@@ -1,0 +1,23 @@
+/** @struct  oyCMMapi9_s
+ *  @ingroup module_api
+ *  @extends oyCMMapiFilter_s
+ *  @brief   Graph policies
+ *  @internal
+ *  
+ *  The user visible Oyranos settings are subject to be applied to graphs.
+ *  This module type provides an interface to check and verified a graph
+ *  according to arbitrary policies in a automated fashion. 
+ *  The usage of graph policy modules is optional and
+ *  can be controled by the front end function oyConversion_Correct().
+ *
+ *  The policy check can cover options and data checks. Graph analysis and 
+ *  correction is possible as well.
+ *
+ *  Differences to native node modules are that, a policy module runs before
+ *  the graph starts data processing, it can provide options for a group of 
+ *  node modules including a UI and provide additional object types.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/07/23 (Oyranos: 0.1.10)
+ *  @date    2009/09/14
+  */

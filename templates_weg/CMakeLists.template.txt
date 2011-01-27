@@ -1,0 +1,40 @@
+PROJECT(oyranos)
+
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
+FIND_PACKAGE(Qt4 COMPONENTS QtCore QtTest REQUIRED)
+FIND_PACKAGE(LibXml2 REQUIRED)
+
+INCLUDE(${QT_USE_FILE})
+
+SET( OYRANOS_GIT_DIR ".." )
+INCLUDE_DIRECTORIES(
+  ${PROJECT_BINARY_DIR}
+  ${OYRANOS_GIT_DIR}
+  ${LIBXML2_INCLUDE_DIR}
+  )
+
+#Setup MOC
+SET( oyTEST_HEADERS "oyTest.h" )
+qt4_wrap_cpp( oyTEST_MOC_SOURCES ${oyTEST_HEADERS} )
+#Setup MOC
+
+SET( OYRANOS_OBJECT_LIBRARIES
+  ${LIBXML2_LIBRARIES}
+  )
+
+#New oyranos object system
+ADD_LIBRARY( oyranos_object SHARED
+{% for class in classes %}
+  {% if class.hiddenStruct %}"{{ class.name }}.c" "{{ class.privName }}.c"{% else %}"{{ class.name }}.c" "{{ class.name }}_impl.c"{% endif %}
+{% endfor %}
+  "oyranos_devices.c" "oyranos_devices_internal.c"
+)
+
+# Tests for the auto-generated oyranos object system
+ADD_EXECUTABLE( oyTest "oyTest.cc" ${oyTEST_MOC_SOURCES} )
+TARGET_LINK_LIBRARIES(
+   oyTest
+   ${QT_LIBRARIES}
+   "oyranos_object"
+)

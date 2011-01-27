@@ -1,0 +1,37 @@
+/** @struct  oyFilterPlug_s
+ *  @ingroup objects_conversion
+ *  @extends oyStruct_s
+ *  @brief   A filter connection structure
+ *
+ *  The active input version of a oyConnector_s.
+ *  Each plug can connect to exact one socket.
+ \dot
+digraph G {
+  bgcolor="transparent";
+  node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
+  edge[ fontname=Helvetica, fontsize=10 ];
+  rankdir=LR
+  a [URL="structoyFilterSocket__s.html", label=<
+<table border="0" cellborder="1" cellspacing="4">
+  <tr> <td>Filter A</td>
+      <td bgcolor="red" width="10" port="s"> socket </td>
+  </tr>
+</table>>
+  ]
+  b [label=< 
+<table border="0" cellborder="1" cellspacing="4">
+  <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
+      <td>Filter B</td>
+  </tr>
+</table>>
+  ]
+  subgraph { rank=min a }
+
+  b:p->a:s [arrowtail=crow, arrowhead=box];
+} 
+ \enddot
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */

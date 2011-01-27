@@ -1,0 +1,154 @@
+NOW:
+- ProfileTag copy constructor needs to lock/unlock the object.
+  That implies that probably oyClass_Copy_() body should be inside a block?
+  If so, then also replace {% block oyClass_Copy_notObject %}{% endblock %}
+- It might be possible that private member functions have a
+  not up to date signature in the <class>.private_members_declarations.h file,
+  because of changed arguments, from public to private.
+- Check all [review] for additional '*var_' and replace them.
+  They can be dangerous when '*var' gets reassigned!
+- No oyranos_object.template.c file yet!
+  Or oyranos_object_internal.template.c, oyranos_module.template.h ...
+- All oyOBJECT_e members are grouped by their @ingroup attrubute.
+  Add a oyOBJECT_CMM_HANDLE_S = 50 & oyOBJECT_CMM_API_MAX equivalent to all groups.
+- grantlee filter argument "strict" does not work
+- Some comments of inherited member variables are different in parent and child class!
+- oyCMMInfo_s:
+  a) oyCMMInfo_Release -> oyranos_alpha.c:28223
+  b) undrescore:"strict"
+- FIX oyCMMapiFilter_s: 3 ways to loop parent classes inside a template.
+  a.  {% for parent in parents %}
+  b.  {% while parent.name != "oyStruct_s" %}
+  c.* {% extend parent %}{% block ... %}
+- Mark all CMM structs as @internal
+- Use the FindOyranos.cmake from KolorManager
+3 Move the grantlee template creation code to a new class.
+  Then replace the while in main with:
+  CreateTemplates( "templates/", "API_generated/" );
+  and use inside createSources():
+  CreateTemplates( allClassesInfo.at(i)->baseName()+"_private_custom_definitions.c", "sources/" );
+1 Create new template scheme for full public structures and adopt oyObject,
+  oyName and oyObserver to it (classes in objects_generic). See [2]
+2 Put the specifics (strings,etc) of an implementation to a new
+  class and use it eg to export the generated source file names
+  through ClassInfo.
+  And then fix templates/CMakeLists.txt to use class.file_(public|private)_(c|h)
+  and also oyTest.template.cc oyTest.template.h. Also see [1]
+- Update Class_s_.h: Replace {% include "Class.members.h" %} with {% include class.private_h %}
+- Check that generic objects like oyName_s and oyObserver_s use lowercase functions.
+- We need a way to clear the templates/ dir from auto-generated templates
+- BUG: oyAPIGenerator crashes when allClassesInfo.at( c )->setContent( parents[allClassesInfo.at( c )->listOf()] );
+  passes the name of a class that does not yet exist.
+- BUG: "@brief\\s+([^\\n\\r\\f]+)\\n" seems to catch 2 spaces at beginning
++ Code Generator should export:
+  - class.public_functions -> oyClass.h fully automatic creation
+    regexp: "\n\s*([a-zA-Z0-9_\s\*]+)\(\s*([a-zA-Z0-9_\s\*]+)"
+  - class.private_members
+  - class.private_methods
+  - class.parentName [OK]
+- Fix templates/Base_s.c:67,72 (!?)
+
+LATER:
+- oyFilterNode_s for now extends oyStruct_s, while it should extend oyNode_s
+  When oyNode_s is added in Oyranos git import it and update oyFilterNode_s.
+- oyClass_XXX_() private functions - or functions that take
+  oyClass_s_ as arguments should be member of oyClass_s_
+- Consider Putting all sources/* in the template files.
+- BUG Dynamic QObject properties are not used by grantlee(!?)
+- How to remove the ending \n in sources/* files?
+- templates/Class* files are identical for both opaque pointer and hidden
+  struct implementations. Do something about that?
+- Find a way to not put the include guards on the auto generated source
+  if the included file is empty. Is this even desirable?
+- Add oyranos version ... to grantlee
++ Internal classes:
+  - Marked with @internal
+  - Do not export public methods with OYEXPORT. Use: {% if class.public %}OYEXPORT{% endif %}
+  - Do not #include oyClass_s.h in oyObjects.h
++ Function signatures:
+  - Public header: OYAPI <return type> OYEXPORT <signature>
+  - Private header: static <return type> <signature>
+  - Public c file: <return type> OYEXPORT <signature>
+  - Private c file: <return type> <signature>
+- When there are changes in the source file, propagate them in the
+  template and rerun the renderer.
+- Save the filestamps of all files and abort when both source and
+  template have been updated.
+- Add python bindings for gdb
+
+MUCH LATER:
+ + Possibility to add more steps after code generation.
+  - Code beautifier
+  - Comment formatter
+
+FAQ
+Q. Some list objects like oyCMMapiFilters_s,
+   use oyStructList_GetRef() instead of oyStructList_GetRefType().
+A. oyStructList_GetRefType() seems to be a higer level function, so the
+   templates use that.
+
+Q. Should all oyClass_XXX() public functions have a private
+   oyClass_XXX_() - where the public does only checking? Like:
+int oyClass_XXX( oyClass_s * class )
+{
+  oyClass_s_ *s = class;
+  if(s)
+    oyCheckType__m( oyOBJECT_CLASS_S, return 0 );
+
+  return oyClass_XXX_( s );
+}
+A. On a per function basis, if it makes sense.
+
+Q. Should all constructors initialise with `0' the pointer class members?
+A. No need to, it is memset to zero anyway.
+
+Q. Should Struct be removed from oyStruct_LockCreateFunc_,
+   or added to oyLockRelease_f, ...?
+A. *************************************
+
+Q. Will oyName_xxxxxxxMembers() be public or private?
+A. ***************************************
+Q. Will oyName_xxxxxxxMembers() be removed and replaced by
+   just extending the blocks inside the template?
+A. ***************************************
+
+Q. Will oyName_s use @extends oyStruct_s
+A. ***************************************
+
+Q. Should '/* Include {' guards be kept inside or outside blocks?
+A. ****************************************************************
+
+Q. Will oyObject_s still be a: typedef struct oyObject_s_* oyObject_s;
+or follow the rest classes?
+A. For now, yes. It is just a refactored version of oyranos git.
+   ********* Try to make it a "opaque pointer" class **********
+
+Q. Will the members of oyObject_s be the same for both private and
+   public structures? [If/When oyObject_s changes to new implementation]
+A. ********** No, public members will be the same as all oyStruct_s ***
+
+Q. What about parent constructor/destructors?
+A. *****************************************************************
+
+Q. Add a public oyXXX_ReleaseMembers()? It's free!
+A. Probably not a good idea... *************************************
+
+Q. Why make auto-generated templates read-only?
+A. So to warn that any changes will be overwritten at next generator
+   invocation. Use the [notemplates] tag in <class>.dox to prevent
+   automatic template creation for that class.
+
+Q. See if oyStruct_s can be removed from the templates, since
+it does not seem to have any need to be auto-generated?
+A. No, because that way, Base_s.[ch] can share its code
+and also other template variables can be used by oyStruct_s.
+
+Q. How to create a variable in Grantlee templates?
+A. Use 'with' keyword
+
+Q. Are generated oy<class>_s.template.[ch] template files editable?
+A. (a) If the [notemplates] tag exists in the <class>.dox file
+definition, then the template files are editable and the
+code-generator will not touch them.
+   (b) If not, they are always re-generated and any edit of
+the template file is lost.

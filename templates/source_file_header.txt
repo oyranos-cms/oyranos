@@ -1,0 +1,16 @@
+/** @file {{ file_name }}
+
+   [Template file inheritance graph]{% for file in parents %}
+   +-{% if not forloop.last %}>{% else %}-{% endif %} {{ file }}{% if not forloop.last %}
+   |{% endif %}{% endfor %}
+
+ *  Oyranos is an open source Colour Management System
+ *
+ *  @par Copyright:
+ *            2004-2011 (C) Kai-Uwe Behrmann
+ *
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @par License:
+ *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
+ *  @since    {% now "yyyy/MM/dd" %}
+ */

@@ -1,0 +1,13 @@
+/** @struct  oyCMMapi3_s
+ *  @ingroup module_api
+ *  @extends oyCMMapi_s
+ *  @brief   The API 3 to implement and set to provide low level ICC profile support
+ *  @internal
+ *  
+ *  This API provides weak interface compile time checking.
+ *  @note New templates will not be created automaticly [notemplates]
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/01/02 (Oyranos: 0.1.8)
+ *  @date    2008/01/02
+ */

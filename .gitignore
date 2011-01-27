@@ -65,3 +65,4 @@ test_*
 tags
 TAGS
 cscope*
+API_generated/

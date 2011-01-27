@@ -1,0 +1,10 @@
+/** @struct  oyBlob_s
+ *  @ingroup objects_value
+ *  @extends oyStruct_s
+ *  @brief   A data blob object
+ *  
+ *
+ *  @version Oyranos: 0.2.1
+ *  @since   2009/01/06 (Oyranos: 0.1.9)
+ *  @date    2011/01/19
+ */

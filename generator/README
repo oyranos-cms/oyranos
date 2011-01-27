@@ -1,0 +1,11 @@
+This project was started to make Oyranos' object system more modular and
+flexible. It allowes for templates and inheritance graphs. Its intented to
+replace the current object API for better support and maintainability towards
+a stable Oyranos release.
+
+
+
+1. Install Grantlee from http://www.gitorious.org/grantlee/pages/Home
+   Use the 0.1 branch as with instructions above from git.
+   Or, alternatively use latest 0.1.x tarball.
+2. $ make

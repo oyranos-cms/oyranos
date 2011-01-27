@@ -1,0 +1,19 @@
+/** @struct  oyCMMptr_s
+ *  @ingroup module_api
+ *  @extends oyStruct_s
+ *  @brief   CMM pointer
+ *  @internal
+ *  
+ *  The oyCMMptr_s is used internally and by modules.
+ *  Memory management can be done by Oyranos' oyAllocateFunc_ and 
+ *  oyDeallocateFunc_.
+ *  A module can specify a own release function for the contained pointer.
+ *  This is well handled for referencing oyCMMptr_s objects. As there is no
+ *  requirement for a module to place a copy function for the pointer, it is
+ *  not recommended to real copy oyCMMptr_s objects. Ask the module to create
+ *  a new oyCMMptr_s object with the according options instead.
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ *  @date    2008/07/02
+ */

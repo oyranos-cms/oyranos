@@ -1,0 +1,11 @@
+/** @struct  oyFilterPlugs_s
+ *  @ingroup objects_conversion
+ *  @extends oyStruct_s
+ *  @brief   A FilterPlugs list
+ *
+ *  @note This class holds a list of objects [list]
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */

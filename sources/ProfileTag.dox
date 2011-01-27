@@ -1,0 +1,10 @@
+/** @struct  oyProfileTag_s
+ *  @ingroup objects_profile
+ *  @extends oyStruct_s
+ *  @brief  A profile constituting element
+ *  
+ *  @note New templates will not be created automaticly [notemplates]
+ *  
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
