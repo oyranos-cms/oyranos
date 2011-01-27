@@ -111,4 +111,30 @@ oyStruct_LockCreate_f   oyStruct_LockCreateFunc_ = oyStruct_LockCreateDummy_;
 oyLockRelease_f         oyLockReleaseFunc_ = oyLockReleaseDummy_;
 oyLock_f                oyLockFunc_        = oyLockDummy_;
 oyUnLock_f              oyUnLockFunc_      = oyUnLockDummy_;
+
+/** Function: oyThreadLockingSet
+ *  @brief set locking functions for threaded applications
+ *
+ *  @since Oyranos: version 0.1.8      
+ *  @date  14 january 2008 (API 0.1.8)
+ */
+void         oyThreadLockingSet        ( oyStruct_LockCreate_f  createLockFunc,
+                                         oyLockRelease_f   releaseLockFunc,
+                                         oyLock_f          lockFunc,
+                                         oyUnLock_f        unlockFunc )
+{
+  oyStruct_LockCreateFunc_ = createLockFunc;
+  oyLockReleaseFunc_ = releaseLockFunc;
+  oyLockFunc_ = lockFunc;
+  oyUnLockFunc_ = unlockFunc;
+
+  if(!oyStruct_LockCreateFunc_ && !oyLockReleaseFunc_ &&
+     !oyLockFunc_ && !oyUnLockFunc_)
+  {
+    oyStruct_LockCreateFunc_ = oyStruct_LockCreateDummy_;
+    oyLockReleaseFunc_ = oyLockReleaseDummy_;
+    oyLockFunc_ = oyLockDummy_;
+    oyUnLockFunc_ = oyUnLockDummy_;
+  }
+}
 /* } Locking function definitions */

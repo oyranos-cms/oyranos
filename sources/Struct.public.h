@@ -13,5 +13,10 @@ extern oyLock_f                oyLockFunc_;
 extern oyUnLock_f              oyUnLockFunc_;
 /* } Locking function declarations */
 
+void         oyThreadLockingSet      ( oyStruct_LockCreate_f  createLockFunc,
+                                       oyLockRelease_f     releaseLockFunc,
+                                       oyLock_f            lockFunc,
+                                       oyUnLock_f          unlockFunc );
+
 
 /* } Message function declarations */
