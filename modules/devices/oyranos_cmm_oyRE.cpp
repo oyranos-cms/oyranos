@@ -931,8 +931,8 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
       long size;
       if(raw_blob)
       {
-        raw_data = (Exiv2::byte*)raw_blob->ptr;
-        size = raw_blob->size;
+        raw_data = (Exiv2::byte*)oyBlob_GetPointer(raw_blob);
+        size = oyBlob_GetSize(raw_blob);
         if (is_raw(Exiv2::ImageFactory::getType(raw_data, size)))
            device_handle = Exiv2::ImageFactory::open(raw_data, size);
         oyBlob_Release( &raw_blob );

@@ -30,16 +30,16 @@ static void print_option(oyOption_s * opt, int j)
       switch (opt_struct->type_) {
          case oyOBJECT_CMM_PTR_S:
             cmm = (oyCMMptr_s*)opt_struct;
-            if (strcmp(cmm->lib_name,"SANE") == 0)
+            if (strcmp(oyCMMptr_GetLibName(cmm),"SANE") == 0)
                printf("\t\t[%s]\n\t\tOption[%d] ID=%d\tCMMptr{%p,%s}\n\n",
-                      oyOption_GetRegistration(opt), j, id, cmm->ptr,
-                      cmm->lib_name);
+                      oyOption_GetRegistration(opt), j, id,
+                      oyCMMptr_GetPointer(cmm), oyCMMptr_GetLibName(cmm));
             break;
          case oyOBJECT_BLOB_S:
             blob = (oyBlob_s *)opt_struct;
             printf("\t\t[%s]\n\t\tOption[%d] ID=%d\tblob{%p,%d}\n\n",
-                   oyOption_GetRegistration(opt), j, id, blob->ptr,
-                   (int)blob->size);
+                   oyOption_GetRegistration(opt), j, id,
+                   oyBlob_GetPointer(blob), (int)oyBlob_GetSize(blob));
             break;
          default:
             printf("\t\tCan't handle struct of type %d\n", opt_struct->type_);
