@@ -8,4 +8,6 @@ a stable Oyranos release.
 1. Install Grantlee from http://www.gitorious.org/grantlee/pages/Home
    Use the 0.1 branch as with instructions above from git.
    Or, alternatively use latest 0.1.x tarball.
-2. $ make
+   The download_grantlee.sh script will guide you.
+2. Go in the top project directory and type
+   $ make generate
