@@ -16,6 +16,7 @@
 #ifndef OYRANOS_STRING_H
 #define OYRANOS_STRING_H
 
+#include "oyranos_helper.h"
 #include "oyranos_types.h"
 
 #ifdef __cplusplus
