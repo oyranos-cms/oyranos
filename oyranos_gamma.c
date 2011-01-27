@@ -581,7 +581,7 @@ int main( int argc , char** argv )
             o = oyConfig_Find( c, "colour_matrix.from_edid" );
             text = oyOption_GetValueText( o, oyAllocFunc );
             printf( OY_DBG_FORMAT_" \"%s\":\n%s\n", OY_DBG_ARGS_,
-                    o->registration, text?text:"----" );
+                    oyOption_GetRegistration(o), text?text:"----" );
             if(text) oyDeAllocFunc( text ); text = 0;
             oyOption_Release( &o );
 

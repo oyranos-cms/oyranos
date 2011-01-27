@@ -166,22 +166,46 @@ CFILES_CORE = \
 	md5.c \
 	lookup3.c
 CFILES_OBJECT = \
+	$(GENDIR)oyCMMptr_s_.c \
+	$(GENDIR)oyCMMptr_s.c \
 	$(GENDIR)oyName_s_.c \
 	$(GENDIR)oyName_s.c \
+	$(GENDIR)oyObject_s_.c \
+	$(GENDIR)oyObject_s.c \
+	$(GENDIR)oyObserver_s_.c \
+	$(GENDIR)oyObserver_s.c \
+	$(GENDIR)oyOption_s_.c \
+	$(GENDIR)oyOption_s.c \
+	$(GENDIR)oyOptions_s_.c \
+	$(GENDIR)oyOptions_s.c \
 	$(GENDIR)oyStruct_s.c \
+	$(GENDIR)oyStructList_s_.c \
+	$(GENDIR)oyStructList_s.c \
 	$(GENDIR)oyranos_object.c
 CHEADERS_OBJECT_PUBLIC = \
+	$(GENDIR)oyBlob_s.h \
+	$(GENDIR)oyCMMptr_s.h \
+	$(GENDIR)oyHash_s.h \
 	$(GENDIR)oyName_s.h \
-	$(GENDIR)oyStruct_s.h \
-	$(GENDIR)$(TARGET)_object.h
-CHEADERS_OBJECT = \
-	$(CHEADERS_OBJECT_PUBLIC) \
-	$(GENDIR)oyName_s_.h \
 	$(GENDIR)oyObject_s.h \
-	$(GENDIR)oyObject_s_.h \
 	$(GENDIR)oyObserver_s.h \
 	$(GENDIR)oyOption_s.h \
 	$(GENDIR)oyOptions_s.h \
+	$(GENDIR)oyStruct_s.h \
+	$(GENDIR)oyStructList_s.h \
+	$(GENDIR)$(TARGET)_object.h
+CHEADERS_OBJECT = \
+	$(CHEADERS_OBJECT_PUBLIC) \
+	$(GENDIR)oyBlob_s_.h \
+	$(GENDIR)oyCMMptr_s_.h \
+	$(GENDIR)oyName_s_.h \
+	$(GENDIR)oyObject_s_.h \
+	$(GENDIR)oyObserver_s_.h \
+	$(GENDIR)oyOption_s_.h \
+	$(GENDIR)oyOptions_s_.h \
+	$(GENDIR)oyStructList_s_.h \
+	$(GENDIR)$(TARGET)_generic_internal.h \
+	$(GENDIR)$(TARGET)_module_internal.h \
 	$(GENDIR)$(TARGET)_object_internal.h
 CFILES = \
 	$(TARGET).c \

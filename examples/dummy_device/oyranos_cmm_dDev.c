@@ -241,7 +241,7 @@ int              DeviceFromName_     ( const char        * device_name,
         OPTIONS_ADD( (*device)->backend_core, host )
         if(!error && data_blob)
         {
-          o = oyOption_New( CMM_BASE_REG OY_SLASH "data_blob", 0 );
+          o = oyOption_FromRegistration( CMM_BASE_REG OY_SLASH "data_blob", 0 );
           error = !o;
           if(!error)
           error = oyOption_SetFromData( o, data_blob->ptr, data_blob->size );
@@ -372,7 +372,8 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
           } else
           {
             p = oyProfile_FromMem( size, (const oyPointer)data, 0, 0 );
-            o = oyOption_New( CMM_BASE_REG OY_SLASH "icc_profile", 0 );
+            o = oyOption_FromRegistration( CMM_BASE_REG OY_SLASH "icc_profile",
+                                           0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
             oyOptions_MoveIn( device->data, &o, -1 );
           }
@@ -384,11 +385,10 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
 
           o = oyOptions_Find( device->data, "icc_profile" );
 
-          if( o && o->value && o->value->oy_struct && 
-              o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
+          p = (oyProfile_s*) oyOption_StructGet( o, oyOBJECT_PROFILE_S );
+          if( p )
           {
             /* our dummy profile will certainly fail */
-            p = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
             tmp = oyProfile_GetFileName( p, 0 );
 
             STRING_ADD( text, "  " );

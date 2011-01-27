@@ -1087,10 +1087,10 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
           error = 0;
       cmsMLU * mlu[2] = {0,0};
       cmsCurveSegment seg[2];
-      oyOption_s * id = oyOption_New( OY_TOP_SHARED OY_SLASH 
+      oyOption_s * id = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH 
                               OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
                                       "gmt_pl.TYPE_Lab_FLT." CMM_NICK, 0);
-      oyOption_s * id16 = oyOption_New( OY_TOP_SHARED OY_SLASH 
+      oyOption_s * id16 = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH 
                                OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
                                         "gmt_pl.TYPE_Lab_16." CMM_NICK, 0);
 
@@ -1341,9 +1341,8 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   o = oyOptions_Find( node->core->options_, "profiles_effect" );
   if(o)
   {
-    if( o->value_type != oyVAL_STRUCT ||
-        !o->value->oy_struct ||
-        o->value->oy_struct->type_ != oyOBJECT_PROFILES_S)
+    profiles = (oyProfiles_s*) oyOption_StructGet( o, oyOBJECT_PROFILES_S );
+    if( !profiles )
     {
       oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
       message( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
@@ -1351,7 +1350,6 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
       
     } else
     {
-      profiles = (oyProfiles_s*) o->value;
       n = oyProfiles_Count( profiles );
       for(i = 0; i < n; ++i)
       {
@@ -1381,8 +1379,8 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
 
   if(o)
   {
-    if( o->value_type != oyVAL_STRUCT ||
-        o->value->oy_struct->type_ != oyOBJECT_PROFILES_S)
+    profiles = (oyProfiles_s*) oyOption_StructGet( o, oyOBJECT_PROFILES_S );
+    if( !profiles )
     {
       oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
       message( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
@@ -1390,7 +1388,6 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
       
     } else
     {
-      profiles = (oyProfiles_s*) o->value->oy_struct;
       n = oyProfiles_Count( profiles );
 
       message( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
@@ -2184,7 +2181,7 @@ int          lcm2MOptions_Handle     ( oyOptions_s       * options,
                     oyOption_GetValueDouble(o,6), oyOption_GetValueDouble(o,7));
       oyOption_Release( &o );
 
-      o = oyOption_New( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profile.colour_matrix._" CMM_NICK,
+      o = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profile.colour_matrix._" CMM_NICK,
                         0 );
       error = oyOption_StructMoveIn( o, (oyStruct_s**) &prof );
       if(!*result)

@@ -469,7 +469,7 @@ oyTESTRESULT_e testOption ()
 
   fprintf(stdout, "\n" );
 
-  o = oyOption_New( 0, 0 );
+  o = oyOption_FromRegistration( 0, 0 );
   if(o)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_New() good                               " );
@@ -478,7 +478,7 @@ oyTESTRESULT_e testOption ()
     "oyOption_New() failed                             " );
   }
 
-  error = oyOption_New( "blabla", 0 ) != 0;
+  error = oyOption_FromRegistration( "blabla", 0 ) != 0;
   if(o)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_New() with wrong registration rejected: ok");
@@ -514,24 +514,28 @@ oyTESTRESULT_e testOption ()
   return result;
 }
 
+#include "oyOption_s_.h"
+
 oyTESTRESULT_e testOptionInt ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
   int error = 0;
   oyOption_s * o = 0;
+  oyOption_s_ * oi = 0;
   int32_t erg[4] = { -1,-1,-1,-1 };
 
   oyExportReset_(EXPORT_SETTING);
 
   fprintf(stdout, "\n" );
 
-  o = oyOption_New( "//" OY_TYPE_STD "/filter/x", 0 );
+  o = oyOption_FromRegistration( "//" OY_TYPE_STD "/filter/x", 0 );
+  oi = (oyOption_s_*) o;
 
   error = oyOption_SetFromInt( o, 0, 0, 0 );
-  if(!error && o->value &&
-     o->value->int32 == 0 &&
-     o->value_type == oyVAL_INT)
+  if(!error && oi->value &&
+     oi->value->int32 == 0 &&
+     oi->value_type == oyVAL_INT)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_SetFromInt() good                        " );
   } else
@@ -540,9 +544,9 @@ oyTESTRESULT_e testOptionInt ()
   }
 
   error = oyOption_SetFromInt( o, 58293, 0, 0 );
-  if(!error && o->value &&
-     o->value->int32 == 58293 &&
-     o->value_type == oyVAL_INT)
+  if(!error && oi->value &&
+     oi->value->int32 == 58293 &&
+     oi->value_type == oyVAL_INT)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_SetFromInt() single int32_t good         " );
     erg[0] = oyOption_GetValueInt( o, 0 );
@@ -552,11 +556,11 @@ oyTESTRESULT_e testOptionInt ()
   }
 
   error = oyOption_SetFromInt( o, 58293, 1, 0 );
-  if(!error && o->value &&
-     o->value->int32_list[0] == 2 &&
-     o->value->int32_list[1] == 58293 &&
-     o->value->int32_list[2] == 58293 &&
-     o->value_type == oyVAL_INT_LIST)
+  if(!error && oi->value &&
+     oi->value->int32_list[0] == 2 &&
+     oi->value->int32_list[1] == 58293 &&
+     oi->value->int32_list[2] == 58293 &&
+     oi->value_type == oyVAL_INT_LIST)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_SetFromInt() add int32_t list good     " );
   } else
@@ -565,12 +569,12 @@ oyTESTRESULT_e testOptionInt ()
   }
 
   error = oyOption_SetFromInt( o, 58293, 2, 0 );
-  if(!error && o->value &&
-     o->value->int32_list[0] == 3 &&
-     o->value->int32_list[1] == 58293 &&
-     o->value->int32_list[2] == 58293 &&
-     o->value->int32_list[3] == 58293 &&
-     o->value_type == oyVAL_INT_LIST)
+  if(!error && oi->value &&
+     oi->value->int32_list[0] == 3 &&
+     oi->value->int32_list[1] == 58293 &&
+     oi->value->int32_list[2] == 58293 &&
+     oi->value->int32_list[3] == 58293 &&
+     oi->value_type == oyVAL_INT_LIST)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_SetFromInt() add int32_t list good     " );
   } else
@@ -579,12 +583,12 @@ oyTESTRESULT_e testOptionInt ()
   }
 
   error = oyOption_SetFromInt( o, 58293, 1, 0 );
-  if(!error && o->value &&
-     o->value->int32_list[0] == 3 &&
-     o->value->int32_list[1] == 58293 &&
-     o->value->int32_list[2] == 58293 &&
-     o->value->int32_list[3] == 58293 &&
-     o->value_type == oyVAL_INT_LIST)
+  if(!error && oi->value &&
+     oi->value->int32_list[0] == 3 &&
+     oi->value->int32_list[1] == 58293 &&
+     oi->value->int32_list[2] == 58293 &&
+     oi->value->int32_list[3] == 58293 &&
+     oi->value_type == oyVAL_INT_LIST)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_SetFromInt() new int32_t list good     " );
   } else
@@ -593,12 +597,12 @@ oyTESTRESULT_e testOptionInt ()
   }
 
   error = oyOption_SetFromInt( o, 293, 1, 0 );
-  if(!error && o->value &&
-     o->value->int32_list[0] == 3 &&
-     o->value->int32_list[1] == 58293 &&
-     o->value->int32_list[2] == 293 &&
-     o->value->int32_list[3] == 58293 &&
-     o->value_type == oyVAL_INT_LIST)
+  if(!error && oi->value &&
+     oi->value->int32_list[0] == 3 &&
+     oi->value->int32_list[1] == 58293 &&
+     oi->value->int32_list[2] == 293 &&
+     oi->value->int32_list[3] == 58293 &&
+     oi->value_type == oyVAL_INT_LIST)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_SetFromInt() modify int32_t list good  " );
   } else
@@ -607,12 +611,12 @@ oyTESTRESULT_e testOptionInt ()
   }
 
   error = oyOption_SetFromInt( o, 58293, 0, 0 );
-  if(!error && o->value &&
-     o->value->int32_list[0] == 3 &&
-     o->value->int32_list[1] == 58293 &&
-     o->value->int32_list[2] == 293 &&
-     o->value->int32_list[3] == 58293 &&
-     o->value_type == oyVAL_INT_LIST)
+  if(!error && oi->value &&
+     oi->value->int32_list[0] == 3 &&
+     oi->value->int32_list[1] == 58293 &&
+     oi->value->int32_list[2] == 293 &&
+     oi->value->int32_list[3] == 58293 &&
+     oi->value_type == oyVAL_INT_LIST)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_SetFromInt() set int32_t list good     " );
     erg[0] = oyOption_GetValueInt( o, 0 );
@@ -636,15 +640,16 @@ oyTESTRESULT_e testOptionInt ()
   oyOption_Release( &o );
 
 
-  o = oyOption_New( "//" OY_TYPE_STD "/filter/y", 0 );
-  o->value_type = oyVAL_INT_LIST;
+  o = oyOption_FromRegistration( "//" OY_TYPE_STD "/filter/y", 0 );
+  oi = (oyOption_s_*) o;
+  /*o->value_type = oyVAL_INT_LIST;*/
   error = oyOption_SetFromInt( o, 58293, 2, 0 );
-  if(!error && o->value &&
-     o->value->int32_list[0] == 3 &&
-     o->value->int32_list[1] == 0 &&
-     o->value->int32_list[2] == 0 &&
-     o->value->int32_list[3] == 58293 &&
-     o->value_type == oyVAL_INT_LIST)
+  if(!error && oi->value &&
+     oi->value->int32_list[0] == 3 &&
+     oi->value->int32_list[1] == 0 &&
+     oi->value->int32_list[2] == 0 &&
+     oi->value->int32_list[3] == 58293 &&
+     oi->value_type == oyVAL_INT_LIST)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_SetFromInt() explicite int32_t list good" );
   } else
@@ -991,10 +996,11 @@ oyTESTRESULT_e testSettings ()
   {
     o = oyOptions_Get( opts, i );
     printf("%d: \"%s\": \"%s\" %s %d\n", i, 
-           oyOption_GetText( o, oyNAME_DESCRIPTION ), o->value->string,
+           oyOption_GetText( o, oyNAME_DESCRIPTION ), oyOption_GetValueText( o,
+                             malloc ),
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                        oyFILTER_REG_OPTION, 0 ),
-           o->flags );
+           ((oyOption_s_*)o)->flags );
 
     oyOption_Release( &o );
   }
@@ -1031,10 +1037,11 @@ oyTESTRESULT_e testSettings ()
   {
     o = oyOptions_Get( opts, i );
     printf("%d: \"%s\": \"%s\" %s %d\n", i, 
-           oyOption_GetText( o, oyNAME_DESCRIPTION ), o->value->string,
+           oyOption_GetText( o, oyNAME_DESCRIPTION ), oyOption_GetValueText( o,
+                             malloc ),
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                        oyFILTER_REG_OPTION, 0 ),
-           o->flags );
+           ((oyOption_s_*)o)->flags );
 
     oyOption_Release( &o );
   }
@@ -1660,6 +1667,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
   oyConfig_s * config = 0;
   oyOptions_s * options_list = 0;
   oyOption_s * o = 0;
+  oyOption_s_ * oi = 0;
   oyProfile_s * p = 0;
 
   /* send a empty query to one module to obtain instructions in a message */
@@ -1752,21 +1760,22 @@ oyTESTRESULT_e testCMMDevicesListing ()
         int mnft = -1, mn, pos;
 
         o = oyConfig_Get( config, k );
+        oi = (oyOption_s_*) o;
 
-        r = oyFilterRegistrationToText( o->registration,
+        r = oyFilterRegistrationToText( oyOption_GetRegistration( o ),
                                         oyFILTER_REG_OPTION, 0 );
         if(r && strcmp(r,"supported_devices_info") == 0 &&
-           o->value_type == oyVAL_STRING_LIST)
+           oi->value_type == oyVAL_STRING_LIST)
         {
           /* print first line special */
-          while(o->value->string_list[++mnft])
+          while(oi->value->string_list[++mnft])
           {
             mn = 0; pos = -1;
-            while(o->value->string_list[mnft][++pos])
+            while(oi->value->string_list[mnft][++pos])
             {
-              if(o->value->string_list[mnft][pos] == '\n')
+              if(oi->value->string_list[mnft][pos] == '\n')
               {
-                if(mn && o->value->string_list[mnft][pos+1])
+                if(mn && oi->value->string_list[mnft][pos+1])
                   putc(',', stdout);
                 else if(mn == 0)
                 {
@@ -1778,7 +1787,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
                 ++mn;
 
               } else
-                putc(o->value->string_list[mnft][pos], stdout);
+                putc(oi->value->string_list[mnft][pos], stdout);
             }
             putc('\n', stdout);
           }
@@ -1786,13 +1795,13 @@ oyTESTRESULT_e testCMMDevicesListing ()
         {
           val = oyOption_GetValueText( o, oyAllocateFunc_ );
           printf("  %d::%d::%d \"%s\": \"%s\"\n", i,j,k,
-                 o->registration, val?val:"(nix)" );
+                 oyOption_GetRegistration(o), val?val:"(nix)" );
         }
 
         if(r) oyDeAllocateFunc_(r); r = 0;
         if(val)
           oyDeAllocateFunc_( val ); val = 0;
-        oyOption_Release( &o );
+        oyOption_Release( &o ); oi = 0;
       }
 
       oyConfig_Release( &config );
@@ -1872,7 +1881,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
 
         val = oyOption_GetValueText( o, oyAllocateFunc_ );
         printf( "  %d::%d %s: \"%s\"\n", l,k, 
-                  oyStrrchr_(o->registration,'/')+1, val );
+                  oyStrrchr_(oyOption_GetRegistration(o),'/')+1, val );
 
         if(val) oyDeAllocateFunc_( val ); val = 0;
         oyOption_Release( &o );
@@ -1883,7 +1892,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
       {
         val = oyOption_GetValueText( o, oyAllocateFunc_ );
         printf( "  %d %s: \"%s\"\n", l, 
-                oyStrrchr_(o->registration,'/')+1, val );
+                oyStrrchr_(oyOption_GetRegistration(o),'/')+1, val );
 
         if(val) oyDeAllocateFunc_( val ); val = 0;
         oyOption_Release( &o );
@@ -1997,7 +2006,7 @@ oyTESTRESULT_e testCMMMonitorListing ()
       o = oyConfig_Get( config, k );
       val = oyOption_GetValueText( o, oyAllocateFunc_ );
 
-      printf( "  %d %s: \"%s\"\n", k, o->registration, val );
+      printf( "  %d %s: \"%s\"\n", k, oyOption_GetRegistration(o), val );
 
       if(val) oyDeAllocateFunc_( val ); val = 0;
       oyOption_Release( &o );
@@ -2042,7 +2051,7 @@ oyTESTRESULT_e testCMMDBListing ()
       o = oyConfig_Get( config, k );
 
       val = oyOption_GetValueText( o, oyAllocateFunc_ );
-      printf( "  %d::%d %s %s\n", j,k, o->registration, val );
+      printf( "  %d::%d %s %s\n", j,k, oyOption_GetRegistration(o), val );
 
       if(val) oyDeAllocateFunc_( val ); val = 0;
       oyOption_Release( &o );
@@ -2105,7 +2114,7 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
 
       val = oyOption_GetValueText( o, oyAllocateFunc_ );
       printf( "  d::%d %s: \"%s\"\n", k,
-      strchr(strchr(strchr(strchr(o->registration,'/')+1,'/')+1,'/')+1,'/')+1,
+      strchr(strchr(strchr(strchr(oyOption_GetRegistration(o),'/')+1,'/')+1,'/')+1,'/')+1,
               val );
 
       if(val) oyDeAllocateFunc_( val ); val = 0;
@@ -2543,11 +2552,11 @@ oyTESTRESULT_e testCMMnmRun ()
 
 
   clck = oyClock();
-  oyOption_s * option = oyOption_New("shared/freedesktop.org/imaging/behaviour/rendering_bpc", 0);
+  oyOption_s * option = oyOption_FromRegistration("shared/freedesktop.org/imaging/behaviour/rendering_bpc", 0);
 
   for(i = 0; i < n*3*17; ++i)
   {
-  int error = !option || !option->registration;
+  int error = !option || !oyOption_GetRegistration(option);
   char * text = 0;
   oyPointer ptr = 0;
   size_t size = 0;
@@ -2555,7 +2564,7 @@ oyTESTRESULT_e testCMMnmRun ()
   oyExportStart_(EXPORT_SETTING);
 
   if(error <= 0)
-    text = oyGetKeyString_( option->registration, oyAllocateFunc_ );
+    text = oyGetKeyString_( oyOption_GetRegistration(option), oyAllocateFunc_ );
 
   if(error <= 0)
   {
@@ -2563,7 +2572,7 @@ oyTESTRESULT_e testCMMnmRun ()
       oyOption_SetFromText( option, text, 0 );
     else
     {
-      ptr = oyGetKeyBinary_( option->registration, &size, oyAllocateFunc_ );
+      ptr = oyGetKeyBinary_( oyOption_GetRegistration(option), &size, oyAllocateFunc_ );
       if(ptr && size)
       {
         oyOption_SetFromData( option, ptr, size );
@@ -2692,7 +2701,7 @@ oyTESTRESULT_e testCMMnmRun ()
     for(i = 0; i < n && error <= 0; ++i)
     {
       o = oyOptions_Get( s, i );
-      o->source = oyOPTIONSOURCE_FILTER;
+      oyOption_SetSource( o, oyOPTIONSOURCE_FILTER );
       /* ask Elektra */
       if(!(flags & oyOPTIONSOURCE_FILTER))
         error = oyOption_SetValueFromDB( o );

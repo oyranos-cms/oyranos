@@ -22,7 +22,9 @@
 #include "oyranos_icc.h"
 #include "oyranos_object.h"
 #include "oyName_s.h"
+#include "oyObject_s.h"
 #include "oyStruct_s.h"
+#include "oyStructList_s.h"
 
 
 #ifdef __cplusplus
@@ -98,78 +100,9 @@ oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
 int          oyStruct_GetId          ( oyStruct_s        * st );
 
 
-/** @enum    oySIGNAL_e
- *  @brief   observer signals
- *  @ingroup objects_generic
- *
- *  The signal types are similiar to the graph event enum oyCONNECTOR_EVENT_e.
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/10/26 (Oyranos: 0.1.10)
- *  @date    2009/10/26
- */
-typedef enum {
-  oySIGNAL_OK,
-  oySIGNAL_CONNECTED,                  /**< connection established */
-  oySIGNAL_RELEASED,                   /**< released the connection */
-  oySIGNAL_DATA_CHANGED,               /**< call to update image views */
-  oySIGNAL_STORAGE_CHANGED,            /**< new data accessors */
-  oySIGNAL_INCOMPATIBLE_DATA,          /**< can not process image */
-  oySIGNAL_INCOMPATIBLE_OPTION,        /**< can not handle option */
-  oySIGNAL_INCOMPATIBLE_CONTEXT,       /**< can not handle profile */
-  oySIGNAL_USER1, 
-  oySIGNAL_USER2, 
-  oySIGNAL_USER3                       /**< more signal types are possible */
-} oySIGNAL_e;
 
 const char *       oySignalToString  ( oySIGNAL_e          signal_type );
-typedef  struct oyObserver_s oyObserver_s;
-typedef  int      (*oyObserver_Signal_f) (
-                                       oyObserver_s      * observer,
-                                       oySIGNAL_e          signal_type,
-                                       oyStruct_s        * signal_data );
 
-
-/** @struct  oyObserver_s
- *  @brief   Oyranos object observers
- *  @ingroup objects_generic
- *  @extends oyStruct_s
- *
- *  oyObserver_s is following the viewer/model design pattern. The relations of
- *  oyObserver_s' can be anything up to complicated cyclic, directed graphs.
- *  The oyObserver_s type is intented for communication to non graph objects.
- *  Oyranos graphs have several communication paths available, which should
- *  be prefered over oyObserver_s when possible.
- *
- *  The struct contains properties to signal changes to a observer.
- *  The signaling provides a small set of very generic signals types as
- *  enumeration.
- *  It is possible for models to add additional data to the signal. These
- *  additional data is only blindly transported. A agreement is not subject of
- *  the oyObserver_s structure. For completeness the observed object shall
- *  always be included in the signal.
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/10/26 (Oyranos: 0.1.10)
- *  @date    2009/10/26
- */
-struct oyObserver_s {
-  oyOBJECT_e           type_;          /**< @private internal struct type oyOBJECT_OBSERVER_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyPointer            dummy;          /**< keep to zero */
-
-  /** a reference to the observing object */
-  oyStruct_s         * observer;
-  /** a reference to the to be observed model */
-  oyStruct_s         * model;
-  /** optional data; If no other user data is available this data will be
-   *  passed with the signal. */
-  oyStruct_s         * user_data;
-  oyObserver_Signal_f  signal;         /**< observers signaling function */ 
-  int                  disable_ref;    /**< disable signals reference counter
-                                            == 0 -> enabled; otherwise not */
-};
 
 OYAPI oyObserver_s * OYEXPORT
            oyObserver_New            ( oyObject_s          object );
@@ -267,86 +200,6 @@ int          oyName_boolean          ( oyName_s          * name_a,
 #define OY_HASH_SIZE 16
 
 
-typedef struct oyStructList_s oyStructList_s;
-typedef struct oyOptions_s oyOptions_s;
-
-/** @struct  oyObject_s
- *  @brief   Oyranos structure base
- *  @ingroup objects_generic
- *  @extends oyStruct_s
- *
- *  The base object of Oyranos object system is self contained. It can be
- *  handled by the belonging function set. Complex objects for user interaction
- *  should almost all be derived from this struct.\n
- *  The memory management can be controlled by the user and will affect internal
- *  and derived data.
- *
- *  @version Oyranos: 0.1.10
- *  @since   2007/10/00 (Oyranos: 0.1.8)
- *  @date    2009/03/01
- */
-struct oyObject_s_ {
-  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_OBJECT_S*/
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  int                  id_;            /**< @private identification for Oyranos */
-  oyAlloc_f            allocateFunc_;  /**< @private data  allocator */
-  oyDeAlloc_f          deallocateFunc_;/**< @private data release function */
-  oyPointer            parent_;        /*!< @private parent struct of parent_type */
-  oyOBJECT_e           parent_type_;   /*!< @private parents struct type */
-  oyPointer            backdoor_;      /*!< @private allow non breaking extensions */
-  oyOptions_s        * handles_;       /**< @private addational data and infos*/
-  oyName_s           * name_;          /*!< @private naming feature */
-  int                  ref_;           /*!< @private reference counter */
-  int                  version_;       /*!< @private OYRANOS_VERSION */
-  unsigned char      * hash_ptr_;      /**< @private 2*OY_HASH_SIZE */
-  oyPointer            lock_;          /**< @private the user provided lock */
-};
-
-oyObject_s   oyObject_New             ( void );
-oyObject_s   oyObject_NewWithAllocators(oyAlloc_f         allocateFunc,
-                                        oyDeAlloc_f       deallocateFunc );
-oyObject_s   oyObject_NewFrom         ( oyObject_s        object );
-oyObject_s   oyObject_Copy            ( oyObject_s        object );
-int          oyObject_Release         ( oyObject_s      * oy );
-
-oyObject_s   oyObject_SetParent       ( oyObject_s        object,
-                                        oyOBJECT_e        type,
-                                        oyPointer         ptr );
-/*oyPointer    oyObjectAlign            ( oyObject_s        oy,
-                                        size_t          * size,
-                                        oyAlloc_f         allocateFunc );*/
-
-int          oyObject_SetNames        ( oyObject_s        object,
-                                        const char      * nick,
-                                        const char      * name,
-                                        const char      * description );
-int          oyObject_SetName         ( oyObject_s        object,
-                                        const char      * name,
-                                        oyNAME_e          type );
-const char  *oyObject_GetName         ( const oyObject_s  object,
-                                        oyNAME_e          type );
-/*oyCMMptr_s * oyObject_GetCMMPtr       ( oyObject_s        object,
-                                        const char      * cmm );
-oyObject_s   oyObject_SetCMMPtr       ( oyObject_s        object,
-                                        oyCMMptr_s      * cmm_ptr );*/
-int          oyObject_Lock             ( oyObject_s        object,
-                                         const char      * marker,
-                                         int               line );
-int          oyObject_UnLock           ( oyObject_s        object,
-                                         const char      * marker,
-                                         int               line );
-int          oyObject_UnSetLocking     ( oyObject_s        object,
-                                         const char      * marker,
-                                         int               line );
-int          oyObject_GetId            ( oyObject_s        object );
-int          oyObject_GetRefCount      ( oyObject_s        object );
-int          oyObject_HashSet          ( oyObject_s        object,
-                                         const unsigned char * hash );
-int          oyObject_HashEqual        ( oyObject_s        s1,
-                                         oyObject_s        s2 );
-
-
 /** @internal
  *  @brief a cache entry
  *  @ingroup objects_generic
@@ -424,27 +277,6 @@ oyPointer          oyBlob_GetPointer ( oyBlob_s          * blob );
 size_t             oyBlob_GetSize    ( oyBlob_s          * blob );
 const char *       oyBlob_GetType    ( oyBlob_s          * blob );
 
-/** @internal
- *  @brief a pointer list
- *  @ingroup objects_generic
- *  @extends oyStruct_s
- *
- *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
- *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
- */
-struct oyStructList_s {
-  oyOBJECT_e           type_;          /*!< @private internal struct type oyOBJECT_STRUCT_LIST_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private features name and hash */
-  oyStruct_s        ** ptr_;           /**< @private the list data */
-  int                  n_;             /**< @private the number of visible pointers */
-  int                  n_reserved_;    /**< @private the number of allocated pointers */
-  char               * list_name;      /**< name of list */
-  oyOBJECT_e           parent_type_;   /**< @private parents struct type */
-};
 
 oyStructList_s * oyStructList_New    ( oyObject_s          object );
 oyStructList_s * oyStructList_Copy   ( oyStructList_s    * list,
@@ -512,45 +344,6 @@ char   *     oyCMMCacheListPrint_    ( void );
 
 /* --- colour conversion --- */
 
-/** @enum    oyVALUETYPE_e
- *  @brief   a value type
- *
-    @see     oyValue_u
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/02/16 (Oyranos: 0.1.x)
- *  @date    2008/02/16
- */
-typedef enum {
-  oyVAL_INT,
-  oyVAL_INT_LIST,
-  oyVAL_DOUBLE,    /*!< IEEE double precission floating point number */
-  oyVAL_DOUBLE_LIST,
-  oyVAL_STRING,
-  oyVAL_STRING_LIST,
-  oyVAL_STRUCT     /**< for pure data blobs use oyBlob_s herein */
-} oyVALUETYPE_e;
-
-/** @union   oyValue_u
- *  @brief   a value
- *  @ingroup objects_value
- *
- *  @see     oyVALUETYPE_e
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/02/16 (Oyranos: 0.1.x)
- *  @date    2008/02/16
- */
-typedef union {
-  int32_t          int32;
-  int32_t        * int32_list;         /**< first is element number of int32 list */
-  double           dbl;
-  double         * dbl_list;           /**< first is element number of dbl list */
-  char           * string;             /**< null terminated */
-  char          ** string_list;        /**< null terminated */
-
-  oyStruct_s     * oy_struct;          /**< a struct, e.g. a profile, or oyBlob_s for a data pointer */
-} oyValue_u;
 
 void           oyValueCopy           ( oyValue_u         * to,
                                        oyValue_u         * from,
@@ -587,58 +380,7 @@ char   oyFilterRegistrationModify    ( const char        * registration,
                                        char             ** result,
                                        oyAlloc_f           allocateFunc );
 
-/** @enum    oyOPTIONSOURCE_e
- *  @brief   a option source type
- *
- *  @version Oyranos: 0.1.9
- *  @since   2008/11/13 (Oyranos: 0.1.9)
- *  @date    2008/11/27
- */
-typedef enum {
-  oyOPTIONSOURCE_NONE = 0,             /**< not clear */
-  oyOPTIONSOURCE_FILTER = 2,           /**< internal defaults, e.g. module */
-  oyOPTIONSOURCE_DATA = 4,             /**< external defaults, e.g. policy, DB*/
-  oyOPTIONSOURCE_USER = 8              /**< user settings, e.g. elektra */
-} oyOPTIONSOURCE_e;
 
-/** @brief   a option
- *  @ingroup objects_value
- *  @extends oyStruct_s
-
-    @todo include the oyOptions_t_ type for gui elements
-    should be used in a list oyColourTransformOptions_s to form a options set
-    oyOptions_t_ covers as well the UI part which should be separated as of the
-    SimpleToolkitAbstraction project:
-    http://www.oyranos.org/wiki/index.php?title=XML_Plug-in_options
-    As of this architecture change The UI part must be decided to obtain a
-    place. Probably in oyOptions_s?
-    Thus the oyOption_s::name member should be removed.
-
- *  The id field maps to a oyWidget_s object.
- *  Options and widgets are to be queried by the according function / CMM
- *  combination.
- *
- *  @version Oyranos: 0.1.8
- *  @since   2007/00/00 (Oyranos: 0.1.x)
- *  @date    2008/04/14
- */
-typedef struct {
-  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_OPTION_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  uint32_t             id;             /**< id to map to events and widgets */
-  char               * registration;   /**< full key path name to store configuration, e.g. "shared/oyranos.org/imaging/scale/x", see as well @ref registration @see oyOPTIONATTRIBUTE_e */
-  int                  version[3];     /**< as for oyCMMapi4_s::version */
-  oyVALUETYPE_e        value_type;     /**< the type in value */
-  oyValue_u          * value;          /**< the actual value */
-  oyOPTIONSOURCE_e     source;         /**< the source of this value */
-  uint32_t             flags;          /**< | oyOPTIONATTRIBUTE_e */
-} oyOption_s;
-
-oyOption_s *   oyOption_New          ( const char        * registration,
-                                       oyObject_s          object );
 oyOption_s *   oyOption_FromDB       ( const char        * registration,
                                        oyObject_s          object );
 oyOption_s *   oyOption_Copy         ( oyOption_s        * option,
@@ -687,27 +429,6 @@ int            oyOption_StructMoveIn ( oyOption_s        * option,
 oyStruct_s *   oyOption_StructGet    ( oyOption_s        * option,
                                        oyOBJECT_e          type );
 
-/**
- *  @struct  oyOptions_s
- *  @brief   generic Options
- *  @ingroup objects_value
- *  @extends oyStruct_s
- *
- *  Options can be any flag or rendering intent and other informations needed to
- *  configure a process. The object contains a list of oyOption_s objects.
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2008/06/26
- */
-struct oyOptions_s {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_OPTIONS_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  oyStructList_s     * list;           /**< the list data */
-};
 
 oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
                                        oyOptions_s       * options,

@@ -512,8 +512,8 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
   /** Set missing options and overwrite filter inbuild fallbacks.
    *  Do not touch edits. */
               if((o &&
-                  o->source == oyOPTIONSOURCE_FILTER &&
-                  !(o->flags & oyOPTIONATTRIBUTE_EDIT)) ||
+                  oyOption_GetSource(o) == oyOPTIONSOURCE_FILTER &&
+                  !(oyOption_GetFlags(o) & oyOPTIONATTRIBUTE_EDIT)) ||
                  !o)
               {
                 db_o = oyOptions_Find( db_options, key );
@@ -521,14 +521,14 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
                 {
                   if(!o)
                   {
-                    db_o->flags |= oyOPTIONATTRIBUTE_AUTOMATIC;
+                    oyOption_SetFlags(db_o, oyOption_GetFlags(db_o) | oyOPTIONATTRIBUTE_AUTOMATIC);
                     oyOptions_MoveIn( f_options, &db_o, -1 );
                   }
                   else
                   {
                     text = oyOption_GetValueText( db_o, oyAllocateFunc_ );
                     oyOption_SetFromText( o, text, 0 );
-                    o->flags |= oyOPTIONATTRIBUTE_AUTOMATIC;
+                    oyOption_SetFlags(o, oyOption_GetFlags(o) | oyOPTIONATTRIBUTE_AUTOMATIC);
                     oyFree_m_( text );
                   }
 
@@ -567,6 +567,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               * f_options = 0;
   oyOption_s * o = 0;
   const char * val = 0;
+  char * tmp = 0;
   int32_t proofing = 0,
           display_mode = 0,
           rendering_gamut_warning = 0;
@@ -658,13 +659,15 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               for(k = 0; k < os_n; k++)
               {
                 o = oyOptions_Get( f_options, k );
+                tmp  = oyOption_GetValueText(o, oyAllocateFunc_);
                 printf("%d: \"%s\": \"%s\" %s %d\n", k, 
                        oyOption_GetText( o, oyNAME_DESCRIPTION ),
-                       o->value->string,
+                       tmp,
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                        oyFILTER_REG_OPTION, 0 ),
-                o->flags );
+                oyOption_GetFlags(o) );
 
+                oyFree_m_( tmp );
                 oyOption_Release( &o );
               }
               os_n = oyOptions_Count(db_options);
@@ -672,13 +675,15 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               for(k = 0; k < os_n; k++)
               {
                 o = oyOptions_Get( db_options, k );
+                tmp  = oyOption_GetValueText(o, oyAllocateFunc_);
                 printf("%d: \"%s\": \"%s\" %s %d\n", k, 
                        oyOption_GetText( o, oyNAME_DESCRIPTION ),
-                       o->value->string,
+                       tmp,
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                        oyFILTER_REG_OPTION, 0 ),
-                o->flags );
+                oyOption_GetFlags(o) );
 
+                oyFree_m_( tmp );
                 oyOption_Release( &o );
               }
 

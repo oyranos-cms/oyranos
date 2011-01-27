@@ -356,8 +356,8 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
   }
   else
   {
-    oyConfigs_Release( (oyConfigs_s**) & o->value->oy_struct );
-    o->value->oy_struct = (oyStruct_s*) oyConfigs_Copy( devices, 0 );
+    oyStruct_s * s = (oyStruct_s*) oyConfigs_Copy( devices, 0 );
+    oyOption_StructMoveIn( o, &s );
   }
   oyOption_Release( &o );
 
@@ -620,8 +620,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
       /* get device dimension */
       o = oyConfig_Find( c, "device_rectangle" );
-      if(o && o->value_type == oyVAL_STRUCT)
-        rd = (oyRectangle_s *) o->value->oy_struct;
+      rd = (oyRectangle_s *) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
       oyOption_Release( &o );
 
       if(!rd)
@@ -640,9 +639,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       /* get display rectangle to project into */
       if(image)
         o = oyOptions_Find( image->tags, "display_rectangle" );
-      if(o && o->value_type == oyVAL_STRUCT && o->value &&
-         o->value->oy_struct->type_ == oyOBJECT_RECTANGLE_S)
-        ri = (oyRectangle_s *) o->value->oy_struct;
+      ri = (oyRectangle_s *) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
       oyOption_Release( &o );
 
       /* trim and adapt the work rectangle */

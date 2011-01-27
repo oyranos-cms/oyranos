@@ -325,7 +325,8 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
 
           if(!error && data && size)
           {           
-            o = oyOption_New( CMM_BASE_REG OY_SLASH "device_context", 0 );
+            o = oyOption_FromRegistration(
+                                    CMM_BASE_REG OY_SLASH "device_context", 0 );
             error = !o;
             if(!error)
               error = oyOption_SetFromData( o, data, size );
@@ -451,11 +452,10 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
         { 
           text = 0;
           o = oyOptions_Find( device->data, "icc_profile" );
-
-          if( o && o->value && o->value->oy_struct && 
-              o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
+          if( o )
+            p = (oyProfile_s*) oyOption_StructGet( o, oyOBJECT_PROFILE_S );
+          if( p )
           {            
-            p = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
             tmp = oyProfile_GetFileName( p, 0 );
             STRING_ADD( text, "  " );
             if(strrchr( tmp, OY_SLASH_C ))
@@ -463,7 +463,7 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
             else
               STRING_ADD( text, tmp );
 
-              oyProfile_Release( &p );
+            oyProfile_Release( &p );
 
             error = oyOptions_SetFromText( &device->data,
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
@@ -1125,8 +1125,8 @@ int CUPSgetProfiles                  ( const char        * device_name,
 
           if(p)
           {
-            oyOption_s * o = oyOption_New( CMM_BASE_REG OY_SLASH "icc_profile",
-                                           0 );
+            oyOption_s * o = oyOption_FromRegistration(
+                                      CMM_BASE_REG OY_SLASH "icc_profile", 0 );
             int l_error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
             oyOptions_MoveIn( device->data, &o, -1 );
             if(l_error)

@@ -200,12 +200,14 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
         if(win_id)
         {
           win_id->ptr = (oyPointer)w;
-          o = oyOption_New( "//" OY_TYPE_STD "/display/window_id", 0 );
+          o = oyOption_FromRegistration( "//" OY_TYPE_STD "/display/window_id",
+                                         0 );
           oyOption_StructMoveIn( o, (oyStruct_s**)&win_id );
           oyOptions_MoveIn( image_tags, &o, -1 );
 
           display_id->ptr = (oyPointer)disp;
-          o = oyOption_New( "//" OY_TYPE_STD "/display/display_id", 0 );
+          o = oyOption_FromRegistration( "//" OY_TYPE_STD "/display/display_id",
+                                         0 );
           oyOption_StructMoveIn( o, (oyStruct_s**)&display_id );
           oyOptions_MoveIn( image_tags, &o, -1 );
 

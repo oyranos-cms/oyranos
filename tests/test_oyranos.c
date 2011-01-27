@@ -282,7 +282,7 @@ oyTESTRESULT_e testOption ()
 
   fprintf(stdout, "\n" );
 
-  o = oyOption_New( "blabla", 0 );
+  o = oyOption_FromRegistration( "blabla", 0 );
   if(!o)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_New() with wrong registration rejected: ok");
@@ -291,7 +291,7 @@ oyTESTRESULT_e testOption ()
     "oyOption_New() with wrong registration not rejected");
   }
 
-  o = oyOption_New( 0, 0 );
+  o = oyOption_FromRegistration( 0, 0 );
   if(o)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_New() good                               " );
@@ -958,7 +958,7 @@ int myFilterSignalHandler            ( oyObserver_s      * observer,
 oyTESTRESULT_e testObserver ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
-  oyOption_s * o = oyOption_New( "a/b/c/d/my_key", 0 );
+  oyOption_s * o = oyOption_FromRegistration( "a/b/c/d/my_key", 0 );
   oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", 0, 0 );
 
   fprintf(stdout, "\n" );
