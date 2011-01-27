@@ -13,7 +13,6 @@
  */
 
 #include "oyCMMptr_s_.h"
-#include "oyHash_s_.h"
 #include "oyName_s_.h"
 #include "oyObserver_s_.h"
 #include "oyOption_s_.h"
@@ -2478,7 +2477,7 @@ oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
   oySprintf_( hash_text, "%s.%c_", registration, api_char ? api_char:' ');
   entry = oyCMMCacheListGetEntry_( hash_text );
   oyDeAllocateFunc_( hash_text ); hash_text = 0;
-  api = (oyCMMapiFilter_s*) oyHash_GetPointer_( entry, type );
+  api = (oyCMMapiFilter_s*) oyHash_GetPointer( entry, type );
   if(api)
     return api;
 #endif
@@ -2495,7 +2494,7 @@ oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
     if(api->copy)
       api = api->copy
 #endif
-    oyHash_SetPointer_( entry, (oyStruct_s*) api );
+    oyHash_SetPointer( entry, (oyStruct_s*) api );
 #endif
   }
 
@@ -3356,7 +3355,7 @@ oyCMMptr_s * oyCMMptrLookUpFromText  ( const char        * text,
     if(error <= 0)
     {
       /* 3. check and 3.a take*/
-      cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( entry,
+      cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer( entry,
                                                   oyOBJECT_CMM_PTR_S);
 
       if(!cmm_ptr)
@@ -3372,12 +3371,12 @@ oyCMMptr_s * oyCMMptrLookUpFromText  ( const char        * text,
 
         if(error <= 0 && cmm_ptr)
           /* 3b.1. update cache entry */
-          error = oyHash_SetPointer_( entry,
+          error = oyHash_SetPointer( entry,
                                      (oyStruct_s*) cmm_ptr );
       }
     }
 
-    oyHash_Release_( &entry );
+    oyHash_Release( &entry );
   }
 
   return cmm_ptr;
@@ -4100,17 +4099,17 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
     if(memcmp(search_ptr, compare->oy_->hash_ptr_, OY_HASH_SIZE*2) == 0)
     {
       entry = compare;
-      return oyHash_Copy_( entry, 0 );
+      return oyHash_Copy( entry, 0 );
     }
   }
 
   if(error <= 0 && !entry)
   {
-    search_key = oyHash_Get_(hash_text, 0);
+    search_key = oyHash_Get(hash_text, 0);
     error = !search_key;
 
     if(error <= 0)
-      entry = oyHash_Copy_( search_key, 0 );
+      entry = oyHash_Copy( search_key, 0 );
 
     if(error <= 0)
     {
@@ -4118,12 +4117,12 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
       search_key = 0;
     }
 
-    oyHash_Release_( &search_key );
+    oyHash_Release( &search_key );
   }
 
 
   if(entry)
-    return oyHash_Copy_( entry, 0 );
+    return oyHash_Copy( entry, 0 );
   else
     return 0;
 }
@@ -8518,7 +8517,7 @@ oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
 
       if(!oyToNoCacheRead_m(flags))
       {
-        s = (oyProfile_s*) oyHash_GetPointer_( entry, oyOBJECT_PROFILE_S);
+        s = (oyProfile_s*) oyHash_GetPointer( entry, oyOBJECT_PROFILE_S);
         s = oyProfile_Copy( s, 0 );
         if(s)
           return s;
@@ -8567,7 +8566,7 @@ oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
     if(!oyToNoCacheWrite_m(flags))
     {
       /* 3b.1. update cache entry */
-      error = oyHash_SetPointer_( entry, (oyStruct_s*)s );
+      error = oyHash_SetPointer( entry, (oyStruct_s*)s );
 #if 0
     } else {
       int i = 0, n = 0, pos = -1;
@@ -8582,7 +8581,7 @@ oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
     }
   }
 
-  oyHash_Release_( &entry );
+  oyHash_Release( &entry );
 
   return s;
 }
@@ -19043,7 +19042,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
           if(error <= 0)
           {
             /* 3. check and 3.a take*/
-            cmm_ptr_out = (oyCMMptr_s*) oyHash_GetPointer_( hash_out,
+            cmm_ptr_out = (oyCMMptr_s*) oyHash_GetPointer( hash_out,
                                                         oyOBJECT_CMM_PTR_S);
 
             if(!(cmm_ptr_out && oyCMMptr_GetPointer(cmm_ptr_out)) || blob)
@@ -19052,7 +19051,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                                               hash_text_ );
               /* 2. query in cache for api4 */
               hash = oyCMMCacheListGetEntry_( hash_text );
-              cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer_( hash,
+              cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer( hash,
                                                         oyOBJECT_CMM_PTR_S);
 
               if(!cmm_ptr)
@@ -19100,7 +19099,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                   ((oyCMMptr_s_*)cmm_ptr)->size = size;
 
                   /* 3b.1. update cache entry */
-                  error = oyHash_SetPointer_( hash, (oyStruct_s*) cmm_ptr);
+                  error = oyHash_SetPointer( hash, (oyStruct_s*) cmm_ptr);
                 }
               }
 
@@ -19121,7 +19120,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                   oyCMMptr_ConvertData( cmm_ptr, cmm_ptr_out, node );
                   node->backend_data = cmm_ptr_out;
                   /* 3b.1. update cache entry */
-                  error = oyHash_SetPointer_( hash_out,
+                  error = oyHash_SetPointer( hash_out,
                                               (oyStruct_s*) cmm_ptr_out);
 
                 } else

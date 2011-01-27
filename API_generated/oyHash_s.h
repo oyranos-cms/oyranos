@@ -82,6 +82,14 @@ OYAPI int OYEXPORT
 
 
 /* Include "Hash.public_methods_declarations.h" { */
+oyHash_s *         oyHash_Get        ( const char        * hash_text,
+                                       oyObject_s          object );
+int                oyHash_IsOf       ( oyHash_s          * hash,
+                                       oyOBJECT_e          type );
+int                oyHash_SetPointer ( oyHash_s          * hash,
+                                       oyStruct_s        * obj );
+oyStruct_s *       oyHash_GetPointer ( oyHash_s          * hash,
+                                       oyOBJECT_e          type );
 
 /* } Include "Hash.public_methods_declarations.h" */
 
