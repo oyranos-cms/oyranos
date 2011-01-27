@@ -270,7 +270,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
 #endif
 
   if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XINERAMA &&
-      ((!prop || (prop && prop->size%128)) ||
+      ((!prop || (prop && oyBlob_GetSize(prop)%128)) ||
        oyOptions_FindString( options, "edid", "refresh" )) )
   {
     int error = 0;
@@ -293,17 +293,17 @@ oyX1GetMonitorInfo_               (const char* display_name,
 
   if( prop )
   {
-    if( prop->size%128 )
+    if( oyBlob_GetSize(prop)%128 )
     {
       WARNcc4_S(user_data, "\n\t  %s %d; %s %s",_("unexpected EDID lenght"),
-               (int)prop->size,
+               (int)oyBlob_GetSize(prop),
                "\"XFree86_DDC_EDID1_RAWDATA\"/\"EDID_DATA\"",
                _("Cant read hardware information from device."))
       error = -1;
     } else
     {
       /* convert to an deployable struct */
-      edi = prop->ptr;
+      edi = oyBlob_GetPointer(prop);
 
       error = oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, vendor,
                       week, year, mnft_id, model_id, colours, allocate_func);
@@ -484,11 +484,12 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
 
   if(prop)
   {
-    oyAllocHelper_m_( moni_profile, char, prop->size, allocate_func, error = 1 )
+    oyAllocHelper_m_( moni_profile, char, oyBlob_GetSize(prop), allocate_func, error = 1 )
     if(!error)
-      error = !memcpy( moni_profile, prop->ptr, prop->size );
+      error = !memcpy( moni_profile, oyBlob_GetPointer(prop),
+                       oyBlob_GetSize(prop) );
     if(!error)
-      *size = prop->size;
+      *size = oyBlob_GetSize(prop);
     oyBlob_Release( &prop );
   } /*else
     WARNc1_S("\n  %s",
