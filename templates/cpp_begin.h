@@ -1,4 +1,4 @@
-/*#ifdef __cplusplus
-namespace oyranos {
+#ifdef __cplusplus
+/*namespace oyranos {*/
   extern "C" {
-#endif *//* __cplusplus */
+#endif /* __cplusplus */
