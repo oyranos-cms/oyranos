@@ -199,8 +199,8 @@ lcm2ProfileWrap_s * lcm2CMMProfile_GetWrap_( oyCMMptr_s * cmm_ptr )
   int type = *((int*)&type_);
 
   if(cmm_ptr && !lcm2CMMCheckPointer( cmm_ptr, lcm2PROFILE ) &&
-     cmm_ptr->ptr)
-    s = (lcm2ProfileWrap_s*) cmm_ptr->ptr;
+     oyCMMptr_GetPointer(cmm_ptr))
+    s = (lcm2ProfileWrap_s*) oyCMMptr_GetPointer(cmm_ptr);
 
   if(s && s->type != type)
     s = 0;
@@ -222,8 +222,8 @@ int      lcm2CMMTransform_GetWrap_   ( oyCMMptr_s        * cmm_ptr,
   int type = *((int*)&type_);
 
   if(cmm_ptr && !lcm2CMMCheckPointer( cmm_ptr, lcm2TRANSFORM ) &&
-     cmm_ptr->ptr)
-    *s = (lcm2TransformWrap_s*) cmm_ptr->ptr;
+     oyCMMptr_GetPointer(cmm_ptr))
+    *s = (lcm2TransformWrap_s*) oyCMMptr_GetPointer(cmm_ptr);
 
   if(*s && ((*s)->type != type || !(*s)->lcm2))
   {
@@ -293,9 +293,6 @@ int          lcm2CMMData_Open        ( oyStruct_s        * data,
   oyCMMptr_s * s = 0;
   int error = 0;
 
-  if(oy->type != oyOBJECT_CMM_PTR_S)
-    error = 1;
-
   if(!error)
   {
     char type_[4] = lcm2PROFILE;
@@ -316,15 +313,9 @@ int          lcm2CMMData_Open        ( oyStruct_s        * data,
     s->block = block;
 
     s->lcm2 = CMMProfileOpen_M( data, block, size );
-    oy->ptr = s;
-    snprintf( oy->func_name, 32, "%s", CMMToString_M(CMMProfileOpen_M) );
-    snprintf( oy->resource, 5, lcm2PROFILE ); 
-    error = !oy->ptr;
-  }
-
-  if(!error)
-  {
-    oy->ptrRelease = lcm2CMMProfileReleaseWrap;
+    error = oyCMMptr_Set( oy, 0,
+                          lcm2PROFILE, s, CMMToString_M(CMMProfileOpen_M),
+                          lcm2CMMProfileReleaseWrap );
   }
 
   if(!error)
@@ -348,12 +339,12 @@ int                lcm2CMMCheckPointer(oyCMMptr_s        * cmm_ptr,
 {
   int error = !cmm_ptr;
 
-  if(cmm_ptr && cmm_ptr->type == oyOBJECT_CMM_PTR_S &&
-     cmm_ptr->ptr && strlen(cmm_ptr->resource))
+  if(cmm_ptr &&
+     oyCMMptr_GetPointer(cmm_ptr) && oyCMMptr_GetResourceName(cmm_ptr))
   {
-    int * res_id = (int*)cmm_ptr->resource;
+    int * res_id = (int*)oyCMMptr_GetResourceName(cmm_ptr);
 
-    if(!oyCMMlibMatchesCMM(cmm_ptr->lib_name, CMM_NICK) ||
+    if(!oyCMMlibMatchesCMM(oyCMMptr_GetLibName(cmm_ptr), CMM_NICK) ||
        *res_id != *((int*)(resource)) )
       error = 1;
   } else {
@@ -481,13 +472,8 @@ lcm2TransformWrap_s * lcm2TransformWrap_Set_ (
   }
 
   if(!error)
-  {
-    oy->ptr = s;
-
-    oy->ptrRelease = lcm2CMMDeleteTransformWrap;
-
-    strcpy( oy->func_name, "lcm2CMMDeleteTransformWrap" );
-  }
+    oyCMMptr_Set( oy, 0, 0, s,
+                  "lcm2CMMDeleteTransformWrap", lcm2CMMDeleteTransformWrap );
 
   return s;
 }
@@ -872,10 +858,10 @@ cmsHPROFILE  lcm2AddProofProfile     ( oyProfile_s       * proof,
   /* cache look up */
   cmm_ptr = oyCMMptrLookUpFromText( hash_text, lcm2PROFILE );
 
-  cmm_ptr->lib_name = CMM_NICK;
+  oyCMMptr_Set( cmm_ptr, CMM_NICK, 0,0,0,0 );
 
   /* for empty profile create a new abstract one */
-  if(!cmm_ptr->ptr)
+  if(!oyCMMptr_GetPointer(cmm_ptr))
   {
     oyCMMptr_s * oy = cmm_ptr;
 
@@ -910,15 +896,9 @@ cmsHPROFILE  lcm2AddProofProfile     ( oyProfile_s       * proof,
 
     /* reopen */
     s->lcm2 = CMMProfileOpen_M( proof, block, size );
-    oy->ptr = s;
-    snprintf( oy->func_name, 32, "%s", CMMToString_M(CMMProfileOpen_M) );
-    snprintf( oy->resource, 5, lcm2PROFILE ); 
-    error = !oy->ptr;
-
-    if(!error)
-    {
-      oy->ptrRelease = lcm2CMMProfileReleaseWrap;
-    }
+    error = oyCMMptr_Set( oy, 0,
+                          lcm2PROFILE, s, CMMToString_M(CMMProfileOpen_M),
+                          lcm2CMMProfileReleaseWrap );
   }
 
   if(!error)
@@ -973,9 +953,9 @@ cmsHPROFILE  lcm2AddProfile          ( oyProfile_s       * p )
     return 0;
   }
 
-  cmm_ptr->lib_name = CMM_NICK;
+  oyCMMptr_Set( cmm_ptr, CMM_NICK, 0,0,0,0 );
 
-  if(!cmm_ptr->ptr)
+  if(!oyCMMptr_GetPointer(cmm_ptr))
     error = lcm2CMMData_Open( (oyStruct_s*)p, cmm_ptr );
 
   if(!error)
@@ -1759,9 +1739,6 @@ int  lcm2CMMdata_Convert             ( oyCMMptr_s        * data_in,
   image_input = (oyImage_s*)plug->remote_socket_->data;
   image_output = (oyImage_s*)socket->data;
 
-  if(!error)
-    error = data_in->type != oyOBJECT_CMM_PTR_S || 
-            data_out->type != oyOBJECT_CMM_PTR_S;
 
   if(!error)
   {
@@ -1770,13 +1747,14 @@ int  lcm2CMMdata_Convert             ( oyCMMptr_s        * data_in,
   }
 
   if(!error &&
-     ( (strcmp( cmm_ptr_in->resource, oyCOLOUR_ICC_DEVICE_LINK ) != 0) ||
-       (strcmp( cmm_ptr_out->resource, lcm2TRANSFORM ) != 0) ) )
+     ( (strcmp( oyCMMptr_GetResourceName(cmm_ptr_in), oyCOLOUR_ICC_DEVICE_LINK ) != 0) ||
+       (strcmp( oyCMMptr_GetResourceName(cmm_ptr_out), lcm2TRANSFORM ) != 0) ) )
     error = 1;
 
   if(!error)
   {
-    lps[0] = CMMProfileOpen_M( node, cmm_ptr_in->ptr, cmm_ptr_in->size );
+    lps[0] = CMMProfileOpen_M( node, oyCMMptr_GetPointer(cmm_ptr_in),
+                               oyCMMptr_GetSize( cmm_ptr_in) );
     xform = lcm2CMMConversionContextCreate_( lps, 1, 0,0,0,
                                            image_input->layout_[0],
                                            image_output->layout_[0],

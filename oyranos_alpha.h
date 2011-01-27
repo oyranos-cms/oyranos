@@ -21,8 +21,14 @@
 #include "oyranos.h"
 #include "oyranos_icc.h"
 #include "oyranos_object.h"
+#include "oyBlob_s.h"
+#include "oyCMMptr_s.h"
+#include "oyHash_s.h"
 #include "oyName_s.h"
 #include "oyObject_s.h"
+#include "oyObserver_s.h"
+#include "oyOption_s.h"
+#include "oyOptions_s.h"
 #include "oyStruct_s.h"
 #include "oyStructList_s.h"
 
@@ -200,83 +206,6 @@ int          oyName_boolean          ( oyName_s          * name_a,
 #define OY_HASH_SIZE 16
 
 
-/** @internal
- *  @brief a cache entry
- *  @ingroup objects_generic
- *  @extends oyStruct_s
- *
- *  Combine hash, description and oyPointer to one searchable struct. The struct
- *  can be used in a oyStructList_s for a hash map or searchable cache.
- *  @see oyCacheListNew_ oyHashGet_
- *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
- *
- *  @since Oyranos: version 0.1.8
- *  @date  24 november 2007 (API 0.1.8)
- */
-typedef struct {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_HASH_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private features name and hash */
-  oyStruct_s         * entry;          /**< holds a pointer to something */
-} oyHash_s;
-
-oyHash_s *         oyHash_New_       ( oyObject_s          object );
-oyHash_s *         oyHash_Get_       ( const char        * hash_text,
-                                       oyObject_s          object );
-oyHash_s *         oyHash_Copy_      ( oyHash_s          * entry,
-                                       oyObject_s          object );
-int                oyHash_Release_   ( oyHash_s         ** entry );
-
-int                oyHash_IsOf_      ( oyHash_s          * hash,
-                                       oyOBJECT_e          type );
-oyStruct_s *       oyHash_GetPointer_( oyHash_s          * hash,
-                                       oyOBJECT_e          type );
-int                oyHash_SetPointer_( oyHash_s          * hash,
-                                       oyStruct_s        * obj );
-
-/** @struct  oyBlob_s
- *  @brief   a data blob object
- *  @extends oyStruct_s
- *
- *  @version Oyranos: 0.1.9
- *  @since   2009/01/06 (Oyranos: 0.1.9)
- *  @date    2009/01/06
- */
-typedef struct {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_BLOB_S */ 
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  size_t               size;           /**< data size */
-  oyPointer            ptr;            /**< data */
-  int                  flags;          /**< 0x01 - static ptr */
-  char                 type[8];        /**< the type of data, e.g. oyCOLOUR_ICC_DEVICE_LINK / "oyDL" */
-} oyBlob_s;
-
-OYAPI oyBlob_s * OYEXPORT
-                 oyBlob_New          ( oyObject_s          object );
-OYAPI oyBlob_s * OYEXPORT
-                 oyBlob_Copy         ( oyBlob_s          * obj,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-                 oyBlob_Release      ( oyBlob_s         ** obj );
-
-OYAPI int  OYEXPORT
-                 oyBlob_SetFromData  ( oyBlob_s          * obj,
-                                       oyPointer           ptr,
-                                       size_t              size,
-                                       const char        * type );
-OYAPI int  OYEXPORT
-                 oyBlob_SetFromStatic( oyBlob_s          * blob,
-                                       const oyPointer     ptr,
-                                       size_t              size,
-                                       const char        * type );
-oyPointer          oyBlob_GetPointer ( oyBlob_s          * blob );
-size_t             oyBlob_GetSize    ( oyBlob_s          * blob );
-const char *       oyBlob_GetType    ( oyBlob_s          * blob );
-
 
 oyStructList_s * oyStructList_New    ( oyObject_s          object );
 oyStructList_s * oyStructList_Copy   ( oyStructList_s    * list,
@@ -343,23 +272,6 @@ char   *     oyCMMCacheListPrint_    ( void );
 
 
 /* --- colour conversion --- */
-
-
-void           oyValueCopy           ( oyValue_u         * to,
-                                       oyValue_u         * from,
-                                       oyVALUETYPE_e       type,
-                                       oyAlloc_f           allocateFunc,
-                                       oyDeAlloc_f         deallocateFunc );
-void           oyValueRelease        ( oyValue_u        ** value,
-                                       oyVALUETYPE_e       type,
-                                       oyDeAlloc_f         deallocateFunc );
-void           oyValueClear          ( oyValue_u         * v,
-                                       oyVALUETYPE_e       type,
-                                       oyDeAlloc_f         deallocateFunc );
-int            oyValueEqual          ( oyValue_u         * a,
-                                       oyValue_u         * b,
-                                       oyVALUETYPE_e       type,
-                                       int                 pos );
 
 
 
@@ -1577,7 +1489,6 @@ oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image );
 
 
 typedef struct oyFilterCore_s oyFilterCore_s;
-typedef struct oyCMMptr_s oyCMMptr_s;
 typedef struct oyCMMapi4_s oyCMMapi4_s;
 typedef struct oyCMMapi6_s oyCMMapi6_s;
 typedef struct oyCMMapi7_s oyCMMapi7_s;

@@ -819,7 +819,8 @@ oyTESTRESULT_e testBlob ()
 
   b = oyBlob_Copy( a, object );
 
-  if(!error && b && b->ptr && b->size && b->ptr == static_ptr)
+  if(!error && b && oyBlob_GetPointer(b) && oyBlob_GetSize(b) &&
+     oyBlob_GetPointer( b ) == static_ptr)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyBlob_Copy( static ) good                      " );
   } else
@@ -841,7 +842,8 @@ oyTESTRESULT_e testBlob ()
 
   b = oyBlob_Copy( a, object );
 
-  if(!error && b && b->ptr && !b->size && b->ptr == static_ptr)
+  if(!error && b && oyBlob_GetPointer(b) && !oyBlob_GetSize(b) &&
+     oyBlob_GetPointer(b) == static_ptr)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyBlob_Copy( static 0) good                     " );
   } else
@@ -852,7 +854,8 @@ oyTESTRESULT_e testBlob ()
   ptr = malloc(1024);
   error = oyBlob_SetFromData( a, ptr, 1024, type );
 
-  if(!error && a->ptr && a->size == 1024 && a->ptr != ptr)
+  if(!error && oyBlob_GetPointer(a) && oyBlob_GetSize(a) == 1024 &&
+     oyBlob_GetPointer(a) != ptr)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyBlob_SetFromData() good                       " );
   } else
@@ -872,7 +875,9 @@ oyTESTRESULT_e testBlob ()
 
   b = oyBlob_Copy( a, object );
 
-  if(!error && b && a != b && b->ptr && a->size == b->size && a->ptr != b->ptr )
+  if(!error && b && a != b && oyBlob_GetPointer(b) &&
+     oyBlob_GetSize(a) == oyBlob_GetSize(b) &&
+     oyBlob_GetPointer(a) != oyBlob_GetPointer(b) )
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyBlob_Copy() good                              " );
   } else

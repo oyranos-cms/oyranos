@@ -199,13 +199,13 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
                  * display_id = oyBlob_New(0);
         if(win_id)
         {
-          win_id->ptr = (oyPointer)w;
+          oyBlob_SetFromStatic( win_id, (oyPointer)w, 0, 0 );
           o = oyOption_FromRegistration( "//" OY_TYPE_STD "/display/window_id",
                                          0 );
           oyOption_StructMoveIn( o, (oyStruct_s**)&win_id );
           oyOptions_MoveIn( image_tags, &o, -1 );
 
-          display_id->ptr = (oyPointer)disp;
+          oyBlob_SetFromStatic( display_id, (oyPointer)disp, 0, 0 );
           o = oyOption_FromRegistration( "//" OY_TYPE_STD "/display/display_id",
                                          0 );
           oyOption_StructMoveIn( o, (oyStruct_s**)&display_id );

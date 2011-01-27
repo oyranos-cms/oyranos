@@ -74,7 +74,7 @@ public:
   {
     /* observe the icc node */
     oyBlob_s * b = oyBlob_New(0);
-    b->ptr = this;
+    oyBlob_SetFromStatic( b, this, 0, 0 );
     oyStruct_ObserverAdd( (oyStruct_s*)icc, (oyStruct_s*)conversion(),
                           (oyStruct_s*)b,
                           observator );

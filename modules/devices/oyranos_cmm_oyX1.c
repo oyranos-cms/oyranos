@@ -250,7 +250,8 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
       if(error <= 0 && edid)
       {
         error = oyDeviceFillEdid(   OYX1_MONITOR_REGISTRATION,
-                                    device, edid->ptr, edid->size,
+                                    device, oyBlob_GetPointer(edid),
+                                    oyBlob_GetSize(edid),
                                     device_name,
                                     host, display_geometry, system_port,
                                     options );
@@ -292,7 +293,8 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
                                 OYX1_MONITOR_REGISTRATION OY_SLASH "edid", 0 );
           error = !o;
           if(!error)
-          error = oyOption_SetFromData( o, edid->ptr, edid->size );
+          error = oyOption_SetFromData( o, oyBlob_GetPointer(edid),
+                                        oyBlob_GetSize( edid ) );
           if(!error)
           {
             if(has)
@@ -514,7 +516,8 @@ int            oyX1Configs_FromPattern (
       {
         oyOptions_s * opts = 0;
         error = oyDeviceFillEdid(   OYX1_MONITOR_REGISTRATION,
-                                    &device, edid->ptr, edid->size,
+                                    &device, oyBlob_GetPointer(edid),
+                                    oyBlob_GetSize( edid ),
                                     NULL,
                                     NULL, NULL, NULL,
                                     options );

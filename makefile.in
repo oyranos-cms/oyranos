@@ -166,8 +166,12 @@ CFILES_CORE = \
 	md5.c \
 	lookup3.c
 CFILES_OBJECT = \
+	$(GENDIR)oyBlob_s_.c \
+	$(GENDIR)oyBlob_s.c \
 	$(GENDIR)oyCMMptr_s_.c \
 	$(GENDIR)oyCMMptr_s.c \
+	$(GENDIR)oyHash_s_.c \
+	$(GENDIR)oyHash_s.c \
 	$(GENDIR)oyName_s_.c \
 	$(GENDIR)oyName_s.c \
 	$(GENDIR)oyObject_s_.c \
@@ -198,6 +202,7 @@ CHEADERS_OBJECT = \
 	$(CHEADERS_OBJECT_PUBLIC) \
 	$(GENDIR)oyBlob_s_.h \
 	$(GENDIR)oyCMMptr_s_.h \
+	$(GENDIR)oyHash_s_.h \
 	$(GENDIR)oyName_s_.h \
 	$(GENDIR)oyObject_s_.h \
 	$(GENDIR)oyObserver_s_.h \

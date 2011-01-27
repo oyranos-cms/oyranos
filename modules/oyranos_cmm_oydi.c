@@ -135,7 +135,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
   {
     int x,y, i,j;
     Atom netColorTarget;
-    Window w = (Window) win_id->ptr, w_return;
+    Window w = (Window) oyBlob_GetPointer(win_id), w_return;
     XWindowAttributes attr;
     const char * display_name = oyOptions_FindString( image->tags,
                                                       "display_name", 0 );
@@ -143,7 +143,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
 #if 0
                          XOpenDisplay( display_name ); /* + XCloseDisplay() */
 #else
-                         (Display *) display_id->ptr;
+                         (Display *) oyBlob_GetPointer(display_id);
 #endif
     oyRectangle_s * display_rectangle = (oyRectangle_s*) oyOptions_GetType( 
                                        image->tags, -1, "display_rectangle",

@@ -56,17 +56,6 @@ int              oyCMMhandle_Set_    ( oyCMMhandle_s     * handle,
                                        oyPointer           dso_handle,
                                        const char        * lib_name );
 
-oyCMMptr_s *       oyCMMptr_New_     ( oyAlloc_f           allocateFunc );
-oyCMMptr_s *       oyCMMptr_Copy_    ( oyCMMptr_s        * cmm_ptr,
-                                       oyAlloc_f           allocateFunc );
-int                oyCMMptr_Release_ ( oyCMMptr_s       ** cmm_ptr );
-
-int                oyCMMptr_Set_     ( oyCMMptr_s        * cmm_ptr,
-                                       const char        * lib_name,
-                                       const char        * resource,
-                                       oyPointer           ptr,
-                                       const char        * func_name,
-                                       oyPointer_release_f ptrRelease );
 int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
                                        oyCMMptr_s        * cmm_ptr_out,
                                        oyFilterNode_s    * node );

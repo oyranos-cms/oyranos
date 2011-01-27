@@ -244,7 +244,8 @@ int              DeviceFromName_     ( const char        * device_name,
           o = oyOption_FromRegistration( CMM_BASE_REG OY_SLASH "data_blob", 0 );
           error = !o;
           if(!error)
-          error = oyOption_SetFromData( o, data_blob->ptr, data_blob->size );
+          error = oyOption_SetFromData( o, oyBlob_GetPointer(data_blob),
+                                        oyBlob_GetSize( data_blob) );
           if(!error)
             oyOptions_MoveIn( (*device)->data, &o, -1 );
           oyBlob_Release( &data_blob );

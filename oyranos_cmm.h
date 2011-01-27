@@ -19,6 +19,7 @@
 
 #include "oyranos.h"
 #include "oyranos_alpha.h"
+#include "oyCMMptr_s.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,47 +67,6 @@ typedef int      (*oyCMMMessageFuncSet_f)( oyMessage_f     message_func );
 #define oyCMM_PROFILE "oyPR"
 #define oyCMM_COLOUR_CONVERSION "oyCC"
 #define oyCOLOUR_ICC_DEVICE_LINK "oyDL"
-
-/** @brief   CMM pointer
- *  @ingroup module_api
- *  @extends oyStruct_s
- *
- *  The oyCMMptr_s is used internally and for CMM's.
- *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
- *
- *  @version Oyranos: 0.1.8
- *  @since   2007/11/00 (Oyranos: 0.1.8)
- *  @date    2008/07/02
- */
-struct oyCMMptr_s {
-  oyOBJECT_e           type;           /*!< internal struct type oyOBJECT_CMM_PTR_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyPointer        dummy;              /**< keep to zero */
-  char               * lib_name;       /*!< the CMM */
-  char                 func_name[32];  /*!< optional the CMM's function name */
-  oyPointer            ptr;            /*!< a CMM's data pointer */
-  int                  size;           /**< -1 && 0 - unknown, > 1 size of ptr*/
-  char                 resource[5];    /**< the resource type, e.g. oyCMM_PROFILE, oyCMM_COLOUR_CONVERSION */
-  oyPointer_release_f  ptrRelease;     /*!< CMM's deallocation function */
-  int                  ref;            /**< Oyranos reference counter */
-};
-
-oyCMMptr_s * oyCMMptr_New            ( oyAlloc_f           allocateFunc );
-oyCMMptr_s * oyCMMptr_Copy           ( oyCMMptr_s        * cmm_ptr,
-                                       oyAlloc_f           allocateFunc );
-int          oyCMMptr_Release        ( oyCMMptr_s       ** obj );
-
-oyCMMptr_s * oyCMMptrLookUpFromText  ( const char        * text,
-                                       const char        * data_type );
-oyCMMptr_s * oyCMMptrLookUpFromObject( oyStruct_s        * data,
-                                       const char        * cmm );
-int          oyCMMptr_Set            ( oyCMMptr_s        * cmm_ptr,
-                                       const char        * lib_name,
-                                       const char        * resource,
-                                       oyPointer           ptr,
-                                       const char        * func_name,
-                                       oyPointer_release_f ptrRelease );
 
 
 /** @brief   CMM data to Oyranos cache

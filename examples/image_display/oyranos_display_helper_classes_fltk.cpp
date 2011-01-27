@@ -259,7 +259,8 @@ int      conversionObserve           ( oyObserver_s      * observer,
                           "//" OY_TYPE_STD "/icc", oyOPTIONATTRIBUTE_ADVANCED,
                           0 );
 
-    Oy_Fl_Box * oy_box = (Oy_Fl_Box*) ((oyBlob_s*)observer->user_data)->ptr;
+    Oy_Fl_Box * oy_box = (Oy_Fl_Box*) oyBlob_GetPointer(
+                                                (oyBlob_s*)observer->user_data);
     oy_box->damage( FL_DAMAGE_USER1 );
 
   }
