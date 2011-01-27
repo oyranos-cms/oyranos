@@ -366,8 +366,7 @@ oyHash_s_ *         oyHash_Get_       ( const char        * hash_text,
 int                oyHash_IsOf_      ( oyHash_s_         * hash,
                                        oyOBJECT_e          type )
 {
-  return (hash && hash->entry &&
-          (type == oyOBJECT_NONE || hash->entry->type_ == type));
+  return (hash && hash->entry && hash->entry->type_ == type);
 }
 
 /** Function  oyHash_SetPointer_

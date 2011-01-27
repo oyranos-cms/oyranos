@@ -109,6 +109,22 @@ oyHash_s *         oyHash_Get         ( const char        * hash_text,
   return (oyHash_s*) oyHash_Get_( hash_text, object );
 }
 
+/** Function  oyHash_GetType
+ *  @memberof oyHash_s
+ *  @brief    get Hash entries type
+ *
+ *  @since    Oyranos: version 0.3.0
+ *  @version  (API 0.3.0)
+ */
+oyOBJECT_e         oyHash_GetType    ( oyHash_s          * hash )
+{
+  oyHash_s_ * s = (oyHash_s_*)hash;
+  if(s && s->entry)
+    return s->entry->type_;
+  else
+    return oyOBJECT_NONE;
+}
+
 /** Function  oyHash_IsOf
  *  @memberof oyHash_s
  *  @brief    Hash is of type

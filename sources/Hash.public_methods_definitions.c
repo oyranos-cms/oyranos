@@ -22,7 +22,7 @@ oyOBJECT_e         oyHash_GetType    ( oyHash_s          * hash )
 {
   oyHash_s_ * s = (oyHash_s_*)hash;
   if(s && s->entry)
-    return s->entry->type;
+    return s->entry->type_;
   else
     return oyOBJECT_NONE;
 }
