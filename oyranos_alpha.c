@@ -1254,7 +1254,7 @@ int          oyCMMdsoReference_    ( const char        * lib_name,
 
   if(!found)
   {
-    oyCMMptr_s * s = oyCMMptr_New_(oyAllocateFunc_);
+    oyCMMptr_s * s = oyCMMptr_New_(0);
     oyStruct_s * oy_cmm_struct = 0;
 
     error = !s;
@@ -19058,7 +19058,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
               if(!cmm_ptr)
               {
                 size = 0;
-                cmm_ptr = oyCMMptr_New_(oyAllocateFunc_);
+                cmm_ptr = oyCMMptr_New_(0);
               }
 
               /* write the context to memory */
@@ -19113,7 +19113,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                 if( oyStrcmp_( node->api7_->context_type,
                                s->api4_->context_type ) != 0 )
                 {
-                  cmm_ptr_out = oyCMMptr_New_(oyAllocateFunc_);
+                  cmm_ptr_out = oyCMMptr_New_(0);
                   error = oyCMMptr_Set_( cmm_ptr_out, node->api7_->id_,
                                          node->api7_->context_type, 0, 0, 0);
 
@@ -20245,9 +20245,9 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
     int i, n;
 
     if(obj)
-      cmm_ptr = oyCMMptr_New_(obj->allocateFunc_);
+      cmm_ptr = oyCMMptr_New_(0);
     else
-      cmm_ptr = oyCMMptr_New_(s->oy_->allocateFunc_);
+      cmm_ptr = oyCMMptr_New_(0);
     error = !cmm_ptr;
 
     if(error <= 0)
