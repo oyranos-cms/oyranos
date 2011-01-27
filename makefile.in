@@ -838,10 +838,10 @@ $(TARGET)-profiles:	$(TARGET)_profiles.o $(LIBSONAMEFULL)
 generate:	API_generated
 
 API_generated:	generator/oyAPIGenerator
-	cd generator; ./oyAPIGenerator ../templates ../sources ../API_generated
+	cd generator/; ./oyAPIGenerator $(SRCDIR)/templates $(SRCDIR)/sources $(SRCDIR)/API_generated
 
 generator/oyAPIGenerator:
-	cd generator; cmake -DGrantlee_DIR="../../grantlee/install/dir" .; make
+	cd generator; cmake -DGrantlee_DIR="$(SRCDIR)/generator/grantlee/lib/grantlee" $(SRCDIR)/generator; make
 
 
 test_core:	$(LIBSONAMECOREFULL) $(LIBNAME_CORE) test_core.o
