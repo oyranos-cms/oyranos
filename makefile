@@ -98,6 +98,8 @@ liboyranos$(TARGET_OBJECT_CORE).so: $(HEADERS_OBJ_CORE) $(OBJECTS_OBJ_CORE)
 	echo Linking $@ ...
 	$(CC) -shared $(OBJECTS_OBJ_CORE) $(OY_LIBS) \
 	-o liboyranos$(TARGET_OBJECT_CORE).so
+	ar cru liboyranos$(TARGET_OBJECT_CORE).a $(OBJECTS_OBJ_CORE)
+	ranlib liboyranos$(TARGET_OBJECT_CORE).a
 
 liboyranos$(TARGET_ICC).so: $(OBJECTS_OBJ_ICC) liboyranos$(TARGET_OBJECT_CORE).so
 	echo Linking $@ ...
