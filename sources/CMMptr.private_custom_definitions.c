@@ -11,9 +11,9 @@
  *
  *  @param[in]  cmmptr  the CMMptr object
  *
- *  @version Oyranos: x.x.x
- *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
+ *  @version Oyranos: 0.3.0
+ *  @since   2010/08/00 (Oyranos: 0.3.0)
+ *  @date    2011/01/28
  */
 void oyCMMptr_Release__Members( oyCMMptr_s_ * cmmptr )
 {
@@ -45,9 +45,6 @@ void oyCMMptr_Release__Members( oyCMMptr_s_ * cmmptr )
 
       /*oyCMMdsoRelease_( cmmptr->lib_name );*/
     }
-    cmmptr->ptrRelease = 0;
-    oyDeAllocateFunc_( cmmptr );
-    cmmptr = 0;
   }
 }
 
