@@ -1153,7 +1153,7 @@ oyCMMui_s oyX1_api8_ui = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,1,10},                            /**< int32_t module_api[3] */
+  {0,3,0},                            /**< int32_t module_api[3] */
 
   0, /* oyCMMFilter_ValidateOptions_f */
   0, /* oyWidgetEvent_f */
@@ -1187,7 +1187,7 @@ oyCMMapi8_s oyX1_api8 = {
 
   OYX1_MONITOR_REGISTRATION, /**< registration */
   CMM_VERSION,                   /**< int32_t version[3] */
-  {0,1,13},                  /**< int32_t module_api[3] */
+  {0,3,0},                  /**< int32_t module_api[3] */
   0,                         /**< char * id_ */
 
   0,                         /**< oyCMMapi5_s * api5_ */

@@ -824,7 +824,7 @@ oyCMMui_s oraw_api4_ui_image_input_libraw = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,1,10},                            /**< int32_t module_api[3] */
+  {0,3,0},                            /**< int32_t module_api[3] */
 
   lrawFilter_ImageInputRAWValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   lrawWidgetEvent, /* oyWidgetEvent_f */
@@ -862,7 +862,7 @@ oyCMMapi4_s   lraw_api4_image_input_libraw = {
   OY_LIBRAW_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,1,10},                  /**< int32_t last_module_api[3] */
+  {0,3,0},                  /**< int32_t last_module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -909,7 +909,7 @@ oyCMMapi7_s   lraw_api7_image_input_libraw = {
   OY_LIBRAW_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,1,10},                  /**< int32_t module_api[3] */
+  {0,3,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 

@@ -837,7 +837,7 @@ oyCMMapi7_s   oydi_api7_image_display = {
   OY_IMAGE_DISPLAY_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,1,10},                  /**< int32_t module_api[3] */
+  {0,3,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -888,7 +888,7 @@ oyCMMui_s oydi_api4_ui_image_display = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,1,10},                            /**< int32_t module_api[3] */
+  {0,3,0},                            /**< int32_t module_api[3] */
 
   oydiFilter_ImageDisplayValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oydiWidgetEvent, /* oyWidgetEvent_f */
@@ -924,7 +924,7 @@ oyCMMapi4_s   oydi_api4_image_display = {
   OY_IMAGE_DISPLAY_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,1,10},                  /**< int32_t module_api[3] */
+  {0,3,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 

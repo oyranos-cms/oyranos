@@ -1881,7 +1881,7 @@ oyCMMapi3_s  oyIM_api3 = {
 
   CMM_BASE_REG CMM_NICK,     /**< registration */
   {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
-  {0,1,10},                  /**< int32_t module_api[3] */
+  {0,3,0},                  /**< int32_t module_api[3] */
   0,                         /**< char * id_ */
 
   oyIMProfileCanHandle,

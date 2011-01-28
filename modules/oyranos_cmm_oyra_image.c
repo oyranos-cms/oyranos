@@ -287,7 +287,7 @@ oyCMMapi7_s   oyra_api7_image_load = {
   OY_IMAGE_LOAD_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,1,10},                  /**< int32_t module_api[3] */
+  {0,3,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -343,7 +343,7 @@ oyCMMui_s oyra_api4_ui_image_load = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,1,10},                            /**< int32_t module_api[3] */
+  {0,3,0},                            /**< int32_t module_api[3] */
 
   oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
@@ -378,7 +378,7 @@ oyCMMapi4_s   oyra_api4_image_load = {
   OY_IMAGE_LOAD_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,1,10},                  /**< int32_t module_api[3] */
+  {0,3,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -615,7 +615,7 @@ oyCMMapi7_s   oyra_api7_image_rectangles = {
   OY_IMAGE_REGIONS_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,1,10},                  /**< int32_t module_api[3] */
+  {0,3,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -669,7 +669,7 @@ oyCMMui_s oyra_api4_ui_image_rectangles = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,1,10},                            /**< int32_t module_api[3] */
+  {0,3,0},                            /**< int32_t module_api[3] */
 
   oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
@@ -704,7 +704,7 @@ oyCMMapi4_s   oyra_api4_image_rectangles = {
   OY_IMAGE_REGIONS_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,1,10},                  /**< int32_t module_api[3] */
+  {0,3,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -837,7 +837,7 @@ oyCMMapi7_s   oyra_api7_image_root = {
   OY_IMAGE_ROOT_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,1,10},                  /**< int32_t module_api[3] */
+  {0,3,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -891,7 +891,7 @@ oyCMMui_s oyra_api4_ui_image_root = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,1,10},                            /**< int32_t module_api[3] */
+  {0,3,0},                            /**< int32_t module_api[3] */
 
   oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
@@ -926,7 +926,7 @@ oyCMMapi4_s   oyra_api4_image_root = {
   OY_IMAGE_ROOT_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,1,10},                  /**< int32_t module_api[3] */
+  {0,3,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -1017,7 +1017,7 @@ oyCMMapi7_s   oyra_api7_image_output = {
   OY_IMAGE_OUTPUT_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,1,10},                  /**< int32_t module_api[3] */
+  {0,3,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -1071,7 +1071,7 @@ oyCMMui_s oyra_api4_ui_image_output = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,1,10},                            /**< int32_t module_api[3] */
+  {0,3,0},                            /**< int32_t module_api[3] */
 
   oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
@@ -1106,7 +1106,7 @@ oyCMMapi4_s   oyra_api4_image_output = {
   OY_IMAGE_OUTPUT_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,1,10},                  /**< int32_t module_api[3] */
+  {0,3,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
