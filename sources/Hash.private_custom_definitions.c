@@ -27,7 +27,7 @@ void oyHash_Release__Members( oyHash_s_ * hash )
 
   if(hash->oy_->deallocateFunc_)
   {
-    oyDeAlloc_f deallocateFunc = hash->oy_->deallocateFunc_;
+    /*oyDeAlloc_f deallocateFunc = hash->oy_->deallocateFunc_;*/
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( hash->member );

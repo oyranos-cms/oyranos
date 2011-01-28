@@ -45,7 +45,7 @@
  *
  *  @version Oyranos: 0.3.0
  *  @since   2010/08/00 (Oyranos: 0.3.0)
- *  @date    2011/01/29
+ *  @date    2011/01/28
  */
 void oyCMMptr_Release__Members( oyCMMptr_s_ * cmmptr )
 {
@@ -55,7 +55,7 @@ void oyCMMptr_Release__Members( oyCMMptr_s_ * cmmptr )
 
   if(cmmptr->oy_->deallocateFunc_)
   {
-    oyDeAlloc_f deallocateFunc = cmmptr->oy_->deallocateFunc_;
+    /*oyDeAlloc_f deallocateFunc = cmmptr->oy_->deallocateFunc_;*/
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( cmmptr->member );

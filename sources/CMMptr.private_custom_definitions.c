@@ -23,7 +23,7 @@ void oyCMMptr_Release__Members( oyCMMptr_s_ * cmmptr )
 
   if(cmmptr->oy_->deallocateFunc_)
   {
-    oyDeAlloc_f deallocateFunc = cmmptr->oy_->deallocateFunc_;
+    /*oyDeAlloc_f deallocateFunc = cmmptr->oy_->deallocateFunc_;*/
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( cmmptr->member );

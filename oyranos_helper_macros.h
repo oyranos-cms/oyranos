@@ -24,6 +24,8 @@
 #include "oyranos/oyranos.h"
 #endif
 
+#include "stdio.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
