@@ -419,7 +419,7 @@ oyCMMui_s dFil_api4_ui_my_filter = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}, /**< version[3] */
-  {0,1,10},                            /**< int32_t module_api[3] */
+  {0,3,0},                            /**< int32_t module_api[3] */
 
   dFilFilter_MyFilterValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   dFilWidgetEvent, /* oyWidgetEvent_f */
@@ -457,7 +457,7 @@ oyCMMapi4_s   dFil_api4_my_filter = {
   OY_DUMMY_FILTER_REGISTRATION,
 
   {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
-  {0,1,10},                  /**< int32_t last_api_version[3] */
+  {0,3,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -491,7 +491,7 @@ oyCMMapi7_s   dFil_api7_my_filter = {
   OY_DUMMY_FILTER_REGISTRATION,
 
   {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
-  {0,1,10},                  /**< int32_t module_api[3] */
+  {0,3,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
