@@ -422,13 +422,14 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
              if(mnft_n)
                STRING_ADD(string_list,"\n");
              STRING_ADD(string_list,manufacturer);
-             STRING_ADD(string_list,";");
+             STRING_ADD(string_list,":");
              sprintf( manufacturer_old, "%s", manufacturer );
-           }
+           } else
+           if(cameras[i+1])
+             STRING_ADD( string_list,";");
 
            STRING_ADD( string_list,
                        &cameras[i][len+1] );
-           STRING_ADD( string_list,";");
            //cout << "  " << &cameras[i][len] << endl;
            ++i;
          }
