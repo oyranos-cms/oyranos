@@ -11745,8 +11745,9 @@ OYAPI oyProfiles_s * OYEXPORT
 /** @internal
  *  @memberof oyProfiles_s
  *
- *  @since Oyranos: version 0.1.8
- *  @date  22 november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.3.0
+ *  @since   2007/11/22 (Oyranos: 0.1.8)
+ *  @date    2011/01/28
  */
 OYAPI oyProfiles_s * OYEXPORT
                    oyProfiles_Copy  ( oyProfiles_s * obj,
@@ -11759,7 +11760,7 @@ OYAPI oyProfiles_s * OYEXPORT
   if(!obj)
     return 0;
 
-  obj = s;
+  s = obj;
 
   oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
 
