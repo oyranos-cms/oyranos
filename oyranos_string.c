@@ -289,6 +289,7 @@ char**             oyStringSplit_    ( const char    * text,
     tmp = 0;
 
     if((list = allocateFunc( (n+1) * sizeof(char*) )) == 0) return 0;
+    memset( list, 0, (n+1) * sizeof(char*) );
 
     {
       const char * start = text;
