@@ -2486,7 +2486,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   fprintf(stdout, "\n" );
 #if 1
-  double clck = oyClock(), clck2;
+  double clck = oyClock();
   for(i = 0; i < n*10000; ++i)
   {
     c = oyNamedColour_Create( NULL, NULL,0, prof, 0 );
