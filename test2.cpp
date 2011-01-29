@@ -202,6 +202,8 @@ oyTESTRESULT_e testI18N()
   return result;
 }
 
+#define TEST_DOMAIN "sw/Oyranos/Tests"
+
 #include "oyranos_elektra.h"
 oyTESTRESULT_e testElektra()
 {
@@ -214,7 +216,7 @@ oyTESTRESULT_e testElektra()
 
   fprintf(stdout, "\n" );
 
-  error = oyAddKey_valueComment_("sw/Oyranos/Tests/test_key",
+  error = oyAddKey_valueComment_(TEST_DOMAIN "/test_key",
                                  "NULLTestValue", "NULLTestComment" );
   start = oyGetKeyString_("sw/Oyranos/Tests/test_key", 0);
   if(!start)
@@ -1913,6 +1915,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
 
   fprintf( stdout, "\n");
 
+
   if(texts && texts[0])
     config = oyConfig_New( texts[0], 0 );
   error = oyConfig_AddDBData( config, "k1", "bla1", OY_CREATE_NEW );
@@ -1927,6 +1930,34 @@ oyTESTRESULT_e testCMMDevicesDetails ()
     "oyConfig_AddDBData                    " );
   }
   fprintf( stdout, "\n");
+
+
+  char * registration = oyStringCopy_(config->registration, oyAllocateFunc_ );
+  error = oyConfig_SaveToDB( config );
+
+  error = oyConfigs_FromDB( registration, &configs, 0 );
+  count = oyConfigs_Count( configs );
+  oyConfigs_Release( &configs );
+
+  int32_t rank = 0;
+  error = oyConfig_GetDB( config, &rank );
+  error = oyConfig_EraseFromDB( config );
+  oyConfig_Release( &config );
+
+  error = oyConfigs_FromDB( registration, &configs, 0 );
+  i = oyConfigs_Count( configs );
+  oyConfigs_Release( &configs );
+
+  if( i - count == 1 )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyConfig_EraseFromDB() %d/%d            ", (int)count,i );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyConfig_EraseFromDB() failed %d/%d     ", (int)count,i );
+  }
+
+  if(registration)
+    oyDeAllocateFunc_( registration ); registration = 0;
 
   return result;
 }
