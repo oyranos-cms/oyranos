@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/01/28
+ *  @since    2011/01/29
  */
 
 
@@ -342,9 +342,9 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
  *  @param         object              the optional object
  *  @return                            the options
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.0
  *  @since   2008/10/08 (Oyranos: 0.1.8)
- *  @date    2009/07/27
+ *  @date    2011/01/29
  */
 oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
                                        const char        * cmm,
@@ -374,7 +374,7 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
   if(error <= 0)
     error = oyFilterCore_SetCMMapi4_( filter, cmm_api4 );
 
-  s = oyOptions_ForFilter_( filter, flags, filter->oy_);
+  s = oyOptions_ForFilter_( filter, flags, object);
 
   oyFilterCore_Release( &filter );
 
@@ -1891,74 +1891,6 @@ int            oyOptions_SetSource   ( oyOptions_s       * options,
   return error;
 }
 
-#ifdef OYRANOS_ELEKTRA_H
-/** Function oyOptions_SaveToDB
- *  @memberof oyOptions_s
- *  @brief   store a oyOptions_s in DB
- *
- *  @param[in]     options             the options
- *  @param[in]     registration        the registration
- *  @return                            0 - good, 1 >= error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/02/08 (Oyranos: 0.1.10)
- *  @date    2009/02/08
- */
-OYAPI int  OYEXPORT
-               oyOptions_SaveToDB    ( oyOptions_s       * options,
-                                       const char        * registration )
-{
-  int error = !options || !registration;
-  oyOption_s_ * o = 0;
-  int n,i;
-  char * key_base_name = 0,
-       * key_name = 0,
-       * key_top = 0;
-
-  DBG_PROG_START
-  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
-
-  if(error <= 0)
-  {
-    key_base_name = oySearchEmptyKeyname_( registration );
-    error = !key_base_name;
-    if(error <= 0)
-    {
-      STRING_ADD( key_base_name, OY_SLASH );
-    }
-
-    n = oyOptions_Count( options );
-    for( i = 0; i < n; ++i )
-    {
-      o = (oyOption_s_*)oyOptions_Get( options, i );
-      key_top = oyFilterRegistrationToText( o->registration,
-                                            oyFILTER_REG_MAX, 0 );
-
-
-      STRING_ADD( key_name, key_base_name );
-      STRING_ADD( key_name, key_top );
-      if(o->value_type == oyVAL_STRING && o->value && o->value->string)
-        error = oyAddKey_valueComment_(key_name, o->value->string, 0);
-# if 0
-      else if(o->value_type == oyVAL_STRUCT &&
-              o->value && o->value->oy_struct->type_ == oyOBJECT_BLOB_S)
-        error = 0;/*oyAddKeyBlobComment_();*/
-#endif
-      else
-        WARNcc_S( (oyStruct_s*)o,
-                    "Could not save non string / non binary option" );
-
-      oyOption_Release( (oyOption_s**)&o );
-      oyFree_m_( key_name );
-    }
-    oyFree_m_( key_base_name );
-  }
-
-  oyExportEnd_();
-  DBG_PROG_ENDE
-  return error;
-}
-#endif /* OYRANOS_ELEKTRA_H */
 
 /** Function oyOptions_ObserverAdd
  *  @memberof oyOptions_s

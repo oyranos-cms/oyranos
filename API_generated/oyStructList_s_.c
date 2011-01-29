@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/01/28
+ *  @since    2011/01/29
  */
 
 
@@ -98,7 +98,7 @@ int oyStructList_Init__Members( oyStructList_s_ * structlist )
  */
 int oyStructList_Copy__Members( oyStructList_s_ * dst, oyStructList_s_ * src)
 {
-  int error,i;
+  int error = 0, i;
   oyAlloc_f allocateFunc_ = 0;
   oyDeAlloc_f deallocateFunc_ = 0;
 

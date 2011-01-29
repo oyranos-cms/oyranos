@@ -91,9 +91,6 @@ int            oyOptions_FindData    ( oyOptions_s       * options,
 int            oyOptions_SetSource   ( oyOptions_s       * options,
                                        oyOPTIONSOURCE_e    source );
 OYAPI int  OYEXPORT
-               oyOptions_SaveToDB    ( oyOptions_s       * options,
-                                       const char        * key_base_name );
-OYAPI int  OYEXPORT
                oyOptions_ObserverAdd ( oyOptions_s       * object,
                                        oyStruct_s        * observer,
                                        oyStruct_s        * user_data,

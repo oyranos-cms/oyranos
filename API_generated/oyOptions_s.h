@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/01/28
+ *  @since    2011/01/29
  */
 
 
@@ -200,9 +200,6 @@ int            oyOptions_FindData    ( oyOptions_s       * options,
                                        oyAlloc_f           allocateFunc );
 int            oyOptions_SetSource   ( oyOptions_s       * options,
                                        oyOPTIONSOURCE_e    source );
-OYAPI int  OYEXPORT
-               oyOptions_SaveToDB    ( oyOptions_s       * options,
-                                       const char        * key_base_name );
 OYAPI int  OYEXPORT
                oyOptions_ObserverAdd ( oyOptions_s       * object,
                                        oyStruct_s        * observer,
