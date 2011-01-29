@@ -4615,12 +4615,14 @@ OYAPI int  OYEXPORT
  *  @memberof oyConfig_s
  *  @brief   store a oyConfig_s in DB
  *
+ *  The new key set name is stored inside the key "key_set_name".
+ *
  *  @param[in]     config              the configuration
  *  @return                            0 - good, 1 >= error
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/21 (Oyranos: 0.1.10)
- *  @date    2009/01/21
+ *  @date    2011/01/29
  */
 OYAPI int  OYEXPORT
                oyConfig_SaveToDB     ( oyConfig_s        * config )
@@ -4628,6 +4630,7 @@ OYAPI int  OYEXPORT
   int error = !config;
   oyOptions_s * opts = 0;
   oyConfig_s * s = config;
+  char * new_reg = 0;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
@@ -4639,11 +4642,54 @@ OYAPI int  OYEXPORT
     oyOptions_AppendOpts( opts, config->db );
     oyOptions_AppendOpts( opts, config->backend_core );
 
-    error = oyOptions_SaveToDB( opts, config->registration );
+    error = oyOptions_SaveToDB( opts, config->registration, &new_reg, 0 );
 
+    /* add information about the data's origin */
+    oyConfig_AddDBData( config, "key_set_name", new_reg, OY_CREATE_NEW );
+
+    oyFree_m_( new_reg );
     oyOptions_Release( &opts );
   }
 
+  DBG_PROG_ENDE
+  return error;
+}
+
+/** Function oyRegistrationEraseFromDB
+ *  @memberof oyConfig_s
+ *  @brief   remove a registration from DB
+ *
+ *  @param[in]     config_registration the configuration
+ *  @return                            0 - good, 1 >= error
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2009/01/27 (Oyranos: 0.3.0)
+ *  @date    2011/01/29
+ */
+int          oyRegistrationEraseFromDB(const char        * registration )
+{
+  int error = !registration;
+  int i;
+  const char * text = 0;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
+
+  if(error <= 0)
+  {
+    i = 0;
+    text = registration;
+    if(text)
+      while( (text = oyStrchr_(++text, OY_SLASH_C)) != 0)
+        ++i;
+
+    if(i == 4)
+      text = registration;
+
+    error = oyEraseKey_( text );
+  }
+
+  oyExportEnd_();
   DBG_PROG_ENDE
   return error;
 }
@@ -4696,7 +4742,7 @@ OYAPI int  OYEXPORT
 
       if(i == 5)
       {
-        tmp = oyStringCopy_( text, oyAllocateFunc_ );
+        tmp = oyStringCopy_( oyOption_GetRegistration( o ), oyAllocateFunc_ );
         t = oyStrrchr_(tmp, OY_SLASH_C);
         t[0] = 0;
         text = tmp;
@@ -6847,15 +6893,19 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
  *
  *  @param[in]     options             the options
  *  @param[in]     registration        the registration
+ *  @param[out]    new_reg             the new registration; optional
+ *  @param[in]     alloc               the user allocator for new_reg; optional
  *  @return                            0 - good, 1 >= error
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.0
  *  @since   2009/02/08 (Oyranos: 0.1.10)
- *  @date    2009/02/08
+ *  @date    2011/01/29
  */
 OYAPI int  OYEXPORT
                oyOptions_SaveToDB    ( oyOptions_s       * options,
-                                       const char        * registration )
+                                       const char        * registration,
+                                       char             ** new_reg,
+                                       oyAlloc_f           allocateFunc )
 {
   int error = !options || !registration;
   oyOption_s_ * o = 0;
@@ -6899,6 +6949,12 @@ OYAPI int  OYEXPORT
 
       oyOption_Release( &o );
       oyFree_m_( key_name );
+    }
+
+    if(error <= 0 && new_reg && key_base_name)
+    {
+      key_base_name[strlen(key_base_name)-1] = '\000';
+      *new_reg = oyStringCopy_(key_base_name, allocateFunc);
     }
     oyFree_m_( key_base_name );
   }
