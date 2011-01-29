@@ -1929,7 +1929,6 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyConfig_AddDBData                    " );
   }
-  fprintf( stdout, "\n");
 
 
   char * registration = oyStringCopy_(config->registration, oyAllocateFunc_ );
@@ -1941,23 +1940,26 @@ oyTESTRESULT_e testCMMDevicesDetails ()
 
   int32_t rank = 0;
   error = oyConfig_GetDB( config, &rank );
-  error = oyConfig_EraseFromDB( config );
+  const char * key_set_name = oyConfig_FindString( config, "key_set_name", 0 );
+  error = oyRegistrationEraseFromDB( key_set_name );
   oyConfig_Release( &config );
 
   error = oyConfigs_FromDB( registration, &configs, 0 );
   i = oyConfigs_Count( configs );
   oyConfigs_Release( &configs );
 
-  if( i - count == 1 )
+  if( count - i == 1 )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConfig_EraseFromDB() %d/%d            ", (int)count,i );
+    "oyRegistrationEraseFromDB() %d/%d       ", (int)count,i );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyConfig_EraseFromDB() failed %d/%d     ", (int)count,i );
+    "oyRegistrationEraseFromDB() failed %d/%d", (int)count,i );
   }
 
   if(registration)
     oyDeAllocateFunc_( registration ); registration = 0;
+
+  fprintf( stdout, "\n");
 
   return result;
 }
