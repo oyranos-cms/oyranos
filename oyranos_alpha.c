@@ -6802,9 +6802,9 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
  *  @param         object              the optional object
  *  @return                            the options
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.0
  *  @since   2008/10/08 (Oyranos: 0.1.8)
- *  @date    2009/07/27
+ *  @date    2011/01/29
  */
 oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
                                        const char        * cmm,
@@ -6834,7 +6834,7 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
   if(error <= 0)
     error = oyFilterCore_SetCMMapi4_( filter, cmm_api4 );
 
-  s = oyOptions_ForFilter_( filter, flags, filter->oy_);
+  s = oyOptions_ForFilter_( filter, flags, object);
 
   oyFilterCore_Release( &filter );
 
