@@ -291,6 +291,7 @@ char   oyFilterRegistrationModify    ( const char        * registration,
                                        oyFILTER_REG_MODE_e mode,
                                        char             ** result,
                                        oyAlloc_f           allocateFunc );
+int          oyRegistrationEraseFromDB(const char        * registration );
 
 
 oyOption_s *   oyOption_FromDB       ( const char        * registration,
@@ -453,7 +454,9 @@ int            oyOptions_SetSource   ( oyOptions_s       * options,
                                        oyOPTIONSOURCE_e    source );
 OYAPI int  OYEXPORT
                oyOptions_SaveToDB    ( oyOptions_s       * options,
-                                       const char        * key_base_name );
+                                       const char        * key_base_name,
+                                       char             ** new_reg,
+                                       oyAlloc_f           allocateFunc );
 OYAPI int  OYEXPORT
                oyOptions_ObserverAdd ( oyOptions_s       * object,
                                        oyStruct_s        * observer,
