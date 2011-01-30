@@ -410,7 +410,7 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
 
         if(error <= 0 && !device->rank_map)
           device->rank_map = oyRankMapCopy( _rank_map,
-                                            device->oy_->allocateFunc_);
+                                   oyStruct_GetAllocator((oyStruct_s*)device));
 
         oyConfig_Release( &device );
       }
