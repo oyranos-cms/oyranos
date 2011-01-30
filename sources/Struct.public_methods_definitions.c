@@ -94,6 +94,34 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
 const char * oyStruct_TypeToText     ( const oyStruct_s  * st )
 { return oyStructTypeToText( st->type_ ); }
 
+/** Function oyStruct_GetAllocator
+ *  @brief   get the memory allocator of a object
+ *
+ *  @version Oyranos: 0.3.0
+ *  @date    2011/01/30
+ *  @since   2011/01/30 (Oyranos: 0.3.0)
+ */
+oyAlloc_f    oyStruct_GetAllocator   ( oyStruct_s        * obj )
+{
+  if(obj && obj->type_ != oyOBJECT_NONE && obj->oy_)
+    return obj->oy_->allocateFunc_;
+  else
+    return 0;
+}
+/** Function oyStruct_GetDeAllocator
+ *  @brief   get the memory allocator of a object
+ *
+ *  @version Oyranos: 0.3.0
+ *  @date    2011/01/30
+ *  @since   2011/01/30 (Oyranos: 0.3.0)
+ */
+oyDeAlloc_f  oyStruct_GetDeAllocator ( oyStruct_s        * obj )
+{
+  if(obj && obj->type_ != oyOBJECT_NONE && obj->oy_)
+    return obj->oy_->deallocateFunc_;
+  else
+    return 0;
+}
 
 /* Locking function definitions { */
 oyPointer  oyStruct_LockCreateDummy_   ( oyStruct_s      * obj )    {return 0;}

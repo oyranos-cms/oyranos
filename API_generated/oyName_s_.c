@@ -23,6 +23,8 @@
 #include "oyObject_s.h"
 
 /** @brief oyName_s new
+ *  @internal
+ *  @memberof oyName_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  2008/01/08 (API 0.1.8)
@@ -60,6 +62,8 @@ oyName_s *   oyName_new              ( oyObject_s          object )
 }
 
 /** @brief oyName_s copy
+ *  @internal
+ *  @memberof oyName_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  2008/01/08 (API 0.1.8)
@@ -84,6 +88,8 @@ oyName_s *   oyName_copy               ( oyName_s        * obj,
 }
 
 /** @brief oyName_s deallocation
+ *  @internal
+ *  @memberof oyName_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  2008/01/08 (API 0.1.8)
@@ -102,6 +108,8 @@ int          oyName_release          ( oyName_s         ** obj )
   return error;
 }
 /** @brief oyName_s copy
+ *  @internal
+ *  @memberof oyName_s
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/22 (Oyranos: 0.1.10)
@@ -143,6 +151,7 @@ int          oyName_copy_            ( oyName_s          * dest,
 
 /**
  *  @internal
+ *  @memberof oyName_s
  *  @brief oyName_s deallocation
  *
  *  @since Oyranos: version 0.1.8
@@ -180,6 +189,7 @@ int          oyName_release_         ( oyName_s         ** obj,
 
 /**
  *  @internal
+ *  @memberof oyName_s
  *  @brief naming plus automatic allocation
  *
  *  @param[in]    obj            the oyName_s struct
@@ -237,8 +247,9 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
 }
 
 /**
- *  @internal
  *  Function oyName_get_
+ *  @internal
+ *  @memberof oyName_s
  *  @brief   get name
  *
  *  @param[in,out] obj                 name object
@@ -271,6 +282,7 @@ const char * oyName_get_             ( const oyName_s    * obj,
 }
 
 /** Function oyName_releaseMembers
+ *  @internal
  *  @memberof oyName_s
  *  @brief   release only members
  *
