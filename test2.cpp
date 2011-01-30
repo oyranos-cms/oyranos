@@ -1941,7 +1941,19 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   int32_t rank = 0;
   error = oyConfig_GetDB( config, &rank );
   const char * key_set_name = oyConfig_FindString( config, "key_set_name", 0 );
+  char * key = 0;
+  STRING_ADD( key, key_set_name );
+  STRING_ADD( key, OY_SLASH );
+  STRING_ADD( key, "k1" );
+  o = oyConfig_Get( config, 0 );
+  oyOption_SetRegistration( o, key );
+  oyOption_Release( &o );
+  if(key)
+    oyDeAllocateFunc_( key ); key = 0;
+  error = oyConfig_EraseFromDB( config );
+  /* The following is equal to oyConfig_EraseFromDB() but more simple.
   error = oyRegistrationEraseFromDB( key_set_name );
+   */
   oyConfig_Release( &config );
 
   error = oyConfigs_FromDB( registration, &configs, 0 );
@@ -1950,10 +1962,10 @@ oyTESTRESULT_e testCMMDevicesDetails ()
 
   if( count - i == 1 )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyRegistrationEraseFromDB() %d/%d       ", (int)count,i );
+    "oyConfig_EraseFromDB() %d/%d            ", (int)count,i );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyRegistrationEraseFromDB() failed %d/%d", (int)count,i );
+    "oyConfig_EraseFromDB() failed %d/%d     ", (int)count,i );
   }
 
   if(registration)
