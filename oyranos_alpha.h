@@ -807,6 +807,8 @@ OYAPI oyPointer OYEXPORT
                                        size_t            * size,
                                        uint32_t            flag,
                                        oyAlloc_f           allocateFunc );
+int                oyProfile_GetMD5  ( oyProfile_s       * profile,
+                                       uint32_t          * md5 );
 oyProfileTag_s *   oyProfile_GetTagByPos ( oyProfile_s   * profile,
                                        int                 pos );
 oyProfileTag_s *   oyProfile_GetTagById ( oyProfile_s    * profile,

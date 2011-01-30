@@ -9788,6 +9788,37 @@ OYAPI oyPointer OYEXPORT
   return block;
 }
 
+/** Function oyProfile_GetMD5
+ *  @memberof oyProfile_s
+ *  @brief   get the ICC profile md5 hash sum
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/30 (Oyranos: 0.3.0)
+ *  @date    2011/01/30
+ */
+int                oyProfile_GetMD5  ( oyProfile_s       * profile,
+                                       uint32_t          * md5 )
+{
+  oyPointer block = 0;
+  oyProfile_s * s = profile;
+  int error = !s;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(!oyProfile_Hashed_(s))
+    error = oyProfile_GetHash_( s );
+
+  if(oyProfile_Hashed_(s))
+    memcpy( md5, s->oy_->hash_ptr_, OY_HASH_SIZE );
+  else
+    error += 1;
+
+  return error;
+}
+
 /**
  *  @internal
  *  Function oyProfile_GetFileName_r
