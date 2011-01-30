@@ -979,7 +979,7 @@ install_bin:	all install_gui
 	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		($(INSTALL) -m 755 lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		$(DESTDIR)$(libdir) \
-		); \
+		&& echo Installed $(DESTDIR)$(libdir)lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
 	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		(test -L $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) && $(RM) $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
@@ -992,14 +992,14 @@ install_bin:	all install_gui
 	   if [ "$(STATIC)" = "" ]; then test -f lib$${lib}.a && \
 		($(INSTALL) -m 644 lib$${lib}.a $(DESTDIR)$(libdir);\
 		$(RANLIB) $(DESTDIR)$(libdir)/lib$${lib}.a \
-		) || echo ""; \
+		) || echo Installed $(DESTDIR)$(libdir)/lib$${lib}.a; \
            fi; \
 	done
 	for lib in $(META); do \
 	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		($(INSTALL) -m 755 lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		$(DESTDIR)$(metadir) \
-		); \
+		&& echo Installed $(DESTDIR)$(metadir)lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
 	   test -f NOT_lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		(test -L $(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) && $(RM) $(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
@@ -1018,9 +1018,10 @@ install_bin:	all install_gui
 	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		($(INSTALL) -m 755 lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		$(DESTDIR)$(cmmdir) \
-		); \
+		&& echo Installed $(DESTDIR)$(cmmdir)lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
 	   test -f NOT_lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
-		(test -L $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) && $(RM) $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
+		(test -L $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
+		&& $(RM) $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		$(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
 		test -L $(DESTDIR)$(cmmdir)/lib$${lib}$(SO)$(LIBEXT) && ( \
@@ -1031,7 +1032,7 @@ install_bin:	all install_gui
 	   test -f lib$${lib}.a && \
 		($(INSTALL) -m 644 lib$${lib}.a $(DESTDIR)$(cmmdir);\
 		$(RANLIB) $(DESTDIR)$(cmmdir)/lib$${lib}.a \
-		) || echo ""; \
+		) || a=1; \
 	done
 	test -d $(DESTDIR)$(includedir)/$(TARGET)/alpha/object || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)/alpha/object
 	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET).h $(DESTDIR)$(includedir)/$(TARGET)
