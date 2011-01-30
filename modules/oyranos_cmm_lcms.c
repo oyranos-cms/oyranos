@@ -1299,6 +1299,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
       {
         oyStructList_s * list = 0;
         const char * c_text = "no copyright; use freely";
+        /* FIXME replace oyName_s with oyOption_s */
         oyName_s * name = oyName_new(0);
 
         name = oyName_set_ ( name, c_text, oyNAME_NAME,
