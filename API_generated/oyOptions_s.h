@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/01/29
+ *  @since    2011/01/30
  */
 
 
@@ -215,6 +215,9 @@ int             oyOptions_Handle     ( const char        * registration,
                                        oyOptions_s       * options,
                                        const char        * command,
                                        oyOptions_s      ** result );
+int            oyOption_GetFlags     ( oyOptions_s       * object );
+int            oyOption_SetFlags     ( oyOptions_s       * object,
+                                       uint32_t            flags );
 
 /* } Include "Options.public_methods_declarations.h" */
 

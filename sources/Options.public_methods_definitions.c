@@ -1743,6 +1743,26 @@ OYAPI int  OYEXPORT
   return error;
 }
 
+int            oyOption_GetFlags     ( oyOptions_s       * object )
+{
+  oyOption_s_ * o = (oyOptions_s_*)object;
+  if(o)
+    return o->flags;
+  else
+    return 0;
+}
+int            oyOption_SetFlags     ( oyOptions_s       * object,
+                                       uint32_t            flags )
+{
+  oyOption_s_ * o = (oyOptions_s_*)object;
+  if(o)
+  {
+    o->flags = flags;
+    return 0;
+  } else
+    return 1;
+}
+
 #ifdef OY_CMM_API_FILTERS_S_H
 /** Function oyOptions_Handle
  *  @brief   handle a request by a module
