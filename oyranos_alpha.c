@@ -4566,7 +4566,12 @@ OYAPI int  OYEXPORT
     if(tmp[oyStrlen_(tmp)-1] != OY_SLASH_C)
       STRING_ADD( tmp, OY_SLASH );
 
-    if(oyStrrchr_( key, OY_SLASH_C ) != 0)
+    if(oyStrstr_( key, config->registration ) != 0)
+    {
+      oyFree_m_(tmp);
+      STRING_ADD( tmp, key );
+    }
+    else if(oyStrrchr_( key, OY_SLASH_C ) != 0)
       STRING_ADD( tmp, oyStrrchr_( key, OY_SLASH_C )+1 );
     else
       STRING_ADD( tmp, key );
@@ -4657,7 +4662,10 @@ OYAPI int  OYEXPORT
 
 /** Function oyRegistrationEraseFromDB
  *  @memberof oyConfig_s
- *  @brief   remove a registration from DB
+ *  @brief   remove a registration config from DB
+ *
+ *  The configs registration needs to be a config group, one with 4 slashes.
+ *  The last level is typical a number.
  *
  *  @param[in]     config_registration the configuration
  *  @return                            0 - good, 1 >= error
@@ -4740,6 +4748,7 @@ OYAPI int  OYEXPORT
         while( (text = oyStrchr_(++text, OY_SLASH_C)) != 0)
           ++i;
 
+      /* A key has one slash more. Cut the last slash off.  */
       if(i == 5)
       {
         tmp = oyStringCopy_( oyOption_GetRegistration( o ), oyAllocateFunc_ );
