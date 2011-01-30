@@ -260,7 +260,7 @@ int          qarzDeviceFromName_     ( const char        * device_name,
 
       if(error <= 0 && edid)
         error = oyDeviceFillEdid(   QARZ_MONITOR_REGISTRATION,
-                                    device, edid->ptr, edid->size,
+                                    device, oyBlob_GetPointer(edid), oyBlob_GetSize(edid),
                                     device_name,
                                     host, display_geometry, system_port,
                                     options );
@@ -281,10 +281,10 @@ int          qarzDeviceFromName_     ( const char        * device_name,
           if(o)
             has = 1;
           else
-            o = oyOption_New( QARZ_MONITOR_REGISTRATION OY_SLASH "edid", 0 );
+            o = oyOption_FromRegistration( QARZ_MONITOR_REGISTRATION OY_SLASH "edid", 0 );
           error = !o;
           if(!error)
-          error = oyOption_SetFromData( o, edid->ptr, edid->size );
+          error = oyOption_SetFromData( o, oyBlob_GetPointer(edid), oyBlob_GetSize(edid) );
           if(!error)
           {
             if(has)
@@ -500,7 +500,7 @@ int            qarzConfigs_FromPattern (
       {
         oyOptions_s * opts = 0;
         error = oyDeviceFillEdid(   QARZ_MONITOR_REGISTRATION,
-                                    &device, edid->ptr, edid->size,
+                                    &device, oyBlob_GetPointer(edid), oyBlob_GetSize(edid),
                                     NULL,
                                     NULL, NULL, NULL,
                                     options );
@@ -619,7 +619,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
             if(o)
               has = 1;
             else
-              o = oyOption_New( QARZ_MONITOR_REGISTRATION OY_SLASH
+              o = oyOption_FromRegistration( QARZ_MONITOR_REGISTRATION OY_SLASH
                                 "device_rectangle", 0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &rect );
             if(has)
@@ -677,7 +677,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
               const char * key = QARZ_MONITOR_REGISTRATION OY_SLASH "icc_profile";
               if(oyOptions_FindString(options, "net_color_region_target", 0))
                 key = QARZ_MONITOR_REGISTRATION OY_SLASH "icc_profile.net_color_region_target";
-              o = oyOption_New( key, 0 );
+              o = oyOption_FromRegistration( key, 0 );
             }
           } else if(oyOptions_FindString( options, "icc_profile.fallback", 0 ))
           {
@@ -756,13 +756,13 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
               oyDeAllocateFunc_( data ); data = NULL; size = 0;
             }
             if(has == 0)
-              o = oyOption_New( QARZ_MONITOR_REGISTRATION OY_SLASH
+              o = oyOption_FromRegistration( QARZ_MONITOR_REGISTRATION OY_SLASH
                                 "icc_profile.fallback", 0 );
             error = -1;
           }
 
           if(!o)
-              o = oyOption_New( QARZ_MONITOR_REGISTRATION OY_SLASH
+              o = oyOption_FromRegistration( QARZ_MONITOR_REGISTRATION OY_SLASH
                                 "icc_profile", 0 );
 
           if(prof)
@@ -797,7 +797,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
           o = oyOptions_Find( device->data, "device_rectangle" );
-          r = (oyRectangle_s*) o->value->oy_struct;
+          r = (oyRectangle_s*) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
 
           text = 0; tmp = 0;
       
@@ -807,10 +807,9 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
 
           o = oyOptions_Find( device->data, "icc_profile" );
 
-          if( o && o->value && o->value->oy_struct && 
-              o->value->oy_struct->type_ == oyOBJECT_PROFILE_S)
+          if( o )
           {
-            prof = oyProfile_Copy( (oyProfile_s*) o->value->oy_struct, 0 );
+            prof = (oyProfile_s*) oyOption_StructGet( o, oyOBJECT_PROFILE_S );
             tmp = oyProfile_GetFileName( prof, 0 );
 
             STRING_ADD( text, "  " );
