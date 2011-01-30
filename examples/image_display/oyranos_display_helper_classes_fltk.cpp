@@ -100,8 +100,10 @@ class Oy_Fl_Box : public Fl_Box, public Oy_Widget
         case FL_PUSH:
           ox = x() - Fl::event_x();
           oy = y() - Fl::event_y();
+          fl_cursor( FL_CURSOR_MOVE, FL_BLACK, FL_WHITE );
           return (1);
         case FL_RELEASE:
+          fl_cursor( FL_CURSOR_DEFAULT, FL_BLACK, FL_WHITE );
           return (1);
         case FL_DRAG:
           px += ox + Fl::event_x();
