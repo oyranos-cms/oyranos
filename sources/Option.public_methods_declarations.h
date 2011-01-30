@@ -46,4 +46,6 @@ oyStruct_s *   oyOption_StructGet    ( oyOption_s        * option,
 void           oyOption_SetSource    ( oyOption_s        * option,
                                        oyOPTIONSOURCE_e    source );
 oyOPTIONSOURCE_e oyOption_GetSource  ( oyOption_s        * option );
-
+int            oyOption_GetFlags     ( oyOption_s        * object );
+int            oyOption_SetFlags     ( oyOption_s        * object,
+                                       uint32_t            flags );

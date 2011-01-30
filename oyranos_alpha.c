@@ -6573,6 +6573,95 @@ char * oyDeviceRegistrationCreate_   ( const char        * device_type,
   return text;
 }
 
+/** Function oyOption_SetValueFromDB
+ *  @memberof oyOption_s
+ *  @brief   value filled from DB if available
+ *
+ *  @param         option              the option
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/24 (Oyranos: 0.1.10)
+ *  @date    2009/05/25
+ */
+int            oyOption_SetValueFromDB  ( oyOption_s        * option )
+{
+  int error = !option || !oyOptionPriv_m(option)->registration;
+  char * text = 0;
+  oyPointer ptr = 0;
+  size_t size = 0;
+  oyOption_s_ * s = (oyOption_s_*)option;
+
+  if(error)
+    return error;
+
+  oyCheckType__m( oyOBJECT_OPTION_S, return 1 )
+
+  oyExportStart_(EXPORT_SETTING);
+
+  if(error <= 0)
+    text = oyGetKeyString_( oyOption_GetText( option, oyNAME_DESCRIPTION),
+                            oyAllocateFunc_ );
+
+  if(error <= 0)
+  {
+    /** Change the option value only if something was found in the DB. */
+    if(text && text[0])
+    {
+      oyOption_SetFromText( option, text, 0 );
+      s->source = oyOPTIONSOURCE_DATA;
+    }
+    else
+    {
+      ptr = oyGetKeyBinary_( s->registration, &size, oyAllocateFunc_ );
+      if(ptr && size)
+      {
+        oyOption_SetFromData( option, ptr, size );
+        s->source = oyOPTIONSOURCE_DATA;
+        oyFree_m_( ptr );
+      }
+    }
+  }
+
+  if(text)
+    oyFree_m_( text );
+
+  oyExportEnd_();
+
+  return error;
+}
+/** Function oyOption_FromDB
+ *  @memberof oyOption_s
+ *  @brief   new option with registration and value filled from DB if available
+ *
+ *  @param         registration        no or full qualified registration
+ *  @param         object              the optional object
+ *  @return                            the option
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/24 (Oyranos: 0.1.10)
+ *  @date    2009/01/24
+ */
+oyOption_s *   oyOption_FromDB       ( const char        * registration,
+                                       oyObject_s          object )
+{
+  int error = !registration;
+  oyOption_s * o = 0;
+
+  if(error <= 0)
+  {
+    /** This is merely a wrapper to oyOption_New() and
+     *  oyOption_SetValueFromDB(). */
+    o = oyOption_FromRegistration( registration, object );
+    error = oyOption_SetFromText( o, 0, 0 );
+    error = oyOption_SetValueFromDB( o );
+    ((oyOption_s_*)o)->source = oyOPTIONSOURCE_DATA;
+  }
+
+  return o;
+}
+
+
 /** Function oyOptions_DoFilter
  *  @memberof oyOptions_s
  *  @brief   filter the options

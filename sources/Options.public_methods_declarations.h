@@ -105,6 +105,4 @@ int             oyOptions_Handle     ( const char        * registration,
                                        oyOptions_s       * options,
                                        const char        * command,
                                        oyOptions_s      ** result );
-int            oyOption_GetFlags     ( oyOptions_s       * object );
-int            oyOption_SetFlags     ( oyOptions_s       * object,
-                                       uint32_t            flags );
+

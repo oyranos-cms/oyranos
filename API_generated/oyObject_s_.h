@@ -20,8 +20,47 @@
 #define OY_OBJECT_S__H
 
 #include <oyranos_object.h>
+#include <oyName_s_.h>
 
 #include "oyObject_s.h"
+
+
+/* Include "Object.dox" { */
+/** @struct  oyObject_s
+ *  @brief   Oyranos structure base
+ *  @ingroup objects_generic
+ *
+ *  The base object of Oyranos object system is self contained. It can be
+ *  handled by the belonging function set. Complex objects for user interaction
+ *  should almost all be derived from this struct.\n
+ *  The memory management can be controlled by the user and will affect internal
+ *  and derived data.
+ *  Do not automaticly create templates [notemplates]
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/10/00 (Oyranos: 0.1.8)
+ *  @date    2009/03/01
+ */
+
+/* } Include "Object.dox" */
+
+struct oyObject_s_ {
+  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_OBJECT_S*/
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  int                  id_;            /**< @private identification for Oyranos */
+  oyAlloc_f            allocateFunc_;  /**< @private data  allocator */
+  oyDeAlloc_f          deallocateFunc_;/**< @private data release function */
+  oyPointer            parent_;        /*!< @private parent struct of parent_type */
+  oyOBJECT_e           parent_type_;   /*!< @private parents struct type */
+  oyPointer            backdoor_;      /*!< @private allow non breaking extensions */
+  oyOptions_s        * handles_;       /**< @private addational data and infos*/
+  oyName_s           * name_;          /*!< @private naming feature */
+  int                  ref_;           /*!< @private reference counter */
+  int                  version_;       /*!< @private OYRANOS_VERSION */
+  unsigned char      * hash_ptr_;      /**< @private 2*OY_HASH_SIZE */
+  oyPointer            lock_;          /**< @private the user provided lock */
+};
 
 
 /* Include "Object.private_methods_declarations.h" { */

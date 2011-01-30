@@ -36,7 +36,8 @@
 #include "oyranos_texts.h"
 
 #include "oyStruct_s.h"
-#include "oyObject_s.h"
+#include "oyObject_s_.h"
+#include "oyName_s_.h"
 
 static oyStruct_RegisterStaticMessageFunc_f * oy_static_msg_funcs_ = 0;
 static int oy_msg_func_n_ = 0;

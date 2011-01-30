@@ -13,7 +13,8 @@
  *  @since    2009/07/05
  */
 
-#include <oyranos_cmm.h>
+#include "oyranos_cmm.h"
+#include "oyObject_s_.h"
 #include <sane/sane.h>
 #include <lcms.h>
 
@@ -22,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+
 
 #include "SANE_help.c"
 /* --- internal definitions --- */

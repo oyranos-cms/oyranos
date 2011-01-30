@@ -20,6 +20,7 @@ static const char *oyValueTypeText( oyVALUETYPE_e       type )
   return 0;
 }
 
+#ifdef DEBUG_
 static void print_option(oyOption_s * opt, int j)
 {
    int id = oyOption_GetId(opt);
@@ -99,6 +100,7 @@ static int print_devices(oyConfigs_s * devices, const char *name)
    }
    return num_devices;
 }
+#endif
 
 #ifdef __cplusplus
 } /* extern "C" */

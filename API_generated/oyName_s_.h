@@ -23,6 +23,49 @@
 
 #include "oyName_s.h"
 
+#include "oyStruct_s.h"
+
+typedef struct oyName_s oyName_s;
+
+
+/* Include "Name.dox" { */
+/** @struct oyName_s
+ *  @ingroup objects_generic
+ *  @brief   Oyranos Name structure
+ *
+ *  This class is a public members only class and does not
+ *  belong to the oyranos object model, like all "Generic Objects".
+ *
+ *  @note New templates will not be created automaticly [notemplates]
+ *
+ *  @version Oyranos: x.x.x
+ *  @since   YYYY/MM/DD (Oyranos: x.x.x)
+ *  @date    YYYY/MM/DD
+ */
+
+/* } Include "Name.dox" */
+
+struct oyName_s {
+  oyOBJECT_e           type;          /*!< internal struct type oyOBJECT_NAME_S */
+  oyStruct_Copy_f      copy;          /**< copy function */
+  oyStruct_Release_f   release;       /**< release function */
+  oyPointer        dummy;             /**< keep to zero */
+  char               * nick;          /*!< few letters for mass representation, eg. "A1" */
+  char               * name;          /*!< normal visible name, eg. "A1-MySys"*/
+  char               * description;   /*!< full user description, eg. "A1-MySys from Oyranos" */
+  char                 lang[8];       /**< i18n language, eg. "en_GB" */
+};
+
+
+/* oyName_s common object functions { */
+oyName_s *   oyName_new              ( oyObject_s          object );
+
+oyName_s *   oyName_copy             ( oyName_s          * obj,
+                                       oyObject_s          object );
+int          oyName_release          ( oyName_s         ** obj );
+/* } oyName_s common object functions */
+
+
 int          oyName_release_         ( oyName_s         ** name,
                                        oyDeAlloc_f         deallocateFunc );
 

@@ -793,7 +793,7 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
   return error;
 }
 
-#ifdef OYRANOS_ELEKTRA_H
+#ifdef OYRANOS_ELEKTRA_H_
 /** Function oyOptions_DoFilter
  *  @memberof oyOptions_s
  *  @brief   filter the options
@@ -1974,26 +1974,6 @@ OYAPI int  OYEXPORT
       oyOption_Release( &o );
     }
   return error;
-}
-
-int            oyOption_GetFlags     ( oyOptions_s       * object )
-{
-  oyOption_s_ * o = (oyOptions_s_*)object;
-  if(o)
-    return o->flags;
-  else
-    return 0;
-}
-int            oyOption_SetFlags     ( oyOptions_s       * object,
-                                       uint32_t            flags )
-{
-  oyOption_s_ * o = (oyOptions_s_*)object;
-  if(o)
-  {
-    o->flags = flags;
-    return 0;
-  } else
-    return 1;
 }
 
 #ifdef OY_CMM_API_FILTERS_S_H

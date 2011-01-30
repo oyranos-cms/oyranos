@@ -24,6 +24,8 @@
 #include "oyranos/oyranos.h"
 #endif
 
+#include "oyObject_s_.h"
+
 #include "stdio.h"
 
 #ifdef __cplusplus
