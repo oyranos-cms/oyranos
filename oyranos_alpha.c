@@ -2754,8 +2754,8 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
        OYRANOS_VERSION < module_api)
     {
       error = 1;
-      DBG_MEM2_S("Wrong API for: %s %s", oyStructTypeToText(api->type),
-                 oyNoEmptyString_m_(api->registration));
+      DBG_MEM3_S("Wrong API for: %s %s %d", oyStructTypeToText(api->type),
+                 oyNoEmptyString_m_(api->registration), module_api);
       return type;
     }
   }
