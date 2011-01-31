@@ -15084,8 +15084,6 @@ OYAPI oyConnector_s * OYEXPORT
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
-  s->name.type = oyOBJECT_NAME_S;
-
   s->is_plug = -1;
 
   return s;
@@ -15100,9 +15098,9 @@ OYAPI oyConnector_s * OYEXPORT
  *  @param[in]     obj                 struct object
  *  @param         object              the optional object
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.3.0
  *  @since   2008/07/27 (Oyranos: 0.1.8)
- *  @date    2008/07/27
+ *  @date    2011/01/31
  */
 oyConnector_s * oyConnector_Copy_    ( oyConnector_s     * obj,
                                        oyObject_s          object )
@@ -15121,9 +15119,7 @@ oyConnector_s * oyConnector_Copy_    ( oyConnector_s     * obj,
   {
     allocateFunc_ = s->oy_->allocateFunc_;
 
-    s->name.nick = oyStringCopy_( obj->name.nick, allocateFunc_);
-    s->name.name = oyStringCopy_( obj->name.name, allocateFunc_);
-    s->name.description = oyStringCopy_( obj->name.description, allocateFunc_);
+    error = oyObject_CopyNames( s->oy_, obj->oy_ );
 
     s->connector_type = oyStringCopy_( obj->connector_type, allocateFunc_ );
     s->is_plug = obj->is_plug;
@@ -15200,8 +15196,6 @@ OYAPI int  OYEXPORT
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
 
-    oyName_releaseMembers( &s->name, deallocateFunc );
-
     if(s->connector_type)
       deallocateFunc( s->connector_type ); s->connector_type = 0;
 
@@ -15212,6 +15206,239 @@ OYAPI int  OYEXPORT
 
   return 0;
 }
+
+/** Function oyConnector_SetName
+ *  @memberof oyConnector_s
+ *  @brief   set the names in a connector
+ *
+ *  These are UI strings, e.g. "Img", "Image", "Image Socket" .
+ *
+ *  @param[in,out] obj                 Connector object
+ *  @param[in]     string              the name to set
+ *  @param[in]     type                the names type
+ *  @return                            1 - error; 0 - success; -1 - otherwise
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+int              oyConnector_SetName ( oyConnector_s     * obj,
+                                       const char        * string,
+                                       oyNAME_e            type )
+{
+  oyConnector_s * s = obj;
+  int error = 0;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 1 )
+
+  error = oyObject_SetName( obj->oy_, string, type );
+
+  return error;
+}
+
+/** Function oyConnector_GetName
+ *  @memberof oyConnector_s
+ *  @brief   set the names in a connector
+ *
+ *  Get UI strings.
+ *
+ *  @param[in]     obj                 Connector object
+ *  @param[in]     type                the names type
+ *  @return                            the name string
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+const char *     oyConnector_GetName ( oyConnector_s     * obj,
+                                       oyNAME_e            type )
+{
+  oyConnector_s * s = obj;
+  const char * string = 0;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 0 )
+
+  string = oyObject_GetName( obj->oy_, type );
+
+  return string;
+}
+
+/** Function oyConnector_IsPlug
+ *  @memberof oyConnector_s
+ *  @brief   is this connector a plug or a socket
+ *
+ *  @param[in]     obj                 Connector object
+ *  @return                            boolean; 0 - socket; 1 - plug
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+int              oyConnector_IsPlug  ( oyConnector_s     * obj )
+{
+  oyConnector_s * s = obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 0 )
+
+  return obj->is_plug;
+}
+
+/** Function oyConnector_SetIsPlug
+ *  @memberof oyConnector_s
+ *  @brief   Set this connector as a plug or a socket
+ *
+ *  @param[in,out] obj                 Connector object
+ *  @param[in]     is_plug             boolean; 0 - socket; 1 - plug
+ *  @return                            1 - error; 0 - success; -1 - otherwise
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+int              oyConnector_SetIsPlug(oyConnector_s     * obj,
+                                       int                 is_plug )
+{
+  oyConnector_s * s = obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 1 )
+
+  obj->is_plug = is_plug;
+
+  return 0;
+}
+
+/** Function oyConnector_GetReg
+ *  @memberof oyConnector_s
+ *  @brief   Get the registration for the connection type
+ *
+ *  This is use as a rough check, if connections are possible.
+ *
+ *  @param[in]     obj                 Connector object
+ *  @return                            registration string
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+const char *     oyConnector_GetReg  ( oyConnector_s     * obj )
+{
+  oyConnector_s * s = obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 0 )
+
+  return obj->connector_type;
+}
+
+/** Function oyConnector_SetReg
+ *  @memberof oyConnector_s
+ *  @brief   Set this connectors type string
+ *
+ *  This is use as a rough check, if connections are possible.
+ *
+ *  @param[in,out] obj                 Connector object
+ *  @param[in]     type_registration   the registration string to describe the
+ *                                     type
+ *  @return                            1 - error; 0 - success; -1 - otherwise
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+int              oyConnector_SetReg  ( oyConnector_s     * obj,
+                                       const char        * type_registration )
+{
+  oyConnector_s * s = obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 1 )
+
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+    oyAlloc_f allocateFunc = s->oy_->allocateFunc_;
+
+    if(s->connector_type)
+      deallocateFunc( s->connector_type ); s->connector_type = 0;
+
+    obj->connector_type = oyStringCopy_( type_registration, allocateFunc );
+  }
+
+  return 0;
+}
+
+/** Function oyConnector_SetMatch
+ *  @memberof oyConnector_s
+ *  @brief   Set this connectors type check function
+ *
+ *  This is use as a check, if connections are possible.
+ *  This allowes for a more fine grained control than the type registration.
+ *
+ *  @param[in,out] obj                 Connector object
+ *  @param[in]     func                the check function
+ *  @return                            1 - error; 0 - success; -1 - otherwise
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+int              oyConnector_SetMatch( oyConnector_s     * obj,
+                                       oyCMMFilterSocket_MatchPlug_f func )
+{
+  oyConnector_s * s = obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 1 )
+
+  obj->filterSocket_MatchPlug = func;
+
+  return 0;
+}
+
+/** Function oyConnector_GetMatch
+ *  @memberof oyConnector_s
+ *  @brief   Set this connectors type check function
+ *
+ *  This is use as a check, if connections are possible.
+ *  This allowes for a more fine grained control than the type registration.
+ *
+ *  @param[in]     obj                 Connector object
+ *  @return                            the check function
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+oyCMMFilterSocket_MatchPlug_f oyConnector_GetMatch (
+                                       oyConnector_s     * obj )
+{
+  oyConnector_s * s = obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 0 )
+
+  return obj->filterSocket_MatchPlug;
+}
+
 
 const char *       oyConnectorEventToText (
                                        oyCONNECTOR_EVENT_e e )
@@ -18250,18 +18477,18 @@ OYAPI int  OYEXPORT
     {
       /** Check if basic types match. */
       reg = oyStringCopy_( "//", oyAllocateFunc_ );
-      tmp = oyFilterRegistrationToText( a->connector_type,
+      tmp = oyFilterRegistrationToText( oyConnector_GetReg(a),
                                         oyFILTER_REG_TYPE, 0 );
       STRING_ADD( reg, tmp );
       if(tmp) oyFree_m_( tmp );
-      match = oyFilterRegistrationMatch( reg, b->connector_type,
+      match = oyFilterRegistrationMatch( reg, oyConnector_GetReg(b),
                                          0 );
       if(reg) oyFree_m_(reg);
     }
 
     /** More detailed checking is done in oyCMMapi5_s. */
-    if(match && sock_first->pattern->filterSocket_MatchPlug)
-      sock_first->pattern->filterSocket_MatchPlug( sock_first, plug );
+    if(match && oyConnector_GetMatch(sock_first->pattern))
+      oyConnector_GetMatch(sock_first->pattern)( sock_first, plug );
   }
 
   oyConnector_Release( &a );
@@ -18326,7 +18553,7 @@ OYAPI int  OYEXPORT
     n = node->api7_->plugs_n;
     for( i = 0; i < n; ++i )
     {
-      if(oyFilterRegistrationMatch( node->api7_->plugs[i]->connector_type,
+      if(oyFilterRegistrationMatch( oyConnector_GetReg(node->api7_->plugs[i]),
                                     pattern, 0))
       {
         if( i == n - 1 && node->api7_->plugs_last_add)
@@ -18370,7 +18597,7 @@ OYAPI int  OYEXPORT
     for( i = 0; i < n; ++i )
     {
       /* 2. compare pattern argument with the socket type */
-      if(oyFilterRegistrationMatch( node->api7_->sockets[i]->connector_type,
+      if(oyFilterRegistrationMatch( oyConnector_GetReg(node->api7_->sockets[i]),
                                     pattern, 0))
       {
 
