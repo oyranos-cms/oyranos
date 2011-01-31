@@ -2251,7 +2251,10 @@ oyTESTRESULT_e testCMMsShow ()
   {
     cmm_info = oyCMMInfoFromLibName_( texts[i] );
     text = oyCMMInfoPrint_( cmm_info );
-    tmp = cmm_info->api;
+    if(cmm_info)
+      tmp = cmm_info->api;
+    else
+      tmp = 0;
 
         while(tmp)
         {
