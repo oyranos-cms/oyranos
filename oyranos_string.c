@@ -594,8 +594,9 @@ char**             oyStringListAppend_( const char   ** list,
  *
  *  In order to collect all possible matches chain this filter.
  *
- *  @since Oyranos: version 0.1.8
- *  @date  december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.3.0
+ *  @since   2007/12/00 (Oyranos: 0.1.8)
+ *  @date    2011/01/31
  */
 char**             oyStringListFilter_(const char   ** list,
                                        int             list_n,
@@ -627,7 +628,13 @@ char**             oyStringListFilter_(const char   ** list,
 
       if(b && string && string[0])
       {
-        b = (oyStrstr_(list[i], string))?1:0;
+        const char * fn;
+        fn = oyStrrchr_( list[i], OY_SLASH_C );
+        if(!fn)
+          fn = list[i];
+        else
+          fn++;
+        b = (oyStrstr_(fn, string))?1:0;
         if(!b) continue;
       }
 
