@@ -60,7 +60,7 @@ VERSION_A=0
 VERSION_B=3
 VERSION_C=0
 VERSION_ABI_A=1
-VERSION_ABI_B=0
+VERSION_ABI_B=1
 RELEASE=0
 OY_START_MONTH=11
 OY_START_YEAR=2004
@@ -706,7 +706,7 @@ rm test_tmp.txt
 test -n "$ECHO" && $ECHO "MAKEDEPEND	= $MAKEDEPEND" >> $CONF
 if [ $OSUNAME = "Darwin" ]; then
   LIBEXT=".dylib"
-  GCC_VERSION_INFO="-Wl,-compatibility_version -Wl,$VERSION_ABI_A -Wl,-current_version -Wl,$VERSION_ABI_A.$VERSION_ABI_B"
+  GCC_VERSION_INFO="-Wl,-compatibility_version -Wl,$VERSION_A.$VERSION_B -Wl,-current_version -Wl,$VERSION"
   DSO_LIB_VERSION=" -install_name "
   LINK_FLAGS_DYNAMIC="$LDFLAGS -framework Carbon -dynamiclib $GCC_VERSION_INFO"
   dyld_libdir="$libdir/"
