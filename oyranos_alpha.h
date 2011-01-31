@@ -1604,19 +1604,15 @@ typedef enum {
  *
  *  @todo generalise the connector properties
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.0
  *  @since   2008/07/26 (Oyranos: 0.1.8)
- *  @date    2010/06/25
+ *  @date    2011/01/31
  */
 struct oyConnector_s {
   oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONNECTOR_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
-
-  /** unique strings, nick and name will be used as the connector's type ID,
-   *  e.g."Img", "Image", "Image Socket"*/
-  oyName_s             name;           
 
   char               * connector_type; /**< a @ref registration string */
   /** Check if two oyCMMapi7_s filter connectors of type oyConnector_s can 
@@ -1635,7 +1631,21 @@ OYAPI oyConnector_s * OYEXPORT
 OYAPI int  OYEXPORT
                  oyConnector_Release ( oyConnector_s    ** list );
 
-
+int              oyConnector_SetName ( oyConnector_s     * obj,
+                                       const char        * string,
+                                       oyNAME_e            type );
+const char *     oyConnector_GetName ( oyConnector_s     * obj,
+                                       oyNAME_e            type );
+int              oyConnector_IsPlug  ( oyConnector_s     * obj );
+int              oyConnector_SetIsPlug(oyConnector_s     * obj,
+                                       int                 is_plug );
+const char *     oyConnector_GetReg  ( oyConnector_s     * obj );
+int              oyConnector_SetReg  ( oyConnector_s     * obj,
+                                       const char        * type_registration );
+int              oyConnector_SetMatch( oyConnector_s     * obj,
+                                       oyCMMFilterSocket_MatchPlug_f func );
+oyCMMFilterSocket_MatchPlug_f oyConnector_GetMatch (
+                                       oyConnector_s     * obj );
 
 /** @struct  oyFilterSocket_s
  *  @brief   a filter connection structure
