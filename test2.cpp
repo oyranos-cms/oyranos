@@ -2363,10 +2363,11 @@ oyTESTRESULT_e testCMMsShow ()
                     {
                       snprintf( text_tmp, 65535,
                             "        plug[%d]: type:\"%s\" id:\"%s\" \"%s\" \"%s\"\n", l,
-                            cmm_api7->plugs[l]->connector_type,
-                            cmm_api7->plugs[l]->name.nick,
-                            cmm_api7->plugs[l]->name.name,
-                            cmm_api7->plugs[l]->name.description
+                            oyConnector_GetReg( cmm_api7->plugs[l]),
+                            oyConnector_GetName(cmm_api7->plugs[l],oyNAME_NICK),
+                            oyConnector_GetName(cmm_api7->plugs[l],oyNAME_NAME),
+                            oyConnector_GetName(cmm_api7->plugs[l],
+                                                            oyNAME_DESCRIPTION)
                             );
                       STRING_ADD( text, text_tmp );
                     }
@@ -2374,10 +2375,13 @@ oyTESTRESULT_e testCMMsShow ()
                     {
                       snprintf( text_tmp, 65535,
                             "        sock[%d]: type:\"%s\" id:\"%s\" \"%s\" \"%s\"\n", l,
-                            cmm_api7->sockets[l]->connector_type,
-                            cmm_api7->sockets[l]->name.nick,
-                            cmm_api7->sockets[l]->name.name,
-                            cmm_api7->sockets[l]->name.description
+                            oyConnector_GetReg( cmm_api7->sockets[l]),
+                            oyConnector_GetName(cmm_api7->sockets[l],
+                                                            oyNAME_NICK),
+                            oyConnector_GetName(cmm_api7->sockets[l],
+                                                            oyNAME_NAME),
+                            oyConnector_GetName(cmm_api7->sockets[l],
+                                                            oyNAME_DESCRIPTION)
                             );
                       STRING_ADD( text, text_tmp );
                     }
