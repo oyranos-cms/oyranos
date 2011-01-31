@@ -1931,7 +1931,9 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   }
 
 
-  char * registration = oyStringCopy_(config->registration, oyAllocateFunc_ );
+  char * registration = 0;
+  if(config)
+    registration = oyStringCopy_(config->registration, oyAllocateFunc_ );
   error = oyConfig_SaveToDB( config );
 
   error = oyConfigs_FromDB( registration, &configs, 0 );
@@ -3257,7 +3259,8 @@ oyTESTRESULT_e testCMMnmRun ()
   clck = oyClock();
   for(i = 0; i < n*10000; ++i)
   {
-    pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0;
+    if(pixel_access)
+      pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0;
     oyConversion_RunPixels( conv, pixel_access );
   }
   clck = oyClock() - clck;
@@ -3310,6 +3313,13 @@ oyTestRegistration_s test_registration[100];
 int main(int argc, char** argv)
 {
   int i, error;
+
+  if(getenv("OYRANOS_DEBUG"))
+  {
+    int value = atoi(getenv("OYRANOS_DEBUG"));
+    if(value > 0)
+      oy_debug += value;
+  }
 
   /* init */
   for(i = 0; i <= oyTESTRESULT_UNKNOWN; ++i)
