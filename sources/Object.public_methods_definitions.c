@@ -299,6 +299,32 @@ int          oyObject_SetNames        ( oyObject_s        object,
   return error;
 }
 
+/** @brief   object naming
+ *  @memberof oyObject_s
+ *
+ *  @param[in]    dest           the object to modify
+ *  @param[in]    src            the object to take names from
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+int          oyObject_CopyNames       ( oyObject_s        dest,
+                                        oyObject_s        src )
+{
+  int error = 0;
+
+  if(!dest || !src) return 1;
+
+  if(error <= 0)
+    error = oyObject_SetNames( dest,
+                               oyObject_GetName( src, oyNAME_NICK ),
+                               oyObject_GetName( src, oyNAME_NAME ),
+                               oyObject_GetName( src, oyNAME_DESCRIPTION ) );
+
+  return error;
+}
+
 /** Function oyObject_GetName
  *  @memberof oyObject_s
  *  @brief   object get names

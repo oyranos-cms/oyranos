@@ -12,6 +12,8 @@ int          oyObject_SetNames        ( oyObject_s        object,
 int          oyObject_SetName         ( oyObject_s        object,
                                         const char      * name,
                                         oyNAME_e          type );
+int          oyObject_CopyNames       ( oyObject_s        dest,
+                                        oyObject_s        src );
 const char  *oyObject_GetName         ( const oyObject_s  object,
                                         oyNAME_e          type );
 /*oyCMMptr_s * oyObject_GetCMMPtr       ( oyObject_s        object,
