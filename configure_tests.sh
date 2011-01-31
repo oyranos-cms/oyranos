@@ -1118,7 +1118,7 @@ if [ -n "$DEBUG" ] && [ $DEBUG -gt 0 ]; then
     for i in $MAKEFILE_DIR; do
       if [ "$debug" -eq "1" ]; then
         if [ $OSUNAME = "Darwin" ] || [ $OSUNAME = "Windows" ]; then
-          DEBUG_="-Wall -g -DDEBUG"
+          DEBUG_="-Wall -g -DDEBUG -gdwarf-2"
         else
           DEBUG_="-Wall -g -DDEBUG --pedantic"
         fi
