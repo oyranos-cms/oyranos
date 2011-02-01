@@ -66,18 +66,12 @@
 {
   {{ class.name }} s = 0;
   int error = 0;
-  oyAlloc_f allocateFunc_ = 0; //FIXME Unused?
 
   if(!{{ class.baseName|lower }} || !object)
     return s;
 
   s = oy{{ class.baseName }}_New_( object );
   error = !s;
-
-  if(!error)
-  {
-    allocateFunc_ = s->oy_->allocateFunc_;
-  }
 
   /* ---- start of custom {{ class.baseName }} copy constructor ----- */
   oy{{ class.baseName }}_Copy__Custom( s, {{ class.baseName|lower }}, object);
@@ -108,9 +102,8 @@
   if(!{{ class.baseName|lower }})
     return 0;
 
-  if({{ class.baseName|lower }} && !object)
+  if(s && !object)
   {
-    s = {{ class.baseName|lower }}; // FIXME Redundant?
     oyObject_Copy( s->oy_ );
     return s;
   }

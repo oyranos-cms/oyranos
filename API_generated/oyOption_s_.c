@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/01/30
+ *  @since    2011/02/01
  */
 
 
@@ -164,13 +164,12 @@ oyOption_s_ * oyOption_New_ ( oyObject_s object )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_OPTION_S;
-# define STRUCT_TYPE oyOption_s_ /* FIXME Why is this needed? */
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = 0;
+  oyOption_s_ * s = 0;
 
   if(s_obj)
-    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+    s = (oyOption_s_*)s_obj->allocateFunc_(sizeof(oyOption_s_));
 
   if(!s || !s_obj)
   {
@@ -178,7 +177,7 @@ oyOption_s_ * oyOption_New_ ( oyObject_s object )
     return NULL;
   }
 
-  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+  error = !memset( s, 0, sizeof(oyOption_s_) );
 
   s->type_ = type;
   s->copy = (oyStruct_Copy_f) oyOption_Copy;
@@ -187,7 +186,6 @@ oyOption_s_ * oyOption_New_ ( oyObject_s object )
   s->oy_ = s_obj;
 
   error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
-# undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
   

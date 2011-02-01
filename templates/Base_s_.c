@@ -31,13 +31,12 @@
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_{{ class.baseName|underscores|upper }}_S;
-# define STRUCT_TYPE {{ class.privName }} /* FIXME Why is this needed? */
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = 0;
+  {{ class.privName }} * s = 0;
 
   if(s_obj)
-    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+    s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }}));
 
   if(!s || !s_obj)
   {
@@ -45,7 +44,7 @@
     return NULL;
   }
 
-  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+  error = !memset( s, 0, sizeof({{ class.privName }}) );
 
   s->type_ = type;
   s->copy = (oyStruct_Copy_f) oy{{ class.baseName }}_Copy;
@@ -54,7 +53,6 @@
   s->oy_ = s_obj;
 
   error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
-# undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
   {% block customConstructor %}
