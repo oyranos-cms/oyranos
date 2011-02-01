@@ -10,7 +10,6 @@
 
 #include "oyStruct_s.h"
 
-typedef struct {{ class.name }} {{ class.name }};
 
 {% block doxygenPublicClass %}
 /* Include "{{ class.dox }}" { */

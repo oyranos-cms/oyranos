@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/01/30
+ *  @since    2011/01/31
  */
 
 
@@ -25,7 +25,6 @@
 
 #include "oyStruct_s.h"
 
-typedef struct oyName_s oyName_s;
 
 
 /* Include "Name.dox" { */

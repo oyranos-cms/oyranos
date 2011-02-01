@@ -516,10 +516,6 @@ struct oyConnectorImaging_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
-  /** unique strings, nick and name will be used as the connector's type ID,
-   *  e.g."Img", "Image", "Image Socket"*/
-  oyName_s             name;
-
   /**
    *  The following types should have a "data" attribute in the application
    *  level as these connectors pass the imaging data.

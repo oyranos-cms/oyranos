@@ -24,7 +24,7 @@
 #include "oyBlob_s.h"
 #include "oyCMMptr_s.h"
 #include "oyHash_s.h"
-#include "oyName_s_.h"
+#include "oyName_s.h"
 #include "oyObject_s.h"
 #include "oyObserver_s.h"
 #include "oyOption_s.h"

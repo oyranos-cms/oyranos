@@ -6,6 +6,7 @@
 
 {% include "cpp_begin.h" %}
 
+typedef struct {{ class.name }} {{ class.name }};
 
 {% include "cpp_end.h" %}
 #endif /* {{ file_name|underscores|upper|tr:". _" }} */

@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/01/30
+ *  @since    2011/01/31
  */
 
 
@@ -25,6 +25,7 @@
 #endif /* __cplusplus */
 
 
+typedef struct oyName_s oyName_s;
 
 #ifdef __cplusplus
 } /* extern "C" */

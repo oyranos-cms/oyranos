@@ -81,8 +81,6 @@ OYAPI oyConnectorImaging_s * OYEXPORT
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
-  s->name.type = oyOBJECT_NAME_S;
-
   s->is_plug = -1;
   s->max_colour_offset = -1;
   s->min_channels_count = -1;
@@ -132,10 +130,7 @@ oyConnectorImaging_s *
   {
     allocateFunc_ = s->oy_->allocateFunc_;
 
-    s->name.nick = oyStringCopy_( obj->name.nick, allocateFunc_);
-    s->name.name = oyStringCopy_( obj->name.name, allocateFunc_);
-    s->name.description = oyStringCopy_( obj->name.description, allocateFunc_);
-
+    error = oyObject_CopyNames( s->oy_, obj->oy_ );
     s->connector_type = obj->connector_type;
     s->is_plug = obj->is_plug;
     if(obj->data_types_n)
@@ -246,10 +241,6 @@ OYAPI int  OYEXPORT
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-
-    if(s->name.nick) deallocateFunc( s->name.nick );
-    if(s->name.name) deallocateFunc( s->name.name );
-    if(s->name.description) deallocateFunc( s->name.description );
 
     if(s->data_types)
       deallocateFunc( s->data_types ); s->data_types = 0;
