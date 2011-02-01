@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/01/30
+ *  @since    2011/02/01
  */
 
 
@@ -104,6 +104,11 @@ OYAPI oyOption_s * OYEXPORT
                                        int                 pos );
 OYAPI int  OYEXPORT
            oyOptions_Count           ( oyOptions_s       * list );
+OYAPI int  OYEXPORT
+           oyOptions_Clear           ( oyOptions_s       * list );
+OYAPI int  OYEXPORT
+           oyOptions_Sort            ( oyOptions_s       * list,
+                                       int32_t           * rank_list );
 
 
 

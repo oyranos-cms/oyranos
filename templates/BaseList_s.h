@@ -19,4 +19,9 @@ OYAPI {{ class.listOf }} * OYEXPORT
                                        int                 pos );
 OYAPI int  OYEXPORT
            oy{{ class.baseName }}_Count           ( {{ class.name }}       * list );
+OYAPI int  OYEXPORT
+           oy{{ class.baseName }}_Clear           ( {{ class.name }}       * list );
+OYAPI int  OYEXPORT
+           oy{{ class.baseName }}_Sort            ( {{ class.name }}       * list,
+                                       int32_t           * rank_list );
 {% endblock GeneralPublicMethodsDeclarations %}

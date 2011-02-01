@@ -128,4 +128,52 @@ OYAPI int  OYEXPORT
     return oyStructList_Count( s->list_ );
   else return 0;
 }
+
+/** Function oy{{ class.baseName }}_Clear
+ *  @memberof {{ class.name }}
+ *  @brief   clear the elements in a {{ class.baseName }} list
+ *
+ *  @param[in,out] list                the list
+ *  @return                            0 - success; otherwise - error
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/02/01 (Oyranos: 0.3.0)
+ *  @date    2011/02/01
+ */
+OYAPI int  OYEXPORT
+           oy{{ class.baseName }}_Clear           ( {{ class.name }}       * list )
+{       
+  int error = !list;
+  {{ class.privName }} * s = ({{ class.privName }}*)list;
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
+
+  if(!error)
+    return oyStructList_Clear( s->list_ );
+  else return 0;
+}
+
+/** Function oy{{ class.baseName }}_Sort
+ *  @memberof {{ class.name }}
+ *  @brief   sort a list according to a rank_list
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/02/01 (Oyranos: 0.3.0)
+ *  @date    2011/02/01
+ */
+OYAPI int  OYEXPORT
+           oy{{ class.baseName }}_Sort            ( {{ class.name }}       * list,
+                                       int32_t           * rank_list )
+{       
+  int error = !list;
+  {{ class.privName }} * s = ({{ class.privName }}*)list;
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
+
+  if(!error)
+    return oyStructList_Sort( s->list_, rank_list );
+  else return 0;
+}
 {% endblock GeneralPublicMethodsDefinitions %}

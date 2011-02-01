@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/01/30
+ *  @since    2011/02/01
  */
 
 
@@ -225,6 +225,54 @@ OYAPI int  OYEXPORT
 
   if(!error)
     return oyStructList_Count( s->list_ );
+  else return 0;
+}
+
+/** Function oyOptions_Clear
+ *  @memberof oyOptions_s
+ *  @brief   clear the elements in a Options list
+ *
+ *  @param[in,out] list                the list
+ *  @return                            0 - success; otherwise - error
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/02/01 (Oyranos: 0.3.0)
+ *  @date    2011/02/01
+ */
+OYAPI int  OYEXPORT
+           oyOptions_Clear           ( oyOptions_s       * list )
+{       
+  int error = !list;
+  oyOptions_s_ * s = (oyOptions_s_*)list;
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
+
+  if(!error)
+    return oyStructList_Clear( s->list_ );
+  else return 0;
+}
+
+/** Function oyOptions_Sort
+ *  @memberof oyOptions_s
+ *  @brief   sort a list according to a rank_list
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/02/01 (Oyranos: 0.3.0)
+ *  @date    2011/02/01
+ */
+OYAPI int  OYEXPORT
+           oyOptions_Sort            ( oyOptions_s       * list,
+                                       int32_t           * rank_list )
+{       
+  int error = !list;
+  oyOptions_s_ * s = (oyOptions_s_*)list;
+
+  if(!error)
+    oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
+
+  if(!error)
+    return oyStructList_Sort( s->list_, rank_list );
   else return 0;
 }
 
