@@ -1241,13 +1241,13 @@ int          oyCMMdsoReference_    ( const char        * lib_name,
 
   if(!found)
   {
-    oyCMMptr_s * s = oyCMMptr_New_(0);
+    oyCMMptr_s * s = oyCMMptr_New(0);
     oyStruct_s * oy_cmm_struct = 0;
 
     error = !s;
 
     if(error <= 0)
-      error = oyCMMptr_Set_( s, lib_name, 0, ptr, "oyDlclose", oyDlclose );
+      error = oyCMMptr_Set( s, lib_name, 0, ptr, "oyDlclose", oyDlclose );
 
     if(error <= 0)
       oy_cmm_struct = (oyStruct_s*) s;
@@ -1860,11 +1860,11 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
   STRING_ADD( text, "\n  " ); \
   STRING_ADD( text, name_ ); \
   STRING_ADD( text, ":\n    " ); \
-  STRING_ADD( text, cmm_info->getText( select, oyNAME_NICK, cmm_info ) ); \
+  STRING_ADD( text, cmm_info->getText( select, oyNAME_NICK, (oyStruct_s*) cmm_info ) ); \
   STRING_ADD( text, "\n    " ); \
-  STRING_ADD( text, cmm_info->getText( select, oyNAME_NAME, cmm_info ) ); \
+  STRING_ADD( text, cmm_info->getText( select, oyNAME_NAME, (oyStruct_s*) cmm_info ) ); \
   STRING_ADD( text, "\n    " ); \
-  STRING_ADD( text, cmm_info->getText( select, oyNAME_DESCRIPTION, cmm_info)); \
+  STRING_ADD( text, cmm_info->getText( select, oyNAME_DESCRIPTION, (oyStruct_s*) cmm_info)); \
   STRING_ADD( text, "\n" );
 
   CMMINFO_ADD_NAME_TO_TEXT( _("Name"), "name" )
@@ -2816,7 +2816,8 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
                  oyNoEmptyString_m_(api->registration));
       }
       if(!(s->ui && s->ui->texts &&
-           s->ui->getText && s->ui->getText("name", oyNAME_NAME)))
+           s->ui->getText && s->ui->getText("name", oyNAME_NAME, (oyStruct_s*)
+                                            s->ui)))
       {
         error = 1;
         WARNc2_S("Missed module name: %s %s",
@@ -3348,11 +3349,11 @@ oyCMMptr_s * oyCMMptrLookUpFromText  ( const char        * text,
 
       if(!cmm_ptr)
       {
-        cmm_ptr = oyCMMptr_New_( 0 );
+        cmm_ptr = oyCMMptr_New( 0 );
         error = !cmm_ptr;
 
         if(error <= 0)
-          error = oyCMMptr_Set_( cmm_ptr, 0,
+          error = oyCMMptr_Set( cmm_ptr, 0,
                                  data_type, 0, 0, 0 );
 
         error = !cmm_ptr;
@@ -5810,7 +5811,7 @@ const char * oyConfDomain_GetText_   ( oyConfDomain_s_   * obj,
   oyConfDomain_s_ * s = obj;
 
   if(s->api8 && s->api8->ui && s->api8->ui->getText)
-    text = s->api8->ui->getText( name, type );
+    text = s->api8->ui->getText( name, type, (oyStruct_s*)s->api8->ui );
 
   return text;
 }
@@ -6039,9 +6040,9 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
                                        uint32_t            flags,
                                        const char        * filter_type )
 {
-  oyOptions_s_ * s = opts;
+  oyOptions_s_ * s = (oyOptions_s_*) opts;
   oyOptions_s_ * opts_tmp = 0;
-  oyOption_s_ * o = 0;
+  oyOption_s * o = 0;
   int error = !s;
   char * text;
   int i,n;
@@ -6052,20 +6053,20 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
   if(error <= 0 && (flags || filter_type))
   {
     /*  6. get stored values */
-    n = oyOptions_Count( s );
-    opts_tmp = oyOptions_New(0);
+    n = oyOptions_Count( opts );
+    opts_tmp = (oyOptions_s_*) oyOptions_New(0);
     for(i = 0; i < n; ++i)
     {
       int skip = 0;
 
-      o = oyOptions_Get( s, i );
+      o = oyOptions_Get( opts, i );
 
 
       /* usage/type range filter */
       if(filter_type)
       {
-        text = oyFilterRegistrationToText( o->registration, oyFILTER_REG_TYPE,
-                                           0);
+        text = oyFilterRegistrationToText( oyOption_GetRegistration(o),
+                                           oyFILTER_REG_TYPE, 0);
         if(oyStrcmp_( filter_type, text ) != 0)
           skip = 1;
 
@@ -6075,7 +6076,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
       /* front end options filter */
       if(!skip && !(flags & oyOPTIONATTRIBUTE_FRONT))
       {
-        text = oyStrrchr_( o->registration, '/' );
+        text = oyStrrchr_( oyOption_GetRegistration(o), '/' );
 
         if(text)
            text = oyStrchr_( text, '.' );
@@ -6087,14 +6088,15 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
       /* advanced options mark and zero */
       if(!skip && !(flags & oyOPTIONATTRIBUTE_ADVANCED))
       {
-        text = oyStrrchr_( o->registration, '/' );
+        text = oyStrrchr_( oyOption_GetRegistration(o), '/' );
         if(text)
            text = oyStrchr_( text, '.' );
         if(text)
           if(oyStrstr_( text, "advanced" ))
           {
             oyOption_SetFromText( o, "0", 0 );
-            o->flags = o->flags & (~oyOPTIONATTRIBUTE_EDIT);
+            oyOption_SetFlags( o,
+                              oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
           }
       } else
       /* Elektra settings, modify value */
@@ -6105,20 +6107,20 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
         if(text && text[0])
         {
           error = oyOption_SetFromText( o, text, 0 );
-          o->flags = o->flags & (~oyOPTIONATTRIBUTE_EDIT);
-          o->source = oyOPTIONSOURCE_USER;
+          oyOption_SetFlags(o,oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
+          oyOption_SetSource( o, oyOPTIONSOURCE_USER );
           oyFree_m_( text );
         }
       }
 
       if(!skip)
-        oyOptions_Add( opts_tmp, o, -1, s->oy_ );
+        oyOptions_Add( (oyOptions_s*)opts_tmp, o, -1, s->oy_ );
 
       oyOption_Release( &o );
     }
 
     error = oyStructList_CopyFrom( s->list_, opts_tmp->list_, 0 );
-    oyOptions_Release( &opts_tmp );
+    oyOptions_Release( (oyOptions_s**)&opts_tmp );
   }
 
   return error;
@@ -6160,7 +6162,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
   oyOptions_s * s = 0,
               * opts_tmp = 0,
               * opts_tmp2 = 0;
-  oyOption_s_ * o = 0;
+  oyOption_s * o = 0;
   int error = !filter || !filter->api4_;
   char * type_txt = oyFilterRegistrationToText( filter->registration_,
                                                 oyFILTER_REG_TYPE, 0 );
@@ -6244,7 +6246,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
     for(i = 0; i < n && error <= 0; ++i)
     {
       o = oyOptions_Get( s, i );
-      o->source = oyOPTIONSOURCE_FILTER;
+      oyOption_SetSource( o, oyOPTIONSOURCE_FILTER );
       /* ask Elektra */
       if(!(flags & oyOPTIONSOURCE_FILTER))
         error = oyOption_SetValueFromDB( o );
@@ -6346,7 +6348,7 @@ OYAPI int  OYEXPORT
                                        oyAlloc_f           allocateFunc )
 {
   int error = !options || !registration;
-  oyOption_s_ * o = 0;
+  oyOption_s * o = 0;
   int n,i;
   char * key_base_name = 0,
        * key_name = 0,
@@ -6368,14 +6370,15 @@ OYAPI int  OYEXPORT
     for( i = 0; i < n; ++i )
     {
       o = oyOptions_Get( options, i );
-      key_top = oyFilterRegistrationToText( o->registration,
+      key_top = oyFilterRegistrationToText( oyOption_GetRegistration(o),
                                             oyFILTER_REG_MAX, 0 );
 
 
       STRING_ADD( key_name, key_base_name );
       STRING_ADD( key_name, key_top );
-      if(o->value_type == oyVAL_STRING && o->value && o->value->string)
-        error = oyAddKey_valueComment_(key_name, o->value->string, 0);
+      if(oyOption_GetValueString(o,0))
+        error = oyAddKey_valueComment_( key_name, oyOption_GetValueString(o,0),
+                                        0 );
 # if 0
       else if(o->value_type == oyVAL_STRUCT &&
               o->value && o->value->oy_struct->type_ == oyOBJECT_BLOB_S)
@@ -7547,7 +7550,7 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
                                        char             ** profile_name,
                                        oyAlloc_f           allocateFunc )
 {
-  oyOption_s_ * o = 0;
+  oyOption_s * o = 0;
   oyOptions_s * options = 0;
   int error = !device || !profile_name;
   const char * device_name = 0;
@@ -7613,14 +7616,13 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
         oyFree_m_(tmp); tmp2 = 0;
       oyOption_Release( &o );
       error = -1;
-    } else if(o->value_type != oyVAL_STRING ||
-            !(o->value && o->value->string && o->value->string[0]) )
+    } else if(!oyOption_GetValueString(o,0))
     {
       WARNc1_S( "Could not get \"profile_name\" data from %s", 
                 oyNoEmptyString_m_(device_name) )
       error = -1;
     } else
-      *profile_name = oyStringCopy_( o->value->string, allocateFunc );
+      *profile_name = oyOption_GetValueText( o, allocateFunc );
 
   } else
     WARNc_S( "missed argument(s)" );
@@ -7660,12 +7662,12 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
                                        uint32_t            flags,
                                        oyConfigs_s      ** matched_devices )
 {
-  oyOption_s_ * odh = 0,
+  oyOption_s * odh = 0,
              * od = 0;
   int error  = !pattern || !matched_devices;
-  char * od_key = 0,
-       * od_val = 0,
-       * odh_val = 0;
+  char * od_key = 0;
+  const char * od_val = 0,
+             * odh_val = 0;
   oyConfig_s * s = pattern,
              * dh = 0;
   oyConfigs_s * matched = 0;
@@ -7713,10 +7715,8 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
         od_key = oyFilterRegistrationToText( oyOption_GetRegistration(od),
                                              oyFILTER_REG_MAX, 0);
 
-        if(od->value_type == oyVAL_STRING &&
-           od->value && od->value->string && od->value->string[0])
-          od_val = od->value->string;
-        else
+        od_val = oyOption_GetValueString( od, 0 );
+        if(!od_val)
           /* ignore non text options */
           continue;
 
@@ -7745,10 +7745,8 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
 
         odh = oyOptions_Find( dh->db, od_key );
 
-        if(odh && odh->value_type == oyVAL_STRING &&
-           odh->value && odh->value->string && odh->value->string[0])
-          odh_val = odh->value->string;
-        else
+        odh_val = oyOption_GetValueString( odh, 0 );
+        if( !odh_val )
           /* ignore non text options */
           match = 0;
 
@@ -9139,7 +9137,6 @@ OYAPI oyPointer OYEXPORT
 int                oyProfile_GetMD5  ( oyProfile_s       * profile,
                                        uint32_t          * md5 )
 {
-  oyPointer block = 0;
   oyProfile_s * s = profile;
   int error = !s;
 
@@ -9453,15 +9450,16 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
 
   char ** keys,
        ** values,
-        * key, * val;
-  const char * r;
+        * key;
+  const char * val,
+             * r;
   void * string = 0;
   const char * key_prefix_required = oyOptions_FindString( options,
                                             "key_prefix_required", 0 );
   int key_prefix_required_len = 0;
 
   /* get just some device */
-  oyOption_s_ * o = 0;
+  oyOption_s * o = 0;
   oyConfig_s * d = device;
 
   oyProfile_s * p = profile;
@@ -9482,9 +9480,9 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
     o = oyConfig_Get( d, i );
     r = oyOption_GetRegistration(o);
     reg = oyFilterRegistrationToText( r, oyFILTER_REG_OPTION, oyAllocateFunc_ );
-    if(o->value_type == oyVAL_STRING)
+    val = oyOption_GetValueString( o, 0 );
+    if(val)
     {
-      char * val = oyOption_GetValueText( o, oyAllocateFunc_ );
       int pass = 1;
 
       if(key_prefix_required)
@@ -9499,10 +9497,8 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
       if(val && pass)
       {
         DBG_PROG2_S("%s: %s", reg, val );
-        oyDeAllocateFunc_(val);
         ++count;
-      } else if(val)
-        oyFree_m_(val);
+      }
     }
     if(reg) oyDeAllocateFunc_(reg);
   }
@@ -9521,7 +9517,8 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
     r = oyOption_GetRegistration(o);
     key = oyFilterRegistrationToText( r, oyFILTER_REG_OPTION,
                                              oyAllocateFunc_ );
-    if(o->value_type == oyVAL_STRING)
+    val = oyOption_GetValueString( o, 0 );
+    if(val)
     {
       int pass = 1;
 
@@ -9534,17 +9531,15 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
           pass = 1;
       }
 
-      val = oyOption_GetValueText( o, oyAllocateFunc_ );
-      if(val && pass)
+      if(pass)
       {
         keys[pos] = key;
-        values[pos] = val;
+        values[pos] = oyStringCopy_(val,oyAllocateFunc_);
         DBG_PROG2_S("%s: %s", key, val );
         block_size += (strlen(key) + strlen(val)) * 2 + 2;
         ++pos;
         key = 0;
-      } else if(val)
-        oyFree_m_(val);
+      }
     }
     if(key) oyDeAllocateFunc_( key ); key = 0;
   }
@@ -16907,7 +16902,8 @@ const char * oyFilterCore_GetName    ( oyFilterCore_s    * filter,
   if(!s)
     return 0;
 
-  return oyNoEmptyName_m_( filter->api4_->ui->getText( "name", name_type ) );
+  return oyNoEmptyName_m_( filter->api4_->ui->getText( "name", name_type,
+                           (oyStruct_s*)filter->api4_->ui ) );
 }
 /** Function oyFilterCore_CategoryGet
  *  @memberof oyFilterCore_s
@@ -18810,7 +18806,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
               if(!cmm_ptr)
               {
                 size = 0;
-                cmm_ptr = oyCMMptr_New_(0);
+                cmm_ptr = oyCMMptr_New(0);
               }
 
               /* write the context to memory */
@@ -18846,7 +18842,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
 
                 if(!error)
                 {
-                  error = oyCMMptr_Set_( cmm_ptr, s->api4_->id_,
+                  error = oyCMMptr_Set( cmm_ptr, s->api4_->id_,
                                          s->api4_->context_type,
                                     ptr, "oyPointerRelease", oyPointerRelease);
                   ((oyCMMptr_s_*)cmm_ptr)->size = size;
@@ -18865,8 +18861,8 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                 if( oyStrcmp_( node->api7_->context_type,
                                s->api4_->context_type ) != 0 )
                 {
-                  cmm_ptr_out = oyCMMptr_New_(0);
-                  error = oyCMMptr_Set_( cmm_ptr_out, node->api7_->id_,
+                  cmm_ptr_out = oyCMMptr_New(0);
+                  error = oyCMMptr_Set( cmm_ptr_out, node->api7_->id_,
                                          node->api7_->context_type, 0, 0, 0);
 
                   /* search for a convertor and convert */
@@ -18877,7 +18873,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                                               (oyStruct_s*) cmm_ptr_out);
 
                 } else
-                  node->backend_data = oyCMMptr_Copy_( cmm_ptr, 0 );
+                  node->backend_data = oyCMMptr_Copy( cmm_ptr, 0 );
               }
 
               if(oy_debug == 1)
@@ -19997,13 +19993,13 @@ oyCMMptr_s *       oyColourConversion_CallCMM_ (
     int i, n;
 
     if(obj)
-      cmm_ptr = oyCMMptr_New_(0);
+      cmm_ptr = oyCMMptr_New(0);
     else
-      cmm_ptr = oyCMMptr_New_(0);
+      cmm_ptr = oyCMMptr_New(0);
     error = !cmm_ptr;
 
     if(error <= 0)
-      error = oyCMMptr_Set_( cmm_ptr, lib_used, oyCMM_COLOUR_CONVERSION,0,0,0 );
+      error = oyCMMptr_Set( cmm_ptr, lib_used, oyCMM_COLOUR_CONVERSION,0,0,0 );
 
     /* collect profiles */
     if(error <= 0)
@@ -22827,7 +22823,7 @@ char *   oyGetDisplayNameFromPosition2(const char        * device_type,
   oyConfig_s * device = 0;
   oyConfigs_s * devices = 0;
   oyOptions_s * options = 0;
-  oyOption_s_ * o = 0;
+  oyOption_s * o = 0;
   oyRectangle_s * r = 0;
   int n, i;
   const char * device_name = 0;
@@ -22854,9 +22850,7 @@ char *   oyGetDisplayNameFromPosition2(const char        * device_type,
     device = oyConfigs_Get( devices, i );
     o = oyConfig_Find( device, "device_rectangle" );
 
-    if(o && o->value && o->value->oy_struct &&
-       o->value->oy_struct->type_ == oyOBJECT_RECTANGLE_S)
-      r = (oyRectangle_s*) o->value->oy_struct;
+    r = (oyRectangle_s*) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
 
     if(!device_name &&
        r && oyRectangle_PointIsInside( r, x,y ))
@@ -22897,7 +22891,7 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
   oyConfig_s * device = 0;
   oyConfigs_s * devices = 0;
   oyOptions_s * options = 0;
-  oyOption_s_ * o = 0;
+  oyOption_s * o = 0;
   oyRectangle_s * r = 0;
   int n, i;
   const char * device_name = 0;
@@ -22924,9 +22918,7 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
     device = oyConfigs_Get( devices, i );
     o = oyConfig_Find( device, "device_rectangle" );
 
-    if(o && o->value && o->value->oy_struct &&
-       o->value->oy_struct->type_ == oyOBJECT_RECTANGLE_S)
-      r = (oyRectangle_s*) o->value->oy_struct;
+    r = (oyRectangle_s*) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
 
     if(!device_name &&
        r && oyRectangle_PointIsInside( r, x,y ))
