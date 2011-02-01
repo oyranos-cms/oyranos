@@ -209,7 +209,8 @@ int      oyraFilterPlug_ImageLoadRun (
 
 oyConnectorImaging_s oyra_imageLoad_plug = {
   oyOBJECT_CONNECTOR_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Load Plug"},
+  oyCMMgetImageConnectorPlugText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/generator.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   1, /* is_plug == oyFilterPlug_s */
@@ -237,7 +238,8 @@ oyConnectorImaging_s *oyra_imageLoad_plugs[2] = {&oyra_imageLoad_plug,0};
 
 oyConnectorImaging_s oyra_imageLoad_socket = {
   oyOBJECT_CONNECTOR_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Load Socket"},
+  oyCMMgetImageConnectorSocketText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/generator.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
@@ -306,7 +308,8 @@ oyCMMapi7_s   oyra_api7_image_load = {
 
 const char * oyraApi4UiImageLoadGetText (
                                        const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   if(strcmp(select,"name"))
   {
@@ -537,7 +540,8 @@ int      oyraFilterPlug_ImageRectanglesRun (
 
 oyConnectorImaging_s oyra_imageRectangles_plug = {
   oyOBJECT_CONNECTOR_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Rectangles Plug"},
+  oyCMMgetImageConnectorPlugText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/splitter.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   1, /* is_plug == oyFilterPlug_s */
@@ -565,7 +569,8 @@ oyConnectorImaging_s *oyra_imageRectangles_plugs[2] = {&oyra_imageRectangles_plu
 
 oyConnectorImaging_s oyra_imageRectangles_socket = {
   oyOBJECT_CONNECTOR_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Rectangles Socket"},
+  oyCMMgetImageConnectorSocketText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
@@ -632,7 +637,8 @@ oyCMMapi7_s   oyra_api7_image_rectangles = {
 
 const char * oyraApi4UiImageRectanglesGetText (
                                        const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   if(strcmp(select,"name"))
   {
@@ -787,7 +793,8 @@ int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
 
 oyConnectorImaging_s oyra_imageRoot_connector = {
   oyOBJECT_CONNECTOR_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Socket"},
+  oyCMMgetImageConnectorSocketText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
@@ -854,7 +861,8 @@ oyCMMapi7_s   oyra_api7_image_root = {
 
 const char * oyraApi4UiImageRootGetText (
                                        const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   if(strcmp(select,"name"))
   {
@@ -944,7 +952,8 @@ oyCMMapi4_s   oyra_api4_image_root = {
 
 oyConnectorImaging_s oyra_imageOutput_connector = {
   oyOBJECT_CONNECTOR_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Plug"},
+  oyCMMgetImageConnectorPlugText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   1, /* is_plug == oyFilterPlug_s */
@@ -1034,7 +1043,8 @@ oyCMMapi7_s   oyra_api7_image_output = {
 
 const char * oyraApi4UiImageOutputGetText (
                                        const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   if(strcmp(select,"name"))
   {

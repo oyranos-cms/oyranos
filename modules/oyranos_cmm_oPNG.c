@@ -76,13 +76,14 @@ int            oPNGCMMMessageFuncSet ( oyMessage_f         message_func )
  *  @date    2010/09/06
  */
 const char * oPNGGetText             ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   if(strcmp(select, "name")==0)
     if(type == oyNAME_NICK)
       return _(CMM_NICK);
 
-  return oyCMMgetText( select, type );
+  return oyCMMgetText( select, type, context );
 }
 
 
@@ -401,9 +402,12 @@ int  oPNGPNGwriteUiGet               ( oyOptions_s       * opts,
 oyDATATYPE_e oPNG_image_png_data_types[5] = {oyUINT8, oyUINT16,
                                              oyFLOAT, oyDOUBLE, 0};
 
+
+
 oyConnectorImaging_s oPNG_imageOutputPNG_connector_out = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image PNG Socket"},
+  oyCMMgetImageConnectorSocketText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
@@ -430,9 +434,11 @@ oyConnectorImaging_s oPNG_imageOutputPNG_connector_out = {
 oyConnectorImaging_s * oPNG_imageOutputPNG_connectors_socket[2] = 
              { &oPNG_imageOutputPNG_connector_out, 0 };
 
+
 oyConnectorImaging_s oPNG_imageOutputPNG_connector_in = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image PNG Plug"},
+  oyCMMgetImageConnectorPlugText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   1, /* is_plug == oyFilterPlug_s */
@@ -468,7 +474,8 @@ oyConnectorImaging_s * oPNG_imageOutputPNG_connectors_plug[2] =
  */
 const char * oPNGApi4ImageWriteUiGetText (
                                        const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   static char * category = 0;
   if(strcmp(select,"name"))
@@ -969,10 +976,28 @@ int  oPNGPNGreadUiGet                ( oyOptions_s       * opts,
   return 0;
 }
 
+const char * oPNG_imageInputPNG_connectorGetText (
+                                       const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
+{
+  if(strcmp(select, "name")==0)
+  {
+    if(type == oyNAME_NICK)
+      return _("Img");
+    else if(type == oyNAME_NAME)
+      return _("Image");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("Image PNG Socket");
+  }
+  return NULL;
+}
+
 
 oyConnectorImaging_s oPNG_imageInputPNG_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image PNG Socket"},
+  oyCMMgetImageConnectorSocketText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
@@ -1009,7 +1034,8 @@ oyConnectorImaging_s * oPNG_imageInputPNG_connectors[2] =
  */
 const char * oPNGApi4ImageInputUiGetText (
                                        const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   static char * category = 0;
   if(strcmp(select,"name"))

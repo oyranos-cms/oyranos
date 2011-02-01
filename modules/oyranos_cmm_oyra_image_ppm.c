@@ -314,7 +314,8 @@ oyDATATYPE_e oyra_image_ppm_data_types[5] = {oyUINT8, oyUINT16,
 
 oyConnectorImaging_s oyra_imageOutputPPM_connector_out = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image PPM Socket"},
+  oyCMMgetImageConnectorSocketText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
@@ -343,7 +344,8 @@ oyConnectorImaging_s * oyra_imageOutputPPM_connectors_socket[2] =
 
 oyConnectorImaging_s oyra_imageOutputPPM_connector_in = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image PPM Plug"},
+  oyCMMgetImageConnectorPlugText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   1, /* is_plug == oyFilterPlug_s */
@@ -379,7 +381,8 @@ oyConnectorImaging_s * oyra_imageOutputPPM_connectors_plug[2] =
  */
 const char * oyraApi4ImageWriteUiGetText (
                                        const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   static char * category = 0;
   if(strcmp(select,"name"))
@@ -1075,7 +1078,8 @@ int  oyraPPMreadUiGet                ( oyOptions_s       * opts,
 
 oyConnectorImaging_s oyra_imageInputPPM_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image PPM Socket"},
+  oyCMMgetImageConnectorSocketText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
@@ -1112,7 +1116,8 @@ oyConnectorImaging_s * oyra_imageInputPPM_connectors[2] =
  */
 const char * oyraApi4ImageInputUiGetText (
                                        const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   static char * category = 0;
   if(strcmp(select,"name"))

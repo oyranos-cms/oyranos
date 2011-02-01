@@ -156,7 +156,8 @@ int  lcmsCMMdata_Convert             ( oyCMMptr_s        * data_in,
 int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket );
 const char * lcmsInfoGetText         ( const char        * select,
-                                       oyNAME_e            type );
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
 
 
 
@@ -719,7 +720,8 @@ oyDATATYPE_e lcms_cmmIcc_data_types[7] = {oyUINT8, oyUINT16, oyDOUBLE, 0};
 
 oyConnectorImaging_s lcms_cmmIccSocket_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Socket"},
+  oyCMMgetImageConnectorSocketText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/manipulator.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
@@ -747,7 +749,8 @@ oyConnectorImaging_s* lcms_cmmIccSocket_connectors[2]={&lcms_cmmIccSocket_connec
 
 oyConnectorImaging_s lcms_cmmIccPlug_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Plug"},
+  oyCMMgetImageConnectorPlugText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/manipulator.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   1, /* is_plug == oyFilterPlug_s */
@@ -1944,7 +1947,8 @@ int          lcmsMOptions_Handle     ( oyOptions_s       * options,
  *  @date    2009/12/11
  */
 const char * lcmsInfoGetTextProfileC ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
          if(strcmp(select, "can_handle")==0)
   {
@@ -2086,13 +2090,14 @@ oyCMMapi7_s   lcms_api7_cmm = {
  */
 const char * lcmsApi4UiGetText (
                                        const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   static char * category = 0;
   if(strcmp(select,"name") ||
      strcmp(select,"help"))
   {
-    return lcmsInfoGetText( select, type );
+    return lcmsInfoGetText( select, type, context );
   }
   else if(strcmp(select,"category"))
   {
@@ -2185,7 +2190,8 @@ oyCMMapi4_s   lcms_api4_cmm = {
  *  @date    2008/12/30
  */
 const char * lcmsInfoGetText         ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
          if(strcmp(select, "name")==0)
   {

@@ -113,7 +113,8 @@ oyWIDGET_EVENT_e   oyIMWidgetEvent   ( oyOptions_s       * options,
  *  @date    2008/12/30
  */
 const char * oyIMInfoGetText         ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
          if(strcmp(select, "name")==0)
   {

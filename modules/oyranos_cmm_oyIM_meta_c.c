@@ -206,7 +206,8 @@ int          oyIMFilterScan          ( oyPointer           data,
           if(registration)
             *registration = oyStringCopy_( api4->registration, allocateFunc );
           if(name)
-            *name = oyStringCopy_( api4->ui->getText("name",oyNAME_NAME),
+            *name = oyStringCopy_( api4->ui->getText("name",oyNAME_NAME,
+                                                     api4->ui),
                                    allocateFunc );
           if(info)
             *info = oyCMMInfo_Copy( cmm_info, object );

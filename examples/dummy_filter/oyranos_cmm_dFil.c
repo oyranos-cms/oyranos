@@ -291,7 +291,8 @@ oyDATATYPE_e dFil_data_types[3] = {oyUINT8, oyUINT16, (oyDATATYPE_e)0};
 /** My filters socket for delivering results */
 oyConnectorImaging_s dFil_myFilter_connectorSocket = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "My Filter Socket"},
+  oyCMMgetImageConnectorSocketText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
@@ -322,7 +323,8 @@ oyConnectorImaging_s * dFil_myFilter_connectorSockets[2] =
 /** My filters plug for obtaining data */
 oyConnectorImaging_s dFil_myFilter_connectorPlug = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "My Filter Plug"},
+  oyCMMgetImageConnectorPlugText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   1, /* is_plug == oyFilterPlug_s */

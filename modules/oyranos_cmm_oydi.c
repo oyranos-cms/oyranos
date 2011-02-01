@@ -50,10 +50,12 @@ oyOptions_s* oydiFilter_ImageDisplayValidateOptions
                                        int                 statical,
                                        uint32_t          * result );
 const char * oydiGetText             ( const char        * select,
-                                       oyNAME_e            type );
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
 const char * oydiApi4UiImageDisplayGetText (
                                        const char        * select,
-                                       oyNAME_e            type );
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
 
 extern oyCMMapi4_s   oydi_api4_image_display;
 extern oyCMMapi7_s   oydi_api7_image_display;
@@ -759,7 +761,8 @@ oyDATATYPE_e oyx1_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
 
 oyConnectorImaging_s oyx1_Display_plug = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Display Plug"},
+  oyCMMgetImageConnectorPlugText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/splitter.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   1, /* is_plug == oyFilterPlug_s */
@@ -787,7 +790,8 @@ oyConnectorImaging_s *oyx1_Display_plugs[2] = {&oyx1_Display_plug,0};
 
 oyConnectorImaging_s oyx1_Display_socket = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Display Socket"},
+  oyCMMgetImageConnectorSocketText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
@@ -854,7 +858,8 @@ oyCMMapi7_s   oydi_api7_image_display = {
 
 const char * oydiApi4UiImageDisplayGetText (
                                        const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   if(strcmp(select,"name"))
   {
@@ -868,7 +873,7 @@ const char * oydiApi4UiImageDisplayGetText (
   {
     /* The help text is identical, as the module contains only one filter to
      * provide help for. */
-    return oydiGetText(select,type);
+    return oydiGetText(select,type,context);
   }
   return 0;
 }
@@ -973,7 +978,8 @@ int            oydiCMMMessageFuncSet ( oyMessage_f         message_func )
  *  @date    2008/04/12
  */
 const char * oydiGetText             ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
          if(strcmp(select, "name")==0)
   {

@@ -816,7 +816,8 @@ oyCMMapi9_s  oicc_api9 = {
  *  @date    2008/12/30
  */
 const char * oiccInfoGetText         ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
          if(strcmp(select, "name")==0)
   {

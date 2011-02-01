@@ -160,7 +160,8 @@ int  lcm2CMMdata_Convert             ( oyCMMptr_s        * data_in,
 int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket );
 const char * lcm2InfoGetText         ( const char        * select,
-                                       oyNAME_e            type );
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
 
 
 
@@ -757,7 +758,8 @@ oyDATATYPE_e lcm2_cmmIcc_data_types[7] = {oyUINT8, oyUINT16, oyFLOAT, oyDOUBLE, 
 
 oyConnectorImaging_s lcm2_cmmIccSocket_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Socket"},
+  oyCMMgetImageConnectorSocketText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/manipulator.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
@@ -785,7 +787,8 @@ oyConnectorImaging_s* lcm2_cmmIccSocket_connectors[2]={&lcm2_cmmIccSocket_connec
 
 oyConnectorImaging_s lcm2_cmmIccPlug_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
-  {oyOBJECT_NAME_S, 0,0,0, "Img", "Image", "Image Plug"},
+  oyCMMgetImageConnectorPlugText, /* getText */
+  oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/manipulator.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   1, /* is_plug == oyFilterPlug_s */
@@ -2179,7 +2182,8 @@ int          lcm2MOptions_Handle     ( oyOptions_s       * options,
  *  @date    2009/12/11
  */
 const char * lcm2InfoGetTextProfileC ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
          if(strcmp(select, "can_handle")==0)
   {
@@ -2321,13 +2325,14 @@ oyCMMapi7_s   lcm2_api7_cmm = {
  */
 const char * lcm2Api4UiGetText (
                                        const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   static char * category = 0;
   if(strcmp(select,"name") ||
      strcmp(select,"help"))
   {
-    return lcm2InfoGetText( select, type );
+    return lcm2InfoGetText( select, type, context );
   }
   else if(strcmp(select,"category"))
   {
@@ -2420,7 +2425,8 @@ oyCMMapi4_s   lcm2_api4_cmm = {
  *  @date    2008/12/30
  */
 const char * lcm2InfoGetText         ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
          if(strcmp(select, "name")==0)
   {
