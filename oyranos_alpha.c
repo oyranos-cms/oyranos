@@ -12,11 +12,11 @@
  *  @since    2004/11/25
  */
 
-#include "oyCMMptr_s_.h"
-#include "oyName_s_.h"
-#include "oyObserver_s_.h"
-#include "oyOption_s_.h"
-#include "oyOptions_s_.h"
+#include "oyCMMptr_s.h"
+#include "oyName_s.h"
+#include "oyObserver_s.h"
+#include "oyOption_s.h"
+#include "oyOptions_s.h"
 
 #include "oyranos_types.h"
 #include "oyranos_alpha.h"
@@ -5927,11 +5927,11 @@ char * oyDeviceRegistrationCreate_   ( const char        * device_type,
  */
 int            oyOption_SetValueFromDB  ( oyOption_s        * option )
 {
-  int error = !option || !oyOptionPriv_m(option)->registration;
+  int error = !option || !oyOption_GetRegistration(option);
   char * text = 0;
   oyPointer ptr = 0;
   size_t size = 0;
-  oyOption_s_ * s = (oyOption_s_*)option;
+  oyOption_s * s = option;
 
   if(error)
     return error;
@@ -5950,15 +5950,15 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
     if(text && text[0])
     {
       oyOption_SetFromText( option, text, 0 );
-      s->source = oyOPTIONSOURCE_DATA;
+      oyOption_SetSource( s, oyOPTIONSOURCE_DATA );
     }
     else
     {
-      ptr = oyGetKeyBinary_( s->registration, &size, oyAllocateFunc_ );
+      ptr = oyGetKeyBinary_( oyOption_GetRegistration(s), &size, oyAllocateFunc_ );
       if(ptr && size)
       {
         oyOption_SetFromData( option, ptr, size );
-        s->source = oyOPTIONSOURCE_DATA;
+        oyOption_SetSource( s, oyOPTIONSOURCE_DATA );
         oyFree_m_( ptr );
       }
     }
@@ -5996,7 +5996,7 @@ oyOption_s *   oyOption_FromDB       ( const char        * registration,
     o = oyOption_FromRegistration( registration, object );
     error = oyOption_SetFromText( o, 0, 0 );
     error = oyOption_SetValueFromDB( o );
-    ((oyOption_s_*)o)->source = oyOPTIONSOURCE_DATA;
+    oyOption_SetSource( o, oyOPTIONSOURCE_DATA );
   }
 
   return o;
@@ -6040,8 +6040,8 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
                                        uint32_t            flags,
                                        const char        * filter_type )
 {
-  oyOptions_s_ * s = (oyOptions_s_*) opts;
-  oyOptions_s_ * opts_tmp = 0;
+  oyOptions_s * s = opts;
+  oyOptions_s * opts_tmp = 0;
   oyOption_s * o = 0;
   int error = !s;
   char * text;
@@ -6054,7 +6054,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
   {
     /*  6. get stored values */
     n = oyOptions_Count( opts );
-    opts_tmp = (oyOptions_s_*) oyOptions_New(0);
+    opts_tmp = oyOptions_New(0);
     for(i = 0; i < n; ++i)
     {
       int skip = 0;
@@ -6119,8 +6119,14 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
       oyOption_Release( &o );
     }
 
-    error = oyStructList_CopyFrom( s->list_, opts_tmp->list_, 0 );
-    oyOptions_Release( (oyOptions_s**)&opts_tmp );
+    n = oyOptions_Count( opts_tmp );
+    error = oyOptions_Clear(s);
+    for( i = 0; i < n && !error; ++i )
+    {
+      o = oyOptions_Get( opts_tmp, i );
+      error = oyOptions_MoveIn( s, &o, -1 );
+    }
+    oyOptions_Release( &opts_tmp );
   }
 
   return error;
@@ -11878,7 +11884,7 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
     error = oyConfig_Compare( p_device, device, &rank );
     rank_list[i] = rank;
 
-    oyStructList_Clear( ((oyOptions_s_*)p_device->backend_core)->list_ );
+    oyOptions_Clear( p_device->backend_core );
     oyProfile_Release( &p );
   }
 
@@ -18845,7 +18851,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                   error = oyCMMptr_Set( cmm_ptr, s->api4_->id_,
                                          s->api4_->context_type,
                                     ptr, "oyPointerRelease", oyPointerRelease);
-                  ((oyCMMptr_s_*)cmm_ptr)->size = size;
+                  oyCMMptr_SetSize( cmm_ptr, size );
 
                   /* 3b.1. update cache entry */
                   error = oyHash_SetPointer( hash, (oyStruct_s*) cmm_ptr);
