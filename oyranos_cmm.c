@@ -458,7 +458,8 @@ int          oyFilterSocket_MatchImagingPlug (
  *  @date    2010/09/06
  */
 const char * oyCMMgetText             ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
          if(strcmp(select, "name")==0)
   {
@@ -488,4 +489,52 @@ const char * oyCMMgetText             ( const char        * select,
   return 0;
 }
 const char *oyCMM_texts[4] = {"name","copyright","manufacturer",0};
+
+/**
+ *  This function implements oyCMMInfoGetText_f for image connector plugs.
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/02/01 (Oyranos: 0.3.0)
+ *  @date    2011/02/01
+ */
+const char * oyCMMgetImageConnectorPlugText (
+                                       const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
+{
+  if(strcmp(select, "name")==0)
+  {
+    if(type == oyNAME_NICK)
+      return _("Img");
+    else if(type == oyNAME_NAME)
+      return _("Image");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("Image PNG Plug");
+  }
+  return NULL;
+}
+const char * oy_image_connector_texts[] = {"name", 0};
+/**
+ *  This function implements oyCMMInfoGetText_f for image connector sockets.
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/02/01 (Oyranos: 0.3.0)
+ *  @date    2011/02/01
+ */
+const char * oyCMMgetImageConnectorSocketText (
+                                       const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
+{
+  if(strcmp(select, "name")==0)
+  {
+    if(type == oyNAME_NICK)
+      return _("Img");
+    else if(type == oyNAME_NAME)
+      return _("Image");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("Image PNG Socket");
+  }
+  return NULL;
+}
 

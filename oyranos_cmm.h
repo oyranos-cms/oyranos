@@ -516,6 +516,17 @@ struct oyConnectorImaging_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
+  oyCMMGetText_f   getText;            /**< translated UI texts */
+  /** zero terminated categories for getText. Support at least "name",
+   *  e.g. {"name",0}
+   *
+   *  The "name" texts shall include information about the connector.
+   *  The oyNAME_NICK is a very small shorthand for the cnnnector. e.g. "Img"
+   *  oyNAME_NAME should contain the connectors name, e.g. "Image" 
+   *  oyNAME_DESCRIPTION can contain some help text, e.g. "Image[PNG] File Input".
+   */
+  const char    ** texts;
+
   /**
    *  The following types should have a "data" attribute in the application
    *  level as these connectors pass the imaging data.
@@ -569,16 +580,6 @@ struct oyConnectorImaging_s {
   /**< connector is mandatory or optional, important for modules */
   int                  is_mandatory;
 
-  oyCMMGetText_f   getText;            /**< translated UI texts */
-  /** zero terminated categories for getText. Support at least "name",
-   *  e.g. {"name",0}
-   *
-   *  The "name" texts shall include information about the connector.
-   *  The oyNAME_NICK is a very small shorthand for the cnnnector. e.g. "Img"
-   *  oyNAME_NAME should contain the connectors name, e.g. "Image" 
-   *  oyNAME_DESCRIPTION can contain some help text, e.g. "Image[PNG] File Input".
-   */
-  const char    ** texts;
 };
 
 
@@ -1376,8 +1377,18 @@ int          oyFilterSocket_MatchImagingPlug (
                                        oyFilterPlug_s    * plug );
 
 const char * oyCMMgetText            ( const char        * select,
-                                       oyNAME_e            type );
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
 extern const char * oyCMM_texts[4];
+const char * oyCMMgetImageConnectorPlugText (
+                                       const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
+const char * oyCMMgetImageConnectorSocketText (
+                                       const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
+extern const char * oy_image_connector_texts[2];
 
 /* miscellaneous helpers */
 int oyCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
