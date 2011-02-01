@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/01/30
+ *  @since    2011/02/01
  */
 
 
@@ -345,6 +345,47 @@ char *         oyOption_GetValueText ( oyOption_s        * obj,
   oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
 
   return oyOption_GetValueText_( s, allocateFunc );
+}
+
+/** Function oyOption_GetValueString
+ *  @memberof oyOption_s
+ *  @brief   get a string
+ *
+ *  @param         obj                 the option
+ *  @param         pos                 position in a list
+ *  @return                            the text
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/02/01 (Oyranos: 0.3.0)
+ *  @date    2011/02/01
+ */
+const char *   oyOption_GetValueString(oyOption_s        * obj,
+                                       int                 pos )
+{
+  oyOption_s_ * s = (oyOption_s_*)obj;
+  int error = !s,
+      n;
+  const char * result = 0;
+
+  if(!s)
+    return NULL;
+
+  oyCheckType__m( oyOBJECT_OPTION_S, return NULL )
+
+  if(error <= 0)
+  {
+    if( s->value_type == oyVAL_STRING_LIST &&
+        s->value->string_list)
+    {
+      while(s->value->string_list[n]) ++n;
+      if( n > pos )
+        result = s->value->string_list[pos];
+    }
+    else if(s->value_type == oyVAL_STRING)
+      result = s->value->string;
+  }
+
+  return result;
 }
 
 /** Function oyOption_SetFromInt

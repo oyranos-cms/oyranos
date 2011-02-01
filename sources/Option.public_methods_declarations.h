@@ -12,6 +12,8 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
                                        uint32_t            flags );
 char *         oyOption_GetValueText ( oyOption_s        * obj,
                                        oyAlloc_f           allocateFunc );
+const char *   oyOption_GetValueString(oyOption_s        * obj,
+                                       int                 pos );
 int            oyOption_SetFromInt   ( oyOption_s        * obj,
                                        int32_t             integer,
                                        int                 pos,
