@@ -126,7 +126,8 @@ oyPointer  dFilFilterNode_MyContextToMem (
  *  @date    2009/06/23
  */
 const char * dFilGetText             ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
          if(strcmp(select, "name")==0)
   {
@@ -362,7 +363,8 @@ oyConnectorImaging_s * dFil_myFilter_connectorPlugs[2] =
  */
 const char * dFilApi4UiGetText (
                                        const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   static char * category = 0;
   if(strcmp(select,"name"))

@@ -64,9 +64,11 @@
 #define STRING_ADD(a,b) strcpy( &a[strlen(a)], b )
 
 const char * GetText                 ( const char        * select,
-                                       oyNAME_e            type );
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
 const char * Api8UiGetText           ( const char        * select,
-                                       oyNAME_e            type );
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
 
 oyMessage_f message = 0;
 
@@ -681,7 +683,8 @@ oyRankPad _rank_map[] = {
 };
 
 const char * Api8UiGetText           ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   static char * category = 0;
   if(strcmp(select,"name") == 0 ||
@@ -689,7 +692,7 @@ const char * Api8UiGetText           ( const char        * select,
   {
     /* The "help" and "name" texts are identical, as the module contains only
      * one filter to provide help for. */
-    return GetText(select,type);
+    return GetText(select, type, context);
   }
   /* provide a useful device name */
   else if(strcmp(select, "device_class")==0)
@@ -800,7 +803,8 @@ oyCMMapi8_s _api8 = {
  *  @date    2009/02/09
  */
 const char * GetText                 ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
          if(strcmp(select, "name")==0)
   {
