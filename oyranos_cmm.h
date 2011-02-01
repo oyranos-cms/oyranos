@@ -568,6 +568,17 @@ struct oyConnectorImaging_s {
   int                  id;             /**< relative to oyFilterCore_s, e.g. 1*/
   /**< connector is mandatory or optional, important for modules */
   int                  is_mandatory;
+
+  oyCMMGetText_f   getText;            /**< translated UI texts */
+  /** zero terminated categories for getText. Support at least "name",
+   *  e.g. {"name",0}
+   *
+   *  The "name" texts shall include information about the connector.
+   *  The oyNAME_NICK is a very small shorthand for the cnnnector. e.g. "Img"
+   *  oyNAME_NAME should contain the connectors name, e.g. "Image" 
+   *  oyNAME_DESCRIPTION can contain some help text, e.g. "Image[PNG] File Input".
+   */
+  const char    ** texts;
 };
 
 

@@ -1511,6 +1511,29 @@ typedef struct oyFilterPlugs_s oyFilterPlugs_s;
 typedef struct oyFilterSocket_s oyFilterSocket_s;
 typedef struct oyPixelAccess_s oyPixelAccess_s;
 
+/**
+ *  type:
+ *  - oyNAME_NICK: compact, e.g. "GPU"
+ *  - oyNAME_NAME: a short explanation, e.g. "Rendering with GPU"
+ *  - oyNAME_DESCRIPTION: a long explanation, e.g. "Accelerated calculations on a GPU"
+ *
+ *  @param         select              one from "name", "manufacturer" or "copyright"
+ *  @param         type                select flavour
+ *  @param         object              the object to ask for a optional context
+ *                                     This will typical be the object to which
+ *                                     this function belongs, but can be stated
+ *                                     otherwise.
+ *  @return                            text string or zero
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2008/12/23 (Oyranos: 0.1.10)
+ *  @date    2011/02/01
+ */
+typedef
+const char *    (* oyCMMGetText_f)   ( const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
+
 /** typedef  oyCMMFilterSocket_MatchPlugIn_f
  *  @brief   verify connectors matching each other
  *  @ingroup module_api
@@ -1613,6 +1636,10 @@ struct oyConnector_s {
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
+
+  /** Support at least "name" for UIs. */
+  oyCMMGetText_f       getText;
+  char              ** texts;          /**< zero terminated list for getText */
 
   char               * connector_type; /**< a @ref registration string */
   /** Check if two oyCMMapi7_s filter connectors of type oyConnector_s can 
@@ -2761,24 +2788,6 @@ typedef struct {
 
 typedef struct oyCMMapi_s oyCMMapi_s;
 
-
-/**
- *  type:
- *  - oyNAME_NICK: compact, e.g. "GPU"
- *  - oyNAME_NAME: a short explanation, e.g. "Rendering with GPU"
- *  - oyNAME_DESCRIPTION: a long explanation, e.g. "Accelerated calculations on a GPU"
- *
- *  @param         select              one from "name", "manufacturer" or "copyright"
- *  @param         type                select flavour
- *  @return                            text string or zero
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/12/23 (Oyranos: 0.1.10)
- *  @date    2008/12/23
- */
-typedef
-const char *    (* oyCMMGetText_f)   ( const char        * select,
-                                       oyNAME_e            type );
 
 /** @brief   the CMM API resources struct to implement and set by a CMM
  *  @ingroup cmm_handling

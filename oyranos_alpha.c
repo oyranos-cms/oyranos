@@ -1860,11 +1860,11 @@ char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info )
   STRING_ADD( text, "\n  " ); \
   STRING_ADD( text, name_ ); \
   STRING_ADD( text, ":\n    " ); \
-  STRING_ADD( text, cmm_info->getText( select, oyNAME_NICK ) ); \
+  STRING_ADD( text, cmm_info->getText( select, oyNAME_NICK, cmm_info ) ); \
   STRING_ADD( text, "\n    " ); \
-  STRING_ADD( text, cmm_info->getText( select, oyNAME_NAME ) ); \
+  STRING_ADD( text, cmm_info->getText( select, oyNAME_NAME, cmm_info ) ); \
   STRING_ADD( text, "\n    " ); \
-  STRING_ADD( text, cmm_info->getText( select, oyNAME_DESCRIPTION ) ); \
+  STRING_ADD( text, cmm_info->getText( select, oyNAME_DESCRIPTION, cmm_info)); \
   STRING_ADD( text, "\n" );
 
   CMMINFO_ADD_NAME_TO_TEXT( _("Name"), "name" )
