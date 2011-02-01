@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/01/30
+ *  @since    2011/02/01
  */
 
 
@@ -148,6 +148,14 @@ int          oyCMMptr_GetSize        ( oyCMMptr_s        * cmm_ptr )
     return c->size;
   else
     return 0;
+}
+int          oyCMMptr_SetSize        ( oyCMMptr_s        * cmm_ptr,
+                                       int                 size )
+{
+  oyCMMptr_s_ * c = (oyCMMptr_s_ *) cmm_ptr;
+  if(c)
+    c->size = size;
+  return 0;
 }
 oyPointer    oyCMMptr_GetPointer     ( oyCMMptr_s        * cmm_ptr )
 {

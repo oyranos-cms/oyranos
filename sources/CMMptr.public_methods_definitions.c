@@ -51,6 +51,14 @@ int          oyCMMptr_GetSize        ( oyCMMptr_s        * cmm_ptr )
   else
     return 0;
 }
+int          oyCMMptr_SetSize        ( oyCMMptr_s        * cmm_ptr,
+                                       int                 size )
+{
+  oyCMMptr_s_ * c = (oyCMMptr_s_ *) cmm_ptr;
+  if(c)
+    c->size = size;
+  return 0;
+}
 oyPointer    oyCMMptr_GetPointer     ( oyCMMptr_s        * cmm_ptr )
 {
   oyCMMptr_s_ * c = (oyCMMptr_s_ *) cmm_ptr;

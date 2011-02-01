@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/01/30
+ *  @since    2011/02/01
  */
 
 
@@ -100,6 +100,8 @@ const char * oyCMMptr_GetFuncName    ( oyCMMptr_s        * cmm_ptr );
 const char * oyCMMptr_GetLibName     ( oyCMMptr_s        * cmm_ptr );
 const char * oyCMMptr_GetResourceName( oyCMMptr_s        * cmm_ptr );
 int          oyCMMptr_GetSize        ( oyCMMptr_s        * cmm_ptr );
+int          oyCMMptr_SetSize        ( oyCMMptr_s        * cmm_ptr,
+                                       int                 size );
 oyPointer    oyCMMptr_GetPointer     ( oyCMMptr_s        * cmm_ptr );
 
 /* } Include "CMMptr.public_methods_declarations.h" */

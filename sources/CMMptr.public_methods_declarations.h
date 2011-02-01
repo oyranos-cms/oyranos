@@ -12,4 +12,6 @@ const char * oyCMMptr_GetFuncName    ( oyCMMptr_s        * cmm_ptr );
 const char * oyCMMptr_GetLibName     ( oyCMMptr_s        * cmm_ptr );
 const char * oyCMMptr_GetResourceName( oyCMMptr_s        * cmm_ptr );
 int          oyCMMptr_GetSize        ( oyCMMptr_s        * cmm_ptr );
+int          oyCMMptr_SetSize        ( oyCMMptr_s        * cmm_ptr,
+                                       int                 size );
 oyPointer    oyCMMptr_GetPointer     ( oyCMMptr_s        * cmm_ptr );
