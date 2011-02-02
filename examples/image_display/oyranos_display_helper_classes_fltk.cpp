@@ -166,8 +166,11 @@ class Oy_Fl_Box : public Fl_Box, public Oy_Widget
         if(py > 0) py = 0;
       }
 
-      ticket->start_xy[0] = -px;
-      ticket->start_xy[1] = -py;
+      if(ticket)
+      {
+        ticket->start_xy[0] = -px;
+        ticket->start_xy[1] = -py;
+      }
 
 #if DEBUG
       printf( "%s:%d new display rectangle: %s +%d+%d +%d+%d\n", __FILE__,
