@@ -55,9 +55,11 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
 int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                                        oyOptions_s       * options );
 const char * oyX1GetText             ( const char        * select,
-                                       oyNAME_e            type );
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
 const char * oyX1Api8UiGetText       ( const char        * select,
-                                       oyNAME_e            type );
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
 
 /* --- implementations --- */
 
@@ -1090,7 +1092,8 @@ oyRankPad oyX1_rank_map[] = {
 };
 
 const char * oyX1Api8UiGetText       ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   static char * category = 0;
   if(strcmp(select,"name") == 0 ||
@@ -1098,7 +1101,7 @@ const char * oyX1Api8UiGetText       ( const char        * select,
   {
     /* The "help" and "name" texts are identical, as the module contains only
      * one filter to provide help for. */
-    return oyX1GetText(select,type);
+    return oyX1GetText(select,type,context);
   }
   else if(strcmp(select, "device_class")==0)
   {
@@ -1212,7 +1215,8 @@ oyCMMapi8_s oyX1_api8 = {
  *  @date    2008/12/30
  */
 const char * oyX1GetText             ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
          if(strcmp(select, "name")==0)
   {

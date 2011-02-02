@@ -115,7 +115,8 @@ oyWIDGET_EVENT_e   oyraWidgetEvent   ( oyOptions_s       * options,
  *  @date    2008/12/23
  */
 const char * oyraGetText             ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
          if(strcmp(select, "name")==0)
   {
