@@ -2452,7 +2452,8 @@ oyTESTRESULT_e testCMMsShow ()
                             "        \"%s\"\n",
                             cmm_api10->texts[l],
                             cmm_api10->getText( cmm_api10->texts[l],
-                                                oyNAME_DESCRIPTION) );
+                                                oyNAME_DESCRIPTION,
+                                                (oyStruct_s*)cmm_api10 ) );
                         STRING_ADD( text, text_tmp );
                       } else
                         break;
