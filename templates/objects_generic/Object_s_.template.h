@@ -21,8 +21,7 @@ struct oyObject_s_ {
   int                  id_;            /**< @private identification for Oyranos */
   oyAlloc_f            allocateFunc_;  /**< @private data  allocator */
   oyDeAlloc_f          deallocateFunc_;/**< @private data release function */
-  oyPointer            parent_;        /*!< @private parent struct of parent_type */
-  oyOBJECT_e           parent_type_;   /*!< @private parents struct type */
+  oyStruct_s         * parents_;       /*!< @private parent struct of parent_type */
   oyPointer            backdoor_;      /*!< @private allow non breaking extensions */
   oyOptions_s        * handles_;       /**< @private addational data and infos*/
   oyName_s           * name_;          /*!< @private naming feature */
