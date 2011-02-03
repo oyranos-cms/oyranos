@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/01
+ *  @since    2011/02/02
  */
 
 
@@ -107,6 +107,8 @@ oyObject_NewWithAllocators  ( oyAlloc_f         allocateFunc,
   o->type_ = oyOBJECT_OBJECT_S;
   o->version_ = oyVersion(0);
   o->hash_ptr_ = 0;
+  o->parent_types_ = o->allocateFunc_(sizeof(oyOBJECT_e)*2);
+  memset(o->parent_types_,0,sizeof(oyOBJECT_e)*2);
 
   return o;
 }
@@ -252,21 +254,39 @@ int          oyObject_Release         ( oyObject_s      * obj )
  *  Then we just need a list of all oyObject_s objects and have an overview.
  *  This facility is intented to work even without debugging tools.
  *
+ *  Each inheritent initialiser should call this function separately during
+ *  normal object allocation and class initialisation.
+ *
  *  @param[in]    o              the object to modify
  *  @param[in]    type           the parents struct type
  *  @param[in]    parent         a pointer to the parent struct
  *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.3.0
+ *  @data    2011/02/02
+ *  @since   2007/11/00 (API 0.1.8)
  */
-oyObject_s   oyObject_SetParent       ( oyObject_s       o,
-                                        oyOBJECT_e        type,
-                                        oyPointer         parent )
+oyObject_s   oyObject_SetParent      ( oyObject_s        o,
+                                       oyOBJECT_e        type,
+                                       oyPointer         parent )
 {
   int error = 0;
   if(error <= 0 && type)
   {
-    o->parent_type_ = type;
+    oyOBJECT_e * tmp = 0;
+    if(type != oyOBJECT_NONE)
+    {
+      tmp = o->allocateFunc_( sizeof(oyOBJECT_e) * (o->parent_types_[0] + 3 ));
+      memset(tmp,0,sizeof(oyOBJECT_e) *  (o->parent_types_[0] + 3 ));
+      memcpy(tmp, o->parent_types_, sizeof(oyOBJECT_e)*(o->parent_types_[0]+1));
+
+      if(o->deallocateFunc_) o->deallocateFunc_( o->parent_types_ );
+      o->parent_types_ = tmp;
+      tmp = 0;
+
+      ++o->parent_types_[0];
+      o->parent_types_[o->parent_types_[0]] = type;
+    }
+
     if(parent)
       o->parent_ = parent;
   }
@@ -288,6 +308,9 @@ int          oyObject_SetName         ( oyObject_s        object,
                                         const char      * text,
                                         oyNAME_e          type )
 {
+  if( object->type_ != oyOBJECT_OBJECT_S )
+    return ;
+
   object->name_ = oyName_set_( object->name_, text, type,
                                object->allocateFunc_, object->deallocateFunc_ );
   return (text && type && object && !object->name_);
@@ -313,7 +336,10 @@ int          oyObject_SetNames        ( oyObject_s        object,
   int error = 0;
   
 
-  if(!object) return 1;
+  if(!object) return 0;
+
+  if( object->type_ != oyOBJECT_OBJECT_S )
+    return 0;
 
   if(error <= 0)
     error = oyObject_SetName( object, nick, oyNAME_NICK );
@@ -340,7 +366,11 @@ int          oyObject_CopyNames       ( oyObject_s        dest,
 {
   int error = 0;
 
-  if(!dest || !src) return 1;
+  if(!dest || !src) return 0;
+
+  if( dest->type_ != oyOBJECT_OBJECT_S ||
+      src->type_ != oyOBJECT_OBJECT_S )
+    return 0;
 
   if(error <= 0)
     error = oyObject_SetNames( dest,
@@ -367,6 +397,9 @@ const oyChar * oyObject_GetName       ( const oyObject_s        obj,
 {
   const char * text = 0;
   if(!obj)
+    return 0;
+
+  if( obj->type_ != oyOBJECT_OBJECT_S)
     return 0;
 
   if(!obj->name_)
@@ -399,6 +432,9 @@ int          oyObject_Lock             ( oyObject_s        object,
 
   if(error <= 0)
   {
+    if( object->type_ != oyOBJECT_OBJECT_S)
+      return 0;
+
     if(!object->lock_)
       object->lock_ = oyStruct_LockCreateFunc_( object->parent_ );
 
@@ -430,6 +466,9 @@ int          oyObject_UnLock           ( oyObject_s        object,
 
   if(error <= 0)
   {
+    if( object->type_ != oyOBJECT_OBJECT_S)
+      return 0;
+
     error = !object->lock_;
     if(error <= 0)
       oyUnLockFunc_( object->lock_, marker, line );
@@ -460,6 +499,9 @@ int          oyObject_UnSetLocking   ( oyObject_s          object,
 
   if(error <= 0)
   {
+    if( object->type_ != oyOBJECT_OBJECT_S)
+      return 1;
+
     oyLockReleaseFunc_( object->lock_, marker, line );
   }
 
@@ -476,6 +518,9 @@ int          oyObject_UnSetLocking   ( oyObject_s          object,
  */
 int            oyObject_GetRefCount  ( oyObject_s          obj )
 {
+  if( obj && obj->type_ != oyOBJECT_OBJECT_S)
+    return -1;
+
   if(obj)
     return obj->ref_;
 
@@ -498,10 +543,7 @@ int          oyObject_UnRef          ( oyObject_s          obj )
   int error = !s;
 
   if( s->type_ != oyOBJECT_OBJECT_S)
-  {
-    WARNc_S("Attempt to manipulate a non oyObject_s object.")
     return 1;
-  }
 
   if(error <= 0)
   {
@@ -518,10 +560,11 @@ int          oyObject_UnRef          ( oyObject_s          obj )
 #   else
     if(s->id_ == 247)
 #   endif
-      WARNc3_S("%s ID: %d refs: %d",
-             oyStructTypeToText( s->parent_type_ ), s->id_, s->ref_)
+      WARNc3_S( "%s ID: %d refs: %d",
+                oyStructTypeToText( s->parent_types_[s->parent_types_[0]] ),
+                s->id_, s->ref_ )
 
-    if(obj->parent_type_ == oyOBJECT_NAMED_COLOURS_S)
+    if(obj->parent_types_[obj->parent_types_[0]] == oyOBJECT_NAMED_COLOURS_S)
     {
       int e_a = error;
       error = pow(e_a,2.1);
