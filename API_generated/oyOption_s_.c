@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/01
+ *  @since    2011/02/02
  */
 
 
@@ -184,13 +184,12 @@ oyOption_s_ * oyOption_New_ ( oyObject_s object )
   s->release = (oyStruct_Release_f) oyOption_Release;
 
   s->oy_ = s_obj;
-
-  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
   /* ---- end of common object constructor ------- */
 
   
   
   /* ---- start of custom Option constructor ----- */
+  error = !oyObject_SetParent( s_obj, oyOBJECT_OPTION_S, s );
   error = oyOption_Init__Members( s );
   /* ---- end of custom Option constructor ------- */
   

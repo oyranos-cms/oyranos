@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/01
+ *  @since    2011/02/02
  */
 
 
@@ -179,13 +179,12 @@ oyBlob_s_ * oyBlob_New_ ( oyObject_s object )
   s->release = (oyStruct_Release_f) oyBlob_Release;
 
   s->oy_ = s_obj;
-
-  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
   /* ---- end of common object constructor ------- */
 
   
   
   /* ---- start of custom Blob constructor ----- */
+  error = !oyObject_SetParent( s_obj, oyOBJECT_BLOB_S, s );
   error = oyBlob_Init__Members( s );
   /* ---- end of custom Blob constructor ------- */
   

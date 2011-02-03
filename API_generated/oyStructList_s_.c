@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/01
+ *  @since    2011/02/02
  */
 
 
@@ -169,13 +169,12 @@ oyStructList_s_ * oyStructList_New_ ( oyObject_s object )
   s->release = (oyStruct_Release_f) oyStructList_Release;
 
   s->oy_ = s_obj;
-
-  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
   /* ---- end of common object constructor ------- */
 
   
   
   /* ---- start of custom StructList constructor ----- */
+  error = !oyObject_SetParent( s_obj, oyOBJECT_STRUCT_LIST_S, s );
   error = oyStructList_Init__Members( s );
   /* ---- end of custom StructList constructor ------- */
   
