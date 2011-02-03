@@ -405,7 +405,8 @@ oyDATATYPE_e oPNG_image_png_data_types[5] = {oyUINT8, oyUINT16,
 
 
 oyConnectorImaging_s oPNG_imageOutputPNG_connector_out = {
-  oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorSocketText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
@@ -436,7 +437,8 @@ oyConnectorImaging_s * oPNG_imageOutputPNG_connectors_socket[2] =
 
 
 oyConnectorImaging_s oPNG_imageOutputPNG_connector_in = {
-  oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorPlugText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
@@ -995,7 +997,8 @@ const char * oPNG_imageInputPNG_connectorGetText (
 
 
 oyConnectorImaging_s oPNG_imageInputPNG_connector = {
-  oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorSocketText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */

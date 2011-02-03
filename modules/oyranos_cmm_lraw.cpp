@@ -756,7 +756,8 @@ int  lrawUiGet                       ( oyOptions_s       * options,
 oyDATATYPE_e lraw_data_types[3] = {oyUINT8, oyUINT16, (oyDATATYPE_e)0};
 
 oyConnectorImaging_s lraw_imageInputRAW_connector = {
-  oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   {oyOBJECT_NAME_S, 0,0,0, (char*)"Img", (char*)"Image", (char*)"Image libraw Socket"},
   (char*)"//" OY_TYPE_STD "/image.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */

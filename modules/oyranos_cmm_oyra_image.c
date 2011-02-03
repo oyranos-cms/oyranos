@@ -994,10 +994,14 @@ int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
   oyFilterNode_s * node = 0;
   int result = 0;
 
-  node = socket->node;
+  if(socket)
+    node = socket->node;
 
   /* to reuse the requestor_plug is a exception for the starting request */
-  result = node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket );
+  if(node)
+    result = node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket );
+  else
+    result = 1;
 
   return result;
 }

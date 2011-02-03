@@ -760,7 +760,8 @@ oyDATATYPE_e oyx1_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
                                    oyHALF, oyFLOAT, oyDOUBLE, 0};
 
 oyConnectorImaging_s oyx1_Display_plug = {
-  oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorPlugText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/splitter.data", /* connector_type */
@@ -789,7 +790,8 @@ oyConnectorImaging_s oyx1_Display_plug = {
 oyConnectorImaging_s *oyx1_Display_plugs[2] = {&oyx1_Display_plug,0};
 
 oyConnectorImaging_s oyx1_Display_socket = {
-  oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorSocketText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */

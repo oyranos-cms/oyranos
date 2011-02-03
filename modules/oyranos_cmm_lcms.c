@@ -719,7 +719,8 @@ oyWIDGET_EVENT_e   lcmsWidgetEvent   ( oyOptions_s       * options,
 oyDATATYPE_e lcms_cmmIcc_data_types[7] = {oyUINT8, oyUINT16, oyDOUBLE, 0};
 
 oyConnectorImaging_s lcms_cmmIccSocket_connector = {
-  oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorSocketText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/manipulator.data", /* connector_type */
@@ -748,7 +749,8 @@ oyConnectorImaging_s lcms_cmmIccSocket_connector = {
 oyConnectorImaging_s* lcms_cmmIccSocket_connectors[2]={&lcms_cmmIccSocket_connector,0};
 
 oyConnectorImaging_s lcms_cmmIccPlug_connector = {
-  oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorPlugText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/manipulator.data", /* connector_type */

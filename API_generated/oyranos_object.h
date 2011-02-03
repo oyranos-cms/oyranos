@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/01
+ *  @since    2011/02/02
  */
 
 
@@ -142,6 +142,7 @@ typedef enum {
   oyOBJECT_CALLBACK_S,                /**< oyCallback_s */
   oyOBJECT_OBSERVER_S,                /**< oyObserver_s */
   oyOBJECT_CONF_DOMAIN_S,             /**< oyConfDomain_s */
+  oyOBJECT_INFO_STATIC_S,             /**< oyObjectInfoStatic_s */
   oyOBJECT_MAX
 } oyOBJECT_e;
 #endif

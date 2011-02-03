@@ -313,7 +313,8 @@ oyDATATYPE_e oyra_image_ppm_data_types[5] = {oyUINT8, oyUINT16,
                                              oyFLOAT, oyDOUBLE, 0};
 
 oyConnectorImaging_s oyra_imageOutputPPM_connector_out = {
-  oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorSocketText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
@@ -343,7 +344,8 @@ oyConnectorImaging_s * oyra_imageOutputPPM_connectors_socket[2] =
              { &oyra_imageOutputPPM_connector_out, 0 };
 
 oyConnectorImaging_s oyra_imageOutputPPM_connector_in = {
-  oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorPlugText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
@@ -1077,7 +1079,8 @@ int  oyraPPMreadUiGet                ( oyOptions_s       * opts,
 
 
 oyConnectorImaging_s oyra_imageInputPPM_connector = {
-  oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorSocketText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
