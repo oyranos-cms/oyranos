@@ -1393,6 +1393,33 @@ extern const char * oy_image_connector_texts[2];
 /* miscellaneous helpers */
 int oyCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
 
+
+/** @struct  oyObjectInfo_s
+ *  @brief   a static object
+ *  @extends oyStruct_s
+ *
+ *  The data field is to be placed alternatively to a oyObject_s at
+ *  oyStruct_s::oy_ for a static object. It provides basic object data.
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/02/02 (Oyranos: 0.3.0)
+ *  @date    2011/02/02
+ */
+typedef struct oyObjectInfoStatic_s {
+  oyOBJECT_e       type;               /**< oyOBJECT_INFO_STATIC_S */
+  oyPointer        dummy1;             /**< keep zero */
+  oyPointer        dummy2;             /**< keep zero */
+  oyPointer        dummy3;             /**< keep zero */
+  /** inherited structures
+   *  start with the position of the last member, followed by the first
+   *  object type until the last one. Seven levels of inheritance are possible
+   *  at maximum.
+   */
+  oyOBJECT_e       inheritance[8];
+} oyObjectInfoStatic_s;
+
+extern oyObjectInfoStatic_s oy_connector_imaging_static_object;
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */
