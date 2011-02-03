@@ -1,3 +1,5 @@
+#include "oyranos_cmm.h" /* oyObjectInfoStatic_s */
+
 const char * (*oyStruct_GetTextFromModule_p) (
                                        oyStruct_s        * obj,
                                        oyNAME_e            name_type,
@@ -164,5 +166,53 @@ void         oyThreadLockingSet        ( oyStruct_LockCreate_f  createLockFunc,
     oyLockFunc_ = oyLockDummy_;
     oyUnLockFunc_ = oyUnLockDummy_;
   }
+}
+
+/** Function oyStruct_CheckType
+ *  @brief   check if the object is a class or is inherited of a class
+ *
+ *  @version Oyranos: 0.3.0
+ *  @date    2011/02/02
+ *  @since   2011/02/02 (Oyranos: 0.3.0)
+ */
+int          oyStruct_CheckType      ( oyStruct_s        * obj,
+                                       oyOBJECT_e          type )
+{
+  int error = 1;
+  if(obj)
+  {
+    /* check dynamic objects */
+    if(obj->type_ != oyOBJECT_OBJECT_S && obj->oy_)
+    {
+      int n, i;
+      oyOBJECT_e * inheritance = 0;
+
+      if(obj->oy_->type_ == oyOBJECT_OBJECT_S)
+        inheritance = obj->oy_->parent_types_;
+      else if(obj->oy_->type_ == oyOBJECT_INFO_STATIC_S)
+      {
+        oyObjectInfoStatic_s * static_object = (oyObjectInfoStatic_s*)obj->oy_;
+        inheritance = static_object->inheritance;
+      } else
+        return 2;
+
+      n = inheritance[0];
+      for(i = 1; i <= n; ++i)
+        if(inheritance[i] == type)
+        {
+          if(inheritance[0] == i)
+            error = 0;
+          else
+            error = -1;
+          break;
+        }
+    } else
+    /* check static objects */
+      if(obj->type_ == type)
+        error = 0;
+  } else
+    error = 2;
+
+  return error;
 }
 /* } Locking function definitions */
