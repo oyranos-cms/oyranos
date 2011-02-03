@@ -5479,13 +5479,14 @@ OYAPI oyConfDomain_s * OYEXPORT
            oyConfDomain_FromReg      ( const char        * registration_domain,
                                        oyObject_s          object )
 {
-  oyObject_s  s = (oyObject_s) object;
   oyConfDomain_s_ * obj = 0;
+  oyConfDomain_s * s = (oyObject_s) object;
 
   if(s)
-    oyCheckType__m( oyOBJECT_OBJECT_S, return 0 );
+    oyCheckType__m( oyOBJECT_CONF_DOMAIN_S, return 0 );
 
-  obj = oyConfDomain_FromReg_( registration_domain, s );
+
+  obj = oyConfDomain_FromReg_( registration_domain, object );
 
   return (oyConfDomain_s*) obj;
 }
@@ -20835,8 +20836,8 @@ int                oyConversion_RunPixels (
                                 pixel_access->output_image_roi, 0 );
     clck = oyClock() - clck;
     DBG_NUM1_S("oyImage_FillArray(): %g", clck/1000000.0 );
+    error = ( result != 0 );
   }
-  error = ( result != 0 );
 
   /* run on the graph */
   if(error <= 0)
@@ -20847,7 +20848,7 @@ int                oyConversion_RunPixels (
     DBG_NUM1_S("conversion->out_->api7_->oyCMMFilterPlug_Run(): %g", clck/1000000.0 );
   }
 
-  if(error != 0)
+  if(error != 0 && pixel_access)
   {
     dirty = oyOptions_FindString( pixel_access->graph->options, "dirty", "true")
             ? 1 : 0;
@@ -20918,8 +20919,9 @@ int                oyConversion_RunPixels (
    * Users with very large data sets have to process the data in chunks and
    * the oyPixelAccess_s::array allocation can remain constant.
    */
-  if((oyPointer)image->pixel_data != (oyPointer)pixel_access->array ||
-     image != pixel_access->output_image)
+  if(image && pixel_access &&
+     ((oyPointer)image->pixel_data != (oyPointer)pixel_access->array ||
+      image != pixel_access->output_image))
   {
     /* move the array to the top left place
      * same as : roi.x = roi.y = 0; */
