@@ -5480,11 +5480,6 @@ OYAPI oyConfDomain_s * OYEXPORT
                                        oyObject_s          object )
 {
   oyConfDomain_s_ * obj = 0;
-  oyConfDomain_s * s = (oyObject_s) object;
-
-  if(s)
-    oyCheckType__m( oyOBJECT_CONF_DOMAIN_S, return 0 );
-
 
   obj = oyConfDomain_FromReg_( registration_domain, object );
 
