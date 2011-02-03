@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/01
+ *  @since    2011/02/03
  */
 
 
@@ -68,13 +68,29 @@ oyOptions_s_ * oyOptions_New_ ( oyObject_s object )
 
   s->oy_ = s_obj;
 
-  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+  
+  /* ---- start of custom Options constructor ----- */
+  error = !oyObject_SetParent( s_obj, oyOBJECT_OPTIONS_S, s );
+  /* ---- end of custom Options constructor ------- */
+  
+  
+  
+  
   /* ---- end of common object constructor ------- */
+
 
   
   s->list_ = oyStructList_Create( s->type_, 0, 0 );
 
 
+  
+  /* ---- start of custom Options constructor ----- */
+  error = oyOptions_Init__Members( s );
+  /* ---- end of custom Options constructor ------- */
+  
+  
+  
+  
   return s;
 }
 
@@ -102,6 +118,14 @@ oyOptions_s_ * oyOptions_Copy__ ( oyOptions_s_ *options, oyObject_s object )
   error = !s;
 
   if(!error) {
+    
+    /* ---- start of custom Options copy constructor ----- */
+    error = oyOptions_Copy__Members( s, options );
+    /* ---- end of custom Options copy constructor ------- */
+    
+    
+    
+    
     
     s->list_ = oyStructList_Copy( options->list_, s->oy_ );
 
@@ -172,6 +196,14 @@ int oyOptions_Release_( oyOptions_s_ **options )
     return 0;
   /* ---- end of common object destructor ------- */
 
+  
+  /* ---- start of custom Options destructor ----- */
+  oyOptions_Release__Members( s );
+  /* ---- end of custom Options destructor ------- */
+  
+  
+  
+  
 
   oyStructList_Release( &s->list_ );
 
@@ -191,6 +223,21 @@ int oyOptions_Release_( oyOptions_s_ **options )
 
 
 /* Include "Options.private_methods_definitions.c" { */
+int            oyOptions_Init__Members(oyOptions_s_      * s )
+{
+  return 0;
+}
+int            oyOptions_Copy__Members(oyOptions_s_      * s )
+{
+  return 0;
+}
+int            oyOptions_Release__Members (
+                                       oyOptions_s_      * s )
+{
+  return 0;
+}
+
+
 /**
  *  @internal
  *  Function oyOptions_ParseXML_

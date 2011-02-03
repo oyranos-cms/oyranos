@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/02
+ *  @since    2011/02/03
  */
 
 
@@ -184,20 +184,29 @@ oyOption_s_ * oyOption_New_ ( oyObject_s object )
   s->release = (oyStruct_Release_f) oyOption_Release;
 
   s->oy_ = s_obj;
-  /* ---- end of common object constructor ------- */
 
-  
   
   /* ---- start of custom Option constructor ----- */
   error = !oyObject_SetParent( s_obj, oyOBJECT_OPTION_S, s );
+  /* ---- end of custom Option constructor ------- */
+  
+  
+  
+  
+  /* ---- end of common object constructor ------- */
+
+
+  
+  
+
+  
+  /* ---- start of custom Option constructor ----- */
   error = oyOption_Init__Members( s );
   /* ---- end of custom Option constructor ------- */
   
   
   
   
-  
-
   return s;
 }
 
@@ -226,10 +235,10 @@ oyOption_s_ * oyOption_Copy__ ( oyOption_s_ *option, oyObject_s object )
 
   if(!error) {
     
-    
     /* ---- start of custom Option copy constructor ----- */
     error = oyOption_Copy__Members( s, option );
     /* ---- end of custom Option copy constructor ------- */
+    
     
     
     
@@ -302,7 +311,6 @@ int oyOption_Release_( oyOption_s_ **option )
     return 0;
   /* ---- end of common object destructor ------- */
 
-
   
   /* ---- start of custom Option destructor ----- */
   oyOption_Release__Members( s );
@@ -311,6 +319,7 @@ int oyOption_Release_( oyOption_s_ **option )
   
   
   
+
 
 
   if(s->oy_->deallocateFunc_)

@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/02
+ *  @since    2011/02/03
  */
 
 
@@ -169,20 +169,29 @@ oyStructList_s_ * oyStructList_New_ ( oyObject_s object )
   s->release = (oyStruct_Release_f) oyStructList_Release;
 
   s->oy_ = s_obj;
-  /* ---- end of common object constructor ------- */
 
-  
   
   /* ---- start of custom StructList constructor ----- */
   error = !oyObject_SetParent( s_obj, oyOBJECT_STRUCT_LIST_S, s );
+  /* ---- end of custom StructList constructor ------- */
+  
+  
+  
+  
+  /* ---- end of common object constructor ------- */
+
+
+  
+  
+
+  
+  /* ---- start of custom StructList constructor ----- */
   error = oyStructList_Init__Members( s );
   /* ---- end of custom StructList constructor ------- */
   
   
   
   
-  
-
   return s;
 }
 
@@ -211,10 +220,10 @@ oyStructList_s_ * oyStructList_Copy__ ( oyStructList_s_ *structlist, oyObject_s 
 
   if(!error) {
     
-    
     /* ---- start of custom StructList copy constructor ----- */
     error = oyStructList_Copy__Members( s, structlist );
     /* ---- end of custom StructList copy constructor ------- */
+    
     
     
     
@@ -287,7 +296,6 @@ int oyStructList_Release_( oyStructList_s_ **structlist )
     return 0;
   /* ---- end of common object destructor ------- */
 
-
   
   /* ---- start of custom StructList destructor ----- */
   oyStructList_Release__Members( s );
@@ -296,6 +304,7 @@ int oyStructList_Release_( oyStructList_s_ **structlist )
   
   
   
+
 
 
   if(s->oy_->deallocateFunc_)

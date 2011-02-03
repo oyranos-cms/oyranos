@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/02
+ *  @since    2011/02/03
  */
 
 
@@ -163,20 +163,29 @@ oyHash_s_ * oyHash_New_ ( oyObject_s object )
   s->release = (oyStruct_Release_f) oyHash_Release;
 
   s->oy_ = s_obj;
-  /* ---- end of common object constructor ------- */
 
-  
   
   /* ---- start of custom Hash constructor ----- */
   error = !oyObject_SetParent( s_obj, oyOBJECT_HASH_S, s );
+  /* ---- end of custom Hash constructor ------- */
+  
+  
+  
+  
+  /* ---- end of common object constructor ------- */
+
+
+  
+  
+
+  
+  /* ---- start of custom Hash constructor ----- */
   error = oyHash_Init__Members( s );
   /* ---- end of custom Hash constructor ------- */
   
   
   
   
-  
-
   return s;
 }
 
@@ -205,10 +214,10 @@ oyHash_s_ * oyHash_Copy__ ( oyHash_s_ *hash, oyObject_s object )
 
   if(!error) {
     
-    
     /* ---- start of custom Hash copy constructor ----- */
     error = oyHash_Copy__Members( s, hash );
     /* ---- end of custom Hash copy constructor ------- */
+    
     
     
     
@@ -284,7 +293,6 @@ int oyHash_Release_( oyHash_s_ **hash )
     return 0;
   /* ---- end of common object destructor ------- */
 
-
   
   /* ---- start of custom Hash destructor ----- */
   oyHash_Release__Members( s );
@@ -293,6 +301,7 @@ int oyHash_Release_( oyHash_s_ **hash )
   
   
   
+
 
 
   if(s->oy_->deallocateFunc_)

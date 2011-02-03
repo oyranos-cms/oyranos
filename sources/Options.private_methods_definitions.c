@@ -1,3 +1,18 @@
+int            oyOptions_Init__Members(oyOptions_s_      * s )
+{
+  return 0;
+}
+int            oyOptions_Copy__Members(oyOptions_s_      * s )
+{
+  return 0;
+}
+int            oyOptions_Release__Members (
+                                       oyOptions_s_      * s )
+{
+  return 0;
+}
+
+
 /**
  *  @internal
  *  Function oyOptions_ParseXML_

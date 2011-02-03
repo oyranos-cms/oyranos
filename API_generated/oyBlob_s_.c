@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/02
+ *  @since    2011/02/03
  */
 
 
@@ -179,20 +179,29 @@ oyBlob_s_ * oyBlob_New_ ( oyObject_s object )
   s->release = (oyStruct_Release_f) oyBlob_Release;
 
   s->oy_ = s_obj;
-  /* ---- end of common object constructor ------- */
 
-  
   
   /* ---- start of custom Blob constructor ----- */
   error = !oyObject_SetParent( s_obj, oyOBJECT_BLOB_S, s );
+  /* ---- end of custom Blob constructor ------- */
+  
+  
+  
+  
+  /* ---- end of common object constructor ------- */
+
+
+  
+  
+
+  
+  /* ---- start of custom Blob constructor ----- */
   error = oyBlob_Init__Members( s );
   /* ---- end of custom Blob constructor ------- */
   
   
   
   
-  
-
   return s;
 }
 
@@ -221,10 +230,10 @@ oyBlob_s_ * oyBlob_Copy__ ( oyBlob_s_ *blob, oyObject_s object )
 
   if(!error) {
     
-    
     /* ---- start of custom Blob copy constructor ----- */
     error = oyBlob_Copy__Members( s, blob );
     /* ---- end of custom Blob copy constructor ------- */
+    
     
     
     
@@ -297,7 +306,6 @@ int oyBlob_Release_( oyBlob_s_ **blob )
     return 0;
   /* ---- end of common object destructor ------- */
 
-
   
   /* ---- start of custom Blob destructor ----- */
   oyBlob_Release__Members( s );
@@ -306,6 +314,7 @@ int oyBlob_Release_( oyBlob_s_ **blob )
   
   
   
+
 
 
   if(s->oy_->deallocateFunc_)

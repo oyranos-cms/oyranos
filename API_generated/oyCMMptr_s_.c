@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/02
+ *  @since    2011/02/03
  */
 
 
@@ -172,20 +172,29 @@ oyCMMptr_s_ * oyCMMptr_New_ ( oyObject_s object )
   s->release = (oyStruct_Release_f) oyCMMptr_Release;
 
   s->oy_ = s_obj;
-  /* ---- end of common object constructor ------- */
 
-  
   
   /* ---- start of custom CMMptr constructor ----- */
   error = !oyObject_SetParent( s_obj, oyOBJECT_CMM_PTR_S, s );
+  /* ---- end of custom CMMptr constructor ------- */
+  
+  
+  
+  
+  /* ---- end of common object constructor ------- */
+
+
+  
+  
+
+  
+  /* ---- start of custom CMMptr constructor ----- */
   error = oyCMMptr_Init__Members( s );
   /* ---- end of custom CMMptr constructor ------- */
   
   
   
   
-  
-
   return s;
 }
 
@@ -214,10 +223,10 @@ oyCMMptr_s_ * oyCMMptr_Copy__ ( oyCMMptr_s_ *cmmptr, oyObject_s object )
 
   if(!error) {
     
-    
     /* ---- start of custom CMMptr copy constructor ----- */
     error = oyCMMptr_Copy__Members( s, cmmptr );
     /* ---- end of custom CMMptr copy constructor ------- */
+    
     
     
     
@@ -290,7 +299,6 @@ int oyCMMptr_Release_( oyCMMptr_s_ **cmmptr )
     return 0;
   /* ---- end of common object destructor ------- */
 
-
   
   /* ---- start of custom CMMptr destructor ----- */
   oyCMMptr_Release__Members( s );
@@ -299,6 +307,7 @@ int oyCMMptr_Release_( oyCMMptr_s_ **cmmptr )
   
   
   
+
 
 
   if(s->oy_->deallocateFunc_)
