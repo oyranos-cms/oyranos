@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/01
+ *  @since    2011/02/02
  */
 
 
@@ -59,7 +59,7 @@ oyObject_s   oyObject_SetAllocators_  ( oyObject_s        object,
  *  @brief   increase the ref counter and return the above zero ref value
  *
  *  @version Oyranos: 0.1.8
- *  @date    2008/02/07
+ *  @date    2011/02/02
  *  @since   2008/02/07 (Oyranos: 0.1.8)
  */
 int          oyObject_Ref            ( oyObject_s          obj )
@@ -83,10 +83,10 @@ int          oyObject_Ref            ( oyObject_s          obj )
   }
 #   if DEBUG_OBJECT
     WARNc3_S("%s   ID: %d refs: %d",
-             oyStructTypeToText( s->parent_type_ ), s->id_, s->ref_)
+             oyStructTypeToText( s->parent_types_[s->parent_types_[0]] ), s->id_, s->ref_)
 #   endif
 
-  if(obj->parent_type_ == oyOBJECT_NAMED_COLOURS_S)
+  if(obj->parent_types_[obj->parent_types_[0]] == oyOBJECT_NAMED_COLOURS_S)
   {
     int e_a = error;
     error = pow(e_a,2.1);

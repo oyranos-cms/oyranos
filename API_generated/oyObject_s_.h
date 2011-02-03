@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/01
+ *  @since    2011/02/02
  */
 
 
@@ -51,8 +51,11 @@ struct oyObject_s_ {
   int                  id_;            /**< @private identification for Oyranos */
   oyAlloc_f            allocateFunc_;  /**< @private data  allocator */
   oyDeAlloc_f          deallocateFunc_;/**< @private data release function */
-  oyPointer            parent_;        /*!< @private parent struct of parent_type */
-  oyOBJECT_e           parent_type_;   /*!< @private parents struct type */
+  oyStruct_s         * parent_;        /*!< @private parent struct of parent_type */
+  /** @private The first number in the array means the number of inherited 
+   *  classes. It is the index to access top class. 
+   *  parent_types_[parent_types_[0]] == actual_class */
+  oyOBJECT_e         * parent_types_;  /**< @private the first number in the array means the number of inherited classes. */
   oyPointer            backdoor_;      /*!< @private allow non breaking extensions */
   oyOptions_s        * handles_;       /**< @private addational data and infos*/
   oyName_s           * name_;          /*!< @private naming feature */
