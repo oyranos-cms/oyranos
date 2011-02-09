@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/03
+ *  @since    2011/02/09
  */
 
 
@@ -96,7 +96,8 @@ int
 
 /* Include "Options.private_methods_declarations.h" { */
 int            oyOptions_Init__Members(oyOptions_s_      * s );
-int            oyOptions_Copy__Members(oyOptions_s_      * s );
+int            oyOptions_Copy__Members(oyOptions_s_      * dest,
+                                       oyOptions_s_      * src );
 int            oyOptions_Release__Members (
                                        oyOptions_s_      * s );
 

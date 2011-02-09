@@ -1,5 +1,6 @@
 int            oyOptions_Init__Members(oyOptions_s_      * s );
-int            oyOptions_Copy__Members(oyOptions_s_      * s );
+int            oyOptions_Copy__Members(oyOptions_s_      * dest,
+                                       oyOptions_s_      * src );
 int            oyOptions_Release__Members (
                                        oyOptions_s_      * s );
 
