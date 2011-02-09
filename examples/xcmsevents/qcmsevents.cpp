@@ -87,7 +87,10 @@ void QcmseDialog::log( const char * text, int code )
       colour.setHsvF( 0.6, 0.4, 0.9 );
       icon->setIcon( icons->itemIcon(0) );
     } else
-    if(pid > 0)
+    /*  base colour server should support opt-out 
+     *  through _NET_COLOR_REGIONS - NCR
+     */
+    if(pid > 0 && strstr(text, "|NCR|") != 0)
     {
       colour.setHsvF( 0.41, 0.5, 0.9 );
       icon->setIcon( icons->itemIcon(1) );
@@ -122,7 +125,10 @@ void QcmseDialog::log( const char * text, int code )
       colour.setHsvF( 0.6, 0.4, 0.9 );
       icon->setIcon( icons->itemIcon(0) );
     } else
-    if(pid > 0)
+    /*  base colour server should support opt-out 
+     *  through _NET_COLOR_REGIONS - NCR
+     */
+    if(pid > 0 && strstr(text, "|NCR|") != 0)
     {
       colour.setHsvF( 0.41, 0.5, 0.9 );
       icon->setIcon( icons->itemIcon(1) );
