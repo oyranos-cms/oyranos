@@ -67,9 +67,11 @@
 #define _(x) x
 
 const char * GetText                 ( const char        * select,
-                                       oyNAME_e            type );
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
 const char * Api8UiGetText           ( const char        * select,
-                                       oyNAME_e            type );
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
 
 /** @instance _rank_map
  *  @brief    oyRankPad map for mapping device to configuration informations
@@ -667,7 +669,8 @@ int Config_Rank(oyConfig_s * config)
 }
 
 const char * Api8UiGetText           ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   static char * category = 0;
   if(strcmp(select,"name") == 0 ||
@@ -675,7 +678,7 @@ const char * Api8UiGetText           ( const char        * select,
   {
     /* The "help" and "name" texts are identical, as the module contains only
      * one filter to provide help for. */
-    return GetText(select,type);
+    return GetText(select,type,context);
   }
   else if(strcmp(select, "device_class") == 0)
     {
@@ -783,7 +786,8 @@ oyCMMapi8_s _api8 = {
  *
  *  \todo { Add usage info }
  */
-const char *GetText(const char *select, oyNAME_e type)
+const char *GetText(const char *select, oyNAME_e type,
+                                       oyStruct_s        * context)
 {
    if (strcmp(select, "name") == 0) {
       if (type == oyNAME_NICK)

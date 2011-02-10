@@ -236,7 +236,8 @@ oyPointer  lrawFilterNode_LibrawContextToMem (
  *  @since   2009/06/14 (Oyranos: 0.1.10)
  */
 const char * lrawGetText             ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
          if(strcmp(select, "name")==0)
   {
@@ -758,7 +759,8 @@ oyDATATYPE_e lraw_data_types[3] = {oyUINT8, oyUINT16, (oyDATATYPE_e)0};
 oyConnectorImaging_s lraw_imageInputRAW_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,
                                (oyObject_s)&oy_connector_imaging_static_object,
-  {oyOBJECT_NAME_S, 0,0,0, (char*)"Img", (char*)"Image", (char*)"Image libraw Socket"},
+  oyCMMgetImageConnectorSocketText, /* getText */
+  oy_image_connector_texts, /* texts */
   (char*)"//" OY_TYPE_STD "/image.data", /* connector_type */
   oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
   0, /* is_plug == oyFilterPlug_s */
@@ -788,7 +790,8 @@ oyConnectorImaging_s * lraw_imageInputRAW_connectors[2] =
 
 const char * oyraApi4UiImageInputLibrawGetText (
                                        const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   if(strcmp(select,"name"))
   {
