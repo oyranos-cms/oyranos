@@ -55,9 +55,11 @@ int          qarzDeviceFromName_     ( const char        * device_name,
 int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
                                        oyOptions_s       * options );
 const char * qarzGetText             ( const char        * select,
-                                       oyNAME_e            type );
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
 const char * qarzApi8UiGetText       ( const char        * select,
-                                       oyNAME_e            type );
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
 
 /* --- implementations --- */
 
@@ -1026,7 +1028,8 @@ oyRankPad qarz_rank_map[] = {
 };
 
 const char * qarzApi8UiGetText       ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
   static char * category = 0;
   if(strcmp(select,"name") == 0 ||
@@ -1034,7 +1037,7 @@ const char * qarzApi8UiGetText       ( const char        * select,
   {
     /* The "help" and "name" texts are identical, as the module contains only
      * one filter to provide help for. */
-    return qarzGetText(select,type);
+    return qarzGetText(select,type,context);
   }
   else if(strcmp(select, "device_class")==0)
   {
@@ -1148,7 +1151,8 @@ oyCMMapi8_s qarz_api8 = {
  *  @date    2008/12/30
  */
 const char * qarzGetText             ( const char        * select,
-                                       oyNAME_e            type )
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
 {
          if(strcmp(select, "name")==0)
   {
