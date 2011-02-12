@@ -447,7 +447,7 @@ COBJECTS = \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
 	$(TARGET)_profiles.o \
-	tests/test_oyranos.o test.o test_core.o
+	tests/test_oyranos.o test.o test_core.o test_object.o
 #ifdef LRAW_LIBS
 #CPP_lraw_OBJECTS = $(CMM_lraw_OBJECTS)
 #endif
@@ -501,7 +501,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
 	$(TARGET)_profiles.o \
-	test2.o test_core.o tests/test_oyranos.o test.o
+	test2.o test_core.o test_object.o tests/test_oyranos.o test.o
 
 SUB_OBJECTS = \
 	$(CMM_lcms_OBJECTS) \
@@ -521,7 +521,7 @@ SUB_OBJECTS = \
 	tests/test_oyranos.o
 
 INCL_DEP = $(SOURCES) $(CXXFILES_Flmm) \
-	test.c test2.cpp test_core.c tests/test_oyranos.c
+	test.c test2.cpp test_core.c test_object.c tests/test_oyranos.c
 
 .PHONY:	check_environment docu examples oforms $(ELEKTRA_VERSION)
 
@@ -550,7 +550,7 @@ ALL_FILES = \
 	$(DOC_TEMPLATES) \
 	$(FLTK_FILES) \
 	dirent.c \
-	test.c test2.cpp test_core.c
+	test.c test2.cpp test_core.c test_object.c
 
 # build all what is needed to run the libraries, helpers
 all:	check_environment config.log.h mkdepend \
@@ -595,7 +595,7 @@ $(LIBSONAMEOBJECTFULL):	$(LIBSONAMECOREFULL) $(LIBNAME_OBJECT) $(DEVEL_LIBS)
 	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_libdir)$(LIBSONAMEOBJECT) \
 	-o $(LIBSONAMEOBJECTFULL) \
 	$(OBJECTS_OBJECT) \
-	$(LIBSONAMECOREFULL) $(LDLIBSCORE) $(m)
+	$(LIBSONAMECOREFULL) $(LDLIBSCORE) $(LIBXML2_LIBS) $(m)
 	$(RM)  $(LIBSONAMEOBJECT)
 	$(LNK) $(LIBSONAMEOBJECTFULL) $(LIBSONAMEOBJECT)
 	$(RM)  $(LIBSOOBJECT)
@@ -853,6 +853,17 @@ test_core:	$(LIBSONAMECOREFULL) $(LIBNAME_CORE) test_core.o
 	echo Linking static $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o $@ \
 	  test_core.o -L./ $(LIBNAME_CORE) -L$(libdir) $(intl) $(dl)
+
+test_object:	$(LIBSONAMEOBJECTFULL) $(LIBNAME_OBJECT) test_object.o
+	echo Linking dynamic $@ ...
+	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall \
+	  -o test_object_dyn \
+	  test_object.o -L./ $(LIBSONAMEOBJECTFULL) $(LIBSONAMECOREFULL) \
+	  $(LDLIBSCORE) $(LIBXML2_LIBS) $(LINK_LIB_PATH) -L$(libdir) $(intl)
+	echo Linking static $@ ...
+	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o $@ \
+	  test_object.o -L./ $(LIBNAME_OBJECT) $(LIBSONAMECORE) \
+	  $(LIBXML2_LIBS) -L$(libdir) $(intl) $(dl)
 
 
 test2:	test2.o $(LIBSONAMEFULL)
@@ -1231,7 +1242,7 @@ clean:
 	$(CLEAN_OBJECTS) libXNVCtrl.a \
 	$(TARGET)-policy \
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
-	test2 test_core test tests/test_oyranos \
+	test2 test_core test_object test tests/test_oyranos \
 	$(FLTK_GUI) \
 	oforms/$(TARGET)-xforms oforms/$(TARGET)-xforms-fltk;
 	for ling in $(LINGUAS); do \
