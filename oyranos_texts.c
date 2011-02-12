@@ -282,7 +282,7 @@ oyOptionStringsTranslate_ ()
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_CMYK_PROFILE,
-      "oyEDITING_CMYK", 0,"coated_FOGRA39L_argl.icc")
+      "oyEDITING_CMYK", 0,"ISOcoated_v2_bas.ICC")
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_XYZ, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
@@ -355,7 +355,7 @@ oyOptionStringsTranslate_ ()
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_ASSUMED_CMYK_PROFILE,
-      "oyASSUMED_CMYK" , 0,"coated_FOGRA39L_argl.icc")
+      "oyASSUMED_CMYK" , 0,"ISOcoated_v2_bas.ICC")
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_GRAY, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
@@ -373,7 +373,7 @@ oyOptionStringsTranslate_ ()
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_PROOF_PROFILE,
-      "oyPROFILE_PROOF" , 0,"coated_FOGRA39L_argl.icc")
+      "oyPROFILE_PROOF" , 0,"ISOcoated_v2_bas.ICC")
 
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_ACTION_UNTAGGED_ASSIGN, 2,
