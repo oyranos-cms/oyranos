@@ -199,6 +199,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_CALLBACK_S: text = "oyCallback_s"; break;
     case oyOBJECT_OBSERVER_S: text = "oyObserver_s"; break;
     case oyOBJECT_CONF_DOMAIN_S: text = "oyConfDomain_s"; break;
+    case oyOBJECT_INFO_STATIC_S: text = "oyObjectInfoStatic_s"; break;
     case oyOBJECT_MAX: text = "Max - none"; break;
   }
   return text;
