@@ -1,7 +1,7 @@
-/** @file oyCMMptr_s_.h
+/** @file oyPointer_s_.h
 
    [Template file inheritance graph]
-   +-> CMMptr_s_.template.h
+   +-> Pointer_s_.template.h
    |
    +-- Base_s_.h
 
@@ -13,29 +13,29 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/01
+ *  @since    2011/02/13
  */
 
 
-#ifndef OY_CMM_PTR_S__H
-#define OY_CMM_PTR_S__H
+#ifndef OY_POINTER_S__H
+#define OY_POINTER_S__H
 
-#define oyCMMptrPriv_m( var ) ((oyCMMptr_s_*) (var))
+#define oyPointerPriv_m( var ) ((oyPointer_s_*) (var))
 
   
 #include <oyranos_object.h>
   
 
-#include "oyCMMptr_s.h"
+#include "oyPointer_s.h"
 
-typedef struct oyCMMptr_s_ oyCMMptr_s_;
-/* Include "CMMptr.private.h" { */
+typedef struct oyPointer_s_ oyPointer_s_;
+/* Include "Pointer.private.h" { */
 
-/* } Include "CMMptr.private.h" */
+/* } Include "Pointer.private.h" */
 
 /** @internal
- *  @struct   oyCMMptr_s_
- *  @brief      CMM pointer
+ *  @struct   oyPointer_s_
+ *  @brief      custom pointer
  *  @ingroup  module_api
  *  @extends  oyStruct_s
  *
@@ -43,7 +43,7 @@ typedef struct oyCMMptr_s_ oyCMMptr_s_;
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-struct oyCMMptr_s_ {
+struct oyPointer_s_ {
 
 /* Include "Struct.members.h" { */
 oyOBJECT_e           type_;          /**< @private struct type */
@@ -55,7 +55,7 @@ oyObject_s           oy_;            /**< @private features name and hash */
 
 
 
-/* Include "CMMptr.members.h" { */
+/* Include "Pointer.members.h" { */
   char               * lib_name;       /*!< the CMM */
   char                 func_name[32];  /*!< optional the CMM's function name */
   oyPointer            ptr;            /*!< a CMM's data pointer */
@@ -64,37 +64,37 @@ oyObject_s           oy_;            /**< @private features name and hash */
   oyPointer_release_f  ptrRelease;     /*!< CMM's deallocation function */
   int                  ref;            /**< Oyranos reference counter */
 
-/* } Include "CMMptr.members.h" */
+/* } Include "Pointer.members.h" */
 
 };
 
 
-oyCMMptr_s_*
-  oyCMMptr_New_( oyObject_s object );
-oyCMMptr_s_*
-  oyCMMptr_Copy_( oyCMMptr_s_ *cmmptr, oyObject_s object);
-oyCMMptr_s_*
-  oyCMMptr_Copy__( oyCMMptr_s_ *cmmptr, oyObject_s object);
+oyPointer_s_*
+  oyPointer_New_( oyObject_s object );
+oyPointer_s_*
+  oyPointer_Copy_( oyPointer_s_ *pointer, oyObject_s object);
+oyPointer_s_*
+  oyPointer_Copy__( oyPointer_s_ *pointer, oyObject_s object);
 int
-  oyCMMptr_Release_( oyCMMptr_s_ **cmmptr );
+  oyPointer_Release_( oyPointer_s_ **pointer );
 
 
 
-/* Include "CMMptr.private_methods_declarations.h" { */
-int                oyCMMptr_Set_     ( oyCMMptr_s_       * cmm_ptr,
+/* Include "Pointer.private_methods_declarations.h" { */
+int                oyPointer_Set_    ( oyPointer_s_      * cmm_ptr,
                                        const char        * lib_name,
                                        const char        * resource,
                                        oyPointer           ptr,
                                        const char        * func_name,
                                        oyPointer_release_f ptrRelease );
 
-/* } Include "CMMptr.private_methods_declarations.h" */
+/* } Include "Pointer.private_methods_declarations.h" */
 
 
 
-void oyCMMptr_Release__Members( oyCMMptr_s_ * cmmptr );
-int oyCMMptr_Init__Members( oyCMMptr_s_ * cmmptr );
-int oyCMMptr_Copy__Members( oyCMMptr_s_ * dst, oyCMMptr_s_ * src);
+void oyPointer_Release__Members( oyPointer_s_ * pointer );
+int oyPointer_Init__Members( oyPointer_s_ * pointer );
+int oyPointer_Copy__Members( oyPointer_s_ * dst, oyPointer_s_ * src);
 
 
-#endif /* OY_CMM_PTR_S__H */
+#endif /* OY_POINTER_S__H */

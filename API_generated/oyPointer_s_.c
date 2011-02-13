@@ -1,7 +1,7 @@
-/** @file oyCMMptr_s_.c
+/** @file oyPointer_s_.c
 
    [Template file inheritance graph]
-   +-> CMMptr_s_.template.c
+   +-> Pointer_s_.template.c
    |
    +-- Base_s_.c
 
@@ -13,14 +13,14 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/03
+ *  @since    2011/02/13
  */
 
 
 
   
-#include "oyCMMptr_s.h"
-#include "oyCMMptr_s_.h"
+#include "oyPointer_s.h"
+#include "oyPointer_s_.h"
 
 #include "oyObject_s.h"
 #include "oyranos_object_internal.h"
@@ -29,10 +29,10 @@
   
 
 
-/* Include "CMMptr.private_custom_definitions.c" { */
-/** Function    oyCMMptr_Release__Members
- *  @memberof   oyCMMptr_s
- *  @brief      Custom CMMptr destructor
+/* Include "Pointer.private_custom_definitions.c" { */
+/** Function    oyPointer_Release__Members
+ *  @memberof   oyPointer_s
+ *  @brief      Custom Pointer destructor
  *  @internal
  *
  *  This function will free up all memmory allocated by the
@@ -41,13 +41,13 @@
  *  of the oy_ object is used to release the rest of the members
  *  that were allocated with oy_->allocateFunc_.
  *
- *  @param[in]  cmmptr  the CMMptr object
+ *  @param[in]  cmmptr  the Pointer object
  *
  *  @version Oyranos: 0.3.0
  *  @since   2010/08/00 (Oyranos: 0.3.0)
- *  @date    2011/01/28
+ *  @date    2011/02/13
  */
-void oyCMMptr_Release__Members( oyCMMptr_s_ * cmmptr )
+void oyPointer_Release__Members( oyPointer_s_ * cmmptr )
 {
   /* Deallocate members here
    * E.g: oyXXX_Release( &cmmptr->member );
@@ -80,45 +80,45 @@ void oyCMMptr_Release__Members( oyCMMptr_s_ * cmmptr )
   }
 }
 
-/** Function    oyCMMptr_Init__Members
- *  @memberof   oyCMMptr_s
- *  @brief      Custom CMMptr constructor 
+/** Function    oyPointer_Init__Members
+ *  @memberof   oyPointer_s
+ *  @brief      Custom Pointer constructor 
  *  @internal
  *
  *  This function will allocate all memmory for the input object.
  *  For the basic member types this is done using the allocateFunc_
  *  of the attatced (oyObject_s)oy_ object.
  *
- *  @param[in]  cmmptr  the CMMptr object
+ *  @param[in]  cmmptr  the Pointer object
  *
  *  @version Oyranos: x.x.x
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyCMMptr_Init__Members( oyCMMptr_s_ * cmmptr )
+int oyPointer_Init__Members( oyPointer_s_ * cmmptr )
 {
   ++cmmptr->ref;
 
   return 0;
 }
 
-/** Function    oyCMMptr_Copy__Members
- *  @memberof   oyCMMptr_s
- *  @brief      Custom CMMptr copy constructor
+/** Function    oyPointer_Copy__Members
+ *  @memberof   oyPointer_s
+ *  @brief      Custom Pointer copy constructor
  *  @internal
  *
  *  This function makes a copy of all values from the input
  *  to the output object. The destination object and all of its
  *  members should already be allocated.
  *
- *  @param[in]   src  the oyCMMptr_s_ input object
- *  @param[out]  dst  the output oyCMMptr_s_ object
+ *  @param[in]   src  the oyPointer_s_ input object
+ *  @param[out]  dst  the output oyPointer_s_ object
  *
  *  @version Oyranos: x.x.x
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyCMMptr_Copy__Members( oyCMMptr_s_ * dst, oyCMMptr_s_ * src)
+int oyPointer_Copy__Members( oyPointer_s_ * dst, oyPointer_s_ * src)
 {
   oyAlloc_f allocateFunc_ = 0;
   oyDeAlloc_f deallocateFunc_ = 0;
@@ -135,29 +135,29 @@ int oyCMMptr_Copy__Members( oyCMMptr_s_ * dst, oyCMMptr_s_ * src)
   return 0;
 }
 
-/* } Include "CMMptr.private_custom_definitions.c" */
+/* } Include "Pointer.private_custom_definitions.c" */
 
 
 
 /** @internal
- *  Function oyCMMptr_New_
- *  @memberof oyCMMptr_s_
- *  @brief   allocate a new oyCMMptr_s_  object
+ *  Function oyPointer_New_
+ *  @memberof oyPointer_s_
+ *  @brief   allocate a new oyPointer_s_  object
  *
  *  @version Oyranos: 
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-oyCMMptr_s_ * oyCMMptr_New_ ( oyObject_s object )
+oyPointer_s_ * oyPointer_New_ ( oyObject_s object )
 {
   /* ---- start of common object constructor ----- */
-  oyOBJECT_e type = oyOBJECT_CMM_PTR_S;
+  oyOBJECT_e type = oyOBJECT_POINTER_S;
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  oyCMMptr_s_ * s = 0;
+  oyPointer_s_ * s = 0;
 
   if(s_obj)
-    s = (oyCMMptr_s_*)s_obj->allocateFunc_(sizeof(oyCMMptr_s_));
+    s = (oyPointer_s_*)s_obj->allocateFunc_(sizeof(oyPointer_s_));
 
   if(!s || !s_obj)
   {
@@ -165,18 +165,18 @@ oyCMMptr_s_ * oyCMMptr_New_ ( oyObject_s object )
     return NULL;
   }
 
-  error = !memset( s, 0, sizeof(oyCMMptr_s_) );
+  error = !memset( s, 0, sizeof(oyPointer_s_) );
 
   s->type_ = type;
-  s->copy = (oyStruct_Copy_f) oyCMMptr_Copy;
-  s->release = (oyStruct_Release_f) oyCMMptr_Release;
+  s->copy = (oyStruct_Copy_f) oyPointer_Copy;
+  s->release = (oyStruct_Release_f) oyPointer_Release;
 
   s->oy_ = s_obj;
 
   
-  /* ---- start of custom CMMptr constructor ----- */
-  error = !oyObject_SetParent( s_obj, oyOBJECT_CMM_PTR_S, s );
-  /* ---- end of custom CMMptr constructor ------- */
+  /* ---- start of custom Pointer constructor ----- */
+  error = !oyObject_SetParent( s_obj, oyOBJECT_POINTER_S, s );
+  /* ---- end of custom Pointer constructor ------- */
   
   
   
@@ -188,9 +188,9 @@ oyCMMptr_s_ * oyCMMptr_New_ ( oyObject_s object )
   
 
   
-  /* ---- start of custom CMMptr constructor ----- */
-  error = oyCMMptr_Init__Members( s );
-  /* ---- end of custom CMMptr constructor ------- */
+  /* ---- start of custom Pointer constructor ----- */
+  error = oyPointer_Init__Members( s );
+  /* ---- end of custom Pointer constructor ------- */
   
   
   
@@ -199,33 +199,33 @@ oyCMMptr_s_ * oyCMMptr_New_ ( oyObject_s object )
 }
 
 /** @internal
- *  Function oyCMMptr_Copy__
- *  @memberof oyCMMptr_s_
- *  @brief   real copy a CMMptr object
+ *  Function oyPointer_Copy__
+ *  @memberof oyPointer_s_
+ *  @brief   real copy a Pointer object
  *
- *  @param[in]     cmmptr                 CMMptr struct object
+ *  @param[in]     pointer                 Pointer struct object
  *  @param         object              the optional object
  *
  *  @version Oyranos: 
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-oyCMMptr_s_ * oyCMMptr_Copy__ ( oyCMMptr_s_ *cmmptr, oyObject_s object )
+oyPointer_s_ * oyPointer_Copy__ ( oyPointer_s_ *pointer, oyObject_s object )
 {
-  oyCMMptr_s_ *s = 0;
+  oyPointer_s_ *s = 0;
   int error = 0;
 
-  if(!cmmptr || !object)
+  if(!pointer || !object)
     return s;
 
-  s = oyCMMptr_New_( object );
+  s = oyPointer_New_( object );
   error = !s;
 
   if(!error) {
     
-    /* ---- start of custom CMMptr copy constructor ----- */
-    error = oyCMMptr_Copy__Members( s, cmmptr );
-    /* ---- end of custom CMMptr copy constructor ------- */
+    /* ---- start of custom Pointer copy constructor ----- */
+    error = oyPointer_Copy__Members( s, pointer );
+    /* ---- end of custom Pointer copy constructor ------- */
     
     
     
@@ -235,74 +235,74 @@ oyCMMptr_s_ * oyCMMptr_Copy__ ( oyCMMptr_s_ *cmmptr, oyObject_s object )
   }
 
   if(error)
-    oyCMMptr_Release_( &s );
+    oyPointer_Release_( &s );
 
   return s;
 }
 
 /** @internal
- *  Function oyCMMptr_Copy_
- *  @memberof oyCMMptr_s_
- *  @brief   copy or reference a CMMptr object
+ *  Function oyPointer_Copy_
+ *  @memberof oyPointer_s_
+ *  @brief   copy or reference a Pointer object
  *
- *  @param[in]     cmmptr                 CMMptr struct object
+ *  @param[in]     pointer                 Pointer struct object
  *  @param         object              the optional object
  *
  *  @version Oyranos: 
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-oyCMMptr_s_ * oyCMMptr_Copy_ ( oyCMMptr_s_ *cmmptr, oyObject_s object )
+oyPointer_s_ * oyPointer_Copy_ ( oyPointer_s_ *pointer, oyObject_s object )
 {
-  oyCMMptr_s_ *s = cmmptr;
+  oyPointer_s_ *s = pointer;
 
-  if(!cmmptr)
+  if(!pointer)
     return 0;
 
-  if(cmmptr && !object)
+  if(pointer && !object)
   {
-    s = cmmptr;
+    s = pointer;
     
     oyObject_Copy( s->oy_ );
     return s;
   }
 
-  s = oyCMMptr_Copy__( cmmptr, object );
+  s = oyPointer_Copy__( pointer, object );
 
   return s;
 }
  
 /** @internal
- *  Function oyCMMptr_Release_
- *  @memberof oyCMMptr_s_
- *  @brief   release and possibly deallocate a CMMptr object
+ *  Function oyPointer_Release_
+ *  @memberof oyPointer_s_
+ *  @brief   release and possibly deallocate a Pointer object
  *
- *  @param[in,out] cmmptr                 CMMptr struct object
+ *  @param[in,out] pointer                 Pointer struct object
  *
  *  @version Oyranos: 
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-int oyCMMptr_Release_( oyCMMptr_s_ **cmmptr )
+int oyPointer_Release_( oyPointer_s_ **pointer )
 {
   /* ---- start of common object destructor ----- */
-  oyCMMptr_s_ *s = 0;
+  oyPointer_s_ *s = 0;
 
-  if(!cmmptr || !*cmmptr)
+  if(!pointer || !*pointer)
     return 0;
 
-  s = *cmmptr;
+  s = *pointer;
 
-  *cmmptr = 0;
+  *pointer = 0;
 
   if(oyObject_UnRef(s->oy_))
     return 0;
   /* ---- end of common object destructor ------- */
 
   
-  /* ---- start of custom CMMptr destructor ----- */
-  oyCMMptr_Release__Members( s );
-  /* ---- end of custom CMMptr destructor ------- */
+  /* ---- start of custom Pointer destructor ----- */
+  oyPointer_Release__Members( s );
+  /* ---- end of custom Pointer destructor ------- */
   
   
   
@@ -324,24 +324,24 @@ int oyCMMptr_Release_( oyCMMptr_s_ **cmmptr )
 
 
 
-/* Include "CMMptr.private_methods_definitions.c" { */
+/* Include "Pointer.private_methods_definitions.c" { */
 /** @internal
- *  @brief set oyCMMptr_s members
+ *  @brief set oyPointer_s members
  *
  *  Has only a weak release behaviour. Use for initialising.
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.0
  *  @since   2007/11/26 (Oyranos: 0.1.8)
- *  @date    2008/12/27
+ *  @date    2011/02/13
  */
-int                oyCMMptr_Set_     ( oyCMMptr_s_       * cmm_ptr,
+int                oyPointer_Set_    ( oyPointer_s_      * cmm_ptr,
                                        const char        * lib_name,
                                        const char        * resource,
                                        oyPointer           ptr,
                                        const char        * func_name,
                                        oyPointer_release_f ptrRelease )
 {
-  oyCMMptr_s_ * s = cmm_ptr;
+  oyPointer_s_ * s = cmm_ptr;
   int error = !s;
 
   if(error <= 0 && lib_name)
@@ -368,5 +368,5 @@ int                oyCMMptr_Set_     ( oyCMMptr_s_       * cmm_ptr,
   return error;
 }
 
-/* } Include "CMMptr.private_methods_definitions.c" */
+/* } Include "Pointer.private_methods_definitions.c" */
 
