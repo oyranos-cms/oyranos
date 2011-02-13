@@ -232,6 +232,7 @@ ldconfig
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_libdir}/lib%{name}_core.so.*
+%{_libdir}/lib%{name}_object.so.*
 %{_libdir}/lib%{name}.so.*
 %dir %{_libdir}/colour/
 %dir %{_libdir}/%{cmmsubpath}/
@@ -249,6 +250,7 @@ ldconfig
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-config
 %{_libdir}/lib%{name}_core.so
+%{_libdir}/lib%{name}_object.so
 %{_libdir}/lib%{name}.so
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/icc34.h
@@ -261,6 +263,7 @@ ldconfig
 %{_includedir}/%{name}/%{name}_types.h
 %{_libdir}/pkgconfig/*
 %{_libdir}/lib%{name}_core.a
+%{_libdir}/lib%{name}_object.a
 %{_libdir}/lib%{name}.a
 %{_mandir}/man3/%{name}-config.3*
 %{_mandir}/man3/%{name}.*
@@ -272,6 +275,7 @@ ldconfig
 %dir %{_includedir}/%{name}/alpha
 %{_includedir}/%{name}/alpha/%{name}_alpha.h
 %{_includedir}/%{name}/alpha/%{name}_cmm.h
+%{_includedir}/%{name}/alpha/object/*.h
 %doc doc_alpha/html
 
 %files monitor
@@ -337,6 +341,9 @@ ldconfig
 %{desktopdir}/qcmsevents-applet.desktop
 
 %changelog
+* Mon Feb 13 2011 Kai-Uwe Behrmann
+- split liboyranos_object from liboyranos
+
 * Mon Jan 03 2011 Kai-Uwe Behrmann
 - split liboyranos_core from liboyranos
 
