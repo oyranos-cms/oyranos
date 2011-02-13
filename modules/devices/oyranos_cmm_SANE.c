@@ -349,12 +349,12 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
          /*Handle "device_handle" option */
          if (handle_opt && !call_sane_exit) {
-            oyCMMptr_s *handle_ptr = NULL;
+            oyPointer_s *handle_ptr = NULL;
             SANE_Handle h;
             status = sane_open(sane_name, &h);
             if (status == SANE_STATUS_GOOD) {
-               handle_ptr = oyCMMptr_New(0);
-               oyCMMptr_Set(handle_ptr,
+               handle_ptr = oyPointer_New(0);
+               oyPointer_Set(handle_ptr,
                             "SANE",
                             "handle",
                             (oyPointer)h,
@@ -432,10 +432,10 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
             g_error++;
          }
       } else {
-        oyCMMptr_s * oy_struct = (oyCMMptr_s*) oyOption_StructGet( handle_opt,
-                                                           oyOBJECT_CMM_PTR_S );
-        device_handle = (SANE_Handle)oyCMMptr_GetPointer(oy_struct);
-        oyCMMptr_Release( &oy_struct );
+        oyPointer_s * oy_struct = (oyPointer_s*) oyOption_StructGet( handle_opt,
+                                                           oyOBJECT_POINTER_S );
+        device_handle = (SANE_Handle)oyPointer_GetPointer(oy_struct);
+        oyPointer_Release( &oy_struct );
       }
 
       if (device_handle) {
@@ -603,12 +603,12 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          /*Handle "device_handle" option */
          handle_opt_dev = oyConfig_Find(device, "device_handle");
          if (!error && !handle_opt_dev) {
-            oyCMMptr_s *handle_ptr = NULL;
+            oyPointer_s *handle_ptr = NULL;
             SANE_Handle h;
             status = sane_open(sane_name, &h);
             if (status == SANE_STATUS_GOOD) {
-               handle_ptr = oyCMMptr_New(0);
-               oyCMMptr_Set(handle_ptr,
+               handle_ptr = oyPointer_New(0);
+               oyPointer_Set(handle_ptr,
                             "SANE",
                             "handle",
                             (oyPointer)h,
@@ -709,10 +709,10 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          /* If not there, get one from SANE */
          handle_opt_dev = oyConfig_Find(device, "device_handle");
          if (handle_opt_dev) {
-           oyCMMptr_s * oy_struct = (oyCMMptr_s*)oyOption_StructGet(
-                                           handle_opt_dev, oyOBJECT_CMM_PTR_S );
-           device_handle = (SANE_Handle)oyCMMptr_GetPointer(oy_struct);
-           oyCMMptr_Release( &oy_struct );
+           oyPointer_s * oy_struct = (oyPointer_s*)oyOption_StructGet(
+                                           handle_opt_dev, oyOBJECT_POINTER_S );
+           device_handle = (SANE_Handle)oyPointer_GetPointer(oy_struct);
+           oyPointer_Release( &oy_struct );
             oyOptions_MoveIn(device_new->data, &handle_opt_dev, -1);
          } else {
             printf(PRFX "Opening sane device \"%s\"..", device_name); fflush(NULL);
@@ -1173,7 +1173,7 @@ int CreateRankMap_(SANE_Handle device_handle, oyRankPad ** rank_map)
  * @brief Release the SANE_Handle.
  *
  * This function is a oyPointer_release_f and is used in the
- * oyCMMptr_s device handle.
+ * oyPointer_s device handle.
  *
  * @param[in]	handle_ptr				SANE_Handle
  * @return 0 for success

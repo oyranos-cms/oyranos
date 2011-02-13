@@ -1,20 +1,20 @@
 /** @internal
- *  @brief set oyCMMptr_s members
+ *  @brief set oyPointer_s members
  *
  *  Has only a weak release behaviour. Use for initialising.
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.0
  *  @since   2007/11/26 (Oyranos: 0.1.8)
- *  @date    2008/12/27
+ *  @date    2011/02/13
  */
-int                oyCMMptr_Set_     ( oyCMMptr_s_       * cmm_ptr,
+int                oyPointer_Set_    ( oyPointer_s_      * cmm_ptr,
                                        const char        * lib_name,
                                        const char        * resource,
                                        oyPointer           ptr,
                                        const char        * func_name,
                                        oyPointer_release_f ptrRelease )
 {
-  oyCMMptr_s_ * s = cmm_ptr;
+  oyPointer_s_ * s = cmm_ptr;
   int error = !s;
 
   if(error <= 0 && lib_name)

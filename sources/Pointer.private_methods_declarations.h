@@ -1,4 +1,4 @@
-int                oyCMMptr_Set_     ( oyCMMptr_s_       * cmm_ptr,
+int                oyPointer_Set_    ( oyPointer_s_      * cmm_ptr,
                                        const char        * lib_name,
                                        const char        * resource,
                                        oyPointer           ptr,

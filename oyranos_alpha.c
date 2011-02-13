@@ -12,7 +12,7 @@
  *  @since    2004/11/25
  */
 
-#include "oyCMMptr_s.h"
+#include "oyPointer_s.h"
 #include "oyName_s.h"
 #include "oyObserver_s.h"
 #include "oyOption_s.h"
@@ -819,14 +819,14 @@ int          oyName_boolean          ( oyName_s          * name_a,
 
 
 /** @internal
- *  @brief   convert between oyCMMptr_s data
+ *  @brief   convert between oyPointer_s data
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/28 (Oyranos: 0.1.10)
  *  @date    2008/12/28
  */
-int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
-                                       oyCMMptr_s        * cmm_ptr_out,
+int          oyPointer_ConvertData   ( oyPointer_s       * cmm_ptr,
+                                       oyPointer_s       * cmm_ptr_out,
                                        oyFilterNode_s    * node )
 {
   int error = !cmm_ptr || !cmm_ptr_out;
@@ -841,17 +841,17 @@ int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
     STRING_ADD( reg, tmp );
     oyFree_m_( tmp );
     STRING_ADD( reg, "/" );
-    STRING_ADD( reg, oyCMMptr_GetResourceName( cmm_ptr ) );
+    STRING_ADD( reg, oyPointer_GetResourceName( cmm_ptr ) );
     STRING_ADD( reg, "_" );
-    STRING_ADD( reg, oyCMMptr_GetResourceName( cmm_ptr_out ) );
+    STRING_ADD( reg, oyPointer_GetResourceName( cmm_ptr_out ) );
 
     api6 = (oyCMMapi6_s*) oyCMMsGetFilterApi_( 0, reg, oyOBJECT_CMM_API6_S );
 
     error = !api6;
   }
 
-  if(error <= 0 && api6->oyCMMdata_Convert)
-    error = api6->oyCMMdata_Convert( cmm_ptr, cmm_ptr_out, node );
+  if(error <= 0 && api6->oyModuleData_Convert)
+    error = api6->oyModuleData_Convert( cmm_ptr, cmm_ptr_out, node );
   else
     error = 1;
 
@@ -1217,22 +1217,22 @@ int          oyCMMdsoReference_    ( const char        * lib_name,
   for(i = 0; i < n; ++i)
   {
     oyStruct_s * obj = oyStructList_Get_(oy_cmm_handles_, i);
-    oyCMMptr_s * s;
+    oyPointer_s * s;
 
-    if(obj && obj->type_ == oyOBJECT_CMM_PTR_S)
-      s = (oyCMMptr_s*) obj;
+    if(obj && obj->type_ == oyOBJECT_POINTER_S)
+      s = (oyPointer_s*) obj;
     else
       s = 0;
 
-    if( s && oyCMMptr_GetLibName( s ) && lib_name &&
-        !oyStrcmp_( oyCMMptr_GetLibName( s ), lib_name ) )
+    if( s && oyPointer_GetLibName( s ) && lib_name &&
+        !oyStrcmp_( oyPointer_GetLibName( s ), lib_name ) )
     {
       found = 1;
       oyStructList_ReferenceAt_(oy_cmm_handles_, i);
       if(ptr)
       {
-        if(!oyCMMptr_GetPointer( s ))
-          oyCMMptr_Set( s, 0, 0, ptr, 0, 0 );
+        if(!oyPointer_GetPointer( s ))
+          oyPointer_Set( s, 0, 0, ptr, 0, 0 );
         /*else
           WARNc_S(("Attempt to register dso handle multiple times."));*/
       }
@@ -1241,13 +1241,13 @@ int          oyCMMdsoReference_    ( const char        * lib_name,
 
   if(!found)
   {
-    oyCMMptr_s * s = oyCMMptr_New(0);
+    oyPointer_s * s = oyPointer_New(0);
     oyStruct_s * oy_cmm_struct = 0;
 
     error = !s;
 
     if(error <= 0)
-      error = oyCMMptr_Set( s, lib_name, 0, ptr, "oyDlclose", oyDlclose );
+      error = oyPointer_Set( s, lib_name, 0, ptr, "oyDlclose", oyDlclose );
 
     if(error <= 0)
       oy_cmm_struct = (oyStruct_s*) s;
@@ -1282,16 +1282,16 @@ int          oyCMMdsoSearch_         ( const char        * lib_name )
   for(i = 0; i < n; ++i)
   {
     oyStruct_s * obj = oyStructList_Get_(oy_cmm_handles_, i);
-    oyCMMptr_s * s = 0;
+    oyPointer_s * s = 0;
 
-    if(obj && obj->type_ == oyOBJECT_CMM_PTR_S)
-      s = (oyCMMptr_s*) obj;
+    if(obj && obj->type_ == oyOBJECT_POINTER_S)
+      s = (oyPointer_s*) obj;
 
     error = !s;
 
     if(error <= 0)
-    if( oyCMMptr_GetLibName(s) && lib_name &&
-        !oyStrcmp_( oyCMMptr_GetLibName(s), lib_name ) )
+    if( oyPointer_GetLibName(s) && lib_name &&
+        !oyStrcmp_( oyPointer_GetLibName(s), lib_name ) )
       pos = i;
   }
 
@@ -1353,11 +1353,11 @@ if(!lib_name)
 
   if(found >= 0)
   {
-    oyCMMptr_s * s = (oyCMMptr_s*)oyStructList_GetType_( oy_cmm_handles_, found,
-                                                  oyOBJECT_CMM_PTR_S );
+    oyPointer_s * s = (oyPointer_s*)oyStructList_GetType_( oy_cmm_handles_, found,
+                                                  oyOBJECT_POINTER_S );
 
     if(s)
-      dso_handle = oyCMMptr_GetPointer(s);
+      dso_handle = oyPointer_GetPointer(s);
   }
 
   if(!dso_handle)
@@ -2864,7 +2864,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api )
            (s->version[0] || s->version[1] || s->version[2]) &&
            s->data_type_in && s->data_type_in[0] &&
            s->data_type_out && s->data_type_out[0] &&
-           s->oyCMMdata_Convert
+           s->oyModuleData_Convert
             ) )
         error = 1;
     } break;
@@ -3241,35 +3241,36 @@ digraph Anatomy_A {
  */
 
 
-/** Function oyCMMptrLookUpFromObject
+/** Function oyPointerLookUpFromObject
  *  @brief   get a module specific pointer from cache
- *  @memberof oyCMMptr_s
+ *  @memberof oyPointer_s
  *
- *  The returned oyCMMptr_s has to be released after using by the module with
- *  oyCMMptr_Release().
- *  In case the the oyCMMptr_s::ptr member is empty, it should be set by the
+ *  The returned oyPointer_s has to be released after using by the module with
+ *  oyPointer_Release().
+ *  In case the the oyPointer_s::ptr member is empty, it should be set by the
  *  requesting module.
  *
- *  @see oyCMMptrLookUpFromText()
+ *  @see oyPointerLookUpFromText()
  *
  *  @param[in]     data                 object to look up
  *  @param[in]     data_type            four byte module type for this object
  *                                      type; The data_type shall enshure the
- *                                      returned oyCMMptr_s is specific to the
+ *                                      returned oyPointer_s is specific to the
  *                                      calling module.
- *  @return                             the CMM specific oyCMMptr_s; It is owned
+ *  @return                             the CMM specific oyPointer_s; It is owned
  *                                      by the CMM.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/28 (Oyranos: 0.1.10)
  *  @date    2009/11/05
  */
-oyCMMptr_s * oyCMMptrLookUpFromObject( oyStruct_s        * data,
+oyPointer_s  * oyPointerLookUpFromObject (
+                                       oyStruct_s        * data,
                                        const char        * data_type )
 {
   oyStruct_s * s = data;
   int error = !s;
-  oyCMMptr_s * cmm_ptr = 0;
+  oyPointer_s * cmm_ptr = 0;
 
   if(error <= 0 && !data_type)
     error = !data_type;
@@ -3278,19 +3279,19 @@ oyCMMptr_s * oyCMMptrLookUpFromObject( oyStruct_s        * data,
   {
     const char * tmp = 0;
     tmp = oyObject_GetName( s->oy_, oyNAME_NICK );
-    cmm_ptr = oyCMMptrLookUpFromText( tmp, data_type );
+    cmm_ptr = oyPointerLookUpFromText( tmp, data_type );
   }
 
   return cmm_ptr;
 }
 
-/** Function oyCMMptrLookUpFromText
+/** Function oyPointerLookUpFromText
  *  @brief   get a module specific pointer from cache
- *  @memberof oyCMMptr_s
+ *  @memberof oyPointer_s
  *
- *  The returned oyCMMptr_s has to be released after using by the module with
- *  oyCMMptr_Release().
- *  In case the the oyCMMptr_s::ptr member is empty, it should be set by the
+ *  The returned oyPointer_s has to be released after using by the module with
+ *  oyPointer_Release().
+ *  In case the the oyPointer_s::ptr member is empty, it should be set by the
  *  requesting module.
  *
  *  @see e.g. lcmsCMMData_Open()
@@ -3298,27 +3299,27 @@ oyCMMptr_s * oyCMMptrLookUpFromObject( oyStruct_s        * data,
  *  @param[in]     text                 hash text to look up
  *  @param[in]     data_type            four byte module type for this object
  *                                      type; The data_type shall enshure the
- *                                      returned oyCMMptr_s is specific to the
+ *                                      returned oyPointer_s is specific to the
  *                                      calling module.
- *  @return                             the CMM specific oyCMMptr_s; It is owned
+ *  @return                             the CMM specific oyPointer_s; It is owned
  *                                      by the CMM.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/11/05 (Oyranos: 0.1.10)
  *  @date    2009/11/05
  */
-oyCMMptr_s * oyCMMptrLookUpFromText  ( const char        * text,
+oyPointer_s * oyPointerLookUpFromText( const char        * text,
                                        const char        * data_type )
 {
   int error = !text;
-  oyCMMptr_s * cmm_ptr = 0;
+  oyPointer_s * cmm_ptr = 0;
 
   if(error <= 0 && !data_type)
     error = !data_type;
 
   if(error <= 0)
   {
-    /*oyCMMptr_s *cmm_ptr = 0;*/
+    /*oyPointer_s *cmm_ptr = 0;*/
     const char * tmp = 0;
  
     oyHash_s * entry = 0;
@@ -3344,16 +3345,16 @@ oyCMMptr_s * oyCMMptrLookUpFromText  ( const char        * text,
     if(error <= 0)
     {
       /* 3. check and 3.a take*/
-      cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer( entry,
-                                                  oyOBJECT_CMM_PTR_S);
+      cmm_ptr = (oyPointer_s*) oyHash_GetPointer( entry,
+                                                  oyOBJECT_POINTER_S);
 
       if(!cmm_ptr)
       {
-        cmm_ptr = oyCMMptr_New( 0 );
+        cmm_ptr = oyPointer_New( 0 );
         error = !cmm_ptr;
 
         if(error <= 0)
-          error = oyCMMptr_Set( cmm_ptr, 0,
+          error = oyPointer_Set( cmm_ptr, 0,
                                  data_type, 0, 0, 0 );
 
         error = !cmm_ptr;
@@ -3503,8 +3504,8 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
  *  - function to convert arbitrary (string) arguments to a single string and a
  *    hash sum 
  *  - a function to create a cache entry struct from above hash and a the 
- *    according description string plus the oyCMMptr_s struct. For simplicity
- *    the cache struct can be identical to the oyCMMptr_s, with the disadvantage
+ *    according description string plus the oyPointer_s struct. For simplicity
+ *    the cache struct can be identical to the oyPointer_s, with the disadvantage
  *    of containing additional data not understandable for a CMM. We need to 
  *    mark these data (hash + description) as internal to Oyranos.
  *  - a list that hold above cache entry stucts
@@ -9691,7 +9692,7 @@ oyChar *       oyProfile_GetCMMText_ ( oyProfile_s       * profile,
   if(error <= 0)
   {
     oyCMMProfile_GetText_t funcP = 0;
-    oyCMMptr_s  * cmm_ptr = 0;
+    oyPointer_s  * cmm_ptr = 0;
 
 
     oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S,
@@ -17390,7 +17391,7 @@ oyFilterNode_s *   oyFilterNode_Copy_( oyFilterNode_s    * node,
   if(error <= 0)
   {
     if(error <= 0 && node->backend_data && node->backend_data->copy)
-      s->backend_data = (oyCMMptr_s*) node->backend_data->copy( (oyStruct_s*)
+      s->backend_data = (oyPointer_s*) node->backend_data->copy( (oyStruct_s*)
                                                   node->backend_data , s->oy_ );
   }
 
@@ -18751,7 +18752,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                * hash_temp = 0;
           int hash_text_len;
           oyPointer ptr = 0;
-          oyCMMptr_s * cmm_ptr = 0,
+          oyPointer_s * cmm_ptr = 0,
                      * cmm_ptr_out = 0;
 
 
@@ -18793,22 +18794,22 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
           if(error <= 0)
           {
             /* 3. check and 3.a take*/
-            cmm_ptr_out = (oyCMMptr_s*) oyHash_GetPointer( hash_out,
-                                                        oyOBJECT_CMM_PTR_S);
+            cmm_ptr_out = (oyPointer_s*) oyHash_GetPointer( hash_out,
+                                                        oyOBJECT_POINTER_S);
 
-            if(!(cmm_ptr_out && oyCMMptr_GetPointer(cmm_ptr_out)) || blob)
+            if(!(cmm_ptr_out && oyPointer_GetPointer(cmm_ptr_out)) || blob)
             {
               oySprintf_( hash_text, "%s:%s", s->api4_->context_type, 
                                               hash_text_ );
               /* 2. query in cache for api4 */
               hash = oyCMMCacheListGetEntry_( hash_text );
-              cmm_ptr = (oyCMMptr_s*) oyHash_GetPointer( hash,
-                                                        oyOBJECT_CMM_PTR_S);
+              cmm_ptr = (oyPointer_s*) oyHash_GetPointer( hash,
+                                                        oyOBJECT_POINTER_S);
 
               if(!cmm_ptr)
               {
                 size = 0;
-                cmm_ptr = oyCMMptr_New(0);
+                cmm_ptr = oyPointer_New(0);
               }
 
               /* write the context to memory */
@@ -18828,7 +18829,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                 goto clean;
               }
 
-              if(!oyCMMptr_GetPointer(cmm_ptr))
+              if(!oyPointer_GetPointer(cmm_ptr))
               {
                 /* 3b. ask CMM */
                 ptr = s->api4_->oyCMMFilterNode_ContextToMem( node, &size,
@@ -18839,15 +18840,15 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                   oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*) node, 
                   OY_DBG_FORMAT_ "no device link for caching", OY_DBG_ARGS_);
                   error = 1;
-                  oyCMMptr_Release( &cmm_ptr );
+                  oyPointer_Release( &cmm_ptr );
                 }
 
                 if(!error)
                 {
-                  error = oyCMMptr_Set( cmm_ptr, s->api4_->id_,
+                  error = oyPointer_Set( cmm_ptr, s->api4_->id_,
                                          s->api4_->context_type,
                                     ptr, "oyPointerRelease", oyPointerRelease);
-                  oyCMMptr_SetSize( cmm_ptr, size );
+                  oyPointer_SetSize( cmm_ptr, size );
 
                   /* 3b.1. update cache entry */
                   error = oyHash_SetPointer( hash, (oyStruct_s*) cmm_ptr);
@@ -18855,7 +18856,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
               }
 
 
-              if(error <= 0 && cmm_ptr && oyCMMptr_GetPointer(cmm_ptr))
+              if(error <= 0 && cmm_ptr && oyPointer_GetPointer(cmm_ptr))
               {
                 if(node->backend_data && node->backend_data->release)
                 node->backend_data->release( (oyStruct_s**)&node->backend_data);
@@ -18863,19 +18864,19 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                 if( oyStrcmp_( node->api7_->context_type,
                                s->api4_->context_type ) != 0 )
                 {
-                  cmm_ptr_out = oyCMMptr_New(0);
-                  error = oyCMMptr_Set( cmm_ptr_out, node->api7_->id_,
+                  cmm_ptr_out = oyPointer_New(0);
+                  error = oyPointer_Set( cmm_ptr_out, node->api7_->id_,
                                          node->api7_->context_type, 0, 0, 0);
 
                   /* search for a convertor and convert */
-                  oyCMMptr_ConvertData( cmm_ptr, cmm_ptr_out, node );
+                  oyPointer_ConvertData( cmm_ptr, cmm_ptr_out, node );
                   node->backend_data = cmm_ptr_out;
                   /* 3b.1. update cache entry */
                   error = oyHash_SetPointer( hash_out,
                                               (oyStruct_s*) cmm_ptr_out);
 
                 } else
-                  node->backend_data = oyCMMptr_Copy( cmm_ptr, 0 );
+                  node->backend_data = oyPointer_Copy( cmm_ptr, 0 );
               }
 
               if(oy_debug == 1)

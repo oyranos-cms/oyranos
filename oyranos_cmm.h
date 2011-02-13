@@ -19,7 +19,7 @@
 
 #include "oyranos.h"
 #include "oyranos_alpha.h"
-#include "oyCMMptr_s.h"
+#include "oyPointer_s.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -79,15 +79,15 @@ typedef int      (*oyCMMMessageFuncSet_f)( oyMessage_f     message_func );
  *  @since   2007/11/00 (Oyranos: 0.1.8)
  *  @date    2008/11/06
  */
-typedef int      (*oyCMMobjectOpen_f)  ( oyStruct_s        * data,
-                                       oyCMMptr_s        * oy );
+typedef int      (*oyCMMobjectOpen_f)( oyStruct_s        * data,
+                                       oyPointer_s       * oy );
 
 typedef void     (*oyCMMProgress_f)  ( int                 ID,
                                        double              progress );
 
 
 typedef icSignature (*oyCMMProfile_GetSignature_f) (
-                                       oyCMMptr_s        * cmm_ptr,
+                                       oyPointer_s       * cmm_ptr,
                                        int                 pcs);
 
 int              oyCMMlibMatchesCMM  ( const char        * lib_name,
@@ -753,7 +753,7 @@ struct oyCMMapi7_s {
 };
 
 /**
- *  typedef oyCMMdata_Convert_f
+ *  typedef oyModuleData_Convert_f
  *  @brief   convert between data formats
  *  @ingroup module_api
  *  @memberof oyCMMapi6_s
@@ -764,8 +764,8 @@ struct oyCMMapi7_s {
  *  @since   2008/12/27 (Oyranos: 0.1.10)
  *  @date    2008/12/27
  */
-typedef int(*oyCMMdata_Convert_f)    ( oyCMMptr_s        * data_in,
-                                       oyCMMptr_s        * data_out,
+typedef int(*oyModuleData_Convert_f) ( oyPointer_s       * data_in,
+                                       oyPointer_s       * data_out,
                                        oyFilterNode_s    * node );
 
 /** @struct  oyCMMapi6_s
@@ -827,7 +827,7 @@ struct oyCMMapi6_s {
   char           * data_type_in;
   /** oyCMMapi7_s::context_type specific data; e.g. "lcCC" */
   char           * data_type_out;
-  oyCMMdata_Convert_f oyCMMdata_Convert;
+  oyModuleData_Convert_f oyModuleData_Convert;
 };
 
 

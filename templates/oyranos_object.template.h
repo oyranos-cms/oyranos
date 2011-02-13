@@ -86,7 +86,7 @@ typedef enum {
   oyOBJECT_PIXEL_ACCESS_S,            /**< oyPixelAccess_s */
   oyOBJECT_CONVERSION_S,              /**< oyConversion_s */
   oyOBJECT_CMM_HANDLE_S      = 50,    /**< oyCMMhandle_s */
-  oyOBJECT_CMM_PTR_S,                 /*!< oyCMMptr_s */
+  oyOBJECT_POINTER_S,                 /*!< oyPointer_s */
   oyOBJECT_CMM_INFO_S,                /*!< oyCMMInfo_s */
   oyOBJECT_CMM_API_S,                 /**< oyCMMapi_s */
   oyOBJECT_CMM_APIS_S,                /**< oyCMMapis_s */

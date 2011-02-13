@@ -22,7 +22,7 @@
 #include "oyranos_icc.h"
 #include "oyranos_object.h"
 #include "oyBlob_s.h"
-#include "oyCMMptr_s.h"
+#include "oyPointer_s.h"
 #include "oyHash_s.h"
 #include "oyName_s.h"
 #include "oyObject_s.h"
@@ -2082,7 +2082,7 @@ struct oyFilterNode_s {
   /** the filters private data, requested over 
    *  oyCMMapi4_s::oyCMMFilterNode_ContextToMem() and converted to
    *  oyCMMapi4_s::context_type */
-  oyCMMptr_s         * backend_data;
+  oyPointer_s        * backend_data;
   /** the processing function and node connector descriptions */
   oyCMMapi7_s        * api7_;
 };

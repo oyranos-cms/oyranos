@@ -168,8 +168,8 @@ CFILES_CORE = \
 CFILES_OBJECT = \
 	$(GENDIR)oyBlob_s_.c \
 	$(GENDIR)oyBlob_s.c \
-	$(GENDIR)oyCMMptr_s_.c \
-	$(GENDIR)oyCMMptr_s.c \
+	$(GENDIR)oyPointer_s_.c \
+	$(GENDIR)oyPointer_s.c \
 	$(GENDIR)oyHash_s_.c \
 	$(GENDIR)oyHash_s.c \
 	$(GENDIR)oyName_s_.c \
@@ -188,7 +188,7 @@ CFILES_OBJECT = \
 	$(GENDIR)oyranos_object.c
 CHEADERS_OBJECT_PUBLIC = \
 	$(GENDIR)oyBlob_s.h \
-	$(GENDIR)oyCMMptr_s.h \
+	$(GENDIR)oyPointer_s.h \
 	$(GENDIR)oyHash_s.h \
 	$(GENDIR)oyName_s.h \
 	$(GENDIR)oyObject_s.h \
@@ -201,7 +201,7 @@ CHEADERS_OBJECT_PUBLIC = \
 CHEADERS_OBJECT = \
 	$(CHEADERS_OBJECT_PUBLIC) \
 	$(GENDIR)oyBlob_s_.h \
-	$(GENDIR)oyCMMptr_s_.h \
+	$(GENDIR)oyPointer_s_.h \
 	$(GENDIR)oyHash_s_.h \
 	$(GENDIR)oyName_s_.h \
 	$(GENDIR)oyObject_s_.h \

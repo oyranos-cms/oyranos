@@ -107,16 +107,16 @@ lcmsTransformWrap_s * lcmsTransformWrap_Set_ (
                                        icColorSpaceSignature colour_out,
                                        oyPixel_t           oy_pixel_layout_in,
                                        oyPixel_t           oy_pixel_layout_out,
-                                       oyCMMptr_s        * oy );
-int      lcmsCMMTransform_GetWrap_   ( oyCMMptr_s        * cmm_ptr,
+                                       oyPointer_s       * oy );
+int      lcmsCMMTransform_GetWrap_   ( oyPointer_s       * cmm_ptr,
                                        lcmsTransformWrap_s ** s );
 int lcmsCMMDeleteTransformWrap       ( oyPointer         * wrap );
 
 lcmsProfileWrap_s * lcmsCMMProfile_GetWrap_(
-                                       oyCMMptr_s        * cmm_ptr );
+                                       oyPointer_s       * cmm_ptr );
 int lcmsCMMProfileReleaseWrap        ( oyPointer         * p );
 
-int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
+int                lcmsCMMCheckPointer(oyPointer_s       * cmm_ptr,
                                        const char        * resource );
 int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
                                        icColorSpaceSignature colour_space );
@@ -150,8 +150,8 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
                                        oyFilterNode_s    * node,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
-int  lcmsCMMdata_Convert             ( oyCMMptr_s        * data_in,
-                                       oyCMMptr_s        * data_out,
+int  lcmsModuleData_Convert          ( oyPointer_s       * data_in,
+                                       oyPointer_s       * data_out,
                                        oyFilterNode_s    * node );
 int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket );
@@ -188,7 +188,7 @@ int                lcmsCMMInit       ( oyStruct_s        * filter )
  *  @date    2007/12/10
  *  @since   2007/12/10 (Oyranos: 0.1.8)
  */
-lcmsProfileWrap_s * lcmsCMMProfile_GetWrap_( oyCMMptr_s * cmm_ptr )
+lcmsProfileWrap_s * lcmsCMMProfile_GetWrap_( oyPointer_s * cmm_ptr )
 {
   lcmsProfileWrap_s * s = 0;
 
@@ -196,8 +196,8 @@ lcmsProfileWrap_s * lcmsCMMProfile_GetWrap_( oyCMMptr_s * cmm_ptr )
   int type = *((int*)&type_);
 
   if(cmm_ptr && !lcmsCMMCheckPointer( cmm_ptr, lcmsPROFILE ) &&
-     oyCMMptr_GetPointer(cmm_ptr))
-    s = (lcmsProfileWrap_s*) oyCMMptr_GetPointer(cmm_ptr);
+     oyPointer_GetPointer(cmm_ptr))
+    s = (lcmsProfileWrap_s*) oyPointer_GetPointer(cmm_ptr);
 
   if(s && s->type != type)
     s = 0;
@@ -212,15 +212,15 @@ lcmsProfileWrap_s * lcmsCMMProfile_GetWrap_( oyCMMptr_s * cmm_ptr )
  *  @since   2007/12/20 (Oyranos: 0.1.8)
  *  @date    2009/05/28
  */
-int      lcmsCMMTransform_GetWrap_   ( oyCMMptr_s        * cmm_ptr,
+int      lcmsCMMTransform_GetWrap_   ( oyPointer_s       * cmm_ptr,
                                        lcmsTransformWrap_s ** s )
 {
   char type_[4] = lcmsTRANSFORM;
   int type = *((int*)&type_);
 
   if(cmm_ptr && !lcmsCMMCheckPointer( cmm_ptr, lcmsTRANSFORM ) &&
-     oyCMMptr_GetPointer(cmm_ptr))
-    *s = (lcmsTransformWrap_s*) oyCMMptr_GetPointer(cmm_ptr);
+     oyPointer_GetPointer(cmm_ptr))
+    *s = (lcmsTransformWrap_s*) oyPointer_GetPointer(cmm_ptr);
 
   if(*s && ((*s)->type != type || !(*s)->lcms))
   {
@@ -285,9 +285,9 @@ int lcmsCMMProfileReleaseWrap(oyPointer *p)
  *  @date    2007/12/27
  */
 int          lcmsCMMData_Open        ( oyStruct_s        * data,
-                                       oyCMMptr_s        * oy )
+                                       oyPointer_s       * oy )
 {
-  oyCMMptr_s * s = 0;
+  oyPointer_s * s = 0;
   int error = 0;
 
   if(!error)
@@ -310,7 +310,7 @@ int          lcmsCMMData_Open        ( oyStruct_s        * data,
     s->block = block;
 
     s->lcms = CMMProfileOpen_M( block, size );
-    error = oyCMMptr_Set( oy, 0,
+    error = oyPointer_Set( oy, 0,
                           lcmsPROFILE, s, CMMToString_M(CMMProfileOpen_M),
                           lcmsCMMProfileReleaseWrap );
   }
@@ -331,17 +331,17 @@ int          lcmsCMMData_Open        ( oyStruct_s        * data,
  *  @date    2007/11/12
  *  @since   2007/11/12 (Oyranos: 0.1.8)
  */
-int                lcmsCMMCheckPointer(oyCMMptr_s        * cmm_ptr,
+int                lcmsCMMCheckPointer(oyPointer_s       * cmm_ptr,
                                        const char        * resource )
 {
   int error = !cmm_ptr;
 
   if(cmm_ptr &&
-     oyCMMptr_GetPointer(cmm_ptr) && oyCMMptr_GetResourceName(cmm_ptr))
+     oyPointer_GetPointer(cmm_ptr) && oyPointer_GetResourceName(cmm_ptr))
   {
-    int * res_id = (int*)oyCMMptr_GetResourceName(cmm_ptr);
+    int * res_id = (int*)oyPointer_GetResourceName(cmm_ptr);
 
-    if(!oyCMMlibMatchesCMM(oyCMMptr_GetLibName(cmm_ptr), CMM_NICK) ||
+    if(!oyCMMlibMatchesCMM(oyPointer_GetLibName(cmm_ptr), CMM_NICK) ||
        *res_id != *((int*)(resource)) )
       error = 1;
   } else {
@@ -443,7 +443,7 @@ lcmsTransformWrap_s * lcmsTransformWrap_Set_ (
                                        icColorSpaceSignature colour_out,
                                        oyPixel_t           oy_pixel_layout_in,
                                        oyPixel_t           oy_pixel_layout_out,
-                                       oyCMMptr_s        * oy )
+                                       oyPointer_s       * oy )
 {
   int error = !xform;
   lcmsTransformWrap_s * s = 0;
@@ -466,7 +466,7 @@ lcmsTransformWrap_s * lcmsTransformWrap_Set_ (
   }
 
   if(!error)
-    oyCMMptr_Set( oy, 0, 0, s,
+    oyPointer_Set( oy, 0, 0, s,
                   "lcmsCMMDeleteTransformWrap", lcmsCMMDeleteTransformWrap );
 
   return s;
@@ -489,7 +489,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
                                        oyPixel_t           oy_pixel_layout_out,
                                        oyOptions_s       * opts,
                                        lcmsTransformWrap_s ** ltw,
-                                       oyCMMptr_s        * oy )
+                                       oyPointer_s       * oy )
 {
   oyPixel_t lcms_pixel_layout_in = 0;
   oyPixel_t lcms_pixel_layout_out = 0;
@@ -796,7 +796,7 @@ cmsHPROFILE  lcmsAddProofProfile     ( oyProfile_s       * proof,
 {
   int error = 0;
   cmsHPROFILE * hp = 0;
-  oyCMMptr_s * cmm_ptr = 0;
+  oyPointer_s * cmm_ptr = 0;
   lcmsProfileWrap_s * s = 0;
   char * hash_text = 0,
        num[12];
@@ -823,14 +823,14 @@ cmsHPROFILE  lcmsAddProofProfile     ( oyProfile_s       * proof,
   STRING_ADD( hash_text, num );
 
   /* cache look up */
-  cmm_ptr = oyCMMptrLookUpFromText( hash_text, lcmsPROFILE );
+  cmm_ptr = oyPointerLookUpFromText( hash_text, lcmsPROFILE );
 
-  oyCMMptr_Set( cmm_ptr, CMM_NICK, 0,0,0,0 );
+  oyPointer_Set( cmm_ptr, CMM_NICK, 0,0,0,0 );
 
   /* for empty profile create a new abstract one */
-  if(!oyCMMptr_GetPointer(cmm_ptr))
+  if(!oyPointer_GetPointer(cmm_ptr))
   {
-    oyCMMptr_s * oy = cmm_ptr;
+    oyPointer_s * oy = cmm_ptr;
 
     char type_[4] = lcmsPROFILE;
     uint32_t type = *((uint32_t*)&type_);
@@ -863,7 +863,7 @@ cmsHPROFILE  lcmsAddProofProfile     ( oyProfile_s       * proof,
 
     /* reopen */
     s->lcms = CMMProfileOpen_M( block, size );
-    error = oyCMMptr_Set( oy, 0,lcmsPROFILE, s, CMMToString_M(CMMProfileOpen_M),
+    error = oyPointer_Set( oy, 0,lcmsPROFILE, s, CMMToString_M(CMMProfileOpen_M),
                           lcmsCMMProfileReleaseWrap );
   }
 
@@ -876,7 +876,7 @@ cmsHPROFILE  lcmsAddProofProfile     ( oyProfile_s       * proof,
   if(!error)
     hp = s->lcms;
 
-  oyCMMptr_Release( &cmm_ptr );
+  oyPointer_Release( &cmm_ptr );
   if(hash_text)
     oyFree_m_(hash_text);
 
@@ -900,7 +900,7 @@ cmsHPROFILE  lcmsAddProfile          ( oyProfile_s       * p )
 {
   int error = 0;
   cmsHPROFILE * hp = 0;
-  oyCMMptr_s * cmm_ptr = 0;
+  oyPointer_s * cmm_ptr = 0;
   lcmsProfileWrap_s * s = 0;
 
   if(!p || p->type_ != oyOBJECT_PROFILE_S)
@@ -910,18 +910,18 @@ cmsHPROFILE  lcmsAddProfile          ( oyProfile_s       * p )
     return 0;
   }
 
-  cmm_ptr = oyCMMptrLookUpFromObject( (oyStruct_s*)p, lcmsPROFILE );
+  cmm_ptr = oyPointerLookUpFromObject( (oyStruct_s*)p, lcmsPROFILE );
 
   if(!cmm_ptr)
   {
     lcms_msg( oyMSG_WARN, (oyStruct_s*)p,
-             OY_DBG_FORMAT_" oyCMMptrLookUpFromObject() failed", OY_DBG_ARGS_ );
+             OY_DBG_FORMAT_" oyPointerLookUpFromObject() failed", OY_DBG_ARGS_ );
     return 0;
   }
 
-  oyCMMptr_Set( cmm_ptr, CMM_NICK, 0,0,0,0 );
+  oyPointer_Set( cmm_ptr, CMM_NICK, 0,0,0,0 );
 
-  if(!oyCMMptr_GetPointer( cmm_ptr ))
+  if(!oyPointer_GetPointer( cmm_ptr ))
     error = lcmsCMMData_Open( (oyStruct_s*)p, cmm_ptr );
 
   if(!error)
@@ -933,7 +933,7 @@ cmsHPROFILE  lcmsAddProfile          ( oyProfile_s       * p )
   if(!error)
     hp = s->lcms;
 
-  oyCMMptr_Release( &cmm_ptr );
+  oyPointer_Release( &cmm_ptr );
 
   if(!error)
     return hp;
@@ -1487,23 +1487,23 @@ char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
 #endif
 }
 
-/** Function lcmsCMMdata_Convert
+/** Function lcmsModuleData_Convert
  *  @brief   convert between data formats
  *  @ingroup cmm_handling
  *
  *  The function might be used to provide a module specific context.
- *  Implements oyCMMdata_Convert_f
+ *  Implements oyModuleData_Convert_f
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.0
  *  @since   2008/12/28 (Oyranos: 0.1.10)
  *  @date    2008/12/28
  */
-int  lcmsCMMdata_Convert             ( oyCMMptr_s        * data_in,
-                                       oyCMMptr_s        * data_out,
+int  lcmsModuleData_Convert          ( oyPointer_s       * data_in,
+                                       oyPointer_s       * data_out,
                                        oyFilterNode_s    * node )
 {
   int error = !data_in || !data_out;
-  oyCMMptr_s * cmm_ptr_in = data_in,
+  oyPointer_s * cmm_ptr_in = data_in,
              * cmm_ptr_out = data_out;
   lcmsTransformWrap_s * ltw  = 0;
   cmsHTRANSFORM xform = 0;
@@ -1518,19 +1518,19 @@ int  lcmsCMMdata_Convert             ( oyCMMptr_s        * data_in,
 
   if(!error)
   {
-    cmm_ptr_in = (oyCMMptr_s*) data_in;
-    cmm_ptr_out = (oyCMMptr_s*) data_out;
+    cmm_ptr_in = (oyPointer_s*) data_in;
+    cmm_ptr_out = (oyPointer_s*) data_out;
   }
 
   if(!error &&
-     ( (strcmp( oyCMMptr_GetResourceName(cmm_ptr_in), oyCOLOUR_ICC_DEVICE_LINK ) != 0) ||
-       (strcmp( oyCMMptr_GetResourceName(cmm_ptr_out), lcmsTRANSFORM ) != 0) ) )
+     ( (strcmp( oyPointer_GetResourceName(cmm_ptr_in), oyCOLOUR_ICC_DEVICE_LINK ) != 0) ||
+       (strcmp( oyPointer_GetResourceName(cmm_ptr_out), lcmsTRANSFORM ) != 0) ) )
     error = 1;
 
   if(!error)
   {
-    lps[0] = CMMProfileOpen_M( oyCMMptr_GetPointer(cmm_ptr_in),
-                               oyCMMptr_GetSize( cmm_ptr_in ) );
+    lps[0] = CMMProfileOpen_M( oyPointer_GetPointer(cmm_ptr_in),
+                               oyPointer_GetSize( cmm_ptr_in ) );
     xform = lcmsCMMConversionContextCreate_( lps, 1, 0,0,0,
                                            image_input->layout_[0],
                                            image_output->layout_[0],
@@ -2042,7 +2042,7 @@ oyCMMapi6_s   lcms_api6_cmm = {
   
   oyCOLOUR_ICC_DEVICE_LINK,  /* data_type_in, "oyDL" */
   lcmsTRANSFORM,             /* data_type_out, "lcCC" */
-  lcmsCMMdata_Convert        /* oyCMMdata_Convert_f oyCMMdata_Convert */
+  lcmsModuleData_Convert     /* oyModuleData_Convert_f oyModuleData_Convert */
 };
 
 

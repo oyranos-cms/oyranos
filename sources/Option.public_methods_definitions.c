@@ -1,4 +1,4 @@
-#include "oyCMMptr_s.h"
+#include "oyPointer_s.h"
 
 /** Function oyOption_FromRegistration
  *  @memberof oyOption_s
@@ -564,8 +564,8 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
     if((s->value && s->value_type == oyVAL_STRUCT &&
          (((s->value->oy_struct->type_ == oyOBJECT_BLOB_S &&
            ((oyBlob_s_*)(s->value->oy_struct))->ptr == ptr)) ||
-          (s->value->oy_struct->type_ == oyOBJECT_CMM_PTR_S &&
-           oyCMMptr_GetPointer((oyCMMptr_s*)(s->value->oy_struct)) == ptr))))
+          (s->value->oy_struct->type_ == oyOBJECT_POINTER_S &&
+           oyPointer_GetPointer((oyPointer_s*)(s->value->oy_struct)) == ptr))))
       return error;
 
     oyValueClear( s->value, s->value_type, deallocateFunc_ );
@@ -633,7 +633,7 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
     if(!(s->value && s->value_type == oyVAL_STRUCT &&
          (((s->value->oy_struct->type_ == oyOBJECT_BLOB_S &&
            ((oyBlob_s_*)(s->value->oy_struct))->ptr)) ||
-          s->value->oy_struct->type_ == oyOBJECT_CMM_PTR_S)))
+          s->value->oy_struct->type_ == oyOBJECT_POINTER_S)))
       error = 1;
   }
 
@@ -1061,9 +1061,9 @@ int            oyValueEqual          ( oyValue_u         * a,
            b->oy_struct->type_ == oyOBJECT_BLOB_S &&
            oyBlob_GetPointer((oyBlob_s*)(a->oy_struct)) == oyBlob_GetPointer((oyBlob_s*)(b->oy_struct)) )
           return 1;
-        if(a->oy_struct->type_ == oyOBJECT_CMM_PTR_S &&
-           b->oy_struct->type_ == oyOBJECT_CMM_PTR_S &&
-           oyCMMptr_GetPointer((oyCMMptr_s*)(a->oy_struct)) == oyCMMptr_GetPointer((oyCMMptr_s*)(b->oy_struct)))
+        if(a->oy_struct->type_ == oyOBJECT_POINTER_S &&
+           b->oy_struct->type_ == oyOBJECT_POINTER_S &&
+           oyPointer_GetPointer((oyPointer_s*)(a->oy_struct)) == oyPointer_GetPointer((oyPointer_s*)(b->oy_struct)))
           return 1;
       break;
   }
