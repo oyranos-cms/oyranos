@@ -4,7 +4,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = Oyranos
-PROJECT_NUMBER         = 0.2.1
+PROJECT_NUMBER         = 0.3.0
 OUTPUT_DIRECTORY       = doc_alpha/
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
@@ -77,12 +77,14 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ./
+INPUT                  = ./ API_generated/
 FILE_PATTERNS          = oyranos.c oyranos.h \
                          doxymentation_alpha \
                          doxymentation_common \
                          oyranos_alpha.c oyranos_alpha.h \
-                         API_generated/oyranos_*.c API_generated/oyranos_*.h \
+                         oyranos_generic.h oyranos_module.h \
+                         oyranos_object.h \
+                         oy[A-Z]*_s*.c oy[A-Z]*_s*.h \
                          oyranos_icc.h oyranos_icc.c \
                          oyranos_xml.h oyranos_xml.c \
                          oyranos_cmm.h
