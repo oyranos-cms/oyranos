@@ -124,12 +124,15 @@ const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
 #define icSigNativeDisplayInfoType 0x6e64696e /* 'ndin' */
 #endif
 
-/** @brief deviceSettingsType tag for ICC profiles
+/** @internal
+ *  @brief deviceSettingsType tag for ICC profiles
  *  @ingroup icc_low
  *
  *  For details see: http://www.oyranos.org/wiki/index.php?title=Device_Settings_in_ICC_0.2
  *
  *  The tag size will be 84 + deviceSettingsType::data_size.
+ *
+ *  @see icDictTagType
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/04 (Oyranos: 0.1.10)
