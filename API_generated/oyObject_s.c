@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/02
+ *  @since    2011/02/14
  */
 
 
@@ -283,7 +283,7 @@ oyObject_s   oyObject_SetParent      ( oyObject_s        o,
       o->parent_types_ = tmp;
       tmp = 0;
 
-      ++o->parent_types_[0];
+      o->parent_types_[0] += 1;
       o->parent_types_[o->parent_types_[0]] = type;
     }
 
@@ -563,6 +563,13 @@ int          oyObject_UnRef          ( oyObject_s          obj )
       WARNc3_S( "%s ID: %d refs: %d",
                 oyStructTypeToText( s->parent_types_[s->parent_types_[0]] ),
                 s->id_, s->ref_ )
+
+    if((intptr_t)obj->parent_types_ < (intptr_t)oyOBJECT_MAX)
+    {
+      WARNc1_S( "non plausible inheritance pointer: %s", 
+                oyStruct_GetInfo(obj,0) );
+      return -1;
+    }
 
     if(obj->parent_types_[obj->parent_types_[0]] == oyOBJECT_NAMED_COLOURS_S)
     {
