@@ -187,7 +187,6 @@ int          oyObject_Release         ( oyObject_s      * obj )
       oy_object_pool_[i] = s;
       s->ref_ = 0;
       s->parent_ = 0;
-      s->parent_type_ = oyOBJECT_NONE;
       return 0;
     }
   }
@@ -202,6 +201,9 @@ int          oyObject_Release         ( oyObject_s      * obj )
 
     if(s->hash_ptr_)
       deallocateFunc(s->hash_ptr_); s->hash_ptr_ = 0;
+
+    if(s->parent_types_)
+      deallocateFunc( s->parent_types_ ); s->parent_types_ = 0;
 
     if(s->backdoor_)
       deallocateFunc( s->backdoor_ ); s->backdoor_ = 0;
