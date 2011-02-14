@@ -119,7 +119,8 @@ const char *   oyStruct_GetInfo      ( oyPointer           context_object,
     if(f)
       text = f( c, 0 );
   }
-  if(text != NULL)
+
+  if(text == NULL)
     text = oyStructTypeToText( c->type_ );
 
   return text;
