@@ -7943,7 +7943,7 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
        strcmp("Lab.icc",name) == 0 ||
        strcmp("LStar-RGB.icc",name) == 0 ||
        strcmp("sRGB.icc",name) == 0 ||
-       strcmp("coated_FOGRA39L_argl.icc",name) == 0
+       strcmp("ISOcoated_v2_bas.ICC",name) == 0
       )
     {
       oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)object,
