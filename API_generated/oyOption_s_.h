@@ -38,10 +38,6 @@ typedef struct oyOption_s_ oyOption_s_;
  *  @brief      Option object
  *  @ingroup  objects_value
  *  @extends  oyStruct_s
- *
- *  @version Oyranos: x.x.x
- *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
  */
 struct oyOption_s_ {
 

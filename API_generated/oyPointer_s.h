@@ -44,7 +44,7 @@ typedef struct oyPointer_s oyPointer_s;
 
 /* Include "Pointer.dox" { */
 /** @struct  oyPointer_s
- *  @ingroup module_api
+ *  @ingroup objects_generic
  *  @extends oyStruct_s
  *  @brief   custom pointer
  *  @internal
@@ -60,7 +60,7 @@ typedef struct oyPointer_s oyPointer_s;
  *
  *  @version Oyranos: 0.3.0
  *  @since   2007/11/00 (Oyranos: 0.1.8)
- *  @date    2011/02/13
+ *  @date    2011/02/15
  */
 
 /* } Include "Pointer.dox" */

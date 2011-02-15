@@ -36,12 +36,8 @@ typedef struct oyPointer_s_ oyPointer_s_;
 /** @internal
  *  @struct   oyPointer_s_
  *  @brief      custom pointer
- *  @ingroup  module_api
+ *  @ingroup  objects_generic
  *  @extends  oyStruct_s
- *
- *  @version Oyranos: x.x.x
- *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
  */
 struct oyPointer_s_ {
 

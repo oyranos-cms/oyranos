@@ -38,10 +38,6 @@ typedef struct oyStructList_s_ oyStructList_s_;
  *  @brief      a pointer list
  *  @ingroup  objects_generic
  *  @extends  oyStruct_s
- *
- *  @version Oyranos: x.x.x
- *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
  */
 struct oyStructList_s_ {
 

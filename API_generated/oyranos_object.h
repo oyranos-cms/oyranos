@@ -60,6 +60,7 @@ typedef enum {
   oyOBJECT_NAME_S,   /**< oyName_s */
   oyOBJECT_OBJECT_S,   /**< oyObject_s */
   oyOBJECT_OBSERVER_S,   /**< oyObserver_s */
+  oyOBJECT_POINTER_S,   /**< oyPointer_s */
   oyOBJECT_STRUCT_LIST_S,   /**< oyStructList_s */
 
   oyOBJECT_BLOB_S,   /**< oyBlob_s */
@@ -71,7 +72,7 @@ typedef enum {
   oyOBJECT_CMM_API1_S,                 /**< oyCMMapi_s */
   oyOBJECT_CMM_API2_S,                /**< oyCMMapi2_s */
 
-  oyOBJECT_POINTER_S,   /**< oyPointer_s */
+  oyOBJECT_MEIN_S,   /**< oyMein_s */
   oyOBJECT_CMM_API_MAX,               /**< not defined */
 
 

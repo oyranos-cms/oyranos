@@ -45,10 +45,6 @@ typedef struct oyOptions_s_ oyOptions_s_;
  *  @brief      generic Options
  *  @ingroup  objects_value
  *  @extends  oyStruct_s
- *
- *  @version Oyranos: x.x.x
- *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
  */
 struct oyOptions_s_ {
 

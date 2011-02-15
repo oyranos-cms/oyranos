@@ -1,5 +1,5 @@
 /** @struct  oyPointer_s
- *  @ingroup module_api
+ *  @ingroup objects_generic
  *  @extends oyStruct_s
  *  @brief   custom pointer
  *  @internal
@@ -15,5 +15,5 @@
  *
  *  @version Oyranos: 0.3.0
  *  @since   2007/11/00 (Oyranos: 0.1.8)
- *  @date    2011/02/13
+ *  @date    2011/02/15
  */

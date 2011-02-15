@@ -24,8 +24,8 @@
 
 #include "oyObject_s.h"
 #include "oyranos_object_internal.h"
-#include "oyranos_module_internal.h"
 
+#include "oyranos_generic_internal.h"
   
 
 

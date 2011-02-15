@@ -38,10 +38,6 @@ typedef struct oyHash_s_ oyHash_s_;
  *  @brief      A cache entry
  *  @ingroup  objects_generic
  *  @extends  oyStruct_s
- *
- *  @version Oyranos: x.x.x
- *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
  */
 struct oyHash_s_ {
 
