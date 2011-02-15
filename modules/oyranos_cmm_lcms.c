@@ -1175,7 +1175,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   if(o)
   {
     profiles = (oyProfiles_s*) oyOption_StructGet( o, oyOBJECT_PROFILES_S );
-    if( profiles )
+    if( !profiles )
     {
       oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
       lcms_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
