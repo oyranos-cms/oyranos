@@ -21,10 +21,6 @@ typedef struct {{ class.privName }} {{ class.privName }};
  *  @brief    {{ class.brief }}
  *  @ingroup  {{ class.group }}
  *  @extends  {{ class.parentName }}
- *
- *  @version Oyranos: x.x.x
- *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
  */
 struct {{ class.privName }} {
 {% block BaseMembers %}
