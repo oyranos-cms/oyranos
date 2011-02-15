@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @since    2011/02/13
+ *  @since    2011/02/15
  */
 
 
@@ -332,7 +332,7 @@ int oyPointer_Release_( oyPointer_s_ **pointer )
  *
  *  @version Oyranos: 0.3.0
  *  @since   2007/11/26 (Oyranos: 0.1.8)
- *  @date    2011/02/13
+ *  @date    2011/02/15
  */
 int                oyPointer_Set_    ( oyPointer_s_      * cmm_ptr,
                                        const char        * lib_name,
@@ -343,13 +343,27 @@ int                oyPointer_Set_    ( oyPointer_s_      * cmm_ptr,
 {
   oyPointer_s_ * s = cmm_ptr;
   int error = !s;
+  oyAlloc_f alloc_func = oyStruct_GetAllocator( (oyStruct_s*) s );
+  oyDeAlloc_f dealloc_func = oyStruct_GetDeAllocator( (oyStruct_s*) s );
 
+    
   if(error <= 0 && lib_name)
-    s->lib_name = oyStringCopy_( lib_name, oyAllocateFunc_ );
+  {
+    oyStringFree_( &s->lib_name, dealloc_func );
+    s->lib_name = oyStringCopy_( lib_name, alloc_func );
+  }
 
   if(error <= 0 && func_name)
-    if(oyStrlen_(func_name) < 32)
-      oySprintf_(s->func_name, "%s", func_name); 
+  {
+    oyStringFree_( &s->func_name, dealloc_func );
+    s->func_name = oyStringCopy_( func_name, alloc_func );
+  }
+
+  if(error <= 0 && resource)
+  {
+    oyStringFree_( &s->resource, dealloc_func );
+    s->resource = oyStringCopy_( resource, alloc_func );
+  }
 
   if(error <= 0 && ptr)
   {
@@ -357,10 +371,6 @@ int                oyPointer_Set_    ( oyPointer_s_      * cmm_ptr,
       s->ptrRelease( &ptr );
     s->ptr = ptr;
   }
-
-  if(error <= 0 && resource)
-    if(oyStrlen_(resource) < 5)
-      oySprintf_(s->resource, "%s", resource); 
 
   if(error <= 0 && ptrRelease)
     s->ptrRelease = ptrRelease;
