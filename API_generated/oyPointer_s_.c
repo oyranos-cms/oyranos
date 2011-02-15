@@ -349,19 +349,22 @@ int                oyPointer_Set_    ( oyPointer_s_      * cmm_ptr,
     
   if(error <= 0 && lib_name)
   {
-    oyStringFree_( &s->lib_name, dealloc_func );
+    if(s->lib_name)
+      oyStringFree_( &s->lib_name, dealloc_func );
     s->lib_name = oyStringCopy_( lib_name, alloc_func );
   }
 
   if(error <= 0 && func_name)
   {
-    oyStringFree_( &s->func_name, dealloc_func );
+    if(s->func_name)
+      oyStringFree_( &s->func_name, dealloc_func );
     s->func_name = oyStringCopy_( func_name, alloc_func );
   }
 
   if(error <= 0 && resource)
   {
-    oyStringFree_( &s->resource, dealloc_func );
+    if(s->resource)
+      oyStringFree_( &s->resource, dealloc_func );
     s->resource = oyStringCopy_( resource, alloc_func );
   }
 

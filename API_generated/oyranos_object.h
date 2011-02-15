@@ -72,7 +72,6 @@ typedef enum {
   oyOBJECT_CMM_API1_S,                 /**< oyCMMapi_s */
   oyOBJECT_CMM_API2_S,                /**< oyCMMapi2_s */
 
-  oyOBJECT_MEIN_S,   /**< oyMein_s */
   oyOBJECT_CMM_API_MAX,               /**< not defined */
 
 
