@@ -67,7 +67,7 @@ public:
     return icc;
   }
 
-  void observeICC( oyFilterNode_s * icc,
+  void observeICC(                     oyFilterNode_s * icc,
                      int(*observator)( oyObserver_s      * observer,
                                        oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data ) )
