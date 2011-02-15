@@ -35,6 +35,8 @@ int          oyStringToDouble        ( const char        * text,
 size_t             oyStrblen_        ( const char        * s );
 char*              oyStringCopy_     ( const char        * text,
                                        oyAlloc_f           allocateFunc );
+void               oyStringFree_     ( char             ** text,
+                                       oyDeAlloc_f         deallocFunc );
 char*              oyStringAppend_   ( const char        * text,
                                        const char        * append,
                                        oyAlloc_f           allocateFunc );

@@ -90,6 +90,17 @@ oyStringCopy_      ( const char    * text,
   return text_copy;
 }
 
+void               oyStringFree_     ( char             ** text,
+                                       oyDeAlloc_f         deallocFunc )
+{
+  if(text)
+  {
+    if(deallocFunc)
+      deallocFunc(*text);
+    *text = NULL;
+  }
+}
+
 /** @internal 
  *  @brief append a string and care about allocation
  *
