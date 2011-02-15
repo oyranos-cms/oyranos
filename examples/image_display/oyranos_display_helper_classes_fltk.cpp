@@ -236,6 +236,23 @@ public:
   {
     oyPixelAccess_Release( &ticket );
   };
+
+  void observeICC(                     oyFilterNode_s * icc,
+                     int(*observator)( oyObserver_s      * observer,
+                                       oySIGNAL_e          signal_type,
+                                       oyStruct_s        * signal_data ) )
+  {
+    /* observe the icc node */
+    oyPointer_s * oy_box_ptr = oyPointer_New(0);
+    oyPointer_Set( oy_box_ptr,
+                   __FILE__,
+                   "Oy_Fl_Box",
+                   this, 0, 0 );
+    oyStruct_ObserverAdd( (oyStruct_s*)icc, (oyStruct_s*)conversion(),
+                          (oyStruct_s*)oy_box_ptr,
+                          observator );
+    oyPointer_Release( &oy_box_ptr );
+  }
 };
 
 
@@ -264,8 +281,8 @@ int      conversionObserve           ( oyObserver_s      * observer,
                           "//" OY_TYPE_STD "/icc", oyOPTIONATTRIBUTE_ADVANCED,
                           0 );
 
-    Oy_Fl_Box * oy_box = (Oy_Fl_Box*) oyBlob_GetPointer(
-                                                (oyBlob_s*)observer->user_data);
+    Oy_Fl_Box * oy_box = (Oy_Fl_Box*) oyPointer_GetPointer(
+                                             (oyPointer_s*)observer->user_data);
     oy_box->damage( FL_DAMAGE_USER1 );
 
   }
