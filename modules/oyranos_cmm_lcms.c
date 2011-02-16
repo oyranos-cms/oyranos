@@ -62,7 +62,7 @@ void  oyDeAllocateFunc_         (void *        data);
 
 #define CMM_VERSION {0,1,0}
 
-oyMessage_f lcms_msg = oyFilterMessageFunc;
+oyMessage_f lcms_msg = oyMessageFunc;
 
 int lcmsErrorHandlerFunction(int ErrorCode, const char *ErrorText);
 int            lcmsCMMMessageFuncSet ( oyMessage_f         message_func );

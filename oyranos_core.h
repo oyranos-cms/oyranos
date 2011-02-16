@@ -45,6 +45,10 @@ int            oyMessageFormat       ( char             ** message_text,
                                        int                 code,
                                        const oyPointer     context,
                                        const char        * string );
+int            oyMessageFunc         ( int                 code,
+                                       const oyPointer     context_object,
+                                       const char        * format,
+                                                           ... );
 int            oyMessageFuncSet      ( oyMessage_f         message_func );
 extern         oyMessage_f             oyMessageFunc_p;
 

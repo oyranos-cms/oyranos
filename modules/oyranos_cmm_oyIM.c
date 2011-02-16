@@ -34,7 +34,7 @@
 /* --- internal definitions --- */
 
 
-oyMessage_f oyIM_msg = oyFilterMessageFunc;
+oyMessage_f oyIM_msg = oyMessageFunc;
 
 
 

@@ -63,7 +63,7 @@ void  oyDeAllocateFunc_         (void *        data);
 
 #define CMM_VERSION {0,1,0}
 
-oyMessage_f message = oyFilterMessageFunc;
+oyMessage_f message = oyMessageFunc;
 
 void lcm2ErrorHandlerFunction         ( cmsContext          ContextID,
                                        cmsUInt32Number     ErrorCode,

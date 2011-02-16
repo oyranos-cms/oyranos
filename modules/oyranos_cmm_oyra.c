@@ -35,7 +35,7 @@
 
 #define CMM_NICK "oyra"
 
-oyMessage_f oyra_msg = oyFilterMessageFunc;
+oyMessage_f oyra_msg = oyMessageFunc;
 
 
 

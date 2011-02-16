@@ -237,7 +237,7 @@ int                oyStringAddPrintf_( char             ** string,
   if(!text)
   {
     fprintf(stderr,
-     "oyranos.c:80 oyMessageFunc_() Could not allocate 256 byte of memory.\n");
+     "oyranos.c:80 oyStringAddPrintf_() Could not allocate 256 byte of memory.\n");
     return 1;
   }
 

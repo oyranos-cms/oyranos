@@ -35,7 +35,7 @@
 #define CMM_NICK "oPNG"
 #define CMM_VERSION {0,1,0}
 
-oyMessage_f message = oyFilterMessageFunc;
+oyMessage_f message = oyMessageFunc;
 
 extern oyCMMapi4_s   oPNG_api4_image_write_png;
 extern oyCMMapi7_s   oPNG_api7_image_write_png;

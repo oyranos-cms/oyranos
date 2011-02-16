@@ -37,7 +37,7 @@
 #endif
 
 #define CMM_NICK "oicc"
-oyMessage_f oicc_msg = oyFilterMessageFunc;
+oyMessage_f oicc_msg = oyMessageFunc;
 int            oiccFilterMessageFuncSet( oyMessage_f       message_func );
 int                oiccFilterInit    ( oyStruct_s        * filter );
 oyWIDGET_EVENT_e   oiccWidgetEvent   ( oyOptions_s       * options,

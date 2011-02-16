@@ -323,21 +323,6 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   return result;
 }
 
-/* private definition */
-int      oyMessageFunc_              ( int                 code,
-                                       const oyPointer     context,
-                                       const char        * format,
-                                       ... );
-
-int      oyFilterMessageFunc         ( int                 code,
-                                       const oyPointer     context,
-                                       const char        * format,
-                                       ... )
-{
-  va_list ap;
-  return oyMessageFunc_( code, context, format, ap );
-}
-
 
 /** Function oyFilterSocket_MatchImagingPlug
  *  @brief   verify connectors matching each other
