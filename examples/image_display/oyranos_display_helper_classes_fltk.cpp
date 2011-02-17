@@ -424,14 +424,16 @@ private:
 
         int pos[4] = {-2,-2,-2,-2};
         glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
-        fprintf(stderr,"%s():%d %d,%d\n",__FILE__,__LINE__,pos[0],pos[1]);
+        if(oy_display_verbose)
+          fprintf(stderr,"%s():%d %d,%d\n",__FILE__,__LINE__,pos[0],pos[1]);
 
         glRasterPos2i(0, Oy_Fl_Widget::h() - i - 1);
         /* on osX it uses sRGB without alternative */
         glDrawPixels( image->width, 1, GL_RGB, GL_UNSIGNED_SHORT, image_data );
 
         glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
-        fprintf(stderr,"%s():%d %d,%d\n",__FILE__,__LINE__,pos[0],pos[1]);
+        if(oy_display_verbose)
+          fprintf(stderr,"%s():%d %d,%d\n",__FILE__,__LINE__,pos[0],pos[1]);
 /*
         fl_draw_image( (const uchar*)image_data, 0, i, image->width, 1,
                        channels, Oy_Fl_Widget::w()*channels);*/
