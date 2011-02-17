@@ -55,9 +55,9 @@ char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
 }
 
 
-Oy_Fl_Double_Window * createWindow (Oy_Fl_Box ** oy_box);
+Oy_Fl_Double_Window * createWindow (Oy_Fl_Widget ** oy_box, uint32_t flags);
 void setWindowMenue                  ( Oy_Fl_Double_Window      * win,
-                                       Oy_Fl_Box         * oy_box,
+                                       Oy_Fl_Widget         * oy_box,
                                        oyFilterNode_s    * node );
 
 int
@@ -110,18 +110,30 @@ main(int argc, char** argv)
   else
     file_name = "../../oyranos_logo.ppm";
 
-
+  int gl_box = 1;
 
   /* setup the drawing box */
+  Oy_Fl_Shader_Box * oy_gl_box = 0;
   Oy_Fl_Box * oy_box = 0;
-  Oy_Fl_Double_Window * win = createWindow( &oy_box );
-  if(oy_box)
-    icc = oy_box->setImage( file_name );
+  Oy_Fl_Widget * oy_widget = 0;
+  Oy_Fl_Double_Window * win = createWindow( &oy_widget, gl_box );
+  if(oy_widget)
+  {
+    if(gl_box)
+    {
+      oy_gl_box = dynamic_cast<Oy_Fl_Shader_Box*> (oy_widget);
+      icc = oy_gl_box->setImage( file_name );
+    } else
+    {
+      oy_box = dynamic_cast<Oy_Fl_Box*> (oy_widget);
+      icc = oy_box->setImage( file_name );
+    }
+  }
   if(icc)
   {
-    setWindowMenue( win, oy_box, icc  );
+    setWindowMenue( win, oy_widget, icc  );
     /* observe the node */
-    oy_box->observeICC( icc, conversionObserve );
+    oy_widget->observeICC( icc, conversionObserve );
     win->label( file_name );
   }
 
@@ -140,7 +152,7 @@ static Fl_RGB_Image image_oyranos_logo(oyranos_logo, 64, 64, 4, 0);
 
 struct box_n_opts {
   oyFilterNode_s * node;
-  Oy_Fl_Box * box;
+  Oy_Fl_Widget * box;
 };
 
 void
@@ -209,7 +221,7 @@ callback ( Fl_Widget* w, void* daten )
     printf("could not find a suitable program structure\n");
 }
 
-Oy_Fl_Double_Window * createWindow (Oy_Fl_Box ** oy_box)
+Oy_Fl_Double_Window * createWindow (Oy_Fl_Widget ** oy_box, uint32_t flags)
 {
   int w = 640,
       h = 480;
@@ -217,7 +229,10 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Box ** oy_box)
 
   Fl::get_system_colors();
   Oy_Fl_Double_Window *win = new Oy_Fl_Double_Window( w, h+100, TARGET );
-      *oy_box = new Oy_Fl_Box(0,0,w,h);
+      if(flags & 1)
+        *oy_box = new Oy_Fl_Shader_Box(0,0,w,h);
+      else
+        *oy_box = new Oy_Fl_Box(0,0,w,h);
       (*oy_box)->box(FL_FLAT_BOX);
       /* add some text */
       Fl_Box *box = new Fl_Box(0,h,w,100, "Oyranos");
@@ -239,7 +254,7 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Box ** oy_box)
 }
 
 void setWindowMenue                  ( Oy_Fl_Double_Window * win,
-                                       Oy_Fl_Box         * oy_box,
+                                       Oy_Fl_Widget         * oy_box,
                                        oyFilterNode_s    * node )
 {
   struct box_n_opts * arg = new box_n_opts;

@@ -17,11 +17,11 @@
 #include <cstdio>
 #include <cstring>
 
+extern "C" {
+const char *   oyDatatypeToText      ( oyDATATYPE_e        t); }
 #include "oyranos_display_helpers.c"
 #include "oyranos_display_helper_classes.cpp"
 
-#include <oyranos.h>
-#include <oyranos_alpha.h>
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -90,9 +90,10 @@ class Oy_Fl_Double_Window : public Fl_Double_Window
 };
 
 
-class Oy_Fl_Box : public Fl_Box, public Oy_Widget
+class Oy_Fl_Widget : public Fl_Widget, public Oy_Widget
 {
   int e, ox, oy, px, py;
+public:
   int handle(int event)
   {
       e = event;
@@ -118,10 +119,11 @@ class Oy_Fl_Box : public Fl_Box, public Oy_Widget
       return ret;
   }
 
+private:
   oyPixelAccess_s * ticket;
-  void draw()
+public:
+  void drawPrepare( oyImage_s ** draw_image, oyDATATYPE_e data_type_request )
   {
-    if(conversion())
     {
       Oy_Fl_Double_Window * win = 0;
       win = dynamic_cast<Oy_Fl_Double_Window*> (window());
@@ -129,8 +131,6 @@ class Oy_Fl_Box : public Fl_Box, public Oy_Widget
       int Y = win->pos_y + y();
       int W = w();
       int H = h();
-      int i, height = 0, is_allocated = 0;
-      oyPointer image_data = 0;
       int channels = 0;
       oyPixel_t pt;
       oyDATATYPE_e data_type;
@@ -180,6 +180,7 @@ class Oy_Fl_Box : public Fl_Box, public Oy_Widget
       dirty = oyDrawScreenImage(conversion(), ticket, display_rectangle,
                                 old_display_rectangle,
                                 old_roi_rectangle, "X11",
+                                data_type_request,
                                 display, window, dirty,
                                 image );
 
@@ -193,13 +194,33 @@ class Oy_Fl_Box : public Fl_Box, public Oy_Widget
       data_type = oyToDataType_m( pt );
       channels = oyToChannels_m( pt );
       if(pt != 0 &&
-         ((channels != 4 && channels != 3) || data_type != oyUINT8))
+         ((channels != 4 && channels != 3) || data_type != data_type_request))
       {
         printf( "WARNING: wrong image data format: %s\n"
-                "need 4 or 3 channels with 8-bit\n",
-                image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "" );
+                "need 4 or 3 channels with %s\n",
+                image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "",
+                oyDatatypeToText( data_type_request ) );
         return;
       }
+
+      *draw_image = image;
+    }
+  }
+private:
+  void draw()
+  {
+    if(conversion())
+    {
+      int i, height = 0, is_allocated = 0;
+      oyPointer image_data = 0;
+      oyPixel_t pt;
+      int channels = 0;
+      oyImage_s * image = 0;
+
+      drawPrepare( &image, oyUINT8 );
+
+      pt = oyImage_PixelLayoutGet( image );
+      channels = oyToChannels_m( pt );
 
       /* get the data and draw the image */
       if(image)
@@ -209,7 +230,7 @@ class Oy_Fl_Box : public Fl_Box, public Oy_Widget
 
         /* on osX it uses sRGB without alternative */
         fl_draw_image( (const uchar*)image_data, 0, i, image->width, 1,
-                       channels, W*channels);
+                       channels, w()*channels);
         if(is_allocated)
           free( image_data );
       }
@@ -223,19 +244,61 @@ public:
   {
     if(c & FL_DAMAGE_USER1)
       dirty = 1;
-    Fl_Box::damage( c );
+    Fl_Widget::damage( c );
   }
 
-  Oy_Fl_Box(int x, int y, int w, int h) : Fl_Box(x,y,w,h)
+  Oy_Fl_Widget(int x, int y, int w, int h) : Fl_Widget(x,y,w,h)
   {
     px=py=ox=oy=0;
     ticket = 0;
   };
 
-  ~Oy_Fl_Box(void)
+  ~Oy_Fl_Widget(void)
   {
     oyPixelAccess_Release( &ticket );
   };
+
+  void observeICC(                     oyFilterNode_s * icc,
+                     int(*observator)( oyObserver_s      * observer,
+                                       oySIGNAL_e          signal_type,
+                                       oyStruct_s        * signal_data ) )
+  {
+    /* observe the icc node */
+    oyPointer_s * oy_box_ptr = oyPointer_New(0);
+    oyPointer_Set( oy_box_ptr,
+                   __FILE__,
+                   "Oy_Fl_Widget",
+                   this, 0, 0 );
+    oyStruct_ObserverAdd( (oyStruct_s*)icc, (oyStruct_s*)conversion(),
+                          (oyStruct_s*)oy_box_ptr,
+                          observator );
+    oyPointer_Release( &oy_box_ptr );
+  }
+};
+
+class Oy_Fl_Box : public Fl_Box, public Oy_Fl_Widget
+{
+public:
+  void damage( char c )
+  {
+    if(c & FL_DAMAGE_USER1)
+      dirty = 1;
+    Fl_Box::damage( c );
+  }
+
+  Oy_Fl_Box(int x, int y, int w, int h) : Fl_Box(x,y,w,h), Oy_Fl_Widget(x,y,w,h)
+  {
+  };
+
+  ~Oy_Fl_Box(void)
+  {
+  };
+
+  oyFilterNode_s * setImage( const char * file_name )
+  {
+    oyFilterNode_s * icc = setImageType( file_name, oyUINT8 );
+    return icc;
+  }
 
   void observeICC(                     oyFilterNode_s * icc,
                      int(*observator)( oyObserver_s      * observer,
@@ -281,9 +344,9 @@ int      conversionObserve           ( oyObserver_s      * observer,
                           "//" OY_TYPE_STD "/icc", oyOPTIONATTRIBUTE_ADVANCED,
                           0 );
 
-    Oy_Fl_Box * oy_box = (Oy_Fl_Box*) oyPointer_GetPointer(
+    Oy_Fl_Widget * oy_widget = (Oy_Fl_Widget*) oyPointer_GetPointer(
                                              (oyPointer_s*)observer->user_data);
-    oy_box->damage( FL_DAMAGE_USER1 );
+    oy_widget->damage( FL_DAMAGE_USER1 );
 
   }
 
@@ -291,4 +354,114 @@ int      conversionObserve           ( oyObserver_s      * observer,
 }
 }
 
+
+#include <FL/Fl_Gl_Window.H>
+#include <FL/Fl.H>
+#include <FL/gl.h>
+
+class Oy_Fl_Shader_Box : public Fl_Gl_Window,
+                         public Oy_Fl_Widget
+{
+public:
+  Oy_Fl_Shader_Box(int x, int y, int w, int h)
+    : Fl_Gl_Window(x,y,w,h), Oy_Fl_Widget(x,y,w,h)
+  { };
+  ~Oy_Fl_Shader_Box(void) { };
+  void damage( char c )
+  {
+    if(c & FL_DAMAGE_USER1)
+      dirty = 1;
+    Oy_Fl_Widget::damage( c );
+  }
+
+
+private:
+  void draw()
+  {
+    if(conversion())
+    {
+      int i, height = 0, is_allocated = 0;
+      oyPointer image_data = 0;
+      oyPixel_t pt;
+      int channels = 0;
+      oyImage_s * image = 0;
+
+      drawPrepare( &image, oyUINT16 );
+
+      pt = oyImage_PixelLayoutGet( image );
+      channels = oyToChannels_m( pt );
+
+      if(!valid())
+      {
+        glClearColor(0.5, 0.5, 0.5, 1.0);
+
+        glShadeModel( GL_FLAT );
+        glDisable( GL_DITHER );
+        glDisable( GL_BLEND );
+        glDisable( GL_DEPTH_TEST );
+
+        glViewport( 0,0, Oy_Fl_Widget::w(), Oy_Fl_Widget::h() );
+
+        glMatrixMode( GL_PROJECTION );
+        glLoadIdentity();
+        glMatrixMode( GL_MODELVIEW );
+        glLoadIdentity();
+
+        glOrtho( 0, Oy_Fl_Widget::w(), 0, Oy_Fl_Widget::h(), -1.0, 1.0);
+      }
+
+      glClear(GL_COLOR_BUFFER_BIT);
+
+
+      glDisable(GL_TEXTURE_2D);
+      glDisable(GL_LIGHTING);
+
+      /* get the data and draw the image */
+      if(image)
+      for(i = 0; i < image->height; ++i)
+      {
+        image_data = image->getLine( image, i, &height, -1, &is_allocated );
+
+        int pos[4] = {-2,-2,-2,-2};
+        glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
+        fprintf(stderr,"%s():%d %d,%d\n",__FILE__,__LINE__,pos[0],pos[1]);
+
+        glRasterPos2i(0, Oy_Fl_Widget::h() - i - 1);
+        /* on osX it uses sRGB without alternative */
+        glDrawPixels( image->width, 1, GL_RGB, GL_UNSIGNED_SHORT, image_data );
+
+        glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
+        fprintf(stderr,"%s():%d %d,%d\n",__FILE__,__LINE__,pos[0],pos[1]);
+/*
+        fl_draw_image( (const uchar*)image_data, 0, i, image->width, 1,
+                       channels, Oy_Fl_Widget::w()*channels);*/
+        if(is_allocated)
+          free( image_data );
+      }
+
+      glEnable(GL_TEXTURE_2D);
+      glEnable(GL_LIGHTING);
+      glFlush();
+
+      oyImage_Release( &image );
+    }
+  }
+
+  int  handle (int e)
+  {
+    int ret = 1;
+    ret = Oy_Fl_Widget::handle( e );
+    if(!ret)
+    ret = Fl_Gl_Window::handle( e );
+    return ret;
+  }
+
+public:
+  oyFilterNode_s * setImage( const char * file_name )
+  {
+    oyFilterNode_s * icc = setImageType( file_name, oyUINT16 );
+    return icc;
+  }
+
+};
 

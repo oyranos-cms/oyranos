@@ -54,11 +54,12 @@ public:
 
   oyConversion_s * conversion() { return context; }
 
-  oyFilterNode_s * setImage( const char * file_name )
+  oyFilterNode_s * setImageType( const char * file_name, oyDATATYPE_e data_type )
   {
     oyFilterNode_s * icc = 0;
-    oyConversion_s * c = oyConversion_FromImageFileName( file_name, &icc,
-                                             oyOPTIONATTRIBUTE_ADVANCED, 0 );
+    oyConversion_s * c = oyConversion_FromImageFileNameForDisplay( 
+                             file_name, &icc, oyOPTIONATTRIBUTE_ADVANCED,
+                             data_type, 0 );
 
     conversion( c );
 
@@ -81,6 +82,5 @@ public:
     oyBlob_Release( &b );
   }
 };
-
 
 

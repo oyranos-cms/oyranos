@@ -21,7 +21,7 @@
 #endif
 
 
-/** Function oyConversion_FromImageFileName
+/** Function oyConversion_FromImageFileNameForDisplay
  *  @brief   generate a Oyranos graph from a image file name
  *
  *  @param[in]     file_name           name of image file
@@ -32,17 +32,19 @@
  *                                     oyOPTIONATTRIBUTE_ADVANCED |
  *                                     OY_SELECT_FILTER |
  *                                     OY_SELECT_COMMON
+ *  @param[in]     data_type           the desired data type for output
  *  @param[in]     obj                 Oyranos object (optional)
  *  @return                            generated new graph, owned by caller
  *
- *  @version Oyranos: 0.1.13
+ *  @version Oyranos: 0.3.0
  *  @since   2010/09/05 (Oyranos: 0.1.11)
- *  @date    2010/11/27
+ *  @date    2011/02/16
  */
-oyConversion_s * oyConversion_FromImageFileName  (
+oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
                                        const char        * file_name,
                                        oyFilterNode_s   ** icc_node,
                                        uint32_t            flags,
+                                       oyDATATYPE_e        data_type,
                                        oyObject_s          obj )
 {
   oyFilterNode_s * in, * out, * icc;
@@ -95,7 +97,7 @@ oyConversion_s * oyConversion_FromImageFileName  (
   /* 8 bit data for FLTK */
   error = oyOptions_SetFromInt( &options,
                                 "//" OY_TYPE_STD "/display/datatype",
-                                oyUINT8, 0, OY_CREATE_NEW );
+                                data_type, 0, OY_CREATE_NEW );
   /* alpha might be support once by FLTK? */
   error = oyOptions_SetFromInt( &options,
                                 "//" OY_TYPE_STD "/display/preserve_alpha",
@@ -161,6 +163,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
                                        oyRectangle_s     * old_display_rectangle,
                                        oyRectangle_s     * old_roi_rectangle,
                                        const char        * system_type,
+                                       oyDATATYPE_e        data_type_request,
                                        void              * display,
                                        void              * window,
                                        int                 dirty,
@@ -227,12 +230,13 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
       data_type = oyToDataType_m( pt );
       channels = oyToChannels_m( pt );
       if(pt != 0 &&
-         ((channels != 4 && channels != 3) || data_type != oyUINT8))
+         ((channels != 4 && channels != 3) || data_type != data_type_request))
       {
         printf( "WARNING: wrong image data format: %s\n%s\n"
-                "need 4 or 3 channels with 8-bit\n",
+                "need 4 or 3 channels with %s\n",
                 oyOptions_FindString( image_tags, "filename", 0 ),
-                image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "" );
+                image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "",
+                oyDatatypeToText( data_type_request ) );
         return 1;
       }
 
