@@ -101,15 +101,18 @@ main(int argc, char** argv)
 
 
   /* handle arguments */
-  if(argc > 1 && strcmp(argv[1], "-v") == 0)
+  for(int i = 1; i < argc; ++i)
   {
-    oy_display_verbose = 1;
-    ++file_pos;
-  }
-  if(argc > 1 && strcmp(argv[1], "--use_gl") == 0)
-  {
-    gl_box = 1;
-    ++file_pos;
+    if(argc > 1 && strcmp(argv[i], "-v") == 0)
+    {
+      oy_display_verbose = 1;
+      ++file_pos;
+    }
+    if(argc > 1 && strcmp(argv[i], "--use_gl") == 0)
+    {
+      gl_box = 1;
+      ++file_pos;
+    }
   }
   if(argc > file_pos && argv[file_pos])
     file_name = argv[file_pos];
