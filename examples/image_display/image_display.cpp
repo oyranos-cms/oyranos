@@ -74,6 +74,7 @@ main(int argc, char** argv)
   const char *locale_paths[2] = {OY_SRC_LOCALEDIR,OY_LOCALEDIR};
   const char *domain = {"oyranos"};
   int is_path = -1;
+  int gl_box = 0;
 
   is_path = fl_search_locale_path  ( 2,
                                 locale_paths,
@@ -105,12 +106,16 @@ main(int argc, char** argv)
     oy_display_verbose = 1;
     ++file_pos;
   }
+  if(argc > 1 && strcmp(argv[1], "--use_gl") == 0)
+  {
+    gl_box = 1;
+    ++file_pos;
+  }
   if(argc > file_pos && argv[file_pos])
     file_name = argv[file_pos];
   else
     file_name = "../../oyranos_logo.ppm";
 
-  int gl_box = 1;
 
   /* setup the drawing box */
   Oy_Fl_Shader_Box * oy_gl_box = 0;
