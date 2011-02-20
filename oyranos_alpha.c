@@ -21516,7 +21516,7 @@ oyNamedColour_SetChannels( oyNamedColour_s  * colour,
 
 /**
  *  @internal
- *  Function: oyConvertColour
+ *  Function: oyConvertColour_
  *  @memberof oyNamedColour_s
  *  @brief   convert colours
  *
