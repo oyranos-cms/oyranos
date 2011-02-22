@@ -22639,9 +22639,9 @@ icValue_to_icUInt32Number_m( oyValueTagSig, icTagSignature )
  *                                     <= -1 - issue,
  *                                     + a message should be sent
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.0
  *  @since   2009/12/11 (Oyranos: 0.1.10)
- *  @date    2009/12/11
+ *  @date    2011/02/22
  */
 int             oyOptions_Handle     ( const char        * registration,
                                        oyOptions_s       * options,
@@ -22659,10 +22659,12 @@ int             oyOptions_Handle     ( const char        * registration,
   if(!error)
   {
     oyCMMapiFilters_s * apis;
-    int apis_n = 0, i;
+    int apis_n = 0, i, found = 0;
     oyCMMapi10_s * cmm_api10 = 0;
     char * class, * api_reg;
     char * test = 0;
+    uint32_t * rank_list = 0,
+               api_n = 0;
 
     class = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE, 0 );
     api_reg = oyStringCopy_("//", oyAllocateFunc_ );
@@ -22675,7 +22677,7 @@ int             oyOptions_Handle     ( const char        * registration,
 
     apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API10_S, 
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
-                                 0,0 );
+                                 &rank_list, &api_n );
     apis_n = oyCMMapiFilters_Count( apis );
     if(test)
       for(i = 0; i < apis_n; ++i)
@@ -22688,12 +22690,15 @@ int             oyOptions_Handle     ( const char        * registration,
           {
             error = cmm_api10->oyMOptions_Handle( s, test, result );
             if(error == 0)
+            {
+              found = 1;
               error = cmm_api10->oyMOptions_Handle( s, command, result );
+            }
 
           } else
             error = 1;
 
-          if(error)
+          if(error > 0)
           {
             WARNc2_S( "%s %s",_("error in module:"), cmm_api10->registration );
           }
@@ -22708,8 +22713,10 @@ int             oyOptions_Handle     ( const char        * registration,
 
     oyFree_m_( test );
     oyCMMapiFilters_Release( &apis );
+    if(!found && error == 0)
+      error = -1;
   }
-  
+
   return error;
 }
 
