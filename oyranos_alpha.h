@@ -2602,6 +2602,15 @@ oyConversion_s  *  oyConversion_CreateBasicPixels (
                                        oyImage_s         * output,
                                        oyOptions_s       * options,
                                        oyObject_s          object );
+oyConversion_s *   oyConversion_FromBuffers (
+                                       oyProfile_s       * p_in,
+                                       oyProfile_s       * p_out,
+                                       oyPointer           buf_in,
+                                       oyPointer           buf_out,
+                                       oyDATATYPE_e        buf_type_in,
+                                       oyDATATYPE_e        buf_type_out,
+                                       oyOptions_s       * options,
+                                       int                 count );
 oyConversion_s  *  oyConversion_Copy ( oyConversion_s    * conversion,
                                        oyObject_s          object );
 int                oyConversion_Release (
