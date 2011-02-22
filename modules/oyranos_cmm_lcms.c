@@ -581,6 +581,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
       cmyk_cmyk_black_preservation = 0,
       flags = lcmsFlagsFromOptions( opts ),
       gamut_warning = flags & cmsFLAGS_GAMUTCHECK;
+  const char * o_txt = 0;
 
   if(!lps || !profiles_n || !oy_pixel_layout_in || !oy_pixel_layout_out)
     return 0;
@@ -603,6 +604,9 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
   lcms_pixel_layout_out = oyPixelToCMMPixelLayout_(oy_pixel_layout_out,
                                                    colour_out);
 
+      o_txt = oyOptions_FindString  ( opts, "cmyk_cmyk_black_preservation", 0 );
+      if(o_txt && oyStrlen_(o_txt))
+        cmyk_cmyk_black_preservation = atoi( o_txt );
 
       if(cmyk_cmyk_black_preservation == 2)
         cmsSetCMYKPreservationStrategy( LCMS_PRESERVE_K_PLANE );
