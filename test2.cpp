@@ -1426,7 +1426,49 @@ oyTESTRESULT_e testProfileLists ()
   return result;
 }
 
+oyTESTRESULT_e testProofingEffect ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  oyOptions_s * opts = oyOptions_New(0),
+              * result_opts = 0;
+  const char * text = 0;
+  oyProfile_s * prof = oyProfile_FromStd( oyEDITING_CMYK, NULL ),
+              * abstract;
+  int error;
 
+  fprintf(stdout, "\n" );
+
+  error = oyOptions_MoveInStruct( &opts, "//"OY_TYPE_STD"/icc_profile.proofing_profile",
+                                  (oyStruct_s**) &prof, OY_CREATE_NEW );
+  error = oyOptions_Handle( "//"OY_TYPE_STD"/create_profile",
+                            opts,"create_profile.proofing_effect",
+                            &result_opts );
+  abstract = (oyProfile_s*)oyOptions_GetType( result_opts, -1, "icc_profile",
+                                              oyOBJECT_PROFILE_S );
+  oyOptions_Release( &result_opts );
+  oyOptions_Release( &opts );
+
+  text = oyProfile_GetText( abstract, oyNAME_DESCRIPTION );
+
+  if(abstract)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOptions_Handle(\"create_profile\"): %s", text );
+  } else if(error == -1)
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_Handle(\"create_profile\") no" );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_Handle(\"create_profile\") zero" );
+  }
+
+  oyProfile_ToFile_( abstract, "test_proof_effect.icc" );
+  oyProfile_Release( &abstract );
+
+  return result;
+}
 
 oyTESTRESULT_e testRegistrationMatch ()
 {
@@ -3354,6 +3396,7 @@ int main(int argc, char** argv)
   TEST_RUN( testProfile, "Profile handling" );
   TEST_RUN( testProfiles, "Profiles reading" );
   TEST_RUN( testProfileLists, "Profile lists" );
+  TEST_RUN( testProofingEffect, "proofing_effect" );
   //TEST_RUN( testMonitor,  "Monitor profiles" );
   //TEST_RUN( testDevices,  "Devices listing" );
   TEST_RUN( testRegistrationMatch,  "Registration matching" );
