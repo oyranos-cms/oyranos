@@ -393,7 +393,6 @@ int oyMessageFunc( int code, const oyPointer context_object, const char * format
   return error;
 }
 
-
 oyMessage_f     oyMessageFunc_p = oyMessageFunc;
 
 /** @func    oyMessageFuncSet
@@ -680,5 +679,10 @@ oyValueUInt64 (icUInt64Number val)
 
 /** @} */
 
+
+
+/* deprecated function to reduce dlopen warnings after API break in 0.3.0; 
+   these APIs are not deselected after dlopen */
+int oyFilterMessageFunc() { return 1; }
 
 

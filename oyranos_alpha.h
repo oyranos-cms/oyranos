@@ -468,7 +468,7 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                oyOptions_ObserversEnable (
                                        oyOptions_s       * object );
-int             oyOptions_Handle     ( const char        * registration,
+int            oyOptions_Handle      ( const char        * registration,
                                        oyOptions_s       * options,
                                        const char        * command,
                                        oyOptions_s      ** result );
