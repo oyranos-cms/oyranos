@@ -127,9 +127,12 @@ int      oyraFilterPlug_ImageLoadRun (
       return result;
     }
 
-    STRING_ADD( file_ext, fileext );
-    i = 0;
-    while(file_ext[i]) { file_ext[i] = tolower( file_ext[i] ); ++i; }
+    if(fileext)
+    {
+      STRING_ADD( file_ext, fileext );
+      i = 0;
+      while(file_ext[i]) { file_ext[i] = tolower( file_ext[i] ); ++i; }
+    }
 
     apis = oyCMMsGetFilterApis_( 0,0, "//" OY_TYPE_STD "/file_read", 
                                  oyOBJECT_CMM_API7_S,
@@ -161,7 +164,7 @@ int      oyraFilterPlug_ImageLoadRun (
                strstr( api7->properties[j], "pixel" ) != 0)
               image_pixel = 1;
 
-            if(strstr( api7->properties[j], "ext=" ) != 0)
+            if(file_ext && strstr( api7->properties[j], "ext=" ) != 0)
             {
               STRING_ADD( api_ext,  &api7->properties[j][4] );
               k = 0;
