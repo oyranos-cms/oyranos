@@ -149,7 +149,7 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
  *                                     - "X11": a Display object
  *  @param[in]     window              the system window with system_type:
  *                                     - "X11": a Window ID
- *  @param[in]     dirty               expicite redraw
+ *  @param[in]     dirty               explicite redraw
  *  @param[out]    image               the image from graph to display
  *  @return                            0 - success, >=  1 - error
  *
@@ -261,7 +261,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
       {
 #ifdef DEBUG
         printf( "%s:%d new display rectangle: %s +%d+%d\n", __FILE__,__LINE__,
-                oyRectangle_Show(disp_rectangle), x(), y() ),
+                oyRectangle_Show(disp_rectangle), X, Y ),
 #endif
 
         /* convert the image data */
