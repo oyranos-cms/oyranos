@@ -4,6 +4,8 @@
  *  @memberof oyOptions_s
  *  @brief   boolean operations on two sets of option
  *
+ *  @see oyOptions_Add
+ *
  *  @param[in]     set_a               options set A
  *  @param[in]     set_b               options set B
  *  @param[in]     type                the operation to perform
@@ -300,7 +302,8 @@ int            oyOptions_Add         ( oyOptions_s       * options,
  *  @memberof oyOptions_s
  *  @brief   set a element in a Options list
  *
- *  Already listed options are replaced by the new option.
+ *  Already listed options are replaced by the new option. A option new to
+ *  the existing set will be referenced if no object argument is given.
  *
  *  Adding a new element without any checks is as simple as following code:
  *  @verbatim
@@ -353,6 +356,8 @@ int            oyOptions_Set         ( oyOptions_s       * options,
  *
  *  Already listed options are replaced by the new options.
  *
+ *  @see oyOptions_Set It will use copying.
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2009/10/25 (Oyranos: 0.1.10)
  *  @date    2009/10/25
@@ -370,7 +375,7 @@ int            oyOptions_SetOpts     ( oyOptions_s       * list,
     for(i = 0; i < n; ++i)
     {
       o = oyOptions_Get( add, i );
-      oyOptions_Set( list, o, -1, 0 );
+      oyOptions_Set( list, o, -1, list->oy_ );
       oyOption_Release( &o );
     }
   }
@@ -378,10 +383,13 @@ int            oyOptions_SetOpts     ( oyOptions_s       * list,
   return error;
 }
 
-/** Function oyOptions_AppendOpts  
+/** Function oyOptions_AppendOpts
  *  @memberof oyOptions_s
  *  @brief   
  *
+ *  Basic reference options from one list into an other.
+ *
+ *  @see oyOptions_MoveIn
  *
  *  @version Oyranos: 
  *  @since
@@ -580,6 +588,8 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
  *  is already in place. So we use it and do inclusion. Front end options can be
  *  filtered as they do not affect the CMM cache.
  *
+ *  @see oyOptions_Add
+ *
  *  @param         s                   the options
  *  @param[in]     flags               for inbuild defaults |
  *                                     oyOPTIONSOURCE_FILTER;
@@ -691,6 +701,8 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
  *  @brief   filter options
  *
  *  Each option added to the add_list is a cheaply linked one.
+ *
+ *  @see oyOptions_Add
  *
  *  @param[out]    add_list            the options list to add to
  *  @param[out]    count               the number of matching options

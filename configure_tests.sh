@@ -912,6 +912,31 @@ if [ -n "$FTGL" ] && [ $FTGL -gt 0 ]; then
   fi
 fi
 
+if [ -n "$FONTCONFIG" ] && [ $FONTCONFIG -gt 0 ]; then
+  l=fontconfig 
+  pkg-config $l
+  if [ $? = 0 ]; then
+    echo_="FONTCONFIG	`pkg-config --modversion $l`	detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo "#define HAVE_FONTCONFIG 1" >> $CONF_H
+    echo "FONTCONFIG = 1" >> $CONF
+    echo "FONTCONFIG_H = `pkg-config --cflags $l | sed \"$STRIPOPT\"`" >> $CONF
+    echo "FONTCONFIG_LIBS = `pkg-config --libs $l | sed \"$STRIPOPT\"`" >> $CONF
+  else
+    rm -f tests/libtest$EXEC_END
+    $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
+    if [ -f tests/libtest ]; then
+      echo_="FONTCONFIG              detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      echo "#define HAVE_FONTCONFIG 1" >> $CONF_H
+      echo "FONTCONFIG = 1" >> $CONF
+      echo "FONTCONFIG_H =" >> $CONF
+      echo "FONTCONFIG_LIBS = -l$l" >> $CONF
+      rm tests/libtest$EXEC_END
+    else
+      echo_="  no or too old FONTCONFIG found, need FONTCONFIG to render text in OpenGL"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    fi
+  fi
+fi
+
 if [ -n "$FLTK" ] && [ $FLTK -gt 0 ]; then
   if [ -z "$fltkconfig" ]; then
     # add /usr/X11R6/bin to path for Fedora

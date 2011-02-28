@@ -21247,6 +21247,55 @@ int                oyConversion_Correct (
   return 0;
 }
 
+/**
+ *  @internal
+ *  Function: oyConversion_FromBuffers
+ *  @memberof oyNamedColour_s
+ *  @brief    one dimensional colour conversion context
+ *
+ *  The options are passed to oyConversion_CreateBasicPixels();
+ *  The function does the lookups for the profiles and the modules contexts
+ *  in the Oyranos cache on the fly.
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/02/22 (Oyranos: 0.3.0)
+ *  @date    2011/02/22
+ */
+oyConversion_s *   oyConversion_FromBuffers (
+                                       oyProfile_s       * p_in,
+                                       oyProfile_s       * p_out,
+                                       oyPointer           buf_in,
+                                       oyPointer           buf_out,
+                                       oyDATATYPE_e        buf_type_in,
+                                       oyDATATYPE_e        buf_type_out,
+                                       oyOptions_s       * options,
+                                       int                 count )
+{
+  oyImage_s * in  = NULL,
+            * out = NULL;
+  oyConversion_s * conv = NULL;
+
+  in    = oyImage_Create( count, 1,
+                         buf_in ,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_in)) |
+                         oyDataType_m(buf_type_in),
+                         p_in,
+                         0 );
+  out   = oyImage_Create( count, 1,
+                         buf_out ,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_out)) |
+                         oyDataType_m(buf_type_out),
+                         p_out,
+                         0 );
+
+  conv   = oyConversion_CreateBasicPixels( in,out, options, 0 );
+
+  oyImage_Release( &in );
+  oyImage_Release( &out );
+
+  return conv;
+}
+
 
 /** @} objects_conversion */
 
@@ -21264,8 +21313,8 @@ int                oyConversion_Correct (
  *  @since Oyranos: version 0.1.8
  *  @date  october 2007 (API 0.1.8)
  *
- *  @param[in]     chan                pointer to channel data with a number of elements specified in sig or channels_n
- *  @param[in]     blob                CGATS or other reference data
+ *  @param[in]     chan                pointer to channel data with a number of elements specified in sig or channels_n, optional
+ *  @param[in]     blob                CGATS or other reference data, optional
  *  @param[in]     blob_len            length of the data blob
  *  @param[in]     ref                 possibly a ICC profile
  *  @param         object              the optional object
@@ -21516,7 +21565,7 @@ oyNamedColour_SetChannels( oyNamedColour_s  * colour,
 
 /**
  *  @internal
- *  Function: oyConvertColour
+ *  Function: oyConvertColour_
  *  @memberof oyNamedColour_s
  *  @brief   convert colours
  *
@@ -22639,9 +22688,9 @@ icValue_to_icUInt32Number_m( oyValueTagSig, icTagSignature )
  *                                     <= -1 - issue,
  *                                     + a message should be sent
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.0
  *  @since   2009/12/11 (Oyranos: 0.1.10)
- *  @date    2009/12/11
+ *  @date    2011/02/22
  */
 int             oyOptions_Handle     ( const char        * registration,
                                        oyOptions_s       * options,
@@ -22659,10 +22708,12 @@ int             oyOptions_Handle     ( const char        * registration,
   if(!error)
   {
     oyCMMapiFilters_s * apis;
-    int apis_n = 0, i;
+    int apis_n = 0, i, found = 0;
     oyCMMapi10_s * cmm_api10 = 0;
     char * class, * api_reg;
     char * test = 0;
+    uint32_t * rank_list = 0,
+               api_n = 0;
 
     class = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE, 0 );
     api_reg = oyStringCopy_("//", oyAllocateFunc_ );
@@ -22675,7 +22726,9 @@ int             oyOptions_Handle     ( const char        * registration,
 
     apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API10_S, 
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
-                                 0,0 );
+                                 &rank_list, &api_n );
+    if(rank_list) oyDeAllocateFunc_(rank_list); rank_list = 0;
+
     apis_n = oyCMMapiFilters_Count( apis );
     if(test)
       for(i = 0; i < apis_n; ++i)
@@ -22688,12 +22741,15 @@ int             oyOptions_Handle     ( const char        * registration,
           {
             error = cmm_api10->oyMOptions_Handle( s, test, result );
             if(error == 0)
+            {
+              found = 1;
               error = cmm_api10->oyMOptions_Handle( s, command, result );
+            }
 
           } else
             error = 1;
 
-          if(error)
+          if(error > 0)
           {
             WARNc2_S( "%s %s",_("error in module:"), cmm_api10->registration );
           }
@@ -22708,8 +22764,10 @@ int             oyOptions_Handle     ( const char        * registration,
 
     oyFree_m_( test );
     oyCMMapiFilters_Release( &apis );
+    if(!found && error == 0)
+      error = -1;
   }
-  
+
   return error;
 }
 

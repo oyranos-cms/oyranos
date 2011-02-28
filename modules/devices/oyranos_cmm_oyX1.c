@@ -721,7 +721,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
               oyOptions_s * opts = oyOptions_New(0),
                           * result = 0;
               error = oyOptions_MoveIn( opts, &o_tmp, -1 );
-              oyOptions_Handle( "///create_profile.icc",
+              oyOptions_Handle( "//"OY_TYPE_STD"/create_profile.icc",
                                 opts,"create_profile.icc_profile.colour_matrix",
                                 &result );
               prof = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",

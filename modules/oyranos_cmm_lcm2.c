@@ -36,6 +36,7 @@ oyConnectorImaging_s* lcm2_cmmIccPlug_connectors[2];
 oyConnectorImaging_s    lcm2_cmmIccPlug_connector;
 oyCMMapi6_s     lcm2_api6_cmm;
 oyCMMapi10_s    lcm2_api10_cmm;
+oyCMMapi10_s    lcm2_api10_cmm2;
 */
 
 void* oyAllocateFunc_           (size_t        size);
@@ -479,6 +480,80 @@ lcm2TransformWrap_s * lcm2TransformWrap_Set_ (
   return s;
 }
 
+int            lcm2IntentFromOptions ( oyOptions_s       * opts,
+                                       int                 proof )
+{
+  int intent = 0,
+      intent_proof = 0;
+  const char * o_txt = 0;
+
+#ifndef oyStrlen_
+#define oyStrlen_ strlen
+#endif
+      o_txt = oyOptions_FindString  ( opts, "rendering_intent", 0);
+      if(o_txt && oyStrlen_(o_txt))
+        intent = atoi( o_txt );
+
+      o_txt = oyOptions_FindString  ( opts, "rendering_intent_proof", 0);
+      if(o_txt && oyStrlen_(o_txt))
+        intent_proof = atoi( o_txt );
+
+      intent_proof = intent_proof == 0 ? INTENT_RELATIVE_COLORIMETRIC :
+                                         INTENT_ABSOLUTE_COLORIMETRIC;
+
+  if(proof)
+    return intent_proof;
+  else
+    return intent;
+}
+
+uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
+{
+  int bpc = 0,
+      cmyk_cmyk_black_preservation = 0,
+      gamut_warning = 0,
+      precalculation = 0,
+      flags = 0;
+  const char * o_txt = 0;
+
+      o_txt = oyOptions_FindString  ( opts, "rendering_bpc", 0 );
+      if(o_txt && oyStrlen_(o_txt))
+        bpc = atoi( o_txt );
+
+      o_txt = oyOptions_FindString  ( opts, "rendering_gamut_warning", 0 );
+      if(o_txt && oyStrlen_(o_txt))
+        gamut_warning = atoi( o_txt );
+
+      o_txt = oyOptions_FindString  ( opts, "precalculation", 0 );
+      if(o_txt && oyStrlen_(o_txt))
+        precalculation = atoi( o_txt );
+
+      o_txt = oyOptions_FindString  ( opts, "cmyk_cmyk_black_preservation", 0 );
+      if(o_txt && oyStrlen_(o_txt))
+        cmyk_cmyk_black_preservation = atoi( o_txt );
+
+      /* this should be moved to the CMM and not be handled here in Oyranos */
+      flags = bpc ?           flags | cmsFLAGS_BLACKPOINTCOMPENSATION :
+                              flags & (~cmsFLAGS_BLACKPOINTCOMPENSATION);
+      flags = gamut_warning ? flags | cmsFLAGS_GAMUTCHECK :
+                              flags & (~cmsFLAGS_GAMUTCHECK);
+      switch(precalculation)
+      {
+      case 0: flags |= cmsFLAGS_NOOPTIMIZE; break;
+      case 1: flags |= 0; break;
+      case 2: flags |= cmsFLAGS_HIGHRESPRECALC; break;
+      case 3: flags |= cmsFLAGS_LOWRESPRECALC; break;
+      }
+
+  if(oy_debug)
+    message( oyMSG_WARN,0, OY_DBG_FORMAT_"\n"
+             "  bpc: %d  gamut_warning: %d  precalculation: %d\n",
+             OY_DBG_ARGS_,
+                bpc,     gamut_warning,     precalculation );
+
+  return flags;
+}
+
 /** Function lcm2CMMConversionContextCreate_
  *  @brief   create a CMM transform
  *
@@ -506,19 +581,19 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
   icColorSpaceSignature colour_in = 0;
   icColorSpaceSignature colour_out = 0;
   icProfileClassSignature profile_class_in = 0;
-  int intent = 0,
-      intent_proof = 0,
-      bpc = 0,
+  int intent = lcm2IntentFromOptions( opts,0 ),
+      intent_proof = lcm2IntentFromOptions( opts,1 ),
       cmyk_cmyk_black_preservation = 0,
-      gamut_warning = 0,
-      precalculation = 0,
-      flags = cmsFLAGS_NOCACHE;
+      flags = lcm2FlagsFromOptions( opts ) | cmsFLAGS_NOCACHE,
+      gamut_warning = flags & cmsFLAGS_GAMUTCHECK;
   const char * o_txt = 0;
 
   if(!lps || !profiles_n || !oy_pixel_layout_in || !oy_pixel_layout_out)
     return 0;
 
-  
+      flags = proof ?         flags | cmsFLAGS_SOFTPROOFING :
+                              flags & (~cmsFLAGS_SOFTPROOFING);
+
   if(!error && lps[0] && lps[profiles_n-1])
   {
     colour_in = cmsGetColorSpace( lps[0] );
@@ -534,61 +609,14 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
   lcm2_pixel_layout_out = oyPixelToCMMPixelLayout_(oy_pixel_layout_out,
                                                    colour_out);
 
-#ifndef oyStrlen_
-#define oyStrlen_ strlen
-#endif
-      o_txt = oyOptions_FindString  ( opts, "rendering_intent", 0);
-      if(o_txt && oyStrlen_(o_txt))
-        intent = atoi( o_txt );
-
-      o_txt = oyOptions_FindString  ( opts, "rendering_intent_proof", 0);
-      if(o_txt && oyStrlen_(o_txt))
-        intent_proof = atoi( o_txt );
-
-      intent_proof = intent_proof == 0 ? INTENT_RELATIVE_COLORIMETRIC :
-                                         INTENT_ABSOLUTE_COLORIMETRIC;
-
-      o_txt = oyOptions_FindString  ( opts, "rendering_bpc", 0 );
-      if(o_txt && oyStrlen_(o_txt))
-        bpc = atoi( o_txt );
-
-      o_txt = oyOptions_FindString  ( opts, "rendering_gamut_warning", 0 );
-      if(o_txt && oyStrlen_(o_txt))
-        gamut_warning = atoi( o_txt );
-
-      o_txt = oyOptions_FindString  ( opts, "precalculation", 0 );
-      if(o_txt && oyStrlen_(o_txt))
-        precalculation = atoi( o_txt );
-
       o_txt = oyOptions_FindString  ( opts, "cmyk_cmyk_black_preservation", 0 );
       if(o_txt && oyStrlen_(o_txt))
         cmyk_cmyk_black_preservation = atoi( o_txt );
 
-      /* this should be moved to the CMM and not be handled here in Oyranos */
-      flags = proof ?         flags | cmsFLAGS_SOFTPROOFING :
-                              flags & (~cmsFLAGS_SOFTPROOFING);
-      flags = bpc ?           flags | cmsFLAGS_BLACKPOINTCOMPENSATION :
-                              flags & (~cmsFLAGS_BLACKPOINTCOMPENSATION);
-      flags = gamut_warning ? flags | cmsFLAGS_GAMUTCHECK :
-                              flags & (~cmsFLAGS_GAMUTCHECK);
-      switch(precalculation)
-      {
-      case 0: flags |= cmsFLAGS_NOOPTIMIZE; break;
-      case 1: flags |= 0; break;
-      case 2: flags |= cmsFLAGS_HIGHRESPRECALC; break;
-      case 3: flags |= cmsFLAGS_LOWRESPRECALC; break;
-      }
       intent = cmyk_cmyk_black_preservation ? intent + 10 : intent;
       if(cmyk_cmyk_black_preservation == 2)
         intent += 13;
 
-  if(oy_debug)
-    message( oyMSG_WARN,0, OY_DBG_FORMAT_"\n"
-    "  intent: %d proof: %d  bpc: %d  gamut_warning: %d  precalculation: %d\n"
-             "  profiles_n: %d,  flags: %d(%s)",
-             OY_DBG_ARGS_,
-       intent,    proof_n,   bpc,     gamut_warning,     precalculation,
-                profiles_n,      flags,    lcm2FlagsToText(flags) );
 
   if(!error)
   {
@@ -1231,6 +1259,82 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
   oyOption_Release( &id16 );
 
   return gmt;
+}
+
+/**
+ *  This function implements oyMOptions_Handle_f.
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/02/21 (Oyranos: 0.3.0)
+ *  @date    2011/02/21
+ */
+int          lcm2MOptions_Handle2    ( oyOptions_s       * options,
+                                       const char        * command,
+                                       oyOptions_s      ** result )
+{
+  int error = 0;
+  oyProfile_s * prof = 0,
+              * p = 0;
+
+  if(oyFilterRegistrationMatch(command,"can_handle", 0))
+  {
+    if(oyFilterRegistrationMatch(command,"create_profile", 0))
+    {
+      p = (oyProfile_s*) oyOptions_GetType( options,-1, "proofing_profile",
+                                            oyOBJECT_PROFILE_S );
+      if(!p)
+      {
+        error = -1;
+      }
+
+      oyProfile_Release( &p );
+
+      return error;
+    }
+    else
+      return -1;
+  }
+  else if(oyFilterRegistrationMatch(command,"create_profile", 0))
+  {
+    p = (oyProfile_s*) oyOptions_GetType( options,-1, "proofing_profile",
+                                          oyOBJECT_PROFILE_S );
+    if(p)
+    {
+      int intent = lcm2IntentFromOptions( options,0 ),
+      intent_proof = lcm2IntentFromOptions( options,1 ),
+      flags = lcm2FlagsFromOptions( options );
+      oyOption_s * o;
+      cmsUInt32Number size = 0;
+      char * block = 0;
+
+      cmsHPROFILE hp = lcm2AddProofProfile( p, flags | cmsFLAGS_GAMUTCHECK,
+                                            intent, intent_proof );
+      oyProfile_Release( &p );
+      if(hp)
+      {
+        cmsSaveProfileToMem( hp, 0, &size );
+        block = oyAllocateFunc_( size );
+        cmsSaveProfileToMem( hp, block, &size );
+        cmsCloseProfile( hp ); hp = 0;
+      }
+
+      prof = oyProfile_FromMem( size, block, 0, 0 );
+      if(block && size)
+        free(block); block = 0; size = 0;
+
+      o = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profile.proofing_effect._" CMM_NICK,
+                        0 );
+      error = oyOption_StructMoveIn( o, (oyStruct_s**) &prof );
+      if(!*result)
+        *result = oyOptions_New(0);
+      oyOptions_MoveIn( *result, &o, -1 );
+    } else
+        message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ " "
+                 "no option \"proofing_effect\" of type oyProfile_s found",
+                 OY_DBG_ARGS_ );
+  }
+
+  return 0;
 }
 
 /** Function lcm2FilterNode_CmmIccContextToMem
@@ -2179,6 +2283,78 @@ int          lcm2MOptions_Handle     ( oyOptions_s       * options,
 /**
  *  This function implements oyCMMInfoGetText_f.
  *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/02/21 (Oyranos: 0.3.0)
+ *  @date    2011/02/21
+ */
+const char * lcm2InfoGetTextProfileC2( const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
+{
+         if(strcmp(select, "can_handle")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "check";
+    else if(type == oyNAME_NAME)
+      return _("check");
+    else
+      return _("Check if LittleCMS can handle a certain command.");
+  } else if(strcmp(select, "create_profile")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "proofing_effect";
+    else if(type == oyNAME_NAME)
+      return _("Create a ICC abstract proofing profile.");
+    else
+      return _("The littleCMS \"create_profile.proofing_effect\" command lets you create ICC abstract profiles from a given ICC profile for proofing. The filter expects a oyOption_s object with name \"proofing_profile\" containing a oyProfile_s as value. The options \"rendering_intent\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_gamut_warning\", \"precalculation\" and \"cmyk_cmyk_black_preservation\" are honoured. The result will appear in \"icc_profile\" with the additional attributes \"create_profile.proofing_effect\" as a oyProfile_s object.");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("help");
+    else if(type == oyNAME_NAME)
+      return _("Create a ICC proofing profile.");
+    else
+      return _("The littleCMS \"create_profile.proofing_effect\" command lets you create ICC abstract profiles from some given ICC profile. See the \"proofing_effect\" info item.");
+  }
+  return 0;
+}
+const char *lcm2_texts_profile_create[4] = {"can_handle","create_profile","help",0};
+
+/** @instance lcm2_api10_cmm2
+ *  @brief    littleCMS oyCMMapi10_s implementation
+ *
+ *  a filter for proofing effect profile creation
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/02/21 (Oyranos: 0.3.0)
+ *  @date    2011/02/21
+ */
+oyCMMapi10_s    lcm2_api10_cmm2 = {
+
+  oyOBJECT_CMM_API10_S,
+  0,0,0,
+  0,
+
+  lcm2CMMInit,
+  lcm2CMMMessageFuncSet,
+
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+  "create_profile.proofing_effect.icc._" CMM_NICK "._CPU",
+
+  CMM_VERSION,
+  {0,3,0},                  /**< int32_t module_api[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+ 
+  lcm2InfoGetTextProfileC2,            /**< getText */
+  (char**)lcm2_texts_profile_create,   /**<texts; list of arguments to getText*/
+ 
+  lcm2MOptions_Handle2                 /**< oyMOptions_Handle_f oyMOptions_Handle */
+};
+
+/**
+ *  This function implements oyCMMInfoGetText_f.
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2009/12/11 (Oyranos: 0.1.10)
  *  @date    2009/12/11
@@ -2214,7 +2390,6 @@ const char * lcm2InfoGetTextProfileC ( const char        * select,
   }
   return 0;
 }
-const char *lcm2_texts_profile_create[4] = {"can_handle","create_profile","help",0};
 
 /** @instance lcm2_api10_cmm
  *  @brief    littleCMS oyCMMapi10_s implementation
@@ -2229,7 +2404,7 @@ oyCMMapi10_s    lcm2_api10_cmm = {
 
   oyOBJECT_CMM_API10_S,
   0,0,0,
-  0,
+  (oyCMMapi_s*) & lcm2_api10_cmm2,
 
   lcm2CMMInit,
   lcm2CMMMessageFuncSet,
