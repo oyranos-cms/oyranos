@@ -140,15 +140,15 @@ const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
  */
 typedef struct {
   icTagTypeSignature type;             /**< "DevS" */
-  uint32_t         dummy;              /**< keep zero */
-  uint8_t          version;            /**< 1 - for version 0.2 */
+  icUInt32Number   dummy;              /**< keep zero */
+  icUInt8Number    version;            /**< 1 - for version 0.2 */
   char             device_serial[12];  /**< 12 byte field, null terminated, unused bytes must be set to zero */
   char             driver_name[12];    /**< 12 byte field, null terminated, unused bytes must be set to zero */
   char             driver_version[12]; /**< 12 byte field, null terminated, unused bytes must be set to zero */
   char             driver_signature[12];/**< 12 byte field, null terminated, unused bytes must be set to zero */
-  uint8_t          priority;           /**< priority of appliance (low - 0 ... high - 255) */
-  uint8_t          reserved[22];       /**< keep to zero */
-  uint32_t         data_size;          /**< as follows starting from byte 84 */
+  icUInt8Number    priority;           /**< priority of appliance (low - 0 ... high - 255) */
+  icUInt8Number    reserved[22];       /**< keep to zero */
+  icUInt32Number   data_size;          /**< as follows starting from byte 84 */
   /* with data_size being > zero the byte 84 is the starting one */
 } deviceSettingsType;
 
