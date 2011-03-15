@@ -1135,13 +1135,17 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
  *  @param         obj                 the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
  *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                     A missing registration path will be 
+ *                                     substituted by the oyOptions_s's internal
+ *                                     registration. Thus "my_opt" will be
+ *                                     converted automatically to a valid key.
  *  @param         value               the value to set
  *  @param         flags               can be OY_CREATE_NEW for a new option,
  *                                     OY_STRING_LIST or OY_ADD_ALWAYS
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.0
  *  @since   2008/11/27 (Oyranos: 0.1.9)
- *  @date    2009/01/20
+ *  @date    2011/03/15
  */
 int            oyOptions_SetFromText ( oyOptions_s      ** obj,
                                        const char        * registration,
@@ -1165,17 +1169,28 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
     if((!o && oyToCreateNew_m(flags)) ||
         oyToAddAlways_m(flags))
     {
+      char * t = 0;
+      /* we silently fix missed registration paths */
+      if(oyStrrchr_( registration, '/' ) == 0)
+      {
+        STRING_ADD( t, ((oyOption_s_*)*obj)->registration );
+        STRING_ADD( t, registration );
+        registration = t;
+      }
       o = oyOption_FromRegistration( registration, (*obj)->oy_ );
       error = !o;
 
       if(error <= 0)
+      {
         /** Flags are passed on to oyOption_SetFromText, e.g. OY_STRING_LIST. */
         error = oyOption_SetFromText( o, value, flags & 1 );
-      else
+      } else
         WARNc3_S( "%s %s=%s",_("wrong argument to option:"),
                   oyNoEmptyString_m_(registration), oyNoEmptyString_m_(value) );
 
       oyOptions_MoveIn( (*obj), &o, -1 );
+      if(t)
+        oyFree_m_( t );
 
     } else
       oyOption_SetFromText( o, value, flags );
