@@ -1171,6 +1171,9 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
       if(error <= 0)
         /** Flags are passed on to oyOption_SetFromText, e.g. OY_STRING_LIST. */
         error = oyOption_SetFromText( o, value, flags & 1 );
+      else
+        WARNc3_S( "%s %s=%s",_("wrong argument to option:"),
+                  oyNoEmptyString_m_(registration), oyNoEmptyString_m_(value) );
 
       oyOptions_MoveIn( (*obj), &o, -1 );
 
