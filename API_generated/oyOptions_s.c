@@ -1416,10 +1416,6 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
  *  @param         obj                 the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
  *                                 "share/freedesktop.org/imaging/my_app/my_opt"
- *                                     A missing registration path will be 
- *                                     substituted by the oyOptions_s's internal
- *                                     registration. Thus "my_opt" will be
- *                                     converted automatically to a valid key.
  *  @param         value               the value to set
  *  @param         flags               can be OY_CREATE_NEW for a new option,
  *                                     OY_STRING_LIST or OY_ADD_ALWAYS
@@ -1450,14 +1446,6 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
     if((!o && oyToCreateNew_m(flags)) ||
         oyToAddAlways_m(flags))
     {
-      char * t = 0;
-      /* we silently fix missed registration paths */
-      if(oyStrrchr_( registration, '/' ) == 0)
-      {
-        STRING_ADD( t, ((oyOption_s_*)*obj)->registration );
-        STRING_ADD( t, registration );
-        registration = t;
-      }
       o = oyOption_FromRegistration( registration, (*obj)->oy_ );
       error = !o;
 
@@ -1470,8 +1458,6 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
                   oyNoEmptyString_m_(registration), oyNoEmptyString_m_(value) );
 
       oyOptions_MoveIn( (*obj), &o, -1 );
-      if(t)
-        oyFree_m_( t );
 
     } else
       oyOption_SetFromText( o, value, flags );
