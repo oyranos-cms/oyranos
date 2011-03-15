@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/02/15
+ *  @date     2011/03/15
  */
 
 
@@ -199,14 +199,14 @@ void         oyThreadLockingSet        ( oyStruct_LockCreate_f  createLockFunc,
  *  @brief   check if the object is a class or is inherited of a class
  *
  *  @version Oyranos: 0.3.0
- *  @date    2011/02/02
+ *  @date    2011/02/15
  *  @since   2011/02/02 (Oyranos: 0.3.0)
  */
 int          oyStruct_CheckType      ( oyStruct_s        * obj,
                                        oyOBJECT_e          type )
 {
   int error = 1;
-  if(obj)
+  if(obj && obj->type_ != oyOBJECT_NONE)
   {
     /* check dynamic objects */
     if(obj->type_ != oyOBJECT_OBJECT_S && obj->oy_)
