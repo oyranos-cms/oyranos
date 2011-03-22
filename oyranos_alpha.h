@@ -2604,10 +2604,10 @@ oyConversion_s  *  oyConversion_CreateBasicPixels (
                                        oyObject_s          object );
 oyConversion_s *   oyConversion_FromBuffers (
                                        oyProfile_s       * p_in,
-                                       oyProfile_s       * p_out,
                                        oyPointer           buf_in,
-                                       oyPointer           buf_out,
                                        oyDATATYPE_e        buf_type_in,
+                                       oyProfile_s       * p_out,
+                                       oyPointer           buf_out,
                                        oyDATATYPE_e        buf_type_out,
                                        oyOptions_s       * options,
                                        int                 count );

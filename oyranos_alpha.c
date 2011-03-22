@@ -13243,6 +13243,32 @@ oyImage_CombinePixelLayout2Mask_ (
   return 0;
 }
 
+char *         oyPixelLayoutPrint_   ( oyPixel_t           pixel_layout )
+{
+  oyDATATYPE_e t = oyToDataType_m( pixel_layout );
+  char * text = 0;
+
+#define oyPixelLayoutPrint_FORMAT "channels: %d channel_offset: %d sample_type[%dByte]: %s planar: %d byte_swap %d colour_swap: %d flawor: %d"
+#define oyPixelLayoutPrint_ARGS \
+  oyToChannels_m( pixel_layout ), \
+  oyToColourOffset_m( pixel_layout ), \
+  oySizeofDatatype( t ), \
+  oyDatatypeToText(t), \
+  oyToPlanar_m( pixel_layout ), \
+  oyToByteswap_m( pixel_layout), \
+  oyToSwapColourChannels_m( pixel_layout ), \
+  oyToFlavor_m( pixel_layout )
+
+  /* describe the pixel layout and access */
+  oyStringAddPrintf_(&text, oyAllocateFunc_, oyDeAllocateFunc_, 
+  oyPixelLayoutPrint_FORMAT, oyPixelLayoutPrint_ARGS);
+
+  /*printf(oyPixelLayoutPrint_FORMAT,oyPixelLayoutPrint_ARGS);*/
+
+#undef oyPixelLayoutPrint_FORMAT
+#undef oyPixelLayoutPrint_ARGS
+  return text;
+}
 
 /** Function oyImage_GetPointContinous
  *  @memberof oyImage_s
@@ -13483,8 +13509,9 @@ oyImage_s *    oyImage_Create         ( int               width,
   s->width = width;
   s->height = height;
   {
+    int channels_n = oyToChannels_m(pixel_layout);
     oyArray2d_s * a = oyArray2d_Create( channels,
-                                        s->width * oyToChannels_m(pixel_layout),
+                                        s->width * channels_n,
                                         s->height,
                                         oyToDataType_m(pixel_layout),
                                         s_obj );
@@ -21263,10 +21290,10 @@ int                oyConversion_Correct (
  */
 oyConversion_s *   oyConversion_FromBuffers (
                                        oyProfile_s       * p_in,
-                                       oyProfile_s       * p_out,
                                        oyPointer           buf_in,
-                                       oyPointer           buf_out,
                                        oyDATATYPE_e        buf_type_in,
+                                       oyProfile_s       * p_out,
+                                       oyPointer           buf_out,
                                        oyDATATYPE_e        buf_type_out,
                                        oyOptions_s       * options,
                                        int                 count )
