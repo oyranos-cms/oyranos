@@ -2602,7 +2602,7 @@ oyConversion_s  *  oyConversion_CreateBasicPixels (
                                        oyImage_s         * output,
                                        oyOptions_s       * options,
                                        oyObject_s          object );
-oyConversion_s *   oyConversion_FromBuffers (
+oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
                                        oyProfile_s       * p_in,
                                        oyPointer           buf_in,
                                        oyDATATYPE_e        buf_type_in,

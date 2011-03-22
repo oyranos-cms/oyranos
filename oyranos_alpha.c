@@ -21276,7 +21276,7 @@ int                oyConversion_Correct (
 
 /**
  *  @internal
- *  Function: oyConversion_FromBuffers
+ *  Function: oyConversion_CreateBasicPixelsFromBuffers
  *  @memberof oyNamedColour_s
  *  @brief    one dimensional colour conversion context
  *
@@ -21288,7 +21288,7 @@ int                oyConversion_Correct (
  *  @since   2011/02/22 (Oyranos: 0.3.0)
  *  @date    2011/02/22
  */
-oyConversion_s *   oyConversion_FromBuffers (
+oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
                                        oyProfile_s       * p_in,
                                        oyPointer           buf_in,
                                        oyDATATYPE_e        buf_type_in,
