@@ -132,6 +132,7 @@ char * lcm2Image_GetText             ( oyImage_s         * image,
 char * lcm2FilterNode_GetText        ( oyFilterNode_s    * node,
                                        oyNAME_e            type,
                                        oyAlloc_f           allocateFunc );
+extern char lcm2_extra_options[];
 char * lcm2FlagsToText               ( int                 flags );
 cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
                                        cmsUInt32Number     flags,
@@ -1730,6 +1731,7 @@ char * lcm2FilterNode_GetText        ( oyFilterNode_s    * node,
   int verbose;
   oyOptions_s * opts = node->core->options_,
               * opts_tmp = 0,
+              * opts_tmp2 = 0,
               * options = 0;
 
   if(!node)
@@ -1761,9 +1763,16 @@ char * lcm2FilterNode_GetText        ( oyFilterNode_s    * node,
     }
     hashTextAdd_m( "\n </data_in>\n" );
 
+    /* pick inbuild defaults */
+    opts_tmp2 = oyOptions_FromText( lcm2_extra_options, 0, NULL );
     opts_tmp = oyOptions_ForFilter( "//" OY_TYPE_STD "/icc", 0,
                                 oyOPTIONSOURCE_FILTER | OY_SELECT_COMMON , 0 );
-    options = oyOptions_FromBoolean( opts_tmp, opts, oyBOOLEAN_UNION, NULL );
+    options = oyOptions_FromBoolean( opts_tmp, opts_tmp2, oyBOOLEAN_UNION,NULL);
+    oyOptions_Release( &opts_tmp );
+    oyOptions_Release( &opts_tmp2 );
+    opts_tmp = options;
+    /* add existing custom options */
+    options = oyOptions_FromBoolean( opts_tmp, opts, oyBOOLEAN_UNION,NULL);
     oyOptions_Release( &opts_tmp );
 
     /* options -> xforms */
