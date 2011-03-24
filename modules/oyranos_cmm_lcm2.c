@@ -1728,7 +1728,9 @@ char * lcm2FilterNode_GetText        ( oyFilterNode_s    * node,
   oyImage_s * in_image = 0,
             * out_image = 0;
   int verbose;
-  oyOptions_s * opts = node->core->options_;
+  oyOptions_s * opts = node->core->options_,
+              * opts_tmp = 0,
+              * options = 0;
 
   if(!node)
     return 0;
@@ -1759,11 +1761,17 @@ char * lcm2FilterNode_GetText        ( oyFilterNode_s    * node,
     }
     hashTextAdd_m( "\n </data_in>\n" );
 
+    opts_tmp = oyOptions_ForFilter( "//" OY_TYPE_STD "/icc", 0,
+                                oyOPTIONSOURCE_FILTER | OY_SELECT_COMMON , 0 );
+    options = oyOptions_FromBoolean( opts_tmp, opts, oyBOOLEAN_UNION, NULL );
+    oyOptions_Release( &opts_tmp );
+
     /* options -> xforms */
     hashTextAdd_m(   " <oyOptions_s>\n" );
-    model = oyOptions_GetText( opts, oyNAME_NAME );
+    model = oyOptions_GetText( options, oyNAME_NAME );
     hashTextAdd_m( model );
     hashTextAdd_m( "\n </oyOptions_s>\n" );
+    oyOptions_Release( &options );
 
     /* output data */
     hashTextAdd_m(   " <data_out>\n" );
