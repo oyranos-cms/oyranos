@@ -21304,7 +21304,7 @@ oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
             * out = NULL;
   oyConversion_s * conv = NULL;
 
-  if(count >= 0)
+  if(count <= 0)
   {
     WARNc1_S("buffer requested with size of pixels: %d", count);
     return NULL;
