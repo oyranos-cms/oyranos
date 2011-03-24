@@ -13502,6 +13502,8 @@ oyImage_s *    oyImage_Create         ( int               width,
 
   if(!profile)
   {
+    WARNc_S("no profile obtained");
+
     oyImage_Release( &s );
     return s;
   }
@@ -21301,6 +21303,18 @@ oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
   oyImage_s * in  = NULL,
             * out = NULL;
   oyConversion_s * conv = NULL;
+
+  if(count >= 0)
+  {
+    WARNc1_S("buffer requested with size of pixels: %d", count);
+    return NULL;
+  }
+
+  if(!buf_in || !buf_out)
+  {
+    WARNc1_S("buffer%s missed", (!buf_in && !buf_out) ? "s" : "");
+    return NULL;
+  }
 
   in    = oyImage_Create( count, 1,
                          buf_in ,
