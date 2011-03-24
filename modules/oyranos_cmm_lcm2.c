@@ -122,7 +122,7 @@ int lcm2CMMProfileReleaseWrap        ( oyPointer         * p );
 
 int                lcm2CMMCheckPointer(oyPointer_s       * cmm_ptr,
                                        const char        * resource );
-int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
+int        oyPixelToLcm2PixelLayout_ ( oyPixel_t           pixel_layout,
                                        icColorSpaceSignature colour_space );
 char * lcm2Image_GetText             ( oyImage_s         * image,
                                        int                 verbose,
@@ -358,14 +358,14 @@ int                lcm2CMMCheckPointer(oyPointer_s       * cmm_ptr,
 
 
 
-/** Function oyPixelToCMMPixelLayout_
+/** Function oyPixelToLcm2PixelLayout_
  *  @brief
  *
  *  @version Oyranos: 0.1.8
  *  @date    2007/11/00
  *  @since   2007/11/00 (Oyranos: 0.1.8)
  */
-int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
+int        oyPixelToLcm2PixelLayout_ ( oyPixel_t           pixel_layout,
                                        icColorSpaceSignature colour_space )
 {
   int cmm_pixel = 0;
@@ -405,6 +405,7 @@ int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
   if(flavour)
     cmm_pixel |= FLAVOR_SH(1);
 
+  /* lcms2 uses V4 style value ranges */
   cmm_pixel |= COLORSPACE_SH( lcm2_colour_space );
 
 
@@ -604,9 +605,9 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
     profile_class_in = cmsGetDeviceClass( lps[0] );
   }
 
-  lcm2_pixel_layout_in  = oyPixelToCMMPixelLayout_(oy_pixel_layout_in,
+  lcm2_pixel_layout_in  = oyPixelToLcm2PixelLayout_(oy_pixel_layout_in,
                                                    colour_in);
-  lcm2_pixel_layout_out = oyPixelToCMMPixelLayout_(oy_pixel_layout_out,
+  lcm2_pixel_layout_out = oyPixelToLcm2PixelLayout_(oy_pixel_layout_out,
                                                    colour_out);
 
       o_txt = oyOptions_FindString  ( opts, "cmyk_cmyk_black_preservation", 0 );
