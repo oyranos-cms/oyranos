@@ -398,9 +398,6 @@ int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
   if(flavour)
     cmm_pixel |= FLAVOR_SH(1);
 
-  cmm_pixel |= COLORSPACE_SH( lcms_colour_space );
-
-
   return cmm_pixel;
 }
 
@@ -614,10 +611,13 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
 
   if(!error)
   {
+     /* we have to erase the colour space */
          if(profiles_n == 1 || profile_class_in == icSigLinkClass)
+    {
         xform = cmsCreateTransform( lps[0], lcms_pixel_layout_in,
                                     0, lcms_pixel_layout_out,
                                     intent, flags );
+    }
     else if(profiles_n == 2 && (!proof_n || (!proof && !gamut_warning)))
         xform = cmsCreateTransform( lps[0], lcms_pixel_layout_in,
                                     lps[1], lcms_pixel_layout_out,
@@ -1731,6 +1731,18 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
       oyFilterSocket_Callback( requestor_plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
       error = 1;
     }
+    /* format for PT_ANY from lcms */
+    else if(data_type == oyDOUBLE)
+    {
+      double * dbl;
+      int width = (int)(array_out->width+0.5), x;
+      for( k = 0; k < array_out->height; ++k)
+      {
+        dbl = (double*)array_in->array2d[k];
+        for(x = 0; x < width; ++x)
+          dbl[x] *= 100.0;
+      }
+    }
 
     /*  - - - - - conversion - - - - - */
     /*lcms_msg(oyMSG_WARN,(oyStruct_s*)ticket, "%s: %d Start lines: %d",
@@ -1749,6 +1761,18 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
                                      array_out->array2d[k], n );
     /*lcms_msg(oyMSG_WARN,(oyStruct_s*)ticket, "%s: %d End width: %d",
             __FILE__,__LINE__, n);*/
+    }
+
+    if(data_type == oyDOUBLE)
+    {
+      double * dbl;
+      int width = (int)(array_out->width+0.5), x;
+      for( k = 0; k < array_out->height; ++k)
+      {
+        dbl = (double*)array_in->array2d[k];
+        for(x = 0; x < width; ++x)
+          dbl[x] /= 100.0;
+      }
     }
 
   } else
