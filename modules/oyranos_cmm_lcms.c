@@ -371,7 +371,7 @@ int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
   int planar = oyToPlanar_m (pixel_layout);
   int flavour = oyToFlavor_m (pixel_layout);
   int cchans = _cmsChannelsOf( colour_space );
-  int lcms_colour_space = _cmsLCMScolorSpace( colour_space );
+  int lcms_colour_space;
   int extra = chan_n - cchans;
 
   if(chan_n > CMMMaxChannels_M)
@@ -379,6 +379,7 @@ int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
              "can not handle more than %d channels; found: %d",
              OY_DBG_ARGS_, CMMMaxChannels_M, chan_n);
 
+  lcms_colour_space = _cmsLCMScolorSpace( colour_space );
   cmm_pixel = COLORSPACE_SH(PT_ANY);
   cmm_pixel |= CHANNELS_SH(cchans);
   if(extra)
@@ -1735,8 +1736,8 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     else if(data_type == oyDOUBLE)
     {
       double * dbl;
-      int width = (int)(array_out->width+0.5), x;
-      for( k = 0; k < array_out->height; ++k)
+      int width = (int)(array_in->width+0.5), x;
+      for( k = 0; k < array_in->height; ++k)
       {
         dbl = (double*)array_in->array2d[k];
         for(x = 0; x < width; ++x)
@@ -1766,12 +1767,20 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     if(data_type == oyDOUBLE)
     {
       double * dbl;
-      int width = (int)(array_out->width+0.5), x;
+      int width = (int)(array_in->width+0.5), x;
       for( k = 0; k < array_out->height; ++k)
       {
+        /* restore */
         dbl = (double*)array_in->array2d[k];
         for(x = 0; x < width; ++x)
           dbl[x] /= 100.0;
+        /* normalise to V4 value ranges */
+        dbl = (double*)array_out->array2d[k];
+        width = (int)(array_out->width+0.5);
+        if(ltw->sig_in == icSigCmykData ||
+           ltw->sig_out == icSigCmykData)
+          for(x = 0; x < width; ++x)
+            dbl[x] /= 100.0;
       }
     }
 
