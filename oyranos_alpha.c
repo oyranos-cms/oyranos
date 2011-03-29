@@ -21089,7 +21089,7 @@ oyImage_s        * oyConversion_GetImage (
  *  @since   2011/03/27 (Oyranos: 0.3.0)
  *  @date    2011/03/29
  */
-oyFilterNode_s   * oyConversion_GetEndNode (
+oyFilterNode_s   * oyConversion_GetNode (
                                        oyConversion_s    * conversion,
                                        uint32_t            flags )
 {
