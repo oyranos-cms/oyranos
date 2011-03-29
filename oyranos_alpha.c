@@ -20201,7 +20201,9 @@ oyPixelAccess_s *  oyPixelAccess_New_( oyObject_s          object )
  *
  *  @verbatim
   // conversion->out_ has to be linear, so we access only the first plug
-  plug = oyFilterNode_GetPlug( conversion->out_, 0 );
+  node = oyConversion_GetNode( conversion, OY_OUTPUT );
+  plug = oyFilterNode_GetPlug( node, 0 );
+  oyFilterNode_Release( &node );
 
   // create a very simple pixel iterator
   if(plug)
@@ -20991,9 +20993,8 @@ oyPointer        * oyConversion_GetOnePixel (
   oyPointer pixel = 0;
   int error = 0;
 
-  /* conversion->out_ has to be linear, so we access only the first socket
-   * (terrible long) */
-  plug = (oyFilterPlug_s*) oyStructList_Get_(((oyFilterSocket_s *)conversion->out_->sockets[0])->requesting_plugs_->list_, 0);
+  /* conversion->out_ has to be linear, so we access only the first socket */
+  plug = oyFilterNode_GetPlug( conversion->out_, 0 );
   sock = plug->remote_socket_;
 
   pixel_access = oyPixelAccess_Create ( x, y, plug, oyPIXEL_ACCESS_POINT, 0 );
@@ -21074,6 +21075,41 @@ oyImage_s        * oyConversion_GetImage (
   }
 
   return image;
+}
+
+/** Function oyConversion_GetNode
+ *  @memberof oyConversion_s
+ *  @brief   get the filter node copy
+ *
+ *  @param[in,out] conversion          conversion object
+ *  @param[in]     flags               OY_INPUT or OY_OUTPUT
+ *  @return                            the filter node as defined by flags
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/03/27 (Oyranos: 0.3.0)
+ *  @date    2011/03/29
+ */
+oyFilterNode_s   * oyConversion_GetEndNode (
+                                       oyConversion_s    * conversion,
+                                       uint32_t            flags )
+{
+  oyFilterNode_s * node = 0;
+  int error = 0;
+  oyConversion_s * s = conversion;
+
+  oyCheckType__m( oyOBJECT_CONVERSION_S, return 0 )
+
+  if(!error)
+  {
+    if(oyToInput_m(flags))
+      node = oyFilterNode_Copy( s->input, 0 );
+
+    else
+    if(oyToOutput_m(flags))
+      node = oyFilterNode_Copy( s->out_, 0 );
+  }
+
+  return node;
 }
 
 /** Function oyConversion_GetGraph
