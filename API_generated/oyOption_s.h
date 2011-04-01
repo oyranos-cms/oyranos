@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/02/15
+ *  @date     2011/04/01
  */
 
 
@@ -167,10 +167,6 @@ OYAPI int OYEXPORT
 /* Include "Option.public_methods_declarations.h" { */
 oyOption_s *   oyOption_FromRegistration( const char        * registration,
                                           oyObject_s          object );
-#if HAVE_ELEKTRA
-oyOption_s *   oyOption_FromDB       ( const char        * registration,
-                                       oyObject_s          object );
-#endif
 int            oyOption_GetId        ( oyOption_s        * option );
 const char *   oyOption_GetText      ( oyOption_s        * obj,
                                        oyNAME_e            type );
@@ -205,9 +201,6 @@ int            oyOption_SetRegistration (
                                        const char        * registration );
 const char *   oyOption_GetRegistration (
                                        oyOption_s        * option );
-#if HAVE_ELEKTRA
-int            oyOption_SetValueFromDB(oyOption_s        * option );
-#endif
 int            oyOption_StructMoveIn ( oyOption_s        * option,
                                        oyStruct_s       ** s );
 oyStruct_s *   oyOption_StructGet    ( oyOption_s        * option,
