@@ -9113,7 +9113,8 @@ OYAPI oyPointer OYEXPORT
       block = oyProfile_TagsToMem_ ( profile, size, allocateFunc );
       profile->tags_modified_ = 0;
       profile->use_default_ = 0;
-      profile->oy_->deallocateFunc_( profile->file_name_ );
+      if(profile->file_name_)
+        profile->oy_->deallocateFunc_( profile->file_name_ );
       profile->file_name_ = 0;
       oyProfile_GetHash_(profile);
       oyObject_SetNames( profile->oy_, 0,0,0 );
@@ -20869,10 +20870,12 @@ int                oyConversion_RunPixels (
   /* run on the graph */
   if(error <= 0)
   {
+    int pixel_n = oyRectangle_CountPoints( pixel_access->output_image_roi );
     clck = oyClock();
     error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
     clck = oyClock() - clck;
-    DBG_NUM1_S("conversion->out_->api7_->oyCMMFilterPlug_Run(): %g", clck/1000000.0 );
+    DBG_NUM2_S( "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g %d",
+                clck/1000000.0, pixel_n );
   }
 
   if(error != 0 && pixel_access)
