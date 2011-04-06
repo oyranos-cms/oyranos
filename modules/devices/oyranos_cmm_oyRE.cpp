@@ -583,8 +583,8 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyConfig_s *device = oyConfigs_Get(devices, i);
          oyConfig_s *device_new = oyConfig_New(CMM_BASE_REG, 0);
 
-         printf(PRFX "Backend core:\n%s", oyOptions_GetText(device->backend_core, oyNAME_NICK));
-         printf(PRFX "Data:\n%s", oyOptions_GetText(device->data, oyNAME_NICK));
+         printf(PRFX "Backend core:\n%s\n", oyOptions_GetText(device->backend_core, oyNAME_NICK));
+         printf(PRFX "Data:\n%s\n", oyOptions_GetText(device->data, oyNAME_NICK));
 
          /* All previous device properties are considered obsolete
           * and a new device is created. Basic options are moved from
@@ -928,19 +928,17 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
 int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
 {
    Exiv2::Image::AutoPtr device_handle;
+   oyAlloc_f allocateFunc = malloc;
    if (handle_opt) {
       char * filename = NULL;
-      oyBlob_s *raw_blob = (oyBlob_s *) oyOption_StructGet( handle_opt,
-                                                            oyOBJECT_BLOB_S );
-      const Exiv2::byte *raw_data = NULL;
-      long size;
-      if(raw_blob)
+      size_t size = 0;
+      const Exiv2::byte *raw_data = (Exiv2::byte*) 
+                                           oyOption_GetData( handle_opt, &size,
+                                                            allocateFunc );
+      if(raw_data)
       {
-        raw_data = (Exiv2::byte*)oyBlob_GetPointer(raw_blob);
-        size = oyBlob_GetSize(raw_blob);
         if (is_raw(Exiv2::ImageFactory::getType(raw_data, size)))
            device_handle = Exiv2::ImageFactory::open(raw_data, size);
-        oyBlob_Release( &raw_blob );
       } else
       {
         filename = oyOption_GetValueText( handle_opt, malloc );
@@ -948,6 +946,7 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
         {
           if (is_raw(Exiv2::ImageFactory::getType(filename)))
             device_handle = Exiv2::ImageFactory::open(filename);
+          printf("filename = %s\n", filename);
           free(filename); filename = 0;
         }
         else
