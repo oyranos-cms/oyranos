@@ -352,8 +352,55 @@ oyConfig_s * oyREgetColorInfo        ( const char        * filename,
 
    /*Call Oyranos*/
    oyDeviceGet(OY_TYPE_STD, "raw-image", "dummy", options, &device);
-
    oyOptions_Release(&options);
+
+#define OPTIONS_ADD_INT(opts, name) if(!error && name) { char * t = 0; \
+        STRING_ADD( t , registration ); STRING_ADD( t, OY_SLASH #name ); \
+        oySprintf_( num, "%d", name ); \
+        error = oyOptions_SetFromText( &opts, t, \
+                                       num, OY_CREATE_NEW ); \
+        if(t) oyFree_m_(t); }
+#define OPTIONS_ADD_FLT(opts, name) if(!error && name) { char * t = 0; \
+        STRING_ADD( t , registration ); STRING_ADD( t, OY_SLASH #name ); \
+        oySprintf_( num, "%.4g", name ); \
+        error = oyOptions_SetFromText( &opts, t, \
+                                       num, OY_CREATE_NEW ); \
+        if(t) oyFree_m_(t); }
+#if 0
+  if(device)
+  {
+    libraw_output_params_t * params = device_context;
+    int error = 0;
+    const char * registration = OY_LIBRAW_REGISTRATION;
+    char num[12];
+    float LRAW_gamm_0 = params->gamm[0];
+    float LRAW_gamm_1 = params->gamm[1];
+    float LRAW_bright = params->bright;
+    int LRAW_document_mode = params->document_mode;
+    int LRAW_user_qual = params->user_qual;
+    int LRAW_use_auto_wb = params->use_auto_wb;
+    int LRAW_use_camera_wb = params->use_camera_wb;
+    int LRAW_use_camera_matrix = params->use_camera_matrix;
+    int LRAW_output_color = params->output_color; /* raw_color */
+    int LRAW_output_bps = params->output_bps;     /* linear space */
+    int LRAW_no_auto_bright = params->;
+    int LRAW_gamma_16bit = params->gamma_16bit;
+    int LRAW_auto_bright = params->auto_bright;
+    int LRAW_filtering_mode = params->filtering_mode;
+    OPTIONS_ADD_INT( (device)->backend_core, LRAW_output_color )
+    OPTIONS_ADD_INT( (device)->backend_core, LRAW_output_bps )
+    OPTIONS_ADD_FLT( (device)->backend_core, LRAW_gamm_0 )
+    OPTIONS_ADD_FLT( (device)->backend_core, LRAW_gamm_1 )
+    OPTIONS_ADD_INT( (device)->backend_core, LRAW_user_qual )
+    OPTIONS_ADD_INT( (device)->backend_core, LRAW_no_auto_bright )
+    OPTIONS_ADD_INT( (device)->backend_core, LRAW_use_auto_wb )
+    OPTIONS_ADD_INT( (device)->backend_core, LRAW_gamma_16bit )
+    if(LRAW_no_auto_bright = 0)
+      OPTIONS_ADD_FLT( (device)->backend_core, LRAW_auto_bright )
+    OPTIONS_ADD_INT( (device)->backend_core, LRAW_filtering_mode )
+  }
+#endif
+
   return device;
 }
 
@@ -381,7 +428,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
   oyProfile_s * prof = 0;
   oyImage_s * image_in = 0;
   oyPixel_t pixel_type = 0;
-  uint8_t * data = 0, * buf = 0;
+  uint8_t * buf = 0;
   size_t  mem_n = 0;   /* needed memory in bytes */
 
   int info_good = 1;
@@ -456,9 +503,11 @@ int      lrawFilterPlug_ImageInputRAWRun (
   params->use_camera_wb = 1;
   params->no_auto_bright = 1;
 
-  error = rip.dcraw_process();
+  if(oyOptions_FindString( node->core->options_, "render", "0" ) == NULL)
+    error = rip.dcraw_process();
 
-  image_rgb = rip.dcraw_make_mem_image();
+  if(oyOptions_FindString( node->core->options_, "render", "0" ) == NULL)
+    image_rgb = rip.dcraw_make_mem_image();
 
   if(image_rgb)
   {
@@ -501,23 +550,26 @@ int      lrawFilterPlug_ImageInputRAWRun (
            break;
     }
 
-  if( !info_good )
+  if( !info_good &&
+      oyOptions_FindString( node->core->options_, "render", "0" ) == NULL)
   {
     message( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ "failed to get info of %s",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ));
-    oyFree_m_( data )
     return FALSE;
   }
 
   /* check if the file can hold the expected data (for raw only) */
   mem_n = width*height*byteps*spp;
-  error = mem_n != image_rgb->data_size;
+  if( info_good )
+    error = mem_n != image_rgb->data_size;
 
-  oyAllocHelper_m_( buf, uint8_t, mem_n, 0, return 1);
+  if(info_good)
+    oyAllocHelper_m_( buf, uint8_t, mem_n, 0, return 1);
 
   /* the following code is almost completely taken from ku.b's ppm CP plug-in */
   /* ... and them copied from the input_ppm Oyranos filter */
+  if(info_good)
   {
     int h, j_h = 0, p, n_samples, n_bytes;
     int byte_swap = 0; /*!oyBigEndian();*/
@@ -601,11 +653,18 @@ int      lrawFilterPlug_ImageInputRAWRun (
   pixel_type = oyChannels_m(spp) | oyDataType_m(data_type); 
   device = oyREgetColorInfo( filename, params );
   oyDeviceAskProfile2( device, 0, &prof );
-  oyConfig_Release( &device );
   if(!prof)
     prof = oyProfile_FromStd( profile_type, 0 );
 
   image_in = oyImage_Create( width, height, buf, pixel_type, prof, 0 );
+
+  if(oyOptions_FindString( node->core->options_, "device", "1" ))
+  {
+    oyOptions_MoveInStruct( &image_in->tags,
+                            "//" OY_TYPE_STD OY_SLASH CMM_NICK "/device",
+                            (oyStruct_s**)&device, OY_CREATE_NEW );
+  }
+  oyConfig_Release( &device );
 
   oyArray2d_ToPPM_    ( (oyArray2d_s*)image_in->pixel_data,
                         "test_oy_dbg_lraw.ppm" );
@@ -617,12 +676,12 @@ int      lrawFilterPlug_ImageInputRAWRun (
       message( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ "libraw can't create a new image\n%dx%d %d",
              OY_DBG_ARGS_,  width, height, pixel_type );
-      oyFree_m_ (data)
+      oyFree_m_ (buf)
     return FALSE;
   }
 
   error = oyOptions_SetFromText( &image_in->tags,
-                                 "//" OY_TYPE_STD OY_SLASH CMM_NICK "/filename",
+                              "//" OY_TYPE_STD OY_SLASH CMM_NICK "/filename",
                                  filename, OY_CREATE_NEW );
 
   if(error <= 0)
@@ -641,7 +700,8 @@ int      lrawFilterPlug_ImageInputRAWRun (
   }
 
   oyImage_Release( &image_in );
-  oyFree_m_ (data)
+  if(buf)
+    oyFree_m_ (buf)
 
   /* return an error to cause the graph to retry */
   return 1;
