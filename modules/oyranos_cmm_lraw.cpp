@@ -456,10 +456,12 @@ int      lrawFilterPlug_ImageInputRAWRun (
   params->use_camera_wb = 1;
   params->no_auto_bright = 1;
 
-  if(oyOptions_FindString( node->core->options_, "render", "0" ) == NULL)
+  int render = oyOptions_FindString( node->core->options_, "render", "0" ) == NULL ? 1 : 0;
+
+  if(render)
     error = rip.dcraw_process();
 
-  if(oyOptions_FindString( node->core->options_, "render", "0" ) == NULL)
+  if(render)
     image_rgb = rip.dcraw_make_mem_image();
 
   if(image_rgb)
@@ -504,7 +506,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
     }
 
   if( !info_good &&
-      oyOptions_FindString( node->core->options_, "render", "0" ) == NULL)
+      render)
   {
     message( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ "failed to get info of %s",
@@ -514,7 +516,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
 
   /* check if the file can hold the expected data (for raw only) */
   mem_n = width*height*byteps*spp;
-  if( info_good )
+  if( image_rgb )
     error = mem_n != image_rgb->data_size;
 
   if(info_good)
@@ -610,8 +612,9 @@ int      lrawFilterPlug_ImageInputRAWRun (
     prof = oyProfile_FromStd( profile_type, 0 );
 
   image_in = oyImage_Create( width, height, buf, pixel_type, prof, 0 );
+  buf = 0;
 
-  if(oyOptions_FindString( node->core->options_, "device", "1" ))
+  if(oyOptions_FindString( node->core->options_, "device", "1" ) != NULL)
   {
     oyOptions_MoveInStruct( &image_in->tags,
                             "//" OY_TYPE_STD OY_SLASH CMM_NICK "/device",
@@ -653,8 +656,6 @@ int      lrawFilterPlug_ImageInputRAWRun (
   }
 
   oyImage_Release( &image_in );
-  if(buf)
-    oyFree_m_ (buf)
 
   /* return an error to cause the graph to retry */
   return 1;
