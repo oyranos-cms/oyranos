@@ -9389,10 +9389,11 @@ const char *       oyProfile_GetFileName (
  *  @param[in]     device              device and driver informations
  *  @param[in]     options             - "key_prefix_required" : prefix
  *                                       accept only key names with the prefix
+ *                                       Separation by point '.' is allowed.
  *
- *  @version Oyranos: 0.1.13
+ *  @version Oyranos: 0.3.0
  *  @since   2009/05/18 (Oyranos: 0.1.10)
- *  @date    2010/11/09
+ *  @date    2011/04/07
  */
 #if 0
 TODO find a general form. Do we want to support the mluc type or is that better
@@ -9450,17 +9451,19 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
                                        oyOptions_s       * options )
 {
   int error = 0;
-  int i, len, size, block_size, pos;
+  int i,j, len, size, block_size, pos;
 
   char ** keys,
        ** values,
-        * key;
-  const char * val,
-             * r;
+        * key,
+        * val;
+  const char * r;
   void * string = 0;
   const char * key_prefix_required = oyOptions_FindString( options,
                                             "key_prefix_required", 0 );
-  int key_prefix_required_len = 0;
+  char ** key_prefix_texts = 0;
+  int key_prefix_texts_n = 0;
+  int * key_prefix_texts_len = 0;
 
   /* get just some device */
   oyOption_s * o = 0;
@@ -9475,7 +9478,13 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
   int count = 0;
 
   if(key_prefix_required)
-    key_prefix_required_len = strlen(key_prefix_required);
+  {
+    key_prefix_texts = oyStringSplit_( key_prefix_required,'.',
+                                       &key_prefix_texts_n, oyAllocateFunc_);
+    oyAllocHelper_m_( key_prefix_texts_len,int,key_prefix_texts_n, 0, return 1);
+    for(j = 0; j < key_prefix_texts_n; ++j)
+      key_prefix_texts_len[j] = strlen( key_prefix_texts[j] );
+  }
 
   /* count valid entries */
   for(i = 0; i < n; ++i)
@@ -9484,7 +9493,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
     o = oyConfig_Get( d, i );
     r = oyOption_GetRegistration(o);
     reg = oyFilterRegistrationToText( r, oyFILTER_REG_OPTION, oyAllocateFunc_ );
-    val = oyOption_GetValueString( o, 0 );
+    val = oyOption_GetValueText( o, oyAllocateFunc_ );
     if(val)
     {
       int pass = 1;
@@ -9493,9 +9502,12 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
       {
         int len = strlen( reg );
         pass = 0;
-        if(len > key_prefix_required_len &&
-           memcmp( key_prefix_required, reg, key_prefix_required_len) == 0)
-          pass = 1;
+        for(j = 0; j < key_prefix_texts_n; ++j)
+        {
+          if(len > key_prefix_texts_len[j] &&
+             memcmp( key_prefix_texts[j], reg, key_prefix_texts_len[j]) == 0)
+            pass = 1;
+        }
       }
 
       if(val && pass)
@@ -9505,6 +9517,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
       }
     }
     if(reg) oyDeAllocateFunc_(reg);
+    if(val) oyDeAllocateFunc_(val);
   }
 
   /* collect data */
@@ -9521,18 +9534,22 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
     r = oyOption_GetRegistration(o);
     key = oyFilterRegistrationToText( r, oyFILTER_REG_OPTION,
                                              oyAllocateFunc_ );
-    val = oyOption_GetValueString( o, 0 );
+    val = oyOption_GetValueText( o, oyAllocateFunc_ );
+    //val = oyOption_GetValueString( o, 0 );
     if(val)
     {
       int pass = 1;
 
       if(key_prefix_required)
       {
-        int len = strlen( key );
+        len = strlen( key );
         pass = 0;
-        if(len > key_prefix_required_len &&
-           memcmp( key_prefix_required, key, key_prefix_required_len) == 0)
-          pass = 1;
+        for(j = 0; j < key_prefix_texts_n; ++j)
+        {
+          if(len > key_prefix_texts_len[j] &&
+             memcmp( key_prefix_texts[j], key, key_prefix_texts_len[j]) == 0)
+            pass = 1;
+        }
       }
 
       if(pass)
@@ -9540,12 +9557,19 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
         keys[pos] = key;
         values[pos] = oyStringCopy_(val,oyAllocateFunc_);
         DBG_PROG2_S("%s: %s", key, val );
-        block_size += (strlen(key) + strlen(val)) * 2 + 2;
+        len = strlen( key ) * 2;
+        len = len + (len%4 ? 4 - len%4 : 0);
+        block_size += len;
+        len = strlen( val ) * 2;
+        len = len + (len%4 ? 4 - len%4 : 0);
+        block_size += len;
+        block_size += + 2;
         ++pos;
         key = 0;
       }
     }
     if(key) oyDeAllocateFunc_( key ); key = 0;
+    if(val) oyDeAllocateFunc_(val);
   }
 
   dict = calloc(sizeof(char), block_size);
@@ -9588,6 +9612,13 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
 
   oyStringListRelease_( &keys, count, oyDeAllocateFunc_ );
   oyStringListRelease_( &values, count, oyDeAllocateFunc_ );
+  if(key_prefix_texts_n)
+  {
+    oyStringListRelease_( &key_prefix_texts, key_prefix_texts_n,
+                          oyDeAllocateFunc_ );
+    oyDeAllocateFunc_( key_prefix_texts_len );
+  }
+  
 
   return 0;
 }
