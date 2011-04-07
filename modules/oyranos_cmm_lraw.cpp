@@ -354,53 +354,6 @@ oyConfig_s * oyREgetColorInfo        ( const char        * filename,
    oyDeviceGet(OY_TYPE_STD, "raw-image", "dummy", options, &device);
    oyOptions_Release(&options);
 
-#define OPTIONS_ADD_INT(opts, name) if(!error && name) { char * t = 0; \
-        STRING_ADD( t , registration ); STRING_ADD( t, OY_SLASH #name ); \
-        oySprintf_( num, "%d", name ); \
-        error = oyOptions_SetFromText( &opts, t, \
-                                       num, OY_CREATE_NEW ); \
-        if(t) oyFree_m_(t); }
-#define OPTIONS_ADD_FLT(opts, name) if(!error && name) { char * t = 0; \
-        STRING_ADD( t , registration ); STRING_ADD( t, OY_SLASH #name ); \
-        oySprintf_( num, "%.4g", name ); \
-        error = oyOptions_SetFromText( &opts, t, \
-                                       num, OY_CREATE_NEW ); \
-        if(t) oyFree_m_(t); }
-#if 0
-  if(device)
-  {
-    libraw_output_params_t * params = device_context;
-    int error = 0;
-    const char * registration = OY_LIBRAW_REGISTRATION;
-    char num[12];
-    float LRAW_gamm_0 = params->gamm[0];
-    float LRAW_gamm_1 = params->gamm[1];
-    float LRAW_bright = params->bright;
-    int LRAW_document_mode = params->document_mode;
-    int LRAW_user_qual = params->user_qual;
-    int LRAW_use_auto_wb = params->use_auto_wb;
-    int LRAW_use_camera_wb = params->use_camera_wb;
-    int LRAW_use_camera_matrix = params->use_camera_matrix;
-    int LRAW_output_color = params->output_color; /* raw_color */
-    int LRAW_output_bps = params->output_bps;     /* linear space */
-    int LRAW_no_auto_bright = params->;
-    int LRAW_gamma_16bit = params->gamma_16bit;
-    int LRAW_auto_bright = params->auto_bright;
-    int LRAW_filtering_mode = params->filtering_mode;
-    OPTIONS_ADD_INT( (device)->backend_core, LRAW_output_color )
-    OPTIONS_ADD_INT( (device)->backend_core, LRAW_output_bps )
-    OPTIONS_ADD_FLT( (device)->backend_core, LRAW_gamm_0 )
-    OPTIONS_ADD_FLT( (device)->backend_core, LRAW_gamm_1 )
-    OPTIONS_ADD_INT( (device)->backend_core, LRAW_user_qual )
-    OPTIONS_ADD_INT( (device)->backend_core, LRAW_no_auto_bright )
-    OPTIONS_ADD_INT( (device)->backend_core, LRAW_use_auto_wb )
-    OPTIONS_ADD_INT( (device)->backend_core, LRAW_gamma_16bit )
-    if(LRAW_no_auto_bright = 0)
-      OPTIONS_ADD_FLT( (device)->backend_core, LRAW_auto_bright )
-    OPTIONS_ADD_INT( (device)->backend_core, LRAW_filtering_mode )
-  }
-#endif
-
   return device;
 }
 
@@ -868,7 +821,11 @@ const char * oyraApi4UiImageInputLibrawGetText (
     else if(type == oyNAME_NAME)
       return _("The filter obtains a image from libraw.");
     else if(type == oyNAME_DESCRIPTION)
-      return _("The filter is a libraw image reader.");
+      return _("The filter is a libraw image reader. The option \"device\" "
+               "with value \"1\" requestests a oyConfig_s object containing "
+               "typical device informations about the cameraRAW file. "
+               "The option \"render\" with value \"0\" will skip some of the "
+               "data processing.");
   }
   return 0;
 }
