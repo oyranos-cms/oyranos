@@ -9535,7 +9535,6 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
     key = oyFilterRegistrationToText( r, oyFILTER_REG_OPTION,
                                              oyAllocateFunc_ );
     val = oyOption_GetValueText( o, oyAllocateFunc_ );
-    //val = oyOption_GetValueString( o, 0 );
     if(val)
     {
       int pass = 1;
