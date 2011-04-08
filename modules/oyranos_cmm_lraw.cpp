@@ -333,12 +333,12 @@ int wread ( unsigned char* data, size_t pos, size_t max, size_t *start, size_t *
 }
 
 oyConfig_s * oyREgetColorInfo        ( const char        * filename,
-                                       libraw_output_params_t * device_context )
+                                       libraw_output_params_t * device_context,
+                                       oyOptions_s       * options )
 {
    oyConfig_s * device = NULL;
    //2.  Get the relevant color information from Oyranos
    //    This is the "command" -> "properties" call
-   oyOptions_s *options = oyOptions_New(0);
    //Request the properties call
    oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "command", "properties", OY_CREATE_NEW);
    oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "device_name", "dummy", OY_CREATE_NEW);
@@ -352,7 +352,6 @@ oyConfig_s * oyREgetColorInfo        ( const char        * filename,
 
    /*Call Oyranos*/
    oyDeviceGet(OY_TYPE_STD, "raw-image", "dummy", options, &device);
-   oyOptions_Release(&options);
 
   return device;
 }
@@ -399,10 +398,6 @@ int      lrawFilterPlug_ImageInputRAWRun (
   libraw_processed_image_t * image_rgb = 0;
 
   libraw_output_params_t * params = rip.output_params_ptr();
-
-  error = oyOptions_SetFromText( &options,
-          "//" OY_TYPE_STD OY_SLASH CMM_NICK "command", "list", OY_CREATE_NEW );
-  //oyDeviceGet();
 
   printf("output_color was: %d  output_bps: %d no_auto_bright: %d\ng[0] %g g[1] %g\n",
           params->output_color, params->output_bps, params->no_auto_bright,
@@ -605,9 +600,12 @@ int      lrawFilterPlug_ImageInputRAWRun (
     }
   }
 
-  pixel_type = oyChannels_m(spp) | oyDataType_m(data_type); 
-  device = oyREgetColorInfo( filename, params );
-  oyDeviceAskProfile2( device, 0, &prof );
+  pixel_type = oyChannels_m(spp) | oyDataType_m(data_type);
+  int32_t n = 0;
+  error = oyOptions_Filter( &options, &n, 0,
+                      oyBOOLEAN_INTERSECTION, "///config",node->core->options_);
+  device = oyREgetColorInfo( filename, params, options );
+  oyDeviceGetProfile( device, 0, &prof );
   if(!prof)
     prof = oyProfile_FromStd( profile_type, 0 );
 
