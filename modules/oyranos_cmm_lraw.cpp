@@ -529,6 +529,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
     uint16_t *d_16;
     float  *d_f;
 
+#pragma omp parallel for
     for(h = 0; h < height; ++h)
     {
         n_samples = 1 * width * spp;
@@ -628,7 +629,8 @@ int      lrawFilterPlug_ImageInputRAWRun (
   }
   oyConfig_Release( &device );
 
-  oyArray2d_ToPPM_    ( (oyArray2d_s*)image_in->pixel_data,
+  if(oy_debug)
+    oyArray2d_ToPPM_  ( (oyArray2d_s*)image_in->pixel_data,
                         "test_oy_dbg_lraw.ppm" );
 
   oyProfile_Release( &prof );
