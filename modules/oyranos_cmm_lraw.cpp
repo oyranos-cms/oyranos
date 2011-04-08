@@ -403,6 +403,10 @@ int      lrawFilterPlug_ImageInputRAWRun (
           params->output_color, params->output_bps, params->no_auto_bright,
           params->gamm[0], params->gamm[1]);
 
+  /* render at half size */
+  params->half_size = 1;
+  params->four_color_rgb = 1;
+
   /* passing through the data reading */
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S &&
      requestor_plug->remote_socket_->data)
@@ -442,7 +446,10 @@ int      lrawFilterPlug_ImageInputRAWRun (
     return 1;
   }
 
+  double clck = oyClock();
   error = rip.unpack();
+  clck = oyClock() - clck;
+  DBG_NUM1_S("rip.unpack(): %g", clck/1000000.0 );
 
   params->output_color = 0;    /* raw_color */
   params->output_bps = 16;     /* linear space */
@@ -454,10 +461,20 @@ int      lrawFilterPlug_ImageInputRAWRun (
   int render = oyOptions_FindString( node->core->options_, "render", "0" ) == NULL ? 1 : 0;
 
   if(render)
+  {
+    clck = oyClock();
     error = rip.dcraw_process();
+    clck = oyClock() - clck;
+    DBG_NUM1_S("rip.dcraw_process(): %g", clck/1000000.0 );
+  }
 
   if(render)
+  {
+    clck = oyClock();
     image_rgb = rip.dcraw_make_mem_image();
+    clck = oyClock() - clck;
+    DBG_NUM1_S("rip.dcraw_make_mem_image(): %g", clck/1000000.0 );
+  }
 
   if(image_rgb)
   {
@@ -518,7 +535,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
     oyAllocHelper_m_( buf, uint8_t, mem_n, 0, return 1);
 
   /* the following code is almost completely taken from ku.b's ppm CP plug-in */
-  /* ... and them copied from the input_ppm Oyranos filter */
+  /* ... and then copied from the input_ppm Oyranos filter */
   if(info_good)
   {
     int h, j_h = 0, p, n_samples, n_bytes;
