@@ -609,6 +609,14 @@ int      lrawFilterPlug_ImageInputRAWRun (
   if(!prof)
     prof = oyProfile_FromStd( profile_type, 0 );
 
+  if(oy_debug)
+  {
+    const char * t = oyProfile_GetText( prof, oyNAME_NAME );
+    message( oyMSG_DBG, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ "image profile %s",
+             OY_DBG_ARGS_,  t?t:"---" );
+  }
+
   image_in = oyImage_Create( width, height, buf, pixel_type, prof, 0 );
   buf = 0;
 
