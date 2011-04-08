@@ -448,8 +448,10 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    } else if (command_properties) {
       /* "properties" call section */
 
-      printf(PRFX "Backend core:\n%s", oyOptions_GetText(device->backend_core, oyNAME_NICK));
-      printf(PRFX "Data:\n%s", oyOptions_GetText(device->data, oyNAME_NICK));
+      const char * t = oyOptions_GetText(device->backend_core, oyNAME_NICK);
+      printf(PRFX "Backend core:\n%s", t?t:"");
+      t = oyOptions_GetText(device->data, oyNAME_NICK);
+      printf(PRFX "Data:\n%s", t?t:"");
 
       /*Handle "device_handle" option [IN]*/
       if (handle_opt) {
@@ -464,6 +466,26 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          libraw_output_params_t *device_context =
             *(libraw_output_params_t**)oyOption_GetData(context_opt, NULL, allocateFunc);
          DeviceFromContext(&device, device_context);
+      }
+
+      /* add device calibration to ICC device profiles meta tag */
+      oyProfile_s * profile = (oyProfile_s*)oyOptions_GetType( options, -1,
+                                        "icc_profile.add_meta",
+                                        oyOBJECT_PROFILE_S );
+      if(profile)
+      {
+        oyOptions_s * options = 0;
+        size_t size = 0;
+        oyPointer data = oyProfile_GetMem( profile, &size, 0, malloc );
+        oyProfile_s * p = oyProfile_FromMem( size, data, 0, 0 );
+        /* Filter the typical name spaces for embedding into the ICC profile.  */
+        error = oyOptions_SetFromText( &options, "///key_prefix_required",
+                                       "Exif_.lraw_" , OY_CREATE_NEW );
+        oyProfile_DeviceAdd( p, device, options );
+        oyProfile_Release( &profile );
+        oyOptions_MoveInStruct( &device->data,
+                                CMM_BASE_REG OY_SLASH "icc_profile.add_meta",
+                                (oyStruct_s**)&p, OY_CREATE_NEW );
       }
 
       /*Copy the rank map*/
