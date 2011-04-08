@@ -6832,6 +6832,7 @@ OYAPI int  OYEXPORT
        * profile_name_temp = 0;
   const char * device_name = 0;
   oyConfig_s * s = device;
+  oyOption_s * o;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
@@ -6961,6 +6962,35 @@ OYAPI int  OYEXPORT
                                    profile_name, OY_CREATE_NEW );
     /* 3.1 send the query to a module */
     error = oyDeviceBackendCall( device, options );
+
+    /* 3.2 check if the module has used that profile and complete do that if needed */
+    if(!oyConfig_Has( device, "icc_profile" ))
+    {
+      int has = 0;
+#define OY_DOMAIN OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD
+      o = oyOption_FromRegistration( OY_DOMAIN OY_SLASH "icc_profile", 0 );
+
+      p = oyProfile_FromFile( profile_name, 0,0 );
+
+      if(p)
+      {
+        has = 1;
+        error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
+      }
+      else
+      /** Warn on not found profile. */
+      {
+        oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)device,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s\n", OY_DBG_ARGS_,
+                _("Could not open ICC profile"), profile_name,
+                _("install in the OpenIccDirectory icc path") );
+      }
+
+      if(has)
+        oyOptions_Set( device->data, o, -1, 0 );
+      oyOption_Release( &o );
+      oyProfile_Release( &p );
+    }
 
     if(profile_name_temp)
       oyRemoveFile_( profile_name_temp );
