@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/02/15
+ *  @date     2011/04/09
  */
 
 
@@ -104,18 +104,18 @@ int          oyObject_Ref            ( oyObject_s          obj )
  *  @memberof oyObject_s
  *  @brief   check if a object has a hash sum computed
  *
- *  @version Oyranos: 0.1.8
- *  @date    2008/11/02
+ *  @version Oyranos: 0.3.0
+ *  @date    2011/04/09
  *  @since   2008/11/02 (Oyranos: 0.1.8)
  */
 int32_t      oyObject_Hashed_        ( oyObject_s          s )
 {
   int32_t hashed = 0;
   if(s && s->type_ == oyOBJECT_OBJECT_S && s->hash_ptr_)
-      if(((uint32_t*)(&s->hash_ptr_[0])) ||
-         ((uint32_t*)(&s->hash_ptr_[4])) ||
-         ((uint32_t*)(&s->hash_ptr_[8])) ||
-         ((uint32_t*)(&s->hash_ptr_[12])) )
+      if(*((uint32_t*)(&s->hash_ptr_[0])) ||
+         *((uint32_t*)(&s->hash_ptr_[4])) ||
+         *((uint32_t*)(&s->hash_ptr_[8])) ||
+         *((uint32_t*)(&s->hash_ptr_[12])) )
         hashed = 1;
   return hashed;
 }
