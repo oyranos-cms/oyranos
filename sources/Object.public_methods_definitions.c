@@ -285,7 +285,7 @@ int          oyObject_SetName         ( oyObject_s        object,
                                         oyNAME_e          type )
 {
   if( object->type_ != oyOBJECT_OBJECT_S )
-    return ;
+    return 0;
 
   object->name_ = oyName_set_( object->name_, text, type,
                                object->allocateFunc_, object->deallocateFunc_ );

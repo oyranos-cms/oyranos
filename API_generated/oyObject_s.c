@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/02/15
+ *  @date     2011/04/09
  */
 
 
@@ -311,7 +311,7 @@ int          oyObject_SetName         ( oyObject_s        object,
                                         oyNAME_e          type )
 {
   if( object->type_ != oyOBJECT_OBJECT_S )
-    return ;
+    return 0;
 
   object->name_ = oyName_set_( object->name_, text, type,
                                object->allocateFunc_, object->deallocateFunc_ );
