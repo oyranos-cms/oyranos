@@ -84,6 +84,9 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "  %s\n",               _("General options:"));
   fprintf( stderr, "      %s\n",           _("-v verbose"));
   fprintf( stderr, "\n");
+  fprintf( stderr, "  %s:\n",               _("Example"));
+  fprintf( stderr, "      SAVEIFS=$IFS ; IFS=$'\\n\\b'; for f in `oyranos-profiles -ldf`; do oymd5icc \"$f\"; done; IFS=$SAVEIFS");
+  fprintf( stderr, "\n");
   fprintf( stderr, "\n");
 
   if(version) oyDeAllocateFunc_(version);
