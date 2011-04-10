@@ -7902,13 +7902,41 @@ oyProfile_New_ ( oyObject_s        object)
 
 /** @internal
  *  @memberof oyProfile_s
+ *  @brief   check internal ICC profile ID
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/04/10 (Oyranos: 0.3.0)
+ *  @date    2011/04/10
+ */
+static int oyProfile_HasID_          ( oyProfile_s       * s )
+{
+  int has_id = 0;
+
+  if(s->block_ && s->size_ >= 132 )
+  {
+    char * data = s->block_;
+    uint32_t id[4];
+    memcpy( id, &data[84], 16 );
+
+    if(id[0] || id[1] || id[2] || id[3])
+      has_id = 1;
+  }
+
+  return has_id;
+}
+
+/** @internal
+ *  @memberof oyProfile_s
  *  @brief   hash for oyProfile_s
  *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
+ *  Get ICC ID from profile or compute.
+ +
+ *  @version Oyranos: 0.3.0
+ *  @since   2007/11/0 (Oyranos: 0.1.8)
+ *  @date    2011/04/10
  */
-static int
-oyProfile_GetHash_( oyProfile_s * s )
+static int oyProfile_GetHash_        ( oyProfile_s       * s,
+                                       int                 flags )
 {
   int error = 1;
 
@@ -7916,9 +7944,26 @@ oyProfile_GetHash_( oyProfile_s * s )
 
   if(s->block_ && s->size_)
   {
+    int has_id = oyProfile_HasID_( s );
+
     oyObject_HashSet( s->oy_, 0 );
-    error = oyProfileGetMD5( s->block_, s->size_, s->oy_->hash_ptr_ );
-    if(error)
+    if(flags & OY_COMPUTE ||
+       !has_id)
+      error = oyProfileGetMD5( s->block_, s->size_, s->oy_->hash_ptr_ );
+    else
+    {
+      char * data = s->block_;
+      uint32_t id[4];
+      int i;
+      memcpy( id, &data[84], 16 );
+
+      for(i = 0; i < 4; ++i)
+        id[i] = oyValueUInt32( id[i] );
+      memcpy(s->oy_->hash_ptr_, id, 16);
+      error = 0;
+    }
+
+    if(error > 0)
       oyObject_HashSet( s->oy_, 0 );
   }
   return error;
@@ -8060,10 +8105,39 @@ oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
 
   if(error <= 0)
   {
-    s = oyProfile_FromMemMove_( size, &block, 0, object );
+    s = oyProfile_FromMemMove_( size, &block, 0, &error, object );
 
     if(!s)
       error = 1;
+
+    if(error < -1)
+    {
+      const char * t = file_name;
+      oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"", OY_DBG_ARGS_,
+                _("Wrong ICC profile id detected"), t?t:OY_PROFILE_NONE );
+    } else
+    if(error == -1)
+    {
+      const char * t = file_name;
+      uint32_t md5[4];
+
+      if(oy_debug)
+        oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"", OY_DBG_ARGS_,
+                _("No ICC profile id detected"), t?t:OY_PROFILE_NONE );
+
+      /* set ICC profile ID */
+      error = oyProfile_GetMD5( s, OY_COMPUTE, md5 );
+      if(oyIsFileFull_( file_name, "wb" ))
+      {
+        error = oyProfile_ToFile_( s, file_name );
+        if(!error)
+          oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"", OY_DBG_ARGS_,
+                _("ICC profile id written"), t?t:OY_PROFILE_NONE );
+      }
+    }
 
     /* We expect a incomplete filename attached to s and try to correct this. */
     if(error <= 0 && !file_name && s->file_name_)
@@ -8152,14 +8226,16 @@ oyProfile_FromFile            ( const char      * name,
  *  @param[in]    size           buffer size
  *  @param[in]    block          pointer to memory containing a profile
  *  @param[in]    flags          for future use
+ *  @param[out]   error_return   error codes
  *  @param[in]    object         the optional base
  *
- *  @since Oyranos: version 0.1.8
+ *  @since Oyranos: version 0.3.0
  *  @date  november 2007 (API 0.1.8)
  */
 oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
                                        oyPointer         * block,
                                        int                 flags,
+                                       int               * error_return,
                                        oyObject_s          object)
 {
   oyProfile_s * s = oyProfile_New_( object );
@@ -8174,6 +8250,8 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
     else
       s->size_ = size;
   }
+
+  if(error_return) *error_return = error;
 
   if (!s->block_)
   {
@@ -8195,12 +8273,16 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
    */
 
   if(error <= 0)
-    error = oyProfile_GetHash_( s );
+    error = oyProfile_GetHash_( s, 0 );
 
-  if(error)
+  if(error != 0)
   {
-    WARNc1_S( "hash error %d", error )
-    return 0;
+    if(error > 0 || error < -1)
+      WARNc1_S( "hash error %d", error )
+    if(error_return) *error_return = error;
+    
+    if(error > 0)
+      return NULL;
   }
 
   if(error <= 0)
@@ -8208,6 +8290,7 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
 
   if(error)
   {
+    if(error_return) *error_return = error;
     WARNc1_S( "signature error %d", error )
     return 0;
   }
@@ -8232,6 +8315,8 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
     WARNc3_S("Channels <= 0 %d %s %s", s->channels_n_,
              oyICCColourSpaceGetName(sig),
              oyICCColourSpaceGetName(h->colorSpace))
+
+    if(error_return) *error_return = error;
   }
 
   return s;
@@ -8271,7 +8356,7 @@ oyProfile_FromMem             ( size_t            size,
     }
   }
 
-  s = oyProfile_FromMemMove_( size_, &block_, flags, object );
+  s = oyProfile_FromMemMove_( size_, &block_, flags, &error, object );
 
   oyProfile_GetID( s );
 
@@ -8406,7 +8491,7 @@ oyProfile_Copy_                      ( const oyProfile_s * profile,
   if(error <= 0)
   {
     if(!oyProfile_Hashed_(s))
-      error = oyProfile_GetHash_( s );
+      error = oyProfile_GetHash_( s, 0 );
   }
 
   if(error <= 0)
@@ -8934,7 +9019,7 @@ OYAPI const oyChar* OYEXPORT
     if(!found && error <= 0)
     {
       if(!oyProfile_Hashed_(s))
-        error = oyProfile_GetHash_( s );
+        error = oyProfile_GetHash_( s,0 );
 
       if(error <= 0)
       {
@@ -9044,7 +9129,7 @@ OYAPI const oyChar* OYEXPORT
       char * file_name = oyProfile_GetFileName_r( s, oyAllocateFunc_ );
 
       if(oyProfile_Hashed_(s))
-        error = oyProfile_GetHash_( s );
+        error = oyProfile_GetHash_( s,0 );
 
       if(s->use_default_ && error <= 0)
         oyWidgetTitleGet( (oyWIDGET_e)s->use_default_, 0, &text, 0, 0 );
@@ -9071,7 +9156,7 @@ OYAPI const oyChar* OYEXPORT
 
     /* last rescue */
     if(!found && oyProfile_Hashed_(s))
-      error = oyProfile_GetHash_( s );
+      error = oyProfile_GetHash_( s,0 );
 
     if(!found && error <= 0)
     {
@@ -9115,7 +9200,10 @@ OYAPI oyPointer OYEXPORT
 {
   oyPointer block = 0;
   oyProfile_s * s = profile;
-  int error = !s;
+  int error = !s,
+      i, tags_modified = 1;
+  uint32_t md5[4];
+  char * data;
 
   if(!s)
     return 0;
@@ -9129,7 +9217,7 @@ OYAPI oyPointer OYEXPORT
   {
     if(s->size_ && s->block_ && !s->tags_modified_)
     {
-
+      tags_modified = 0;
       block = oyAllocateWrapFunc_( s->size_, allocateFunc );
       error = !block;
       if(error <= 0)
@@ -9146,29 +9234,50 @@ OYAPI oyPointer OYEXPORT
       if(profile->file_name_)
         profile->oy_->deallocateFunc_( profile->file_name_ );
       profile->file_name_ = 0;
-      oyProfile_GetHash_(profile);
       oyObject_SetNames( profile->oy_, 0,0,0 );
       oyProfile_GetText(profile, oyNAME_NICK);
       oyProfile_GetText(profile, oyNAME_NAME);
       oyProfile_GetText(profile, oyNAME_DESCRIPTION);
     }
+
+    /* get actual ICC profile ID */
+    oyProfile_GetMD5( profile, OY_COMPUTE, md5 );
+
+    /* Write ICC profile ID into memory */
+    for(i = 0; i < 4; ++i)
+      md5[i] = oyValueUInt32( md5[i] );
+    data = block;
+    memcpy( &data[84], md5, 16 );
   }
 
   if(s)
-    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+    oyObject_UnLock( s->oy_,__FILE__,__LINE__ );
 
   return block;
 }
+
 
 /** Function oyProfile_GetMD5
  *  @memberof oyProfile_s
  *  @brief   get the ICC profile md5 hash sum
  *
+ *  The ICC profiles ID is returned. On request it can be recomputed through
+ *  the OY_COMPUTE flag. That computed ID will be used internally as a hash
+ *  value. The original profile ID can always be obtained through the
+ *  OY_FROM_PROFILE flags until writing of the profile.
+ *
+ *  @param[in,out] profile             the profile
+ *  @param[in]     flags               OY_COMPUTE will calculate the hash
+ *                                     OY_FROM_PROFILE - original profile ID
+ *  @param[out]    md5                 the the ICC md5 based profile ID
+ *  @return                            0 - good, 1 >= error, -1 <= issue(s)
+ *
  *  @version Oyranos: 0.3.0
  *  @since   2011/01/30 (Oyranos: 0.3.0)
- *  @date    2011/01/30
+ *  @date    2011/04/10
  */
 int                oyProfile_GetMD5  ( oyProfile_s       * profile,
+                                       int                 flags,
                                        uint32_t          * md5 )
 {
   oyProfile_s * s = profile;
@@ -9179,13 +9288,30 @@ int                oyProfile_GetMD5  ( oyProfile_s       * profile,
 
   oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
 
-  if(!oyProfile_Hashed_(s))
-    error = oyProfile_GetHash_( s );
+  if(!oyProfile_Hashed_(s) ||
+     flags & OY_COMPUTE ||
+     s->tags_modified_)
+    error = oyProfile_GetHash_( s, OY_COMPUTE );
 
   if(oyProfile_Hashed_(s))
-    memcpy( md5, s->oy_->hash_ptr_, OY_HASH_SIZE );
-  else
+  {
+    if(!(flags & OY_FROM_PROFILE))
+      memcpy( md5, s->oy_->hash_ptr_, OY_HASH_SIZE );
+    else
+    if(s->block_ && s->size_ >= 132)
+    {
+      int i;
+      char * data = s->block_;
+      memcpy( md5, &data[84], 16 );
+      for(i = 0; i < 4; ++i)
+        md5[i] = oyValueUInt32( md5[i] );
+    } else
+      error = -3;
+  }
+  else if(error > 0)
     error += 1;
+  else
+    error = 1;
 
   return error;
 }
@@ -11428,7 +11554,7 @@ OYAPI oyProfiles_s * OYEXPORT
             { /* TODO short readings */
               full_name = oyFindProfile_(names[i]);
               block = oyReadFileToMem_ (full_name, &size, oyAllocateFunc_);
-              tmp = oyProfile_FromMemMove_( size, &block, 0, 0 );
+              tmp = oyProfile_FromMemMove_( size, &block, 0, &error, 0 );
             }
             else
             {
