@@ -100,7 +100,7 @@ oyFindProfile_ (const char* fileName)
 
   if(!path_name)
   {
-    if (oyIsFileFull_(fileName)) {
+    if (oyIsFileFull_(fileName,"rb")) {
       fullFileName = oyStringCopy_( fileName, oyAllocateFunc_ );
     } else
       fullFileName = oyMakeFullFileDirName_ (fileName);

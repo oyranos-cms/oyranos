@@ -414,7 +414,7 @@ oyIsDir_ (const char* path)
 }
 
 int
-oyIsFileFull_ (const char* fullFileName)
+oyIsFileFull_ (const char* fullFileName, const char * read_mode)
 {
   struct stat status;
   int r = 0;
@@ -455,7 +455,7 @@ oyIsFileFull_ (const char* fullFileName)
   DBG_MEM_V( r )
   if (r)
   {
-    FILE* fp = fopen (name, "rb");
+    FILE* fp = fopen (name, read_mode);
     if (!fp) { DBG_PROG1_S("not existent: %s", name )
       r = 0;
     } else { DBG_MEM_S(name)
@@ -475,7 +475,7 @@ oyIsFile_ (const char* fileName)
 
   DBG_MEM_START
 
-  r = oyIsFileFull_(name);
+  r = oyIsFileFull_(name,"rb");
 
   oyFree_m_ (name) DBG_MEM
 
