@@ -74,7 +74,7 @@ oyCheckProfile_                    (const char* name,
     ;/*DBG_NUM_S((fullName)); */
 
   /* do check */
-  if (oyIsFileFull_(fullName))
+  if (oyIsFileFull_(fullName,"rb"))
   {
     size = 128;
     header = oyReadFileToMem_ (fullName, &size, oyAllocateFunc_); DBG_PROG
@@ -138,6 +138,11 @@ oyCheckProfileMem_                 (const void* mem, size_t size,
 /** @internal
  *  @brief md5 calculation
  *
+ *  @param[in]  buffer         complete profiles buffer
+ *  @param[in]  size           over all profile size
+ *  @param[out] md5_return     buffer to write in the md5 digest (128 bytes)
+ *  @return                    -1 wrong profile_id detected, 0 - good, 1 - error
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2007/11/24 (Oyranos: 0.1.x)
  *  @date    2009/08/15
@@ -149,6 +154,10 @@ oyProfileGetMD5_       ( void       *buffer,
 {
   char* block = NULL;
   int error = 0;
+  char profile_id[16];
+  uint32_t * h = (uint32_t*)profile_id,
+           * m = (uint32_t*)md5_return;
+  int has_profile_id;
 
   DBG_PROG_START
 
@@ -157,12 +166,40 @@ oyProfileGetMD5_       ( void       *buffer,
     oyAllocHelper_m_( block, char, size, oyAllocateFunc_, return 1);
     memcpy( block, buffer, size);
 
+    memcpy( profile_id, &block[84], 16 );
+
     /* process as described in the ICC specification */
     memset( &block[44], 0, 4 );  /* flags */
     memset( &block[64], 0, 4 );  /* intent */
     memset( &block[84], 0, 16 ); /* ID */
 
     error = oyMiscBlobGetMD5_(block, size, md5_return);
+    has_profile_id = h[0] || h[1] || h[2] || h[3];
+
+    /* Check if the profiles internal header ID differs. */
+    if(oyValueUInt32(h[0]) != m[0] ||
+       oyValueUInt32(h[1]) != m[1] ||
+       oyValueUInt32(h[2]) != m[2] ||
+       oyValueUInt32(h[3]) != m[3])
+    {
+      char tmp_hash[34], tmp_hash2[34];
+
+      oySprintf_(tmp_hash, "%x%x%x%x", oyValueUInt32(h[0]),
+                oyValueUInt32(h[1]), oyValueUInt32(h[2]), oyValueUInt32(h[3]));
+
+      oySprintf_(tmp_hash2, "%x%x%x%x", m[0], m[1], m[2], m[3]);
+
+      if(has_profile_id)
+        WARNc2_S("%s != %s", tmp_hash, tmp_hash2)
+      error = -1 - has_profile_id;
+    } else
+    if(oy_debug)
+    {
+      oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*) NULL, 
+                OY_DBG_FORMAT_ "[ICC md5]: %x%x%x%x", OY_DBG_ARGS_,
+                oyValueUInt32(h[0]),
+                oyValueUInt32(h[1]), oyValueUInt32(h[2]), oyValueUInt32(h[3]));
+    }
 
     if(block) oyFree_m_ (block);
 
@@ -183,7 +220,7 @@ oyCheckPolicy_               ( const char * name )
   DBG_PROG_START
 
   /* do check */
-  if (oyIsFileFull_(name))
+  if (oyIsFileFull_(name,"rb"))
   {
     size = 128;
     header = oyReadFileToMem_ (name, &size, oyAllocateFunc_); DBG_PROG
