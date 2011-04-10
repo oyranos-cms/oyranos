@@ -190,7 +190,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
     DBG_PROG_S("dir/filename found")
     fullFileName = oyMakeFullFileDirName_ (fileName);
 
-    if (oyIsFileFull_(fullFileName))
+    if (oyIsFileFull_(fullFileName,"rb"))
     {
       size = 128;
       header = oyReadFileToMem_ (fullFileName, &size, allocate_func);
@@ -1358,6 +1358,7 @@ oyGetPathFromProfileName (const char* profile_name, oyAlloc_f     allocate_func)
  *  @param[in]  buffer         complete profiles buffer
  *  @param[in]  size           over all profile size
  *  @param[out] md5_return     buffer to write in the md5 digest (128 bytes)
+ *  @return                    -1 wrong profile_id detected, 0 - good, 1 - error
  *
  *  @return                    error
  */

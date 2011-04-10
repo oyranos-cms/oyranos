@@ -80,7 +80,7 @@ int     oyRecursivePaths_      (int (*doInPath) (oyFileList_s *,
 
 int oyIsDir_      (const char* path);
 int oyIsFile_     (const char* fileName);
-int oyIsFileFull_ (const char* fullFileName);
+int oyIsFileFull_ (const char* fullFileName, const char * read_mode);
 int oyMakeDir_    (const char* path);
 int  oyRemoveFile_                   ( const char        * full_file_name );
 
