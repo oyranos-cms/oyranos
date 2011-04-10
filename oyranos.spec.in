@@ -11,8 +11,6 @@ Vendor: Kai-Uwe Behrmann
 BuildRoot: %{_tmppath}/%{name}-root
 Prefix:    %{_prefix}
 
-Requires:      icc-profiles-basiccolor-lstarrgb icc-profiles-lcms-lab icc-profiles-openicc-printing icc-profiles-openicc-rgb
-
 BuildRequires: libexiv2-devel libraw-devel libraw-devel-static
 
 %if 0%{?suse_version} > 0
@@ -35,11 +33,14 @@ BuildRequires:  Mesa Mesa-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel
 BuildRequires: gcc-c++ gettext doxygen graphviz fltk fltk-devel libpng-devel libjpeg-devel pkgconfig xorg-x11 xorg-x11-devel xorg-x11-Mesa-devel xorg-x11-libXext xorg-x11-libXext-devel  xorg-x11-libXpm xorg-x11-libXpm-devel  libtiff-devel libxml2-devel cairo-devel liblcms-devel xdg-utils cups-devel libqt4-devel libXcm-dev netpbm
 %endif
 
-%package -n lib%{name}0
+%package      -n lib%{name}0
 Summary:   Colour Management System Libraries
 Group:     Development/Libraries/Other
 # assume users want the device modules
 Requires:  lib%{name}0-cups = %{version} lib%{name}0-monitor = %{version}
+# we need rgb, lab, xyz gray and cmyk profiles
+# the proper names: sRGB.icc, XYZ.icc, Lab.icc are in the OpenICC-data package
+Requires:   icc-profiles
 
 %package      -n lib%{name}-devel
 Summary:   Headers, Configuration and static Libs + Documentation
@@ -54,8 +55,7 @@ Requires:  lib%{name}-devel
 %package      -n lib%{name}0-monitor
 Summary:    Oyranos Monitor dependent Libraries
 Group:      Development/Libraries/Other
-Requires:   icc-profiles-openicc-rgb
-Requires:   xcm
+Requires:   xcm xcalib
 
 %package      monitor
 Summary:    Oyranos Monitor Tools
@@ -65,7 +65,7 @@ Requires:   lib%{name}0-monitor
 %package      monitor-nvidia
 Summary:    Nvidia card support
 Group:      System/X11/Utilities
-License: GPL
+License:    GPL
 
 %package      -n lib%{name}0-cups
 Summary:    CUPS device support
