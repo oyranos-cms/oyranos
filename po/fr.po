@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2011-02-21 19:29+0100\n"
+"POT-Creation-Date: 2011-04-10 11:23+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: ALL <ku.b@gmx.de>\n"
@@ -80,14 +80,14 @@ msgstr ""
 
 #: oyranos_cmm.c:64 oyranos_alpha.c:560 oyranos_alpha.c:911
 #: oyranos_alpha.c:1403 oyranos_alpha.c:3656 oyranos_alpha.c:4569
-#: oyranos_alpha.c:5622 oyranos_alpha.c:7844 oyranos_alpha.c:10670
-#: oyranos_alpha.c:11247 oyranos_alpha.c:11934 oyranos_alpha.c:12513
-#: oyranos_alpha.c:13461 oyranos_alpha.c:14409 oyranos_alpha.c:15004
-#: oyranos_alpha.c:15229 oyranos_alpha.c:15528 oyranos_alpha.c:16585
-#: oyranos_alpha.c:16881 oyranos_alpha.c:16962 oyranos_alpha.c:17231
-#: oyranos_alpha.c:18926 oyranos_alpha.c:19210 oyranos_alpha.c:20148
-#: oyranos_alpha.c:20514 oyranos_alpha.c:21294 oyranos_alpha.c:21901
-#: oyranos_alpha.c:22159 API_generated/oyBlob_s_.c:171
+#: oyranos_alpha.c:5622 oyranos_alpha.c:7874 oyranos_alpha.c:10857
+#: oyranos_alpha.c:11434 oyranos_alpha.c:12121 oyranos_alpha.c:12700
+#: oyranos_alpha.c:13674 oyranos_alpha.c:14625 oyranos_alpha.c:15220
+#: oyranos_alpha.c:15445 oyranos_alpha.c:15744 oyranos_alpha.c:16801
+#: oyranos_alpha.c:17097 oyranos_alpha.c:17178 oyranos_alpha.c:17447
+#: oyranos_alpha.c:19142 oyranos_alpha.c:19426 oyranos_alpha.c:20364
+#: oyranos_alpha.c:20732 oyranos_alpha.c:21609 oyranos_alpha.c:22216
+#: oyranos_alpha.c:22474 API_generated/oyBlob_s_.c:171
 #: API_generated/oyPointer_s_.c:164 API_generated/oyHash_s_.c:155
 #: API_generated/oyName_s_.c:48 API_generated/oyObserver_s.c:51
 #: API_generated/oyOption_s_.c:176 API_generated/oyOptions_s_.c:59
@@ -131,7 +131,7 @@ msgstr ""
 #: modules/devices/oyranos_cmm_qarz.c:1193
 #: modules/devices/oyranos_cmm_CUPS.c:850
 #: modules/devices/oyranos_cmm_SANE.c:960
-#: modules/devices/oyranos_cmm_oyRE.cpp:807 modules/oyranos_cmm_oyIM.c:134
+#: modules/devices/oyranos_cmm_oyRE.cpp:829 modules/oyranos_cmm_oyIM.c:134
 #: modules/oyranos_cmm_oicc.c:837 modules/oyranos_cmm_lraw.cpp:257
 #: examples/dummy_device/oyranos_cmm_dDev.c:824
 msgid ""
@@ -1399,9 +1399,9 @@ msgstr ""
 msgid "For more informations read the man page:"
 msgstr ""
 
-#: oyranos_gamma.c:253 oyranos_policy.c:138 oyranos_profiles.c:225
-#: oforms/oyranos_xforms.c:143 oforms/oyranos_xforms_modules.c:141
-#: oforms/oyranos_xforms_fltk.cxx:304
+#: oyranos_gamma.c:253 oyranos_policy.c:138 oyranos_profiles.c:228
+#: API_generated/oyOptions_s.c:1457 oforms/oyranos_xforms.c:143
+#: oforms/oyranos_xforms_modules.c:141 oforms/oyranos_xforms_fltk.cxx:304
 msgid "wrong argument to option:"
 msgstr ""
 
@@ -1548,33 +1548,38 @@ msgstr "ICC Profils"
 msgid "system path"
 msgstr ""
 
-#: oyranos_profiles.c:194
+#: oyranos_profiles.c:87 examples/dummy_device/oyranos_cmm_dDev.c:701
+#: examples/dummy_device/oyranos_cmm_dDev.c:712
+msgid "Example"
+msgstr ""
+
+#: oyranos_profiles.c:197
 msgid "A single path option is required"
 msgstr ""
 
-#: oyranos_profiles.c:207
+#: oyranos_profiles.c:210
 msgid "File name is missed"
 msgstr ""
 
-#: oyranos_profiles.c:266
+#: oyranos_profiles.c:269
 #, fuzzy
 msgid "ICC profiles"
 msgstr "ICC Profils"
 
-#: oyranos_profiles.c:342
+#: oyranos_profiles.c:345
 #, fuzzy
 msgid "ICC profile search paths"
 msgstr "ICC Profils"
 
-#: oyranos_profiles.c:369
+#: oyranos_profiles.c:372
 msgid "Profile already installed"
 msgstr ""
 
-#: oyranos_profiles.c:391
+#: oyranos_profiles.c:394
 msgid "Installed"
 msgstr ""
 
-#: oyranos_profiles.c:391
+#: oyranos_profiles.c:394
 msgid "bytes"
 msgstr "bytes"
 
@@ -1598,71 +1603,90 @@ msgid ""
 "point to a Oyranos module loader library?"
 msgstr ""
 
-#: oyranos_alpha.c:6725 oyranos_alpha.c:7451 oyranos_alpha.c:23079
-#: oyranos_alpha.c:23162
+#: oyranos_alpha.c:6725 oyranos_alpha.c:7481 oyranos_alpha.c:23403
+#: oyranos_alpha.c:23486
 #, fuzzy
 msgid "Could not open device"
 msgstr "Ouvrir Profil"
 
-#: oyranos_alpha.c:6934 oyranos_alpha.c:7462
+#: oyranos_alpha.c:6935 oyranos_alpha.c:7492
 #, fuzzy
 msgid "Could not open profile"
 msgstr "Ouvrir Profil"
 
-#: oyranos_alpha.c:6942
+#: oyranos_alpha.c:6943
 #, fuzzy
 msgid "Could not write to file"
 msgstr "Ouvrir Profil"
 
-#: oyranos_alpha.c:7951 oyranos_alpha.c:7957
+#: oyranos_alpha.c:6985
+#, fuzzy
+msgid "Could not open ICC profile"
+msgstr "Ouvrir Profil"
+
+#: oyranos_alpha.c:6986 oyranos_alpha.c:8028 oyranos_alpha.c:8033
+msgid "install in the OpenIccDirectory icc path"
+msgstr ""
+
+#: oyranos_alpha.c:8026 oyranos_alpha.c:8032
 #, fuzzy
 msgid "Could not open default ICC profile"
 msgstr "Ouvrir Profil"
 
-#: oyranos_alpha.c:7952
+#: oyranos_alpha.c:8027
 msgid "You can get them from http://sf.net/projects/openicc"
 msgstr ""
 
-#: oyranos_alpha.c:7953 oyranos_alpha.c:7958
-msgid "install in the OpenIccDirectory icc path"
+#: oyranos_alpha.c:8118
+msgid "Wrong ICC profile id detected"
 msgstr ""
 
-#: oyranos_alpha.c:15831 oyranos_alpha.c:15849 oyranos_alpha.c:15949
-#: oyranos_alpha.c:15965 API_generated/oyranos_object.c:157
+#: oyranos_alpha.c:8128
+#, fuzzy
+msgid "No ICC profile id detected"
+msgstr "ICC Profils"
+
+#: oyranos_alpha.c:8138
+#, fuzzy
+msgid "ICC profile id written"
+msgstr "ICC Profils"
+
+#: oyranos_alpha.c:16047 oyranos_alpha.c:16065 oyranos_alpha.c:16165
+#: oyranos_alpha.c:16181 API_generated/oyranos_object.c:157
 #: API_generated/oyranos_object.c:175 API_generated/oyranos_object.c:276
 #: API_generated/oyranos_object.c:292
 msgid "with '.' is not allowed"
 msgstr ""
 
-#: oyranos_alpha.c:17637
+#: oyranos_alpha.c:17853
 msgid "attempt to add a incomplete filter"
 msgstr ""
 
-#: oyranos_alpha.c:17699
+#: oyranos_alpha.c:17915
 msgid "?? Nothing to add ??"
 msgstr ""
 
-#: oyranos_alpha.c:18114 API_generated/oyObserver_s_.c:53
+#: oyranos_alpha.c:18330 API_generated/oyObserver_s_.c:53
 #: API_generated/oyObserver_s.c:349 API_generated/oyObserver_s.c:549
 #: API_generated/oyObserver_s.c:627
-#: examples/image_display/oyranos_display_helper_classes_fltk.cpp:273
+#: examples/image_display/oyranos_display_helper_classes_fltk.cpp:336
 msgid "Signal"
 msgstr ""
 
-#: oyranos_alpha.c:18249 oyranos_alpha.c:21236 oyranos_alpha.c:22698
-#: API_generated/oyOptions_s.c:2095
+#: oyranos_alpha.c:18465 oyranos_alpha.c:21490 oyranos_alpha.c:23020
+#: API_generated/oyOptions_s.c:2111
 msgid "error in module:"
 msgstr ""
 
-#: oyranos_alpha.c:21206
+#: oyranos_alpha.c:21460
 msgid "Found no node in conversion. give up"
 msgstr ""
 
-#: oyranos_alpha.c:21867
+#: oyranos_alpha.c:22182
 msgid "---"
 msgstr ""
 
-#: oyranos_alpha.c:22706 API_generated/oyOptions_s.c:2103
+#: oyranos_alpha.c:23028 API_generated/oyOptions_s.c:2119
 #, fuzzy
 msgid "Could not allocate memory for:"
 msgstr "Ouvrir Profil"
@@ -1779,35 +1803,35 @@ msgstr ""
 msgid "Already enabled"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:1858 modules/oyranos_cmm_lcm2.c:1995
+#: modules/oyranos_cmm_lcms.c:1898 modules/oyranos_cmm_lcm2.c:2117
 #, fuzzy
 msgid "Extended Options"
 msgstr "Options"
 
-#: modules/oyranos_cmm_lcms.c:1863 modules/oyranos_cmm_lcm2.c:2000
+#: modules/oyranos_cmm_lcms.c:1903 modules/oyranos_cmm_lcm2.c:2122
 msgid "Black Preservation"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:1883 modules/oyranos_cmm_lcm2.c:2020
+#: modules/oyranos_cmm_lcms.c:1923 modules/oyranos_cmm_lcm2.c:2142
 #, fuzzy
 msgid "Optimization"
 msgstr "Options"
 
-#: modules/oyranos_cmm_lcms.c:2058 modules/oyranos_cmm_lcms.c:2130
-#: modules/oyranos_cmm_lcm2.c:2195
+#: modules/oyranos_cmm_lcms.c:2109 modules/oyranos_cmm_lcms.c:2181
+#: modules/oyranos_cmm_lcm2.c:2317 modules/oyranos_cmm_lcm2.c:2389
 msgid "check"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2060 modules/oyranos_cmm_lcms.c:2132
-#: modules/oyranos_cmm_lcm2.c:2197
+#: modules/oyranos_cmm_lcms.c:2111 modules/oyranos_cmm_lcms.c:2183
+#: modules/oyranos_cmm_lcm2.c:2319 modules/oyranos_cmm_lcm2.c:2391
 msgid "Check if LittleCMS can handle a certain command."
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2066
+#: modules/oyranos_cmm_lcms.c:2117 modules/oyranos_cmm_lcm2.c:2325
 msgid "Create a ICC abstract proofing profile."
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2068
+#: modules/oyranos_cmm_lcms.c:2119 modules/oyranos_cmm_lcm2.c:2327
 msgid ""
 "The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
 "abstract profiles from a given ICC profile for proofing. The filter expects "
@@ -1819,34 +1843,34 @@ msgid ""
 "proofing_effect\" as a oyProfile_s object."
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2072 modules/oyranos_cmm_lcms.c:2144
-#: modules/oyranos_cmm_lcms.c:2394 modules/oyranos_cmm_lcm2.c:2209
-#: modules/oyranos_cmm_lcm2.c:2460 modules/oyranos_cmm_oydi.c:1013
-#: modules/devices/oyranos_cmm_SANE.c:970
-#: modules/devices/oyranos_cmm_oyRE.cpp:817 modules/oyranos_cmm_oicc.c:849
+#: modules/oyranos_cmm_lcms.c:2123 modules/oyranos_cmm_lcms.c:2195
+#: modules/oyranos_cmm_lcms.c:2445 modules/oyranos_cmm_lcm2.c:2331
+#: modules/oyranos_cmm_lcm2.c:2403 modules/oyranos_cmm_lcm2.c:2653
+#: modules/oyranos_cmm_oydi.c:1013 modules/devices/oyranos_cmm_SANE.c:970
+#: modules/devices/oyranos_cmm_oyRE.cpp:839 modules/oyranos_cmm_oicc.c:849
 #: examples/dummy_device/oyranos_cmm_dDev.c:836
 #: examples/dummy_filter/oyranos_cmm_dFil.c:159
 #, fuzzy
 msgid "help"
 msgstr "Aide"
 
-#: modules/oyranos_cmm_lcms.c:2074
+#: modules/oyranos_cmm_lcms.c:2125 modules/oyranos_cmm_lcm2.c:2333
 msgid "Create a ICC proofing profile."
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2076
+#: modules/oyranos_cmm_lcms.c:2127 modules/oyranos_cmm_lcm2.c:2335
 msgid ""
 "The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
 "abstract profiles from some given ICC profile. See the \"proofing_effect\" "
 "info item."
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2138 modules/oyranos_cmm_lcms.c:2146
-#: modules/oyranos_cmm_lcm2.c:2203 modules/oyranos_cmm_lcm2.c:2211
+#: modules/oyranos_cmm_lcms.c:2189 modules/oyranos_cmm_lcms.c:2197
+#: modules/oyranos_cmm_lcm2.c:2397 modules/oyranos_cmm_lcm2.c:2405
 msgid "Create a ICC matrix profile."
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2140
+#: modules/oyranos_cmm_lcms.c:2191
 msgid ""
 "The littleCMS \"create_profile.colour_matrix\" command lets you create ICC "
 "profiles from some given colourimetric coordinates. The filter expects a "
@@ -1858,7 +1882,7 @@ msgid ""
 "additional attributes \"create_profile.colour_matrix\"."
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2148 modules/oyranos_cmm_lcm2.c:2213
+#: modules/oyranos_cmm_lcms.c:2199 modules/oyranos_cmm_lcm2.c:2407
 msgid ""
 "The littleCMS \"create_profile.colour_matrix\" command lets you create ICC "
 "profiles from some given colourimetric coordinates. See the \"create_profile"
@@ -1866,19 +1890,19 @@ msgid ""
 msgstr ""
 
 #. The following strings must match the categories for a menu entry.
-#: modules/oyranos_cmm_lcms.c:2277 modules/oyranos_cmm_lcm2.c:2343
+#: modules/oyranos_cmm_lcms.c:2328 modules/oyranos_cmm_lcm2.c:2536
 #: modules/devices/oyranos_cmm_oyX1.c:1127
 #: modules/devices/oyranos_cmm_qarz.c:1063
 #: modules/devices/oyranos_cmm_CUPS.c:742
 #: modules/devices/oyranos_cmm_SANE.c:830
-#: modules/devices/oyranos_cmm_oyRE.cpp:701
+#: modules/devices/oyranos_cmm_oyRE.cpp:723
 #: examples/dummy_device/oyranos_cmm_dDev.c:712
 #: examples/dummy_filter/oyranos_cmm_dFil.c:393
 msgid "Colour"
 msgstr "Couleur"
 
-#: modules/oyranos_cmm_lcms.c:2278 modules/oyranos_cmm_lcms.c:2281
-#: modules/oyranos_cmm_lcm2.c:2344 modules/oyranos_cmm_lcm2.c:2347
+#: modules/oyranos_cmm_lcms.c:2329 modules/oyranos_cmm_lcms.c:2332
+#: modules/oyranos_cmm_lcm2.c:2537 modules/oyranos_cmm_lcm2.c:2540
 #: modules/oyranos_cmm_oyra_image_ppm.c:404
 #: modules/oyranos_cmm_oyra_image_ppm.c:1140
 #: modules/devices/oyranos_cmm_oyX1.c:1128
@@ -1892,19 +1916,19 @@ msgid "/"
 msgstr ""
 
 #. CMM: abbreviation for Colour Matching Module
-#: modules/oyranos_cmm_lcms.c:2280 modules/oyranos_cmm_lcm2.c:2346
+#: modules/oyranos_cmm_lcms.c:2331 modules/oyranos_cmm_lcm2.c:2539
 msgid "CMM"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2282 modules/oyranos_cmm_lcm2.c:2348
+#: modules/oyranos_cmm_lcms.c:2333 modules/oyranos_cmm_lcm2.c:2541
 msgid "littleCMS"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2372
+#: modules/oyranos_cmm_lcms.c:2423
 msgid "Little CMS"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2374
+#: modules/oyranos_cmm_lcms.c:2425
 msgid ""
 "LittleCMS is a CMM, a color management engine; it implements fast transforms "
 "between ICC profiles. \"Little\" stands for its small overhead. With a "
@@ -1915,41 +1939,41 @@ msgid ""
 "extremely liberal open source license."
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2378 modules/oyranos_cmm_lcm2.c:2444
+#: modules/oyranos_cmm_lcms.c:2429 modules/oyranos_cmm_lcm2.c:2637
 msgid "Marti"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2380 modules/oyranos_cmm_lcm2.c:2446
+#: modules/oyranos_cmm_lcms.c:2431 modules/oyranos_cmm_lcm2.c:2639
 msgid "Marti Maria"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2382
+#: modules/oyranos_cmm_lcms.c:2433
 msgid ""
 "littleCMS project; www: http://www.littlecms.com; support/email: "
 "support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "
 "Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2386 modules/oyranos_cmm_lcm2.c:2452
+#: modules/oyranos_cmm_lcms.c:2437 modules/oyranos_cmm_lcm2.c:2645
 #: modules/devices/oyranos_cmm_SANE.c:963
-#: modules/devices/oyranos_cmm_oyRE.cpp:810
+#: modules/devices/oyranos_cmm_oyRE.cpp:832
 #: examples/dummy_device/oyranos_cmm_dDev.c:828
 msgid "MIT"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2388 modules/oyranos_cmm_lcm2.c:2454
+#: modules/oyranos_cmm_lcms.c:2439 modules/oyranos_cmm_lcm2.c:2647
 msgid "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2390 modules/oyranos_cmm_lcm2.c:2456
+#: modules/oyranos_cmm_lcms.c:2441 modules/oyranos_cmm_lcm2.c:2649
 #: modules/devices/oyranos_cmm_CUPS.c:859
 #: modules/devices/oyranos_cmm_SANE.c:967
-#: modules/devices/oyranos_cmm_oyRE.cpp:814
+#: modules/devices/oyranos_cmm_oyRE.cpp:836
 #: examples/dummy_device/oyranos_cmm_dDev.c:832
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2396 modules/oyranos_cmm_lcm2.c:2462
+#: modules/oyranos_cmm_lcms.c:2447 modules/oyranos_cmm_lcm2.c:2655
 msgid ""
 "The lcms \"colour.icc\" filter is a one dimensional colour conversion "
 "filter. It can both create a colour conversion context, some precalculated "
@@ -1958,7 +1982,7 @@ msgid ""
 "context, which is ICC device link based, to the internal lcms format."
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2398
+#: modules/oyranos_cmm_lcms.c:2449
 msgid ""
 "The following options are available to create colour contexts:\n"
 " \"profiles_simulation\", a option of type oyProfiles_s, can contain device "
@@ -1973,7 +1997,7 @@ msgid ""
 "\"precalculation\"."
 msgstr ""
 
-#: modules/oyranos_cmm_lcm2.c:2205
+#: modules/oyranos_cmm_lcm2.c:2399
 msgid ""
 "The littleCMS \"create_profile.colour_matrix\" command lets you create ICC "
 "profiles from some given colourimetric coordinates. The filter expects a "
@@ -1984,11 +2008,11 @@ msgid ""
 "and a gamma value."
 msgstr ""
 
-#: modules/oyranos_cmm_lcm2.c:2438
+#: modules/oyranos_cmm_lcm2.c:2631
 msgid "Little CMS 2"
 msgstr ""
 
-#: modules/oyranos_cmm_lcm2.c:2440
+#: modules/oyranos_cmm_lcm2.c:2633
 msgid ""
 "LittleCMS 2 is a CMM, a color management engine; it implements fast "
 "transforms between ICC profiles. \"Little\" stands for its small overhead. "
@@ -1999,14 +2023,14 @@ msgid ""
 "extremely liberal open source license."
 msgstr ""
 
-#: modules/oyranos_cmm_lcm2.c:2448
+#: modules/oyranos_cmm_lcm2.c:2641
 msgid ""
 "littleCMS 2 project; www: http://www.littlecms.com; support/email: "
 "support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "
 "Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project"
 msgstr ""
 
-#: modules/oyranos_cmm_lcm2.c:2464
+#: modules/oyranos_cmm_lcm2.c:2657
 msgid ""
 "The following options are available to create colour contexts:\n"
 " \"profiles_simulation\", a option of type oyProfiles_s, can contain device "
@@ -2065,65 +2089,65 @@ msgid ""
 "allocated output image. "
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image.c:319
+#: modules/oyranos_cmm_oyra_image.c:322
 msgid "Load"
 msgstr "Ouvrir"
 
-#: modules/oyranos_cmm_oyra_image.c:321
+#: modules/oyranos_cmm_oyra_image.c:324
 msgid "Load Image File Object"
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image.c:327 modules/oyranos_cmm_oyra_image.c:329
+#: modules/oyranos_cmm_oyra_image.c:330 modules/oyranos_cmm_oyra_image.c:332
 msgid "unfinished"
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image.c:648
+#: modules/oyranos_cmm_oyra_image.c:651
 msgid "Rectangles"
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image.c:650
+#: modules/oyranos_cmm_oyra_image.c:653
 msgid "Rectangles Splitter Object"
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image.c:656
+#: modules/oyranos_cmm_oyra_image.c:659
 msgid "Apply regions of interesst in form of simple rectangles."
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image.c:658
+#: modules/oyranos_cmm_oyra_image.c:661
 msgid ""
 "The filter will expect a \"rectangle\" option and will create, fill and "
 "process a according rectangle with a new job ticket."
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image.c:872
+#: modules/oyranos_cmm_oyra_image.c:875
 msgid "Root Image"
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image.c:874
+#: modules/oyranos_cmm_oyra_image.c:877
 msgid "Root Image Filter Object"
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image.c:880
+#: modules/oyranos_cmm_oyra_image.c:883
 msgid "The filter provides a generic image source."
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image.c:882
+#: modules/oyranos_cmm_oyra_image.c:885
 msgid "The root image filter can hold pixel data for processing in a graph."
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image.c:1058
+#: modules/oyranos_cmm_oyra_image.c:1061
 msgid "Image[out]"
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image.c:1060
+#: modules/oyranos_cmm_oyra_image.c:1063
 msgid "Output Image Filter Object"
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image.c:1066
+#: modules/oyranos_cmm_oyra_image.c:1069
 msgid "The filter is a possible pixel target in a graph."
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image.c:1068
+#: modules/oyranos_cmm_oyra_image.c:1071
 msgid ""
 "The filter can query pixels from its successors in a graph. The results are "
 "stored in the internal buffer."
@@ -2201,7 +2225,7 @@ msgstr ""
 #: modules/devices/oyranos_cmm_qarz.c:1066
 #: modules/devices/oyranos_cmm_CUPS.c:745
 #: modules/devices/oyranos_cmm_SANE.c:830
-#: modules/devices/oyranos_cmm_oyRE.cpp:701
+#: modules/devices/oyranos_cmm_oyRE.cpp:723
 #: examples/dummy_device/oyranos_cmm_dDev.c:712
 msgid "Device"
 msgstr ""
@@ -2360,55 +2384,55 @@ msgid "The scanner (hopefully)usefull backend of Oyranos."
 msgstr ""
 
 #: modules/devices/oyranos_cmm_SANE.c:954
-#: modules/devices/oyranos_cmm_oyRE.cpp:801
+#: modules/devices/oyranos_cmm_oyRE.cpp:823
 msgid "orionas"
 msgstr ""
 
 #: modules/devices/oyranos_cmm_SANE.c:956
-#: modules/devices/oyranos_cmm_oyRE.cpp:803
+#: modules/devices/oyranos_cmm_oyRE.cpp:825
 msgid "Yiannis Belias"
 msgstr ""
 
 #: modules/devices/oyranos_cmm_SANE.c:965
-#: modules/devices/oyranos_cmm_oyRE.cpp:812
+#: modules/devices/oyranos_cmm_oyRE.cpp:834
 #: examples/dummy_device/oyranos_cmm_dDev.c:830
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr ""
 
 #: modules/devices/oyranos_cmm_SANE.c:972
-#: modules/devices/oyranos_cmm_oyRE.cpp:819
+#: modules/devices/oyranos_cmm_oyRE.cpp:841
 #: examples/dummy_device/oyranos_cmm_dDev.c:838
 #: examples/dummy_filter/oyranos_cmm_dFil.c:161
 msgid "My filter introduction."
 msgstr ""
 
 #: modules/devices/oyranos_cmm_SANE.c:974
-#: modules/devices/oyranos_cmm_oyRE.cpp:821
+#: modules/devices/oyranos_cmm_oyRE.cpp:843
 #: examples/dummy_device/oyranos_cmm_dDev.c:840
 #: examples/dummy_filter/oyranos_cmm_dFil.c:163
 msgid "All the small details for using this module."
 msgstr ""
 
-#: modules/devices/oyranos_cmm_oyRE.cpp:688
+#: modules/devices/oyranos_cmm_oyRE.cpp:710
 msgid "RawCamera"
 msgstr ""
 
-#: modules/devices/oyranos_cmm_oyRE.cpp:690
+#: modules/devices/oyranos_cmm_oyRE.cpp:712
 msgid ""
 "Raw camera data, which are in file containing raw sensor data from a camera "
 "still picture."
 msgstr ""
 
-#: modules/devices/oyranos_cmm_oyRE.cpp:701
+#: modules/devices/oyranos_cmm_oyRE.cpp:723
 msgid "CameraRaw"
 msgstr ""
 
-#: modules/devices/oyranos_cmm_oyRE.cpp:796
+#: modules/devices/oyranos_cmm_oyRE.cpp:818
 #, fuzzy
 msgid "Oyranos RAW Image"
 msgstr "Oyranos Préférences"
 
-#: modules/devices/oyranos_cmm_oyRE.cpp:798
+#: modules/devices/oyranos_cmm_oyRE.cpp:820
 msgid "The raw image (hopefully)usefull backend of Oyranos."
 msgstr ""
 
@@ -2615,41 +2639,45 @@ msgstr ""
 msgid "libraw input filter"
 msgstr ""
 
-#: modules/oyranos_cmm_lraw.cpp:719
+#: modules/oyranos_cmm_lraw.cpp:758
 #, fuzzy
 msgid "Module Options"
 msgstr "Options"
 
-#: modules/oyranos_cmm_lraw.cpp:724
+#: modules/oyranos_cmm_lraw.cpp:763
 msgid "Bits per Sample"
 msgstr ""
 
-#: modules/oyranos_cmm_lraw.cpp:727
+#: modules/oyranos_cmm_lraw.cpp:766
 msgid "More bits mean more precission for processing and more size."
 msgstr ""
 
-#: modules/oyranos_cmm_lraw.cpp:733
+#: modules/oyranos_cmm_lraw.cpp:772
 msgid "8-bit"
 msgstr ""
 
-#: modules/oyranos_cmm_lraw.cpp:739
+#: modules/oyranos_cmm_lraw.cpp:778
 msgid "16-bit"
 msgstr ""
 
-#: modules/oyranos_cmm_lraw.cpp:801
+#: modules/oyranos_cmm_lraw.cpp:840
 msgid "Image[lraw]"
 msgstr ""
 
-#: modules/oyranos_cmm_lraw.cpp:803
+#: modules/oyranos_cmm_lraw.cpp:842
 msgid "Input libraw Image Filter Object"
 msgstr ""
 
-#: modules/oyranos_cmm_lraw.cpp:809
+#: modules/oyranos_cmm_lraw.cpp:848
 msgid "The filter obtains a image from libraw."
 msgstr ""
 
-#: modules/oyranos_cmm_lraw.cpp:811
-msgid "The filter is a libraw image reader."
+#: modules/oyranos_cmm_lraw.cpp:850
+msgid ""
+"The filter is a libraw image reader. The option \"device\" with value \"1\" "
+"requestests a oyConfig_s object containing typical device informations about "
+"the cameraRAW file. The option \"render\" with value \"0\" will skip some of "
+"the data processing."
 msgstr ""
 
 #: oforms/oyranos_xforms.c:22 oforms/oyranos_xforms_modules.c:25
@@ -2727,11 +2755,6 @@ msgstr " points"
 msgid "&Done"
 msgstr ""
 
-#: examples/dummy_device/oyranos_cmm_dDev.c:701
-#: examples/dummy_device/oyranos_cmm_dDev.c:712
-msgid "Example"
-msgstr ""
-
 #: examples/dummy_device/oyranos_cmm_dDev.c:703
 msgid "Example Device"
 msgstr ""
@@ -2789,12 +2812,12 @@ msgstr ""
 msgid "My Filter"
 msgstr "Ouvrir Profil"
 
-#: examples/image_display/image_display.cpp:257
+#: examples/image_display/image_display.cpp:280
 #, fuzzy
 msgid "Edit Options"
 msgstr "Options"
 
-#: oyranos_alpha_internal.h:237 oyranos_alpha_internal.h:245
+#: oyranos_alpha_internal.h:238 oyranos_alpha_internal.h:246
 msgid "Unexpected object type:"
 msgstr ""
 
