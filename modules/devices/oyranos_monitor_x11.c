@@ -752,7 +752,8 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
         error = -1;
     }
 
-    DBG_PROG1_S( "system: %s", text )
+    if(oy_debug)
+      DBG1_S( "system: %s", text )
 
     /* set OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE atom in X */
     {
