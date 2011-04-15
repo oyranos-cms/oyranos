@@ -21046,7 +21046,7 @@ int                oyConversion_RunPixels (
   if(error <= 0)
   {
     clck = oyClock();
-    result = oyImage_FillArray( image, &roi, 2,
+    result = oyImage_FillArray( image, &roi, 0,
                                 &pixel_access->array,
                                 pixel_access->output_image_roi, 0 );
     clck = oyClock() - clck;
@@ -21089,7 +21089,7 @@ int                oyConversion_RunPixels (
     {
       clck = oyClock();
       l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
-      l_error = oyImage_FillArray( image, &roi, 2,
+      l_error = oyImage_FillArray( image, &roi, 0,
                                    &pixel_access->array,
                                    pixel_access->output_image_roi, 0 ); OY_ERR
       clck = oyClock() - clck;

@@ -513,7 +513,7 @@ int      oyraFilterPlug_ImageRectanglesRun (
         /* fill the array rectangle for the following filter */
         if(!new_ticket->array)
           oyImage_FillArray( new_ticket->output_image,
-                             new_ticket->output_image_roi, 2,
+                             new_ticket->output_image_roi, 0,
                             &new_ticket->array, 0, 0 );
 
         /* start new call into branch */
