@@ -289,10 +289,13 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   x = ticket->start_xy[0];
   y = ticket->start_xy[1];
 
+#if 0
+  /* skip automatic iteration, better iterate  */
   result = oyPixelAccess_CalculateNextStartPixel( ticket, requestor_plug);
 
   if(result != 0)
     return result;
+#endif
 
   if(x < image->width &&
      y < image->height &&
