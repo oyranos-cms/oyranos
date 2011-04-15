@@ -14114,7 +14114,8 @@ int            oyImage_FillArray     ( oyImage_s         * image,
       (a && ( pixel_rectangle.width > a->width ||
               pixel_rectangle.height > a->height )) ||
       pixel_rectangle.width != array_rectangle_.width ||
-      pixel_rectangle.height != array_rectangle_.height)
+      pixel_rectangle.height != array_rectangle_.height ||
+      (a->own_lines != oyNO && do_copy == oyNO) )
     )
   {
     oyArray2d_Release( array );
@@ -21163,7 +21164,6 @@ int                oyConversion_RunPixels (
  *  @param[in,out] conversion          conversion object
  *  @param[in]     x                   position x
  *  @param[in]     y                   position y
- *  @param[out]    feedback            -1 end; 0 on success; error > 1
  *  @param[in,out] pixel_access        pixel iterator configuration
  *  @return                            -1 end; 0 on success; error > 1
  *
