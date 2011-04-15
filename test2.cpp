@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Colour Management System 
  *
- *  Copyright (C) 2004-2010  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2011  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -3275,8 +3275,6 @@ oyTESTRESULT_e testCMMnmRun ()
   }
   clck = oyClock() - clck;
 
-  oyPixelAccess_Release( &pixel_access );
-  oyConversion_Release( &conv );
 
 
   if( !error )
@@ -3286,6 +3284,29 @@ oyTESTRESULT_e testCMMnmRun ()
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyColourConvert_() sans oyPixelAccess_Create()     " );
+  }
+
+  clck = oyClock();
+  d[0] = d[1] = d[2] = 1.0;
+  d[3] = d[4] = d[5] = 0.0;
+  if(pixel_access)
+  for(i = 0; i < n*10000; ++i)
+  {
+    int error = oyConversion_GetOnePixel( conv, 0,0, pixel_access );
+    error = 0;
+  }
+  clck = oyClock() - clck;
+  oyConversion_Release( &conv );
+  oyPixelAccess_Release( &pixel_access );
+
+  if( !error  && d[3] != 0.0 )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyConversion_GetOnePixel() sans oyPixelAcce.%s %.02g %.02g %.02g",
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"), d[3], d[4], d[5]);
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyConversion_GetOnePixel() sans oyPixelAcce.%s %.02g %.02g %.02g" ,
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"), d[3], d[4], d[5]);
   }
 
 
