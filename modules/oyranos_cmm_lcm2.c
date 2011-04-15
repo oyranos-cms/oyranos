@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2007-2009 (C) Kai-Uwe Behrmann
+ *            2007-2011 (C) Kai-Uwe Behrmann
  *
  *  @brief    littleCMS CMM module for Oyranos
  *  @internal
@@ -1940,7 +1940,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     oyArray2d_Release( &new_ticket->array );
     oyImage_Release( &new_ticket->output_image );
     new_ticket->output_image = oyImage_Copy( image_input, 0 );
-    error = oyImage_FillArray( image_input, new_ticket->output_image_roi, 2,
+    error = oyImage_FillArray( image_input, new_ticket->output_image_roi, 0,
                                &new_ticket->array, 0, 0 );
   }
 
