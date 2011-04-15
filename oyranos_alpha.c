@@ -21164,33 +21164,33 @@ int                oyConversion_RunPixels (
  *  @param[in]     x                   position x
  *  @param[in]     y                   position y
  *  @param[out]    feedback            -1 end; 0 on success; error > 1
- *  @return                            the pixel pointer
+ *  @param[in,out] pixel_access        pixel iterator configuration
+ *  @return                            -1 end; 0 on success; error > 1
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.3.0
  *  @since   2008/07/14 (Oyranos: 0.1.8)
- *  @date    2008/07/14
+ *  @date    2011/04/11
  */
-oyPointer        * oyConversion_GetOnePixel (
-                                       oyConversion_s    * conversion,
+int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
                                        int32_t             x,
                                        int32_t             y,
-                                       int32_t           * feedback )
+                                       oyPixelAccess_s   * pixel_access )
 {
-  oyPixelAccess_s * pixel_access = 0;
   oyFilterPlug_s * plug = 0;
   oyFilterSocket_s * sock = 0;
-  oyPointer pixel = 0;
   int error = 0;
 
   /* conversion->out_ has to be linear, so we access only the first socket */
   plug = oyFilterNode_GetPlug( conversion->out_, 0 );
   sock = plug->remote_socket_;
 
-  pixel_access = oyPixelAccess_Create ( x, y, plug, oyPIXEL_ACCESS_POINT, 0 );
+  pixel_access->start_xy[0] = x;
+  pixel_access->start_xy[1] = y;
+
   /* @todo */
   error = sock->node->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
 
-  return pixel;
+  return error;
 }
 
 /** Function oyConversion_GetImage

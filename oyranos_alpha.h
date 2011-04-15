@@ -2626,11 +2626,11 @@ int                oyConversion_Set  ( oyConversion_s    * conversion,
 int                oyConversion_RunPixels (
                                        oyConversion_s    * conversion,
                                        oyPixelAccess_s   * pixel_access );
-oyPointer        * oyConversion_GetOnePixel (
+int                oyConversion_GetOnePixel (
                                        oyConversion_s    * conversion,
                                        int32_t             x,
                                        int32_t             y,
-                                       int32_t           * feedback );
+                                       oyPixelAccess_s   * pixel_access );
 #define OY_OUTPUT                      0x01
 #define OY_INPUT                       0x02
 /* decode */
