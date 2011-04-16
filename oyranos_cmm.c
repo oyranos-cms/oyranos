@@ -318,7 +318,7 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
     new_roi.y += y / (double) image->width;
     new_roi.width *= correct;
     new_roi.height *= correct;
-    error = oyImage_FillArray( image, &new_roi, 0, &ticket->array, 0, 0 );
+    error = oyImage_FillArray( image, &new_roi, 1, &ticket->array, 0, 0 );
     if(error)
       result = error;
   }
