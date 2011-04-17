@@ -3417,10 +3417,12 @@ oyTESTRESULT_e testImagePixel()
   clck = oyClock() - clck;
 
   if( !error &&
+      /* check unchanged input buffer */
       buf_16in2x2[0]==20000 && buf_16in2x2[1]==20000 && buf_16in2x2[2]==20000 &&
       buf_16in2x2[3]==10000 && buf_16in2x2[4]==10000 && buf_16in2x2[5]==10000 &&
       buf_16in2x2[6]==0 && buf_16in2x2[7]==0 && buf_16in2x2[8]==0 &&
       buf_16in2x2[9]==65535 && buf_16in2x2[10]==65535 &&buf_16in2x2[11]==65535&&
+      /* check black and white in lower row with typical *ab of 32896 */
       buf_16out2x2[6]==0 && buf_16out2x2[7]>20000 && buf_16out2x2[7]<40000 &&
       buf_16out2x2[9]==65535 && buf_16out2x2[10]>20000 && buf_16out2x2[10]<40000
       )
@@ -3452,20 +3454,30 @@ oyTESTRESULT_e testImagePixel()
   memset( buf_16out2x2, 0, sizeof(uint16_t)*12 );
   pixel_access->start_xy[0] = pixel_access->start_xy[1] = 1;
   pixel_access->output_image_roi->width = pixel_access->output_image_roi->height = 0.5;
-  error  = oyConversion_RunPixels( cc, pixel_access );
+  clck = oyClock();
+  for(i = 0; i < n*1000; ++i)
+  if(error <= 0)
+  {
+    error  = oyConversion_RunPixels( cc, pixel_access );
+  }
+  clck = oyClock() - clck;
 
   if( !error &&
+      /* input should not change */
       buf_16in2x2[0]==20000 && buf_16in2x2[1]==20000 && buf_16in2x2[2]==20000 &&
       buf_16in2x2[3]==10000 && buf_16in2x2[4]==10000 && buf_16in2x2[5]==10000 &&
       buf_16in2x2[6]==0 && buf_16in2x2[7]==0 && buf_16in2x2[8]==0 &&
       buf_16in2x2[9]==65535 && buf_16in2x2[10]==65535 &&buf_16in2x2[11]==65535&&
+      /* the result shall appears in the upper left corner / first pixel */
       buf_16out2x2[0]==65535 && buf_16out2x2[1]>20000 && buf_16out2x2[2]<40000&&
-      buf_16out2x2[6]==0 && buf_16out2x2[7]>20000 && buf_16out2x2[7]<40000 &&
-      buf_16out2x2[9]==65535 && buf_16out2x2[10]>20000 && buf_16out2x2[10]<40000
+      /* all other buffer pixels shall remain untouched */
+      buf_16out2x2[3]==0 && buf_16out2x2[4]==0 && buf_16out2x2[5]==0 &&
+      buf_16out2x2[6]==0 && buf_16out2x2[7]==0 && buf_16out2x2[8]==0 &&
+      buf_16out2x2[9]==0 && buf_16out2x2[10]==0 && buf_16out2x2[10]==0
       )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "Plain Image upper left RoI               %s",
-                          oyProfilingToString(4*i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "Plain Image upper left RoI                         " );
