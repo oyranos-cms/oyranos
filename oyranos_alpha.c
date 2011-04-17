@@ -14258,14 +14258,6 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
   if(error)
     oyArray2d_Release( &a );
-  else
-  {
-    /* set back, what was changed intermediately above */
-    if(a_orig_width != 0)
-      a->width = a_orig_width;
-    if(a_orig_height != 0)
-      a->height = a_orig_height;
-  }
 
   *array = a;
 
@@ -21000,7 +20992,7 @@ int                oyConversion_RunPixels (
 {
   oyConversion_s * s = conversion;
   oyFilterPlug_s * plug = 0;
-  oyFilterCore_s * filter = 0;
+  oyFilterNode_s * node_out = 0;
   oyImage_s * image = 0, * image_input = 0;
   int error = 0, result = 0, l_error = 0, i,n, dirty = 0, tmp_ticket = 0;
   oyRectangle_s roi = {oyOBJECT_RECTANGLE_S, 0,0,0};
@@ -21037,7 +21029,7 @@ int                oyConversion_RunPixels (
     error = 1;
 
   /* should be the same as conversion->out_->filter */
-  filter = conversion->out_->core;
+  node_out = oyConversion_GetNode( conversion, OY_OUTPUT );
   image = oyConversion_GetImage( conversion, OY_OUTPUT );
 
   if(error <= 0)
@@ -21059,7 +21051,7 @@ int                oyConversion_RunPixels (
   {
     int pixel_n = oyRectangle_CountPoints( pixel_access->output_image_roi );
     clck = oyClock();
-    error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
+    error = node_out->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
     clck = oyClock() - clck;
     DBG_NUM2_S( "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g %d",
                 clck/1000000.0, pixel_n );
