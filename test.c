@@ -111,7 +111,7 @@ main(int argc, char** argv)
   result = 0;
   x = y = 0;
   pixel_access->start_xy[0] = pixel_access->start_xy[1] = x;
-  while(result == 0)
+  while(result == 0 && 0)
   {
     double * p = 0;
 
