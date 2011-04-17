@@ -2654,8 +2654,12 @@ int                oyConversion_Correct (
                                        const char        * registration,
                                        uint32_t            flags,
                                        oyOptions_s       * options );
-                                       
-
+int                oyConversion_ChangeRectangle ( 
+                                       oyConversion_s    * conversion,
+                                       oyPixelAccess_s   * pixel_access,
+                                       int                 start_x,
+                                       int                 start_y,
+                                       oyRectangle_s     * output_rectangle );
 
 
 /** @struct oyNamedColour_s
