@@ -3301,11 +3301,11 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( !error  && d[3] != 0.0 )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConversion_GetOnePixel() sans oyPixelAcce.%s %.02g %.02g %.02g",
+    "oyConversion_GetOnePixel( oyPix. )  %s %.02g %.02g %.02g",
                           oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"), d[3], d[4], d[5]);
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyConversion_GetOnePixel() sans oyPixelAcce.%s %.02g %.02g %.02g" ,
+    "oyConversion_GetOnePixel( oyPix. )  %s %.02g %.02g %.02g" ,
                           oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"), d[3], d[4], d[5]);
   }
 
@@ -3356,7 +3356,137 @@ oyTESTRESULT_e testCMMnmRun ()
   return result;
 }
 
+oyTESTRESULT_e testImagePixel()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  oyNamedColour_s * c = 0;
+  oyProfile_s * p_lab = oyProfile_FromStd( oyEDITING_LAB, NULL );
+  oyProfile_s * p_web = oyProfile_FromStd( oyASSUMED_WEB, NULL );
+  oyProfile_s * p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),
+              * p_in, * p_out;
+  int error = 0, l_error = 0,
+      i,n = 10;
+  uint16_t buf_16in2x2[12] = {
+  20000,20000,20000, 10000,10000,10000,
+  0,0,0,             65535,65535,65535
+  };
+  uint16_t buf_16out2x2[12];
+  oyDATATYPE_e buf_type_in = oyUINT16,
+               buf_type_out = oyUINT16;
+  oyImage_s *input, *output;
 
+  fprintf(stdout, "\n" );
+
+  double clck = oyClock();
+  p_in = p_web;
+  p_out = p_lab;
+  input =oyImage_Create( 2,2, 
+                         buf_16in2x2,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_in)) |
+                          oyDataType_m(buf_type_in),
+                         p_in,
+                         0 );
+  output=oyImage_Create( 2,2, 
+                         buf_16out2x2,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_out)) |
+                          oyDataType_m(buf_type_out),
+                         p_out,
+                         0 );
+
+  #define OY_ERR if(l_error != 0) error = l_error;
+
+  oyFilterPlug_s * plug = 0;
+  oyPixelAccess_s * pixel_access = 0;
+  oyConversion_s * cc;
+  cc = oyConversion_CreateBasicPixels( input,output, 0, 0 );
+  if(cc && cc->out_)
+    plug = oyFilterNode_GetPlug( oyConversion_GetNode( cc, OY_OUTPUT), 0 );
+  else
+    error = 1;
+  pixel_access = oyPixelAccess_Create( 0,0, plug,
+                                           oyPIXEL_ACCESS_IMAGE, 0 );
+  oyFilterPlug_Release( &plug );
+
+  error  = oyConversion_RunPixels( cc, pixel_access );
+  clck = oyClock();
+  for(i = 0; i < n*1000; ++i)
+  if(error <= 0)
+  {
+    error  = oyConversion_RunPixels( cc, pixel_access );
+  }
+  clck = oyClock() - clck;
+
+  if( !error &&
+      buf_16in2x2[0]==20000 && buf_16in2x2[1]==20000 && buf_16in2x2[2]==20000 &&
+      buf_16in2x2[3]==10000 && buf_16in2x2[4]==10000 && buf_16in2x2[5]==10000 &&
+      buf_16in2x2[6]==0 && buf_16in2x2[7]==0 && buf_16in2x2[8]==0 &&
+      buf_16in2x2[9]==65535 && buf_16in2x2[10]==65535 &&buf_16in2x2[11]==65535&&
+      buf_16out2x2[6]==0 && buf_16out2x2[7]>20000 && buf_16out2x2[7]<40000 &&
+      buf_16out2x2[9]==65535 && buf_16out2x2[10]>20000 && buf_16out2x2[10]<40000
+      )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "Plain Image                              %s",
+                          oyProfilingToString(4*i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "Plain Image                                        " );
+  }
+
+  fprintf(stdout, "input:  %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
+                  buf_16in2x2[0], buf_16in2x2[1], buf_16in2x2[2],
+                  buf_16in2x2[3], buf_16in2x2[4], buf_16in2x2[5],
+                  buf_16in2x2[6], buf_16in2x2[7], buf_16in2x2[8],
+                  buf_16in2x2[9], buf_16in2x2[10], buf_16in2x2[11] );
+  fprintf(stdout, "output: %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
+                  buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
+                  buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
+                  buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
+                  buf_16out2x2[9], buf_16out2x2[10], buf_16out2x2[11] );
+
+
+
+  buf_16in2x2[0]=buf_16in2x2[1]=buf_16in2x2[2]=20000;
+  buf_16in2x2[3]=buf_16in2x2[4]=buf_16in2x2[5]=10000;
+  buf_16in2x2[6]=buf_16in2x2[7]=buf_16in2x2[8]=0;
+  buf_16in2x2[9]=buf_16in2x2[10]=buf_16in2x2[11]=65535;
+  memset( buf_16out2x2, 0, sizeof(uint16_t)*12 );
+  pixel_access->start_xy[0] = pixel_access->start_xy[1] = 1;
+  pixel_access->output_image_roi->width = pixel_access->output_image_roi->height = 0.5;
+  error  = oyConversion_RunPixels( cc, pixel_access );
+
+  if( !error &&
+      buf_16in2x2[0]==20000 && buf_16in2x2[1]==20000 && buf_16in2x2[2]==20000 &&
+      buf_16in2x2[3]==10000 && buf_16in2x2[4]==10000 && buf_16in2x2[5]==10000 &&
+      buf_16in2x2[6]==0 && buf_16in2x2[7]==0 && buf_16in2x2[8]==0 &&
+      buf_16in2x2[9]==65535 && buf_16in2x2[10]==65535 &&buf_16in2x2[11]==65535&&
+      buf_16out2x2[0]==65535 && buf_16out2x2[1]>20000 && buf_16out2x2[2]<40000&&
+      buf_16out2x2[6]==0 && buf_16out2x2[7]>20000 && buf_16out2x2[7]<40000 &&
+      buf_16out2x2[9]==65535 && buf_16out2x2[10]>20000 && buf_16out2x2[10]<40000
+      )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "Plain Image upper left RoI               %s",
+                          oyProfilingToString(4*i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "Plain Image upper left RoI                         " );
+  }
+
+  fprintf(stdout, "input:  %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
+                  buf_16in2x2[0], buf_16in2x2[1], buf_16in2x2[2],
+                  buf_16in2x2[3], buf_16in2x2[4], buf_16in2x2[5],
+                  buf_16in2x2[6], buf_16in2x2[7], buf_16in2x2[8],
+                  buf_16in2x2[9], buf_16in2x2[10], buf_16in2x2[11] );
+  fprintf(stdout, "output: %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
+                  buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
+                  buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
+                  buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
+                  buf_16out2x2[9], buf_16out2x2[10], buf_16out2x2[11] );
+
+  oyConversion_Release ( &cc );
+  oyPixelAccess_Release( &pixel_access );
+
+  return result;
+}
 
 typedef struct {
   oyTESTRESULT_e (*oyTestRun)        ( oyTESTRESULT_e    (*test)(void),
@@ -3430,6 +3560,7 @@ int main(int argc, char** argv)
   TEST_RUN( testCMMmonitorDBmatch, "CMM monitor DB match" );
   TEST_RUN( testCMMsShow, "CMMs show" );
   TEST_RUN( testCMMnmRun, "CMM named colour run" );
+  TEST_RUN( testImagePixel, "CMM Image Pixel run" );
 
   /* give a summary */
   if(!(argc > 1 &&  
