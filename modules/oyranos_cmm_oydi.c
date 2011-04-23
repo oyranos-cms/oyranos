@@ -472,7 +472,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
 int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
-  int x = 0, y = 0, n = 0, i;
+  int n = 0, i;
   int result = 0, l_result = 0, error = 0;
   oyFilterGraph_s * display_graph = 0;
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
@@ -490,9 +490,6 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   int dirty = 0,
       init = 0;
   char * ID = 0;
-
-  x = ticket->start_xy[0];
-  y = ticket->start_xy[1];
 
   image = (oyImage_s*)socket->data;
   image_input = oyFilterPlug_ResolveImage( (oyFilterPlug_s *)node->plugs[0],
