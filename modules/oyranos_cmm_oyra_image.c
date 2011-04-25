@@ -93,16 +93,12 @@ int      oyraFilterPlug_ImageLoadRun (
                                        oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
-  int x = 0, y = 0;
   int result = 0, error = 0;
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilterNode_s * node = socket->node;
   oyImage_s * image = (oyImage_s*)socket->data;
   oyCMMapiFilter_s * api = 0;
   oyCMMapiFilters_s * apis = 0;
-
-  x = ticket->start_xy[0];
-  y = ticket->start_xy[1];
 
   image = (oyImage_s*)socket->data;
   if(!image)
@@ -459,12 +455,12 @@ int      oyraFilterPlug_ImageRectanglesRun (
   oyPixelAccess_s * new_ticket = 0;
   int dirty = 0;
 
-  x = ticket->start_xy[0];
-  y = ticket->start_xy[1];
-
   image = (oyImage_s*)socket->data;
   if(!image)
     return 1;
+
+  x = ticket->start_xy[0] * image->width;
+  y = ticket->start_xy[1] * image->width;
 
   if(x < image->width &&
      y < image->height &&
