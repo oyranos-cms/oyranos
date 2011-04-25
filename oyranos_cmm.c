@@ -267,12 +267,13 @@ OYAPI int  OYEXPORT
 int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
-  int x = 0, y = 0, n = 0;
+  int x_pix = 0, y_pix = 0, n = 0;
   int result = 0, error = 0;
   int is_allocated = 0;
   oyPointer * ptr = 0;
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyImage_s * image = (oyImage_s*)socket->data;
+  int width;
 
   /* Do not work on non existent data. */
   if(!image || !ticket->output_image)
@@ -286,39 +287,34 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
     oyImage_SetCritical( ticket->output_image, image->layout_[0], 0, 0 );
   }
 
-  x = ticket->start_xy[0];
-  y = ticket->start_xy[1];
+  width = ticket->output_image->width;
 
-#if 0
-  /* skip automatic iteration, better iterate  */
-  result = oyPixelAccess_CalculateNextStartPixel( ticket, requestor_plug);
+  x_pix = ticket->start_xy[0] * width;
+  y_pix = ticket->start_xy[1] * width;
 
-  if(result != 0)
-    return result;
-#endif
-
-  if(x < image->width &&
-     y < image->height &&
+  if(x_pix < image->width &&
+     y_pix < image->height &&
      ticket->pixels_n)
   {
     n = ticket->pixels_n;
     if(n == 1)
-      ptr = image->getPoint( image, x, y, 0, &is_allocated );
+      ptr = image->getPoint( image, x_pix, y_pix, 0, &is_allocated );
 
     result = !ptr;
 
   } else {
 
     /* adapt the rectangle of interesst to the new image dimensions */
-    oyRectangle_s new_roi = {oyOBJECT_RECTANGLE_S,0,0,0};
+    oyRectangle_s image_roi = {oyOBJECT_RECTANGLE_S,0,0,0};
     double correct = ticket->output_image->width / (double) image->width;
-    oyRectangle_SetByRectangle( &new_roi, ticket->output_image_roi );
-    /* x and y offset */
-    new_roi.x += x / (double) image->width;
-    new_roi.y += y / (double) image->width;
-    new_roi.width *= correct;
-    new_roi.height *= correct;
-    error = oyImage_FillArray( image, &new_roi, 1, &ticket->array, 0, 0 );
+    oyRectangle_SetByRectangle( &image_roi, ticket->output_image_roi );
+    /* x and y source image offset */
+    image_roi.x = x_pix / (double) image->width;
+    image_roi.y = y_pix / (double) image->width;
+    image_roi.width *= correct;
+    image_roi.height *= correct;
+    error = oyImage_FillArray( image, &image_roi, 1,
+                               &ticket->array, ticket->output_image_roi, 0 );
     if(error)
       result = error;
   }
