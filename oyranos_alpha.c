@@ -12196,20 +12196,23 @@ int            oyRectangle_SamplesFromImage (
   if(!error && image->type_ != oyOBJECT_IMAGE_S)
     return 0;
 
-  channel_n = image->layout_[oyCHANS];
-
-  if(!image_rectangle)
+  if(!error)
   {
-    oyRectangle_SetGeo( pixel_rectangle, 0,0, image->width, image->height );
-    pixel_rectangle->width *= channel_n;
+    channel_n = image->layout_[oyCHANS];
 
-  } else
-  {
-    oyRectangle_SetByRectangle( pixel_rectangle, image_rectangle );
-    oyRectangle_Scale( pixel_rectangle, image->width );
-    pixel_rectangle->x *= channel_n;
-    pixel_rectangle->width *= channel_n;
-    oyRectangle_Round( pixel_rectangle );
+    if(!image_rectangle)
+    {
+      oyRectangle_SetGeo( pixel_rectangle, 0,0, image->width, image->height );
+      pixel_rectangle->width *= channel_n;
+
+    } else
+    {
+      oyRectangle_SetByRectangle( pixel_rectangle, image_rectangle );
+      oyRectangle_Scale( pixel_rectangle, image->width );
+      pixel_rectangle->x *= channel_n;
+      pixel_rectangle->width *= channel_n;
+      oyRectangle_Round( pixel_rectangle );
+    }
   }
 
   return error;
@@ -12895,17 +12898,17 @@ int            oyArray2d_ReleaseArray( oyArray2d_s       * obj )
   if(s && s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-    int y;
+    int y, y_max = s->data_area.height + s->data_area.y;
     size_t dsize = oySizeofDatatype( s->t );
 
-    for( y = s->data_area.y; y < s->data_area.height; ++y )
+    for( y = s->data_area.y; y < y_max; ++y )
     {
       if((s->own_lines == 1 && y == 0) ||
          s->own_lines == 2)
-        deallocateFunc( s->array2d[y] );
+        deallocateFunc( s->array2d[y] + dsize * (int)s->data_area.x );
       s->array2d[y] = 0;
     }
-    deallocateFunc( s->array2d - (size_t)(dsize * -s->data_area.y) );
+    deallocateFunc( s->array2d + (size_t)s->data_area.y );
     s->array2d = 0;
   }
   return error;
@@ -13571,7 +13574,8 @@ int       oyImage_SetArray2dLineContinous (
     offset *= channels;
   }
 
-  memcpy( &array2d[ point_y ][ offset ], data, pixel_n * byteps * channels );
+  if(&array2d[ point_y ][ offset ] != data)
+    memcpy( &array2d[ point_y ][ offset ], data, pixel_n * byteps * channels );
 
   return 0; 
 }
@@ -14043,23 +14047,67 @@ int            oyImage_DataSet       ( oyImage_s         * image,
   return error;
 }
 
+/** Function oyArray2d_SetFocus
+ *  @memberof oyArray2d_s
+ *  @brief   move a arrays active area to a given rectangle
+ *
+ *  @param[in,out] array               the pixel array
+ *  @param[in]     rectangle           the new region in the array's wholes data
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/04/19 (Oyranos: 0.3.0)
+ *  @date    2011/04/19
+ */
+int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
+                                       oyRectangle_s     * rectangle )
+{
+  oyRectangle_s * array_roi_pix = rectangle;
+  oyArray2d_s * a = array;
+  int error = 0;
+  int y;
+
+  if(array && rectangle)
+  {
+    /* shift array focus to requested region */
+    int bps = oySizeofDatatype( array->t );
+    if(a->data_area.x != (int)OY_ROUND(array_roi_pix->x))
+    {
+      for(y = a->data_area.y; y < a->data_area.height; ++y)
+        a->array2d[y] += (int)OY_ROUND(array_roi_pix->x + a->data_area.x) * bps;
+      a->data_area.x = (int)-array_roi_pix->x;
+    }
+    if(a->data_area.y != (int)OY_ROUND(array_roi_pix->y))
+    {
+      a->array2d += (int)OY_ROUND(array_roi_pix->y + a->data_area.y);
+      a->data_area.y = -array_roi_pix->y;
+    }
+    a->width = array_roi_pix->width;
+    a->height = array_roi_pix->height;
+  } else
+    error = 1;
+
+  return error;
+}
+
 /** Function oyImage_FillArray
  *  @memberof oyImage_s
  *  @brief   creata a array from a image and fill with data
  *
  *  The rectangle will be considered relative to the data.
- *  A given array will be filled. do_copy makes the distinction to reuse a 
- *  available array2d.
+ *  A given array will be filled. Allocation of a new array2d object happens as
+ *  needed.
  *
  *  @param[in]     image               the image
  *  @param[in]     rectangle           the image rectangle in a relative unit
  *                                     a rectangle in the source image
- *  @param[in]     do_copy
+ *  @param[in]     allocate_method
  *                                     - 0 assign the rows without copy
  *                                     - 1 do copy into the array
  *                                     - 2 allocate empty rows
  *                                     - 3 only skelet, no copy/assignment
- *  @param[out]    array               array to fill
+ *  @param[out]    array               array to fill; If array is empty, it is
+ *                                     allocated as per allocate_method
  *  @param[in]     array_rectangle     the array rectangle in samples
  *                                     For NULL the image rectangle will be
  *                                     placed to the top left corner in array.
@@ -14075,7 +14123,7 @@ int            oyImage_DataSet       ( oyImage_s         * image,
  */
 int            oyImage_FillArray     ( oyImage_s         * image,
                                        oyRectangle_s     * rectangle,
-                                       int                 do_copy,
+                                       int                 allocate_method,
                                        oyArray2d_s      ** array,
                                        oyRectangle_s     * array_rectangle,
                                        oyObject_s          obj )
@@ -14083,12 +14131,13 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   int error;
   oyArray2d_s * a = *array;
   oyImage_s * s = image;
-  oyRectangle_s pixel_rectangle = {oyOBJECT_RECTANGLE_S,0,0,0},
+  oyRectangle_s image_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0},
                 r = {oyOBJECT_RECTANGLE_S,0,0,0};
   oyDATATYPE_e data_type = oyUINT8;
   int is_allocated = 0;
-  int size;
-  oyRectangle_s array_rectangle_ = {oyOBJECT_RECTANGLE_S,0,0,0};
+  int data_size, ay;
+  oyRectangle_s array_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0};
+  int array_width, array_height;
   double a_orig_width = 0, a_orig_height = 0;
   oyAlloc_f allocateFunc_ = 0;
 
@@ -14098,131 +14147,135 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
 
   data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
-  error = oyRectangle_SamplesFromImage( image, rectangle, &pixel_rectangle );
+  data_size = oySizeofDatatype( data_type );
+  error = oyRectangle_SamplesFromImage( image, rectangle, &image_roi_pix );
 
   if(!error && array_rectangle)
     error = oyRectangle_SamplesFromImage( image, array_rectangle,
-                                          &array_rectangle_ );
+                                          &array_roi_pix );
   else
   {
     oyRectangle_SetGeo( &r, 0,0, rectangle->width, rectangle->height );
-    error = oyRectangle_SamplesFromImage( image, &r, &array_rectangle_ );
+    error = oyRectangle_SamplesFromImage( image, &r, &array_roi_pix );
   }
 
-  if(!error && 
+      if(array_roi_pix.x != 0.0)
+        printf("jetzt");
+
+  array_width = array_roi_pix.x + array_roi_pix.width;
+  array_height = array_roi_pix.y + array_roi_pix.height;
+
+  if(!error &&
      (!a ||
-      (a && ( pixel_rectangle.width > a->width ||
-              pixel_rectangle.height > a->height )) ||
-      pixel_rectangle.width != array_rectangle_.width ||
-      pixel_rectangle.height != array_rectangle_.height ||
-      (a->own_lines != oyNO && do_copy == oyNO) )
+      (a && ( array_width > a->data_area.width ||
+              array_height > a->data_area.height )))
     )
   {
     oyArray2d_Release( array );
 
-    /* array creation is not possible */
-    if(!(array_rectangle_.width && array_rectangle_.height))
+    if(!(array_roi_pix.width && array_roi_pix.height))
+      /* array creation is not possible */
       error = -1;
 
     if(!error)
     {
-      a = oyArray2d_Create_( array_rectangle_.width, array_rectangle_.height,
+      a = oyArray2d_Create_( array_width, array_height,
                              data_type, obj );
       error = !a;
       if(!error)
       {
-        if(array_rectangle_.x)
-          a->data_area.x = -array_rectangle_.x;
         /* allocate each single line */
-        if(do_copy == 1 || do_copy == 2)
+        if(allocate_method == 1 || allocate_method == 2)
+        {
           a->own_lines = 2;
+
+          for(ay = 0; ay < array_height; ++ay)
+            if(!a->array2d[ay])
+              oyAllocHelper_m_( a->array2d[ay], 
+                              unsigned char,
+                              array_width * data_size,
+                              allocateFunc_,
+                              error = 1; break );
+        }
       }
     }
   }
 
   /* a array should have been created */
-  if( !a && array_rectangle_.width && array_rectangle_.height )
+  if( !a && array_roi_pix.width && array_roi_pix.height )
   {
     WARNc_S("Could not create array.")
+    if(error <= 0) error = -1;
   }
 
-  if( !error && a )
+  if( !error )
   {
+    /* shift array focus to requested region */
+    oyArray2d_SetFocus( a, &array_roi_pix );
+
     /* change intermediately and store old values for later recovering */
-    if(a && a->width > pixel_rectangle.width)
+    if(a && a->width > image_roi_pix.width)
     {
       a_orig_width = a->width;
-      a->width = pixel_rectangle.width;
+      a->width = image_roi_pix.width;
     }
-    if(a && a->height > pixel_rectangle.height)
+    if(a && a->height > image_roi_pix.height)
     {
       a_orig_height = a->height;
-      a->height = pixel_rectangle.height;
+      a->height = image_roi_pix.height;
     }
   }
 
-  if(!error && do_copy != 3)
+  if(!error && allocate_method != 3)
   {
   if(image->getLine)
   {
-    unsigned char * data = 0;
+    unsigned char * line_data = 0;
     int i,j, height;
-    size_t len, wlen, ay;
+    size_t len, wlen;
     oyPointer src, dst;
 
     if(a->oy_)
       allocateFunc_ = a->oy_->allocateFunc_;
-    size = oySizeofDatatype( data_type );
-    len = (array_rectangle_.width + array_rectangle_.x) * size;
-    wlen = pixel_rectangle.width * size;
+    len = (array_roi_pix.width + array_roi_pix.x) * data_size;
+    wlen = image_roi_pix.width * data_size;
 
-    if(do_copy == 2)
-    for( i = 0; i < pixel_rectangle.height; ++i )
+    if(allocate_method == 2 && !*array)
+    for( i = 0; i < image_roi_pix.height; ++i )
     {
       if(!a->array2d[i])
             oyAllocHelper_m_( a->array2d[i],
                               unsigned char, len,
                               allocateFunc_,
                               error = 1; break );
-    } else
-    for( i = 0; i < pixel_rectangle.height; )
+    } else if(allocate_method != 2)
+    for( i = 0; i < image_roi_pix.height; )
     {
       height = is_allocated = 0;
-      data = image->getLine( image, pixel_rectangle.y + i, &height, -1,
+      line_data = image->getLine( image, image_roi_pix.y + i, &height, -1,
                              &is_allocated );
 
       for( j = 0; j < height; ++j )
       {
-        if( i + j >= array_rectangle_.height )
+        if( i + j >= array_roi_pix.height )
           break;
 
-        ay = array_rectangle_.y + i + j;
+        ay = i + j;
 
-        if(do_copy == 1)
-        {
-          if(!a->array2d[ay])
-            oyAllocHelper_m_( a->array2d[ay], 
-                              unsigned char,
-                              a_orig_width ? a_orig_width * size : len,
-                              allocateFunc_,
-                              error = 1; break );
-
-          dst = &a->array2d[ay][(int)array_rectangle_.x * size];
-          src = &data[(j
+        dst = &a->array2d[ay][0];
+        src = &line_data[(j
                        * (int)OY_ROUND(image->width * image->layout_[oyCHANS])
-                       + (int)pixel_rectangle.x)
-                      * size];
+                       + (int)image_roi_pix.x)
+                      * data_size];
 
-          if(dst != src)
-            error = !memcpy( dst, src, wlen );
-
-        } else /*if(do_copy == 0)*/
+        if(dst != src && a->own_lines != oyNO)
+          error = !memcpy( dst, src, wlen );
+        else
         {
           a->array2d[ay] = 
-                    &data[j * size * (int)OY_ROUND(a->data_area.width)];
+                    &line_data[j*data_size * (int)OY_ROUND(a->data_area.width)];
 
-          a->array2d[ay] = &a->array2d[i+j]
-                        [size * (int)(array_rectangle_.x + pixel_rectangle.x)];
+          a->array2d[ay] = &a->array2d[i+j][data_size * (int)image_roi_pix.x];
         }
       }
 
@@ -14232,10 +14285,10 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     }
 
     /* allocate a complete array */
-    if(do_copy != 0)
+    if(allocate_method != 0 && !*array)
     for( ; i < a_orig_height; ++i )
     {
-      ay = array_rectangle_.y + i;
+      ay = i;
 
       if(!a->array2d[ay])
             oyAllocHelper_m_( a->array2d[ay], 
@@ -14276,16 +14329,16 @@ int            oyImage_FillArray     ( oyImage_s         * image,
  *  @date    2009/02/28
  */
 int            oyImage_ReadArray     ( oyImage_s         * image,
-                                       oyRectangle_s     * rectangle,
+                                       oyRectangle_s     * image_rectangle,
                                        oyArray2d_s       * array,
                                        oyRectangle_s     * array_rectangle )
 {
   oyImage_s * s = image;
   int error = !image || !array;
-  oyRectangle_s pixel_rectangle = {oyOBJECT_RECTANGLE_S,0,0,0};
-  oyRectangle_s new_array_rectangle_ = {oyOBJECT_RECTANGLE_S,0,0,0};
+  oyRectangle_s image_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0};
+  oyRectangle_s array_rect_pix = {oyOBJECT_RECTANGLE_S,0,0,0};
   oyDATATYPE_e data_type = oyUINT8;
-  int size = 0, channel_n, i, offset, width;
+  int bps = 0, channel_n, i, offset, width;
 
   if(error)
     return 0;
@@ -14293,18 +14346,17 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
 
   data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
-  size = oySizeofDatatype( data_type );
+  bps = oySizeofDatatype( data_type );
   channel_n = image->layout_[oyCHANS];
 
-  error = oyRectangle_SamplesFromImage( image, rectangle, &pixel_rectangle );
-  width = pixel_rectangle.width / channel_n;
-
-  if(array->width < pixel_rectangle.width ||
-     array->height < pixel_rectangle.height)
+  error = oyRectangle_SamplesFromImage( image, image_rectangle, &image_roi_pix );
+  /* We want to check if the array is big enough to hold the pixels */
+  if(array->data_area.width < image_roi_pix.width ||
+     array->data_area.height < image_roi_pix.height)
   {
     WARNc3_S( "array (%dx%d) is too small for rectangle %s",
                (int)array->width, (int)array->height,
-               oyRectangle_Show( &pixel_rectangle ) );
+               oyRectangle_Show( &image_roi_pix ) );
     error = 1;
   }
 
@@ -14315,21 +14367,30 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
     error = 1;
   }
 
-  if(!error && !array_rectangle)
+  if(!error)
   {
-    array_rectangle = &new_array_rectangle_;
-    oyRectangle_SetGeo( array_rectangle, 0,0, array->width, array->height );
-    error = !array_rectangle;
+    if(array_rectangle)
+    {
+      oyRectangle_SetByRectangle( &array_rect_pix, array_rectangle );
+      oyRectangle_Scale( &array_rect_pix, image->width );
+    } else
+    {
+      oyRectangle_SetGeo( &array_rect_pix, 0,0, array->width, array->height );
+    }
   }
 
   if(!error)
   {
-    offset = pixel_rectangle.x / channel_n;
-    for(i = array_rectangle->y; i < array_rectangle->height; ++i)
+    offset = image_roi_pix.x / channel_n * bps;
+    width = image_roi_pix.width / channel_n;
+    if(width > array_rect_pix.width)
+      width = array_rect_pix.width/channel_n;
+
+    for(i = array_rect_pix.y; i < array_rect_pix.height; ++i)
     {
-      image->setLine( image, offset, pixel_rectangle.y + i, width, -1,
+      image->setLine( image, offset, image_roi_pix.y + i, width, -1,
                       &array->array2d
-                              [i][(int)OY_ROUND(array_rectangle->x) * size] );
+                              [i][(int)OY_ROUND(array_rect_pix.x) * bps] );
     }
   }
 
@@ -20504,8 +20565,8 @@ oyPixelAccess_s * oyPixelAccess_Copy_( oyPixelAccess_s   * obj,
 
   if(error <= 0)
   {
-    s->start_xy[0] = s->start_xy_old[0] = obj->start_xy[0];
-    s->start_xy[1] = s->start_xy_old[1] = obj->start_xy[1];
+    s->start_xy_old[0] = s->start_xy[0] = obj->start_xy[0];
+    s->start_xy_old[1] = s->start_xy[1] = obj->start_xy[1];
     s->array_n = obj->array_n;
     if(obj->array_xy && obj->array_n)
     {
@@ -20617,79 +20678,6 @@ int          oyPixelAccess_Release   ( oyPixelAccess_s  ** obj )
     oyObject_Release( &s->oy_ );
 
     deallocateFunc( s );
-  }
-
-  return 0;
-}
-
-/** Function: oyPixelAccess_CalculateNextStartPixel
- *  @memberof oyPixelAccess_s
- *  @brief   predict the next start position
- *
- *  @param[in,out] obj                 oyPixelAccess_s object
- *  @param[in,out] requestor_plug      plug
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/10/21 (Oyranos: 0.1.8)
- *  @date    2009/05/01
- */
-int                oyPixelAccess_CalculateNextStartPixel (
-                                       oyPixelAccess_s   * obj,
-                                       oyFilterPlug_s    * requestor_plug )
-{
-  oyPixelAccess_s * pixel_access = obj;
-  int x = pixel_access->start_xy[0], sx = x;
-  int y = pixel_access->start_xy[1], sy = y;
-  int max = 0, i, n;
-
-  oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyImage_s * image = (oyImage_s*)socket->data;
-
-  if(!image)
-    return 0;
-
-  /* calculate the pixel position we want */
-  if(pixel_access->array_xy)
-  { 
-    /* we have a iteration description - use it */
-    n = pixel_access->pixels_n;
-    if(pixel_access->array_n < pixel_access->pixels_n)
-      n = pixel_access->array_n;
-  
-    /* x direction progress of this iteration request */
-    for( i = 0; i < n; ++i )
-      max += pixel_access->array_xy[i*2+0];
-
-    sx += max * pixel_access->pixels_n / pixel_access->array_n;
-
-    /* y direction progress of this iteration request */
-    max = 0;
-    for( i = 0; i < n; ++i )
-      max += pixel_access->array_xy[i*2+1];
-
-    sy += max * pixel_access->pixels_n / pixel_access->array_n;
-    pixel_access->start_xy[0] = sx;
-    pixel_access->start_xy[1] = sy;
-  } else
-  {
-    /* fall back to a one by one pixel access */
-    x = pixel_access->start_xy[0];
-    y = pixel_access->start_xy[1];
-
-    if(pixel_access->start_xy[0] >= image->width)
-    {
-      x = 0; pixel_access->start_xy[0] = 1;
-      if(image->width > 0)
-        y = ++pixel_access->start_xy[1];
-      else
-        y = pixel_access->start_xy[1];
-    } else if(image->width > 0)
-      ++pixel_access->start_xy[0];
-
-    if(pixel_access->start_xy[1] >= image->height && image->height)
-    {
-      return -1;
-    }
   }
 
   return 0;
@@ -20993,23 +20981,25 @@ int                oyConversion_RunPixels (
   oyConversion_s * s = conversion;
   oyFilterPlug_s * plug = 0;
   oyFilterNode_s * node_out = 0;
-  oyImage_s * image = 0, * image_input = 0;
+  oyImage_s * image_out = 0, * image_input = 0;
   int error = 0, result = 0, l_error = 0, i,n, dirty = 0, tmp_ticket = 0;
   oyRectangle_s roi = {oyOBJECT_RECTANGLE_S, 0,0,0};
   double clck;
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
 
+  /* should be the same as conversion->out_->filter */
+  node_out = oyConversion_GetNode( conversion, OY_OUTPUT );
+  plug = oyFilterNode_GetPlug( node_out, 0 );
+
   /* basic checks */
-  if(!conversion->out_ || !conversion->out_->plugs ||
-     !conversion->out_->plugs[0])
+  if(!plug)
   {
     WARNc1_S("graph incomplete [%d]", s ? oyObject_GetId( s->oy_ ) : -1)
     return 1;
   }
 
   /* conversion->out_ has to be linear, so we access only the first plug */
-  plug = oyFilterNode_GetPlug( conversion->out_, 0 );
 
   if(!pixel_access)
   {
@@ -21028,33 +21018,32 @@ int                oyConversion_RunPixels (
   if(!pixel_access)
     error = 1;
 
-  /* should be the same as conversion->out_->filter */
-  node_out = oyConversion_GetNode( conversion, OY_OUTPUT );
-  image = oyConversion_GetImage( conversion, OY_OUTPUT );
+  image_out = oyConversion_GetImage( conversion, OY_OUTPUT );
 
   if(error <= 0)
     oyRectangle_SetByRectangle( &roi, pixel_access->output_image_roi );
-  
+
+#if 0  
   if(error <= 0)
   {
     clck = oyClock();
-    result = oyImage_FillArray( image, &roi, 0,
+    result = oyImage_FillArray( image_out, &roi, 0,
                                 &pixel_access->array,
                                 pixel_access->output_image_roi, 0 );
     clck = oyClock() - clck;
     DBG_NUM1_S("oyImage_FillArray(): %g", clck/1000000.0 );
     error = ( result != 0 );
   }
+#endif
 
   /* run on the graph */
   if(error <= 0)
   {
-    int pixel_n = oyRectangle_CountPoints( pixel_access->output_image_roi );
     clck = oyClock();
     error = node_out->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
     clck = oyClock() - clck;
-    DBG_NUM2_S( "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g %d",
-                clck/1000000.0, pixel_n );
+    DBG_NUM1_S( "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g",
+                clck/1000000.0 );
   }
 
   if(error != 0 && pixel_access)
@@ -21081,9 +21070,11 @@ int                oyConversion_RunPixels (
     {
       clck = oyClock();
       l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
-      l_error = oyImage_FillArray( image, &roi, 0,
+#if 0
+      l_error = oyImage_FillArray( image_out, &roi, 0,
                                    &pixel_access->array,
                                    pixel_access->output_image_roi, 0 ); OY_ERR
+#endif
       clck = oyClock() - clck;
       DBG_NUM1_S("oyImage_FillArray(): %g", clck/1000000.0 );
 
@@ -21128,23 +21119,23 @@ int                oyConversion_RunPixels (
    * Users with very large data sets have to process the data in chunks and
    * the oyPixelAccess_s::array allocation can remain constant.
    */
-  if(image && pixel_access &&
-     ((oyPointer)image->pixel_data != (oyPointer)pixel_access->array ||
-      image != pixel_access->output_image))
+  if(image_out && pixel_access &&
+     ((oyPointer)image_out->pixel_data != (oyPointer)pixel_access->array ||
+      image_out != pixel_access->output_image))
   {
     /* move the array to the top left place
      * same as : roi.x = roi.y = 0; */
-    roi.x -= pixel_access->output_image_roi->x;
-    roi.y -= pixel_access->output_image_roi->y;
+    /*roi.x -= pixel_access->output_image_roi->x;
+    roi.y -= pixel_access->output_image_roi->y;*/
 
-    result = oyImage_ReadArray( image, &roi, /*pixel_access->output_image_roi,*/
-                                       pixel_access->array, 0 );
+    result = oyImage_ReadArray( image_out, &roi,
+                                pixel_access->array, 0 );
   }
 
   if(tmp_ticket)
     oyPixelAccess_Release( &pixel_access );
 
-  oyImage_Release( &image );
+  oyImage_Release( &image_out );
 
   return error;
 }
@@ -21169,8 +21160,8 @@ int                oyConversion_RunPixels (
 int                oyConversion_ChangeRectangle (
                                        oyConversion_s    * conversion,
                                        oyPixelAccess_s   * pixel_access,
-                                       int                 start_x,
-                                       int                 start_y,
+                                       double              start_x,
+                                       double              start_y,
                                        oyRectangle_s     * output_rectangle )
 {
   oyConversion_s * s = conversion;
@@ -21207,8 +21198,8 @@ int                oyConversion_ChangeRectangle (
 
   if(error <= 0)
     oyRectangle_SetByRectangle( &roi, pixel_access->output_image_roi );
-  roi.x = start_x;
-  roi.y = start_y;
+  pixel_access->start_xy[0] = roi.x = start_x;
+  pixel_access->start_xy[1] = roi.y = start_y;
  
   if(error <= 0)
   {
@@ -21241,8 +21232,8 @@ int                oyConversion_ChangeRectangle (
  *  @date    2011/04/11
  */
 int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
-                                       int32_t             x,
-                                       int32_t             y,
+                                       double              x,
+                                       double              y,
                                        oyPixelAccess_s   * pixel_access )
 {
   oyFilterPlug_s * plug = 0;
