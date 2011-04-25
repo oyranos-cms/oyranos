@@ -102,19 +102,27 @@ public:
           ox = x() - Fl::event_x();
           oy = y() - Fl::event_y();
           fl_cursor( FL_CURSOR_MOVE, FL_BLACK, FL_WHITE );
+#if DEBUG
+      printf("%s:%d e: %d ox:%d px:%d\n",strrchr(__FILE__,'/')+1,__LINE__,e, ox, px);
+#endif
           return (1);
         case FL_RELEASE:
           fl_cursor( FL_CURSOR_DEFAULT, FL_BLACK, FL_WHITE );
+#if DEBUG
+      printf("%s:%d e: %d ox:%d px:%d\n",strrchr(__FILE__,'/')+1,__LINE__,e, ox, px);
+#endif
           return (1);
         case FL_DRAG:
           px += ox + Fl::event_x();
           py += oy + Fl::event_y();
           ox = x() - Fl::event_x();
           oy = y() - Fl::event_y();
+#if DEBUG
+      printf("%s:%d e: %d ox:%d px:%d oy: %d py:%d\n",strrchr(__FILE__,'/')+1,__LINE__,e, ox, px,oy,py);
+#endif
           redraw();
           return (1);
       }
-      //printf("e: %d ox:%d px:%d\n",e, ox, px);
       int ret = Fl_Widget::handle(e);
       return ret;
   }
@@ -136,6 +144,7 @@ public:
       oyDATATYPE_e data_type;
       oyImage_s * image = 0;
       oyRectangle_s * display_rectangle = 0;
+      oyFilterNode_s * node_out = oyConversion_GetNode( conversion(),OY_OUTPUT);
       void * display = 0,
            * window = 0;
 
@@ -151,9 +160,9 @@ public:
       /* Load the image before creating the oyPicelAccess_s object. */
       image = oyConversion_GetImage( conversion(), OY_OUTPUT );
 
-      if(!ticket)
+      if(image && !ticket)
       {
-        oyFilterPlug_s * plug = oyFilterNode_GetPlug( conversion()->out_, 0 );
+        oyFilterPlug_s * plug = oyFilterNode_GetPlug( node_out, 0 );
         ticket = oyPixelAccess_Create( 0,0, plug, oyPIXEL_ACCESS_IMAGE, 0 );
       }
 
@@ -166,16 +175,32 @@ public:
         if(py > 0) py = 0;
       }
 
+#if DEBUG
+      printf( "%s:%d new display rectangle: %s +%d+%d +%d+%d\n",
+              strrchr(__FILE__,'/')+1, __LINE__,
+              oyRectangle_Show(display_rectangle), x(), y(), px, py );
+#endif
+
       if(ticket)
       {
-        ticket->start_xy[0] = -px;
-        ticket->start_xy[1] = -py;
-      }
-
+        oyRectangle_s output_rectangle = {oyOBJECT_RECTANGLE_S,0,0,0};
+        oyRectangle_SamplesFromImage( image, 0, &output_rectangle );
+        output_rectangle.width = W;
+        output_rectangle.height = H;
+        oyRectangle_Scale( &output_rectangle, 1.0/image->width );
 #if DEBUG
-      printf( "%s:%d new display rectangle: %s +%d+%d +%d+%d\n", __FILE__,
-        __LINE__, oyRectangle_Show(display_rectangle), x(), y(), px, py );
+        if(px != 0)
+        printf( "%s:%d output rectangle: %s start_xy:%.04g %.04g\n",
+                strrchr(__FILE__,'/')+1, __LINE__,
+                oyRectangle_Show(&output_rectangle),
+                ticket->start_xy[0], ticket->start_xy[1] );
 #endif
+        oyConversion_ChangeRectangle ( conversion(), ticket,
+                                       -px/(double)image->width,
+                                       -py/(double)image->width,
+                                       &output_rectangle );
+        
+      }
 
       dirty = oyDrawScreenImage(conversion(), ticket, display_rectangle,
                                 old_display_rectangle,
@@ -359,13 +384,18 @@ int      conversionObserve           ( oyObserver_s      * observer,
 #include <FL/Fl.H>
 #include <FL/gl.h>
 
+#ifndef OY_MIN
+#define OY_MIN(a,b)    (((a) <= (b)) ? (a) : (b))
+#endif
+
 class Oy_Fl_Shader_Box : public Fl_Gl_Window,
                          public Oy_Fl_Widget
 {
+  char * frame_data;
 public:
   Oy_Fl_Shader_Box(int x, int y, int w, int h)
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Widget(x,y,w,h)
-  { };
+  { frame_data = NULL; };
   ~Oy_Fl_Shader_Box(void) { };
   void damage( char c )
   {
@@ -376,11 +406,15 @@ public:
 
 
 private:
+  int frame_dirty;
+  int frame_pos;
   void draw()
   {
+    int W = Oy_Fl_Widget::w(),
+        H = Oy_Fl_Widget::h();
     if(conversion())
     {
-      int i, height = 0, is_allocated = 0;
+      int y, height = 0, is_allocated = 0;
       oyPointer image_data = 0;
       oyPixel_t pt;
       int channels = 0;
@@ -393,57 +427,58 @@ private:
 
       if(!valid())
       {
-        glClearColor(0.5, 0.5, 0.5, 1.0);
-
-        glShadeModel( GL_FLAT );
-        glDisable( GL_DITHER );
-        glDisable( GL_BLEND );
-        glDisable( GL_DEPTH_TEST );
-
-        glViewport( 0,0, Oy_Fl_Widget::w(), Oy_Fl_Widget::h() );
-
-        glMatrixMode( GL_PROJECTION );
+        valid(1);
         glLoadIdentity();
-        glMatrixMode( GL_MODELVIEW );
-        glLoadIdentity();
-
-        glOrtho( 0, Oy_Fl_Widget::w(), 0, Oy_Fl_Widget::h(), -1.0, 1.0);
+        glViewport( 0,0, W,H );
+        glOrtho( -W,W, -H,H, -1.0,1.0);
       }
 
       glClear(GL_COLOR_BUFFER_BIT);
+      glColor3f(1.0, 1.0, 1.0);
+      glBegin(GL_LINE_STRIP); glVertex2f(W, H); glVertex2f(-W,-H); glEnd();
+      glBegin(GL_LINE_STRIP); glVertex2f(W,-H); glVertex2f(-W, H); glEnd();
 
+      int frame_height = OY_MIN(image->height,H),
+          frame_width = OY_MIN(image->width,W);
 
-      glDisable(GL_TEXTURE_2D);
-      glDisable(GL_LIGHTING);
+      if(!frame_data)
+        frame_data = (char*)malloc(W*H*3*2);
 
-      /* get the data and draw the image */
-      if(image)
-      for(i = 0; i < image->height; ++i)
+      int pos[4] = {-2,-2,-2,-2};
+      glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
+      if(oy_display_verbose)
+        fprintf(stderr,"%s():%d %d,%d\n",__FILE__,__LINE__,pos[0],pos[1]);
+
+      /* get the data */
+      if(image && frame_data)
+      for(y = 0; y < frame_height; ++y)
       {
-        image_data = image->getLine( image, i, &height, -1, &is_allocated );
+        image_data = image->getLine( image, y, &height, -1, &is_allocated );
 
-        int pos[4] = {-2,-2,-2,-2};
-        glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
-        if(oy_display_verbose)
-          fprintf(stderr,"%s():%d %d,%d\n",__FILE__,__LINE__,pos[0],pos[1]);
+        memcpy( &frame_data[frame_width*(frame_height-y-1)*3*2], image_data,
+                frame_width*3*2 );
 
-        glRasterPos2i(0, Oy_Fl_Widget::h() - i - 1);
-        /* on osX it uses sRGB without alternative */
-        glDrawPixels( image->width, 1, GL_RGB, GL_UNSIGNED_SHORT, image_data );
-
-        glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
-        if(oy_display_verbose)
-          fprintf(stderr,"%s():%d %d,%d\n",__FILE__,__LINE__,pos[0],pos[1]);
-/*
-        fl_draw_image( (const uchar*)image_data, 0, i, image->width, 1,
-                       channels, Oy_Fl_Widget::w()*channels);*/
         if(is_allocated)
           free( image_data );
       }
 
-      glEnable(GL_TEXTURE_2D);
-      glEnable(GL_LIGHTING);
-      glFlush();
+      /*double scale = (double)H/(double)frame_height;
+
+      if(scale * frame_width > W)
+        scale = (double)W/(double)frame_width;
+
+      glPixelZoom( scale,-scale );*/
+      glRasterPos2i(-frame_width, -frame_height);
+      /* on osX it uses sRGB without alternative */
+      glDrawPixels( frame_width, frame_height, GL_RGB,
+                    GL_UNSIGNED_SHORT, frame_data );
+
+      glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
+
+      //glDrawPixels( frame_width, frame_height, GL_RGB, GL_UNSIGNED_BYTE,
+      //              frame_data );
+      frame_dirty = 0;
+      printf("draw %dx%d[%d] %dx%d\n",frame_width,frame_height,frame_pos,W,H);
 
       oyImage_Release( &image );
     }
@@ -456,6 +491,23 @@ private:
     if(!ret)
     ret = Fl_Gl_Window::handle( e );
     return ret;
+  }
+
+  void resize(int X,int Y,int W,int H)
+  {
+    if(frame_data) free(frame_data);
+    frame_data = (char*)malloc(W*H*3*2);
+    Fl_Gl_Window::resize(X,Y,W,H);
+    glLoadIdentity();
+    glViewport( 0,0, W,H );
+    glOrtho( -W,W, -H,H, -1.0,1.0);
+    Oy_Fl_Widget::resize(X,Y,W,H);
+    redraw();
+  }
+
+  void redraw()
+  {
+    Fl::awake(this);
   }
 
 public:
