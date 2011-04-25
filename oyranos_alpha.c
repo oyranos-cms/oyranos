@@ -14382,9 +14382,8 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   if(!error)
   {
     offset = image_roi_pix.x / channel_n * bps;
-    width = image_roi_pix.width / channel_n;
-    if(width > array_rect_pix.width)
-      width = array_rect_pix.width/channel_n;
+    width = OY_MIN(image_roi_pix.width, array_rect_pix.width);
+    width /= channel_n;
 
     for(i = array_rect_pix.y; i < array_rect_pix.height; ++i)
     {
