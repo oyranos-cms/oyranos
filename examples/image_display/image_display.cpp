@@ -21,6 +21,8 @@
 #include <oyranos_alpha.h>
 #include <oyranos_cmm.h>   /* for hacking into module API */
 
+#define DEBUG 1
+
 #include "../../oyranos_logo.h"
 #include "oyranos_display_helper_classes_fltk.cpp"
 
@@ -63,6 +65,9 @@ void setWindowMenue                  ( Oy_Fl_Double_Window      * win,
 int
 main(int argc, char** argv)
 {
+  // activate FLTK thread support
+  Fl::lock();
+
   /* some Oyranos types */
 
   oyFilterNode_s * icc;
