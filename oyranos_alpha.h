@@ -2412,8 +2412,8 @@ struct oyPixelAccess_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
-  int32_t          start_xy[2];        /**< the start point of output_image */
-  int32_t          start_xy_old[2];    /**< @deprecated the previous start point */
+  double           start_xy[2];        /**< the start point of output_image */
+  double           start_xy_old[2];    /**< @deprecated the previous start point */
   int32_t        * array_xy;           /**< @deprecated array of shifts, e.g. 1,0,2,0,1,0 */
   int              array_n;            /**< @deprecated the number of points in array_xy */
 
@@ -2457,10 +2457,6 @@ oyPixelAccess_s *  oyPixelAccess_Copy( oyPixelAccess_s   * obj,
                                        oyObject_s          object );
 int                oyPixelAccess_Release(
                                        oyPixelAccess_s  ** obj );
-
-int                oyPixelAccess_CalculateNextStartPixel (
-                                       oyPixelAccess_s   * obj,
-                                       oyFilterPlug_s    * requestor_plug );
 
 /** @struct oyConversion_s
  *  @brief  a filter chain or graph to manipulate a image
@@ -2628,8 +2624,8 @@ int                oyConversion_RunPixels (
                                        oyPixelAccess_s   * pixel_access );
 int                oyConversion_GetOnePixel (
                                        oyConversion_s    * conversion,
-                                       int32_t             x,
-                                       int32_t             y,
+                                       double              x,
+                                       double              y,
                                        oyPixelAccess_s   * pixel_access );
 #define OY_OUTPUT                      0x01
 #define OY_INPUT                       0x02
@@ -2657,8 +2653,8 @@ int                oyConversion_Correct (
 int                oyConversion_ChangeRectangle ( 
                                        oyConversion_s    * conversion,
                                        oyPixelAccess_s   * pixel_access,
-                                       int                 start_x,
-                                       int                 start_y,
+                                       double              start_x,
+                                       double              start_y,
                                        oyRectangle_s     * output_rectangle );
 
 
