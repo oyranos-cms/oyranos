@@ -3359,18 +3359,19 @@ oyTESTRESULT_e testCMMnmRun ()
 oyTESTRESULT_e testImagePixel()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
-  oyNamedColour_s * c = 0;
   oyProfile_s * p_lab = oyProfile_FromStd( oyEDITING_LAB, NULL );
   oyProfile_s * p_web = oyProfile_FromStd( oyASSUMED_WEB, NULL );
-  oyProfile_s * p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),
+  oyProfile_s /** p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),*/
               * p_in, * p_out;
-  int error = 0, l_error = 0,
+  int error = 0,
       i,n = 10;
   uint16_t buf_16in2x2[12] = {
   20000,20000,20000, 10000,10000,10000,
   0,0,0,             65535,65535,65535
   };
   uint16_t buf_16out2x2[12];
+  oyPointer p1 = buf_16in2x2,
+            p2 = buf_16out2x2;
   oyDATATYPE_e buf_type_in = oyUINT16,
                buf_type_out = oyUINT16;
   oyImage_s *input, *output;
@@ -3393,11 +3394,10 @@ oyTESTRESULT_e testImagePixel()
                          p_out,
                          0 );
 
-  #define OY_ERR if(l_error != 0) error = l_error;
-
   oyFilterPlug_s * plug = 0;
   oyPixelAccess_s * pixel_access = 0;
   oyConversion_s * cc;
+  memset( buf_16out2x2, 0, sizeof(uint16_t)*12 );
   cc = oyConversion_CreateBasicPixels( input,output, 0, 0 );
   if(cc && cc->out_)
     plug = oyFilterNode_GetPlug( oyConversion_GetNode( cc, OY_OUTPUT), 0 );
@@ -3452,7 +3452,8 @@ oyTESTRESULT_e testImagePixel()
   buf_16in2x2[6]=buf_16in2x2[7]=buf_16in2x2[8]=0;
   buf_16in2x2[9]=buf_16in2x2[10]=buf_16in2x2[11]=65535;
   memset( buf_16out2x2, 0, sizeof(uint16_t)*12 );
-  pixel_access->start_xy[0] = pixel_access->start_xy[1] = 1;
+  /* use the lower left source pixel */
+  pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0.5;
   pixel_access->output_image_roi->width = pixel_access->output_image_roi->height = 0.5;
   clck = oyClock();
   for(i = 0; i < n*1000; ++i)
@@ -3468,7 +3469,7 @@ oyTESTRESULT_e testImagePixel()
       buf_16in2x2[3]==10000 && buf_16in2x2[4]==10000 && buf_16in2x2[5]==10000 &&
       buf_16in2x2[6]==0 && buf_16in2x2[7]==0 && buf_16in2x2[8]==0 &&
       buf_16in2x2[9]==65535 && buf_16in2x2[10]==65535 &&buf_16in2x2[11]==65535&&
-      /* the result shall appears in the upper left corner / first pixel */
+      /* the result shall appear in the upper left corner / first pixel */
       buf_16out2x2[0]==65535 && buf_16out2x2[1]>20000 && buf_16out2x2[2]<40000&&
       /* all other buffer pixels shall remain untouched */
       buf_16out2x2[3]==0 && buf_16out2x2[4]==0 && buf_16out2x2[5]==0 &&
@@ -3476,11 +3477,11 @@ oyTESTRESULT_e testImagePixel()
       buf_16out2x2[9]==0 && buf_16out2x2[10]==0 && buf_16out2x2[10]==0
       )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "Plain Image upper left RoI               %s",
+    "lower right source pixel in 1 pixel RoI  %s",
                           oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "Plain Image upper left RoI                         " );
+    "lower right source pixel in 1 pixel RoI            " );
   }
 
   fprintf(stdout, "input:  %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
@@ -3493,6 +3494,56 @@ oyTESTRESULT_e testImagePixel()
                   buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
                   buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
                   buf_16out2x2[9], buf_16out2x2[10], buf_16out2x2[11] );
+
+
+  buf_16in2x2[0]=buf_16in2x2[1]=buf_16in2x2[2]=20000;
+  buf_16in2x2[3]=buf_16in2x2[4]=buf_16in2x2[5]=10000;
+  buf_16in2x2[6]=buf_16in2x2[7]=buf_16in2x2[8]=0;
+  buf_16in2x2[9]=buf_16in2x2[10]=buf_16in2x2[11]=65535;
+  memset( buf_16out2x2, 0, sizeof(uint16_t)*12 );
+  pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0.5;
+  pixel_access->output_image_roi->width = pixel_access->output_image_roi->height = 0.5;
+  pixel_access->output_image_roi->x = pixel_access->output_image_roi->y = 0.5;
+  clck = oyClock();
+  for(i = 0; i < n*1000; ++i)
+  if(error <= 0)
+  {
+    error  = oyConversion_RunPixels( cc, pixel_access );
+  }
+  clck = oyClock() - clck;
+
+  if( !error &&
+      /* input should not change */
+      buf_16in2x2[0]==20000 && buf_16in2x2[1]==20000 && buf_16in2x2[2]==20000 &&
+      buf_16in2x2[3]==10000 && buf_16in2x2[4]==10000 && buf_16in2x2[5]==10000 &&
+      buf_16in2x2[6]==0 && buf_16in2x2[7]==0 && buf_16in2x2[8]==0 &&
+      buf_16in2x2[9]==65535 && buf_16in2x2[10]==65535 &&buf_16in2x2[11]==65535&&
+      /* the result shall appear in the lower right corner / last pixel */
+      buf_16out2x2[9]==65535 && buf_16out2x2[10]>20000&&buf_16out2x2[20]<40000&&
+      /* all other buffer pixels shall remain untouched */
+      buf_16out2x2[0]==0 && buf_16out2x2[1]==0 && buf_16out2x2[2]==0 &&
+      buf_16out2x2[3]==0 && buf_16out2x2[4]==0 && buf_16out2x2[5]==0 &&
+      buf_16out2x2[6]==0 && buf_16out2x2[7]==0 && buf_16out2x2[8]==0
+      )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "lower right source in lower right output %s",
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "lower right source in lower right output           " );
+  }
+
+  fprintf(stdout, "input:  %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
+                  buf_16in2x2[0], buf_16in2x2[1], buf_16in2x2[2],
+                  buf_16in2x2[3], buf_16in2x2[4], buf_16in2x2[5],
+                  buf_16in2x2[6], buf_16in2x2[7], buf_16in2x2[8],
+                  buf_16in2x2[9], buf_16in2x2[10], buf_16in2x2[11] );
+  fprintf(stdout, "output: %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
+                  buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
+                  buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
+                  buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
+                  buf_16out2x2[9], buf_16out2x2[10], buf_16out2x2[11] );
+
 
   oyConversion_Release ( &cc );
   oyPixelAccess_Release( &pixel_access );
