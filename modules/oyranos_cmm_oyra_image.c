@@ -506,11 +506,13 @@ int      oyraFilterPlug_ImageRectanglesRun (
 
       if(oyRectangle_CountPoints(  new_ticket->output_image_roi ) > 0)
       {
+
         /* fill the array rectangle for the following filter */
         if(!new_ticket->array)
           oyImage_FillArray( new_ticket->output_image,
                              new_ticket->output_image_roi, 0,
-                            &new_ticket->array, 0, 0 );
+                             &new_ticket->array, new_ticket->output_image_roi,
+                             0 );
 
         /* start new call into branch */
         l_result = input_node->api7_->oyCMMFilterPlug_Run( node->plugs[i],
