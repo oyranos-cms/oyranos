@@ -504,6 +504,10 @@ int      oyraFilterPlug_ImageRectanglesRun (
       /* adapt the rectangle of interesst to the new image dimensions */
       oyRectangle_Trim( new_ticket->output_image_roi, ticket->output_image_roi );
 
+      /* use the correct source pixels */
+      new_ticket->start_xy[0] += new_ticket->output_image_roi->x;
+      new_ticket->start_xy[1] += new_ticket->output_image_roi->y;
+
       if(oyRectangle_CountPoints(  new_ticket->output_image_roi ) > 0)
       {
 
