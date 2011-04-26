@@ -1967,6 +1967,13 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     error = 1;
   }
 
+  if(!ticket->array)
+  {
+    message( oyMSG_ERROR,0, OY_DBG_FORMAT_ " no ticket->array",
+             OY_DBG_ARGS_);
+    error = 1;
+  }
+
   if(!error)
   {
     channels = oyToChannels_m( ticket->output_image->layout_[0] );
