@@ -14159,9 +14159,6 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     error = oyRectangle_SamplesFromImage( image, &r, &array_roi_pix );
   }
 
-      if(array_roi_pix.x != 0.0)
-        printf("jetzt");
-
   array_width = array_roi_pix.x + array_roi_pix.width;
   array_height = array_roi_pix.y + array_roi_pix.height;
 

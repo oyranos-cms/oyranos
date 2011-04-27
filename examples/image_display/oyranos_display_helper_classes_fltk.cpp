@@ -190,10 +190,15 @@ public:
         oyRectangle_Scale( &output_rectangle, 1.0/image->width );
 #if DEBUG
         if(px != 0)
+        {
+        oyRectangle_s r = {oyOBJECT_RECTANGLE_S,0,0,0};
+        oyRectangle_SetByRectangle( &r, &output_rectangle );
+        oyRectangle_Scale( &r, image->width );
         printf( "%s:%d output rectangle: %s start_xy:%.04g %.04g\n",
                 strrchr(__FILE__,'/')+1, __LINE__,
-                oyRectangle_Show(&output_rectangle),
-                ticket->start_xy[0], ticket->start_xy[1] );
+                oyRectangle_Show(&r),
+                ticket->start_xy[0]*image->width, ticket->start_xy[1]*image->width );
+        }
 #endif
         oyConversion_ChangeRectangle ( conversion(), ticket,
                                        -px/(double)image->width,
