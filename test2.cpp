@@ -3040,8 +3040,6 @@ oyTESTRESULT_e testCMMnmRun ()
   for(i = 0; i < n*10000; ++i)
   if(error <= 0)
   {
-    pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0;
-
 #if 1
     error  = oyConversion_RunPixels( s, pixel_access );
 #else
@@ -3270,7 +3268,6 @@ oyTESTRESULT_e testCMMnmRun ()
   for(i = 0; i < n*10000; ++i)
   {
     int error = 0;
-    pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0;
     error  = oyConversion_RunPixels( conv, pixel_access );
   }
   clck = oyClock() - clck;
@@ -3330,8 +3327,6 @@ oyTESTRESULT_e testCMMnmRun ()
   clck = oyClock();
   for(i = 0; i < n*10000; ++i)
   {
-    if(pixel_access)
-      pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0;
     oyConversion_RunPixels( conv, pixel_access );
   }
   clck = oyClock() - clck;
