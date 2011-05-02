@@ -22,6 +22,10 @@ const char *   oyDatatypeToText      ( oyDATATYPE_e        t); }
 #include "oyranos_display_helpers.c"
 #include "oyranos_display_helper_classes.cpp"
 
+#ifndef OY_MIN
+#define OY_MIN(a,b)    (((a) <= (b)) ? (a) : (b))
+#endif
+
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -185,8 +189,8 @@ public:
       {
         oyRectangle_s output_rectangle = {oyOBJECT_RECTANGLE_S,0,0,0};
         oyRectangle_SamplesFromImage( image, 0, &output_rectangle );
-        output_rectangle.width = W;
-        output_rectangle.height = H;
+        output_rectangle.width = OY_MIN( W, image->width );
+        output_rectangle.height = OY_MIN( H, image->height );
         oyRectangle_Scale( &output_rectangle, 1.0/image->width );
 #if DEBUG
         if(px != 0)
@@ -388,10 +392,6 @@ int      conversionObserve           ( oyObserver_s      * observer,
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl.H>
 #include <FL/gl.h>
-
-#ifndef OY_MIN
-#define OY_MIN(a,b)    (((a) <= (b)) ? (a) : (b))
-#endif
 
 class Oy_Fl_Shader_Box : public Fl_Gl_Window,
                          public Oy_Fl_Widget
