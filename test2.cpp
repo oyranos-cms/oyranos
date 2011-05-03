@@ -3542,6 +3542,8 @@ oyTESTRESULT_e testImagePixel()
 
   oyConversion_Release ( &cc );
   oyPixelAccess_Release( &pixel_access );
+  oyImage_Release( &input );
+  oyImage_Release( &output );
 
   return result;
 }
