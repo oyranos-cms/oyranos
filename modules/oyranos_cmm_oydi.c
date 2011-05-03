@@ -481,7 +481,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   oyImage_s * image = 0,
             * image_input = 0;
   oyOption_s * o = 0;
-  oyRectangle_s * r, * rd, * ri;
+  oyRectangle_s * r, * device_rectangle, * display_rectangle;
+  oyRectangle_s roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0};
   oyConfigs_s * devices = 0;
   oyConfig_s * c = 0;
   oyProfile_s * p = 0;
@@ -619,10 +620,10 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
       /* get device dimension */
       o = oyConfig_Find( c, "device_rectangle" );
-      rd = (oyRectangle_s *) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
+      device_rectangle = (oyRectangle_s *) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
       oyOption_Release( &o );
 
-      if(!rd)
+      if(!device_rectangle)
       {
         oydi_msg( oyMSG_WARN, (oyStruct_s*)image,
         OY_DBG_FORMAT_"device %d: Could not obtain \"device_rectangle\" option",
@@ -638,23 +639,23 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       /* get display rectangle to project into */
       if(image)
         o = oyOptions_Find( image->tags, "display_rectangle" );
-      ri = (oyRectangle_s *) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
+      display_rectangle = (oyRectangle_s *) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
       oyOption_Release( &o );
 
       /* trim and adapt the work rectangle */
-      oyRectangle_SetByRectangle( r, ri );
-      display_pos_x = r->x;
-      display_pos_y = r->y;
-      oyRectangle_Trim( r, rd );
-      r->x -= display_pos_x;
-      r->y -= display_pos_y;
+      oyRectangle_SetByRectangle( &roi_pix, display_rectangle );
+      display_pos_x = roi_pix.x;
+      display_pos_y = roi_pix.y;
+      oyRectangle_Trim( &roi_pix, device_rectangle );
+      roi_pix.x -= display_pos_x;
+      roi_pix.y -= display_pos_y;
       if(oy_debug)
         oydi_msg( oyMSG_DBG, (oyStruct_s*)image,
-            OY_DBG_FORMAT_"image %d: %s", OY_DBG_ARGS_, i, oyRectangle_Show(r));
+            OY_DBG_FORMAT_"image %d: %s", OY_DBG_ARGS_, i, oyRectangle_Show(&roi_pix));
 
       /* all rectangles are relative to image dimensions */
       if(image && image->width != 0)
-        oyRectangle_Scale( r, 1./image->width );
+        oyRectangle_Scale( &roi_pix, 1./image->width );
 
       /* select actual image from the according CMM node */
       if(rectangles->plugs && rectangles->plugs[i] &&
@@ -665,8 +666,10 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         image_input = 0;
         oydi_msg( oyMSG_WARN, (oyStruct_s*)image,
                  OY_DBG_FORMAT_"image %d: is missed",
-                 OY_DBG_ARGS_, i, oyRectangle_Show( r ) );
+                 OY_DBG_ARGS_, i, oyRectangle_Show( &roi_pix ) );
       }
+
+      oyRectangle_SetByRectangle( r, &roi_pix );
 
       /* set the device profile of all CMM's image data */
       if(init)
