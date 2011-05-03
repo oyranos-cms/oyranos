@@ -158,7 +158,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
     char * tmp = oyStringCopy_( oyRectangle_Show(display_rectangle), oyAllocateFunc_);
 
     oydi_msg( oyMSG_DBG, (oyStruct_s*)image,
-             OY_DBG_FORMAT_"Display: %s Window id: %d  %s %s", OY_DBG_ARGS_,
+             OY_DBG_FORMAT_"Display: %s Window id: %d  display_rectangle:%s old_window_rectangle:%s", OY_DBG_ARGS_,
              display_name, w, tmp, oyRectangle_Show( old_window_rectangle ) );
     oyFree_m_( tmp );
 #endif
@@ -183,7 +183,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
                                   -attr.border_width, -attr.border_width,
                                   &x, &y, &w_return);
     oydi_msg( oyMSG_DBG, (oyStruct_s*)image,
-               OY_DBG_FORMAT_"Display: %s Window id: %d  %s @+%d+%d",
+               OY_DBG_FORMAT_"Display: %s Window id: %d  display_rectangle:%s @+%d+%d",
                OY_DBG_ARGS_,
                display_name, (int)w, oyRectangle_Show(display_rectangle), x,y );
 
@@ -651,7 +651,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       roi_pix.y -= display_pos_y;
       if(oy_debug)
         oydi_msg( oyMSG_DBG, (oyStruct_s*)image,
-            OY_DBG_FORMAT_"image %d: %s", OY_DBG_ARGS_, i, oyRectangle_Show(&roi_pix));
+            OY_DBG_FORMAT_"image %d: roi_pix:%s", OY_DBG_ARGS_, i, oyRectangle_Show(&roi_pix));
 
       /* all rectangles are relative to image dimensions */
       if(image && image->width != 0)
@@ -665,7 +665,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       {
         image_input = 0;
         oydi_msg( oyMSG_WARN, (oyStruct_s*)image,
-                 OY_DBG_FORMAT_"image %d: is missed",
+                 OY_DBG_FORMAT_"image %d: is missed roi_pix:%s",
                  OY_DBG_ARGS_, i, oyRectangle_Show( &roi_pix ) );
       }
 
