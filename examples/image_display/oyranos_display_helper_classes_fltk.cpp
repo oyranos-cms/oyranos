@@ -106,13 +106,13 @@ public:
           ox = x() - Fl::event_x();
           oy = y() - Fl::event_y();
           fl_cursor( FL_CURSOR_MOVE, FL_BLACK, FL_WHITE );
-#if DEBUG
+#if DEBUG_
       printf("%s:%d e: %d ox:%d px:%d\n",strrchr(__FILE__,'/')+1,__LINE__,e, ox, px);
 #endif
           return (1);
         case FL_RELEASE:
           fl_cursor( FL_CURSOR_DEFAULT, FL_BLACK, FL_WHITE );
-#if DEBUG
+#if DEBUG_
       printf("%s:%d e: %d ox:%d px:%d\n",strrchr(__FILE__,'/')+1,__LINE__,e, ox, px);
 #endif
           return (1);
@@ -121,7 +121,7 @@ public:
           py += oy + Fl::event_y();
           ox = x() - Fl::event_x();
           oy = y() - Fl::event_y();
-#if DEBUG
+#if DEBUG_
       printf("%s:%d e: %d ox:%d px:%d oy: %d py:%d\n",strrchr(__FILE__,'/')+1,__LINE__,e, ox, px,oy,py);
 #endif
           redraw();
@@ -179,7 +179,7 @@ public:
         if(py > 0) py = 0;
       }
 
-#if DEBUG
+#if DEBUG_
       printf( "%s:%d new display rectangle: %s +%d+%d +%d+%d\n",
               strrchr(__FILE__,'/')+1, __LINE__,
               oyRectangle_Show(display_rectangle), x(), y(), px, py );

@@ -259,7 +259,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
            ticket->start_xy[1] != ticket->start_xy_old[1]) ||
            dirty ))
       {
-#ifdef DEBUG
+#ifdef DEBUG_
         printf( "%s:%d new display rectangle: %s +%d+%d\n", __FILE__,__LINE__,
                 oyRectangle_Show(disp_rectangle), X, Y ),
 #endif
