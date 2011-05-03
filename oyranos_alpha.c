@@ -12901,11 +12901,16 @@ int            oyArray2d_ReleaseArray( oyArray2d_s       * obj )
     int y, y_max = s->data_area.height + s->data_area.y;
     size_t dsize = oySizeofDatatype( s->t );
 
+    if(oy_debug)
+      oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)s,
+                       OY_DBG_FORMAT_ "s->data_area: %s", OY_DBG_ARGS_,
+                       oyRectangle_Show(&s->data_area) );
+
     for( y = s->data_area.y; y < y_max; ++y )
     {
       if((s->own_lines == 1 && y == 0) ||
          s->own_lines == 2)
-        deallocateFunc( s->array2d[y] + dsize * (int)s->data_area.x );
+        deallocateFunc( &s->array2d[y][dsize * (int)s->data_area.x] );
       s->array2d[y] = 0;
     }
     deallocateFunc( s->array2d + (size_t)s->data_area.y );
@@ -14117,9 +14122,9 @@ int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
  *                                     The unit is relative to the image.
  *  @param[in]     obj                 the optional user object
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.3.0
  *  @since   2008/10/02 (Oyranos: 0.1.8)
- *  @date    2009/06/19
+ *  @date    2011/05/02
  */
 int            oyImage_FillArray     ( oyImage_s         * image,
                                        oyRectangle_s     * rectangle,
@@ -21116,8 +21121,8 @@ int                oyConversion_RunPixels (
    * the oyPixelAccess_s::array allocation can remain constant.
    */
   if(image_out && pixel_access &&
-     ((oyPointer)image_out->pixel_data != (oyPointer)pixel_access->array ||
-      image_out != pixel_access->output_image))
+     /*((oyPointer)image_out->pixel_data != (oyPointer)pixel_access->array ||*/
+      image_out != pixel_access->output_image)
   {
     /* move the array to the top left place
      * same as : roi.x = roi.y = 0; */
