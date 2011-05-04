@@ -3351,6 +3351,14 @@ oyTESTRESULT_e testCMMnmRun ()
   return result;
 }
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+int oyArray2d_SetFocus( oyArray2d_s * a, oyRectangle_s * array_roi_pix );
+#ifdef __cplusplus
+}
+#endif
+
 oyTESTRESULT_e testImagePixel()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
@@ -3365,8 +3373,6 @@ oyTESTRESULT_e testImagePixel()
   0,0,0,             65535,65535,65535
   };
   uint16_t buf_16out2x2[12];
-  oyPointer p1 = buf_16in2x2,
-            p2 = buf_16out2x2;
   oyDATATYPE_e buf_type_in = oyUINT16,
                buf_type_out = oyUINT16;
   oyImage_s *input, *output;
@@ -3542,6 +3548,145 @@ oyTESTRESULT_e testImagePixel()
 
   oyConversion_Release ( &cc );
   oyPixelAccess_Release( &pixel_access );
+  oyProfile_Release( &p_lab );
+  oyProfile_Release( &p_web );
+
+  oyPixel_t pixel_layout = OY_TYPE_123_16;
+  oyPointer channels = 0;
+  oyRectangle_s roi = {oyOBJECT_RECTANGLE_S, 0,0,0};
+  oyRectangle_s a_roi = {oyOBJECT_RECTANGLE_S, 0,0,0};
+  oyPointer ap;
+
+  oyArray2d_s * a = oyArray2d_Create( channels,
+                                      2 * oyToChannels_m(pixel_layout),
+                                      2,
+                                      oyToDataType_m(pixel_layout),
+                                      0 );
+  ap = a->array2d[0];
+
+  oyRectangle_SetGeo( &roi, 0.5,0.5,0.5,0.5 );
+  oyRectangle_SetGeo( &a_roi, 0.5,0.5,0.5,0.5 );
+  buf_16out2x2[9] = buf_16out2x2[10] = buf_16out2x2[11] = 65535;
+  error = oyImage_FillArray( output, &roi, 0,
+                             &a,
+                             &a_roi, 0 );
+
+  uint16_t * output_u16 = (uint16_t*)a->array2d[0];
+
+  if(!error &&
+     a->array2d[0] != (unsigned char*)buf_16out2x2)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyImage_FillArray() keep allocation                 " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyImage_FillArray() keep alloc 0x%lo 0x%lo",
+    (unsigned long)a->array2d[0], (unsigned long)buf_16out2x2 );
+  }
+
+  if(!error &&
+     output_u16[0] == 65535 && output_u16[1] == 65535 && output_u16[2] == 65535)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyImage_FillArray() place array data                " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyImage_FillArray() place array data                " );
+  }
+
+  /* set lower right pixel */
+  output_u16[0] = output_u16[1] = output_u16[2] = 2;
+
+  fprintf(stdout, "output: %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
+                  buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
+                  buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
+                  buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
+                  buf_16out2x2[9], buf_16out2x2[10], buf_16out2x2[11] );
+
+  oyRectangle_SetGeo( &a_roi, 0.0,0.0,0.5,0.5 );
+  error = oyImage_ReadArray( output, &roi,
+                             a, &a_roi );
+
+
+  if(!error &&
+     a->array2d[0] != (unsigned char*)&buf_16out2x2[9] &&
+     buf_16out2x2[9]==2&& buf_16out2x2[10]==2&& buf_16out2x2[11]==2)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyImage_ReadArray( array_roi )                      " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyImage_ReadArray( array_roi )                      " );
+  }
+
+  /* set lower right pixel */
+  output_u16[0] = output_u16[1] = output_u16[2] = 3;
+  error = oyImage_ReadArray( output, &roi,
+                             a, 0 );
+
+
+  if(!error &&
+     a->array2d[0] != (unsigned char*)&buf_16out2x2[9] &&
+     buf_16out2x2[9]==3&& buf_16out2x2[10]==3&& buf_16out2x2[11]==3)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyImage_ReadArray()                                 " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyImage_ReadArray()                                 " );
+  }
+
+  fprintf(stdout, "output: %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
+                  buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
+                  buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
+                  buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
+                  buf_16out2x2[9], buf_16out2x2[10], buf_16out2x2[11] );
+
+  /* move the focus to the top left */
+  oyRectangle_s array_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,3,1};
+  oyArray2d_SetFocus( a, &array_roi_pix );
+
+
+  if(!error &&
+     a->array2d[0] != (unsigned char*)output_u16)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyArray2d_SetFocus() change array                   " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyArray2d_SetFocus() change 0x%lo 0x%lo",
+    (unsigned long)a->array2d[0], (unsigned long)output_u16 );
+  }
+
+
+  output_u16 = (uint16_t*)a->array2d[0];
+
+  /* set lower right pixel */
+  output_u16[0] = output_u16[1] = output_u16[2] = 4;
+  error = oyImage_ReadArray( output, &roi,
+                             a, 0 );
+  if(!error &&
+     a->array2d[0] != (unsigned char*)&buf_16out2x2[9] &&
+     buf_16out2x2[9]==4&& buf_16out2x2[10]==4&& buf_16out2x2[11]==4)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyArray2d_SetFocus()                                " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyArray2d_SetFocus()                                " );
+  }
+
+  oyArray2d_Release( &a );
+
+  oyRectangle_SetGeo( &a_roi, 0.5,0.5,0.5,0.5 );
+  error = oyImage_FillArray( output, &roi, 0,
+                             &a, &a_roi, 0 );
+
+  if(!error &&
+     a->array2d[0] == (unsigned char*)&buf_16out2x2[9])
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyImage_FillArray() assigment                       " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyImage_FillArray() assigment 0x%lo 0x%lo",
+    (unsigned long)a->array2d[0], (unsigned long)&buf_16out2x2[9] );
+  }
+
+  oyArray2d_Release( &a );
   oyImage_Release( &input );
   oyImage_Release( &output );
 
