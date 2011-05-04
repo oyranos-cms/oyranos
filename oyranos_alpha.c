@@ -14340,7 +14340,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   oyRectangle_s image_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0};
   oyRectangle_s array_rect_pix = {oyOBJECT_RECTANGLE_S,0,0,0};
   oyDATATYPE_e data_type = oyUINT8;
-  int bps = 0, channel_n, i, offset, width;
+  int bps = 0, channel_n, i, offset, width, height;
 
   if(error)
     return 0;
@@ -14375,6 +14375,8 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
     {
       oyRectangle_SetByRectangle( &array_rect_pix, array_rectangle );
       oyRectangle_Scale( &array_rect_pix, image->width );
+      array_rect_pix.x *= channel_n;
+      array_rect_pix.width *= channel_n;
     } else
     {
       oyRectangle_SetGeo( &array_rect_pix, 0,0, array->width, array->height );
@@ -14386,8 +14388,9 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
     offset = image_roi_pix.x / channel_n * bps;
     width = OY_MIN(image_roi_pix.width, array_rect_pix.width);
     width /= channel_n;
+    height = array_rect_pix.y + array_rect_pix.height;
 
-    for(i = array_rect_pix.y; i < array_rect_pix.height; ++i)
+    for(i = array_rect_pix.y; i < height; ++i)
     {
       image->setLine( image, offset, image_roi_pix.y + i, width, -1,
                       &array->array2d
