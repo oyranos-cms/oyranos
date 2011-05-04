@@ -12908,7 +12908,7 @@ int            oyArray2d_ReleaseArray( oyArray2d_s       * obj )
 
     for( y = s->data_area.y; y < y_max; ++y )
     {
-      if((s->own_lines == 1 && y == 0) ||
+      if((s->own_lines == 1 && y == s->data_area.y) ||
          s->own_lines == 2)
         deallocateFunc( &s->array2d[y][dsize * (int)s->data_area.x] );
       s->array2d[y] = 0;
