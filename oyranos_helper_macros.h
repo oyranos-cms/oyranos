@@ -27,6 +27,7 @@
 #include "oyObject_s_.h"
 
 #include "stdio.h"
+#include "math.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -152,7 +153,7 @@ char    oyToupper_( char c_ );
 #define OY_MAX(a,b)    (((a) > (b)) ? (a) : (b))
 #define OY_HYP(a,b)    pow((a)*(a) + (b)*(b),1.0/2.0)
 #define OY_HYP3(a,b,c) pow( (a)*(a) + (b)*(b) + (c)*(c) , 1.0/2.0)
-#define OY_ROUND(a)    ((a) + 0.5)
+#define OY_ROUND(a)    ((int)floor((a)+0.5))
 
 /* --- miscellaneous helpers --- */
 
