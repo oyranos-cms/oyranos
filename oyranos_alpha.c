@@ -21121,14 +21121,13 @@ int                oyConversion_RunPixels (
    * the oyPixelAccess_s::array allocation can remain constant.
    */
   if(image_out && pixel_access &&
-     /*((oyPointer)image_out->pixel_data != (oyPointer)pixel_access->array ||*/
-      image_out != pixel_access->output_image)
+     ((oyPointer)image_out->pixel_data != (oyPointer)pixel_access->array ||
+      image_out != pixel_access->output_image))
   {
     /* move the array to the top left place
      * same as : roi.x = roi.y = 0; */
     /*roi.x -= pixel_access->output_image_roi->x;
     roi.y -= pixel_access->output_image_roi->y;*/
-
     result = oyImage_ReadArray( image_out, &roi,
                                 pixel_access->array, 0 );
   }
