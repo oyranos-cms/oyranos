@@ -1322,6 +1322,9 @@ OYAPI int  OYEXPORT
                  oyArray2d_RowsSet   ( oyArray2d_s       * obj,
                                        oyPointer         * rows,
                                        int                 do_copy );
+OYAPI int  OYEXPORT  oyArray2d_SetFocus (
+                                       oyArray2d_s       * array,
+                                       oyRectangle_s     * rectangle );
 
 /** @struct  oyImage_s
  *  @brief   a reference struct to gather information for image transformation

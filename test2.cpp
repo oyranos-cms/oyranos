@@ -3351,13 +3351,6 @@ oyTESTRESULT_e testCMMnmRun ()
   return result;
 }
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-int oyArray2d_SetFocus( oyArray2d_s * a, oyRectangle_s * array_roi_pix );
-#ifdef __cplusplus
-}
-#endif
 
 oyTESTRESULT_e testImagePixel()
 {
