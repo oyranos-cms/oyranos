@@ -12467,10 +12467,10 @@ void           oyRectangle_Round     ( oyRectangle_s     * edit_rectangle )
   if(!s)
     return;
 
-  r->x = (int)OY_ROUND(r->x);
-  r->y = (int)OY_ROUND(r->y);
-  r->width = (int)OY_ROUND(r->width);
-  r->height = (int)OY_ROUND(r->height);
+  r->x = OY_ROUND(r->x);
+  r->y = OY_ROUND(r->y);
+  r->width = OY_ROUND(r->width);
+  r->height = OY_ROUND(r->height);
 }
 
 /**
@@ -12577,7 +12577,7 @@ int            oyRectangle_Index     ( oyRectangle_s     * rectangle,
   if(!s)
     return FALSE;
 
-  return (int)OY_ROUND((y - r->y) * r->width + (x - r->x));
+  return OY_ROUND((y - r->y) * r->width + (x - r->x));
 }
 
 /**
@@ -14076,15 +14076,17 @@ int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
   {
     /* shift array focus to requested region */
     int bps = oySizeofDatatype( array->t );
-    if(a->data_area.x != (int)OY_ROUND(array_roi_pix->x))
+    if(a->data_area.x != OY_ROUND(array_roi_pix->x))
     {
-      for(y = a->data_area.y; y < a->data_area.height; ++y)
-        a->array2d[y] += (int)OY_ROUND(array_roi_pix->x + a->data_area.x) * bps;
-      a->data_area.x = (int)-array_roi_pix->x;
+      int height = a->data_area.height + a->data_area.y;
+      int shift = (OY_ROUND(array_roi_pix->x) + OY_ROUND(a->data_area.x)) * bps;
+      for(y = a->data_area.y; y < height; ++y)
+        a->array2d[y] += shift;
+      a->data_area.x = -OY_ROUND(array_roi_pix->x);
     }
-    if(a->data_area.y != (int)OY_ROUND(array_roi_pix->y))
+    if(a->data_area.y != OY_ROUND(array_roi_pix->y))
     {
-      a->array2d += (int)OY_ROUND(array_roi_pix->y + a->data_area.y);
+      a->array2d += OY_ROUND(array_roi_pix->y + a->data_area.y);
       a->data_area.y = -array_roi_pix->y;
     }
     a->width = array_roi_pix->width;
@@ -14266,8 +14268,8 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
         dst = &a->array2d[ay][0];
         src = &line_data[(j
-                       * (int)OY_ROUND(image->width * image->layout_[oyCHANS])
-                       + (int)image_roi_pix.x)
+                       * OY_ROUND(image->width * image->layout_[oyCHANS])
+                       + OY_ROUND(image_roi_pix.x))
                       * data_size];
 
         if(dst != src && a->own_lines != oyNO)
@@ -14275,9 +14277,9 @@ int            oyImage_FillArray     ( oyImage_s         * image,
         else
         {
           a->array2d[ay] = 
-                    &line_data[j*data_size * (int)OY_ROUND(a->data_area.width)];
+                    &line_data[j*data_size * OY_ROUND(a->data_area.width)];
 
-          a->array2d[ay] = &a->array2d[i+j][data_size * (int)image_roi_pix.x];
+          a->array2d[ay] = &a->array2d[i+j][data_size * image_roi_pix.x];
         }
       }
 
@@ -14394,7 +14396,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
     {
       image->setLine( image, offset, image_roi_pix.y + i, width, -1,
                       &array->array2d
-                              [i][(int)OY_ROUND(array_rect_pix.x) * bps] );
+                              [i][OY_ROUND(array_rect_pix.x) * bps] );
     }
   }
 
