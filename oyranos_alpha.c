@@ -12901,8 +12901,8 @@ int            oyArray2d_ReleaseArray( oyArray2d_s       * obj )
     int y, y_max = s->data_area.height + s->data_area.y;
     size_t dsize = oySizeofDatatype( s->t );
 
-    if(oy_debug)
-      oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)s,
+    if(oy_debug > 3)
+      oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)s,
                        OY_DBG_FORMAT_ "s->data_area: %s", OY_DBG_ARGS_,
                        oyRectangle_Show(&s->data_area) );
 
@@ -14279,7 +14279,8 @@ int            oyImage_FillArray     ( oyImage_s         * image,
           a->array2d[ay] = 
                     &line_data[j*data_size * OY_ROUND(a->data_area.width)];
 
-          a->array2d[ay] = &a->array2d[i+j][data_size * image_roi_pix.x];
+          a->array2d[ay] = &a->array2d[i+j]
+                                      [data_size * OY_ROUND(image_roi_pix.x)];
         }
       }
 
@@ -21131,8 +21132,8 @@ int                oyConversion_RunPixels (
   {
     /* move the array to the top left place
      * same as : roi.x = roi.y = 0; */
-    /*roi.x -= pixel_access->output_image_roi->x;
-    roi.y -= pixel_access->output_image_roi->y;*/
+    /*roi.x = pixel_access->start_xy[0];
+    roi.y = pixel_access->start_xy[1];*/
     result = oyImage_ReadArray( image_out, &roi,
                                 pixel_access->array, 0 );
   }
