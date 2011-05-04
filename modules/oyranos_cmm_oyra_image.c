@@ -452,6 +452,8 @@ int      oyraFilterPlug_ImageRectanglesRun (
   oyImage_s * image = (oyImage_s*)socket->data;
   oyOption_s * o = 0;
   oyRectangle_s * r;
+  oyRectangle_s array_pix = {oyOBJECT_RECTANGLE_S,0,0,0};
+
   oyPixelAccess_s * new_ticket = 0;
   int dirty = 0;
 
@@ -537,6 +539,10 @@ int      oyraFilterPlug_ImageRectanglesRun (
 
       oyOption_Release( &o );
     }
+
+    oyRectangle_SetGeo( &array_pix, 0,0,
+              ticket->array->data_area.width, ticket->array->data_area.height );
+    error = oyArray2d_SetFocus( ticket->array, &array_pix );
   }
 
   return result;
