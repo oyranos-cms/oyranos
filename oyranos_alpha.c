@@ -21073,15 +21073,15 @@ int                oyConversion_RunPixels (
     n = oyFilterNodes_Count( pixel_access->graph->nodes );
     for(i = 0; i < n; ++i)
     {
+#if 0
       clck = oyClock();
       l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
-#if 0
       l_error = oyImage_FillArray( image_out, &roi, 0,
                                    &pixel_access->array,
                                    pixel_access->output_image_roi, 0 ); OY_ERR
-#endif
       clck = oyClock() - clck;
       DBG_NUM1_S("oyImage_FillArray(): %g", clck/1000000.0 );
+#endif
 
       if(error != 0 &&
          dirty)
