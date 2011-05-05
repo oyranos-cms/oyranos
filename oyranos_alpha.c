@@ -14263,7 +14263,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     }
   }
 
-  if(image->getLine)
+  if(!error && image->getLine)
   {
     oyPointer src, dst;
 
@@ -14302,11 +14302,11 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     }
 
   } else
-  if(image->getPoint)
+  if(!error && image->getPoint)
   {
     WARNc_S("image->getPoint  not yet supported")
   } else
-  if(image->getTile)
+  if(!error && image->getTile)
   {
     WARNc_S("image->getTile  not yet supported")
     error = 1;
