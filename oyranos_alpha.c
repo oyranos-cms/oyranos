@@ -21147,11 +21147,10 @@ int                oyConversion_RunPixels (
   return error;
 }
 
-/** Function oyConversion_ChangeRectangle
+/** Function oyPixelAccess_ChangeRectangle
  *  @memberof oyConversion_s
  *  @brief   change the ticket for a conversion graph
  *
- *  @param[in]     conversion          conversion object
  *  @param[in,out] pixel_access        optional pixel iterator configuration
  *  @param[in]     start_x             x position relative to virtual source
  *                                     image
@@ -21162,65 +21161,32 @@ int                oyConversion_RunPixels (
  *
  *  @version Oyranos: 0.3.0
  *  @since   2011/04/17 (Oyranos: 0.3.0)
- *  @date    2011/04/17
+ *  @date    2011/05/ß5
  */
-int                oyConversion_ChangeRectangle (
-                                       oyConversion_s    * conversion,
+int                oyPixelAccess_ChangeRectangle (
                                        oyPixelAccess_s   * pixel_access,
                                        double              start_x,
                                        double              start_y,
                                        oyRectangle_s     * output_rectangle )
 {
-  oyConversion_s * s = conversion;
-  oyFilterPlug_s * plug = 0;
-  oyFilterNode_s * node_out = 0;
-  oyImage_s * image = 0;
   int error = 0, result = 0;
   oyRectangle_s roi = {oyOBJECT_RECTANGLE_S, 0,0,0};
   double clck;
 
-  oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
-
-  node_out = oyConversion_GetNode( conversion, OY_OUTPUT );
-
-  /* basic checks */
-  if(!node_out || !node_out->plugs ||
-     !node_out->plugs[0])
-  {
-    WARNc1_S("graph incomplete [%d]", s ? oyObject_GetId( s->oy_ ) : -1)
-    return 1;
-  }
-
-  /* conversion->out_ has to be linear, so we access only the first plug */
-  plug = oyFilterNode_GetPlug( node_out, 0 );
-
-  if(output_rectangle)
-    oyRectangle_SetByRectangle( pixel_access->output_image_roi,
-                                output_rectangle );
- 
   if(!pixel_access)
     error = 1;
 
-  image = oyConversion_GetImage( conversion, OY_OUTPUT );
-
-  if(error <= 0)
-    oyRectangle_SetByRectangle( &roi, pixel_access->output_image_roi );
-  pixel_access->start_xy[0] = roi.x = start_x;
-  pixel_access->start_xy[1] = roi.y = start_y;
+  if(error <= 0 && output_rectangle)
+    oyRectangle_SetByRectangle( pixel_access->output_image_roi,
+                                output_rectangle );
  
   if(error <= 0)
   {
-    clck = oyClock();
-    result = oyImage_FillArray( image, &roi, 0,
-                                &pixel_access->array,
-                                pixel_access->output_image_roi, 0 );
-    clck = oyClock() - clck;
-    DBG_NUM1_S("oyImage_FillArray(): %g", clck/1000000.0 );
-    error = ( result != 0 );
+    oyRectangle_SetByRectangle( &roi, pixel_access->output_image_roi );
+    pixel_access->start_xy[0] = roi.x = start_x;
+    pixel_access->start_xy[1] = roi.y = start_y;
   }
-
-  oyImage_Release( &image );
-
+ 
   return error;
 }
 

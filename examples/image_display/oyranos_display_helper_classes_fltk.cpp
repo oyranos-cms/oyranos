@@ -192,9 +192,11 @@ public:
         output_rectangle.width = OY_MIN( W, image->width );
         output_rectangle.height = OY_MIN( H, image->height );
         oyRectangle_Scale( &output_rectangle, 1.0/image->width );
-#if DEBUG
-        if(px != 0)
+#if DEBUG_
+        static int old_px = 0;
+        if(px != old_px)
         {
+        old_px = px;
         oyRectangle_s r = {oyOBJECT_RECTANGLE_S,0,0,0};
         oyRectangle_SetByRectangle( &r, &output_rectangle );
         oyRectangle_Scale( &r, image->width );
@@ -204,11 +206,10 @@ public:
                 ticket->start_xy[0]*image->width, ticket->start_xy[1]*image->width );
         }
 #endif
-        oyConversion_ChangeRectangle ( conversion(), ticket,
+        oyPixelAccess_ChangeRectangle( ticket,
                                        -px/(double)image->width,
                                        -py/(double)image->width,
                                        &output_rectangle );
-        
       }
 
       dirty = oyDrawScreenImage(conversion(), ticket, display_rectangle,

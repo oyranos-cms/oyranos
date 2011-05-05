@@ -2465,6 +2465,11 @@ oyPixelAccess_s *  oyPixelAccess_Copy( oyPixelAccess_s   * obj,
                                        oyObject_s          object );
 int                oyPixelAccess_Release(
                                        oyPixelAccess_s  ** obj );
+int                oyPixelAccess_ChangeRectangle ( 
+                                       oyPixelAccess_s   * pixel_access,
+                                       double              start_x,
+                                       double              start_y,
+                                       oyRectangle_s     * output_rectangle );
 
 /** @struct oyConversion_s
  *  @brief  a filter chain or graph to manipulate a image
@@ -2658,12 +2663,6 @@ int                oyConversion_Correct (
                                        const char        * registration,
                                        uint32_t            flags,
                                        oyOptions_s       * options );
-int                oyConversion_ChangeRectangle ( 
-                                       oyConversion_s    * conversion,
-                                       oyPixelAccess_s   * pixel_access,
-                                       double              start_x,
-                                       double              start_y,
-                                       oyRectangle_s     * output_rectangle );
 
 
 /** @struct oyNamedColour_s
