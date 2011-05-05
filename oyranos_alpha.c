@@ -20992,7 +20992,7 @@ int                oyConversion_RunPixels (
   oyFilterPlug_s * plug = 0;
   oyFilterNode_s * node_out = 0;
   oyImage_s * image_out = 0, * image_input = 0;
-  int error = 0, result = 0, l_error = 0, i,n, dirty = 0, tmp_ticket = 0;
+  int error = 0, result = 0, i,n, dirty = 0, tmp_ticket = 0;
   oyRectangle_s roi = {oyOBJECT_RECTANGLE_S, 0,0,0};
   double clck;
 

@@ -175,7 +175,7 @@ int      oyStructSignalForward_      ( oyObserver_s      * observer,
  *  @since   2009/11/18 (Oyranos: 0.1.10)
  *  @date    2009/11/18
  */
-typedef struct {
+typedef struct oyCallback_s {
   oyOBJECT_e           type_;          /**< struct type oyOBJECT_CALLBACK_S */ 
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -474,8 +474,6 @@ int            oyOptions_Handle      ( const char        * registration,
                                        oyOptions_s      ** result );
 
 
-
-
 /** @struct  oyConfig_s
  *  @brief   a group of options for a device
  *  @ingroup objects_value
@@ -485,7 +483,7 @@ int            oyOptions_Handle      ( const char        * registration,
  *  @since   2009/01/15 (Oyranos: 0.1.10)
  *  @date    2009/01/15
  */
-typedef struct {
+typedef struct oyConfig_s {
   oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONFIG_S */ 
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -577,7 +575,7 @@ OYAPI oyOption_s * OYEXPORT
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/01/19
  */
-typedef struct {
+typedef struct oyConfigs_s {
   oyOBJECT_e           type_;          /**< struct type oyOBJECT_CONFIGS_S */ 
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -642,7 +640,7 @@ OYAPI int  OYEXPORT
  *  @since   2009/12/30 (Oyranos: 0.1.10)
  *  @date    2009/12/30
  */
-typedef struct {
+typedef struct oyConfDomain_s {
   oyOBJECT_e           type_;          /**< struct type oyOBJECT_CONF_DOMAIN_S */ 
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -675,7 +673,6 @@ OYAPI int  OYEXPORT
 
 
 
-
 /** @brief general profile infos
  *  @ingroup objects_profile
  *
@@ -684,7 +681,7 @@ OYAPI int  OYEXPORT
  *  @since Oyranos: version 0.1.8
  *  @date  10 december 2007 (API 0.1.8)
  */
-typedef enum {
+typedef enum oySIGNATURE_TYPE_e {
   oySIGNATURE_COLOUR_SPACE,            /**< colour space */
   oySIGNATURE_PCS,                     /**< profile connection space */
   oySIGNATURE_SIZE,                    /**< internal stored size */
@@ -713,7 +710,7 @@ typedef struct oyProfileTag_s oyProfileTag_s;
  *  @ingroup objects_profile
  *  @extends oyStruct_s
  */
-typedef struct {
+typedef struct oyProfile_s {
   oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_PROFILE_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -838,7 +835,7 @@ int                oyProfile_DeviceGet ( oyProfile_s     * profile,
  *  @ingroup objects_profile
  *  @extends oyStruct_s
  */
-typedef struct {
+typedef struct oyProfiles_s {
   oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_PROFILES_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -1001,7 +998,7 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
  *  @since   2008/00/00 (Oyranos: 0.1.8)
  *  @date    2008/00/00
  */
-typedef enum {
+typedef enum oyDATALAYOUT_e {
   oyDATALAYOUT_NONE,
   oyDATALAYOUT_CURVE,                 /**< equally spaced curve, oyDATALAYOUT_e[0], size[1], min[2], max[3], elements[4]... */
   oyDATALAYOUT_MATRIX,                /**< 3x3 matrix, oyDATALAYOUT_e[0], a1[1],a2[2],a3,b1,b2,b3,c1,c2,c3 */
@@ -1013,12 +1010,11 @@ typedef enum {
   oyDATALAYOUT_MAX                    /**< */
 } oyDATALAYOUT_e;
 
-
 /** @brief start with a simple rectangle
  *  @ingroup objects_rectangle
  *  @extends oyStruct_s
  */
-typedef struct {
+typedef struct oyRectangle_s {
   oyOBJECT_e           type_;          /**< @private internal struct type oyOBJECT_RECTANGLE_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -1085,7 +1081,7 @@ const char *   oyRectangle_Show      ( oyRectangle_s     * rectangle );
  *  @since   2007/00/00 (Oyranos: 0.1.8)
  *  @date    2007/00/00
  */
-typedef enum {
+typedef enum oyDATATYPE_e {
   oyUINT8,     /*!<  8-bit integer */
   oyUINT16,    /*!< 16-bit integer */
   oyUINT32,    /*!< 32-bit integer */
@@ -1197,7 +1193,7 @@ typedef uint32_t oyPixel_t;
  *  @since   2008/00/00 (Oyranos: 0.1.8)
  *  @date    2009/08/03
  */
-typedef enum {
+typedef enum oyCHANNELTYPE_e {
   oyCHANNELTYPE_UNDEFINED,            /**< as well for the list end */
   oyCHANNELTYPE_OTHER,
   oyCHANNELTYPE_LIGHTNESS,
@@ -1499,7 +1495,6 @@ oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image );
 
 
 
-typedef struct oyFilterCore_s oyFilterCore_s;
 typedef struct oyCMMapi4_s oyCMMapi4_s;
 typedef struct oyCMMapi6_s oyCMMapi6_s;
 typedef struct oyCMMapi7_s oyCMMapi7_s;
@@ -1507,6 +1502,8 @@ typedef struct oyCMMapi8_s oyCMMapi8_s;
 typedef struct oyCMMapi9_s oyCMMapi9_s;
 typedef struct oyCMMapi10_s oyCMMapi10_s;
 typedef struct oyCMMapiFilter_s oyCMMapiFilter_s;
+typedef struct oyFilterCore_s oyFilterCore_s;
+typedef struct oyFilterCores_s oyFilterCores_s;
 typedef struct oyFilterGraph_s oyFilterGraph_s;
 typedef struct oyFilterNode_s oyFilterNode_s;
 typedef struct oyFilterNodes_s oyFilterNodes_s;
@@ -1516,6 +1513,14 @@ typedef struct oyFilterPlug_s oyFilterPlug_s;
 typedef struct oyFilterPlugs_s oyFilterPlugs_s;
 typedef struct oyFilterSocket_s oyFilterSocket_s;
 typedef struct oyPixelAccess_s oyPixelAccess_s;
+typedef struct oyConversion_s oyConversion_s;
+typedef struct oyNamedColour_s oyNamedColour_s;
+typedef struct oyNamedColours_s oyNamedColours_s;
+typedef struct oyIcon_s oyIcon_s;
+typedef struct oyCMMInfo_s oyCMMInfo_s;
+typedef struct oyCMMapiFilters_s oyCMMapiFilters_s;
+typedef struct oyCMMapis_s oyCMMapis_s;
+typedef struct oyUiHandler_s oyUiHandler_s;
 
 /**
  *  type:
@@ -1945,14 +1950,14 @@ const char * oyFilterCore_WidgetsGet ( oyFilterCore_s    * filter,
  *  @since   2008/07/08 (Oyranos: 0.1.8)
  *  @date    2009/02/28
  */
-typedef struct {
+struct  oyFilterCores_s {
   oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTER_CORES_S */ 
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
   oyStructList_s     * list_;          /**< @private the list data */
-} oyFilterCores_s;
+};
 
 OYAPI oyFilterCores_s * OYEXPORT
                  oyFilterCores_New   ( oyObject_s          object );
@@ -2588,7 +2593,7 @@ digraph G {
  *  @since   2008/06/08 (Oyranos: 0.1.8)
  *  @date    2008/06/08
  */
-typedef struct {
+struct oyConversion_s {
   oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONVERSION_S*/
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -2596,7 +2601,7 @@ typedef struct {
 
   oyFilterNode_s     * input;          /**< the input image filter; Most users will start logically with this pice and chain their filters to get the final result. */
   oyFilterNode_s     * out_;           /**< @private the Oyranos output image. Oyranos will stream the filters starting from the end. This element will be asked on its first plug. */
-} oyConversion_s;
+};
 
 oyConversion_s *   oyConversion_New  ( oyObject_s          object );
 oyConversion_s  *  oyConversion_CreateBasicPixels (
@@ -2677,7 +2682,7 @@ int                oyConversion_ChangeRectangle (
  *
  *  TODO: needs to be Xatom compatible
  */
-typedef struct {
+struct oyNamedColour_s {
   oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_NAMED_COLOUR_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -2687,7 +2692,7 @@ typedef struct {
   char               * blob_;          /**< @private advanced : CGATS / ICC ? */
   size_t               blob_len_;      /**< @private advanced : CGATS / ICC ? */
   oyProfile_s        * profile_;       /**< @private ICC */
-} oyNamedColour_s;
+};
 
 oyNamedColour_s*  oyNamedColour_Create( const double      * chan,
                                         const char        * blob,
@@ -2751,13 +2756,13 @@ const char   *    oyNamedColour_GetName( oyNamedColour_s * s,
  *
  *  TODO: make the object non visible
  */
-typedef struct {
+struct oyNamedColours_s {
   oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_NAMED_COLOURS_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /*!< @private base object */
   oyStructList_s     * list_;          /**< @private colour list */
-} oyNamedColours_s;
+};
 
 oyNamedColours_s* oyNamedColours_New ( oyObject_s       object );
 oyNamedColours_s* oyNamedColours_Copy( oyNamedColours_s  * colours,
@@ -2793,7 +2798,7 @@ void              oyCopyColour       ( const double      * from,
  *
  *  Since: 0.1.8
  */
-typedef struct {
+struct oyIcon_s {
   oyOBJECT_e       type;               /*!< struct type oyOBJECT_ICON_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -2802,7 +2807,7 @@ typedef struct {
   int              height;             /**< */
   float          * data;               /*!< should be sRGB matched */
   char           * file_list;          /*!< colon ':' delimited list of icon file names, SVG, PNG */
-} oyIcon_s;
+};
 
 typedef struct oyCMMapi_s oyCMMapi_s;
 
@@ -2836,7 +2841,7 @@ typedef struct oyCMMapi_s oyCMMapi_s;
  *  @since   2007/12/05 (Oyranos: 0.1.8)
  *  @date    2008/12/23
  */
-typedef struct {
+struct oyCMMInfo_s {
   oyOBJECT_e       type;               /*!< struct type oyOBJECT_CMM_INFO_S */
   oyStruct_Copy_f      copy_;          /**< copy function; zero for static data */
   oyStruct_Release_f   release_;       /**< release function; zero for static data */
@@ -2855,7 +2860,7 @@ typedef struct {
   oyCMMapi_s     * api;                /**< must be casted to a according API, zero terminated list */
 
   oyIcon_s         icon;               /*!< zero terminated list of a icon pyramid */
-} oyCMMInfo_s;
+};
 
 OYAPI oyCMMInfo_s * OYEXPORT
                  oyCMMInfo_New       ( oyObject_s          object );
@@ -2875,14 +2880,14 @@ OYAPI int  OYEXPORT
  *  @since   2009/01/30 (Oyranos: 0.1.10)
  *  @date    2009/01/30
  */
-typedef struct {
+struct oyCMMapiFilters_s {
   oyOBJECT_e           type_;          /**< struct type oyOBJECT_CMM_API_FILTERS_S */ 
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
   oyStructList_s     * list_;          /**< the list data */
-} oyCMMapiFilters_s;
+};
 
 OYAPI oyCMMapiFilters_s * OYEXPORT
                  oyCMMapiFilters_New ( oyObject_s          object );
@@ -2917,14 +2922,14 @@ OYAPI int  OYEXPORT
  *  @since   2010/06/25 (Oyranos: 0.1.10)
  *  @date    2010/06/25
  */
-typedef struct {
+struct oyCMMapis_s {
   oyOBJECT_e           type_;          /**< struct type oyOBJECT_CMM_APIS_S */ 
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
 
   oyStructList_s     * list_;          /**< the list data */
-} oyCMMapis_s;
+};
 
 OYAPI oyCMMapis_s * OYEXPORT
            oyCMMapis_New             ( oyObject_s          object );
@@ -3032,7 +3037,7 @@ typedef int  (*oyUiHandler_f)        ( oyPointer           cur,
  *  @since   2009/08/30 (Oyranos: 0.1.10)
  *  @date    2009/11/10
  */
-typedef struct {
+struct oyUiHandler_s {
   oyOBJECT_e           type;           /**< oyOBJECT_UI_HANDLER_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -3052,7 +3057,7 @@ typedef struct {
    *  pick there the xf:label and xf:value elements.
    */
   char              ** element_searches;
-} oyUiHandler_s;
+};
 
 char *       oyXFORMsFromModelAndUi  ( const char        * data,
                                        const char        * ui_text,
