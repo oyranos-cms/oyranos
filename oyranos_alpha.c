@@ -14112,7 +14112,6 @@ int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
  *                                     - 0 assign the rows without copy
  *                                     - 1 do copy into the array
  *                                     - 2 allocate empty rows
- *                                     - 3 only skelet, no copy/assignment
  *  @param[out]    array               array to fill; If array is empty, it is
  *                                     allocated as per allocate_method
  *  @param[in]     array_rectangle     the array rectangle in samples
@@ -14147,11 +14146,20 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   int array_width, array_height;
   double a_orig_width = 0, a_orig_height = 0;
   oyAlloc_f allocateFunc_ = 0;
+  unsigned char * line_data = 0;
+  int i,j, height;
+  size_t len, wlen;
 
   if(!image)
     return 1;
 
   oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
+
+  if( allocate_method < 0 || allocate_method > 2 )
+  {
+    WARNc1_S("allocate_method not allowed: %d", allocate_method )
+    error = 1;
+  }
 
   data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
   data_size = oySizeofDatatype( data_type );
@@ -14200,6 +14208,31 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                               array_width * data_size,
                               allocateFunc_,
                               error = 1; break );
+        } else if(allocate_method == 0)
+        {
+          for( i = 0; i < array_height; )
+          {
+            if(!a->array2d[i])
+            {
+              height = is_allocated = 0;
+              line_data = image->getLine( image, i, &height, -1,
+                             &is_allocated );
+              for( j = 0; j < height; ++j )
+              {
+                if( i + j >= array_height )
+                  break;
+
+                ay = i + j;
+
+                a->array2d[ay] = 
+                    &line_data[j*data_size * array_width];
+              }
+            }
+
+            i += height;
+
+            if(error) break;
+          }
         }
       }
     }
@@ -14230,13 +14263,8 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     }
   }
 
-  if(!error && allocate_method != 3)
-  {
   if(image->getLine)
   {
-    unsigned char * line_data = 0;
-    int i,j, height;
-    size_t len, wlen;
     oyPointer src, dst;
 
     if(a->oy_)
@@ -14244,15 +14272,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     len = (array_roi_pix.width + array_roi_pix.x) * data_size;
     wlen = image_roi_pix.width * data_size;
 
-    if(allocate_method == 2 && !*array)
-    for( i = 0; i < image_roi_pix.height; ++i )
-    {
-      if(!a->array2d[i])
-            oyAllocHelper_m_( a->array2d[i],
-                              unsigned char, len,
-                              allocateFunc_,
-                              error = 1; break );
-    } else if(allocate_method != 2)
+    if(allocate_method != 2)
     for( i = 0; i < image_roi_pix.height; )
     {
       height = is_allocated = 0;
@@ -14272,34 +14292,13 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                        + OY_ROUND(image_roi_pix.x))
                       * data_size];
 
-        if(dst != src && a->own_lines != oyNO)
+        if(dst != src)
           error = !memcpy( dst, src, wlen );
-        else
-        {
-          a->array2d[ay] = 
-                    &line_data[j*data_size * OY_ROUND(a->data_area.width)];
-
-          a->array2d[ay] = &a->array2d[i+j]
-                                      [data_size * OY_ROUND(image_roi_pix.x)];
-        }
       }
 
       i += height;
 
       if(error) break;
-    }
-
-    /* allocate a complete array */
-    if(allocate_method != 0 && !*array)
-    for( ; i < a_orig_height; ++i )
-    {
-      ay = i;
-
-      if(!a->array2d[ay])
-            oyAllocHelper_m_( a->array2d[ay], 
-                              unsigned char, len,
-                              allocateFunc_,
-                              error = 1; break );
     }
 
   } else
@@ -14311,7 +14310,6 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   {
     WARNc_S("image->getTile  not yet supported")
     error = 1;
-  }
   }
 
   if(error)
@@ -21030,8 +21028,8 @@ int                oyConversion_RunPixels (
   if(error <= 0)
     oyRectangle_SetByRectangle( &roi, pixel_access->output_image_roi );
 
-#if 0  
-  if(error <= 0)
+#if 0
+  if(error <= 0 && !pixel_access->array)
   {
     clck = oyClock();
     result = oyImage_FillArray( image_out, &roi, 0,
