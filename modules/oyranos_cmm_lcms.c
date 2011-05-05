@@ -1720,6 +1720,13 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     error = lcmsCMMTransform_GetWrap_( node->backend_data, &ltw );
   }
 
+  if(ltw && !ticket->array)
+  {
+    lcms_msg( oyMSG_ERROR,0, OY_DBG_FORMAT_ " no ticket->array",
+             OY_DBG_ARGS_);
+    error = 1;
+  }
+
   /* now do some position blind manipulations */
   if(ltw)
   {
