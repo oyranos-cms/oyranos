@@ -21028,7 +21028,6 @@ int                oyConversion_RunPixels (
   if(error <= 0)
     oyRectangle_SetByRectangle( &roi, pixel_access->output_image_roi );
 
-#if 0
   if(error <= 0 && !pixel_access->array)
   {
     clck = oyClock();
@@ -21039,7 +21038,6 @@ int                oyConversion_RunPixels (
     DBG_NUM1_S("oyImage_FillArray(): %g", clck/1000000.0 );
     error = ( result != 0 );
   }
-#endif
 
   /* run on the graph */
   if(error <= 0)
