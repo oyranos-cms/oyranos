@@ -14180,11 +14180,11 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   if(!error &&
      (!a ||
       (a && ( array_width > a->data_area.width ||
-              array_height > a->data_area.height )))
+              array_height > a->data_area.height ))) &&
+     array_width > 0 && array_height > 0
     )
   {
     oyArray2d_Release( array );
-
     if(!(array_roi_pix.width && array_roi_pix.height))
       /* array creation is not possible */
       error = -1;
@@ -14193,6 +14193,10 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     {
       a = oyArray2d_Create_( array_width, array_height,
                              data_type, obj );
+
+      if(a->oy_)
+        allocateFunc_ = a->oy_->allocateFunc_;
+
       error = !a;
       if(!error)
       {
@@ -14245,7 +14249,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     if(error <= 0) error = -1;
   }
 
-  if( !error )
+  if( !error && a )
   {
     /* shift array focus to requested region */
     oyArray2d_SetFocus( a, &array_roi_pix );
@@ -14263,12 +14267,12 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     }
   }
 
-  if(!error && image->getLine)
+  if(a && !error)
+  {
+  if(image->getLine)
   {
     oyPointer src, dst;
 
-    if(a->oy_)
-      allocateFunc_ = a->oy_->allocateFunc_;
     len = (array_roi_pix.width + array_roi_pix.x) * data_size;
     wlen = image_roi_pix.width * data_size;
 
@@ -14302,14 +14306,15 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     }
 
   } else
-  if(!error && image->getPoint)
+  if(image->getPoint)
   {
     WARNc_S("image->getPoint  not yet supported")
   } else
-  if(!error && image->getTile)
+  if(image->getTile)
   {
     WARNc_S("image->getTile  not yet supported")
     error = 1;
+  }
   }
 
   if(error)
