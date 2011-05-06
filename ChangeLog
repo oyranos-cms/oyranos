@@ -1,3 +1,919 @@
+Version 0.3.0
+
+Kai-Uwe Behrmann (350):
+	* [build]: avoid circular RPM requirement
+	* [build]: own the new "object" header directory
+	* [alpha]: oyConversion_Change -> oyPixelAccess_Ch.
+	* [lcms]: copy array for new tickets
+	* [alpha]: give structs a name
+	* [alpha]: ignore array allocation without size
+	* [lcms]: add missed array warning
+	* [lcm2]: notice missing array only with transform
+	* [alpha]: check errors in oyImage_FillArray()
+	* [alpha]: care about missed ticket array
+	* [alpha]: keep ditry ticket array
+	* [alpha]: split allocation and filling
+	* [alpha]: expose oyArray2d_SetFocus()
+	* [alpha]: compile fix for array variable
+	* [oyra]: move array back to initial position
+	* [test]: add various array testing
+	* [alpha]: fix oyArray2d_SetFocus() shifting
+	* [core]: use for rounding of floats
+	* [conf]: update date
+	* [alpha]: fix oyImage_ReadArray() rectangles
+	* [alpha]: fix wrong memory release
+	* [alpha]: partitial revert #0728c9cd
+	* [test]: free image data
+	* [alpha]: omit array comparision
+	* [oydi]: be more explicite with debug messages
+	* [oydi]: rename rectangles
+	* [exmpl]: silence debug output
+	* [exmpl]: clip pixel rectangle
+	* [test]: remove start position reset
+	* [alpha]: adjust debug messages
+	* [oyra]: allign input and output rectangles
+	* [lcm2]: add error message for missed ticket array
+	* [oyra]: use same output like input region
+	* [alpha]: dont exceed array width
+	* [exmpl]: simplify the OpenGL widgets drawing
+	* [exmpl]: support threading in image_display
+	* [test]: small lower right output rectangle RoI
+	* [alpha]: oyFilterPlug_ImageRootRun() uses ticket
+	* [alpha]: add oyArray2d_SetFocus()
+	* [alpha]: oyPixelAccess_s::start_xy is now double
+	* [oyra]: scale origin to local image coordinates
+	* [oydi]: remove unneeded variables
+	* [test]: fix one pixel rectangle test
+	* [alpha]: add oyConversion_ChangeRectangle()
+	* [alpha]: partitial revert #d0e01567
+	* [test]: Region of Image conversion
+	* [test]: omit iterator testing
+	* [alpha]: partitially revert 542fa3a1
+	* [alpha]: more lightwight array row referencing
+	* [alpha]: reference array rows in filter calls
+	* [alpha]: omit forward iteration
+	* [alpha]: fix array assignment without copy
+	* [alpha]: change oyConversion_GetOnePixel() API
+	* [test]: check OnePixel
+	* [oyX1]: print xcalib system call
+	* [build]: require more lightweight icc-profiles
+	* [exmpl]: add "--set" option to oymd5icc
+	* [alpha]: write profile ID
+	* [core]: improve error messages for profile ID
+	* [alpha]: select profile ID in oyProfile_GetMD5()
+	* [core]: probe file access in oyIsFileFull_()
+	* [alpha]: export error from oyProfile_FromMemMove_
+	* [i18n]: update deutsch
+	* [exmpl]: add iterate over profiles to cli docu
+	* [sources]: fix md5 hash check
+	* [sources]: fix return value
+	* [lraw]: render at half size
+	* [lraw]: omit debug image
+	* [lraw]: debug message for obtained profile
+	* [alpha]: add missing icc_profile
+	* [lraw]: image pass through of config options
+	* [oyRE]: add meta tag
+	* [lraw]: clean code
+	* [docu]: describe new lraw options
+	* [oyRE]: add namespaces
+	* [lraw]: fix namespaces
+	* [alpha]: support number input for meta tag
+	* [alpha]: support n names spaces for meta tag
+	* [oyRE]: fix getting context variable
+	* [alpha]: check before freeing pointer
+	* [sources]: omit Elektra makro
+	* [alpha]: fix symbol name
+	* [alpha]: add oyConversion_GetNode()
+	* [lcms]: V4 value range for Cmyk
+	* [lcm2]: add module specific defaults to hash
+	* [lcm2]: add core options to hash text
+	* [alpha]: correct previous commit
+	* [alpha]: improve warnings for BasicPixels
+	* [lcms]: use V4 float value ranges
+	* [lcm2]: rename layout funtion
+	* [alpha]: oyConversion_CreateBasicPixelsFromBuffers
+	* [alpha]: swap oyConversion_FromBuffers() args
+	* [source]: revert previous #18564c6
+	* [sources]: extent the oyOptions_SetFromText() API
+	* [sources]: more verbose error message
+	* [sources]: improved check in oyStruct_CheckType
+	* [core]: switch DevS to ICC types
+	* [exmpl]: fix typo
+	* [oyra]: fix crash with missed image extension
+	* [core]: add dummy oyFilterMessageFunc
+	* [sources]: copy all in oyOptions_SetOpts()
+	* [alpha]: add oyConversion_FromBuffers()
+	* [lcm2]: add "proofing_effect"
+	* [test]: check "create_profile.proofing_effect"
+	* [lcms]: add "proofing_effect" creation
+	* [alpha]: free unused memory in oyOptions_Handle
+	* [alpha]: let oyOptions_Handle cover more modules
+	* [oyX1]: shrink search for optins command
+	* [i18n]: update deutsch(de)
+	* [docu]: fix typo
+	* [conf]: sync base script with ICC Examin
+	* [exmpl]: place verbosity on request
+	* [exmpl]: fix parsing of multiple arguments
+	* [exmpl]: add --use_gl to image_display
+	* [exmpl]: add Oy_Fl_Shader_Box
+	* [API]: oyFilterMessageFunc -> oyMessageFunc
+	* [alpha]: check for new default Cmyk profile
+	* [lcms]: fix proofing bug
+	* [sources]: fix oyPointer_s string release warnings
+	* [sources]: move Pointer to objects_generic
+	* [templates]: remove date and version per object
+	* [templates]: document file date, not file start
+	* [exmpl]: add Oy_Fl_Box::observeICC()
+	* [exmpl]: format Oy_Widget::observeICC()
+	* [sources]: no static only strings in oyPointer
+	* [core]: add internal oyStringFree_()
+	* [sources]: release inheritance array
+	* [sources]: add warnings around static inheritance
+	* [core]: fix oyStruct_GetInfo output
+	* [sources]: rename oyCMMptr_s to oyPointer_s III
+	* [sources]: complete previous commit db257d53
+	* [sources]: rename oyCMMptr_s to oyPointer_s
+	* [docu]: undocument deviceSettingsType
+	* [docu]: update doxygen files
+	* [build]: update RPM for liboyranos_object
+	* [SANE]: adapt to oyCMMapiGetText_f changes
+	* [test]: add compile test for liboyranos_object
+	* [core]: add missing string for object enum
+	* [core]: switch to new openicc-data set for Cmyk
+	* [qarz]: adapt to oyCMMapiGetText_f changes
+	* [oyRE]: oyCMMapiGetText_f + oyConnectorImaging_s
+	* [exmpl]: detect colour server only with NCR
+	* [sources]: fix member copy declaration
+	* [templates]: make contructor obligatory
+	* [lcm2]: add inheritance to oyConnectorImaging_s
+	* [alpha]: add oyObjectInfoStatic_s
+	* [sources]: add oyStruct_CheckType()
+	* [templates]: set types in order of inheritance
+	* [templates]: adapt oyObject_s functions #696bd6
+	* [templates]: adapt oyObject_Ref to oyObject_s
+	* [templates]: trace inheritance in oyObject_s
+	* [alpha]: remove check for copy object
+	* [alpha]: fix crash for missed rendering context
+	* [templates]: break oyObject_s_ struct
+	* [exmpl]: fix crash in image_dispay class
+	* [CUPS]: adapt oyCMMapiGetText_f in more modules
+	* [test]: fix compile error for oyCMMapiGetText_f
+	* [exmpl]: adapt plugins to compile again
+	* [alpha]: remove oyName_e from oyImageConnector_s
+	* [alpha]: add image connector text helpers
+	* [alpha]: remove private class headers
+	* [templates]: add oyXXXs_Sort() and _Clear()
+	* [templates]: clean old macro
+	* [sources]: add oyCMMptr_SetSize()
+	* [alpha]: fix compiler warnings
+	* [sources]: add oyOption_GetValueString()
+	* [alpha]: change the oyCMMGetText_f API
+	* [sources]: make oyName_s opaque
+	* [alpha]: remove oyObject_s code
+	* [test]: switch to new Connector API
+	* [sources]: add oyObject_CopyNames()
+	* [alpha]: add oyConnector_s member access APIs
+	* [alpha]: remove oyConnector_s::oyName_s type
+	* [build]: swap build order for object and core
+	* [test]: fix crash after non loaded library
+	* [conf]: set complete library version on Darwin
+	* [core]: apply file filter not on whole path
+	* [conf]: add -gdwarf-2 for debugging in Xcode
+	* [alpha]: add module version debug info for failed check
+	* [test]: fix crash for no loaded module
+	* [exmpl]: avoid internal APIs
+	* [alpha]: add oyProfile_GetMd5()
+	* [sources]: add oyStruct_GetAllocator()
+	* [qarz]: compile fixes for hidden internal APIs
+	* [docu]: lcms/oyIM move from oyName to oyOption
+	* [sources]: move oyName_s to internal structs
+	* [sources]: add oyOption_GetFlags()
+	* [build]: verbose install libraries
+	* [exmpl]: show move cursor in image_display
+	* [test]: switch back to oyConfig_EraseFromDB()
+	* [alpha]: oyConfig_AddDBData() accepts key path
+	* [build]: refresh no generated code after clean
+	* [sources]: move oyOptions_SaveToDB() out
+	* [test]: add test for oyRegistrationEraseFromDB()
+	* [alpha]: change oyOptions_SaveToDB() API
+	* [alpha]: add oyRegistrationEraseFromDB()
+	* [test]: check oyConfig_EraseFromDB()
+	* [alpha]: honour object arg in oyOptions_ForFilter
+	* [test]: fix compile warning
+	* [sources]: initialise variable for oyStructList_s
+	* [sources]: fix some compiler warnings
+	* [alpha]: fix copying of oyProfiles_s
+	* [sources]: fix wrong object deallocation
+	* [core]: fix string list end
+	* [oyRE]: better format camera model list
+	* [alpha]: lessen module API warning
+	* [exmpl]: update modules to 0.3.0
+	* [API]: require module_api versions >= 0.3.0
+	* [conf]: bump version to 0.3.0
+	* [conf]: add liboyranos_object to pkg-config
+	* [sources]: remove smartnes in oyHash_IsOf_()
+	* [sources]: add oyHash_GetType()
+	* [alpha]: adapt to to changed oyCMMptr_New_() API
+	* [templates]: fix outdated object pointer
+	* [build]: use oyAPIGenerator out of source tree
+	* [docu]: describe how to build oyAPIgenerator
+	* [build]: generate sources
+	* [docu]: move files to generator
+	* [templates]: fix C++ guards
+	* [build]: statical library
+	* [sources]: add oyThreadLockingSet()
+	* [SANE]: adapt to oyBlob_s and oyCMMptr_s APIs
+	* [oyX1]: adapt to oyBlob_s API changes
+	* [API]: add oyBlob_s and oyHash_s
+	* [SANE]: adapt to changed object API
+	* [core]: include missed internal header
+	* [API]: add oyOption_s and other core objects
+	* [API]: add object oyName_s
+	* [core]: remove string function macros
+	* [core]: build always string function wrappers
+	* [build]: fix make deb
+	* [build]: fix out of source tree compiling
+	* [oyRE]: fix compile issue
+	* [API]: add generated code for oyStruct_s
+	* [API]: add object oyStruct_s
+	* [build]: install new liboyranos_object
+	* [sources]: sync object_core with main git
+	* [docu]: fix function modification date
+	* [build]: add new module library target
+	* [sources]: update Configs to current git
+	* [build]: change variable reference
+	* [sources]: remove oyHash_CopyRef_
+	* [generator]: update modified sourses
+	* [docu]: add license file - new BSD
+	* [docu]: update build instructions and README
+	* [build]: compile generator from top makefile
+	* [sources]: make Config visible again
+	* [sources]: fix some first Profile compile issues
+	* [build]: link dynamical
+	* [sources]: update Config to actual git
+	* [docu]: enhance object description and fix dates
+	* [build]: fix minor issues
+	* [build]: explicitely linke libraries
+	* [build]: link against all basic libraries
+	* [build]: in old directory layout
+	* [generator]: move to own directory
+	* [build]: use simple makefile
+	* [build]: restructure diretories
+	* [sources]: update to two funcs in core
+	* [build]: compress package with bzip2
+	* [build]: link against local lib for oforms
+	* [build]: fix pkg-config file to new library
+	* [build]: bundle and clean test_core
+	* [build]: update spec to new liboyranos_core
+	* [build]: link against core
+	* [sources]: add oyranos_core.h
+	* [templates]: add oyranos_object.templates.c
+	* [sources]: header adjustments to fix compilation
+	* [templates]: add static oyObject_e enum
+	* [cmake]: compile oyStruct_s.c
+	* [saources]: add more value APIs
+	* [sources]: compile Elektra APIs if requested
+	* [sources]: remove non core API headers
+	* [templates]: add oyBlob_s data accessors
+	* [core]: move version API to core
+	* [core]: move internaly to core headers
+	* [alpha]: add Blob accessor functions
+	* [core]: split core code out of io
+	* [API]: no object reference in messaging APIs
+	* [core]: move oyExportResetSentinel_ to core
+	* [core]: fix compile warning
+	* [core]: fix linking with liboyranos_core.a
+	* [oyX1]: support cloned outputs
+	* [core]: show only existing messages
+	* [core]: split core sentinel functions out
+	* [core]: move basic object info provider to core
+	* [build]: fix test_core target
+	* [build]: install liboyranos_core.a
+	* [core]: fix long messages
+	* [CUPS]: fix string allocation size
+	* [core]: add oyMessageFormat()
+	* [core]: add oyStruct_GetInfo()
+	* [build]: move text functions out of core
+	* [core]: build liboyranos_core.a
+	* [core]: split core out of CM functions
+	* [core]: remove old XML based module API
+	* [includes]: add Oyranos core includes
+	* [templates]: update data
+	* [templates]: add missed headers
+	* [templates]: add missed oyTextboolean_()
+	* [templates]: deactiave Filter function
+	* [templates]: fix template name
+	* [templates]: readd enum to string function
+	* [templates]: substiture private function
+	* [templates]: fix compiler warning
+	* [templates]: not namespaces in C compiled lib
+	* [templates]: fix compiler warning
+	* [templates]: fix foreign member access
+	* [sources]: add StructList::parent_type_ public
+	* [sources]: print object type
+	* [sources]: fix compiler warning
+	* [sources]: move code up in object hierarchy
+	* [sources]: access Option::source
+	* [sources]: fix compiler errors
+	* [sources]: make oyObject_UnRef() public
+	* [sources]: CMMptr fix typos, exchange macro
+	* [sources]: add member accessors
+	* [cmake]: add debug flags
+	* [sources]: sort non object code out
+	* [conf]: sync with ICC Examin
+	* [build]: install libraw test file
+	* [conf]: correct libraw testing
+	* [docu]: update versions and requirements
+	* [docu]: fix doxygen version
+	* [conf]: test more careful libraw
+	* [conf]: use -fPIC only on 64bit builds
+	* [exmpl]: fix example compilation
+	* [build]: add libraw-devel-static to spec
+	* [conf]: remove oyranos-icc
+	* [build]: add forms package and lraw + oyRE
+	* [docu]: ifx some doxygen warnings
+	* [build]: switch to oyranos-xforms-modules name
+	* [conf]: search for libraw.pc
+	* [build]: properly install oFORMS tools
+	* [build]: install qcmsevents png icon
+	* [build]: switch to libraw.pc
+	* [conf]: update qcmsevents desktop file
+	* [docu]: more requirements details
+	* [alpha]: add oyConversion_GetGraph()
+	* [alpha]: cache generated fallback profile
+	* [oyX1]: relase resources
+	* [oyX1]: embed meta tag in generated ICC profile
+	* [oyX1]: generate more unique profile name
+	* [exmpl]: simplify code
+	* [core]: make profiling instrumentation available
+	* [conf]: bump version
+	* [oyX1]: fix compile issue with XRandR headers
+	* [docu]: add Yiannis Belias to AUTHORS
+	* [docu]: strongly require OpenICC-data
+	* [docu]: fix typo
+
+Nicolas Chauvet (1):
+	* [conf]: apply Fedora patch for pkg-config
+
+Stephen Kelly (2):
+	Use GRANTLEE_PLUGIN_PATH instead of /usr/local/lib
+	Delete engine pointer.
+
+Yiannis Belias (553):
+	* Create skeleton files for oyFilterPlugs_s
+	* Create skeleton files for oyFilterPlugs_s
+	* Create skeleton files for oyFilterSocket_s
+	[generator] Ignore *~ files
+	* Create skeleton files for oyConnector_s
+	[generator] Fix bug of wrong input name to render()
+	[generator] Return the new filename of rendered template
+	[generator] Print New/Old class status
+	[generator] Automaticly create the *.private_custom_definitions.c
+	[generator] Add a ClassTemplates::getNewClasses() member function
+	[generator] Make debug message less scary :)
+	[cmake] Add ClassTemplates.cc to build system
+	[generator] Move previous functionality of main()
+	[generator] Add the interface of new ClassGenerator class
+	[doc] Update TODO
+	[generator] Remove unused code
+	[generator] Make comment more explicit
+	[templates] Add include files to CMMapi4_s_.h
+	* Create skeleton files for oyFilterNode_s
+	[templates] Add include files to oyCMMapi3_s_.h
+	[templates] Add 2 include files to oyranos_module.h
+	* Create skeleton files for oyFilterCore_s
+	[doc] Update README
+	[templates] Fix blank line on top of file
+	[cmake] Update CMakeLists.txt file to better configure
+	[generator] Fix the getTemplateParents() function
+	[templates] Print the template file inheritance graph in the source file header
+	[generator] Make the standard dirs global
+	[doc] Update TODO
+	[review] [sources] Adopt oyHash_GetPointer_() to "hidden struct" interface.
+	[review] [sources] Adopt oyHash_SetPointer_() to "hidden struct" interface.
+	[review] [sources] Adopt oyHash_IsOf_() to "hidden struct" interface.
+	[review] [sources] Adopt oyHash_Get_() to "hidden struct" interface.
+	[review] [sources] Adopt oyHash_CopyRef_() to "hidden struct" interface.
+	[sources] Import private methods for oyHash_s
+	[review] [sources] Implement the destructor for oyHash_s
+	[review] [sources] Implement the copy constructor for oyHash_s
+	[templates] Enable customize if branch in oyClass_Copy_()
+	[review] [sources] Implement the constructor for oyHash_s
+	[templates] Fix typo
+	[sources] Fix export declarations of public api for oyProfile_s
+	[review] [sources] Adopt oyProfile_DeviceGet() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_GetFileName() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_AddTagText() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_TagReleaseAt() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_TagMoveIn() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_GetTagCount() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_GetTagById() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_GetTagByPos() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_GetMem() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_GetText() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_Equal() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_GetID() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_GetChannelName() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_GetChannelNames() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_SetChannelNames() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_SetSignature() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_GetSignature() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_GetChannelsCount() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_FromMD5() to "hidden struct" interface.
+	[sources] Remove duplicate function definition
+	[review] [sources] Adopt oyProfile_FromSignature() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_FromMem() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_FromFile() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_FromStd() to "hidden struct" interface.
+	[templates] Include files in oyranos_generic_internal.h
+	[templates] oyClass_s_.c of group objects_generic includes oyranos_generic_internal.h
+	[templates] Add 2 new files for Generic Objects API
+	[templates] Include files in oyProfile_s.h
+	[templates] Remove include file
+	[templates] oyClass_s_.c of group module_api includes oyranos_module_internal.h
+	[templates] New Module APIs private include file.
+	[templates] Include icc34.h in oyProfile_s
+	[sources] Import public methods for oyProfile_s
+	[templates] Add Profile API doxygen description
+	[templates] Add oyCacheListGetEntry_() to oyranos_object_internal.h and remove oyCMMsGetFilterApis_()
+	[templates] Include oyranos_icc.h in oyProfile_s_.c
+	[sources] Fix missing oyProfileTag_s cast
+	[review] [sources] Adopt oyProfile_WriteTagTable_() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_WriteTags_() to "hidden struct" interface.
+	[templates] Include oyProfileTag_s_.h in oyProfile_s_.c
+	[sources] Add some defines to oyProfile.h
+	[review] [sources] Adopt oyProfile_WriteHeader_() to "hidden struct" interface.
+	[review] [sources] Rename oyProfile_DeviceAdd() to oyProfile_DeviceAdd_()
+	[review] [sources] Adopt oyProfile_DeviceAdd() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_TagReleaseAt_() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_TagMoveIn_() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_GetTagCount_() to "hidden struct" interface.
+	[review] [sources] Adopt GetTagByPos_() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_GetFileName_r() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_Hashed_() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_Match_() to "hidden struct" interface.
+	[templates] Include oyStructList_s_.h in Profile_s_.c
+	[templates] Include oyHash_s_.h instead of oyHash_s.h
+	[review] [sources] Adopt oyProfile_FromFile_() to "hidden struct" interface. [Part II]
+	[templates] Include oyHash_s.h in Profile_s_.c
+	* Create skeleton files for oyHash_s
+	[review] [sources] Adopt oyProfile_ToFile_() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_TagsToMem_() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_FromFile_() to "hidden struct" interface.
+	[review] [sources] Adopt oyProfile_FromMemMove_() to "hidden struct" interface.
+	[templates] Add include files to oyProfile_s_.h
+	[templates] Add oySTATUS_e to oyranos_object.h
+	[templates] Add icc34.h to oyProfileTag_s_.h
+	* Create skeleton files for oyProfileTag_s
+	[doc] Update README
+	[cmake] Look in the source dir for include files, too
+	[doc] Update TODO
+	[sources] Import private methods for oyProfile_s
+	[sources] Fix missing _ in allocateFunc_
+	[templates] Include oyranos_profile.h in oyProfile_s.h
+	[templates] Add a new header file for the profiles API group
+	[review] [sources] Implement the destructor for oyProfile_s
+	[review] [sources] Implement the copy constructor for oyProfile_s
+	[review] [sources] Implement the constructor for oyProfile_s
+	[templates] Include files in oyProfile_s_.h
+	[templates] Add objects_profile in oyOBJECT_e
+	* Create skeleton files for oyProfile_s
+	[review] [sources] Adopt oyDeviceSelectSimiliar() to "hidden struct" interface.
+	[templates] Include files in oyranos_devices.c
+	[templates] Add OY_ERR macro to oyranos_devices_internal.h
+	[templates] Include "oyranos_object_internal.h" in oyranos_devices.c
+	[review] [sources] Adopt oyDevicesGet() to "hidden struct" interface.
+	[templates] Add include files in oyranos_devices.[ch]
+	[sources] Adopt arguments of private functions to private classes in oyOptions_s
+	[sources] Add 2 private functions to devices_handling group
+	[templates] Remove from oyranos_devices_internal.* 2 functions.
+	[doc] Update TODO
+	[review] [sources] Adopt oyDeviceProfileFromDB() to "hidden struct" interface.
+	[review] [sources] Adopt oyDeviceSetProfile() to "hidden struct" interface.
+	[review] [sources] Adopt oyDeviceAskProfile2() to "hidden struct" interface.
+	[review] [sources] Adopt oyDeviceGetInfo() to "hidden struct" interface.
+	[review] [sources] Adopt oyDeviceUnset() to "hidden struct" interface.
+	[review] [sources] Adopt oyDeviceSetup() to "hidden struct" interface.
+	[review] [sources] Adopt oyDeviceBackendCall() to "hidden struct" interface.
+	[review] [sources] Adopt oyDeviceGet() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_SetDeviceTextKey_() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_SetDeviceTextKey_() to "hidden struct" interface.
+	[templates] Add oyranos_devices* to cmake
+	[templates] Import the Device API functions
+	[templates] Include <oyranos_sentinel.h> in Config_s.c
+	[templates] Add oyCMMsGetFilterApis_() to oyranos_object_internal.h
+	[tempaltes] Add include files to oyCMMapi8_s_.h
+	[templates] Include "oyCMMapi_s.h" in CMMInfo_s_.h
+	[doc] Update TODO
+	[templates] Override block in oyCMMapiFilters_MoveIn()
+	* Create skeleton files for oyCMMapiFilters_s
+	[templates] Add include files to oyConfig_s.c
+	[sources] Fix wrong pointer type
+	[review] [sources] Adopt oyConfigDomainList() to "hidden struct" interface.
+	[review] [sources] Change oyConfigs_SelectSimiliars to oyConfigs_SelectSimilars (typo)
+	[review] [sources] Adopt oyConfigs_Modify() to "hidden struct" interface.
+	[review] [sources] Adopt oyConfigs_FromDB() to "hidden struct" interface.
+	[review] [sources] Adopt oyConfigs_FromDeviceClass() to "hidden struct" interface.
+	[review] [sources] Adopt oyConfigs_FromDomain() to "hidden struct" interface.
+	[sources] Import public methods for oyConfigs_s
+	[sources] Remove duplicate function declarations
+	[review] [templates] Change the error check
+	[templates] Override block:MoveIn_Observed
+	[templates] Add missing flags to oyStructList_MoveIn
+	* Create skeleton files for oyConfigs_s
+	[templates] Add include files to oyConfig_s.h
+	[templates] Import oyRankPad struct
+	[doc] Update TODO
+	[review] [sources] Add an extra oyConfig_s constructor to replace the old non-default one
+	[review] [sources] Adopt oyRankMapCopy() to "hidden struct" interface.
+	[review] [sources] Adopt oyConfig_Get() to "hidden struct" interface.
+	[review] [sources] Adopt oyConfig_Count() to "hidden struct" interface.
+	[review] [sources] Adopt oyConfig_Find() to "hidden struct" interface.
+	[review] [sources] Adopt oyConfig_Has() to "hidden struct" interface.
+	[review] [sources] Adopt oyConfig_FindString() to "hidden struct" interface.
+	[review] [sources] Adopt oyConfig_DomainRank() to "hidden struct" interface.
+	[review] [sources] Adopt oyConfig_Compare() to "hidden struct" interface.
+	[review] [sources] Adopt oyConfig_EraseFromDB() to "hidden struct" interface.
+	[review] [sources] Adopt oyConfig_SaveToDB() to "hidden struct" interface.
+	[review] [sources] Adopt oyConfig_GetDB() to "hidden struct" interface.
+	[review] [sources] Adopt oyConfig_ClearDBData() to "hidden struct" interface.
+	[review] [sources] Adopt oyConfig_AddDBData() to "hidden struct" interface.
+	[sources] Import public methods for oyConfig_s
+	[review] [sources] Implement the destructor for oyConfig_s
+	[review] [sources] Implement the copy constructor for oyConfig_s
+	[templates] Add error checking to copy constructor
+	[review] [sources] Implement the constructor for oyConfig_s
+	* Create skeleton files for oyConfig_s
+	[sources] Import oyCMMapi10_s private typedef
+	[sources] Import oyCMMapi9_s private typedef
+	[sources] Import oyCMMapi8_s private typedefs
+	[sources] Import oyCMMapi4_s private typedefs
+	[sources] Import oyCMMapi6_s private typedef
+	[sources] Import oyCMMapi7_s private typedef
+	[templates] Import common typedef for api4&5 in oyranos_module.h
+	[sources] Import oyCMMapi5_s private typedefs
+	Move oyCMMapi_s private typedefs to CMMapi.private.h
+	* Create skeleton files for oyCMMui_s
+	[sources] Import typedefs of oyCMMobjectType_s
+	* Create skeleton files for oyCMMobjectType_s
+	[sources] Add more include files to CMMapi.private_methods_definitions.c
+	[sources] Add the oyCMMProfileTag_*_f typedefs to CMMapi3.private.h
+	[sources] Include oyCMMapi3_s_.h in CMMapi.private_methods_definitions.c
+	[templates] Add an ending CMM member in oyOBJECT_e
+	[doc] Update TODO
+	[templates] Group oyOBJECT_e members by group
+	[review] [sources] Adopt oyCMMapi3_Query_() to "hidden struct" interface.
+	[sources] Import private methods for oyCMMapi3_s
+	* Create skeleton files for oyCMMapi3_s
+	[grantlee] Fix CamelcaseToUnderscoreFilter to also work with numbers
+	[templates] Call the parent destructors
+	[templates] Call the parent copy constructors
+	[templates] Call the parent constructors
+	[generator] ClassTemplates uses a new Null ClassInfo as parent of Struct
+	[generator] Correct typo
+	[generator] oyStruct_s returns "" as parentName
+	[generator] Have the oyStruct_s class info avaliable, just in case
+	[generator] Add support for a private header file
+	[sources] Add oyRegistrationData_s private struct
+	[sources] Import and adopt oyCMMapi4_selectFilter_()
+	* Create skeleton files for oyCMMapi4_s
+	* Create skeleton files for oyCMMapi10_s
+	* Create skeleton files for oyCMMapi9_s
+	[doc] Update TODO
+	* Create skeleton files for oyCMMapi8_s
+	* Create skeleton files for oyCMMapi6_s
+	* Create skeleton files for oyCMMapi7_s
+	* Create skeleton files for oyCMMapi5_s
+	[generator] First try for getTemplateParents()
+	[templates] Intended usage of parents variable
+	[doc] Update TODO
+	[sources] Remove CMMapi members from CMMapiFilter
+	[templates] Replace Django with Qt date formatting
+	* Create skeleton files for oyCMMapiFilter_s
+	[sources] Fix "type" -> "type_"
+	[templates] Add the oyIcon_s struct to oyranos_module.h
+	[templates] Add the oyCMMGetText_f typedef to oyranos_module.h
+	[templates] Add oyCMMInfo_s_.h to CMMapi_s_.h
+	[sources] Private methods take the hidden class pointer
+	[template] Remove forgotten filter test argument
+	[grantlee] Get correctly the argument string
+	[review] [sources] Implement the destructor for oyCMMInfo_s
+	[review] [sources] Implement the copy constructor for oyCMMInfo_s
+	* Create skeleton files for oyCMMInfo_s
+	[doc] Update TODO
+	[build] Count new grantlee_extensions/ files
+	[sources] Mark CMMapi as internal and [notemplates]
+	[templates] Update last 2 occurences of deprecated enumName
+	[templates] Update to use the new "underscore" and "tr" filters
+	[grantlee] Add a new "tr" filter
+	[generator] Remove support for camel2under()
+	[templates] Include oyranos_module.h from CMMapi_s_.h
+	[templates] Add a new header file "oyranos_module.h"
+	[doc] Update TODO
+	* Rename grantlee plugin to "gsoc_extensions"
+	[templates] Load the custom extensions library
+	[grantlee] Import the camel2under() function as a filter
+	[grantlee] Add the boilerplate code for qt plugins
+	[grantlee] Include the grantlee use file
+	[grantlee] Add grantlee_extensions directory
+	[generator] Find custom grantlee plugins when run from build dir
+	[review] [sources] Adopt oyCMMapi_selectFilter_() to "hidden struct" interface.
+	[review] [sources] Adopt oyCMMapi_CheckWrap_() to "hidden struct" interface.
+	[review] [sources] Adopt oyCMMapi_Check_() to "hidden struct" interface.
+	[sources] Import private methods for oyCMMapi_s
+	* Create skeleton files for oyCMMapi_s
+	[doc] Update TODO
+	[review] [sources] Adopt oyCMMptr_ConvertData() to "hidden struct" interface.
+	[review] [sources] Adopt oyCMMptr_Set() to "hidden struct" interface.
+	[review] [sources] Adopt oyCMMptrLookUpFromText() to "hidden struct" interface.
+	[sources] Adopt oyCMMptr_Set_() to "hidden struct" interface.
+	[sources] Import public methods for oyCMMptr_s
+	[review] [sources] Adopt oyCMMptr_Set_() to "hidden struct" interface.
+	[sources] Import private methods for oyCMMptr_s
+	[review] [sources] Implement the destructor for oyCMMptr_s
+	[review] [sources] Implement the copy constructor for oyCMMptr_s
+	[review] [sources] Implement the constructor for oyCMMptr_s
+	* Create skeleton files for oyCMMptr_s
+	[templates] Use the new underscores filter
+	[doc] Update TODO
+	[sources] Ifdef oyOption_SetValueFromDB() to be used when elektra is imported
+	[sources] Fix compile error: use the private Blob class
+	[templates] Add oyBlob_s private header to oyOption_s.c
+	[templates] Include the public class header from the private class header.
+	[review] [sources] Adopt oyBlob_SetFromStatic() to "hidden struct" interface.
+	[review] [sources] Adopt oyBlob_SetFromData() to "hidden struct" interface.
+	[sources] Import public methods for oyBlob_s
+	[review] [sources] Implement the destructor for oyBlob_s
+	[review] [sources] Implement the copy constructor for oyBlob_s
+	[review] [sources] Implement the constructor for oyBlob_s
+	[templates] Fix logical error
+	Create skeleton files for oyBlob_s
+	Ifdef oyOptions_Handle() to hide until oyCMMApiFilters gets imported
+	[doc] Update TODO
+	[review] [sources] Adopt oyOptions_ObserverAdd() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_SaveToDB() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_SetSource() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_FindData() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_SetFromData() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_MoveInStruct() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_GetType() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_SetFromDouble() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_FindDouble() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_SetFromInt() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_FindInt() to "hidden struct" interface.
+	[sources] Ifdef oyOptions_DoFilter() to hide until elektra gets imported
+	[review] [sources] Adopt oyOptions_SetFromText() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_FindString^C to "hidden struct" interface.
+	[sources] Fix compile errors
+	[templates] Add oyranos_sentinel.h to Options_s.c
+	[templates] Add the private include file of the content
+	[sources] Ifdef oyOptions_ForFilter() to only be used when oyFilterCore is imported.
+	[templates] Fix compile errors: use private structures
+	[review] [sources] Adopt oyOptions_Find() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_CountType() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_GetText() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_Filter() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_DoFilter() to "hidden struct" interface.
+	[review] [sources] Adopt oyOptions_CopyFrom() to "hidden struct" interface.
+	[templates] Add needed #include
+	[sources] Fix variable name compile error
+	[templates] Fix compile error
+	[sources] Ifdef oyOptions_ForFilter_ to only be used when oyFilterCore is imported.
+	* Add proper support for libxml in the auto-generated code
+	[review] [sources] Adopt oyOptions_Set() to "hidden struct" interface.
+	[templates] Add missing #include to oyOptions_s.h
+	[templates] Add filter registration declarations to oyranos_object.h
+	[review] [sources] Adopt oyOptions_Add() to "hidden struct" interface.
+	[templates] Add a new oyClassPriv_m( var ) macro
+	[templates] Add oyBOOLEAN_e to oyranos_object.h
+	[review] [sources] Implement the copy constructor for oyOption_s
+	[review] [sources] Adopt oyOptions_ParseXML_() to "hidden struct" interface.
+	[sources] Import forgotten oyOptions_ParseXML_()
+	[review] [sources] Adopt oyOptions_ForFilter_() to "hidden struct" interface.
+	[templates] Update templates to new underscoreName variable
+	[generator] Add a new underscoreName variable to templates
+	[sources] FIX: oyOptions_ForFilter_() sliped in twice!
+	[doc] Update TODO
+	[sources] Import private methods for oyOptions_s
+	[build] Print total lines of code
+	[doc] Update TODO
+	[review] [sources] Adopt oyOptions_FromBoolean() to "hidden struct" interface.
+	[sources] Import public methods for oyOptions_s
+	[sources] Add #defines to oyOptions_s.h
+	[templates] Fix typo for previous commit
+	[templates] Add the Observer part in oyOptions_MoveIn()
+	[templates] Add support for overriding parts of oyClass_MoveIn()
+	[templates] Add missing #include file
+	[templates] Better support for adding custom #include
+	* Add missing #include  and make Option_s templates hand-edited
+	[doc] Update TODO
+	[tempaltes] Import oyOPTIONATTRIBUTE_e enum
+	[sources] Add missing cast
+	[templates] Replace old oyOption_New constructor
+	[templates] Fix typo, public not private struct
+	[templates] Fix to use private oyOption_s_
+	[review] [sources] Adopt oyOption_StructGet() to "hidden struct" interface.
+	[review] [sources] Adopt oyOption_StructMoveIn() to "hidden struct" interface.
+	[review] [sources] Adopt oyOption_SetValueFromDB() to "hidden struct" interface.
+	[review] [sources] Adopt oyOption_GetRegistration() to "hidden struct" interface.
+	[review] [sources] Adopt oyOption_SetRegistration() to "hidden struct" interface.
+	[review] [sources] Adopt oyOption_GetData() to "hidden struct" interface.
+	[review] [sources] Adopt oyOption_SetFromData() to "hidden struct" interface.
+	[review] [sources] Adopt oyOption_Clear() to "hidden struct" interface.
+	[review] [sources] Adopt oyOption_GetValueDouble() to "hidden struct" interface.
+	[review] [sources] Adopt oyOption_SetFromDouble() to "hidden struct" interface.
+	[review] [sources] Adopt oyOption_GetValueInt() to "hidden struct" interface.
+	[review] [sources] Adopt oyOption_SetFromInt() to "hidden struct" interface.
+	[sources] Fix wrong input pointer
+	[review] [sources] Adopt oyOption_GetValueText() to "hidden struct" interface.
+	[review] [sources] Adopt oyOption_SetFromText() to "hidden struct" interface.
+	[review] [sources] Adopt oyOption_GetText() to "hidden struct" interface.
+	[review] [sources] Adopt oyOption_GetId() to "hidden struct" interface.
+	Update TODO
+	[review] [sources] Adopt oyOption_FromDB() to "hidden struct" interface.
+	[review] [sources] oyOption_New(const char*registration,oyObject_s object)
+	[doc] Update TODO
+	[sources] Remove old custom (copy)constructor and destructor
+	[sources] Remove oyOption_FromStatic_(). It is deprecated
+	[sources] Remove spaces from end of line
+	[sources] Import public methods for oyOption_s
+	[review] [sources] Adopt oyOption_s private methods to "hidden struct" interface.
+	[sources] Import private methods for oyOption_s
+	[review] [sources] Implement the destructor for oyOption_s
+	[review] [sources] Implement the copy constructor for oyOption_s
+	[review] [sources] Implement the copy constructor for oyOption_s
+	[sources] Add oyValue_u definitions in oyOption.h
+	* Create skeleton files for oyOption_s
+	[sources] Add missing oyStructList_Create() function
+	[templates] Add proper #include files
+	[review] [sources] Fix to use the private structs
+	[templates] Adopt templates to new class.enumName
+	[sources] Add [notemplates] tag to StructList.dox
+	[review] [sources] Fix typo parent_type -> parent_type_
+	[generator] Add a new property enumName to grantlee
+	[sources] Import the member functions of oyStructList_s
+	[review] [sources] Implement the destructor for oyStructList_s
+	[review] [sources] Implement the copy constructor for oyStructList_s
+	[templates] Catch error from copy constructor
+	* Create skeleton files oyStructList_s
+	[review] [templates] The oyObject_Copy_() function is
+	* Remove the API_proposed directory (unused)
+	[generator] Check first  if the template is readable
+	[generator] Check if template files can be opened.
+	[build] Compile auto-generated source by default
+	[FIXME] [templates] Temporary workaround for oyOBJECT_STRUCT_LIST_S
+	[review] [templates] Use hidden the structures to get private members.
+	* Add the oyObserver_s class to the objects_generic templates.
+	[review] [templates] Move the OY_HASH_SIZE definition to Object_s.h
+	[sources] Emptying sources/Object.members.h (unused)
+	[templates] Add the math.h for pow().
+	[FIXME] Temporary workarount for not yet existent oyOBJECT_NAMED_COLOURS_S.
+	[review] [sources] Move the locking functions to the oyStruct_s files.
+	[templates] Include the oyranos_texts.h file in oyranos_object_internal.h
+	[templates] Add #includes for compiling oyObject_s
+	[sources] Remove pointer from oyObject_s
+	[templates] Add missing #includes
+	[sources] Remove pointer from oyObject_s, as it's
+	* Remove the 'extends' keyword from objects_generic classes.
+	* Remove the oyName_s class from object system
+	* Fix typo: "to" -> "dst"
+	[templates] Adding a new template file.
+	[sources] Fix errors preventing compilation
+	[sources] Put the oyranos message functions declarations
+	[templates] Add some include files for correct compilation
+	[templates] Add a cast
+	[templates] Include the definition of oyObject_s
+	[templates] Introduce a new header file
+	[doc] Show the cyclic comile time dependency of classes.
+	[tempaltes] Break #include compilation cycle
+	[templates] A "list" should include the container class definition
+	[generator] Auto-generated template files are read-only.
+	[templates] Fix some typos, like name -> privName
+	[doc] Add an oyStruct_s dependency diagram
+	* Update README
+	[templates] Fix to use the new {{ class.content }}
+	[generator] Add a new member to ClassInfo for "list" classes
+	[templates] Fix a few small errors and better ...
+	[sources] Import the oyOptions_s class, part1.
+	[templates] Add support for "list" classes
+	[generator] Add support for "list" classes
+	[templates] Include oyStruct_s.h & oyObject_s.h
+	[source] First proper import of the Name class
+	* Add proper support for custom object members manipulation
+	[templates] Adapt the template files to work with previous commit.
+	* Add the oyObject_s class
+	[tempaltes] Rreplace all occurences of 'obj' variable
+	[templates] Fix oyTest* templates to print correctly
+	* Temporary workaround for templates not exporting
+	[templates] Put the base members in their own block
+	[generator] Add support to create classes from different templates
+	[templates] Fix wrong baseName -> name
+	[ClassTemplates] Split createTemplates() to createSources()
+	* Track the TODO file
+	[templates] Rearrange all templates to fit previous commit
+	[templates] Reorganise to use comment guards
+	[ClassTemplates] Turn getAllClasses() into a const function
+	[ClassTemplates] Declare sourceFiles as const
+	[generator] Support a [notemplates] tag in <class>.doxy files
+	[generator] Add support for class.parent variable in grantlee
+	[templates] Remove _s suffix from Struct templates
+	[templates] Keep only needed stuff from oyranos_alpha.h
+	[templates] Include the headers from oyranos source tree
+	* Move some typedefs from oyranos_alpha.h to Struct_s.public.h
+	[generator] Add some more properties to ClassInfo
+	[generator] Add ClassInfo::parseSourceFiles()
+	[extract] Update to new oyAPIGenerator arguments
+	[templates] Add an CMakeLists.txt file
+	[generator] Treat template files differently.
+	[cmake] Fix some errors to build the auto-generated tests
+	[generator] Update globbing to ignore new opaque Class templates
+	[templates] Add the generic templates needed for previous commit
+	[templates] Add support for classes with opaque pointer interface
+	[templates] Update to use class.privName
+	[main.cc] Fix 3-space indentation to 2-space
+	[generator] Add error handling for I/O directories
+	[generator] Load all template subdirectories automaticly
+	[generator] Have hardcoded default I/O directories
+	[templates] Create a template directory for each object group
+	[generator] Put each new template inside templates/<group>/
+	[generator] Recurse into templates/ dir for *template* files
+	[cmake] Build the auto-generated QtTests
+	[templates] Add an automatic test using QtTest
+	[cmake] Do not build tests by default
+	[generator] Allow template files with .cc extension
+	[templates] Add a new oyranos_object.h file
+	[templates] The generated <class>_s.[ch] files are read-only
+	[templates] Add FIXME comments for clarification
+	[templates] BUG: Remove members start/stop comment
+	[templates] Add a missing declaration of *_Copy__()
+	[templates] Fix a missing variable
+	Add a command line programm to test the Qt regexps
+	[grantlee] Add a class.brief tag
+	[templates] Also print the parent child members
+	[templates] Fix Base_s_* to use class.baseName
+	[Name] Add the doxygen doc
+	[Templates] Add missing ""
+	[oyStruct_s] Create correctly the public functions
+	Use Struct_s.members.h for oyStruct_s members
+	Create a dummy class for oyStruct_s use whithin templates
+	Add the doxygen documentation to public Class header
+	Fix: Use a QRegExp, else all Class instances get replaced
+	Depricate the class_name and class_base_name
+	Correctly replace the included Base* file
+	Add a convenievce string
+	Insert the current class + all classes information
+	Add a getAllClasses() member to ClassTemplates
+	Fix a compile error:
+	Remove: findClasses(), allClasses, doxOnlyClasses
+	Add a static getAllClasses method
+	Add a doxOnly property to ClassInfo
+	Use list of ClassInfo instead of plain QStringList
+	Update .gitignore
+	Add missing parenthesis in qWarning
+	Fix typo in cmake
+	Backslashes need to be escaped in regexps
+	Fix typos preventing compile
+	Setup cmake for Qt moc files
+	Add some qDebug messages
+	Add missing directory names to filename strings
+	Remove "*.dox" from automaticly created source files
+	Remove Class.dox from detected classes
+	Create a new ClassInfo class
+	Create a new ClassTemplates class.
+	Class.dox is the basic template for creating a new Class
+	Rename Class_s*.template.[ch] -> Class_s*.[ch]
+	Add .gitignore file
+	Add generic Class_s* templates
+	Add oyName_s in sources/
+	Add sources/ as template dir
+	Fix #include files
+	Add a new template class: Name
+	Add class doxygen comments
+	correct typo /nase/base/
+	Fix typos
+	StructList will be created from BaseList
+	The object system now defaults to the following structure.
+	Add proposed oyObject
+	Add proposed oyObserver
+	Add proposed oyName
+	Add proposed oyStruct
+	Separate the actual code from template code
+	The process of code creation is split in 2 stages
+	Add oyStructList
+	Base.* is the base of all structures
+	Include header file without _s
+	Rename header.txt to source_file_header.txt
+	New template sceme using hidden structures
+	Add file_name variable to the Grantlee::Context
+	Update README
+	First try to make the generator more clever.
+	Add a new ClassMethods block & fix indentation
+	Hard coded plugin path is a bug!
+	Add a CMMapi7 test template
+	Add a README
+	Move for loop from shell script to main.cc
+	Initial commit
+
 Version 0.2.0
 
 Kai-Uwe Behrmann (184):
