@@ -273,6 +273,7 @@ ldconfig
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %dir %{_includedir}/%{name}/alpha
+%dir %{_includedir}/%{name}/alpha/object
 %{_includedir}/%{name}/alpha/%{name}_alpha.h
 %{_includedir}/%{name}/alpha/%{name}_cmm.h
 %{_includedir}/%{name}/alpha/object/*.h
