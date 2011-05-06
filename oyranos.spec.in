@@ -55,7 +55,7 @@ Requires:  lib%{name}-devel
 %package      -n lib%{name}0-monitor
 Summary:    Oyranos Monitor dependent Libraries
 Group:      Development/Libraries/Other
-Requires:   xcm xcalib
+Requires:   xcalib
 
 %package      monitor
 Summary:    Oyranos Monitor Tools
