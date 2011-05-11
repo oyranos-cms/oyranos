@@ -502,6 +502,7 @@ private:
   int  handle (int e)
   {
     int ret = 1;
+    redraw();
     ret = Oy_Fl_Widget::handle( e );
     if(!ret)
     ret = Fl_Gl_Window::handle( e );
@@ -523,6 +524,7 @@ private:
   void redraw()
   {
     Fl::awake(this);
+    Fl_Gl_Window::redraw();
   }
 
 public:
