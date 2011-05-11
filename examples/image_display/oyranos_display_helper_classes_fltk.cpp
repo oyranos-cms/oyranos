@@ -241,38 +241,6 @@ public:
       *draw_image = image;
     }
   }
-private:
-  void draw()
-  {
-    if(conversion())
-    {
-      int i, height = 0, is_allocated = 0;
-      oyPointer image_data = 0;
-      oyPixel_t pt;
-      int channels = 0;
-      oyImage_s * image = 0;
-
-      drawPrepare( &image, oyUINT8 );
-
-      pt = oyImage_PixelLayoutGet( image );
-      channels = oyToChannels_m( pt );
-
-      /* get the data and draw the image */
-      if(image)
-      for(i = 0; i < image->height; ++i)
-      {
-        image_data = image->getLine( image, i, &height, -1, &is_allocated );
-
-        /* on osX it uses sRGB without alternative */
-        fl_draw_image( (const uchar*)image_data, 0, i, image->width, 1,
-                       channels, w()*channels);
-        if(is_allocated)
-          free( image_data );
-      }
-
-      oyImage_Release( &image );
-    }
-  }
 
 public:
   void damage( char c )
@@ -351,6 +319,38 @@ public:
                           observator );
     oyPointer_Release( &oy_box_ptr );
   }
+private:
+  void draw()
+  {
+    if(conversion())
+    {
+      int i, height = 0, is_allocated = 0;
+      oyPointer image_data = 0;
+      oyPixel_t pt;
+      int channels = 0;
+      oyImage_s * image = 0;
+
+      drawPrepare( &image, oyUINT8 );
+
+      pt = oyImage_PixelLayoutGet( image );
+      channels = oyToChannels_m( pt );
+
+      /* get the data and draw the image */
+      if(image)
+      for(i = 0; i < image->height; ++i)
+      {
+        image_data = image->getLine( image, i, &height, -1, &is_allocated );
+
+        /* on osX it uses sRGB without alternative */
+        fl_draw_image( (const uchar*)image_data, 0, i, image->width, 1,
+                       channels, Oy_Fl_Widget::w()*channels);
+        if(is_allocated)
+          free( image_data );
+      }
+
+      oyImage_Release( &image );
+    }
+  }
 };
 
 
@@ -389,6 +389,10 @@ int      conversionObserve           ( oyObserver_s      * observer,
 }
 }
 
+extern "C" {
+int              oyArray2d_ToPPM_    ( oyArray2d_s       * array,
+                                       const char        * file_name );
+}
 
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl.H>
@@ -453,7 +457,8 @@ private:
       int pos[4] = {-2,-2,-2,-2};
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
       if(oy_display_verbose)
-        fprintf(stderr,"%s():%d %d,%d\n",__FILE__,__LINE__,pos[0],pos[1]);
+        fprintf( stderr, "%s():%d %d,%d %d %d\n", __FILE__,__LINE__,
+                 pos[0],pos[1],pos[2], pos[3] );
 
       /* get the data */
       if(image && frame_data)
@@ -484,7 +489,11 @@ private:
       //glDrawPixels( frame_width, frame_height, GL_RGB, GL_UNSIGNED_BYTE,
       //              frame_data );
       frame_dirty = 0;
-      printf("draw %dx%d[%d] %dx%d\n",frame_width,frame_height,frame_pos,W,H);
+      if(oy_display_verbose)
+        fprintf(stdout, "%s:%d draw %dx%d[%d] %dx%d\n",
+                    strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
+                    __LINE__,
+                    frame_width,frame_height,frame_pos,W,H);
 
       oyImage_Release( &image );
     }
