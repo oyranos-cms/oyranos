@@ -14473,36 +14473,57 @@ oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image )
  *  @memberof oyArray2d_s
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
+ *  @param[in]     image               the image
+ *  @param[in]     file_name           a writeable file name, The file can 
+ *                                     contain "%d" to include the image ID.
+ *  @param[in]     free_text           A text to include as comment.
+ *
  *  @version Oyranos: 0.3.1
  *  @since   2008/10/07 (Oyranos: 0.1.8)
  *  @date    2011/05/12
  */
-int          oyImage_PpmWrite        ( oyImage_s         * image_output,
+int          oyImage_PpmWrite        ( oyImage_s         * image,
                                        const char        * file_name,
                                        const char        * free_text )
 {
-  int result = 0;
+  int error = !file_name;
   FILE * fp = 0;
+  char * filename = 0;
+  oyImage_s * s = image;
 
-  if(file_name)
-    fp = fopen( file_name, "wb" );
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
+
+  if(!error)
+    oyAllocHelper_m_( filename, char, strlen(file_name)+80, 0, return 1 );
+
+  if(!error)
+  {
+    if(strstr(file_name, "%d"))
+      sprintf( filename, file_name, oyStruct_GetId( (oyStruct_s*)s ) );
+    else
+      strcpy(filename,file_name);
+  }
+
+  if(filename)
+    fp = fopen( filename, "wb" );
   else
-    result = 1;
+    error = 2;
 
   if(fp)
   {
       size_t pt = 0;
       char text[128];
+      char * t = 0;
       int  len = 0;
       int  i,j,k,l, n;
       char bytes[48];
 
-      int cchan_n = oyProfile_GetChannelsCount( image_output->profile_ );
-      int channels = oyToChannels_m( image_output->layout_[0] );
-      oyDATATYPE_e data_type = oyToDataType_m( image_output->layout_[0] );
+      int cchan_n = oyProfile_GetChannelsCount( image->profile_ );
+      int channels = oyToChannels_m( image->layout_[0] );
+      oyDATATYPE_e data_type = oyToDataType_m( image->layout_[0] );
       int alpha = channels - cchan_n;
       int byteps = oySizeofDatatype( data_type );
-      const char * colourspacename = oyProfile_GetText( image_output->profile_,
+      const char * colourspacename = oyProfile_GetText( image->profile_,
                                                         oyNAME_DESCRIPTION );
       char * vs = oyVersionString(1,malloc);
       uint8_t * out_values = 0;
@@ -14534,12 +14555,15 @@ int          oyImage_PpmWrite        ( oyImage_s         * image_output,
 
       fputc( '\n', fp );
 
-      snprintf( text, 128, "# CREATOR: Oyranos-%s %s%s%s\n",
+      oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                "# CREATOR: Oyranos-%s\n%s\n",
                 oyNoEmptyString_m_(vs), 
-                free_text?"\"":"", free_text?free_text:"", free_text?"\"":"" );
+                free_text?free_text:"" );
       if(vs) free(vs); vs = 0;
-      len = strlen( text );
-      do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
+      len = strlen( t );
+      do { fputc ( t[pt] , fp); if(t[pt] == '\n') fputc( '#', fp ); pt++; } while (--len); pt = 0;
+      fputc( '\n', fp );
+      oyFree_m_( t );
 
       {
         time_t  cutime;         /* Time since epoch */
@@ -14573,7 +14597,7 @@ int          oyImage_PpmWrite        ( oyImage_s         * image_output,
           snprintf( bytes, 48, "-1.0" );
       }
       else
-        oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)image_output,
+        oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)image,
              OY_DBG_FORMAT_ " byteps: %d",
              OY_DBG_ARGS_, byteps );
 
@@ -14586,7 +14610,7 @@ int          oyImage_PpmWrite        ( oyImage_s         * image_output,
           tupl = "GRAYSCALE_ALPHA";
         snprintf( text, 128, "WIDTH %d\nHEIGHT %d\nDEPTH %d\nMAXVAL "
                   "%s\nTUPLTYPE %s\nENDHDR\n",
-                  image_output->width, image_output->height,
+                  image->width, image->height,
                   channels, bytes, tupl );
         len = strlen( text );
         do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
@@ -14594,8 +14618,8 @@ int          oyImage_PpmWrite        ( oyImage_s         * image_output,
       }
       else
       {
-        snprintf( text, 128, "%d %d\n", image_output->width,
-                                       image_output->height);
+        snprintf( text, 128, "%d %d\n", image->width,
+                                       image->height);
         len = strlen( text );
         do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
 
@@ -14604,15 +14628,15 @@ int          oyImage_PpmWrite        ( oyImage_s         * image_output,
         do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
       }
 
-      n = image_output->width * channels;
+      n = image->width * channels;
       if(byteps == 8)
         u8 = (uint8_t*) &flt;
 
-      for( k = 0; k < image_output->height; ++k)
+      for( k = 0; k < image->height; ++k)
       {
         int height = 0,
             is_allocated = 0;
-        out_values = image_output->getLine( image_output, k, &height, -1, 
+        out_values = image->getLine( image, k, &height, -1, 
                                             &is_allocated );
         len = n * byteps;
 
@@ -14641,18 +14665,14 @@ int          oyImage_PpmWrite        ( oyImage_s         * image_output,
         }
 
         if(is_allocated)
-          image_output->oy_->deallocateFunc_(out_values);
+          image->oy_->deallocateFunc_(out_values);
       }
 
       fflush( fp );
       fclose (fp);
-
-    /*oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
-             OY_DBG_FORMAT_ "write file %s",
-             OY_DBG_ARGS_, filename );*/
   }
 
-  return result;
+  return error;
 }
 
 
