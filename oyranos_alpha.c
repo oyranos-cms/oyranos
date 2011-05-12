@@ -19161,8 +19161,12 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
 
               if(oy_debug == 1)
               {
+                int id = oyFilterNode_GetId( node );
+                char * file_name = 0;
+                oyAllocHelper_m_( file_name, char, 80, 0, return 1 );
+                sprintf( file_name, "test_dbg_colour_dl-%d.icc", id );
                 if(ptr && size && node->backend_data)
-                  oyWriteMemToFile_( "test_dbg_colour_dl.icc", ptr, size );
+                  oyWriteMemToFile_( file_name, ptr, size );
               }
 
             } else
@@ -21169,9 +21173,8 @@ int                oyPixelAccess_ChangeRectangle (
                                        double              start_y,
                                        oyRectangle_s     * output_rectangle )
 {
-  int error = 0, result = 0;
+  int error = 0;
   oyRectangle_s roi = {oyOBJECT_RECTANGLE_S, 0,0,0};
-  double clck;
 
   if(!pixel_access)
     error = 1;
