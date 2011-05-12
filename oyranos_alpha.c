@@ -14467,6 +14467,195 @@ oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image )
   return oyOptions_Copy( s->tags, 0 );
 }
 
+/**
+ *  @internal
+ *  @func    oyImage_PpmWrite
+ *  @memberof oyArray2d_s
+ *  @brief   implement oyCMMFilter_GetNext_f()
+ *
+ *  @version Oyranos: 0.3.1
+ *  @since   2008/10/07 (Oyranos: 0.1.8)
+ *  @date    2011/05/12
+ */
+int          oyImage_PpmWrite        ( oyImage_s         * image_output,
+                                       const char        * file_name,
+                                       const char        * free_text )
+{
+  int result = 0;
+  FILE * fp = 0;
+
+  if(file_name)
+    fp = fopen( file_name, "wb" );
+  else
+    result = 1;
+
+  if(fp)
+  {
+      size_t pt = 0;
+      char text[128];
+      int  len = 0;
+      int  i,j,k,l, n;
+      char bytes[48];
+
+      int cchan_n = oyProfile_GetChannelsCount( image_output->profile_ );
+      int channels = oyToChannels_m( image_output->layout_[0] );
+      oyDATATYPE_e data_type = oyToDataType_m( image_output->layout_[0] );
+      int alpha = channels - cchan_n;
+      int byteps = oySizeofDatatype( data_type );
+      const char * colourspacename = oyProfile_GetText( image_output->profile_,
+                                                        oyNAME_DESCRIPTION );
+      char * vs = oyVersionString(1,malloc);
+      uint8_t * out_values = 0;
+      const uint8_t * u8;
+      double * dbls;
+      float flt;
+
+            fputc( 'P', fp );
+      if(alpha) 
+            fputc( '7', fp );
+      else
+      {
+        if(byteps == 1 ||
+           byteps == 2)
+        {
+          if(channels == 1)
+            fputc( '5', fp );
+          else
+            fputc( '6', fp );
+        } else
+        if (byteps == 4 || byteps == 8)
+        {
+          if(channels == 1)
+            fputc( 'f', fp ); /* PFM gray */
+          else
+            fputc( 'F', fp ); /* PFM rgb */
+        }
+      }
+
+      fputc( '\n', fp );
+
+      snprintf( text, 128, "# CREATOR: Oyranos-%s %s%s%s\n",
+                oyNoEmptyString_m_(vs), 
+                free_text?"\"":"", free_text?free_text:"", free_text?"\"":"" );
+      if(vs) free(vs); vs = 0;
+      len = strlen( text );
+      do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
+
+      {
+        time_t  cutime;         /* Time since epoch */
+        struct tm       *gmt;
+        char time_str[24];
+
+        cutime = time(NULL); /* time right NOW */
+        gmt = gmtime(&cutime);
+        strftime(time_str, 24, "%Y/%m/%d %H:%M:%S", gmt);
+        snprintf( text, 128, "# DATE/TIME: %s\n", time_str );
+        len = strlen( text );
+        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
+      }
+
+      snprintf( text, 128, "# COLORSPACE: %s\n", colourspacename ?
+                colourspacename : "--" );
+      len = strlen( text );
+      do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
+
+      if(byteps == 1)
+        snprintf( bytes, 48, "255" );
+      else
+      if(byteps == 2)
+        snprintf( bytes, 48, "65535" );
+      else
+      if (byteps == 4 || byteps == 8) 
+      {
+        if(oyBigEndian())
+          snprintf( bytes, 48, "1.0" );
+        else
+          snprintf( bytes, 48, "-1.0" );
+      }
+      else
+        oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)image_output,
+             OY_DBG_FORMAT_ " byteps: %d",
+             OY_DBG_ARGS_, byteps );
+
+
+      if(alpha)
+      {
+        const char *tupl = "RGB_ALPHA";
+
+        if(channels == 2)
+          tupl = "GRAYSCALE_ALPHA";
+        snprintf( text, 128, "WIDTH %d\nHEIGHT %d\nDEPTH %d\nMAXVAL "
+                  "%s\nTUPLTYPE %s\nENDHDR\n",
+                  image_output->width, image_output->height,
+                  channels, bytes, tupl );
+        len = strlen( text );
+        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
+
+      }
+      else
+      {
+        snprintf( text, 128, "%d %d\n", image_output->width,
+                                       image_output->height);
+        len = strlen( text );
+        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
+
+        snprintf( text, 128, "%s\n", bytes );
+        len = strlen( text );
+        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
+      }
+
+      n = image_output->width * channels;
+      if(byteps == 8)
+        u8 = (uint8_t*) &flt;
+
+      for( k = 0; k < image_output->height; ++k)
+      {
+        int height = 0,
+            is_allocated = 0;
+        out_values = image_output->getLine( image_output, k, &height, -1, 
+                                            &is_allocated );
+        len = n * byteps;
+
+        for( l = 0; l < height; ++l )
+        {
+          if(byteps == 8)
+          {
+            dbls = (double*)out_values;
+            for(i = 0; i < n; ++i)
+            {
+              flt = dbls[l * len + i];
+              for(j = 0; j < 4; ++j)
+                fputc ( u8[j], fp);
+            }
+          } else 
+          for(i = 0; i < len; ++i)
+          {
+            if(!oyBigEndian() && (byteps == 2))
+            { if(i%2)
+                fputc ( out_values[l * len + i - 1] , fp);
+              else
+                fputc ( out_values[l * len + i + 1] , fp);
+            } else
+              fputc ( out_values[l * len + i] , fp);
+          }
+        }
+
+        if(is_allocated)
+          image_output->oy_->deallocateFunc_(out_values);
+      }
+
+      fflush( fp );
+      fclose (fp);
+
+    /*oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ "write file %s",
+             OY_DBG_ARGS_, filename );*/
+  }
+
+  return result;
+}
+
+
 /** @} *//* objects_image */ 
 
 
@@ -19167,6 +19356,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                 sprintf( file_name, "test_dbg_colour_dl-%d.icc", id );
                 if(ptr && size && node->backend_data)
                   oyWriteMemToFile_( file_name, ptr, size );
+                oyFree_m_(file_name);
               }
 
             } else

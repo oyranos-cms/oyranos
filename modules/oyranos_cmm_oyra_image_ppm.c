@@ -15,6 +15,7 @@
 
 #include "config.h"
 #include "oyranos_alpha.h"
+#include "oyranos_alpha_internal.h"
 #include "oyranos_cmm.h"
 #include "oyranos_cmm_oyra.h"
 #include "oyranos_helper.h"
@@ -90,9 +91,9 @@ oyOptions_s* oyraFilter_ImageOutputPPMValidateOptions
 /** @func    oyraFilterPlug_ImageOutputPPMWrite
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.3.1
  *  @since   2008/10/07 (Oyranos: 0.1.8)
- *  @date    2009/02/18
+ *  @date    2011/05/12
  */
 int      oyraFilterPlug_ImageOutputPPMWrite (
                                        oyFilterPlug_s    * requestor_plug,
@@ -104,7 +105,6 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
                  * node = 0;
   int result = 0;
   const char * filename = 0;
-  FILE * fp = 0;
 
   node = socket->node;
   plug = (oyFilterPlug_s *)node->plugs[0];
@@ -116,170 +116,10 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
   if(result <= 0)
     filename = oyOptions_FindString( node->core->options_, "filename", 0 );
 
-  if(filename)
-    fp = fopen( filename, "wb" );
-
-  if(fp)
+  if(filename && socket)
   {
-      size_t pt = 0;
-      char text[128];
-      int  len = 0;
-      int  i,j,k,l, n;
-      char bytes[48];
-      oyImage_s *image_output = (oyImage_s*)socket->data;
-
-      int cchan_n = oyProfile_GetChannelsCount( image_output->profile_ );
-      int channels = oyToChannels_m( image_output->layout_[0] );
-      oyDATATYPE_e data_type = oyToDataType_m( image_output->layout_[0] );
-      int alpha = channels - cchan_n;
-      int byteps = oySizeofDatatype( data_type );
-      const char * colourspacename = oyProfile_GetText( image_output->profile_,
-                                                        oyNAME_DESCRIPTION );
-      char * vs = oyVersionString(1,malloc);
-      uint8_t * out_values = 0;
-      const uint8_t * u8;
-      double * dbls;
-      float flt;
-
-            fputc( 'P', fp );
-      if(alpha) 
-            fputc( '7', fp );
-      else
-      {
-        if(byteps == 1 ||
-           byteps == 2)
-        {
-          if(channels == 1)
-            fputc( '5', fp );
-          else
-            fputc( '6', fp );
-        } else
-        if (byteps == 4 || byteps == 8)
-        {
-          if(channels == 1)
-            fputc( 'f', fp ); /* PFM gray */
-          else
-            fputc( 'F', fp ); /* PFM rgb */
-        }
-      }
-
-      fputc( '\n', fp );
-
-      snprintf( text, 128, "# CREATOR: Oyranos-%s " CMM_NICK "\"%s\"\n",
-                oyNoEmptyString_m_(vs), node->relatives_ );
-      if(vs) free(vs); vs = 0;
-      len = strlen( text );
-      do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
-
-      {
-        time_t  cutime;         /* Time since epoch */
-        struct tm       *gmt;
-        char time_str[24];
-
-        cutime = time(NULL); /* time right NOW */
-        gmt = gmtime(&cutime);
-        strftime(time_str, 24, "%Y/%m/%d %H:%M:%S", gmt);
-        snprintf( text, 128, "# DATE/TIME: %s\n", time_str );
-        len = strlen( text );
-        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
-      }
-
-      snprintf( text, 128, "# COLORSPACE: %s\n", colourspacename ?
-                colourspacename : "--" );
-      len = strlen( text );
-      do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
-
-      if(byteps == 1)
-        snprintf( bytes, 48, "255" );
-      else
-      if(byteps == 2)
-        snprintf( bytes, 48, "65535" );
-      else
-      if (byteps == 4 || byteps == 8) 
-      {
-        if(oyBigEndian())
-          snprintf( bytes, 48, "1.0" );
-        else
-          snprintf( bytes, 48, "-1.0" );
-      }
-      else
-        oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
-             OY_DBG_FORMAT_ " byteps: %d",
-             OY_DBG_ARGS_, byteps );
-
-
-      if(alpha)
-      {
-        const char *tupl = "RGB_ALPHA";
-
-        if(channels == 2)
-          tupl = "GRAYSCALE_ALPHA";
-        snprintf( text, 128, "WIDTH %d\nHEIGHT %d\nDEPTH %d\nMAXVAL "
-                  "%s\nTUPLTYPE %s\nENDHDR\n",
-                  image_output->width, image_output->height,
-                  channels, bytes, tupl );
-        len = strlen( text );
-        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
-
-      }
-      else
-      {
-        snprintf( text, 128, "%d %d\n", image_output->width,
-                                       image_output->height);
-        len = strlen( text );
-        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
-
-        snprintf( text, 128, "%s\n", bytes );
-        len = strlen( text );
-        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
-      }
-
-      n = image_output->width * channels;
-      if(byteps == 8)
-        u8 = (uint8_t*) &flt;
-
-      for( k = 0; k < image_output->height; ++k)
-      {
-        int height = 0,
-            is_allocated = 0;
-        out_values = image_output->getLine( image_output, k, &height, -1, 
-                                            &is_allocated );
-        len = n * byteps;
-
-        for( l = 0; l < height; ++l )
-        {
-          if(byteps == 8)
-          {
-            dbls = (double*)out_values;
-            for(i = 0; i < n; ++i)
-            {
-              flt = dbls[l * len + i];
-              for(j = 0; j < 4; ++j)
-                fputc ( u8[j], fp);
-            }
-          } else 
-          for(i = 0; i < len; ++i)
-          {
-            if(!oyBigEndian() && (byteps == 2))
-            { if(i%2)
-                fputc ( out_values[l * len + i - 1] , fp);
-              else
-                fputc ( out_values[l * len + i + 1] , fp);
-            } else
-              fputc ( out_values[l * len + i] , fp);
-          }
-        }
-
-        if(is_allocated)
-          image_output->oy_->deallocateFunc_(out_values);
-      }
-
-      fflush( fp );
-      fclose (fp);
-
-    /*oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
-             OY_DBG_FORMAT_ "write file %s",
-             OY_DBG_ARGS_, filename );*/
+    oyImage_s *image_output = (oyImage_s*)socket->data;
+    result = oyImage_PpmWrite( image_output, filename, node->relatives_ );
   }
 
   return result;
