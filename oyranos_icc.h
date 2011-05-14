@@ -31,7 +31,9 @@ extern "C" {
 
 icUInt16Number          oyValueUInt16   (icUInt16Number val);
 icUInt32Number          oyValueUInt32   (icUInt32Number val);
+icS15Fixed16Number      oyValueInt32    (icS15Fixed16Number val);
 unsigned long           oyValueUInt64   (icUInt64Number val);
+
 icColorSpaceSignature   oyValueCSpaceSig(icColorSpaceSignature val);
 icPlatformSignature     oyValuePlatSig  (icPlatformSignature val);
 icProfileClassSignature oyValueProfCSig (icProfileClassSignature val);
@@ -58,7 +60,19 @@ const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
 
 
 /* additionals - not defined in icc34.h */
-/* partitially taken from littleCMS */
+/* partitially taken from littleCMS and from elsewhere */
+
+#ifndef icSigParametricCurveType
+#define icSigParametricCurveType 0x70617261 /* para */
+#endif
+
+#ifndef icSigLutAtoBType
+#define icSigLutAtoBType 0x6D414220 /* mAB */
+#endif
+
+#ifndef icSigLutBtoAType
+#define icSigLutBtoAType 0x6D424120 /* mBA */
+#endif
 
 #ifndef icSigColorantOrderType
 #define icSigColorantOrderType 0x636c726f /* clro */
