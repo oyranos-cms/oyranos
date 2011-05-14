@@ -11009,6 +11009,55 @@ OYAPI oyProfileTag_s * OYEXPORT
   return tag;
 }
 
+/** Function oyProfileTag_CreateFromData
+ *  @memberof oyProfileTag_s
+ *
+ *  @param[in]     sig                 usage signature
+ *  @param[in]     type                content type
+ *  @param[in]     status              to be set
+ *  @param[in]     tag_size            memory size of tag_block
+ *  @param[in]     tag_block           the to be copied memory
+ *  @param[in]     object              the user object for the tag creation
+ *  @return                            a profile tag
+ *
+ *  @version Oyranos: 0.3.1
+ *  @since   2011/05/13 (Oyranos: 0.3.1)
+ *  @date    2011/05/13
+ */
+OYAPI oyProfileTag_s * OYEXPORT
+               oyProfileTag_CreateFromData ( 
+                                       icTagSignature      sig,
+                                       icTagTypeSignature  type,
+                                       oySTATUS_e          status,
+                                       size_t              tag_size,
+                                       oyPointer           tag_block,
+                                       oyObject_s          object )
+{
+  oyProfileTag_s * s = oyProfileTag_New(object);
+  int error = !s;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 0 )
+
+  if(error <= 0)
+  {
+    s->use = sig;
+    s->tag_type_ = type;
+    s->status_ = status;
+    s->size_ = tag_size;
+    if(s->size_)
+    {
+      oyAllocHelper_m_( s->block_, char, tag_size, s->oy_->allocateFunc_,
+                        return 0 );
+      memcpy( s->block_, tag_block, tag_size );
+    }
+  }
+
+  return s;
+}
+
 /** Function oyProfileTag_Copy
  *  @memberof oyProfileTag_s
  *

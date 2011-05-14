@@ -916,6 +916,14 @@ OYAPI oyProfileTag_s * OYEXPORT
                                        icTagSignature      tag_usage,
                                        oyObject_s          object );
 OYAPI oyProfileTag_s * OYEXPORT
+               oyProfileTag_CreateFromData ( 
+                                       icTagSignature      sig,
+                                       icTagTypeSignature  type,
+                                       oySTATUS_e          status,
+                                       size_t              tag_size,
+                                       oyPointer           tag_block,
+                                       oyObject_s          object );
+OYAPI oyProfileTag_s * OYEXPORT
                oyProfileTag_Copy     ( oyProfileTag_s    * obj,
                                        oyObject_s          object);
 OYAPI int  OYEXPORT
