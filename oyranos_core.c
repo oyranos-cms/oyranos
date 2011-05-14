@@ -652,6 +652,30 @@ oyValueUInt32 (icUInt32Number val)
     return (icUInt32Number)val;
 }
 
+
+icS15Fixed16Number      oyValueInt32    (icS15Fixed16Number val)
+{
+  if(!oyBigEndian())
+  {
+    unsigned char        *temp = (unsigned char*) &val;
+
+    unsigned char  uint32[4];
+
+    uint32[0] = temp[3];
+    uint32[1] = temp[2];
+    uint32[2] = temp[1];
+    uint32[3] = temp[0];
+
+    {
+    int *erg = (int*) &uint32[0];
+
+
+    return (icS15Fixed16Number) *erg;
+    }
+  } else
+    return (icS15Fixed16Number)val;
+}
+
 unsigned long
 oyValueUInt64 (icUInt64Number val)
 {
