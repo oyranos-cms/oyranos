@@ -942,6 +942,7 @@ char   **      oyProfileTag_GetText  ( oyProfileTag_s    * tag,
                                        const char        * country,
                                        int32_t           * tag_size,
                                        oyAlloc_f           allocateFunc );
+oyStructList_s*oyProfileTag_Get      ( oyProfileTag_s    * tag );
 int            oyProfileTag_GetBlock ( oyProfileTag_s    * tag,
                                        oyPointer         * tag_block,
                                        size_t            * tag_size,

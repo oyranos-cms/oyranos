@@ -11218,10 +11218,72 @@ oyOBJECT_e   oyCMMapi3_Query_        ( oyCMMInfo_s       * cmm_info,
     return oyOBJECT_NONE;
 }
 
+/** Function oyProfileTag_Get
+ *  @memberof oyProfileTag_s
+ *
+ *  Hint: to select a certain module use the oyProfileTag_s::required_cmm
+ *  element from the tag parameter.
+ *
+ *  @param[in]     tag                 the tag to read
+ *  @return                            a list of strings
+ *
+ *  @version Oyranos: 0.3.1
+ *  @since   2008/06/19 (Oyranos: 0.1.8)
+ *  @date    2008/05/17
+ */
+oyStructList_s*oyProfileTag_Get      ( oyProfileTag_s    * tag )
+{
+  oyProfileTag_s * s = tag;
+  int error = !s;
+  oyCMMProfileTag_GetValues_f funcP = 0;
+  char cmm[] = {0,0,0,0,0};
+  oyStructList_s * values = 0;
+  oyCMMapiQuery_s query = {oyQUERY_PROFILE_TAG_TYPE_READ, 0, oyREQUEST_HARD};
+  oyCMMapiQuery_s *query_[2] = {0,0};
+  oyCMMapiQueries_s queries = {1,0};
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 0 )
+
+  if(error <= 0)
+  {
+    query.value = tag->tag_type_;
+    query_[0] = &query;
+    queries.queries = query_;
+    error = !memcpy( queries.prefered_cmm, tag->profile_cmm_, 4 ); 
+
+    if(error <= 0)
+      error = !memcpy( cmm, tag->required_cmm, 4 );
+  }
+
+  if(error <= 0)
+  {
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API3_S, cmm, 0,
+                                      oyCMMapi3_Query_, &queries );
+    if(api)
+    {
+      oyCMMapi3_s * api3 = (oyCMMapi3_s*) api;
+      funcP = api3->oyCMMProfileTag_GetValues;
+    }
+    error = !funcP;
+  }
+
+  if(error <= 0)
+  {
+    values = funcP( tag );
+
+    error = !memcpy( tag->last_cmm_, cmm, 4 );
+  }
+
+  return values;
+}
+
 /** Function oyProfileTag_GetText
  *  @memberof oyProfileTag_s
  *
- *  For the affect of the parameters look at the appropriate module.
+ *  For the effect of the parameters look at the appropriate module.
  *  @see oyIMProfileTag_GetValues
  *
  *  Hint: to select a certain module use the oyProfileTag_s::required_cmm
@@ -11255,9 +11317,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
 {
   oyProfileTag_s * s = tag;
   int error = !s;
-  oyCMMProfileTag_GetValues_f funcP = 0;
-  char cmm[] = {0,0,0,0,0}, 
-       t_l[8] = {0,0,0,0,0,0,0,0}, t_c[8] = {0,0,0,0,0,0,0,0}, *t_ptr;
+  char t_l[8] = {0,0,0,0,0,0,0,0}, t_c[8] = {0,0,0,0,0,0,0,0}, *t_ptr;
   int implicite_i18n = 0;
   char ** texts = 0, * text = 0, * text_tmp = 0, * temp = 0;
   oyStructList_s * values = 0;
@@ -11266,9 +11326,6 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
   size_t size = 0;
   int values_n = 0, i = 0, k;
   int32_t texts_n = 0;
-  oyCMMapiQuery_s query = {oyQUERY_PROFILE_TAG_TYPE_READ, 0, oyREQUEST_HARD};
-  oyCMMapiQuery_s *query_[2] = {0,0};
-  oyCMMapiQueries_s queries = {1,0};
 
   *n = 0;
 
@@ -11279,29 +11336,8 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
 
   if(error <= 0)
   {
-    query.value = tag->tag_type_;
-    query_[0] = &query;
-    queries.queries = query_;
-    error = !memcpy( queries.prefered_cmm, tag->profile_cmm_, 4 ); 
+    values = oyProfileTag_Get( tag );
 
-    if(error <= 0)
-      error = !memcpy( cmm, tag->required_cmm, 4 );
-  }
-
-  if(error <= 0)
-  {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API3_S, cmm, 0,
-                                      oyCMMapi3_Query_, &queries );
-    if(api)
-    {
-      oyCMMapi3_s * api3 = (oyCMMapi3_s*) api;
-      funcP = api3->oyCMMProfileTag_GetValues;
-    }
-    error = !funcP;
-  }
-
-  if(error <= 0)
-  {
     /* check for a "" in the lang variable -> want the best i18n match */
     if(language && !language[0])
     {
@@ -11313,9 +11349,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
     if(!allocateFunc)
       allocateFunc = oyAllocateFunc_;
 
-    values = funcP( tag );
-
-      if(oyStructList_Count( values ) )
+    if(oyStructList_Count( values ) )
       {
         name = 0;
         blob = 0;
@@ -11405,8 +11439,6 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
         *n = texts_n;
       }
     oyStructList_Release( &values );
-
-    error = !memcpy( tag->last_cmm_, cmm, 4 );
   }
 
   return texts;
