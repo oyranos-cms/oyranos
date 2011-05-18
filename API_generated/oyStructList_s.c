@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/02/15
+ *  @date     2011/05/18
  */
 
 
@@ -760,6 +760,30 @@ int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
      oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
   }
   return error;
+}
+/**
+ *  Function oyStructList_GetName
+ *  @memberof oyStructList_s
+ *  @brief   add a name to a list
+ *
+ *  The text is added a a oyName_s::name member variable.
+ *
+ *  @version Oyranos: 0.3.1
+ *  @date    2011/05/18
+ *  @since   2011/05/18 (Oyranos: 0.3.1)
+ */
+const char * oyStructList_GetName( oyStructList_s * texts, int pos )
+{
+  int error = !texts;
+  oyName_s * name = 0;
+  const char * text = 0;
+  if(!error)
+  {
+     name = (oyName_s*)oyStructList_GetRefType(texts, pos, oyOBJECT_NAME_S);
+     if(!name) return text;
+     text = oyName_get_( name, oyNAME_NAME );
+  }
+  return text;
 }
 
 

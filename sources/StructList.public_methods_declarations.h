@@ -38,6 +38,8 @@ int              oyStructList_MoveInName (
 int              oyStructList_AddName( oyStructList_s    * texts,
                                        const char        * text,
                                        int pos );
+const char *     oyStructList_GetName( oyStructList_s    * texts,
+                                       int pos );
 
 oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
                                        const char        * list_name,

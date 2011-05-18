@@ -660,5 +660,29 @@ int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
   }
   return error;
 }
+/**
+ *  Function oyStructList_GetName
+ *  @memberof oyStructList_s
+ *  @brief   add a name to a list
+ *
+ *  The text is added a a oyName_s::name member variable.
+ *
+ *  @version Oyranos: 0.3.1
+ *  @date    2011/05/18
+ *  @since   2011/05/18 (Oyranos: 0.3.1)
+ */
+const char * oyStructList_GetName( oyStructList_s * texts, int pos )
+{
+  int error = !texts;
+  oyName_s * name = 0;
+  const char * text = 0;
+  if(!error)
+  {
+     name = (oyName_s*)oyStructList_GetRefType(texts, pos, oyOBJECT_NAME_S);
+     if(!name) return text;
+     text = oyName_get_( name, oyNAME_NAME );
+  }
+  return text;
+}
 
 

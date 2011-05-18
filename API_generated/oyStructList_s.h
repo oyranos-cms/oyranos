@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/02/15
+ *  @date     2011/05/18
  */
 
 
@@ -125,6 +125,8 @@ int              oyStructList_MoveInName (
                                        int                 pos );
 int              oyStructList_AddName( oyStructList_s    * texts,
                                        const char        * text,
+                                       int pos );
+const char *     oyStructList_GetName( oyStructList_s    * texts,
                                        int pos );
 
 oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
