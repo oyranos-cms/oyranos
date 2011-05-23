@@ -106,6 +106,8 @@ Dependencies:
     extra/fltk
     AUR/xcalib
     AUR/elektra
+  NOTE: If you have problems installing elektra from AUR,
+  use this PKGBUILD: extras/elektra/PKGBUILD
 
 Building:
     $ configure
