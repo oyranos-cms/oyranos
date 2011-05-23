@@ -1139,7 +1139,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
            {
              uint16_t type = oyValueUInt16( (uint16_t)*((uint16_t*)&mem[8]) ); 
              double params[7]; /* Y(gamma),a,b,c,d,e,f */
-
+             int i,
+                 params_n = 0;
 
              opt = oyOption_FromRegistration( "///icParametricCurveType", 0 );
              if(type == 0) /* gamma */
@@ -1148,22 +1149,90 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
                oyOption_SetFromDouble( opt, 16, 1, 0 );
-
-               params[0] = oyValueInt32( (uint16_t)*((uint16_t*)&mem[12]) )
-                           / 65536.0;
-               oyOption_SetFromDouble( opt, params[0], 2, 0 );
-               oyStringAddPrintf_( &tmp, AD, "%s : γ=%g", _("Y=X^γ"),
-                                   params[0] );
+               params_n = 1;
              } else if(type == 1)
              {
                if(tag->size_ < 24) return texts;
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
-               oyOption_SetFromDouble( opt, 24, 1, 0 );
+               oyOption_SetFromDouble( opt, 12, 1, 0 );
+               params_n = 3;
+             } else if(type == 2)
+             {
+               if(tag->size_ < 28) return texts;
 
+               oyOption_SetFromDouble( opt, type, 0, 0 );
+               oyOption_SetFromDouble( opt, 16, 1, 0 );
+               params_n = 4;
+             } else if(type == 3)
+             {
+               if(tag->size_ < 32) return texts;
+
+               oyOption_SetFromDouble( opt, type, 0, 0 );
+               oyOption_SetFromDouble( opt, 20, 1, 0 );
+               params_n = 5;
+             } else if(type == 4)
+             {
+               if(tag->size_ < 40) return texts;
+
+               oyOption_SetFromDouble( opt, type, 0, 0 );
+               oyOption_SetFromDouble( opt, 28, 1, 0 );
+               params_n = 7;
              }
+
+             for(i = 0; i < params_n; ++i)
+             {
+                 params[i] = oyValueInt32( (uint32_t)*((uint32_t*)&mem[12+i*4]))
+                                           / 65536.0;
+                 oyOption_SetFromDouble( opt, params[i], 2+i, 0 );
+             }
+
+             oyStringAddPrintf_( &tmp, AD, "%s %d\n", _("parametric function type"), type);
+             if(type == 0) /* gamma */
+             {
+               oyStringAddPrintf_( &tmp, AD, "%s\n%s=%g",
+                                   _("Y=X^gamma"),
+                                   _("gamma"),
+                                   params[0] );
+             } else if(type == 1)
+             {
+               oyStringAddPrintf_( &tmp,AD, "%s\n%s\n%s=%g a=%g b=%g",
+                                   _("Y=(a*X+b)^gamma for X>=-b/a"),
+                                   _("Y=0 for (X<-b/a)"),
+                                   _("gamma"),
+                                   params[0], params[1], params[2] );
+             } else if(type == 2)
+             {
+               oyStringAddPrintf_( &tmp,AD, "%s\n%s\n%s=%g a=%g b=%g c=%g",
+                                   _("Y=(a*X+b)^gamma + c for X>=-b/a"),
+                                   _("Y=c for (X<-b/a)"),
+                                   _("gamma"),
+                                   params[0], params[1], params[2], params[3] );
+             } else if(type == 3)
+             {
+               oyStringAddPrintf_( &tmp,AD, "%s\n%s\n%s=%g a=%g b=%g c=%g d=%g",
+                                   _("Y=(a*X+b)^gamma for X>=d"),
+                                   _("Y=c*X for (X<d)"),
+                                   _("gamma"),
+                                   params[0], params[1], params[2], params[3],
+                                   params[4] );
+             } else if(type == 4)
+             {
+               oyStringAddPrintf_( &tmp,AD, "%s\n%s\n%s=%g a=%g b=%g c=%g d=%g"
+                                   " e=%g f=%g",
+                                   _("Y=(a*X+b)^gamma + e for X>=d"),
+                                   _("Y=c*X+f for (X<d)"),
+                                   _("gamma"),
+                                   params[0], params[1], params[2], params[3],
+                                   params[4], params[5], params[6] );
+             }
+
+             if(!tmp)
+               oyStringAddPrintf_(&tmp, AD, "%s %d", "parametric curve", type );
              oyStructList_AddName( texts, tmp, -1 );
              oyStructList_MoveIn( texts, (oyStruct_s**)&opt, -1, 0 );
+
+             if(tmp) oyFree_m_(tmp);
            }
 
            break;
