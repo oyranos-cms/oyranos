@@ -89,6 +89,24 @@ Dependencies:
     libexiv2-devel
     libraw-devel
 
+  Arch Linux:
+    extra/libxml2
+    extra/libxrandr
+    extra/libxinerama
+    extra/libxfixes
+    extra/libxxf86vm
+    extra/lcms
+    extra/lcms2
+    extra/graphviz
+    extra/doxygen
+    AUR/libxcm
+    AUR/openicc (TODO verify if correct package)
+  optional:
+    extra/qt
+    extra/fltk
+    AUR/xcalib
+    AUR/elektra
+
 Building:
     $ configure
     $ make
