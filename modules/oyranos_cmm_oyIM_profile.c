@@ -114,7 +114,6 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
   return ret;
 }
 
-
 /** @func    oyIMProfileTag_GetValues
  *  @brief   get values from ICC profile tags
  *
@@ -1149,38 +1148,34 @@ oyStructList_s * oyIMProfileTag_GetValues(
                if(tag->size_ < 16) return texts;
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
-               oyOption_SetFromDouble( opt, 1, 1, 0 );
                params_n = 1;
              } else if(type == 1)
              {
                if(tag->size_ < 24) return texts;
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
-               oyOption_SetFromDouble( opt, 3, 1, 0 );
                params_n = 3;
              } else if(type == 2)
              {
                if(tag->size_ < 28) return texts;
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
-               oyOption_SetFromDouble( opt, 4, 1, 0 );
                params_n = 4;
              } else if(type == 3)
              {
                if(tag->size_ < 32) return texts;
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
-               oyOption_SetFromDouble( opt, 5, 1, 0 );
                params_n = 5;
              } else if(type == 4)
              {
                if(tag->size_ < 40) return texts;
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
-               oyOption_SetFromDouble( opt, 7, 1, 0 );
                params_n = 7;
              }
 
+             oyOption_SetFromDouble( opt, params_n, 1, 0 );
              for(i = 0; i < params_n; ++i)
              {
                  params[i] = oyValueInt32( (uint32_t)*((uint32_t*)&mem[12+i*4]))
@@ -1227,6 +1222,9 @@ oyStructList_s * oyIMProfileTag_GetValues(
                                    params[0], params[1], params[2], params[3],
                                    params[4], params[5], params[6] );
              }
+
+             
+             oyOption_SetFromDouble( opt, 64, 2+params_n, 0 );
 
              if(!tmp)
                oyStringAddPrintf_(&tmp, AD, "%s %d", "parametric curve", type );
