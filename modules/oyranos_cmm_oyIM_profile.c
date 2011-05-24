@@ -277,11 +277,12 @@ int    oyICCparametricCurveToSegments (oyOption_s        * parameters,
  *  - icSigParametricCurveType:
  *    - since Oyranos 0.3.1 (API 0.3.1)
  *    - returns
- *      - a string describing the curve
- *      - a option containing doubles
- *        - first double means the type of the curve as of ICC spec 10.15
- *        - second double means binary size of the curve
- *        - the following double(s) mean one till seven paramters for the formula"
+ *      - position 0 : the type of the curve as of ICC spec 10.15\
+ *      - position 1 : count of parameters - param_n\
+ *      - position 2 : first paramter for the parametric formula\
+ *      - position 2 + param_n : the number of a segmented curve - seg_count\
+ *      - position 2 + param_n + 1 : the curves value for 0.0\
+ *      - position 2 + param_n + 1 + seg_count - 1 : the curves value for 1.0"
  *
  *  - icSigTextDescriptionType:
  *    - since Oyranos 0.1.8 (API 0.1.8)
@@ -543,9 +544,12 @@ oyStructList_s * oyIMProfileTag_GetValues(
   - returns\
     - a string describing the curve\
     - a option containing doubles\
-      - first double means the type of the curve as of ICC spec 10.15\
-      - second double means binary size of the curve\
-      - the following double(s) mean one till seven paramters for the formula"
+      - position 0 : the type of the curve as of ICC spec 10.15\
+      - position 1 : count of parameters - param_n\
+      - position 2 : first paramter for the parametric formula\
+      - position 2 + param_n : the number of a segmented curve - seg_count\
+      - position 2 + param_n + 1 : the curves value for 0.0\
+      - position 2 + param_n + 1 + seg_count - 1 : the curves value for 1.0"
     };
 
     oyName_s description_text = {
@@ -1046,7 +1050,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                if(error <= 0)
                {
                  oyStringAddPrintf_( &tmp, AD, "%s: %d->%d[%s] ",
-                                     _("nLut"), channels_in, channels_out,
+                                     _("nLUT"), channels_in, channels_out,
                              precission ? "8-bit":"16-bit" );
                  for(i = 0; i < channels_in; ++i)
                  {
