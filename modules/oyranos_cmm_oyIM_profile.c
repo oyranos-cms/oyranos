@@ -114,6 +114,125 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
   return ret;
 }
 
+int    oyICCparametricCurveToSegments (oyOption_s        * parameters,
+                                       oyOption_s        * segments,
+                                       int                 segments_start,
+                                       int                 count,
+                                       double              start,
+                                       double              end )
+{
+  int error = 0;
+
+  if(parameters &&
+     oyFilterRegistrationMatchKey( oyOption_GetRegistration( parameters ),
+                                   "////icParametricCurveType", oyOBJECT_NONE ))
+  {
+    double type = oyOption_GetValueDouble( parameters, 0 );
+    /*double params_n = oyOption_GetValueDouble( parameters, 1 );*/
+    double gamma = oyOption_GetValueDouble( parameters, 2 ),
+           a,b,c,d,e,f;
+
+    double step = (end - start) / (count-1),
+           X, Y;
+    int i;
+
+
+             if(type == 0) /* gamma */
+             {
+               for(i = 0; i < count; ++i)
+               {
+                 X = start + step * i;
+
+                 /* Y = X^gamma */
+                 Y = pow( X, gamma );
+
+                 oyOption_SetFromDouble( segments, Y, segments_start + i, 0 );
+               }
+             } else if(type == 1)
+             {
+               for(i = 0; i < count; ++i)
+               {
+                 a = oyOption_GetValueDouble( parameters, 2+1 ),
+                 b = oyOption_GetValueDouble( parameters, 2+2 ),
+                 X = start + step * i;
+                 /* Y=(a*X+b)^gamma for X>=-b/a
+                  * Y=0 for (X<-b/a)
+                  */
+                 if(X >= -b/a)
+                   Y = pow( a*X+b, gamma );
+                 else
+                   Y = 0;
+
+                 oyOption_SetFromDouble( segments, Y, segments_start + i, 0 );
+               }
+             } else if(type == 2)
+             {
+               for(i = 0; i < count; ++i)
+               {
+                 a = oyOption_GetValueDouble( parameters, 2+1 ),
+                 b = oyOption_GetValueDouble( parameters, 2+2 ),
+                 c = oyOption_GetValueDouble( parameters, 2+3 ),
+                 X = start + step * i;
+
+                 /* Y=(a*X+b)^gamma + c for X>=-b/a
+                  * Y=c for (X<-b/a)
+                  */
+                 if(X >= -b/a)
+                   Y = pow( a*X+b, gamma ) + c;
+                 else
+                   Y = c;
+
+                 oyOption_SetFromDouble( segments, Y, segments_start + i, 0 );
+               }
+             } else if(type == 3)
+             {
+               for(i = 0; i < count; ++i)
+               {
+                 a = oyOption_GetValueDouble( parameters, 2+1 ),
+                 b = oyOption_GetValueDouble( parameters, 2+2 ),
+                 c = oyOption_GetValueDouble( parameters, 2+3 ),
+                 d = oyOption_GetValueDouble( parameters, 2+4 ),
+                 X = start + step * i;
+
+                 /* Y=(a*X+b)^gamma for X>=d
+                  * Y=c*X for (X<d)
+                  */
+                 if(X >= d)
+                   Y = pow( a*X+b, gamma );
+                 else
+                   Y = c*X;
+
+                 oyOption_SetFromDouble( segments, Y, segments_start + i, 0 );
+               }
+             } else if(type == 4)
+             {
+               for(i = 0; i < count; ++i)
+               {
+                 a = oyOption_GetValueDouble( parameters, 2+1 ),
+                 b = oyOption_GetValueDouble( parameters, 2+2 ),
+                 c = oyOption_GetValueDouble( parameters, 2+3 ),
+                 d = oyOption_GetValueDouble( parameters, 2+4 ),
+                 e = oyOption_GetValueDouble( parameters, 2+5 ),
+                 f = oyOption_GetValueDouble( parameters, 2+6 ),
+                 X = start + step * i;
+
+                 /* Y=(a*X+b)^gamma + e for X>=d
+                  * Y=c*X+f for (X<d)
+                  */
+                 if(X >= d)
+                   Y = pow( a*X+b, gamma ) + e;
+                 else
+                   Y = c*X+f;
+
+                 oyOption_SetFromDouble( segments, Y, segments_start + i, 0 );
+               }
+             }
+
+  }
+
+  return error;
+}
+
 /** @func    oyIMProfileTag_GetValues
  *  @brief   get values from ICC profile tags
  *
@@ -598,7 +717,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
              int i;
              icCurveType * daten = (icCurveType*)&mem[0]; 
 
-             opt = oyOption_FromRegistration("///icCurveType",0);
+             opt = oyOption_FromRegistration("////icCurveType",0);
              if(count == 0) /* idendity */
              {
                oyOption_SetFromDouble( opt, 1.0, 0, 0 );
@@ -918,7 +1037,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                    oyOption_SetFromDouble( opt, channels_in, 0, 0 );
                    oyOption_SetFromDouble( opt, channels_out, 1, 0 );
                    oyOption_SetFromDouble( opt, precission, 2, 0 );
-                   opt =oyOption_FromRegistration("///icSigLutAtoBTypeNlut",0);
+                   opt =oyOption_FromRegistration("////icSigLutAtoBTypeNlut",0);
                    for(i = channels_in-1; i >= 0; --i)
                      oyOption_SetFromDouble( opt, dimensions[i], i, 0 );
                  }
@@ -992,7 +1111,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                oySprintf_( text, "%s", _("Matrix"));
                oyStructList_AddName( texts, text, -1);
                oyStructList_MoveIn( texts, (oyStruct_s**)&opt, -1, 0 );
-               opt =oyOption_FromRegistration("///Matrix3x3+3",0);
+               opt =oyOption_FromRegistration("////Matrix3x3+3",0);
              }
 
              if(offset_bcurve)
@@ -1141,8 +1260,9 @@ oyStructList_s * oyIMProfileTag_GetValues(
              double params[7]; /* Y(gamma),a,b,c,d,e,f */
              int i,
                  params_n = 0;
+             int segments_n = 256;
 
-             opt = oyOption_FromRegistration( "///icParametricCurveType", 0 );
+             opt = oyOption_FromRegistration( "////icParametricCurveType", 0 );
              if(type == 0) /* gamma */
              {
                if(tag->size_ < 16) return texts;
@@ -1187,28 +1307,28 @@ oyStructList_s * oyIMProfileTag_GetValues(
              if(type == 0) /* gamma */
              {
                oyStringAddPrintf_( &tmp, AD, "%s\n%s=%g",
-                                   _("Y=X^gamma"),
+                                   _("f(X)=X^gamma"),
                                    _("gamma"),
                                    params[0] );
              } else if(type == 1)
              {
                oyStringAddPrintf_( &tmp,AD, "%s\n%s\n%s=%g a=%g b=%g",
-                                   _("Y=(a*X+b)^gamma for X>=-b/a"),
-                                   _("Y=0 for (X<-b/a)"),
+                                   _("f(X)=(a*X+b)^gamma for X>=-b/a"),
+                                   _("f(X)=0 for (X<-b/a)"),
                                    _("gamma"),
                                    params[0], params[1], params[2] );
              } else if(type == 2)
              {
                oyStringAddPrintf_( &tmp,AD, "%s\n%s\n%s=%g a=%g b=%g c=%g",
-                                   _("Y=(a*X+b)^gamma + c for X>=-b/a"),
-                                   _("Y=c for (X<-b/a)"),
+                                   _("f(X)=(a*X+b)^gamma + c for X>=-b/a"),
+                                   _("f(X)=c for (X<-b/a)"),
                                    _("gamma"),
                                    params[0], params[1], params[2], params[3] );
              } else if(type == 3)
              {
                oyStringAddPrintf_( &tmp,AD, "%s\n%s\n%s=%g a=%g b=%g c=%g d=%g",
-                                   _("Y=(a*X+b)^gamma for X>=d"),
-                                   _("Y=c*X for (X<d)"),
+                                   _("f(X)=(a*X+b)^gamma for X>=d"),
+                                   _("f(X)=c*X for (X<d)"),
                                    _("gamma"),
                                    params[0], params[1], params[2], params[3],
                                    params[4] );
@@ -1216,15 +1336,16 @@ oyStructList_s * oyIMProfileTag_GetValues(
              {
                oyStringAddPrintf_( &tmp,AD, "%s\n%s\n%s=%g a=%g b=%g c=%g d=%g"
                                    " e=%g f=%g",
-                                   _("Y=(a*X+b)^gamma + e for X>=d"),
-                                   _("Y=c*X+f for (X<d)"),
+                                   _("f(X)=(a*X+b)^gamma + e for X>=d"),
+                                   _("f(X)=c*X+f for (X<d)"),
                                    _("gamma"),
                                    params[0], params[1], params[2], params[3],
                                    params[4], params[5], params[6] );
              }
 
-             
-             oyOption_SetFromDouble( opt, 64, 2+params_n, 0 );
+             oyOption_SetFromDouble( opt, segments_n, 2+params_n, 0 );
+             oyICCparametricCurveToSegments( opt, opt, 2 + params_n + 1,
+                                             segments_n, 0.0, 1.0 );
 
              if(!tmp)
                oyStringAddPrintf_(&tmp, AD, "%s %d", "parametric curve", type );
@@ -2443,7 +2564,7 @@ oyStructList_s *   oyCurvesFromTag   ( char              * mem,
 
     values = (oyOption_s*) oyStructList_GetRefType( data,
                                                     1, oyOBJECT_OPTION_S );
-    curve_bytes = oyOption_GetValueDouble( values, 1 );
+    curve_bytes = oyOption_GetValueDouble( values, 1 ) * 4;
     oyOption_Release( &values );
 
     curve_bytes_total += curve_bytes;
