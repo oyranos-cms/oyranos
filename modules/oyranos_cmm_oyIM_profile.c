@@ -114,6 +114,7 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
   return ret;
 }
 
+
 /** @func    oyIMProfileTag_GetValues
  *  @brief   get values from ICC profile tags
  *
@@ -1148,35 +1149,35 @@ oyStructList_s * oyIMProfileTag_GetValues(
                if(tag->size_ < 16) return texts;
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
-               oyOption_SetFromDouble( opt, 16, 1, 0 );
+               oyOption_SetFromDouble( opt, 1, 1, 0 );
                params_n = 1;
              } else if(type == 1)
              {
                if(tag->size_ < 24) return texts;
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
-               oyOption_SetFromDouble( opt, 12, 1, 0 );
+               oyOption_SetFromDouble( opt, 3, 1, 0 );
                params_n = 3;
              } else if(type == 2)
              {
                if(tag->size_ < 28) return texts;
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
-               oyOption_SetFromDouble( opt, 16, 1, 0 );
+               oyOption_SetFromDouble( opt, 4, 1, 0 );
                params_n = 4;
              } else if(type == 3)
              {
                if(tag->size_ < 32) return texts;
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
-               oyOption_SetFromDouble( opt, 20, 1, 0 );
+               oyOption_SetFromDouble( opt, 5, 1, 0 );
                params_n = 5;
              } else if(type == 4)
              {
                if(tag->size_ < 40) return texts;
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
-               oyOption_SetFromDouble( opt, 28, 1, 0 );
+               oyOption_SetFromDouble( opt, 7, 1, 0 );
                params_n = 7;
              }
 
