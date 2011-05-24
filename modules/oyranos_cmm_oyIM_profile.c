@@ -2568,7 +2568,7 @@ oyStructList_s *   oyCurvesFromTag   ( char              * mem,
 
     values = (oyOption_s*) oyStructList_GetRefType( data,
                                                     1, oyOBJECT_OPTION_S );
-    curve_bytes = oyOption_GetValueDouble( values, 1 ) * 4;
+    curve_bytes = 12 + oyOption_GetValueDouble( values, 1 ) * 4;
     oyOption_Release( &values );
 
     curve_bytes_total += curve_bytes;
