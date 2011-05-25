@@ -233,6 +233,90 @@ int    oyICCparametricCurveToSegments (oyOption_s        * parameters,
   return error;
 }
 
+int  oyWriteIcSigLutAtoBTypeNlut     ( oyStructList_s    * texts,
+                                       int                 channels_in,
+                                       int                 channels_out,
+                                       char              * mem,
+                                       size_t              offset_clut,
+                                       size_t              tag_size )
+{
+  int error = 0;
+  int size, i;
+  size_t off = offset_clut;
+  uint8_t * dimensions, precission, *u8;
+  uint16_t u16;
+  char * tmp = 0;
+  char * text = oyAllocateFunc_(128);
+  oyOption_s        * opt = 0;
+
+               if(tag_size >= off + 20)
+               {
+                 dimensions = (uint8_t*)&mem[off+0];
+                 precission = mem[off+16];
+                 size = 1;
+                 for(i = 0; i < channels_in; ++i)
+                   size *= dimensions[i];
+                 size *= precission;
+
+                 if(tag_size < off+20+size)
+                   error = 1;
+                 else
+                 {
+                   opt =oyOption_FromRegistration("////icSigLutAtoBTypeNlut",0);
+                   oyOption_SetFromDouble( opt, channels_in, 0, 0 );
+                   oyOption_SetFromDouble( opt, channels_out, 1, 0 );
+                   oyOption_SetFromDouble( opt, precission, 2, 0 );
+                   for(i = channels_in-1; i >= 0; --i)
+                     oyOption_SetFromDouble( opt, dimensions[i], i, 0 );
+                 }
+               }
+
+               if(error <= 0)
+               {
+                 oyStringAddPrintf_( &tmp, AD, "%s: %d->%d[%s] ",
+                                     _("nLUT"), channels_in, channels_out,
+                             precission ? "8-bit":"16-bit" );
+                 for(i = 0; i < channels_in; ++i)
+                 {
+                   if(i)
+                     oyStringAddPrintf_( &tmp, AD, "x" );
+                   oyStringAddPrintf_( &tmp, AD, "%d",
+                                       dimensions[i] );
+                 }
+                 oyStructList_AddName( texts, tmp, -1);
+                 oyFree_m_( tmp );
+               } else
+               {
+                 oySprintf_( text, "%s %s", _("nLUT"), _("Error"));
+                 oyStructList_AddName( texts, text, -1);
+               }
+
+               if(error <= 0)
+               {
+                 size /= precission;
+                 u8 = (uint8_t*)&mem[off+20];
+                 if(precission == 1) /* 8-bit */
+                   for(i = size-1; i >= 0; --i)
+                   {
+                     u16 = u8[i];
+                     oyOption_SetFromDouble( opt, u16/256.0,
+                                             3 + channels_in + i, 0 );
+                   }
+                 else if(precission == 2) /* 16-bit */
+                   for(i = size-1; i >= 0; --i)
+                   {
+                     u16 = oyGetTableUInt16_( &mem[off+20], 0, 0, i );
+                     oyOption_SetFromDouble( opt, u16/65536.0, 
+                                             3 + channels_in + i, 0 );
+                   }
+               }
+               oyStructList_MoveIn( texts, (oyStruct_s**)&opt, -1, 0 );
+
+  oyFree_m_( text );
+
+  return error;
+}
+
 /** @func    oyIMProfileTag_GetValues
  *  @brief   get values from ICC profile tags
  *
@@ -923,9 +1007,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
              uint32_t offset_bcurve, offset_matrix, offset_mcurve, offset_clut,
                       offset_acurve;
              int32_t i;
-             uint16_t u16;
              int type = 0, curves_n;
-             uint8_t * dimensions, precission, *u8;
 
              offset_bcurve = oyGetTableUInt32_( &mem[12], 0, 0, 0 );
              offset_matrix = oyGetTableUInt32_( &mem[12], 0, 0, 1 );
@@ -1039,71 +1121,10 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
              if(offset_clut)
              {
-               int size;
-               off = offset_clut;
-
-               if(tag->size_ >= off + 20)
-               {
-                 dimensions = (uint8_t*)&mem[off+0];
-                 precission = mem[off+16];
-                 size = 1;
-                 for(i = 0; i < channels_in; ++i)
-                   size *= dimensions[i];
-                 size *= precission;
-
-                 if(tag->size_ < off+20+size)
-                   error = 1;
-                 else
-                 {
-                   oyOption_SetFromDouble( opt, channels_in, 0, 0 );
-                   oyOption_SetFromDouble( opt, channels_out, 1, 0 );
-                   oyOption_SetFromDouble( opt, precission, 2, 0 );
-                   opt =oyOption_FromRegistration("////icSigLutAtoBTypeNlut",0);
-                   for(i = channels_in-1; i >= 0; --i)
-                     oyOption_SetFromDouble( opt, dimensions[i], i, 0 );
-                 }
-               }
-
-               if(error <= 0)
-               {
-                 oyStringAddPrintf_( &tmp, AD, "%s: %d->%d[%s] ",
-                                     _("nLUT"), channels_in, channels_out,
-                             precission ? "8-bit":"16-bit" );
-                 for(i = 0; i < channels_in; ++i)
-                 {
-                   if(i)
-                     oyStringAddPrintf_( &tmp, AD, "x" );
-                   oyStringAddPrintf_( &tmp, AD, "%d",
-                                       dimensions[i] );
-                 }
-                 oyStructList_AddName( texts, tmp, -1);
-                 oyFree_m_( tmp );
-               } else
-               {
-                 oySprintf_( text, "%s %s", _("nLUT"), _("Error"));
-                 oyStructList_AddName( texts, text, -1);
-               }
-
-               if(error <= 0)
-               {
-                 size /= precission;
-                 u8 = (uint8_t*)&mem[off+20];
-                 if(precission == 1) /* 8-bit */
-                   for(i = size-1; i >= 0; --i)
-                   {
-                     u16 = u8[i];
-                     oyOption_SetFromDouble( opt, u16/256.0,
-                                             3 + channels_in + i, 0 );
-                   }
-                 else if(precission == 2) /* 16-bit */
-                   for(i = size-1; i >= 0; --i)
-                   {
-                     u16 = oyGetTableUInt16_( &mem[off+20], 0, 0, i );
-                     oyOption_SetFromDouble( opt, u16/65536.0, 
-                                             3 + channels_in + i, 0 );
-                   }
-               }
-               oyStructList_MoveIn( texts, (oyStruct_s**)&opt, -1, 0 );
+               error = oyWriteIcSigLutAtoBTypeNlut( texts,
+                                                    channels_in, channels_out,
+                                                    mem, offset_clut,
+                                                    tag->size_ );
              }
 
              if(offset_mcurve)
