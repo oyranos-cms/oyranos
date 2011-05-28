@@ -256,6 +256,7 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
   oyOption_s        * opt = 0;
   oyStructList_s * list;
   int curves_n;
+  double val; 
 
   const char * colour_space_in = "1",
              * colour_space_out = "0";
@@ -304,7 +305,7 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
                  size = 1;
                  for(i = 0; i < channels_in; ++i)
                    size *= dimensions[i];
-                 size *= precission;
+                 size *= precission * channels_out;
 
                  if(tag_size < off+20+size)
                    error = 1;
@@ -315,7 +316,7 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
                    oyOption_SetFromDouble( opt, channels_out, 1, 0 );
                    oyOption_SetFromDouble( opt, precission, 2, 0 );
                    for(i = channels_in-1; i >= 0; --i)
-                     oyOption_SetFromDouble( opt, dimensions[i], i, 0 );
+                     oyOption_SetFromDouble( opt, dimensions[i], 2+i, 0 );
                  }
                }
 
@@ -323,7 +324,7 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
                {
                  oyStringAddPrintf_( &tmp, AD, "%s: %d->%d[%s] ",
                                      _("nLUT"), channels_in, channels_out,
-                             precission ? "8-bit":"16-bit" );
+                             precission == 1 ? "8-bit":"16-bit" );
                  for(i = 0; i < channels_in; ++i)
                  {
                    if(i)
@@ -346,15 +347,16 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
                  if(precission == 1) /* 8-bit */
                    for(i = size-1; i >= 0; --i)
                    {
-                     u16 = u8[i];
-                     oyOption_SetFromDouble( opt, u16/256.0,
+                     val = u8[i]/256.0;
+                     oyOption_SetFromDouble( opt, val,
                                              3 + channels_in + i, 0 );
                    }
                  else if(precission == 2) /* 16-bit */
                    for(i = size-1; i >= 0; --i)
                    {
                      u16 = oyGetTableUInt16_( &mem[off+20], 0, 0, i );
-                     oyOption_SetFromDouble( opt, u16/65536.0, 
+                     val = u16/65536.0;
+                     oyOption_SetFromDouble( opt, val, 
                                              3 + channels_in + i, 0 );
                    }
                }
