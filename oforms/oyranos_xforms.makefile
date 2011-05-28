@@ -24,7 +24,7 @@ oyranos-xforms-modules:	$(SRCDIR)oyranos_xforms_modules.c
 
 oyranos-xforms-fltk:	$(SRCDIR)oyranos_xforms_fltk.cxx $(SRCDIR)oyranos_forms_fltk.cxx $(SRCDIR)oyranos_widgets_fltk.cxx $(SRCDIR)oyranos_widgets_fltk.h
 	echo "Compiling $(SRCDIR)$< + Linking $@ ..."
-	c++ $(LDFLAGS_) -Wall -g $(CFLAGS) $(INCL)  $(SRCDIR)oyranos_xforms_fltk.cxx -o oyranos-xforms-fltk -pedantic -loyforms_fltk -lfl_i18n $(FLTK_FLAGS) $(OY_FLAGS)
+	c++ $(LDFLAGS_) -Wall -g $(CXXFLAGS) $(INCL)  $(SRCDIR)oyranos_xforms_fltk.cxx -o oyranos-xforms-fltk -pedantic -loyforms_fltk -lfl_i18n $(FLTK_FLAGS) $(OY_FLAGS)
 
 
 # Build commands and filename extensions...
