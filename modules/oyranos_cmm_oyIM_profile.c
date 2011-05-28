@@ -258,24 +258,16 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
   int curves_n;
   double val; 
 
-  const char * colour_space_in = "1",
-             * colour_space_out = "0";
-
-  if(tag_sig == icSigLutBtoAType)
-  {
-    colour_space_in = "0";
-    colour_space_out = "1";
-  }
 
              if(offset_acurve)
              {
-               off = offset_bcurve;
+               off = offset_acurve;
                list = oyCurvesFromTag( &mem[off], tag_size - off, channels_in);
                curves_n = oyStructList_Count( list );
                if(curves_n == channels_in)
                {
                  opt = oyOption_FromRegistration("////color_space",0);
-                 oyOption_SetFromText( opt, colour_space_in, 0 );
+                 oyOption_SetFromText( opt, "1", 0 );
                  for(i = 0; i < curves_n; ++i)
                  {
                    oyStructList_s * element = (oyStructList_s*)
@@ -371,7 +363,7 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
                if(curves_n == channels_in)
                {
                  opt = oyOption_FromRegistration("////color_space",0);
-                 oyOption_SetFromText( opt, colour_space_out, 0 );
+                 oyOption_SetFromText( opt, "0", 0 );
                  for(i = 0; i < curves_n; ++i)
                  {
                    oyStructList_s * element = (oyStructList_s*)
@@ -416,7 +408,7 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
                if(curves_n == channels_in)
                {
                  opt = oyOption_FromRegistration("////color_space",0);
-                 oyOption_SetFromText( opt, colour_space_out, 0 );
+                 oyOption_SetFromText( opt, "0", 0 );
                  for(i = 0; i < curves_n; ++i)
                  {
                    oyStructList_s * element = (oyStructList_s*)
