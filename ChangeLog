@@ -1,3 +1,37 @@
+Version 0.3.1
+
+Kai-Uwe Behrmann (30):
+	* [core]: use C compliant log2()
+	* [core]: revert previous #39a22a16
+	* [core]: add C header for clock()
+	* [sources]: use POSIX header for setlocale
+	* [exmpl]: add missing -lintl on osX
+	* [build]: use appropriate flags for FLTK oforms
+	* [oyIM]: do not swap mBA curve channel names
+	* [oyIM]: show correct precission for mAB nLUTs
+	* [oyIM]: support icSigLutBtoAType alias mBA
+	* [oyIM]: split out oyWriteIcSigLutAtoBTypeNlut()
+	* [oyIM]: set correct curv count
+	* [oyIM]: fix curve sequence size
+	* [i18n]: update deutsch
+	* [oyIM]: describe para data
+	* [oyIM]: send segmented curve along para
+	* [oyIM]: set parameters count once
+	* [oyIM]: describe parameter count
+	* [oyIM]: complete para-metric tag type
+	* [sources]: add oyStructList_GetName()
+	* [alpha]: add oyProfileTag_Get()
+	* [oyIM]: add curv and mAB reading
+	* [alpha]: add oyProfileTag_CreateFromData()
+	* [core]: add more ICC tag types
+	* [core]: add oyValueInt32()
+	* [alpha]: support id wildcart in oyImage_PpmWrite
+	* [alpha]: extract oyImage_PpmWrite() from oyra
+	* [alpha]: add id to debug device link
+	* [exmpl]: handle GL view events
+	* [exmpl]: move draw() out of base class
+	* [conf]: bump version
+
 Version 0.3.0
 
 Kai-Uwe Behrmann (350):
