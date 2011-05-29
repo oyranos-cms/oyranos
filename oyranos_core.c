@@ -16,7 +16,6 @@
 #include "oyranos_core.h" /* define HAVE_POSIX */
 
 #include <sys/stat.h>
-#include <time.h>
 #ifdef HAVE_POSIX
 #include <unistd.h>
 #include <langinfo.h>
