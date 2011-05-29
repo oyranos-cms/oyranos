@@ -1,3 +1,5 @@
+#include <locale.h>  /* setlocale */
+
 #include "oyStructList_s_.h" /* not nice, but direct access is probably faster */
 #include "oyranos_i18n.h"
 

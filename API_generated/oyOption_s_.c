@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/02/15
+ *  @date     2011/05/29
  */
 
 
@@ -337,6 +337,8 @@ int oyOption_Release_( oyOption_s_ **option )
 
 
 /* Include "Option.private_methods_definitions.c" { */
+#include <locale.h>  /* setlocale */
+
 #include "oyStructList_s_.h" /* not nice, but direct access is probably faster */
 #include "oyranos_i18n.h"
 
