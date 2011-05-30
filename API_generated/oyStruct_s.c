@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/03/15
+ *  @date     2011/05/30
  */
 
 
@@ -223,7 +223,7 @@ int          oyStruct_CheckType      ( oyStruct_s        * obj,
       } else
         return 2;
 
-      if((intptr_t)inheritance < (intptr_t)oyOBJECT_MAX)
+      if((uint32_t)inheritance < (uint32_t)oyOBJECT_MAX)
       {
         WARNc1_S( "non plausible inheritance pointer: %s", 
                   oyStruct_GetInfo(obj,0) );

@@ -540,7 +540,7 @@ int          oyObject_UnRef          ( oyObject_s          obj )
                 oyStructTypeToText( s->parent_types_[s->parent_types_[0]] ),
                 s->id_, s->ref_ )
 
-    if((intptr_t)obj->parent_types_ < (intptr_t)oyOBJECT_MAX)
+    if((uint32_t)obj->parent_types_ < (uint32_t)oyOBJECT_MAX)
     {
       WARNc1_S( "non plausible inheritance pointer: %s", 
                 oyStruct_GetInfo(obj,0) );
