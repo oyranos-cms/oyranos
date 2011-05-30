@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2004-2010 (C) Kai-Uwe Behrmann
+ *            2004-2011 (C) Kai-Uwe Behrmann
  *
  *  @brief    pure string handling functions
  *  @internal
@@ -16,6 +16,7 @@
 #include <sys/stat.h>
 #include <stddef.h>           /* size_t ptrdiff_t */
 #include <stdlib.h>
+#include <stdint.h>           /* uint64_t uintptr_t */
 #include <stdio.h>
 #include <string.h>
 #include <iconv.h>
@@ -404,7 +405,7 @@ char *             oyStringSegment_  ( char              * text,
                                        int                 segment,
                                        int               * end )
 {
-  ptrdiff_t end_pos = 0;
+  uintptr_t end_pos = 0;
   int i = 0;
   char * t = text;
 
@@ -414,7 +415,7 @@ char *             oyStringSegment_  ( char              * text,
     ++t;
   }
 
-  end_pos = (ptrdiff_t) oyStrchr_(t, delimiter);
+  end_pos = (uintptr_t) oyStrchr_(t, delimiter);
 
   if(end_pos == 0)
   {
@@ -422,7 +423,7 @@ char *             oyStringSegment_  ( char              * text,
     return t;
   }
 
-  *end = (int) (end_pos - (ptrdiff_t) t);
+  *end = (int) (end_pos - (uintptr_t) t);
 
   return t;
 }
@@ -433,7 +434,7 @@ char *             oyStringSegmentN_ ( char              * text,
                                        int                 segment,
                                        int               * end )
 {
-  ptrdiff_t end_pos = (ptrdiff_t)text;
+  uintptr_t end_pos = (uintptr_t)text;
   int i = 0;
   char * t = text;
 
@@ -445,7 +446,7 @@ char *             oyStringSegmentN_ ( char              * text,
 
   if(len)
   {
-    end_pos = (ptrdiff_t) oyStrnchr_(t, delimiter, text + len - t);
+    end_pos = (uintptr_t) oyStrnchr_(t, delimiter, text + len - t);
 
     if(end_pos == 0)
     {
@@ -454,7 +455,7 @@ char *             oyStringSegmentN_ ( char              * text,
     }
   }
 
-  *end = (int) (end_pos - (ptrdiff_t) t);
+  *end = (int) (end_pos - (uintptr_t) t);
 
   return t;
 }
