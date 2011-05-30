@@ -97,7 +97,7 @@ Group:      Development/Libraries/Other
 
 %package      qcmsevents
 Summary:    Xorg Colour management Event observer applet
-Group:      System/Applet
+Group:      System/Monitoring
 
 %description
 Oyranos is a colour management system.
