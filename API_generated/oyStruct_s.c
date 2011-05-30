@@ -25,7 +25,7 @@
 
 
 /* Include "Struct.public_methods_definitions.c" { */
-#include <stddef.h>           /* size_t ptrdiff_t */
+#include <stdint.h>           /* uint64_t uintptr_t */
 #include "oyranos_cmm.h" /* oyObjectInfoStatic_s */
 
 const char * (*oyStruct_GetTextFromModule_p) (
@@ -224,7 +224,7 @@ int          oyStruct_CheckType      ( oyStruct_s        * obj,
       } else
         return 2;
 
-      if((ptrdiff_t)inheritance < (ptrdiff_t)oyOBJECT_MAX)
+      if((uintptr_t)inheritance < (uintptr_t)oyOBJECT_MAX)
       {
         WARNc1_S( "non plausible inheritance pointer: %s", 
                   oyStruct_GetInfo(obj,0) );
