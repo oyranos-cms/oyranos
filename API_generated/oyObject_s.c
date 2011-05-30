@@ -24,6 +24,8 @@
 
 
 /* Include "Object.public_methods_definitions.c" { */
+#include <stddef.h>           /* size_t ptrdiff_t */
+
 static int oy_object_id_ = 0;
 #if OY_USE_OBJECT_POOL_
 static oyObject_s oy_object_pool_[100] = {
@@ -566,7 +568,7 @@ int          oyObject_UnRef          ( oyObject_s          obj )
                 oyStructTypeToText( s->parent_types_[s->parent_types_[0]] ),
                 s->id_, s->ref_ )
 
-    if((uint32_t)obj->parent_types_ < (uint32_t)oyOBJECT_MAX)
+    if((ptrdiff_t)obj->parent_types_ < (ptrdiff_t)oyOBJECT_MAX)
     {
       WARNc1_S( "non plausible inheritance pointer: %s", 
                 oyStruct_GetInfo(obj,0) );
