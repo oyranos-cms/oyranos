@@ -29,19 +29,17 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
 {
   int error = !obj;
   const char * text = 0;
-  oyOBJECT_e type = oyOBJECT_NONE;
 
   if(!error)
     text = oyObject_GetName( obj->oy_, oyNAME_NICK );
 
   if(!error && !text)
   {
-    type = obj->type_;
 
     if(oyStruct_GetTextFromModule_p)
       text = oyStruct_GetTextFromModule_p(obj, name_type, flags);
 #ifdef USE_MODULES /* FIXME move to oyStruct_GetTextFromModule_p */
-    if(type)
+    if(obj->type_)
     {
       oyCMMapiFilters_s * apis;
       int apis_n = 0, i,j;

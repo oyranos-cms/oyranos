@@ -76,14 +76,12 @@ int oyBlob_Init__Members( oyBlob_s_ * blob )
 int oyBlob_Copy__Members( oyBlob_s_ * dst, oyBlob_s_ * src)
 {
   oyAlloc_f allocateFunc_ = 0;
-  oyDeAlloc_f deallocateFunc_ = 0;
   int error = 0;
 
   if(!dst || !src)
     return 1;
 
   allocateFunc_ = dst->oy_->allocateFunc_;
-  deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
   if(error <= 0)

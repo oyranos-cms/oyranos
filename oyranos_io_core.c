@@ -234,15 +234,11 @@ int  oyWriteMemToFile2_              ( const char        * name,
              * tmp_dir = 0;
   char * filename_tmp = 0;
   char * full_name = 0;
-  char * mode = "wb";
   int exist = 0, pos = 1;
   char * tmp = 0;
 
   if(!name)
     return 1;
-
-  if(flags & OY_FILE_APPEND)
-    mode = "ab";
 
   if(flags & OY_FILE_TEMP_DIR)
   {

@@ -68,6 +68,9 @@ oyObject_NewWithAllocators  ( oyAlloc_f         allocateFunc,
   if(old_obj == 0)
 #endif
     error = !memset( o, 0, len );
+
+  if(error)
+    return NULL;
   
   o = oyObject_SetAllocators_( o, allocateFunc, deallocateFunc );
   o->copy = (oyStruct_Copy_f) oyObject_Copy;
@@ -155,7 +158,6 @@ oyObject_Copy ( oyObject_s      object )
  */
 int          oyObject_Release         ( oyObject_s      * obj )
 {
-  int error = 0;
   /* ---- start of common object destructor ----- */
   oyObject_s s = 0;
 
@@ -211,7 +213,7 @@ int          oyObject_Release         ( oyObject_s      * obj )
       deallocateFunc( s->backdoor_ ); s->backdoor_ = 0;
 
     if(s->handles_ && s->handles_->release)
-      error = s->handles_->release( (oyStruct_s**)&s->handles_ );
+      s->handles_->release( (oyStruct_s**)&s->handles_ );
 
     deallocateFunc( s );
     oyLockReleaseFunc_( lock, __FILE__, __LINE__ );
