@@ -104,6 +104,7 @@ Dependencies:
   optional:
     extra/qt
     extra/fltk
+    community/libraw
     AUR/xcalib
     AUR/elektra
   NOTE: If you have problems installing elektra from AUR,
