@@ -9,6 +9,7 @@ GenericName[de]=Xorg Farbmanagement Ereignisse
 Comment=Show State of Colour Server
 Comment[de]=Statusanzeige für Farbserver
 Categories=System;TrayIcon;
+OnlyShowIn=KDE;GNOME;ROX;XFCE;
 StartupNotify=false
 Terminal=false
 TryExec=qcmsevents
