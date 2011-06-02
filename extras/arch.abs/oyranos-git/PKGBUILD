@@ -1,0 +1,79 @@
+# Maintainer: Yiannis Belias <jonnyb@hol.gr>
+
+pkgname=oyranos-git
+pkgver=20110602
+pkgrel=1
+pkgdesc="The Colour Management System (CMS) Oyranos allows the coordination of
+device specific Information (ICC profiles) and system wide settings."
+arch=('i686' 'x86_64')
+url="http://www.oyranos.org"
+license=('BSD' 'FLMM' 'FLTK' 'GPL')
+groups=()
+depends=('libxml2'
+         'libxrandr'
+         'libxinerama'
+         'libxfixes'
+         'libxxf86vm'
+         'lcms'
+         'lcms2'
+         'libxcm')
+makedepends=('git' 'doxygen' 'graphviz')
+optdepends=('qt: for a nice observer utility'
+            'fltk: is needed for the example Gui'
+            'libraw: for cameraRAW decoding'
+            'exiv2: for cameraRAW decoding'
+            'xcalib: a vcgt loader'
+            'elektra')
+provides=('oyranos')
+conflicts=('oyranos')
+
+source=()
+md5sums=()
+
+_gitroot="/home/john/Code/GSoC/code_2011/oyranos"
+_gitname="oyranos"
+#_gitroot="git://www.oyranos.org/git/oyranos"
+
+build() {
+  msg "Connecting to GIT server...."
+  cd ${srcdir}
+  if [ -d ${_gitname}/.git ]; then
+    cd ${_gitname}
+    git pull
+  else
+    git clone --branch gsoc2011 ${_gitroot} ${_gitname}
+  fi
+
+  msg "Starting make..."
+  cd ${srcdir}/${_gitname}
+  CFLAGS=-I/usr/include/elektra/ ./configure --prefix=/usr
+  make
+  make docu
+}
+package() {
+  cd ${srcdir}/${_gitname}
+  make DESTDIR="${pkgdir}/" install
+} 
+
+build_outoftree() {
+  msg "Connecting to GIT server...."
+  cd ${srcdir}
+  if [ -d ${_gitname}/.git ]; then
+    cd ${_gitname}
+    git pull
+  else
+    git clone --branch gsoc2011 ${_gitroot} ${_gitname}
+  fi
+
+  msg "Starting make..."
+  rm -rf ${srcdir}/build
+  mkdir -p ${srcdir}/build
+  cd ${srcdir}/build || return 1
+  CFLAGS=-I/usr/include/elektra/ ${srcdir}/${_gitname}/configure --prefix=/usr
+  make
+  make docu
+}
+package_outoftree() {
+  cd ${srcdir}/build || return 1
+  make DESTDIR="${pkgdir}/" install
+} 
