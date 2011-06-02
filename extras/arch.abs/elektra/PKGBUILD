@@ -4,7 +4,7 @@
 
 pkgname=elektra
 pkgver=0.7.0
-pkgrel=1
+pkgrel=2
 pkgdesc="Elektra is a universal hierarchical configuration store"
 url="http://www.libelektra.org/"
 license="BSD"
