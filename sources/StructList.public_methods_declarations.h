@@ -24,7 +24,7 @@ int              oyStructList_CopyFrom(oyStructList_s    * list,
 int              oyStructList_MoveTo ( oyStructList_s    * s,
                                        int                 pos,
                                        int                 new_pos );
-int              oyStructList_Sort   ( oyStructList_s    * s,
+int              oyStructList_Sort   ( oyStructList_s    * list,
                                        int32_t           * rank_map );
 int              oyStructList_ObserverAdd (
                                        oyStructList_s    * list,

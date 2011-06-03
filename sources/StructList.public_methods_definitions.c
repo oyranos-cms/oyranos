@@ -428,9 +428,9 @@ int              oyStructList_MoveTo ( oyStructList_s    * s,
 }
 
 /**
- *  Function oyStructList_Sort
+ *  Function  oyStructList_Sort
  *  @memberof oyStructList_s
- *  @brief   sort a list according to a rank_list
+ *  @brief    Sort a list according to a rank_list
  *
  *  @version Oyranos: 0.1.10
  *  @date    2009/05/23
