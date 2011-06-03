@@ -130,8 +130,9 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
   return error;
 }
 
-/** @internal
- *  @brief oyStructList_s referenced pointer access
+/** Function  oyStructList_GetRef
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s referenced pointer access
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
@@ -139,18 +140,18 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
 oyStruct_s *     oyStructList_GetRef ( oyStructList_s    * list,
                                        int                 pos )
 {
-  oyStructList_s * s = list;
+  oyStructList_s_ * s = (oyStructList_s_*)list;
   int error = !s;
   oyStruct_s * obj = 0;
 
   if(!error)
     oyObject_Lock( s->oy_, __FILE__, __LINE__ );
 
-  obj = oyStructList_Get_(list, pos);
+  obj = oyStructList_Get_(s, pos);
   error = !obj;
 
   if(error <= 0)
-    error = oyStructList_ReferenceAt_(list, pos);
+    error = oyStructList_ReferenceAt_(s, pos);
 
   if(s)
     oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
