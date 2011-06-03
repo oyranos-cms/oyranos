@@ -1,5 +1,6 @@
-/** @internal
- *  @brief oyStructList_s pointer add
+/** Function  oyStructList_MoveIn
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s pointer add
  *
  *  If the list was observed, the new elements are not automatically observed.
  *  The caller can select OY_OBSERVE_AS_WELL in the flags argument if he
