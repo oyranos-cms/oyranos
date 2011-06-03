@@ -604,9 +604,9 @@ oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
 }
 
 /**
- *  Function oyStructList_MoveInName
+ *  Function  oyStructList_MoveInName
  *  @memberof oyStructList_s
- *  @brief   add a name to a list
+ *  @brief    Add a name to a list
  *
  *  The text is added a a oyName_s::name member variable and owned by the list.
  *
@@ -616,7 +616,7 @@ oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
  */
 int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
 {
-  int error = !texts || ! text;
+  int error = !texts || !text;
   oyName_s * name = 0;
   oyStruct_s * oy_struct = 0;
   if(!error)
