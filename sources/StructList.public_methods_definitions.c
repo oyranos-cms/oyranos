@@ -298,26 +298,26 @@ const char * oyStructList_GetText    ( oyStructList_s    * list,
 }
 
 /**
- *  Function oyStructList_GetID
+ *  Function  oyStructList_GetID
  *  @memberof oyStructList_s
- *  @brief   eventually build and obtain the lists member names
+ *  @brief    Eventually build and obtain the lists member names
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/11/04
  *  @since   2008/11/04 (Oyranos: 0.1.8)
  */
-const char *     oyStructList_GetID  ( oyStructList_s    * s,
+const char *     oyStructList_GetID  ( oyStructList_s    * list,
                                        int                 intent_spaces,
                                        uint32_t            flags )
 {
-  int error = !s;
+  int error = !list;
   const char * text = 0;
 
   if(error <= 0)
   {
-    text = oyObject_GetName( s->oy_, oyNAME_NICK );
+    text = oyObject_GetName( list->oy_, oyNAME_NICK );
     if(!text)
-      text = oyStructList_GetText( s, oyNAME_NICK, intent_spaces, flags );
+      text = oyStructList_GetText( list, oyNAME_NICK, intent_spaces, flags );
   }
 
   return text;

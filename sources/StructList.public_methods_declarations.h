@@ -14,7 +14,7 @@ const char *     oyStructList_GetText( oyStructList_s    * list,
                                        oyNAME_e            name_type,
                                        int                 intent_spaces,
                                        uint32_t            flags );
-const char *     oyStructList_GetID  ( oyStructList_s    * s,
+const char *     oyStructList_GetID  ( oyStructList_s    * list,
                                        int                 intent_spaces,
                                        uint32_t            flags );
 int              oyStructList_Clear  ( oyStructList_s    * s );
