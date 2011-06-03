@@ -10,7 +10,7 @@ oyStruct_s *     oyStructList_GetRefType( oyStructList_s * list,
 int              oyStructList_ReleaseAt( oyStructList_s  * list,
                                          int               pos );
 int              oyStructList_Count  ( oyStructList_s    * list );
-const char *     oyStructList_GetText( oyStructList_s    * s,
+const char *     oyStructList_GetText( oyStructList_s    * list,
                                        oyNAME_e            name_type,
                                        int                 intent_spaces,
                                        uint32_t            flags );

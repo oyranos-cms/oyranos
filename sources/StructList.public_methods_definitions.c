@@ -249,20 +249,20 @@ int              oyStructList_Count ( oyStructList_s   * list )
   return n;
 }
 
-/**
- *  Function oyStructList_GetText
+/** Function  oyStructList_GetText
  *  @memberof oyStructList_s
- *  @brief   build and obtain the lists member names
+ *  @brief    Build and obtain the lists member names
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/11/04
  *  @since   2008/11/04 (Oyranos: 0.1.8)
  */
-const char * oyStructList_GetText    ( oyStructList_s    * s,
+const char * oyStructList_GetText    ( oyStructList_s    * list,
                                        oyNAME_e            name_type,
                                        int                 intent_spaces,
                                        uint32_t            flags )
 {
+  oyStructList_s_ * s = (oyStructList_s_*)list;
   int error = !s, i, n;
   char * hash_text = 0;
   char * text = 0;
@@ -274,7 +274,7 @@ const char * oyStructList_GetText    ( oyStructList_s    * s,
     for(i = 0; i < intent_spaces; ++i)
       text[i] = ' ';
     text[i] = 0;
-    n = oyStructList_Count( s );
+    n = oyStructList_Count( list );
     for(i = 0; i < n; ++i)
     {
       oy_struct = oyStructList_Get_( s, i );
