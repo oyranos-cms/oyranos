@@ -561,6 +561,10 @@ oyStruct_s *     oyStructList_GetType( oyStructList_s    * list,
   return obj;
 }
 
+/** Function  oyStructList_GetParentObjType
+ *  @memberof oyStructList_s
+ *
+ */
 oyOBJECT_e       oyStructList_GetParentObjType (
                                        oyStructList_s    * list )
 {
