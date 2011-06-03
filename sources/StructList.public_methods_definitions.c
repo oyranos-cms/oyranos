@@ -227,8 +227,9 @@ int            oyStructList_ReleaseAt( oyStructList_s    * list,
   return error;
 }
 
-/**
- *  @brief oyStructList_s count
+/** Function  oyStructList_Count
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s count
  *
  *  @since Oyranos: version 0.1.8
  *  @date  21 november 2007 (API 0.1.8)
