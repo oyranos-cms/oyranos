@@ -20,32 +20,34 @@
   return p;
 }*/
 
-/** @internal
- *  @brief oyStructList_s pointer access
+/** Function  oyStructList_Get_
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s pointer access
+ *  @internal
  *
  *  non thread save
  *
  *  @since Oyranos: version 0.1.8
  *  @date  21 november 2007 (API 0.1.8)
  */
-oyStruct_s *     oyStructList_Get_   ( oyStructList_s    * list,
+oyStruct_s *     oyStructList_Get_   ( oyStructList_s_   * list,
                                        int                 pos )
 {
   int n = 0;
-  oyStructList_s_ * s = (oyStructList_s_*)list;
+  oyStructList_s_ * s = list;
   int error = !s;
   oyStruct_s * obj = 0;
 
   if(error <= 0)
-  if(s->type_ != oyOBJECT_STRUCT_LIST_S)
-    error = 1;
+    if(s->type_ != oyOBJECT_STRUCT_LIST_S)
+      error = 1;
 
   if(error <= 0)
     n = s->n_;
 
   if(error <= 0)
-  if(pos >= 0 && n > pos && s->ptr_[pos])
-    obj = s->ptr_[pos];
+    if(pos >= 0 && n > pos && s->ptr_[pos])
+      obj = s->ptr_[pos];
 
   return obj;
 }
