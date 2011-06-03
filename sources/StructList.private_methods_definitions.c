@@ -52,18 +52,20 @@ oyStruct_s *     oyStructList_Get_   ( oyStructList_s_   * list,
   return obj;
 }
 
-/** @internal
- *  @brief oyStructList_s pointer referencing
+/** Function  oyStructList_ReferenceAt_
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s pointer referencing
+ *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  23 november 2007 (API 0.1.8)
  */
-int              oyStructList_ReferenceAt_( oyStructList_s * list,
-                                       int                 pos )
+int              oyStructList_ReferenceAt_(oyStructList_s_ * list,
+                                           int               pos )
 {
   int n = 0;
   int error = 0;
-  oyStructList_s_ * s = (oyStructList_s_*)list;
+  oyStructList_s_ * s = list;
   oyStruct_s * p = 0;
 
   if(s)
