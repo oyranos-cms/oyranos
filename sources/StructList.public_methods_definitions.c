@@ -324,9 +324,9 @@ const char *     oyStructList_GetID  ( oyStructList_s    * list,
 }
 
 /**
- *  Function oyStructList_Clear
+ *  Function  oyStructList_Clear
  *  @memberof oyStructList_s
- *  @brief   release all listed objects
+ *  @brief    Release all listed objects
  *
  *  @version Oyranos: 0.1.9
  *  @date    2008/11/27
@@ -339,7 +339,7 @@ int              oyStructList_Clear  ( oyStructList_s    * list )
 
   if(error <= 0)
     for(i = s->n_ - 1; i >= 0; --i)
-      oyStructList_ReleaseAt( (oyStructList_s*)s, i );
+      oyStructList_ReleaseAt( list, i );
   return error;
 }
 

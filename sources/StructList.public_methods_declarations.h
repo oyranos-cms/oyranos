@@ -17,7 +17,7 @@ const char *     oyStructList_GetText( oyStructList_s    * list,
 const char *     oyStructList_GetID  ( oyStructList_s    * list,
                                        int                 intent_spaces,
                                        uint32_t            flags );
-int              oyStructList_Clear  ( oyStructList_s    * s );
+int              oyStructList_Clear  ( oyStructList_s    * list );
 int              oyStructList_CopyFrom(oyStructList_s    * list,
                                        oyStructList_s    * from,
                                        oyObject_s          object );
