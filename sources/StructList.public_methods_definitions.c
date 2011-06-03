@@ -663,9 +663,9 @@ int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
   return error;
 }
 /**
- *  Function oyStructList_GetName
+ *  Function  oyStructList_GetName
  *  @memberof oyStructList_s
- *  @brief   add a name to a list
+ *  @brief    Add a name to a list
  *
  *  The text is added a a oyName_s::name member variable.
  *
