@@ -630,9 +630,9 @@ int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
   return error;
 }
 /**
- *  Function oyStructList_AddName
+ *  Function  oyStructList_AddName
  *  @memberof oyStructList_s
- *  @brief   add a name to a list
+ *  @brief    Add a name to a list
  *
  *  The text is added a a oyName_s::name member variable.
  *
