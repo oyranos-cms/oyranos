@@ -182,10 +182,9 @@ oyStruct_s *     oyStructList_GetRefType( oyStructList_s * list,
   return obj;
 }
 
-/**
- *  @internal
- *  Function oyStructList_ReleaseAt
- *  @brief   oyStructList_s pointer release
+/** Function  oyStructList_ReleaseAt
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s pointer release
  *
  *  release and shrink
  *
@@ -207,7 +206,7 @@ int            oyStructList_ReleaseAt( oyStructList_s    * list,
   if(error <= 0)
     oyObject_Lock( s->oy_, __FILE__, __LINE__ );
 
-  if(error <= 0 && list)
+  if(error <= 0 && s)
   {
       if(0 <= pos && pos < s->n_)
       {

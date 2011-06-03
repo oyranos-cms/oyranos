@@ -8,7 +8,7 @@ oyStruct_s *     oyStructList_GetRefType( oyStructList_s * list,
                                           int              pos,
                                           oyOBJECT_e       type );
 int              oyStructList_ReleaseAt( oyStructList_s  * list,
-                                       int                 pos );
+                                         int               pos );
 int              oyStructList_Count  ( oyStructList_s    * list );
 const char *     oyStructList_GetText( oyStructList_s    * s,
                                        oyNAME_e            name_type,
