@@ -574,9 +574,9 @@ oyOBJECT_e       oyStructList_GetParentObjType (
   return s->parent_type_;
 }
 
-/**
- *  Function oyStructList_Create
- *  @brief   create a new oyStruct_s list
+/** Function  oyStructList_Create
+ *  @memberof oyStructList_s
+ *  @brief    Create a new oyStruct_s list
  *
  *  @param         parent_type         type of parent object
  *  @param         list_name           optional list name
