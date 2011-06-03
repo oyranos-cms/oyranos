@@ -159,15 +159,16 @@ oyStruct_s *     oyStructList_GetRef ( oyStructList_s    * list,
   return obj;
 }
 
-/** Function oyStructList_GetRefType
- *  @brief oyStructList_s pointer access
+/** Function  oyStructList_GetRefType
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s pointer access
  *
  *  @since Oyranos: version 0.1.8
  *  @date  1 january 2008 (API 0.1.8)
  */
 oyStruct_s *     oyStructList_GetRefType( oyStructList_s * list,
-                                       int                 pos,
-                                       oyOBJECT_e          type )
+                                          int              pos,
+                                          oyOBJECT_e       type )
 {
   oyStruct_s * obj = oyStructList_GetRef( list, pos );
 

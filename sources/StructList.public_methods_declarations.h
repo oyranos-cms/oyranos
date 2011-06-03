@@ -5,8 +5,8 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
 oyStruct_s *     oyStructList_GetRef ( oyStructList_s    * list,
                                        int                 pos );
 oyStruct_s *     oyStructList_GetRefType( oyStructList_s * list,
-                                       int                 pos,
-                                       oyOBJECT_e          type );
+                                          int              pos,
+                                          oyOBJECT_e       type );
 int              oyStructList_ReleaseAt( oyStructList_s  * list,
                                        int                 pos );
 int              oyStructList_Count  ( oyStructList_s    * list );
