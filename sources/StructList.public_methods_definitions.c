@@ -541,9 +541,9 @@ int              oyStructList_ObserverAdd (
   return error;
 }
 
-/**
- *  Function oyStructList_GetType
- *  @brief oyStructList_s pointer access
+/** Function  oyStructList_GetType
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s pointer access
  *
  *  non thread save; better dont use
  *
@@ -554,7 +554,7 @@ oyStruct_s *     oyStructList_GetType( oyStructList_s    * list,
                                        int                 pos,
                                        oyOBJECT_e          type )
 {
-  oyStruct_s * obj = oyStructList_Get_( list, pos );
+  oyStruct_s * obj = oyStructList_Get_( (oyStructList_s_*)list, pos );
 
   if(obj && obj->type_ != type)
     obj = 0;
