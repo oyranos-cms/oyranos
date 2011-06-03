@@ -501,9 +501,9 @@ int              oyStructList_Sort   ( oyStructList_s    * list,
 }
 
 /**
- *  Function oyStructList_ObserverAdd
+ *  Function  oyStructList_ObserverAdd
  *  @memberof oyStructList_s
- *  @brief   add a observer to the each list member
+ *  @brief    Add a observer to the each list member
  *
  *  Members are further observed by the list object.
  *
