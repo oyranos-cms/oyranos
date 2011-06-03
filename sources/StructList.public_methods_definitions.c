@@ -344,9 +344,9 @@ int              oyStructList_Clear  ( oyStructList_s    * list )
 }
 
 /**
- *  Function oyStructList_CopyFrom
+ *  Function  oyStructList_CopyFrom
  *  @memberof oyStructList_s
- *  @brief   clean "list" and copy all listed objects from "from" to "list".
+ *  @brief    Clean "list" and copy all listed objects from "from" to "list".
  *
  *  If the list was observed, the new elements are observed by the list through
  *  the standard signal forwarding function (oyStructSignalForward_).
@@ -368,7 +368,7 @@ int              oyStructList_CopyFrom(oyStructList_s    * list,
 
   if(error <= 0)
   {
-    error = oyStructList_Clear( list );
+    error = oyStructList_Clear( s );
 
     from_n = ((oyStructList_s_*)from)->n_;
     for(i = 0; i < from_n && error <= 0; ++i)
@@ -381,7 +381,7 @@ int              oyStructList_CopyFrom(oyStructList_s    * list,
     }
 
     if(error <= 0 && oyStruct_IsObserved( (oyStruct_s*)s, 0) )
-      error = oyStructList_ObserverAdd( list, 0, 0, 0 );
+      error = oyStructList_ObserverAdd( s, 0, 0, 0 );
   }
 
 
