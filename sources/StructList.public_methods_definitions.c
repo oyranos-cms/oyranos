@@ -388,10 +388,9 @@ int              oyStructList_CopyFrom(oyStructList_s    * list,
   return error;
 }
 
-/** @internal
- *  Function oyStructList_MoveTo
+/** Function  oyStructList_MoveTo
  *  @memberof oyStructList_s
- *  @brief   move a list element to a new position
+ *  @brief    Move a list element to a new position
  *
  *  real used?
  *
