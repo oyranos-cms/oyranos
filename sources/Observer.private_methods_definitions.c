@@ -39,10 +39,10 @@ int      oyStructSignalForward_      ( oyObserver_s      * observer,
   return handled;
 }
 
-/** @internal
- *  Function oyObserver_Copy_
+/** Function  oyObserver_Copy_
  *  @memberof oyObserver_s
- *  @brief   real copy a Observer object
+ *  @brief    Real copy a Observer object
+ *  @internal
  *
  *  @param[in]     obj                 struct object
  *  @param         object              the optional object
@@ -51,8 +51,7 @@ int      oyStructSignalForward_      ( oyObserver_s      * observer,
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2009/10/26
  */
-oyObserver_s * oyObserver_Copy_
-                                     ( oyObserver_s      * obj,
+oyObserver_s * oyObserver_Copy_      ( oyObserver_s      * obj,
                                        oyObject_s          object )
 {
   oyObserver_s * s = 0;

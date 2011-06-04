@@ -1,8 +1,7 @@
 int      oyStructSignalForward_      ( oyObserver_s      * observer,
                                        oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data );
-oyObserver_s * oyObserver_Copy_
-                                     ( oyObserver_s      * obj,
+oyObserver_s * oyObserver_Copy_      ( oyObserver_s      * obj,
                                        oyObject_s          object );
 oyStructList_s * oyStruct_ObserverListGet_(
                                        oyStruct_s        * obj,
