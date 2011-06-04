@@ -1,14 +1,18 @@
-/** @internal
- *  @brief oyStructList_s pointer access
+/** Function  oyStructList_GetRaw_
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s pointer access
+ *
+ *  Unused?? Consider changing the name to oyStructList_GetArray_()??
+ *  Get a pointer to the internal array of oyStruct_s objects
  *
  *  @since Oyranos: version 0.1.8
  *  @date  23 november 2007 (API 0.1.8)
  */
-/*oyHandle_s **    oyStructList_GetRaw_( oyStructList_s    * list )
+oyStruct_s **    oyStructList_GetRaw_( oyStructList_s_   * list )
 {
   int error = 0;
-  oyStructList_s_ * s = (oyStructList_s_*)list;
-  oyHandle_s ** p = 0;
+  oyStructList_s_ * s = list;
+  oyStruct_s ** p = 0;
 
   if(error <= 0)
   if(s->type_ != oyOBJECT_STRUCT_LIST_S)
@@ -18,7 +22,7 @@
     p = s->ptr_;
 
   return p;
-}*/
+}
 
 /** Function  oyStructList_Get_
  *  @memberof oyStructList_s
