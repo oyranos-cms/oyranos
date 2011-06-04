@@ -134,10 +134,10 @@ oyStructList_s * oyStruct_ObserverListGet_(
   return list;
 }
 
-/** @internal
- *  Function oyStruct_ObserverRemove_
+/** Function  oyStruct_ObserverRemove_
  *  @memberof oyObserver_s
- *  @brief   remove a observer from the observer or model internal list
+ *  @brief    Remove a observer from the observer or model internal list
+ *  @internal
  *
  *  @param[in,out] list                the reference list
  *  @param[in]     obj                 comparision object
