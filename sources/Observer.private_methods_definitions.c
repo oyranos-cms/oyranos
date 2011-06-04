@@ -1,8 +1,8 @@
-/**
- *  @internal
- *  Function oyStructSignalForward_
+/** Function  oyStructSignalForward_
  *  @memberof oyObserver_s
- *  @brief   observe all list members
+ *  @brief    Observe all list members
+ *  @internal
+ *
  *
  *  This function is useful to forward signals and fill holes in a chain.
  *  Implements oyObserver_Signal_f.
