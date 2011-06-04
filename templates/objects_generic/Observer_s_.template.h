@@ -9,17 +9,8 @@
 #include "{{ class.name }}.h"
 #include "oyStructList_s.h"
 
-int      oyStructSignalForward_      ( oyObserver_s      * observer,
-                                       oySIGNAL_e          signal_type,
-                                       oyStruct_s        * signal_data );
-oyObserver_s * oyObserver_Copy_
-                                     ( oyObserver_s      * obj,
-                                       oyObject_s          object );
-oyStructList_s * oyStruct_ObserverListGet_(
-                                       oyStruct_s        * obj,
-                                       const char        * reg );
-int        oyStruct_ObserverRemove_  ( oyStructList_s    * list,
-                                       oyStruct_s        * obj,
-                                       int                 observer,
-                                       oyObserver_Signal_f signalFunc );
+/* Include "{{ class.private_methods_declarations_h }}" { */
+{% include class.private_methods_declarations_h %}
+/* } Include "{{ class.private_methods_declarations_h }}" */
+
 #endif /* {{ file_name|underscores|upper|tr:". _" }} */
