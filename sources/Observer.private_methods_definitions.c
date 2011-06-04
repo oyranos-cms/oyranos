@@ -77,10 +77,10 @@ oyObserver_s * oyObserver_Copy_      ( oyObserver_s      * obj,
   return s;
 }
 
-/** @internal
- *  Function oyStruct_ObserverListGet_
+/** Function  oyStruct_ObserverListGet_
  *  @memberof oyObserver_s
- *  @brief   get the desired list of oyObserver_s'
+ *  @brief    Get the desired list of oyObserver_s'
+ *  @internal
  *
  *  @param[in]     obj                 the object to look in for the list
  *  @param[in]     reg                 the selector for the list
@@ -111,8 +111,7 @@ oyStructList_s * oyStruct_ObserverListGet_(
       if(!obj->oy_->handles_)
         obj->oy_->handles_ = oyOptions_New( 0 );
       error = oyOptions_MoveIn( obj->oy_->handles_, &o, -1);
-      o = oyOptions_Find( obj->oy_->handles_,
-                          reg );
+      o = oyOptions_Find( obj->oy_->handles_, reg );
     }
   }
 
