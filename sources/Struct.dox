@@ -3,7 +3,8 @@
  *  @brief Oyranos base structure
  *
  *  All Oyranos structures should be castable to this basic one.
- *  Do not automaticly create templates [notemplates]
+ *
+ *  @note New templates will not be created automaticly [notemplates]
  *
  *  @version Oyranos: x.x.x
  *  @since Oyranos: version 0.1.8

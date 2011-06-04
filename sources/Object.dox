@@ -7,7 +7,8 @@
  *  should almost all be derived from this struct.\n
  *  The memory management can be controlled by the user and will affect internal
  *  and derived data.
- *  Do not automaticly create templates [notemplates]
+ *
+ *  @note New templates will not be created automaticly [notemplates]
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/10/00 (Oyranos: 0.1.8)
