@@ -129,6 +129,7 @@ int main (int argc, char ** argv)
                         if(t) oyDeAllocateFunc_( t );
                         t = 0;
                         i=100; break;
+              case '?':
               default:
                         usage(argc, argv);
                         exit (0);
@@ -151,8 +152,14 @@ int main (int argc, char ** argv)
 
   if(!input_xml_file)
   {
+    size_t text_size = 0;
+    text = oyReadStdinToMem_(&text_size, oyAllocateFunc_);
+
+    if(text_size == 0)
+    {
                         usage(argc, argv);
                         exit (0);
+    }
   }
 
   /* get Layout file */
