@@ -831,47 +831,6 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
 int                oyProfile_DeviceGet ( oyProfile_s     * profile,
                                        oyConfig_s        * device );
 
-/** @brief tell about the conversion profiles
- *  @ingroup objects_profile
- *  @extends oyStruct_s
- */
-typedef struct oyProfiles_s {
-  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_PROFILES_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-  oyStructList_s     * list_;          /**< @private list of profiles */
-} oyProfiles_s;
-
-OYAPI oyProfiles_s * OYEXPORT
-                 oyProfiles_New      ( oyObject_s          object );
-OYAPI oyProfiles_s * OYEXPORT
-                 oyProfiles_Copy     ( oyProfiles_s      * profile_list,
-                                       oyObject_s          object);
-OYAPI oyProfiles_s * OYEXPORT
-                 oyProfiles_Create   ( oyProfiles_s      * patterns,
-                                       oyObject_s          object);
-OYAPI oyProfiles_s * OYEXPORT
-                 oyProfiles_ForStd   ( oyPROFILE_e         colour_space,
-                                       int               * current,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-                 oyProfiles_Release  ( oyProfiles_s     ** profile_list );
-
-
-oyProfiles_s   * oyProfiles_MoveIn   ( oyProfiles_s      * list,
-                                       oyProfile_s      ** ptr,
-                                       int                 pos );
-int              oyProfiles_ReleaseAt( oyProfiles_s      * list,
-                                       int                 pos );
-oyProfile_s *    oyProfiles_Get      ( oyProfiles_s      * list,
-                                       int                 pos );
-int              oyProfiles_Count    ( oyProfiles_s      * list );
-int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
-                                       oyConfig_s        * device,
-                                       int32_t           * rank_list );
-
-
 
 OYAPI int  OYEXPORT
            oyOptions_SetDriverContext( oyOptions_s      ** options,
