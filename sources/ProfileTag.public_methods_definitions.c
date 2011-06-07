@@ -136,8 +136,9 @@ OYAPI oyProfileTag_s * OYEXPORT
   return tag;
 }
 
-/** Function oyProfileTag_CreateFromData
+/** Function  oyProfileTag_CreateFromData
  *  @memberof oyProfileTag_s
+ *  @brief    Create a oyProfileTag_s from some data
  *
  *  @param[in]     sig                 usage signature
  *  @param[in]     type                content type
@@ -160,7 +161,7 @@ OYAPI oyProfileTag_s * OYEXPORT
                                        oyPointer           tag_block,
                                        oyObject_s          object )
 {
-  oyProfileTag_s * s = oyProfileTag_New(object);
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)oyProfileTag_New(object);
   int error = !s;
 
   if(!s)
@@ -182,7 +183,7 @@ OYAPI oyProfileTag_s * OYEXPORT
     }
   }
 
-  return s;
+  return (oyProfileTag_s*)s;
 }
 
 /** Function oyProfileTag_Set
