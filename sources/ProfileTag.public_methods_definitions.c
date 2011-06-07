@@ -1,8 +1,9 @@
-/** Function oyProfileTag_Create
+/** Function  oyProfileTag_Create
  *  @memberof oyProfileTag_s
+ *  @brief    Create a oyProfileTag_s from a list of arguments
  *
  *  The API relies on an generic arguments inside a list. The arguments are not
- *  specified here but in the appropriate moduls. This allowes flixibility, 
+ *  specified here but in the appropriate modules. This allows flexibility,
  *  which needs more understanding.
  *
  *  For the effect of the parameters look at the appropriate module
@@ -72,7 +73,7 @@ OYAPI oyProfileTag_s * OYEXPORT
       error = funcP( tag, list, tag_type, version );
 
     if(error <= 0)
-      error = !memcpy( tag->last_cmm_, cmm, 4 );
+      error = !memcpy( oyProfileTagPriv_m(tag)->last_cmm_, cmm, 4 );
     if(error <= 0)
       s = tag;
   }
