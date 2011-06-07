@@ -872,43 +872,6 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
                                        int32_t           * rank_list );
 
 
-/** @struct oyProfileTag_s
- *  @brief  a profile constituting element
- *  @ingroup objects_profile
- *  @extends oyStruct_s
- *
- *  @since Oyranos: version 0.1.8
- *  @date  1 january 2008 (API 0.1.8)
- */
-struct oyProfileTag_s {
-  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_PROFILE_TAG_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  icTagSignature       use;            /**< tag functionality inside profile */
-  icTagTypeSignature   tag_type_;      /**< @private tag type to decode the data block */
-
-  oySTATUS_e           status_;        /**< @private status at load time */
-
-  size_t               offset_orig;    /**< information from profile read */
-  size_t               size_;          /**< @private data block size */
-  size_t               size_check_;    /**< @private calculated data block size */
-  oyPointer            block_;         /**< @private the data to interprete */
-
-  char                 profile_cmm_[5];/**< @private the profile prefered CMM */
-  char                 required_cmm[5];/**< selected a certain CMM */
-  char                 last_cmm_[5];   /**< info: last processing CMM */
-};
-
-OYAPI oyProfileTag_s * OYEXPORT
-               oyProfileTag_New      ( oyObject_s          object );
-OYAPI oyProfileTag_s * OYEXPORT
-               oyProfileTag_Copy     ( oyProfileTag_s    * obj,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-               oyProfileTag_Release  ( oyProfileTag_s   ** obj );
-
 
 OYAPI int  OYEXPORT
            oyOptions_SetDriverContext( oyOptions_s      ** options,
