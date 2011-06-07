@@ -81,8 +81,9 @@ OYAPI oyProfileTag_s * OYEXPORT
   return s;
 }
 
-/** Function oyProfileTag_CreateFromText
+/** Function  oyProfileTag_CreateFromText
  *  @memberof oyProfileTag_s
+ *  @brief    Create a oyProfileTag_s from a string
  *
  *  @param[in]     text                a string
  *  @param[in]     tag_type            type to create, e.g. icSigTextDescriptionType or icSigTextType
@@ -128,7 +129,7 @@ OYAPI oyProfileTag_s * OYEXPORT
   }
 
   if(error <= 0)
-  tag->use = tag_usage;
+    oyProfileTagPriv_m(tag)->use = tag_usage;
 
   oyStructList_Release( &list );
 
