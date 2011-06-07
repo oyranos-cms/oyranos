@@ -17,18 +17,7 @@
  */
 void oyProfileTag_Release__Members( oyProfileTag_s_ * profiletag )
 {
-  /* Deallocate members here
-   * E.g: oyXXX_Release( &profiletag->member );
-   */
-
-  if(profiletag->oy_->deallocateFunc_)
-  {
-    oyDeAlloc_f deallocateFunc = profiletag->oy_->deallocateFunc_;
-
-    /* Deallocate members of basic type here
-     * E.g.: deallocateFunc( profiletag->member );
-     */
-  }
+  /* Nothing to deallocate here */
 }
 
 /** Function    oyProfileTag_Init__Members
