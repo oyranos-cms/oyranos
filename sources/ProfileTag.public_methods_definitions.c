@@ -186,10 +186,9 @@ OYAPI oyProfileTag_s * OYEXPORT
   return (oyProfileTag_s*)s;
 }
 
-/** Function oyProfileTag_Set
+/** Function  oyProfileTag_Set
  *  @memberof oyProfileTag_s
- *
- *  The function is a simple setter for the object elements.
+ *  @brief    The function is a simple setter for the object elements.
  *
  *  @param[in,out] tag                 the to be manipulated ICC profile object
  *  @param[in]     sig                 usage signature
@@ -214,7 +213,7 @@ OYAPI int  OYEXPORT
                                        size_t              tag_size,
                                        oyPointer           tag_block )
 {
-  oyProfileTag_s * s = tag;
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
   int error = !s;
 
   if(!s)
