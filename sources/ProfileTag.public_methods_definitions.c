@@ -461,10 +461,9 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
   return texts;
 }
 
-/** Function oyProfileTag_GetBlock
+/** Function  oyProfileTag_GetBlock
  *  @memberof oyProfileTag_s
- *
- *  Get the raw memory block of the tag.
+ *  @brief    Get the raw memory block of the tag.
  *
  *  @param[in]     tag                 the tag to read
  *  @param[out]    tag_block           the raw data owned by the user; on success the block if it has a size; else undefined
@@ -481,7 +480,7 @@ int            oyProfileTag_GetBlock ( oyProfileTag_s    * tag,
                                        size_t            * tag_size,
                                        oyAlloc_f           allocateFunc )
 {
-  oyProfileTag_s * s = tag;
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
   int error = 0;
 
   if(!s)
@@ -494,13 +493,13 @@ int            oyProfileTag_GetBlock ( oyProfileTag_s    * tag,
     if(!allocateFunc)
       allocateFunc = oyAllocateFunc_;
 
-    if(tag->size_ && tag->block_ && tag_block)
+    if(s->size_ && s->block_ && tag_block)
     {
-      *tag_block = allocateFunc( tag->size_ + 1 );
-      memcpy( *tag_block, tag->block_, tag->size_ );
+      *tag_block = allocateFunc( s->size_ + 1 );
+      memcpy( *tag_block, s->block_, s->size_ );
     }
     if(tag_size)
-      *tag_size = tag->size_;
+      *tag_size = s->size_;
   }
 
   return error;
