@@ -250,7 +250,7 @@ OYAPI int  OYEXPORT
  */
 oyStructList_s*oyProfileTag_Get      ( oyProfileTag_s    * tag )
 {
-  oyProfileTag_s * s = tag;
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
   int error = !s;
   oyCMMProfileTag_GetValues_f funcP = 0;
   char cmm[] = {0,0,0,0,0};
@@ -266,13 +266,13 @@ oyStructList_s*oyProfileTag_Get      ( oyProfileTag_s    * tag )
 
   if(error <= 0)
   {
-    query.value = tag->tag_type_;
+    query.value = s->tag_type_;
     query_[0] = &query;
     queries.queries = query_;
-    error = !memcpy( queries.prefered_cmm, tag->profile_cmm_, 4 ); 
+    error = !memcpy( queries.prefered_cmm, s->profile_cmm_, 4 );
 
     if(error <= 0)
-      error = !memcpy( cmm, tag->required_cmm, 4 );
+      error = !memcpy( cmm, s->required_cmm, 4 );
   }
 
   if(error <= 0)
@@ -291,7 +291,7 @@ oyStructList_s*oyProfileTag_Get      ( oyProfileTag_s    * tag )
   {
     values = funcP( tag );
 
-    error = !memcpy( tag->last_cmm_, cmm, 4 );
+    error = !memcpy( s->last_cmm_, cmm, 4 );
   }
 
   return values;
