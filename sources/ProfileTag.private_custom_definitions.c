@@ -69,17 +69,12 @@ int oyProfileTag_Init__Members( oyProfileTag_s_ * profiletag )
  */
 int oyProfileTag_Copy__Members( oyProfileTag_s_ * dst, oyProfileTag_s_ * src)
 {
-  int error = 0;
-  oyAlloc_f allocateFunc_ = 0;
-  oyDeAlloc_f deallocateFunc_ = 0;
-
   if(!dst || !src)
     return 1;
 
-  allocateFunc_ = dst->oy_->allocateFunc_;
-  deallocateFunc_ = dst->oy_->deallocateFunc_;
-
   /* Copy each value of src to dst here */
+  /* Copy the whole struct mem block as is - is this safe? */
+  memcpy(dst, src, sizeof(oyProfileTag_s_));
 
-  return error;
+  return 0;
 }
