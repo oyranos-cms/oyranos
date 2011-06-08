@@ -83,11 +83,6 @@ int    oyOptions_SetRegistrationTextKey_(
                                        const char        * key,
                                        const char        * value );
 
-oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
-                                       oyPointer         * block,
-                                       int                 flags,
-                                       int               * error_return,
-                                       oyObject_s          object);
 oyPointer    oyProfile_TagsToMem_    ( oyProfile_s       * profile,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
