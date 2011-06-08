@@ -342,11 +342,11 @@ oyPointer    oyProfile_TagsToMem_    ( oyProfile_s_      * profile,
   return block;
 }
 
-/** Function  oyProfile_FromMemMove_
+/** Function  oyProfile_ToFile_
  *  @memberof oyProfile_s
+ *  @brief    Save from in memory profile to file
  *  @internal
  *
- *  @brief    Save from in memory profile to file
  *
  *  @since Oyranos: version 0.1.8
  *  @date  20 december 2007 (API 0.1.8)
