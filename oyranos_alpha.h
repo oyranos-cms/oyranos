@@ -755,10 +755,6 @@ OYAPI oyPointer OYEXPORT
 int          oyProfile_ToFile_       ( oyProfile_s       * profile,
                                        const char        * file_name );
 
-OYAPI int OYEXPORT
-             oyProfile_SetSignature (  oyProfile_s       * profile,
-                                       icSignature         sig,
-                                       oySIGNATURE_TYPE_e  type );
 OYAPI void OYEXPORT oyProfile_SetChannelNames( oyProfile_s * colour,
                                        oyObject_s        * names_chan );
 OYAPI const oyObject_s * OYEXPORT
