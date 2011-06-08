@@ -7894,57 +7894,6 @@ oyProfile_New_ ( oyObject_s        object)
   return s;
 }
 
-/** @brief   get channel names
- *  @memberof oyProfile_s
- *
- *  @param[in]     profile             the profile
- *
- *  @since Oyranos: version 0.1.8
- *  @date  october 2007 (API 0.1.8)
- */
-const oyObject_s *
-oyProfile_GetChannelNames           ( oyProfile_s   * profile )
-{
-  oyProfile_s * s = profile;
-  int n = oyProfile_GetChannelsCount( profile );
-  int error = 0;
-  icColorSpaceSignature sig = oyProfile_GetSignature( profile, oySIGNATURE_COLOUR_SPACE );
-
-  if(!profile)
-    return 0;
-
-  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
-
-  if(!s->names_chan_ && n)
-  {
-    int i = 0;
-    s->names_chan_ = s->oy_->allocateFunc_( (n + 1 ) * sizeof(oyObject_s) );
-    if(!s->names_chan_)
-      error = 1;
-    if(error <= 0)
-    {
-      s->names_chan_[ n ] = NULL;
-      for( ; i < n; ++i )
-      {
-        s->names_chan_[i] = oyObject_NewFrom( s->oy_ );
-        if(!s->names_chan_[i])
-          error = 1;
-        else
-          error = oyObject_SetNames( s->names_chan_[i],
-                    oyICCColourSpaceGetChannelName ( sig, i, oyNAME_NICK ),
-                    oyICCColourSpaceGetChannelName ( sig, i, oyNAME_NAME ),
-                    oyICCColourSpaceGetChannelName ( sig, i, oyNAME_DESCRIPTION )
-                      );
-      }
-    }
-  }
-
-  if(error <= 0 && s->names_chan_)
-    return (const oyObject_s*) s->names_chan_;
-  else
-    return 0;
-}
-
 /** @brief   get unique name
  *  @memberof oyProfile_s
  *

@@ -755,8 +755,6 @@ OYAPI oyPointer OYEXPORT
 int          oyProfile_ToFile_       ( oyProfile_s       * profile,
                                        const char        * file_name );
 
-OYAPI const oyObject_s * OYEXPORT
-                   oyProfile_GetChannelNames( oyProfile_s * colour);
 OYAPI const char  * OYEXPORT
                    oyProfile_GetID   ( oyProfile_s       * profile );
 OYAPI int OYEXPORT
