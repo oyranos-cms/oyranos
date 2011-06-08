@@ -435,8 +435,9 @@ oyProfile_s *    oyProfiles_Get      ( oyProfiles_s      * list,
   return obj;
 }
 
-/**
+/** Function  oyProfiles_Count
  *  @memberof oyProfiles_s
+ *  @brief    Return the number of profiles in list.
  *
  *  @since Oyranos: version 0.1.8
  *  @date  22 november 2007 (API 0.1.8)
@@ -444,15 +445,15 @@ oyProfile_s *    oyProfiles_Get      ( oyProfiles_s      * list,
 int              oyProfiles_Count ( oyProfiles_s   * list )
 {
   int n = 0;
-  oyProfiles_s * s = list;
+  oyProfiles_s_ * s = (oyProfiles_s_*)list;
 
   if(!s)
     return 0;
 
   oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
 
-  if(list && list->list_)
-    n = oyStructList_Count( list->list_ );
+  if(s && s->list_)
+    n = oyStructList_Count( s->list_ );
 
   return n;
 }
