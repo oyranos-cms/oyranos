@@ -7894,67 +7894,6 @@ oyProfile_New_ ( oyObject_s        object)
   return s;
 }
 
-/** @brief   release correctly
- *  @memberof oyProfile_s
- *
- *  set pointer to zero
- *
- *  @param[in]     obj                 address of Oyranos struct pointer
- *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
- */
-int 
-oyProfile_Release( oyProfile_s ** obj )
-{
-  /* ---- start of common object destructor ----- */
-  oyProfile_s * s = 0;
-  int i;
-
-  if(!obj || !*obj)
-    return 0;
-
-  s = *obj;
-
-  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
-
-  *obj = 0;
-
-  if(oyObject_UnRef(s->oy_))
-    return 0;
-  /* ---- end of common object destructor ------- */
-
-  if(s->names_chan_)
-    for(i = 0; i < s->channels_n_; ++i)
-      if(s->names_chan_[i])
-        oyObject_Release( &s->names_chan_[i] );
-  /*oyOptions_Release( s->options );*/
-
-  s->sig_ = (icColorSpaceSignature)0;
-
-  oyStructList_Release(&s->tags_);
-
-  if(s->oy_->deallocateFunc_)
-  {
-    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-
-    if(s->names_chan_)
-      deallocateFunc( s->names_chan_ ); s->names_chan_ = 0;
-
-    if(s->block_)
-      deallocateFunc( s->block_ ); s->block_ = 0; s->size_ = 0;
-
-    if(s->file_name_)
-      deallocateFunc( s->file_name_ ); s->file_name_ = 0;
-
-    oyObject_Release( &s->oy_ );
-
-    deallocateFunc( s );
-  }
-
-  return 0;
-}
-
 /** @brief   number of channels in a colour space
  *  @memberof oyProfile_s
  *
