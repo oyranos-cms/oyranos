@@ -7894,46 +7894,6 @@ oyProfile_New_ ( oyObject_s        object)
   return s;
 }
 
-/** @brief   set channel names
- *  @memberof oyProfile_s
- *
- *  The function should be used to specify extra channels or unusual colour
- *  layouts like CMYKRB. The number of elements in names_chan should fit to the
- *  channels count or to the colour space signature.
- *
- *  You can let single entries empty if they are understandable by the
- *  colour space signature. Oyranos will set them for you on request.
- *
- *  @param[in]     profile             profile
- *  @param[in]     names_chan          pointer to channel names 
- *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
- */
-void
-oyProfile_SetChannelNames            ( oyProfile_s       * profile,
-                                       oyObject_s        * names_chan )
-{
-  oyProfile_s * s = profile;
-  int n = oyProfile_GetChannelsCount( profile );
-  int error = !s;
-
-  if(error)
-    return;
-
-  oyCheckType__m( oyOBJECT_PROFILE_S, return )
-
-  if(names_chan && n)
-  {
-    int i = 0;
-    s->names_chan_ = s->oy_->allocateFunc_( (n + 1 ) * sizeof(oyObject_s) );
-    s->names_chan_[ n ] = NULL;
-    for( ; i < n; ++i )
-      if(names_chan[i])
-        s->names_chan_[i] = oyObject_Copy( names_chan[i] );
-  }
-}
-
 /** @brief   get a channels name
  *  @memberof oyProfile_s
  *
