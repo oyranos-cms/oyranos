@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/04/09
+ *  @date     2011/05/30
  */
 
 
@@ -24,6 +24,8 @@
 
 
 /* Include "Object.public_methods_definitions.c" { */
+#include <stdint.h>           /* uint64_t uintptr_t */
+
 static int oy_object_id_ = 0;
 #if OY_USE_OBJECT_POOL_
 static oyObject_s oy_object_pool_[100] = {
@@ -92,6 +94,9 @@ oyObject_NewWithAllocators  ( oyAlloc_f         allocateFunc,
   if(old_obj == 0)
 #endif
     error = !memset( o, 0, len );
+
+  if(error)
+    return NULL;
   
   o = oyObject_SetAllocators_( o, allocateFunc, deallocateFunc );
   o->copy = (oyStruct_Copy_f) oyObject_Copy;
@@ -179,7 +184,6 @@ oyObject_Copy ( oyObject_s      object )
  */
 int          oyObject_Release         ( oyObject_s      * obj )
 {
-  int error = 0;
   /* ---- start of common object destructor ----- */
   oyObject_s s = 0;
 
@@ -235,7 +239,7 @@ int          oyObject_Release         ( oyObject_s      * obj )
       deallocateFunc( s->backdoor_ ); s->backdoor_ = 0;
 
     if(s->handles_ && s->handles_->release)
-      error = s->handles_->release( (oyStruct_s**)&s->handles_ );
+      s->handles_->release( (oyStruct_s**)&s->handles_ );
 
     deallocateFunc( s );
     oyLockReleaseFunc_( lock, __FILE__, __LINE__ );
@@ -566,7 +570,7 @@ int          oyObject_UnRef          ( oyObject_s          obj )
                 oyStructTypeToText( s->parent_types_[s->parent_types_[0]] ),
                 s->id_, s->ref_ )
 
-    if((intptr_t)obj->parent_types_ < (intptr_t)oyOBJECT_MAX)
+    if((uintptr_t)obj->parent_types_ < (uintptr_t)oyOBJECT_MAX)
     {
       WARNc1_S( "non plausible inheritance pointer: %s", 
                 oyStruct_GetInfo(obj,0) );

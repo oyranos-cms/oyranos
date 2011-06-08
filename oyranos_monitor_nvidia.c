@@ -73,7 +73,7 @@ unsigned char** oyGetNvidiaEdid( Display* display, int screen, size_t **size);
 const char *       oyNVmaskToPortName( int                 mask )
 {
   static char * text = 0;
-  double d = log2(mask);
+  double d = log2((double)mask);
   if(!text)
     text = (char*)malloc(128);
   text[0] = 0;

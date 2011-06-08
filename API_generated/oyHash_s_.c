@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/02/15
+ *  @date     2011/05/30
  */
 
 
@@ -166,7 +166,7 @@ oyHash_s_ * oyHash_New_ ( oyObject_s object )
 
   
   /* ---- start of custom Hash constructor ----- */
-  error = !oyObject_SetParent( s_obj, oyOBJECT_HASH_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_HASH_S, s );
   /* ---- end of custom Hash constructor ------- */
   
   
@@ -180,12 +180,16 @@ oyHash_s_ * oyHash_New_ ( oyObject_s object )
 
   
   /* ---- start of custom Hash constructor ----- */
-  error = oyHash_Init__Members( s );
+  error += oyHash_Init__Members( s );
   /* ---- end of custom Hash constructor ------- */
   
   
   
   
+
+  if(error)
+    WARNc1_S("%d", error);
+
   return s;
 }
 

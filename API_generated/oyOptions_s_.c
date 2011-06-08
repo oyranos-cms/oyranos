@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/02/15
+ *  @date     2011/05/30
  */
 
 
@@ -70,7 +70,7 @@ oyOptions_s_ * oyOptions_New_ ( oyObject_s object )
 
   
   /* ---- start of custom Options constructor ----- */
-  error = !oyObject_SetParent( s_obj, oyOBJECT_OPTIONS_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_OPTIONS_S, s );
   /* ---- end of custom Options constructor ------- */
   
   
@@ -85,12 +85,16 @@ oyOptions_s_ * oyOptions_New_ ( oyObject_s object )
 
   
   /* ---- start of custom Options constructor ----- */
-  error = oyOptions_Init__Members( s );
+  error += oyOptions_Init__Members( s );
   /* ---- end of custom Options constructor ------- */
   
   
   
   
+
+  if(error)
+    WARNc1_S("%d", error);
+
   return s;
 }
 

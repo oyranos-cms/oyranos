@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/02/15
+ *  @date     2011/05/30
  */
 
 
@@ -187,7 +187,7 @@ oyOption_s_ * oyOption_New_ ( oyObject_s object )
 
   
   /* ---- start of custom Option constructor ----- */
-  error = !oyObject_SetParent( s_obj, oyOBJECT_OPTION_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_OPTION_S, s );
   /* ---- end of custom Option constructor ------- */
   
   
@@ -201,12 +201,16 @@ oyOption_s_ * oyOption_New_ ( oyObject_s object )
 
   
   /* ---- start of custom Option constructor ----- */
-  error = oyOption_Init__Members( s );
+  error += oyOption_Init__Members( s );
   /* ---- end of custom Option constructor ------- */
   
   
   
   
+
+  if(error)
+    WARNc1_S("%d", error);
+
   return s;
 }
 
@@ -337,6 +341,8 @@ int oyOption_Release_( oyOption_s_ **option )
 
 
 /* Include "Option.private_methods_definitions.c" { */
+#include <locale.h>  /* setlocale */
+
 #include "oyStructList_s_.h" /* not nice, but direct access is probably faster */
 #include "oyranos_i18n.h"
 

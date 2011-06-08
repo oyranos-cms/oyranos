@@ -18,6 +18,7 @@
 
 #include <string.h>
 #include <stdarg.h>
+#include <stddef.h>           /* size_t ptrdiff_t */
 #include <stdio.h>
 #include <stdlib.h>
 

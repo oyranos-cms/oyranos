@@ -14,7 +14,7 @@
  */
 
 
-
+#include <stddef.h>           /* size_t ptrdiff_t */
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -122,7 +122,7 @@ oyXMLgetValue_  (const oyChar  * xml,
   len = value2 - len2 - value1;
   oyFree_m_(key1); oyFree_m_(key2);
 # endif
-  if(len > 0 && (intptr_t)value1 - len1 > 0)
+  if(len > 0 && (ptrdiff_t)value1 - len1 > 0)
   {
     oyAllocHelper_m_( value, char, len+1, oyAllocateFunc_, return NULL );
     oySnprintf1_(value, len+1, "%s", value1);
@@ -140,7 +140,7 @@ oyXMLgetField2_ (const char       *xml,
 {
   const char* val_pos = 0;
   char *value1 = 0, *value2 = 0;
-  intptr_t l = 0;
+  ptrdiff_t l = 0;
   int   len1 = strlen( start_key ) + 2,
         len2 = strlen( start_key ) + 3;
   const char *key1 = start_key,
@@ -191,7 +191,7 @@ oyXMLgetField_  (const char       *xml,
                  int              *len)
 {
   char *value1 = 0;
-  intptr_t l = 0;
+  ptrdiff_t l = 0;
   int   len1 = strlen( key ) + 2,
         len2 = strlen( key ) + 3;
   char *key1 = NULL,

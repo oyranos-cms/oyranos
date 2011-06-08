@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2011-05-24 15:37+0200\n"
+"POT-Creation-Date: 2011-05-25 08:43+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -687,7 +687,7 @@ msgid "----"
 msgstr ""
 
 #. scnr
-#: oyranos_icc.c:532 modules/oyranos_cmm_oyIM_profile.c:1000
+#: oyranos_icc.c:532 modules/oyranos_cmm_oyIM_profile.c:1002
 msgid "Input"
 msgstr "Eingabe"
 
@@ -697,7 +697,7 @@ msgid "Display"
 msgstr "Monitor"
 
 #. prtr
-#: oyranos_icc.c:536 modules/oyranos_cmm_oyIM_profile.c:1004
+#: oyranos_icc.c:536 modules/oyranos_cmm_oyIM_profile.c:1006
 msgid "Output"
 msgstr "Ausgabe"
 
@@ -2487,214 +2487,214 @@ msgstr "The RAW Bild Modul für Oyranos."
 msgid "Copyright (c) 2005-2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: modules/oyranos_cmm_oyIM_profile.c:724
+#: modules/oyranos_cmm_oyIM_profile.c:726
 msgid "Idendity"
-msgstr ""
+msgstr "Idendität"
 
-#: modules/oyranos_cmm_oyIM_profile.c:730
+#: modules/oyranos_cmm_oyIM_profile.c:732
 msgid "Gamma"
 msgstr ""
 
-#: modules/oyranos_cmm_oyIM_profile.c:733
+#: modules/oyranos_cmm_oyIM_profile.c:735
 msgid "Segmented Curve"
-msgstr "Stückweise Kurven"
+msgstr "Stückweise Kurve"
 
 #. "key/value pairs found:" followed by the number on the next line"%d"
-#: modules/oyranos_cmm_oyIM_profile.c:884
+#: modules/oyranos_cmm_oyIM_profile.c:886
 msgid "key/value pairs found:"
 msgstr "Schlüssel/Wertepaare gefunden:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:941
-#: modules/oyranos_cmm_oyIM_profile.c:954
-#: modules/oyranos_cmm_oyIM_profile.c:967
-#: modules/oyranos_cmm_oyIM_profile.c:980
+#: modules/oyranos_cmm_oyIM_profile.c:943
+#: modules/oyranos_cmm_oyIM_profile.c:956
+#: modules/oyranos_cmm_oyIM_profile.c:969
+#: modules/oyranos_cmm_oyIM_profile.c:982
 msgid "Type"
 msgstr "Typ"
 
-#: modules/oyranos_cmm_oyIM_profile.c:954
-#: modules/oyranos_cmm_oyIM_profile.c:980
-#: modules/oyranos_cmm_oyIM_profile.c:992
-#: modules/oyranos_cmm_oyIM_profile.c:1111
+#: modules/oyranos_cmm_oyIM_profile.c:956
+#: modules/oyranos_cmm_oyIM_profile.c:982
+#: modules/oyranos_cmm_oyIM_profile.c:994
+#: modules/oyranos_cmm_oyIM_profile.c:1130
 msgid "Matrix"
 msgstr ""
 
-#: modules/oyranos_cmm_oyIM_profile.c:967
-#: modules/oyranos_cmm_oyIM_profile.c:980
-#: modules/oyranos_cmm_oyIM_profile.c:990
+#: modules/oyranos_cmm_oyIM_profile.c:969
+#: modules/oyranos_cmm_oyIM_profile.c:982
+#: modules/oyranos_cmm_oyIM_profile.c:992
 msgid "CLUT"
 msgstr ""
 
-#: modules/oyranos_cmm_oyIM_profile.c:988
+#: modules/oyranos_cmm_oyIM_profile.c:990
 msgid "Undefined"
 msgstr "undefiniert"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1000
-#: modules/oyranos_cmm_oyIM_profile.c:1004
+#: modules/oyranos_cmm_oyIM_profile.c:1002
+#: modules/oyranos_cmm_oyIM_profile.c:1006
 msgid "Channels"
 msgstr "Kanäle"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1013
-#: modules/oyranos_cmm_oyIM_profile.c:1093
-#: modules/oyranos_cmm_oyIM_profile.c:1122
+#: modules/oyranos_cmm_oyIM_profile.c:1032
+#: modules/oyranos_cmm_oyIM_profile.c:1112
+#: modules/oyranos_cmm_oyIM_profile.c:1140
 msgid "Curves"
 msgstr "Kurven"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1049
-#: modules/oyranos_cmm_oyIM_profile.c:1062
+#: modules/oyranos_cmm_oyIM_profile.c:1068
+#: modules/oyranos_cmm_oyIM_profile.c:1081
 msgid "nLUT"
 msgstr ""
 
-#: modules/oyranos_cmm_oyIM_profile.c:1062
+#: modules/oyranos_cmm_oyIM_profile.c:1081
 msgid "Error"
 msgstr "Fehler"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1145
+#: modules/oyranos_cmm_oyIM_profile.c:1163
 msgid "Tag Version:"
 msgstr "Element Version:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1156
+#: modules/oyranos_cmm_oyIM_profile.c:1174
 msgid "Device Serial:"
 msgstr "Serien Nr.:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1167
+#: modules/oyranos_cmm_oyIM_profile.c:1185
 msgid "Driver name:"
 msgstr "Gerätetreibername:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1178
+#: modules/oyranos_cmm_oyIM_profile.c:1196
 msgid "Driver version:"
 msgstr "Gerätetreiberversion:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1189
+#: modules/oyranos_cmm_oyIM_profile.c:1207
 msgid "Driver signature/encoding:"
 msgstr "Gerätetreiberdatentyp:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1203
+#: modules/oyranos_cmm_oyIM_profile.c:1221
 msgid "Priority:"
 msgstr "Priorität:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1220
+#: modules/oyranos_cmm_oyIM_profile.c:1238
 msgid "Data:"
 msgstr "Daten:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1306
+#: modules/oyranos_cmm_oyIM_profile.c:1324
 msgid "parametric function type"
 msgstr "Parametrischer Funktionstyp"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1310
+#: modules/oyranos_cmm_oyIM_profile.c:1328
 msgid "f(X)=X^gamma"
 msgstr ""
 
-#: modules/oyranos_cmm_oyIM_profile.c:1311
-#: modules/oyranos_cmm_oyIM_profile.c:1318
-#: modules/oyranos_cmm_oyIM_profile.c:1325
-#: modules/oyranos_cmm_oyIM_profile.c:1332
-#: modules/oyranos_cmm_oyIM_profile.c:1341
+#: modules/oyranos_cmm_oyIM_profile.c:1329
+#: modules/oyranos_cmm_oyIM_profile.c:1336
+#: modules/oyranos_cmm_oyIM_profile.c:1343
+#: modules/oyranos_cmm_oyIM_profile.c:1350
+#: modules/oyranos_cmm_oyIM_profile.c:1359
 msgid "gamma"
 msgstr ""
 
-#: modules/oyranos_cmm_oyIM_profile.c:1316
+#: modules/oyranos_cmm_oyIM_profile.c:1334
 msgid "f(X)=(a*X+b)^gamma for X>=-b/a"
 msgstr "f(X)=(a*X+b)^gamma für X>=-b/a"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1317
+#: modules/oyranos_cmm_oyIM_profile.c:1335
 msgid "f(X)=0 for (X<-b/a)"
 msgstr "f(X)=0 für (X<-b/a)"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1323
+#: modules/oyranos_cmm_oyIM_profile.c:1341
 msgid "f(X)=(a*X+b)^gamma + c for X>=-b/a"
 msgstr "f(X)=(a*X+b)^gamma + c für X>=-b/a"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1324
+#: modules/oyranos_cmm_oyIM_profile.c:1342
 msgid "f(X)=c for (X<-b/a)"
 msgstr "f(X)=c für (X<-b/a)"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1330
+#: modules/oyranos_cmm_oyIM_profile.c:1348
 msgid "f(X)=(a*X+b)^gamma for X>=d"
 msgstr "f(X)=(a*X+b)^gamma für X>=d"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1331
+#: modules/oyranos_cmm_oyIM_profile.c:1349
 msgid "f(X)=c*X for (X<d)"
 msgstr "f(X)=c*X für (X<d)"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1339
+#: modules/oyranos_cmm_oyIM_profile.c:1357
 msgid "f(X)=(a*X+b)^gamma + e for X>=d"
 msgstr "f(X)=(a*X+b)^gamma + e für X>=d"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1340
+#: modules/oyranos_cmm_oyIM_profile.c:1358
 msgid "f(X)=c*X+f for (X<d)"
 msgstr "f(X)=c*X+f für (X<d)"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1411
+#: modules/oyranos_cmm_oyIM_profile.c:1429
 msgid "Error in ICC profile tag found!"
 msgstr "Fehler in ICC Profilbaustein gefunden!"
 
 #. write to string
-#: modules/oyranos_cmm_oyIM_profile.c:1619
-#: modules/oyranos_cmm_oyIM_profile.c:1799
+#: modules/oyranos_cmm_oyIM_profile.c:1637
+#: modules/oyranos_cmm_oyIM_profile.c:1817
 msgid "Manufacturer:"
 msgstr "Hersteller:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1621
+#: modules/oyranos_cmm_oyIM_profile.c:1639
 msgid "Model:"
 msgstr "Modell:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1623
+#: modules/oyranos_cmm_oyIM_profile.c:1641
 msgid "Serial:"
 msgstr "Serien Nr.:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1625
+#: modules/oyranos_cmm_oyIM_profile.c:1643
 msgid "Date:"
 msgstr "Datum:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1641
+#: modules/oyranos_cmm_oyIM_profile.c:1659
 msgid "Size:"
 msgstr "Größe"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1653
+#: modules/oyranos_cmm_oyIM_profile.c:1671
 msgid "Red xy:"
 msgstr "Rot xy:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1655
+#: modules/oyranos_cmm_oyIM_profile.c:1673
 msgid "Green xy:"
 msgstr "Grün xy:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1657
+#: modules/oyranos_cmm_oyIM_profile.c:1675
 msgid "Blue xy:"
 msgstr "Blau xy:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1659
+#: modules/oyranos_cmm_oyIM_profile.c:1677
 msgid "White xy:"
 msgstr "Weiß xy:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1669
+#: modules/oyranos_cmm_oyIM_profile.c:1687
 msgid "Red Gamma:"
 msgstr "Rote Tonwertkurve:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1671
+#: modules/oyranos_cmm_oyIM_profile.c:1689
 msgid "Green Gamma:"
 msgstr "Grünes Tonwertkurve:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1673
+#: modules/oyranos_cmm_oyIM_profile.c:1691
 msgid "Blue Gamma:"
 msgstr "Blaue Tonwertkurve:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1685
+#: modules/oyranos_cmm_oyIM_profile.c:1703
 msgid "Curve Channels:"
 msgstr "Kurvenkanäle:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1687
+#: modules/oyranos_cmm_oyIM_profile.c:1705
 msgid "Curve Segments:"
 msgstr "Kurventeile:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1689
+#: modules/oyranos_cmm_oyIM_profile.c:1707
 msgid "Curve Precission:"
 msgstr "Kurvenpräzission:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1804
+#: modules/oyranos_cmm_oyIM_profile.c:1822
 msgid "Modell:"
 msgstr "Modell:"
 
-#: modules/oyranos_cmm_oyIM_profile.c:1809
+#: modules/oyranos_cmm_oyIM_profile.c:1827
 msgid "Technology:"
 msgstr "Technologie:"
 

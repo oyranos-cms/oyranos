@@ -894,7 +894,7 @@ check:	all tests/test_oyranos $(TEST2) examples oforms
 	OY_MODULE_PATHS=. LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} tests/test_oyranos
 
 examples:	all
-	cd examples && ($(MAKE) clean; PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." INCLUDE="-I$(includedir) -I$(SRCDIR) -I../ -I$(SRCDIR)/$(GENDIR)" SRCDIR=$(SRCDIR)/examples/ CFLAGS="$(CFLAGS)" LIBS="-L$(libdir) -L../" $(MAKE))
+	cd examples && ($(MAKE) clean; PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." INCLUDE="-I$(includedir) -I$(SRCDIR) -I../ -I$(SRCDIR)/$(GENDIR)" SRCDIR=$(SRCDIR)/examples/ CFLAGS="$(CFLAGS)" LIBS="-L$(libdir) -L../" intl="$(intl)" $(MAKE))
 
 oforms:	all $(LIB_FORMS_FLTK_NAME)
 	cd oforms && (PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../ -I$(SRCDIR)/$(GENDIR)" SRCDIR=$(SRCDIR)/oforms/ LDFLAGS="-L../ $(intl) $(LDFLAGS)" $(MAKE) -f oyranos_xforms.makefile)
@@ -963,7 +963,7 @@ docu:
 	test -f Doxyfile || ($(COPY) $(SRCDIR)/Doxyfile . && \
 	                     echo "INPUT = $(SRCDIR)" >> Doxyfile && \
 			     $(COPY) $(SRCDIR)/Doxyfile_alpha . && \
-                             echo "INPUT = $(SRCDIR)" >> Doxyfile_alpha && \
+                             echo "INPUT = $(SRCDIR) $(SRCDIR)/API_generated" >> Doxyfile_alpha && \
 			     ln -s $(SRCDIR)/doxygen.header $(SRCDIR)/doxygen.footer $(SRCDIR)/doxygen.css $(SRCDIR)/doxymentation $(SRCDIR)/doxymentation_common $(SRCDIR)/doxymentation_alpha .)
 	test -n 'which doxygen' && ( \
 		doxygen Doxyfile; $(COPY) $(SRCDIR)/$(TARGET)_logo.png doc/html/; \

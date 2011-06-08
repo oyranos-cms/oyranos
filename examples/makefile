@@ -27,7 +27,7 @@ TARGET2_FLAGS = ../modules/devices/oyranos_monitor.o \
 TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo lcms oyranos xcm))
 LDFLAGS = $(LIBS)
 DEBUG = -Wall -g -pedantic -O0
-CXXFLAGS_ = $(CXXFLAGS) $(OY_CFLAGS) $(INCLUDE) $(DEBUG) -std=c++0x $(XCM_CFLAGS)
+CXXFLAGS_ = $(CXXFLAGS) $(OY_CFLAGS) $(INCLUDE) $(DEBUG) -std=c++98 $(XCM_CFLAGS)
 CFLAGS_ = $(CFLAGS) -std=c99 -D__USE_POSIX2=1 $(OY_CFLAGS) $(INCLUDE) $(DEBUG) \
 	$(X11) $(XCM_CFLAGS)
 
@@ -78,7 +78,7 @@ $(TARGET1):	$(SRCDIR)$(TARGET1).cpp
 	echo Compiling $@ ...
 	-$(CXX) -DTARGET=\"$(TARGET)\" $(CXXFLAGS_) $(FLTK_CFLAGS) $< \
 	$(X11) $(LDFLAGS) $(OY_LDFLAGS) \
-	../fl_i18n/libfl_i18n.a  $(FLTK_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
+	$(intl) ../fl_i18n/libfl_i18n.a  $(FLTK_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
 	$(PKG_CONFIG_LIBS) -DUSE_GETTEXT=1 \
 	-o $@
 	fltk-config --post $@

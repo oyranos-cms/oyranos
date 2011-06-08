@@ -4,10 +4,6 @@ License: BSD
 Group: Development/Libraries/Other
 URL: http://www.oyranos.org
 Vendor: Kai-Uwe Behrmann
-#BuildArch: %{_arch}
-#%ifos linux
-#Prereq: oyranos-icc-RGB oyranos-icc-lcmsLAB oyranos-icc-LStar-RGB oyranos-icc-Cineaon oyranos-icc-printing oyranos-target-fogra oyranos-target-npes
-#%endif 
 BuildRoot: %{_tmppath}/%{name}-root
 Prefix:    %{_prefix}
 
@@ -17,7 +13,6 @@ BuildRequires: libexiv2-devel libraw-devel libraw-devel-static
 BuildRequires:     gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg-devel xorg-x11-Mesa xorg-x11-Mesa-devel libtiff-devel libxml2-devel cairo-devel liblcms-devel xdg-utils cups-devel libqt4-devel libXcm-devel netpbm
 %endif
 %if 0%{?suse_version} > 910
-#BuildRequires: gcc-c++ gettext doxygen fltk-threaded fltk-threaded-devel xorg-x11 xorg-x11-devel xorg-x11-Mesa-devel  pkgconfig libpng-devel libjpeg-devel
 BuildRequires:  acl autoconf automake bash bind-utils binutils bison bzip2 coreutils cpio cvs cyrus-sasl diffutils e2fsprogs expat file filesystem findutils flex fontconfig fontconfig-devel freetype2 freetype2-devel gawk gcc gcc-c++ gdbm gdbm-devel gettext gettext-devel glibc glibc-devel gpm grep groff gzip info less libacl libattr libjpeg-devel libpng libpng-devel libtool m4 make man mktemp module-init-tools ncurses ncurses-devel net-tools openssl pam patch perl pkgconfig popt procinfo procps psmisc rcs readline rpm sed strace tar texinfo timezone unzip util-linux zlib zlib-devel
 %endif
 %if 0%{?suse_version} > 1010
@@ -37,7 +32,7 @@ BuildRequires: gcc-c++ gettext doxygen graphviz fltk fltk-devel libpng-devel lib
 Summary:   Colour Management System Libraries
 Group:     Development/Libraries/Other
 # assume users want the device modules
-Requires:  lib%{name}0-cups = %{version} lib%{name}0-monitor = %{version}
+Requires:  oyranos-libs-cups = %{version} oyranos-libs-monitor = %{version}
 # we need rgb, lab, xyz gray and cmyk profiles
 # the proper names: sRGB.icc, XYZ.icc, Lab.icc are in the OpenICC-data package
 Requires:   icc-profiles
@@ -52,7 +47,7 @@ Summary:   Alpha and Pre Alpha Headers
 Group:     Development/Libraries/Other
 Requires:  lib%{name}-devel
 
-%package      -n lib%{name}0-monitor
+%package      libs-monitor
 Summary:    Oyranos Monitor dependent Libraries
 Group:      Development/Libraries/Other
 Requires:   xcalib
@@ -60,19 +55,19 @@ Requires:   xcalib
 %package      monitor
 Summary:    Oyranos Monitor Tools
 Group:      Development/Libraries/Other
-Requires:   lib%{name}0-monitor
+Requires:   oyranos-libs-monitor
 
 %package      monitor-nvidia
 Summary:    Nvidia card support
 Group:      System/X11/Utilities
 License:    GPL
 
-%package      -n lib%{name}0-cups
+%package      libs-cups
 Summary:    CUPS device support
 Group:      Development/Libraries/Other
 Requires:   cups
 
-%package      -n lib%{name}0-sane
+%package      libs-sane
 Summary:    SANE device support
 Group:      Development/Libraries/Other
 Requires:   sane
@@ -97,7 +92,7 @@ Group:      Development/Libraries/Other
 
 %package      qcmsevents
 Summary:    Xorg Colour management Event observer applet
-Group:      System/Applet
+Group:      System/Monitoring
 
 %description
 Oyranos is a colour management system.
@@ -151,7 +146,7 @@ These API's are to be considered for changing very frequently.
 %description  monitor
 The monitor profile configuration tool.
 
-%description  -n lib%{name}0-monitor
+%description  libs-monitor
 The monitor support libraries of the
 Oyranos colour management system.
 
@@ -160,11 +155,11 @@ Display setup tool for the
 Oyranos colour management system.
 The nvidia EDID configuration part.
 
-%description  -n lib%{name}0-cups
+%description  libs-cups
 CUPS device support for the
 Oyranos colour management system.
 
-%description  -n lib%{name}0-sane
+%description  libs-sane
 SANE device support for the
 Oyranos colour management system.
 
@@ -286,7 +281,7 @@ ldconfig
 %{_mandir}/man1/%{name}-monitor*
 /etc/xdg/autostart/%{name}-monitor-setup.desktop
 
-%files -n lib%{name}0-monitor
+%files libs-monitor
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %dir %{_libdir}/colour/
@@ -299,14 +294,14 @@ ldconfig
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-monitor-nvidia
 
-%files -n lib%{name}0-cups
+%files libs-cups
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %dir %{_libdir}/colour/
 %dir %{_libdir}/%{cmmsubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_CUPS_cmm_module*
 
-%files -n lib%{name}0-sane
+%files libs-sane
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %dir %{_libdir}/colour/
@@ -342,6 +337,10 @@ ldconfig
 %{desktopdir}/qcmsevents-applet.desktop
 
 %changelog
+* Mon Jun 01 2011 Kai-Uwe Behrmann
+- rename module packages from liboyranos-xxx to oyranos-libs-xxx
+- remove comments with macros 
+
 * Mon Feb 13 2011 Kai-Uwe Behrmann
 - split liboyranos_object from liboyranos
 

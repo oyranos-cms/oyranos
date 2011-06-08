@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/02/15
+ *  @date     2011/05/30
  */
 
 
@@ -108,14 +108,12 @@ int oyBlob_Init__Members( oyBlob_s_ * blob )
 int oyBlob_Copy__Members( oyBlob_s_ * dst, oyBlob_s_ * src)
 {
   oyAlloc_f allocateFunc_ = 0;
-  oyDeAlloc_f deallocateFunc_ = 0;
   int error = 0;
 
   if(!dst || !src)
     return 1;
 
   allocateFunc_ = dst->oy_->allocateFunc_;
-  deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
   if(error <= 0)
@@ -182,7 +180,7 @@ oyBlob_s_ * oyBlob_New_ ( oyObject_s object )
 
   
   /* ---- start of custom Blob constructor ----- */
-  error = !oyObject_SetParent( s_obj, oyOBJECT_BLOB_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_BLOB_S, s );
   /* ---- end of custom Blob constructor ------- */
   
   
@@ -196,12 +194,16 @@ oyBlob_s_ * oyBlob_New_ ( oyObject_s object )
 
   
   /* ---- start of custom Blob constructor ----- */
-  error = oyBlob_Init__Members( s );
+  error += oyBlob_Init__Members( s );
   /* ---- end of custom Blob constructor ------- */
   
   
   
   
+
+  if(error)
+    WARNc1_S("%d", error);
+
   return s;
 }
 

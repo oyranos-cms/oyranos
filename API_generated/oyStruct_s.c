@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/03/15
+ *  @date     2011/05/30
  */
 
 
@@ -25,6 +25,7 @@
 
 
 /* Include "Struct.public_methods_definitions.c" { */
+#include <stdint.h>           /* uint64_t uintptr_t */
 #include "oyranos_cmm.h" /* oyObjectInfoStatic_s */
 
 const char * (*oyStruct_GetTextFromModule_p) (
@@ -55,19 +56,17 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
 {
   int error = !obj;
   const char * text = 0;
-  oyOBJECT_e type = oyOBJECT_NONE;
 
   if(!error)
     text = oyObject_GetName( obj->oy_, oyNAME_NICK );
 
   if(!error && !text)
   {
-    type = obj->type_;
 
     if(oyStruct_GetTextFromModule_p)
       text = oyStruct_GetTextFromModule_p(obj, name_type, flags);
 #ifdef USE_MODULES /* FIXME move to oyStruct_GetTextFromModule_p */
-    if(type)
+    if(obj->type_)
     {
       oyCMMapiFilters_s * apis;
       int apis_n = 0, i,j;
@@ -223,7 +222,7 @@ int          oyStruct_CheckType      ( oyStruct_s        * obj,
       } else
         return 2;
 
-      if((intptr_t)inheritance < (intptr_t)oyOBJECT_MAX)
+      if((uintptr_t)inheritance < (uintptr_t)oyOBJECT_MAX)
       {
         WARNc1_S( "non plausible inheritance pointer: %s", 
                   oyStruct_GetInfo(obj,0) );

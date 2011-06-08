@@ -83,6 +83,7 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
          case icSigDeviceSettingsType:
          case icSigDescriptiveNameValueMuArrayType_:
          case icSigLutAtoBType:
+         case icSigLutBtoAType:
          case icSigMakeAndModelType:
          case icSigNativeDisplayInfoType:
          case icSigDictType:
@@ -233,6 +234,205 @@ int    oyICCparametricCurveToSegments (oyOption_s        * parameters,
   return error;
 }
 
+int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
+                                       int                 channels_in,
+                                       int                 channels_out,
+                                       icTagTypeSignature  tag_sig,
+                                       char              * mem,
+                                       size_t              offset_bcurve,
+                                       size_t              offset_matrix,
+                                       size_t              offset_mcurve,
+                                       size_t              offset_clut,
+                                       size_t              offset_acurve,
+                                       size_t              tag_size )
+{
+  int error = 0;
+  int size, i;
+  size_t off;
+  uint8_t * dimensions, precission, *u8;
+  uint16_t u16;
+  char * tmp = 0;
+  char * text = oyAllocateFunc_(128);
+  oyOption_s        * opt = 0;
+  oyStructList_s * list;
+  int curves_n;
+  double val; 
+
+
+             if(offset_acurve)
+             {
+               off = offset_acurve;
+               list = oyCurvesFromTag( &mem[off], tag_size - off, channels_in);
+               curves_n = oyStructList_Count( list );
+               if(curves_n == channels_in)
+               {
+                 opt = oyOption_FromRegistration("////color_space",0);
+                 oyOption_SetFromText( opt, "1", 0 );
+                 for(i = 0; i < curves_n; ++i)
+                 {
+                   oyStructList_s * element = (oyStructList_s*)
+                                               oyStructList_GetRefType( list, i,
+                                               oyOBJECT_STRUCT_LIST_S );
+                   oyOption_s * tmp = oyOption_Copy(opt,0);
+                   oyStructList_MoveIn( element, (oyStruct_s**)&tmp, -1, 0 );
+                   oyStructList_Release( &element );
+                 }
+                 oyOption_Release( &opt );
+               }
+
+               oyStringAddPrintf_( &tmp, AD, "%s A: %d",
+                                   _("Curves"), channels_in );
+               oyStructList_AddName( texts, tmp, -1);
+               oyFree_m_( tmp );
+               oyStructList_MoveIn( texts, (oyStruct_s**)&list, -1, 0 );
+             }
+
+             if(offset_clut)
+             {
+               off = offset_clut;
+               if(tag_size >= off + 20)
+               {
+                 dimensions = (uint8_t*)&mem[off+0];
+                 precission = mem[off+16];
+                 size = 1;
+                 for(i = 0; i < channels_in; ++i)
+                   size *= dimensions[i];
+                 size *= precission * channels_out;
+
+                 if(tag_size < off+20+size)
+                   error = 1;
+                 else
+                 {
+                   opt =oyOption_FromRegistration("////icSigLutAtoBTypeNlut",0);
+                   oyOption_SetFromDouble( opt, channels_in, 0, 0 );
+                   oyOption_SetFromDouble( opt, channels_out, 1, 0 );
+                   oyOption_SetFromDouble( opt, precission, 2, 0 );
+                   for(i = channels_in-1; i >= 0; --i)
+                     oyOption_SetFromDouble( opt, dimensions[i], 2+i, 0 );
+                 }
+               }
+
+               if(error <= 0)
+               {
+                 oyStringAddPrintf_( &tmp, AD, "%s: %d->%d[%s] ",
+                                     _("nLUT"), channels_in, channels_out,
+                             precission == 1 ? "8-bit":"16-bit" );
+                 for(i = 0; i < channels_in; ++i)
+                 {
+                   if(i)
+                     oyStringAddPrintf_( &tmp, AD, "x" );
+                   oyStringAddPrintf_( &tmp, AD, "%d",
+                                       dimensions[i] );
+                 }
+                 oyStructList_AddName( texts, tmp, -1);
+                 oyFree_m_( tmp );
+               } else
+               {
+                 oySprintf_( text, "%s %s", _("nLUT"), _("Error"));
+                 oyStructList_AddName( texts, text, -1);
+               }
+
+               if(error <= 0)
+               {
+                 size /= precission;
+                 u8 = (uint8_t*)&mem[off+20];
+                 if(precission == 1) /* 8-bit */
+                   for(i = size-1; i >= 0; --i)
+                   {
+                     val = u8[i]/256.0;
+                     oyOption_SetFromDouble( opt, val,
+                                             3 + channels_in + i, 0 );
+                   }
+                 else if(precission == 2) /* 16-bit */
+                   for(i = size-1; i >= 0; --i)
+                   {
+                     u16 = oyGetTableUInt16_( &mem[off+20], 0, 0, i );
+                     val = u16/65536.0;
+                     oyOption_SetFromDouble( opt, val, 
+                                             3 + channels_in + i, 0 );
+                   }
+               }
+               oyStructList_MoveIn( texts, (oyStruct_s**)&opt, -1, 0 );
+             }
+
+             if(offset_mcurve)
+             {
+               off = offset_mcurve;
+               list = oyCurvesFromTag( &mem[off], tag_size - off, channels_out);
+               curves_n = oyStructList_Count( list );
+               if(curves_n == channels_in)
+               {
+                 opt = oyOption_FromRegistration("////color_space",0);
+                 oyOption_SetFromText( opt, "0", 0 );
+                 for(i = 0; i < curves_n; ++i)
+                 {
+                   oyStructList_s * element = (oyStructList_s*)
+                                               oyStructList_GetRefType( list, i,
+                                               oyOBJECT_STRUCT_LIST_S );
+                   oyOption_s * tmp = oyOption_Copy(opt,0);
+                   oyStructList_MoveIn( element, (oyStruct_s**)&tmp, -1, 0 );
+                   oyStructList_Release( &element );
+                 }
+                 oyOption_Release( &opt );
+               }
+
+               oyStringAddPrintf_( &tmp, AD, "%s M: %d",
+                                   _("Curves"), channels_in );
+               oyStructList_AddName( texts, tmp, -1);
+               oyFree_m_( tmp );
+               oyStructList_MoveIn( texts, (oyStruct_s**)&list, -1, 0 );
+             }
+
+             if(offset_matrix)
+             {
+               int32_t i32;
+               opt =oyOption_FromRegistration("////Matrix3x3+3",0);
+               off = offset_matrix;
+               if(tag_size >= off + 12*4)
+               for(i = 0; i < 12; ++i)
+               {
+                 i32 = oyValueInt32( (int32_t)*((int32_t*)&mem[off+i*4]));
+                 oyOption_SetFromDouble( opt, i32/65536.0, i, 0 );
+               }
+
+               oySprintf_( text, "%s", _("Matrix"));
+               oyStructList_AddName( texts, text, -1);
+               oyStructList_MoveIn( texts, (oyStruct_s**)&opt, -1, 0 );
+             }
+
+             if(offset_bcurve)
+             {
+               off = offset_bcurve;
+               list = oyCurvesFromTag( &mem[off], tag_size - off, channels_out);
+               curves_n = oyStructList_Count( list );
+               if(curves_n == channels_in)
+               {
+                 opt = oyOption_FromRegistration("////color_space",0);
+                 oyOption_SetFromText( opt, "0", 0 );
+                 for(i = 0; i < curves_n; ++i)
+                 {
+                   oyStructList_s * element = (oyStructList_s*)
+                                               oyStructList_GetRefType( list, i,
+                                               oyOBJECT_STRUCT_LIST_S );
+                   oyOption_s * tmp = oyOption_Copy(opt,0);
+                   oyStructList_MoveIn( element, (oyStruct_s**)&tmp, -1, 0 );
+                   oyStructList_Release( &element );
+                 }
+                 oyOption_Release( &opt );
+               }
+
+               oyStringAddPrintf_( &tmp, AD, "%s B: %d",
+                                   _("Curves"), channels_out );
+               oyStructList_AddName( texts, tmp, -1);
+               oyFree_m_( tmp );
+               oyStructList_MoveIn( texts, (oyStruct_s**)&list, -1, 0 );
+             }
+
+  oyFree_m_( text );
+
+  return error;
+}
+
 /** @func    oyIMProfileTag_GetValues
  *  @brief   get values from ICC profile tags
  *
@@ -264,11 +464,12 @@ int    oyICCparametricCurveToSegments (oyOption_s        * parameters,
  *
  *  - icSigCurveType:
  *    - since Oyranos 0.3.1 (API 0.3.1)
- *    - returns
+ *    - returns:
  *      - a string describing the curve
  *      - a option containing doubles
- *        - one double means idendity or gamma
+ *        - first entry : count with zero means idendity, one means gamma
  *        - more doubles means a segmented curve
+ *        - second entry : values start
  *
  *  - icSigTextType and icSigWCSProfileTag:
  *    - since Oyranos 0.1.8 (API 0.1.8)
@@ -389,7 +590,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
   icTagBase * tag_base = 0;
   icTagTypeSignature  sig = 0;
   int32_t size_ = -1;
-  uint32_t off;
   oyStructList_s * list = 0;
   icTagTypeSignature tag_sig = (icTagSignature)0;
   char num[32];
@@ -443,11 +643,12 @@ oyStructList_s * oyIMProfileTag_GetValues(
       "\
 - icSigCurveType:\
   - since Oyranos 0.3.1 (API 0.3.1)\
-  - returns\
+  - returns:\
     - a string describing the curve\
     - a option containing doubles\
-      - one double means idendity or gamma\
-      - more doubles means a segmented curve"
+      - first entry : count with zero means idendity, one means gamma\
+      - more doubles means a segmented curve\
+      - second entry : values start"
     };
 
     oyName_s description_mluc = {
@@ -707,9 +908,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
              count = *(icUInt32Number*)(mem+8);
              count = oyValueUInt32( count );
 
-             oySprintf_( num, "%d", count );
-             oyStructList_AddName( texts, num, -1);
-
              size_ = 12 + count * 4;
 
              error = tag->size_ < size_;
@@ -717,29 +915,30 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
            if(error <= 0)
            {
-             uint16_t number; 
+             double val; 
              int i;
              icCurveType * daten = (icCurveType*)&mem[0]; 
 
              opt = oyOption_FromRegistration("////icCurveType",0);
+             oyOption_SetFromDouble( opt, count, 0, 0 );
              if(count == 0) /* idendity */
              {
-               oyOption_SetFromDouble( opt, 1.0, 0, 0 );
+               oyOption_SetFromDouble( opt, 1.0, 1, 0 );
                oyStringAddPrintf_( &tmp, AD, "%s", _("Idendity") );
              } else
              if(count == 1) /* icU16Fixed16Number */
              {
-               number = oyValueUInt16(daten->curve.data[0]) / 256.0;
-               oyOption_SetFromDouble( opt, number, 0, 0 );
-               oyStringAddPrintf_( &tmp, AD, "%s: %g", _("Gamma"), number );
+               val = oyValueUInt16(daten->curve.data[0]) / 256.0;
+               oyOption_SetFromDouble( opt, val, 1, 0 );
+               oyStringAddPrintf_( &tmp, AD, "%s: %g", _("Gamma"), val );
              } else
              {
-               oyStringAddPrintf_( &tmp, AD, "%s: %g", _("Segmented Curve"),
+               oyStringAddPrintf_( &tmp, AD, "%s: %d", _("Segmented Curve"),
                                    count );
                for( i = 0; i < count; ++i)
                {
-                 number = oyValueUInt16(daten->curve.data[i])/65536.0;
-                 oyOption_SetFromDouble( opt, number, i, 0 );
+                 val = oyValueUInt16(daten->curve.data[i])/65536.0;
+                 oyOption_SetFromDouble( opt, val, 1 + i, 0 );
                }
              }
              oyStructList_AddName( texts, tmp, -1 );
@@ -917,15 +1116,11 @@ oyStructList_s * oyIMProfileTag_GetValues(
            
            if(error <= 0)
            {
-             char * text = oyAllocateFunc_(128);
              uint8_t channels_in = *(icUInt8Number*)(mem+8);
              uint8_t channels_out = *(icUInt8Number*)(mem+9);
              uint32_t offset_bcurve, offset_matrix, offset_mcurve, offset_clut,
                       offset_acurve;
-             int32_t i;
-             uint16_t u16;
              int type = 0;
-             uint8_t * dimensions, precission, *u8;
 
              offset_bcurve = oyGetTableUInt32_( &mem[12], 0, 0, 0 );
              offset_matrix = oyGetTableUInt32_( &mem[12], 0, 0, 1 );
@@ -933,11 +1128,12 @@ oyStructList_s * oyIMProfileTag_GetValues(
              offset_clut = oyGetTableUInt32_( &mem[12], 0, 0, 3 );
              offset_acurve = oyGetTableUInt32_( &mem[12], 0, 0, 4 );
 
-             if(offset_acurve != 0 &&
+             /* B */
+             if(offset_acurve == 0 &&
                 offset_clut == 0 &&
                 offset_mcurve == 0 &&
                 offset_matrix == 0 &&
-                offset_bcurve == 0)
+                offset_bcurve != 0)
              {
                type = 1;
                
@@ -946,6 +1142,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                oyStructList_AddName( texts, tmp, -1);
                oyFree_m_( tmp );
              } else
+             /* M - Ma - B */
              if(offset_acurve == 0 &&
                 offset_clut == 0 &&
                 offset_mcurve != 0 &&
@@ -959,6 +1156,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                oyStructList_AddName( texts, tmp, -1);
                oyFree_m_( tmp );
              } else
+             /* A - C - B */
              if(offset_acurve != 0 &&
                 offset_clut != 0 &&
                 offset_mcurve == 0 &&
@@ -972,6 +1170,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                oyStructList_AddName( texts, tmp, -1);
                oyFree_m_( tmp );
              } else
+             /* A - C - M - Ma - B */
              if(offset_acurve != 0 &&
                 offset_clut != 0 &&
                 offset_mcurve != 0 &&
@@ -1009,127 +1208,127 @@ oyStructList_s * oyIMProfileTag_GetValues(
              oyStructList_AddName( texts, tmp, -1);
              oyFree_m_( tmp );
 
-             if(offset_acurve)
+             error = oyWriteIcSigLutAtoBType( texts, channels_in, channels_out,
+                                                    sig, mem,
+                                                    offset_bcurve,
+                                                    offset_matrix,
+                                                    offset_mcurve,
+                                                    offset_clut,
+                                                    offset_acurve,
+                                                    tag->size_ );
+
+           }
+           else
+             oyStructList_AddName( texts, "unrecoverable parameters found", -1);
+
+           break;
+      case icSigLutBtoAType:
+           error = tag->size_ < 32;
+           count = *(icUInt8Number*)(mem+8);
+           
+           if(error <= 0)
+           {
+             uint8_t channels_in = *(icUInt8Number*)(mem+8);
+             uint8_t channels_out = *(icUInt8Number*)(mem+9);
+             uint32_t offset_bcurve, offset_matrix, offset_mcurve, offset_clut,
+                      offset_acurve;
+             int type = 0;
+
+             offset_bcurve = oyGetTableUInt32_( &mem[12], 0, 0, 0 );
+             offset_matrix = oyGetTableUInt32_( &mem[12], 0, 0, 1 );
+             offset_mcurve = oyGetTableUInt32_( &mem[12], 0, 0, 2 );
+             offset_clut = oyGetTableUInt32_( &mem[12], 0, 0, 3 );
+             offset_acurve = oyGetTableUInt32_( &mem[12], 0, 0, 4 );
+
+             /* B */
+             if(offset_acurve == 0 &&
+                offset_clut == 0 &&
+                offset_mcurve == 0 &&
+                offset_matrix == 0 &&
+                offset_bcurve != 0)
              {
-               off = offset_bcurve;
-               list = oyCurvesFromTag( &mem[off], tag->size_ - off, channels_in);
-               oyStringAddPrintf_( &tmp, AD, "%s A: %d",
-                                   _("Curves"), channels_in );
-               oyStructList_AddName( texts, tmp, -1);
-               oyFree_m_( tmp );
-               oyStructList_MoveIn( texts, (oyStruct_s**)&list, -1, 0 );
-             }
-
-             if(offset_clut)
-             {
-               int size;
-               off = offset_clut;
-
-               if(tag->size_ >= off + 20)
-               {
-                 dimensions = (uint8_t*)&mem[off+0];
-                 precission = mem[off+16];
-                 size = 1;
-                 for(i = 0; i < channels_in; ++i)
-                   size *= dimensions[i];
-                 size *= precission;
-
-                 if(tag->size_ < off+20+size)
-                   error = 1;
-                 else
-                 {
-                   oyOption_SetFromDouble( opt, channels_in, 0, 0 );
-                   oyOption_SetFromDouble( opt, channels_out, 1, 0 );
-                   oyOption_SetFromDouble( opt, precission, 2, 0 );
-                   opt =oyOption_FromRegistration("////icSigLutAtoBTypeNlut",0);
-                   for(i = channels_in-1; i >= 0; --i)
-                     oyOption_SetFromDouble( opt, dimensions[i], i, 0 );
-                 }
-               }
-
-               if(error <= 0)
-               {
-                 oyStringAddPrintf_( &tmp, AD, "%s: %d->%d[%s] ",
-                                     _("nLUT"), channels_in, channels_out,
-                             precission ? "8-bit":"16-bit" );
-                 for(i = 0; i < channels_in; ++i)
-                 {
-                   if(i)
-                     oyStringAddPrintf_( &tmp, AD, "x" );
-                   oyStringAddPrintf_( &tmp, AD, "%d",
-                                       dimensions[i] );
-                 }
-                 oyStructList_AddName( texts, tmp, -1);
-                 oyFree_m_( tmp );
-               } else
-               {
-                 oySprintf_( text, "%s %s", _("nLUT"), _("Error"));
-                 oyStructList_AddName( texts, text, -1);
-               }
-
-               if(error <= 0)
-               {
-                 size /= precission;
-                 u8 = (uint8_t*)&mem[off+20];
-                 if(precission == 1) /* 8-bit */
-                   for(i = size-1; i >= 0; --i)
-                   {
-                     u16 = u8[i];
-                     oyOption_SetFromDouble( opt, u16/256.0,
-                                             3 + channels_in + i, 0 );
-                   }
-                 else if(precission == 2) /* 16-bit */
-                   for(i = size-1; i >= 0; --i)
-                   {
-                     u16 = oyGetTableUInt16_( &mem[off+20], 0, 0, i );
-                     oyOption_SetFromDouble( opt, u16/65536.0, 
-                                             3 + channels_in + i, 0 );
-                   }
-               }
-               oyStructList_MoveIn( texts, (oyStruct_s**)&opt, -1, 0 );
-             }
-
-             if(offset_mcurve)
-             {
-               off = offset_mcurve;
-               list = oyCurvesFromTag( &mem[off], tag->size_ - off, channels_in );
-               oyStringAddPrintf_( &tmp, AD, "%s M: %d",
-                                   _("Curves"), channels_in );
-               oyStructList_AddName( texts, tmp, -1);
-               oyFree_m_( tmp );
-               oyStructList_MoveIn( texts, (oyStruct_s**)&list, -1, 0 );
-             }
-
-             if(offset_matrix)
-             {
-               off = offset_matrix;
-               if(tag->size_ >= off + 12*2)
-               for(i = 0; i < 12; ++i)
-               {
-                 u16 = oyGetTableUInt16_( &mem[off], 0, 0, i );
+               type = 1;
                
-                 oyOption_SetFromDouble( opt, u16/65535.0, i, 0 );
-               }
-               oyStructList_MoveIn( texts, (oyStruct_s**)&opt, -1 , 0 );
-
-               oySprintf_( text, "%s", _("Matrix"));
-               oyStructList_AddName( texts, text, -1);
-               oyStructList_MoveIn( texts, (oyStruct_s**)&opt, -1, 0 );
-               opt =oyOption_FromRegistration("////Matrix3x3+3",0);
-             }
-
-             if(offset_bcurve)
-             {
-               off = offset_bcurve;
-               list = oyCurvesFromTag( &mem[off], tag->size_ - off, channels_out );
-               oyStringAddPrintf_( &tmp, AD, "%s B: %d",
-                                   _("Curves"), channels_out );
+               oyStringAddPrintf_( &tmp, AD, "%s: B",
+                                   _("Type") );
                oyStructList_AddName( texts, tmp, -1);
                oyFree_m_( tmp );
-               oyStructList_MoveIn( texts, (oyStruct_s**)&list, -1, 0 );
+             } else
+             /* B - Ma - M */
+             if(offset_acurve == 0 &&
+                offset_clut == 0 &&
+                offset_mcurve != 0 &&
+                offset_matrix != 0 &&
+                offset_bcurve != 0)
+             {
+               type = 2;
+               
+               oyStringAddPrintf_( &tmp, AD, "%s: B - %s - M",
+                                   _("Type"), _("Matrix") );
+               oyStructList_AddName( texts, tmp, -1);
+               oyFree_m_( tmp );
+             } else
+             /* B - C - A */
+             if(offset_acurve != 0 &&
+                offset_clut != 0 &&
+                offset_mcurve == 0 &&
+                offset_matrix == 0 &&
+                offset_bcurve != 0)
+             {
+               type = 3;
+               
+               oyStringAddPrintf_( &tmp, AD, "%s: B - %s - A",
+                                   _("Type"), _("CLUT") );
+               oyStructList_AddName( texts, tmp, -1);
+               oyFree_m_( tmp );
+             } else
+             /* B - Ma - M - C - A */
+             if(offset_acurve != 0 &&
+                offset_clut != 0 &&
+                offset_mcurve != 0 &&
+                offset_matrix != 0 &&
+                offset_bcurve != 0)
+             {
+               type = 4;
+               
+               oyStringAddPrintf_( &tmp, AD, "%s: B - %s - M - %s - A",
+                                   _("Type"), _("Matrix"), _("CLUT") );
+               oyStructList_AddName( texts, tmp, -1);
+               oyFree_m_( tmp );
+             } else
+             {
+               type = 0;
+               
+               oyStringAddPrintf_( &tmp, AD,"%s: A%s - %s%s - M%s - %s%s - B%s",
+                                   _("Undefined"),
+                                   offset_acurve?"*":"",
+                                   _("CLUT"), offset_clut ? "*":"",
+                                   offset_mcurve?"*":"",
+                                   _("Matrix"), offset_matrix ? "*":"",
+                                   offset_bcurve?"*":""
+                                 );
+               oyStructList_AddName( texts, tmp, -1);
+               oyFree_m_( tmp );
              }
 
-             oyFree_m_( text );
+             oyStringAddPrintf_( &tmp, AD, "%s %s: %d",
+                                 _("Input"), _("Channels"), channels_in );
+             oyStructList_AddName( texts, tmp, -1);
+             oyFree_m_( tmp );
+             oyStringAddPrintf_( &tmp, AD, "%s %s: %d",
+                                 _("Output"), _("Channels"), channels_out );
+             oyStructList_AddName( texts, tmp, -1);
+             oyFree_m_( tmp );
+
+             error = oyWriteIcSigLutAtoBType( texts, channels_in, channels_out,
+                                                    sig, mem,
+                                                    offset_bcurve,
+                                                    offset_matrix,
+                                                    offset_mcurve,
+                                                    offset_clut,
+                                                    offset_acurve,
+                                                    tag->size_ );
+
            }
            else
              oyStructList_AddName( texts, "unrecoverable parameters found", -1);
@@ -2568,7 +2767,13 @@ oyStructList_s *   oyCurvesFromTag   ( char              * mem,
 
     values = (oyOption_s*) oyStructList_GetRefType( data,
                                                     1, oyOBJECT_OPTION_S );
-    curve_bytes = 12 + oyOption_GetValueDouble( values, 1 ) * 4;
+    if(oyFilterRegistrationMatchKey( oyOption_GetRegistration( values ),
+                                   "////icParametricCurveType", oyOBJECT_NONE ))
+      curve_bytes = 12 + oyOption_GetValueDouble( values, 1 ) * 4;
+    else
+      if(oyFilterRegistrationMatchKey( oyOption_GetRegistration( values ),
+                                   "////icCurveType", oyOBJECT_NONE ))
+      curve_bytes = 12 + oyOption_GetValueDouble( values, 0 ) * 2;
     oyOption_Release( &values );
 
     curve_bytes_total += curve_bytes;
