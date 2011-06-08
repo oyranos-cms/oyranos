@@ -7895,8 +7895,6 @@ oyProfile_New_ ( oyObject_s        object)
 }
 
 
-oyProfile_s ** oy_profile_s_std_cache_ = 0;
-
 /** @brief   create from default colour space settings
  *  @memberof oyProfile_s
  *
