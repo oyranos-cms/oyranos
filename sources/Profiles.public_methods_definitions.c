@@ -401,8 +401,9 @@ int              oyProfiles_ReleaseAt( oyProfiles_s      * list,
   return error;
 }
 
-/**
+/** Function  oyProfiles_Get
  *  @memberof oyProfiles_s
+ *  @brief    Get a copy of the profile at position pos.
  *
  *  @param[in] list                    the profile list to use
  *  @param[in] pos                     the position in list
@@ -415,16 +416,16 @@ oyProfile_s *    oyProfiles_Get      ( oyProfiles_s      * list,
                                        int                 pos )
 {
   oyProfile_s * obj = 0;
-  oyProfiles_s * s = list;
+  oyProfiles_s_ * s = (oyProfiles_s_*)list;
 
   if(!s)
     return 0;
 
   oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
 
-  if(list && list->list_)
+  if(s && s->list_)
   {
-    oyProfile_s * p = (oyProfile_s*) oyStructList_GetType_( list->list_,
+    oyProfile_s * p = (oyProfile_s*) oyStructList_GetType_( s->list_,
                                                  pos, oyOBJECT_PROFILE_S );
 
     if(p)
