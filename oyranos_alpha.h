@@ -752,7 +752,6 @@ OYAPI oyPointer OYEXPORT
                                        size_t          * size,
                                        oyAlloc_f         allocateFunc );
 #endif
-OYAPI int OYEXPORT oyProfile_GetChannelsCount ( oyProfile_s * colour );
 int          oyProfile_ToFile_       ( oyProfile_s       * profile,
                                        const char        * file_name );
 

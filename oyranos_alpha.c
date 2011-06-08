@@ -7894,30 +7894,6 @@ oyProfile_New_ ( oyObject_s        object)
   return s;
 }
 
-/** @brief   number of channels in a colour space
- *  @memberof oyProfile_s
- *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
- */
-int
-oyProfile_GetChannelsCount( oyProfile_s * profile )
-{
-  oyProfile_s * s = profile;
-
-  if(!s)
-    return 0;
-
-  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
-
-  if(profile->channels_n_)
-    return profile->channels_n_;
-
-  profile->channels_n_ = oyICCColourSpaceGetChannelCount( profile->sig_ );
-
-  return profile->channels_n_;
-}
-
 /** @brief   get ICC colour space signature
  *  @memberof oyProfile_s
  *
