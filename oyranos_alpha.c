@@ -10985,47 +10985,6 @@ oyOBJECT_e   oyCMMapi3_Query_        ( oyCMMInfo_s       * cmm_info,
 
 oyProfiles_s * oy_profile_list_cache_ = 0;
 
-/**
- *  @memberof oyProfiles_s
- *
- *  @since Oyranos: version 0.1.8
- *  @date  22 november 2007 (API 0.1.8)
- */
-OYAPI int  OYEXPORT
-                   oyProfiles_Release(oyProfiles_s** obj )
-{
-  int error = 0;
-  /* ---- start of common object destructor ----- */
-  oyProfiles_s * s = 0;
-
-  if(!obj || !*obj)
-    return error;
-
-  s = *obj;
-
-  oyCheckType__m( oyOBJECT_PROFILES_S, return 1 )
-
-  *obj = 0;
-
-  if(oyObject_UnRef(s->oy_))
-    return error;
-  /* ---- end of common object destructor ------- */
-
-  if(error <= 0 && s->list_)
-  error = oyStructList_Release(&s->list_);
-
-  if(s->oy_->deallocateFunc_)
-  {
-    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-
-    oyObject_Release( &s->oy_ );
-
-    deallocateFunc( s );
-  }
-
-  return error;
-}
-
 /** @} *//* objects_profile */
 
 
