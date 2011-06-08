@@ -758,11 +758,6 @@ int          oyProfile_ToFile_       ( oyProfile_s       * profile,
 OYAPI int OYEXPORT
                    oyProfile_Equal   ( oyProfile_s       * profileA,
                                        oyProfile_s       * profileB );
-OYAPI oyPointer OYEXPORT
-                   oyProfile_GetMem  ( oyProfile_s       * profile,
-                                       size_t            * size,
-                                       uint32_t            flag,
-                                       oyAlloc_f           allocateFunc );
 #define OY_COMPUTE      0x01
 #define OY_FROM_PROFILE 0x04
 int                oyProfile_GetMD5  ( oyProfile_s       * profile,
