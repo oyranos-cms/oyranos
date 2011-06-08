@@ -13,7 +13,6 @@
  */
 
 #include "oyPointer_s.h"
-#include "oyName_s.h"
 #include "oyObserver_s.h"
 #include "oyOption_s.h"
 #include "oyOptions_s.h"
@@ -751,56 +750,6 @@ int          oyTextboolean_          ( const char        * text_a,
 
   return erg;
 }
-
-/** @brief   test a boolean operator
- *
- *  The function requires to receive proper object arguments and valid ranges.
- *
- *  @return                            -1 for undefined, 1 - true, 0 - false
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/06/28 (Oyranos: 0.1.8)
- *  @date    2008/06/28
- */
-int          oyName_boolean          ( oyName_s          * name_a,
-                                       oyName_s          * name_b,
-                                       oyNAME_e            name_type,
-                                       oyBOOLEAN_e         type )
-{
-  int erg = -1;
-  int error = !name_a || !name_b ||
-              0 > name_type || name_type > oyNAME_DESCRIPTION ||
-              0 > type || type > oyBOOLEAN_UNION;
-
-  const char *text_a = 0;
-  const char *text_b = 0;
-
-  if(error <= 0)
-  {
-    if(name_type == oyNAME_NAME)
-    {
-      text_a = name_a->name;
-      text_b = name_b->name;
-    } else
-    if(name_type == oyNAME_NICK)
-    {
-      text_a = name_a->nick;
-      text_b = name_b->nick;
-    } else
-    if(name_type == oyNAME_DESCRIPTION)
-    {
-      text_a = name_a->description;
-      text_b = name_b->description;
-    }
-
-    erg = oyTextboolean_( text_a, text_b, type );
-  }
-
-  return erg;
-}
-
-
-
 
 
 /**
