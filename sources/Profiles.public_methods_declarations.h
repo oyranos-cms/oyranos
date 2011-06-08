@@ -5,10 +5,6 @@ OYAPI oyProfiles_s * OYEXPORT
                  oyProfiles_ForStd   ( oyPROFILE_e         std_profile_class,
                                        int               * current,
                                        oyObject_s          object);
-OYAPI int  OYEXPORT
-                 oyProfiles_Release  ( oyProfiles_s     ** profile_list );
-
-
 oyProfiles_s   * oyProfiles_MoveIn   ( oyProfiles_s      * list,
                                        oyProfile_s      ** ptr,
                                        int                 pos );
