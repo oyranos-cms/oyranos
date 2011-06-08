@@ -14,5 +14,5 @@ oyProfile_s *    oyProfiles_Get      ( oyProfiles_s      * list,
                                        int                 pos );
 int              oyProfiles_Count    ( oyProfiles_s      * list );
 int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
-                                       oyConfig_s        * device,
-                                       int32_t           * rank_list );
+                                         oyConfig_s      * device,
+                                         int32_t         * rank_list );

@@ -458,9 +458,9 @@ int              oyProfiles_Count ( oyProfiles_s   * list )
   return n;
 }
 
-/** Function oyProfiles_DeviceRank
+/** Function  oyProfiles_DeviceRank
  *  @memberof oyProfiles_s
- *  @brief   sort a profile list according to a given device
+ *  @brief    Sort a profile list according to a given device
  *
  *  Profiles which match the device will placed according to a rank value on 
  *  top of the list followed by the zero ranked profiles.
@@ -489,14 +489,15 @@ int              oyProfiles_Count ( oyProfiles_s   * list )
  *  @date    2009/05/22
  */
 int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
-                                       oyConfig_s        * device,
-                                       int32_t           * rank_list )
+                                         oyConfig_s      * device,
+                                         int32_t         * rank_list )
 {
   int error = !list || !device || !rank_list;
-  oyProfiles_s * s = list;
+  oyProfiles_s_ * s = (oyProfiles_s_*)list;
   int i,n,rank;
   oyProfile_s * p = 0;
   oyConfig_s * p_device = 0;
+  oyConfig_s_ * d = (oyConfig_s_*)device;
   oyOptions_s * old_db = 0;
 
   if(!list)
@@ -507,16 +508,16 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
 
   oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
 
-  p_device = oyConfig_New( device->registration, 0 );
+  p_device = oyConfig_New( d->registration, 0 );
   n = oyProfiles_Count( list );
 
   error = !memset( rank_list, 0, sizeof(int32_t) * n );
 
   /* oyConfig_Compare assumes its options in device->db, so it is filled here.*/
-  if(!oyOptions_Count( device->db ))
+  if(!oyOptions_Count( d->db ))
   {
-    old_db = device->db;
-    device->db = device->backend_core;
+    old_db = d->db;
+    d->db = d->backend_core;
   }
 
   for(i = 0; i < n; ++i)
@@ -529,17 +530,15 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
     error = oyConfig_Compare( p_device, device, &rank );
     rank_list[i] = rank;
 
-    oyOptions_Clear( p_device->backend_core );
+    oyOptions_Clear( oyConfigPriv_m(p_device)->backend_core );
     oyProfile_Release( &p );
   }
 
   if(!error)
-    error = oyStructList_Sort( list->list_, rank_list );
+    error = oyStructList_Sort( s->list_, rank_list );
 
   if(old_db)
-    device->db = old_db;
+    d->db = old_db;
 
   return error;
 }
-
-
