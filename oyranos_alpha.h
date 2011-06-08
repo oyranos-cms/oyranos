@@ -755,9 +755,6 @@ OYAPI oyPointer OYEXPORT
 int          oyProfile_ToFile_       ( oyProfile_s       * profile,
                                        const char        * file_name );
 
-OYAPI icSignature OYEXPORT
-             oyProfile_GetSignature (  oyProfile_s       * profile,
-                                       oySIGNATURE_TYPE_e  type );
 OYAPI int OYEXPORT
              oyProfile_SetSignature (  oyProfile_s       * profile,
                                        icSignature         sig,
