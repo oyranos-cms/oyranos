@@ -757,10 +757,6 @@ int          oyProfile_ToFile_       ( oyProfile_s       * profile,
 
 OYAPI const oyObject_s * OYEXPORT
                    oyProfile_GetChannelNames( oyProfile_s * colour);
-OYAPI const char   * OYEXPORT
-                   oyProfile_GetChannelName ( oyProfile_s * profile,
-                                         int               channel_pos,
-                                         oyNAME_e          type );
 OYAPI const char  * OYEXPORT
                    oyProfile_GetID   ( oyProfile_s       * profile );
 OYAPI int OYEXPORT

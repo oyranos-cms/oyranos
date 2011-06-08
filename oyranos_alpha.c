@@ -7894,44 +7894,6 @@ oyProfile_New_ ( oyObject_s        object)
   return s;
 }
 
-/** @brief   get a channels name
- *  @memberof oyProfile_s
- *
- *  A convinience function to get a single name with a certain type.
- *
- *  @param[in] profile  address of a Oyranos named colour structure
- *  @param[in] pos      position of channel 
- *  @param[in] type     sort of text 
- *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
- */
-const oyChar *
-oyProfile_GetChannelName           ( oyProfile_s   * profile,
-                                        int                pos,
-                                        oyNAME_e           type )
-{
-  oyProfile_s * s = profile;
-  int n = oyProfile_GetChannelsCount( s );
-  const oyChar * text = 0;
-
-  if(!s)
-    return 0;
-
-  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
-
-  if( 0 <= pos && pos < n )
-    return "-";
-
-  if(!s->names_chan_)
-    oyProfile_GetChannelNames ( s );
-
-  if(s->names_chan_ && s->names_chan_[pos])
-    text = oyObject_GetName( s->names_chan_[pos], type );
-
-  return text;
-}
-
 /** @brief   get channel names
  *  @memberof oyProfile_s
  *
