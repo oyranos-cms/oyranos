@@ -105,9 +105,9 @@ OYAPI oyProfiles_s * OYEXPORT
   return s;
 }
 
-/** Function oyProfiles_ForStd
+/** Function  oyProfiles_ForStd
  *  @memberof oyProfiles_s
- *  @brief   get a list of installed profiles
+ *  @brief    Get a list of installed profiles
  *
  *  Allow for a special case with oyDEFAULT_PROFILE_START in the colour_space
  *  argument, to select all possible standard colour profiles, e.g. for 
