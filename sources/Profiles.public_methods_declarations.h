@@ -1,9 +1,4 @@
 OYAPI oyProfiles_s * OYEXPORT
-                 oyProfiles_New      ( oyObject_s          object );
-OYAPI oyProfiles_s * OYEXPORT
-                 oyProfiles_Copy     ( oyProfiles_s      * profile_list,
-                                       oyObject_s          object);
-OYAPI oyProfiles_s * OYEXPORT
                  oyProfiles_Create   ( oyProfiles_s      * patterns,
                                        oyObject_s          object);
 OYAPI oyProfiles_s * OYEXPORT
