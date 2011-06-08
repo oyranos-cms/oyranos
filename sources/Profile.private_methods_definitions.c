@@ -1,3 +1,11 @@
+static
+const char * oyProfile_Message_      ( oyPointer           profile,
+                                       int                 flags )
+{
+  oyStruct_s*s = profile;
+  return oyProfile_GetText( (oyProfile_s*)s, oyNAME_DESCRIPTION );
+}
+
 /** Function  oyProfile_FromMemMove_
  *  @memberof oyProfile_s
  *  @brief    Create from in memory blob

@@ -7841,13 +7841,7 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
  */
 
 static int oy_profile_first = 0;
-static
-const char * oyProfile_Message_      ( oyPointer           profile,
-                                       int                 flags )
-{
-  oyStruct_s*s = profile;
-  return oyProfile_GetText( (oyProfile_s*)s, oyNAME_DESCRIPTION );
-}
+
 
 /** @internal
  *  @memberof oyProfile_s
