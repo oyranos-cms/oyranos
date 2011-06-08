@@ -10983,52 +10983,6 @@ oyOBJECT_e   oyCMMapi3_Query_        ( oyCMMInfo_s       * cmm_info,
     return oyOBJECT_NONE;
 }
 
-/** @internal
- *  @memberof oyProfiles_s
- *
- *  @version Oyranos: 0.3.0
- *  @since   2007/11/22 (Oyranos: 0.1.8)
- *  @date    2011/01/28
- */
-OYAPI oyProfiles_s * OYEXPORT
-                   oyProfiles_Copy  ( oyProfiles_s * obj,
-                                         oyObject_s        object)
-{
-  oyProfiles_s * s = 0;
-  int error = 0;
-  oyAlloc_f allocateFunc = 0;
-
-  if(!obj)
-    return 0;
-
-  s = obj;
-
-  oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
-
-  s = oyProfiles_New( object );
-  error = !s;
-
-  if(error <= 0)
-    allocateFunc = s->oy_->allocateFunc_;
-
-  if(error <= 0)
-  {
-    if(obj->list_)
-    {
-      s->list_ = oyStructList_Copy(obj->list_, object);
-      error = !s->list_;
-    }
-  }
-
-  if(error)
-  {
-    WARNc_S("Could not create structure for profile.")
-    return 0;
-  }
-
-  return s;
-}
-
 oyProfiles_s * oy_profile_list_cache_ = 0;
 
 /**
