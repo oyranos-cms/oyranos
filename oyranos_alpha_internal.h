@@ -88,9 +88,6 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
                                        int                 flags,
                                        int               * error_return,
                                        oyObject_s          object);
-oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
-                                       uint32_t            flags,
-                                       oyObject_s          object );
 oyPointer    oyProfile_TagsToMem_    ( oyProfile_s       * profile,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
