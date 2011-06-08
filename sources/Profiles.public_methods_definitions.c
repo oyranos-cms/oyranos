@@ -377,8 +377,9 @@ oyProfiles_s* oyProfiles_MoveIn      ( oyProfiles_s      * list,
   return list;
 }
 
-/**
+/** Function  oyProfiles_ReleaseAt
  *  @memberof oyProfiles_s
+ *  @brief    Release profile at position pos.
  *
  *  @since Oyranos: version 0.1.8
  *  @date  22 november 2007 (API 0.1.8)
@@ -387,15 +388,15 @@ int              oyProfiles_ReleaseAt( oyProfiles_s      * list,
                                        int                 pos )
 {
   int error = 0;
-  oyProfiles_s * s = list;
+  oyProfiles_s_ * s = (oyProfiles_s_*)list;
 
   if(!s)
     return 1;
 
   oyCheckType__m( oyOBJECT_PROFILES_S, return 1 )
 
-  if(list && list->list_)
-    error = oyStructList_ReleaseAt( list->list_, pos );
+  if(s && s->list_)
+    error = oyStructList_ReleaseAt( s->list_, pos );
 
   return error;
 }
