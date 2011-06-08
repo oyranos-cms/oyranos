@@ -726,9 +726,6 @@ typedef struct oyProfile_s {
   int                  tags_modified_; /**< @private note manipulation */
 } oyProfile_s;
 
-OYAPI oyProfile_s * OYEXPORT
-                   oyProfile_FromStd ( oyPROFILE_e         colour_space,
-                                       oyObject_s          object);
 /** @typedef oyIO_t
     parametric type as shorthand for IO flags \n
 
