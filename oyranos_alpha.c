@@ -7894,48 +7894,6 @@ oyProfile_New_ ( oyObject_s        object)
   return s;
 }
 
-/** @brief   create from in memory blob
- *  @memberof oyProfile_s
- *
- *  @param[in]    size           buffer size
- *  @param[in]    block          pointer to memory containing a profile
- *  @param[in]    flags          for future use
- *  @param[in]    object         the optional base
- *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
- */
-OYAPI oyProfile_s * OYEXPORT
-oyProfile_FromMem             ( size_t            size,
-                                const oyPointer   block,
-                                uint32_t          flags,
-                                oyObject_s        object)
-{
-  oyProfile_s * s = 0;
-  int error = 0;
-  oyPointer block_ = 0;
-  size_t size_ = 0;
-
-  if(block && size)
-  {
-    oyAllocHelper_m_( block_, char, size, object ? object->allocateFunc_:0,
-                      error = 1 );
-
-    if(!error)
-    {
-      size_ = size;
-      error = !memcpy( block_, block, size );
-    }
-  }
-
-  s = oyProfile_FromMemMove_( size_, &block_, flags, &error, object );
-
-  oyProfile_GetID( s );
-
-  return s;
-}
-
-
 /** @brief   create a fractional profile from signature
  *  @memberof oyProfile_s
  *
