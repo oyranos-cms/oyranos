@@ -10983,50 +10983,6 @@ oyOBJECT_e   oyCMMapi3_Query_        ( oyCMMInfo_s       * cmm_info,
     return oyOBJECT_NONE;
 }
 
-
-
-/**
- *  @memberof oyProfiles_s
- *
- *  @since Oyranos: version 0.1.8
- *  @date  22 november 2007 (API 0.1.8)
- */
-OYAPI oyProfiles_s * OYEXPORT
-                   oyProfiles_New ( oyObject_s          object )
-{
-  /* ---- start of common object constructor ----- */
-  oyOBJECT_e type = oyOBJECT_PROFILES_S;
-# define STRUCT_TYPE oyProfiles_s
-  int error = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = 0;
-  
-  if(s_obj)
-    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
-
-  if(!s || !s_obj)
-  {
-    WARNc_S(_("MEM Error."));
-    return NULL;
-  }
-
-  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
-
-  s->type_ = type;
-  s->copy = (oyStruct_Copy_f) oyProfiles_Copy;
-  s->release = (oyStruct_Release_f) oyProfiles_Release;
-
-  s->oy_ = s_obj;
-
-  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
-# undef STRUCT_TYPE
-  /* ---- end of common object constructor ------- */
-
-  s->list_ = oyStructList_Create( s->type_, 0, 0 );
-
-  return s;
-}
-
 /** @internal
  *  @memberof oyProfiles_s
  *
