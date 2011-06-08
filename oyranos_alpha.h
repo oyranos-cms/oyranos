@@ -758,9 +758,6 @@ int          oyProfile_ToFile_       ( oyProfile_s       * profile,
 OYAPI int OYEXPORT
                    oyProfile_Equal   ( oyProfile_s       * profileA,
                                        oyProfile_s       * profileB );
-OYAPI const char  * OYEXPORT
-                   oyProfile_GetText ( oyProfile_s       * profile,
-                                       oyNAME_e            type );
 OYAPI oyPointer OYEXPORT
                    oyProfile_GetMem  ( oyProfile_s       * profile,
                                        size_t            * size,
