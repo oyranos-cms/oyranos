@@ -1,6 +1,6 @@
-/** Function oyProfiles_Create
+/** Function  oyProfiles_Create
  *  @memberof oyProfiles_s
- *  @brief   get a list of installed profiles
+ *  @brief    Get a list of installed profiles
  *
  *  @param[in]     patterns            a list properties, e.g. classes
  *  @param         object              the optional object
@@ -11,7 +11,7 @@
  */
 OYAPI oyProfiles_s * OYEXPORT
                  oyProfiles_Create( oyProfiles_s   * patterns,
-                                       oyObject_s          object)
+                                    oyObject_s       object)
 {
   oyProfiles_s * s = 0;
   int error = 0;
@@ -34,7 +34,7 @@ OYAPI oyProfiles_s * OYEXPORT
     {
       pattern = oyProfiles_Get(patterns, j);
 
-      if(pattern->size_ > 132)
+      if(oyProfilePriv_m(pattern)->size_ > 132)
         size = 0;
 
       oyProfile_Release( &pattern );
@@ -82,7 +82,7 @@ OYAPI oyProfiles_s * OYEXPORT
             if(tmp)
               pattern = oyProfiles_Get(patterns, j);
 
-            if(oyProfile_Match_( pattern, tmp ))
+            if(oyProfile_Match_( (oyProfile_s_*)pattern, (oyProfile_s_*)tmp ))
             {
               s = oyProfiles_MoveIn( s, &tmp, -1);
               error = !s;
