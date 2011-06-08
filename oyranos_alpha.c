@@ -7894,39 +7894,6 @@ oyProfile_New_ ( oyObject_s        object)
   return s;
 }
 
-/** @brief   create from file
- *  @memberof oyProfile_s
- *
- *  Supported are profiles with absolute path names, profiles in OpenICC 
- *  profile paths and profiles relative to the current working path. 
- *  Search will occure in this order.
- *
- *  @param[in]    name           profile file name
- *  @param[in]    flags          for future extension
- *  @param[in]    object         the optional base
- *
- *  flags supports OY_NO_CACHE_READ and OY_NO_CACHE_WRITE to disable cache
- *  reading and writing. The cache flags are useful for one time profiles or
- *  scanning large numbers of profiles.
- *
- *  @version Oyranos: 0.1.10
- *  @since   2007/11/0 (Oyranos: 0.1.9)
- *  @date    2010/05/18
- */
-OYAPI oyProfile_s * OYEXPORT
-oyProfile_FromFile            ( const char      * name,
-                                uint32_t          flags,
-                                oyObject_s        object)
-{
-  oyProfile_s * s = 0;
-
-  s = oyProfile_FromFile_( name, flags, object );
-
-  oyProfile_GetID( s );
-
-  return s;
-}
-
 /**
  *  @internal
  *  @brief   create from in memory blob

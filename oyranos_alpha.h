@@ -743,10 +743,6 @@ typedef struct oyProfile_s {
 #define oyToNoCacheRead_m(r)        ((r)&1)
 #define oyToNoCacheWrite_m(w)       (((w) >> 1)&1)
 OYAPI oyProfile_s * OYEXPORT
-                   oyProfile_FromFile( const char*         file_name,
-                                       uint32_t            flags,
-                                       oyObject_s          object);
-OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromMem ( size_t              buf_size,
                                        const oyPointer     buf,
                                        uint32_t            flags,
