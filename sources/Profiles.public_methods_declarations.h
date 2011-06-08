@@ -6,7 +6,7 @@ OYAPI oyProfiles_s * OYEXPORT
                                        int               * current,
                                        oyObject_s          object);
 oyProfiles_s   * oyProfiles_MoveIn   ( oyProfiles_s      * list,
-                                       oyProfile_s      ** ptr,
+                                       oyProfile_s      ** obj,
                                        int                 pos );
 int              oyProfiles_ReleaseAt( oyProfiles_s      * list,
                                        int                 pos );

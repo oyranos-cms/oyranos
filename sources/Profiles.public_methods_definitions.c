@@ -347,8 +347,9 @@ OYAPI oyProfiles_s * OYEXPORT
   return iccs;
 }
 
-/**
+/** Function  oyProfiles_MoveIn
  *  @memberof oyProfiles_s
+ *  @brief    Move a profile inside the profiles list.
  *
  *  @since Oyranos: version 0.1.8
  *  @date  22 november 2007 (API 0.1.8)
@@ -358,7 +359,7 @@ oyProfiles_s* oyProfiles_MoveIn      ( oyProfiles_s      * list,
                                        int                 pos )
 {
   int error = 0;
-  oyProfiles_s * s = list;
+  oyProfiles_s_ * s = (oyProfiles_s_*)list;
 
   if(s)
     oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
@@ -368,8 +369,8 @@ oyProfiles_s* oyProfiles_MoveIn      ( oyProfiles_s      * list,
     if(!list)
       list = oyProfiles_New(0);
 
-    if(list && list->list_)
-        error = oyStructList_MoveIn( list->list_, (oyStruct_s**) obj, pos,
+    if(list && s->list_)
+        error = oyStructList_MoveIn( s->list_, (oyStruct_s**) obj, pos,
                                      OY_OBSERVE_AS_WELL );
   }
 
