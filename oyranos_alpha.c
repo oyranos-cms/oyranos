@@ -9196,7 +9196,8 @@ OYAPI oyPointer OYEXPORT
     for(i = 0; i < 4; ++i)
       md5[i] = oyValueUInt32( md5[i] );
     data = block;
-    memcpy( &data[84], md5, 16 );
+    if(data && (int)size >= 132)
+      memcpy( &data[84], md5, 16 );
   }
 
   if(s)
