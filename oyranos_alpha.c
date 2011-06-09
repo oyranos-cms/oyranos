@@ -8625,64 +8625,6 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
   return block;
 }
 
-/**
- *  @internal
- *  Function oyProfile_TagsToMem_
- *  @memberof oyProfile_s
- *  @brief   get the parsed ICC profile back into memory
- *
- *  non thread save
- *
- *  @version Oyranos: 0.1.8
- *  @date    2008/01/30
- *  @since   2008/01/30 (Oyranos: 0.1.8)
- */
-oyPointer    oyProfile_TagsToMem_    ( oyProfile_s       * profile,
-                                       size_t            * size,
-                                       oyAlloc_f           allocateFunc )
-{
-  oyPointer block = 0;
-  int error = !(profile && profile->block_ &&
-                profile->size_ > 132 && profile->tags_ && size);
-
-  if(error <= 0)
-  {
-    size_t size_ = 0;
-
-    oyPointer icc_header = 0;
-    oyPointer icc_tagtable = 0;
-
-    /* 1. header */
-    icc_header = oyProfile_WriteHeader_( profile, &size_ );
-
-    error = !icc_header;
-
-    /* 2. tag table */
-    if(error <= 0)
-    {
-      icc_tagtable = oyProfile_WriteTagTable_( profile, &size_ );
-      error = !icc_tagtable;
-    }
-
-    /* 3. tags */
-    if(error <= 0)
-    {
-      block = oyProfile_WriteTags_( profile, &size_, icc_header, icc_tagtable,
-                                    allocateFunc );
-      error = !block;
-    }
-
-    if(error <= 0)
-    {
-      oyDeAllocateFunc_(icc_header);
-      oyDeAllocateFunc_(icc_tagtable);
-      *size = size_;
-    }
-  }
-
-  return block;
-}
-
 /** @internal
  *  Function oyProfile_GetTagByPos_
  *  @memberof oyProfile_s
