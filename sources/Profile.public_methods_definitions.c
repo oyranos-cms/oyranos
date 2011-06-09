@@ -1345,9 +1345,9 @@ OYAPI int OYEXPORT
   return error;
 }
 
-/** Function oyProfile_GetMD5
+/** Function  oyProfile_GetMD5
  *  @memberof oyProfile_s
- *  @brief   get the ICC profile md5 hash sum
+ *  @brief    Get the ICC profile md5 hash sum
  *
  *  The ICC profiles ID is returned. On request it can be recomputed through
  *  the OY_COMPUTE flag. That computed ID will be used internally as a hash
@@ -1368,7 +1368,7 @@ int                oyProfile_GetMD5  ( oyProfile_s       * profile,
                                        int                 flags,
                                        uint32_t          * md5 )
 {
-  oyProfile_s * s = profile;
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
   int error = !s;
 
   if(!s)
