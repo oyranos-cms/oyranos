@@ -8484,24 +8484,6 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
   return block;
 }
 
-/** @internal
- *  Function oyProfile_TagReleaseAt_
- *  @memberof oyProfile_s
- *  @brief   remove a tag from a profile
- *
- *  non thread save
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/03/11 (Oyranos: 0.1.8)
- *  @date    2009/12/29
- */
-int          oyProfile_TagReleaseAt_ ( oyProfile_s       * profile,
-                                       int                 pos )
-{
-  oyProfile_s * s = profile;
-  return oyStructList_ReleaseAt ( s->tags_, pos );
-}
-
 /** Function oyProfileTag_New
  *  @memberof oyProfileTag_s
  *
