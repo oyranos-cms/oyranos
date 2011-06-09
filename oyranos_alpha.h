@@ -763,8 +763,6 @@ int                oyProfile_GetMD5  ( oyProfile_s       * profile,
 int                oyProfile_DeviceAdd(oyProfile_s       * profile,
                                        oyConfig_s        * device,
                                        oyOptions_s       * options );
-int                oyProfile_DeviceGet ( oyProfile_s     * profile,
-                                       oyConfig_s        * device );
 
 
 OYAPI int  OYEXPORT
