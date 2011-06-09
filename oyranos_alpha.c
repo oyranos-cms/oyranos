@@ -8543,28 +8543,6 @@ oyChar *       oyProfile_GetCMMText_ ( oyProfile_s       * profile,
 */
 #endif
 
-/**
- *  @internal
- *  Function oyProfile_Equal
- *  @memberof oyProfile_s
- *  @brief   check if two profiles are qual by their hash sum
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/02/03 (Oyranos: 0.1.8)
- *  @date    2009/04/16
- */
-OYAPI int OYEXPORT
-                   oyProfile_Equal   ( oyProfile_s       * profileA,
-                                       oyProfile_s       * profileB )
-{
-  int equal = 0;
-
-  if(profileA && profileB)
-    equal = oyObject_HashEqual( profileA->oy_, profileB->oy_ );
-
-  return equal;
-}
-
 /** @internal
  *  Function oyProfile_Match_
  *  @memberof oyProfile_s

@@ -755,9 +755,6 @@ OYAPI oyPointer OYEXPORT
 int          oyProfile_ToFile_       ( oyProfile_s       * profile,
                                        const char        * file_name );
 
-OYAPI int OYEXPORT
-                   oyProfile_Equal   ( oyProfile_s       * profileA,
-                                       oyProfile_s       * profileB );
 #define OY_COMPUTE      0x01
 #define OY_FROM_PROFILE 0x04
 int                oyProfile_GetMD5  ( oyProfile_s       * profile,
