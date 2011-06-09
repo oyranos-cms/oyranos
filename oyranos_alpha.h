@@ -760,8 +760,6 @@ int          oyProfile_ToFile_       ( oyProfile_s       * profile,
 int                oyProfile_GetMD5  ( oyProfile_s       * profile,
                                        int                 flags,
                                        uint32_t          * md5 );
-const char   *     oyProfile_GetFileName ( oyProfile_s   * profile,
-                                       int                 dl_pos );
 int                oyProfile_DeviceAdd(oyProfile_s       * profile,
                                        oyConfig_s        * device,
                                        oyOptions_s       * options );
