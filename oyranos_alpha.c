@@ -8919,59 +8919,6 @@ oyPointer    oyProfile_TagsToMem_    ( oyProfile_s       * profile,
   return block;
 }
 
-/** Function oyProfile_GetTagById
- *  @memberof oyProfile_s
- *  @brief   get a profile tag by its tag signature
- *
- *  @param[in]     profile             the profile
- *  @param[in]     id                  icTagSignature
- *
- *  @since Oyranos: version 0.1.8
- *  @date  2 january 2008 (API 0.1.8)
- */
-oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
-                                       icTagSignature      id )
-{
-  oyProfile_s * s = profile;
-  int error = !s;
-  oyProfileTag_s * tag = 0,
-                 * tmp = 0;
-  int i = 0, n = 0;
-  icTagSignature tag_id_ = 0;
-
-  if(!s)
-    return 0;
-
-  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
-
-  if(error <= 0)
-    n = oyProfile_GetTagCount_( s );
-
-  if(error <= 0 && n)
-  {
-    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
-    for(i = 0; i < n; ++i)
-    {
-      tmp = oyProfile_GetTagByPos_( s, i );
-      tag_id_ = 0;
-
-      if(tmp)
-        tag_id_ = tmp->use;
-
-      if(tag_id_ == id)
-      {
-        tag = tmp; tmp = 0;
-        break;
-      } else
-        oyProfileTag_Release( &tmp );
-    }
-    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
-  }
-
-  return tag;
-}
-
-
 /** @internal
  *  Function oyProfile_GetTagByPos_
  *  @memberof oyProfile_s
