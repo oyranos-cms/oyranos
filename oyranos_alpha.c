@@ -9146,61 +9146,6 @@ int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
   return error;
 }
 
-/** Function oyProfile_TagMoveIn
- *  @memberof oyProfile_s
- *  @brief   add a tag to a profile
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/02/01 (Oyranos: 0.1.8)
- *  @date    2009/12/29
- */
-int                oyProfile_TagMoveIn(oyProfile_s       * profile,
-                                       oyProfileTag_s   ** obj,
-                                       int                 pos )
-{
-  oyProfile_s * s = profile;
-  int error = !s, i,n;
-  oyProfileTag_s * tag = 0;
-
-  if(!s)
-    return error;
-
-  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
-
-  if(!(obj && *obj && (*obj)->type_ == oyOBJECT_PROFILE_TAG_S))
-    error = 1;
-
-  if(s)
-    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
-
-
-  if(error <= 0)
-  {
-    /** Initialise tag list. */
-    n = oyProfile_GetTagCount_( s );
-
-    /** Avoid double occurencies of tags. */
-    for( i = 0; i < n; ++i )
-    {
-      tag = oyProfile_GetTagByPos_( s, i );
-      if(tag->use == (*obj)->use)
-      {
-        oyProfile_TagReleaseAt_(s, i);
-        n = oyProfile_GetTagCount_( s );
-      }
-      oyProfileTag_Release( &tag );
-    }
-    error = oyStructList_MoveIn ( s->tags_, (oyStruct_s**)obj, pos,
-                                  OY_OBSERVE_AS_WELL );
-    ++s->tags_modified_;
-  }
-
-  if(s)
-    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
-
-  return error;
-}
-
 /** @internal
  *  Function oyProfile_TagReleaseAt_
  *  @memberof oyProfile_s
