@@ -9164,43 +9164,6 @@ int          oyProfile_TagReleaseAt_ ( oyProfile_s       * profile,
   return oyStructList_ReleaseAt ( s->tags_, pos );
 }
 
-/** Function oyProfile_TagReleaseAt
- *  @memberof oyProfile_s
- *  @brief   remove a tag from a profile
- *
- *  @version Oyranos: 0.1.8
- *  @date    2008/03/11
- *  @since   2008/03/11 (Oyranos: 0.1.8)
- */
-int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
-                                       int                 pos )
-{
-  oyProfile_s * s = profile;
-  int error = !s;
-
-  if(!s)
-    return error;
-
-  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
-
-  if(!(s && s->type_ == oyOBJECT_PROFILE_S))
-    error = 1;
-
-  if(s)
-    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
-
-  if(error <= 0)
-  {
-    error = oyStructList_ReleaseAt ( s->tags_, pos );
-    ++s->tags_modified_;
-  }
-
-  if(s)
-    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
-
-  return error;
-}
-
 /** Function oyProfile_AddTagText
  *  @memberof oyProfile_s
  *  @brief   add a text tag

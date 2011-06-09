@@ -760,8 +760,6 @@ int          oyProfile_ToFile_       ( oyProfile_s       * profile,
 int                oyProfile_GetMD5  ( oyProfile_s       * profile,
                                        int                 flags,
                                        uint32_t          * md5 );
-int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
-                                       int                 pos );
 int                oyProfile_AddTagText (
                                        oyProfile_s       * profile,
                                        icSignature         signature,
