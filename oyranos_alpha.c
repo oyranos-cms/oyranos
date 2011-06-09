@@ -7894,65 +7894,6 @@ oyProfile_New_ ( oyObject_s        object)
   return s;
 }
 
-/** Function oyProfile_GetMD5
- *  @memberof oyProfile_s
- *  @brief   get the ICC profile md5 hash sum
- *
- *  The ICC profiles ID is returned. On request it can be recomputed through
- *  the OY_COMPUTE flag. That computed ID will be used internally as a hash
- *  value. The original profile ID can always be obtained through the
- *  OY_FROM_PROFILE flags until writing of the profile.
- *
- *  @param[in,out] profile             the profile
- *  @param[in]     flags               OY_COMPUTE will calculate the hash
- *                                     OY_FROM_PROFILE - original profile ID
- *  @param[out]    md5                 the the ICC md5 based profile ID
- *  @return                            0 - good, 1 >= error, -1 <= issue(s)
- *
- *  @version Oyranos: 0.3.0
- *  @since   2011/01/30 (Oyranos: 0.3.0)
- *  @date    2011/04/10
- */
-int                oyProfile_GetMD5  ( oyProfile_s       * profile,
-                                       int                 flags,
-                                       uint32_t          * md5 )
-{
-  oyProfile_s * s = profile;
-  int error = !s;
-
-  if(!s)
-    return 0;
-
-  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
-
-  if(!oyProfile_Hashed_(s) ||
-     flags & OY_COMPUTE ||
-     s->tags_modified_)
-    error = oyProfile_GetHash_( s, OY_COMPUTE );
-
-  if(oyProfile_Hashed_(s))
-  {
-    if(!(flags & OY_FROM_PROFILE))
-      memcpy( md5, s->oy_->hash_ptr_, OY_HASH_SIZE );
-    else
-    if(s->block_ && s->size_ >= 132)
-    {
-      int i;
-      char * data = s->block_;
-      memcpy( md5, &data[84], 16 );
-      for(i = 0; i < 4; ++i)
-        md5[i] = oyValueUInt32( md5[i] );
-    } else
-      error = -3;
-  }
-  else if(error > 0)
-    error += 1;
-  else
-    error = 1;
-
-  return error;
-}
-
 /**
  *  Function oyProfile_DeviceAdd
  *  @memberof oyProfile_s
