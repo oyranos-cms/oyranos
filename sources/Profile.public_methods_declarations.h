@@ -74,3 +74,6 @@ OYAPI const char * OYEXPORT
 OYAPI int OYEXPORT
                    oyProfile_DeviceGet ( oyProfile_s     * profile,
                                          oyConfig_s      * device );
+int                oyProfile_GetMD5  ( oyProfile_s       * profile,
+                                       int                 flags,
+                                       uint32_t          * md5 );
