@@ -760,10 +760,6 @@ int          oyProfile_ToFile_       ( oyProfile_s       * profile,
 int                oyProfile_GetMD5  ( oyProfile_s       * profile,
                                        int                 flags,
                                        uint32_t          * md5 );
-int                oyProfile_AddTagText (
-                                       oyProfile_s       * profile,
-                                       icSignature         signature,
-                                       const char        * text );
 const char   *     oyProfile_GetFileName ( oyProfile_s   * profile,
                                        int                 dl_pos );
 int                oyProfile_DeviceAdd(oyProfile_s       * profile,
