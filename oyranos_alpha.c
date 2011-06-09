@@ -8485,42 +8485,6 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
 }
 
 /** @internal
- *  Function oyProfile_TagMoveIn_
- *  @memberof oyProfile_s
- *  @brief   add a tag to a profile
- *
- *  non thread save
- *
- *  The profile is needs probably be marked as modified after calling this
- *  function.
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/06 (Oyranos: 0.1.10)
- *  @date    2009/12/29
- */
-int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
-                                       oyProfileTag_s   ** obj,
-                                       int                 pos )
-{
-  oyProfile_s * s = profile;
-  int error = !s;
-
-  if(!s)
-    return error;
-
-  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
-
-  if(!(obj && *obj && (*obj)->type_ == oyOBJECT_PROFILE_TAG_S))
-    error = 1;
-
-  if(error <= 0)
-    error = oyStructList_MoveIn ( s->tags_, (oyStruct_s**)obj, pos,
-                                  OY_OBSERVE_AS_WELL );
-
-  return error;
-}
-
-/** @internal
  *  Function oyProfile_TagReleaseAt_
  *  @memberof oyProfile_s
  *  @brief   remove a tag from a profile

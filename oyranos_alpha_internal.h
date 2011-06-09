@@ -83,9 +83,6 @@ int    oyOptions_SetRegistrationTextKey_(
                                        const char        * key,
                                        const char        * value );
 
-int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
-                                       oyProfileTag_s   ** obj,
-                                       int                 pos );
 int          oyProfile_TagReleaseAt_ ( oyProfile_s       * profile,
                                        int                 pos );
 int    oyTextIccDictMatch            ( const char        * text,
