@@ -8340,42 +8340,6 @@ oyChar *       oyProfile_GetCMMText_ ( oyProfile_s       * profile,
 #endif
 
 /** @internal
- *  Function oyProfile_Match_
- *  @memberof oyProfile_s
- *  @brief   check if a profiles matches by some properties
- *
- *  @version Oyranos: 0.1.8
- *  @date    2008/06/20
- *  @since   2008/06/20 (Oyranos: 0.1.8)
- */
-int32_t      oyProfile_Match_        ( oyProfile_s       * pattern,
-                                       oyProfile_s       * profile )
-{
-  int32_t match = 0;
-  int i;
-  icSignature pattern_sig, profile_sig;
-
-  if(pattern && profile)
-  {
-    /*match = oyProfile_Equal_(pattern, profile);*/ /* too expensive */
-    if(!match)
-    {
-      match = 1;
-      for( i = 0; i < (int)oySIGNATURE_MAX; ++i)
-      {
-        pattern_sig = oyProfile_GetSignature( pattern, (oySIGNATURE_TYPE_e) i );
-        profile_sig = oyProfile_GetSignature( profile, (oySIGNATURE_TYPE_e) i );
-
-        if(pattern_sig && profile_sig && pattern_sig != profile_sig)
-          match = 0;
-      }
-    }
-  }
-
-  return match;
-}
-
-/** @internal
  *  Function oyProfile_Hashed_
  *  @memberof oyProfile_s
  *  @brief   check if a profile has a hash sum computed

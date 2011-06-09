@@ -83,8 +83,6 @@ int    oyOptions_SetRegistrationTextKey_(
                                        const char        * key,
                                        const char        * value );
 
-int32_t      oyProfile_Match_        ( oyProfile_s       * pattern,
-                                       oyProfile_s       * profile );
 int32_t      oyProfile_Hashed_       ( oyProfile_s       * s );
 char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
                                        oyAlloc_f           allocateFunc );
