@@ -760,7 +760,6 @@ int          oyProfile_ToFile_       ( oyProfile_s       * profile,
 int                oyProfile_GetMD5  ( oyProfile_s       * profile,
                                        int                 flags,
                                        uint32_t          * md5 );
-int                oyProfile_GetTagCount( oyProfile_s    * profile );
 int                oyProfile_TagMoveIn(oyProfile_s       * profile,
                                        oyProfileTag_s   ** tag,
                                        int                 pos );
