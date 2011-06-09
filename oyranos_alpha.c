@@ -8484,44 +8484,6 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
   return block;
 }
 
-/** |internal
- *  Function oyProfile_GetTagCount_
- *  @memberof oyProfile_s
- *
- *  non thread save
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/01/01 (Oyranos: 0.1.8)
- *  @date    2009/12/29
- */
-int                oyProfile_GetTagCount_ (
-                                       oyProfile_s       * profile )
-{
-  int n = 0;
-  oyProfile_s *s = profile;
-  int error = !s;
-
-  if(!s)
-    return 0;
-
-  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
-
-  if(error <= 0 && !s->tags_)
-    error = 1;
-
-  if(error <= 0)
-    n = oyStructList_Count( s->tags_ );
-
-  if(error <= 0 && !n)
-  {
-    oyProfileTag_s * tag = oyProfile_GetTagByPos_ ( s, 0 );
-    oyProfileTag_Release( &tag );
-    n = oyStructList_Count( s->tags_ );
-  }
-
-  return n;
-}
-
 /** @internal
  *  Function oyProfile_TagMoveIn_
  *  @memberof oyProfile_s
