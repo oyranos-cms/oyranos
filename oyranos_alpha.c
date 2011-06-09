@@ -8339,23 +8339,6 @@ oyChar *       oyProfile_GetCMMText_ ( oyProfile_s       * profile,
 */
 #endif
 
-/** @internal
- *  Function oyProfile_Hashed_
- *  @memberof oyProfile_s
- *  @brief   check if a profile has a hash sum computed
- *
- *  @version Oyranos: 0.1.8
- *  @date    2008/06/20
- *  @since   2008/06/20 (Oyranos: 0.1.8)
- */
-int32_t      oyProfile_Hashed_       ( oyProfile_s       * s )
-{
-  if(s && s->type_ == oyOBJECT_PROFILE_S)
-    return oyObject_Hashed_( s->oy_ );
-  else
-    return 0;
-}
-
 /**
  *  @internal
  *  Function oyProfile_WriteHeader_
