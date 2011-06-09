@@ -8071,7 +8071,7 @@ oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
       const char * t = file_name;
       uint32_t md5[4];
 
-      if(oy_debug)
+      if(oy_debug == 1)
         oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
                        OY_DBG_FORMAT_"\n\t%s: \"%s\"", OY_DBG_ARGS_,
                 _("No ICC profile id detected"), t?t:OY_PROFILE_NONE );

@@ -973,107 +973,107 @@ docu:
 # the copy part for this directory level
 install_bin:	all install_gui
 	echo Installing binaries ...
-	mkdir -p $(DESTDIR)$(bindir)
-	$(INSTALL) -m 755 $(TARGET)-config     $(DESTDIR)$(bindir)
-	$(INSTALL) -m 755 $(TARGET)-monitor    $(DESTDIR)$(bindir)
-	$(INSTALL) -m 755 $(TARGET)-policy     $(DESTDIR)$(bindir)
-	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia $(DESTDIR)$(bindir)
-	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms $(DESTDIR)$(bindir)
-	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms-fltk $(DESTDIR)$(bindir)
-	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms-modules $(DESTDIR)$(bindir)
-	mkdir -p $(DESTDIR)$(libdir)
-	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
-	mkdir -p $(DESTDIR)$(metadir)
-	mkdir -p $(DESTDIR)$(cmmdir)
-	$(INSTALL) -m 644 $(TARGET).pc $(DESTDIR)$(libdir)/pkgconfig/
+	mkdir -p "$(DESTDIR)$(bindir)"
+	$(INSTALL) -m 755 $(TARGET)-config     "$(DESTDIR)$(bindir)"
+	$(INSTALL) -m 755 $(TARGET)-monitor    "$(DESTDIR)$(bindir)"
+	$(INSTALL) -m 755 $(TARGET)-policy     "$(DESTDIR)$(bindir)"
+	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia "$(DESTDIR)$(bindir)"
+	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms "$(DESTDIR)$(bindir)"
+	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms-fltk "$(DESTDIR)$(bindir)"
+	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms-modules "$(DESTDIR)$(bindir)"
+	mkdir -p "$(DESTDIR)$(libdir)"
+	mkdir -p "$(DESTDIR)$(libdir)/pkgconfig"
+	mkdir -p "$(DESTDIR)$(metadir)"
+	mkdir -p "$(DESTDIR)$(cmmdir)"
+	$(INSTALL) -m 644 $(TARGET).pc "$(DESTDIR)$(libdir)/pkgconfig/"
 	for lib in $(LIBRARIES); do \
 	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		($(INSTALL) -m 755 lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
-		$(DESTDIR)$(libdir) \
+		"$(DESTDIR)$(libdir)" \
 		&& echo Installed $(DESTDIR)$(libdir)lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
 	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
-		(test -L $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) && $(RM) $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
+		(test -L "$(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)" && $(RM) "$(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)"; \
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
-		$(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
-		test -L $(DESTDIR)$(libdir)/lib$${lib}$(SO)$(LIBEXT) && ( \
-		$(RM) $(DESTDIR)$(libdir)/lib$${lib}$(SO)$(LIBEXT)) ; \
+		"$(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)"; \
+		test -L "$(DESTDIR)$(libdir)/lib$${lib}$(SO)$(LIBEXT)" && ( \
+		$(RM) "$(DESTDIR)$(libdir)/lib$${lib}$(SO)$(LIBEXT)") ; \
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
-		$(DESTDIR)$(libdir)/lib$${lib}$(SO)$(LIBEXT); \
+		"$(DESTDIR)$(libdir)/lib$${lib}$(SO)$(LIBEXT)"; \
 		); \
 	   if [ "$(STATIC)" = "" ]; then test -f lib$${lib}.a && \
-		($(INSTALL) -m 644 lib$${lib}.a $(DESTDIR)$(libdir);\
-		$(RANLIB) $(DESTDIR)$(libdir)/lib$${lib}.a \
+		($(INSTALL) -m 644 lib$${lib}.a "$(DESTDIR)$(libdir)";\
+		$(RANLIB) "$(DESTDIR)$(libdir)/lib$${lib}.a" \
 		) || echo Installed $(DESTDIR)$(libdir)/lib$${lib}.a; \
            fi; \
 	done
 	for lib in $(META); do \
 	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		($(INSTALL) -m 755 lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
-		$(DESTDIR)$(metadir) \
+		"$(DESTDIR)$(metadir)" \
 		&& echo Installed $(DESTDIR)$(metadir)lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
 	   test -f NOT_lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
-		(test -L $(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) && $(RM) $(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
+		(test -L "$(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)" && $(RM) "$(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)"; \
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
-		$(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
-		test -L $(DESTDIR)$(metadir)/lib$${lib}$(SO)$(LIBEXT) && ( \
-		$(RM) $(DESTDIR)$(metadir)/lib$${lib}$(SO)$(LIBEXT)) ; \
+		"$(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)"; \
+		test -L "$(DESTDIR)$(metadir)/lib$${lib}$(SO)$(LIBEXT)" && ( \
+		$(RM) "$(DESTDIR)$(metadir)/lib$${lib}$(SO)$(LIBEXT)") ; \
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
-		$(DESTDIR)$(metadir)/lib$${lib}$(SO)$(LIBEXT); \
+		"$(DESTDIR)$(metadir)/lib$${lib}$(SO)$(LIBEXT)"; \
 		); \
 	   test -f lib$${lib}.a && \
-		($(INSTALL) -m 644 lib$${lib}.a $(DESTDIR)$(metadir);\
-		$(RANLIB) $(DESTDIR)$(metadir)/lib$${lib}.a \
+		($(INSTALL) -m 644 lib$${lib}.a "$(DESTDIR)$(metadir)";\
+		$(RANLIB) "$(DESTDIR)$(metadir)/lib$${lib}.a" \
 		) || echo ""; \
 	done
 	for lib in $(CMMS); do \
 	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		($(INSTALL) -m 755 lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
-		$(DESTDIR)$(cmmdir) \
+		"$(DESTDIR)$(cmmdir)" \
 		&& echo Installed $(DESTDIR)$(cmmdir)lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
 	   test -f NOT_lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
-		(test -L $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
-		&& $(RM) $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
+		(test -L "$(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)" \
+		&& $(RM) "$(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)"; \
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
-		$(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT); \
-		test -L $(DESTDIR)$(cmmdir)/lib$${lib}$(SO)$(LIBEXT) && ( \
-		$(RM) $(DESTDIR)$(cmmdir)/lib$${lib}$(SO)$(LIBEXT)) ; \
+		"$(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)"; \
+		test -L "$(DESTDIR)$(cmmdir)/lib$${lib}$(SO)$(LIBEXT)" && ( \
+		$(RM) "$(DESTDIR)$(cmmdir)/lib$${lib}$(SO)$(LIBEXT)") ; \
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
-		$(DESTDIR)$(cmmdir)/lib$${lib}$(SO)$(LIBEXT); \
+		"$(DESTDIR)$(cmmdir)/lib$${lib}$(SO)$(LIBEXT)"; \
 		); \
 	   test -f lib$${lib}.a && \
-		($(INSTALL) -m 644 lib$${lib}.a $(DESTDIR)$(cmmdir);\
-		$(RANLIB) $(DESTDIR)$(cmmdir)/lib$${lib}.a \
+		($(INSTALL) -m 644 lib$${lib}.a "$(DESTDIR)$(cmmdir)";\
+		$(RANLIB) "$(DESTDIR)$(cmmdir)/lib$${lib}.a" \
 		) || a=1; \
 	done
-	test -d $(DESTDIR)$(includedir)/$(TARGET)/alpha/object || mkdir -p $(DESTDIR)$(includedir)/$(TARGET)/alpha/object
-	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET).h $(DESTDIR)$(includedir)/$(TARGET)
-	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_types.h $(DESTDIR)$(includedir)/$(TARGET)
-	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_alpha.h $(DESTDIR)$(includedir)/$(TARGET)/alpha
-	(cd $(SRCDIR); $(INSTALL) -m 644 $(CHEADERS_OBJECT_PUBLIC) $(DESTDIR)$(includedir)/$(TARGET)/alpha/object)
-	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_cmm.h $(DESTDIR)$(includedir)/$(TARGET)/alpha
-	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_config.h $(DESTDIR)$(includedir)/$(TARGET)
-	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_core.h $(DESTDIR)$(includedir)/$(TARGET)
-	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_definitions.h $(DESTDIR)$(includedir)/$(TARGET)
-	$(INSTALL) -m 644 $(SRCDIR)/icc34.h $(DESTDIR)$(includedir)/$(TARGET)
-	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_icc.h $(DESTDIR)$(includedir)/$(TARGET)
-	$(INSTALL) -m 644 $(TARGET)_version.h $(DESTDIR)$(includedir)/$(TARGET)
-	-mkdir -p $(DESTDIR)/etc/xdg/autostart/
-	-$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)-monitor-setup.desktop $(DESTDIR)/etc/xdg/autostart/
+	test -d "$(DESTDIR)$(includedir)/$(TARGET)/alpha/object" || mkdir -p "$(DESTDIR)$(includedir)/$(TARGET)/alpha/object"
+	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET).h" "$(DESTDIR)$(includedir)/$(TARGET)"
+	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)_types.h" "$(DESTDIR)$(includedir)/$(TARGET)"
+	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)_alpha.h" "$(DESTDIR)$(includedir)/$(TARGET)/alpha"
+	(cd $(SRCDIR); $(INSTALL) -m 644 $(CHEADERS_OBJECT_PUBLIC) "$(DESTDIR)$(includedir)/$(TARGET)/alpha/object")
+	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)_cmm.h" "$(DESTDIR)$(includedir)/$(TARGET)/alpha"
+	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)_config.h" "$(DESTDIR)$(includedir)/$(TARGET)"
+	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)_core.h" "$(DESTDIR)$(includedir)/$(TARGET)"
+	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)_definitions.h" "$(DESTDIR)$(includedir)/$(TARGET)"
+	$(INSTALL) -m 644 "$(SRCDIR)/icc34.h" "$(DESTDIR)$(includedir)/$(TARGET)"
+	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)_icc.h" "$(DESTDIR)$(includedir)/$(TARGET)"
+	$(INSTALL) -m 644 "$(TARGET)_version.h" "$(DESTDIR)$(includedir)/$(TARGET)"
+	-mkdir -p "$(DESTDIR)/etc/xdg/autostart/"
+	-$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)-monitor-setup.desktop" "$(DESTDIR)/etc/xdg/autostart/"
 	echo ... binary Installation finished
 
 # install recursive
 install:	oforms install-main examples
-	$(INSTALL) -m 755 examples/xcmsevents/qcmsevents $(DESTDIR)$(bindir)
-	mkdir -p $(DESTDIR)$(desktopdir)
-	$(INSTALL) -m 644 $(SRCDIR)/examples/xcmsevents/qcmsevents-applet.desktop $(DESTDIR)$(desktopdir)
+	$(INSTALL) -m 755 examples/xcmsevents/qcmsevents "$(DESTDIR)$(bindir)"
+	mkdir -p "$(DESTDIR)$(desktopdir)"
+	$(INSTALL) -m 644 "$(SRCDIR)/examples/xcmsevents/qcmsevents-applet.desktop" "$(DESTDIR)$(desktopdir)"
 	echo ... $@ done
 
 install-main:	install_bin install_linguas install_docu
 	mkdir -p $(DESTDIR)$(pixmapdir)
-	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_logo.png $(DESTDIR)$(pixmapdir)/$(TARGET)_logo.png
-	$(INSTALL) -m 644 $(SRCDIR)/lcms_logo2.png $(DESTDIR)$(pixmapdir)/lcms_logo2.png
-	$(INSTALL) -m 644 $(SRCDIR)/examples/xcmsevents/plugin-compicc.svg $(DESTDIR)$(pixmapdir)/qcmsevents.svg
-	$(INSTALL) -m 644 $(SRCDIR)/$(TARGET)_logo.png $(DESTDIR)$(pixmapdir)/qcmsevents.png
+	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)_logo.png" "$(DESTDIR)$(pixmapdir)/$(TARGET)_logo.png"
+	$(INSTALL) -m 644 "$(SRCDIR)/lcms_logo2.png" "$(DESTDIR)$(pixmapdir)/lcms_logo2.png"
+	$(INSTALL) -m 644 "$(SRCDIR)/examples/xcmsevents/plugin-compicc.svg" "$(DESTDIR)$(pixmapdir)/qcmsevents.svg"
+	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)_logo.png" "$(DESTDIR)$(pixmapdir)/qcmsevents.png"
 
 # synonymes
 doc:		docu
@@ -1081,32 +1081,32 @@ install_doc:	install_docu
 
 install_docu: docu
 	echo Installing policy settings files ...
-	-mkdir -p $(DESTDIR)$(syscolordir)/$(settingsdirname)
-	-$(INSTALL) -m 644 $(SRCDIR)/settings/*.policy.xml $(DESTDIR)$(syscolordir)/$(settingsdirname)
+	-mkdir -p "$(DESTDIR)$(syscolordir)/$(settingsdirname)"
+	-$(INSTALL) -m 644 "$(SRCDIR)/settings/*.policy.xml" "$(DESTDIR)$(syscolordir)/$(settingsdirname)"
 	echo ... installing policy settings files done
-	mkdir -p $(DESTDIR)$(docdir)
+	mkdir -p "$(DESTDIR)$(docdir)"
 	cd $(SRCDIR) && \
-	  $(INSTALL) -m 644 $(DOKU) $(DESTDIR)$(docdir)
-	mkdir -p $(DESTDIR)$(mandir)/man1
+	  $(INSTALL) -m 644 $(DOKU) "$(DESTDIR)$(docdir)"
+	mkdir -p "$(DESTDIR)$(mandir)/man1"
 	cd $(SRCDIR) && \
-	  $(INSTALL) -m 644 $(MAN1) $(DESTDIR)$(mandir)/man1
-	mkdir -p $(DESTDIR)$(mandir)/man3
+	  $(INSTALL) -m 644 $(MAN1) "$(DESTDIR)$(mandir)/man1"
+	mkdir -p "$(DESTDIR)$(mandir)/man3"
 	cd $(SRCDIR) && \
-	  $(INSTALL) -m 644 $(MAN3) $(DESTDIR)$(mandir)/man3
-	mkdir -p $(DESTDIR)$(docdir)/html/alpha
-	-$(INSTALL) -m 644 doc/html/* $(DESTDIR)$(docdir)/html
-	-$(INSTALL) -m 644 doc_alpha/html/* $(DESTDIR)$(docdir)/html/alpha
+	  $(INSTALL) -m 644 $(MAN3) "$(DESTDIR)$(mandir)/man3"
+	mkdir -p "$(DESTDIR)$(docdir)/html/alpha"
+	-$(INSTALL) -m 644 doc/html/* "$(DESTDIR)$(docdir)/html"
+	-$(INSTALL) -m 644 doc_alpha/html/* "$(DESTDIR)$(docdir)/html/alpha"
 	cd $(SRCDIR) && \
-	  test -n "$(SCRIPTS)" && $(INSTALL) $(SCRIPTS) $(DESTDIR)$(docdir) || \
+	  test -n "$(SCRIPTS)" && $(INSTALL) $(SCRIPTS) "$(DESTDIR)$(docdir)" || \
 	  echo ""
 	
 
 install_gui:	$(FLTK_GUI)
 	echo Installing UI ...
-	mkdir -p $(DESTDIR)$(bindir)
+	mkdir -p "$(DESTDIR)$(bindir)"
 #ifdef FLTK
-	$(INSTALL) -m 755 $(FLTK_GUI) $(DESTDIR)$(bindir)
-	(cd $(DESTDIR)$(bindir)/; $(POST) $(DESTDIR)$(bindir)/$(FLTK_GUI))
+	$(INSTALL) -m 755 $(FLTK_GUI) "$(DESTDIR)$(bindir)"
+	(cd "$(DESTDIR)$(bindir)/"; $(POST) "$(DESTDIR)$(bindir)/$(FLTK_GUI)")
 #endif
 
 install_linguas:
@@ -1114,8 +1114,8 @@ install_linguas:
 	for ling in $(LINGUAS); do \
 	  echo "Installing po/$${ling}.gmo ..."; \
 	  test -f po/$${ling}.gmo \
-		&& (mkdir -p $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES; \
-            $(INSTALL) -m 644 po/$${ling}.gmo $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES/$(TARGET).mo ) \
+		&& (mkdir -p "$(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES"; \
+            $(INSTALL) -m 644 po/$${ling}.gmo "$(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES/$(TARGET).mo" ) \
 		|| (echo $${ling}.gmo is not yet ready ... skipping); \
 	done;
 
@@ -1147,7 +1147,7 @@ deb:	dist
 	tar xvzf $(TARGET)-$(VERSION).tar.gz
 	(cd $(TARGET)-$(VERSION); \
 	./configure --prefix=/usr; \
-	make DESTDIR=$(build_dir)/debian/deb/DEBIAN install;)
+	make "DESTDIR=$(build_dir)/debian/deb/DEBIAN" install;)
 	$(COPY) $(TARGET)-$(VERSION)/$(TARGET)_control $(build_dir)/debian/deb/DEBIAN/control
 	$(RM) -R $(TARGET)-$(VERSION)
 	dpkg -b $(build_dir)/debian/deb debian/$(TARGET)_$(VERSION)-$(RELEASE)_$(deb_arch).deb
@@ -1160,33 +1160,33 @@ uninstall:	uninstall_bin uninstall_docu uninstall_linguas
 
 uninstall_bin:
 	echo Uninstalling binaries ...
-	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-monitor
-	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-config
+	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-monitor"
+	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-config"
 #ifdef FLTK_GUI
-	$(RM)   $(DESTDIR)$(bindir)/$(FLTK_GUI)
+	$(RM)   "$(DESTDIR)$(bindir)/$(FLTK_GUI)"
 #endif
-	$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-policy
-	-$(RM)   $(DESTDIR)$(bindir)/$(TARGET)-monitor-nvidia
-	$(RM)   $(DESTDIR)$(libdir)/pkgconfig/$(TARGET).pc
+	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-policy"
+	-$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-monitor-nvidia"
+	$(RM)   "$(DESTDIR)$(libdir)/pkgconfig/$(TARGET).pc"
 	for lib in $(LIBRARIES); do \
-	    $(RM) $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
-	          $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
-	          $(DESTDIR)$(libdir)/lib$${lib}$(SO)$(LIBEXT) \
-	          $(DESTDIR)$(libdir)/lib$${lib}.a; \
+	    $(RM) "$(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT)" \
+	          "$(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)" \
+	          "$(DESTDIR)$(libdir)/lib$${lib}$(SO)$(LIBEXT)" \
+	          "$(DESTDIR)$(libdir)/lib$${lib}.a"; \
 	done
 	for lib in $(META); do \
-	   $(RM) $(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
-	         $(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
-	         $(DESTDIR)$(metadir)/lib$${lib}$(SO)$(LIBEXT) \
-	         $(DESTDIR)$(metadir)/lib$${lib}.a; \
+	   $(RM) "$(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT)" \
+	         "$(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)" \
+	         "$(DESTDIR)$(metadir)/lib$${lib}$(SO)$(LIBEXT)" \
+	         "$(DESTDIR)$(metadir)/lib$${lib}.a"; \
 	done
 	for lib in $(CMMS); do \
-	   $(RM) $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
-	         $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT) \
-	         $(DESTDIR)$(cmmdir)/lib$${lib}$(SO)$(LIBEXT) \
-	         $(DESTDIR)$(cmmdir)/lib$${lib}.a; \
+	   $(RM) "$(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT)" \
+	         "$(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)" \
+	         "$(DESTDIR)$(cmmdir)/lib$${lib}$(SO)$(LIBEXT)" \
+	         "$(DESTDIR)$(cmmdir)/lib$${lib}.a"; \
 	done
-	$(RM)   -R $(DESTDIR)$(includedir)/$(TARGET)
+	$(RM)   -R "$(DESTDIR)$(includedir)/$(TARGET)"
 	echo ... done uninstalling binaries
 	
 
@@ -1194,7 +1194,7 @@ uninstall_bin:
 uninstall_linguas:
 	echo Uninstalling linguas ...
 	for ling in $(LINGUAS); do \
-	  $(RM) $(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES/$(TARGET).mo; \
+	  $(RM) "$(DESTDIR)$(datadir)/locale/$${ling}/LC_MESSAGES/$(TARGET).mo"; \
 	done;
 	echo ... done uninstalling linguas
 
@@ -1202,20 +1202,20 @@ uninstall_docu:
 	echo Uninstalling docu ...
 	for i in settings/*.policy.xml; do \
 	  ii=`echo $${i} | sed s%settings\/%%g`; \
-	  $(RM)   $(DESTDIR)$(syscolordir)/$(settingsdirname)/$${ii}; \
+	  $(RM)   "$(DESTDIR)$(syscolordir)/$(settingsdirname)/$${ii}"; \
 	done;
 	for file in $(DOKU); do \
-	  $(RM) $(DESTDIR)$(docdir)/$$file; \
+	  $(RM) "$(DESTDIR)$(docdir)/$$file"; \
 	done
 	for file in $(SCRIPTS); do \
-	  $(RM) $(DESTDIR)$(docdir)/$$file; \
+	  $(RM) "$(DESTDIR)$(docdir)/$$file"; \
 	done
-	-$(RM) -R $(DESTDIR)$(docdir)/html
+	-$(RM) -R 2$(DESTDIR)$(docdir)/html"
 	for file in $(MAN1); do \
-	  $(RM) $(DESTDIR)$(mandir)/man1/$$file; \
+	  $(RM) "$(DESTDIR)$(mandir)/man1/$$file"; \
 	done
 	for file in $(MAN3); do \
-	  $(RM) $(DESTDIR)$(mandir)/man3/$$file; \
+	  $(RM) "$(DESTDIR)$(mandir)/man3/$$file"; \
 	done
 	echo ... done uninstalling docu
 
@@ -1342,7 +1342,7 @@ cdepend:
 # smallest package covering the current directory
 tgz:
 	-test -d Entwickeln && $(RM) -r Entwickeln
-	$(MAKE) DESTDIR=Entwickeln copy_files
+	$(MAKE) "DESTDIR=Entwickeln" copy_files
 	tar cf - Entwickeln/ \
 	| gzip > $(TARGET)_$(MTIME).tgz
 	-test -d ../Archiv && mv -v $(TARGET)_*.tgz ../Archiv
@@ -1353,7 +1353,7 @@ tgz:
 # build the source package including the subdirectories
 targz:
 	test -d $(TARGET)-$(VERSION) && $(RM) -R $(TARGET)-$(VERSION) || echo -e "\c"
-	$(MAKE) DESTDIR=$(build_dir)/$(TARGET)-$(VERSION) copy_files
+	$(MAKE) "DESTDIR=$(build_dir)/$(TARGET)-$(VERSION)" copy_files
 	tar cf - $(TARGET)-$(VERSION)/ \
 	| gzip > $(build_dir)/$(TARGET)-$(MTIME).tgz
 	test -d $(build_dir)/$(TARGET)-$(VERSION) && \
@@ -1363,67 +1363,67 @@ targz:
 
 # basic file set
 copy_files:
-	mkdir $(DESTDIR)
+	mkdir "$(DESTDIR)"
 	cd fl_i18n && \
-	  $(MAKE) DESTDIR=$(DESTDIR)/fl_i18n -f $(MAKEFILE_ARCH) copy_files
-	-$(RM) $(DESTDIR)/fl_i18n/Makefile
-	cd $(SRCDIR) && \
-	  $(COPY) -R $(ALL_FILES) $(DESTDIR)
-	$(COPY) $(CONFIG_FILES) $(DESTDIR)
-	cd $(SRCDIR) && \
-	  $(COPY) -R settings $(DESTDIR)
-	#$(COPY) -r cmms $(DESTDIR)
+	  $(MAKE) "DESTDIR=$(DESTDIR)/fl_i18n" -f $(MAKEFILE_ARCH) copy_files
+	-$(RM) "$(DESTDIR)/fl_i18n/Makefile"
+	cd "$(SRCDIR)" && \
+	  $(COPY) -R $(ALL_FILES) "$(DESTDIR)"
+	$(COPY) $(CONFIG_FILES) "$(DESTDIR)"
+	cd "$(SRCDIR)" && \
+	  $(COPY) -R settings "$(DESTDIR)"
+	#$(COPY) -r cmms "$(DESTDIR)"
 #ifdef LIB_XNVCTRL
 	-(cd libXNVCtrl && $(MAKE) -f Makefile clean)
-	cd $(SRCDIR)
+	cd "$(SRCDIR)"
 #endif
-	mkdir $(DESTDIR)/$(GENDIR)
-	cd $(SRCDIR) && \
-	  $(COPY) $(CFILES_OBJECT) $(CHEADERS_OBJECT) $(DESTDIR)/$(GENDIR)
-	mkdir $(DESTDIR)/libXNVCtrl
-	$(COPY) -R $(SRCDIR)/libXNVCtrl $(DESTDIR)
-	mkdir $(DESTDIR)/modules
+	mkdir "$(DESTDIR)/$(GENDIR)"
+	cd "$(SRCDIR)" && \
+	  $(COPY) $(CFILES_OBJECT) $(CHEADERS_OBJECT) "$(DESTDIR)/$(GENDIR)"
+	mkdir "$(DESTDIR)/libXNVCtrl"
+	$(COPY) -R $(SRCDIR)/libXNVCtrl "$(DESTDIR)"
+	mkdir "$(DESTDIR)/modules"
 	cd $(SRCDIR) && \
 	  $(COPY) $(CFILES_MODULES) $(CPPFILES_MODULES) $(CHEADERS_MODULES) \
-	  $(DESTDIR)/modules/
-	mkdir $(DESTDIR)/modules/devices
-	cd $(SRCDIR) && \
-	  $(COPY) $(CFILES_MODULES_DEVICES) $(DESTDIR)/modules/devices
-	mkdir $(DESTDIR)/oforms
+	  "$(DESTDIR)/modules/"
+	mkdir "$(DESTDIR)/modules/devices"
+	cd "$(SRCDIR)" && \
+	  $(COPY) $(CFILES_MODULES_DEVICES) "$(DESTDIR)/modules/devices"
+	mkdir "$(DESTDIR)/oforms"
 	cd $(SRCDIR) && \
 	  $(COPY) $(CFILES_OFORMS) $(CXXFILES_OFORMS_FLTK) $(CFILES_OFORMS_CLI)\
 	  $(HEADERS_OFORMS_FLTK) $(CHEADERS_OFORMS) $(OFORMS_FILES) \
-	  $(DESTDIR)/oforms/
-	mkdir $(DESTDIR)/tests
-	cd $(SRCDIR) && \
-	  $(COPY) $(TEST_FILES) $(DESTDIR)/tests
-	mkdir $(DESTDIR)/examples
+	  "$(DESTDIR)/oforms/"
+	mkdir "$(DESTDIR)/tests"
+	cd "$(SRCDIR)" && \
+	  $(COPY) $(TEST_FILES) "$(DESTDIR)/tests"
+	mkdir "$(DESTDIR)/examples"
 	for exmpl in $(EXAMPLE_FILES); do \
-	  mkdir -p $(DESTDIR)/$${exmpl}; rmdir $(DESTDIR)/$${exmpl}; \
-	  cd $(SRCDIR) && \
-	    $(COPY) -R $${exmpl} $(DESTDIR)/$${exmpl}; \
+	  mkdir -p "$(DESTDIR)/$${exmpl}"; rmdir "$(DESTDIR)/$${exmpl}"; \
+	  cd "$(SRCDIR)" && \
+	    $(COPY) -R $${exmpl} "$(DESTDIR)/$${exmpl}"; \
 	done;
 	mkdir $(DESTDIR)/FL
-	cd $(SRCDIR) && \
-	  $(COPY) $(Flmm_FILES) $(DESTDIR)/FL
-	mkdir $(DESTDIR)/po
-	cd $(SRCDIR) && \
-	  $(COPY) $(POT_FILE) $(DESTDIR)/po
+	cd "$(SRCDIR)" && \
+	  $(COPY) $(Flmm_FILES) "$(DESTDIR)/FL"
+	mkdir "$(DESTDIR)/po"
+	cd "$(SRCDIR)" && \
+	  $(COPY) $(POT_FILE) "$(DESTDIR)/po"
 	for ling in $(LINGUAS); do \
-	  test -f $(SRCDIR)/po/$${ling}.po \
-	  && $(COPY) $(SRCDIR)/po/$${ling}.po $(DESTDIR)/po/; \
+	  test -f "$(SRCDIR)/po/$${ling}.po" \
+	  && $(COPY) "$(SRCDIR)/po/$${ling}.po" "$(DESTDIR)/po/"; \
 	done;
 	if [ -n "$(ELEKTRA_VERSION)" ] && \
 	   [ -d "$(SRCDIR)/$(ELEKTRA_VERSION)" ] && \
 	   [ -d $(build_dir)/$(ELEKTRA_VERSION) ]; then \
           cd $(build_dir)/$(ELEKTRA_VERSION); \
 	  make dist-gzip; \
-	  cd $(DESTDIR); \
+	  cd "$(DESTDIR)"; \
 	  test -f $(build_dir)/$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz && \
 	    tar xzf $(build_dir)/$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz; \
 	else \
-	  test -d $(SRCDIR)/elektra-0.7.1/ && ( \
-	    cp -avr $(SRCDIR)/elektra-0.7.1/ $(DESTDIR) ) || \
+	  test -d "$(SRCDIR)/elektra-0.7.1/" && ( \
+	    cp -avr "$(SRCDIR)/elektra-0.7.1/" "$(DESTDIR)" ) || \
 	    echo "no elektra"; \
 	fi
 	echo ... $@ done
