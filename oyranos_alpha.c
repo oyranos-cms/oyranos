@@ -8392,38 +8392,6 @@ int32_t      oyProfile_Hashed_       ( oyProfile_s       * s )
     return 0;
 }
 
-/** @internal
- *  @memberof oyProfile_s
- *
- *  @since Oyranos: version 0.1.8
- *  @date  20 december 2007 (API 0.1.8)
- */
-int          oyProfile_ToFile_       ( oyProfile_s       * profile,
-                                       const char        * file_name )
-{
-  oyProfile_s * s = profile;
-  int error = !s || !file_name;
-  oyPointer buf = 0;
-  size_t size = 0;
-
-  if(!s)
-    return error;
-
-  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
-
-  if(error <= 0)
-  {
-    buf = oyProfile_GetMem ( s, &size, 0, 0 );
-    if(buf && size)
-    error = oyWriteMemToFile_( file_name, buf, size );
-
-    if(buf) oyDeAllocateFunc_(buf);
-    size = 0;
-  }
-
-  return error;
-}
-
 /**
  *  @internal
  *  Function oyProfile_WriteHeader_

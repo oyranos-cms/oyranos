@@ -752,8 +752,6 @@ OYAPI oyPointer OYEXPORT
                                        size_t          * size,
                                        oyAlloc_f         allocateFunc );
 #endif
-int          oyProfile_ToFile_       ( oyProfile_s       * profile,
-                                       const char        * file_name );
 
 #define OY_COMPUTE      0x01
 #define OY_FROM_PROFILE 0x04

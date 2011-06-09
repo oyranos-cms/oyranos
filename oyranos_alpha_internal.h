@@ -86,8 +86,6 @@ int    oyOptions_SetRegistrationTextKey_(
 oyPointer    oyProfile_TagsToMem_    ( oyProfile_s       * profile,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
-int          oyProfile_ToFile_       ( oyProfile_s       * profile,
-                                       const char        * file_name );
 int32_t      oyProfile_Match_        ( oyProfile_s       * pattern,
                                        oyProfile_s       * profile );
 int32_t      oyProfile_Hashed_       ( oyProfile_s       * s );
