@@ -83,8 +83,6 @@ int    oyOptions_SetRegistrationTextKey_(
                                        const char        * key,
                                        const char        * value );
 
-oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
-                                       int                 pos );
 int                oyProfile_GetTagCount_ (
                                        oyProfile_s       * profile );
 int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
