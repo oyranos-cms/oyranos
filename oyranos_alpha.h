@@ -760,8 +760,6 @@ int          oyProfile_ToFile_       ( oyProfile_s       * profile,
 int                oyProfile_GetMD5  ( oyProfile_s       * profile,
                                        int                 flags,
                                        uint32_t          * md5 );
-oyProfileTag_s *   oyProfile_GetTagByPos ( oyProfile_s   * profile,
-                                       int                 pos );
 oyProfileTag_s *   oyProfile_GetTagById ( oyProfile_s    * profile,
                                        icTagSignature      id );
 int                oyProfile_GetTagCount( oyProfile_s    * profile );

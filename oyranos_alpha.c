@@ -9125,39 +9125,6 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
   return tag;
 }
 
-/** Function oyProfile_GetTagByPos
- *  @memberof oyProfile_s
- *  @brief   get a profile tag
- *
- *  @param[in]     profile             the profile
- *  @param[in]     pos                 header + tag position
- *
- *  @version Oyranos: 0.1.8
- *  @date    2008/02/06
- *  @since   2008/02/06 (Oyranos: 0.1.8)
- */
-oyProfileTag_s * oyProfile_GetTagByPos(oyProfile_s       * profile,
-                                       int                 pos )
-{
-  oyProfileTag_s * tag = 0;
-  oyProfile_s * s = profile;
-
-  if(!s)
-    return 0;
-
-  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
-
-  if(s)
-    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
-
-  tag = oyProfile_GetTagByPos_( s, pos );
-
-  if(s)
-    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
-
-  return tag;
-}
-
 /** |internal
  *  Function oyProfile_GetTagCount_
  *  @memberof oyProfile_s
