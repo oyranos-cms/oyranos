@@ -7963,6 +7963,15 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
     s->use_default_ = type;
   else
   {
+    int count = 0, i;
+    char * text = 0;
+    char ** path_names = oyProfilePathsGet_( &count, oyAllocateFunc_ );
+    for(i = 0; i < count; ++i)
+    {
+      STRING_ADD( text, path_names[i] );
+      STRING_ADD( text, "\n" );
+    }
+
     if(strcmp("XYZ.icc",name) == 0 ||
        strcmp("Lab.icc",name) == 0 ||
        strcmp("LStar-RGB.icc",name) == 0 ||
@@ -7971,15 +7980,15 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
       )
     {
       oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)object,
-                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s\n\t%s", OY_DBG_ARGS_,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s\n\t%s\n%s", OY_DBG_ARGS_,
                 _("Could not open default ICC profile"),name,
                 _("You can get them from http://sf.net/projects/openicc"),
-                _("install in the OpenIccDirectory icc path") );
+                _("install in the OpenIccDirectory icc path"), text );
     } else
       oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)object,
-                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s", OY_DBG_ARGS_,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s\n%s", OY_DBG_ARGS_,
                 _("Could not open default ICC profile"), name,
-                _("install in the OpenIccDirectory icc path") );
+                _("install in the OpenIccDirectory icc path"), text );
   }
 
   if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
