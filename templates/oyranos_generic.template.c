@@ -53,7 +53,7 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
 
   for(i = 0; i < n; ++i)
   {
-    oyHash_s * compare = (oyHash_s*) oyStructList_GetType_( cache_list, i,
+    oyHash_s * compare = (oyHash_s*) oyStructList_GetType_( (oyStructList_s_*)cache_list, i,
                                                          oyOBJECT_HASH_S );
 
     if(compare )
