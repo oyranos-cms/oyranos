@@ -2032,79 +2032,81 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
             __FILE__,__LINE__, array_out->height);*/
     if(!error)
     {
+      double xyz_factor = 1.0 + 32767.0/32768.0;
+      int use_xyz_scale = 1;
       if(array_out->height > 20)
       {
 #pragma omp parallel for
         for( k = 0; k < array_out->height; ++k)
         {
-          if(array_in_tmp)
+          if(array_in_tmp && use_xyz_scale)
           {
             memcpy( array_in_tmp, array_in->array2d[k], w * bps_in );
             if(data_type_in == oyFLOAT)
             for(j = 0; j < w; ++j)
             {
-              array_in_tmp_flt[j] *= 0.5;
+              array_in_tmp_flt[j] /= xyz_factor;
             }
             if(data_type_in == oyDOUBLE)
             for(j = 0; j < w; ++j)
             {
-              array_in_tmp_dbl[j] *= 0.5;
+              array_in_tmp_dbl[j] /= xyz_factor;
             }
             cmsDoTransform( ltw->lcm2, array_in_tmp,
                                        array_out->array2d[k], n );
           } else
             cmsDoTransform( ltw->lcm2, array_in->array2d[k],
                                        array_out->array2d[k], n );
-          if(array_out_tmp)
+          if(array_out_tmp && use_xyz_scale)
           {
             if(data_type_out == oyFLOAT)
             {
               array_out_tmp_flt = (float*) array_out->array2d[k];
               for(j = 0; j < w; ++j)
-                array_out_tmp_flt[j] *= 2.0;
+                array_out_tmp_flt[j] *= xyz_factor;
             } else
             if(data_type_out == oyDOUBLE)
             {
               array_out_tmp_dbl = (double*) array_out->array2d[k];
               for(j = 0; j < w; ++j)
-                array_out_tmp_dbl[j] *= 2.0;
+                array_out_tmp_dbl[j] *= xyz_factor;
             }
           }
         }
       } else
         for( k = 0; k < array_out->height; ++k)
         {
-          if(array_in_tmp)
+          if(array_in_tmp && use_xyz_scale)
           {
             memcpy( array_in_tmp, array_in->array2d[k], w * bps_in );
             if(data_type_in == oyFLOAT)
             for(j = 0; j < w; ++j)
             {
-              array_in_tmp_flt[j] *= 0.5;
+              array_in_tmp_flt[j] /= xyz_factor;
             }
             if(data_type_in == oyDOUBLE)
             for(j = 0; j < w; ++j)
             {
-              array_in_tmp_dbl[j] *= 0.5;
+              array_in_tmp_dbl[j] /= xyz_factor;
             }
             cmsDoTransform( ltw->lcm2, array_in_tmp,
                                        array_out->array2d[k], n );
           } else
             cmsDoTransform( ltw->lcm2, array_in->array2d[k],
                                        array_out->array2d[k], n );
-          if(array_out_tmp)
+          if(array_out_tmp && use_xyz_scale)
           {
             if(data_type_out == oyFLOAT)
             {
               array_out_tmp_flt = (float*) array_out->array2d[k];
               for(j = 0; j < w; ++j)
-                array_out_tmp_flt[j] *= 2.0;
+                array_out_tmp_flt[j] *= xyz_factor;
             } else
             if(data_type_out == oyDOUBLE)
             {
               array_out_tmp_dbl = (double*) array_out->array2d[k];
               for(j = 0; j < w; ++j)
-                array_out_tmp_dbl[j] *= 2.0;
+                array_out_tmp_dbl[j] *= xyz_factor;
             }
           }
         }
