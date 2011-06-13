@@ -882,8 +882,8 @@ if [ -n "$ECHO" ]; then
   fi
   EXIV2=2; export EXIV2
   #OYRANOS=1; export OYRANOS
-  LCMS=1; export LCMS
-  LCMS2=2; export LCMS2
+  LCMS=2; export LCMS
+  LCMS2=1; export LCMS2
   LRAW=2; export LRAW
   LIBXML2=1; export LIBXML2
   LIBPNG=2; export LIBPNG
