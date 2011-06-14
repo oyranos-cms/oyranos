@@ -441,6 +441,7 @@ private:
         glLoadIdentity();
         glViewport( 0,0, W,H );
         glOrtho( -W,W, -H,H, -1.0,1.0);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
       }
 
       glClear(GL_COLOR_BUFFER_BIT);
