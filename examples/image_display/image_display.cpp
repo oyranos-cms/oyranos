@@ -79,7 +79,6 @@ main(int argc, char** argv)
   const char *locale_paths[2] = {OY_SRC_LOCALEDIR,OY_LOCALEDIR};
   const char *domain = {"oyranos"};
   int is_path = -1;
-  int gl_box = 0;
 
   is_path = fl_search_locale_path  ( 2,
                                 locale_paths,
@@ -104,6 +103,7 @@ main(int argc, char** argv)
   oy_domain_codeset = fl_i18n_codeset;
 #endif
 
+  int gl_box = 1;
 
   /* handle arguments */
   for(int i = 1; i < argc; ++i)
@@ -113,9 +113,9 @@ main(int argc, char** argv)
       oy_display_verbose = 1;
       ++file_pos;
     }
-    if(argc > 1 && strcmp(argv[i], "--use_gl") == 0)
+    if(argc > 1 && strcmp(argv[i], "--use-no-gl") == 0)
     {
-      gl_box = 1;
+      gl_box = 0;
       ++file_pos;
     }
   }
