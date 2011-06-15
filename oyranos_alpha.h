@@ -704,8 +704,6 @@ typedef enum oySIGNATURE_TYPE_e {
   oySIGNATURE_MAX
 } oySIGNATURE_TYPE_e;
 
-typedef struct oyProfileTag_s oyProfileTag_s;
-
 /** @typedef oyIO_t
     parametric type as shorthand for IO flags \n
 
