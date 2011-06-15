@@ -1403,3 +1403,252 @@ int                oyProfile_GetMD5  ( oyProfile_s       * profile,
 
   return error;
 }
+
+/**
+ *  Function oyProfile_DeviceAdd
+ *  @memberof oyProfile_s
+ *  @brief   add device and driver informations to a profile
+ *
+ *  oyProfile_DeviceAdd() is for storing device/driver informations in a 
+ *  ICC profile. So the profile can be sent over internet and Oyranos, or 
+ *  an other CMS, can better match to a device/driver on the new host.
+ *  The convention what to place into the ICC profile is dependent on each
+ *  device class and its actual driver or driver type.
+ *  The meta data is stored in the ICC 'meta' tag of type 'dict'.
+ *
+ *  @param[in,out] profile             the profile
+ *  @param[in]     device              device and driver informations
+ *  @param[in]     options             - "key_prefix_required" : prefix
+ *                                       accept only key names with the prefix
+ *                                       Separation by point '.' is allowed.
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2009/05/18 (Oyranos: 0.1.10)
+ *  @date    2011/04/07
+ */
+#if 0
+TODO find a general form. Do we want to support the mluc type or is that better
+up to a specialised GUI?
+int                oyProfile_DeviceAdd(oyProfile_s       * profile,
+                                       oyConfig_s        * device )
+{
+  int error = !profile;
+  oyProfile_s * s = profile;
+  oyProfileTag_s * pddt = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(error <= 0)
+  {
+      pddt = oyProfile_GetTagById( s, icSigProfileDetailDescriptionTag_ );
+
+      /* icSigProfileDetailDescriptionTag_ */
+      if(error <= 0 && !pddt)
+      {
+        oyStructList_s * list = 0;
+
+        list = oyStructList_New(0);
+        error = oyStructList_MoveIn( list, (oyStruct_s**) &device, 0,
+                                     OY_OBSERVE_AS_WELL );
+
+        if(error <= 0)
+        {
+          pddt = oyProfileTag_Create( list, icSigProfileDetailDescriptionTag_,
+                                      0, OY_MODULE_NICK, 0);
+          error = !pddt;
+        }
+
+        if(error <= 0)
+          pddt->use = icSigProfileDetailDescriptionTag_;
+
+        oyStructList_Release( &list );
+
+        if(pddt)
+        {
+          error = oyProfile_TagMoveIn_( s, &pddt, -1 );
+          ++s->tags_modified_;
+        }
+      }
+  }
+
+  return error;
+}
+#else
+int                oyProfile_DeviceAdd(oyProfile_s       * profile,
+                                       oyConfig_s        * device,
+                                       oyOptions_s       * options )
+{
+  int error = 0;
+  int i,j, len, size, block_size, pos;
+
+  char ** keys,
+       ** values,
+        * key,
+        * val;
+  const char * r;
+  void * string = 0;
+  const char * key_prefix_required = oyOptions_FindString( options,
+                                            "key_prefix_required", 0 );
+  char ** key_prefix_texts = 0;
+  int key_prefix_texts_n = 0;
+  int * key_prefix_texts_len = 0;
+
+  /* get just some device */
+  oyOption_s * o = 0;
+  oyConfig_s * d = device;
+
+  oyProfile_s * p = profile;
+  oyProfileTag_s * dict_tag;
+  icDictTagType * dict;
+  icNameValueRecord * record;
+
+  int n = oyConfig_Count( d );
+  int count = 0;
+
+  if(key_prefix_required)
+  {
+    key_prefix_texts = oyStringSplit_( key_prefix_required,'.',
+                                       &key_prefix_texts_n, oyAllocateFunc_);
+    oyAllocHelper_m_( key_prefix_texts_len,int,key_prefix_texts_n, 0, return 1);
+    for(j = 0; j < key_prefix_texts_n; ++j)
+      key_prefix_texts_len[j] = strlen( key_prefix_texts[j] );
+  }
+
+  /* count valid entries */
+  for(i = 0; i < n; ++i)
+  {
+    char * reg = 0;
+    o = oyConfig_Get( d, i );
+    r = oyOption_GetRegistration(o);
+    reg = oyFilterRegistrationToText( r, oyFILTER_REG_OPTION, oyAllocateFunc_ );
+    val = oyOption_GetValueText( o, oyAllocateFunc_ );
+    if(val)
+    {
+      int pass = 1;
+
+      if(key_prefix_required)
+      {
+        int len = strlen( reg );
+        pass = 0;
+        for(j = 0; j < key_prefix_texts_n; ++j)
+        {
+          if(len > key_prefix_texts_len[j] &&
+             memcmp( key_prefix_texts[j], reg, key_prefix_texts_len[j]) == 0)
+            pass = 1;
+        }
+      }
+
+      if(val && pass)
+      {
+        DBG_PROG2_S("%s: %s", reg, val );
+        ++count;
+      }
+    }
+    if(reg) oyDeAllocateFunc_(reg);
+    if(val) oyDeAllocateFunc_(val);
+  }
+
+  /* collect data */
+  size = 16 /* or 24 or 32*/
+         * n + sizeof(icDictTagType),
+  block_size = size;
+  pos = 0;
+
+  keys = oyAllocateFunc_( 2 * count * sizeof(char*));
+  values = oyAllocateFunc_( 2 * count * sizeof(char*));
+  for(i = 0; i < n; ++i)
+  {
+    o = oyConfig_Get( d, i );
+    r = oyOption_GetRegistration(o);
+    key = oyFilterRegistrationToText( r, oyFILTER_REG_OPTION,
+                                             oyAllocateFunc_ );
+    val = oyOption_GetValueText( o, oyAllocateFunc_ );
+    if(val)
+    {
+      int pass = 1;
+
+      if(key_prefix_required)
+      {
+        len = strlen( key );
+        pass = 0;
+        for(j = 0; j < key_prefix_texts_n; ++j)
+        {
+          if(len > key_prefix_texts_len[j] &&
+             memcmp( key_prefix_texts[j], key, key_prefix_texts_len[j]) == 0)
+            pass = 1;
+        }
+      }
+
+      if(pass)
+      {
+        keys[pos] = key;
+        values[pos] = oyStringCopy_(val,oyAllocateFunc_);
+        DBG_PROG2_S("%s: %s", key, val );
+        len = strlen( key ) * 2;
+        len = len + (len%4 ? 4 - len%4 : 0);
+        block_size += len;
+        len = strlen( val ) * 2;
+        len = len + (len%4 ? 4 - len%4 : 0);
+        block_size += len;
+        block_size += + 2;
+        ++pos;
+        key = 0;
+      }
+    }
+    if(key) oyDeAllocateFunc_( key ); key = 0;
+    if(val) oyDeAllocateFunc_(val);
+  }
+
+  dict = calloc(sizeof(char), block_size);
+  dict->sig = oyValueUInt32( icSigDictType );
+  dict->number = oyValueUInt32( count );
+  dict->size = oyValueUInt32( 16 );
+
+  pos = size;
+  for(i = 0; i < count; ++i)
+  {
+    record = (icNameValueRecord*)((char*)dict + sizeof(icDictTagType) + 16 * i);
+
+    len = 0;
+    string = NULL;
+    error = oyIconvGet( keys[i], &string, &len, "UTF-8", "UTF-16BE",
+                        oyAllocateFunc_ );
+    record->name_string_offset = oyValueUInt32( pos );
+    len = strlen( keys[i] ) * 2;
+    len = len + (len%4 ? 4 - len%4 : 0);
+    record->name_string_size =  oyValueUInt32( len );
+    memcpy(((char*)dict)+pos, string, len );
+    pos += len;
+
+    len = 0;
+    string = NULL;
+    error = oyIconvGet( values[i], &string, &len, "UTF-8", "UTF-16BE", 
+                        oyAllocateFunc_ );
+    record->value_string_offset =  oyValueUInt32( pos );
+    len = strlen( values[i] ) * 2;
+    len = len + (len%4 ? 4 - len%4 : 0);
+    record->value_string_size =  oyValueUInt32( len );
+    memcpy(((char*)dict)+pos, string, len );
+    pos += len;
+  }
+
+  dict_tag = oyProfileTag_New(NULL);
+  error = oyProfileTag_Set( dict_tag, icSigMetaDataTag, icSigDictType,
+                            oyOK, block_size, dict );
+  error = oyProfile_TagMoveIn( p, &dict_tag, -1 );
+
+  oyStringListRelease_( &keys, count, oyDeAllocateFunc_ );
+  oyStringListRelease_( &values, count, oyDeAllocateFunc_ );
+  if(key_prefix_texts_n)
+  {
+    oyStringListRelease_( &key_prefix_texts, key_prefix_texts_n,
+                          oyDeAllocateFunc_ );
+    oyDeAllocateFunc_( key_prefix_texts_len );
+  }
+
+  return 0;
+}
+#endif

@@ -686,10 +686,6 @@ OYAPI int  OYEXPORT
 /* decode */
 #define oyToNoCacheRead_m(r)        ((r)&1)
 #define oyToNoCacheWrite_m(w)       (((w) >> 1)&1)
-OYAPI oyProfile_s * OYEXPORT
-                   oyProfile_Copy    ( oyProfile_s       * profile,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT oyProfile_Release( oyProfile_s      ** profile );
 #if 0
 OYAPI oyPointer OYEXPORT
                    oyProfile_Align   ( oyProfile_s     * profile,
@@ -699,10 +695,6 @@ OYAPI oyPointer OYEXPORT
 
 #define OY_COMPUTE      0x01
 #define OY_FROM_PROFILE 0x04
-int                oyProfile_DeviceAdd(oyProfile_s       * profile,
-                                       oyConfig_s        * device,
-                                       oyOptions_s       * options );
-
 
 OYAPI int  OYEXPORT
            oyOptions_SetDriverContext( oyOptions_s      ** options,
