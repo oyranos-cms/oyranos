@@ -1918,6 +1918,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   oyDATATYPE_e data_type_in = 0,
                data_type_out = 0;
   int bps_out, bps_in;
+  oyPixel_t pixel_layout_in, pixel_layout_out;
 
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilterPlug_s * plug = 0;
@@ -1932,6 +1933,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   input_node = plug->remote_socket_->node;
 
   image_input = oyFilterPlug_ResolveImage( plug, socket, ticket );
+  pixel_layout_in = oyImage_PixelLayoutGet( image_input );
 
   if(oyImage_PixelLayoutGet( image_input ) != 
      oyImage_PixelLayoutGet( ticket->output_image ))
@@ -1973,6 +1975,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   if(!error)
   {
     image_output = ticket->output_image;
+    pixel_layout_out = oyImage_PixelLayoutGet( image_output );
     data_type_out = oyToDataType_m( oyImage_PixelLayoutGet( image_output ) );
     bps_out = oySizeofDatatype( data_type_out );
     channels = oyToChannels_m( oyImage_PixelLayoutGet( image_output ) );
@@ -1980,6 +1983,8 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     error = lcm2CMMTransform_GetWrap_( node->backend_data, &ltw );
   }
 
+  DBG_NUM2_S( "channels in/out: %d->%d",
+              oyToChannels_m( pixel_layout_in ), channels );
 
   if(ltw && !ticket->array)
   {
