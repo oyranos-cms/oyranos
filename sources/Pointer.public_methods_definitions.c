@@ -68,8 +68,8 @@ oyPointer    oyPointer_GetPointer     ( oyPointer_s        * cmm_ptr )
     return NULL;
 }
 
-/** Function oyPointerLookUpFromObject
- *  @brief   Get a module specific pointer from cache
+/** Function  oyPointerLookUpFromObject
+ *  @brief    Get a module specific pointer from cache
  *  @memberof oyPointer_s
  *
  *  The returned oyPointer_s has to be released after using by the module with
@@ -112,8 +112,8 @@ oyPointer_s  * oyPointerLookUpFromObject (
   return cmm_ptr;
 }
 
-/** Function oyPointerLookUpFromText
- *  @brief   get a module specific pointer from cache
+/** Function  oyPointerLookUpFromText
+ *  @brief    Get a module specific pointer from cache
  *  @memberof oyPointer_s
  *
  *  The returned oyPointer_s has to be released after using by the module with
