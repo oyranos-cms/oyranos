@@ -145,6 +145,38 @@ oyReadFileToMem_(const char* name, size_t *size,
   return mem;
 }
 
+char * oyReadStdinToMem_             ( size_t            * size,
+                                       oyAlloc_f           allocate_func )
+{
+  char * text = 0;
+  {
+    int text_size = 0, buf_size = 0; 
+    int c;
+    char * tmp = 0;
+
+    while(((c = getc(stdin)) != EOF))
+    {
+      if(text_size >= buf_size-1)
+      {
+        buf_size = text_size + 65536;
+        tmp = calloc( sizeof(char), buf_size );
+        if(text_size)
+          memcpy(tmp, text, text_size);
+        free(text);
+        text = tmp; tmp = 0;
+      }
+      text[text_size++] = c;
+    }
+    if(text)
+      text[text_size] = '\000';
+
+    if(size)
+      *size = text_size;
+  }
+
+  return text;
+}
+
 int
 oyWriteMemToFile_(const char* name, const void* mem, size_t size)
 {

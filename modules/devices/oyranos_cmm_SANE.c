@@ -16,7 +16,9 @@
 #include "oyranos_cmm.h"
 #include "oyObject_s_.h"
 #include <sane/sane.h>
+#ifdef HAVE_LCMS
 #include <lcms.h>
+#endif
 
 #include <string.h>
 #include <stdarg.h>
@@ -1058,6 +1060,7 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
                 if (strstr(opt->name, "gamma-table")) {
                   /* If the option contains a gamma table, calculate the gamma value
                    * as a float and save that instead */
+#ifdef HAVE_LCMS
                    LPGAMMATABLE lt = cmsAllocGamma(count);
                    float norm = 65535.0/(count-1);
 
@@ -1068,6 +1071,7 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
                    snprintf(value_str, value_size, "%f", cmsEstimateGamma(lt));
                    oyOptions_SetFromText(options, registration, value_str, OY_CREATE_NEW);
                    cmsFreeGamma(lt);
+#endif
                 } else {
                    int chars = 0;
                    for (i=0; i<count; ++i) {

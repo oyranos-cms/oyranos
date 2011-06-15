@@ -134,7 +134,8 @@ public:
 private:
   oyPixelAccess_s * ticket;
 public:
-  void drawPrepare( oyImage_s ** draw_image, oyDATATYPE_e data_type_request )
+  void drawPrepare( oyImage_s ** draw_image, oyDATATYPE_e data_type_request,
+                    int center_aligned )
   {
     {
       Oy_Fl_Double_Window * win = 0;
@@ -158,9 +159,6 @@ public:
       window = (void*)fl_xid(win);
 #endif
 
-      /* Inform about the images display coverage.  */
-      display_rectangle = oyRectangle_NewWith( X,Y,W,H, 0 );
-
       /* Load the image before creating the oyPicelAccess_s object. */
       image = oyConversion_GetImage( conversion(), OY_OUTPUT );
 
@@ -177,6 +175,17 @@ public:
         if(py < H - image->height) py = H - image->height;
         if(px > 0) px = 0;
         if(py > 0) py = 0;
+
+        /* Inform about the images display coverage.  */
+        int offset_x = 0, offset_y = 0;
+        if(center_aligned)
+        {
+          if(W > image->width)
+            offset_x = (W - image->width) / 2;
+          if(H > image->height)
+            offset_y = (H - image->height) / 2;
+        }
+        display_rectangle = oyRectangle_NewWith( X+offset_x,Y+offset_y,W,H, 0 );
       }
 
 #if DEBUG_
@@ -330,7 +339,7 @@ private:
       int channels = 0;
       oyImage_s * image = 0;
 
-      drawPrepare( &image, oyUINT8 );
+      drawPrepare( &image, oyUINT8, 0 );
 
       pt = oyImage_PixelLayoutGet( image );
       channels = oyToChannels_m( pt );
@@ -430,7 +439,7 @@ private:
       int channels = 0;
       oyImage_s * image = 0;
 
-      drawPrepare( &image, oyUINT16 );
+      drawPrepare( &image, oyUINT16, 1 );
 
       pt = oyImage_PixelLayoutGet( image );
       channels = oyToChannels_m( pt );
@@ -441,6 +450,7 @@ private:
         glLoadIdentity();
         glViewport( 0,0, W,H );
         glOrtho( -W,W, -H,H, -1.0,1.0);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
       }
 
       glClear(GL_COLOR_BUFFER_BIT);

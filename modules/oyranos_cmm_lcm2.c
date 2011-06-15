@@ -1912,16 +1912,18 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
 int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
-  int k, n;
+  int j, k, n;
   int error = 0;
   int channels = 0;
-  oyDATATYPE_e data_type = 0;
+  oyDATATYPE_e data_type_in = 0,
+               data_type_out = 0;
+  int bps_out, bps_in;
 
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilterPlug_s * plug = 0;
   oyFilterNode_s * input_node = 0,
                  * node = socket->node;
-  oyImage_s * image_input = 0;
+  oyImage_s * image_input = 0, * image_output = 0;
   oyArray2d_s * array_in = 0, * array_out = 0;
   lcm2TransformWrap_s * ltw  = 0;
   oyPixelAccess_s * new_ticket = ticket;
@@ -1951,9 +1953,10 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   array_in = new_ticket->array;
   array_out = ticket->array;
 
-  data_type = oyToDataType_m( oyImage_PixelLayoutGet( image_input ) );
+  data_type_in = oyToDataType_m( oyImage_PixelLayoutGet( image_input ) );
+  bps_in = oySizeofDatatype( data_type_in );
 
-  if(data_type == oyHALF)
+  if(data_type_in == oyHALF)
   {
     oyFilterSocket_Callback( requestor_plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
     message(oyMSG_WARN,0, OY_DBG_FORMAT_" can not handle oyHALF",OY_DBG_ARGS_);
@@ -1969,10 +1972,14 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
   if(!error)
   {
-    channels = oyToChannels_m( ticket->output_image->layout_[0] );
+    image_output = ticket->output_image;
+    data_type_out = oyToDataType_m( oyImage_PixelLayoutGet( image_output ) );
+    bps_out = oySizeofDatatype( data_type_out );
+    channels = oyToChannels_m( oyImage_PixelLayoutGet( image_output ) );
 
     error = lcm2CMMTransform_GetWrap_( node->backend_data, &ltw );
   }
+
 
   if(ltw && !ticket->array)
   {
@@ -1984,35 +1991,131 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   /* now do some position blind manipulations */
   if(ltw)
   {
-    n = (int)(array_out->width+0.5) / channels;
+    uint8_t * array_in_tmp = 0,
+            * array_out_tmp = 0;
+    float * array_in_tmp_flt,
+          * array_out_tmp_flt;
+    double * array_in_tmp_dbl,
+           * array_out_tmp_dbl;
+    int w =(int)(array_out->width+0.5);
+    n = w / channels;
 
-    if(!(data_type == oyUINT8 ||
-         data_type == oyUINT16 ||
-         data_type == oyFLOAT ||
-         data_type == oyDOUBLE))
+    if(!(data_type_in == oyUINT8 ||
+         data_type_in == oyUINT16 ||
+         data_type_in == oyFLOAT ||
+         data_type_in == oyDOUBLE))
     {
       oyFilterSocket_Callback( requestor_plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
       error = 1;
     }
+    
+    if(ltw->sig_in  == icSigXYZData &&
+       (data_type_in == oyFLOAT ||
+        data_type_in == oyDOUBLE))
+    {
+      array_in_tmp = oyAllocateFunc_( (int)(array_out->width+0.5) * bps_in );
+      if(data_type_in == oyFLOAT)
+        array_in_tmp_flt = (float*) array_in_tmp;
+      else if(data_type_in == oyDOUBLE)
+        array_in_tmp_dbl = (double*) array_in_tmp;
+    }
+    if(ltw->sig_out  == icSigXYZData &&
+       (data_type_out == oyFLOAT ||
+        data_type_out == oyDOUBLE))
+    {
+      array_out_tmp = array_out->array2d[0];
+    }
+    
 
     /*  - - - - - conversion - - - - - */
     /*message(oyMSG_WARN,(oyStruct_s*)ticket, "%s: %d Start lines: %d",
             __FILE__,__LINE__, array_out->height);*/
     if(!error)
     {
+      double xyz_factor = 1.0 + 32767.0/32768.0;
+      int use_xyz_scale = 1;
       if(array_out->height > 20)
       {
 #pragma omp parallel for
         for( k = 0; k < array_out->height; ++k)
-          cmsDoTransform( ltw->lcm2, array_in->array2d[k],
-                                     array_out->array2d[k], n );
+        {
+          if(array_in_tmp && use_xyz_scale)
+          {
+            memcpy( array_in_tmp, array_in->array2d[k], w * bps_in );
+            if(data_type_in == oyFLOAT)
+            for(j = 0; j < w; ++j)
+            {
+              array_in_tmp_flt[j] /= xyz_factor;
+            }
+            if(data_type_in == oyDOUBLE)
+            for(j = 0; j < w; ++j)
+            {
+              array_in_tmp_dbl[j] /= xyz_factor;
+            }
+            cmsDoTransform( ltw->lcm2, array_in_tmp,
+                                       array_out->array2d[k], n );
+          } else
+            cmsDoTransform( ltw->lcm2, array_in->array2d[k],
+                                       array_out->array2d[k], n );
+          if(array_out_tmp && use_xyz_scale)
+          {
+            if(data_type_out == oyFLOAT)
+            {
+              array_out_tmp_flt = (float*) array_out->array2d[k];
+              for(j = 0; j < w; ++j)
+                array_out_tmp_flt[j] *= xyz_factor;
+            } else
+            if(data_type_out == oyDOUBLE)
+            {
+              array_out_tmp_dbl = (double*) array_out->array2d[k];
+              for(j = 0; j < w; ++j)
+                array_out_tmp_dbl[j] *= xyz_factor;
+            }
+          }
+        }
       } else
         for( k = 0; k < array_out->height; ++k)
-          cmsDoTransform( ltw->lcm2, array_in->array2d[k],
-                                     array_out->array2d[k], n );
+        {
+          if(array_in_tmp && use_xyz_scale)
+          {
+            memcpy( array_in_tmp, array_in->array2d[k], w * bps_in );
+            if(data_type_in == oyFLOAT)
+            for(j = 0; j < w; ++j)
+            {
+              array_in_tmp_flt[j] /= xyz_factor;
+            }
+            if(data_type_in == oyDOUBLE)
+            for(j = 0; j < w; ++j)
+            {
+              array_in_tmp_dbl[j] /= xyz_factor;
+            }
+            cmsDoTransform( ltw->lcm2, array_in_tmp,
+                                       array_out->array2d[k], n );
+          } else
+            cmsDoTransform( ltw->lcm2, array_in->array2d[k],
+                                       array_out->array2d[k], n );
+          if(array_out_tmp && use_xyz_scale)
+          {
+            if(data_type_out == oyFLOAT)
+            {
+              array_out_tmp_flt = (float*) array_out->array2d[k];
+              for(j = 0; j < w; ++j)
+                array_out_tmp_flt[j] *= xyz_factor;
+            } else
+            if(data_type_out == oyDOUBLE)
+            {
+              array_out_tmp_dbl = (double*) array_out->array2d[k];
+              for(j = 0; j < w; ++j)
+                array_out_tmp_dbl[j] *= xyz_factor;
+            }
+          }
+        }
     /*message(oyMSG_WARN,(oyStruct_s*)ticket, "%s: %d End width: %d",
             __FILE__,__LINE__, n);*/
     }
+
+    if(array_in_tmp)
+      oyDeAllocateFunc_( array_in_tmp );
 
   } else
   {

@@ -339,9 +339,7 @@ int main( int argc , char** argv )
     if(list_paths)
     {
       int n = 0;
-      char ** path_names = oyDataPathsGet_( &n, "color/icc",
-                                              oyALL, oyUSER_SYS,
-                                              oyAllocateFunc_ );
+      char ** path_names = oyProfilePathsGet_( &n, oyAllocateFunc_ );
       fprintf(stderr, "%s:\n", _("ICC profile search paths"));
       if(path)
       {
