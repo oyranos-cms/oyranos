@@ -7840,60 +7840,6 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
  *  @{
  */
 
-static int oy_profile_first = 0;
-
-
-/** @internal
- *  @memberof oyProfile_s
- *  @brief   create a empty profile
- *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
- */
-oyProfile_s *
-oyProfile_New_ ( oyObject_s        object)
-{
-  /* ---- start of common object constructor ----- */
-  oyOBJECT_e type = oyOBJECT_PROFILE_S;
-# define STRUCT_TYPE oyProfile_s
-  int error = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = 0;
-  
-  if(s_obj)
-    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
-
-  if(!s || !s_obj)
-  {
-    WARNc_S(_("MEM Error."));
-    return NULL;
-  }
-
-  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
-
-  s->type_ = type;
-  s->copy = (oyStruct_Copy_f) oyProfile_Copy;
-  s->release = (oyStruct_Release_f) oyProfile_Release;
-
-  s->oy_ = s_obj;
-
-  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
-# undef STRUCT_TYPE
-  /* ---- end of common object constructor ------- */
-
-  s->tags_ = oyStructList_Create( s->type_, 0, 0 );
-  s->tags_modified_ = 0;
-
-  if(oy_profile_first)
-  {
-    oy_profile_first = 1;
-    oyStruct_RegisterStaticMessageFunc( oyOBJECT_PROFILE_S,
-                                        oyProfile_Message_ );
-  }
-
-  return s;
-}
-
 /**
  *  Function oyProfile_DeviceAdd
  *  @memberof oyProfile_s

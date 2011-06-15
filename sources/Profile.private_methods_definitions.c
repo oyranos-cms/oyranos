@@ -1,12 +1,4 @@
 /* Static helper functions { */
-static
-const char * oyProfile_Message_      ( oyPointer           profile,
-                                       int                 flags )
-{
-  oyStruct_s*s = profile;
-  return oyProfile_GetText( (oyProfile_s*)s, oyNAME_DESCRIPTION );
-}
-
 /** @internal
  *  @memberof oyProfile_s
  *  @brief   check internal ICC profile ID
