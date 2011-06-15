@@ -1405,9 +1405,9 @@ int                oyProfile_GetMD5  ( oyProfile_s       * profile,
 }
 
 /**
- *  Function oyProfile_DeviceAdd
+ *  Function  oyProfile_DeviceAdd
  *  @memberof oyProfile_s
- *  @brief   add device and driver informations to a profile
+ *  @brief    Add device and driver informations to a profile
  *
  *  oyProfile_DeviceAdd() is for storing device/driver informations in a 
  *  ICC profile. So the profile can be sent over internet and Oyranos, or 
@@ -1433,8 +1433,8 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
                                        oyConfig_s        * device )
 {
   int error = !profile;
-  oyProfile_s * s = profile;
-  oyProfileTag_s * pddt = 0;
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
+  oyProfileTag_s_ * pddt = 0;
 
   if(!s)
     return 0;
@@ -1443,7 +1443,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
 
   if(error <= 0)
   {
-      pddt = oyProfile_GetTagById( s, icSigProfileDetailDescriptionTag_ );
+      pddt = (oyProfileTag_s_*)oyProfile_GetTagById( (oyProfile_s*)s, icSigProfileDetailDescriptionTag_ );
 
       /* icSigProfileDetailDescriptionTag_ */
       if(error <= 0 && !pddt)
@@ -1456,8 +1456,8 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
 
         if(error <= 0)
         {
-          pddt = oyProfileTag_Create( list, icSigProfileDetailDescriptionTag_,
-                                      0, OY_MODULE_NICK, 0);
+          pddt = (oyProfileTag_s_*)oyProfileTag_Create( list, icSigProfileDetailDescriptionTag_,
+                                                        0, OY_MODULE_NICK, 0);
           error = !pddt;
         }
 
