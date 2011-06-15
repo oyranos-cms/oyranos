@@ -7842,45 +7842,6 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
 
 /**
  *  @internal
- *  Function oyProfile_WriteHeader_
- *  @memberof oyProfile_s
- *  @brief   get the parsed ICC profile back into memory
- *
- *  @version Oyranos: 0.1.8
- *  @date    2008/01/30
- *  @since   2008/01/30 (Oyranos: 0.1.8)
- */
-oyPointer    oyProfile_WriteHeader_  ( oyProfile_s       * profile,
-                                       size_t            * size )
-{
-  oyPointer block = 0;
-  char h[5] = {"head"};
-  uint32_t * hi = (uint32_t*)&h;
-
-  if(profile && profile->block_ && profile->size_ > 132 &&
-     profile->tags_)
-  {
-    int n = oyProfile_GetTagCount_( profile );
-    oyProfileTag_s * tag = oyProfile_GetTagByPos_ ( profile, 0 );
-
-    if(n && tag->use == *hi && tag->block_ && tag->size_ >= 128)
-    {
-      block = oyAllocateFunc_ (132);
-      if(block)
-      {
-        memset( block, 0, 132 );
-        memcpy( block, tag->block_, 128 );
-      }
-    }
-
-    oyProfileTag_Release( &tag );
-  }
-
-  return block;
-}
-
-/**
- *  @internal
  *  Function oyProfile_WriteTagTable_
  *  @memberof oyProfile_s
  *  @brief   get the parsed ICC profile back into memory
