@@ -1,3 +1,75 @@
+/* Static helper functions { */
+/** @internal
+ *  @memberof oyProfile_s
+ *  @brief   check internal ICC profile ID
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/04/10 (Oyranos: 0.3.0)
+ *  @date    2011/04/10
+ */
+static int oyProfile_HasID_          ( oyProfile_s       * s )
+{
+  int has_id = 0;
+
+  if(s->block_ && s->size_ >= 132 )
+  {
+    char * data = s->block_;
+    uint32_t id[4];
+    memcpy( id, &data[84], 16 );
+
+    if(id[0] || id[1] || id[2] || id[3])
+      has_id = 1;
+  }
+
+  return has_id;
+}
+
+/** @internal
+ *  @memberof oyProfile_s
+ *  @brief   hash for oyProfile_s
+ *
+ *  Get ICC ID from profile or compute.
+ +
+ *  @version Oyranos: 0.3.0
+ *  @since   2007/11/0 (Oyranos: 0.1.8)
+ *  @date    2011/04/10
+ */
+static int oyProfile_GetHash_        ( oyProfile_s       * s,
+                                       int                 flags )
+{
+  int error = 1;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
+
+  if(s->block_ && s->size_)
+  {
+    int has_id = oyProfile_HasID_( s );
+
+    oyObject_HashSet( s->oy_, 0 );
+    if(flags & OY_COMPUTE ||
+       !has_id)
+      error = oyProfileGetMD5( s->block_, s->size_, s->oy_->hash_ptr_ );
+    else
+    {
+      char * data = s->block_;
+      uint32_t id[4];
+      int i;
+      memcpy( id, &data[84], 16 );
+
+      for(i = 0; i < 4; ++i)
+        id[i] = oyValueUInt32( id[i] );
+      memcpy(s->oy_->hash_ptr_, id, 16);
+      error = 0;
+    }
+
+    if(error > 0)
+      oyObject_HashSet( s->oy_, 0 );
+  }
+  return error;
+}
+/* } Static helper functions */
+
+
 /** Function  oyProfile_FromMemMove_
  *  @memberof oyProfile_s
  *  @brief    Create from in memory blob
@@ -262,11 +334,11 @@ oyPointer    oyProfile_TagsToMem_    ( oyProfile_s_      * profile,
   return block;
 }
 
-/** Function  oyProfile_FromMemMove_
+/** Function  oyProfile_ToFile_
  *  @memberof oyProfile_s
+ *  @brief    Save from in memory profile to file
  *  @internal
  *
- *  @brief    Save from in memory profile to file
  *
  *  @since Oyranos: version 0.1.8
  *  @date  20 december 2007 (API 0.1.8)
@@ -956,3 +1028,51 @@ oyPointer    oyProfile_WriteTagTable_( oyProfile_s_      * profile,
 
   return block;
 }
+
+#if 0
+/** @brief get a CMM specific pointer
+ *  @memberof oyProfile_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  26 november 2007 (API 0.1.8)
+ */
+/*
+oyChar *       oyProfile_GetCMMText_ ( oyProfile_s       * profile,
+                                       oyNAME_e            type,
+                                       const char        * language,
+                                       const char        * country )
+{
+  oyProfile_s * s = profile;
+  int error = !s;
+  oyChar * name = 0;
+  char cmm_used[] = {0,0,0,0,0};
+
+  if(error <= 0)
+  {
+    oyCMMProfile_GetText_t funcP = 0;
+    oyPointer_s  * cmm_ptr = 0;
+
+
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S,
+                                      0, 0, cmm_used );
+    if(api && *(uint32_t*)&cmm_used)
+    {
+      oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
+      funcP = api1->oyCMMProfile_GetText;
+    }
+
+    if(*(uint32_t*)&cmm_used)
+      cmm_ptr = oyProfile_GetCMMPtr_( s, cmm_used );
+
+    if(funcP && cmm_ptr)
+    {
+      name = funcP(cmm_ptr, type, language, country, s->oy_->allocateFunc_);
+
+      oyCMMdsoRelease_( cmm_used );
+    }
+  }
+
+  return name;
+}
+*/
+#endif

@@ -34,3 +34,9 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s_      * profile,
                                        oyAlloc_f           allocateFunc );
 oyPointer    oyProfile_WriteTagTable_( oyProfile_s_      * profile,
                                        size_t            * size );
+#if 0
+oyChar *       oyProfile_GetCMMText_ ( oyProfile_s       * profile,
+                                       oyNAME_e            type,
+                                       const char        * language,
+                                       const char        * country );
+#endif
