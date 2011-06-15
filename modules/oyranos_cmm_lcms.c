@@ -852,7 +852,7 @@ cmsHPROFILE  lcmsAddProofProfile     ( oyProfile_s       * proof,
   STRING_ADD( hash_text, num );
 
   /* cache look up */
-  cmm_ptr = oyPointerLookUpFromText( hash_text, lcmsPROFILE );
+  cmm_ptr = oyPointer_LookUpFromText( hash_text, lcmsPROFILE );
 
   oyPointer_Set( cmm_ptr, CMM_NICK, 0,0,0,0 );
 
@@ -939,12 +939,12 @@ cmsHPROFILE  lcmsAddProfile          ( oyProfile_s       * p )
     return 0;
   }
 
-  cmm_ptr = oyPointerLookUpFromObject( (oyStruct_s*)p, lcmsPROFILE );
+  cmm_ptr = oyPointer_LookUpFromObject( (oyStruct_s*)p, lcmsPROFILE );
 
   if(!cmm_ptr)
   {
     lcms_msg( oyMSG_WARN, (oyStruct_s*)p,
-             OY_DBG_FORMAT_" oyPointerLookUpFromObject() failed", OY_DBG_ARGS_ );
+             OY_DBG_FORMAT_" oyPointer_LookUpFromObject() failed", OY_DBG_ARGS_ );
     return 0;
   }
 

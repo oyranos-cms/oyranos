@@ -68,7 +68,7 @@ oyPointer    oyPointer_GetPointer     ( oyPointer_s        * cmm_ptr )
     return NULL;
 }
 
-/** Function  oyPointerLookUpFromObject
+/** Function  oyPointer_LookUpFromObject
  *  @brief    Get a module specific pointer from cache
  *  @memberof oyPointer_s
  *
@@ -77,7 +77,7 @@ oyPointer    oyPointer_GetPointer     ( oyPointer_s        * cmm_ptr )
  *  In case the the oyPointer_s::ptr member is empty, it should be set by the
  *  requesting module.
  *
- *  @see oyPointerLookUpFromText()
+ *  @see oyPointer_LookUpFromText()
  *
  *  @param[in]     data                 object to look up
  *  @param[in]     data_type            four byte module type for this object
@@ -91,7 +91,7 @@ oyPointer    oyPointer_GetPointer     ( oyPointer_s        * cmm_ptr )
  *  @since   2008/12/28 (Oyranos: 0.1.10)
  *  @date    2009/11/05
  */
-oyPointer_s  * oyPointerLookUpFromObject (
+oyPointer_s  * oyPointer_LookUpFromObject (
                                        oyStruct_s        * data,
                                        const char        * data_type )
 {
@@ -106,13 +106,13 @@ oyPointer_s  * oyPointerLookUpFromObject (
   {
     const char * tmp = 0;
     tmp = oyObject_GetName( s->oy_, oyNAME_NICK );
-    cmm_ptr = oyPointerLookUpFromText( tmp, data_type );
+    cmm_ptr = oyPointer_LookUpFromText( tmp, data_type );
   }
 
   return cmm_ptr;
 }
 
-/** Function  oyPointerLookUpFromText
+/** Function  oyPointer_LookUpFromText
  *  @brief    Get a module specific pointer from cache
  *  @memberof oyPointer_s
  *
@@ -135,7 +135,7 @@ oyPointer_s  * oyPointerLookUpFromObject (
  *  @since   2009/11/05 (Oyranos: 0.1.10)
  *  @date    2009/11/05
  */
-oyPointer_s * oyPointerLookUpFromText( const char        * text,
+oyPointer_s * oyPointer_LookUpFromText( const char        * text,
                                        const char        * data_type )
 {
   int error = !text;
