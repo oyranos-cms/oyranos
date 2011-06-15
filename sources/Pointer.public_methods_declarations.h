@@ -18,3 +18,5 @@ oyPointer    oyPointer_GetPointer    ( oyPointer_s       * cmm_ptr );
 oyPointer_s  * oyPointerLookUpFromObject (
                                        oyStruct_s        * data,
                                        const char        * data_type );
+oyPointer_s * oyPointerLookUpFromText( const char        * text,
+                                       const char        * data_type );
