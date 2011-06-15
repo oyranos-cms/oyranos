@@ -1,6 +1,16 @@
 {% include "source_file_header.txt" %}
 
+#include <string.h>
+
+#include "oyranos_helper_macros.h"
+#include "oyranos_helper.h"
 #include "oyranos_generic.h"
+#include "oyranos_object.h"
+
+#include "oyObject_s.h"
+#include "oyHash_s.h"
+
+#include "oyStructList_s_.h"
 
 /** Public function definitions { */
 /** } Public function definitions */
