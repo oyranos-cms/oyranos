@@ -415,55 +415,6 @@ int            oyOptions_Handle      ( const char        * registration,
                                        const char        * command,
                                        oyOptions_s      ** result );
 
-
-/** @struct  oyConfig_s
- *  @brief   a group of options for a device
- *  @ingroup objects_value
- *  @extends oyStruct_s
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/15 (Oyranos: 0.1.10)
- *  @date    2009/01/15
- */
-typedef struct oyConfig_s {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONFIG_S */ 
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  uint32_t             id;             /**< id to map to events and widgets */
-  /** This property contains the identifier for communication with a Oyranos
-   *  or a module through Oyranos. It defines the basic key path name to store
-   *  configuration.\n
-   *  e.g. "shared/freedesktop.org/imaging/config.monitor.xorg" \n
-   *  see as well @ref registration */
-  char               * registration;
-  int                  version[3];     /**< as for oyCMMapi4_s::version */
-
-  /** data base (Elektra) properties,
-  e.g. "shared/freedesktop.org/imaging/config.monitor.xorg/1/manufacturer=EIZO"*/
-  oyOptions_s        * db;
-  /** These are the module core properties, the ones to identify the 
-   *  device and store in DB. They must be filled by the module.
-  e.g. "shared/freedesktop.org/imaging/config.monitor.xorg/manufacturer=EIZO" */
-  oyOptions_s        * backend_core;
-  /** Additional informations from modules, with non identification purpose,
-   *  can be stored herein,
-  e.g. "shared/freedesktop.org/imaging/config.monitor.xorg/edid=oyBlob_s*" */
-  oyOptions_s        * data;
-
-  oyRankPad          * rank_map;       /**< zero terminated list; key compare */
-} oyConfig_s;
-
-OYAPI oyConfig_s * OYEXPORT
-               oyConfig_New          ( const char        * registration,
-                                       oyObject_s          object );
-OYAPI oyConfig_s * OYEXPORT
-               oyConfig_Copy         ( oyConfig_s        * obj,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-               oyConfig_Release      ( oyConfig_s       ** obj );
-
 OYAPI int  OYEXPORT
                oyConfig_Set          ( oyConfig_s        * config,
                                        const char        * registration_domain,
