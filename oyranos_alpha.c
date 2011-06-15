@@ -7840,54 +7840,6 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
  *  @{
  */
 
-#if 0
-/** @brief get a CMM specific pointer
- *  @memberof oyProfile_s
- *
- *  @since Oyranos: version 0.1.8
- *  @date  26 november 2007 (API 0.1.8)
- */
-/*
-oyChar *       oyProfile_GetCMMText_ ( oyProfile_s       * profile,
-                                       oyNAME_e            type,
-                                       const char        * language,
-                                       const char        * country )
-{
-  oyProfile_s * s = profile;
-  int error = !s;
-  oyChar * name = 0;
-  char cmm_used[] = {0,0,0,0,0};
-
-  if(error <= 0)
-  {
-    oyCMMProfile_GetText_t funcP = 0;
-    oyPointer_s  * cmm_ptr = 0;
-
-
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S,
-                                      0, 0, cmm_used );
-    if(api && *(uint32_t*)&cmm_used)
-    {
-      oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
-      funcP = api1->oyCMMProfile_GetText;
-    }
-
-    if(*(uint32_t*)&cmm_used)
-      cmm_ptr = oyProfile_GetCMMPtr_( s, cmm_used );
-
-    if(funcP && cmm_ptr)
-    {
-      name = funcP(cmm_ptr, type, language, country, s->oy_->allocateFunc_);
-
-      oyCMMdsoRelease_( cmm_used );
-    }
-  }
-
-  return name;
-}
-*/
-#endif
-
 /**
  *  @internal
  *  Function oyProfile_WriteHeader_
