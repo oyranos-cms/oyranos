@@ -185,7 +185,8 @@ CFILES_OBJECT = \
 	$(GENDIR)oyStruct_s.c \
 	$(GENDIR)oyStructList_s_.c \
 	$(GENDIR)oyStructList_s.c \
-	$(GENDIR)oyranos_object.c
+	$(GENDIR)oyranos_object.c \
+	$(GENDIR)oyranos_generic.c
 CHEADERS_OBJECT_PUBLIC = \
 	$(GENDIR)oyBlob_s.h \
 	$(GENDIR)oyPointer_s.h \
@@ -197,7 +198,8 @@ CHEADERS_OBJECT_PUBLIC = \
 	$(GENDIR)oyOptions_s.h \
 	$(GENDIR)oyStruct_s.h \
 	$(GENDIR)oyStructList_s.h \
-	$(GENDIR)$(TARGET)_object.h
+	$(GENDIR)$(TARGET)_object.h \
+	$(GENDIR)oyranos_generic.h
 CHEADERS_OBJECT = \
 	$(CHEADERS_OBJECT_PUBLIC) \
 	$(GENDIR)oyBlob_s_.h \
