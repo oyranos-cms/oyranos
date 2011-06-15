@@ -7840,37 +7840,6 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
  *  @{
  */
 
-/** Function oyProfileTag_Copy
- *  @memberof oyProfileTag_s
- *
- *  @since Oyranos: version 0.1.8
- *  @date  1 january 2008 (API 0.1.8)
- */
-OYAPI oyProfileTag_s * OYEXPORT
-                   oyProfileTag_Copy   ( oyProfileTag_s  * obj,
-                                         oyObject_s        object)
-{
-  oyProfileTag_s * s = 0;
-  int error = 0;
-
-  if(!obj)
-    return s;
-
-  if(s)
-    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
-
-  if(error <= 0 && !object && obj->oy_)
-  {
-    oyObject_Ref( obj->oy_ );
-    return obj;
-  }
-
-  if(s)
-    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
-
-  return s;
-}
-
 /** Function oyProfileTag_Release
  *  @memberof oyProfileTag_s
  *
