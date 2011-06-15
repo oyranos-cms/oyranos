@@ -30,9 +30,8 @@ conflicts=('oyranos')
 source=()
 md5sums=()
 
-_gitroot="/home/john/Code/GSoC/code_2011/oyranos"
 _gitname="oyranos"
-#_gitroot="git://www.oyranos.org/git/oyranos"
+_gitroot="git://www.oyranos.org/git/oyranos"
 
 build() {
   msg "Connecting to GIT server...."
@@ -41,7 +40,7 @@ build() {
     cd ${_gitname}
     git pull
   else
-    git clone --branch gsoc2011 ${_gitroot} ${_gitname}
+    git clone ${_gitroot} ${_gitname}
   fi
 
   msg "Starting make..."
