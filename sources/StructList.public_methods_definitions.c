@@ -1,5 +1,6 @@
-/** @internal
- *  @brief oyStructList_s pointer add
+/** Function  oyStructList_MoveIn
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s pointer add
  *
  *  If the list was observed, the new elements are not automatically observed.
  *  The caller can select OY_OBSERVE_AS_WELL in the flags argument if he
@@ -129,8 +130,9 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
   return error;
 }
 
-/** @internal
- *  @brief oyStructList_s referenced pointer access
+/** Function  oyStructList_GetRef
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s referenced pointer access
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
@@ -138,18 +140,18 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
 oyStruct_s *     oyStructList_GetRef ( oyStructList_s    * list,
                                        int                 pos )
 {
-  oyStructList_s * s = list;
+  oyStructList_s_ * s = (oyStructList_s_*)list;
   int error = !s;
   oyStruct_s * obj = 0;
 
   if(!error)
     oyObject_Lock( s->oy_, __FILE__, __LINE__ );
 
-  obj = oyStructList_Get_(list, pos);
+  obj = oyStructList_Get_(s, pos);
   error = !obj;
 
   if(error <= 0)
-    error = oyStructList_ReferenceAt_(list, pos);
+    error = oyStructList_ReferenceAt_(s, pos);
 
   if(s)
     oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
@@ -157,15 +159,16 @@ oyStruct_s *     oyStructList_GetRef ( oyStructList_s    * list,
   return obj;
 }
 
-/** Function oyStructList_GetRefType
- *  @brief oyStructList_s pointer access
+/** Function  oyStructList_GetRefType
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s pointer access
  *
  *  @since Oyranos: version 0.1.8
  *  @date  1 january 2008 (API 0.1.8)
  */
 oyStruct_s *     oyStructList_GetRefType( oyStructList_s * list,
-                                       int                 pos,
-                                       oyOBJECT_e          type )
+                                          int              pos,
+                                          oyOBJECT_e       type )
 {
   oyStruct_s * obj = oyStructList_GetRef( list, pos );
 
@@ -179,10 +182,9 @@ oyStruct_s *     oyStructList_GetRefType( oyStructList_s * list,
   return obj;
 }
 
-/**
- *  @internal
- *  Function oyStructList_ReleaseAt
- *  @brief   oyStructList_s pointer release
+/** Function  oyStructList_ReleaseAt
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s pointer release
  *
  *  release and shrink
  *
@@ -204,7 +206,7 @@ int            oyStructList_ReleaseAt( oyStructList_s    * list,
   if(error <= 0)
     oyObject_Lock( s->oy_, __FILE__, __LINE__ );
 
-  if(error <= 0 && list)
+  if(error <= 0 && s)
   {
       if(0 <= pos && pos < s->n_)
       {
@@ -225,8 +227,9 @@ int            oyStructList_ReleaseAt( oyStructList_s    * list,
   return error;
 }
 
-/**
- *  @brief oyStructList_s count
+/** Function  oyStructList_Count
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s count
  *
  *  @since Oyranos: version 0.1.8
  *  @date  21 november 2007 (API 0.1.8)
@@ -246,20 +249,20 @@ int              oyStructList_Count ( oyStructList_s   * list )
   return n;
 }
 
-/**
- *  Function oyStructList_GetText
+/** Function  oyStructList_GetText
  *  @memberof oyStructList_s
- *  @brief   build and obtain the lists member names
+ *  @brief    Build and obtain the lists member names
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/11/04
  *  @since   2008/11/04 (Oyranos: 0.1.8)
  */
-const char * oyStructList_GetText    ( oyStructList_s    * s,
+const char * oyStructList_GetText    ( oyStructList_s    * list,
                                        oyNAME_e            name_type,
                                        int                 intent_spaces,
                                        uint32_t            flags )
 {
+  oyStructList_s_ * s = (oyStructList_s_*)list;
   int error = !s, i, n;
   char * hash_text = 0;
   char * text = 0;
@@ -271,7 +274,7 @@ const char * oyStructList_GetText    ( oyStructList_s    * s,
     for(i = 0; i < intent_spaces; ++i)
       text[i] = ' ';
     text[i] = 0;
-    n = oyStructList_Count( s );
+    n = oyStructList_Count( list );
     for(i = 0; i < n; ++i)
     {
       oy_struct = oyStructList_Get_( s, i );
@@ -295,35 +298,35 @@ const char * oyStructList_GetText    ( oyStructList_s    * s,
 }
 
 /**
- *  Function oyStructList_GetID
+ *  Function  oyStructList_GetID
  *  @memberof oyStructList_s
- *  @brief   eventually build and obtain the lists member names
+ *  @brief    Eventually build and obtain the lists member names
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/11/04
  *  @since   2008/11/04 (Oyranos: 0.1.8)
  */
-const char *     oyStructList_GetID  ( oyStructList_s    * s,
+const char *     oyStructList_GetID  ( oyStructList_s    * list,
                                        int                 intent_spaces,
                                        uint32_t            flags )
 {
-  int error = !s;
+  int error = !list;
   const char * text = 0;
 
   if(error <= 0)
   {
-    text = oyObject_GetName( s->oy_, oyNAME_NICK );
+    text = oyObject_GetName( list->oy_, oyNAME_NICK );
     if(!text)
-      text = oyStructList_GetText( s, oyNAME_NICK, intent_spaces, flags );
+      text = oyStructList_GetText( list, oyNAME_NICK, intent_spaces, flags );
   }
 
   return text;
 }
 
 /**
- *  Function oyStructList_Clear
+ *  Function  oyStructList_Clear
  *  @memberof oyStructList_s
- *  @brief   release all listed objects
+ *  @brief    Release all listed objects
  *
  *  @version Oyranos: 0.1.9
  *  @date    2008/11/27
@@ -336,14 +339,14 @@ int              oyStructList_Clear  ( oyStructList_s    * list )
 
   if(error <= 0)
     for(i = s->n_ - 1; i >= 0; --i)
-      oyStructList_ReleaseAt( (oyStructList_s*)s, i );
+      oyStructList_ReleaseAt( list, i );
   return error;
 }
 
 /**
- *  Function oyStructList_CopyFrom
+ *  Function  oyStructList_CopyFrom
  *  @memberof oyStructList_s
- *  @brief   clean "list" and copy all listed objects from "from" to "list".
+ *  @brief    Clean "list" and copy all listed objects from "from" to "list".
  *
  *  If the list was observed, the new elements are observed by the list through
  *  the standard signal forwarding function (oyStructSignalForward_).
@@ -365,7 +368,7 @@ int              oyStructList_CopyFrom(oyStructList_s    * list,
 
   if(error <= 0)
   {
-    error = oyStructList_Clear( list );
+    error = oyStructList_Clear( s );
 
     from_n = ((oyStructList_s_*)from)->n_;
     for(i = 0; i < from_n && error <= 0; ++i)
@@ -378,17 +381,16 @@ int              oyStructList_CopyFrom(oyStructList_s    * list,
     }
 
     if(error <= 0 && oyStruct_IsObserved( (oyStruct_s*)s, 0) )
-      error = oyStructList_ObserverAdd( list, 0, 0, 0 );
+      error = oyStructList_ObserverAdd( s, 0, 0, 0 );
   }
 
 
   return error;
 }
 
-/** @internal
- *  Function oyStructList_MoveTo
+/** Function  oyStructList_MoveTo
  *  @memberof oyStructList_s
- *  @brief   move a list element to a new position
+ *  @brief    Move a list element to a new position
  *
  *  real used?
  *
@@ -426,9 +428,9 @@ int              oyStructList_MoveTo ( oyStructList_s    * s,
 }
 
 /**
- *  Function oyStructList_Sort
+ *  Function  oyStructList_Sort
  *  @memberof oyStructList_s
- *  @brief   sort a list according to a rank_list
+ *  @brief    Sort a list according to a rank_list
  *
  *  @version Oyranos: 0.1.10
  *  @date    2009/05/23
@@ -499,9 +501,9 @@ int              oyStructList_Sort   ( oyStructList_s    * list,
 }
 
 /**
- *  Function oyStructList_ObserverAdd
+ *  Function  oyStructList_ObserverAdd
  *  @memberof oyStructList_s
- *  @brief   add a observer to the each list member
+ *  @brief    Add a observer to the each list member
  *
  *  Members are further observed by the list object.
  *
@@ -539,9 +541,9 @@ int              oyStructList_ObserverAdd (
   return error;
 }
 
-/**
- *  Function oyStructList_GetType
- *  @brief oyStructList_s pointer access
+/** Function  oyStructList_GetType
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s pointer access
  *
  *  non thread save; better dont use
  *
@@ -552,13 +554,17 @@ oyStruct_s *     oyStructList_GetType( oyStructList_s    * list,
                                        int                 pos,
                                        oyOBJECT_e          type )
 {
-  oyStruct_s * obj = oyStructList_Get_( list, pos );
+  oyStruct_s * obj = oyStructList_Get_( (oyStructList_s_*)list, pos );
 
   if(obj && obj->type_ != type)
     obj = 0;
   return obj;
 }
 
+/** Function  oyStructList_GetParentObjType
+ *  @memberof oyStructList_s
+ *
+ */
 oyOBJECT_e       oyStructList_GetParentObjType (
                                        oyStructList_s    * list )
 {
@@ -572,9 +578,9 @@ oyOBJECT_e       oyStructList_GetParentObjType (
   return s->parent_type_;
 }
 
-/**
- *  Function oyStructList_Create
- *  @brief   create a new oyStruct_s list
+/** Function  oyStructList_Create
+ *  @memberof oyStructList_s
+ *  @brief    Create a new oyStruct_s list
  *
  *  @param         parent_type         type of parent object
  *  @param         list_name           optional list name
@@ -602,9 +608,9 @@ oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
 }
 
 /**
- *  Function oyStructList_MoveInName
+ *  Function  oyStructList_MoveInName
  *  @memberof oyStructList_s
- *  @brief   add a name to a list
+ *  @brief    Add a name to a list
  *
  *  The text is added a a oyName_s::name member variable and owned by the list.
  *
@@ -614,7 +620,7 @@ oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
  */
 int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
 {
-  int error = !texts || ! text;
+  int error = !texts || !text;
   oyName_s * name = 0;
   oyStruct_s * oy_struct = 0;
   if(!error)
@@ -628,9 +634,9 @@ int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
   return error;
 }
 /**
- *  Function oyStructList_AddName
+ *  Function  oyStructList_AddName
  *  @memberof oyStructList_s
- *  @brief   add a name to a list
+ *  @brief    Add a name to a list
  *
  *  The text is added a a oyName_s::name member variable.
  *
@@ -661,9 +667,9 @@ int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
   return error;
 }
 /**
- *  Function oyStructList_GetName
+ *  Function  oyStructList_GetName
  *  @memberof oyStructList_s
- *  @brief   add a name to a list
+ *  @brief    Add a name to a list
  *
  *  The text is added a a oyName_s::name member variable.
  *
