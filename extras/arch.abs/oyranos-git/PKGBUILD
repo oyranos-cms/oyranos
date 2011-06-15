@@ -49,30 +49,8 @@ build() {
   make
   make docu
 }
+
 package() {
   cd ${srcdir}/${_gitname}
-  make DESTDIR="${pkgdir}/" install
-} 
-
-build_outoftree() {
-  msg "Connecting to GIT server...."
-  cd ${srcdir}
-  if [ -d ${_gitname}/.git ]; then
-    cd ${_gitname}
-    git pull
-  else
-    git clone --branch gsoc2011 ${_gitroot} ${_gitname}
-  fi
-
-  msg "Starting make..."
-  rm -rf ${srcdir}/build
-  mkdir -p ${srcdir}/build
-  cd ${srcdir}/build || return 1
-  CFLAGS=-I/usr/include/elektra/ ${srcdir}/${_gitname}/configure --prefix=/usr
-  make
-  make docu
-}
-package_outoftree() {
-  cd ${srcdir}/build || return 1
   make DESTDIR="${pkgdir}/" install
 } 
