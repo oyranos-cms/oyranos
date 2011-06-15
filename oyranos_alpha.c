@@ -7840,48 +7840,6 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
  *  @{
  */
 
-/** Function oyProfileTag_Release
- *  @memberof oyProfileTag_s
- *
- *  @since Oyranos: version 0.1.8
- *  @date  1 january 2008 (API 0.1.8)
- */
-OYAPI int  OYEXPORT
-                   oyProfileTag_Release(oyProfileTag_s  ** obj )
-{
-  int error = 0;
-  /* ---- start of common object destructor ----- */
-  oyProfileTag_s * s = 0;
-
-  if(!obj || !*obj)
-    return error;
-
-  s = *obj;
-
-  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
-
-  *obj = 0;
-
-  if(oyObject_UnRef(s->oy_))
-    return error;
-  /* ---- end of common object destructor ------- */
-
-  if(s->oy_->deallocateFunc_)
-  {
-    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-
-    if(s->block_ && s->size_)
-      deallocateFunc( s->block_ );
-    s->block_ = 0; s->size_ = 0;
-
-    oyObject_Release( &s->oy_ );
-
-    deallocateFunc( s );
-  }
-
-  return error;
-}
-
 /** @internal
  *  Function oyCMMapi3_Query_
  *
