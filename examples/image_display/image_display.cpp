@@ -155,8 +155,6 @@ main(int argc, char** argv)
 
   Fl::run();
 
-  delete win;
-
   return 0;
 }
 
