@@ -107,8 +107,12 @@ Dependencies:
     community/libraw
     AUR/xcalib
     AUR/elektra
-  NOTE: If you have problems installing elektra from AUR,
-  use this PKGBUILD: extras/elektra/PKGBUILD
+  NOTE1: If you have problems installing elektra from AUR,
+  use this PKGBUILD: ./extras/arch.abs/elektra/PKGBUILD
+  NOTE2: To build an Arch package of Oyranos from yor local git branch,
+  use './extras/arch.abs/oyranos-git/PKGBUILD' and
+  (a) replace '_gitroot' variable,
+  (b) replace the branch name in line 44.
 
 Building:
     $ configure
