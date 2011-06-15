@@ -220,9 +220,6 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
 /*oyStruct_s **    oyStructList_GetRaw_( oyStructList_s    * list );*/
 oyStruct_s *     oyStructList_Get_   ( oyStructList_s    * list,
                                        int                 pos );
-oyStruct_s *     oyStructList_GetType_(oyStructList_s    * list,
-                                       int                 pos,
-                                       oyOBJECT_e          type );
 oyStruct_s *     oyStructList_GetRef ( oyStructList_s    * list,
                                        int                 pos );
 oyStruct_s *     oyStructList_GetRefType( oyStructList_s * list,
