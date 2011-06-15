@@ -706,26 +706,6 @@ typedef enum oySIGNATURE_TYPE_e {
 
 typedef struct oyProfileTag_s oyProfileTag_s;
 
-/** @brief a profile and its attributes
- *  @ingroup objects_profile
- *  @extends oyStruct_s
- */
-typedef struct oyProfile_s {
-  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_PROFILE_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-  char               * file_name_;     /*!< @private file name for loading on request */
-  size_t               size_;          /*!< @private ICC profile size */
-  void               * block_;         /*!< @private ICC profile data */
-  icColorSpaceSignature sig_;          /*!< @private ICC profile signature */
-  oyPROFILE_e          use_default_;   /*!< @private if > 0 : take from settings */
-  oyObject_s         * names_chan_;    /*!< @private user visible channel description */
-  int                  channels_n_;    /*!< @private number of channels */
-  oyStructList_s     * tags_;          /**< @private list of header + tags */
-  int                  tags_modified_; /**< @private note manipulation */
-} oyProfile_s;
-
 /** @typedef oyIO_t
     parametric type as shorthand for IO flags \n
 
