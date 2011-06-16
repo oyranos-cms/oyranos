@@ -30,6 +30,7 @@
 #include "oyOption_s.h"
 #include "oyOptions_s.h"
 #include "oyProfile_s.h"
+#include "oyProfiles_s.h"
 #include "oyStruct_s.h"
 #include "oyStructList_s.h"
 
