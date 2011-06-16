@@ -1700,7 +1700,7 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
                               allocate_func, return NULL);
             w[pos++] = oyWIDGET_GROUP_DEFAULT_PROFILES_PROOF;
             for ( oywid = (oyWIDGET_e)oyPROFILE_PROOF;
-                    (oyWIDGET_e)oywid <= oyPROFILE_PROOF; ++oywid )
+                    oywid <= (oyWIDGET_e)oyPROFILE_PROOF; ++oywid )
               w[pos++] = oywid;
 
            *count = pos;
