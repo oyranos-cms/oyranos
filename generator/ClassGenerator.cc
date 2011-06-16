@@ -147,7 +147,8 @@ QString ClassGenerator::render( const QFileInfo& templateFileInfo, const QString
     }
     else
     //3. There is no difference in file contents -> do nothing
-      qDebug() << "Skipping" << sourceFile.fileName();
+      qDebug() << "Skipping" << sourceFileInfo.fileName() << "\n"
+               << "`-->[" << templateFileInfo.absoluteFilePath() << "]";
   }
 
   //5. Both have changed //TODO
