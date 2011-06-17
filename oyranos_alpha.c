@@ -8702,7 +8702,7 @@ oyImage_CombinePixelLayout2Mask_ (
       clayout[i] = oyCHANNELTYPE_OTHER;
     /* describe profile colours */
     for(i = coff_x; i < coff_x + cchan_n; ++i)
-      clayout[i] = oyICCColourSpaceToChannelLayout( profile->sig_, i - coff_x );
+      clayout[i] = oyICCColourSpaceToChannelLayout( oyProfilePriv_m(profile)->sig_, i - coff_x );
     /* place a end marker */
     clayout[n] = oyCHANNELTYPE_UNDEFINED;
       s->channel_layout = clayout;
