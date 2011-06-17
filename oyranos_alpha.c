@@ -6833,6 +6833,19 @@ OYAPI int  OYEXPORT
         profile_name = oyStringCopy_( oyProfile_GetFileName(p, -1),
                                       oyAllocateFunc_ );
         WARNc1_S( "implicitely selected %s", oyNoEmptyString_m_(profile_name) );
+        if(oy_debug > 1)
+        {
+          int i, n = oyProfiles_Count( iccs );
+          const char * fn;
+          oyProfile_Release( &p );
+          for(i = 0; i < n; ++i)
+          {
+            p = oyProfiles_Get( iccs, i );
+            fn = oyProfile_GetFileName(p, -1);
+            if(rank_list[i])
+              DBG_NUM2_S("%d: %s", rank_list[i], fn);
+          }
+        }
         oyFree_m_( rank_list );
       }
 
