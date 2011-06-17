@@ -373,7 +373,7 @@ int              oyStructList_CopyFrom(oyStructList_s    * list,
     from_n = ((oyStructList_s_*)from)->n_;
     for(i = 0; i < from_n && error <= 0; ++i)
     {
-      o = oyStructList_Get_( from, i );
+      o = oyStructList_Get_( (oyStructList_s_*)from, i );
       o = o->copy( o, object );
       error = !o;
       if(!error)
