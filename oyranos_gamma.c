@@ -30,6 +30,7 @@
 #include "oyranos_version.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
+#include "oyProfile_s_.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
