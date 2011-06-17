@@ -16,6 +16,7 @@
 #include "oyObserver_s.h"
 #include "oyOption_s.h"
 #include "oyOptions_s.h"
+#include "oyStructList_s_.h"
 
 #include "oyranos_types.h"
 #include "oyranos_alpha.h"
@@ -19137,6 +19138,7 @@ int      oyActivateMonitorProfiles   ( const char        * display_name )
 
 /** @} *//* monitor_api */
 
+extern oyStructList_s_ * oy_profile_s_file_cache_;
 
 /** @internal
  *
@@ -19149,7 +19151,5 @@ void     oyAlphaFinish_              ( int                 unused )
   oyProfiles_Release( &oy_profile_list_cache_ );
   oyStructList_Release( &oy_meta_module_cache_ );
   oyStructList_Release( &oy_cmm_cache_ );
-  oyStructList_Release( &oy_profile_s_file_cache_ );
+  oyStructList_Release_( &oy_profile_s_file_cache_ );
 }
-
-

@@ -163,7 +163,7 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
   return s;
 }
 
-static oyStructList_s_ * oy_profile_s_file_cache_ = 0;
+oyStructList_s_ * oy_profile_s_file_cache_ = 0;
 
 /** Function  oyProfile_FromFile_
  *  @memberof oyProfile_s
