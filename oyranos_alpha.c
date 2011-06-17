@@ -4810,7 +4810,7 @@ OYAPI int OYEXPORT
         /** 3. obtain all keys from one configuration directory */
         config_key_names = oyKeySetGetNames_( key_set_names[j], &k_n );
 
-        config = oyConfig_New( texts[i], object );
+        config = oyConfig_FromRegistration( texts[i], object );
         error = !config;
 
         for(k = 0; k < k_n; ++k)
