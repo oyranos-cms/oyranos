@@ -13,6 +13,9 @@
  */
 
 #include "oyPointer_s.h"
+#include "oyProfile_s_.h"
+#include "oyConfig_s.h"
+#include "oyConfig_s_.h"
 #include "oyObserver_s.h"
 #include "oyOption_s.h"
 #include "oyOptions_s.h"
@@ -276,7 +279,7 @@ oyChar *     oyDumpColourToCGATS     ( const double      * channels,
   int i;
   size_t len = n * channels_n * 16 + 2024;
   oyChar * text = allocateFunc( len );
-  const oyChar * prof_name = prof?prof->file_name_:"";
+  const oyChar * prof_name = prof ? ((oyProfile_s_*)prof)->file_name_ : "";
   const char * format = "";
   char * daten = text;
   /*double value = 0;*/
@@ -3371,7 +3374,7 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
-    error = oyConfigs_FromDB( device->registration, &configs, 0 );
+    error = oyConfigs_FromDB( oyConfigPriv_m(device)->registration, &configs, 0 );
 
     n = oyConfigs_Count( configs );
 
@@ -3397,8 +3400,8 @@ OYAPI int  OYEXPORT
 
   if(error <= 0 && max_config)
   {
-    oyOptions_Release( &device->db );
-    device->db = oyOptions_Copy( max_config->db, 0 );
+    oyOptions_Release( &oyConfigPriv_m(device)->db );
+    oyConfigPriv_m(device)->db = oyOptions_Copy( oyConfigPriv_m(max_config)->db, 0 );
     oyConfig_Release( &max_config );
   }
 
@@ -3438,11 +3441,11 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
-    STRING_ADD( tmp, config->registration );
+    STRING_ADD( tmp, oyConfigPriv_m(config)->registration );
     if(tmp[oyStrlen_(tmp)-1] != OY_SLASH_C)
       STRING_ADD( tmp, OY_SLASH );
 
-    if(oyStrstr_( key, config->registration ) != 0)
+    if(oyStrstr_( key, oyConfigPriv_m(config)->registration ) != 0)
     {
       oyFree_m_(tmp);
       STRING_ADD( tmp, key );
@@ -3453,7 +3456,7 @@ OYAPI int  OYEXPORT
       STRING_ADD( tmp, key );
 
     /** We provide basically a wrapper for oyOptions_SetFromText(). */
-    error = oyOptions_SetFromText( &config->db, tmp, value, flags );
+    error = oyOptions_SetFromText( &oyConfigPriv_m(config)->db, tmp, value, flags );
 
     oyFree_m_( tmp );
   }
@@ -3485,8 +3488,8 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
-    error = oyOptions_Release( &config->db );
-    config->db = oyOptions_New( config->oy_ );
+    error = oyOptions_Release( &oyConfigPriv_m(config)->db );
+    oyConfigPriv_m(config)->db = oyOptions_New( oyConfigPriv_m(config)->oy_ );
   }
 
   return error;
@@ -3520,10 +3523,10 @@ OYAPI int  OYEXPORT
   if(error <= 0)
   {
     opts = oyOptions_New( 0 );
-    oyOptions_AppendOpts( opts, config->db );
-    oyOptions_AppendOpts( opts, config->backend_core );
+    oyOptions_AppendOpts( opts, oyConfigPriv_m(config)->db );
+    oyOptions_AppendOpts( opts, oyConfigPriv_m(config)->backend_core );
 
-    error = oyOptions_SaveToDB( opts, config->registration, &new_reg, 0 );
+    error = oyOptions_SaveToDB( opts, oyConfigPriv_m(config)->registration, &new_reg, 0 );
 
     /* add information about the data's origin */
     oyConfig_AddDBData( config, "key_set_name", new_reg, OY_CREATE_NEW );
@@ -3608,14 +3611,14 @@ OYAPI int  OYEXPORT
   if(error <= 0)
   {
     i = 0;
-    text = config->registration;
+    text = oyConfigPriv_m(config)->registration;
     if(text)
       while( (text = oyStrchr_(++text, OY_SLASH_C)) != 0)
         ++i;
 
     if(i != 4)
     {
-      o = oyOptions_Get( config->db, 0 );
+      o = oyOptions_Get( oyConfigPriv_m(config)->db, 0 );
       i = 0;
       text = 0;
       if(o)
@@ -3635,7 +3638,7 @@ OYAPI int  OYEXPORT
 
     }
     else
-      text = config->registration;
+      text = oyConfigPriv_m(config)->registration;
 
     error = oyEraseKey_( text );
 
@@ -3692,27 +3695,27 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
 
   if(error <= 0)
   {
-    if(device->rank_map)
-      rank_map = device->rank_map;
+    if(oyConfigPriv_m(device)->rank_map)
+      rank_map = oyConfigPriv_m(device)->rank_map;
     else
-      rank_map = pattern->rank_map;
+      rank_map = oyConfigPriv_m(pattern)->rank_map;
 
-    domain_n = oyOptions_Count( device->backend_core );
+    domain_n = oyOptions_Count( oyConfigPriv_m(device)->backend_core );
     if(domain_n)
-      dopts = device->backend_core;
+      dopts = oyConfigPriv_m(device)->backend_core;
     else
     {
-      domain_n = oyOptions_Count( device->db );
+      domain_n = oyOptions_Count( oyConfigPriv_m(device)->db );
       if(domain_n)
         /* fall back for pure DB contructed oyConfig_s */
-        dopts = device->db;
+        dopts = oyConfigPriv_m(device)->db;
 #ifdef DEBUG
       else if(oy_debug > 2)
-        WARNc1_S("No key/values pairs found in %s", device->registration);
+        WARNc1_S("No key/values pairs found in %s", oyConfigPriv_m(device)->registration);
 #endif
     }
 
-    pattern_n = oyOptions_Count( pattern->db );
+    pattern_n = oyOptions_Count( oyConfigPriv_m(pattern)->db );
     for(i = 0; i < domain_n; ++i)
     {
       d = oyOptions_Get( dopts, i );
@@ -3743,7 +3746,7 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
       if(d_rank > 0 && d_val && d_opt)
       for( j = 0; j < pattern_n; ++j )
       {
-        p = oyOptions_Get( pattern->db, j );
+        p = oyOptions_Get( oyConfigPriv_m(pattern)->db, j );
 
         p_opt = oyFilterRegistrationToText( oyOption_GetRegistration(p),
                                             oyFILTER_REG_MAX,
@@ -3860,7 +3863,7 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
-    apis = oyCMMsGetFilterApis_( 0,0, config->registration,
+    apis = oyCMMsGetFilterApis_( 0,0, oyConfigPriv_m(config)->registration,
                                  oyOBJECT_CMM_API8_S, 
                                  oyFILTER_REG_MODE_NONE,
                                  &rank_list, &apis_n);
@@ -3923,11 +3926,11 @@ OYAPI const char * OYEXPORT
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
 
-  text = oyOptions_FindString( config->data, key, value );
+  text = oyOptions_FindString( oyConfigPriv_m(config)->data, key, value );
   if(!text)
-    text = oyOptions_FindString( config->backend_core, key, value );
+    text = oyOptions_FindString( oyConfigPriv_m(config)->backend_core, key, value );
   if(!text)
-    text = oyOptions_FindString( config->db, key, value );
+    text = oyOptions_FindString( oyConfigPriv_m(config)->db, key, value );
 
   return text;
 }
@@ -3955,11 +3958,11 @@ OYAPI oyOption_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
-  o = oyOptions_Find( config->data, key );
+  o = oyOptions_Find( oyConfigPriv_m(config)->data, key );
   if(!o)
-    o = oyOptions_Find( config->backend_core, key );
+    o = oyOptions_Find( oyConfigPriv_m(config)->backend_core, key );
   if(!o)
-    o = oyOptions_Find( config->db, key );
+    o = oyOptions_Find( oyConfigPriv_m(config)->db, key );
 
   return o;
 }
@@ -3988,11 +3991,11 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
-  o = oyOptions_Find( config->data, key );
+  o = oyOptions_Find( oyConfigPriv_m(config)->data, key );
   if(!o)
-    o = oyOptions_Find( config->backend_core, key );
+    o = oyOptions_Find( oyConfigPriv_m(config)->backend_core, key );
   if(!o)
-    o = oyOptions_Find( config->db, key );
+    o = oyOptions_Find( oyConfigPriv_m(config)->db, key );
 
   if(o)
     has_option = 1;
@@ -4027,9 +4030,9 @@ OYAPI int  OYEXPORT
   {
     opts = oyOptions_New( 0 );
 
-    oyOptions_AppendOpts( opts, config->db );
-    oyOptions_AppendOpts( opts, config->backend_core );
-    oyOptions_AppendOpts( opts, config->data );
+    oyOptions_AppendOpts( opts, oyConfigPriv_m(config)->db );
+    oyOptions_AppendOpts( opts, oyConfigPriv_m(config)->backend_core );
+    oyOptions_AppendOpts( opts, oyConfigPriv_m(config)->data );
     n = oyOptions_Count( opts );
     oyOptions_Release( &opts );
   }
@@ -4064,9 +4067,9 @@ OYAPI oyOption_s * OYEXPORT
   {
     opts = oyOptions_New( 0 );
 
-    oyOptions_AppendOpts( opts, config->db );
-    oyOptions_AppendOpts( opts, config->backend_core );
-    oyOptions_AppendOpts( opts, config->data );
+    oyOptions_AppendOpts( opts, oyConfigPriv_m(config)->db );
+    oyOptions_AppendOpts( opts, oyConfigPriv_m(config)->backend_core );
+    oyOptions_AppendOpts( opts, oyConfigPriv_m(config)->data );
 
     o = oyOptions_Get( opts, pos );
 
@@ -4186,9 +4189,9 @@ OYAPI int  OYEXPORT
     {
       config = oyConfigs_Get( s, i );
 
-      l_error = oyOptions_SetSource( config->backend_core,
+      l_error = oyOptions_SetSource( oyConfigPriv_m(config)->backend_core,
                                      oyOPTIONSOURCE_FILTER); OY_ERR
-      l_error = oyOptions_SetSource( config->data,
+      l_error = oyOptions_SetSource( oyConfigPriv_m(config)->data,
                                      oyOPTIONSOURCE_FILTER ); OY_ERR
 
       oyConfig_Release( &config );
@@ -4394,7 +4397,7 @@ OYAPI int  OYEXPORT
     config = oyConfigs_Get( configs, 0 );
     /** 1.2 get all device class module names from the firsts oyConfig_s
       *     registration */
-    error = oyConfigDomainList  ( config->registration, &texts, &count,
+    error = oyConfigDomainList  ( oyConfigPriv_m(config)->registration, &texts, &count,
                                   &rank_list, 0 );
     oyConfig_Release( &config );
   }
@@ -4817,7 +4820,7 @@ OYAPI int OYEXPORT
             o = oyOption_FromDB( config_key_names[k], object );
           error = !o;
           if(error <= 0)
-            error = oyOptions_Add( config->db, o, -1, 0 );
+            error = oyOptions_Add( oyConfigPriv_m(config)->db, o, -1, 0 );
           else
           {
             WARNcc1_S( (oyStruct_s*) object, "Could not generate key %s",
@@ -4833,8 +4836,8 @@ OYAPI int OYEXPORT
 
         /* add a rank map to allow for comparisions */
         if(cmm_api8)
-          config->rank_map = oyRankMapCopy( cmm_api8->rank_map,
-                                            config->oy_->allocateFunc_ );
+          oyConfigPriv_m(config)->rank_map = oyRankMapCopy( cmm_api8->rank_map,
+                                                            config->oy_->allocateFunc_ );
 
         oyConfigs_MoveIn( s, &config, -1 );
       }
@@ -6304,7 +6307,7 @@ OYAPI int  OYEXPORT
     /** 1.1 add "properties" call to module arguments */
     if(error <= 0)
     l_error = oyOptions_SetRegistrationTextKey_( options,
-                                                 device->registration,
+                                                 oyConfigPriv_m(device)->registration,
                                                  "command", "properties" ); OY_ERR
     new_options = 1;
   }
@@ -6334,13 +6337,13 @@ OYAPI int  OYEXPORT
 icProfileClassSignature oyDeviceSigGet(oyConfig_s        * device )
 {
   icProfileClassSignature deviceSignature = 0;
-  if(oyFilterRegistrationMatch( device->registration, "monitor", 0 ))
+  if(oyFilterRegistrationMatch( oyConfigPriv_m(device)->registration, "monitor", 0 ))
     deviceSignature = icSigDisplayClass;
-  else if(oyFilterRegistrationMatch( device->registration, "scanner", 0 ))
+  else if(oyFilterRegistrationMatch( oyConfigPriv_m(device)->registration, "scanner", 0 ))
     deviceSignature = icSigInputClass;
-  else if(oyFilterRegistrationMatch( device->registration, "raw-image", 0 ))
+  else if(oyFilterRegistrationMatch( oyConfigPriv_m(device)->registration, "raw-image", 0 ))
     deviceSignature = icSigInputClass;
-  else if(oyFilterRegistrationMatch( device->registration, "printer", 0 ))
+  else if(oyFilterRegistrationMatch( oyConfigPriv_m(device)->registration, "printer", 0 ))
     deviceSignature = icSigOutputClass;
 
   return deviceSignature;
@@ -6429,7 +6432,7 @@ OYAPI int  OYEXPORT
     {
       oyOptions_s * fallback = oyOptions_New( 0 );
       error = oyOptions_SetRegistrationTextKey_( fallback,
-                                                 device->registration,
+                                                 oyConfigPriv_m(device)->registration,
                                                  "icc_profile.fallback","true");
       /* 2.2.1 try fallback for rescue */
       error = oyDeviceAskProfile2( device, fallback, &p );
@@ -6521,7 +6524,7 @@ OYAPI int  OYEXPORT
       }
 
       if(has)
-        oyOptions_Set( device->data, o, -1, 0 );
+        oyOptions_Set( oyConfigPriv_m(device)->data, o, -1, 0 );
       oyOption_Release( &o );
       oyProfile_Release( &p );
     }
@@ -6529,7 +6532,7 @@ OYAPI int  OYEXPORT
     if(profile_name_temp)
       oyRemoveFile_( profile_name_temp );
     profile_name_temp = 0;
-    oyOptions_Release( &options );
+    oyOptions_Release( options );
     if(profile_name)
       oyFree_m_( profile_name );
   }
@@ -6576,7 +6579,7 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
                                    device_name, OY_CREATE_NEW );
 
     /** 2.2 send the query to a module */
-    error = oyConfigs_FromDomain( device->registration, options, 0, 0 );
+    error = oyConfigs_FromDomain( oyConfigPriv_m(device)->registration, options, 0, 0 );
 
     oyOptions_Release( &options );
     /* 3.1 send the query to a module */
@@ -6691,7 +6694,7 @@ OYAPI int  OYEXPORT
 
   if(type == oyNAME_NICK)
   {
-    tmp = oyOptions_FindString( device->backend_core,"device_name", 0 );
+    tmp = oyOptions_FindString( oyConfigPriv_m(device)->backend_core,"device_name", 0 );
     *info_text = oyStringCopy_( tmp, allocateFunc );
     return error;
   }
@@ -6699,7 +6702,7 @@ OYAPI int  OYEXPORT
   if(type == oyNAME_DESCRIPTION)
   {
     /* get expensive infos */
-    if(oyOptions_Count( device->backend_core ) < 2)
+    if(oyOptions_Count( oyConfigPriv_m(device)->backend_core ) < 2)
     {
       error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
@@ -6710,10 +6713,10 @@ OYAPI int  OYEXPORT
 
     if(error <= 0)
     {
-      n = oyOptions_Count( device->backend_core );
+      n = oyOptions_Count( oyConfigPriv_m(device)->backend_core );
       for( i = 0; i < n; ++i )
       {
-        o = oyOptions_Get( device->backend_core, i );
+        o = oyOptions_Get( oyConfigPriv_m(device)->backend_core, i );
         
         STRING_ADD( text, oyStrrchr_( oyOption_GetRegistration(o),
                           OY_SLASH_C ) + 1 );
@@ -6749,7 +6752,7 @@ OYAPI int  OYEXPORT
   {
     /* add "list" call to module arguments */
     error = oyOptions_SetRegistrationTextKey_( options,
-                                               device->registration,
+                                               oyConfigPriv_m(device)->registration,
                                                "command", "list" );
   }
 
@@ -6757,7 +6760,7 @@ OYAPI int  OYEXPORT
   {
     if(type == oyNAME_NAME)
     error = oyOptions_SetRegistrationTextKey_( options,
-                                               device->registration,
+                                               oyConfigPriv_m(device)->registration,
                                                "oyNAME_NAME", "true" );
   }
 
@@ -6766,15 +6769,15 @@ OYAPI int  OYEXPORT
   if(error <= 0)
     error = oyDeviceBackendCall( device, options );
 
-  if(error <= 0 && device->backend_core)
+  if(error <= 0 && oyConfigPriv_m(device)->backend_core)
   {
     /** 1.2.1 add device_name to the string list */
     if(type == oyNAME_NICK)
-      tmp = oyOptions_FindString( device->backend_core,"device_name",0);
+      tmp = oyOptions_FindString( oyConfigPriv_m(device)->backend_core,"device_name",0);
     else if(type == oyNAME_NAME)
-      tmp = oyOptions_FindString( device->data, "oyNAME_NAME", 0 );
+      tmp = oyOptions_FindString( oyConfigPriv_m(device)->data, "oyNAME_NAME", 0 );
     else if(type == oyNAME_DESCRIPTION)
-      tmp = oyOptions_FindString( device->data, "oyNAME_DESCRIPTION", 0 );
+      tmp = oyOptions_FindString( oyConfigPriv_m(device)->data, "oyNAME_DESCRIPTION", 0 );
   }
 
   *info_text = oyStringCopy_( tmp, allocateFunc );
@@ -6887,14 +6890,14 @@ OYAPI int  OYEXPORT
   {
     /* add "list" call to module arguments */
     error = oyOptions_SetRegistrationTextKey_( options,
-                                               device->registration,
+                                               oyConfigPriv_m(device)->registration,
                                                "command", "list" );
   }
 
   if(error <= 0)
   {
     error = oyOptions_SetRegistrationTextKey_( options,
-                                                 device->registration,
+                                                 oyConfigPriv_m(device)->registration,
                                                  "icc_profile", "true" );
   }
 
@@ -6987,7 +6990,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
 
 
   /** 1. obtain detailed and expensive device informations */
-  if(oyOptions_Count( device->backend_core ) < 2)
+  if(oyOptions_Count( oyConfigPriv_m(device)->backend_core ) < 2)
   { 
     /** 1.1 add "properties" call to module arguments */
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
@@ -7001,7 +7004,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   }
 
   if(error <= 0)
-    error = !oyOptions_Count( device->backend_core );
+    error = !oyOptions_Count( oyConfigPriv_m(device)->backend_core );
 
   if(error <= 0)
   {
@@ -7032,7 +7035,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   if(error <= 0)
   {
     /** 4.1 get stored DB's configurations */
-    error = oyConfigs_FromDB( device->registration, &configs, 0 );
+    error = oyConfigs_FromDB( oyConfigPriv_m(device)->registration, &configs, 0 );
 
     n = oyConfigs_Count( configs );
     for( i = 0; i < n; ++i )
@@ -7041,10 +7044,10 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
 
       equal = 0;
 
-      j_n = oyOptions_Count( device->backend_core );
+      j_n = oyOptions_Count( oyConfigPriv_m(device)->backend_core );
       for(j = 0; j < j_n; ++j)
       {
-        od = oyOptions_Get( device->backend_core, j );
+        od = oyOptions_Get( oyConfigPriv_m(device)->backend_core, j );
         d_opt = oyFilterRegistrationToText( oyOption_GetRegistration(od),
                                             oyFILTER_REG_MAX, 0 );
         d_val = oyConfig_FindString( device, d_opt, 0 );
@@ -7167,7 +7170,7 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
 
     if(!o)
     {
-      o = oyOptions_Get( device->db, 0 );
+      o = oyOptions_Get( oyConfigPriv_m(device)->db, 0 );
       if(o)
         tmp = oyStringCopy_(oyOption_GetRegistration(o), oyAllocateFunc_);
       if(tmp && oyStrrchr_( tmp, OY_SLASH_C))
@@ -7310,7 +7313,7 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
         if(oyStrcmp_(od_key,"profile_name") == 0)
           continue;
 
-        odh = oyOptions_Find( dh->db, od_key );
+        odh = oyOptions_Find( oyConfigPriv_m(dh)->db, od_key );
 
         odh_val = oyOption_GetValueString( odh, 0 );
         if( !odh_val )
