@@ -25,6 +25,11 @@
 #include "oyranos_i18n.h"
 #include "oyranos_string.h"
 
+#ifdef _OPENMP
+#define USE_OPENMP 1
+#include <omp.h>
+#endif
+
 /*
 oyCMMInfo_s   lcm2_cmm_module;
 oyCMMapi4_s     lcm2_api4_cmm;
@@ -2002,8 +2007,20 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
           * array_out_tmp_flt;
     double * array_in_tmp_dbl,
            * array_out_tmp_dbl;
+    int threads_n = 
+#if defined(_OPENMP) && defined(USE_OPENMP)
+                    omp_get_max_threads();
+#else
+                    1;
+#endif
     int w =(int)(array_out->width+0.5);
+    int stride_in = w * bps_in;
+
     n = w / channels;
+
+    message( oyMSG_DBG,(oyStruct_s*)requestor_plug, OY_DBG_FORMAT_
+             " threads_n: %d",
+             OY_DBG_ARGS_, threads_n );
 
     if(!(data_type_in == oyUINT8 ||
          data_type_in == oyUINT16 ||
@@ -2018,7 +2035,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
        (data_type_in == oyFLOAT ||
         data_type_in == oyDOUBLE))
     {
-      array_in_tmp = oyAllocateFunc_( (int)(array_out->width+0.5) * bps_in );
+      array_in_tmp = oyAllocateFunc_( stride_in * threads_n );
       if(data_type_in == oyFLOAT)
         array_in_tmp_flt = (float*) array_in_tmp;
       else if(data_type_in == oyDOUBLE)
@@ -2037,27 +2054,39 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
             __FILE__,__LINE__, array_out->height);*/
     if(!error)
     {
-      double xyz_factor = 1.0 + 32767.0/32768.0;
-      int use_xyz_scale = 1;
-      if(array_out->height > 20)
+      const double xyz_factor = 1.0 + 32767.0/32768.0;
+      const int use_xyz_scale = 1;
+      int index = 0;
+      if(array_out->height > threads_n * 10)
       {
-#pragma omp parallel for
+#if defined(USE_OPENMP)
+#pragma omp parallel for private(index,j,array_in_tmp_flt,array_in_tmp_dbl,array_out_tmp_flt,array_out_tmp_dbl)
+#endif
         for( k = 0; k < array_out->height; ++k)
         {
           if(array_in_tmp && use_xyz_scale)
           {
-            memcpy( array_in_tmp, array_in->array2d[k], w * bps_in );
+#if defined(_OPENMP) && defined(USE_OPENMP)
+            index = omp_get_thread_num();
+#endif
+            memcpy( &array_in_tmp[stride_in*index], array_in->array2d[k], w * bps_in );
             if(data_type_in == oyFLOAT)
-            for(j = 0; j < w; ++j)
             {
-              array_in_tmp_flt[j] /= xyz_factor;
-            }
+              array_in_tmp_flt = (float*) &array_in_tmp[stride_in*index];
+              for(j = 0; j < w; ++j)
+              {
+                array_in_tmp_flt[j] /= xyz_factor;
+              }
+            } else
             if(data_type_in == oyDOUBLE)
-            for(j = 0; j < w; ++j)
             {
-              array_in_tmp_dbl[j] /= xyz_factor;
+              array_in_tmp_dbl = (double*) &array_in_tmp[stride_in*index];
+              for(j = 0; j < w; ++j)
+              {
+                array_in_tmp_dbl[j] /= xyz_factor;
+              }
             }
-            cmsDoTransform( ltw->lcm2, array_in_tmp,
+            cmsDoTransform( ltw->lcm2, &array_in_tmp[stride_in*index],
                                        array_out->array2d[k], n );
           } else
             cmsDoTransform( ltw->lcm2, array_in->array2d[k],
