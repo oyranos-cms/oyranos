@@ -275,6 +275,20 @@ OYAPI int  OYEXPORT
   return error;
 }
 
+icProfileClassSignature oyDeviceSigGet(oyConfig_s        * device )
+{
+  icProfileClassSignature deviceSignature = 0;
+  if(oyFilterRegistrationMatch( oyConfigPriv_m(device)->registration, "monitor", 0 ))
+    deviceSignature = icSigDisplayClass;
+  else if(oyFilterRegistrationMatch( oyConfigPriv_m(device)->registration, "scanner", 0 ))
+    deviceSignature = icSigInputClass;
+  else if(oyFilterRegistrationMatch( oyConfigPriv_m(device)->registration, "raw-image", 0 ))
+    deviceSignature = icSigInputClass;
+  else if(oyFilterRegistrationMatch( oyConfigPriv_m(device)->registration, "printer", 0 ))
+    deviceSignature = icSigOutputClass;
+
+  return deviceSignature;
+}
 
 /** Function oyDeviceSetup
  *  @brief   activate the device using the stored configuration
