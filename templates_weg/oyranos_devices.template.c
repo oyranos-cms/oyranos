@@ -310,6 +310,7 @@ OYAPI int  OYEXPORT
        * profile_name_temp = 0;
   const char * device_name = 0;
   oyConfig_s * s = device;
+  oyOption_s * o;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
@@ -326,14 +327,55 @@ OYAPI int  OYEXPORT
     /* 2. query the full device information */
     error = oyDeviceProfileFromDB( device, &profile_name, 0 );
 
-    /* 2.1 for no profile name: skip the "setup" call */
+    /* 2.1 select best match to device from installed profiles */
+    if(!profile_name)
+    {
+      int size;
+      oyProfile_s * profile = 0;
+      oyProfiles_s * patterns = 0, * iccs = 0;
+      icProfileClassSignature device_signature = oyDeviceSigGet(device);
+      int32_t * rank_list = 0;
+      double clck;
+
+      profile = oyProfile_FromSignature( device_signature, oySIGNATURE_CLASS, 0 );
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      clck = oyClock();
+      iccs = oyProfiles_Create( patterns, 0 );
+      clck = oyClock() - clck;
+      DBG_NUM1_S("oyProfiles_Create(): %g", clck/1000000.0 );
+      oyProfiles_Release( &patterns );
+
+      size = oyProfiles_Count(iccs);
+      oyAllocHelper_m_( rank_list, int32_t, oyProfiles_Count(iccs), 0, error = 1; return error );
+      if(error <= 0)
+      {
+        clck = oyClock();
+        oyProfiles_DeviceRank( iccs, device, rank_list );
+        clck = oyClock() - clck;
+        DBG_NUM1_S("oyProfiles_DeviceRank(): %g", clck/1000000.0 );
+      }
+      if(error <= 0 && size && rank_list[0] > 0)
+      {
+        p = oyProfiles_Get( iccs, 0 );
+        profile_name = oyStringCopy_( oyProfile_GetFileName(p, -1),
+                                      oyAllocateFunc_ );
+        WARNc1_S( "implicitely selected %s", oyNoEmptyString_m_(profile_name) );
+        oyFree_m_( rank_list );
+      }
+
+      oyProfile_Release( &p );
+      oyProfiles_Release( &iccs );
+    }
+
+
     if(!profile_name)
     {
       oyOptions_s * fallback = oyOptions_New( 0 );
       error = oyOptions_SetRegistrationTextKey_( oyOptionsPriv_m(fallback),
                                                  oyConfigPriv_m(device)->registration,
                                                  "icc_profile.fallback","true");
-      /* 2.1.1 try fallback for rescue */
+      /* 2.2.1 try fallback for rescue */
       error = oyDeviceAskProfile2( device, fallback, &p );
       oyOptions_Release( &fallback );
       if(p)
@@ -346,10 +388,26 @@ OYAPI int  OYEXPORT
           size_t size = 0;
           data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
           if(data && size)
-            error = oyWriteMemToFile2_( "oyranos_tmp.icc", data, size,
+          {
+            char * fn = 0;
+            const char * t = 0;
+            STRING_ADD( fn, OY_USERCOLORDATA OY_SLASH OY_ICCDIRNAME OY_SLASH );
+            STRING_ADD( fn, "devices" OY_SLASH );
+            STRING_ADD( fn, oyICCDeviceClassDescription(
+                             oyProfile_GetSignature( p, oySIGNATURE_CLASS ) ) );
+            STRING_ADD( fn, OY_SLASH );
+            if((t = oyProfile_GetText( p, oyNAME_DESCRIPTION )) != 0)
+              STRING_ADD( fn, t );
+            STRING_ADD( fn, ".icc" );
+
+            error = oyWriteMemToFile_ ( fn, data, size );
+            if(!error)
+              profile_name = fn;
+            else
+              error = oyWriteMemToFile2_( "oyranos_tmp.icc", data, size,
                                         OY_FILE_NAME_SEARCH | OY_FILE_TEMP_DIR,
                                         &profile_name_temp, oyAllocateFunc_ );
-          else
+          } else
           {
             error = 1;
             WARNc1_S( "%s",_("Could not open profile") );
@@ -357,7 +415,7 @@ OYAPI int  OYEXPORT
 
           if(profile_name_temp)
             profile_name = profile_name_temp;
-          else
+          else if( !profile_name )
           {
             error = 1;
             WARNc2_S("%s: \"%s\"(oyranos_tmp.icc)",_("Could not write to file"),
@@ -370,7 +428,7 @@ OYAPI int  OYEXPORT
         return error;
     }
 
-    /* 2.2 get device_name */
+    /* 2.3 get device_name */
     device_name = oyConfig_FindString( device, "device_name", 0);
 
     /* 3. setup the device through the module */
@@ -382,6 +440,35 @@ OYAPI int  OYEXPORT
                                    profile_name, OY_CREATE_NEW );
     /* 3.1 send the query to a module */
     error = oyDeviceBackendCall( device, options );
+
+    /* 3.2 check if the module has used that profile and complete do that if needed */
+    if(!oyConfig_Has( device, "icc_profile" ))
+    {
+      int has = 0;
+#define OY_DOMAIN OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD
+      o = oyOption_FromRegistration( OY_DOMAIN OY_SLASH "icc_profile", 0 );
+
+      p = oyProfile_FromFile( profile_name, 0,0 );
+
+      if(p)
+      {
+        has = 1;
+        error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
+      }
+      else
+      /** Warn on not found profile. */
+      {
+        oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)device,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s\n", OY_DBG_ARGS_,
+                _("Could not open ICC profile"), profile_name,
+                _("install in the OpenIccDirectory icc path") );
+      }
+
+      if(has)
+        oyOptions_Set( oyConfigPriv_m(device)->data, o, -1, 0 );
+      oyOption_Release( &o );
+      oyProfile_Release( &p );
+    }
 
     if(profile_name_temp)
       oyRemoveFile_( profile_name_temp );
