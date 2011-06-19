@@ -534,7 +534,6 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
   return error;
 }
 
-
 /** Function oyDeviceGetInfo
  *  @brief   get all devices matching to a device class and type
  *
@@ -593,7 +592,7 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
  *                                     even lines contain the property key name,
  *                                     odd lines contain the value,
  *                                     lines are separated by newline '\\n'
- *  @param[in]     flags               reserved
+ *  @param[in]     options             defaults to command=properties
  *  @param[out]    info_text           the text
  *  @param[in]     allocateFunc        the user allocator for info_text
  *  @return                            0 - good, 1 >= error, -1 <= issue(s)
@@ -612,9 +611,10 @@ OYAPI int  OYEXPORT
   int error = !device || !info_text;
   oyConfig_s_ * device_ = (oyConfig_s_*)device;
   oyOption_s * o = 0;
+  oyConfig_s * config = 0;
   const char * tmp = 0;
   static char * num = 0;
-  char * text = 0;
+  char * text = 0, * t = 0;
   int i, n,
       own_options = 0;
   oyConfig_s * s = device;
@@ -659,9 +659,15 @@ OYAPI int  OYEXPORT
       {
         o = oyOptions_Get( device_->backend_core, i );
         
-        STRING_ADD( text, oyStrrchr_( oyOptionPriv_m(o)->registration, OY_SLASH_C ) + 1 );
+        STRING_ADD( text, oyStrrchr_( oyOption_GetRegistration(o),
+                          OY_SLASH_C ) + 1 );
         STRING_ADD( text, ":\n" );
-        STRING_ADD( text, oyOptionPriv_m(o)->value->string );
+        t = oyOption_GetValueText(o,oyAllocateFunc_);
+        if(t)
+        {
+          STRING_ADD( text, t );
+          oyDeAllocateFunc_(t); t = 0;
+        }
         STRING_ADD( text, "\n" );
 
         oyOption_Release( &o );
@@ -719,6 +725,7 @@ OYAPI int  OYEXPORT
 
   if(own_options)
     oyOptions_Release( &options );
+  oyConfig_Release( &config );
 
   return error;
 }
