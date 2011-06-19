@@ -15,5 +15,6 @@ cat $AWK | sed "s/__FUNC__/$FUNC/" > $AWKTMP
 cat $FILE1 | awk -f $AWKTMP > $FILE1F
 cat $FILE2 | awk -f $AWKTMP > $FILE2F
 
-diff $FILE1F $FILE2F
+#diff $FILE1F $FILE2F
+vimdiff $FILE1F $FILE2F
 echo vimdiff $FILE1F $FILE2F
