@@ -6107,60 +6107,6 @@ icProfileClassSignature oyDeviceSigGet(oyConfig_s        * device )
   return deviceSignature;
 }
 
-/** Function oyDeviceUnset
- *  @brief   unset the device profile
- *
- *  The function solely calls \a unset in the module, e.g. unset graphic card
- *  luts and server stored profile. So pretty all device/server side 
- *  informatin should go away. \n
- *
- *  @param         device          the device
- *  @return                            error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/02/12 (Oyranos: 0.1.10)
- *  @date    2009/02/12
- */
-int      oyDeviceUnset               ( oyConfig_s        * device )
-{
-  int error = !device;
-  oyOptions_s * options = 0;
-  char * profile_name = 0;
-  const char * device_name = 0;
-  oyConfig_s * s = device;
-
-  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
-
-  {
-    /* 1. query the full device information */
-    error = oyDeviceProfileFromDB( device, &profile_name, 0 );
-
-    /* 1.1 get device_name */
-    device_name = oyConfig_FindString( device, "device_name", 0);
-
-    /* 2. unset the device through the module */
-    /** 2.1 set a general request */
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
-                                   "unset", OY_CREATE_NEW );
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
-                                   device_name, OY_CREATE_NEW );
-
-    /** 2.2 send the query to a module */
-    error = oyConfigs_FromDomain( oyConfigPriv_m(device)->registration, options, 0, 0 );
-
-    oyOptions_Release( &options );
-    /* 3.1 send the query to a module */
-    error = oyDeviceBackendCall( device, options );
-
-    oyOptions_Release( &options );
-    if(profile_name)
-      oyFree_m_( profile_name );
-  }
-
-  return error;
-}
-
-
 /** Function oyDeviceGetInfo
  *  @brief   get all devices matching to a device class and type
  *
