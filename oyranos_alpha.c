@@ -5403,51 +5403,6 @@ const char **oyConfDomain_GetTexts_  ( oyConfDomain_s_   * obj )
  *  @{
  */
 
-
-/** @internal
- *  Function oyDeviceRegistrationCreate_
- *  @brief   combine a device registration
- *
- *  @param[in]     device_type         the device type ::oyFILTER_REG_TYPE,
- *                                     defaults to OY_TYPE_STD (optional)
- *  @param[in]     device_class        the device class, e.g. "monitor",
- *                                     ::oyFILTER_REG_APPLICATION
- *  @param[in]     key                 key_name to add at ::oyFILTER_REG_OPTION
- *  @param[in]     old_text            string to reuse
- *  @return                            the new registration
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/30 (Oyranos: 0.1.10)
- *  @date    2009/01/30
- */
-char * oyDeviceRegistrationCreate_   ( const char        * device_type,
-                                       const char        * device_class,
-                                       const char        * key,
-                                       char              * old_text )
-{
-  char * text = old_text;
-  const char * device_type_ = device_type;
-
-  if(!device_type_)
-    device_type_ = OY_TYPE_STD;
-
-  STRING_ADD( text, "//" );
-  STRING_ADD( text, device_type_ );
-  STRING_ADD( text, "/config" );
-  if(device_class)
-  {
-    STRING_ADD( text, "." );
-    STRING_ADD( text, device_class );
-  }
-  if(key)
-  {
-    STRING_ADD( text, "/" );
-    STRING_ADD( text, key );
-  }
-
-  return text;
-}
-
 /** Function oyOption_SetValueFromDB
  *  @memberof oyOption_s
  *  @brief   value filled from DB if available
