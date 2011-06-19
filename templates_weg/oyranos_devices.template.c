@@ -876,7 +876,6 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-
 /** Function oyDeviceSetProfile
  *  @brief   set the device profile
  *
@@ -910,7 +909,8 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   oyOption_s * od = 0;
   oyOptions_s * options = 0;
   oyConfigs_s * configs = 0;
-  oyConfig_s * config = 0;
+  oyConfig_s * config = 0,
+             * device_tmp = 0;
   oyProfile_s * p = 0;
   int i, j, n, j_n, equal;
   char * d_opt = 0;
@@ -956,6 +956,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   if(error)
   {
     WARNc2_S( "%s: \"%s\"", _("Could not open device"), device_name );
+    goto cleanup;
   }
 
   /** 3 load profile from file name argument */
@@ -966,6 +967,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   if(error)
   {
     WARNc2_S( "%s: \"%s\"", _("Could not open profile"), profile_name );
+    goto cleanup;
   }
 
   /** 4. Now remove all those DB configurations fully matching the selected
@@ -986,7 +988,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
       for(j = 0; j < j_n; ++j)
       {
         od = oyOptions_Get( oyConfigPriv_m(device)->backend_core, j );
-        d_opt = oyFilterRegistrationToText( oyOptionPriv_m(od)->registration,
+        d_opt = oyFilterRegistrationToText( oyOption_GetRegistration(od),
                                             oyFILTER_REG_MAX, 0 );
         d_val = oyConfig_FindString( device, d_opt, 0 );
 
@@ -1030,6 +1032,9 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   /** 5.3 reload the DB part */
   if(error <= 0)
     error = oyConfig_GetDB( device, 0 );
+
+  cleanup:
+  oyConfig_Release( &device_tmp );
 
   return error;
 }
