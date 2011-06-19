@@ -1172,12 +1172,12 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
                                        uint32_t            flags,
                                        oyConfigs_s      ** matched_devices )
 {
-  oyOption_s_ * odh = 0,
-              * od = 0;
+  oyOption_s * odh = 0,
+             * od = 0;
   int error  = !pattern || !matched_devices;
-  char * od_key = 0,
-       * od_val = 0,
-       * odh_val = 0;
+  char * od_key = 0;
+  const char * od_val = 0,
+             * odh_val = 0;
   oyConfig_s * s = pattern,
              * dh = 0;
   oyConfigs_s * matched = 0;
@@ -1221,14 +1221,12 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
       for(j = 0; j < j_n; ++j)
       {
         match = 1;
-        od = (oyOption_s_*)oyConfig_Get( pattern, j );
-        od_key = oyFilterRegistrationToText( od->registration,
+        od = oyConfig_Get( pattern, j );
+        od_key = oyFilterRegistrationToText( oyOption_GetRegistration(od),
                                              oyFILTER_REG_MAX, 0);
 
-        if(od->value_type == oyVAL_STRING &&
-           od->value && od->value->string && od->value->string[0])
-          od_val = od->value->string;
-        else
+        od_val = oyOption_GetValueString( od, 0 );
+        if(!od_val)
           /* ignore non text options */
           continue;
 
@@ -1255,12 +1253,10 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
         if(oyStrcmp_(od_key,"profile_name") == 0)
           continue;
 
-        odh = (oyOption_s_*)oyOptions_Find( oyConfigPriv_m(dh)->db, od_key );
+        odh = oyOptions_Find( oyConfigPriv_m(dh)->db, od_key );
 
-        if(odh && odh->value_type == oyVAL_STRING &&
-           odh->value && odh->value->string && odh->value->string[0])
-          odh_val = odh->value->string;
-        else
+        odh_val = oyOption_GetValueString( odh, 0 );
+        if( !odh_val )
           /* ignore non text options */
           match = 0;
 
@@ -1270,9 +1266,9 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
         /*printf("pruefe: %s=%s match = %d flags=%d\n", od_key, od_val, match, flags);*/
 
 
-        oyOption_Release( (oyOption_s**)&od );
+        oyOption_Release( &od );
 
-        oyOption_Release( (oyOption_s**)&odh );
+        oyOption_Release( &odh );
 
         if(match == 0)
           break;
@@ -1294,7 +1290,6 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
 
   return error;
 }
-
 /**
  *  @} *//* devices_handling
  */
