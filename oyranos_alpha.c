@@ -6107,60 +6107,6 @@ icProfileClassSignature oyDeviceSigGet(oyConfig_s        * device )
   return deviceSignature;
 }
 
-/** Function oyDeviceGetProfile
- *  @brief   order a device profile
- *
- *  This function is designed to satisfy most users as it tries to deliver
- *  a profile all the time. 
- *  Following code can almost allways expect some profile to go with.
- *  It tries hard to get a current profile or set the system up and retry or
- *  get at least one basic profile.
- *
- *  For a basic and thus weaker call to the device use
- *  oyDeviceAskProfile2() instead.
- *
- *  @param         device              the device
- *  @param         options             options passed to the backend
- *  @param         profile             the device's ICC profile
- *  @return                            error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/02/08 (Oyranos: 0.1.10)
- *  @date    2009/02/09
- */
-OYAPI int  OYEXPORT
-           oyDeviceGetProfile        ( oyConfig_s        * device,
-                                       oyOptions_s       * options,
-                                       oyProfile_s      ** profile )
-{
-  int error = !device,
-      l_error = 0;
-  oyConfig_s * s = device;
-
-  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
-
-
-  l_error = oyDeviceAskProfile2( device, options, profile ); OY_ERR
-
-  /** This function does a device setup in case no profile is delivered
-   *  by the according module. */
-  if(error != 0 && !*profile)
-    error = oyDeviceSetup( device );
-
-  if(error <= 0) 
-    l_error = oyDeviceAskProfile2( device, options, profile ); OY_ERR
-
-  /** As a last means oyASSUMED_WEB is delivered. */
-  if(!*profile)
-  {
-    *profile = oyProfile_FromStd( oyASSUMED_WEB, 0 );
-    if(error == 0)
-      error = -1;
-  }
-
-  return error;
-}
-
 /** Function oyDeviceAskProfile2
  *  @brief   ask for the device profile
  *
