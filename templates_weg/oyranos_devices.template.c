@@ -310,6 +310,7 @@ OYAPI int  OYEXPORT
        * profile_name_temp = 0;
   const char * device_name = 0;
   oyConfig_s * s = device;
+  oyOption_s * o;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
@@ -326,14 +327,55 @@ OYAPI int  OYEXPORT
     /* 2. query the full device information */
     error = oyDeviceProfileFromDB( device, &profile_name, 0 );
 
-    /* 2.1 for no profile name: skip the "setup" call */
+    /* 2.1 select best match to device from installed profiles */
+    if(!profile_name)
+    {
+      int size;
+      oyProfile_s * profile = 0;
+      oyProfiles_s * patterns = 0, * iccs = 0;
+      icProfileClassSignature device_signature = oyDeviceSigGet(device);
+      int32_t * rank_list = 0;
+      double clck;
+
+      profile = oyProfile_FromSignature( device_signature, oySIGNATURE_CLASS, 0 );
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      clck = oyClock();
+      iccs = oyProfiles_Create( patterns, 0 );
+      clck = oyClock() - clck;
+      DBG_NUM1_S("oyProfiles_Create(): %g", clck/1000000.0 );
+      oyProfiles_Release( &patterns );
+
+      size = oyProfiles_Count(iccs);
+      oyAllocHelper_m_( rank_list, int32_t, oyProfiles_Count(iccs), 0, error = 1; return error );
+      if(error <= 0)
+      {
+        clck = oyClock();
+        oyProfiles_DeviceRank( iccs, device, rank_list );
+        clck = oyClock() - clck;
+        DBG_NUM1_S("oyProfiles_DeviceRank(): %g", clck/1000000.0 );
+      }
+      if(error <= 0 && size && rank_list[0] > 0)
+      {
+        p = oyProfiles_Get( iccs, 0 );
+        profile_name = oyStringCopy_( oyProfile_GetFileName(p, -1),
+                                      oyAllocateFunc_ );
+        WARNc1_S( "implicitely selected %s", oyNoEmptyString_m_(profile_name) );
+        oyFree_m_( rank_list );
+      }
+
+      oyProfile_Release( &p );
+      oyProfiles_Release( &iccs );
+    }
+
+
     if(!profile_name)
     {
       oyOptions_s * fallback = oyOptions_New( 0 );
       error = oyOptions_SetRegistrationTextKey_( oyOptionsPriv_m(fallback),
                                                  oyConfigPriv_m(device)->registration,
                                                  "icc_profile.fallback","true");
-      /* 2.1.1 try fallback for rescue */
+      /* 2.2.1 try fallback for rescue */
       error = oyDeviceAskProfile2( device, fallback, &p );
       oyOptions_Release( &fallback );
       if(p)
@@ -346,10 +388,26 @@ OYAPI int  OYEXPORT
           size_t size = 0;
           data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
           if(data && size)
-            error = oyWriteMemToFile2_( "oyranos_tmp.icc", data, size,
+          {
+            char * fn = 0;
+            const char * t = 0;
+            STRING_ADD( fn, OY_USERCOLORDATA OY_SLASH OY_ICCDIRNAME OY_SLASH );
+            STRING_ADD( fn, "devices" OY_SLASH );
+            STRING_ADD( fn, oyICCDeviceClassDescription(
+                             oyProfile_GetSignature( p, oySIGNATURE_CLASS ) ) );
+            STRING_ADD( fn, OY_SLASH );
+            if((t = oyProfile_GetText( p, oyNAME_DESCRIPTION )) != 0)
+              STRING_ADD( fn, t );
+            STRING_ADD( fn, ".icc" );
+
+            error = oyWriteMemToFile_ ( fn, data, size );
+            if(!error)
+              profile_name = fn;
+            else
+              error = oyWriteMemToFile2_( "oyranos_tmp.icc", data, size,
                                         OY_FILE_NAME_SEARCH | OY_FILE_TEMP_DIR,
                                         &profile_name_temp, oyAllocateFunc_ );
-          else
+          } else
           {
             error = 1;
             WARNc1_S( "%s",_("Could not open profile") );
@@ -357,7 +415,7 @@ OYAPI int  OYEXPORT
 
           if(profile_name_temp)
             profile_name = profile_name_temp;
-          else
+          else if( !profile_name )
           {
             error = 1;
             WARNc2_S("%s: \"%s\"(oyranos_tmp.icc)",_("Could not write to file"),
@@ -370,7 +428,7 @@ OYAPI int  OYEXPORT
         return error;
     }
 
-    /* 2.2 get device_name */
+    /* 2.3 get device_name */
     device_name = oyConfig_FindString( device, "device_name", 0);
 
     /* 3. setup the device through the module */
@@ -382,6 +440,35 @@ OYAPI int  OYEXPORT
                                    profile_name, OY_CREATE_NEW );
     /* 3.1 send the query to a module */
     error = oyDeviceBackendCall( device, options );
+
+    /* 3.2 check if the module has used that profile and complete do that if needed */
+    if(!oyConfig_Has( device, "icc_profile" ))
+    {
+      int has = 0;
+#define OY_DOMAIN OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD
+      o = oyOption_FromRegistration( OY_DOMAIN OY_SLASH "icc_profile", 0 );
+
+      p = oyProfile_FromFile( profile_name, 0,0 );
+
+      if(p)
+      {
+        has = 1;
+        error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
+      }
+      else
+      /** Warn on not found profile. */
+      {
+        oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)device,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s\n", OY_DBG_ARGS_,
+                _("Could not open ICC profile"), profile_name,
+                _("install in the OpenIccDirectory icc path") );
+      }
+
+      if(has)
+        oyOptions_Set( oyConfigPriv_m(device)->data, o, -1, 0 );
+      oyOption_Release( &o );
+      oyProfile_Release( &p );
+    }
 
     if(profile_name_temp)
       oyRemoveFile_( profile_name_temp );
@@ -447,7 +534,6 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
   return error;
 }
 
-
 /** Function oyDeviceGetInfo
  *  @brief   get all devices matching to a device class and type
  *
@@ -506,7 +592,7 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
  *                                     even lines contain the property key name,
  *                                     odd lines contain the value,
  *                                     lines are separated by newline '\\n'
- *  @param[in]     flags               reserved
+ *  @param[in]     options             defaults to command=properties
  *  @param[out]    info_text           the text
  *  @param[in]     allocateFunc        the user allocator for info_text
  *  @return                            0 - good, 1 >= error, -1 <= issue(s)
@@ -525,9 +611,10 @@ OYAPI int  OYEXPORT
   int error = !device || !info_text;
   oyConfig_s_ * device_ = (oyConfig_s_*)device;
   oyOption_s * o = 0;
+  oyConfig_s * config = 0;
   const char * tmp = 0;
   static char * num = 0;
-  char * text = 0;
+  char * text = 0, * t = 0;
   int i, n,
       own_options = 0;
   oyConfig_s * s = device;
@@ -572,9 +659,15 @@ OYAPI int  OYEXPORT
       {
         o = oyOptions_Get( device_->backend_core, i );
         
-        STRING_ADD( text, oyStrrchr_( oyOptionPriv_m(o)->registration, OY_SLASH_C ) + 1 );
+        STRING_ADD( text, oyStrrchr_( oyOption_GetRegistration(o),
+                          OY_SLASH_C ) + 1 );
         STRING_ADD( text, ":\n" );
-        STRING_ADD( text, oyOptionPriv_m(o)->value->string );
+        t = oyOption_GetValueText(o,oyAllocateFunc_);
+        if(t)
+        {
+          STRING_ADD( text, t );
+          oyDeAllocateFunc_(t); t = 0;
+        }
         STRING_ADD( text, "\n" );
 
         oyOption_Release( &o );
@@ -632,6 +725,7 @@ OYAPI int  OYEXPORT
 
   if(own_options)
     oyOptions_Release( &options );
+  oyConfig_Release( &config );
 
   return error;
 }
@@ -782,7 +876,6 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-
 /** Function oyDeviceSetProfile
  *  @brief   set the device profile
  *
@@ -816,7 +909,8 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   oyOption_s * od = 0;
   oyOptions_s * options = 0;
   oyConfigs_s * configs = 0;
-  oyConfig_s * config = 0;
+  oyConfig_s * config = 0,
+             * device_tmp = 0;
   oyProfile_s * p = 0;
   int i, j, n, j_n, equal;
   char * d_opt = 0;
@@ -862,6 +956,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   if(error)
   {
     WARNc2_S( "%s: \"%s\"", _("Could not open device"), device_name );
+    goto cleanup;
   }
 
   /** 3 load profile from file name argument */
@@ -872,6 +967,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   if(error)
   {
     WARNc2_S( "%s: \"%s\"", _("Could not open profile"), profile_name );
+    goto cleanup;
   }
 
   /** 4. Now remove all those DB configurations fully matching the selected
@@ -892,7 +988,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
       for(j = 0; j < j_n; ++j)
       {
         od = oyOptions_Get( oyConfigPriv_m(device)->backend_core, j );
-        d_opt = oyFilterRegistrationToText( oyOptionPriv_m(od)->registration,
+        d_opt = oyFilterRegistrationToText( oyOption_GetRegistration(od),
                                             oyFILTER_REG_MAX, 0 );
         d_val = oyConfig_FindString( device, d_opt, 0 );
 
@@ -937,6 +1033,9 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   if(error <= 0)
     error = oyConfig_GetDB( device, 0 );
 
+  cleanup:
+  oyConfig_Release( &device_tmp );
+
   return error;
 }
 
@@ -961,7 +1060,7 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
                                        char             ** profile_name,
                                        oyAlloc_f           allocateFunc )
 {
-  oyOption_s_ * o = 0;
+  oyOption_s * o = 0;
   oyOptions_s * options = 0;
   int error = !device || !profile_name;
   const char * device_name = 0;
@@ -976,7 +1075,7 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
 
   if(error <= 0)
   {
-    o = (oyOption_s_*)oyConfig_Find( device, "profile_name" );
+    o = oyConfig_Find( device, "profile_name" );
     device_name = oyConfig_FindString( device, "device_name", 0);
 
     /* 1. obtain detailed and expensive device informations */
@@ -998,22 +1097,22 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
       oyOptions_Release( &options );
 
       /* renew outdated string */
-      o = (oyOption_s_*)oyConfig_Find( device, "profile_name" );
+      o = oyConfig_Find( device, "profile_name" );
       device_name = oyConfig_FindString( device, "device_name", 0);
-      oyOption_Release( (oyOption_s**)&o );
+      oyOption_Release( &o );
     }
 
     if(!o)
     {
       error = oyConfig_GetDB( device, &rank_value );
-      o = (oyOption_s_*)oyConfig_Find( device, "profile_name" );
+      o = oyConfig_Find( device, "profile_name" );
     }
 
     if(!o)
     {
-      o = (oyOption_s_*)oyOptions_Get( oyConfigPriv_m(device)->db, 0 );
+      o = oyOptions_Get( oyConfigPriv_m(device)->db, 0 );
       if(o)
-        tmp = oyStringCopy_(o->registration, oyAllocateFunc_);
+        tmp = oyStringCopy_(oyOption_GetRegistration(o), oyAllocateFunc_);
       if(tmp && oyStrrchr_( tmp, OY_SLASH_C))
       {
         tmp2 = oyStrrchr_( tmp, OY_SLASH_C);
@@ -1025,16 +1124,15 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
                 (int)rank_value )
       if(tmp)
         oyFree_m_(tmp); tmp2 = 0;
-      oyOption_Release( (oyOption_s**)&o );
+      oyOption_Release( &o );
       error = -1;
-    } else if(o->value_type != oyVAL_STRING ||
-            !(o->value && o->value->string && o->value->string[0]) )
+    } else if(!oyOption_GetValueString(o,0))
     {
       WARNc1_S( "Could not get \"profile_name\" data from %s", 
                 oyNoEmptyString_m_(device_name) )
       error = -1;
     } else
-      *profile_name = oyStringCopy_( o->value->string, allocateFunc );
+      *profile_name = oyOption_GetValueText( o, allocateFunc );
 
   } else
     WARNc_S( "missed argument(s)" );
@@ -1074,12 +1172,12 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
                                        uint32_t            flags,
                                        oyConfigs_s      ** matched_devices )
 {
-  oyOption_s_ * odh = 0,
-              * od = 0;
+  oyOption_s * odh = 0,
+             * od = 0;
   int error  = !pattern || !matched_devices;
-  char * od_key = 0,
-       * od_val = 0,
-       * odh_val = 0;
+  char * od_key = 0;
+  const char * od_val = 0,
+             * odh_val = 0;
   oyConfig_s * s = pattern,
              * dh = 0;
   oyConfigs_s * matched = 0;
@@ -1123,14 +1221,12 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
       for(j = 0; j < j_n; ++j)
       {
         match = 1;
-        od = (oyOption_s_*)oyConfig_Get( pattern, j );
-        od_key = oyFilterRegistrationToText( od->registration,
+        od = oyConfig_Get( pattern, j );
+        od_key = oyFilterRegistrationToText( oyOption_GetRegistration(od),
                                              oyFILTER_REG_MAX, 0);
 
-        if(od->value_type == oyVAL_STRING &&
-           od->value && od->value->string && od->value->string[0])
-          od_val = od->value->string;
-        else
+        od_val = oyOption_GetValueString( od, 0 );
+        if(!od_val)
           /* ignore non text options */
           continue;
 
@@ -1157,12 +1253,10 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
         if(oyStrcmp_(od_key,"profile_name") == 0)
           continue;
 
-        odh = (oyOption_s_*)oyOptions_Find( oyConfigPriv_m(dh)->db, od_key );
+        odh = oyOptions_Find( oyConfigPriv_m(dh)->db, od_key );
 
-        if(odh && odh->value_type == oyVAL_STRING &&
-           odh->value && odh->value->string && odh->value->string[0])
-          odh_val = odh->value->string;
-        else
+        odh_val = oyOption_GetValueString( odh, 0 );
+        if( !odh_val )
           /* ignore non text options */
           match = 0;
 
@@ -1172,9 +1266,9 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
         /*printf("pruefe: %s=%s match = %d flags=%d\n", od_key, od_val, match, flags);*/
 
 
-        oyOption_Release( (oyOption_s**)&od );
+        oyOption_Release( &od );
 
-        oyOption_Release( (oyOption_s**)&odh );
+        oyOption_Release( &odh );
 
         if(match == 0)
           break;
@@ -1196,7 +1290,6 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
 
   return error;
 }
-
 /**
  *  @} *//* devices_handling
  */
