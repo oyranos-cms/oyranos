@@ -1,5 +1,20 @@
 #!/bin/bash
 
+function usage() {
+  echo "Usage: $0 [-f|-h]"
+  echo
+  echo -e "-f\tPrint full outpout (slow)"
+  echo -e "-h\tShow this help message"
+
+  exit 0
+}
+
+case $1 in
+  -f) FULL=1 ;;
+  -h) usage ;;
+  *)  FULL=0 ;;
+esac
+
 function grp_color() {
   case $1 in
     cmm_handling)       COLOR=1 ;;
@@ -51,7 +66,7 @@ function publicAPI() {
   tput sgr0
 }
 
-function print_list() {
+function print_full_list() {
   for d in sources/*dox sources_weg/*dox; do
     GROUP=$(grep '@ingroup' $d | awk '{print $3}')
     CLASS=$(basename $d .dox)
@@ -73,4 +88,23 @@ function print_list() {
   done
 }
 
-print_list | sort
+function print_list() {
+  for d in sources/*dox sources_weg/*dox; do
+    GROUP=$(grep '@ingroup' $d | awk '{print $3}')
+    CLASS=$(basename $d .dox)
+    test $CLASS = "Class" && continue
+    grp_color $GROUP
+    tput setaf $COLOR
+    echo -n $GROUP
+    tput sgr0
+    echo ": $CLASS"
+  done
+}
+
+if [ $FULL = 1 ]; then
+  print_full_list | sort
+else
+  print_list | sort
+fi
+
+exit 0
