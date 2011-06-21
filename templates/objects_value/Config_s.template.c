@@ -8,6 +8,7 @@
 {% block LocalIncludeFiles %}
 {{ block.super }}
 #include "oyConfigs_s.h"
+#include "oyOptions_s.h"
 #ifdef UNHIDE_CMM
 #include "oyCMMapiFilters_s.h"
 #endif
