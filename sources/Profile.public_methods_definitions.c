@@ -1535,7 +1535,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
         pass = 0;
         for(j = 0; j < key_prefix_texts_n; ++j)
         {
-          if(len > key_prefix_texts_len[j] &&
+          if(len >= key_prefix_texts_len[j] &&
              memcmp( key_prefix_texts[j], reg, key_prefix_texts_len[j]) == 0)
             pass = 1;
         }
@@ -1576,7 +1576,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
         pass = 0;
         for(j = 0; j < key_prefix_texts_n; ++j)
         {
-          if(len > key_prefix_texts_len[j] &&
+          if(len >= key_prefix_texts_len[j] &&
              memcmp( key_prefix_texts[j], key, key_prefix_texts_len[j]) == 0)
             pass = 1;
         }
