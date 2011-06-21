@@ -5,6 +5,11 @@ function usage() {
   echo
   echo -e "-f\tPrint full outpout (slow)"
   echo -e "-h\tShow this help message"
+  echo
+  echo Legend:
+  echo "[CDC] == Constructor / Destructor / Copy constructor"
+  echo "Green color: git log says it's been imported"
+  echo "Red color: git log unable to find any relative message"
 
   exit 0
 }
