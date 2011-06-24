@@ -53,7 +53,9 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("List included ICC tags:"));
-  fprintf( stderr, "      %s -l \n",        argv[0]);
+  fprintf( stderr, "      %s -l [-d] \n",        argv[0]);
+  fprintf( stderr, "      -p NUMBER  %s\n",       _("select tag"));
+  fprintf( stderr, "      -n NAME  %s\n",       _("select tag"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Print a help text:"));
   fprintf( stderr, "      %s -h\n",        argv[0]);
@@ -62,7 +64,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      %s\n",           _("-v verbose"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s:\n",               _("Example"));
-  fprintf( stderr, "      oyranos-profile -l");
+  fprintf( stderr, "      oyranos-profile -lv -p=1 sRGB.icc");
   fprintf( stderr, "\n");
   fprintf( stderr, "\n");
 
@@ -76,8 +78,10 @@ void  printfHelp (int argc, char** argv)
 int main( int argc , char** argv )
 {
   int error = 0;
-  int list_tags = 0;
-  const char * file_name = 0;
+  int list_tags = 0,
+      tag_pos = -1;
+  const char * file_name = 0,
+             * tag_name = 0;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -98,6 +102,8 @@ int main( int argc , char** argv )
             switch (argv[pos][i])
             {
               case 'l': list_tags = 1; break;
+              case 'n': OY_PARSE_STRING_ARG(tag_name); break;
+              case 'p': OY_PARSE_INT_ARG( tag_pos ); break;
               case 'v': oy_debug += 1; break;
               case 'h':
               default:
@@ -136,14 +142,17 @@ int main( int argc , char** argv )
 
     if(list_tags)
     {
-      fprintf(stderr, "%s \"%s\" %d:\n", _("ICC profile"), file_name, p->size_);
+      fprintf(stderr, "%s \"%s\" %d:\n", _("ICC profile"), file_name,
+              (int)p->size_);
       count = oyProfile_GetTagCount( p );
       for(i = 0; i < count; ++i)
       {
-        icSignature sig_class = 0;
         oyProfileTag_s * tag = oyProfile_GetTagByPos( p, i );
 
-        if(tag)
+        if(tag &&
+           ((tag_name == NULL && (tag_pos == -1 || tag_pos == i)) ||
+            (tag_name != NULL && (strcmp(oyICCTagName(tag->use),tag_name)==0)))
+          )
         {
           int32_t tag_size = 0;
           texts = oyProfileTag_GetText( tag, &texts_n, NULL, NULL,
@@ -151,10 +160,11 @@ int main( int argc , char** argv )
 
           fprintf( stdout, "%s/%s[%d] %d @ %d %s",
                    oyICCTagName(tag->use), oyICCTagTypeName(tag->tag_type_), i,
-                   tag->size_, tag->offset_orig, oyICCTagDescription(tag->use));
+                   (int)tag->size_, (int)tag->offset_orig,
+                   oyICCTagDescription(tag->use));
           if(oy_debug && texts)
           {
-            fprintf( stdout, ":\n", oyICCTagName(tag->use) );
+            fprintf( stdout, ":\n" );
               for(j = 0; j < texts_n; ++j)
                 fprintf( stdout, "%s\n", texts[j] );
           } else
