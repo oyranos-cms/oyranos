@@ -1267,7 +1267,7 @@ OYAPI const char * OYEXPORT
 
 /** Function  oyProfile_DeviceGet
  *  @memberof oyProfile_s
- *  @brief    Obtain device informations from a profile
+ *  @brief    Obtain device information from a profile
  *
  *  @verbatim
     oyConfig_s * device = oyConfig_New( "//" OY_TYPE_STD "/config", object );
@@ -1279,7 +1279,7 @@ OYAPI const char * OYEXPORT
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/05/22 (Oyranos: 0.1.10)
- *  @date    2009/05/23
+ *  @date    2010/10/26
  */
 OYAPI int OYEXPORT
                    oyProfile_DeviceGet ( oyProfile_s     * profile,
@@ -1292,7 +1292,7 @@ OYAPI int OYEXPORT
   char ** texts = 0;
   int32_t texts_n = 0;
   int i,
-      dmnd_found = 0, dmdd_found = 0;
+      dmnd_found = 0, dmdd_found = 0, serial_found = 0;
 
   if(!s)
     return 0;
@@ -1301,18 +1301,40 @@ OYAPI int OYEXPORT
 
   if(!error)
   {
-    tag = oyProfile_GetTagById( s, icSigProfileDetailDescriptionTag_ );
+    tag = oyProfile_GetTagById( s, icSigMetaDataTag );
     texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
     if(texts && texts[0] && texts_n > 0)
+    {
       for(i = 2; i+1 < texts_n && error <= 0; i+=2)
       {
         if(strcmp(texts[i+0],"model") == 0) dmdd_found = 1;
         if(strcmp(texts[i+0],"manufacturer") == 0) dmnd_found = 1;
+        if(strcmp(texts[i+0],"serial") == 0) serial_found = 1;
 
         error = oyOptions_SetRegistrationTextKey_( device_->backend_core,
                                                    device_->registration,
                                                    texts[i+0], texts[i+1] );
       }
+
+      if(!serial_found)
+      {
+        /* search for a key ending on _serial to strip namespaces */
+        for(i = 2; i+1 < texts_n && error <= 0; i+=2)
+        {
+          int key_len = strlen(texts[i+0]),
+              s_len = strlen("serial");
+          if(key_len > s_len &&
+             strcmp(&texts[i+0][key_len-s_len-1],"_serial") == 0)
+          {
+            error = oyOptions_SetRegistrationTextKey_( device->backend_core,
+                                                 device->registration,
+                                                 "serial", texts[i+1] );
+            DBG_NUM1_S("added serial: %s", texts[i+1]);
+            break;
+          }
+        }
+      }
+    }
   }
 
   if(!error)
