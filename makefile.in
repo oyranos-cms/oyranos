@@ -293,6 +293,7 @@ CFILES_GAMMA = \
 
 CFILES_TOOLS = \
 	$(TARGET)_policy.c \
+	$(TARGET)_profile.c \
 	$(TARGET)_profiles.c
 #ifdef FLTK
 CXXFILES_FLTK = \
@@ -446,6 +447,7 @@ COBJECTS = \
 	$(CMM_oPNG_OBJECTS) \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
+	$(TARGET)_profile.o \
 	$(TARGET)_profiles.o \
 	tests/test_oyranos.o test.o test_core.o test_object.o
 #ifdef LRAW_LIBS
@@ -500,6 +502,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(FLTK_OFORMS_OBJECTS) \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
+	$(TARGET)_profile.o \
 	$(TARGET)_profiles.o \
 	test2.o test_core.o test_object.o tests/test_oyranos.o test.o
 
@@ -557,7 +560,7 @@ all:	check_environment config.log.h mkdepend \
 	$(LIBSONAMEFULL) \
 	$(TARGET)-monitor $(X11) \
 	$(LIBS_CMM) \
-	$(TARGET)-policy $(TARGET)-profiles $(FLTK_GUI) \
+	$(TARGET)-policy $(TARGET)-profile $(TARGET)-profiles $(FLTK_GUI) \
 	$(LINGUAS_SRC) \
 	$(LIB_FORMS_FLTK_NAME)
 	echo ... $@ done
@@ -826,6 +829,12 @@ $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) -o $(TARGET)-policy \
 	$(TARGET)_policy.o \
+	$(MODULE_LDLIBS) $(LDLIBS) $(LINK_LIB_PATH)
+
+$(TARGET)-profile:	$(TARGET)_profile.o $(LIBSONAMEFULL)
+	echo Linking $@ ...
+	$(CC) -I./ $(CFLAGS) -o $@ \
+	$< \
 	$(MODULE_LDLIBS) $(LDLIBS) $(LINK_LIB_PATH)
 
 $(TARGET)-profiles:	$(TARGET)_profiles.o $(LIBSONAMEFULL)
