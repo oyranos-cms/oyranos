@@ -25,6 +25,7 @@
 #include "oyranos_alpha.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
+#include "oyranos_helper_macros.h"
 #include "oyranos_internal.h"
 #include "oyranos_config.h"
 #include "oyranos_version.h"
@@ -102,48 +103,6 @@ int main( int argc , char** argv )
     if( (ptr = strchr(ptr, '.')) != 0 )
       ptr[0] = '\000';
 
-/* allow "-opt val" and "-opt=val" syntax */
-#define OY_PARSE_INT_ARG( opt ) \
-                        if( pos + 1 < argc && argv[pos][i+1] == 0 ) \
-                        { opt = atoi( argv[pos+1] ); \
-                          if( opt == 0 && strcmp(argv[pos+1],"0") ) \
-                            wrong_arg = "-" #opt; \
-                          ++pos; \
-                          i = 1000; \
-                        } else if(argv[pos][i+1] == '=') \
-                        { opt = atoi( &argv[pos][i+2] ); \
-                          if( opt == 0 && strcmp(&argv[pos][i+2],"0") ) \
-                            wrong_arg = "-" #opt; \
-                          i = 1000; \
-                        } else wrong_arg = "-" #opt; \
-                        if(oy_debug) printf(#opt "=%d\n",opt)
-#define OY_PARSE_STRING_ARG( opt ) \
-                        if( pos + 1 < argc && argv[pos][i+1] == 0 ) \
-                        { opt = argv[pos+1]; \
-                          if( opt == 0 && strcmp(argv[pos+1],"0") ) \
-                            wrong_arg = "-" #opt; \
-                          ++pos; \
-                          i = 1000; \
-                        } else if(argv[pos][i+1] == '=') \
-                        { opt = &argv[pos][i+2]; \
-                          if( opt == 0 && strcmp(&argv[pos][i+2],"0") ) \
-                            wrong_arg = "-" #opt; \
-                          i = 1000; \
-                        } else wrong_arg = "-" #opt; \
-                        if(oy_debug) printf(#opt "=%s\n",opt)
-#define OY_PARSE_STRING_ARG2( opt, arg ) \
-                        if( pos + 1 < argc && argv[pos][i+strlen(arg)+1] == 0 ) \
-                        { opt = argv[pos+1]; \
-                          ++pos; \
-                          i = 1000; \
-                        } else if(argv[pos][i+strlen(arg)+1] == '=') \
-                        { opt = &argv[pos][i+strlen(arg)+2]; \
-                          i = 1000; \
-                        } else wrong_arg = "-" arg; \
-                        if(oy_debug) printf(arg "=%s\n",opt)
-#define OY_IS_ARG( arg ) \
-                        (strlen(argv[pos])-2 >= strlen(arg) && \
-                         memcmp(&argv[pos][2],arg, strlen(arg)) == 0)
 
   if(argc != 1)
   {
