@@ -1,9 +1,10 @@
 #!/bin/bash
 
 function usage() {
-  echo "Usage: $0 [-h] <function> [branch:]<file1> [branch:]<file2>"
+  echo "Usage: $0 [-h|-s] <function> [branch:]<file1> [branch:]<file2>"
   echo
   echo -e "-h\tShow this help message"
+  echo -e "-s\tShow just the diff output"
   echo
 
   exit 0
@@ -17,15 +18,24 @@ function cleanup() {
 }
 
 case $1 in
-  -h|"") usage ;;
+  -h|"")
+    usage ;;
+  -s)
+    DIFF=1
+    FUNC=$2;
+    IN1=$3;
+    IN2=$4 ;;
+  *)
+    DIFF=0
+    FUNC=$1;
+    IN1=$2;
+    IN2=$3 ;;
 esac
 
+FILE1=${IN1#*:};
+FILE2=${IN2#*:};
 
 AWK=$(dirname $0)/f_compare.awk
-
-FUNC=$1
-FILE1=${2#*:}
-FILE2=${3#*:}
 
 FILE1F="$(basename ${FILE1})-${FUNC}.c"
 FILE2F="$(basename ${FILE2})-${FUNC}.c"
@@ -35,13 +45,13 @@ AWKTMP=/tmp/f_compare-tmp.awk
 BRANCH=$(git branch|grep '*'|cut -f2 -d' ')
 echo "Current branch: $BRANCH"
 
-if echo $2|grep -q : ; then
-  BRANCH1=$(echo $2|cut -f1 -d:)
+if echo $IN1|grep -q : ; then
+  BRANCH1=$(echo $IN1|cut -f1 -d:)
 else
   BRANCH1=$BRANCH
 fi
-if echo $3|grep -q : ; then
-  BRANCH2=$(echo $3|cut -f1 -d:)
+if echo $IN2|grep -q : ; then
+  BRANCH2=$(echo $IN2|cut -f1 -d:)
 else
   BRANCH2=$BRANCH
 fi
@@ -64,9 +74,15 @@ if [ $BRANCH != $BRANCH2 ]; then
   git checkout -q $BRANCH || exit 1
 fi
 
-test $(du $FILE1F | cut -f1) = "0" && cleanup "$FUNC not found in $2"
-test $(du $FILE2F | cut -f1) = "0" && cleanup "$FUNC not found in $3"
+test $(du $FILE1F | cut -f1) = "0" && cleanup "$FUNC not found in $IN1"
+test $(du $FILE2F | cut -f1) = "0" && cleanup "$FUNC not found in $IN2"
 
-#diff $FILE1F $FILE2F
-#vimdiff $FILE1F $FILE2F
+if [ $DIFF = 1 ]; then
+  echo "############## diff: ############## "
+  diff $FILE1F $FILE2F
+  echo "##############       ############## "
+else
+  vimdiff $FILE1F $FILE2F
+fi
+
 echo vimdiff $FILE1F $FILE2F
