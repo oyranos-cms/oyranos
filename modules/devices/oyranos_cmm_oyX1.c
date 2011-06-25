@@ -798,12 +798,12 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
 
               error = oyOptions_SetFromText( &device->backend_core,
                                        OYX1_MONITOR_REGISTRATION OY_SLASH
-                                       "OPENICC_automatic_generated",
+                                       "OYRANOS_automatic_generated",
                                        "1", OY_CREATE_NEW );
 
               /* embed meta tag */
               error = oyOptions_SetFromText( &opts, "///key_prefix_required",
-                                                "EDID_.OPENICC_",
+                                                "EDID_.OYRANOS_",
                                                 OY_CREATE_NEW );
               oyProfile_DeviceAdd( prof, device, opts );
               oyOptions_Release( &opts);
