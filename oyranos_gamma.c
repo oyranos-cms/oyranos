@@ -55,7 +55,7 @@ int main( int argc , char** argv )
   int server = 0;
   int net_color_region_target = 0;
   int device_meta_tag = 0;
-  char * add_edid = 0,
+  char * add_meta = 0,
        * prof_name = 0,
        * module_name = 0;
   char * device_class = 0;
@@ -145,7 +145,7 @@ int main( int argc , char** argv )
                         else if(OY_IS_ARG("database"))
                         { database = 1; monitor_profile = 0; i=100; break; }
                         else if(OY_IS_ARG("add-edid"))
-                        { OY_PARSE_STRING_ARG2(add_edid,"add-edid"); break; }
+                        { OY_PARSE_STRING_ARG2(add_meta,"add-edid"); break; }
                         else if(OY_IS_ARG("profile"))
                         { OY_PARSE_STRING_ARG2(prof_name, "profile"); break; }
                         else if(OY_IS_ARG("modules"))
@@ -217,7 +217,7 @@ int main( int argc , char** argv )
     if(oy_debug) printf( "%s\n", argv[1] );
 
     if(!erase && !list && !database && !setup && !server && !format &&
-       !add_edid && !list_modules)
+       !add_meta && !list_modules)
       setup = 1;
 
     if(module_name)
@@ -278,7 +278,7 @@ int main( int argc , char** argv )
       return error;
     }
 
-    if(!monitor_profile && !erase && !list && !setup && !format && !add_edid)
+    if(!monitor_profile && !erase && !list && !setup && !format && !add_meta)
     {
       char * fn = 0;
       error = oyDeviceGet( OY_TYPE_STD, device_class, oy_display_name, 0,
@@ -454,10 +454,10 @@ int main( int argc , char** argv )
       oyOptions_Release( &options );
 
     } else
-    if(prof_name && add_edid)
+    if(prof_name && add_meta)
     {
       oyBlob_s * edid = oyBlob_New(0);
-      char * edid_fn = oyResolveDirFileName_(add_edid);
+      char * edid_fn = oyResolveDirFileName_(add_meta);
       data = oyReadFileToMem_( edid_fn, &size, oyAllocateFunc_ );
       oyFree_m_(edid_fn);
       oyBlob_SetFromData( edid, data, size, "edid" );
@@ -466,7 +466,7 @@ int main( int argc , char** argv )
       oyOptions_Release( &options );
       error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",
-                                     "add-edid-meta-to-icc", OY_CREATE_NEW );
+                                     "add_meta", OY_CREATE_NEW );
       error = oyOptions_MoveInStruct( &options,
                                      "//" OY_TYPE_STD "/config/icc_profile",
                                       (oyStruct_s**)&prof, OY_CREATE_NEW );
