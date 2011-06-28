@@ -76,13 +76,18 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("List included ICC tags:"));
   fprintf( stderr, "      %s -l [-d] FILE_NAME\n",        argv[0]);
-  fprintf( stderr, "      -p NUMBER  %s\n",       _("select tag"));
+  fprintf( stderr, "      -p NUMBER  %s\n",     _("select tag"));
   fprintf( stderr, "      -n NAME  %s\n",       _("select tag"));
   fprintf( stderr, "      -s NAME  %s\n",       _("add prefix"));
   fprintf( stderr, "      -c NAME  %s\n",       _("use device class"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Dump Device Infos to JSON:"));
   fprintf( stderr, "      %s -o FILE_NAME\n",        argv[0]);
+  fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",               _("Write to ICC profile:"));
+  fprintf( stderr, "      %s -w NAME [-j FILE_NAME] FILE_NAME\n",        argv[0]);
+  fprintf( stderr, "      -w NAME  %s\n",       _("use new name"));
+  fprintf( stderr, "      -j FILE_NAME  %s\n",  _("embed OpenICC device JSON from file"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Print a help text:"));
   fprintf( stderr, "      %s -h\n",        argv[0]);
@@ -110,9 +115,13 @@ int main( int argc , char** argv )
       dump_openicc_json = 0;
   const char * file_name = 0,
              * tag_name = 0,
-             * name_space = 0;
+             * name_space = 0,
+             * json_name = 0,
+             * profile_name = 0;
   const char * prefixes[24] = {0}; int pn = 0;
   const char * device_class = "unknown";
+  oyProfile_s * p;
+  oyProfileTag_s * tag;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -133,6 +142,7 @@ int main( int argc , char** argv )
             switch (argv[pos][i])
             {
               case 'c': OY_PARSE_STRING_ARG(device_class); break;
+              case 'j': OY_PARSE_STRING_ARG(json_name); break;
               case 'l': list_tags = 1; break;
               case 'n': OY_PARSE_STRING_ARG(tag_name); break;
               case 'o': dump_openicc_json = 1; break;
@@ -149,6 +159,7 @@ int main( int argc , char** argv )
                         }
                         break;
               case 'v': oy_debug += 1; break;
+              case 'w': OY_PARSE_STRING_ARG(profile_name); break;
               case 'h':
               default:
                         printfHelp(argc, argv);
@@ -174,13 +185,47 @@ int main( int argc , char** argv )
                         exit (0);
   }
 
+  if(json_name && !profile_name)
+  {
+    fprintf(stderr, "%s %s\n", _("missed -w option to write a ICC profile"), _("Exit!"));
+    printfHelp(argc, argv);
+    exit(1);
+  }
 
+  if(profile_name && !file_name)
+  {
+    fprintf(stderr, "%s %s\n", _("Need a ICC profile to modify."), _("Exit!"));
+    printfHelp(argc, argv);
+    exit(1);
+  }
+
+  if(file_name && profile_name)
+  {
+    oyConfig_s * config;
+
+    p = oyProfile_FromFile( profile_name, 0, 0 );
+    if(p)
+    {
+      fprintf(stderr, "%s: %s %s\n", _("Profile exists already"), profile_name, _("Exit!"));
+      printfHelp(argc, argv);
+      exit(1);
+    }
+
+    p = oyProfile_FromFile( file_name, 0, 0 );
+    if(!p)
+      exit(1);
+
+    error = oyProfile_AddTagText( p, icSigProfileDescriptionTag, profile_name );
+
+    config = oyConfig_New( "//" OY_TYPE_STD "/config", 0 );
+
+  } else
   if(file_name)
   {
-    oyProfile_s * p = oyProfile_FromFile( file_name, 0, 0 );
-    oyProfileTag_s * tag;
     char ** texts = NULL;
-    int32_t texts_n = 0, i,j, count;
+    int32_t texts_n = 0, i,j,k, count;
+
+    p = oyProfile_FromFile( file_name, 0, 0 );
 
     if(list_tags)
     {
@@ -279,9 +324,41 @@ int main( int argc , char** argv )
         /* add device and driver calibration properties */
         for(j = 2; j < texts_n; j += 2)
         {
+          int vals_n = 0;
+          char ** vals = 0, * val = 0;
+
           if(texts_n > j+1)
-            fprintf( stdout, "              \"%s\": \"%s\"",
+          {
+            if(texts[j+1][0] == '<')
+              fprintf( stdout, "              \"%s\": \"%s\"",
                      texts[j], texts[j+1] );
+            else
+            {
+              /* split into a array with a useful delimiter */
+              vals = oyStringSplit_( texts[j+1], ':', &vals_n, malloc );
+              if(vals_n > 1)
+              {
+                STRING_ADD( val, "              \"");
+                STRING_ADD( val, texts[j] );
+                STRING_ADD( val, ": [" );
+                for(k = 0; k < vals_n; ++k)
+                {
+                  if(k != 0)
+                  STRING_ADD( val, "," );
+                  STRING_ADD( val, "\"" );
+                  STRING_ADD( val, vals[k] );
+                  STRING_ADD( val, "\"" );
+                }
+                STRING_ADD( val, "]");
+                fprintf( stdout, "%s", val );
+                if(val) free( val );
+              } else
+                fprintf( stdout, "              \"%s\": \"%s\"",
+                     texts[j], texts[j+1] );
+
+              oyStringListRelease_( &vals, vals_n, free );
+            }
+          }
           if(j < texts_n - 2)
             fprintf( stdout, ",\n" );
         }
