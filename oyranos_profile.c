@@ -265,19 +265,15 @@ int main( int argc , char** argv )
           {
             if(j == 0)
             {
-                fprintf( stdout, "              \"prefix\": " );
-              if(pn > 1)
-                fprintf( stdout, "[" );
+                fprintf( stdout, "              \"prefix\": \"" );
             }
-                fprintf( stdout, "\"%s\"",
+                fprintf( stdout, "%s",
                          prefixes[j] );
             if(pn > 1 && j < pn-1)
                 fprintf( stdout, "," );
+            if(j == pn-1)
+              fprintf( stdout, "\",\n" );
           }
-          if(pn > 1)
-            fprintf( stdout, "],\n" );
-          else
-            fprintf( stdout, ",\n" );
         }
 
         /* add device and driver calibration properties */
