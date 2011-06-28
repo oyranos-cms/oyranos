@@ -4945,9 +4945,10 @@ OYAPI int  OYEXPORT
     for(i = 0; i < apis_n; ++i)
     {
       api = oyCMMapiFilters_Get( apis, i );
-      oyStringListAddStaticString_( &reg_lists, &reg_list_n,
-                                    oyNoEmptyString_m_( api->registration ),
-                                    oyAllocateFunc_, oyDeAllocateFunc_ );
+      if(rank_list[0][i])
+        oyStringListAddStaticString_( &reg_lists, &reg_list_n,
+                                      oyNoEmptyString_m_( api->registration ),
+                                      oyAllocateFunc_, oyDeAllocateFunc_ );
 
       if(api->release)
         api->release( (oyStruct_s**)&api );

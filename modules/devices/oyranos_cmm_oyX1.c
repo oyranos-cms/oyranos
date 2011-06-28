@@ -796,9 +796,15 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
               else
                 error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag, t);
 
+              error = oyOptions_SetFromText( &device->backend_core,
+                                       OYX1_MONITOR_REGISTRATION OY_SLASH
+                                       "OPENICC_automatic_generated",
+                                       "1", OY_CREATE_NEW );
+
               /* embed meta tag */
               error = oyOptions_SetFromText( &opts, "///key_prefix_required",
-                                                "EDID_" , OY_CREATE_NEW );
+                                                "EDID_.OPENICC_",
+                                                OY_CREATE_NEW );
               oyProfile_DeviceAdd( prof, device, opts );
               oyOptions_Release( &opts);
 

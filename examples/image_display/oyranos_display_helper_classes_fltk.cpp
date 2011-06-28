@@ -221,7 +221,8 @@ public:
                                        &output_rectangle );
       }
 
-      dirty = oyDrawScreenImage(conversion(), ticket, display_rectangle,
+      if(image)
+        dirty = oyDrawScreenImage(conversion(), ticket, display_rectangle,
                                 old_display_rectangle,
                                 old_roi_rectangle, "X11",
                                 data_type_request,
@@ -231,7 +232,12 @@ public:
       oyRectangle_Release( &display_rectangle );
 
       if(oy_display_verbose)
-        oyShowGraph_( conversion()->input, 0 ); oy_display_verbose = 0;
+      {
+        static int done = 0;
+        if(!done)
+          oyShowGraph_( conversion()->input, 0 );
+        done = 1;
+      }
 
       /* some error checks */
       pt = oyImage_PixelLayoutGet( image );
@@ -426,7 +432,6 @@ public:
 
 private:
   int frame_dirty;
-  int frame_pos;
   void draw()
   {
     int W = Oy_Fl_Widget::w(),
@@ -438,11 +443,23 @@ private:
       oyPixel_t pt;
       int channels = 0;
       oyImage_s * image = 0;
+      int gl_type = 0;
 
       drawPrepare( &image, oyUINT16, 1 );
 
       pt = oyImage_PixelLayoutGet( image );
       channels = oyToChannels_m( pt );
+
+      if(channels == 3)
+        gl_type = GL_RGB;
+      if(channels == 4)
+        gl_type = GL_RGBA;
+
+      if(oy_display_verbose && image)
+        fprintf(stdout, "%s:%d pixellayout: %d width: %d channels: %d\n",
+                    strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
+                    __LINE__,
+                    pt, image->width, oyToChannels_m(pt) );
 
       if(!valid())
       {
@@ -458,11 +475,14 @@ private:
       glBegin(GL_LINE_STRIP); glVertex2f(W, H); glVertex2f(-W,-H); glEnd();
       glBegin(GL_LINE_STRIP); glVertex2f(W,-H); glVertex2f(-W, H); glEnd();
 
+      if(!image)
+        return;
+
       int frame_height = OY_MIN(image->height,H),
           frame_width = OY_MIN(image->width,W);
 
       if(!frame_data)
-        frame_data = (char*)malloc(W*H*3*2);
+        frame_data = (char*)malloc(W*H*channels*2);
 
       int pos[4] = {-2,-2,-2,-2};
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
@@ -476,8 +496,8 @@ private:
       {
         image_data = image->getLine( image, y, &height, -1, &is_allocated );
 
-        memcpy( &frame_data[frame_width*(frame_height-y-1)*3*2], image_data,
-                frame_width*3*2 );
+        memcpy( &frame_data[frame_width*(frame_height-y-1)*channels*2], image_data,
+                frame_width*channels*2 );
 
         if(is_allocated)
           free( image_data );
@@ -491,19 +511,17 @@ private:
       glPixelZoom( scale,-scale );*/
       glRasterPos2i(-frame_width, -frame_height);
       /* on osX it uses sRGB without alternative */
-      glDrawPixels( frame_width, frame_height, GL_RGB,
+      glDrawPixels( frame_width, frame_height, gl_type,
                     GL_UNSIGNED_SHORT, frame_data );
 
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
 
-      //glDrawPixels( frame_width, frame_height, GL_RGB, GL_UNSIGNED_BYTE,
-      //              frame_data );
       frame_dirty = 0;
       if(oy_display_verbose)
-        fprintf(stdout, "%s:%d draw %dx%d[%d] %dx%d\n",
+        fprintf(stdout, "%s:%d draw %dx%d %dx%d\n",
                     strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
                     __LINE__,
-                    frame_width,frame_height,frame_pos,W,H);
+                    frame_width,frame_height,W,H);
 
       oyImage_Release( &image );
     }

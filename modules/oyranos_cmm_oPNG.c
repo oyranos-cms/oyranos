@@ -788,6 +788,10 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   }
   pixel_layout |= oyDataType_m(data_type);
 
+  message( oyMSG_DBG, object,
+             OY_DBG_FORMAT_ " color_type: %d width: %d spp:%d channels: %d",
+             OY_DBG_ARGS_, color_type, width, spp,oyToChannels_m(pixel_layout));
+
   num_passes = png_set_interlace_handling( png_ptr );
   /* update after all the above changes to the png structures */
   png_read_update_info( png_ptr, info_ptr );

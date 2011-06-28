@@ -851,7 +851,7 @@ API_generated:	generator/oyAPIGenerator
 	cd generator/; ./oyAPIGenerator $(SRCDIR)/templates $(SRCDIR)/sources $(SRCDIR)/API_generated
 
 generator/oyAPIGenerator:
-	cd generator; cmake -DGrantlee_DIR="$(SRCDIR)/generator/grantlee/lib/grantlee" $(SRCDIR)/generator; make
+	cd generator; cmake -DGrantlee_DIR="$(SRCDIR)/generator/grantlee/lib/grantlee" $(SRCDIR)/generator; make || echo Did you run download_grantlee.sh in generator/ ?
 
 
 test_core:	$(LIBSONAMECOREFULL) $(LIBNAME_CORE) test_core.o
