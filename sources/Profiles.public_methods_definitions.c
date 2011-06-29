@@ -417,17 +417,17 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
     rank = 0;
 
     error = oyConfig_Compare( p_device, device, &rank );
-    if(oyConfig_FindString( p_device, "OPENICC_automatic_generated", "1" ))
+    if(oyConfig_FindString( p_device, "OYRANOS_automatic_generated", "1" ))
     {
-      DBG_NUM2_S( "found OPENICC_automatic_generated: %d %s",
+      DBG_NUM2_S( "found OYRANOS_automatic_generated: %d %s",
                   rank, strrchr(oyProfile_GetFileName(p,-1),'/')+1);
       if(oyConfig_FindString( p_device, "serial", 0 ))
         rank -= 11;
       else
         rank -= 1;
-      DBG_NUM1_S("after serial && OPENICC_automatic_generated: %d", rank);
+      DBG_NUM1_S("after serial && OYRANOS_automatic_generated: %d", rank);
     }
-    if(oyConfig_FindString( p_device, "OPENICC_automatic_assignment", "1" ))
+    if(oyConfig_FindString( p_device, "OYRANOS_automatic_assignment", "1" ))
       rank -= 1;
     rank_list[i] = rank;
 
