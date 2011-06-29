@@ -35,6 +35,8 @@
 /* --- internal definitions --- */
 
 #define PRFX "raw-image.oyRE: "
+#define PRFX_EXIF "EXIF_"
+#define PRFX_LRAW "LRAW_"
 /* select a own four byte identifier string instead of "dDev" and replace the
  * dDev in the below macros.
  */
@@ -85,76 +87,76 @@ const char * Api8UiGetText           ( const char        * select,
  */
 oyRankPad _rank_map[] = {
    {const_cast < char *>("device_name"), 0, 0, 0},                   /**< Unused?*/
-   {const_cast < char *>("lraw_driver_version"), 2, -1, 0},               /**< is good */
+   {const_cast < char *>(PRFX_LRAW "driver_version"), 2, -1, 0},               /**< is good */
    {const_cast < char *>("profile_name"), 0, 0, 0},                  /**< non relevant for device properties*/
-       /* EXIF Fields */                                              
-   {const_cast < char *>("Exif_Image_Make"), 1, -1, 0},              /**< is nice */
-   {const_cast < char *>("Exif_Image_Model"), 5, -5, 0},             /**< important, should not fail */
-   {const_cast < char *>("Exif_Photo_ISOSpeedRatings"), 1, 0, 0},    /**< is nice */
-   {const_cast < char *>("Exif_Photo_ExposureProgram"), 1, 0, 0},    /**< nice to match */
-   {const_cast < char *>("Exif_Photo_Flash"), 1, 0, 0},              /**< nice to match */
+       /* EXIF Fields */
+   {const_cast < char *>(PRFX_EXIF "Image_Make"), 1, -1, 0},              /**< is nice */
+   {const_cast < char *>(PRFX_EXIF "Image_Model"), 5, -5, 0},             /**< important, should not fail */
+   {const_cast < char *>(PRFX_EXIF "Photo_ISOSpeedRatings"), 1, 0, 0},    /**< is nice */
+   {const_cast < char *>(PRFX_EXIF "Photo_ExposureProgram"), 1, 0, 0},    /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Photo_Flash"), 1, 0, 0},              /**< nice to match */
 
       /*Makernote Fields - no 1-1 mapping with exif tags */
       /* Makernote Tags: Serial Number */
-   {const_cast < char *>("Exif_Canon_SerialNumber"), 1, 0, 0},        /**< nice to match */
-   {const_cast < char *>("Exif_Fujifilm_SerialNumber"), 1, 0, 0},     /**< nice to match */
-   {const_cast < char *>("Exif_Nikon3_SerialNumber"), 1, 0, 0},       /**< nice to match */
-   {const_cast < char *>("Exif_Nikon3_SerialNO"), 1, 0, 0},           /**< nice to match */
-   {const_cast < char *>("Exif_Olympus_SerialNumber"), 1, 0, 0},      /**< nice to match */
-   {const_cast < char *>("Exif_Olympus_SerialNumber2"), 1, 0, 0},     /**< nice to match */
-   {const_cast < char *>("Exif_OlympusEq_SerialNumber"), 1, 0, 0},    /**< nice to match */
-   {const_cast < char *>("Exif_OlympusEq_InternalSerialNumber"), 1, 0, 0},/**< nice to match */
-   {const_cast < char *>("Exif_Sigma_SerialNumber"), 1, 0, 0},        /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Canon_SerialNumber"), 1, 0, 0},        /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Fujifilm_SerialNumber"), 1, 0, 0},     /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Nikon3_SerialNumber"), 1, 0, 0},       /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Nikon3_SerialNO"), 1, 0, 0},           /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Olympus_SerialNumber"), 1, 0, 0},      /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Olympus_SerialNumber2"), 1, 0, 0},     /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "OlympusEq_SerialNumber"), 1, 0, 0},    /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "OlympusEq_InternalSerialNumber"), 1, 0, 0},/**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Sigma_SerialNumber"), 1, 0, 0},        /**< nice to match */
 
       /* Makernote Tags: Lens */
-   {const_cast < char *>("Exif_CanonCs_LensType"), 1, 0, 0},          /**< nice to match */
-   {const_cast < char *>("Exif_CanonCs_Lens"), 1, 0, 0},              /**< nice to match */
-   {const_cast < char *>("Exif_Minolta_LensID"), 1, 0, 0},            /**< nice to match */
-   {const_cast < char *>("Exif_Nikon1_AuxiliaryLens"), 1, 0, 0},      /**< nice to match */
-   {const_cast < char *>("Exif_Nikon2_AuxiliaryLens"), 1, 0, 0},      /**< nice to match */
-   {const_cast < char *>("Exif_Nikon3_AuxiliaryLens"), 1, 0, 0},      /**< nice to match */
-   {const_cast < char *>("Exif_Nikon3_LensType"), 1, 0, 0},           /**< nice to match */
-   {const_cast < char *>("Exif_Nikon3_Lens"), 1, 0, 0},               /**< nice to match */
-   {const_cast < char *>("Exif_OlympusEq_LensType"), 1, 0, 0},        /**< nice to match */
-   {const_cast < char *>("Exif_OlympusEq_LensSerialNumber"), 1, 0, 0},/**< nice to match */
-   {const_cast < char *>("Exif_OlympusEq_LensFirmwareVersion"), 1, 0, 0},/**< nice to match */
-   {const_cast < char *>("Exif_Pentax_LensType"), 1, 0, 0},           /**< nice to match */
-   {const_cast < char *>("Exif_Pentax_LensInfo"), 1, 0, 0},           /**< nice to match */
-   {const_cast < char *>("Exif_Sigma_LensRange"), 1, 0, 0},           /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "CanonCs_LensType"), 1, 0, 0},          /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "CanonCs_Lens"), 1, 0, 0},              /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Minolta_LensID"), 1, 0, 0},            /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Nikon1_AuxiliaryLens"), 1, 0, 0},      /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Nikon2_AuxiliaryLens"), 1, 0, 0},      /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Nikon3_AuxiliaryLens"), 1, 0, 0},      /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Nikon3_LensType"), 1, 0, 0},           /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Nikon3_Lens"), 1, 0, 0},               /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "OlympusEq_LensType"), 1, 0, 0},        /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "OlympusEq_LensSerialNumber"), 1, 0, 0},/**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "OlympusEq_LensFirmwareVersion"), 1, 0, 0},/**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Pentax_LensType"), 1, 0, 0},           /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Pentax_LensInfo"), 1, 0, 0},           /**< nice to match */
+   {const_cast < char *>(PRFX_EXIF "Sigma_LensRange"), 1, 0, 0},           /**< nice to match */
 
        /* Possibly not relevant options are marked with: O->Output R->Repair */
        /* LibRaw Options affecting open_file() */                     
        /* LibRaw Options affecting unpack() */                        
-   {const_cast < char *>("lraw_use_camera_wb"), 1, -1, 0},                /**< is nice */
-   {const_cast < char *>("lraw_use_camera_matrix"), 1, -1, 0},            /**< is nice */
-   {const_cast < char *>("lraw_half_size"), 1, -1, 0},                    /**< is nice */
-   {const_cast<char*>("lraw_filtering_mode"), 1, -1, 0},                   /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "use_camera_wb"), 1, -1, 0},                /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "use_camera_matrix"), 1, -1, 0},            /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "half_size"), 1, -1, 0},                    /**< is nice */
+   {const_cast<char*>(PRFX_LRAW "filtering_mode"), 1, -1, 0},                   /**< is nice */
 //This is a bit-field. Out of all the possible flags, only LIBRAW_FILTERING_NORAWCURVE
 //seems to be relevant to color [From LibRaw API docs]:               
 //This bit turns off tone curve processing (for tone curves read from file metadata or
 //calculated from constants). This setting is supported only for bayer-pattern cameras
 //with tone curve;                                                    
-   {const_cast < char *>("lraw_threshold"), 1, -1, 0},                    /**< is nice */ /*R*/
-   {const_cast < char *>("lraw_aber"), 1, -1, 0},                         /**< is nice */ /*R*/
+   {const_cast < char *>(PRFX_LRAW "threshold"), 1, -1, 0},                    /**< is nice */ /*R*/
+   {const_cast < char *>(PRFX_LRAW "aber"), 1, -1, 0},                         /**< is nice */ /*R*/
        /* LibRaw Options affecting dcraw_process() */                 
-   {const_cast < char *>("lraw_greybox"), 1, -1, 0},                      /**< is nice */
-   {const_cast < char *>("lraw_gamm"), 1, -1, 0},                         /**< is nice */
-   {const_cast < char *>("lraw_user_mul"), 1, -1, 0},                     /**< is nice */
-   {const_cast < char *>("lraw_bright"), 1, -1, 0},                       /**< is nice */
-   {const_cast < char *>("lraw_four_color_rgb"), 1, -1, 0},               /**< is nice */
-   {const_cast < char *>("lraw_highlight"), 1, -1, 0},                    /**< is nice */
-   {const_cast < char *>("lraw_use_auto_wb"), 1, -1, 0},                  /**< is nice */
-   {const_cast < char *>("lraw_output_color"), 1, -1, 0},                 /**< is nice */
-   {const_cast < char *>("lraw_camera_profile"), 1, -1, 0},               /**< is nice */
-   {const_cast < char *>("lraw_output_bps"), 1, -1, 0},                   /**< is nice */
-   {const_cast < char *>("lraw_user_qual"), 1, -1, 0},                    /**< is nice */
-   {const_cast < char *>("lraw_user_black"), 1, -1, 0},                   /**< is nice */
-   {const_cast < char *>("lraw_user_sat"), 1, -1, 0},                     /**< is nice */
-   {const_cast < char *>("lraw_med_passes"), 1, -1, 0},                   /**< is nice */
-   {const_cast < char *>("lraw_auto_bright_thr"), 1, -1, 0},              /**< is nice */
-   {const_cast < char *>("lraw_no_auto_bright"), 1, -1, 0},               /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "greybox"), 1, -1, 0},                      /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "gamm"), 1, -1, 0},                         /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "user_mul"), 1, -1, 0},                     /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "bright"), 1, -1, 0},                       /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "four_color_rgb"), 1, -1, 0},               /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "highlight"), 1, -1, 0},                    /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "use_auto_wb"), 1, -1, 0},                  /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "output_color"), 1, -1, 0},                 /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "camera_profile"), 1, -1, 0},               /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "output_bps"), 1, -1, 0},                   /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "user_qual"), 1, -1, 0},                    /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "user_black"), 1, -1, 0},                   /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "user_sat"), 1, -1, 0},                     /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "med_passes"), 1, -1, 0},                   /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "auto_bright_thr"), 1, -1, 0},              /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "no_auto_bright"), 1, -1, 0},               /**< is nice */
        /* Extra options (user supplied) */                            
-   {const_cast < char *>("lraw_illumination_source"), 1, -1, 0},          /**< is nice */
+   {const_cast < char *>(PRFX_LRAW "illumination_source"), 1, -1, 0},          /**< is nice */
    {0, 0, 0, 0}                                                      /**< end of list */
 };
 
@@ -221,12 +223,12 @@ class exif2options {
       //FIXME We assume that any exif tag has exactly 2 '.' (dots)
       int add(const char *name)
       {
-         std::string n(name);
+         std::string n(name), exif(name);
          n.replace(n.find("."),1,"_");
-         n.replace(n.find("."),1,"_");
+         exif.replace(0,5,"Exif.");
          std::ostringstream registration;
          registration << CMM_BASE_REG OY_SLASH << n.c_str();
-         Exiv2::ExifKey key( name );
+         Exiv2::ExifKey key( exif );
          Exiv2::ExifData::iterator pos = _exif_data_->findKey(key);
          if (pos != _exif_data_->end()) {
             return oyOptions_SetFromText( _options_,
@@ -261,46 +263,46 @@ int DeviceFromHandle(oyOptions_s **options, Exiv2::Image::AutoPtr image)
    exif2options e2o(&image->exifData(),options);
 
    // Standard EXIF Tags
-   error += e2o.add("Exif.Image.Model");
-   error += e2o.add("Exif.Image.Make");
-   error += e2o.add("Exif.Photo.ISOSpeedRatings");
-   error += e2o.add("Exif.Photo.ExposureProgram");
-   error += e2o.add("Exif.Photo.Flash");
+   error += e2o.add(PRFX_EXIF "Image.Model");
+   error += e2o.add(PRFX_EXIF "Image.Make");
+   error += e2o.add(PRFX_EXIF "Photo.ISOSpeedRatings");
+   error += e2o.add(PRFX_EXIF "Photo.ExposureProgram");
+   error += e2o.add(PRFX_EXIF "Photo.Flash");
  
    // Makernote Tags: Serial Number
-   error += e2o.add("Exif.Canon.SerialNumber");
-   error += e2o.add("Exif.Fujifilm.SerialNumber");
+   error += e2o.add(PRFX_EXIF "Canon.SerialNumber");
+   error += e2o.add(PRFX_EXIF "Fujifilm.SerialNumber");
    //e2o.add("Minolta"); //Non existant?
-   error += e2o.add("Exif.Nikon3.SerialNumber");
-   error += e2o.add("Exif.Nikon3.SerialNO");
-   error += e2o.add("Exif.Olympus.SerialNumber");
-   error += e2o.add("Exif.Olympus.SerialNumber2");
-   error += e2o.add("Exif.OlympusEq.SerialNumber");
-   error += e2o.add("Exif.OlympusEq.InternalSerialNumber");
-   //e2o.add("Exif.Panasonic.InternalSerialNumber"); //!in libexiv2?
+   error += e2o.add(PRFX_EXIF "Nikon3.SerialNumber");
+   error += e2o.add(PRFX_EXIF "Nikon3.SerialNO");
+   error += e2o.add(PRFX_EXIF "Olympus.SerialNumber");
+   error += e2o.add(PRFX_EXIF "Olympus.SerialNumber2");
+   error += e2o.add(PRFX_EXIF "OlympusEq.SerialNumber");
+   error += e2o.add(PRFX_EXIF "OlympusEq.InternalSerialNumber");
+   //e2o.add(PRFX_EXIF "Panasonic.InternalSerialNumber"); //!in libexiv2?
    //e2o.add("Pentax"); //Non existant?
-   error += e2o.add("Exif.Sigma.SerialNumber");
+   error += e2o.add(PRFX_EXIF "Sigma.SerialNumber");
    //e2o.add("Sony"); //Non existant?
 
    // Makernote Tags: Lens
-   error += e2o.add("Exif.CanonCs.LensType");
-   error += e2o.add("Exif.CanonCs.Lens");
+   error += e2o.add(PRFX_EXIF "CanonCs.LensType");
+   error += e2o.add(PRFX_EXIF "CanonCs.Lens");
    //e2o.add("Fujifilm"); //Non existant?
-   error += e2o.add("Exif.Minolta.LensID");
-   error += e2o.add("Exif.Nikon1.AuxiliaryLens");
-   error += e2o.add("Exif.Nikon2.AuxiliaryLens");
-   error += e2o.add("Exif.Nikon3.AuxiliaryLens");
-   error += e2o.add("Exif.Nikon3.LensType");
-   error += e2o.add("Exif.Nikon3.Lens");
-   error += e2o.add("Exif.OlympusEq.LensType");
-   error += e2o.add("Exif.OlympusEq.LensSerialNumber");
-   error += e2o.add("Exif.OlympusEq.LensFirmwareVersion");
-   //e2o.add("Exif.Panasonic.ConversionLens"); //!in libexiv2?
-   //e2o.add("Exif.Panasonic.LensType"); //!in libexiv2?
-   //e2o.add("Exif.Panasonic.LensSerialNumber"); //!in libexiv2?
-   error += e2o.add("Exif.Pentax.LensType");
-   error += e2o.add("Exif.Pentax.LensInfo");
-   error += e2o.add("Exif.Sigma.LensRange");
+   error += e2o.add(PRFX_EXIF "Minolta.LensID");
+   error += e2o.add(PRFX_EXIF "Nikon1.AuxiliaryLens");
+   error += e2o.add(PRFX_EXIF "Nikon2.AuxiliaryLens");
+   error += e2o.add(PRFX_EXIF "Nikon3.AuxiliaryLens");
+   error += e2o.add(PRFX_EXIF "Nikon3.LensType");
+   error += e2o.add(PRFX_EXIF "Nikon3.Lens");
+   error += e2o.add(PRFX_EXIF "OlympusEq.LensType");
+   error += e2o.add(PRFX_EXIF "OlympusEq.LensSerialNumber");
+   error += e2o.add(PRFX_EXIF "OlympusEq.LensFirmwareVersion");
+   //e2o.add(PRFX_EXIF "Panasonic.ConversionLens"); //!in libexiv2?
+   //e2o.add(PRFX_EXIF "Panasonic.LensType"); //!in libexiv2?
+   //e2o.add(PRFX_EXIF "Panasonic.LensSerialNumber"); //!in libexiv2?
+   error += e2o.add(PRFX_EXIF "Pentax.LensType");
+   error += e2o.add(PRFX_EXIF "Pentax.LensInfo");
+   error += e2o.add(PRFX_EXIF "Sigma.LensRange");
 
    return error;
 }
@@ -369,6 +371,8 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    device = oyConfig_New(CMM_BASE_REG, 0);
    /*A device *must* have a device_name!*/
    oyOptions_SetFromText(&device->backend_core, CMM_BASE_REG OY_SLASH "device_name", "dummy", OY_CREATE_NEW);
+   oyOptions_SetFromText(&device->backend_core, CMM_BASE_REG OY_SLASH "prefix",
+                          PRFX_EXIF "," PRFX_LRAW, OY_CREATE_NEW);
 
    if (command_list) {
       /* "list" call section */
@@ -481,7 +485,8 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
         oyProfile_s * p = oyProfile_FromMem( size, data, 0, 0 );
         /* Filter the typical name spaces for embedding into the ICC profile.  */
         error = oyOptions_SetFromText( &options, "///key_prefix_required",
-                                       "Exif_.lraw_" , OY_CREATE_NEW );
+                                       PRFX_EXIF "." PRFX_LRAW ".prefix",
+                                       OY_CREATE_NEW );
         oyProfile_DeviceAdd( p, device, options );
         oyProfile_Release( &profile );
         oyOptions_MoveInStruct( &device->data,
@@ -883,15 +888,15 @@ oyCMMInfo_s _cmm_module = {
  */
 #define DFC_OPT_ADD_INT_ARR(name, i) if(!error) \
         error = oyOptions_SetFromInt( &((*config)->backend_core), \
-                                      CMM_BASE_REG OY_SLASH "lraw_"#name, \
+                                      CMM_BASE_REG OY_SLASH PRFX_LRAW #name, \
                                       params->name[i], i, OY_CREATE_NEW );
 #define DFC_OPT_ADD_INT(name) if(!error) \
         error = oyOptions_SetFromInt( &((*config)->backend_core), \
-                                      CMM_BASE_REG OY_SLASH "lraw_"#name, \
+                                      CMM_BASE_REG OY_SLASH PRFX_LRAW #name, \
                                       params->name, 0, OY_CREATE_NEW );
 #define DFC_OPT_ADD_FLOAT_ARR(name, i, n) if(!error) { \
 if (i==n-1) { \
-   oyOption_s *opt = oyOption_FromRegistration(CMM_BASE_REG OY_SLASH "lraw_"#name, 0);\
+   oyOption_s *opt = oyOption_FromRegistration(CMM_BASE_REG OY_SLASH PRFX_LRAW #name, 0);\
    oyOption_SetFromDouble(opt, params->name[i], i, 0); \
    oyOptions_MoveIn((*config)->backend_core, &opt, -1); \
 } else { \
@@ -899,7 +904,7 @@ if (i==n-1) { \
    oyOption_SetFromDouble(opt, params->name[i], i, 0); \
 } }
 #define DFC_OPT_ADD_FLOAT(name) if(!error) { \
-        oyOption_s *opt = oyOption_FromRegistration(CMM_BASE_REG OY_SLASH "lraw_"#name, 0); \
+        oyOption_s *opt = oyOption_FromRegistration(CMM_BASE_REG OY_SLASH PRFX_LRAW #name, 0); \
         oyOption_SetFromDouble(opt, params->name, 0, 0); \
         oyOptions_MoveIn((*config)->backend_core, &opt, -1); \
 }

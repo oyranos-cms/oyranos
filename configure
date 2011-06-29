@@ -886,6 +886,7 @@ if [ -n "$ECHO" ]; then
   LCMS2=1; export LCMS2
   LRAW=2; export LRAW
   LIBXML2=1; export LIBXML2
+  YAJL=1; export YAJL
   LIBPNG=2; export LIBPNG
   LIBTIFF=2; export LIBTIFF
   LIBOPENEXR=2; export LIBOPENEXR
@@ -942,6 +943,7 @@ fi
   LCMS2=0; export LCMS2
   LRAW=0; export LRAW
   LIBXML2=0; export LIBXML2
+  YAJL=0; export YAJL
   LIBPNG=0; export LIBPNG
   LIBTIFF=0; export LIBTIFF
   LIBOPENEXR=0; export LIBOPENEXR

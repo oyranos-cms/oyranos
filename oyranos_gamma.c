@@ -25,6 +25,7 @@
 #include "oyranos_alpha.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
+#include "oyranos_helper_macros.h"
 #include "oyranos_internal.h"
 #include "oyranos_config.h"
 #include "oyranos_version.h"
@@ -55,7 +56,7 @@ int main( int argc , char** argv )
   int server = 0;
   int net_color_region_target = 0;
   int device_meta_tag = 0;
-  char * add_edid = 0,
+  char * add_meta = 0,
        * prof_name = 0,
        * module_name = 0;
   char * device_class = 0;
@@ -103,48 +104,6 @@ int main( int argc , char** argv )
     if( (ptr = strchr(ptr, '.')) != 0 )
       ptr[0] = '\000';
 
-/* allow "-opt val" and "-opt=val" syntax */
-#define OY_PARSE_INT_ARG( opt ) \
-                        if( pos + 1 < argc && argv[pos][i+1] == 0 ) \
-                        { opt = atoi( argv[pos+1] ); \
-                          if( opt == 0 && strcmp(argv[pos+1],"0") ) \
-                            wrong_arg = "-" #opt; \
-                          ++pos; \
-                          i = 1000; \
-                        } else if(argv[pos][i+1] == '=') \
-                        { opt = atoi( &argv[pos][i+2] ); \
-                          if( opt == 0 && strcmp(&argv[pos][i+2],"0") ) \
-                            wrong_arg = "-" #opt; \
-                          i = 1000; \
-                        } else wrong_arg = "-" #opt; \
-                        if(oy_debug) printf(#opt "=%d\n",opt)
-#define OY_PARSE_STRING_ARG( opt ) \
-                        if( pos + 1 < argc && argv[pos][i+1] == 0 ) \
-                        { opt = argv[pos+1]; \
-                          if( opt == 0 && strcmp(argv[pos+1],"0") ) \
-                            wrong_arg = "-" #opt; \
-                          ++pos; \
-                          i = 1000; \
-                        } else if(argv[pos][i+1] == '=') \
-                        { opt = &argv[pos][i+2]; \
-                          if( opt == 0 && strcmp(&argv[pos][i+2],"0") ) \
-                            wrong_arg = "-" #opt; \
-                          i = 1000; \
-                        } else wrong_arg = "-" #opt; \
-                        if(oy_debug) printf(#opt "=%s\n",opt)
-#define OY_PARSE_STRING_ARG2( opt, arg ) \
-                        if( pos + 1 < argc && argv[pos][i+strlen(arg)+1] == 0 ) \
-                        { opt = argv[pos+1]; \
-                          ++pos; \
-                          i = 1000; \
-                        } else if(argv[pos][i+strlen(arg)+1] == '=') \
-                        { opt = &argv[pos][i+strlen(arg)+2]; \
-                          i = 1000; \
-                        } else wrong_arg = "-" arg; \
-                        if(oy_debug) printf(arg "=%s\n",opt)
-#define OY_IS_ARG( arg ) \
-                        (strlen(argv[pos])-2 >= strlen(arg) && \
-                         memcmp(&argv[pos][2],arg, strlen(arg)) == 0)
 
   if(argc != 1)
   {
@@ -187,7 +146,7 @@ int main( int argc , char** argv )
                         else if(OY_IS_ARG("database"))
                         { database = 1; monitor_profile = 0; i=100; break; }
                         else if(OY_IS_ARG("add-edid"))
-                        { OY_PARSE_STRING_ARG2(add_edid,"add-edid"); break; }
+                        { OY_PARSE_STRING_ARG2(add_meta,"add-edid"); break; }
                         else if(OY_IS_ARG("profile"))
                         { OY_PARSE_STRING_ARG2(prof_name, "profile"); break; }
                         else if(OY_IS_ARG("modules"))
@@ -259,7 +218,7 @@ int main( int argc , char** argv )
     if(oy_debug) printf( "%s\n", argv[1] );
 
     if(!erase && !list && !database && !setup && !server && !format &&
-       !add_edid && !list_modules)
+       !add_meta && !list_modules)
       setup = 1;
 
     if(module_name)
@@ -320,7 +279,7 @@ int main( int argc , char** argv )
       return error;
     }
 
-    if(!monitor_profile && !erase && !list && !setup && !format && !add_edid)
+    if(!monitor_profile && !erase && !list && !setup && !format && !add_meta)
     {
       char * fn = 0;
       error = oyDeviceGet( OY_TYPE_STD, device_class, oy_display_name, 0,
@@ -496,10 +455,10 @@ int main( int argc , char** argv )
       oyOptions_Release( &options );
 
     } else
-    if(prof_name && add_edid)
+    if(prof_name && add_meta)
     {
       oyBlob_s * edid = oyBlob_New(0);
-      char * edid_fn = oyResolveDirFileName_(add_edid);
+      char * edid_fn = oyResolveDirFileName_(add_meta);
       data = oyReadFileToMem_( edid_fn, &size, oyAllocateFunc_ );
       oyFree_m_(edid_fn);
       oyBlob_SetFromData( edid, data, size, "edid" );
@@ -508,7 +467,7 @@ int main( int argc , char** argv )
       oyOptions_Release( &options );
       error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",
-                                     "add-edid-meta-to-icc", OY_CREATE_NEW );
+                                     "add_meta", OY_CREATE_NEW );
       error = oyOptions_MoveInStruct( &options,
                                      "//" OY_TYPE_STD "/config/icc_profile",
                                       (oyStruct_s**)&prof, OY_CREATE_NEW );

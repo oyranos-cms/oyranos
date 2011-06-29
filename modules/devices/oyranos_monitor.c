@@ -83,7 +83,8 @@ int            oyDeviceFillInfos     ( const char        * registration,
         char* t = 0;
         const char * manufacturer = EDID_manufacturer,
                    * model = EDID_model,
-                   * serial = EDID_serial;
+                   * serial = EDID_serial,
+                   * prefix = "EDID_";
         STRING_ADD(t, registration);
         STRING_ADD(t, OY_SLASH );
         STRING_ADD(t, "device_name");
@@ -101,6 +102,7 @@ int            oyDeviceFillInfos     ( const char        * registration,
                                        device_name, OY_CREATE_NEW );
         oyFree_m_(t);
 
+        OPTIONS_ADD( (*device)->backend_core, prefix, 0 )
         OPTIONS_ADD( (*device)->backend_core, EDID_manufacturer, 0 )
         OPTIONS_ADD( (*device)->backend_core, manufacturer, 0 )
         OPTIONS_ADD( (*device)->backend_core, EDID_mnft, 0 )

@@ -172,7 +172,7 @@ const char * oyX1_help_unset =
       " The option \"device_name\" must be present, see \"list\" above.\n"
 ;
 const char * oyX1_help_add_edid_to_icc =
-      "The presence of option \"command=add-edid-meta-to-icc\" will embedds device\n"
+      "The presence of option \"command=add_meta\" will embedd device\n"
       " informations from a provided EDID block to a provided ICC profile.\n"
       " The option \"edid\" must be present and contain an\n"
       " oyBlob_s object with the valid EDID data block.\n"
@@ -489,10 +489,10 @@ int            oyX1Configs_FromPattern (
       goto cleanup;
     }
 
-    /** 3.6 internal "add-edid-meta-to-icc" call; Embedd infos to ICC profile 
+    /** 3.6 internal "add_meta" call; Embedd infos to ICC profile 
      *      as meta tag. Might be moved to a oyCMMapi10_s object. */
     if(error <= 0 &&
-       oyOptions_FindString( options, "command", "add-edid-meta-to-icc" ))
+       oyOptions_FindString( options, "command", "add_meta" ))
     {
       oyProfile_s * prof;
       oyBlob_s * edid;
@@ -798,12 +798,12 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
 
               error = oyOptions_SetFromText( &device->backend_core,
                                        OYX1_MONITOR_REGISTRATION OY_SLASH
-                                       "OPENICC_automatic_generated",
+                                       "OYRANOS_automatic_generated",
                                        "1", OY_CREATE_NEW );
 
               /* embed meta tag */
               error = oyOptions_SetFromText( &opts, "///key_prefix_required",
-                                                "EDID_.OPENICC_",
+                                                "EDID_.OYRANOS_",
                                                 OY_CREATE_NEW );
               oyProfile_DeviceAdd( prof, device, opts );
               oyOptions_Release( &opts);
