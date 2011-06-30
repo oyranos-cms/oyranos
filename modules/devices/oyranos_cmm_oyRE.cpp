@@ -230,7 +230,7 @@ class exif2options {
            n = PRFX_EXIF "manufacturer";
          else if(n == PRFX_EXIF "Image_Model")
            n = PRFX_EXIF "model";
-         else if(n.find("SerialNumber") != -1)
+         else if(n.find("SerialNumber") != std::string::npos)
            n = PRFX_EXIF "serial";
 
          exif.replace(0,5,"Exif.");
