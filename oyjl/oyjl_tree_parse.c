@@ -1,7 +1,7 @@
 /** @file yajl_tree_parser.c
  *
  *  @par Copyright:
- *            2010 (C) Kai-Uwe Behrmann
+ *            2010-2011 (C) Kai-Uwe Behrmann
  *
  *  @brief    tree parser extension to yajl
  *  @internal
@@ -22,12 +22,24 @@
 #include <stdarg.h>
 
 #include <yajl/yajl_parse.h>
+#include <yajl/yajl_version.h>
 #include "oyjl_tree.h"
 
-#ifndef MIN
-#define MIN(a,b) (a)<(b) ? (a) : (b)
-#endif
-
+#if YAJL_VERSION > 20000
+yajl_callbacks oyjl_tree_callbacks = {
+  oyjl_tree_parse_null,
+  oyjl_tree_parse_boolean,
+  (int(*)(void*,long long))oyjl_tree_parse_integer,
+  oyjl_tree_parse_double,
+  NULL,
+  (int(*)(void*,const unsigned char*,size_t))oyjl_tree_parse_string,
+  oyjl_tree_parse_start_map,
+  (int(*)(void*,const unsigned char*,size_t))oyjl_tree_parse_map_key,
+  oyjl_tree_parse_end_map,
+  oyjl_tree_parse_start_array,
+  oyjl_tree_parse_end_array
+};
+#else
 yajl_callbacks oyjl_tree_callbacks = {
   oyjl_tree_parse_null,
   oyjl_tree_parse_boolean,
@@ -41,6 +53,12 @@ yajl_callbacks oyjl_tree_callbacks = {
   oyjl_tree_parse_start_array,
   oyjl_tree_parse_end_array
 };
+#endif
+
+#ifndef MIN
+#define MIN(a,b) (a)<(b) ? (a) : (b)
+#endif
+
 
 
 /* ---------------------- Implementation ---------------------- */
@@ -638,14 +656,20 @@ yajl_status  oyjl_tree_from_json     ( const char        * text,
   size_t len = 0;
   oyjl_tree_parse_context_s * context = oyjl_tree_parse_context_new();
   yajl_status ystatus;
+#if YAJL_VERSION < 20000
   yajl_parser_config yconfig = { 1, 1 };
+#endif
   yajl_handle yhandle;
 
   if(!error && context)
   {
     len = strlen(text);
     /* setup the oyjl library */
-    yhandle = yajl_alloc( &oyjl_tree_callbacks, &yconfig, NULL, (void*)context);
+    yhandle = yajl_alloc( &oyjl_tree_callbacks,
+#if YAJL_VERSION < 20000
+                                                &yconfig,
+#endif
+                                                          NULL, (void*)context);
 
     error = !yhandle;
   }
