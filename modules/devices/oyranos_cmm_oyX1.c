@@ -528,7 +528,11 @@ int            oyX1Configs_FromPattern (
                                                 "EDID_" , OY_CREATE_NEW );
         oyProfile_DeviceAdd( prof, device, opts );
         oyOptions_Release( &opts );
+        oyConfigs_MoveIn( devices, &device, -1 );
       }
+
+      if(error <= 0)
+        *s = devices;
 
       goto cleanup;
     }
