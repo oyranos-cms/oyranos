@@ -412,9 +412,6 @@ OYAPI int  OYEXPORT
 
 
 OYAPI int  OYEXPORT
-                 oyConfigs_Modify    ( oyConfigs_s       * configs,
-                                       oyOptions_s       * options );
-OYAPI int  OYEXPORT
                  oyConfigs_SelectSimiliars (
                                        oyConfigs_s       * list,
                                        const char        * pattern[][2],
