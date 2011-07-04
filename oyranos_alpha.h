@@ -244,8 +244,6 @@ oyOption_s *   oyOption_FromDB       ( const char        * registration,
 #define OY_STRING_LIST                 0x01 /** create a oyVAL_STRING_LIST */
 /* decode */
 #define oyToStringList_m(r)            ((r)&1)
-int            oyOption_SetValueFromDB(oyOption_s        * option );
-
 
 oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * pattern,
                                        oyOptions_s       * options,
