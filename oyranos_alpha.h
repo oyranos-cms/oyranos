@@ -429,9 +429,6 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                oyConfig_Has          ( oyConfig_s        * config,
                                        const char        * key );
-OYAPI oyOption_s * OYEXPORT
-               oyConfig_Get          ( oyConfig_s        * config,
-                                       int                 pos );
 
 
 /** @struct  oyConfigs_s
