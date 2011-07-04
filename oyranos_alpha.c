@@ -3408,37 +3408,6 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyConfig_ClearDBCache
- *  @memberof oyConfig_s
- *  @brief   remove all additional data from the oyConfig_s::db object cache
- *
- *  Clear the local DB cache. The function will be called as well from
- *  oyConfig_GetDB().
- *
- *  @param[in]     config              the configuration
- *  @return                            0 - good, 1 >= error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/02/08 (Oyranos: 0.1.10)
- *  @date    2009/02/08
- */
-OYAPI int  OYEXPORT
-               oyConfig_ClearDBData    ( oyConfig_s        * config )
-{
-  int error = !config;
-  oyConfig_s * s = config;
-
-  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
-
-  if(error <= 0)
-  {
-    error = oyOptions_Release( &oyConfigPriv_m(config)->db );
-    oyConfigPriv_m(config)->db = oyOptions_New( oyConfigPriv_m(config)->oy_ );
-  }
-
-  return error;
-}
-
 /** Function oyConfig_SaveToDB
  *  @memberof oyConfig_s
  *  @brief   store a oyConfig_s in DB
