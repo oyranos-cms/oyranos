@@ -265,15 +265,15 @@ OYAPI int  OYEXPORT
  *                                     oyConfigs_FromPattern_f;
  *                                     Additional allowed are DB configs.
  *  @param[in]     db_pattern          the to be compared configuration from
- *                                     elsewhere
+ *                                     elsewhere, e.g. ICC dict tag
  *  @param[out]    rank_value          the number of matches between config and
  *                                     pattern, -1 means invalid
  *  @return                            0 - good, >= 1 - error + a message should
  *                                     be sent
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.1.13
  *  @since   2009/01/26 (Oyranos: 0.1.10)
- *  @date    2010/02/25
+ *  @date    2010/11/21
  */
 int            oyConfig_Compare      ( oyConfig_s        * module_device,
                                        oyConfig_s        * db_pattern,
@@ -288,8 +288,8 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
              * p = 0,
              * check = 0;
   oyOptions_s * dopts = 0; /* device options */
-  char * d_opt = 0, * d_val = 0,
-       * p_opt = 0, * p_val = 0,
+  char * d_opt = 0, * d_val = 0, /* device variables */
+       * p_opt = 0, * p_val = 0, /* pattern variables */
        * check_opt = 0, * check_val = 0;
   oyConfig_s_ * pattern = (oyConfig_s_*)db_pattern,
               * device  = (oyConfig_s_*)module_device;
@@ -324,7 +324,8 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
     for(i = 0; i < domain_n; ++i)
     {
       d = oyOptions_Get( dopts, i );
-      d_opt = oyFilterRegistrationToText( oyOptionPriv_m(d)->registration, oyFILTER_REG_MAX, 0);
+      d_opt = oyFilterRegistrationToText( oyOption_GetRegistration(d),
+                                          oyFILTER_REG_MAX, 0);
       d_val = oyOption_GetValueText( d, oyAllocateFunc_ );
       has_opt = 0;
 
@@ -332,7 +333,7 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
       for(l = 0; l < i; ++l)
       {
         check = oyOptions_Get( dopts, l );
-        check_opt = oyFilterRegistrationToText( oyOptionPriv_m(check)->registration,
+        check_opt = oyFilterRegistrationToText( oyOption_GetRegistration(check),
                                                 oyFILTER_REG_MAX, 0);
         if(oyStrcmp_(d_opt, check_opt) == 0)
         {
@@ -352,7 +353,8 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
       {
         p = oyOptions_Get( pattern->db, j );
 
-        p_opt = oyFilterRegistrationToText( oyOptionPriv_m(p)->registration, oyFILTER_REG_MAX,
+        p_opt = oyFilterRegistrationToText( oyOption_GetRegistration(p),
+                                            oyFILTER_REG_MAX,
                                             0 );
 
         if(p_opt && oyStrstr_(p_opt, d_opt))
@@ -397,6 +399,7 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
               ++k;
             }
           }
+          break;
         }
         /*
         rank += oyFilterRegistrationMatch( d->registration, p->registration,
