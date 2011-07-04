@@ -35,7 +35,12 @@ OYAPI int  OYEXPORT
     if(tmp[oyStrlen_(tmp)-1] != OY_SLASH_C)
       STRING_ADD( tmp, OY_SLASH );
 
-    if(oyStrrchr_( key, OY_SLASH_C ) != 0)
+    if(oyStrstr_( key, s->registration ) != 0)
+    {
+      oyFree_m_(tmp);
+      STRING_ADD( tmp, key );
+    }
+    else if(oyStrrchr_( key, OY_SLASH_C ) != 0)
       STRING_ADD( tmp, oyStrrchr_( key, OY_SLASH_C )+1 );
     else
       STRING_ADD( tmp, key );
