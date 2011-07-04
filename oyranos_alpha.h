@@ -404,11 +404,6 @@ typedef struct oyConfigs_s {
 
 OYAPI oyConfigs_s * OYEXPORT
                  oyConfigs_New       ( oyObject_s          object );
-OYAPI int  OYEXPORT
-               oyConfigs_FromDomain  ( const char        * registration_domain,
-                                       oyOptions_s       * options,
-                                       oyConfigs_s      ** configs,
-                                       oyObject_s          object );
 OYAPI oyConfigs_s * OYEXPORT
                  oyConfigs_Copy      ( oyConfigs_s       * list,
                                        oyObject_s          object);
