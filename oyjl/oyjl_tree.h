@@ -63,7 +63,7 @@ struct oyjl_value_s_ {
 };
 
 
-/* intermediate memory handlers, can be replaced oncy xajl exports its stuff. */
+/* intermediate memory handlers, can be replaced once yajl exports its stuff. */
 void * oyjl_malloc( size_t size );
 void   oyjl_free_memory( void ** ptr );
 
