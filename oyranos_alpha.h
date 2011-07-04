@@ -429,10 +429,6 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                oyConfig_EraseFromDB  ( oyConfig_s        * config );
 OYAPI int  OYEXPORT
-               oyConfig_Compare      ( oyConfig_s        * device,
-                                       oyConfig_s        * pattern,
-                                       int32_t           * rank_value );
-OYAPI int  OYEXPORT
                oyConfig_DomainRank   ( oyConfig_s        * config );
 OYAPI const char * OYEXPORT
                oyConfig_FindString   ( oyConfig_s        * config,
