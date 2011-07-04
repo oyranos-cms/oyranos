@@ -154,12 +154,14 @@ OYAPI int  OYEXPORT
  *  @memberof oyConfig_s
  *  @brief    Store a oyConfig_s in DB
  *
+ *  The new key set name is stored inside the key "key_set_name".
+ *
  *  @param[in]     config              the configuration
  *  @return                            0 - good, 1 >= error
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/21 (Oyranos: 0.1.10)
- *  @date    2009/01/21
+ *  @date    2011/01/29
  */
 OYAPI int  OYEXPORT
                oyConfig_SaveToDB     ( oyConfig_s        * config )
@@ -167,6 +169,7 @@ OYAPI int  OYEXPORT
   int error = !config;
   oyOptions_s * opts = 0;
   oyConfig_s * s = config;
+  char * new_reg = 0;
   oyConfig_s_ * config_ = (oyConfig_s_*)config;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
@@ -179,8 +182,12 @@ OYAPI int  OYEXPORT
     oyOptions_AppendOpts( opts, config_->db );
     oyOptions_AppendOpts( opts, config_->backend_core );
 
-    error = oyOptions_SaveToDB( opts, config_->registration );
+    error = oyOptions_SaveToDB( opts, config_->registration, &new_reg, 0 );
 
+    /* add information about the data's origin */
+    oyConfig_AddDBData( config, "key_set_name", new_reg, OY_CREATE_NEW );
+
+    oyFree_m_( new_reg );
     oyOptions_Release( &opts );
   }
 
