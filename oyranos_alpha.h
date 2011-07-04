@@ -428,8 +428,6 @@ OYAPI int  OYEXPORT
                oyConfig_SaveToDB     ( oyConfig_s        * config );
 OYAPI int  OYEXPORT
                oyConfig_EraseFromDB  ( oyConfig_s        * config );
-OYAPI int  OYEXPORT
-               oyConfig_DomainRank   ( oyConfig_s        * config );
 OYAPI const char * OYEXPORT
                oyConfig_FindString   ( oyConfig_s        * config,
                                        const char        * key,
