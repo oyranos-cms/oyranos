@@ -267,7 +267,6 @@ int            oyOption_SetFromDouble( oyOption_s        * obj,
                                        uint32_t            flags );
 double         oyOption_GetValueDouble(oyOption_s        * obj,
                                        int                 pos );
-int            oyOption_Clear        ( oyOption_s        * s );
 int            oyOption_SetFromData  ( oyOption_s        * option,
                                        oyPointer           ptr,
                                        size_t              size );
