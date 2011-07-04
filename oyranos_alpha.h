@@ -440,8 +440,6 @@ OYAPI int  OYEXPORT
 OYAPI oyOption_s * OYEXPORT
                oyConfig_Find         ( oyConfig_s        * config,
                                        const char        * key );
-OYAPI int  OYEXPORT
-               oyConfig_Count        ( oyConfig_s        * config );
 OYAPI oyOption_s * OYEXPORT
                oyConfig_Get          ( oyConfig_s        * config,
                                        int                 pos );

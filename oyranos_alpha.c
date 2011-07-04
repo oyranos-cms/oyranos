@@ -3739,41 +3739,6 @@ OYAPI int  OYEXPORT
   return has_option;
 }
 
-/** Function oyConfig_Count
- *  @brief   number of all options
- *  @memberof oyConfig_s
- *
- *  @param[in]     config              the configuration
- *  @return                            the options count
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/02/08 (Oyranos: 0.1.10)
- *  @date    2009/02/08
- */
-OYAPI int  OYEXPORT
-               oyConfig_Count        ( oyConfig_s        * config )
-{
-  int error = !config;
-  int n = 0;
-  oyOptions_s * opts = 0;
-  oyConfig_s * s = config;
-
-  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
-
-  if(error <= 0)
-  {
-    opts = oyOptions_New( 0 );
-
-    oyOptions_AppendOpts( opts, oyConfigPriv_m(config)->db );
-    oyOptions_AppendOpts( opts, oyConfigPriv_m(config)->backend_core );
-    oyOptions_AppendOpts( opts, oyConfigPriv_m(config)->data );
-    n = oyOptions_Count( opts );
-    oyOptions_Release( &opts );
-  }
-
-  return n;
-}
-
 /** Function oyConfig_Get
  *  @brief   get one option
  *  @memberof oyConfig_s
