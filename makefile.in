@@ -1015,7 +1015,7 @@ install_bin:	all install_gui
 	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		($(INSTALL) -m 755 lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		"$(DESTDIR)$(libdir)" \
-		&& echo Installed $(DESTDIR)$(libdir)lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
+		&& echo Installed $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
 	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		(test -L "$(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)" && $(RM) "$(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)"; \
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
@@ -1035,7 +1035,7 @@ install_bin:	all install_gui
 	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		($(INSTALL) -m 755 lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		"$(DESTDIR)$(metadir)" \
-		&& echo Installed $(DESTDIR)$(metadir)lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
+		&& echo Installed $(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
 	   test -f NOT_lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		(test -L "$(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)" && $(RM) "$(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)"; \
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
@@ -1054,7 +1054,7 @@ install_bin:	all install_gui
 	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		($(INSTALL) -m 755 lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		"$(DESTDIR)$(cmmdir)" \
-		&& echo Installed $(DESTDIR)$(cmmdir)lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
+		&& echo Installed $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
 	   test -f NOT_lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		(test -L "$(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)" \
 		&& $(RM) "$(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)"; \
