@@ -244,7 +244,6 @@ oyOption_s *   oyOption_Copy         ( oyOption_s        * option,
 int            oyOption_Release      ( oyOption_s       ** option );
 
 
-int            oyOption_GetId        ( oyOption_s        * option );
 const char *   oyOption_GetText      ( oyOption_s        * obj,
                                        oyNAME_e            type );
 #define OY_STRING_LIST                 0x01 /** create a oyVAL_STRING_LIST */
