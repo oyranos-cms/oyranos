@@ -409,13 +409,6 @@ OYAPI int  OYEXPORT
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** configs,
                                        oyObject_s          object );
-OYAPI int  OYEXPORT
-               oyConfigs_FromDeviceClass (
-                                       const char        * device_type,
-                                       const char        * device_class,
-                                       oyOptions_s       * options,
-                                       oyConfigs_s      ** configs,
-                                       oyObject_s          object );
 OYAPI oyConfigs_s * OYEXPORT
                  oyConfigs_Copy      ( oyConfigs_s       * list,
                                        oyObject_s          object);
