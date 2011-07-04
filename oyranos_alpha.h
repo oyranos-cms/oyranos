@@ -270,9 +270,6 @@ double         oyOption_GetValueDouble(oyOption_s        * obj,
 int            oyOption_SetFromData  ( oyOption_s        * option,
                                        oyPointer           ptr,
                                        size_t              size );
-oyPointer      oyOption_GetData      ( oyOption_s        * option,
-                                       size_t            * size,
-                                       oyAlloc_f           allocateFunc );
 int            oyOption_SetRegistration (
                                        oyOption_s        * option,
                                        const char        * registration );
