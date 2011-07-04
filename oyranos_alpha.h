@@ -431,18 +431,6 @@ OYAPI int  OYEXPORT
                  oyConfigs_Modify    ( oyConfigs_s       * configs,
                                        oyOptions_s       * options );
 OYAPI int  OYEXPORT
-                 oyConfigs_MoveIn    ( oyConfigs_s       * list,
-                                       oyConfig_s       ** ptr,
-                                       int                 pos );
-OYAPI int  OYEXPORT
-                 oyConfigs_ReleaseAt ( oyConfigs_s       * list,
-                                       int                 pos );
-OYAPI oyConfig_s * OYEXPORT
-                 oyConfigs_Get       ( oyConfigs_s       * list,
-                                       int                 pos );
-OYAPI int  OYEXPORT
-                 oyConfigs_Count     ( oyConfigs_s       * list );
-OYAPI int  OYEXPORT
                  oyConfigs_SelectSimiliars (
                                        oyConfigs_s       * list,
                                        const char        * pattern[][2],
