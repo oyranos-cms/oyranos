@@ -3408,62 +3408,6 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyConfig_AddDBData
- *  @memberof oyConfig_s
- *  @brief   add a key value pair to a oyConfig_s::db
- *
- *  This functions handles canonical user side settings. The keys added with
- *  this function can later be stored in the DB. A call to oyConfig_GetDB() or
- *  oyConfig_ClearDBData() overwrite the added entries. \n
- *  Modules should add informations to oyConfig_s::data.
- *
- *  @param[in]     config              the configuration
- *  @param[in]     key                 a key name, e.g. "my_key"
- *  @param[in]     value               a value, e.g. "my_value"
- *  @param[in]     flags               see oyOptions_s::oyOptions_SetFromText(.., flags,..)
- *  @return                            0 - good, 1 >= error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/21 (Oyranos: 0.1.10)
- *  @date    2009/02/08
- */
-OYAPI int  OYEXPORT
-               oyConfig_AddDBData    ( oyConfig_s        * config,
-                                       const char        * key,
-                                       const char        * value,
-                                       uint32_t            flags )
-{
-  int error = !config || !key;
-  char * tmp = 0;
-  oyConfig_s * s = config;
-
-  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
-
-  if(error <= 0)
-  {
-    STRING_ADD( tmp, oyConfigPriv_m(config)->registration );
-    if(tmp[oyStrlen_(tmp)-1] != OY_SLASH_C)
-      STRING_ADD( tmp, OY_SLASH );
-
-    if(oyStrstr_( key, oyConfigPriv_m(config)->registration ) != 0)
-    {
-      oyFree_m_(tmp);
-      STRING_ADD( tmp, key );
-    }
-    else if(oyStrrchr_( key, OY_SLASH_C ) != 0)
-      STRING_ADD( tmp, oyStrrchr_( key, OY_SLASH_C )+1 );
-    else
-      STRING_ADD( tmp, key );
-
-    /** We provide basically a wrapper for oyOptions_SetFromText(). */
-    error = oyOptions_SetFromText( &oyConfigPriv_m(config)->db, tmp, value, flags );
-
-    oyFree_m_( tmp );
-  }
-
-  return error;
-}
-
 /** Function oyConfig_ClearDBCache
  *  @memberof oyConfig_s
  *  @brief   remove all additional data from the oyConfig_s::db object cache

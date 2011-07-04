@@ -422,11 +422,6 @@ OYAPI int  OYEXPORT
                                        oyOptions_s       * options,
                                        oyBlob_s          * data );
 OYAPI int  OYEXPORT
-               oyConfig_AddDBData    ( oyConfig_s        * config,
-                                       const char        * key,
-                                       const char        * value,
-                                       uint32_t            flags );
-OYAPI int  OYEXPORT
                oyConfig_ClearDBData  ( oyConfig_s        * config );
 OYAPI int  OYEXPORT
                oyConfig_GetDB        ( oyConfig_s        * device,
