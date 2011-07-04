@@ -422,9 +422,6 @@ OYAPI int  OYEXPORT
                                        oyOptions_s       * options,
                                        oyBlob_s          * data );
 OYAPI int  OYEXPORT
-               oyConfig_GetDB        ( oyConfig_s        * device,
-                                       int32_t           * rank_value );
-OYAPI int  OYEXPORT
                oyConfig_SaveToDB     ( oyConfig_s        * config );
 OYAPI int  OYEXPORT
                oyConfig_Has          ( oyConfig_s        * config,

@@ -3345,69 +3345,6 @@ oyRankPad *        oyRankMapCopy     ( const oyRankPad   * rank_map,
   return map;
 }
 
-/** Function oyConfig_GetDB
- *  @brief   search a configuration in the DB for a configuration from module
- *  @memberof oyConfig_s
- *
- *  @param[in]     device              the to be checked configuration from
- *                                     oyConfigs_FromPattern_f
- *  @param[out]    rank_value          the number of matches between config and
- *                                     pattern, -1 means invalid
- *  @return                            0 - good, >= 1 - error + a message should
- *                                     be sent
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/26 (Oyranos: 0.1.10)
- *  @date    2009/01/26
- */
-OYAPI int  OYEXPORT
-               oyConfig_GetDB        ( oyConfig_s        * device,
-                                       int32_t           * rank_value )
-{
-  int error = !device;
-  int rank = 0, max_rank = 0, i, n;
-  oyConfigs_s * configs = 0;
-  oyConfig_s * config = 0, * max_config = 0;
-  oyConfig_s * s = device;
-
-  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
-
-  if(error <= 0)
-  {
-    error = oyConfigs_FromDB( oyConfigPriv_m(device)->registration, &configs, 0 );
-
-    n = oyConfigs_Count( configs );
-
-    for( i = 0; i < n; ++i )
-    {
-      config = oyConfigs_Get( configs, i );
-
-      error = oyConfig_Compare( device, config, &rank );
-      DBG_PROG1_S("rank: %d\n", rank);
-      if(max_rank < rank)
-      {
-        max_rank = rank;
-        oyConfig_Release( &max_config );
-        max_config = oyConfig_Copy( config, 0 );
-      }
-
-      oyConfig_Release( &config );
-    }
-  }
-
-  if(error <= 0 && rank_value)
-    *rank_value = max_rank;
-
-  if(error <= 0 && max_config)
-  {
-    oyOptions_Release( &oyConfigPriv_m(device)->db );
-    oyConfigPriv_m(device)->db = oyOptions_Copy( oyConfigPriv_m(max_config)->db, 0 );
-    oyConfig_Release( &max_config );
-  }
-
-  return error;
-}
-
 /** Function oyConfig_SaveToDB
  *  @memberof oyConfig_s
  *  @brief   store a oyConfig_s in DB
