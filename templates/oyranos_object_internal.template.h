@@ -38,5 +38,7 @@
     action; \
   }
 
+int    oyTextIccDictMatch            ( const char        * text,
+                                       const char        * pattern );
 
 #endif /* {{ file_name|cut:".h"|upper }}_H */

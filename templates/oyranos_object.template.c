@@ -742,4 +742,61 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration_a,
   return match;
 }
 
+/** Function oyTextIccDictMatch
+ *  @brief   analyse a string and compare with a given pattern
+ *
+ *  The rules are described in the ICC meta tag dict type at
+ *  http://www.color.org    ICCSpecRevision_25-02-10_dictType.pdf
+ *
+ *  @param         text                value string
+ *  @param         pattern             pattern to compare with
+ *  @return                            match, useable for ranking
+ *
+ *  @version Oyranos: 0.1.13
+ *  @since   2010/11/21 (Oyranos: 0.1.13)
+ *  @date    2010/11/21
+ */
+int    oyTextIccDictMatch            ( const char        * text,
+                                       const char        * pattern )
+{
+  int match = 0;
+  int n = 0, p_n = 0, i, j;
+  char ** texts = 0, * t;
+  char ** patterns = 0, * p;
+  long num[2];
+  int num_valid[2];
+  double dbl[2];
+  int dbl_valid[2];
 
+  if(text && pattern)
+  {
+    texts = oyStringSplit_(text, ',', &n, oyAllocateFunc_ );
+    patterns = oyStringSplit_(pattern, ',', &p_n, oyAllocateFunc_ );
+
+    for( i = 0; i < n; ++i)
+    {
+      t = texts[i];
+      num_valid[0] = !oyStringToLong(t,&num[0]);
+      dbl_valid[0] = !oyStringToDouble(t,&dbl[0]);
+      for( j = 0; j < p_n; ++j )
+      {
+        p = patterns[j];
+        num_valid[1] = !oyStringToLong(p,&num[1]);
+        dbl_valid[1] = !oyStringToDouble(p,&dbl[1]);
+
+        if((strcmp( t, p ) == 0) ||
+           (num_valid[0] && num_valid[1] && num[0] == num[1]) ||
+           (dbl_valid[0] && dbl_valid[1] && dbl[0] == dbl[1]) )
+        {
+          match = 1;
+          goto clean_oyTextIccDictMatch;
+        }
+      }
+    }
+    clean_oyTextIccDictMatch:
+      oyStringListRelease_( &texts, n, oyDeAllocateFunc_ );
+      oyStringListRelease_( &patterns, p_n, oyDeAllocateFunc_ );
+  }
+
+  return match;
+}
