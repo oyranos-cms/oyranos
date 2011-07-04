@@ -3529,38 +3529,6 @@ OYAPI const char * OYEXPORT
   return text;
 }
 
-/** Function oyConfig_Find
- *  @brief   search in data sets for a key
- *  @memberof oyConfig_s
- *
- *  @param[in]     config              the configuration to be checked
- *                                     wether or not the module can make
- *                                     sense of it and support the data
- *  @param[in]     key                 the key name
- *  @return                            the found value
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/02/08 (Oyranos: 0.1.10)
- *  @date    2009/02/08
- */
-OYAPI oyOption_s * OYEXPORT
-               oyConfig_Find         ( oyConfig_s        * config,
-                                       const char        * key )
-{
-  oyOption_s * o = 0;
-  oyConfig_s * s = config;
-
-  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
-
-  o = oyOptions_Find( oyConfigPriv_m(config)->data, key );
-  if(!o)
-    o = oyOptions_Find( oyConfigPriv_m(config)->backend_core, key );
-  if(!o)
-    o = oyOptions_Find( oyConfigPriv_m(config)->db, key );
-
-  return o;
-}
-
 /** Function oyConfig_Has
  *  @brief   search in data sets for a key
  *  @memberof oyConfig_s
