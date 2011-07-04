@@ -205,7 +205,8 @@ OYAPI int  OYEXPORT
   int error = !config;
   oyOption_s * o = 0;
   int i;
-  char * text = 0,
+  const char * text = 0;
+  char * t = 0,
        * tmp = 0;
   oyConfig_s_ * s = (oyConfig_s_*)config;
 
@@ -228,16 +229,17 @@ OYAPI int  OYEXPORT
       i = 0;
       text = 0;
       if(o)
-        text = oyOptionPriv_m(o)->registration;
+        text = oyOption_GetRegistration( o );
       if(text)
         while( (text = oyStrchr_(++text, OY_SLASH_C)) != 0)
           ++i;
 
+      /* A key has one slash more. Cut the last slash off.  */
       if(i == 5)
       {
-        tmp = oyStringCopy_( oyOptionPriv_m(o)->registration, oyAllocateFunc_ );
-        text = oyStrrchr_(tmp, OY_SLASH_C);
-        text[0] = 0;
+        tmp = oyStringCopy_( oyOption_GetRegistration( o ), oyAllocateFunc_ );
+        t = oyStrrchr_(tmp, OY_SLASH_C);
+        t[0] = 0;
         text = tmp;
       }
 
