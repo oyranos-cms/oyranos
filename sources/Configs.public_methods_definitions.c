@@ -403,7 +403,6 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-
 /** Function  oyConfigDomainList
  *  @memberof oyConfigs_s
  *  @brief    Count and show the global oyConfigs_s suppliers
@@ -494,9 +493,10 @@ OYAPI int  OYEXPORT
     for(i = 0; i < apis_n; ++i)
     {
       api = (oyCMMapiFilter_s_*)oyCMMapiFilters_Get( apis, i );
-      oyStringListAddStaticString_( &reg_lists, &reg_list_n,
-                                    oyNoEmptyString_m_( api->registration ),
-                                    oyAllocateFunc_, oyDeAllocateFunc_ );
+      if(rank_list[0][i])
+        oyStringListAddStaticString_( &reg_lists, &reg_list_n,
+                                      oyNoEmptyString_m_( api->registration ),
+                                      oyAllocateFunc_, oyDeAllocateFunc_ );
 
       if(api->release)
         api->release( (oyStruct_s**)&api );
