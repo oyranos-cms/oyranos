@@ -272,8 +272,6 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
 int            oyOption_SetRegistration (
                                        oyOption_s        * option,
                                        const char        * registration );
-const char *   oyOption_GetRegistration (
-                                       oyOption_s        * option );
 int            oyOption_SetValueFromDB(oyOption_s        * option );
 int            oyOption_StructMoveIn ( oyOption_s        * option,
                                        oyStruct_s       ** s );
