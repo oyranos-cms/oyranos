@@ -450,12 +450,6 @@ OYAPI const char * OYEXPORT
 OYAPI const char ** OYEXPORT
            oyConfDomain_GetTexts     ( oyConfDomain_s    * obj );
 
-OYAPI int  OYEXPORT
-                 oyConfigDomainList  ( const char        * registration_pattern,
-                                       char            *** list,
-                                       uint32_t          * count,
-                                       uint32_t         ** rank_list,
-                                       oyAlloc_f           allocateFunc );
 
 /** @typedef oyIO_t
     parametric type as shorthand for IO flags \n
