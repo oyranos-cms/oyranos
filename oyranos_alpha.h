@@ -426,10 +426,6 @@ OYAPI int  OYEXPORT
                                        int32_t           * rank_value );
 OYAPI int  OYEXPORT
                oyConfig_SaveToDB     ( oyConfig_s        * config );
-OYAPI const char * OYEXPORT
-               oyConfig_FindString   ( oyConfig_s        * config,
-                                       const char        * key,
-                                       const char        * value );
 OYAPI int  OYEXPORT
                oyConfig_Has          ( oyConfig_s        * config,
                                        const char        * key );
