@@ -83,9 +83,6 @@ int    oyOptions_SetRegistrationTextKey_(
                                        const char        * key,
                                        const char        * value );
 
-int    oyTextIccDictMatch            ( const char        * text,
-                                       const char        * pattern );
-
 int          oyImage_PpmWrite        ( oyImage_s         * image_output,
                                        const char        * file_name,
                                        const char        * free_text );
