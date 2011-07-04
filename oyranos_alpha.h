@@ -423,9 +423,6 @@ OYAPI int  OYEXPORT
                                        oyBlob_s          * data );
 OYAPI int  OYEXPORT
                oyConfig_SaveToDB     ( oyConfig_s        * config );
-OYAPI int  OYEXPORT
-               oyConfig_Has          ( oyConfig_s        * config,
-                                       const char        * key );
 
 
 /** @struct  oyConfigs_s
