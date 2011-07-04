@@ -3306,45 +3306,6 @@ oyChar* oyCMMCacheListPrint_()
 
 
 
-/** Function oyRankMapCopy
- *  @memberof oyConfig_s
- *  @brief   copy a rank map
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/27 (Oyranos: 0.1.10)
- *  @date    2009/01/27
- */
-oyRankPad *        oyRankMapCopy     ( const oyRankPad   * rank_map,
-                                       oyAlloc_f           allocateFunc )
-{
-  oyRankPad * map = 0;
-  int error = !rank_map;
-  int n = 0, i;
-
-  if(!allocateFunc)
-    allocateFunc = oyAllocateFunc_;
-
-  if(error <= 0)
-  {
-    while( rank_map[n++].key ) {}
-
-    oyAllocHelper_m_( map, oyRankPad, n + 1, allocateFunc, error = 1 );
-  }
-
-  if(error <= 0)
-  {
-    for(i = 0; i < n; ++i)
-    {
-      map[i].key = oyStringCopy_( rank_map[i].key, allocateFunc );
-      map[i].match_value = rank_map[i].match_value;
-      map[i].none_match_value = rank_map[i].none_match_value;
-      map[i].not_found_value = rank_map[i].not_found_value;
-    }
-  }
-
-  return map;
-}
-
 /** Function oyConfig_SaveToDB
  *  @memberof oyConfig_s
  *  @brief   store a oyConfig_s in DB
