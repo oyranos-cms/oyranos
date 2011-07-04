@@ -421,8 +421,6 @@ OYAPI int  OYEXPORT
                                        const char        * registration_domain,
                                        oyOptions_s       * options,
                                        oyBlob_s          * data );
-OYAPI int  OYEXPORT
-               oyConfig_SaveToDB     ( oyConfig_s        * config );
 
 
 /** @struct  oyConfigs_s

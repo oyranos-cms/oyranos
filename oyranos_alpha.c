@@ -3306,50 +3306,6 @@ oyChar* oyCMMCacheListPrint_()
 
 
 
-/** Function oyConfig_SaveToDB
- *  @memberof oyConfig_s
- *  @brief   store a oyConfig_s in DB
- *
- *  The new key set name is stored inside the key "key_set_name".
- *
- *  @param[in]     config              the configuration
- *  @return                            0 - good, 1 >= error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/21 (Oyranos: 0.1.10)
- *  @date    2011/01/29
- */
-OYAPI int  OYEXPORT
-               oyConfig_SaveToDB     ( oyConfig_s        * config )
-{
-  int error = !config;
-  oyOptions_s * opts = 0;
-  oyConfig_s * s = config;
-  char * new_reg = 0;
-
-  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
-
-  DBG_PROG_START
-
-  if(error <= 0)
-  {
-    opts = oyOptions_New( 0 );
-    oyOptions_AppendOpts( opts, oyConfigPriv_m(config)->db );
-    oyOptions_AppendOpts( opts, oyConfigPriv_m(config)->backend_core );
-
-    error = oyOptions_SaveToDB( opts, oyConfigPriv_m(config)->registration, &new_reg, 0 );
-
-    /* add information about the data's origin */
-    oyConfig_AddDBData( config, "key_set_name", new_reg, OY_CREATE_NEW );
-
-    oyFree_m_( new_reg );
-    oyOptions_Release( &opts );
-  }
-
-  DBG_PROG_ENDE
-  return error;
-}
-
 /** Function oyRegistrationEraseFromDB
  *  @memberof oyConfig_s
  *  @brief   remove a registration config from DB
