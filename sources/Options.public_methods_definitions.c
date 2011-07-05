@@ -590,7 +590,7 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
  *
  *  @see oyOptions_Add
  *
- *  @param         s                   the options
+ *  @param         opts                the options
  *  @param[in]     flags               for inbuild defaults |
  *                                     oyOPTIONSOURCE_FILTER;
  *                                     for options marked as advanced |
@@ -604,13 +604,13 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
  *  @since   2008/11/27 (Oyranos: 0.1.9)
  *  @date    2008/11/27
  */
-int          oyOptions_DoFilter      ( oyOptions_s       * s,
+int          oyOptions_DoFilter      ( oyOptions_s       * opts,
                                        uint32_t            flags,
                                        const char        * filter_type )
 {
   oyOptions_s * opts_tmp = 0;
-  oyOption_s_ * o = 0;
-  int error = !s;
+  oyOption_s * o = 0;
+  int error = !opts;
   char * text;
   int i,n;
 
@@ -620,20 +620,20 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
   if(error <= 0 && (flags || filter_type))
   {
     /*  6. get stored values */
-    n = oyOptions_Count( s );
+    n = oyOptions_Count( opts );
     opts_tmp = oyOptions_New(0);
     for(i = 0; i < n; ++i)
     {
       int skip = 0;
 
-      o = (oyOption_s_*)oyOptions_Get( s, i );
+      o = oyOptions_Get( opts, i );
 
 
       /* usage/type range filter */
       if(filter_type)
       {
-        text = oyFilterRegistrationToText( o->registration, oyFILTER_REG_TYPE,
-                                           0);
+        text = oyFilterRegistrationToText( oyOption_GetRegistration(o),
+                                           oyFILTER_REG_TYPE, 0);
         if(oyStrcmp_( filter_type, text ) != 0)
           skip = 1;
 
@@ -643,7 +643,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
       /* front end options filter */
       if(!skip && !(flags & oyOPTIONATTRIBUTE_FRONT))
       {
-        text = oyStrrchr_( o->registration, '/' );
+        text = oyStrrchr_( oyOption_GetRegistration(o), '/' );
 
         if(text)
            text = oyStrchr_( text, '.' );
@@ -655,40 +655,44 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
       /* advanced options mark and zero */
       if(!skip && !(flags & oyOPTIONATTRIBUTE_ADVANCED))
       {
-        text = oyStrrchr_( o->registration, '/' );
+        text = oyStrrchr_( oyOption_GetRegistration(o), '/' );
         if(text)
            text = oyStrchr_( text, '.' );
         if(text)
           if(oyStrstr_( text, "advanced" ))
           {
-            oyOption_SetFromText( (oyOption_s*)o, "0", 0 );
-            o->flags = o->flags & (~oyOPTIONATTRIBUTE_EDIT);
+            oyOption_SetFromText( o, "0", 0 );
+            oyOption_SetFlags( o,
+                              oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
           }
       } else
       /* Elektra settings, modify value */
       if(!skip && !(flags & oyOPTIONSOURCE_FILTER))
       {
-        text = oyGetKeyString_( oyOption_GetText( (oyOption_s*)o, oyNAME_DESCRIPTION),
+        text = oyGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                 oyAllocateFunc_ );
         if(text && text[0])
         {
-          error = oyOption_SetFromText( (oyOption_s*)o, text, 0 );
-          o->flags = o->flags & (~oyOPTIONATTRIBUTE_EDIT);
-          o->source = oyOPTIONSOURCE_USER;
+          error = oyOption_SetFromText( o, text, 0 );
+          oyOption_SetFlags(o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
+          oyOption_SetSource( o, oyOPTIONSOURCE_USER );
           oyFree_m_( text );
         }
       }
 
       if(!skip)
-        oyOptions_Add( opts_tmp, (oyOption_s*)o, -1, s->oy_ );
+        oyOptions_Add( opts_tmp, o, -1, opts->oy_ );
 
-      oyOption_Release( (oyOption_s**)&o );
+      oyOption_Release( &o );
     }
 
-    error = oyStructList_CopyFrom(
-              oyOptionsPriv_m(s)->list_,
-              oyOptionsPriv_m(opts_tmp)->list_, 0
-              );
+    n = oyOptions_Count( opts_tmp );
+    error = oyOptions_Clear(opts);
+    for( i = 0; i < n && !error; ++i )
+    {
+      o = oyOptions_Get( opts_tmp, i );
+      error = oyOptions_MoveIn( opts, &o, -1 );
+    }
     oyOptions_Release( &opts_tmp );
   }
 
