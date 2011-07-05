@@ -359,13 +359,6 @@ OYAPI oyPointer OYEXPORT
 #define OY_COMPUTE      0x01
 #define OY_FROM_PROFILE 0x04
 
-OYAPI int  OYEXPORT
-           oyOptions_SetDriverContext( oyOptions_s      ** options,
-                                       oyPointer           driver_context,
-                                       const char        * driver_context_type,
-                                       size_t              driver_context_size,
-                                       oyObject_s          object);
-
 
 /** @enum    oyDATALAYOUT_e
  *  @brief   ideas for basic data arrangements
