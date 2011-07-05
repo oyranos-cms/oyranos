@@ -105,4 +105,9 @@ int             oyOptions_Handle     ( const char        * registration,
                                        oyOptions_s       * options,
                                        const char        * command,
                                        oyOptions_s      ** result );
-
+OYAPI int  OYEXPORT
+           oyOptions_SetDriverContext( oyOptions_s      ** options,
+                                       oyPointer           driver_context,
+                                       const char        * driver_context_type,
+                                       size_t              driver_context_size,
+                                       oyObject_s          object );
