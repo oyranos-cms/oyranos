@@ -1796,7 +1796,7 @@ int             oyOptions_Handle     ( const char        * registration,
   {
     oyCMMapiFilters_s * apis;
     int apis_n = 0, i;
-    oyCMMapi10_s * cmm_api10 = 0;
+    oyCMMapi10_s_ * cmm_api10 = 0;
     char * class, * api_reg;
     char * test = 0;
 
@@ -1816,7 +1816,7 @@ int             oyOptions_Handle     ( const char        * registration,
     if(test)
       for(i = 0; i < apis_n; ++i)
       {
-        cmm_api10 = (oyCMMapi10_s*) oyCMMapiFilters_Get( apis, i );
+        cmm_api10 = (oyCMMapi10_s_*) oyCMMapiFilters_Get( apis, i );
 
         if(oyFilterRegistrationMatch( cmm_api10->registration, registration, 0))
         {
