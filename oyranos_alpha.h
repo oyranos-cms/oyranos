@@ -257,10 +257,6 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
 oyOptions_s *  oyOptions_FromText    ( const char        * text,
                                        uint32_t            flags,
                                        oyObject_s          object );
-oyOptions_s *  oyOptions_New         ( oyObject_s          object );
-oyOptions_s *  oyOptions_Copy        ( oyOptions_s       * options,
-                                       oyObject_s          object );
-int            oyOptions_Release     ( oyOptions_s      ** options );
 
 
 int            oyOptions_ReleaseAt   ( oyOptions_s       * list,
