@@ -90,8 +90,9 @@ oyRankPad _rank_map[] = {
    {const_cast < char *>(PRFX_LRAW "driver_version"), 2, -1, 0},               /**< is good */
    {const_cast < char *>("profile_name"), 0, 0, 0},                  /**< non relevant for device properties*/
        /* EXIF Fields */
-   {const_cast < char *>(PRFX_EXIF "Image_Make"), 1, -1, 0},              /**< is nice */
-   {const_cast < char *>(PRFX_EXIF "Image_Model"), 5, -5, 0},             /**< important, should not fail */
+   {const_cast < char *>(PRFX_EXIF "manufacturer"), 1, -1, 0},              /**< is nice */
+   {const_cast < char *>(PRFX_EXIF "model"), 5, -5, 0},             /**< important, should not fail */
+   {const_cast < char *>(PRFX_EXIF "serial"), 1, 0, 0},                    /**< is nice */
    {const_cast < char *>(PRFX_EXIF "Photo_ISOSpeedRatings"), 1, 0, 0},    /**< is nice */
    {const_cast < char *>(PRFX_EXIF "Photo_ExposureProgram"), 1, 0, 0},    /**< nice to match */
    {const_cast < char *>(PRFX_EXIF "Photo_Flash"), 1, 0, 0},              /**< nice to match */
@@ -225,7 +226,15 @@ class exif2options {
       {
          std::string n(name), exif(name);
          n.replace(n.find("."),1,"_");
+         if(n == PRFX_EXIF "Image_Make")
+           n = PRFX_EXIF "manufacturer";
+         else if(n == PRFX_EXIF "Image_Model")
+           n = PRFX_EXIF "model";
+         else if(n.find("SerialNumber") != std::string::npos)
+           n = PRFX_EXIF "serial";
+
          exif.replace(0,5,"Exif.");
+
          std::ostringstream registration;
          registration << CMM_BASE_REG OY_SLASH << n.c_str();
          Exiv2::ExifKey key( exif );
@@ -791,7 +800,7 @@ oyCMMapi8_s _api8 = {
    CMMInit,                                                           /**< oyCMMInit_f      oyCMMInit */
    CMMMessageFuncSet,                                                 /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
    const_cast < char *>(CMM_BASE_REG),                                /**< registration */
-   {0, 1, 0},                                                         /**< int32_t version[3] */
+   {0, 2, 0},                                                         /**< int32_t version[3] */
    {0,3,0},                                                        /**< int32_t module_api[3] */
    0,                                                                 /**< char * id_ */
    0,                                                                 /**< oyCMMapi5_s * api5_ */
@@ -823,7 +832,7 @@ const char *GetText(const char *select, oyNAME_e type,
       else if (type == oyNAME_NAME)
          return _("Oyranos RAW Image");
       else
-         return _("The raw image (hopefully)usefull backend of Oyranos.");
+         return _("The raw image backend of Oyranos.");
    } else if (strcmp(select, "manufacturer") == 0) {
       if (type == oyNAME_NICK)
          return _("orionas");

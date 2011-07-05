@@ -457,11 +457,13 @@ int main( int argc , char** argv )
     } else
     if(prof_name && add_meta)
     {
+      uint32_t id[4];
       oyBlob_s * edid = oyBlob_New(0);
       char * edid_fn = oyResolveDirFileName_(add_meta);
       data = oyReadFileToMem_( edid_fn, &size, oyAllocateFunc_ );
       oyFree_m_(edid_fn);
       oyBlob_SetFromData( edid, data, size, "edid" );
+      oyFree_m_(data);
       prof = oyProfile_FromFile( prof_name, 0, 0 );
       device = 0;
       oyOptions_Release( &options );
@@ -479,6 +481,10 @@ int main( int argc , char** argv )
       prof = (oyProfile_s*)oyOptions_GetType( options, -1, "icc_profile",
                                               oyOBJECT_PROFILE_S );
       oyOptions_Release( &options );
+      /* serialise before requesting a ICC md5 */
+      data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
+      oyFree_m_(data);
+      oyProfile_GetMD5( prof, OY_COMPUTE, id );
       oyProfile_ToFile_( prof, prof_name );
       oyProfile_Release( &prof );
     }

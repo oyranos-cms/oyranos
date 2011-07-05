@@ -111,10 +111,10 @@ ELEKTRA_OBJ = \
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(SRCDIR) \
 	-I$(SRCDIR)/$(GENDIR) \
 	$(LCMS_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) $(LIBXML2_H) \
-	$(XCM_H) $(LRAW_H)
+	$(XCM_H) $(LRAW_H) $(YAJL_H)
 
 LDLIBS = $(LDFLAGS) -L$(libdir) -L. \
-	$(ELEKTRA_LIBS) $(LIBXML2_LIBS) -lc $(I18N_LIB) $(LIBLTDL)
+	$(ELEKTRA_LIBS) $(YAJL_LIBS) $(LIBXML2_LIBS) -lc $(I18N_LIB) $(LIBLTDL)
 LDLIBSCORE = $(LDFLAGS) -L$(libdir) -L. \
 	$(LIBXML2_LIBS) -lc $(I18N_LIB) $(LIBLTDL)
 
@@ -332,6 +332,9 @@ OFORMS_FILES = \
 CXXFILES_Flmm = \
 	FL/Flmm_Tabs.cxx
 
+CFILES_OYJL = \
+	oyjl/oyjl_tree_parse.c
+
 TEST_CPP = \
 	tests/cups_test.cxx \
 	tests/dE2000_test.cpp \
@@ -420,6 +423,11 @@ Flmm_FILES = \
 	FL/README
 #endif
 
+OYJL_FILES = \
+	oyjl/oyjl_tree.h \
+	$(CFILES_OYJL) \
+	oyjl/oyjl_tree_test.c \
+	oyjl/makefile
 
 TOP_SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES_CORE) $(CFILES) $(CFILESC) \
 		$(CFILES_MONI_NVIDIA) $(CFILES_GAMMA) \
@@ -468,7 +476,7 @@ CPPOBJECTS =	test2.o \
 	$(CPP_lraw_OBJECTS)
 CXXOBJECTS =	$(CXXFILES) $(FLTK_OFORMS_OBJECTS)
 
-OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILES_ALPHA:.c=.o) $(CFILES_OFORMS:.c=.o) $(OBJECTS_CS)
+OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILES_ALPHA:.c=.o) $(CFILES_OFORMS:.c=.o) $(OBJECTS_CS) $(OYJL_OBJECTS)
 OBJECTS_OBJECT = $(CFILES_OBJECT:.c=.o)
 OBJECTS_CORE = $(CFILES_CORE:.c=.o) $(CFILESC:.c=.o)
 CMM_lcms_OBJECTS = $(CFILES_CMM_lcms:.c=.o)
@@ -489,6 +497,7 @@ MONI_CS_OBJECTS = $(CFILES_MONI_CS:.c=.o)
 Flmm_OBJECTS = $(CXXFILES_Flmm:.cxx=.o)
 FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
 FLTK_OFORMS_OBJECTS = $(CXXFILES_OFORMS_FLTK:.cxx=.o)
+OYJL_OBJECTS = $(CFILES_OYJL:.c=.o)
 
 CLEAN_OBJECTS = $(OBJECTS) \
 	$(OBJECTS_OBJECT) \
@@ -510,6 +519,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(CMM_oPNG_OBJECTS) \
 	$(FLTK_OBJECTS) \
 	$(FLTK_OFORMS_OBJECTS) \
+	$(OYJL_OBJECTS) \
 	$(TARGET)_gamma.o \
 	$(TARGET)_policy.o \
 	$(TARGET)_profile.o \
@@ -531,9 +541,10 @@ SUB_OBJECTS = \
 	$(CMM_oicc_OBJECTS) \
 	$(CMM_oPNG_OBJECTS) \
 	$(Flmm_OBJECTS) \
+	$(OYJL_OBJECTS) \
 	tests/test_oyranos.o
 
-INCL_DEP = $(SOURCES) $(CXXFILES_Flmm) \
+INCL_DEP = $(SOURCES) $(CXXFILES_Flmm) $(CFILES_OYJL) \
 	test.c test2.cpp test_core.c test_object.c tests/test_oyranos.c
 
 .PHONY:	check_environment docu examples oforms $(ELEKTRA_VERSION)
@@ -778,6 +789,11 @@ $(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL_NAM
 	-L./$(LIB_XNVCTRL) -lXNVCtrl $(MODULE_LDLIBS) \
 	$(LINK_LIB_PATH)
 
+oyjl/oyjl_tree_parse.o:	$(SRCDIR)/oyjl/oyjl_tree_parse.c
+	echo Compiling $<
+	mkdir -p oyjl/
+	$(CC) -I./ -I./oyjl -I$(SRCDIR)/oyjl $(CFLAGS) $(INCL) $(YAJL_H) -o $@ -c $<
+
 $(TARGET)_config_fltk.o:	$(SRCDIR)/$(TARGET)_config_fltk.cxx
 	echo Compiling $*.cxx
 	$(CXX) -I./ -I$(SRCDIR) $(CXXFLAGS) $(INCL) $(FLTK_H) -c $<
@@ -1009,7 +1025,7 @@ install_bin:	all install_gui
 	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		($(INSTALL) -m 755 lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		"$(DESTDIR)$(libdir)" \
-		&& echo Installed $(DESTDIR)$(libdir)lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
+		&& echo Installed $(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
 	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		(test -L "$(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)" && $(RM) "$(DESTDIR)$(libdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)"; \
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
@@ -1029,7 +1045,7 @@ install_bin:	all install_gui
 	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		($(INSTALL) -m 755 lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		"$(DESTDIR)$(metadir)" \
-		&& echo Installed $(DESTDIR)$(metadir)lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
+		&& echo Installed $(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
 	   test -f NOT_lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		(test -L "$(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)" && $(RM) "$(DESTDIR)$(metadir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)"; \
 		$(LNK)  lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
@@ -1048,7 +1064,7 @@ install_bin:	all install_gui
 	   test -f lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		($(INSTALL) -m 755 lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
 		"$(DESTDIR)$(cmmdir)" \
-		&& echo Installed $(DESTDIR)$(cmmdir)lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
+		&& echo Installed $(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION)$(LIBEXT) ); \
 	   test -f NOT_lib$${lib}$(SO).$(VERSION)$(LIBEXT) && \
 		(test -L "$(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)" \
 		&& $(RM) "$(DESTDIR)$(cmmdir)/lib$${lib}$(SO).$(VERSION_A)$(LIBEXT)"; \
@@ -1302,7 +1318,7 @@ depend:	cdepend
 	    incl_src="$${incl_src} $(SRCDIR)/$${file}"; done; \
 	  $(MAKEDEPEND) -I./ -I$(SRCDIR) $(INCL) $${incl_src} >> mkdepend)
 	-for file in $(SUB_OBJECTS); do \
-	   obj=`echo $${file} | sed 's%modules/%% ; s%devices/%% ; s%FL/%% ; s%tests/%% ; s%oforms/%%'`; \
+	   obj=`echo $${file} | sed 's%modules/%% ; s%devices/%% ; s%FL/%% ; s%tests/%% ; s%oforms/%% ; s%oyjl/%%'`; \
 	   cat mkdepend | sed s%$${obj}%$${file}% > mkdepend.tmp; \
 	   mv mkdepend.tmp mkdepend; \
          done
@@ -1425,6 +1441,9 @@ copy_files:
 	mkdir $(DESTDIR)/FL
 	cd "$(SRCDIR)" && \
 	  $(COPY) $(Flmm_FILES) "$(DESTDIR)/FL"
+	mkdir $(DESTDIR)/oyjl
+	cd "$(SRCDIR)" && \
+	  $(COPY) $(OYJL_FILES) "$(DESTDIR)/oyjl"
 	mkdir "$(DESTDIR)/po"
 	cd "$(SRCDIR)" && \
 	  $(COPY) $(POT_FILE) "$(DESTDIR)/po"

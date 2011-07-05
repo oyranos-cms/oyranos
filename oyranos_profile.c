@@ -26,6 +26,9 @@
 #include "oyranos_config.h"
 #include "oyranos_string.h"
 #include "oyranos_version.h"
+
+#include "oyjl/oyjl_tree.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -202,6 +205,10 @@ int main( int argc , char** argv )
   if(file_name && profile_name)
   {
     oyConfig_s * config;
+    oyjl_value_s * json = 0,
+                 * json_device,
+                 * json_tmp;
+    char * prefix, * val, * key, * tmp;
 
     p = oyProfile_FromFile( profile_name, 0, 0 );
     if(p)
@@ -217,8 +224,20 @@ int main( int argc , char** argv )
 
     error = oyProfile_AddTagText( p, icSigProfileDescriptionTag, profile_name );
 
-    config = oyConfig_New( "//" OY_TYPE_STD "/config", 0 );
-
+    {
+      char * json_text;
+      size_t json_size = 0;
+      yajl_status status;
+      json_text = oyReadFileToMem_( json_name, &json_size, oyAllocateFunc_ );
+      config = oyConfig_New( "//" OY_TYPE_STD "/config", 0 );
+      status = oyjl_tree_from_json( json_text, &json, 0 );
+      oyDeAllocateFunc_(json_text);
+    }
+    json_device = oyjl_tree_get_value( json,
+                                      "org/freedesktop/openicc/device/[0]/[0]");
+    json_tmp = oyjl_tree_get_value( json_device, "prefixes" );
+    
+    prefix = oyjl_print_text( &json_tmp->value.text );
   } else
   if(file_name)
   {
