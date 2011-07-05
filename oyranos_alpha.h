@@ -246,11 +246,6 @@ oyOption_s *   oyOption_FromDB       ( const char        * registration,
 #define oyToStringList_m(r)            ((r)&1)
 
 
-oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
-                                       const char        * cmm,
-                                       uint32_t            flags,
-                                       oyObject_s          object );
-
 #define OY_CREATE_NEW                  0x02        /** create */
 #define OY_ADD_ALWAYS                  0x04        /** do not use for configurations */
 /* decode */
