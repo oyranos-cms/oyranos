@@ -259,14 +259,6 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
                                        oyObject_s          object );
 
 
-int            oyOptions_ReleaseAt   ( oyOptions_s       * list,
-                                       int                 pos );
-oyOption_s *   oyOptions_Get         ( oyOptions_s       * list,
-                                       int                 pos );
-int            oyOptions_Count       ( oyOptions_s       * list );
-int            oyOptions_MoveIn      ( oyOptions_s       * options,
-                                       oyOption_s       ** option,
-                                       int                 pos );
 int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyOption_s        * option,
                                        int                 pos,
