@@ -256,10 +256,6 @@ OYAPI int  OYEXPORT
                                        const char        * key_base_name,
                                        char             ** new_reg,
                                        oyAlloc_f           allocateFunc );
-int            oyOptions_Handle      ( const char        * registration,
-                                       oyOptions_s       * options,
-                                       const char        * command,
-                                       oyOptions_s      ** result );
 
 OYAPI int  OYEXPORT
                oyConfig_Set          ( oyConfig_s        * config,
