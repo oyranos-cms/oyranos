@@ -251,9 +251,6 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
                                        uint32_t            flags,
                                        oyObject_s          object );
 
-int            oyOptions_DoFilter    ( oyOptions_s       * s,
-                                       uint32_t            flags,
-                                       const char        * filter_type );
 #define OY_CREATE_NEW                  0x02        /** create */
 #define OY_ADD_ALWAYS                  0x04        /** do not use for configurations */
 /* decode */
