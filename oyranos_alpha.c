@@ -15,6 +15,7 @@
 #include "oyPointer_s.h"
 #include "oyProfile_s_.h"
 #include "oyConfig_s.h"
+#include "oyConfigs_s.h"
 #include "oyConfig_s_.h"
 #include "oyObserver_s.h"
 #include "oyOption_s.h"
@@ -24,6 +25,7 @@
 #include "oyranos_types.h"
 #include "oyranos_alpha.h"
 #include "oyranos_alpha_internal.h"
+#include "oyranos_generic_internal.h"
 #include "oyranos_cmm.h"
 #include "oyranos_elektra.h"
 #include "oyranos_helper.h"
@@ -1145,7 +1147,7 @@ int          oyCMMdsoReference_    ( const char        * lib_name,
   if(error <= 0)
   for(i = 0; i < n; ++i)
   {
-    oyStruct_s * obj = oyStructList_Get_(oy_cmm_handles_, i);
+    oyStruct_s * obj = oyStructList_Get_((oyStructList_s_*)oy_cmm_handles_, i);
     oyPointer_s * s;
 
     if(obj && obj->type_ == oyOBJECT_POINTER_S)
@@ -1157,7 +1159,7 @@ int          oyCMMdsoReference_    ( const char        * lib_name,
         !oyStrcmp_( oyPointer_GetLibName( s ), lib_name ) )
     {
       found = 1;
-      oyStructList_ReferenceAt_(oy_cmm_handles_, i);
+      oyStructList_ReferenceAt_((oyStructList_s_*)oy_cmm_handles_, i);
       if(ptr)
       {
         if(!oyPointer_GetPointer( s ))
@@ -1210,7 +1212,7 @@ int          oyCMMdsoSearch_         ( const char        * lib_name )
   if(error <= 0)
   for(i = 0; i < n; ++i)
   {
-    oyStruct_s * obj = oyStructList_Get_(oy_cmm_handles_, i);
+    oyStruct_s * obj = oyStructList_Get_((oyStructList_s_*)oy_cmm_handles_, i);
     oyPointer_s * s = 0;
 
     if(obj && obj->type_ == oyOBJECT_POINTER_S)
@@ -1282,7 +1284,7 @@ if(!lib_name)
 
   if(found >= 0)
   {
-    oyPointer_s * s = (oyPointer_s*)oyStructList_GetType_( oy_cmm_handles_, found,
+    oyPointer_s * s = (oyPointer_s*)oyStructList_GetType_( (oyStructList_s_*)oy_cmm_handles_, found,
                                                   oyOBJECT_POINTER_S );
 
     if(s)
@@ -1489,7 +1491,7 @@ oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name )
   if(error <= 0)
   for(i = 0; i < n; ++i)
   {
-    oyCMMhandle_s * cmmh = (oyCMMhandle_s*) oyStructList_GetType_(oy_cmm_infos_,
+    oyCMMhandle_s * cmmh = (oyCMMhandle_s*) oyStructList_GetType_((oyStructList_s_*)oy_cmm_infos_,
                                                 i, oyOBJECT_CMM_HANDLE_S );
     oyCMMInfo_s * s = 0;
 
@@ -1501,7 +1503,7 @@ oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name )
         !oyStrcmp_( cmmh->lib_name, lib_name ) )
     {
       cmm_handle = oyCMMhandle_Copy_( cmmh, 0 );
-      error = oyStructList_ReferenceAt_( oy_cmm_infos_, i );
+      error = oyStructList_ReferenceAt_( (oyStructList_s_*)oy_cmm_infos_, i );
       if(!error)
         break;
     }
@@ -2627,7 +2629,9 @@ int              oyCMMRelease_       ( const char        * cmm )
   {
     oyCMMInfo_s * s = 0;
     oyCMMhandle_s * cmmh = (oyCMMhandle_s *) oyStructList_GetType_(
-                                oy_cmm_infos_, i, oyOBJECT_CMM_HANDLE_S );
+                                               (oyStructList_s_*)oy_cmm_infos_,
+                                               i,
+                                               oyOBJECT_CMM_HANDLE_S );
 
     if(cmmh)
       s = (oyCMMInfo_s*) cmmh->info;
@@ -3280,7 +3284,7 @@ oyChar* oyCMMCacheListPrint_()
 
   for(i = 0; i < n ; ++i)
   {
-    oyHash_s * compare = (oyHash_s*) oyStructList_GetType_(*cache_list, i,
+    oyHash_s * compare = (oyHash_s*) oyStructList_GetType_((oyStructList_s_*)*cache_list, i,
                                                          oyOBJECT_HASH_S );
 
     if(compare)
