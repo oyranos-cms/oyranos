@@ -228,6 +228,7 @@ ldconfig
 %doc AUTHORS COPYING ChangeLog README
 %{_libdir}/lib%{name}_core.so.*
 %{_libdir}/lib%{name}_object.so.*
+%{_libdir}/lib%{name}_modules.so.*
 %{_libdir}/lib%{name}.so.*
 %dir %{_libdir}/colour/
 %dir %{_libdir}/%{cmmsubpath}/
@@ -246,6 +247,7 @@ ldconfig
 %{_bindir}/%{name}-config
 %{_libdir}/lib%{name}_core.so
 %{_libdir}/lib%{name}_object.so
+%{_libdir}/lib%{name}_modules.so
 %{_libdir}/lib%{name}.so
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/icc34.h
@@ -259,6 +261,7 @@ ldconfig
 %{_libdir}/pkgconfig/*
 %{_libdir}/lib%{name}_core.a
 %{_libdir}/lib%{name}_object.a
+%{_libdir}/lib%{name}_modules.a
 %{_libdir}/lib%{name}.a
 %{_mandir}/man3/%{name}-config.3*
 %{_mandir}/man3/%{name}.*
@@ -337,6 +340,9 @@ ldconfig
 %{desktopdir}/qcmsevents-applet.desktop
 
 %changelog
+* Wed Jul 01 2011 Kai-Uwe Behrmann
+- add liboyranos_modules
+
 * Mon Jun 01 2011 Kai-Uwe Behrmann
 - rename module packages from liboyranos-xxx to oyranos-libs-xxx
 - remove comments with macros 
