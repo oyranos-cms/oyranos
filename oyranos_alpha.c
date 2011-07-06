@@ -10014,8 +10014,8 @@ int          oyProfile_ToFile_       ( oyProfile_s       * profile,
  *  @memberof oyProfile_s
  *  @brief   get the parsed ICC profile back into memory
  *
- *  @version Oyranos: 0.1.8
- *  @date    2008/01/30
+ *  @version Oyranos: 0.3.2
+ *  @date    2011/07/05
  *  @since   2008/01/30 (Oyranos: 0.1.8)
  */
 oyPointer    oyProfile_WriteHeader_  ( oyProfile_s       * profile,
@@ -10038,6 +10038,8 @@ oyPointer    oyProfile_WriteHeader_  ( oyProfile_s       * profile,
       {
         memset( block, 0, 132 );
         memcpy( block, tag->block_, 128 );
+        /* unset profile ID */
+        memset( &((char*)block)[84], 0, OY_HASH_SIZE );
       }
     }
 
