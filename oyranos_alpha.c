@@ -9206,6 +9206,14 @@ OYAPI oyPointer OYEXPORT
       if(profile->file_name_)
         profile->oy_->deallocateFunc_( profile->file_name_ );
       profile->file_name_ = 0;
+      if(profile->block_ && profile->size_)
+        profile->oy_->deallocateFunc_( profile->block_ );
+      profile->size_ = 0;
+      profile->block_ = oyAllocateWrapFunc_( *size,
+                                             profile->oy_->allocateFunc_ );
+      error = !memcpy( profile->block_, block, *size );
+      if(error <= 0)
+        profile->size_ = *size;
       oyObject_SetNames( profile->oy_, 0,0,0 );
       oyProfile_GetText(profile, oyNAME_NICK);
       oyProfile_GetText(profile, oyNAME_NAME);
