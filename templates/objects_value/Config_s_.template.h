@@ -6,3 +6,8 @@
 {% include "Config.members.h" %}
 /* } Include "Config.members.h" */
 {% endblock %}
+
+{% block LocalIncludeFiles %}
+{{ block.super }}
+#include "oyOptions_s_.h"
+{% endblock %}
