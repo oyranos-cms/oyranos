@@ -249,7 +249,7 @@ char *         oyOption_GetValueText_( oyOption_s_       * obj,
         oyStruct_s * oy_struct = 0;
 
         if(oy_struct_list && oy_struct_list->type_ == oyOBJECT_STRUCT_LIST_S)
-          oy_struct = oyStructList_Get_( oy_struct_list, i );
+          oy_struct = oyStructList_Get_( ( oyStructList_s_*)oy_struct_list, i );
         else if(v->oy_struct)
           oy_struct = v->oy_struct;
 

@@ -549,7 +549,7 @@ OYAPI int  OYEXPORT
     n = oyStructList_Count( handles->list_ );
   for(i = 0; i < n; ++i)
   {
-    o = (oyOption_s_*) oyStructList_Get_( handles->list_, i );
+    o = (oyOption_s_*) oyStructList_Get_( (oyStructList_s_*)(handles->list_), i );
     if( oyStrcmp_( o->registration, OY_SIGNAL_OBSERVERS ) == 0)
     {
       if(observer)
