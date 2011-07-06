@@ -45,8 +45,6 @@ char * printCFDictionary( CFDictionaryRef dict );
 #include "oyranos_helper.h"
 #include "oyranos_sentinel.h"
 
-#include "oyranos_monitor.c"
-
 /* ---  Helpers  --- */
 
 /* --- internal API definition --- */

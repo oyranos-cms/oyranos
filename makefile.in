@@ -273,6 +273,7 @@ CHEADERS_MODULES = \
 CFILES_MODULES_DEVICES = \
 	$(CFILES_CMM_oyX1) \
 	$(CFILES_CMM_qarz) \
+	$(CFILES_MONI) \
 	$(CFILES_MONI_X11) \
 	$(CFILES_MONI_CS) \
 	$(CFILES_CMM_CUPS) \
@@ -280,7 +281,8 @@ CFILES_MODULES_DEVICES = \
 	modules/devices/helper.c \
 	$(CFILES_CMM_SANE) \
 	modules/devices/SANE_help.c \
-	$(CPPFILES_CMM_oyRE) \
+	$(CPPFILES_CMM_oyRE)
+CFILES_MONI = \
 	modules/devices/$(TARGET)_monitor.c
 CFILES_MONI_X11 = \
 	modules/devices/$(TARGET)_monitor_x11.c
@@ -482,8 +484,8 @@ CMM_oyra_OBJECTS = $(CFILES_CMM_oyra:.c=.o)
 CMM_oyIM_OBJECTS = $(CFILES_CMM_oyIM:.c=.o)
 CMM_oicc_OBJECTS = $(CFILES_CMM_oicc:.c=.o)
 CMM_oPNG_OBJECTS = $(CFILES_CMM_oPNG:.c=.o)
-MONI_X11_OBJECTS = $(CFILES_MONI_X11:.c=.o)
-MONI_CS_OBJECTS = $(CFILES_MONI_CS:.c=.o)
+MONI_X11_OBJECTS = $(CFILES_MONI_X11:.c=.o) $(CFILES_MONI:.c=.o)
+MONI_CS_OBJECTS = $(CFILES_MONI_CS:.c=.o) $(CFILES_MONI:.c=.o)
 Flmm_OBJECTS = $(CXXFILES_Flmm:.cxx=.o)
 FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
 FLTK_OFORMS_OBJECTS = $(CXXFILES_OFORMS_FLTK:.cxx=.o)
