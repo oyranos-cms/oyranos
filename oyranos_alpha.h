@@ -29,6 +29,7 @@
 #include "oyObserver_s.h"
 #include "oyOption_s.h"
 #include "oyOptions_s.h"
+#include "oyConfigs_s.h"
 #include "oyProfile_s.h"
 #include "oyProfiles_s.h"
 #include "oyStruct_s.h"
