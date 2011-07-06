@@ -1022,7 +1022,7 @@ OYAPI int OYEXPORT
     for( i = 0; i < n; ++i )
     {
       tag = oyProfile_GetTagByPos_( s, i );
-      if(oyProfileTagPriv_m(tag)->use == oyProfileTagPriv((*obj))->use)
+      if(oyProfileTagPriv_m(tag)->use == oyProfileTagPriv_m((*obj))->use)
       {
         oyProfile_TagReleaseAt_(s, i);
         n = oyProfile_GetTagCount_( s );
@@ -1326,8 +1326,8 @@ OYAPI int OYEXPORT
           if(key_len > s_len &&
              strcmp(&texts[i+0][key_len-s_len-1],"_serial") == 0)
           {
-            error = oyOptions_SetRegistrationTextKey_( device->backend_core,
-                                                 device->registration,
+            error = oyOptions_SetRegistrationTextKey_( device_->backend_core,
+                                                 device_->registration,
                                                  "serial", texts[i+1] );
             DBG_NUM1_S("added serial: %s", texts[i+1]);
             break;
