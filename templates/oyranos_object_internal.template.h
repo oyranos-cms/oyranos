@@ -38,6 +38,8 @@
     action; \
   }
 
+#define OY_ERR if(l_error != 0) error = l_error;
+
 int    oyTextIccDictMatch            ( const char        * text,
                                        const char        * pattern );
 
