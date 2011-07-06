@@ -204,7 +204,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
 
     if(!object)
     {
-      entry = oyCacheListGetEntry_ ( oy_profile_s_file_cache_, 0, name );
+      entry = oyCacheListGetEntry_ ( (oyStructList_s*)oy_profile_s_file_cache_, 0, name );
 
       if(!oyToNoCacheRead_m(flags))
       {
