@@ -3352,49 +3352,6 @@ int          oyRegistrationEraseFromDB(const char        * registration )
   return error;
 }
 
-/** Function oyConfigs_Release
- *  @memberof oyConfigs_s
- *  @brief   release and possibly deallocate a Configs list
- *
- *  @param[in,out] obj                 struct object
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-OYAPI int  OYEXPORT
-               oyConfigs_Release     ( oyConfigs_s      ** obj )
-{
-  /* ---- start of common object destructor ----- */
-  oyConfigs_s * s = 0;
-
-  if(!obj || !*obj)
-    return 0;
-
-  s = *obj;
-
-  oyCheckType__m( oyOBJECT_CONFIGS_S, return 1 )
-
-  *obj = 0;
-
-  if(oyObject_UnRef(s->oy_))
-    return 0;
-  /* ---- end of common object destructor ------- */
-
-  oyStructList_Release( &s->list_ );
-
-  if(s->oy_->deallocateFunc_)
-  {
-    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-
-    oyObject_Release( &s->oy_ );
-
-    deallocateFunc( s );
-  }
-
-  return 0;
-}
-
 /** Function oyConfigs_SelectSimiliars
  *  @memberof oyConfigs_s
  *  @brief   filter similiar configs compared by a pattern
