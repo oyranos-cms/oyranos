@@ -264,9 +264,6 @@ OYAPI int  OYEXPORT
                                        oyBlob_s          * data );
 
 
-OYAPI oyConfigs_s * OYEXPORT
-                 oyConfigs_Copy      ( oyConfigs_s       * list,
-                                       oyObject_s          object);
 OYAPI int  OYEXPORT
                  oyConfigs_Release   ( oyConfigs_s      ** list );
 
