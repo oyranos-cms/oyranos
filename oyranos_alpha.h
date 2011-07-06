@@ -265,8 +265,6 @@ OYAPI int  OYEXPORT
 
 
 OYAPI oyConfigs_s * OYEXPORT
-                 oyConfigs_New       ( oyObject_s          object );
-OYAPI oyConfigs_s * OYEXPORT
                  oyConfigs_Copy      ( oyConfigs_s       * list,
                                        oyObject_s          object);
 OYAPI int  OYEXPORT
