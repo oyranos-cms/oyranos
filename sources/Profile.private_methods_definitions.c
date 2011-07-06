@@ -7,7 +7,7 @@
  *  @since   2011/04/10 (Oyranos: 0.3.0)
  *  @date    2011/04/10
  */
-static int oyProfile_HasID_          ( oyProfile_s_      * s )
+int oyProfile_HasID_          ( oyProfile_s_      * s )
 {
   int has_id = 0;
 
@@ -34,7 +34,7 @@ static int oyProfile_HasID_          ( oyProfile_s_      * s )
  *  @since   2007/11/0 (Oyranos: 0.1.8)
  *  @date    2011/04/10
  */
-static int oyProfile_GetHash_        ( oyProfile_s_      * s,
+int oyProfile_GetHash_        ( oyProfile_s_      * s,
                                        int                 flags )
 {
   int error = 1;
@@ -204,7 +204,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
 
     if(!object)
     {
-      entry = oyCacheListGetEntry_ ( (oyStructList_s*)oy_profile_s_file_cache_, 0, name );
+      entry = (oyHash_s_*)oyCacheListGetEntry_ ( (oyStructList_s*)oy_profile_s_file_cache_, 0, name );
 
       if(!oyToNoCacheRead_m(flags))
       {
