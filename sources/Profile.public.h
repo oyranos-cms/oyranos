@@ -14,3 +14,6 @@
 /* decode */
 #define oyToNoCacheRead_m(r)        ((r)&1)
 #define oyToNoCacheWrite_m(w)       (((w) >> 1)&1)
+
+#define OY_COMPUTE      0x01
+#define OY_FROM_PROFILE 0x04

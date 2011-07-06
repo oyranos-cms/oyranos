@@ -34,6 +34,10 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s_      * profile,
                                        oyAlloc_f           allocateFunc );
 oyPointer    oyProfile_WriteTagTable_( oyProfile_s_      * profile,
                                        size_t            * size );
+
+static int oyProfile_HasID_          ( oyProfile_s_      * s );
+static int oyProfile_GetHash_        ( oyProfile_s_      * s,
+                                int                 flags );
 #if 0
 oyChar *       oyProfile_GetCMMText_ ( oyProfile_s       * profile,
                                        oyNAME_e            type,
