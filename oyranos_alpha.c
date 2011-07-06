@@ -6672,7 +6672,7 @@ OYAPI int  OYEXPORT
   /** 3. check for success of device detection */
   error = !s;
   if(error)
-    WARNc2_S( "%s: \"%s\"", _("Could not open device"), device_name );
+    DBG_NUM2_S( "%s: \"%s\"", _("Could not open device"), device_name );
 
   if(device)
     *device = s;
