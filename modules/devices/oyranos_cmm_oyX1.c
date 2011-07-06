@@ -525,7 +525,7 @@ int            oyX1Configs_FromPattern (
                                     options );
         if(error <= 0)
           error = oyOptions_SetFromText( &opts, "///key_prefix_required",
-                                                "EDID_" , OY_CREATE_NEW );
+                                                "EDID_.prefix", OY_CREATE_NEW );
         oyProfile_DeviceAdd( prof, device, opts );
         oyOptions_Release( &opts );
       }
