@@ -3,7 +3,6 @@
  *  @extends oyStruct_s
  *  @brief   A group of options for a device
  *  
- *  @note New templates will not be created automaticly [notemplates]
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/15 (Oyranos: 0.1.10)

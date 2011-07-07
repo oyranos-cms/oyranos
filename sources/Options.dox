@@ -5,7 +5,6 @@
  *  
  *  Options can be any flag or rendering intent and other informations needed to
  *  configure a process. The object contains a list of oyOption_s objects.
- *  @note New templates will not be created automaticly [notemplates]
  *  @note This class holds a list of objects [list]
  *
  *  @version Oyranos: x.x.x

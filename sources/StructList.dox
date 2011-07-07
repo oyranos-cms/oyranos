@@ -5,7 +5,6 @@
  *  @internal
  *  
  *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
- *  @note New templates will not be created automaticly [notemplates]
  *
  *  @version Oyranos: x.x.x
  *  @since Oyranos: version 0.1.8

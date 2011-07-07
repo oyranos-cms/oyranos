@@ -19,7 +19,6 @@
  *  oyCMMapi7_s. For a context, which must be created from the processing data
  *  this is not relyable, as the interpolator can not be shure that the context
  *  plug-in supports the same or larger set of connectors.
- *  @note New templates will not be created automaticly [notemplates]
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/24 (Oyranos: 0.1.8)

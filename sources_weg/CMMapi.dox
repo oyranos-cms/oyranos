@@ -6,7 +6,6 @@
  *  
  *  The registration should provide keywords for selection.
  *  The api5_ member is missed for oyCMMapi5_s.
- *  @note New templates will not be created automaticly [notemplates]
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/16 (Oyranos: 0.1.10)

@@ -12,8 +12,6 @@
  *  requirement for a module to place a copy function for the pointer, it is
  *  not recommended to real copy oyPointer_s objects. Ask the module to create
  *  a new oyPointer_s object with the according options instead.
-
- *  @note New templates will not be created automaticly [notemplates]
  *
  *  @version Oyranos: 0.3.0
  *  @since   2007/11/00 (Oyranos: 0.1.8)

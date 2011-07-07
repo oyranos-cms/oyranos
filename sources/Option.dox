@@ -15,7 +15,6 @@
  *  The id field maps to a oyWidget_s object.
  *  Options and widgets are to be queried by the according function / CMM
  *  combination.
- *  @note New templates will not be created automaticly [notemplates]
  *
  *  @version Oyranos: 0.1.8
  *  @since   2007/00/00 (Oyranos: 0.1.x)

@@ -5,7 +5,6 @@
  *  @internal
  *  
  *  This API provides weak interface compile time checking.
- *  @note New templates will not be created automaticly [notemplates]
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/01/02 (Oyranos: 0.1.8)

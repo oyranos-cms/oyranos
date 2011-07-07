@@ -3,8 +3,7 @@
  *  @extends oyStruct_s
  *  @brief   A Configs list
  *  
- *  Managing the plural of oyConfig_s for the sake of typesafty.
- *  @note New templates will not be created automaticly [notemplates]
+ *  Managing the plural of oyConfig_s for the sake of typesafety.
  *  @note This class holds a list of objects [list]
  *
  *  @version Oyranos: 0.1.10

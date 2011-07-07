@@ -3,7 +3,6 @@
  *  @extends oyStruct_s
  *  @brief   A profile and its attributes
  *  
- *  @note New templates will not be created automaticly [notemplates]
  *
  *  @version Oyranos: x.x.x
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
