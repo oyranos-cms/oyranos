@@ -193,6 +193,7 @@ Grantlee::Engine* ClassGenerator::getEngine( const QStringList& tmplDirs )
   }
   qDebug() << "Loading templates from:";
   qDebug() << allTmplDirs;
+  qDebug() << "";
 
   Grantlee::Engine *engine = new Grantlee::Engine();
   GFSLoader::Ptr loader = GFSLoader::Ptr( new GFSLoader() );

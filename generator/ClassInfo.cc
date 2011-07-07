@@ -34,6 +34,7 @@ QList<ClassInfo*> ClassInfo::getAllClasses( const QString& directory )
   for (int i=0; i<allClassesInfo.size(); i++)
     qDebug() << allClassesInfo.at( i )->baseName()
              << (allClassesInfo.at( i )->doxOnly() ? "[New]" : "[Old]");
+  qDebug() << "";
 
   return allClassesInfo;
 }

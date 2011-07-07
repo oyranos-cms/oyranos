@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
   ClassGenerator cg( templateDir.path(), sourceDir.path(), outputDir.path() );
 
   cg.initTemplates();
+  qDebug() << "";
   cg.render();
 
   return 0;

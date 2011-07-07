@@ -136,9 +136,9 @@ void ClassTemplates::createTemplates() const
 
         newFile.write( fileData.toAscii() );
 
-        qDebug() << "\tCreating file" << newFile.fileName() << "from" << oldFile.fileName();
+        qDebug() << "  Creating file" << newFile.fileName() << "from" << oldFile.fileName();
       } else {
-        qDebug() << "\tSkipping file" << newFile.fileName();
+        qDebug() << "  Skipping file" << newFile.fileName();
       }
     }
   }
