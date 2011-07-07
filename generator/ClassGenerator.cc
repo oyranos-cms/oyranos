@@ -122,35 +122,12 @@ QString ClassGenerator::render( const QFileInfo& templateFileInfo, const QString
 
   QString newFileContents = t->render( &c );
 
-  //1. There is no source file yet
-  if (not sourceFile.exists()) {
-    sourceFile.open(QIODevice::WriteOnly | QIODevice::Text);
-    sourceFile.write( newFileContents.toUtf8() );
-    qDebug() << "Creating" << sourceFile.fileName();
-  } else
-  //2. The template file is more recent
-  if (templateFileInfo.lastModified() > sourceFileInfo.lastModified()) {
-    sourceFile.open(QIODevice::WriteOnly | QIODevice::Text);
-    sourceFile.write( newFileContents.toUtf8() );
-    qDebug() << "Updating" << sourceFile.fileName();
-  } else {
-    sourceFile.open(QIODevice::ReadOnly | QIODevice::Text);
-    QString oldFileContents = sourceFile.readAll();
-    //4. The souce file has changed
-    if (oldFileContents != newFileContents)
-    {
-      qWarning() << "Warning:" << sourceFile.fileName() << "has changed!";
-      sourceFile.close();
-      sourceFile.open(QIODevice::WriteOnly | QIODevice::Text);
-      sourceFile.write( newFileContents.toUtf8() );
-    }
-    else
-    //3. There is no difference in file contents -> do nothing
-      qDebug() << "Skipping" << sourceFileInfo.fileName() << "\n"
-               << "`-->[" << templateFileInfo.absoluteFilePath() << "]";
-  }
-
-  //5. Both have changed //TODO
+  QString status;
+  sourceFile.exists() ? status = "Updating" : "Creating";
+  sourceFile.open(QIODevice::WriteOnly | QIODevice::Text);
+  sourceFile.write( newFileContents.toUtf8() );
+  qDebug() << status << sourceFile.fileName() << '\n'
+           << "`-->[" << templateFileInfo.absoluteFilePath() << "]";
 
   return sourceFile.fileName();
 }
