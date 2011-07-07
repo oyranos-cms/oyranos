@@ -17,9 +17,9 @@ class ClassTemplates
     //But only if these files do not exist (we do not overwrite)
     void createSources() const;
 
-    /// Create the template files in templates/ for all present classes.
-    /// If these files do not already exist.
-    /// We do not overwrite, unless updateTemplates is set to true.
+    /// Create the template files in templates/ for all present classes,
+    /// if these files do not already exist.
+    /// We do not overwrite already existing template files.
     /// Additionally we ignore special classes using the [notemplates]
     /// tag (like oyStruct_s and oyObject_s) because their templates are hand-written
     void createTemplates() const;
@@ -32,8 +32,6 @@ class ClassTemplates
 
     /// Return all classes that only have a .dox file
     QList<ClassInfo*> getNewClasses() const;
-
-    bool updateTemplates;                   ///< Not only create new, but update all .*template*. files, too
 
   private:
     QString sources,                        ///< Directory that holds the sources

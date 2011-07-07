@@ -19,8 +19,7 @@ const QStringList ClassTemplates::sourceFiles = QStringList()
   << "public_methods_definitions.c";
 
 ClassTemplates::ClassTemplates( const QString& src, const QString& tpl )
-  : updateTemplates(false),
-    sources(src), templates(tpl),
+  : sources(src), templates(tpl),
     structClassInfo(new ClassInfo("Struct", src)), nullClassInfo(new ClassInfo("Null", src))
 {
   structClassInfo->setParent( nullClassInfo );
@@ -117,7 +116,7 @@ void ClassTemplates::createTemplates() const
                                 replace( "Class", allClassesInfo.at(i)->baseName() );
       QFile newFile( templates + "/" + group + "/" + newTemplateFile );
       QFile oldFile( templates + "/" + oldTemplateFile );
-      if (updateTemplates || !newFile.exists()) {
+      if (!newFile.exists()) {
         if (!newFile.open( QIODevice::WriteOnly|QIODevice::Text )) {
           qWarning() << "Could not open file" << newFile.fileName() << "for writting";
           continue;
@@ -136,9 +135,6 @@ void ClassTemplates::createTemplates() const
                             allClassesInfo.at(i)->parentBaseName() + "\\1" + ".template." + "\\2" );
 
         newFile.write( fileData.toAscii() );
-
-        // Protect the auto-generated template file by making it read-only
-        newFile.setPermissions( QFile::ReadOwner|QFile::ReadGroup );
 
         qDebug() << "\tCreating file" << newFile.fileName() << "from" << oldFile.fileName();
       } else {

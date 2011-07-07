@@ -36,7 +36,6 @@ void ClassGenerator::initTemplates()
 {
   //Check for newly added classes and...
   //create missing templates
-  tpl.updateTemplates = true;
   tpl.createTemplates();
   //create missing source files
   tpl.createSources();
