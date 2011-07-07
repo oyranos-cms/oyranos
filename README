@@ -99,6 +99,7 @@ Dependencies:
     extra/lcms2
     extra/graphviz
     extra/doxygen
+    community/yajl
     AUR/libxcm
     AUR/openicc (TODO verify if correct package)
   optional:
