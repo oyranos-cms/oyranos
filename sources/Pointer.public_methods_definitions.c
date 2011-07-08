@@ -68,6 +68,7 @@ oyPointer    oyPointer_GetPointer     ( oyPointer_s        * cmm_ptr )
     return NULL;
 }
 
+#ifdef UNHIDE_CMM
 /** Function  oyPointer_LookUpFromObject
  *  @brief    Get a module specific pointer from cache
  *  @memberof oyPointer_s
@@ -198,3 +199,4 @@ oyPointer_s * oyPointer_LookUpFromText( const char        * text,
 
   return cmm_ptr;
 }
+#endif

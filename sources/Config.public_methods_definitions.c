@@ -445,6 +445,7 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
   return error;
 }
 
+#ifdef UNHIDE_CMM
 /** Function  oyConfig_DomainRank
  *  @memberof oyConfig_s
  *  @brief    Check for being recognised by a given module
@@ -513,6 +514,7 @@ OYAPI int  OYEXPORT
   oyExportEnd_();
   return rank;
 }
+#endif
 
 /** Function  oyConfig_FindString
  *  @memberof oyConfig_s

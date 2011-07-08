@@ -18,7 +18,7 @@ OYAPI int  OYEXPORT
                  oyConfigs_Modify    ( oyConfigs_s       * configs,
                                        oyOptions_s       * options );
 OYAPI int  OYEXPORT
-                 oyConfigs_SelectSimiliars (
+                 oyConfigs_SelectSimilars (
                                        oyConfigs_s       * list,
                                        const char        * pattern[][2],
                                        oyConfigs_s      ** filtered );

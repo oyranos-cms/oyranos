@@ -534,7 +534,7 @@ int              oyStructList_ObserverAdd (
   n = oyStructList_Count( list );
   for(i = 0; i < n; ++i)
   {
-    o = oyStructList_Get_( list, i );
+    o = oyStructList_Get_( (oyStructList_s_*)list, i );
     oyStruct_ObserverAdd( o, (oyStruct_s*)s, 0, 0 );
   }
 

@@ -29,6 +29,7 @@
 #include "oyObserver_s.h"
 #include "oyOption_s.h"
 #include "oyOptions_s.h"
+#include "oyConfigs_s.h"
 #include "oyProfile_s.h"
 #include "oyProfiles_s.h"
 #include "oyStruct_s.h"
@@ -262,35 +263,6 @@ OYAPI int  OYEXPORT
                                        const char        * registration_domain,
                                        oyOptions_s       * options,
                                        oyBlob_s          * data );
-
-
-/** @struct  oyConfigs_s
- *  @brief   a Configs list
- *  @ingroup objects_value
- *  @extends oyStruct_s
- *
- *  Managing the plural of oyConfig_s for the sake of typesafty.
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-typedef struct oyConfigs_s {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CONFIGS_S */ 
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
-
-  oyStructList_s     * list_;          /**< the list data */
-} oyConfigs_s;
-
-OYAPI oyConfigs_s * OYEXPORT
-                 oyConfigs_New       ( oyObject_s          object );
-OYAPI oyConfigs_s * OYEXPORT
-                 oyConfigs_Copy      ( oyConfigs_s       * list,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-                 oyConfigs_Release   ( oyConfigs_s      ** list );
 
 
 OYAPI int  OYEXPORT

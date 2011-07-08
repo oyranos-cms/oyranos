@@ -11,8 +11,10 @@ int          oyPointer_GetSize       ( oyPointer_s       * cmm_ptr );
 int          oyPointer_SetSize       ( oyPointer_s       * cmm_ptr,
                                        int                 size );
 oyPointer    oyPointer_GetPointer    ( oyPointer_s       * cmm_ptr );
+#ifdef UNHIDE_CMM
 oyPointer_s  * oyPointer_LookUpFromObject (
                                        oyStruct_s        * data,
                                        const char        * data_type );
 oyPointer_s * oyPointer_LookUpFromText( const char        * text,
                                        const char        * data_type );
+#endif

@@ -350,7 +350,7 @@ OYAPI int OYEXPORT
                                        icSignature         sig,
                                        oySIGNATURE_TYPE_e  type )
 {
-  oyProfile_s_ * s = profile;
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
   int error = !s;
   oyPointer block_ = 0;
   size_t size_ = 128;
@@ -616,8 +616,8 @@ OYAPI const oyChar* OYEXPORT
     /* Do we have a hash_? */
     if(!found && error <= 0)
     {
-      if(!oyProfile_Hashed_((oyProfile_s*)s))
-        error = oyProfile_GetHash_( s );
+      if(!oyProfile_Hashed_(s))
+        error = oyProfile_GetHash_( s, 0 );
 
       if(error <= 0)
       {
@@ -749,7 +749,7 @@ OYAPI const oyChar* OYEXPORT
       char * file_name = oyProfile_GetFileName_r( s, oyAllocateFunc_ );
 
       if(oyProfile_Hashed_(s))
-        error = oyProfile_GetHash_( s );
+        error = oyProfile_GetHash_( s, 0 );
 
       if(s->use_default_ && error <= 0)
         oyWidgetTitleGet( (oyWIDGET_e)s->use_default_, 0, &text, 0, 0 );
@@ -776,7 +776,7 @@ OYAPI const oyChar* OYEXPORT
 
     /* last rescue */
     if(!found && oyProfile_Hashed_(s))
-      error = oyProfile_GetHash_( s );
+      error = oyProfile_GetHash_( s, 0 );
 
     if(!found && error <= 0)
     {
@@ -1022,7 +1022,7 @@ OYAPI int OYEXPORT
     for( i = 0; i < n; ++i )
     {
       tag = oyProfile_GetTagByPos_( s, i );
-      if(oyProfileTagPriv_m(tag)->use == oyProfileTagPriv((*obj))->use)
+      if(oyProfileTagPriv_m(tag)->use == oyProfileTagPriv_m((*obj))->use)
       {
         oyProfile_TagReleaseAt_(s, i);
         n = oyProfile_GetTagCount_( s );
@@ -1326,8 +1326,8 @@ OYAPI int OYEXPORT
           if(key_len > s_len &&
              strcmp(&texts[i+0][key_len-s_len-1],"_serial") == 0)
           {
-            error = oyOptions_SetRegistrationTextKey_( device->backend_core,
-                                                 device->registration,
+            error = oyOptions_SetRegistrationTextKey_( device_->backend_core,
+                                                 device_->registration,
                                                  "serial", texts[i+1] );
             DBG_NUM1_S("added serial: %s", texts[i+1]);
             break;

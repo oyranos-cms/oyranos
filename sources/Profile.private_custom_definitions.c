@@ -135,7 +135,7 @@ int oyProfile_Copy__Members( oyProfile_s_ * dst, oyProfile_s_ * src)
   if(error <= 0)
   {
     if(!oyProfile_Hashed_(dst))
-      error = oyProfile_GetHash_( dst );
+      error = oyProfile_GetHash_( dst, 0 );
   }
 
   if(error <= 0)

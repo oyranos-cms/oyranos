@@ -15,6 +15,7 @@
 #include "oyPointer_s.h"
 #include "oyProfile_s_.h"
 #include "oyConfig_s.h"
+#include "oyConfigs_s.h"
 #include "oyConfig_s_.h"
 #include "oyObserver_s.h"
 #include "oyOption_s.h"
@@ -24,6 +25,7 @@
 #include "oyranos_types.h"
 #include "oyranos_alpha.h"
 #include "oyranos_alpha_internal.h"
+#include "oyranos_generic_internal.h"
 #include "oyranos_cmm.h"
 #include "oyranos_elektra.h"
 #include "oyranos_helper.h"
@@ -1145,7 +1147,7 @@ int          oyCMMdsoReference_    ( const char        * lib_name,
   if(error <= 0)
   for(i = 0; i < n; ++i)
   {
-    oyStruct_s * obj = oyStructList_Get_(oy_cmm_handles_, i);
+    oyStruct_s * obj = oyStructList_Get_((oyStructList_s_*)oy_cmm_handles_, i);
     oyPointer_s * s;
 
     if(obj && obj->type_ == oyOBJECT_POINTER_S)
@@ -1157,7 +1159,7 @@ int          oyCMMdsoReference_    ( const char        * lib_name,
         !oyStrcmp_( oyPointer_GetLibName( s ), lib_name ) )
     {
       found = 1;
-      oyStructList_ReferenceAt_(oy_cmm_handles_, i);
+      oyStructList_ReferenceAt_((oyStructList_s_*)oy_cmm_handles_, i);
       if(ptr)
       {
         if(!oyPointer_GetPointer( s ))
@@ -1210,7 +1212,7 @@ int          oyCMMdsoSearch_         ( const char        * lib_name )
   if(error <= 0)
   for(i = 0; i < n; ++i)
   {
-    oyStruct_s * obj = oyStructList_Get_(oy_cmm_handles_, i);
+    oyStruct_s * obj = oyStructList_Get_((oyStructList_s_*)oy_cmm_handles_, i);
     oyPointer_s * s = 0;
 
     if(obj && obj->type_ == oyOBJECT_POINTER_S)
@@ -1282,7 +1284,7 @@ if(!lib_name)
 
   if(found >= 0)
   {
-    oyPointer_s * s = (oyPointer_s*)oyStructList_GetType_( oy_cmm_handles_, found,
+    oyPointer_s * s = (oyPointer_s*)oyStructList_GetType_( (oyStructList_s_*)oy_cmm_handles_, found,
                                                   oyOBJECT_POINTER_S );
 
     if(s)
@@ -1489,7 +1491,7 @@ oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name )
   if(error <= 0)
   for(i = 0; i < n; ++i)
   {
-    oyCMMhandle_s * cmmh = (oyCMMhandle_s*) oyStructList_GetType_(oy_cmm_infos_,
+    oyCMMhandle_s * cmmh = (oyCMMhandle_s*) oyStructList_GetType_((oyStructList_s_*)oy_cmm_infos_,
                                                 i, oyOBJECT_CMM_HANDLE_S );
     oyCMMInfo_s * s = 0;
 
@@ -1501,7 +1503,7 @@ oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name )
         !oyStrcmp_( cmmh->lib_name, lib_name ) )
     {
       cmm_handle = oyCMMhandle_Copy_( cmmh, 0 );
-      error = oyStructList_ReferenceAt_( oy_cmm_infos_, i );
+      error = oyStructList_ReferenceAt_( (oyStructList_s_*)oy_cmm_infos_, i );
       if(!error)
         break;
     }
@@ -2627,7 +2629,9 @@ int              oyCMMRelease_       ( const char        * cmm )
   {
     oyCMMInfo_s * s = 0;
     oyCMMhandle_s * cmmh = (oyCMMhandle_s *) oyStructList_GetType_(
-                                oy_cmm_infos_, i, oyOBJECT_CMM_HANDLE_S );
+                                               (oyStructList_s_*)oy_cmm_infos_,
+                                               i,
+                                               oyOBJECT_CMM_HANDLE_S );
 
     if(cmmh)
       s = (oyCMMInfo_s*) cmmh->info;
@@ -3280,7 +3284,7 @@ oyChar* oyCMMCacheListPrint_()
 
   for(i = 0; i < n ; ++i)
   {
-    oyHash_s * compare = (oyHash_s*) oyStructList_GetType_(*cache_list, i,
+    oyHash_s * compare = (oyHash_s*) oyStructList_GetType_((oyStructList_s_*)*cache_list, i,
                                                          oyOBJECT_HASH_S );
 
     if(compare)
@@ -3346,159 +3350,6 @@ int          oyRegistrationEraseFromDB(const char        * registration )
   oyExportEnd_();
   DBG_PROG_ENDE
   return error;
-}
-
-/** Function oyConfigs_New
- *  @memberof oyConfigs_s
- *  @brief   allocate a new Configs list
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-OYAPI oyConfigs_s * OYEXPORT
-                   oyConfigs_New ( oyObject_s          object )
-{
-  /* ---- start of common object constructor ----- */
-  oyOBJECT_e type = oyOBJECT_CONFIGS_S;
-# define STRUCT_TYPE oyConfigs_s
-  int error = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = 0;
-  
-  if(s_obj)
-    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
-
-  if(!s || !s_obj)
-  {
-    WARNc_S(_("MEM Error."));
-    return NULL;
-  }
-
-  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
-
-  s->type_ = type;
-  s->copy = (oyStruct_Copy_f) oyConfigs_Copy;
-  s->release = (oyStruct_Release_f) oyConfigs_Release;
-
-  s->oy_ = s_obj;
-
-  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
-# undef STRUCT_TYPE
-  /* ---- end of common object constructor ------- */
-
-  s->list_ = oyStructList_Create( s->type_, 0, 0 );
-
-  return s;
-}
-
-/** @internal
- *  Function oyConfigs_Copy_
- *  @memberof oyConfigs_s
- *  @brief   real copy a Configs object
- *
- *  @param[in]     obj                 struct object
- *  @param         object              the optional object
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-oyConfigs_s * oyConfigs_Copy_
-                                     ( oyConfigs_s       * obj,
-                                       oyObject_s          object )
-{
-  oyConfigs_s * s = 0;
-  int error = 0;
-
-  if(!obj || !object)
-    return s;
-
-  s = oyConfigs_New( object );
-  error = !s;
-
-  if(error <= 0)
-    s->list_ = oyStructList_Copy( obj->list_, s->oy_ );
-
-  if(error)
-    oyConfigs_Release( &s );
-
-  return s;
-}
-
-/** Function oyConfigs_Copy
- *  @memberof oyConfigs_s
- *  @brief   copy or reference a Configs list
- *
- *  @param[in]     obj                 struct object
- *  @param         object              the optional object
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-OYAPI oyConfigs_s * OYEXPORT
-                   oyConfigs_Copy ( oyConfigs_s       * obj,
-                                       oyObject_s          object )
-{
-  oyConfigs_s * s = 0;
-
-  if(!obj || obj->type_ != oyOBJECT_CONFIGS_S)
-    return s;
-
-  if(obj && !object)
-  {
-    s = obj;
-    oyObject_Copy( s->oy_ );
-    return s;
-  }
-
-  s = oyConfigs_Copy_( obj, object );
-
-  return s;
-}
- 
-/** Function oyConfigs_Release
- *  @memberof oyConfigs_s
- *  @brief   release and possibly deallocate a Configs list
- *
- *  @param[in,out] obj                 struct object
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/01/19
- */
-OYAPI int  OYEXPORT
-               oyConfigs_Release     ( oyConfigs_s      ** obj )
-{
-  /* ---- start of common object destructor ----- */
-  oyConfigs_s * s = 0;
-
-  if(!obj || !*obj)
-    return 0;
-
-  s = *obj;
-
-  oyCheckType__m( oyOBJECT_CONFIGS_S, return 1 )
-
-  *obj = 0;
-
-  if(oyObject_UnRef(s->oy_))
-    return 0;
-  /* ---- end of common object destructor ------- */
-
-  oyStructList_Release( &s->list_ );
-
-  if(s->oy_->deallocateFunc_)
-  {
-    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-
-    oyObject_Release( &s->oy_ );
-
-    deallocateFunc( s );
-  }
-
-  return 0;
 }
 
 /** Function oyConfigs_SelectSimiliars
