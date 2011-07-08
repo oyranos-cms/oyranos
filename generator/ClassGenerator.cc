@@ -6,7 +6,7 @@
 
 #include <QtDebug>
 
-#include "grantlee_paths.h"
+#include "config.h"
 #include "ClassGenerator.h"
 
 const QStringList ClassGenerator::templateSuffixes(
@@ -17,14 +17,40 @@ const QStringList ClassGenerator::templateSuffixes(
     "*.template.txt"
 );
 
-ClassGenerator::ClassGenerator( const QString& tmpl, const QString& src, const QString& dst ) :
-  templatesPath(tmpl), sourcesPath(src), destinationPath(dst),
-  tpl( sourcesPath, templatesPath )
+ClassGenerator::ClassGenerator( const QHash<QString,QString>& dirs, const QString& dst ) :
+  destinationPath(dst), tpl( dirs )
 {
-  //Setup grantlee
-  engine = getEngine( QStringList() << templatesPath << sourcesPath );
+  // Setup grantlee
+  QStringList alldirs;
+  QHash<QString,QString>::const_iterator i;
+  for (i = dirs.constBegin(); i != dirs.constEnd(); i++)
+    alldirs << i.key() << i.value();
+
+  engine = getEngine( alldirs );
 
   classes = tpl.getAllClasses();
+
+  // Set tmplPath for easy retrieval of 'template path' from 'template name'
+  for (i = dirs.constBegin(); i != dirs.constEnd(); i++) {
+    QDirIterator templateFile( i.key(), templateSuffixes,
+                               QDir::Files|QDir::Readable,
+                               QDirIterator::Subdirectories );
+    while (templateFile.hasNext()) {
+      templateFile.next();
+      if (tmplPath.contains(templateFile.fileName()))
+        qCritical() << "Duplicate template file:"
+                    << tmplPath[templateFile.fileName()]
+                    << templateFile.filePath();
+      tmplPath[templateFile.fileName()] = templateFile.filePath();
+      }
+  }
+
+  // Set basePath also, for Base_* template files
+  QDirIterator baseTemplateFile( TEMPLATES_STD_DIR , QStringList() << "Base*.[ch]" );
+  while (baseTemplateFile.hasNext()) {
+    baseTemplateFile.next();
+    basePath[baseTemplateFile.fileName()] = baseTemplateFile.filePath();
+  }
 }
 
 ClassGenerator::~ClassGenerator()
@@ -43,21 +69,21 @@ void ClassGenerator::initTemplates()
   //create missing constructor/destructor source files
   QList<ClassInfo*> newClassesInfo = tpl.getNewClasses();
   QString classRendered;
-  QString genericTemplate = templatesPath + "/Class_s_private_custom_definitions.c";
-  for (int i=0; i<newClassesInfo.size(); i++) {
+  QString genericTemplate = TEMPLATES_CLASS_PATH "/Class_s_private_custom_definitions.c";
+  for (int i=0; i<newClassesInfo.size(); i++) { //TODO Render in RAM
     // If this is a list class, ignore it
     if (not newClassesInfo.at(i)->listOf().isEmpty())
       continue;
-    QString classTemplate = sourcesPath +
+    QString classTemplate = newClassesInfo.at(i)->srcDir() +
                             "/" +
                             newClassesInfo.at(i)->baseName() +
                             "_s.template.c";
-    QString classSource = sourcesPath +
+    QString classSource = newClassesInfo.at(i)->srcDir() +
                           "/" +
                           newClassesInfo.at(i)->baseName() +
                           ".private_custom_definitions.c";
     if (QFile::copy( genericTemplate, classTemplate )) {
-      classRendered = render( classTemplate, sourcesPath );
+      classRendered = render( classTemplate, newClassesInfo.at(i)->srcDir() );
     } else {
       qWarning() << "Could not create file" << classTemplate;
       continue;
@@ -123,7 +149,7 @@ QString ClassGenerator::render( const QFileInfo& templateFileInfo, const QString
   QString newFileContents = t->render( &c );
 
   QString status;
-  sourceFile.exists() ? status = "Updating" : "Creating";
+  status = sourceFile.exists() ? "Updating" : "Creating";
   sourceFile.open(QIODevice::WriteOnly | QIODevice::Text);
   sourceFile.write( newFileContents.toUtf8() );
   qDebug() << status << sourceFile.fileName() << '\n'
@@ -134,22 +160,15 @@ QString ClassGenerator::render( const QFileInfo& templateFileInfo, const QString
 
 void ClassGenerator::render()
 {
-  QDirIterator templateFiles( templatesPath,
-               templateSuffixes,
-               QDir::Files|QDir::Readable,
-               QDirIterator::Subdirectories );
-
-  while (templateFiles.hasNext()) {
-    templateFiles.next();
-    QFileInfo templateFileInfo = templateFiles.fileInfo();
-
-    render( templateFileInfo, destinationPath );
-  }
+    // Render each template file to destinationPath
+    QHash<QString,QString>::const_iterator t;
+    for (t = tmplPath.constBegin(); t != tmplPath.constEnd(); t++)
+      render( QFileInfo(t.value()) , destinationPath );
 }
 
-void ClassGenerator::getTemplateParents( const QString& tmplPath, QVariantList& parentList )
+void ClassGenerator::getTemplateParents( const QString& path, QVariantList& parentList )
 {
-  QFile tmpl( tmplPath );
+  QFile tmpl( path );
   tmpl.open( QIODevice::ReadOnly|QIODevice::Text );
   QString text = tmpl.readAll();
 
@@ -159,17 +178,10 @@ void ClassGenerator::getTemplateParents( const QString& tmplPath, QVariantList& 
     QString tmplParentName = extends.cap(1);
     parentList << tmplParentName;
 
-    QString tmplParentPath;
-    QDirIterator templateFile( templatesPath, QDirIterator::Subdirectories );
-    while (templateFile.hasNext()) {
-      templateFile.next();
-      if (templateFile.fileName() == tmplParentName) {
-        tmplParentPath = templateFile.filePath();
-        break;
-      }
-    }
-    if (!tmplParentPath.isEmpty())
-      getTemplateParents( tmplParentPath, parentList );
+    if (tmplPath.contains(tmplParentName))
+      getTemplateParents( tmplPath[tmplParentName], parentList );
+    else if (basePath.contains(tmplParentName))
+      getTemplateParents( basePath[tmplParentName], parentList );
     else
       qWarning() << "Could not find template" << tmplParentName;
   }

@@ -9,25 +9,30 @@
 
 #include "ClassInfo.h"
 
-QList<ClassInfo*> ClassInfo::getAllClasses( const QString& directory )
+QList<ClassInfo*> ClassInfo::getAllClasses( const QHash<QString,QString>& dirs )
 {
-  QDir sourceDir( directory );
-  sourceDir.setNameFilters( QStringList() << "*.dox" );
-  sourceDir.setFilter( QDir::Files | QDir::Readable );
-  QStringList doxClasses = sourceDir.entryList();
-  doxClasses.removeOne( "Class.dox" );
-  doxClasses.removeOne( "Struct.dox" );
-
   QList<ClassInfo*> allClassesInfo;
-  for (int c = 0; c<doxClasses.size(); c++) {
-    QString ClassName = doxClasses.at( c );
-    ClassName.chop(4); //Remove .dox extension
 
-    sourceDir.setNameFilters( QStringList() << ClassName + ".*[^~]" );
-    if (sourceDir.entryList().size() == 1)
-      allClassesInfo << new ClassInfo( ClassName, directory, true );
-    else
-      allClassesInfo << new ClassInfo( ClassName, directory, false );
+  QHash<QString,QString>::const_iterator dir;
+  for (dir = dirs.constBegin(); dir != dirs.constEnd(); dir++) {
+    // dir->key: templates directory, dir->value: sources directory
+    QDir sourceDir( dir.value() );
+    sourceDir.setNameFilters( QStringList() << "*.dox" );
+    sourceDir.setFilter( QDir::Files | QDir::Readable );
+    QStringList doxClasses = sourceDir.entryList();
+    doxClasses.removeOne( "Class.dox" );
+    doxClasses.removeOne( "Struct.dox" );
+
+    for (int c = 0; c<doxClasses.size(); c++) {
+      QString ClassName = doxClasses.at( c );
+      ClassName.chop(4); //Remove .dox extension
+
+      sourceDir.setNameFilters( QStringList() << ClassName + ".*[^~]" );
+      if (sourceDir.entryList().size() == 1)
+        allClassesInfo << new ClassInfo( ClassName, dir.key(), dir.value(), true );
+      else
+        allClassesInfo << new ClassInfo( ClassName, dir.key(), dir.value(), false );
+    }
   }
 
   qDebug() << "Found the following classes:";
@@ -41,7 +46,7 @@ QList<ClassInfo*> ClassInfo::getAllClasses( const QString& directory )
 
 void ClassInfo::parseDoxyfile()
 {
-  QFile doxyfile( directory + "/" + base + ".dox");
+  QFile doxyfile( sourcesDir + "/" + base + ".dox");
   if (doxyfile.exists()) {
     doxyfile.open( QIODevice::ReadOnly|QIODevice::Text );
     QString text = doxyfile.readAll();
@@ -90,7 +95,7 @@ void ClassInfo::parseDoxyfile()
 void ClassInfo::parseSourceFiles()
 {
   // Get all source files, except from <base>.dox
-  QDir sourceDir( directory );
+  QDir sourceDir( sourcesDir );
   sourceDir.setNameFilters( QStringList() << base + ".*.h" <<  base + ".*.c" );
   sourceDir.setFilter( QDir::Files | QDir::Readable );
   QStringList sourceFiles = sourceDir.entryList();

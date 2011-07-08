@@ -1,10 +1,13 @@
 #include <QObject>
+#include <QHash>
 
 class QString;
 
 class ClassInfo: public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(QString srcDir READ srcDir)
+  Q_PROPERTY(QString tmplDir READ tmplDir)
   Q_PROPERTY(QString name READ name)
   Q_PROPERTY(QString privName READ privName)
   Q_PROPERTY(QString baseName READ baseName)
@@ -30,8 +33,8 @@ class ClassInfo: public QObject
   Q_PROPERTY(QString public_methods_definitions_c READ public_methods_definitions_c)
 
   public:
-    ClassInfo( const QString& name, const QString& dir, bool isnew = false )
-      : base(name), directory(dir),
+    ClassInfo( const QString& name, const QString& templates, const QString& sources, bool isnew = false )
+      : base(name), sourcesDir(sources), templatesDir(templates),
         isInternal(false), isNew(isnew),
         autotemplates(true), hiddenstruct(true), list(false),
         m_parent(NULL), m_content(NULL)
@@ -41,6 +44,10 @@ class ClassInfo: public QObject
     }
 
     /* Public property functions start */
+    /// Get the source files directory
+    QString srcDir() const { return sourcesDir; }
+    /// Get the template files root directory
+    QString tmplDir() const { return templatesDir; }
     /// Get the class full public name
     QString name() const { return "oy" + base + "_s"; }
     /// Get the class full private name
@@ -108,14 +115,15 @@ class ClassInfo: public QObject
     /// Wether templates for this should be created using "hidden struct"
     bool hiddenStruct() const { return hiddenstruct; }
 
-    static QList<ClassInfo*> getAllClasses( const QString& directory );
+    static QList<ClassInfo*> getAllClasses( const QHash<QString,QString>& dirs );
 
   private:
     QString base;           ///< The class name without any prefix/suffix
     QString parentBase;     ///< The base name of the parent class
     QString groupName;      ///< The group this class belongs to
     QString doxyBrief;      ///< The doxygen class brief description
-    QString directory;      ///< Where the class source files live
+    QString sourcesDir;     ///< Where the class source files live
+    QString templatesDir;   ///< The template files root directory
     bool isInternal;        ///< True if this is an internal(not public) class
     bool isNew;             ///< True if this is a new class (with only a .dox file)
     bool autotemplates;     ///< True if templates should be created automaticly for this class

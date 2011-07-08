@@ -10,7 +10,7 @@ class QVariant;
 class ClassTemplates
 {
   public:
-    ClassTemplates( const QString& src, const QString& tpl );
+    ClassTemplates( const QHash<QString,QString>& dirs );
     ~ClassTemplates();
 
     //Create the empty sources/* files for all present classes.
@@ -33,9 +33,11 @@ class ClassTemplates
     /// Return all classes that only have a .dox file
     QList<ClassInfo*> getNewClasses() const;
 
+    /// Return a constant reference of the templates directory map
+    const QHash<QString,QString>& getDirMap() const { return dirMap; }
+
   private:
-    QString sources,                        ///< Directory that holds the sources
-            templates;                      ///< Directory that holds the templates
+    QHash<QString,QString> dirMap;          ///< Maps the 'template' <-> 'sources' directories
     ClassInfo* structClassInfo;             ///< Info for the oyStruct_s class is kept here
     ClassInfo* nullClassInfo;               ///< Info for the null class is kept here
     QList<ClassInfo*> allClassesInfo;       ///< Info list of all classes in sources directory

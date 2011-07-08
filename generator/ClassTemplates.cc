@@ -7,6 +7,7 @@
 
 #include <QtDebug>
 
+#include "config.h"
 #include "ClassTemplates.h"
 
 const QStringList ClassTemplates::sourceFiles = QStringList()
@@ -18,16 +19,17 @@ const QStringList ClassTemplates::sourceFiles = QStringList()
   << "public_methods_declarations.h"
   << "public_methods_definitions.c";
 
-ClassTemplates::ClassTemplates( const QString& src, const QString& tpl )
-  : sources(src), templates(tpl),
-    structClassInfo(new ClassInfo("Struct", src)), nullClassInfo(new ClassInfo("Null", src))
+ClassTemplates::ClassTemplates( const QHash<QString,QString>& dirs )
+  : dirMap(dirs),
+    structClassInfo(new ClassInfo("Struct", TEMPLATES_STD_DIR, SOURCES_STD_DIR )),
+    nullClassInfo(new ClassInfo("Null", TEMPLATES_STD_DIR, SOURCES_STD_DIR ))
 {
   structClassInfo->setParent( nullClassInfo );
   nullClassInfo->setParent( nullClassInfo );
 
   // 1. Get all classes that have a *.dox file
   // (oyStruct_s is ommited)
-  allClassesInfo = ClassInfo::getAllClasses( sources );
+  allClassesInfo = ClassInfo::getAllClasses( dirMap );
 
   // 2. Initialise the pointers with the parent class
   // and the content class if it is a "list" class
@@ -58,7 +60,7 @@ void ClassTemplates::createSources() const
   for (int i=0; i<allClassesInfo.size(); i++) {
     for (int s=0; s<sourceFiles.size(); s++) {
       QString classSourceFile = allClassesInfo.at(i)->baseName() + "." + sourceFiles.at(s);
-      QFile f( sources + "/" + classSourceFile );
+      QFile f( allClassesInfo.at(i)->srcDir() + "/" + classSourceFile );
       if (!f.exists()) {
         f.open( QIODevice::WriteOnly );
         qDebug() << "Creating file" << classSourceFile;
@@ -71,19 +73,20 @@ void ClassTemplates::createSources() const
 
 void ClassTemplates::createTemplates() const
 {
-  QDir templateDir( templates );
-  templateDir.setFilter( QDir::Files | QDir::Readable );
   for (int i=0; i<allClassesInfo.size(); i++) {
     if (!allClassesInfo.at(i)->createTemplates()) {
       qDebug() << "Skipping template files for" << allClassesInfo.at(i)->baseName();
       continue;
     }
 
-    //Create the templates/<group_name>/ directory, if not present
+    //Create the <template_dir>/<group_name>/ directory, if not present
     QString group( allClassesInfo.at(i)->group() );
-    if (!templateDir.exists( group ))
-      if (!templateDir.mkdir( group )) {
-        qWarning() << "Could not create directory" << group;
+    QDir templatesDir( allClassesInfo.at(i)->tmplDir() );
+    if (!templatesDir.exists( group ))
+      if (templatesDir.mkdir( group )) {
+        qDebug() << "Creating directory" << templatesDir.dirName() << "/" << group;
+      } else {
+        qWarning() << "Could not create directory" << templatesDir.dirName() << "/" << group;
         continue;
       }
 
@@ -114,8 +117,8 @@ void ClassTemplates::createTemplates() const
                                 remove( ".list" ).
                                 replace( '.', ".template." ).
                                 replace( "Class", allClassesInfo.at(i)->baseName() );
-      QFile newFile( templates + "/" + group + "/" + newTemplateFile );
-      QFile oldFile( templates + "/" + oldTemplateFile );
+      QFile newFile( templatesDir.canonicalPath() + "/" + group + "/" + newTemplateFile );
+      QFile oldFile( TEMPLATES_CLASS_PATH "/" + oldTemplateFile );
       if (!newFile.exists()) {
         if (!newFile.open( QIODevice::WriteOnly|QIODevice::Text )) {
           qWarning() << "Could not open file" << newFile.fileName() << "for writting";

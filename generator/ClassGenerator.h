@@ -9,12 +9,8 @@
 
 class ClassGenerator {
   public:
-    ClassGenerator( const QString& tmpl, const QString& src, const QString& dst );
+    ClassGenerator( const QHash<QString,QString>& dirs, const QString& dst );
     ~ClassGenerator();
-
-    void setTemplateDir( const QString& dir );
-    void setSourceDir( const QString& dir );
-    void setDestinationDir( const QString& dir );
 
     void initTemplates();
     void render();
@@ -26,7 +22,9 @@ class ClassGenerator {
     Grantlee::Engine* getEngine( const QStringList& tmplDirs );
     QString render( const QFileInfo& templateFileInfo, const QString& dstDir );
 
-    QString templatesPath, sourcesPath, destinationPath;
+    QHash<QString,QString> tmplPath; //< Map of 'template name' -> 'template path'
+    QHash<QString,QString> basePath; //< Map of 'base template name' -> 'base template path'
+    QString destinationPath;
     Grantlee::Engine* engine;
     ClassTemplates tpl;
     QVariantList classes;

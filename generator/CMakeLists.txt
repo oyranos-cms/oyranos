@@ -22,8 +22,8 @@ INCLUDE_DIRECTORIES(
 )
 
 CONFIGURE_FILE(
-  ${PROJECT_SOURCE_DIR}/grantlee_paths.h.cmake
-  ${PROJECT_BINARY_DIR}/grantlee_paths.h
+  ${PROJECT_SOURCE_DIR}/config.h.cmake
+  ${PROJECT_BINARY_DIR}/config.h
 )
 
 ADD_SUBDIRECTORY(grantlee_extensions)

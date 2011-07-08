@@ -4,11 +4,8 @@
 
 #include <QtDebug>
 
+#include "config.h"
 #include "ClassGenerator.h"
-
-#define TEMPALTE_DIR "templates"
-#define SOURCE_DIR "sources"
-#define API_DIR "API_generated"
 
 using namespace std;
 
@@ -17,22 +14,35 @@ int main(int argc, char *argv[])
 {
   if (QString(argv[1]) == "-h" ||
       QString(argv[1]) == "--help") {
-    cout << "Usage: " << argv[0] << " [template dir]" << " [sources dir]" << " [output dir]" << endl;
+    cout << "Usage 1: " << argv[0] << endl;
+    cout << "Usage 2: " << argv[0] << " <template dir1>:<sources dir1>"
+                                   << " [<template dir2>:<sources dir2>] ..."  << endl;
     return 0;
   }
-  QDir templateDir, sourceDir, outputDir;
-  templateDir.setPath( argc > 1 ? argv[1] : TEMPALTE_DIR );
-  sourceDir.setPath  ( argc > 2 ? argv[2] : SOURCE_DIR   );
-  outputDir.setPath  ( argc > 3 ? argv[3] : API_DIR      );
 
-  if (!templateDir.exists()) {
-    qCritical() << "Directory" << templateDir.path() << "does not exist";
-    return 1;
+  QHash<QString,QString> dirMap;
+  if (argc == 1)
+    dirMap[TEMPLATES_STD_DIR] = SOURCES_STD_DIR;
+  else {
+    for (int arg = 1; arg<argc; arg++) {
+      QString argument( argv[arg] );
+      QDir templatesDir( argument.section( ':', 0,0 ) );
+      QDir sourcesDir( argument.section( ':', 1,1 ) );
+
+      if (!templatesDir.exists()) {
+        qCritical() << "Directory" << templatesDir.path() << "does not exist";
+        return 1;
+      }
+      if (!sourcesDir.exists()) {
+        qCritical() << "Directory" << sourcesDir.path() << "does not exist";
+        return 1;
+      }
+
+      dirMap[templatesDir.canonicalPath()] = sourcesDir.canonicalPath();
+    }
   }
-  if (!sourceDir.exists()) {
-    qCritical() << "Directory" << sourceDir.path() << "does not exist";
-    return 1;
-  }
+
+  QDir outputDir( OUTPUT_STD_DIR );
   if (!outputDir.exists()) {
     qDebug() << "Creating directory" << outputDir.path();
     QDir currentDir;
@@ -42,7 +52,7 @@ int main(int argc, char *argv[])
     }
   }
 
-  ClassGenerator cg( templateDir.path(), sourceDir.path(), outputDir.path() );
+  ClassGenerator cg( dirMap, outputDir.canonicalPath() );
 
   cg.initTemplates();
   qDebug() << "";
