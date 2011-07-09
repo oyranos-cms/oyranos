@@ -226,10 +226,39 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
 
   if(error <= 0)
   {
-    s = oyProfile_FromMemMove_( size, &block, 0, object );
+    s = oyProfile_FromMemMove_( size, &block, 0, &error, object );
 
     if(!s)
       error = 1;
+
+    if(error < -1)
+    {
+      const char * t = file_name;
+      oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"", OY_DBG_ARGS_,
+                _("Wrong ICC profile id detected"), t?t:OY_PROFILE_NONE );
+    } else
+    if(error == -1)
+    {
+      const char * t = file_name;
+      uint32_t md5[4];
+
+      if(oy_debug == 1)
+        oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"", OY_DBG_ARGS_,
+                _("No ICC profile id detected"), t?t:OY_PROFILE_NONE );
+
+      /* set ICC profile ID */
+      error = oyProfile_GetMD5( (oyProfile_s_*)s, OY_COMPUTE, md5 );
+      if(oyIsFileFull_( file_name, "wb" ))
+      {
+        error = oyProfile_ToFile_( s, file_name );
+        if(!error)
+          oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"", OY_DBG_ARGS_,
+                _("ICC profile id written"), t?t:OY_PROFILE_NONE );
+      }
+    }
 
     /* We expect a incomplete filename attached to s and try to correct this. */
     if(error <= 0 && !file_name && s->file_name_)
@@ -276,7 +305,6 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
 
   return s;
 }
-
 /** Function  oyProfile_TagsToMem_
  *  @memberof oyProfile_s
  *  @brief    Get the parsed ICC profile back into memory
