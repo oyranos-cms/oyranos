@@ -259,7 +259,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
                 _("No ICC profile id detected"), t?t:OY_PROFILE_NONE );
 
       /* set ICC profile ID */
-      error = oyProfile_GetMD5( (oyProfile_s_*)s, OY_COMPUTE, md5 );
+      error = oyProfile_GetMD5( s, OY_COMPUTE, md5 );
       if(oyIsFileFull_( file_name, "wb" ))
       {
         error = oyProfile_ToFile_( s, file_name );
