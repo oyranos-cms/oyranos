@@ -172,8 +172,6 @@ CFILES_CORE = \
 CFILES_OBJECT = \
 	$(GENDIR)oyBlob_s_.c \
 	$(GENDIR)oyBlob_s.c \
-	$(GENDIR)oyConfig_s_.c \
-	$(GENDIR)oyConfig_s.c \
 	$(GENDIR)oyPointer_s_.c \
 	$(GENDIR)oyPointer_s.c \
 	$(GENDIR)oyProfile_s_.c \
@@ -197,7 +195,6 @@ CFILES_OBJECT = \
 	$(GENDIR)oyranos_generic.c
 CHEADERS_OBJECT_PUBLIC = \
 	$(GENDIR)oyBlob_s.h \
-	$(GENDIR)oyConfig_s.h \
 	$(GENDIR)oyPointer_s.h \
 	$(GENDIR)oyProfile_s.h \
 	$(GENDIR)oyHash_s.h \
@@ -213,7 +210,6 @@ CHEADERS_OBJECT_PUBLIC = \
 CHEADERS_OBJECT = \
 	$(CHEADERS_OBJECT_PUBLIC) \
 	$(GENDIR)oyBlob_s_.h \
-	$(GENDIR)oyConfig_s_.h \
 	$(GENDIR)oyPointer_s_.h \
 	$(GENDIR)oyProfile_s_.h \
 	$(GENDIR)oyHash_s_.h \
@@ -227,9 +223,17 @@ CHEADERS_OBJECT = \
 	$(GENDIR)$(TARGET)_module_internal.h \
 	$(GENDIR)$(TARGET)_object_internal.h
 
-CFILES_OBJECT_MODULES =
-CHEADERS_OBJECT_MODULES_PUBLIC =
+CFILES_OBJECT_MODULES = \
+	$(GENDIR)oyConfig_s_.c \
+	$(GENDIR)oyConfig_s.c \
+	$(GENDIR)oyranos_devices.c \
+	$(GENDIR)oyranos_devices_internal.c
+CHEADERS_OBJECT_MODULES_PUBLIC = \
+	$(GENDIR)oyConfig_s.h \
+	$(GENDIR)oyranos_devices.h
 CHEADERS_OBJECT_MODULES = \
+	$(GENDIR)oyConfig_s_.h \
+	$(GENDIR)oyranos_devices_internal.c \
 	$(CHEADERS_OBJECT_MODULES_PUBLIC)
 
 CFILES = \
