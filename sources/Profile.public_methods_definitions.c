@@ -41,6 +41,35 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
 
   if(s)
     s->use_default_ = type;
+  else
+  {
+    int count = 0, i;
+    char * text = 0;
+    char ** path_names = oyProfilePathsGet_( &count, oyAllocateFunc_ );
+    for(i = 0; i < count; ++i)
+    {
+      STRING_ADD( text, path_names[i] );
+      STRING_ADD( text, "\n" );
+    }
+
+    if(strcmp("XYZ.icc",name) == 0 ||
+       strcmp("Lab.icc",name) == 0 ||
+       strcmp("LStar-RGB.icc",name) == 0 ||
+       strcmp("sRGB.icc",name) == 0 ||
+       strcmp("ISOcoated_v2_bas.ICC",name) == 0
+      )
+    {
+      oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)object,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s\n\t%s\n%s", OY_DBG_ARGS_,
+                _("Could not open default ICC profile"),name,
+                _("You can get them from http://sf.net/projects/openicc"),
+                _("install in the OpenIccDirectory icc path"), text );
+    } else
+      oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)object,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s\n%s", OY_DBG_ARGS_,
+                _("Could not open default ICC profile"), name,
+                _("install in the OpenIccDirectory icc path"), text );
+  }
 
   if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
     oy_profile_s_std_cache_[pos] = oyProfile_Copy( (oyProfile_s*)s, 0 );
