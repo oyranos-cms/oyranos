@@ -820,7 +820,10 @@ OYAPI oyPointer OYEXPORT
 {
   oyPointer block = 0;
   oyProfile_s_ * s = (oyProfile_s_*)profile;
-  int error = !s;
+  int error = !s,
+      i, tags_modified = 1;
+  uint32_t md5[4];
+  char * data;
 
   if(!s)
     return 0;
@@ -834,7 +837,7 @@ OYAPI oyPointer OYEXPORT
   {
     if(s->size_ && s->block_ && !s->tags_modified_)
     {
-
+      tags_modified = 0;
       block = oyAllocateWrapFunc_( s->size_, allocateFunc );
       error = !block;
       if(error <= 0)
@@ -846,11 +849,38 @@ OYAPI oyPointer OYEXPORT
     if( oyStructList_Count( s->tags_ ))
     {
       block = oyProfile_TagsToMem_ ( s, size, allocateFunc );
+      s->tags_modified_ = 0;
+      s->use_default_ = 0;
+      if(s->file_name_)
+        profile->oy_->deallocateFunc_( s->file_name_ );
+      s->file_name_ = 0;
+      if(s->block_ && s->size_)
+        profile->oy_->deallocateFunc_( s->block_ );
+      s->size_ = 0;
+      s->block_ = oyAllocateWrapFunc_( *size,
+                                             profile->oy_->allocateFunc_ );
+      error = !memcpy( s->block_, block, *size );
+      if(error <= 0)
+        s->size_ = *size;
+      oyObject_SetNames( profile->oy_, 0,0,0 );
+      oyProfile_GetText(profile, oyNAME_NICK);
+      oyProfile_GetText(profile, oyNAME_NAME);
+      oyProfile_GetText(profile, oyNAME_DESCRIPTION);
     }
+
+    /* get actual ICC profile ID */
+    oyProfile_GetMD5( profile, OY_COMPUTE, md5 );
+
+    /* Write ICC profile ID into memory */
+    for(i = 0; i < 4; ++i)
+      md5[i] = oyValueUInt32( md5[i] );
+    data = block;
+    if(data && (int)*size >= 132)
+      memcpy( &data[84], md5, 16 );
   }
 
   if(s)
-    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+    oyObject_UnLock( s->oy_,__FILE__,__LINE__ );
 
   return block;
 }
