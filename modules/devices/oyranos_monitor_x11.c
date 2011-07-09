@@ -46,8 +46,6 @@
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 
-#include "oyranos_monitor.c"
-
 /* ---  Helpers  --- */
 
 /* --- internal API definition --- */

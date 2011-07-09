@@ -131,7 +131,7 @@ const char * oyX1_help_properties =
       " properties. Requires one device identifier returned with the \n"
       " \"list\" option. The properties may cover following entries:\n"
       " - \"EDID_manufacturer\" description\n"
-      " - \"manufacturer\" dupicate of the previous key\n"
+      " - \"manufacturer\" duplicate of the previous key\n"
       " - \"EDID_mnft\" (decoded EDID_mnft_id)\n"
       " - \"EDID_model\" textual name\n"
       " - \"model\" duplicate of the previous key\n"
@@ -525,7 +525,7 @@ int            oyX1Configs_FromPattern (
                                     options );
         if(error <= 0)
           error = oyOptions_SetFromText( &opts, "///key_prefix_required",
-                                                "EDID_" , OY_CREATE_NEW );
+                                                "EDID_.prefix", OY_CREATE_NEW );
         oyProfile_DeviceAdd( prof, device, opts );
         oyOptions_Release( &opts );
       }
