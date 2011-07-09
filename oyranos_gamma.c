@@ -485,7 +485,7 @@ int main( int argc , char** argv )
       data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
       oyFree_m_(data);
       oyProfile_GetMD5( prof, OY_COMPUTE, id );
-      oyProfile_ToFile_( prof, prof_name );
+      oyProfile_ToFile_( (oyProfile_s_*)prof, prof_name );
       oyProfile_Release( &prof );
     }
 
