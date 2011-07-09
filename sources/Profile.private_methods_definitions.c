@@ -852,8 +852,8 @@ int                oyProfile_DeviceAdd_(oyProfile_s_      * profile,
  *  @brief    Get the parsed ICC profile back into memory
  *  @internal
  *
- *  @version Oyranos: 0.1.8
- *  @date    2008/01/30
+ *  @version Oyranos: 0.3.2
+ *  @date    2011/07/05
  *  @since   2008/01/30 (Oyranos: 0.1.8)
  */
 oyPointer    oyProfile_WriteHeader_  ( oyProfile_s_      * profile,
@@ -876,6 +876,8 @@ oyPointer    oyProfile_WriteHeader_  ( oyProfile_s_      * profile,
       {
         memset( block, 0, 132 );
         memcpy( block, tag->block_, 128 );
+        /* unset profile ID */
+        memset( &((char*)block)[84], 0, OY_HASH_SIZE );
       }
     }
 
