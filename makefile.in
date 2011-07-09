@@ -13,7 +13,12 @@ BUILDDIR        = $(build_dir)/
 GENDIR          = API_generated/
 
 OY_MODULE_NAME  =_cmm_module
-LIBRARIES = $(TARGET) $(TARGET)_object $(TARGET)_core $(LIB_FORMS_FLTK)
+LIBRARIES = \
+	$(TARGET) \
+	$(TARGET)_modules \
+	$(TARGET)_object \
+	$(TARGET)_core \
+	$(LIB_FORMS_FLTK)
 LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)$(LIBEXT)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)$(LIBEXT)
 LIBSO = lib$(TARGET)$(SO)$(LIBEXT)
@@ -379,7 +384,13 @@ EXAMPLE_FILES = \
 	examples/xcmsevents/qcmsevents.qrc \
 	examples/xcmsevents/qcmsevents-applet.desktop
 
-MAN1 = oyranos-config-fltk.1 oyranos-monitor.1 oyranos-policy.1
+MAN1 = \
+	oyranos-config-fltk.1 \
+	oyranos-monitor.1 \
+	oyranos-policy.1 \
+	oyranos-xforms.1 \
+	oyranos-xforms-fltk.1 \
+	oyranos-xforms-modules.1
 MAN3 = oyranos.3 oyranos-config.3
 ICONS = \
 	$(TARGET)_logo.png \
@@ -1147,7 +1158,9 @@ install_doc:	install_docu
 install_docu: docu
 	echo Installing policy settings files ...
 	-mkdir -p "$(DESTDIR)$(syscolordir)/$(settingsdirname)"
-	-$(INSTALL) -m 644 "$(SRCDIR)/settings/*.policy.xml" "$(DESTDIR)$(syscolordir)/$(settingsdirname)"
+	-for i in `ls settings/*.policy.xml`; do \
+	     $(INSTALL) -m 644 "$${i}" "$(DESTDIR)$(syscolordir)/$(settingsdirname)";\
+	done
 	echo ... installing policy settings files done
 	mkdir -p "$(DESTDIR)$(docdir)"
 	cd $(SRCDIR) && \
@@ -1265,7 +1278,7 @@ uninstall_linguas:
 
 uninstall_docu:
 	echo Uninstalling docu ...
-	for i in settings/*.policy.xml; do \
+	for i in `ls settings/*.policy.xml`; do \
 	  ii=`echo $${i} | sed s%settings\/%%g`; \
 	  $(RM)   "$(DESTDIR)$(syscolordir)/$(settingsdirname)/$${ii}"; \
 	done;
