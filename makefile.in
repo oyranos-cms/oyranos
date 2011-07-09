@@ -387,6 +387,7 @@ EXAMPLE_FILES = \
 MAN1 = \
 	oyranos-config-fltk.1 \
 	oyranos-monitor.1 \
+	oyranos-monitor-nvidia.1 \
 	oyranos-policy.1 \
 	oyranos-xforms.1 \
 	oyranos-xforms-fltk.1 \

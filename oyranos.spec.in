@@ -282,7 +282,7 @@ ldconfig
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-monitor
-%{_mandir}/man1/%{name}-monitor*
+%{_mandir}/man1/%{name}-monitor.1*
 /etc/xdg/autostart/%{name}-monitor-setup.desktop
 
 %files libs-monitor
@@ -297,6 +297,7 @@ ldconfig
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-monitor-nvidia
+%{_mandir}/man1/%{name}-monitor-nvidia.1*
 
 %files libs-cups
 %defattr(-, root, root)
