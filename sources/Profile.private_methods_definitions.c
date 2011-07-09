@@ -69,7 +69,6 @@ int oyProfile_GetHash_        ( oyProfile_s_      * s,
 }
 /* } Static helper functions */
 
-
 /** Function  oyProfile_FromMemMove_
  *  @memberof oyProfile_s
  *  @brief    Create from in memory blob
@@ -78,14 +77,16 @@ int oyProfile_GetHash_        ( oyProfile_s_      * s,
  *  @param[in]    size           buffer size
  *  @param[in]    block          pointer to memory containing a profile
  *  @param[in]    flags          for future use
+ *  @param[out]   error_return   error codes
  *  @param[in]    object         the optional base
  *
- *  @since Oyranos: version 0.1.8
+ *  @since Oyranos: version 0.3.0
  *  @date  november 2007 (API 0.1.8)
  */
 oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
                                        oyPointer         * block,
                                        int                 flags,
+                                       int               * error_return,
                                        oyObject_s          object)
 {
   oyProfile_s_ * s = oyProfile_New_( object );
@@ -100,6 +101,8 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
     else
       s->size_ = size;
   }
+
+  if(error_return) *error_return = error;
 
   if (!s->block_)
   {
@@ -123,10 +126,14 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
   if(error <= 0)
     error = oyProfile_GetHash_( s, 0 );
 
-  if(error)
+  if(error != 0)
   {
-    WARNc1_S( "hash error %d", error )
-    return 0;
+    if(error > 0 || error < -1)
+      WARNc1_S( "hash error %d", error )
+    if(error_return) *error_return = error;
+
+    if(error > 0)
+      return NULL;
   }
 
   if(error <= 0)
@@ -134,6 +141,7 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
 
   if(error)
   {
+    if(error_return) *error_return = error;
     WARNc1_S( "signature error %d", error )
     return 0;
   }
@@ -158,6 +166,8 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
     WARNc3_S("Channels <= 0 %d %s %s", s->channels_n_,
              oyICCColourSpaceGetName(sig),
              oyICCColourSpaceGetName(h->colorSpace))
+
+    if(error_return) *error_return = error;
   }
 
   return s;

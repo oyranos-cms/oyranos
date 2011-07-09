@@ -1,6 +1,7 @@
-oyProfile_s_* oyProfile_FromMemMove_ ( size_t              size,
+oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
                                        oyPointer         * block,
                                        int                 flags,
+                                       int               * error_return,
                                        oyObject_s          object);
 oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
                                        uint32_t            flags,
