@@ -148,7 +148,7 @@ oyProfile_FromMem             ( size_t            size,
     }
   }
 
-  s = oyProfile_FromMemMove_( size_, &block_, flags, object );
+  s = oyProfile_FromMemMove_( size_, &block_, flags, &error, object );
 
   oyProfile_GetID( (oyProfile_s*)s );
 
