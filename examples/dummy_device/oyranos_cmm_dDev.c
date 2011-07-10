@@ -181,11 +181,8 @@ int              DeviceFromName_     ( const char        * device_name,
                                        oyConfig_s       ** device,
                                        oyAlloc_f           allocateFunc )
 {
-  const char * value3 = 0;
   oyOption_s * o = 0;
   int error = !device;
-
-    value3 = oyOptions_FindString( options, "data_blob", 0 );
 
     if(!error)
     {

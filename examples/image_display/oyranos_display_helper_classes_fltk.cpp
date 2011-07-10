@@ -63,9 +63,11 @@ class Oy_Fl_Double_Window : public Fl_Double_Window
 
   int  handle (int e)
   { 
-    int lx_,ly_,lw_,lh_,wx,wy;
-    lx_=ly_=lw_=lh_=wx=wy=0;
+    int wx,wy;
+    wx=wy=0;
 #if ((FL_MAJOR_VERSION * 100 + FL_MINOR_VERSION) > 106)
+    int lx_,ly_,lw_,lh_;
+    lx_=ly_=lw_=lh_=wx=wy=0;
     Fl::screen_xywh(lx_,ly_,lw_,lh_);
 #endif
     Fl_Window * win = 0;

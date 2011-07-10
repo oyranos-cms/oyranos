@@ -238,7 +238,6 @@ int      dFilFilterPlug_MyFilterRun (
                                        oyPixelAccess_s   * ticket )
 {
   oyFilterSocket_s * socket;
-  oyFilterPlug_s * plug;
   oyFilterNode_s * node;
   oyImage_s * image_input;
   uint8_t * u8_array;
@@ -250,10 +249,12 @@ int      dFilFilterPlug_MyFilterRun (
   socket = requestor_plug->remote_socket_;
   /** my filter node */
   node = socket->node;
-  /** my filters plug */
-  plug = (oyFilterPlug_s *)node->plugs[0];
 
 #if 0
+  oyFilterPlug_s * plug;
+
+  /** my filters plug */
+  plug = (oyFilterPlug_s *)node->plugs[0];
   /** get the full image data in case my filter needs it */
   image_input = oyFilterPlug_ResolveImage( plug, socket, ticket );
 #endif

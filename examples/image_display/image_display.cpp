@@ -211,6 +211,8 @@ callback ( Fl_Widget* w, void* daten )
             " -i %s/image_display_in_tmp.xml -o %s/image_display_tmp.xml",
             tmp_dir, tmp_dir );
     error = system(command);
+    if(error)
+      fprintf(stderr, "error %d for \"%s\"", error, command );
 
     /* reload changed options */
     t = strstr(command," -o ");
