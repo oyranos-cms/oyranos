@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include <oyranos_helper.h>
+#include <oyranos_icc.h>
 
 #include "oyranos_devices.h"
 #include "oyranos_devices_internal.h"
@@ -10,6 +11,7 @@
 #include "oyConfig_s_.h"
 #include "oyOption_s_.h"
 #include "oyOptions_s_.h"
+#include "oyProfiles_s.h"
 
 
 /** \addtogroup devices_handling Device API
