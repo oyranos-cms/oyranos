@@ -42,7 +42,7 @@ oyICCColourSpaceGetChannelCount ( icColorSpaceSignature color )
 {
   int n;
 
-  switch (color) {
+  switch ((unsigned int)color) {
     case icSigXYZData: n = 3; break;
     case icSigLabData: n = 3; break;
     case icSigLuvData: n = 3; break;
@@ -106,7 +106,7 @@ oyICCColourSpaceGetName ( icColorSpaceSignature sig )
 {
   const char * text = 0;
 
-  switch (sig) {
+  switch ((unsigned int)sig) {
     case icSigXYZData: text =_("XYZ"); break;
     case icSigLabData: text =_("Lab"); break;
     case icSigLuvData: text =_("Luv"); break;
@@ -175,7 +175,7 @@ oyICCColourSpaceGetChannelName ( icColorSpaceSignature sig,
   if( type >= oyNAME_DESCRIPTION )
     type = oyNAME_NAME;
 
-  switch(sig)
+  switch((unsigned int)sig)
   {
     case icSigXYZData: switch(pos) {
          case 0: return type ? "X"  : _("CIE X");
@@ -362,7 +362,7 @@ oyCHANNELTYPE_e oyICCColourSpaceToChannelLayout (
 const oyChar *   oyICCTagDescription ( icTagSignature      sig )
 {
 
-  switch (sig) {
+  switch ((unsigned int)sig) {
     case icSigAToB0Tag: return _("Lockup table, device to PCS, intent perceptual");
     case icSigAToB1Tag: return _("Lockup table, device to PCS, intent relative colorimetric");
     case icSigAToB2Tag: return _("Lockup table, device to PCS, intent saturation");
@@ -448,7 +448,7 @@ const oyChar *   oyICCTagDescription ( icTagSignature      sig )
  */
 const oyChar *   oyICCTagName        ( icTagSignature      sig )
 {
-  switch (sig) {
+  switch ((unsigned int)sig) {
     case icSigAToB0Tag: return "A2B0";
     case icSigAToB1Tag: return "A2B1";
     case icSigAToB2Tag: return "A2B2";
@@ -559,7 +559,7 @@ const oyChar *   oyICCDeviceClassDescription ( icProfileClassSignature sig )
  */
 const oyChar *   oyICCPlatformDescription ( icPlatformSignature platform )
 {
-  switch (platform)
+  switch ((unsigned int)platform)
   {
     case icSigMacintosh: return _("Macintosh");
     case icSigMicrosoft: return _("Microsoft");
@@ -586,7 +586,7 @@ const oyChar *   oyICCPlatformDescription ( icPlatformSignature platform )
 const oyChar *   oyICCTagTypeName    ( icTagTypeSignature  sig )
 {
 
-  switch (sig) {
+  switch ((unsigned int)sig) {
     case icSigCurveType: return "curv";
     case icSigDataType: return "data";
     case icSigDateTimeType: return "dtim";

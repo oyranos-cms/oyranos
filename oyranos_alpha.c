@@ -231,7 +231,7 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
  */
 int lcmsColorSpace(icColorSpaceSignature ProfileSpace)
 {    
-       switch (ProfileSpace) {
+       switch ((unsigned int)ProfileSpace) {
 
        case icSigGrayData: return  PT_GRAY;
        case icSigRgbData:  return  PT_RGB;
@@ -561,6 +561,8 @@ OYAPI oyCallback_s * OYEXPORT
   }
 
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+  if(error)
+    WARNc_S( "memset failed" );
 
   s->type_ = type;
   s->copy = (oyStruct_Copy_f) oyCallback_Copy;
@@ -569,6 +571,8 @@ OYAPI oyCallback_s * OYEXPORT
   s->oy_ = s_obj;
 
   error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+  if(error)
+    WARNc_S( "oyObject_SetParent failed" );
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 
@@ -862,6 +866,8 @@ OYAPI oyCMMapis_s * OYEXPORT
   }
 
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+  if(error)
+    WARNc_S("memset failed");
 
   s->type_ = type;
   s->copy = (oyStruct_Copy_f) oyCMMapis_Copy;
@@ -1354,6 +1360,8 @@ oyCMMhandle_s *    oyCMMhandle_New_    ( oyObject_s        object )
   }
 
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+  if(error)
+    WARNc_S("memset failed");
 
   s->type_ = type;
   s->copy = (oyStruct_Copy_f) oyCMMhandle_Copy_;
@@ -2453,7 +2461,6 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm )
 {
   int error = 0;
   oyCMMapis_s * apis = 0;
-  int  found = 0;
   oyCMMapi_Check_f apiCheck = oyCMMapi_CheckWrap_;
 
   if(error <= 0)
@@ -2481,7 +2488,6 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm )
 
         while(tmp)
         {
-          found = 0;
 
           if(apiCheck(cmm_info, tmp, 0, 0) == oyOBJECT_CMM_API5_S)
           {
@@ -2546,7 +2552,6 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
 {
   int error = !type;
   oyCMMapi_s * api = 0;
-  int  found = 0;
 
   if(!apiCheck)
     apiCheck = oyCMMapi_CheckWrap_;
@@ -2577,7 +2582,6 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
 
         while(tmp)
         {
-          found = 0;
 
           if(apiCheck(cmm_info, tmp, check_pointer, &rank) == type)
           {
@@ -3607,6 +3611,8 @@ OYAPI oyConfig_s * OYEXPORT
   }
 
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+  if(error)
+    WARNc_S("memset failed");
 
   s->type_ = type;
   s->copy = (oyStruct_Copy_f) oyConfig_Copy;
@@ -5629,7 +5635,6 @@ oyConfDomain_s_ * oyConfDomain_Copy__ (
 {
   oyConfDomain_s_ * s = 0;
   int error = 0;
-  oyAlloc_f allocateFunc_ = 0;
 
   if(!obj || !object)
     return s;
@@ -5639,8 +5644,6 @@ oyConfDomain_s_ * oyConfDomain_Copy__ (
 
   if(!error)
   {
-    allocateFunc_ = s->oy_->allocateFunc_;
-
     if(obj->api8)
     {
       if(obj->api8->copy)
@@ -6701,15 +6704,9 @@ OYAPI int  OYEXPORT
       l_error = 0;
   oyConfigs_s * devices = 0;
   oyConfig_s * s = device;
-  const char * device_name = 0;
   int new_options = 0;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
-
-  if(error <= 0)
-  {
-    device_name = oyConfig_FindString( device, "device_name", 0);
-  }
 
   if(!options)
   {
@@ -9173,7 +9170,7 @@ OYAPI oyPointer OYEXPORT
   oyPointer block = 0;
   oyProfile_s * s = profile;
   int error = !s,
-      i, tags_modified = 1;
+      i;
   uint32_t md5[4];
   char * data;
 
@@ -9189,7 +9186,6 @@ OYAPI oyPointer OYEXPORT
   {
     if(s->size_ && s->block_ && !s->tags_modified_)
     {
-      tags_modified = 0;
       block = oyAllocateWrapFunc_( s->size_, allocateFunc );
       error = !block;
       if(error <= 0)
@@ -9744,7 +9740,8 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
   dict_tag = oyProfileTag_New(NULL);
   error = oyProfileTag_Set( dict_tag, icSigMetaDataTag, icSigDictType,
                             oyOK, block_size, dict );
-  error = oyProfile_TagMoveIn( p, &dict_tag, -1 );
+  if(error <= 0)
+    error = oyProfile_TagMoveIn( p, &dict_tag, -1 );
 
   oyStringListRelease_( &keys, count, oyDeAllocateFunc_ );
   oyStringListRelease_( &values, count, oyDeAllocateFunc_ );
@@ -9756,7 +9753,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
   }
   
 
-  return 0;
+  return error;
 }
 #endif
 
@@ -10421,7 +10418,6 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
 
     if(error <= 0 && s->size_ > min_icc_size)
     {
-      uint32_t size = 0;
       uint32_t tag_count = 0;
       icTag *tag_list = 0;
       int i = 0;
@@ -10443,7 +10439,6 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
       error = oyProfile_TagMoveIn_( s, &tag_, -1 );
 
 
-      size = oyProfile_GetSignature( s, oySIGNATURE_SIZE );
       tag_count = oyValueUInt32( ic_profile->count );
 
       tag_list = (icTag*)&((char*)s->block_)[132];
@@ -11551,7 +11546,6 @@ OYAPI oyProfiles_s * OYEXPORT
 {
   oyProfiles_s * s = 0;
   int error = 0;
-  oyAlloc_f allocateFunc = 0;
 
   if(!obj)
     return 0;
@@ -11562,9 +11556,6 @@ OYAPI oyProfiles_s * OYEXPORT
 
   s = oyProfiles_New( object );
   error = !s;
-
-  if(error <= 0)
-    allocateFunc = s->oy_->allocateFunc_;
 
   if(error <= 0)
   {
@@ -14242,7 +14233,6 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   int data_size, ay;
   oyRectangle_s array_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0};
   int array_width, array_height;
-  double a_orig_width = 0, a_orig_height = 0;
   oyAlloc_f allocateFunc_ = 0;
   unsigned char * line_data = 0;
   int i,j, height;
@@ -14352,15 +14342,13 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     /* shift array focus to requested region */
     oyArray2d_SetFocus( a, &array_roi_pix );
 
-    /* change intermediately and store old values for later recovering */
+    /* change intermediately */
     if(a && a->width > image_roi_pix.width)
     {
-      a_orig_width = a->width;
       a->width = image_roi_pix.width;
     }
     if(a && a->height > image_roi_pix.height)
     {
-      a_orig_height = a->height;
       a->height = image_roi_pix.height;
     }
   }
@@ -15484,16 +15472,15 @@ OYAPI int  OYEXPORT
  *
  *  @return                            1 if handled or zero
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.2
  *  @since   2009/10/27 (Oyranos: 0.1.10)
- *  @date    2009/10/28
+ *  @date    2011/07/10
  */
 OYAPI int  OYEXPORT
                  oyFilterSocket_SignalToGraph (
                                        oyFilterSocket_s  * c,
                                        oyCONNECTOR_EVENT_e e )
 {
-  int result = 0;
   oySIGNAL_e sig = oySIGNAL_OK;
   int n, i, j_n,j, k,k_n, handled = 0, pos;
   oyFilterPlug_s * p, * sp;
@@ -15513,7 +15500,9 @@ OYAPI int  OYEXPORT
          sig = (oySIGNAL_e) e; break;
   }
 
-  result = oyStruct_ObserverSignal( (oyStruct_s*) c->node, sig, 0 );
+  handled = oyStruct_ObserverSignal( (oyStruct_s*) c->node, sig, 0 );
+  if(handled)
+    return handled;
 
   if(e != oyCONNECTOR_EVENT_OK && oy_debug_signals)
   {
@@ -15531,7 +15520,7 @@ OYAPI int  OYEXPORT
   for(i = 0; i < n; ++i)
   {
     p = oyFilterPlugs_Get( c->requesting_plugs_, i );
-    result = oyStruct_ObserverSignal( (oyStruct_s*) p->node, sig, 0 );
+    handled = oyStruct_ObserverSignal( (oyStruct_s*) p->node, sig, 0 );
 
     /* get all nodes in the output direction */
     graph = oyFilterGraph_FromNode( p->node, OY_INPUT );
@@ -20020,7 +20009,6 @@ oyFilterGraph_s * oyFilterGraph_Copy_
 {
   oyFilterGraph_s * s = 0;
   int error = 0;
-  oyAlloc_f allocateFunc_ = 0;
 
   if(!obj || !object)
     return s;
@@ -20031,11 +20019,6 @@ oyFilterGraph_s * oyFilterGraph_Copy_
   s->nodes = oyFilterNodes_Copy( obj->nodes, 0 );
   s->edges = oyFilterPlugs_Copy( obj->edges, 0 );
   s->options = oyOptions_Copy( obj->options, object );
-
-  if(!error)
-  {
-    allocateFunc_ = s->oy_->allocateFunc_;
-  }
 
   if(error)
     oyFilterGraph_Release( &s );
@@ -20431,6 +20414,8 @@ void oyShowGraph__( oyFilterGraph_s * s )
                               "Oyranos Test Graph", 0, malloc );
   oyWriteMemToFile_( "test.dot", ptr, strlen(ptr) );
   error = system("dot -Tps test.dot -o test.ps; gv -spartan -antialias test.ps &");
+  if(error)
+    WARNc1_S("error during calling \"dot -Tps test.dot -o test.ps; gv -spartan -antialias test.ps &\": %d", error);
 
   free(ptr); ptr = 0;
 }
@@ -23511,6 +23496,9 @@ char *   oyGetDisplayNameFromPosition2(const char        * device_type,
   error = oyConfigs_FromDeviceClass ( device_type, device_class, options, &devices,
                                           0 );
 
+  if(error>=0)
+    WARNc1_S("oyConfigs_FromDeviceClass() returned: %d", error);
+
   oyOptions_Release( &options );
 
   if(!allocateFunc)
@@ -23578,6 +23566,9 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
 
   error = oyConfigs_FromDeviceClass ( 0, "monitor", options, &devices,
                                           0 );
+
+  if(error>=0)
+    WARNc1_S("oyConfigs_FromDeviceClass() returned: %d", error);
 
   oyOptions_Release( &options );
 
@@ -23866,8 +23857,7 @@ int      oyActivateMonitorProfiles   ( const char        * display_name )
   oyOptions_s * options = 0;
   oyConfig_s * device = 0;
   oyConfigs_s * devices = 0;
-  const char * device_class = "monitor",
-             * device_name = 0;
+  const char * device_class = "monitor";
   int i, n;
 
   if(error > 0)
@@ -23890,9 +23880,6 @@ int      oyActivateMonitorProfiles   ( const char        * display_name )
     for(i = 0; i < n; ++i)
     {
       device = oyConfigs_Get( devices, i );
-
-      device_name = oyConfig_FindString( device, "device_name", 0 );
-
       oyDeviceSetup( device );
       oyConfig_Release( &device );
     }

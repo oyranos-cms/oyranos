@@ -170,6 +170,9 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
     }
     ret =
       kdbGetChildKeys( oy_handle_, list_name_user, list_user, KDB_O_SORT);
+
+    if(ret > 0)
+      WARNc1_S("kdbGetChildKeys returned with %d", ret);
   }
   if( user_sys == oyUSER_SYS || user_sys == oySYS ) {
     list_sys = ksNew(0);
@@ -181,6 +184,9 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
     }
     ret =
       kdbGetChildKeys( oy_handle_, list_name_sys, list_sys, KDB_O_SORT);
+
+    if(ret > 0)
+      WARNc1_S("kdbGetChildKeys returned with %d", ret);
   }
 
   if(list_user)
@@ -663,6 +669,8 @@ int      oyKeyIsString_              ( const char        * full_key_name )
   /** check if the key is a binary one */
   key = keyNew( full_key_name, KEY_END );
   rc=kdbGetKey( oy_handle_, key );
+  if(rc > 0)
+    WARNc1_S("kdbGetKey returned with %d", rc);
   success = keyIsString(key);
   keyDel( key ); key = 0;
 
@@ -677,6 +685,8 @@ int      oyKeyIsBinary_              ( const char        * full_key_name )
   /** check if the key is a binary one */
   key = keyNew( full_key_name, KEY_END );
   rc=kdbGetKey( oy_handle_, key );
+  if(rc > 0)
+    WARNc1_S("kdbGetKey returned with %d", rc);
   success = keyIsBinary(key);
   keyDel( key ); key = 0;
 
@@ -694,6 +704,8 @@ oyPointer  oyGetKeyBinary__          ( const char        * full_key_name,
 
   key = keyNew( full_key_name, KEY_END );
   rc=kdbGetKey( oy_handle_, key );
+  if(rc > 0)
+    WARNc1_S("kdbGetKey returned with %d", rc);
   if(keyIsBinary(key))
   {
     new_size = keyGetValueSize( key );
