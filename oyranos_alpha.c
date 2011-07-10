@@ -21,6 +21,7 @@
 #include "oyOption_s.h"
 #include "oyOptions_s.h"
 #include "oyStructList_s_.h"
+#include "oyranos_devices.h"
 
 #include "oyranos_types.h"
 #include "oyranos_alpha.h"

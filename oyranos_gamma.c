@@ -20,6 +20,7 @@
  * 
  */
 
+#include "oyranos_devices.h"
 
 #include "oyranos.h"
 #include "oyranos_alpha.h"
