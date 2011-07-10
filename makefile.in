@@ -1215,7 +1215,7 @@ rpm:	dist
 	rpmdir/SOURCES \
 	rpmdir/SRPMS \
 	rpmdir/RPMS/$(RPMARCH)
-	$(COPY) -f $(TARGET)-$(VERSION).tar.gz rpmdir/SOURCES
+	$(COPY) -f $(TARGET)-$(VERSION).tar.bz2 rpmdir/SOURCES
 	rpmbuild --clean -ba $(build_dir)/$(TARGET).spec --define "_topdir $$PWD/rpmdir"
 	@echo "============================================================"
 	@echo "Finished - the packages are in rpmdir/RPMS and rpmdir/SRPMS!"
