@@ -370,6 +370,14 @@ if [ -n "$YAJL" ] && [ $YAJL -gt 0 ]; then
       rm tests/libtest$EXEC_END
     fi
   fi
+
+  # search for yajl_version.h header file
+    $CC $CFLAGS -I$includedir $ROOT_DIR/tests/yajl.c $LDFLAGS -L/usr/X11R6/lib$BARCH -l$l -o tests/yajl_test 2>/dev/null
+    if [ ! -f tests/yajl_test ]; then
+      echo "YAJL_VERSION = -DYAJL_VERSION=10000" >> $CONF
+      rm tests/yajl_test$EXEC_END
+    fi
+
   if [ $HAVE_LIB -ne 0 ]; then
     if [ -n $version ]; then
       echo_="$name	$version		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"

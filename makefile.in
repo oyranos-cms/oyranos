@@ -469,6 +469,7 @@ COBJECTS = \
 	$(CFILES_OFORMS:.c=.o) $(OBJECTS_CS) \
 	$(MONI_X11_SPECIFIC_OBJECTS) \
 	$(MONI_CS_SPECIFIC_OBJECTS) \
+	$(MONI_OBJECTS) \
 	$(CMM_lcms_OBJECTS) \
 	$(CMM_oydi_OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
@@ -826,7 +827,8 @@ $(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL_NAM
 oyjl/oyjl_tree_parse.o:	$(SRCDIR)/oyjl/oyjl_tree_parse.c
 	echo Compiling $<
 	mkdir -p oyjl/
-	$(CC) -I./ -I./oyjl -I$(SRCDIR)/oyjl $(CFLAGS) $(INCL) $(YAJL_H) -o $@ -c $<
+	$(CC) -I./ -I./oyjl $(YAJL_VERSION) -I$(SRCDIR)/oyjl \
+	  $(CFLAGS) $(INCL) $(YAJL_H) -o $@ -c $<
 
 $(TARGET)_config_fltk.o:	$(SRCDIR)/$(TARGET)_config_fltk.cxx
 	echo Compiling $*.cxx
