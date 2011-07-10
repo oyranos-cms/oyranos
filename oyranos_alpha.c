@@ -12545,8 +12545,7 @@ oyProfiles_s * oyConcatenateImageProfiles_ (
       if(error <= 0)
       {
         tmp = oyProfile_Copy( in->profile_, 0);
-        p_list = oyProfiles_MoveIn( p_list, &tmp, 0 );
-        error = !p_list;
+        error = oyProfiles_MoveIn( p_list, &tmp, 0 );
       }
 
       p_list_n = oyProfiles_Count( p_list );
@@ -12557,16 +12556,14 @@ oyProfiles_s * oyConcatenateImageProfiles_ (
         for(i = 0; i < n; ++i)
         {
           tmp = oyProfiles_Get( list,i );
-          p_list = oyProfiles_MoveIn( p_list, &tmp, i + p_list_n);
-          error = !p_list;
+          error = oyProfiles_MoveIn( p_list, &tmp, i + p_list_n);
         }
       }
 
       if(error <= 0)
       {
         tmp = oyProfile_Copy(out->profile_, 0);
-        p_list = oyProfiles_MoveIn( p_list, &tmp, p_list_n);
-        error = !p_list;
+        error = oyProfiles_MoveIn( p_list, &tmp, p_list_n);
       }
     }
   }

@@ -340,7 +340,7 @@ OYAPI int  OYEXPORT
       double clck;
 
       profile = oyProfile_FromSignature( device_signature, oySIGNATURE_CLASS, 0 );
-      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+      oyProfiles_MoveIn( patterns, &profile, -1 );
 
       clck = oyClock();
       iccs = oyProfiles_Create( patterns, 0 );

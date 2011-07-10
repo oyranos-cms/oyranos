@@ -1431,7 +1431,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
     return 0;
   }
   p = oyProfile_Copy( image_input->profile_, 0 );
-  profs = oyProfiles_MoveIn( profs, &p, -1 );
+  error = oyProfiles_MoveIn( profs, &p, -1 );
 
   /* effect profiles */
   o = oyOptions_Find( node->core->options_, "profiles_effect" );
@@ -1453,7 +1453,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
 
         /* Look in the Oyranos cache for a CMM internal representation */
         lps[ profiles_n++ ] = lcm2AddProfile( p );
-        profs = oyProfiles_MoveIn( profs, &p, -1 );
+        error = oyProfiles_MoveIn( profs, &p, -1 );
       }
     }
     oyOption_Release( &o );
@@ -1499,7 +1499,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
                  " found profile: %s",
                  OY_DBG_ARGS_, p?oyProfile_GetFileName( p,-1 ):"????");
 
-        profs = oyProfiles_MoveIn( profs, &p, -1 );
+        error = oyProfiles_MoveIn( profs, &p, -1 );
         ++profiles_proof_n;
 
         oyProfile_Release( &p );
@@ -1520,7 +1520,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   }
   lps[ profiles_n++ ] = lcm2AddProfile( image_output->profile_ );
   p = oyProfile_Copy( image_output->profile_, 0 );
-  profs = oyProfiles_MoveIn( profs, &p, -1 );
+  error = oyProfiles_MoveIn( profs, &p, -1 );
 
   *size = 0;
 
