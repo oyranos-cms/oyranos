@@ -1,6 +1,6 @@
-Summary: Colour Management System
+Summary: Color Management System
 Name: oyranos
-License: BSD
+License: newBSD
 Group: Development/Libraries/Other
 URL: http://www.oyranos.org
 Vendor: Kai-Uwe Behrmann
@@ -29,10 +29,10 @@ BuildRequires: gcc-c++ gettext doxygen graphviz fltk fltk-devel libpng-devel lib
 %endif
 
 %package      -n lib%{name}0
-Summary:   Colour Management System Libraries
+Summary:   Color Management System Libraries
 Group:     Development/Libraries/Other
 # assume users want the device modules
-Requires:  oyranos-libs-cups = %{version} oyranos-libs-monitor = %{version}
+Requires:  oyranos-libs-cups oyranos-libs-monitor
 # we need rgb, lab, xyz gray and cmyk profiles
 # the proper names: sRGB.icc, XYZ.icc, Lab.icc are in the OpenICC-data package
 Requires:   icc-profiles
@@ -91,7 +91,7 @@ Summary:    XFORMS subset rendering
 Group:      Development/Libraries/Other
 
 %package      qcmsevents
-Summary:    Xorg Colour management Event observer applet
+Summary:    Xorg Color management Event observer applet
 Group:      System/Monitoring
 
 %description
@@ -194,7 +194,7 @@ the system tray.
 
 %install
 rm -rf %{buildroot}
-make %{_smp_mflags}
+make #%%{_smp_mflags}
 make DESTDIR=%{buildroot} install
 rm -fr %{buildroot}/%{_datadir}/doc/%{name}
 %find_lang %{name}       # generate a special file list
@@ -340,6 +340,7 @@ ldconfig
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/qcmsevents
+%{_mandir}/man1/qcmsevents.1*
 %{pixmapdir}/qcmsevents.*
 %{desktopdir}/qcmsevents-applet.desktop
 
