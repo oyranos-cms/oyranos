@@ -303,7 +303,7 @@ Option::Option( int x, int y, int w, int h, const char *name,
     Fl_Pack::size( weigth, Fl_Pack::h() );
   w = Fl_Pack::w();*/
 
-  switch(type)
+  switch((unsigned int)type)
   {
   // == Profiles ==
   case oyWIDGETTYPE_DEFAULT_PROFILE:
