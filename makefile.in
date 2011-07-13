@@ -176,6 +176,8 @@ CFILES_OBJECT = \
 	$(GENDIR)oyPointer_s.c \
 	$(GENDIR)oyProfile_s_.c \
 	$(GENDIR)oyProfile_s.c \
+	$(GENDIR)oyProfileTag_s.c \
+	$(GENDIR)oyProfileTag_s_.c \
 	$(GENDIR)oyHash_s_.c \
 	$(GENDIR)oyHash_s.c \
 	$(GENDIR)oyName_s_.c \
@@ -197,6 +199,7 @@ CHEADERS_OBJECT_PUBLIC = \
 	$(GENDIR)oyBlob_s.h \
 	$(GENDIR)oyPointer_s.h \
 	$(GENDIR)oyProfile_s.h \
+	$(GENDIR)oyProfileTag_s.h \
 	$(GENDIR)oyHash_s.h \
 	$(GENDIR)oyName_s.h \
 	$(GENDIR)oyObject_s.h \
@@ -212,6 +215,7 @@ CHEADERS_OBJECT = \
 	$(GENDIR)oyBlob_s_.h \
 	$(GENDIR)oyPointer_s_.h \
 	$(GENDIR)oyProfile_s_.h \
+	$(GENDIR)oyProfileTag_s_.h \
 	$(GENDIR)oyHash_s_.h \
 	$(GENDIR)oyName_s_.h \
 	$(GENDIR)oyObject_s_.h \
