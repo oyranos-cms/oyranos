@@ -12143,7 +12143,8 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
     rank = 0;
 
     error = oyConfig_Compare( p_device, device, &rank );
-    if(oyConfig_FindString( p_device, "OYRANOS_automatic_generated", "1" ))
+    if(oyConfig_FindString( p_device, "OYRANOS_automatic_generated", "1" ) ||
+       oyConfig_FindString( p_device, "OPENICC_automatic_generated", "1" ))
     {
       DBG_NUM2_S( "found OYRANOS_automatic_generated: %d %s",
                   rank, strrchr(oyProfile_GetFileName(p,-1),'/')+1);

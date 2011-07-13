@@ -145,7 +145,7 @@ char *  oyStrstr_ ( const char * str1_, const char * str2_ );
 int     oyStrcmp_ ( const char * str1_, const char * str2_ );
 char    oyToupper_( char c_ );
 
-/* allow "-opt val" and "-opt=val" syntax */
+/* allow "--opt val" and "--opt=val" syntax */
 #define OY_PARSE_INT_ARG( opt ) \
                         if( pos + 1 < argc && argv[pos][i+1] == 0 ) \
                         { opt = atoi( argv[pos+1] ); \

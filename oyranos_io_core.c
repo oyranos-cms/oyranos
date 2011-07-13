@@ -87,6 +87,10 @@ oyReadFileToMem_(const char* name, size_t *size,
 
   DBG_MEM
 
+  if(filename && filename[0] && strlen(filename) > 7 &&
+     memcmp(filename, "file://", 7) == 0)
+    filename = &filename[7];
+
   {
     fp = fopen(filename, "rb");
     DBG_MEM2_S ("fp = %u filename = %s\n", (unsigned int)((intptr_t)fp), filename)

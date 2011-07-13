@@ -130,6 +130,10 @@ oyGetPathFromProfileName_       (const char*   fileName,
 
   DBG_PROG_START
 
+  if(fileName && fileName[0] && strlen(fileName) > 7 &&
+     memcmp(fileName, "file://", 7) == 0)
+    fileName = &fileName[7];
+
   /*DBG_NUM_S((fileName)) */
   /* search in configured paths */
   if (fileName && fileName[0] != OY_SLASH_C)
