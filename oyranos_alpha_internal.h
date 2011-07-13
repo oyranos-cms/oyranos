@@ -215,14 +215,6 @@ int          oyIdToCMM               ( uint32_t            cmmId,
               oyStructTypeToText( typ )) \
     action; \
   }
-#define oyCheckType__m( type, action ) \
-  if( !s || oyStruct_CheckType( (oyStruct_s*)s, type ) > 0) \
-  { \
-    WARNc3_S( "%s %s(%s)", _("Unexpected object type:"), \
-              oyStructTypeToText( s ? s->type_ : oyOBJECT_NONE ), \
-              oyStructTypeToText( type )) \
-    action; \
-  }
 
 void     oyAlphaFinish_              ( int                 unused );
 

@@ -26,6 +26,7 @@
 #include "oyranos_types.h"
 #include "oyranos_alpha.h"
 #include "oyranos_alpha_internal.h"
+#include "oyranos_object_internal.h"
 #include "oyranos_generic_internal.h"
 #include "oyranos_cmm.h"
 #include "oyranos_elektra.h"
