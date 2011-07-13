@@ -272,8 +272,12 @@ int main( int argc , char** argv )
               * rank_list = 0;
       char ** texts = 0;
 
+#ifdef UNHIDE_CMM
       error = oyConfigDomainList( device_class, &texts, &count,
                                   &rank_list, 0 );
+#else
+      error = 1;
+#endif
 
       for(i = 0; i < count; ++i)
         printf("%s\n", strstr(texts[i],"monitor.") + 8 );
@@ -360,9 +364,11 @@ int main( int argc , char** argv )
                           * result = 0;
 
               error = oyOptions_MoveIn( opts, &o, -1 );
+#ifdef UNHIDE_CMM
               oyOptions_Handle( "///create_profile.icc",
                                 opts,"create_profile.icc_profile.colour_matrix",
                                 &result );
+#endif
               prof = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
                                         oyOBJECT_PROFILE_S );
               oyOptions_Release( &result );

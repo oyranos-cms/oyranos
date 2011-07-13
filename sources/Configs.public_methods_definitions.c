@@ -1,3 +1,4 @@
+#ifdef UNHIDE_CMM
 /** Function  oyConfigs_FromDomain
  *  @memberof oyConfigs_s
  *  @brief    Send a request to a configuration module
@@ -82,6 +83,7 @@ OYAPI int  OYEXPORT
   oyExportEnd_();
   return error;
 }
+#endif
 
 /** Function  oyConfigs_FromDeviceClass
  *  @memberof oyConfigs_s
@@ -219,6 +221,7 @@ OYAPI int  OYEXPORT
   return error;
 }
 
+#ifdef UNHIDE_CMM
 /** Function  oyConfigs_FromDB
  *  @memberof oyConfigs_s
  *  @brief    Get all oyConfigs_s from DB
@@ -318,7 +321,9 @@ OYAPI int OYEXPORT
   oyExportEnd_();
   return error;
 }
+#endif
 
+#ifdef UNHIDE_CMM
 /** Function  oyConfigs_Modify
  *  @memberof oyConfigs_s
  *  @brief    Ask a module for device informations or other direct calls
@@ -402,7 +407,9 @@ OYAPI int  OYEXPORT
   oyExportEnd_();
   return error;
 }
+#endif
 
+#ifdef UNHIDE_CMM
 /** Function  oyConfigDomainList
  *  @memberof oyConfigs_s
  *  @brief    Count and show the global oyConfigs_s suppliers
@@ -517,3 +524,4 @@ OYAPI int  OYEXPORT
   oyExportEnd_();
   return error;
 }
+#endif
