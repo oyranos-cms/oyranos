@@ -4037,7 +4037,9 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
         error = oyOption_SetValueFromDB( o );
       oyOption_Release( &o );
     }
+#if 0
     error = oyOptions_DoFilter ( s, flags, type_txt );
+#endif
   }
 
   if(type_txt)

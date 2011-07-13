@@ -2843,7 +2843,11 @@ oyTESTRESULT_e testCMMnmRun ()
         error = oyOption_SetValueFromDB( o );
       oyOption_Release( &o );
     }
+#if 0
     error = oyOptions_DoFilter ( s, flags, type_txt );
+#else
+    error = 1;
+#endif
   }
 
   if(type_txt)
