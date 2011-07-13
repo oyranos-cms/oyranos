@@ -1,8 +1,5 @@
 {% extends "Base_s_.c" %}
 
-{% block CustomPrivateMethodsDefinitions %}
-{% endblock CustomPrivateMethodsDefinitions %}
-
 {% block customConstructor %}
   s->list_ = oyStructList_Create( s->type_, 0, 0 );
 {% endblock customConstructor %}
