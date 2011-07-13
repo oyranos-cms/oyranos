@@ -226,13 +226,17 @@ CHEADERS_OBJECT = \
 CFILES_OBJECT_MODULES = \
 	$(GENDIR)oyConfig_s_.c \
 	$(GENDIR)oyConfig_s.c \
+	$(GENDIR)oyConfigs_s_.c \
+	$(GENDIR)oyConfigs_s.c \
 	$(GENDIR)oyranos_devices.c \
 	$(GENDIR)oyranos_devices_internal.c
 CHEADERS_OBJECT_MODULES_PUBLIC = \
 	$(GENDIR)oyConfig_s.h \
+	$(GENDIR)oyConfigs_s.h \
 	$(GENDIR)oyranos_devices.h
 CHEADERS_OBJECT_MODULES = \
 	$(GENDIR)oyConfig_s_.h \
+	$(GENDIR)oyConfigs_s_.h \
 	$(GENDIR)oyranos_devices_internal.c \
 	$(CHEADERS_OBJECT_MODULES_PUBLIC)
 
