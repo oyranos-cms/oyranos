@@ -389,6 +389,7 @@ MAN1 = \
 	oyranos-monitor.1 \
 	oyranos-monitor-nvidia.1 \
 	oyranos-policy.1 \
+	oyranos-profiles.1 \
 	oyranos-xforms.1 \
 	oyranos-xforms-fltk.1 \
 	oyranos-xforms-modules.1 \
@@ -585,7 +586,8 @@ CONFIG_FILES = \
 	$(SRCDIR)/$(TARGET).spec.in \
 	$(SRCDIR)/$(TARGET)_control.in \
 	$(SRCDIR)/$(TARGET)-config.in \
-	$(SRCDIR)/$(TARGET)-monitor-setup.desktop
+	$(SRCDIR)/$(TARGET)-monitor-setup.desktop \
+	$(SRCDIR)/$(TARGET)-profile-install.desktop
 
 ALL_FILES = \
 	$(DOKU) \
@@ -1055,6 +1057,7 @@ install_bin:	all install_gui
 	$(INSTALL) -m 755 $(TARGET)-config     "$(DESTDIR)$(bindir)"
 	$(INSTALL) -m 755 $(TARGET)-monitor    "$(DESTDIR)$(bindir)"
 	$(INSTALL) -m 755 $(TARGET)-policy     "$(DESTDIR)$(bindir)"
+	$(INSTALL) -m 755 $(TARGET)-profiles   "$(DESTDIR)$(bindir)"
 	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia "$(DESTDIR)$(bindir)"
 	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms "$(DESTDIR)$(bindir)"
 	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms-fltk "$(DESTDIR)$(bindir)"
@@ -1139,6 +1142,8 @@ install_bin:	all install_gui
 	$(INSTALL) -m 644 "$(TARGET)_version.h" "$(DESTDIR)$(includedir)/$(TARGET)"
 	-mkdir -p "$(DESTDIR)/etc/xdg/autostart/"
 	-$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)-monitor-setup.desktop" "$(DESTDIR)/etc/xdg/autostart/"
+	mkdir -p "$(DESTDIR)$(desktopdir)"
+	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)-profile-install.desktop" "$(DESTDIR)$(desktopdir)"
 	echo ... binary Installation finished
 
 # install recursive
@@ -1248,6 +1253,7 @@ uninstall_bin:
 	$(RM)   "$(DESTDIR)$(bindir)/$(FLTK_GUI)"
 #endif
 	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-policy"
+	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-profiles"
 	-$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-monitor-nvidia"
 	$(RM)   "$(DESTDIR)$(libdir)/pkgconfig/$(TARGET).pc"
 	for lib in $(LIBRARIES); do \
@@ -1323,6 +1329,8 @@ clean:
 	-$(RM) \
 	$(CLEAN_OBJECTS) libXNVCtrl.a \
 	$(TARGET)-policy \
+	$(TARGET)-profile \
+	$(TARGET)-profiles \
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
 	test2 test_core test_object test tests/test_oyranos \
 	$(FLTK_GUI) \

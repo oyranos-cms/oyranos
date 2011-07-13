@@ -215,14 +215,17 @@ ldconfig
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-policy
+%{_bindir}/%{name}-profiles
 %{_bindir}/%{name}-xforms-modules
 %{_mandir}/man1/%{name}-policy*
+%{_mandir}/man1/%{name}-profiles.1*
 %{_mandir}/man1/%{name}-xforms-modules.1*
 %{pixmapdir}/oyranos_logo.*
 %{pixmapdir}/lcms_logo2.png
 %dir %{syscolordir}
 %dir %{syscolordir}/%{settingsdirname}
 %{syscolordir}/%{settingsdirname}/*.policy.xml
+%{desktopdir}/%{name}-profile-install.desktop
 
 %files -n lib%{name}0
 %defattr(-, root, root)
