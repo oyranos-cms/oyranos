@@ -116,7 +116,11 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
+#ifdef UNHIDE_CMM
     error = oyConfigs_FromDB( device_->registration, &configs, 0 );
+#else
+    error = 1;
+#endif
 
     n = oyConfigs_Count( configs );
 
@@ -356,7 +360,11 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
         oyFree_m_( check_opt );
       }
 
+#ifdef UNHIDE_CMM
       d_rank = oyConfig_DomainRank( (oyConfig_s*)device );
+#else
+      d_rank = 1;
+#endif
       if(d_rank > 0 && d_val && d_opt)
       for( j = 0; j < pattern_n; ++j )
       {

@@ -1114,8 +1114,10 @@ oyTESTRESULT_e testConfDomain ()
   oyConfDomain_Release( &a );
   oyConfDomain_Release( &b );
 
+#ifdef UNHIDE_CMM
   error = oyConfigDomainList( "//" OY_TYPE_STD, &domains, &count, &rank_list,
                               malloc );
+#endif
   if( count )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyConfigDomainList \"%s\": %d               ", "//" OY_TYPE_STD "",
@@ -1696,8 +1698,10 @@ oyTESTRESULT_e testCMMDevicesListing ()
 #endif
 
   /* get all configuration filters */
+#ifdef UNHIDE_CMM
   oyConfigDomainList( "//"OY_TYPE_STD"/config.device.icc_profile",
                       &texts, &count, &rank_list ,0 );
+#endif
 
   if( count )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -1721,7 +1725,11 @@ oyTESTRESULT_e testCMMDevicesListing ()
 
   /* send a empty query to one module to obtain instructions in a message */
   if(count)
+#ifdef UNHIDE_CMM
   error = oyConfigs_FromDomain( texts[0], 0, &configs, 0 );
+#else
+  error = 1;
+#endif
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyConfigs_FromDomain \"%s\" help text ", texts ? 
@@ -1747,8 +1755,12 @@ oyTESTRESULT_e testCMMDevicesListing ()
     const char * registration_domain = texts[i];
     printf("%d[rank %d]: %s\n", i, rank_list[i], registration_domain);
 
+#ifdef UNHIDE_CMM
     error = oyConfigs_FromDomain( registration_domain,
                                   options_list, &configs, 0 );
+#else
+    error = 1;
+#endif
     j_n = oyConfigs_Count( configs );
     for( j = 0; j < j_n; ++j )
     {
@@ -1775,7 +1787,11 @@ oyTESTRESULT_e testCMMDevicesListing ()
         oyProfile_Release( &p );
       }
 
+#ifdef UNHIDE_CMM
       error = oyConfigs_FromDB( config->registration, &heap, 0 );
+#else
+      error = 1;
+#endif
 
       error = oyDeviceSelectSimiliar( config, heap, 0, &dbs );
       precise_count = oyConfigs_Count( dbs );
@@ -1884,8 +1900,10 @@ oyTESTRESULT_e testCMMDevicesDetails ()
 #endif
 
   /* get all configuration filters */
+#ifdef UNHIDE_CMM
   oyConfigDomainList( "//"OY_TYPE_STD"/config.device.icc_profile",
                       &texts, &count, &rank_list ,0 );
+#endif
 
   if( count )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -1914,8 +1932,12 @@ oyTESTRESULT_e testCMMDevicesDetails ()
                                      "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
     /* send the query to a module */
+#ifdef UNHIDE_CMM
     error = oyConfigs_FromDomain( registration_domain,
                                   options, &configs, 0 );
+#else
+    error = 1;
+#endif
     devices_n = oyConfigs_Count( configs );
     for( l = 0; l < devices_n; ++l )
     {
@@ -1978,7 +2000,11 @@ oyTESTRESULT_e testCMMDevicesDetails ()
     registration = oyStringCopy_(config->registration, oyAllocateFunc_ );
   error = oyConfig_SaveToDB( config );
 
+#ifdef UNHIDE_CMM
   error = oyConfigs_FromDB( registration, &configs, 0 );
+#else
+  error = 1;
+#endif
   count = oyConfigs_Count( configs );
   oyConfigs_Release( &configs );
 
@@ -2000,7 +2026,11 @@ oyTESTRESULT_e testCMMDevicesDetails ()
    */
   oyConfig_Release( &config );
 
+#ifdef UNHIDE_CMM
   error = oyConfigs_FromDB( registration, &configs, 0 );
+#else
+  error = 1;
+#endif
   i = oyConfigs_Count( configs );
   oyConfigs_Release( &configs );
 
@@ -2126,7 +2156,11 @@ oyTESTRESULT_e testCMMDBListing ()
   oyOption_s * o = 0;
   char * val = 0;
 
+#ifdef UNHIDE_CMM
   error = oyConfigs_FromDB( "//" OY_TYPE_STD "", &configs, 0 );
+#else
+  error = 1;
+#endif
   j_n = oyConfigs_Count( configs );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,

@@ -156,8 +156,12 @@ OYAPI int  OYEXPORT
 
   /** 1.2.2 get all device class module names */
   if(error <= 0)
+#ifdef UNHIDE_CMM
     error = oyConfigDomainList  ( device_class_registration, &texts, &count,
                                   &rank_list, 0 );
+#else
+    error = 1;
+#endif
 
   if(devices && !*devices)
     *devices = oyConfigs_New( object );
@@ -168,8 +172,12 @@ OYAPI int  OYEXPORT
     const char * registration_domain = texts[i];
 
     /** 1.3.1 call into module */
+#ifdef UNHIDE_CMM
     error = oyConfigs_FromDomain( registration_domain, options, &configs,
                                   object);
+#else
+    error = 1;
+#endif
 
     if(devices && *devices)
       j_n = oyConfigs_Count( configs );
@@ -258,7 +266,11 @@ OYAPI int OYEXPORT
   if(error <= 0)
   {
     /** 1. get all module names for the registration pattern */
+#ifdef UNHIDE_CMM
     error = oyConfigDomainList( registration, &texts, &count, &d_rank_list, 0 );
+#else
+    error = 1;
+#endif
     if(count)
       s = oyConfigs_New( 0 );
 
@@ -375,8 +387,12 @@ OYAPI int  OYEXPORT
     config = (oyConfig_s_*)oyConfigs_Get( configs, 0 );
     /** 1.2 get all device class module names from the firsts oyConfig_s
       *     registration */
+#ifdef UNHIDE_CMM
     error = oyConfigDomainList  ( config->registration, &texts, &count,
                                   &rank_list, 0 );
+#else
+    error = 1;
+#endif
     oyConfig_Release( (oyConfig_s**)&config );
   }
 
