@@ -161,6 +161,17 @@ QVariant ClassTemplates::getStructClass() const
   return QVariant( QVariant::fromValue( static_cast<QObject*>(structClassInfo) ) );
 }
 
+QList<ClassInfo*> ClassTemplates::getStdClasses() const
+{
+  QList<ClassInfo*> stdClassesInfo;
+  for (int i=0; i<allClassesInfo.size(); i++) {
+    if (allClassesInfo.at(i)->createTemplates())
+      stdClassesInfo << allClassesInfo.at(i);
+  }
+
+  return stdClassesInfo;
+}
+
 QList<ClassInfo*> ClassTemplates::getNewClasses() const
 {
   QList<ClassInfo*> newClassesInfo;

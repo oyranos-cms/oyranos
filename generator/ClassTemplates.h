@@ -30,6 +30,9 @@ class ClassTemplates
     /// Return a QVariant for use with grantlee
     QVariant getStructClass() const;
 
+    /// Return a list of all 'object system' Classes information
+    QList<ClassInfo*> getStdClasses() const;
+
     /// Return all classes that only have a .dox file
     QList<ClassInfo*> getNewClasses() const;
 

@@ -62,28 +62,36 @@ void ClassGenerator::initTemplates()
 {
   //Check for newly added classes and...
   //create missing templates
+  qDebug() << "#### Create missing template files ##############################";
   tpl.createTemplates();
+
   //create missing source files
+  qDebug() << "#### Create missing source files ################################";
   tpl.createSources();
 
   //create missing constructor/destructor source files
-  QList<ClassInfo*> newClassesInfo = tpl.getNewClasses();
+  qDebug() << "#### Create missing constructor/destructor source files #########";
+
+  const QList<ClassInfo*>& stdClasses = tpl.getStdClasses();
   QString classRendered;
   QString genericTemplate = TEMPLATES_CLASS_PATH "/Class_s_private_custom_definitions.c";
-  for (int i=0; i<newClassesInfo.size(); i++) { //TODO Render in RAM
-    // If this is a list class, ignore it
-    if (not newClassesInfo.at(i)->listOf().isEmpty())
-      continue;
-    QString classTemplate = newClassesInfo.at(i)->srcDir() +
+  for (int i=0; i<stdClasses.size(); i++) { //TODO Render in RAM
+    QString classTemplate = stdClasses.at(i)->srcDir() +
                             "/" +
-                            newClassesInfo.at(i)->baseName() +
+                            stdClasses.at(i)->baseName() +
                             "_s.template.c";
-    QString classSource = newClassesInfo.at(i)->srcDir() +
+    QString classSource = stdClasses.at(i)->srcDir() +
                           "/" +
-                          newClassesInfo.at(i)->baseName() +
+                          stdClasses.at(i)->baseName() +
                           ".private_custom_definitions.c";
+
+    if (QFile::exists(classSource) && QFileInfo(classSource).size() > 0) {
+      qDebug() << "Skipping file" << classSource;
+      continue;
+    }
+
     if (QFile::copy( genericTemplate, classTemplate )) {
-      classRendered = render( classTemplate, newClassesInfo.at(i)->srcDir() );
+      classRendered = render( classTemplate, stdClasses.at(i)->srcDir() );
     } else {
       qWarning() << "Could not create file" << classTemplate;
       continue;
