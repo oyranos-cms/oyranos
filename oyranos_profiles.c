@@ -343,7 +343,12 @@ int main( int argc , char** argv )
       fprintf(stderr, "%s:\n", _("ICC profile search paths"));
       if(path)
       {
-        fprintf(stdout, "%s\n", path );
+        char * pn = oyResolveDirFileName_(path);
+        if(pn)
+        {
+          fprintf(stdout, "%s\n", pn );
+          free(pn);
+        }
       } else
         for(i = 0; i < n; ++i)
           fprintf(stdout, "%s\n", path_names[i]);
