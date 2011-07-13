@@ -1,3 +1,5 @@
+extern oyProfiles_s * oy_profile_list_cache_;
+
 /** Function  oyProfiles_Create
  *  @memberof oyProfiles_s
  *  @brief    Get a list of installed profiles
@@ -52,7 +54,7 @@ OYAPI oyProfiles_s * OYEXPORT
             { /* TODO short readings */
               full_name = oyFindProfile_(names[i]);
               block = oyReadFileToMem_ (full_name, &size, oyAllocateFunc_);
-              tmp = oyProfile_FromMemMove_( size, &block, 0, &error, 0 );
+              tmp = (oyProfile_s*)oyProfile_FromMemMove_( size, &block, 0, &error, 0 );
             }
             else
             {
@@ -394,7 +396,7 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
 
   oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
 
-  p_device = oyConfig_New( d->registration, 0 );
+  p_device = oyConfig_FromRegistration( d->registration, 0 );
   n = oyProfiles_Count( list );
 
   error = !memset( rank_list, 0, sizeof(int32_t) * n );

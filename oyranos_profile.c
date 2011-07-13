@@ -229,7 +229,7 @@ int main( int argc , char** argv )
       size_t json_size = 0;
       yajl_status status;
       json_text = oyReadFileToMem_( json_name, &json_size, oyAllocateFunc_ );
-      config = oyConfig_New( "//" OY_TYPE_STD "/config", 0 );
+      config = oyConfig_FromRegistration( "//" OY_TYPE_STD "/config", 0 );
       status = oyjl_tree_from_json( json_text, &json, 0 );
       oyDeAllocateFunc_(json_text);
     }

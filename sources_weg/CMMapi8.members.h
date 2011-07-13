@@ -12,7 +12,7 @@
    *  device pair are well known, this rank_map can be copied into each 
    *  oyConfig_s device created by oyConfigs_FromPattern():
    *  @verbatim
-      oyConfig_s * device = oyConfig_New( CMM_BASE_REG, 0);
+      oyConfig_s * device = oyConfig_FromRegistration( CMM_BASE_REG, 0);
       device->rank_map = oyRankMapCopy( dDev_api8->rank_map,
                                         device->oy_->allocateFunc_);
       @endverbatim

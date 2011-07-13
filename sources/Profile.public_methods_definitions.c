@@ -1329,7 +1329,7 @@ OYAPI const char * OYEXPORT
  *  @brief    Obtain device information from a profile
  *
  *  @verbatim
-    oyConfig_s * device = oyConfig_New( "//" OY_TYPE_STD "/config", object );
+    oyConfig_s * device = oyConfig_FromRegistration( "//" OY_TYPE_STD "/config", object );
     oyProfile_DeviceGet( profile, device ); @endverbatim
  *
  *  @param[in]     profile             the profile

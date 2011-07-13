@@ -229,7 +229,7 @@ int              DeviceFromName_     ( const char        * device_name,
       if(error <= 0)
       {
         if(!*device)
-          *device = oyConfig_New( CMM_BASE_REG, 0 );
+          *device = oyConfig_FromRegistration( CMM_BASE_REG, 0 );
         error = !*device;
         if(!error && device_name)
         error = oyOptions_SetFromText( &(*device)->backend_core,
@@ -592,7 +592,7 @@ int              Configs_FromPattern ( const char        * registration,
         if(device_name && strcmp(device_name, texts[i]) != 0)
           continue;
 
-        device = oyConfig_New( CMM_BASE_REG, 0 );
+        device = oyConfig_FromRegistration( CMM_BASE_REG, 0 );
         error = !device;
 
         if(error <= 0)

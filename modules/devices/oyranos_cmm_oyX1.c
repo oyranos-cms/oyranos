@@ -412,7 +412,7 @@ int            oyX1Configs_FromPattern (
         if(odevice_name && strcmp(odevice_name, texts[i]) != 0)
           continue;
 
-        device = oyConfig_New( OYX1_MONITOR_REGISTRATION, 0 );
+        device = oyConfig_FromRegistration( OYX1_MONITOR_REGISTRATION, 0 );
         error = !device;
 
          /** 3.1.2 tell the "device_name" */

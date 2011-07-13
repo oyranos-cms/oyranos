@@ -1959,7 +1959,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
 
 
   if(texts && texts[0])
-    config = oyConfig_New( texts[0], 0 );
+    config = oyConfig_FromRegistration( texts[0], 0 );
   error = oyConfig_AddDBData( config, "k1", "bla1", OY_CREATE_NEW );
   error = oyConfig_AddDBData( config, "k2", "bla2", OY_CREATE_NEW );
   error = oyConfig_AddDBData( config, "k3", "bla3", OY_CREATE_NEW );

@@ -314,7 +314,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
              strcmp(device_name, sane_name) != 0)  /*and they don't match,*/
             continue;                              /*then try the next*/
 
-         device = oyConfig_New(CMM_BASE_REG, 0);
+         device = oyConfig_FromRegistration(CMM_BASE_REG, 0);
 
          /*Handle "driver_version" option [OUT] */
          if (version_opt) {
@@ -392,7 +392,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
        * SANE driver S/W color options
        * with the according rank map */
 
-      device = oyConfig_New(CMM_BASE_REG, 0);
+      device = oyConfig_FromRegistration(CMM_BASE_REG, 0);
 
       /*Handle "driver_version" option [OUT] */
       if (version_opt) {
@@ -656,7 +656,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
           * and a new device is created. Basic options are moved from
           * the old to new device */
          device = oyConfigs_Get(devices, i);
-         device_new = oyConfig_New(CMM_BASE_REG, 0);
+         device_new = oyConfig_FromRegistration(CMM_BASE_REG, 0);
 
          printf(PRFX "Backend core:\n%s", oyOptions_GetText(device->backend_core, oyNAME_NICK));
          printf(PRFX "Data:\n%s", oyOptions_GetText(device->data, oyNAME_NICK));

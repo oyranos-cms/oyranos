@@ -377,7 +377,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    version_opt = oyOptions_Find(options, "driver_version");
 
    oyConfig_s *device = NULL;
-   device = oyConfig_New(CMM_BASE_REG, 0);
+   device = oyConfig_FromRegistration(CMM_BASE_REG, 0);
    /*A device *must* have a device_name!*/
    oyOptions_SetFromText(&device->backend_core, CMM_BASE_REG OY_SLASH "device_name", "dummy", OY_CREATE_NEW);
    oyOptions_SetFromText(&device->backend_core, CMM_BASE_REG OY_SLASH "prefix",
@@ -618,7 +618,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
       for (int i = 0; i < num_devices; ++i) {
          oyConfig_s *device = oyConfigs_Get(devices, i);
-         oyConfig_s *device_new = oyConfig_New(CMM_BASE_REG, 0);
+         oyConfig_s *device_new = oyConfig_FromRegistration(CMM_BASE_REG, 0);
 
          printf(PRFX "Backend core:\n%s\n", oyOptions_GetText(device->backend_core, oyNAME_NICK));
          printf(PRFX "Data:\n%s\n", oyOptions_GetText(device->data, oyNAME_NICK));

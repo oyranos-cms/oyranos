@@ -599,7 +599,7 @@ int            Configs_FromPattern (
         if(printer_name && strcmp(printer_name, texts[i]) != 0)
           continue;
 
-        device = oyConfig_New( CMM_BASE_REG, 0 );
+        device = oyConfig_FromRegistration( CMM_BASE_REG, 0 );
         error = !device;
 
         /* Build icc_profile */
@@ -1001,7 +1001,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
       device = oyConfigs_Get( devices, pos );
       if(!device)
       {
-        device = oyConfig_New( CMM_BASE_REG, 0 );
+        device = oyConfig_FromRegistration( CMM_BASE_REG, 0 );
         must_move = 1;
       }
 

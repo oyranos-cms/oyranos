@@ -95,7 +95,7 @@ int            oyDeviceFillInfos     ( const char        * registration,
         sprintf( num, "%d", week );
         STRING_ADD(EDID_date, num);
         if(!*device)
-          *device = oyConfig_New( registration, 0 );
+          *device = oyConfig_FromRegistration( registration, 0 );
         error = !*device;
         if(!error && device_name)
         error = oyOptions_SetFromText( &(*device)->backend_core, t,
