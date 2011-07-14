@@ -3,7 +3,7 @@
  *  @extends oyStruct_s
  *  @brief   Brief description
  *  @internal
- *  
+ *
  *  Multi line description
  *  @note New templates will not be created automaticly [notemplates]
  *  @note Create templates using "opaque pointer" [opaquepointer]

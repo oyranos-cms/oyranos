@@ -20,7 +20,6 @@ QList<ClassInfo*> ClassInfo::getAllClasses( const QHash<QString,QString>& dirs )
     sourceDir.setNameFilters( QStringList() << "*.dox" );
     sourceDir.setFilter( QDir::Files | QDir::Readable );
     QStringList doxClasses = sourceDir.entryList();
-    doxClasses.removeOne( "Class.dox" );
     doxClasses.removeOne( "Struct.dox" );
 
     for (int c = 0; c<doxClasses.size(); c++) {
