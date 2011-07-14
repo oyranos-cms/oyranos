@@ -381,22 +381,39 @@ int main( int argc , char** argv )
         {
           if(show_gui)
           {
+            char * app = 0;
             if(getenv("KDE_FULL_SESSION"))
             {
               STRING_ADD( txt, "kdialog --sorry \"");
               STRING_ADD( txt, show_text );
               STRING_ADD( txt, "\"" );
-              system(txt);
-              oyFree_m_( txt );
             } else
             {
-              STRING_ADD( txt, "xterm -e sh -c \"dialog --msgbox \\\"");
-              STRING_ADD( txt, show_text );
-              STRING_ADD( txt, "\\\" 5 70\"" );
-              printf("%s\n", txt );
-              system(txt);
-              oyFree_m_( txt );
+              if(!app && (app = oyFindApplication( "zenity" )) != NULL)
+              {
+                STRING_ADD( txt, "zenity --warning --text \"");
+                STRING_ADD( txt, show_text );
+                STRING_ADD( txt, "\"" );
+                printf("%s\n", txt );
+              }
+              if(!app && (app = oyFindApplication( "dialog" )) != NULL)
+              {
+                STRING_ADD( txt, "xterm -e sh -c \"dialog --msgbox \\\"");
+                STRING_ADD( txt, show_text );
+                STRING_ADD( txt, "\\\" 5 70\"" );
+                printf("%s\n", txt );
+              }
+              if(!app && (app = oyFindApplication( "xterm" )) != NULL)
+              {
+                STRING_ADD( txt, "xterm -e sh -c \"echo \\\"");
+                STRING_ADD( txt, show_text );
+                STRING_ADD( txt, "\\\"; sleep 10\"" );
+                printf("%s\n", txt );
+              }
             }
+            system(txt);
+            oyFree_m_( txt );
+            oyFree_m_( app );
           }
 
           fprintf(stderr, "%s\n", show_text );
