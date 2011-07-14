@@ -1,5 +1,6 @@
 {% include "source_file_header.txt" %}
 
+#include "oyranos_i18n.h"
 #include "oyranos_string.h"
 #include "oyranos_devices_internal.h"
 
