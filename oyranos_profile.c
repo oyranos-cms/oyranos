@@ -43,7 +43,8 @@ void* oyAllocFunc(size_t size) {return malloc (size);}
   "        \"device\": {\n" \
   "          \"%s\": [{\n"
 #define OPENICC_DEVICE_JSON_FOOTER \
-  "          }]\n" \
+  "            }\n" \
+  "          ]\n" \
   "        }\n" \
   "      }\n" \
   "    }\n" \
