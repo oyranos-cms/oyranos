@@ -41,9 +41,9 @@ void* oyAllocFunc(size_t size) {return malloc (size);}
   "    \"freedesktop\": {\n" \
   "      \"openicc\": {\n" \
   "        \"device\": {\n" \
-  "          \"%s\": {\n"
+  "          \"%s\": [{\n"
 #define OPENICC_DEVICE_JSON_FOOTER \
-  "          }\n" \
+  "          }]\n" \
   "        }\n" \
   "      }\n" \
   "    }\n" \
@@ -333,7 +333,7 @@ int main( int argc , char** argv )
           {
             if(j == 0)
             {
-                fprintf( stdout, "            \"prefix\": \"" );
+                fprintf( stdout, "              \"prefix\": \"" );
             }
                 fprintf( stdout, "%s",
                          prefixes[j] );
@@ -353,7 +353,7 @@ int main( int argc , char** argv )
           if(texts_n > j+1)
           {
             if(texts[j+1][0] == '<')
-              fprintf( stdout, "            \"%s\": \"%s\"",
+              fprintf( stdout, "              \"%s\": \"%s\"",
                      texts[j], texts[j+1] );
             else
             {
@@ -361,7 +361,7 @@ int main( int argc , char** argv )
               vals = oyStringSplit_( texts[j+1], ':', &vals_n, malloc );
               if(vals_n > 1)
               {
-                STRING_ADD( val, "            \"");
+                STRING_ADD( val, "              \"");
                 STRING_ADD( val, texts[j] );
                 STRING_ADD( val, ": [" );
                 for(k = 0; k < vals_n; ++k)
@@ -376,7 +376,7 @@ int main( int argc , char** argv )
                 fprintf( stdout, "%s", val );
                 if(val) free( val );
               } else
-                fprintf( stdout, "            \"%s\": \"%s\"",
+                fprintf( stdout, "              \"%s\": \"%s\"",
                      texts[j], texts[j+1] );
 
               oyStringListRelease_( &vals, vals_n, free );
