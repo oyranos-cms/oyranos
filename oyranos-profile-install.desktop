@@ -2,13 +2,13 @@
 Type=Application
 Comment=Install a ICC profile for the actual user
 Comment[de]=Installiere ein ICC Farbprofil für den aktuellen Benutzer
-Exec=oyranos-profiles --gui --install -u %U
+Exec=oyranos-profile-install %U
 GenericName=Install ICC profile
 GenericName[de]=Installiere ein ICC Farbprofil
 Icon=iccexamin
 MimeType=application/vnd.iccprofile;
 Name=Install ICC for User
-Name[de]=Install ICC für Benutzer
+Name[de]=Installiere ICC für den Benutzer
 StartupNotify=false
 Terminal=false
-TryExec=oyranos-profiles
+TryExec=oyranos-profile-install

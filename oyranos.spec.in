@@ -216,6 +216,7 @@ ldconfig
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-policy
 %{_bindir}/%{name}-profiles
+%{_bindir}/%{name}-profile-install
 %{_bindir}/%{name}-xforms-modules
 %{_mandir}/man1/%{name}-policy*
 %{_mandir}/man1/%{name}-profiles.1*
