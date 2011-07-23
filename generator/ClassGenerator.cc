@@ -42,7 +42,7 @@ ClassGenerator::ClassGenerator( const QHash<QString,QString>& dirs, const QStrin
                     << tmplPath[templateFile.fileName()]
                     << templateFile.filePath();
       tmplPath[templateFile.fileName()] = templateFile.filePath();
-      }
+    }
   }
 
   // Set basePath also, for Base_* template files
