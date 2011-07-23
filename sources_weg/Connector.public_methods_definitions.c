@@ -60,9 +60,9 @@ const char *     oyConnector_GetName ( oyConnector_s     * obj,
   return string;
 }
 
-/** Function oyConnector_IsPlug
+/** Function  oyConnector_IsPlug
  *  @memberof oyConnector_s
- *  @brief   is this connector a plug or a socket
+ *  @brief    Is this connector a plug or a socket
  *
  *  @param[in]     obj                 Connector object
  *  @return                            boolean; 0 - socket; 1 - plug
@@ -73,14 +73,14 @@ const char *     oyConnector_GetName ( oyConnector_s     * obj,
  */
 int              oyConnector_IsPlug  ( oyConnector_s     * obj )
 {
-  oyConnector_s * s = obj;
+  oyConnector_s_ * s = (oyConnector_s_*)obj;
 
   if(!obj)
     return 0;
 
   oyCheckType__m( oyOBJECT_CONNECTOR_S, return 0 )
 
-  return obj->is_plug;
+  return s->is_plug;
 }
 
 /** Function oyConnector_SetIsPlug
