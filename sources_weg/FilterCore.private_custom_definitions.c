@@ -48,6 +48,7 @@ void oyFilterCore_Release__Members( oyFilterCore_s_ * filtercore )
  */
 int oyFilterCore_Init__Members( oyFilterCore_s_ * filtercore )
 {
+  /* No members seem to need initialization for now */
   return 0;
 }
 
