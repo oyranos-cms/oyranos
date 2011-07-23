@@ -40,13 +40,13 @@
 
   if(!s || !s_obj)
   {
-    WARNc_S(_("oy{{ class.baseName }}_New_(): MEM Error."));
+    WARNc_S(_("MEM Error."));
     return NULL;
   }
 
   error = !memset( s, 0, sizeof({{ class.privName }}) );
   if(error)
-    WARNc_S( "oy{{ class.baseName }}_New_(): memset failed" );
+    WARNc_S( "memset failed" );
 
   s->type_ = type;
   s->copy = (oyStruct_Copy_f) oy{{ class.baseName }}_Copy;
@@ -94,7 +94,7 @@
   {% endifequal %}
   /* ---- end of common object constructor ------- */
   if(error)
-    WARNc_S( "oy{{ class.baseName }}_New_(): oyObject_SetParent failed" );
+    WARNc_S( "oyObject_SetParent failed" );
 
 
   {% block customConstructor %}
