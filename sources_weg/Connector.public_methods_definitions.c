@@ -83,9 +83,9 @@ int              oyConnector_IsPlug  ( oyConnector_s     * obj )
   return s->is_plug;
 }
 
-/** Function oyConnector_SetIsPlug
+/** Function  oyConnector_SetIsPlug
  *  @memberof oyConnector_s
- *  @brief   Set this connector as a plug or a socket
+ *  @brief    Set this connector as a plug or a socket
  *
  *  @param[in,out] obj                 Connector object
  *  @param[in]     is_plug             boolean; 0 - socket; 1 - plug
@@ -98,14 +98,14 @@ int              oyConnector_IsPlug  ( oyConnector_s     * obj )
 int              oyConnector_SetIsPlug(oyConnector_s     * obj,
                                        int                 is_plug )
 {
-  oyConnector_s * s = obj;
+  oyConnector_s_ * s = (oyConnector_s_*)obj;
 
   if(!obj)
     return 0;
 
   oyCheckType__m( oyOBJECT_CONNECTOR_S, return 1 )
 
-  obj->is_plug = is_plug;
+  s->is_plug = is_plug;
 
   return 0;
 }
