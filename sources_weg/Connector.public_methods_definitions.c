@@ -203,9 +203,9 @@ int              oyConnector_SetMatch( oyConnector_s     * obj,
   return 0;
 }
 
-/** Function oyConnector_GetMatch
+/** Function  oyConnector_GetMatch
  *  @memberof oyConnector_s
- *  @brief   Set this connectors type check function
+ *  @brief    Set this connectors type check function
  *
  *  This is use as a check, if connections are possible.
  *  This allowes for a more fine grained control than the type registration.
@@ -220,12 +220,12 @@ int              oyConnector_SetMatch( oyConnector_s     * obj,
 oyCMMFilterSocket_MatchPlug_f oyConnector_GetMatch (
                                        oyConnector_s     * obj )
 {
-  oyConnector_s * s = obj;
+  oyConnector_s_ * s = (oyConnector_s_*)obj;
 
   if(!obj)
     return 0;
 
   oyCheckType__m( oyOBJECT_CONNECTOR_S, return 0 )
 
-  return obj->filterSocket_MatchPlug;
+  return s->filterSocket_MatchPlug;
 }
