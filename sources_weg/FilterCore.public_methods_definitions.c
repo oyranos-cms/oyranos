@@ -43,9 +43,9 @@ const char * oyFilterCore_GetName    ( oyFilterCore_s    * filter,
                            (oyStruct_s*)s->api4_->ui ) );
 }
 
-/** Function oyFilterCore_GetText
+/** Function  oyFilterCore_GetText
  *  @memberof oyFilterCore_s
- *  @brief   get text
+ *  @brief    Get text
  *
  *  oyNAME_NAME provides a XML element with child elements and attributes
  *
@@ -60,7 +60,7 @@ const char * oyFilterCore_GetText    ( oyFilterCore_s    * filter,
                                        oyNAME_e            name_type )
 {
   char * text = 0;
-  oyFilterCore_s * s = filter;
+  oyFilterCore_s_ * s = (oyFilterCore_s_*)filter;
   int error = !s;
 
   if(error)
@@ -80,13 +80,13 @@ const char * oyFilterCore_GetText    ( oyFilterCore_s    * filter,
            );
 
 #if 0
-    if(error <= 0 && filter->profiles_)
+    if(error <= 0 && s->profiles_)
     {
-      int i = 0, n = oyProfiles_Count(filter->profiles_);
+      int i = 0, n = oyProfiles_Count(s->profiles_);
       oyProfile_s * profile = 0;
       for(i = 0; i < n; ++i)
       {
-        profile = oyProfiles_Get( filter->profiles_, i );
+        profile = oyProfiles_Get( s->profiles_, i );
         sprintf( &text[oyStrlen_(text)], "    %s\n",
         oyNoEmptyName_m_(oyProfile_GetText( profile, oyNAME_NAME)) );
       }
@@ -100,7 +100,7 @@ const char * oyFilterCore_GetText    ( oyFilterCore_s    * filter,
       WARNc_S(_("MEM Error."));
   }
 
-  return oyObject_GetName(filter->oy_, name_type);
+  return oyObject_GetName(s->oy_, name_type);
 }
 
 /** Function oyFilterCore_NewWith
