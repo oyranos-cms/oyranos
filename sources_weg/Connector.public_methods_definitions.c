@@ -110,9 +110,9 @@ int              oyConnector_SetIsPlug(oyConnector_s     * obj,
   return 0;
 }
 
-/** Function oyConnector_GetReg
+/** Function  oyConnector_GetReg
  *  @memberof oyConnector_s
- *  @brief   Get the registration for the connection type
+ *  @brief    Get the registration for the connection type
  *
  *  This is use as a rough check, if connections are possible.
  *
@@ -125,14 +125,14 @@ int              oyConnector_SetIsPlug(oyConnector_s     * obj,
  */
 const char *     oyConnector_GetReg  ( oyConnector_s     * obj )
 {
-  oyConnector_s * s = obj;
+  oyConnector_s_ * s = (oyConnector_s_*)obj;
 
   if(!obj)
     return 0;
 
   oyCheckType__m( oyOBJECT_CONNECTOR_S, return 0 )
 
-  return obj->connector_type;
+  return s->connector_type;
 }
 
 /** Function oyConnector_SetReg
