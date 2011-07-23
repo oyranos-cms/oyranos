@@ -134,18 +134,17 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
   return s;
 }
 
-/**
- *  @internal
- *  Function oyFilterCore_SetCMMapi4_
+/** Function  oyFilterCore_SetCMMapi4_
  *  @memberof oyFilterCore_s
- *  @brief   lookup and initialise a new filter object
+ *  @brief    Lookup and initialise a new filter object
+ *  @internal
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/11/27 (Oyranos: 0.1.9)
  *  @date    2009/02/28
  */
-int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
-                                       oyCMMapi4_s       * cmm_api4 )
+int          oyFilterCore_SetCMMapi4_( oyFilterCore_s_   * s,
+                                       oyCMMapi4_s_      * cmm_api4 )
 {
   int error = !s;
   oyAlloc_f allocateFunc_ = 0;
@@ -177,11 +176,11 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
       oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
     }
 
-    s->api4_ = cmm_api4;
+    s->api4_ = (oyCMMapi4_s*)cmm_api4;
   }
 
   if(error && s)
-    oyFilterCore_Release( &s );
+    oyFilterCore_Release_( &s );
 
   return error;
 }
