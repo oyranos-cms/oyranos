@@ -1,6 +1,6 @@
-/** Function oyFilterCore_CategoryGet
+/** Function  oyFilterCore_CategoryGet
  *  @memberof oyFilterCore_s
- *  @brief   get category string
+ *  @brief    Get category string
  *
  *  @param[in,out] filter              filter object
  *  @param         nontranslated       switch for translation
@@ -15,7 +15,7 @@ const char * oyFilterCore_CategoryGet( oyFilterCore_s    * filter,
   if(!filter)
     return 0;
 
-  return filter->category_;
+  return ((oyFilterCore_s_*)filter)->category_;
 }
 
 /** Function oyFilterCore_GetName
