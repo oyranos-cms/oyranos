@@ -135,9 +135,9 @@ const char *     oyConnector_GetReg  ( oyConnector_s     * obj )
   return s->connector_type;
 }
 
-/** Function oyConnector_SetReg
+/** Function  oyConnector_SetReg
  *  @memberof oyConnector_s
- *  @brief   Set this connectors type string
+ *  @brief    Set this connectors type string
  *
  *  This is use as a rough check, if connections are possible.
  *
@@ -153,7 +153,7 @@ const char *     oyConnector_GetReg  ( oyConnector_s     * obj )
 int              oyConnector_SetReg  ( oyConnector_s     * obj,
                                        const char        * type_registration )
 {
-  oyConnector_s * s = obj;
+  oyConnector_s_ * s = (oyConnector_s_*)obj;
 
   if(!obj)
     return 0;
@@ -167,7 +167,7 @@ int              oyConnector_SetReg  ( oyConnector_s     * obj,
     if(s->connector_type)
       deallocateFunc( s->connector_type ); s->connector_type = 0;
 
-    obj->connector_type = oyStringCopy_( type_registration, allocateFunc );
+    s->connector_type = oyStringCopy_( type_registration, allocateFunc );
   }
 
   return 0;
