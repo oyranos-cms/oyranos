@@ -48,6 +48,8 @@ void oyConnector_Release__Members( oyConnector_s_ * connector )
  */
 int oyConnector_Init__Members( oyConnector_s_ * connector )
 {
+  connector->is_plug = -1;
+
   return 0;
 }
 
