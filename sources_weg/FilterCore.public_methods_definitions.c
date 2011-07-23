@@ -18,9 +18,9 @@ const char * oyFilterCore_CategoryGet( oyFilterCore_s    * filter,
   return ((oyFilterCore_s_*)filter)->category_;
 }
 
-/** Function oyFilterCore_GetName
+/** Function  oyFilterCore_GetName
  *  @memberof oyFilterCore_s
- *  @brief   get name
+ *  @brief    Get name
  *
  *  provides the original filter names
  *
@@ -34,13 +34,13 @@ const char * oyFilterCore_CategoryGet( oyFilterCore_s    * filter,
 const char * oyFilterCore_GetName    ( oyFilterCore_s    * filter,
                                        oyNAME_e            name_type )
 {
-  oyFilterCore_s * s = filter;
+  oyFilterCore_s_ * s = (oyFilterCore_s_*)filter;
 
   if(!s)
     return 0;
 
-  return oyNoEmptyName_m_( filter->api4_->ui->getText( "name", name_type,
-                           (oyStruct_s*)filter->api4_->ui ) );
+  return oyNoEmptyName_m_( s->api4_->ui->getText( "name", name_type,
+                           (oyStruct_s*)s->api4_->ui ) );
 }
 
 /** Function oyFilterCore_GetText
