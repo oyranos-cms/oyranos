@@ -850,7 +850,7 @@ OYAPI oyPointer OYEXPORT
   oyPointer block = 0;
   oyProfile_s_ * s = (oyProfile_s_*)profile;
   int error = !s,
-      i, tags_modified = 1;
+      i;
   uint32_t md5[4];
   char * data;
 
@@ -866,7 +866,6 @@ OYAPI oyPointer OYEXPORT
   {
     if(s->size_ && s->block_ && !s->tags_modified_)
     {
-      tags_modified = 0;
       block = oyAllocateWrapFunc_( s->size_, allocateFunc );
       error = !block;
       if(error <= 0)
@@ -1719,7 +1718,8 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
   dict_tag = oyProfileTag_New(NULL);
   error = oyProfileTag_Set( dict_tag, icSigMetaDataTag, icSigDictType,
                             oyOK, block_size, dict );
-  error = oyProfile_TagMoveIn( p, &dict_tag, -1 );
+  if(error <= 0)
+    error = oyProfile_TagMoveIn( p, &dict_tag, -1 );
 
   oyStringListRelease_( &keys, count, oyDeAllocateFunc_ );
   oyStringListRelease_( &values, count, oyDeAllocateFunc_ );
@@ -1730,6 +1730,6 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
     oyDeAllocateFunc_( key_prefix_texts_len );
   }
 
-  return 0;
+  return error;
 }
 #endif

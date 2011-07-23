@@ -607,7 +607,6 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
 
     if(error <= 0 && s->size_ > min_icc_size)
     {
-      uint32_t size = 0;
       uint32_t tag_count = 0;
       icTag *tag_list = 0;
       int i = 0;
@@ -630,7 +629,6 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
       error = oyProfile_TagMoveIn_( s, (oyProfileTag_s**)&tag_, -1 );
 
 
-      size = oyProfile_GetSignature( (oyProfile_s*)s, oySIGNATURE_SIZE );
       tag_count = oyValueUInt32( ic_profile->count );
 
       tag_list = (icTag*)&((char*)s->block_)[132];
