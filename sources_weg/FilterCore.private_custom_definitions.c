@@ -28,6 +28,13 @@ void oyFilterCore_Release__Members( oyFilterCore_s_ * filtercore )
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( filtercore->member );
      */
+    if(filtercore->registration_)
+      deallocateFunc( filtercore->registration_ );
+
+    if(filtercore->category_) {
+      deallocateFunc( filtercore->category_ );
+      filtercore->category_ = 0;
+    }
   }
 }
 
