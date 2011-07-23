@@ -1,6 +1,6 @@
-  /** unique strings, nick and name will be used as the connector's type ID,
-   *  e.g."Img", "Image", "Image Socket"*/
-  oyName_s             name;           
+  /** Support at least "name" for UIs. */
+  oyCMMGetText_f       getText;
+  char              ** texts;          /**< zero terminated list for getText */
 
   char               * connector_type; /**< a @ref registration string */
   /** Check if two oyCMMapi7_s filter connectors of type oyConnector_s can 

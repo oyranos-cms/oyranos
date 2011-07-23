@@ -2,7 +2,7 @@
  *  @ingroup objects_conversion
  *  @extends oyStruct_s
  *  @brief   A filter connection description structure
- *  
+ *
  *  This structure holds informations about the connection capabilities.
  *  It holds common structure members of oyFilterPlug_s and oyFilterSocket_s.
  *
@@ -11,7 +11,7 @@
  *
  *  @todo generalise the connector properties
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.0
  *  @since   2008/07/26 (Oyranos: 0.1.8)
- *  @date    2010/06/25
+ *  @date    2011/01/31
  */
