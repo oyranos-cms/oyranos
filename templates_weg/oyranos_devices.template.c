@@ -232,15 +232,9 @@ OYAPI int  OYEXPORT
       l_error = 0;
   oyConfigs_s * devices = 0;
   oyConfig_s * s = device;
-  const char * device_name = 0;
   int new_options = 0;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
-
-  if(error <= 0)
-  {
-    device_name = oyConfig_FindString( device, "device_name", 0);
-  }
 
   if(!options)
   {
