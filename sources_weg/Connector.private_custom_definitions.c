@@ -82,6 +82,10 @@ int oyConnector_Copy__Members( oyConnector_s_ * dst, oyConnector_s_ * src)
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
+  error = oyObject_CopyNames( dst->oy_, src->oy_ );
+
+  dst->connector_type = oyStringCopy_( src->connector_type, allocateFunc_ );
+  dst->is_plug = src->is_plug;
 
   return error;
 }
