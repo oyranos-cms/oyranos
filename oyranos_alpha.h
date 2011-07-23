@@ -1002,30 +1002,6 @@ struct oyConnector_s {
   int                  is_plug;
 };
 
-OYAPI oyConnector_s * OYEXPORT
-                 oyConnector_New     ( oyObject_s          object );
-OYAPI oyConnector_s * OYEXPORT
-                 oyConnector_Copy    ( oyConnector_s     * list,
-                                       oyObject_s          object );
-OYAPI int  OYEXPORT
-                 oyConnector_Release ( oyConnector_s    ** list );
-
-int              oyConnector_SetName ( oyConnector_s     * obj,
-                                       const char        * string,
-                                       oyNAME_e            type );
-const char *     oyConnector_GetName ( oyConnector_s     * obj,
-                                       oyNAME_e            type );
-int              oyConnector_IsPlug  ( oyConnector_s     * obj );
-int              oyConnector_SetIsPlug(oyConnector_s     * obj,
-                                       int                 is_plug );
-const char *     oyConnector_GetReg  ( oyConnector_s     * obj );
-int              oyConnector_SetReg  ( oyConnector_s     * obj,
-                                       const char        * type_registration );
-int              oyConnector_SetMatch( oyConnector_s     * obj,
-                                       oyCMMFilterSocket_MatchPlug_f func );
-oyCMMFilterSocket_MatchPlug_f oyConnector_GetMatch (
-                                       oyConnector_s     * obj );
-
 /** @struct  oyFilterSocket_s
  *  @brief   a filter connection structure
  *  @ingroup objects_conversion
