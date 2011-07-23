@@ -1041,7 +1041,7 @@ test -n "$ECHO" && $ECHO "#define OYRANOS_DATE \"$DATE\"" >> $VERS_H
 test -n "$ECHO" && $ECHO "" >> $VERS_H
 
 test -n "$RPMECHO" && $RPMECHO "Version:         $VERSION" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "Source:          $TARGET"-"$VERSION".tar.gz >> $SPEC
+test -n "$RPMECHO" && $RPMECHO "Source:          $TARGET"-"$VERSION".tar.bz2 >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "Release:         $RELEASE" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define syscolordir     $syscolordir" >> $SPEC
 test -n "$RPMECHO" && $RPMECHO "%define usercolordir    $usercolordir" >> $SPEC

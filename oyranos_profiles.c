@@ -21,6 +21,7 @@
 #include "oyranos_debug.h"
 #include "oyranos_elektra.h"
 #include "oyranos_helper.h"
+#include "oyranos_helper_macros.h"
 #include "oyranos_internal.h"
 #include "oyranos_io.h"
 #include "oyranos_config.h"
@@ -77,6 +78,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -s  %s\n",       _("system path"));
   fprintf( stderr, "      -y  %s\n",       _("oyranos install path"));
   fprintf( stderr, "      -m  %s\n",       _("machine specific path"));
+  fprintf( stderr, "      --gui %s\n",     _("show hints and question GUI"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Print a help text:"));
   fprintf( stderr, "      %s -h\n",        argv[0]);
@@ -95,34 +97,6 @@ void  printfHelp (int argc, char** argv)
   if(devel_time) oyDeAllocateFunc_(devel_time);
 }
 
-/* allow "-opt val" and "-opt=val" syntax */
-#define OY_PARSE_STRING_ARG( opt ) \
-                        if( pos + 1 < argc && argv[pos][i+1] == 0 ) \
-                        { opt = argv[pos+1]; \
-                          if( opt == 0 && strcmp(argv[pos+1],"0") ) \
-                            wrong_arg = "-" #opt; \
-                          ++pos; \
-                          i = 1000; \
-                        } else if(argv[pos][i+1] == '=') \
-                        { opt = &argv[pos][i+2]; \
-                          if( opt == 0 && strcmp(&argv[pos][i+2],"0") ) \
-                            wrong_arg = "-" #opt; \
-                          i = 1000; \
-                        } else wrong_arg = "-" #opt; \
-                        if(oy_debug) fprintf(stderr, #opt "=%s\n",opt)
-#define OY_PARSE_STRING_ARG2( opt, arg ) \
-                        if( pos + 1 < argc && argv[pos][i+strlen(arg)+1] == 0 ) \
-                        { opt = argv[pos+1]; \
-                          ++pos; \
-                          i = 1000; \
-                        } else if(argv[pos][i+strlen(arg)+1] == '=') \
-                        { opt = &argv[pos][i+strlen(arg)+2]; \
-                          i = 1000; \
-                        } else wrong_arg = "-" arg; \
-                        if(oy_debug) printf(arg "=%s\n",opt)
-#define OY_IS_ARG( arg ) \
-                        (strlen(argv[pos])-2 >= strlen(arg) && \
-                         memcmp(&argv[pos][2],arg, strlen(arg)) == 0)
 
 int main( int argc , char** argv )
 {
@@ -138,7 +112,8 @@ int main( int argc , char** argv )
       named_colour = 0,
       device_link = 0;
   char ** install = 0;
-  int install_n = 0;
+  int install_n = 0,
+      show_gui = 0;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -210,7 +185,13 @@ int main( int argc , char** argv )
                             fprintf(stderr, "%s: --install [-u|-s|-y|-m] ICC_file_name(s)\n", _("File name is missed"));
                             exit (0);
                           }
-                          i=100; break; }
+                          i=100; break;
+                        }
+                        else if(OY_IS_ARG("gui"))
+                        {
+                          show_gui = 1;
+                          i=100; break;
+                        }
                         }
               default:
                         printfHelp(argc, argv);
@@ -343,7 +324,12 @@ int main( int argc , char** argv )
       fprintf(stderr, "%s:\n", _("ICC profile search paths"));
       if(path)
       {
-        fprintf(stdout, "%s\n", path );
+        char * pn = oyResolveDirFileName_(path);
+        if(pn)
+        {
+          fprintf(stdout, "%s\n", pn );
+          free(pn);
+        }
       } else
         for(i = 0; i < n; ++i)
           fprintf(stdout, "%s\n", path_names[i]);
@@ -355,7 +341,17 @@ int main( int argc , char** argv )
       for(i = 0; i < install_n; ++i)
       {
         const char * file_name = install[i];
+        oyProfile_s * ip = oyProfile_FromFile( file_name, 0,0 );
+        const char * in = oyProfile_GetText( ip, oyNAME_DESCRIPTION );
         int j;
+        char * show_text = 0, * txt = 0;
+
+        if(!ip)
+        {
+          STRING_ADD( show_text, _("Could not open: ") );
+          STRING_ADD( show_text, file_name );
+        }
+
         accept = 1;
 
         if(strrchr(file_name, OY_SLASH_C))
@@ -363,20 +359,72 @@ int main( int argc , char** argv )
 
         for(j = 0; j < (int)count; ++j)
         {
-          if(strcmp(file_name, names[j]) == 0)
+          p = oyProfile_FromFile(names[j], 0,0);
+          t = oyProfile_GetText(p, oyNAME_DESCRIPTION);
+
+          if(in && t && strcmp(in, t) == 0)
           {
-            p = oyProfile_FromFile(names[j], 0,0);
-            t = oyProfile_GetFileName(p, -1);
-            fprintf(stderr, "%s: \"%s\"\n", _("Profile already installed"), t );
-            oyProfile_Release( &p );
+            if(!show_text)
+            {
+              STRING_ADD( show_text, _("Profile already installed") );
+              STRING_ADD( show_text, ":" );
+            }
+            STRING_ADD( show_text, " \'" );
+            STRING_ADD( show_text, t );
+            STRING_ADD( show_text, "\'" );
             accept = 0;
           }
+
+          oyProfile_Release( &p );
         }
+        if(show_text)
+        {
+          if(show_gui)
+          {
+            char * app = 0;
+            if(getenv("KDE_FULL_SESSION"))
+            {
+              STRING_ADD( txt, "kdialog --sorry \"");
+              STRING_ADD( txt, show_text );
+              STRING_ADD( txt, "\"" );
+            } else
+            {
+              if(!app && (app = oyFindApplication( "zenity" )) != NULL)
+              {
+                STRING_ADD( txt, "zenity --warning --text \"");
+                STRING_ADD( txt, show_text );
+                STRING_ADD( txt, "\"" );
+                printf("%s\n", txt );
+              }
+              if(!app && (app = oyFindApplication( "dialog" )) != NULL)
+              {
+                STRING_ADD( txt, "xterm -e sh -c \"dialog --msgbox \\\"");
+                STRING_ADD( txt, show_text );
+                STRING_ADD( txt, "\\\" 5 70\"" );
+                printf("%s\n", txt );
+              }
+              if(!app && (app = oyFindApplication( "xterm" )) != NULL)
+              {
+                STRING_ADD( txt, "xterm -e sh -c \"echo \\\"");
+                STRING_ADD( txt, show_text );
+                STRING_ADD( txt, "\\\"; sleep 10\"" );
+                printf("%s\n", txt );
+              }
+            }
+            system(txt);
+            oyFree_m_( txt );
+            oyFree_m_( app );
+          }
+
+          fprintf(stderr, "%s\n", show_text );
+          oyFree_m_(show_text);
+        }
+ 
         if(accept)
         {
           size_t size = 0;
           char * data, * fn = 0;
-          const char * sfn = install[i];
+          const char * sfn = in;
           int error = 0;
 
           data = oyReadFileToMem_(install[i], &size, oyAllocateFunc_);
@@ -385,6 +433,7 @@ int main( int argc , char** argv )
           if(strrchr(sfn, OY_SLASH_C))
             sfn = strrchr(sfn, OY_SLASH_C) + 1;
           STRING_ADD( fn, sfn );
+          STRING_ADD( fn, ".icc" );
           if(size)
             error = oyWriteMemToFile_ ( fn, data, size );
 
@@ -392,6 +441,7 @@ int main( int argc , char** argv )
                    _("Installed"), (int)size, _("bytes"), install[i], fn );
           oyDeAllocateFunc_(data); size = 0; data = 0;
         }
+        oyProfile_Release( &ip );
       }
     oyStringListRelease_(&names, count, oyDeAllocateFunc_);
   }

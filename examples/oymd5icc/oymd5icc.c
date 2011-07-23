@@ -13,7 +13,6 @@ int main( int argc, char ** argv )
            id[4];
   int profile_pos = 1,
       set_md5 = 0,
-      md5_good = 0,
       error;
 
   if(argc == 1)
@@ -30,8 +29,6 @@ int main( int argc, char ** argv )
 
   p = oyProfile_FromFile( argv[profile_pos], 0,0 );
   error = oyProfile_GetMD5(p, OY_COMPUTE, md5);
-  if(-1 <= error && error < 1)
-    md5_good = 1;
 
   oyProfile_GetMD5(p, OY_FROM_PROFILE, id);
 

@@ -84,6 +84,7 @@ void oyCheckDefaultDirectories_ ();
 /* search in profile path and in current path */
 char* oyFindProfile_ (const char* name);
 
+char * oyFindApplication(const char * app_name);
 
 #ifdef __cplusplus
 } /* extern "C" */

@@ -895,7 +895,7 @@ char**  oyXDGPathsGet_( int             * count,
 char * oyPathContructAndTest_(char * path_, const char * subdir)
 {
   char * text = 0, * tmp = 0;
-  int subdir_len = 0, len;
+  int subdir_len = 0;
 
   if(!path_)
     return 0;
@@ -903,7 +903,6 @@ char * oyPathContructAndTest_(char * path_, const char * subdir)
   if(subdir)
     subdir_len = oyStrlen_(subdir);
 
-  len = subdir_len + strlen(path_) + 1;
   STRING_ADD( text, path_ );
   if(subdir)
   {
@@ -945,7 +944,6 @@ oyDataPathsGet_       (int             * count,
 {
   char ** paths = NULL;
   int ndp = 0;        /* number of default paths */
-  static int init = 0;
 
   /* the OpenICC agreed upon *nix default paths */
   {
@@ -955,8 +953,6 @@ oyDataPathsGet_       (int             * count,
     char ** tmp_paths = 0;
     char * text = 0;
     char * xdg_sub = 0, * x = 0;
-
-    init = 1;
 
     oyAllocHelper_m_( xdg_sub, char, MAX_PATH, oyAllocateFunc_, return 0);
     oySprintf_( xdg_sub, "%s", subdir );

@@ -54,7 +54,7 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
                                        oyOptions_s       * collected_elements,
                                        oyPointer           user_data )
 {
-  int is_default, default_pos = -1,
+  int is_default,
       choices_n = 0;
   const char * default_value = 0,
              * tmp,
@@ -124,7 +124,6 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
                oyStrcmp_(default_value,value) == 0)
             {
               is_default = 1;
-              default_pos = choices_n;
             }
 
             if(!value) value = label;
@@ -205,7 +204,6 @@ int        oyXML2XFORMsCmdLineHtmlHeadlineHandler (
                                        oyPointer           user_data )
 {
   const char * tmp = 0;
-  int size = 0;
   oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
   int print = forms_args ? forms_args->print : 1;
 
@@ -213,8 +211,6 @@ int        oyXML2XFORMsCmdLineHtmlHeadlineHandler (
   {
     if(oyXMLNodeNameIs( cur, "h3") && print)
       tmp = oyXML2NodeValue(cur);
-    if(tmp)
-      size = 3;
   }
 
   if(tmp && tmp[0] && print)
@@ -246,7 +242,6 @@ int        oyXML2XFORMsCmdLineHtmlHeadline4Handler (
                                        oyPointer           user_data )
 {
   const char * tmp = 0;
-  int size = 0;
   oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
   int print = forms_args ? forms_args->print : 1;
 
@@ -254,8 +249,6 @@ int        oyXML2XFORMsCmdLineHtmlHeadline4Handler (
   {
     if(oyXMLNodeNameIs( cur, "h4") && print)
       tmp = oyXML2NodeValue(cur);
-    if(tmp)
-      size = 3;
   }
 
   if(tmp && tmp[0] && print)

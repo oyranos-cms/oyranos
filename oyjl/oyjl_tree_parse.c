@@ -22,7 +22,9 @@
 #include <stdarg.h>
 
 #include <yajl/yajl_parse.h>
+#ifndef YAJL_VERSION
 #include <yajl/yajl_version.h>
+#endif
 #include "oyjl_tree.h"
 
 #if YAJL_VERSION > 20000

@@ -926,7 +926,7 @@ const char * lraw_api7_image_input_raw_properties[] =
   "image=pixel",  /* image type, pixel/vector/font */
   "layers=1",     /* layer count, one for plain images */
   "icc=0",        /* image type ICC profile support */
-  "ext=cr2,raf,sti,nef,dng", /* supported extensions */
+  "ext=cr2,crw,dng,mrf,nef,orf,raf,rw2,sti", /* supported extensions */
   0
 };
 
@@ -956,7 +956,7 @@ oyCMMapi7_s   lraw_api7_image_input_libraw = {
   OY_LIBRAW_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,3,0},                  /**< int32_t module_api[3] */
+  {0,3,2},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 

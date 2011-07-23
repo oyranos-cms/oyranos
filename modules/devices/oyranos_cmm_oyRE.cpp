@@ -32,6 +32,8 @@
 
 #include "oyRE_help.c"
 #include "helper.c"
+
+using namespace std;
 /* --- internal definitions --- */
 
 #define PRFX "raw-image.oyRE: "

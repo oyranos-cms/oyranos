@@ -1,0 +1,68 @@
+.TH "oyranos-xforms" 1 "July 08, 2011" "User Commands"
+.SH NAME
+oyranos-xforms \- Oyranos command line forms tool
+.SH SYNOPSIS
+\fBoyranos-xforms\fR [ [-i \fIFILENAME\fR] [-l] [-h] [-O|-o \fIFILENAME\fR] [--key=value] ]
+.fi
+\fBoyranos-xforms\fR [-?]
+.SH DESCRIPTION
+The tool dumps out / read a configuration of the Oyranos forms file.
+.SH OPTIONS
+.TP
+.B \-i \fIo(X)FORMS.xhtml\fR
+Select the input forms file.
+
+\fB-h\fR show available help text for the option(s)
+
+\fB-l\fR list possible option choices
+
+\fB-o\fR \fIFILENAME\fR
+Dump the new model to a options form document.
+
+\fB-O\fR
+Dump the new model to standard output.
+
+\fB--key_name\fR \fIvalue\fR
+Set option \fBkey_name\fR to value \fBvalue\fR.
+.TP
+.B \-?
+help text
+.SH ENVIRONMENT
+.TP
+.B OYRANOS_DEBUG
+set the Oyranos debug level. Alternatively the -v option can be used.
+.TP
+.B XDG_CONFIG_HOME XDG_DATA_DIRS
+route Oyranos to top directories containing resources. The derived paths for
+policies have a "color/settings" appended.
+.nf
+http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
+.TP
+.B OY_MODULE_PATHS
+route Oyranos to additional directories containing modules.
+.SH EXAMPLES
+.TP
+Show options with help texts and choices:
+.B oyranos-xforms -i lcms.xhtml -hl
+.TP
+Set cmyk_cmyk_black_preservation to 1 and same in model in file:
+.B oyranos-xforms -i lcms.xhtml --shared/oyranos.org/imaging/icc/cmyk_cmyk_black_preservation=1 -o lcms_model.xhtml
+.TP
+Pipe in forms, set proof option to ISOcoated_v2_bas.ICC and dump out:
+.B oyranos-xforms-modules -n lcms2 | oyranos-policy --shared/freedesktop.org/imaging/profile/proof=ISOcoated_v2_bas.ICC -O
+.TP
+Print a help text:
+.B oyranos-xforms -?
+.PP
+.SH AUTHOR
+Kai-Uwe Behrmann (ku.b (at) gmx.de)
+.SH COPYRIGHT
+(c) 2005-2011, Kai-Uwe Behrmann and others
+.fi
+License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+.SH "SEE ALSO"
+oyranos-config(3) oyranos-policy(1) oyranos(3)
+.fi
+http://www.oyranos.org
+.SH "BUGS"
+at: http://sourceforge.net/tracker/?group_id=177017&atid=879553

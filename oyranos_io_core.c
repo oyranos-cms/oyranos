@@ -87,6 +87,10 @@ oyReadFileToMem_(const char* name, size_t *size,
 
   DBG_MEM
 
+  if(filename && filename[0] && strlen(filename) > 7 &&
+     memcmp(filename, "file://", 7) == 0)
+    filename = &filename[7];
+
   {
     fp = fopen(filename, "rb");
     DBG_MEM2_S ("fp = %u filename = %s\n", (unsigned int)((intptr_t)fp), filename)
@@ -680,6 +684,34 @@ oyMakeFullFileDirName_ (const char* name)
   return newName;
 }
 
+/* resembles which */
+char * oyFindApplication(const char * app_name)
+{
+  const char * path = getenv("PATH");
+  char * full_app_name = NULL;
+  if(path && app_name)
+  {
+    int paths_n = 0, i;
+    char ** paths = oyStringSplit_( path, ':', &paths_n, malloc );
+    for(i = 0; i < paths_n; ++i)
+    {
+      char * full_name = 0;
+      int found;
+      STRING_ADD( full_name, paths[i] );
+      STRING_ADD( full_name, OY_SLASH );
+      STRING_ADD( full_name, app_name );
+      found = oyIsFileFull_( full_name, "rb" );
+      if(found)
+      {
+        i = paths_n;
+        full_app_name = strdup( full_name );
+      }
+      oyFree_m_( full_name );
+    }
+    oyStringListRelease_( &paths, paths_n, free );
+  }
+  return full_app_name;
+}
 
 
 typedef int (*pathSelect_f_)(oyFileList_s*,const char*,const char*);

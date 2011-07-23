@@ -41,11 +41,10 @@ void* oyAllocFunc(size_t size) {return malloc (size);}
   "    \"freedesktop\": {\n" \
   "      \"openicc\": {\n" \
   "        \"device\": {\n" \
-  "          \"%s\": {\n" \
-  "            \"%d\": {\n"
+  "          \"%s\": [{\n"
 #define OPENICC_DEVICE_JSON_FOOTER \
   "            }\n" \
-  "          }\n" \
+  "          ]\n" \
   "        }\n" \
   "      }\n" \
   "    }\n" \
@@ -289,6 +288,7 @@ int main( int argc , char** argv )
       {
         int32_t tag_size = 0;
         int size = 0;
+        int has_prefix = 0;
 
         texts = oyProfileTag_GetText( tag, &texts_n, NULL, NULL,
                                       &tag_size, malloc );
@@ -297,6 +297,11 @@ int main( int argc , char** argv )
           size = atoi(texts[0]);
 
         /* collect key prefixes and detect device class */
+        if(size == 2)
+        for(j = 2; j < texts_n; j += 2)
+          if(strcmp(texts[j],"prefix") == 0)
+            has_prefix = 1;
+
         if(size == 2)
         for(j = 2; j < texts_n; j += 2)
         {
@@ -311,8 +316,8 @@ int main( int argc , char** argv )
             prefixes[pn++] = name_; \
           }}
           CHECK_PREFIX( "EDID_", OPENICC_DEVICE_MONITOR );
-          CHECK_PREFIX( "Exif_", OPENICC_DEVICE_CAMERA );
-          CHECK_PREFIX( "lraw_", OPENICC_DEVICE_CAMERA );
+          CHECK_PREFIX( "EXIF_", OPENICC_DEVICE_CAMERA );
+          CHECK_PREFIX( "lRAW_", OPENICC_DEVICE_CAMERA );
           CHECK_PREFIX( "PPD_", OPENICC_DEVICE_PRINTER );
           CHECK_PREFIX( "CUPS_", OPENICC_DEVICE_PRINTER );
           CHECK_PREFIX( "GUTENPRINT_", OPENICC_DEVICE_PRINTER );
@@ -320,10 +325,10 @@ int main( int argc , char** argv )
         }
 
         /* add device class */
-        fprintf( stdout, OPENICC_DEVICE_JSON_HEADER, device_class, 1 );
+        fprintf( stdout, OPENICC_DEVICE_JSON_HEADER, device_class );
 
         /* add prefix key */
-        if(pn)
+        if(pn && !has_prefix)
         {
           for(j = 0; j < pn; ++j)
           {

@@ -145,7 +145,6 @@ int QcmseMessageFunc( XCME_MSG_e code, const void * context, const char * format
 {
   char* text = 0, *pos = 0;
   va_list list;
-  const char * type_name = "";
   int id = -1;
   const oyStruct_s * s = (oyStruct_s*) context;
 
@@ -155,7 +154,6 @@ int QcmseMessageFunc( XCME_MSG_e code, const void * context, const char * format
 
   if(s && oyOBJECT_NONE < s->type_)
   {
-    type_name = oyStructTypeToText( s->type_ );
     id = oyObject_GetId( s->oy_ );
   }
 
@@ -174,9 +172,6 @@ int QcmseMessageFunc( XCME_MSG_e code, const void * context, const char * format
     case oyMSG_DBG:
          break;
   }
-
-  /*snprintf( &text[strlen(text)], 4096 - strlen(text), " %03f %s[%d] ", 
-                                                     DBG_UHR_, type_name,id );*/
 
   va_start( list, format);
   vsnprintf( &text[strlen(text)], 4096 - strlen(text), format, list);

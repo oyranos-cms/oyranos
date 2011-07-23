@@ -389,7 +389,7 @@ class Option {: {public OyFl_Pack} private
     Fl_Pack::size( weigth, Fl_Pack::h() );
   w = Fl_Pack::w();*/
 
-  switch(type)
+  switch((unsigned int)type)
   {
   // == Profiles ==
   case oyWIDGETTYPE_DEFAULT_PROFILE:

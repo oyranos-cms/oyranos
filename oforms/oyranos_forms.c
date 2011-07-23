@@ -60,6 +60,8 @@ OYAPI oyFormsArgs_s * OYEXPORT
   }
 
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+  if(error)
+    WARNc1_S("memset error: %d", error);
 
   s->type_ = type;
   s->copy = oyFormsArgs_Copy;
@@ -93,18 +95,12 @@ oyFormsArgs_s * oyFormsArgs_Copy_
 {
   oyFormsArgs_s * s = 0;
   int error = 0;
-  oyAlloc_f allocateFunc_ = 0;
 
   if(!obj || !object)
     return s;
 
   s = oyFormsArgs_New( object );
   error = !s;
-
-  if(!error)
-  {
-    allocateFunc_ = ((oyObject_s)s->oy_)->allocateFunc_;
-  }
 
   if(error)
     oyFormsArgs_Release( &s );

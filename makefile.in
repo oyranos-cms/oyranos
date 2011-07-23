@@ -13,7 +13,12 @@ BUILDDIR        = $(build_dir)/
 GENDIR          = API_generated/
 
 OY_MODULE_NAME  =_cmm_module
-LIBRARIES = $(TARGET) $(TARGET)_object $(TARGET)_core $(LIB_FORMS_FLTK)
+LIBRARIES = \
+	$(TARGET) \
+	$(TARGET)_modules \
+	$(TARGET)_object \
+	$(TARGET)_core \
+	$(LIB_FORMS_FLTK)
 LIBSONAMEFULL = lib$(TARGET)$(SO).$(VERSION)$(LIBEXT)
 LIBSONAME = lib$(TARGET)$(SO).$(VERSION_A)$(LIBEXT)
 LIBSO = lib$(TARGET)$(SO)$(LIBEXT)
@@ -405,7 +410,16 @@ EXAMPLE_FILES = \
 	examples/xcmsevents/qcmsevents.qrc \
 	examples/xcmsevents/qcmsevents-applet.desktop
 
-MAN1 = oyranos-config-fltk.1 oyranos-monitor.1 oyranos-policy.1
+MAN1 = \
+	oyranos-config-fltk.1 \
+	oyranos-monitor.1 \
+	oyranos-monitor-nvidia.1 \
+	oyranos-policy.1 \
+	oyranos-profiles.1 \
+	oyranos-xforms.1 \
+	oyranos-xforms-fltk.1 \
+	oyranos-xforms-modules.1 \
+	qcmsevents.1
 MAN3 = oyranos.3 oyranos-config.3
 ICONS = \
 	$(TARGET)_logo.png \
@@ -429,6 +443,8 @@ LINGUAS_SRC = $(LING:.po=.gmo)
 POT_FILE = po/$(TARGET).pot
 POT_SCRIPT = oyranos_xml_to_po.sh
 
+BIN_SCRIPTS = \
+	$(SRCDIR)/$(TARGET)-profile-install
 SCRIPTS = 
 # $(POT_SCRIPT)
 
@@ -483,6 +499,7 @@ COBJECTS = \
 	$(CFILES_OFORMS:.c=.o) $(OBJECTS_CS) \
 	$(MONI_X11_SPECIFIC_OBJECTS) \
 	$(MONI_CS_SPECIFIC_OBJECTS) \
+	$(MONI_OBJECTS) \
 	$(CMM_lcms_OBJECTS) \
 	$(CMM_oydi_OBJECTS) \
 	$(CMM_oyX1_OBJECTS) \
@@ -597,7 +614,8 @@ CONFIG_FILES = \
 	$(SRCDIR)/$(TARGET).spec.in \
 	$(SRCDIR)/$(TARGET)_control.in \
 	$(SRCDIR)/$(TARGET)-config.in \
-	$(SRCDIR)/$(TARGET)-monitor-setup.desktop
+	$(SRCDIR)/$(TARGET)-monitor-setup.desktop \
+	$(SRCDIR)/$(TARGET)-profile-install.desktop
 
 ALL_FILES = \
 	$(DOKU) \
@@ -605,6 +623,7 @@ ALL_FILES = \
 	$(TOP_SOURCES) \
 	$(CHEADERS) \
 	$(SCRIPTS) \
+	$(BIN_SCRIPTS) \
 	$(MAN1) $(MAN3) \
 	$(DOC_TEMPLATES) \
 	$(FLTK_FILES) \
@@ -840,7 +859,8 @@ $(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL_NAM
 oyjl/oyjl_tree_parse.o:	$(SRCDIR)/oyjl/oyjl_tree_parse.c
 	echo Compiling $<
 	mkdir -p oyjl/
-	$(CC) -I./ -I./oyjl -I$(SRCDIR)/oyjl $(CFLAGS) $(INCL) $(YAJL_H) -o $@ -c $<
+	$(CC) -I./ -I./oyjl $(YAJL_VERSION) -I$(SRCDIR)/oyjl \
+	  $(CFLAGS) $(INCL) $(YAJL_H) -o $@ -c $<
 
 $(TARGET)_config_fltk.o:	$(SRCDIR)/$(TARGET)_config_fltk.cxx
 	echo Compiling $*.cxx
@@ -1066,6 +1086,8 @@ install_bin:	all install_gui
 	$(INSTALL) -m 755 $(TARGET)-config     "$(DESTDIR)$(bindir)"
 	$(INSTALL) -m 755 $(TARGET)-monitor    "$(DESTDIR)$(bindir)"
 	$(INSTALL) -m 755 $(TARGET)-policy     "$(DESTDIR)$(bindir)"
+	$(INSTALL) -m 755 $(TARGET)-profiles   "$(DESTDIR)$(bindir)"
+	$(INSTALL) -m 755 $(BIN_SCRIPTS)       "$(DESTDIR)$(bindir)"
 	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia "$(DESTDIR)$(bindir)"
 	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms "$(DESTDIR)$(bindir)"
 	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms-fltk "$(DESTDIR)$(bindir)"
@@ -1150,6 +1172,8 @@ install_bin:	all install_gui
 	$(INSTALL) -m 644 "$(TARGET)_version.h" "$(DESTDIR)$(includedir)/$(TARGET)"
 	-mkdir -p "$(DESTDIR)/etc/xdg/autostart/"
 	-$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)-monitor-setup.desktop" "$(DESTDIR)/etc/xdg/autostart/"
+	mkdir -p "$(DESTDIR)$(desktopdir)"
+	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)-profile-install.desktop" "$(DESTDIR)$(desktopdir)"
 	echo ... binary Installation finished
 
 # install recursive
@@ -1173,7 +1197,9 @@ install_doc:	install_docu
 install_docu: docu
 	echo Installing policy settings files ...
 	-mkdir -p "$(DESTDIR)$(syscolordir)/$(settingsdirname)"
-	-$(INSTALL) -m 644 "$(SRCDIR)/settings/*.policy.xml" "$(DESTDIR)$(syscolordir)/$(settingsdirname)"
+	-for i in `ls settings/*.policy.xml`; do \
+	     $(INSTALL) -m 644 "$${i}" "$(DESTDIR)$(syscolordir)/$(settingsdirname)";\
+	done
 	echo ... installing policy settings files done
 	mkdir -p "$(DESTDIR)$(docdir)"
 	cd $(SRCDIR) && \
@@ -1227,7 +1253,7 @@ rpm:	dist
 	rpmdir/SOURCES \
 	rpmdir/SRPMS \
 	rpmdir/RPMS/$(RPMARCH)
-	$(COPY) -f $(TARGET)-$(VERSION).tar.gz rpmdir/SOURCES
+	$(COPY) -f $(TARGET)-$(VERSION).tar.bz2 rpmdir/SOURCES
 	rpmbuild --clean -ba $(build_dir)/$(TARGET).spec --define "_topdir $$PWD/rpmdir"
 	@echo "============================================================"
 	@echo "Finished - the packages are in rpmdir/RPMS and rpmdir/SRPMS!"
@@ -1257,6 +1283,8 @@ uninstall_bin:
 	$(RM)   "$(DESTDIR)$(bindir)/$(FLTK_GUI)"
 #endif
 	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-policy"
+	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-profiles"
+	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-profile-install"
 	-$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-monitor-nvidia"
 	$(RM)   "$(DESTDIR)$(libdir)/pkgconfig/$(TARGET).pc"
 	for lib in $(LIBRARIES); do \
@@ -1291,7 +1319,7 @@ uninstall_linguas:
 
 uninstall_docu:
 	echo Uninstalling docu ...
-	for i in settings/*.policy.xml; do \
+	for i in `ls settings/*.policy.xml`; do \
 	  ii=`echo $${i} | sed s%settings\/%%g`; \
 	  $(RM)   "$(DESTDIR)$(syscolordir)/$(settingsdirname)/$${ii}"; \
 	done;
@@ -1332,6 +1360,8 @@ clean:
 	-$(RM) \
 	$(CLEAN_OBJECTS) libXNVCtrl.a \
 	$(TARGET)-policy \
+	$(TARGET)-profile \
+	$(TARGET)-profiles \
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
 	test2 test_core test_object test tests/test_oyranos \
 	$(FLTK_GUI) \
