@@ -81,6 +81,10 @@ int oyFilterCore_Copy__Members( oyFilterCore_s_ * dst, oyFilterCore_s_ * src)
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
+  dst->registration_ = oyStringCopy_( src->registration_, allocateFunc_ );
+  dst->category_ = oyStringCopy_( src->category_, allocateFunc_ );
+  dst->options_ = oyOptions_Copy( src->options_, dst->oy_ );
+  dst->api4_ = src->api4_;
 
   return error;
 }
