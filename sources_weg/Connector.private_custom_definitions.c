@@ -28,6 +28,10 @@ void oyConnector_Release__Members( oyConnector_s_ * connector )
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( connector->member );
      */
+    if(connector->connector_type) {
+      deallocateFunc( connector->connector_type );
+      connector->connector_type = 0;
+    }
   }
 }
 
