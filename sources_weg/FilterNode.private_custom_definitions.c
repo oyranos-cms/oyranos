@@ -48,6 +48,14 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
  */
 int oyFilterNode_Init__Members( oyFilterNode_s_ * filternode )
 {
+  /**  Is this necessary??
+   *   filternode->relatives_ = 0;
+   *
+   *   if( filternode->backend_data && filternode->backend_data->release )
+   *     filternode->backend_data->release( (oyStruct_s**) & filternode->backend_data );
+   *   filternode->backend_data = 0;
+   */
+
   return 0;
 }
 
