@@ -374,9 +374,10 @@ oyFilterNode_s *   oyFilterNode_GetNextFromLinear_ (
   return next;
 }
 
-/** Function oyFilterNode_TextToInfo_
+/** Function  oyFilterNode_TextToInfo_
  *  @memberof oyFilterNode_s
- *  @brief   serialise filter node to binary
+ *  @brief    Serialise filter node to binary
+ *  @internal
  *
  *  Serialise into a Oyranos specific ICC profile containers "Info" text tag.
  *  Not useable for binary contexts.
@@ -393,9 +394,9 @@ oyFilterNode_s *   oyFilterNode_GetNextFromLinear_ (
  *  @since   2008/07/17 (Oyranos: 0.1.8)
  *  @date    2008/07/18
  */
-oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s    * node,
-                                       size_t            * size,
-                                       oyAlloc_f           allocateFunc )
+oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s_    * node,
+                                       size_t             * size,
+                                       oyAlloc_f            allocateFunc )
 {
   oyPointer ptr = 0;
   icHeader * header = 0;
@@ -407,7 +408,7 @@ oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s    * node,
   if(!node)
     return 0;
 
-  temp = oyFilterNode_GetText( node, oyNAME_NAME );
+  temp = oyFilterNode_GetText( (oyFilterNode_s*)node, oyNAME_NAME );
 
   text_len = strlen(temp) + 1;
   len += text_len + 1;
@@ -430,5 +431,3 @@ oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s    * node,
 
   return ptr;
 }
-
-
