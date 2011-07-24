@@ -62,11 +62,10 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s_    * s,
   return 0;
 }
 
-/**
- *  @internal
- *  Function oyFilterNode_ContextSet_
+/** Function  oyFilterNode_ContextSet_
  *  @memberof oyFilterNode_s
- *  @brief   set module context in a filter
+ *  @brief    Set module context in a filter
+ *  @internal
  *
  *  The api4 data is passed to a interpolator specific transformer. The result
  *  of this transformer will on request be cached by Oyranos as well.
@@ -79,11 +78,12 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s_    * s,
  *  @since   2008/11/02 (Oyranos: 0.1.8)
  *  @date    2009/06/12
  */
-int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
-                                       oyBlob_s          * blob )
+int          oyFilterNode_ContextSet_( oyFilterNode_s_    * node_,
+                                       oyBlob_s_          * blob  )
 {
   int error = 0;
-  oyFilterCore_s * s = node->core;
+  oyFilterNode_s * node = (oyFilterNode_s*)node_;
+  oyFilterCore_s_ * s = (oyFilterCore_s_*)node_->core;
 
   if(error <= 0)
   {
@@ -120,13 +120,13 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
           hash_text_len = oyStrlen_( hash_text_ );
 
           hash_text = oyAllocateFunc_(hash_text_len + 16);
-          oySprintf_( hash_text, "%s:%s", node->api7_->context_type,
+          oySprintf_( hash_text, "%s:%s", node_->api7_->context_type,
                                           hash_text_ );
 
           if(oy_debug == 1)
           {
             size = 0;
-            ptr = oyFilterNode_TextToInfo_( node, &size, oyAllocateFunc_ );
+            ptr = oyFilterNode_TextToInfo_( node_, &size, oyAllocateFunc_ );
             if(ptr)
               oyWriteMemToFile_( "test_dbg_colour.icc", ptr, size );
           }
@@ -159,14 +159,14 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
               if(blob)
               {
 
-                error = oyOptions_SetFromText( &node->tags, "////verbose",
+                error = oyOptions_SetFromText( &node_->tags, "////verbose",
                                                "true", OY_CREATE_NEW );
 
                 /* oy_debug is used to obtain a complete data set */
                 ptr = s->api4_->oyCMMFilterNode_ContextToMem( node, &size,
                                                               oyAllocateFunc_ );
                 oyBlob_SetFromData( blob, ptr, size, s->api4_->context_type );
-                error = oyOptions_SetFromText( &node->tags, "////verbose",
+                error = oyOptions_SetFromText( &node_->tags, "////verbose",
                                                "false", 0 );
 
                 goto clean;
@@ -201,25 +201,25 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
 
               if(error <= 0 && cmm_ptr && oyPointer_GetPointer(cmm_ptr))
               {
-                if(node->backend_data && node->backend_data->release)
-                node->backend_data->release( (oyStruct_s**)&node->backend_data);
+                if(node_->backend_data && node_->backend_data->release)
+                node_->backend_data->release( (oyStruct_s**)&node_->backend_data);
 
-                if( oyStrcmp_( node->api7_->context_type,
+                if( oyStrcmp_( node_->api7_->context_type,
                                s->api4_->context_type ) != 0 )
                 {
                   cmm_ptr_out = oyPointer_New(0);
-                  error = oyPointer_Set( cmm_ptr_out, node->api7_->id_,
-                                         node->api7_->context_type, 0, 0, 0);
+                  error = oyPointer_Set( cmm_ptr_out, node_->api7_->id_,
+                                         node_->api7_->context_type, 0, 0, 0);
 
                   /* search for a convertor and convert */
                   oyPointer_ConvertData( cmm_ptr, cmm_ptr_out, node );
-                  node->backend_data = cmm_ptr_out;
+                  node_->backend_data = cmm_ptr_out;
                   /* 3b.1. update cache entry */
                   error = oyHash_SetPointer( hash_out,
                                               (oyStruct_s*) cmm_ptr_out);
 
                 } else
-                  node->backend_data = oyPointer_Copy( cmm_ptr, 0 );
+                  node_->backend_data = oyPointer_Copy( cmm_ptr, 0 );
               }
 
               if(oy_debug == 1)
@@ -228,13 +228,13 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                 char * file_name = 0;
                 oyAllocHelper_m_( file_name, char, 80, 0, return 1 );
                 sprintf( file_name, "test_dbg_colour_dl-%d.icc", id );
-                if(ptr && size && node->backend_data)
+                if(ptr && size && node_->backend_data)
                   oyWriteMemToFile_( file_name, ptr, size );
                 oyFree_m_(file_name);
               }
 
             } else
-              node->backend_data = cmm_ptr_out;
+              node_->backend_data = cmm_ptr_out;
 
           }
 
