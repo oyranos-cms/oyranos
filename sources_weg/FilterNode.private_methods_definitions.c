@@ -247,11 +247,10 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s_    * node_,
   return error;
 }
 
-/**
- *  @internal
- *  Function oyFilterNode_DataGet_
+/** Function  oyFilterNode_DataGet_
  *  @memberof oyFilterNode_s
- *  @brief   get the processing data from a filter node
+ *  @brief    Get the processing data from a filter node
+ *  @internal
  *
  *  @param[in]     node                filter
  *  @param[in]     get_plug            1 get input, 0 get output data
@@ -261,8 +260,8 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s_    * node_,
  *  @since   2008/11/04 (Oyranos: 0.1.8)
  *  @date    2008/11/04
  */
-oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
-                                       int                 get_plug )
+oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s_    * node,
+                                       int                  get_plug )
 {
   int error = !node;
   oyStructList_s * datas = 0;
@@ -276,7 +275,7 @@ oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
     if(get_plug)
     {
           /* pick all plug (input) data */
-          n = oyFilterNode_EdgeCount( node, 1, 0 );
+          n = oyFilterNode_EdgeCount( (oyFilterNode_s*)node, 1, 0 );
           for( i = 0; i < n && error <= 0; ++i)
           if(node->plugs[i])
           {
@@ -291,7 +290,7 @@ oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
     } else
     {
           /* pick all sockets (output) data */
-          n = oyFilterNode_EdgeCount( node, 0, 0 );
+          n = oyFilterNode_EdgeCount( (oyFilterNode_s*)node, 0, 0 );
           for( i = 0; i < n && error <= 0; ++i)
           if(node->sockets[i])
           {
