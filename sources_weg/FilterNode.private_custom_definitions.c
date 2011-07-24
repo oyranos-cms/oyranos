@@ -20,6 +20,24 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
   /* Deallocate members here
    * E.g: oyXXX_Release( &filternode->member );
    */
+  oyOptions_Release( &filternode->tags );
+
+  if(filternode->sockets)
+  {
+    n = oyFilterNode_EdgeCount( filternode, 0, 0 );
+    for(i = 0; i < n; ++i)
+      oyFilterSocket_Release( &filternode->sockets[i] );
+  }
+
+  if(filternode->plugs)
+  {
+    n = oyFilterNode_EdgeCount( filternode, 1, 0 );
+    for(i = 0; i < n; ++i)
+      oyFilterPlug_Release( &filternode->plugs[i] );
+  }
+
+  oyObject_UnRef(filternode->oy_); //Is this really needed?
+
 
   if(filternode->oy_->deallocateFunc_)
   {
@@ -28,6 +46,9 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( filternode->member );
      */
+    if(filternode->relatives_)
+      deallocateFunc( filternode->relatives_ );
+    filternode->relatives_ = 0;
   }
 }
 

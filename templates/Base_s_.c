@@ -271,9 +271,9 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
   s = *{{ class.baseName|lower }};
 
   *{{ class.baseName|lower }} = 0;
-
+{% block refCount %}
   if(oyObject_UnRef(s->oy_))
-    return 0;
+    return 0;{% endblock %}
   /* ---- end of common object destructor ------- */
 
   {% ifequal class.parent.name "oyStruct_s" %}
