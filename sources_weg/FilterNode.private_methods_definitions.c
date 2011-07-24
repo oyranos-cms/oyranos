@@ -1,6 +1,7 @@
-/** @internal
- *  Function oyFilterNode_AddToAdjacencyLst_
- *  @brief   get a graphs adjazency list
+/** Function  oyFilterNode_AddToAdjacencyLst_
+ *  @memberof oyFilterNode_s
+ *  @brief    Get a graphs adjazency list
+ *  @internal
  *
  *  @param[in]     s                   the start node
  *  @param[in,out] nodes               the collected nodes
@@ -13,14 +14,14 @@
  *  @since   2009/02/25 (Oyranos: 0.1.10)
  *  @date    2009/10/28
  */
-int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
-                                       oyFilterNodes_s   * nodes,
-                                       oyFilterPlugs_s   * edges,
-                                       const char        * mark,
-                                       int                 flags )
+int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s_    * s,
+                                       oyFilterNodes_s_   * nodes,
+                                       oyFilterPlugs_s_   * edges,
+                                       const char         * mark,
+                                       int                  flags )
 {
   int n, i, j, p_n;
-  oyFilterPlug_s * p = 0;
+  oyFilterPlug_s_ * p = 0;
 
   /* Scan the input/plug side for unknown nodes, add these and continue in
    * the direction of previous unknown edges...
@@ -40,7 +41,7 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
   /* ... same on the output/socket side */
   if(!(flags & OY_OUTPUT))
   {
-    n = oyFilterNode_EdgeCount( s, 0, 0 );
+    n = oyFilterNode_EdgeCount( (oyFilterNode_s*)s, 0, 0 );
     for( i = 0; i < n; ++i )
     {
       if( s->sockets[i] && s->sockets[i]->requesting_plugs_ )
@@ -48,7 +49,7 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s    * s,
         p_n = oyFilterPlugs_Count( s->sockets[i]->requesting_plugs_ );
         for( j = 0; j < p_n; ++j )
         {
-          p = oyFilterPlugs_Get( s->sockets[i]->requesting_plugs_, j );
+          p = (oyFilterPlug_s_*)oyFilterPlugs_Get( s->sockets[i]->requesting_plugs_, j );
 
           if(oyAdjacencyListAdd_( p, nodes, edges, mark, flags ))
             oyFilterNode_AddToAdjacencyLst_( p->node,
