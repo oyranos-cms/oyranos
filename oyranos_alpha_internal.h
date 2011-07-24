@@ -88,10 +88,6 @@ int          oyImage_PpmWrite        ( oyImage_s         * image_output,
                                        const char        * free_text );
 
 
-oyFilterCore_s * oyFilterCore_New_   ( oyObject_s          object );
-int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
-                                       oyCMMapi4_s       * cmm_api4 );
-
 oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
                                        int                 get_plug );
 

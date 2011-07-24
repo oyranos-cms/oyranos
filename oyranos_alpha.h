@@ -1229,20 +1229,6 @@ struct oyFilterCore_s {
   oyCMMapi4_s        * api4_;          /**< @private oyranos library interfaces */
 };
 
-oyFilterCore_s * oyFilterCore_New    ( const char        * registration,
-                                       oyOptions_s       * options,
-                                       oyObject_s          object );
-oyFilterCore_s * oyFilterCore_Copy   ( oyFilterCore_s    * filter,
-                                       oyObject_s          object );
-int          oyFilterCore_Release    ( oyFilterCore_s   ** filter );
-
-
-const char * oyFilterCore_GetText    ( oyFilterCore_s    * filter,
-                                       oyNAME_e            name_type );
-const char * oyFilterCore_GetName    ( oyFilterCore_s    * filter,
-                                       oyNAME_e            name_type );
-const char * oyFilterCore_CategoryGet( oyFilterCore_s    * filter,
-                                       int                 nontranslated );
 #define OY_FILTER_SET_TEST             0x01        /** only test */
 #define OY_FILTER_GET_DEFAULT          0x01        /** defaults */
 /* decode */
