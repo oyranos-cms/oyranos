@@ -88,6 +88,9 @@ int oyFilterNode_Copy__Members( oyFilterNode_s_ * dst, oyFilterNode_s_ * src)
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
+  if(src->backend_data && src->backend_data->copy)
+    dst->backend_data = (oyPointer_s*) src->backend_data->copy( (oyStruct_s*)
+                                                src->backend_data , dst->oy_ );
 
   return error;
 }
