@@ -309,11 +309,10 @@ oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s_    * node,
   return datas;
 }
 
-/**
- *  @internal
- *  Function: oyFilterNode_GetLastFromLinear_
+/** Function  oyFilterNode_GetLastFromLinear_
  *  @memberof oyFilterNode_s
- *  @brief   get last node from a linear graph
+ *  @brief    Get last node from a linear graph
+ *  @internal
  *
  *  @param[in]     first               filter
  *  @return                            last node
@@ -323,16 +322,16 @@ oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s_    * node,
  *  @date    2008/07/16
  */
 oyFilterNode_s *   oyFilterNode_GetLastFromLinear_ (
-                                       oyFilterNode_s    * first )
+                                       oyFilterNode_s_    * first )
 {
   oyFilterNode_s * next = 0,
                  * last = 0;
 
-      next = last = first;
+      next = last = (oyFilterNode_s*)first;
 
       while(next)
       {
-        next = oyFilterNode_GetNextFromLinear_( next );
+        next = oyFilterNode_GetNextFromLinear_( (oyFilterNode_s_*)next );
 
         if(next)
           last = next;
