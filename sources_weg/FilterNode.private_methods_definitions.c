@@ -340,11 +340,10 @@ oyFilterNode_s *   oyFilterNode_GetLastFromLinear_ (
   return last;
 }
 
-/**
- *  @internal
- *  Function: oyFilterNode_GetNextFromLinear_
+/** Function  oyFilterNode_GetNextFromLinear_
  *  @memberof oyFilterNode_s
- *  @brief   get next node from a linear graph
+ *  @brief    Get next node from a linear graph
+ *  @internal
  *
  *  @param[in]     first               filter
  *  @return                            next node
@@ -354,23 +353,23 @@ oyFilterNode_s *   oyFilterNode_GetLastFromLinear_ (
  *  @date    2008/11/01
  */
 oyFilterNode_s *   oyFilterNode_GetNextFromLinear_ (
-                                       oyFilterNode_s    * first )
+                                       oyFilterNode_s_    * first )
 {
-      oyFilterNode_s * next = 0;
-      oyFilterSocket_s * socket = 0;
-      oyFilterPlug_s * plug = 0;
+  oyFilterNode_s * next = 0;
+  oyFilterSocket_s * socket = 0;
+  oyFilterPlug_s * plug = 0;
 
-      {
-        socket = first->sockets[0];
+  {
+    socket = first->sockets[0];
 
-        if(socket)
-          plug = oyFilterPlugs_Get( socket->requesting_plugs_, 0 );
-        if(plug)
-          next = plug->node;
-        else
-          next = 0;
-        oyFilterPlug_Release( &plug );
-      }
+    if(socket)
+      plug = oyFilterPlugs_Get( ((oyFilterSocket_s_*)socket)->requesting_plugs_, 0 );
+    if(plug)
+      next = ((oyFilterPlug_s_*)plug)->node;
+    else
+      next = 0;
+    oyFilterPlug_Release( &plug );
+  }
 
   return next;
 }

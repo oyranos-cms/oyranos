@@ -10,7 +10,7 @@ oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s_    * node,
 oyFilterNode_s *   oyFilterNode_GetLastFromLinear_ (
                                        oyFilterNode_s_    * first );
 oyFilterNode_s *   oyFilterNode_GetNextFromLinear_ (
-                                       oyFilterNode_s    * first );
+                                       oyFilterNode_s_    * first );
 oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s    * node,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
