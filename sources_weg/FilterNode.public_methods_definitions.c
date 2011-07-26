@@ -322,9 +322,9 @@ oyStruct_s *   oyFilterNode_DataGet  ( oyFilterNode_s    * node,
   return data;
 }
 
-/** Function oyFilterNode_DataSet
+/** Function  oyFilterNode_DataSet
  *  @memberof oyFilterNode_s
- *  @brief   Set process data to a filter socket
+ *  @brief    Set process data to a filter socket
  *
  *  @param[in,out] node                filter node
  *  @param[in]     data                data
@@ -342,14 +342,14 @@ int            oyFilterNode_DataSet  ( oyFilterNode_s    * node,
                                        oyObject_s        * object )
 {
   oyFilterNode_s * s = node;
-  oyFilterSocket_s * socket = 0;
+  oyFilterSocket_s_ * socket = 0;
 
   if(!s)
     return 0;
 
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 );
 
-  socket = oyFilterNode_GetSocket( node, socket_pos );
+  socket = (oyFilterSocket_s_*)oyFilterNode_GetSocket( node, socket_pos );
 
   if(socket)
   {
