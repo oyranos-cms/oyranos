@@ -209,9 +209,9 @@ OYAPI int  OYEXPORT
   return match;
 }
 
-/** Function oyFilterNode_Create
+/** Function  oyFilterNode_Create
  *  @memberof oyFilterNode_s
- *  @brief   initialise a new filter node object properly
+ *  @brief    Initialise a new filter node object properly
  *
  *  @param         filter              the mandatory filter
  *  @param         object              the optional object
@@ -227,6 +227,9 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
   int error = 0;
   oyAlloc_f allocateFunc_ = 0;
 
+  oyFilterCore_s_ ** filter_ = &(oyFilterCore_s_*)filter;
+  oyFilterNode_s_ ** s_      = &(oyFilterNode_s_*)s;
+
   if(!filter)
     return s;
 
@@ -236,49 +239,49 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
 
   if(error <= 0)
   {
-    s->core = oyFilterCore_Copy( filter, object );
-    if(!s->core)
+    (*s_)->core = oyFilterCore_Copy( filter, object );
+    if(!(*s_)->core)
     {
       WARNc2_S("Could not copy filter: %s %s",
-               filter->registration_, filter->category_)
+               (*filter_)->registration_, (*filter_)->category_)
       error = 1;
     }
 
     if(error <= 0)
-      s->api7_ = (oyCMMapi7_s*) oyCMMsGetFilterApi_( 0,
-                                s->core->registration_, oyOBJECT_CMM_API7_S );
-    if(error <= 0 && !s->api7_)
+      (*s_)->api7_ = (oyCMMapi7_s*) oyCMMsGetFilterApi_( 0,
+                                (*s_)->core->registration_, oyOBJECT_CMM_API7_S );
+    if(error <= 0 && !(*s_)->api7_)
     {
       WARNc2_S("Could not obtain filter api7 for: %s %s",
-               filter->registration_, filter->category_)
+               (*filter_)->registration_, (*filter_)->category_)
       error = 1;
     }
 
-    if(s->api7_)
+    if((*s_)->api7_)
     {
-      s->plugs_n_ = s->api7_->plugs_n + s->api7_->plugs_last_add;
-      if(s->api7_->plugs_last_add)
-        --s->plugs_n_;
-      s->sockets_n_ = s->api7_->sockets_n + s->api7_->sockets_last_add;
-      if(s->api7_->sockets_last_add)
-        --s->sockets_n_;
+      (*s_)->plugs_n_ = (*s_)->api7_->plugs_n + (*s_)->api7_->plugs_last_add;
+      if((*s_)->api7_->plugs_last_add)
+        --(*s_)->plugs_n_;
+      (*s_)->sockets_n_ = (*s_)->api7_->sockets_n + (*s_)->api7_->sockets_last_add;
+      if((*s_)->api7_->sockets_last_add)
+        --(*s_)->sockets_n_;
     }
 
-    if(s->core)
+    if((*s_)->core)
     {
       size_t len = sizeof(oyFilterSocket_s*) *
              (oyFilterNode_EdgeCount( s, 0, 0 ) + 1);
       len = len?len:sizeof(oyFilterSocket_s*);
-      s->sockets = allocateFunc_( len );
-      memset( s->sockets, 0, len );
+      (*s_)->sockets = allocateFunc_( len );
+      memset( (*s_)->sockets, 0, len );
 
       len = sizeof(oyFilterSocket_s*) * (oyFilterNode_EdgeCount( s, 1, 0 ) + 1);
       len = len?len:sizeof(oyFilterSocket_s*);
-      s->plugs = allocateFunc_( len );
-      memset( s->plugs, 0, len );
+      (*s_)->plugs = allocateFunc_( len );
+      memset( (*s_)->plugs, 0, len );
 
-      s->relatives_ = allocateFunc_( oyStrlen_(filter->category_) + 24 );
-      oySprintf_( s->relatives_, "%d: %s", oyObject_GetId(s->oy_), s->core->category_);
+      (*s_)->relatives_ = allocateFunc_( oyStrlen_((*filter_)->category_) + 24 );
+      oySprintf_( (*s_)->relatives_, "%d: %s", oyObject_GetId(s->oy_), (*s_)->core->category_);
     }
   }
 
