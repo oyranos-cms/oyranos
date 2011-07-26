@@ -365,9 +365,9 @@ int            oyFilterNode_DataSet  ( oyFilterNode_s    * node,
   return 0;
 }
 
-/** Function oyFilterNode_Disconnect
+/** Function  oyFilterNode_Disconnect
  *  @memberof oyFilterNode_s
- *  @brief   disconnect two nodes by a edge
+ *  @brief    Disconnect two nodes by a edge
  *
  *  @param         edge                plug
  *  @return                            error
@@ -380,7 +380,7 @@ int            oyFilterNode_Disconnect(oyFilterPlug_s    * edge )
 {
   oyFilterPlug_s * s = edge;
   oyFilterSocket_Callback( s, oyCONNECTOR_EVENT_RELEASED );
-  oyFilterSocket_Release( &s->remote_socket_ );
+  oyFilterSocket_Release( &oyFilterPlugPriv_m(s)->remote_socket_ );
   return 0;
 }
 
