@@ -291,9 +291,9 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
   return s;
 }
 
-/** Function oyFilterNode_DataGet
+/** Function  oyFilterNode_DataGet
  *  @memberof oyFilterNode_s
- *  @brief   get process data from a filter socket
+ *  @brief    Get process data from a filter socket
  *
  *  @param[in]     node                filter node
  *  @param[in]     socket_pos          position of socket
@@ -317,7 +317,7 @@ oyStruct_s *   oyFilterNode_DataGet  ( oyFilterNode_s    * node,
 
   socket = oyFilterNode_GetSocket( node, socket_pos );
   if(socket)
-    data = socket->data;
+    data = oyFilterSocketPriv_m(socket)->data;
 
   return data;
 }
