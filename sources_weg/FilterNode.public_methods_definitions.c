@@ -150,9 +150,9 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
   return error;
 }
 
-/** Function: oyFilterNode_ConnectorMatch
+/** Function  oyFilterNode_ConnectorMatch
  *  @memberof oyFilterNode_s
- *  @brief   check if a connector match to a FilterNode
+ *  @brief    Check if a connector match to a FilterNode
  *
  *  @param         node_first          first node
  *  @param         pos_first           position of connector from first node
@@ -169,20 +169,21 @@ OYAPI int  OYEXPORT
                                        oyFilterPlug_s    * plug )
 {
   int match = 0;
-  oyConnector_s * a = 0,  * b = plug->pattern;
+  oyConnector_s * a = 0,  * b = oyFilterPlugPriv_m(plug)->pattern;
   char * reg = 0,
        * tmp = 0;
 
   if(node_first && node_first->type_ == oyOBJECT_FILTER_NODE_S &&
-     node_first->core)
+     oyFilterNodePriv_m(node_first)->core)
     a = oyFilterNode_ShowConnector( node_first, pos_first, 0 );
 
   if(a && b)
   {
     oyFilterSocket_s * sock_first = oyFilterNode_GetSocket( node_first, pos_first );
+    oyConnector_s * sock_first_pattern = oyFilterSocketPriv_m(sock_first)->pattern;
     match = 1;
 
-    if(!b->is_plug)
+    if(!oyConnectorPriv_m(b)->is_plug)
       match = 0;
 
     if(match)
@@ -199,8 +200,8 @@ OYAPI int  OYEXPORT
     }
 
     /** More detailed checking is done in oyCMMapi5_s. */
-    if(match && oyConnector_GetMatch(sock_first->pattern))
-      oyConnector_GetMatch(sock_first->pattern)( sock_first, plug );
+    if(match && oyConnector_GetMatch(sock_first_pattern))
+      oyConnector_GetMatch(sock_first_pattern)( sock_first, plug );
   }
 
   oyConnector_Release( &a );
