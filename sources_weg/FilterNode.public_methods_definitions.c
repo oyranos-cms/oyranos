@@ -41,9 +41,9 @@ int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
   return error;
 }
 
-/** Function oyFilterNode_Connect
+/** Function  oyFilterNode_Connect
  *  @memberof oyFilterNode_s
- *  @brief   connect two nodes by a edge
+ *  @brief    Connect two nodes by a edge
  *
  *  @param         input               the node to provide a socket
  *  @param         socket_nick         name of socket
@@ -62,7 +62,7 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
                                        const char        * plug_nick,
                                        int                 flags )
 {
-  oyFilterNode_s * s = input;
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)input;
   int error = !s;
   oyFilterPlug_s * out_plug = 0;
   oyFilterSocket_s * output_socket = 0,
@@ -70,7 +70,7 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
   int pos, out_pos;
 
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 1 )
-  s = output;
+  s = (oyFilterNode_s_*)output;
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 1 )
 
   if(error <= 0)
@@ -86,7 +86,7 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
        !oyFilterNode_EdgeCount( input, 0, OY_FILTEREDGE_FREE ))
     {
       WARNc2_S( "%s: %s", "input node has no free socket",
-                oyFilterCore_GetName( input->core, oyNAME_NAME) );
+                oyFilterCore_GetName( oyFilterNodePriv_m(input)->core, oyNAME_NAME) );
       error = 1;
     }
 
@@ -117,7 +117,7 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
       if(!out_plug)
       {
         WARNc3_S( "\n  %s: \"%s\" %s", "Could not find plug for filter",
-                  oyFilterCore_GetName( output->core, oyNAME_NAME), socket_nick );
+                  oyFilterCore_GetName( oyFilterNodePriv_m(output)->core, oyNAME_NAME), socket_nick );
         error = 1;
       }
 
@@ -128,14 +128,16 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
         else
         {
           WARNc3_S( "\n  %s: %s -> %s", "Filter connectors do not match",
-                    input->relatives_, output->relatives_ );
+                    oyFilterNodePriv_m(input)->relatives_, oyFilterNodePriv_m(output)->relatives_ );
           error = 1;
         }
       }
 
-      if(error <= 0 && output_socket && !output_socket->data &&
-         in_socket && in_socket->data)
-        output_socket->data = in_socket->data->copy( in_socket->data, 0 );
+      if(error <= 0 && output_socket && !oyFilterSocketPriv_m(output_socket)->data &&
+         in_socket && oyFilterSocketPriv_m(in_socket)->data)
+        oyFilterSocketPriv_m(output_socket)->data = oyFilterSocketPriv_m(in_socket)->data->copy(
+                                                      oyFilterSocketPriv_m(in_socket)->data,
+                                                      0 );
 
       if(error <= 0)
         oyFilterPlug_ConnectIntoSocket( &out_plug, &in_socket );
