@@ -384,9 +384,9 @@ int            oyFilterNode_Disconnect(oyFilterPlug_s    * edge )
   return 0;
 }
 
-/** Function oyFilterNode_EdgeCount
+/** Function  oyFilterNode_EdgeCount
  *  @memberof oyFilterNode_s
- *  @brief   count real and potential connections to a filter node object
+ *  @brief    Count real and potential connections to a filter node object
  *
  *  @param         node                the node
  *  @param         is_input            1 - plugs; 0 - sockets
@@ -405,14 +405,14 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
                                        int                 is_input,
                                        int                 flags )
 {
-  oyFilterNode_s * s = node;
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node;
   int n = 0, start, i,
       possible = 0,
       connected = 0;
 
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
 
-  if(!node->core || !node->api7_)
+  if(!s->core || !s->api7_)
     return 0;
 
   /* plugs */
@@ -424,13 +424,13 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
       start = s->api7_->plugs_n - 1;
     } else
     {
-      possible = node->plugs_n_;
+      possible = s->plugs_n_;
       start = 0;
     }
 
-    if(node->plugs)
+    if(s->plugs)
       for(i = start; i < possible; ++i)
-        if(node->plugs[i] && node->plugs[i]->remote_socket_)
+        if(s->plugs[i] && s->plugs[i]->remote_socket_)
           ++connected;
 
     if(oyToFilterEdge_Free_m(flags))
@@ -449,14 +449,14 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
       start = s->api7_->sockets_n - 1;
     } else
     {
-      possible = node->sockets_n_;
+      possible = s->sockets_n_;
       start = 0;
     }
 
-    if(node->sockets)
+    if(s->sockets)
       for(i = 0; i < possible; ++i)
-        if(node->sockets[i])
-          connected += oyFilterPlugs_Count(node->sockets[i]->requesting_plugs_);
+        if(s->sockets[i])
+          connected += oyFilterPlugs_Count(s->sockets[i]->requesting_plugs_);
 
     if(oyToFilterEdge_Free_m(flags))
       n = possible ? INT32_MAX : 0;
@@ -465,7 +465,6 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
     else
       n = possible;
   }
-
 
   return n;
 }
