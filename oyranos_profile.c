@@ -233,10 +233,10 @@ int main( int argc , char** argv )
       oyDeAllocateFunc_(json_text);
     }
     json_device = oyjl_tree_get_value( json,
-                                      "org/freedesktop/openicc/device/[0]/[0]");
-    json_tmp = oyjl_tree_get_value( json_device, "prefixes" );
-    
-    prefix = oyjl_print_text( &json_tmp->value.text );
+                                      "org/freedesktop/openicc/device/[0]/");
+    json_tmp = oyjl_tree_get_value( json_device, "prefix" );
+    if(json_tmp)
+      prefix = oyjl_print_text( &json_tmp->value.text );
   } else
   if(file_name)
   {
