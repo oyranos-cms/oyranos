@@ -399,7 +399,9 @@ int      lrawFilterPlug_ImageInputRAWRun (
 
   libraw_output_params_t * params = rip.output_params_ptr();
 
-  printf("output_color was: %d  output_bps: %d no_auto_bright: %d\ng[0] %g g[1] %g\n",
+  message(oyMSG_DBG, (oyStruct_s*)node,
+          OY_DBG_FORMAT_ " output_color was: %d  output_bps: %d no_auto_bright: %d\ng[0] %g g[1] %g",
+          OY_DBG_ARGS_,
           params->output_color, params->output_bps, params->no_auto_bright,
           params->gamm[0], params->gamm[1]);
 
