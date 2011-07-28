@@ -689,9 +689,9 @@ OYAPI oyFilterPlug_s * OYEXPORT
   return (oyFilterPlug_s*)s;
 }
 
-/** Function oyFilterNode_GetSocket
+/** Function  oyFilterNode_GetSocket
  *  @memberof oyFilterNode_s
- *  @brief   get a oyFilterSocket_s of type from a FilterNode
+ *  @brief    Get a oyFilterSocket_s of type from a FilterNode
  *
  *  @param         node                filter node
  *  @param         pos                 absolute position of connector
@@ -708,29 +708,32 @@ OYAPI oyFilterSocket_s * OYEXPORT
 {
   oyFilterSocket_s * s = 0;
 
+  oyFilterNode_s_ ** node_ = &(oyFilterNode_s_*)node;
+  oyFilterSocket_s_ ** s_ = &(oyFilterSocket_s_*)s;
+
   if(node && node->type_ == oyOBJECT_FILTER_NODE_S &&
      pos < oyFilterNode_EdgeCount( node, 0, 0 ))
   {
     oyAlloc_f allocateFunc_ = node->oy_->allocateFunc_;
 
-    if(!node->sockets)
+    if(!(*node_)->sockets)
     {
       size_t len = sizeof(oyFilterSocket_s*) *
                    (oyFilterNode_EdgeCount( node, 0, 0 ) + 1);
-      node->sockets = allocateFunc_( len );
-      memset( node->sockets, 0, len );
+      (*node_)->sockets = allocateFunc_( len );
+      memset( (*node_)->sockets, 0, len );
     }
 
-    if(!node->sockets[pos])
+    if(!(*node_)->sockets[pos])
     {
       s = oyFilterSocket_New( node->oy_ );
-      s->pattern = oyFilterNode_ShowConnector( node, pos, 0 );
-      s->node = oyFilterNode_Copy( node, 0 );
-      s->relatives_ = oyStringCopy_( node->relatives_, allocateFunc_ );
-      node->sockets[pos] = s;
+      (*s_)->pattern = oyFilterNode_ShowConnector( node, pos, 0 );
+      (*s_)->node = oyFilterNode_Copy( node, 0 );
+      (*s_)->relatives_ = oyStringCopy_( (*node_)->relatives_, allocateFunc_ );
+      (*node_)->sockets[pos] = s;
     }
 
-    s = node->sockets[pos];
+    s = (*node_)->sockets[pos];
   }
 
   return s;
