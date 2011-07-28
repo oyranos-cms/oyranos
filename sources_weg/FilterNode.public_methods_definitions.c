@@ -621,9 +621,9 @@ OYAPI int  OYEXPORT
   return pos;
 }
 
-/** Function oyFilterNode_GetId
+/** Function  oyFilterNode_GetId
  *  @memberof oyFilterNode_s
- *  @brief   get the object Id
+ *  @brief    Get the object Id
  *
  *  @param[in]     node                filter node
  *  @return                            the object Id
