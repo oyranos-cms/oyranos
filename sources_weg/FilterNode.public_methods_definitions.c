@@ -469,9 +469,9 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
   return n;
 }
 
-/** Function oyFilterNode_GetConnectorPos
+/** Function  oyFilterNode_GetConnectorPos
  *  @memberof oyFilterNode_s
- *  @brief   get a oyFilterSocket_s or oyFilterPlug_s position from a FilterNode
+ *  @brief    Get a oyFilterSocket_s or oyFilterPlug_s position from a FilterNode
  *
  *  @param         node                filter node
  *  @param         is_input            1 - plugs; 0 - sockets
@@ -504,7 +504,7 @@ OYAPI int  OYEXPORT
                                        int                 nth_of_type,
                                        int                 flags )
 {
-  oyFilterNode_s * s = node;
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node;
   int pos = -1,
       i, j, n, n2,
       nth = -1;
@@ -523,14 +523,14 @@ OYAPI int  OYEXPORT
   /* plugs */
   if(is_input)
   {
-    n = node->api7_->plugs_n;
+    n = s->api7_->plugs_n;
     for( i = 0; i < n; ++i )
     {
-      if(oyFilterRegistrationMatch( oyConnector_GetReg(node->api7_->plugs[i]),
+      if(oyFilterRegistrationMatch( oyConnector_GetReg(s->api7_->plugs[i]),
                                     pattern, 0))
       {
-        if( i == n - 1 && node->api7_->plugs_last_add)
-          n2 = node->api7_->plugs_last_add;
+        if( i == n - 1 && s->api7_->plugs_last_add)
+          n2 = s->api7_->plugs_last_add;
         else
           n2 = 0;
 
@@ -538,7 +538,7 @@ OYAPI int  OYEXPORT
         {
           if(oyToFilterEdge_Free_m(flags))
           {
-            if( node->plugs[i + j] && node->plugs[i + j]->remote_socket_ )
+            if( s->plugs[i + j] && s->plugs[i + j]->remote_socket_ )
               continue;
             else
               ++nth;
@@ -546,7 +546,7 @@ OYAPI int  OYEXPORT
           } else
           if(oyToFilterEdge_Connected_m(flags))
           {
-            if( node->plugs[i + j] && node->plugs[i + j]->remote_socket_ )
+            if( s->plugs[i + j] && s->plugs[i + j]->remote_socket_ )
               ++nth;
             else
               continue;
@@ -566,18 +566,18 @@ OYAPI int  OYEXPORT
   /* ... or sockets */
   {
     /* 1. count possible connectors */
-    n = node->api7_->sockets_n;
+    n = s->api7_->sockets_n;
     for( i = 0; i < n; ++i )
     {
       /* 2. compare pattern argument with the socket type */
-      if(oyFilterRegistrationMatch( oyConnector_GetReg(node->api7_->sockets[i]),
+      if(oyFilterRegistrationMatch( oyConnector_GetReg(s->api7_->sockets[i]),
                                     pattern, 0))
       {
 
         /* 3. iterate through at least connectors or connectors that where added
               to the last one */
-        if( i == n - 1 && node->api7_->sockets_last_add)
-          n2 = node->api7_->sockets_last_add;
+        if( i == n - 1 && s->api7_->sockets_last_add)
+          n2 = s->api7_->sockets_last_add;
         else
           n2 = 0;
 
@@ -586,8 +586,8 @@ OYAPI int  OYEXPORT
           /* 3.1 check only unused connectors */
           if(oyToFilterEdge_Free_m(flags))
           {
-            if( node->sockets[i + j] &&
-                oyFilterPlugs_Count( node->sockets[i + j]->requesting_plugs_ ) )
+            if( s->sockets[i + j] &&
+                oyFilterPlugs_Count( s->sockets[i + j]->requesting_plugs_ ) )
               continue;
             else
               ++nth;
@@ -596,8 +596,8 @@ OYAPI int  OYEXPORT
           /* 3.2 check only used connectors */
           if(oyToFilterEdge_Connected_m(flags))
           {
-            if( node->sockets[i + j] &&
-                oyFilterPlugs_Count( node->sockets[i + j]->requesting_plugs_ ) )
+            if( s->sockets[i + j] &&
+                oyFilterPlugs_Count( s->sockets[i + j]->requesting_plugs_ ) )
               ++nth;
             else
               continue;
