@@ -1,3 +1,18 @@
+/** @file oyranos_xforms_fltk.cxx
+ *
+ *  Oyranos is an open source Colour Management System 
+ *
+ *  @par Copyright:
+ *            2009-2011 (C) Kai-Uwe Behrmann
+ *
+ *  @brief    forms handling for the FLTK toolkit
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @par License:
+ *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2009/00/00
+ */
+
 /* gcc -Wall -g `pkg-config oyranos libxml-2.0 --libs --cflags` oy_filter_node.c -o oy_filter_node */
 #include <oyranos_alpha.h>
 #include <oyranos_helper.h>
