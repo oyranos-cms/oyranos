@@ -1029,22 +1029,20 @@ const char * oyXFORMsModelGetXPathValue_
   return text;
 }
 
-/** Function oyXFORMsModelGetXPathValue
- *  @brief   get the xforms model value of a corresponding layout node
+/** Function oyXFORMsModelGetAttrValue
+ *  @brief   get the xml elements attribute value
  *
  *  @param[in]     cur                 the libxml2 node
- *  @param[in]     attr_name           the nodes attribute, only "ref" ?
- *  @param[out]    xpath               the xpath of the referenced key
+ *  @param[in]     attr_name           the nodes attribute
  *  @return                            the attributes value
  *
- *  @version Oyranos: 0.1.10
- *  @since   2009/11/11 (Oyranos: 0.1.10)
- *  @date    2009/11/11
+ *  @version Oyranos: 0.3.2
+ *  @since   2011/07/31 (Oyranos: 0.3.2)
+ *  @date    2011/07/31
  */
-const char *       oyXFORMsModelGetXPathValue (
+const char *       oyXFORMsModelGetAttrValue (
                                        xmlNodePtr          cur,
-                                       const char        * attr_name,
-                                       const char       ** xpath )
+                                       const char        * attr_name )
 {
   const char * v = 0;
   xmlAttrPtr attr = 0;
@@ -1065,14 +1063,43 @@ const char *       oyXFORMsModelGetXPathValue (
     if( oyStrcmp_((char*)attr->name, attr_name) == 0 &&
         attr->children->content )
     {
-      v = oyXFORMsModelGetXPathValue_( cur->doc,(char*)attr->children->content);
+      v = (const char*)attr->children->content;
       if(v && oy_debug)
          printf( "Found: %s=\"%s\"\n", attr->children->content, v );
-      if(xpath)
-        *xpath = (const char*) attr->children->content;
     }
 
     attr = attr->next;
+  }
+  return v;
+}
+
+/** Function oyXFORMsModelGetXPathValue
+ *  @brief   get the xforms model value of a corresponding layout node
+ *
+ *  @param[in]     cur                 the libxml2 node
+ *  @param[in]     attr_name           the nodes attribute, only "ref" ?
+ *  @param[out]    xpath               the xpath of the referenced key
+ *  @return                            the attributes value
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/11 (Oyranos: 0.1.10)
+ *  @date    2009/11/11
+ */
+const char *       oyXFORMsModelGetXPathValue (
+                                       xmlNodePtr          cur,
+                                       const char        * attr_name,
+                                       const char       ** xpath )
+{
+  const char * v = 0;
+  const char * attr = 0;
+
+  /* search a entry node */
+  attr = oyXFORMsModelGetAttrValue( cur, attr_name );
+  if( attr )
+  {
+    v = oyXFORMsModelGetXPathValue_( cur->doc,(char*)attr);
+    if(xpath)
+      *xpath = attr;
   }
   return v;
 }
