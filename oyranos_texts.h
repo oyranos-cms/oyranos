@@ -35,7 +35,8 @@ typedef struct {
   oyGROUP_e     category[10];     /**< layout for categories */
   int         flags;            /**< flags to control widget bebahiour */
   const char *name;             /**< label for setting */
-  const char *description;      /**< description for setting */
+  const char *description;      /**< long description for setting */
+  const char *tooltip;          /**< tooltip or short description for setting */
   int         choices;          /**< number of options */
   const char *choice_list[10];  /**< label for each choice */
 # if 0
@@ -73,6 +74,10 @@ oyWIDGET_TYPE_e oyWidgetTitleGet_        (oyWIDGET_e          option,
                                         const char     ** name,
                                         const char     ** tooltip,
                                         int             * flags );
+oyWIDGET_TYPE_e  oyWidgetDescriptionGet_(
+                                       oyWIDGET_e          option,
+                                       const char       ** description,
+                                       int                 choice );
 int           oyOptionChoicesGet_      (oyWIDGET_e          option,
                                         int             * choices,
                                         const char    *** choices_string_list,
