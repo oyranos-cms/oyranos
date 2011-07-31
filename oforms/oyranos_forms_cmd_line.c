@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2009 (C) Kai-Uwe Behrmann
+ *            2009-2011 (C) Kai-Uwe Behrmann
  *
  *  @brief    forms handling for command line applications
  *  @internal
@@ -194,84 +194,55 @@ oyUiHandler_s oy_ui_cmd_line_handler_xf_select1_ =
  *  @param[in]     user_data           toolkit context
  *  @return                            error
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.2
  *  @since   2009/08/29 (Oyranos: 0.1.10)
- *  @date    2009/08/31
+ *  @date    2011/07/31
  */
 int        oyXML2XFORMsCmdLineHtmlHeadlineHandler (
                                        xmlNodePtr          cur,
                                        oyOptions_s       * collected_elements,
                                        oyPointer           user_data )
 {
-  const char * tmp = 0;
+  const char * label = 0,
+             * help = 0,
+             * type = 0;
   oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
   int print = forms_args ? forms_args->print : 1;
 
-  if(!tmp)
+  xmlNodePtr group;
+  int error = 0;
+
+
+  if(cur && print)
   {
-    if(oyXMLNodeNameIs( cur, "h3") && print)
-      tmp = oyXML2NodeValue(cur);
+    group = cur->children;
+
+    if(cur->next)
+      type = oyXFORMsModelGetAttrValue( cur, "type" );
+
+    if(type)
+    while(group)
+    {
+      if(oyXMLNodeNameIs( group, "xf:label") && print && !label)
+        label = oyXML2NodeValue(group);
+      else
+      if(oyXMLNodeNameIs( group, "xf:help") && print && !help)
+        help = oyXML2NodeValue(group);
+      group = group->next;
+    }
   }
 
-  if(tmp && tmp[0] && print)
-  {
-    printf( "%s\n", tmp );
-  }
+  if(label && label[0] && print)
+    printf( "%s\n", label );
+  if(help && help[0] && print)
+    printf( " [%s]\n", help );
 
   return 0;
 }
 
-/** @internal
- *  Function oyXML2XFORMsCmdLineHtmlHeadline4Handler
- *  @brief   build a UI for a xf:select1 XFORMS sequence
- *
- *  This function is a simple demonstration.
- *
- *  @param[in]     cur                 libxml2 node
- *  @param[in]     collected_elements  parsed and requested elements
- *  @param[in]     user_data           toolkit context
- *  @return                            error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/10/04 (Oyranos: 0.1.10)
- *  @date    2009/10/04
- */
-int        oyXML2XFORMsCmdLineHtmlHeadline4Handler (
-                                       xmlNodePtr          cur,
-                                       oyOptions_s       * collected_elements,
-                                       oyPointer           user_data )
-{
-  const char * tmp = 0;
-  oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
-  int print = forms_args ? forms_args->print : 1;
-
-  if(!tmp)
-  {
-    if(oyXMLNodeNameIs( cur, "h4") && print)
-      tmp = oyXML2NodeValue(cur);
-  }
-
-  if(tmp && tmp[0] && print)
-  {
-    printf( "  %s\n", tmp );
-  }
-
-  return 0;
-}
-
-const char * oy_ui_cmd_line_handler_html_headline4_element_searches_[] = {
-"h4",0};
-oyUiHandler_s oy_ui_cmd_line_handler_html_headline4_ =
-  {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
-   "oyFORMS",                          /**< dialect */
-   "libxml2",                          /**< parser_type */
-   (oyUiHandler_f)oyXML2XFORMsCmdLineHtmlHeadline4Handler, /**<oyUiHandler_f handler*/
-   "dummy",                            /**< handler_type */
-   (char**)oy_ui_cmd_line_handler_html_headline4_element_searches_ /**< element_searches */
-  };
 
 const char * oy_ui_cmd_line_handler_html_headline_element_searches_[] = {
-"h3",0};
+"xf:group",0};
 oyUiHandler_s oy_ui_cmd_line_handler_html_headline_ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    "oyFORMS",                          /**< dialect */
@@ -284,7 +255,6 @@ oyUiHandler_s oy_ui_cmd_line_handler_html_headline_ =
 oyUiHandler_s * oy_ui_cmd_line_handlers[4] = {
   &oy_ui_cmd_line_handler_xf_select1_,
   &oy_ui_cmd_line_handler_html_headline_,
-  &oy_ui_cmd_line_handler_html_headline4_,
   0
 };
 
