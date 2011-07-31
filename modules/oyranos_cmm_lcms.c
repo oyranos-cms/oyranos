@@ -1995,9 +1995,9 @@ char lcms_extra_options[] = {
 /** Function lcmsGetOptionsUI
  *  @brief   return XFORMS for matching options
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.2
  *  @since   2009/07/29 (Oyranos: 0.1.10)
- *  @date    2009/07/30
+ *  @date    2011/07/31
  */
 int lcmsGetOptionsUI                 ( oyOptions_s        * options,
                                        char              ** ui_text,
@@ -2011,15 +2011,22 @@ int lcmsGetOptionsUI                 ( oyOptions_s        * options,
     return 0;
 
   tmp = oyStringCopy_( "\
-  <h3>little CMS ", oyAllocateFunc_ );
+  <xf:group type=\"h3\">\
+    <xf:label>little CMS ", oyAllocateFunc_ );
 
   A(       _("Extended Options"));
-  A(                         ":</h3>\n");
+  A(                         ":</xf:label>\n");
   A("\
      <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc/cmyk_cmyk_black_preservation\">\n\
       <xf:label>" );
   A(          _("Black Preservation"));
   A(                              "</xf:label>\n\
+      <xf:hint>" );
+  A(          _("Decide how to preserve the black channel for Cmyk to Cmyk transforms"));
+  A(                              "</xf:hint>\n\
+      <xf:help>" );
+  A(          _("Cmyk to Cmyk transforms can provide various strategies to preserve the black only channel. None means, black might change to Cmy and thus text prints not very well. LittleCMS has added two different modes to deal with that: Black-ink-only preservation and black-plane preservation. The first is simple and effective: do all the colorimetric transforms but keep only K (preserving L*) where the source image is only black. The second mode is fair more complex and tries to preserve the WHOLE K plane."));
+  A(                              "</xf:help>\n\
       <xf:choices>\n\
        <xf:item>\n\
         <xf:value>0</xf:value>\n\
@@ -2040,6 +2047,12 @@ int lcmsGetOptionsUI                 ( oyOptions_s        * options,
       <xf:label>" );
   A(          _("Optimization"));
   A(                              "</xf:label>\n\
+      <xf:hint>" );
+  A(          _("Color Transforms can be differently stored internally"));
+  A(                              "</xf:hint>\n\
+      <xf:help>" );
+  A(          _("Little CMS tries to optimize profile chains whatever possible. There are some built-in optimization schemes, and you can add new schemas by using a plug-in. This generally improves the performance of the transform, but may introduce a small delay of 1-2 seconds when creating the transform. If you are going to transform just few colors, you don't need this precalculations. Then, the flag cmsFLAGS_NOOPTIMIZE in cmsCreateTransform() can be used to inhibit the optimization process. See the API reference for a more detailed discussion of the flags."));
+  A(                              "</xf:help>\n\
       <xf:choices>\n\
        <xf:item>\n\
         <xf:value>0</xf:value>\n\
@@ -2058,7 +2071,8 @@ int lcmsGetOptionsUI                 ( oyOptions_s        * options,
         <xf:label>LCMS_LOWRESPRECALC</xf:label>\n\
        </xf:item>\n\
       </xf:choices>\n\
-     </xf:select1>\n");
+     </xf:select1>\n\
+   </xf:group>\n");
 
   if(allocateFunc && tmp)
   {
