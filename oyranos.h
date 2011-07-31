@@ -267,6 +267,10 @@ oyWIDGET_TYPE_e oyWidgetTitleGet       (oyWIDGET_e        option,
                                         const char     ** name,
                                         const char     ** tooltip,
                                         int             * flags );
+oyWIDGET_TYPE_e  oyWidgetDescriptionGet (
+                                       oyWIDGET_e          option,
+                                       const char       ** description,
+                                       int                 choice );
 
 int           oyOptionChoicesGet       (oyWIDGET_e        option,
                                         int             * choices,

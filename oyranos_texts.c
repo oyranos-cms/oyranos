@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2004-2010 (C) Kai-Uwe Behrmann
+ *            2004-2011 (C) Kai-Uwe Behrmann
  *
  *  @brief    pure text handling functions
  *  @internal
@@ -108,7 +108,7 @@ oyOptionStringsTranslate_ ()
   opt = oy_option_;
 
   {
-#   define oySET_OPTIONS_M_( t_, id_, ca_n, ca1, ca2, ca3, labl, desc, \
+#   define oySET_OPTIONS_M_( t_, id_, ca_n, ca1, ca2, ca3, labl, tip, desc, \
                              ch_n, ch0, ch1, ch2, ch3, \
                              conf, xml, \
                              val, def_name) { \
@@ -121,6 +121,7 @@ oyOptionStringsTranslate_ ()
       opt[pos]. category[3] = (oyGROUP_e)ca3; \
       opt[pos]. flags = 0; \
       opt[pos]. name = labl; \
+      opt[pos]. tooltip = tip; \
       opt[pos]. description = desc; \
       opt[pos]. choices = ch_n; \
       opt[pos]. choice_list[0] = ch0; \
@@ -141,8 +142,9 @@ oyOptionStringsTranslate_ ()
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_START, 0,
       0, 0, 0,
-      _("Start"),
-      _("Oyranos Settings Group"),
+      _("Start"),                  /* name */
+      _("Oyranos Settings Group"), /* tooltip */
+      _("Oyranos settings let you configure ICC color management behaviour for a local computer. The settings can be per user or per system."), /* description */
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -151,6 +153,7 @@ oyOptionStringsTranslate_ ()
       0, 0, 0,
       _("Default Profiles"),
       _("Source and Target Profiles for various situations"),
+      _("Source and Target ICC Profiles for various situations."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -159,6 +162,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Editing Colour Space"),
       _("Well behaving Colour Space for Editing"),
+      _("The Editing Color Space shall be well behaving in order to allow editing of per channel curves. Well behaving means for Rgb, that editing of all three curves maintains gray neutrality. Hint: editing color spaces are sometimes called a working space."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -167,6 +171,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Assumed Colour Space"),
       _("Assumed Colour Space for untagged colours"),
+      _("Color content can sometimes have to ICC profile assigned. This is a critical situation. Therefor the color processing parts need to pick some profile as a guess. These settings allow to change the picked ICC profile to guide the processing components."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -174,6 +179,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES_PROOF, 0,
       0, 0, 0,
       _("Proofing Colour Space"),
+      _("Colour Space for Simulating real devices"),
       _("Colour Space for Simulating real devices"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -183,6 +189,7 @@ oyOptionStringsTranslate_ ()
       0, 0, 0,
       _("Paths"),
       _("Paths where ICC Profiles can be found"),
+      _("Paths where ICC Profiles can be found"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -190,6 +197,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_POLICY, 0,
       0, 0, 0,
       _("Policy"),
+      _("Collections of settings in Oyranos"),
       _("Collections of settings in Oyranos"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -199,6 +207,7 @@ oyOptionStringsTranslate_ ()
       0, 0, 0,
       _("Behaviour"),
       _("Settings affecting the Behaviour in various situations"),
+      _("Settings affecting the Behaviour in various situations"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -206,6 +215,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_RENDERING, 1,
       oyGROUP_BEHAVIOUR, 0, 0,
       _("Rendering"),
+      _("The kind of ICC gamut mapping for transforming colours between differently sized colour spaces"),
       _("The kind of ICC gamut mapping for transforming colours between differently sized colour spaces"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -215,6 +225,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, 0, 0,
       _("Save Mixed colour space Documents"),
       _("Handling of Mixed Colour Spaces inside one single Document"),
+      _("Handling of Mixed Colour Spaces inside one single Document"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -222,6 +233,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_MISSMATCH, 1, 
       oyGROUP_BEHAVIOUR, 0, 0,
       _("Mismatching"),
+      _("Decide what to do when the default colour spaces dont match the current ones."),
       _("Decide what to do when the default colour spaces dont match the current ones."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -231,6 +243,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, 0, 0,
       _("Proofing"),
       _("Proofing Settings"),
+      _("Proofing Settings"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -238,6 +251,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_ALL, 0,
       0, 0, 0,
       _("All"),
+      _("Oyranos Settings"),
       _("Oyranos Settings"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -248,6 +262,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_CHOICE, oyWIDGET_POLICY, 1,
       oyGROUP_POLICY, 0, 0,
       _("Policy"),
+      _("Collections of settings in Oyranos"),
       _("Collections of settings in Oyranos"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -260,6 +275,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_PATHS, 0, 0,
       _("Paths"),
       _("Paths where ICC Profiles can be found"),
+      _("Paths where ICC Profiles can be found"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -270,6 +286,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Rgb"),
       _("Prefered Rgb Editing Colour Space"),
+      _("Prefered Rgb Editing Colour Space"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_RGB_PROFILE,
@@ -278,6 +295,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_CMYK, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Cmyk"),
+      _("Prefered Cmyk Editing Colour Space"),
       _("Prefered Cmyk Editing Colour Space"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -288,6 +306,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing XYZ"),
       _("Prefered XYZ Editing Colour Space"),
+      _("Prefered XYZ Editing Colour Space"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_XYZ_PROFILE,
@@ -296,6 +315,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_LAB, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Lab"),
+      _("Prefered CIE*Lab Editing Colour Space"),
       _("Prefered CIE*Lab Editing Colour Space"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -306,6 +326,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Gray"),
       _("Prefered Gray Editing Colour Space"),
+      _("Prefered Gray Editing Colour Space"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_GRAY_PROFILE,
@@ -314,6 +335,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_XYZ, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed XYZ source"),
+      _("Assigning an untagged XYZ Image an colour space"),
       _("Assigning an untagged XYZ Image an colour space"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -324,6 +346,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Lab source"),
       _("Assigning an untagged CIE*Lab Image an colour space"),
+      _("Assigning an untagged CIE*Lab Image an colour space"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_ASSUMED_LAB_PROFILE,
@@ -333,6 +356,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Rgb source"),
       _("Assigning an untagged Rgb Image an colour space"),
+      _("Assigning an untagged Rgb Image an colour space"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_ASSUMED_RGB_PROFILE,
@@ -341,6 +365,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_WEB, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Web source"),
+      _("Assigning an untagged Rgb Image with source from the WWW an colour space"),
       _("Assigning an untagged Rgb Image with source from the WWW an colour space"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -352,6 +377,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Cmyk source"),
       _("Assigning an untagged Cmyk Image this colour space"),
+      _("Assigning an untagged Cmyk Image this colour space"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_ASSUMED_CMYK_PROFILE,
@@ -361,6 +387,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Gray source"),
       _("Assigning an untagged Gray Image this colour space"),
+      _("Assigning an untagged Gray Image this colour space"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_ASSUMED_GRAY_PROFILE,
@@ -369,6 +396,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_PROFILE_PROOF, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("Proofing"),
+      _("Colour space for Simulating an Output Device"),
       _("Colour space for Simulating an Output Device"),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -380,6 +408,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
       _("No Image profile"),
       _("Image has no colour space embedded. What default action shall be performed?"),
+      _("Image has no colour space embedded. What default action shall be performed?"),
       3, /* choices */
       _("Assign No Profile"),_("Assign Assumed Profile"),_("Promt"), NULL,
       OY_ACTION_UNTAGGED_ASSIGN,
@@ -388,6 +417,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_ACTION_OPEN_MISMATCH_RGB, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
       _("On Rgb Mismatch"),
+      _("Action for Image profile and Editing profile mismatches."),
       _("Action for Image profile and Editing profile mismatches."),
       3, /* choices */
       _("Preserve Numbers"),_("Convert automatically"),_("Promt"), NULL,
@@ -398,6 +428,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
       _("On Cmyk Mismatch"),
       _("Action for Image profile and Editing profile mismatches."),
+      _("Action for Image profile and Editing profile mismatches."),
       3, /* choices */
       _("Preserve Numbers"),_("Convert automatically"),_("Promt"), NULL,
       OY_ACTION_MISMATCH_CMYK,
@@ -406,6 +437,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_MIXED_MOD_DOCUMENTS_PRINT, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 0,
       _("For Print"),
+      _("Handle Mixed colour spaces in Preparing a document for Print output."),
       _("Handle Mixed colour spaces in Preparing a document for Print output."),
       4, /* choices */
       _("Preserve Numbers"),_("Convert to Default Cmyk Editing Space"),_("Convert to untagged Cmyk, preserving Cmyk numbers"),_("Promt"),
@@ -416,6 +448,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 0,
       _("For Screen"),
       _("Handle Mixed colour spaces in Preparing a document for Screen output."),
+      _("Handle Mixed colour spaces in Preparing a document for Screen output."),
       4, /* choices */
       _("Preserve Numbers"),_("Convert to Default Rgb Editing Space"),_("Convert to WWW (sRGB)"),_("Promt"),
       OY_CONVERT_MIXED_COLOUR_SPACE_SCREEN_DOCUMENT,
@@ -424,6 +457,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_INTENT, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
       _("Rendering Intent"),
+      _("Rendering Intent for colour space Transformations."),
       _("Rendering Intent for colour space Transformations."),
       4, /* choices */
       _("Perceptual"),_("Relative Colorimetric"),_("Saturation"),_("Absolute Colorimetric"),
@@ -434,6 +468,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
       _("Use Black Point Compensation"),
       _("BPC affects often only the Relative Colorimetric Rendering Intent."),
+      _("BPC affects often only the Relative Colorimetric Rendering Intent."),
       2, /* choices */
       _("No"),_("Yes"), NULL, NULL,
       OY_DEFAULT_RENDERING_BPC,
@@ -442,6 +477,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_INTENT_PROOF, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("Proofing Rendering Intent"),
+      _("Behaviour of colour space transformation for proofing"),
       _("Behaviour of colour space transformation for proofing"),
       2, /* choices */
       _("Relative Colorimetric"),_("Absolute Colorimetric"),NULL,NULL,
@@ -452,6 +488,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("SoftProof"),
       _("Simulate the output print on the monitor"),
+      _("Simulate the output print on the monitor"),
       2, /* choices */
       _("No"),_("Yes"),NULL,NULL,
       OY_DEFAULT_PROOF_SOFT,
@@ -461,6 +498,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("Hardproof"),
       _("Behaviour for preselecting Hardproofing with a Proofing Profile at print time"),
+      _("Behaviour for preselecting Hardproofing with a Proofing Profile at print time"),
       2, /* choices */
       _("No"),_("Yes"),NULL,NULL,
       OY_DEFAULT_PROOF_HARD,
@@ -469,6 +507,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_GAMUT_WARNING, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
       _("Gamut Warning"),
+      _("Mark Out Of Gamut colours"),
       _("Mark Out Of Gamut colours"),
       2, /* choices */
       _("No"),_("Yes"),NULL,NULL,
@@ -516,7 +555,7 @@ oyWIDGET_TYPE_e oyWidgetTitleGet_      (oyWIDGET_e        type,
     if( name )
     *name                 = t->name;
     if( tooltip )
-    *tooltip              = t->description;
+    *tooltip              = t->tooltip;
     if( flags )
     *flags                = t->flags;
   }
@@ -525,6 +564,31 @@ oyWIDGET_TYPE_e oyWidgetTitleGet_      (oyWIDGET_e        type,
   return t->type;
 }
 
+oyWIDGET_TYPE_e  oyWidgetDescriptionGet_(
+                                       oyWIDGET_e          type,
+                                       const char       ** description,
+                                       int                 choice )
+{
+  const oyOption_t_ *t = oyOptionGet_(type);
+  DBG_PROG_START
+
+  {
+    if( description && choice == 0)
+    *description          = t->description;
+    if( description && choice > 0 )
+    {
+       int choices = 0, current = -1;
+       const char ** choices_string_list = 0;
+
+       oyOptionChoicesGet_( type, &choices, &choices_string_list, &current );
+       if(choice <= choices)
+         *description     = choices_string_list[choice-1];
+    }
+  }
+
+  DBG_PROG_ENDE
+  return t->type;
+}
 
 char **
 oyProfilePathsGet_    (int             * count,

@@ -660,6 +660,24 @@ oyWIDGET_TYPE_e oyWidgetTitleGet         (oyWIDGET_e          option,
   return type;
 }
 
+oyWIDGET_TYPE_e  oyWidgetDescriptionGet (
+                                       oyWIDGET_e          option,
+                                       const char       ** description,
+                                       int                 choice )
+{
+  oyWIDGET_TYPE_e type = oyWIDGETTYPE_START;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_CHECK_NO);
+  oyTextsCheck_ ();
+
+  type = oyWidgetDescriptionGet_           ( option, description, choice );
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+  return type;
+}
+
 /** @brief Get a Options choices UI strings.
  *
  *  This function is checked for double occuring profiles. Such are sorted out.
