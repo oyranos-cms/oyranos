@@ -73,6 +73,9 @@ void               oyParseXMLDoc_    ( xmlDocPtr           doc,
                                        xmlNodePtr          cur,
                                        oyUiHandler_s    ** ui_handlers,
                                        oyPointer           ui_handlers_context);
+const char *       oyXFORMsModelGetAttrValue (
+                                       xmlNodePtr          cur,
+                                       const char        * attr_name );
 const char *       oyXFORMsModelGetXPathValue_
                                      ( xmlDocPtr           doc,
                                        const char        * reference );
