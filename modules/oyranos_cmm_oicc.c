@@ -206,7 +206,8 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
    */
   int section_group[3] = {0,0,0};
   const char * section_names[3] = {0,0,0},
-             * section_tooltips[3] = {0,0,0};
+             * section_tooltips[3] = {0,0,0},
+             * section_description[3] = {0,0,0};
 
   char num[12];
   oyProfile_s * p = 0;
@@ -218,7 +219,8 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
         int             count = 0,
                         current = 0,
                         flags = 0;
-        const char    * tooltip = NULL;
+        const char    * tooltip = NULL,
+                      * description = NULL;
         const char   ** names = NULL;
         const char    * name = NULL;
         oyWIDGET_e        oywid = wl[i];
@@ -259,14 +261,17 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
                 section_group[0] = 0;
               }
               A("\
- <xf:group>\n\
-  <xf:help>" );
-              A( section_tooltips[0] );
-              A(      "</xf:help>\n");
+ <xf:group type=\"h3\">\n");
               A("\
-  <h3>Oyranos " );
+  <xf:label>Oyranos " );
               A(section_names[0]);
-              A(             ":</h3>\n");
+              A(             ":</xf:label>\n\
+  <xf:hint>" );
+              A( section_tooltips[0] );
+              A(      "</xf:hint>\n\
+  <xf:help>" );
+              A( section_description[0] );
+              A(      "</xf:help>\n");
               /* The headline is in place. The reference shall be removed. */
               section_names[0] = 0;
               /* Remember to later close that group */
@@ -281,14 +286,20 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
                 section_group[1] = 0;
               }
               A("\
-  <xf:group>\n\
-   <xf:help>" );
-              A( section_tooltips[1] );
-              A(      "</xf:help>\n");
-              A("\
-   <h4>");
+  <xf:group type=\"h4\">\n");
+   /*<h4>");
               A(section_names[1]);
-              A(              "</h4>\n");
+              A(              "</h4>\n");*/
+              A("\
+   <xf:label>" );
+              A( section_names[1] );
+              A(      "</xf:label>\n\
+   <xf:hint>" );
+              A( section_tooltips[1] );
+              A(      "</xf:hint>\n\
+   <xf:help>" );
+              A( section_description[1] );
+              A(      "</xf:help>\n");
               section_names[1] = 0;
               section_group[1] = 1;
             }
@@ -373,8 +384,10 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
         } else if(type == oyWIDGETTYPE_GROUP_TREE)
         {
           type = oyWidgetTitleGet(  oywid, &groups, &name, &tooltip, &flags );
+          oyWidgetDescriptionGet( oywid, &description, 0 );
           section_names[groups[0]] = name;
           section_tooltips[groups[0]] = tooltip;
+          section_description[groups[0]] = description;
         }
   }
 
