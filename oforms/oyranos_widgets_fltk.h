@@ -21,7 +21,10 @@
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Pack.H>
+#include <FL/Fl_Widget.H>
 #include <FL/Flmm_Tabs.H>
+#include "../oyranos_alpha.h"
+#include "oyranos_forms.h"
 
 #define H_SPACING 10
 #define V_SPACING 3
@@ -43,6 +46,39 @@ public:
   const char * label();
   void label(const char * l);
   void copy_label(const char* l);
+  oyCallback_s * hint_callback;
+  int handle(int event)
+  {
+    int result = Fl_Box::handle(event);
+    printf("%s\n", __func__);
+    switch (event)
+    {
+      case FL_ENTER:
+           if(hint_callback)
+           {
+             oyFormsFltkHelpViewCallback_f userCallback = 0;
+             userCallback =(oyFormsFltkHelpViewCallback_f)
+                                                        hint_callback->callback;
+             if(userCallback)
+               userCallback( hint_callback->data, (const char*)user_data() );
+           }
+           redraw();
+           break;
+
+      case FL_LEAVE:
+           if(hint_callback)
+           {
+             oyFormsFltkHelpViewCallback_f userCallback = 0;
+             userCallback =(oyFormsFltkHelpViewCallback_f)
+                                                        hint_callback->callback;
+             if(userCallback)
+               userCallback( hint_callback->data, 0 );
+           }
+           redraw();
+           break;
+    }
+    return result;
+  }
 };
 
 class OyFl_Pack_c : public Fl_Pack {

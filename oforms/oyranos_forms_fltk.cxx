@@ -133,7 +133,7 @@ class formsFltkChoice : public Fl_Choice
  *  Function oyXML2XFORMsFLTKSelect1Handler
  *  @brief   build a UI for a xf:select1 XFORMS sequence
  *
- *  This function is a simple demonstration.
+ *  This function is a handler for a Oyranos style xforms.
  *
  *  @param[in]     cur                 libxml2 node
  *  @param[in]     collected_elements  unused
@@ -308,6 +308,7 @@ const char * oy_ui_fltk_handler_xf_select1_element_searches_[] = {
  "xf:select1/xf:choices/xf:item/xf:label.xf:value",
  "xf:select1/xf:label",
  "xf:select1/xf:help",
+ "xf:select1/xf:hint",
  0
 };
 
@@ -324,39 +325,37 @@ oyUiHandler_s oy_ui_fltk_handler_xf_select1_ =
  *  Function oyXML2XFORMsFLTKHtmlHeadlineHandler
  *  @brief   build a UI for a html:h3 element
  *
- *  This function is a simple demonstration.
+ *  This function is a handler for a Oyranos style xforms.
  *
  *  @param[in]     cur                 libxml2 node
  *  @param[in]     collected_elements  unused
  *  @param[in]     user_data           toolkit context
  *  @return                            error
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.2
  *  @since   2009/08/29 (Oyranos: 0.1.10)
- *  @date    2009/08/31
+ *  @date    2011/07/31
  */
 int        oyXML2XFORMsFLTKHtmlHeadlineHandler (
                                        xmlNodePtr          cur,
                                        oyOptions_s       * collected_elements,
                                        oyPointer           user_data )
 {
-  const char * tmp = 0;
-  int size = 0;
+  const char * label = 0,
+             * help = 0,
+             * type = 0;
   oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
   int print = forms_args ? forms_args->print : 1;
   OyFl_Box_c * box = 0;
+  xmlNodePtr group;
+  int error = 0;
 
-  if(!tmp)
-  {
-    if(oyXMLNodeNameIs( cur, "h3") && print)
-      tmp = oyXML2NodeValue(cur);
-    if(tmp)
-      size = 3;
-  }
 
-  if(tmp && tmp[0] && print)
+  if(cur && print)
   {
     Fl_Group *parent = Fl_Group::current(); // parent tab
+
+    group = cur->children;
 
     if( !parent )
     {
@@ -364,7 +363,16 @@ int        oyXML2XFORMsFLTKHtmlHeadlineHandler (
       return 1;
     }
 
+    if(cur->next)
+      type = oyXFORMsModelGetAttrValue( cur, "type" );
+
+    if(type)
+    while(group)
     {
+      if(oyXMLNodeNameIs( group, "xf:label") && print && !label)
+      {
+        int len = 0;
+        void * string = 0;
         Fl_Widget *wid = (Fl_Widget*)0; //parent->user_data();
         if( !wid ) wid = parent;
 
@@ -372,95 +380,42 @@ int        oyXML2XFORMsFLTKHtmlHeadlineHandler (
             y = parent->y(),
             w = parent->w();
         box = new OyFl_Box_c( x,y,w,BUTTON_HEIGHT );
-        int len = 0;
-        void * string = 0;
-        oyIconvGet( tmp, &string, &len,
+        label = oyXML2NodeValue(group);
+        oyIconvGet( label, &string, &len,
                                   "UTF-8", fl_i18n_codeset, malloc );
         box->copy_label( (const char *)string );
         if(string) free(string); string = 0;
-        box->labelfont( FL_BOLD );
+        if(strcmp(type,"h3") ==  0)
+          box->labelfont( FL_BOLD );
+        else
+          box->labelfont( FL_ITALIC );
         box->align( FL_ALIGN_LEFT | FL_ALIGN_INSIDE );
+      }
+      else
+      if(oyXMLNodeNameIs( group, "xf:help") && print && !help)
+      {
+        oyCallback_s * cb = 0;
+        help = oyXML2NodeValue(group);
+        error = oyOptions_FindData( (oyOptions_s*)forms_args->data_,
+                                      OYFORMS_FLTK_HELP_VIEW_REG,
+                                      (oyPointer*)&cb, 0, 0);
+        if(cb && box)
+          box->hint_callback = cb;
+        if(box)
+          box->user_data( (void*)help );
+      }
+      group = group->next;
     }
   }
 
   return 0;
 }
 
-/** @internal
- *  Function oyXML2XFORMsFLTKHtmlHeadline4Handler
- *  @brief   build a UI for a html:h4 element
- *
- *  This function is a simple demonstration.
- *
- *  @param[in]     cur                 libxml2 node
- *  @param[in]     collected_elements  unused
- *  @param[in]     user_data           toolkit context
- *  @return                            error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/10/04 (Oyranos: 0.1.10)
- *  @date    2009/10/04
- */
-int        oyXML2XFORMsFLTKHtmlHeadline4Handler (
-                                       xmlNodePtr          cur,
-                                       oyOptions_s       * collected_elements,
-                                       oyPointer           user_data )
-{
-  const char * tmp = 0;
-  int size = 0;
-  oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
-  int print = forms_args ? forms_args->print : 1;
-  OyFl_Box_c * box = 0;
 
-  if(!tmp)
-  {
-    if(oyXMLNodeNameIs( cur, "h4") && print)
-      tmp = oyXML2NodeValue(cur);
-    if(tmp)
-      size = 3;
-  }
-
-  if(tmp && print)
-  {
-    Fl_Group *parent = Fl_Group::current(); // parent tab
-
-    if( !parent )
-    {
-      WARNc_S( "wrong widget" );
-      return 1;
-    }
-
-    {
-        int x = parent->x(),
-            y = parent->y(),
-            w = parent->w();
-        box = new OyFl_Box_c( x,y,w,BUTTON_HEIGHT );
-        int len = 0;
-        void * string = 0;
-        oyIconvGet( tmp, &string, &len,
-                                  "UTF-8", fl_i18n_codeset, malloc );
-        box->copy_label( (const char *)string );
-        if(string) free(string); string = 0;
-        box->labelfont( FL_ITALIC );
-        box->align( FL_ALIGN_LEFT | FL_ALIGN_INSIDE );
-    }
-  }
-
-  return 0;
-}
-
-const char * oy_ui_fltk_handler_html_headline4_element_searches_[] = {"h4",0};
-
-oyUiHandler_s oy_ui_fltk_handler_html_headline4_ =
-  {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
-   (char*)"oyFORMS",                   /**< dialect */
-   (char*)"libxml2",                   /**< parser_type */
-   (oyUiHandler_f)oyXML2XFORMsFLTKHtmlHeadline4Handler, /**<oyUiHandler_f handler*/
-   (char*)"dummy",                     /**< handler_type */
-   (char**)oy_ui_fltk_handler_html_headline4_element_searches_ /**< element_searches */
-  };
-
-const char * oy_ui_fltk_handler_html_headline_element_searches_[] = {"h3",0};
+const char * oy_ui_fltk_handler_html_headline_element_searches_[] = {
+ "xf:group",
+ 0
+};
 oyUiHandler_s oy_ui_fltk_handler_html_headline_ =
   {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
    (char*)"oyFORMS",                   /**< dialect */
@@ -470,10 +425,9 @@ oyUiHandler_s oy_ui_fltk_handler_html_headline_ =
    (char**)oy_ui_fltk_handler_html_headline_element_searches_ /**< element_searches */
   };
 
-oyUiHandler_s * oy_ui_fltk_handlers[4] = {
+oyUiHandler_s * oy_ui_fltk_handlers[5] = {
   &oy_ui_fltk_handler_xf_select1_,
   &oy_ui_fltk_handler_html_headline_,
-  &oy_ui_fltk_handler_html_headline4_,
   0
 };
 
