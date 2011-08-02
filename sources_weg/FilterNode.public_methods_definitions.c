@@ -878,9 +878,9 @@ oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
   return options;
 }
 
-/** Function: oyFilterNode_ShowConnector
+/** Function  oyFilterNode_ShowConnector
  *  @memberof oyFilterNode_s
- *  @brief   get a connector description from a filter module
+ *  @brief    Get a connector description from a filter module
  *
  *  The path to obtain a new connector.
  *  The filter can say it has more connectors to provide for a certain kind of
@@ -905,27 +905,29 @@ OYAPI oyConnector_s * OYEXPORT
   oyConnector_s * pattern = 0;
   oyObject_s object = 0;
 
-  if(!node || !node->core || node->type_ != oyOBJECT_FILTER_NODE_S ||
-     !node->api7_)
+  oyFilterNode_s_ ** node_ = &(oyFilterNode_s_*)node;
+
+  if(!node || !(*node_)->core || node->type_ != oyOBJECT_FILTER_NODE_S ||
+     !(*node_)->api7_)
     return 0;
 
   object = oyObject_New ();
 
   if(is_plug)
   {
-    if(node->api7_->plugs_n <= as_pos &&
+    if((*node_)->api7_->plugs_n <= as_pos &&
        as_pos < oyFilterNode_EdgeCount( node, 1, 0 ))
-      as_pos = node->api7_->plugs_n - 1;
+      as_pos = (*node_)->api7_->plugs_n - 1;
 
-    if(node->api7_->plugs_n > as_pos)
-      pattern = oyConnector_Copy( node->api7_->plugs[as_pos], object );
+    if((*node_)->api7_->plugs_n > as_pos)
+      pattern = oyConnector_Copy( (*node_)->api7_->plugs[as_pos], object );
   } else {
-    if(node->api7_->sockets_n <= as_pos &&
+    if((*node_)->api7_->sockets_n <= as_pos &&
        as_pos < oyFilterNode_EdgeCount( node, 0, 0 ))
-      as_pos = node->api7_->sockets_n - 1;
+      as_pos = (*node_)->api7_->sockets_n - 1;
 
-    if(node->api7_->sockets_n > as_pos)
-      pattern = oyConnector_Copy( node->api7_->sockets[as_pos], object );
+    if((*node_)->api7_->sockets_n > as_pos)
+      pattern = oyConnector_Copy( (*node_)->api7_->sockets[as_pos], object );
   }
 
   oyObject_Release( &object );
