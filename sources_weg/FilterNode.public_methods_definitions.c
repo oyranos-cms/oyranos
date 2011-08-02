@@ -739,9 +739,9 @@ OYAPI oyFilterSocket_s * OYEXPORT
   return s;
 }
 
-/** Function oyFilterNode_GetText
+/** Function  oyFilterNode_GetText
  *  @memberof oyFilterNode_s
- *  @brief   serialise filter node to text
+ *  @brief    Serialise filter node to text
  *
  *  Serialise into:
  *  - oyNAME_NICK: XML ID
@@ -767,7 +767,7 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
 {
   const char * tmp = 0;
   char * hash_text = 0;
-  oyFilterNode_s * s = node;
+  oyFilterNode_s_ ** node_ = &(oyFilterNode_s_*)node;
 
   oyStructList_s * in_datas = 0,
                  * out_datas = 0;
@@ -779,29 +779,29 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
   hashTextAdd_m( "<oyFilterNode_s>\n  " );
 
   /* the filter text */
-  hashTextAdd_m( oyFilterCore_GetText( node->core, oyNAME_NAME ) );
+  hashTextAdd_m( oyFilterCore_GetText( (*node_)->core, oyNAME_NAME ) );
 
   /* pick all plug (input) data */
-  in_datas = oyFilterNode_DataGet_( node, 1 );
+  in_datas = oyFilterNode_DataGet_( *node_, 1 );
 
   /* pick all sockets (output) data */
-  out_datas = oyFilterNode_DataGet_( node, 0 );
+  out_datas = oyFilterNode_DataGet_( *node_, 0 );
 
   /* make a description */
-  tmp = oyContextCollectData_( (oyStruct_s*)node, s->core->options_,
+  tmp = oyContextCollectData_( (oyStruct_s*)node, (*node_)->core->options_,
                                in_datas, out_datas );
   hashTextAdd_m( tmp );
 
   hashTextAdd_m( "</oyFilterNode_s>\n" );
 
 
-  oyObject_SetName( s->oy_, hash_text, oyNAME_NICK );
+  oyObject_SetName( node->oy_, hash_text, oyNAME_NICK );
 
-  if(s->oy_->deallocateFunc_)
-    s->oy_->deallocateFunc_( hash_text );
+  if(node->oy_->deallocateFunc_)
+    node->oy_->deallocateFunc_( hash_text );
   hash_text = 0;
 
-  hash_text = (oyChar*) oyObject_GetName( s->oy_, oyNAME_NICK );
+  hash_text = (oyChar*) oyObject_GetName( node->oy_, oyNAME_NICK );
 
   return hash_text;
 }
