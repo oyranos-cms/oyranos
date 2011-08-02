@@ -830,9 +830,9 @@ oyFilterNode_s *   oyFilterNode_NewWith (
   return node;
 }
 
-/** Function oyFilterNode_OptionsGet
+/** Function  oyFilterNode_OptionsGet
  *  @memberof oyFilterNode_s
- *  @brief   get filter options
+ *  @brief    Get filter options
  *
  *  @param[in,out] node                filter object
  *  @param         flags               see oyOptions_s::oyOptions_ForFilter()
@@ -849,25 +849,27 @@ oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
   oyFilterNode_s * s = node;
   int error = 0;
 
+  oyFilterNode_s_ ** node_ = &(oyFilterNode_s_*)node;
+
   if(!node)
     return 0;
 
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
 
-  if(flags || !node->core->options_)
+  if(flags || !(*node_)->core->options_)
   {
-    options = oyOptions_ForFilter_( node->core, flags, node->core->oy_ );
-    if(!node->core->options_)
-      node->core->options_ = oyOptions_Copy( options, 0 );
+    options = oyOptions_ForFilter_( (*node_)->core, flags, (*node_)->core->oy_ );
+    if(!(*node_)->core->options_)
+      (*node_)->core->options_ = oyOptions_Copy( options, 0 );
     else
-      error = oyOptions_Filter( &node->core->options_, 0, 0,
+      error = oyOptions_Filter( &(*node_)->core->options_, 0, 0,
                                 oyBOOLEAN_UNION,
                                 0, options );
-    if(!node->core->options_)
-      node->core->options_ = oyOptions_New( 0 );
+    if(!(*node_)->core->options_)
+      (*node_)->core->options_ = oyOptions_New( 0 );
   }
 
-  options = oyOptions_Copy( node->core->options_, 0 );
+  options = oyOptions_Copy( (*node_)->core->options_, 0 );
 
   /** Observe exported options for changes and propagate to a existing graph. */
   error = oyOptions_ObserverAdd( options, (oyStruct_s*)node,
