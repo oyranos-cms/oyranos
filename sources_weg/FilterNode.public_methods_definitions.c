@@ -935,9 +935,9 @@ OYAPI oyConnector_s * OYEXPORT
   return pattern;
 }
 
-/** Function oyFilterNode_UiGet
+/** Function  oyFilterNode_UiGet
  *  @memberof oyFilterNode_s
- *  @brief   get filter options XFORMS
+ *  @brief    Get filter options XFORMS
  *
  *  @param[in,out] node                filter object
  *  @param[out]    ui_text             XFORMS fitting to the node Options
@@ -960,6 +960,8 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
   char * text = 0,
        * tmp = 0;
 
+  oyFilterNode_s_ ** node_ = &(oyFilterNode_s_*)node;
+
   if(!node)
     return 0;
 
@@ -976,8 +978,9 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
     oyCMMapiFilters_s * apis;
     int apis_n = 0, i,j = 0;
     oyCMMapi9_s * cmm_api9 = 0;
+    oyCMMapi9_s_ ** cmm_api9_ = &(oyCMMapi9_s_*)cmm_api9;
     char * class, * api_reg;
-    const char * reg = node->core->registration_;
+    const char * reg = (*node_)->core->registration_;
 
     class = oyFilterRegistrationToText( reg, oyFILTER_REG_TYPE, 0 );
     api_reg = oyStringCopy_("//", oyAllocateFunc_ );
@@ -992,14 +995,14 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
     {
       cmm_api9 = (oyCMMapi9_s*) oyCMMapiFilters_Get( apis, i );
 
-      if(oyFilterRegistrationMatch( reg, cmm_api9->pattern, 0 ))
+      if(oyFilterRegistrationMatch( reg, (*cmm_api9_)->pattern, 0 ))
       {
-        if(cmm_api9->oyCMMuiGet)
-          error = cmm_api9->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
+        if((*cmm_api9_)->oyCMMuiGet)
+          error = (*cmm_api9_)->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
 
         if(error)
         {
-          WARNc2_S( "%s %s",_("error in module:"), cmm_api9->registration );
+          WARNc2_S( "%s %s",_("error in module:"), (*cmm_api9_)->registration );
           return 1;
 
         } else
@@ -1009,7 +1012,7 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
           STRING_ADD( text, "\n" );
           oyFree_m_(tmp);
 
-          if(namespaces && cmm_api9->xml_namespace)
+          if(namespaces && (*cmm_api9_)->xml_namespace)
           {
             if(j == 0)
             {
@@ -1017,7 +1020,7 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
               *namespaces = allocateFunc( len );
               memset(*namespaces, 0, len);
             }
-            *namespaces[j] = oyStringCopy_( cmm_api9->xml_namespace,
+            *namespaces[j] = oyStringCopy_( (*cmm_api9_)->xml_namespace,
                                             allocateFunc );
             ++j;
             namespaces[j] = 0;
@@ -1031,10 +1034,10 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
     oyCMMapiFilters_Release( &apis );
   }
 
-  if(!error && node->core->api4_->ui->oyCMMuiGet)
+  if(!error && (*node_)->core->api4_->ui->oyCMMuiGet)
   {
     /* @todo and how to mix in the values? */
-    error = node->core->api4_->ui->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
+    error = (*node_)->core->api4_->ui->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
     if(tmp)
     {
       STRING_ADD( text, tmp );
