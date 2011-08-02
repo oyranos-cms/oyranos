@@ -806,9 +806,9 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
   return hash_text;
 }
 
-/** Function oyFilterNode_NewWith
+/** Function  oyFilterNode_NewWith
  *  @memberof oyFilterNode_s
- *  @brief   initialise a new filter node object properly
+ *  @brief    Initialise a new filter node object properly
  *
  *  @param         registration        a registration string, @see module_api
  *  @param         options             options for the filter
