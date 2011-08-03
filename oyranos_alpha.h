@@ -1401,18 +1401,6 @@ struct oyFilterNode_s {
   oyCMMapi7_s        * api7_;
 };
 
-oyFilterNode_s *   oyFilterNode_New  ( oyObject_s          object );
-oyFilterNode_s *   oyFilterNode_NewWith (
-                                       const char        * registration,
-                                       oyOptions_s       * options,
-                                       oyObject_s          object );
-oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
-                                       oyObject_s          object );
-oyFilterNode_s *   oyFilterNode_Copy ( oyFilterNode_s    * node,
-                                       oyObject_s          object );
-int            oyFilterNode_Release  ( oyFilterNode_s   ** node );
-
-
 #define OY_FILTEREDGE_FREE             0x01        /**< list free edges */
 #define OY_FILTEREDGE_CONNECTED        0x02        /**< list connected edges */
 #define OY_FILTEREDGE_LASTTYPE         0x04        /**< list last type edges */
@@ -1420,57 +1408,7 @@ int            oyFilterNode_Release  ( oyFilterNode_s   ** node );
 #define oyToFilterEdge_Free_m(r)       ((r)&1)
 #define oyToFilterEdge_Connected_m(r)  (((r) >> 1)&1)
 #define oyToFilterEdge_LastType_m(r)   (((r) >> 2)&1)
-int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
-                                       int                 input,
-                                       int                 flags );
-int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
-                                       const char        * socket_nick,
-                                       oyFilterNode_s    * output,
-                                       const char        * plug_nick,
-                                       int                 flags );
-int            oyFilterNode_Disconnect(oyFilterPlug_s    * edge );
-OYAPI oyConnector_s * OYEXPORT
-               oyFilterNode_ShowConnector (
-                                       oyFilterNode_s    * node,
-                                       int                 as_pos,
-                                       int                 plug );
-OYAPI int  OYEXPORT
-               oyFilterNode_ConnectorMatch (
-                                       oyFilterNode_s    * node_first,
-                                       int                 pos_first,
-                                       oyFilterPlug_s    * plug );
-OYAPI int  OYEXPORT
-               oyFilterNode_GetConnectorPos (
-                                       oyFilterNode_s    * node,
-                                       int                 is_input,
-                                       const char        * pattern,
-                                       int                 nth_of_type,
-                                       int                 flags );
-OYAPI oyFilterSocket_s * OYEXPORT
-               oyFilterNode_GetSocket( oyFilterNode_s    * node,
-                                       int                 pos );
-OYAPI oyFilterPlug_s * OYEXPORT
-               oyFilterNode_GetPlug  ( oyFilterNode_s    * node,
-                                       int                 pos );
-oyOptions_s*   oyFilterNode_OptionsGet(oyFilterNode_s    * node,
-                                       int                 flags );
-int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
-                                       char              ** ui_text,
-                                       char             *** namespaces,
-                                       oyAlloc_f            allocateFunc );
-const char *   oyFilterNode_GetText  ( oyFilterNode_s    * node,
-                                       oyNAME_e            name_type );
-OYAPI int  OYEXPORT
-               oyFilterNode_GetId    ( oyFilterNode_s    * node );
-oyStruct_s *   oyFilterNode_DataGet  ( oyFilterNode_s    * node,
-                                       int                 socket_pos );
-int            oyFilterNode_DataSet  ( oyFilterNode_s    * node,
-                                       oyStruct_s        * data,
-                                       int                 socket_pos,
-                                       oyObject_s        * object );
-
 void oyShowGraph_( oyFilterNode_s * c, const char * selector );
-
 
 
 /** @struct  oyFilterNodes_s
