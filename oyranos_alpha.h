@@ -1462,9 +1462,6 @@ const char *   oyFilterNode_GetText  ( oyFilterNode_s    * node,
                                        oyNAME_e            name_type );
 OYAPI int  OYEXPORT
                oyFilterNode_GetId    ( oyFilterNode_s    * node );
-oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s    * node,
-                                       size_t            * size,
-                                       oyAlloc_f           allocateFunc );
 oyStruct_s *   oyFilterNode_DataGet  ( oyFilterNode_s    * node,
                                        int                 socket_pos );
 int            oyFilterNode_DataSet  ( oyFilterNode_s    * node,

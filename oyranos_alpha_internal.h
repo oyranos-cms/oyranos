@@ -87,10 +87,6 @@ int          oyImage_PpmWrite        ( oyImage_s         * image_output,
                                        const char        * file_name,
                                        const char        * free_text );
 
-
-oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
-                                       int                 get_plug );
-
 const char *   oyContextCollectData_ ( oyStruct_s        * s,
                                        oyOptions_s       * opts,
                                        oyStructList_s    * ins,
