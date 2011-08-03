@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2009 (C) Kai-Uwe Behrmann
+ *            2009-2011 (C) Kai-Uwe Behrmann
  *
  *  @brief    additional widgets for the FLTK toolkit
  *  @internal
@@ -38,47 +38,17 @@ namespace forms {
 
 class OyFl_Box_c : public Fl_Box {
 public:
-  OyFl_Box_c(int x, int y, int w, int h , const char *t = 0) ;
+  OyFl_Box_c(int x, int y, int w, int h , const char *t = 0);
+  ~OyFl_Box_c() {};
 private:
   void draw();
   char *label_orig; 
 public:
-  const char * label();
+  const char * label( );
   void label(const char * l);
   void copy_label(const char* l);
   oyCallback_s * hint_callback;
-  int handle(int event)
-  {
-    int result = Fl_Box::handle(event);
-    printf("%s\n", __func__);
-    switch (event)
-    {
-      case FL_ENTER:
-           if(hint_callback)
-           {
-             oyFormsFltkHelpViewCallback_f userCallback = 0;
-             userCallback =(oyFormsFltkHelpViewCallback_f)
-                                                        hint_callback->callback;
-             if(userCallback)
-               userCallback( hint_callback->data, (const char*)user_data() );
-           }
-           redraw();
-           break;
-
-      case FL_LEAVE:
-           if(hint_callback)
-           {
-             oyFormsFltkHelpViewCallback_f userCallback = 0;
-             userCallback =(oyFormsFltkHelpViewCallback_f)
-                                                        hint_callback->callback;
-             if(userCallback)
-               userCallback( hint_callback->data, 0 );
-           }
-           redraw();
-           break;
-    }
-    return result;
-  }
+  virtual int handle(int);
 };
 
 class OyFl_Pack_c : public Fl_Pack {
