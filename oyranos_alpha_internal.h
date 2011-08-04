@@ -179,7 +179,6 @@ oyCMMapi_s * oyCMMsGetApiFromRegistration_(
                                        const char        * cmm_required,
                                        const char        * registration );
 
-oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s        * api );
 oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name );
 oyCMMInfo_s *    oyCMMGet_           ( const char        * cmm );
 int              oyCMMRelease_       ( const char        * cmm );
