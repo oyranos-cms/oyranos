@@ -71,9 +71,9 @@ OYAPI int  OYEXPORT
                           oyFilterPlugs_MoveIn( ts->requesting_plugs_, p, -1 ));
 }
 
-/** Function oyFilterPlug_ResolveImage
+/** Function  oyFilterPlug_ResolveImage
  *  @memberof oyFilterPlug_s
- *  @brief   resolve processing data during a filter run
+ *  @brief    Resolve processing data during a filter run
  *
  *  The function is a convenience function to use inside a filters
  *  oyCMMFilterPlug_Run_f call. The function makes only sense for non root
@@ -93,12 +93,17 @@ OYAPI oyImage_s * OYEXPORT
                                        oyFilterSocket_s  * socket,
                                        oyPixelAccess_s   * ticket )
 {
-  int error = !plug || !plug->remote_socket_ ||
+  oyFilterPlug_s_ ** plug_ = &(oyFilterPlug_s_*)plug;
+  oyFilterSocket_s_ ** socket_ = &(oyFilterSocket_s_*)socket;
+  oyPixelAccess_s_ ** ticket_ = &(oyPixelAccess_s_*)ticket;
+
+  int error = !plug || !(*plug_)->remote_socket_ ||
               !ticket ||
-              !socket || !socket->node;
-  oyImage_s * image_input = 0, * image = 0;
-  oyFilterNode_s * input_node = 0,
-                 * node = socket->node;
+              !socket || !(*socket_)->node;
+  oyImage_s_ * image_input_ = 0;
+  oyImage_s  * image = 0;
+  oyFilterNode_s_ * input_node_ = 0;
+  oyFilterNode_s  * node = (*socket_)->node;
   oyPixel_t pixel_layout = 0;
   oyOptions_s * options = 0,
               * requests = 0,
@@ -108,18 +113,17 @@ OYAPI oyImage_s * OYEXPORT
   if(error)
     return 0;
 
-  image_input = oyImage_Copy( (oyImage_s*)plug->remote_socket_->data, 0 );
-  input_node = plug->remote_socket_->node;
+  image_input_ = (oyImage_s_*)oyImage_Copy( (oyImage_s*)(*plug_)->remote_socket_->data, 0 );
+  input_node_ = (oyFilterNode_s_*)(*plug_)->remote_socket_->node;
 
-
-  if(!image_input)
+  if(!image_input_)
   {
     /* get options */
     options = oyFilterNode_OptionsGet( node, 0 );
 
     /* store original queue */
-    ticket_orig = ticket->request_queue;
-    ticket->request_queue = 0;
+    ticket_orig = (*ticket_)->request_queue;
+    (*ticket_)->request_queue = 0;
 
     /* select only resolve requests */
     error = oyOptions_Filter( &requests, &n, 0,
@@ -128,40 +132,40 @@ OYAPI oyImage_s * OYEXPORT
     oyOptions_Release( &options );
 
     /* combine old queue and requests from the current node */
-    oyOptions_CopyFrom( &ticket->request_queue, requests, oyBOOLEAN_UNION, 0,0);
-    oyOptions_CopyFrom( &ticket->request_queue, ticket_orig, oyBOOLEAN_UNION,
+    oyOptions_CopyFrom( &(*ticket_)->request_queue, requests, oyBOOLEAN_UNION, 0,0);
+    oyOptions_CopyFrom( &(*ticket_)->request_queue, ticket_orig, oyBOOLEAN_UNION,
                         0, 0 );
 
     /* filter again, (really needed?) */
-    oyOptions_Filter( &ticket->request_queue, &n, 0,
+    oyOptions_Filter( &(*ticket_)->request_queue, &n, 0,
                       oyBOOLEAN_INTERSECTION, "////resolve", requests );
     oyOptions_Release( &requests );
 
     /* try to obtain the processing data from a generator filter */
-    input_node->api7_->oyCMMFilterPlug_Run( node->plugs[0], ticket );
-    image_input = oyImage_Copy( (oyImage_s*)plug->remote_socket_->data, 0 );
+    input_node_->api7_->oyCMMFilterPlug_Run( oyFilterNodePriv_m(node)->plugs[0], ticket );
+    image_input_ = (oyImage_s_*)oyImage_Copy( (oyImage_s*)(*plug_)->remote_socket_->data, 0 );
 
     /* clean up the queue */
-    oyOptions_Release( &ticket->request_queue );
+    oyOptions_Release( &(*ticket_)->request_queue );
 
     /* restore old queue */
-    ticket->request_queue = ticket_orig; ticket_orig = 0;
+    (*ticket_)->request_queue = ticket_orig; ticket_orig = 0;
 
-    if(!image_input)
+    if(!image_input_)
       return 0;
   }
 
-  if(!socket->data)
+  if(!(*socket_)->data)
   {
     /* Copy a root image or link to a non root image. */
-    if(!plug->remote_socket_->node->api7_->plugs_n)
+    if(!(*plug_)->remote_socket_->node->api7_->plugs_n)
     {
       options = oyFilterNode_OptionsGet( node, 0 );
       error = oyOptions_Filter( &requests, &n, 0,
                                 oyBOOLEAN_INTERSECTION,
                                 "////resolve", options );
       oyOptions_Release( &options );
-      oyOptions_CopyFrom( &requests, ticket->request_queue,oyBOOLEAN_UNION,0,0);
+      oyOptions_CopyFrom( &requests, (*ticket_)->request_queue,oyBOOLEAN_UNION,0,0);
 
       error = oyOptions_FindInt( requests, "pixel_layout", 0,
                                  (int32_t*)&pixel_layout );
@@ -171,29 +175,29 @@ OYAPI oyImage_s * OYEXPORT
       {
         /* possibly complete the pixel layout information */
         int n = oyToChannels_m( pixel_layout );
-        int cchan_n = oyProfile_GetChannelsCount( image_input->profile_ );
+        int cchan_n = oyProfile_GetChannelsCount( image_input_->profile_ );
         oyPixel_t layout = oyDataType_m( oyToDataType_m(pixel_layout) ) |
                            oyChannels_m( OY_MAX(n, cchan_n) );
         /* create a new image */
-        image = oyImage_Create( image_input->width, image_input->height,
+        image = oyImage_Create( image_input_->width, image_input_->height,
                                 0, layout,
-                                image_input->profile_, node->oy_ );
+                                image_input_->profile_, node->oy_ );
 
       } else
-        image = oyImage_Copy( (oyImage_s*) image_input, node->oy_ );
+        image = oyImage_Copy( (oyImage_s*) image_input_, node->oy_ );
 
 
     } else
-      image = oyImage_Copy( (oyImage_s*) image_input, 0 );
+      image = oyImage_Copy( (oyImage_s*) image_input_, 0 );
 
     error = oyFilterNode_DataSet( node, (oyStruct_s*)image, 0, 0 );
     oyImage_Release( &image );
   }
 
-  if(!ticket->output_image)
-    ticket->output_image = oyImage_Copy( (oyImage_s*) socket->data, 0 );
+  if(!(*ticket_)->output_image)
+    (*ticket_)->output_image = oyImage_Copy( (oyImage_s*) (*socket_)->data, 0 );
 
   oyOptions_Release( &requests );
 
-  return image_input;
+  return (oyImage_s*)image_input_;
 }
