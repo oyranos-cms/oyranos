@@ -20,6 +20,12 @@ void oyFilterPlug_Release__Members( oyFilterPlug_s_ * filterplug )
   /* Deallocate members here
    * E.g: oyXXX_Release( &filterplug->member );
    */
+  oyFilterNode_Release( &filterplug->node );
+
+  oyFilterSocket_Callback( (oyFilterPlug_s*)filterplug, oyCONNECTOR_EVENT_RELEASED );
+  oyFilterSocket_Release( &filterplug->remote_socket_ );
+
+  oyConnector_Release( &filterplug->pattern );
 
   if(filterplug->oy_->deallocateFunc_)
   {
@@ -28,6 +34,9 @@ void oyFilterPlug_Release__Members( oyFilterPlug_s_ * filterplug )
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( filterplug->member );
      */
+    if(filterplug->relatives_)
+      deallocateFunc( filterplug->relatives_ );
+    filterplug->relatives_ = 0;
   }
 }
 
