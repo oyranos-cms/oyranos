@@ -51,7 +51,7 @@ typedef oyCMMapiFilter_s * (*oyCMMFilterLoad_f) (
                                        oyOBJECT_e          type,
                                        int                 num );
 
-/** typedef  oyCMMFilterSocket_MatchPlugIn_f
+/** typedef  oyCMMFilterSocket_MatchPlug_f
  *  @brief   verify connectors matching each other
  *  @ingroup module_api
  *  @memberof oyCMMapi5_s
