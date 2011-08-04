@@ -59,9 +59,9 @@ OYAPI int  OYEXPORT
   return 0;
 }
 
-/** Function oyFilterSocket_SignalToGraph
+/** Function  oyFilterSocket_SignalToGraph
  *  @memberof oyFilterSocket_s
- *  @brief   send a signal through the graph
+ *  @brief    Send a signal through the graph
  *
  *  The traversal direction is defined as from the starting node to the output.
  *
@@ -81,6 +81,8 @@ OYAPI int  OYEXPORT
   oyFilterPlug_s * p, * sp;
   oyFilterGraph_s * graph = 0;
 
+  oyFilterSocket_s_ ** c_ = &(oyFilterSocket_s_*)c;
+
   switch(e)
   {
     case oyCONNECTOR_EVENT_OK:                /**< kind of ping */
@@ -95,7 +97,7 @@ OYAPI int  OYEXPORT
          sig = (oySIGNAL_e) e; break;
   }
 
-  handled = oyStruct_ObserverSignal( (oyStruct_s*) c->node, sig, 0 );
+  handled = oyStruct_ObserverSignal( (oyStruct_s*) (*c_)->node, sig, 0 );
   if(handled)
     return handled;
 
@@ -103,27 +105,27 @@ OYAPI int  OYEXPORT
   {
     WARNc4_S("oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n"
              "  event: \"%s\" socket[%d]",
-            (c && c->node) ? oyObject_GetId(c->node->oy_) : -1,
+            (c && (*c_)->node) ? oyObject_GetId((*c_)->node->oy_) : -1,
             c ? oyObject_GetId(c->oy_) : -1,
             oyConnectorEventToText(e),
             (c) ? oyObject_GetId( c->oy_ ) : -1
           );
   }
 
-  n = oyFilterPlugs_Count( c->requesting_plugs_ );
+  n = oyFilterPlugs_Count( (*c_)->requesting_plugs_ );
 
   for(i = 0; i < n; ++i)
   {
-    p = oyFilterPlugs_Get( c->requesting_plugs_, i );
-    handled = oyStruct_ObserverSignal( (oyStruct_s*) p->node, sig, 0 );
+    p = oyFilterPlugs_Get( (*c_)->requesting_plugs_, i );
+    handled = oyStruct_ObserverSignal( (oyStruct_s*) oyFilterPlugPriv_m(p)->node, sig, 0 );
 
     /* get all nodes in the output direction */
-    graph = oyFilterGraph_FromNode( p->node, OY_INPUT );
+    graph = oyFilterGraph_FromNode( oyFilterPlugPriv_m(p)->node, OY_INPUT );
 
-    j_n = oyFilterNodes_Count( graph->nodes );
+    j_n = oyFilterNodes_Count( oyFilterGraphPriv_m(graph)->nodes );
     for( j = 0; j < j_n; ++j )
     {
-      oyFilterNode_s * node = oyFilterNodes_Get( graph->nodes, j );
+      oyFilterNode_s * node = oyFilterNodes_Get( oyFilterGraphPriv_m(graph)->nodes, j );
 
       /* iterate over all node outputs */
       k_n = oyFilterNode_EdgeCount( node, 1, OY_FILTEREDGE_CONNECTED );
