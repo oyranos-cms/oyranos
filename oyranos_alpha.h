@@ -1053,25 +1053,6 @@ struct oyFilterSocket_s {
 
 };
 
-OYAPI oyFilterSocket_s * OYEXPORT
-                 oyFilterSocket_New  ( oyObject_s          object );
-OYAPI oyFilterSocket_s * OYEXPORT
-                 oyFilterSocket_Copy ( oyFilterSocket_s  * list,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-                 oyFilterSocket_Release (
-                                       oyFilterSocket_s ** list );
-
-
-OYAPI int  OYEXPORT
-                 oyFilterSocket_Callback (
-                                       oyFilterPlug_s    * c,
-                                       oyCONNECTOR_EVENT_e e );
-OYAPI int  OYEXPORT
-                 oyFilterSocket_SignalToGraph (
-                                       oyFilterSocket_s  * c,
-                                       oyCONNECTOR_EVENT_e e );
-
 /** @struct oyFilterPlug_s
  *  @brief  a filter connection structure
  *  @ingroup objects_conversion
