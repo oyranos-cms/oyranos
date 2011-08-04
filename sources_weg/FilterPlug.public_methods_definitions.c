@@ -32,9 +32,9 @@ OYAPI int  OYEXPORT
   return 0;
 }
 
-/** Function oyFilterPlug_ConnectIntoSocket
+/** Function  oyFilterPlug_ConnectIntoSocket
  *  @memberof oyFilterPlug_s
- *  @brief   connect a oyFilterPlug_s with a oyFilterSocket_s
+ *  @brief    Connect a oyFilterPlug_s with a oyFilterSocket_s
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/30 (Oyranos: 0.1.8)
@@ -45,25 +45,25 @@ OYAPI int  OYEXPORT
                                        oyFilterPlug_s   ** p,
                                        oyFilterSocket_s ** s )
 {
-  oyFilterPlug_s * tp = 0;
-  oyFilterSocket_s * ts = 0;
+  oyFilterPlug_s_ * tp = 0;
+  oyFilterSocket_s_ * ts = 0;
 
   if(!p || !*p || !s || !*s)
     return 1;
 
-  tp = *p;
-  ts = *s;
+  tp = (oyFilterPlug_s_*)*p;
+  ts = (oyFilterSocket_s_*)*s;
 
   if(tp->remote_socket_)
-    oyFilterSocket_Callback( tp, oyCONNECTOR_EVENT_RELEASED );
+    oyFilterSocket_Callback( (oyFilterPlug_s*)tp, oyCONNECTOR_EVENT_RELEASED );
   oyFilterSocket_Release( &tp->remote_socket_ );
 
 # if DEBUG_OBJECT
       WARNc6_S("%s Id: %d -> %s Id: %d\n  %s -> %s",
              oyStructTypeToText( (*p)->type_ ), oyObject_GetId((*p)->oy_),
              oyStructTypeToText( (*s)->type_ ), oyObject_GetId((*s)->oy_),
-             (*p)->node->relatives_,
-             (*s)->node->relatives_ )
+             (*(oyFilterPlug_s_**)p)->node->relatives_,
+             (*(oyFilterSocket_s_**)s)->node->relatives_ )
 #endif
 
   tp->remote_socket_ = *s; *s = 0;
