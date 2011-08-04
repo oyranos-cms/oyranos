@@ -80,6 +80,10 @@ int oyFilterSocket_Copy__Members( oyFilterSocket_s_ * dst, oyFilterSocket_s_ * s
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
+  dst->pattern = oyConnector_Copy( src->pattern, dst->oy_ );
+  dst->node = oyFilterNode_Copy( src->node, 0 );
+  if(src->data && src->data->copy)
+    dst->data = src->data->copy( src->data, dst->oy_ );
 
   return error;
 }
