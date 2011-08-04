@@ -1,6 +1,6 @@
-/** Function oyFilterSocket_Callback
+/** Function  oyFilterSocket_Callback
  *  @memberof oyFilterSocket_s
- *  @brief   tell about a oyConversion_s event
+ *  @brief    Tell about a oyConversion_s event
  *
  *  @param[in,out] c                   the connector
  *  @param         e                   the event type
@@ -16,40 +16,42 @@ OYAPI int  OYEXPORT
                                        oyCONNECTOR_EVENT_e e )
 {
   int n, i;
-  oyFilterSocket_s * s;
+  oyFilterSocket_s_ * s_;
   oyFilterPlug_s * p;
+
+  oyFilterPlug_s_ ** c_ = &(oyFilterPlug_s_*)c;
 
   if(e != oyCONNECTOR_EVENT_OK && oy_debug_signals)
   {
     WARNc5_S("\n  oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n"
              "  event: \"%s\" plug[%d/node%d]",
-            (c && c->remote_socket_ && c->remote_socket_->node) ?
-                   oyObject_GetId(c->remote_socket_->node->oy_) : -1,
-            (c && c->remote_socket_) ? oyObject_GetId(c->remote_socket_->oy_)
+            (c && (*c_)->remote_socket_ && (*c_)->remote_socket_->node) ?
+                   oyObject_GetId((*c_)->remote_socket_->node->oy_) : -1,
+            (c && (*c_)->remote_socket_) ? oyObject_GetId((*c_)->remote_socket_->oy_)
                                      : -1,
             oyConnectorEventToText(e),
             c ? oyObject_GetId( c->oy_ ) : -1,
-            c ? (c->node ? oyObject_GetId( c->node->oy_ ) : -1) : -1
+            c ? ((*c_)->node ? oyObject_GetId( (*c_)->node->oy_ ) : -1) : -1
           );
   }
 
   if(!c)
     return 1;
 
-  s = c->remote_socket_;
+  s_ = (oyFilterSocket_s_*) (*c_)->remote_socket_;
 
-  if(!s)
+  if(!s_)
     return 0;
 
-  n = oyFilterPlugs_Count( s->requesting_plugs_ );
+  n = oyFilterPlugs_Count( s_->requesting_plugs_ );
 
   if(e == oyCONNECTOR_EVENT_RELEASED)
     for(i = 0; i < n; ++i)
     {
-      p = oyFilterPlugs_Get( s->requesting_plugs_, i );
+      p = oyFilterPlugs_Get( s_->requesting_plugs_, i );
       if(p == c)
       {
-        oyFilterPlugs_ReleaseAt( s->requesting_plugs_, i );
+        oyFilterPlugs_ReleaseAt( s_->requesting_plugs_, i );
         break;
       }
     }
