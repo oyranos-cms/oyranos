@@ -1,6 +1,6 @@
-/** Function oyFilterPlug_Callback
+/** Function  oyFilterPlug_Callback
  *  @memberof oyFilterPlug_s
- *  @brief   tell about a oyConversion_s event
+ *  @brief    Tell about a oyConversion_s event
  *
  *  @param[in,out] c                   the connector
  *  @param         e                   the event type
@@ -14,18 +14,20 @@ OYAPI int  OYEXPORT
                                        oyFilterPlug_s    * c,
                                        oyCONNECTOR_EVENT_e e )
 {
+  oyFilterPlug_s_ ** c_ = &(oyFilterPlug_s_*)c;
+
   if(oy_debug_signals)
     WARNc4_S("oyFilterNode_s[%d]->oyFilterPlug_s[%d]\n"
              "  event: \"%s\" socket[%d]",
-            (c && c->node) ? oyObject_GetId(c->node->oy_) : -1,
+            (c && (*c_)->node) ? oyObject_GetId((*c_)->node->oy_) : -1,
             c ? oyObject_GetId(c->oy_) : -1,
             oyConnectorEventToText(e),
-            (c && c->remote_socket_) ?
-                                   oyObject_GetId( c->remote_socket_->oy_ ) : -1
+            (c && (*c_)->remote_socket_) ?
+                                   oyObject_GetId( (*c_)->remote_socket_->oy_ ) : -1
           );
 
   if(c && e == oyCONNECTOR_EVENT_RELEASED)
-    c->remote_socket_ = 0;
+    (*c_)->remote_socket_ = 0;
 
   return 0;
 }
