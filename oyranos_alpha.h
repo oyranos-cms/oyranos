@@ -1122,29 +1122,6 @@ struct oyFilterPlug_s {
   char               * relatives_;     /**< @private hint about belonging to a filter */
 };
 
-
-OYAPI oyFilterPlug_s * OYEXPORT
-                 oyFilterPlug_New    ( oyObject_s          object );
-OYAPI oyFilterPlug_s * OYEXPORT
-                 oyFilterPlug_Copy   ( oyFilterPlug_s    * list,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-                 oyFilterPlug_Release( oyFilterPlug_s   ** list );
-
-
-OYAPI int  OYEXPORT
-                 oyFilterPlug_Callback(
-                                       oyFilterPlug_s    * c,
-                                       oyCONNECTOR_EVENT_e e );
-OYAPI int  OYEXPORT
-                 oyFilterPlug_ConnectIntoSocket (
-                                       oyFilterPlug_s   ** p,
-                                       oyFilterSocket_s ** s );
-OYAPI oyImage_s * OYEXPORT
-             oyFilterPlug_ResolveImage(oyFilterPlug_s    * plug,
-                                       oyFilterSocket_s  * socket,
-                                       oyPixelAccess_s   * ticket );
-
 /** @struct  oyFilterPlugs_s
  *  @brief   a FilterPlugs list
  *  @ingroup objects_conversion
