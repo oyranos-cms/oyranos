@@ -398,61 +398,6 @@ typedef struct {
   oyCMMobjectScan_f                oyCMMobjectScan; /**< */
 } oyCMMobjectType_s;
 
-
-/** typedef oyCMMFilterLoad_f
- *  @brief   load a filter from a in memory data blob
- *  @ingroup module_api
- *  @memberof oyCMMapi5_s
- *
- *  @param[in]     data                data blob
- *  @param[in]     size                data size
- *  @return                            filter
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/11/22 (Oyranos: 0.1.9)
- *  @date    2008/12/28
- */
-typedef oyCMMapiFilter_s * (*oyCMMFilterLoad_f) (
-                                       oyPointer           data,
-                                       size_t              size,
-                                       const char        * file_name,
-                                       oyOBJECT_e          type,
-                                       int                 num );
-
-/** typedef oyCMMFilterScan_f
- *  @brief   load a filter from a in memory data blob
- *  @ingroup module_api
- *  @memberof oyCMMapi5_s
- *
- *  @param[in]     data                filter data blob
- *  @param[in]     size                data size
- *  @param[in]     file_name           the filter file for information or zero
- *  @param[in]     type                filter type
- *  @param[in]     num                 number of filter
- *  @param[out]    registration        filter registration string
- *  @param[out]    name                filter name
- *  @param[in]     allocateFunc        e.g. malloc
- *  @param[out]    info                oyCMMInfo_s pointer to set
- *  @param[in]     object              e.g. Oyranos object
- *  @return                            0 on success; error >= 1; -1 not found; unknown < -1
- *
- *  @version Oyranos: 0.1.9
- *  @since   2008/11/22 (Oyranos: 0.1.9)
- *  @date    2008/12/17
- */
-typedef int          (*oyCMMFilterScan_f) (
-                                       oyPointer           data,
-                                       size_t              size,
-                                       const char        * file_name,
-                                       oyOBJECT_e          type,
-                                       int                 num,
-                                       char             ** registration,
-                                       char             ** name,
-                                       oyAlloc_f           allocateFunc,
-                                       oyCMMInfo_s      ** info,
-                                       oyObject_s          object );
-
-
 /** @struct  oyConnectorImaging_s
  *  @brief   node connection descriptor
  *  @ingroup objects_conversion
@@ -551,67 +496,6 @@ OYAPI oyConnectorImaging_s * OYEXPORT
 OYAPI int  OYEXPORT
                  oyConnectorImaging_Release ( 
                                        oyConnectorImaging_s**list );
-
-int          oyFilterSocket_MatchImagingPlug (
-                                       oyFilterSocket_s  * socket,
-                                       oyFilterPlug_s    * plug );
-
-
-/** @struct  oyCMMapi5_s
- *  @brief   module or script loader
- *  @ingroup module_api
- *  @extends oyCMMapi_s
- *
- *  Filters can be provided in non library form, e.g. as text files. This API 
- *  allowes for registring of paths and file types to be recognised as filters.
- *  The API must provide the means to search, list, verify and open these 
- *  script filters through Oyranos. The filters are opened in Oyranos and passed
- *  as blobs to the API function for obtaining light wight informations, e.g.
- *  list the scanned filters in a user selection widget. Further the API is
- *  responsible to open the filter and create a oyFilter_s object.
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/11/22 (Oyranos: 0.1.9)
- *  @date    2010/06/25
- */
-struct oyCMMapi5_s {
-  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API5_S */
-  oyPointer        dummya;             /**< keep to zero */
-  oyPointer        dummyb;             /**< keep to zero */
-  oyPointer        dummyc;             /**< keep to zero */
-  oyCMMapi_s     * next;
-
-  oyCMMInit_f      oyCMMInit;          /**< */
-  oyCMMMessageFuncSet_f oyCMMMessageFuncSet;  /**< */
-
-  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva" or "sw/oyranos.org/colour/icc",
-      see as well @ref registration */
-  const char     * registration;
-
-  /** 0: major - should be stable for the live time of a filter, \n
-      1: minor - mark new features, \n
-      2: patch version - correct errors */
-  int32_t          version[3];
-
-  /** 0: last major Oyranos version during development time, e.g. 0
-   *  1: last minor Oyranos version during development time, e.g. 0
-   *  2: last Oyranos patch version during development time, e.g. 10
-   */
-  int32_t          module_api[3];
-
-  char           * id_;                /**< @private Oyranos id; keep to zero */
-
-  /** a colon separated list of sub paths to expect the scripts in,
-      e.g. "color/shiva:color/octl" */
-  const char     * sub_paths;
-  /** optional filename extensions, e.g. "shi:ctl" */
-  const char     * ext;
-  /** 0: libs - libraries, Oyranos searches in the XDG_LIBRARY_PATH and sub_paths, The library will be provided as file_name\n  1: scripts - platform independent filters, Oyranos will search in the XDG_DATA_* paths, Script are provided as i memory blobs */
-  int32_t          data_type;          /**< */
-
-  oyCMMFilterLoad_f                oyCMMFilterLoad; /**< */
-  oyCMMFilterScan_f                oyCMMFilterScan; /**< */
-};
 
 /** typedef oyCMMFilterPlug_Run_f
  *  @brief   get a pixel or channel from the previous filter
@@ -1328,9 +1212,6 @@ struct oyCMMapi10_s {
 /* implemented filter functions */
 int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket );
-int          oyFilterSocket_MatchImagingPlug (
-                                       oyFilterSocket_s  * socket,
-                                       oyFilterPlug_s    * plug );
 
 const char * oyCMMgetText            ( const char        * select,
                                        oyNAME_e            type,
