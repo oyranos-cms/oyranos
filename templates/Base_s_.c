@@ -56,40 +56,40 @@
 
   {% ifequal class.parent.name "oyStruct_s" %}
   /* ---- start of custom {{ class.baseName }} constructor ----- */
-  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.baseName|underscores|upper }}_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.baseName|underscores|upper }}_S, (oyPointer)s );
   /* ---- end of custom {{ class.baseName }} constructor ------- */
   {% endifequal %}
   {% ifequal class.parent.parent.name "oyStruct_s" %}
   /* ---- start of custom {{ class.parent.baseName }} constructor ----- */
-  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.parent.baseName|underscores|upper }}_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.parent.baseName|underscores|upper }}_S, (oyPointer)s );
   /* ---- end of custom {{ class.parent.baseName }} constructor ------- */
   /* ---- start of custom {{ class.baseName }} constructor ----- */
-  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.baseName|underscores|upper }}_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.baseName|underscores|upper }}_S, (oyPointer)s );
   /* ---- end of custom {{ class.baseName }} constructor ------- */
   {% endifequal %}
   {% ifequal class.parent.parent.parent.name "oyStruct_s" %}
   /* ---- start of custom {{ class.parent.parent.baseName }} constructor ----- */
-  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.parent.parent.baseName|underscores|upper }}_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.parent.parent.baseName|underscores|upper }}_S, (oyPointer)s );
   /* ---- end of custom {{ class.parent.parent.baseName }} constructor ------- */
   /* ---- start of custom {{ class.parent.baseName }} constructor ----- */
-  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.parent.baseName|underscores|upper }}_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.parent.baseName|underscores|upper }}_S, (oyPointer)s );
   /* ---- end of custom {{ class.parent.baseName }} constructor ------- */
   /* ---- start of custom {{ class.baseName }} constructor ----- */
-  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.baseName|underscores|upper }}_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.baseName|underscores|upper }}_S, (oyPointer)s );
   /* ---- end of custom {{ class.baseName }} constructor ------- */
   {% endifequal %}
   {% ifequal class.parent.parent.parent.parent.name "oyStruct_s" %}
   /* ---- start of custom {{ class.parent.parent.parent.baseName }} constructor ----- */
-  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.parent.parent.parent.baseName|underscores|upper }}_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.parent.parent.parent.baseName|underscores|upper }}_S, (oyPointer)s );
   /* ---- end of custom {{ class.parent.parent.parent.baseName }} constructor ------- */
   /* ---- start of custom {{ class.parent.parent.baseName }} constructor ----- */
-  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.parent.parent.baseName|underscores|upper }}_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.parent.parent.baseName|underscores|upper }}_S, (oyPointer)s );
   /* ---- end of custom {{ class.parent.parent.baseName }} constructor ------- */
   /* ---- start of custom {{ class.parent.baseName }} constructor ----- */
-  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.parent.baseName|underscores|upper }}_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.parent.baseName|underscores|upper }}_S, (oyPointer)s );
   /* ---- end of custom {{ class.parent.baseName }} constructor ------- */
   /* ---- start of custom {{ class.baseName }} constructor ----- */
-  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.baseName|underscores|upper }}_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_{{ class.baseName|underscores|upper }}_S, (oyPointer)s );
   /* ---- end of custom {{ class.baseName }} constructor ------- */
   {% endifequal %}
   /* ---- end of common object constructor ------- */
