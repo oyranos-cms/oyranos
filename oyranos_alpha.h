@@ -842,7 +842,6 @@ typedef struct oyCMMapi7_s oyCMMapi7_s;
 typedef struct oyCMMapi8_s oyCMMapi8_s;
 typedef struct oyCMMapi9_s oyCMMapi9_s;
 typedef struct oyCMMapi10_s oyCMMapi10_s;
-typedef struct oyCMMapiFilter_s oyCMMapiFilter_s;
 typedef struct oyFilterCore_s oyFilterCore_s;
 typedef struct oyFilterCores_s oyFilterCores_s;
 typedef struct oyFilterGraph_s oyFilterGraph_s;
