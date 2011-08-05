@@ -1,5 +1,5 @@
 /** @internal
- *  Function oyCMMapi4_selectFilter_
+ *  Function oyCMMapi4_SelectFilter_
  *  @brief   filter the desired api
  *  @memberof oyCMMapi_s_
  *
@@ -7,7 +7,7 @@
  *  @since   2008/12/16 (Oyranos: 0.1.9)
  *  @date    2008/12/16
  */
-oyOBJECT_e   oyCMMapi4_selectFilter_ ( oyCMMapi_s_       * api,
+oyOBJECT_e   oyCMMapi4_SelectFilter_ ( oyCMMapi_s_       * api,
                                        oyPointer           data )
 {
   oyOBJECT_e type = oyOBJECT_NONE,
