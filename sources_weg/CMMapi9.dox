@@ -3,7 +3,7 @@
  *  @extends oyCMMapiFilter_s
  *  @brief   Graph policies
  *  @internal
- *  
+ *
  *  The user visible Oyranos settings are subject to be applied to graphs.
  *  This module type provides an interface to check and verified a graph
  *  according to arbitrary policies in a automated fashion. 
@@ -20,4 +20,4 @@
  *  @version Oyranos: 0.1.10
  *  @since   2009/07/23 (Oyranos: 0.1.10)
  *  @date    2009/09/14
-  */
+ */
