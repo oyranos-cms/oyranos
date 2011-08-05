@@ -1877,17 +1877,6 @@ int              oyCMMCanHandle_    ( oyCMMapi3_s        * api,
   return capable;
 }
 
-/** @internal
- *
- *  @version Oyranos: 0.1.9
- *  @since   2008/12/16 (Oyranos: 0.1.9)
- *  @date    2008/12/16
- */
-typedef struct {
-  oyOBJECT_e type;
-  const char        * registration;
-} oyRegistrationData_s;
-
 static oyStructList_s * oy_meta_module_cache_ = 0;
 
 /** @internal
@@ -1979,47 +1968,6 @@ oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
 
   return api;
 }
-
-/** @internal
- *  Function oyCMMapi4_selectFilter_
- *  @brief   filter the desired api
- *
- *  @version Oyranos: 0.1.9
- *  @since   2008/12/16 (Oyranos: 0.1.9)
- *  @date    2008/12/16
- */
-oyOBJECT_e   oyCMMapi4_selectFilter_ ( oyCMMapi_s        * api,
-                                       oyPointer           data )
-{
-  oyOBJECT_e type = oyOBJECT_NONE,
-             searched = oyOBJECT_CMM_API4_S;
-  int error = !data || !api;
-  oyRegistrationData_s * reg_filter;
-  oyCMMapi4_s * cmm_api = (oyCMMapi4_s *) api;
-  int found = 0;
-
-  if(error <= 0)
-    reg_filter = (oyRegistrationData_s*) data;
-
-  if(error <= 0 &&
-     api->type == searched &&
-     reg_filter->type == searched)
-  {
-    if(reg_filter->registration)
-    {
-      if(oyFilterRegistrationMatch( cmm_api->registration,
-                                    reg_filter->registration, api->type ))
-        found = 1;
-    } else
-      found = 1;
-
-    if( found )
-      type = api->type;
-  }
-
-  return type;
-}
-
 
 /** @internal
  *  Function oyCMMsGetFilterApis_
