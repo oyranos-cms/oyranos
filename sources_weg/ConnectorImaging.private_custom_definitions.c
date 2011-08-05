@@ -48,6 +48,20 @@ void oyConnectorImaging_Release__Members( oyConnectorImaging_s_ * connectorimagi
  */
 int oyConnectorImaging_Init__Members( oyConnectorImaging_s_ * connectorimaging )
 {
+  connectorimaging->max_colour_offset = -1;
+  connectorimaging->min_channels_count = -1;
+  connectorimaging->max_channels_count = -1;
+  connectorimaging->min_colour_count = -1;
+  connectorimaging->max_colour_count = -1;
+  connectorimaging->can_planar = -1;
+  connectorimaging->can_interwoven = -1;
+  connectorimaging->can_swap = -1;
+  connectorimaging->can_swap_bytes = -1;
+  connectorimaging->can_revert = -1;
+  connectorimaging->can_premultiplied_alpha = -1;
+  connectorimaging->can_nonpremultiplied_alpha = -1;
+  connectorimaging->can_subpixel = -1;
+
   return 0;
 }
 
