@@ -28,6 +28,15 @@ void oyConnectorImaging_Release__Members( oyConnectorImaging_s_ * connectorimagi
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( connectorimaging->member );
      */
+    if(connectorimaging->data_types)
+      deallocateFunc( connectorimaging->data_types );
+    connectorimaging->data_types = 0;
+    connectorimaging->data_types_n = 0;
+
+    if(connectorimaging->channel_types)
+      deallocateFunc( connectorimaging->channel_types );
+    connectorimaging->channel_types = 0;
+    connectorimaging->channel_types_n = 0;
   }
 }
 
