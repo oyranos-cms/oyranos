@@ -165,7 +165,7 @@
   if(!{{ class.baseName|lower }} || !object)
     return s;
 
-  s = {% block altConstructor %}oy{{ class.baseName }}_New_( object );{% endblock %}
+  s = {% block altConstructor %}({{ class.privName }}*) oy{{ class.baseName }}_New( object );{% endblock %}
   error = !s;
 
   if(!error) {
