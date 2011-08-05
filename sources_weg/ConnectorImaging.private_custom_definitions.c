@@ -94,6 +94,45 @@ int oyConnectorImaging_Copy__Members( oyConnectorImaging_s_ * dst, oyConnectorIm
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
+  if(src->data_types_n)
+  {
+    dst->data_types = allocateFunc_( src->data_types_n * sizeof(oyDATATYPE_e) );
+    error = !dst->data_types;
+    if(!error)
+      error = !memcpy( dst->data_types, src->data_types,
+                       src->data_types_n * sizeof(oyDATATYPE_e) );
+    if(error <= 0)
+      dst->data_types_n = src->data_types_n;
+  }
+
+  dst->max_colour_offset = src->max_colour_offset;
+  dst->min_channels_count = src->min_channels_count;
+  dst->max_channels_count = src->max_channels_count;
+  dst->min_colour_count = src->min_colour_count;
+  dst->max_colour_count = src->max_colour_count;
+  dst->can_planar = src->can_planar;
+  dst->can_interwoven = src->can_interwoven;
+  dst->can_swap = src->can_swap;
+  dst->can_swap_bytes = src->can_swap_bytes;
+  dst->can_revert = src->can_revert;
+  dst->can_premultiplied_alpha = src->can_premultiplied_alpha;
+  dst->can_nonpremultiplied_alpha = src->can_nonpremultiplied_alpha;
+  dst->can_subpixel = src->can_subpixel;
+
+  if(src->channel_types_n)
+  {
+    int n = src->channel_types_n;
+
+    dst->channel_types = allocateFunc_( n * sizeof(oyCHANNELTYPE_e) );
+    error = !dst->channel_types;
+    if(!error)
+      error = !memcpy( dst->channel_types, src->channel_types,
+                       n * sizeof(oyCHANNELTYPE_e) );
+    if(error <= 0)
+      dst->channel_types_n = n;
+  }
+
+  dst->is_mandatory = src->is_mandatory;
 
   return error;
 }
