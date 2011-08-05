@@ -842,7 +842,6 @@ typedef struct oyFilterGraph_s oyFilterGraph_s;
 typedef struct oyFilterNode_s oyFilterNode_s;
 typedef struct oyFilterNodes_s oyFilterNodes_s;
 typedef struct oyConnector_s oyConnector_s;
-typedef struct oyConnectorImaging_s oyConnectorImaging_s;
 typedef struct oyFilterPlug_s oyFilterPlug_s;
 typedef struct oyFilterPlugs_s oyFilterPlugs_s;
 typedef struct oyFilterSocket_s oyFilterSocket_s;
