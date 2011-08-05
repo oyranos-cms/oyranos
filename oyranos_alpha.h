@@ -836,7 +836,6 @@ oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image );
 
 
 
-typedef struct oyCMMapi10_s oyCMMapi10_s;
 typedef struct oyFilterCore_s oyFilterCore_s;
 typedef struct oyFilterCores_s oyFilterCores_s;
 typedef struct oyFilterGraph_s oyFilterGraph_s;
