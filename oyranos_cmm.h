@@ -118,26 +118,6 @@ typedef oyWIDGET_EVENT_e   (*oyWidgetEvent_f)
 /* -------------------------------------------------------------------------*/
 typedef struct oyCMMapi5_s oyCMMapi5_s;
 
-/** typedef  oyCMMuiGet_f
- *  @brief   obtain a XFORMS ui description
- *  @ingroup module_api
- *
- *  The structures can provide a XFORMS ui based on the modules own
- *  set of options. The options are in the property of the caller.
- *
- *  @param[in]     options             the options to display
- *  @param[out]    ui_text             the XFORMS string
- *  @param[in]     allocateFunc        user allocator
- *  @return                            0 on success; error >= 1; -1 not understood; unknown < -1
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/18 (Oyranos: 0.1.10)
- *  @date    2009/01/18
- */
-typedef int  (*oyCMMuiGet_f)         ( oyOptions_s        * options,
-                                       char              ** ui_text,
-                                       oyAlloc_f            allocateFunc );
-
 /** @struct  oyConnectorImaging_s
  *  @brief   node connection descriptor
  *  @ingroup objects_conversion
@@ -236,57 +216,6 @@ OYAPI oyConnectorImaging_s * OYEXPORT
 OYAPI int  OYEXPORT
                  oyConnectorImaging_Release ( 
                                        oyConnectorImaging_s**list );
-
-/** @struct  oyCMMui_s
- *  @brief   the CMM API UI part
- *  @ingroup module_api
- *  @extends oyStruct_s
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/09/06 (Oyranos: 0.1.10)
- *  @date    2009/12/17
- */
-typedef struct {
-  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_DATA_TYPES_S */
-  oyPointer        dummya;             /**< keep to zero */
-  oyPointer        dummyb;             /**< keep to zero */
-  oyPointer        dummyc;             /**< keep to zero */
-
-  /** 0: major - should be stable for the live time of a filters UI, \n
-      1: minor - mark new features, \n
-      2: patch version - correct errors */
-  int32_t          version[3];
-
-  /** 0: last major Oyranos version during development time, e.g. 0
-   *  1: last minor Oyranos version during development time, e.g. 0
-   *  2: last Oyranos patch version during development time, e.g. 10
-   */
-  int32_t          module_api[3];
-
-  /** check options for validy and correct */
-  oyCMMFilter_ValidateOptions_f    oyCMMFilter_ValidateOptions;
-  oyWidgetEvent_f                  oyWidget_Event; /**< handle widget events */
-
-  const char     * category;           /**< menu structure */
-  const char     * options;            /**< default options as Elektra/XFORMS 
-                                        *   compatible XML */
-  oyCMMuiGet_f     oyCMMuiGet;         /**< xml ui elements for filter options*/
-
-  oyCMMGetText_f   getText;            /**< translated UI texts */
-  /** zero terminated categories for getText,
-   *  e.g. {"name","category","help",0}
-   *
-   *  The "name" texts shall include information about the module.
-   *  The "category" gives in oyNAME_NAME a translated version of
-   *  oyCMMui_s::category.
-   *  The "help" texts should provide general infromations about the module.
-   *
-   *  The oyNAME_NICK for the several oyCMMui_s::getText() texts is typical not
-   *  translated. For "name" the oyNAME_NICK should be the module name. For 
-   *  other texts like "help" and "category" oyNAME_NICK makes no sense.
-   */
-  const char    ** texts;
-} oyCMMui_s;
 
 /* implemented filter functions */
 int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
