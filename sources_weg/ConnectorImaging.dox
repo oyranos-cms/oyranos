@@ -1,0 +1,17 @@
+/** @struct  oyConnectorImaging_s
+ *  @ingroup objects_conversion
+ *  @extends oyConnector_s
+ *  @brief   Node connection descriptor
+ *
+ *  This structure holds informations about the connection capabilities.
+ *  It holds common structure members of oyFilterPlug_s and oyFilterSocket_s.
+ *
+ *  To signal a value is not initialised or does not apply, set the according
+ *  integer value to -1.
+ *
+ *  @todo generalise the connector properties
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/07/26 (Oyranos: 0.1.8)
+ *  @date    2010/06/25
+ */
