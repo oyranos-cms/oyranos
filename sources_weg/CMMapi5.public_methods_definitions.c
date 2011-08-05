@@ -1,7 +1,6 @@
-/** Function oyFilterSocket_MatchImagingPlug
- *  @brief   verify connectors matching each other
- *  @ingroup module_api
+/** Function  oyFilterSocket_MatchImagingPlug
  *  @memberof oyCMMapi5_s
+ *  @brief    Verify connectors matching each other
  *
  *  @param         socket              a filter socket
  *  @param         plug                a filter plug
@@ -16,24 +15,29 @@ int          oyFilterSocket_MatchImagingPlug (
                                        oyFilterPlug_s    * plug )
 {
   int match = 0;
-  oyConnectorImaging_s * a = 0,  * b = 0;
-  oyImage_s * image = 0;
+  oyConnectorImaging_s_ * a = 0, * b = 0;
+  oyImage_s_ * image = 0;
   int colours_n = 0, n, i, j;
   int coff = 0;
   oyDATATYPE_e data_type = 0;
 
-  if(socket && socket->type_ == oyOBJECT_FILTER_SOCKET_S &&
-     socket->pattern && socket->pattern->type_ == oyOBJECT_CONNECTOR_IMAGING_S)
-    a = (oyConnectorImaging_s*)socket->pattern;
+  oyFilterPlug_s_ ** plug_ = &(oyFilterPlug_s_*)plug;
+  oyFilterSocket_s_ ** socket_ = &(oyFilterSocket_s_*)socket;
+
+  if(socket &&
+     socket->type_ == oyOBJECT_FILTER_SOCKET_S &&
+     (*socket_)->pattern &&
+     (*socket_)->pattern->type_ == oyOBJECT_CONNECTOR_IMAGING_S)
+    a = (oyConnectorImaging_s_*) (*socket_)->pattern;
 
   if(plug && plug->type_ == oyOBJECT_FILTER_PLUG_S &&
-     plug->pattern && plug->pattern->type_ == oyOBJECT_CONNECTOR_IMAGING_S)
-    b = (oyConnectorImaging_s*) plug->pattern;
+     (*plug_)->pattern && (*plug_)->pattern->type_ == oyOBJECT_CONNECTOR_IMAGING_S)
+    b = (oyConnectorImaging_s_*) (*plug_)->pattern;
 
   if(a && b)
   {
     match = 1;
-    image = oyImage_Copy( (oyImage_s*)socket->data, 0 );
+    image = (oyImage_s_*) oyImage_Copy( (oyImage_s*)(*socket_)->data, 0 );
 
     if(!b->is_plug)
       match = 0;
@@ -103,8 +107,8 @@ int          oyFilterSocket_MatchImagingPlug (
     }
   }
 
-  oyImage_Release( &image );
-  oyConnectorImaging_Release( &a );
+  oyImage_Release( &(oyImage_s*)image );
+  oyConnectorImaging_Release( &(oyConnectorImaging_s*)a );
 
   return match;
 }
