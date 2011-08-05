@@ -114,47 +114,6 @@ typedef oyWIDGET_EVENT_e   (*oyWidgetEvent_f)
                                      ( oyOptions_s       * options,
                                        oyWIDGET_EVENT_e    type,
                                        oyStruct_s        * event );
-/** @struct  oyCMMapi_s
- *  @brief   the basic API interface
- *  @ingroup module_api
- *  @extends oyStruct_s
- *
- *  The registration should provide keywords for selection.
- *  The api5_ member is missed for oyCMMapi5_s.
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/16 (Oyranos: 0.1.10)
- *  @date    2009/01/16
- */
-struct oyCMMapi_s {
-  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API7_S */
-  oyPointer        dummya;             /**< keep to zero */
-  oyPointer        dummyb;             /**< keep to zero */
-  oyPointer        dummyc;             /**< keep to zero */
-  oyCMMapi_s     * next;               /**< the next CMM api */
-
-  oyCMMInit_f      oyCMMInit;          /**< */
-  oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
-
-  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
-      see as well @ref registration */
-  const char     * registration;
-
-  /** 0: major - should be stable for the live time of a filter, \n
-      1: minor - mark new features, \n
-      2: patch version - correct errors */
-  int32_t          version[3];
-
-  /** 0: last major Oyranos version during development time, e.g. 0
-   *  1: last minor Oyranos version during development time, e.g. 0
-   *  2: last Oyranos patch version during development time, e.g. 10
-   */
-  int32_t          module_api[3];
-
-  char           * id_;                /**< @private Oyranos id; keep to zero */
-};
-
-
 
 /**
  *  typedef oyCMMProfileTag_GetValues_f

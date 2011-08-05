@@ -1984,9 +1984,6 @@ struct oyIcon_s {
   char           * file_list;          /*!< colon ':' delimited list of icon file names, SVG, PNG */
 };
 
-typedef struct oyCMMapi_s oyCMMapi_s;
-
-
 /** @brief   the CMM API resources struct to implement and set by a CMM
  *  @ingroup cmm_handling
  *  @extends oyStruct_s
