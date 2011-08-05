@@ -115,68 +115,6 @@ typedef oyWIDGET_EVENT_e   (*oyWidgetEvent_f)
                                        oyWIDGET_EVENT_e    type,
                                        oyStruct_s        * event );
 
-/**
- *  typedef oyCMMProfileTag_GetValues_f
- *  @memberof oyCMMapi3_s
- */
-typedef oyStructList_s *    (*oyCMMProfileTag_GetValues_f) (
-                                       oyProfileTag_s    * tag );
-/**
- *  typedef oyCMMProfileTag_Create_f
- *  @memberof oyCMMapi3_s
- */
-typedef int                 (*oyCMMProfileTag_Create_f) ( 
-                                       oyProfileTag_s    * tag,
-                                       oyStructList_s    * list,
-                                       icTagTypeSignature  tag_type,
-                                       uint32_t            version );
-
-/** @struct  oyCMMapi3_s
- *  @brief   the API 3 to implement and set to provide low level ICC profile
- *           support
- *  @ingroup module_api
- *  @extends oyCMMapi_s
- *
- *  This API provides weak interface compile time checking.
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/01/02 (Oyranos: 0.1.8)
- *  @date    2008/01/02
- */
-typedef struct {
-  oyOBJECT_e       type;               /**< struct type oyOBJECT_CMM_API3_S */
-  oyPointer        dummya;             /**< keep to zero */
-  oyPointer        dummyb;             /**< keep to zero */
-  oyPointer        dummyc;             /**< keep to zero */
-  oyCMMapi_s     * next;
-
-  oyCMMInit_f      oyCMMInit;          /**< */
-  oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
-
-  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
-      see as well @ref registration */
-  const char     * registration;
-
-  /** 0: major - should be stable for the live time of a filter, \n
-      1: minor - mark new features, \n
-      2: patch version - correct errors */
-  int32_t          version[3];
-
-  /** 0: last major Oyranos version during development time, e.g. 0
-   *  1: last minor Oyranos version during development time, e.g. 0
-   *  2: last Oyranos patch version during development time, e.g. 10
-   */
-  int32_t          module_api[3];
-
-  char           * id_;                /**< @private Oyranos id; keep to zero */
-
-  oyCMMCanHandle_f oyCMMCanHandle;     /**< */
-
-  oyCMMProfileTag_GetValues_f oyCMMProfileTag_GetValues; /**< @memberof oyCMMapi3_s */
-  oyCMMProfileTag_Create_f oyCMMProfileTag_Create; /**< @memberof oyCMMapi3_s */
-} oyCMMapi3_s;
-
-
 /* -------------------------------------------------------------------------*/
 typedef struct oyCMMapi5_s oyCMMapi5_s;
 
