@@ -858,7 +858,6 @@ typedef struct oyNamedColour_s oyNamedColour_s;
 typedef struct oyNamedColours_s oyNamedColours_s;
 typedef struct oyIcon_s oyIcon_s;
 typedef struct oyCMMInfo_s oyCMMInfo_s;
-typedef struct oyCMMapiFilters_s oyCMMapiFilters_s;
 typedef struct oyCMMapis_s oyCMMapis_s;
 typedef struct oyUiHandler_s oyUiHandler_s;
 
@@ -2040,50 +2039,6 @@ OYAPI oyCMMInfo_s * OYEXPORT
                                        oyObject_s          object);
 OYAPI int  OYEXPORT
                  oyCMMInfo_Release   ( oyCMMInfo_s      ** obj );
-
-
-
-/** @struct  oyCMMapiFilters_s
- *  @brief   a CMMapiFilters list
- *  @extends oyStruct_s
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/30 (Oyranos: 0.1.10)
- *  @date    2009/01/30
- */
-struct oyCMMapiFilters_s {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CMM_API_FILTERS_S */ 
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
-
-  oyStructList_s     * list_;          /**< the list data */
-};
-
-OYAPI oyCMMapiFilters_s * OYEXPORT
-                 oyCMMapiFilters_New ( oyObject_s          object );
-OYAPI oyCMMapiFilters_s * OYEXPORT
-                 oyCMMapiFilters_Copy( oyCMMapiFilters_s * list,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-                 oyCMMapiFilters_Release (
-                                       oyCMMapiFilters_s** list );
-
-
-OYAPI int  OYEXPORT
-                 oyCMMapiFilters_MoveIn (
-                                       oyCMMapiFilters_s * list,
-                                       oyCMMapiFilter_s ** ptr,
-                                       int                 pos );
-OYAPI int  OYEXPORT
-                 oyCMMapiFilters_ReleaseAt (
-                                       oyCMMapiFilters_s * list,
-                                       int                 pos );
-OYAPI oyCMMapiFilter_s * OYEXPORT
-                 oyCMMapiFilters_Get ( oyCMMapiFilters_s * list,
-                                       int                 pos );
-OYAPI int  OYEXPORT
-                 oyCMMapiFilters_Count(oyCMMapiFilters_s * list );
 
 /** @struct  oyCMMapis_s
  *  @brief   a CMMapis list
