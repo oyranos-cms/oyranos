@@ -59,6 +59,7 @@ OYAPI int  OYEXPORT
   return 0;
 }
 
+#ifdef UNHIDE_FILTERSOCKET
 /** Function  oyFilterSocket_SignalToGraph
  *  @memberof oyFilterSocket_s
  *  @brief    Send a signal through the graph
@@ -149,3 +150,4 @@ OYAPI int  OYEXPORT
 
   return handled;
 }
+#endif /*UNHIDE_FILTERSOCKET*/
