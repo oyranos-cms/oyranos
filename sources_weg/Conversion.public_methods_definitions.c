@@ -609,9 +609,9 @@ int                oyConversion_Set  ( oyConversion_s    * conversion,
   return error;
 }
 
-/** Function: oyConversion_ToText
+/** Function  oyConversion_ToText
  *  @memberof oyConversion_s
- *  @brief   text description of a conversion graph
+ *  @brief    Text description of a conversion graph
  *
  *  @todo Should this function generate XFORMS compatible output? How?
  *
@@ -631,17 +631,17 @@ char             * oyConversion_ToText (
                                        int                 reserved,
                                        oyAlloc_f           allocateFunc )
 {
-  oyConversion_s * s = conversion;
+  oyConversion_s_ * s = conversion;
   char * text = 0;
   oyFilterGraph_s * adjacency_list = 0;
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 0 )
 
   adjacency_list = oyFilterGraph_New( 0 );
-  oyFilterGraph_SetFromNode( adjacency_list, conversion->input, 0, 0 );
+  oyFilterGraph_SetFromNode( adjacency_list, s->input, 0, 0 );
 
   text = oyFilterGraph_ToText( adjacency_list,
-                               conversion->input, conversion->out_,
+                               s->input, s->out_,
                                head_line, reserved, allocateFunc );
 
   oyFilterGraph_Release( &adjacency_list );
