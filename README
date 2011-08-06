@@ -35,11 +35,11 @@ Dependencies:
     locales
     build-essential
     libxml2-dev
-    elektra-0.7.0 - included
+    elektra-0.7.0 - included (ubuntu: libelektra-dev)
 
     pkg-config
     gettext
-    fltk1.1-dev (ubuntu8.10: libfltk1.1-dev)
+    fltk1.1-dev (ubuntu: libfltk1.1-dev)
     libpng12-dev
     liblcms1-dev
     libcairo2-dev
