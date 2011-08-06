@@ -8,9 +8,10 @@
 
 {% block GlobalIncludeFiles %}{% endblock %}  
 #include <oyranos_object.h>
-{% block LocalIncludeFiles %}{% endblock %}
 
 typedef struct {{ class.name }} {{ class.name }};
+{% block LocalIncludeFiles %}{% endblock %}
+
 /* Include "{{ class.public_h }}" { */
 {% include class.public_h %}
 /* } Include "{{ class.public_h }}" */
