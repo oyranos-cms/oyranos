@@ -348,9 +348,9 @@ oyFilterNode_s   * oyConversion_GetNode (
   return node;
 }
 
-/** Function oyConversion_GetOnePixel
+/** Function  oyConversion_GetOnePixel
  *  @memberof oyConversion_s
- *  @brief   compute one pixel at the given position
+ *  @brief    Compute one pixel at the given position
  *
  *  @param[in,out] conversion          conversion object
  *  @param[in]     x                   position x
@@ -372,14 +372,14 @@ int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
   int error = 0;
 
   /* conversion->out_ has to be linear, so we access only the first socket */
-  plug = oyFilterNode_GetPlug( conversion->out_, 0 );
-  sock = plug->remote_socket_;
+  plug = oyFilterNode_GetPlug( oyConversionPriv_m(conversion)->out_, 0 );
+  sock = oyFilterPlugPriv_m(plug)->remote_socket_;
 
-  pixel_access->start_xy[0] = x;
-  pixel_access->start_xy[1] = y;
+  oyPixelAccessPriv_m(pixel_access)->start_xy[0] = x;
+  oyPixelAccessPriv_m(pixel_access)->start_xy[1] = y;
 
   /* @todo */
-  error = sock->node->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
+  error = oyFilterSocketPriv_m(sock)->node->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
 
   return error;
 }
