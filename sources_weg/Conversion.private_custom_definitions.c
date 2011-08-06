@@ -80,6 +80,7 @@ int oyConversion_Copy__Members( oyConversion_s_ * dst, oyConversion_s_ * src)
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
+  dst->input = oyFilterNode_Copy( src->input, dst->oy_ );
 
   return error;
 }
