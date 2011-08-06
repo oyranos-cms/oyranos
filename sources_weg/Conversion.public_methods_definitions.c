@@ -578,9 +578,9 @@ int                oyConversion_RunPixels (
   return error;
 }
 
-/** Function oyConversion_Set
+/** Function  oyConversion_Set
  *  @memberof oyConversion_s
- *  @brief   set input and output of a conversion graph
+ *  @brief    Set input and output of a conversion graph
  *
  *  @param[in,out] conversion          conversion object
  *  @param[in]     input               input node
@@ -595,7 +595,7 @@ int                oyConversion_Set  ( oyConversion_s    * conversion,
                                        oyFilterNode_s    * input,
                                        oyFilterNode_s    * output )
 {
-  oyConversion_s * s = conversion;
+  oyConversion_s_ * s = (oyConversion_s_*)conversion;
   int error = 0;
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
