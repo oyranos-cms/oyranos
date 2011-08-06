@@ -20,6 +20,8 @@ void oyConversion_Release__Members( oyConversion_s_ * conversion )
   /* Deallocate members here
    * E.g: oyXXX_Release( &conversion->member );
    */
+  oyFilterNode_Release( &conversion->input );
+  oyFilterNode_Release( &conversion->out_ );
 
   if(conversion->oy_->deallocateFunc_)
   {
