@@ -1,0 +1,89 @@
+/** @struct  oyImage_s
+ *  @ingroup objects_image
+ *  @extends oyStruct_s
+ *  @brief   A reference struct to gather information for image transformation
+ *
+ *  as we dont target a complete imaging solution, only raster is supported
+ *
+ *  Resolution is in pixel per centimeter.
+ *
+ *  Requirements: \n
+ *  - to provide a view on the image data we look at per line arrays
+ *  - it should be possible to echange the to be processed data without altering
+ *    the context
+ *  - oyImage_s should hold image dimensions,
+ *  - display rectangle information and
+ *  - a reference to the data for conversion
+ *
+ *  To set a image data module use oyImage_DataSet().
+ *  \dot
+ digraph oyImage_s {
+  bgcolor="transparent";
+  nodesep=.1;
+  ranksep=1.;
+  rankdir=LR;
+  graph [fontname=Helvetica, fontsize=12];
+  node [shape=record,fontname=Helvetica, fontsize=10, width=.1];
+
+  subgraph cluster_3 {
+    label="oyImage_s data modules";
+    color=white;
+    clusterrank=global;
+
+      i [ label="... | <0>oyStruct_s * pixel | <1> oyImage_GetPoint_f getPoint | <2>oyImage_GetLine_f getLine | <3>oyImage_GetTile_f getTile | ..."];
+
+      node [width = 2.5, style=filled];
+      pixel_A [label="oyArray2d_s arrayA"];
+      gp_p_A [label="Array2d_GetPointA"];
+      gp_l_A [label="Array2d_GetLineA"];
+      gp_t_A [label="Array2d_GetTileA"];
+
+      pixel_B [label="mmap arrayB"];
+      gp_p_B [label="mmap_GetPointB"];
+      gp_l_B [label="mmap_GetLineB"];
+      gp_t_B [label="mmap_GetTileB"];
+
+      subgraph cluster_0 {
+        rank=max;
+        color=red;
+        style=dashed;
+        node [style="filled"];
+        pixel_A; gp_p_A; gp_l_A; gp_t_A;
+        //pixel_A -> gp_p_A -> gp_l_A -> gp_t_A [color=white, arrowhead=none, dirtype=none];
+        label="module A";
+      }
+
+      subgraph cluster_1 {
+        color=blue;
+        style=dashed;
+        node [style="filled"];
+        pixel_B; gp_p_B; gp_l_B; gp_t_B;
+        label="module B";
+      }
+
+      subgraph cluster_2 {
+        color=gray;
+        node [style="filled"];
+        i;
+        label="oyImage_s";
+        URL="structoyImage__s.html";
+      }
+
+      i:0 -> pixel_A [arrowhead="open", color=red];
+      i:1 -> gp_p_A [arrowhead="open", color=red];
+      i:2 -> gp_l_A [arrowhead="open", color=red];
+      i:3 -> gp_t_A [arrowhead="open", color=red];
+      i:0 -> pixel_B [arrowhead="open", color=blue];
+      i:1 -> gp_p_B [arrowhead="open", color=blue];
+      i:2 -> gp_l_B [arrowhead="open", color=blue];
+      i:3 -> gp_t_B [arrowhead="open", color=blue];
+  }
+ }
+ \enddot
+ *
+ *  Should oyImage_s become internal and we provide a user interface?
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
