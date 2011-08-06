@@ -1,12 +1,12 @@
 /** @internal
- *  @brief   convert between oyCMMptr_s data
+ *  @brief   convert between oyPointer_s data
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/28 (Oyranos: 0.1.10)
  *  @date    2008/12/28
  */
-int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
-                                       oyCMMptr_s        * cmm_ptr_out,
+int          oyCMMptr_ConvertData    ( oyPointer_s       * cmm_ptr,
+                                       oyPointer_s       * cmm_ptr_out,
                                        oyFilterNode_s    * node )
 {
   int error = !cmm_ptr || !cmm_ptr_out;

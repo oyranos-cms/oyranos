@@ -1,5 +1,5 @@
-int          oyCMMptr_ConvertData    ( oyCMMptr_s        * cmm_ptr,
-                                       oyCMMptr_s        * cmm_ptr_out,
+int          oyCMMptr_ConvertData    ( oyPointer_s       * cmm_ptr,
+                                       oyPointer_s       * cmm_ptr_out,
                                        oyFilterNode_s    * node );
 int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
                                        const char        * socket_nick,

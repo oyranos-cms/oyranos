@@ -10,6 +10,6 @@
  *  @since   2008/12/27 (Oyranos: 0.1.10)
  *  @date    2008/12/27
  */
-typedef int(*oyCMMdata_Convert_f)    ( oyCMMptr_s        * data_in,
-                                       oyCMMptr_s        * data_out,
+typedef int(*oyCMMdata_Convert_f)    ( oyPointer_s       * data_in,
+                                       oyPointer_s       * data_out,
                                        oyFilterNode_s    * node );
