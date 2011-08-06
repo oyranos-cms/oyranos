@@ -1,0 +1,127 @@
+/** @struct  oyConversion_s
+ *  @ingroup objects_conversion
+ *  @extends oyStruct_s
+ *  @brief   A filter chain or graph to manipulate a image
+ *
+ *  Order of filters matters.
+ *  The processing direction is a bit like raytracing as nodes request their
+ *  parent.
+ *
+ *  The graph is allowed to be a directed graph without cycles.
+ \dot
+digraph G {
+  bgcolor="transparent";
+  rankdir=LR
+  graph [fontname=Helvetica, fontsize=12];
+  node [shape=record, fontname=Helvetica, fontsize=10, style="filled,rounded"];
+  edge [fontname=Helvetica, fontsize=10];
+
+  a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
+  b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
+
+  subgraph cluster_0 {
+    label="Oyranos Filter Graph";
+    color=gray;
+
+    a:socket -> b:plug [arrowtail=normal, arrowhead=none, label=request];
+    b:socket -> d:plug [arrowtail=normal, arrowhead=none, label=request];
+    a:socket -> c:plug [arrowtail=normal, arrowhead=none, label=request];
+    c:socket -> d:plug [arrowtail=normal, arrowhead=none, label=request];
+  }
+}
+ \enddot
+ *  oyConversion_s shall provide access to the graph and help in processing
+ *  and managing nodes.\n
+ \dot
+digraph G {
+  bgcolor="transparent";
+  rankdir=LR
+  graph [fontname=Helvetica, fontsize=12];
+  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
+  edge [fontname=Helvetica, fontsize=10];
+
+  conversion [shape=plaintext, label=<
+<table border="0" cellborder="1" cellspacing="0" bgcolor="lightgray">
+  <tr><td>oyConversion_s</td></tr>
+  <tr><td>
+     <table border="0" cellborder="0" align="left">
+       <tr><td align="left">...</td></tr>
+       <tr><td align="left" port="in">+input</td></tr>
+       <tr><td align="left" port="out">+out_</td></tr>
+       <tr><td align="left">...</td></tr>
+     </table>
+     </td></tr>
+  <tr><td> </td></tr>
+</table>>,
+                    style=""];
+
+  a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
+  b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
+
+  subgraph cluster_0 {
+    label="oyConversion_s with attached Filter Graph";
+    color=gray;
+
+    a:socket -> b:plug [arrowtail=normal];
+    b:socket -> d:plug [arrowtail=normal];
+    a:socket -> c:plug [arrowtail=normal];
+    c:socket -> d:plug [arrowtail=normal];
+
+    conversion:in -> a;
+    conversion:out -> d;
+  }
+
+  conversion
+}
+ \enddot
+ *  \b Creating \b Graphs: \n
+ *  Most simple is to use the oyConversion_CreateBasicPixles() function to 
+ *  create a profile to profile and possible image buffer to image buffer linear
+ *  graph.\n
+ *  The other possibility is to create a non linear graph. The input member can
+ *  be accessed for this directly.
+ *
+ *  While it would be possible to have several open ends in a graph, there
+ *  are two endpoints considered as special. The input member prepresents the
+ *  top most required node to be provided in a oyConversion_s graph. The
+ *  input node is accessible for user manipulation. The other one is the out_
+ *  member. It is the closing node in the graph. It will be set by Oyranos
+ *  during closing the graph, e.g. in oyConversion_LinOutputAdd().
+ *
+ *  \b Using \b Graphs: \n
+ *  To obtain the data the oyConversion_GetNextPixel() and
+ *  oyConversion_GetOnePixel() functions are available.
+ \dot
+digraph G {
+  bgcolor="transparent";
+  rankdir=LR
+  graph [fontname=Helvetica, fontsize=12];
+  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
+  edge [fontname=Helvetica, fontsize=12];
+
+  a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
+  b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
+  app [ label="application", style=filled ]
+
+  subgraph cluster_0 {
+    label="Data Flow";
+    color=gray;
+    a:socket -> b:plug [label=data];
+    b:socket -> d:plug [label=data];
+    a:socket -> c:plug [label=data];
+    c:socket -> d:plug [label=data];
+    d:socket -> app [label=<<table  border="0" cellborder="0"><tr><td>return of<br/>oyConversion_GetNextPixel()</td></tr></table>>];
+  }
+}
+ \enddot
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/08 (Oyranos: 0.1.8)
+ *  @date    2008/06/08
+ */
