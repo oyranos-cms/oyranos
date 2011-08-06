@@ -72,18 +72,6 @@ int              oyCMMlibMatchesCMM  ( const char        * lib_name,
 void               oyCMMdeallocateFunc(oyPointer           mem );*/
 
 
-/**  @ingroup module_api */
-typedef enum {
-  oyWIDGET_OK,
-  oyWIDGET_CORRUPTED,
-  oyWIDGET_REDRAW,
-  oyWIDGET_HIDE,
-  oyWIDGET_SHOW,
-  oyWIDGET_ACTIVATE,
-  oyWIDGET_DEACTIVATE,
-  oyWIDGET_UNDEFINED
-} oyWIDGET_EVENT_e;
-
 /** typedef  oyCMMFilter_ValidateOptions_f
  *  @brief    a function to check and validate options
  *  @ingroup  module_api

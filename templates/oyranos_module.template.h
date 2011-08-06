@@ -87,6 +87,20 @@ typedef oyOptions_s * (*oyCMMFilter_ValidateOptions_f)
                                        int                 statical,
                                        uint32_t          * result );
 
+/** @typedef oyWIDGET_EVENT_e
+ *  @ingroup module_api
+ */
+typedef enum {
+  oyWIDGET_OK,
+  oyWIDGET_CORRUPTED,
+  oyWIDGET_REDRAW,
+  oyWIDGET_HIDE,
+  oyWIDGET_SHOW,
+  oyWIDGET_ACTIVATE,
+  oyWIDGET_DEACTIVATE,
+  oyWIDGET_UNDEFINED
+} oyWIDGET_EVENT_e;
+
 /** @typedef  oyWidgetEvent_f
  *  @ingroup  module_api
  */
