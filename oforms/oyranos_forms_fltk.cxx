@@ -157,6 +157,7 @@ int        oyXML2XFORMsFLTKSelect1Handler (
              * label,
              * value,
              * xpath = 0;
+  char * default_string = 0;
   oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
   int print = forms_args ? forms_args->print : 1;
   int error = 0;
@@ -281,6 +282,10 @@ int        oyXML2XFORMsFLTKSelect1Handler (
                       fltkCallback,
                       (void*)cb_data, 0 );
               if(string) free(string); string = 0;
+
+              if(is_default)
+                error = oyIconvGet( label, (void**)&default_string, &len,
+                                  "UTF-8", fl_i18n_codeset, malloc );
             }
 
             ++choices_n;
@@ -289,12 +294,17 @@ int        oyXML2XFORMsFLTKSelect1Handler (
       }
       select1 = select1->next;
     }
+
+    if(default_string && default_pos >= 0)
+    {
+      c->value( c->find_item( (char*)default_string ) );
+      free( default_string ); default_string = 0;
+    } else
+      c->value( -1 );
   }
 
   pack->end();
   pack->resizable( box );
-  if(default_pos >= 0)
-    c->value( default_pos );
 
   /* collect results */
   if(xpath && forms_args)
