@@ -15,9 +15,10 @@ function usage() {
 }
 
 case $1 in
-  -f) FULL=1 ;;
   -h) usage ;;
-  *)  FULL=0 ;;
+  -f) FUNC=1 ;;
+  -b) FUNC=2 ;;
+  *)  FUNC=0 ;;
 esac
 
 function grp_color() {
@@ -71,6 +72,22 @@ function publicAPI() {
   tput sgr0
 }
 
+function builtPublic() {
+  PUBLIC="API_generated/CMakeFiles/oyranos_object.dir/oy$1_s.c.o"
+  test -f $PUBLIC && c=2 || c=1
+  tput setaf $c
+  echo -n Public
+  tput sgr0
+}
+
+function builtPrivate() {
+  PRIVATE="API_generated/CMakeFiles/oyranos_object.dir/oy$1_s_.c.o"
+  test -f $PRIVATE && c=2 || c=1
+  tput setaf $c
+  echo -n Private
+  tput sgr0
+}
+
 function print_full_list() {
   for d in sources/*dox sources_weg/*dox; do
     GROUP=$(grep '@ingroup' $d | awk '{print $3}')
@@ -106,10 +123,27 @@ function print_list() {
   done
 }
 
-if [ $FULL = 1 ]; then
-  print_full_list | sort
-else
-  print_list | sort
-fi
+function print_build_list() {
+  for d in sources/*dox sources_weg/*dox; do
+    GROUP=$(grep '@ingroup' $d | awk '{print $3}')
+    CLASS=$(basename $d .dox)
+    test $CLASS = "Class" && continue
+    grp_color $GROUP
+    tput setaf $COLOR
+    echo -n $GROUP
+    tput sgr0
+    echo -en ": $CLASS\t\t\t["
+    builtPublic $CLASS
+    echo -n '|'
+    builtPrivate $CLASS
+    echo ']'
+  done
+}
+
+case $FUNC in
+  '0') print_list | sort ;;
+  '1') print_full_list | sort ;;
+  '2') print_build_list | sort ;;
+esac
 
 exit 0
