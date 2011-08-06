@@ -221,9 +221,9 @@ oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
   return conv;
 }
 
-/** Function oyConversion_GetGraph
+/** Function  oyConversion_GetGraph
  *  @memberof oyConversion_s
- *  @brief   get the filter graph from a conversion context
+ *  @brief    Get the filter graph from a conversion context
  *
  *  @see oyFilterGraph_GetNode() to obtain a node.
  *
@@ -237,7 +237,7 @@ oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
 oyFilterGraph_s  * oyConversion_GetGraph (
                                        oyConversion_s    * conversion )
 {
-  return oyFilterGraph_FromNode( conversion->input, 0 );
+  return oyFilterGraph_FromNode( ((oyConversion_s_*)conversion)->input, 0 );
 }
 
 /** Function oyConversion_GetImage
