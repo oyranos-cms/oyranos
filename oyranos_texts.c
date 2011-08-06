@@ -144,7 +144,7 @@ oyOptionStringsTranslate_ ()
       0, 0, 0,
       _("Start"),                  /* name */
       _("Oyranos Settings Group"), /* tooltip */
-      _("Oyranos settings let you configure ICC color management behaviour for a local computer. The settings can be per user or per system."), /* description */
+      _("Oyranos settings let you configure ICC color management behaviour for a local computer. The settings can be per user and per system."), /* description */
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -153,34 +153,34 @@ oyOptionStringsTranslate_ ()
       0, 0, 0,
       _("Default Profiles"),
       _("Source and Target Profiles for various situations"),
-      _("Source and Target ICC Profiles for various situations."),
+      _("ICC profiles should always be attached to all colors. In case colors are undefined, users can set various default ICC profiles in Oyranos settings."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_DEFAULT_PROFILES", 0, NULL)
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES_EDIT, 1,
       oyGROUP_DEFAULT_PROFILES, 0, 0,
-      _("Editing Colour Space"),
-      _("Well behaving Colour Space for Editing"),
-      _("The Editing Color Space shall be well behaving in order to allow editing of per channel curves. Well behaving means for Rgb, that editing of all three curves maintains gray neutrality. Hint: editing color spaces are sometimes called a working space."),
+      _("Editing Color Space"),
+      _("Well behaving Color Space for Editing"),
+      _("The Editing Color Spaces shall be well behaving in order to allow editing of per channel curves. Well behaving means for Rgb, that editing of all three curves maintains gray neutrality. Hint: editing color spaces are sometimes called a working space."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_DEFAULT_PROFILES_EDIT", 0,0)
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES_ASSUMED, 1,
       oyGROUP_DEFAULT_PROFILES, 0, 0,
-      _("Assumed Colour Space"),
-      _("Assumed Colour Space for untagged colours"),
-      _("Color content can sometimes have to ICC profile assigned. This is a critical situation. Therefor the color processing parts need to pick some profile as a guess. These settings allow to change the picked ICC profile to guide the processing components."),
+      _("Assumed Color Space"),
+      _("Assumed Color Space for untagged colors"),
+      _("Color content can sometimes have no ICC profile assigned. This is a critical situation. Therefor the color processing parts need to pick some profile as a guess. These settings allow to change the picked ICC profile to guide the processing components and allow proper conversion and compositing."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_DEFAULT_PROFILES_ASSUMED", 0,0)
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES_PROOF, 0,
       0, 0, 0,
-      _("Proofing Colour Space"),
-      _("Colour Space for Simulating real devices"),
-      _("Colour Space for Simulating real devices"),
+      _("Proofing Color Space"),
+      _("Color Space for Simulating real devices"),
+      _("The proofing color space represents a real color device for simulation. Possible uses cases are to simulate a print machine, a viewing environment in a theater or a expected small monitor gamut."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -189,7 +189,7 @@ oyOptionStringsTranslate_ ()
       0, 0, 0,
       _("Paths"),
       _("Paths where ICC Profiles can be found"),
-      _("Paths where ICC Profiles can be found"),
+      _("ICC profiles reside in well known paths. They are defined by OpenICC and can be used by every complying system or application."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -198,7 +198,7 @@ oyOptionStringsTranslate_ ()
       0, 0, 0,
       _("Policy"),
       _("Collections of settings in Oyranos"),
-      _("Collections of settings in Oyranos"),
+      _("Policies summarise common settings for different user groups. Such settings make it easy to switch back to simple defaults. Other groups can define own settings and share them accross Oyranos enabled systems."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -207,7 +207,7 @@ oyOptionStringsTranslate_ ()
       0, 0, 0,
       _("Behaviour"),
       _("Settings affecting the Behaviour in various situations"),
-      _("Settings affecting the Behaviour in various situations"),
+      _("Color management has in some situations to resolve unclear situations. This can be done by automatic applying preselected choices or on a case to case base. In unclear situations users can get alerted if they wish and perform manual control."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -215,17 +215,17 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_RENDERING, 1,
       oyGROUP_BEHAVIOUR, 0, 0,
       _("Rendering"),
-      _("The kind of ICC gamut mapping for transforming colours between differently sized colour spaces"),
-      _("The kind of ICC gamut mapping for transforming colours between differently sized colour spaces"),
+      _("The kind of ICC gamut mapping for transforming colors between differently sized color spaces"),
+      _("The conversion between color spaces of different shape and size can happen in various ways. The Perceptual rendering intent is usual the best choice for photographs and artistic imagery. It is used in many automatic systems. The Relative Colorimetric rendering intent provides a well defined one to one color mapping but without applying white point adaption. This can lead to color clipping in case of colors falling outside the target gamut as a price for  the otherwise colorimetric correctness. The Relative Colorimetric intent is often used in combination with Black Point Compensation. The Saturation rendering intent shall provide a maximal use of saturated device colors. The Absolute Colorimetric rendering intent works like the relative colorimetric one except the white point is adapted. All rendering intents beside the colorimetric ones rely on the color tables provided by the profile vendor."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_RENDERING", 0,0)
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 1,
       oyGROUP_BEHAVIOUR, 0, 0,
-      _("Save Mixed colour space Documents"),
-      _("Handling of Mixed Colour Spaces inside one single Document"),
-      _("Handling of Mixed Colour Spaces inside one single Document"),
+      _("Save Mixed color space Documents"),
+      _("Handling of Mixed Color Spaces inside one single Document"),
+      _("Mixed Color Spaces inside one single document can be difficult to handle for some systems. The settings gives choice about flattening document color spaces."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -233,8 +233,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_MISSMATCH, 1, 
       oyGROUP_BEHAVIOUR, 0, 0,
       _("Mismatching"),
-      _("Decide what to do when the default colour spaces dont match the current ones."),
-      _("Decide what to do when the default colour spaces dont match the current ones."),
+      _("Decide what to do when the default color spaces dont match the current ones."),
+      _("Decide how to resolve conflicts with input color spaces and current settings."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -243,7 +243,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, 0, 0,
       _("Proofing"),
       _("Proofing Settings"),
-      _("Proofing Settings"),
+      _("Proofing Settings allow to decide about the simulation color space."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -252,7 +252,7 @@ oyOptionStringsTranslate_ ()
       0, 0, 0,
       _("All"),
       _("Oyranos Settings"),
-      _("Oyranos Settings"),
+      _("Oyranos Settings allow to fine tune handling of color management."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -263,7 +263,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_POLICY, 0, 0,
       _("Policy"),
       _("Collections of settings in Oyranos"),
-      _("Collections of settings in Oyranos"),
+      _("Settings can be grouped in Oyranos for easier adaption to demands, better remembering and synchronisation."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -275,7 +275,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_PATHS, 0, 0,
       _("Paths"),
       _("Paths where ICC Profiles can be found"),
-      _("Paths where ICC Profiles can be found"),
+      _("ICC profiles reside in well known paths. They are defined by OpenICC and can be used by every complying system or application. XDG_DATA_HOME and XDG_DATA_DIRS environment variables route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -285,8 +285,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_RGB, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Rgb"),
-      _("Prefered Rgb Editing Colour Space"),
-      _("Prefered Rgb Editing Colour Space"),
+      _("Prefered Rgb Editing Color Space"),
+      _("The prefered Rgb Editing Color Space should represent a well behaving color space like sRGB."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_RGB_PROFILE,
@@ -295,8 +295,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_CMYK, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Cmyk"),
-      _("Prefered Cmyk Editing Colour Space"),
-      _("Prefered Cmyk Editing Colour Space"),
+      _("Prefered Cmyk Editing Color Space"),
+      _("The prefered Cmyk Editing Color Space should represent a color space which complies to well defined printing conditions like FOGRA or SWOP."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_CMYK_PROFILE,
@@ -305,8 +305,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_XYZ, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing XYZ"),
-      _("Prefered XYZ Editing Colour Space"),
-      _("Prefered XYZ Editing Colour Space"),
+      _("Prefered XYZ Editing Color Space"),
+      _("The prefered XYZ Editing Color Space shall decribe CIE*XYZ."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_XYZ_PROFILE,
@@ -315,8 +315,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_LAB, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Lab"),
-      _("Prefered CIE*Lab Editing Colour Space"),
-      _("Prefered CIE*Lab Editing Colour Space"),
+      _("Prefered CIE*Lab Editing Color Space"),
+      _("The prefered CIE*Lab Editing Color Space shall describe the CIE*Lab."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_LAB_PROFILE,
@@ -325,8 +325,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_GRAY, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Gray"),
-      _("Prefered Gray Editing Colour Space"),
-      _("Prefered Gray Editing Colour Space"),
+      _("Prefered Gray Editing Color Space"),
+      _("The prefered Gray Editing Color Space shall describe a single lighness channel color space for gray scale images."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_GRAY_PROFILE,
@@ -335,8 +335,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_XYZ, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed XYZ source"),
-      _("Assigning an untagged XYZ Image an colour space"),
-      _("Assigning an untagged XYZ Image an colour space"),
+      _("Assigning an untagged XYZ Image an color space"),
+      _("The selected color space will be assigned to untagged XYZ color content and define colors for further processing."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_ASSUMED_XYZ_PROFILE,
@@ -345,8 +345,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_LAB, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Lab source"),
-      _("Assigning an untagged CIE*Lab Image an colour space"),
-      _("Assigning an untagged CIE*Lab Image an colour space"),
+      _("Assigning an untagged CIE*Lab Image an color space"),
+      _("The selected color space will be assigned to untagged CIE*Lab color content and define colors for further processing."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_ASSUMED_LAB_PROFILE,
@@ -355,8 +355,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_RGB, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Rgb source"),
-      _("Assigning an untagged Rgb Image an colour space"),
-      _("Assigning an untagged Rgb Image an colour space"),
+      _("Assigning an untagged Rgb Image an color space"),
+      _("The selected color space will be assigned to untagged Rgb color content and define colors for further processing. Typical sRGB should be assumed."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_ASSUMED_RGB_PROFILE,
@@ -365,8 +365,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_WEB, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Web source"),
-      _("Assigning an untagged Rgb Image with source from the WWW an colour space"),
-      _("Assigning an untagged Rgb Image with source from the WWW an colour space"),
+      _("Assigning an untagged Rgb Image with source from the WWW an color space"),
+      _("Assigning an untagged Rgb Image with source from the WWW an color space. This will always be sRGB as defined by W3C."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_ASSUMED_WEB_PROFILE,
@@ -376,8 +376,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_CMYK, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Cmyk source"),
-      _("Assigning an untagged Cmyk Image this colour space"),
-      _("Assigning an untagged Cmyk Image this colour space"),
+      _("Assigning an untagged Cmyk Image this color space"),
+      _("The selected color space will be assigned to untagged Cmyk color content and define colors for further processing."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_ASSUMED_CMYK_PROFILE,
@@ -386,8 +386,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_GRAY, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Gray source"),
-      _("Assigning an untagged Gray Image this colour space"),
-      _("Assigning an untagged Gray Image this colour space"),
+      _("Assigning an untagged Gray Image this color space"),
+      _("The selected color space will be assigned to untagged Gray color content and define colors for further processing."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_ASSUMED_GRAY_PROFILE,
@@ -396,8 +396,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_PROFILE_PROOF, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("Proofing"),
-      _("Colour space for Simulating an Output Device"),
-      _("Colour space for Simulating an Output Device"),
+      _("Color space for Simulating an Output Device"),
+      _("Select a color profile representing a device to be simulated. This profile will only be applied if proofing is enabled."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_PROOF_PROFILE,
@@ -407,8 +407,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_ACTION_UNTAGGED_ASSIGN, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
       _("No Image profile"),
-      _("Image has no colour space embedded. What default action shall be performed?"),
-      _("Image has no colour space embedded. What default action shall be performed?"),
+      _("Image has no color space embedded. What default action shall be performed?"),
+      _("This setting decides what to do in the case that colors have no color space assigned. Typical the according assumed ICC profile should be assigned."),
       3, /* choices */
       _("Assign No Profile"),_("Assign Assumed Profile"),_("Promt"), NULL,
       OY_ACTION_UNTAGGED_ASSIGN,
@@ -418,7 +418,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
       _("On Rgb Mismatch"),
       _("Action for Image profile and Editing profile mismatches."),
-      _("Action for Image profile and Editing profile mismatches."),
+      _("Incomming color spaces can have a color space assigned, which differs from the default editing color space. For most users a automatic conversion is fine. However for more demanding work, numbers need to be preserved."),
       3, /* choices */
       _("Preserve Numbers"),_("Convert automatically"),_("Promt"), NULL,
       OY_ACTION_MISMATCH_RGB,
@@ -428,7 +428,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
       _("On Cmyk Mismatch"),
       _("Action for Image profile and Editing profile mismatches."),
-      _("Action for Image profile and Editing profile mismatches."),
+      _("Incomming color spaces can have a color space assigned, which differs from the default editing color space. For most users a automatic conversion is fine. However for more demanding work, numbers need to be preserved."),
       3, /* choices */
       _("Preserve Numbers"),_("Convert automatically"),_("Promt"), NULL,
       OY_ACTION_MISMATCH_CMYK,
@@ -437,8 +437,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_MIXED_MOD_DOCUMENTS_PRINT, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 0,
       _("For Print"),
-      _("Handle Mixed colour spaces in Preparing a document for Print output."),
-      _("Handle Mixed colour spaces in Preparing a document for Print output."),
+      _("Handle Mixed color spaces in Preparing a document for Print output."),
+      _("Handle Mixed color spaces in Preparing a document for Print output. A conversion to the default editing color space is, what most users want."),
       4, /* choices */
       _("Preserve Numbers"),_("Convert to Default Cmyk Editing Space"),_("Convert to untagged Cmyk, preserving Cmyk numbers"),_("Promt"),
       OY_CONVERT_MIXED_COLOUR_SPACE_PRINT_DOCUMENT,
@@ -447,8 +447,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_MIXED_MOD_DOCUMENTS_SCREEN, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 0,
       _("For Screen"),
-      _("Handle Mixed colour spaces in Preparing a document for Screen output."),
-      _("Handle Mixed colour spaces in Preparing a document for Screen output."),
+      _("Handle Mixed color spaces in Preparing a document for Screen output."),
+      _("Handle Mixed color spaces in Preparing a document for Screen output. A conversion to sRGB helps in easy data exchange and is what most users want."),
       4, /* choices */
       _("Preserve Numbers"),_("Convert to Default Rgb Editing Space"),_("Convert to WWW (sRGB)"),_("Promt"),
       OY_CONVERT_MIXED_COLOUR_SPACE_SCREEN_DOCUMENT,
@@ -457,8 +457,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_INTENT, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
       _("Rendering Intent"),
-      _("Rendering Intent for colour space Transformations."),
-      _("Rendering Intent for colour space Transformations."),
+      _("Rendering Intent for color space Transformations."),
+      _("Rendering Intent for color space Transformations is typical the Relative Colorimetric intent plus Black Point Compensation or the Perceptual intent."),
       4, /* choices */
       _("Perceptual"),_("Relative Colorimetric"),_("Saturation"),_("Absolute Colorimetric"),
       OY_DEFAULT_RENDERING_INTENT,
@@ -477,8 +477,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_INTENT_PROOF, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("Proofing Rendering Intent"),
-      _("Behaviour of colour space transformation for proofing"),
-      _("Behaviour of colour space transformation for proofing"),
+      _("Behaviour of color space transformation for proofing"),
+      _("Behaviour of color space transformation for proofing. Most people want a preview on screen only. The Relative Colorimetric intent is right for that. The Absolute Colorimetric intent needs a very careful profiling and non trivial setup but allowes for side by side comparisions."),
       2, /* choices */
       _("Relative Colorimetric"),_("Absolute Colorimetric"),NULL,NULL,
       OY_DEFAULT_RENDERING_INTENT_PROOF,
@@ -488,7 +488,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("SoftProof"),
       _("Simulate the output print on the monitor"),
-      _("Simulate the output print on the monitor"),
+      _("Enable simulate of output print on the monitor. Most users do not work for a certain media and leave color handling to the system. They want no simulation."),
       2, /* choices */
       _("No"),_("Yes"),NULL,NULL,
       OY_DEFAULT_PROOF_SOFT,
@@ -498,7 +498,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("Hardproof"),
       _("Behaviour for preselecting Hardproofing with a Proofing Profile at print time"),
-      _("Behaviour for preselecting Hardproofing with a Proofing Profile at print time"),
+      _("Enable simulation of a output color space on a local printer. Most users do not work for a certain media and leave color handling to the system. They want no simulation."),
       2, /* choices */
       _("No"),_("Yes"),NULL,NULL,
       OY_DEFAULT_PROOF_HARD,
@@ -507,8 +507,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_GAMUT_WARNING, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
       _("Gamut Warning"),
-      _("Mark Out Of Gamut colours"),
-      _("Mark Out Of Gamut colours"),
+      _("Mark Out Of Gamut colors"),
+      _("Most users want a simple display of colors and not check if colors match the simulation color space."),
       2, /* choices */
       _("No"),_("Yes"),NULL,NULL,
       OY_DEFAULT_RENDERING_GAMUT_WARNING,
