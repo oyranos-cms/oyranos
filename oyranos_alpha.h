@@ -917,26 +917,6 @@ typedef enum {
   oyCONNECTOR_ANALYSIS
 } oyCONNECTOR_e;
 
-/** @enum    oyCONNECTOR_EVENT_e
- *  @brief   connector events types
- *  @ingroup objects_conversion
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/00/00 (Oyranos: 0.1.8)
- *  @date    2008/00/00
- */
-typedef enum {
-  oyCONNECTOR_EVENT_OK,                /**< kind of ping */
-  oyCONNECTOR_EVENT_CONNECTED,         /**< connection established */
-  oyCONNECTOR_EVENT_RELEASED,          /**< released the connection */
-  oyCONNECTOR_EVENT_DATA_CHANGED,      /**< call to update image views */
-  oyCONNECTOR_EVENT_STORAGE_CHANGED,   /**< new data accessors */
-  oyCONNECTOR_EVENT_INCOMPATIBLE_DATA, /**< can not process image */
-  oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION,/**< can not handle option */
-  oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT,/**< can not handle profile */
-  oyCONNECTOR_EVENT_INCOMPLETE_GRAPH   /**< can not completely process */ 
-} oyCONNECTOR_EVENT_e;
-
 /** @struct  oyConnector_s
  *  @brief   a filter connection description structure
  *  @ingroup objects_conversion
