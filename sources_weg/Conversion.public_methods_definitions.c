@@ -313,9 +313,9 @@ oyImage_s        * oyConversion_GetImage (
   return image;
 }
 
-/** Function oyConversion_GetNode
+/** Function  oyConversion_GetNode
  *  @memberof oyConversion_s
- *  @brief   get the filter node copy
+ *  @brief    Get the filter node copy
  *
  *  @param[in,out] conversion          conversion object
  *  @param[in]     flags               OY_INPUT or OY_OUTPUT
@@ -331,7 +331,7 @@ oyFilterNode_s   * oyConversion_GetNode (
 {
   oyFilterNode_s * node = 0;
   int error = 0;
-  oyConversion_s * s = conversion;
+  oyConversion_s_ * s = (oyConversion_s_*)conversion;
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 0 )
 
