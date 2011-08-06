@@ -19,7 +19,7 @@ OYAPI int  OYEXPORT
   oyFilterSocket_s_ * s_;
   oyFilterPlug_s * p;
 
-  oyFilterPlug_s_ ** c_ = &(oyFilterPlug_s_*)c;
+  oyFilterPlug_s_ ** c_ = (oyFilterPlug_s_**)&c;
 
   if(e != oyCONNECTOR_EVENT_OK && oy_debug_signals)
   {
@@ -81,7 +81,7 @@ OYAPI int  OYEXPORT
   oyFilterPlug_s * p, * sp;
   oyFilterGraph_s * graph = 0;
 
-  oyFilterSocket_s_ ** c_ = &(oyFilterSocket_s_*)c;
+  oyFilterSocket_s_ ** c_ = (oyFilterSocket_s_**)&c;
 
   switch(e)
   {

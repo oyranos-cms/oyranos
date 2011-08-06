@@ -14,7 +14,7 @@ OYAPI int  OYEXPORT
                                        oyFilterPlug_s    * c,
                                        oyCONNECTOR_EVENT_e e )
 {
-  oyFilterPlug_s_ ** c_ = &(oyFilterPlug_s_*)c;
+  oyFilterPlug_s_ ** c_ = (oyFilterPlug_s_**)&c;
 
   if(oy_debug_signals)
     WARNc4_S("oyFilterNode_s[%d]->oyFilterPlug_s[%d]\n"
@@ -93,9 +93,9 @@ OYAPI oyImage_s * OYEXPORT
                                        oyFilterSocket_s  * socket,
                                        oyPixelAccess_s   * ticket )
 {
-  oyFilterPlug_s_ ** plug_ = &(oyFilterPlug_s_*)plug;
-  oyFilterSocket_s_ ** socket_ = &(oyFilterSocket_s_*)socket;
-  oyPixelAccess_s_ ** ticket_ = &(oyPixelAccess_s_*)ticket;
+  oyFilterPlug_s_ ** plug_ = (oyFilterPlug_s_**)&plug;
+  oyFilterSocket_s_ ** socket_ = (oyFilterSocket_s_**)&socket;
+  oyPixelAccess_s_ ** ticket_ = (oyPixelAccess_s_**)&ticket;
 
   int error = !plug || !(*plug_)->remote_socket_ ||
               !ticket ||

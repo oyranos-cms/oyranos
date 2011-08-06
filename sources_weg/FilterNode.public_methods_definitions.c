@@ -227,8 +227,8 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
   int error = 0;
   oyAlloc_f allocateFunc_ = 0;
 
-  oyFilterCore_s_ ** filter_ = &(oyFilterCore_s_*)filter;
-  oyFilterNode_s_ ** s_      = &(oyFilterNode_s_*)s;
+  oyFilterCore_s_ ** filter_ = (oyFilterCore_s_**)&filter;
+  oyFilterNode_s_ ** s_      = (oyFilterNode_s_**)&s;
 
   if(!filter)
     return s;
@@ -658,7 +658,7 @@ OYAPI oyFilterPlug_s * OYEXPORT
                  oyFilterNode_GetPlug( oyFilterNode_s    * node,
                                        int                 pos )
 {
-  oyFilterNode_s_ ** node_ = &(oyFilterNode_s_*)node;
+  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
   oyFilterPlug_s_ * s = 0;
 
   if(node && node->type_ == oyOBJECT_FILTER_NODE_S &&
@@ -708,8 +708,8 @@ OYAPI oyFilterSocket_s * OYEXPORT
 {
   oyFilterSocket_s * s = 0;
 
-  oyFilterNode_s_ ** node_ = &(oyFilterNode_s_*)node;
-  oyFilterSocket_s_ ** s_ = &(oyFilterSocket_s_*)s;
+  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
+  oyFilterSocket_s_ ** s_ = (oyFilterSocket_s_**)&s;
 
   if(node && node->type_ == oyOBJECT_FILTER_NODE_S &&
      pos < oyFilterNode_EdgeCount( node, 0, 0 ))
@@ -767,7 +767,7 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
 {
   const char * tmp = 0;
   char * hash_text = 0;
-  oyFilterNode_s_ ** node_ = &(oyFilterNode_s_*)node;
+  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
 
   oyStructList_s * in_datas = 0,
                  * out_datas = 0;
@@ -849,7 +849,7 @@ oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
   oyFilterNode_s * s = node;
   int error = 0;
 
-  oyFilterNode_s_ ** node_ = &(oyFilterNode_s_*)node;
+  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
 
   if(!node)
     return 0;
@@ -905,7 +905,7 @@ OYAPI oyConnector_s * OYEXPORT
   oyConnector_s * pattern = 0;
   oyObject_s object = 0;
 
-  oyFilterNode_s_ ** node_ = &(oyFilterNode_s_*)node;
+  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
 
   if(!node || !(*node_)->core || node->type_ != oyOBJECT_FILTER_NODE_S ||
      !(*node_)->api7_)
@@ -960,7 +960,7 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
   char * text = 0,
        * tmp = 0;
 
-  oyFilterNode_s_ ** node_ = &(oyFilterNode_s_*)node;
+  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
 
   if(!node)
     return 0;

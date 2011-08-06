@@ -21,8 +21,8 @@ int          oyFilterSocket_MatchImagingPlug (
   int coff = 0;
   oyDATATYPE_e data_type = 0;
 
-  oyFilterPlug_s_ ** plug_ = &(oyFilterPlug_s_*)plug;
-  oyFilterSocket_s_ ** socket_ = &(oyFilterSocket_s_*)socket;
+  oyFilterPlug_s_ ** plug_ = (oyFilterPlug_s_**)&plug;
+  oyFilterSocket_s_ ** socket_ = (oyFilterSocket_s_**)&socket;
 
   if(socket &&
      socket->type_ == oyOBJECT_FILTER_SOCKET_S &&
