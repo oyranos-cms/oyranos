@@ -384,9 +384,9 @@ int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
   return error;
 }
 
-/** Function oyConversion_RunPixels
+/** Function  oyConversion_RunPixels
  *  @memberof oyConversion_s
- *  @brief   iterate over a conversion graph
+ *  @brief    Iterate over a conversion graph
  *
  *  @verbatim
     // use the output
@@ -423,6 +423,10 @@ int                oyConversion_RunPixels (
   oyRectangle_s roi = {oyOBJECT_RECTANGLE_S, 0,0,0};
   double clck;
 
+  oyConversion_s_ ** conversion_ = (oyConversion_s_**)&conversion;
+  oyPixelAccess_s_ ** pixel_access_ = (oyPixelAccess_s_**)&pixel_access;
+  oyImage_s_ ** image_out_ = (oyImage_s_**)&image_out;
+
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
 
   /* should be the same as conversion->out_->filter */
@@ -458,14 +462,14 @@ int                oyConversion_RunPixels (
   image_out = oyConversion_GetImage( conversion, OY_OUTPUT );
 
   if(error <= 0)
-    oyRectangle_SetByRectangle( &roi, pixel_access->output_image_roi );
+    oyRectangle_SetByRectangle( &roi, (*pixel_access_)->output_image_roi );
 
-  if(error <= 0 && !pixel_access->array)
+  if(error <= 0 && !(*pixel_access_)->array)
   {
     clck = oyClock();
     result = oyImage_FillArray( image_out, &roi, 0,
-                                &pixel_access->array,
-                                pixel_access->output_image_roi, 0 );
+                                &(*pixel_access_)->array,
+                                (*pixel_access_)->output_image_roi, 0 );
     clck = oyClock() - clck;
     DBG_NUM1_S("oyImage_FillArray(): %g", clck/1000000.0 );
     error = ( result != 0 );
@@ -475,7 +479,7 @@ int                oyConversion_RunPixels (
   if(error <= 0)
   {
     clck = oyClock();
-    error = node_out->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
+    error = oyFilterNodePriv_m(node_out)->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
     clck = oyClock() - clck;
     DBG_NUM1_S( "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g",
                 clck/1000000.0 );
@@ -483,32 +487,32 @@ int                oyConversion_RunPixels (
 
   if(error != 0 && pixel_access)
   {
-    dirty = oyOptions_FindString( pixel_access->graph->options, "dirty", "true")
+    dirty = oyOptions_FindString( (*pixel_access_)->graph->options, "dirty", "true")
             ? 1 : 0;
 
     /* refresh the graph representation */
     clck = oyClock();
-    oyFilterGraph_SetFromNode( pixel_access->graph, conversion->input, 0, 0 );
+    oyFilterGraph_SetFromNode( (*pixel_access_)->graph, (*conversion_)->input, 0, 0 );
     clck = oyClock() - clck;
     DBG_NUM1_S("oyFilterGraph_SetFromNode(): %g", clck/1000000.0 );
 
     /* resolve missing data */
     clck = oyClock();
-    image_input = oyFilterPlug_ResolveImage( plug, plug->remote_socket_,
+    image_input = oyFilterPlug_ResolveImage( plug, oyFilterPlugPriv_m(plug)->remote_socket_,
                                              pixel_access );
     clck = oyClock() - clck;
     DBG_NUM1_S("oyFilterPlug_ResolveImage(): %g", clck/1000000.0 );
     oyImage_Release( &image_input );
 
-    n = oyFilterNodes_Count( pixel_access->graph->nodes );
+    n = oyFilterNodes_Count( (*pixel_access_)->graph->nodes );
     for(i = 0; i < n; ++i)
     {
 #if 0
       clck = oyClock();
-      l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
+      l_error = oyArray2d_Release( &(*pixel_access_)->array ); OY_ERR
       l_error = oyImage_FillArray( image_out, &roi, 0,
-                                   &pixel_access->array,
-                                   pixel_access->output_image_roi, 0 ); OY_ERR
+                                   &(*pixel_access_)->array,
+                                   (*pixel_access_)->output_image_roi, 0 ); OY_ERR
       clck = oyClock() - clck;
       DBG_NUM1_S("oyImage_FillArray(): %g", clck/1000000.0 );
 #endif
@@ -516,20 +520,20 @@ int                oyConversion_RunPixels (
       if(error != 0 &&
          dirty)
       {
-        if(pixel_access->start_xy[0] != pixel_access->start_xy_old[0] ||
-           pixel_access->start_xy[1] != pixel_access->start_xy_old[1])
+        if((*pixel_access_)->start_xy[0] != (*pixel_access_)->start_xy_old[0] ||
+           (*pixel_access_)->start_xy[1] != (*pixel_access_)->start_xy_old[1])
         {
           /* set back to previous values, at least for the simplest case */
-          pixel_access->start_xy[0] = pixel_access->start_xy_old[0];
-          pixel_access->start_xy[1] = pixel_access->start_xy_old[1];
+          (*pixel_access_)->start_xy[0] = (*pixel_access_)->start_xy_old[0];
+          (*pixel_access_)->start_xy[1] = (*pixel_access_)->start_xy_old[1];
         }
 
         clck = oyClock();
-        oyFilterGraph_PrepareContexts( pixel_access->graph, 0 );
+        oyFilterGraph_PrepareContexts( (*pixel_access_)->graph, 0 );
         clck = oyClock() - clck;
         DBG_NUM1_S("oyFilterGraph_PrepareContexts(): %g", clck/1000000.0 );
         clck = oyClock();
-        error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug,
+        error = (*conversion_)->out_->api7_->oyCMMFilterPlug_Run( plug,
                                                               pixel_access);
         clck = oyClock() - clck;
         DBG_NUM1_S("conversion->out_->api7_->oyCMMFilterPlug_Run(): %g", clck/1000000.0 );
@@ -555,15 +559,15 @@ int                oyConversion_RunPixels (
    * the oyPixelAccess_s::array allocation can remain constant.
    */
   if(image_out && pixel_access &&
-     ((oyPointer)image_out->pixel_data != (oyPointer)pixel_access->array ||
-      image_out != pixel_access->output_image))
+     ((oyPointer)(*image_out_)->pixel_data != (oyPointer)(*pixel_access_)->array ||
+      image_out != (*pixel_access_)->output_image))
   {
     /* move the array to the top left place
      * same as : roi.x = roi.y = 0; */
-    /*roi.x = pixel_access->start_xy[0];
-    roi.y = pixel_access->start_xy[1];*/
+    /*roi.x = (*pixel_access_)->start_xy[0];
+    roi.y = (*pixel_access_)->start_xy[1];*/
     result = oyImage_ReadArray( image_out, &roi,
-                                pixel_access->array, 0 );
+                                (*pixel_access_)->array, 0 );
   }
 
   if(tmp_ticket)
