@@ -87,6 +87,13 @@ typedef oyOptions_s * (*oyCMMFilter_ValidateOptions_f)
                                        int                 statical,
                                        uint32_t          * result );
 
+/** @typedef  oyWidgetEvent_f
+ *  @ingroup  module_api
+ */
+typedef oyWIDGET_EVENT_e   (*oyWidgetEvent_f)
+                                     ( oyOptions_s       * options,
+                                       oyWIDGET_EVENT_e    type,
+                                       oyStruct_s        * event );
 
 {% include "cpp_end.h" %}
 
