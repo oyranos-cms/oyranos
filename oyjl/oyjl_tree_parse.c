@@ -455,9 +455,9 @@ int oyjl_tree_parse_map_key(void * context, const unsigned char * text,
   oyjl_value_s *** array = 0;
   oyjl_value_s * value = 0, * new_value = 0;
   int count = 0;
+  yajl_status error = yajl_status_error;
   while(s->stack && s->stack[count]) ++count;
   value = s->stack[count-1];
-  yajl_status error = yajl_status_error;
 
   /* get the current array */
   if(value->type == oyjl_type_array)
@@ -567,15 +567,22 @@ const char * oyjl_print_text         ( oyjl_text_s       * text )
   static int len = 0;
   static char * t = NULL;
 
-  if(len < text->len)
+  if(!text || len < text->len)
   {
     if(t)
       oyjl_free_memory( (void**)&t );
-    len = text->len;
+    if(text)
+      len = text->len;
+    else
+      len = 24;
     t = oyjl_malloc(len+1);
   }
-  memcpy( t, text->text, text->len );
-  t[text->len] = '\000';
+  if(text)
+  {
+    memcpy( t, text->text, text->len );
+    t[text->len] = '\000';
+  } else
+    memset( t, 0, 24 );
 
   return t;
 }
@@ -918,6 +925,9 @@ oyjl_value_s * oyjl_tree_get_value   ( oyjl_value_s      * root,
 int            oyjl_value_count      ( oyjl_value_s      * value )
 {
   int count = 0;
+
+  if(!value)
+    return count;
 
   /* encapsulated container */
   if(value->type == oyjl_type_object &&

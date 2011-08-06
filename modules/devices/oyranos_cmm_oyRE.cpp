@@ -67,8 +67,9 @@ using namespace std;
 #define _api8_ui_texts          catCMMfunc( oyRE, _api8_ui_texts )
 #define _api8_icon              catCMMfunc( oyRE, _api8_icon )
 
-#define _DBG_FORMAT_ "%s:%d %s()"
-#define _DBG_ARGS_ __FILE__,__LINE__,__func__
+#define _DBG_FORMAT_ "%s:%d %s() "
+#define _DBG_ARGS_ (__FILE__ && strrchr(__FILE__,'/')) ? \
+                   strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
 #define _(x) x
 
 const char * GetText                 ( const char        * select,
@@ -164,9 +165,9 @@ oyRankPad _rank_map[] = {
 };
 
 
-      oyMessage_f message = 0;
+oyMessage_f message = 0;
 
-      extern oyCMMapi8_s _api8;
+extern oyCMMapi8_s _api8;
 
 
 bool is_raw( int id );
@@ -213,7 +214,7 @@ void ConfigsFromPatternUsage(oyStruct_s * options)
     /** oyMSG_WARN should make shure our message is visible. */
    message(oyMSG_WARN, options, _DBG_FORMAT_ "\n %s",
            _DBG_ARGS_, "The following help text informs about the communication protocol.");
-   message(oyMSG_WARN, options, "%s()\n%s", __func__, help_message);
+   message(oyMSG_WARN, options, "%s", help_message);
 
    return;
 }
@@ -338,7 +339,9 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
                                         oyOBJECT_CMM_API8_S);
    oyAlloc_f allocateFunc = malloc;
 
-   printf(PRFX "Entering %s(). Options:\n%s", __func__, oyOptions_GetText(options, oyNAME_NICK));
+   message( oyMSG_DBG, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+            "entered Options:\n%s", _DBG_ARGS_,
+            oyOptions_GetText(options, oyNAME_NICK) );
 
    /* "error handling" section */
    if (rank == 0) {
@@ -388,8 +391,12 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    if (command_list) {
       /* "list" call section */
 
-      printf(PRFX "Backend core:\n%s", oyOptions_GetText(device->backend_core, oyNAME_NICK));
-      printf(PRFX "Data:\n%s", oyOptions_GetText(device->data, oyNAME_NICK));
+      message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+               "Backend core:\n%s", _DBG_ARGS_,
+               oyOptions_GetText(device->backend_core, oyNAME_NICK));
+      message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX
+               "Data:\n%s", _DBG_ARGS_,
+               oyOptions_GetText(device->data, oyNAME_NICK));
 
       const char **device_list = LibRaw::cameraList();
       /*int num_devices = LibRaw::cameraCount();*/
@@ -419,7 +426,9 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       if (!handle_opt) {
          int i = 0;
          while(device_list[i++]);
-         printf("################### Found %d devices #######################\n",i-1);
+         message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+                 "################### Found %d devices #######################",
+                  _DBG_ARGS_, i-1);
          char *string_list = 0;
          const char ** cameras = device_list;
          i = 0;
@@ -465,15 +474,18 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       /* "properties" call section */
 
       const char * t = oyOptions_GetText(device->backend_core, oyNAME_NICK);
-      printf(PRFX "Backend core:\n%s", t?t:"");
+      message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+                  "Backend core:\n%s", _DBG_ARGS_, t?t:"");
       t = oyOptions_GetText(device->data, oyNAME_NICK);
-      printf(PRFX "Data:\n%s", t?t:"");
+      message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+                  "Data:\n%s", _DBG_ARGS_, t?t:"");
 
       /*Handle "device_handle" option [IN]*/
       if (handle_opt) {
          DeviceFromHandle_opt(device, handle_opt);
       } else { /*Bail out if no "device_handle" given*/
-         printf("Missing \"device_handle\" option\n");
+         message( oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ PRFX
+                  "Missing \"device_handle\" option", _DBG_ARGS_);
          return -1;
       }
 
@@ -541,7 +553,9 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 {
    oyAlloc_f allocateFunc = malloc;
 
-   printf(PRFX "Entering %s(). Options:\n%s", __func__, oyOptions_GetText(options, oyNAME_NICK));
+   
+   message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+            "Options:\n%s",_DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK));
 
    /* "error handling" section */
    if (!devices || !oyConfigs_Count(devices)) {
@@ -576,8 +590,12 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          int error = 0;
          oyConfig_s *device = oyConfigs_Get(devices, i);
 
-         printf(PRFX "Backend core:\n%s", oyOptions_GetText(device->backend_core, oyNAME_NICK));
-         printf(PRFX "Data:\n%s", oyOptions_GetText(device->data, oyNAME_NICK));
+         const char * t = oyOptions_GetText(device->backend_core, oyNAME_NICK);
+         message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+                  "Backend core:\n%s", _DBG_ARGS_, t?t:"");
+         t = oyOptions_GetText(device->data, oyNAME_NICK);
+         message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+                  "Data:\n%s", _DBG_ARGS_, t?t:"");
 
          /*Handle "driver_version" option [IN/OUT] */
          oyOption_s *version_opt_dev = oyConfig_Find(device, "driver_version");
@@ -622,8 +640,12 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyConfig_s *device = oyConfigs_Get(devices, i);
          oyConfig_s *device_new = oyConfig_FromRegistration(CMM_BASE_REG, 0);
 
-         printf(PRFX "Backend core:\n%s\n", oyOptions_GetText(device->backend_core, oyNAME_NICK));
-         printf(PRFX "Data:\n%s\n", oyOptions_GetText(device->data, oyNAME_NICK));
+         const char * t = oyOptions_GetText(device->backend_core, oyNAME_NICK);
+         message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+                  "Backend core:\n%s", _DBG_ARGS_, t?t:"");
+         t = oyOptions_GetText(device->data, oyNAME_NICK);
+         message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+                  "Data:\n%s", _DBG_ARGS_, t?t:"");
 
          /* All previous device properties are considered obsolete
           * and a new device is created. Basic options are moved from
@@ -696,7 +718,8 @@ int Config_Rank(oyConfig_s * config)
    int error = !config, rank = 1;
 
    if (!config) {
-      message(oyMSG_DBG, (oyStruct_s *) config, _DBG_FORMAT_ "\n " "No config argument provided.\n", _DBG_ARGS_);
+      message( oyMSG_DBG, (oyStruct_s *) config, _DBG_FORMAT_
+               "\n No config argument provided.", _DBG_ARGS_);
       return 0;
    }
 
@@ -985,20 +1008,24 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
         {
           if (is_raw(Exiv2::ImageFactory::getType(filename)))
             device_handle = Exiv2::ImageFactory::open(filename);
-          printf("filename = %s\n", filename);
-          free(filename); filename = 0;
+          message( oyMSG_DBG, (oyStruct_s *) device, _DBG_FORMAT_
+               "filename = %s", _DBG_ARGS_, filename );
         }
         else
-          printf("Option \"device_handle\" is of a wrong type\n");
+          message( oyMSG_WARN, (oyStruct_s *) device, _DBG_FORMAT_
+                  "Option \"device_handle\" is of a wrong type", _DBG_ARGS_);
       }
 
       //The std::auto_ptr::get() method returns the pointer owned by the auto_ptr
       if (device_handle.get() && device_handle->good())
          DeviceFromHandle(&device->backend_core, device_handle);
       else {
-         printf("Unable to open raw image.\n");
+         message( oyMSG_WARN, (oyStruct_s *) device, _DBG_FORMAT_
+               "Unable to open raw image %s", _DBG_ARGS_, filename?filename:"");
          return 1;
       }
+      if(filename)
+        free(filename); filename = 0;
    } else
       return 1;
 
@@ -1009,15 +1036,19 @@ bool is_raw( int id )
 {
    //using namespace Exiv2::ImageType;
    switch (id) {
-      case 7: //cr2:
       case 3: //crw:
+      case 4: //tiff
       case 5: //mrw:
-      case 9: //orf:
+      case 7: //cr2:
       case 8: //raf:
+      case 9: //orf:
       case 16: //rw2:
          return true;
          break;
       default:
-         return false;
+         if(id == 0)
+           return false;
+         else
+           return true;
    }
 }
