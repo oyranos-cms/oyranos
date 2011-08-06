@@ -70,16 +70,15 @@ LATER:
   - Private header: static <return type> <signature>
   - Public c file: <return type> OYEXPORT <signature>
   - Private c file: <return type> <signature>
-- When there are changes in the source file, propagate them in the
-  template and rerun the renderer.
-- Save the filestamps of all files and abort when both source and
-  template have been updated.
-- Add python bindings for gdb
+- Generator needs to run TWICE!!
+  When the templates are automaticly generated, the source files are
+  not created, because the *template* files are scanned first.
 
 MUCH LATER:
  + Possibility to add more steps after code generation.
   - Code beautifier
   - Comment formatter
+- Add python bindings for gdb
 
 FAQ
 Q. Some list objects like oyCMMapiFilters_s,
