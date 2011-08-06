@@ -1,7 +1,7 @@
-/** @internal
- *  Function oyOptions_ForFilter_
+/** Function  oyOptions_ForFilter_
  *  @memberof oyOptions_s
- *  @brief   provide Oyranos behaviour settings
+ *  @brief    Provide Oyranos behaviour settings
+ *  @internal
  *
  *  The returned options are read in from the Elektra settings and if thats not
  *  available from the inbuild defaults. The later can explicitely selected with
@@ -27,7 +27,7 @@
  *  @since   2008/12/08 (Oyranos: 0.1.9)
  *  @date    2009/07/27
  */
-oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
+oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
                                        uint32_t            flags,
                                        oyObject_s          object )
 {
@@ -68,7 +68,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
       oyCMMapiFilters_s * apis;
       int apis_n = 0;
       uint32_t         * rank_list = 0;
-      oyCMMapi9_s * cmm_api9 = 0;
+      oyCMMapi9_s_ * cmm_api9_ = 0;
       char * klass, * api_reg;
 
       klass = oyFilterRegistrationToText( filter->registration_,
@@ -85,16 +85,16 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
       apis_n = oyCMMapiFilters_Count( apis );
       for(i = 0; i < apis_n; ++i)
       {
-        cmm_api9 = (oyCMMapi9_s*) oyCMMapiFilters_Get( apis, i );
-        if(oyFilterRegistrationMatch( filter->registration_, cmm_api9->pattern,
+        cmm_api9_ = (oyCMMapi9_s_*) oyCMMapiFilters_Get( apis, i );
+        if(oyFilterRegistrationMatch( filter->registration_, cmm_api9_->pattern,
                                       oyOBJECT_NONE ))
         {
-          opts_tmp = oyOptions_FromText( cmm_api9->options, 0, object );
+          opts_tmp = oyOptions_FromText( cmm_api9_->options, 0, object );
           oyOptions_AppendOpts( s, opts_tmp );
           oyOptions_Release( &opts_tmp );
         }
-        if(cmm_api9->release)
-          cmm_api9->release( (oyStruct_s**)&cmm_api9 );
+        if(cmm_api9_->release)
+          cmm_api9_->release( (oyStruct_s**)&cmm_api9_ );
       }
       oyCMMapiFilters_Release( &apis );
       oyFree_m_( api_reg );

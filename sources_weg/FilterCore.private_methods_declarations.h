@@ -1,4 +1,4 @@
-oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
+oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
                                        uint32_t            flags,
                                        oyObject_s          object );
 int          oyFilterCore_SetCMMapi4_( oyFilterCore_s_   * s,
