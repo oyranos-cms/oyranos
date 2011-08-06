@@ -814,29 +814,6 @@ typedef struct oyCMMInfo_s oyCMMInfo_s;
 typedef struct oyCMMapis_s oyCMMapis_s;
 typedef struct oyUiHandler_s oyUiHandler_s;
 
-/**
- *  type:
- *  - oyNAME_NICK: compact, e.g. "GPU"
- *  - oyNAME_NAME: a short explanation, e.g. "Rendering with GPU"
- *  - oyNAME_DESCRIPTION: a long explanation, e.g. "Accelerated calculations on a GPU"
- *
- *  @param         select              one from "name", "manufacturer" or "copyright"
- *  @param         type                select flavour
- *  @param         object              the object to ask for a optional context
- *                                     This will typical be the object to which
- *                                     this function belongs, but can be stated
- *                                     otherwise.
- *  @return                            text string or zero
- *
- *  @version Oyranos: 0.3.0
- *  @since   2008/12/23 (Oyranos: 0.1.10)
- *  @date    2011/02/01
- */
-typedef
-const char *    (* oyCMMGetText_f)   ( const char        * select,
-                                       oyNAME_e            type,
-                                       oyStruct_s        * context );
-
 /** @enum    oyCONNECTOR_e
  *  @brief   basic connector attributes
  *  @ingroup objects_conversion

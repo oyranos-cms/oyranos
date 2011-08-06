@@ -27,7 +27,6 @@ typedef enum {
 #define oyCMM_COLOUR_CONVERSION "oyCC"
 #define oyCOLOUR_ICC_DEVICE_LINK "oyDL"
 
-
 /**
  *  type:
  *  - oyNAME_NICK: compact, e.g. "GPU"
@@ -36,16 +35,20 @@ typedef enum {
  *
  *  @param         select              one from "name", "manufacturer" or "copyright"
  *  @param         type                select flavour
+ *  @param         object              the object to ask for a optional context
+ *                                     This will typical be the object to which
+ *                                     this function belongs, but can be stated
+ *                                     otherwise.
  *  @return                            text string or zero
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.0
  *  @since   2008/12/23 (Oyranos: 0.1.10)
- *  @date    2008/12/23
+ *  @date    2011/02/01
  */
 typedef
 const char *    (* oyCMMGetText_f)   ( const char        * select,
-                                       oyNAME_e            type );
-
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
 
 /** @brief   icon data
  *  @ingroup cmm_handling
