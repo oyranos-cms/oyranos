@@ -160,7 +160,6 @@ void OyFl_Box_c::copy_label(const char* l) {
 int OyFl_Box_c::handle(int event)
 {
     int result = Fl_Box::handle(event);
-    printf("%s\n", __func__);
     switch (event)
     {
       case FL_ENTER:
