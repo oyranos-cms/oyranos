@@ -1,6 +1,6 @@
-/** typedef  oyConversion_Correct
- *  @brief   check for correctly adhering to policies
+/** Function  oyConversion_Correct
  *  @memberof oyConversion_s
+ *  @brief    Check for correctly adhering to policies
  *
  *  Without any options the module selected with the registration argument shall
  *  perform graph analysis and correct the graph.
@@ -34,15 +34,15 @@ int                oyConversion_Correct (
                                        oyOptions_s       * options )
 {
   int error = 0;
-  oyConversion_s * s = conversion;
+  oyConversion_s_ * s = (oyConversion_s_*)conversion;
   const char * pattern = registration;
 
-  if(!conversion)
+  if(!s)
     return error;
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
 
-  if(!conversion->input && !conversion->out_)
+  if(!s->input && !s->out_)
   {
     WARNc1_S( "%s",_("Found no node in conversion. give up") );
     return 1;
@@ -52,7 +52,7 @@ int                oyConversion_Correct (
   {
     oyCMMapiFilters_s * apis;
     int apis_n = 0, i;
-    oyCMMapi9_s * cmm_api9 = 0;
+    oyCMMapi9_s_ * cmm_api9_ = 0;
     char * class, * api_reg;
 
     class = oyFilterRegistrationToText( pattern, oyFILTER_REG_TYPE, 0 );
@@ -66,21 +66,21 @@ int                oyConversion_Correct (
     apis_n = oyCMMapiFilters_Count( apis );
     for(i = 0; i < apis_n; ++i)
     {
-      cmm_api9 = (oyCMMapi9_s*) oyCMMapiFilters_Get( apis, i );
+      cmm_api9_ = (oyCMMapi9_s_*) oyCMMapiFilters_Get( apis, i );
 
-      if(oyFilterRegistrationMatch( cmm_api9->pattern, pattern, 0 ))
+      if(oyFilterRegistrationMatch( cmm_api9_->pattern, pattern, 0 ))
       {
-        if(cmm_api9->oyConversion_Correct)
-          error = cmm_api9->oyConversion_Correct( s, flags, options );
+        if(cmm_api9_->oyConversion_Correct)
+          error = cmm_api9_->oyConversion_Correct( conversion, flags, options );
         if(error)
         {
-          WARNc2_S( "%s %s",_("error in module:"), cmm_api9->registration );
+          WARNc2_S( "%s %s",_("error in module:"), cmm_api9_->registration );
           return 1;
         }
       }
 
-      if(cmm_api9->release)
-        cmm_api9->release( (oyStruct_s**)&cmm_api9 );
+      if(cmm_api9_->release)
+        cmm_api9_->release( (oyStruct_s**)&cmm_api9_ );
     }
     oyCMMapiFilters_Release( &apis );
   }
