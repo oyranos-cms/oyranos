@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2008-2009 (C) Kai-Uwe Behrmann
+ *            2008-2011 (C) Kai-Uwe Behrmann
  *
  *  @brief    colour management policy module for Oyranos
  *  @internal
@@ -236,6 +236,7 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
         {
           oyOptionChoicesGet( oywid, &count, &names, &current );
           type = oyWidgetTitleGet(  oywid, &groups, &name, &tooltip, &flags );
+          oyWidgetDescriptionGet( oywid, &description, 0 );
 
           /* TODO: When and how to display policy informations? */
           if(oywid == oyWIDGET_POLICY)
@@ -319,8 +320,11 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
       <xf:label>" );
             A( name );
             A(                        "</xf:label>\n\
-      <xf:help>" );
+      <xf:hint>" );
             A( tooltip );
+            A(        "</xf:hint>\n\
+      <xf:help>" );
+            A( description );
             A(        "</xf:help>\n\
       <xf:choices>\n");
 
