@@ -240,9 +240,9 @@ oyFilterGraph_s  * oyConversion_GetGraph (
   return oyFilterGraph_FromNode( ((oyConversion_s_*)conversion)->input, 0 );
 }
 
-/** Function oyConversion_GetImage
+/** Function  oyConversion_GetImage
  *  @memberof oyConversion_s
- *  @brief   get a image copy at the desired position
+ *  @brief    Get a image copy at the desired position
  *
  *  @param[in,out] conversion          conversion object
  *  @param[in]     flags               OY_INPUT or OY_OUTPUT
@@ -260,7 +260,7 @@ oyImage_s        * oyConversion_GetImage (
   oyFilterPlug_s * plug = 0;
   oyFilterSocket_s * sock = 0;
   int error = 0;
-  oyConversion_s * s = conversion;
+  oyConversion_s_ * s = (oyConversion_s_*)conversion;
   oyPixelAccess_s * pixel_access = 0;
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 0 )
