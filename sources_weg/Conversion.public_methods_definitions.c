@@ -88,9 +88,9 @@ int                oyConversion_Correct (
   return 0;
 }
 
-/** Function oyConversion_CreateBasicPixels
+/** Function  oyConversion_CreateBasicPixels
  *  @memberof oyConversion_s
- *  @brief   allocate initialise a basic oyConversion_s object
+ *  @brief    Allocate initialise a basic oyConversion_s object
  *
  *  Provided options will be passed to oyFilterNode_NewWith(). There for no
  *  options defaults will be selected.
