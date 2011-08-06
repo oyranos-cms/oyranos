@@ -103,9 +103,9 @@ const char * oyFilterCore_GetText    ( oyFilterCore_s    * filter,
   return oyObject_GetName(s->oy_, name_type);
 }
 
-/** Function oyFilterCore_NewWith
+/** Function  oyFilterCore_NewWith
  *  @memberof oyFilterCore_s
- *  @brief   lookup and initialise a new filter object
+ *  @brief    Lookup and initialise a new filter object
  *
  *  back end selection: \n
  *  - the user knows, which kind of filter is requested -> registration, e.g. "//color"
@@ -122,31 +122,31 @@ const char * oyFilterCore_GetText    ( oyFilterCore_s    * filter,
  */
 oyFilterCore_s * oyFilterCore_NewWith( const char        * registration,
                                        oyOptions_s       * options,
-                                       oyObject_s          object );
+                                       oyObject_s          object )
 {
-  oyFilterCore_s * s = oyFilterCore_New_( object );
+  oyFilterCore_s * s = (oyFilterCore_s*)oyFilterCore_New_( object );
   int error = !s;
-  oyCMMapi4_s * api4 = 0;
+  oyCMMapi4_s_ * api4_ = 0;
 
   if(error <= 0)
   {
-    api4 = (oyCMMapi4_s*) oyCMMsGetFilterApi_( 0,
+    api4_ = (oyCMMapi4_s_*) oyCMMsGetFilterApi_( 0,
                                             registration, oyOBJECT_CMM_API4_S );
-    error = !api4;
+    error = !api4_;
   }
 
   if(error <= 0)
-    error = oyFilterCore_SetCMMapi4_( s, api4 );
+    error = oyFilterCore_SetCMMapi4_( (oyFilterCore_s_*)s, api4_ );
 
   if(error <= 0 && !options)
   {
 #if 0
-    s->options_ = api4->oyCMMFilter_ValidateOptions( s, options, 0, &ret );
+    oyFilterCorePriv_m(s)->options_ = api4_->oyCMMFilter_ValidateOptions( s, options, 0, &ret );
 #endif
   }
 
   if(error <= 0 && options)
-    s->options_ = oyOptions_Copy( options, 0 );
+    oyFilterCorePriv_m(s)->options_ = oyOptions_Copy( options, 0 );
 
   if(error && s)
   {
