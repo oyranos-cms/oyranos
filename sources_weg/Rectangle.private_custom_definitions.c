@@ -80,6 +80,10 @@ int oyRectangle_Copy__Members( oyRectangle_s_ * dst, oyRectangle_s_ * src)
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
+  dst->x = src->x;
+  dst->y = src->y;
+  dst->width = src->width;
+  dst->height = src->height;
 
   return error;
 }
