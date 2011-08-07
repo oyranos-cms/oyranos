@@ -274,18 +274,19 @@ int            oyRectangle_SamplesFromImage (
   return error;
 }
 
-/**
- *  @brief   scale with origin in the top left corner
+/** Function  oyRectangle_Scale
+ *  @brief    Scale with origin in the top left corner
  *  @memberof oyRectangle_s
  *
- *  @since Oyranos: version 0.1.8
- *  @date  4 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/12/04 (Oyranos: 0.1.8)
+ *  @date    2007/12/04
  */
 void           oyRectangle_Scale     ( oyRectangle_s     * edit_rectangle,
                                        double              factor )
 {
   oyRectangle_s * s = edit_rectangle;
-  oyRectangle_s * r = s;
+  oyRectangle_s_ * r = (oyRectangle_s_*)s;
 
   if(!s)
     return;
