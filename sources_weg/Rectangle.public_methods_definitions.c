@@ -48,8 +48,8 @@ int            oyRectangle_IsEqual   ( oyRectangle_s     * rectangle1,
                                        oyRectangle_s     * rectangle2 )
 {
   int gleich = TRUE;
-  oyRectangle_s * r1 = rectangle1;
-  oyRectangle_s * r2 = rectangle2;
+  oyRectangle_s_ * r1 = (oyRectangle_s_*)rectangle1;
+  oyRectangle_s_ * r2 = (oyRectangle_s_*)rectangle2;
 
   if(!r1 || !r2)
     return FALSE;
