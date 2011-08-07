@@ -318,12 +318,13 @@ void           oyRectangle_SetByRectangle (
   oyRectangle_SetGeo( s, (*ref_)->x, (*ref_)->y, (*ref_)->width, (*ref_)->height );
 }
 
-/**
- *  @brief   set geometry
+/** Function  oyRectangle_SetGeo
+ *  @brief    Set geometry
  *  @memberof oyRectangle_s
  *
- *  @since Oyranos: version 0.1.8
- *  @date  4 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/12/04 (Oyranos: 0.1.8)
+ *  @date    2007/12/04
  */
 void           oyRectangle_SetGeo    ( oyRectangle_s     * edit_rectangle,
                                        double              x,
@@ -331,7 +332,7 @@ void           oyRectangle_SetGeo    ( oyRectangle_s     * edit_rectangle,
                                        double              width,
                                        double              height )
 {
-  oyRectangle_s * s = edit_rectangle;
+  oyRectangle_s_ * s = (oyRectangle_s_*)edit_rectangle;
   if(!s)
     return;
 
