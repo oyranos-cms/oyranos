@@ -152,9 +152,9 @@ oyRectangle_s* oyRectangle_NewWith   ( double              x,
   return s;
 }
 
-/**
- *  @brief   normalise swapped values for width and height
+/** Function  oyRectangle_Normalise
  *  @memberof oyRectangle_s
+ *  @brief    Normalise swapped values for width and height
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
@@ -162,7 +162,7 @@ oyRectangle_s* oyRectangle_NewWith   ( double              x,
 void           oyRectangle_Normalise ( oyRectangle_s     * edit_rectangle )
 {
   oyRectangle_s * s = edit_rectangle;
-  oyRectangle_s * r = s;
+  oyRectangle_s_ * r = (oyRectangle_s_*)s;
 
   if(!s)
     return;
