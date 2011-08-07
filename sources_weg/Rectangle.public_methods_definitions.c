@@ -177,9 +177,9 @@ void           oyRectangle_Normalise ( oyRectangle_s     * edit_rectangle )
   }
 }
 
-/**
- *  @brief   compare
+/** Function  oyRectangle_PointIsInside
  *  @memberof oyRectangle_s
+ *  @brief    Compare
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/04 (Oyranos: 0.1.8)
@@ -191,7 +191,7 @@ int            oyRectangle_PointIsInside (
                                        double              y )
 {
   oyRectangle_s * s = rectangle;
-  oyRectangle_s * r = s;
+  oyRectangle_s_ * r = (oyRectangle_s_*)s;
   int in = TRUE;
 
   if(!s)
