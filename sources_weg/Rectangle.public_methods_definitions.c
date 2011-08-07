@@ -342,24 +342,30 @@ void           oyRectangle_SetGeo    ( oyRectangle_s     * edit_rectangle,
   s->height = height;
 }
 
-/**
+/** Function  oyRectangle_Show
  *  @memberof oyRectangle_s
- *  @brief   debug text
- *  not so threadsafe
+ *  @brief    Debug text
  *
- *  @since Oyranos: version 0.1.8
- *  @date  4 december 2007 (API 0.1.8)
+ *  Not so threadsafe
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/12/04 (Oyranos: 0.1.8)
+ *  @date    2007/12/04
  */
-const char*    oyRectangle_Show      ( oyRectangle_s     * r )
+const char*    oyRectangle_Show      ( oyRectangle_s     * rect )
 {
   static oyChar *text = 0;
+  oyRectangle_s_ * s = (oyRectangle_s_*)rect;
+
+  if(!s)
+    return;
 
   if(!text)
     text = oyAllocateFunc_(sizeof(char) * 512);
 
-  if(r)
-    oySprintf_(text, "%.02fx%.02f%s%.02f%s%.02f", r->width,r->height,
-                     r->x<0?"":"+", r->x, r->y<0?"":"+", r->y);
+  if(s)
+    oySprintf_(text, "%.02fx%.02f%s%.02f%s%.02f", s->width,s->height,
+                     s->x<0?"":"+", s->x, s->y<0?"":"+", s->y);
   else
     oySprintf_(text, "no rectangle");
 
