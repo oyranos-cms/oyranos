@@ -10,4 +10,4 @@
   /** a UI description
    *  Obligatory is a implemented oyCMMapi4_s::ui->getText( x, y ) call. The x
    *  argument shall cover "name" and "help" */
-  oyCMMui_s      * ui;                 /**< a UI description */
+  oyCMMui_s_     * ui;                 /**< a UI description */

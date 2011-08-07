@@ -4,4 +4,4 @@
 
   oyOptions_s        * options_;       /**< @private local options */
 
-  oyCMMapi4_s        * api4_;          /**< @private oyranos library interfaces */
+  oyCMMapi4_s_       * api4_;          /**< @private oyranos library interfaces */
