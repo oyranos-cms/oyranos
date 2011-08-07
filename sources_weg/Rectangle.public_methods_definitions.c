@@ -81,9 +81,9 @@ int            oyRectangle_IsInside  ( oyRectangle_s     * test,
          oyRectangle_PointIsInside( ref, test_->x, test_->y + test_->height - 1 );
 }
 
-/**
- *  @brief   trim edit_rectangle to ref extents
+/** Function  oyRectangle_MoveInside
  *  @memberof oyRectangle_s
+ *  @brief    Trim edit_rectangle to ref extents
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
@@ -91,13 +91,13 @@ int            oyRectangle_IsInside  ( oyRectangle_s     * test,
 void           oyRectangle_MoveInside( oyRectangle_s     * edit_rectangle,
                                        oyRectangle_s     * ref )
 {
-  oyRectangle_s * s = edit_rectangle;
-  oyRectangle_s * a = ref;
+  oyRectangle_s_ * s = (oyRectangle_s_*)edit_rectangle;
+  oyRectangle_s_ * a = (oyRectangle_s_*)ref;
 
   if(!s)
     return;
 
-  oyRectangle_Normalise( s );
+  oyRectangle_Normalise( edit_rectangle );
 
   if (s->x < a->x)
     s->x = a->x;
