@@ -204,9 +204,9 @@ int            oyRectangle_PointIsInside (
   return in;
 }
 
-/**
- *  @brief   scale with origin in the top left corner
+/** Function  oyRectangle_Round
  *  @memberof oyRectangle_s
+ *  @brief    Scale with origin in the top left corner
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
@@ -214,7 +214,7 @@ int            oyRectangle_PointIsInside (
 void           oyRectangle_Round     ( oyRectangle_s     * edit_rectangle )
 {
   oyRectangle_s * s = edit_rectangle;
-  oyRectangle_s * r = s;
+  oyRectangle_s_ * r = (oyRectangle_s_*)s;
 
   if(!s)
     return;
