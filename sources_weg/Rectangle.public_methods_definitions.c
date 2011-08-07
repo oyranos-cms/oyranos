@@ -373,40 +373,42 @@ const char*    oyRectangle_Show      ( oyRectangle_s     * rect )
 
 }
 
-/**
- *  @brief   trim edit_rectangle to ref extents
+/** Function  oyRectangle_Trim
+ *  @brief    Trim edit_rectangle to ref extents
  *  @memberof oyRectangle_s
  *
- *  @since Oyranos: version 0.1.8
- *  @date  4 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/12/04 (Oyranos: 0.1.8)
+ *  @date    2007/12/04
  */
 void           oyRectangle_Trim      ( oyRectangle_s     * edit_rectangle,
                                        oyRectangle_s     * ref )
 {
   oyRectangle_s * s = edit_rectangle;
-  oyRectangle_s * r = s;
+  oyRectangle_s_ * e = (oyRectangle_s_*)edit_rectangle;
+  oyRectangle_s_ * r = (oyRectangle_s_*)ref;
   if(!s)
     return;
 
-  if (r->x < ref->x)
+  if (e->x < r->x)
   {
-    r->width -= ref->x - r->x;
-    r->x = ref->x;
+    e->width -= r->x - e->x;
+    e->x = r->x;
   }
-  if (r->x + r->width > ref->x + ref->width)
-    r->width -= (r->x + r->width) - (ref->x + ref->width);
-  if( r->width < 0 )
-    r->width = 0;
+  if (e->x + e->width > r->x + r->width)
+    e->width -= (e->x + e->width) - (r->x + r->width);
+  if( e->width < 0 )
+    e->width = 0;
 
-  if (r->y < ref->y)
+  if (e->y < r->y)
   {
-    r->height -= ref->y - r->y;
-    r->y = ref->y;
+    e->height -= r->y - e->y;
+    e->y = r->y;
   }
-  if (r->y + r->height > ref->y + ref->height)
-    r->height -= (r->y + r->height) - (ref->y + ref->height);
-  if( r->height < 0 )
-    r->height = 0;
+  if (e->y + e->height > r->y + r->height)
+    e->height -= (e->y + e->height) - (r->y + r->height);
+  if( e->height < 0 )
+    e->height = 0;
 
-  oyRectangle_Normalise( r );
+  oyRectangle_Normalise( edit_rectangle );
 }
