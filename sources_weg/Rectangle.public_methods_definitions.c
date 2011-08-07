@@ -1,6 +1,6 @@
-/**
- *  @brief   count number of points covered by this rectangle
+/** Function  oyRectangle_CountPoints
  *  @memberof oyRectangle_s
+ *  @brief    Count number of points covered by this rectangle
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/04 (Oyranos: 0.1.8)
@@ -8,8 +8,8 @@
  */
 double         oyRectangle_CountPoints(oyRectangle_s     * rectangle )
 {
-  oyRectangle_s * s = rectangle;
-  oyRectangle_s * r = s;
+  oyRectangle_s_ * s = (oyRectangle_s_*)rectangle;
+  oyRectangle_s_ * r = s;
 
   if(!s)
     return FALSE;
