@@ -61,9 +61,9 @@ int            oyRectangle_IsEqual   ( oyRectangle_s     * rectangle1,
   return gleich;
 }
 
-/**
- *  @brief   compare
+/** Function  oyRectangle_IsInside
  *  @memberof oyRectangle_s
+ *  @brief    Compare
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/23 (Oyranos: 0.1.10)
@@ -72,11 +72,13 @@ int            oyRectangle_IsEqual   ( oyRectangle_s     * rectangle1,
 int            oyRectangle_IsInside  ( oyRectangle_s     * test,
                                        oyRectangle_s     * ref )
 {
-  return oyRectangle_PointIsInside( ref, test->x, test->y ) &&
-         oyRectangle_PointIsInside( ref, test->x + test->width - 1, test->y ) &&
-         oyRectangle_PointIsInside( ref, test->x + test->width - 1,
-                                      test->y + test->height - 1) &&
-         oyRectangle_PointIsInside( ref, test->x, test->y + test->height - 1 );
+  oyRectangle_s_ * test_ = (oyRectangle_s_*)test;
+
+  return oyRectangle_PointIsInside( ref, test_->x, test_->y ) &&
+         oyRectangle_PointIsInside( ref, test_->x + test_->width - 1, test_->y ) &&
+         oyRectangle_PointIsInside( ref, test_->x + test_->width - 1,
+                                      test_->y + test_->height - 1) &&
+         oyRectangle_PointIsInside( ref, test_->x, test_->y + test_->height - 1 );
 }
 
 /**
