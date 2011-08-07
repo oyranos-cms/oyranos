@@ -17,8 +17,9 @@ double         oyRectangle_CountPoints(oyRectangle_s     * rectangle )
   return r->width * r->height;
 }
 
-/** @brief   return position inside rectangle, assuming rectangle size
+/** Function  oyRectangle_Index
  *  @memberof oyRectangle_s
+ *  @brief    Return position inside rectangle, assuming rectangle size
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
@@ -27,8 +28,8 @@ int            oyRectangle_Index     ( oyRectangle_s     * rectangle,
                                        double              x,
                                        double              y )
 {
-  oyRectangle_s * s = rectangle;
-  oyRectangle_s * r = s;
+  oyRectangle_s_ * s = (oyRectangle_s_*)rectangle;
+  oyRectangle_s_ * r = s;
 
   if(!s)
     return FALSE;
