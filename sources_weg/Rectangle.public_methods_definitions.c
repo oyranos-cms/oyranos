@@ -225,9 +225,9 @@ void           oyRectangle_Round     ( oyRectangle_s     * edit_rectangle )
   r->height = OY_ROUND(r->height);
 }
 
-/** Function oyRectangle_SamplesFromImage
+/** Function  oyRectangle_SamplesFromImage
  *  @memberof oyRectangle_s
- *  @brief   new from image
+ *  @brief    New from image
  *
  *  @param[in]     image               a image
  *  @param[in]     image_rectangle     optional rectangle from image
@@ -246,24 +246,27 @@ int            oyRectangle_SamplesFromImage (
   int error = !image,
       channel_n = 0;
 
-  if(!error && image->type_ != oyOBJECT_IMAGE_S)
+  oyImage_s_ ** image_ = (oyImage_s_**)&image;
+  oyRectangle_s_ ** pixel_rectangle_ = (oyRectangle_s_**)&pixel_rectangle;
+
+  if(!error && (*image_)->type_ != oyOBJECT_IMAGE_S)
     return 0;
 
   if(!error)
   {
-    channel_n = image->layout_[oyCHANS];
+    channel_n = (*image_)->layout_[oyCHANS];
 
     if(!image_rectangle)
     {
-      oyRectangle_SetGeo( pixel_rectangle, 0,0, image->width, image->height );
-      pixel_rectangle->width *= channel_n;
+      oyRectangle_SetGeo( pixel_rectangle, 0,0, (*image_)->width, (*image_)->height );
+      (*pixel_rectangle_)->width *= channel_n;
 
     } else
     {
       oyRectangle_SetByRectangle( pixel_rectangle, image_rectangle );
-      oyRectangle_Scale( pixel_rectangle, image->width );
-      pixel_rectangle->x *= channel_n;
-      pixel_rectangle->width *= channel_n;
+      oyRectangle_Scale( pixel_rectangle, (*image_)->width );
+      (*pixel_rectangle_)->x *= channel_n;
+      (*pixel_rectangle_)->width *= channel_n;
       oyRectangle_Round( pixel_rectangle );
     }
   }
