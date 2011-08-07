@@ -46,6 +46,98 @@ typedef enum oyCHANNELTYPE_e {
   oyCHANNELTYPE_V
 } oyCHANNELTYPE_e;
 
+/** @typedef oyPixel_t
+ *  @ingroup objects_image
+    parametric type as shorthand for the channel layout in bitmaps \n
+
+    should fit into a 32bit type, usual unsigned int or uint32_t \n
+
+    X F P S TTTT OOOOOOOO CCCCCCCC \n
+
+    C  channels count per pixel (3 for RGB); max 255 \n
+    O  colour channel offset (0 for RGB, 1 for ARGB) \n
+    P  Planar bit: 0 - interwoven, 1 - one channel after the other \n
+    S  Swap colour channels bit (BGR) \n
+    T  Type oyDATATYPE_e \n
+    X  non host byte order bit \n
+    F  Revert bit: 0 - MinIsBlack(Chocolate) 1 - MinIsWhite(Vanilla); \n
+       exchange min and max : (1-x)
+
+ */
+typedef uint32_t oyPixel_t;
+
+#define oyChannels_m(c)             (c)
+#define oyColourOffset_m(o)         ((o) << 8)
+#define oyDataType_m(t)             ((t) << 16)
+#define oySwapColourChannels_m(s)   ((s) << 20)
+#define oyPlanar_m(p)               ((p) << 21)
+#define oyFlavor_m(p)               ((f) << 22)
+#define oyByteSwap_m(x)             ((x) << 23)
+
+/** define some common types */
+#define OY_TYPE_123_8       (oyChannels_m(3)|oyDataType_m(oyUINT8))
+#define OY_TYPE_123_16      (oyChannels_m(3)|oyDataType_m(oyUINT16))
+#define OY_TYPE_123_HALF    (oyChannels_m(3)|oyDataType_m(oyHALF))
+#define OY_TYPE_123_FLOAT   (oyChannels_m(3)|oyDataType_m(oyFLOAT))
+#define OY_TYPE_123_DBL     (oyChannels_m(3)|oyDataType_m(oyDOUBLE))
+
+#define OY_TYPE_123A_8      (oyChannels_m(4)|oyDataType_m(oyUINT8))
+#define OY_TYPE_123A_16     (oyChannels_m(4)|oyDataType_m(oyUINT16))
+#define OY_TYPE_123A_HALF   (oyChannels_m(4)|oyDataType_m(oyHALF))
+#define OY_TYPE_123A_FLOAT  (oyChannels_m(4)|oyDataType_m(oyFLOAT))
+#define OY_TYPE_123A_DBL    (oyChannels_m(4)|oyDataType_m(oyDOUBLE))
+
+#define OY_TYPE_123AZ_HALF  (oyChannels_m(5)|oyDataType_m(oyHALF))
+#define OY_TYPE_123AZ_FLOAT (oyChannels_m(5)|oyDataType_m(oyFLOAT))
+#define OY_TYPE_123AZ_DBL   (oyChannels_m(5)|oyDataType_m(oyDOUBLE))
+
+#define OY_TYPE_A123_8      (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT8))
+#define OY_TYPE_A123_16     (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT16))
+
+#define OY_TYPE_A321_8      (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT8)|oySwapColourChannels_m(oyYES))
+#define OY_TYPE_A321_16     (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT16)|oySwapColourChannels_m(oyYES))
+
+/* some intermixed types will work as well */
+#define OY_TYPE_123A_HALF_Z_FLOAT (oyChannels_m(4+1*2)|oyDataType_m(oyHALF))
+
+#define OY_TYPE_1234_8      (oyChannels_m(4)|oyDataType_m(oyUINT8))
+#define OY_TYPE_1234A_8     (oyChannels_m(5)|oyDataType_m(oyUINT8))
+#define OY_TYPE_1234_16     (oyChannels_m(4)|oyDataType_m(oyUINT16))
+#define OY_TYPE_1234A_16    (oyChannels_m(5)|oyDataType_m(oyUINT16))
+
+#define OY_TYPE_1234_8_REV  (oyChannels_m(4)|oyDataType_m(oyUINT8)|oyFlavor_m(oyYes))
+#define OY_TYPE_1234A_8_REV (oyChannels_m(5)|oyDataType_m(oyUINT8)|oyFlavor_m(oyYes))
+#define OY_TYPE_1234_16_REV (oyChannels_m(4)|oyDataType_m(oyUINT16)|oyFlavor_m(oyYes))
+#define OY_TYPE_1234A_16_REV (oyChannels_m(5)|oyDataType_m(oyUINT16)|oyFlavor_m(oyYes))
+
+
+#define OY_TYPE_1_8         (oyChannels_m(1)|oyDataType_m(oyUINT8))
+#define OY_TYPE_1_16        (oyChannels_m(1)|oyDataType_m(oyUINT16))
+#define OY_TYPE_1_HALF      (oyChannels_m(1)|oyDataType_m(oyHALF))
+#define OY_TYPE_1_FLOAT     (oyChannels_m(1)|oyDataType_m(oyFLOAT))
+#define OY_TYPE_1A_8        (oyChannels_m(2)|oyDataType_m(oyUINT8))
+#define OY_TYPE_1A_16       (oyChannels_m(2)|oyDataType_m(oyUINT16))
+#define OY_TYPE_1A_HALF     (oyChannels_m(2)|oyDataType_m(oyHALF))
+#define OY_TYPE_1A_FLOAT    (oyChannels_m(2)|oyDataType_m(oyFLOAT))
+
+#define OY_TYPE_1_8_REV     (oyChannels_m(1)|oyDataType_m(oyUINT8)|oyFlavor_m(oyYes))
+#define OY_TYPE_1_16_REV    (oyChannels_m(1)|oyDataType_m(oyUINT16)|oyFlavor_m(oyYes))
+#define OY_TYPE_1_HALF_REV  (oyChannels_m(1)|oyDataType_m(oyHALF)|oyFlavor_m(oyYes))
+#define OY_TYPE_1_FLOAT_REV (oyChannels_m(1)|oyDataType_m(oyFLOAT))|oyFlavor_m(oyYes)
+#define OY_TYPE_1A_8_REV    (oyChannels_m(2)|oyDataType_m(oyUINT8)|oyFlavor_m(oyYes))
+#define OY_TYPE_1A_16_REV   (oyChannels_m(2)|oyDataType_m(oyUINT16)|oyFlavor_m(oyYes))
+#define OY_TYPE_1A_HALF_REV (oyChannels_m(2)|oyDataType_m(oyHALF)|oyFlavor_m(oyYes))
+#define OY_TYPE_1A_FLOAT_REV (oyChannels_m(2)|oyDataType_m(oyFLOAT)|oyFlavor_m(oyYes))
+
+/* decode */
+#define oyToChannels_m(c)           ((c)&255)
+#define oyToColourOffset_m(o)       (((o) >> 8)&255)
+#define oyToDataType_m(t)           ((oyDATATYPE_e)(((t) >> 16)&15))
+#define oyToSwapColourChannels_m(s) (((s) >> 20)&1)
+#define oyToPlanar_m(p)             (((p) >> 21)&1)
+#define oyToFlavor_m(f)             (((f) >> 22)&1)
+#define oyToByteswap_m(x)           (((x) >> 23)&1)
+
 {% include "cpp_end.h" %}
 
 #endif /* {{ file_name|underscores|upper|tr:". _" }} */
