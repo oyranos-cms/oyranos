@@ -117,9 +117,9 @@ void           oyRectangle_MoveInside( oyRectangle_s     * edit_rectangle,
   }
 }
 
-/**
- *  @brief   new from other rectangle
+/** Function  oyRectangle_NewFrom
  *  @memberof oyRectangle_s
+ *  @brief    New from other rectangle
  *
  *  @since Oyranos: version 0.1.8
  *  @date  4 december 2007 (API 0.1.8)
@@ -127,7 +127,7 @@ void           oyRectangle_MoveInside( oyRectangle_s     * edit_rectangle,
 oyRectangle_s* oyRectangle_NewFrom   ( oyRectangle_s     * ref,
                                        oyObject_s          object )
 {
-  oyRectangle_s * s = oyRectangle_New_( object );
+  oyRectangle_s * s = oyRectangle_New( object );
   if(s)
     oyRectangle_SetByRectangle(s, ref);
   return s;
