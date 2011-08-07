@@ -3,6 +3,7 @@
 {% block LocalIncludeFiles %}
 {{ block.super }}
 #include "oyranos_module.h"
+#include "oyranos_image.h"
 #include "oyCMMapi5_s_.h"
 {% endblock %}
 

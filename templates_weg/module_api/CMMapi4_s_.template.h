@@ -2,9 +2,9 @@
 
 {% block LocalIncludeFiles %}
 {{ block.super }}
-#include "oyCMMui_s.h"
 #include "oyCMMapi5_s.h"
 #include "oyFilterNode_s.h"
+#include "oyCMMui_s_.h"
 {% endblock %}
 
 {% block ChildMembers %}
