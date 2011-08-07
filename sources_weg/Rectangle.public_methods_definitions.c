@@ -133,8 +133,8 @@ oyRectangle_s* oyRectangle_NewFrom   ( oyRectangle_s     * ref,
   return s;
 }
 
-/**
- *  @brief   new with geometry
+/** Function  oyRectangle_NewWith
+ *  @brief    New with geometry
  *  @memberof oyRectangle_s
  *
  *  @since Oyranos: version 0.1.8
@@ -146,7 +146,7 @@ oyRectangle_s* oyRectangle_NewWith   ( double              x,
                                        double              height,
                                        oyObject_s          object )
 {
-  oyRectangle_s * s = oyRectangle_New_( object );
+  oyRectangle_s * s = oyRectangle_New( object );
   if(s)
     oyRectangle_SetGeo( s, x, y, width, height );
   return s;
