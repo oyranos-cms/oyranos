@@ -221,6 +221,7 @@ oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
   return conv;
 }
 
+#ifdef UNHIDE_FILTERGRAPH
 /** Function  oyConversion_GetGraph
  *  @memberof oyConversion_s
  *  @brief    Get the filter graph from a conversion context
@@ -239,6 +240,7 @@ oyFilterGraph_s  * oyConversion_GetGraph (
 {
   return oyFilterGraph_FromNode( ((oyConversion_s_*)conversion)->input, 0 );
 }
+#endif /*UNHIDE_FILTERGRAPH*/
 
 /** Function  oyConversion_GetImage
  *  @memberof oyConversion_s

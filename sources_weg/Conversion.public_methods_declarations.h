@@ -17,8 +17,10 @@ oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
                                        oyDATATYPE_e        buf_type_out,
                                        oyOptions_s       * options,
                                        int                 count );
+#ifdef UNHIDE_FILTERGRAPH
 oyFilterGraph_s  * oyConversion_GetGraph (
                                        oyConversion_s    * conversion );
+#endif /*UNHIDE_FILTERGRAPH*/
 oyImage_s        * oyConversion_GetImage (
                                        oyConversion_s    * conversion,
                                        uint32_t            flags );
