@@ -26,6 +26,19 @@ typedef enum {
   oyCONNECTOR_EVENT_INCOMPLETE_GRAPH   /**< can not completely process */
 } oyCONNECTOR_EVENT_e;
 
+/** @enum    oyFILTER_REG_MODE_e
+ *  @ingroup objects_conversion
+ *
+ *  @version Oyranos: 0.1.11
+ *  @since   2010/08/12 (Oyranos: 0.1.11)
+ *  @date    2010/08/12
+ */
+typedef enum {
+  oyFILTER_REG_MODE_NONE = 0,
+  /** segments starting with underbar are implementation attributes */
+  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR = 0x0100
+} oyFILTER_REG_MODE_e;
+
 {% include "cpp_end.h" %}
 
 #endif /* {{ file_name|underscores|upper|tr:". _" }} */
