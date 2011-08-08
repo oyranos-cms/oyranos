@@ -351,12 +351,12 @@ oyWriteOptionsToXML_    ( oyOption_t_ ** opts,
                                              "<!-- %s \n"
                                              "     %s -->\n\n",
                        opt->name,
-                       opt->description );
+                       opt->tooltip );
            oyStringAddPrintf_( &text,  oyAllocateFunc_, oyDeAllocateFunc_,
                                              "<!-- %s \n"
                                              "     %s -->\n\n",
                        opt->name,
-                       opt->description );
+                       opt->tooltip );
 
            break;
       case oyWIDGETTYPE_DEFAULT_PROFILE:
@@ -408,7 +408,7 @@ void         oyWriteOptionToXML_     ( oyGROUP_e           group,
                                         "<!-- %s \n"
                                      "     %s -->\n\n",
                   opt->name,
-                  opt->description );
+                  opt->tooltip );
   }
 
   tmp = oyWidgetListGet_( group, &n, oyAllocateFunc_ );
@@ -439,7 +439,7 @@ void         oyWriteOptionToXML_     ( oyGROUP_e           group,
                        t->name );
              oyStringAddPrintf_( text,  oyAllocateFunc_, oyDeAllocateFunc_,
                                             "%s     %s\n", indent,
-                       t->description);
+                       t->tooltip);
              /* write the profile name */
              if(opt_type == oyWIDGETTYPE_DEFAULT_PROFILE)
              {
