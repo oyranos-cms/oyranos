@@ -38,7 +38,7 @@ void usage(int argc, char ** argv)
   fprintf(stderr, "\n");
   fprintf(stderr, _("For more informations read the man page:"));
   fprintf(stderr, "\n");
-  fprintf(stderr, "      man oyranos-xforms_not_yet\n");
+  fprintf(stderr, "      man oyranos-xforms\n");
 }
 
 

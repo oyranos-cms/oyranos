@@ -57,7 +57,7 @@ void usage(int argc, char ** argv)
   fprintf(stderr, "      -i \"xhtml_file\"  %s\n",_("read XFORMS"));
   fprintf(stderr, "\n");
   fprintf(stderr, "%s", _("For more informations read the man page:"));
-  fprintf(stderr, "      man oyranos-xforms_not_yet\n");
+  fprintf(stderr, "      man oyranos-xforms\n");
 }
 
 void callback_done( Fl_Widget * w, void * )
