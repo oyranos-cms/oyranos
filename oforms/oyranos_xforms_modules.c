@@ -35,7 +35,7 @@ void usage(int argc, char ** argv)
   printf("      -f  %s\n",       _("show policy options"));
   printf("\n");
   puts(_("For more informations read the man page:"));
-  printf("      man oyranos-xforms-modules_not_yet\n");
+  printf("      man oyranos-xforms-modules\n");
 }
 
 
