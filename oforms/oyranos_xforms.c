@@ -57,6 +57,7 @@ int main (int argc, char ** argv)
   int error = 0,
       i;
   int print = 1;
+  int help = 0;
   oyOptions_s * opts = 0;
   oyOption_s * o = 0;
 
@@ -65,22 +66,6 @@ int main (int argc, char ** argv)
 #endif
   oyI18NInit_();
 
-
-/* allow "-opt val" and "-opt=val" syntax */
-#define OY_PARSE_STRING_ARG( opt ) \
-                        if( pos + 1 < argc && argv[pos][i+1] == 0 ) \
-                        { opt = argv[pos+1]; \
-                          if( opt == 0 && strcmp(argv[pos+1],"0") ) \
-                            wrong_arg = "-" #opt; \
-                          ++pos; \
-                          i = 1000; \
-                        } else if(argv[pos][i+1] == '=') \
-                        { opt = &argv[pos][i+2]; \
-                          if( opt == 0 && strcmp(&argv[pos][i+2],"0") ) \
-                            wrong_arg = "-" #opt; \
-                          i = 1000; \
-                        } else wrong_arg = "-" #opt; \
-                        if(oy_debug) fprintf(stderr, #opt "=%s\n",opt)
 
   if(argc != 1)
   {
@@ -101,38 +86,42 @@ int main (int argc, char ** argv)
               case 'h': print |= 0x02; break;
               case 'l': print |= 0x04; break;
               case '-':
-                        if(strcmp(&argv[pos][2],"verbose") == 0)
+                        if(OY_IS_ARG("help"))
+                        { help = 1; i=100; break; }
+                        else if(strcmp(&argv[pos][2],"verbose") == 0)
                         { oy_debug += 1; i=100; break;
-                        }
-                        STRING_ADD( t, &argv[pos][2] );
-                        text = oyStrrchr_(t, '=');
-                        /* get the key only */
-                        if(text)
-                          text[0] = 0;
-                        oyStringListAddStaticString_( &other_args,&other_args_n,
-                                                      t,
+                        } else
+                        {
+                          STRING_ADD( t, &argv[pos][2] );
+                          text = oyStrrchr_(t, '=');
+                          /* get the key only */
+                          if(text)
+                            text[0] = 0;
+                          oyStringListAddStaticString_( &other_args,&other_args_n,
+                                                        t,
                                             oyAllocateFunc_,oyDeAllocateFunc_ );
-                        if(text)
-                        oyStringListAddStaticString_( &other_args,&other_args_n,
+                          if(text)
+                            oyStringListAddStaticString_(
+                                            &other_args,&other_args_n,
                                             oyStrrchr_(&argv[pos][2], '=') + 1,
                                             oyAllocateFunc_,oyDeAllocateFunc_ );
-                        else {
-                          if(argv[pos+1])
-                          {
-                            oyStringListAddStaticString_( &other_args,
-                                                          &other_args_n,
-                                                          argv[pos+1],
+                          else {
+                            if(argv[pos+1])
+                            {
+                              oyStringListAddStaticString_( &other_args,
+                                                            &other_args_n,
+                                                            argv[pos+1],
                                             oyAllocateFunc_,oyDeAllocateFunc_ );
-                            ++pos;
-                          } else wrong_arg = argv[pos];
+                              ++pos;
+                            } else wrong_arg = argv[pos];
+                          }
+                          if(t) oyDeAllocateFunc_( t );
+                          t = 0;
+                          i=100; break;
                         }
-                        if(t) oyDeAllocateFunc_( t );
-                        t = 0;
-                        i=100; break;
               case '?':
               default:
-                        usage(argc, argv);
-                        exit (0);
+                        help = 1;
                         break;
             }
             break;
@@ -143,6 +132,11 @@ int main (int argc, char ** argv)
       {
         fprintf( stderr, "%s %s\n", _("wrong argument to option:"), wrong_arg);
         exit(1);
+      }
+      if(help)
+      {
+                        usage(argc, argv);
+                        exit (0);
       }
       ++pos;
     }
