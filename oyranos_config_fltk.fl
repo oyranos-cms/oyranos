@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0110 
 i18n_type 1 
 i18n_include <libintl.h> 
 i18n_function _ 
@@ -119,38 +119,6 @@ Function {showDefaultProfile_callback( Fl_Widget* w, void* )} {} {
       }
     }
   } else fl_alert( "%s", _("Show Profile failed") );} {}
-} 
-
-Function {addPathCallback( Fl_Widget* w, void* )} {} {
-  code {char* name = fl_dir_chooser(_("Select a directory with ICC profiles"), NULL);
-  if( name ) {
-    //oyPathAdd ( name );
-    updateUI();
-  }} {}
-} 
-
-Function {rmPathCallback( Fl_Widget* w, void* )} {} {
-  code {ListEntry *pp = dynamic_cast<ListEntry*> (w->parent());
-  if(pp) {
-    Fl_Button *b = dynamic_cast<Fl_Button*> (w);
-    if(b && b == pp->button_add) {
-      std::cout << b->value() << std::endl;
-      int error = 0;//oyPathAdd (pp->box->label());
-      if(error) {
-        fl_alert( _("error setting path: %s"), pp->box->label() );
-      }
-    } else
-    if(b && b == pp->button_remove) {
-      std::cout << b->value() << std::endl;
-      //oyPathRemove ( pp->box->label() );
-      //Fl::pushed(&bPL);
-      updateUI();
-
-      // Alle Blaetter Loeschen
-      // Nun ist der Speicherblock fuer diese Funktion bereits freigegeben
-      // und wird aber weiter benutzt
-    } else fl_alert( "no Fl_Button" );
-  } else fl_alert( "%s", _("Path") );} {}
 } 
 
 Function {selectBehaviourCallback( Fl_Widget* w, void* x )} {} {
@@ -522,19 +490,6 @@ class Option {: {public OyFl_Pack} private
       pp->end();
     }
 
-    if(0 && flags & OY_LAYOUT_PATH_SELECTOR)
-    {
-      Fl_Pack *pack = new Fl_Pack(0,0,
-                                  width, BUTTON_HEIGHT);
-        pack->type( FL_HORIZONTAL );
-        pack->spacing( H_SPACING );
-        Fl_Button *nbutton = new Fl_Button(0,0, width-BUTTON_HEIGHT-2*spacing(), BUTTON_HEIGHT, _("@-3+"));
-        nbutton->callback( addPathCallback );
-        nbutton->tooltip(_("Add Path containing ICC profiles"));
-        pack->resizable( nbutton );
-        new Fl_Box( 0, 0, 1, BUTTON_HEIGHT );
-      pack->end();
-    }
   }
   } /* switch */
 
@@ -560,19 +515,7 @@ class ListEntry {open : {public OyFl_Pack} private
     box = new Fl_Box( 0, 0, w-BUTTON_HEIGHT-spacing(), BUTTON_HEIGHT, name );
     box->align(FL_ALIGN_LEFT | FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
 
-\#if 0
-    if( flags & OY_LAYOUT_PATH_SELECTOR )
-    if( strcmp( "/usr/share/color/icc", name ) != 0 &&
-        strcmp( "~/.color/icc", name ) != 0 &&
-        strcmp( OY_SYSCOLORDIR OY_SLASH OY_ICCDIRNAME , name ) != 0 &&
-        strcmp( OY_USERCOLORDIR OY_SLASH OY_ICCDIRNAME, name ) != 0 )
-    {
-      button_remove = new Fl_Button( 0, 0, BUTTON_HEIGHT, BUTTON_HEIGHT, "@-31+" );
-      button_remove->callback( rmPathCallback );
-      button_remove->tooltip(_("Exclude this path"));
-    } else
-\#endif
-      new Fl_Box( 0, 0, BUTTON_HEIGHT, BUTTON_HEIGHT );
+    new Fl_Box( 0, 0, BUTTON_HEIGHT, BUTTON_HEIGHT );
 
     int width=0, height=0;
     int scroll_w = 50; //default_profiles_pack->w() - 3*H_SPACING - BUTTON_HEIGHT;
@@ -886,7 +829,7 @@ Function {updateUIIdle(void*)} {} {
   refreshOptions();} {}
 } 
 
-Function {} {open C
+Function {} {C
 } {
   code {Fl::scheme("plastic");
 
@@ -978,7 +921,7 @@ Function {} {open C
   }} {}
   Fl_Window top_group {
     label {Oyranos Configuration} open
-    xywh {564 466 505 410} type Double resizable size_range {305 255 0 0} visible
+    xywh {564 361 505 410} type Double resizable size_range {305 255 0 0} visible
   } {
     Fl_Pack {} {open
       xywh {0 0 480 70} type HORIZONTAL
@@ -999,7 +942,7 @@ Function {} {open C
       class Flmm_Tabs
     } {
       Fl_Group {} {
-        label Policy open selected
+        label Policy open
         tooltip {Reset to a standard Policy for Oyranos.} xywh {10 95 485 266} resizable
       } {}
     }
