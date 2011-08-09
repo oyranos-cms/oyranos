@@ -1,4 +1,4 @@
-{% extends "Struct_s.template.h" %}
+{% extends "oyStruct_s.template.h" %}
 
 {% block LocalIncludeFiles %}
 {{ block.super }}
