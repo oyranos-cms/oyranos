@@ -1,6 +1,8 @@
 #include <QObject>
 #include <QHash>
 
+#include "FuncInfo.h"
+
 class QString;
 
 class ClassInfo: public QObject
@@ -11,6 +13,7 @@ class ClassInfo: public QObject
   Q_PROPERTY(QString name READ name)
   Q_PROPERTY(QString privName READ privName)
   Q_PROPERTY(QString baseName READ baseName)
+  Q_PROPERTY(QString cppName READ cppName)
   Q_PROPERTY(QObject* parent READ parent)
   Q_PROPERTY(QObject* content READ content)
   Q_PROPERTY(QString parentBaseName READ parentBaseName)
@@ -32,6 +35,8 @@ class ClassInfo: public QObject
   Q_PROPERTY(QString public_methods_declarations_h READ public_methods_declarations_h)
   Q_PROPERTY(QString public_methods_definitions_c READ public_methods_definitions_c)
 
+  Q_PROPERTY(QList<QObject*> functions READ functions)
+
   public:
     ClassInfo( const QString& name, const QString& templates, const QString& sources, bool isnew = false )
       : base(name), sourcesDir(sources), templatesDir(templates),
@@ -40,8 +45,11 @@ class ClassInfo: public QObject
         m_parent(NULL), m_content(NULL)
     {
       parseDoxyfile();
+      m_functions = FuncInfo::getPublicFunctions( this );
       //parseSourceFiles(); FIXME This is not working
     }
+
+    ~ClassInfo() { delete m_functions; }
 
     /* Public property functions start */
     /// Get the source files directory
@@ -54,6 +62,8 @@ class ClassInfo: public QObject
     QString privName() const { return "oy" + base + "_s_"; }
     /// Get the class name without any prefix/suffix
     QString baseName() const { return base; }
+    /// Get the class C++ name
+    QString cppName() const { return base; }
     /// Get the parent class
     QObject* parent() const { return static_cast<QObject*>(m_parent); }
     /// Get the content class
@@ -115,22 +125,26 @@ class ClassInfo: public QObject
     /// Wether templates for this should be created using "hidden struct"
     bool hiddenStruct() const { return hiddenstruct; }
 
+    /// Get the class functions info
+    const QList<QObject*> functions() const { return m_functions; }
+
     static QList<ClassInfo*> getAllClasses( const QHash<QString,QString>& dirs );
 
   private:
-    QString base;           ///< The class name without any prefix/suffix
-    QString parentBase;     ///< The base name of the parent class
-    QString groupName;      ///< The group this class belongs to
-    QString doxyBrief;      ///< The doxygen class brief description
-    QString sourcesDir;     ///< Where the class source files live
-    QString templatesDir;   ///< The template files root directory
-    bool isInternal;        ///< True if this is an internal(not public) class
-    bool isNew;             ///< True if this is a new class (with only a .dox file)
-    bool autotemplates;     ///< True if templates should be created automaticly for this class
-    bool hiddenstruct;      ///< True if templates should be created using "hidden struct"
-    bool list;              ///< True if this class is a special "list" class
-    ClassInfo* m_parent;    ///< A pointer to the parent class info
-    ClassInfo* m_content;   ///< A pointer to the content class info, if this is a "list" class
+    QString base;                 ///< The class name without any prefix/suffix
+    QString parentBase;           ///< The base name of the parent class
+    QString groupName;            ///< The group this class belongs to
+    QString doxyBrief;            ///< The doxygen class brief description
+    QString sourcesDir;           ///< Where the class source files live
+    QString templatesDir;         ///< The template files root directory
+    bool isInternal;              ///< True if this is an internal(not public) class
+    bool isNew;                   ///< True if this is a new class (with only a .dox file)
+    bool autotemplates;           ///< True if templates should be created automaticly for this class
+    bool hiddenstruct;            ///< True if templates should be created using "hidden struct"
+    bool list;                    ///< True if this class is a special "list" class
+    ClassInfo* m_parent;          ///< A pointer to the parent class info
+    ClassInfo* m_content;         ///< A pointer to the content class info, if this is a "list" class
+    QList<QObject*> m_functions;  ///< A list of the information for each function of this class
 
     void parseDoxyfile();
     void parseSourceFiles();
