@@ -117,7 +117,7 @@ void ClassTemplates::createTemplates() const
                                 remove( ".list" ).
                                 replace( '.', ".template." ).
                                 replace( "Class", allClassesInfo.at(i)->baseName() );
-      QFile newFile( templatesDir.canonicalPath() + "/" + group + "/" + newTemplateFile );
+      QFile newFile( templatesDir.canonicalPath() + "/" + group + "/oy" + newTemplateFile );
       QFile oldFile( TEMPLATES_CLASS_PATH "/" + oldTemplateFile );
       if (!newFile.exists()) {
         if (!newFile.open( QIODevice::WriteOnly|QIODevice::Text )) {
@@ -135,7 +135,7 @@ void ClassTemplates::createTemplates() const
         // If our parent is not oyStruct_s, replace Base* with parent template file
         if (allClassesInfo.at(i)->parentBaseName() != "Struct")
           fileData.replace( QRegExp(catchBase),
-                            allClassesInfo.at(i)->parentBaseName() + "\\1" + ".template." + "\\2" );
+                            "oy" + allClassesInfo.at(i)->parentBaseName() + "\\1" + ".template." + "\\2" );
 
         newFile.write( fileData.toAscii() );
 

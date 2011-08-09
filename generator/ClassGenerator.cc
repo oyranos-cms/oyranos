@@ -118,28 +118,26 @@ QString ClassGenerator::render( const QFileInfo& templateFileInfo, const QString
   Grantlee::Template t = engine->loadByName( templateFileInfo.fileName() );
   Grantlee::Context c;
 
-  QString class_base_name = templateFileInfo.baseName();
-  int idx = class_base_name.indexOf("_");
-  class_base_name.truncate(idx);
-
   QVariant classinfo;
-  QString sourceName, oy;
-  if (class_base_name == "Struct") {
+  QString class_name = templateFileInfo.baseName();
+  if (class_name == "oyStruct_s") {
     classinfo = tpl.getStructClass();
-    oy = "oy";
   } else {
     int i;
     for (i=0; i<classes.size(); i++) {
-      if (class_base_name == classes.at( i ).value<QObject*>()->property("baseName").toString()) {
+      if (class_name == classes.at( i ).value<QObject*>()->property("name").toString() ||
+          class_name == classes.at( i ).value<QObject*>()->property("privName").toString()) {
         classinfo = classes.at( i );
-        oy = "oy";
         break;
       }
     }
-    if (i == classes.size())
+    if (i == classes.size()) {
       qDebug() << templateFileInfo.fileName() << "is not a base class file.";
+      classinfo = QVariant::fromValue( static_cast<QObject*>(new ClassInfo( "Null", "", "" )) );
+    }
   }
-  sourceName = oy + templateFileInfo.baseName() + "." + templateFileInfo.suffix();
+
+  QString sourceName = templateFileInfo.baseName() + "." + templateFileInfo.suffix();
   QFile sourceFile( dstDir + "/" + sourceName );
   QFileInfo sourceFileInfo(sourceFile);
 
