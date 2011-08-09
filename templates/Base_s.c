@@ -1,4 +1,4 @@
-{% extends "Struct_s.template.c" %}
+{% extends "oyStruct_s.template.c" %}
 {% load gsoc_extensions %}
 
 {% block LocalIncludeFiles %}
