@@ -32,4 +32,4 @@ class ClassGenerator {
     static const QStringList templateSuffixes;
 };
 
-#endif //CLASS_GENERATOR_H
+#endif // CLASS_GENERATOR_H

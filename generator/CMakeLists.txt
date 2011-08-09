@@ -29,11 +29,11 @@ CONFIGURE_FILE(
 ADD_SUBDIRECTORY(grantlee_extensions)
 
 #Setup MOC
-set( MOC_HEADERS ClassInfo.h )
+set( MOC_HEADERS ClassInfo.h FuncInfo.h )
 qt4_wrap_cpp( MOC_SOURCES ${MOC_HEADERS} )
 
 # ... Application sources etc.
-SET( GeneratorSrc "main.cc" "ClassTemplates.cc" "ClassInfo.cc" "ClassGenerator.cc" )
+SET( GeneratorSrc "main.cc" "ClassTemplates.cc" "ClassInfo.cc" "FuncInfo.cc" "ClassGenerator.cc" )
 ADD_EXECUTABLE( oyAPIGenerator ${GeneratorSrc} ${MOC_SOURCES} )
 TARGET_LINK_LIBRARIES(
    oyAPIGenerator

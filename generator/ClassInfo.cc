@@ -9,6 +9,18 @@
 
 #include "ClassInfo.h"
 
+ClassInfo::ClassInfo( const QString& name, const QString& templates,
+                      const QString& sources, bool isnew )
+  : base(name), sourcesDir(sources), templatesDir(templates),
+    isInternal(false), isNew(isnew),
+    autotemplates(true), hiddenstruct(true), list(false),
+    m_parent(NULL), m_content(NULL)
+{
+  parseDoxyfile();
+  m_functions = FuncInfo::getPublicFunctions( this );
+  //parseSourceFiles(); FIXME This is not working
+}
+
 QList<ClassInfo*> ClassInfo::getAllClasses( const QHash<QString,QString>& dirs )
 {
   QList<ClassInfo*> allClassesInfo;

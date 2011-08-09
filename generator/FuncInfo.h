@@ -1,6 +1,13 @@
+#ifndef FUNC_INFO_H
+#define FUNC_INFO_H
+
 #include <QObject>
+#include <QStringList>
+
+#include "ClassInfo.h"
 
 class QString;
+class ClassInfo;
 
 class FuncInfo: public QObject
 {
@@ -13,8 +20,8 @@ class FuncInfo: public QObject
   Q_PROPERTY(QStringList argList READ argList)
 
   public:
-    FuncInfo( const QString& prototype ) :
-      m_name("unknown"), m_returnType("unknown")
+    FuncInfo( const QString& className, const QString& prototype ) :
+      m_name("unknown"), m_returnType("unknown"), m_classBaseName(className)
     {
       parsePublicPrototype( prototype );
     }
@@ -33,15 +40,17 @@ class FuncInfo: public QObject
     QStringList argList() const { return m_arguments; }
 
     static QList<QObject*> getPublicFunctions( const ClassInfo* classInfo );
+    static const QString public_regexp_tmpl;
 
   private:
     QString m_name;              ///< The name of the function, without the oyClass_ prefix
     QString m_returnType;        ///< The function return type
+    QString m_classBaseName;     ///< The name of the function, without the oyClass_ prefix
     QStringList m_arguments;     ///< A list of all function arguments
     QStringList m_argumentNames; ///< A list of all function argument names
     QStringList m_argumentTypes; ///< A list of all function argument types
 
-    static const QString public_regexp_tmpl;
-
     void parsePublicPrototype( const QString& prototype );
 };
+
+#endif // FUNC_INFO_H

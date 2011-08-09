@@ -1,11 +1,14 @@
 #include <QRegExp>
+#include <QFile>
+
+#include <QtDebug>
 
 #include "FuncInfo.h"
 
-FuncInfo::public_regexp_tmpl =
+const QString FuncInfo::public_regexp_tmpl =
   "OYAPI\\s+(.*(?:\\b|\\*))\\s+OYEXPORT\\s+oy%1_(\\w+)\\s+\\(\\s+oy%1_s\\s+\\*\\s+\\w+";
 
-static QList<QObject*> FuncInfo::getPublicFunctions( const ClassInfo* classInfo )
+QList<QObject*> FuncInfo::getPublicFunctions( const ClassInfo* classInfo )
 {
   QList<QObject*> functions;
 
@@ -13,7 +16,7 @@ static QList<QObject*> FuncInfo::getPublicFunctions( const ClassInfo* classInfo 
   QString c_header_contents = c_header.readAll();
   QStringList declarations = c_header_contents.split(";");
   for (int i=0; i<declarations.size(); i++)
-    functions << static_cast<QObject*>(new FuncInfo( declarations.at(i)) );
+    functions << static_cast<QObject*>(new FuncInfo( classInfo->baseName(), declarations.at(i)) );
 
   return functions;
 }
@@ -23,7 +26,7 @@ void FuncInfo::parsePublicPrototype( const QString& prototype )
   int pos = 0;
 
   // Catch function name and return type
-  QRegExp findName( public_regexp_tmpl.arg( classInfo->baseName() ) );
+  QRegExp findName( public_regexp_tmpl.arg( m_classBaseName ) );
   if ((pos = findName.indexIn(prototype, pos)) != -1) {
     m_name = findName.cap(2);
     m_returnType = findName.cap(1);

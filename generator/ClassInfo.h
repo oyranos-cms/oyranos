@@ -1,9 +1,13 @@
+#ifndef CLASS_INFO_H
+#define CLASS_INFO_H
+
 #include <QObject>
 #include <QHash>
 
 #include "FuncInfo.h"
 
 class QString;
+class FuncInfo;
 
 class ClassInfo: public QObject
 {
@@ -38,18 +42,7 @@ class ClassInfo: public QObject
   Q_PROPERTY(QList<QObject*> functions READ functions)
 
   public:
-    ClassInfo( const QString& name, const QString& templates, const QString& sources, bool isnew = false )
-      : base(name), sourcesDir(sources), templatesDir(templates),
-        isInternal(false), isNew(isnew),
-        autotemplates(true), hiddenstruct(true), list(false),
-        m_parent(NULL), m_content(NULL)
-    {
-      parseDoxyfile();
-      m_functions = FuncInfo::getPublicFunctions( this );
-      //parseSourceFiles(); FIXME This is not working
-    }
-
-    ~ClassInfo() { delete m_functions; }
+    ClassInfo( const QString& name, const QString& templates, const QString& sources, bool isnew = false );
 
     /* Public property functions start */
     /// Get the source files directory
@@ -149,3 +142,5 @@ class ClassInfo: public QObject
     void parseDoxyfile();
     void parseSourceFiles();
 };
+
+#endif // CLASS_INFO_H

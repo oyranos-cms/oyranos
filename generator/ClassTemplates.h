@@ -1,5 +1,5 @@
-#ifndef CLASSTEMPLATES_H
-#define CLASSTEMPLATES_H
+#ifndef CLASS_TEMPLATES_H
+#define CLASS_TEMPLATES_H
 
 #include "ClassInfo.h"
 
@@ -47,4 +47,4 @@ class ClassTemplates
     static const QStringList sourceFiles;   ///< List of source file types for each class
 };
 
-#endif //CLASSTEMPLATES_H
+#endif // CLASS_TEMPLATES_H

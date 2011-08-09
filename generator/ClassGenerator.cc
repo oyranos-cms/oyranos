@@ -126,7 +126,8 @@ QString ClassGenerator::render( const QFileInfo& templateFileInfo, const QString
     int i;
     for (i=0; i<classes.size(); i++) {
       if (class_name == classes.at( i ).value<QObject*>()->property("name").toString() ||
-          class_name == classes.at( i ).value<QObject*>()->property("privName").toString()) {
+          class_name == classes.at( i ).value<QObject*>()->property("privName").toString() ||
+          class_name == classes.at( i ).value<QObject*>()->property("cppName").toString()) {
         classinfo = classes.at( i );
         break;
       }
