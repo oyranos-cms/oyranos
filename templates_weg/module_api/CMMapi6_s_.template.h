@@ -1,4 +1,4 @@
-{% extends "CMMapiFilter_s_.template.h" %}
+{% extends "oyCMMapiFilter_s_.template.h" %}
 
 {% block ChildMembers %}
 {{ block.super }}

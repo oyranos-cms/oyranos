@@ -1,4 +1,4 @@
-{% extends "Connector_s_.template.h" %}
+{% extends "oyConnector_s_.template.h" %}
 
 {% block LocalIncludeFiles %}
 {{ block.super }}

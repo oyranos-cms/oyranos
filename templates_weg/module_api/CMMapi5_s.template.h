@@ -1,4 +1,4 @@
-{% extends "CMMapi_s.template.h" %}
+{% extends "oyCMMapi_s.template.h" %}
 
 {% block LocalIncludeFiles %}
 {{ block.super }}

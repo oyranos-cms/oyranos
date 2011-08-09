@@ -1,1 +1,1 @@
-{% extends "Connector_s_.template.c" %}
+{% extends "oyConnector_s_.template.c" %}

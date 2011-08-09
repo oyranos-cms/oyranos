@@ -1,1 +1,1 @@
-{% extends "Connector_s.template.h" %}
+{% extends "oyConnector_s.template.h" %}

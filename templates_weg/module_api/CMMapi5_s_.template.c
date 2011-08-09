@@ -1,1 +1,1 @@
-{% extends "CMMapi_s_.template.c" %}
+{% extends "oyCMMapi_s_.template.c" %}
