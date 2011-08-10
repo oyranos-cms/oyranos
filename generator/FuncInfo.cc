@@ -8,15 +8,29 @@
 const QString FuncInfo::public_regexp_tmpl =
   "OYAPI\\s+(.*(?:\\b|\\*))\\s+OYEXPORT\\s+oy%1_(\\w+)\\s+\\(\\s+oy%1_s\\s+\\*\\s+\\w+";
 
-QList<QObject*> FuncInfo::getPublicFunctions( const ClassInfo* classInfo )
+QVariantList FuncInfo::getPublicFunctions( const ClassInfo* classInfo )
 {
-  QList<QObject*> functions;
+  QVariantList functions;
 
   QFile c_header( classInfo->srcDir() + "/" + classInfo->public_methods_declarations_h() );
-  QString c_header_contents = c_header.readAll();
-  QStringList declarations = c_header_contents.split(";");
-  for (int i=0; i<declarations.size(); i++)
-    functions << static_cast<QObject*>(new FuncInfo( classInfo->baseName(), declarations.at(i)) );
+  if (!c_header.exists()) {
+    qWarning() << "File not found:" << c_header.fileName();
+    return functions;
+  }
+  if (!c_header.open( QIODevice::ReadOnly|QIODevice::Text )) {
+    qWarning() << "Could not open file" << c_header.fileName() << "for reading";
+  }
+
+  QString c_header_contents = c_header.readAll().trimmed();
+  QStringList declarations = c_header_contents.split(";", QString::SkipEmptyParts);
+  for (int i=0; i<declarations.size(); i++) {
+    FuncInfo* fp = new FuncInfo( classInfo->baseName(), declarations.at(i));
+    if (fp->name().isEmpty() || fp->returnType().isEmpty()) {
+      delete fp; fp = NULL;
+      continue;
+    }
+    functions << QVariant( QVariant::fromValue( static_cast<QObject*>(fp) ) );
+  }
 
   return functions;
 }
@@ -54,8 +68,4 @@ void FuncInfo::parsePublicPrototype( const QString& prototype )
 
     pos += findArgs.matchedLength();
   }
-  //QString cpp_arguments = functionArguments.join(",");
-  //QString normSignature = QString("%1 %2(%3)").arg(returnType, functionName, cpp_arguments);
-  //qDebug() << normSignature;
-  //qDebug() << prototype;
 }
