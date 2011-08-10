@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QVariant>
 
 #include "ClassInfo.h"
 
@@ -39,7 +40,7 @@ class FuncInfo: public QObject
     /// Get the function arguments as a list
     QStringList argList() const { return m_arguments; }
 
-    static QList<QObject*> getPublicFunctions( const ClassInfo* classInfo );
+    static QVariantList getPublicFunctions( const ClassInfo* classInfo );
     static const QString public_regexp_tmpl;
 
   private:

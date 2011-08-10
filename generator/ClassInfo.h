@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QHash>
+#include <QVariant>
 
 #include "FuncInfo.h"
 
@@ -39,7 +40,7 @@ class ClassInfo: public QObject
   Q_PROPERTY(QString public_methods_declarations_h READ public_methods_declarations_h)
   Q_PROPERTY(QString public_methods_definitions_c READ public_methods_definitions_c)
 
-  Q_PROPERTY(QList<QObject*> functions READ functions)
+  Q_PROPERTY(QVariantList functions READ functions)
 
   public:
     ClassInfo( const QString& name, const QString& templates, const QString& sources, bool isnew = false );
@@ -120,7 +121,7 @@ class ClassInfo: public QObject
     bool hiddenStruct() const { return hiddenstruct; }
 
     /// Get the class functions info
-    const QList<QObject*> functions() const { return m_functions; }
+    const QVariantList functions() const { return m_functions; }
 
     static QList<ClassInfo*> getAllClasses( const QHash<QString,QString>& dirs );
 
@@ -138,7 +139,7 @@ class ClassInfo: public QObject
     bool list;                    ///< True if this class is a special "list" class
     ClassInfo* m_parent;          ///< A pointer to the parent class info
     ClassInfo* m_content;         ///< A pointer to the content class info, if this is a "list" class
-    QList<QObject*> m_functions;  ///< A list of the information for each function of this class
+    QVariantList m_functions;     ///< A list of the information for each function of this class
 
     void parseDoxyfile();
     void parseSourceFiles();

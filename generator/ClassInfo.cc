@@ -24,7 +24,7 @@ ClassInfo::ClassInfo( const QString& name, const QString& templates,
 ClassInfo::~ClassInfo()
 {
   while (!m_functions.isEmpty())
-    delete m_functions.takeFirst();
+    delete static_cast<FuncInfo*>(m_functions.takeFirst().value<QObject*>());
 }
 
 QList<ClassInfo*> ClassInfo::getAllClasses( const QHash<QString,QString>& dirs )
