@@ -15,6 +15,7 @@ class FuncInfo: public QObject
   Q_OBJECT
   Q_PROPERTY(QString name READ name)
   Q_PROPERTY(QString returnType READ returnType)
+  Q_PROPERTY(bool isVoid READ isVoid)
   Q_PROPERTY(QString args READ args)
   Q_PROPERTY(QString argNames READ argNames)
   Q_PROPERTY(QString argTypes READ argTypes)
@@ -31,6 +32,8 @@ class FuncInfo: public QObject
     QString name() const { return m_name; }
     /// Get the function return type
     QString returnType() const { return m_returnType; }
+    /// Check if function is void
+    bool isVoid() const { return m_returnType == "void" ? true : false; }
     /// Get the function arguments (comma separated)
     QString args() const { return m_arguments.join(", "); }
     /// Get the function argument names (comma separated)
