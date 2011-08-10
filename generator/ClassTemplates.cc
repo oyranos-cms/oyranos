@@ -95,18 +95,18 @@ void ClassTemplates::createTemplates() const
     if (allClassesInfo.at(i)->hiddenStruct()) { //Use the "hidden struct" API
       if (allClassesInfo.at(i)->listOf() == "") { //Create a simple object
         qDebug() << "Creating template files for simple object" << allClassesInfo.at(i)->baseName();
-        genericTemplateFiles << "Class_s.h" << "Class_s.c"
-                             << "Class_s_.h" << "Class_s_.c";
+        genericTemplateFiles << "oyClass_s.h" << "oyClass_s.c"
+                             << "oyClass_s_.h" << "oyClass_s_.c";
         catchBase = "Base(_s_?)\\.([ch])";
       } else { //Create a list of objects
         qDebug() << "Creating template files for list of" << allClassesInfo.at(i)->listOf() << "objects";
-        genericTemplateFiles << "Class_s.list.h" << "Class_s.list.c"
-                             << "Class_s_.list.h" << "Class_s_.list.c";
+        genericTemplateFiles << "oyClass_s.list.h" << "oyClass_s.list.c"
+                             << "oyClass_s_.list.h" << "oyClass_s_.list.c";
         catchBase = "BaseList(_s_?)\\.([ch])";
       }
     } else { //Use the "opaque pointer" API
-      genericTemplateFiles << "Class_s.opaque.h" << "Class_s.opaque.c"
-                           << "Class_s_impl.opaque.h" << "Class_s_impl.opaque.c";
+      genericTemplateFiles << "oyClass_s.opaque.h" << "oyClass_s.opaque.c"
+                           << "oyClass_s_impl.opaque.h" << "oyClass_s_impl.opaque.c";
       catchBase = "Base(_s(?:_impl){0,1})\\.opaque\\.([ch])";
     }
 
@@ -117,7 +117,7 @@ void ClassTemplates::createTemplates() const
                                 remove( ".list" ).
                                 replace( '.', ".template." ).
                                 replace( "Class", allClassesInfo.at(i)->baseName() );
-      QFile newFile( templatesDir.canonicalPath() + "/" + group + "/oy" + newTemplateFile );
+      QFile newFile( templatesDir.canonicalPath() + "/" + group + "/" + newTemplateFile );
       QFile oldFile( TEMPLATES_CLASS_PATH "/" + oldTemplateFile );
       if (!newFile.exists()) {
         if (!newFile.open( QIODevice::WriteOnly|QIODevice::Text )) {
