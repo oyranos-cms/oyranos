@@ -22,7 +22,7 @@ class FuncInfo: public QObject
 
   public:
     FuncInfo( const QString& className, const QString& prototype ) :
-      m_name("unknown"), m_returnType("unknown"), m_classBaseName(className)
+      m_classBaseName(className)
     {
       parsePublicPrototype( prototype );
     }
