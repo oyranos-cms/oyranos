@@ -17,7 +17,8 @@ ClassInfo::ClassInfo( const QString& name, const QString& templates,
     m_parent(NULL), m_content(NULL)
 {
   parseDoxyfile();
-  m_functions = FuncInfo::getPublicFunctions( this );
+  if (base != "oyStruct_s" && base != "Null")
+    m_functions = FuncInfo::getPublicFunctions( this );
   //parseSourceFiles(); FIXME This is not working
 }
 
