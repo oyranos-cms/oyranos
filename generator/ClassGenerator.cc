@@ -47,7 +47,10 @@ ClassGenerator::ClassGenerator( const QHash<QString,QString>& dirs, const QStrin
   }
 
   // Set basePath also, for Base_* template files
-  QDirIterator baseTemplateFile( TEMPLATES_STD_DIR , QStringList() << "Base*.[ch]" );
+  QDirIterator baseTemplateFile( TEMPLATES_STD_DIR ,
+                                 QStringList() << "Base*.[ch]"
+                                               << "Base.cc"
+                                               << "Base.hh" );
   while (baseTemplateFile.hasNext()) {
     baseTemplateFile.next();
     basePath[baseTemplateFile.fileName()] = baseTemplateFile.filePath();
