@@ -12,6 +12,7 @@
 const QStringList ClassGenerator::templateSuffixes(
     QStringList() <<
     "*.template.h" <<
+    "*.template.hh" <<
     "*.template.c" <<
     "*.template.cc" <<
     "*.template.txt"
