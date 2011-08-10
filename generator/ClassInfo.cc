@@ -21,6 +21,12 @@ ClassInfo::ClassInfo( const QString& name, const QString& templates,
   //parseSourceFiles(); FIXME This is not working
 }
 
+ClassInfo::~ClassInfo()
+{
+  while (!m_functions.isEmpty())
+    delete m_functions.takeFirst();
+}
+
 QList<ClassInfo*> ClassInfo::getAllClasses( const QHash<QString,QString>& dirs )
 {
   QList<ClassInfo*> allClassesInfo;

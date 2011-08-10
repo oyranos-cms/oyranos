@@ -43,6 +43,7 @@ class ClassInfo: public QObject
 
   public:
     ClassInfo( const QString& name, const QString& templates, const QString& sources, bool isnew = false );
+    ~ClassInfo();
 
     /* Public property functions start */
     /// Get the source files directory
