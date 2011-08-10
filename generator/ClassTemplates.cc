@@ -110,6 +110,9 @@ void ClassTemplates::createTemplates() const
       catchBase = "Base(_s(?:_impl){0,1})\\.opaque\\.([ch])";
     }
 
+    // C++ templates
+    genericTemplateFiles << "Class.hh" << "Class.cc";
+
     for (int g=0; g<genericTemplateFiles.size(); g++) {
       QString oldTemplateFile = genericTemplateFiles.at( g );
       QString newTemplateFile = QString( oldTemplateFile ).
