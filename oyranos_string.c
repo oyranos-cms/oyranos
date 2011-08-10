@@ -233,27 +233,27 @@ int                oyStringAddPrintf_( char             ** string,
   char * text = 0;
   va_list list;
   int len;
-  size_t sz = 256;
+  size_t sz = strlen(format) * 2;
 
-  text = malloc( sz );
+  text = allocateFunc( sz );
   if(!text)
   {
     fprintf(stderr,
-     "oyranos.c:80 oyStringAddPrintf_() Could not allocate 256 byte of memory.\n");
+     "oyranos_string.c:242 oyStringAddPrintf_() Could not allocate 256 byte of memory.\n");
     return 1;
   }
 
   text[0] = 0;
 
   va_start( list, format);
-  len = vsnprintf( text, sz, format, list);
+  len = vsnprintf( text, sz, format, list );
   va_end  ( list );
 
   if (len >= sz)
   {
     text = realloc( text, (len+1)*sizeof(char) );
     va_start( list, format);
-    len = vsnprintf( text, len+1, format, list);
+    len = vsnprintf( text, len+1, format, list );
     va_end  ( list );
   }
 
@@ -265,7 +265,7 @@ int                oyStringAddPrintf_( char             ** string,
 
   *string = text_copy;
 
-  free(text);
+  deallocFunc(text);
 
   return 0;
 }
