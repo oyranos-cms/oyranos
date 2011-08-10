@@ -21,9 +21,15 @@ class {{ class.cppName }} {
     ~{{ class.cppName }}();
 
     // Member functions
-    {% for function in class.functions %}
+    {% for function in class.functions %}{% if not function.isStatic %}
     {{ function.returnType }}
-    {{ function.name }}({{ function.args }});
+    {{ function.name }}({{ function.args }});{% endif %}
+    {% endfor %}
+
+    // Static functions
+    {% for function in class.functions %}{% if function.isStatic %}
+    static {{ function.returnType }}
+    {{ function.name }}({{ function.args }});{% endif %}
     {% endfor %}
 } // class {{ class.cppName }}
 

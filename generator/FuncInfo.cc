@@ -6,7 +6,10 @@
 #include "FuncInfo.h"
 
 const QString FuncInfo::public_regexp_tmpl =
-  "OYAPI\\s+(.*(?:\\b|\\*))\\s+OYEXPORT\\s+oy%1_(\\w+)\\s+\\(\\s+oy%1_s\\s+\\*\\s+\\w+";
+  "OYAPI\\s+(.*(?:\\b|\\*))\\s+OYEXPORT\\s+oy%1_(\\w+)\\s*\\(\\s*oy%1_s\\s*\\*\\s*\\w+.*\\)";
+
+const QString FuncInfo::public_regexp_static_tmpl =
+  "OYAPI\\s+(.*(?:\\b|\\*))\\s+OYEXPORT\\s+oy%1_(\\w+)\\s*\\(.*\\)";
 
 QVariantList FuncInfo::getPublicFunctions( const ClassInfo* classInfo )
 {
@@ -37,15 +40,18 @@ QVariantList FuncInfo::getPublicFunctions( const ClassInfo* classInfo )
 
 void FuncInfo::parsePublicPrototype( const QString& prototype )
 {
-  int pos = 0;
-
   // Catch function name and return type
   QRegExp findName( public_regexp_tmpl.arg( m_classBaseName ) );
-  if ((pos = findName.indexIn(prototype, pos)) != -1) {
+  QRegExp findNameStatic( public_regexp_static_tmpl.arg( m_classBaseName ) );
+  if (findName.indexIn(prototype) != -1) {
     m_name = findName.cap(2);
     m_returnType = findName.cap(1);
 
-    pos += findName.matchedLength();
+  } else if (findNameStatic.indexIn(prototype) != -1) {
+    m_name = findNameStatic.cap(2);
+    m_returnType = findNameStatic.cap(1);
+    m_static = true;
+
   } else {
     qWarning() << "Non compatible function signature:";
     qWarning() << prototype;
@@ -53,19 +59,23 @@ void FuncInfo::parsePublicPrototype( const QString& prototype )
   }
 
   // Catch arguments
-  QRegExp findArgs(",\\s+([^,^)]+\\b)");
-  QRegExp splitArg("(.*)(\\b[A-Za-z0-9_]+)$");
-  while ((pos = findArgs.indexIn(prototype, pos)) != -1) {
-    QString arg = findArgs.cap(1).simplified();
+  int open_idx = prototype.indexOf( "(" );
+  int close_idx = prototype.indexOf( ")" );
+  QString args = prototype.mid( open_idx+1, close_idx-open_idx-1 ).simplified();
+  QStringList arglist = args.split( ",", QString::SkipEmptyParts );
+  if (!m_static && !arglist.isEmpty())
+    arglist.removeFirst();
+
+  for (int i=0; i<arglist.size(); i++) {
+    QString arg = arglist.at(i).trimmed();
     m_arguments << arg;
 
+    QRegExp splitArg("(.*)(\\b[A-Za-z0-9_]+\\b)(?:\\[.*\\])*$");
     if (splitArg.indexIn(arg) != -1) {
       m_argumentTypes << splitArg.cap(1).trimmed();
       m_argumentNames << splitArg.cap(2).trimmed();
     } else {
       qWarning() << "Unable to split argument:" << arg;
     }
-
-    pos += findArgs.matchedLength();
   }
 }
