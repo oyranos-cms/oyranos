@@ -20,11 +20,12 @@ class {{ class.cppName }} {
     //{{ class.cppName }}(const {{ class.cppName }}& c);
     ~{{ class.cppName }}();
 
+    // Member functions
     {% for function in class.functions %}
     {{ function.returnType }}
     {{ function.name }}({{ function.args }});
     {% endfor %}
-}
+} // class {{ class.cppName }}
 
-} //namespace oy
+} // namespace oy
 #endif // {{ file_name|underscores|upper|tr:". _" }}

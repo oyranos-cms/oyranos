@@ -6,7 +6,7 @@
 using namespace oy;
 
 
-{{ class.cppName }}::{{ class.cppName }}(Object object = NULL)
+{{ class.cppName }}::{{ class.cppName }}(Object object)
 {
   m_oy = oy{{ class.baseName }}_New(object);
 }
@@ -17,9 +17,9 @@ using namespace oy;
 }
 
 {% for function in class.functions %}
-{{ class.cppName }}::{{ function.returnType }}
-{{ function.name }}({{ function.args }})
+{{ function.returnType }}
+{{ class.cppName }}::{{ function.name }}({% if function.args %} {{ function.args }} {% endif %})
 {
-  oy{{ class.baseName }}_{{ function }}( m_oy, {{ function.argNames }} );
+  {% if not function.isVoid %}return {% endif %}oy{{ class.baseName }}_{{ function.name }}( m_oy{% if function.argNames %}, {{ function.argNames }}{% endif %} );
 }
 {% endfor %}
