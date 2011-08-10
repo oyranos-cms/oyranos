@@ -1,20 +1,29 @@
-int          oyPointer_Set           ( oyPointer_s       * cmm_ptr,
-                                       const char        * lib_name,
-                                       const char        * resource,
-                                       oyPointer           ptr,
-                                       const char        * func_name,
-                                       oyPointer_release_f ptrRelease );
-const char * oyPointer_GetFuncName   ( oyPointer_s       * cmm_ptr );
-const char * oyPointer_GetLibName    ( oyPointer_s       * cmm_ptr );
-const char * oyPointer_GetResourceName(oyPointer_s       * cmm_ptr );
-int          oyPointer_GetSize       ( oyPointer_s       * cmm_ptr );
-int          oyPointer_SetSize       ( oyPointer_s       * cmm_ptr,
-                                       int                 size );
-oyPointer    oyPointer_GetPointer    ( oyPointer_s       * cmm_ptr );
+OYAPI int  OYEXPORT
+                 oyPointer_Set           ( oyPointer_s       * cmm_ptr,
+                                           const char        * lib_name,
+                                           const char        * resource,
+                                           oyPointer           ptr,
+                                           const char        * func_name,
+                                           oyPointer_release_f ptrRelease );
+OYAPI const char *  OYEXPORT
+                oyPointer_GetFuncName    ( oyPointer_s       * cmm_ptr );
+OYAPI const char *  OYEXPORT
+                oyPointer_GetLibName     ( oyPointer_s       * cmm_ptr );
+OYAPI const char *  OYEXPORT
+                oyPointer_GetResourceName(oyPointer_s       * cmm_ptr );
+OYAPI int  OYEXPORT
+                 oyPointer_GetSize       ( oyPointer_s       * cmm_ptr );
+OYAPI int  OYEXPORT
+                 oyPointer_SetSize       ( oyPointer_s       * cmm_ptr,
+                                           int                 size );
+OYAPI oyPointer  OYEXPORT
+                 oyPointer_GetPointer    ( oyPointer_s       * cmm_ptr );
 #ifdef UNHIDE_CMM
-oyPointer_s  * oyPointer_LookUpFromObject (
-                                       oyStruct_s        * data,
-                                       const char        * data_type );
-oyPointer_s * oyPointer_LookUpFromText( const char        * text,
-                                       const char        * data_type );
+OYAPI oyPointer_s *  OYEXPORT
+                oyPointer_LookUpFromObject (
+                                          oyStruct_s        * data,
+                                          const char        * data_type );
+OYAPI oyPointer_s *  OYEXPORT
+                oyPointer_LookUpFromText( const char        * text,
+                                          const char        * data_type );
 #endif

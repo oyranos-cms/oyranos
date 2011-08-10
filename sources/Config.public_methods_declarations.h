@@ -47,5 +47,6 @@ OYAPI oyOption_s * OYEXPORT
 OYAPI oyConfig_s * OYEXPORT
                oyConfig_FromRegistration( const char        * registration,
                                           oyObject_s          object );
-oyRankPad *        oyRankMapCopy     ( const oyRankPad   * rank_map,
+OYAPI oyRankPad * OYEXPORT
+                 oyRankMapCopy     ( const oyRankPad   * rank_map,
                                        oyAlloc_f           allocateFunc );

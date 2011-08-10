@@ -5,6 +5,7 @@ OYAPI oyProfiles_s * OYEXPORT
                  oyProfiles_ForStd   ( oyPROFILE_e         std_profile_class,
                                        int               * current,
                                        oyObject_s          object);
-int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
+OYAPI int  OYEXPORT
+                 oyProfiles_DeviceRank ( oyProfiles_s    * list,
                                          oyConfig_s      * device,
                                          int32_t         * rank_list );
