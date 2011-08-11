@@ -24,7 +24,7 @@ class FuncInfo: public QObject
 
   public:
     FuncInfo( const QString& className, const QString& prototype ) :
-      m_static(false), m_classBaseName(className)
+      m_static(false), m_valid(true), m_classBaseName(className)
     {
       parsePublicPrototype( prototype );
     }
@@ -46,18 +46,21 @@ class FuncInfo: public QObject
     /// Get the function arguments as a list
     QStringList argList() const { return m_arguments; }
 
+    bool isValid() const { return m_valid; }
+
     static QVariantList getPublicFunctions( const ClassInfo* classInfo );
     static const QString public_regexp_tmpl;
     static const QString public_regexp_static_tmpl;
 
   private:
-    bool m_static;               ///< Is this a static function?
-    QString m_name;              ///< The name of the function, without the oyClass_ prefix
-    QString m_returnType;        ///< The function return type
-    QString m_classBaseName;     ///< The name of the function, without the oyClass_ prefix
-    QStringList m_arguments;     ///< A list of all function arguments
-    QStringList m_argumentNames; ///< A list of all function argument names
-    QStringList m_argumentTypes; ///< A list of all function argument types
+    bool m_static;                  ///< Is this a static function?
+    bool m_valid;                   ///< Is this function parsed correctly?
+    QString m_name;                 ///< The name of the function, without the oyClass_ prefix
+    QString m_returnType;           ///< The function return type
+    QString m_classBaseName;        ///< The name of the function, without the oyClass_ prefix
+    QStringList m_arguments;        ///< A list of all function arguments
+    QStringList m_argumentNames;    ///< A list of all function argument names
+    QStringList m_argumentTypes;    ///< A list of all function argument types
 
     void parsePublicPrototype( const QString& prototype );
 };

@@ -28,7 +28,7 @@ QVariantList FuncInfo::getPublicFunctions( const ClassInfo* classInfo )
   QStringList declarations = c_header_contents.split(";", QString::SkipEmptyParts);
   for (int i=0; i<declarations.size(); i++) {
     FuncInfo* fp = new FuncInfo( classInfo->baseName(), declarations.at(i));
-    if (fp->name().isEmpty() || fp->returnType().isEmpty()) {
+    if (!fp->isValid()) {
       delete fp; fp = NULL;
       continue;
     }
@@ -46,13 +46,12 @@ void FuncInfo::parsePublicPrototype( const QString& prototype )
   if (findName.indexIn(prototype) != -1) {
     m_name = findName.cap(2);
     m_returnType = findName.cap(1);
-
   } else if (findNameStatic.indexIn(prototype) != -1) {
     m_name = findNameStatic.cap(2);
     m_returnType = findNameStatic.cap(1);
     m_static = true;
-
   } else {
+    m_valid = false;
     qWarning() << "Non compatible function signature:";
     qWarning() << prototype;
     return;
@@ -75,6 +74,7 @@ void FuncInfo::parsePublicPrototype( const QString& prototype )
       m_argumentTypes << splitArg.cap(1).trimmed();
       m_argumentNames << splitArg.cap(2).trimmed();
     } else {
+      m_valid = false;
       qWarning() << "Unable to split argument:" << arg;
     }
   }
