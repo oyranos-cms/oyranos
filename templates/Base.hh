@@ -21,19 +21,18 @@ class {{ class.cppName }} {
     ~{{ class.cppName }}();
 
     // Generic {{ class.cppName }} methods
-    {{ class.privName }} *
-    c_struct() { return m_oy; }
+    {{ class.privName }} * c_struct() { return m_oy; }
 
     // Specific {{ class.cppName }} methods
     {% for function in class.functions %}{% if not function.isStatic %}
     {{ function.returnType }}
-    {{ function.name }}({{ function.args }});{% endif %}
+    {{ function.name }}({{ function.argsCPP }});{% endif %}
     {% endfor %}
 
     // Static functions
     {% for function in class.functions %}{% if function.isStatic %}
     static {{ function.returnType }}
-    {{ function.name }}({{ function.args }});{% endif %}
+    {{ function.name }}({{ function.argsCPP }});{% endif %}
     {% endfor %}
 } // class {{ class.cppName }}
 

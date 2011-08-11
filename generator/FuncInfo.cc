@@ -79,3 +79,26 @@ void FuncInfo::parsePublicPrototype( const QString& prototype )
     }
   }
 }
+
+// Later: Add an argInfo class that keeps C/C++/python/... types/transforms, etc
+void FuncInfo::cppTransformations()
+{
+  QRegExp const_char_p( "^const +char *\\*$" );
+  QRegExp oyclass_p( "^oy([A-Za-z0-9]+)_s *\\*$" );
+
+  for (int i=0; i<m_argumentTypes.size(); i++) {
+    if (m_argumentTypes.at(i).contains(const_char_p)) {
+      m_cppArgumentTypes << "const std::string&";
+      m_cppArgumentNames << m_argumentNames.at(i) + ".c_str()";
+    } else if (m_argumentTypes.at(i).contains(oyclass_p)) {
+      m_cppArgumentTypes << oyclass_p.cap(1);
+      m_cppArgumentNames << m_argumentNames.at(i) + ".c_struct()";
+    } else {
+      m_cppArgumentTypes << m_argumentTypes.at(i);
+      m_cppArgumentNames << m_argumentNames.at(i);
+    }
+  }
+
+  for (int i=0; i<m_argumentNames.size(); i++)
+    m_cppArguments << m_cppArgumentTypes.at(i) + " " + m_argumentNames.at(i);
+}
