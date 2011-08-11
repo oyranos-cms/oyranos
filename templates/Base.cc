@@ -18,7 +18,7 @@ using namespace oy;
 
 {% for function in class.functions %}{% if not function.isStatic %}
 {{ function.returnType }}
-{{ class.cppName }}::{{ function.name }}({% if function.argsCPP %} {{ function.argsCPP }} {% endif %})
+{{ class.cppName }}::{{ function.name }}({% if function.argsCPP|safe %} {{ function.argsCPP|safe }} {% endif %})
 {
   {% if not function.isVoid %}return {% endif %}oy{{ class.baseName }}_{{ function.name }}( m_oy{% if function.argNamesCPP %}, {{ function.argNamesCPP }}{% endif %} );
 }{% endif %}
@@ -27,7 +27,7 @@ using namespace oy;
 // Static functions
 {% for function in class.functions %}{% if function.isStatic %}
 {{ function.returnType }}
-{{ class.cppName }}::{{ function.name }}({% if function.argsCPP %} {{ function.argsCPP }} {% endif %})
+{{ class.cppName }}::{{ function.name }}({% if function.argsCPP|safe %} {{ function.argsCPP|safe }} {% endif %})
 {
   {% if not function.isVoid %}return {% endif %}oy{{ class.baseName }}_{{ function.name }}( {{ function.argNamesCPP }} );
 }{% endif %}

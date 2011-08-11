@@ -26,13 +26,13 @@ class {{ class.cppName }} {
     // Specific {{ class.cppName }} methods
     {% for function in class.functions %}{% if not function.isStatic %}
     {{ function.returnType }}
-    {{ function.name }}({{ function.argsCPP }});{% endif %}
+    {{ function.name }}({{ function.argsCPP|safe }});{% endif %}
     {% endfor %}
 
     // Static functions
     {% for function in class.functions %}{% if function.isStatic %}
     static {{ function.returnType }}
-    {{ function.name }}({{ function.argsCPP }});{% endif %}
+    {{ function.name }}({{ function.argsCPP|safe }});{% endif %}
     {% endfor %}
 } // class {{ class.cppName }}
 
