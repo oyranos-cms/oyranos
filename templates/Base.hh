@@ -20,7 +20,11 @@ class {{ class.cppName }} {
     //{{ class.cppName }}(const {{ class.cppName }}& c);
     ~{{ class.cppName }}();
 
-    // Member functions
+    // Generic {{ class.cppName }} methods
+    {{ class.privName }} *
+    c_struct() { return m_oy; }
+
+    // Specific {{ class.cppName }} methods
     {% for function in class.functions %}{% if not function.isStatic %}
     {{ function.returnType }}
     {{ function.name }}({{ function.args }});{% endif %}
