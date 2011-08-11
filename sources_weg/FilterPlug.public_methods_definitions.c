@@ -56,7 +56,7 @@ OYAPI int  OYEXPORT
 
   if(tp->remote_socket_)
     oyFilterSocket_Callback( (oyFilterPlug_s*)tp, oyCONNECTOR_EVENT_RELEASED );
-  oyFilterSocket_Release( &tp->remote_socket_ );
+  oyFilterSocket_Release( (oyFilterSocket_s**)&tp->remote_socket_ );
 
 # if DEBUG_OBJECT
       WARNc6_S("%s Id: %d -> %s Id: %d\n  %s -> %s",
@@ -66,7 +66,7 @@ OYAPI int  OYEXPORT
              (*(oyFilterSocket_s_**)s)->node->relatives_ )
 #endif
 
-  tp->remote_socket_ = *s; *s = 0;
+  tp->remote_socket_ = (oyFilterSocket_s_*)*s; *s = 0;
   return !(ts->requesting_plugs_ =
                           oyFilterPlugs_MoveIn( ts->requesting_plugs_, p, -1 ));
 }
