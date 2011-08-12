@@ -33,7 +33,7 @@ void oy{{ class.baseName }}_Release__Members( {{ class.privName }} * {{ class.ba
 
 /** Function    oy{{ class.baseName }}_Init__Members
  *  @memberof   {{ class.name }}
- *  @brief      Custom {{ class.baseName }} constructor 
+ *  @brief      Custom {{ class.baseName }} constructor
  *  @internal
  *
  *  This function will allocate all memmory for the input object.
