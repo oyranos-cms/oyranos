@@ -82,8 +82,8 @@ void ClassGenerator::initTemplates()
   for (int i=0; i<stdClasses.size(); i++) { //TODO Render in RAM
     QString classTemplate = stdClasses.at(i)->srcDir() +
                             "/" +
-                            stdClasses.at(i)->baseName() +
-                            "_s.template.c";
+                            stdClasses.at(i)->name() +
+                            ".template.c";
     QString classSource = stdClasses.at(i)->srcDir() +
                           "/" +
                           stdClasses.at(i)->baseName() +
