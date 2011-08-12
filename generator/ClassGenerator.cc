@@ -95,7 +95,7 @@ void ClassGenerator::initTemplates()
     }
 
     if (QFile::copy( genericTemplate, classTemplate )) {
-      classRendered = render( classTemplate, stdClasses.at(i)->srcDir() );
+      classRendered = renderFile( classTemplate, stdClasses.at(i)->srcDir() );
     } else {
       qWarning() << "Could not create file" << classTemplate;
       continue;
@@ -107,20 +107,12 @@ void ClassGenerator::initTemplates()
   }
 }
 
-QString ClassGenerator::render( const QString& templateFile, const QString& dstDir )
-{
-  return render( QFileInfo( templateFile ), dstDir );
-}
-
-QString ClassGenerator::render( const QString& templateFile )
-{
-  return render( templateFile, destinationPath );
-}
-
-QString ClassGenerator::render( const QFileInfo& templateFileInfo, const QString& dstDir )
+QString ClassGenerator::renderFile( const QFileInfo& templateFileInfo, const QString& dstDir )
 {
   Grantlee::Template t = engine->loadByName( templateFileInfo.fileName() );
   Grantlee::Context c;
+  if (dstDir.isEmpty())
+    dstDir = destinationPath;
 
   QVariant classinfo;
   QString class_name = templateFileInfo.baseName();
@@ -174,7 +166,7 @@ void ClassGenerator::render()
     // Render each template file to destinationPath
     QHash<QString,QString>::const_iterator t;
     for (t = tmplPath.constBegin(); t != tmplPath.constEnd(); t++)
-      render( QFileInfo(t.value()) , destinationPath );
+      renderFile( QFileInfo(t.value()) , destinationPath );
 }
 
 void ClassGenerator::getTemplateParents( const QString& path, QVariantList& parentList )

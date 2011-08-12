@@ -14,13 +14,11 @@ class ClassGenerator {
 
     void initTemplates();
     void render();
-    QString render( const QString& templateFile );
-    QString render( const QString& templateFile, const QString& dstDir );
+    QString renderFile( const QFileInfo& templateFileInfo, const QString& dstDir = "" );
 
   private:
     void getTemplateParents( const QString& tmplPath, QVariantList& parentList );
     Grantlee::Engine* getEngine( const QStringList& tmplDirs );
-    QString render( const QFileInfo& templateFileInfo, const QString& dstDir );
 
     QHash<QString,QString> tmplPath; //< Map of 'template name' -> 'template path'
     QHash<QString,QString> basePath; //< Map of 'base template name' -> 'base template path'
