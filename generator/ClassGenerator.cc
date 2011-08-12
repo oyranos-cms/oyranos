@@ -107,12 +107,15 @@ void ClassGenerator::initTemplates()
   }
 }
 
+QString ClassGenerator::renderFile( const QFileInfo& templateFileInfo )
+{
+  return renderFile( templateFileInfo, destinationPath );
+}
+
 QString ClassGenerator::renderFile( const QFileInfo& templateFileInfo, const QString& dstDir )
 {
   Grantlee::Template t = engine->loadByName( templateFileInfo.fileName() );
   Grantlee::Context c;
-  if (dstDir.isEmpty())
-    dstDir = destinationPath;
 
   QVariant classinfo;
   QString class_name = templateFileInfo.baseName();

@@ -14,7 +14,8 @@ class ClassGenerator {
 
     void initTemplates();
     void render();
-    QString renderFile( const QFileInfo& templateFileInfo, const QString& dstDir = "" );
+    QString renderFile( const QFileInfo& templateFileInfo );
+    QString renderFile( const QFileInfo& templateFileInfo, const QString& dstDir );
 
   private:
     void getTemplateParents( const QString& tmplPath, QVariantList& parentList );
