@@ -67,8 +67,11 @@ OYAPI int  OYEXPORT
 #endif
 
   tp->remote_socket_ = (oyFilterSocket_s_*)*s; *s = 0;
-  return !(ts->requesting_plugs_ =
-                          oyFilterPlugs_MoveIn( ts->requesting_plugs_, p, -1 ));
+
+  if (!ts->requesting_plugs_)
+    ts->requesting_plugs_ = oyFilterPlugs_New(ts->oy_);
+
+  return !oyFilterPlugs_MoveIn( ts->requesting_plugs_, p, -1 );
 }
 
 /** Function  oyFilterPlug_ResolveImage
