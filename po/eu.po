@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2011-08-06 15:47+0200\n"
+"POT-Creation-Date: 2011-08-11 09:34+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -708,7 +708,7 @@ msgid "Colour channel output names"
 msgstr ""
 
 #. Fl_Box* o
-#: oyranos_icc.c:432 oyranos_config_fltk.cxx:688 oyranos_config_fltk.cxx:1678
+#: oyranos_icc.c:432 oyranos_config_fltk.cxx:631 oyranos_config_fltk.cxx:1623
 #: modules/oyranos_cmm_oicc.c:247
 msgid "----"
 msgstr "----"
@@ -1031,9 +1031,10 @@ msgstr "Kolore-espazioa"
 #: oyranos_texts.c:174
 msgid ""
 "Color content can sometimes have no ICC profile assigned. This is a critical "
-"situation. Therefor the color processing parts need to pick some profile as "
-"a guess. These settings allow to change the picked ICC profile to guide the "
-"processing components and allow proper conversion and compositing."
+"situation as the system can not properly convert these colors. Therefor the "
+"color processing parts need to pick some profile as a guess. These settings "
+"allow to change the picked ICC profile to guide the processing components "
+"and allow proper conversion and compositing."
 msgstr ""
 
 #: oyranos_texts.c:181
@@ -1067,7 +1068,7 @@ msgid ""
 "be used by every complying system or application."
 msgstr ""
 
-#: oyranos_texts.c:199 oyranos_texts.c:264 oyranos_config_fltk.cxx:1660
+#: oyranos_texts.c:199 oyranos_texts.c:264 oyranos_config_fltk.cxx:1605
 msgid "Policy"
 msgstr ""
 
@@ -1576,6 +1577,67 @@ msgid ""
 "simulation color space."
 msgstr ""
 
+#. HTML
+#: oyranos_xml.c:689
+msgid "About Oyranos"
+msgstr ""
+
+#. HTML
+#: oyranos_xml.c:794
+#, fuzzy
+msgid "Oyranos Version"
+msgstr "Oyranos-en ezarpenak"
+
+#. HTML
+#: oyranos_xml.c:804
+#, fuzzy
+msgid "Copyright &copy;"
+msgstr "Copyright-a"
+
+#: oyranos_xml.c:842
+msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
+msgstr ""
+
+#. HTML
+#: oyranos_xml.c:849
+msgid ""
+"Oyranos is a Color Management System (CMS), which relies one the ICC file "
+"format standard - <a href=\"http://www.color.org\">www.color.org</a> for "
+"color space definitions. The appliance of ICC color profiles shall enable a "
+"flawless and automated color data exchange between different color spaces "
+"and various devices with their respective physical color behaviours."
+msgstr ""
+
+#. HTML
+#: oyranos_xml.c:861
+msgid ""
+"Color matching between different devices is possible, provided the color "
+"characteristics of the involved devices are known. The quality of a color "
+"transform from one to an other color space depends for devices mainly on the "
+"quality of the color measurement and the used profiling algorithm during ICC "
+"profile creation. Each color space definition happens in reference to a "
+"Profile Connection Spaces (PCS). The PCS is a well known color space, based "
+"on a average human observer as defined by CIE."
+msgstr ""
+
+#. HTML
+#: oyranos_xml.c:876
+msgid ""
+"Color profiles are often available from manufacturers of imaging devices as "
+"digital cameras, monitors and printers. In Oyranos ICC profiles are assigned "
+"to a calibration states of color devices, to get close to the device "
+"behaviour as was present during ICC profile creation."
+msgstr ""
+
+#. HTML
+#: oyranos_xml.c:886
+msgid ""
+"Oyranos allowes detailed settings like prefered editing color spaces and the "
+"behaviour of color conversions or simulation. Oyranos reduces the work "
+"involved in all color management related decissions by automation, useful "
+"defaults and grouping of settings in selectable policies."
+msgstr ""
+
 #: oyranos_gamma.c:92
 msgid "DISPLAY variable not set: giving up."
 msgstr ""
@@ -1656,9 +1718,9 @@ msgstr ""
 msgid "For more informations read the man page:"
 msgstr ""
 
-#: oyranos_gamma.c:212 oyranos_policy.c:138 oyranos_profile.c:178
+#: oyranos_gamma.c:212 oyranos_policy.c:146 oyranos_profile.c:178
 #: oyranos_profiles.c:209 API_generated/oyOptions_s.c:1457
-#: oforms/oyranos_xforms.c:144 oforms/oyranos_xforms_modules.c:141
+#: oforms/oyranos_xforms.c:133 oforms/oyranos_xforms_modules.c:141
 #: oforms/oyranos_xforms_fltk.cxx:320
 msgid "wrong argument to option:"
 msgstr ""
@@ -1698,7 +1760,7 @@ msgstr "ez da fitxategi-izenik eman"
 msgid "List available policies:"
 msgstr ""
 
-#: oyranos_policy.c:60 oyranos_policy.c:199
+#: oyranos_policy.c:60 oyranos_policy.c:207
 msgid "Currently active policy:"
 msgstr ""
 
@@ -1719,15 +1781,15 @@ msgstr ""
 msgid "Print a help text:"
 msgstr ""
 
-#: oyranos_policy.c:181
+#: oyranos_policy.c:189
 msgid "installed new policy"
 msgstr ""
 
-#: oyranos_policy.c:184
+#: oyranos_policy.c:192
 msgid "installation of new policy file failed with error:"
 msgstr ""
 
-#: oyranos_policy.c:206
+#: oyranos_policy.c:214
 msgid "Policy search paths"
 msgstr ""
 
@@ -2031,13 +2093,13 @@ msgstr "Ezin izan da letra-tipoa ireki:"
 msgid "[none]"
 msgstr "bat ere ez"
 
-#: oyranos_config_fltk.cxx:22 oyranos_config_fltk.cxx:104
+#: oyranos_config_fltk.cxx:22 oyranos_config_fltk.cxx:72
 #, fuzzy
 msgid "setting"
 msgstr "Ezarpenak"
 
 #: oyranos_config_fltk.cxx:22 oyranos_config_fltk.cxx:36
-#: oyranos_config_fltk.cxx:104
+#: oyranos_config_fltk.cxx:72
 msgid "failed!"
 msgstr ""
 
@@ -2058,61 +2120,40 @@ msgstr ""
 msgid "Show Profile failed"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:58
-#, fuzzy
-msgid "Select a directory with ICC profiles"
-msgstr "ICC profilari buruzko txostena"
-
-#: oyranos_config_fltk.cxx:73
-#, c-format
-msgid "error setting path: %s"
-msgstr ""
-
-#: oyranos_config_fltk.cxx:86
-msgid "Path"
-msgstr ""
-
-#: oyranos_config_fltk.cxx:109
+#: oyranos_config_fltk.cxx:77
 msgid "Select Behaviour"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:353
+#: oyranos_config_fltk.cxx:321
 msgid "Show in external Viewer"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:445
-msgid "@-3+"
-msgstr ""
-
-#: oyranos_config_fltk.cxx:447
-msgid "Add Path containing ICC profiles"
-msgstr ""
-
-#: oyranos_config_fltk.cxx:478
-msgid "Exclude this path"
-msgstr ""
-
 #. Fl_Box* o
-#: oyranos_config_fltk.cxx:1619 oyranos_config_fltk.cxx:1635
+#: oyranos_config_fltk.cxx:1564 oyranos_config_fltk.cxx:1580
 msgid "Oyranos Configuration"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1661
+#: oyranos_config_fltk.cxx:1606
 msgid "Reset to a standard Policy for Oyranos."
 msgstr ""
 
 #. Flmm_Tabs* top_tabs
-#: oyranos_config_fltk.cxx:1668
+#: oyranos_config_fltk.cxx:1613
 msgid "@-3reload"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1669
+#: oyranos_config_fltk.cxx:1614
 msgid "Refresh"
 msgstr ""
 
-#: oyranos_config_fltk.cxx:1675
+#: oyranos_config_fltk.cxx:1620
 msgid "Active Policy:"
 msgstr ""
+
+#: oyranos_config_fltk.cxx:1695
+#, fuzzy
+msgid "Oyranos Help"
+msgstr "Oyranos-en ezarpenak"
 
 #: API_generated/oyObserver_s_.c:155
 msgid "found list of wrong type"
@@ -3219,7 +3260,7 @@ msgstr "Modeloa:"
 msgid "verbose"
 msgstr ""
 
-#: oforms/oyranos_xforms.c:215 oforms/oyranos_xforms_modules.c:209
+#: oforms/oyranos_xforms.c:209 oforms/oyranos_xforms_modules.c:209
 #, fuzzy
 msgid "Option"
 msgstr "Bereizketa"
@@ -3355,6 +3396,10 @@ msgstr ""
 #: oyranos_helper_macros.h:114
 msgid "nothing allocated"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Select a directory with ICC profiles"
+#~ msgstr "ICC profilari buruzko txostena"
 
 #, fuzzy
 #~ msgid "nLut"
