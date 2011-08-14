@@ -84,6 +84,7 @@ int main( int argc , char** argv )
   char * import_policy_fn = NULL;
   int current_policy = 0, list_policies = 0, list_paths = 0,
       dump_policy = 0;
+  int long_help = 0;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -92,7 +93,7 @@ int main( int argc , char** argv )
 
   if(argc >= 2)
   {
-    int pos = 1;
+    int pos = 1, i;
     char *wrong_arg = 0;
     DBG_PROG1_S("argc: %d\n", argc);
     while(pos < argc)
@@ -100,6 +101,7 @@ int main( int argc , char** argv )
       switch(argv[pos][0])
       {
         case '-':
+            for(i = 1; i < strlen(argv[pos]); ++i)
             switch (argv[pos][1])
             {
               case 'c': current_policy = 1; break;
@@ -121,6 +123,12 @@ int main( int argc , char** argv )
                         if(oy_debug) fprintf(stderr,"save_policy=0\n"); ++pos;
                         break;
               case 'v': oy_debug += 1; break;
+              case '-':
+                        if(i == 1)
+                        {
+                             if(OY_IS_ARG("help"))
+                        { long_help = 1; i=100; break; }
+                        }
               case 'h':
               default:
                         printfHelp(argc, argv);
@@ -216,6 +224,19 @@ int main( int argc , char** argv )
     size = 0;
     xml = oyPolicyToXML( oyGROUP_ALL, 1, oyAllocateFunc_ );
     DBG_PROG2_S("%s:%d new policy:\n\n",__FILE__,__LINE__);
+    fprintf(stdout, "%s\n", xml);
+
+    if(xml) oyDeAllocateFunc_( xml );
+
+  } else
+  if(long_help)
+  {
+    const char * opts[] = {"add_html_header","1",
+                           "add_oyranos_title","1",
+                           "add_oyranos_copyright","1",
+                           NULL};
+    size = 0;
+    xml = oyDescriptionToHTML( oyGROUP_ALL, opts, oyAllocateFunc_ );
     fprintf(stdout, "%s\n", xml);
 
     if(xml) oyDeAllocateFunc_( xml );
