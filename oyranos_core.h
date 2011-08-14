@@ -64,6 +64,9 @@ const char *   oyStruct_GetInfo      ( oyPointer           context,
 int            oyVersion             ( int                 type );
 char *         oyVersionString       ( int                 type,
                                        oyAlloc_f           allocateFunc );
+char *         oyDescriptionToHTML   ( int                 group,
+                                       const char       ** options,
+                                       oyAlloc_f           allocateFunc );
 
 
 
