@@ -1559,6 +1559,8 @@ int main(int argc, char **argv) {
       WARNc_S("i18n initialisation failed");
     }
   }
+  
+  Fl::add_handler( event_handler );
   { top_group = new Fl_Double_Window(505, 410, _("Oyranos Configuration"));
     { OyFl_Pack* o = new OyFl_Pack(0, 0, 480, 70);
       o->type(1);
@@ -1659,4 +1661,49 @@ void listWindow( Fl_Widget *w ) {
     std::cout << " t" << (int)w->type() << " " << w->x()<<"+"<<w->y()<<"+"<<w->w()<<"x"<<w->h() <<
                  " " << (w->label()?w->label():"- ");
   }
+}
+
+int event_handler( int e ) {
+  int found = 0;
+
+  switch (e)
+  {
+  case FL_SHORTCUT:
+      /*if(Fl::event_key() == FL_Escape) {
+        found = 1;
+      } else
+      if(Fl::event_key() == 'q'
+       && Fl::event_state() == FL_CTRL) {
+        exit();
+        found = 1;
+      } else*/
+      if(Fl::event_key() == FL_F + 1) {
+        make_help();
+        found = 1;
+      }
+  break;
+  }
+  
+  return found;
+}
+
+Fl_Double_Window *help_window=(Fl_Double_Window *)0;
+
+Fl_Help_View *help_browser=(Fl_Help_View *)0;
+
+Fl_Double_Window* make_help() {
+  { help_window = new Fl_Double_Window(505, 410, _("Oyranos Help"));
+    { help_browser = new Fl_Help_View(0, 0, 505, 410);
+      help_browser->box(FL_THIN_UP_BOX);
+      help_browser->color((Fl_Color)16);
+    } // Fl_Help_View* help_browser
+    help_window->end();
+  } // Fl_Double_Window* help_window
+  help_window->show();
+    const char * opts[] = {"add_html_header","1",
+                           "add_oyranos_title","1",
+                           "add_oyranos_copyright","1",
+                           NULL};
+  help_browser->value( oyDescriptionToHTML(oyGROUP_ALL, opts,0) );
+  return help_window;
 }

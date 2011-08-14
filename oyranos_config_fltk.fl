@@ -38,6 +38,7 @@ decl {\#include <FL/fl_draw.H>} {public
 decl {\#include "oyranos.h"
 \#include "oyranos_debug.h"
 \#include "oyranos_config.h"
+\#include "oyranos_core.h"
 \#include "oyranos_helper.h"
 \#include "oyranos_alpha.h"
 \#include "oyranos_texts.h"
@@ -829,7 +830,7 @@ Function {updateUIIdle(void*)} {} {
   refreshOptions();} {}
 } 
 
-Function {} {C
+Function {} {open C
 } {
   code {Fl::scheme("plastic");
 
@@ -918,7 +919,9 @@ Function {} {C
     if(err) {
       WARNc_S("i18n initialisation failed");
     }
-  }} {}
+  }
+  
+  Fl::add_handler( event_handler );} {}
   Fl_Window top_group {
     label {Oyranos Configuration} open
     xywh {564 361 505 410} type Double resizable size_range {305 255 0 0} visible
@@ -996,4 +999,48 @@ Function {listWindow( Fl_Widget *w )} {} {
     std::cout << " t" << (int)w->type() << " " << w->x()<<"+"<<w->y()<<"+"<<w->w()<<"x"<<w->h() <<
                  " " << (w->label()?w->label():"- ");
   }} {}
+} 
+
+Function {event_handler( int e )} {open return_type int
+} {
+  code {int found = 0;
+
+  switch (e)
+  {
+  case FL_SHORTCUT:
+      /*if(Fl::event_key() == FL_Escape) {
+        found = 1;
+      } else
+      if(Fl::event_key() == 'q'
+       && Fl::event_state() == FL_CTRL) {
+        exit();
+        found = 1;
+      } else*/
+      if(Fl::event_key() == FL_F + 1) {
+        make_help();
+        found = 1;
+      }
+  break;
+  }
+  
+  return found;} {}
+} 
+
+Function {make_help()} {open
+} {
+  Fl_Window help_window {
+    label {Oyranos Help} open
+    xywh {719 186 505 410} type Double visible
+  } {
+    Fl_Help_View help_browser {selected
+      xywh {0 0 505 410} box THIN_UP_BOX color 16
+    }
+  }
+  code {help_window->show();
+    const char * opts[] = {"add_html_header","1",
+                           "add_oyranos_title","1",
+                           "add_oyranos_copyright","1",
+                           NULL};
+  help_browser->value( oyDescriptionToHTML(oyGROUP_ALL, opts,0) );
+} {}
 } 

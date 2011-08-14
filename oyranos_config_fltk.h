@@ -16,6 +16,7 @@
 #include "oyranos.h"
 #include "oyranos_debug.h"
 #include "oyranos_config.h"
+#include "oyranos_core.h"
 #include "oyranos_helper.h"
 #include "oyranos_alpha.h"
 #include "oyranos_texts.h"
@@ -91,4 +92,9 @@ extern Flmm_Tabs *top_tabs;
 #include <FL/Fl_Pack.H>
 extern Fl_Box *policy_box;
 void listWindow( Fl_Widget *w );
+int event_handler( int e );
+extern Fl_Double_Window *help_window;
+#include <FL/Fl_Help_View.H>
+extern Fl_Help_View *help_browser;
+Fl_Double_Window* make_help();
 #endif
