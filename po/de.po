@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2011-08-06 15:47+0200\n"
+"POT-Creation-Date: 2011-08-11 09:34+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -681,7 +681,7 @@ msgid "Colour channel output names"
 msgstr "Farbkanalnamen Ausgang"
 
 #. Fl_Box* o
-#: oyranos_icc.c:432 oyranos_config_fltk.cxx:688 oyranos_config_fltk.cxx:1678
+#: oyranos_icc.c:432 oyranos_config_fltk.cxx:631 oyranos_config_fltk.cxx:1623
 #: modules/oyranos_cmm_oicc.c:247
 msgid "----"
 msgstr ""
@@ -973,6 +973,9 @@ msgid ""
 "ICC profiles should always be attached to all colors. In case colors are "
 "undefined, users can set various default ICC profiles in Oyranos settings."
 msgstr ""
+"Alle Farben sollten auf einem Rechner mit ICC Farbprofilen definiert sein. "
+"Für nicht definierte Farben können Benutzer ICC Farbprofile in Oyranos "
+"voreinstellen."
 
 #: oyranos_texts.c:163
 msgid "Editing Color Space"
@@ -989,6 +992,10 @@ msgid ""
 "curves maintains gray neutrality. Hint: editing color spaces are sometimes "
 "called a working space."
 msgstr ""
+"Der Editierfarbraum sollte wohlgeformt sein, um das Editieren von "
+"Farbkanälen zu erleichtern. Wohlgeformt meint für Rgb, daß ein "
+"gleichzeitiges Verändern aller drei Farbkanäle die Neutralität der Grauachse "
+"nicht beeinflusst."
 
 #: oyranos_texts.c:172
 msgid "Assumed Color Space"
@@ -1001,10 +1008,16 @@ msgstr "Erwarteter Farbraum für Farben ohne Farbprofil"
 #: oyranos_texts.c:174
 msgid ""
 "Color content can sometimes have no ICC profile assigned. This is a critical "
-"situation. Therefor the color processing parts need to pick some profile as "
-"a guess. These settings allow to change the picked ICC profile to guide the "
-"processing components and allow proper conversion and compositing."
+"situation as the system can not properly convert these colors. Therefor the "
+"color processing parts need to pick some profile as a guess. These settings "
+"allow to change the picked ICC profile to guide the processing components "
+"and allow proper conversion and compositing."
 msgstr ""
+"Farben können mitunter ohne Farbprofil auftreten. Das ist eine schwierige "
+"Situation, da das System solche Farben nicht korrekt umwandeln kann. Deshalb "
+"sollte ein vermutlich treffendes ICC Profil als Ersatz zugewiesen werden. "
+"Die Einstellungen beinflussen die Auswahl des Ersatzprofiles, damit eine "
+"Weiterverarbeitung und Mischung mit anderen Farben möglich wird."
 
 #: oyranos_texts.c:181
 msgid "Proofing Color Space"
@@ -1020,6 +1033,10 @@ msgid ""
 "Possible uses cases are to simulate a print machine, a viewing environment "
 "in a theater or a expected small monitor gamut."
 msgstr ""
+"Der Simulationsfarbraum stellt das Farbverhalten eines realen Gerätes dar. "
+"Mögliche Anwendungen sind die Simulation einer Druckmaschine, von "
+"Betrachtungsbedingungen in einem Theater oder der kleinere Farbumfang eines "
+"Bildschirmes."
 
 #: oyranos_texts.c:190 oyranos_texts.c:276
 msgid "Paths"
@@ -1035,7 +1052,7 @@ msgid ""
 "be used by every complying system or application."
 msgstr ""
 
-#: oyranos_texts.c:199 oyranos_texts.c:264 oyranos_config_fltk.cxx:1660
+#: oyranos_texts.c:199 oyranos_texts.c:264 oyranos_config_fltk.cxx:1605
 msgid "Policy"
 msgstr "Richtlinie"
 
@@ -1049,6 +1066,10 @@ msgid ""
 "make it easy to switch back to simple defaults. Other groups can define own "
 "settings and share them accross Oyranos enabled systems."
 msgstr ""
+"Richtlinien fassen gemeinsame Einstellungen für Benutzergruppen zusammen. "
+"Solche Richtlinien ermöglichen ein einfaches zurückschalten zu den "
+"jeweiligen Voreinstellungen. Gruppen können eigene Richtlinien erstellen und "
+"zwischen Oyranos unterstützenden Systemen austauschen."
 
 #: oyranos_texts.c:208
 msgid "Behaviour"
@@ -1556,6 +1577,65 @@ msgid ""
 "simulation color space."
 msgstr ""
 
+#. HTML
+#: oyranos_xml.c:689
+msgid "About Oyranos"
+msgstr "Über Oyranos"
+
+#. HTML
+#: oyranos_xml.c:794
+msgid "Oyranos Version"
+msgstr "Oyranos Version"
+
+#. HTML
+#: oyranos_xml.c:804
+msgid "Copyright &copy;"
+msgstr "Kopierrecht &copy;"
+
+#: oyranos_xml.c:842
+msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
+msgstr ""
+
+#. HTML
+#: oyranos_xml.c:849
+msgid ""
+"Oyranos is a Color Management System (CMS), which relies one the ICC file "
+"format standard - <a href=\"http://www.color.org\">www.color.org</a> for "
+"color space definitions. The appliance of ICC color profiles shall enable a "
+"flawless and automated color data exchange between different color spaces "
+"and various devices with their respective physical color behaviours."
+msgstr ""
+
+#. HTML
+#: oyranos_xml.c:861
+msgid ""
+"Color matching between different devices is possible, provided the color "
+"characteristics of the involved devices are known. The quality of a color "
+"transform from one to an other color space depends for devices mainly on the "
+"quality of the color measurement and the used profiling algorithm during ICC "
+"profile creation. Each color space definition happens in reference to a "
+"Profile Connection Spaces (PCS). The PCS is a well known color space, based "
+"on a average human observer as defined by CIE."
+msgstr ""
+
+#. HTML
+#: oyranos_xml.c:876
+msgid ""
+"Color profiles are often available from manufacturers of imaging devices as "
+"digital cameras, monitors and printers. In Oyranos ICC profiles are assigned "
+"to a calibration states of color devices, to get close to the device "
+"behaviour as was present during ICC profile creation."
+msgstr ""
+
+#. HTML
+#: oyranos_xml.c:886
+msgid ""
+"Oyranos allowes detailed settings like prefered editing color spaces and the "
+"behaviour of color conversions or simulation. Oyranos reduces the work "
+"involved in all color management related decissions by automation, useful "
+"defaults and grouping of settings in selectable policies."
+msgstr ""
+
 #: oyranos_gamma.c:92
 msgid "DISPLAY variable not set: giving up."
 msgstr "DISPLAY Variable nicht gesetzt: gebe auf."
@@ -1630,9 +1710,9 @@ msgstr ""
 msgid "For more informations read the man page:"
 msgstr "Mehr Informationen stehen im Handbuch:"
 
-#: oyranos_gamma.c:212 oyranos_policy.c:138 oyranos_profile.c:178
+#: oyranos_gamma.c:212 oyranos_policy.c:146 oyranos_profile.c:178
 #: oyranos_profiles.c:209 API_generated/oyOptions_s.c:1457
-#: oforms/oyranos_xforms.c:144 oforms/oyranos_xforms_modules.c:141
+#: oforms/oyranos_xforms.c:133 oforms/oyranos_xforms_modules.c:141
 #: oforms/oyranos_xforms_fltk.cxx:320
 msgid "wrong argument to option:"
 msgstr "Falsches Argument für Option:"
@@ -1672,7 +1752,7 @@ msgstr "Richtlinie oder Dateiname"
 msgid "List available policies:"
 msgstr "Liste der verfügbaren Richtlinien:"
 
-#: oyranos_policy.c:60 oyranos_policy.c:199
+#: oyranos_policy.c:60 oyranos_policy.c:207
 msgid "Currently active policy:"
 msgstr "Aktive Richtlinie:"
 
@@ -1692,15 +1772,15 @@ msgstr "Richtlinienname"
 msgid "Print a help text:"
 msgstr "Zeige einen Hilfetext an:"
 
-#: oyranos_policy.c:181
+#: oyranos_policy.c:189
 msgid "installed new policy"
 msgstr "neue Richtlinie erfolgreich gespeichert"
 
-#: oyranos_policy.c:184
+#: oyranos_policy.c:192
 msgid "installation of new policy file failed with error:"
 msgstr "Speicherung der neuen Richtline schlug fehl mit Fehler:"
 
-#: oyranos_policy.c:206
+#: oyranos_policy.c:214
 msgid "Policy search paths"
 msgstr "Richtliniensuchpfade"
 
@@ -1978,12 +2058,12 @@ msgstr "Kann nicht reservieren für:"
 msgid "[none]"
 msgstr "[kein]"
 
-#: oyranos_config_fltk.cxx:22 oyranos_config_fltk.cxx:104
+#: oyranos_config_fltk.cxx:22 oyranos_config_fltk.cxx:72
 msgid "setting"
 msgstr "Einstellung"
 
 #: oyranos_config_fltk.cxx:22 oyranos_config_fltk.cxx:36
-#: oyranos_config_fltk.cxx:104
+#: oyranos_config_fltk.cxx:72
 msgid "failed!"
 msgstr "daneben!"
 
@@ -2003,60 +2083,39 @@ msgstr "Anzeige des Profiles misslungen. iccexamin nicht gefunden."
 msgid "Show Profile failed"
 msgstr "Anzeige des Profiles misslungen"
 
-#: oyranos_config_fltk.cxx:58
-msgid "Select a directory with ICC profiles"
-msgstr "Wählen Sie ein Verzeichnis mit ICC Profilen"
-
-#: oyranos_config_fltk.cxx:73
-#, c-format
-msgid "error setting path: %s"
-msgstr "Fehler beim Setzen des Pfades: \"%s\""
-
-#: oyranos_config_fltk.cxx:86
-msgid "Path"
-msgstr "Pfad"
-
-#: oyranos_config_fltk.cxx:109
+#: oyranos_config_fltk.cxx:77
 msgid "Select Behaviour"
 msgstr "Wählen Sie das Verhalten"
 
-#: oyranos_config_fltk.cxx:353
+#: oyranos_config_fltk.cxx:321
 msgid "Show in external Viewer"
 msgstr "Anzeige in exteren Betrachter"
 
-#: oyranos_config_fltk.cxx:445
-msgid "@-3+"
-msgstr "@-3+"
-
-#: oyranos_config_fltk.cxx:447
-msgid "Add Path containing ICC profiles"
-msgstr "Pfad mit ICC Profilen hinzufügen"
-
-#: oyranos_config_fltk.cxx:478
-msgid "Exclude this path"
-msgstr "Diesen Pfad ausschließen"
-
 #. Fl_Box* o
-#: oyranos_config_fltk.cxx:1619 oyranos_config_fltk.cxx:1635
+#: oyranos_config_fltk.cxx:1564 oyranos_config_fltk.cxx:1580
 msgid "Oyranos Configuration"
 msgstr "Oyranos Konfiguration"
 
-#: oyranos_config_fltk.cxx:1661
+#: oyranos_config_fltk.cxx:1606
 msgid "Reset to a standard Policy for Oyranos."
 msgstr "Zurücksetzen auf Oyranos' Standardrichtlinie"
 
 #. Flmm_Tabs* top_tabs
-#: oyranos_config_fltk.cxx:1668
+#: oyranos_config_fltk.cxx:1613
 msgid "@-3reload"
 msgstr "@-3reload"
 
-#: oyranos_config_fltk.cxx:1669
+#: oyranos_config_fltk.cxx:1614
 msgid "Refresh"
 msgstr "Erneuern"
 
-#: oyranos_config_fltk.cxx:1675
+#: oyranos_config_fltk.cxx:1620
 msgid "Active Policy:"
 msgstr "Aktive Richtlinie:"
+
+#: oyranos_config_fltk.cxx:1695
+msgid "Oyranos Help"
+msgstr "Oyranos Hilfe"
 
 #: API_generated/oyObserver_s_.c:155
 msgid "found list of wrong type"
@@ -3230,7 +3289,7 @@ msgstr "Zeige Modell:"
 msgid "verbose"
 msgstr "plaudernd"
 
-#: oforms/oyranos_xforms.c:215 oforms/oyranos_xforms_modules.c:209
+#: oforms/oyranos_xforms.c:209 oforms/oyranos_xforms_modules.c:209
 msgid "Option"
 msgstr "Option"
 
@@ -3357,6 +3416,24 @@ msgstr "Kann nicht reservieren für:"
 #: oyranos_helper_macros.h:114
 msgid "nothing allocated"
 msgstr "nichts reserviert"
+
+#~ msgid "Select a directory with ICC profiles"
+#~ msgstr "Wählen Sie ein Verzeichnis mit ICC Profilen"
+
+#~ msgid "error setting path: %s"
+#~ msgstr "Fehler beim Setzen des Pfades: \"%s\""
+
+#~ msgid "Path"
+#~ msgstr "Pfad"
+
+#~ msgid "@-3+"
+#~ msgstr "@-3+"
+
+#~ msgid "Add Path containing ICC profiles"
+#~ msgstr "Pfad mit ICC Profilen hinzufügen"
+
+#~ msgid "Exclude this path"
+#~ msgstr "Diesen Pfad ausschließen"
 
 #, fuzzy
 #~ msgid "nLut"
