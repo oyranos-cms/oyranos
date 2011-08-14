@@ -171,7 +171,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Assumed Color Space"),
       _("Assumed Color Space for untagged colors"),
-      _("Color content can sometimes have no ICC profile assigned. This is a critical situation. Therefor the color processing parts need to pick some profile as a guess. These settings allow to change the picked ICC profile to guide the processing components and allow proper conversion and compositing."),
+      _("Color content can sometimes have no ICC profile assigned. This is a critical situation as the system can not properly convert these colors. Therefor the color processing parts need to pick some profile as a guess. These settings allow to change the picked ICC profile to guide the processing components and allow proper conversion and compositing."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
