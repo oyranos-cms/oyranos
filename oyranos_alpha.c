@@ -23768,7 +23768,7 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
  *
  *  The profile_name argument does two things. Set to zero the function solely
  *  unsets the graphic card luts and the server stored profile. So pretty all
- *  server side informatin should go away. \n
+ *  server side information should go away. \n
  *  With a profile name given the function will lookup the monitor in the 
  *  Oyranos device database and stores the given profile there. \n
  *  To sum up, to set a new profile please call the following sequence:
