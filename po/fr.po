@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2011-08-11 09:34+0200\n"
+"POT-Creation-Date: 2011-08-15 08:56+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: ALL <ku.b@gmx.de>\n"
@@ -459,17 +459,17 @@ msgstr "Canal"
 
 #: oyranos_icc.c:366
 #, fuzzy
-msgid "Lockup table, device to PCS, intent perceptual"
+msgid "Lookup table, device to PCS, intent perceptual"
 msgstr "Aperçu, colorimétrie relative"
 
 #: oyranos_icc.c:367
 #, fuzzy
-msgid "Lockup table, device to PCS, intent relative colorimetric"
+msgid "Lookup table, device to PCS, intent relative colorimetric"
 msgstr "Aperçu, colorimétrie relative"
 
 #: oyranos_icc.c:368
 #, fuzzy
-msgid "Lockup table, device to PCS, intent saturation"
+msgid "Lookup table, device to PCS, intent saturation"
 msgstr "Aperçu, colorimétrie relative"
 
 #: oyranos_icc.c:369
@@ -482,17 +482,17 @@ msgstr ""
 
 #: oyranos_icc.c:371
 #, fuzzy
-msgid "Lockup table, PCS to device, intent perceptual"
+msgid "Lookup table, PCS to device, intent perceptual"
 msgstr "Aperçu, colorimétrie relative"
 
 #: oyranos_icc.c:372
 #, fuzzy
-msgid "Lockup table, PCS to device, intent relative colorimetric"
+msgid "Lookup table, PCS to device, intent relative colorimetric"
 msgstr "Aperçu, colorimétrie relative"
 
 #: oyranos_icc.c:373
 #, fuzzy
-msgid "Lockup table, PCS to device, intent saturation"
+msgid "Lookup table, PCS to device, intent saturation"
 msgstr "Aperçu, colorimétrie relative"
 
 #: oyranos_icc.c:374
@@ -1573,23 +1573,23 @@ msgid "About Oyranos"
 msgstr ""
 
 #. HTML
-#: oyranos_xml.c:794
+#: oyranos_xml.c:858
 #, fuzzy
 msgid "Oyranos Version"
 msgstr "Oyranos Préférences"
 
 #. HTML
-#: oyranos_xml.c:804
+#: oyranos_xml.c:868
 #, fuzzy
 msgid "Copyright &copy;"
 msgstr "Copyright"
 
-#: oyranos_xml.c:842
+#: oyranos_xml.c:991
 msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 msgstr ""
 
 #. HTML
-#: oyranos_xml.c:849
+#: oyranos_xml.c:998
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "
 "format standard - <a href=\"http://www.color.org\">www.color.org</a> for "
@@ -1599,7 +1599,7 @@ msgid ""
 msgstr ""
 
 #. HTML
-#: oyranos_xml.c:861
+#: oyranos_xml.c:1010
 msgid ""
 "Color matching between different devices is possible, provided the color "
 "characteristics of the involved devices are known. The quality of a color "
@@ -1611,7 +1611,7 @@ msgid ""
 msgstr ""
 
 #. HTML
-#: oyranos_xml.c:876
+#: oyranos_xml.c:1025
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
 "digital cameras, monitors and printers. In Oyranos ICC profiles are assigned "
@@ -1620,7 +1620,7 @@ msgid ""
 msgstr ""
 
 #. HTML
-#: oyranos_xml.c:886
+#: oyranos_xml.c:1035
 msgid ""
 "Oyranos allowes detailed settings like prefered editing color spaces and the "
 "behaviour of color conversions or simulation. Oyranos reduces the work "
