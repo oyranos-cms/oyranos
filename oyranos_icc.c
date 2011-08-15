@@ -363,14 +363,14 @@ const oyChar *   oyICCTagDescription ( icTagSignature      sig )
 {
 
   switch ((unsigned int)sig) {
-    case icSigAToB0Tag: return _("Lockup table, device to PCS, intent perceptual");
-    case icSigAToB1Tag: return _("Lockup table, device to PCS, intent relative colorimetric");
-    case icSigAToB2Tag: return _("Lockup table, device to PCS, intent saturation");
+    case icSigAToB0Tag: return _("Lookup table, device to PCS, intent perceptual");
+    case icSigAToB1Tag: return _("Lookup table, device to PCS, intent relative colorimetric");
+    case icSigAToB2Tag: return _("Lookup table, device to PCS, intent saturation");
     case icSigBlueColorantTag: return _("Blue Colorant");
     case icSigBlueTRCTag: return _("Blue tone reproduction curve");
-    case icSigBToA0Tag: return _("Lockup table, PCS to device, intent perceptual");
-    case icSigBToA1Tag: return _("Lockup table, PCS to device, intent relative colorimetric");
-    case icSigBToA2Tag: return _("Lockup table, PCS to device, intent saturation");
+    case icSigBToA0Tag: return _("Lookup table, PCS to device, intent perceptual");
+    case icSigBToA1Tag: return _("Lookup table, PCS to device, intent relative colorimetric");
+    case icSigBToA2Tag: return _("Lookup table, PCS to device, intent saturation");
     case icSigCalibrationDateTimeTag: return _("Calibration date");
     case icSigCharTargetTag: return _("Colour measurement data");
     case icSigCopyrightTag: return _("Copyright");
