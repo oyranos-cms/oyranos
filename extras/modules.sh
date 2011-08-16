@@ -29,6 +29,7 @@ function grp_color() {
     objects_generic)    COLOR=4 ;;
     objects_value)      COLOR=5 ;;
     objects_profile)    COLOR=6 ;;
+    objects_image)      COLOR=7 ;;
   esac
 }
 
