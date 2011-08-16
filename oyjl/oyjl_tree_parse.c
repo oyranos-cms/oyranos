@@ -27,7 +27,7 @@
 #endif
 #include "oyjl_tree.h"
 
-#if YAJL_VERSION > 20000
+#if (YAJL_VERSION) > 20000
 yajl_callbacks oyjl_tree_callbacks = {
   oyjl_tree_parse_null,
   oyjl_tree_parse_boolean,

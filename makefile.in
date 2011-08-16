@@ -356,7 +356,8 @@ TEST_CPP = \
 	tests/openmp_main.c \
 	tests/sane_test.cxx \
 	tests/test_oyranos.c \
-	tests/tiff_test.cxx
+	tests/tiff_test.cxx \
+	tests/yajl.c
 TEST_H = \
 	tests/ciede2000testdata.h
 CPPFILES =
