@@ -1,0 +1,36 @@
+.TH oyranos-profile-install 1 "August 16, 2011" "User Commands"
+.SH NAME
+oyranos-profile-install \- Oyranos CMS ICC profile installation tool
+.SH SYNOPSIS
+\fBoyranos-profile-install\fR \fIPROFILENAME\fR
+.SH DESCRIPTION
+The oyranos-profile-install programm let you install a ICC colour profile for OpenICC compliant applications.
+.SH OPTIONS
+.TP
+.SH ENVIRONMENT
+.TP
+.B OYRANOS_DEBUG
+set the Oyranos debug level. Alternatively the -v option can be used.
+.TP
+.B XDG_DATA_HOME XDG_DATA_DIRS
+route Oyranos to top directories containing resources. The derived paths for
+ICC profiles have a "color/icc" appended.
+.nf
+http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
+.SH EXAMPLES
+.TP
+Install a profile for the actual user and show error messages in a GUI:
+.B oyranos-profile-install profilename
+.PP
+.SH AUTHOR
+Kai-Uwe Behrmann (ku.b (at) gmx.de)
+.SH COPYRIGHT
+(c) 2010-2011, Kai-Uwe Behrmann and others
+.fi
+License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+.SH "SEE ALSO"
+oyranos-profiles(1) oyranos-config(1) oyranos(3)
+.fi
+http://www.oyranos.org
+.SH "BUGS"
+at: http://sourceforge.net/tracker/?group_id=177017&atid=879553

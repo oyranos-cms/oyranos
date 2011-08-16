@@ -221,6 +221,7 @@ ldconfig
 %{_bindir}/%{name}-xforms-modules
 %{_mandir}/man1/%{name}-policy*
 %{_mandir}/man1/%{name}-profiles.1*
+%{_mandir}/man1/%{name}-profile-install.1*
 %{_mandir}/man1/%{name}-xforms-modules.1*
 %{pixmapdir}/oyranos_logo.*
 %{pixmapdir}/lcms_logo2.png

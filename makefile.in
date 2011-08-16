@@ -417,6 +417,7 @@ MAN1 = \
 	oyranos-monitor-nvidia.1 \
 	oyranos-policy.1 \
 	oyranos-profiles.1 \
+	oyranos-profile-install.1 \
 	oyranos-xforms.1 \
 	oyranos-xforms-fltk.1 \
 	oyranos-xforms-modules.1 \
