@@ -1,11 +1,13 @@
 [Desktop Entry]
 Type=Application
+Categories=Applications;
+Hidden=true
 Comment=Install a ICC profile for the actual user
 Comment[de]=Installiere ein ICC Farbprofil für den aktuellen Benutzer
 Exec=oyranos-profile-install %U
 GenericName=Install ICC profile
 GenericName[de]=Installiere ein ICC Farbprofil
-Icon=iccexamin
+Icon=oyranos_logo
 MimeType=application/vnd.iccprofile;
 Name=Install ICC for User
 Name[de]=Installiere ICC für den Benutzer
