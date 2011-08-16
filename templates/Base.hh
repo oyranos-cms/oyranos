@@ -11,7 +11,7 @@ namespace oy {
 
 class {{ class.cppName }} {
   private:
-    {{ class.privName }} * m_oy;
+    {{ class.name }} * m_oy;
 
   public:
     {{ class.cppName }}(Object object = NULL);
@@ -21,7 +21,7 @@ class {{ class.cppName }} {
     ~{{ class.cppName }}();
 
     // Generic {{ class.cppName }} methods
-    {{ class.privName }} * c_struct() { return m_oy; }
+    {{ class.name }} * c_struct() { return m_oy; }
 
     // Specific {{ class.cppName }} methods
     {% for function in class.functions %}{% if not function.isStatic %}
