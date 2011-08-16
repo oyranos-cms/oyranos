@@ -200,6 +200,7 @@ rm -fr %{buildroot}/%{_datadir}/doc/%{name}
 %find_lang %{name}       # generate a special file list
 %if 0%{?suse_version} > 1010
 %suse_update_desktop_file -n  qcmsevents-applet # some opensuse magic
+%suse_update_desktop_file -n  %{name}-profile-install # some opensuse magic
 %endif
 
 %clean
