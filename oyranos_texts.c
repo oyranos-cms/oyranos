@@ -153,7 +153,7 @@ oyOptionStringsTranslate_ ()
       0, 0, 0,
       _("Default Profiles"),
       _("Source and Target Profiles for various situations"),
-      _("ICC profiles should always be attached to all colors. In case colors are undefined, users can set various default ICC profiles in Oyranos settings."),
+      _("ICC profiles should always be attached to all colors. In the case that colors are undefined, users can set various default ICC profiles in Oyranos settings."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -216,16 +216,16 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, 0, 0,
       _("Rendering"),
       _("The kind of ICC gamut mapping for transforming colors between differently sized color spaces"),
-      _("The conversion between color spaces of different shape and size can happen in various ways. The Perceptual rendering intent is usual the best choice for photographs and artistic imagery. It is used in many automatic systems. The Relative Colorimetric rendering intent provides a well defined one to one color mapping but without applying white point adaption. This can lead to color clipping in case of colors falling outside the target gamut as a price for  the otherwise colorimetric correctness. The Relative Colorimetric intent is often used in combination with Black Point Compensation. The Saturation rendering intent shall provide a maximal use of saturated device colors. The Absolute Colorimetric rendering intent works like the relative colorimetric one except the white point is adapted. All rendering intents beside the colorimetric ones rely on the color tables provided by the profile vendor."),
+      _("The conversion between color spaces of different shape and size can happen in various ways. The Perceptual rendering intent is usual the best choice for photographs and artistic imagery. It is used in many automatic systems. The Relative Colorimetric rendering intent provides a well-defined, one-to-one color mapping, but without applying white point adaption. This can lead to color clipping in case of colors falling outside the target gamut as a price for the otherwise colorimetric correctness. The Relative Colorimetric intent is often used in combination with Black Point Compensation. The Saturation rendering intent shall provide an optimal use of saturated device colors. The Absolute Colorimetric rendering intent works like the relative colorimetric one except the white point is adapted. All rendering intents beside the colorimetric ones rely on the color tables designed by the profile vendor."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_RENDERING", 0,0)
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 1,
       oyGROUP_BEHAVIOUR, 0, 0,
-      _("Save Mixed color space Documents"),
+      _("Save Mixed Color Space Documents"),
       _("Handling of Mixed Color Spaces inside one single Document"),
-      _("Mixed Color Spaces inside one single document can be difficult to handle for some systems. The settings gives choice about flattening document color spaces."),
+      _("Mixed color spaces inside one single document can be difficult to handle for some systems. The settings can give the option to flatten document color spaces."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -243,7 +243,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, 0, 0,
       _("Proofing"),
       _("Proofing Settings"),
-      _("Proofing Settings allow to decide about the simulation color space."),
+      _("Proofing Settings allows one to decide about the simulation color space."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -286,7 +286,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Rgb"),
       _("Prefered Rgb Editing Color Space"),
-      _("The prefered Rgb Editing Color Space should represent a well behaving color space like sRGB."),
+      _("The preferred Rgb Editing Color Space should represent a well behaving color space like sRGB."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_RGB_PROFILE,
@@ -296,7 +296,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Cmyk"),
       _("Prefered Cmyk Editing Color Space"),
-      _("The prefered Cmyk Editing Color Space should represent a color space which complies to well defined printing conditions like FOGRA or SWOP."),
+      _("The preferred Cmyk Editing Color Space should represent a color space that complies to well defined printing conditions like FOGRA or SWOP."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_CMYK_PROFILE,
@@ -306,7 +306,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing XYZ"),
       _("Prefered XYZ Editing Color Space"),
-      _("The prefered XYZ Editing Color Space shall decribe CIE*XYZ."),
+      _("The preferred XYZ Editing Color Space shall decribe CIE*XYZ."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_XYZ_PROFILE,
@@ -316,7 +316,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Lab"),
       _("Prefered CIE*Lab Editing Color Space"),
-      _("The prefered CIE*Lab Editing Color Space shall describe the CIE*Lab."),
+      _("The preferred CIE*Lab Editing Color Space shall describe the CIE*Lab."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_LAB_PROFILE,
@@ -326,7 +326,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Gray"),
       _("Prefered Gray Editing Color Space"),
-      _("The prefered Gray Editing Color Space shall describe a single lighness channel color space for gray scale images."),
+      _("The preferred Gray Editing Color Space shall describe a single lighness channel color space for grayscale images."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_GRAY_PROFILE,
@@ -335,7 +335,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_XYZ, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed XYZ source"),
-      _("Assigning an untagged XYZ Image an color space"),
+      _("Assigns an untagged XYZ Image this color space"),
       _("The selected color space will be assigned to untagged XYZ color content and define colors for further processing."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -345,7 +345,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_LAB, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Lab source"),
-      _("Assigning an untagged CIE*Lab Image an color space"),
+      _("Assigns an untagged CIE*Lab Image this color space"),
       _("The selected color space will be assigned to untagged CIE*Lab color content and define colors for further processing."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -355,7 +355,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_RGB, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Rgb source"),
-      _("Assigning an untagged Rgb Image an color space"),
+      _("Assigns an untagged Rgb Image this color space"),
       _("The selected color space will be assigned to untagged Rgb color content and define colors for further processing. Typical sRGB should be assumed."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -365,8 +365,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_WEB, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Web source"),
-      _("Assigning an untagged Rgb Image with source from the WWW an color space"),
-      _("Assigning an untagged Rgb Image with source from the WWW an color space. This will always be sRGB as defined by W3C."),
+      _("Assigns an untagged Rgb Image with source from the WWW this color space"),
+      _("Assigns an untagged Rgb Image with source from the WWW this color space. This will always be sRGB as defined by W3C."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_ASSUMED_WEB_PROFILE,
@@ -376,7 +376,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_CMYK, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Cmyk source"),
-      _("Assigning an untagged Cmyk Image this color space"),
+      _("Assigns an untagged Cmyk Image this color space"),
       _("The selected color space will be assigned to untagged Cmyk color content and define colors for further processing."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -386,7 +386,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_ASSUMED_GRAY, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_ASSUMED, 0,
       _("Assumed Gray source"),
-      _("Assigning an untagged Gray Image this color space"),
+      _("Assigns an untagged Gray Image this color space"),
       _("The selected color space will be assigned to untagged Gray color content and define colors for further processing."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -418,7 +418,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
       _("On Rgb Mismatch"),
       _("Action for Image profile and Editing profile mismatches."),
-      _("Incomming color spaces can have a color space assigned, which differs from the default editing color space. For most users a automatic conversion is fine. However for more demanding work, numbers need to be preserved."),
+      _("Incoming color spaces can have a color space assigned, which differs from the default editing color space. For most users, an automatic conversion is fine. However, for more demanding work, the numbers need to be preserved."),
       3, /* choices */
       _("Preserve Numbers"),_("Convert automatically"),_("Promt"), NULL,
       OY_ACTION_MISMATCH_RGB,
@@ -428,7 +428,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
       _("On Cmyk Mismatch"),
       _("Action for Image profile and Editing profile mismatches."),
-      _("Incomming color spaces can have a color space assigned, which differs from the default editing color space. For most users a automatic conversion is fine. However for more demanding work, numbers need to be preserved."),
+      _("Incoming color spaces can have a color space assigned, which differs from the default editing color space. For most users, an automatic conversion is fine. However for more demanding work, the numbers need to be preserved."),
       3, /* choices */
       _("Preserve Numbers"),_("Convert automatically"),_("Promt"), NULL,
       OY_ACTION_MISMATCH_CMYK,
@@ -437,8 +437,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_MIXED_MOD_DOCUMENTS_PRINT, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 0,
       _("For Print"),
-      _("Handle Mixed color spaces in Preparing a document for Print output."),
-      _("Handle Mixed color spaces in Preparing a document for Print output. A conversion to the default editing color space is, what most users want."),
+      _("Handle mixed color spaces in preparing a document for print output."),
+      _("Handle mixed color spaces in preparing a document for print output. A conversion to the default editing color space is typically what most users want."),
       4, /* choices */
       _("Preserve Numbers"),_("Convert to Default Cmyk Editing Space"),_("Convert to untagged Cmyk, preserving Cmyk numbers"),_("Promt"),
       OY_CONVERT_MIXED_COLOUR_SPACE_PRINT_DOCUMENT,
@@ -447,8 +447,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_MIXED_MOD_DOCUMENTS_SCREEN, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, 0,
       _("For Screen"),
-      _("Handle Mixed color spaces in Preparing a document for Screen output."),
-      _("Handle Mixed color spaces in Preparing a document for Screen output. A conversion to sRGB helps in easy data exchange and is what most users want."),
+      _("Handle mixed color spaces in preparing a document for screen output."),
+      _("Handle mixed color spaces in preparing a document for screen output. A conversion to sRGB helps in easy data exchange and is what most users want."),
       4, /* choices */
       _("Preserve Numbers"),_("Convert to Default Rgb Editing Space"),_("Convert to WWW (sRGB)"),_("Promt"),
       OY_CONVERT_MIXED_COLOUR_SPACE_SCREEN_DOCUMENT,
@@ -457,8 +457,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_INTENT, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
       _("Rendering Intent"),
-      _("Rendering Intent for color space Transformations."),
-      _("Rendering Intent for color space Transformations is typical the Relative Colorimetric intent plus Black Point Compensation or the Perceptual intent."),
+      _("Rendering intent for color space transformations."),
+      _("Rendering intent for color space transformations is typical the Relative Colorimetric intent plus Black Point Compensation or the Perceptual intent."),
       4, /* choices */
       _("Perceptual"),_("Relative Colorimetric"),_("Saturation"),_("Absolute Colorimetric"),
       OY_DEFAULT_RENDERING_INTENT,
@@ -467,8 +467,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_BPC, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
       _("Use Black Point Compensation"),
-      _("BPC affects often only the Relative Colorimetric Rendering Intent."),
-      _("BPC affects often only the Relative Colorimetric Rendering Intent."),
+      _("BPC affects often only the Relative Colorimetric Rendering intent."),
+      _("BPC affects often only the Relative Colorimetric Rendering intent."),
       2, /* choices */
       _("No"),_("Yes"), NULL, NULL,
       OY_DEFAULT_RENDERING_BPC,
@@ -478,7 +478,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("Proofing Rendering Intent"),
       _("Behaviour of color space transformation for proofing"),
-      _("Behaviour of color space transformation for proofing. Most people want a preview on screen only. The Relative Colorimetric intent is right for that. The Absolute Colorimetric intent needs a very careful profiling and non trivial setup but allowes for side by side comparisions."),
+      _("Behaviour of color space transformation for proofing. Most people want a preview on screen only. The Relative Colorimetric intent is right for that. The Absolute Colorimetric intent needs a very careful profiling and non-trivial setup, but allowes for side-by-side comparisions."),
       2, /* choices */
       _("Relative Colorimetric"),_("Absolute Colorimetric"),NULL,NULL,
       OY_DEFAULT_RENDERING_INTENT_PROOF,
@@ -488,7 +488,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("SoftProof"),
       _("Simulate the output print on the monitor"),
-      _("Enable simulate of output print on the monitor. Most users do not work for a certain media and leave color handling to the system. They want no simulation."),
+      _("Enable simulation of output print on the monitor. Most users do not work for a certain media and leave color handling to the system. They want no simulation."),
       2, /* choices */
       _("No"),_("Yes"),NULL,NULL,
       OY_DEFAULT_PROOF_SOFT,
@@ -498,7 +498,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("Hardproof"),
       _("Behaviour for preselecting Hardproofing with a Proofing Profile at print time"),
-      _("Enable simulation of a output color space on a local printer. Most users do not work for a certain media and leave color handling to the system. They want no simulation."),
+      _("Enable simulation of an output color space on a local printer. Most users do not work for a certain media and leave color handling to the system. They want no simulation."),
       2, /* choices */
       _("No"),_("Yes"),NULL,NULL,
       OY_DEFAULT_PROOF_HARD,
@@ -508,7 +508,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
       _("Gamut Warning"),
       _("Mark Out Of Gamut colors"),
-      _("Most users want a simple display of colors and not check if colors match the simulation color space."),
+      _("Most users want a simple display of colors and will not check if colors match the simulation color space."),
       2, /* choices */
       _("No"),_("Yes"),NULL,NULL,
       OY_DEFAULT_RENDERING_GAMUT_WARNING,
