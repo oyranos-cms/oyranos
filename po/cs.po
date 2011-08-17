@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2011-08-15 08:56+0200\n"
+"POT-Creation-Date: 2011-08-17 16:55+0200\n"
 "PO-Revision-Date: 2008-10-23 20:49+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -975,8 +975,9 @@ msgstr "Vstupni a vystupni profily pro ruzne situace"
 
 #: oyranos_texts.c:156
 msgid ""
-"ICC profiles should always be attached to all colors. In case colors are "
-"undefined, users can set various default ICC profiles in Oyranos settings."
+"ICC profiles should always be attached to all colors. In the case that "
+"colors are undefined, users can set various default ICC profiles in Oyranos "
+"settings."
 msgstr ""
 
 #: oyranos_texts.c:163
@@ -1096,21 +1097,21 @@ msgid ""
 "The conversion between color spaces of different shape and size can happen "
 "in various ways. The Perceptual rendering intent is usual the best choice "
 "for photographs and artistic imagery. It is used in many automatic systems. "
-"The Relative Colorimetric rendering intent provides a well defined one to "
-"one color mapping but without applying white point adaption. This can lead "
+"The Relative Colorimetric rendering intent provides a well-defined, one-to-"
+"one color mapping, but without applying white point adaption. This can lead "
 "to color clipping in case of colors falling outside the target gamut as a "
-"price for  the otherwise colorimetric correctness. The Relative Colorimetric "
+"price for the otherwise colorimetric correctness. The Relative Colorimetric "
 "intent is often used in combination with Black Point Compensation. The "
-"Saturation rendering intent shall provide a maximal use of saturated device "
+"Saturation rendering intent shall provide an optimal use of saturated device "
 "colors. The Absolute Colorimetric rendering intent works like the relative "
 "colorimetric one except the white point is adapted. All rendering intents "
-"beside the colorimetric ones rely on the color tables provided by the "
+"beside the colorimetric ones rely on the color tables designed by the "
 "profile vendor."
 msgstr ""
 
 #: oyranos_texts.c:226
 #, fuzzy
-msgid "Save Mixed color space Documents"
+msgid "Save Mixed Color Space Documents"
 msgstr "Ulozit dokumenty se smisenymi barvovymi prostory"
 
 #: oyranos_texts.c:227
@@ -1121,8 +1122,8 @@ msgstr ""
 
 #: oyranos_texts.c:228
 msgid ""
-"Mixed Color Spaces inside one single document can be difficult to handle for "
-"some systems. The settings gives choice about flattening document color "
+"Mixed color spaces inside one single document can be difficult to handle for "
+"some systems. The settings can give the option to flatten document color "
 "spaces."
 msgstr ""
 
@@ -1154,7 +1155,8 @@ msgid "Proofing Settings"
 msgstr "Vychozi nastaveni simulace tisku"
 
 #: oyranos_texts.c:246
-msgid "Proofing Settings allow to decide about the simulation color space."
+msgid ""
+"Proofing Settings allows one to decide about the simulation color space."
 msgstr ""
 
 #: oyranos_texts.c:253
@@ -1194,10 +1196,11 @@ msgid "Prefered Rgb Editing Color Space"
 msgstr "Preferovany RGB barvovy prostor pro editaci"
 
 #: oyranos_texts.c:289
+#, fuzzy
 msgid ""
-"The prefered Rgb Editing Color Space should represent a well behaving color "
+"The preferred Rgb Editing Color Space should represent a well behaving color "
 "space like sRGB."
-msgstr ""
+msgstr "Preferovany XYZ barvovy prostor pro editaci"
 
 #: oyranos_texts.c:297
 msgid "Editing Cmyk"
@@ -1210,7 +1213,7 @@ msgstr "Preferovany CMYK barvovy prostor pro editaci"
 
 #: oyranos_texts.c:299
 msgid ""
-"The prefered Cmyk Editing Color Space should represent a color space which "
+"The preferred Cmyk Editing Color Space should represent a color space that "
 "complies to well defined printing conditions like FOGRA or SWOP."
 msgstr ""
 
@@ -1225,7 +1228,7 @@ msgstr "Preferovany XYZ barvovy prostor pro editaci"
 
 #: oyranos_texts.c:309
 #, fuzzy
-msgid "The prefered XYZ Editing Color Space shall decribe CIE*XYZ."
+msgid "The preferred XYZ Editing Color Space shall decribe CIE*XYZ."
 msgstr "Preferovany XYZ barvovy prostor pro editaci"
 
 #: oyranos_texts.c:317
@@ -1239,7 +1242,7 @@ msgstr "Preferovany CIE*Lab barvovy prostor pro editaci"
 
 #: oyranos_texts.c:319
 #, fuzzy
-msgid "The prefered CIE*Lab Editing Color Space shall describe the CIE*Lab."
+msgid "The preferred CIE*Lab Editing Color Space shall describe the CIE*Lab."
 msgstr "Preferovany CIE*Lab barvovy prostor pro editaci"
 
 #: oyranos_texts.c:327
@@ -1252,10 +1255,11 @@ msgid "Prefered Gray Editing Color Space"
 msgstr "Preferovany sedy barvovy prostor pro editaci"
 
 #: oyranos_texts.c:329
+#, fuzzy
 msgid ""
-"The prefered Gray Editing Color Space shall describe a single lighness "
-"channel color space for gray scale images."
-msgstr ""
+"The preferred Gray Editing Color Space shall describe a single lighness "
+"channel color space for grayscale images."
+msgstr "Preferovany CIE*Lab barvovy prostor pro editaci"
 
 #: oyranos_texts.c:337
 msgid "Assumed XYZ source"
@@ -1263,7 +1267,7 @@ msgstr "Predpokladany vstupni XYZ"
 
 #: oyranos_texts.c:338
 #, fuzzy
-msgid "Assigning an untagged XYZ Image an color space"
+msgid "Assigns an untagged XYZ Image this color space"
 msgstr "Prirazeni barvoveho prostoru neoznacenemu XYZ obrazku"
 
 #: oyranos_texts.c:339
@@ -1278,7 +1282,7 @@ msgstr "Predpokladany vstupni Lab"
 
 #: oyranos_texts.c:348
 #, fuzzy
-msgid "Assigning an untagged CIE*Lab Image an color space"
+msgid "Assigns an untagged CIE*Lab Image this color space"
 msgstr "Prirazeni barvoveho prostoru neoznacenemu CIE*Lab obrazku"
 
 #: oyranos_texts.c:349
@@ -1293,7 +1297,7 @@ msgstr "Predpokladany vstupni RGB"
 
 #: oyranos_texts.c:358
 #, fuzzy
-msgid "Assigning an untagged Rgb Image an color space"
+msgid "Assigns an untagged Rgb Image this color space"
 msgstr "Prirazeni barvoveho prostoru neoznacenemu RGB obrazku"
 
 #: oyranos_texts.c:359
@@ -1308,14 +1312,14 @@ msgstr "Predpokladany vstupni Web"
 
 #: oyranos_texts.c:368
 #, fuzzy
-msgid "Assigning an untagged Rgb Image with source from the WWW an color space"
+msgid "Assigns an untagged Rgb Image with source from the WWW this color space"
 msgstr ""
 "Prirazeni barvoveho prostoru neoznacenemu RGB obrazku pochazejiciho z WWW"
 
 #: oyranos_texts.c:369
 #, fuzzy
 msgid ""
-"Assigning an untagged Rgb Image with source from the WWW an color space. "
+"Assigns an untagged Rgb Image with source from the WWW this color space. "
 "This will always be sRGB as defined by W3C."
 msgstr ""
 "Prirazeni barvoveho prostoru neoznacenemu RGB obrazku pochazejiciho z WWW"
@@ -1326,7 +1330,7 @@ msgstr "Predpokladany vstupni CMYK"
 
 #: oyranos_texts.c:379
 #, fuzzy
-msgid "Assigning an untagged Cmyk Image this color space"
+msgid "Assigns an untagged Cmyk Image this color space"
 msgstr "Prirazeni barvoveho prostoru neoznacenemu CMYK obrazku"
 
 #: oyranos_texts.c:380
@@ -1341,7 +1345,7 @@ msgstr "Predpokladany vstupni sed"
 
 #: oyranos_texts.c:389
 #, fuzzy
-msgid "Assigning an untagged Gray Image this color space"
+msgid "Assigns an untagged Gray Image this color space"
 msgstr "Prirazeni barvoveho prostoru neoznacenemu sedemu obrazku"
 
 #: oyranos_texts.c:390
@@ -1400,11 +1404,11 @@ msgstr "V pripade RGB nesouladu"
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr "Akce pro nesoulad profilu obrazku a editace."
 
-#: oyranos_texts.c:421 oyranos_texts.c:431
+#: oyranos_texts.c:421
 msgid ""
-"Incomming color spaces can have a color space assigned, which differs from "
-"the default editing color space. For most users a automatic conversion is "
-"fine. However for more demanding work, numbers need to be preserved."
+"Incoming color spaces can have a color space assigned, which differs from "
+"the default editing color space. For most users, an automatic conversion is "
+"fine. However, for more demanding work, the numbers need to be preserved."
 msgstr ""
 
 #. choices
@@ -1421,13 +1425,20 @@ msgstr "Automaticky konvertovat"
 msgid "On Cmyk Mismatch"
 msgstr "V pripade nesouladu CMYK"
 
+#: oyranos_texts.c:431
+msgid ""
+"Incoming color spaces can have a color space assigned, which differs from "
+"the default editing color space. For most users, an automatic conversion is "
+"fine. However for more demanding work, the numbers need to be preserved."
+msgstr ""
+
 #: oyranos_texts.c:439
 msgid "For Print"
 msgstr "Pro tisk"
 
 #: oyranos_texts.c:440
 #, fuzzy
-msgid "Handle Mixed color spaces in Preparing a document for Print output."
+msgid "Handle mixed color spaces in preparing a document for print output."
 msgstr ""
 "Zachazeni se smisenymi barvovymi prostory pri priprave dokumentu pro tiskovy "
 "vystup."
@@ -1435,8 +1446,9 @@ msgstr ""
 #: oyranos_texts.c:441
 #, fuzzy
 msgid ""
-"Handle Mixed color spaces in Preparing a document for Print output. A "
-"conversion to the default editing color space is, what most users want."
+"Handle mixed color spaces in preparing a document for print output. A "
+"conversion to the default editing color space is typically what most users "
+"want."
 msgstr ""
 "Zachazeni se smisenymi barvovymi prostory pri priprave dokumentu pro tiskovy "
 "vystup."
@@ -1455,7 +1467,7 @@ msgstr "Pro obrazovku"
 
 #: oyranos_texts.c:450
 #, fuzzy
-msgid "Handle Mixed color spaces in Preparing a document for Screen output."
+msgid "Handle mixed color spaces in preparing a document for screen output."
 msgstr ""
 "Zachazeni se smisenymi barvovymi prostory pri priprave dokumentu pro vystup "
 "na obrazovku"
@@ -1463,7 +1475,7 @@ msgstr ""
 #: oyranos_texts.c:451
 #, fuzzy
 msgid ""
-"Handle Mixed color spaces in Preparing a document for Screen output. A "
+"Handle mixed color spaces in preparing a document for screen output. A "
 "conversion to sRGB helps in easy data exchange and is what most users want."
 msgstr ""
 "Zachazeni se smisenymi barvovymi prostory pri priprave dokumentu pro vystup "
@@ -1484,12 +1496,12 @@ msgstr "Vychozi zamer transformace"
 
 #: oyranos_texts.c:460
 #, fuzzy
-msgid "Rendering Intent for color space Transformations."
+msgid "Rendering intent for color space transformations."
 msgstr "Zamer transformace pro barvove prostory"
 
 #: oyranos_texts.c:461
 msgid ""
-"Rendering Intent for color space Transformations is typical the Relative "
+"Rendering intent for color space transformations is typical the Relative "
 "Colorimetric intent plus Black Point Compensation or the Perceptual intent."
 msgstr ""
 
@@ -1513,7 +1525,7 @@ msgstr "Pouzit kompenzaci cerneho bodu (BPC)"
 
 #: oyranos_texts.c:470 oyranos_texts.c:471
 #, fuzzy
-msgid "BPC affects often only the Relative Colorimetric Rendering Intent."
+msgid "BPC affects often only the Relative Colorimetric Rendering intent."
 msgstr "BPC ovlivnuje pouze relativni kolorimetricky zamer transformace."
 
 #. choices
@@ -1540,8 +1552,8 @@ msgstr "Chovani zameru transformace barvoveho prostoru pro simulaci tisku"
 msgid ""
 "Behaviour of color space transformation for proofing. Most people want a "
 "preview on screen only. The Relative Colorimetric intent is right for that. "
-"The Absolute Colorimetric intent needs a very careful profiling and non "
-"trivial setup but allowes for side by side comparisions."
+"The Absolute Colorimetric intent needs a very careful profiling and non-"
+"trivial setup, but allowes for side-by-side comparisions."
 msgstr ""
 
 #: oyranos_texts.c:489
@@ -1555,8 +1567,8 @@ msgstr ""
 
 #: oyranos_texts.c:491
 msgid ""
-"Enable simulate of output print on the monitor. Most users do not work for a "
-"certain media and leave color handling to the system. They want no "
+"Enable simulation of output print on the monitor. Most users do not work for "
+"a certain media and leave color handling to the system. They want no "
 "simulation."
 msgstr ""
 
@@ -1575,7 +1587,7 @@ msgstr ""
 
 #: oyranos_texts.c:501
 msgid ""
-"Enable simulation of a output color space on a local printer. Most users do "
+"Enable simulation of an output color space on a local printer. Most users do "
 "not work for a certain media and leave color handling to the system. They "
 "want no simulation."
 msgstr ""
@@ -1591,8 +1603,8 @@ msgstr ""
 
 #: oyranos_texts.c:511
 msgid ""
-"Most users want a simple display of colors and not check if colors match the "
-"simulation color space."
+"Most users want a simple display of colors and will not check if colors "
+"match the simulation color space."
 msgstr ""
 
 #. HTML
@@ -1620,8 +1632,8 @@ msgstr ""
 #: oyranos_xml.c:998
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "
-"format standard - <a href=\"http://www.color.org\">www.color.org</a> for "
-"color space definitions. The appliance of ICC color profiles shall enable a "
+"format standard (<a href=\"http://www.color.org\">www.color.org</a>) for "
+"color space definitions. The use of ICC color profiles shall enable a "
 "flawless and automated color data exchange between different color spaces "
 "and various devices with their respective physical color behaviours."
 msgstr ""
@@ -1629,31 +1641,31 @@ msgstr ""
 #. HTML
 #: oyranos_xml.c:1010
 msgid ""
-"Color matching between different devices is possible, provided the color "
-"characteristics of the involved devices are known. The quality of a color "
-"transform from one to an other color space depends for devices mainly on the "
-"quality of the color measurement and the used profiling algorithm during ICC "
-"profile creation. Each color space definition happens in reference to a "
-"Profile Connection Spaces (PCS). The PCS is a well known color space, based "
-"on a average human observer as defined by CIE."
+"Color matching between different devices is possible, provided that the "
+"color characteristics of the involved devices are known. The quality of a "
+"color transform for devices from one color space to an other depends "
+"particularly on the quality of the color measurement and the profiling "
+"algorithm used during ICC profile creation. Each color space definition "
+"happens in reference to a Profile Connection Spaces (PCS). The PCS is a well "
+"known color space, based on the average \"human observer\" as defined by CIE."
 msgstr ""
 
 #. HTML
 #: oyranos_xml.c:1025
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
-"digital cameras, monitors and printers. In Oyranos ICC profiles are assigned "
-"to a calibration states of color devices, to get close to the device "
+"digital cameras, monitors and printers. In Oyranos, ICC profiles are "
+"assigned to calibration states of color devices, to get close to the device "
 "behaviour as was present during ICC profile creation."
 msgstr ""
 
 #. HTML
 #: oyranos_xml.c:1035
 msgid ""
-"Oyranos allowes detailed settings like prefered editing color spaces and the "
-"behaviour of color conversions or simulation. Oyranos reduces the work "
-"involved in all color management related decissions by automation, useful "
-"defaults and grouping of settings in selectable policies."
+"Oyranos allowes detailed settings like preferred editing color spaces and "
+"the behaviour of color conversions or simulation. Oyranos reduces the work "
+"involved in all color management related decisions through automation, "
+"useful defaults and grouping of settings in selectable policies."
 msgstr ""
 
 #: oyranos_gamma.c:92
