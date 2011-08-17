@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2011-08-15 08:56+0200\n"
+"POT-Creation-Date: 2011-08-17 16:55+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -970,8 +970,9 @@ msgstr "Quell- und Zielprofile für verschiedene Situationen"
 
 #: oyranos_texts.c:156
 msgid ""
-"ICC profiles should always be attached to all colors. In case colors are "
-"undefined, users can set various default ICC profiles in Oyranos settings."
+"ICC profiles should always be attached to all colors. In the case that "
+"colors are undefined, users can set various default ICC profiles in Oyranos "
+"settings."
 msgstr ""
 "Alle Farben sollten auf einem Rechner mit ICC Farbprofilen definiert sein. "
 "Für nicht definierte Farben können Benutzer ICC Farbprofile in Oyranos "
@@ -1103,20 +1104,20 @@ msgid ""
 "The conversion between color spaces of different shape and size can happen "
 "in various ways. The Perceptual rendering intent is usual the best choice "
 "for photographs and artistic imagery. It is used in many automatic systems. "
-"The Relative Colorimetric rendering intent provides a well defined one to "
-"one color mapping but without applying white point adaption. This can lead "
+"The Relative Colorimetric rendering intent provides a well-defined, one-to-"
+"one color mapping, but without applying white point adaption. This can lead "
 "to color clipping in case of colors falling outside the target gamut as a "
-"price for  the otherwise colorimetric correctness. The Relative Colorimetric "
+"price for the otherwise colorimetric correctness. The Relative Colorimetric "
 "intent is often used in combination with Black Point Compensation. The "
-"Saturation rendering intent shall provide a maximal use of saturated device "
+"Saturation rendering intent shall provide an optimal use of saturated device "
 "colors. The Absolute Colorimetric rendering intent works like the relative "
 "colorimetric one except the white point is adapted. All rendering intents "
-"beside the colorimetric ones rely on the color tables provided by the "
+"beside the colorimetric ones rely on the color tables designed by the "
 "profile vendor."
 msgstr ""
 
 #: oyranos_texts.c:226
-msgid "Save Mixed color space Documents"
+msgid "Save Mixed Color Space Documents"
 msgstr "Speichere Dokumente mit gemischten Farbräumen"
 
 #: oyranos_texts.c:227
@@ -1125,8 +1126,8 @@ msgstr "Behandlung von gemischten Farbräumen in einem einzelnen Dokument"
 
 #: oyranos_texts.c:228
 msgid ""
-"Mixed Color Spaces inside one single document can be difficult to handle for "
-"some systems. The settings gives choice about flattening document color "
+"Mixed color spaces inside one single document can be difficult to handle for "
+"some systems. The settings can give the option to flatten document color "
 "spaces."
 msgstr ""
 
@@ -1157,7 +1158,8 @@ msgid "Proofing Settings"
 msgstr "Einstellungen für Nachbildung (Simulation) von einem Ausgabegerät"
 
 #: oyranos_texts.c:246
-msgid "Proofing Settings allow to decide about the simulation color space."
+msgid ""
+"Proofing Settings allows one to decide about the simulation color space."
 msgstr ""
 
 #: oyranos_texts.c:253
@@ -1197,9 +1199,10 @@ msgstr "Bevorzugter Rgb Editierfarbraum"
 
 #: oyranos_texts.c:289
 msgid ""
-"The prefered Rgb Editing Color Space should represent a well behaving color "
+"The preferred Rgb Editing Color Space should represent a well behaving color "
 "space like sRGB."
 msgstr ""
+"Der bevorzugte Rgb Editierfarbraum sollte wohlgeformt sein."
 
 #: oyranos_texts.c:297
 msgid "Editing Cmyk"
@@ -1211,7 +1214,7 @@ msgstr "Bevorzugter Cmyk Editierfarbraum"
 
 #: oyranos_texts.c:299
 msgid ""
-"The prefered Cmyk Editing Color Space should represent a color space which "
+"The preferred Cmyk Editing Color Space should represent a color space that "
 "complies to well defined printing conditions like FOGRA or SWOP."
 msgstr ""
 
@@ -1224,7 +1227,7 @@ msgid "Prefered XYZ Editing Color Space"
 msgstr "Bevorzugter XYZ Editierfarbraum"
 
 #: oyranos_texts.c:309
-msgid "The prefered XYZ Editing Color Space shall decribe CIE*XYZ."
+msgid "The preferred XYZ Editing Color Space shall decribe CIE*XYZ."
 msgstr "Der bevorzugter XYZ Editierfarbraum soll CIE*XYZ definieren."
 
 #: oyranos_texts.c:317
@@ -1236,7 +1239,7 @@ msgid "Prefered CIE*Lab Editing Color Space"
 msgstr "Bevorzugter CIE*Lab Editierfarbraum"
 
 #: oyranos_texts.c:319
-msgid "The prefered CIE*Lab Editing Color Space shall describe the CIE*Lab."
+msgid "The preferred CIE*Lab Editing Color Space shall describe the CIE*Lab."
 msgstr "Der bevorzugter CIE*Lab Editierfarbraum soll CIE*Lab beschreiben."
 
 #: oyranos_texts.c:327
@@ -1249,8 +1252,8 @@ msgstr "Bevorzugter Grau Editierfarbraum"
 
 #: oyranos_texts.c:329
 msgid ""
-"The prefered Gray Editing Color Space shall describe a single lighness "
-"channel color space for gray scale images."
+"The preferred Gray Editing Color Space shall describe a single lighness "
+"channel color space for grayscale images."
 msgstr ""
 "Der bevorzugte Grautonfarbraum soll Farben mit einem einzigen "
 "Helligkeitsfarbkanal beschreiben."
@@ -1260,7 +1263,7 @@ msgid "Assumed XYZ source"
 msgstr "Vermutete XYZ Quelle"
 
 #: oyranos_texts.c:338
-msgid "Assigning an untagged XYZ Image an color space"
+msgid "Assigns an untagged XYZ Image this color space"
 msgstr "Weise einem XYZ Bild ohne Profil ein Farbraum zu"
 
 #: oyranos_texts.c:339
@@ -1276,7 +1279,7 @@ msgid "Assumed Lab source"
 msgstr "Vermutete Lab Quelle"
 
 #: oyranos_texts.c:348
-msgid "Assigning an untagged CIE*Lab Image an color space"
+msgid "Assigns an untagged CIE*Lab Image this color space"
 msgstr "Weise einem CIE*Lab Bild ohne Profil ein Farbraum zu"
 
 #: oyranos_texts.c:349
@@ -1290,7 +1293,7 @@ msgid "Assumed Rgb source"
 msgstr "Vermutete Rgb Quelle"
 
 #: oyranos_texts.c:358
-msgid "Assigning an untagged Rgb Image an color space"
+msgid "Assigns an untagged Rgb Image this color space"
 msgstr "Weise einem Rgb Bild ohne Profil ein Farbraum zu"
 
 #: oyranos_texts.c:359
@@ -1304,16 +1307,16 @@ msgid "Assumed Web source"
 msgstr "Vermutete Web Quelle"
 
 #: oyranos_texts.c:368
-msgid "Assigning an untagged Rgb Image with source from the WWW an color space"
+msgid "Assigns an untagged Rgb Image with source from the WWW this color space"
 msgstr ""
-"Weise einem nicht festgeschriebenen Rgb Bild aus dem WWW diesen Farbraum zu"
+"Weise einem Rgb Bild ihne ICC Profil aus dem WWW diesen Farbraum zu"
 
 #: oyranos_texts.c:369
 msgid ""
-"Assigning an untagged Rgb Image with source from the WWW an color space. "
+"Assigns an untagged Rgb Image with source from the WWW this color space. "
 "This will always be sRGB as defined by W3C."
 msgstr ""
-"Weise einem nicht festgeschriebenen Rgb Bild aus dem WWW diesen Farbraum zu. "
+"Weise einem Rgb Bild ohne ICC Profile aus dem WWW diesen Farbraum zu. "
 "Das wird sRGB wie vom W3C vorgegeben sein."
 
 #: oyranos_texts.c:378
@@ -1321,7 +1324,7 @@ msgid "Assumed Cmyk source"
 msgstr "Vermutete Cmyk Quelle"
 
 #: oyranos_texts.c:379
-msgid "Assigning an untagged Cmyk Image this color space"
+msgid "Assigns an untagged Cmyk Image this color space"
 msgstr "Weise einem nicht festgeschriebenen Cmyk Bild diesen Farbraum zu"
 
 #: oyranos_texts.c:380
@@ -1335,7 +1338,7 @@ msgid "Assumed Gray source"
 msgstr "Vermutete Grau Quelle"
 
 #: oyranos_texts.c:389
-msgid "Assigning an untagged Gray Image this color space"
+msgid "Assigns an untagged Gray Image this color space"
 msgstr "Weise einem nicht festgeschriebenen Grau Bild diesen Farbraum zu"
 
 #: oyranos_texts.c:390
@@ -1392,11 +1395,11 @@ msgstr "Bei Rgb Ungleichheit"
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr "Verhalten bei Ungleichheit von Bild- und Editierfarbraum"
 
-#: oyranos_texts.c:421 oyranos_texts.c:431
+#: oyranos_texts.c:421
 msgid ""
-"Incomming color spaces can have a color space assigned, which differs from "
-"the default editing color space. For most users a automatic conversion is "
-"fine. However for more demanding work, numbers need to be preserved."
+"Incoming color spaces can have a color space assigned, which differs from "
+"the default editing color space. For most users, an automatic conversion is "
+"fine. However, for more demanding work, the numbers need to be preserved."
 msgstr ""
 
 #. choices
@@ -1413,20 +1416,28 @@ msgstr "Wandle automatisch"
 msgid "On Cmyk Mismatch"
 msgstr "Bei Cmyk Ungleichheit"
 
+#: oyranos_texts.c:431
+msgid ""
+"Incoming color spaces can have a color space assigned, which differs from "
+"the default editing color space. For most users, an automatic conversion is "
+"fine. However for more demanding work, the numbers need to be preserved."
+msgstr ""
+
 #: oyranos_texts.c:439
 msgid "For Print"
 msgstr "Für den Druck"
 
 #: oyranos_texts.c:440
-msgid "Handle Mixed color spaces in Preparing a document for Print output."
+msgid "Handle mixed color spaces in preparing a document for print output."
 msgstr ""
 "Behandlung von uneinheitlichen Farbräumen in Vorbereitung eines Dokumentes "
 "für die Druckausgabe"
 
 #: oyranos_texts.c:441
 msgid ""
-"Handle Mixed color spaces in Preparing a document for Print output. A "
-"conversion to the default editing color space is, what most users want."
+"Handle mixed color spaces in preparing a document for print output. A "
+"conversion to the default editing color space is typically what most users "
+"want."
 msgstr ""
 "Behandlung von uneinheitlichen Farbräumen in Vorbereitung eines Dokumentes "
 "für die Druckausgabe. Die Umwandlung in den voreingestellten Editierfarbraum "
@@ -1445,14 +1456,14 @@ msgid "For Screen"
 msgstr "Bildschirm"
 
 #: oyranos_texts.c:450
-msgid "Handle Mixed color spaces in Preparing a document for Screen output."
+msgid "Handle mixed color spaces in preparing a document for screen output."
 msgstr ""
 "Behandlung von uneinheitlichen Farbräumen in Vorbereitung eines Dokumentes "
 "für die Bildschirmausgabe"
 
 #: oyranos_texts.c:451
 msgid ""
-"Handle Mixed color spaces in Preparing a document for Screen output. A "
+"Handle mixed color spaces in preparing a document for screen output. A "
 "conversion to sRGB helps in easy data exchange and is what most users want."
 msgstr ""
 "Behandlung von uneinheitlichen Farbräumen in Vorbereitung eines Dokumentes "
@@ -1472,12 +1483,12 @@ msgid "Rendering Intent"
 msgstr "Übertragungsart"
 
 #: oyranos_texts.c:460
-msgid "Rendering Intent for color space Transformations."
+msgid "Rendering intent for color space transformations."
 msgstr "Übertragungsart für Farbtransformationen."
 
 #: oyranos_texts.c:461
 msgid ""
-"Rendering Intent for color space Transformations is typical the Relative "
+"Rendering intent for color space transformations is typical the Relative "
 "Colorimetric intent plus Black Point Compensation or the Perceptual intent."
 msgstr ""
 
@@ -1500,7 +1511,7 @@ msgid "Use Black Point Compensation"
 msgstr "Benutze Schwarzpunktkompensation (BPC)"
 
 #: oyranos_texts.c:470 oyranos_texts.c:471
-msgid "BPC affects often only the Relative Colorimetric Rendering Intent."
+msgid "BPC affects often only the Relative Colorimetric Rendering intent."
 msgstr "BPC beeinflusst oft nur die Relativ Farbmetrische Übertragungsart."
 
 #. choices
@@ -1526,9 +1537,14 @@ msgstr "Verhalten von Farbtransformationen bei der Gerätesimulation"
 msgid ""
 "Behaviour of color space transformation for proofing. Most people want a "
 "preview on screen only. The Relative Colorimetric intent is right for that. "
-"The Absolute Colorimetric intent needs a very careful profiling and non "
-"trivial setup but allowes for side by side comparisions."
+"The Absolute Colorimetric intent needs a very careful profiling and non-"
+"trivial setup, but allowes for side-by-side comparisions."
 msgstr ""
+"Verhalten der Farbübertragung bei der Simulation. Die meisten Nutzer wünschen "
+"eine Simulation nur an einem Bildschirm. Die relativ farbmetrische "
+"Übertragung ist richtig dafür. Die absolut farbmetrische Übertragung "
+"benötigt eine sorgfältige komplizierte Einrichtung für Seit an Seit "
+"Vergleiche."
 
 #: oyranos_texts.c:489
 msgid "SoftProof"
@@ -1540,10 +1556,13 @@ msgstr "Bilde einen Ausdruck auf dem Bildschirm nach"
 
 #: oyranos_texts.c:491
 msgid ""
-"Enable simulate of output print on the monitor. Most users do not work for a "
-"certain media and leave color handling to the system. They want no "
+"Enable simulation of output print on the monitor. Most users do not work for "
+"a certain media and leave color handling to the system. They want no "
 "simulation."
 msgstr ""
+"Simuliere einen Ausgabefarbraum auf dem Bildschirm. Die meisten "
+"Benutzer arbeiten nicht für spezielle Ausgabemedien und überlassen die "
+"Farbanpassung dem System. Sie möchten keine Simulation."
 
 #: oyranos_texts.c:499
 msgid "Hardproof"
@@ -1558,10 +1577,13 @@ msgstr ""
 
 #: oyranos_texts.c:501
 msgid ""
-"Enable simulation of a output color space on a local printer. Most users do "
+"Enable simulation of an output color space on a local printer. Most users do "
 "not work for a certain media and leave color handling to the system. They "
 "want no simulation."
 msgstr ""
+"Simuliere einen Ausgabefarbraum auf einem lokalen Drucker. Die meisten "
+"Benutzer arbeiten nicht für spezielle Ausgabemedien und überlassen die "
+"Farbanpassung dem System. Sie möchten keine Simulation."
 
 #: oyranos_texts.c:509
 msgid "Gamut Warning"
@@ -1573,9 +1595,11 @@ msgstr "Markiere nicht darstellbare Farben"
 
 #: oyranos_texts.c:511
 msgid ""
-"Most users want a simple display of colors and not check if colors match the "
-"simulation color space."
+"Most users want a simple display of colors and will not check if colors "
+"match the simulation color space."
 msgstr ""
+"Viele Benutzer möchten eine einfache Farbdarstellungen und wollen nicht "
+"prüfen ob Farben in den Simulationsfarbraum passen."
 
 #. HTML
 #: oyranos_xml.c:689
@@ -1600,41 +1624,62 @@ msgstr ""
 #: oyranos_xml.c:998
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "
-"format standard - <a href=\"http://www.color.org\">www.color.org</a> for "
-"color space definitions. The appliance of ICC color profiles shall enable a "
+"format standard (<a href=\"http://www.color.org\">www.color.org</a>) for "
+"color space definitions. The use of ICC color profiles shall enable a "
 "flawless and automated color data exchange between different color spaces "
 "and various devices with their respective physical color behaviours."
 msgstr ""
+"Oyranos ist ein auf dem ICC Standard (<a href=\"http://www.color.org\">"
+"www.color.org</a>) für Farbraumbescheibungen beruhendes Farbmanagementsystem "
+"(CMS). Die Benutzung von ICC Farbprofilen soll einen reibungslosen und "
+"automatisierten Datenaustausch zwischen unterschiedlichen Farbräumen und "
+"den Abgleich auf verschiedenen Geräten mit ihren jeweiligen physikalischen "
+"Gegebenheiten ermöglichen."
 
 #. HTML
 #: oyranos_xml.c:1010
 msgid ""
-"Color matching between different devices is possible, provided the color "
-"characteristics of the involved devices are known. The quality of a color "
-"transform from one to an other color space depends for devices mainly on the "
-"quality of the color measurement and the used profiling algorithm during ICC "
-"profile creation. Each color space definition happens in reference to a "
-"Profile Connection Spaces (PCS). The PCS is a well known color space, based "
-"on a average human observer as defined by CIE."
+"Color matching between different devices is possible, provided that the "
+"color characteristics of the involved devices are known. The quality of a "
+"color transform for devices from one color space to an other depends "
+"particularly on the quality of the color measurement and the profiling "
+"algorithm used during ICC profile creation. Each color space definition "
+"happens in reference to a Profile Connection Spaces (PCS). The PCS is a well "
+"known color space, based on the average \"human observer\" as defined by CIE."
 msgstr ""
+"Farbabgleich zwischen verschiedenen Geräten ist möglich, vorausgesetzt die "
+"farbmetrischen Eigenschaften der beteiligten Geräte sind bekannt. Die "
+"Qualität einer Farbumwandlung von einem Farbgerät zu einem anderen hängt "
+"überwiegend von der Genauigkeit der Farbmessung und dem Berechnungsverfahren "
+" für das Erstellen des Farbprofiles ab. Farbraumdefinitionen geschehen in "
+"Bezug zu dem Profilverbindungsfarbraum (PCS). Der PCS wurde von der CIE "
+"auf Grund der Farbeindrücke von menschlichen Beobachtern ermittelt."
 
 #. HTML
 #: oyranos_xml.c:1025
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
-"digital cameras, monitors and printers. In Oyranos ICC profiles are assigned "
-"to a calibration states of color devices, to get close to the device "
+"digital cameras, monitors and printers. In Oyranos, ICC profiles are "
+"assigned to calibration states of color devices, to get close to the device "
 "behaviour as was present during ICC profile creation."
 msgstr ""
+"Farbprofile sind oftmals erhältlich von Herstellern solcher Farbgeräte wie "
+"Digitalkameras, Bildschirmen oder Druckern. In Oyranos wird ein ICC Profil "
+"mit dem Kalibrierzustand dieser Geräte verknüpft, um möglichst nahe an das "
+" Farbverhalten wärend der ICC Profilerzeugung zu gelangen."
 
 #. HTML
 #: oyranos_xml.c:1035
 msgid ""
-"Oyranos allowes detailed settings like prefered editing color spaces and the "
-"behaviour of color conversions or simulation. Oyranos reduces the work "
-"involved in all color management related decissions by automation, useful "
-"defaults and grouping of settings in selectable policies."
+"Oyranos allowes detailed settings like preferred editing color spaces and "
+"the behaviour of color conversions or simulation. Oyranos reduces the work "
+"involved in all color management related decisions through automation, "
+"useful defaults and grouping of settings in selectable policies."
 msgstr ""
+"Oyranos erlaubt detailierte Einstellungen, wie z.B. zu bevorzugten "
+"Editierfarbräume, das Verhalten von Farbumwandlungen oder Simulation. "
+"Oyranos verringert den Aufwand für Farbmanagemententscheidungen durch "
+"Automation, sinnvolle Voreinstellungen und wählbare Richtlinien."
 
 #: oyranos_gamma.c:92
 msgid "DISPLAY variable not set: giving up."
@@ -1790,15 +1835,15 @@ msgstr "ist ein ICC Profilinformationswerkzeug"
 
 #: oyranos_profile.c:79
 msgid "List included ICC tags:"
-msgstr ""
+msgstr "Liste der enthaltenen ICC Elemente:"
 
 #: oyranos_profile.c:81 oyranos_profile.c:82
 msgid "select tag"
-msgstr ""
+msgstr "wähle Eintrag"
 
 #: oyranos_profile.c:83
 msgid "add prefix"
-msgstr ""
+msgstr "füge Vorsilbe hinzu"
 
 #: oyranos_profile.c:84
 msgid "use device class"
@@ -1806,7 +1851,7 @@ msgstr "benutze Geräteklasse"
 
 #: oyranos_profile.c:86
 msgid "Dump Device Infos to JSON:"
-msgstr ""
+msgstr "Schreibe Geräteinformationen nach JSON:"
 
 #: oyranos_profile.c:89
 msgid "Write to ICC profile:"
@@ -1814,11 +1859,11 @@ msgstr "Schreibe ICC Profil:"
 
 #: oyranos_profile.c:91
 msgid "use new name"
-msgstr ""
+msgstr "Nutze neuen Namen"
 
 #: oyranos_profile.c:92
 msgid "embed OpenICC device JSON from file"
-msgstr ""
+msgstr "bette OpenICC JSON Gerät von Datei ein"
 
 #: oyranos_profile.c:100 oyranos_profiles.c:89
 #: examples/dummy_device/oyranos_cmm_dDev.c:698
@@ -1828,7 +1873,7 @@ msgstr "Beispiel"
 
 #: oyranos_profile.c:192
 msgid "missed -w option to write a ICC profile"
-msgstr ""
+msgstr "vermisse -w Option für das Schreiben eines ICC Profiles"
 
 #: oyranos_profile.c:192 oyranos_profile.c:199 oyranos_profile.c:215
 msgid "Exit!"
