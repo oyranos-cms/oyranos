@@ -996,9 +996,9 @@ char * oyDescriptionToHTML           ( int                 group,
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, _(
          /* HTML */
 "Oyranos is a Color Management System (CMS), which relies one the ICC "
-"file format standard - <a href=\"http://www.color.org\">www.color.org</a> "
+"file format standard (<a href=\"http://www.color.org\">www.color.org</a>) "
 "for color space definitions. "
-"The appliance of ICC color profiles shall enable a flawless and automated "
+"The use of ICC color profiles shall enable a flawless and automated "
 "color data exchange between different color spaces and various "
 "devices with their respective physical color behaviours.") );
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
@@ -1008,14 +1008,14 @@ char * oyDescriptionToHTML           ( int                 group,
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, _(
          /* HTML */
 "Color matching between different devices is "
-"possible, provided the color characteristics of the involved devices are "
+"possible, provided that the color characteristics of the involved devices are "
 "known. "
-"The quality of a color transform from one to an other color space depends "
-"for devices mainly on the quality of the color measurement and the used "
-"profiling algorithm during ICC profile creation. "
+"The quality of a color transform for devices from one color space to an other "
+"depends particularly on the quality of the color measurement and the "
+"profiling algorithm used during ICC profile creation. "
 "Each color space definition happens in reference to a "
 "Profile Connection Spaces (PCS). The PCS is a well known color space, based "
-"on a average human observer as defined by CIE.") );
+"on the average \"human observer\" as defined by CIE.") );
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
 </p>\n \
 <p>" );
@@ -1023,8 +1023,8 @@ char * oyDescriptionToHTML           ( int                 group,
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, _(
          /* HTML */
 "Color profiles are often available from manufacturers of imaging devices "
-"as digital cameras, monitors and printers. In Oyranos ICC profiles are "
-"assigned to a calibration states of color devices, to get close to the device "
+"as digital cameras, monitors and printers. In Oyranos, ICC profiles are "
+"assigned to calibration states of color devices, to get close to the device "
 "behaviour as was present during ICC profile creation." ) );
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
 </p>\n \
@@ -1032,10 +1032,10 @@ char * oyDescriptionToHTML           ( int                 group,
   /* other settings */
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, _(
          /* HTML */
-"Oyranos allowes detailed settings like prefered editing color spaces and the "
+"Oyranos allowes detailed settings like preferred editing color spaces and the "
 "behaviour of color conversions or simulation. "
-"Oyranos reduces the work involved in all color management related decissions "
-"by automation, useful defaults and grouping of settings in selectable "
+"Oyranos reduces the work involved in all color management related decisions "
+"through automation, useful defaults and grouping of settings in selectable "
 "policies.") );
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
 <br/></p>\n");
