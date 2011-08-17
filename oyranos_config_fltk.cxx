@@ -1696,6 +1696,7 @@ Fl_Double_Window* make_help() {
     { help_browser = new Fl_Help_View(0, 0, 505, 410);
       help_browser->box(FL_THIN_UP_BOX);
       help_browser->color((Fl_Color)16);
+      Fl_Group::current()->resizable(help_browser);
     } // Fl_Help_View* help_browser
     help_window->end();
   } // Fl_Double_Window* help_window

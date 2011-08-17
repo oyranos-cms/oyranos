@@ -1030,10 +1030,10 @@ Function {make_help()} {open
 } {
   Fl_Window help_window {
     label {Oyranos Help} open
-    xywh {719 186 505 410} type Double visible
+    xywh {719 186 505 410} type Double resizable visible
   } {
     Fl_Help_View help_browser {selected
-      xywh {0 0 505 410} box THIN_UP_BOX color 16
+      xywh {0 0 505 410} box THIN_UP_BOX color 16 resizable
     }
   }
   code {help_window->show();
@@ -1041,6 +1041,5 @@ Function {make_help()} {open
                            "add_oyranos_title","1",
                            "add_oyranos_copyright","1",
                            NULL};
-  help_browser->value( oyDescriptionToHTML(oyGROUP_ALL, opts,0) );
-} {}
+  help_browser->value( oyDescriptionToHTML(oyGROUP_ALL, opts,0) );} {}
 } 
