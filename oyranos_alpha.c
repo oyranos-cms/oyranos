@@ -23497,7 +23497,7 @@ char *   oyGetDisplayNameFromPosition2(const char        * device_type,
   error = oyConfigs_FromDeviceClass ( device_type, device_class, options, &devices,
                                           0 );
 
-  if(error>=0)
+  if(error>0)
     WARNc1_S("oyConfigs_FromDeviceClass() returned: %d", error);
 
   oyOptions_Release( &options );
@@ -23568,7 +23568,7 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
   error = oyConfigs_FromDeviceClass ( 0, "monitor", options, &devices,
                                           0 );
 
-  if(error>=0)
+  if(error>0)
     WARNc1_S("oyConfigs_FromDeviceClass() returned: %d", error);
 
   oyOptions_Release( &options );
