@@ -189,7 +189,7 @@ oyOptionStringsTranslate_ ()
       0, 0, 0,
       _("Paths"),
       _("Paths where ICC Profiles can be found"),
-      _("ICC profiles reside in well known paths. They are defined by OpenICC and can be used by every complying system or application."),
+      _("ICC profiles reside in known paths. They are defined by OpenICC and can be used by every complying system or application."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -216,7 +216,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, 0, 0,
       _("Rendering"),
       _("The kind of ICC gamut mapping for transforming colors between differently sized color spaces"),
-      _("The conversion between color spaces of different shape and size can happen in various ways. The Perceptual rendering intent is usual the best choice for photographs and artistic imagery. It is used in many automatic systems. The Relative Colorimetric rendering intent provides a well-defined, one-to-one color mapping, but without applying white point adaption. This can lead to color clipping in case of colors falling outside the target gamut as a price for the otherwise colorimetric correctness. The Relative Colorimetric intent is often used in combination with Black Point Compensation. The Saturation rendering intent shall provide an optimal use of saturated device colors. The Absolute Colorimetric rendering intent works like the relative colorimetric one except the white point is adapted. All rendering intents beside the colorimetric ones rely on the color tables designed by the profile vendor."),
+      _("The conversion between color spaces of different shape and size can happen in various ways. The Perceptual rendering intent is usual the best choice for photographs and artistic imagery. It is used in many automatic systems. The Relative Colorimetric rendering intent provides a well-defined standard, one-to-one color mapping, but without applying white point adaption. This can lead to color clipping in case of colors falling outside the target gamut as a price for the otherwise colorimetric correctness. The Relative Colorimetric intent is often used in combination with Black Point Compensation. The Saturation rendering intent shall provide an optimal use of saturated device colors. The Absolute Colorimetric rendering intent works like the relative colorimetric one except the white point is adapted. All rendering intents beside the colorimetric ones rely on the color tables designed by the profile vendor."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -263,7 +263,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_POLICY, 0, 0,
       _("Policy"),
       _("Collections of settings in Oyranos"),
-      _("Settings can be grouped in Oyranos for easier adaption to demands, better remembering and synchronisation."),
+      _("Settings can be grouped in Oyranos policies for easier adaption to demands, better remembering and synchronisation."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -275,7 +275,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_PATHS, 0, 0,
       _("Paths"),
       _("Paths where ICC Profiles can be found"),
-      _("ICC profiles reside in well known paths. They are defined by OpenICC and can be used by every complying system or application. XDG_DATA_HOME and XDG_DATA_DIRS environment variables route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended."),
+      _("ICC profiles reside in known paths. They are defined by OpenICC and can be used by every complying system or application. XDG_DATA_HOME and XDG_DATA_DIRS environment variables route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -418,7 +418,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
       _("On Rgb Mismatch"),
       _("Action for Image profile and Editing profile mismatches."),
-      _("Incoming color spaces can have a color space assigned, which differs from the default editing color space. For most users, an automatic conversion is fine. However, for more demanding work, the numbers need to be preserved."),
+      _("Incoming color spaces can differ from the default editing color space. For most users, an automatic conversion is fine. However, for more demanding work, the numbers need to be preserved."),
       3, /* choices */
       _("Preserve Numbers"),_("Convert automatically"),_("Promt"), NULL,
       OY_ACTION_MISMATCH_RGB,
@@ -428,7 +428,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
       _("On Cmyk Mismatch"),
       _("Action for Image profile and Editing profile mismatches."),
-      _("Incoming color spaces can have a color space assigned, which differs from the default editing color space. For most users, an automatic conversion is fine. However for more demanding work, the numbers need to be preserved."),
+      _("Incoming color spaces can differ from the default editing color space. For most users, an automatic conversion is fine. However, for more demanding work, the numbers need to be preserved."),
       3, /* choices */
       _("Preserve Numbers"),_("Convert automatically"),_("Promt"), NULL,
       OY_ACTION_MISMATCH_CMYK,
