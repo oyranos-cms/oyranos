@@ -288,9 +288,9 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyArray2d_SetFocus
+/** Function  oyArray2d_SetFocus
  *  @memberof oyArray2d_s
- *  @brief   move a arrays active area to a given rectangle
+ *  @brief    Move a arrays active area to a given rectangle
  *
  *  @param[in,out] array               the pixel array
  *  @param[in]     rectangle           the new region in the array's wholes data
@@ -303,15 +303,15 @@ OYAPI int  OYEXPORT
 int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
                                        oyRectangle_s     * rectangle )
 {
-  oyRectangle_s * array_roi_pix = rectangle;
-  oyArray2d_s * a = array;
+  oyRectangle_s_ * array_roi_pix = (oyRectangle_s_*)rectangle;
+  oyArray2d_s_ * a = (oyArray2d_s_*)array;
   int error = 0;
   int y;
 
   if(array && rectangle)
   {
     /* shift array focus to requested region */
-    int bps = oySizeofDatatype( array->t );
+    int bps = oySizeofDatatype( a->t );
     if(a->data_area.x != OY_ROUND(array_roi_pix->x))
     {
       int height = a->data_area.height + a->data_area.y;
