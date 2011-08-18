@@ -1,8 +1,8 @@
 {% include "source_file_header.txt" %}
 
-/** @internal
- *  Function oyCMMsGetFilterApis_
- *  @brief let a oyCMMapi5_s meta module open a set of modules
+/** Function oyCMMsGetFilterApis_
+ *  @brief   Let a oyCMMapi5_s meta module open a set of modules
+ *  @internal
  *
  *  The oyCMMapiLoadxxx_ function family loads a API from a external module.\n
  *  The module system shall support:
@@ -30,11 +30,11 @@
  *                                     simplifies and speeds up the search
  *  @param[in]   registration          point'.' separated list of identifiers
  *  @param[in]   type                  CMM API
- *  @param[in]   flags                 supported is 
- *                                     - oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR 
+ *  @param[in]   flags                 supported is
+ *                                     - oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR
  *                                       for omitting implementation attributes
  *  @param[out]  rank_list             the ranks matching the returned list;
- *                                     without that only the most matching API  
+ *                                     without that only the most matching API
  *                                     is returned at position 0
  *  @param[out]  count                 count of returned modules
  *  @return                            a zero terminated list of modules
@@ -43,18 +43,20 @@
  *  @since   2008/12/19 (Oyranos: 0.1.10)
  *  @date    2010/08/12
  */
-oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_meta,
-                                       const char        * cmm_required,
-                                       const char        * registration,
-                                       oyOBJECT_e          type,
-                                       uint32_t            flags,
-                                       uint32_t         ** rank_list,
-                                       uint32_t          * count )
+oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
+                                         const char        * cmm_required,
+                                         const char        * registration,
+                                         oyOBJECT_e          type,
+                                         uint32_t            flags,
+                                         uint32_t         ** rank_list,
+                                         uint32_t          * count )
 {
   int error = !oyIsOfTypeCMMapiFilter( type );
   oyCMMapiFilters_s * apis = 0, * apis2 = 0;
   oyCMMapiFilter_s * api = 0,
                    * api2 = 0;
+  oyCMMapiFilter_s_ ** api_ = (oyCMMapiFilter_s_**)&api;
+  oyCMMapiFilter_s_ ** api2_ = (oyCMMapiFilter_s_**)&api2;
   uint32_t * rank_list_ = 0, * rank_list2_ = 0;
   int rank_list_n = 5, count_ = 0;
   oyObject_s object = oyObject_New();
@@ -76,7 +78,7 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_meta,
 
   if(error <= 0)
   {
-    oyCMMapi5_s * api5 = 0;
+    oyCMMapi5_s_ * api5 = 0;
     oyCMMapis_s * meta_apis = oyCMMGetMetaApis_( cmm_meta );
     int meta_apis_n = 0;
     char ** files = 0;
@@ -84,18 +86,18 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_meta,
     int i, j, k = 0, match_j = -1, ret, match_i = -1, rank = 0, old_rank = 0,
         n, accept;
     char * match = 0, * reg = 0;
-    oyCMMInfo_s * info = 0;
+    oyCMMInfo_s_ * info = 0;
 
     meta_apis_n = oyCMMapis_Count( meta_apis );
     for(k = 0; k < meta_apis_n; ++k)
     {
-      api5 = (oyCMMapi5_s*) oyCMMapis_Get( meta_apis, k );
+      api5 = (oyCMMapi5_s_*) oyCMMapis_Get( meta_apis, k );
 
       files_n = 0;
 
       if(error <= 0)
       files = oyCMMsGetNames_(&files_n, api5->sub_paths, api5->ext,
-                              cmm_required, 
+                              cmm_required,
                               api5->data_type == 0 ? oyPATH_MODULE :
                                                      oyPATH_SCRIPT);
       else
@@ -107,7 +109,7 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_meta,
       {
         ret = 0; j = 0;
         ret = api5->oyCMMFilterScan( 0,0, files[i], type, j,
-                                     0, 0, oyAllocateFunc_, &info, object );
+                                     0, 0, oyAllocateFunc_, (oyCMMInfo_s*)&info, object );
         while(!ret)
         {
           ret = api5->oyCMMFilterScan( 0,0, files[i], type, j,
@@ -146,9 +148,9 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_meta,
               if(!api)
                 continue;
 
-              if(!api->id_)
-                api->id_ = oyStringCopy_( files[i], oyAllocateFunc_ );
-              api->api5_ = api5;
+              if(!(*api_)->id_)
+                (*api_)->id_ = oyStringCopy_( files[i], oyAllocateFunc_ );
+              (*api_)->api5_ = api5;
               if(!apis)
                 apis = oyCMMapiFilters_New( 0 );
               oyCMMapiFilters_MoveIn( apis, &api, -1 );
@@ -170,7 +172,7 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_meta,
         }
       }
 
-      oyCMMInfo_Release( &info );
+      oyCMMInfo_Release( (oyCMMInfo_s**)&info );
 #if 0
       if(api5->release)
         api5->release( (oyStruct_s**)&api5 );
@@ -183,9 +185,9 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_meta,
     {
       apis2 = oyCMMapiFilters_New( 0 );
       api = api5->oyCMMFilterLoad( 0,0, files[match_i], type, match_j );
-      if(!api->id_)
-        api->id_ = oyStringCopy_( files[match_i], oyAllocateFunc_ );
-      api->api5_ = api5;
+      if(!(*api_)->id_)
+        (*api_)->id_ = oyStringCopy_( files[match_i], oyAllocateFunc_ );
+      (*api_)->api5_ = api5;
       oyCMMapiFilters_MoveIn( apis2, &api, -1 );
       if(count)
         *count = 1;
@@ -203,7 +205,7 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_meta,
 
         api = oyCMMapiFilters_Get( apis, i );
         if(flags | oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR)
-          oyFilterRegistrationModify( api->registration,
+          oyFilterRegistrationModify( (*api_)->registration,
                                     oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                       &apir, 0 );
         accept = 1;
@@ -214,7 +216,7 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_meta,
 
           api2 = oyCMMapiFilters_Get( apis, j );
           if(flags | oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR)
-            oyFilterRegistrationModify( api2->registration,
+            oyFilterRegistrationModify( (*api2_)->registration,
                                     oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                         &api2r, 0 );
 
@@ -251,13 +253,13 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_meta,
       if(count)
         *count = k;
     }
-      
+
     oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
   }
 
   /*if(api)
   {
-    api->id_ = lib_name;
+    (*api_)->id_ = lib_name;
     error = oyHash_SetPointer_( entry, (oyStruct_s*) s );
   }*/
 
@@ -266,5 +268,3 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_meta,
 
   return apis2;
 }
-
-

@@ -1,1 +1,1 @@
-  oyCMMapi5_s    * api5_;            /**< @private meta module; keep to zero */
+  oyCMMapi5_s_   * api5_;            /**< @private meta module; keep to zero */

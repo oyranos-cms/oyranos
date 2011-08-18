@@ -4,9 +4,11 @@
 #define {{ file_name|underscores|upper|tr:". _" }}
 
 
-oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_required,
+oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
+                                         const char        * cmm_required,
                                          const char        * registration,
                                          oyOBJECT_e          type,
+                                         uint32_t            flags,
                                          uint32_t         ** rank_list,
                                          uint32_t          * count );
 
