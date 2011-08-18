@@ -162,9 +162,9 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyArray2d_ReleaseArray
+/** Function  oyArray2d_ReleaseArray
  *  @memberof oyArray2d_s
- *  @brief   release Array2d::array member
+ *  @brief    Release Array2d::array member
  *
  *  @param[in,out] obj                 struct object
  *
@@ -175,7 +175,8 @@ OYAPI int  OYEXPORT
 int            oyArray2d_ReleaseArray( oyArray2d_s       * obj )
 {
   int error = 0;
-  oyArray2d_s * s = obj;
+  oyArray2d_s_ * s = (oyArray2d_s_*)obj;
+
   if(s && s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
@@ -197,6 +198,7 @@ int            oyArray2d_ReleaseArray( oyArray2d_s       * obj )
     deallocateFunc( s->array2d + (size_t)s->data_area.y );
     s->array2d = 0;
   }
+
   return error;
 }
  

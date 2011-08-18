@@ -8,6 +8,8 @@ OYAPI int  OYEXPORT
                  oyArray2d_DataSet   ( oyArray2d_s       * obj,
                                        oyPointer           data );
 OYAPI int  OYEXPORT
+               oyArray2d_ReleaseArray( oyArray2d_s       * obj );
+OYAPI int  OYEXPORT
                  oyArray2d_RowsSet   ( oyArray2d_s       * obj,
                                        oyPointer         * rows,
                                        int                 do_copy );
