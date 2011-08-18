@@ -1,6 +1,6 @@
-/** Function oyArray2d_Create
+/** Function  oyArray2d_Create
  *  @memberof oyArray2d_s
- *  @brief   allocate and initialise a oyArray2d_s object
+ *  @brief    Allocate and initialise a oyArray2d_s object
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/08/23 (Oyranos: 0.1.8)
@@ -14,12 +14,13 @@ OYAPI oyArray2d_s * OYEXPORT
                                        oyObject_s          object )
 {
   oyArray2d_s * s = 0;
+  oyArray2d_s_ ** s_ = (oyArray2d_s_**)&s;
   int error = 0;
 
   if(!width || !height)
     return s;
 
-  s = oyArray2d_Create_( width, height, data_type, object );
+  (*s_)= oyArray2d_Create_( width, height, data_type, object );
   error = !s;
 
   if(error <= 0)
@@ -31,7 +32,7 @@ OYAPI oyArray2d_s * OYEXPORT
       data = s->oy_->allocateFunc_( width * height *
                                     oySizeofDatatype( data_type ) );
       error = oyArray2d_DataSet( s, data );
-      s->own_lines = oyYES;
+      (*s_)->own_lines = oyYES;
     }
   }
 
