@@ -115,11 +115,9 @@ OYAPI int  OYEXPORT
 }
 #endif
 
-/**
- *  @internal
- *  Function oyArray2d_DataSet
+/** Function  oyArray2d_DataSet
  *  @memberof oyArray2d_s
- *  @brief   set the data blob and (re-)initialise the object
+ *  @brief    Set the data blob and (re-)initialise the object
  *
  *  @param[in,out] obj                 struct object
  *  @param[in]     data                the data, remains in the property of the
@@ -133,7 +131,7 @@ OYAPI int  OYEXPORT
                  oyArray2d_DataSet   ( oyArray2d_s       * obj,
                                        oyPointer           data )
 {
-  oyArray2d_s * s = 0;
+  oyArray2d_s_ * s = 0;
   int error = 0;
 
   if(!data)
@@ -142,7 +140,7 @@ OYAPI int  OYEXPORT
   if(!obj || obj->type_ != oyOBJECT_ARRAY2D_S)
     return 1;
 
-  s = obj;
+  s = (oyArray2d_s_*)obj;
 
   {
     int y_len = sizeof(unsigned char *) * (s->height + 1),
