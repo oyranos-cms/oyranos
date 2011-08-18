@@ -17,6 +17,7 @@ class FuncInfo: public QObject
   Q_PROPERTY(QString returnType READ returnType)
   Q_PROPERTY(bool isVoid READ isVoid)
   Q_PROPERTY(bool isStatic READ isStatic)
+  Q_PROPERTY(bool isConstructor READ isConstructor)
   Q_PROPERTY(QString args READ args)
   Q_PROPERTY(QString argNames READ argNames)
   Q_PROPERTY(QString argTypes READ argTypes)
@@ -27,7 +28,7 @@ class FuncInfo: public QObject
 
   public:
     FuncInfo( const QString& className, const QString& prototype ) :
-      m_static(false), m_valid(true), m_classBaseName(className)
+      m_static(false), m_constructor(false), m_valid(true), m_classBaseName(className)
     {
       parsePublicPrototype( prototype );
 
@@ -43,6 +44,8 @@ class FuncInfo: public QObject
     bool isVoid() const { return m_returnType == "void" ? true : false; }
     /// Check if function is a static function
     bool isStatic() const { return m_static; }
+    /// Check if function is an overloaded constructor
+    bool isConstructor() const { return m_constructor; }
     /// Get the function arguments (comma separated)
     QString args() const { return m_arguments.join(", "); }
     /// Get the function argument names (comma separated)
@@ -62,10 +65,11 @@ class FuncInfo: public QObject
 
     static QVariantList getPublicFunctions( const ClassInfo* classInfo );
     static const QString public_regexp_tmpl;
-    static const QString public_regexp_static_tmpl;
+    static const QString public_special_regexp_tmpl;
 
   private:
     bool m_static;                  ///< Is this a static function?
+    bool m_constructor;             ///< Is this a constructor?
     bool m_valid;                   ///< Is this function parsed correctly?
     QString m_name;                 ///< The name of the function, without the oyClass_ prefix
     QString m_returnType;           ///< The function return type

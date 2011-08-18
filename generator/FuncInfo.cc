@@ -8,7 +8,7 @@
 const QString FuncInfo::public_regexp_tmpl =
   "OYAPI\\s+(.*(?:\\b|\\*))\\s+OYEXPORT\\s+oy%1_(\\w+)\\s*\\(\\s*oy%1_s\\s*\\*\\s*\\w+.*\\)";
 
-const QString FuncInfo::public_regexp_static_tmpl =
+const QString FuncInfo::public_special_regexp_tmpl =
   "OYAPI\\s+(.*(?:\\b|\\*))\\s+OYEXPORT\\s+oy%1_(\\w+)\\s*\\(.*\\)";
 
 QVariantList FuncInfo::getPublicFunctions( const ClassInfo* classInfo )
@@ -42,14 +42,19 @@ void FuncInfo::parsePublicPrototype( const QString& prototype )
 {
   // Catch function name and return type
   QRegExp findName( public_regexp_tmpl.arg( m_classBaseName ) );
-  QRegExp findNameStatic( public_regexp_static_tmpl.arg( m_classBaseName ) );
+  QRegExp findNameSpecial( public_special_regexp_tmpl.arg( m_classBaseName ) );
   if (findName.indexIn(prototype) != -1) {
     m_name = findName.cap(2);
     m_returnType = findName.cap(1);
-  } else if (findNameStatic.indexIn(prototype) != -1) {
-    m_name = findNameStatic.cap(2);
-    m_returnType = findNameStatic.cap(1);
-    m_static = true;
+  } else if (findNameSpecial.indexIn(prototype) != -1) {
+    m_name = findNameSpecial.cap(2);
+    m_returnType = findNameSpecial.cap(1);
+
+    if (m_name.contains( QRegExp("From|Create") ) &&
+        m_returnType.contains( QRegExp("^\\s*oy"+m_classBaseName+"_s\\s*\\*\\s*$") ))
+      m_constructor = true;
+    else
+      m_static = true;
   } else {
     m_valid = false;
     qWarning() << "Non compatible function signature:";
@@ -62,7 +67,7 @@ void FuncInfo::parsePublicPrototype( const QString& prototype )
   int close_idx = prototype.indexOf( ")" );
   QString args = prototype.mid( open_idx+1, close_idx-open_idx-1 ).simplified();
   QStringList arglist = args.split( ",", QString::SkipEmptyParts );
-  if (!m_static && !arglist.isEmpty())
+  if (!(m_static || m_constructor) && !arglist.isEmpty())
     arglist.removeFirst();
 
   for (int i=0; i<arglist.size(); i++) {
