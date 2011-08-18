@@ -15,6 +15,12 @@ class {{ class.cppName }} {
 
   public:
     {{ class.cppName }}(Object object = NULL);
+
+    // Overloaded constructor methods
+    {% for function in class.functions %}{% if function.isConstructor %}
+    {{ class.cppName }}({{ function.argsCPP|safe }});{% endif %}
+    {% endfor %}
+
     //{{ class.cppName }}(const {{ class.name }}* c);
     //{{ class.cppName }}(const {{ class.privName }}* c);
     //{{ class.cppName }}(const {{ class.cppName }}& c);
@@ -24,9 +30,9 @@ class {{ class.cppName }} {
     {{ class.name }} * c_struct() { return m_oy; }
 
     // Specific {{ class.cppName }} methods
-    {% for function in class.functions %}{% if not function.isStatic %}
+    {% for function in class.functions %}{% if not function.isStatic %}{% if not function.isConstructor %}
     {{ function.returnType }}
-    {{ function.name }}({{ function.argsCPP|safe }});{% endif %}
+    {{ function.name }}({{ function.argsCPP|safe }});{% endif %}{% endif %}
     {% endfor %}
 
     // Static functions
