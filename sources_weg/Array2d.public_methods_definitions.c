@@ -39,10 +39,9 @@ OYAPI oyArray2d_s * OYEXPORT
 }
 
 #if 0
-/**
- *  Function oyArray2d_DataCopy
+/** Function  oyArray2d_DataCopy
  *  @memberof oyArray2d_s
- *  @brief   copy data
+ *  @brief    Copy data
  *
  *  @todo just refere the other arrays, with refs_ and refered_ members,
  *        reuse memory
@@ -62,8 +61,8 @@ OYAPI int  OYEXPORT
                                        oyArray2d_s       * source,
                                        oyRectangle_s     * roi_source )
 {
-  oyArray2d_s * s = *obj,
-              * src = source;
+  oyArray2d_s_ * s = *obj,
+               * src = source;
   int error = 0;
   int new_roi = !roi;
 
