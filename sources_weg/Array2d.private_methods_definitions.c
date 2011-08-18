@@ -1,26 +1,25 @@
-/**
- *  @internal
- *  Function oyArray2d_Create_
+/** Function  oyArray2d_Create_
  *  @memberof oyArray2d_s
- *  @brief   allocate and initialise a oyArray2d_s object widthout pixel
+ *  @brief    Allocate and initialise a oyArray2d_s object widthout pixel
+ *  @internal
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/08/23 (Oyranos: 0.1.8)
  *  @date    2008/10/03
  */
-OYAPI oyArray2d_s * OYEXPORT
+oyArray2d_s_ *
                    oyArray2d_Create_ ( int                 width,
                                        int                 height,
                                        oyDATATYPE_e        data_type,
                                        oyObject_s          object )
 {
-  oyArray2d_s * s = 0;
+  oyArray2d_s_ * s = 0;
   int error = 0;
 
   if(!width || !height)
     return s;
 
-  s = oyArray2d_New( object );
+  s = (oyArray2d_s_*)oyArray2d_New( object );
   error = !s;
 
   if(error <= 0)
