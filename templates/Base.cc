@@ -1,7 +1,7 @@
 {% include "source_file_header.txt" %}
 {% load gsoc_extensions %}
 
-#include "{{ class.baseName }}"
+#include "{{ class.baseName }}.hh"
 
 using namespace oy;
 
