@@ -38,10 +38,10 @@ oyArray2d_s_ *
   return s;
 }
 
-/** @internal
- *  Function oyArray2d_ToPPM_
+/** Function  oyArray2d_ToPPM_
  *  @memberof oyArray2d_s
- *  @brief   dump array to a netppm file 
+ *  @brief    Dump array to a netppm file 
+ *  @internal
  *
  *  @param[in]     array               the array to fill read from
  *  @param[in]     file_name           rectangle of interesst in samples
@@ -50,10 +50,10 @@ oyArray2d_s_ *
  *  @since   2009/06/18 (Oyranos: 0.1.10)
  *  @date    2009/06/18
  */
-int              oyArray2d_ToPPM_    ( oyArray2d_s       * array,
+int              oyArray2d_ToPPM_    ( oyArray2d_s_      * array,
                                        const char        * file_name )
 {
-  oyArray2d_s * s = array;
+  oyArray2d_s_ * s = array;
   int error = 0, i,j, len, shift;
   size_t size,
          byteps;
@@ -152,5 +152,3 @@ int              oyArray2d_ToPPM_    ( oyArray2d_s       * array,
 
   return error;
 }
-
-
