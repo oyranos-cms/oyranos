@@ -202,11 +202,9 @@ int            oyArray2d_ReleaseArray( oyArray2d_s       * obj )
   return error;
 }
  
-/**
- *  @internal
- *  Function oyArray2d_RowsSet
+/** Function  oyArray2d_RowsSet
  *  @memberof oyArray2d_s
- *  @brief   set the data and (re-)initialise the object
+ *  @brief    Set the data and (re-)initialise the object
  *
  *  @param[in,out] obj                 struct object
  *  @param[in]     data                the data
@@ -223,7 +221,7 @@ OYAPI int  OYEXPORT
                                        oyPointer         * rows,
                                        int                 do_copy )
 {
-  oyArray2d_s * s = obj;
+  oyArray2d_s_ * s = (oyArray2d_s_*)obj;
   int error = 0;
 
   if(!rows)
@@ -242,7 +240,7 @@ OYAPI int  OYEXPORT
 
     size = s->width * oySizeofDatatype( s->t );
 
-    oyArray2d_ReleaseArray( s );
+    oyArray2d_ReleaseArray( (oyArray2d_s*)s );
 
     /* allocate the base array */
     oyAllocHelper_m_( s->array2d, unsigned char *, s->height+1, allocateFunc_,
