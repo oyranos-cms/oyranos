@@ -81,5 +81,14 @@ int oyArray2d_Copy__Members( oyArray2d_s_ * dst, oyArray2d_s_ * src)
 
   /* Copy each value of src to dst here */
 
+  dst->own_lines = 2;
+  for(i = 0; i < dst->height; ++i)
+  {
+    size = dst->width * oySizeofDatatype( dst->t );
+    oyAllocHelper_m_( dst->array2d[i], unsigned char, size, allocateFunc_,
+                      error = 1; break );
+    error = !memcpy( dst->array2d[i], src->array2d[i], size );
+  }
+
   return error;
 }
