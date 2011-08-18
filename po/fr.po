@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2011-08-17 16:55+0200\n"
+"POT-Creation-Date: 2011-08-18 06:08+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: ALL <ku.b@gmx.de>\n"
@@ -1056,8 +1056,8 @@ msgstr ""
 
 #: oyranos_texts.c:192
 msgid ""
-"ICC profiles reside in well known paths. They are defined by OpenICC and can "
-"be used by every complying system or application."
+"ICC profiles reside in known paths. They are defined by OpenICC and can be "
+"used by every complying system or application."
 msgstr ""
 
 #: oyranos_texts.c:199 oyranos_texts.c:264 oyranos_config_fltk.cxx:1605
@@ -1106,16 +1106,16 @@ msgid ""
 "The conversion between color spaces of different shape and size can happen "
 "in various ways. The Perceptual rendering intent is usual the best choice "
 "for photographs and artistic imagery. It is used in many automatic systems. "
-"The Relative Colorimetric rendering intent provides a well-defined, one-to-"
-"one color mapping, but without applying white point adaption. This can lead "
-"to color clipping in case of colors falling outside the target gamut as a "
-"price for the otherwise colorimetric correctness. The Relative Colorimetric "
-"intent is often used in combination with Black Point Compensation. The "
-"Saturation rendering intent shall provide an optimal use of saturated device "
-"colors. The Absolute Colorimetric rendering intent works like the relative "
-"colorimetric one except the white point is adapted. All rendering intents "
-"beside the colorimetric ones rely on the color tables designed by the "
-"profile vendor."
+"The Relative Colorimetric rendering intent provides a well-defined standard, "
+"one-to-one color mapping, but without applying white point adaption. This "
+"can lead to color clipping in case of colors falling outside the target "
+"gamut as a price for the otherwise colorimetric correctness. The Relative "
+"Colorimetric intent is often used in combination with Black Point "
+"Compensation. The Saturation rendering intent shall provide an optimal use "
+"of saturated device colors. The Absolute Colorimetric rendering intent works "
+"like the relative colorimetric one except the white point is adapted. All "
+"rendering intents beside the colorimetric ones rely on the color tables "
+"designed by the profile vendor."
 msgstr ""
 
 #: oyranos_texts.c:226
@@ -1176,14 +1176,14 @@ msgstr ""
 
 #: oyranos_texts.c:266
 msgid ""
-"Settings can be grouped in Oyranos for easier adaption to demands, better "
-"remembering and synchronisation."
+"Settings can be grouped in Oyranos policies for easier adaption to demands, "
+"better remembering and synchronisation."
 msgstr ""
 
 #: oyranos_texts.c:278
 msgid ""
-"ICC profiles reside in well known paths. They are defined by OpenICC and can "
-"be used by every complying system or application. XDG_DATA_HOME and "
+"ICC profiles reside in known paths. They are defined by OpenICC and can be "
+"used by every complying system or application. XDG_DATA_HOME and "
 "XDG_DATA_DIRS environment variables route Oyranos to top directories "
 "containing resources. The derived paths for ICC profiles have a \"color/icc"
 "\" appended."
@@ -1398,11 +1398,11 @@ msgstr ""
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr ""
 
-#: oyranos_texts.c:421
+#: oyranos_texts.c:421 oyranos_texts.c:431
 msgid ""
-"Incoming color spaces can have a color space assigned, which differs from "
-"the default editing color space. For most users, an automatic conversion is "
-"fine. However, for more demanding work, the numbers need to be preserved."
+"Incoming color spaces can differ from the default editing color space. For "
+"most users, an automatic conversion is fine. However, for more demanding "
+"work, the numbers need to be preserved."
 msgstr ""
 
 #. choices
@@ -1417,13 +1417,6 @@ msgstr ""
 
 #: oyranos_texts.c:429
 msgid "On Cmyk Mismatch"
-msgstr ""
-
-#: oyranos_texts.c:431
-msgid ""
-"Incoming color spaces can have a color space assigned, which differs from "
-"the default editing color space. For most users, an automatic conversion is "
-"fine. However for more demanding work, the numbers need to be preserved."
 msgstr ""
 
 #: oyranos_texts.c:439
