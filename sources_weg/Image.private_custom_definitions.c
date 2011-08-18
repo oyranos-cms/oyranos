@@ -20,6 +20,16 @@ void oyImage_Release__Members( oyImage_s_ * image )
   /* Deallocate members here
    * E.g: oyXXX_Release( &image->member );
    */
+  image->width = 0;
+  image->height = 0;
+  if(image->pixel_data && image->pixel_data->release)
+    image->pixel_data->release( &image->pixel_data );
+
+  if(image->user_data && image->user_data->release)
+    image->user_data->release( &image->user_data );
+
+  oyProfile_Release( &image->profile_ );
+
 
   if(image->oy_->deallocateFunc_)
   {
@@ -28,6 +38,11 @@ void oyImage_Release__Members( oyImage_s_ * image )
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( image->member );
      */
+    if(image->layout_)
+      deallocateFunc( image->layout_ ); image->layout_ = 0;
+
+    if(image->channel_layout)
+      deallocateFunc( image->channel_layout ); image->channel_layout = 0;
   }
 }
 
