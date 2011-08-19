@@ -42,9 +42,9 @@ int                oyPixelAccess_ChangeRectangle (
   return error;
 }
 
-/** Function oyPixelAccess_Create
+/** Function  oyPixelAccess_Create
  *  @memberof oyPixelAccess_s
- *  @brief   allocate iand initialise a basic oyPixelAccess_s object
+ *  @brief    Allocate iand initialise a basic oyPixelAccess_s object
  *
  *  @verbatim
   // conversion->out_ has to be linear, so we access only the first plug
@@ -69,16 +69,17 @@ oyPixelAccess_s *  oyPixelAccess_Create (
                                        oyPIXEL_ACCESS_TYPE_e type,
                                        oyObject_s          object )
 {
-  oyPixelAccess_s * s = oyPixelAccess_New_( object );
-  oyFilterSocket_s * sock = 0;
-  int error = !s || !plug || !plug->remote_socket_;
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)oyPixelAccess_New( object );
+  oyFilterSocket_s_ * sock = 0;
+  oyFilterPlug_s_ ** plug_ = (oyFilterPlug_s_**)&plug;
+  int error = !s || !plug || !(*plug_)->remote_socket_;
   int w = 0;
   oyImage_s * image = 0;
   int32_t n = 0;
 
   if(error <= 0)
   {
-    sock = plug->remote_socket_;
+    sock = (*plug_)->remote_socket_;
     image = (oyImage_s*)sock->data;
 
     s->start_xy[0] = s->start_xy_old[0] = start_x;
@@ -89,14 +90,14 @@ oyPixelAccess_s *  oyPixelAccess_Create (
 
     s->data_in = filter->image_->data; */
     if(image)
-    w = image->width;
+      w = oyImage_Width( image );
 
     /** The filters have no obligation to pass end to end informations.
         The ticket must hold all pices of interesst.
      */
     s->output_image_roi->width = 1.0;
     if(image)
-      s->output_image_roi->height = image->height / (double)image->width;
+      s->output_image_roi->height = oyImage_Height( image ) / (double)oyImage_Width( image );
     s->output_image = oyImage_Copy( image, 0 );
     s->graph = oyFilterGraph_FromNode( sock->node, 0 );
 
@@ -126,16 +127,14 @@ oyPixelAccess_s *  oyPixelAccess_Create (
     }
 
     /* Copy requests, which where attached to the node, to the ticket. */
-    if(plug->node->core->options_)
+    if((*plug_)->node->core->options_)
       error = oyOptions_Filter( &s->request_queue, &n, 0,
                                 oyBOOLEAN_INTERSECTION,
-                                "////resolve", plug->node->core->options_ );
+                                "////resolve", (*plug_)->node->core->options_ );
   }
 
   if(error)
-    oyPixelAccess_Release ( &s );
+    oyPixelAccess_Release ( (oyPixelAccess_s**)&s );
 
-  return s;
+  return (oyPixelAccess_s*)s;
 }
-
-
