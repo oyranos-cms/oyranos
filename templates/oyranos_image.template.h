@@ -46,6 +46,19 @@ typedef enum oyCHANNELTYPE_e {
   oyCHANNELTYPE_V
 } oyCHANNELTYPE_e;
 
+/** @enum    oyPIXEL_ACCESS_TYPE_e
+ *  @brief   pixel access types
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/00/00 (Oyranos: 0.1.8)
+ *  @date    2008/00/00
+ */
+typedef enum {
+  oyPIXEL_ACCESS_IMAGE,
+  oyPIXEL_ACCESS_POINT,                /**< dont use */
+  oyPIXEL_ACCESS_LINE                  /**< dont use */
+} oyPIXEL_ACCESS_TYPE_e;
+
 /** @typedef oyPixel_t
  *  @ingroup objects_image
     parametric type as shorthand for the channel layout in bitmaps \n
