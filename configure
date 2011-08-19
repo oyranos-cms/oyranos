@@ -860,13 +860,13 @@ if [ $? != 0 ] && [ 0 -eq $rpm ]; then
   if [ -f tests/libtest ]; then
     rm tests/libtest$EXEC_END
   elif [ -d $l ]; then
-    YAJL_VERSION="yajl"
+    YAJL_DIR="yajl"
     test -n "$ECHO" && $ECHO "#define HAVE_YAJL 1" >> $CONF_H
     test -n "$ECHO" && $ECHO "YAJL = 1" >> $CONF
-    test -n "$ECHO" && $ECHO "YAJL_H = -I$YAJL_VERSION/ -I$ROOT_DIR/$YAJL_VERSION/" >> $CONF
+    test -n "$ECHO" && $ECHO "YAJL_H = -I$YAJL_DIR/ -I$ROOT_DIR/$YAJL_DIR/" >> $CONF
     test -n "$ECHO" && $ECHO "YAJL_LIBS = \$(YAJL_OBJ)" >> $CONF
-    test -n "$ECHO" && $ECHO "YAJL_VERSION = $YAJL_VERSION" >> $CONF
-    test -n "$ECHO" && $ECHO "Yajl internal           $YAJL_VERSION"
+    test -n "$ECHO" && $ECHO "YAJL_DIR = $YAJL_DIR" >> $CONF
+    test -n "$ECHO" && $ECHO "Yajl internal           $YAJL_DIR"
     test -n "$ECHO" && $ECHO ""
   else
     echo_="!!! Yajl: !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
@@ -904,7 +904,7 @@ if [ -n "$ECHO" ]; then
   if [ -z "$ELEKTRA_VERSION" ]; then
   ELEKTRA=2; export ELEKTRA
   fi
-  if [ -z "$YAJL_VERSION" ]; then
+  if [ -z "$YAJL_DIR" ]; then
   YAJL=1; export YAJL
   fi
   EXIV2=2; export EXIV2
