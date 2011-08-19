@@ -171,9 +171,9 @@ OYAPI int  OYEXPORT
   return 0;
 }
 
-/** Function oyFilterGraph_ToBlob
+/** Function  oyFilterGraph_ToBlob
  *  @memberof oyBlob_s
- *  @brief   node context to binary blob
+ *  @brief    Node context to binary blob
  *
  *  Typical a context from a CMM will be returned.
  *
@@ -192,8 +192,9 @@ oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
 {
   int flags = 1;
   oyFilterNode_s * node = 0;
+  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
   int do_it;
-  oyFilterGraph_s * s = graph;
+  oyFilterGraph_s_ * s = (oyFilterGraph_s_*)graph;
   oyBlob_s * blob = 0;
 
   oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
@@ -202,17 +203,17 @@ oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
 
   if(node)
   {
-    if(flags || !node->backend_data)
+    if(flags || !(*node_)->backend_data)
       do_it = 1;
     else
       do_it = 0;
 
     if(do_it &&
-       node->core->api4_->oyCMMFilterNode_ContextToMem &&
-       strlen(node->core->api4_->context_type))
+       (*node_)->core->api4_->oyCMMFilterNode_ContextToMem &&
+       strlen((*node_)->core->api4_->context_type))
     {
       blob = oyBlob_New( object );
-      oyFilterNode_ContextSet_( node, blob );
+      oyFilterNode_ContextSet_( *node_, (oyBlob_s_*)blob );
     }
 
     oyFilterNode_Release( &node );
