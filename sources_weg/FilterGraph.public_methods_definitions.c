@@ -133,9 +133,9 @@ OYAPI int  OYEXPORT
   return 0;
 }
 
-/** Function oyFilterGraph_SetFromNode
+/** Function  oyFilterGraph_SetFromNode
  *  @memberof oyFilterNode_s
- *  @brief   get a graphs adjazency list
+ *  @brief    Get a graphs adjazency list
  *
  *  @param[in]     graph               a graph object
  *  @param[in]     node                filter node
@@ -154,7 +154,7 @@ OYAPI int  OYEXPORT
                                        const char        * mark,
                                        int                 flags )
 {
-  oyFilterGraph_s * s = graph;
+  oyFilterGraph_s_ * s = (oyFilterGraph_s_*)graph;
 
   oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 1 )
 
@@ -165,7 +165,7 @@ OYAPI int  OYEXPORT
     s->nodes = oyFilterNodes_New( 0 );
     s->edges = oyFilterPlugs_New( 0 );
 
-    oyFilterNode_AddToAdjacencyLst_( node, s->nodes, s->edges, mark, flags );
+    oyFilterNode_AddToAdjacencyLst_( (oyFilterNode_s_*)node, s->nodes, s->edges, mark, flags );
   }
 
   return 0;
