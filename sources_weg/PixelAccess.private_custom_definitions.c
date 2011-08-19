@@ -82,6 +82,29 @@ int oyPixelAccess_Copy__Members( oyPixelAccess_s_ * dst, oyPixelAccess_s_ * src)
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
+  dst->start_xy_old[0] = dst->start_xy[0] = src->start_xy[0];
+  dst->start_xy_old[1] = dst->start_xy[1] = src->start_xy[1];
+  dst->array_n = src->array_n;
+  if(src->array_xy && src->array_n)
+  {
+    len = sizeof(int32_t) * 2 * src->array_n;
+    dst->array_xy = allocateFunc_(len);
+    error = !dst->array_xy;
+    if(error <= 0)
+      error = !memcpy(dst->array_xy, src->array_xy, len);
+  }
+  /* reset to properly initialise the new iterator */
+  dst->index = 0;
+  dst->pixels_n = src->pixels_n;
+  dst->workspace_id = src->workspace_id;
+  dst->output_image_roi = oyRectangle_Copy( src->output_image_roi, dst->oy_ );
+  dst->output_image = oyImage_Copy( src->output_image, 0 );
+  dst->array = oyArray2d_Copy( src->array, 0 );
+  if(src->user_data && src->user_data->copy)
+    dst->user_data = src->user_data->copy( src->user_data, 0 );
+  else
+    dst->user_data = src->user_data;
+  dst->graph = oyFilterGraph_Copy( src->graph, 0 );
 
   return error;
 }
