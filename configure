@@ -855,12 +855,12 @@ fi
 
 pkg-config  --atleast-version=1.0 yajl 2>/dev/null
 if [ $? != 0 ] && [ 0 -eq $rpm ]; then
-  YAJL_VERSION="yajl"
-  l=$YAJL_VERSION
+  l=yajl
   $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
   if [ -f tests/libtest ]; then
     rm tests/libtest$EXEC_END
-  elif [ -d $YAJL_VERSION ]; then
+  elif [ -d $l ]; then
+    YAJL_VERSION="yajl"
     test -n "$ECHO" && $ECHO "#define HAVE_YAJL 1" >> $CONF_H
     test -n "$ECHO" && $ECHO "YAJL = 1" >> $CONF
     test -n "$ECHO" && $ECHO "YAJL_H = -I$YAJL_VERSION/ -I$ROOT_DIR/$YAJL_VERSION/" >> $CONF
