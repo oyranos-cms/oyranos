@@ -28,9 +28,9 @@ OYAPI oyFilterGraph_s * OYEXPORT
   return graph;
 }
 
-/** Function oyFilterGraph_GetNode
+/** Function  oyFilterGraph_GetNode
  *  @memberof oyFilterGraph_s
- *  @brief   select a node
+ *  @brief    Select a node
  *
  *  @param[in]     graph               a filter graph
  *  @param[in]     pos                 the position in a matching list,
@@ -51,7 +51,8 @@ OYAPI oyFilterNode_s * OYEXPORT
                                        const char        * mark )
 {
   oyFilterNode_s * node = 0;
-  oyFilterGraph_s * s = graph;
+  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
+  oyFilterGraph_s_ * s = (oyFilterGraph_s_*)graph;
   int i, n, m = -1, found;
 
   oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
@@ -64,12 +65,12 @@ OYAPI oyFilterNode_s * OYEXPORT
     found = 1;
 
     if(found && registration &&
-       !oyFilterRegistrationMatch( node->core->api4_->registration,
+       !oyFilterRegistrationMatch( (*node_)->core->api4_->registration,
                                    registration, 0 ))
       found = 0;
 
     if(found && mark &&
-       oyOptions_FindString( node->tags, mark, 0 ) == 0 )
+       oyOptions_FindString( (*node_)->tags, mark, 0 ) == 0 )
       found = 0;
 
     if(found)
