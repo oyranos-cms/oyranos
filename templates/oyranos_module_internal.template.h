@@ -3,6 +3,7 @@
 #ifndef {{ file_name|underscores|upper|tr:". _" }}
 #define {{ file_name|underscores|upper|tr:". _" }}
 
+#include "oyCMMapiFilters_s.h"
 
 oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
                                          const char        * cmm_required,
