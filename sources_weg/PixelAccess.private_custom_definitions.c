@@ -48,6 +48,8 @@ void oyPixelAccess_Release__Members( oyPixelAccess_s_ * pixelaccess )
  */
 int oyPixelAccess_Init__Members( oyPixelAccess_s_ * pixelaccess )
 {
+  pixelaccess->output_image_roi = oyRectangle_NewFrom( 0, 0 );
+
   return 0;
 }
 
