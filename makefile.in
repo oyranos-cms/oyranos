@@ -117,6 +117,12 @@ ELEKTRA_OBJ = \
 	$(ELEKTRA_VERSION)/src/libelektra/libelektra.a
 #endif
 
+#ifdef YAJL_VERSION
+YAJL_OBJ = \
+	$(YAJL_VERSION)/libyajl.a
+YAJL_SOURCES := $(shell cd $(SRCDIR) && ls $(YAJL_VERSION)/*.c)
+#endif
+
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(SRCDIR) \
 	-I$(SRCDIR)/$(GENDIR) \
 	$(LCMS_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) $(LIBXML2_H) \
@@ -490,6 +496,7 @@ COBJECTS = \
 	$(TARGET)_policy.o \
 	$(TARGET)_profile.o \
 	$(TARGET)_profiles.o \
+	$(YAJL_OBJECTS) \
 	tests/test_oyranos.o test.o test_core.o test_object.o
 #ifdef LRAW_LIBS
 #CPP_lraw_OBJECTS = $(CMM_lraw_OBJECTS)
@@ -525,6 +532,7 @@ Flmm_OBJECTS = $(CXXFILES_Flmm:.cxx=.o)
 FLTK_OBJECTS = $(CXXFILES_FLTK:.cxx=.o) $(Flmm_OBJECTS)
 FLTK_OFORMS_OBJECTS = $(CXXFILES_OFORMS_FLTK:.cxx=.o)
 OYJL_OBJECTS = $(CFILES_OYJL:.c=.o)
+YAJL_OBJECTS = $(YAJL_SOURCES:.c=.o)
 
 CLEAN_OBJECTS = $(OBJECTS) \
 	$(OBJECTS_OBJECT) \
@@ -572,10 +580,11 @@ SUB_OBJECTS = \
 	$(OYJL_OBJECTS) \
 	tests/test_oyranos.o
 
-INCL_DEP = $(SOURCES) $(CXXFILES_Flmm) $(CFILES_OYJL) \
+INCL_DEP = $(SOURCES) $(CXXFILES_Flmm) $(CFILES_OYJL) $(YAJL_SOURCES) \
 	test.c test2.cpp test_core.c test_object.c tests/test_oyranos.c
 
-.PHONY:	check_environment docu examples oforms $(ELEKTRA_VERSION)
+.PHONY:	check_environment docu examples oforms \
+	$(ELEKTRA_VERSION)
 
 TEST  = test
 TEST2 = test2
@@ -633,7 +642,7 @@ time:
 	echo $(MTIME)
 
 # build all objects and libraries, link the headers to $(TARGET)
-$(LIBSONAMEFULL):	$(LIBSONAMEMODULESFULL) $(LIBSONAMEOBJECTFULL) $(LIBNAME) $(DEVEL_LIBS) $(ELEKTRA_VERSION)
+$(LIBSONAMEFULL):	$(LIBSONAMEMODULESFULL) $(LIBSONAMEOBJECTFULL) $(LIBNAME) $(DEVEL_LIBS) $(ELEKTRA_VERSION) $(YAJL_OBJ)
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_libdir)$(LIBSONAME) \
 	-o $(LIBSONAMEFULL) \
@@ -822,6 +831,7 @@ $(LIB_XNVCTRL).a:
 	-(cd $(LIB_XNVCTRL) && $(MAKE) -f Makefile)
 	test -L $(LIB_XNVCTRL).a || $(LNK) $(LIB_XNVCTRL)/$(LIB_XNVCTRL).a .
 
+
 # the twinview library
 $(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL_NAME) $(MONI_X11_OBJECTS)
 	echo Linking $@ $(LIB_XNVCTRL_)1 $(XNVCtrl)2 $(LIB_XNVCTRL)3 $(LIB_XNVCTRL_NAME)4 ...
@@ -894,12 +904,17 @@ $(ELEKTRA_VERSION):
 	cd $(ELEKTRA_VERSION); \
 	test -f Makefile && make || (./configure --enable-static $(nodeps_config_opt) --prefix=$(prefix); make)
 
+$(YAJL_OBJ):	$(YAJL_OBJECTS)
+	echo building Yajl ...
+	cd $(YAJL_VERSION); \
+	test -f Makefile && make || (echo no makefile found)
+
 # the monitor profile tool
 $(TARGET)-monitor:	$(LIBSONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) -o $(TARGET)-monitor \
 	$(TARGET)_gamma.o \
-	$(LDLIBS) $(MODULE_LDLIBS) $(LINK_LIB_PATH)
+	$(MODULE_LDLIBS) $(LDLIBS) $(LINK_LIB_PATH)
 
 $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	echo Linking $@ ...
@@ -972,7 +987,7 @@ test2c:	test2.c.o
 	$(CC) -I./ `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -o test2c \
 	test2.c.o -L./ `./oyranos-config --ldstaticflags`
 
-check:	all tests/test_oyranos $(TEST2) examples oforms
+check:	all tests/test_oyranos $(TEST2) examples oforms test_core test_object
 	echo current git version is:
 	n=0; for i in `cd $(SRCDIR); git rev-list master`; do if [ $${n} -eq 0 ]; then echo git id:$${i}; fi; n=1; done
 	echo run tests/test_oyranos
@@ -1380,7 +1395,7 @@ depend:	cdepend
 	    incl_src="$${incl_src} $(SRCDIR)/$${file}"; done; \
 	  $(MAKEDEPEND) -I./ -I$(SRCDIR) $(INCL) $${incl_src} >> mkdepend)
 	-for file in $(SUB_OBJECTS); do \
-	   obj=`echo $${file} | sed 's%modules/%% ; s%devices/%% ; s%FL/%% ; s%tests/%% ; s%oforms/%% ; s%oyjl/%%'`; \
+	   obj=`echo $${file} | sed 's%modules/%% ; s%devices/%% ; s%FL/%% ; s%tests/%% ; s%oforms/%% ; s%oyjl/%% ; s%yajl/%%'`; \
 	   cat mkdepend | sed s%$${obj}%$${file}% > mkdepend.tmp; \
 	   mv mkdepend.tmp mkdepend; \
          done
@@ -1505,6 +1520,8 @@ copy_files:
 	mkdir $(DESTDIR)/FL
 	cd "$(SRCDIR)" && \
 	  $(COPY) $(Flmm_FILES) "$(DESTDIR)/FL"
+	cd yajl && \
+	  $(MAKE) "DESTDIR=$(DESTDIR)/yajl" -f $(MAKEFILE_ARCH) copy_files
 	mkdir $(DESTDIR)/oyjl
 	cd "$(SRCDIR)" && \
 	  $(COPY) $(OYJL_FILES) "$(DESTDIR)/oyjl"
