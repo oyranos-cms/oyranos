@@ -12,4 +12,4 @@
    *  oyCMMapi4_s::context_type */
   oyPointer_s        * backend_data;
   /** the processing function and node connector descriptions */
-  oyCMMapi7_s        * api7_;
+  oyCMMapi7_s_       * api7_;

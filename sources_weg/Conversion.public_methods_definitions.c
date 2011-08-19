@@ -371,19 +371,19 @@ int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
                                        double              y,
                                        oyPixelAccess_s   * pixel_access )
 {
-  oyFilterPlug_s * plug = 0;
-  oyFilterSocket_s * sock = 0;
+  oyFilterPlug_s_ * plug = 0;
+  oyFilterSocket_s_ * sock = 0;
   int error = 0;
 
   /* conversion->out_ has to be linear, so we access only the first socket */
-  plug = oyFilterNode_GetPlug( oyConversionPriv_m(conversion)->out_, 0 );
-  sock = oyFilterPlugPriv_m(plug)->remote_socket_;
+  plug = (oyFilterPlug_s_*)oyFilterNode_GetPlug( oyConversionPriv_m(conversion)->out_, 0 );
+  sock = plug->remote_socket_;
 
   oyPixelAccessPriv_m(pixel_access)->start_xy[0] = x;
   oyPixelAccessPriv_m(pixel_access)->start_xy[1] = y;
 
   /* @todo */
-  error = oyFilterSocketPriv_m(sock)->node->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
+  error = sock->node->api7_->oyCMMFilterPlug_Run( (oyFilterPlug_s*)plug, pixel_access );
 
   return error;
 }

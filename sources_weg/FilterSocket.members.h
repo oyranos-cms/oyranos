@@ -1,4 +1,4 @@
-  oyFilterNode_s     * node;           /**< filter node for this connector */
+  oyFilterNode_s_    * node;           /**< filter node for this connector */
   oyFilterPlugs_s    * requesting_plugs_;/**< @private all remote inputs */
   oyStruct_s         * data;           /**< unprocessed data model */
 
