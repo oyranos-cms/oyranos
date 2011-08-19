@@ -1,4 +1,4 @@
-int                oyPixelAccess_ChangeRectangle ( 
+int                oyPixelAccess_ChangeRectangle (
                                        oyPixelAccess_s   * pixel_access,
                                        double              start_x,
                                        double              start_y,
@@ -9,4 +9,3 @@ oyPixelAccess_s *  oyPixelAccess_Create (
                                        oyFilterPlug_s    * plug,
                                        oyPIXEL_ACCESS_TYPE_e type,
                                        oyObject_s          object );
-

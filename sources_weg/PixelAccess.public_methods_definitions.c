@@ -1,6 +1,6 @@
-/** Function oyPixelAccess_ChangeRectangle
+/** Function  oyPixelAccess_ChangeRectangle
  *  @memberof oyConversion_s
- *  @brief   change the ticket for a conversion graph
+ *  @brief    Change the ticket for a conversion graph
  *
  *  @param[in,out] pixel_access        optional pixel iterator configuration
  *  @param[in]     start_x             x position relative to virtual source
@@ -20,23 +20,25 @@ int                oyPixelAccess_ChangeRectangle (
                                        double              start_y,
                                        oyRectangle_s     * output_rectangle )
 {
+  oyPixelAccess_s_ ** pixel_access_ = (oyPixelAccess_s_**)&pixel_access;
   int error = 0;
-  oyRectangle_s roi = {oyOBJECT_RECTANGLE_S, 0,0,0};
+  oyRectangle_s_ * roi = (oyRectangle_s_*)oyRectangle_New(0);
 
   if(!pixel_access)
     error = 1;
 
   if(error <= 0 && output_rectangle)
-    oyRectangle_SetByRectangle( pixel_access->output_image_roi,
+    oyRectangle_SetByRectangle( (*pixel_access_)->output_image_roi,
                                 output_rectangle );
- 
+
   if(error <= 0)
   {
-    oyRectangle_SetByRectangle( &roi, pixel_access->output_image_roi );
-    pixel_access->start_xy[0] = roi.x = start_x;
-    pixel_access->start_xy[1] = roi.y = start_y;
+    oyRectangle_SetByRectangle( (oyRectangle_s*)roi, (*pixel_access_)->output_image_roi );
+    (*pixel_access_)->start_xy[0] = roi->x = start_x;
+    (*pixel_access_)->start_xy[1] = roi->y = start_y;
   }
- 
+  oyRectangle_Release( (oyRectangle_s**)&roi );
+
   return error;
 }
 
@@ -82,9 +84,9 @@ oyPixelAccess_s *  oyPixelAccess_Create (
     s->start_xy[0] = s->start_xy_old[0] = start_x;
     s->start_xy[1] = s->start_xy_old[1] = start_y;
 
-    /* make shure the filter->image_ is set, e.g. 
+    /* make shure the filter->image_ is set, e.g.
        error = oyFilterCore_ImageSet ( filter, image );
-     
+
     s->data_in = filter->image_->data; */
     if(image)
     w = image->width;
