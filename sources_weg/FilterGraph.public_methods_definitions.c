@@ -222,9 +222,9 @@ oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
   return blob;
 }
 
-/** Function oyFilterGraph_ToText
+/** Function  oyFilterGraph_ToText
  *  @memberof oyFilterGraph_s
- *  @brief   text description of a graph
+ *  @brief    Text description of a graph
  *
  *  @todo Should this function generate XFORMS compatible output? How?
  *
@@ -254,10 +254,11 @@ OYAPI char * OYEXPORT
        * temp = oyAllocateFunc_(1024),
        * tmp = 0, * txt = 0, * t = 0;
   oyFilterNode_s * node = 0;
+  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
   char * save_locale = 0;
-  oyFilterGraph_s * s = graph;
+  oyFilterGraph_s_ * s = graph;
 
-  oyFilterPlug_s * p = 0;
+  oyFilterPlug_s_ * p = 0;
   int i, n,
       nodes_n = 0;
 
@@ -301,24 +302,24 @@ OYAPI char * OYEXPORT
 
     /** The function is more verbose with the oy_debug variable set. */
     if(!oy_debug &&
-       oyStrchr_( node->core->api4_->id_, OY_SLASH_C ))
+       oyStrchr_( (*node_)->core->api4_->id_, OY_SLASH_C ))
     {
-      STRING_ADD( tmp, node->core->api4_->id_ );
+      STRING_ADD( tmp, (*node_)->core->api4_->id_ );
       t = oyStrrchr_( tmp, OY_SLASH_C );
       *t = 0;
       STRING_ADD( txt, t+1 );
       oyFree_m_(tmp);
     } else
-      STRING_ADD( txt, node->core->api4_->id_ );
+      STRING_ADD( txt, (*node_)->core->api4_->id_ );
 
     oySprintf_(temp, "  %d [ label=\"{<plug> %d| Filter Node %d\\n"
                      " Category: \\\"%s\\\"\\n CMM: \\\"%s\\\"\\n"
                      " Type: \\\"%s\\\"|<socket>}\"];\n",
                      oyFilterNode_GetId( node ), n,
                      node->oy_->id_,
-                     node->core->category_,
+                     (*node_)->core->category_,
                      txt,
-                     node->core->registration_ );
+                     (*node_)->core->registration_ );
     STRING_ADD( text, temp );
     oyFree_m_(txt);
 
@@ -338,7 +339,7 @@ OYAPI char * OYEXPORT
   n = oyFilterPlugs_Count( s->edges );
   for(i = 0; i < n; ++i)
   {
-    p = oyFilterPlugs_Get( s->edges, i );
+    p = (oyFilterPlug_s_*)oyFilterPlugs_Get( s->edges, i );
 
     oySprintf_( temp,
                 "    %d:socket -> %d:plug [arrowhead=crow, arrowtail=box];\n",
@@ -346,7 +347,7 @@ OYAPI char * OYEXPORT
                 oyFilterNode_GetId( p->node ) );
     STRING_ADD( text, temp );
 
-    oyFilterPlug_Release( &p );
+    oyFilterPlug_Release( (oyFilterPlug_s_**)&p );
   }
 
   STRING_ADD( text, "\n" );
