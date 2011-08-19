@@ -1,6 +1,6 @@
-/** Function oyFilterGraph_FromNode
+/** Function  oyFilterGraph_FromNode
  *  @memberof oyFilterNode_s
- *  @brief   get a graphs adjazency list
+ *  @brief    Get a graphs adjazency list
  *
  *  @param[in]     node                filter node
  *  @param[in]     flags               - OY_INPUT omit input direction
