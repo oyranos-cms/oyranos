@@ -16,5 +16,5 @@
                                             to the
                                             output_image (of the last filter).*/
   oyImage_s      * output_image;       /**< the image which issued the request*/
-  oyFilterGraph_s * graph;             /**< the graph to process */
+  oyFilterGraph_s_ * graph;            /**< the graph to process */
   oyOptions_s    * request_queue;      /**< messaging; requests to resolve */

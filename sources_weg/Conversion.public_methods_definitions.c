@@ -273,7 +273,7 @@ oyImage_s        * oyConversion_GetImage (
   {
     if(oyToInput_m(flags))
     {
-      sock = oyFilterNode_GetSocket( s->input, 0 );
+      sock = oyFilterNode_GetSocket( (oyFilterNode_s*)s->input, 0 );
       if(sock)
       {
         image = oyImage_Copy( (oyImage_s*) (*sock_)->data, 0 );
@@ -289,7 +289,7 @@ oyImage_s        * oyConversion_GetImage (
     } else
     if(oyToOutput_m(flags))
     {
-      plug = oyFilterNode_GetPlug( s->out_, 0 );
+      plug = oyFilterNode_GetPlug( (oyFilterNode_s*)s->out_, 0 );
       if(plug && (*plug_)->remote_socket_)
       {
         image = oyImage_Copy( (oyImage_s*) (*plug_)->remote_socket_->data, 0);
@@ -297,7 +297,7 @@ oyImage_s        * oyConversion_GetImage (
         if(!image)
         {
           /* Run the graph to set up processing image data. */
-          plug = oyFilterNode_GetPlug( s->out_, 0 );
+          plug = oyFilterNode_GetPlug( (oyFilterNode_s*)s->out_, 0 );
           pixel_access = oyPixelAccess_Create( 0,0, plug,
                                                oyPIXEL_ACCESS_IMAGE, 0 );
           s->out_->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
@@ -342,11 +342,11 @@ oyFilterNode_s   * oyConversion_GetNode (
   if(!error)
   {
     if(oyToInput_m(flags))
-      node = oyFilterNode_Copy( s->input, 0 );
+      node = oyFilterNode_Copy( (oyFilterNode_s*)s->input, 0 );
 
     else
     if(oyToOutput_m(flags))
-      node = oyFilterNode_Copy( s->out_, 0 );
+      node = oyFilterNode_Copy( (oyFilterNode_s*)s->out_, 0 );
   }
 
   return node;
@@ -376,7 +376,7 @@ int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
   int error = 0;
 
   /* conversion->out_ has to be linear, so we access only the first socket */
-  plug = (oyFilterPlug_s_*)oyFilterNode_GetPlug( oyConversionPriv_m(conversion)->out_, 0 );
+  plug = (oyFilterPlug_s_*)oyFilterNode_GetPlug( (oyFilterNode_s *)oyConversionPriv_m(conversion)->out_, 0 );
   sock = plug->remote_socket_;
 
   oyPixelAccessPriv_m(pixel_access)->start_xy[0] = x;
@@ -491,18 +491,18 @@ int                oyConversion_RunPixels (
 
   if(error != 0 && pixel_access)
   {
-    dirty = oyOptions_FindString( (*pixel_access_)->graph->options, "dirty", "true")
+    dirty = oyOptions_FindString( (oyOptions_s*)(*pixel_access_)->graph->options, "dirty", "true")
             ? 1 : 0;
 
     /* refresh the graph representation */
     clck = oyClock();
-    oyFilterGraph_SetFromNode( (*pixel_access_)->graph, (*conversion_)->input, 0, 0 );
+    oyFilterGraph_SetFromNode( (oyFilterGraph_s*)(*pixel_access_)->graph, (oyFilterNode_s*)(*conversion_)->input, 0, 0 );
     clck = oyClock() - clck;
     DBG_NUM1_S("oyFilterGraph_SetFromNode(): %g", clck/1000000.0 );
 
     /* resolve missing data */
     clck = oyClock();
-    image_input = oyFilterPlug_ResolveImage( plug, oyFilterPlugPriv_m(plug)->remote_socket_,
+    image_input = oyFilterPlug_ResolveImage( plug, (oyFilterSocket_s*)((oyFilterPlug_s_*)plug)->remote_socket_,
                                              pixel_access );
     clck = oyClock() - clck;
     DBG_NUM1_S("oyFilterPlug_ResolveImage(): %g", clck/1000000.0 );
@@ -533,7 +533,7 @@ int                oyConversion_RunPixels (
         }
 
         clck = oyClock();
-        oyFilterGraph_PrepareContexts( (*pixel_access_)->graph, 0 );
+        oyFilterGraph_PrepareContexts( (oyFilterGraph_s*)(*pixel_access_)->graph, 0 );
         clck = oyClock() - clck;
         DBG_NUM1_S("oyFilterGraph_PrepareContexts(): %g", clck/1000000.0 );
         clck = oyClock();
@@ -605,10 +605,10 @@ int                oyConversion_Set  ( oyConversion_s    * conversion,
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
 
   if(input)
-    s->input = input;
+    s->input = (oyFilterNode_s_*)input;
 
   if(output)
-    s->out_ = output;
+    s->out_ = (oyFilterNode_s_*)output;
 
   return error;
 }
@@ -635,17 +635,17 @@ char             * oyConversion_ToText (
                                        int                 reserved,
                                        oyAlloc_f           allocateFunc )
 {
-  oyConversion_s_ * s = conversion;
+  oyConversion_s_ * s = (oyConversion_s_*)conversion;
   char * text = 0;
   oyFilterGraph_s * adjacency_list = 0;
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 0 )
 
   adjacency_list = oyFilterGraph_New( 0 );
-  oyFilterGraph_SetFromNode( adjacency_list, s->input, 0, 0 );
+  oyFilterGraph_SetFromNode( adjacency_list, (oyFilterNode_s*)s->input, 0, 0 );
 
   text = oyFilterGraph_ToText( adjacency_list,
-                               s->input, s->out_,
+                               (oyFilterNode_s*)s->input, (oyFilterNode_s*)s->out_,
                                head_line, reserved, allocateFunc );
 
   oyFilterGraph_Release( &adjacency_list );
