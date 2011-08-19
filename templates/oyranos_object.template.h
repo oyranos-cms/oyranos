@@ -282,6 +282,9 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration1,
                                        const char        * registration2,
                                        oyOBJECT_e          api_number );
 
+#define OY_OUTPUT                      0x01
+#define OY_INPUT                       0x02
+/* decode */
 
 
 {% include "cpp_end.h" %}
