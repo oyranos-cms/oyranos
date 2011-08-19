@@ -20,8 +20,8 @@ void oyConversion_Release__Members( oyConversion_s_ * conversion )
   /* Deallocate members here
    * E.g: oyXXX_Release( &conversion->member );
    */
-  oyFilterNode_Release( &conversion->input );
-  oyFilterNode_Release( &conversion->out_ );
+  oyFilterNode_Release( (oyFilterNode_s**)&conversion->input );
+  oyFilterNode_Release( (oyFilterNode_s**)&conversion->out_ );
 
   if(conversion->oy_->deallocateFunc_)
   {
@@ -82,7 +82,7 @@ int oyConversion_Copy__Members( oyConversion_s_ * dst, oyConversion_s_ * src)
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
-  dst->input = oyFilterNode_Copy( src->input, dst->oy_ );
+  dst->input = (oyFilterNode_s_*)oyFilterNode_Copy( (oyFilterNode_s*)src->input, dst->oy_ );
 
   return error;
 }
