@@ -20,6 +20,9 @@ void oyFilterGraph_Release__Members( oyFilterGraph_s_ * filtergraph )
   /* Deallocate members here
    * E.g: oyXXX_Release( &filtergraph->member );
    */
+  oyFilterNodes_Release( &filtergraph->nodes );
+  oyFilterPlugs_Release( &filtergraph->edges );
+  oyOptions_Release( &filtergraph->options );
 
   if(filtergraph->oy_->deallocateFunc_)
   {
