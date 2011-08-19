@@ -117,10 +117,10 @@ ELEKTRA_OBJ = \
 	$(ELEKTRA_VERSION)/src/libelektra/libelektra.a
 #endif
 
-#ifdef YAJL_VERSION
+#ifdef YAJL_DIR
 YAJL_OBJ = \
-	$(YAJL_VERSION)/libyajl.a
-YAJL_SOURCES := $(shell cd $(SRCDIR) && ls $(YAJL_VERSION)/*.c)
+	$(YAJL_DIR)/libyajl.a
+YAJL_SOURCES := $(shell cd $(SRCDIR) && ls $(YAJL_DIR)/*.c)
 #endif
 
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(SRCDIR) \
@@ -906,7 +906,7 @@ $(ELEKTRA_VERSION):
 
 $(YAJL_OBJ):	$(YAJL_OBJECTS)
 	echo building Yajl ...
-	cd $(YAJL_VERSION); \
+	cd $(YAJL_DIR); \
 	test -f Makefile && make || (echo no makefile found)
 
 # the monitor profile tool
