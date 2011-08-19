@@ -260,7 +260,9 @@ oyImage_s        * oyConversion_GetImage (
 {
   oyImage_s * image = 0;
   oyFilterPlug_s * plug = 0;
+  oyFilterPlug_s_ ** plug_ = (oyFilterPlug_s_**)&plug;
   oyFilterSocket_s * sock = 0;
+  oyFilterSocket_s_ ** sock_ = (oyFilterSocket_s_**)&sock;
   int error = 0;
   oyConversion_s_ * s = (oyConversion_s_*)conversion;
   oyPixelAccess_s * pixel_access = 0;
@@ -274,13 +276,13 @@ oyImage_s        * oyConversion_GetImage (
       sock = oyFilterNode_GetSocket( s->input, 0 );
       if(sock)
       {
-        image = oyImage_Copy( (oyImage_s*) sock->data, 0 );
+        image = oyImage_Copy( (oyImage_s*) (*sock_)->data, 0 );
 
-        if(!sock->data)
+        if(!(*sock_)->data)
         {
           /* TODO: remove the following hack; the socket->plug cast is ugly */
           s->input->api7_->oyCMMFilterPlug_Run( (oyFilterPlug_s*) sock, 0 );
-          image = oyImage_Copy( (oyImage_s*) sock->data, 0 );
+          image = oyImage_Copy( (oyImage_s*) (*sock_)->data, 0 );
         }
       }
 
@@ -288,25 +290,25 @@ oyImage_s        * oyConversion_GetImage (
     if(oyToOutput_m(flags))
     {
       plug = oyFilterNode_GetPlug( s->out_, 0 );
-      if(plug && plug->remote_socket_)
+      if(plug && (*plug_)->remote_socket_)
       {
-        image = oyImage_Copy( (oyImage_s*) plug->remote_socket_->data, 0);
+        image = oyImage_Copy( (oyImage_s*) (*plug_)->remote_socket_->data, 0);
 
         if(!image)
         {
           /* Run the graph to set up processing image data. */
-          plug = oyFilterNode_GetPlug( conversion->out_, 0 );
+          plug = oyFilterNode_GetPlug( s->out_, 0 );
           pixel_access = oyPixelAccess_Create( 0,0, plug,
                                                oyPIXEL_ACCESS_IMAGE, 0 );
-          conversion->out_->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
+          s->out_->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
 
           /* Link the tickets image. It should be real copied in a plug-in. */
-          /* error = oyFilterNode_DataSet( conversion->out_,
+          /* error = oyFilterNode_DataSet( s->out_,
                                         (oyStruct_s*)pixel_access->output_image,
                                         0, 0 ); */
           oyPixelAccess_Release( &pixel_access );
 
-          image = oyImage_Copy( (oyImage_s*) plug->remote_socket_->data, 0 );
+          image = oyImage_Copy( (oyImage_s*) (*plug_)->remote_socket_->data, 0 );
         }
       }
     }
