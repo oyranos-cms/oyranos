@@ -1,3 +1,5 @@
+int            oyImage_Width         ( oyImage_s         * image );
+int            oyImage_Height        ( oyImage_s         * image );
 oyImage_s *    oyImage_Create        ( int                 width,
                                        int                 height,
                                        oyPointer           channels,
