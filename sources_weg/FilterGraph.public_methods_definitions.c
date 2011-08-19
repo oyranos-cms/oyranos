@@ -83,9 +83,9 @@ OYAPI oyFilterNode_s * OYEXPORT
   return node;
 }
 
-/** Function oyFilterGraph_PrepareContexts
+/** Function  oyFilterGraph_PrepareContexts
  *  @memberof oyFilterGraph_s
- *  @brief   iterate over a filter graph and possibly prepare contexts
+ *  @brief    Iterate over a filter graph and possibly prepare contexts
  *
  *  @param[in,out] graph               a filter graph
  *  @param[in]     flags               1 - enforce a context preparation
@@ -102,7 +102,8 @@ OYAPI int  OYEXPORT
 {
   oyOption_s * o = 0;
   oyFilterNode_s * node = 0;
-  oyFilterGraph_s * s = graph;
+  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
+  oyFilterGraph_s_ * s = (oyFilterGraph_s_*)graph;
   int i, n, do_it;
 
   oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 1 )
@@ -112,14 +113,14 @@ OYAPI int  OYEXPORT
   {
     node = oyFilterNodes_Get( s->nodes, i );
 
-    if(flags || !node->backend_data)
+    if(flags || !(*node_)->backend_data)
       do_it = 1;
     else
       do_it = 0;
 
     if(do_it &&
-       node->core->api4_->oyCMMFilterNode_ContextToMem &&
-       strlen(node->api7_->context_type))
+       (*node_)->core->api4_->oyCMMFilterNode_ContextToMem &&
+       strlen((*node_)->api7_->context_type))
       oyFilterNode_ContextSet_( node, 0 );
 
     oyFilterNode_Release( &node );
