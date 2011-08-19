@@ -20,6 +20,10 @@ void oyPixelAccess_Release__Members( oyPixelAccess_s_ * pixelaccess )
   /* Deallocate members here
    * E.g: oyXXX_Release( &pixelaccess->member );
    */
+  oyArray2d_Release( &pixelaccess->array );
+  oyRectangle_Release( &pixelaccess->output_image_roi );
+  oyImage_Release( &pixelaccess->output_image );
+  oyFilterGraph_Release( &pixelaccess->graph );
 
   if(pixelaccess->oy_->deallocateFunc_)
   {
@@ -28,6 +32,11 @@ void oyPixelAccess_Release__Members( oyPixelAccess_s_ * pixelaccess )
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( pixelaccess->member );
      */
+    if(pixelaccess->user_data && pixelaccess->user_data->release)
+        pixelaccess->user_data->release( &pixelaccess->user_data );
+    if(pixelaccess->array_xy)
+      deallocateFunc( pixelaccess->array_xy );
+    pixelaccess->array_xy = 0;
   }
 }
 
