@@ -48,6 +48,8 @@ void oyFilterGraph_Release__Members( oyFilterGraph_s_ * filtergraph )
  */
 int oyFilterGraph_Init__Members( oyFilterGraph_s_ * filtergraph )
 {
+  filtergraph->options = oyOptions_New( 0 );
+
   return 0;
 }
 
