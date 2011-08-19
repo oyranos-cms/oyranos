@@ -1,5 +1,13 @@
 {% extends "Base_s_.h" %}
 
+{% block LocalIncludeFiles %}
+{{ block.super }}
+#include "oyCMMapi7_s_.h"
+#include "oyBlob_s_.h"
+#include "oyFilterNodes_s_.h"
+#include "oyFilterPlugs_s_.h"
+{% endblock %}
+
 {% block ChildMembers %}
 {{ block.super }}
 /* Include "FilterNode.members.h" { */

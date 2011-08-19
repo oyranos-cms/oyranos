@@ -2,8 +2,9 @@
 
 {% block LocalIncludeFiles %}
 {{ block.super }}
-#include "oyFilterNode_s.h"
 #include "oyFilterPlugs_s.h"
+#include "oyFilterNode_s.h"
+#include "oyFilterNode_s_.h"
 {% endblock %}
 
 {% block ChildMembers %}
