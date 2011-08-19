@@ -82,6 +82,9 @@ int oyFilterGraph_Copy__Members( oyFilterGraph_s_ * dst, oyFilterGraph_s_ * src)
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
+  dst->nodes = oyFilterNodes_Copy( src->nodes, 0 );
+  dst->edges = oyFilterPlugs_Copy( src->edges, 0 );
+  dst->options = oyOptions_Copy( src->options, object );
 
   return error;
 }
