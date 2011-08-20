@@ -59,7 +59,7 @@ OYAPI oyProfileTag_s * OYEXPORT
                                       oyCMMapi3_Query_, &queries );
     if(api)
     {
-      oyCMMapi3_s * api3 = (oyCMMapi3_s*) api;
+      oyCMMapi3_s_ * api3 = (oyCMMapi3_s_*) api;
       funcP = api3->oyCMMProfileTag_Create;
     }
     error = !funcP;
@@ -289,7 +289,7 @@ oyStructList_s*oyProfileTag_Get      ( oyProfileTag_s    * tag )
 #endif
     if(api)
     {
-      oyCMMapi3_s * api3 = (oyCMMapi3_s*) api;
+      oyCMMapi3_s_ * api3 = (oyCMMapi3_s_*) api;
       funcP = api3->oyCMMProfileTag_GetValues;
     }
     error = !funcP;
