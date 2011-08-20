@@ -28,7 +28,7 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s_    * s,
    */
   if(!(flags & OY_INPUT))
   {
-    n = oyFilterNode_EdgeCount( s, 1, 0 );
+    n = oyFilterNode_EdgeCount( (oyFilterNode_s*)s, 1, 0 );
     for( i = 0; i < n; ++i )
     {
       if( s->plugs[i] && s->plugs[i]->remote_socket_ )
@@ -165,7 +165,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s_    * node_,
                 /* oy_debug is used to obtain a complete data set */
                 ptr = s->api4_->oyCMMFilterNode_ContextToMem( node, &size,
                                                               oyAllocateFunc_ );
-                oyBlob_SetFromData( blob, ptr, size, s->api4_->context_type );
+                oyBlob_SetFromData( (oyBlob_s*)blob, ptr, size, s->api4_->context_type );
                 error = oyOptions_SetFromText( &node_->tags, "////verbose",
                                                "false", 0 );
 
@@ -355,15 +355,15 @@ oyFilterNode_s *   oyFilterNode_GetLastFromLinear_ (
 oyFilterNode_s *   oyFilterNode_GetNextFromLinear_ (
                                        oyFilterNode_s_    * first )
 {
-  oyFilterNode_s * next = 0;
-  oyFilterSocket_s * socket = 0;
+  oyFilterNode_s_ * next = 0;
+  oyFilterSocket_s_ * socket = 0;
   oyFilterPlug_s * plug = 0;
 
   {
     socket = first->sockets[0];
 
     if(socket)
-      plug = oyFilterPlugs_Get( ((oyFilterSocket_s_*)socket)->requesting_plugs_, 0 );
+      plug = oyFilterPlugs_Get( socket->requesting_plugs_, 0 );
     if(plug)
       next = ((oyFilterPlug_s_*)plug)->node;
     else
@@ -371,8 +371,55 @@ oyFilterNode_s *   oyFilterNode_GetNextFromLinear_ (
     oyFilterPlug_Release( &plug );
   }
 
-  return next;
+  return (oyFilterNode_s*)next;
 }
+
+/**
+ *  @internal
+ *  Info profilbody */
+char info_profile_data[320] =
+  {
+/*0*/    0,0,1,64, 'o','y','r','a',
+    2,48,0,0, 'n','o','n','e',
+    'R','G','B',32, 'L','a','b',32,
+    0,0,0,0,0,0,0,0,
+/*32*/    0,0,0,0,97,99,115,112,
+    '*','n','i','x',0,0,0,0,
+    110,111,110,101,110,111,110,101,
+    -64,48,11,8,-40,-41,-1,-65,
+/*64*/    0,0,0,0,0,0,-10,-42,
+    0,1,0,0,0,0,-45,45,
+    'o','y','r','a',0,0,0,0,
+    0,0,0,0,0,0,0,0,
+/*96*/    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+/*128*/    0,0,0,3,'d','e','s','c',
+    0,0,0,-88,0,0,0,33,
+    'c','p','r','t',0,0,0,-52,
+    0,0,0,29,'I','n','f','o',
+/*160*/    0,0,0,-20,0,0,0,0,
+    't','e','x','t',0,0,0,0,
+    'F','i','l','t','e','r',' ','I',
+    'n','f','o',' ','X','M','L',0,
+/*192*/    0,0,0,0,0,0,0,0,
+    0,0,0,0,'t','e','x','t',
+    0,0,0,0,110,111,116,32,
+    99,111,112,121,114,105,103,104,
+/*224*/    116,101,100,32,100,97,116,97,
+    0,0,0,0,'t','e','x','t',
+    0,0,0,0,'s','t','a','r',
+    't',0,0,0,0,0,0,0,
+/*256*/    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0
+  };
 
 /** Function  oyFilterNode_TextToInfo_
  *  @memberof oyFilterNode_s
