@@ -1,6 +1,6 @@
-  oyFilterPlug_s    ** plugs;          /**< possible input connectors */
+  oyFilterPlug_s_   ** plugs;          /**< possible input connectors */
   int                  plugs_n_;       /**< readonly number of inputs */
-  oyFilterSocket_s  ** sockets;        /**< possible output connectors */
+  oyFilterSocket_s_ ** sockets;        /**< possible output connectors */
   int                  sockets_n_;     /**< readonly number of outputs */
 
   oyFilterCore_s_    * core;           /**< the filter core */

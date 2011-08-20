@@ -10,7 +10,7 @@ int          oyCMMptr_ConvertData    ( oyPointer_s       * cmm_ptr,
                                        oyFilterNode_s    * node )
 {
   int error = !cmm_ptr || !cmm_ptr_out;
-  oyCMMapi6_s * api6 = 0;
+  oyCMMapi6_s_ * api6 = 0;
   char * reg = 0, * tmp = 0;
 
   if(error <= 0)
@@ -21,11 +21,11 @@ int          oyCMMptr_ConvertData    ( oyPointer_s       * cmm_ptr,
     STRING_ADD( reg, tmp );
     oyFree_m_( tmp );
     STRING_ADD( reg, "/" );
-    STRING_ADD( reg, oyCMMptrPriv(cmm_ptr)->resource );
+    STRING_ADD( reg, ((oyPointer_s_*)cmm_ptr)->resource );
     STRING_ADD( reg, "_" );
-    STRING_ADD( reg, oyCMMptrPriv(cmm_ptr_out)->resource );
+    STRING_ADD( reg, ((oyPointer_s_*)cmm_ptr_out)->resource );
 
-    api6 = (oyCMMapi6_s*) oyCMMsGetFilterApi_( 0, reg, oyOBJECT_CMM_API6_S );
+    api6 = (oyCMMapi6_s_*) oyCMMsGetFilterApi_( 0, reg, oyOBJECT_CMM_API6_S );
 
     error = !api6;
   }
@@ -86,7 +86,7 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
        !oyFilterNode_EdgeCount( input, 0, OY_FILTEREDGE_FREE ))
     {
       WARNc2_S( "%s: %s", "input node has no free socket",
-                oyFilterCore_GetName( oyFilterNodePriv_m(input)->core, oyNAME_NAME) );
+                oyFilterCore_GetName( (oyFilterCore_s*)oyFilterNodePriv_m(input)->core, oyNAME_NAME) );
       error = 1;
     }
 
@@ -117,7 +117,7 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
       if(!out_plug)
       {
         WARNc3_S( "\n  %s: \"%s\" %s", "Could not find plug for filter",
-                  oyFilterCore_GetName( oyFilterNodePriv_m(output)->core, oyNAME_NAME), socket_nick );
+                  oyFilterCore_GetName( (oyFilterCore_s*)oyFilterNodePriv_m(output)->core, oyNAME_NAME), socket_nick );
         error = 1;
       }
 
@@ -239,7 +239,7 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
 
   if(error <= 0)
   {
-    (*s_)->core = oyFilterCore_Copy( filter, object );
+    (*s_)->core = (oyFilterCore_s_*)oyFilterCore_Copy( filter, object );
     if(!(*s_)->core)
     {
       WARNc2_S("Could not copy filter: %s %s",
@@ -248,7 +248,7 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
     }
 
     if(error <= 0)
-      (*s_)->api7_ = (oyCMMapi7_s*) oyCMMsGetFilterApi_( 0,
+      (*s_)->api7_ = (oyCMMapi7_s_*) oyCMMsGetFilterApi_( 0,
                                 (*s_)->core->registration_, oyOBJECT_CMM_API7_S );
     if(error <= 0 && !(*s_)->api7_)
     {
@@ -380,7 +380,7 @@ int            oyFilterNode_Disconnect(oyFilterPlug_s    * edge )
 {
   oyFilterPlug_s * s = edge;
   oyFilterSocket_Callback( s, oyCONNECTOR_EVENT_RELEASED );
-  oyFilterSocket_Release( &oyFilterPlugPriv_m(s)->remote_socket_ );
+  oyFilterSocket_Release( (oyFilterSocket_s**)&oyFilterPlugPriv_m(s)->remote_socket_ );
   return 0;
 }
 
@@ -678,9 +678,9 @@ OYAPI oyFilterPlug_s * OYEXPORT
     {
       s = (oyFilterPlug_s_*)oyFilterPlug_New( node->oy_ );
       s->pattern = oyFilterNode_ShowConnector( node, pos, 1 );
-      s->node = oyFilterNode_Copy( node, 0 );
+      s->node = (oyFilterNode_s_*)oyFilterNode_Copy( node, 0 );
       s->relatives_ = oyStringCopy_( (*node_)->relatives_, allocateFunc_ );
-      (*node_)->plugs[pos] = (oyFilterPlug_s*)s;
+      (*node_)->plugs[pos] = s;
     }
 
     s = (oyFilterPlug_s_*)(*node_)->plugs[pos];
@@ -728,12 +728,12 @@ OYAPI oyFilterSocket_s * OYEXPORT
     {
       s = oyFilterSocket_New( node->oy_ );
       (*s_)->pattern = oyFilterNode_ShowConnector( node, pos, 0 );
-      (*s_)->node = oyFilterNode_Copy( node, 0 );
+      (*s_)->node = (oyFilterNode_s_*)oyFilterNode_Copy( node, 0 );
       (*s_)->relatives_ = oyStringCopy_( (*node_)->relatives_, allocateFunc_ );
-      (*node_)->sockets[pos] = s;
+      (*node_)->sockets[pos] = *s_;
     }
 
-    s = (*node_)->sockets[pos];
+    *s_ = (*node_)->sockets[pos];
   }
 
   return s;
@@ -767,7 +767,7 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
 {
   const char * tmp = 0;
   char * hash_text = 0;
-  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node;
 
   oyStructList_s * in_datas = 0,
                  * out_datas = 0;
@@ -779,29 +779,29 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
   hashTextAdd_m( "<oyFilterNode_s>\n  " );
 
   /* the filter text */
-  hashTextAdd_m( oyFilterCore_GetText( (*node_)->core, oyNAME_NAME ) );
+  hashTextAdd_m( oyFilterCore_GetText( (oyFilterCore_s*)s->core, oyNAME_NAME ) );
 
   /* pick all plug (input) data */
-  in_datas = oyFilterNode_DataGet_( *node_, 1 );
+  in_datas = oyFilterNode_DataGet_( s, 1 );
 
   /* pick all sockets (output) data */
-  out_datas = oyFilterNode_DataGet_( *node_, 0 );
+  out_datas = oyFilterNode_DataGet_( s, 0 );
 
   /* make a description */
-  tmp = oyContextCollectData_( (oyStruct_s*)node, (*node_)->core->options_,
+  tmp = oyContextCollectData_( (oyStruct_s*)s, s->core->options_,
                                in_datas, out_datas );
   hashTextAdd_m( tmp );
 
   hashTextAdd_m( "</oyFilterNode_s>\n" );
 
 
-  oyObject_SetName( node->oy_, hash_text, oyNAME_NICK );
+  oyObject_SetName( s->oy_, hash_text, oyNAME_NICK );
 
-  if(node->oy_->deallocateFunc_)
-    node->oy_->deallocateFunc_( hash_text );
+  if(s->oy_->deallocateFunc_)
+    s->oy_->deallocateFunc_( hash_text );
   hash_text = 0;
 
-  hash_text = (oyChar*) oyObject_GetName( node->oy_, oyNAME_NICK );
+  hash_text = (oyChar*) oyObject_GetName( s->oy_, oyNAME_NICK );
 
   return hash_text;
 }
@@ -823,7 +823,7 @@ oyFilterNode_s *   oyFilterNode_NewWith (
                                        oyOptions_s       * options,
                                        oyObject_s          object )
 {
-  oyFilterCore_s * core = oyFilterCore_New( registration, options, object);
+  oyFilterCore_s * core = oyFilterCore_NewWith( registration, options, object);
   oyFilterNode_s * node = oyFilterNode_Create( core, object );
 
   oyFilterCore_Release( &core );
@@ -873,7 +873,7 @@ oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
 
   /** Observe exported options for changes and propagate to a existing graph. */
   error = oyOptions_ObserverAdd( options, (oyStruct_s*)node,
-                                 0, oyFilterNodeObserve_ );
+                                 0, oyFilterNode_Observe_ );
 
   return options;
 }
@@ -978,7 +978,7 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
     oyCMMapiFilters_s * apis;
     int apis_n = 0, i,j = 0;
     oyCMMapi9_s * cmm_api9 = 0;
-    oyCMMapi9_s_ ** cmm_api9_ = &(oyCMMapi9_s_*)cmm_api9;
+    oyCMMapi9_s_ ** cmm_api9_ = (oyCMMapi9_s_**)&cmm_api9;
     char * class, * api_reg;
     const char * reg = (*node_)->core->registration_;
 
