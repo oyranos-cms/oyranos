@@ -58,21 +58,13 @@ fi
 echo "$FILE1 -> $BRANCH1"
 echo "$FILE2 -> $BRANCH2"
 
+SHOW1=$BRANCH1:$FILE1
+SHOW2=$BRANCH2:$FILE2
+
 cat $AWK | sed "s/__FUNC__/$FUNC/" > $AWKTMP
 
-if [ $BRANCH1 != $BRANCH ]; then
-  git checkout -q $BRANCH1 || exit 1
-fi
-cat $FILE1 | awk -f $AWKTMP > $FILE1F
-
-if [ $BRANCH2 != $BRANCH1 ]; then
-  git checkout -q $BRANCH2 || exit 1
-fi
-cat $FILE2 | awk -f $AWKTMP > $FILE2F
-
-if [ $BRANCH != $BRANCH2 ]; then
-  git checkout -q $BRANCH || exit 1
-fi
+git show $SHOW1 | awk -f $AWKTMP > $FILE1F
+git show $SHOW2 | awk -f $AWKTMP > $FILE2F
 
 test $(du $FILE1F | cut -f1) = "0" && cleanup "$FUNC not found in $IN1"
 test $(du $FILE2F | cut -f1) = "0" && cleanup "$FUNC not found in $IN2"
