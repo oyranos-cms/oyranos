@@ -79,8 +79,9 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
 
       s = oyOptions_New( 0 );
 
-      apis = oyCMMsGetFilterApis_( 0, api_reg,
+      apis = oyCMMsGetFilterApis_( 0,0, api_reg,
                                    oyOBJECT_CMM_API9_S,
+                                   oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                    &rank_list, 0);
       apis_n = oyCMMapiFilters_Count( apis );
       for(i = 0; i < apis_n; ++i)
@@ -123,9 +124,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
         error = oyOption_SetValueFromDB( o );
       oyOption_Release( &o );
     }
-#if 0
     error = oyOptions_DoFilter ( s, flags, type_txt );
-#endif
   }
 
   if(type_txt)
