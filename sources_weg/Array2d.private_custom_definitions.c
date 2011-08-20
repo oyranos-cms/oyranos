@@ -20,7 +20,7 @@ void oyArray2d_Release__Members( oyArray2d_s_ * array2d )
   /* Deallocate members here
    * E.g: oyXXX_Release( &array2d->member );
    */
-  oyArray2d_ReleaseArray( array2d );
+  oyArray2d_ReleaseArray( (oyArray2d_s*)array2d );
 
   if(array2d->oy_->deallocateFunc_)
   {
@@ -70,7 +70,7 @@ int oyArray2d_Init__Members( oyArray2d_s_ * array2d )
  */
 int oyArray2d_Copy__Members( oyArray2d_s_ * dst, oyArray2d_s_ * src)
 {
-  int error = 0;
+  int error = 0, i, size;
   oyAlloc_f allocateFunc_ = 0;
   oyDeAlloc_f deallocateFunc_ = 0;
 

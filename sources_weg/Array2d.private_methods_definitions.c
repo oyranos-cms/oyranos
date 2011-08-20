@@ -29,7 +29,7 @@ oyArray2d_s_ *
     s->width = width;
     s->height = height;
     s->t = data_type;
-    oyRectangle_SetGeo( &s->data_area, 0,0, width, height );
+    oyRectangle_SetGeo( (oyRectangle_s*)&s->data_area, 0,0, width, height );
     s->array2d = s->oy_->allocateFunc_( y_len );
     error = !memset( s->array2d, 0, y_len );
     s->own_lines = oyNO;
