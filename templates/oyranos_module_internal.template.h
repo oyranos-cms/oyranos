@@ -3,6 +3,8 @@
 #ifndef {{ file_name|underscores|upper|tr:". _" }}
 #define {{ file_name|underscores|upper|tr:". _" }}
 
+#include "oyranos_module.h"
+
 #include "oyCMMapiFilters_s.h"
 
 oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
@@ -12,6 +14,16 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
                                          uint32_t            flags,
                                          uint32_t         ** rank_list,
                                          uint32_t          * count );
+oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
+                                       const char        * lib_name,
+                                       oyCMMapi_Check_f    apiCheck,
+                                       oyPointer           check_pointer,
+                                       int                 num );
+oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
+                                       const char        * cmm_required,
+                                       char             ** lib_used,
+                                       oyCMMapi_Check_f    apiCheck,
+                                       oyPointer           check_pointer );
 
 /**
  *  @internal

@@ -268,3 +268,194 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
 
   return apis2;
 }
+
+/** @internal
+ *  Function oyCMMsGetApi__
+ *  @brief get a specified module
+ *
+ *  The oyCMMapiLoadxxx_ function family loads a API from a external module.\n
+ *
+ *  This function allowes to obtain a desired API from a certain library.
+ *
+ *  @param[in]   type                  the API to return
+ *  @param[in]   lib_name              if present take this or fail, the arg
+ *                                     simplifies and speeds up the search
+ *  @param[in]   apiCheck              custom api selector
+ *  @param[in]   check_pointer         data to pass to apiCheck
+ *  @param[in]   num                   position in api chain matching to type
+ *                                     and apiCheck/check_pointer starting from
+ *                                     zero,
+ *                                     -1 means: pick the first match, useful
+ *                                     in case the API position is known or to
+ *                                     iterate through all matching API's
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/08 (Oyranos: 0.1.9)
+ *  @date    2008/12/23
+ */
+oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
+                                       const char        * lib_name,
+                                       oyCMMapi_Check_f    apiCheck,
+                                       oyPointer           check_pointer,
+                                       int                 num )
+{
+  int error = !type,
+      i = 0;
+  oyCMMapi_s * api = 0;
+  uint32_t rank = 0;
+
+  if(error <= 0 &&
+     !(oyOBJECT_CMM_API1_S <= type && type < oyOBJECT_CMM_API_MAX))
+    error = 1;
+
+  if(error <= 0)
+  {
+    /* open the module */
+    oyCMMInfo_s * cmm_info = oyCMMInfoFromLibName_( lib_name );
+
+    if(cmm_info)
+    {
+      oyCMMapi_s * tmp = cmm_info->api;
+
+      if(!apiCheck)
+        apiCheck = oyCMMapi_CheckWrap_;
+
+      while(tmp)
+      {
+        if(apiCheck(cmm_info, tmp, check_pointer, &rank) == type)
+        {
+          if((num >= 0 && num == i) ||
+             num < 0 )
+            api = tmp;
+
+          ++i;
+        }
+        tmp = tmp->next;
+      }
+    }
+
+    oyCMMInfo_Release( &cmm_info );
+  }
+
+  return api;
+}
+
+/** @internal
+ *  Function oyCMMsGetApi_
+ *  @brief get a oyranos module
+ *
+ *  The oyCMMapiLoadxxx_ function family loads a API from a external module.\n
+ *  The module system shall support:
+ *    - use of the desired CMM for the task at hand
+ *    - provide fallbacks for incapabilities
+ *    - process in different ways and by different modules through the same API
+ *
+ *  We have modules with well defined capabilities and some with fuzzy ones.\n
+ *  For instance the X11 API's is well defined and we can use it, once it is
+ *  loaded.\n
+ *  A CMM for colour conversion has often limitations or certain features,
+ *  which make it desireable. So we have to search for match to our automatic
+ *  criteria.\n
+ *
+ *
+ *  This function allowes to obtain a API for a certain modul/CMM.
+ *  oyCMMapi4_s is excluded.
+ *
+ *  @param[in]   type                  the API type to return
+ *  @param[in]   cmm_required          if present take this or fail, the arg
+ *                                     simplifies and speeds up the search
+ *  @param[out]  lib_used              inform about the selected CMM
+ *  @param[in]   apiCheck              custom API selector
+ *  @param[in]   check_pointer         data to pass to apiCheck
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2007/12/12 (Oyranos: 0.1.9)
+ *  @date    2008/12/16
+ */
+oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
+                                       const char        * cmm_required,
+                                       char             ** lib_used,
+                                       oyCMMapi_Check_f    apiCheck,
+                                       oyPointer           check_pointer )
+{
+  int error = !type;
+  oyCMMapi_s * api = 0;
+
+  if(!apiCheck)
+    apiCheck = oyCMMapi_CheckWrap_;
+
+  if(error <= 0 &&
+     !(oyOBJECT_CMM_API1_S <= type && type < oyOBJECT_CMM_API_MAX))
+    error = 1;
+
+  if(error <= 0)
+  {
+    char ** files = 0;
+    uint32_t  files_n = 0;
+    int i, oy_compatibility = 0;
+    uint32_t rank = 0,
+             max_rank = 0;
+    int max_pos = -1;
+
+    files = oyCMMsGetLibNames_(&files_n, cmm_required);
+
+    /* open the modules */
+    for( i = 0; i < files_n; ++i)
+    {
+      oyCMMInfo_s * cmm_info = oyCMMInfoFromLibName_(files[i]);
+
+      if(cmm_info)
+      {
+        oyCMMapi_s * tmp = cmm_info->api;
+
+        while(tmp)
+        {
+
+          if(apiCheck(cmm_info, tmp, check_pointer, &rank) == type)
+          {
+
+              if( /* if we found already a matching version, do not exchange*/
+                  oy_compatibility != OYRANOS_VERSION &&
+                    /* possibly newly found */
+                  ( oy_compatibility = 0 ||
+                    /* or a bigger version but not greater than current oy_ */
+                    ( cmm_info->oy_compatibility <= OYRANOS_VERSION &&
+                      oy_compatibility < cmm_info->oy_compatibility ) ||
+                    /* or we select a less greater in case we are above oy_ */
+                    ( cmm_info->oy_compatibility > OYRANOS_VERSION &&
+                      oy_compatibility > cmm_info->oy_compatibility )
+                  )
+                )
+              {
+                if(cmm_info->oy_compatibility == OYRANOS_VERSION)
+                  ++rank;
+                if(rank > max_rank)
+                {
+                  api = tmp;
+                  max_rank = rank;
+                  max_pos = i;
+
+                }
+                oy_compatibility = cmm_info->oy_compatibility;
+              }
+          }
+          tmp = tmp->next;
+        }
+      }
+
+      oyCMMInfo_Release( &cmm_info );
+    }
+
+    if(max_rank >= 0 && lib_used)
+    {
+      if(*lib_used)
+        oyFree_m_(*lib_used);
+      if(files && files_n)
+        *lib_used = oyStringCopy_( files[max_pos], oyAllocateFunc_ );
+    }
+
+    oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
+  }
+
+  return api;
+}
