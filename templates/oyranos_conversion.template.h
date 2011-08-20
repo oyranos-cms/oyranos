@@ -6,6 +6,14 @@
 
 {% include "cpp_begin.h" %}
 
+#define OY_FILTEREDGE_FREE             0x01        /**< list free edges */
+#define OY_FILTEREDGE_CONNECTED        0x02        /**< list connected edges */
+#define OY_FILTEREDGE_LASTTYPE         0x04        /**< list last type edges */
+/* decode */
+#define oyToFilterEdge_Free_m(r)       ((r)&1)
+#define oyToFilterEdge_Connected_m(r)  (((r) >> 1)&1)
+#define oyToFilterEdge_LastType_m(r)   (((r) >> 2)&1)
+
 /** @enum    oyCONNECTOR_EVENT_e
  *  @ingroup objects_conversion
  *  @brief   Connector events types
