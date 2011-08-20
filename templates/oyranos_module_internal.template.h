@@ -13,5 +13,51 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
                                          uint32_t         ** rank_list,
                                          uint32_t          * count );
 
+/**
+ *  @internal
+ *  @enum    oyREQUEST_e
+ *  @brief   grade of request complying
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/00/00 (Oyranos: 0.1.8)
+ *  @date    2008/00/00
+ */
+typedef enum {
+  oyREQUEST_NONE,                      /**< deactives the request */
+  oyREQUEST_SLIGTH,
+  oyREQUEST_MID,
+  oyREQUEST_MUCH,
+  oyREQUEST_HARD                       /**< requirement, fail if not present */
+} oyREQUEST_e;
+
+/**
+ *  @internal
+ *  @struct oyCMMapiQuery_s
+ *  @brief  check/prepare a module
+ *
+ *  @since  Oyranos: version 0.1.8
+ *  @date   2008/01/03 (API 0.1.8)
+ */
+typedef struct {
+  oyCMMQUERY_e         query;
+  uint32_t             value;
+  oyREQUEST_e          request;
+} oyCMMapiQuery_s;
+
+/**
+ *  @internal
+ *  @struct oyCMMapiQuerie_s
+ *  @brief  check/prepare a module
+ *
+ *  @since  Oyranos: version 0.1.8
+ *  @date   2008/01/03 (API 0.1.8)
+ */
+typedef struct {
+  int                  n;
+  oyCMMapiQuery_s   ** queries;
+  char                 prefered_cmm[5];
+} oyCMMapiQueries_s;
+
+
 
 #endif /* {{ file_name|underscores|upper|tr:". _" }} */
