@@ -12,8 +12,66 @@
 
 #include "oyStructList_s_.h"
 
+
 /** Public function definitions { */
+
+/** Function  oyContextCollectData_
+ *  @brief    Describe a transform uniquely
+ *  @internal
+ *
+ *  @param[in,out] s                   the context's object 
+ *  @param[in]     opts                options
+ *  @param[in]     ins                 input datas
+ *  @param[in]     outs                output datas
+ *  @return                            the objects ID text
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/26 (Oyranos: 0.1.8)
+ *  @date    2008/11/02
+ */
+const char *   oyContextCollectData_ ( oyStruct_s        * s,
+                                       oyOptions_s       * opts,
+                                       oyStructList_s    * ins,
+                                       oyStructList_s    * outs )
+{
+  int error = !s;
+  const char * model = 0;
+
+  char * hash_text = 0;
+
+  if(error <= 0)
+  {
+    /* input data */
+    hashTextAdd_m(   " <data_in>\n" );
+    hashTextAdd_m( oyStructList_GetID( ins, 0, 0 ) );
+    hashTextAdd_m( "\n </data_in>\n" );
+
+    /* options -> xforms */
+    hashTextAdd_m(   " <oyOptions_s>\n" );
+    model = oyOptions_GetText( opts, oyNAME_NAME );
+    hashTextAdd_m( model );
+    hashTextAdd_m( "\n </oyOptions_s>\n" );
+
+    /* output data */
+    hashTextAdd_m(   " <data_out>\n" );
+    hashTextAdd_m( oyStructList_GetID( outs, 0, 0 ) );
+    hashTextAdd_m( "\n </data_out>\n" );
+
+    oyObject_SetName( s->oy_, hash_text, oyNAME_NICK );
+
+    if(hash_text && s->oy_->deallocateFunc_)
+      s->oy_->deallocateFunc_( hash_text );
+    hash_text = 0;
+  }
+
+  hash_text = (oyChar*) oyObject_GetName( s->oy_, oyNAME_NICK );
+
+  return hash_text;
+}
+
 /** } Public function definitions */
+
+
 
 /** Private function definitions { */
 
