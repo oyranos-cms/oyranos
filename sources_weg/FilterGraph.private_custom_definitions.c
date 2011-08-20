@@ -87,7 +87,7 @@ int oyFilterGraph_Copy__Members( oyFilterGraph_s_ * dst, oyFilterGraph_s_ * src)
   /* Copy each value of src to dst here */
   dst->nodes = oyFilterNodes_Copy( src->nodes, 0 );
   dst->edges = oyFilterPlugs_Copy( src->edges, 0 );
-  dst->options = oyOptions_Copy( src->options, object );
+  dst->options = oyOptions_Copy( src->options, dst->oy_ );
 
   return error;
 }
