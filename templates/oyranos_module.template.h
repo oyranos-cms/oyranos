@@ -8,6 +8,8 @@
 
 #include "oyOptions_s.h"
 #include "oyFilterCore_s.h"
+#include "oyCMMInfo_s.h"
+#include "oyCMMapi_s.h"
 
 //#include "oyStruct_s.h"
 /** @brief   CMM capabilities query enum
@@ -49,6 +51,11 @@ typedef
 const char *    (* oyCMMGetText_f)   ( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context );
+
+typedef  oyOBJECT_e(*oyCMMapi_Check_f)(oyCMMInfo_s       * cmm_info,
+                                       oyCMMapi_s        * api,
+                                       oyPointer           data,
+                                       uint32_t          * rank );
 
 /** @brief   icon data
  *  @ingroup cmm_handling
