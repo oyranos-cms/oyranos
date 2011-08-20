@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2009 (C) Joseph Simon III
+ *            2009-2011 (C) Joseph Simon III
  *
  *  @brief    Printer Device Detection (CUPS module)
  *  @internal
@@ -77,6 +77,13 @@ const char * GetText                 ( const char        * select,
 const char * Api8UiGetText           ( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context );
+int          tunePPDSettings_i       ( const char        * profile_string, 
+                                       const char        * printer_id, 
+                                       ppd_file_t        * ppd);
+oyConfig_s*  getOyConfigPrinter_     ( const char        * printer_id );
+int          resetPPDChoices_        ( ppd_file_t        * ppd,
+                                       const char        * option_string,
+                                       const char        * choice );
 
 oyMessage_f message = 0;
 
@@ -1148,3 +1155,154 @@ int CUPSgetProfiles                  ( const char        * device_name,
 
     return error;
 }
+
+
+    
+/* ***************************************
+ *       tunePPDSettings_ (LOCAL)        *   
+ *****************************************
+
+     AUTHOR: Joseph Simon
+     INPUT:  const char* (Profile path string)
+             const char* (CUPS Printer Name)
+             ppd_file_t* (PPD configuration)
+     OUTPUT: ppd_file_t* (Adjusted PPD File with 
+                          cleared choices.)
+                         
+     Description:  This function will take an ICC filepath,
+                   CUPS dest name, and a PPD Configuration.
+                   Its purpose is to identify the options
+                   that will need to be adjusted in the PPD file,
+                   based on information provided in the meta tag.
+*/
+int
+tunePPDSettings_(const char* profile_string, 
+                 const char* printer_id, 
+                 ppd_file_t* ppd)
+{
+    
+    char** texts = 0;
+    int texts_n = 0, k = 0;
+    const char* all_text = "";
+    
+    ppd_file_t* new_ppd = 0;  
+    ppd_attr_t* attr = 0;
+    ppd_option_t* option = 0;    
+    
+    oyConfig_s* printer = getOyConfigPrinter_(printer_id);        
+    oyProfile_s* profile = oyProfile_FromFile(profile_string, 0, 0);
+
+    if(!profile)      
+      return 1;         
+    
+     oyProfile_DeviceAdd(profile, printer, 0);  
+     oyProfileTag_s* tag = oyProfile_GetTagById(profile, 
+                                               icSigMetaDataTag); 
+
+    if(!tag)
+      return 1;
+    else {
+      texts = oyProfileTag_GetText(tag, &texts_n, all_text, 0, 0, 0);
+            
+      for(k = 2; k < texts_n; k+=2)
+      {             
+         if(ppdFindOption(ppd, texts[k]))
+            resetPPDChoices_(ppd, texts[k], texts[k+1]);   
+      }
+    }
+    
+    oyConfig_Release( &printer );
+    
+    return 0;  
+}
+
+
+/* ******************************************
+ *       getOyConfigPrinter_ (LOCAL)        *   
+ ********************************************
+
+     AUTHOR: Joseph Simon
+     INPUT:  const char* (CUPS printer name)
+     OUTPUT: oyConfig_s* (Oyranos printer config file.)
+                         
+     Description:  Helper function that returns an Oyranos
+                   config_s* structure, based on a CUPS dest name.
+*/
+oyConfig_s* 
+getOyConfigPrinter_(const char* printer_id)
+{
+      
+    int error = 0;
+    oyConfig_s* config = oyConfig_New(0,0); 
+    
+    if(!printer_id)
+      return 0;
+
+    error = oyDeviceGet( OY_TYPE_STD, "printer", 
+                         printer_id, 0, &config ); 
+    
+    if (config && !error)
+      return config;
+    else
+      return 0;    
+}
+
+
+
+/* *****************************************
+ *       resetPPDChoices_    (LOCAL)       *   
+ *******************************************
+
+     AUTHOR: Joseph Simon
+     INPUT:  ppd_file_t* (PPD File)
+             const char* (PPD Option Key)
+             const char* (PPD Option Choice)
+     OUTPUT: ppd_file_t* (Adjusted PPD File with 
+                          cleared choices.)
+                         
+     Description:  This function requires a PPD config, an option, 
+                   and a desired choice. The selected choice will be
+                   highlighted by replacing the 'choice' pointer from
+                   the option and setting the option's 'num_choices' to 1.
+                   
+                   What is returned is a ppd configuration (in memory) of 
+                   the stripped choices.  The GUI will thus only see one choice
+                   for that option.
+*/
+int
+resetPPDChoices_(ppd_file_t* ppd, const char* option_string, const char* choice)
+{
+    
+    int i = 0;
+    int option_choices_n;
+
+    ppd_option_t* option = 0;
+    ppd_choice_t* choice_ptr = 0;
+    
+    option = ppdFindOption(ppd, option_string);
+    
+    if(option) {      
+      
+      ppd_choice_t* current_choice = ppdFindChoice(option, choice);
+      
+      if(current_choice) {
+
+        ppd_choice_t* choice_cpy = (ppd_choice_t*)malloc(sizeof(ppd_choice_t));   
+        
+        strcpy(choice_cpy->choice, current_choice->choice);
+        strcpy(choice_cpy->text, current_choice->text);
+
+        choice_cpy->option = option;   
+
+        /* We strip the number of choices. */        
+        option->choices = choice_cpy;
+        option->num_choices = 1;        
+      } 
+    }
+    
+    printf("**XCPDCM Selector**   Profile Option '%s' saved as '%s'.\n", 
+           option_string, choice);
+    
+    return 0;    
+}
+
