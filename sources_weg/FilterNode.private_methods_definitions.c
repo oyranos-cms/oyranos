@@ -444,15 +444,15 @@ oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s_    * node,
  *  @since   2009/10/28 (Oyranos: 0.1.10)
  *  @date    2009/10/28
  */
-int      oyFilterNodeObserve_        ( oyObserver_s      * observer,
+int      oyFilterNode_Observe_       ( oyObserver_s      * observer,
                                        oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data )
 {
   int handled = 0;
   int i,n;
   oyFilterSocket_s * socket = 0;
-  oyFilterNode_s * node = 0;
-  oyObserver_s * obs = observer;
+  oyFilterNode_s_ * node = 0;
+  oyObserver_s  * obs = observer;
 
   if(observer && observer->model &&
      observer->model->type_ == oyOBJECT_OPTIONS_S &&
@@ -466,16 +466,16 @@ int      oyFilterNodeObserve_        ( oyObserver_s      * observer,
                     oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
                     oyObject_GetId(   obs->observer->oy_) );
 
-    node = (oyFilterNode_s*)observer->observer;
+    node = (oyFilterNode_s_*)observer->observer;
 
     /* invalidate the context */
     if(node->backend_data)
       node->backend_data->release( (oyStruct_s**)&node->backend_data );
 
-    n = oyFilterNode_EdgeCount( node, 0, 0 );
+    n = oyFilterNode_EdgeCount( (oyFilterNode_s*)node, 0, 0 );
     for(i = 0; i < n; ++i)
     {
-      socket = oyFilterNode_GetSocket( node, i );
+      socket = oyFilterNode_GetSocket( (oyFilterNode_s*)node, i );
       /* forward to the downward graph */
       oyFilterSocket_SignalToGraph( socket, signal_type );
     }
