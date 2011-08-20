@@ -5,13 +5,14 @@
 
 #define oy{{ class.baseName }}Priv_m( var ) (({{ class.privName }}*) (var))
 
+typedef struct {{ class.privName }} {{ class.privName }};
+
 {% block GlobalIncludeFiles %}{% endblock %}  
 #include <oyranos_object.h>
 {% block LocalIncludeFiles %}{% endblock %}  
 
 #include "{{ class.name }}.h"
 
-typedef struct {{ class.privName }} {{ class.privName }};
 /* Include "{{ class.private_h }}" { */
 {% include class.private_h %}
 /* } Include "{{ class.private_h }}" */
