@@ -3,6 +3,7 @@
 {% block LocalIncludeFiles %}
 {{ block.super }}
 #include "oyCMMobjectType_s.h"
+#include "oyConversion_s.h"
 #include "oyCMMui_s_.h"
 {% endblock %}
 

@@ -60,7 +60,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
     /*  1. get filter */
 
     /*  2. get implementation for filter type */
-    api5 = filter->api4_->api5_;
+    api5 = (oyCMMapi5_s*)filter->api4_->api5_;
 
     /*  3. parse static common options from a policy module */
     if(api5 && flags & OY_SELECT_COMMON)
@@ -153,7 +153,7 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s_   * s,
   if(error <= 0)
     allocateFunc_ = s->oy_->allocateFunc_;
 
-  error = !(cmm_api4 && cmm_api4->type == oyOBJECT_CMM_API4_S);
+  error = !(cmm_api4 && cmm_api4->type_ == oyOBJECT_CMM_API4_S);
 
   if(error <= 0)
   {
@@ -175,7 +175,7 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s_   * s,
       oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
     }
 
-    s->api4_ = (oyCMMapi4_s*)cmm_api4;
+    s->api4_ = cmm_api4;
   }
 
   if(error && s)
