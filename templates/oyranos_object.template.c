@@ -800,3 +800,21 @@ int    oyTextIccDictMatch            ( const char        * text,
 
   return match;
 }
+
+/** @internal
+ *  @brief   wrapper for oyDeAllocateFunc_
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/27 (Oyranos: 0.1.10)
+ *  @date    2008/12/27
+ */
+int oyPointerRelease                 ( oyPointer         * ptr )
+{
+  if(ptr && *ptr)
+  {
+    oyDeAllocateFunc_(*ptr);
+    *ptr = 0;
+    return 0;
+  }
+  return 1;
+}
