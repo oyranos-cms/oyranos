@@ -121,7 +121,7 @@ OYAPI int  OYEXPORT
     if(do_it &&
        (*node_)->core->api4_->oyCMMFilterNode_ContextToMem &&
        strlen((*node_)->api7_->context_type))
-      oyFilterNode_ContextSet_( node, 0 );
+      oyFilterNode_ContextSet_( *node_, 0 );
 
     oyFilterNode_Release( &node );
   }
@@ -165,7 +165,10 @@ OYAPI int  OYEXPORT
     s->nodes = oyFilterNodes_New( 0 );
     s->edges = oyFilterPlugs_New( 0 );
 
-    oyFilterNode_AddToAdjacencyLst_( (oyFilterNode_s_*)node, s->nodes, s->edges, mark, flags );
+    oyFilterNode_AddToAdjacencyLst_( (oyFilterNode_s_*)node,
+                                     (oyFilterNodes_s_*)s->nodes,
+                                     (oyFilterPlugs_s_ *)s->edges,
+                                     mark, flags );
   }
 
   return 0;
@@ -256,7 +259,7 @@ OYAPI char * OYEXPORT
   oyFilterNode_s * node = 0;
   oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
   char * save_locale = 0;
-  oyFilterGraph_s_ * s = graph;
+  oyFilterGraph_s_ * s = (oyFilterGraph_s_*)graph;
 
   oyFilterPlug_s_ * p = 0;
   int i, n,
@@ -343,11 +346,11 @@ OYAPI char * OYEXPORT
 
     oySprintf_( temp,
                 "    %d:socket -> %d:plug [arrowhead=crow, arrowtail=box];\n",
-                oyFilterNode_GetId( p->remote_socket_->node ),
-                oyFilterNode_GetId( p->node ) );
+                oyFilterNode_GetId( (oyFilterNode_s*)p->remote_socket_->node ),
+                oyFilterNode_GetId( (oyFilterNode_s*)p->node ) );
     STRING_ADD( text, temp );
 
-    oyFilterPlug_Release( (oyFilterPlug_s_**)&p );
+    oyFilterPlug_Release( (oyFilterPlug_s**)&p );
   }
 
   STRING_ADD( text, "\n" );
