@@ -186,7 +186,7 @@ int            oyArray2d_ReleaseArray( oyArray2d_s       * obj )
     if(oy_debug > 3)
       oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)s,
                        OY_DBG_FORMAT_ "s->data_area: %s", OY_DBG_ARGS_,
-                       oyRectangle_Show(&s->data_area) );
+                       oyRectangle_Show((oyRectangle_s*)&s->data_area) );
 
     for( y = s->data_area.y; y < y_max; ++y )
     {
