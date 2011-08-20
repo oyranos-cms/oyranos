@@ -1185,19 +1185,15 @@ tunePPDSettings_(const char* profile_string,
     int texts_n = 0, k = 0;
     const char* all_text = "";
     
-    ppd_file_t* new_ppd = 0;  
-    ppd_attr_t* attr = 0;
-    ppd_option_t* option = 0;    
-    
     oyConfig_s* printer = getOyConfigPrinter_(printer_id);        
     oyProfile_s* profile = oyProfile_FromFile(profile_string, 0, 0);
+    oyProfileTag_s* tag;
 
     if(!profile)      
       return 1;         
     
-     oyProfile_DeviceAdd(profile, printer, 0);  
-     oyProfileTag_s* tag = oyProfile_GetTagById(profile, 
-                                               icSigMetaDataTag); 
+    oyProfile_DeviceAdd(profile, printer, 0);  
+    tag = oyProfile_GetTagById(profile, icSigMetaDataTag); 
 
     if(!tag)
       return 1;
@@ -1272,12 +1268,7 @@ getOyConfigPrinter_(const char* printer_id)
 int
 resetPPDChoices_(ppd_file_t* ppd, const char* option_string, const char* choice)
 {
-    
-    int i = 0;
-    int option_choices_n;
-
     ppd_option_t* option = 0;
-    ppd_choice_t* choice_ptr = 0;
     
     option = ppdFindOption(ppd, option_string);
     
