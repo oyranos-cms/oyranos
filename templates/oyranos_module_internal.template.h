@@ -24,6 +24,7 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        char             ** lib_used,
                                        oyCMMapi_Check_f    apiCheck,
                                        oyPointer           check_pointer );
+oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text );
 
 /**
  *  @internal
