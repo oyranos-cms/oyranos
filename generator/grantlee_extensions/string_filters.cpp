@@ -27,7 +27,7 @@ CamelcaseToUnderscoreFilter::doFilter( const QVariant& input, const QVariant& ar
     if (!pre.isLetterOrNumber() || !cur.isLetterOrNumber()) {
       under += pre;
       upword = false;
-    } else if ((pre.isLower() && cur.isLower()) || cur.isNumber()) {
+    } else if (((pre.isLower() || pre.isNumber()) && cur.isLower()) || cur.isNumber()) {
       under += pre;
     } else if (pre.isLower() && cur.isUpper()) {
       under += pre;
