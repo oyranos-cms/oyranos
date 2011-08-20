@@ -1,4 +1,4 @@
-  oyFilterNode_s     * node;           /**< filter node for this connector */
+  oyFilterNode_s_    * node;           /**< filter node for this connector */
   oyFilterSocket_s_  * remote_socket_; /**< @private the remote output */
 
   oyConnector_s      * pattern;        /**< a pattern the filter node can handle through this connector */

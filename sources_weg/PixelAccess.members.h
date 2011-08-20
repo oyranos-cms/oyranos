@@ -11,7 +11,7 @@
   oyArray2d_s    * array;              /**< processing data. The position is in
                                             start_xy relative to the previous
                                             mediator in the graph. */
-  oyRectangle_s  * output_image_roi;   /**< rectangle of interesst; The
+  oyRectangle_s_ * output_image_roi;   /**< rectangle of interesst; The
                                             rectangle is to be seen in relation
                                             to the
                                             output_image (of the last filter).*/

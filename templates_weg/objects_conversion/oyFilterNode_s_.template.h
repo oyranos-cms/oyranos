@@ -6,6 +6,7 @@
 #include "oyBlob_s_.h"
 #include "oyFilterNodes_s_.h"
 #include "oyFilterPlugs_s_.h"
+#include "oyFilterCore_s_.h"
 {% endblock %}
 
 {% block ChildMembers %}

@@ -3,7 +3,7 @@
   oyFilterSocket_s  ** sockets;        /**< possible output connectors */
   int                  sockets_n_;     /**< readonly number of outputs */
 
-  oyFilterCore_s     * core;           /**< the filter core */
+  oyFilterCore_s_    * core;           /**< the filter core */
   char               * relatives_;     /**< @private hint about belonging to a filter */
   oyOptions_s        * tags;           /**< infos, e.g. group markers */
 

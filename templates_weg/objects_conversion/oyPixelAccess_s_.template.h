@@ -3,6 +3,7 @@
 {% block LocalIncludeFiles %}
 {{ block.super }}
 #include "oyFilterGraph_s_.h"
+#include "oyRectangle_s_.h"
 {% endblock %}
 
 {% block ChildMembers %}

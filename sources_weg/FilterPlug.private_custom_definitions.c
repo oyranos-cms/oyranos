@@ -20,10 +20,10 @@ void oyFilterPlug_Release__Members( oyFilterPlug_s_ * filterplug )
   /* Deallocate members here
    * E.g: oyXXX_Release( &filterplug->member );
    */
-  oyFilterNode_Release( &filterplug->node );
+  oyFilterNode_Release( (oyFilterNode_s**)&filterplug->node );
 
   oyFilterSocket_Callback( (oyFilterPlug_s*)filterplug, oyCONNECTOR_EVENT_RELEASED );
-  oyFilterSocket_Release( &filterplug->remote_socket_ );
+  oyFilterSocket_Release( (oyFilterSocket_s**)&filterplug->remote_socket_ );
 
   oyConnector_Release( &filterplug->pattern );
 
@@ -90,7 +90,7 @@ int oyFilterPlug_Copy__Members( oyFilterPlug_s_ * dst, oyFilterPlug_s_ * src)
 
   /* Copy each value of src to dst here */
   dst->pattern = oyConnector_Copy( src->pattern, dst->oy_ );
-  dst->node = oyFilterNode_Copy( src->node, 0 );
+  dst->node = (oyFilterNode_s_*)oyFilterNode_Copy( (oyFilterNode_s*)src->node, 0 );
 
   return error;
 }

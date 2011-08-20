@@ -28,12 +28,12 @@ int                oyPixelAccess_ChangeRectangle (
     error = 1;
 
   if(error <= 0 && output_rectangle)
-    oyRectangle_SetByRectangle( (*pixel_access_)->output_image_roi,
+    oyRectangle_SetByRectangle( (oyRectangle_s*)(*pixel_access_)->output_image_roi,
                                 output_rectangle );
 
   if(error <= 0)
   {
-    oyRectangle_SetByRectangle( (oyRectangle_s*)roi, (*pixel_access_)->output_image_roi );
+    oyRectangle_SetByRectangle( (oyRectangle_s*)roi, (oyRectangle_s*)(*pixel_access_)->output_image_roi );
     (*pixel_access_)->start_xy[0] = roi->x = start_x;
     (*pixel_access_)->start_xy[1] = roi->y = start_y;
   }
@@ -99,7 +99,7 @@ oyPixelAccess_s *  oyPixelAccess_Create (
     if(image)
       s->output_image_roi->height = oyImage_Height( image ) / (double)oyImage_Width( image );
     s->output_image = oyImage_Copy( image, 0 );
-    s->graph = oyFilterGraph_FromNode( sock->node, 0 );
+    s->graph = (oyFilterGraph_s_*)oyFilterGraph_FromNode( (oyFilterNode_s*)sock->node, 0 );
 
     if(type == oyPIXEL_ACCESS_POINT)
     {
