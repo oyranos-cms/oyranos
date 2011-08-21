@@ -15,6 +15,7 @@ const QStringList ClassGenerator::templateSuffixes(
     "*.template.hh" <<
     "*.template.c" <<
     "*.template.cc" <<
+    "*.template.py" <<
     "*.template.txt"
 );
 
