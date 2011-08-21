@@ -107,7 +107,7 @@
   {% endifequal %}
   {% ifequal class.parent.parent.name "oyStruct_s" %}
   /* ---- start of custom {{ class.parent.baseName }} constructor ----- */
-  error += oy{{ class.parent.baseName }}_Init__Members( s );
+  error += oy{{ class.parent.baseName }}_Init__Members( ({{ class.parent.privName }}*)s );
   /* ---- end of custom {{ class.parent.baseName }} constructor ------- */
   /* ---- start of custom {{ class.baseName }} constructor ----- */
   error += oy{{ class.baseName }}_Init__Members( s );
@@ -115,10 +115,10 @@
   {% endifequal %}
   {% ifequal class.parent.parent.parent.name "oyStruct_s" %}
   /* ---- start of custom {{ class.parent.parent.baseName }} constructor ----- */
-  error += oy{{ class.parent.parent.baseName }}_Init__Members( s );
+  error += oy{{ class.parent.parent.baseName }}_Init__Members( ({{ class.parent.parent.privName }}*)s );
   /* ---- end of custom {{ class.parent.parent.baseName }} constructor ------- */
   /* ---- start of custom {{ class.parent.baseName }} constructor ----- */
-  error += oy{{ class.parent.baseName }}_Init__Members( s );
+  error += oy{{ class.parent.baseName }}_Init__Members( ({{ class.parent.privName }}*)s );
   /* ---- end of custom {{ class.parent.baseName }} constructor ------- */
   /* ---- start of custom {{ class.baseName }} constructor ----- */
   error += oy{{ class.baseName }}_Init__Members( s );
@@ -126,13 +126,13 @@
   {% endifequal %}
   {% ifequal class.parent.parent.parent.parent.name "oyStruct_s" %}
   /* ---- start of custom {{ class.parent.parent.parent.baseName }} constructor ----- */
-  error += oy{{ class.parent.parent.parent.baseName }}_Init__Members( s );
+  error += oy{{ class.parent.parent.parent.baseName }}_Init__Members( ({{ class.parent.parent.parent.privName }}*)s );
   /* ---- end of custom {{ class.parent.parent.parent.baseName }} constructor ------- */
   /* ---- start of custom {{ class.parent.parent.baseName }} constructor ----- */
-  error += oy{{ class.parent.parent.baseName }}_Init__Members( s );
+  error += oy{{ class.parent.parent.baseName }}_Init__Members( ({{ class.parent.parent.privName }}*)s );
   /* ---- end of custom {{ class.parent.parent.baseName }} constructor ------- */
   /* ---- start of custom {{ class.parent.baseName }} constructor ----- */
-  error += oy{{ class.parent.baseName }}_Init__Members( s );
+  error += oy{{ class.parent.baseName }}_Init__Members( ({{ class.parent.privName }}*)s );
   /* ---- end of custom {{ class.parent.baseName }} constructor ------- */
   /* ---- start of custom {{ class.baseName }} constructor ----- */
   error += oy{{ class.baseName }}_Init__Members( s );
