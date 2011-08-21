@@ -788,6 +788,41 @@ yajl_status    oyjl_tree_print( oyjl_value_s * v, int * level, FILE * fp )
   return yajl_status_ok;
 }
 
+char *   oyjl_value_text             ( oyjl_value_s      * v,
+                                       void              * (*my_alloc)(size_t len) )
+{
+  char * text = NULL;
+  const char * tmp;
+
+  if(!my_alloc)
+    my_alloc = malloc;
+
+  if(v &&
+     v->type == oyjl_type_object &&
+     v->value.object->value)
+  switch(v->value.object->value->type)
+  {
+    case oyjl_type_none:
+         break;
+    case oyjl_type_boolean:
+         text = my_alloc(12);
+         if(text) sprintf( text, "%d", v->value.object->value->value.boolean); break;
+    case oyjl_type_integer:
+         text = my_alloc(80);
+         if(text) sprintf( text, "%li", v->value.object->value->value.integer); break;
+    case oyjl_type_double:
+         text = my_alloc(80);
+         if(text) sprintf( text, "%g", v->value.object->value->value.floating); break;
+    case oyjl_type_text:
+         tmp = oyjl_print_text(&v->value.object->value->value.text);
+         if(tmp) text = my_alloc(strlen(tmp)+1);
+         if(text) sprintf( text, "%s", tmp); break;
+    default:
+         break;
+  }
+  return text;
+}
+
 char **        oyjl_string_split     ( const char        * text,
                                        int               * count )
 {

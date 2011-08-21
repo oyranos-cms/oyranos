@@ -124,6 +124,8 @@ oyjl_value_s * oyjl_tree_get_value   ( oyjl_value_s      * root,
 int            oyjl_value_count      ( oyjl_value_s      * value );
 oyjl_value_s * oyjl_value_pos_get    ( oyjl_value_s      * value,
                                        int                 pos );
+char *         oyjl_value_text       ( oyjl_value_s      * value,
+                                       void              * (*my_alloc)(size_t len) );
 
 typedef enum {
   oyjl_message_info = 400 + yajl_status_ok,
