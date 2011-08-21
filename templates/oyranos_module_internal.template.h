@@ -5,6 +5,7 @@
 
 #include "oyranos_module.h"
 
+#include "oyHash_s.h"
 #include "oyCMMapiFilters_s.h"
 
 oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,

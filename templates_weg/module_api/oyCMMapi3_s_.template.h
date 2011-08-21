@@ -9,6 +9,7 @@
 {{ block.super }}
 #include "oyStructList_s.h"
 #include "oyProfileTag_s.h"
+#include "oyCMMapi_s_.h"
 {% endblock %}
 
 {% block ChildMembers %}
