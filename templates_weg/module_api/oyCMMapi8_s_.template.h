@@ -2,6 +2,7 @@
 
 {% block LocalIncludeFiles %}
 {{ block.super }}
+#include "oyConfigs_s.h"
 #include "oyCMMapi5_s.h"
 #include "oyCMMui_s.h"
 

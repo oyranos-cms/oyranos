@@ -274,7 +274,7 @@ oyOBJECT_e   oyCMMapi_selectFilter_  ( oyCMMInfo_s_      * info,
                                        uint32_t          * rank )
 {
   oyOBJECT_e type = oyOBJECT_NONE;
-  oyCMMapiFilter_s_ * cmm_api = (oyCMMapiFilter_s *) api;
+  oyCMMapiFilter_s_ * cmm_api = (oyCMMapiFilter_s_*) api;
   int error = !data || !api;
   oyRegistrationData_s * reg_filter;
   int found = 0;
@@ -283,7 +283,7 @@ oyOBJECT_e   oyCMMapi_selectFilter_  ( oyCMMInfo_s_      * info,
     reg_filter = (oyRegistrationData_s*) data;
 
   if(error <= 0 &&
-     api->type_ == reg_filter->type_)
+     api->type_ == reg_filter->type)
   {
     if(reg_filter->registration)
     {
