@@ -1,6 +1,7 @@
 {% extends "Base_s_.h" %}
 
 {% block LocalIncludeFiles %}
+#include "oyranos_module.h"
 #include "oyCMMapi_s.h"
 {% endblock %}
 

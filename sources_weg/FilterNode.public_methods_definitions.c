@@ -30,8 +30,8 @@ int          oyCMMptr_ConvertData    ( oyPointer_s       * cmm_ptr,
     error = !api6;
   }
 
-  if(error <= 0 && api6->oyCMMdata_Convert)
-    error = api6->oyCMMdata_Convert( cmm_ptr, cmm_ptr_out, node );
+  if(error <= 0 && api6->oyModuleData_Convert)
+    error = api6->oyModuleData_Convert( cmm_ptr, cmm_ptr_out, node );
   else
     error = 1;
 
