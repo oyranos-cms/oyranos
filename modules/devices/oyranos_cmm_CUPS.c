@@ -335,7 +335,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
           if(!error && data && size)
           {           
             o = oyOption_FromRegistration(
-                                    CMM_BASE_REG OY_SLASH "device_context", 0 );
+                           CMM_BASE_REG OY_SLASH "device_context.PPD.text", 0 );
             error = !o;
             if(!error)
               error = oyOption_SetFromData( o, data, size );
@@ -1229,7 +1229,7 @@ getOyConfigPrinter_(const char* printer_id)
 {
       
     int error = 0;
-    oyConfig_s* config = oyConfig_New(0,0); 
+    oyConfig_s* config = 0; 
     
     if(!printer_id)
       return 0;
