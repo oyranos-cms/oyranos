@@ -27,8 +27,6 @@
 #include "oyranos_string.h"
 #include "oyranos_version.h"
 
-#include "oyjl/oyjl_tree.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -88,7 +86,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Write to ICC profile:"));
   fprintf( stderr, "      %s -w NAME [-j FILE_NAME] FILE_NAME\n",        argv[0]);
-  fprintf( stderr, "      -w NAME  %s\n",       _("use new name"));
+  fprintf( stderr, "      -w NAME       %s\n",  _("use new name"));
   fprintf( stderr, "      -j FILE_NAME  %s\n",  _("embed OpenICC device JSON from file"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Print a help text:"));
@@ -98,7 +96,8 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      %s\n",           _("-v verbose"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s:\n",               _("Example"));
-  fprintf( stderr, "      oyranos-profile -lv -p=1 sRGB.icc");
+  fprintf( stderr, "      oyranos-profile -lv -p=1 sRGB.icc\n");
+  fprintf( stderr, "      oyranos-profile -w test -j test.json sRGB.icc");
   fprintf( stderr, "\n");
   fprintf( stderr, "\n");
 
@@ -203,16 +202,21 @@ int main( int argc , char** argv )
 
   if(file_name && profile_name)
   {
-    oyConfig_s * config;
-    oyjl_value_s * json = 0,
-                 * json_device,
-                 * json_tmp;
-    char * prefix, * val, * key, * tmp;
+    oyConfig_s * device;
+    oyOptions_s * opts = NULL;
+    char * json_text;
+    char * data = 0;
+    size_t size = 0;
+    char * pn = 0;
 
-    p = oyProfile_FromFile( profile_name, 0, 0 );
+    STRING_ADD( pn, profile_name );
+    if(!strrchr(profile_name, '.'))
+      STRING_ADD( pn, ".icc" );
+
+    p = oyProfile_FromFile( pn, 0, 0 );
     if(p)
     {
-      fprintf(stderr, "%s: %s %s\n", _("Profile exists already"), profile_name, _("Exit!"));
+      fprintf(stderr, "%s: \"%s\" - %s\n", _("Profile exists already"), pn, _("Exit!"));
       printfHelp(argc, argv);
       exit(1);
     }
@@ -224,19 +228,33 @@ int main( int argc , char** argv )
     error = oyProfile_AddTagText( p, icSigProfileDescriptionTag, profile_name );
 
     {
-      char * json_text;
       size_t json_size = 0;
-      yajl_status status;
       json_text = oyReadFileToMem_( json_name, &json_size, oyAllocateFunc_ );
-      config = oyConfig_New( "//" OY_TYPE_STD "/config", 0 );
-      status = oyjl_tree_from_json( json_text, &json, 0 );
-      oyDeAllocateFunc_(json_text);
+      oyDeviceFromJSON( json_text, NULL, &device );
     }
-    json_device = oyjl_tree_get_value( json,
-                                      "org/freedesktop/openicc/device/[0]/");
-    json_tmp = oyjl_tree_get_value( json_device, "prefix" );
-    if(json_tmp)
-      prefix = oyjl_print_text( &json_tmp->value.text );
+      
+    error = oyOptions_SetFromText( &opts, "///set_device_attributes",
+                                   "true", OY_CREATE_NEW );
+    oyProfile_DeviceAdd( p, device, opts );
+    oyOptions_Release( &opts );
+    data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
+
+    if(data && size)
+    {
+      uint32_t id[4];
+
+      oyFree_m_(data);
+
+      oyProfile_GetMD5( p, OY_COMPUTE, id );
+      oyProfile_ToFile_( p, pn );
+      oyFree_m_( pn );
+    }
+
+    oyDeAllocateFunc_(json_text);
+
+    oyProfile_Release( &p );
+    oyConfig_Release( &device );
+
   } else
   if(file_name)
   {
