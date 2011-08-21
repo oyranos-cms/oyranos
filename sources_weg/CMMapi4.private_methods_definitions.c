@@ -21,19 +21,19 @@ oyOBJECT_e   oyCMMapi4_SelectFilter_ ( oyCMMapi_s_       * api,
     reg_filter = (oyRegistrationData_s*) data;
 
   if(error <= 0 &&
-     api->type == searched &&
+     api->type_ == searched &&
      reg_filter->type == searched)
   {
     if(reg_filter->registration)
     {
       if(oyFilterRegistrationMatch( cmm_api->registration,
-                                    reg_filter->registration, api->type ))
+                                    reg_filter->registration, api->type_ ))
         found = 1;
     } else
       found = 1;
 
     if( found )
-      type = api->type;
+      type = api->type_;
   }
 
   return type;

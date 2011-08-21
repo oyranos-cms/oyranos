@@ -99,6 +99,7 @@ typedef enum {
   oyOBJECT_CMM_API7_S,                /**< oyCMMapi7_s */
   oyOBJECT_CMM_DATA_TYPES_S,          /**< oyCMMDataTypes_s */
   oyOBJECT_CMM_API8_S,                /**< oyCMMapi8_s */
+  oyOBJECT_CMM_API_FILTER_S,          /**< oyCMMapiFilter_s */
   oyOBJECT_CMM_API_FILTERS_S,         /**< oyCMMapiFilters_s */
   oyOBJECT_CMM_API9_S,                /**< oyCMMapi9_s */
   oyOBJECT_CMM_API10_S,               /**< oyCMMapi10_s */
