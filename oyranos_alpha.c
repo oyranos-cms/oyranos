@@ -28,6 +28,9 @@
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
+
+#include "oyjl/oyjl_tree.h"
+
 #ifdef HAVE_POSIX
 #include <dlfcn.h>
 #endif
@@ -7770,6 +7773,57 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
 
   } else
     WARNc_S( "missed argument(s)" );
+
+  return error;
+}
+
+/** Function oyDeviceGetJSON
+ *  @brief   get JSON format text for a device calibration
+ *
+ *  @param[out]   json_text            the device calibration
+ *  @param[in]    options              unused
+ *  @param[out]   config               the device
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.3.2
+ *  @since   2011/08/21 (Oyranos: 0.3.2)
+ *  @date    2011/08/21
+ */
+OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
+                                       oyOptions_s       * options,
+                                       oyConfig_s       ** device )
+{
+  int error = 0;
+  oyConfig_s * device_ = NULL;
+  oyjl_value_s * json = 0,
+               * json_device;
+  char * val, * key;
+  const char * xpath = "org/freedesktop/openicc/device/[0]/[0]";
+  int count, i;
+
+  yajl_status status;
+
+  device_ = oyConfig_New( "//" OY_TYPE_STD "/config", 0 );
+  status = oyjl_tree_from_json( json_text, &json, 0 );
+
+  json_device = oyjl_tree_get_value( json, xpath );
+  if(!json_device)
+    WARNc3_S( "\"%s\" %s \"%s\"\n", xpath,_("not found:"), xpath );
+      
+  count = oyjl_value_count(json_device);
+  for(i = 0; i < count; ++i)
+  {
+    oyjl_value_s * v = oyjl_value_pos_get( json_device, i );
+    key = oyStringCopy_(oyjl_print_text( &v->value.object->key ), 0);
+    val = oyjl_value_text( v, oyAllocateFunc_ );
+      
+    oyConfig_AddDBData( device_, key, val, OY_CREATE_NEW );
+    oyDeAllocateFunc_(key);
+    oyDeAllocateFunc_(val);
+  }
+
+  *device = device_;
+  device_ = NULL;
 
   return error;
 }

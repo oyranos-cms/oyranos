@@ -564,6 +564,7 @@ OYAPI oyOption_s * OYEXPORT
                                        int                 pos );
 
 
+
 /** @struct  oyConfigs_s
  *  @brief   a Configs list
  *  @ingroup objects_value
@@ -963,6 +964,10 @@ OYAPI int  OYEXPORT
            oyDeviceGet               ( const char        * device_type,
                                        const char        * device_class,
                                        const char        * device_name,
+                                       oyOptions_s       * options,
+                                       oyConfig_s       ** device );
+OYAPI int  OYEXPORT
+           oyDeviceFromJSON          ( const char        * json,
                                        oyOptions_s       * options,
                                        oyConfig_s       ** device );
 OYAPI int  OYEXPORT
