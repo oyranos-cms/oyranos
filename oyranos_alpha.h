@@ -1003,6 +1003,10 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
                                        oyConfigs_s       * heap,
                                        uint32_t            flags,
                                        oyConfigs_s      ** matched_devices );
+OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
+                                       oyOptions_s       * options,
+                                       char             ** json_text,
+                                       oyAlloc_f           allocateFunc );
 
 
 /** @enum    oyDATALAYOUT_e
