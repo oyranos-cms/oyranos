@@ -879,7 +879,7 @@ $(LIBNAME):	$(OBJECTS)
 	echo Linking $@ ...
 	test -f $(LIBNAME) && $(RM) $(LIBNAME) || echo ""
 	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIBNAME) \
-		$(OBJECTS)
+		$(OBJECTS) $(YAJL_OBJECTS)
 	$(RANLIB) $(LIBNAME)
 $(LIBNAME_MODULES):	$(OBJECTS_MODULES)
 	echo Linking $@ ...

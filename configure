@@ -724,7 +724,7 @@ if [ $OSUNAME = "Darwin" ]; then
   test -n "$ECHO" && $ECHO "I18N_LIB = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
   test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
   INSTALL="install -p $DEBUG_SWITCH"
-  oyranos_add="-framework ApplicationServices \$ltdl \$xml2"
+  oyranos_add="-framework ApplicationServices \$ltdl \$xml2 \$yajl"
   if [ -n "$devel" ]; then
     DEVEL_LIBS="\$(LIBS_CMM)"
   fi
@@ -739,7 +739,7 @@ else
         --copyright-holder='Kai-Uwe Behrmann' \
         --msgid-bugs-address='ku.b@gmx.de' \
         --from-code=utf-8" >> $CONF
-  oyranos_add="-L\$libdir \$ltdl \$xml2 \$iconv \$intl"
+  oyranos_add="-L\$libdir \$ltdl \$xml2 \$iconv \$intl \$yajl"
   if [ $OSUNAME = "Linux" ]; then
     COPY="cp -vdpa"
     MOVE="mv -v"
