@@ -19,7 +19,7 @@ oyOBJECT_e   oyCMMapi3_Query_        ( oyCMMInfo_s_      * cmm_info,
   int prefered = 1;
   oyCMMapi3_s_ * api3 = 0;
 
-  if(api->type == oyOBJECT_CMM_API3_S)
+  if(api->type_ == oyOBJECT_CMM_API3_S)
     api3 = (oyCMMapi3_s_*) api;
 
   if(memcmp( queries->prefered_cmm, cmm_info->cmm, 4 ) == 0)
@@ -31,7 +31,7 @@ oyOBJECT_e   oyCMMapi3_Query_        ( oyCMMInfo_s_      * cmm_info,
     *rank = rank_ * prefered;
 
   if(rank_)
-    return api->type;
+    return api->type_;
   else
     return oyOBJECT_NONE;
 }
