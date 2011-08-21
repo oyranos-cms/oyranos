@@ -2019,6 +2019,68 @@ oyTESTRESULT_e testCMMDevicesDetails ()
 
   return result;
 }
+      
+oyTESTRESULT_e testCMMMonitorJSON ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  int i;
+  int error = 0;
+  double clck = 0;
+
+#ifdef USE_GETTEXT
+  setlocale(LC_ALL,"");
+#endif
+
+  oyConfigs_s * configs = 0;
+  oyConfig_s * config = 0;
+  int devices_n = 0;
+  oyOptions_s * options = NULL;
+
+  clck = oyClock();
+  error = oyOptions_SetFromText( &options,
+                                     "//" OY_TYPE_STD "/config/command",
+                                     "properties", OY_CREATE_NEW );
+  error = oyDevicesGet( 0, "monitor", options, &configs );
+  clck = oyClock() - clck;
+  devices_n = oyConfigs_Count( configs );
+  for( i = 0; i < devices_n; ++i )
+  {
+    char * json_text = 0;
+    config = oyConfigs_Get( configs, i );
+    oyDeviceToJSON( config, 0, &json_text, malloc );
+    printf( "  %d oyDeviceToJSON():\n%s\n", i,
+            json_text );
+
+    oyConfig_Release( &config );
+    if( json_text )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyDeviceToJSON() \"monitor\"       " );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+      "oyDeviceToJSON() \"monitor\"       " );
+    }
+
+    oyDeviceFromJSON( json_text, 0, &config );
+    if( config )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyDeviceFromJSON() %d             ", oyConfig_Count(config) );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+      "oyDeviceFromJSON() %d             ", oyConfig_Count(config) );
+    }
+
+    oyFree_m_( json_text );
+  }
+
+  oyConfigs_Release( &configs );
+  fprintf( stdout, "\n");
+
+  return result;
+}
+
 
 oyTESTRESULT_e testCMMMonitorListing ()
 {
@@ -3753,6 +3815,7 @@ int main(int argc, char** argv)
   TEST_RUN( testPolicy, "Policy handling" );
   TEST_RUN( testCMMDevicesListing, "CMM devices listing" );
   TEST_RUN( testCMMDevicesDetails, "CMM devices details" );
+  TEST_RUN( testCMMMonitorJSON, "monitor JSON" );
   TEST_RUN( testCMMMonitorListing, "CMM monitor listing" );
   TEST_RUN( testCMMDBListing, "CMM DB listing" );
   TEST_RUN( testCMMmonitorDBmatch, "CMM monitor DB match" );
