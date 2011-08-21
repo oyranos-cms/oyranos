@@ -107,8 +107,8 @@ int          oyFilterSocket_MatchImagingPlug (
     }
   }
 
-  oyImage_Release( &(oyImage_s*)image );
-  oyConnectorImaging_Release( &(oyConnectorImaging_s*)a );
+  oyImage_Release( (oyImage_s**)&image );
+  oyConnectorImaging_Release( (oyConnectorImaging_s**)&a );
 
   return match;
 }
