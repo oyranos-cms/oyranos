@@ -418,6 +418,8 @@ int main( int argc , char** argv )
             if(device_meta_tag)
             {
               oyOptions_s * opts = 0;
+              error = oyOptions_SetFromText( &opts, "///set_device_attributes",
+                                                    "true", OY_CREATE_NEW );
               error = oyOptions_SetFromText( &opts, "///key_prefix_required",
                                                     "EDID_" , OY_CREATE_NEW );
               oyProfile_DeviceAdd( prof, c, opts );
