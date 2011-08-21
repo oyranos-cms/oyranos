@@ -27,12 +27,12 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s_        * api )
     error = 1;
   else
   {
-    if(module_api < 110 ||  /* last API break */
+    if(module_api < 300 ||  /* last API break */
        OYRANOS_VERSION < module_api)
     {
       error = 1;
-      WARNc2_S("Wrong API for: %s %s", oyStructTypeToText(api->type_),
-               oyNoEmptyString_m_(api->registration));
+      DBG_MEM3_S("Wrong API for: %s %s %d", oyStructTypeToText(api->type_),
+                 oyNoEmptyString_m_(api->registration), module_api);
       return type;
     }
   }
@@ -105,7 +105,8 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s_        * api )
                  oyNoEmptyString_m_(api->registration));
       }
       if(!(s->ui && s->ui->texts &&
-           s->ui->getText && s->ui->getText("name", oyNAME_NAME)))
+           s->ui->getText && s->ui->getText("name", oyNAME_NAME, (oyStruct_s*)
+                                            s->ui)))
       {
         error = 1;
         WARNc2_S("Missed module name: %s %s",
@@ -152,7 +153,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s_        * api )
            (s->version[0] || s->version[1] || s->version[2]) &&
            s->data_type_in && s->data_type_in[0] &&
            s->data_type_out && s->data_type_out[0] &&
-           s->oyCMMdata_Convert
+           s->oyModuleData_Convert
             ) )
         error = 1;
     } break;
