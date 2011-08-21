@@ -2,4 +2,4 @@
   char           * data_type_in;
   /** oyCMMapi7_s::context_type specific data; e.g. "lcCC" */
   char           * data_type_out;
-  oyCMMdata_Convert_f oyCMMdata_Convert;
+  oyModuleData_Convert_f oyModuleData_Convert;
