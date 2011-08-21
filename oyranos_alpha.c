@@ -28,6 +28,9 @@
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
+
+#include "oyjl/oyjl_tree.h"
+
 #ifdef HAVE_POSIX
 #include <dlfcn.h>
 #endif
@@ -7774,6 +7777,57 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
   return error;
 }
 
+/** Function oyDeviceGetJSON
+ *  @brief   get JSON format text for a device calibration
+ *
+ *  @param[out]   json_text            the device calibration
+ *  @param[in]    options              unused
+ *  @param[out]   config               the device
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.3.2
+ *  @since   2011/08/21 (Oyranos: 0.3.2)
+ *  @date    2011/08/21
+ */
+OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
+                                       oyOptions_s       * options,
+                                       oyConfig_s       ** device )
+{
+  int error = 0;
+  oyConfig_s * device_ = NULL;
+  oyjl_value_s * json = 0,
+               * json_device;
+  char * val, * key;
+  const char * xpath = "org/freedesktop/openicc/device/[0]/[0]";
+  int count, i;
+
+  yajl_status status;
+
+  device_ = oyConfig_New( "//" OY_TYPE_STD "/config", 0 );
+  status = oyjl_tree_from_json( json_text, &json, 0 );
+
+  json_device = oyjl_tree_get_value( json, xpath );
+  if(!json_device)
+    WARNc3_S( "\"%s\" %s \"%s\"\n", xpath,_("not found:"), xpath );
+      
+  count = oyjl_value_count(json_device);
+  for(i = 0; i < count; ++i)
+  {
+    oyjl_value_s * v = oyjl_value_pos_get( json_device, i );
+    key = oyStringCopy_(oyjl_print_text( &v->value.object->key ), 0);
+    val = oyjl_value_text( v, oyAllocateFunc_ );
+      
+    oyConfig_AddDBData( device_, key, val, OY_CREATE_NEW );
+    oyDeAllocateFunc_(key);
+    oyDeAllocateFunc_(val);
+  }
+
+  *device = device_;
+  device_ = NULL;
+
+  return error;
+}
+
 
 /**
  *  @} *//* devices_handling
@@ -9523,10 +9577,14 @@ const char *       oyProfile_GetFileName (
  *  @param[in]     options             - "key_prefix_required" : prefix
  *                                       accept only key names with the prefix
  *                                       Separation by point '.' is allowed.
+ *                                     - "set_device_attributes"="true"
+ *                                       will write "manufacturer", "model",
+ *                                       "mnft" and "model_id" keys to the
+ *                                       appropriate profile tags and fields.
  *
- *  @version Oyranos: 0.3.0
+ *  @version Oyranos: 0.3.2
  *  @since   2009/05/18 (Oyranos: 0.1.10)
- *  @date    2011/04/07
+ *  @date    2011/08/21
  */
 #if 0
 TODO find a general form. Do we want to support the mluc type or is that better
@@ -9594,9 +9652,12 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
   void * string = 0;
   const char * key_prefix_required = oyOptions_FindString( options,
                                             "key_prefix_required", 0 );
+  const char * key_prefix = oyConfig_FindString( device, "prefix", 0 );
+  const char * prefix = 0;
   char ** key_prefix_texts = 0;
   int key_prefix_texts_n = 0;
   int * key_prefix_texts_len = 0;
+  char * manufacturer=0, * model=0, *mnft=0, *model_id=0;
 
   /* get just some device */
   oyOption_s * o = 0;
@@ -9611,8 +9672,13 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
   int count = 0;
 
   if(key_prefix_required)
+    prefix = key_prefix_required;
+  else if(key_prefix)
+    prefix = key_prefix;
+
+  if(prefix)
   {
-    key_prefix_texts = oyStringSplit_( key_prefix_required,'.',
+    key_prefix_texts = oyStringSplit_( prefix,'.',
                                        &key_prefix_texts_n, oyAllocateFunc_);
     oyAllocHelper_m_( key_prefix_texts_len,int,key_prefix_texts_n, 0, return 1);
     for(j = 0; j < key_prefix_texts_n; ++j)
@@ -9631,19 +9697,31 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
     {
       int pass = 1;
 
-      if(key_prefix_required)
+      if(prefix)
       {
         int len = strlen( reg );
-        pass = 0;
+        if(key_prefix_required)
+          pass = 0;
         for(j = 0; j < key_prefix_texts_n; ++j)
         {
           if(len >= key_prefix_texts_len[j] &&
              memcmp( key_prefix_texts[j], reg, key_prefix_texts_len[j]) == 0)
             pass = 1;
+          if(pass && len > key_prefix_texts_len[j])
+          {
+            if( strcmp( reg+key_prefix_texts_len[j], "manufacturer") == 0 )
+              manufacturer = oyStringCopy_( val, oyAllocateFunc_ );
+            if( strcmp( reg+key_prefix_texts_len[j], "model") == 0 )
+              model = oyStringCopy_( val, oyAllocateFunc_ );
+            if( strcmp( reg+key_prefix_texts_len[j], "mnft") == 0 )
+              mnft = oyStringCopy_( val, oyAllocateFunc_ );
+            if( strcmp( reg+key_prefix_texts_len[j], "model_id") == 0 )
+              model_id = oyStringCopy_( val, oyAllocateFunc_ );
+          }
         }
       }
 
-      if(val && pass)
+      if(pass)
       {
         DBG_PROG2_S("%s: %s", reg, val );
         ++count;
@@ -9723,6 +9801,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
     len = len + (len%4 ? 4 - len%4 : 0);
     record->name_string_size =  oyValueUInt32( len );
     memcpy(((char*)dict)+pos, string, len );
+    oyFree_m_( string );
     pos += len;
 
     len = 0;
@@ -9735,6 +9814,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
     record->value_string_size =  oyValueUInt32( len );
     memcpy(((char*)dict)+pos, string, len );
     pos += len;
+    oyFree_m_( string );
   }
 
   dict_tag = oyProfileTag_New(NULL);
@@ -9742,6 +9822,45 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
                             oyOK, block_size, dict );
   if(error <= 0)
     error = oyProfile_TagMoveIn( p, &dict_tag, -1 );
+
+  if(oyOptions_FindString( options, "set_device_attributes", "true" ))
+  {
+      uint32_t model_idi = 0;
+      const char * t = 0;
+      char * data;
+      size_t size = 0;
+      icHeader * header = 0;
+
+      oyProfileTag_s * tag = oyProfile_GetTagByPos( p, 0 );
+      char h[5] = {"head"};
+      uint32_t * hi = (uint32_t*)&h;
+      char *tag_block = 0;
+
+      data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
+      header = (icHeader*) data;
+      t = mnft;
+      if(t)
+        sprintf( (char*)&header->manufacturer, "%s", t );
+      t = model_id;
+      if(t)
+        model_idi = atoi( t );
+      model_idi = oyValueUInt32( model_idi );
+      memcpy( &header->model, &model_idi, 4 );
+
+      oyAllocHelper_m_( tag_block, char, 132, 0, return 0 );
+      error = !memcpy( tag_block, data, 132 );
+      error = oyProfileTag_Set( tag, (icTagSignature)*hi,
+                                (icTagTypeSignature)*hi,
+                                oyOK, 132, tag_block );
+      t = manufacturer;
+      if(t)
+        error = oyProfile_AddTagText( p, icSigDeviceMfgDescTag, t );
+      t =  model;
+      if(t)
+        error = oyProfile_AddTagText( p, icSigDeviceModelDescTag, t );
+      if(data && size)
+        oyFree_m_( data );
+  }
 
   oyStringListRelease_( &keys, count, oyDeAllocateFunc_ );
   oyStringListRelease_( &values, count, oyDeAllocateFunc_ );
@@ -9751,7 +9870,10 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
                           oyDeAllocateFunc_ );
     oyDeAllocateFunc_( key_prefix_texts_len );
   }
-  
+  if(manufacturer) oyFree_m_( manufacturer );
+  if(model) oyFree_m_( model );
+  if(model_id) oyFree_m_( model_id );
+  if(mnft) oyFree_m_( mnft );
 
   return error;
 }

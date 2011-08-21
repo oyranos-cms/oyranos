@@ -564,6 +564,7 @@ oyMakeDir_ (const char* path)
 #endif
       }
     }
+    oyDeAllocateFunc_( path_name );;
   }
 
   oyFree_m_ (full_name)
