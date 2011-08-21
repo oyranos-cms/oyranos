@@ -5,6 +5,19 @@
 #include "{{ class.name }}.h"
 #include "{{ class.privName }}.h"
 
+{% ifequal class.parent.parent.name "oyStruct_s" %}
+#include "{{ class.parent.privName }}.h"
+{% endifequal %}
+{% ifequal class.parent.parent.parent.name "oyStruct_s" %}
+#include "{{ class.parent.parent.privName }}.h"
+#include "{{ class.parent.privName }}.h"
+{% endifequal %}
+{% ifequal class.parent.parent.parent.parent.name "oyStruct_s" %}
+#include "{{ class.parent.parent.parent.privName }}.h"
+#include "{{ class.parent.parent.privName }}.h"
+#include "{{ class.parent.privName }}.h"
+{% endifequal %}
+
 #include "oyObject_s.h"
 #include "oyranos_object_internal.h"
 {% ifequal class.group "module_api" %}#include "oyranos_module_internal.h"{% endifequal %}
