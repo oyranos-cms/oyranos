@@ -84,6 +84,9 @@ oyConfig_s*  getOyConfigPrinter_     ( const char        * printer_id );
 int          resetPPDChoices_        ( ppd_file_t        * ppd,
                                        const char        * option_string,
                                        const char        * choice );
+int          resetPPDAttributes_     ( ppd_file_t        * ppd,
+                                       const char        * attribute_string, 
+                                       const char        * new_value );
 
 oyMessage_f message = 0;
 
@@ -1306,3 +1309,23 @@ resetPPDChoices_(ppd_file_t* ppd, const char* option_string, const char* choice)
     return 0;    
 }
 
+int
+resetPPDAttributes_(ppd_file_t* ppd, const char* attribute_string, 
+                    const char* new_value)
+{
+    
+    int attr_found = 0;
+
+    ppd_attr_t* attr = 0;
+    
+    attr = ppdFindAttr(ppd, attribute_string, 0);
+    
+    if(attr) {  
+        strncpy(attr->value, new_value, PPD_MAX_NAME);
+        attr->value[PPD_MAX_NAME-1] = '\0';
+
+        attr_found = 1;
+    }
+  
+    return attr_found;
+}
