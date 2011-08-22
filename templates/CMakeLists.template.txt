@@ -7,7 +7,7 @@ FIND_PACKAGE(LibXml2 REQUIRED)
 
 INCLUDE(${QT_USE_FILE})
 
-SET( OYRANOS_GIT_DIR "../include_core" )
+SET( OYRANOS_GIT_DIR ".." )
 INCLUDE_DIRECTORIES(
   ${PROJECT_BINARY_DIR}
   ${OYRANOS_GIT_DIR}
@@ -29,9 +29,13 @@ ADD_LIBRARY( oyranos_object SHARED
   {% if class.hiddenStruct %}"{{ class.name }}.c" "{{ class.privName }}.c"{% else %}"{{ class.name }}.c" "{{ class.name }}_impl.c"{% endif %}
 {% endfor %}
   "oyStruct_s.c"
+
+  "oyranos_devices.c"
+  "oyranos_devices_internal.c"
+  "oyranos_generic.c"
+  "oyranos_module.c"
   "oyranos_object.c"
 )
-# "oyranos_devices.c" "oyranos_devices_internal.c"
 
 # Tests for the auto-generated oyranos object system
 ADD_EXECUTABLE( oyTest "oyTest.cc" ${oyTEST_MOC_SOURCES} )
