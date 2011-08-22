@@ -573,6 +573,7 @@ int            Configs_FromPattern (
   oyAlloc_f allocateFunc = malloc;
   static char * num = 0;
   const char * printer_name = 0;
+  oyOption_s * o;
 
   int rank = oyFilterRegistrationMatch( _api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
@@ -599,6 +600,14 @@ int            Configs_FromPattern (
     /** common resolving */
     {
       texts_n = GetDevices( http, &texts, allocateFunc );
+
+      /* search for a device_context instead of a device_name */
+      o = oyOptions_Find( options, "device_context.PPD.text" );
+      if(o)
+      {
+        size_t size = 0;
+        char * ppd_data = oyOption_GetData( o, &size, oyAllocateFunc_ );
+      }
 
       for( i = 0; i < texts_n; i++ )
       {
