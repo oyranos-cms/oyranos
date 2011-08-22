@@ -1,5 +1,8 @@
 #include <stdint.h>           /* uint64_t uintptr_t */
-#include "oyranos_cmm.h" /* oyObjectInfoStatic_s */
+
+#include "oyranos_generic.h"
+#include "oyCMMapi9_s.h"
+#include "oyCMMapiFilters_s.h"
 
 const char * (*oyStruct_GetTextFromModule_p) (
                                        oyStruct_s        * obj,

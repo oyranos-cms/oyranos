@@ -13,6 +13,11 @@
 #include "oyStructList_s_.h"
 
 
+oyObjectInfoStatic_s oy_connector_imaging_static_object = {
+  oyOBJECT_INFO_STATIC_S, 0,0,0,
+  {2,oyOBJECT_CONNECTOR_S,oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,0,0}
+};
+
 /** Public function definitions { */
 
 /** Function  oyContextCollectData_
