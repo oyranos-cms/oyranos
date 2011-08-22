@@ -1215,7 +1215,7 @@ tunePPDSettings_(const char* profile_string,
       for(k = 2; k < texts_n; k+=2)
       {             
          if(ppdFindOption(ppd, texts[k]))
-            resetPPDChoices_(ppd, texts[k], texts[k+1]);   
+            resetPPDAttributes_(ppd, texts[k], texts[k+1]);   
       }
     }
     
