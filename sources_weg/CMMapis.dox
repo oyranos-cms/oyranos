@@ -1,0 +1,11 @@
+/** @struct  oyCMMapis_s
+ *  @ingroup cmm_handling
+ *  @extends oyStruct_s
+ *  @brief   A CMMapis list
+ *
+ *  @note This class holds a list of objects [list]
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2010/06/25 (Oyranos: 0.1.10)
+ *  @date    2010/06/25
+ */
