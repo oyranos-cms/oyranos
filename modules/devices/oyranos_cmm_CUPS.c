@@ -138,7 +138,11 @@ int            CMMMessageFuncSet ( oyMessage_f message_func )
                                        CMM_BASE_REG OY_SLASH #name, \
                                        name, OY_CREATE_NEW );
 const char * _help =
-      "The following help text informs about the communication protocol.";
+      "The following help text informs about the communication protocol.\n"
+      " Common options to select a device context are:\n"
+      " \"device_context.PPD.ppd_file_t\" containing a CUPS ppd_file_t \n"
+      " pointer.\n"
+      " For more informations see the Device Protocol.";
 const char * _help_list = 
       "The presence of option \"command=list\" will provide a list of\n"
       " available devices. The actual device name can be found in\n"
@@ -172,8 +176,11 @@ const char * _help_properties =
       " elsewhere, but this is optional.\n"
       " The \"device_name\" should be identical with the one\n"
       " returned from a \"list\" request.\n"
+      " A \"device_context\" string option indicates the module shall return\n"
+      " the PPD file as text.\n"
       " The \"properties\" call might be a expensive one. Informations are\n" 
-      " stored in the returned oyConfig_s::backend_core member.";
+      " stored in the returned oyConfig_s::backend_core member."
+      " The "
 const char * _help_setup =
       "The presence of option \"command=setup\" will setup the device\n"
       " from a profile.\n"
