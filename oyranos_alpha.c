@@ -5441,6 +5441,7 @@ OYAPI oyConfDomain_s * OYEXPORT
 {
   oyConfDomain_s_ * obj = 0;
 
+  if(registration_domain)
   obj = oyConfDomain_FromReg_( registration_domain, object );
 
   return (oyConfDomain_s*) obj;
@@ -5763,7 +5764,7 @@ const char * oyConfDomain_GetText_   ( oyConfDomain_s_   * obj,
   const char * text = 0;
   oyConfDomain_s_ * s = obj;
 
-  if(s->api8 && s->api8->ui && s->api8->ui->getText)
+  if(s && s->api8 && s->api8->ui && s->api8->ui->getText)
     text = s->api8->ui->getText( name, type, (oyStruct_s*)s->api8->ui );
 
   return text;
