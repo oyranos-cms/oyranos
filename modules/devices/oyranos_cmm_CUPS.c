@@ -63,6 +63,7 @@
 #define _help_properties        catCMMfunc( CUPS, _help_properties )
 #define _help_setup             catCMMfunc( CUPS, _help_setup )
 #define _help_unset             catCMMfunc( CUPS, _help_unset )
+#define LoadDevice              catCMMfunc( CUPS, LoadDevice )
 
 #define _DBG_FORMAT_ "%s:%d %s()"
 #define _DBG_ARGS_ (strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__),__LINE__,__func__
@@ -87,6 +88,11 @@ int          resetPPDChoices_        ( ppd_file_t        * ppd,
 int          resetPPDAttributes_     ( ppd_file_t        * ppd,
                                        const char        * attribute_string, 
                                        const char        * new_value );
+int          LoadDevice              ( oyConfig_s        * device,
+                                       oyConfigs_s       * devices,
+                                       ppd_file_t        * ppd_file,
+                                       const char        * device_name,
+                                       oyOptions_s       * options );
 
 oyMessage_f message = 0;
 
@@ -256,7 +262,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
     oyOption_s * o = 0;
     int error = !device;
  
-    const char * value3 = oyOptions_FindString( options, "device_context", 0 );
+    oyOption_s * value3 = oyOptions_Find( options, "device_context" );
     const char * device_name = oyConfig_FindString( device, "device_name", 0 );
 
     if(!error)
@@ -274,10 +280,10 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
             * tmp = 0;
       int colour_key_words_n = 0;
 
-      if(!device_name)
+      if(!device_name && !value3 && !ppd_file_location && !ppd)
       {
         message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_
-                "The \"device_name\" is\n"
+                "The \"device_name\"  and \"device_context\" is\n"
                 " missed to select a appropriate device.", _DBG_ARGS_ );
         error = 1;
         return error;
@@ -318,6 +324,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
         if (value3)
         {
           /* open the PPD data */
+          if(ppd_file_location)
           {
             FILE * fp = fopen( ppd_file_location, "r" );
             size_t lsize = 0;
@@ -374,35 +381,44 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
                                          oyAllocateFunc_);
         oyDeAllocateFunc_( tmp );
 
-        /* Scan PPD attributes for matching the ColorKeyWords and
-         * add the key/value pairs to the devices backend_core options. */
-        for(i = 0; i < attr_n; i++)
+        /* add the key/value pairs to the devices backend_core options. */
+        for(j = 0; j < colour_key_words_n; ++j)
         {
-          keyword = ppd->attrs[i]->name;
-          for(j = 0; j < colour_key_words_n; ++j)
-          {
-            if(oyStrcmp_( colour_key_words[j], keyword ) == 0)
-            {
-              if(!error && ppd->attrs[i]->value)
-              {
-                char * reg_name = 0;
-                STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
-                STRING_ADD( reg_name, keyword );
-                error = oyOptions_SetFromText( &device->backend_core,
+          const char * keyword = colour_key_words[j];
+          ppd_choice_t * c = ppdFindMarkedChoice( ppd, keyword );
+          ppd_option_t * o = ppdFindOption( ppd, keyword );
+                char * reg_name = 0,
+                     * value = 0;
+          /* take the marked choice */
+          if(c)
+            value = c->choice;
+          /* fall back to a default */
+          else if(o)
+            value = &o->defchoice;
+          else
+          /* Scan PPD attributes for matching the ColorKeyWords and */
+            for(i = 0; i < attr_n; i++)
+              if(oyStrcmp_( ppd->attrs[i]->name, keyword ) == 0)
+                value = ppd->attrs[i]->value;
+
+          STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
+          STRING_ADD( reg_name, keyword );
+          if(value)
+            error = oyOptions_SetFromText( &device->backend_core,
                                                reg_name,
-                                               ppd->attrs[i]->value,
+                                               value,
                                                OY_CREATE_NEW );
-                oyDeAllocateFunc_( reg_name );
-              }
-            }
-          }
+          oyDeAllocateFunc_( reg_name );
         }
 
         if( colour_key_words && colour_key_words_n)
           oyStringListRelease_( &colour_key_words, colour_key_words_n,
                                 oyDeAllocateFunc_ );
       }
+
+      oyOption_Release( &value3 );
     }
+
  
   return error;
 }
@@ -561,6 +577,49 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
   return error;
 }
 
+int          LoadDevice              ( oyConfig_s        * device,
+                                       oyConfigs_s       * devices,
+                                       ppd_file_t        * ppd_file,
+                                       const char        * device_name,
+                                       oyOptions_s       * options )
+{
+          int n, j, error = 0;
+          const char * ppd_file_location = NULL;
+          oyConfigs_s * devices_ = oyConfigs_New(0);
+          oyConfig_s * tmp = oyConfig_Copy( device, 0 );
+          oyConfigs_MoveIn( devices_, &tmp, -1 );
+
+          if(device_name)
+            ppd_file_location = cupsGetPPD2( oyGetCUPSConnection(),device_name);
+
+          /* Search for CUPS ICC profiles */
+          CUPSgetProfiles( device_name, ppd_file, devices_, options );
+
+          /* add additional devices */
+          n = oyConfigs_Count( devices_ );
+          for(j = 0; j < n; ++j)
+          {
+            oyConfig_s * d = oyConfigs_Get( devices_, j );
+ 
+            /* set the device name */
+            error = oyOptions_SetFromText( &d->backend_core,
+                                     CMM_BASE_REG OY_SLASH "device_name",
+                                     device_name, OY_CREATE_NEW );
+
+            /* additional properties */
+            error = DeviceAttributes_( ppd_file, options, d, ppd_file_location);
+
+            if(j)
+              oyConfigs_MoveIn( devices, &d, -1 );
+            else
+              oyConfig_Release( &d );
+          }
+          
+          oyConfigs_Release( &devices_ );
+
+  return error;
+}
+
 int            Configs_FromPattern (
                                        const char        * registration,
                                        oyOptions_s       * options,
@@ -605,13 +664,18 @@ int            Configs_FromPattern (
       texts_n = GetDevices( http, &texts, allocateFunc );
 
       /* search for a device_context instead of a device_name */
-      o = oyOptions_Find( options, "device_context.PPD.text" );
+      o = oyOptions_Find( options, "device_context.PPD.ppd_file_t" );
       if(o)
       {
         size_t size = 0;
-        char * ppd_data = oyOption_GetData( o, &size, oyAllocateFunc_ );
-      }
+        ppd_file_t * ppd_file = oyOption_GetData( o, &size, oyAllocateFunc_ );
+        const char * device_name = NULL;
 
+        device = oyConfig_New( CMM_BASE_REG, 0 );
+        error = LoadDevice( device, devices, ppd_file, device_name, options );
+        oyConfigs_MoveIn( devices, &device, -1 );
+      }
+      else
       for( i = 0; i < texts_n; i++ )
       {
         /* filter */
@@ -626,40 +690,14 @@ int            Configs_FromPattern (
         if(1 || profile_request ||
            oyOptions_FindString( options, "oyNAME_NAME", 0 ) )
         {
-          int n, j;
           const char * device_name = texts[i];
           const char * ppd_file_location = cupsGetPPD2( oyGetCUPSConnection(),
                                                         device_name );
           ppd_file_t * ppd_file = ppdOpenFile( ppd_file_location );
-          oyConfigs_s * devices_ = oyConfigs_New(0);
-          oyConfig_s * tmp = oyConfig_Copy( device, 0 );
-          oyConfigs_MoveIn( devices_, &tmp, -1 );
 
-          /* Search for CUPS ICC profiles */
-          CUPSgetProfiles( device_name, ppd_file, devices_, options );
+          error = LoadDevice( device, devices, ppd_file, device_name, options );
 
-          /* add additional devices */
-          n = oyConfigs_Count( devices_ );
-          for(j = 0; j < n; ++j)
-          {
-            oyConfig_s * d = oyConfigs_Get( devices_, j );
- 
-            /* set the device name */
-            error = oyOptions_SetFromText( &d->backend_core,
-                                     CMM_BASE_REG OY_SLASH "device_name",
-                                     device_name, OY_CREATE_NEW );
-
-            /* additional properties */
-            error = DeviceAttributes_( ppd_file, options, d, ppd_file_location);
-
-            if(j)
-              oyConfigs_MoveIn( devices, &d, -1 );
-            else
-              oyConfig_Release( &d );
-          }
           ppdClose( ppd_file ); ppd_file = 0;
-          
-          oyConfigs_Release( &devices_ );
         }
 
         oyConfigs_MoveIn( devices, &device, -1 );
@@ -1076,7 +1114,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
 
             message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
                 "Could not obtain profile information for %s. Downloading new profile: '%s'.",
-                _DBG_ARGS_, device_name, profile_name);
+                _DBG_ARGS_, device_name?device_name:"???", profile_name);
            
             /* Create the complete path to the profile on the server 
              * (ie. http://host:port/profiles/xxx.icc
