@@ -384,17 +384,17 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
         /* add the key/value pairs to the devices backend_core options. */
         for(j = 0; j < colour_key_words_n; ++j)
         {
-          const char * keyword = colour_key_words[j];
+          const char * keyword = colour_key_words[j],
+                     * value = NULL;
           ppd_choice_t * c = ppdFindMarkedChoice( ppd, keyword );
           ppd_option_t * o = ppdFindOption( ppd, keyword );
-                char * reg_name = 0,
-                     * value = 0;
+                char * reg_name = 0;
           /* take the marked choice */
           if(c)
             value = c->choice;
           /* fall back to a default */
           else if(o)
-            value = &o->defchoice;
+            value = o->defchoice;
           else
           /* Scan PPD attributes for matching the ColorKeyWords and */
             for(i = 0; i < attr_n; i++)
@@ -414,6 +414,36 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
         if( colour_key_words && colour_key_words_n)
           oyStringListRelease_( &colour_key_words, colour_key_words_n,
                                 oyDeAllocateFunc_ );
+        else
+        {
+          ppd_choice_t * c;
+          ppd_option_t * o;
+          while((o = ppdNextOption(ppd)) != 0)
+          {
+            const char * value = 0;
+            char * reg_name = 0;
+
+            keyword = o->keyword;
+            STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
+            STRING_ADD( reg_name, keyword );
+            /* take the marked choice */
+            for(i = 0; i < o->num_choices; ++i)
+              if(o->choices[i].marked)
+              {
+                value = o->choices[i].choice;
+                break;
+              }
+            if(!value)
+              value = &o->defchoice;
+            
+            if(value)
+              error = oyOptions_SetFromText( &device->backend_core,
+                                                reg_name,
+                                                value,
+                                                OY_CREATE_NEW );
+            oyDeAllocateFunc_( reg_name );
+          }
+        }
       }
 
       oyOption_Release( &value3 );
