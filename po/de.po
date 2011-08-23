@@ -1808,7 +1808,7 @@ msgstr "Konnte Gerät nicht auflösen"
 
 #: oyranos_gamma.c:258
 msgid "Available devices"
-msgstr "Verfügbaren Geröte"
+msgstr "Verfügbaren Geräte"
 
 #: oyranos_policy.c:43
 msgid "is a policy administration tool"
