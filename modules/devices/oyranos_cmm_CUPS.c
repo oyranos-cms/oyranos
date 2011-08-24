@@ -179,8 +179,7 @@ const char * _help_properties =
       " A \"device_context\" string option indicates the module shall return\n"
       " the PPD file as text.\n"
       " The \"properties\" call might be a expensive one. Informations are\n" 
-      " stored in the returned oyConfig_s::backend_core member."
-      " The "
+      " stored in the returned oyConfig_s::backend_core member.";
 const char * _help_setup =
       "The presence of option \"command=setup\" will setup the device\n"
       " from a profile.\n"
