@@ -208,10 +208,32 @@ int main( int argc , char** argv )
     char * data = 0;
     size_t size = 0;
     char * pn = 0;
+    char * ext = 0;
+    const char * t = strrchr(profile_name, '.');
+    int i;
 
     STRING_ADD( pn, profile_name );
-    if(!strrchr(profile_name, '.'))
+    if(t)
+    {
+      ++t;
+      STRING_ADD( ext, t );
+      i = 0;
+      while(ext[i])
+      {
+        ext[i] = tolower(ext[i]);
+        ++i;
+      }
+      if(strcmp(ext,"icc") != 0 &&
+         strcmp(ext,"icm") != 0)
+      {
+        oyFree_m_(ext);
+        ext = 0;
+      }
+    }
+    if(!ext)
       STRING_ADD( pn, ".icc" );
+    else
+      oyFree_m_(ext);
 
     p = oyProfile_FromFile( pn, 0, 0 );
     if(p)
