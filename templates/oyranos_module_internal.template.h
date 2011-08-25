@@ -26,7 +26,7 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        oyCMMapi_Check_f    apiCheck,
                                        oyPointer           check_pointer );
 oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text );
-oyCMMapis_s* oyCMMGetMetaApis_       ( const char        * cmm );
+oyCMMapis_s_ * oyCMMGetMetaApis_     ( const char        * cmm );
 oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm );
 
 /**

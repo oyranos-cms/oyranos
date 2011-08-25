@@ -528,9 +528,9 @@ oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text)
  *  @since   2008/12/28 (Oyranos: 0.1.10)
  *  @date    2010/09/14
  */
-oyCMMapis_s* oyCMMGetMetaApis_       ( const char        * cmm )
+oyCMMapis_s_ * oyCMMGetMetaApis_     ( const char        * cmm )
 {
-  oyCMMapis_s * meta_apis = 0;
+  oyCMMapis_s_ * meta_apis = 0;
   meta_apis = oyCMMsGetMetaApis_( cmm );
   return meta_apis;
 }
