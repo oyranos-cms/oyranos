@@ -534,3 +534,68 @@ oyCMMapis_s* oyCMMGetMetaApis_       ( const char        * cmm )
   meta_apis = oyCMMsGetMetaApis_( cmm );
   return meta_apis;
 }
+
+/** @internal
+ *  Function oyCMMsGetMetaApis_
+ *  @brief get oyranos modules
+ *
+ *  @param[in]   cmm                  the selected module, optional
+ *
+ *  @version Oyranos: 0.1.11
+ *  @since   2010/06/25 (Oyranos: 0.1.10)
+ *  @date    2010/09/14
+ */
+oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm )
+{
+  int error = 0;
+  oyCMMapis_s * apis = 0;
+  oyCMMapi_Check_f apiCheck = oyCMMapi_CheckWrap_;
+
+  if(error <= 0)
+  {
+    char ** files = 0;
+    uint32_t  files_n = 0;
+    int i = 0;
+
+    files = oyCMMsGetLibNames_(&files_n, cmm);
+
+    if(!files_n)
+      WARNc_S(_("Could not find any meta module. "
+                "Did you set the OY_MODULE_PATHS variable,"
+                " to point to a Oyranos module loader library?"));
+
+    /* open the modules */
+    for( i = 0; i < files_n; ++i)
+    {
+      oyCMMInfo_s * cmm_info = oyCMMInfoFromLibName_(files[i]);
+
+      if(cmm_info)
+      {
+        oyCMMapi_s * tmp = cmm_info->api,
+                   * copy = 0;
+
+        while(tmp)
+        {
+
+          if(apiCheck(cmm_info, tmp, 0, 0) == oyOBJECT_CMM_API5_S)
+          {
+            if(!apis)
+              apis = oyCMMapis_New(0);
+
+            copy = tmp;
+
+            oyCMMapis_MoveIn( apis, &copy, -1 );
+          }
+
+          tmp = tmp->next;
+        }
+      }
+
+      oyCMMInfo_Release( &cmm_info );
+    }
+
+    oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
+  }
+
+  return apis;
+}
