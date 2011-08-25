@@ -37,9 +37,6 @@ FILE2=${IN2#*:};
 
 AWK=$(dirname $0)/f_compare.awk
 
-FILE1F="$(basename ${FILE1})-${FUNC}.c"
-FILE2F="$(basename ${FILE2})-${FUNC}.c"
-
 AWKTMP=/tmp/f_compare-tmp.awk
 
 BRANCH=$(git branch|grep '*'|cut -f2 -d' ')
@@ -60,6 +57,9 @@ echo "$FILE2 -> $BRANCH2"
 
 SHOW1=$BRANCH1:$FILE1
 SHOW2=$BRANCH2:$FILE2
+
+FILE1F="${BRANCH1}-$(basename ${FILE1})-${FUNC}.c"
+FILE2F="${BRANCH2}-$(basename ${FILE2})-${FUNC}.c"
 
 cat $AWK | sed "s/__FUNC__/$FUNC/" > $AWKTMP
 
