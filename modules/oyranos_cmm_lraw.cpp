@@ -406,8 +406,8 @@ int      lrawFilterPlug_ImageInputRAWRun (
           params->gamm[0], params->gamm[1]);
 
   /* render at half size */
-  params->half_size = 1;
-  params->four_color_rgb = 1;
+  params->half_size = 0;
+  params->four_color_rgb = 0;
 
   /* passing through the data reading */
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S &&
