@@ -745,6 +745,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       { /* hack */
         WARNc2_S("%s %s", _("No monitor gamma curves by profile:"),
                 oyNoEmptyName_m_(profil_basename) )
+        error = -1;
       } else
         /* take xcalib error not serious, turn into a issue */
         error = -1;
