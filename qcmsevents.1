@@ -2,11 +2,17 @@
 .SH NAME
 qcmsevents \- Xorg color management event observer
 .SH SYNOPSIS
-\fBqcmsevents\fR
+\fBqcmsevents\fR [--show]
 .fi 
 .SH DESCRIPTION
 qcmsevents is a analysis tool for observing and debugging color management events under X. It knows about _ICC_PROFILE in X, net-color spec and EDID events. Applications issuing such events are tools to configure the monitors ICC profile, viewers using the net-color spec and desktop color servers. The first lines of output will contain some status informatins and some important observed atom names. Following are the monitors with their geometry and a optional ICC profile. Dynamic events are show imediately.
 The tool will reside in the system try with a cmall CIE*diagram icon. If that is coloured it means that a colour server is running. If its gray no colour server could be detected. The message window can be opened from the icon.
+.SH OPTIONS
+.TP
+.B \-\-show 
+Show the window. Useful for window managers without systray.
+list installed profiles.
+.sp
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH COPYRIGHT

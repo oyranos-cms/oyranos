@@ -244,7 +244,8 @@ int main(int argc, char *argv[])
   XcmICCprofileGetNameFuncSet( getName );
 
   dialog = new QcmseDialog();
-  //dialog->show();
+  if(argc > 1 && strcmp(argv[1],"--show") == 0)
+    dialog->show();
 
   app.setup();
 
