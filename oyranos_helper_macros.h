@@ -160,6 +160,16 @@ char    oyToupper_( char c_ );
                           i = 1000; \
                         } else wrong_arg = "-" #opt; \
                         if(oy_debug) printf(#opt "=%d\n",opt)
+#define OY_PARSE_INT_ARG2( opt, arg ) \
+                        if( pos + 1 < argc && argv[pos][i+strlen(arg)+1] == 0 ) \
+                        { opt = atoi(argv[pos+1]); \
+                          ++pos; \
+                          i = 1000; \
+                        } else if(argv[pos][i+strlen(arg)+1] == '=') \
+                        { opt = atoi(&argv[pos][i+strlen(arg)+2]); \
+                          i = 1000; \
+                        } else wrong_arg = "-" arg; \
+                        if(oy_debug) fprintf(stderr,arg "=%d\n",opt)
 #define OY_PARSE_STRING_ARG( opt ) \
                         if( pos + 1 < argc && argv[pos][i+1] == 0 ) \
                         { opt = argv[pos+1]; \
