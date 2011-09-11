@@ -174,7 +174,7 @@ char *       qarzGetMonitorProfile   ( const char        * device_name,
   DBG_PROG_START
 
   /* Since osX SL DeviceRGB is set to sRGB. And we handle the native profile 
-   * like the net-color one */
+   * like the X Color Management one */
   if(flags & 0x01 ||
      version < 100600)
   {

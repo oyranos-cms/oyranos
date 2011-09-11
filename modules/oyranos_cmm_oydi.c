@@ -275,7 +275,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
 
       /* upload the new or changed region to the X server */
       error = XcolorRegionInsert( display, w, 0, &region, 1 );
-      netColorTarget = XInternAtom( display, "_NET_COLOR_TARGET", True );
+      netColorTarget = XInternAtom( display, "_ICC_COLOR_TARGET", True );
       XChangeProperty( display, w, netColorTarget, XA_STRING, 8,
                        PropModeReplace,
                        (unsigned char*) display_string, strlen(display_string));

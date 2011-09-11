@@ -6,7 +6,7 @@ Overview:
   dummy_device:   dummy device backend
   image2pdf:      simple RAW to Cairo renderer
   image_display:  a rudimentary ppm file displayer using Oyranos
-  xcmsevents:     X11 CMS events observer (_ICC_PROFILE_xxx, _NET_COLOR_xxx )
+  xcmsevents:     X11 CMS events observer (_ICC_PROFILE_xxx, _ICC_COLOR_xxx )
 
 
 Dependencies:
