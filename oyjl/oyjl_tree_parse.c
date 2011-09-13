@@ -819,7 +819,20 @@ char *   oyjl_value_text             ( oyjl_value_s      * v,
          if(text) sprintf( text, "%s", tmp); break;
     default:
          break;
-  }
+  } else
+    if(v &&
+       v->type == oyjl_type_text &&
+       v->value.text.len)
+    {
+         tmp = (char*)v->value.text.text;
+         if(tmp) text = my_alloc(v->value.text.len+1);
+         if(text)
+         {
+           memcpy( text, tmp, v->value.text.len);
+           text[v->value.text.len] = 0;
+         }
+    }
+
   return text;
 }
 
