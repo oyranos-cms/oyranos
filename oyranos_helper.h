@@ -99,6 +99,9 @@ char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
                          oyAlloc_f     allocate_func);
 char * oyReadStdinToMem_             ( size_t            * size,
                                        oyAlloc_f           allocate_func );
+char * oyReadFilepToMem_             ( FILE              * file,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func );
 
 
 /* --- mathematical helpers --- */

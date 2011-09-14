@@ -75,26 +75,17 @@ oyReadFileSize_(const char* name)
   return size;
 }
 
-char*
-oyReadFileToMem_(const char* name, size_t *size,
-                 oyAlloc_f     allocate_func)
+char *       oyReadFilepToMem_       ( FILE              * fp,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func)
 {
-  FILE *fp = 0;
   char* mem = 0;
-  const char* filename = name;
 
   DBG_MEM_START
 
   DBG_MEM
 
-  if(filename && filename[0] && strlen(filename) > 7 &&
-     memcmp(filename, "file://", 7) == 0)
-    filename = &filename[7];
-
   {
-    fp = fopen(filename, "rb");
-    DBG_MEM2_S ("fp = %u filename = %s\n", (unsigned int)((intptr_t)fp), filename)
-
     if (fp)
     {
       /* get size */
@@ -137,6 +128,36 @@ oyReadFileToMem_(const char* name, size_t *size,
           }
         }
       }
+    }
+  }
+ 
+  DBG_MEM_ENDE
+  return mem;
+}
+
+char*
+oyReadFileToMem_(const char* name, size_t *size,
+                 oyAlloc_f     allocate_func)
+{
+  FILE *fp = 0;
+  char* mem = 0;
+  const char* filename = name;
+
+  DBG_MEM_START
+
+  DBG_MEM
+
+  if(filename && filename[0] && strlen(filename) > 7 &&
+     memcmp(filename, "file://", 7) == 0)
+    filename = &filename[7];
+
+  {
+    fp = fopen(filename, "rb");
+    DBG_MEM2_S ("fp = %u filename = %s\n", (unsigned int)((intptr_t)fp), filename)
+
+    if(fp)
+    {
+      mem = oyReadFilepToMem_( fp, size, allocate_func );
     } else {
       WARNc1_S( "could not read: \"%s\"\n", filename );
     }

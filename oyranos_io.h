@@ -18,7 +18,7 @@
 #ifndef OYRANOS_IO_H
 #define OYRANOS_IO_H
 
-#include "oyranos.h" /* define HAVE_POSIX */
+#include "oyranos_types.h" /* define HAVE_POSIX */
 
 #include <sys/stat.h>
 #ifdef HAVE_POSIX
@@ -33,6 +33,14 @@
 #include "oyranos_internal.h"
 #include "oyranos_helper.h"
 #include "oyranos_debug.h"
+
+#if defined(WIN32)
+# define oyPOPEN_m    _popen
+# define oyPCLOSE_m   _pclose
+#else
+# define oyPOPEN_m    popen
+# define oyPCLOSE_m   pclose
+#endif 
 
 #ifdef __cplusplus
 extern "C" {
