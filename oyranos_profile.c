@@ -81,7 +81,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -s NAME  %s\n",       _("add prefix"));
   fprintf( stderr, "      -c NAME  %s\n",       _("use device class"));
   fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("Dump Device Infos to JSON:"));
+  fprintf( stderr, "  %s\n",               _("Dump Device Infos to OpenICC device JSON:"));
   fprintf( stderr, "      %s -o FILE_NAME\n",        argv[0]);
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Write to ICC profile:"));
