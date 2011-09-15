@@ -3637,7 +3637,7 @@ OYAPI oyConfig_s * OYEXPORT
   return s;
 }
 
-/** Function oyConfig_GetDB
+/** Function oyConfig_GetFromDB
  *  @brief   search a configuration in the DB for a configuration from module
  *  @memberof oyConfig_s
  *
@@ -3648,17 +3648,17 @@ OYAPI oyConfig_s * OYEXPORT
  *  @return                            0 - good, >= 1 - error + a message should
  *                                     be sent
  *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/26 (Oyranos: 0.1.10)
- *  @date    2009/01/26
+ *  @version Oyranos: 0.3.2
+ *  @since   2009/01/26 (Oyranos: 0.3.2)
+ *  @date    2011/09/14
  */
 OYAPI int  OYEXPORT
-               oyConfig_GetDB        ( oyConfig_s        * device,
+               oyConfig_GetFromDB    ( oyConfig_s        * device,
+                                       oyConfigs_s       * configs,
                                        int32_t           * rank_value )
 {
   int error = !device;
   int rank = 0, max_rank = 0, i, n;
-  oyConfigs_s * configs = 0;
   oyConfig_s * config = 0, * max_config = 0;
   oyConfig_s * s = device;
 
@@ -3666,8 +3666,6 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
-    error = oyConfigs_FromDB( device->registration, &configs, 0 );
-
     n = oyConfigs_Count( configs );
 
     for( i = 0; i < n; ++i )
@@ -3696,6 +3694,132 @@ OYAPI int  OYEXPORT
     device->db = oyOptions_Copy( max_config->db, 0 );
     oyConfig_Release( &max_config );
   }
+
+  return error;
+}
+
+/** Function oyConfig_GetDB
+ *  @brief   search a configuration in the DB for a configuration from module
+ *  @memberof oyConfig_s
+ *
+ *  @param[in]     device              the to be checked configuration from
+ *                                     oyConfigs_FromPattern_f
+ *  @param[out]    rank_value          the number of matches between config and
+ *                                     pattern, -1 means invalid
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/26 (Oyranos: 0.1.10)
+ *  @date    2009/01/26
+ */
+OYAPI int  OYEXPORT
+               oyConfig_GetDB        ( oyConfig_s        * device,
+                                       int32_t           * rank_value )
+{
+  int error = !device;
+  oyConfigs_s * configs = 0;
+  oyConfig_s * s = device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
+
+  if(error <= 0)
+    error = oyConfigs_FromDB( device->registration, &configs, 0 );
+  if(error <= 0)
+    error = oyConfig_GetFromDB( device, configs, 0 );
+  oyConfigs_Release( &configs );
+
+  return error;
+}
+
+OYAPI int  OYEXPORT
+             oyConfigs_FromTaxiDB    ( oyConfig_s        * device,
+                                       oyConfigs_s      ** configs,
+                                       oyObject_s          obj )
+{
+  int error = 0;
+  oyConfigs_s * configs_ = 0;
+  oyConfig_s * s = device;
+  FILE * mnft_fp = 0;
+  char * manufacturers;
+  size_t size = 0;
+  const char * short_name = oyConfig_FindString( device, "short_name", 0 );
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
+
+  mnft_fp = oyPOPEN_m( "curl -s http://icc.opensuse.org/manufacturers", "r" );
+  manufacturers = oyReadFilepToMem_(mnft_fp, &size, oyAllocateFunc_ );
+
+  
+  if(manufacturers)
+  {
+    int level = 0;
+    oyjl_value_s * root = 0, * value = 0;
+    int count = 0, i;
+    char * val = NULL;
+    char * xpath = "";
+
+    error = oyjl_tree_from_json( manufacturers, &root, NULL );
+
+    if(root)
+    {
+      count = oyjl_value_count(value);
+
+      for(i = 0; i < count; ++i)
+      {
+        int done = 0;
+        oyjl_value_s * v = 0;
+        oyStringAddPrintf_( &xpath, oyAllocateFunc_, oyDeAllocateFunc_,
+                            "[%d]/short_name", i );
+        
+        v = oyjl_tree_get_value( root, xpath );
+        val = oyjl_value_text( v, oyAllocateFunc_ );
+        if( val && strcmp( val, short_name) == 0 )
+          done = 1;
+
+        if(val) oyDeAllocateFunc_(val); val = 0;
+        if(xpath) oyDeAllocateFunc_(xpath); xpath = 0;
+
+        if(done) break;
+      }
+    }
+
+    error = oyjl_tree_free( &root );
+  }
+
+  return error;
+}
+
+/** Function oyConfig_GetFromTaxiDB
+ *  @brief   search a configuration in the taxi DB for a configuration
+ *  @memberof oyConfig_s
+ *
+ *  @param[in]     device              the to be checked configuration from
+ *                                     oyConfigs_FromPattern_f
+ *  @param[out]    rank_value          the number of matches between config and
+ *                                     pattern, -1 means invalid
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent
+ *
+ *  @version Oyranos: 0.3.2
+ *  @since   2009/01/26 (Oyranos: 0.3.2)
+ *  @date    2011/09/14
+ */
+OYAPI int  OYEXPORT
+               oyConfig_GetFromTaxiDB( oyConfig_s        * device,
+                                       int32_t           * rank_value )
+{
+  int error = !device;
+  oyConfigs_s * configs = 0;
+  oyConfig_s * s = device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
+
+  if(error <= 0)
+    error = oyConfigs_FromTaxiDB( device, &configs, 0 );
+  if(error <= 0)
+    error = oyConfig_GetFromDB( device, configs, 0 );
+  oyConfigs_Release( &configs );
 
   return error;
 }
@@ -7627,6 +7751,129 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
   return error;
 }
 
+int          oyDeviceCheckProperties ( oyConfig_s        * device )
+{
+  oyOption_s * o = 0;
+  oyOptions_s * options = 0;
+  int error = !device;
+  const char * device_name = 0;
+  oyConfig_s * s = device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
+
+  if(error <= 0)
+  {
+    device_name = oyConfig_FindString( device, "device_name", 0);
+
+    /* 1. obtain detailed and expensive device informations */
+    if( !oyConfig_FindString(s,"manufacturer",0) ||
+        !oyConfig_FindString(s,"model",0) )
+    { 
+      /* 1.1 add "properties" call to module arguments */
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                     "properties", OY_CREATE_NEW );
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
+                                     device_name, OY_CREATE_NEW );
+
+      device_name = 0;
+
+      /* 1.2 get details about device */
+      if(error <= 0)
+        error = oyDeviceBackendCall( device, options );
+
+      oyOptions_Release( &options );
+
+      /* renew outdated string */
+      o = oyConfig_Find( device, "profile_name" );
+      device_name = oyConfig_FindString( device, "device_name", 0);
+      oyOption_Release( &o );
+    }
+  }
+
+  return error;
+}
+
+
+/** Function oyDeviceProfileFromTaxiDB
+ *  @brief   look up a profile of a device from remote DB
+ *
+ *  The function asks the taxi DB for a detailed and possible expensive list
+ *  of device information and tries to find a matching configuration in the
+ *  iremote taxi DB.
+ *
+ *  @param[in]     device              a device
+ *  @param[in]     options             unused
+ *  @param[in]     profile_name        profile's name in DB
+ *  @param[in]     allocateFunc        user allocator
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/21 (Oyranos: 0.1.10)
+ *  @date    2009/02/09
+ */
+OYAPI int OYEXPORT oyDeviceProfileFromTaxiDB
+                                     ( oyConfig_s        * device,
+                                       oyOptions_s       * options,
+                                       char             ** profile_name,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyOption_s * o = 0;
+  int error = !device || !profile_name;
+  const char * device_name = 0;
+  char * tmp = 0, * tmp2 = 0;
+  int32_t rank_value = 0;
+  oyConfig_s * s = device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  if(error <= 0)
+  {
+    /* 1. obtain detailed and expensive device informations */
+    error = oyDeviceCheckProperties( device );
+
+    device_name = oyConfig_FindString( device, "device_name", 0);
+
+    o = oyConfig_Find( device, "profile_name" );
+    if(!o)
+    {
+      error = oyConfig_GetFromTaxiDB( device, &rank_value );
+      o = oyConfig_Find( device, "profile_name" );
+    }
+
+    if(!o)
+    {
+      o = oyOptions_Get( device->db, 0 );
+      if(o)
+        tmp = oyStringCopy_(oyOption_GetRegistration(o), oyAllocateFunc_);
+      if(tmp && oyStrrchr_( tmp, OY_SLASH_C))
+      {
+        tmp2 = oyStrrchr_( tmp, OY_SLASH_C);
+        tmp2[0] = 0;
+      }
+      WARNc3_S( "\n Could not get a \"profile_name\" from %s\n"
+                " registration: \"%s\" rank: %d", 
+                oyNoEmptyString_m_(device_name), oyNoEmptyString_m_(tmp),
+                (int)rank_value )
+      if(tmp)
+        oyFree_m_(tmp); tmp2 = 0;
+      oyOption_Release( &o );
+      error = -1;
+    } else if(!oyOption_GetValueString(o,0))
+    {
+      WARNc1_S( "Could not get \"profile_name\" data from %s", 
+                oyNoEmptyString_m_(device_name) )
+      error = -1;
+    } else
+      *profile_name = oyOption_GetValueText( o, allocateFunc );
+
+  } else
+    WARNc_S( "missed argument(s)" );
+
+  return error;
+}
 /** Function oyDeviceSelectSimiliar
  *  @brief   get similiar devices by a pattern from a list
  *
