@@ -376,6 +376,7 @@ EXAMPLE_SOURCES = \
 	examples/dummy_filter/oyranos_cmm_dFil.c \
 	examples/image2pdf/image2pdf.c \
 	examples/image_display/image_display.cpp \
+	examples/libraw/oyranos_file.cpp \
 	examples/image_display/oyranos_display_helper_classes.cpp \
 	examples/image_display/oyranos_display_helper_classes_fltk.cpp \
 	examples/image_display/oyranos_display_helpers.c \
@@ -386,6 +387,7 @@ EXAMPLE_SOURCES = \
 EXAMPLE_FILES = \
 	$(EXAMPLE_SOURCES) \
 	examples/README \
+	examples/libraw/README \
 	examples/makefile \
 	examples/xcmsevents/plugin-compicc.svg \
 	examples/xcmsevents/plugin-compicc_gray.svg \
