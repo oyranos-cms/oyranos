@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2011-08-18 06:08+0200\n"
+"POT-Creation-Date: 2011-08-24 07:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,15 +30,15 @@ msgstr ""
 msgid "File exists"
 msgstr ""
 
-#: oyranos_io_core.c:798
+#: oyranos_io_core.c:799
 msgid "path is not a directory"
 msgstr ""
 
-#: oyranos_io_core.c:802
+#: oyranos_io_core.c:803
 msgid "path is a link: ignored"
 msgstr ""
 
-#: oyranos_io_core.c:807
+#: oyranos_io_core.c:808
 msgid "path is not readable"
 msgstr ""
 
@@ -74,20 +74,20 @@ msgstr ""
 msgid "will overwrite policy file"
 msgstr ""
 
-#: oyranos_check.c:72
+#: oyranos_check.c:72 oyranos_alpha.c:7812
 msgid "not found:"
 msgstr ""
 
-#: oyranos_cmm.c:64 oyranos_alpha.c:559 oyranos_alpha.c:864
-#: oyranos_alpha.c:1358 oyranos_alpha.c:3609 oyranos_alpha.c:4524
-#: oyranos_alpha.c:5578 oyranos_alpha.c:7834 oyranos_alpha.c:10857
-#: oyranos_alpha.c:11515 oyranos_alpha.c:12211 oyranos_alpha.c:12793
-#: oyranos_alpha.c:13773 oyranos_alpha.c:14985 oyranos_alpha.c:15581
-#: oyranos_alpha.c:15806 oyranos_alpha.c:16105 oyranos_alpha.c:17162
-#: oyranos_alpha.c:17458 oyranos_alpha.c:17539 oyranos_alpha.c:17808
-#: oyranos_alpha.c:19508 oyranos_alpha.c:19792 oyranos_alpha.c:20726
-#: oyranos_alpha.c:21021 oyranos_alpha.c:21939 oyranos_alpha.c:22546
-#: oyranos_alpha.c:22804 API_generated/oyBlob_s_.c:169
+#: oyranos_cmm.c:64 oyranos_alpha.c:562 oyranos_alpha.c:867
+#: oyranos_alpha.c:1361 oyranos_alpha.c:3612 oyranos_alpha.c:4527
+#: oyranos_alpha.c:5582 oyranos_alpha.c:8012 oyranos_alpha.c:11103
+#: oyranos_alpha.c:11761 oyranos_alpha.c:12457 oyranos_alpha.c:13039
+#: oyranos_alpha.c:14019 oyranos_alpha.c:15231 oyranos_alpha.c:15827
+#: oyranos_alpha.c:16052 oyranos_alpha.c:16351 oyranos_alpha.c:17408
+#: oyranos_alpha.c:17704 oyranos_alpha.c:17785 oyranos_alpha.c:18054
+#: oyranos_alpha.c:19754 oyranos_alpha.c:20038 oyranos_alpha.c:20972
+#: oyranos_alpha.c:21267 oyranos_alpha.c:22185 oyranos_alpha.c:22792
+#: oyranos_alpha.c:23050 API_generated/oyBlob_s_.c:169
 #: API_generated/oyPointer_s_.c:164 API_generated/oyHash_s_.c:155
 #: API_generated/oyName_s_.c:48 API_generated/oyObserver_s.c:51
 #: API_generated/oyOption_s_.c:176 API_generated/oyOptions_s_.c:59
@@ -110,7 +110,7 @@ msgid "Oyranos supplied modules"
 msgstr ""
 
 #: oyranos_cmm.c:459 modules/oyranos_cmm_oydi.c:997
-#: modules/oyranos_cmm_oyra.c:132 modules/devices/oyranos_cmm_oyX1.c:1259
+#: modules/oyranos_cmm_oyra.c:132 modules/devices/oyranos_cmm_oyX1.c:1263
 #: modules/devices/oyranos_cmm_qarz.c:1189 modules/oyranos_cmm_oyIM.c:130
 #: modules/oyranos_cmm_oicc.c:850 modules/oyranos_cmm_lraw.cpp:253
 #: examples/dummy_device/oyranos_cmm_dDev.c:817
@@ -118,7 +118,7 @@ msgid "Kai-Uwe"
 msgstr ""
 
 #: oyranos_cmm.c:461 modules/oyranos_cmm_oydi.c:999
-#: modules/oyranos_cmm_oyra.c:134 modules/devices/oyranos_cmm_oyX1.c:1261
+#: modules/oyranos_cmm_oyra.c:134 modules/devices/oyranos_cmm_oyX1.c:1265
 #: modules/devices/oyranos_cmm_qarz.c:1191 modules/oyranos_cmm_oyIM.c:132
 #: modules/oyranos_cmm_oicc.c:852 modules/oyranos_cmm_lraw.cpp:255
 #: examples/dummy_device/oyranos_cmm_dDev.c:819
@@ -126,9 +126,9 @@ msgid "Kai-Uwe Behrmann"
 msgstr ""
 
 #: oyranos_cmm.c:463 modules/oyranos_cmm_oydi.c:1001
-#: modules/oyranos_cmm_oyra.c:136 modules/devices/oyranos_cmm_oyX1.c:1263
+#: modules/oyranos_cmm_oyra.c:136 modules/devices/oyranos_cmm_oyX1.c:1267
 #: modules/devices/oyranos_cmm_qarz.c:1193
-#: modules/devices/oyranos_cmm_CUPS.c:850
+#: modules/devices/oyranos_cmm_CUPS.c:943
 #: modules/devices/oyranos_cmm_SANE.c:962
 #: modules/devices/oyranos_cmm_oyRE.cpp:869 modules/oyranos_cmm_oyIM.c:134
 #: modules/oyranos_cmm_oicc.c:854 modules/oyranos_cmm_lraw.cpp:257
@@ -139,7 +139,7 @@ msgid ""
 msgstr ""
 
 #: oyranos_cmm.c:467 modules/oyranos_cmm_oydi.c:1005
-#: modules/oyranos_cmm_oyra.c:140 modules/devices/oyranos_cmm_oyX1.c:1267
+#: modules/oyranos_cmm_oyra.c:140 modules/devices/oyranos_cmm_oyX1.c:1271
 #: modules/devices/oyranos_cmm_qarz.c:1197 modules/oyranos_cmm_oyIM.c:138
 #: modules/oyranos_cmm_oicc.c:858 modules/oyranos_cmm_lraw.cpp:261
 #: examples/dummy_filter/oyranos_cmm_dFil.c:151
@@ -147,13 +147,13 @@ msgid "newBSD"
 msgstr ""
 
 #: oyranos_cmm.c:469 modules/oyranos_cmm_oyra.c:142
-#: modules/devices/oyranos_cmm_oyX1.c:1269
+#: modules/devices/oyranos_cmm_oyX1.c:1273
 #: modules/devices/oyranos_cmm_qarz.c:1199
 msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
 #: oyranos_cmm.c:471 modules/oyranos_cmm_oydi.c:1009
-#: modules/oyranos_cmm_oyra.c:144 modules/devices/oyranos_cmm_oyX1.c:1271
+#: modules/oyranos_cmm_oyra.c:144 modules/devices/oyranos_cmm_oyX1.c:1275
 #: modules/devices/oyranos_cmm_qarz.c:1201 modules/oyranos_cmm_oyIM.c:142
 #: modules/oyranos_cmm_oicc.c:862 modules/oyranos_cmm_lraw.cpp:265
 #: examples/dummy_filter/oyranos_cmm_dFil.c:155
@@ -480,7 +480,7 @@ msgstr ""
 msgid "Colour measurement data"
 msgstr ""
 
-#: oyranos_icc.c:376 oyranos_alpha.c:1829
+#: oyranos_icc.c:376 oyranos_alpha.c:1832
 msgid "Copyright"
 msgstr ""
 
@@ -1594,7 +1594,7 @@ msgstr ""
 msgid "is a colour profile administration tool for monitors"
 msgstr ""
 
-#: oyranos_gamma.c:165 oyranos_policy.c:53 oyranos_profile.c:78
+#: oyranos_gamma.c:165 oyranos_policy.c:53 oyranos_profile.c:76
 #: oyranos_profiles.c:55 oforms/oyranos_xforms.c:23
 #: oforms/oyranos_xforms_modules.c:26 oforms/oyranos_xforms_fltk.cxx:54
 msgid "Usage"
@@ -1636,13 +1636,13 @@ msgstr ""
 msgid "Dump data:"
 msgstr ""
 
-#: oyranos_gamma.c:191 oyranos_profile.c:97 oyranos_profiles.c:86
+#: oyranos_gamma.c:191 oyranos_profile.c:95 oyranos_profiles.c:86
 #: oforms/oyranos_xforms.c:36 oforms/oyranos_xforms_modules.c:33
 #: oforms/oyranos_xforms_fltk.cxx:55
 msgid "General options:"
 msgstr ""
 
-#: oyranos_gamma.c:192 oyranos_profile.c:98 oyranos_profiles.c:87
+#: oyranos_gamma.c:192 oyranos_profile.c:96 oyranos_profiles.c:87
 msgid "-v verbose"
 msgstr ""
 
@@ -1660,7 +1660,7 @@ msgstr ""
 msgid "For more informations read the man page:"
 msgstr ""
 
-#: oyranos_gamma.c:212 oyranos_policy.c:146 oyranos_profile.c:178
+#: oyranos_gamma.c:212 oyranos_policy.c:146 oyranos_profile.c:177
 #: oyranos_profiles.c:209 API_generated/oyOptions_s.c:1457
 #: oforms/oyranos_xforms.c:133 oforms/oyranos_xforms_modules.c:141
 #: oforms/oyranos_xforms_fltk.cxx:320
@@ -1679,7 +1679,7 @@ msgstr ""
 msgid "is a policy administration tool"
 msgstr ""
 
-#: oyranos_policy.c:51 oyranos_profile.c:76 oyranos_profiles.c:53
+#: oyranos_policy.c:51 oyranos_profile.c:74 oyranos_profiles.c:53
 msgid ""
 "Hint: search paths are influenced by the XDG_CONFIG_HOME shell variable."
 msgstr ""
@@ -1716,7 +1716,7 @@ msgstr ""
 msgid "policy name"
 msgstr ""
 
-#: oyranos_policy.c:66 oyranos_profile.c:94 oyranos_profiles.c:83
+#: oyranos_policy.c:66 oyranos_profile.c:92 oyranos_profiles.c:83
 msgid "Print a help text:"
 msgstr ""
 
@@ -1732,65 +1732,65 @@ msgstr ""
 msgid "Policy search paths"
 msgstr ""
 
-#: oyranos_profile.c:68 oyranos_profiles.c:45
+#: oyranos_profile.c:66 oyranos_profiles.c:45
 msgid "is a ICC profile information tool"
 msgstr ""
 
-#: oyranos_profile.c:79
+#: oyranos_profile.c:77
 msgid "List included ICC tags:"
 msgstr ""
 
-#: oyranos_profile.c:81 oyranos_profile.c:82
+#: oyranos_profile.c:79 oyranos_profile.c:80
 msgid "select tag"
 msgstr ""
 
-#: oyranos_profile.c:83
+#: oyranos_profile.c:81
 msgid "add prefix"
 msgstr ""
 
-#: oyranos_profile.c:84
+#: oyranos_profile.c:82
 msgid "use device class"
 msgstr ""
 
-#: oyranos_profile.c:86
+#: oyranos_profile.c:84
 msgid "Dump Device Infos to JSON:"
 msgstr ""
 
-#: oyranos_profile.c:89
+#: oyranos_profile.c:87
 msgid "Write to ICC profile:"
 msgstr ""
 
-#: oyranos_profile.c:91
+#: oyranos_profile.c:89
 msgid "use new name"
 msgstr ""
 
-#: oyranos_profile.c:92
+#: oyranos_profile.c:90
 msgid "embed OpenICC device JSON from file"
 msgstr ""
 
-#: oyranos_profile.c:100 oyranos_profiles.c:89
+#: oyranos_profile.c:98 oyranos_profiles.c:89
 #: examples/dummy_device/oyranos_cmm_dDev.c:698
 #: examples/dummy_device/oyranos_cmm_dDev.c:709
 msgid "Example"
 msgstr ""
 
-#: oyranos_profile.c:192
+#: oyranos_profile.c:191
 msgid "missed -w option to write a ICC profile"
 msgstr ""
 
-#: oyranos_profile.c:192 oyranos_profile.c:199 oyranos_profile.c:215
+#: oyranos_profile.c:191 oyranos_profile.c:198 oyranos_profile.c:219
 msgid "Exit!"
 msgstr ""
 
-#: oyranos_profile.c:199
+#: oyranos_profile.c:198
 msgid "Need a ICC profile to modify."
 msgstr ""
 
-#: oyranos_profile.c:215
+#: oyranos_profile.c:219
 msgid "Profile exists already"
 msgstr ""
 
-#: oyranos_profile.c:250 modules/oyranos_cmm_oicc.c:441
+#: oyranos_profile.c:268 modules/oyranos_cmm_oicc.c:441
 msgid "ICC profile"
 msgstr ""
 
@@ -1894,101 +1894,101 @@ msgstr ""
 msgid "bytes"
 msgstr ""
 
-#: oyranos_alpha.c:1827
+#: oyranos_alpha.c:1830
 msgid "Name"
 msgstr ""
 
-#: oyranos_alpha.c:1828
+#: oyranos_alpha.c:1831
 msgid "Manufacturer"
 msgstr ""
 
-#: oyranos_alpha.c:2211
+#: oyranos_alpha.c:2214
 msgid "Could not open meta module API"
 msgstr ""
 
-#: oyranos_alpha.c:2475
+#: oyranos_alpha.c:2478
 msgid ""
 "Could not find any meta module. Did you set the OY_MODULE_PATHS variable, to "
 "point to a Oyranos module loader library?"
 msgstr ""
 
-#: oyranos_alpha.c:6678 oyranos_alpha.c:7441 oyranos_alpha.c:23739
-#: oyranos_alpha.c:23822
+#: oyranos_alpha.c:6682 oyranos_alpha.c:7445 oyranos_alpha.c:23985
+#: oyranos_alpha.c:24068
 msgid "Could not open device"
 msgstr ""
 
-#: oyranos_alpha.c:6895 oyranos_alpha.c:7452
+#: oyranos_alpha.c:6899 oyranos_alpha.c:7456
 msgid "Could not open profile"
 msgstr ""
 
-#: oyranos_alpha.c:6903
+#: oyranos_alpha.c:6907
 msgid "Could not write to file"
 msgstr ""
 
-#: oyranos_alpha.c:6945
+#: oyranos_alpha.c:6949
 msgid "Could not open ICC profile"
 msgstr ""
 
-#: oyranos_alpha.c:6946 oyranos_alpha.c:7997 oyranos_alpha.c:8002
+#: oyranos_alpha.c:6950 oyranos_alpha.c:8175 oyranos_alpha.c:8180
 msgid "install in the OpenIccDirectory icc path"
 msgstr ""
 
-#: oyranos_alpha.c:7995 oyranos_alpha.c:8001
+#: oyranos_alpha.c:8173 oyranos_alpha.c:8179
 msgid "Could not open default ICC profile"
 msgstr ""
 
-#: oyranos_alpha.c:7996
+#: oyranos_alpha.c:8174
 msgid "You can get them from http://sf.net/projects/openicc"
 msgstr ""
 
-#: oyranos_alpha.c:8087
+#: oyranos_alpha.c:8265
 msgid "Wrong ICC profile id detected"
 msgstr ""
 
-#: oyranos_alpha.c:8097
+#: oyranos_alpha.c:8275
 msgid "No ICC profile id detected"
 msgstr ""
 
-#: oyranos_alpha.c:8107
+#: oyranos_alpha.c:8285
 msgid "ICC profile id written"
 msgstr ""
 
-#: oyranos_alpha.c:16408 oyranos_alpha.c:16426 oyranos_alpha.c:16526
-#: oyranos_alpha.c:16542 API_generated/oyranos_object.c:157
+#: oyranos_alpha.c:16654 oyranos_alpha.c:16672 oyranos_alpha.c:16772
+#: oyranos_alpha.c:16788 API_generated/oyranos_object.c:157
 #: API_generated/oyranos_object.c:175 API_generated/oyranos_object.c:276
 #: API_generated/oyranos_object.c:292
 msgid "with '.' is not allowed"
 msgstr ""
 
-#: oyranos_alpha.c:18214
+#: oyranos_alpha.c:18460
 msgid "attempt to add a incomplete filter"
 msgstr ""
 
-#: oyranos_alpha.c:18276
+#: oyranos_alpha.c:18522
 msgid "?? Nothing to add ??"
 msgstr ""
 
-#: oyranos_alpha.c:18691 API_generated/oyObserver_s_.c:53
+#: oyranos_alpha.c:18937 API_generated/oyObserver_s_.c:53
 #: API_generated/oyObserver_s.c:349 API_generated/oyObserver_s.c:549
 #: API_generated/oyObserver_s.c:627
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:388
 msgid "Signal"
 msgstr ""
 
-#: oyranos_alpha.c:18826 oyranos_alpha.c:21820 oyranos_alpha.c:23350
+#: oyranos_alpha.c:19072 oyranos_alpha.c:22066 oyranos_alpha.c:23596
 #: API_generated/oyOptions_s.c:2111
 msgid "error in module:"
 msgstr ""
 
-#: oyranos_alpha.c:21790
+#: oyranos_alpha.c:22036
 msgid "Found no node in conversion. give up"
 msgstr ""
 
-#: oyranos_alpha.c:22512
+#: oyranos_alpha.c:22758
 msgid "---"
 msgstr ""
 
-#: oyranos_alpha.c:23358 API_generated/oyOptions_s.c:2119
+#: oyranos_alpha.c:23604 API_generated/oyOptions_s.c:2119
 msgid "Could not allocate memory for:"
 msgstr ""
 
@@ -2197,9 +2197,9 @@ msgstr ""
 
 #. The following strings must match the categories for a menu entry.
 #: modules/oyranos_cmm_lcms.c:2460 modules/oyranos_cmm_lcm2.c:2695
-#: modules/devices/oyranos_cmm_oyX1.c:1133
+#: modules/devices/oyranos_cmm_oyX1.c:1137
 #: modules/devices/oyranos_cmm_qarz.c:1063
-#: modules/devices/oyranos_cmm_CUPS.c:742
+#: modules/devices/oyranos_cmm_CUPS.c:835
 #: modules/devices/oyranos_cmm_SANE.c:832
 #: modules/devices/oyranos_cmm_oyRE.cpp:763
 #: examples/dummy_device/oyranos_cmm_dDev.c:709
@@ -2211,12 +2211,12 @@ msgstr ""
 #: modules/oyranos_cmm_lcm2.c:2696 modules/oyranos_cmm_lcm2.c:2699
 #: modules/oyranos_cmm_oyra_image_ppm.c:244
 #: modules/oyranos_cmm_oyra_image_ppm.c:980
-#: modules/devices/oyranos_cmm_oyX1.c:1134
-#: modules/devices/oyranos_cmm_oyX1.c:1137
+#: modules/devices/oyranos_cmm_oyX1.c:1138
+#: modules/devices/oyranos_cmm_oyX1.c:1141
 #: modules/devices/oyranos_cmm_qarz.c:1064
 #: modules/devices/oyranos_cmm_qarz.c:1067
-#: modules/devices/oyranos_cmm_CUPS.c:743
-#: modules/devices/oyranos_cmm_CUPS.c:746 modules/oyranos_cmm_oPNG.c:497
+#: modules/devices/oyranos_cmm_CUPS.c:836
+#: modules/devices/oyranos_cmm_CUPS.c:839 modules/oyranos_cmm_oPNG.c:497
 #: modules/oyranos_cmm_oPNG.c:1062
 msgid "/"
 msgstr ""
@@ -2272,7 +2272,7 @@ msgid "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
 msgstr ""
 
 #: modules/oyranos_cmm_lcms.c:2573 modules/oyranos_cmm_lcm2.c:2808
-#: modules/devices/oyranos_cmm_CUPS.c:859
+#: modules/devices/oyranos_cmm_CUPS.c:952
 #: modules/devices/oyranos_cmm_SANE.c:969
 #: modules/devices/oyranos_cmm_oyRE.cpp:876
 #: examples/dummy_device/oyranos_cmm_dDev.c:829
@@ -2521,14 +2521,14 @@ msgid ""
 "The oyEDITING_RGB ICC profile is attached."
 msgstr ""
 
-#: modules/devices/oyranos_cmm_oyX1.c:1117
-#: modules/devices/oyranos_cmm_oyX1.c:1138
+#: modules/devices/oyranos_cmm_oyX1.c:1121
+#: modules/devices/oyranos_cmm_oyX1.c:1142
 #: modules/devices/oyranos_cmm_qarz.c:1047
 #: modules/devices/oyranos_cmm_qarz.c:1068
 msgid "Monitor"
 msgstr ""
 
-#: modules/devices/oyranos_cmm_oyX1.c:1119
+#: modules/devices/oyranos_cmm_oyX1.c:1123
 #: modules/devices/oyranos_cmm_qarz.c:1049
 msgid ""
 "Monitors, which can be detected through the video card driver and windowing "
@@ -2536,26 +2536,26 @@ msgid ""
 msgstr ""
 
 #. CMM: abbreviation for Colour Matching Module
-#: modules/devices/oyranos_cmm_oyX1.c:1136
+#: modules/devices/oyranos_cmm_oyX1.c:1140
 #: modules/devices/oyranos_cmm_qarz.c:1066
-#: modules/devices/oyranos_cmm_CUPS.c:745
+#: modules/devices/oyranos_cmm_CUPS.c:838
 #: modules/devices/oyranos_cmm_SANE.c:832
 #: modules/devices/oyranos_cmm_oyRE.cpp:763
 #: examples/dummy_device/oyranos_cmm_dDev.c:709
 msgid "Device"
 msgstr ""
 
-#: modules/devices/oyranos_cmm_oyX1.c:1232
+#: modules/devices/oyranos_cmm_oyX1.c:1236
 #: modules/devices/oyranos_cmm_qarz.c:1162
 msgid "Oyranos X11"
 msgstr ""
 
-#: modules/devices/oyranos_cmm_oyX1.c:1234
+#: modules/devices/oyranos_cmm_oyX1.c:1238
 #: modules/devices/oyranos_cmm_qarz.c:1164
 msgid "The window support module of Oyranos."
 msgstr ""
 
-#: modules/devices/oyranos_cmm_oyX1.c:1241
+#: modules/devices/oyranos_cmm_oyX1.c:1245
 msgid "The oyX1 module supports the generic device protocol."
 msgstr ""
 
@@ -2643,39 +2643,39 @@ msgstr ""
 msgid "no qarzMonitor_s from"
 msgstr ""
 
-#: modules/devices/oyranos_cmm_CUPS.c:730
+#: modules/devices/oyranos_cmm_CUPS.c:823
 msgid "Printer"
 msgstr ""
 
-#: modules/devices/oyranos_cmm_CUPS.c:732
+#: modules/devices/oyranos_cmm_CUPS.c:825
 msgid "Printers, which are accessible through the CUPS spooling system."
 msgstr ""
 
-#: modules/devices/oyranos_cmm_CUPS.c:747
+#: modules/devices/oyranos_cmm_CUPS.c:840
 msgid "Printer CUPS"
 msgstr ""
 
-#: modules/devices/oyranos_cmm_CUPS.c:839
+#: modules/devices/oyranos_cmm_CUPS.c:932
 msgid "Oyranos CUPS"
 msgstr ""
 
-#: modules/devices/oyranos_cmm_CUPS.c:841
+#: modules/devices/oyranos_cmm_CUPS.c:934
 msgid "The CUPS/printer module for Oyranos."
 msgstr ""
 
-#: modules/devices/oyranos_cmm_CUPS.c:846
+#: modules/devices/oyranos_cmm_CUPS.c:939
 msgid "Joe"
 msgstr ""
 
-#: modules/devices/oyranos_cmm_CUPS.c:848
+#: modules/devices/oyranos_cmm_CUPS.c:941
 msgid "Joseph Simon III"
 msgstr ""
 
-#: modules/devices/oyranos_cmm_CUPS.c:857
+#: modules/devices/oyranos_cmm_CUPS.c:950
 msgid "Copyright (c) 2009 Joseph Simon; MIT"
 msgstr ""
 
-#: modules/devices/oyranos_cmm_CUPS.c:867
+#: modules/devices/oyranos_cmm_CUPS.c:960
 msgid "The CUPS module supports the generic device protocol."
 msgstr ""
 
