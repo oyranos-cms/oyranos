@@ -1,0 +1,9 @@
+The oyranos-file app is used to render a cameraRAW file to a ppm. But
+more important is the capability to embedd device calibration information 
+into a provided ICC profile.
+
+The resulting modified ICC device profile can be placed into the local or 
+remote ICC device profile DB and will be automatically selected by the lraw 
+rendering module.
+This can be seen in Oyranos' image_display and in the lraw CinePaint plugin.
+
