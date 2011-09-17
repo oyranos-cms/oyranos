@@ -4,7 +4,7 @@ License:   newBSD
 Group:     Development/Libraries/Other
 URL:       http://www.oyranos.org
 Vendor:    Kai-Uwe Behrmann
-BuildRoot: %{_tmppath}/%{name}-%{version}-build
+BuildRoot: %{_tmppath}/%{name}-root
 Prefix:    %{_prefix}
 
 BuildRequires:  desktop-file-utils
@@ -42,7 +42,7 @@ BuildRequires: gcc-c++ gettext doxygen graphviz fltk fltk-devel libpng-devel lib
 Summary:   Color Management System Libraries
 Group:     Development/Libraries/Other
 # assume users want the device modules
-Requires:  oyranos-libs-cups oyranos-libs-monitor
+Requires:  lib%{name}0-cups = %{version} lib%{name}0-monitor = %{version}
 # we need rgb, lab, xyz gray and cmyk profiles
 # the proper names: sRGB.icc, XYZ.icc, Lab.icc are in the OpenICC-data package
 Requires:   icc-profiles
@@ -57,7 +57,7 @@ Summary:   Alpha and Pre Alpha Headers
 Group:     Development/Libraries/Other
 Requires:  lib%{name}-devel
 
-%package      libs-monitor
+%package      -n lib%{name}0-monitor
 Summary:    Oyranos Monitor dependent Libraries
 Group:      Development/Libraries/Other
 Requires:   xcalib
@@ -65,19 +65,19 @@ Requires:   xcalib
 %package      monitor
 Summary:    Oyranos Monitor Tools
 Group:      Development/Libraries/Other
-Requires:   oyranos-libs-monitor
+Requires:   lib%{name}0-monitor
 
 %package      monitor-nvidia
 Summary:    Nvidia card support
 Group:      System/X11/Utilities
 License:    GPL
 
-%package      libs-cups
+%package      -n lib%{name}0-cups
 Summary:    CUPS device support
 Group:      Development/Libraries/Other
 Requires:   cups
 
-%package      libs-sane
+%package      -n lib%{name}0-sane
 Summary:    SANE device support
 Group:      Development/Libraries/Other
 Requires:   sane
@@ -156,7 +156,7 @@ These API's are to be considered for changing very frequently.
 %description  monitor
 The monitor profile configuration tool.
 
-%description  libs-monitor
+%description  -n lib%{name}0-monitor
 The monitor support libraries of the
 Oyranos colour management system.
 
@@ -165,11 +165,11 @@ Display setup tool for the
 Oyranos colour management system.
 The nvidia EDID configuration part.
 
-%description  libs-cups
+%description  -n lib%{name}0-cups
 CUPS device support for the
 Oyranos colour management system.
 
-%description  libs-sane
+%description  -n lib%{name}0-sane
 SANE device support for the
 Oyranos colour management system.
 
@@ -197,7 +197,7 @@ the applet shows if a colour server is running through a icon in
 the system tray.
 
 %prep
-%setup -p
+%setup -q
 
 %build
 export CFLAGS="%{optflags}"
@@ -205,18 +205,15 @@ export CFLAGS="%{optflags}"
 make %{_smp_mflags} || make
 
 %install
-rm -rf %{buildroot}
 make #%%{_smp_mflags}
-make DESTDIR=%{buildroot} install
+%make_install
 rm -fr %{buildroot}/%{_datadir}/doc/%{name}
+cp -av examples/xcmsevents/qcmsevents-applet.desktop .
 echo 'X-SuSE-translate=true' >> qcmsevents-applet.desktop
 echo 'X-SuSE-translate=true' >> %{name}-profile-install.desktop
 desktop-file-install --dir=%{buildroot}/%{desktopdir} qcmsevents-applet.desktop
 desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.desktop
 %find_lang %{name}       # generate a special file list
-
-%clean
-rm -rf %{buildroot}
 
 %post -n lib%{name}0
 ldconfig
@@ -303,7 +300,7 @@ ldconfig
 %{_mandir}/man1/%{name}-monitor.1*
 /etc/xdg/autostart/%{name}-monitor-setup.desktop
 
-%files libs-monitor
+%files -n lib%{name}0-monitor
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %dir %{_libdir}/colour/
@@ -317,14 +314,14 @@ ldconfig
 %{_bindir}/%{name}-monitor-nvidia
 %{_mandir}/man1/%{name}-monitor-nvidia.1*
 
-%files libs-cups
+%files -n lib%{name}0-cups
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %dir %{_libdir}/colour/
 %dir %{_libdir}/%{cmmsubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_CUPS_cmm_module*
 
-%files libs-sane
+%files -n lib%{name}0-sane
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %dir %{_libdir}/colour/
