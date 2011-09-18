@@ -842,9 +842,9 @@ $(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL_NAM
 	-$(CC) -I./ $(CFLAGS) $(INCL) $(SRCDIR)/$(TARGET)_monitor_nvidia.c \
 	-I$(SRCDIR)/libXNVCtrl \
 	-o $(TARGET)-monitor-nvidia $(MONI_X11_OBJECTS) -L./ \
-	$(LDLIBS) $(X11_LIBS) $(m) \
+	$(LDLIBS) \
 	-L./$(LIB_XNVCTRL) -lXNVCtrl $(MODULE_LDLIBS) \
-	$(LINK_LIB_PATH)
+	$(LINK_LIB_PATH) $(X11_LIBS) $(m)
 
 oyjl/oyjl_tree_parse.o:	$(SRCDIR)/oyjl/oyjl_tree_parse.c
 	echo Compiling $<
