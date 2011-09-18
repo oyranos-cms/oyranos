@@ -894,7 +894,7 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
   if [ -n "$MAKEFILE_DIR" ]; then
     for i in $MAKEFILE_DIR; do
       test -f "$ROOT_DIR/$i/makefile".in && echo "X11_INCL=\$(XF86VMODE_INC) \$(XINERAMA_INC) \$(XRANDR_INC)" >> "$i/makefile"
-      test -f "$ROOT_DIR/$i/makefile".in && echo "X11_LIBS=\$(X11_LIB_PATH) -lX11 $X_ADD_LIBS \$(XCM_LIBS)" >> "$i/makefile"
+      test -f "$ROOT_DIR/$i/makefile".in && echo "X11_LIBS=\$(X11_LIB_PATH)  \$(XCM_LIBS) $X_ADD_LIBS" >> "$i/makefile"
     done
   fi
 fi
