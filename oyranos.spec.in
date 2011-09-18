@@ -1,3 +1,17 @@
+#
+# spec file for package oyranos
+#
+# Copyright (c) 2011 Kai-Uwe Behrmann <ku.b@gmx.de>
+#
+# All modifications and additions to the file contributed by third parties
+# remain the property of their copyright owners, unless otherwise agreed
+# upon. The license for this file, and modifications and additions to the
+# file, is the same license as for the pristine package itself (unless the
+# license for the pristine package is not an Open Source License, in which
+# case the license is the MIT License). An "Open Source License" is a
+# license that conforms to the Open Source Definition (Version 1.9)
+# published by the Open Source Initiative.
+
 Summary:   Color Management System
 Name:      oyranos
 License:   newBSD
@@ -119,6 +133,8 @@ Authors:
 --------
     Oyranos     Kai-Uwe Behrmann <www.behrmann.name>
     CUPS        Joe Simon <jsimon184@yahoo.com>
+    lraw, oyRE, grantlee code generator
+                Yiannis Belias <yiannisbe@gmail.com>
 
 used components and libraries with divergine FOSS licenses:
     md5         L. Peter Deutsch
@@ -205,7 +221,6 @@ export CFLAGS="%{optflags}"
 make %{_smp_mflags} || make
 
 %install
-make #%%{_smp_mflags}
 %make_install
 rm -fr %{buildroot}/%{_datadir}/doc/%{name}
 cp -av examples/xcmsevents/qcmsevents-applet.desktop .
@@ -225,10 +240,12 @@ ldconfig
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-policy
+%{_bindir}/%{name}-profile
 %{_bindir}/%{name}-profiles
 %{_bindir}/%{name}-profile-install
 %{_bindir}/%{name}-xforms-modules
 %{_mandir}/man1/%{name}-policy*
+%{_mandir}/man1/%{name}-profile.1*
 %{_mandir}/man1/%{name}-profiles.1*
 %{_mandir}/man1/%{name}-profile-install.1*
 %{_mandir}/man1/%{name}-xforms-modules.1*
@@ -250,8 +267,10 @@ ldconfig
 %dir %{_libdir}/%{cmmsubpath}/
 %dir %{_libdir}/%{metasubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_lcm*
+%if 0%{?suse_version} > 1130
 %{_libdir}/%{cmmsubpath}/lib%{name}_lraw_cmm_module*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oyRE_cmm_module*
+%endif
 %{_libdir}/%{cmmsubpath}/lib%{name}_oyra_cmm_module*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oicc_cmm_module*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oPNG_cmm_module*
