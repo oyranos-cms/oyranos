@@ -399,6 +399,7 @@ MAN1 = \
 	oyranos-monitor.1 \
 	oyranos-monitor-nvidia.1 \
 	oyranos-policy.1 \
+	oyranos-profile.1 \
 	oyranos-profiles.1 \
 	oyranos-profile-install.1 \
 	oyranos-xforms.1 \
@@ -836,7 +837,7 @@ $(LIB_XNVCTRL).a:
 
 
 # the twinview library
-$(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL_NAME) $(MONI_X11_OBJECTS)
+$(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL_NAME) $(MONI_X11_OBJECTS) $(LIBSONAMEFULL)
 	echo Linking $@ $(LIB_XNVCTRL_)1 $(XNVCtrl)2 $(LIB_XNVCTRL)3 $(LIB_XNVCTRL_NAME)4 ...
 	-$(CC) -I./ $(CFLAGS) $(INCL) $(SRCDIR)/$(TARGET)_monitor_nvidia.c \
 	-I$(SRCDIR)/libXNVCtrl \
@@ -1080,6 +1081,7 @@ install_bin:	all install_gui
 	$(INSTALL) -m 755 $(TARGET)-config     "$(DESTDIR)$(bindir)"
 	$(INSTALL) -m 755 $(TARGET)-monitor    "$(DESTDIR)$(bindir)"
 	$(INSTALL) -m 755 $(TARGET)-policy     "$(DESTDIR)$(bindir)"
+	$(INSTALL) -m 755 $(TARGET)-profile    "$(DESTDIR)$(bindir)"
 	$(INSTALL) -m 755 $(TARGET)-profiles   "$(DESTDIR)$(bindir)"
 	$(INSTALL) -m 755 $(BIN_SCRIPTS)       "$(DESTDIR)$(bindir)"
 	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia "$(DESTDIR)$(bindir)"
@@ -1277,6 +1279,7 @@ uninstall_bin:
 	$(RM)   "$(DESTDIR)$(bindir)/$(FLTK_GUI)"
 #endif
 	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-policy"
+	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-profile"
 	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-profiles"
 	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-profile-install"
 	-$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-monitor-nvidia"
