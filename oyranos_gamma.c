@@ -57,7 +57,8 @@ int main( int argc , char** argv )
   int device_meta_tag = 0;
   char * add_meta = 0,
        * prof_name = 0,
-       * module_name = 0;
+       * module_name = 0,
+       * new_profile_name = 0;
   char * device_class = 0;
   int list_modules = 0;
 
@@ -146,6 +147,8 @@ int main( int argc , char** argv )
                         { database = 1; monitor_profile = 0; i=100; break; }
                         else if(OY_IS_ARG("add-edid"))
                         { OY_PARSE_STRING_ARG2(add_meta,"add-edid"); break; }
+                        else if(OY_IS_ARG("name"))
+                        { OY_PARSE_STRING_ARG2(new_profile_name, "name"); break; }
                         else if(OY_IS_ARG("profile"))
                         { OY_PARSE_STRING_ARG2(prof_name, "profile"); break; }
                         else if(OY_IS_ARG("modules"))
@@ -482,6 +485,8 @@ int main( int argc , char** argv )
       prof = (oyProfile_s*)oyOptions_GetType( options, -1, "icc_profile",
                                               oyOBJECT_PROFILE_S );
       oyOptions_Release( &options );
+      if(new_profile_name)
+        error = oyProfile_AddTagText( prof, icSigProfileDescriptionTag, new_profile_name );
       /* serialise before requesting a ICC md5 */
       data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
       oyFree_m_(data);
