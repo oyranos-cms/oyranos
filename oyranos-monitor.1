@@ -66,6 +66,9 @@ Embedd EDID keys to a ICC profile as meta tag. Requires --profile.
 .TP
 .B \-\-profile \fIICC_FILENAME\fR
 ICC profile.
+.TP
+.B \-\-name \fIICC_INTERNAL_NAME\fR
+String for ICC profile internal name.
 .SH GENERAL OPTIONS
 .TP
 .B \-v, \-\-verbose
@@ -128,7 +131,7 @@ Dump data in the format following the -f option:
 .PP
 .TP
 Embedd device informations into ICC meta tag:
-.B oyranos-monitor --add-edid=edid_filename --profile=profilename
+.B oyranos-monitor --add-edid=edid_filename --profile=profilename.icc --name=profilename
 .PP
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
