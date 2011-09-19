@@ -1,3 +1,202 @@
+Version 0.3.2
+
+Boris Manojlovic (1):
+	* [build]: fix-lib-order
+
+Joseph Simon (3):
+	* [CUPS]: add resetPPDAttributes_()
+	* [CUPS]: add getOyConfigPrinter_+ resetPPDChoices_
+	* [docu]: typo fixes and make the document flow better
+
+Kai-Uwe Behrmann (183):
+	* [alpha]: add --name option to oyranos-monitor
+	* [build]: add license to spec file
+	* [build]: install oyranos-profile tool
+	* [conf]: avoid double library linking
+	* [conf]: sort link order
+	* [docu]: add oyranos-profile man page
+	* [build]: fix package names and desktop file installation
+	* [i18n]: update deutsch
+	* [yajl]: print text nodes
+	* [build]: package libraw device calibration embedd app
+	* [exmpl]: add libraw device calibration embedd app
+	* [core]: add OY_PARSE_INT_ARG2 for cli parsing
+	* [exmpl]: add --show to qcmsevents
+	* [oyX1]: do not fail
+	* [lraw]: render at full by default
+	* [alpha]: sensible file extension check
+	* [CUPS]: fix typo
+	* [CUPS]: document the device_context.PPD.ppd_file_t option
+	* [CUPS]: fall back to complete keyset
+	* [i18n]: fix typo in deutsch trasnlation
+	* [alpha]: be more relaxed on wrong arguments in oyConfDomain_GetText_
+	* [CUPS]: select colour option choice with fallbacks
+	* [CUPS]: use resetPPDAttributes_ instead of resetPPDChoices_
+	* [CUPS]: search for device context
+	* [CUPS]: mark "device_context" as "PPD.text"
+	* [oyX1]: use "set_device_attributes" with oyProfile_DeviceAdd()
+	* [alpha]: enable oyranos-profile -w -j options
+	* [test]: add "monitor JSON" test
+	* [alpha]: add oyDeviceFromJSON() API
+	* [conf]: expose static yajl objects in build scripts
+	* [alpha]: add oyDeviceFromJSON() API
+	* [alpha]: add "set_device_attributes" flag to oyProfile_DeviceAdd()
+	* [core]: fix memory leak in oyMakeDir_
+	* [yajl]: add oyjl_value_text() API
+	* [build]: fix spec file to match openSUSE packaging
+	* [CUPS]: fix C build warnings
+	* [build]: move file to match module sources
+	* [build]: fix liboyranos_module linking
+	* [build]: fix yajl on osX
+	* [build]: fix conflicting make variable
+	* [build]: require libraw and libyajl only >= oS-11.4
+	* [build]: if defaulting to detected external yajl
+	* [build]: copy yajl into sources and link if needed
+	* [yajl]: add internal version based on yail 1.0.12
+	* [conf]: detect a missed yajl and use internal one
+	* [i18n]: update deutsch
+	* [docu]: fine tune help text
+	* [i18n]: update deutsch in parts
+	* [core]: make oyranos-config-fltk help window resizeable
+	* [alpha]: fix over sensible error message
+	* [docu]: add oyranos-profile-install man page
+	* [conf]: hide oyranos-profile-install.desktop from menu
+	* [conf]: more robust yajl version detection
+	* [core]: fix typo in ICC tag name
+	* [i18n]: add new texts to oyranos.pot
+	* [core]: show help text by F1 in oyranos-config-fltk
+	* [core]: export HTML over oyranos-policy --help
+	* [core]: export core option desriptions to HTML
+	* [core]: add oyDescriptionToHTML() API
+	* [docu]: describe reason, why a missed ICC profile is bad
+	* [core]: fix string lenght in oyStringAddPrintf_()
+	* [docu]: fix man page typo
+	* [core]: remove unused path configuration code in oyranos-config-fltk
+	* [oforms]: remove hint to non yet available man pages
+	* [oforms]: support --help by oyranos-xforms
+	* [core]: use tooltips for oyranos-policy dump
+	* [i18n]: update deutsch in parts
+	* [core]: add long descriptions to core options
+	* [oforms]: remove printf
+	* [oforms]: set correct default choice
+	* [oicc]: set description as xf:help for xf:select1
+	* [oforms]: show description of headlines
+	* [oforms]: use xf:group labels on cmd line
+	* [oforms]: show the xf:group labels
+	* [lcm2]: add help descriptions to specific options
+	* [lcms]: add help descriptions to specific options
+	* [oicc]: move h3/h4 elements to <xf:group type=[h3,h4]>
+	* [core]: add a oyOption_t_::tooltip and make descriptions accessible
+	* [core]: add oyXFORMsModelGetAttrValue()
+	* [alpha]: adapt oyranos-profile to non enumerated JSON devices
+	* [lraw]: convert printf into message
+	* [oyRE]: accept DNG in is_raw()
+	* [yajl]: catch on minor user errors
+	* [build]: add oyranos-profile-install script to fix desktop file
+	* [lraw]: add crw and other endings
+	* [alpha]: use only JSON array in oyranos-profile -o
+	* [oyRE]: add std namespace to fix compile error
+	* [alpha]: add more UI's for oyranos-profiles --gui option
+	* [alpha]: skip the numbered JSON device level in oyranos-profiles
+	* [core]: add oyFindApplication()
+	* [core]: remove ignored entry
+	* [core]: add oyranos-profile-install xdg meny entry
+	* [core]: support file:// prefix
+	* [docu]: add man page for oyranos-profiles tool
+	* [alpha]: add oyranos-profile --gui --install
+	* [alpha]: show resolved user path name in oyranos-profiles
+	* [docu]: fix typo
+	* [docu]: move REPORT BUGS to BUGS man page section
+	* [core]: fix compile warning
+	* [build]: pachage qcmsevents man page
+	* [exmpl]: fix compile warnings
+	* [docu]: add qcmsevents man page
+	* [build}: test for yajl_version.h
+	* [core]: fix compile warnings
+	* [build]: use bzip2 for RPM source package
+	* [docu]: add oyranos-monitor-nvidia man page
+	* [build]: install man pages
+	* [docu]: add oforms tools man pages
+	* [docu]: fix web link in man page
+	* [build]: add liboyranos_modules dummy
+	* [oyX1]: fix typo
+	* [build]: omit double dependency tracking for oyranos_monitor.c
+	* [build]: add libyajl-devel to RPM spec file
+	* [oyX1]: include "prefix" key to meta tag
+	* [alpha]: omit "Could not open device" message
+	* [alpha]: remember data for serialised profile tags
+	* [alpha]: unset ID for modiefied in memory profiles
+	* [oyX1]: avoid included oyranos_monitor.c
+	* [alpha]: serialise before requesting ICC md5
+	* [build]: fix make output text
+	* [alpha]: write correct ID in oyranos-monitor
+	* [oyX1]: revert #5c9f114f return device from "add_meta" command
+	* [alpha]: use oyjl API in oyranos-profile
+	* [oyX1]: return device from "add_meta" command
+	* [yajl]: fix typo
+	* [build]: link oyjl and yajl to liboyranos
+	* [oyRE]: fix compiler warning
+	* [oyRE]: harmonise manufacturer, model and serial keys across device modules
+	* [yajl]: update to v2.0 API
+	* [yajl]: add reasy JSON access API based on yajl
+	* [alpha]: keys with double point trasnlate to a JSON array
+	* [oyRE]: harmonise meta tag namespace
+	* [oyX1]: add prefix key to deviec calibration indo
+	* [oyX1]: use add_meta key for meta tag embedding
+	* [conf]: require yajl
+	* [alpha]: prefix is one string value in JSON
+	* [oyX1]: prefix OPENICC_ key with OYRANOS_ because lack of interesst
+	* [alpha]: support -c and -s in oyranos-profile
+	* [alpha]: support -n and -p in oyranos-profile
+	* [build]: add oyranos-profile
+	* [core]: share cli macros
+	* [alpha]: oyranos-profile info tool
+	* [lcms]: adapt lcm2 OpenMP private cache
+	* [lcm2]: separate in and out channels count
+	* [alpha]: rank OPENICC_automatic_generated meta key lower
+	* [alpha]: strip namespace from "serial" meta key
+	* [oyX1]: add OPENICC_automatic_generated meta key
+	* [alpha]: accept full length meta key names
+	* [alpha]: add verbosity to implicite profiles
+	* [alpha]: use only Meta backends of ranked
+	* [lcm2]: set OpenMP private cache
+	* [build]: add hint about download_grantlee.sh
+	* [exmpl]: fix image_display start without image
+	* [oPNG]: add more channel debug indos
+	* [lcm2]: add more debug infos
+	* [exmpl]: fix memory leak at image_display exit
+	* [exmpl]: image_display defaults to OpenGL
+	* [exmpl]: centred placement in image_display
+	* [exmpl]: fix skewing in image_display GL view
+	* [conf]: prefere lcms2 as default
+	* [SANE]: compile without lcms1
+	* [lcm2]: fix ICC XYZ PCS scaling factor
+	* [lcm2]: normalise lcms2 XYZ to ICC/CIE*XYZ
+	* [alpha]: show avialable standard ICC paths
+	* [exmpl]: show osX path names in oyranos-profiles -p
+	* [build]: support install into path names with spaces
+	* [alpha]: fix empty profile access
+	* [alpha]: remove some more oyName_e references
+	* [oforms]: support stdin
+	* [core]: add oyReadStdinToMem_() helper
+	* [build]: rename internal module RPMs
+	* [docu]: no empty space as last character in man
+	* [build]: fix macros in comments
+	* [conf]: fix desktop file
+	* [docu]: include generated code out of tree
+	* [templates]: fix unused variable warnings
+	* [conf]: use System/Monitoring for qcmsevents
+	* [core]: avoid intptr_t and ptrdiff_t for pointer
+	* [sources]: cast from pointer to uintptr_t
+	* [sources]: cast from pointer to ptrdiff_t
+	* [core]: compare using ptrdiff_t
+	* [oyRE]: add missed include for ptrdiff_t
+	* [conf]: bump version
+
+Yiannis Belias (2):
+	[build]: Keep a PKGBUILD for Arch Linux elektra package
+	[docu]: add Arch Linux package dependencies
+
 Version 0.3.1
 
 Kai-Uwe Behrmann (30):
