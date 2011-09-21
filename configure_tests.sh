@@ -603,6 +603,9 @@ if [ -n "$XCM" ] && [ $XCM -gt 0 ]; then
     libname=$name
     minversion=0.7
     ID=XCM
+    TESTER=$XCM
+  minversion=0.4
+  url="http://sf.net/projects/oyranos/files/libXcm"
 
     ID_H="$ID"_H
     ID_LIBS="$ID"_LIBS
@@ -628,8 +631,14 @@ if [ -n "$XCM" ] && [ $XCM -gt 0 ]; then
         done
       fi
     elif [ $OSUNAME = "Linux" ]; then
-      echo_="X CM not found in"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-      echo_="  $pc_package.pc"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      if [ $TESTER -eq 1 ]; then
+        echo_="!!! ERROR: no or too old $name found, !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+        ERROR=1
+      else
+        echo_="    Warning: no or too old $name found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+        WARNING=1
+      fi
+      echo_="  need at least version $minversion, download: $url"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     fi
 fi
 
