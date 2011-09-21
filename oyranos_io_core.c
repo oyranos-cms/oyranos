@@ -75,6 +75,53 @@ oyReadFileSize_(const char* name)
   return size;
 }
 
+/** @internal
+ *  Read a file stream without knowing its size in advance.
+ */
+char *       oyReadFileSToMem_       ( FILE              * fp,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func)
+{
+  size_t mem_size = 256;
+  char* mem = malloc(mem_size),
+        c;
+
+  DBG_MEM_START
+
+  DBG_MEM
+
+  if (fp && size)
+  {
+    while((c = getc(fp)) != EOF)
+    {
+      if(*size >= mem_size)
+      {
+        mem_size *= 2;
+        mem = realloc( mem, mem_size );
+      }
+      mem[(*size)++] = c;
+    }
+
+    if(mem)
+    {
+      /* copy to external allocator */
+      char* temp = mem;
+      mem = oyAllocateWrapFunc_( *size+1, allocate_func );
+      if(mem) {
+        memcpy( mem, temp, *size );
+        oyFree_m_ (temp)
+        mem[*size] = 0;
+      } else {
+        oyFree_m_ (mem)
+        *size = 0;
+      }
+    }
+  }
+ 
+  DBG_MEM_ENDE
+  return mem;
+}
+
 char *       oyReadFilepToMem_       ( FILE              * fp,
                                        size_t            * size,
                                        oyAlloc_f           allocate_func)
