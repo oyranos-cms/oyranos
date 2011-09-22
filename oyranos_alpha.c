@@ -3748,7 +3748,7 @@ OYAPI int  OYEXPORT
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   mnft_fp = oyPOPEN_m( "curl -s http://icc.opensuse.org/manufacturers", "r" );
-  manufacturers = oyReadFilepToMem_(mnft_fp, &size, oyAllocateFunc_ );
+  manufacturers = oyReadFileSToMem_(mnft_fp, &size, oyAllocateFunc_ );
 
   
   if(manufacturers)
@@ -4836,7 +4836,15 @@ OYAPI int  OYEXPORT
   {
     const char * registration_domain = texts[i];
 
-    /** 1.3.1 call into module */
+    /** 1.3.1 skip identical registration_domains */
+    int found = 0;
+    for( j = 0; j < i; ++j )
+      if(texts[i] && texts[j] && strcmp(texts[i], texts[j]) == 0)
+        found = 1;
+    if(found)
+      continue;
+
+    /** 1.3.2 call into module */
     error = oyConfigs_FromDomain( registration_domain, options, &configs,
                                   object);
 
@@ -4850,13 +4858,13 @@ OYAPI int  OYEXPORT
 
       if(device_name)
       {
-        /** 1.3.1.1 Compare the device_name with the device_name option
+        /** 1.3.2.1 Compare the device_name with the device_name option
          *          and collect the matching devices. */
         tmp = oyConfig_FindString( device, "device_name", 0 );
         if(tmp && oyStrcmp_( tmp, device_name ) == 0)
           oyConfigs_MoveIn( *devices, &device, -1 );
       } else
-        /** 1.3.1.2 ... or collect all device configurations */
+        /** 1.3.2.2 ... or collect all device configurations */
         oyConfigs_MoveIn( *devices, &device, -1 );
 
       oyConfig_Release( &device );
