@@ -2038,6 +2038,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
   oyConfig_s * config = 0;
   int devices_n = 0;
   oyOptions_s * options = NULL;
+  char * first_json = NULL;
 
   clck = oyClock();
   error = oyOptions_SetFromText( &options,
@@ -2052,15 +2053,28 @@ oyTESTRESULT_e testCMMMonitorJSON ()
     config = oyConfigs_Get( configs, i );
     oyDeviceToJSON( config, 0, &json_text, malloc );
     printf( "  %d oyDeviceToJSON():\n%s\n", i,
-            json_text );
+            json_text?json_text:"---" );
 
     oyConfig_Release( &config );
     if( json_text )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
       "oyDeviceToJSON() \"monitor\"       " );
+      if(i == 0)
+        first_json = strdup(json_text);
     } else
     { PRINT_SUB( oyTESTRESULT_FAIL,
       "oyDeviceToJSON() \"monitor\"       " );
+    }
+
+    if(i == 1)
+    {
+      if(strcmp(json_text,first_json) != 0)
+      { PRINT_SUB( oyTESTRESULT_SUCCESS,
+        "found second unique monitor        " );
+      } else
+      { PRINT_SUB( oyTESTRESULT_FAIL,
+        "first and second monitor are equal " );
+      }
     }
 
     oyDeviceFromJSON( json_text, 0, &config );
@@ -3832,7 +3846,7 @@ int main(int argc, char** argv)
     fprintf( stderr, "#                                                              #\n" );
     fprintf( stderr, "#                     Results                                  #\n" );
     for(i = 0; i <= oyTESTRESULT_UNKNOWN; ++i)
-      fprintf( stderr, "    Tests with status %s: %d\n",
+      fprintf( stderr, "    Tests with status %s:\t%d\n",
                        oyTestResultToString( (oyTESTRESULT_e)i ), results[i] );
 
     error = (results[oyTESTRESULT_FAIL] ||
