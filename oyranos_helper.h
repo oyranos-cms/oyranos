@@ -105,6 +105,9 @@ char * oyReadFilepToMem_             ( FILE              * file,
 char * oyReadFileSToMem_             ( FILE              * fp,
                                        size_t            * size,
                                        oyAlloc_f           allocate_func);
+char * oyReadUrlToMem_               ( const char        * url,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func );
 
 
 /* --- mathematical helpers --- */

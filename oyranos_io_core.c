@@ -249,6 +249,33 @@ char * oyReadStdinToMem_             ( size_t            * size,
   return text;
 }
 
+/** @internal
+ *  Read a file stream without knowing its size in advance.
+ */
+char * oyReadUrlToMem_               ( const char        * url,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func )
+{
+  char * text = 0;
+  char * command = 0;
+  FILE * fp;
+
+  if(url && strlen(url) && size )
+  {
+    oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
+                        "curl -s %s", url );
+  
+    if(command)
+      fp = oyPOPEN_m( command, "r" );
+    if(fp)
+      text = oyReadFileSToMem_(fp, size, allocate_func );
+    if(command)
+      oyFree_m_(command);
+  }
+
+  return text;
+}
+
 int
 oyWriteMemToFile_(const char* name, const void* mem, size_t size)
 {
