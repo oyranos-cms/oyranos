@@ -1148,7 +1148,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
             size_t size = 0;
             int tempfd = 0;
 
-            message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+            message(oyMSG_WARN, (oyStruct_s*)user_options, _DBG_FORMAT_ "\n "
                 "Could not obtain profile information for %s. Downloading new profile: '%s'.",
                 _DBG_ARGS_, device_name?device_name:"???", profile_name);
            
