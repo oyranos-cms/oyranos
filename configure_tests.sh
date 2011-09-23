@@ -601,11 +601,10 @@ if [ -n "$XCM" ] && [ $XCM -gt 0 ]; then
     pc_package=xcm
     name="xcm"
     libname=$name
-    minversion=0.7
+    minversion=0.5
     ID=XCM
     TESTER=$XCM
-  minversion=0.4
-  url="http://sf.net/projects/oyranos/files/libXcm"
+    url="http://sf.net/projects/oyranos/files/libXcm"
 
     ID_H="$ID"_H
     ID_LIBS="$ID"_LIBS
