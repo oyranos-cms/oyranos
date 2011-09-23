@@ -82,6 +82,7 @@ int    oyOptions_SetRegistrationTextKey_(
                                        const char        * registration,
                                        const char        * key,
                                        const char        * value );
+int          oyDeviceCheckProperties ( oyConfig_s        * device );
 
 oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
                                        oyPointer         * block,
