@@ -92,6 +92,7 @@ char *       oyReadFileSToMem_       ( FILE              * fp,
 
   if (fp && size)
   {
+    *size = 0;
     while((c = getc(fp)) != EOF)
     {
       if(*size >= mem_size)
@@ -262,13 +263,32 @@ char * oyReadUrlToMem_               ( const char        * url,
 
   if(url && strlen(url) && size )
   {
+    int len = strlen(url), i, pos;
+    char * mem = oyAllocateFunc_(len*3+1);
+    char c;
+
+    for(i = 0, pos = 0; i < len; ++i)
+    {
+      c = url[i];
+           if(c == ' ')
+      { memcpy( &mem[pos], "%20", 3 ); pos += 3; }
+      else if(c == '&')
+      { memcpy( &mem[pos], "%26", 3 ); pos += 3; }
+      else
+        mem[pos++] = c;
+    }
+    mem[pos] = '\000';
     oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
-                        "curl -s %s", url );
+                        "curl -s %s", mem );
   
     if(command)
       fp = oyPOPEN_m( command, "r" );
     if(fp)
+    {
       text = oyReadFileSToMem_(fp, size, allocate_func );
+      fclose(fp);
+      fp = 0;
+    }
     if(command)
       oyFree_m_(command);
   }
