@@ -296,6 +296,49 @@ char * oyReadUrlToMem_               ( const char        * url,
   return text;
 }
 
+/** @internal
+ *  Read a file stream without knowing its size in advance.
+ */
+char * oyReadUrlToMemf_              ( size_t            * size,
+                                       oyAlloc_f           allocate_func,
+                                       const char        * format,
+                                                           ... )
+{
+  char * result = NULL;
+  char * text = 0;
+  va_list list;
+  int len;
+  size_t sz = strlen(format) * 2;
+
+  text = oyAllocateFunc_( sz );
+  if(!text)
+  {
+    fprintf(stderr,
+     "oyranos_io_core.c oyReadUrlToMemf_() Could not allocate memory.\n");
+    return 1;
+  }
+
+  text[0] = 0;
+
+  va_start( list, format);
+  len = vsnprintf( text, sz, format, list );
+  va_end  ( list );
+
+  if (len >= sz)
+  {
+    text = realloc( text, (len+1)*sizeof(char) );
+    va_start( list, format);
+    len = vsnprintf( text, len+1, format, list );
+    va_end  ( list );
+  }
+
+  result = oyReadUrlToMem_( text, size, allocate_func );
+
+  oyDeAllocateFunc_(text);
+
+  return result;
+}
+
 int
 oyWriteMemToFile_(const char* name, const void* mem, size_t size)
 {

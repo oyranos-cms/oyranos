@@ -971,6 +971,58 @@ oyjl_value_s * oyjl_tree_get_value   ( oyjl_value_s      * root,
     return NULL;
 }
 
+/** Function oyjl_tree_get_valuef
+ *  @brief   get a child node
+ *
+ *  @param[in]     root                the oyjl node
+ *  @param[in]     format              the xpath format
+ *  @param[in]     ...                 the variable argument list
+ *  @return                            the childs text value
+ *
+ *  @version Oyranos: 0.3.3
+ *  @since   2011/09/24 (Oyranos: 0.3.3)
+ *  @date    2011/09/24
+ */
+oyjl_value_s * oyjl_tree_get_valuef  ( oyjl_value_s      * root,
+                                       const char        * format,
+                                                           ... )
+{
+  oyjl_value_s * value = 0;
+
+  char * text = 0;
+  va_list list;
+  int len;
+  size_t sz = strlen(format) * 2;
+
+  text = malloc( sz );
+  if(!text)
+  {
+    fprintf( stderr, "!!! ERROR: could not allocate memory\n" );
+    return 0;
+  }
+
+  text[0] = 0;
+
+  va_start( list, format);
+  len = vsnprintf( text, sz, format, list );
+  va_end  ( list );
+
+  if (len >= sz)
+  {
+    text = realloc( text, (len+1)*sizeof(char) );
+    va_start( list, format);
+    len = vsnprintf( text, len+1, format, list );
+    va_end  ( list );
+  }
+
+  value = oyjl_tree_get_value( root, text );
+
+  if(text) free(text);
+
+  return value;
+}
+
+
 int            oyjl_value_count      ( oyjl_value_s      * value )
 {
   int count = 0;
