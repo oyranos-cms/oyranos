@@ -80,8 +80,8 @@ void QcmseDialog::log( const char * text, int code )
 
     if(strstr(text, "PropertyNotify : "))
       text = strstr(text, "PropertyNotify : ") + strlen("PropertyNotify : ");
-    if(strstr(text, "_ICC_COLOR_DESKTOP "))
-      sscanf( text, "_ICC_COLOR_DESKTOP %d", &pid );
+    if(strstr(text, XCM_COLOR_DESKTOP" "))
+      sscanf( text, XCM_COLOR_DESKTOP" %d", &pid );
     if(pid == 0)
     {
       colour.setHsvF( 0.6, 0.4, 0.9 );
@@ -118,8 +118,8 @@ void QcmseDialog::log( const char * text, int code )
   else if (XCME_MSG_DISPLAY_STATUS)
   {
     int i;
-    if(strstr(text, "atom: \"_ICC_COLOR_DESKTOP\":"))
-      sscanf( text, "atom: \"_ICC_COLOR_DESKTOP\": %d %d", &i, &pid );
+    if(strstr(text, "atom: \""XCM_COLOR_DESKTOP"\":"))
+      sscanf( text, "atom: \""XCM_COLOR_DESKTOP"\": %d %d", &i, &pid );
     if(pid == 0)
     {
       colour.setHsvF( 0.6, 0.4, 0.9 );
