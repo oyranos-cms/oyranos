@@ -878,7 +878,7 @@ $(LIB_FORMS_FLTK_NAME):	$(FLTK_OFORMS_OBJECTS)
 		$(FLTK_OFORMS_OBJECTS)
 	$(RANLIB) $(LIB_FORMS_FLTK_NAME)
 
-$(LIBNAME):	$(OBJECTS)
+$(LIBNAME):	$(OBJECTS) $(YAJL_OBJ)
 	echo Linking $@ ...
 	test -f $(LIBNAME) && $(RM) $(LIBNAME) || echo ""
 	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIBNAME) \
@@ -1174,9 +1174,11 @@ install_bin:	all install_gui
 
 # install recursive
 install:	oforms install-main examples
+#ifdef QT
 	$(INSTALL) -m 755 examples/xcmsevents/qcmsevents "$(DESTDIR)$(bindir)"
 	mkdir -p "$(DESTDIR)$(desktopdir)"
 	$(INSTALL) -m 644 "$(SRCDIR)/examples/xcmsevents/qcmsevents-applet.desktop" "$(DESTDIR)$(desktopdir)"
+#endif
 	echo ... $@ done
 
 install-main:	install_bin install_linguas install_docu
@@ -1193,7 +1195,7 @@ install_doc:	install_docu
 install_docu: docu
 	echo Installing policy settings files ...
 	-mkdir -p "$(DESTDIR)$(syscolordir)/$(settingsdirname)"
-	-for i in `ls settings/*.policy.xml`; do \
+	-for i in `ls $(SRCDIR)/settings/*.policy.xml`; do \
 	     $(INSTALL) -m 644 "$${i}" "$(DESTDIR)$(syscolordir)/$(settingsdirname)";\
 	done
 	echo ... installing policy settings files done

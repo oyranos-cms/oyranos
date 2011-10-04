@@ -15,8 +15,8 @@ TARGET8 = xcmsevents/qcmsevents
 TARGET9 = libraw/oyranos-file
 TARGETS = $(TARGET1) $(TARGET2) $(TARGET4) $(TARGET5) $(TARGET6) \
 	$(TARGET7) $(TARGET8) $(TARGET9) ../oyranos_logo.ppm
-OY_CFLAGS := $(shell (oyranos-config --cflags))
-OY_LDFLAGS := $(shell (oyranos-config --ldflags))
+OY_CFLAGS := $(shell (pkg-config --cflags oyranos))
+OY_LDFLAGS := $(shell (pkg-config --libs oyranos))
 FLTK_CFLAGS := $(shell (fltk-config --cflags --use-gl | sed 's/-O.//g'))
 FLTK_LDFLAGS := $(shell (fltk-config --ldflags --use-gl)) -pthread # FLTK on Fedora13 misses libpthread.so
 PKG_CONFIG_CFLAGS := $(shell (pkg-config --cflags xfixes x11))
@@ -82,7 +82,7 @@ $(TARGET1):	$(SRCDIR)$(TARGET1).cpp
 	$(intl) ../fl_i18n/libfl_i18n.a  $(FLTK_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
 	$(PKG_CONFIG_LIBS) -DUSE_GETTEXT=1 \
 	-o $@
-	fltk-config --post $@
+	-fltk-config --post $@
 
 $(TARGET2):	$(SRCDIR)$(TARGET2).c
 	mkdir -p xcmsevents
