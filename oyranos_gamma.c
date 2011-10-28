@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2005-2010 (C) Kai-Uwe Behrmann
+ *            2005-2011 (C) Kai-Uwe Behrmann
  *
  *  @brief    gamma loader
  *  @internal
@@ -70,10 +70,13 @@ int main( int argc , char** argv )
   oyConfig_s * device = 0;
   oyConfigs_s * devices = 0;
   oyOptions_s * options = 0;
+  oyConfig_s * c = 0;
+  oyOption_s * o = 0;
   size_t size = 0;
   const char * filename = 0;
   char * data = 0;
   uint32_t n = 0;
+  int i;
 
   if(getenv("OYRANOS_DEBUG"))
   {
@@ -107,7 +110,7 @@ int main( int argc , char** argv )
 
   if(argc != 1)
   {
-    int pos = 1, i;
+    int pos = 1;
     const char *wrong_arg = 0;
     while(pos < argc)
     {
@@ -205,9 +208,6 @@ int main( int argc , char** argv )
             break;
         default:
             monitor_profile = argv[pos];
-            /* activate all profiles at once */
-            /*error = oyActivateMonitorProfiles (display_name); */
-
             erase = 0;
       }
       if( wrong_arg )
@@ -218,7 +218,9 @@ int main( int argc , char** argv )
       ++pos;
     }
     if(oy_debug) printf( "%s\n", argv[1] );
+  }
 
+  {
     if(!erase && !list && !database && !setup && !server && !format &&
        !add_meta && !list_modules)
       setup = 1;
@@ -229,10 +231,13 @@ int main( int argc , char** argv )
       STRING_ADD( device_class, module_name);
     }
 
+    /* by default a given monitor profile is used to setup the major monitor */
+    if(monitor_profile && !server && device_pos == -1)
+      device_pos = 0;
+
     if(device_pos != -1)
     {
       oyConfigs_s * devices = 0;
-      oyConfig_s * c = 0;
 
       error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",
@@ -261,7 +266,7 @@ int main( int argc , char** argv )
                  device_pos, _("Available devices"), n);
       oyConfigs_Release( &devices );
       oyOptions_Release( &options );
-    } else
+    } else if(server)
       oy_display_name = oyGetDisplayNameFromPosition2 ( OY_TYPE_STD,
                                                     device_class,
                                                     display_name, x,y,
@@ -269,8 +274,8 @@ int main( int argc , char** argv )
 
     if(list_modules)
     {
-       uint32_t count = 0,
-              * rank_list = 0;
+      uint32_t count = 0,
+             * rank_list = 0;
       char ** texts = 0;
 
       error = oyConfigDomainList( device_class, &texts, &count,
@@ -281,6 +286,9 @@ int main( int argc , char** argv )
       return error;
     }
 
+    /* the pure -x + -y or -b arguments return a ICC profile info line
+     * It could be merged with the -l list option.
+     */
     if(!monitor_profile && !erase && !list && !setup && !format && !add_meta)
     {
       char * fn = 0;
@@ -322,9 +330,7 @@ int main( int argc , char** argv )
         strcmp(format,"edid_icc") == 0))
     {
       oyConfigs_s * devices = 0;
-      oyConfig_s * c = 0;
       icHeader * header = 0;
-      oyOption_s * o = 0;
       char * out_name = 0;
 
       error = oyOptions_SetFromText( &options,
@@ -332,7 +338,7 @@ int main( int argc , char** argv )
                                      "properties", OY_CREATE_NEW );
       error = oyOptions_SetFromText( &options, "//"OY_TYPE_STD"/config/edid",
                                        "1", OY_CREATE_NEW );
-      if(server)
+      if(oy_display_name)
         error = oyOptions_SetFromText( &options,
                                        "//"OY_TYPE_STD"/config/device_name",
                                        oy_display_name, OY_CREATE_NEW );
@@ -500,8 +506,6 @@ int main( int argc , char** argv )
       char * text = 0,
            * report = 0;
       uint32_t n = 0, i;
-      oyConfig_s * c = 0;
-      oyOption_s * o = 0;
       oyOptions_s * cs_options = 0;
 
       if(net_color_region_target)
@@ -590,47 +594,59 @@ int main( int argc , char** argv )
       oyOptions_Release( &cs_options );
     }
 
-    /* make shure the display name is correct including the screen */
+    if(oy_display_name)
+    /* make shure the display name is correctly including the screen number */
     {
       error = oyDeviceGet( OY_TYPE_STD, device_class, oy_display_name, 0,
                            &device );
+
       if(monitor_profile)
+      {
         oyDeviceSetProfile( device, monitor_profile );
-      if(monitor_profile || erase)
         oyDeviceUnset( device );
+      } else
       if(erase)
+      {
+        oyDeviceUnset( device );
         oyConfig_EraseFromDB( device );
+      }
+
+      if(setup)
+        oyDeviceSetup( device );
 
       oyConfig_Release( &device );
     }
-  } else
-    setup = 1;
-
-  if(setup || monitor_profile)
-  {
-    int i = 0;
-
-    /* 1. set a general request */
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
-                                   "list", OY_CREATE_NEW );
-    /* we want a fuzzy look at our display, not as narrow as "device_name"*/
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/display_name",
-                                   display_name, OY_CREATE_NEW );
-    error = oyConfigs_FromDeviceClass ( OY_TYPE_STD, device_class, options,
-                                            &devices, 0 );
-
-    n = oyConfigs_Count( devices );
-    for(i = 0; i < n; ++i)
+    else if(erase || setup)
     {
-      device = oyConfigs_Get( devices, i );
+      error = oyOptions_SetFromText( &options,
+                                     "//" OY_TYPE_STD "/config/command",
+                                     "list", OY_CREATE_NEW );
+      error = oyOptions_SetFromText( &options,
+                                     "//"OY_TYPE_STD"/config/display_name",
+                                     display_name, OY_CREATE_NEW );
 
-      oyDeviceSetup( device );
+      error = oyDevicesGet( 0, device_class, options, &devices );
 
-      oyConfig_Release( &device );
+      n = oyConfigs_Count( devices );
+      if(!error)
+      {
+        for(i = 0; i < n; ++i)
+        {
+          device = oyConfigs_Get( devices, i );
+
+          if(erase)
+          {
+            oyDeviceUnset( device );
+            oyConfig_EraseFromDB( device );
+          } else if(setup)
+            oyDeviceSetup( device );
+
+          oyConfig_Release( &device );
+        }
+      }
+      oyConfigs_Release( &devices );
+      oyOptions_Release( &options );
     }
-
-    oyConfigs_Release( &devices );
-    oyOptions_Release( &options );
   }
 
   if(oy_display_name)
