@@ -20,6 +20,12 @@
  * 
  */
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#include <X11/Xcm/XcmEvents.h>
+#include <X11/extensions/Xrandr.h>
 
 #include "oyranos.h"
 #include "oyranos_alpha.h"
@@ -31,9 +37,16 @@
 #include "oyranos_version.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+
+
+#ifdef HAVE_X
+int   updateOutputConfiguration      ( Display           * display );
+int            getDeviceProfile      ( Display           * display,
+                                       oyConfig_s        * device,
+                                       int                 screen );
+void  cleanDisplay                   ( Display           * display );
+int  runDaemon                       ( const char        * display_name );
+#endif
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
 void  oyDeAllocFunc ( oyPointer ptr) { if(ptr) free (ptr); }
@@ -41,7 +54,7 @@ void  oyDeAllocFunc ( oyPointer ptr) { if(ptr) free (ptr); }
 
 int main( int argc , char** argv )
 {
-  char *display_name = getenv("DISPLAY");
+  char *display_name = strdup(getenv("DISPLAY"));
   char *monitor_profile = 0;
   int error = 0;
 
@@ -49,6 +62,7 @@ int main( int argc , char** argv )
   int erase = 0;
   int list = 0;
   int setup = 0;
+  int daemon = 0;
   char * format = 0;
   char * output = 0;
   int server = 0;
@@ -90,22 +104,7 @@ int main( int argc , char** argv )
 #endif
   oyI18NInit_();
 
-#ifndef __APPLE__
-  if(!display_name)
-  {
-    WARNc_S( _("DISPLAY variable not set: giving up.") );
-    error = 1;
-    return error;
-  }
-#endif
-
   STRING_ADD( device_class, "monitor" );
-
-  /* cut off the screen information */
-  if(display_name &&
-     (ptr = strchr(display_name,':')) != 0)
-    if( (ptr = strchr(ptr, '.')) != 0 )
-      ptr[0] = '\000';
 
 
   if(argc != 1)
@@ -141,6 +140,8 @@ int main( int argc , char** argv )
                         { net_color_region_target = 1; i=100; break; }
                         else if(OY_IS_ARG("setup"))
                         { setup = 1; i=100; break; }
+                        else if(OY_IS_ARG("daemon"))
+                        { daemon = 1; i=100; break; }
                         else if(OY_IS_ARG("format"))
                         { OY_PARSE_STRING_ARG2(format, "format"); break; }
                         else if(OY_IS_ARG("output"))
@@ -151,6 +152,9 @@ int main( int argc , char** argv )
                         { OY_PARSE_STRING_ARG2(new_profile_name, "name"); break; }
                         else if(OY_IS_ARG("profile"))
                         { OY_PARSE_STRING_ARG2(prof_name, "profile"); break; }
+                        else if(OY_IS_ARG("display"))
+                        { const char * t; OY_PARSE_STRING_ARG2(t, "display");
+                          if(t) display_name = strdup(t); break; }
                         else if(OY_IS_ARG("modules"))
                         { list_modules = 1; i=100; break; }
                         else if(OY_IS_ARG("module"))
@@ -210,6 +214,22 @@ int main( int argc , char** argv )
     }
     if(oy_debug) printf( "%s\n", argv[1] );
   }
+
+#ifndef __APPLE__
+  if(!display_name)
+  {
+    WARNc_S( _("DISPLAY variable not set: giving up.") );
+    error = 1;
+    return error;
+  }
+#endif
+
+  /* cut off the screen information */
+  if(display_name &&
+     (ptr = strchr(display_name,':')) != 0)
+    if( (ptr = strchr(ptr, '.')) != 0 )
+      ptr[0] = '\000';
+
 
   {
     if(!erase && !list && !setup && !format &&
@@ -606,5 +626,251 @@ int main( int argc , char** argv )
   if(oy_display_name)
     oyDeAllocFunc(oy_display_name);
 
+#if HAVE_X
+  if(daemon)
+    error = runDaemon( display_name );
+#endif
+
   return error;
 }
+
+#ifdef HAVE_X
+void cleanDisplay( Display * display )
+{
+  int error = 0,
+      n;
+  oyOptions_s * options = 0;
+  oyConfigs_s * devices = 0;
+  char * display_name = 0, * t;
+  int old_oy_debug, i;
+
+    display_name = strdup(XDisplayString(display));
+    if(display_name && strchr(display_name,'.'))
+    {
+      t = strrchr(display_name,'.');
+      t[0] = 0;
+    }
+
+    /* clean up to 20 displays */
+    error = oyOptions_SetFromText( &options,
+                                   "//"OY_TYPE_STD"/config/command",
+                                   "unset", OY_CREATE_NEW );
+    if(display_name)
+    {
+      t = calloc(sizeof(char), strlen(display_name));
+    } else
+    {
+      display_name = strdup(":0");
+      t = calloc(sizeof(char), 8);
+    }
+
+    if(t && display_name)
+    {
+      for(i = 0; i < 20; ++i)
+      {
+        sprintf( t, "%s.%d", display_name, i );
+        error = oyOptions_SetFromText( &options,
+                                       "//" OY_TYPE_STD "/config/device_name",
+                                       t, OY_CREATE_NEW );
+        error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
+        oyConfigs_Release( &devices );
+      }
+    }
+    oyOptions_Release( &options );
+
+
+    /* get number of connected devices */
+    error = oyOptions_SetFromText( &options,
+                                   "//"OY_TYPE_STD"/config/command",
+                                   "list", OY_CREATE_NEW );
+    error = oyOptions_SetFromText( &options,
+                                   "//" OY_TYPE_STD "/config/display_name",
+                                   display_name, OY_CREATE_NEW );
+    error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
+    n = oyConfigs_Count( devices );
+    oyConfigs_Release( &devices );
+    oyOptions_Release( &options );
+
+    /** Monitor hotplugs can easily mess up the ICC profile to device assigment.
+     *  So first we erase the _ICC_PROFILE(_xxx) to get a clean state.
+     *  We setup the EDID atoms and ICC profiles new.
+     *  The ICC profiles are moved to the right places through the 
+     *  PropertyChange events recieved by the colour server.
+     */
+
+    /* refresh EDID */
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                   "list", OY_CREATE_NEW );
+    sprintf( t, "%s.%d", display_name, 0 );
+    error = oyOptions_SetFromText( &options,
+                                   "//" OY_TYPE_STD "/config/device_name",
+                                   t, OY_CREATE_NEW );
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/edid",
+                                   "refresh", OY_CREATE_NEW );
+    old_oy_debug = oy_debug;
+    /*oy_debug = 1;*/
+    error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
+    oy_debug = old_oy_debug;
+    oyConfigs_Release( &devices );
+    oyOptions_Release( &options );
+
+    free(display_name); display_name = 0;
+    free(t); t = 0;
+}
+
+int            getDeviceProfile      ( Display           * display,
+                                       oyConfig_s        * device,
+                                       int                 screen )
+{
+  oyOption_s * o = 0;
+  oyRectangle_s * r = 0;
+  oyProfile_s * dst_profile = 0;
+  const char * device_name = 0;
+  char num[12];
+  int error = 0, t_err = 0;
+
+  snprintf( num, 12, "%d", (int)screen );
+
+    o = oyConfig_Find( device, "device_rectangle" );
+    if( !o )
+    {
+      oyMessageFunc_p( oyMSG_WARN, 0, "monitor rectangle request failed" );
+      return 1;
+    }
+    r = (oyRectangle_s*) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
+    if( !r )
+    {
+      oyMessageFunc_p( oyMSG_WARN, 0,
+                   "monitor rectangle request failed" );
+      return 1;
+    }
+    oyOption_Release( &o );
+
+    device_name = oyConfig_FindString( device, "device_name", 0 );
+    if(device_name && device_name[0])
+    {
+      printf("%d %s %gx%g+%g+%g\n",
+             __LINE__, device_name, r->width,r->height,r->x,r->y );
+
+    } else
+    {
+       oyMessageFunc_p( oyMSG_WARN, 0,
+       "oyDevicesGet list answere included no device_name");
+    }
+
+    {
+      oyOptions_s * options = 0;
+      /*oyOptions_SetFromText( &options,
+                   "//"OY_TYPE_STD"/config/command",
+                                       "list", OY_CREATE_NEW );
+      oyOptions_SetFromText( &options,
+                   "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target",
+                                       "yes", OY_CREATE_NEW );*/
+      t_err = oyDeviceGetProfile( device, options, &dst_profile );
+      oyOptions_Release( &options );
+    }
+
+    if(dst_profile)
+    {
+      /* check that no sRGB is delivered */
+      if(t_err)
+      {
+        oyProfile_s * web = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+        if(oyProfile_Equal( web, dst_profile ))
+        {
+          oyMessageFunc_p( oyMSG_WARN, 0,
+                           "Output %s ignoring fallback %d",
+                           device_name, error);
+          oyProfile_Release( &dst_profile );
+          error = 1;
+        }
+        oyProfile_Release( &web );
+      }
+    } else
+    {
+      oyMessageFunc_p( oyMSG_WARN, 0,
+                       "Output %s: no ICC profile found %d",
+                       device_name, error);
+      error = 1;
+    }
+
+  return error;
+}
+
+int updateOutputConfiguration( Display * display )
+{
+  int error = 0,
+      i, n;
+  oyOptions_s * options = 0;
+  oyConfigs_s * devices = 0;
+  oyConfig_s * device = 0;
+
+  printf("%s:%d %s()\n", __FILE__, __LINE__, __func__);
+
+  /* allow Oyranos to see modifications made to the compiz Xlib context */
+  XFlush( display );
+
+  /* obtain device informations, including geometry and ICC profiles
+     from the according Oyranos module */
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                 "list", OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_rectangle",
+                                 "true", OY_CREATE_NEW );
+  error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
+  n = oyOptions_Count( options );
+  oyOptions_Release( &options );
+
+  n = oyConfigs_Count( devices );
+
+  cleanDisplay( display );
+
+  for(i = 0; i < n; ++i)
+  {
+    device = oyConfigs_Get( devices, i );
+
+    error = getDeviceProfile( display, device, i );
+
+    oyConfig_Release( &device );
+  }
+  oyConfigs_Release( &devices );
+
+  return 0;
+}
+
+int  runDaemon                       ( const char        * display_name )
+{
+  Atom netDesktopGeometry;
+  int rr_event_base = 0, rr_error_base = 0;
+
+  XcmeContext_s * c = XcmeContext_New( );
+  XcmeContext_Setup2( c, display_name, 0 );
+  XRRQueryExtension(XcmeContext_DisplayGet(c), &rr_event_base, &rr_error_base );
+
+  netDesktopGeometry = XInternAtom( XcmeContext_DisplayGet(c),
+                                    "_NET_DESKTOP_GEOMETRY", False );
+  for(;;)
+  {
+    XEvent event;
+    XNextEvent( XcmeContext_DisplayGet( c ), &event);
+    if(event.type == rr_event_base + RRNotify)
+    {
+      XRRNotifyEvent *rrn = (XRRNotifyEvent *) &event;
+      if(rrn->subtype == RRNotify_OutputChange)
+      {
+        printf("detected RRNotify_OutputChange event -> update\n");
+        updateOutputConfiguration( XcmeContext_DisplayGet( c ) );
+      }
+    } else if( event.type == PropertyNotify &&
+               event.xproperty.atom == netDesktopGeometry)
+    {
+        printf("detected _NET_DESKTOP_GEOMETRY event -> update\n");
+        updateOutputConfiguration( XcmeContext_DisplayGet( c ) );
+    }
+  }
+
+  XcmeContext_Release( &c );
+
+  return 0;
+}
+#endif
+
