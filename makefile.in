@@ -397,6 +397,7 @@ EXAMPLE_FILES = \
 MAN1 = \
 	oyranos-config-fltk.1 \
 	oyranos-monitor.1 \
+	oyranos-monitor-daemon.1 \
 	oyranos-monitor-nvidia.1 \
 	oyranos-policy.1 \
 	oyranos-profile.1 \
@@ -430,6 +431,7 @@ POT_FILE = po/$(TARGET).pot
 POT_SCRIPT = oyranos_xml_to_po.sh
 
 BIN_SCRIPTS = \
+	$(SRCDIR)/$(TARGET)-monitor-daemon \
 	$(SRCDIR)/$(TARGET)-profile-install
 SCRIPTS = 
 # $(POT_SCRIPT)
@@ -918,7 +920,7 @@ $(TARGET)-monitor:	$(LIBSONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) -o $(TARGET)-monitor \
 	$(TARGET)_gamma.o \
-	$(MODULE_LDLIBS) $(LDLIBS) $(LINK_LIB_PATH)
+	$(MODULE_LDLIBS) $(LDLIBS) $(X11_LIBS) $(LINK_LIB_PATH)
 
 $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	echo Linking $@ ...
@@ -1276,6 +1278,7 @@ uninstall:	uninstall_bin uninstall_docu uninstall_linguas
 uninstall_bin:
 	echo Uninstalling binaries ...
 	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-monitor"
+	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-monitor-daemon"
 	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-config"
 #ifdef FLTK_GUI
 	$(RM)   "$(DESTDIR)$(bindir)/$(FLTK_GUI)"
