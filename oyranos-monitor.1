@@ -2,19 +2,20 @@
 .SH NAME
 oyranos-monitor \- Oyranos CMS monitor configuration
 .SH SYNOPSIS
-\fBoyranos-monitor\fR [ |-s [-x num] [-y num] [-v] ]
+\fBoyranos-monitor\fR [ |-s [[-x num] [-y num]|-d \fINUMBER\fR] [-v] ]
 .fi
-\fBoyranos-monitor\fR [ \fIPROFILENAME\fR [-x num] [-y num] [-v] ]
+\fBoyranos-monitor\fR [ \fIPROFILENAME\fR [[-x num] [-y num]|-d \fINUMBER\fR] [-v] ]
 .fi
-\fBoyranos-monitor\fR [ -b [-x num] [-y num] [-v] ]
+\fBoyranos-monitor\fR [ -e [[-x num] [-y num]|-d \fINUMBER\fR] [-v] ]
 .fi
-\fBoyranos-monitor\fR [ -e [-x num] [-y num] [-v] ]
-.fi
-\fBoyranos-monitor\fR [ -l [-v] [ --module \fIMODULENAME\fR ] ]
+\fBoyranos-monitor\fR [ -l [[-x num] [-y num]|-d \fINUMBER\fR] [-v]
+                [ --module \fIMODULENAME\fR ] ]
 .fi
 \fBoyranos-monitor\fR [ --modules [-v] ]
 .fi
-\fBoyranos-monitor\fR [ -f [edid|icc|edid_icc] [-o \fIOUT_FILENAME\fR | default:stdout] [-x num] [-y num] [-m] [-v] ]
+\fBoyranos-monitor\fR [ -f [edid|icc|edid_icc] [-o \fIOUT_FILENAME\fR | default:stdout] [[-x num] [-y num]|-d \fINUMBER\fR] [-m] [-v] ]
+.fi
+\fBoyranos-monitor\fR [ --add-edid \fIFILENAME\fR ] [--profile \fIFILENAME\fR --name \fINAME\fR] [-v] ]
 .SH DESCRIPTION
 The oyranos-monitor programm let you query and set the monitor profile(s) within the Oyranos colour management system (CMS). Profiles are stored in a data base, the Oyranos DB.
 .SH OPTIONS
@@ -39,9 +40,6 @@ Assign a monitor ICC profile to the selected screen and store in the Oyranos DB.
 .TP
 .B \-e, \-\-unset \fR[[-x num] [-y num] | -d number]]
 reset one hardware gamma table to the defaults
-.TP
-.B \-b, \-\-database \fR[[-x num] [-y num] | -d number]]
-query one profile name from the Oyranos device profile data base
 .TP
 .B \-l, \-\-list
 list devices visible to Oyranos
@@ -114,12 +112,12 @@ Query the server side, network transparent profile:
 .B oyranos-monitor -x pos -y pos
 .PP
 .TP
-Query the Oyranos device data base profile on the local computer:
-.B oyranos-monitor -b -x pos -y pos
-.PP
-.TP
 List all Oyranos monitor devices:
 .B oyranos-monitor -l
+.PP
+.TP
+Show the first Oyranos monitor device verbosely:
+.B oyranos-monitor -l -v -d 0
 .PP
 .TP
 List all monitor devices through the oyX1 module:

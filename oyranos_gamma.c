@@ -49,7 +49,6 @@ int main( int argc , char** argv )
   int erase = 0;
   int list = 0;
   int setup = 0;
-  int database = 0;
   char * format = 0;
   char * output = 0;
   int server = 0;
@@ -122,7 +121,6 @@ int main( int argc , char** argv )
             switch (argv[pos][i])
             {
               case 'e': erase = 1; monitor_profile = 0; break;
-              case 'b': database = 1; monitor_profile = 0; break;
               case 'c': net_color_region_target = 1; monitor_profile = 0; break;
               case 'd': server = 1; OY_PARSE_INT_ARG( device_pos ); break;
               case 'f': OY_PARSE_STRING_ARG(format); monitor_profile = 0; break;
@@ -147,8 +145,6 @@ int main( int argc , char** argv )
                         { OY_PARSE_STRING_ARG2(format, "format"); break; }
                         else if(OY_IS_ARG("output"))
                         { OY_PARSE_STRING_ARG2(output, "output"); break; }
-                        else if(OY_IS_ARG("database"))
-                        { database = 1; monitor_profile = 0; i=100; break; }
                         else if(OY_IS_ARG("add-edid"))
                         { OY_PARSE_STRING_ARG2(add_meta,"add-edid"); break; }
                         else if(OY_IS_ARG("name"))
@@ -178,16 +174,10 @@ int main( int argc , char** argv )
                         printf("      %s -e [-x pos -y pos | -d number]\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("Activate profiles:"));
-                        printf("      %s\n",           argv[0]);
-                        printf("\n");
-                        printf("  %s\n",               _("Query server profile:"));
                         printf("      %s [-x pos -y pos | -d number]\n", argv[0]);
                         printf("\n");
-                        printf("  %s\n",               _("Query device data base profile:"));
-                        printf("      %s -b [-x pos -y pos | -d number]\n", argv[0]);
-                        printf("\n");
                         printf("  %s\n",               _("List devices:"));
-                        printf("      %s -l\n",        argv[0]);
+                        printf("      %s -l [-x pos -y pos | -d number]\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("List modules:"));
                         printf("      %s --modules\n",        argv[0]);
@@ -222,7 +212,7 @@ int main( int argc , char** argv )
   }
 
   {
-    if(!erase && !list && !database && !setup && !server && !format &&
+    if(!erase && !list && !setup && !format &&
        !add_meta && !list_modules)
       setup = 1;
 
@@ -486,9 +476,19 @@ int main( int argc , char** argv )
       n = oyConfigs_Count( devices );
       if(error <= 0)
       {
+        const char * device_name = 0;
         for(i = 0; i < n; ++i)
         {
           c = oyConfigs_Get( devices, i );
+          device_name = oyConfig_FindString( c, "device_name", 0 );
+
+          if( oy_display_name && device_name &&
+              strcmp( oy_display_name, device_name ) != 0 )
+          {
+            oyConfig_Release( &c );
+            device_name = 0;
+            continue;
+          }
 
           if(verbose)
           printf("------------------------ %d ---------------------------\n",i);
@@ -525,6 +525,7 @@ int main( int argc , char** argv )
             printf( " server profile \"%s\" size: %d\n",
                     filename?filename:OY_PROFILE_NONE, (int)size );
 
+            text = 0;
             oyDeviceProfileFromDB( c, &text, oyAllocFunc );
             printf( " DB profile \"%s\"\n  keys: %s\n",
                     text?text:OY_PROFILE_NONE,
