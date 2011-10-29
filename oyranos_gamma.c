@@ -61,6 +61,7 @@ int main( int argc , char** argv )
        * new_profile_name = 0;
   char * device_class = 0;
   int list_modules = 0;
+  int verbose = 0;
 
   char *ptr = NULL;
   int x = 0, y = 0;
@@ -130,7 +131,7 @@ int main( int argc , char** argv )
               case 'o': OY_PARSE_STRING_ARG(output); monitor_profile = 0; break;
               case 'x': server = 1; OY_PARSE_INT_ARG( x ); break;
               case 'y': server = 1; OY_PARSE_INT_ARG( y ); break;
-              case 'v': oy_debug += 1; break;
+              case 'v': if(verbose) oy_debug += 1; verbose = 1; break;
               case 's': setup = 1; break; /* implicite -> setup */
               case 'h':
               case '-':
@@ -161,7 +162,7 @@ int main( int argc , char** argv )
                         else if(OY_IS_ARG("list"))
                         { list = 1; monitor_profile = 0; i=100; break; }
                         else if(OY_IS_ARG("verbose"))
-                        { oy_debug += 1; i=100; break; }
+                        { if(verbose) oy_debug += 1; verbose = 1; i=100; break;}
                         }
               default:
                         printf("\n");
@@ -284,44 +285,6 @@ int main( int argc , char** argv )
       for(i = 0; i < count; ++i)
         printf("%s\n", strstr(texts[i],"monitor.") + 8 );
       return error;
-    }
-
-    /* the pure -x + -y or -b arguments return a ICC profile info line
-     * It could be merged with the -l list option.
-     */
-    if(!monitor_profile && !erase && !list && !setup && !format && !add_meta)
-    {
-      char * fn = 0;
-      error = oyDeviceGet( OY_TYPE_STD, device_class, oy_display_name, 0,
-                           &device );
-      if(net_color_region_target)
-        error = oyOptions_SetFromText( &options,
-                                       "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target",
-                                       "yes", OY_CREATE_NEW );
-
-      if(database)
-      {
-        error = oyDeviceProfileFromDB( device, &fn, oyAllocFunc ); 
-        prof = oyProfile_FromFile( fn, 0, 0 );
-        filename = fn;
-      } else {
-        error = oyDeviceGetProfile( device, options, &prof );
-        filename = oyProfile_GetFileName( prof, -1 );
-      }
-      data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc);
-      if(size && data) oyDeAllocFunc( data ); data = 0;
-
-      if(filename && strrchr(filename, '/') != 0)
-        filename = strrchr(filename, '/') + 1;
-
-      printf("%s:%d profile \"%s\" size: %d\n",
-             strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,__LINE__,
-             filename?filename:OY_PROFILE_NONE, (int)size);
-
-      if(fn) oyDeAllocFunc( fn ); fn = 0;
-      oyProfile_Release( &prof );
-      oyConfig_Release( &device );
-      oyOptions_Release( &options );
     }
 
     if(format &&
@@ -450,7 +413,7 @@ int main( int argc , char** argv )
             error = 1;
 
           if(!error)
-          { if(oy_debug) printf( "  written to %s\n", out_name ); }
+          { if(verbose) printf( "  written to %s\n", out_name ); }
           else
             printf( "Could not write %d bytes to %s\n",
                     (int)size, out_name?out_name:format);
@@ -527,7 +490,7 @@ int main( int argc , char** argv )
         {
           c = oyConfigs_Get( devices, i );
 
-          if(oy_debug)
+          if(verbose)
           printf("------------------------ %d ---------------------------\n",i);
 
           error = oyDeviceGetInfo( c, oyNAME_NICK, cs_options, &text,
@@ -541,7 +504,7 @@ int main( int argc , char** argv )
           oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
                               "%s%s", text ? text : "???",
                                       i+1 == n ? "" : "\n" );
-          if(oy_debug)
+          if(verbose)
           {
             error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, cs_options, &text,
                                      oyAllocFunc );
@@ -552,28 +515,18 @@ int main( int argc , char** argv )
             free( text );
 
           /* verbose adds */
-          if(oy_debug)
+          if(verbose)
           {
-            o = oyConfig_Find( c, "colour_matrix.from_edid" );
-            text = oyOption_GetValueText( o, oyAllocFunc );
-            printf( OY_DBG_FORMAT_" \"%s\":\n%s\n", OY_DBG_ARGS_,
-                    oyOption_GetRegistration(o), text?text:"----" );
-            if(text) oyDeAllocFunc( text ); text = 0;
-            oyOption_Release( &o );
-
             oyDeviceAskProfile2( c, cs_options, &prof );
             data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc);
             if(size && data)
               oyDeAllocFunc( data );
             filename = oyProfile_GetFileName( prof, -1 );
-            printf( OY_DBG_FORMAT_" server profile \"%s\" size: %d\n",
-                    OY_DBG_ARGS_,
+            printf( " server profile \"%s\" size: %d\n",
                     filename?filename:OY_PROFILE_NONE, (int)size );
 
             oyDeviceProfileFromDB( c, &text, oyAllocFunc );
-            printf( OY_DBG_FORMAT_
-                    " DB profile \"%s\"\n  DB registration key set: %s\n",
-                    OY_DBG_ARGS_,
+            printf( " DB profile \"%s\"\n  keys: %s\n",
                     text?text:OY_PROFILE_NONE,
                     oyConfig_FindString( c, "key_set_name", 0 ) ?
                       oyConfig_FindString( c, "key_set_name", 0 ) :
