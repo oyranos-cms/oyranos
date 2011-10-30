@@ -60,6 +60,7 @@ int main( int argc , char** argv )
 
   /* the functional switches */
   int erase = 0;
+  int unset = 0;
   int list = 0;
   int setup = 0;
   int daemon = 0;
@@ -126,6 +127,7 @@ int main( int argc , char** argv )
               case 'l': list = 1; monitor_profile = 0; break;
               case 'm': device_meta_tag = 1; break;
               case 'o': OY_PARSE_STRING_ARG(output); monitor_profile = 0; break;
+              case 'u': unset = 1; monitor_profile = 0; break;
               case 'x': server = 1; OY_PARSE_INT_ARG( x ); break;
               case 'y': server = 1; OY_PARSE_INT_ARG( y ); break;
               case 'v': if(verbose) oy_debug += 1; verbose = 1; break;
@@ -134,8 +136,10 @@ int main( int argc , char** argv )
               case '-':
                         if(i == 1)
                         {
-                             if(OY_IS_ARG("unset"))
+                             if(OY_IS_ARG("erase"))
                         { erase = 1; monitor_profile = 0; i=100; break; }
+                        else if(OY_IS_ARG("unset"))
+                        { unset = 1; monitor_profile = 0; i=100; break; }
                         else if(strcmp(&argv[pos][2],"net_color_region_target") == 0)
                         { net_color_region_target = 1; i=100; break; }
                         else if(OY_IS_ARG("setup"))
@@ -174,7 +178,7 @@ int main( int argc , char** argv )
                         printf("      %s [-x pos -y pos | -d number] %s\n", argv[0],
                                                        _("profile name"));
                         printf("\n");
-                        printf("  %s\n",               _("Unset profile:"));
+                        printf("  %s\n",               _("Erase profile:"));
                         printf("      %s -e [-x pos -y pos | -d number]\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("Activate profiles:"));
@@ -204,6 +208,7 @@ int main( int argc , char** argv )
         default:
             monitor_profile = argv[pos];
             erase = 0;
+            unset = 0;
       }
       if( wrong_arg )
       {
@@ -232,7 +237,7 @@ int main( int argc , char** argv )
 
 
   {
-    if(!erase && !list && !setup && !format &&
+    if(!erase && !unset && !list && !setup && !format &&
        !add_meta && !list_modules)
       setup = 1;
 
@@ -579,18 +584,17 @@ int main( int argc , char** argv )
         oyDeviceSetProfile( device, monitor_profile );
         oyDeviceUnset( device );
       } else
-      if(erase)
-      {
+      if(erase || unset)
         oyDeviceUnset( device );
+      if(erase)
         oyConfig_EraseFromDB( device );
-      }
 
       if(setup)
         oyDeviceSetup( device );
 
       oyConfig_Release( &device );
     }
-    else if(erase || setup)
+    else if(erase || unset || setup)
     {
       error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",
@@ -608,11 +612,11 @@ int main( int argc , char** argv )
         {
           device = oyConfigs_Get( devices, i );
 
-          if(erase)
-          {
+          if(erase || unset)
             oyDeviceUnset( device );
+          if(erase)
             oyConfig_EraseFromDB( device );
-          } else if(setup)
+          if(setup)
             oyDeviceSetup( device );
 
           oyConfig_Release( &device );
