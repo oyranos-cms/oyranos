@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2011-08-24 07:28+0200\n"
+"POT-Creation-Date: 2011-10-30 12:12+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
+"Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -28,20 +29,20 @@ msgstr ""
 msgid "!!! ERROR"
 msgstr ""
 
-#: oyranos_io_core.c:306 oyranos_io_core.c:351
+#: oyranos_io_core.c:464 oyranos_io_core.c:509
 #, fuzzy
 msgid "File exists"
 msgstr "Fitxategi-sistema"
 
-#: oyranos_io_core.c:799
+#: oyranos_io_core.c:957
 msgid "path is not a directory"
 msgstr ""
 
-#: oyranos_io_core.c:803
+#: oyranos_io_core.c:961
 msgid "path is a link: ignored"
 msgstr ""
 
-#: oyranos_io_core.c:808
+#: oyranos_io_core.c:966
 msgid "path is not readable"
 msgstr ""
 
@@ -79,21 +80,21 @@ msgstr ""
 msgid "will overwrite policy file"
 msgstr ""
 
-#: oyranos_check.c:72 oyranos_alpha.c:7812
+#: oyranos_check.c:72 oyranos_alpha.c:8180
 #, fuzzy
 msgid "not found:"
 msgstr "Biratu inguruan"
 
 #: oyranos_cmm.c:64 oyranos_alpha.c:562 oyranos_alpha.c:867
-#: oyranos_alpha.c:1361 oyranos_alpha.c:3612 oyranos_alpha.c:4527
-#: oyranos_alpha.c:5582 oyranos_alpha.c:8012 oyranos_alpha.c:11103
-#: oyranos_alpha.c:11761 oyranos_alpha.c:12457 oyranos_alpha.c:13039
-#: oyranos_alpha.c:14019 oyranos_alpha.c:15231 oyranos_alpha.c:15827
-#: oyranos_alpha.c:16052 oyranos_alpha.c:16351 oyranos_alpha.c:17408
-#: oyranos_alpha.c:17704 oyranos_alpha.c:17785 oyranos_alpha.c:18054
-#: oyranos_alpha.c:19754 oyranos_alpha.c:20038 oyranos_alpha.c:20972
-#: oyranos_alpha.c:21267 oyranos_alpha.c:22185 oyranos_alpha.c:22792
-#: oyranos_alpha.c:23050 API_generated/oyBlob_s_.c:169
+#: oyranos_alpha.c:1361 oyranos_alpha.c:3612 oyranos_alpha.c:4764
+#: oyranos_alpha.c:5827 oyranos_alpha.c:8380 oyranos_alpha.c:11471
+#: oyranos_alpha.c:12129 oyranos_alpha.c:12825 oyranos_alpha.c:13407
+#: oyranos_alpha.c:14387 oyranos_alpha.c:15599 oyranos_alpha.c:16195
+#: oyranos_alpha.c:16420 oyranos_alpha.c:16719 oyranos_alpha.c:17776
+#: oyranos_alpha.c:18072 oyranos_alpha.c:18153 oyranos_alpha.c:18422
+#: oyranos_alpha.c:20122 oyranos_alpha.c:20406 oyranos_alpha.c:21340
+#: oyranos_alpha.c:21635 oyranos_alpha.c:22553 oyranos_alpha.c:23160
+#: oyranos_alpha.c:23418 API_generated/oyBlob_s_.c:169
 #: API_generated/oyPointer_s_.c:164 API_generated/oyHash_s_.c:155
 #: API_generated/oyName_s_.c:48 API_generated/oyObserver_s.c:51
 #: API_generated/oyOption_s_.c:176 API_generated/oyOptions_s_.c:59
@@ -1644,99 +1645,91 @@ msgid ""
 "useful defaults and grouping of settings in selectable policies."
 msgstr ""
 
-#: oyranos_gamma.c:92
-msgid "DISPLAY variable not set: giving up."
-msgstr ""
-
-#: oyranos_gamma.c:164
+#: oyranos_gamma.c:175
 msgid "is a colour profile administration tool for monitors"
 msgstr ""
 
-#: oyranos_gamma.c:165 oyranos_policy.c:53 oyranos_profile.c:76
+#: oyranos_gamma.c:176 oyranos_policy.c:53 oyranos_profile.c:76
 #: oyranos_profiles.c:55 oforms/oyranos_xforms.c:23
 #: oforms/oyranos_xforms_modules.c:26 oforms/oyranos_xforms_fltk.cxx:54
 msgid "Usage"
 msgstr ""
 
-#: oyranos_gamma.c:166
+#: oyranos_gamma.c:177
 #, fuzzy
 msgid "Set new profile:"
 msgstr "profilik ez"
 
-#: oyranos_gamma.c:168
+#: oyranos_gamma.c:179
 #, fuzzy
 msgid "profile name"
 msgstr "Fitxategi-izena"
 
-#: oyranos_gamma.c:170
+#: oyranos_gamma.c:181
 #, fuzzy
-msgid "Unset profile:"
+msgid "Erase profile:"
 msgstr "profilik ez"
 
-#: oyranos_gamma.c:173
+#: oyranos_gamma.c:184
 msgid "Activate profiles:"
 msgstr ""
 
-#: oyranos_gamma.c:176
-msgid "Query server profile:"
-msgstr ""
-
-#: oyranos_gamma.c:179
-msgid "Query device data base profile:"
-msgstr ""
-
-#: oyranos_gamma.c:182
+#: oyranos_gamma.c:187
 msgid "List devices:"
 msgstr ""
 
-#: oyranos_gamma.c:185
+#: oyranos_gamma.c:190
 #, fuzzy
 msgid "List modules:"
 msgstr "Oyranos-en ezarpenak"
 
-#: oyranos_gamma.c:188
+#: oyranos_gamma.c:193
 #, fuzzy
 msgid "Dump data:"
 msgstr "Data"
 
-#: oyranos_gamma.c:191 oyranos_profile.c:95 oyranos_profiles.c:86
+#: oyranos_gamma.c:196 oyranos_profile.c:95 oyranos_profiles.c:86
 #: oforms/oyranos_xforms.c:36 oforms/oyranos_xforms_modules.c:33
 #: oforms/oyranos_xforms_fltk.cxx:55
 msgid "General options:"
 msgstr ""
 
-#: oyranos_gamma.c:192 oyranos_profile.c:96 oyranos_profiles.c:87
+#: oyranos_gamma.c:197 oyranos_profile.c:96 oyranos_profiles.c:87
 msgid "-v verbose"
 msgstr ""
 
-#: oyranos_gamma.c:193
+#: oyranos_gamma.c:198
 #, fuzzy
 msgid "--module name"
 msgstr "Fitxategi-izena"
 
-#: oyranos_gamma.c:194
+#: oyranos_gamma.c:199
 msgid "-d device_position_start_from_zero"
 msgstr ""
 
-#: oyranos_gamma.c:196 oforms/oyranos_xforms.c:39
+#: oyranos_gamma.c:201 oforms/oyranos_xforms.c:39
 #: oforms/oyranos_xforms_modules.c:37 oforms/oyranos_xforms_fltk.cxx:59
 #, c-format
 msgid "For more informations read the man page:"
 msgstr ""
 
-#: oyranos_gamma.c:212 oyranos_policy.c:146 oyranos_profile.c:177
+#: oyranos_gamma.c:215 oyranos_policy.c:146 oyranos_profile.c:177
 #: oyranos_profiles.c:209 API_generated/oyOptions_s.c:1457
 #: oforms/oyranos_xforms.c:133 oforms/oyranos_xforms_modules.c:141
 #: oforms/oyranos_xforms_fltk.cxx:320
 msgid "wrong argument to option:"
 msgstr ""
 
-#: oyranos_gamma.c:257
+#: oyranos_gamma.c:226
+msgid "DISPLAY variable not set: giving up."
+msgstr ""
+
+#: oyranos_gamma.c:281
 #, fuzzy
 msgid "Could not resolve device"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: oyranos_gamma.c:258
+#: oyranos_gamma.c:282
 msgid "Available devices"
 msgstr ""
 
@@ -1822,7 +1815,7 @@ msgid "use device class"
 msgstr "Gailuaren koloreak"
 
 #: oyranos_profile.c:84
-msgid "Dump Device Infos to JSON:"
+msgid "Dump Device Infos to OpenICC device JSON:"
 msgstr ""
 
 #: oyranos_profile.c:87
@@ -1848,7 +1841,7 @@ msgstr ""
 msgid "missed -w option to write a ICC profile"
 msgstr ""
 
-#: oyranos_profile.c:191 oyranos_profile.c:198 oyranos_profile.c:219
+#: oyranos_profile.c:191 oyranos_profile.c:198 oyranos_profile.c:241
 msgid "Exit!"
 msgstr ""
 
@@ -1857,12 +1850,12 @@ msgstr ""
 msgid "Need a ICC profile to modify."
 msgstr "Oyranos-en ezarpenak"
 
-#: oyranos_profile.c:219
+#: oyranos_profile.c:241
 #, fuzzy
 msgid "Profile exists already"
 msgstr "Profila kapsulatuta dago eta "
 
-#: oyranos_profile.c:268 modules/oyranos_cmm_oicc.c:441
+#: oyranos_profile.c:290 modules/oyranos_cmm_oicc.c:441
 #, fuzzy
 msgid "ICC profile"
 msgstr "Zein ICC profila?"
@@ -1997,91 +1990,91 @@ msgid ""
 "point to a Oyranos module loader library?"
 msgstr ""
 
-#: oyranos_alpha.c:6682 oyranos_alpha.c:7445 oyranos_alpha.c:23985
-#: oyranos_alpha.c:24068
+#: oyranos_alpha.c:6927 oyranos_alpha.c:7690 oyranos_alpha.c:24353
+#: oyranos_alpha.c:24436
 #, fuzzy
 msgid "Could not open device"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: oyranos_alpha.c:6899 oyranos_alpha.c:7456
+#: oyranos_alpha.c:7144 oyranos_alpha.c:7701
 #, fuzzy
 msgid "Could not open profile"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: oyranos_alpha.c:6907
+#: oyranos_alpha.c:7152
 #, fuzzy
 msgid "Could not write to file"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: oyranos_alpha.c:6949
+#: oyranos_alpha.c:7194
 #, fuzzy
 msgid "Could not open ICC profile"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: oyranos_alpha.c:6950 oyranos_alpha.c:8175 oyranos_alpha.c:8180
+#: oyranos_alpha.c:7195 oyranos_alpha.c:8543 oyranos_alpha.c:8548
 msgid "install in the OpenIccDirectory icc path"
 msgstr ""
 
-#: oyranos_alpha.c:8173 oyranos_alpha.c:8179
+#: oyranos_alpha.c:8541 oyranos_alpha.c:8547
 #, fuzzy
 msgid "Could not open default ICC profile"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: oyranos_alpha.c:8174
+#: oyranos_alpha.c:8542
 msgid "You can get them from http://sf.net/projects/openicc"
 msgstr ""
 
-#: oyranos_alpha.c:8265
+#: oyranos_alpha.c:8633
 #, fuzzy
 msgid "Wrong ICC profile id detected"
 msgstr "Errorea aurkitu da ICC profilako etiketan."
 
-#: oyranos_alpha.c:8275
+#: oyranos_alpha.c:8643
 #, fuzzy
 msgid "No ICC profile id detected"
 msgstr "ICC profilaren goiburua"
 
-#: oyranos_alpha.c:8285
+#: oyranos_alpha.c:8653
 #, fuzzy
 msgid "ICC profile id written"
 msgstr "ICC profilaren goiburua"
 
-#: oyranos_alpha.c:16654 oyranos_alpha.c:16672 oyranos_alpha.c:16772
-#: oyranos_alpha.c:16788 API_generated/oyranos_object.c:157
+#: oyranos_alpha.c:17022 oyranos_alpha.c:17040 oyranos_alpha.c:17140
+#: oyranos_alpha.c:17156 API_generated/oyranos_object.c:157
 #: API_generated/oyranos_object.c:175 API_generated/oyranos_object.c:276
 #: API_generated/oyranos_object.c:292
 msgid "with '.' is not allowed"
 msgstr ""
 
-#: oyranos_alpha.c:18460
+#: oyranos_alpha.c:18828
 msgid "attempt to add a incomplete filter"
 msgstr ""
 
-#: oyranos_alpha.c:18522
+#: oyranos_alpha.c:18890
 msgid "?? Nothing to add ??"
 msgstr ""
 
-#: oyranos_alpha.c:18937 API_generated/oyObserver_s_.c:53
+#: oyranos_alpha.c:19305 API_generated/oyObserver_s_.c:53
 #: API_generated/oyObserver_s.c:349 API_generated/oyObserver_s.c:549
 #: API_generated/oyObserver_s.c:627
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:388
 msgid "Signal"
 msgstr ""
 
-#: oyranos_alpha.c:19072 oyranos_alpha.c:22066 oyranos_alpha.c:23596
+#: oyranos_alpha.c:19440 oyranos_alpha.c:22434 oyranos_alpha.c:23964
 #: API_generated/oyOptions_s.c:2111
 msgid "error in module:"
 msgstr ""
 
-#: oyranos_alpha.c:22036
+#: oyranos_alpha.c:22404
 msgid "Found no node in conversion. give up"
 msgstr ""
 
-#: oyranos_alpha.c:22758
+#: oyranos_alpha.c:23126
 msgid "---"
 msgstr "---"
 
-#: oyranos_alpha.c:23604 API_generated/oyOptions_s.c:2119
+#: oyranos_alpha.c:23972 API_generated/oyOptions_s.c:2119
 #, fuzzy
 msgid "Could not allocate memory for:"
 msgstr "Ezin izan da letra-tipoa ireki:"
@@ -2692,7 +2685,7 @@ msgid "no EDID available from X properties"
 msgstr ""
 
 #: modules/devices/oyranos_monitor_x11.c:720
-#: modules/devices/oyranos_monitor_x11.c:1222
+#: modules/devices/oyranos_monitor_x11.c:1223
 #: modules/devices/oyranos_monitor_cs.c:131
 #: modules/devices/oyranos_monitor_cs.c:259
 msgid "open X Display failed"
@@ -2703,44 +2696,44 @@ msgstr "huts egin du X pantaila irekitzean"
 msgid "No monitor gamma curves by profile:"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:783
+#: modules/devices/oyranos_monitor_x11.c:784
 #, fuzzy
 msgid "Error obtaining profile"
 msgstr "okerreko etiketa-tamaina profilan "
 
-#: modules/devices/oyranos_monitor_x11.c:790
-#: modules/devices/oyranos_monitor_x11.c:792
+#: modules/devices/oyranos_monitor_x11.c:791
+#: modules/devices/oyranos_monitor_x11.c:793
 msgid "Error setting up atom"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:887
+#: modules/devices/oyranos_monitor_x11.c:888
 msgid "Error getting atom"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:1114
+#: modules/devices/oyranos_monitor_x11.c:1115
 msgid "XRandR CrtcInfo request failed"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:1132
+#: modules/devices/oyranos_monitor_x11.c:1133
 msgid "Xinerama request failed"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:1148
+#: modules/devices/oyranos_monitor_x11.c:1149
 #, fuzzy
 msgid "open X Screen failed"
 msgstr "huts egin du X pantaila irekitzean"
 
-#: modules/devices/oyranos_monitor_x11.c:1215
+#: modules/devices/oyranos_monitor_x11.c:1216
 #, fuzzy
 msgid "allocation failed"
 msgstr "Kalibrazio-data"
 
-#: modules/devices/oyranos_monitor_x11.c:1230
+#: modules/devices/oyranos_monitor_x11.c:1231
 #, fuzzy
 msgid "no Screen found"
 msgstr "Pantaila osoa aktibatu/desaktibatu"
 
-#: modules/devices/oyranos_monitor_x11.c:1390
+#: modules/devices/oyranos_monitor_x11.c:1391
 msgid "less Xinerama monitors than XRandR ones"
 msgstr ""
 
@@ -3373,7 +3366,7 @@ msgstr "Iragazki pertsonalizatua"
 msgid "Edit Options"
 msgstr "Bereizketa"
 
-#: oyranos_alpha_internal.h:243 oyranos_alpha_internal.h:251
+#: oyranos_alpha_internal.h:244 oyranos_alpha_internal.h:252
 msgid "Unexpected object type:"
 msgstr ""
 
