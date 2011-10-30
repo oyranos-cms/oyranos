@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <X11/Xcm/Xcm.h>
 #include <X11/Xcm/XcmEvents.h>
 #include <X11/extensions/Xrandr.h>
 
@@ -843,32 +844,54 @@ int updateOutputConfiguration( Display * display )
 
 int  runDaemon                       ( const char        * display_name )
 {
-  Atom netDesktopGeometry;
+  Display * display;
+  Atom net_desktop_geometry, icc_color_desktop;
   int rr_event_base = 0, rr_error_base = 0;
-
+  Atom actual;
+  int format;
+  unsigned long left, n;
+  unsigned char * data = 0;
   XcmeContext_s * c = XcmeContext_New( );
-  XcmeContext_Setup2( c, display_name, 0 );
-  XRRQueryExtension(XcmeContext_DisplayGet(c), &rr_event_base, &rr_error_base );
 
-  netDesktopGeometry = XInternAtom( XcmeContext_DisplayGet(c),
-                                    "_NET_DESKTOP_GEOMETRY", False );
+  XcmeContext_Setup2( c, display_name, 0 );
+  display = XcmeContext_DisplayGet( c );
+
+  if(!display)
+    return 1;
+
+  XRRQueryExtension( display, &rr_event_base, &rr_error_base );
+
+  net_desktop_geometry = XInternAtom( display,
+                                      "_NET_DESKTOP_GEOMETRY", False );
+  icc_color_desktop = XInternAtom( display,
+                                      XCM_COLOR_DESKTOP, False );
+
+
   for(;;)
   {
     XEvent event;
-    XNextEvent( XcmeContext_DisplayGet( c ), &event);
+    XNextEvent( display, &event);
+    XGetWindowProperty( display, RootWindow(display,0),
+                        icc_color_desktop, 0, ~0, False, XA_STRING,
+                        &actual,&format, &n, &left, &data );
+    n += left;
+    /* we rely on any colour server doing X11 setup by its own */
+    if(n && data)
+      continue;
+
     if(event.type == rr_event_base + RRNotify)
     {
       XRRNotifyEvent *rrn = (XRRNotifyEvent *) &event;
       if(rrn->subtype == RRNotify_OutputChange)
       {
         printf("detected RRNotify_OutputChange event -> update\n");
-        updateOutputConfiguration( XcmeContext_DisplayGet( c ) );
+        updateOutputConfiguration( display );
       }
     } else if( event.type == PropertyNotify &&
-               event.xproperty.atom == netDesktopGeometry)
+               event.xproperty.atom == net_desktop_geometry)
     {
         printf("detected _NET_DESKTOP_GEOMETRY event -> update\n");
-        updateOutputConfiguration( XcmeContext_DisplayGet( c ) );
+        updateOutputConfiguration( display );
     }
   }
 
