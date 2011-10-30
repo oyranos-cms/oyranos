@@ -316,7 +316,9 @@ ldconfig
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-monitor
+%{_bindir}/%{name}-monitor-daemon
 %{_mandir}/man1/%{name}-monitor.1*
+%{_mandir}/man1/%{name}-monitor-daemon.1*
 /etc/xdg/autostart/%{name}-monitor-setup.desktop
 
 %files -n lib%{name}0-monitor
@@ -379,6 +381,9 @@ ldconfig
 %{desktopdir}/qcmsevents-applet.desktop
 
 %changelog
+* Fri Oct 29 2011 Kai-Uwe Behrmann
+- add oyranos-monitor-daemon
+
 * Wed Jul 01 2011 Kai-Uwe Behrmann
 - add liboyranos_modules
 
