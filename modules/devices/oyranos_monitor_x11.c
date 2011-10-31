@@ -886,6 +886,7 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
       else
       {
         WARNc2_S("%s \"%s\"", _("Error getting atom"), atom_name);
+        error = -1;
       }
 
       {
@@ -1133,6 +1134,11 @@ oyX1Monitor_getScreenGeometry_            (oyX1Monitor_s *disp)
       WARNc_S(_("Xinerama request failed"))
       return 1;
     }
+    if( n_scr_info < screen )
+    {
+      WARNc_S(_("Xinerama request failed"))
+      return -1;
+    }
     {
         disp->geo[2] = scr_info[screen].x_org;
         disp->geo[3] = scr_info[screen].y_org;
@@ -1173,7 +1179,7 @@ oyX1Monitor_getScreenGeometry_            (oyX1Monitor_s *disp)
 oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
                                        int                 expensive )
 {
-  int error = 0;
+  int error = 0, t_err = 0;
   int i = 0;
   oyX1Monitor_s * disp = 0;
 
@@ -1181,8 +1187,11 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
 
   disp = oyAllocateFunc_( sizeof(oyX1Monitor_s) );
   error = !disp;
-  if(!error)
-    error = !memset( disp, 0, sizeof(oyX1Monitor_s) );
+  if(error <= 0)
+  {
+    t_err = !memset( disp, 0, sizeof(oyX1Monitor_s) );
+    if(t_err) error = t_err;
+  }
 
   disp->type_ = oyOBJECT_MONITOR_S;
 
@@ -1198,7 +1207,7 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
       disp->name = oyStringCopy_( ":0", oyAllocateFunc_ );
   }
 
-  if( !error &&
+  if( error <= 0 &&
       (disp->host = oyExtractHostName_( disp->name )) == 0 )
     error = 1;
 
@@ -1403,12 +1412,15 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
   for( i = 0; i < 6; ++i )
     disp->geo[i] = -1;
 
-  if( !error &&
-      oyX1Monitor_getScreenGeometry_( disp ) != 0 )
-    error = 1;
+  if( error <= 0 &&
+      (t_err = oyX1Monitor_getScreenGeometry_( disp )) != 0 )
+    error = t_err;
 
   if( error <= 0 )
-    error = oyX1Monitor_getGeometryIdentifier_( disp );
+  {
+    t_err = oyX1Monitor_getGeometryIdentifier_( disp );
+    if(t_err) error = t_err;
+  }
 
   if( !disp->system_port || !oyStrlen_( disp->system_port ) )
   if( 0 <= oyX1Monitor_screen_( disp ) && oyX1Monitor_screen_( disp ) < 10000 )
@@ -1416,6 +1428,9 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
     disp->system_port = (char*)oyAllocateWrapFunc_( 12, oyAllocateFunc_ );
     oySprintf_( disp->system_port, "%d", oyX1Monitor_screen_( disp ) );
   }
+
+  if(error > 0)
+    oyX1Monitor_release_( &disp );
 
   DBG_PROG_ENDE
   return disp;
