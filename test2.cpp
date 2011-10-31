@@ -2233,6 +2233,38 @@ oyTESTRESULT_e testCMMDBListing ()
   return result;
 }
 
+oyTESTRESULT_e testCMMMonitorModule ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  oyConfigs_s * devices = 0;
+  oyOptions_s * options = 0;
+  const char * t = ":0.100";
+  int error = 0;
+
+  fprintf(stdout, "\n" );
+
+  /* non existing display */
+  error = oyOptions_SetFromText( &options,
+                                 "//" OY_TYPE_STD "/config/device_name",
+                                 t, OY_CREATE_NEW );
+  /* clean up */
+  error = oyOptions_SetFromText( &options,
+                                 "//"OY_TYPE_STD"/config/command",
+                                 "unset", OY_CREATE_NEW );
+  error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
+  oyConfigs_Release( &devices );
+
+  if( error == -1 )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyDevicesGet( \"//" OY_TYPE_STD "\", unset, ... ) = -1  " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyDevicesGet( \"//" OY_TYPE_STD "\", unset, ... ) = %d", error );
+  }
+
+  return result;
+}
+
 oyTESTRESULT_e testCMMmonitorDBmatch ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
@@ -3831,6 +3863,7 @@ int main(int argc, char** argv)
   TEST_RUN( testCMMDevicesDetails, "CMM devices details" );
   TEST_RUN( testCMMMonitorJSON, "monitor JSON" );
   TEST_RUN( testCMMMonitorListing, "CMM monitor listing" );
+  TEST_RUN( testCMMMonitorModule, "CMM monitor module" );
   TEST_RUN( testCMMDBListing, "CMM DB listing" );
   TEST_RUN( testCMMmonitorDBmatch, "CMM monitor DB match" );
   TEST_RUN( testCMMsShow, "CMMs show" );
