@@ -794,9 +794,9 @@ int            oyOptions_Filter      ( oyOptions_s      ** add_list,
  *  @param         type                oyNAME_NICK is equal to an ID
  *  @return                            the text
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.3
  *  @since   2008/11/25 (Oyranos: 0.1.9)
- *  @date    2008/09/01
+ *  @date    2011/10/31
  */
 const char *   oyOptions_GetText     ( oyOptions_s       * options,
                                        oyNAME_e            type )
@@ -810,6 +810,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
   int * sort, changed;
   char ** old_levels = 0;
   int old_levels_n = 0;
+  int close_oy_struct = 0;
 
   if(error <= 0)
   {
@@ -857,7 +858,9 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
 
     for( i = 0; i < n; ++i )
     {
+      oyOption_s_ * o_ = 0;
       o = oyOptions_Get( options, sort[i] );
+      o_ = (oyOption_s_*)o;
 
       /* Omit redundant XML level closes and opens based on alphabetical input.
        */
@@ -892,6 +895,12 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
               STRING_ADD ( text, " " );
           if(old_levels_n > j)
           {
+            if( close_oy_struct )
+            {
+              for(k = 0; k < indent+j_n-1; ++k)
+                STRING_ADD ( text, " " );
+              close_oy_struct = 0;
+            }
             STRING_ADD ( text, "</" );
             STRING_ADD ( text, old_levels[j] );
             if(j)
@@ -914,15 +923,25 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
             STRING_ADD ( text, ">\n" );
         }
 
-        tmp = oyOption_GetValueText( o, oyAllocateFunc_ );
-        STRING_ADD ( text, tmp );
+        if( o_->value_type == oyVAL_STRUCT )
+        {
+          STRING_ADD ( text, "\n" );
+          for(k = 0; k < indent+j_n-1; ++k)
+            STRING_ADD ( text, " " );
+          STRING_ADD ( text, oyOption_GetText( o, oyNAME_XML_VALUE ) );
+          close_oy_struct = 1;
+        }
+        else
+        {
+          tmp = oyOption_GetValueText( o, oyAllocateFunc_ );
+          STRING_ADD ( text, tmp );
+          oyFree_m_( tmp );
+        }
 
         if(old_levels)
           oyStringListRelease_( &old_levels, old_levels_n, oyDeAllocateFunc_ );
         old_levels = list;
         old_levels_n = j_n;
-
-        oyFree_m_( tmp );
       }
       else
       {
