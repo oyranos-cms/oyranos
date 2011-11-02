@@ -118,7 +118,8 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
     }
 
   if(error <= 0 &&
-     ( type == oyNAME_NICK || type == oyNAME_NAME ))
+     ( type == oyNAME_NICK || type == oyNAME_NAME ||
+       type == oyNAME_XML_VALUE ))
   {
     int n = 1, i = 0, j;
     char * tmp = 0,
@@ -152,8 +153,14 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
       oyStringListRelease_( &list, n, oyDeAllocateFunc_ );
     }
 
-    tmp = oyOption_GetValueText( obj, oyAllocateFunc_ );
-    STRING_ADD ( text, tmp );
+    if( s->value_type == oyVAL_STRUCT &&
+        s->value->oy_struct)
+      STRING_ADD ( text, oyStruct_GetText( s->value->oy_struct, type, 0 ) );
+    else
+    {
+      tmp = oyOption_GetValueText( obj, oyAllocateFunc_ );
+      STRING_ADD ( text, tmp );
+    }
 
     if(type == oyNAME_NAME)
     {
