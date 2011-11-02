@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/02/15
+ *  @date     2011/11/01
  */
 
 
@@ -163,6 +163,8 @@ typedef enum {
   oyNAME_NICK,                         /**< compatible to oyName_s/oyObject_s */
   oyNAME_DESCRIPTION                   /**< compatible to oyName_s/oyObject_s */
 } oyNAME_e;
+
+#define oyNAME_XML_VALUE (oyNAME_DESCRIPTION + 1)
 
 /** @brief   select from filter
  *  @ingroup objects_value

@@ -141,6 +141,8 @@ typedef enum {
   oyNAME_DESCRIPTION                   /**< compatible to oyName_s/oyObject_s */
 } oyNAME_e;
 
+#define oyNAME_XML_VALUE (oyNAME_DESCRIPTION + 1)
+
 /** @brief   select from filter
  *  @ingroup objects_value
  *
