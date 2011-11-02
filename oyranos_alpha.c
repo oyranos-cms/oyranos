@@ -1256,6 +1256,82 @@ int          oyCMMdsoSearch_         ( const char        * lib_name )
   return pos;
 }
 
+/* defined in sources/Struct.public_methods_definitions.c */
+extern const char * (*oyStruct_GetTextFromModule_p) (
+                                       oyStruct_s        * obj,
+                                       oyNAME_e            name_type,
+                                       uint32_t            flags );
+
+/** Function  oyStruct_GetTextFromModule
+ *  @memberof oyStruct_s
+ *  @brief    get object infos from a module
+ *
+ *  @param[in,out] obj                 the objects structure
+ *  @param[in]     name_type           the type
+ *  @param[in]     flags               @see oyStruct_GetText
+ *  @return                            the text
+ *
+ *  @version  Oyranos: 0.3.3
+ *  @since    2009/09/15 (Oyranos: 0.3.3)
+ *  @date     2011/10/31
+ */
+const char * oyStruct_GetTextFromModule (
+                                       oyStruct_s        * obj,
+                                       oyNAME_e            name_type,
+                                       uint32_t            flags )
+{
+  int error = !obj;
+  const char * text = 0;
+
+  if(!error)
+    text = oyObject_GetName( obj->oy_, oyNAME_NICK );
+
+  if(!error && !text)
+  {
+    if(obj->type_)
+    {
+      oyCMMapiFilters_s * apis;
+      int apis_n = 0, i,j,n;
+      oyCMMapi9_s * cmm_api9 = 0;
+      char * api_reg = 0;
+
+      apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S,
+                                   oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                                   0, 0);
+      apis_n = oyCMMapiFilters_Count( apis );
+      for(i = 0; i < apis_n; ++i)
+      {
+        cmm_api9 = (oyCMMapi9_s*) oyCMMapiFilters_Get( apis, i );
+
+        n = 0;
+        while( cmm_api9->object_types && cmm_api9->object_types[n])
+          ++n;
+        for(j = 0; j < n; ++j)
+          if( cmm_api9->object_types[j]->oyCMMobjectGetText &&
+              cmm_api9->object_types[j]->id == obj->type_ )
+          {
+            text = cmm_api9->object_types[j]->oyCMMobjectGetText( flags?0:obj,
+                                                   name_type, 0 );
+            if(text)
+              break;
+          }
+
+        if(cmm_api9->release)
+          cmm_api9->release( (oyStruct_s**)&cmm_api9 );
+
+        if(text)
+          break;
+      }
+      oyCMMapiFilters_Release( &apis );
+    }
+  }
+
+  if(!error && !text)
+    text = oyStructTypeToText( obj->type_ );
+
+  return text;
+}
+
 /** @internal
  *  @brief release Oyranos CMM dlopen handle
  *
@@ -1327,6 +1403,10 @@ if(!lib_name)
       WARNc2_S( "\n  dlopen( %s, RTLD_LAZY):\n  \"%s\"", lib_name, dlerror() );
       system("  echo $LD_LIBRARY_PATH");
     }
+
+    /* initialise module type lookup */
+    if(!oyStruct_GetTextFromModule_p)
+      oyStruct_GetTextFromModule_p = oyStruct_GetTextFromModule;
   }
 
   if(dso_handle)
@@ -2227,7 +2307,8 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_meta,
           if(!ret && reg)
           {
             rank = oyFilterRegistrationMatch( reg, registration, type );
-            if(rank && OYRANOS_VERSION == info->oy_compatibility)
+            if((rank && OYRANOS_VERSION == info->oy_compatibility) ||
+               !registration)
               ++rank;
 
             if(rank && rank_list)
@@ -8391,15 +8472,23 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
     memset( oy_profile_s_std_cache_, 0, len );
   }
 
-  if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
-    if(oy_profile_s_std_cache_[pos])
-      return oyProfile_Copy( oy_profile_s_std_cache_[pos], 0 );
-
   if(object)
     allocateFunc = object->allocateFunc_;
 
   if(type)
     name = oyGetDefaultProfileName ( type, allocateFunc );
+
+  if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
+    if(oy_profile_s_std_cache_[pos] &&
+       oy_profile_s_std_cache_[pos]->file_name_ && name &&
+       strcmp(oy_profile_s_std_cache_[pos]->file_name_, name) == 0 )
+    {
+      if(object->deallocateFunc_)
+        object->deallocateFunc_( name );
+      else
+        oyDeAllocateFunc_( name );
+      return oyProfile_Copy( oy_profile_s_std_cache_[pos], 0 );
+    }
 
   s = oyProfile_FromFile_( name, 0, object );
 
@@ -9481,8 +9570,7 @@ OYAPI const oyChar* OYEXPORT
     text = oyProfile_GetID( s );
 
   if(error <= 0 && !text)
-    if(type <= oyNAME_DESCRIPTION)
-      text = oyObject_GetName( s->oy_, type );
+    text = oyObject_GetName( s->oy_, type );
 
   if(error <= 0 && !(text && text[0]))
   {
@@ -9525,7 +9613,7 @@ OYAPI const oyChar* OYEXPORT
       }
     }
 
-    if(type == oyNAME_NAME)
+    if(type == oyNAME_NAME || type == oyNAME_XML_VALUE)
     {
       uint32_t * i = (uint32_t*)s->oy_->hash_ptr_;
       char * file_name = oyProfile_GetFileName_r( s, oyAllocateFunc_ );
