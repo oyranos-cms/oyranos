@@ -453,6 +453,72 @@ const char * oiccProfileGetText      ( oyStruct_s        * obj,
   return text;
 }
 
+/** @brief   get a presentable name
+ *  @memberof oyProfiles_s
+ *
+ *  The type argument should select the following string in return: \n
+ *  - oyNAME_NAME - a readable XML element
+ *  - oyNAME_NICK - the hash ID
+ *  - oyNAME_DESCRIPTION - profiles internal name (icSigProfileDescriptionTag)
+ *
+ *  @version Oyranos: 0.3.3
+ *  @since   2011/10/31 (Oyranos: 0.3.3)
+ *  @date    2011/10/31
+ */
+const char * oiccProfilesGetText     ( oyStruct_s        * obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  const char * text = 0, * t = 0;
+  char * tmp = 0;
+  int i, n,
+      error = 0;
+  oyProfiles_s * profiles = 0;
+
+  if(!obj)
+  {
+    if(type == oyNAME_NAME)
+      text = _("ICC profiles");
+    else if(type == oyNAME_DESCRIPTION)
+      text = _("ICC colour profiles for colour transformations");
+    else
+      text = "oyProfiles_s";
+  } else
+  {
+    if(obj &&
+       obj->type_ == oyOBJECT_PROFILES_S)
+    {
+      if(type == oyNAME_NAME)
+        STRING_ADD( tmp, "<oyProfiles_s>\n" );
+      profiles = (oyProfiles_s*)obj;
+      n = oyProfiles_Count( profiles );
+      for(i = 0; i < n; ++i)
+      {
+        oyProfile_s * p = oyProfiles_Get( profiles, i );
+        t = oyProfile_GetText( p, type );
+        if(t)
+          oyStringAddPrintf_( &tmp, oyAllocateFunc_, oyDeAllocateFunc_,
+                              "  %s\n", t );
+        else
+          STRING_ADD( tmp,    "  <no info available/>\n" );
+        oyProfile_Release( &p );
+      }
+      if(type == oyNAME_NAME)
+        STRING_ADD( tmp, "</oyProfiles_s>" );
+
+      if(error <= 0)
+        error = oyObject_SetName( profiles->oy_, tmp, type );
+
+      oyFree_m_( tmp );
+
+      if(error <= 0)
+        text = oyObject_GetName( profiles->oy_, type );
+    }
+  }
+
+  return text;
+}
+
 /** Function oiccObjectLoadFromMem
  *  @brief   load a ICC profile from a in memory data blob
  *
@@ -475,7 +541,7 @@ oyStruct_s * oiccProfileLoadFromMem   ( size_t              buf_size,
  *  @since   2008/11/23 (Oyranos: 0.1.9)
  *  @date    2009/09/14
  */
-int          oiccObjectScan       ( oyPointer           buf,
+int          oiccObjectScan          ( oyPointer           buf,
                                        size_t              buf_size,
                                        char             ** intern,
                                        char             ** filename,
@@ -509,8 +575,21 @@ oyCMMobjectType_s icc_profile = {
   oiccProfileLoadFromMem, /* oyCMMobjectLoadFromMem; */
   oiccObjectScan /* oyCMMobjectScan; */
 };
+oyCMMobjectType_s icc_profiles = {
+  oyOBJECT_CMM_DATA_TYPES_S, /* oyStruct_s::type; */
+  0,0,0, /* unused oyStruct_s fields in static data; keep to zero */
+  oyOBJECT_PROFILES_S, /* id; */
+  "color/icc", /* paths; sub paths */
+  0, /* pathsGet */
+  NULL, /* exts; file name extensions */
+  "profiles", /* element_name; in XML documents */
+  oiccProfilesGetText, /* oyCMMobjectGetText; */
+  0, /* oyCMMobjectLoadFromMem; */
+  0 /* oyCMMobjectScan; */
+};
 oyCMMobjectType_s * icc_objects[] = {
   &icc_profile,
+  &icc_profiles,
   0
 };
 
@@ -591,6 +670,16 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
 
   if(oy_debug == 1)
     verbose = 1;
+
+  if( oyOptions_FindString( options, "display_mode", "1" ) )
+  {
+    ++display_mode;
+  }
+  if(verbose)
+    WARNc2_S( "display_mode option %sfound %s", display_mode?"":"not ",
+              oyOptions_FindString( options, "display_mode", 0)?
+              oyOptions_FindString( options, "display_mode", 0):"");
+
 
   if(s->input)
     g = oyFilterGraph_FromNode( s->input, 0 );
@@ -731,7 +820,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               {
                 proof = oyProfile_FromStd( oyPROFILE_PROOF, 0 );
                 proofs = oyProfiles_New(0);
-                val = oyProfile_GetText( proof, oyNAME_NICK );
+                val = oyProfile_GetText( proof, oyNAME_NAME );
                 oyProfiles_MoveIn( proofs, &proof, -1 );
                 oyOptions_MoveInStruct( &f_options,
                                     OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD "/icc/profiles_simulation",
@@ -739,18 +828,20 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                         OY_CREATE_NEW );
                 if(verbose)
                   oicc_msg( oyMSG_WARN,(oyStruct_s*)node,
-                           "%s:%d set \"profiles_simulation\": %s %s",
+                           "%s:%d set \"profiles_simulation\": %s %s in %s[%d]",
                            strrchr(__FILE__,'/') ?
                                  strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
                            val?val:"empty profile text", 
-                           display_mode ? "for displaying" : "for hard copy" );
+                           display_mode ? "for displaying" : "for hard copy",
+                           oyStruct_GetInfo( (oyStruct_s*)f_options, 0 ),
+                           oyObject_GetId( f_options->oy_ ));
               } else if(verbose)
                 oicc_msg( oyMSG_WARN,(oyStruct_s*)node,
                          "%s:%d \"profiles_simulation\" %s, %s",
                          strrchr(__FILE__,'/') ?
                                  strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
                          o ? "is already set" : "no profile",
-                         proofing ? "proofing was set" :"proofing is not set" );
+                         proofing ? "proofing is set" :"proofing is not set" );
 
               oyOption_Release( &o );
 
