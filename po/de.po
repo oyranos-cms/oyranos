@@ -1719,7 +1719,7 @@ msgid ""
 "useful defaults and grouping of settings in selectable policies."
 msgstr ""
 "Oyranos erlaubt detailierte Einstellungen, wie z.B. zu bevorzugten "
-"Editierfarbräume, das Verhalten von Farbumwandlungen oder Simulation. "
+"Editierfarbräumen, das Verhalten von Farbumwandlungen oder Simulation. "
 "Oyranos verringert den Aufwand für Farbmanagemententscheidungen durch "
 "Automation, sinnvolle Voreinstellungen und wählbare Richtlinien."
 
