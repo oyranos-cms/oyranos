@@ -141,6 +141,7 @@ oyCheckProfileMem_                 (const void* mem, size_t size,
  *  @param[in]  buffer         complete profiles buffer
  *  @param[in]  size           over all profile size
  *  @param[out] md5_return     buffer to write in the md5 digest (128 bytes)
+ *                             in host byte order
  *  @return                    -1 wrong profile_id detected, 0 - good, 1 - error
  *
  *  @version Oyranos: 0.1.10
