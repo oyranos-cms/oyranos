@@ -2033,10 +2033,11 @@ oyStructList_s * oyIMProfileTag_GetValues(
            if(tag->size_ > 12)
            {
              int32_t off = 0;
-             int i;
+             int i, j;
              int offset = 0, old_offset = 0;
              int size = 0;
              uint32_t * hash = 0;
+             uint32_t md5[4];
 
              mluc_size = 0;
              desc_tmp = 0;
@@ -2077,9 +2078,11 @@ oyStructList_s * oyIMProfileTag_GetValues(
                if(!error && offset + size <= tag->size_)
                {
                  hash = (uint32_t*)&mem[offset];
+                 for(j = 0; j < 4; ++j)
+                   md5[j] = oyValueUInt32( hash[j] );
                  tmp = oyAllocateFunc_(80);
                  error = !tmp;
-                 oySprintf_(tmp, "%x%x%x%x",hash[0], hash[1], hash[2], hash[3]);
+                 oySprintf_(tmp, "%x%x%x%x",md5[0], md5[1], md5[2], md5[3]);
                  oyStructList_AddName( texts, "md5id:", -1 );
                  oyStructList_MoveInName( texts, &tmp, -1 );
 
