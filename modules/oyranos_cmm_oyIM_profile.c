@@ -2451,7 +2451,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
 
              if(!error)
              {
-               int pos = 12 + 8*n + tmp_len;
+               int pos = 12 + 8*n + tmp_len, j;
                error = !memcpy( &mem[pos + 16],
                                 tmptag->block_, tmptag->size_ );
                *((uint32_t*)&mem[12 + 8*i + 0]) = oyValueUInt32( pos );
@@ -2461,6 +2461,8 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
                error = !prof || !prof->block_ || !prof->size_;
                error = oyProfileGetMD5( prof->block_, prof->size_,
                                         (unsigned char*)&mem[pos] );
+               for(j = 0; j < 4; ++j)
+                 ((uint32_t*)&mem[pos])[j] = oyValueUInt32( ((uint32_t*)&mem[pos])[j] );
                oyProfile_Release( &prof );
 
                len = 16 + tmptag->size_;
