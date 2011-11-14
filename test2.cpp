@@ -1470,6 +1470,86 @@ oyTESTRESULT_e testProofingEffect ()
   return result;
 }
 
+oyTESTRESULT_e testDeviceLinkProfile ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  double buf[24];
+  oyProfile_s * prof = oyProfile_FromStd( oyASSUMED_WEB, 0 ), *dl = 0;
+  oyImage_s * in = oyImage_Create( 2, 2, buf, OY_TYPE_123_DBL, prof, 0 );
+  oyImage_s * out = oyImage_CreateForDisplay( 2, 2, buf, OY_TYPE_123_DBL, 0,
+                                              0,0, 12,12, 0 );
+  oyConversion_s *cc = oyConversion_CreateBasicPixels( in, out, 0, 0 );
+  oyFilterGraph_s * graph = oyFilterGraph_New( 0 );
+  oyBlob_s * blob = oyBlob_New(0);
+  int error = 0;
+  const char * fn = 0;
+  int i,n, len;
+
+  fprintf(stdout, "\n" );
+
+  memset( buf, 0, sizeof(double)*24);
+
+  /*oyConversion_RunPixels( cc, 0 );*/
+
+  oyFilterGraph_SetFromNode( graph, cc->input, 0, 0 );
+  n = oyFilterNodes_Count( graph->nodes );
+  for(i = 0; i < n; ++i)
+  {
+    blob = oyFilterGraph_ToBlob( graph, i, 0 );
+    if(blob && oyBlob_GetSize( blob ))
+    {
+      char name[64];
+      sprintf( name, "oy_dl_test_%d_", i );
+      len = strlen(name);
+      memcpy( &name[len], oyBlob_GetType( blob ), 4 );
+      name[len+4] = 0;
+      len = strlen(name);
+      sprintf( &name[len], ".icc" );
+      error = oyWriteMemToFile_( name, oyBlob_GetPointer( blob ),
+                                 oyBlob_GetSize( blob) );
+      if(!error)
+        printf("wrote: %s\n", name );
+      else
+        printf("writing failed: %s\n", name );
+      dl = oyProfile_FromMem( oyBlob_GetSize( blob ),
+                              oyBlob_GetPointer( blob ), 0,0 );
+    }
+
+    oyBlob_Release( &blob );
+  }
+
+  fn = oyProfile_GetFileName( dl, 0 );
+  if(fn)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyProfile_GetFileName(dl, 0): %s", fn );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyProfile_GetFileName(dl, 0): ----" );
+  }
+
+  fn = oyProfile_GetFileName( dl, 1 );
+  if(fn)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyProfile_GetFileName(dl, 1): %s", fn );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyProfile_GetFileName(dl, 1): ----" );
+  }
+
+  error = oyConversion_Release( &cc );
+  error = oyImage_Release( &in );
+  error = oyImage_Release( &out );
+  error = oyProfile_Release( &prof );
+  error = oyProfile_Release( &dl );
+
+
+  return result;
+}
 oyTESTRESULT_e testRegistrationMatch ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
@@ -3854,6 +3934,7 @@ int main(int argc, char** argv)
   TEST_RUN( testProfiles, "Profiles reading" );
   TEST_RUN( testProfileLists, "Profile lists" );
   TEST_RUN( testProofingEffect, "proofing_effect" );
+  TEST_RUN( testDeviceLinkProfile, "CMM deviceLink" );
   //TEST_RUN( testMonitor,  "Monitor profiles" );
   //TEST_RUN( testDevices,  "Devices listing" );
   TEST_RUN( testRegistrationMatch,  "Registration matching" );
