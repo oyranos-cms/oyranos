@@ -1370,7 +1370,7 @@ clean:
 	oforms/$(TARGET)-xforms oforms/$(TARGET)-xforms-fltk;
 	for ling in $(LINGUAS); do \
 	  test -f po/$${ling}.gmo \
-        && $(RM) po/$${ling}.gmo; \
+        && $(RM) po/$${ling}.gmo || echo ""; \
 	done;
 	for lib in $(LIBRARIES); do \
 	   $(RM) lib$${lib}$(SO).$(VERSION)$(LIBEXT) \

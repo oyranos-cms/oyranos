@@ -7,8 +7,6 @@ VERSION=1.0.12
 
 SRCDIR = $(src_dir)
 
-BINTARGET = $(TARGET)
-
 API_FILES = \
 	yajl/$(TARGET)_common.h \
 	yajl/$(TARGET)_gen.h \
@@ -94,22 +92,10 @@ $(LIBNAME):	$(OBJECTS)
 	$(COLLECT) $(LIBNAME) $(OBJECTS)
 	$(RANLIB) $(LIBNAME)
 
-strip: $(BINTARGET)
-	echo strip $(BINTARGET)
-	strip $(BINTARGET)
-
-static_static:	$(OBJECTS)
-	$(CXX) $(OPTS) -o $(BINTARGET) \
-	$(OBJECTS) \
-	$(LDLIBS_) -static  $(dl) $(m) $(c) \
-	-L/opt/local/lib
-	$(REZ)
-
-
 
 clean:
 	echo clean $(TARGET) ...
-	-$(RM) $(OBJECTS) $(TARGET_OBJECTS) $(BINTARGET) \
+	-$(RM) $(OBJECTS) $(TARGET_OBJECTS) \
 	$(LIBNAME)
 	echo ... $@ done
 
