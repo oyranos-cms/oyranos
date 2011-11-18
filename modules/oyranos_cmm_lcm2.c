@@ -570,9 +570,9 @@ uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
 /** Function lcm2CMMConversionContextCreate_
  *  @brief   create a CMM transform
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.3
  *  @since   2008/12/28 (Oyranos: 0.1.10)
- *  @date    2009/11/04
+ *  @date    2011/11/18
  */
 cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
                                        cmsHPROFILE       * lps,
@@ -635,9 +635,9 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
       if(o_txt && oyStrlen_(o_txt))
         adaption_state = atof( o_txt );
 
+  cmsSetAdaptationState(adaption_state);
   if(!error)
   {
-    cmsSetAdaptationState(adaption_state);
          if(profiles_n == 1 || profile_class_in == icSigLinkClass)
     {
         /* we have to erase the colour space */
@@ -2243,7 +2243,7 @@ char lcm2_extra_options[] = {
      <" "icc" ">\n\
       <cmyk_cmyk_black_preservation.advanced>0</cmyk_cmyk_black_preservation.advanced>\n\
       <precalculation.advanced>2</precalculation.advanced>\n\
-      <adaption_state.advanced>2</adaption_state.advanced>\n\
+      <adaption_state.advanced>1.0</adaption_state.advanced>\n\
      </" "icc" ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
@@ -2345,11 +2345,11 @@ int lcm2GetOptionsUI                 ( oyOptions_s        * options,
   A(                              "</xf:help>\n\
       <xf:choices>\n\
        <xf:item>\n\
-        <xf:value>0</xf:value>\n\
+        <xf:value>0.0</xf:value>\n\
         <xf:label>0.0</xf:label>\n\
        </xf:item>\n\
        <xf:item>\n\
-        <xf:value>1</xf:value>\n\
+        <xf:value>1.0</xf:value>\n\
         <xf:label>1.0</xf:label>\n\
        </xf:item>\n\
       </xf:choices>\n\
