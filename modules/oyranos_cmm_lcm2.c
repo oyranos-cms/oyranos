@@ -1675,11 +1675,7 @@ char * lcm2Image_GetText             ( oyImage_s         * image,
   /* describe the image */
   oySprintf_( text,   "  <oyImage_s\n");
   hashTextAdd_m( text );
-  if(oy_debug || verbose)
-    oySprintf_( text, "    profile=\"%s\"\n", oyProfile_GetText(profile,
-                                                                oyNAME_NAME));
-  else
-    oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NICK));
+  oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NAME));
   hashTextAdd_m( text );
   oySprintf_( text,   "    <channels all=\"%d\" colour=\"%d\" />\n", n,cchan_n);
   hashTextAdd_m( text );
