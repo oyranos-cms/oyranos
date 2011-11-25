@@ -9772,7 +9772,8 @@ OYAPI oyPointer OYEXPORT
  *  @param[in,out] profile             the profile
  *  @param[in]     flags               OY_COMPUTE will calculate the hash
  *                                     OY_FROM_PROFILE - original profile ID
- *  @param[out]    md5                 the the ICC md5 based profile ID
+ *  @param[out]    md5                 the ICC md5 based profile ID
+ *                                     in host byte order
  *  @return                            0 - good, 1 >= error, -1 <= issue(s)
  *
  *  @version Oyranos: 0.3.0
@@ -19477,7 +19478,7 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
  *
  *  Serialise into:
  *  - oyNAME_NICK: XML ID
- *  - oyNAME_NAME: XML
+ *  - oyNAME_NAME: XML from module
  *  - oyNAME_DESCRIPTION: ??
  *
  *  This function provides a complete description of the context. It might be 
@@ -19490,9 +19491,9 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
  *  @param[out]    name_type           the type
  *  @return                            the text
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.3.3
  *  @since   2008/07/17 (Oyranos: 0.1.8)
- *  @date    2008/07/18
+ *  @date    2011/11/22
  */
 const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
                                        oyNAME_e            name_type )
@@ -19506,6 +19507,23 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
 
   if(!node)
     return 0;
+
+  if( s->core && s->core->api4_ && s->core->api4_->oyCMMFilterNode_GetText &&
+      name_type == oyNAME_NAME )
+  {
+    hash_text = s->core->api4_->oyCMMFilterNode_GetText( node, oyNAME_NICK,
+                                                   oyAllocateFunc_ );
+    if(hash_text)
+    {
+      oyObject_SetName( s->oy_, hash_text, oyNAME_NAME );
+
+      oyDeAllocateFunc_( hash_text );
+      hash_text = 0;
+
+      hash_text = (oyChar*) oyObject_GetName( s->oy_, oyNAME_NAME );
+      return hash_text;
+    }
+  }
 
   /* 1. create hash text */
   hashTextAdd_m( "<oyFilterNode_s>\n  " );
@@ -19642,7 +19660,7 @@ oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s    * node,
   if(!node)
     return 0;
 
-  temp = oyFilterNode_GetText( node, oyNAME_NAME );
+  temp = oyFilterNode_GetText( node, oyNAME_NICK );
 
   text_len = strlen(temp) + 1;
   len += text_len + 1;
