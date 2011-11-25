@@ -1134,7 +1134,7 @@ oyX1Monitor_getScreenGeometry_            (oyX1Monitor_s *disp)
       WARNc_S(_("Xinerama request failed"))
       return 1;
     }
-    if( n_scr_info < screen )
+    if( n_scr_info <= screen )
     {
       WARNc_S(_("Xinerama request failed"))
       return -1;
