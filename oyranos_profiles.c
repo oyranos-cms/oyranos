@@ -427,6 +427,11 @@ int main( int argc , char** argv )
           const char * sfn = in;
           int error = 0;
 
+          if(!sfn)
+          {
+            WARNc_S("Could not write to profile");
+            return 1;
+          }
           data = oyReadFileToMem_(install[i], &size, oyAllocateFunc_);
           STRING_ADD( fn, path );
           STRING_ADD( fn, OY_SLASH );
