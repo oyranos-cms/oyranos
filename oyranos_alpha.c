@@ -10392,6 +10392,9 @@ int              oyProfile_DeviceGet ( oyProfile_s       * profile,
     {
       for(i = 2; i+1 < texts_n && error <= 0; i+=2)
       {
+        if(!texts[i+0])
+          continue;
+
         if(strcmp(texts[i+0],"model") == 0) dmdd_found = 1;
         if(strcmp(texts[i+0],"manufacturer") == 0) dmnd_found = 1;
         if(strcmp(texts[i+0],"serial") == 0) serial_found = 1;
