@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2005-2010 (C) Kai-Uwe Behrmann
+ *            2005-2011 (C) Kai-Uwe Behrmann
  *
  *  @brief    monitor device detection
  *  @internal
@@ -18,7 +18,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
-#include "limits.h"
+#include <limits.h>
 #include <unistd.h>  /* intptr_t */
 #include <locale.h>
 
@@ -144,7 +144,7 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
                               True );
       else
         atom = XInternAtom( display, prop_name, True );
-      DBG_PROG1_S("atom: %ld", atom)
+      DBG_NUM1_S("atom: %ld", atom)
 
       if(atom)
       {
@@ -174,6 +174,8 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
         XGetWindowProperty( display, w, atom, 0, INT_MAX, False, XA_CARDINAL,
                      &a, &actual_format_return, &nitems_return, 
                      &bytes_after_return, &prop_return );
+      DBG_NUM6_S( "root: %d atom: %ld atom_name: %s prop_name: %s %d %d",
+                  w, atom, atom_name, prop_name, nitems_return,bytes_after_return );
       if(atom_name)
         oyFree_m_( atom_name )
     }
