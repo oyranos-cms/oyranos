@@ -86,6 +86,11 @@ double             oySeconds         ( );
 #define DBG_NUM2_S if(oy_debug > 1)DBG2_S
 #define DBG_NUM3_S if(oy_debug > 1)DBG3_S
 #define DBG_NUM4_S if(oy_debug > 1)DBG4_S
+#define DBG_NUM5_S if(oy_debug > 1)DBG5_S
+#define DBG_NUM6_S if(oy_debug > 1)DBG6_S
+#define DBG_NUM7_S if(oy_debug > 1)DBG7_S
+#define DBG_NUM8_S if(oy_debug > 1)DBG8_S
+#define DBG_NUM9_S if(oy_debug > 1)DBG9_S
 #define DBG_NUM_V if(oy_debug > 1)DBG_V
 
 #define DBG_PROG if(oy_debug > 2)DBG
