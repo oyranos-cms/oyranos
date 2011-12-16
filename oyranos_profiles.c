@@ -159,11 +159,11 @@ int main( int argc , char** argv )
                           {
                             if(strcmp(argv[pos+1],"-u") == 0)
                             {  user_path = 1; ++pos; }
-                            if(strcmp(argv[pos+1],"-s") == 0)
+                            else if(strcmp(argv[pos+1],"-s") == 0)
                             {  system_path = 1; ++pos; }
-                            if(strcmp(argv[pos+1],"-y") == 0)
+                            else if(strcmp(argv[pos+1],"-y") == 0)
                             {  oyranos_path = 1; ++pos; }
-                            if(strcmp(argv[pos+1],"-m") == 0)
+                            else if(strcmp(argv[pos+1],"-m") == 0)
                             {  machine_path = 1; ++pos; }
                           }
                           if(user_path + oyranos_path + system_path +
