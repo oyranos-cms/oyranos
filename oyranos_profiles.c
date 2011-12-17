@@ -382,7 +382,7 @@ int main( int argc , char** argv )
           if(show_gui)
           {
             char * app = 0;
-            if(getenv("KDE_FULL_SESSION"))
+            if(getenv("KDE_FULL_SESSION") && (app = oyFindApplication( "kdialog" )) != NULL)
             {
               STRING_ADD( txt, "kdialog --sorry \"");
               STRING_ADD( txt, show_text );
