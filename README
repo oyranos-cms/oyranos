@@ -31,30 +31,16 @@ Dependencies:
     SANE only with Oyranos SANE_CAP_COLOUR patch - http://www.sane-project.org/
     Cairo for a example - http://www.cairographics.org/
 
-  Debian:
-    locales
-    build-essential
-    libxml2-dev
-    elektra-0.7.0 - included
+  Debian/Ubuntu:
+    elektra-0.7.0 - is included in the tar ball
 
-    pkg-config
-    gettext
-    fltk1.1-dev (ubuntu8.10: libfltk1.1-dev)
-    libpng12-dev
-    liblcms1-dev
-    libcairo2-dev
-    x11proto-xf86vidmode-dev
-    x11proto-xext-dev
-    libxxf86vm-dev
-    libxrandr-dev
-    libxinerama-dev
-    libxmu-dev
-    libxpm-dev
-    oyranos-0.1.10 can now be installed successfully.
-    doxygen
-    graphviz
-    libxfixes-dev
-    fluid
+    fltk1.3-dev (ubuntu10.10: fltk1.1-dev) (ubuntu8.10: libfltk1.1-dev) 
+    sudo apt-get install locales build-essential git autoconf libxml2-dev gettext fltk1.3-dev libpng-dev libcairo2-dev x11proto-xf86vidmode-dev x11proto-xext-dev libxxf86vm-dev libxrandr-dev libxinerama-dev libxmu-dev libxpm-dev libxfixes-dev fluid ftgl-dev liblcms2-dev liblcms1-dev libexiv2-dev libcups2-dev
+    # oyranos-0.3.3 can now be installed successfully.
+    sudo apt-get install libqt4-dev cmake                                  # Synnefo
+    sudo apt-get install kdelibs5-dev                                      # KolorManager
+    sudo apt-get install libgtk2.0-dev libglib2.0-dev libgutenprintui2-dev # CinePaint
+    sudo apt-get install doxygen graphviz                                  # for documentation
 
   optional:
     ICC Examin to build afterwards. oyranos-config-fltk uses the profile viewer.
