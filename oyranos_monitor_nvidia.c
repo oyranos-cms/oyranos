@@ -128,6 +128,9 @@ main(int argc, char **argv)
   int put_edid = 0;
   char *app_name = argv[0];
   int traditional_screens_b = 1;
+# ifdef HAVE_XIN
+  XineramaScreenInfo* xin_screens = 0;
+# endif
 
   if(getenv("OYRANOS_DEBUG"))
   {
@@ -212,7 +215,7 @@ main(int argc, char **argv)
   {
     if( XineramaIsActive( display ) )
     {
-      XineramaQueryScreens( display, &number_of_screens );
+      xin_screens = XineramaQueryScreens( display, &number_of_screens );
       traditional_screens_b = 0;
     }
   }
@@ -244,7 +247,8 @@ main(int argc, char **argv)
       /* create a list of outputs sorted in some kind of Xinerama order */
       ret = XNVCTRLQueryStringAttribute ( display, i, 1 << j,
                             NV_CTRL_STRING_TWINVIEW_XINERAMA_INFO_ORDER, &ptr );
-      fprintf( stderr, "found %d EDID%s  order list: %s\n", y, y<=1?"":"s", ptr?ptr:"" );
+      if(oy_debug)
+      fprintf( stderr, "found %d EDID%s\n""  order list: %s\n", y, y<=1?"":"s", ptr?ptr:"" );
       if(ret && ptr)
       {
         p = ptr;
@@ -263,6 +267,9 @@ main(int argc, char **argv)
 
       if(n > 0 && txt[0][0])
       {
+        if(ptr && strchr(ptr,'-') != 0)
+          meaningful_order = 1;
+        else
           for(j = 0; j < 24; ++j)
           {
             if(data[j] && size[j])
@@ -317,7 +324,7 @@ main(int argc, char **argv)
               if(data[j] && size[j])
               {
                 ct = oyNVmaskToPortName( 1 << j );
-                if(t && strcmp( ct, t ) == 0 ||
+                if((t && strcmp( ct, t ) == 0) ||
                    (!t && j != xineramas[x-1][0]))
                 {
                   xineramas[x][0] = j;
@@ -329,7 +336,7 @@ main(int argc, char **argv)
           }
         } else
           /* rely on the nvidia output order list to name all active outputs */
-          for(k = 0; k < y; ++k)
+          for(k = 0; k < n; ++k)
           {
             if(k < n)
               t = txt[k];
@@ -366,7 +373,7 @@ main(int argc, char **argv)
              *model=0,             
              *serial=0,
              *vendor=0;
-        char  display_name[256] = {""};
+        char  display_name[256] = {""}, display_base[256] = {""};
         double c[9];
         uint32_t week=0, year=0, mnft_id=0, prod_id=0;
 
@@ -376,7 +383,10 @@ main(int argc, char **argv)
             ptr[0] = '\000';
 
         if(strlen(display_name))
+        {
+          strcpy( display_base, display_name );
           snprintf( &display_name[strlen(display_name)], 256, "_%d", i );
+        }
 
         ptr = 0;
         ret = XNVCTRLSetAttributeAndGetStatus( display, i, 1 << j,
@@ -393,6 +403,14 @@ main(int argc, char **argv)
 
         if(model)
           fprintf( stderr, " \"%s\"", model );
+        fprintf(stderr, "\t%s.%d %dx%d+%d+%d",
+                      display_base?display_base:"",
+                      monitors_in_traditional_screen,
+                      xin_screens[monitors_in_traditional_screen].width,
+                      xin_screens[monitors_in_traditional_screen].height,
+                      xin_screens[monitors_in_traditional_screen].x_org,
+                      xin_screens[monitors_in_traditional_screen].y_org
+                      );
         fprintf( stderr, "\n" );
                    
 
