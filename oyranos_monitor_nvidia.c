@@ -128,9 +128,6 @@ main(int argc, char **argv)
   int put_edid = 0;
   char *app_name = argv[0];
   int traditional_screens_b = 1;
-# ifdef HAVE_XIN
-  XineramaScreenInfo* fenster = 0;
-# endif
 
   if(getenv("OYRANOS_DEBUG"))
   {
@@ -215,7 +212,7 @@ main(int argc, char **argv)
   {
     if( XineramaIsActive( display ) )
     {
-      fenster = XineramaQueryScreens( display, &number_of_screens );
+      XineramaQueryScreens( display, &number_of_screens );
       traditional_screens_b = 0;
     }
   }
@@ -231,7 +228,8 @@ main(int argc, char **argv)
          * p = NULL;
     char txt[24][48], * t;
     const char * ct;
-    int n = 0, x = 0, xineramas[24][2], k;
+    int n = 0, x = 0, y = 0, xineramas[24][2], k,
+        meaningful_order = 0;
 
     if( !traditional_screens_b )
       monitors_in_traditional_screen = monitors;
@@ -241,13 +239,12 @@ main(int argc, char **argv)
     {
       for(j = 0; j < 24; ++j)
         if(data[j] && size[j])
-          ++x;
-      fprintf( stderr, "found %d EDIDs\n", x );
-      x = 0;
+          ++y;
 
       /* create a list of outputs sorted in some kind of Xinerama order */
       ret = XNVCTRLQueryStringAttribute ( display, i, 1 << j,
                             NV_CTRL_STRING_TWINVIEW_XINERAMA_INFO_ORDER, &ptr );
+      fprintf( stderr, "found %d EDID%s  order list: %s\n", y, y<=1?"":"s", ptr?ptr:"" );
       if(ret && ptr)
       {
         p = ptr;
@@ -264,38 +261,99 @@ main(int argc, char **argv)
         }
       }
 
+      if(n > 0 && txt[0][0])
+      {
+          for(j = 0; j < 24; ++j)
+          {
+            if(data[j] && size[j])
+            {
+              ct = oyNVmaskToPortName( 1 << j );
+              if(strcmp( ct, txt[0] ) == 0)
+                meaningful_order = 1;
+            }
+          }
+      }
+
       for(j = 0; j < 24; ++j)
       {
         xineramas[j][0] = -1;
         xineramas[j][1] = -1;
       }
-      /* create a xinerama output table mapping to the nvidia mask */
-      for(k = 0; k < n; ++k)
+
+      if(!meaningful_order)
       {
-        t = txt[k];
-        for(j = 0; j < n && j < 24; ++j)
+        fprintf( stderr, "found %d EDID%s but %d outputs  ", y, y<=1?"":"s", n );
+        for(j = 0; j < n; ++j)
+          fprintf( stderr, "%s ", txt[j] );
+        fputs( "\n", stderr);
+
+        /* create a xinerama output table mapping to the nvidia mask */
+        /* ignore nvidia output order list */
+        for(k = 0; k < y; ++k)
         {
-          if(data[j] && size[j])
+          for(j = 0; j < 24; ++j)
           {
-            ct = oyNVmaskToPortName( 1 << j );
-            if(strcmp( ct, t ) == 0)
+            if(data[j] && size[j])
             {
+              ct = oyNVmaskToPortName( 1 << j );
               xineramas[x][0] = j;
+              sprintf( txt[k], "%s", ct );
               xineramas[x++][1] = k;
             }
           }
         }
+      } else
+      {
+      /* create a xinerama output table mapping to the nvidia mask */
+        if(y > n)
+        {
+          /* expect just the main output being named in the output order list */
+          for(k = 0; k < y; ++k)
+          {
+            if(k < n)
+              t = txt[k];
+            for(j = 0; j < 24; ++j)
+            {
+              if(data[j] && size[j])
+              {
+                ct = oyNVmaskToPortName( 1 << j );
+                if(t && strcmp( ct, t ) == 0 ||
+                   (!t && j != xineramas[x-1][0]))
+                {
+                  xineramas[x][0] = j;
+                  xineramas[x++][1] = k;
+                }
+              }
+            }
+            t = 0;
+          }
+        } else
+          /* rely on the nvidia output order list to name all active outputs */
+          for(k = 0; k < y; ++k)
+          {
+            if(k < n)
+              t = txt[k];
+            for(j = 0; j < 24; ++j)
+            {
+              if(data[j] && size[j])
+              {
+                ct = oyNVmaskToPortName( 1 << j );
+                if(strcmp( ct, t ) == 0)
+                {
+                  xineramas[x][0] = j;
+                  xineramas[x++][1] = k;
+                }
+              }
+            }
+          }
       }
     }
 
     /* iterate over the xinerama output table */
     if(data)
-    for(k = 0; k < x; ++k)
+    for(k = 0; k < y; ++k)
     {
-      int mask; /* the nvidia mask attribute */
-
       j = xineramas[k][0];
-      mask = 1<<j;
       t = txt[xineramas[k][1]];
 
       /*/printf( "%d: Edid of size %d found.\n", j, (int)size[j]);*/
