@@ -63,7 +63,12 @@ int          oyStringToDouble        ( const char        * text,
                                        double            * value )
 {
   char * p = 0;
+  char * save_locale = 0;
+  save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_);
+  setlocale(LC_NUMERIC, "C");
   *value = strtod( text, &p );
+  setlocale(LC_NUMERIC, save_locale);
+  oyFree_m_( save_locale );
   if(p && p != text && p[0] == '\000')
     return 0;
 #if 0
