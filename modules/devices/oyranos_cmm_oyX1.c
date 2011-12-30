@@ -531,6 +531,18 @@ int            oyX1Configs_FromPattern (
                                                 "EDID_.prefix", OY_CREATE_NEW );
         }
         oyProfile_DeviceAdd( prof, device, opts );
+
+        error = oyOptions_SetFromText( &device->backend_core,
+                                       OYX1_MONITOR_REGISTRATION OY_SLASH
+                                       "device_name",
+                                       device_name, OY_CREATE_NEW );
+        if(error <= 0 && !device->rank_map)
+          device->rank_map = oyRankMapCopy( oyX1_rank_map,
+                                            device->oy_->allocateFunc_ );
+        oyConfigs_MoveIn( devices, &device, -1 );
+        if(error <= 0)
+          *s = devices;
+
         oyOptions_Release( &opts );
       }
 
