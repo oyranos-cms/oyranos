@@ -285,7 +285,12 @@ int main( int argc , char** argv )
 
     p = oyProfile_FromFile( file_name, 0, 0 );
 
-    if(list_tags)
+    if(!p)
+    {
+      error = 1;
+    }
+
+    if(error <= 0 && list_tags)
     {
       fprintf(stderr, "%s \"%s\" %d:\n", _("ICC profile"), file_name,
               (int)p->size_);
@@ -321,7 +326,7 @@ int main( int argc , char** argv )
         oyProfileTag_Release( &tag );
       }
     } else
-    if( dump_openicc_json )
+    if( error <= 0 && dump_openicc_json )
     {
       tag = oyProfile_GetTagById( p, icSigMetaDataTag );
       if(tag)
@@ -339,13 +344,13 @@ int main( int argc , char** argv )
         /* collect key prefixes and detect device class */
         if(size == 2)
         for(j = 2; j < texts_n; j += 2)
-          if(strcmp(texts[j],"prefix") == 0)
+          if(texts[j] && strcmp(texts[j],"prefix") == 0)
             has_prefix = 1;
 
         if(size == 2)
         for(j = 2; j < texts_n; j += 2)
         {
-          int len = strlen( texts[j] );
+          int len = texts[j] ? strlen( texts[j] ) : 0;
 
           #define CHECK_PREFIX( name_, device_class_ ) { \
             int plen = strlen(name_), n=pn-1, found = 0; \
@@ -391,7 +396,7 @@ int main( int argc , char** argv )
           int vals_n = 0;
           char ** vals = 0, * val = 0;
 
-          if(texts_n > j+1)
+          if(texts[j] && texts[j+1] && texts_n > j+1)
           {
             if(texts[j+1][0] == '<')
               fprintf( stdout, "              \"%s\": \"%s\"",
