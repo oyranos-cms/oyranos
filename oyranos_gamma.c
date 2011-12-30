@@ -449,11 +449,11 @@ int main( int argc , char** argv )
       uint32_t id[4];
       oyBlob_s * edid = oyBlob_New(0);
       char * edid_fn = oyResolveDirFileName_(add_meta);
+
       data = oyReadFileToMem_( edid_fn, &size, oyAllocateFunc_ );
-      oyFree_m_(edid_fn);
       oyBlob_SetFromData( edid, data, size, "edid" );
       oyFree_m_(data);
-      prof = oyProfile_FromFile( prof_name, 0, 0 );
+      prof = oyProfile_FromFile( prof_name, OY_NO_CACHE_READ, 0 );
       device = 0;
       oyOptions_Release( &options );
       error = oyOptions_SetFromText( &options,
@@ -466,7 +466,39 @@ int main( int argc , char** argv )
                                      "//" OY_TYPE_STD "/config/edid",
                                       (oyStruct_s**)&edid, OY_CREATE_NEW );
       error = oyDeviceGet( OY_TYPE_STD, device_class, ":0.0", options, &device);
+      if(verbose && device)
+      {
+        /* We need a newly opened profile, otherwise we obtaine cached
+           modifications. */
+        oyProfile_s * p = oyProfile_FromFile( prof_name, OY_NO_CACHE_READ, 0 );
+        oyConfig_s * p_device = oyConfig_New( device->registration, 0 );
+        int32_t rank = 0;
+        int old_oy_debug = oy_debug;
+        char * json = 0;
+        oyProfile_DeviceGet( p, p_device );
+
+        if(oy_debug > 1)
+        {
+          error = oyDeviceToJSON( p_device, 0, &json, oyAllocateFunc_ );
+          printf("device from profile %s:\n%s\n", prof_name, json );
+          oyFree_m_( json );
+        }
+        if(oy_debug > 1)
+        {
+          error = oyDeviceToJSON( device, 0, &json, oyAllocateFunc_ );
+          printf("device from edid %s:\n%s\n", edid_fn, json );
+          oyFree_m_( json );
+        }
+
+        p_device->db = oyOptions_Copy( p_device->backend_core, 0 );
+        device->db = oyOptions_Copy( device->backend_core, 0 );
+        if(oy_debug < 2) oy_debug = 2;
+        error = oyConfig_Compare( p_device, device, &rank );
+        oy_debug = old_oy_debug;
+        printf("rank of edid to previous profile %d\n", rank);
+      }
       oyConfig_Release( &device );
+      oyFree_m_(edid_fn);
       prof = (oyProfile_s*)oyOptions_GetType( options, -1, "icc_profile",
                                               oyOBJECT_PROFILE_S );
       oyOptions_Release( &options );
