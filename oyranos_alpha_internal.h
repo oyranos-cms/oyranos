@@ -112,7 +112,8 @@ int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
 int          oyProfile_TagReleaseAt_ ( oyProfile_s       * profile,
                                        int                 pos );
 int    oyTextIccDictMatch            ( const char        * text,
-                                       const char        * pattern );
+                                       const char        * pattern,
+                                       double              delta );
 
 int          oyImage_PpmWrite        ( oyImage_s         * image_output,
                                        const char        * file_name,

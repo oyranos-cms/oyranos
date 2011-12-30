@@ -4394,7 +4394,8 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
            *        should be expandable to several values.
            *        Do we need more than the ICC dict style syntax here?
            */
-          if(p_val && oyTextIccDictMatch( d_val, p_val ))
+          /* the delta value of 0.0005 is tuned towards EDID floats */
+          if(p_val && oyTextIccDictMatch( d_val, p_val, 0.0005 ))
           {
             if(rank_map)
             {
@@ -4404,12 +4405,16 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
                 if(oyStrcmp_(rank_map[k].key, d_opt) == 0)
                 {
                   rank += rank_map[k].match_value;
+                  DBG_NUM4_S( "%s %s/%s -> %d", d_opt, d_val, p_val, rank);
                   break;
                 }
                 ++k;
               }
             } else
+            {
               ++rank;
+              DBG_NUM4_S( "%s %s/%s -1 -> %d", d_opt, d_val, p_val, rank);
+            }
 
             oyFree_m_(p_val);
           } else if(rank_map)
@@ -4420,6 +4425,7 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
               if(oyStrcmp_(rank_map[k].key, d_opt) == 0)
               {
                 rank += rank_map[k].none_match_value;
+                DBG_NUM4_S( "%s %s/%s -> %d", d_opt, d_val, p_val, rank);
                 break;
               }
               ++k;
@@ -4444,6 +4450,7 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
             if(oyStrcmp_(rank_map[k].key, d_opt) == 0)
             {
               rank += rank_map[k].not_found_value;
+              DBG_NUM4_S( "%s %s/%s -> %d", d_opt, d_val, p_val, rank);
               break;
             }
             ++k;
@@ -4451,8 +4458,10 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
       }
 
       oyOption_Release( &d );
-      oyFree_m_( d_opt );
-      oyFree_m_( d_val );
+      if(d_opt)
+        oyFree_m_( d_opt );
+      if(d_val)
+        oyFree_m_( d_val );
     }
   }
 
@@ -17600,12 +17609,13 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration_a,
  *  @param         pattern             pattern to compare with
  *  @return                            match, useable for ranking
  *
- *  @version Oyranos: 0.1.13
- *  @since   2010/11/21 (Oyranos: 0.1.13)
- *  @date    2010/11/21
+ *  @version Oyranos: 0.3.3
+ *  @since   2010/11/21 (Oyranos: 0.1.3)
+ *  @date    2011/12/29
  */
 int    oyTextIccDictMatch            ( const char        * text,
-                                       const char        * pattern )
+                                       const char        * pattern,
+                                       double              delta )
 {
   int match = 0;
   int n = 0, p_n = 0, i, j;
@@ -17634,7 +17644,7 @@ int    oyTextIccDictMatch            ( const char        * text,
 
         if((strcmp( t, p ) == 0) ||
            (num_valid[0] && num_valid[1] && num[0] == num[1]) ||
-           (dbl_valid[0] && dbl_valid[1] && dbl[0] == dbl[1]) )
+           (dbl_valid[0] && dbl_valid[1] && fabs(dbl[0] - dbl[1])/2.0 < delta))
         {
           match = 1;
           goto clean_oyTextIccDictMatch;

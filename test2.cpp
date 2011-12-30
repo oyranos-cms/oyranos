@@ -1610,7 +1610,7 @@ oyTESTRESULT_e testRegistrationMatch ()
 }
 
 extern "C" {
-int oyTextIccDictMatch( const char *, const char * ); }
+int oyTextIccDictMatch( const char *, const char *, double delta ); }
 
 oyTESTRESULT_e test_oyTextIccDictMatch ()
 {
@@ -1619,7 +1619,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   fprintf(stdout, "\n" );
 
   if( oyTextIccDictMatch("ABC",
-                         "ABC"))
+                         "ABC", 0))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "simple text matching                  " );
   } else
@@ -1628,7 +1628,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if(!oyTextIccDictMatch("ABC",
-                         "ABCD"))
+                         "ABCD", 0))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "simple text mismatching               " );
   } else
@@ -1637,7 +1637,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if( oyTextIccDictMatch("abcd,ABC,efgh",
-                         "abcdef,12345,ABC"))
+                         "abcdef,12345,ABC", 0))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "multiple text matching                " );
   } else
@@ -1646,7 +1646,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if( oyTextIccDictMatch("abcd,ABC,efgh,12345",
-                         "abcdef,12345,ABCD"))
+                         "abcdef,12345,ABCD", 0.0005))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "multiple integer matching             " );
   } else
@@ -1655,7 +1655,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if(!oyTextIccDictMatch("abcd,ABC,efgh,12345",
-                         "abcdef,12345ABCD"))
+                         "abcdef,12345ABCD", 0.0005))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "multiple integer mismatching          " );
   } else
@@ -1663,8 +1663,8 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
     "multiple integer mismatching          " );
   }
 
-  if( oyTextIccDictMatch("abcd,ABC,efgh,123.45",
-                         "abcdef,123.45,ABCD"))
+  if( oyTextIccDictMatch("abcd,ABC,efgh,123.45001",
+                         "abcdef,123.45,ABCD", 0.0005))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "multiple float matching               " );
   } else
@@ -1673,7 +1673,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if(!oyTextIccDictMatch("abcd,ABC,efgh,123.45",
-                         "abcdef,123"))
+                         "abcdef,123", 0.0005))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "multiple float mismatching            " );
   } else
