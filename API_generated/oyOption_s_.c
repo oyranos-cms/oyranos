@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/05/30
+ *  @date     2011/12/29
  */
 
 
@@ -614,13 +614,14 @@ char *         oyOption_GetValueText_( oyOption_s_       * obj,
       }
     }
 
-    erg = oyStringCopy_( text, allocateFunc );
+    if(text)
+      erg = oyStringCopy_( text, allocateFunc );
 
     oyFree_m_( tmp );
     if(!text)
     {
-      WARNc2_S( "missed value in \"%s\" [%d]", obj->registration,
-                oyObject_GetId(obj->oy_) );
+      DBG_NUM2_S( "missed value in \"%s\" [%d]", obj->registration,
+                    oyObject_GetId(obj->oy_) );
     } else
       oyFree_m_( text );
   }
