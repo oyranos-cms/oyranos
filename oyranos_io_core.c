@@ -315,7 +315,7 @@ char * oyReadUrlToMemf_              ( size_t            * size,
   {
     fprintf(stderr,
      "oyranos_io_core.c oyReadUrlToMemf_() Could not allocate memory.\n");
-    return 1;
+    return result;
   }
 
   text[0] = 0;

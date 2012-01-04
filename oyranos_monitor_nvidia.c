@@ -404,7 +404,7 @@ main(int argc, char **argv)
         if(model)
           fprintf( stderr, " \"%s\"", model );
         fprintf(stderr, "\t%s.%d %dx%d+%d+%d",
-                      display_base?display_base:"",
+                      display_base,
                       monitors_in_traditional_screen,
                       xin_screens[monitors_in_traditional_screen].width,
                       xin_screens[monitors_in_traditional_screen].height,
