@@ -3812,65 +3812,218 @@ OYAPI int  OYEXPORT
   if(error <= 0)
     error = oyConfigs_FromDB( device->registration, &configs, 0 );
   if(error <= 0)
-    error = oyConfig_GetFromDB( device, configs, 0 );
+    error = oyConfig_GetFromDB( device, configs, rank_value );
   oyConfigs_Release( &configs );
 
   return error;
 }
 
+#define OPENICC_DEVICE_JSON_HEADER_BASE \
+  "{\n" \
+  "  \"org\": {\n" \
+  "    \"freedesktop\": {\n" \
+  "      \"openicc\": {\n" \
+  "        \"device\": {\n" \
+  "          \"%s\":\n"
+#define OPENICC_DEVICE_JSON_FOOTER_BASE \
+  "        }\n" \
+  "      }\n" \
+  "    }\n" \
+  "  }\n" \
+  "}\n"
+
+
+/** Function  oyConfigs_FromTaxiDB
+ *  @brief    search a calibration state in the taxi DB for a device
+ *  @memberof oyConfig_s
+ *
+ *  @param[in]     device              the device
+ *  @param[in]     options             not used
+ *  @param[out]    devices             the obtained device calibrations
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent
+ *
+ *  @version Oyranos: 0.3.3
+ *  @since   2011/09/14 (Oyranos: 0.3.2)
+ *  @date    2012/01/06
+ */
 OYAPI int  OYEXPORT
              oyConfigs_FromTaxiDB    ( oyConfig_s        * device,
-                                       oyConfigs_s      ** configs,
+                                       oyOptions_s       * options,
+                                       oyConfigs_s      ** devices,
                                        oyObject_s          obj )
 {
   int error = 0;
   oyConfigs_s * configs_ = 0;
   oyConfig_s * s = device;
-  FILE * mnft_fp = 0;
   char * manufacturers;
   size_t size = 0;
-  const char * short_name = oyConfig_FindString( device, "short_name", 0 );
+  const char * short_name = NULL,
+             * long_name = NULL,
+             * name = NULL;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
-  mnft_fp = oyPOPEN_m( "curl -s http://icc.opensuse.org/manufacturers", "r" );
-  manufacturers = oyReadFileSToMem_(mnft_fp, &size, oyAllocateFunc_ );
+  error = oyDeviceCheckProperties ( device );
+
+
+  manufacturers = oyReadUrlToMem_( "http://icc.opensuse.org/manufacturers",
+                                   &size, "r", oyAllocateFunc_ );
 
   
   if(manufacturers)
   {
     int level = 0;
     oyjl_value_s * root = 0, * value = 0;
-    int count = 0, i;
-    char * val = NULL;
-    char * xpath = "";
+    int count = 0, i, j,n;
+    char * val = NULL,
+         * key = NULL;
+    char * json_text = NULL;
+    const char * prefix = oyConfig_FindString( device, "prefix", 0 );
 
     error = oyjl_tree_from_json( manufacturers, &root, NULL );
+    if(prefix)
+      oyStringAddPrintf_( &key, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "%smnft", prefix );
+    else
+      oyStringAddPrintf_( &key, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "mnft" );
+    name = short_name = oyConfig_FindString( device, key, 0 );
+    oyFree_m_(key);
+    if(prefix)
+      oyStringAddPrintf_( &key, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "%smanufacturer", prefix );
+    else
+      oyStringAddPrintf_( &key, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "manufacturer" );
+    if(!short_name)
+      name = long_name = oyConfig_FindString( device, key, 0 );
+    oyFree_m_(key);
+
+    if(oy_debug)
+      WARNc1_S("manufacturers:\n%s", manufacturers);
 
     if(root)
     {
-      count = oyjl_value_count(value);
+      int done = 0;
+      oyjl_value_s * v = 0;
 
+      count = oyjl_value_count(root);
       for(i = 0; i < count; ++i)
       {
-        int done = 0;
-        oyjl_value_s * v = 0;
-        oyStringAddPrintf_( &xpath, oyAllocateFunc_, oyDeAllocateFunc_,
-                            "[%d]/short_name", i );
-        
-        v = oyjl_tree_get_value( root, xpath );
-        val = oyjl_value_text( v, oyAllocateFunc_ );
-        if( val && strcmp( val, short_name) == 0 )
-          done = 1;
+        if(short_name)
+          v = oyjl_tree_get_valuef( root, 
+                              "[%d]/short_name", i );
+        else if(long_name)
+          v = oyjl_tree_get_valuef( root, 
+                              "[%d]/long_name", i );
 
-        if(val) oyDeAllocateFunc_(val); val = 0;
-        if(xpath) oyDeAllocateFunc_(xpath); xpath = 0;
+        val = oyjl_value_text( v, oyAllocateFunc_ );
+        if( val && name && strcmp( val, name) == 0 )
+          done = 1;
+        else
+          DBG_NUM2_S("could not find device:\n%s %s",
+                   oyNoEmptyString_m_(name), oyNoEmptyString_m_(val));
 
         if(done) break;
+        if(val) oyDeAllocateFunc_(val); val = 0;
+      }
+
+      error = oyjl_tree_free( &root );
+
+      /* get the devices */
+      if(done)
+      {
+        char * device_db, * t = NULL;
+        oyOptions_s * opts = NULL;
+        oyConfig_s * dev;
+
+        /* put a cloak around the bare meta data, so it behaves like OpenICC
+         * JSON */
+        oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                            OPENICC_DEVICE_JSON_HEADER_BASE, "dummy" );
+
+        /* the device DB JSON contains all device meta data for one
+         * mnft / manufacturer */
+        device_db = oyReadUrlToMemf_( &size, "r", oyAllocateFunc_,
+                            "http://icc.opensuse.org/devices/%s", val );
+        STRING_ADD( t, device_db );
+        oyFree_m_( device_db );
+
+        oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                            "\n"OPENICC_DEVICE_JSON_FOOTER_BASE );
+        device_db = t; t = NULL;
+
+        if(oy_debug)
+          oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)device,
+                       OY_DBG_FORMAT_
+                       "http://icc.opensuse.org/devices/%s with header:\n%s",
+                       OY_DBG_ARGS_,
+                       val, oyNoEmptyString_m_(device_db) );
+        error = oyjl_tree_from_json( device_db, &root, NULL );
+
+        error = oyOptions_SetFromText( &opts,
+                                 "//" OY_TYPE_STD "/argv/underline_key_suffix",
+                                 "TAXI", OY_CREATE_NEW );
+
+        count = oyjl_value_count(root);
+        for(i = 0; i < count; ++i)
+        {
+          error = oyOptions_SetFromInt( &opts,
+                                 "//" OY_TYPE_STD "/argv/pos",
+                                 i, 0, OY_CREATE_NEW );
+
+          v = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]/[%d]/_id/$oid", i );
+          val = oyjl_value_text( v, oyAllocateFunc_ );
+          error = oyDeviceFromJSON( device_db, opts, &dev );
+
+          if(dev)
+          {
+            int j,n;
+            oyConfig_AddDBData( dev, "TAXI_id", val, OY_CREATE_NEW );
+            if(val) oyDeAllocateFunc_(val); val = 0;
+
+            v = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]/[%d]/profile_description", i );
+            n = oyjl_value_count(v);
+            for(j = 0; j < n; ++j)
+            {
+              v = oyjl_tree_get_valuef( v, "[%d]", j );
+              val = oyjl_value_text( v, oyAllocateFunc_ );
+              oyConfig_AddDBData( dev, "TAXI_profile_description", val, OY_CREATE_NEW );
+              if(val) oyDeAllocateFunc_(val); val = 0;
+              /* TODO store all profile descriptions */
+              break;
+            }
+
+            if(!configs_)
+              configs_ = oyConfigs_New(0);
+            oyConfigs_MoveIn( configs_, &dev, -1 );
+          }
+
+          if(val) oyDeAllocateFunc_(val); val = 0;
+          if(json_text) oyFree_m_( json_text );
+        }
+        oyOptions_Release( &opts );
+        if(device_db) oyDeAllocateFunc_(device_db); device_db = 0;
       }
     }
 
-    error = oyjl_tree_free( &root );
+    oyFree_m_( manufacturers );
+
+    if(!configs_)
+    {
+      oyDeviceToJSON( device, 0, &json_text, oyAllocateFunc_ );
+      WARNc1_S("no profile found for\n%s", json_text);
+      oyFree_m_(json_text);
+    } else if(oy_debug)
+    {
+      count = oyConfigs_Count( configs_ );
+      for( i = 0; i < count; ++i)
+        WARNc1_S("%d", i);
+    }
+
+    if(configs_)
+      *devices = configs_;
   }
 
   return error;
@@ -3898,13 +4051,17 @@ OYAPI int  OYEXPORT
   int error = !device;
   oyConfigs_s * configs = 0;
   oyConfig_s * s = device;
+  oyOptions_s * options = 0;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   if(error <= 0)
-    error = oyConfigs_FromTaxiDB( device, &configs, 0 );
+  {
+    error = oyConfigs_FromTaxiDB( device, options, &configs, 0 );
+    oyOptions_Release( &options );
+  }
   if(error <= 0)
-    error = oyConfig_GetFromDB( device, configs, 0 );
+    error = oyConfig_GetFromDB( device, configs, rank_value );
   oyConfigs_Release( &configs );
 
   return error;
@@ -4450,7 +4607,10 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
             if(oyStrcmp_(rank_map[k].key, d_opt) == 0)
             {
               rank += rank_map[k].not_found_value;
-              DBG_NUM4_S( "%s %s/%s -> %d", d_opt, d_val, p_val, rank);
+              DBG_NUM4_S( "%s %s/%s -> %d",
+                          oyNoEmptyString_m_(d_opt),
+                          oyNoEmptyString_m_(d_val),
+                          oyNoEmptyString_m_(p_val), rank);
               break;
             }
             ++k;
@@ -7854,6 +8014,7 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
   return error;
 }
 
+
 int          oyDeviceCheckProperties ( oyConfig_s        * device )
 {
   oyOption_s * o = 0;
@@ -7898,85 +8059,63 @@ int          oyDeviceCheckProperties ( oyConfig_s        * device )
 
 
 /** Function oyDeviceProfileFromTaxiDB
- *  @brief   look up a profile of a device from remote DB
+ *  @brief   look up a profile of a device from Taxi DB
  *
- *  The function asks the taxi DB for a detailed and possible expensive list
- *  of device information and tries to find a matching configuration in the
- *  iremote taxi DB.
+ *  The function asks the online ICC Taxi DB for a profile
  *
- *  @param[in]     device              a device
+ *  The device argument is expected to come from oyConfig_GetFromTaxiDB() or 
+ *  oyConfigs_FromTaxiDB().
+ *
+ *  @param[in]     device              a device with "TAXI_id" key
  *  @param[in]     options             unused
- *  @param[in]     profile_name        profile's name in DB
- *  @param[in]     allocateFunc        user allocator
+ *  @param[out]    profile             the resulting profile
  *  @return                            error
  *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/21 (Oyranos: 0.1.10)
- *  @date    2009/02/09
+ *  @version Oyranos: 0.3.3
+ *  @since   2012/01/06 (Oyranos: 0.3.3)
+ *  @date    2012/01/06
  */
-OYAPI int OYEXPORT oyDeviceProfileFromTaxiDB
-                                     ( oyConfig_s        * device,
+OYAPI int  OYEXPORT
+           oyDeviceProfileFromTaxiDB ( oyConfig_s        * device,
                                        oyOptions_s       * options,
-                                       char             ** profile_name,
-                                       oyAlloc_f           allocateFunc )
+                                       oyProfile_s      ** profile )
 {
-  oyOption_s * o = 0;
-  int error = !device || !profile_name;
-  const char * device_name = 0;
-  char * tmp = 0, * tmp2 = 0;
-  int32_t rank_value = 0;
+  int error = !device;
+  oyProfile_s * p = NULL;
   oyConfig_s * s = device;
+  size_t size = 0;
+  char * mem = NULL;
+  int32_t pos = 0;
+  const char * taxi_id = NULL;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
-  if(!allocateFunc)
-    allocateFunc = oyAllocateFunc_;
-
-  if(error <= 0)
+  if(error > 0)
   {
-    /* 1. obtain detailed and expensive device informations */
-    error = oyDeviceCheckProperties( device );
+    WARNc_S( "No device argument provided. Give up." );
+    return error;
+  }
 
-    device_name = oyConfig_FindString( device, "device_name", 0);
+  error = oyOptions_FindInt( options, "pos", 0, &pos );
+  if(error) error = 0;
 
-    o = oyConfig_Find( device, "profile_name" );
-    if(!o)
-    {
-      error = oyConfig_GetFromTaxiDB( device, &rank_value );
-      o = oyConfig_Find( device, "profile_name" );
-    }
+  taxi_id = oyConfig_FindString( device, "TAXI_id", 0 );
 
-    if(!o)
-    {
-      o = oyOptions_Get( device->db, 0 );
-      if(o)
-        tmp = oyStringCopy_(oyOption_GetRegistration(o), oyAllocateFunc_);
-      if(tmp && oyStrrchr_( tmp, OY_SLASH_C))
-      {
-        tmp2 = oyStrrchr_( tmp, OY_SLASH_C);
-        tmp2[0] = 0;
-      }
-      WARNc3_S( "\n Could not get a \"profile_name\" from %s\n"
-                " registration: \"%s\" rank: %d", 
-                oyNoEmptyString_m_(device_name), oyNoEmptyString_m_(tmp),
-                (int)rank_value )
-      if(tmp)
-        oyFree_m_(tmp); tmp2 = 0;
-      oyOption_Release( &o );
-      error = -1;
-    } else if(!oyOption_GetValueString(o,0))
-    {
-      WARNc1_S( "Could not get \"profile_name\" data from %s", 
-                oyNoEmptyString_m_(device_name) )
-      error = -1;
-    } else
-      *profile_name = oyOption_GetValueText( o, allocateFunc );
+  if(taxi_id)
+    mem = oyReadUrlToMemf_( &size, "r", oyAllocateFunc_,
+                            "http://icc.opensuse.org/profile/%s/%d/profile.icc",
+                            taxi_id, pos );
 
-  } else
-    WARNc_S( "missed argument(s)" );
+  if(mem && size)
+    p = oyProfile_FromMem( size, mem, 0, NULL);
+  if(p && profile)
+    *profile = oyProfile_Copy( p, NULL );
+
+  oyProfile_Release( &p );
 
   return error;
 }
+
 /** Function oyDeviceSelectSimiliar
  *  @brief   get similiar devices by a pattern from a list
  *
@@ -8132,34 +8271,47 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
  *  @brief   generate a device from a JSON device calibration
  *
  *  @param[in]    json_text            the device calibration
- *  @param[in]    options              unused
+ *  @param[in]    options              optional
+ *                                     - "underline_key_suffix" will be used as
+ *                                       suffix for keys starting with underline
+ *                                       '_'
+ *                                     - "pos" integer selects position in array
  *  @param[out]   config               the device
  *  @return                            error
  *
- *  @version Oyranos: 0.3.2
+ *  @version Oyranos: 0.3.3
  *  @since   2011/08/21 (Oyranos: 0.3.2)
- *  @date    2011/08/21
+ *  @date    2012/01/06
  */
 OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
                                        oyOptions_s       * options,
                                        oyConfig_s       ** device )
 {
-  int error = 0;
+  int error = !json_text || !device;
   oyConfig_s * device_ = NULL;
   oyjl_value_s * json = 0,
                * json_device;
-  char * val, * key;
-  const char * xpath = "org/freedesktop/openicc/device/[0]/[0]";
+  char * val, * key, * t = NULL;
+  const char * xpath = "org/freedesktop/openicc/device/[0]/[%d]";
   int count, i;
+  int32_t pos = 0;
+  const char * underline_key_suffix = oyOptions_FindString( options,
+                                                    "underline_key_suffix", 0 );
 
   yajl_status status;
 
   device_ = oyConfig_New( "//" OY_TYPE_STD "/config", 0 );
   status = oyjl_tree_from_json( json_text, &json, 0 );
 
-  json_device = oyjl_tree_get_value( json, xpath );
+  error = oyOptions_FindInt( options, "pos", 0, &pos );
+  oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                          xpath, pos );
+
+  json_device = oyjl_tree_get_value( json, t );
+
   if(!json_device)
-    WARNc3_S( "\"%s\" %s \"%s\"\n", xpath,_("not found:"), xpath );
+    WARNc2_S( "\"%s\" %s\n", t,_("not found:") );
+  oyFree_m_( t );
       
   count = oyjl_value_count(json_device);
   for(i = 0; i < count; ++i)
@@ -8167,10 +8319,22 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
     oyjl_value_s * v = oyjl_value_pos_get( json_device, i );
     key = oyStringCopy_(oyjl_print_text( &v->value.object->key ), 0);
     val = oyjl_value_text( v, oyAllocateFunc_ );
-      
-    oyConfig_AddDBData( device_, key, val, OY_CREATE_NEW );
-    oyDeAllocateFunc_(key);
-    oyDeAllocateFunc_(val);
+
+    if(key && key[0] && key[0] == '_' && underline_key_suffix)
+    {
+      t = 0;
+      STRING_ADD( t, underline_key_suffix );
+      STRING_ADD( t, key );
+      oyFree_m_( key );
+      key = t; t = 0;
+    }
+
+    /* ignore empty keys or values */
+    if(key && val)
+      oyConfig_AddDBData( device_, key, val, OY_CREATE_NEW );
+
+    if(key) oyDeAllocateFunc_(key);
+    if(val) oyDeAllocateFunc_(val);
   }
 
   *device = device_;

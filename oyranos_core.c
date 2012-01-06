@@ -357,7 +357,7 @@ int oyMessageFunc( int code, const oyPointer context_object, const char * format
   int error = 0;
   va_list list;
   size_t sz = 256;
-  int len;
+  int len = 0;
   oyStruct_s * c = (oyStruct_s*) context_object;
 
   text = calloc( sizeof(char), sz );

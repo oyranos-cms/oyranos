@@ -998,6 +998,10 @@ OYAPI int  OYEXPORT
            oyDeviceProfileFromDB     ( oyConfig_s        * device,
                                        char             ** profile_name,
                                        oyAlloc_f           allocateFunc );
+OYAPI int  OYEXPORT
+           oyDeviceProfileFromTaxiDB ( oyConfig_s        * device,
+                                       oyOptions_s       * options,
+                                       oyProfile_s      ** profile );
 OYAPI int OYEXPORT oyDeviceSelectSimiliar
                                      ( oyConfig_s        * pattern,
                                        oyConfigs_s       * heap,

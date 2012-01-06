@@ -107,8 +107,10 @@ char * oyReadFileSToMem_             ( FILE              * fp,
                                        oyAlloc_f           allocate_func);
 char * oyReadUrlToMem_               ( const char        * url,
                                        size_t            * size,
+                                       const char        * mode,
                                        oyAlloc_f           allocate_func );
 char * oyReadUrlToMemf_              ( size_t            * size,
+                                       const char        * mode,
                                        oyAlloc_f           allocate_func,
                                        const char        * format,
                                                            ... );
