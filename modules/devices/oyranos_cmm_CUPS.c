@@ -422,7 +422,6 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
                                 oyDeAllocateFunc_ );
         else
         {
-          ppd_choice_t * c;
           ppd_option_t * o;
           while((o = ppdNextOption(ppd)) != 0)
           {
@@ -440,7 +439,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
                 break;
               }
             if(!value)
-              value = &o->defchoice;
+              value = o->defchoice;
             
             if(value)
               error = oyOptions_SetFromText( &device->backend_core,
