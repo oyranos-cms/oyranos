@@ -93,7 +93,7 @@ char *       oyReadFileSToMem_       ( FILE              * fp,
   if (fp && size)
   {
     *size = 0;
-    while((c = getc(fp)) != EOF)
+    while((c = getc(fp)) && !feof(fp))
     {
       if(*size >= mem_size)
       {
@@ -255,6 +255,7 @@ char * oyReadStdinToMem_             ( size_t            * size,
  */
 char * oyReadUrlToMem_               ( const char        * url,
                                        size_t            * size,
+                                       const char        * mode,
                                        oyAlloc_f           allocate_func )
 {
   char * text = 0;
@@ -278,15 +279,59 @@ char * oyReadUrlToMem_               ( const char        * url,
         mem[pos++] = c;
     }
     mem[pos] = '\000';
-    oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
-                        "curl -s %s", mem );
+    if(oy_debug)
+      oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "curl -v -s %s", mem );
+    else
+      oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "curl -s %s", mem );
   
     if(command)
-      fp = oyPOPEN_m( command, "r" );
+      fp = oyPOPEN_m( command, mode );
     if(fp)
     {
+      size_t check = 0;
+      size_t mem_size = 0;
+      char* mem = NULL;
+
       text = oyReadFileSToMem_(fp, size, allocate_func );
-      fclose(fp);
+
+      if(!feof(fp))
+      {
+        if(text) oyFree_m_(text);
+        *size = 0;
+        mem_size = 1024;
+        mem = malloc(mem_size);
+        pclose(fp);
+        fp = oyPOPEN_m( command, mode );
+      }
+      if(fp)
+      while(!feof(fp))
+      {
+        if(*size >= mem_size)
+        {
+          mem_size *= 10;
+          mem = realloc( mem, mem_size );
+        }
+        *size += fread( &mem[*size], sizeof(char), mem_size-*size, fp );
+      }
+      if(fp && mem)
+      {
+          /* copy to external allocator */
+          char* temp = mem;
+          mem = oyAllocateWrapFunc_( *size+1, allocate_func );
+          if(mem) {
+            memcpy( mem, temp, *size );
+            oyFree_m_ (temp)
+            mem[*size] = 0;
+          } else {
+            oyFree_m_ (mem)
+            *size = 0;
+          }
+        text = mem;
+      }
+      if(fp)
+        pclose(fp);
       fp = 0;
     }
     if(command)
@@ -300,6 +345,7 @@ char * oyReadUrlToMem_               ( const char        * url,
  *  Read a file stream without knowing its size in advance.
  */
 char * oyReadUrlToMemf_              ( size_t            * size,
+                                       const char        * mode,
                                        oyAlloc_f           allocate_func,
                                        const char        * format,
                                                            ... )
@@ -315,7 +361,7 @@ char * oyReadUrlToMemf_              ( size_t            * size,
   {
     fprintf(stderr,
      "oyranos_io_core.c oyReadUrlToMemf_() Could not allocate memory.\n");
-    return 1;
+    return result;
   }
 
   text[0] = 0;
@@ -332,7 +378,7 @@ char * oyReadUrlToMemf_              ( size_t            * size,
     va_end  ( list );
   }
 
-  result = oyReadUrlToMem_( text, size, allocate_func );
+  result = oyReadUrlToMem_( text, size, mode, allocate_func );
 
   oyDeAllocateFunc_(text);
 
