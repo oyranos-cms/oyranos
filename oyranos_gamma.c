@@ -76,6 +76,8 @@ int main( int argc , char** argv )
        * new_profile_name = 0;
   char * device_class = 0;
   int list_modules = 0;
+  int list_taxi = 0;
+  int download_taxi = 0;
   int verbose = 0;
 
   char *ptr = NULL;
@@ -166,6 +168,8 @@ int main( int argc , char** argv )
                         { OY_PARSE_STRING_ARG2(module_name, "module"); break; }
                         else if(OY_IS_ARG("list"))
                         { list = 1; monitor_profile = 0; i=100; break; }
+                        else if(OY_IS_ARG("list-taxi"))
+                        { list_taxi = 1; i=100; break; }
                         else if(OY_IS_ARG("verbose"))
                         { if(verbose) oy_debug += 1; verbose = 1; i=100; break;}
                         }
@@ -239,7 +243,7 @@ int main( int argc , char** argv )
 
   {
     if(!erase && !unset && !list && !setup && !format &&
-       !add_meta && !list_modules)
+       !add_meta && !list_modules && !list_taxi)
       setup = 1;
 
     if(module_name)
@@ -254,7 +258,6 @@ int main( int argc , char** argv )
 
     if(device_pos != -1)
     {
-      oyConfigs_s * devices = 0;
 
       error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",
@@ -303,12 +306,63 @@ int main( int argc , char** argv )
       return error;
     }
 
+    if(list_taxi)
+    {
+      oyConfig_s * taxi_dev;
+      int32_t rank_value, max_rank_value = 0, max_device_pos = -1;
+      devices = 0;
+
+      if(!oy_display_name)
+      {
+        printf("%s\n", _("Please specify a monitor") );
+        return error;
+      }
+
+      error = oyOptions_SetFromText( &options,
+                                 "//" OY_TYPE_STD "/config/command",
+                                 "properties", OY_CREATE_NEW );
+      error = oyDeviceGet( OY_TYPE_STD, device_class, oy_display_name, 0,
+                           &device );
+      oyDevicesFromTaxiDB( device, options, &devices, NULL );
+      n = oyConfigs_Count( devices );
+      for(i = 0; i < n; ++i)
+      {
+        taxi_dev = oyConfigs_Get( devices, i );
+        printf("%s\n", oyNoEmptyString_m_(
+                 oyConfig_FindString(taxi_dev, "TAXI_id", 0)));
+        printf("%s\n", oyNoEmptyString_m_(
+                 oyConfig_FindString(taxi_dev, "TAXI_profile_description", 0)));
+        error = oyConfig_Compare( device, taxi_dev, &rank_value );
+        printf(" rank_value = %d\n", rank_value );
+
+        if(verbose)
+        {
+          char * json_text = 0;
+          oyDeviceToJSON( taxi_dev, 0, &json_text, oyAllocateFunc_ );
+          printf("%s\n", json_text );
+          oyFree_m_(json_text);
+        }
+
+        if(rank_value > max_rank_value)
+        {
+          max_rank_value = rank_value;
+          max_device_pos = i;
+        }
+        oyConfig_Release( &taxi_dev );
+      }
+      oyConfig_Release( &device );
+      oyConfigs_Release( &devices );
+      oyOptions_Release( &options );
+
+      //oyDeviceProfileFromTaxiDB();
+      return error;
+    }
+
     if(format &&
        (strcmp(format,"edid") == 0 ||
         strcmp(format,"icc") == 0 ||
         strcmp(format,"edid_icc") == 0))
     {
-      oyConfigs_s * devices = 0;
       icHeader * header = 0;
       char * out_name = 0;
 
@@ -365,7 +419,7 @@ int main( int argc , char** argv )
                 error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag, t );
               t =  oyConfig_FindString( c, "EDID_model", 0 );
               if(t)
-                error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag, t );
+                error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag, t);
               if(device_meta_tag)
               {
                 oyOptions_s * opts = 0;
