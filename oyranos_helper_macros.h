@@ -195,7 +195,7 @@ char    oyToupper_( char c_ );
                         } else wrong_arg = "-" arg; \
                         if(oy_debug) printf(arg "=%s\n",opt)
 #define OY_IS_ARG( arg ) \
-                        (strlen(argv[pos])-2 >= strlen(arg) && \
+                        (strlen(argv[pos])-2 == strlen(arg) && \
                          memcmp(&argv[pos][2],arg, strlen(arg)) == 0)
 
 
