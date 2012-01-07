@@ -999,6 +999,11 @@ OYAPI int  OYEXPORT
                                        char             ** profile_name,
                                        oyAlloc_f           allocateFunc );
 OYAPI int  OYEXPORT
+           oyDevicesFromTaxiDB       ( oyConfig_s        * device,
+                                       oyOptions_s       * options,
+                                       oyConfigs_s      ** devices,
+                                       oyObject_s          obj );
+OYAPI int  OYEXPORT
            oyDeviceProfileFromTaxiDB ( oyConfig_s        * device,
                                        oyOptions_s       * options,
                                        oyProfile_s      ** profile );
