@@ -1,8 +1,8 @@
-prefix=/opt/local
+prefix=/usr
 
 CC = gcc
 DEBUG= -Wall -g
-INCL = -I$(prefix)/include
+INCL = -I$(prefix)/include -I../yajl/
 LDFLAGS = -L$(prefix)/lib64
 TARGET = oyjl_tree_test
 CFLAGS=$(DEBUG) $(INCL) -fPIC
