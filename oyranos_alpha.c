@@ -3833,7 +3833,7 @@ OYAPI int  OYEXPORT
   "}\n"
 
 
-/** Function  oyConfigs_FromTaxiDB
+/** Function  oyDevicesFromTaxiDB
  *  @brief    search a calibration state in the taxi DB for a device
  *  @memberof oyConfig_s
  *
@@ -3848,7 +3848,7 @@ OYAPI int  OYEXPORT
  *  @date    2012/01/06
  */
 OYAPI int  OYEXPORT
-             oyConfigs_FromTaxiDB    ( oyConfig_s        * device,
+             oyDevicesFromTaxiDB     ( oyConfig_s        * device,
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** devices,
                                        oyObject_s          obj )
@@ -3906,7 +3906,7 @@ OYAPI int  OYEXPORT
     if(root)
     {
       int done = 0;
-      oyjl_value_s * v = 0;
+      oyjl_value_s * v = 0, * tv = 0;
 
       count = oyjl_value_count(root);
       for(i = 0; i < count; ++i)
@@ -3966,7 +3966,8 @@ OYAPI int  OYEXPORT
                                  "//" OY_TYPE_STD "/argv/underline_key_suffix",
                                  "TAXI", OY_CREATE_NEW );
 
-        count = oyjl_value_count(root);
+        tv = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]" );
+        count = oyjl_value_count(tv);
         for(i = 0; i < count; ++i)
         {
           error = oyOptions_SetFromInt( &opts,
@@ -3987,7 +3988,7 @@ OYAPI int  OYEXPORT
             n = oyjl_value_count(v);
             for(j = 0; j < n; ++j)
             {
-              v = oyjl_tree_get_valuef( v, "[%d]", j );
+              v = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]/[%d]/profile_description/[%d]", i, j );
               val = oyjl_value_text( v, oyAllocateFunc_ );
               oyConfig_AddDBData( dev, "TAXI_profile_description", val, OY_CREATE_NEW );
               if(val) oyDeAllocateFunc_(val); val = 0;
@@ -4006,6 +4007,7 @@ OYAPI int  OYEXPORT
         oyOptions_Release( &opts );
         if(device_db) oyDeAllocateFunc_(device_db); device_db = 0;
       }
+      oyjl_tree_free( &root );
     }
 
     oyFree_m_( manufacturers );
@@ -4057,7 +4059,7 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
-    error = oyConfigs_FromTaxiDB( device, options, &configs, 0 );
+    error = oyDevicesFromTaxiDB( device, options, &configs, 0 );
     oyOptions_Release( &options );
   }
   if(error <= 0)
@@ -8064,7 +8066,7 @@ int          oyDeviceCheckProperties ( oyConfig_s        * device )
  *  The function asks the online ICC Taxi DB for a profile
  *
  *  The device argument is expected to come from oyConfig_GetFromTaxiDB() or 
- *  oyConfigs_FromTaxiDB().
+ *  oyDevicesFromTaxiDB().
  *
  *  @param[in]     device              a device with "TAXI_id" key
  *  @param[in]     options             unused
@@ -8267,7 +8269,7 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
   return error;
 }
 
-/** Function oyDeviceGetJSON
+/** Function oyDeviceFromJSON
  *  @brief   generate a device from a JSON device calibration
  *
  *  @param[in]    json_text            the device calibration
@@ -8447,8 +8449,10 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
             oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                                 ",\n" );
           oyOption_Release( &opt );
-          oyFree_m_( key );
-          oyFree_m_( value );
+          if(key)
+            oyFree_m_( key );
+          if(value)
+            oyFree_m_( value );
         }
 
         oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
