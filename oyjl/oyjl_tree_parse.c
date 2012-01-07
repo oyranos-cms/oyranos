@@ -159,7 +159,7 @@ oyjl_object_s *  oyjl_object_create  ( const unsigned char * key,
   oyjl_object_s  * s = oyjl_malloc(sizeof(oyjl_object_s ));
   memset( s, 0, sizeof(oyjl_object_s ) );
 
-  s->key.text = key;
+  s->key.text = oyjl_string_dup( key, len );
   s->key.len = len;
 
   return s;
@@ -355,6 +355,19 @@ int oyjl_tree_parse_double(void * context, double g)
   return !error;
 }
 
+unsigned char * oyjl_string_dup      ( const unsigned char * text,
+                                       unsigned int        len )
+{
+  unsigned char * t = 0;
+  t = oyjl_malloc( len + 1 );
+  if(t)
+  {
+    memcpy( t, text, len );
+    t[len] = '\000';
+  }
+  return t;
+}
+
 int oyjl_tree_parse_string ( void * context, const unsigned char * text,
                              unsigned int len)
 {
@@ -366,7 +379,7 @@ int oyjl_tree_parse_string ( void * context, const unsigned char * text,
   if(new_value)
   {
     new_value->type = oyjl_type_text;
-    new_value->value.text.text = text;
+    new_value->value.text.text = oyjl_string_dup( text, len );
     new_value->value.text.len = len;
 
     if(c->type == oyjl_type_object)
@@ -382,7 +395,9 @@ int oyjl_tree_parse_string ( void * context, const unsigned char * text,
     } else if(c->type == oyjl_type_array)
     {
       oyjl_message( oyjl_message_info, NULL, 
-               "[string]=%s\n", oyjl_print_text(&new_value->value.text));
+               "0x%x [string]=%s 0x%x 0x%x %u\n", new_value,
+                    oyjl_print_text(&new_value->value.text),
+                    new_value->value.text.text, text, len );
       oyjl_value_array_move_in( &c->value.array, &new_value );
       error = yajl_status_ok;
     }
@@ -627,7 +642,7 @@ oyjl_text_s *  oyjl_string_create    ( const unsigned char * text,
 
   if(text)
   {
-    t->text = text;
+    t->text = oyjl_string_dup( text, len );
     t->len = len;
   }
 
@@ -639,6 +654,7 @@ yajl_status    oyjl_string_free      ( oyjl_text_s      ** text )
   if(text && *text)
   {
     (*text)->len = 0;
+    if((*text)->text) oyjl_free_memory((void**)&(*text)->text);
     (*text)->text = NULL;
     oyjl_free_memory( (void**)text );
   }
@@ -696,11 +712,14 @@ yajl_status  oyjl_tree_from_json     ( const char        * text,
       yajl_free_error( yhandle, txt ); txt = 0;
       error = yajl_status_error;
     }
-    yajl_free( yhandle );
   }
 
   if(context && context->stack)
+  {
     *value = context->stack[0];
+    (*value)->priv_ = yhandle;
+  } else
+    yajl_free( yhandle );
   oyjl_tree_parse_context_free( &context );
 
   return error;
@@ -712,14 +731,21 @@ yajl_status    oyjl_tree_free        ( oyjl_value_s     ** object )
   oyjl_value_s * v = *object;
 
   if(v)
-  switch(v->type)
   {
+    if(v->priv_)
+      yajl_free( v->priv_ );
+
+    switch(v->type)
+    {
     case oyjl_type_none:
     case oyjl_type_boolean:
     case oyjl_type_integer:
     case oyjl_type_double:
+         break;
     case oyjl_type_text:
-         oyjl_free_memory( (void**)object ); break;
+         if(v->value.text.text) oyjl_free_memory(&v->value.text.text);
+         oyjl_free_memory( (void**)object );
+         break;
     case oyjl_type_array:
          {
            int count = 0, i;
@@ -738,6 +764,7 @@ yajl_status    oyjl_tree_free        ( oyjl_value_s     ** object )
     default:
          fprintf( stderr, "unknown type: %d\n", v->type );
          break;
+    }
   }
 
   return error;
@@ -760,7 +787,7 @@ yajl_status    oyjl_tree_print( oyjl_value_s * v, int * level, FILE * fp )
     case oyjl_type_double:
          fprintf(fp, "oyjl_type_double: %g\n", v->value.floating); break;
     case oyjl_type_text:
-         fprintf(fp, "oyjl_type_text: %s\n", oyjl_print_text(&v->value.text)); break;
+         fprintf(fp, "oyjl_type_text: %s 0x%x %u\n", oyjl_print_text(&v->value.text), v->value.text.text, v->value.text.len); break;
     case oyjl_type_array:
          {
            int count = 0, i;

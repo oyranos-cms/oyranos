@@ -26,7 +26,7 @@
 
 
 typedef struct oyjl_text_s_ {
-  const unsigned char     * text;
+  unsigned char           * text;
   unsigned int              len;
 } oyjl_text_s;
 
@@ -60,6 +60,7 @@ union oyjl_value_u_ {
 struct oyjl_value_s_ {
   oyjl_type_e               type;
   oyjl_value_u              value;
+  void                    * priv_;
 };
 
 
@@ -73,6 +74,8 @@ oyjl_object_s *  oyjl_object_create  ( const unsigned char * key,
 oyjl_text_s *  oyjl_string_create    ( const unsigned char * text,
                                        unsigned int        len );
 yajl_status    oyjl_string_free      ( oyjl_text_s      ** text );
+unsigned char * oyjl_string_dup      ( const unsigned char * text,
+                                       unsigned int        len );
 const char * oyjl_print_text         ( oyjl_text_s       * text );
 oyjl_value_s  ** oyjl_array_new      ( int                 count );
 yajl_status  oyjl_value_array_move_in( oyjl_value_s    *** array,
