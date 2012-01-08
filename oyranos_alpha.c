@@ -9070,7 +9070,6 @@ OYAPI oyProfile_s * OYEXPORT
  *
  *  @param[in]     options             - "TAXI_id" shall provide a string
  *                                       for device driver parameter selection
- *                                     - "pos" options can selects a profile
  *  @param[out]    profile             the resulting profile
  *  @return                            error
  *
@@ -9088,7 +9087,6 @@ OYAPI oyProfile_s * OYEXPORT
   oyOptions_s * s = options;
   size_t size = 0;
   char * mem = NULL;
-  int32_t pos = 0;
   const char * taxi_id = NULL;
 
   oyCheckType__m( oyOBJECT_OPTIONS_S, return p )
@@ -9099,15 +9097,12 @@ OYAPI oyProfile_s * OYEXPORT
     return p;
   }
 
-  error = oyOptions_FindInt( options, "pos", 0, &pos );
-  if(error) error = 0;
-
   taxi_id = oyOptions_FindString( options, "TAXI_id", 0 );
 
   if(taxi_id)
     mem = oyReadUrlToMemf_( &size, "r", oyAllocateFunc_,
-                            "http://icc.opensuse.org/profile/%s/%d/profile.icc",
-                            taxi_id, pos );
+                            "http://icc.opensuse.org/profile/%s/profile.icc",
+                            taxi_id );
   else
     WARNc_S("No TAXI_id provided, Do not know what to download.");
 
