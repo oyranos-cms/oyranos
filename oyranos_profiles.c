@@ -31,6 +31,13 @@
 #include <stdio.h>
 #include <string.h>
 
+int    installProfile                ( oyProfile_s       * ip,
+                                       const char        * file_name,
+                                       const char        * path,
+                                       char             ** names,
+                                       int                 count,
+                                       char              * show_text,
+                                       int                 show_gui );
 void* oyAllocFunc(size_t size) {return malloc (size);}
 
 void  printfHelp (int argc, char** argv)
@@ -73,12 +80,13 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -m  %s\n",       _("machine specific path"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Install ICC profile:"));
-  fprintf( stderr, "      %s --install [-u|-s|-y|-m] ICC_file_name(s)\n", argv[0]);
+  fprintf( stderr, "      %s --install [-u|-s|-y|-m] ICC_file_name(s)|--taxi=ID\n", argv[0]);
   fprintf( stderr, "      -u  %s\n",       _("user path"));
   fprintf( stderr, "      -s  %s\n",       _("system path"));
   fprintf( stderr, "      -y  %s\n",       _("oyranos install path"));
   fprintf( stderr, "      -m  %s\n",       _("machine specific path"));
   fprintf( stderr, "      --gui %s\n",     _("show hints and question GUI"));
+  fprintf( stderr, "      --taxi=ID %s\n", _("download from Taxi data base"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Print a help text:"));
   fprintf( stderr, "      %s -h\n",        argv[0]);
@@ -114,6 +122,7 @@ int main( int argc , char** argv )
   char ** install = 0;
   int install_n = 0,
       show_gui = 0;
+  const char * taxi_id = NULL;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -192,6 +201,7 @@ int main( int argc , char** argv )
                           show_gui = 1;
                           i=100; break;
                         }
+                        { OY_PARSE_STRING_ARG2(taxi_id, "taxi"); break; }
                         }
               default:
                         printfHelp(argc, argv);
@@ -222,7 +232,7 @@ int main( int argc , char** argv )
   /*oyPathAdd( OY_PROFILE_PATH_USER_DEFAULT );*/
 
 
-  if(list_profiles || list_paths || install_n)
+  if(list_profiles || list_paths || install_n || taxi_id)
   {
     oyProfile_s * p = 0;
     char ** names = NULL;
@@ -337,6 +347,11 @@ int main( int argc , char** argv )
       oyStringListRelease_(&path_names, n, oyDeAllocateFunc_);
     }
 
+    if(taxi_id)
+    {
+      
+    }
+
     if(install_n)
       for(i = 0; i < install_n; ++i)
       {
@@ -352,10 +367,36 @@ int main( int argc , char** argv )
           STRING_ADD( show_text, file_name );
         }
 
-        accept = 1;
-
         if(strrchr(file_name, OY_SLASH_C))
           file_name = strrchr(file_name, OY_SLASH_C) + 1;
+
+        installProfile( ip, file_name, path, names, count, show_text, show_gui );
+
+        oyProfile_Release( &ip );
+      }
+    oyStringListRelease_(&names, count, oyDeAllocateFunc_);
+  }
+
+
+  return error;
+}
+
+
+int    installProfile                ( oyProfile_s       * ip,
+                                       const char        * file_name,
+                                       const char        * path,
+                                       char             ** names,
+                                       int                 count,
+                                       char              * show_text,
+                                       int                 show_gui )
+{
+      {
+        const char * in = oyProfile_GetText( ip, oyNAME_DESCRIPTION );
+        int j;
+        char * txt = 0;
+        int accept = 1;
+        const char * t = 0;
+        oyProfile_s * p = NULL;
 
         for(j = 0; j < (int)count; ++j)
         {
@@ -432,7 +473,7 @@ int main( int argc , char** argv )
             WARNc_S("Could not write to profile");
             return 1;
           }
-          data = oyReadFileToMem_(install[i], &size, oyAllocateFunc_);
+          data = oyProfile_GetMem( ip, &size, 0, oyAllocateFunc_);
           STRING_ADD( fn, path );
           STRING_ADD( fn, OY_SLASH );
           if(strrchr(sfn, OY_SLASH_C))
@@ -443,14 +484,9 @@ int main( int argc , char** argv )
             error = oyWriteMemToFile_ ( fn, data, size );
 
           fprintf(stderr, "%s[%d%s]: \"%s\" -> \"%s\"\n",
-                   _("Installed"), (int)size, _("bytes"), install[i], fn );
+                   _("Installed"), (int)size, _("bytes"), file_name, fn );
           oyDeAllocateFunc_(data); size = 0; data = 0;
         }
-        oyProfile_Release( &ip );
       }
-    oyStringListRelease_(&names, count, oyDeAllocateFunc_);
-  }
-
-
-  return error;
+  return 0;
 }
