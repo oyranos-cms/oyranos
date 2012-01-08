@@ -764,6 +764,10 @@ OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromMD5(  uint32_t          * md5,
                                        oyObject_s          object );
 OYAPI oyProfile_s * OYEXPORT
+                   oyProfile_FromTaxiDB (
+                                       oyOptions_s       * options,
+                                       oyObject_s          object );
+OYAPI oyProfile_s * OYEXPORT
                    oyProfile_Copy    ( oyProfile_s       * profile,
                                        oyObject_s          object);
 OYAPI int  OYEXPORT oyProfile_Release( oyProfile_s      ** profile );
@@ -1003,10 +1007,6 @@ OYAPI int  OYEXPORT
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** devices,
                                        oyObject_s          obj );
-OYAPI int  OYEXPORT
-           oyDeviceProfileFromTaxiDB ( oyConfig_s        * device,
-                                       oyOptions_s       * options,
-                                       oyProfile_s      ** profile );
 OYAPI int OYEXPORT oyDeviceSelectSimiliar
                                      ( oyConfig_s        * pattern,
                                        oyConfigs_s       * heap,
