@@ -3873,9 +3873,8 @@ OYAPI int  OYEXPORT
   
   if(manufacturers)
   {
-    int level = 0;
-    oyjl_value_s * root = 0, * value = 0;
-    int count = 0, i, j,n;
+    oyjl_value_s * root = 0;
+    int count = 0, i;
     char * val = NULL,
          * key = NULL;
     char * json_text = NULL;
@@ -4031,8 +4030,8 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyConfig_GetFromTaxiDB
- *  @brief   search a configuration in the taxi DB for a configuration
+/** Function oyConfig_GetBestMatchFromTaxiDB
+ *  @brief   search a profile ID in the Taxi DB for a configuration
  *  @memberof oyConfig_s
  *
  *  @param[in]     device              the to be checked configuration from
@@ -4047,7 +4046,8 @@ OYAPI int  OYEXPORT
  *  @date    2011/09/14
  */
 OYAPI int  OYEXPORT
-               oyConfig_GetFromTaxiDB( oyConfig_s        * device,
+               oyConfig_GetBestMatchFromTaxiDB(
+                                       oyConfig_s        * device,
                                        int32_t           * rank_value )
 {
   int error = !device;
@@ -8060,64 +8060,6 @@ int          oyDeviceCheckProperties ( oyConfig_s        * device )
 }
 
 
-/** Function oyDeviceProfileFromTaxiDB
- *  @brief   look up a profile of a device from Taxi DB
- *
- *  The function asks the online ICC Taxi DB for a profile
- *
- *  The device argument is expected to come from oyConfig_GetFromTaxiDB() or 
- *  oyDevicesFromTaxiDB().
- *
- *  @param[in]     device              a device with "TAXI_id" key
- *  @param[in]     options             unused
- *  @param[out]    profile             the resulting profile
- *  @return                            error
- *
- *  @version Oyranos: 0.3.3
- *  @since   2012/01/06 (Oyranos: 0.3.3)
- *  @date    2012/01/06
- */
-OYAPI int  OYEXPORT
-           oyDeviceProfileFromTaxiDB ( oyConfig_s        * device,
-                                       oyOptions_s       * options,
-                                       oyProfile_s      ** profile )
-{
-  int error = !device;
-  oyProfile_s * p = NULL;
-  oyConfig_s * s = device;
-  size_t size = 0;
-  char * mem = NULL;
-  int32_t pos = 0;
-  const char * taxi_id = NULL;
-
-  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
-
-  if(error > 0)
-  {
-    WARNc_S( "No device argument provided. Give up." );
-    return error;
-  }
-
-  error = oyOptions_FindInt( options, "pos", 0, &pos );
-  if(error) error = 0;
-
-  taxi_id = oyConfig_FindString( device, "TAXI_id", 0 );
-
-  if(taxi_id)
-    mem = oyReadUrlToMemf_( &size, "r", oyAllocateFunc_,
-                            "http://icc.opensuse.org/profile/%s/%d/profile.icc",
-                            taxi_id, pos );
-
-  if(mem && size)
-    p = oyProfile_FromMem( size, mem, 0, NULL);
-  if(p && profile)
-    *profile = oyProfile_Copy( p, NULL );
-
-  oyProfile_Release( &p );
-
-  return error;
-}
-
 /** Function oyDeviceSelectSimiliar
  *  @brief   get similiar devices by a pattern from a list
  *
@@ -9116,6 +9058,68 @@ OYAPI oyProfile_s * OYEXPORT
 
   return s;
 }
+
+/** Function oyProfile_FromTaxiDB
+ *  @brief   look up a profile of a device from Taxi DB
+ *
+ *  The function asks the online ICC Taxi DB for a profile. It is therefore
+ *  blocking and can cause a serious delay before returning.
+ *
+ *  The TAXI_id option is expected to come from 
+ *  oyConfig_GetBestMatchFromTaxiDB() or oyDevicesFromTaxiDB().
+ *
+ *  @param[in]     options             - "TAXI_id" shall provide a string
+ *                                       for device driver parameter selection
+ *                                     - "pos" options can selects a profile
+ *  @param[out]    profile             the resulting profile
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.3.3
+ *  @since   2012/01/08 (Oyranos: 0.3.3)
+ *  @date    2012/01/08
+ */
+OYAPI oyProfile_s * OYEXPORT
+                   oyProfile_FromTaxiDB (
+                                       oyOptions_s       * options,
+                                       oyObject_s          object )
+{
+  int error = !options;
+  oyProfile_s * p = NULL;
+  oyOptions_s * s = options;
+  size_t size = 0;
+  char * mem = NULL;
+  int32_t pos = 0;
+  const char * taxi_id = NULL;
+
+  oyCheckType__m( oyOBJECT_OPTIONS_S, return p )
+
+  if(error > 0)
+  {
+    WARNc_S( "No options provided. Give up." );
+    return p;
+  }
+
+  error = oyOptions_FindInt( options, "pos", 0, &pos );
+  if(error) error = 0;
+
+  taxi_id = oyOptions_FindString( options, "TAXI_id", 0 );
+
+  if(taxi_id)
+    mem = oyReadUrlToMemf_( &size, "r", oyAllocateFunc_,
+                            "http://icc.opensuse.org/profile/%s/%d/profile.icc",
+                            taxi_id, pos );
+  else
+    WARNc_S("No TAXI_id provided, Do not know what to download.");
+
+  if(mem && size)
+  {
+    p = oyProfile_FromMem( size, mem, 0, NULL);
+    oyFree_m_( mem ); size = 0;
+  }
+
+  return p;
+}
+
 
 /**
  *  @internal
