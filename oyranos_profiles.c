@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2010 (C) Kai-Uwe Behrmann
+ *            2010-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC profile informations - on the command line
  *  @internal
@@ -80,13 +80,14 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -m  %s\n",       _("machine specific path"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Install ICC profile:"));
-  fprintf( stderr, "      %s --install [-u|-s|-y|-m] ICC_file_name(s)|--taxi=ID\n", argv[0]);
+  fprintf( stderr, "      %s [--gui] --install [-u|-s|-y|-m] ICC_FILE_NAME(s)\n", argv[0]);
+  fprintf( stderr, "      %s --taxi=ID [--gui] --install [-u|-s|-y|-m]\n", argv[0]);
   fprintf( stderr, "      -u  %s\n",       _("user path"));
   fprintf( stderr, "      -s  %s\n",       _("system path"));
   fprintf( stderr, "      -y  %s\n",       _("oyranos install path"));
   fprintf( stderr, "      -m  %s\n",       _("machine specific path"));
   fprintf( stderr, "      --gui %s\n",     _("show hints and question GUI"));
-  fprintf( stderr, "      --taxi=ID %s\n", _("download from Taxi data base"));
+  fprintf( stderr, "      --taxi=ID %s\n", _("download ID from Taxi data base"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Print a help text:"));
   fprintf( stderr, "      %s -h\n",        argv[0]);
@@ -189,7 +190,7 @@ int main( int argc , char** argv )
                                 argv[pos], oyAllocateFunc_, oyDeAllocateFunc_ );
                             ++pos;
                           }
-                          if(!install_n)
+                          if(!install_n && !taxi_id)
                           {
                             fprintf(stderr, "%s: --install [-u|-s|-y|-m] ICC_file_name(s)\n", _("File name is missed"));
                             exit (0);
@@ -201,6 +202,7 @@ int main( int argc , char** argv )
                           show_gui = 1;
                           i=100; break;
                         }
+                        else if(OY_IS_ARG("taxi"))
                         { OY_PARSE_STRING_ARG2(taxi_id, "taxi"); break; }
                         }
               default:
@@ -349,7 +351,28 @@ int main( int argc , char** argv )
 
     if(taxi_id)
     {
-      
+      oyProfile_s * ip;
+      oyOptions_s * options = NULL;
+      char * show_text = 0;
+      const char * file_name = NULL;
+
+      error = oyOptions_SetFromText( &options,
+                                 "//" OY_TYPE_STD "/argv/TAXI_id",
+                                 taxi_id,
+                                 OY_CREATE_NEW );
+
+      ip = oyProfile_FromTaxiDB( options, NULL );
+      if(!ip)
+      {
+        STRING_ADD( show_text, _("Could not open: ") );
+        STRING_ADD( show_text, file_name );
+      } else
+      {
+        file_name = oyProfile_GetText( ip, oyNAME_DESCRIPTION );
+        installProfile( ip, file_name, path, names, count, show_text, show_gui);
+
+        oyProfile_Release( &ip );
+      }
     }
 
     if(install_n)

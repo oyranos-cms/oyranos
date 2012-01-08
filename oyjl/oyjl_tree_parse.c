@@ -1,7 +1,7 @@
 /** @file yajl_tree_parser.c
  *
  *  @par Copyright:
- *            2010-2011 (C) Kai-Uwe Behrmann
+ *            2010-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    tree parser extension to yajl
  *  @internal

@@ -1,7 +1,7 @@
 /** @file oyjl_tree.h
  *
  *  @par Copyright:
- *            2010-2011 (C) Kai-Uwe Behrmann
+ *            2010-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    object parser extension to yajl
  *  @internal
