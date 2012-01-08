@@ -192,6 +192,9 @@ int main( int argc , char** argv )
                         printf("  %s\n",               _("List devices:"));
                         printf("      %s -l [-x pos -y pos | -d number]\n", argv[0]);
                         printf("\n");
+                        printf("  %s\n",               _("List Taxi profile for selected device:"));
+                        printf("      %s --list-taxi [-x pos -y pos | -d number]\n", argv[0]);
+                        printf("\n");
                         printf("  %s\n",               _("List modules:"));
                         printf("      %s --modules\n",        argv[0]);
                         printf("\n");
@@ -310,11 +313,13 @@ int main( int argc , char** argv )
     {
       oyConfig_s * taxi_dev;
       int32_t rank_value, max_rank_value = 0, max_device_pos = -1;
+      int head = 0;
       devices = 0;
 
       if(!oy_display_name)
       {
-        printf("%s\n", _("Please specify a monitor") );
+        printf("%s\n", _("Please specify a monitor with the -d option.") );
+        system("oyranos-monitor -lc");
         return error;
       }
 
@@ -328,14 +333,51 @@ int main( int argc , char** argv )
       for(i = 0; i < n; ++i)
       {
         taxi_dev = oyConfigs_Get( devices, i );
-        printf("%s\n", oyNoEmptyString_m_(
-                 oyConfig_FindString(taxi_dev, "TAXI_id", 0)));
-        printf("%s\n", oyNoEmptyString_m_(
-                 oyConfig_FindString(taxi_dev, "TAXI_profile_description", 0)));
         error = oyConfig_Compare( device, taxi_dev, &rank_value );
-        printf(" rank_value = %d\n", rank_value );
+        if(rank_value <= 0 && !verbose)
+        {
+          oyConfig_Release( &taxi_dev );
+          continue;
+        }
 
-        if(verbose)
+        if(!head)
+        {
+          oyOptions_s * cs_options = 0;
+          char * text = NULL,
+               * report = NULL;
+
+          head = 1;
+
+          if(verbose)
+          {
+            if(net_color_region_target)
+            {
+              /* get OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
+              error = oyOptions_SetFromText( &cs_options,
+              "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target", "yes", OY_CREATE_NEW );
+            }
+            error = oyDeviceGetInfo( device, oyNAME_NICK, cs_options, &text,
+                                     oyAllocFunc );
+            oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
+                                "\"%s\" ", text ? text : "???" );
+            error = oyDeviceGetInfo( device, oyNAME_NAME, cs_options, &text,
+                                     oyAllocFunc );
+            oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
+                                "%s", text ? text : "???" );
+            fprintf( stderr, "%s: %s\n", _("Taxi DB entries for device"),
+                     report );
+          }
+          fprintf( stderr, "%s: %s \"%s\"\n", _("Taxi ID"),
+                   _("match value"), _("description") );
+          oyOptions_Release( cs_options );
+        }
+
+        printf("%s/0: %d ", oyNoEmptyString_m_(
+                 oyConfig_FindString(taxi_dev, "TAXI_id", 0)), rank_value);
+        printf("\"%s\"\n", oyNoEmptyString_m_(
+                 oyConfig_FindString(taxi_dev, "TAXI_profile_description", 0)));
+
+        if(oy_debug)
         {
           char * json_text = 0;
           oyDeviceToJSON( taxi_dev, 0, &json_text, oyAllocateFunc_ );
