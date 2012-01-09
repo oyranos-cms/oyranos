@@ -93,9 +93,9 @@ fi
 
 if [ "$echo_ldflags" = "yes" ]; then
   if [ -f liboyranos.so ]; then
-    echo "-L. -loyranos -loyranos_object -loyranos_core $elektra_dyn $oyranos_add"
+    echo "-L. -loyranos -loyranos_object -loyranos_core"
   else
-    echo "-L$libdir -loyranos -loyranos_object -loyranos_core $elektra_dyn $oyranos_add"
+    echo "-L$libdir -loyranos -loyranos_object -loyranos_core"
   fi
 fi
 

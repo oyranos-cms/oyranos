@@ -640,13 +640,13 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
           char * data = 0;
           oyProfile_s * p = 0;
 
-          if(oyOptions_FindString( options, "net_color_region_target", 0 ))
+          if(oyOptions_FindString( options, "x_color_region_target", 0 ))
           {
             if(oy_debug)
               message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
                      "Try %s from %s",
                      OY_DBG_ARGS_,
-                     oyOptions_FindString(options, "net_color_region_target", 0) ? 
+                     oyOptions_FindString(options, "x_color_region_target", 0) ? 
                      "ColorSync" : "Base",
                      device_name );
             flags |= 0x01;
@@ -677,8 +677,8 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
             if(has == 0)
             {
               const char * key = QARZ_MONITOR_REGISTRATION OY_SLASH "icc_profile";
-              if(oyOptions_FindString(options, "net_color_region_target", 0))
-                key = QARZ_MONITOR_REGISTRATION OY_SLASH "icc_profile.net_color_region_target";
+              if(oyOptions_FindString(options, "x_color_region_target", 0))
+                key = QARZ_MONITOR_REGISTRATION OY_SLASH "icc_profile.x_color_region_target";
               o = oyOption_FromRegistration( key, 0 );
             }
           } else if(oyOptions_FindString( options, "icc_profile.fallback", 0 ))
@@ -779,7 +779,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
             message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
                      "Could not obtain %s information for %s",
                      OY_DBG_ARGS_,
-                     oyOptions_FindString(options, "net_color_region_target", 0) ? 
+                     oyOptions_FindString(options, "x_color_region_target", 0) ? 
                      "ColorSync" : "Base",
                      device_name );
 

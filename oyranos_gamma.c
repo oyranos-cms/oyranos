@@ -68,7 +68,7 @@ int main( int argc , char** argv )
   char * format = 0;
   char * output = 0;
   int server = 0;
-  int net_color_region_target = 0;
+  int x_color_region_target = 0;
   int device_meta_tag = 0;
   char * add_meta = 0,
        * prof_name = 0,
@@ -124,7 +124,7 @@ int main( int argc , char** argv )
             switch (argv[pos][i])
             {
               case 'e': erase = 1; monitor_profile = 0; break;
-              case 'c': net_color_region_target = 1; monitor_profile = 0; break;
+              case 'c': x_color_region_target = 1; monitor_profile = 0; break;
               case 'd': server = 1; OY_PARSE_INT_ARG( device_pos ); break;
               case 'f': OY_PARSE_STRING_ARG(format); monitor_profile = 0; break;
               case 'l': list = 1; monitor_profile = 0; break;
@@ -143,8 +143,8 @@ int main( int argc , char** argv )
                         { erase = 1; monitor_profile = 0; i=100; break; }
                         else if(OY_IS_ARG("unset"))
                         { unset = 1; monitor_profile = 0; i=100; break; }
-                        else if(strcmp(&argv[pos][2],"net_color_region_target") == 0)
-                        { net_color_region_target = 1; i=100; break; }
+                        else if(strcmp(&argv[pos][2],"x_color_region_target") == 0)
+                        { x_color_region_target = 1; i=100; break; }
                         else if(OY_IS_ARG("setup"))
                         { setup = 1; i=100; break; }
                         else if(OY_IS_ARG("daemon"))
@@ -350,11 +350,11 @@ int main( int argc , char** argv )
 
           if(verbose)
           {
-            if(net_color_region_target)
+            if(x_color_region_target)
             {
               /* get OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
               error = oyOptions_SetFromText( &cs_options,
-              "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target", "yes", OY_CREATE_NEW );
+              "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
             }
             error = oyDeviceGetInfo( device, oyNAME_NICK, cs_options, &text,
                                      oyAllocFunc );
@@ -491,11 +491,11 @@ int main( int argc , char** argv )
           if(strcmp(format,"icc") == 0)
           {
             oyOptions_s * cs_options = 0;
-            if(net_color_region_target)
+            if(x_color_region_target)
             {
               /* get OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
               error = oyOptions_SetFromText( &cs_options,
-              "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target", "yes", OY_CREATE_NEW );
+              "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
             }
             oyDeviceAskProfile2( c, cs_options, &prof );
             oyOptions_Release( &cs_options );
@@ -615,11 +615,11 @@ int main( int argc , char** argv )
       uint32_t n = 0, i;
       oyOptions_s * cs_options = 0;
 
-      if(net_color_region_target)
+      if(x_color_region_target)
       {
         /* get OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
         error = oyOptions_SetFromText( &cs_options,
-              "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target", "yes", OY_CREATE_NEW );
+              "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
       }
       error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",
@@ -897,7 +897,7 @@ int            getDeviceProfile      ( Display           * display,
                    "//"OY_TYPE_STD"/config/command",
                                        "list", OY_CREATE_NEW );
       oyOptions_SetFromText( &options,
-                   "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target",
+                   "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                                        "yes", OY_CREATE_NEW );*/
       t_err = oyDeviceGetProfile( device, options, &dst_profile );
       oyOptions_Release( &options );

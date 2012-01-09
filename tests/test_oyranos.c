@@ -600,7 +600,7 @@ oyTESTRESULT_e testMonitor ()
                "\"list\" device(s): ---                   " )
 
   error = oyOptions_SetFromText( &options,
-                               "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target",
+                               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                                        "yes", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &options,
                                  "//"OY_TYPE_STD"/config/command",
@@ -678,7 +678,7 @@ oyTESTRESULT_e testMonitor ()
 #endif
 
   error = oyOptions_SetFromText( &options,
-                               "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target",
+                               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                                        "yes", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &options,
                                  "//"OY_TYPE_STD"/config/command",

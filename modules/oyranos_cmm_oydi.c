@@ -136,7 +136,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
   if(win_id && display_id)
   {
     int x,y, i,j;
-    Atom netColorTarget;
+    Atom xColorTarget;
     Window w = (Window) oyBlob_GetPointer(win_id), w_return;
     XWindowAttributes attr;
     const char * display_name = oyOptions_FindString( image->tags,
@@ -275,8 +275,8 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
 
       /* upload the new or changed region to the X server */
       error = XcolorRegionInsert( display, w, 0, &region, 1 );
-      netColorTarget = XInternAtom( display, "_ICC_COLOR_TARGET", True );
-      XChangeProperty( display, w, netColorTarget, XA_STRING, 8,
+      xColorTarget = XInternAtom( display, "_ICC_COLOR_TARGET", True );
+      XChangeProperty( display, w, xColorTarget, XA_STRING, 8,
                        PropModeReplace,
                        (unsigned char*) display_string, strlen(display_string));
 
@@ -676,7 +676,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       {
         oyOptions_s * options = 0;
         error = oyOptions_SetFromText( &options,
-                               "//"OY_TYPE_STD"/config/net_color_region_target",
+                               "//"OY_TYPE_STD"/config/x_color_region_target",
                                        "yes", OY_CREATE_NEW );
         error = oyDeviceGetProfile( c, options, &p );
         oyOptions_Release( &options );

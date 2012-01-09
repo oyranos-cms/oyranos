@@ -1846,7 +1846,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
         oyOptions_s * options = 0;
         const char * t = 0;
         oyOptions_SetFromText( &options,
-                   "//"OY_TYPE_STD"/config/icc_profile.net_color_region_target",
+                   "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                          "yes", OY_CREATE_NEW );
         error = oyDeviceGetProfile( config, options, &p );
         oyOptions_Release( &options );
