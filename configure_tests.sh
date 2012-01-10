@@ -1089,7 +1089,12 @@ if [ -n "$COMPIZ" ] && [ $COMPIZ -gt 0 ]; then
   if [ $? = 0 ]; then
     echo_="$pc_package	`pkg-config --modversion $pc_package`		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     echo "#define HAVE_COMPIZ 1" >> $CONF_H
-    echo "COMPIZ = 1" >> $CONF
+    pkg-config  --atleast-version=0.9 $pc_package
+    if [ $? = 0 ]; then
+      echo "COMPIZ_CPP = 1" >> $CONF
+    else
+      echo "COMPIZ = 1" >> $CONF
+    fi
     echo "COMPIZ_H = `pkg-config --cflags $pc_package | sed \"$STRIPOPT\"`" >> $CONF
     echo "COMPIZ_LIBS = `pkg-config --libs $pc_package | sed \"$STRIPOPT\"`" >> $CONF
   else
