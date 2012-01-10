@@ -266,7 +266,7 @@ fi
 
 if [ -n "$OYRANOS" ] && [ "$OYRANOS" != "0" ]; then
   name="oyranos"
-  minversion=0.2
+  minversion=0.4
   version=`pkg-config --modversion $name`
   url="http://www.oyranos.org"
   HAVE_LIB=0
