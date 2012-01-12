@@ -29,6 +29,9 @@
 #include <stdlib.h>
 #include <locale.h>
 
+#include <X11/Xlib.h>
+#include <X11/extensions/Xfixes.h>
+#include <X11/Xcm/Xcm.h>
 
 /* --- internal definitions --- */
 
@@ -44,9 +47,10 @@ int            oyX1CMMMessageFuncSet ( oyMessage_f         message_func );
 
 #define OYX1_MONITOR_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.device.icc_profile.monitor." CMM_NICK
 
-oyMessage_f message = 0;
+oyMessage_f oyX1_msg = 0;
 
 extern oyCMMapi8_s oyX1_api8;
+extern oyCMMapi10_s    oyX1_api10_set_xcm_region_handler;
 oyRankPad oyX1_rank_map[];
 
 int          oyX1DeviceFromName_     ( const char        * device_name,
@@ -94,7 +98,7 @@ void               oyCMMdeallocateFunc ( oyPointer         mem )
  */
 int            oyX1CMMMessageFuncSet ( oyMessage_f         message_func )
 {
-  message = message_func;
+  oyX1_msg = message_func;
   return 0;
 }
 
@@ -186,13 +190,13 @@ const char * oyX1_help =
 void     oyX1ConfigsUsage( oyStruct_s        * options )
 {
     /** oyMSG_WARN shall make shure our message will be visible. */
-    message( oyMSG_WARN, options, OY_DBG_FORMAT_ "\n %s",
+    oyX1_msg( oyMSG_WARN, options, OY_DBG_FORMAT_ "\n %s",
              OY_DBG_ARGS_, oyX1_help );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_list );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_properties );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_setup );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_unset );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_add_edid_to_icc );
+    oyX1_msg( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_list );
+    oyX1_msg( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_properties );
+    oyX1_msg( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_setup );
+    oyX1_msg( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_unset );
+    oyX1_msg( oyMSG_WARN, options, "%s()\n %s", __func__, oyX1_help_add_edid_to_icc );
 #if 0
     message( oyMSG_WARN, options, "%s()\n %s", __func__,
       "The presence of option \"get\" will provide a oyProfile_s of the\n"
@@ -226,7 +230,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
 
       if(!device_name)
       {
-        message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
+        oyX1_msg(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
                 "The \"device_name\" argument is\n"
                 " missed to select a appropriate device for the"
                 " \"properties\" call.", OY_DBG_ARGS_ );
@@ -243,7 +247,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
                                         (oyStruct_s*)options );
 
       if(error != 0)
-        message( oyMSG_WARN, (oyStruct_s*)options, 
+        oyX1_msg( oyMSG_WARN, (oyStruct_s*)options, 
                  OY_DBG_FORMAT_ "\n  Could not complete \"properties\" call.\n"
                  "  oyX1GetMonitorInfo_lib returned with %s; device_name:"
                  " \"%s\"", OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
@@ -275,7 +279,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
       }
 
       if(error != 0)
-        message( oyMSG_WARN, (oyStruct_s*)options,
+        oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
                  OY_DBG_FORMAT_ "\n  Could not complete \"properties\" call.\n"
                  "  oyX1GetMonitorInfo_lib returned with %s %d; device_name:"
                  " \"%s\"",OY_DBG_ARGS_, error > 0 ? "error(s)" : "issue(s)",
@@ -378,7 +382,7 @@ int            oyX1Configs_FromPattern (
 #if !defined(__APPLE__)
       if(!tmp)
       {
-        message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+        oyX1_msg(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
               "DISPLAY variable not set: giving up\n. Options:\n%s",
                 OY_DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
@@ -430,7 +434,7 @@ int            oyX1Configs_FromPattern (
         if(devices && oyConfigs_Count(devices))
           error = oyX1Configs_Modify( devices, options );
         else if(oy_debug)
-          message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+          oyX1_msg(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                 "No monitor devices found.\n Options:\n%s", OY_DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
@@ -452,7 +456,7 @@ int            oyX1Configs_FromPattern (
       oprofile_name = oyOptions_FindString( options, "profile_name", 0 );
       error = !odevice_name || !oprofile_name;
       if(error >= 1)
-        message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+        oyX1_msg(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
               "The device_name/profile_name option is missed. Options:\n%s",
                 OY_DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
@@ -470,7 +474,7 @@ int            oyX1Configs_FromPattern (
     {
       error = !odevice_name;
       if(error >= 1)
-        message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+        oyX1_msg(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                 "The device_name option is missed. Options:\n%s",
                 OY_DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
                 );
@@ -508,7 +512,7 @@ int            oyX1Configs_FromPattern (
         error = 1;
       if(error >= 1)
       {
-        message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+        oyX1_msg(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                 "\"edid\" or \"icc_profile\" missed:\n%s",
                 OY_DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
                 );
@@ -551,7 +555,7 @@ int            oyX1Configs_FromPattern (
   }
 
 
-  message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+  oyX1_msg(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                 "This point should not be reached. Options:\n%s", OY_DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
@@ -676,7 +680,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           if(oyOptions_FindString( options, "x_color_region_target", 0 ))
           {
             if(oy_debug)
-              message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+              oyX1_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
                      "Try %s(_xxx) from %s",
                      OY_DBG_ARGS_,
                      oyOptions_FindString(options, "x_color_region_target", 0) ? 
@@ -762,7 +766,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                 if(t)
                   STRING_ADD( text, t );
                 else
-                message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+                oyX1_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
                 "Could not obtain \"EDID_model\" from monitor device for %s",
                      OY_DBG_ARGS_, device_name );
               }
@@ -799,14 +803,14 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                 if(!t)
                   error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag, t);
                 else
-                message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+                oyX1_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
             "Could not obtain \"EDID_manufacturer\" from monitor device for %s",
                      OY_DBG_ARGS_, device_name );
               } else
                 error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag, t);
               t = oyConfig_FindString( device, "EDID_model", 0 );
               if(!t)
-                message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+                oyX1_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
                    "Could not obtain \"EDID_model\" from monitor device for %s",
                      OY_DBG_ARGS_, device_name );
               else
@@ -829,7 +833,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
               o_tmp = oyConfig_Find( device, "EDID_mnft" );
               t = oyConfig_FindString( device, "EDID_mnft", 0 );
               if(!t)
-                message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+                oyX1_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
                     "Could not obtain \"EDID_mnft\" from monitor device for %s",
                      OY_DBG_ARGS_, device_name );
               else
@@ -861,7 +865,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           else
           /** Warn and return issue on not found profile. */
           {
-            message( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+            oyX1_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
                      "Could not obtain %s(_xxx) information for %s",
                      OY_DBG_ARGS_,
                      oyOptions_FindString(options, "x_color_region_target", 0) ? 
@@ -972,7 +976,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
 
         error = !device_name || !oprofile_name;
         if(error >= 1)
-          message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+          oyX1_msg(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                   "The device_name/profile_name option is missed. Options:\n%s",
                   OY_DBG_ARGS_,
                   oyOptions_GetText( options, oyNAME_NICK )
@@ -1013,7 +1017,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
 
         error = !device_name || !oprofile_name;
         if(error >= 1)
-          message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+          oyX1_msg(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                   "The device_name option is missed. Options:\n%s",
                   OY_DBG_ARGS_,
                   oyOptions_GetText( options, oyNAME_NICK )
@@ -1038,7 +1042,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
   }
 
 
-  message(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+  oyX1_msg(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                 "This point should not be reached. Options:\n%s", OY_DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
@@ -1068,7 +1072,7 @@ int            oyX1Config_Rank       ( oyConfig_s        * config )
 
   if(!config)
   {
-    message(oyMSG_DBG, (oyStruct_s*)config, OY_DBG_FORMAT_ "\n "
+    oyX1_msg(oyMSG_DBG, (oyStruct_s*)config, OY_DBG_FORMAT_ "\n "
                 "No config argument provided.\n", OY_DBG_ARGS_ );
     return 0;
   }
@@ -1205,7 +1209,7 @@ oyIcon_s oyX1_api8_icon = {
 oyCMMapi8_s oyX1_api8 = {
   oyOBJECT_CMM_API8_S,
   0,0,0,
-  (oyCMMapi_s*) 0, /**< next */
+  (oyCMMapi_s*) & oyX1_api10_set_xcm_region_handler, /**< next */
 
   oyX1CMMInit,               /**< oyCMMInit_f      oyCMMInit */
   oyX1CMMMessageFuncSet,     /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
@@ -1311,4 +1315,304 @@ oyCMMInfo_s oyX1_cmm_module = {
 
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
 };
+
+int XcolorRegionFind(XcolorRegion * old_regions, unsigned long old_regions_n, Display * dpy, Window win, XRectangle * rectangle)
+{   
+  XRectangle * rect = 0;
+  int nRect = 0;
+  int pos = -1;
+  unsigned long i;
+  int j;
+    
+  /* get old regions */ 
+  old_regions = XcolorRegionFetch( dpy, win, &old_regions_n );
+  /* search region */
+  for(i = 0; i < old_regions_n; ++i) 
+  {     
+                 
+    if(!old_regions[i].region || pos >= 0)
+      break;                    
+
+    rect = XFixesFetchRegion( dpy, ntohl(old_regions[i].region),
+                              &nRect );
+
+    for(j = 0; j < nRect; ++j)
+    {
+      if(oy_debug) 
+        printf( "reg[%lu]: %dx%d+%d+%d %dx%d+%d+%d\n",
+                   i,
+                   rectangle->width, rectangle->height,
+                   rectangle->x, rectangle->y,
+                   rect[j].width, rect[j].height, rect[j].x, rect[j].y
+                  );
+      if(rectangle->x == rect[j].x &&
+         rectangle->y == rect[j].y &&
+         rectangle->width == rect[j].width &&
+         rectangle->height == rect[j].height )
+      {
+        pos = i;
+        break;
+      }
+    }
+  }
+
+  return pos;
+}
+
+/**
+ *  This function implements oyMOptions_Handle_f.
+ *
+ *  @version Oyranos: 0.4.0
+ *  @since   2012/01/11 (Oyranos: 0.4.0)
+ *  @date    2012/01/11
+ */
+int          oyX1MOptions_Handle     ( oyOptions_s       * options,
+                                       const char        * command,
+                                       oyOptions_s      ** result )
+{
+  oyOption_s * o = 0;
+  int error = 0;
+
+  if(oyFilterRegistrationMatch(command,"can_handle", 0))
+  {
+    if(oyFilterRegistrationMatch(command,"set_xcm_region", 0))
+    {
+      o = oyOptions_Find( options, "window_rectangle" );
+      if(!o)
+      {
+        oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
+                 "no option \"window_rectangle\" found");
+        error = 1;
+      }
+      oyOption_Release( &o );
+      o = oyOptions_Find( options, "window_id" );
+      if(!o)
+      {
+        oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
+                 "no option \"window_id\" found");
+        error = 1;
+      }
+      oyOption_Release( &o );
+      o = oyOptions_Find( options, "display_id" );
+      if(!o)
+      {
+        oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
+                 "no option \"display_id\" found");
+        error = 1;
+      }
+      oyOption_Release( &o );
+
+      return error;
+    }
+    else
+      return 1;
+  }
+  else if(oyFilterRegistrationMatch(command,"set_xcm_region", 0))
+  {
+    oyProfile_s * p = NULL;
+    oyRectangle_s * win_rect = NULL;
+    oyRectangle_s * old_rect = NULL;
+
+    Display * dpy = NULL;
+    Window win = 0;
+    char * blob = 0;
+    size_t size = 0;
+    XcolorProfile * profile = 0;
+    XserverRegion reg = 0;
+    XcolorRegion region;
+    int error;
+    XRectangle rec[2] = { { 0,0,0,0 }, { 0,0,0,0 } };
+    double rect[4];
+
+    oyBlob_s * win_id, * display_id;
+
+    win_id = (oyBlob_s*) oyOptions_GetType( options, -1, "window_id",
+                                          oyOBJECT_BLOB_S );
+    display_id = (oyBlob_s*) oyOptions_GetType( options, -1, "display_id",
+                                          oyOBJECT_BLOB_S );
+    win = (Window) oyBlob_GetPointer(win_id);
+    dpy = (Display *) oyBlob_GetPointer(display_id);
+
+    oyBlob_Release( &win_id );
+    oyBlob_Release( &display_id );
+
+    /* now handle the options */
+    win_rect = (oyRectangle_s*) oyOptions_GetType( options, -1, "window_rectangle",
+                                          oyOBJECT_RECTANGLE_S );
+    old_rect = (oyRectangle_s*) oyOptions_GetType( options, -1,
+                                 "old_window_rectangle", oyOBJECT_RECTANGLE_S );
+    o = oyOptions_Find( options, "icc_profile" );
+    p = (oyProfile_s*) oyOptions_GetType( options, -1, "icc_profile",
+                                          oyOBJECT_PROFILE_S );
+    if(!win_id || !display_id)
+      oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
+                "options \"display_id\" or \"win_id\" not found");
+    if(!win_rect)
+      oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
+                "options \"window_rectangle\" not found");
+
+
+    if(old_rect)
+    {
+      XcolorRegion *old_regions = 0;
+      unsigned long old_regions_n = 0;
+      int pos = -1;
+
+      oyRectangle_GetGeo( old_rect, &rect[0], &rect[1], &rect[2], &rect[3] );
+
+      rec[0].x = rect[0];
+      rec[0].y = rect[1];
+      rec[0].width = rect[2];
+      rec[0].height = rect[3];
+
+      /* get old regions */
+      old_regions = XcolorRegionFetch( dpy, win, &old_regions_n );
+      /* remove specified region */
+      pos = XcolorRegionFind( old_regions, old_regions_n, dpy, win, rec );
+      XFree( old_regions );
+      if(pos >= 0)
+      {
+        int undeleted_n = old_regions_n;
+        XcolorRegionDelete( dpy, win, pos, 1 );
+        old_regions = XcolorRegionFetch( dpy, win, &old_regions_n );
+        if(undeleted_n - old_regions_n != 1)
+          printf(  "removed %d; have still %d\n",
+                   pos, (int)old_regions_n );
+      } else
+        printf( "region not found in %lu\n", old_regions_n );
+
+      XFlush( dpy );
+
+    }
+
+    oyRectangle_GetGeo( win_rect, &rect[0], &rect[1], &rect[2], &rect[3] );
+
+    rec[0].x = rect[0];
+    rec[0].y = rect[1];
+    rec[0].width = rect[2];
+    rec[0].height = rect[3];
+
+    if(p)
+    {
+        blob = (char*)oyProfile_GetMem( p, &size, 0,0 );
+
+        if(blob && size)
+        {
+          int result;
+        /* Create a XcolorProfile object that will be uploaded to the display.*/
+          profile = (XcolorProfile*)malloc(sizeof(XcolorProfile) + size);
+
+          oyProfile_GetMD5(p, 0, (uint32_t*)profile->md5);
+
+          profile->length = htonl(size);
+          memcpy(profile + 1, blob, size);
+
+          result = XcolorProfileUpload( dpy, profile );
+          if(result)
+            oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
+                "XcolorProfileUpload: %d\n", result);
+        }
+    }
+
+    reg = XFixesCreateRegion( dpy, rec, 1);
+
+    region.region = htonl(reg);
+    if(blob && size)
+      memcpy(region.md5, profile->md5, 16);
+    else
+      memset( region.md5, 0, 16 );
+
+    /* upload the new or changed region to the X server */
+    error = XcolorRegionInsert( dpy, win, 0, &region, 1 );
+    if(error)
+          oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
+                    "XcolorRegionInsert failed %d\n", error );
+
+  }
+
+  return 0;
+}
+
+/**
+ *  This function implements oyCMMInfoGetText_f.
+ *
+ *  @version Oyranos: 0.4.0
+ *  @since   2012/01/11 (Oyranos: 0.4.0)
+ *  @date    2012/01/11
+ */
+const char * oyX1InfoGetTextMyHandler( const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
+{
+         if(strcmp(select, "can_handle")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "check";
+    else if(type == oyNAME_NAME)
+      return _("check");
+    else
+      return _("Check if this module can handle a certain command.");
+  } else if(strcmp(select, "set_xcm_region")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "set_xcm_region";
+    else if(type == oyNAME_NAME)
+      return _("So something with options.");
+    else
+      return _("The set_xcm_region takes minimal three options. The key name "
+               "\"window_rectangle\" specifies in a oyRectangle_s object the requested "
+               "window region in coordinates relative to the window. The "
+               "\"old_window_rectangle\" is similiar to the \"window_rectangle\" "
+               "option but optionally specifies to remove a old rectangagle. "
+               "The \"window_id\" specifies a X11 window id as oyBlob_s. "
+               "The \"display_id\" specifies a X11 Display struct as oyBlob_s. "
+               "The " "\"icc_profile\" option of type oyProfile_s optionally provides "
+               "a ICC profile to upload to the server.");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("help");
+    else if(type == oyNAME_NAME)
+      return _("Handle options.");
+    else
+      return _("The oyX1 modules \"set_xcm_region\" handler lets you set "
+               "X Color Management compatible client side colour regions. "
+               "The implementation uses libXcm and Oyranos.");
+  }
+  return 0;
+}
+const char *oyX1_texts_set_xcm_region[4] = {"can_handle","set_xcm_region","help",0};
+
+/** @instance oyX1_api10_set_xcm_region_handler
+ *  @brief    oyX1 oyCMMapi10_s implementation
+ *
+ *  X Color Manageent server side regions setup
+ *
+ *  @version Oyranos: 0.4.0
+ *  @since   2012/01/11 (Oyranos: 0.4.0)
+ *  @date    2012/01/11
+ */
+oyCMMapi10_s    oyX1_api10_set_xcm_region_handler = {
+
+  oyOBJECT_CMM_API10_S,
+  0,0,0,
+  (oyCMMapi_s*) NULL,
+
+  oyX1CMMInit,
+  oyX1CMMMessageFuncSet,
+
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+  "set_xcm_region._" CMM_NICK,
+
+  {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
+  {0,4,0},                  /**< int32_t module_api[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+ 
+  oyX1InfoGetTextMyHandler,             /**< getText */
+  (char**)oyX1_texts_set_xcm_region,       /**<texts; list of arguments to getText*/
+ 
+  oyX1MOptions_Handle                  /**< oyMOptions_Handle_f oyMOptions_Handle */
+};
+
 
