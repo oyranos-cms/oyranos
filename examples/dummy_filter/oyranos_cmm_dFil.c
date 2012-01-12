@@ -30,12 +30,14 @@
 /** The CMM_NICK consists of four bytes, which appear as well in the library name. This is important for Oyranos to identify the required filter struct name. */
 #define CMM_NICK "dFil"
 #define OY_DUMMY_FILTER_REGISTRATION OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "my_filter"
+#define OY_DUMMY_OPTIONS_HANDLER_REG OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "my_handler"
 
 /** The message function pointer to use for messaging. */
-oyMessage_f message = 0;
+oyMessage_f dFil_msg = 0;
 
 extern oyCMMapi4_s   dFil_api4_my_filter;
 extern oyCMMapi7_s   dFil_api7_my_filter;
+extern oyCMMapi10_s  dFil_api10_my_handler;
 
 #ifndef USE_I18N
 /** i18n prototype */
@@ -73,7 +75,7 @@ int                dFilCMMInit       ( )
  */
 int            dFilCMMMessageFuncSet ( oyMessage_f         message_func )
 {
-  message = message_func;
+  dFil_msg = message_func;
   return 0;
 }
 
@@ -261,7 +263,7 @@ int      dFilFilterPlug_MyFilterRun (
 
   if( !ticket )
   {
-    message( oyMSG_WARN, (oyStruct_s*)node,
+    dFil_msg( oyMSG_WARN, (oyStruct_s*)node,
              "failed to get a job ticket");
     return 1;
   }
@@ -398,7 +400,7 @@ const char * dFilApi4UiGetText (
         /* Create a translation for dFil_api4_ui_my_filter::category. */
         sprintf( category,"%s/%s", i18n[0], i18n[1] );
       else
-        message(oyMSG_WARN, (oyStruct_s *) 0, _DBG_FORMAT_ "\n " "Could not allocate enough memory.", _DBG_ARGS_);
+        dFil_msg(oyMSG_WARN, (oyStruct_s *) 0, _DBG_FORMAT_ "\n " "Could not allocate enough memory.", _DBG_ARGS_);
     }
          if(type == oyNAME_NICK)
       return "category";
@@ -487,7 +489,7 @@ oyCMMapi7_s   dFil_api7_my_filter = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
-  (oyCMMapi_s*) 0, /* oyCMMapi_s * next */
+  (oyCMMapi_s*) & dFil_api10_my_handler, /* oyCMMapi_s * next */
   
   dFilCMMInit, /* oyCMMInit_f */
   dFilCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
@@ -513,4 +515,137 @@ oyCMMapi7_s   dFil_api7_my_filter = {
 
 
 /* OY_DUMMY_FILTER_REGISTRATION ----------------------------------------------*/
+
+/* OY_DUMMY_OPTIONS_HANDLER_REG ----------------------------------------------*/
+
+/**
+ *  This function implements oyMOptions_Handle_f.
+ *
+ *  @version Oyranos: 0.4.0
+ *  @since   2012/01/11 (Oyranos: 0.4.0)
+ *  @date    2012/01/11
+ */
+int          dFilMOptions_Handle     ( oyOptions_s       * options,
+                                       const char        * command,
+                                       oyOptions_s      ** result )
+{
+  oyOption_s * o = 0;
+  int error = 0;
+
+  if(oyFilterRegistrationMatch(command,"can_handle", 0))
+  {
+    if(oyFilterRegistrationMatch(command,"my_handler", 0))
+    {
+      o = oyOptions_Find( options, "print" );
+      if(!o)
+      {
+        dFil_msg( oyMSG_WARN, (oyStruct_s*)options,
+                 "no option \"print\" found");
+        error = 1;
+      }
+      oyOption_Release( &o );
+
+      return error;
+    }
+    else
+      return 1;
+  }
+  else if(oyFilterRegistrationMatch(command,"my_handler", 0))
+  {
+    o = oyOptions_Find( options, "print" );
+    if(o)
+    {
+      /* now handle the options */
+      dFil_msg( oyMSG_WARN, (oyStruct_s*)options,
+                 "\"print\" contains: %s",
+                 oyOption_GetText( o, oyNAME_NAME ) );
+      
+      oyOption_Release( &o );
+
+      o = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "my_handler.result." CMM_NICK,
+                        0 );
+      oyOption_SetFromText( o, "done", 0 );
+      if(!*result)
+        *result = oyOptions_New(0);
+      oyOptions_MoveIn( *result, &o, -1 );
+    }
+  }
+
+  return 0;
+}
+
+/**
+ *  This function implements oyCMMInfoGetText_f.
+ *
+ *  @version Oyranos: 0.4.0
+ *  @since   2012/01/11 (Oyranos: 0.4.0)
+ *  @date    2012/01/11
+ */
+const char * dFilInfoGetTextMyHandler( const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
+{
+         if(strcmp(select, "can_handle")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "check";
+    else if(type == oyNAME_NAME)
+      return _("check");
+    else
+      return _("Check if this module can handle a certain command.");
+  } else if(strcmp(select, "my_handler")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "my_handler";
+    else if(type == oyNAME_NAME)
+      return _("So something with options.");
+    else
+      return _("The my_handler takes a option with key name \"print\" and prints it.");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("help");
+    else if(type == oyNAME_NAME)
+      return _("Handle options.");
+    else
+      return _("This example module \"my_handler\" lets you print a option.");
+  }
+  return 0;
+}
+const char *dFil_texts_my_handler[4] = {"can_handle","my_handler","help",0};
+
+/** @instance dFil_api10_my_handler
+ *  @brief    dFil oyCMMapi10_s implementation
+ *
+ *  a simple example for handling options
+ *
+ *  @version Oyranos: 0.4.0
+ *  @since   2012/01/11 (Oyranos: 0.4.0)
+ *  @date    2012/01/11
+ */
+oyCMMapi10_s    dFil_api10_my_handler = {
+
+  oyOBJECT_CMM_API10_S,
+  0,0,0,
+  (oyCMMapi_s*) NULL,
+
+  dFilCMMInit,
+  dFilCMMMessageFuncSet,
+
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+  "my_handler._" CMM_NICK,
+
+  {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
+  {0,4,0},                  /**< int32_t module_api[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+ 
+  dFilInfoGetTextMyHandler,             /**< getText */
+  (char**)dFil_texts_my_handler,       /**<texts; list of arguments to getText*/
+ 
+  dFilMOptions_Handle                  /**< oyMOptions_Handle_f oyMOptions_Handle */
+};
+
+/* OY_DUMMY_OPTIONS_HANDLER_REG ----------------------------------------------*/
+
 
