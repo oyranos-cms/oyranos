@@ -1071,6 +1071,11 @@ void           oyRectangle_SetGeo    ( oyRectangle_s     * edit_rectangle,
                                        double              y,
                                        double              width,
                                        double              height );
+void           oyRectangle_GetGeo    ( oyRectangle_s     * rectangle,
+                                       double            * x,
+                                       double            * y,
+                                       double            * width,
+                                       double            * height );
 void           oyRectangle_SetByRectangle (
                                        oyRectangle_s     * edit_rectangle,
                                        oyRectangle_s     * ref );

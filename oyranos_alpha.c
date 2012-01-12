@@ -13178,6 +13178,30 @@ void           oyRectangle_SetGeo    ( oyRectangle_s     * edit_rectangle,
 }
 
 /**
+ *  @brief    get geometry
+ *  @memberof oyRectangle_s
+ *
+ *  @version Oyranos: 0.4.0
+ *  @since   2012/01/11 (Oyranos: 0.4.0)
+ *  @date    2012/01/11
+ */
+void           oyRectangle_GetGeo    ( oyRectangle_s     * rectangle,
+                                       double            * x,
+                                       double            * y,
+                                       double            * width,
+                                       double            * height )
+{
+  oyRectangle_s * s = rectangle;
+  if(!s)
+    return;
+
+  *x = s->x;
+  *y = s->y;
+  *width = s->width;
+  *height = s->height;
+}
+
+/**
  *  @brief   copy values
  *  @memberof oyRectangle_s
  *
