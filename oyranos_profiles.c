@@ -380,9 +380,7 @@ int main( int argc , char** argv )
       {
         const char * file_name = install[i];
         oyProfile_s * ip = oyProfile_FromFile( file_name, 0,0 );
-        const char * in = oyProfile_GetText( ip, oyNAME_DESCRIPTION );
-        int j;
-        char * show_text = 0, * txt = 0;
+        char * show_text = 0;
 
         if(!ip)
         {
@@ -393,7 +391,7 @@ int main( int argc , char** argv )
         if(strrchr(file_name, OY_SLASH_C))
           file_name = strrchr(file_name, OY_SLASH_C) + 1;
 
-        installProfile( ip, file_name, path, names, count, show_text, show_gui );
+        installProfile( ip, file_name, path, names, count, show_text, show_gui);
 
         oyProfile_Release( &ip );
       }

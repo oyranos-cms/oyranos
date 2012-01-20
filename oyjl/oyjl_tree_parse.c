@@ -743,7 +743,7 @@ yajl_status    oyjl_tree_free        ( oyjl_value_s     ** object )
     case oyjl_type_double:
          break;
     case oyjl_type_text:
-         if(v->value.text.text) oyjl_free_memory(&v->value.text.text);
+         if(v->value.text.text) oyjl_free_memory((void**)&v->value.text.text);
          oyjl_free_memory( (void**)object );
          break;
     case oyjl_type_array:
@@ -787,7 +787,7 @@ yajl_status    oyjl_tree_print( oyjl_value_s * v, int * level, FILE * fp )
     case oyjl_type_double:
          fprintf(fp, "oyjl_type_double: %g\n", v->value.floating); break;
     case oyjl_type_text:
-         fprintf(fp, "oyjl_type_text: %s 0x%x %u\n", oyjl_print_text(&v->value.text), v->value.text.text, v->value.text.len); break;
+         fprintf(fp, "oyjl_type_text: %s 0x%lx %u\n", oyjl_print_text(&v->value.text), (intptr_t)v->value.text.text, v->value.text.len); break;
     case oyjl_type_array:
          {
            int count = 0, i;

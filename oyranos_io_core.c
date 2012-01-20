@@ -290,7 +290,6 @@ char * oyReadUrlToMem_               ( const char        * url,
       fp = oyPOPEN_m( command, mode );
     if(fp)
     {
-      size_t check = 0;
       size_t mem_size = 0;
       char* mem = NULL;
 

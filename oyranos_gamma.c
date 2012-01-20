@@ -77,7 +77,6 @@ int main( int argc , char** argv )
   char * device_class = 0;
   int list_modules = 0;
   int list_taxi = 0;
-  int download_taxi = 0;
   int verbose = 0;
 
   char *ptr = NULL;
@@ -369,7 +368,7 @@ int main( int argc , char** argv )
           }
           fprintf( stderr, "%s: %s \"%s\"\n", _("Taxi ID"),
                    _("match value"), _("description") );
-          oyOptions_Release( cs_options );
+          oyOptions_Release( &cs_options );
         }
 
         printf("%s/0: %d ", oyNoEmptyString_m_(
@@ -396,7 +395,6 @@ int main( int argc , char** argv )
       oyConfigs_Release( &devices );
       oyOptions_Release( &options );
 
-      //oyDeviceProfileFromTaxiDB();
       return error;
     }
 
