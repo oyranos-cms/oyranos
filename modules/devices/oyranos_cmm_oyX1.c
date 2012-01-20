@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2007-2009 (C) Kai-Uwe Behrmann
+ *            2007-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyranos X11 module for Oyranos
  *  @internal
@@ -1514,20 +1514,22 @@ int          oyX1MOptions_Handle     ( oyOptions_s       * options,
         }
     }
 
-    reg = XFixesCreateRegion( dpy, rec, 1);
+    if( rect[0] || rect[1] || rect[2] || rect[3] )
+    {
+      reg = XFixesCreateRegion( dpy, rec, 1);
 
-    region.region = htonl(reg);
-    if(blob && size)
-      memcpy(region.md5, profile->md5, 16);
-    else
-      memset( region.md5, 0, 16 );
+      region.region = htonl(reg);
+      if(blob && size)
+        memcpy(region.md5, profile->md5, 16);
+      else
+        memset( region.md5, 0, 16 );
 
-    /* upload the new or changed region to the X server */
-    error = XcolorRegionInsert( dpy, win, 0, &region, 1 );
-    if(error)
+      /* upload the new or changed region to the X server */
+      error = XcolorRegionInsert( dpy, win, 0, &region, 1 );
+      if(error)
           oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
                     "XcolorRegionInsert failed %d\n", error );
-
+    }
   }
 
   return 0;
@@ -1560,14 +1562,16 @@ const char * oyX1InfoGetTextMyHandler( const char        * select,
       return _("So something with options.");
     else
       return _("The set_xcm_region takes minimal three options. The key name "
-               "\"window_rectangle\" specifies in a oyRectangle_s object the requested "
-               "window region in coordinates relative to the window. The "
-               "\"old_window_rectangle\" is similiar to the \"window_rectangle\" "
+               "\"window_rectangle\" specifies in a oyRectangle_s object the "
+               "requested window region in coordinates relative to the window. "
+               "If its parameters are all set to zero, then the rectangle is "
+               "ignored. The \"old_window_rectangle\" is similiar to the "
+               "\"window_rectangle\" "
                "option but optionally specifies to remove a old rectangagle. "
                "The \"window_id\" specifies a X11 window id as oyBlob_s. "
                "The \"display_id\" specifies a X11 Display struct as oyBlob_s. "
-               "The " "\"icc_profile\" option of type oyProfile_s optionally provides "
-               "a ICC profile to upload to the server.");
+               "The " "\"icc_profile\" option of type oyProfile_s optionally "
+               "provides a ICC profile to upload to the server.");
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)
