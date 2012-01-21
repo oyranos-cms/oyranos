@@ -2,7 +2,7 @@
  *  Oyranos is an open source Colour Management System 
  * 
  *  @par Copyright:
- *            2009-2010 (C) Kai-Uwe Behrmann
+ *            2009-2012 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -96,7 +96,7 @@ class Oy_Fl_Double_Window : public Fl_Double_Window
 };
 
 
-class Oy_Fl_Widget : public Fl_Widget, public Oy_Widget
+class Oy_Fl_Image_Widget : public Fl_Widget, public Oy_Widget
 {
   int e, ox, oy, px, py;
 public:
@@ -267,13 +267,13 @@ public:
     Fl_Widget::damage( c );
   }
 
-  Oy_Fl_Widget(int x, int y, int w, int h) : Fl_Widget(x,y,w,h)
+  Oy_Fl_Image_Widget(int x, int y, int w, int h) : Fl_Widget(x,y,w,h)
   {
     px=py=ox=oy=0;
     ticket = 0;
   };
 
-  ~Oy_Fl_Widget(void)
+  ~Oy_Fl_Image_Widget(void)
   {
     oyPixelAccess_Release( &ticket );
   };
@@ -287,7 +287,7 @@ public:
     oyPointer_s * oy_box_ptr = oyPointer_New(0);
     oyPointer_Set( oy_box_ptr,
                    __FILE__,
-                   "Oy_Fl_Widget",
+                   "Oy_Fl_Image_Widget",
                    this, 0, 0 );
     oyStruct_ObserverAdd( (oyStruct_s*)icc, (oyStruct_s*)conversion(),
                           (oyStruct_s*)oy_box_ptr,
@@ -296,7 +296,7 @@ public:
   }
 };
 
-class Oy_Fl_Box : public Fl_Box, public Oy_Fl_Widget
+class Oy_Fl_Image_Box : public Fl_Box, public Oy_Fl_Image_Widget
 {
 public:
   void damage( char c )
@@ -306,11 +306,11 @@ public:
     Fl_Box::damage( c );
   }
 
-  Oy_Fl_Box(int x, int y, int w, int h) : Fl_Box(x,y,w,h), Oy_Fl_Widget(x,y,w,h)
+  Oy_Fl_Image_Box(int x, int y, int w, int h) : Fl_Box(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
   {
   };
 
-  ~Oy_Fl_Box(void)
+  ~Oy_Fl_Image_Box(void)
   {
   };
 
@@ -329,7 +329,7 @@ public:
     oyPointer_s * oy_box_ptr = oyPointer_New(0);
     oyPointer_Set( oy_box_ptr,
                    __FILE__,
-                   "Oy_Fl_Box",
+                   "Oy_Fl_Image_Box",
                    this, 0, 0 );
     oyStruct_ObserverAdd( (oyStruct_s*)icc, (oyStruct_s*)conversion(),
                           (oyStruct_s*)oy_box_ptr,
@@ -360,13 +360,40 @@ private:
 
         /* on osX it uses sRGB without alternative */
         fl_draw_image( (const uchar*)image_data, 0, i, image->width, 1,
-                       channels, Oy_Fl_Widget::w()*channels);
+                       channels, Oy_Fl_Image_Widget::w()*channels);
         if(is_allocated)
           free( image_data );
       }
 
       oyImage_Release( &image );
     }
+  }
+};
+
+class Oy_Fl_Box : public Fl_Box, public Oy_Fl_Image_Widget
+{
+  oyProfile_s * edit_space;
+public:
+  void damage( char c )
+  {
+    if(c & FL_DAMAGE_USER1)
+      dirty = 1;
+    Fl_Box::damage( c );
+  }
+
+  Oy_Fl_Box(int x, int y, int w, int h, oyProfile_s * p) : Fl_Box(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
+  {
+     edit_space = oyProfile_Copy( p, NULL );
+  };
+
+  ~Oy_Fl_Box(void)
+  {
+     oyProfile_Release( &edit_space );
+  };
+
+private:
+  void draw()
+  {
   }
 };
 
@@ -396,7 +423,7 @@ int      conversionObserve           ( oyObserver_s      * observer,
                           "//" OY_TYPE_STD "/icc", oyOPTIONATTRIBUTE_ADVANCED,
                           0 );
 
-    Oy_Fl_Widget * oy_widget = (Oy_Fl_Widget*) oyPointer_GetPointer(
+    Oy_Fl_Image_Widget * oy_widget = (Oy_Fl_Image_Widget*) oyPointer_GetPointer(
                                              (oyPointer_s*)observer->user_data);
     oy_widget->damage( FL_DAMAGE_USER1 );
 
@@ -416,19 +443,19 @@ int              oyArray2d_ToPPM_    ( oyArray2d_s       * array,
 #include <FL/gl.h>
 
 class Oy_Fl_Shader_Box : public Fl_Gl_Window,
-                         public Oy_Fl_Widget
+                         public Oy_Fl_Image_Widget
 {
   char * frame_data;
 public:
   Oy_Fl_Shader_Box(int x, int y, int w, int h)
-    : Fl_Gl_Window(x,y,w,h), Oy_Fl_Widget(x,y,w,h)
+    : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
   { frame_data = NULL; };
   ~Oy_Fl_Shader_Box(void) { };
   void damage( char c )
   {
     if(c & FL_DAMAGE_USER1)
       dirty = 1;
-    Oy_Fl_Widget::damage( c );
+    Oy_Fl_Image_Widget::damage( c );
   }
 
 
@@ -436,8 +463,8 @@ private:
   int frame_dirty;
   void draw()
   {
-    int W = Oy_Fl_Widget::w(),
-        H = Oy_Fl_Widget::h();
+    int W = Oy_Fl_Image_Widget::w(),
+        H = Oy_Fl_Image_Widget::h();
     if(conversion())
     {
       int y, height = 0, is_allocated = 0;
@@ -533,7 +560,7 @@ private:
   {
     int ret = 1;
     redraw();
-    ret = Oy_Fl_Widget::handle( e );
+    ret = Oy_Fl_Image_Widget::handle( e );
     if(!ret)
     ret = Fl_Gl_Window::handle( e );
     return ret;
@@ -547,7 +574,7 @@ private:
     glLoadIdentity();
     glViewport( 0,0, W,H );
     glOrtho( -W,W, -H,H, -1.0,1.0);
-    Oy_Fl_Widget::resize(X,Y,W,H);
+    Oy_Fl_Image_Widget::resize(X,Y,W,H);
     redraw();
   }
 

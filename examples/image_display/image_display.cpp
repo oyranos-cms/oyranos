@@ -2,7 +2,7 @@
  *  Oyranos is an open source Colour Management System 
  * 
  *  @par Copyright:
- *            2009-2010 (C) Kai-Uwe Behrmann
+ *            2009-2012 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -57,9 +57,9 @@ char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
 }
 
 
-Oy_Fl_Double_Window * createWindow (Oy_Fl_Widget ** oy_box, uint32_t flags);
-void setWindowMenue                  ( Oy_Fl_Double_Window      * win,
-                                       Oy_Fl_Widget         * oy_box,
+Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags);
+void setWindowMenue                  ( Oy_Fl_Double_Window*win,
+                                       Oy_Fl_Image_Widget* oy_box,
                                        oyFilterNode_s    * node );
 
 int
@@ -127,8 +127,8 @@ main(int argc, char** argv)
 
   /* setup the drawing box */
   Oy_Fl_Shader_Box * oy_gl_box = 0;
-  Oy_Fl_Box * oy_box = 0;
-  Oy_Fl_Widget * oy_widget = 0;
+  Oy_Fl_Image_Box * oy_box = 0;
+  Oy_Fl_Image_Widget * oy_widget = 0;
   Oy_Fl_Double_Window * win = createWindow( &oy_widget, gl_box );
   if(oy_widget)
   {
@@ -138,7 +138,7 @@ main(int argc, char** argv)
       icc = oy_gl_box->setImage( file_name );
     } else
     {
-      oy_box = dynamic_cast<Oy_Fl_Box*> (oy_widget);
+      oy_box = dynamic_cast<Oy_Fl_Image_Box*> (oy_widget);
       icc = oy_box->setImage( file_name );
     }
   }
@@ -163,7 +163,7 @@ static Fl_RGB_Image image_oyranos_logo(oyranos_logo, 64, 64, 4, 0);
 
 struct box_n_opts {
   oyFilterNode_s * node;
-  Oy_Fl_Widget * box;
+  Oy_Fl_Image_Widget * box;
 };
 
 void
@@ -234,7 +234,7 @@ callback ( Fl_Widget* w, void* daten )
     printf("could not find a suitable program structure\n");
 }
 
-Oy_Fl_Double_Window * createWindow (Oy_Fl_Widget ** oy_box, uint32_t flags)
+Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags)
 {
   int w = 640,
       h = 480;
@@ -245,7 +245,7 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Widget ** oy_box, uint32_t flags)
       if(flags & 1)
         *oy_box = new Oy_Fl_Shader_Box(0,0,w,h);
       else
-        *oy_box = new Oy_Fl_Box(0,0,w,h);
+        *oy_box = new Oy_Fl_Image_Box(0,0,w,h);
       (*oy_box)->box(FL_FLAT_BOX);
       /* add some text */
       Fl_Box *box = new Fl_Box(0,h,w,100, "Oyranos");
@@ -267,7 +267,7 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Widget ** oy_box, uint32_t flags)
 }
 
 void setWindowMenue                  ( Oy_Fl_Double_Window * win,
-                                       Oy_Fl_Widget         * oy_box,
+                                       Oy_Fl_Image_Widget  * oy_box,
                                        oyFilterNode_s    * node )
 {
   struct box_n_opts * arg = new box_n_opts;
