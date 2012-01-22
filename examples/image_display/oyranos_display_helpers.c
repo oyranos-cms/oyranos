@@ -2,7 +2,7 @@
  *  Oyranos is an open source Colour Management System 
  * 
  *  @par Copyright:
- *            2009-2010 (C) Kai-Uwe Behrmann
+ *            2009-2012 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -277,4 +277,52 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
   return 0;
 }
 
+extern "C" { int oyWriteMemToFile_(const char* name, const void* mem, size_t size); }
+
+oyProfile_s * getEditingProfile      ( )
+{
+  static oyProfile_s * editing = NULL;
+
+  if(!editing)
+  {
+    oyOption_s *matrix = oyOption_FromRegistration("///colour_matrix."
+              "from_primaries."
+              "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma", NULL );
+    /* http://www.color.org/chardata/rgb/rommrgb.xalter
+     * original gamma is 1.8, we adapt to typical LCD gamma of 2.2 */
+    oyOption_SetFromDouble( matrix, 0.7347, 0, 0);
+    oyOption_SetFromDouble( matrix, 0.2653, 1, 0);
+    oyOption_SetFromDouble( matrix, 0.1596, 2, 0);
+    oyOption_SetFromDouble( matrix, 0.8404, 3, 0);
+    oyOption_SetFromDouble( matrix, 0.0366, 4, 0);
+    oyOption_SetFromDouble( matrix, 0.0001, 5, 0);
+    oyOption_SetFromDouble( matrix, 0.3457, 6, 0);
+    oyOption_SetFromDouble( matrix, 0.3585, 7, 0);
+    oyOption_SetFromDouble( matrix, 2.2, 8, 0);
+
+    oyOptions_s * opts = oyOptions_New(0),
+                * result = 0;
+
+    oyOptions_MoveIn( opts, &matrix, -1 );
+    oyOptions_Handle( "//"OY_TYPE_STD"/create_profile.icc",
+                                opts,"create_profile.icc_profile.colour_matrix",
+                                &result );
+
+    editing = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
+                                               oyOBJECT_PROFILE_S );
+    oyOptions_Release( &result );
+
+    oyProfile_AddTagText( editing, icSigProfileDescriptionTag,
+                                            "ICC Examin ROMM gamma 2.2" );
+
+    if(oy_debug)
+    {
+      size_t size = 0;
+      char * data = (char*) oyProfile_GetMem( editing, &size, 0, malloc );
+      oyWriteMemToFile_( "ICC Examin ROMM gamma 2.2.icc", data, size );
+    }
+  }
+
+  return editing;
+}
 
