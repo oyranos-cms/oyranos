@@ -253,7 +253,8 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
           /* Did the window area move? */
          ((!oyRectangle_IsEqual( disp_rectangle, old_display_rectangle ) ||
            /* Something explicite to update? */
-           !oyRectangle_IsEqual( ticket->output_image_roi, old_roi_rectangle )||
+           (old_roi_rectangle &&
+            !oyRectangle_IsEqual( ticket->output_image_roi, old_roi_rectangle ))||
            /* Did the image move? */
            ticket->start_xy[0] != ticket->start_xy_old[0] ||
            ticket->start_xy[1] != ticket->start_xy_old[1]) ||
