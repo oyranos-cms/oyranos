@@ -95,7 +95,6 @@ class Oy_Fl_Double_Window : public Fl_Double_Window
   };
 };
 
-
 class Oy_Fl_Image_Widget : public Fl_Widget, public Oy_Widget
 {
   int e, ox, oy, px, py;
@@ -370,6 +369,232 @@ private:
   }
 };
 
+class Fl_Oy_Group : public Fl_Group
+{
+  Fl_Offscreen off;
+  unsigned char * off_buf;
+  oyPixelAccess_s * ticket;
+  int W,H;
+  int e, px, py;
+  int dirty;
+  oyConversion_s * context;
+
+public:
+  oyRectangle_s * old_display_rectangle;
+
+  void damage( char c )
+  {
+    if(c & FL_DAMAGE_USER1)
+      dirty = 1;
+    Fl_Oy_Group::damage( c );
+  }
+  void drawPrepare( oyImage_s ** draw_image, oyDATATYPE_e data_type_request,
+                    int center_aligned )
+  {
+    {
+      Oy_Fl_Double_Window * win = 0;
+      win = dynamic_cast<Oy_Fl_Double_Window*> (window());
+      int X = win->pos_x + x();
+      int Y = win->pos_y + y();
+      int W = w();
+      int H = h();
+      int channels = 0;
+      oyPixel_t pt;
+      oyDATATYPE_e data_type;
+      oyImage_s * image = 0;
+      oyRectangle_s * display_rectangle = 0;
+      oyFilterNode_s * node_out = oyConversion_GetNode( conversion(),OY_OUTPUT);
+      void * display = 0,
+           * window = 0;
+
+#if defined(HAVE_X11)
+      /* add X11 window and display identifiers to output image */
+      display = fl_display;
+      window = (void*)fl_xid(win);
+#endif
+
+      /* Load the image before creating the oyPicelAccess_s object. */
+      image = oyConversion_GetImage( conversion(), OY_OUTPUT );
+
+      if(image && !ticket)
+      {
+        oyFilterPlug_s * plug = oyFilterNode_GetPlug( node_out, 0 );
+        ticket = oyPixelAccess_Create( 0,0, plug, oyPIXEL_ACCESS_IMAGE, 0 );
+      }
+
+      if(image)
+      {
+        /* take care to not go over the borders */
+        if(px < W - image->width) px = W - image->width;
+        if(py < H - image->height) py = H - image->height;
+        if(px > 0) px = 0;
+        if(py > 0) py = 0;
+
+        /* Inform about the images display coverage.  */
+        int offset_x = 0, offset_y = 0;
+        if(center_aligned)
+        {
+          if(W > image->width)
+            offset_x = (W - image->width) / 2;
+          if(H > image->height)
+            offset_y = (H - image->height) / 2;
+        }
+        display_rectangle = oyRectangle_NewWith( X+offset_x,Y+offset_y,W,H, 0 );
+      }
+
+#if DEBUG_
+      printf( "%s:%d new display rectangle: %s +%d+%d +%d+%d\n",
+              strrchr(__FILE__,'/')+1, __LINE__,
+              oyRectangle_Show(display_rectangle), x(), y(), px, py );
+#endif
+
+      if(ticket)
+      {
+        oyRectangle_s output_rectangle = {oyOBJECT_RECTANGLE_S,0,0,0};
+        oyRectangle_SamplesFromImage( image, 0, &output_rectangle );
+        output_rectangle.width = OY_MIN( W, image->width );
+        output_rectangle.height = OY_MIN( H, image->height );
+        oyRectangle_Scale( &output_rectangle, 1.0/image->width );
+#if DEBUG_
+        static int old_px = 0;
+        if(px != old_px)
+        {
+        old_px = px;
+        oyRectangle_s r = {oyOBJECT_RECTANGLE_S,0,0,0};
+        oyRectangle_SetByRectangle( &r, &output_rectangle );
+        oyRectangle_Scale( &r, image->width );
+        printf( "%s:%d output rectangle: %s start_xy:%.04g %.04g\n",
+                strrchr(__FILE__,'/')+1, __LINE__,
+                oyRectangle_Show(&r),
+                ticket->start_xy[0]*image->width, ticket->start_xy[1]*image->width );
+        }
+#endif
+        oyPixelAccess_ChangeRectangle( ticket,
+                                       -px/(double)image->width,
+                                       -py/(double)image->width,
+                                       &output_rectangle );
+      }
+
+      if(image)
+        dirty = oyDrawScreenImage(conversion(), ticket, display_rectangle,
+                                old_display_rectangle,
+                                NULL, "X11",
+                                data_type_request,
+                                display, window, dirty,
+                                image );
+
+      oyRectangle_Release( &display_rectangle );
+
+      if(oy_display_verbose)
+      {
+        static int done = 0;
+        if(!done)
+          oyShowGraph_( conversion()->input, 0 );
+        done = 1;
+      }
+
+      /* some error checks */
+      pt = oyImage_PixelLayoutGet( image );
+      data_type = oyToDataType_m( pt );
+      channels = oyToChannels_m( pt );
+      if(pt != 0 &&
+         ((channels != 4 && channels != 3) || data_type != data_type_request))
+      {
+        printf( "WARNING: wrong image data format: %s\n"
+                "need 4 or 3 channels with %s\n",
+                image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "",
+                oyDatatypeToText( data_type_request ) );
+        return;
+      }
+
+      *draw_image = image;
+    }
+  }
+
+  void draw()
+  {
+    if(!off || W!=w() || H != h())
+    {
+      W = w();
+      H = h();
+      if(off)
+        fl_delete_offscreen(off);
+      if(off_buf)
+        delete [] off_buf;
+      off = fl_create_offscreen(W,H);
+      off_buf = new unsigned char[W*H*4];
+      setImage();
+    }
+    fl_begin_offscreen(off);
+    Fl_Group::draw();
+    fl_read_image(off_buf,0,0,w(),h());
+    fl_end_offscreen();
+
+    if(conversion())
+    {
+      oyImage_s * image = 0;
+
+      drawPrepare( &image, oyUINT8, 0 );
+
+      oyImage_Release( &image );
+    }
+    fl_draw_image(off_buf, x(),y(),w(),h());
+  }
+
+  oyConversion_s * conversion()
+  {
+    return context;
+  }
+
+private:
+  oyImage_s * image;
+  oyProfile_s * editing;
+public:
+  oyFilterNode_s * setImage( )
+  {
+    oyFilterNode_s * icc = 0;
+    if(image)
+      oyImage_Release( &image );
+    image = oyImage_Create( w(), h(),
+                         off_buf ,
+                         oyChannels_m(oyProfile_GetChannelsCount(editing)) |
+                          oyUINT8,
+                         editing,
+                         0 );
+    oyConversion_Release( &context );
+    context = oyConversion_FromImageForDisplay( 
+                             image, image, &icc, oyOPTIONATTRIBUTE_ADVANCED,
+                             oyUINT8, 0 );
+    oyPixelAccess_Release( &ticket );
+    return icc;
+  }
+
+
+  Fl_Oy_Group( int X, int Y, int W, int H, oyProfile_s * p = NULL )
+  : Fl_Group(X,Y,W,H)
+  {
+    off = 0;
+    off_buf = NULL;
+    ticket = NULL;
+    context = NULL;
+    old_display_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
+    dirty = 1;
+    image = NULL;
+    W = 0; H = 0;
+    e = 0, px = 0, py = 0;
+    if(p)
+      editing = oyProfile_Copy( p, NULL );
+    else
+      editing = oyProfile_FromStd( oyASSUMED_WEB, NULL );
+  }
+  ~Fl_Oy_Group( )
+  {
+    oyConversion_Release( &context );
+    oyRectangle_Release( &old_display_rectangle );
+  }
+};
+
+#if 0
 class Oy_Fl_Box : public Fl_Box, public Oy_Fl_Image_Widget
 {
   oyProfile_s * edit_space;
@@ -396,7 +621,7 @@ private:
   {
   }
 };
-
+#endif
 
 extern "C" {
 int      conversionObserve           ( oyObserver_s      * observer,
