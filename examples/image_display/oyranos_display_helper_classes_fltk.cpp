@@ -442,7 +442,8 @@ public:
         display_rectangle = oyRectangle_NewWith( X+offset_x,Y+offset_y,W,H, 0 );
       }
 
-#if DEBUG_
+#if DEBUG
+      if(oy_debug)
       printf( "%s:%d new display rectangle: %s +%d+%d +%d+%d\n",
               strrchr(__FILE__,'/')+1, __LINE__,
               oyRectangle_Show(display_rectangle), x(), y(), px, py );
@@ -455,18 +456,21 @@ public:
         output_rectangle.width = OY_MIN( W, image->width );
         output_rectangle.height = OY_MIN( H, image->height );
         oyRectangle_Scale( &output_rectangle, 1.0/image->width );
-#if DEBUG_
-        static int old_px = 0;
-        if(px != old_px)
+#if DEBUG
+        if(oy_debug)
         {
-        old_px = px;
-        oyRectangle_s r = {oyOBJECT_RECTANGLE_S,0,0,0};
-        oyRectangle_SetByRectangle( &r, &output_rectangle );
-        oyRectangle_Scale( &r, image->width );
-        printf( "%s:%d output rectangle: %s start_xy:%.04g %.04g\n",
+          static int old_px = 0;
+          if(px != old_px)
+          {
+            old_px = px;
+            oyRectangle_s r = {oyOBJECT_RECTANGLE_S,0,0,0};
+            oyRectangle_SetByRectangle( &r, &output_rectangle );
+            oyRectangle_Scale( &r, image->width );
+            printf( "%s:%d output rectangle: %s start_xy:%.04g %.04g\n",
                 strrchr(__FILE__,'/')+1, __LINE__,
                 oyRectangle_Show(&r),
                 ticket->start_xy[0]*image->width, ticket->start_xy[1]*image->width );
+          }
         }
 #endif
         oyPixelAccess_ChangeRectangle( ticket,
@@ -513,6 +517,10 @@ public:
 
   void draw()
   {
+    if(oy_debug)
+      printf("%s:%d W:%d H:%d\n",
+              strrchr(__FILE__,'/')+1, __LINE__,
+              W, H );
     if(!off || W!=w() || H != h())
     {
       W = w();
@@ -536,6 +544,10 @@ public:
 
       drawPrepare( &image, oyUINT8, 0 );
 
+      if(oy_debug)
+      printf("%s:%d draw() %s\n",
+              strrchr(__FILE__,'/')+1, __LINE__,
+              oyFilterNode_GetText( icc, oyNAME_NAME ) );
       oyImage_Release( &image );
     }
     fl_draw_image(off_buf, x(),y(),w(),h());
@@ -548,23 +560,40 @@ public:
 
 private:
   oyImage_s * image;
+  oyImage_s * image_display;
   oyProfile_s * editing;
+  oyFilterNode_s * icc;
 public:
   oyFilterNode_s * setImage( )
   {
-    oyFilterNode_s * icc = 0;
-    if(image)
-      oyImage_Release( &image );
+    oyImage_Release( &image );
+    oyImage_Release( &image_display );
     image = oyImage_Create( w(), h(),
                          off_buf ,
                          oyChannels_m(oyProfile_GetChannelsCount(editing)) |
                           oyUINT8,
                          editing,
                          0 );
+    image_display = oyImage_Create( w(), h(),
+                         off_buf ,
+                         oyChannels_m(oyProfile_GetChannelsCount(editing)) |
+                          oyUINT8,
+                         editing,
+                         0 );
+    if(oy_debug)
+      printf("%s:%d image:%s image_display:%s\n",
+              strrchr(__FILE__,'/')+1, __LINE__,
+              image?"created":"failed",
+              image_display?"created":"failed");
     oyConversion_Release( &context );
+    oyFilterNode_Release( &icc );
     context = oyConversion_FromImageForDisplay( 
-                             image, image, &icc, oyOPTIONATTRIBUTE_ADVANCED,
+                             image, image_display, &icc, oyOPTIONATTRIBUTE_ADVANCED,
                              oyUINT8, 0 );
+    if(oy_debug)
+      printf("%s:%d context:%s\n",
+              strrchr(__FILE__,'/')+1, __LINE__,
+              oyFilterNode_GetText( icc, oyNAME_NAME ) );
     oyPixelAccess_Release( &ticket );
     return icc;
   }
@@ -580,6 +609,8 @@ public:
     old_display_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
     dirty = 1;
     image = NULL;
+    image_display = NULL;
+    icc = NULL;
     W = 0; H = 0;
     e = 0, px = 0, py = 0;
     if(p)
