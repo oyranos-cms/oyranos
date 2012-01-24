@@ -28,6 +28,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Tile.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Menu_Button.H>
 #include <FL/fl_draw.H>
@@ -240,18 +241,21 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags
 
   Fl::get_system_colors();
   Oy_Fl_Double_Window *win = new Oy_Fl_Double_Window( w, h+100, TARGET );
+  { Fl_Tile* t = new Fl_Tile(0,0, w, h+100);
       if(flags & 1)
         *oy_box = new Oy_Fl_Shader_Box(0,0,w,h);
       else
         *oy_box = new Oy_Fl_Image_Box(0,0,w,h);
       (*oy_box)->box(FL_FLAT_BOX);
+
       {
         oyProfile_s * e = NULL; /* default: sRGB */
         Fl_Oy_Group * og = new Fl_Oy_Group(0, h, w, 100, e);
+        int gh = h;
         oyProfile_Release( &e );
         {
           /* add some text */
-          Fl_Box *box = new Fl_Box(0,0,w,100, "Oyranos");
+          Fl_Box *box = new Fl_Box(0,0+gh,w,100, "Oyranos");
             box->labeltype(FL_ENGRAVED_LABEL);
             box->labelfont(0);
             box->labelsize(48);
@@ -262,15 +266,17 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags
         }
         /* place the colour managed logo */
         {
-          Fl_Box* o = new Fl_Box(16, 16, 64, 64);
+          Fl_Box* o = new Fl_Box(16, 16+gh, 64, 64);
             o->image(image_oyranos_logo);
             o->color(FL_RED);
             o->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
         }
         og->end();
       }
+    t->end();
+    Fl_Group::current()->resizable(t);
+  }
   win->end();
-  win->resizable(*oy_box);
 
   return win;
 }
