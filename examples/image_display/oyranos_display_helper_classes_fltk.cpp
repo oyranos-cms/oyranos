@@ -386,7 +386,7 @@ public:
   {
     if(c & FL_DAMAGE_USER1)
       dirty = 1;
-    Fl_Oy_Group::damage( c );
+    Fl_Group::damage( c );
   }
   void drawPrepare( oyImage_s ** draw_image, oyDATATYPE_e data_type_request,
                     int center_aligned )
@@ -517,11 +517,12 @@ public:
 
   void draw()
   {
-    if(oy_debug)
-      printf("%s:%d W:%d H:%d\n",
+    if(oy_display_verbose)
+      printf("%s:%d W:%d H:%d %dx%d+%d+%d %dx%d+%d+%d\n",
               strrchr(__FILE__,'/')+1, __LINE__,
-              W, H );
-    if(!off || W!=w() || H != h())
+              W, H, w(),h(),x(),y(),
+              Fl_Group::w(),Fl_Group::h(),Fl_Group::x(),Fl_Group::y() );
+    if(!off || W != w() || H != h())
     {
       W = w();
       H = h();
@@ -534,8 +535,12 @@ public:
       setImage();
     }
     fl_begin_offscreen(off);
+    int X = x(), Y = y();
+    position(0,0);
     Fl_Group::draw();
-    fl_read_image(off_buf,0,0,w(),h());
+    position(X,Y);
+    dirty=1;
+    fl_read_image(off_buf,0,0,W,H);
     fl_end_offscreen();
 
     if(conversion())
@@ -550,7 +555,7 @@ public:
               oyFilterNode_GetText( icc, oyNAME_NAME ) );
       oyImage_Release( &image );
     }
-    fl_draw_image(off_buf, x(),y(),w(),h());
+    fl_draw_image(off_buf, x(),y(),W,H);
   }
 
   oyConversion_s * conversion()
@@ -568,13 +573,13 @@ public:
   {
     oyImage_Release( &image );
     oyImage_Release( &image_display );
-    image = oyImage_Create( w(), h(),
+    image = oyImage_Create( W, H,
                          off_buf ,
                          oyChannels_m(oyProfile_GetChannelsCount(editing)) |
                           oyUINT8,
                          editing,
                          0 );
-    image_display = oyImage_Create( w(), h(),
+    image_display = oyImage_Create( W, H,
                          off_buf ,
                          oyChannels_m(oyProfile_GetChannelsCount(editing)) |
                           oyUINT8,
@@ -622,6 +627,10 @@ public:
   {
     oyConversion_Release( &context );
     oyRectangle_Release( &old_display_rectangle );
+    oyPixelAccess_Release( &ticket );
+    oyImage_Release( &image );
+    oyImage_Release( &image_display );
+    oyFilterNode_Release( &icc );
   }
 };
 
@@ -717,10 +726,29 @@ public:
 
 private:
   int frame_dirty;
+  int W,H;
   void draw()
   {
-    int W = Oy_Fl_Image_Widget::w(),
-        H = Oy_Fl_Image_Widget::h();
+    int W_ = Oy_Fl_Image_Widget::w(),
+        H_ = Oy_Fl_Image_Widget::h();
+    if(oy_display_verbose)
+      printf("%s:%d %s() %dx%d+%d+%d %dx%d+%d+%d\n", 
+     strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__, __LINE__, __func__,
+        W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
+        Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(), Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y());
+    if(W_ != W || H != H_)
+    {
+      W = W_;
+      H = H_;
+      if(frame_data) free(frame_data);
+      frame_data = (char*)malloc(W*H*3*2);
+    //Fl_Gl_Window::resize(X,Y,W,H);
+      glLoadIdentity();
+      glViewport( 0,0, W,H );
+      glOrtho( -W,W, -H,H, -1.0,1.0);
+      //Oy_Fl_Image_Widget::resize(X,Y,W,H);
+      //redraw();
+    }
     if(conversion())
     {
       int y, height = 0, is_allocated = 0;
@@ -740,7 +768,7 @@ private:
       if(channels == 4)
         gl_type = GL_RGBA;
 
-      if(oy_display_verbose && image)
+      if(0&&oy_display_verbose && image)
         fprintf(stdout, "%s:%d pixellayout: %d width: %d channels: %d\n",
                     strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
                     __LINE__,
@@ -771,7 +799,7 @@ private:
 
       int pos[4] = {-2,-2,-2,-2};
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
-      if(oy_display_verbose)
+      if(0&&oy_display_verbose)
         fprintf( stderr, "%s():%d %d,%d %d %d\n", __FILE__,__LINE__,
                  pos[0],pos[1],pos[2], pos[3] );
 
@@ -802,7 +830,7 @@ private:
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
 
       frame_dirty = 0;
-      if(oy_display_verbose)
+      if(0&&oy_display_verbose)
         fprintf(stdout, "%s:%d draw %dx%d %dx%d\n",
                     strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
                     __LINE__,
@@ -820,18 +848,6 @@ private:
     if(!ret)
     ret = Fl_Gl_Window::handle( e );
     return ret;
-  }
-
-  void resize(int X,int Y,int W,int H)
-  {
-    if(frame_data) free(frame_data);
-    frame_data = (char*)malloc(W*H*3*2);
-    Fl_Gl_Window::resize(X,Y,W,H);
-    glLoadIdentity();
-    glViewport( 0,0, W,H );
-    glOrtho( -W,W, -H,H, -1.0,1.0);
-    Oy_Fl_Image_Widget::resize(X,Y,W,H);
-    redraw();
   }
 
   void redraw()
