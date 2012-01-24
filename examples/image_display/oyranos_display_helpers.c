@@ -254,11 +254,11 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
  *                                     - "X11": a Window ID
  *  @param[in]     dirty               explicite redraw
  *  @param[out]    image               the image from graph to display
- *  @return                            0 - success, >=  1 - error
+ *  @return                            0 - success, -1 - issue, >=  1 - error
  *
  *  @version Oyranos: 0.4.0
  *  @since   2010/09/05 (Oyranos: 0.1.11)
- *  @date    2012/01/22
+ *  @date    2012/01/24
  */
 int  oyDrawScreenImage               ( oyConversion_s    * context,
                                        oyPixelAccess_s   * ticket,
@@ -286,6 +286,8 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
 
       if(!image)
         return 1;
+      if( W <= 0 || H <= 0)
+        return -1;
 
       image_tags = oyImage_TagsGet( image );
 
