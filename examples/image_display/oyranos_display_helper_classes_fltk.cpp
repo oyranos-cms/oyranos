@@ -711,11 +711,14 @@ class Oy_Fl_Shader_Box : public Fl_Gl_Window,
                          public Oy_Fl_Image_Widget
 {
   char * frame_data;
+  int W,H;
 public:
   Oy_Fl_Shader_Box(int x, int y, int w, int h)
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
-  { frame_data = NULL; };
+  { frame_data = NULL; W=0; H=0; };
+
   ~Oy_Fl_Shader_Box(void) { };
+
   void damage( char c )
   {
     if(c & FL_DAMAGE_USER1)
@@ -725,8 +728,6 @@ public:
 
 
 private:
-  int frame_dirty;
-  int W,H;
   void draw()
   {
     int W_ = Oy_Fl_Image_Widget::w(),
@@ -736,19 +737,7 @@ private:
      strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__, __LINE__, __func__,
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
         Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(), Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y());
-    if(W_ != W || H != H_)
-    {
-      W = W_;
-      H = H_;
-      if(frame_data) free(frame_data);
-      frame_data = (char*)malloc(W*H*3*2);
-    //Fl_Gl_Window::resize(X,Y,W,H);
-      glLoadIdentity();
-      glViewport( 0,0, W,H );
-      glOrtho( -W,W, -H,H, -1.0,1.0);
-      //Oy_Fl_Image_Widget::resize(X,Y,W,H);
-      //redraw();
-    }
+
     if(conversion())
     {
       int y, height = 0, is_allocated = 0;
@@ -774,8 +763,13 @@ private:
                     __LINE__,
                     pt, image->width, oyToChannels_m(pt) );
 
-      if(!valid())
+      if(!valid() ||
+         W_ != W || H_ != H || !frame_data)
       {
+        W = W_;
+        H = H_;
+        if(frame_data) free(frame_data);
+        frame_data = (char*)malloc(W*H*channels*2);
         valid(1);
         glLoadIdentity();
         glViewport( 0,0, W,H );
@@ -793,9 +787,6 @@ private:
 
       int frame_height = OY_MIN(image->height,H),
           frame_width = OY_MIN(image->width,W);
-
-      if(!frame_data)
-        frame_data = (char*)malloc(W*H*channels*2);
 
       int pos[4] = {-2,-2,-2,-2};
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
@@ -816,12 +807,6 @@ private:
           free( image_data );
       }
 
-      /*double scale = (double)H/(double)frame_height;
-
-      if(scale * frame_width > W)
-        scale = (double)W/(double)frame_width;
-
-      glPixelZoom( scale,-scale );*/
       glRasterPos2i(-frame_width, -frame_height);
       /* on osX it uses sRGB without alternative */
       glDrawPixels( frame_width, frame_height, gl_type,
@@ -829,7 +814,6 @@ private:
 
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
 
-      frame_dirty = 0;
       if(0&&oy_display_verbose)
         fprintf(stdout, "%s:%d draw %dx%d %dx%d\n",
                     strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
