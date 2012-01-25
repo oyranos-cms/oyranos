@@ -1,0 +1,158 @@
+#ifndef Oy_Fl_Shader_Box_H
+#define Oy_Fl_Shader_Box_H
+
+extern "C" {
+int              oyArray2d_ToPPM_    ( oyArray2d_s       * array,
+                                       const char        * file_name );
+}
+
+
+#include <FL/Fl_Gl_Window.H>
+#include <FL/Fl.H>
+#include <FL/gl.h>
+
+#include "Oy_Fl_Image_Widget.h"
+
+class Oy_Fl_Shader_Box : public Fl_Gl_Window,
+                         public Oy_Fl_Image_Widget
+{
+  char * frame_data;
+  int W,H;
+public:
+  Oy_Fl_Shader_Box(int x, int y, int w, int h)
+    : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
+  { frame_data = NULL; W=0; H=0; };
+
+  ~Oy_Fl_Shader_Box(void) { };
+
+  void damage( char c )
+  {
+    if(c & FL_DAMAGE_USER1)
+      dirty = 1;
+    Oy_Fl_Image_Widget::damage( c );
+  }
+
+
+private:
+  void draw()
+  {
+    int W_ = Oy_Fl_Image_Widget::w(),
+        H_ = Oy_Fl_Image_Widget::h();
+    if(oy_display_verbose)
+      printf("%s:%d %s() %dx%d+%d+%d %dx%d+%d+%d\n", 
+     strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__, __LINE__, __func__,
+        W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
+        Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(), Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y());
+
+    if(conversion())
+    {
+      int y, height = 0, is_allocated = 0;
+      oyPointer image_data = 0;
+      oyPixel_t pt;
+      int channels = 0;
+      oyImage_s * image = 0;
+      int gl_type = 0;
+
+      drawPrepare( &image, oyUINT16, 1 );
+
+      pt = oyImage_PixelLayoutGet( image );
+      channels = oyToChannels_m( pt );
+
+      if(channels == 3)
+        gl_type = GL_RGB;
+      if(channels == 4)
+        gl_type = GL_RGBA;
+
+      if(0&&oy_display_verbose && image)
+        fprintf(stdout, "%s:%d pixellayout: %d width: %d channels: %d\n",
+                    strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
+                    __LINE__,
+                    pt, image->width, oyToChannels_m(pt) );
+
+      if(!valid() ||
+         W_ != W || H_ != H || !frame_data)
+      {
+        W = W_;
+        H = H_;
+        if(frame_data) free(frame_data);
+        frame_data = (char*)malloc(W*H*channels*2);
+        valid(1);
+        glLoadIdentity();
+        glViewport( 0,0, W,H );
+        glOrtho( -W,W, -H,H, -1.0,1.0);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+      }
+
+      glClear(GL_COLOR_BUFFER_BIT);
+      glColor3f(1.0, 1.0, 1.0);
+      glBegin(GL_LINE_STRIP); glVertex2f(W, H); glVertex2f(-W,-H); glEnd();
+      glBegin(GL_LINE_STRIP); glVertex2f(W,-H); glVertex2f(-W, H); glEnd();
+
+      if(!image)
+        return;
+
+      int frame_height = OY_MIN(image->height,H),
+          frame_width = OY_MIN(image->width,W);
+
+      int pos[4] = {-2,-2,-2,-2};
+      glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
+      if(0&&oy_display_verbose)
+        fprintf( stderr, "%s():%d %d,%d %d %d\n", __FILE__,__LINE__,
+                 pos[0],pos[1],pos[2], pos[3] );
+
+      /* get the data */
+      if(image && frame_data)
+      for(y = 0; y < frame_height; ++y)
+      {
+        image_data = image->getLine( image, y, &height, -1, &is_allocated );
+
+        memcpy( &frame_data[frame_width*(frame_height-y-1)*channels*2], image_data,
+                frame_width*channels*2 );
+
+        if(is_allocated)
+          free( image_data );
+      }
+
+      glRasterPos2i(-frame_width, -frame_height);
+      /* on osX it uses sRGB without alternative */
+      glDrawPixels( frame_width, frame_height, gl_type,
+                    GL_UNSIGNED_SHORT, frame_data );
+
+      glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
+
+      if(0&&oy_display_verbose)
+        fprintf(stdout, "%s:%d draw %dx%d %dx%d\n",
+                    strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
+                    __LINE__,
+                    frame_width,frame_height,W,H);
+
+      oyImage_Release( &image );
+    }
+  }
+
+  int  handle (int e)
+  {
+    int ret = 1;
+    redraw();
+    ret = Oy_Fl_Image_Widget::handle( e );
+    if(!ret)
+    ret = Fl_Gl_Window::handle( e );
+    return ret;
+  }
+
+  void redraw()
+  {
+    Fl::awake(this);
+    Fl_Gl_Window::redraw();
+  }
+
+public:
+  oyFilterNode_s * setImage( const char * file_name )
+  {
+    oyFilterNode_s * icc = setImageType( file_name, oyUINT16 );
+    return icc;
+  }
+
+};
+
+#endif /* Oy_Fl_Shader_Box_H */

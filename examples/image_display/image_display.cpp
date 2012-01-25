@@ -24,19 +24,13 @@
 #define DEBUG 1
 
 #include "../../oyranos_logo.h"
-#include "oyranos_display_helper_classes_fltk.cpp"
+#include "oyranos_display_helper_classes_fltk.cpp" // observer callback
+#include "Oy_Fl_Group.h"
+#include "Oy_Fl_Shader_Box.h"
+#include "Oy_Fl_Image_Box.h"
 
-#include <FL/Fl.H>
-#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Tile.H>
-#include <FL/Fl_Box.H>
 #include <FL/Fl_Menu_Button.H>
-#include <FL/fl_draw.H>
-
-#include <FL/x.H>
-
-
-#include <cmath>
 
 #ifdef USE_GETTEXT
 #include "config.h" /* I18N */
@@ -44,8 +38,6 @@
 #else
 #define _(text) text
 #endif
-
-#define USE_RESOLVE
 
 
 extern "C" {

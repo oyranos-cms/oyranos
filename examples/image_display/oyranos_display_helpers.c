@@ -20,6 +20,20 @@
 #include <X11/Xlib.h>
 #endif
 
+#ifdef USE_GETTEXT
+#include "config.h" /* I18N */
+#include "fl_i18n/fl_i18n.H"
+#else
+#define _(text) text
+#endif
+
+
+extern "C" {
+const char *   oyDatatypeToText      ( oyDATATYPE_e        t); }
+
+#ifndef OY_MIN
+#define OY_MIN(a,b)    (((a) <= (b)) ? (a) : (b))
+#endif
 
 /** Function oyConversion_FromImageForDisplay
  *  @brief   generate a Oyranos graph from a image file name
