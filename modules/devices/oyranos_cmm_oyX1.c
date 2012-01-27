@@ -1381,7 +1381,7 @@ int          oyX1MOptions_Handle     ( oyOptions_s       * options,
       if(!o)
       {
         oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
-                 "no option \"window_rectangle\" found");
+                 "no option window_rectangle found");
         error = 1;
       }
       oyOption_Release( &o );
@@ -1389,7 +1389,7 @@ int          oyX1MOptions_Handle     ( oyOptions_s       * options,
       if(!o)
       {
         oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
-                 "no option \"window_id\" found");
+                 "no option window_id found");
         error = 1;
       }
       oyOption_Release( &o );
@@ -1397,7 +1397,7 @@ int          oyX1MOptions_Handle     ( oyOptions_s       * options,
       if(!o)
       {
         oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
-                 "no option \"display_id\" found");
+                 "no option display_id found");
         error = 1;
       }
       oyOption_Release( &o );
@@ -1444,12 +1444,12 @@ int          oyX1MOptions_Handle     ( oyOptions_s       * options,
     o = oyOptions_Find( options, "icc_profile" );
     p = (oyProfile_s*) oyOptions_GetType( options, -1, "icc_profile",
                                           oyOBJECT_PROFILE_S );
-    if(!win_id || !display_id)
+    if(!win || !dpy)
       oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
-                "options \"display_id\" or \"win_id\" not found");
+                "options display_id or window_id not found");
     if(!win_rect)
       oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
-                "options \"window_rectangle\" not found");
+                "option window_rectangle not found");
 
 
     if(old_rect)
