@@ -13,27 +13,10 @@
  */
 
 #include <oyranos.h>
-#include <oyranos_alpha.h>
-#include <oyranos_cmm.h>   /* for hacking into module API */
+#include <alpha/oyranos_alpha.h>
+#include "oyranos_display_helpers.h"
 
-#ifdef HAVE_X11
-#include <X11/Xlib.h>
-#endif
-
-#ifdef USE_GETTEXT
-#include "config.h" /* I18N */
-#include "fl_i18n/fl_i18n.H"
-#else
-#define _(text) text
-#endif
-
-
-extern "C" {
-const char *   oyDatatypeToText      ( oyDATATYPE_e        t); }
-
-#ifndef OY_MIN
-#define OY_MIN(a,b)    (((a) <= (b)) ? (a) : (b))
-#endif
+int oy_display_verbose = 0;
 
 /** Function oyConversion_FromImageForDisplay
  *  @brief   generate a Oyranos graph from a image file name
@@ -307,7 +290,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
 
     if(window && strcmp("X11", system_type) == 0)
     {
-#if defined(HAVE_X11)
+#if defined(HAVE_X)
       /* add X11 window and display identifiers to output image */
       oyOption_s * o = 0;
       Display *disp = (Display*) display;

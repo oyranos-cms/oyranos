@@ -242,7 +242,7 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags
 
       {
         oyProfile_s * e = NULL; /* default: sRGB */
-        Fl_Oy_Group * og = new Fl_Oy_Group(0, h, w, 100, e);
+        Oy_Fl_Group * og = new Oy_Fl_Group(0, h, w, 100, e);
         int gh = h;
         oyProfile_Release( &e );
         {

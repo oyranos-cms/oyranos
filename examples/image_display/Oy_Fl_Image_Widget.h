@@ -1,6 +1,8 @@
 #ifndef Oy_Fl_Image_Widget_H
 #define Oy_Fl_Image_Widget_H
 
+#include <assert.h>
+
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
 
@@ -51,8 +53,12 @@ public:
                     int center_aligned )
   {
     {
-      Oy_Fl_Double_Window * win = 0;
-      win = dynamic_cast<Oy_Fl_Double_Window*> (window());
+      Oy_Fl_Window_Base * topWindow_is_a_Oy_Fl_Window_Base = 0, * win = 0;
+      win = topWindow_is_a_Oy_Fl_Window_Base = 
+                                    dynamic_cast<Oy_Fl_Window_Base*> (window());
+      assert(topWindow_is_a_Oy_Fl_Window_Base != NULL);
+      int Oy_Fl_Window_Base_is_initialised_by_calling_its_handleFunc_from_topWindowHandleFunc = win->initialised();
+      assert(Oy_Fl_Window_Base_is_initialised_by_calling_its_handleFunc_from_topWindowHandleFunc);
       int X = win->pos_x + x();
       int Y = win->pos_y + y();
       int W = w();
@@ -66,10 +72,10 @@ public:
       void * display = 0,
            * window = 0;
 
-#if defined(HAVE_X11)
+#if defined(HAVE_X)
       /* add X11 window and display identifiers to output image */
       display = fl_display;
-      window = (void*)fl_xid(win);
+      window = (void*)fl_xid( Fl_Widget::window() );
 #endif
 
       /* Load the image before creating the oyPicelAccess_s object. */

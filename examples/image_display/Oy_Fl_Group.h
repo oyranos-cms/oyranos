@@ -1,10 +1,15 @@
 #ifndef Oy_Fl_Group_H
 #define Oy_Fl_Group_H
 
+#include <assert.h>
+
 #include <FL/Fl_Group.H>
 #include <FL/fl_draw.H>
 
-class Fl_Oy_Group : public Fl_Group
+#include "Oy_Fl_Double_Window.h"
+#include "oyranos_display_helpers.h"
+
+class Oy_Fl_Group : public Fl_Group
 {
   Fl_Offscreen off;
   unsigned char * off_buf;
@@ -27,8 +32,12 @@ public:
                     int center_aligned )
   {
     {
-      Oy_Fl_Double_Window * win = 0;
-      win = dynamic_cast<Oy_Fl_Double_Window*> (window());
+      Oy_Fl_Window_Base * topWindow_is_a_Oy_Fl_Window_Base = 0, * win = 0;
+      win = topWindow_is_a_Oy_Fl_Window_Base = 
+                                    dynamic_cast<Oy_Fl_Window_Base*> (window());
+      assert(topWindow_is_a_Oy_Fl_Window_Base != NULL);
+      int Oy_Fl_Window_Base_is_initialised_by_calling_its_handleFunc_from_topWindowHandleFunc = win->initialised();
+      assert(Oy_Fl_Window_Base_is_initialised_by_calling_its_handleFunc_from_topWindowHandleFunc);
       int X = win->pos_x + x();
       int Y = win->pos_y + y();
       int W = w();
@@ -42,10 +51,10 @@ public:
       void * display = 0,
            * window = 0;
 
-#if defined(HAVE_X11)
+#if defined(HAVE_X)
       /* add X11 window and display identifiers to output image */
       display = fl_display;
-      window = (void*)fl_xid(win);
+      window = (void*)fl_xid( Fl_Widget::window() );
 #endif
 
       /* Load the image before creating the oyPicelAccess_s object. */
@@ -168,7 +177,9 @@ public:
       off = fl_create_offscreen(W,H);
       off_buf = new unsigned char[W*H*4];
       setImage();
-    }
+    } else if(!context)
+      setImage();
+
     fl_begin_offscreen(off);
     int X = x(), Y = y();
     position(0,0);
@@ -238,8 +249,16 @@ public:
     return icc;
   }
 
+  void setProfile( oyProfile_s * p )
+  {
+    if(p)
+      editing = oyProfile_Copy( p, NULL );
+    else
+      editing = oyProfile_FromStd( oyASSUMED_WEB, NULL );
+    oyConversion_Release( &context );
+  }
 
-  Fl_Oy_Group( int X, int Y, int W, int H, oyProfile_s * p = NULL )
+  Oy_Fl_Group( int X, int Y, int W, int H, oyProfile_s * p = NULL )
   : Fl_Group(X,Y,W,H)
   {
     off = 0;
@@ -253,12 +272,9 @@ public:
     icc = NULL;
     W = 0; H = 0;
     e = 0, px = 0, py = 0;
-    if(p)
-      editing = oyProfile_Copy( p, NULL );
-    else
-      editing = oyProfile_FromStd( oyASSUMED_WEB, NULL );
+    setProfile( p );
   }
-  ~Fl_Oy_Group( )
+  ~Oy_Fl_Group( )
   {
     oyConversion_Release( &context );
     oyRectangle_Release( &old_display_rectangle );
