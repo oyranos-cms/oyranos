@@ -1567,7 +1567,7 @@ const char * oyX1InfoGetTextMyHandler( const char        * select,
                "If its parameters are all set to zero, then the rectangle is "
                "ignored. The \"old_window_rectangle\" is similiar to the "
                "\"window_rectangle\" "
-               "option but optionally specifies to remove a old rectangagle. "
+               "option but optionally specifies to remove a old rectangle. "
                "The \"window_id\" specifies a X11 window id as oyBlob_s. "
                "The \"display_id\" specifies a X11 Display struct as oyBlob_s. "
                "The " "\"icc_profile\" option of type oyProfile_s optionally "

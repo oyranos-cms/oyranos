@@ -78,7 +78,7 @@ const char * GetText                 ( const char        * select,
 const char * Api8UiGetText           ( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context );
-int          tunePPDSettings_i       ( const char        * profile_string, 
+int          tunePPDSettings_        ( const char        * profile_string, 
                                        const char        * printer_id, 
                                        ppd_file_t        * ppd);
 oyConfig_s*  getOyConfigPrinter_     ( const char        * printer_id );
@@ -371,7 +371,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
           keyword = ppd->attrs[i]->name;
 
           /* we support keys beginning with ColorKeyWords, e.g.
-             "ColorKeyWords1" "ColorKeyWords2" ... */
+             "ColorKeyWords" "ColorKeyWords" ... */
           snprintf( &key[0], 16, "%s", keyword );
           key[14] = 0;
         
@@ -492,7 +492,6 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
 
   if(error <= 0)
   {
-
     /** "list" call section */
     properties_request = oyOptions_FindString( options, "command", "properties" );
     if(oyOptions_FindString( options, "command", "list" ) ||
