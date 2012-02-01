@@ -1102,18 +1102,18 @@ oyRankPad oyX1_rank_map[] = {
   {"EDID_mnft", 0, 0, 0},              /**< is nice, covered by mnft_id */
   {"EDID_mnft_id", 1, -1, 0},          /**< is nice */
   {"model", 0, 0, 0},                  /**< important, covered by model_id */
-  {"EDID_model_id", 5, -5, 0},         /**< important, should not fail */
+  {"EDID_model_id", 1, -1, 0},         /**< important, but fails sometimes */
   {"EDID_date", 2, 0, 0},              /**< good to match */
   {"serial", 10, -2, 0},               /**< important, could slightly fail */
-  {"EDID_red_x", 1, -5, 0},    /**< is nice, should not fail */
-  {"EDID_red_y", 1, -5, 0},    /**< is nice, should not fail */
-  {"EDID_green_x", 1, -5, 0},  /**< is nice, should not fail */
-  {"EDID_green_y", 1, -5, 0},  /**< is nice, should not fail */
-  {"EDID_blue_x", 1, -5, 0},   /**< is nice, should not fail */
-  {"EDID_blue_y", 1, -5, 0},   /**< is nice, should not fail */
-  {"EDID_white_x", 1, -5, 0},  /**< is nice, should not fail */
-  {"EDID_white_y", 1, -5, 0},  /**< is nice, should not fail */
-  {"EDID_gamma", 1, -5, 0},            /**< is nice, should not fail */
+  {"EDID_red_x", 2, -5, 0},    /**< is nice, should not fail */
+  {"EDID_red_y", 2, -5, 0},    /**< is nice, should not fail */
+  {"EDID_green_x", 2, -5, 0},  /**< is nice, should not fail */
+  {"EDID_green_y", 2, -5, 0},  /**< is nice, should not fail */
+  {"EDID_blue_x", 2, -5, 0},   /**< is nice, should not fail */
+  {"EDID_blue_y", 2, -5, 0},   /**< is nice, should not fail */
+  {"EDID_white_x", 2, -5, 0},  /**< is nice, should not fail */
+  {"EDID_white_y", 2, -5, 0},  /**< is nice, should not fail */
+  {"EDID_gamma", 2, -5, 0},            /**< is nice, should not fail */
   {0,0,0,0}                            /**< end of list */
 };
 

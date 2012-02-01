@@ -12874,9 +12874,9 @@ int              oyProfiles_Count ( oyProfiles_s   * list )
  *  @param[in]     device              filter pattern
  *  @param[in,out] rank_list           list of rank levels for the profile list
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.4.0
  *  @since   2009/05/22 (Oyranos: 0.1.10)
- *  @date    2009/05/22
+ *  @date    2012/02/01
  */
 int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
                                        oyConfig_s        * device,
@@ -12922,8 +12922,9 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
     {
       DBG_NUM2_S( "found OYRANOS_automatic_generated: %d %s",
                   rank, strrchr(oyProfile_GetFileName(p,-1),'/')+1);
+      /* substract serial number and accound for possible wrong model_id */
       if(oyConfig_FindString( p_device, "serial", 0 ))
-        rank -= 11;
+        rank -= 12;
       else
         rank -= 1;
       DBG_NUM1_S("after serial && OYRANOS_automatic_generated: %d", rank);
