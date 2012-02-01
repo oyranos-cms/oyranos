@@ -379,7 +379,7 @@ int main( int argc , char** argv )
       for(i = 0; i < install_n; ++i)
       {
         const char * file_name = install[i];
-        oyProfile_s * ip = oyProfile_FromFile( file_name, 0,0 );
+        oyProfile_s * ip = oyProfile_FromFile( file_name, OY_NO_CACHE_WRITE, 0 );
         char * show_text = 0;
 
         if(!ip)
