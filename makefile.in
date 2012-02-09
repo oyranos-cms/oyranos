@@ -377,7 +377,6 @@ EXAMPLE_SOURCES = \
 	examples/image2pdf/image2pdf.c \
 	examples/image_display/image_display.cpp \
 	examples/libraw/oyranos_file.cpp \
-	examples/image_display/oyranos_display_helper_classes.cpp \
 	examples/image_display/oyranos_display_helper_classes_fltk.cpp \
 	examples/image_display/oyranos_display_helpers.c \
 	examples/xcmsevents/qcmsevents.cpp \
