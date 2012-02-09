@@ -532,6 +532,8 @@ else
   COMPILER=$CC
 fi
 $COMPILER $CFLAGS $ROOT_DIR/tests/intptr_test.c -o tests/intptr_test 2>/dev/null
+FPIC=-fPIC
+DPIC=-DPIC
 if [ -f tests/intptr_test ]; then
   tests/intptr_test
   INTPTR_SIZE=$?
@@ -540,8 +542,6 @@ if [ -f tests/intptr_test ]; then
   elif [ $INTPTR_SIZE -gt 4 ]; then
     echo_="64-bit build            detected"
     BARCH=64
-    FPIC=-fPIC
-    DPIC=-DPIC
     test -n "$ECHO" && $ECHO "BUILD_64 = 1" >> $CONF
   elif [ $INTPTR_SIZE -ne 0 ]; then
     echo_="$INTPTR_SIZE-byte intptr_t          detected"
