@@ -1001,10 +1001,11 @@ oyTESTRESULT_e testSettings ()
   
   for( i = 0; i < countB; ++i)
   {
+    char * t;
     o = oyOptions_Get( opts, i );
+    t = oyStringCopy_(oyOption_GetText(o, oyNAME_DESCRIPTION), oyAllocateFunc_);
     printf("%d: \"%s\": \"%s\" %s %d\n", i, 
-           oyOption_GetText( o, oyNAME_DESCRIPTION ), oyOption_GetValueText( o,
-                             malloc ),
+           t, oyOption_GetValueText( o, malloc ),
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                        oyFILTER_REG_OPTION, 0 ),
            ((oyOption_s_*)o)->flags );
@@ -1042,10 +1043,11 @@ oyTESTRESULT_e testSettings ()
   countB = oyOptions_Count( opts );
   for( i = 0; i < countB; ++i)
   {
+    char * t;
     o = oyOptions_Get( opts, i );
+    t = oyStringCopy_(oyOption_GetText(o, oyNAME_DESCRIPTION), oyAllocateFunc_);
     printf("%d: \"%s\": \"%s\" %s %d\n", i, 
-           oyOption_GetText( o, oyNAME_DESCRIPTION ), oyOption_GetValueText( o,
-                             malloc ),
+           t, oyOption_GetValueText( o, malloc ),
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                        oyFILTER_REG_OPTION, 0 ),
            ((oyOption_s_*)o)->flags );
