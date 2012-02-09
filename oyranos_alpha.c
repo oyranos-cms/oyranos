@@ -13799,10 +13799,10 @@ int            oyArray2d_ReleaseArray( oyArray2d_s       * obj )
     {
       if((s->own_lines == 1 && y == s->data_area.y) ||
          s->own_lines == 2)
-        deallocateFunc( &s->array2d[y][dsize * (int)s->data_area.x] );
+        deallocateFunc( &s->array2d[y][dsize * (long)s->data_area.x] );
       s->array2d[y] = 0;
     }
-    deallocateFunc( s->array2d + (size_t)s->data_area.y );
+    deallocateFunc( s->array2d + (long)s->data_area.y );
     s->array2d = 0;
   }
   return error;
@@ -14975,8 +14975,8 @@ int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
     }
     if(a->data_area.y != OY_ROUND(array_roi_pix->y))
     {
-      a->array2d += OY_ROUND(array_roi_pix->y + a->data_area.y);
-      a->data_area.y = -array_roi_pix->y;
+      a->array2d += (long)(OY_ROUND(array_roi_pix->y) + a->data_area.y);
+      a->data_area.y = -OY_ROUND(array_roi_pix->y);
     }
     a->width = array_roi_pix->width;
     a->height = array_roi_pix->height;
