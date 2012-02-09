@@ -2028,7 +2028,8 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
     n = w_out / channels;
 
-    lcm2_msg( oyMSG_DBG,(oyStruct_s*)requestor_plug, OY_DBG_FORMAT_
+    if(oy_debug > 1)
+      lcm2_msg( oyMSG_DBG,(oyStruct_s*)requestor_plug, OY_DBG_FORMAT_
              " threads_n: %d",
              OY_DBG_ARGS_, threads_n );
 
