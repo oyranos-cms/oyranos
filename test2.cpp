@@ -1484,7 +1484,7 @@ oyTESTRESULT_e testDeviceLinkProfile ()
   oyBlob_s * blob = oyBlob_New(0);
   int error = 0;
   const char * fn = 0;
-  int i,n, len;
+  int i,n=0, len;
 
   fprintf(stdout, "\n" );
 
@@ -1492,8 +1492,10 @@ oyTESTRESULT_e testDeviceLinkProfile ()
 
   /*oyConversion_RunPixels( cc, 0 );*/
 
-  oyFilterGraph_SetFromNode( graph, cc->input, 0, 0 );
-  n = oyFilterNodes_Count( graph->nodes );
+  if(cc)
+    oyFilterGraph_SetFromNode( graph, cc->input, 0, 0 );
+  if(graph)
+    n = oyFilterNodes_Count( graph->nodes );
   for(i = 0; i < n; ++i)
   {
     blob = oyFilterGraph_ToBlob( graph, i, 0 );
@@ -3261,8 +3263,9 @@ oyTESTRESULT_e testCMMnmRun ()
   filter = conversion->out_->core;
   image = oyConversion_GetImage( conversion, OY_OUTPUT );
 
-  result = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
-                              &pixel_access->array, 0, 0 );
+  if(pixel_access)
+    result = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
+                                &pixel_access->array, 0, 0 );
   error = ( result != 0 );
 
   if(error <= 0)
@@ -3635,8 +3638,11 @@ oyTESTRESULT_e testImagePixel()
   buf_16in2x2[9]=buf_16in2x2[10]=buf_16in2x2[11]=65535;
   memset( buf_16out2x2, 0, sizeof(uint16_t)*12 );
   /* use the lower left source pixel */
-  pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0.5;
-  pixel_access->output_image_roi->width = pixel_access->output_image_roi->height = 0.5;
+  if(pixel_access)
+  {
+    pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0.5;
+    pixel_access->output_image_roi->width = pixel_access->output_image_roi->height = 0.5;
+  }
   clck = oyClock();
   for(i = 0; i < n*1000; ++i)
   if(error <= 0)
@@ -3683,9 +3689,12 @@ oyTESTRESULT_e testImagePixel()
   buf_16in2x2[6]=buf_16in2x2[7]=buf_16in2x2[8]=0;
   buf_16in2x2[9]=buf_16in2x2[10]=buf_16in2x2[11]=65535;
   memset( buf_16out2x2, 0, sizeof(uint16_t)*12 );
-  pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0.5;
-  pixel_access->output_image_roi->width = pixel_access->output_image_roi->height = 0.5;
-  pixel_access->output_image_roi->x = pixel_access->output_image_roi->y = 0.5;
+  if(pixel_access)
+  {
+    pixel_access->start_xy[0] = pixel_access->start_xy[1] = 0.5;
+    pixel_access->output_image_roi->width = pixel_access->output_image_roi->height = 0.5;
+    pixel_access->output_image_roi->x = pixel_access->output_image_roi->y = 0.5;
+  }
   clck = oyClock();
   for(i = 0; i < n*1000; ++i)
   if(error <= 0)
