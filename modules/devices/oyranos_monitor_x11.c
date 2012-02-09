@@ -1231,7 +1231,9 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
 
     if( !disp->display )
       oyPostAllocHelper_m_( disp->display, 1,
-                            WARNc_S(_("open X Display failed")); return 0 )
+                            WARNc3_S("%s: %s %s", _("open X Display failed"),
+                            oyNoEmptyString_m_(disp->name),
+                            oyNoEmptyString_m_(text)); return 0 )
 
     disp->screen = 0;
   }
