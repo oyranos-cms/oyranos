@@ -2198,6 +2198,7 @@ oyTESTRESULT_e testCMMMonitorListing ()
   oyConfig_s * config = 0;
   oyOption_s * o = 0;
   int devices_n = 0;
+  char * device_name = 0;
   char * text = 0,
        * val = 0;
 
@@ -2218,6 +2219,9 @@ oyTESTRESULT_e testCMMMonitorListing ()
     config = oyConfigs_Get( configs, i );
     printf( "  %d oyConfig_FindString(..\"device_name\"..): %s\n", i,
             oyConfig_FindString( config, "device_name",0 ) );
+    if(i==0)
+      device_name = oyStringCopy_(oyConfig_FindString( config, "device_name",0),
+                                  oyAllocateFunc_ );
 
     clck = oyClock();
     error = oyDeviceProfileFromDB( config, &text, myAllocFunc );
@@ -2246,14 +2250,14 @@ oyTESTRESULT_e testCMMMonitorListing ()
   oyConfigs_Release( &configs );
   fprintf( stdout, "\n");
 
-  error = oyDeviceGet( 0, "monitor", ":0.0", 0, &config );
+  error = oyDeviceGet( 0, "monitor", device_name, 0, &config );
   k_n = oyConfig_Count( config );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyDeviceGet(..\"monitor\" \":0.0\"..) %d     ", k_n );
+    "oyDeviceGet(..\"monitor\" \"%s\"..) %d     ", device_name, k_n );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyDeviceGet(..\"monitor\" \":0.0\"..) %d     ", k_n );
+    "oyDeviceGet(..\"monitor\" \"%s\"..) %d     ", device_name, k_n );
   }
     for( k = 0; k < k_n; ++k )
     {
@@ -2362,19 +2366,20 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   oyOption_s * o = 0;
   char * val = 0;
   double clck = 0;
+  const char * device_name = getenv("DISPLAY");
 
   fprintf( stdout, "load a device ...\n");
   clck = oyClock();
-  error = oyDeviceGet( 0, "monitor", ":0.0", 0, &device );
+  error = oyDeviceGet( 0, "monitor", device_name, 0, &device );
   clck = oyClock() - clck;
   k_n = oyConfig_Count( device );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyDeviceGet(..\"monitor\" \":0.0\".. &device ) %d     %s", k_n,
+    "oyDeviceGet(..\"monitor\" \"%s\".. &device ) %d     %s", device_name, k_n,
                    oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyDeviceGet(..\"monitor\" \":0.0\".. &device) %d", k_n );
+    "oyDeviceGet(..\"monitor\" \"%s\".. &device) %d", device_name, k_n );
   }
 
   fprintf( stdout, "... and search for the devices DB entry ...\n");
