@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2004-2009 (C) Kai-Uwe Behrmann
+ *            2004-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    elektra dependent functions
  *  @internal
@@ -806,6 +806,8 @@ oyGetKeyString_ ( const char       *key_name,
   {
     sprintf( full_key_name, "%s%s", OY_SYS, key_name );
     key = keyNew( full_key_name, KEY_END );
+    rc=kdbGetKey( oy_handle_, key );
+    success = keyIsString(key);
     if(success)
       rc = keyGetString( key, name, MAX_PATH );
     keyDel( key ); key = 0;

@@ -5078,6 +5078,8 @@ OYAPI int  OYEXPORT
                                           device_name,
                                           device_class_registration );
     error = !device_class_registration;
+    if(error)
+      WARNc_S( "no device_class_registration" );
   }
 
   /** 1.2.2 get all device class module names */
