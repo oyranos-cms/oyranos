@@ -1436,7 +1436,7 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
 
   if(error > 0)
   {
-    WARNc2_S("%s: %s %d", _("no oyX1Monitor_s created"), device_name, error);
+    WARNc3_S("%s: %s %d", _("no oyX1Monitor_s created"), display_name, error);
     oyX1Monitor_release_( &disp );
   }
 
