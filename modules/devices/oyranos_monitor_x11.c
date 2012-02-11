@@ -432,7 +432,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
     DBG_PROG_ENDE
     return 0;
   } else {
-    const char * log = _("Cant read hardware information from device.");
+    const char * log = _("Can not read hardware information from device.");
     int r = -1;
 
     if(*mnft && (*mnft)[0])
@@ -471,10 +471,7 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
 
   disp = oyX1Monitor_newFrom_( device_name, 0 );
   if(!disp)
-  {
-    WARNc2_S("%s: %s", _("no oyX1Monitor_s created"), device_name);
     return 0;
-  }
 
   /* support the colour server device profile */
   if(flags & 0x01)
@@ -1438,7 +1435,10 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
   }
 
   if(error > 0)
+  {
+    WARNc2_S("%s: %s %d", _("no oyX1Monitor_s created"), device_name, error);
     oyX1Monitor_release_( &disp );
+  }
 
   DBG_PROG_ENDE
   return disp;
