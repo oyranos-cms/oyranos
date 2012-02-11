@@ -471,7 +471,10 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
 
   disp = oyX1Monitor_newFrom_( device_name, 0 );
   if(!disp)
+  {
+    WARNc2_S("%s: %s", _("no oyX1Monitor_s created"), device_name);
     return 0;
+  }
 
   /* support the colour server device profile */
   if(flags & 0x01)
