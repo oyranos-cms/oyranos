@@ -109,6 +109,12 @@ main(int argc, char** argv)
       gl_box = 0;
       ++file_pos;
     }
+    if(argc > 1 && (strcmp(argv[i], "--help") == 0 ||
+       strcmp(argv[i], "-h") == 0 ) )
+    {
+      printf("Usage: image_display --use-no-gl   use normal pixel copy\n" );
+      exit(0);
+    }
   }
   if(argc > file_pos && argv[file_pos])
     file_name = argv[file_pos];
