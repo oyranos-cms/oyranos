@@ -278,7 +278,7 @@ int main( int argc , char** argv )
       error = oyDevicesGet( 0, device_class, options, &devices );
 
       n = oyConfigs_Count( devices );
-      if(!error && 0 <= device_pos && device_pos < n )
+      if(error <= 0 && 0 <= device_pos && device_pos < n )
       {
         c = oyConfigs_Get( devices, device_pos );
         oy_display_name = strdup( oyConfig_FindString( c, "device_name", 0 ));
