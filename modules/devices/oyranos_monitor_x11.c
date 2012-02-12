@@ -161,6 +161,7 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
     atom = 0;
 
     if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XINERAMA ||
+        oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_SCREEN ||
         (oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR &&
           !nitems_return) )
     {
