@@ -51,7 +51,9 @@ int  runDaemon                       ( const char        * display_name );
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
 void  oyDeAllocFunc ( oyPointer ptr) { if(ptr) free (ptr); }
-
+int   compareRanks                   ( const void       * rank1,
+                                       const void       * rank2 )
+{const int32_t *r1=rank1, *r2=rank2; if(r1[1] < r2[1]) return 1; else return 0;}
 
 int main( int argc , char** argv )
 {
@@ -311,7 +313,7 @@ int main( int argc , char** argv )
     if(list_taxi)
     {
       oyConfig_s * taxi_dev;
-      int32_t rank_value, max_rank_value = 0, max_device_pos = -1;
+      int32_t * ranks;
       int head = 0;
       devices = 0;
 
@@ -332,11 +334,20 @@ int main( int argc , char** argv )
       if(n == 0)
       fprintf(stderr,
               "%s\n", _("Zero profiles found in Taxi ICC DB") );
+      ranks = calloc(sizeof(int32_t), n*2+1);
       for(i = 0; i < n; ++i)
       {
         taxi_dev = oyConfigs_Get( devices, i );
-        error = oyConfig_Compare( device, taxi_dev, &rank_value );
-        if(rank_value <= 0 && !verbose)
+        ranks[2*i+0] = i;
+        error = oyConfig_Compare( device, taxi_dev, &ranks[2*i+1] );
+
+        oyConfig_Release( &taxi_dev );
+      }
+      qsort( ranks, n, sizeof(int32_t)*2, compareRanks );
+      for(i = 0; i < n; ++i)
+      {
+        taxi_dev = oyConfigs_Get( devices, ranks[2*i+0] );
+        if(ranks[2*i+1] <= 0 && !verbose)
         {
           oyConfig_Release( &taxi_dev );
           continue;
@@ -375,7 +386,7 @@ int main( int argc , char** argv )
         }
 
         printf("%s/0: %d ", oyNoEmptyString_m_(
-                 oyConfig_FindString(taxi_dev, "TAXI_id", 0)), rank_value);
+                 oyConfig_FindString(taxi_dev, "TAXI_id", 0)), ranks[2*i+1]);
         printf("\"%s\"\n", oyNoEmptyString_m_(
                  oyConfig_FindString(taxi_dev, "TAXI_profile_description", 0)));
 
@@ -387,11 +398,6 @@ int main( int argc , char** argv )
           oyFree_m_(json_text);
         }
 
-        if(rank_value > max_rank_value)
-        {
-          max_rank_value = rank_value;
-          max_device_pos = i;
-        }
         oyConfig_Release( &taxi_dev );
       }
       oyConfig_Release( &device );
