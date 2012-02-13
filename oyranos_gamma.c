@@ -317,8 +317,8 @@ int main( int argc , char** argv )
 
       if(!oy_display_name)
       {
-        printf("%s\n", _("Please specify a monitor with the -d option.") );
-        system("oyranos-monitor -lc");
+        fprintf(stderr,
+                "%s\n", _("Please specify a monitor with the -d option.") );
         return error;
       }
 
@@ -329,6 +329,9 @@ int main( int argc , char** argv )
                            &device );
       oyDevicesFromTaxiDB( device, options, &devices, NULL );
       n = oyConfigs_Count( devices );
+      if(n == 0)
+      fprintf(stderr,
+              "%s\n", _("Zero profiles found in Taxi ICC DB") );
       for(i = 0; i < n; ++i)
       {
         taxi_dev = oyConfigs_Get( devices, i );
