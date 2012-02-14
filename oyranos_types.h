@@ -18,7 +18,7 @@
 
 #include <stdlib.h> /* for size_t */
 
-#if !defined(WIN32) || (defined(WIN32) && (defined(__CYGWIN__) || defined(__MINGW) || defined(__MINGW32)))
+#if !defined(WIN32) || (defined(WIN32) && (defined(__CYGWIN__) || defined(__MINGW) || defined(__MINGW32) || defined(__MINGW64__)))
 #define HAVE_POSIX 1
 #include <inttypes.h> /* uint32_t */
 #else
