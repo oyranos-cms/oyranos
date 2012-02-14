@@ -27,6 +27,7 @@
 #define uint8_t unsigned char
 #define int32_t __int32
 #define int16_t __int16
+#define intptr_t unsigned long int
 #define INT32_MAX  (2147483647)
 #define INT32_MIN  (-2147483647-1)
 #define UINT16_MAX  65535
