@@ -1002,10 +1002,12 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
       WARNc3_S("%d. \"%s\" %s", i, path, _("path is not a directory"));
       continue;
     }
+#ifdef HAVE_POSIX
     if (S_ISLNK (statbuf.st_mode)) {
       WARNc3_S("%d. \"%s\" %s", i, path, _("path is a link: ignored"));
       continue;
     }
+#endif
     dir[l] = opendir (path);
     if (!dir[l]) {
       WARNc3_S("%d. \"%s\" %s", i, path, _("path is not readable"));
@@ -1055,10 +1057,12 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
         DBG_MEM2_S("%d. %s does not exist", l, name)
         goto cont;
       }
+#ifdef HAVE_POSIX
       if (!S_ISLNK(statbuf.st_mode)){/*((statbuf.st_mode & S_IFMT) & S_IFLNK))  */
         DBG_MEM5_S("%d. %s is a link: ignored %d %d %d", l, name, (int)statbuf.st_mode , S_IFLNK, 0120000);
         /*goto cont; */
       }
+#endif
       if (S_ISDIR (statbuf.st_mode) &&
           l < MAX_DEPTH ) {
 
