@@ -2366,7 +2366,7 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   oyOption_s * o = 0;
   char * val = 0;
   double clck = 0;
-  const char * device_name = getenv("DISPLAY");
+  const char * device_name = NULL; /* getenv("DISPLAY") + ".0"; */
 
   fprintf( stdout, "load a device ...\n");
   clck = oyClock();

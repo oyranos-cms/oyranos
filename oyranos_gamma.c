@@ -777,8 +777,7 @@ int main( int argc , char** argv )
 #ifdef HAVE_X
 void cleanDisplay( Display * display )
 {
-  int error = 0,
-      n;
+  int error = 0;
   oyOptions_s * options = 0;
   oyConfigs_s * devices = 0;
   char * display_name = 0, * t;
@@ -795,6 +794,7 @@ void cleanDisplay( Display * display )
     error = oyOptions_SetFromText( &options,
                                    "//"OY_TYPE_STD"/config/command",
                                    "unset", OY_CREATE_NEW );
+    if(error) WARNc2_S("%s %d", _("found issues"),error);
     if(display_name)
     {
       t = calloc(sizeof(char), strlen(display_name));
@@ -813,6 +813,7 @@ void cleanDisplay( Display * display )
                                        "//" OY_TYPE_STD "/config/device_name",
                                        t, OY_CREATE_NEW );
         error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
+        if(error) WARNc2_S("%s %d", _("found issues"),error);
         oyConfigs_Release( &devices );
       }
     }
@@ -823,11 +824,13 @@ void cleanDisplay( Display * display )
     error = oyOptions_SetFromText( &options,
                                    "//"OY_TYPE_STD"/config/command",
                                    "list", OY_CREATE_NEW );
+    if(error) WARNc2_S("%s %d", _("found issues"),error);
     error = oyOptions_SetFromText( &options,
                                    "//" OY_TYPE_STD "/config/display_name",
                                    display_name, OY_CREATE_NEW );
+    if(error) WARNc2_S("%s %d", _("found issues"),error);
     error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
-    n = oyConfigs_Count( devices );
+    if(error) WARNc2_S("%s %d", _("found issues"),error);
     oyConfigs_Release( &devices );
     oyOptions_Release( &options );
 
@@ -841,15 +844,18 @@ void cleanDisplay( Display * display )
     /* refresh EDID */
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                    "list", OY_CREATE_NEW );
+    if(error) WARNc2_S("%s %d", _("found issues"),error);
     sprintf( t, "%s.%d", display_name, 0 );
     error = oyOptions_SetFromText( &options,
                                    "//" OY_TYPE_STD "/config/device_name",
                                    t, OY_CREATE_NEW );
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/edid",
                                    "refresh", OY_CREATE_NEW );
+    if(error) WARNc2_S("%s %d", _("found issues"),error);
     old_oy_debug = oy_debug;
     /*oy_debug = 1;*/
     error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
+    if(error) WARNc2_S("%s %d", _("found issues"),error);
     oy_debug = old_oy_debug;
     oyConfigs_Release( &devices );
     oyOptions_Release( &options );
@@ -954,9 +960,12 @@ int updateOutputConfiguration( Display * display )
      from the according Oyranos module */
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                  "list", OY_CREATE_NEW );
+  if(error) WARNc2_S("%s %d", _("found issues"),error);
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
+  if(error) WARNc2_S("%s %d", _("found issues"),error);
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
+  if(error) WARNc2_S("%s %d", _("found issues"),error);
   n = oyOptions_Count( options );
   oyOptions_Release( &options );
 
@@ -969,6 +978,7 @@ int updateOutputConfiguration( Display * display )
     device = oyConfigs_Get( devices, i );
 
     error = getDeviceProfile( display, device, i );
+    if(error) WARNc2_S("%s %d", _("found issues"),error);
 
     oyConfig_Release( &device );
   }

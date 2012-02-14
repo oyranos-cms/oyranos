@@ -185,7 +185,7 @@ callback ( Fl_Widget* w, void* daten )
                * model = 0;
     char * command = new char [1024];
     char * t = 0;
-    int error = 0, i;
+    int error = 0;
     char * ui_text = 0, ** namespaces = 0;
 
     if(!tmp_dir)
@@ -199,7 +199,7 @@ callback ( Fl_Widget* w, void* daten )
                                      malloc );
     /* export the options values */
     sprintf( command, "%s/image_display_in_tmp.xml", tmp_dir );
-    i = oyWriteMemToFile_( command, in_text, strlen(in_text) );
+    oyWriteMemToFile_( command, in_text, strlen(in_text) );
     in_text = 0; command[0] = 0;
 
     /* render the options to the UI */

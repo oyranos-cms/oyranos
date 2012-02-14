@@ -453,9 +453,8 @@ oyTESTRESULT_e testSettings ()
   oyDeAllocateFunc_(text); text = tmp; tmp = 0;
 
   doc = xmlParseMemory( text, oyStrlen_( text ) );
-  error = !doc;
   {
-    if(!doc)
+    if(error)
     {
       PRINT_SUB( oyTESTRESULT_FAIL, 
       "libxml2::xmlParseMemory() returned could not parse the document" );

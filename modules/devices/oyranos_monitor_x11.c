@@ -284,6 +284,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
               "PATH=" OY_BINDIR ":$PATH; oyranos-monitor-nvidia -p" );
 
     error = system( txt );
+    if(error) WARNc2_S("%s %d", _("found issues"),error);
     if(txt) { oyDeAllocateFunc_(txt); txt = 0; }
 
 #if !defined(IGNORE_EDID)
@@ -308,6 +309,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
 
       error = oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, vendor,
                       week, year, mnft_id, model_id, colours, allocate_func);
+      if(error) WARNc2_S("%s %d", _("found issues"),error);
 
       if(edid && error != XCM_EDID_OK)
         oyBlob_Release( &prop );
@@ -318,8 +320,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
   /* as a last means try Xorg.log for at least some informations */
   {
     char * log_file = 0;
-    char * log_text = 0,
-         * t;
+    char * log_text = 0;
     size_t log_size = 0;
     int screen = oyX1Monitor_screen_( disp ), i;
 
@@ -335,7 +336,6 @@ oyX1GetMonitorInfo_               (const char* display_name,
     if(log_file)
     {
       log_text = oyReadFileToMem_( log_file, &log_size, oyAllocateFunc_);
-      t = log_text;
     }
 
     if(log_text)
@@ -798,6 +798,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       if( atom && moni_profile)
       result = XChangeProperty( display, w, atom, XA_CARDINAL,
                        8, PropModeReplace, moni_profile, (int)size );
+      if(result) WARNc2_S("%s %d", _("found issues"),result);
 
       /* claim to be compatible with 0.4 
        * http://www.freedesktop.org/wiki/OpenIcc/ICC_Profiles_in_X_Specification_0.4
@@ -823,6 +824,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
           result = XChangeProperty( display, w, atom, XA_STRING,
                                     8, PropModeReplace,
                                     value, 4 );
+          if(result) WARNc2_S("%s %d", _("found issues"),result);
         }
       }
 
@@ -909,6 +911,7 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
 
         if(screen == disp->geo[1])
           r = system( command );
+        if(r) WARNc2_S("%s %d", _("found issues"),r);
 
         oyFree_m_( command )
       }

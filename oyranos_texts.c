@@ -959,13 +959,9 @@ char**  oyXDGPathsGet_( int             * count,
 char * oyPathContructAndTest_(char * path_, const char * subdir)
 {
   char * text = 0, * tmp = 0;
-  int subdir_len = 0;
 
   if(!path_)
     return 0;
-
-  if(subdir)
-    subdir_len = oyStrlen_(subdir);
 
   STRING_ADD( text, path_ );
   if(subdir)

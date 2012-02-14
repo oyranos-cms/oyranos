@@ -742,14 +742,11 @@ void         oyWriteOptionToHTML_    ( oyGROUP_e           group,
                                        char             ** text )
 {
   int   i = 0;
-  const oyOption_t_ * opt = 0;
   int n = 0;
   oyWIDGET_e *tmp = NULL;
   DBG_PROG_START
 
   
-         opt = oyOptionGet_( (oyWIDGET_e)group );
-
   tmp = oyWidgetListGet_( group, &n, oyAllocateFunc_ );
 
        for(i = 0; i < n; ++i)

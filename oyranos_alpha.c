@@ -8248,6 +8248,8 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
 
   device_ = oyConfig_New( "//" OY_TYPE_STD "/config", 0 );
   status = oyjl_tree_from_json( json_text, &json, 0 );
+  if(status != yajl_status_ok)
+    WARNc2_S( "\"%s\" %d\n", _("found issues parsing JSON"), status );
 
   error = oyOptions_FindInt( options, "pos", 0, &pos );
   oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
@@ -12767,6 +12769,8 @@ oyProfiles_s* oyProfiles_MoveIn      ( oyProfiles_s      * list,
     if(list && list->list_)
         error = oyStructList_MoveIn( list->list_, (oyStruct_s**) obj, pos,
                                      OY_OBSERVE_AS_WELL );
+    if(error)
+      WARNc2_S("%s: %d",_("found issues while moving in profile"),error);
   }
 
   return list;
@@ -15038,7 +15042,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   oyAlloc_f allocateFunc_ = 0;
   unsigned char * line_data = 0;
   int i,j, height;
-  size_t len, wlen;
+  size_t wlen;
 
   if(!image)
     return 1;
@@ -15161,7 +15165,6 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   {
     oyPointer src, dst;
 
-    len = (array_roi_pix.width + array_roi_pix.x) * data_size;
     wlen = image_roi_pix.width * data_size;
 
     if(allocate_method != 2)
@@ -17283,14 +17286,24 @@ char *         oyFilterRegistrationToText (
 {
   char  * text = 0, * tmp = 0;
   int     texts_n = 0,
-          pos = 0, single = 0, len = 0;
+          single = 0, len = 0;
 
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
 
   if(registration)
   {
-         if(fields & oyFILTER_REG_TOP)
+    if(fields == oyFILTER_REG_TOP ||
+       fields == oyFILTER_REG_DOMAIN ||
+       fields == oyFILTER_REG_TYPE ||
+       fields == oyFILTER_REG_APPLICATION ||
+       fields == oyFILTER_REG_OPTION ||
+       fields == oyFILTER_REG_MAX)
+      single = 1;
+
+#if USE_OLD_STRING_API
+    int pos = 0;
+    if(fields & oyFILTER_REG_TOP)
       pos = 1;
     else if(fields & oyFILTER_REG_DOMAIN)
       pos = 2;
@@ -17303,15 +17316,6 @@ char *         oyFilterRegistrationToText (
     else if(fields & oyFILTER_REG_MAX)
       pos = 6;
 
-    if(fields == oyFILTER_REG_TOP ||
-       fields == oyFILTER_REG_DOMAIN ||
-       fields == oyFILTER_REG_TYPE ||
-       fields == oyFILTER_REG_APPLICATION ||
-       fields == oyFILTER_REG_OPTION ||
-       fields == oyFILTER_REG_MAX)
-      single = 1;
-
-#if USE_OLD_STRING_API
     char ** texts = oyStringSplit_( registration, OY_SLASH_C, &texts_n,oyAllocateFunc_);
     if(texts_n >= pos && fields == oyFILTER_REG_TOP)
     {
@@ -18016,14 +18020,9 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
         lang = oyLanguage();
 
       oyObject_Lock( s->oy_, __FILE__, __LINE__ );
-      if(lang &&
-         oyStrcmp_( oyNoEmptyName_m_(oyLanguage()), lang ) == 0)
-        update = 0;
-
+      s->api4_ = cmm_api4;
       oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
     }
-
-    s->api4_ = cmm_api4;
   }
 
   if(error && s)
@@ -19548,6 +19547,8 @@ oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
       error = oyOptions_Filter( &node->core->options_, 0, 0,
                                 oyBOOLEAN_UNION,
                                 0, options );
+    if(error)
+      WARNc2_S("%s %d", _("found issues"),error);
     if(!node->core->options_)
       node->core->options_ = oyOptions_New( 0 );
   }
@@ -19557,6 +19558,8 @@ oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
   /** Observe exported options for changes and propagate to a existing graph. */
   error = oyOptions_ObserverAdd( options, (oyStruct_s*)node,
                                  0, oyFilterNodeObserve_ );
+  if(error)
+    WARNc2_S("%s %d", _("found issues"),error);
 
   return options;
 }

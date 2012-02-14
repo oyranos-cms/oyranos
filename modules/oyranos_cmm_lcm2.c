@@ -523,7 +523,6 @@ int            lcm2IntentFromOptions ( oyOptions_s       * opts,
 uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
 {
   int bpc = 0,
-      cmyk_cmyk_black_preservation = 0,
       gamut_warning = 0,
       precalculation = 0,
       flags = 0;
@@ -540,10 +539,6 @@ uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
       o_txt = oyOptions_FindString  ( opts, "precalculation", 0 );
       if(o_txt && oyStrlen_(o_txt))
         precalculation = atoi( o_txt );
-
-      o_txt = oyOptions_FindString  ( opts, "cmyk_cmyk_black_preservation", 0 );
-      if(o_txt && oyStrlen_(o_txt))
-        cmyk_cmyk_black_preservation = atoi( o_txt );
 
       /* this should be moved to the CMM and not be handled here in Oyranos */
       flags = bpc ?           flags | cmsFLAGS_BLACKPOINTCOMPENSATION :
@@ -1033,14 +1028,13 @@ int gamutCheckSampler16(const cmsUInt16Number In[],
                         void                * Cargo)
 {
   cmsCIELab Lab1, Lab2;
-  double d;
   oyPointer * ptr = (oyPointer*)Cargo;
 
   cmsLabEncoded2Float(&Lab1, In);
   cmsDoTransform( ptr[0], In, Out, 1 );
   cmsLabEncoded2Float(&Lab2, Out);
-  d = cmsDeltaE( &Lab1, &Lab2 );
-  /*if(abs(d) > 10 && ptr[1] != NULL)
+  /*double d = cmsDeltaE( &Lab1, &Lab2 );
+  if(abs(d) > 10 && ptr[1] != NULL)
   {
     Lab2.L = 50.0;
     Lab2.a = Lab2.b = 0.0;
@@ -1372,14 +1366,11 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   /*int error = !node || !size;*/
   oyPointer block = 0;
   int error = 0;
-  int channels = 0;
   int n,i,len;
   oyDATATYPE_e data_type = 0;
   size_t size_ = 0;
   oyFilterSocket_s * socket = (oyFilterSocket_s *)node->sockets[0];
   oyFilterPlug_s * plug = (oyFilterPlug_s *)node->plugs[0];
-  oyFilterCore_s * filter = 0;
-  oyFilterNode_s * input_node = 0;
   oyImage_s * image_input = 0,
             * image_output = 0;
   cmsHPROFILE * lps = 0;
@@ -1398,8 +1389,6 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   int verbose = oyOptions_FindString( node->tags, "verbose", "true" ) ? 1 : 0;
   const char * o_txt = 0;
 
-  filter = node->core;
-  input_node = plug->remote_socket_->node;
   image_input = (oyImage_s*)plug->remote_socket_->data;
   image_output = (oyImage_s*)socket->data;
 
@@ -1428,8 +1417,6 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
     lcm2_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_" can not handle oyHALF", OY_DBG_ARGS_ );
   }
-
-  channels = oyToChannels_m( image_input->layout_[0] );
 
   len = sizeof(cmsHPROFILE) * (15 + 2 + 1);
   lps = oyAllocateFunc_( len );
@@ -1931,8 +1918,8 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   int channels = 0;
   oyDATATYPE_e data_type_in = 0,
                data_type_out = 0;
-  int bps_out, bps_in;
-  oyPixel_t pixel_layout_in, pixel_layout_out;
+  int bps_in;
+  oyPixel_t pixel_layout_in;
 
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilterPlug_s * plug = 0;
@@ -1989,9 +1976,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   if(!error)
   {
     image_output = ticket->output_image;
-    pixel_layout_out = oyImage_PixelLayoutGet( image_output );
     data_type_out = oyToDataType_m( oyImage_PixelLayoutGet( image_output ) );
-    bps_out = oySizeofDatatype( data_type_out );
     channels = oyToChannels_m( oyImage_PixelLayoutGet( image_output ) );
 
     error = lcm2CMMTransform_GetWrap_( node->backend_data, &ltw );
@@ -2414,6 +2399,7 @@ oyProfile_s *      lcm2CreateICCMatrixProfile (
 
   error = oyProfile_AddTagText( prof, icSigCopyrightTag,
                                       "no copyright; use freely" );
+  if(error) WARNc2_S("%s %d", _("found issues"),error);
 
   oyDeAllocateFunc_( data ); size = 0;
   return prof;

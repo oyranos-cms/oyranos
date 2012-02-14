@@ -470,15 +470,13 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
   error = !devices;
   const char   * unset_request = 0,
                * profile_in = 0,
-               * profile_request = 0,
                * properties_request = 0,
                * setup_request = 0;
-  http_t * http = 0;
   static char * num = 0;
   const char * tmp = 0, * printer_name = 0;
 
   /* Initialize the CUPS server. */
-  http = oyGetCUPSConnection();
+  oyGetCUPSConnection();
 
   if(!num)
     num = malloc( 80 );
@@ -503,11 +501,6 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
         device = oyConfigs_Get( devices, i );
 
         printer_name = oyConfig_FindString( device, "device_name", 0 );
-
-
-        /* Building of a icc_profile option should be already done with the 
-           first call to "list" */
-        profile_request = oyOptions_FindString( options, "icc_profile", 0 );   
 
         /* Build oyNAME_NAME */
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
@@ -607,7 +600,7 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
 
 
   clean:
-  oyCloseCUPSConnection(); http=0;
+  oyCloseCUPSConnection();
   return error;
 }
 
@@ -1204,7 +1197,6 @@ int CUPSgetProfiles                  ( const char        * device_name,
    
           if(is_custom_profile == 1)
           {
-              int success = 0;
               /* Create a file for the custom profile in a local directory. */
               /* ex. '/home/bob/.config/color/icc/custom.icc' */
               char * profile_path = 0;
@@ -1213,7 +1205,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
               STRING_ADD( profile_path, profile_name );
 
               /* Output to file. */
-              success = oyProfile_ToFile_( p, profile_path);
+              oyProfile_ToFile_( p, profile_path);
 
               is_custom_profile = 0;      /* Done. Unmark as a custom profile. */
           }

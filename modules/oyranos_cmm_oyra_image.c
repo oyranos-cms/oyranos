@@ -530,10 +530,12 @@ int      oyraFilterPlug_ImageRectanglesRun (
            backward array. @todo use direct array copy oyArray2d_DataCopy() */
         error = oyImage_ReadArray( image, new_ticket->output_image_roi,
                                    new_ticket->array, 0 );
+        if(error) WARNc2_S("%s %d", _("found issues"),error);
         error = oyImage_FillArray( new_ticket->output_image,
                                    new_ticket->output_image_roi, 1,
                                    &ticket->array, new_ticket->output_image_roi,
                                    0 );
+        if(error) WARNc2_S("%s %d", _("found issues"),error);
       }
       oyPixelAccess_Release( &new_ticket );
 
@@ -543,6 +545,7 @@ int      oyraFilterPlug_ImageRectanglesRun (
     oyRectangle_SetGeo( &array_pix, 0,0,
               ticket->array->data_area.width, ticket->array->data_area.height );
     error = oyArray2d_SetFocus( ticket->array, &array_pix );
+    if(error) WARNc2_S("%s %d", _("found issues"),error);
   }
 
   return result;

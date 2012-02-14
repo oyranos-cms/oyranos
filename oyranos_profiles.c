@@ -502,10 +502,15 @@ int    installProfile                ( oyProfile_s       * ip,
           STRING_ADD( fn, sfn );
           STRING_ADD( fn, ".icc" );
           if(size)
+          {
             error = oyWriteMemToFile_ ( fn, data, size );
-
-          fprintf(stderr, "%s[%d%s]: \"%s\" -> \"%s\"\n",
+            if(error)
+            {
+              WARNc_S("Could not write to profile");
+	    } else
+              fprintf(stderr, "%s[%d%s]: \"%s\" -> \"%s\"\n",
                    _("Installed"), (int)size, _("bytes"), file_name, fn );
+          }
           oyDeAllocateFunc_(data); size = 0; data = 0;
         }
       }

@@ -344,7 +344,6 @@ int          oyFilterSocket_MatchImagingPlug (
   oyConnectorImaging_s * a = 0,  * b = 0;
   oyImage_s * image = 0;
   int colours_n = 0, n, i, j;
-  int coff = 0;
   oyDATATYPE_e data_type = 0;
 
   if(socket && socket->type_ == oyOBJECT_FILTER_SOCKET_S &&
@@ -367,8 +366,6 @@ int          oyFilterSocket_MatchImagingPlug (
         checked later. */
     if(image && image->layout_[oyLAYOUT] && match)
     {
-      coff = oyToColourOffset_m( image->layout_[oyLAYOUT] );
-
       /* channel counts */
       colours_n = oyProfile_GetChannelsCount( image->profile_ );
       if(image->layout_[oyCHANS] < b->min_channels_count ||

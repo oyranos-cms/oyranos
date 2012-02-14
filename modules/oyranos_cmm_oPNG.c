@@ -858,6 +858,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
                                  "//" OY_TYPE_STD "/input_png.file_read"
                                                                     "/filename",
                                  filename, OY_CREATE_NEW );
+  if(error) WARNc2_S("%s %d", _("found issues"),error);
 
 
   png_read_clean:

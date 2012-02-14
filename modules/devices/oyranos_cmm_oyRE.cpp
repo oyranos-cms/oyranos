@@ -604,21 +604,26 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                                           CMM_BASE_REG OY_SLASH "driver_version_string",
                                           driver_version_string,
                                           OY_CREATE_NEW);
+            if(error) WARNc2_S("%s %d", _("found issues"),error);
             error = oyOptions_SetFromInt(&device->backend_core,
                                          CMM_BASE_REG OY_SLASH "driver_version_number",
                                          driver_version_number,
                                          0,
                                          OY_CREATE_NEW);
+            if(error) WARNc2_S("%s %d", _("found issues"),error);
          }
 
          //FIXME: Should probably be removed, because command_list creates it anyway
          /*Handle "device_handle" option [OUT:informative]*/
          oyOption_s *handle_opt_dev = oyConfig_Find(device, "device_handle");
          if (!handle_opt_dev && handle_opt)
+	 {
             error = oyOptions_SetFromText(&device->data,
                                           CMM_BASE_REG OY_SLASH "device_handle",
                                           "filename\nblob",
                                           OY_CREATE_NEW);
+            if(error) WARNc2_S("%s %d", _("found issues"),error);
+         }
 
          /*Handle "supported_devices_info" option [OUT:informative]*/
          //FIXME: It is not here, because command_list creates it anyway

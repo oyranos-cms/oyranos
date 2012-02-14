@@ -587,7 +587,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
   char * tmp = 0;
   char * mem = 0;
   char * pos = 0;
-  icTagBase * tag_base = 0;
   icTagTypeSignature  sig = 0;
   int32_t size_ = -1;
   oyStructList_s * list = 0;
@@ -599,7 +598,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
   int mluc_size = 0;
   oyStructList_s * desc_tmp = 0;
-  int desc_tmp_n = 0;
   oyProfileTag_s * tmptag = 0;
 
 
@@ -863,7 +861,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
   if(!error && tag->status_ == oyOK)
   {
-    tag_base = tag->block_;
     mem = tag->block_;
     sig = tag->tag_type_;
 
@@ -1120,7 +1117,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
              uint8_t channels_out = *(icUInt8Number*)(mem+9);
              uint32_t offset_bcurve, offset_matrix, offset_mcurve, offset_clut,
                       offset_acurve;
-             int type = 0;
 
              offset_bcurve = oyGetTableUInt32_( &mem[12], 0, 0, 0 );
              offset_matrix = oyGetTableUInt32_( &mem[12], 0, 0, 1 );
@@ -1135,8 +1131,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
                 offset_matrix == 0 &&
                 offset_bcurve != 0)
              {
-               type = 1;
-               
                oyStringAddPrintf_( &tmp, AD, "%s: B",
                                    _("Type") );
                oyStructList_AddName( texts, tmp, -1);
@@ -1149,8 +1143,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
                 offset_matrix != 0 &&
                 offset_bcurve != 0)
              {
-               type = 2;
-               
                oyStringAddPrintf_( &tmp, AD, "%s: M - %s - B",
                                    _("Type"), _("Matrix") );
                oyStructList_AddName( texts, tmp, -1);
@@ -1163,8 +1155,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
                 offset_matrix == 0 &&
                 offset_bcurve != 0)
              {
-               type = 3;
-               
                oyStringAddPrintf_( &tmp, AD, "%s: A - %s - B",
                                    _("Type"), _("CLUT") );
                oyStructList_AddName( texts, tmp, -1);
@@ -1177,16 +1167,12 @@ oyStructList_s * oyIMProfileTag_GetValues(
                 offset_matrix != 0 &&
                 offset_bcurve != 0)
              {
-               type = 4;
-               
                oyStringAddPrintf_( &tmp, AD, "%s: A - %s - M - %s - B",
                                    _("Type"), _("CLUT"), _("Matrix") );
                oyStructList_AddName( texts, tmp, -1);
                oyFree_m_( tmp );
              } else
              {
-               type = 0;
-               
                oyStringAddPrintf_( &tmp, AD,"%s: A%s - %s%s - M%s - %s%s - B%s",
                                    _("Undefined"),
                                    offset_acurve?"*":"",
@@ -1232,7 +1218,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
              uint8_t channels_out = *(icUInt8Number*)(mem+9);
              uint32_t offset_bcurve, offset_matrix, offset_mcurve, offset_clut,
                       offset_acurve;
-             int type = 0;
 
              offset_bcurve = oyGetTableUInt32_( &mem[12], 0, 0, 0 );
              offset_matrix = oyGetTableUInt32_( &mem[12], 0, 0, 1 );
@@ -1247,8 +1232,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
                 offset_matrix == 0 &&
                 offset_bcurve != 0)
              {
-               type = 1;
-               
                oyStringAddPrintf_( &tmp, AD, "%s: B",
                                    _("Type") );
                oyStructList_AddName( texts, tmp, -1);
@@ -1261,8 +1244,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
                 offset_matrix != 0 &&
                 offset_bcurve != 0)
              {
-               type = 2;
-               
                oyStringAddPrintf_( &tmp, AD, "%s: B - %s - M",
                                    _("Type"), _("Matrix") );
                oyStructList_AddName( texts, tmp, -1);
@@ -1275,8 +1256,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
                 offset_matrix == 0 &&
                 offset_bcurve != 0)
              {
-               type = 3;
-               
                oyStringAddPrintf_( &tmp, AD, "%s: B - %s - A",
                                    _("Type"), _("CLUT") );
                oyStructList_AddName( texts, tmp, -1);
@@ -1289,16 +1268,12 @@ oyStructList_s * oyIMProfileTag_GetValues(
                 offset_matrix != 0 &&
                 offset_bcurve != 0)
              {
-               type = 4;
-               
                oyStringAddPrintf_( &tmp, AD, "%s: B - %s - M - %s - A",
                                    _("Type"), _("Matrix"), _("CLUT") );
                oyStructList_AddName( texts, tmp, -1);
                oyFree_m_( tmp );
              } else
              {
-               type = 0;
-               
                oyStringAddPrintf_( &tmp, AD,"%s: A%s - %s%s - M%s - %s%s - B%s",
                                    _("Undefined"),
                                    offset_acurve?"*":"",
@@ -2041,7 +2016,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
              mluc_size = 0;
              desc_tmp = 0;
-             desc_tmp_n = 0;
              tmptag = 0;
 
              off += 8;
@@ -2106,7 +2080,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
                                            icSigMultiLocalizedUnicodeType, oyOK,
                                            tag->size_ - offset, tmp );
                    tmp = 0;
-                   desc_tmp_n = 0;
                    desc_tmp = oyIMProfileTag_GetValues( tmptag );
                    if(oyStructList_Count( desc_tmp ) )
                    {
@@ -2716,6 +2689,7 @@ oyStructList_s *   oyStringsFrommluc ( const char        * mem,
   tmptag = oyProfileTag_New(0);
   tmp = oyAllocateFunc_(size);
   error = !memcpy(tmp, mem, size);
+  if(error) WARNc2_S("%s %d", _("found issues"),error);
   oyProfileTag_Set( tmptag, icSigProfileDescriptionTag,
                             icSigMultiLocalizedUnicodeType, oyOK,
                             size, tmp );

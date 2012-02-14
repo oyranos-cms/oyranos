@@ -376,7 +376,6 @@ int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
   int planar = oyToPlanar_m (pixel_layout);
   int flavour = oyToFlavor_m (pixel_layout);
   int cchans = _cmsChannelsOf( colour_space );
-  int lcms_colour_space;
   int extra = chan_n - cchans;
 
   if(chan_n > CMMMaxChannels_M)
@@ -384,7 +383,6 @@ int        oyPixelToCMMPixelLayout_  ( oyPixel_t           pixel_layout,
              "can not handle more than %d channels; found: %d",
              OY_DBG_ARGS_, CMMMaxChannels_M, chan_n);
 
-  lcms_colour_space = _cmsLCMScolorSpace( colour_space );
   cmm_pixel = COLORSPACE_SH(PT_ANY);
   cmm_pixel |= CHANNELS_SH(cchans);
   if(extra)
@@ -1169,14 +1167,11 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   /*int error = !node || !size;*/
   oyPointer block = 0;
   int error = 0;
-  int channels = 0;
   int n,i,len;
   oyDATATYPE_e data_type = 0;
   size_t size_ = 0;
   oyFilterSocket_s * socket = (oyFilterSocket_s *)node->sockets[0];
   oyFilterPlug_s * plug = (oyFilterPlug_s *)node->plugs[0];
-  oyFilterCore_s * filter = 0;
-  oyFilterNode_s * input_node = 0;
   oyImage_s * image_input = 0,
             * image_output = 0;
   cmsHPROFILE * lps = 0;
@@ -1195,8 +1190,6 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   int verbose = oyOptions_FindString( node->tags, "verbose", "true" ) ? 1 : 0;
   const char * o_txt = 0;
 
-  filter = node->core;
-  input_node = plug->remote_socket_->node;
   image_input = (oyImage_s*)plug->remote_socket_->data;
   image_output = (oyImage_s*)socket->data;
 
@@ -1225,8 +1218,6 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
     lcms_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_" can not handle oyFLOAT", OY_DBG_ARGS_ );
   }
-
-  channels = oyToChannels_m( image_input->layout_[0] );
 
   len = sizeof(cmsHPROFILE) * (15 + 2 + 1);
   lps = oyAllocateFunc_( len );
@@ -1647,6 +1638,15 @@ int  lcmsModuleData_Convert          ( oyPointer_s       * data_in,
                                            image_output->layout_[0],
                                            node->core->options_,
                                            &ltw, cmm_ptr_out );
+    if(!xform)
+    {
+      uint32_t f = image_input->layout_[0];
+      lcms_msg( oyMSG_WARN,(oyStruct_s*) node, OY_DBG_FORMAT_
+      "colourspace:%d extra:%d channels:%d lcms_bytes%d",
+      OY_DBG_ARGS_,
+      T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
+      error = 1;
+    }
     CMMProfileRelease_M (lps[0] );
   }
 
@@ -1668,8 +1668,8 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   int channels = 0;
   oyDATATYPE_e data_type_in = 0,
                data_type_out = 0;
-  int bps_out, bps_in;
-  oyPixel_t pixel_layout_in, pixel_layout_out;
+  int bps_in;
+  oyPixel_t pixel_layout_in;
 
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilterPlug_s * plug = 0;
@@ -1727,9 +1727,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   if(!error)
   {
     image_output = ticket->output_image;
-    pixel_layout_out = oyImage_PixelLayoutGet( image_output );
     data_type_out = oyToDataType_m( oyImage_PixelLayoutGet( image_output ) );
-    bps_out = oySizeofDatatype( data_type_out );
     channels = oyToChannels_m( oyImage_PixelLayoutGet( image_output ) );
 
     error = lcmsCMMTransform_GetWrap_( node->backend_data, &ltw );
@@ -2135,6 +2133,7 @@ oyProfile_s *      lcmsCreateICCMatrixProfile (
 
   error = oyProfile_AddTagText( prof, icSigCopyrightTag,
                                       "no copyright; use freely" );
+  if(error) WARNc2_S("%s %d", _("found issues"),error);
 
   oyDeAllocateFunc_( data ); size = 0;
   return prof;
