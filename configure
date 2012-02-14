@@ -515,8 +515,17 @@ else
         test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
         OSUNAME=BSD
       else
-        echo_="Oyranos may or may not compile on your $UNAME_ system"
-        test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+        if [ `uname -a | grep W32 | wc -l` -gt 0 ]; then
+          test -n "$ECHO" && $ECHO "WIN32 = 1" >> $CONF
+          EXEC_END=.exe
+          test -n "$ECHO" && $ECHO "#define WIN32 1" >> $CONF_H
+          echo_="Windows $UNAME_             detected"
+          test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+          OSUNAME=WIN32
+        else
+          echo_="Oyranos may or may not compile on your $UNAME_ system"
+          test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+        fi
       fi
     fi
   fi
