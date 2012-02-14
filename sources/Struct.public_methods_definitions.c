@@ -1,4 +1,4 @@
-#include <stdint.h>           /* uint64_t uintptr_t */
+#include "oyranos_types.h"/* uint64_t uintptr_t */
 #include "oyranos_cmm.h" /* oyObjectInfoStatic_s */
 
 const char * (*oyStruct_GetTextFromModule_p) (

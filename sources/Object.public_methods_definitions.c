@@ -1,4 +1,4 @@
-#include <stdint.h>           /* uint64_t uintptr_t */
+#include "oyranos_types.h"           /* uint64_t uintptr_t */
 
 static int oy_object_id_ = 0;
 #if OY_USE_OBJECT_POOL_
