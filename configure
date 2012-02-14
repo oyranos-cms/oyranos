@@ -841,6 +841,7 @@ if [ $? != 0 ] && [ 0 -eq $rpm ]; then
       cd "$dir"
     fi
     test -n "$ECHO" && $ECHO "ltdl=-lltdl" >> $PKGC
+    test -n "$ECHO" && $ECHO "elektra=\$(ELEKTRA_OBJ)" >> $PKGC
     test -n "$ECHO" && $ECHO ""
     test -n "$ECHO" && $ECHO "... $ELEKTRA_VERSION configured"
   else
@@ -850,7 +851,8 @@ if [ $? != 0 ] && [ 0 -eq $rpm ]; then
     echo 1 > error.tmp
   fi
 else
-  test -n "$ECHO" && $ECHO "ltdl=" >> $PKGC
+    test -n "$ECHO" && $ECHO "ltdl=" >> $PKGC
+    test -n "$ECHO" && $ECHO "elektra=`pkg-config --libs elektra`" >> $PKGC
 fi
 
 pkg-config  --atleast-version=1.0 yajl 2>/dev/null

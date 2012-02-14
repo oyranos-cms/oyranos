@@ -74,7 +74,6 @@ if [ "$echo_help" = "yes" ]; then
   echo "  $0 --settingsdirname   Oyranos settings directory name"
 fi
 
-  #elektra_dyn="`pkg-config --libs elektra`"
   if [ -f $libdir/libelektra.a ]; then
     elektra="$libdir/libelektra.a"
     if [ -f $libdir/libelektra-filesys.a ]; then
@@ -84,6 +83,7 @@ fi
       elektra="$elektra $libdir/elektra/libelektra-filesys.a"
     fi
   else
+    elektra_dyn="`pkg-config --libs elektra`"
     elektra="$elektra_dyn"
   fi
 
@@ -93,9 +93,9 @@ fi
 
 if [ "$echo_ldflags" = "yes" ]; then
   if [ -f liboyranos.so ]; then
-    echo "-L. -loyranos -loyranos_object -loyranos_core"
+    echo "-L. -loyranos -loyranos_object -loyranos_core $elektra $oyranos_add"
   else
-    echo "-L$libdir -loyranos -loyranos_object -loyranos_core"
+    echo "-L$libdir -loyranos -loyranos_object -loyranos_core $elektra $oyranos_add"
   fi
 fi
 
