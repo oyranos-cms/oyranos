@@ -144,120 +144,66 @@ authorization from SunSoft Inc.
  */
 
 
-#ifdef PACKAGE_NAME
-/*
-  June 9, 2003, Adapted for use with configure by Bob Friesenhahn
-  Added the stupid check for autoconf by Marti Maria. 
-  PACKAGE_NAME is defined if autoconf is being used 
-*/
-
-typedef unsigned char	icUInt8Number;
-typedef unsigned short	icUInt16Number;
-typedef unsigned int	icUInt32Number;
-typedef unsigned int	icUInt64Number[2];
-
-typedef char	icInt8Number;
-typedef short	icInt16Number;
-typedef int	icInt32Number;
-typedef int	icInt64Number[2];
-
-#else
-
 /* 
  *Apr-17-2002: Modified by Marti Maria in order to provide wider portability.
+ *14-Feb-2012: Modified to C99 taked from lcms2 for easier compiling
  */
 
-#if defined (__digital__) && defined (__unix__)
+#include <limits.h>
+/* I will give the chance of redefining basic types for compilers that are not fully C99 compliant */
+#ifndef CMS_BASIC_TYPES_ALREADY_DEFINED
 
-/* Tru64 */
+/* Base types */
+typedef unsigned char        icUInt8Number;   /* That is guaranteed by the C99 spec */
+typedef signed char          icInt8Number;    /* That is guaranteed by the C99 spec */
 
-#include <inttypes.h>
+#if CHAR_BIT != 8 
+#  error "Unable to find 8 bit type, unsupported compiler"
+#endif 
 
-typedef uint8_t   icUInt8Number;
-typedef uint16_t  icUInt16Number;
-typedef uint32_t  icUInt32Number;
-typedef uint32_t  icUInt64Number[2];
+/* IEEE float storage numbers */
+typedef float                icFloat32Number;
+typedef double               icFloat64Number;
 
-typedef int8_t     icInt8Number;
-typedef int16_t    icInt16Number;
-typedef int32_t    icInt32Number;
-typedef int32_t    icInt64Number[2];
-
+/* 16-bit base types */
+#if (USHRT_MAX == 65535U)
+ typedef unsigned short      icUInt16Number;
+#elif (UINT_MAX == 65535U)
+ typedef unsigned int        icUInt16Number;
 #else
-#ifdef __sgi
-#include "sgidefs.h"
+#  error "Unable to find 16 bits unsigned type, unsupported compiler"
+#endif
 
-
-/*
- * Number definitions
- */
-
-/* Unsigned integer numbers */
-typedef unsigned char   icUInt8Number;
-typedef unsigned short  icUInt16Number;
-typedef __uint32_t      icUInt32Number;
-typedef __uint32_t      icUInt64Number[2];
-
-/* Signed numbers */
-typedef char            icInt8Number;
-typedef short           icInt16Number;
-typedef __int32_t       icInt32Number;
-typedef __int32_t       icInt64Number[2];
-
-
-#else   
-#if defined(__GNUC__) || defined(__unix__) || defined(__unix)
-
-#include <sys/types.h>
-
-#if defined(__sun) || defined(__hpux) || defined (__MINGW) || defined(__MINGW32__)
-
-typedef uint8_t   icUInt8Number;
-typedef uint16_t  icUInt16Number;
-typedef uint32_t  icUInt32Number;
-typedef uint32_t  icUInt64Number[2];
-
+#if (SHRT_MAX == 32767)
+  typedef  short             icInt16Number;
+#elif (INT_MAX == 32767)
+  typedef  int               icInt16Number;
 #else
-
-/* Unsigned integer numbers */
-typedef u_int8_t   icUInt8Number;
-typedef u_int16_t  icUInt16Number;
-typedef u_int32_t  icUInt32Number;
-typedef u_int32_t  icUInt64Number[2];
-
+#  error "Unable to find 16 bits signed type, unsupported compiler"
 #endif
 
-
-/* Signed numbers */
-typedef int8_t     icInt8Number;
-typedef int16_t    icInt16Number;
-typedef int32_t    icInt32Number;
-typedef int32_t    icInt64Number[2];
-
-
-#else /* default definitions */
-
-/*
- * Number definitions
- */
-
-/* Unsigned integer numbers */
-typedef unsigned char   icUInt8Number;
-typedef unsigned short  icUInt16Number;
-typedef unsigned long   icUInt32Number;
-typedef unsigned long   icUInt64Number[2];
-
-/* Signed numbers */
-typedef char            icInt8Number;
-typedef short           icInt16Number;
-typedef long            icInt32Number;
-typedef long            icInt64Number[2];
-
-
-#endif  /* default defs */
+/* 32-bit base type */
+#if (UINT_MAX == 4294967295U)
+ typedef unsigned int        icUInt32Number;
+#elif (ULONG_MAX == 4294967295U)
+ typedef unsigned long       icUInt32Number;
+#else
+#  error "Unable to find 32 bit unsigned type, unsupported compiler"
 #endif
+
+#if (INT_MAX == +2147483647)
+ typedef  int                icInt32Number;
+#elif (LONG_MAX == +2147483647)
+ typedef  long               icInt32Number;
+#else
+#  error "Unable to find 32 bit signed type, unsupported compiler"
 #endif
+
+/* 64-bit base types */
+typedef icUInt32Number   icUInt64Number[2];
+typedef icInt32Number    icInt64Number[2];
 #endif
+
 
 /* Base types */
 
