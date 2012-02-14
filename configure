@@ -101,7 +101,7 @@ verbose=1
 fltk=1
 X11=0
 X_ADD_2="Xinerama Xxf86vm Xrandr Xext X11"
-LIBS_TEST="ltdl dl iconv intl m xml2 Xfixes cups sane XNVCtrl yajl pthread"
+LIBS_TEST="c ltdl dl iconv intl m xml2 Xfixes cups sane XNVCtrl yajl pthread"
 
 # find a suitable fltk-config script
 fltkconfig="fltk-config"
