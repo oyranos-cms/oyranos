@@ -366,6 +366,7 @@ test -n "$ECHO" && $ECHO "" > $CONF
 test -n "$ECHO" && $ECHO "" > $CONF_H
 test -n "$ECHO" && $ECHO "" > $CONF_I18N
 test -n "$ECHO" && $ECHO "" > $CONF_NV
+test -n "$ECHO" && $ECHO "" > yajl/makefile
 test -n "$ECHO" && $ECHO "# generated $PKGC automatically by configure from $PKGC.in" > $PKGC
 test -n "$ECHO" && $ECHO "" >> $PKGC
 test -n "$RPMECHO" && $RPMECHO "# generated $SPEC automatically by configure from $ROOT_DIR/$SPEC.in" > $SPEC
@@ -784,8 +785,13 @@ else
     fi
     test -n "$ECHO" && $ECHO "I18N_LIB = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
     test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
-    CFLAGS="$CFLAGS $FPIC"
-    CXXFLAGS="$CXXFLAGS $FPIC"
+    if [ $OSUNAME = "WIN32" ]; then
+      CFLAGS="$CFLAGS"
+      CXXFLAGS="$CXXFLAGS"
+    else
+      CFLAGS="$CFLAGS $FPIC"
+      CXXFLAGS="$CXXFLAGS $FPIC"
+    fi
   fi
 fi
  
