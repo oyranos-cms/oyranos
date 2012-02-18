@@ -33,6 +33,12 @@
 
 #ifdef HAVE_POSIX
 #include <dlfcn.h>
+#else
+#include <ltdl.h>
+#define dlopen  lt_dlopen
+#define dlsym   lt_dlsym
+#define dlerror lt_dlerror
+#define dlclose lt_dlclose
 #endif
 #include <math.h>
 #include <locale.h>   /* LC_NUMERIC */

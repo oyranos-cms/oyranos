@@ -24,9 +24,12 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "config.h"
+#ifdef HAVE_X
 #include <X11/Xcm/Xcm.h>
 #include <X11/Xcm/XcmEvents.h>
 #include <X11/extensions/Xrandr.h>
+#endif
 
 #include "oyranos.h"
 #include "oyranos_alpha.h"

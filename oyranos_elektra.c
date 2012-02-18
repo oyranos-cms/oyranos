@@ -17,8 +17,6 @@
 
 #ifdef HAVE_POSIX
 #include <unistd.h> /* geteuid() */
-#else
-#include <io.h>
 #endif
 
 #include <errno.h>
@@ -40,10 +38,6 @@
 #include "oyranos_string.h"
 #include "oyranos_xml.h"
 
-
-#ifdef HAVE_POSIX
-#include <unistd.h> /* geteuid() */
-#endif
 
 #ifndef KDB_VERSION_MAJOR
 #define KDB_VERSION_MAJOR 0
