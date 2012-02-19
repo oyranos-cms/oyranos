@@ -90,6 +90,8 @@ if [ -n "$LIBS" ] && [ $LIBS -gt 0 ]; then
             done
           fi
           rm tests/libtest$EXEC_END
+      else
+          echo "$l=" >> "$CONF_TEMP_SH"
       fi
     done
   fi
@@ -863,10 +865,14 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
           if [ $OSUNAME = "Darwin" ]; then
             if [ -n "`otool -L tests/libtest | grep $l`" ]; then
               echo "$l=-l$l" >> "$CONF_TEMP_SH"
+            else
+              echo "$l=" >> "$CONF_TEMP_SH"
             fi
           else
             if [ -n "`ldd tests/libtest | grep $l`" ]; then
               echo "$l=-l$l" >> "$CONF_TEMP_SH"
+            else
+              echo "$l=" >> "$CONF_TEMP_SH"
             fi
           fi
           rm tests/libtest$EXEC_END
@@ -894,6 +900,7 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
           echo_="!!! ERROR lib$l is missed"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
           ERROR=1
         else
+          echo "$l=" >> "$CONF_TEMP_SH"
           echo_="lib$l is missed"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
         fi
       fi

@@ -856,7 +856,6 @@ if [ $? != 0 ] && [ 0 -eq $rpm ]; then
       cd $ELEKTRA_VERSION && sh -c "$ROOT_DIR/$ELEKTRA_VERSION/configure --enable-static --enable-shared=false $nodeps_config_opt --prefix=$prefix"
       cd "$dir"
     fi
-    test -n "$ECHO" && $ECHO "ltdl=-lltdl" >> $PKGC
     test -n "$ECHO" && $ECHO "elektra=\$(ELEKTRA_OBJ)" >> $PKGC
     test -n "$ECHO" && $ECHO ""
     test -n "$ECHO" && $ECHO "... $ELEKTRA_VERSION configured"
@@ -867,7 +866,6 @@ if [ $? != 0 ] && [ 0 -eq $rpm ]; then
     echo 1 > error.tmp
   fi
 else
-    test -n "$ECHO" && $ECHO "ltdl=" >> $PKGC
     test -n "$ECHO" && $ECHO "elektra=`pkg-config --libs elektra`" >> $PKGC
 fi
 
@@ -1135,6 +1133,8 @@ test -n "$ECHO" && $ECHO "targetdirname=$targetdirname" >> $PKGC
 test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $PKGC
 test -n "$ECHO" && $ECHO "icondir=$icondir" >> $PKGC
 test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $PKGC
+test -n "$ECHO" && cat $CONF_TEMP_SH >> $PKGC
+test -n "$ECHO" && $ECHO "oyranos_add=-L\${libdir} \${elektra} \${ltdl} \${xml2} \${iconv} \${intl} \${yajl}" >> $PKGC
 test -n "$ECHO" && cat  "$ROOT_DIR/$PKGC.in" >> $PKGC
 if [ -n "$ECHO" ]; then
   test -n "$INFOECHO" && $INFOECHO generated $PKGC from "$ROOT_DIR/$PKGC.in"
