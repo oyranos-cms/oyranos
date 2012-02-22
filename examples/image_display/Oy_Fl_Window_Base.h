@@ -33,7 +33,7 @@ class Oy_Fl_Window_Base
     oywin->init = 1;
 #if defined(__APPLE__)
     /* osX virtualises window placement, but we need exact positioning */
-    if(oywin->pos_x != x() || oywin->pos_y != y())
+    if(oywin->pos_x != win->x() || oywin->pos_y != win->y())
     {
       win->redraw();
     }
