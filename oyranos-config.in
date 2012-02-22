@@ -53,6 +53,12 @@ do
 	--settingsdirname)
 	    echo_settingsdirname=yes
 	    ;;
+        --cmmdir)
+	    echo_cmmdirname=yes
+	    ;;
+        --metadir)
+	    echo_metadirname=yes
+	    ;;
 	*)
 	    echo_help=yes
 	    ;;
@@ -72,6 +78,8 @@ if [ "$echo_help" = "yes" ]; then
   echo "  $0 --usercolordir      path to users main color directory"
   echo "  $0 --iccdirname        ICC profile directory name"
   echo "  $0 --settingsdirname   Oyranos settings directory name"
+  echo "  $0 --cmmdir            Oyranos CMM directory name"
+  echo "  $0 --metadir           Oyranos meta module directory name"
 fi
 
   if [ -f $libdir/libelektra.a ]; then
@@ -118,5 +126,11 @@ if [ "$echo_iccdirname" = "yes" ]; then
 fi
 if [ "$echo_settingsdirname" = "yes" ]; then
   echo "$settingsdirname"
+fi
+if [ "$echo_cmmdirname" = "yes" ]; then
+  echo "$cmmdir"
+fi
+if [ "$echo_metadirname" = "yes" ]; then
+  echo "$libdir/$metasubpath"
 fi
 
