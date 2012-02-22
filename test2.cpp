@@ -708,7 +708,7 @@ oyTESTRESULT_e testOptionsCopy ()
   fprintf(stdout, "\n" );
 
   error = oyOptions_SetFromText( &setA,
-                "sw/oyranos.org/imaging/lcms.colour.icc/rendering_bpc.advanced",
+                "sw/oyranos.org/imaging/lcm2.colour.icc/rendering_bpc.advanced",
                                  "1", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &setA,
                                  "//" OY_TYPE_STD "/image/A", "true",
@@ -2342,7 +2342,11 @@ oyTESTRESULT_e testCMMMonitorModule ()
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   oyConfigs_Release( &devices );
 
+#ifdef __APPLE__
+  if(error > 0)
+#else
   if( error == -1 )
+#endif
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyDevicesGet( \"//" OY_TYPE_STD "\", unset, ... ) = -1  " );
   } else
