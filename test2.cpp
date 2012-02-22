@@ -2342,13 +2342,13 @@ oyTESTRESULT_e testCMMMonitorModule ()
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   oyConfigs_Release( &devices );
 
+  if( error == -1
 #ifdef __APPLE__
-  if(error > 0)
-#else
-  if( error == -1 )
+      ||  error == 0
 #endif
+    )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyDevicesGet( \"//" OY_TYPE_STD "\", unset, ... ) = -1  " );
+    "oyDevicesGet( \"//" OY_TYPE_STD "\", unset, ... ) = %d", error );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyDevicesGet( \"//" OY_TYPE_STD "\", unset, ... ) = %d", error );
