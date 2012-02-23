@@ -12,111 +12,270 @@
 # license that conforms to the Open Source Definition (Version 1.9)
 # published by the Open Source Initiative.
 
-Summary:   Color Management System
-Name:      oyranos
-License:   newBSD
-Group:     Development/Libraries/Other
-URL:       http://www.oyranos.org
-Vendor:    Kai-Uwe Behrmann
-BuildRoot: %{_tmppath}/%{name}-root
-Prefix:    %{_prefix}
+Summary:        Color Management System
+Name:           oyranos
+License:        BSD-3-Clause and GPL-2.0
+Group:          Development/Libraries/Other
+URL:            http://www.oyranos.org
+Vendor:         Kai-Uwe Behrmann
+BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+Prefix:         %{_prefix}
+Source1:        oyranos-rpmlintrc
+BuildRequires:  color-filesystem
 
 BuildRequires:  desktop-file-utils
+BuildRequires:  lcms2
 
 %if 0%{?suse_version} > 0
-BuildRequires:     gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg-devel xorg-x11-Mesa xorg-x11-Mesa-devel libtiff-devel libxml2-devel cairo-devel liblcms-devel xdg-utils cups-devel libqt4-devel libXcm-devel netpbm
+BuildRequires:  cairo-devel
+BuildRequires:  cups-devel
+BuildRequires:  doxygen
+BuildRequires:  fltk
+BuildRequires:  fltk-devel
+BuildRequires:  gcc-c++
+BuildRequires:  gettext
+BuildRequires:  graphviz
+BuildRequires:  libXcm-devel
+BuildRequires:  libjpeg-devel
+BuildRequires:  liblcms-devel
+BuildRequires:  libpng-devel
+BuildRequires:  libqt4-devel
+BuildRequires:  libtiff-devel
+BuildRequires:  libxml2-devel
+BuildRequires:  netpbm
+BuildRequires:  pkgconfig
+BuildRequires:  xdg-utils
+BuildRequires:  xorg-x11-Mesa
+BuildRequires:  xorg-x11-Mesa-devel
 %endif
 
 %if 0%{?suse_version} > 910
-BuildRequires:  acl autoconf automake bash bind-utils binutils bison bzip2 coreutils cpio cvs cyrus-sasl diffutils e2fsprogs expat file filesystem findutils flex fontconfig fontconfig-devel freetype2 freetype2-devel gawk gcc gcc-c++ gdbm gdbm-devel gettext gettext-devel glibc glibc-devel gpm grep groff gzip info less libacl libattr libjpeg-devel libpng libpng-devel libtool m4 make man mktemp module-init-tools ncurses ncurses-devel net-tools openssl pam patch perl pkgconfig popt procinfo procps psmisc rcs readline rpm sed strace tar texinfo timezone unzip util-linux zlib zlib-devel
 %endif
 
 %if 0%{?suse_version} > 1010
-BuildRequires:  Mesa Mesa-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg-devel xorg-x11-fonts-devel xorg-x11-libICE xorg-x11-libICE-devel xorg-x11-libSM xorg-x11 xorg-x11-devel xorg-x11-libSM-devel xorg-x11-libX11 xorg-x11-libX11-devel xorg-x11-libXau xorg-x11-libXau-devel xorg-x11-libXdmcp xorg-x11-libXdmcp-devel xorg-x11-libXext xorg-x11-libXext-devel xorg-x11-libXfixes xorg-x11-libXfixes-devel xorg-x11-libXmu xorg-x11-libXmu-devel xorg-x11-libXp xorg-x11-libXp-devel xorg-x11-libXpm xorg-x11-libXpm-devel xorg-x11-libXprintUtil xorg-x11-libXprintUtil-devel xorg-x11-libXrender xorg-x11-libXrender-devel xorg-x11-libXt xorg-x11-libXt-devel xorg-x11-libXv xorg-x11-libXv-devel xorg-x11-libfontenc xorg-x11-libfontenc-devel xorg-x11-libs xorg-x11-libxkbfile xorg-x11-libxkbfile-devel xorg-x11-proto-devel xorg-x11-util-devel xorg-x11-xtrans-devel netpbm update-desktop-files
+BuildRequires:  Mesa
+BuildRequires:  Mesa-devel
+BuildRequires:  doxygen
+BuildRequires:  fltk
+BuildRequires:  fltk-devel
+BuildRequires:  gcc-c++
+BuildRequires:  gettext
+BuildRequires:  graphviz
+BuildRequires:  libjpeg-devel
+BuildRequires:  libpng-devel
+BuildRequires:  netpbm
+BuildRequires:  pkgconfig
+BuildRequires:  update-desktop-files
+BuildRequires:  xorg-x11
+BuildRequires:  xorg-x11-devel
+BuildRequires:  xorg-x11-fonts-devel
+BuildRequires:  xorg-x11-libICE
+BuildRequires:  xorg-x11-libICE-devel
+BuildRequires:  xorg-x11-libSM
+BuildRequires:  xorg-x11-libSM-devel
+BuildRequires:  xorg-x11-libX11
+BuildRequires:  xorg-x11-libX11-devel
+BuildRequires:  xorg-x11-libXau
+BuildRequires:  xorg-x11-libXau-devel
+BuildRequires:  xorg-x11-libXdmcp
+BuildRequires:  xorg-x11-libXdmcp-devel
+BuildRequires:  xorg-x11-libXext
+BuildRequires:  xorg-x11-libXext-devel
+BuildRequires:  xorg-x11-libXfixes
+BuildRequires:  xorg-x11-libXfixes-devel
+BuildRequires:  xorg-x11-libXmu
+BuildRequires:  xorg-x11-libXmu-devel
+BuildRequires:  xorg-x11-libXp
+BuildRequires:  xorg-x11-libXp-devel
+BuildRequires:  xorg-x11-libXpm
+BuildRequires:  xorg-x11-libXpm-devel
+BuildRequires:  xorg-x11-libXprintUtil
+BuildRequires:  xorg-x11-libXprintUtil-devel
+BuildRequires:  xorg-x11-libXrender
+BuildRequires:  xorg-x11-libXrender-devel
+BuildRequires:  xorg-x11-libXt
+BuildRequires:  xorg-x11-libXt-devel
+BuildRequires:  xorg-x11-libXv
+BuildRequires:  xorg-x11-libXv-devel
+BuildRequires:  xorg-x11-libfontenc
+BuildRequires:  xorg-x11-libfontenc-devel
+BuildRequires:  xorg-x11-libs
+BuildRequires:  xorg-x11-libxkbfile
+BuildRequires:  xorg-x11-libxkbfile-devel
+BuildRequires:  xorg-x11-proto-devel
+BuildRequires:  xorg-x11-util-devel
+BuildRequires:  xorg-x11-xtrans-devel
 %endif
 
 %if 0%{?suse_version} > 1130
 BuildRequires:  libyajl-devel
-BuildRequires:  libexiv2-devel libraw-devel libraw-devel-static
+BuildRequires:  libexiv2-devel
+BuildRequires:  libraw-devel
+BuildRequires:  libraw-devel-static
+%endif
+
+%if 0%{?suse_version} > 1200
+BuildRequires:  libltdl-devel
 %endif
 
 %if 0%{?mandriva_version} > 0
-BuildRequires:  Mesa mesagl-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel  libtiff-devel libxml2-devel cairo-devel lcms-devel xdg-utils cups-devel libqt4-devel libXcm-devel xorg-x11 netpbm libxrandr-devel libxinerama-devel libtool-devel
+BuildRequires:  Mesa
+BuildRequires:  cairo-devel
+BuildRequires:  cups-devel
+BuildRequires:  doxygen
+BuildRequires:  fltk
+BuildRequires:  fltk-devel
+BuildRequires:  gcc-c++
+BuildRequires:  gettext
+BuildRequires:  graphviz
+BuildRequires:  lcms-devel
+BuildRequires:  libXcm-devel
+BuildRequires:  libjpeg
+BuildRequires:  libjpeg-devel
+BuildRequires:  libpng-devel
+BuildRequires:  libqt4-devel
+BuildRequires:  libtiff-devel
+BuildRequires:  libtool-devel
+BuildRequires:  libxinerama-devel
+BuildRequires:  libxml2-devel
+BuildRequires:  libxrandr-devel
+BuildRequires:  mesagl-devel
+BuildRequires:  netpbm
+BuildRequires:  pkgconfig
+BuildRequires:  xdg-utils
+BuildRequires:  xorg-x11
 %endif
 
 %if 0%{?fedora_version} > 0
-BuildRequires:  Mesa Mesa-devel gcc-c++ gettext doxygen graphviz fltk fltk-devel pkgconfig    libpng-devel libjpeg libjpeg-devel xorg-x11-devel xorg-x11-Mesa-devel libXxf86vm-devel  libtiff-devel libxml2-devel cairo-devel liblcms-devel xdg-utils cups-devel libqt4-devel libXcm-devel libXmu-devel netpbm elektra-devel
+BuildRequires:  Mesa
+BuildRequires:  Mesa-devel
+BuildRequires:  cairo-devel
+BuildRequires:  cups-devel
+BuildRequires:  doxygen
+BuildRequires:  elektra-devel
+BuildRequires:  fltk
+BuildRequires:  fltk-devel
+BuildRequires:  gcc-c++
+BuildRequires:  gettext
+BuildRequires:  graphviz
+BuildRequires:  libXcm-devel
+BuildRequires:  libXmu-devel
+BuildRequires:  libXxf86vm-devel
+BuildRequires:  libjpeg
+BuildRequires:  libjpeg-devel
+BuildRequires:  liblcms-devel
+BuildRequires:  libpng-devel
+BuildRequires:  libqt4-devel
+BuildRequires:  libtiff-devel
+BuildRequires:  libxml2-devel
+BuildRequires:  netpbm
+BuildRequires:  pkgconfig
+BuildRequires:  xdg-utils
+BuildRequires:  xorg-x11-Mesa-devel
+BuildRequires:  xorg-x11-devel
 %endif
 
 %if 0%{?debian_version} > 0
-BuildRequires: gcc-c++ gettext doxygen graphviz fltk fltk-devel libpng-devel libjpeg-devel pkgconfig xorg-x11 xorg-x11-devel xorg-x11-Mesa-devel xorg-x11-libXext xorg-x11-libXext-devel  xorg-x11-libXpm xorg-x11-libXpm-devel  libtiff-devel libxml2-devel cairo-devel liblcms-devel xdg-utils cups-devel libqt4-devel libXcm-dev netpbm
+BuildRequires:  cairo-devel
+BuildRequires:  cups-devel
+BuildRequires:  doxygen
+BuildRequires:  fltk
+BuildRequires:  fltk-devel
+BuildRequires:  gcc-c++
+BuildRequires:  gettext
+BuildRequires:  graphviz
+BuildRequires:  libXcm-dev
+BuildRequires:  libjpeg-devel
+BuildRequires:  liblcms-devel
+BuildRequires:  libpng-devel
+BuildRequires:  libqt4-devel
+BuildRequires:  libtiff-devel
+BuildRequires:  libxml2-devel
+BuildRequires:  netpbm
+BuildRequires:  pkgconfig
+BuildRequires:  xdg-utils
+BuildRequires:  xorg-x11
+BuildRequires:  xorg-x11-Mesa-devel
+BuildRequires:  xorg-x11-devel
+BuildRequires:  xorg-x11-libXext
+BuildRequires:  xorg-x11-libXext-devel
+BuildRequires:  xorg-x11-libXpm
+BuildRequires:  xorg-x11-libXpm-devel
 %endif
 
 %package      -n lib%{name}0
-Summary:   Color Management System Libraries
-Group:     Development/Libraries/Other
+Summary:        Color Management System Libraries
+Group:          Development/Libraries/Other
 # assume users want the device modules
-Requires:  lib%{name}0-cups = %{version} lib%{name}0-monitor = %{version}
+Requires:       lib%{name}0-cups = %{version} lib%{name}0-monitor = %{version}
 # we need rgb, lab, xyz gray and cmyk profiles
 # the proper names: sRGB.icc, XYZ.icc, Lab.icc are in the OpenICC-data package
-Requires:   icc-profiles
+Requires:       icc-profiles
 
 %package      -n lib%{name}-devel
-Summary:   Headers, Configuration and static Libs + Documentation
-Group:     Development/Libraries/Other
-Requires:  lib%{name}0 = %{version} libxml2-devel
+Summary:        Headers, Configuration and static Libs + Documentation
+Group:          Development/Libraries/Other
+Requires:       lib%{name}0 = %{version} libxml2-devel
+%if 0%{?suse_version} > 1130
+Requires:       libyajl-devel
+%endif
 
 %package      -n lib%{name}-alpha-devel
-Summary:   Alpha and Pre Alpha Headers
-Group:     Development/Libraries/Other
-Requires:  lib%{name}-devel
+Summary:        Alpha and Pre Alpha Headers
+Group:          Development/Libraries/Other
+Requires:       lib%{name}-devel
+
+%package      -n lib%{name}-alpha-devel-doc
+Summary:        Alpha and Pre Alpha Documentation
+Group:          Development/Libraries/Other
+Requires:       lib%{name}-alpha-devel
 
 %package      -n lib%{name}0-monitor
-Summary:    Oyranos Monitor dependent Libraries
-Group:      Development/Libraries/Other
-Requires:   xcalib
+Summary:        Oyranos Monitor dependent Libraries
+Group:          Development/Libraries/Other
+Requires:       xcalib
 
 %package      monitor
-Summary:    Oyranos Monitor Tools
-Group:      Development/Libraries/Other
-Requires:   lib%{name}0-monitor
+Summary:        Oyranos Monitor Tools
+Group:          Development/Libraries/Other
+Requires:       lib%{name}0-monitor
 
 %package      monitor-nvidia
-Summary:    Nvidia card support
-Group:      System/X11/Utilities
-License:    GPL
+Summary:        Nvidia card support
+Group:          System/X11/Utilities
+License:        GPL-2.0
 
 %package      -n lib%{name}0-cups
-Summary:    CUPS device support
-Group:      Development/Libraries/Other
-Requires:   cups
+Summary:        CUPS device support
+Group:          Development/Libraries/Other
+Requires:       cups
 
 %package      -n lib%{name}0-sane
-Summary:    SANE device support
-Group:      Development/Libraries/Other
-Requires:   sane
+Summary:        SANE device support
+Group:          Development/Libraries/Other
+Requires:       sane
 
 %package      ui-fltk
-Summary:    Example Configuration Panel
-Group:      System/GUI/Other
-Requires:   fltk
+Summary:        Example Configuration Panel
+Group:          System/GUI/Other
+Requires:       fltk
 
 %package      forms-fltk
-Summary:    XFORMS subset rendering
-Group:      Development/Libraries/Other
+Summary:        XFORMS subset rendering
+Group:          Development/Libraries/Other
 
 %package      forms-fltk-devel
-Summary:    XFORMS subset rendering
-Group:      Development/Libraries/Other
-Requires:   fltk-devel
+Summary:        XFORMS subset rendering
+Group:          Development/Libraries/Other
+Requires:       fltk-devel
 
 %package      forms
-Summary:    XFORMS subset rendering
-Group:      Development/Libraries/Other
+Summary:        XFORMS subset rendering
+Group:          Development/Libraries/Other
 
 %package      qcmsevents
-Summary:    Xorg Color management Event observer applet
-Group:      System/Monitoring
+Summary:        Xorg Color management Event observer applet
+Group:          System/Monitoring
 
 %description
 Oyranos is a colour management system.
@@ -162,11 +321,15 @@ query for profiles in that paths.
 The documentation in html format is included.
 
 %description -n lib%{name}-alpha-devel
-Header files, libraries and documentation for development.
+Header files and libraries for development.
 The object oriented Oyranos API's provide advanced access to
 ICC profiles, allow for filtering profile lists and provide
 a CMM independent colour conversion API. Single colour lookups 
 are supported.
+These API's are to be considered for changing very frequently.
+
+%description -n lib%{name}-alpha-devel-doc
+Documentation for development.
 These API's are to be considered for changing very frequently.
 
 %description  monitor
@@ -230,11 +393,9 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} qcmsevents-applet.desktop
 desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.desktop
 %find_lang %{name}       # generate a special file list
 
-%post -n lib%{name}0
-ldconfig
+%post -n lib%{name}0 -p /sbin/ldconfig
 
-%postun -n lib%{name}0
-ldconfig
+%postun -n lib%{name}0 -p /sbin/ldconfig
 
 %files -f %{name}.lang
 %defattr(-, root, root)
@@ -251,7 +412,6 @@ ldconfig
 %{_mandir}/man1/%{name}-xforms-modules.1*
 %{pixmapdir}/oyranos_logo.*
 %{pixmapdir}/lcms_logo2.png
-%dir %{syscolordir}
 %dir %{syscolordir}/%{settingsdirname}
 %{syscolordir}/%{settingsdirname}/*.policy.xml
 %{desktopdir}/%{name}-profile-install.desktop
@@ -310,6 +470,9 @@ ldconfig
 %{_includedir}/%{name}/alpha/%{name}_alpha.h
 %{_includedir}/%{name}/alpha/%{name}_cmm.h
 %{_includedir}/%{name}/alpha/object/*.h
+
+%files -n lib%{name}-alpha-devel-doc
+%defattr(-, root, root)
 %doc doc_alpha/html
 
 %files monitor
