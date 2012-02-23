@@ -844,7 +844,10 @@ test -n "$INFOECHO" && $INFOECHO ""
 pkg-config  --atleast-version=0.7 elektra 2>/dev/null
 if [ $? != 0 ] && [ 0 -eq $rpm ]; then
   ELEKTRA_VERSION="elektra-0.7.1"
-  if [ -d $ELEKTRA_VERSION ]; then
+  if [ -d $ROOT_DIR/$ELEKTRA_VERSION ]; then
+    if [ ! -d $ELEKTRA_VERSION ]; then
+      mkdir -p $ELEKTRA_VERSION
+    fi
     test -n "$ECHO" && $ECHO "#define HAVE_ELEKTRA 1" >> $CONF_H
     test -n "$ECHO" && $ECHO "ELEKTRA = 1" >> $CONF
     test -n "$ECHO" && $ECHO "ELEKTRA_H = -I$ELEKTRA_VERSION/src/include -I$ROOT_DIR/$ELEKTRA_VERSION/src/include" >> $CONF
@@ -856,10 +859,11 @@ if [ $? != 0 ] && [ 0 -eq $rpm ]; then
       cd $ELEKTRA_VERSION && sh -c "$ROOT_DIR/$ELEKTRA_VERSION/configure --enable-static --enable-shared=false $nodeps_config_opt --prefix=$prefix"
       cd "$dir"
     fi
-    test -n "$ECHO" && $ECHO "elektra=\$(ELEKTRA_OBJ)" >> $PKGC
+    test -n "$ECHO" && $ECHO "elektra=" >> $PKGC
     test -n "$ECHO" && $ECHO ""
     test -n "$ECHO" && $ECHO "... $ELEKTRA_VERSION configured"
   else
+    echo_="  no $ROOT_DIR/$ELEKTRA_VERSION"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     echo_="!!! Elektra: !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     echo_="  no or too old Elektra found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     echo_="  need a version not greater than $elektra_max, download: elektra.sf.net"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
