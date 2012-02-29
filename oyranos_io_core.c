@@ -267,6 +267,7 @@ char * oyReadUrlToMem_               ( const char        * url,
     int len = strlen(url), i, pos;
     char * mem = oyAllocateFunc_(len*3+1);
     char c;
+    char * app = 0;
 
     for(i = 0, pos = 0; i < len; ++i)
     {
@@ -279,12 +280,27 @@ char * oyReadUrlToMem_               ( const char        * url,
         mem[pos++] = c;
     }
     mem[pos] = '\000';
-    if(oy_debug)
-      oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
-                          "curl -v -s %s", mem );
-    else
-      oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
-                          "curl -s %s", mem );
+    
+    if(!app && (app = oyFindApplication( "curl" )) != NULL)
+    {
+      if(oy_debug)
+        oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
+                            "curl -v -s %s", mem );
+      else
+        oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
+                            "curl -s %s", mem );
+    } else if(!app && (app = oyFindApplication( "wget" )) != NULL)
+    {
+      if(oy_debug)
+        oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
+                            "wget -v %s -O -", mem );
+      else
+        oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
+                            "wget -q %s -O -", mem );
+    } else
+      WARNc_S(_("Could not download from WWW. Please install curl or wget."));
+
+    if(app) oyFree_m_( app );
   
     if(command)
       fp = oyPOPEN_m( command, mode );
