@@ -12940,7 +12940,9 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
       else
         rank -= 1;
       DBG_NUM1_S("after serial && OYRANOS_automatic_generated: %d", rank);
-    }
+    } else
+      DBG_NUM1_S( "%s",
+                  strrchr(oyProfile_GetFileName(p,-1),'/')+1);
     if(oyConfig_FindString( p_device, "OYRANOS_automatic_assignment", "1" ))
       rank -= 1;
     rank_list[i] = rank;
@@ -18006,7 +18008,6 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
   int error = !s;
   oyAlloc_f allocateFunc_ = 0;
   static const char * lang = 0;
-  int update = 1;
 
   if(error <= 0)
     allocateFunc_ = s->oy_->allocateFunc_;
