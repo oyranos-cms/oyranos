@@ -798,7 +798,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       if( atom && moni_profile)
       result = XChangeProperty( display, w, atom, XA_CARDINAL,
                        8, PropModeReplace, moni_profile, (int)size );
-      if(result) WARNc2_S("%s %d", _("found issues"),result);
+      if(result == 0) WARNc2_S("%s %d", _("found issues"),result);
 
       /* claim to be compatible with 0.4 
        * http://www.freedesktop.org/wiki/OpenIcc/ICC_Profiles_in_X_Specification_0.4
@@ -824,7 +824,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
           result = XChangeProperty( display, w, atom, XA_STRING,
                                     8, PropModeReplace,
                                     value, 4 );
-          if(result) WARNc2_S("%s %d", _("found issues"),result);
+          if(result == 0) WARNc2_S("%s %d", _("found issues"),result);
         }
       }
 
