@@ -2415,14 +2415,14 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
 
            for(i = 0; i < n; ++i)
            {
-             if(!error)
+             if(error <= 0)
              {
                tmptag = (oyProfileTag_s*) oyStructList_GetRefType( tag_list,
                                                i, oyOBJECT_PROFILE_TAG_S );
                error = !tmptag;
              }
 
-             if(!error)
+             if(error <= 0)
              {
                int pos = 12 + 8*n + tmp_len, j;
                error = !memcpy( &mem[pos + 16],
@@ -2445,7 +2445,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
              oyProfileTag_Release( &tmptag );
            }
 
-           if(!error)
+           if(error <= 0)
              *((uint32_t*)&mem[8]) = oyValueUInt32( n );
          }
        }
