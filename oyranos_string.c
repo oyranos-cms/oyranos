@@ -129,7 +129,7 @@ char*              oyStringAppend_   ( const char        * text,
 
   if(text_len || append_len)
   {
-    oyAllocHelper_m_( text_copy, oyChar,
+    oyAllocHelper_m_( text_copy, char,
                       text_len + append_len + 1,
                       allocateFunc, return 0 );
 
