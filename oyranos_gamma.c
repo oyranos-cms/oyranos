@@ -383,12 +383,12 @@ int main( int argc , char** argv )
             fprintf( stderr, "%s: %s\n", _("Taxi DB entries for device"),
                      report );
           }
-          fprintf( stderr, "%s: %s \"%s\"\n", _("Taxi ID"),
+          fprintf( stderr, "%s [%s] \"%s\"\n", _("Taxi ID"),
                    _("match value"), _("description") );
           oyOptions_Release( &cs_options );
         }
 
-        printf("%s/0: %d ", oyNoEmptyString_m_(
+        printf("%s/0 [%d] ", oyNoEmptyString_m_(
                  oyConfig_FindString(taxi_dev, "TAXI_id", 0)), ranks[2*i+1]);
         printf("\"%s\"\n", oyNoEmptyString_m_(
                  oyConfig_FindString(taxi_dev, "TAXI_profile_description", 0)));
