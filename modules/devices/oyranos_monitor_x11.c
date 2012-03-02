@@ -175,6 +175,8 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
         XGetWindowProperty( display, w, atom, 0, INT_MAX, False, XA_CARDINAL,
                      &a, &actual_format_return, &nitems_return, 
                      &bytes_after_return, &prop_return );
+        if(bytes_after_return != 0) WARNc2_S("%s bytes_after_return: %d",
+                                          _("found issues"),bytes_after_return);
       DBG_NUM6_S( "root: %d atom: %ld atom_name: %s prop_name: %s %d %d",
                   w, atom, atom_name, prop_name, nitems_return,bytes_after_return );
       if(atom_name)
@@ -185,7 +187,7 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
   if(nitems_return && prop_return)
   {
     prop = oyBlob_New( 0 );
-    oyBlob_SetFromData( prop, prop_return, nitems_return + bytes_after_return, 0 );
+    oyBlob_SetFromData( prop, prop_return, nitems_return+bytes_after_return, 0);
     XFree( prop_return ); prop_return = 0;
   }
 
@@ -816,6 +818,8 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
         XGetWindowProperty( display, w, atom, 0, INT_MAX, False, XA_STRING,
                      &a, &actual_format_return, &nitems_return, 
                      &bytes_after_return, &prop_return );
+        if(bytes_after_return != 0) WARNc2_S("%s bytes_after_return: %d",
+                                          _("found issues"),bytes_after_return);
         /* check if the old value is the same as our intented */
         if(actual_format_return != XA_STRING ||
            nitems_return == 0)
@@ -898,7 +902,7 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
         char *dpy_name = oyStringCopy_( oyNoEmptyString_m_(display_name), oyAllocateFunc_ );
         char * command = 0;
         char *ptr = NULL;
-        int r;
+        int r = 0;
 
         oyAllocHelper_m_( command, char, 1048, 0 , goto finish );
 
