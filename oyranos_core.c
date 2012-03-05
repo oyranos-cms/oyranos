@@ -365,7 +365,7 @@ int oyMessageFunc( int code, const oyPointer context_object, const char * format
   va_end  ( list );
 
   {
-    oyAllocHelper_m_(text, char, len + 1, allocateFunc, return 1);
+    oyAllocHelper_m_(text, char, len + 1, oyAllocateFunc_, return 1);
     va_start( list, format);
     len = vsnprintf( text, len+1, format, list);
     va_end  ( list );
@@ -376,8 +376,8 @@ int oyMessageFunc( int code, const oyPointer context_object, const char * format
   if(msg)
     fprintf( stderr, "%s\n", msg );
 
-  free( text ); text = 0;
-  free( msg ); msg = 0;
+  oyDeAllocateFunc_( text ); text = 0;
+  oyDeAllocateFunc_( msg ); msg = 0;
 
   return error;
 }

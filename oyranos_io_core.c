@@ -377,7 +377,7 @@ char * oyReadUrlToMemf_              ( size_t            * size,
 
   if (len >= sz)
   {
-    oyAllocHelper_m_(text, char, len + 1, allocateFunc, return 1);
+    oyAllocHelper_m_(text, char, len + 1, oyAllocateFunc_, return 1);
     va_start( list, format);
     len = vsnprintf( text, len+1, format, list );
     va_end  ( list );
