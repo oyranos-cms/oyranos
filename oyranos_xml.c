@@ -556,8 +556,7 @@ oyPolicyToXML_  (oyGROUP_e           group,
            char *value = oyPolicyToXML_(i, 0, oyAllocateFunc_);
            if(value)
            {
-             oyStringAddPrintf_( &text,  oyAllocateFunc_, oyDeAllocateFunc_,
-                                   "%s", value);
+             oyStringAdd_( &text, value, oyAllocateFunc_, oyDeAllocateFunc_ );
              oyFree_m_(value);
            }
          }
