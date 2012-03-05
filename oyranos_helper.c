@@ -192,7 +192,17 @@ void* oyAllocateFunc_           (size_t        size)
 
   if(ptr == 0)
 #endif
-    ptr = malloc (size);
+  {
+    if(oy_debug_memory != 0)
+      printf( OY_DBG_FORMAT_"allocate %d %lu + %lu byte in", OY_DBG_ARGS_,
+              oy_allocs_count_, (unsigned long) size, (unsigned long) sizeof(long));
+
+    /* sizeof(long) is for better alignment and less valgrind positives */
+    ptr = malloc (size + sizeof(long));
+
+    if(oy_debug_memory != 0)
+      printf( " 0x%tX\n", (intptr_t)ptr);
+  }
 
   if( !ptr )
   {
@@ -200,9 +210,11 @@ void* oyAllocateFunc_           (size_t        size)
   }
     else if(oy_debug_memory != 0)
   {
+#if OY_USE_ALLOCATE_FUNC_POOL_
     oy_alloc_count_ += size;
-    printf( "%s:%d %d allocate %d  %d\n", __FILE__,__LINE__,
+    printf( OY_DBG_FORMAT_"%d allocate %d  %d\n", OY_DBG_ARGS_,
             oy_allocs_count_, (int)size, oy_alloc_count_ );
+#endif
     ++oy_allocs_count_;
   }
 
@@ -222,8 +234,11 @@ void  oyDeAllocateFunc_           (void*       block)
       oy_allocate_func_pool_used_[i] = 0;
 
       if(oy_debug_memory)
-        printf( "%s:%d found block with pos:%d size=%d\n", __FILE__,__LINE__,
+      {
+        printf( OY_DBG_FORMAT_"found block with pos:%d size=%d", OY_DBG_ARGS_,
                 i, (int)oy_allocate_func_pool_size_[i] );
+        printf( " 0x%tX\n", (intptr_t)ptr);
+      }
 
       return;
     }
@@ -235,7 +250,10 @@ void  oyDeAllocateFunc_           (void*       block)
   {
     free( block );
     if(oy_debug_memory != 0)
-      printf( "%s:%d %d deallocated\n", __FILE__,__LINE__,--oy_allocs_count_ );
+    {
+      printf( OY_DBG_FORMAT_"%d remaining 0x%tX\n", OY_DBG_ARGS_,
+              --oy_allocs_count_, (intptr_t)block );
+    }
   }
 }
 
