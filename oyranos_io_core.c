@@ -369,17 +369,7 @@ char * oyReadUrlToMemf_              ( size_t            * size,
   char * text = 0;
   va_list list;
   int len;
-  size_t sz = strlen(format) * 2;
-
-  text = oyAllocateFunc_( sz );
-  if(!text)
-  {
-    fprintf(stderr,
-     "oyranos_io_core.c oyReadUrlToMemf_() Could not allocate memory.\n");
-    return result;
-  }
-
-  text[0] = 0;
+  size_t sz = 0;
 
   va_start( list, format);
   len = vsnprintf( text, sz, format, list );
@@ -387,7 +377,7 @@ char * oyReadUrlToMemf_              ( size_t            * size,
 
   if (len >= sz)
   {
-    text = realloc( text, (len+1)*sizeof(char) );
+    oyAllocHelper_m_(text, char, len + 1, allocateFunc, return 1);
     va_start( list, format);
     len = vsnprintf( text, len+1, format, list );
     va_end  ( list );
