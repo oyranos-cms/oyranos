@@ -166,7 +166,7 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
       kdbGetChildKeys( oy_handle_, list_name_user, list_user, KDB_O_SORT);
 
     if(ret > 0)
-      WARNc1_S("kdbGetChildKeys returned with %d", ret);
+      DBG_NUM1_S("kdbGetChildKeys returned with %d", ret);
   }
   if( user_sys == oyUSER_SYS || user_sys == oySYS ) {
     list_sys = ksNew(0);
@@ -180,7 +180,7 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
       kdbGetChildKeys( oy_handle_, list_name_sys, list_sys, KDB_O_SORT);
 
     if(ret > 0)
-      WARNc1_S("kdbGetChildKeys returned with %d", ret);
+      DBG_NUM1_S("kdbGetChildKeys returned with %d", ret);
   }
 
   if(list_user)
