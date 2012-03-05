@@ -16,8 +16,7 @@ Summary:        Color Management System
 Name:           oyranos
 License:        BSD-3-Clause and GPL-2.0
 Group:          Development/Libraries/Other
-URL:            http://www.oyranos.org
-Vendor:         Kai-Uwe Behrmann
+Url:            http://www.oyranos.org
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 Prefix:         %{_prefix}
 Source1:        oyranos-rpmlintrc
