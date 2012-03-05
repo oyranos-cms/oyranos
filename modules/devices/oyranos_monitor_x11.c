@@ -150,7 +150,7 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
       {
         error =
         XRRGetOutputProperty ( display, oyX1Monitor_xrrOutput_( disp ),
-                      atom, 0, 32,
+                      atom, 0, INT_MAX,
                       False, False, AnyPropertyType, &a,
                       &actual_format_return, &nitems_return,
                       &bytes_after_return, &prop_return );
@@ -187,7 +187,7 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
   if(nitems_return && prop_return)
   {
     prop = oyBlob_New( 0 );
-    oyBlob_SetFromData( prop, prop_return, nitems_return+bytes_after_return, 0);
+    oyBlob_SetFromData( prop, prop_return, nitems_return, 0);
     XFree( prop_return ); prop_return = 0;
   }
 
