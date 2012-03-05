@@ -29,7 +29,6 @@
 intptr_t oy_observe_pointer_ = 0;
 
 /* --- internal API definition --- */
-static int oy_alloc_count_ = 0;
 static int oy_allocs_count_ = 0;
 int oy_debug_memory = 0;
 int oy_debug_signals = 0;
@@ -39,6 +38,7 @@ const char * oy_backtrace = 0;
 #endif
 
 #if OY_USE_ALLOCATE_FUNC_POOL_
+static int oy_alloc_count_ = 0;
 #define OY_ALLOCATE_FUNC_POOL_CHUNK_ 128
 #define OY_ALLOCATE_FUNC_POOL_SIZE_ 64
 static int oy_allocate_func_pool_used_[OY_ALLOCATE_FUNC_POOL_SIZE_] = {
