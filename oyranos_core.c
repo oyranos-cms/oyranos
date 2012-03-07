@@ -377,7 +377,7 @@ int oyMessageFunc( int code, const oyPointer context_object, const char * format
     fprintf( stderr, "%s\n", msg );
 
   oyDeAllocateFunc_( text ); text = 0;
-  oyDeAllocateFunc_( msg ); msg = 0;
+  if(msg) oyDeAllocateFunc_( msg ); msg = 0;
 
   return error;
 }
