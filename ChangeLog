@@ -1,3 +1,173 @@
+Version 0.4.0
+
+Kai-Uwe Behrmann (166):
+	* [conf]: set actual date
+	* [core]: skip message warning
+	* [docu]: fix module name
+	* [i18n]: update deutsch
+	* [core]: fix compile warnings
+	* [core]: print return values as info
+	* [build]: fix spec Url
+	* [core]: set correct deallocation for vsnprintf
+	* [core]: vsnprintf length for allocation
+	* [oyX1]: fix HDMI2 EDID in XRandR reading
+	* [core]: improve OYRANOS_DEBUG_MEMORY output
+	* [core]: replace printf with normal copy
+	* [oyX1]: initialise variable
+	* [core]: remove one more oyChar macro
+	* [oyX1]: clearify the Taxi output
+	* [oyX1]: correct X11 error code interpretation
+	* [alpha]: show ICC DB profile at comparision debug
+	* [core]: add fallback to wget
+	* [oyIM]: relax about missing profile ID
+	* [build]: sync with openSUSE spec file
+	* [conf]: fix remote internal elaktra builds
+	* [test]: simplify APPLE macro
+	* [test]: fix test cases for osX
+	* [exmpl]: fix osX build of image_display
+	* [conf]: add plug-in paths to oyranos-config
+	* [conf]: add dependencies to pkg-config --libs
+	* [core]: compile fixes for win32
+	* [build]: correct link order
+	* [conf]: initialy write yajl Makefile
+	* [core]: add uintptr_t
+	* [alpha]: skip stdint.h
+	* [core]: use HAVE_POSIX for S_ISLNK() macro
+	* [conf]: detect -lc need
+	* [core]: omit types on __MINGW64__
+	* [core]: add intptr_t
+	* [core]: take atomic type definitions from lcms2
+	* [conf]: export EXEC_END
+	* [conf]: detect win32
+	* [core]: fix various compile warnings
+	* [conf]: add missed libraries to link flags
+	* [oyX1]: sort Taxi ranks in oyranos-monitor
+	* [oyX1]: print message if zero Taxi profiles
+	* [oyX1]: enable screen profile/edid search
+	* [oyX1]: fix compile error
+	* [oyX1]: fix typo
+	* [oyX1]: warning for non created monitor object
+	* [exmpl]: add small help text to image_display
+	* [oyX1]: configure non perfect detected monitors
+	* [core]: read root key
+	* [oyX1]: add more detail to warning for XOpenDisplay
+	* [oyX1]: show better warning for failed XOpenDisplay
+	* [test]: substitute specific monitor names
+	* [test]: fix wrong memory access
+	* [alpha]: fix memory offsets
+	* [lcm2]: reduce verbosity
+	* [test]: fix uninitialised memory accesses
+	* [build]: skip removed file
+	* [conf]: always use -fPIC
+	* [exmpl]: add Oy_Widget.h to image_display
+	* [oyX1]: ignore model_id currently
+	* [docu]: precise licensing of public domain file(s)
+	* [oyX1]: account for wrong EDID_model_id
+	* [alpha]: skip caching of to be installed profiles
+	* [docu]: fix some typos in oyX1
+	* [build]: add make to required build packages
+	* [exmpl]: add virtual class Oy_Fl_Window_Base
+	* [oyX1]: set correct warn message
+	* [exmpl]: sort classes into separate files
+	* [exmpl]: simplify frame_data allocation
+	* [exmpl]: skip draw arealess widget in image_display
+	* [exmpl]: fix offscreen drawing in image_display
+	* [exmpl]: add FL_Tile to image_display
+	* [exmpl]: add display image container to Fl_Oy_Group
+	* [exmpl]: use Fl_Oy_Group in image_display
+	* [exmpl]: add oyConversion_FromImageForDisplay()
+	* [exmpl]: support no roi in oyDrawScreenImage()
+	* [exmpl]: add getEditingProfile() to helpers
+	* [conf]: use NoDisplay for xdg desktop script
+	* [exmpl]: rename widget classes to reflect usage
+	* [oyX1]: ignore zero sized rectangle in "set_xcm_region"
+	* [test]: results with lcms2
+	* [alpha]: fix various compile warnings
+	* [alpha]: add oyRectangle_GetGeo()
+	* [oyX1]: add "set_xcm_region" handler
+	* [exmpl]: add a API10 example for option handling
+	* [oyX1]: adapt to colorimetry names from libXcm
+	* [conf]: update from compicc
+	* [conf]: bump to 0.4
+	* [alpha]: switch to x_color_region_target
+	* [alpha]: add taxi download in oyranos-profiles
+	* [alpha]: ignore profile position during taxi download
+	* [core]: reenable --key=val cli options
+	* [alpha]: split out installProfile in oyranos-profiles
+	* [oyX1]: better oyranos-monitor --list-taxi output
+	* [alpha]: rename oyConfig_GetFromTaxiDB to oyConfig_GetBestMatchFromTaxiDB
+	* [alpha]: rename oyDeviceProfileFromTaxiDB to oyProfile_FromTaxiDB
+	* [core]: exactly match command line args
+	* [oyX1]: list Taxi DB profiles for a local monitor
+	* [alpha]: omit warnings in oyDeviceToJSON for empty values
+	* [alphy]: show oyDevicesFromTaxiDB()
+	* [oyjl]: add verbosity to test program
+	* [oyjl]: keep yail handle alive until end of oyjl root node
+	* [alpha]: add oyDeviceProfileFromTaxiDB()
+	* [core]: support big files in oyReadUrlToMem_()
+	* [core]: fix some compiler warnings
+	* [alpha]: fix some oyranos-profile crashes
+	* [oyX1]: oyranos-monitor can show ranking
+	* [alpha]: add tolerant float comparision to oyTextIccDictMatch()
+	* [core]: locale independent oyStringToDouble()
+	* [oyX1]: add infos to show a device during a add_meta call
+	* [sources]: relax on empty key warnings
+	* [oyX1]: output xinerama geometry during nvidia EDID setup
+	* [oyX1]: support broken TwinViewXineramaInfoOrder API
+	* [docu]: update openSUSE build dependency section
+	* [docu]: update ubuntu/debian build dependency section
+	* [alpha]: check for kdialog inside KDE
+	* [alpha]: fix empty meta values
+	* [oyX1]: fix include
+	* [core]: support more argument in debug makros
+	* [core]: fix wrong argument parsing
+	* [core]: catch missed profile name in oyranos-profiles
+	* [oyX1]: catch wrong screen count
+	* [alpha]: specific caching of colour transforms
+	* [alpha]: fix oyCMMapi_Check_ wrong data access
+	* [lraw]: remove unused functions
+	* [lcm2]: put xml profile name into node text
+	* [lcm2]: default to full adaption for absolute intent
+	* [lcm2]: support adaption state for absolute intent
+	* [build]: fix make clean in non build source tree
+	* [test]: add "CMM deviceLink"
+	* [oyIM]: fix byte swapping while writing 'psid'
+	* [docu]: avoid byte order ambiguity in digest
+	* [oyIM]: fix wrong printed 'psid' text
+	* [i18n]: fix typo
+	* [alpha]: support module search for generic objects
+	* [source]: better format XML output for unknown objects
+	* [source]: get text strings from oyStruct_GetText()
+	* [source]: support arbitrary object strings
+	* [oicc]: support the oyProfiles_s object generic access
+	* [source]: add oyNAME_XML_VALUE number
+	* [test]: add monitor unset test
+	* [oyX1]: return failed property removal
+	* [oyX1]: oyranos-monitor --daemon inactive with colour server
+	* [build]: package oyranos-monitor-daemon script
+	* [i18n]: update deutsch
+	* [oyX1]: add --unset to oyranos-monitor
+	* [oicc]: rename to actual profile set
+	* [oyX1]: add oyranos-monitor-daemon script
+	* [oyX1]: add --daemon to oyranos-monitor
+	* [oyX1]: remove oyranos-monitor -b option
+	* [oyX1]: use verbose without oy_debug in oyranos-monitor
+	* [oyX1]: gix device selection on oyranos-monitor
+	* [build]: fix out of tree install of policies
+	* [exmpl]: use Xcm strings for qcmsevents
+	* [core]: add some variable argument helper versions
+	* [core]: replace certain characters for URLs
+	* [oyjl]: check data before accessing
+	* [alpha]: expose oyDeviceCheckProperties internally
+	* [core]: add download helper
+	* [CUPS]: fix wrong object pasing
+	* [conf]: bump libXcm requirement to 0.5
+	* [test]: check for identical monitors
+	* [alpha]: skip identical device domains
+	* [core]: add stream reader oyReadFileSToMem_()
+	* [conf]: let missing libXcm fail
+	* [docu]: update ChangeLog
+
 Version 0.3.2
 
 Boris Manojlovic (1):
