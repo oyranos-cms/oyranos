@@ -34,7 +34,7 @@ BuildRequires:  fltk-devel
 BuildRequires:  gcc-c++
 BuildRequires:  gettext
 BuildRequires:  graphviz
-BuildRequires:  libXcm-devel
+BuildRequires:  libXcm-devel >= 0.5.0
 BuildRequires:  libjpeg-devel
 BuildRequires:  liblcms-devel
 BuildRequires:  libpng-devel
@@ -128,7 +128,7 @@ BuildRequires:  gcc-c++
 BuildRequires:  gettext
 BuildRequires:  graphviz
 BuildRequires:  lcms-devel
-BuildRequires:  libXcm-devel
+BuildRequires:  libXcm-devel >= 0.5.0
 BuildRequires:  libjpeg
 BuildRequires:  libjpeg-devel
 BuildRequires:  libpng-devel
@@ -157,7 +157,7 @@ BuildRequires:  fltk-devel
 BuildRequires:  gcc-c++
 BuildRequires:  gettext
 BuildRequires:  graphviz
-BuildRequires:  libXcm-devel
+BuildRequires:  libXcm-devel >= 0.5.0
 BuildRequires:  libXmu-devel
 BuildRequires:  libXxf86vm-devel
 BuildRequires:  libjpeg
@@ -222,22 +222,23 @@ Requires:       libyajl-devel
 %package      -n lib%{name}-alpha-devel
 Summary:        Alpha and Pre Alpha Headers
 Group:          Development/Libraries/Other
-Requires:       lib%{name}-devel
+Requires:       lib%{name}-devel = %{version}
 
 %package      -n lib%{name}-alpha-devel-doc
 Summary:        Alpha and Pre Alpha Documentation
 Group:          Development/Libraries/Other
-Requires:       lib%{name}-alpha-devel
+Requires:       lib%{name}-alpha-devel = %{version}
 
 %package      -n lib%{name}0-monitor
 Summary:        Oyranos Monitor dependent Libraries
 Group:          Development/Libraries/Other
 Requires:       xcalib
+Requires:       libXcm0 >= 0.5.0
 
 %package      monitor
 Summary:        Oyranos Monitor Tools
 Group:          Development/Libraries/Other
-Requires:       lib%{name}0-monitor
+Requires:       lib%{name}0-monitor >= %{version}
 
 %package      monitor-nvidia
 Summary:        Nvidia card support
