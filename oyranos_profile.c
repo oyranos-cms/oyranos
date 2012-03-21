@@ -75,7 +75,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("List included ICC tags:"));
-  fprintf( stderr, "      %s -l [-d] FILE_NAME\n",        argv[0]);
+  fprintf( stderr, "      %s -l FILE_NAME\n",        argv[0]);
   fprintf( stderr, "      -p NUMBER  %s\n",     _("select tag"));
   fprintf( stderr, "      -n NAME  %s\n",       _("select tag"));
   fprintf( stderr, "      -s NAME  %s\n",       _("add prefix"));
