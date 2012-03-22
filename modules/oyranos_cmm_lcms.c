@@ -66,7 +66,7 @@ void  oyDeAllocateFunc_         (void *        data);
  *  53 is the grid size used internally in lcms' gamut marking code. */
 #define lcmsPROOF_LUT_GRID_RASTER 53
 
-#define CMM_VERSION {0,1,0}
+#define CMM_VERSION {0,1,1}
 
 oyMessage_f lcms_msg = oyMessageFunc;
 

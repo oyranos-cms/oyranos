@@ -11,7 +11,7 @@ int main( int argc, char ** argv)
 
   oyBlob_Release(&blob);
 
-  o = oyOption_FromRegistration("/sw/freedesktop.org/imaging/key",0);
+  o = oyOption_FromRegistration("/org/freedesktop.openicc/imaging/key",0);
   oyOption_SetFromDouble( o, 0.25, 2, 0 );
   oyOption_Release( &o );
 

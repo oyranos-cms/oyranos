@@ -82,13 +82,13 @@
 /** directory separator */
 #define OY_SLASH_C               '/'
 /** Top path for standard settings */
-#define OY_TOP_SHARED            "shared"
+#define OY_TOP_SHARED            "org"
 /** @deprecated use this path for non standardised filters and applications */
-#define OY_TOP_INTERNAL          "sw"
+#define OY_TOP_INTERNAL          "org"
 /** Domain path for standard settings */
-#define OY_DOMAIN_STD            "freedesktop.org"
+#define OY_DOMAIN_STD            "freedesktop.openicc"
 /** Domain path for Oyranos specific settings */
-#define OY_DOMAIN_INTERNAL       "oyranos.org"
+#define OY_DOMAIN_INTERNAL       "oyranos"
 /** Type path for standard settings */
 #define OY_TYPE_STD              "imaging"
 

@@ -3220,7 +3220,7 @@ digraph Anatomy_A {
  *  needed. This pattern follows the scheme of directories with attributes or
  *  XML elements with attributes.
  *  The sections are to be filled as follows:
- *  - top, e.g. "shared" (::oyFILTER_REG_TOP)
+ *  - top, e.g. "org" (::oyFILTER_REG_TOP)
  *  - vendor, e.g. "oyranos.org" (::oyFILTER_REG_DOMAIN)
  *  - filter type, e.g. "imaging"
  *    (::oyFILTER_REG_TYPE)
@@ -3242,7 +3242,7 @@ digraph Anatomy_A {
  *    hardware acceleration features \n
  *  
  *  \b Example: a complete module registration: \n
- *  "shared/oyranos.org/imaging/icc.lcms._NOACCEL._CPU" registers a plain
+ *  "org/oyranos/imaging/icc.lcms._NOACCEL._CPU" registers a plain
  *  software CMM
  * 
  *  A underscore in front of a attribute makes the attribute optional during

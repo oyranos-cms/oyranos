@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/03/22
  */
 
 
@@ -1434,7 +1434,7 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
  *
  *  @param         obj                 the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                 "org/freedesktop/imaging/my_app/my_opt"
  *  @param         value               the value to set
  *  @param         flags               can be OY_CREATE_NEW for a new option,
  *                                     OY_STRING_LIST or OY_ADD_ALWAYS
@@ -1493,7 +1493,7 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
  *
  *  @param         options             the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                 "org/freedesktop/imaging/my_app/my_opt"
  *                                     or simple key, e.g. "my_opt"
  *  @param         pos                 the values position in a possible list
  *  @param         result              the integer
@@ -1545,7 +1545,7 @@ int            oyOptions_FindInt     ( oyOptions_s       * options,
  *
  *  @param         obj                 the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                 "org/freedesktop/imaging/my_app/my_opt"
  *  @param         value               the value to set
  *  @param         pos                 the position in a value list
  *  @param         flags               can be OY_CREATE_NEW for a new option,
@@ -1604,7 +1604,7 @@ int            oyOptions_SetFromInt  ( oyOptions_s      ** obj,
  *
  *  @param         options             the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                 "org/freedesktop/imaging/my_app/my_opt"
  *                                     or simple key, e.g. "my_opt"
  *  @param         result              the double
  *  @param         pos                 the value position
@@ -1659,7 +1659,7 @@ int            oyOptions_FindDouble  ( oyOptions_s       * options,
  *
  *  @param         obj                 the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                 "org/freedesktop/imaging/my_app/my_opt"
  *  @param         value               the value to set
  *  @param         pos                 the position in a value list
  *  @param         flags               can be OY_CREATE_NEW for a new option,
@@ -1776,7 +1776,7 @@ oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
  *
  *  @param         obj                 the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                 "org/freedesktop/imaging/my_app/my_opt"
  *  @param         oy_struct           the Oyranos style object to move in
  *  @param         flags               can be OY_CREATE_NEW for a new option,
  *                                     or OY_ADD_ALWAYS
@@ -1833,7 +1833,7 @@ int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
  *
  *  @param         options             the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                 "org/freedesktop/imaging/my_app/my_opt"
  *  @param         ptr                 the pointer
  *  @param         size                the pointer size
  *  @param         flags               can be OY_CREATE_NEW for a new option,
@@ -1892,7 +1892,7 @@ int            oyOptions_SetFromData ( oyOptions_s      ** options,
  *
  *  @param         options             the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                 "org/freedesktop/imaging/my_app/my_opt"
  *                                     or simply a key, e.g. "my_opt"
  *  @param[out]    result              the data; With size == zero, the pointer
  *                                     is static and owned somewhere else.
