@@ -12,7 +12,8 @@ Internet:
 Dependencies:
     Mandatory:
     libxml2 - http://www.xmlsoft.org/
-    OpenICC-Data is needed with its default ICC profiles
+    icc-profiles-openicc and icc-profiles-basiccolor - default ICC profiles
+                                http://sourceforge.net/projects/openicc/files/
     libXinerama, libXrandr, libXfixes and libXxf86vm for X11 support - www.x.org
     libXcm for X11 and Quarz monitor support - http://www.oyranos.org
     Xcm for X11 and Quarz monitor support - http://www.oyranos.org
