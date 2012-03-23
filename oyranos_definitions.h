@@ -86,24 +86,26 @@
 /** @deprecated use this path for non standardised filters and applications */
 #define OY_TOP_INTERNAL          "org"
 /** Domain path for standard settings */
-#define OY_DOMAIN_STD            "freedesktop.openicc"
+#define OY_DOMAIN_STD            "freedesktop"
 /** Domain path for Oyranos specific settings */
 #define OY_DOMAIN_INTERNAL       "oyranos"
 /** Type path for standard settings */
-#define OY_TYPE_STD              "imaging"
+#define OY_TYPE_STD              "openicc"
 
-/** Oyranos general key path in the elektra data base */
+/** Oyranos general key path in the data base */
 #define OY_STD     OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD
+/** Oyranos internal key path in the data base */
+#define OY_INTERNAL OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD
 /** Type path for standard settings */
 #define OY_PROFILE_STD           OY_STD OY_SLASH "profile" OY_SLASH
 /** Type path for standard settings */
 #define OY_BEHAVIOUR_STD         OY_STD OY_SLASH "behaviour" OY_SLASH
 
-/** Oyranos default profiles key path in the elektra data base */
+/** Oyranos default profiles key path in the data base */
 #define OY_REGISTRED_PROFILES    OY_STD OY_SLASH "device_profiles"
-/** elektra system keys */
+/** system keys */
 #define OY_SYS                   "system/"
-/** elektra user keys */
+/** user keys */
 #define OY_USER                  "user/"
 
 #ifndef MAX_PATH
@@ -112,14 +114,6 @@
 #endif
 
 #define OY_SLEEP "SLEEP"
-
-/* path names */
-
-/** elektra keys for configured paths */
-#define OY_PATHS              OY_STD OY_SLASH "paths"
-/** elektra key base name for configured paths */
-#define OY_PATH               "path"
-
 
 /* --- default profiles --- */
 

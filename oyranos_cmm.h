@@ -176,7 +176,7 @@ struct oyCMMapi_s {
   oyCMMInit_f      oyCMMInit;          /**< */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
 
-  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
+  /** e.g. "org/oyranos/colour.tonemap.openicc/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
       see as well @ref registration */
   const char     * registration;
 
@@ -234,7 +234,7 @@ typedef struct {
   oyCMMInit_f      oyCMMInit;          /**< */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
 
-  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
+  /** e.g. "org/oyranos/colour.tonemap.openicc/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
       see as well @ref registration */
   const char     * registration;
 
@@ -285,7 +285,7 @@ struct oyCMMapiFilter_s {
   oyCMMInit_f      oyCMMInit;          /**< */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
 
-  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
+  /** e.g. "org/oyranos/colour.tonemap.openicc/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
       see as well @ref registration */
   const char     * registration;
 
@@ -530,19 +530,19 @@ struct oyConnectorImaging_s {
   /**
    *  The following types should have a "data" attribute in the application
    *  level as these connectors pass the imaging data.
-   *  - a data manipulator. e.g. a normal filter - "//imaging/manipulator.data"
-   *  - a data generator, e.g. checkerboard, gradient "//imaging/generator.data"
-   *  - a pixel data provider, e.g. oyFILTER_TYPE_IMAGE "//imaging/image.data"
+   *  - a data manipulator. e.g. a normal filter - "//"OY_TYPE_STD"/manipulator.data"
+   *  - a data generator, e.g. checkerboard, gradient "//"OY_TYPE_STD"/generator.data"
+   *  - a pixel data provider, e.g. oyFILTER_TYPE_IMAGE "//"OY_TYPE_STD"/image.data"
    *  - observer, a endpoint, only input, e.g. text log, thumbnail viewer 
-   *    "//imaging/observer.data"
-   *  - a routing element, without data altering "//imaging/splitter.rectangle.data"
-   *  - combines or splits image data, e.g. blending "//imaging/blender.rectangle.data"
-   *  - converts pixel layout to other formats "//imaging/pixel.convertor.data"
+   *    "//"OY_TYPE_STD"/observer.data"
+   *  - a routing element, without data altering "//"OY_TYPE_STD"/splitter.rectangle.data"
+   *  - combines or splits image data, e.g. blending "//"OY_TYPE_STD"/blender.rectangle.data"
+   *  - converts pixel layout to other formats "//"OY_TYPE_STD"/pixel.convertor.data"
    *  - converts pixel layout to other formats, with precission loss, e.g. 
    *    float -> uint8_t, only relevant for output connectors 
-   *    "//imaging/pixel.convertor.lossy.data"
-   *  - combines gray channels, e.g. from colour "//imaging/combiner.channels.data"
-   *  - provides gray scale views of channels "//imaging/splitter.channels.data"
+   *    "//"OY_TYPE_STD"/pixel.convertor.lossy.data"
+   *  - combines gray channels, e.g. from colour "//"OY_TYPE_STD"/combiner.channels.data"
+   *  - provides gray scale views of channels "//"OY_TYPE_STD"/splitter.channels.data"
    *
    *  The following types should have a "text" attribute in the application
    *  level as this connector type passes text.
@@ -624,7 +624,7 @@ struct oyCMMapi5_s {
   oyCMMInit_f      oyCMMInit;          /**< */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;  /**< */
 
-  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva" or "sw/oyranos.org/colour/icc",
+  /** e.g. "org/oyranos/colour.tonemap.openicc/hydra.shiva" or "org/oyranos/openicc/icc",
       see as well @ref registration */
   const char     * registration;
 
@@ -713,7 +713,7 @@ struct oyCMMapi7_s {
   oyCMMInit_f      oyCMMInit;          /**< @memberof oyCMMapi7_s */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;  /**< @memberof oyCMMapi7_s */
 
-  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
+  /** e.g. "org/oyranos/colour.tonemap.openicc/hydra.shiva.CPU.GPU" or "org/oyranos/openicc/icc.lcms.CPU",
       see as well @ref registration */
   const char     * registration;
 
@@ -805,7 +805,7 @@ struct oyCMMapi6_s {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
 
   /** place data_type_in + underscore '_' + data_type_out, 
-   *  e.g. "sw/oyranos.org/colour/icc.lcms.oyDL_lcCC",
+   *  e.g. "org/oyranos/openicc/icc.lcms.oyDL_lcCC",
       see as well @ref registration */
   const char     * registration;
 
@@ -968,7 +968,7 @@ struct  oyCMMapi4_s {
   oyCMMInit_f      oyCMMInit;
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet;
 
-  /** e.g. "sw/oyranos.org/imaging/scale" or "sw/oyranos.org/colour/icc.lcms",
+  /** e.g. "org/oyranos/"OY_TYPE_STD"/scale" or "org/oyranos/"OY_TYPE_STD"/icc.lcms",
       see as well @ref registration */
   const char     * registration;
 
@@ -1110,8 +1110,8 @@ struct oyCMMapi8_s {
 
   /** The oyFILTER_REG_APPLICATION of "config" is obligatory.
    *
-   *  e.g. "shared/freedesktop.org/imaging/config.device.icc_profile.scanner.sane" or 
-   *       "shared/freedesktop.org/imaging/config.device.icc_profile.monitor.xorg"...\n
+   *  e.g. OY_STD"/config.device.icc_profile.scanner.sane" or 
+   *       OY_STD"/config.device.icc_profile.monitor.xorg"...\n
       see as well @ref registration
    */
   char           * registration;
@@ -1222,8 +1222,8 @@ struct oyCMMapi9_s {
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
 
   /** The oyFILTER_REG_APPLICATION of "config" is obligatory.
-   *  e.g. "shared/freedesktop.org/imaging/config.scanner.sane" or 
-   *       "shared/freedesktop.org/imaging/config.monitor.xorg" ...\n
+   *  e.g. OY_STD"/config.scanner.sane" or 
+   *       OY_STD"/config.monitor.xorg" ...\n
       see as well @ref registration
    */
   char           * registration;
@@ -1261,7 +1261,7 @@ struct oyCMMapi9_s {
   oyConversion_Correct_f oyConversion_Correct; /**< check a graph */
   /** registration pattern which are supported by oyConversion_Correct \n
    *
-   *  e.g. for imaging this could be "//imaging"
+   *  e.g. for imaging this could be "//"OY_TYPE_STD
    */
   const char     * pattern;
 };
@@ -1334,7 +1334,7 @@ struct oyCMMapi10_s {
   oyCMMInit_f      oyCMMInit;          /**< */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
 
-  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
+  /** e.g. "org/oyranos/colour.tonemap.openicc/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
       see as well @ref registration */
   const char     * registration;
 

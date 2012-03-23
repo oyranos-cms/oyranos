@@ -493,21 +493,21 @@ typedef struct oyConfig_s {
   /** This property contains the identifier for communication with a Oyranos
    *  or a module through Oyranos. It defines the basic key path name to store
    *  configuration.\n
-   *  e.g. "shared/freedesktop.org/imaging/config.monitor.xorg" \n
+   *  e.g. OY_STD"/config.monitor.xorg" \n
    *  see as well @ref registration */
   char               * registration;
   int                  version[3];     /**< as for oyCMMapi4_s::version */
 
   /** data base (Elektra) properties,
-  e.g. "shared/freedesktop.org/imaging/config.monitor.xorg/1/manufacturer=EIZO"*/
+  e.g. OY_STD"/config.monitor.xorg/1/manufacturer=EIZO"*/
   oyOptions_s        * db;
   /** These are the module core properties, the ones to identify the 
    *  device and store in DB. They must be filled by the module.
-  e.g. "shared/freedesktop.org/imaging/config.monitor.xorg/manufacturer=EIZO" */
+  e.g. OY_STD"/config.monitor.xorg/manufacturer=EIZO" */
   oyOptions_s        * backend_core;
   /** Additional informations from modules, with non identification purpose,
    *  can be stored herein,
-  e.g. "shared/freedesktop.org/imaging/config.monitor.xorg/edid=oyBlob_s*" */
+  e.g. OY_STD"/config.monitor.xorg/edid=oyBlob_s*" */
   oyOptions_s        * data;
 
   oyRankPad          * rank_map;       /**< zero terminated list; key compare */
@@ -1606,31 +1606,31 @@ typedef int          (*oyCMMFilterSocket_MatchPlug_f) (
  *  @date    2009/04/28
  */
 typedef enum {
-  /** a data manipulator. e.g. a normal filter - "//imaging/manipulator" */
+  /** a data manipulator. e.g. a normal filter - "//"OY_TYPE_STD"/manipulator" */
   oyCONNECTOR_IMAGE_MANIPULATOR,
-  /** a data generator, e.g. checkerboard, gradient "//imaging/generator" */
+  /** a data generator, e.g. checkerboard, gradient "//"OY_TYPE_STD"/generator" */
   oyCONNECTOR_IMAGE_GENERATOR,
-  /** a pixel data provider, e.g. image data connector "//imaging/data".
+  /** a pixel data provider, e.g. image data connector "//"OY_TYPE_STD"/data".
    *  This type should be always present to connect processing data.
    *  That data is stored in oyFilterSocket_s::data. */
   oyCONNECTOR_IMAGE,
   /** observer, a endpoint, only input, e.g. text log, thumbnail viewer 
-   *  "//imaging/observer" */
+   *  "//"OY_TYPE_STD"/observer" */
   oyCONNECTOR_IMAGE_OBSERVER,
-  /** a routing element, without data altering "//imaging/splitter.rectangle" */
+  /** a routing element, without data altering "//"OY_TYPE_STD"/splitter.rectangle" */
   oyCONNECTOR_IMAGE_SPLITTER,
-  /** combines or splits image data, e.g. blending "//imaging/blender.rectangle"*/
+  /** combines or splits image data, e.g. blending "//"OY_TYPE_STD"/blender.rectangle"*/
   oyCONNECTOR_IMAGE_COMPOSITOR,
 
-  /** converts pixel layout to other formats "//imaging/pixel.convertor" */
+  /** converts pixel layout to other formats "//"OY_TYPE_STD"/pixel.convertor" */
   oyCONNECTOR_CONVERTOR_PIXELDATA,
   /** converts pixel layout to other formats, with precission loss, e.g. 
    *  float -> uint8_t, only relevant for output connectors 
-   *  "//imaging/pixel.convertor.lossy" */
+   *  "//"OY_TYPE_STD"/pixel.convertor.lossy" */
   oyCONNECTOR_CONVERTOR_PIXELDATA_LOSSY,
-  /** combines gray channels, e.g. from colour "//imaging/combiner.channels" */
+  /** combines gray channels, e.g. from colour "//"OY_TYPE_STD"/combiner.channels" */
   oyCONNECTOR_COMPOSITOR_CHANNEL,
-  /** provides gray scale views of channels "//imaging/splitter.channels" */
+  /** provides gray scale views of channels "//"OY_TYPE_STD"/splitter.channels" */
   oyCONNECTOR_SPLITTER_CHANNEL,
 
   /** provides values or text, only output "///analysis" */
@@ -1935,7 +1935,7 @@ struct oyFilterCore_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
-  char               * registration_;  /**< @private a registration name, e.g. "shared/oyranos.org/imaging/scale", see as well @ref registration */
+  char               * registration_;  /**< @private a registration name, e.g. OY_STD"/scale", see as well @ref registration */
 
   char               * category_;      /**< @private the ui menue category for this filter, to be specified */
 

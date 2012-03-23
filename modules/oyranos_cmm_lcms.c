@@ -734,7 +734,7 @@ oyOptions_s* lcmsFilter_CmmIccValidateOptions
   uint32_t error = !filter;
 
   if(!error)
-    error = oyFilterRegistrationMatch(filter->registration_, "//imaging/icc",
+    error = oyFilterRegistrationMatch(filter->registration_, "//"OY_TYPE_STD"/icc",
                                       oyOBJECT_CMM_API4_S);
 
   *result = error;

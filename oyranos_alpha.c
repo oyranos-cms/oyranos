@@ -3220,9 +3220,9 @@ digraph Anatomy_A {
  *  needed. This pattern follows the scheme of directories with attributes or
  *  XML elements with attributes.
  *  The sections are to be filled as follows:
- *  - top, e.g. "org" (::oyFILTER_REG_TOP)
- *  - vendor, e.g. "oyranos.org" (::oyFILTER_REG_DOMAIN)
- *  - filter type, e.g. "imaging"
+ *  - top, e.g. OY_TOP_SHARED (::oyFILTER_REG_TOP)
+ *  - vendor, e.g. OY_DOMAIN_STD (::oyFILTER_REG_DOMAIN)
+ *  - filter type, e.g. OY_TYPE_STD
  *    (::oyFILTER_REG_TYPE)
  *  - filter name, e.g. "icc.lcms._NOACCEL._CPU" (::oyFILTER_REG_APPLICATION)
  *
@@ -3242,7 +3242,7 @@ digraph Anatomy_A {
  *    hardware acceleration features \n
  *  
  *  \b Example: a complete module registration: \n
- *  "org/oyranos/imaging/icc.lcms._NOACCEL._CPU" registers a plain
+ *  "org/oyranos/openicc/icc.lcms._NOACCEL._CPU" registers a plain
  *  software CMM
  * 
  *  A underscore in front of a attribute makes the attribute optional during
@@ -3270,14 +3270,14 @@ digraph Anatomy_A {
  *  attibute must not match.
  *
  *  \b Example: a complete registration search pattern: \n
- *  "//imaging/4+icc.7+ACCEL.7_GPU.7_HLSL.7-GLSL" selects a accelerated CMM 
+ *  "//openicc/4+icc.7+ACCEL.7_GPU.7_HLSL.7-GLSL" selects a accelerated CMM 
  *  interpolator with prefered GPU and HLSL but no GLSL support together with a
  *  ICC compliant context generator and options.
  *
  *  The oyFilterRegistrationToText() and oyFilterRegistrationMatch() functions
  *  might be useful for canonical processing Oyranos registration text strings.
  *  Many functions allow for passing a registration string. Matching can be 
- *  obtained by omitting sections like in the string "//imaging/icc", where the
+ *  obtained by omitting sections like in the string "//openicc/icc", where the
  *  elements between slashes is o,itted. This string would result in a match 
  *  for any ICC compliant colour conversion filter.
  *
@@ -10190,7 +10190,7 @@ const char *       oyProfile_GetFileName (
       {
         char * key = oyAllocateFunc_(80);
         txt = oyFindProfile_( name );
-        sprintf( key, "//imaging/profile.icc/psid_%d", dl_pos );
+        sprintf( key, "//"OY_TYPE_STD"/profile.icc/psid_%d", dl_pos );
         oyOptions_SetFromText( &s->oy_->handles_,
                                key,
                                txt,
@@ -14641,7 +14641,7 @@ oyImage_s *    oyImage_Create         ( int               width,
     error = !display_rectangle;
     if(error <= 0)
       oyOptions_MoveInStruct( &s->tags,
-                              "//imaging/output/display_rectangle",
+                              "//"OY_TYPE_STD"/output/display_rectangle",
                               (oyStruct_s**)&display_rectangle, OY_CREATE_NEW );
   }
 
@@ -14702,7 +14702,7 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
     error = !display_rectangle;
     
     if(error <= 0 && display_name)
-      error = oyOptions_SetFromText( &s->tags, "//imaging/output/display_name",
+      error = oyOptions_SetFromText( &s->tags, "//"OY_TYPE_STD"/output/display_name",
                                      display_name, OY_CREATE_NEW );
 
     if(error > 0)

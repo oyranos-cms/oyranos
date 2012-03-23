@@ -820,7 +820,7 @@ oyTESTRESULT_e testRegistrationMatch ()
 
   fprintf(stdout, "\n" );
 
-  if( oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+  if( oyFilterRegistrationMatch(OY_INTERNAL "/icc.lcms",
                                 "//" OY_TYPE_STD "/icc",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -830,7 +830,7 @@ oyTESTRESULT_e testRegistrationMatch ()
     "simple CMM selection                  " );
   }
 
-  if(!oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+  if(!oyFilterRegistrationMatch( OY_INTERNAL "/icc.lcms",
                                 "//" OY_TYPE_STD "/icc.octl",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -840,7 +840,7 @@ oyTESTRESULT_e testRegistrationMatch ()
     "simple CMM selection no match         " );
   }
 
-  if( oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+  if( oyFilterRegistrationMatch( OY_INTERNAL "/icc.lcms",
                                 "//" OY_TYPE_STD "/icc.4+lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -850,7 +850,7 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM selection                 " );
   }
 
-  if(!oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+  if(!oyFilterRegistrationMatch( OY_INTERNAL "/icc.lcms",
                                 "//" OY_TYPE_STD "/icc.4-lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -860,7 +860,7 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM avoiding                  " );
   }
 
-  if( oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+  if( oyFilterRegistrationMatch( OY_INTERNAL "/icc.lcms",
                                 "//" OY_TYPE_STD "/icc.7-lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -870,7 +870,7 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM avoiding, other API       " );
   }
 
-  if( oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+  if( oyFilterRegistrationMatch( OY_INTERNAL "/icc.lcms",
                                 "lcms", 0 ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "select by keyname                     " );

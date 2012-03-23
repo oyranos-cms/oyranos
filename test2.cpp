@@ -45,6 +45,7 @@ typedef enum {
 } oyTESTRESULT_e;
 
 int results[oyTESTRESULT_UNKNOWN+1];
+char * tests_failed[64];
 
 const char * oyTestResultToString    ( oyTESTRESULT_e      error )
 {
@@ -118,6 +119,8 @@ oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
 
   fprintf(stderr, "\t%s", oyTestResultToString(error));
 
+  if(error == oyTESTRESULT_FAIL)
+    tests_failed[results[error]] = (char*)test_name;
   results[error] += 1;
 
   /* print */
@@ -325,7 +328,7 @@ oyTESTRESULT_e testStringRun ()
   int error = 0,
       i;
 
-  const char * test = "sw/oyranos.org/imaging/display.oydi/display_name";
+  const char * test = OY_INTERNAL "/display.oydi/display_name";
   
   char * erg = oyStrnchr_( (char*) test, OY_SLASH_C, oyStrlen_(test) );
   int test_n = oyStringSegmentsN_( test, oyStrlen_(test), OY_SLASH_C );
@@ -345,7 +348,7 @@ oyTESTRESULT_e testStringRun ()
 
     switch(i) {
       case 0: if(test_sub_n != 1) error = 1; break;
-      case 1: if(test_sub_n != 2) error = 1; break;
+      case 1: if(test_sub_n != 1) error = 1; break;
       case 2: if(test_sub_n != 1) error = 1; break;
       case 3: if(test_sub_n != 2) error = 1; break;
       case 4: if(test_sub_n != 1) error = 1; break;
@@ -406,7 +409,7 @@ oyTESTRESULT_e testStringRun ()
 
 
 
-  test = "//imaging/display.oydi/";
+  test = "//" OY_TYPE_STD "/display.oydi/";
   erg = oyStrnchr_( (char*) test, OY_SLASH_C, oyStrlen_(test) );
   test_n = oyStringSegmentsN_( test, oyStrlen_(test), OY_SLASH_C );
   test_n = oyStringSegments_( test, OY_SLASH_C );
@@ -708,7 +711,7 @@ oyTESTRESULT_e testOptionsCopy ()
   fprintf(stdout, "\n" );
 
   error = oyOptions_SetFromText( &setA,
-                "sw/oyranos.org/imaging/lcm2.colour.icc/rendering_bpc.advanced",
+                OY_INTERNAL "/lcm2.colour.icc/rendering_bpc.advanced",
                                  "1", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &setA,
                                  "//" OY_TYPE_STD "/image/A", "true",
@@ -742,7 +745,7 @@ oyTESTRESULT_e testOptionsCopy ()
                                  "//" OY_TYPE_STD "/config/D", "true",
                                  OY_CREATE_NEW );
   error = oyOptions_SetFromText( &setC,
-                                 "//" OY_TYPE_STD "/imaging/C", "true",
+                                 "//" OY_TYPE_STD "/config/C", "true",
                                  OY_CREATE_NEW );
 
   error = oyOptions_CopyFrom( &resultA, setA, oyBOOLEAN_UNION,
@@ -774,7 +777,7 @@ oyTESTRESULT_e testOptionsCopy ()
 
 
   error = oyOptions_Filter( &resultB, &count, 0, oyBOOLEAN_INTERSECTION,
-                            "sw/oyranos.org/imaging/image", setA  );
+                  OY_INTERNAL "/image", setA  );
 
   if(!error && oyOptions_Count( resultB ) == 1 &&
      oyOptions_FindString( resultB, "A", 0 ))
@@ -1077,9 +1080,9 @@ oyTESTRESULT_e testConfDomain ()
   fprintf(stdout, "\n" );
 
 #ifdef __APPLE__
-  a = oyConfDomain_FromReg( "shared/freedesktop.org/imaging/config.device.icc_profile.monitor.qarz", 0 );
+  a = oyConfDomain_FromReg( OY_STD"/config.device.icc_profile.monitor.qarz", 0 );
 #else
-  a = oyConfDomain_FromReg( "shared/freedesktop.org/imaging/config.device.icc_profile.monitor.oyX1", 0 );
+  a = oyConfDomain_FromReg( OY_STD"/config.device.icc_profile.monitor.oyX1", 0 );
 #endif
   error = !a;
 
@@ -1560,7 +1563,7 @@ oyTESTRESULT_e testRegistrationMatch ()
 
   fprintf(stdout, "\n" );
 
-  if( oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+  if( oyFilterRegistrationMatch(OY_INTERNAL "/icc.lcms",
                                 "//" OY_TYPE_STD "/icc",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -1570,7 +1573,7 @@ oyTESTRESULT_e testRegistrationMatch ()
     "simple CMM selection                  " );
   }
 
-  if(!oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+  if(!oyFilterRegistrationMatch(OY_INTERNAL "/icc.lcms",
                                 "//" OY_TYPE_STD "/icc.octl",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -1580,7 +1583,7 @@ oyTESTRESULT_e testRegistrationMatch ()
     "simple CMM selection no match         " );
   }
 
-  if( oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+  if( oyFilterRegistrationMatch(OY_INTERNAL "/icc.lcms",
                                 "//" OY_TYPE_STD "/icc.4+lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -1590,7 +1593,7 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM selection                 " );
   }
 
-  if(!oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+  if(!oyFilterRegistrationMatch(OY_INTERNAL "/icc.lcms",
                                 "//" OY_TYPE_STD "/icc.4-lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -1600,7 +1603,7 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM avoiding                  " );
   }
 
-  if( oyFilterRegistrationMatch("sw/oyranos.org/" OY_TYPE_STD "/icc.lcms",
+  if( oyFilterRegistrationMatch(OY_INTERNAL "/icc.lcms",
                                 "//" OY_TYPE_STD "/icc.7-lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -2803,7 +2806,7 @@ oyTESTRESULT_e testCMMnmRun ()
   }
 
 
-  const char * key_name = "shared/freedesktop.org/imaging/behaviour/rendering_bpc";
+  const char * key_name = OY_STD"/behaviour/rendering_bpc";
   oyAlloc_f allocate_func = oyAllocateFunc_;
 
   char* name = 0;
@@ -2855,7 +2858,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
 
   clck = oyClock();
-  oyOption_s * option = oyOption_FromRegistration("shared/freedesktop.org/imaging/behaviour/rendering_bpc", 0);
+  oyOption_s * option = oyOption_FromRegistration(OY_STD"/behaviour/rendering_bpc", 0);
 
   for(i = 0; i < n*3*17; ++i)
   {
@@ -3987,6 +3990,10 @@ int main(int argc, char** argv)
              results[oyTESTRESULT_SYSERROR] ||
              results[oyTESTRESULT_UNKNOWN]
             );
+
+    for(i = 0; i < results[oyTESTRESULT_FAIL]; ++i)
+      fprintf( stderr, "    %s: \"%s\"\n",
+               oyTestResultToString( oyTESTRESULT_FAIL), tests_failed[i] );
 
     if(error)
       fprintf( stderr, "    Tests FAILED\n" );

@@ -1235,7 +1235,7 @@ OYAPI const char * OYEXPORT
       if(hash)
       {
         txt = oyFindProfile_( name );
-        sprintf( hash, "//imaging/profile.icc/psid_%d", dl_pos );
+        sprintf( hash, "//"OY_TYPE_STD"/profile.icc/psid_%d", dl_pos );
         oyOptions_SetFromText( &s->oy_->handles_,
                                hash,
                                txt,
