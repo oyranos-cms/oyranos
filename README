@@ -21,6 +21,7 @@ Dependencies:
 
     Optional:
     Elektra - http://www.libelektra.org
+    Yajl - http://lloyd.github.com/yajl/
     FLTK (--enable-threads) is needed for the example Gui - http://www.fltk.org
     Xcalib a vcgt loader - http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/
     For the documentation use doxygen, graphviz and graphviz-gd packages.
