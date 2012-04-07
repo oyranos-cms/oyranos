@@ -1,58 +1,18 @@
-// !cc -Wall -g test_device.c -o test_device2 -L. `oyranos-config --ldstaticflags` -lm -lltdl
+// !cc -Wall -g test_device.c -o test_device2 -L. `oyranos-config --cflags --ldstaticflags` -lm -lltdl
 #include <stdio.h>
 
 
 #include "oyranos.h"
 #include "oyranos_helper.h"
-#include "oyranos_internal.h"
 #include "oyranos_elektra.h"
+#include "oyranos_string.h"
 #include "config.h"
 #include <locale.h>
-#include <libintl.h>
-#include <float.h>
-#include <stdint.h>
 
 void myDeAllocFunc(void *block)
 {
   if(block) free(block);
 }
-
-typedef struct {
-  uint32_t name_offset;                /**< UTF-16BE */
-  uint32_t name_size;
-  uint32_t value_offset;               /**< UTF-16BE */
-  uint32_t value_size;
-  uint32_t display_name_offset;        /**< mluc */
-  uint32_t display_name_size;
-  uint32_t display_value_offset;       /**< mluc */
-  uint32_t display_value_size;
-} icNameValueRecord;
-
-typedef struct {
-  icTagTypeSignature type;             /**< 'dict' */
-  uint32_t reserved;                   /**< zero */
-  uint32_t m;                          /**< Number of name-value records (m) */
-  /** The length of each name-value record, in bytes. (n) The value shall be
-   *  16, 24, or 32. */
-  uint32_t length;
-  
-} icDictType;
-
-typedef struct icDescriptiveNameValue {
-  char name[64];                       /**< first parameter name; 7-bit ASCII */
-  char value[64];                      /**< first parameter value; 7-bit ASCII*/
-  uint32_t mluc_name_offset;           /**< first parameter display text */
-  uint32_t mluc_name_size;             /**< first parameter display text */
-  uint32_t mluc_value_offset;          /**< first parameter value display text*/
-  uint32_t mluc_value_size;            /**< first parameter value display text*/
-} icDescriptiveNameValue;
-
-typedef struct icDescriptiveNameValueMuArrayType_ {
-  icTagTypeSignature type;             /**< 'nvmt' */
-  uint32_t         dummy;              /**< keep zero */
-  uint32_t         count;              /**< name */
-  icDescriptiveNameValue array[1];      /**< parameter array */
-} icDescriptiveNameValueMuArrayType_;
 
 
 int main(int argc, char *argv[])
@@ -210,7 +170,7 @@ int main(int argc, char *argv[])
 
     error = oyDeviceGet( 0, device_class, device_name, 0, &oy_device );
     if(oy_device)
-      error = oyDeviceGetProfile( oy_device, &profile );
+      error = oyDeviceGetProfile( oy_device, 0, &profile );
 
     if(profile)
       tmp = oyProfile_GetFileName( profile, -1 );
@@ -251,9 +211,7 @@ int main(int argc, char *argv[])
   /* device profile */
   {
     int i,n, pos = 0;
-    size_t nvmt_n;
     oyProfileTag_s * tag_ = 0;
-    icDescriptiveNameValueMuArrayType_ * nvmt = 0;
     oyConfig_s * oy_device = 0;
     oyOption_s * o = 0;
     char * text = 0, * name = 0;
@@ -265,7 +223,7 @@ int main(int argc, char *argv[])
     /* pick expensive informations */
     oyDeviceGetInfo( oy_device, oyNAME_DESCRIPTION, 0, &text, oyAllocateFunc_);
     oyDeAllocateFunc_( text );
-    error = oyDeviceGetProfile( oy_device, &p );
+    error = oyDeviceGetProfile( oy_device, 0, &p );
 
     vs = oyValueUInt32( oyProfile_GetSignature(p,oySIGNATURE_VERSION) );
     v = (char*)&vs;
@@ -275,14 +233,6 @@ int main(int argc, char *argv[])
       texttype = (icTagTypeSignature) icSigMultiLocalizedUnicodeType;
 
     n = oyOptions_Count( oy_device->backend_core );
-    nvmt_n = 12 + n * sizeof(icDescriptiveNameValue);
-    
-
-    nvmt = (icDescriptiveNameValueMuArrayType_*) oyAllocateFunc_(nvmt_n);
-    memset( nvmt, 0, nvmt_n );
-
-    nvmt->type = (icTagTypeSignature) oyValueUInt32(
-                                        icSigDescriptiveNameValueMuArrayType_ );
 
     for(i = 0; i < n; ++i)
     {
@@ -291,8 +241,8 @@ int main(int argc, char *argv[])
       text = oyOption_GetValueText( o, oyAllocateFunc_ );
       if(!text) continue;
 
-      name = oyFilterRegistrationToText( o->registration, oyFILTER_REG_MAX,
-                                         oyAllocateFunc_ );
+      name = oyFilterRegistrationToText( oyOption_GetRegistration(o),
+                                         oyFILTER_REG_MAX, oyAllocateFunc_ );
       if(strstr(name, "manufacturer"))
       {
         /* add a Manufacturer desc tag */
@@ -322,34 +272,15 @@ int main(int argc, char *argv[])
 
       }
 
-      memcpy( nvmt->array[pos].value,text, strlen(text) > 64 ? 64:strlen(text));
       oyDeAllocateFunc_( text );
 
-      text = oyFilterRegistrationToText( o->registration, oyFILTER_REG_MAX,
-                                         oyAllocateFunc_ );
-      memcpy( nvmt->array[pos].name, text, strlen(text) > 64 ? 64:strlen(text));
+      text = oyFilterRegistrationToText( oyOption_GetRegistration(o),
+                                         oyFILTER_REG_MAX, oyAllocateFunc_ );
       oyDeAllocateFunc_( text );
       ++pos;
     }
 
-    nvmt_n = 12 + pos * sizeof(icDescriptiveNameValue);
-    nvmt->count = oyValueUInt32( (uint32_t)pos );
-    tag_ = oyProfileTag_New( 0 );
-    error = oyProfileTag_Set( tag_,
-                              (icTagSignature)icSigProfileDetailDescriptionTag_,
-                      (icTagTypeSignature)icSigDescriptiveNameValueMuArrayType_,
-                              oyOK, nvmt_n, nvmt );
-    if(!error)
-      error = !memcpy( tag_->profile_cmm_, "oyra", 4 );
-
-    error = oyProfile_TagMoveIn( p, &tag_, -1 );
-
-    error = oyProfile_ToFile_( p, "test_device.icc" );
     oyProfile_Release( &p );
-
-    p = oyProfile_FromFile( "./test_device.icc", 0, 0 );
-    printf( "written \"test_device.icc\"  \"%s\"\n\n",
-            oyProfile_GetText( p, oyNAME_DESCRIPTION ) );
 
     oyConfig_s * device = oyConfig_New( "//" OY_TYPE_STD "/config",
                                         0 );
@@ -364,7 +295,7 @@ int main(int argc, char *argv[])
       text = oyOption_GetValueText( o, oyAllocateFunc_ );
       if(!text) continue;
 
-      printf("%s: %s\n", o->registration, text);
+      printf("%s: %s\n", oyOption_GetRegistration(o), text);
 
       oyOption_Release( &o );
     }
