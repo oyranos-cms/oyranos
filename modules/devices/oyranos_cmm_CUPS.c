@@ -385,7 +385,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
 
         colour_key_words = oyStringSplit_( tmp, ';', &colour_key_words_n,
                                          oyAllocateFunc_);
-        oyDeAllocateFunc_( tmp );
+        if(tmp) oyDeAllocateFunc_( tmp ); tmp = 0;
 
         /* add the key/value pairs to the devices backend_core options. */
         for(j = 0; j < colour_key_words_n; ++j)
@@ -414,7 +414,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
                                                reg_name,
                                                value,
                                                OY_CREATE_NEW );
-          oyDeAllocateFunc_( reg_name );
+          if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
         }
 
         if( colour_key_words && colour_key_words_n)
@@ -446,7 +446,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
                                                 reg_name,
                                                 value,
                                                 OY_CREATE_NEW );
-            oyDeAllocateFunc_( reg_name );
+            if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
           }
         }
       }
@@ -523,7 +523,7 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
             error = oyOptions_SetFromText( &device->data,
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
-            oyDeAllocateFunc_( text );
+            if(text) oyDeAllocateFunc_( text ); text = 0;
           }
         }
 
@@ -1101,7 +1101,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
         oyOptions_SetFromText( &device->backend_core,
                                reg_name,
                                texts[0], OY_CREATE_NEW );
-        oyDeAllocateFunc_( reg_name );
+        if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
       }
       if(selectorB && texts[1] && texts[1][0])
       {
@@ -1111,7 +1111,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
         oyOptions_SetFromText( &device->backend_core,
                                reg_name,
                                texts[1], OY_CREATE_NEW );
-        oyDeAllocateFunc_( reg_name );
+        if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
       }
       if(selectorC && texts[2] && texts[2][0])
       {
@@ -1121,7 +1121,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
         oyOptions_SetFromText( &device->backend_core,
                                reg_name,
                                texts[2], OY_CREATE_NEW );
-        oyDeAllocateFunc_( reg_name );
+        if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
       }
 
           /* Check to see if profile is a custom one.
