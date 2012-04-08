@@ -302,7 +302,12 @@ int main( int argc , char** argv )
 
         if(!list_profile_full_names && !list_profile_internal_names &&
            accept)
-            fprintf(stdout, "%s", names[i]);
+        {
+          const char * sfn = names[i];
+          if(strrchr(sfn, OY_SLASH_C))
+            sfn = strrchr(sfn, OY_SLASH_C) + 1;
+          fprintf(stdout, "%s", sfn);
+        }
 
         if(list_profile_internal_names && accept)
         {
