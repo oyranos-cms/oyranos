@@ -929,7 +929,12 @@ typedef int (*pathSelect_f_)(oyFileList_s*,const char*,const char*);
 int oyStrcmpWrap( const void * a, const void * b)
 {
   const char ** ca = (const char**)a, ** cb = (const char**)b;
-  return strcmp(*ca,*cb);
+  const char * ca_ = *ca, *cb_ = *cb;
+  if(strrchr(ca_, OY_SLASH_C))
+    ca_ = strrchr(ca_, OY_SLASH_C);
+  if(strrchr(cb_, OY_SLASH_C))
+    cb_ = strrchr(cb_, OY_SLASH_C);
+  return strcmp(ca_,cb_);
 }
 
 #define MAX_DEPTH 64
