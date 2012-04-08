@@ -12914,6 +12914,8 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
 
   error = !memset( rank_list, 0, sizeof(int32_t) * n );
 
+  error = oyDeviceCheckProperties ( device );
+
   /* oyConfig_Compare assumes its options in device->db, so it is filled here.*/
   if(!oyOptions_Count( device->db ))
   {
