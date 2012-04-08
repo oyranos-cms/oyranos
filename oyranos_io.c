@@ -141,9 +141,9 @@ int oyProfileListCb_ (oyFileList_s * data,
           l->mem_count += l->hopp;
         }
 
-        oyAllocString_m_( l->names[l->count_files], oyStrblen_(filename) + 1,
+        oyAllocString_m_( l->names[l->count_files], oyStrblen_(full_name) + 1,
                           oyAllocateFunc_, return 1 );
-        strcpy(l->names[l->count_files], filename);
+        strcpy(l->names[l->count_files], full_name);
         ++l->count_files;
       }
 
