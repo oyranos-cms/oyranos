@@ -65,18 +65,10 @@ void callback_done( Fl_Widget * w, void * )
   w->window()->hide();
 }
 
-//#define HELP_VIEW_DISPLAY 1
-
 void callback_help_view( oyPointer * ptr, const char * help_text )
 {
   int error = 0;
 
-#if HELP_VIEW_DISPLAY
-  Fl_Text_Buffer * buffer = 0;
-  buffer = (Fl_Text_Buffer*)ptr;
-  if(buffer)
-    buffer->text( help_text?help_text:"" );
-#else
   Fl_Help_View * help_view = (Fl_Help_View*)ptr;
   if(help_view)
   {
@@ -132,7 +124,6 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
       help_view->leftline( 0 );
     }
   }
-#endif
   else
     error = 1;
 }
@@ -353,26 +344,15 @@ int main (int argc, char ** argv)
   Fl_Double_Window * w = new Fl_Double_Window(400,475,_("XFORMS in FLTK"));
     oyCallback_s callback = {oyOBJECT_CALLBACK_S, 0,0,0,
                                   (void(*)())callback_help_view,0};
-#if HELP_VIEW_DISPLAY
-    Fl_Text_Display * help_view = new Fl_Text_Display( 0,340,400,100 );
-#else
     Fl_Group* o = new Fl_Group(0, 340, 400, 100);
       Fl_Help_View * help_view = new Fl_Help_View( 0,340,400,100 );
-#endif
       help_view->box(FL_ENGRAVED_BOX);
       help_view->color(FL_BACKGROUND_COLOR);
       //help_view->align(FL_ALIGN_LEFT);
       help_view->selection_color(FL_DARK1);
-#if HELP_VIEW_DISPLAY
-      Fl_Text_Buffer * buffer = new Fl_Text_Buffer(0);
-      buffer->append( _("Hints") );
-    help_view->buffer( buffer );
-    callback.data = buffer;
-#else
       help_view->value("");
       callback.data = help_view;
     o->end(); // Fl_Group* o
-#endif
     oyFormsArgs_ResourceSet( forms_args, OYFORMS_FLTK_HELP_VIEW_REG,
                              (oyPointer)&callback);
 
