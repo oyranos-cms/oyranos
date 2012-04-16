@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xf="http://www.w3.org/2002/xforms"
+      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      xmlns:oicc="http://www.oyranos.org/2009/oyranos_icc">
+<head>
+  <title>Filter options</title>
+  <xf:model>
+    <xf:instance xmlns="">
+      <org>
+       <freedesktop>
+        <openicc>
+         <behaviour>
+          <proof_hard>0</proof_hard>
+          <proof_soft>0</proof_soft>
+          <rendering_bpc>0</rendering_bpc>
+          <rendering_gamut_warning>0</rendering_gamut_warning>
+          <rendering_intent>0</rendering_intent>
+          <rendering_intent_proof>0</rendering_intent_proof>
+         </behaviour>
+        </openicc>
+       </freedesktop>
+       <oyranos>
+        <openicc>
+         <icc>
+          <cmyk_cmyk_black_preservation>0</cmyk_cmyk_black_preservation>
+          <precalculation>0</precalculation>
+         </icc>
+        </openicc>
+       </oyranos>
+       <Name/>
+       <select_colour>orange</select_colour>
+       <input_one>4</input_one>
+       <some_text>text text text text</some_text>
+      </org>
+    </xf:instance>
+    <!-- you MUST bind each data type to the decimal type for the range control to work -->
+    <xf:bind nodeset="/org/input_one" type="xs:decimal" />
+  </xf:model>
+
+  <style type="text/css"> 
+  @namespace xf url("http://www.w3.org/2002/xforms");
+  xf|label, xf|range {
+   font-family: Helvetica, Geneva, Lucida, sans-serif;
+   width: 30ex;
+   text-align: right;
+   padding-right: 1em;
+  }
+  xf|select1 { display: table-row; }
+  xf|select1 xf|label, xf|choices { display: table-cell; }
+  xf|select1 xf|choices { width: 45ex; }
+  xf|range { display: table-row; }
+  xf|range xf|label { display: table-cell; }
+  .range_image { padding-left: 30ex; }
+  </style>
+</head>
+<body>
+ <xf:group type="h3">
+  <xf:label>Oyranos Behaviour:</xf:label>
+  <xf:hint>Settings affecting the Behaviour in various situations</xf:hint>
+  <xf:help>Color management has in some situations to resolve unclear situations. This can be done by automatic applying preselected choices or on a case to case base. In unclear situations users can get alerted if they wish and perform manual control.</xf:help>
+  <xf:group type="h4">
+   <xf:label>Rendering</xf:label>
+   <xf:hint>The kind of ICC gamut mapping for transforming colors between differently sized color spaces</xf:hint>
+   <xf:help>The conversion between color spaces of different shape and size can happen in various ways. The Perceptual rendering intent is usual the best choice for photographs and artistic imagery. It is used in many automatic systems. The Relative Colorimetric rendering intent provides a well-defined standard, one-to-one color mapping, but without applying white point adaption. This can lead to color clipping in case of colors falling outside the target gamut as a price for the otherwise colorimetric correctness. The Relative Colorimetric intent is often used in combination with Black Point Compensation. The Saturation rendering intent shall provide an optimal use of saturated device colors. The Absolute Colorimetric rendering intent works like the relative colorimetric one except the white point is adapted. All rendering intents beside the colorimetric ones rely on the color tables designed by the profile vendor.</xf:help>
+     <xf:select1 ref="/org/freedesktop/openicc/behaviour/rendering_intent">
+      <xf:label>Rendering Intent</xf:label>
+      <xf:hint>Rendering intent for color space transformations.</xf:hint>
+      <xf:help>Rendering intent for color space transformations is typical the Relative Colorimetric intent plus Black Point Compensation or the Perceptual intent.</xf:help>
+      <xf:choices>
+       <xf:item>
+        <xf:label>Perceptual</xf:label>
+        <xf:value>0</xf:value>
+       </xf:item>
+       <xf:item>
+        <xf:label>Relative Colorimetric</xf:label>
+        <xf:value>1</xf:value>
+       </xf:item>
+       <xf:item>
+        <xf:label>Saturation</xf:label>
+        <xf:value>2</xf:value>
+       </xf:item>
+       <xf:item>
+        <xf:label>Absolute Colorimetric</xf:label>
+        <xf:value>3</xf:value>
+       </xf:item>
+      </xf:choices>
+     </xf:select1>
+     <xf:select1 ref="/org/freedesktop/openicc/behaviour/rendering_bpc">
+      <xf:label>Use Black Point Compensation</xf:label>
+      <xf:hint>BPC affects often only the Relative Colorimetric Rendering intent.</xf:hint>
+      <xf:help>BPC affects often only the Relative Colorimetric Rendering intent.</xf:help>
+      <xf:choices>
+       <xf:item>
+        <xf:label>No</xf:label>
+        <xf:value>0</xf:value>
+       </xf:item>
+       <xf:item>
+        <xf:label>Yes</xf:label>
+        <xf:value>1</xf:value>
+       </xf:item>
+      </xf:choices>
+     </xf:select1>
+     <xf:select1 ref="/org/freedesktop/openicc/behaviour/rendering_gamut_warning">
+      <xf:label>Gamut Warning</xf:label>
+      <xf:hint>Mark Out Of Gamut colors</xf:hint>
+      <xf:help>Most users want a simple display of colors and will not check if colors match the simulation color space.</xf:help>
+      <xf:choices>
+       <xf:item>
+        <xf:label>No</xf:label>
+        <xf:value>0</xf:value>
+       </xf:item>
+       <xf:item>
+        <xf:label>Yes</xf:label>
+        <xf:value>1</xf:value>
+       </xf:item>
+      </xf:choices>
+     </xf:select1>
+  </xf:group>
+  <xf:group type="h4">
+   <xf:label>Proofing</xf:label>
+   <xf:hint>Proofing Settings</xf:hint>
+   <xf:help>Proofing Settings allows one to decide about the simulation color space.</xf:help>
+     <xf:select1 ref="/org/freedesktop/openicc/behaviour/rendering_intent_proof">
+      <xf:label>Proofing Rendering Intent</xf:label>
+      <xf:hint>Behaviour of color space transformation for proofing</xf:hint>
+      <xf:help>Behaviour of color space transformation for proofing. Most people want a preview on screen only. The Relative Colorimetric intent is right for that. The Absolute Colorimetric intent needs a very careful profiling and non-trivial setup, but allowes for side-by-side comparisions.</xf:help>
+      <xf:choices>
+       <xf:item>
+        <xf:label>Relative Colorimetric</xf:label>
+        <xf:value>0</xf:value>
+       </xf:item>
+       <xf:item>
+        <xf:label>Absolute Colorimetric</xf:label>
+        <xf:value>1</xf:value>
+       </xf:item>
+      </xf:choices>
+     </xf:select1>
+     <xf:select1 ref="/org/freedesktop/openicc/behaviour/proof_soft">
+      <xf:label>SoftProof</xf:label>
+      <xf:hint>Simulate the output print on the monitor</xf:hint>
+      <xf:help>Enable simulation of output print on the monitor. Most users do not work for a certain media and leave color handling to the system. They want no simulation.</xf:help>
+      <xf:choices>
+       <xf:item>
+        <xf:label>No</xf:label>
+        <xf:value>0</xf:value>
+       </xf:item>
+       <xf:item>
+        <xf:label>Yes</xf:label>
+        <xf:value>1</xf:value>
+       </xf:item>
+      </xf:choices>
+     </xf:select1>
+     <xf:select1 ref="/org/freedesktop/openicc/behaviour/proof_hard">
+      <xf:label>Hardproof</xf:label>
+      <xf:hint>Behaviour for preselecting Hardproofing with a Proofing Profile at print time</xf:hint>
+      <xf:help>Enable simulation of an output color space on a local printer. Most users do not work for a certain media and leave color handling to the system. They want no simulation.</xf:help>
+      <xf:choices>
+       <xf:item>
+        <xf:label>No</xf:label>
+        <xf:value>0</xf:value>
+       </xf:item>
+       <xf:item>
+        <xf:label>Yes</xf:label>
+        <xf:value>1</xf:value>
+       </xf:item>
+      </xf:choices>
+     </xf:select1>
+  </xf:group>
+ </xf:group>
+
+  <xf:group type="h3">    <xf:label>little CMS Extended Options:</xf:label>
+     <xf:select1 ref="/org/oyranos/openicc/icc/cmyk_cmyk_black_preservation">
+      <xf:label>Black Preservation</xf:label>
+      <xf:hint>Decide how to preserve the black channel for Cmyk to Cmyk transforms</xf:hint>
+      <xf:help>Cmyk to Cmyk transforms can provide various strategies to preserve the black only channel. None means, black might change to Cmy and thus text prints not very well. LittleCMS has added two different modes to deal with that: Black-ink-only preservation and black-plane preservation. The first is simple and effective: do all the colorimetric transforms but keep only K (preserving L*) where the source image is only black. The second mode is fair more complex and tries to preserve the WHOLE K plane.</xf:help>
+      <xf:choices>
+       <xf:item>
+        <xf:value>0</xf:value>
+        <xf:label>none</xf:label>
+       </xf:item>
+       <xf:item>
+        <xf:value>1</xf:value>
+        <xf:label>LCMS_PRESERVE_PURE_K</xf:label>
+       </xf:item>
+       <xf:item>
+        <xf:value>2</xf:value>
+        <xf:label>LCMS_PRESERVE_K_PLANE</xf:label>
+       </xf:item>
+      </xf:choices>
+     </xf:select1>
+     <xf:select1 ref="/org/oyranos/openicc/icc/precalculation">
+      <xf:label>Optimization</xf:label>
+      <xf:hint>Color Transforms can be differently stored internally</xf:hint>
+      <xf:help>Little CMS tries to optimize profile chains whatever possible. There are some built-in optimization schemes, and you can add new schemas by using a plug-in. This generally improves the performance of the transform, but may introduce a small delay of 1-2 seconds when creating the transform. If you are going to transform just few colors, you don't need this precalculations. Then, the flag cmsFLAGS_NOOPTIMIZE in cmsCreateTransform() can be used to inhibit the optimization process. See the API reference for a more detailed discussion of the flags.</xf:help>
+      <xf:choices>
+       <xf:item>
+        <xf:value>0</xf:value>
+        <xf:label>LCMS_NOOPTIMIZE</xf:label>
+       </xf:item>
+       <xf:item>
+        <xf:value>1</xf:value>
+        <xf:label>normal</xf:label>
+       </xf:item>
+       <xf:item>
+        <xf:value>2</xf:value>
+        <xf:label>LCMS_HIGHRESPRECALC</xf:label>
+       </xf:item>
+       <xf:item>
+        <xf:value>3</xf:value>
+        <xf:label>LCMS_LOWRESPRECALC</xf:label>
+       </xf:item>
+      </xf:choices>
+     </xf:select1>
+   </xf:group>
+    <hr />
+     <xf:select1 ref="/org/oyranos/openicc/icc/precalculation" appearance="full">
+      <xf:label>Optimization</xf:label>
+      <xf:hint>Color Transforms can be differently stored internally</xf:hint>
+      <xf:help>Little CMS tries to optimize profile chains whatever possible. There are some built-in optimization schemes, and you can add new schemas by using a plug-in. This generally improves the performance of the transform, but may introduce a small delay of 1-2 seconds when creating the transform. If you are going to transform just few colors, you don't need this precalculations. Then, the flag cmsFLAGS_NOOPTIMIZE in cmsCreateTransform() can be used to inhibit the optimization process. See the API reference for a more detailed discussion of the flags.</xf:help>
+      <xf:choices>
+       <xf:item>
+        <xf:value>0</xf:value>
+        <xf:label>LCMS_NOOPTIMIZE</xf:label>
+       </xf:item>
+       <xf:item>
+        <xf:value>1</xf:value>
+        <xf:label>normal</xf:label>
+       </xf:item>
+       <xf:item>
+        <xf:value>2</xf:value>
+        <xf:label>LCMS_HIGHRESPRECALC</xf:label>
+       </xf:item>
+       <xf:item>
+        <xf:value>3</xf:value>
+        <xf:label>LCMS_LOWRESPRECALC</xf:label>
+       </xf:item>
+      </xf:choices>
+     </xf:select1>
+
+
+    <hr />
+    <xf:input ref="/org/Name">
+      <xf:label>Text Input </xf:label>
+    </xf:input>
+    <br />
+    <xf:output value="concat('Hello ', /org/Name)">
+      <xf:label>Text Output: </xf:label>
+    </xf:output>
+    <hr />
+   <xf:group>   <xf:label>Select:</xf:label>
+    <xf:select ref="/org/select_colour" appearance="full">
+      <xf:choices>
+        <xf:item>
+           <xf:label>Red</xf:label>
+           <xf:value>red</xf:value>
+        </xf:item>
+        <xf:item>
+           <xf:label>Orange</xf:label>
+           <xf:value>orange</xf:value>
+        </xf:item>
+      </xf:choices>
+    </xf:select>
+   </xf:group>
+   <xf:select ref="/org/select_colour" appearance="compact">
+    <xf:choices>
+     <xf:item>
+      <xf:label>Red</xf:label>
+      <xf:value>red</xf:value>
+     </xf:item>
+     <xf:item>
+      <xf:label>Orange</xf:label>
+      <xf:value>orange</xf:value>
+     </xf:item>
+    </xf:choices>
+   </xf:select>
+    <hr />
+    <xf:range ref="/org/input_one" start="1" end="7" step="1" incremental="true">
+      <xf:label>Input</xf:label>
+    </xf:range>
+    <img class="range_image" src="gradient-sw.png" />
+    <br /><br />
+    <xf:output ref="/org/input_one"/>
+    <hr />
+    <xf:textarea ref="/org/some_text">
+      <xf:label>Text Area:</xf:label>
+    </xf:textarea>
+
+</body></html>
