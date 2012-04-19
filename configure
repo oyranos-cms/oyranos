@@ -1223,27 +1223,25 @@ test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $CONF
 test -n "$ECHO" && $ECHO "" >> $CONF
 
 
-test -n "$ECHO" && $ECHO "" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_PREFIX         \"$prefix\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_BINDIR         \"$bindir\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_DATADIR        \"$datadir\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_LIBDIR         \"$libdir\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_CMMDIR         \"$cmmdir\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_CMMSUBPATH     \"$cmmsubpath\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_METASUBPATH    \"$metasubpath\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_SYSCOLORDIR    \"$syscolordir\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_USERCOLORDIR   \"$usercolordir\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_USERCOLORDATA  \"$usercolordata\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_ICCDIRNAME     \"$iccdirname\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_SETTINGSDIRNAME \"$settingsdirname\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_TARGETDIRNAME  \"$targetdirname\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_LOCALEDIR      \"$datadir/locale\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_SRCDIR         \"$BUILD_DIR\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_SRC_LOCALEDIR  \"$BUILD_DIR/po\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "" >> $CONF_H
 test -n "$ECHO" && $ECHO $OYAPI >> $VERS_H
 test -n "$ECHO" && $ECHO $OYEXPORT >> $VERS_H
 test -n "$ECHO" && $ECHO "" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_PREFIX         \"$prefix\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_BINDIR         \"$bindir\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_DATADIR        \"$datadir\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_LIBDIR         \"$libdir\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_CMMDIR         \"$cmmdir\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_CMMSUBPATH     \"$cmmsubpath\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_METASUBPATH    \"$metasubpath\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_SYSCOLORDIR    \"$syscolordir\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_USERCOLORDIR   \"$usercolordir\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_USERCOLORDATA  \"$usercolordata\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_ICCDIRNAME     \"$iccdirname\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_SETTINGSDIRNAME \"$settingsdirname\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_TARGETDIRNAME  \"$targetdirname\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_LOCALEDIR      \"$datadir/locale\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_SRCDIR         \"$BUILD_DIR\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_SRC_LOCALEDIR  \"$BUILD_DIR/po\"" >> $VERS_H
 # Images formats availablility markers
 if [ `cat $CONF_H | grep "HAVE_PNG 1" | wc -l` -gt 0 ]; then
 test -n "$ECHO" && $ECHO "#define OY_HAVE_PNG 1" >> $VERS_H

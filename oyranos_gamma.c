@@ -56,7 +56,7 @@ void* oyAllocFunc(size_t size) {return malloc (size);}
 void  oyDeAllocFunc ( oyPointer ptr) { if(ptr) free (ptr); }
 int   compareRanks                   ( const void       * rank1,
                                        const void       * rank2 )
-{const int32_t *r1=rank1, *r2=rank2; if(r1[1] < r2[1]) return 1; else return 0;}
+{const int32_t *r1=(int32_t*)rank1, *r2=(int32_t*)rank2; if(r1[1] < r2[1]) return 1; else return 0;}
 
 int main( int argc , char** argv )
 {
