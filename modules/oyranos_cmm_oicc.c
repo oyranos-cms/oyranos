@@ -381,7 +381,7 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
 
           } else if(oy_debug)
             /* tell about missed options */
-            printf("  %d: %s %s\n", __LINE__,
+            fprintf( stderr, "  %d: %s %s\n", __LINE__,
                   t->config_string?t->config_string:"-", name );
 
         /* remember the section headlines */
@@ -728,7 +728,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
 
     old_id = oyFilterNode_GetId( node );
     if(verbose && search)
-      printf("ICC CMM search: %d - ", old_id);
+      fprintf( stderr, "ICC CMM search: %d - ", old_id);
 
     /* search for a path to a "icc" CMM */
     while(search)
@@ -766,7 +766,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               {
                 o = oyOptions_Get( f_options, k );
                 tmp  = oyOption_GetValueText(o, oyAllocateFunc_);
-                printf("%d: \"%s\": \"%s\" %s %d\n", k, 
+                fprintf( stderr, "%d: \"%s\": \"%s\" %s %d\n", k, 
                        oyOption_GetText( o, oyNAME_DESCRIPTION ),
                        tmp,
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
@@ -782,7 +782,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               {
                 o = oyOptions_Get( db_options, k );
                 tmp  = oyOption_GetValueText(o, oyAllocateFunc_);
-                printf("%d: \"%s\": \"%s\" %s %d\n", k, 
+                fprintf( stderr, "%d: \"%s\": \"%s\" %s %d\n", k, 
                        oyOption_GetText( o, oyNAME_DESCRIPTION ),
                        tmp,
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
@@ -858,9 +858,9 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
       if(verbose)
       {
         if(search)
-          printf(OY_DBG_FORMAT_"%d - ", OY_DBG_ARGS_, old_id);
+          fprintf( stderr, OY_DBG_FORMAT_"%d - ", OY_DBG_ARGS_, old_id);
         else
-          printf("%d[icc]\n", old_id );
+          fprintf( stderr, "%d[icc]\n", old_id );
       }
     }
     oyFilterNode_Release( &node );

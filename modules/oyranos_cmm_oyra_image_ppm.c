@@ -609,7 +609,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
             t[fpos - l_pos - 15] = 0;
             prof = oyProfile_FromName(t);
             if(prof)
-              printf("found: %s\n", t);
+              fprintf(stderr, "found: %s\n", t);
             else
               oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ " could not find ICC: %s",
@@ -638,7 +638,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
             var_s[l] = 0;
             var = atof(var_s);
 #           ifdef DEBUG_
-            printf("var = \"%s\"  %d\n",var_s, l);
+            fprintf(stderr, "var = \"%s\"  %d\n",var_s, l);
 #           endif
           }
           l_pos = end + 1;
