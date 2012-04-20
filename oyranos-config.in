@@ -82,6 +82,12 @@ if [ "$echo_help" = "yes" ]; then
   echo "  $0 --metadir           Oyranos meta module directory name"
 fi
 
+if [ "$echo_ldflags" = "yes" ]; then
+    elektra_dyn="`pkg-config --libs elektra`"
+    elektra="$elektra_dyn"
+fi
+
+if [ -z "$elektra" ]; then
   if [ -f $libdir/libelektra.a ]; then
     elektra="$libdir/libelektra.a"
     if [ -f $libdir/libelektra-filesys.a ]; then
@@ -90,10 +96,8 @@ fi
     if [ -f $libdir/elektra/libelektra-filesys.a ]; then
       elektra="$elektra $libdir/elektra/libelektra-filesys.a"
     fi
-  else
-    elektra_dyn="`pkg-config --libs elektra`"
-    elektra="$elektra_dyn"
   fi
+fi
 
 if [ "$echo_cflags" = "yes" ]; then
   echo "-I$includedir -I$includedir/alpha/object"
