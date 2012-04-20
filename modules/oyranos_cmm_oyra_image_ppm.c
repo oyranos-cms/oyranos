@@ -408,6 +408,36 @@ int wread ( unsigned char* data, size_t pos, size_t max, size_t *start, size_t *
   return end_found;
 }
 
+oyProfile_s * oyProfile_FromName     ( const char        * name )
+{
+    oyProfile_s * p = 0;
+    char ** names = NULL;
+    uint32_t count = 0, i;
+    const char * t = 0;
+
+    names = /*(const char**)*/ oyProfileListGet ( NULL, &count, malloc );
+
+    if(name)
+    {
+      for(i = 0; i < (int)count; ++i)
+      {
+        p = oyProfile_FromFile( names[i], 0,0 );
+
+        t = oyProfile_GetText(p, oyNAME_DESCRIPTION);
+        if(t && strcmp(t,name) == 0)
+        {
+          free(names[i]);
+          break;
+        }
+        free(names[i]);
+
+        oyProfile_Release( &p );
+      }
+      free(names); names = 0;
+    }
+  return p;
+}
+
 /** @func    oyraFilterPlug_ImageInputPPMRun
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
@@ -565,6 +595,29 @@ int      oyraFilterPlug_ImageInputPPMRun (
           in_c = 0;
         }
         ++fpos;
+      }
+
+      /* lockup colour space */
+      if(fpos - l_pos > 0)
+      {
+        if(fpos - l_pos >= 14 && memcmp(&data[l_pos],"# COLORSPACE: ", 14) == 0)
+        { 
+          char * t = oyAllocateFunc_(fpos - l_pos + 1);
+          if(t)
+          {
+            memcpy( t, &data[l_pos+14], fpos - l_pos - 15 );
+            t[fpos - l_pos - 15] = 0;
+            prof = oyProfile_FromName(t);
+            if(prof)
+              printf("found: %s\n", t);
+            else
+              oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ " could not find ICC: %s",
+             OY_DBG_ARGS_, oyNoEmptyString_m_( t ) );
+              
+            oyDeAllocateFunc_(t);
+          }
+        }
       }
 
       /* parse line */
@@ -854,7 +907,8 @@ int      oyraFilterPlug_ImageInputPPMRun (
   }
 
   pixel_type = oyChannels_m(spp) | oyDataType_m(data_type); 
-  prof = oyProfile_FromStd( profile_type, 0 );
+  if(!prof)
+    prof = oyProfile_FromStd( profile_type, 0 );
 
   image_in = oyImage_Create( width, height, buf, pixel_type, prof, 0 );
 
