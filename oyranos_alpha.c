@@ -15457,8 +15457,10 @@ int          oyImage_PpmWrite        ( oyImage_s         * image,
       fputc( '\n', fp );
 
       oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
-                "# CREATOR: Oyranos-%s\n%s\n",
-                oyNoEmptyString_m_(vs), 
+                "# CREATOR: Oyranos-%s\n",
+                oyNoEmptyString_m_(vs) ); 
+      oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                " COMMENT: %s\n",
                 free_text?free_text:"" );
       if(vs) free(vs); vs = 0;
       len = strlen( t );
