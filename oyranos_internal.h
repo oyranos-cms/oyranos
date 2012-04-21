@@ -62,7 +62,9 @@ int     oySetProfile_Block                (const char      * name,
                                            size_t            size,
                                            oyPROFILE_e       type,
                                            const char      * comnt);
-
+int   oySetProfile_             (const char      * name,
+                                 oyPROFILE_e       type,
+                                 const char      * comment);
 
 /* separate from the external functions */
 int   oyPathsCount_             (void);
