@@ -1983,8 +1983,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   }
 
   oyConfigs_s * configs = 0;
-  oyConfig_s * config = 0,
-             * device = 0;
+  oyConfig_s * config = 0;
   oyOptions_s * options = 0;
   oyOption_s * o = 0;
   int devices_n = 0;
@@ -2023,7 +2022,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
         oyOption_Release( &o );
       }
 
-      o = oyConfig_Find( device, "icc_profile" );
+      o = oyConfig_Find( config, "icc_profile" );
       if(o)
       {
         val = oyOption_GetValueText( o, oyAllocateFunc_ );
