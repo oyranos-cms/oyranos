@@ -43,6 +43,8 @@ oyConversion_s * oyConversion_FromImage (
                                        oyImage_s         * image_in,
                                        const char        * module,
                                        oyOptions_s       * module_options,
+                                       oyProfile_s       * output_profile,
+                                       oyDATATYPE_e        buf_type_out,
                                        uint32_t            flags,
                                        oyObject_s          obj );
 
@@ -113,6 +115,7 @@ int main( int argc , char** argv )
   oyProfiles_s * proofing = oyProfiles_New(0),
                * effects = oyProfiles_New(0);
   oyProfile_s * p = 0;
+  oyOptions_s * module_options = 0;
 
   int output_model = 0;
   const char * input_xml_file = 0;
@@ -129,7 +132,6 @@ int main( int argc , char** argv )
   oyOptions_s * opts = 0;
   oyOption_s * o = 0;
   oyImage_s * image = 0;
-
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -170,7 +172,7 @@ int main( int argc , char** argv )
                         { help = 1; i=100; break; }
                         else if(strcmp(&argv[pos][2],"verbose") == 0)
                         { oy_debug += 1; i=100; break;
-                        } else
+                        } else if(argv[pos][2])
                         {
                           STRING_ADD( t, &argv[pos][2] );
                           text = oyStrrchr_(t, '=');
@@ -198,7 +200,11 @@ int main( int argc , char** argv )
                           if(t) oyDeAllocateFunc_( t );
                           t = 0;
                           i=100; break;
+                        } else
+                        {
+                          wrong_arg = argv[pos];
                         }
+                        break;
               default:
                         printfHelp(argc, argv);
                         exit (0);
@@ -298,12 +304,24 @@ int main( int argc , char** argv )
   if(output_profile)
   {
     uint32_t flags = 0;
+    oyPixel_t pixel_layout;
+    oyDATATYPE_e data_type = oyUINT8;
+
+    if(!output)
+      WARNc_S("No output file name provided");
     if(!icc_defaults_simple)
       flags |= oyOPTIONATTRIBUTE_ADVANCED;
     error = oyImage_FromFile( input, &image, NULL );
+    pixel_layout = oyImage_PixelLayoutGet( image );
+    data_type = oyToDataType_m(pixel_layout);
+    p = oyProfile_FromFile(output_profile, 0,0);
     oyConversion_s * cc = oyConversion_FromImage (
-                              image, node_name, module_options, flags, 0 );
-    error = oyConversion_RunPixel( cc, 0 );
+                                image, node_name, module_options, 
+                                p, data_type, flags, 0 );
+    oyImage_Release( &image );
+    error = oyConversion_RunPixels( cc, 0 );
+    image = oyConversion_GetImage( cc, OY_OUTPUT );
+    error = oyImage_PpmWrite( image, output, input );
     
   } else
   if(format && strcmp(format,"icc") == 0)
@@ -410,6 +428,8 @@ oyConversion_s * oyConversion_FromImage (
                                        oyImage_s         * image_in,
                                        const char        * module,
                                        oyOptions_s       * module_options,
+                                       oyProfile_s       * output_profile,
+                                       oyDATATYPE_e        buf_type_out,
                                        uint32_t            flags,
                                        oyObject_s          obj )
 {
@@ -418,6 +438,7 @@ oyConversion_s * oyConversion_FromImage (
   oyConversion_s * conversion = 0;
   oyOptions_s * options = 0;
   char * module_reg = 0;
+  oyImage_s * image_out = 0;
 
   if(!image_in)
     return NULL;
@@ -438,7 +459,7 @@ oyConversion_s * oyConversion_FromImage (
   else
     STRING_ADD( module_reg, "icc" );
 
-  /* create a new filter node */
+  /* create a new CMM filter node */
   icc = out = oyFilterNode_NewWith( module_reg, module_options, obj );
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
@@ -446,11 +467,13 @@ oyConversion_s * oyConversion_FromImage (
   if(error > 0)
     fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc" );
 
-  /* Set the image to the first/only socket of the filter node.
-   * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
-   * We rely on resolving the image later.
-   */
-  /*oyFilterNode_DataSet( in, (oyStruct_s*)image_out, 0, 0 );*/
+  /* Create a output image with supplied channel depth and profile */
+  image_out   = oyImage_Create( image_in->width, image_in->height,
+                         0,
+                      oyChannels_m(oyProfile_GetChannelsCount(output_profile)) |
+                          oyDataType_m(buf_type_out),
+                         output_profile,
+                         0 );
 
   /* swap in and out */
   in = out;
@@ -459,6 +482,7 @@ oyConversion_s * oyConversion_FromImage (
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
+  oyFilterNode_DataSet( in, (oyStruct_s*)image_out, 0, 0 );
   /* set the output node of the conversion */
   oyConversion_Set( conversion, 0, out );
 
