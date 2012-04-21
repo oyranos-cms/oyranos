@@ -114,18 +114,6 @@ void oyCloseReal__() { kdbClose( oy_handle_ );
 /* oyranos part */
 
 
-oyComp_t_* oyGetDeviceProfile_sList          (const char* manufacturer,
-                                           const char* model,
-                                           const char* product_id,
-                                           const char* host,
-                                           const char* port,
-                                           const char* attrib1,
-                                           const char* attrib2,
-                                           const char* attrib3,
-                                           KeySet* profilesList,
-                                           int   rc);
-
-
 
 /* small helpers */
 
