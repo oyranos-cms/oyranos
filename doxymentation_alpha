@@ -326,7 +326,7 @@
     /* Ask Oyranos to lookup its DB for a matching profile. It is only useful
      * if a profile is already set for the devices keys. The set devices can be
      * viewed at the command line with:
-     * ls -d ~/.kdb/user/shared/freedesktop.org/imaging/config.device.icc_profile.*
+     * ls -d ~/.kdb/user/org/freedesktop/imaging/config.device.icc_profile.*
      */
     error = oyDeviceAskProfile( device, &profile );
     @endverbatim

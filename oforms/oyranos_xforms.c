@@ -241,7 +241,7 @@ int main (int argc, char ** argv)
       fprintf( stderr, "%s\n", "no model found" );
   }
 
-  /* xmlParseMemory sollte der Ebenen gewahr werden wie oyOptions_FromText. */
+  /* xmlParseMemory should see the level like oyOptions_FromText. */
   opts = oyOptions_FromText( data, 0,0 );
 
   if(text) free(text); text = 0;
