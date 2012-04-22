@@ -248,7 +248,7 @@ int GetDevices                       ( http_t            * http,
     /* Use CUPS to obtain printer name(s) on the default server. */
     for (p = 0, i = num_dests, dest = dests; i > 0; i--, dest++, p++)
     {
-        texts[p] = allocateFunc(24); 
+        texts[p] = allocateFunc(strlen(dest->name)+1); 
         sprintf( texts[p], "%s", dest->name );
     }
 
@@ -383,9 +383,12 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
           }
         }
 
-        colour_key_words = oyStringSplit_( tmp, ';', &colour_key_words_n,
-                                         oyAllocateFunc_);
-        if(tmp) oyDeAllocateFunc_( tmp ); tmp = 0;
+        if(tmp)
+        {
+          colour_key_words = oyStringSplit_( tmp, ';', &colour_key_words_n,
+                                             oyAllocateFunc_);
+          oyDeAllocateFunc_( tmp ); tmp = 0;
+        }
 
         /* add the key/value pairs to the devices backend_core options. */
         for(j = 0; j < colour_key_words_n; ++j)
