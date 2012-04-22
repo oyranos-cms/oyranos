@@ -73,7 +73,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -p PROFILE   %s\n", _("Output Color Space"));
   fprintf( stderr, "      -s PROFILE   %s\n", _("Simulation/Proof Color Space"));
   fprintf( stderr, "      -e PROFILE   %s\n", _("Effect abtract Color Space"));
-  fprintf( stderr, "      -o FILENAME  %s\n", _("write to file"));
+  fprintf( stderr, "      -o FILENAME  %s\n", _("write to file, currently only PPM format"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Extract ICC profile:"));
   fprintf( stderr, "      %s -f icc [-o FILENAME] [-n MODULE] -i FILENAME\n", argv[0]);
@@ -88,7 +88,10 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s:\n",               _("Example"));
   fprintf( stderr, "    %s:\n",             _("Get ICC profile"));
-  fprintf( stderr, "      oyranos-icc -f icc -i FILENAME | iccexamin -g -i");
+  fprintf( stderr, "      oyranos-icc -f icc -i image.png | iccexamin -g -i\n");
+  fprintf( stderr, "\n");
+  fprintf( stderr, "    %s:\n",             _("Convert image to ICC Color Space"));
+  fprintf( stderr, "      oyranos-icc -i image.png -n lcm2 -p Lab.icc -o image.ppm\n");
   fprintf( stderr, "\n");
   fprintf( stderr, "\n");
 
