@@ -155,6 +155,10 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
                       &actual_format_return, &nitems_return,
                       &bytes_after_return, &prop_return );
 
+        if(error != Success)
+          WARNc4_S("%s nitems_return: %lu, bytes_after_return: %lu %d",
+                   _("found issues"), nitems_return, bytes_after_return,
+                   error );
       }
     }
 # endif
@@ -172,7 +176,8 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
         w = RootWindow( display, oyX1Monitor_deviceScreen_( disp ) );
       if(w)
         /* AnyPropertyType does not work for OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE ---vvvvvvvvvv */
-        XGetWindowProperty( display, w, atom, 0, INT_MAX, False, XA_CARDINAL,
+        XGetWindowProperty( display, w, atom, 0, INT_MAX, False,
+                     AnyPropertyType,
                      &a, &actual_format_return, &nitems_return, 
                      &bytes_after_return, &prop_return );
         if(bytes_after_return != 0) WARNc2_S("%s bytes_after_return: %d",
