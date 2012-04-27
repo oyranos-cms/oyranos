@@ -92,7 +92,7 @@ VERSION_L=`echo $VERSION_L | sed 's/^0*//g'`
 INFOECHO="echo"
 
 
-debug=0
+debug=1
 nodeps=0
 openmp=1
 rpm=0
@@ -224,9 +224,9 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       quick="1"
     fi
-    switch=enable-debug
+    switch=disable-debug
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
-      debug="1"
+      debug="0"
     fi
     switch=enable-devel
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
@@ -292,7 +292,7 @@ test -n "$INFOECHO" && $INFOECHO "   --with-fltk-config=[fltk-config]     altern
 test -n "$INFOECHO" && $INFOECHO "   --with-x                             use X11 on Darwin"
 test -n "$INFOECHO" && $INFOECHO "   --with-rpath                         use rpath for ELF linking"
 test -n "$INFOECHO" && $INFOECHO "   --rpm-only                           generate only rpm spec file"
-test -n "$INFOECHO" && $INFOECHO "   --enable-debug                       debug version [default disable]"
+test -n "$INFOECHO" && $INFOECHO "   --disable-debug                       debug version [default enable]"
 test -n "$INFOECHO" && $INFOECHO "   --enable-devel                       devel mode for osX [default disable]"
 test -n "$INFOECHO" && $INFOECHO "   --disable-openmp                     SMP support [default automatic]"
 test -n "$INFOECHO" && $INFOECHO "   --disable-static                     no static libraries [default enable]"
@@ -829,6 +829,12 @@ for i in CFLAGS CXXFLAGS LDFLAGS; do
 done
 if [ -n "$ECHO" ]; then
   echo_="\"$CFLAGS\" \"$CXXFLAGS\" \"$LDFLAGS\""
+  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  if [ $debug = 1 ]; then
+    echo_="Debug macros            enabled"
+  else
+    echo_="Debug macros            disabled"
+  fi
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
 
