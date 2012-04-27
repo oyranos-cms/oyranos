@@ -159,8 +159,12 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
           WARNc4_S("%s nitems_return: %lu, bytes_after_return: %lu %d",
                    _("found issues"), nitems_return, bytes_after_return,
                    error );
+        DBG_NUM6_S( "root: %d atom: %ld atom_name: %s prop_name: %s %d %d",
+                  w, atom, atom_name, prop_name, nitems_return,bytes_after_return );
       }
     }
+#else
+    DBG_NUM_S("!HAVE_XRANDR");
 # endif
     atom = 0;
 
@@ -275,6 +279,8 @@ oyX1GetMonitorInfo_               (const char* display_name,
 #if !defined(IGNORE_EDID)
   prop = oyX1Monitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
                                        xrandr_edids );
+#else
+    DBG_NUM_S("IGNORE_EDID");
 #endif
 
   if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XINERAMA &&
@@ -297,6 +303,8 @@ oyX1GetMonitorInfo_               (const char* display_name,
 #if !defined(IGNORE_EDID)
     prop = oyX1Monitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
                                          xrandr_edids );
+#else
+    DBG_NUM_S("IGNORE_EDID");
 #endif
   }
 
