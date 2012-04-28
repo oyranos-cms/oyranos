@@ -237,13 +237,12 @@ int main( int argc , char** argv )
   if(list_profiles || list_paths || install_n || taxi_id)
   {
     oyProfile_s * p = 0;
+    oyProfiles_s * ps = 0;
     char ** names = NULL;
     uint32_t count = 0, i;
     int accept;
     const char * t = 0;
     const char * path = 0;
-
-    names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
 
     if(user_path || oyranos_path || system_path || machine_path)
     {
@@ -260,8 +259,25 @@ int main( int argc , char** argv )
     if(list_profiles)
     {
       fprintf(stderr, "%s:\n", _("ICC profiles"));
-      for(i = 0; i < (int)count; ++i)
+
+      if(!(list_profile_full_names || list_profile_internal_names ||
+           colour_space || input || display || output || abstract ||
+           named_colour || device_link))
       {
+      names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+      for(i = 0; i < (int)count; ++i)
+        {
+          const char * sfn = names[i];
+          if(strrchr(sfn, OY_SLASH_C))
+            sfn = strrchr(sfn, OY_SLASH_C) + 1;
+          fprintf(stdout, "%s\n", sfn);
+        }
+      } else
+      {
+      ps = oyProfiles_Create(0,0);
+      count = oyProfiles_Count(ps);
+      for(i = 0; i < (int)count; ++i)
+        {
         icSignature sig_class = 0;
 
         accept = 1;
@@ -270,7 +286,7 @@ int main( int argc , char** argv )
 
         if(list_profile_full_names || list_profile_internal_names)
         {
-          p = oyProfile_FromFile( names[i], 0,0 );
+          p = oyProfiles_Get( ps, i );
         }
 
         if( colour_space || input || display || output || abstract ||
@@ -278,7 +294,7 @@ int main( int argc , char** argv )
         {
           accept = 0;
           if(!p)
-            p = oyProfile_FromFile( names[i], 0,0 );
+            p = oyProfiles_Get( ps, i );
           sig_class = oyProfile_GetSignature( p, oySIGNATURE_CLASS );
         }
 
@@ -303,7 +319,7 @@ int main( int argc , char** argv )
         if(!list_profile_full_names && !list_profile_internal_names &&
            accept)
         {
-          const char * sfn = names[i];
+          const char * sfn = oyProfile_GetFileName(p, -1);
           if(strrchr(sfn, OY_SLASH_C))
             sfn = strrchr(sfn, OY_SLASH_C) + 1;
           fprintf(stdout, "%s", sfn);
@@ -331,6 +347,8 @@ int main( int argc , char** argv )
             fprintf(stdout, "\n");
 
         oyProfile_Release( &p );
+        }
+        oyProfiles_Release( &ps );
       }
     }
 
@@ -374,6 +392,7 @@ int main( int argc , char** argv )
       } else
       {
         file_name = oyProfile_GetText( ip, oyNAME_DESCRIPTION );
+        names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
         installProfile( ip, file_name, path, names, count, show_text, show_gui);
 
         oyProfile_Release( &ip );
@@ -396,11 +415,13 @@ int main( int argc , char** argv )
         if(strrchr(file_name, OY_SLASH_C))
           file_name = strrchr(file_name, OY_SLASH_C) + 1;
 
+        names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
         installProfile( ip, file_name, path, names, count, show_text, show_gui);
 
         oyProfile_Release( &ip );
       }
-    oyStringListRelease_(&names, count, oyDeAllocateFunc_);
+    if(names)
+      oyStringListRelease_(&names, count, oyDeAllocateFunc_);
   }
 
 
