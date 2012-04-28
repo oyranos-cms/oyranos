@@ -124,7 +124,7 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
   Display *display = 0;
   Window w = 0;
   Atom atom = 0, a;
-  char *atom_name;
+  char *atom_name = 0;
   int actual_format_return;
   unsigned long nitems_return=0, bytes_after_return=0;
   unsigned char* prop_return=0;
@@ -159,6 +159,8 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
           WARNc4_S("%s nitems_return: %lu, bytes_after_return: %lu %d",
                    _("found issues"), nitems_return, bytes_after_return,
                    error );
+        if(oy_debug)
+          atom_name = XGetAtomName(display, atom);
         DBG_NUM6_S( "root: %d atom: %ld atom_name: %s prop_name: %s %d %d",
                   w, atom, atom_name, prop_name, nitems_return,bytes_after_return );
       }
