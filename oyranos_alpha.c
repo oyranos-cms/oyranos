@@ -12360,6 +12360,12 @@ OYAPI oyProfiles_s * OYEXPORT
 }
 
 oyProfiles_s * oy_profile_list_cache_ = 0;
+int oyLowerStrcmpWrap (const void * a_, const void * b_)
+{
+  const char * a = *(const char **)a_,
+             * b = *(const char **)b_;
+  return strcmp(a,b);
+}
 
 /** Function oyProfiles_Create
  *  @memberof oyProfiles_s
@@ -12373,18 +12379,18 @@ oyProfiles_s * oy_profile_list_cache_ = 0;
  *  @date    2008/06/20
  */
 OYAPI oyProfiles_s * OYEXPORT
-                 oyProfiles_Create( oyProfiles_s   * patterns,
+                 oyProfiles_Create   ( oyProfiles_s      * patterns,
                                        oyObject_s          object)
 {
-  oyProfiles_s * s = 0;
+  oyProfiles_s * s = 0, *tmps = 0;
   int error = 0;
 
   oyProfile_s * tmp = 0, * pattern = 0;
-  char  ** names = 0, * full_name = 0;
-  oyPointer block = 0;
+  char  ** names = 0, *t;
   uint32_t names_n = 0, i = 0, j = 0, n = 0,
            patterns_n = oyProfiles_Count(patterns);
-  size_t   size = 128;
+  int sorts = 0;
+  const char ** sort = NULL;
 
   s = oyProfiles_New( object );
   error = !s;
@@ -12393,40 +12399,41 @@ OYAPI oyProfiles_s * OYEXPORT
   {
     names = oyProfileListGet_ ( NULL, &names_n );
 
-    for(j = 0; j < patterns_n; ++j)
-    {
-      pattern = oyProfiles_Get(patterns, j);
-
-      if(pattern->size_ > 132)
-        size = 0;
-
-      oyProfile_Release( &pattern );
-    }
-
     if(oyProfiles_Count( oy_profile_list_cache_ ) != names_n)
     {
+      sorts = OY_MAX(oyProfiles_Count( oy_profile_list_cache_ ),names_n);
+      sort = oyAllocateFunc_(sorts*sizeof(const char*)*2);
       for(i = 0; i < names_n; ++i)
       {
         if(names[i])
         {
           if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
           {
-            if(size && 0)
-            { /* TODO short readings */
-              full_name = oyFindProfile_(names[i]);
-              block = oyReadFileToMem_ (full_name, &size, oyAllocateFunc_);
-              tmp = oyProfile_FromMemMove_( size, &block, 0, &error, 0 );
-            }
-            else
-            {
-              tmp = oyProfile_FromFile( names[i], OY_NO_CACHE_WRITE, 0 );
-              oy_profile_list_cache_ = oyProfiles_MoveIn(oy_profile_list_cache_,
-                                                         &tmp, -1);
-              error = !oy_profile_list_cache_;
-            }
+            tmp = oyProfile_FromFile( names[i], OY_NO_CACHE_WRITE, 0 );
+            t = 0;
+            oyStringAdd_(&t, oyProfile_GetText(tmp, oyNAME_DESCRIPTION), oyAllocateFunc_, 0);
+            n = strlen(t);
+            for(j = 0; j < n; ++j)
+              t[j] = tolower(t[j]);
+            sort[i*2] = t;
+            sort[i*2+1] = names[i];
+            oy_profile_list_cache_ = oyProfiles_MoveIn(oy_profile_list_cache_,
+                                                       &tmp, -1);
+            error = !oy_profile_list_cache_;
           }
         }
       }
+      qsort( sort, sorts, sizeof(char**)*2, oyLowerStrcmpWrap );
+      for(i = 0; i < sorts; ++i)
+      {
+        tmp = oyProfile_FromFile( sort[i*2+1], OY_NO_CACHE_WRITE, 0 );
+        tmps = oyProfiles_MoveIn(tmps, &tmp, -1);
+        t = (char*)sort[i*2];
+        oyFree_m_(t);
+      }
+      oyProfiles_Release(&oy_profile_list_cache_);
+      oy_profile_list_cache_ = tmps;
+      oyFree_m_(sort);
     }
 
     n = oyProfiles_Count( oy_profile_list_cache_ );
