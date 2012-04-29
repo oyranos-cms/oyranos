@@ -321,6 +321,16 @@ int main( int argc , char** argv )
     pixel_layout = oyImage_PixelLayoutGet( image );
     data_type = oyToDataType_m(pixel_layout);
     p = oyProfile_FromFile(output_profile, 0,0);
+    if(oyProfiles_Count(effects))
+      error = oyOptions_MoveInStruct( &module_options,
+                                     "//" OY_TYPE_STD "/config/profiles_effect",
+                                       (oyStruct_s**) &effects,
+                                       OY_CREATE_NEW );
+    if(oyProfiles_Count(proofing))
+      error = oyOptions_MoveInStruct( &module_options,
+                                      "//" OY_TYPE_STD "/config/profiles_proof",
+                                       (oyStruct_s**) &proofing,
+                                       OY_CREATE_NEW );
     oyConversion_s * cc = oyConversion_FromImage (
                                 image, node_name, module_options, 
                                 p, data_type, flags, 0 );
