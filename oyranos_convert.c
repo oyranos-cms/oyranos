@@ -34,6 +34,9 @@
 #include <string.h>
 
 #include "oyranos_forms.h"
+#ifdef USE_LCMS
+#include "lcms2.h"
+#endif
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
 int    oyImage_FromFile              ( const char        * file_name,
@@ -321,8 +324,34 @@ int main( int argc , char** argv )
     oyConversion_s * cc = oyConversion_FromImage (
                                 image, node_name, module_options, 
                                 p, data_type, flags, 0 );
-    oyImage_Release( &image );
     error = oyConversion_RunPixels( cc, 0 );
+    oyImage_Release( &image );
+#ifdef USE_LCMS
+    if(0)
+    {
+      image = oyConversion_GetImage( cc, OY_INPUT );
+      oyProfile_s * p_in = oyImage_ProfileGet(image);
+      const char * pfn_in = oyProfile_GetFileName(p_in, -1);
+      oyImage_Release( &image );
+      cmsHPROFILE in = cmsOpenProfileFromFile( pfn_in, "rb"),
+                  out = cmsOpenProfileFromFile(output_profile, "rb");
+      image = oyConversion_GetImage( cc, OY_OUTPUT );
+      oyPixel_t pixel_layout_out = oyImage_PixelLayoutGet( image );
+      oyDATATYPE_e data_type_out = oyToDataType_m(pixel_layout_out);
+      uint32_t flags_in = cmsFormatterForColorspaceOfProfile(in, 
+                       data_type == oyFLOAT ? 4 : data_type == oyUINT16 ? 2 : 1,
+                                                    data_type == oyFLOAT ? 1:0),
+               flags_out = cmsFormatterForColorspaceOfProfile( out,
+               data_type_out == oyFLOAT ? 4 : data_type_out == oyUINT16 ? 2 : 1,
+                                               data_type_out == oyFLOAT ? 1:0) ;
+      printf("input %s -> %s %d->%d\n", pfn_in, output_profile, TYPE_XYZ_FLT, TYPE_RGB_FLT );
+      cmsHTRANSFORM xform = cmsCreateTransform(in, flags_in, out, flags_out, 0,
+                                               cmsFLAGS_NOOPTIMIZE);
+      char * image_data = image->getLine( image, 0, 0, -1, 0 );
+      cmsDoTransform(xform, image_data, image_data, image->height * image->width);
+      //memset(image_data,0,image->height * image->width*3*4);
+    }
+#endif
     image = oyConversion_GetImage( cc, OY_OUTPUT );
     error = oyImage_PpmWrite( image, output, input );
     
