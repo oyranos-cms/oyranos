@@ -125,8 +125,8 @@ YAJL_SOURCES := $(shell cd $(SRCDIR) && ls $(YAJL_DIR)/*.c)
 
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(SRCDIR) \
 	-I$(SRCDIR)/$(GENDIR) \
-	$(LCMS_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) $(LIBXML2_H) \
-	$(XCM_H) $(LRAW_H) $(YAJL_H)
+	$(LCMS_H) $(LCMS2_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) \
+	$(LIBXML2_H) $(XCM_H) $(LRAW_H) $(YAJL_H)
 
 LDLIBS = $(LDFLAGS) -L$(libdir) -L. \
 	$(ELEKTRA_LIBS) $(YAJL_LIBS) $(LIBXML2_LIBS) $(c) $(I18N_LIB) $(LIBLTDL)
