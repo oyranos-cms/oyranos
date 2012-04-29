@@ -245,6 +245,7 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags
       else
         *oy_box = new Oy_Fl_Image_Box(0,0,w,h);
       (*oy_box)->box(FL_FLAT_BOX);
+      t->resizable(*oy_box);
 
       {
         oyProfile_s * e = NULL; /* default: sRGB */
