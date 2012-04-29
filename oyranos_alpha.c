@@ -12364,7 +12364,11 @@ int oyLowerStrcmpWrap (const void * a_, const void * b_)
 {
   const char * a = *(const char **)a_,
              * b = *(const char **)b_;
+#ifdef HAVE_POSIX
+  return strcasecmp(a,b);
+#else
   return strcmp(a,b);
+#endif
 }
 
 /** Function oyProfiles_Create
@@ -12401,7 +12405,7 @@ OYAPI oyProfiles_s * OYEXPORT
 
     if(oyProfiles_Count( oy_profile_list_cache_ ) != names_n)
     {
-      sorts = OY_MAX(oyProfiles_Count( oy_profile_list_cache_ ),names_n);
+      sorts = names_n;
       sort = oyAllocateFunc_(sorts*sizeof(const char*)*2);
       for(i = 0; i < names_n; ++i)
       {
@@ -12410,16 +12414,20 @@ OYAPI oyProfiles_s * OYEXPORT
           if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
           {
             tmp = oyProfile_FromFile( names[i], OY_NO_CACHE_WRITE, 0 );
+#if !defined(HAVE_POSIX)
             t = 0;
             oyStringAdd_(&t, oyProfile_GetText(tmp, oyNAME_DESCRIPTION), oyAllocateFunc_, 0);
             n = strlen(t);
+            /* the following upper caseing is portable,
+             * still strcasecmp() might be faster? */
             for(j = 0; j < n; ++j)
-              t[j] = tolower(t[j]);
+              if(isalpha(t[j]))
+                t[j] = tolower(t[j]);
             sort[i*2] = t;
+#else
+            sort[i*2] = oyProfile_GetText(tmp, oyNAME_DESCRIPTION);
+#endif
             sort[i*2+1] = names[i];
-            oy_profile_list_cache_ = oyProfiles_MoveIn(oy_profile_list_cache_,
-                                                       &tmp, -1);
-            error = !oy_profile_list_cache_;
           }
         }
       }
@@ -12429,7 +12437,9 @@ OYAPI oyProfiles_s * OYEXPORT
         tmp = oyProfile_FromFile( sort[i*2+1], OY_NO_CACHE_WRITE, 0 );
         tmps = oyProfiles_MoveIn(tmps, &tmp, -1);
         t = (char*)sort[i*2];
+#if !defined(HAVE_POSIX)
         oyFree_m_(t);
+#endif
       }
       oyProfiles_Release(&oy_profile_list_cache_);
       oy_profile_list_cache_ = tmps;
