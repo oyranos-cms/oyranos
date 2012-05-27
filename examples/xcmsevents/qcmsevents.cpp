@@ -14,6 +14,8 @@
 #include "oyranos_alpha.h"
 #include "oyranos_i18n.h"
 
+#include <X11/Xcm/Xcm.h>
+
 QcmseDialog * dialog = 0;
 
 QcmseDialog::QcmseDialog()
