@@ -34,7 +34,7 @@ BuildRequires:  fltk-devel
 BuildRequires:  gcc-c++
 BuildRequires:  gettext
 BuildRequires:  graphviz
-BuildRequires:  libXcm-devel >= 0.5.0
+BuildRequires:  libXcm-devel >= 0.5.1
 BuildRequires:  libjpeg-devel
 BuildRequires:  liblcms-devel
 BuildRequires:  libpng-devel
@@ -128,7 +128,7 @@ BuildRequires:  gcc-c++
 BuildRequires:  gettext
 BuildRequires:  graphviz
 BuildRequires:  lcms-devel
-BuildRequires:  libXcm-devel >= 0.5.0
+BuildRequires:  libXcm-devel >= 0.5.1
 BuildRequires:  libjpeg
 BuildRequires:  libjpeg-devel
 BuildRequires:  libpng-devel
@@ -157,7 +157,7 @@ BuildRequires:  fltk-devel
 BuildRequires:  gcc-c++
 BuildRequires:  gettext
 BuildRequires:  graphviz
-BuildRequires:  libXcm-devel >= 0.5.0
+BuildRequires:  libXcm-devel >= 0.5.1
 BuildRequires:  libXmu-devel
 BuildRequires:  libXxf86vm-devel
 BuildRequires:  libjpeg
