@@ -120,8 +120,8 @@ void QcmseDialog::log( const char * text, int code )
   else if (XCME_MSG_DISPLAY_STATUS)
   {
     int i;
-    if(strstr(text, "atom: \""XCM_COLOR_DESKTOP"\":"))
-      sscanf( text, "atom: \""XCM_COLOR_DESKTOP"\": %d %d", &i, &pid );
+    if(strstr(text, "atom: \"" XCM_COLOR_DESKTOP "\":"))
+      sscanf( text, "atom: \"" XCM_COLOR_DESKTOP "\": %d %d", &i, &pid );
     if(pid == 0)
     {
       colour.setHsvF( 0.6, 0.4, 0.9 );
