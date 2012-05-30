@@ -99,6 +99,10 @@ if [ -z "$elektra" ]; then
   fi
 fi
 
+if [ -z "$elektra" ]; then
+    elektra="`pkg-config --libs elektra`"
+fi
+
 if [ "$echo_cflags" = "yes" ]; then
   echo "-I$includedir -I$includedir/alpha/object"
 fi
