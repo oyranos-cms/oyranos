@@ -379,6 +379,14 @@ EXAMPLE_SOURCES = \
 	examples/libraw/oyranos_file.cpp \
 	examples/image_display/oyranos_display_helper_classes_fltk.cpp \
 	examples/image_display/oyranos_display_helpers.c \
+	examples/image_display/oyranos_display_helpers.h \
+	examples/image_display/Oy_Widget.h \
+	examples/image_display/Oy_Fl_Window_Base.h \
+	examples/image_display/Oy_Fl_Image_Widget.h \
+	examples/image_display/Oy_Fl_Double_Window.h \
+	examples/image_display/Oy_Fl_Group.h \
+	examples/image_display/Oy_Fl_Image_Box.h \
+	examples/image_display/Oy_Fl_Shader_Box.h \
 	examples/xcmsevents/qcmsevents.cpp \
 	examples/xcmsevents/qcmsevents.h \
 	examples/oymd5icc/oymd5icc.c
