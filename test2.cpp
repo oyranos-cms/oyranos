@@ -2753,6 +2753,13 @@ oyTESTRESULT_e testCMMsShow ()
 }
 
 #include <kdb.h>
+#ifndef KDB_VERSION_MAJOR
+#define KDB_VERSION_MAJOR 0
+#endif
+#ifndef KDB_VERSION_MINOR
+#define KDB_VERSION_MINOR 0
+#endif
+#define KDB_VERSION_NUM (KDB_VERSION_MAJOR*10000 + KDB_VERSION_MINOR*100)
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -2775,6 +2782,13 @@ int  oyColourConvert_ ( oyProfile_s       * p_in,
 extern ckdb KDB * oy_handle_;
 
 double d[6] = {0.5,0.5,0.5,0,0,0};
+
+#if KDB_VERSION_NUM >= 800
+extern "C" {int oyGetKey(ckdb Key*);}
+#define dbGetKey(a,b) oyGetKey(b)
+#else
+#define dbGetKey(a,b) ckdb kdbGetKey(a,b)
+#endif
 
 oyTESTRESULT_e testCMMnmRun ()
 {
@@ -2824,7 +2838,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   /** check if the key is a binary one */
   key = ckdb keyNew( full_key_name, KEY_END );
-  rc=ckdb kdbGetKey( oy_handle_, key );
+  rc= dbGetKey( oy_handle_, key );
   success = ckdb keyIsString(key);
 
   if(success)

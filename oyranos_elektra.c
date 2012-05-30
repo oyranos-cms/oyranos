@@ -47,11 +47,29 @@
 #endif
 #define KDB_VERSION_NUM (KDB_VERSION_MAJOR*10000 + KDB_VERSION_MINOR*100)
 
-#if KDB_VERSION_NUM >= 700
+#if KDB_VERSION_NUM >= 800
+Key * error_key = 0;
+#define kdbOpen_m() kdbOpen(error_key)
+#define kdbClose_m(a) kdbClose(a, error_key)
+#define kdbGetString_m kdbGetString
+#define kdbGetChildKeys(a,b,c,d) oyGetByName(c,b)
+#define kdbGetKey(a,b) oyGetKey(b)
+#define kdbSetKey(a,b) oySetKey(b)
+#define kdbRemove(a,b) oyRemoveFromDB(b)
+#define ksAppendKeys ksAppend
+#define KDBHandle KDB
+#define keyIsDir(a) 0
+#define keyRemove(a) 0
+#define keySetComment(a,b) keySetMeta(a,"comment",b)
+
+#elif KDB_VERSION_NUM >= 700
+#define kdbOpen_m() kdbOpen()
+#define kdbClose_m(a) kdbClose(a)
 #define kdbGetString_m kdbGetString
 #define kdbGetChildKeys(a,b,c,d) kdbGetByName(a,c,b,d)
 #define ksAppendKeys ksAppend
 #define KDBHandle KDB
+
 #else
 #define kdbGetString_m kdbGetValue
 #endif
@@ -92,14 +110,17 @@ KeySet* oyReturnChildrenList_  (const char* keyParentName,int* rc);
 #if DEBUG_NEVER
 static 
 #endif
-       KDBHandle * oy_handle_ = 0;
+KDBHandle * oy_handle_ = 0;
 
 void oyOpen_ (void)
 {
   if(!oyranos_init) {
-    oy_handle_ = kdbOpen( /*&oy_handle_*/ );
+    oy_handle_ = kdbOpen_m( /*&oy_handle_*/ );
     if(!oy_handle_)
       WARNc_S("Could not initialise Elektra.");
+#if KDB_VERSION_NUM >= 800
+    error_key = keyNew( KEY_END );
+#endif
     oyranos_init = 1;
   }
 }
@@ -107,7 +128,7 @@ void oyClose_() { /*kdbClose( &oy_handle_ );*/ }
 /* @todo make oyOpen unnecessary */
 void oyOpen  (void) { oyOpen_(); }
 void oyClose (void) { oyClose_(); }
-void oyCloseReal__() { kdbClose( oy_handle_ );
+void oyCloseReal__() { kdbClose_m( oy_handle_ );
                        oy_handle_ = 0;
                        oyranos_init = 0; }
 
@@ -123,6 +144,54 @@ void oyCloseReal__() { kdbClose( oy_handle_ );
    for( current_ = ksNext( list ); current_; current_ = ksNext( list )  )
 
 
+#if KDB_VERSION_NUM >= 800
+int oyGetByName(KeySet * conf, const char * base)
+{
+  Key *key = keyNew(base,KEY_END);
+  int ret = kdbGet(oy_handle_, conf, key);
+  keyDel(key);
+  return ret;
+}
+
+int  oyGetKey                        ( Key               * key )
+{
+  KeySet * ks = ksNew(0);
+  int ret = kdbGet( oy_handle_, ks, key );
+  Key * result = ksLookup( ks, key, KDB_O_NONE);
+  if(!ret && !result)
+  {
+    ret = -1;
+    WARNc_S( oyNoEmptyString_m_(keyString(key)) );
+  }
+  keyCopy( key, result );
+  keyDel( result );
+  ksDel( ks );
+  return ret;
+}
+
+int  oySetKey                        ( Key               * key )
+{
+  KeySet * ks = ksNew(0);
+  int ret = kdbGet( oy_handle_, ks, key );
+  if(!ret)
+    ret = kdbSet( oy_handle_, ks, key );
+  ksDel( ks );
+  return ret;
+}
+
+int  oyRemoveFromDB                  ( const char        * name )
+{
+  Key *key = keyNew(name,KEY_END);
+  KeySet * ks = ksNew(0);
+  int ret = kdbGet(oy_handle_, ks, key);
+  ksClear(ks);
+  if(!ret)
+    ret = kdbSet( oy_handle_, ks, key );
+  ksDel( ks );
+  keyDel(key);
+  return ret;
+}
+#endif /* KDB_VERSION_NUM >= 800 */
 
 /* --- function definitions --- */
 

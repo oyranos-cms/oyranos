@@ -142,7 +142,7 @@ if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
     elektra_min="0.7"
   fi
   if [ -z "$elektra_max" ]; then
-    elektra_max="0.7.100"
+    elektra_max="0.9"
   fi
   if [ -z "$ELEKTRA_FOUND" ]; then
     elektra_mod=`pkg-config --modversion elektra`
