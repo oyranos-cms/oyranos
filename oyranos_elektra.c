@@ -81,6 +81,14 @@ char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", r
 
 #if KDB_VERSION_NUM > 600
 #define kdbStrError(t) oy__kdbStrError(t)
+#define oyERR(k) if(rc <= 0) { const Key *meta = NULL; while(meta=keyNextMeta(k)) \
+                           WARNc2_S( "rc: %d\t%s", \
+                           rc, oyNoEmptyString_m_(keyString(meta)) ); \
+                           if(!meta) meta = keyGetMeta(k, "error"); \
+                           if(meta) WARNc2_S( "rc: %d\t%s", \
+                           rc, oyNoEmptyString_m_(keyString(meta)) ); }
+#else
+#define oyERR(k)
 #endif
 
 /* --- Helpers  --- */
@@ -128,7 +136,7 @@ void oyClose_() { /*kdbClose( &oy_handle_ );*/ }
 /* @todo make oyOpen unnecessary */
 void oyOpen  (void) { oyOpen_(); }
 void oyClose (void) { oyClose_(); }
-void oyCloseReal__() { kdbClose_m( oy_handle_ );
+void oyCloseReal__() { int rc=kdbClose_m( oy_handle_ ); oyERR(error_key)
                        oy_handle_ = 0;
                        oyranos_init = 0; }
 
@@ -148,58 +156,61 @@ void oyCloseReal__() { kdbClose_m( oy_handle_ );
 int oyGetByName(KeySet * conf, const char * base)
 {
   Key *key = keyNew(base,KEY_END);
-  int ret = kdbGet(oy_handle_, conf, key);
+  int rc = kdbGet(oy_handle_, conf, key); oyERR(key)
   keyDel(key);
-  return ret;
+  return rc;
 }
 
 int  oyGetKey                        ( Key               * key )
 {
   KeySet * ks = ksNew(0);
-  int ret = kdbGet( oy_handle_, ks, key );
-  Key * result = ksLookup( ks, key, KDB_O_NONE);
-  if(!ret && !result)
+  Key * result;
+  int rc = kdbGet( oy_handle_, ks, key );
+
+  result = ksLookup( ks, key, KDB_O_NONE);
+  if(!rc && !result)
   {
-    ret = -1;
+    rc = -1;
     WARNc_S( oyNoEmptyString_m_(keyString(key)) );
+    oyERR(key)
   }
   keyCopy( key, result );
   keyDel( result );
   ksDel( ks );
-  return ret;
+  return rc;
 }
 
 int  oySetKey                        ( Key               * key )
 {
   KeySet * ks = ksNew(0);
-  int ret = kdbGet( oy_handle_, ks, key );
-  if(!ret)
-    ret = kdbSet( oy_handle_, ks, key );
+  int rc = kdbGet( oy_handle_, ks, key ); oyERR(key)
+  if(!rc)
+    rc = kdbSet( oy_handle_, ks, key ); oyERR(key)
   ksDel( ks );
-  return ret;
+  return rc;
 }
 
 int  oyRemoveFromDB                  ( const char        * name )
 {
   Key *key = keyNew(name,KEY_END);
   KeySet * ks = ksNew(0);
-  int ret = kdbGet(oy_handle_, ks, key);
+  int rc = kdbGet(oy_handle_, ks, key); oyERR(key)
   ksClear(ks);
-  if(!ret)
-    ret = kdbSet( oy_handle_, ks, key );
+  if(!rc)
+    rc = kdbSet( oy_handle_, ks, key ); oyERR(key)
   ksDel( ks );
   keyDel(key);
-  return ret;
+  return rc;
 }
 #endif /* KDB_VERSION_NUM >= 800 */
 
 /* --- function definitions --- */
 
 KeySet*
-oyReturnChildrenList_ (const char* keyParentName, int* rc)
+oyReturnChildrenList_ (const char* keyParentName, int* rc_ptr)
 {
   int user_sys = oyUSER_SYS,
-      ret = 0;
+      rc = 0;
   KeySet*list_user = 0;
   KeySet*list_sys = 0;
   KeySet*list = ksNew(0);
@@ -216,28 +227,28 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc)
     sprintf(           list_name_user, "%s%s", OY_USER, keyParentName);
     if(!oy_handle_)
     {
-      *rc = 1;
+      *rc_ptr = 1;
       return 0;
     }
-    ret =
-      kdbGetChildKeys( oy_handle_, list_name_user, list_user, KDB_O_SORT);
+    rc =
+      kdbGetChildKeys( oy_handle_, list_name_user, list_user, KDB_O_SORT); oyERR(error_key)
 
-    if(ret > 0)
-      DBG_NUM1_S("kdbGetChildKeys returned with %d", ret);
+    if(rc > 0)
+      DBG_NUM1_S("kdbGetChildKeys returned with %d", rc);
   }
   if( user_sys == oyUSER_SYS || user_sys == oySYS ) {
     list_sys = ksNew(0);
     sprintf(           list_name_sys, "%s%s", OY_SYS, keyParentName);
     if(!oy_handle_)
     {
-      *rc = 1;
+      *rc_ptr = 1;
       return 0;
     }
-    ret =
-      kdbGetChildKeys( oy_handle_, list_name_sys, list_sys, KDB_O_SORT);
+    rc =
+      kdbGetChildKeys( oy_handle_, list_name_sys, list_sys, KDB_O_SORT); oyERR(error_key)
 
-    if(ret > 0)
-      DBG_NUM1_S("kdbGetChildKeys returned with %d", ret);
+    if(rc > 0)
+      DBG_NUM1_S("kdbGetChildKeys returned with %d", rc);
   }
 
   if(list_user)
@@ -282,7 +293,7 @@ char* oySearchEmptyKeyname_ (const char* key_parent_name)
 
     key = keyNew( new_key_name, KEY_END );
 
-    rc=kdbGetKey( oy_handle_, key );
+    rc=kdbGetKey( oy_handle_, key ); oyERR(key)
     if( rc == -1 &&
         !keyIsDir( key ) &&
         !keyIsString(key) &&
@@ -422,7 +433,7 @@ oyAddKey_valueComment_ (const char* keyName,
 
   if(!oy_handle_)
     goto clean;
-  rc=kdbGetKey( oy_handle_, key );
+  rc=kdbGetKey( oy_handle_, key ); oyERR(key)
   if(rc < 0 && oy_debug)
     oyMessageFunc_p( oyMSG_WARN, 0, OY_DBG_FORMAT_"key new? code:%d %s name:%s",
                      OY_DBG_ARGS_, rc, kdbStrError(rc), name);
@@ -442,7 +453,7 @@ oyAddKey_valueComment_ (const char* keyName,
   }
 
   oyOpen_();
-  rc=kdbSetKey( oy_handle_, key );
+  rc=kdbSetKey( oy_handle_, key ); oyERR(key)
   if(rc < 0)
     oyMessageFunc_p( oyMSG_WARN, 0, OY_DBG_FORMAT_ "code:%d %s name:%s",
                      OY_DBG_ARGS_, rc, kdbStrError(rc), name);
@@ -689,7 +700,7 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
               DBG_PROG_S(value)
               if(!oy_handle_)
                 return 1;
-              kdbRemove ( oy_handle_, value );
+              kdbRemove ( oy_handle_, value ); oyERR(error_key)
               break;
             }
           }
@@ -719,7 +730,7 @@ int      oyKeyIsString_              ( const char        * full_key_name )
 
   /** check if the key is a binary one */
   key = keyNew( full_key_name, KEY_END );
-  rc=kdbGetKey( oy_handle_, key );
+  rc=kdbGetKey( oy_handle_, key ); oyERR(key)
   if(rc > 0)
     WARNc1_S("kdbGetKey returned with %d", rc);
   success = keyIsString(key);
@@ -735,7 +746,7 @@ int      oyKeyIsBinary_              ( const char        * full_key_name )
 
   /** check if the key is a binary one */
   key = keyNew( full_key_name, KEY_END );
-  rc=kdbGetKey( oy_handle_, key );
+  rc=kdbGetKey( oy_handle_, key ); oyERR(key)
   if(rc > 0)
     WARNc1_S("kdbGetKey returned with %d", rc);
   success = keyIsBinary(key);
@@ -754,7 +765,7 @@ oyPointer  oyGetKeyBinary__          ( const char        * full_key_name,
   ssize_t new_size = 0;
 
   key = keyNew( full_key_name, KEY_END );
-  rc=kdbGetKey( oy_handle_, key );
+  rc=kdbGetKey( oy_handle_, key ); oyERR(key)
   if(rc > 0)
     WARNc1_S("kdbGetKey returned with %d", rc);
   if(keyIsBinary(key))
@@ -846,7 +857,7 @@ oyGetKeyString_ ( const char       *key_name,
 
   /** check if the key is a binary one */
   key = keyNew( full_key_name, KEY_END );
-  rc=kdbGetKey( oy_handle_, key );
+  rc=kdbGetKey( oy_handle_, key ); oyERR(key)
   success = keyIsString(key);
 
   if(success)
@@ -857,7 +868,7 @@ oyGetKeyString_ ( const char       *key_name,
   {
     sprintf( full_key_name, "%s%s", OY_SYS, key_name );
     key = keyNew( full_key_name, KEY_END );
-    rc=kdbGetKey( oy_handle_, key );
+    rc=kdbGetKey( oy_handle_, key ); oyERR(key)
     success = keyIsString(key);
     if(success)
       rc = keyGetString( key, name, MAX_PATH );
@@ -903,13 +914,13 @@ int                oyEraseKey_       ( const char        * key_name )
   if(!error)
   {
     key = keyNew( name, KEY_END );
-    rc = kdbGetKey( oy_handle_, key );
+    rc = kdbGetKey( oy_handle_, key ); oyERR(key)
 
     if(!keyIsDir( key ))
     {
       if( keyRemove( key ) == 1 )
       {
-        rc = kdbSetKey( oy_handle_, key );
+        rc = kdbSetKey( oy_handle_, key ); oyERR(key)
         if(rc == 0)
         {
           DBG_PROG1_S( "removed key %s", name );
@@ -921,7 +932,7 @@ int                oyEraseKey_       ( const char        * key_name )
       if(success)
         return error;
 
-      rc = kdbRemove ( oy_handle_, name ); 
+      rc = kdbRemove ( oy_handle_, name ); oyERR(error_key)
       if(rc == 0)    
       {
         return error;
@@ -940,7 +951,7 @@ int                oyEraseKey_       ( const char        * key_name )
 
         if(strstr(value, key_name) != 0)
         {
-          rc = kdbRemove ( oy_handle_, value );
+          rc = kdbRemove ( oy_handle_, value ); oyERR(error_key)
           if(rc == 0)
           {
             DBG_PROG1_S( "removed key %s", value );
@@ -951,7 +962,7 @@ int                oyEraseKey_       ( const char        * key_name )
       oyFree_m_( value );
     }
 
-    rc = kdbRemove ( oy_handle_, name );
+    rc = kdbRemove ( oy_handle_, name ); oyERR(error_key)
     if(rc == 0)
     {
       DBG_PROG1_S( "removed key %s", name );
