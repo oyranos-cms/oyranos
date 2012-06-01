@@ -81,6 +81,9 @@ char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", r
 
 #if KDB_VERSION_NUM > 600
 #define kdbStrError(t) oy__kdbStrError(t)
+#endif
+
+#if KDB_VERSION_NUM >= 800
 #define oyERR(k) if(rc <= 0) { const Key *meta = NULL; while(meta=keyNextMeta(k)) \
                            WARNc2_S( "rc: %d\t%s", \
                            rc, oyNoEmptyString_m_(keyString(meta)) ); \
@@ -136,7 +139,11 @@ void oyClose_() { /*kdbClose( &oy_handle_ );*/ }
 /* @todo make oyOpen unnecessary */
 void oyOpen  (void) { oyOpen_(); }
 void oyClose (void) { oyClose_(); }
-void oyCloseReal__() { int rc=kdbClose_m( oy_handle_ ); oyERR(error_key)
+void oyCloseReal__() {
+#if KDB_VERSION_NUM >= 800
+                       int rc=
+#endif
+                       kdbClose_m( oy_handle_ ); oyERR(error_key)
                        oy_handle_ = 0;
                        oyranos_init = 0; }
 
