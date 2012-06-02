@@ -84,12 +84,14 @@ char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", r
 #endif
 
 #if KDB_VERSION_NUM >= 800
-#define oyERR(k) if(rc <= 0) { const Key *meta = NULL; while(meta=keyNextMeta(k)) \
-                           WARNc2_S( "rc: %d\t%s", \
-                           rc, oyNoEmptyString_m_(keyString(meta)) ); \
-                           if(!meta) meta = keyGetMeta(k, "error"); \
-                           if(meta) WARNc2_S( "rc: %d\t%s", \
-                           rc, oyNoEmptyString_m_(keyString(meta)) ); }
+#define oyERR(k) { const Key *meta = NULL; keyRewindMeta(k); \
+                   if(rc <= 0) { \
+                     while((meta = keyNextMeta(k)) != 0) { \
+                       WARNc2_S( "%s:\t%s", \
+                                 oyNoEmptyString_m_( keyName(meta) ), \
+                                 oyNoEmptyString_m_( keyString(meta) ) ); \
+                     } \
+                 } }
 #else
 #define oyERR(k)
 #endif
@@ -395,7 +397,7 @@ oyKeySetHasValue_     (const char* keyParentName, const char* ask_value)
 }
 
 int
-oyAddKey_valueComment_ (const char* keyName,
+oyAddKey_valueComment_ (const char* key_name,
                         const char* value,
                         const char* comment)
 {
@@ -412,7 +414,7 @@ oyAddKey_valueComment_ (const char* keyName,
   oyAllocHelper_m_(value_utf8, char, MAX_PATH, 0,; )
   oyAllocHelper_m_(comment_utf8, char, MAX_PATH, 0,; )
 
-  sprintf(name, "%s%s", oySelectUserSys_(), keyName);
+  sprintf(name, "%s%s", oySelectUserSys_(), key_name);
   if(value && oyStrlen_(value))
   {
     max_len = strlen(value) < MAX_PATH ? strlen(value) : MAX_PATH;
@@ -426,14 +428,14 @@ oyAddKey_valueComment_ (const char* keyName,
              comment_utf8, 0, "UTF-8" );
   }
 
-  if (keyName)
-    DBG_PROG_S(( keyName ));
+  if (key_name)
+    DBG_PROG_S(( key_name ));
   if (value)
     DBG_PROG_S(( value ));
   if (comment)
     DBG_PROG_S(( comment ));
-  if (!keyName || !strlen(keyName))
-    WARNc_S( "no keyName given" );
+  if (!key_name || !strlen(key_name))
+    WARNc_S( "no key_name given" );
 
   key = keyNew( KEY_END );
   keySetName( key, name );
@@ -503,18 +505,18 @@ oySetBehaviour_      (oyBEHAVIOUR_e type, int choice)
 
   if ( (r=oyTestInsideBehaviourOptions_(type, choice)) == 1 )
   {
-    const char *keyName = 0;
+    const char *key_name = 0;
 
-    keyName = oyOptionGet_((oyWIDGET_e)type)-> config_string;
+    key_name = oyOptionGet_((oyWIDGET_e)type)-> config_string;
 
-      if(keyName)
+      if(key_name)
       {
         char val[12];
         const char *com =
             oyOptionGet_((oyWIDGET_e)type)-> choice_list[ choice ];
         snprintf(val, 12, "%d", choice);
-        r = oyAddKey_valueComment_ (keyName, val, com);
-        DBG_PROG4_S( "%s %d %s %s", keyName, type, val, com?com:"" )
+        r = oyAddKey_valueComment_ (key_name, val, com);
+        DBG_PROG4_S( "%s %d %s %s", key_name, type, val, com?com:"" )
       }
       else
         WARNc1_S( "type %d behaviour not possible", type);
@@ -671,11 +673,11 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
       {
         int len = strlen(OY_REGISTRED_PROFILES)
                   + strlen(fileName);
-        char* keyName = (char*) calloc (len +10, sizeof(char)); DBG_PROG
-        sprintf (keyName, "%s%s", OY_REGISTRED_PROFILES OY_SLASH, fileName); DBG_PROG
-        r = oyAddKey_valueComment_ (keyName, com, 0); DBG_PROG
-        DBG_PROG2_S( "%s %d", keyName, len )
-        oyFree_m_ (keyName)
+        char* key_name = (char*) calloc (len +10, sizeof(char)); DBG_PROG
+        sprintf (key_name, "%s%s", OY_REGISTRED_PROFILES OY_SLASH, fileName); DBG_PROG
+        r = oyAddKey_valueComment_ (key_name, com, 0); DBG_PROG
+        DBG_PROG2_S( "%s %d", key_name, len )
+        oyFree_m_ (key_name)
       }
       else
         WARNc2_S( "%s %d", _("default profile type does not exist:"), type );
