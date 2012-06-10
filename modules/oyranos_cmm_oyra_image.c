@@ -94,11 +94,19 @@ int      oyraFilterPlug_ImageLoadRun (
                                        oyPixelAccess_s   * ticket )
 {
   int result = 0, error = 0;
-  oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyFilterNode_s * node = socket->node;
-  oyImage_s * image = (oyImage_s*)socket->data;
+  oyFilterSocket_s * socket = NULL;
+  oyFilterNode_s * node = NULL;
+  oyImage_s * image = NULL;
   oyCMMapiFilter_s * api = 0;
   oyCMMapiFilters_s * apis = 0;
+
+  if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S)
+    socket = socket = requestor_plug->remote_socket_;
+  else if(requestor_plug->type_ == oyOBJECT_FILTER_SOCKET_S)
+    socket = (oyFilterSocket_s*) requestor_plug;
+
+  node = socket->node;
+  image = (oyImage_s*)socket->data;
 
   image = (oyImage_s*)socket->data;
   if(!image)
