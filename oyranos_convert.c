@@ -39,14 +39,6 @@
 #endif
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
-oyConversion_s * oyConversion_FromImage (
-                                       oyImage_s         * image_in,
-                                       const char        * module,
-                                       oyOptions_s       * module_options,
-                                       oyProfile_s       * output_profile,
-                                       oyDATATYPE_e        buf_type_out,
-                                       uint32_t            flags,
-                                       oyObject_s          obj );
 
 void  printfHelp (int argc, char** argv)
 {
@@ -328,7 +320,7 @@ int main( int argc , char** argv )
                                       "//" OY_TYPE_STD "/config/profiles_proof",
                                        (oyStruct_s**) &proofing,
                                        OY_CREATE_NEW );
-    oyConversion_s * cc = oyConversion_FromImage (
+    oyConversion_s * cc = oyConversion_CreateFromImage (
                                 image, node_name, module_options, 
                                 p, data_type, flags, 0 );
     error = oyConversion_RunPixels( cc, 0 );
@@ -400,93 +392,3 @@ int main( int argc , char** argv )
 }
 
 
-/** Function oyConversion_FromImage
- *  @brief   generate a Oyranos graph from a image file name
- *
- *  @param[in]     image_in            input
- *  @param[in]     module              tobe ussed icc node
- *  @param[in]     flags               for inbuild defaults |
- *                                     oyOPTIONSOURCE_FILTER;
- *                                     for options marked as advanced |
- *                                     oyOPTIONATTRIBUTE_ADVANCED |
- *                                     OY_SELECT_FILTER |
- *                                     OY_SELECT_COMMON
- *  @param[in]     data_type           the desired data type for output
- *  @param[in]     obj                 Oyranos object (optional)
- *  @return                            generated new graph, owned by caller
- *
- *  @version Oyranos: 0.4.1
- *  @since   2012/04/21 (Oyranos: 0.4.1)
- *  @date    2012/04/21
- */
-oyConversion_s * oyConversion_FromImage (
-                                       oyImage_s         * image_in,
-                                       const char        * module,
-                                       oyOptions_s       * module_options,
-                                       oyProfile_s       * output_profile,
-                                       oyDATATYPE_e        buf_type_out,
-                                       uint32_t            flags,
-                                       oyObject_s          obj )
-{
-  oyFilterNode_s * in, * out, * icc;
-  int error = 0;
-  oyConversion_s * conversion = 0;
-  oyOptions_s * options = 0;
-  char * module_reg = 0;
-  oyImage_s * image_out = 0;
-
-  if(!image_in)
-    return NULL;
-
-  /* start with an empty conversion object */
-  conversion = oyConversion_New( obj );
-  /* create a filter node */
-  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0, obj );
-  /* set the above filter node as the input */
-  oyConversion_Set( conversion, in, 0 );
-  /* set the image buffer */
-  oyFilterNode_DataSet( in, (oyStruct_s*)image_in, 0, 0 );
-
-
-  STRING_ADD( module_reg, "//" OY_TYPE_STD "/" );
-  if(module)
-    STRING_ADD( module_reg, module );
-  else
-    STRING_ADD( module_reg, "icc" );
-
-  /* create a new CMM filter node */
-  icc = out = oyFilterNode_NewWith( module_reg, module_options, obj );
-  /* append the new to the previous one */
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc" );
-
-  /* Create a output image with supplied channel depth and profile */
-  image_out   = oyImage_Create( image_in->width, image_in->height,
-                         0,
-                      oyChannels_m(oyProfile_GetChannelsCount(output_profile)) |
-                          oyDataType_m(buf_type_out),
-                         output_profile,
-                         0 );
-
-  /* swap in and out */
-  in = out;
-
-  /* add a closing node */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  oyFilterNode_DataSet( in, (oyStruct_s*)image_out, 0, 0 );
-  /* set the output node of the conversion */
-  oyConversion_Set( conversion, 0, out );
-
-  /* apply policies */
-  /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
-                                 "true", OY_CREATE_NEW );*/
-  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", flags,
-                        options );
-  oyOptions_Release( &options );
-
-  return conversion;
-}

@@ -1527,6 +1527,9 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
 oyPixel_t      oyImage_PixelLayoutGet( oyImage_s         * image );
 oyProfile_s *  oyImage_ProfileGet    ( oyImage_s         * image );
 oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image );
+int            oyImage_PpmWrite      ( oyImage_s         * image,
+                                       const char        * file_name,
+                                       const char        * comment );
 
 
 
@@ -2649,6 +2652,14 @@ oyConversion_s  *  oyConversion_CreateBasicPixels (
                                        oyImage_s         * output,
                                        oyOptions_s       * options,
                                        oyObject_s          object );
+oyConversion_s *   oyConversion_CreateFromImage (
+                                       oyImage_s         * image_in,
+                                       const char        * module,
+                                       oyOptions_s       * module_options,
+                                       oyProfile_s       * output_profile,
+                                       oyDATATYPE_e        buf_type_out,
+                                       uint32_t            flags,
+                                       oyObject_s          obj );
 oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
                                        oyProfile_s       * p_in,
                                        oyPointer           buf_in,
