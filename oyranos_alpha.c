@@ -14734,6 +14734,63 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
   return s;
 }
 
+/** Function oyImage_FromFile
+ *  @brief   generate a Oyranos image from a file name
+ *
+ *  @param[in]     file_name           input
+ *  @param[out]    image               output
+ *  @param[in]     obj                 Oyranos object (optional)
+ *  @return                            >0 == error, <0 == issue or zero
+ *
+ *  @version Oyranos: 0.4.1
+ *  @since   2012/04/21 (Oyranos: 0.4.1)
+ *  @date    2012/04/21
+ */
+int    oyImage_FromFile              ( const char        * file_name,
+                                       oyImage_s        ** image,
+                                       oyObject_s          obj )
+{
+  oyFilterNode_s * in, * out;
+  int error = 0;
+  oyConversion_s * conversion = 0;
+  oyOptions_s * options = 0;
+
+  if(!file_name)
+    return 1;
+
+  /* start with an empty conversion object */
+  conversion = oyConversion_New( obj );
+  /* create a filter node */
+  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/file_read.meta", 0, obj );
+  /* set the above filter node as the input */
+  oyConversion_Set( conversion, in, 0 );
+
+  /* add a file name argument */
+  /* get the options of the input node */
+  if(in)
+  options = oyFilterNode_OptionsGet( in, OY_SELECT_FILTER );
+  /* add a new option with the appropriate value */
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
+                                 file_name, OY_CREATE_NEW );
+  /* release the options object, this means its not any more refered from here*/
+  oyOptions_Release( &options );
+
+  /* add a closing node */
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+  /* set the output node of the conversion */
+  oyConversion_Set( conversion, 0, out );
+
+  *image = oyConversion_GetImage( conversion, OY_OUTPUT );
+  oyImage_Release( image );
+  *image = oyConversion_GetImage( conversion, OY_INPUT );
+
+  oyConversion_Release( &conversion );
+
+  return error;
+}
+
 /**
  *  @internal
  *  @brief   copy a image

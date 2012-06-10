@@ -39,9 +39,6 @@
 #endif
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
-int    oyImage_FromFile              ( const char        * file_name,
-                                       oyImage_s        ** image,
-                                       oyObject_s          obj );
 oyConversion_s * oyConversion_FromImage (
                                        oyImage_s         * image_in,
                                        const char        * module,
@@ -402,50 +399,6 @@ int main( int argc , char** argv )
   return error;
 }
 
-int    oyImage_FromFile              ( const char        * file_name,
-                                       oyImage_s        ** image,
-                                       oyObject_s          obj )
-{
-  oyFilterNode_s * in, * out;
-  int error = 0;
-  oyConversion_s * conversion = 0;
-  oyOptions_s * options = 0;
-
-  if(!file_name)
-    return 1;
-
-  /* start with an empty conversion object */
-  conversion = oyConversion_New( obj );
-  /* create a filter node */
-  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/file_read.meta", 0, obj );
-  /* set the above filter node as the input */
-  oyConversion_Set( conversion, in, 0 );
-
-  /* add a file name argument */
-  /* get the options of the input node */
-  if(in)
-  options = oyFilterNode_OptionsGet( in, OY_SELECT_FILTER );
-  /* add a new option with the appropriate value */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
-                                 file_name, OY_CREATE_NEW );
-  /* release the options object, this means its not any more refered from here*/
-  oyOptions_Release( &options );
-
-  /* add a closing node */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  /* set the output node of the conversion */
-  oyConversion_Set( conversion, 0, out );
-
-  *image = oyConversion_GetImage( conversion, OY_OUTPUT );
-  oyImage_Release( image );
-  *image = oyConversion_GetImage( conversion, OY_INPUT );
-
-  oyConversion_Release( &conversion );
-
-  return error;
-}
 
 /** Function oyConversion_FromImage
  *  @brief   generate a Oyranos graph from a image file name
