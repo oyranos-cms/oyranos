@@ -7013,7 +7013,7 @@ OYAPI int  OYEXPORT
  *  @param[in]     device_class        registration ::oyFILTER_REG_APPLICATION
  *                                     part, e.g. "monitor", mandatory
  *  @param[in]     device_name         the device name as returned by
- *                                     oyConfigs_FromPattern_f, mandatory,
+ *                                     oyConfigs_FromPattern_f, optional,
                                        ::oyFILTER_REG_OPTION
  *  @param[in]     options             options to pass to the module, for zero
  *                                     the verbose and expensive "properties"
@@ -7021,9 +7021,9 @@ OYAPI int  OYEXPORT
  *  @param[out]    device              the returned device
  *  @return                            error
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.4.1
  *  @since   2009/01/28 (Oyranos: 0.1.10)
- *  @date    2009/02/09
+ *  @date    2012/06/11
  */
 OYAPI int  OYEXPORT
            oyDeviceGet               ( const char        * device_type,
@@ -7032,15 +7032,13 @@ OYAPI int  OYEXPORT
                                        oyOptions_s       * options,
                                        oyConfig_s       ** device )
 {
-  int error = !device_name || !device_name[0] ||
-              !device_class || !device_class[0];
+  int error = !device_class || !device_class[0];
   oyConfigs_s * devices = 0;
   oyConfig_s * s = 0;
 
   if(error > 0)
   {
-    WARNc2_S( "No device_name/device_class argument provided. Give up: %s/%s",
-              oyNoEmptyString_m_(device_name),
+    WARNc1_S( "No device_class argument provided. Give up: %s",
               oyNoEmptyString_m_(device_class) );
     return 0;
   }
@@ -7059,7 +7057,7 @@ OYAPI int  OYEXPORT
   }
 
   /** 1.1.2 set device filter */
-  if(error <= 0)
+  if(error <= 0 && device_name)
     error = oyOptions_SetDeviceTextKey_( options, device_type,
                                              device_class,
                                              "device_name",device_name);
