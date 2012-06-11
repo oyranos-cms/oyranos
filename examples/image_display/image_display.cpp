@@ -94,7 +94,8 @@ main(int argc, char** argv)
   oy_domain_codeset = fl_i18n_codeset;
 #endif
 
-  int gl_box = 1;
+  int gl_box = 0x01;
+  int logo = 0x02;
 
   /* handle arguments */
   for(int i = 1; i < argc; ++i)
@@ -102,6 +103,11 @@ main(int argc, char** argv)
     if(argc > 1 && strcmp(argv[i], "-v") == 0)
     {
       oy_display_verbose = 1;
+      ++file_pos;
+    }
+    if(argc > 1 && strcmp(argv[i], "--no-logo") == 0)
+    {
+      logo = 0;
       ++file_pos;
     }
     if(argc > 1 && strcmp(argv[i], "--use-no-gl") == 0)
@@ -126,7 +132,7 @@ main(int argc, char** argv)
   Oy_Fl_Shader_Box * oy_gl_box = 0;
   Oy_Fl_Image_Box * oy_box = 0;
   Oy_Fl_Image_Widget * oy_widget = 0;
-  Oy_Fl_Double_Window * win = createWindow( &oy_widget, gl_box );
+  Oy_Fl_Double_Window * win = createWindow( &oy_widget, gl_box | logo );
   if(oy_widget)
   {
     if(gl_box)
@@ -234,13 +240,17 @@ callback ( Fl_Widget* w, void* daten )
 Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags)
 {
   int w = 640,
-      h = 480;
+      h = 480,
+      lh = 0;
+
+  if(flags & 0x02)
+    lh = 100;
 
 
   Fl::get_system_colors();
-  Oy_Fl_Double_Window *win = new Oy_Fl_Double_Window( w, h+100, TARGET );
-  { Fl_Tile* t = new Fl_Tile(0,0, w, h+100);
-      if(flags & 1)
+  Oy_Fl_Double_Window *win = new Oy_Fl_Double_Window( w, h+lh, TARGET );
+  { Fl_Tile* t = new Fl_Tile(0,0, w, h+lh);
+      if(flags & 0x01)
         *oy_box = new Oy_Fl_Shader_Box(0,0,w,h);
       else
         *oy_box = new Oy_Fl_Image_Box(0,0,w,h);
@@ -249,9 +259,10 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags
 
       {
         oyProfile_s * e = NULL; /* default: sRGB */
-        Oy_Fl_Group * og = new Oy_Fl_Group(0, h, w, 100, e);
+        Oy_Fl_Group * og = new Oy_Fl_Group(0, h, w, lh, e);
         int gh = h;
         oyProfile_Release( &e );
+        if(flags & 0x02)
         {
           /* add some text */
           Fl_Box *box = new Fl_Box(0,0+gh,w,100, "Oyranos");
