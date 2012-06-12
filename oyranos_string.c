@@ -224,9 +224,11 @@ void               oyStringAdd_      ( char             ** text,
 /** @internal 
  *  @brief   printf style string add
  *
- *  @version Oyranos: 0.1.10
+ *  The deallocFunc can be omited in case the user provides no string.
+ *
+ *  @version Oyranos: 0.4.1
  *  @since   2009/02/07 (Oyranos: 0.1.10)
- *  @date    2009/02/07
+ *  @date    2012/06/12
  */
 int                oyStringAddPrintf_( char             ** string,
                                        oyAlloc_f           allocateFunc,
@@ -251,14 +253,18 @@ int                oyStringAddPrintf_( char             ** string,
     va_end  ( list );
   }
 
-  text_copy = oyStringAppend_(*string, text, allocateFunc);
+  if(string && *string)
+  {
+    text_copy = oyStringAppend_(*string, text, allocateFunc);
 
-  if(string && *string && deallocFunc)
-    deallocFunc(*string);
+    if(deallocFunc)
+      deallocFunc(*string);
+    *string = text_copy;
 
-  *string = text_copy;
+    deallocFunc(text);
 
-  deallocFunc(text);
+  } else
+    *string = text;
 
   return 0;
 }
