@@ -169,8 +169,7 @@ struct box_n_opts {
   Oy_Fl_Image_Widget * box;
 };
 
-void
-callback ( Fl_Widget* w, void* daten )
+void callback ( Fl_Widget* w, void* daten )
 {
   struct box_n_opts * arg = (box_n_opts*) daten;
   oyStruct_s * object = (oyStruct_s*) arg->node;
@@ -197,9 +196,9 @@ callback ( Fl_Widget* w, void* daten )
     if(!tmp_dir)
       tmp_dir = "/tmp";
 
-    error = oyFilterNode_UiGet( node, &ui_text, &namespaces, malloc );
+    error = oyFilterNode_GetUi( node, &ui_text, &namespaces, malloc );
 
-    opts = oyFilterNode_OptionsGet( node, OY_SELECT_FILTER );
+    opts = oyFilterNode_GetOptions( node, OY_SELECT_FILTER );
     model = oyOptions_GetText( opts, oyNAME_NAME );
     in_text= oyXFORMsFromModelAndUi( model, ui_text, (const char**)namespaces,0,
                                      malloc );
@@ -236,6 +235,47 @@ callback ( Fl_Widget* w, void* daten )
   else
     printf("could not find a suitable program structure\n");
 }
+
+extern "C" {
+int          oyProfile_ToFile_       ( oyProfile_s       * profile,
+                                       const char        * file_name );
+}
+void view_cb ( Fl_Widget* w, void* daten )
+{
+  struct box_n_opts * arg = (box_n_opts*) daten;
+  oyStruct_s * object = (oyStruct_s*) arg->node;
+
+  if(!w->parent())
+    printf("Could not find parents.\n");
+  else
+  if(!object)
+    printf("Oyranos argument missed.\n");
+  else
+  if(object->type_ == oyOBJECT_FILTER_NODE_S)
+  {
+    oyImage_s * image = oyConversion_GetImage( arg->box->conversion(), OY_INPUT );
+    const char * tmp_dir = getenv("TMPDIR");
+    char * command = new char [1024];
+    int error = 0;
+    oyProfile_s * p = oyImage_GetProfile( image );
+
+    if(!tmp_dir)
+      tmp_dir = "/tmp";
+
+    sprintf( command, "%s/image_display_in_tmp.icc", tmp_dir );
+    oyProfile_ToFile_( p, command );
+
+    /* export the options values */
+    sprintf( command, "iccexamin -g %s/image_display_in_tmp.icc &", tmp_dir );
+
+    error = system(command);
+    if(error)
+      fprintf(stderr, "error %d for \"%s\"", error, command );
+  }
+  else
+    printf("could not find a suitable program structure\n");
+}
+void exit_cb ( Fl_Widget* w, void* daten ) {exit(0);}
 
 Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags)
 {
@@ -309,6 +349,10 @@ void setWindowMenue                  ( Oy_Fl_Double_Window * win,
       arg->box = oy_box;
       menue_->add( _("Edit Options"),
                    FL_CTRL + 'e', callback, (void*)arg, 0 );
+      menue_->add( _("Examine ICC Profile ..."),
+                   FL_CTRL + 'i', view_cb, (void*)arg, 0 );
+      menue_->add( _("Quit"),
+                   FL_CTRL + 'q', exit_cb, (void*)arg, 0 );
       menue_button_->copy(menue_->menu());
   win->end();
 }
