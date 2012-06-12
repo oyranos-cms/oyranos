@@ -6997,8 +6997,9 @@ OYAPI int  OYEXPORT
  *  @brief   ask a module for device informations or other direct calls
  *
  *  @verbatim
+    // get the first monitor profile
     oyConfig_s * device = 0;
-    int error = oyDeviceGet( 0, "monitor", ":0.0", 0, &device );
+    int error = oyDeviceGet( 0, "monitor", 0, 0, &device );
     oyConfig_Release( &device );
     @endverbatim
  *
@@ -20320,7 +20321,8 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
                 if(!ptr || !size)
                 {
                   oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*) node, 
-                  OY_DBG_FORMAT_ "no device link for caching", OY_DBG_ARGS_);
+                  OY_DBG_FORMAT_ "no device link for caching\n%s", OY_DBG_ARGS_,
+                  oyFilterNode_GetText( node, oyNAME_NICK ));
                   error = 1;
                   oyPointer_Release( &cmm_ptr );
                 }
