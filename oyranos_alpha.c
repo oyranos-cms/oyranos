@@ -13915,7 +13915,8 @@ OYAPI int  OYEXPORT
 
   {
     int y_len = sizeof(unsigned char *) * (s->height + 1),
-        y;
+        y,
+        size = oySizeofDatatype( s->t );
     uint8_t * u8 = data;
 
     error = !s->array2d;
@@ -13927,7 +13928,7 @@ OYAPI int  OYEXPORT
 
     if(error <= 0)
       for( y = 0; y < s->height; ++y )
-        s->array2d[y] = &u8[oySizeofDatatype( s->t ) * s->width * y];
+        s->array2d[y] = &u8[size * s->width * y];
   }
 
   return error;
@@ -15386,6 +15387,46 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   }
 
   return error;
+}
+
+/** Function oyImage_WidthGet
+ *  @memberof oyImage_s
+ *  @brief   get the width in pixel
+ *
+ *  @version Oyranos: 0.4.1
+ *  @since   2009/03/05 (Oyranos: 0.1.10)
+ *  @date    2012/06/12
+ */
+int            oyImage_WidthGet      ( oyImage_s         * image )
+{
+  oyImage_s * s = image;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
+
+  return s->width;
+}
+
+/** Function oyImage_HeightGet
+ *  @memberof oyImage_s
+ *  @brief   get the width in pixel
+ *
+ *  @version Oyranos: 0.4.1
+ *  @since   2009/03/05 (Oyranos: 0.1.10)
+ *  @date    2012/06/12
+ */
+int            oyImage_HeightGet     ( oyImage_s         * image )
+{
+  oyImage_s * s = image;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
+
+  return s->height;
 }
 
 /** Function oyImage_PixelLayoutGet
