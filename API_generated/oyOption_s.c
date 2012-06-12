@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/06/12
  */
 
 
@@ -287,8 +287,8 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
 
     error = oyObject_SetName( obj->oy_, text, type );
 
-    oyFree_m_( tmp );
-    oyFree_m_( text );
+    if(tmp) oyFree_m_( tmp );
+    if(text) oyFree_m_( text );
   }
 
   if(error <= 1 && obj)

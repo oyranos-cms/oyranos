@@ -184,8 +184,8 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
 
     error = oyObject_SetName( obj->oy_, text, type );
 
-    oyFree_m_( tmp );
-    oyFree_m_( text );
+    if(tmp) oyFree_m_( tmp );
+    if(text) oyFree_m_( text );
   }
 
   if(error <= 1 && obj)
