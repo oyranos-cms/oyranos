@@ -1243,10 +1243,8 @@ typedef enum oyCHANNELTYPE_e {
 oyCHANNELTYPE_e oyICCColourSpaceToChannelLayout (
                                        icColorSpaceSignature sig,
                                        int                 pos );
-#if 0
 char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
                                        oyAlloc_f           allocateFunc );
-#endif
 
 typedef struct oyArray2d_s oyArray2d_s;
 
