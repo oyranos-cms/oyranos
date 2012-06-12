@@ -14361,6 +14361,12 @@ oyImage_CombinePixelLayout2Mask_ (
 
 char *         oyPixelLayoutPrint_   ( oyPixel_t           pixel_layout )
 {
+  return oyPixelPrint(pixel_layout, oyAllocateFunc_);
+}
+
+char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
+                                       oyAlloc_f           allocateFunc )
+{
   oyDATATYPE_e t = oyToDataType_m( pixel_layout );
   char * text = 0;
 
@@ -14376,8 +14382,8 @@ char *         oyPixelLayoutPrint_   ( oyPixel_t           pixel_layout )
   oyToFlavor_m( pixel_layout )
 
   /* describe the pixel layout and access */
-  oyStringAddPrintf_(&text, oyAllocateFunc_, oyDeAllocateFunc_, 
-  oyPixelLayoutPrint_FORMAT, oyPixelLayoutPrint_ARGS);
+  oyStringAddPrintf_(&text, allocateFunc, 0, 
+                     oyPixelLayoutPrint_FORMAT, oyPixelLayoutPrint_ARGS);
 
   /*printf(oyPixelLayoutPrint_FORMAT,oyPixelLayoutPrint_ARGS);*/
 
@@ -14385,6 +14391,7 @@ char *         oyPixelLayoutPrint_   ( oyPixel_t           pixel_layout )
 #undef oyPixelLayoutPrint_ARGS
   return text;
 }
+
 
 /** Function oyImage_GetPointContinous
  *  @memberof oyImage_s

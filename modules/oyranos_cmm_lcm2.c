@@ -321,9 +321,15 @@ int          lcm2CMMData_Open        ( oyStruct_s        * data,
     s->block = block;
 
     s->lcm2 = CMMProfileOpen_M( data, block, size );
+    if(!s->lcm2)
+      lcm2_msg( oyMSG_WARN, (oyStruct_s*)data,
+             OY_DBG_FORMAT_" %s() failed", OY_DBG_ARGS_, "CMMProfileOpen_M" );
     error = oyPointer_Set( oy, 0,
                           lcm2PROFILE, s, CMMToString_M(CMMProfileOpen_M),
                           lcm2CMMProfileReleaseWrap );
+    if(error)
+      lcm2_msg( oyMSG_WARN, (oyStruct_s*)data,
+             OY_DBG_FORMAT_" oyPointer_Set() failed", OY_DBG_ARGS_ );
   }
 
   if(!error)
@@ -703,10 +709,17 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
 
   if(!xform)
   {
-    uint32_t f = lcm2_pixel_layout_in;
+    uint32_t f = lcm2_pixel_layout_in, i;
     printf ("%s:%d %s() float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
     f = lcm2_pixel_layout_out;
     printf ("%s:%d %s() float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
+    for(i=0; i < profiles_n; ++i)
+      lcm2_msg( oyMSG_WARN,(oyStruct_s*)opts, OY_DBG_FORMAT_"\n"
+             "  ColourSpace:%s->PCS:%s DeviceClass:%s",
+             OY_DBG_ARGS_,
+             oyICCColourSpaceGetName(cmsGetColorSpace( lps[0])),
+             oyICCColourSpaceGetName(cmsGetPCS( lps[i] )),
+             oyICCDeviceClassDescription(cmsGetDeviceClass(lps[i])) );
     error = 1;
   }
 
@@ -738,7 +751,7 @@ oyPointer  lcm2CMMColourConversion_ToMem_ (
 
   if(!error)
   {
-    cmsHPROFILE dl= cmsTransform2DeviceLink( xform,4.2,cmsFLAGS_KEEP_SEQUENCE );
+    cmsHPROFILE dl= cmsTransform2DeviceLink( xform,4.3,cmsFLAGS_KEEP_SEQUENCE );
 
     *size = 0;
 
@@ -1006,10 +1019,17 @@ cmsHPROFILE  lcm2AddProfile          ( oyProfile_s       * p )
   if(!oyPointer_GetPointer(cmm_ptr))
     error = lcm2CMMData_Open( (oyStruct_s*)p, cmm_ptr );
 
-  if(!error)
+  if(error)
+  {
+    lcm2_msg( oyMSG_WARN, (oyStruct_s*)p,
+             OY_DBG_FORMAT_" lcm2CMMData_Open() failed", OY_DBG_ARGS_ );
+  } else
   {
     s = lcm2CMMProfile_GetWrap_( cmm_ptr );
     error = !s;
+    if(error)
+      lcm2_msg( oyMSG_WARN, (oyStruct_s*)p,
+             OY_DBG_FORMAT_" lcm2CMMProfile_GetWrap_() failed", OY_DBG_ARGS_ );
   }
 
   if(!error)
@@ -1540,6 +1560,36 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
       block = lcm2CMMColourConversion_ToMem_( xform, size, allocateFunc );
     error = !block || !*size;
     cmsDeleteTransform( xform ); xform = 0;
+  } else
+  {
+    lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_"\n"
+              "loading failed profiles_n:%d profiles_proof_n:%d profiles:%d",
+              OY_DBG_ARGS_,
+              profiles_n, profiles_proof_n, oyProfiles_Count(profiles) );
+    lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_"\n"
+              "  input profile: \"%s\" %s %s->%s %s\n  %s",
+              OY_DBG_ARGS_,
+              oyProfile_GetText( image_input->profile_, oyNAME_DESCRIPTION ),
+              oyProfile_GetText( image_input->profile_, oyNAME_NAME ),
+              oyICCColourSpaceGetName( oyProfile_GetSignature( 
+                            image_input->profile_, oySIGNATURE_COLOUR_SPACE ) ),
+              oyICCColourSpaceGetName( oyProfile_GetSignature( 
+                            image_input->profile_, oySIGNATURE_PCS ) ),
+              oyICCDeviceClassDescription( oyProfile_GetSignature( 
+                            image_input->profile_, oySIGNATURE_CLASS ) ),
+              oyPixelPrint(image_input->layout_[0], malloc));
+    lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_"\n"
+              "  output profile: \"%s\" %s %s->%s %s\n  %s",
+              OY_DBG_ARGS_,
+              oyProfile_GetText( image_input->profile_, oyNAME_DESCRIPTION ),
+              oyProfile_GetText( image_output->profile_, oyNAME_NAME ),
+              oyICCColourSpaceGetName( oyProfile_GetSignature( 
+                            image_input->profile_, oySIGNATURE_COLOUR_SPACE ) ),
+              oyICCColourSpaceGetName( oyProfile_GetSignature( 
+                            image_input->profile_, oySIGNATURE_PCS ) ),
+              oyICCDeviceClassDescription( oyProfile_GetSignature( 
+                            image_input->profile_, oySIGNATURE_CLASS ) ),
+              oyPixelPrint(image_output->layout_[0], malloc));
   }
 
   /* additional tags for debugging */
