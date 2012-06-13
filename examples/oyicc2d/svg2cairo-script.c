@@ -18,6 +18,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+modified 2012 by Kai-Uwe Behrmann for script output
+
+build instruction:
+gcc -Wall -g `pkg-config --cflags --libs librsvg-2.0 cairo` examples/oyicc2d/svg2cairo-script.c -o examples/oyicc2d/svg2cairoscript
 */
 
 #include <stdio.h>
@@ -27,10 +32,10 @@ THE SOFTWARE.
 #include <librsvg/rsvg-cairo.h>
 
 #include <cairo.h>
-#include <cairo-xml.h>
+#include <cairo-script.h>
 
 static void usage() {
-    printf("usage: svg2cairoxml svg-file xml-file\n");
+    printf("usage: svg2cairoscript svg-file script-file\n");
 }
 
 static cairo_status_t write_func(FILE *fp, unsigned char *data, unsigned int size) {
@@ -72,7 +77,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    dev = cairo_xml_create_for_stream((cairo_write_func_t)write_func, fp);
+    dev = cairo_script_create_for_stream((cairo_write_func_t)write_func, fp);
 
     rsvg_init();
     rsvg_set_default_dpi_x_y(-1, -1);
@@ -83,7 +88,7 @@ int main(int argc, char *argv[]) {
     
     fprintf(fp, "<image width='%d' height='%d'>\n", dimensions.width, dimensions.height);
 
-    surface = cairo_xml_surface_create(dev, CAIRO_CONTENT_COLOR_ALPHA, dimensions.width, dimensions.height);
+    surface = cairo_script_surface_create(dev, CAIRO_CONTENT_COLOR_ALPHA, dimensions.width, dimensions.height);
 
     cr = cairo_create(surface);
 
