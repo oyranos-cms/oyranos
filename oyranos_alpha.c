@@ -14775,7 +14775,7 @@ int    oyImage_FromFile              ( const char        * file_name,
   /* add a file name argument */
   /* get the options of the input node */
   if(in)
-  options = oyFilterNode_OptionsGet( in, OY_SELECT_FILTER );
+  options = oyFilterNode_GetOptions( in, OY_SELECT_FILTER );
   /* add a new option with the appropriate value */
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
                                  file_name, OY_CREATE_NEW );
@@ -15389,7 +15389,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   return error;
 }
 
-/** Function oyImage_WidthGet
+/** Function oyImage_GetWidth
  *  @memberof oyImage_s
  *  @brief   get the width in pixel
  *
@@ -15397,7 +15397,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
  *  @since   2009/03/05 (Oyranos: 0.1.10)
  *  @date    2012/06/12
  */
-int            oyImage_WidthGet      ( oyImage_s         * image )
+int            oyImage_GetWidth      ( oyImage_s         * image )
 {
   oyImage_s * s = image;
 
@@ -15409,7 +15409,7 @@ int            oyImage_WidthGet      ( oyImage_s         * image )
   return s->width;
 }
 
-/** Function oyImage_HeightGet
+/** Function oyImage_GetHeight
  *  @memberof oyImage_s
  *  @brief   get the width in pixel
  *
@@ -15417,7 +15417,7 @@ int            oyImage_WidthGet      ( oyImage_s         * image )
  *  @since   2009/03/05 (Oyranos: 0.1.10)
  *  @date    2012/06/12
  */
-int            oyImage_HeightGet     ( oyImage_s         * image )
+int            oyImage_GetHeight     ( oyImage_s         * image )
 {
   oyImage_s * s = image;
 
@@ -15429,15 +15429,15 @@ int            oyImage_HeightGet     ( oyImage_s         * image )
   return s->height;
 }
 
-/** Function oyImage_PixelLayoutGet
+/** Function oyImage_GetPixelLayout
  *  @memberof oyImage_s
  *  @brief   get the pixel layout
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.4.1
  *  @since   2009/03/05 (Oyranos: 0.1.10)
- *  @date    2009/03/05
+ *  @date    2012/06/12
  */
-oyPixel_t      oyImage_PixelLayoutGet( oyImage_s         * image )
+oyPixel_t      oyImage_GetPixelLayout( oyImage_s         * image )
 {
   oyImage_s * s = image;
 
@@ -15449,15 +15449,15 @@ oyPixel_t      oyImage_PixelLayoutGet( oyImage_s         * image )
   return s->layout_[oyLAYOUT];
 }
 
-/** Function oyImage_ProfileGet
+/** Function oyImage_GetProfile
  *  @memberof oyImage_s
  *  @brief   get the image profile
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.4.1
  *  @since   2009/08/05 (Oyranos: 0.1.10)
- *  @date    2009/08/05
+ *  @date    2012/06/12
  */
-oyProfile_s *  oyImage_ProfileGet    ( oyImage_s         * image )
+oyProfile_s *  oyImage_GetProfile    ( oyImage_s         * image )
 {
   oyImage_s * s = image;
 
@@ -15469,15 +15469,15 @@ oyProfile_s *  oyImage_ProfileGet    ( oyImage_s         * image )
   return oyProfile_Copy( s->profile_, 0 );
 }
 
-/** Function oyImage_TagsGet
+/** Function oyImage_GetTags
  *  @memberof oyImage_s
  *  @brief   get object tags
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.4.1
  *  @since   2009/03/05 (Oyranos: 0.1.10)
- *  @date    2009/03/05
+ *  @date    2012/06/12
  */
-oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image )
+oyOptions_s *  oyImage_GetTags       ( oyImage_s         * image )
 {
   oyImage_s * s = image;
 
@@ -16930,7 +16930,7 @@ OYAPI oyImage_s * OYEXPORT
   if(!image_input)
   {
     /* get options */
-    options = oyFilterNode_OptionsGet( node, 0 );
+    options = oyFilterNode_GetOptions( node, 0 );
 
     /* store original queue */
     ticket_orig = ticket->request_queue;
@@ -16971,7 +16971,7 @@ OYAPI oyImage_s * OYEXPORT
     /* Copy a root image or link to a non root image. */
     if(!plug->remote_socket_->node->api7_->plugs_n)
     {
-      options = oyFilterNode_OptionsGet( node, 0 );
+      options = oyFilterNode_GetOptions( node, 0 );
       error = oyOptions_Filter( &requests, &n, 0,
                                 oyBOOLEAN_INTERSECTION,
                                 "////resolve", options );
@@ -19646,7 +19646,7 @@ int      oyFilterNodeObserve_        ( oyObserver_s      * observer,
   return handled;
 }
 
-/** Function oyFilterNode_OptionsGet
+/** Function oyFilterNode_GetOptions
  *  @memberof oyFilterNode_s
  *  @brief   get filter options
  *
@@ -19654,11 +19654,11 @@ int      oyFilterNodeObserve_        ( oyObserver_s      * observer,
  *  @param         flags               see oyOptions_s::oyOptions_ForFilter()
  *  @return                            the options
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.4.1
  *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2009/06/26
+ *  @date    2012/06/12
  */
-oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
+oyOptions_s* oyFilterNode_GetOptions ( oyFilterNode_s    * node,
                                        int                 flags )
 {
   oyOptions_s * options = 0;
@@ -19696,7 +19696,7 @@ oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
   return options;
 }
 
-/** Function oyFilterNode_UiGet
+/** Function oyFilterNode_GetUi
  *  @memberof oyFilterNode_s
  *  @brief   get filter options XFORMS
  *
@@ -19706,11 +19706,11 @@ oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
  *  @param         allocateFunc        optional user allocator
  *  @return                            the options
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.4.1
  *  @since   2009/07/29 (Oyranos: 0.1.10)
- *  @date    2009/08/31
+ *  @date    2012/06/12
  */
-int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
+int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
                                        char              ** ui_text,
                                        char             *** namespaces,
                                        oyAlloc_f            allocateFunc )
@@ -19730,7 +19730,7 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
     allocateFunc = oyAllocateFunc_;
 
   if(!error)
-    options = oyFilterNode_OptionsGet( node, 0 );
+    options = oyFilterNode_GetOptions( node, 0 );
 
   if(!error)
   {

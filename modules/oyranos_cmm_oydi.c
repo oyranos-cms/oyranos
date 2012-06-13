@@ -377,7 +377,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
         if(oyFilterRegistrationMatch( input_node->core->registration_,
                                       "//" OY_TYPE_STD "/icc", 0 ))
         {
-          options = oyFilterNode_OptionsGet( input_node, 0 );
+          options = oyFilterNode_GetOptions( input_node, 0 );
           cmm_node = oyFilterNode_NewWith( input_node->core->registration_,
                                            options, 0 );
           error = oyStruct_ObserversCopy( (oyStruct_s*)cmm_node,
@@ -506,8 +506,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   /* Allocate missing local process data in a specific manner. */
   if(error <= 0 && !image)
   {
-    oyPixel_t pixel_layout = oyImage_PixelLayoutGet( image_input );
-    oyProfile_s * p_in = oyImage_ProfileGet( image_input );
+    oyPixel_t pixel_layout = oyImage_GetPixelLayout( image_input );
+    oyProfile_s * p_in = oyImage_GetProfile( image_input );
     oyDATATYPE_e data_type = oyToDataType_m(pixel_layout);
     int32_t datatype = -1;
     int32_t channels_in = oyToChannels_m(pixel_layout);

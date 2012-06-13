@@ -236,10 +236,6 @@ void callback ( Fl_Widget* w, void* daten )
     printf("could not find a suitable program structure\n");
 }
 
-extern "C" {
-int          oyProfile_ToFile_       ( oyProfile_s       * profile,
-                                       const char        * file_name );
-}
 void view_cb ( Fl_Widget* w, void* daten )
 {
   struct box_n_opts * arg = (box_n_opts*) daten;
@@ -253,28 +249,28 @@ void view_cb ( Fl_Widget* w, void* daten )
   else
   if(object->type_ == oyOBJECT_FILTER_NODE_S)
   {
-    oyImage_s * image = oyConversion_GetImage( arg->box->conversion(), OY_INPUT );
-    const char * tmp_dir = getenv("TMPDIR");
-    char * command = new char [1024];
     int error = 0;
-    oyProfile_s * p = oyImage_GetProfile( image );
-
-    if(!tmp_dir)
-      tmp_dir = "/tmp";
-
-    sprintf( command, "%s/image_display_in_tmp.icc", tmp_dir );
-    oyProfile_ToFile_( p, command );
+    oyConversion_s * cc = arg->box->conversion();
+    oyFilterNode_s * in = oyConversion_GetNode( cc, OY_INPUT);
+    oyOptions_s * opts =  oyFilterNode_GetOptions( in, 0 );
+    const char * fn =     oyOptions_FindString( opts, "//" OY_TYPE_STD "/file_read/filename", 0 );
+    char * command = new char [1024];
 
     /* export the options values */
-    sprintf( command, "iccexamin -g %s/image_display_in_tmp.icc &", tmp_dir );
+    sprintf( command, "iccexamin -g %s &", fn );
 
     error = system(command);
     if(error)
       fprintf(stderr, "error %d for \"%s\"", error, command );
+
+    oyFilterNode_Release( &in );
+    oyOptions_Release( &opts );
+    if(command) delete [] command;
   }
   else
     printf("could not find a suitable program structure\n");
 }
+
 void exit_cb ( Fl_Widget* w, void* daten ) {exit(0);}
 
 Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags)

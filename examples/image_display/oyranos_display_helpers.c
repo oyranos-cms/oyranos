@@ -84,7 +84,7 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
 
   /* create a node for preparing the image for displaying */
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, obj );
-  options = oyFilterNode_OptionsGet( out, OY_SELECT_FILTER );
+  options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
   /* 8 bit data for FLTK */
   error = oyOptions_SetFromInt( &options,
                                 "//" OY_TYPE_STD "/display/datatype",
@@ -166,7 +166,7 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
   /* add a file name argument */
   /* get the options of the input node */
   if(in)
-  options = oyFilterNode_OptionsGet( in, OY_SELECT_FILTER );
+  options = oyFilterNode_GetOptions( in, OY_SELECT_FILTER );
   /* add a new option with the appropriate value */
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
                                  file_name, OY_CREATE_NEW );
@@ -193,7 +193,7 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
 
   /* create a node for preparing the image for displaying */
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, obj );
-  options = oyFilterNode_OptionsGet( out, OY_SELECT_FILTER );
+  options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
   /* 8 bit data for FLTK */
   error = oyOptions_SetFromInt( &options,
                                 "//" OY_TYPE_STD "/display/datatype",
@@ -286,7 +286,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
       if( W <= 0 || H <= 0)
         return -1;
 
-      image_tags = oyImage_TagsGet( image );
+      image_tags = oyImage_GetTags( image );
 
     if(window && strcmp("X11", system_type) == 0)
     {
@@ -328,7 +328,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
 #endif
    }
       /* check if the actual data can be displayed */
-      pt = oyImage_PixelLayoutGet( image );
+      pt = oyImage_GetPixelLayout( image );
       data_type = oyToDataType_m( pt );
       channels = oyToChannels_m( pt );
       if(pt != 0 &&

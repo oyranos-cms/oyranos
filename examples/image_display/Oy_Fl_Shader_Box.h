@@ -55,7 +55,7 @@ private:
 
       drawPrepare( &image, oyUINT16, 1 );
 
-      pt = oyImage_PixelLayoutGet( image );
+      pt = oyImage_GetPixelLayout( image );
       channels = oyToChannels_m( pt );
 
       if(channels == 3)

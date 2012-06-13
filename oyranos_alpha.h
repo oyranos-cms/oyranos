@@ -1522,11 +1522,11 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
                                        oyRectangle_s     * rectangle,
                                        oyArray2d_s       * array,
                                        oyRectangle_s     * array_rectangle );
-int            oyImage_WidthGet      ( oyImage_s         * image );
-int            oyImage_HeightGet     ( oyImage_s         * image );
-oyPixel_t      oyImage_PixelLayoutGet( oyImage_s         * image );
-oyProfile_s *  oyImage_ProfileGet    ( oyImage_s         * image );
-oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image );
+int            oyImage_GetWidth      ( oyImage_s         * image );
+int            oyImage_GetHeight     ( oyImage_s         * image );
+oyPixel_t      oyImage_GetPixelLayout( oyImage_s         * image );
+oyProfile_s *  oyImage_GetProfile    ( oyImage_s         * image );
+oyOptions_s *  oyImage_GetTags       ( oyImage_s         * image );
 int            oyImage_PpmWrite      ( oyImage_s         * image,
                                        const char        * file_name,
                                        const char        * comment );
@@ -2187,9 +2187,9 @@ OYAPI oyFilterSocket_s * OYEXPORT
 OYAPI oyFilterPlug_s * OYEXPORT
                oyFilterNode_GetPlug  ( oyFilterNode_s    * node,
                                        int                 pos );
-oyOptions_s*   oyFilterNode_OptionsGet(oyFilterNode_s    * node,
+oyOptions_s*   oyFilterNode_GetOptions(oyFilterNode_s    * node,
                                        int                 flags );
-int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
+int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
                                        char              ** ui_text,
                                        char             *** namespaces,
                                        oyAlloc_f            allocateFunc );
@@ -3137,6 +3137,13 @@ int      oyGetMonitorInfo            ( const char        * display,
                                        char             ** system_port,
                                        oyBlob_s         ** edit,
                                        oyAlloc_f           allocate_func );
+#if 1
+#define oyImage_PixelLayoutGet         oyImage_GetPixelLayout
+#define oyImage_ProfileGet             oyImage_GetProfile
+#define oyImage_TagsGet                oyImage_GetTags
+#define oyFilterNode_OptionsGet        oyFilterNode_GetOptions
+#define oyFilterNode_UiGet             oyFilterNode_GetUi
+#endif
 
 #ifdef __cplusplus
 } /* extern "C" */

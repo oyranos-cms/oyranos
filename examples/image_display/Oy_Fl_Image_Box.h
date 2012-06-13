@@ -58,7 +58,7 @@ private:
 
       drawPrepare( &image, oyUINT8, 0 );
 
-      pt = oyImage_PixelLayoutGet( image );
+      pt = oyImage_GetPixelLayout( image );
       channels = oyToChannels_m( pt );
 
       /* get the data and draw the image */

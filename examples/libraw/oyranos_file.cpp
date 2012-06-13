@@ -61,7 +61,7 @@ oyConversion_s * oyConversion_FromImageFileName  (
   /* add a file name argument */
   /* get the options of the input node */
   if(in)
-  options = oyFilterNode_OptionsGet( in, OY_SELECT_FILTER );
+  options = oyFilterNode_GetOptions( in, OY_SELECT_FILTER );
   /* add a new option with the appropriate value */
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
                                  file_name, OY_CREATE_NEW );

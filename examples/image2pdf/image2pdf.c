@@ -122,8 +122,8 @@ int main (int argc, char ** argv)
     oyImage_s * in = NULL, * out = NULL;
     error = oyImage_FromFile( filename, &in, NULL );
 
-    w = oyImage_WidthGet( in );
-    h = oyImage_HeightGet( in );
+    w = oyImage_GetWidth( in );
+    h = oyImage_GetHeight( in );
 
     /* create a Cairo image */
     image_surf = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, w, h );

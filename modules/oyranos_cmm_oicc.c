@@ -759,7 +759,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               /* apply the found policy settings */
               db_options = oyOptions_ForFilter( node->core->registration_, 0,
                                                 flags, 0 );
-              f_options = oyFilterNode_OptionsGet( node, flags );
+              f_options = oyFilterNode_GetOptions( node, flags );
               os_n = oyOptions_Count(f_options);
               if(oy_debug || verbose)
               for(k = 0; k < os_n; k++)

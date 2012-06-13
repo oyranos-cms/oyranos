@@ -159,7 +159,7 @@ public:
       }
 
       /* some error checks */
-      pt = oyImage_PixelLayoutGet( image );
+      pt = oyImage_GetPixelLayout( image );
       data_type = oyToDataType_m( pt );
       channels = oyToChannels_m( pt );
       if(pt != 0 &&
