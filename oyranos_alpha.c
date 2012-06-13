@@ -96,7 +96,7 @@ oyLab2XYZ (const double *CIELab, double * XYZ)
   const double * l = CIELab;
   /* double e = 216./24389.;             // 0.0088565 */
   /* double k = 24389./27.;              // 903.30 */
-  double d = 6./29.;                  /* 0.20690 */
+  double d = 6./29.;                  /* 24.0/116.0 0.20690 */
 
   double Xn = 0.964294;
   double Yn = 1.000000;
@@ -110,15 +110,15 @@ oyLab2XYZ (const double *CIELab, double * XYZ)
   if(fy > d)
     XYZ[1] = Yn * pow( fy, 3 );
   else
-    XYZ[1] = (fy - 16./116.) * 3 * pow( d, 2 ) * Yn;
+    XYZ[1] = (fy - 16./116.) * 108.0/841.0 * Yn;
   if(fx > d)
     XYZ[0] = Xn * pow( fx, 3 );
   else
-    XYZ[0] = (fx - 16./116.) * 3 * pow( d, 2 ) * Xn;
+    XYZ[0] = (fx - 16./116.) * 108.0/841.0 * Xn;
   if(fz > d)
     XYZ[2] = Zn * pow( fz, 3 );
   else
-    XYZ[2] = (fz - 16./116.) * 3 * pow( d, 2 ) * Zn;
+    XYZ[2] = (fz - 16./116.) * 108.0/841.0 * Zn;
 }
 
 /** */
