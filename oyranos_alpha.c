@@ -8940,6 +8940,8 @@ oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
              oyICCColourSpaceGetName(sig),
              oyICCColourSpaceGetName(h->colorSpace))
 
+    oyProfile_Release( &s );
+
     if(error_return) *error_return = error;
   }
 
