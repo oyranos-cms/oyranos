@@ -13,8 +13,9 @@ TARGET6 = dummy_filter/liboyranos_dFil_cmm_module.so
 TARGET7 = oymd5icc/oymd5icc
 TARGET8 = xcmsevents/qcmsevents
 TARGET9 = libraw/oyranos-file
+TARGET10 = oyranos_profile_graph/oyranos-profile-graph
 TARGETS = $(TARGET1) $(TARGET2) $(TARGET4) $(TARGET5) $(TARGET6) \
-	$(TARGET7) $(TARGET8) $(TARGET9) ../oyranos_logo.ppm
+	$(TARGET7) $(TARGET8) $(TARGET9) $(TARGET10) ../oyranos_logo.ppm
 OY_CFLAGS := $(shell (pkg-config --cflags oyranos))
 OY_LDFLAGS := $(shell (pkg-config --libs oyranos))
 FLTK_CFLAGS := $(shell (fltk-config --cflags --use-gl | sed 's/-O.//g'))
@@ -122,6 +123,12 @@ $(TARGET9):	$(SRCDIR)libraw/oyranos_file.cpp
 	mkdir -p libraw
 	echo Compiling $@ ...
 	-$(CXX) $(CXXFLAGS_) $< $(LDFLAGS) $(OY_LDFLAGS) -o $@
+
+$(TARGET10):	$(SRCDIR)oyranos_profile_graph/oyranos_profile_graph.c
+	mkdir -p oyranos_profile_graph
+	echo Compiling $@ ...
+	-$(CC) $(CFLAGS_) $< $(TARGET4_FLAGS) $(LDFLAGS) \
+	$(OY_LDFLAGS) -o $@
 
 ../oyranos_logo.ppm:	$(SRCDIR)../oyranos_logo.png
 	-cat $(SRCDIR)../oyranos_logo.png | pngtopnm > $@

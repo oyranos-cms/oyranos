@@ -277,6 +277,10 @@ Group:          Development/Libraries/Other
 Summary:        Xorg Color management Event observer applet
 Group:          System/Monitoring
 
+%package      profile-graph
+Summary:        profile 2D graph tool
+Group:          Development/Libraries/Other
+
 %description
 Oyranos is a colour management system.
 Features:
@@ -374,6 +378,9 @@ options.
 %description  qcmsevents
 the applet shows if a colour server is running through a icon in 
 the system tray.
+
+%description  profile-graph
+the grapher renders a simple gamut hull in 2D of a ICC profile.
 
 %prep
 %setup -q
@@ -543,7 +550,16 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 %{pixmapdir}/qcmsevents.*
 %{desktopdir}/qcmsevents-applet.desktop
 
+%files profile-graph
+%defattr(-, root, root)
+%doc AUTHORS COPYING ChangeLog README
+%{_bindir}/%{name}-profile-graph
+%{_mandir}/man1/%{name}-profile-graph.1*
+
 %changelog
+* Tue Jun 14 2012 Kai-Uwe Behrmann
+- add oyranos-profile-graph
+
 * Fri Oct 29 2011 Kai-Uwe Behrmann
 - add oyranos-monitor-daemon
 
