@@ -343,7 +343,7 @@ void setWindowMenue                  ( Oy_Fl_Double_Window * win,
       menue_ = new Fl_Menu_Button(0,0,win->w(),win->h(),""); menue_->hide();
       arg->node = node;
       arg->box = oy_box;
-      menue_->add( _("Edit Options"),
+      menue_->add( _("Edit Options ..."),
                    FL_CTRL + 'e', callback, (void*)arg, 0 );
       menue_->add( _("Examine ICC Profile ..."),
                    FL_CTRL + 'i', view_cb, (void*)arg, 0 );
