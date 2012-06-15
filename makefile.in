@@ -390,6 +390,7 @@ EXAMPLE_SOURCES = \
 	examples/xcmsevents/qcmsevents.cpp \
 	examples/xcmsevents/qcmsevents.h \
 	examples/oyranos_profile_graph/oyranos_profile_graph.c \
+	examples/oyranos_profile_graph/ciexyz64_1.h \
 	examples/oymd5icc/oymd5icc.c
 
 EXAMPLE_FILES = \
