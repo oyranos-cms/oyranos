@@ -81,7 +81,7 @@ int main( int argc , char** argv )
       x,y,w=0,h=0;               /* image dimensions */
   oyProfile_s * p_xyz = oyProfile_FromStd(oyASSUMED_XYZ,0),
               * p_lab = oyProfile_FromStd(oyASSUMED_LAB,0),
-              * proj = p_xyz;
+              * proj = p_lab;
   double xs_xyz = 1.2,           /* scaling of CIE*xy graph */
          ys_xyz = 1.2;
 
@@ -119,13 +119,13 @@ int main( int argc , char** argv )
             for(i = 1; i < strlen(argv[pos]); ++i)
             switch (argv[pos][i])
             {
-              case 'b': border = 0; i=100; break;
+              case 'b': border = 0; break;
               case 'f': OY_PARSE_STRING_ARG(format); break;
               case 'o': OY_PARSE_STRING_ARG(output); break;
               case 'w': OY_PARSE_INT_ARG( pixel_w ); break;
-              case 'v': if(verbose) oy_debug += 1; verbose = 1; i=100; break;
-              case 'l': proj = p_lab; i=100; break;
-              case 's': spectral = 0; i=100; break;
+              case 'v': if(verbose) oy_debug += 1; verbose = 1; break;
+              case 'x': proj = p_xyz; break;
+              case 's': spectral = 0; break;
               case 't': OY_PARSE_FLOAT_ARG( thickness ); break;
               case 'h':
               case '-':
@@ -149,10 +149,10 @@ int main( int argc , char** argv )
                                 _("is a ICC colour profile grapher"));
                         printf("%s:\n",                 _("Usage"));
                         printf("  %s\n",               _("2D Graph from profiles:"));
-                        printf("      %s [-o FILENAME] [-l] [-w NUMBER] [-b] [-s] PROFILENAMES\n", argv[0] );
+                        printf("      %s [-o FILENAME] [-x] [-w NUMBER] [-b] [-s] PROFILENAMES\n", argv[0] );
                         printf("      -w  %s\n",       _("specify output image width in pixel"));
                         printf("      -o  %s\n",       _("specify output file name, default is output.png"));
-                        printf("      -l  %s\n",       _("use CIE*Lab *a*b plane for saturation line projection"));
+                        printf("      -x  %s\n",       _("use CIE*xyY *x*y plane for saturation line projection"));
                         printf("      -s  %s\n",       _("omit the spectral line"));
                         printf("      -b  %s\n",       _("omit border"));
                         printf("      -t  %s\n",       _("specify increase of the thickness of the graph lines"));
