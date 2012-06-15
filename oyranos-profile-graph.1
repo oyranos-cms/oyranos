@@ -2,7 +2,7 @@
 .SH NAME
 oyranos-profile-graph \- ICC profile graph tool
 .SH SYNOPSIS
-\fBoyranos-profile-graph\fR [-o \fIFILENAME\fR] [-l] [-w NUMBER] [-b] [-s] \fIPROFILENAMES\fR
+\fBoyranos-profile-graph\fR [-o \fIFILENAME\fR] [-x] [-w NUMBER] [-b] [-s] \fIPROFILENAMES\fR
 .fi
 \fBoyranos-profile-graph\fR [ -h ]
 .SH DESCRIPTION
@@ -17,8 +17,8 @@ set output image width in pixel
 \fB\-o\fR \fIFILENAME\fR
 write resulting image to file name.
 .TP
-\fB\-l\fR
-use CIE*Lab *a*b plane for saturation line projection.
+\fB\-x\fR
+use CIE*xyY *x*y plane for saturation line projection.
 .TP
 \fB-s\fR
 omit the spectral line.
@@ -48,7 +48,7 @@ http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
 .SH EXAMPLES
 .TP
 Show the saturation lines of two profile in CIE*ab 256 pixel width, without spectral line and with thicker lines:
-.B oyranos-profile-graph -l -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc
+.B oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc
 .PP
 .TP
 Show the standard observer spectral function as curves:
