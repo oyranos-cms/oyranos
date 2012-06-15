@@ -62,6 +62,7 @@ int main( int argc , char** argv )
   int verbose = 0;
   int spectral = 1;
   float thickness = 1.0;
+  float change_thickness = .7;
   int border = 1;
   int standardobs = 0;
   int saturation = 1;
@@ -120,6 +121,7 @@ int main( int argc , char** argv )
             switch (argv[pos][i])
             {
               case 'b': border = 0; break;
+              case 'd': OY_PARSE_FLOAT_ARG( change_thickness ); break;
               case 'f': OY_PARSE_STRING_ARG(format); break;
               case 'o': OY_PARSE_STRING_ARG(output); break;
               case 'w': OY_PARSE_INT_ARG( pixel_w ); break;
@@ -144,7 +146,10 @@ int main( int argc , char** argv )
                         }
               default:
                         printf("\n");
-                        printf("oyranos-monitor v%d.%d.%d %s\n",
+                        for(i = 0; i < argc; ++i)
+                          printf("%s ", argv[i]);
+                        printf("\n");
+                        printf("%s v%d.%d.%d %s\n", argv[0],
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
                                 _("is a ICC colour profile grapher"));
                         printf("%s:\n",                 _("Usage"));
@@ -156,6 +161,7 @@ int main( int argc , char** argv )
                         printf("      -s  %s\n",       _("omit the spectral line"));
                         printf("      -b  %s\n",       _("omit border"));
                         printf("      -t  %s\n",       _("specify increase of the thickness of the graph lines"));
+                        printf("      -d  %s\n",       _("specify incemental increase of the thickness of the graph lines"));
                         printf("\n");
                         printf("  %s\n",               _("General options:"));
                         printf("      %s\n",           _("-v verbose"));
@@ -186,6 +192,8 @@ int main( int argc , char** argv )
   }
 
   pixel_h = pixel_w;
+
+  thickness *= pixel_w/128.0;
 
   /* create a surface to place our images on */
   surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, pixel_w,pixel_h);
@@ -247,7 +255,7 @@ int main( int argc , char** argv )
 
     if(proj == p_lab)
     {
-      cairo_set_source_rgba( cr, .9, .9, .9, 1.0);
+      cairo_set_source_rgba( cr, 1., 1., 1., 1.0);
       cairo_new_path(cr);
       for(i = 0; i<=371; ++i)
       {
@@ -274,10 +282,11 @@ int main( int argc , char** argv )
 
   if(saturation)
   {
+    float t = thickness;
     cairo_set_line_width (cr, 1.*thickness);
     if(proj == p_lab && !spectral)
     {
-      cairo_set_source_rgba( cr, .9, .9, .9, 1.0);
+      cairo_set_source_rgba( cr, 1., 1., 1., 1.0);
       cairo_move_to(cr, xToImage(.0), yToImage(.5));
       cairo_line_to(cr, xToImage(1.0), yToImage(.5));
       cairo_move_to(cr, xToImage(.5), yToImage(0));
@@ -285,7 +294,7 @@ int main( int argc , char** argv )
       cairo_stroke(cr);
     }
 
-    cairo_set_line_width (cr, 3.*thickness);
+    cairo_set_line_width (cr, 3.*t);
     for ( j=argc-o; j < argc; ++j )
     {
       const char * filename = argv[j];
@@ -293,6 +302,9 @@ int main( int argc , char** argv )
 
       oyProfile_s * p = oyProfile_FromFile( filename, 0, NULL );
       double * saturation;
+
+      t *= pow( change_thickness, j-argc-o+1);
+      cairo_set_line_width (cr, 3.*t);
 
       if(!p)
       {
@@ -340,7 +352,7 @@ int main( int argc , char** argv )
         }
       }
       cairo_close_path(cr);
-      cairo_set_source_rgba( cr, .3, .3, .3, 1.0);
+      cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
       cairo_stroke(cr);
 
       oyProfile_Release( &p );
