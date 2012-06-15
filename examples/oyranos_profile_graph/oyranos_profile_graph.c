@@ -303,9 +303,6 @@ int main( int argc , char** argv )
       oyProfile_s * p = oyProfile_FromFile( filename, 0, NULL );
       double * saturation;
 
-      t *= pow( change_thickness, j-argc-o+1);
-      cairo_set_line_width (cr, 3.*t);
-
       if(!p)
       {
         oyImage_s * image = 0;
@@ -314,6 +311,9 @@ int main( int argc , char** argv )
       }
 
       saturation = getSaturationLine_( p, 3, &size, p_lab );
+
+      t = pow( change_thickness, j-(argc-o)) * thickness;
+      cairo_set_line_width (cr, 3.*t);
 
       cairo_new_path(cr);
       if(saturation)
