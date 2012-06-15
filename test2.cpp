@@ -1320,6 +1320,8 @@ oyTESTRESULT_e testProfiles ()
 
   /* compare the default profile spaces with the total of profiles */
   countB = 0;
+  /* thread testing needs initialisation through oyThreadLockingSet()
+#pragma omp parallel for private(current,count,p,tmp,profs) */
   for(i = oyEDITING_XYZ; i <= oyEDITING_GRAY; ++i)
   {
     profs = oyProfiles_ForStd( (oyPROFILE_e)i, &current, 0 );
@@ -2767,12 +2769,6 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
                                        uint32_t            flags,
                                        oyObject_s          object );
 int      oyKeyIsString_              ( const char        * full_key_name );
-int  oyColourConvert_ ( oyProfile_s       * p_in,
-                        oyProfile_s       * p_out,
-                        oyPointer           buf_in,
-                        oyPointer           buf_out,
-                        oyDATATYPE_e        buf_type_in,
-                        oyDATATYPE_e        buf_type_out );
 #ifdef __cplusplus
 }
 #define ckdb ckdb::
