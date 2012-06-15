@@ -242,6 +242,7 @@ int main( int argc , char** argv )
 
   if(spectral)
   {
+    cairo_set_source_rgba( cr, 1., 1., 1., 1.0);
     if(proj == p_xyz)
     {
       i = nano_min;
@@ -255,7 +256,6 @@ int main( int argc , char** argv )
 
     if(proj == p_lab)
     {
-      cairo_set_source_rgba( cr, 1., 1., 1., 1.0);
       cairo_new_path(cr);
       for(i = 0; i<=371; ++i)
       {
