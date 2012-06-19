@@ -115,10 +115,6 @@ int    oyTextIccDictMatch            ( const char        * text,
                                        const char        * pattern,
                                        double              delta );
 
-int          oyImage_PpmWrite        ( oyImage_s         * image_output,
-                                       const char        * file_name,
-                                       const char        * free_text );
-
 
 oyFilterCore_s * oyFilterCore_New_   ( oyObject_s          object );
 int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,

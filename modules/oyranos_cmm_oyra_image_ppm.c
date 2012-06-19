@@ -119,7 +119,7 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
   if(filename && socket)
   {
     oyImage_s *image_output = (oyImage_s*)socket->data;
-    result = oyImage_PpmWrite( image_output, filename, node->relatives_ );
+    result = oyImage_WritePPM( image_output, filename, node->relatives_ );
   }
 
   return result;

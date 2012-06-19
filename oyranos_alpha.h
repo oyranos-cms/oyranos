@@ -1369,7 +1369,7 @@ OYAPI int  OYEXPORT  oyArray2d_SetFocus (
  *  - display rectangle information and
  *  - a reference to the data for conversion
  *
- *  To set a image data module use oyImage_DataSet().
+ *  To set a image data module use oyImage_SetData().
  *  \dot
  digraph oyImage_s {
   bgcolor="transparent";
@@ -1504,7 +1504,7 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
                                        oyPixel_t           pixel_layout,
                                        oyProfile_s       * profile,
                                        oyOptions_s       * options );
-int            oyImage_DataSet       ( oyImage_s         * image,
+int            oyImage_SetData       ( oyImage_s         * image,
                                        oyStruct_s       ** pixel_data,
                                        oyImage_GetPoint_f  getPoint,
                                        oyImage_GetLine_f   getLine,
@@ -1527,7 +1527,7 @@ int            oyImage_GetHeight     ( oyImage_s         * image );
 oyPixel_t      oyImage_GetPixelLayout( oyImage_s         * image );
 oyProfile_s *  oyImage_GetProfile    ( oyImage_s         * image );
 oyOptions_s *  oyImage_GetTags       ( oyImage_s         * image );
-int            oyImage_PpmWrite      ( oyImage_s         * image,
+int            oyImage_WritePPM      ( oyImage_s         * image,
                                        const char        * file_name,
                                        const char        * comment );
 

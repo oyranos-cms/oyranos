@@ -14644,7 +14644,7 @@ oyImage_s *    oyImage_Create         ( int               width,
                                         s->height,
                                         oyToDataType_m(pixel_layout),
                                         s_obj );
-    oyImage_DataSet ( s, (oyStruct_s**) &a, 0,0,0,0,0,0 );
+    oyImage_SetData ( s, (oyStruct_s**) &a, 0,0,0,0,0,0 );
   }
   s->profile_ = oyProfile_Copy( profile, 0 );
   if(s->width != 0.0)
@@ -14654,12 +14654,12 @@ oyImage_s *    oyImage_Create         ( int               width,
   error = oyImage_CombinePixelLayout2Mask_ ( s, pixel_layout );
 
   if(s->pixel_data && s->layout_[oyCOFF] == 1)
-    oyImage_DataSet( s, 0, oyImage_GetArray2dPointContinous,
+    oyImage_SetData( s, 0, oyImage_GetArray2dPointContinous,
                            oyImage_GetArray2dLineContinous, 0,
                            oyImage_SetArray2dPointContinous,
                            oyImage_SetArray2dLineContinous, 0 );
   else if(s->pixel_data)
-    oyImage_DataSet( s, 0, oyImage_GetArray2dPointPlanar,
+    oyImage_SetData( s, 0, oyImage_GetArray2dPointPlanar,
                            oyImage_GetArray2dLinePlanar, 0, 0,0,0 );
 
   if(error <= 0)
@@ -14959,7 +14959,7 @@ int            oyImage_SetCritical    ( oyImage_s       * image,
                                         oyToDataType_m(pixel_layout),
                                         s->oy_ );
       
-    oyImage_DataSet( s,    (oyStruct_s**) &a,
+    oyImage_SetData( s,    (oyStruct_s**) &a,
                            oyImage_GetArray2dPointContinous,
                            oyImage_GetArray2dLineContinous, 0,
                            oyImage_SetArray2dPointContinous,
@@ -14990,11 +14990,11 @@ int            oyImage_SetCritical    ( oyImage_s       * image,
  *  @param         setTile             interface function
  *  @return                            error
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.5.0
  *  @since   2008/08/23 (Oyranos: 0.1.8)
- *  @date    2008/08/23
+ *  @date    2012/06/19
  */
-int            oyImage_DataSet       ( oyImage_s         * image,
+int            oyImage_SetData       ( oyImage_s         * image,
                                        oyStruct_s       ** pixel_data,
                                        oyImage_GetPoint_f  getPoint,
                                        oyImage_GetLine_f   getLine,
@@ -15493,7 +15493,7 @@ oyOptions_s *  oyImage_GetTags       ( oyImage_s         * image )
 
 /**
  *  @internal
- *  @func    oyImage_PpmWrite
+ *  @func    oyImage_WritePPM
  *  @memberof oyArray2d_s
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
@@ -15506,7 +15506,7 @@ oyOptions_s *  oyImage_GetTags       ( oyImage_s         * image )
  *  @since   2008/10/07 (Oyranos: 0.1.8)
  *  @date    2011/05/12
  */
-int          oyImage_PpmWrite        ( oyImage_s         * image,
+int          oyImage_WritePPM        ( oyImage_s         * image,
                                        const char        * file_name,
                                        const char        * free_text )
 {

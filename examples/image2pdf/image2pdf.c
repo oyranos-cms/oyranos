@@ -157,7 +157,7 @@ int main (int argc, char ** argv)
     oyConversion_RunPixels( to_output, NULL );
     oyConversion_Release( &to_output );
 
-    /*oyImage_PpmWrite( out, "test_out.ppm", "out" );*/
+    /*oyImage_WritePPM( out, "test_out.ppm", "out" );*/
     oyImage_Release( &in );
     oyImage_Release( &out );
 

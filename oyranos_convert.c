@@ -352,7 +352,7 @@ int main( int argc , char** argv )
     }
 #endif
     image = oyConversion_GetImage( cc, OY_OUTPUT );
-    error = oyImage_PpmWrite( image, output, input );
+    error = oyImage_WritePPM( image, output, input );
     
   } else
   if(format && strcmp(format,"icc") == 0)

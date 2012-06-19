@@ -96,12 +96,6 @@ oyConversion_s * oyConversion_FromImageFileName  (
 }
 
 
-extern "C" {
-int          oyImage_PpmWrite        ( oyImage_s         * image_output,
-                                       const char        * file_name,
-                                       const char        * free_text );
-}
-
 int main(int argc, char ** argv)
 {
   const char * profile_name = argc > 2 ? argv[2] : NULL;
@@ -137,7 +131,7 @@ int main(int argc, char ** argv)
   t[0] = '\000';
   sprintf( t, "%s", ".ppm" );
 
-  int error = oyImage_PpmWrite( image, nfn, argv[1] );
+  int error = oyImage_WritePPM( image, nfn, argv[1] );
   if(!error)
     printf( "wrote file to %s\n", nfn );
   oyImage_Release( &image );

@@ -101,7 +101,7 @@ int      oyraFilterPlug_ImageLoadRun (
   oyCMMapiFilters_s * apis = 0;
 
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S)
-    socket = socket = requestor_plug->remote_socket_;
+    socket = requestor_plug->remote_socket_;
   else if(requestor_plug->type_ == oyOBJECT_FILTER_SOCKET_S)
     socket = (oyFilterSocket_s*) requestor_plug;
 

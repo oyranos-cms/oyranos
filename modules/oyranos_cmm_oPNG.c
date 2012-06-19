@@ -839,7 +839,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
       png_read_rows( png_ptr, a->array2d, NULL, height );
 #endif
 
-    oyImage_DataSet ( image_in, (oyStruct_s**) &a, 0,0,0,0,0,0 );
+    oyImage_SetData ( image_in, (oyStruct_s**) &a, 0,0,0,0,0,0 );
   }
 
   png_read_end( png_ptr, info_ptr );
