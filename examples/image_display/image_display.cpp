@@ -39,6 +39,7 @@
 #define _(text) text
 #endif
 
+oyConversion_s * idcc = 0;
 
 extern "C" {
 /* forward declaration of oyranos_alpha.c */
@@ -96,6 +97,7 @@ main(int argc, char** argv)
 
   int gl_box = 0x01;
   int logo = 0x02;
+  const char * module_name = 0;
 
   /* handle arguments */
   for(int i = 1; i < argc; ++i)
@@ -113,6 +115,12 @@ main(int argc, char** argv)
     if(argc > 1 && strcmp(argv[i], "--use-no-gl") == 0)
     {
       gl_box = 0;
+      ++file_pos;
+    }
+    if(argc > 2 && strcmp(argv[i], "--module") == 0)
+    {
+      module_name = argv[i+1];
+      ++file_pos;
       ++file_pos;
     }
     if(argc > 1 && (strcmp(argv[i], "--help") == 0 ||
@@ -138,11 +146,11 @@ main(int argc, char** argv)
     if(gl_box)
     {
       oy_gl_box = dynamic_cast<Oy_Fl_Shader_Box*> (oy_widget);
-      icc = oy_gl_box->setImage( file_name );
+      icc = oy_gl_box->setImage( file_name, module_name, NULL );
     } else
     {
       oy_box = dynamic_cast<Oy_Fl_Image_Box*> (oy_widget);
-      icc = oy_box->setImage( file_name );
+      icc = oy_box->setImage( file_name, module_name, NULL );
     }
   }
   if(icc)
@@ -270,6 +278,31 @@ void view_cb ( Fl_Widget* w, void* daten )
   else
     printf("could not find a suitable program structure\n");
 }
+void dbg_cb ( Fl_Widget* w, void* daten )
+{
+  struct box_n_opts * arg = (box_n_opts*) daten;
+  oyStruct_s * object = (oyStruct_s*) arg->node;
+
+  if(!w->parent())
+    printf("Could not find parents.\n");
+  else
+  if(!object)
+    printf("Oyranos argument missed.\n");
+  else
+  if(object->type_ == oyOBJECT_FILTER_NODE_S)
+  {
+    if(idcc)
+      oyConversion_Release( &idcc );
+    idcc = arg->box->conversion();
+    int oy_debug_old = oy_debug;
+    oy_debug = 1;
+    oyShowConversion_(idcc, 0);
+    oy_debug = oy_debug_old;
+    oyImage_s * image = oyConversion_GetImage( idcc, OY_INPUT );
+    oyImage_WritePPM( image, "debug_image.ppm", "image_display input image");
+    oyImage_Release( &image );
+  }
+}
 
 void exit_cb ( Fl_Widget* w, void* daten ) {exit(0);}
 
@@ -347,6 +380,8 @@ void setWindowMenue                  ( Oy_Fl_Double_Window * win,
                    FL_CTRL + 'e', callback, (void*)arg, 0 );
       menue_->add( _("Examine ICC Profile ..."),
                    FL_CTRL + 'i', view_cb, (void*)arg, 0 );
+      menue_->add( _("Debug"),
+                   FL_CTRL + 'd', dbg_cb, (void*)arg, 0 );
       menue_->add( _("Quit"),
                    FL_CTRL + 'q', exit_cb, (void*)arg, 0 );
       menue_button_->copy(menue_->menu());
