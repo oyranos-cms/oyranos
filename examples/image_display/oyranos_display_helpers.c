@@ -23,7 +23,7 @@ int oy_display_verbose = 0;
  *
  *  @param[in]     image_in            input
  *  @param[in]     image_out           output
- *  @param[out]    icc_node            used icc node, owned by caller
+ *  @param[out]    cc_node             used icc node, owned by caller
  *  @param[in]     flags               for inbuild defaults |
  *                                     oyOPTIONSOURCE_FILTER;
  *                                     for options marked as advanced |
@@ -41,9 +41,11 @@ int oy_display_verbose = 0;
 oyConversion_s * oyConversion_FromImageForDisplay  (
                                        oyImage_s         * image_in,
                                        oyImage_s         * image_out,
-                                       oyFilterNode_s   ** icc_node,
+                                       oyFilterNode_s   ** cc_node,
                                        uint32_t            flags,
                                        oyDATATYPE_e        data_type,
+                                       const char        * cc_name,
+                                       oyOptions_s       * cc_options,
                                        oyObject_s          obj )
 {
   oyFilterNode_s * in, * out, * icc;
@@ -65,42 +67,47 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
 
 
   /* create a new filter node */
-  icc = out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, obj );
+  if(!cc_name)
+    cc_name = "//" OY_TYPE_STD "/icc";
+  icc = out = oyFilterNode_NewWith( cc_name, cc_options, obj );
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
   if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc" );
+    fprintf( stderr, "could not add  filter: %s\n", cc_name );
 
   /* Set the image to the first/only socket of the filter node.
    * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
    * We rely on resolving the image later.
    */
-  oyFilterNode_DataSet( in, (oyStruct_s*)image_out, 0, 0 );
+  oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
 
   /* swap in and out */
-  in = out;
+  if(out)
+    in = out;
 
 
   /* create a node for preparing the image for displaying */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, obj );
-  options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
-  /* 8 bit data for FLTK */
-  error = oyOptions_SetFromInt( &options,
-                                "//" OY_TYPE_STD "/display/datatype",
-                                data_type, 0, OY_CREATE_NEW );
-  /* alpha might be support once by FLTK? */
-  error = oyOptions_SetFromInt( &options,
-                                "//" OY_TYPE_STD "/display/preserve_alpha",
-                                1, 0, OY_CREATE_NEW );
-  oyOptions_Release( &options );
-  /* append the node */
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
-  in = out;
-
+  if(icc)
+  {
+    out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, obj );
+    options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
+    /* data type for display */
+    error = oyOptions_SetFromInt( &options,
+                                  "//" OY_TYPE_STD "/display/datatype",
+                                  data_type, 0, OY_CREATE_NEW );
+    /* alpha might be support once by FLTK? */
+    error = oyOptions_SetFromInt( &options,
+                                  "//" OY_TYPE_STD "/display/preserve_alpha",
+                                  1, 0, OY_CREATE_NEW );
+    oyOptions_Release( &options );
+    /* append the node */
+    error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                  out, "//" OY_TYPE_STD "/data", 0 );
+    if(error > 0)
+      fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
+    in = out;
+  }
 
   /* add a closing node */
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
@@ -112,12 +119,12 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
   /* apply policies */
   /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
                                  "true", OY_CREATE_NEW );*/
-  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", flags,
+  oyConversion_Correct( conversion, cc_name, flags,
                         options );
   oyOptions_Release( &options );
 
 
-  *icc_node = icc;
+  *cc_node = icc;
 
   return conversion;
 }
@@ -125,7 +132,7 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
  *  @brief   generate a Oyranos graph from a image file name
  *
  *  @param[in]     file_name           name of image file
- *  @param[out]    icc_node            used icc node, owned by caller
+ *  @param[out]    cc_node             used icc node, owned by caller
  *  @param[in]     flags               for inbuild defaults |
  *                                     oyOPTIONSOURCE_FILTER;
  *                                     for options marked as advanced |
@@ -142,9 +149,11 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
  */
 oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
                                        const char        * file_name,
-                                       oyFilterNode_s   ** icc_node,
+                                       oyFilterNode_s   ** cc_node,
                                        uint32_t            flags,
                                        oyDATATYPE_e        data_type,
+                                       const char        * cc_name,
+                                       oyOptions_s       * cc_options,
                                        oyObject_s          obj )
 {
   oyFilterNode_s * in, * out, * icc;
@@ -174,12 +183,14 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
   oyOptions_Release( &options );
 
   /* create a new filter node */
-  icc = out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, obj );
+  if(!cc_name)
+    cc_name = "//" OY_TYPE_STD "/icc";
+  icc = out = oyFilterNode_NewWith( cc_name, cc_options, obj );
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
   if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc" );
+    fprintf( stderr, "could not add  filter: %s\n", cc_name );
 
   /* Set the image to the first/only socket of the filter node.
    * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
@@ -188,27 +199,31 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
   oyFilterNode_DataSet( in, (oyStruct_s*)image_in, 0, 0 );
 
   /* swap in and out */
-  in = out;
+  if(out)
+    in = out;
 
 
   /* create a node for preparing the image for displaying */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, obj );
-  options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
-  /* 8 bit data for FLTK */
-  error = oyOptions_SetFromInt( &options,
-                                "//" OY_TYPE_STD "/display/datatype",
-                                data_type, 0, OY_CREATE_NEW );
-  /* alpha might be support once by FLTK? */
-  error = oyOptions_SetFromInt( &options,
-                                "//" OY_TYPE_STD "/display/preserve_alpha",
-                                1, 0, OY_CREATE_NEW );
-  oyOptions_Release( &options );
-  /* append the node */
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
-  in = out;
+  if(icc)
+  {
+    out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, obj );
+    options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
+    /* data type for display */
+    error = oyOptions_SetFromInt( &options,
+                                  "//" OY_TYPE_STD "/display/datatype",
+                                  data_type, 0, OY_CREATE_NEW );
+    /* alpha might be support once by FLTK? */
+    error = oyOptions_SetFromInt( &options,
+                                  "//" OY_TYPE_STD "/display/preserve_alpha",
+                                  1, 0, OY_CREATE_NEW );
+    oyOptions_Release( &options );
+    /* append the node */
+    error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                  out, "//" OY_TYPE_STD "/data", 0 );
+    if(error > 0)
+      fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
+    in = out;
+  }
 
 
   /* add a closing node */
@@ -221,12 +236,12 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
   /* apply policies */
   /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
                                  "true", OY_CREATE_NEW );*/
-  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", flags,
+  oyConversion_Correct( conversion, cc_name, flags,
                         options );
   oyOptions_Release( &options );
 
 
-  *icc_node = icc;
+  *cc_node = icc;
 
   return conversion;
 }
@@ -334,8 +349,8 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
       if(pt != 0 &&
          ((channels != 4 && channels != 3) || data_type != data_type_request))
       {
-        printf( "WARNING: wrong image data format: %s\n%s\n"
-                "need 4 or 3 channels with %s\n",
+        printf( "%s:%d WARNING: wrong image data format: %s\n%s\n"
+                "need 4 or 3 channels with %s\n", __FILE__,__LINE__,
                 oyOptions_FindString( image_tags, "filename", 0 ),
                 image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "",
                 oyDatatypeToText( data_type_request ) );
