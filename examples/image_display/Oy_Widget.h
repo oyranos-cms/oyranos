@@ -57,12 +57,25 @@ public:
 
   oyConversion_s * conversion() { return context; }
 
-  oyFilterNode_s * setImageType( const char * file_name, oyDATATYPE_e data_type )
+  oyFilterNode_s * setImageType( const char * file_name, oyDATATYPE_e data_type, const char * cc_name, oyOptions_s * cc_options )
   {
     oyFilterNode_s * icc = 0;
     oyConversion_s * c = oyConversion_FromImageFileNameForDisplay( 
                              file_name, &icc, oyOPTIONATTRIBUTE_ADVANCED,
-                             data_type, 0 );
+                             data_type, cc_name, cc_options, 0 );
+
+    conversion( c );
+
+    oyConversion_Release( &c );
+
+    return icc;
+  }
+  oyFilterNode_s * setImageType( oyImage_s * image, oyImage_s * display_image, oyDATATYPE_e data_type, const char * cc_name, oyOptions_s * cc_options )
+  {
+    oyFilterNode_s * icc = 0;
+    oyConversion_s * c = oyConversion_FromImageForDisplay( 
+                             image, display_image, &icc, oyOPTIONATTRIBUTE_ADVANCED,
+                             data_type, cc_name, cc_options, 0 );
 
     conversion( c );
 

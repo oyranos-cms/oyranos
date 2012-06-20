@@ -23,9 +23,12 @@ public:
   {
   };
 
-  oyFilterNode_s * setImage( const char * file_name )
+  oyFilterNode_s * setImage          ( const char        * file_name,
+                                       const char        * cc_name,
+                                       oyOptions_s       * cc_options )
   {
-    oyFilterNode_s * icc = setImageType( file_name, oyUINT8 );
+    oyFilterNode_s * icc = setImageType( file_name, oyUINT8,
+                                         cc_name, cc_options );
     return icc;
   }
 

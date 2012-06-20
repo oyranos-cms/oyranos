@@ -148,8 +148,8 @@ public:
       if(pt != 0 &&
          ((channels != 4 && channels != 3) || data_type != data_type_request))
       {
-        printf( "WARNING: wrong image data format: %s\n"
-                "need 4 or 3 channels with %s\n",
+        printf( "%s:%d WARNING: wrong image data format: %s\n"
+                "need 4 or 3 channels with %s\n", __FILE__,__LINE__,
                 image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "",
                 oyDatatypeToText( data_type_request ) );
         return;
@@ -239,8 +239,8 @@ public:
     oyConversion_Release( &context );
     oyFilterNode_Release( &icc );
     context = oyConversion_FromImageForDisplay( 
-                             image, image_display, &icc, oyOPTIONATTRIBUTE_ADVANCED,
-                             oyUINT8, 0 );
+                             image, image_display, &icc,
+                             oyOPTIONATTRIBUTE_ADVANCED, oyUINT8, 0,0, 0 );
     if(oy_debug)
       printf("%s:%d context:%s\n",
               strrchr(__FILE__,'/')+1, __LINE__,
