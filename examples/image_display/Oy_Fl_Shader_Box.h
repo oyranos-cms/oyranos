@@ -42,18 +42,29 @@ private:
       printf("%s:%d %s() %dx%d+%d+%d %dx%d+%d+%d\n", 
      strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__, __LINE__, __func__,
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
-        Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(), Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y());
+        Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
+        Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y());
 
     if(conversion())
     {
       int y, height = 0, is_allocated = 0;
       oyPointer image_data = 0;
+      int sample_size;
       oyPixel_t pt;
       int channels = 0;
+      oyDATATYPE_e data_type = oyUINT8;
       oyImage_s * image = 0;
       int gl_type = 0;
 
-      drawPrepare( &image, oyUINT16, 1 );
+      image = oyConversion_GetImage( conversion(), OY_INPUT );
+      pt = oyImage_GetPixelLayout( image );
+      data_type = oyToDataType_m( pt );
+      if(data_type == oyUINT8)
+        data_type = oyUINT16;
+      sample_size = oySizeofDatatype( data_type );
+      oyImage_Release( & image );
+
+      drawPrepare( &image, data_type, 1 );
 
       pt = oyImage_GetPixelLayout( image );
       channels = oyToChannels_m( pt );
@@ -75,7 +86,7 @@ private:
         W = W_;
         H = H_;
         if(frame_data) free(frame_data);
-        frame_data = (char*)malloc(W*H*channels*2);
+        frame_data = (char*)malloc(W*H*channels*sample_size);
         valid(1);
         glLoadIdentity();
         glViewport( 0,0, W,H );
@@ -106,8 +117,8 @@ private:
       {
         image_data = image->getLine( image, y, &height, -1, &is_allocated );
 
-        memcpy( &frame_data[frame_width*(frame_height-y-1)*channels*2], image_data,
-                frame_width*channels*2 );
+        memcpy( &frame_data[frame_width*(frame_height-y-1)*channels*sample_size], image_data,
+                frame_width*channels*sample_size );
 
         if(is_allocated)
           free( image_data );
@@ -115,8 +126,12 @@ private:
 
       glRasterPos2i(-frame_width, -frame_height);
       /* on osX it uses sRGB without alternative */
-      glDrawPixels( frame_width, frame_height, gl_type,
-                    GL_UNSIGNED_SHORT, frame_data );
+      if(data_type == oyUINT16)
+        glDrawPixels( frame_width, frame_height, gl_type,
+                      GL_UNSIGNED_SHORT, frame_data );
+      else if(data_type == oyFLOAT)
+        glDrawPixels( frame_width, frame_height, gl_type,
+                      GL_FLOAT, frame_data );
 
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
 
@@ -147,9 +162,30 @@ private:
   }
 
 public:
-  oyFilterNode_s * setImage( const char * file_name )
+  oyFilterNode_s * setImage          ( const char        * file_name,
+                                       const char        * cc_name,
+                                       oyOptions_s       * cc_options )
   {
-    oyFilterNode_s * icc = setImageType( file_name, oyUINT16 );
+    oyImage_s * image = 0;
+    oyImage_FromFile( file_name, &image, 0 );
+    oyPixel_t pt;
+    oyDATATYPE_e data_type = oyUINT8;
+
+    pt = oyImage_GetPixelLayout( image );
+    data_type = oyToDataType_m( pt );
+    if(data_type == oyUINT8)
+      data_type = oyUINT16;
+
+    oyImage_s * display_image = oyImage_Create( oyImage_GetWidth( image ), oyImage_GetHeight( image ),
+                         0,
+                         oyChannels_m(3) | oyDataType_m(data_type),
+                         oyImage_GetProfile( image ),
+                         0 );
+
+    oyFilterNode_s * icc = setImageType( image, display_image, data_type,
+                                         cc_name, cc_options );
+    oyImage_Release( &image );
+    oyImage_Release( &display_image );
     return icc;
   }
 
