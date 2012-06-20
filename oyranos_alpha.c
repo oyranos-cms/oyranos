@@ -15585,6 +15585,9 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                 " COMMENT: %s\n",
                 free_text?free_text:"" );
+      oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                " oyImage_s: %d\n",
+                oyObject_GetId( image->oy_ ) );
       if(vs) free(vs); vs = 0;
       len = strlen( t );
       do { fputc ( t[pt] , fp); if(t[pt] == '\n') fputc( '#', fp ); pt++; } while (--len); pt = 0;
@@ -21464,17 +21467,22 @@ void oyShowGraph_( oyFilterNode_s * s, const char * selector )
 
   oyFilterGraph_Release( &adjacency_list );
 }
-void oyShowConversion_( oyConversion_s * s )
+void               oyShowConversion_ ( oyConversion_s    * conversion,
+                                       uint32_t            flags )
 {
   char * ptr = 0;
   int error = 0;
+  oyConversion_s * s = conversion;
   oyCheckType__m( oyOBJECT_CONVERSION_S, return )
   /*return;*/
 
   ptr = oyConversion_ToText( s, "Conversion Graph", 0, oyAllocateFunc_ );
 
   oyWriteMemToFile_( "test.dot", ptr, strlen(ptr) );
-  error = system("dot -Tps test.dot -o test.ps; gv -spartan -antialias test.ps &");
+  if(!(flags & 0x01))
+    error = system("dot -Tps test.dot -o test.ps; gv -spartan -antialias test.ps &");
+  else
+    error = system("dot -Tps test.dot -o test.ps &");
   if(error)
     WARNc1_S("error during calling \"dot -Tps test.dot -o test.ps; gv -spartan -antialias test.ps &\": %d", error);
 

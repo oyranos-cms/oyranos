@@ -2710,6 +2710,8 @@ int                oyConversion_Correct (
                                        uint32_t            flags,
                                        oyOptions_s       * options );
 
+void               oyShowConversion_ ( oyConversion_s    * conversion,
+                                       uint32_t            flags );
 
 /** @struct oyNamedColour_s
  *  @brief colour patch with meta informations
