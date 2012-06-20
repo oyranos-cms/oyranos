@@ -264,6 +264,14 @@ void view_cb ( Fl_Widget* w, void* daten )
     const char * fn =     oyOptions_FindString( opts, "//" OY_TYPE_STD "/file_read/filename", 0 );
     char * command = new char [1024];
 
+    if(!fn)
+    {
+      oyImage_s * image = oyConversion_GetImage( cc, OY_INPUT );
+      opts = oyImage_GetTags(image);
+      fn =   oyOptions_FindString( opts, "//" OY_TYPE_STD "/file_read/filename", 0 );
+      oyImage_Release( &image );
+    }
+
     /* export the options values */
     sprintf( command, "iccexamin -g %s &", fn );
 
