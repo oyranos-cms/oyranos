@@ -14795,6 +14795,11 @@ int    oyImage_FromFile              ( const char        * file_name,
   oyImage_Release( image );
   *image = oyConversion_GetImage( conversion, OY_INPUT );
 
+  options = oyImage_GetTags( *image );
+  oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
+                                 file_name, OY_CREATE_NEW );
+  oyOptions_Release( &options );
+
   oyConversion_Release( &conversion );
 
   return error;
