@@ -26,12 +26,16 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
                                        oyFilterNode_s   ** icc_node,
                                        uint32_t            flags,
                                        oyDATATYPE_e        data_type,
+                                       const char        * cc_name,
+                                       oyOptions_s       * cc_options,
                                        oyObject_s          obj );
 oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
                                        const char        * file_name,
                                        oyFilterNode_s   ** icc_node,
                                        uint32_t            flags,
                                        oyDATATYPE_e        data_type,
+                                       const char        * cc_name,
+                                       oyOptions_s       * cc_options,
                                        oyObject_s          obj );
 int  oyDrawScreenImage               ( oyConversion_s    * context,
                                        oyPixelAccess_s   * ticket,
