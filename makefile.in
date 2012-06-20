@@ -1097,9 +1097,9 @@ install_bin:	all install_gui
 	$(INSTALL) -m 755 $(TARGET)-profiles   "$(DESTDIR)$(bindir)"
 	$(INSTALL) -m 755 $(BIN_SCRIPTS)       "$(DESTDIR)$(bindir)"
 	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia "$(DESTDIR)$(bindir)"
-	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms "$(DESTDIR)$(bindir)"
+	$(INSTALL) -m 755 oforms/$(TARGET)-xforms "$(DESTDIR)$(bindir)"
 	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms-fltk "$(DESTDIR)$(bindir)"
-	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms-modules "$(DESTDIR)$(bindir)"
+	$(INSTALL) -m 755 oforms/$(TARGET)-xforms-modules "$(DESTDIR)$(bindir)"
 	mkdir -p "$(DESTDIR)$(libdir)"
 	mkdir -p "$(DESTDIR)$(libdir)/pkgconfig"
 	mkdir -p "$(DESTDIR)$(metadir)"
@@ -1378,7 +1378,8 @@ clean:
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
 	test2 test_core test_object test tests/test_oyranos \
 	$(FLTK_GUI) \
-	oforms/$(TARGET)-xforms oforms/$(TARGET)-xforms-fltk;
+	oforms/$(TARGET)-xforms oforms/$(TARGET)-xforms-fltk \
+	oforms/$(TARGET)-xforms-modules;
 	for ling in $(LINGUAS); do \
 	  test -f po/$${ling}.gmo \
         && $(RM) po/$${ling}.gmo || echo ""; \
