@@ -308,7 +308,10 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
                    oyOption_SetFromDouble( opt, channels_out, 1, 0 );
                    oyOption_SetFromDouble( opt, precission, 2, 0 );
                    for(i = channels_in-1; i >= 0; --i)
-                     oyOption_SetFromDouble( opt, dimensions[i], 2+i, 0 );
+                   {
+                     val = dimensions[i];
+                     oyOption_SetFromDouble( opt, val, 3+i, 0 );
+                   }
                  }
                }
 
@@ -339,7 +342,7 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
                  if(precission == 1) /* 8-bit */
                    for(i = size-1; i >= 0; --i)
                    {
-                     val = u8[i]/256.0;
+                     val = u8[i]/255.0;
                      oyOption_SetFromDouble( opt, val,
                                              3 + channels_in + i, 0 );
                    }
@@ -347,7 +350,7 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
                    for(i = size-1; i >= 0; --i)
                    {
                      u16 = oyGetTableUInt16_( &mem[off+20], 0, 0, i );
-                     val = u16/65536.0;
+                     val = u16/65535.0;
                      oyOption_SetFromDouble( opt, val, 
                                              3 + channels_in + i, 0 );
                    }
