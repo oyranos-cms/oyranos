@@ -165,8 +165,8 @@ public:
       if(pt != 0 &&
          ((channels != 4 && channels != 3) || data_type != data_type_request))
       {
-        printf( "WARNING: wrong image data format: %s\n"
-                "need 4 or 3 channels with %s\n",
+        printf( "%s:%d WARNING: wrong image data format: %s\n"
+                "need 4 or 3 channels with %s\n",__FILE__,__LINE__,
                 image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "",
                 oyDatatypeToText( data_type_request ) );
         return;
