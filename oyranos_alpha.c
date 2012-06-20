@@ -21233,14 +21233,15 @@ OYAPI char * OYEXPORT
                                        oyAlloc_f           allocateFunc )
 {
   char * text = 0, 
-       * temp = oyAllocateFunc_(1024),
+       * temp =  oyAllocateFunc_(1024),
+       * temp2 = oyAllocateFunc_(1024),
        * tmp = 0, * txt = 0, * t = 0;
   oyFilterNode_s * node = 0;
   char * save_locale = 0;
   oyFilterGraph_s * s = graph;
 
   oyFilterPlug_s * p = 0;
-  int i, n,
+  int i, j, n, len,
       nodes_n = 0;
 
   oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
@@ -21291,7 +21292,59 @@ OYAPI char * OYEXPORT
       STRING_ADD( txt, t+1 );
       oyFree_m_(tmp);
     } else
+    {
       STRING_ADD( txt, node->core->api4_->id_ );
+      if(oy_debug)
+      for(j = 0; j < node->sockets_n_; ++j)
+      {
+        oyFilterSocket_s * socket = node->sockets[j];
+        if(socket && socket->data)
+        {
+          const char * name = oyObject_GetName( socket->data->oy_, 1 );
+          int k, pos = 0;
+          len = strlen(name);
+          for(k = 0; k < len; ++k)
+            if(k && name[k] == '"' && name[k-1] != '\\')
+            {
+              sprintf( &temp2[pos], "\\\"" );
+              pos += 2;
+            } else if(name[k] == '<')
+            {
+              sprintf( &temp2[pos], "\\<" );
+              pos += 2;
+            } else if(name[k] == '>')
+            {
+              sprintf( &temp2[pos], "\\>" );
+              pos += 2;
+            } else if(name[k] == '[')
+            {
+              sprintf( &temp2[pos], "\\[" );
+              pos += 2;
+            } else if(name[k] == ']')
+            {
+              sprintf( &temp2[pos], "\\]" );
+              pos += 2;
+            } else if(name[k] == '\n')
+            {
+              sprintf( &temp2[pos], "\\n" );
+              pos += 2;
+            } else
+              temp2[pos++] = name[k];
+          temp2[pos] = 0;
+          printf("%s\n", name);
+          printf("%s\n", temp2);
+          oySprintf_(temp, "  %d [ label=\"{<data> | Data %d\\n"
+                     " Type: \\\"%s\\\"\\n"
+                     " XML: \\\"%s\\\"|<socket>}\"];\n",
+                     oyObject_GetId( socket->oy_ ),
+                     j,
+                     oyStructTypeToText( socket->data->type_ ),
+                     temp2);
+          printf("%s\n", temp);
+          STRING_ADD( text, temp );
+        }
+      }
+    }
 
     oySprintf_(temp, "  %d [ label=\"{<plug> %d| Filter Node %d\\n"
                      " Category: \\\"%s\\\"\\n CMM: \\\"%s\\\"\\n"
@@ -21329,6 +21382,26 @@ OYAPI char * OYEXPORT
     STRING_ADD( text, temp );
 
     oyFilterPlug_Release( &p );
+  }
+  
+  for(i = 0; i < nodes_n; ++i)
+  {
+    node = oyFilterNodes_Get( s->nodes, i );
+    if(oy_debug)
+      for(j = 0; j < node->sockets_n_; ++j)
+      {
+        oyFilterSocket_s * socket = node->sockets[j];
+        if(socket && socket->data)
+        {
+          oySprintf_( temp,
+               "    %d:socket -> %d:data [arrowhead=crow, arrowtail=box];\n",
+                oyFilterNode_GetId( node ),
+                oyObject_GetId( socket->oy_ ));
+          STRING_ADD( text, temp );
+        }
+      }
+
+    oyFilterNode_Release( &node );
   }
 
   STRING_ADD( text, "\n" );
@@ -21391,199 +21464,23 @@ void oyShowGraph_( oyFilterNode_s * s, const char * selector )
 
   oyFilterGraph_Release( &adjacency_list );
 }
-
-#if 0
-/** @internal
- *  @brief   create and possibly precalculate a transform for a given image
- *  @memberof oyColourConversion_s
-
- *  @param[in]     opts                conversion opts
- *  @param[in]     in                  input image
- *  @param[in]     out                 output image
- *  @param         object              the optional object
- *  @return        conversion
- *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
- */
-oyColourConversion_s* oyColourConversion_Create (
-                                        oyOptions_s     * opts,
-                                        oyImage_s       * in,
-                                        oyImage_s       * out,
-                                        oyObject_s        object)
+void oyShowConversion_( oyConversion_s * s )
 {
-  oyColourConversion_s * s = 0;
-
-  DBG_PROG_START
-  oyExportStart_(EXPORT_CMMS);
-
-  s = oyColourConversion_Create_(opts, in, out, object);
-
-  oyExportEnd_();
-  DBG_PROG_ENDE
-  return s;
-}
-
-/**
- *  @internal
- *  Function: oyConcatenateImageProfiles_
- *  @brief   oyCMMColourConversion_ToMem_t implementation
- *
- *  @version Oyranos: 0.1.8
- *  @since   2007/12/21 (Oyranos: 0.1.8)
- *  @date    2007/06/26
- */
-oyProfiles_s * oyConcatenateImageProfiles_ (
-                                        oyProfiles_s    * list,
-                                        oyImage_s       * in,
-                                        oyImage_s       * out,
-                                        oyObject_s        obj )
-{
+  char * ptr = 0;
   int error = 0;
-  oyProfiles_s * p_list = 0;
+  oyCheckType__m( oyOBJECT_CONVERSION_S, return )
+  /*return;*/
 
-  if(error <= 0)
-  {
-    int i, n;
+  ptr = oyConversion_ToText( s, "Conversion Graph", 0, oyAllocateFunc_ );
 
-    /* collect profiles */
-    if(error <= 0)
-    {
-      int p_list_n = 0;
-      oyProfile_s * tmp = 0;
+  oyWriteMemToFile_( "test.dot", ptr, strlen(ptr) );
+  error = system("dot -Tps test.dot -o test.ps; gv -spartan -antialias test.ps &");
+  if(error)
+    WARNc1_S("error during calling \"dot -Tps test.dot -o test.ps; gv -spartan -antialias test.ps &\": %d", error);
 
-      if(obj)
-        p_list = oyProfiles_New( obj );
-      else
-        p_list = oyProfiles_New( 0 );
-      error = !p_list;
-
-      if(error <= 0)
-      {
-        tmp = oyProfile_Copy( in->profile_, 0);
-        p_list = oyProfiles_MoveIn( p_list, &tmp, 0 );
-        error = !p_list;
-      }
-
-      p_list_n = oyProfiles_Count( p_list );
-
-      if(error <= 0 && list && oyProfiles_Count(list))
-      {
-        n = oyProfiles_Count(list);
-        for(i = 0; i < n; ++i)
-        {
-          tmp = oyProfiles_Get( list,i );
-          p_list = oyProfiles_MoveIn( p_list, &tmp, i + p_list_n);
-          error = !p_list;
-        }
-      }
-
-      if(error <= 0)
-      {
-        tmp = oyProfile_Copy(out->profile_, 0);
-        p_list = oyProfiles_MoveIn( p_list, &tmp, p_list_n);
-        error = !p_list;
-      }
-    }
-  }
-  
-  return p_list;
+  oyDeAllocateFunc_(ptr); ptr = 0;
 }
 
-
-/** @internal 
- *  @memberof oyColourConversion_s
- *             precalculate a transform for a given image by the CMM
- *
- *  @since Oyranos: version 0.1.8
- *  @date  24 november 2007 (API 0.1.8)
- */
-oyCMMptr_s *       oyColourConversion_CallCMM_ (
-                                        const char      * cmm,
-                                        oyColourConversion_s * s,
-                                        oyProfiles_s * list,
-                                        oyOptions_s     * opts,
-                                        oyImage_s       * in,
-                                        oyImage_s       * out,
-                                        oyProfileTag_s ** psid,
-                                        oyObject_s        obj)
-{
-  oyCMMptr_s * cmm_ptr = 0;
-  oyCMMColourConversion_Create_f funcP = 0;
-  int error = !s;
-  char *lib_used = 0;
-
-  if(error <= 0)
-  {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S, cmm, &lib_used,
-                                      0,0 );
-    if(api && *(uint32_t*)&cmm)
-    {
-      oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
-      funcP = api1->oyCMMColourConversion_Create;
-    }
-    error = !funcP;
-  }
-
-  if(error <= 0)
-  {
-    oyProfiles_s * p_list = 0;
-    int i, n;
-
-    if(obj)
-      cmm_ptr = oyCMMptr_New(0);
-    else
-      cmm_ptr = oyCMMptr_New(0);
-    error = !cmm_ptr;
-
-    if(error <= 0)
-      error = oyCMMptr_Set( cmm_ptr, lib_used, oyCMM_COLOUR_CONVERSION,0,0,0 );
-
-    /* collect profiles */
-    if(error <= 0)
-    {
-      p_list = oyConcatenateImageProfiles_( list, in, out, obj ? obj : s->oy_ );
-
-      error = !p_list;
-    }
-
-    if(error <= 0)
-    {
-      oyCMMptr_s ** p = oyStructList_GetCMMptrs_( p_list->list_, lib_used );
-      int layout_in = in->layout_[oyLAYOUT];
-      int layout_out = out->layout_[oyLAYOUT];
-
-      if(!opts)
-        opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcms",
-                                            0/* oyOPTIONATTRIBUTE_ADVANCED |
-                                            oyOPTIONATTRIBUTE_FRONT |
-                                            OY_SELECT_COMMON */, 0 );
-
-      n = oyProfiles_Count(p_list);
-
-      error = funcP( p, n, layout_in, layout_out, opts, cmm_ptr );
-
-      for(i = 0; i < n; ++i)
-        if(error <= 0)
-          error = oyCMMptr_Release_(&p[i]);
-      p_list->oy_->deallocateFunc_(p);
-
-      oyCMMdsoRelease_( lib_used );
-
-      if(psid)
-        *psid = oyProfileTag_Create( p_list->list_,
-                     icSigProfileSequenceIdentifierType, 0, OY_MODULE_NICK, 0 );
-
-      oyProfiles_Release( &p_list );
-    }
-  }
-
-  if(lib_used)
-    oyFree_m_(lib_used);
-
-  return cmm_ptr;
-}
-#endif
 
 /**
  *  @internal
