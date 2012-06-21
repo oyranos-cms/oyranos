@@ -71,6 +71,12 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "  %s\n",               _("Extract ICC profile:"));
   fprintf( stderr, "      %s -f icc [-o FILENAME] [-n MODULE] -i FILENAME\n", argv[0]);
   fprintf( stderr, "      -o FILENAME  %s\n", _("write to file"));
+  fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",               _("Generate Image:"));
+  fprintf( stderr, "      %s -f [hald|slice|lab] [-o FILENAME] --levels 8\n", argv[0]);
+  fprintf( stderr, "      -o FILENAME  %s\n", _("write to file"));
+  fprintf( stderr, "      --levels NUMBER   %s\n", _("levels from 4-16 make sense"));
+  fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Print a help text:"));
   fprintf( stderr, "      %s -h [-n MODULE] [-d]\n",        argv[0]);
   fprintf( stderr, "\n");
@@ -112,6 +118,8 @@ int main( int argc , char** argv )
                * effects = oyProfiles_New(0);
   oyProfile_s * p = 0;
   oyOptions_s * module_options = 0;
+
+  int levels = 8;
 
   int output_model = 0;
   const char * input_xml_file = 0;
@@ -166,6 +174,10 @@ int main( int argc , char** argv )
               case '-':
                         if(OY_IS_ARG("help"))
                         { help = 1; i=100; break; }
+                        else if(OY_IS_ARG("levels"))
+                        { OY_PARSE_INT_ARG2(levels, "levels"); break; }
+                        else if(OY_IS_ARG("output"))
+                        { OY_PARSE_STRING_ARG2(output, "output"); break; }
                         else if(strcmp(&argv[pos][2],"verbose") == 0)
                         { oy_debug += 1; i=100; break;
                         } else if(argv[pos][2])
@@ -384,6 +396,94 @@ int main( int argc , char** argv )
       WARNc_S("No profile found");
     
   } else
+  if(format && (strcmp(format,"hald") == 0 ||
+                strcmp(format,"slice") == 0 ||
+                strcmp(format,"lab") == 0))
+  {
+    int width = levels,
+        size = width*width,
+        l,a,b,j;
+    uint16_t * buf = 0;
+    uint16_t in[3];
+    char comment[80];
+
+    if(!output)
+      WARNc_S("No output file name provided");
+
+    p = oyProfile_FromStd( oyEDITING_LAB, 0 );
+    if(strcmp(format,"hald") == 0)
+    {
+      buf = calloc(sizeof(uint16_t), size*width*size*width*3);
+#pragma omp parallel for private(in,a,b,j,)
+      for(l = 0; l < size; ++l)
+      {
+        in[0] = floor((double) l / (size - 1) * 65535.0 + 0.5);
+        for(a = 0; a < size; ++a) {
+          in[1] = floor((double) a / (size - 1) * 65535.0 + 0.5);
+          for(b = 0; b < size; ++b)
+          {
+            in[2] = floor((double) b / (size - 1) * 65535.0 + 0.5);
+            for(j = 0; j < 3; ++j)
+              buf[l*size*size*3+b*size*3+a*3+j] = in[j];
+          }
+        }
+      }
+      image = oyImage_Create( size*width, size*width, buf, OY_TYPE_123_16,
+                              p, 0 );
+      sprintf( comment, "CIE*Lab Hald with %d levels", levels );
+
+    } else if(strcmp(format,"lab") == 0)
+    {
+      buf = calloc(sizeof(uint16_t), size*width*3);
+
+#pragma omp parallel for private(in,a,b,j)
+      for(l = 0; l < width; ++l)
+      {
+        in[0] = floor((double) l / (width - 1) * 65535.0 + 0.5);
+        for(a = 0; a < width; ++a) {
+          in[1] = floor((double) a / (width - 1) * 65535.0 + 0.5);
+          for(b = 0; b < width; ++b)
+          {
+            in[2] = floor((double) b / (width - 1) * 65535.0 + 0.5);
+            for(j = 0; j < 3; ++j)
+              buf[a*size*3+b*+width*3+l*3+j] = in[j];
+          }
+        }
+      }
+      image = oyImage_Create( width,width*width, buf, OY_TYPE_123_16,
+                              p, 0 );
+      sprintf( comment, "CIE*Lab LUT with %d levels", levels );
+    } else if(strcmp(format,"slice") == 0)
+    {
+      buf = calloc(sizeof(uint16_t), size*width*3);
+
+#pragma omp parallel for private(in,a,b,j)
+      for(l = 0; l < width; ++l)
+      {
+        in[1] = floor((double) l / (width - 1) * 65535.0 + 0.5);
+        for(a = 0; a < width; ++a) {
+          in[0] = floor((double) a / (width - 1) * 65535.0 + 0.5);
+          for(b = 0; b < width; ++b)
+          {
+            in[2] = floor((double) b / (width - 1) * 65535.0 + 0.5);
+            for(j = 0; j < 3; ++j)
+              buf[a*size*3+b*+width*3+l*3+j] = in[j];
+          }
+        }
+      }
+      image = oyImage_Create( width,width*width, buf, OY_TYPE_123_16,
+                              p, 0 );
+      sprintf( comment, "CIE*Lab slice with %d levels", levels );
+    } else
+      WARNc1_S("format is not supported %s", format);
+
+    error = oyImage_WritePPM( image, output, comment);
+    if(error)
+    {
+      WARNc_S("Could not write to file");
+    }
+  }
+  else
   {
                         printfHelp(argc, argv);
                         exit (0);
