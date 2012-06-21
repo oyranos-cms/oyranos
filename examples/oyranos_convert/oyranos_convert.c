@@ -62,6 +62,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("Convert Image:"));
   fprintf( stderr, "      %s -p PROFILE [-o FILENAME] [-n MODULE] -i FILENAME\n", argv[0]);
+  fprintf( stderr, "      -i FILENAME  %s\n", _("read from file"));
   fprintf( stderr, "      -p PROFILE   %s\n", _("Output Color Space"));
   fprintf( stderr, "      -s PROFILE   %s\n", _("Simulation/Proof Color Space"));
   fprintf( stderr, "      -e PROFILE   %s\n", _("Effect abtract Color Space"));

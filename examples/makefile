@@ -14,8 +14,10 @@ TARGET7 = oymd5icc/oymd5icc
 TARGET8 = xcmsevents/qcmsevents
 TARGET9 = libraw/oyranos-file
 TARGET10 = oyranos_profile_graph/oyranos-profile-graph
+TARGET11 = oyranos_convert/oyranos-icc
 TARGETS = $(TARGET1) $(TARGET2) $(TARGET4) $(TARGET5) $(TARGET6) \
-	$(TARGET7) $(TARGET8) $(TARGET9) $(TARGET10) ../oyranos_logo.ppm
+	$(TARGET7) $(TARGET8) $(TARGET9) $(TARGET10) $(TARGET11) \
+	../oyranos_logo.ppm
 OY_CFLAGS := $(shell (pkg-config --cflags oyranos))
 OY_LDFLAGS := $(shell (pkg-config --libs oyranos))
 FLTK_CFLAGS := $(shell (fltk-config --cflags --use-gl | sed 's/-O.//g'))
@@ -24,6 +26,7 @@ PKG_CONFIG_CFLAGS := $(shell (pkg-config --cflags xfixes x11))
 PKG_CONFIG_LIBS := $(shell (pkg-config --libs xfixes x11))
 XCM_CFLAGS := $(shell (pkg-config --cflags xcm))
 XCM_LDFLAGS := $(shell (pkg-config --libs xcm))
+OFORMS_FLAGS = -I$(SRCDIR)../oforms
 TARGET2_FLAGS = ../modules/devices/oyranos_monitor.o \
 		../modules/devices/oyranos_edid_parse.o $(XCM_CFLAGS)
 TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo oyranos))
@@ -129,6 +132,11 @@ $(TARGET10):	$(SRCDIR)oyranos_profile_graph/oyranos_profile_graph.c
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS_) $< $(TARGET4_FLAGS) $(LDFLAGS) \
 	$(OY_LDFLAGS) -o $@
+
+$(TARGET11):	$(SRCDIR)oyranos_convert/oyranos_convert.c
+	mkdir -p oyranos_convert
+	echo Compiling $@ ...
+	-$(CC) $(CFLAGS_) $< $(LDFLAGS) $(OY_LDFLAGS) $(OFORMS_FLAGS) -o $@
 
 ../oyranos_logo.ppm:	$(SRCDIR)../oyranos_logo.png
 	-cat $(SRCDIR)../oyranos_logo.png | pngtopnm > $@

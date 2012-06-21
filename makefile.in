@@ -389,6 +389,7 @@ EXAMPLE_SOURCES = \
 	examples/image_display/Oy_Fl_Shader_Box.h \
 	examples/xcmsevents/qcmsevents.cpp \
 	examples/xcmsevents/qcmsevents.h \
+	examples/oyranos_convert/oyranos_convert.c \
 	examples/oyranos_profile_graph/oyranos_profile_graph.c \
 	examples/oyranos_profile_graph/ciexyz64_1.h \
 	examples/oymd5icc/oymd5icc.c
@@ -616,7 +617,8 @@ CONFIG_FILES = \
 	$(SRCDIR)/$(TARGET)_control.in \
 	$(SRCDIR)/$(TARGET)-config.in \
 	$(SRCDIR)/$(TARGET)-monitor-setup.desktop \
-	$(SRCDIR)/$(TARGET)-profile-install.desktop
+	$(SRCDIR)/$(TARGET)-profile-install.desktop \
+	$(SRCDIR)/examples/makefile
 
 ALL_FILES = \
 	$(DOKU) \
