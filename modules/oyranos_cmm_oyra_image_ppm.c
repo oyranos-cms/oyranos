@@ -874,6 +874,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
           unsigned char *c_buf = &buf[ h * width * spp * byteps ];
           char  tmp;
           if (byteps == 2) {         /* 16 bit */
+#pragma omp parallel for private(tmp)
             for (p = 0; p < n_bytes; p += 2)
             {
               tmp = c_buf[p];
@@ -881,6 +882,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
               c_buf[p+1] = tmp;
             }
           } else if (byteps == 4) {  /* float */
+#pragma omp parallel for private(tmp)
             for (p = 0; p < n_bytes; p += 4)
             {
               tmp = c_buf[p];
@@ -894,12 +896,15 @@ int      oyraFilterPlug_ImageInputPPMRun (
         }
 
         if (byteps == 1 && maxval < 255) {         /*  8 bit */
+#pragma omp parallel for
           for (p = 0; p < n_samples; ++p)
             d_8[p] = (d_8[p] * 255) / maxval;
         } else if (byteps == 2 && maxval < 65535) {/* 16 bit */
+#pragma omp parallel for
           for (p = 0; p < n_samples; ++p)
             d_16 [p] = (d_16[p] * 65535) / maxval;
         } else if (byteps == 4 && maxval != 1.0) {  /* float */
+#pragma omp parallel for
           for (p = 0; p < n_samples; ++p)
             d_f[p] = d_f[p] * maxval;
         }
