@@ -7022,7 +7022,7 @@ OYAPI int  OYEXPORT
  *  @param[out]    device              the returned device
  *  @return                            error
  *
- *  @version Oyranos: 0.4.1
+ *  @version Oyranos: 0.5.0
  *  @since   2009/01/28 (Oyranos: 0.1.10)
  *  @date    2012/06/11
  */
@@ -14751,8 +14751,8 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
  *  @param[in]     obj                 Oyranos object (optional)
  *  @return                            >0 == error, <0 == issue or zero
  *
- *  @version Oyranos: 0.4.1
- *  @since   2012/04/21 (Oyranos: 0.4.1)
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/04/21 (Oyranos: 0.5.0)
  *  @date    2012/04/21
  */
 int    oyImage_FromFile              ( const char        * file_name,
@@ -15400,7 +15400,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
  *  @memberof oyImage_s
  *  @brief   get the width in pixel
  *
- *  @version Oyranos: 0.4.1
+ *  @version Oyranos: 0.5.0
  *  @since   2009/03/05 (Oyranos: 0.1.10)
  *  @date    2012/06/12
  */
@@ -15420,7 +15420,7 @@ int            oyImage_GetWidth      ( oyImage_s         * image )
  *  @memberof oyImage_s
  *  @brief   get the width in pixel
  *
- *  @version Oyranos: 0.4.1
+ *  @version Oyranos: 0.5.0
  *  @since   2009/03/05 (Oyranos: 0.1.10)
  *  @date    2012/06/12
  */
@@ -15440,7 +15440,7 @@ int            oyImage_GetHeight     ( oyImage_s         * image )
  *  @memberof oyImage_s
  *  @brief   get the pixel layout
  *
- *  @version Oyranos: 0.4.1
+ *  @version Oyranos: 0.5.0
  *  @since   2009/03/05 (Oyranos: 0.1.10)
  *  @date    2012/06/12
  */
@@ -15460,7 +15460,7 @@ oyPixel_t      oyImage_GetPixelLayout( oyImage_s         * image )
  *  @memberof oyImage_s
  *  @brief   get the image profile
  *
- *  @version Oyranos: 0.4.1
+ *  @version Oyranos: 0.5.0
  *  @since   2009/08/05 (Oyranos: 0.1.10)
  *  @date    2012/06/12
  */
@@ -15480,7 +15480,7 @@ oyProfile_s *  oyImage_GetProfile    ( oyImage_s         * image )
  *  @memberof oyImage_s
  *  @brief   get object tags
  *
- *  @version Oyranos: 0.4.1
+ *  @version Oyranos: 0.5.0
  *  @since   2009/03/05 (Oyranos: 0.1.10)
  *  @date    2012/06/12
  */
@@ -19664,7 +19664,7 @@ int      oyFilterNodeObserve_        ( oyObserver_s      * observer,
  *  @param         flags               see oyOptions_s::oyOptions_ForFilter()
  *  @return                            the options
  *
- *  @version Oyranos: 0.4.1
+ *  @version Oyranos: 0.5.0
  *  @since   2008/06/26 (Oyranos: 0.1.8)
  *  @date    2012/06/12
  */
@@ -19716,7 +19716,7 @@ oyOptions_s* oyFilterNode_GetOptions ( oyFilterNode_s    * node,
  *  @param         allocateFunc        optional user allocator
  *  @return                            the options
  *
- *  @version Oyranos: 0.4.1
+ *  @version Oyranos: 0.5.0
  *  @since   2009/07/29 (Oyranos: 0.1.10)
  *  @date    2012/06/12
  */
@@ -21993,8 +21993,8 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
  *  @param[in]     obj                 Oyranos object (optional)
  *  @return                            generated new graph, owned by caller
  *
- *  @version Oyranos: 0.4.1
- *  @since   2012/04/21 (Oyranos: 0.4.1)
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/04/21 (Oyranos: 0.5.0)
  *  @date    2012/04/21
  */
 oyConversion_s * oyConversion_CreateFromImage (
