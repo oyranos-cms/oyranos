@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2012-06-20 19:21+0200\n"
+"POT-Creation-Date: 2012-06-24 15:50+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: ALL <ku.b@gmx.de>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 
 #: oyranos_core.c:291 examples/xcmsevents/qcmsevents.cpp:169
 #, c-format
@@ -87,12 +87,12 @@ msgstr ""
 #: oyranos_alpha.c:1447 oyranos_alpha.c:3704 oyranos_alpha.c:4914
 #: oyranos_alpha.c:5979 oyranos_alpha.c:8481 oyranos_alpha.c:11642
 #: oyranos_alpha.c:12300 oyranos_alpha.c:13020 oyranos_alpha.c:13626
-#: oyranos_alpha.c:14614 oyranos_alpha.c:15927 oyranos_alpha.c:16523
-#: oyranos_alpha.c:16748 oyranos_alpha.c:17047 oyranos_alpha.c:18106
-#: oyranos_alpha.c:18396 oyranos_alpha.c:18477 oyranos_alpha.c:18746
-#: oyranos_alpha.c:20468 oyranos_alpha.c:20752 oyranos_alpha.c:21588
-#: oyranos_alpha.c:21883 oyranos_alpha.c:22891 oyranos_alpha.c:23498
-#: oyranos_alpha.c:23756 API_generated/oyBlob_s_.c:169
+#: oyranos_alpha.c:14614 oyranos_alpha.c:15932 oyranos_alpha.c:16528
+#: oyranos_alpha.c:16753 oyranos_alpha.c:17052 oyranos_alpha.c:18111
+#: oyranos_alpha.c:18401 oyranos_alpha.c:18482 oyranos_alpha.c:18751
+#: oyranos_alpha.c:20473 oyranos_alpha.c:20757 oyranos_alpha.c:21593
+#: oyranos_alpha.c:21888 oyranos_alpha.c:22896 oyranos_alpha.c:23503
+#: oyranos_alpha.c:23761 API_generated/oyBlob_s_.c:169
 #: API_generated/oyPointer_s_.c:164 API_generated/oyHash_s_.c:155
 #: API_generated/oyName_s_.c:48 API_generated/oyObserver_s.c:51
 #: API_generated/oyOption_s_.c:176 API_generated/oyOptions_s_.c:59
@@ -1646,6 +1646,7 @@ msgstr ""
 #: oyranos_gamma.c:185 oyranos_policy.c:53 oyranos_profile.c:76
 #: oyranos_profiles.c:62 oforms/oyranos_xforms.c:23
 #: oforms/oyranos_xforms_modules.c:26 oforms/oyranos_xforms_fltk.cxx:54
+#: examples/oyranos_convert/oyranos_convert.c:62
 #: examples/oyranos_profile_graph/oyranos_profile_graph.c:155
 msgid "Usage"
 msgstr ""
@@ -1689,6 +1690,7 @@ msgstr ""
 #: oyranos_gamma.c:208 oyranos_profile.c:95 oyranos_profiles.c:95
 #: oforms/oyranos_xforms.c:36 oforms/oyranos_xforms_modules.c:33
 #: oforms/oyranos_xforms_fltk.cxx:55
+#: examples/oyranos_convert/oyranos_convert.c:83
 #: examples/oyranos_profile_graph/oyranos_profile_graph.c:166
 msgid "General options:"
 msgstr ""
@@ -1718,6 +1720,7 @@ msgstr ""
 #: oyranos_profiles.c:221 API_generated/oyOptions_s.c:1466
 #: oforms/oyranos_xforms.c:133 oforms/oyranos_xforms_modules.c:142
 #: oforms/oyranos_xforms_fltk.cxx:311
+#: examples/oyranos_convert/oyranos_convert.c:229
 #: examples/oyranos_profile_graph/oyranos_profile_graph.c:186
 msgid "wrong argument to option:"
 msgstr ""
@@ -1764,7 +1767,7 @@ msgstr "Description"
 #: oyranos_gamma.c:834 oyranos_gamma.c:836 oyranos_gamma.c:850
 #: oyranos_gamma.c:857 oyranos_gamma.c:861 oyranos_gamma.c:966
 #: oyranos_gamma.c:969 oyranos_gamma.c:971 oyranos_gamma.c:984
-#: oyranos_alpha.c:19688 oyranos_alpha.c:19699 modules/oyranos_cmm_lcms.c:2136
+#: oyranos_alpha.c:19693 oyranos_alpha.c:19704 modules/oyranos_cmm_lcms.c:2136
 #: modules/oyranos_cmm_lcm2.c:2452 modules/oyranos_cmm_oyra_image.c:541
 #: modules/oyranos_cmm_oyra_image.c:546 modules/oyranos_cmm_oyra_image.c:556
 #: modules/devices/oyranos_monitor_x11.c:160
@@ -1787,6 +1790,7 @@ msgid "is a policy administration tool"
 msgstr ""
 
 #: oyranos_policy.c:51 oyranos_profile.c:74 oyranos_profiles.c:60
+#: examples/oyranos_convert/oyranos_convert.c:60
 msgid ""
 "Hint: search paths are influenced by the XDG_CONFIG_HOME shell variable."
 msgstr ""
@@ -1826,6 +1830,7 @@ msgid "policy name"
 msgstr ""
 
 #: oyranos_policy.c:66 oyranos_profile.c:92 oyranos_profiles.c:92
+#: examples/oyranos_convert/oyranos_convert.c:80
 msgid "Print a help text:"
 msgstr ""
 
@@ -1882,6 +1887,7 @@ msgstr ""
 #: oyranos_profile.c:98 oyranos_profiles.c:98
 #: examples/dummy_device/oyranos_cmm_dDev.c:698
 #: examples/dummy_device/oyranos_cmm_dDev.c:709
+#: examples/oyranos_convert/oyranos_convert.c:88
 msgid "Example"
 msgstr ""
 
@@ -2041,8 +2047,8 @@ msgid ""
 "point to a Oyranos module loader library?"
 msgstr ""
 
-#: oyranos_alpha.c:7078 oyranos_alpha.c:7841 oyranos_alpha.c:24691
-#: oyranos_alpha.c:24774
+#: oyranos_alpha.c:7078 oyranos_alpha.c:7841 oyranos_alpha.c:24696
+#: oyranos_alpha.c:24779
 #, fuzzy
 msgid "Could not open device"
 msgstr "Ouvrir Profil"
@@ -2097,42 +2103,42 @@ msgstr "ICC Profils"
 msgid "found issues while moving in profile"
 msgstr ""
 
-#: oyranos_alpha.c:17350 oyranos_alpha.c:17368 oyranos_alpha.c:17469
-#: oyranos_alpha.c:17485 API_generated/oyranos_object.c:157
+#: oyranos_alpha.c:17355 oyranos_alpha.c:17373 oyranos_alpha.c:17474
+#: oyranos_alpha.c:17490 API_generated/oyranos_object.c:157
 #: API_generated/oyranos_object.c:175 API_generated/oyranos_object.c:276
 #: API_generated/oyranos_object.c:292
 msgid "with '.' is not allowed"
 msgstr ""
 
-#: oyranos_alpha.c:19152
+#: oyranos_alpha.c:19157
 msgid "attempt to add a incomplete filter"
 msgstr ""
 
-#: oyranos_alpha.c:19214
+#: oyranos_alpha.c:19219
 msgid "?? Nothing to add ??"
 msgstr ""
 
-#: oyranos_alpha.c:19629 API_generated/oyObserver_s_.c:53
+#: oyranos_alpha.c:19634 API_generated/oyObserver_s_.c:53
 #: API_generated/oyObserver_s.c:349 API_generated/oyObserver_s.c:549
 #: API_generated/oyObserver_s.c:627
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:46
 msgid "Signal"
 msgstr ""
 
-#: oyranos_alpha.c:19768 oyranos_alpha.c:22772 oyranos_alpha.c:24302
+#: oyranos_alpha.c:19773 oyranos_alpha.c:22777 oyranos_alpha.c:24307
 #: API_generated/oyOptions_s.c:2120
 msgid "error in module:"
 msgstr ""
 
-#: oyranos_alpha.c:22742
+#: oyranos_alpha.c:22747
 msgid "Found no node in conversion. give up"
 msgstr ""
 
-#: oyranos_alpha.c:23464
+#: oyranos_alpha.c:23469
 msgid "---"
 msgstr ""
 
-#: oyranos_alpha.c:24310 API_generated/oyOptions_s.c:2128
+#: oyranos_alpha.c:24315 API_generated/oyOptions_s.c:2128
 #, fuzzy
 msgid "Could not allocate memory for:"
 msgstr "Ouvrir Profil"
@@ -2365,7 +2371,7 @@ msgstr "Couleur"
 #: modules/oyranos_cmm_lcms.c:2460 modules/oyranos_cmm_lcms.c:2463
 #: modules/oyranos_cmm_lcm2.c:2765 modules/oyranos_cmm_lcm2.c:2768
 #: modules/oyranos_cmm_oyra_image_ppm.c:244
-#: modules/oyranos_cmm_oyra_image_ppm.c:1034
+#: modules/oyranos_cmm_oyra_image_ppm.c:1039
 #: modules/devices/oyranos_cmm_oyX1.c:1154
 #: modules/devices/oyranos_cmm_oyX1.c:1157
 #: modules/devices/oyranos_cmm_qarz.c:1064
@@ -2661,7 +2667,7 @@ msgid "Write PPM Image Filter Object"
 msgstr ""
 
 #: modules/oyranos_cmm_oyra_image_ppm.c:243
-#: modules/oyranos_cmm_oyra_image_ppm.c:1033 modules/oyranos_cmm_oPNG.c:496
+#: modules/oyranos_cmm_oyra_image_ppm.c:1038 modules/oyranos_cmm_oPNG.c:496
 #: modules/oyranos_cmm_oPNG.c:1062
 #, fuzzy
 msgid "Files"
@@ -2681,23 +2687,23 @@ msgid ""
 "data into. A existing file will be overwritten without notice."
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image_ppm.c:1025
+#: modules/oyranos_cmm_oyra_image_ppm.c:1030
 msgid "Image[input_ppm]"
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image_ppm.c:1027
+#: modules/oyranos_cmm_oyra_image_ppm.c:1032
 msgid "Input PPM Image Filter Object"
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image_ppm.c:1035
+#: modules/oyranos_cmm_oyra_image_ppm.c:1040
 msgid "Read PPM"
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image_ppm.c:1049
+#: modules/oyranos_cmm_oyra_image_ppm.c:1054
 msgid "Option \"filename\", a valid filename of a existing PPM image"
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image_ppm.c:1051
+#: modules/oyranos_cmm_oyra_image_ppm.c:1056
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the ppm data "
 "from. If the file does not exist, a error will occure.\n"
@@ -3371,10 +3377,12 @@ msgstr "Model:"
 
 #: oforms/oyranos_xforms.c:37 oforms/oyranos_xforms_modules.c:34
 #: oforms/oyranos_xforms_fltk.cxx:56
+#: examples/oyranos_convert/oyranos_convert.c:84
 msgid "verbose"
 msgstr ""
 
 #: oforms/oyranos_xforms.c:209 oforms/oyranos_xforms_modules.c:210
+#: examples/oyranos_convert/oyranos_convert.c:303
 #, fuzzy
 msgid "Option"
 msgstr "Options"
@@ -3477,22 +3485,92 @@ msgstr ""
 msgid "This example module \"my_handler\" lets you print a option."
 msgstr ""
 
-#: examples/image_display/image_display.cpp:379
+#: examples/image_display/image_display.cpp:387
 #, fuzzy
 msgid "Edit Options ..."
 msgstr "Options"
 
-#: examples/image_display/image_display.cpp:381
+#: examples/image_display/image_display.cpp:389
 msgid "Examine ICC Profile ..."
 msgstr ""
 
-#: examples/image_display/image_display.cpp:383
+#: examples/image_display/image_display.cpp:391
 msgid "Debug"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:385
+#: examples/image_display/image_display.cpp:393
 msgid "Quit"
 msgstr "Quitter"
+
+#: examples/oyranos_convert/oyranos_convert.c:52
+#, fuzzy
+msgid "is a ICC color conversion tool"
+msgstr "Oyranos Préférences"
+
+#: examples/oyranos_convert/oyranos_convert.c:63
+msgid "Convert Image:"
+msgstr ""
+
+#: examples/oyranos_convert/oyranos_convert.c:65
+#, fuzzy
+msgid "read from file"
+msgstr "Ouvrir Profil"
+
+#: examples/oyranos_convert/oyranos_convert.c:66
+#, fuzzy
+msgid "Output Color Space"
+msgstr "Espace colorimétrique"
+
+#: examples/oyranos_convert/oyranos_convert.c:67
+#, fuzzy
+msgid "Simulation/Proof Color Space"
+msgstr "Espace colorimétrique"
+
+#: examples/oyranos_convert/oyranos_convert.c:68
+#, fuzzy
+msgid "Effect abtract Color Space"
+msgstr "Espace colorimétrique"
+
+#: examples/oyranos_convert/oyranos_convert.c:69
+msgid "write to file, currently only PPM format"
+msgstr ""
+
+#: examples/oyranos_convert/oyranos_convert.c:71
+#, fuzzy
+msgid "Extract ICC profile:"
+msgstr "ICC Profils"
+
+#: examples/oyranos_convert/oyranos_convert.c:73
+#: examples/oyranos_convert/oyranos_convert.c:77
+#, fuzzy
+msgid "write to file"
+msgstr "Ouvrir Profil"
+
+#: examples/oyranos_convert/oyranos_convert.c:75
+msgid "Generate Image:"
+msgstr ""
+
+#: examples/oyranos_convert/oyranos_convert.c:78
+msgid "levels from 4-16 make sense"
+msgstr ""
+
+#: examples/oyranos_convert/oyranos_convert.c:85
+#, fuzzy
+msgid "module name"
+msgstr "Fichier"
+
+#: examples/oyranos_convert/oyranos_convert.c:86
+msgid "enable simple defaults"
+msgstr ""
+
+#: examples/oyranos_convert/oyranos_convert.c:89
+#, fuzzy
+msgid "Get ICC profile"
+msgstr "ICC Profils"
+
+#: examples/oyranos_convert/oyranos_convert.c:92
+msgid "Convert image to ICC Color Space"
+msgstr ""
 
 #: examples/oyranos_profile_graph/oyranos_profile_graph.c:154
 #, fuzzy
