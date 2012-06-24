@@ -293,6 +293,120 @@ int wread ( unsigned char* data, size_t pos, size_t max, size_t *start, size_t *
   return end_found;
 }
 
+oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color )
+{
+  static oyProfile_s * p = NULL;
+
+  if(color.profile_length)
+    p = oyProfile_FromMem( color.profile_length, color.profile, 0,0);
+
+  if(!p)
+  {
+    oyOption_s *matrix = oyOption_FromRegistration("///colour_matrix."
+              "from_primaries."
+              "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma", NULL );
+
+    int fail = 0;
+    if(oy_debug)
+      printf("cam_xyz:\n");
+    float cam_xy[3][2];
+    for(int i = 0; i < 4; ++i)
+    {
+      for(int j = 0; j < 3; ++j)
+      {
+        if(i < 3 && color.cam_xyz[i][j] == 0)
+          fail = 1;
+        if(oy_debug)
+          printf(" %g", color.cam_xyz[i][j]);
+      }
+      float sum = color.cam_xyz[i][0]+color.cam_xyz[i][1]+color.cam_xyz[i][2];
+      cam_xy[i][0] = color.cam_xyz[i][0]/sum;
+      cam_xy[i][1] = color.cam_xyz[i][1]/sum;
+      if(oy_debug)
+        printf("\n x:%g y:%g\n", cam_xy[i][0], cam_xy[i][1] );
+    }
+    if(oy_debug)
+    printf("cmatrix:\n");
+    if(oy_debug)
+    for(int i = 0; i < 3; ++i)
+    {
+      for(int j = 0; j < 4; ++j)
+      {
+        printf(" %g", color.cmatrix[i][j]);
+      }
+      printf("\n");
+    }
+    if(oy_debug)
+    printf("rgb_cam:\n");
+    if(oy_debug)
+    for(int i = 0; i < 3; ++i)
+    {
+      for(int j = 0; j < 4; ++j)
+      {
+        printf(" %g", color.rgb_cam[i][j]);
+      }
+      float sum = color.rgb_cam[i][0]+color.rgb_cam[i][1]+color.rgb_cam[i][2];
+      printf("\n x:%g y:%g\n", color.rgb_cam[i][0]/sum, color.rgb_cam[i][1]/sum );
+    }
+    if(!fail)
+    {
+      oyOption_SetFromDouble( matrix, cam_xy[0][0], 0, 0);
+      oyOption_SetFromDouble( matrix, cam_xy[0][1], 1, 0);
+      oyOption_SetFromDouble( matrix, cam_xy[1][0], 2, 0);
+      oyOption_SetFromDouble( matrix, cam_xy[1][1], 3, 0);
+      oyOption_SetFromDouble( matrix, cam_xy[2][0], 4, 0);
+      oyOption_SetFromDouble( matrix, cam_xy[2][1], 5, 0);
+      oyOption_SetFromDouble( matrix, 0.3457, 6, 0);
+      oyOption_SetFromDouble( matrix, 0.3585, 7, 0);
+    } else
+    {
+    /* http://www.color.org/chardata/rgb/rommrgb.xalter
+     * original gamma is 1.8, we adapt to typical cameraRAW gamma of 1.0 */
+      oyOption_SetFromDouble( matrix, 0.7347, 0, 0);
+      oyOption_SetFromDouble( matrix, 0.2653, 1, 0);
+      oyOption_SetFromDouble( matrix, 0.1596, 2, 0);
+      oyOption_SetFromDouble( matrix, 0.8404, 3, 0);
+      oyOption_SetFromDouble( matrix, 0.0366, 4, 0);
+      oyOption_SetFromDouble( matrix, 0.0001, 5, 0);
+      oyOption_SetFromDouble( matrix, 0.3457, 6, 0);
+      oyOption_SetFromDouble( matrix, 0.3585, 7, 0);
+    }
+    oyOption_SetFromDouble( matrix, 1.0, 8, 0);
+
+    oyOptions_s * opts = oyOptions_New(0),
+                * result = 0;
+
+    oyOptions_MoveIn( opts, &matrix, -1 );
+    oyOptions_Handle( "//"OY_TYPE_STD"/create_profile.icc",
+                                opts,"create_profile.icc_profile.colour_matrix",
+                                &result );
+
+    p = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
+                                               oyOBJECT_PROFILE_S );
+    oyOptions_Release( &result );
+
+    if(!fail)
+      oyProfile_AddTagText( p, icSigProfileDescriptionTag,
+                                            "cam_xyz gamma 1.0" );
+    else
+      oyProfile_AddTagText( p, icSigProfileDescriptionTag,
+                                            "ICC Examin ROMM gamma 1.0" );
+
+    if(oy_debug)
+    {
+      size_t size = 0;
+      char * data = (char*) oyProfile_GetMem( p, &size, 0, malloc );
+      if(!fail)
+        oyWriteMemToFile_( "cam_xyz gamma 1.0.icc", data, size );
+      else
+        oyWriteMemToFile_( "ICC Examin ROMM gamma 1.0.icc", data, size );
+    }
+  }
+
+  return p;
+}
+
+
 oyConfig_s * oyREgetColorInfo        ( const char        * filename,
                                        libraw_output_params_t * device_context,
                                        oyOptions_s       * options )
@@ -586,9 +700,16 @@ int      lrawFilterPlug_ImageInputRAWRun (
   error = oyOptions_Filter( &options, &n, 0,
                       oyBOOLEAN_INTERSECTION, "///config",node->core->options_);
   device = oyREgetColorInfo( filename, params, options );
-  oyDeviceGetProfile( device, 0, &prof );
-  if(!prof)
-    prof = oyProfile_FromStd( profile_type, 0 );
+  error = oyDeviceGetProfile( device, 0, &prof );
+  if(!prof || error != 0)
+  {
+    if(prof)
+      oyProfile_Release( &prof );
+    if(profile_type == oyASSUMED_RGB)
+      prof = createMatrixProfile( rip.imgdata.color );
+    else
+      prof = oyProfile_FromStd( profile_type, 0 );
+  }
 
   if(oy_debug)
   {
