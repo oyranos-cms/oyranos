@@ -1418,7 +1418,7 @@ depend:	cdepend
 	echo "#nicht editieren/dont edit - automatisch generiert von makefile.in" >> mkdepend
 	-(for file in $(INCL_DEP); do \
 	    incl_src="$${incl_src} $(SRCDIR)/$${file}"; done; \
-	  $(MAKEDEPEND) -I./ -I$(SRCDIR) $(INCL) $${incl_src} >> mkdepend)
+	  $(MAKEDEPEND) -I./ -I$(SRCDIR) -I$(SRCDIR)/oforms $(INCL) $${incl_src} >> mkdepend)
 	-for file in $(SUB_OBJECTS); do \
 	   obj=`echo $${file} | sed 's%modules/%% ; s%devices/%% ; s%FL/%% ; s%tests/%% ; s%oforms/%% ; s%oyjl/%% ; s%yajl/%%'`; \
 	   cat mkdepend | sed s%$${obj}%$${file}% > mkdepend.tmp; \
