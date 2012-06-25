@@ -48,6 +48,7 @@ if [ "$ROOT_DIR" != "." ]; then
   cp $v $ROOT_DIR/examples/makefile examples/
   mkdir -p oforms/
   cp $v $ROOT_DIR/oforms/oyranos_xforms.makefile oforms/
+  mkdir -p tests/
 fi
 
 export ROOT_DIR
