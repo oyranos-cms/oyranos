@@ -15045,6 +15045,33 @@ int            oyImage_SetData       ( oyImage_s         * image,
   return error;
 }
 
+/** Function oyImage_GetPoint
+ *  @memberof oyImage_s
+ *  @brief   standard pixel accessor
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/06/27 (Oyranos: 0.5.0)
+ *  @date    2012/06/27
+ */
+oyPointer      oyImage_GetPoint      ( oyImage_s         * image,
+                                       int                 point_x,
+                                       int                 point_y,
+                                       int                 channel,
+                                       int               * is_allocated )
+{
+  oyImage_s * s = image;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
+
+  if(image->getPoint)
+    return image->getPoint( image, point_x, point_y, channel, is_allocated );
+  else
+    return 0;
+}
+
 /** Function oyArray2d_SetFocus
  *  @memberof oyArray2d_s
  *  @brief   move a arrays active area to a given rectangle
