@@ -2112,14 +2112,20 @@ oyProfile_s *      lcmsCreateICCMatrixProfile (
 
   p.Red.x = rx; 
   p.Red.y = ry;
+  p.Red.Y = 1.0;
   p.Green.x = gx;
   p.Green.y = gy;
+  p.Green.Y = 1.0;
   p.Blue.x = bx;
   p.Blue.y = by;
+  p.Blue.Y = 1.0;
   wtpt_xyY.x = wx;
   wtpt_xyY.y = wy;
   wtpt_xyY.Y = 1.0;
   g[0] = g[1] = g[2] = cmsBuildGamma(1, (double)gamma);
+  lcms_msg( oyMSG_DBG,0, OY_DBG_FORMAT_
+             " red: %g %g %g green: %g %g %g blue: %g %g %g white: %g %g gamma: %g",
+             OY_DBG_ARGS_, rx,ry,p.Red.Y, gx,gy,p.Green.Y,bx,by,p.Blue.Y,wx,wy,gamma );
   lp = cmsCreateRGBProfile( &wtpt_xyY, &p, g);
 
   _cmsSaveProfileToMem( lp, 0, &size );
