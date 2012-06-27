@@ -24280,8 +24280,6 @@ int             oyOptions_Handle     ( const char        * registration,
     apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API10_S, 
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                  &rank_list, &api_n );
-    if(rank_list) oyDeAllocateFunc_(rank_list); rank_list = 0;
-
     apis_n = oyCMMapiFilters_Count( apis );
     if(test)
       for(i = 0; i < apis_n; ++i)
@@ -24319,6 +24317,8 @@ int             oyOptions_Handle     ( const char        * registration,
     oyCMMapiFilters_Release( &apis );
     if(!found && error == 0)
       error = -1;
+    if(rank_list) oyDeAllocateFunc_(rank_list); rank_list = 0;
+
   }
 
   return error;
