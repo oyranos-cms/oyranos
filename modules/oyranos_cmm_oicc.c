@@ -731,7 +731,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
       fprintf( stderr, "ICC CMM search: %d - ", old_id);
 
     /* search for a path to a "icc" CMM */
-    while(search)
+    if(search)
     {
       it = 0;
 
