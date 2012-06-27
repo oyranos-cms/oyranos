@@ -73,7 +73,7 @@ all:
 	echo "PKG_CONFIG_PATH=$$PKG_CONFIG_PATH"
 	echo "CFLAGS=$(CFLAGS)"
 	echo "PATH=$$PATH"
-	make $(TARGETS)
+	$(MAKE) $(TARGETS)
 	echo ... all done
 
 	

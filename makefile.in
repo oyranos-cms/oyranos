@@ -920,12 +920,12 @@ $(LIBNAME_CORE):	$(OBJECTS_CORE)
 $(ELEKTRA_VERSION):
 	echo building DB ...
 	cd $(ELEKTRA_VERSION); \
-	test -f Makefile && make || (./configure --enable-static $(nodeps_config_opt) --prefix=$(prefix); make)
+	test -f Makefile && $(MAKE) || (./configure --enable-static $(nodeps_config_opt) --prefix=$(prefix); $(MAKE))
 
 $(YAJL_OBJ):	$(YAJL_OBJECTS)
 	echo building Yajl ...
 	cd $(YAJL_DIR); \
-	test -f Makefile && make || (echo no makefile found)
+	test -f Makefile && $(MAKE) || (echo no makefile found)
 
 # the monitor profile tool
 $(TARGET)-monitor:	$(LIBSONAMEFULL) $(TARGET)_gamma.o
@@ -959,7 +959,7 @@ API_generated:	generator/oyAPIGenerator
 	cd generator/; ./oyAPIGenerator $(SRCDIR)/templates $(SRCDIR)/sources $(SRCDIR)/API_generated
 
 generator/oyAPIGenerator:
-	cd generator; cmake -DGrantlee_DIR="$(SRCDIR)/generator/grantlee/lib/grantlee" $(SRCDIR)/generator; make || echo Did you run download_grantlee.sh in generator/ ?
+	cd generator; cmake -DGrantlee_DIR="$(SRCDIR)/generator/grantlee/lib/grantlee" $(SRCDIR)/generator; $(MAKE) || echo Did you run download_grantlee.sh in generator/ ?
 
 
 test_core:	$(LIBSONAMECOREFULL) $(LIBNAME_CORE) test_core.o
@@ -1277,7 +1277,7 @@ deb:	dist
 	tar xvzf $(TARGET)-$(VERSION).tar.gz
 	(cd $(TARGET)-$(VERSION); \
 	./configure --prefix=/usr; \
-	make "DESTDIR=$(build_dir)/debian/deb/DEBIAN" install;)
+	$(MAKE) "DESTDIR=$(build_dir)/debian/deb/DEBIAN" install;)
 	$(COPY) $(TARGET)-$(VERSION)/$(TARGET)_control $(build_dir)/debian/deb/DEBIAN/control
 	$(RM) -R $(TARGET)-$(VERSION)
 	dpkg -b $(build_dir)/debian/deb debian/$(TARGET)_$(VERSION)-$(RELEASE)_$(deb_arch).deb
@@ -1561,7 +1561,7 @@ copy_files:
 	   [ -d "$(SRCDIR)/$(ELEKTRA_VERSION)" ] && \
 	   [ -d $(build_dir)/$(ELEKTRA_VERSION) ]; then \
           cd $(build_dir)/$(ELEKTRA_VERSION); \
-	  make dist-gzip; \
+	  $(MAKE) dist-gzip; \
 	  cd "$(DESTDIR)"; \
 	  test -f $(build_dir)/$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz && \
 	    tar xzf $(build_dir)/$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz; \
