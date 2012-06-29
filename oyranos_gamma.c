@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2005-2011 (C) Kai-Uwe Behrmann
+ *            2005-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    gamma loader
  *  @internal
@@ -83,6 +83,7 @@ int main( int argc , char** argv )
   int list_modules = 0;
   int list_taxi = 0;
   int verbose = 0;
+  int simple = 0;
 
   char *ptr = NULL;
   int x = 0, y = 0;
@@ -174,6 +175,8 @@ int main( int argc , char** argv )
                         { list = 1; monitor_profile = 0; i=100; break; }
                         else if(OY_IS_ARG("list-taxi"))
                         { list_taxi = 1; i=100; break; }
+                        else if(OY_IS_ARG("short"))
+                        { simple = 1; i=100; break;}
                         else if(OY_IS_ARG("verbose"))
                         { if(verbose) oy_debug += 1; verbose = 1; i=100; break;}
                         }
@@ -194,7 +197,7 @@ int main( int argc , char** argv )
                         printf("      %s [-x pos -y pos | -d number]\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("List devices:"));
-                        printf("      %s -l [-x pos -y pos | -d number]\n", argv[0]);
+                        printf("      %s -l [-x pos -y pos | -d number] --short\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("List Taxi profile for selected device:"));
                         printf("      %s --list-taxi [-x pos -y pos | -d number]\n", argv[0]);
@@ -659,15 +662,28 @@ int main( int argc , char** argv )
 
           error = oyDeviceGetInfo( c, oyNAME_NICK, cs_options, &text,
                                    oyAllocFunc );
-          oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
-                              "%d: ", i );
-          oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
-                              "\"%s\" ", text ? text : "???" );
-          error = oyDeviceGetInfo( c, oyNAME_NAME, cs_options, &text,
-                                   oyAllocFunc );
-          oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
-                              "%s%s", text ? text : "???",
+          if(!simple)
+          {
+            oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
+                                "%d: ", i );
+            oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
+                                "\"%s\" ", text ? text : "???" );
+            error = oyDeviceGetInfo( c, oyNAME_NAME, cs_options, &text,
+                                     oyAllocFunc );
+            oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
+                                "%s%s", text ? text : "???",
                                       i+1 == n ? "" : "\n" );
+          } else
+          {
+            oyDeviceAskProfile2( c, cs_options, &prof );
+            data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc);
+            if(size && data)
+              oyDeAllocFunc( data );
+            filename = oyProfile_GetFileName( prof, -1 );
+            oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
+                                "%s%s", filename ? (strrchr(filename,OY_SLASH_C) ? strrchr(filename,OY_SLASH_C)+1:filename) : OY_PROFILE_NONE,
+                                      i+1 == n ? "" : "\n" );
+          }
           if(verbose)
           {
             error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, cs_options, &text,
