@@ -1089,7 +1089,7 @@ docu:
 	echo ... Documentation done
 
 # the copy part for this directory level
-install_bin:	all install_gui
+install_bin:	all oforms install_gui
 	echo Installing binaries ...
 	mkdir -p "$(DESTDIR)$(bindir)"
 	$(INSTALL) -m 755 $(TARGET)-config     "$(DESTDIR)$(bindir)"
@@ -1187,7 +1187,7 @@ install_bin:	all install_gui
 	echo ... binary Installation finished
 
 # install recursive
-install:	oforms install-main examples
+install:	install-main examples
 #ifdef QT
 	$(INSTALL) -m 755 examples/xcmsevents/qcmsevents "$(DESTDIR)$(bindir)"
 	mkdir -p "$(DESTDIR)$(desktopdir)"
