@@ -14,7 +14,7 @@
  *
  *  The program uses ICC profiles to perform colour transforms.
  *
- *  cc -Wall -g oyranos_convert.c -o oyranos-icc `pkg-config --libs --cflags oyranos` -I./ -I../build_11.4 -I API_generated/ -I oforms/
+ *  cc -Wall -g oyranos_convert.c -o oyranos-icc `pkg-config --libs --cflags oyranos` -I../../ -I../build_11.4 -I ../../API_generated/ -I ../../oforms/
  */
 
 
@@ -338,34 +338,46 @@ int main( int argc , char** argv )
                                 p, data_type, flags, 0 );
     error = oyConversion_RunPixels( cc, 0 );
     oyImage_Release( &image );
-#ifdef USE_LCMS
-    if(0)
+
+    if(format == strcmp(format,"clut") == 0)
     {
-      image = oyConversion_GetImage( cc, OY_INPUT );
-      oyProfile_s * p_in = oyImage_ProfileGet(image);
-      const char * pfn_in = oyProfile_GetFileName(p_in, -1);
-      oyImage_Release( &image );
-      cmsHPROFILE in = cmsOpenProfileFromFile( pfn_in, "rb"),
-                  out = cmsOpenProfileFromFile(output_profile, "rb");
+      int width = levels,
+          size = width*width,
+          l,a,b,j;
+      uint16_t * buf = 0;
+      uint16_t in[3];
+      char comment[80];
+
+      if(!output)
+        WARNc_S("No output file name provided");
+
+      p = oyProfile_FromStd( oyEDITING_LAB, 0 );
+      buf = calloc(sizeof(uint16_t), size*width*3);
+
+#pragma omp parallel for private(in,a,b,j)
+      for(l = 0; l < width; ++l)
+      {
+        in[0] = floor((double) l / (width - 1) * 65535.0 + 0.5);
+        for(a = 0; a < width; ++a) {
+          in[1] = floor((double) a / (width - 1) * 65535.0 + 0.5);
+          for(b = 0; b < width; ++b)
+          {
+            in[2] = floor((double) b / (width - 1) * 65535.0 + 0.5);
+            for(j = 0; j < 3; ++j)
+              buf[a*size*3+b*+width*3+l*3+j] = in[j];
+          }
+        }
+      }
+      image = oyImage_Create( width,width*width, buf, OY_TYPE_123_16,
+                              p, 0 );
+      sprintf( comment, "clut with %d levels", levels );
+
+      error = oyImage_WritePPM( image, output, comment);
+    } else
+    {
       image = oyConversion_GetImage( cc, OY_OUTPUT );
-      oyPixel_t pixel_layout_out = oyImage_PixelLayoutGet( image );
-      oyDATATYPE_e data_type_out = oyToDataType_m(pixel_layout_out);
-      uint32_t flags_in = cmsFormatterForColorspaceOfProfile(in, 
-                       data_type == oyFLOAT ? 4 : data_type == oyUINT16 ? 2 : 1,
-                                                    data_type == oyFLOAT ? 1:0),
-               flags_out = cmsFormatterForColorspaceOfProfile( out,
-               data_type_out == oyFLOAT ? 4 : data_type_out == oyUINT16 ? 2 : 1,
-                                               data_type_out == oyFLOAT ? 1:0) ;
-      printf("input %s -> %s %d->%d\n", pfn_in, output_profile, TYPE_XYZ_FLT, TYPE_RGB_FLT );
-      cmsHTRANSFORM xform = cmsCreateTransform(in, flags_in, out, flags_out, 0,
-                                               cmsFLAGS_NOOPTIMIZE);
-      char * image_data = image->getLine( image, 0, 0, -1, 0 );
-      cmsDoTransform(xform, image_data, image_data, image->height * image->width);
-      //memset(image_data,0,image->height * image->width*3*4);
+      error = oyImage_WritePPM( image, output, input );
     }
-#endif
-    image = oyConversion_GetImage( cc, OY_OUTPUT );
-    error = oyImage_WritePPM( image, output, input );
     
   } else
   if(format && strcmp(format,"icc") == 0)
