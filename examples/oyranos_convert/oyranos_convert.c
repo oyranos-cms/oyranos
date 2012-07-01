@@ -68,6 +68,16 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -e PROFILE   %s\n", _("Effect abtract Color Space"));
   fprintf( stderr, "      -o FILENAME  %s\n", _("write to file, currently only PPM format"));
   fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",               _("Generate CLUT Image:"));
+  fprintf( stderr, "      %s -p PROFILE -f clut [-o FILENAME] [-n MODULE] -i FILENAME\n", argv[0]);
+  fprintf( stderr, "      -i FILENAME  %s\n", _("read from file"));
+  fprintf( stderr, "      -p PROFILE   %s\n", _("Output Color Space"));
+  fprintf( stderr, "      -s PROFILE   %s\n", _("Simulation/Proof Color Space"));
+  fprintf( stderr, "      -e PROFILE   %s\n", _("Effect abtract Color Space"));
+  fprintf( stderr, "      -o FILENAME  %s\n", _("write to file, currently only PPM format"));
+  fprintf( stderr, "      -f FORMAT    %s\n", _("select format, currently only clut"));
+  fprintf( stderr, "         clut      %s\n", _("CLUT is a levels x levels*levels sized PPM, --levels defaults for clut to 64"));
+  fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Extract ICC profile:"));
   fprintf( stderr, "      %s -f icc [-o FILENAME] [-n MODULE] -i FILENAME\n", argv[0]);
   fprintf( stderr, "      -o FILENAME  %s\n", _("write to file"));
@@ -91,6 +101,9 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "    %s:\n",             _("Convert image to ICC Color Space"));
   fprintf( stderr, "      oyranos-icc -i image.png -n lcm2 -p Lab.icc -o image.ppm\n");
+  fprintf( stderr, "\n");
+  fprintf( stderr, "    %s:\n",             _("Create 3D CLUT"));
+  fprintf( stderr, "      oyranos-icc -i Lab.icc -n lcm2 -p sRGB.icc -f clut -o clut.ppm\n");
   fprintf( stderr, "\n");
   fprintf( stderr, "\n");
 
@@ -119,7 +132,7 @@ int main( int argc , char** argv )
   oyProfile_s * p = 0;
   oyOptions_s * module_options = 0;
 
-  int levels = 8;
+  int levels = 0;
 
   int output_model = 0;
   const char * input_xml_file = 0;
@@ -161,10 +174,12 @@ int main( int argc , char** argv )
               case 'p': OY_PARSE_STRING_ARG(output_profile); break;
               case 's': OY_PARSE_STRING_ARG(simulation_profile);
                         p = oyProfile_FromFile( simulation_profile, 0,0 );
+                        if(!p) wrong_arg = effect_profile;
                         oyProfiles_MoveIn( proofing, &p, -1 );
                         break;
               case 'e': OY_PARSE_STRING_ARG(effect_profile);
                         p = oyProfile_FromFile( effect_profile, 0,0 );
+                        if(!p) wrong_arg = effect_profile;
                         oyProfiles_MoveIn( effects, &p, -1 );
                         break;
               case 'i': OY_PARSE_STRING_ARG(input); break;
@@ -319,10 +334,6 @@ int main( int argc , char** argv )
       WARNc_S("No output file name provided");
     if(!icc_defaults_simple)
       flags |= oyOPTIONATTRIBUTE_ADVANCED;
-    error = oyImage_FromFile( input, &image, NULL );
-    pixel_layout = oyImage_PixelLayoutGet( image );
-    data_type = oyToDataType_m(pixel_layout);
-    p = oyProfile_FromFile(output_profile, 0,0);
     if(oyProfiles_Count(effects))
       error = oyOptions_MoveInStruct( &module_options,
                                      "//" OY_TYPE_STD "/config/profiles_effect",
@@ -333,25 +344,23 @@ int main( int argc , char** argv )
                                       "//" OY_TYPE_STD "/config/profiles_proof",
                                        (oyStruct_s**) &proofing,
                                        OY_CREATE_NEW );
-    oyConversion_s * cc = oyConversion_CreateFromImage (
-                                image, node_name, module_options, 
-                                p, data_type, flags, 0 );
-    error = oyConversion_RunPixels( cc, 0 );
-    oyImage_Release( &image );
 
-    if(format == strcmp(format,"clut") == 0)
+    if(format && strcmp(format,"clut") == 0)
     {
       int width = levels,
-          size = width*width,
-          l,a,b,j;
+          size, l,a,b,j;
       uint16_t * buf = 0;
       uint16_t in[3];
       char comment[80];
 
+      if(!width)
+        width = 64;
+
+      size = width*width;
+
       if(!output)
         WARNc_S("No output file name provided");
 
-      p = oyProfile_FromStd( oyEDITING_LAB, 0 );
       buf = calloc(sizeof(uint16_t), size*width*3);
 
 #pragma omp parallel for private(in,a,b,j)
@@ -368,15 +377,50 @@ int main( int argc , char** argv )
           }
         }
       }
+      if(input)
+      {
+        p = oyProfile_FromFile( input, 0,0 );
+        if(!p)
+          WARNc1_S("Could not open profile: %s", input);
+          error = 1;
+      } else
+        p = oyProfile_FromStd( oyASSUMED_WEB, 0 );
       image = oyImage_Create( width,width*width, buf, OY_TYPE_123_16,
                               p, 0 );
-      sprintf( comment, "clut with %d levels", levels );
+      oyProfile_Release( &p );
+      sprintf( comment, "clut with %d levels", width );
+
+      pixel_layout = oyImage_PixelLayoutGet( image );
+      data_type = oyToDataType_m(pixel_layout);
+      p = oyProfile_FromFile(output_profile, 0,0);
+      oyConversion_s * cc = oyConversion_CreateFromImage (
+                                image, node_name, module_options, 
+                                p, data_type, flags, 0 );
+
+      error = oyConversion_RunPixels( cc, 0 );
+      image = oyConversion_GetImage( cc, OY_OUTPUT );
 
       error = oyImage_WritePPM( image, output, comment);
+
+      oyImage_Release( &image );
     } else
     {
+      error = oyImage_FromFile( input, &image, NULL );
+      pixel_layout = oyImage_PixelLayoutGet( image );
+      data_type = oyToDataType_m(pixel_layout);
+      p = oyProfile_FromFile(output_profile, 0,0);
+      if(!p)
+          WARNc1_S("Could not open profile: %s", input);
+          error = 1;
+      oyConversion_s * cc = oyConversion_CreateFromImage (
+                                image, node_name, module_options, 
+                                p, data_type, flags, 0 );
+
+      error = oyConversion_RunPixels( cc, 0 );
       image = oyConversion_GetImage( cc, OY_OUTPUT );
       error = oyImage_WritePPM( image, output, input );
+
+      oyImage_Release( &image );
     }
     
   } else
@@ -425,6 +469,8 @@ int main( int argc , char** argv )
     p = oyProfile_FromStd( oyEDITING_LAB, 0 );
     if(strcmp(format,"hald") == 0)
     {
+      if(!width)
+        width = 8;
       buf = calloc(sizeof(uint16_t), size*width*size*width*3);
 #pragma omp parallel for private(in,a,b,j,)
       for(l = 0; l < size; ++l)
@@ -442,10 +488,12 @@ int main( int argc , char** argv )
       }
       image = oyImage_Create( size*width, size*width, buf, OY_TYPE_123_16,
                               p, 0 );
-      sprintf( comment, "CIE*Lab Hald with %d levels", levels );
+      sprintf( comment, "CIE*Lab Hald with %d levels", width );
 
     } else if(strcmp(format,"lab") == 0)
     {
+      if(!width)
+        width = 64;
       buf = calloc(sizeof(uint16_t), size*width*3);
 
 #pragma omp parallel for private(in,a,b,j)
@@ -464,9 +512,11 @@ int main( int argc , char** argv )
       }
       image = oyImage_Create( width,width*width, buf, OY_TYPE_123_16,
                               p, 0 );
-      sprintf( comment, "CIE*Lab LUT with %d levels", levels );
+      sprintf( comment, "CIE*Lab LUT with %d levels", width );
     } else if(strcmp(format,"slice") == 0)
     {
+      if(!width)
+        width = 17;
       buf = calloc(sizeof(uint16_t), size*width*3);
 
 #pragma omp parallel for private(in,a,b,j)
@@ -485,7 +535,7 @@ int main( int argc , char** argv )
       }
       image = oyImage_Create( width,width*width, buf, OY_TYPE_123_16,
                               p, 0 );
-      sprintf( comment, "CIE*Lab slice with %d levels", levels );
+      sprintf( comment, "CIE*Lab slice with %d levels", width );
     } else
       WARNc1_S("format is not supported %s", format);
 
