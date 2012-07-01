@@ -1,81 +1,126 @@
-.TH oyranos-monitor 1 "December 16, 2010" "User Commands"
+.TH oyranos-monitor 1 "July 29, 2012" "User Commands"
 .SH NAME
 oyranos-monitor \- Oyranos CMS monitor configuration
 .SH SYNOPSIS
-\fBoyranos-monitor\fR [ |-s [[-x num] [-y num]|-d \fINUMBER\fR] [-v] ]
+\fBoyranos-monitor\fR |-s [[-x num] [-y num]|-d \fINUMBER\fR] [-v]
 .fi
-\fBoyranos-monitor\fR [ \fIPROFILENAME\fR [[-x num] [-y num]|-d \fINUMBER\fR] [-v] ]
+\fBoyranos-monitor\fR \fIPROFILENAME\fR [[-x num] [-y num]|-d \fINUMBER\fR] [-v]
 .fi
-\fBoyranos-monitor\fR [ -e [[-x num] [-y num]|-d \fINUMBER\fR] [-v] ]
+\fBoyranos-monitor\fR -e [[-x num] [-y num]|-d \fINUMBER\fR] [-v]
 .fi
-\fBoyranos-monitor\fR [ -l [[-x num] [-y num]|-d \fINUMBER\fR] [-v]
-                [ --module \fIMODULENAME\fR ] ]
+\fBoyranos-monitor\fR -l [[-x num] [-y num]|-d \fINUMBER\fR] [-v]
+                [ --module \fIMODULENAME\fR ]
 .fi
-\fBoyranos-monitor\fR [ --modules [-v] ]
+\fBoyranos-monitor\fR --modules [-v]
 .fi
-\fBoyranos-monitor\fR [ -f [edid|icc|edid_icc] [-o \fIOUT_FILENAME\fR | default:stdout] [[-x num] [-y num]|-d \fINUMBER\fR] [-m] [-v] ]
+\fBoyranos-monitor\fR -f [edid|icc|edid_icc] [-o \fIOUT_FILENAME\fR | default:stdout] [[-x num] [-y num]|-d \fINUMBER\fR] [-m] [-v]
 .fi
-\fBoyranos-monitor\fR [ --add-edid \fIFILENAME\fR ] [--profile \fIFILENAME\fR --name \fINAME\fR] [-v] ]
+\fBoyranos-monitor\fR --add-edid \fIFILENAME\fR --profile \fIFILENAME\fR [--name \fINAME\fR] [-v]
 .SH DESCRIPTION
 The oyranos-monitor programm let you query and set the monitor profile(s) within the Oyranos colour management system (CMS). Profiles are stored in a data base, the Oyranos DB.
 .SH OPTIONS
 .TP
-.B \-d\fR=\fINUMBER\fR , \-d\fR \fINUMBER
+.B \-s\fR Setup a ICC profile for a all or a selected monitor
+.sp
+.br
+.B \-s, \-\-setup \fR[default]\fR
+Set up the X11 server with the Oyranos DB stored monitor ICC profile(s). This option is optional.
+.sp
+.br
+\fB\-d\fR \fINUMBER\fR , \-d\fR=\fINUMBER\fR
 position in device list.
-The numbering of monitors starts with zero for the first device. To get the
-number of all available devices use "\fBoyranos-monitor\fR -l | wc -l".
-.TP
-\fB\-x\fR=\fIPOSITION\fR , \-x\fR \fIPOSITION
+.br
+\fB\-x\fR \fIPOSITION\fR , \-x\fR=\fIPOSITION\fR
 select the screen at the x position.
-The Oyranos screens are if possible real devices. A screen position must be unique and not shared by different screens, otherwise it will be ambiguous.
+.br
+\fB\-y\fR \fIPOSITION\fR , \-y\fR=\fIPOSITION\fR
+select the screen at the y position.
 .TP
-\fB\-y\fR=\fIPOSITION\fR , \-y\fR \fIPOSITION
-select the screen at the y position
-.TP
-.B \-s, \-\-setup \fR[default] [[-x num] [-y num] | -d number]]
-Set up the X11 server with the Oyranos DB stored monitor ICC profile(s)
-.TP
-\fIPROFILENAME\fR [[-x num] [-y num] | -d number]]
+\fIPROFILENAME\fR  assign a ICC profile to a monitor device
 Assign a monitor ICC profile to the selected screen and store in the Oyranos DB.
+.sp
+.br
+\fB\-d\fR \fINUMBER\fR , \-d\fR=\fINUMBER\fR
+position in device list.
+.br
+\fB\-x\fR \fIPOSITION\fR , \-x\fR=\fIPOSITION\fR
+select the screen at the x position.
+.br
+\fB\-y\fR \fIPOSITION\fR , \-y\fR=\fIPOSITION\fR
+select the screen at the y position.
 .TP
-.B \-e, \-\-erase \fR[[-x num] [-y num] | -d number]]
-reset the hardware gamma table to the defaults and erase from the Oyranos DB
+.B \-e, \-\-erase \fR release a ICC profile from a monitor device
+Reset the hardware gamma table to the defaults and erase from the Oyranos DB
+.sp
+.br
+\fB\-d\fR \fINUMBER\fR , \-d\fR=\fINUMBER\fR
+position in device list.
+.br
+\fB\-x\fR \fIPOSITION\fR , \-x\fR=\fIPOSITION\fR
+select the screen at the x position.
+.br
+\fB\-y\fR \fIPOSITION\fR , \-y\fR=\fIPOSITION\fR
+select the screen at the y position.
 .TP
-.B \-l, \-\-list
-list devices visible to Oyranos
+.B \-l, \-\-list\fR list devices
+.br
+\fB-v\fR increase verbosity
+.br
+\fB--short\fR show only the ICC profiles file name
 .TP
 .B \-\-modules
 list monitor modules
 .TP
-.B \-f, \-\-format [edid|icc|edid_icc]
+.B \-f, \-\-format [edid|icc|edid_icc]\fR Get data
 Select a data format. Possible are \fBedid\fR for server side EDID data, \fBicc\fR for a server side ICC profile and \fBedid_icc\fR for a ICC profile created from server side EDID. Without the -o/--ouput option the output is written to stdout.
 .sp
 .br
-\fB-m\fR (--device-meta-tag) switch is accepted by the \fB-f=icc\fR and
+\fB\-d\fR \fINUMBER\fR , \-d\fR=\fINUMBER\fR
+position in device list.
+.br
+\fB\-x\fR \fIPOSITION\fR , \-x\fR=\fIPOSITION\fR
+select the screen at the x position.
+.br
+\fB\-y\fR \fIPOSITION\fR , \-y\fR=\fIPOSITION\fR
+select the screen at the y position.
+.br
+\fB-m\fR (--device-meta-tag)\fR switch is accepted by the \fB-f=icc\fR and
 \fB-f=edid_icc\fR option. It embeddes device and driver informations about
 the actual device for later easier ICC profile to device assignment.
 This becomes useful for sharing ICC profiles.
-.TP
+.br
 .B \-o, \-\-output \fIOUT_FILENAME\fR
 Write data selected by -f/--format to the given filename.
 .TP
 .B \-\-add-edid \fIEDID_FILENAME\fR
 Embedd EDID keys to a ICC profile as meta tag. Requires --profile.
-.TP
+.br
 .B \-\-profile \fIICC_FILENAME\fR
 ICC profile.
-.TP
+.br
 .B \-\-name \fIICC_INTERNAL_NAME\fR
 String for ICC profile internal name.
 .SH GENERAL OPTIONS
-.TP
-.B \-v, \-\-verbose
+.br
+\fB\-d\fR \fINUMBER\fR , \-d\fR=\fINUMBER\fR
+position in device list.
+The numbering of monitors starts with zero for the first device. To get the
+number of all available devices use "\fBoyranos-monitor\fR -l | wc -l".
+.br
+\fB\-x\fR \fIPOSITION\fR , \-x\fR=\fIPOSITION\fR
+select the screen at the x position.
+The Oyranos screens are if possible real devices. A screen position must be unique and not shared by different screens, otherwise it will be ambiguous.
+.br
+\fB\-y\fR \fIPOSITION\fR , \-y\fR=\fIPOSITION\fR
+select the screen at the y position
+.br
+.B \-v, \-\-verbose\fR
 increase verbosity
-.TP
-.B \-\-module
+.br
+.B \-\-module\fR
 select module
 .TP
-.B \-\-daemon
+.B \-\-daemon\fR
 Run as daemon to observe monitor hotplug events and update the setup.
 .SH ENVIRONMENT
 .TP
@@ -137,11 +182,11 @@ Embedd device informations into ICC meta tag:
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH COPYRIGHT
-(c) 2005-2011, Kai-Uwe Behrmann and others
+(c) 2005-2012, Kai-Uwe Behrmann and others
 .fi
 License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
 .SH "SEE ALSO"
-oyranos-config-fltk(1) oyranos-policy(1) oyranos(3)
+oyranos-config-fltk(1) oyranos-policy(1) oyranos-profiles(1) oyranos(3)
 .fi
 http://www.oyranos.org
 .SH "BUGS"
