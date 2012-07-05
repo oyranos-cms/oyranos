@@ -1,9 +1,9 @@
 // !cc -Wall -g test_device.c -o test_device2 -L. `oyranos-config --cflags --ldstaticflags` -lm -lltdl
 
-// cc -Wall -g test_device.c -o test_device2 -L. `oyranos-config --cflags --ldstaticflags` `pkg-config --cflags --libs libxml-2.0` -lm -I ../../ -I ../../API_gen
-erated/
+// cc -Wall -g test_device.c -o test_device2 -L. `oyranos-config --cflags --ldstaticflags` `pkg-config --cflags --libs libxml-2.0` -lm -I ../../ -I ../../API_generated/
 #include <stdio.h>
-
+#include <stdlib.h>
+#include <string.h>
 
 #include "oyranos.h"
 #include "oyranos_alpha.h"
