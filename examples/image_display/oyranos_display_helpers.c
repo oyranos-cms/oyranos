@@ -69,18 +69,22 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
   /* create a new filter node */
   if(!cc_name)
     cc_name = "//" OY_TYPE_STD "/icc";
-  icc = out = oyFilterNode_NewWith( cc_name, cc_options, obj );
-  /* append the new to the previous one */
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", cc_name );
+  if(cc_name && cc_name[0])
+  {
+    icc = out = oyFilterNode_NewWith( cc_name, cc_options, obj );
+    /* append the new to the previous one */
+    error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                  out, "//" OY_TYPE_STD "/data", 0 );
+    if(error > 0)
+      fprintf( stderr, "could not add  filter: %s\n", cc_name );
 
-  /* Set the image to the first/only socket of the filter node.
-   * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
-   * We rely on resolving the image later.
-   */
-  oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
+    /* Set the image to the first/only socket of the filter node.
+     * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
+     * We rely on resolving the image later.
+     */
+    oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
+  } else
+    icc = 0;
 
   /* swap in and out */
   if(out)
@@ -119,12 +123,13 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
   /* apply policies */
   /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
                                  "true", OY_CREATE_NEW );*/
-  oyConversion_Correct( conversion, cc_name, flags,
-                        options );
+  if(cc_name && cc_name[0])
+    oyConversion_Correct( conversion, cc_name, flags,
+                          options );
   oyOptions_Release( &options );
 
-
-  *cc_node = icc;
+  if(cc_node)
+    *cc_node = icc;
 
   return conversion;
 }
@@ -236,8 +241,9 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
   /* apply policies */
   /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
                                  "true", OY_CREATE_NEW );*/
-  oyConversion_Correct( conversion, cc_name, flags,
-                        options );
+  if(cc_name && cc_name[0])
+    oyConversion_Correct( conversion, cc_name, flags,
+                          options );
   oyOptions_Release( &options );
 
 
