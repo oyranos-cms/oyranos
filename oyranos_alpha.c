@@ -13716,6 +13716,8 @@ OYAPI oyArray2d_s * OYEXPORT
     {
       data = s->oy_->allocateFunc_( width * height *
                                     oySizeofDatatype( data_type ) );
+      DBG_NUM2_S("allocate image data: 0x%x size: %d ", (int)(intptr_t)
+                  data, width * height * oySizeofDatatype( data_type ) );
       error = oyArray2d_DataSet( s, data );
       s->own_lines = oyYES;
     }
@@ -19774,13 +19776,13 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
     oyCMMapiFilters_s * apis;
     int apis_n = 0, i,j = 0;
     oyCMMapi9_s * cmm_api9 = 0;
-    char * class, * api_reg;
+    char * class_name, * api_reg;
     const char * reg = node->core->registration_;
 
-    class = oyFilterRegistrationToText( reg, oyFILTER_REG_TYPE, 0 );
+    class_name = oyFilterRegistrationToText( reg, oyFILTER_REG_TYPE, 0 );
     api_reg = oyStringCopy_("//", oyAllocateFunc_ );
-    STRING_ADD( api_reg, class );
-    oyFree_m_( class );
+    STRING_ADD( api_reg, class_name );
+    oyFree_m_( class_name );
 
     apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S, 
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
@@ -22780,12 +22782,12 @@ int                oyConversion_Correct (
     oyCMMapiFilters_s * apis;
     int apis_n = 0, i;
     oyCMMapi9_s * cmm_api9 = 0;
-    char * class, * api_reg;
+    char * class_name, * api_reg;
 
-    class = oyFilterRegistrationToText( pattern, oyFILTER_REG_TYPE, 0 );
+    class_name = oyFilterRegistrationToText( pattern, oyFILTER_REG_TYPE, 0 );
     api_reg = oyStringCopy_("//", oyAllocateFunc_ );
-    STRING_ADD( api_reg, class );
-    oyFree_m_( class );
+    STRING_ADD( api_reg, class_name );
+    oyFree_m_( class_name );
 
     apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S, 
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
@@ -24290,15 +24292,15 @@ int             oyOptions_Handle     ( const char        * registration,
     oyCMMapiFilters_s * apis;
     int apis_n = 0, i, found = 0;
     oyCMMapi10_s * cmm_api10 = 0;
-    char * class, * api_reg;
+    char * class_name, * api_reg;
     char * test = 0;
     uint32_t * rank_list = 0,
                api_n = 0;
 
-    class = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE, 0 );
+    class_name = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE, 0 );
     api_reg = oyStringCopy_("//", oyAllocateFunc_ );
-    STRING_ADD( api_reg, class );
-    oyFree_m_( class );
+    STRING_ADD( api_reg, class_name );
+    oyFree_m_( class_name );
 
     STRING_ADD( test, "can_handle." );
     if(command && command[0])

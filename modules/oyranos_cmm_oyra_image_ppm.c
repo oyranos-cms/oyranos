@@ -810,6 +810,8 @@ int      oyraFilterPlug_ImageInputPPMRun (
   }
 
   oyAllocHelper_m_( buf, uint8_t, mem_n, 0, return 1);
+  DBG_NUM2_S("allocate image data: 0x%x size: %d ", (int)(intptr_t)
+              buf, mem_n );
 
   /* the following code is almost completely taken from ku.b's ppm CP plug-in */
   {
