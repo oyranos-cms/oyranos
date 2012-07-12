@@ -76,15 +76,17 @@ all:
 	make $(TARGETS)
 	echo ... all done
 
-	
+image_display/GLee.o:	$(SRCDIR)image_display/GLee.c
+	-$(CC) $(CFLAGS_) -I$(SRCDIR)image_display/ \
+	  -c $(SRCDIR)image_display/GLee.c -o image_display/GLee.o
 
-$(TARGET1):	$(SRCDIR)$(TARGET1).cpp
+$(TARGET1):	$(SRCDIR)$(TARGET1).cpp image_display/GLee.o
 	mkdir -p image_display
 	echo Compiling $@ ...
 	-$(CXX) -DTARGET=\"$(TARGET)\" $(CXXFLAGS_) $(FLTK_CFLAGS) $< \
 	$(X11) $(LDFLAGS) $(OY_LDFLAGS) \
 	$(intl) ../fl_i18n/libfl_i18n.a  $(FLTK_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
-	$(PKG_CONFIG_LIBS) -DUSE_GETTEXT=1 \
+	$(PKG_CONFIG_LIBS) -DUSE_GETTEXT=1 image_display/GLee.o \
 	-o $@
 	-fltk-config --post $@
 

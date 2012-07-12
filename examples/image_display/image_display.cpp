@@ -23,9 +23,14 @@
 
 #define DEBUG 1
 
+extern "C" {
+#include "GLee.h"
+}
+
 #include "../../oyranos_logo.h"
 #include "oyranos_display_helper_classes_fltk.cpp" // observer callback
 #include "Oy_Fl_Group.h"
+#include "Oy_Fl_GL_Box.h"
 #include "Oy_Fl_Shader_Box.h"
 #include "Oy_Fl_Image_Box.h"
 
@@ -62,7 +67,7 @@ main(int argc, char** argv)
 
   /* some Oyranos types */
 
-  oyFilterNode_s * icc;
+  oyFilterNode_s * icc = 0;
   int file_pos = 1;
   const char * file_name = NULL;
 
@@ -98,6 +103,7 @@ main(int argc, char** argv)
   int gl_box = 0x01;
   int logo = 0x02;
   const char * module_name = 0;
+  const char * clut_name = 0;
 
   /* handle arguments */
   for(int i = 1; i < argc; ++i)
@@ -123,6 +129,13 @@ main(int argc, char** argv)
       ++file_pos;
       ++file_pos;
     }
+    if(argc > 2 && strcmp(argv[i], "--shader") == 0)
+    {
+      gl_box = 0x04;
+      clut_name = argv[i+1];
+      ++file_pos;
+      ++file_pos;
+    }
     if(argc > 1 && (strcmp(argv[i], "--help") == 0 ||
        strcmp(argv[i], "-h") == 0 ) )
     {
@@ -137,27 +150,41 @@ main(int argc, char** argv)
 
 
   /* setup the drawing box */
-  Oy_Fl_Shader_Box * oy_gl_box = 0;
+  Oy_Fl_Shader_Box * oy_shader_box = 0;
+  Oy_Fl_GL_Box * oy_gl_box = 0;
   Oy_Fl_Image_Box * oy_box = 0;
   Oy_Fl_Image_Widget * oy_widget = 0;
   Oy_Fl_Double_Window * win = createWindow( &oy_widget, gl_box | logo );
+  int error = 0;
   if(oy_widget)
   {
     if(gl_box)
     {
-      oy_gl_box = dynamic_cast<Oy_Fl_Shader_Box*> (oy_widget);
-      icc = oy_gl_box->setImage( file_name, module_name, NULL );
+      if(gl_box & 0x04)
+      {
+        oy_shader_box = dynamic_cast<Oy_Fl_Shader_Box*> (oy_widget);
+        error = oy_shader_box->setImage( file_name, module_name, NULL, clut_name );
+        if(!error)
+          fprintf(stderr, "setImage fine\n");
+        else
+          fprintf(stderr, "setImage failed: %s\n", clut_name);
+      } else
+      {
+        oy_gl_box = dynamic_cast<Oy_Fl_GL_Box*> (oy_widget);
+        icc = oy_gl_box->setImage( file_name, module_name, NULL );
+      }
     } else
     {
       oy_box = dynamic_cast<Oy_Fl_Image_Box*> (oy_widget);
       icc = oy_box->setImage( file_name, module_name, NULL );
     }
   }
-  if(icc)
+  if(icc || (gl_box & 0x04 && !error))
   {
     setWindowMenue( win, oy_widget, icc  );
     /* observe the node */
-    oy_widget->observeICC( icc, conversionObserve );
+    if(icc)
+      oy_widget->observeICC( icc, conversionObserve );
     win->label( file_name );
   }
 
@@ -188,7 +215,7 @@ void callback ( Fl_Widget* w, void* daten )
   if(!object)
     printf("Oyranos argument missed.\n");
   else
-  if(object->type_ == oyOBJECT_FILTER_NODE_S)
+  if(object && object->type_ == oyOBJECT_FILTER_NODE_S)
   {
     oyFilterNode_s * node = (oyFilterNode_s*) object;
     oyOptions_s * opts = 0,
@@ -255,7 +282,7 @@ void view_cb ( Fl_Widget* w, void* daten )
   if(!object)
     printf("Oyranos argument missed.\n");
   else
-  if(object->type_ == oyOBJECT_FILTER_NODE_S)
+  if(object && object->type_ == oyOBJECT_FILTER_NODE_S)
   {
     int error = 0;
     oyConversion_s * cc = arg->box->conversion();
@@ -297,7 +324,7 @@ void dbg_cb ( Fl_Widget* w, void* daten )
   if(!object)
     printf("Oyranos argument missed.\n");
   else
-  if(object->type_ == oyOBJECT_FILTER_NODE_S)
+  if(object && object->type_ == oyOBJECT_FILTER_NODE_S)
   {
     if(idcc)
       oyConversion_Release( &idcc );
@@ -327,8 +354,10 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags
   Fl::get_system_colors();
   Oy_Fl_Double_Window *win = new Oy_Fl_Double_Window( w, h+lh, TARGET );
   { Fl_Tile* t = new Fl_Tile(0,0, w, h+lh);
-      if(flags & 0x01)
+      if(flags & 0x04)
         *oy_box = new Oy_Fl_Shader_Box(0,0,w,h);
+      else if(flags & 0x01)
+        *oy_box = new Oy_Fl_GL_Box(0,0,w,h);
       else
         *oy_box = new Oy_Fl_Image_Box(0,0,w,h);
       (*oy_box)->box(FL_FLAT_BOX);
@@ -384,12 +413,15 @@ void setWindowMenue                  ( Oy_Fl_Double_Window * win,
       menue_ = new Fl_Menu_Button(0,0,win->w(),win->h(),""); menue_->hide();
       arg->node = node;
       arg->box = oy_box;
-      menue_->add( _("Edit Options ..."),
+      if(node)
+      {
+        menue_->add( _("Edit Options ..."),
                    FL_CTRL + 'e', callback, (void*)arg, 0 );
-      menue_->add( _("Examine ICC Profile ..."),
+        menue_->add( _("Examine ICC Profile ..."),
                    FL_CTRL + 'i', view_cb, (void*)arg, 0 );
-      menue_->add( _("Debug"),
+        menue_->add( _("Debug"),
                    FL_CTRL + 'd', dbg_cb, (void*)arg, 0 );
+      }
       menue_->add( _("Quit"),
                    FL_CTRL + 'q', exit_cb, (void*)arg, 0 );
       menue_button_->copy(menue_->menu());

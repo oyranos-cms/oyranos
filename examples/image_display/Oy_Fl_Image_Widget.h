@@ -71,6 +71,8 @@ public:
       oyFilterNode_s * node_out = oyConversion_GetNode( conversion(),OY_OUTPUT);
       void * display = 0,
            * window = 0;
+      int width;
+      int height;
 
 #if defined(HAVE_X)
       /* add X11 window and display identifiers to output image */
@@ -80,6 +82,8 @@ public:
 
       /* Load the image before creating the oyPicelAccess_s object. */
       image = oyConversion_GetImage( conversion(), OY_OUTPUT );
+      width = oyImage_GetWidth( image );
+      height = oyImage_GetHeight( image );
 
       if(image && !ticket)
       {
@@ -90,8 +94,8 @@ public:
       if(image)
       {
         /* take care to not go over the borders */
-        if(px < W - image->width) px = W - image->width;
-        if(py < H - image->height) py = H - image->height;
+        if(px < W - width) px = W - width;
+        if(py < H - height) py = H - height;
         if(px > 0) px = 0;
         if(py > 0) py = 0;
 
@@ -99,10 +103,10 @@ public:
         int offset_x = 0, offset_y = 0;
         if(center_aligned)
         {
-          if(W > image->width)
-            offset_x = (W - image->width) / 2;
-          if(H > image->height)
-            offset_y = (H - image->height) / 2;
+          if(W > width)
+            offset_x = (W - width) / 2;
+          if(H > height)
+            offset_y = (H - height) / 2;
         }
         display_rectangle = oyRectangle_NewWith( X+offset_x,Y+offset_y,W,H, 0 );
       }
@@ -117,9 +121,9 @@ public:
       {
         oyRectangle_s output_rectangle = {oyOBJECT_RECTANGLE_S,0,0,0};
         oyRectangle_SamplesFromImage( image, 0, &output_rectangle );
-        output_rectangle.width = OY_MIN( W, image->width );
-        output_rectangle.height = OY_MIN( H, image->height );
-        oyRectangle_Scale( &output_rectangle, 1.0/image->width );
+        output_rectangle.width = OY_MIN( W, width );
+        output_rectangle.height = OY_MIN( H, height );
+        oyRectangle_Scale( &output_rectangle, 1.0/width );
 #if DEBUG_
         static int old_px = 0;
         if(px != old_px)
@@ -127,16 +131,16 @@ public:
         old_px = px;
         oyRectangle_s r = {oyOBJECT_RECTANGLE_S,0,0,0};
         oyRectangle_SetByRectangle( &r, &output_rectangle );
-        oyRectangle_Scale( &r, image->width );
+        oyRectangle_Scale( &r, width );
         printf( "%s:%d output rectangle: %s start_xy:%.04g %.04g\n",
                 strrchr(__FILE__,'/')+1, __LINE__,
                 oyRectangle_Show(&r),
-                ticket->start_xy[0]*image->width, ticket->start_xy[1]*image->width );
+                ticket->start_xy[0]*width, ticket->start_xy[1]*width );
         }
 #endif
         oyPixelAccess_ChangeRectangle( ticket,
-                                       -px/(double)image->width,
-                                       -py/(double)image->width,
+                                       -px/(double)width,
+                                       -py/(double)width,
                                        &output_rectangle );
       }
 
