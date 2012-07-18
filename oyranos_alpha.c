@@ -13101,13 +13101,14 @@ int            oyRectangle_SamplesFromImage (
 
     if(!image_rectangle)
     {
-      oyRectangle_SetGeo( pixel_rectangle, 0,0, image->width, image->height );
+      oyRectangle_SetGeo( pixel_rectangle, 0,0, oyImage_GetWidth(image),
+                                                oyImage_GetHeight(image) );
       pixel_rectangle->width *= channel_n;
 
     } else
     {
       oyRectangle_SetByRectangle( pixel_rectangle, image_rectangle );
-      oyRectangle_Scale( pixel_rectangle, image->width );
+      oyRectangle_Scale( pixel_rectangle, oyImage_GetWidth(image) );
       pixel_rectangle->x *= channel_n;
       pixel_rectangle->width *= channel_n;
       oyRectangle_Round( pixel_rectangle );
@@ -15577,8 +15578,8 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       char bytes[48];
 
       int cchan_n = oyProfile_GetChannelsCount( image->profile_ );
-      int channels = oyToChannels_m( image->layout_[0] );
-      oyDATATYPE_e data_type = oyToDataType_m( image->layout_[0] );
+      int channels = oyToChannels_m( image->layout_[oyLAYOUT] );
+      oyDATATYPE_e data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
       int alpha = channels - cchan_n;
       int byteps = oySizeofDatatype( data_type );
       const char * colourspacename = oyProfile_GetText( image->profile_,
@@ -21687,14 +21688,14 @@ oyPixelAccess_s *  oyPixelAccess_Create (
      
     s->data_in = filter->image_->data; */
     if(image)
-    w = image->width;
+    w = oyImage_GetWidth(image);
 
     /** The filters have no obligation to pass end to end informations.
         The ticket must hold all pices of interesst.
      */
     s->output_image_roi->width = 1.0;
     if(image)
-      s->output_image_roi->height = image->height / (double)image->width;
+      s->output_image_roi->height = oyImage_GetHeight(image) / (double)oyImage_GetWidth(image);
     s->output_image = oyImage_Copy( image, 0 );
     s->graph = oyFilterGraph_FromNode( sock->node, 0 );
 
@@ -22041,6 +22042,10 @@ oyConversion_s * oyConversion_CreateFromImage (
   oyOptions_s * options = 0;
   char * module_reg = 0;
   oyImage_s * image_out = 0;
+  int layout_out = 0;
+  oyProfile_s * profile_in;
+  int chan_in;
+  int cchan_in;
 
   if(!image_in)
     return NULL;
@@ -22069,11 +22074,22 @@ oyConversion_s * oyConversion_CreateFromImage (
   if(error > 0)
     fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc" );
 
+  layout_out = oyDataType_m(buf_type_out);
+  profile_in = oyImage_GetProfile( image_in );
+  chan_in     = oyToChannels_m( oyImage_GetPixelLayout(image_in) );
+  cchan_in = oyProfile_GetChannelsCount( profile_in );
+
+  if(!chan_in && cchan_in)
+    chan_in = cchan_in;
+  /* preserve alpha */
+  layout_out |= oyChannels_m( oyProfile_GetChannelsCount(output_profile)
+                              + chan_in - cchan_in );
+
   /* Create a output image with supplied channel depth and profile */
-  image_out   = oyImage_Create( image_in->width, image_in->height,
+  image_out   = oyImage_Create( oyImage_GetWidth( image_in ),
+                                oyImage_GetHeight( image_in ),
                          0,
-                      oyChannels_m(oyProfile_GetChannelsCount(output_profile)) |
-                          oyDataType_m(buf_type_out),
+                         layout_out,
                          output_profile,
                          0 );
 
@@ -22249,7 +22265,7 @@ int                oyConversion_Set  ( oyConversion_s    * conversion,
     // use the output
     oyImage_s * image = oyConversion_GetImage( context, OY_OUTPUT );
     // get the data and draw the image
-    for(i = 0; i < image->height; ++i)
+    for(i = 0; i < oyImage_GetHeight(image); ++i)
     {
       image_data = image->getLine( image, i, &height, -1, &is_allocated );
 
