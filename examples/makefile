@@ -127,7 +127,7 @@ $(TARGET8):	$(TARGET8_OBJECTS)
 $(TARGET9):	$(SRCDIR)libraw/oyranos_file.cpp
 	mkdir -p libraw
 	echo Compiling $@ ...
-	-$(CXX) $(CXXFLAGS_) $< $(LDFLAGS) $(OY_LDFLAGS) -o $@
+	-$(CXX) $(CXXFLAGS_) $< $(LDFLAGS) $(OY_LDFLAGS) -lm -o $@
 
 $(TARGET10):	$(SRCDIR)oyranos_profile_graph/oyranos_profile_graph.c
 	mkdir -p oyranos_profile_graph
@@ -138,7 +138,7 @@ $(TARGET10):	$(SRCDIR)oyranos_profile_graph/oyranos_profile_graph.c
 $(TARGET11):	$(SRCDIR)oyranos_convert/oyranos_convert.c
 	mkdir -p oyranos_convert
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS_) $< $(LDFLAGS) $(OY_LDFLAGS) $(OFORMS_FLAGS) -o $@
+	-$(CC) $(CFLAGS_) $< $(LDFLAGS) $(OY_LDFLAGS) $(OFORMS_FLAGS) -lm -o $@
 
 ../oyranos_logo.ppm:	$(SRCDIR)../oyranos_logo.png
 	-cat $(SRCDIR)../oyranos_logo.png | pngtopnm > $@
