@@ -1495,6 +1495,9 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
 int            oyImage_FromFile      ( const char        * file_name,
                                        oyImage_s        ** image,
                                        oyObject_s          object );
+int            oyImage_ToFile        ( oyImage_s         * image,
+                                       const char        * file_name,
+                                       oyOptions_s       * opts );
 oyImage_s *    oyImage_Copy          ( oyImage_s         * image,
                                        oyObject_s          object );
 int            oyImage_Release       ( oyImage_s        ** image );
