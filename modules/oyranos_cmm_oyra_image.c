@@ -116,6 +116,7 @@ int      oyraFilterPlug_ImageWriteRun (
     const char * filename = oyOptions_FindString( node->core->options_, "filename", 0 );
     const char * fileext = 0;
     char * file_ext = 0;
+    int run = -1;
 
     if(filename)
     {
@@ -185,6 +186,7 @@ int      oyraFilterPlug_ImageWriteRun (
         {
           result = api7->oyCMMFilterPlug_Run( requestor_plug, ticket );
           i = n;
+          run = i;
         }
 
         if(api->release)
@@ -192,6 +194,11 @@ int      oyraFilterPlug_ImageWriteRun (
       }
       oyCMMapiFilters_Release( &apis );
     }
+
+    if( run < 0 )
+      oyra_msg( oyMSG_WARN, (oyStruct_s*)requestor_plug,
+             OY_DBG_FORMAT_ "Could not find fitting file_write plugin. %d",
+             OY_DBG_ARGS_, n );
 
     if( !n )
       oyra_msg( oyMSG_WARN, (oyStruct_s*)requestor_plug,
