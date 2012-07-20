@@ -100,25 +100,32 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
                                        oyPixelAccess_s   * ticket )
 {
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyFilterPlug_s * plug = 0;
-  oyFilterNode_s * input_node = 0,
-                 * node = 0;
+  oyFilterNode_s * node = 0;
   int result = 0;
   const char * filename = 0;
+  FILE * fp = 0;
 
-  node = socket->node;
-  plug = (oyFilterPlug_s *)node->plugs[0];
-  input_node = plug->remote_socket_->node;
+  if(socket)
+    node = socket->node;
 
   /* to reuse the requestor_plug is a exception for the starting request */
-  result = input_node->api7_->oyCMMFilterPlug_Run( plug, ticket );
+  if(node)
+    result = node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket );
+  else
+    result = 1;
 
   if(result <= 0)
     filename = oyOptions_FindString( node->core->options_, "filename", 0 );
 
-  if(filename && socket)
+  if(filename)
+    fp = fopen( filename, "wb" );
+
+  if(fp)
   {
     oyImage_s *image_output = (oyImage_s*)socket->data;
+
+    fclose (fp); fp = 0;
+
     result = oyImage_WritePPM( image_output, filename, node->relatives_ );
   }
 
@@ -327,6 +334,16 @@ oyCMMapi4_s   oyra_api4_image_write_ppm = {
   &oyra_api4_image_write_ppm_ui        /**< oyCMMui_s *ui */
 };
 
+char * oyra_api7_image_output_ppm_properties[] =
+{
+  "file=write",    /* file load|write */
+  "image=pixel",  /* image type, pixel/vector/font */
+  "layers=1",     /* layer count, one for plain images */
+  "icc=0",        /* image type ICC profile support */
+  "ext=ppm,pnm,pbm,pgm,pfm", /* supported extensions */
+  0
+};
+
 /** @instance oyra_api7
  *  @brief    oyra oyCMMapi7_s implementation
  *
@@ -364,7 +381,9 @@ oyCMMapi7_s   oyra_api7_image_write_ppm = {
   0,   /* plugs_last_add */
   (oyConnector_s**) oyra_imageOutputPPM_connectors_socket,   /* sockets */
   1,   /* sockets_n */
-  0    /* sockets_last_add */
+  0,    /* sockets_last_add */
+
+  oyra_api7_image_output_ppm_properties /* char * properties */
 };
 
 
