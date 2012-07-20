@@ -204,6 +204,9 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
   int colour = PNG_COLOR_TYPE_GRAY;
   int byteps = oySizeofDatatype( data_type );
   png_text text_ptr[2];
+  time_t ttime;
+  png_time png_time_data;
+
 
    /* Open the file */
    fp = fopen(file_name, "wb");
@@ -270,8 +273,15 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
    png_set_IHDR(png_ptr, info_ptr, width, height, byteps*8, colour,
       PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
+  /* set ICC profile */
   pmem = oyProfile_GetMem( prof, &psize, 0,0 );
   png_set_iCCP( png_ptr, info_ptr, (char*)colourspacename, 0, pmem, psize);
+  oyDeAllocateFunc_( &pmem );
+
+  /* set time stamp */
+  ttime= time(NULL); /* time right NOW */
+  png_convert_from_time_t( &png_time_data, ttime );
+  png_set_tIME( png_ptr, info_ptr, &png_time_data );
 
   /* Optionally write comments into the image */
   if(oyOptions_FindString( options, "comment", 0 ))
@@ -411,10 +421,6 @@ int      oPNGFilterPlug_ImageOutputPNGWrite (
     fclose (fp); fp = 0;
 
     result = oyImage_WritePNG( image, filename, node->core->options_ );
-
-    /*message( oyMSG_WARN, (oyStruct_s*)node,
-             OY_DBG_FORMAT_ "write file %s",
-             OY_DBG_ARGS_, filename );*/
   }
 
   return result;
