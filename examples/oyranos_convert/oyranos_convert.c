@@ -410,15 +410,20 @@ int main( int argc , char** argv )
       data_type = oyToDataType_m(pixel_layout);
       p = oyProfile_FromFile(output_profile, 0,0);
       if(!p)
+      {
           WARNc1_S("Could not open profile: %s", input);
           error = 1;
+      }
       oyConversion_s * cc = oyConversion_CreateFromImage (
                                 image, node_name, module_options, 
                                 p, data_type, flags, 0 );
 
       error = oyConversion_RunPixels( cc, 0 );
       image = oyConversion_GetImage( cc, OY_OUTPUT );
-      error = oyImage_WritePPM( image, output, input );
+      oyConversion_Release( &cc );
+      oyOptions_SetFromText( &opts, "//" OY_TYPE_STD "/file_write/comment",
+                             input, OY_CREATE_NEW );
+      error = oyImage_ToFile( image, output, opts );
 
       oyImage_Release( &image );
     }
