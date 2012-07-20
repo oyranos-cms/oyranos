@@ -276,7 +276,7 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
   /* set ICC profile */
   pmem = oyProfile_GetMem( prof, &psize, 0,0 );
   png_set_iCCP( png_ptr, info_ptr, (char*)colourspacename, 0, pmem, psize);
-  oyDeAllocateFunc_( &pmem );
+  oyDeAllocateFunc_( pmem ); pmem = 0;
 
   /* set time stamp */
   ttime= time(NULL); /* time right NOW */
