@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2012-07-31 07:00+0200\n"
+"POT-Creation-Date: 2012-08-01 08:49+0200\n"
 "PO-Revision-Date: 2008-10-23 20:49+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -26,6 +26,12 @@ msgstr "VAROVANI"
 #, c-format
 msgid "!!! ERROR"
 msgstr "!!! CHYBA"
+
+#: oyranos_io_core.c:71 oyranos_io_core.c:210 oyranos_alpha.c:7295
+#: oyranos_alpha.c:7853
+#, fuzzy
+msgid "Could not open profile"
+msgstr "Nemohu nacist pismo v:"
 
 #: oyranos_io_core.c:301
 msgid "Could not download from WWW. Please install curl or wget."
@@ -81,20 +87,20 @@ msgstr "soubor existuje, odstrante jej prosim pred instalaci noveho profilu."
 msgid "will overwrite policy file"
 msgstr "prepise soubor pravidel"
 
-#: oyranos_check.c:72 oyranos_alpha.c:8266
+#: oyranos_check.c:72 oyranos_alpha.c:8267
 msgid "not found:"
 msgstr "nenalezeno"
 
 #: oyranos_cmm.c:64 oyranos_alpha.c:568 oyranos_alpha.c:873
 #: oyranos_alpha.c:1447 oyranos_alpha.c:3704 oyranos_alpha.c:4914
-#: oyranos_alpha.c:5979 oyranos_alpha.c:8481 oyranos_alpha.c:11642
-#: oyranos_alpha.c:12300 oyranos_alpha.c:13020 oyranos_alpha.c:13627
-#: oyranos_alpha.c:14617 oyranos_alpha.c:16025 oyranos_alpha.c:16621
-#: oyranos_alpha.c:16846 oyranos_alpha.c:17145 oyranos_alpha.c:18204
-#: oyranos_alpha.c:18494 oyranos_alpha.c:18575 oyranos_alpha.c:18844
-#: oyranos_alpha.c:20566 oyranos_alpha.c:20850 oyranos_alpha.c:21686
-#: oyranos_alpha.c:21981 oyranos_alpha.c:23004 oyranos_alpha.c:23611
-#: oyranos_alpha.c:23869 API_generated/oyBlob_s_.c:169
+#: oyranos_alpha.c:5979 oyranos_alpha.c:8482 oyranos_alpha.c:11643
+#: oyranos_alpha.c:12301 oyranos_alpha.c:13021 oyranos_alpha.c:13628
+#: oyranos_alpha.c:14618 oyranos_alpha.c:16026 oyranos_alpha.c:16622
+#: oyranos_alpha.c:16847 oyranos_alpha.c:17146 oyranos_alpha.c:18205
+#: oyranos_alpha.c:18495 oyranos_alpha.c:18576 oyranos_alpha.c:18845
+#: oyranos_alpha.c:20567 oyranos_alpha.c:20851 oyranos_alpha.c:21687
+#: oyranos_alpha.c:21982 oyranos_alpha.c:23005 oyranos_alpha.c:23612
+#: oyranos_alpha.c:23870 API_generated/oyBlob_s_.c:169
 #: API_generated/oyPointer_s_.c:164 API_generated/oyHash_s_.c:155
 #: API_generated/oyName_s_.c:48 API_generated/oyObserver_s.c:51
 #: API_generated/oyOption_s_.c:176 API_generated/oyOptions_s_.c:59
@@ -1798,8 +1804,8 @@ msgstr "Popis"
 #: oyranos_gamma.c:851 oyranos_gamma.c:853 oyranos_gamma.c:867
 #: oyranos_gamma.c:874 oyranos_gamma.c:878 oyranos_gamma.c:983
 #: oyranos_gamma.c:986 oyranos_gamma.c:988 oyranos_gamma.c:1001
-#: oyranos_alpha.c:19786 oyranos_alpha.c:19797 modules/oyranos_cmm_lcms.c:2142
-#: modules/oyranos_cmm_lcm2.c:2492 modules/oyranos_cmm_oyra_image.c:896
+#: oyranos_alpha.c:19787 oyranos_alpha.c:19798 modules/oyranos_cmm_lcms.c:2142
+#: modules/oyranos_cmm_lcm2.c:2520 modules/oyranos_cmm_oyra_image.c:896
 #: modules/oyranos_cmm_oyra_image.c:901 modules/oyranos_cmm_oyra_image.c:911
 #: modules/devices/oyranos_monitor_x11.c:160
 #: modules/devices/oyranos_monitor_x11.c:190
@@ -2082,15 +2088,10 @@ msgid ""
 "point to a Oyranos module loader library?"
 msgstr ""
 
-#: oyranos_alpha.c:7078 oyranos_alpha.c:7841 oyranos_alpha.c:24804
-#: oyranos_alpha.c:24887
+#: oyranos_alpha.c:7078 oyranos_alpha.c:7842 oyranos_alpha.c:24805
+#: oyranos_alpha.c:24888
 #, fuzzy
 msgid "Could not open device"
-msgstr "Nemohu nacist pismo v:"
-
-#: oyranos_alpha.c:7295 oyranos_alpha.c:7852
-#, fuzzy
-msgid "Could not open profile"
 msgstr "Nemohu nacist pismo v:"
 
 #: oyranos_alpha.c:7303
@@ -2103,78 +2104,88 @@ msgstr "Nemohu nacist pismo v:"
 msgid "Could not open ICC profile"
 msgstr "Nemohu nacist pismo v:"
 
-#: oyranos_alpha.c:7346 oyranos_alpha.c:8652 oyranos_alpha.c:8657
-msgid "install in the OpenIccDirectory icc path"
+#: oyranos_alpha.c:7346
+msgid "Install the missing profile in the OpenIccDirectory path."
 msgstr ""
 
-#: oyranos_alpha.c:8257
+#: oyranos_alpha.c:7347
+msgid ""
+"Profile installation can be done using oyranos-profile-install or oyranos-"
+"profiles."
+msgstr ""
+
+#: oyranos_alpha.c:8258
 msgid "found issues parsing JSON"
 msgstr ""
 
-#: oyranos_alpha.c:8650 oyranos_alpha.c:8656
+#: oyranos_alpha.c:8651 oyranos_alpha.c:8657
 #, fuzzy
 msgid "Could not open default ICC profile"
 msgstr "Nemohu nacist pismo v:"
 
-#: oyranos_alpha.c:8651
+#: oyranos_alpha.c:8652
 msgid "You can get them from http://sf.net/projects/openicc"
 msgstr ""
 
-#: oyranos_alpha.c:8742
+#: oyranos_alpha.c:8653 oyranos_alpha.c:8658
+msgid "install in the OpenIccDirectory icc path"
+msgstr ""
+
+#: oyranos_alpha.c:8743
 #, fuzzy
 msgid "Wrong ICC profile id detected"
 msgstr "Nalezena chyba v tagu ICC profilu!"
 
-#: oyranos_alpha.c:8752
+#: oyranos_alpha.c:8753
 #, fuzzy
 msgid "No ICC profile id detected"
 msgstr "hlavicka ICC profilu"
 
-#: oyranos_alpha.c:8762
+#: oyranos_alpha.c:8763
 #, fuzzy
 msgid "ICC profile id written"
 msgstr "hlavicka ICC profilu"
 
-#: oyranos_alpha.c:12797
+#: oyranos_alpha.c:12798
 msgid "found issues while moving in profile"
 msgstr ""
 
-#: oyranos_alpha.c:17448 oyranos_alpha.c:17466 oyranos_alpha.c:17567
-#: oyranos_alpha.c:17583 API_generated/oyranos_object.c:157
+#: oyranos_alpha.c:17449 oyranos_alpha.c:17467 oyranos_alpha.c:17568
+#: oyranos_alpha.c:17584 API_generated/oyranos_object.c:157
 #: API_generated/oyranos_object.c:175 API_generated/oyranos_object.c:276
 #: API_generated/oyranos_object.c:292
 msgid "with '.' is not allowed"
 msgstr ""
 
-#: oyranos_alpha.c:19250
+#: oyranos_alpha.c:19251
 msgid "attempt to add a incomplete filter"
 msgstr "pokus o pridani neuplneho filtru"
 
-#: oyranos_alpha.c:19312
+#: oyranos_alpha.c:19313
 msgid "?? Nothing to add ??"
 msgstr "?? Nic k pridani ??"
 
-#: oyranos_alpha.c:19727 API_generated/oyObserver_s_.c:53
+#: oyranos_alpha.c:19728 API_generated/oyObserver_s_.c:53
 #: API_generated/oyObserver_s.c:349 API_generated/oyObserver_s.c:549
 #: API_generated/oyObserver_s.c:627
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:46
 msgid "Signal"
 msgstr ""
 
-#: oyranos_alpha.c:19866 oyranos_alpha.c:22885 oyranos_alpha.c:24413
+#: oyranos_alpha.c:19867 oyranos_alpha.c:22886 oyranos_alpha.c:24414
 #: API_generated/oyOptions_s.c:2120
 msgid "error in module:"
 msgstr ""
 
-#: oyranos_alpha.c:22855
+#: oyranos_alpha.c:22856
 msgid "Found no node in conversion. give up"
 msgstr ""
 
-#: oyranos_alpha.c:23577
+#: oyranos_alpha.c:23578
 msgid "---"
 msgstr "---"
 
-#: oyranos_alpha.c:24421 API_generated/oyOptions_s.c:2128
+#: oyranos_alpha.c:24422 API_generated/oyOptions_s.c:2128
 #, fuzzy
 msgid "Could not allocate memory for:"
 msgstr "Nelze alokovat pamet pro:"
@@ -2270,17 +2281,17 @@ msgstr "nenalezena hlavicka"
 msgid "Already enabled"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2015 modules/oyranos_cmm_lcm2.c:2321
+#: modules/oyranos_cmm_lcms.c:2015 modules/oyranos_cmm_lcm2.c:2349
 #, fuzzy
 msgid "Extended Options"
 msgstr "Obecne volby:"
 
-#: modules/oyranos_cmm_lcms.c:2020 modules/oyranos_cmm_lcm2.c:2326
+#: modules/oyranos_cmm_lcms.c:2020 modules/oyranos_cmm_lcm2.c:2354
 #, fuzzy
 msgid "Black Preservation"
 msgstr "Pouzit kompenzaci cerneho bodu (BPC)"
 
-#: modules/oyranos_cmm_lcms.c:2023 modules/oyranos_cmm_lcm2.c:2329
+#: modules/oyranos_cmm_lcms.c:2023 modules/oyranos_cmm_lcm2.c:2357
 msgid "Decide how to preserve the black channel for Cmyk to Cmyk transforms"
 msgstr ""
 
@@ -2295,16 +2306,16 @@ msgid ""
 "complex and tries to preserve the WHOLE K plane."
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2046 modules/oyranos_cmm_lcm2.c:2352
+#: modules/oyranos_cmm_lcms.c:2046 modules/oyranos_cmm_lcm2.c:2380
 #, fuzzy
 msgid "Optimization"
 msgstr "Separace"
 
-#: modules/oyranos_cmm_lcms.c:2049 modules/oyranos_cmm_lcm2.c:2355
+#: modules/oyranos_cmm_lcms.c:2049 modules/oyranos_cmm_lcm2.c:2383
 msgid "Color Transforms can be differently stored internally"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2052 modules/oyranos_cmm_lcm2.c:2358
+#: modules/oyranos_cmm_lcms.c:2052 modules/oyranos_cmm_lcm2.c:2386
 msgid ""
 "Little CMS tries to optimize profile chains whatever possible. There are "
 "some built-in optimization schemes, and you can add new schemas by using a "
@@ -2317,18 +2328,18 @@ msgid ""
 msgstr ""
 
 #: modules/oyranos_cmm_lcms.c:2246 modules/oyranos_cmm_lcms.c:2318
-#: modules/oyranos_cmm_lcm2.c:2585 modules/oyranos_cmm_lcm2.c:2657
+#: modules/oyranos_cmm_lcm2.c:2613 modules/oyranos_cmm_lcm2.c:2685
 #: modules/devices/oyranos_cmm_oyX1.c:1554
 #: examples/dummy_filter/oyranos_cmm_dFil.c:593
 msgid "check"
 msgstr ""
 
 #: modules/oyranos_cmm_lcms.c:2248 modules/oyranos_cmm_lcms.c:2320
-#: modules/oyranos_cmm_lcm2.c:2587 modules/oyranos_cmm_lcm2.c:2659
+#: modules/oyranos_cmm_lcm2.c:2615 modules/oyranos_cmm_lcm2.c:2687
 msgid "Check if LittleCMS can handle a certain command."
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2254 modules/oyranos_cmm_lcm2.c:2593
+#: modules/oyranos_cmm_lcms.c:2254 modules/oyranos_cmm_lcm2.c:2621
 msgid "Create a ICC abstract proofing profile."
 msgstr ""
 
@@ -2345,8 +2356,8 @@ msgid ""
 msgstr ""
 
 #: modules/oyranos_cmm_lcms.c:2260 modules/oyranos_cmm_lcms.c:2332
-#: modules/oyranos_cmm_lcms.c:2582 modules/oyranos_cmm_lcm2.c:2599
-#: modules/oyranos_cmm_lcm2.c:2671 modules/oyranos_cmm_lcm2.c:2921
+#: modules/oyranos_cmm_lcms.c:2582 modules/oyranos_cmm_lcm2.c:2627
+#: modules/oyranos_cmm_lcm2.c:2699 modules/oyranos_cmm_lcm2.c:2949
 #: modules/oyranos_cmm_oydi.c:1013 modules/devices/oyranos_cmm_oyX1.c:1578
 #: modules/devices/oyranos_cmm_SANE.c:972
 #: modules/devices/oyranos_cmm_oyRE.cpp:884 modules/oyranos_cmm_oicc.c:957
@@ -2357,11 +2368,11 @@ msgstr ""
 msgid "help"
 msgstr "Napoveda"
 
-#: modules/oyranos_cmm_lcms.c:2262 modules/oyranos_cmm_lcm2.c:2601
+#: modules/oyranos_cmm_lcms.c:2262 modules/oyranos_cmm_lcm2.c:2629
 msgid "Create a ICC proofing profile."
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2264 modules/oyranos_cmm_lcm2.c:2603
+#: modules/oyranos_cmm_lcms.c:2264 modules/oyranos_cmm_lcm2.c:2631
 msgid ""
 "The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
 "abstract profiles from some given ICC profile. See the \"proofing_effect\" "
@@ -2369,7 +2380,7 @@ msgid ""
 msgstr ""
 
 #: modules/oyranos_cmm_lcms.c:2326 modules/oyranos_cmm_lcms.c:2334
-#: modules/oyranos_cmm_lcm2.c:2665 modules/oyranos_cmm_lcm2.c:2673
+#: modules/oyranos_cmm_lcm2.c:2693 modules/oyranos_cmm_lcm2.c:2701
 msgid "Create a ICC matrix profile."
 msgstr ""
 
@@ -2385,7 +2396,7 @@ msgid ""
 "additional attributes \"create_profile.colour_matrix\"."
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2336 modules/oyranos_cmm_lcm2.c:2675
+#: modules/oyranos_cmm_lcms.c:2336 modules/oyranos_cmm_lcm2.c:2703
 msgid ""
 "The littleCMS \"create_profile.colour_matrix\" command lets you create ICC "
 "profiles from some given colourimetric coordinates. See the \"create_profile"
@@ -2393,7 +2404,7 @@ msgid ""
 msgstr ""
 
 #. The following strings must match the categories for a menu entry.
-#: modules/oyranos_cmm_lcms.c:2465 modules/oyranos_cmm_lcm2.c:2804
+#: modules/oyranos_cmm_lcms.c:2465 modules/oyranos_cmm_lcm2.c:2832
 #: modules/devices/oyranos_cmm_oyX1.c:1153
 #: modules/devices/oyranos_cmm_qarz.c:1063
 #: modules/devices/oyranos_cmm_CUPS.c:829
@@ -2405,7 +2416,7 @@ msgid "Colour"
 msgstr "Barva"
 
 #: modules/oyranos_cmm_lcms.c:2466 modules/oyranos_cmm_lcms.c:2469
-#: modules/oyranos_cmm_lcm2.c:2805 modules/oyranos_cmm_lcm2.c:2808
+#: modules/oyranos_cmm_lcm2.c:2833 modules/oyranos_cmm_lcm2.c:2836
 #: modules/oyranos_cmm_oyra_image_ppm.c:251
 #: modules/oyranos_cmm_oyra_image_ppm.c:1060
 #: modules/devices/oyranos_cmm_oyX1.c:1154
@@ -2419,12 +2430,12 @@ msgid "/"
 msgstr ""
 
 #. CMM: abbreviation for Colour Matching Module
-#: modules/oyranos_cmm_lcms.c:2468 modules/oyranos_cmm_lcm2.c:2807
+#: modules/oyranos_cmm_lcms.c:2468 modules/oyranos_cmm_lcm2.c:2835
 #, fuzzy
 msgid "CMM"
 msgstr "CMM: "
 
-#: modules/oyranos_cmm_lcms.c:2470 modules/oyranos_cmm_lcm2.c:2809
+#: modules/oyranos_cmm_lcms.c:2470 modules/oyranos_cmm_lcm2.c:2837
 msgid "littleCMS"
 msgstr ""
 
@@ -2443,12 +2454,12 @@ msgid ""
 "extremely liberal open source license."
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2566 modules/oyranos_cmm_lcm2.c:2905
+#: modules/oyranos_cmm_lcms.c:2566 modules/oyranos_cmm_lcm2.c:2933
 #, fuzzy
 msgid "Marti"
 msgstr "Matice"
 
-#: modules/oyranos_cmm_lcms.c:2568 modules/oyranos_cmm_lcm2.c:2907
+#: modules/oyranos_cmm_lcms.c:2568 modules/oyranos_cmm_lcm2.c:2935
 msgid "Marti Maria"
 msgstr ""
 
@@ -2459,18 +2470,18 @@ msgid ""
 "Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2574 modules/oyranos_cmm_lcm2.c:2913
+#: modules/oyranos_cmm_lcms.c:2574 modules/oyranos_cmm_lcm2.c:2941
 #: modules/devices/oyranos_cmm_SANE.c:965
 #: modules/devices/oyranos_cmm_oyRE.cpp:877
 #: examples/dummy_device/oyranos_cmm_dDev.c:825
 msgid "MIT"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2576 modules/oyranos_cmm_lcm2.c:2915
+#: modules/oyranos_cmm_lcms.c:2576 modules/oyranos_cmm_lcm2.c:2943
 msgid "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2578 modules/oyranos_cmm_lcm2.c:2917
+#: modules/oyranos_cmm_lcms.c:2578 modules/oyranos_cmm_lcm2.c:2945
 #: modules/devices/oyranos_cmm_CUPS.c:946
 #: modules/devices/oyranos_cmm_SANE.c:969
 #: modules/devices/oyranos_cmm_oyRE.cpp:881
@@ -2478,7 +2489,7 @@ msgstr ""
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr ""
 
-#: modules/oyranos_cmm_lcms.c:2584 modules/oyranos_cmm_lcm2.c:2923
+#: modules/oyranos_cmm_lcms.c:2584 modules/oyranos_cmm_lcm2.c:2951
 msgid ""
 "The lcms \"colour.icc\" filter is a one dimensional colour conversion "
 "filter. It can both create a colour conversion context, some precalculated "
@@ -2502,7 +2513,7 @@ msgid ""
 "\"precalculation\"."
 msgstr ""
 
-#: modules/oyranos_cmm_lcm2.c:2332
+#: modules/oyranos_cmm_lcm2.c:2360
 msgid ""
 "Cmyk to Cmyk transforms can provide various strategies to preserve the black "
 "only channel. None means, black might change to Cmy and thus text prints not "
@@ -2513,38 +2524,38 @@ msgid ""
 "fair more complex and tries to preserve the WHOLE K plane."
 msgstr ""
 
-#: modules/oyranos_cmm_lcm2.c:2382
+#: modules/oyranos_cmm_lcm2.c:2410
 #, fuzzy
 msgid "Curves for Optimization"
 msgstr "Separace"
 
-#: modules/oyranos_cmm_lcm2.c:2385
+#: modules/oyranos_cmm_lcm2.c:2413
 msgid "Color Transform CLUT's can additionally use curves for special cases"
 msgstr ""
 
-#: modules/oyranos_cmm_lcm2.c:2388
+#: modules/oyranos_cmm_lcm2.c:2416
 msgid ""
 "Little CMS can use curves before and after CLUT's for special cases like "
 "gamma encoded values to and from linear gamma values. Performance will "
 "suffer."
 msgstr ""
 
-#: modules/oyranos_cmm_lcm2.c:2404
+#: modules/oyranos_cmm_lcm2.c:2432
 #, fuzzy
 msgid "Adaptation State"
 msgstr "Datum kalibrace"
 
-#: modules/oyranos_cmm_lcm2.c:2407
+#: modules/oyranos_cmm_lcm2.c:2435
 msgid "Adaptation state for absolute colorimetric intent"
 msgstr ""
 
-#: modules/oyranos_cmm_lcm2.c:2410
+#: modules/oyranos_cmm_lcm2.c:2438
 msgid ""
 "The adaption state should be between 0 and 1.0 and will apply to the "
 "absolute colorimetric intent."
 msgstr ""
 
-#: modules/oyranos_cmm_lcm2.c:2595
+#: modules/oyranos_cmm_lcm2.c:2623
 msgid ""
 "The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
 "abstract profiles from a given ICC profile for proofing. The filter expects "
@@ -2557,7 +2568,7 @@ msgid ""
 "oyProfile_s object."
 msgstr ""
 
-#: modules/oyranos_cmm_lcm2.c:2667
+#: modules/oyranos_cmm_lcm2.c:2695
 msgid ""
 "The littleCMS \"create_profile.colour_matrix\" command lets you create ICC "
 "profiles from some given colourimetric coordinates. The filter expects a "
@@ -2568,11 +2579,11 @@ msgid ""
 "and a gamma value."
 msgstr ""
 
-#: modules/oyranos_cmm_lcm2.c:2899
+#: modules/oyranos_cmm_lcm2.c:2927
 msgid "Little CMS 2"
 msgstr ""
 
-#: modules/oyranos_cmm_lcm2.c:2901
+#: modules/oyranos_cmm_lcm2.c:2929
 msgid ""
 "LittleCMS 2 is a CMM, a color management engine; it implements fast "
 "transforms between ICC profiles. \"Little\" stands for its small overhead. "
@@ -2583,14 +2594,14 @@ msgid ""
 "extremely liberal open source license."
 msgstr ""
 
-#: modules/oyranos_cmm_lcm2.c:2909
+#: modules/oyranos_cmm_lcm2.c:2937
 msgid ""
 "littleCMS 2 project; www: http://www.littlecms.com; support/email: "
 "support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "
 "Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project"
 msgstr ""
 
-#: modules/oyranos_cmm_lcm2.c:2925
+#: modules/oyranos_cmm_lcm2.c:2953
 msgid ""
 "The following options are available to create colour contexts:\n"
 " \"profiles_simulation\", a option of type oyProfiles_s, can contain device "

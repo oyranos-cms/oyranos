@@ -71,6 +71,7 @@ using namespace std;
 #define _DBG_ARGS_ (__FILE__ && strrchr(__FILE__,'/')) ? \
                    strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
 #define _(x) x
+#define DUMMY "filename\nblob"
 
 const char * GetText                 ( const char        * select,
                                        oyNAME_e            type,
@@ -419,7 +420,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       if (!handle_opt)
          error = oyOptions_SetFromText(&device->data,
                                        CMM_BASE_REG OY_SLASH "device_handle",
-                                       "filename\nblob",
+                                       DUMMY,
                                        OY_CREATE_NEW);
 
       /*Handle "supported_devices_info" option [OUT:informative]*/
@@ -620,7 +621,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 	 {
             error = oyOptions_SetFromText(&device->data,
                                           CMM_BASE_REG OY_SLASH "device_handle",
-                                          "filename\nblob",
+                                          DUMMY,
                                           OY_CREATE_NEW);
             if(error) WARNc2_S("%s %d", _("found issues"),error);
          }
@@ -1025,8 +1026,12 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
       if (device_handle.get() && device_handle->good())
          DeviceFromHandle(&device->backend_core, device_handle);
       else {
-         message( oyMSG_WARN, (oyStruct_s *) device, _DBG_FORMAT_
-               "Unable to open raw image %s", _DBG_ARGS_, filename?filename:"");
+         int level = oyMSG_WARN;
+         if(filename && strcmp( filename, DUMMY ) == 0)
+           level = oyMSG_DBG;
+
+         message( level, (oyStruct_s *) device, _DBG_FORMAT_
+               "Unable to open raw image \"%s\"", _DBG_ARGS_, filename?filename:"");
          return 1;
       }
       if(filename)

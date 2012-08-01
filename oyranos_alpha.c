@@ -7341,9 +7341,10 @@ OYAPI int  OYEXPORT
       /** Warn on not found profile. */
       {
         oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)device,
-                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s\n", OY_DBG_ARGS_,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s\n\t%s\n", OY_DBG_ARGS_,
                 _("Could not open ICC profile"), profile_name,
-                _("install in the OpenIccDirectory icc path") );
+                _("Install the missing profile in the OpenIccDirectory path."),
+                _("Profile installation can be done using oyranos-profile-install or oyranos-profiles.") );
       }
 
       if(has)

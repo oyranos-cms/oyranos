@@ -68,7 +68,7 @@ oyReadFileSize_(const char* name)
       fclose (fp);
 
     } else
-      WARNc1_S( "could not read %s", filename );
+      WARNc2_S( "%s: %s", _("Could not open profile"), filename );
   }
 
   DBG_MEM_ENDE
@@ -207,7 +207,7 @@ oyReadFileToMem_(const char* name, size_t *size,
     {
       mem = oyReadFilepToMem_( fp, size, allocate_func );
     } else {
-      WARNc1_S( "could not read: \"%s\"\n", filename );
+      WARNc2_S( "%s: %s", _("Could not open profile"), filename );
     }
   }
  
