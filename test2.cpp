@@ -673,17 +673,18 @@ oyTESTRESULT_e testOptionsSet ()
 
   int error = 0;
   oyOptions_s * setA = 0;
+  const char * t = NULL;
 
   fprintf(stdout, "\n" );
 
   error = oyOptions_SetFromText( &setA,
-                                 "//" OY_TYPE_STD "/filter/gamma_A",
+                                 "org/test/" OY_TYPE_STD "/filter/gamma_A",
                                  "1", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &setA,
-                                 "//" OY_TYPE_STD "/filter/gamma_A1",
+                                 "org/test/" OY_TYPE_STD "/filter/gamma_A1",
                                  "1", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &setA,
-                                 "//" OY_TYPE_STD "/filter/gamma_A12",
+                                 "org/test/" OY_TYPE_STD "/filter/gamma_A12",
                                  "1", OY_CREATE_NEW );
 
   if(!error && oyOptions_Count( setA ) == 3)
@@ -692,6 +693,29 @@ oyTESTRESULT_e testOptionsSet ()
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL, 
     "oyOptions_SetFromText() similiar registration failed" );
+  }
+
+  error = oyOptions_SetFromText( &setA,
+                                 "org/oyranos/" OY_TYPE_STD "/filter/gamma_A2",
+                                 "one\ntwo\nthree\nfour",
+                                 OY_CREATE_NEW | OY_STRING_LIST);
+  t = oyOptions_GetText( setA, oyNAME_NAME );
+  if(t && t[0] && oyOptions_Count( setA ) == 4)
+  {
+    oyOption_s * opt;
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOptions_GetText()                             good" );
+    fprintf( stdout, "%s\n", t );
+    opt = oyOptions_Get( setA, 3 );
+    fprintf( stdout, "fourth option\n" );
+    fprintf( stdout, "ValueText: %s\n", oyOption_GetValueText(opt, malloc ) );
+    fprintf( stdout, "NICK: %s\n", oyOption_GetText(opt, oyNAME_NICK) );
+    fprintf( stdout, "NAME: %s\n", oyOption_GetText(opt, oyNAME_NAME) );
+    fprintf( stdout, "DESCRIPTION: %s\n", oyOption_GetText(opt, oyNAME_DESCRIPTION) );
+    
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOptions_GetText()                           failed" );
   }
 
   oyOptions_Release( &setA );
