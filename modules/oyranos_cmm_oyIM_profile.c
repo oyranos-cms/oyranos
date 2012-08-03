@@ -1412,7 +1412,12 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
            len = tag->size_ * sizeof(char);
            tmp = oyAllocateFunc_( len );
+           if(oy_debug_memory)
+             DBG3_S( "%d "OY_PRINT_POINTER" "OY_PRINT_POINTER,
+                      len, tmp, &mem[8]);
            error = !memcpy( tmp, &mem[8], len - 8 );
+           /* explicitely set a string end */
+           tmp[len-8] = 0;
 
            while (strchr(tmp, 13) > (char*)0) { /* \r 013 0x0d */
              pos = strchr(tmp, 13);
