@@ -62,21 +62,36 @@ int          oyStringToLong          ( const char        * text,
 int          oyStringToDouble        ( const char        * text,
                                        double            * value )
 {
-  char * p = 0;
+  char * p = 0, * t;
   char * save_locale = 0;
+  int len = strlen(text);
+  int found = 1;
   save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_);
   setlocale(LC_NUMERIC, "C");
-  *value = strtod( text, &p );
+  /* avoid irritating valgrind output of "Invalid read of size 8"
+   * might be a glibc error or a false positive in valgrind */
+  t = oyAllocateFunc_( len + 2*sizeof(long) + 1 );
+  memcpy( t, text, len );
+  t[len] = 0;
+  if(0 && oy_debug_memory)
+  {
+    printf( OY_DBG_FORMAT_""OY_PRINT_POINTER" \"%s\" %d "OY_PRINT_POINTER" \"%s\"\n",
+            OY_DBG_ARGS_,(intptr_t)text, text, len,
+            t, t  );
+    fflush( stdout );
+  }
+
+  *value = strtod( t, &p );
+
   setlocale(LC_NUMERIC, save_locale);
-  oyFree_m_( save_locale );
+
   if(p && p != text && p[0] == '\000')
-    return 0;
-#if 0
-  else if(errno)
-    return errno;
-#endif
-  else
-    return 1;
+    found = 0;
+
+  oyFree_m_( t );
+  oyFree_m_( save_locale );
+
+  return found;
 }
 
 
@@ -135,9 +150,19 @@ char*              oyStringAppend_   ( const char        * text,
 
     if(text_len)
       memcpy( text_copy, text, text_len );
-      
+
     if(append_len)
+    {
+      if(0 && oy_debug_memory)
+      {
+        printf( OY_DBG_FORMAT_""OY_PRINT_POINTER" \"%s\" %d %d "OY_PRINT_POINTER" \"%s\"\n",
+                OY_DBG_ARGS_,(intptr_t)text_copy, text_copy, text_len,
+                append_len, append,append  );
+        fflush( stdout );
+      }
       memcpy( &text_copy[text_len], append, append_len );
+    }
+
     text_copy[text_len+append_len] = '\000';
   }
 
@@ -321,6 +346,9 @@ char**             oyStringSplit_    ( const char    * text,
 
         memcpy( list[i], start, len );
         list[i][len] = 0;
+        if(0 && oy_debug_memory)
+          printf( OY_DBG_FORMAT_""OY_PRINT_POINTER" %s %ld\n",
+                  OY_DBG_ARGS_,(intptr_t)list[i], list[i], len+1 );
         start += len + 1;
       }
     }
