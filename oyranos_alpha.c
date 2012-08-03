@@ -4505,10 +4505,8 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
       if(domain_n)
         /* fall back for pure DB contructed oyConfig_s */
         dopts = device->db;
-#ifdef DEBUG
-      else if(oy_debug > 2)
-        WARNc1_S("No key/values pairs found in %s", device->registration);
-#endif
+      else
+        DBG_PROG1_S("No key/values pairs found in %s", device->registration);
     }
 
     pattern_n = oyOptions_Count( pattern->db );
@@ -11249,11 +11247,9 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
         size_t offset = oyValueUInt32( ic_tag->offset );
         size_t tag_size = oyValueUInt32( ic_tag->size );
         char *tmp = 0;
-#ifdef DEBUG
-        oyChar **texts = 0;
+        char **texts = 0;
         int32_t texts_n = 0;
         int j;
-#endif
         oySTATUS_e status = oyOK;
         icTagSignature sig = oyValueUInt32( ic_tag->sig );
         icTagTypeSignature tag_type = 0;
@@ -11282,7 +11278,6 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
         if(error <= 0)
           error = !memcpy( tag_->profile_cmm_, profile_cmm, 4 );
 
-#ifdef DEBUG
         if(oy_debug > 3)
         {
           DBG_PROG5_S("%d[%d @ %d]: %s %s", 
@@ -11295,7 +11290,6 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
           if(texts_n && texts)
             oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
         }
-#endif
 
         if(i == pos-1)
           tag = oyProfileTag_Copy( tag_, 0 );
@@ -18074,6 +18068,8 @@ int    oyTextIccDictMatch            ( const char        * text,
   double dbl[2];
   int dbl_valid[2]; 
 
+  DBG_MEM_START
+
   if(text && pattern)
   {
     texts = oyStringSplit_(text, ',', &n, oyAllocateFunc_ );
@@ -18082,13 +18078,17 @@ int    oyTextIccDictMatch            ( const char        * text,
     for( i = 0; i < n; ++i)
     {
       t = texts[i];
+      DBG_MEM3_S( "%d: "OY_PRINT_POINTER" \"%s\"", i, (intptr_t)t, t );
       num_valid[0] = !oyStringToLong(t,&num[0]);
       dbl_valid[0] = !oyStringToDouble(t,&dbl[0]);
+      DBG_MEM
       for( j = 0; j < p_n; ++j )
       {
         p = patterns[j];
+        DBG_MEM4_S( "%d %d: "OY_PRINT_POINTER" \"%s\"", i, j, (intptr_t)t, p );
         num_valid[1] = !oyStringToLong(p,&num[1]);
         dbl_valid[1] = !oyStringToDouble(p,&dbl[1]);
+        DBG_MEM
 
         if((strcmp( t, p ) == 0) ||
            (num_valid[0] && num_valid[1] && num[0] == num[1]) ||
@@ -18104,6 +18104,7 @@ int    oyTextIccDictMatch            ( const char        * text,
       oyStringListRelease_( &patterns, p_n, oyDeAllocateFunc_ );
   }
 
+  DBG_MEM_ENDE
   return match;
 }
 
