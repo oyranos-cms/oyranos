@@ -357,7 +357,8 @@ int oyMessageFunc( int code, const oyPointer context_object, const char * format
   int error = 0;
   va_list list;
   size_t sz = 0;
-  int len = 0;
+  int len = 0,
+      l;
   oyStruct_s * c = (oyStruct_s*) context_object;
 
   va_start( list, format);
@@ -367,7 +368,9 @@ int oyMessageFunc( int code, const oyPointer context_object, const char * format
   {
     oyAllocHelper_m_(text, char, len + 1, oyAllocateFunc_, return 1);
     va_start( list, format);
-    len = vsnprintf( text, len+1, format, list);
+    l = vsnprintf( text, len+1, format, list);
+    if(l != len)
+      fprintf(stderr, "vsnprintf lengths differ: %d %d\n", l,len );
     va_end  ( list );
   }
 
