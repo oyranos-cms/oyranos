@@ -799,9 +799,9 @@ char**  oyLibPathsGet_( int             * count,
     if( (i >= 2 && (owner != oyUSER)) ||
         (i < 2 && (owner != oySYS)))
     {
-      if(getenv(vars[i]))
+      const char * var = getenv(vars[i]);
+      if(var)
       {
-        const char * var = getenv(vars[i]);
 
         if(strlen(var))
         {
@@ -878,10 +878,9 @@ char**  oyXDGPathsGet_( int             * count,
       if( ((i == 0 || i == 2) && data != oyNO) ||
           ((i == 1 || i == 3) && data != oyYES) )
     {
-      if(getenv(vars[i]))
+      const char * var = getenv(vars[i]);
+      if(var)
       {
-        const char * var = getenv(vars[i]);
-
         if(strlen(var))
         {
           char **tmp_neu;
