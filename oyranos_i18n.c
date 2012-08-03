@@ -65,8 +65,10 @@ void oyI18NInit_()
     oyStringAdd_( &temp, "NLSPATH=", oyAllocateFunc_, oyDeAllocateFunc_);
     oyStringAdd_( &temp, oy_domain_path, oyAllocateFunc_, oyDeAllocateFunc_);
     putenv(temp); /* Solaris */
+#if 0
     if(oy_debug_memory)
       oyFree_m_(temp);  /* putenv requires a static string ??? */
+#endif
 
     if(oy_debug)
       WARNc2_S("bindtextdomain( %s, %s )", oy_domain, oy_domain_path );
