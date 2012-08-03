@@ -7216,7 +7216,20 @@ OYAPI int  OYEXPORT
       oyProfiles_Release( &patterns );
  
       size = oyProfiles_Count(iccs);
-      oyAllocHelper_m_( rank_list, int32_t, oyProfiles_Count(iccs), 0, error = 1; return error );
+      if(size)
+      {
+        oyAllocHelper_m_( rank_list, int32_t, oyProfiles_Count(iccs), 0, error = 1; return error );
+      } else
+      {
+        /* Could not get ICC profile for a device name with ICC class */
+        WARNc3_S( "%s %s \"%s\"",
+                 _("Could not get ICC profile for"),
+                 device->registration,
+                 oyICCDeviceClassDescription( device_signature ) );
+        oyProfiles_Release( &iccs );
+        error = -1;
+      }
+
       if(error <= 0)
       {
         clck = oyClock();
@@ -7292,7 +7305,7 @@ OYAPI int  OYEXPORT
           } else
           {
             error = 1;
-            WARNc1_S( "%s",_("Could not open profile") );
+            WARNc1_S( "%s",_("Could not open ICC profile") );
           }
 
           if(profile_name_temp)
