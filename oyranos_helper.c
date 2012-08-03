@@ -195,13 +195,14 @@ void* oyAllocateFunc_           (size_t        size)
   {
     if(oy_debug_memory != 0)
       printf( OY_DBG_FORMAT_"allocate %d %lu + %lu byte in", OY_DBG_ARGS_,
-              oy_allocs_count_, (unsigned long) size, (unsigned long) sizeof(long));
+              oy_allocs_count_, (unsigned long) size, (unsigned long) 2*sizeof(long));
 
-    /* sizeof(long) is for better alignment and less valgrind positives */
-    ptr = malloc (size + sizeof(long));
+    /* sizeof(long) is for better alignment and less valgrind positives 
+     * 2*sizeof(long) helped on a oS-12.1 instal with glibc-2.14.1-14.27.1.x86_64 */
+    ptr = malloc (size + 2 * sizeof(long));
 
     if(oy_debug_memory != 0)
-      printf( " 0x%tX\n", (intptr_t)ptr);
+      printf( " "OY_PRINT_POINTER"\n", (intptr_t)ptr);
   }
 
   if( !ptr )
@@ -237,7 +238,7 @@ void  oyDeAllocateFunc_           (void*       block)
       {
         printf( OY_DBG_FORMAT_"found block with pos:%d size=%d", OY_DBG_ARGS_,
                 i, (int)oy_allocate_func_pool_size_[i] );
-        printf( " 0x%tX\n", (intptr_t)ptr);
+        printf( " "OY_PRINT_POINTER"\n", (intptr_t)ptr);
       }
 
       return;
@@ -251,7 +252,7 @@ void  oyDeAllocateFunc_           (void*       block)
     free( block );
     if(oy_debug_memory != 0)
     {
-      printf( OY_DBG_FORMAT_"%d remaining 0x%tX\n", OY_DBG_ARGS_,
+      printf( OY_DBG_FORMAT_"%d remaining "OY_PRINT_POINTER"\n", OY_DBG_ARGS_,
               --oy_allocs_count_, (intptr_t)block );
     }
   }
