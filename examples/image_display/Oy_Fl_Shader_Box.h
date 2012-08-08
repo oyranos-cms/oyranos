@@ -16,6 +16,11 @@ int              oyArray2d_ToPPM_    ( oyArray2d_s       * array,
 
 #include "Oy_Fl_Image_Widget.h"
 
+#ifndef _DBG_FORMAT_
+#define _DBG_FORMAT_ "%s:%d %s() "
+#define _DBG_ARGS_ (strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__),__LINE__,__func__
+#endif
+
 class Oy_Fl_Shader_Box : public Fl_Gl_Window,
                          public Oy_Fl_Image_Widget
 {
@@ -255,8 +260,7 @@ private:
     W = Oy_Fl_Image_Widget::w(),
     H = Oy_Fl_Image_Widget::h();
     if(oy_display_verbose)
-      printf("%s:%d %s() %dx%d+%d+%d %dx%d+%d+%d\n", 
-        strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__, __LINE__, __func__,
+      printf(_DBG_FORMAT_"%dx%d+%d+%d %dx%d+%d+%d\n",_DBG_ARGS_, 
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
         Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
         Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y());
@@ -300,7 +304,7 @@ private:
       glTranslatef(0,0,-10);
       gl_font(FL_HELVETICA_BOLD, 16 );
       */
-      printf("initialise %d %d  %dx%d\n", w_, h_,
+      fprintf( stderr, "initialise %d %d  %dx%d\n", w_, h_,
           Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h());
     }
     if(conversion())
@@ -325,10 +329,9 @@ private:
       if(channels == 4)
         gl_type = GL_RGBA;
 
-      if(0&&oy_display_verbose && image)
-        fprintf(stdout, "%s:%d pixellayout: %d width: %d channels: %d\n",
-                    strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
-                    __LINE__,
+      if(oy_display_verbose && image)
+        fprintf(stdout, _DBG_FORMAT_"pixellayout: %d width: %d channels: %d\n",
+                    _DBG_ARGS_,
                     pt, image->width, oyToChannels_m(pt) );
 
       if(!valid())
@@ -346,15 +349,18 @@ private:
       glBegin(GL_LINE_STRIP); glVertex2f(W,-H); glVertex2f(-W, H); glEnd();
 
       if(!image)
+      {
+        fprintf( stderr, _DBG_FORMAT_"no image!!!\n", _DBG_ARGS_);
         return;
+      }
 
       int frame_height = OY_MIN(image->height,H),
           frame_width = OY_MIN(image->width,W);
 
       int pos[4] = {-2,-2,-2,-2};
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
-      if(0&&oy_display_verbose)
-        fprintf( stderr, "%s():%d %d,%d %d %d\n", __FILE__,__LINE__,
+      if(oy_display_verbose)
+        fprintf( stderr, _DBG_FORMAT_"%d,%d %d %d\n",_DBG_ARGS_,
                  pos[0],pos[1],pos[2], pos[3] );
 
       /* get the data */
@@ -372,11 +378,9 @@ private:
 
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
 
-      if(0&&oy_display_verbose)
-        fprintf(stdout, "%s:%d draw %dx%d %dx%d\n",
-                    strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
-                    __LINE__,
-                    frame_width,frame_height,W,H);
+      if(oy_display_verbose)
+        fprintf(stderr, _DBG_FORMAT_"draw %dx%d %dx%d\n",_DBG_ARGS_,
+                        frame_width,frame_height, W,H );
     }
     w_ = oyImage_GetWidth(  display_image );
     h_ = oyImage_GetHeight( display_image );

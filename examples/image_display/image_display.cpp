@@ -144,7 +144,9 @@ main(int argc, char** argv)
              "\t--no-logo\tskip Oyranos logo\n"
              "\t--module <name>\tselect a Oyranos wrapped CMM\n"
              "\t--shader <file>\tset a CLUT from PPM image for colour transform\n"
-             );
+             "\t-v\t\tprint verbosely\n"
+             "\t--help\t\tprint this help text\n"
+            );
       exit(0);
     }
   }

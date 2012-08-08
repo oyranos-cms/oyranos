@@ -9,6 +9,11 @@
 #include "Oy_Fl_Double_Window.h"
 #include "Oy_Widget.h"
 
+#ifndef _DBG_FORMAT_
+#define _DBG_FORMAT_ "%s:%d %s() "
+#define _DBG_ARGS_ (strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__),__LINE__,__func__
+#endif
+
 class Oy_Fl_Image_Widget : public Fl_Widget, public Oy_Widget
 {
   int e, ox, oy, px, py;
@@ -22,13 +27,13 @@ public:
           oy = y() - Fl::event_y();
           fl_cursor( FL_CURSOR_MOVE, FL_BLACK, FL_WHITE );
 #if DEBUG_
-      printf("%s:%d e: %d ox:%d px:%d\n",strrchr(__FILE__,'/')+1,__LINE__,e, ox, px);
+      printf(_DBG_FORMAT_"e: %d ox:%d px:%d\n",_DBG_ARGS_,e, ox, px);
 #endif
           return (1);
         case FL_RELEASE:
           fl_cursor( FL_CURSOR_DEFAULT, FL_BLACK, FL_WHITE );
 #if DEBUG_
-      printf("%s:%d e: %d ox:%d px:%d\n",strrchr(__FILE__,'/')+1,__LINE__,e, ox, px);
+      printf(_DBG_FORMAT_"e: %d ox:%d px:%d\n",_DBG_ARGS_,e, ox, px);
 #endif
           return (1);
         case FL_DRAG:
@@ -37,7 +42,7 @@ public:
           ox = x() - Fl::event_x();
           oy = y() - Fl::event_y();
 #if DEBUG_
-      printf("%s:%d e: %d ox:%d px:%d oy: %d py:%d\n",strrchr(__FILE__,'/')+1,__LINE__,e, ox, px,oy,py);
+      printf(_DBG_FORMAT_"e: %d ox:%d px:%d oy: %d py:%d\n",_DBG_ARGS_,e, ox, px,oy,py);
 #endif
           redraw();
           return (1);
@@ -112,8 +117,8 @@ public:
       }
 
 #if DEBUG_
-      printf( "%s:%d new display rectangle: %s +%d+%d +%d+%d\n",
-              strrchr(__FILE__,'/')+1, __LINE__,
+      printf( _DBG_FORMAT_"new display rectangle: %s +%d+%d +%d+%d\n",
+              _DBG_ARGS_,
               oyRectangle_Show(display_rectangle), x(), y(), px, py );
 #endif
 
@@ -132,8 +137,8 @@ public:
         oyRectangle_s r = {oyOBJECT_RECTANGLE_S,0,0,0};
         oyRectangle_SetByRectangle( &r, &output_rectangle );
         oyRectangle_Scale( &r, width );
-        printf( "%s:%d output rectangle: %s start_xy:%.04g %.04g\n",
-                strrchr(__FILE__,'/')+1, __LINE__,
+        printf( _DBG_FORMAT_"output rectangle: %s start_xy:%.04g %.04g\n",
+                _DBG_ARGS_,
                 oyRectangle_Show(&r),
                 ticket->start_xy[0]*width, ticket->start_xy[1]*width );
         }
@@ -169,8 +174,8 @@ public:
       if(pt != 0 &&
          ((channels != 4 && channels != 3) || data_type != data_type_request))
       {
-        printf( "%s:%d WARNING: wrong image data format: %s\n"
-                "need 4 or 3 channels with %s\n",__FILE__,__LINE__,
+        printf( _DBG_FORMAT_"WARNING: wrong image data format: %s\n"
+                "need 4 or 3 channels with %s\n",_DBG_ARGS_,
                 image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "",
                 oyDatatypeToText( data_type_request ) );
         return;
