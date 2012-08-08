@@ -139,7 +139,12 @@ main(int argc, char** argv)
     if(argc > 1 && (strcmp(argv[i], "--help") == 0 ||
        strcmp(argv[i], "-h") == 0 ) )
     {
-      printf("Usage: image_display --use-no-gl   use normal pixel copy\n" );
+      printf("Usage: image_display [options] <image_file>\n"
+             "\t--use-no-gl\tuse normal pixel copy\n"
+             "\t--no-logo\tskip Oyranos logo\n"
+             "\t--module <name>\tselect a Oyranos wrapped CMM\n"
+             "\t--shader <file>\tset a CLUT from PPM image for colour transform\n"
+             );
       exit(0);
     }
   }
