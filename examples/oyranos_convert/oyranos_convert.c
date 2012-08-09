@@ -372,8 +372,10 @@ int main( int argc , char** argv )
           for(b = 0; b < width; ++b)
           {
             in[2] = floor((double) b / (width - 1) * 65535.0 + 0.5);
+
             for(j = 0; j < 3; ++j)
-              buf[a*size*3+b*+width*3+l*3+j] = in[j];
+              /* BGR */
+              buf[b*size*3+a*+width*3+l*3+j] = in[j];
           }
         }
       }
