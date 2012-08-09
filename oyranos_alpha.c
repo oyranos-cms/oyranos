@@ -13725,8 +13725,8 @@ OYAPI oyArray2d_s * OYEXPORT
     {
       data = s->oy_->allocateFunc_( width * height *
                                     oySizeofDatatype( data_type ) );
-      DBG_NUM2_S("allocate image data: 0x%x size: %d ", (int)(intptr_t)
-                  data, width * height * oySizeofDatatype( data_type ) );
+      DBGs_NUM2_S( s, "allocate image data: 0x%x size: %d ", (int)(intptr_t)
+                   data, width * height * oySizeofDatatype( data_type ) );
       error = oyArray2d_DataSet( s, data );
       s->own_lines = oyYES;
     }
@@ -15095,6 +15095,7 @@ int            oyImage_SetData       ( oyImage_s         * image,
     if(s->pixel_data && s->pixel_data->release)
       s->pixel_data->release( &s->pixel_data );
     s->pixel_data = *pixel_data;
+    DBGs_NUM1_S( s, "pixel_data[%d]", oyStruct_GetId((oyStruct_s*)*pixel_data));
     *pixel_data = 0;
   }
 
@@ -21587,7 +21588,7 @@ void oyShowGraph_( oyFilterNode_s * s, const char * selector )
 void               oyShowConversion_ ( oyConversion_s    * conversion,
                                        uint32_t            flags )
 {
-  char * ptr = 0;
+  char * ptr = 0, * t = 0, * t2 = 0, * command = 0;
   int error = 0;
   oyConversion_s * s = conversion;
   oyCheckType__m( oyOBJECT_CONVERSION_S, return )
@@ -21595,15 +21596,39 @@ void               oyShowConversion_ ( oyConversion_s    * conversion,
 
   ptr = oyConversion_ToText( s, "Conversion Graph", 0, oyAllocateFunc_ );
 
-  oyWriteMemToFile_( "test.dot", ptr, strlen(ptr) );
-  if(!(flags & 0x01))
-    error = system("dot -Tps test.dot -o test.ps; gv -spartan -antialias test.ps &");
-  else
-    error = system("dot -Tps test.dot -o test.ps &");
-  if(error)
-    WARNc1_S("error during calling \"dot -Tps test.dot -o test.ps; gv -spartan -antialias test.ps &\": %d", error);
+  oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                      "test-%d.dot",
+                      oyStruct_GetId( (oyStruct_s*) conversion ) );
+  oyStringAddPrintf_( &t2, oyAllocateFunc_, oyDeAllocateFunc_,
+                      "test-%d.ps",
+                      oyStruct_GetId( (oyStruct_s*) conversion ) );
 
-  oyDeAllocateFunc_(ptr); ptr = 0;
+  oyWriteMemToFile_( t, ptr, strlen(ptr) );
+  if(!(flags & 0x01))
+  {
+    STRING_ADD( command, "dot -Tps ");
+    STRING_ADD( command, t );
+    STRING_ADD( command, " -o ");
+    STRING_ADD( command, t2 );
+    STRING_ADD( command, "; gv -spartan -antialias ");
+    STRING_ADD( command, t2 );
+    STRING_ADD( command, " &");
+  } else
+  {
+    STRING_ADD( command, "dot -Tps ");
+    STRING_ADD( command, t );
+    STRING_ADD( command, " -o ");
+    STRING_ADD( command, t2 );
+    STRING_ADD( command, " &");
+  }
+  error = system(command);
+  if(error)
+    WARNc2_S("error during calling \"%s\": %d", command, error);
+
+  oyFree_m_(ptr);
+  oyFree_m_(t);
+  oyFree_m_(t2);
+  oyFree_m_(command);
 }
 
 
@@ -22402,7 +22427,7 @@ int                oyConversion_RunPixels (
       pixel_access = oyPixelAccess_Create( 0,0, plug,
                                            oyPIXEL_ACCESS_IMAGE, 0 );
       clck = oyClock() - clck;
-      DBG_NUM1_S("oyPixelAccess_Create(): %g", clck/1000000.0 );
+      DBGs_NUM1_S(pixel_access,"oyPixelAccess_Create(): %g", clck/1000000.0 );
     }
     tmp_ticket = 1;
   }
@@ -22422,18 +22447,21 @@ int                oyConversion_RunPixels (
                                 &pixel_access->array,
                                 pixel_access->output_image_roi, 0 );
     clck = oyClock() - clck;
-    DBG_NUM1_S("oyImage_FillArray(): %g", clck/1000000.0 );
+    DBGs_NUM1_S( pixel_access,"oyImage_FillArray(): %g", clck/1000000.0 );
     error = ( result != 0 );
   }
 
   /* run on the graph */
   if(error <= 0)
   {
+    DBGs_NUM2_S( pixel_access, "Run: node_out[%d] image_out[%d]",
+                 oyStruct_GetId((oyStruct_s*)node_out),
+                 oyStruct_GetId((oyStruct_s*)image_out) );
     clck = oyClock();
     error = node_out->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
     clck = oyClock() - clck;
-    DBG_NUM1_S( "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g",
-                clck/1000000.0 );
+    DBGs_NUM1_S( pixel_access, 
+         "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g", clck/1000000.0 );
   }
 
   if(error != 0 && pixel_access)
@@ -22445,14 +22473,14 @@ int                oyConversion_RunPixels (
     clck = oyClock();
     oyFilterGraph_SetFromNode( pixel_access->graph, conversion->input, 0, 0 );
     clck = oyClock() - clck;
-    DBG_NUM1_S("oyFilterGraph_SetFromNode(): %g", clck/1000000.0 );
+    DBGs_NUM1_S(pixel_access,"oyFilterGraph_SetFromNode(): %g",clck/1000000.0 );
 
     /* resolve missing data */
     clck = oyClock();
     image_input = oyFilterPlug_ResolveImage( plug, plug->remote_socket_,
                                              pixel_access );
     clck = oyClock() - clck;
-    DBG_NUM1_S("oyFilterPlug_ResolveImage(): %g", clck/1000000.0 );
+    DBGs_NUM1_S(pixel_access,"oyFilterPlug_ResolveImage(): %g",clck/1000000.0 );
     oyImage_Release( &image_input );
 
     n = oyFilterNodes_Count( pixel_access->graph->nodes );
@@ -22482,12 +22510,14 @@ int                oyConversion_RunPixels (
         clck = oyClock();
         oyFilterGraph_PrepareContexts( pixel_access->graph, 0 );
         clck = oyClock() - clck;
-        DBG_NUM1_S("oyFilterGraph_PrepareContexts(): %g", clck/1000000.0 );
+        DBGs_NUM1_S( pixel_access,
+                     "oyFilterGraph_PrepareContexts(): %g", clck/1000000.0 );
         clck = oyClock();
         error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug,
                                                               pixel_access);
         clck = oyClock() - clck;
-        DBG_NUM1_S("conversion->out_->api7_->oyCMMFilterPlug_Run(): %g", clck/1000000.0 );
+        DBGs_NUM1_S( pixel_access,
+          "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g",clck/1000000.0 );
       }
 
       if(error == 0)
