@@ -48,7 +48,7 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
                                        oyOptions_s       * cc_options,
                                        oyObject_s          obj )
 {
-  oyFilterNode_s * in, * out, * icc;
+  oyFilterNode_s * in = 0, * out = 0, * icc = 0;
   int error = 0;
   oyConversion_s * conversion = 0;
   oyOptions_s * options = 0;
@@ -85,8 +85,7 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
     error = oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
     if(error != 0)
       fprintf( stderr, "could not add data\n" );
-  } else
-    icc = 0;
+  }
 
   /* swap in and out */
   if(out)

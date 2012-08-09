@@ -306,7 +306,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
   oyFilterGraph_s * display_graph = 0;
   oyFilterNode_s * input_node = 0,
                  * node = socket->node,
-                 * cmm_node = 0,
+                 * src_node = 0,
                  * rectangles = 0;
   oyOptions_s * options = 0;
   oyOption_s * o = 0;
@@ -376,50 +376,48 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
       /* The first rectangle is the one provided by the user graph. */
       if(m != 0 || i != 0)
       {
-        if(oyFilterRegistrationMatch( input_node->core->registration_,
-                                      "//" OY_TYPE_STD "/icc", 0 ))
+        /*if(oyFilterRegistrationMatch( input_node->core->registration_,
+                                      "//" OY_TYPE_STD "/icc", 0 ))*/
+        if(input_node->plugs[0])
         {
           options = oyFilterNode_GetOptions( input_node, 0 );
-          cmm_node = oyFilterNode_NewWith( input_node->core->registration_,
+          src_node = oyFilterNode_NewWith( input_node->core->registration_,
                                            options, 0 );
-          error = oyStruct_ObserversCopy( (oyStruct_s*)cmm_node,
+          error = oyStruct_ObserversCopy( (oyStruct_s*)src_node,
                                           (oyStruct_s*)input_node, 0 );
           oyOptions_Release( &options );
           
-        } else
-          oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
-                   "\n  Filter %s expects a colour conversion filter as"
-                   " input\n  But obtained: %s",
-                   OY_DBG_ARGS_,
-                   node->relatives_,
-                   input_node->relatives_ );
+          /* mark the new node as belonging to this node */
+          oyOptions_SetFromText( &src_node->tags, ID, "true",
+                                 OY_CREATE_NEW );
 
-        /* mark the new node as belonging to this node */
-        oyOptions_SetFromText( &cmm_node->tags, ID, "true",
-                               OY_CREATE_NEW );
-
-        /* position the new CMM between the original CMMs input and 
-           "rectangles" */
-        error = oyFilterNode_Connect( cmm_node, "//" OY_TYPE_STD "/data",
+          /* position the new CMM between the original CMMs input and 
+             "rectangles" */
+          error = oyFilterNode_Connect( src_node, "//" OY_TYPE_STD "/data",
                                       rectangles, "//" OY_TYPE_STD "/data", 0 );
-        if(error > 0)
-          oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
-                    "could not add  new CMM: %s\n",
-                   OY_DBG_ARGS_,
-                    input_node->core->registration_ );
+          if(error > 0)
+            oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
+                      "could not add  new CMM: %s\n",
+                      OY_DBG_ARGS_,
+                      input_node->core->registration_ );
 
-        error = oyFilterNode_Connect( 
+          if(input_node->plugs[0] && 
+             input_node->plugs[0]->remote_socket_->node != src_node)
+            error = oyFilterNode_Connect( 
                                   input_node->plugs[0]->remote_socket_->node, 0,
-                                      cmm_node, "//" OY_TYPE_STD "/data", 0 );
+                                        src_node, "//" OY_TYPE_STD "/data", 0 );
 
-        /* clone into a new image */
-        if(cmm_node->sockets[0]->data)
-          cmm_node->sockets[0]->data->release( 
-                                    (oyStruct_s**)&cmm_node->sockets[0]->data );
-        cmm_node->sockets[0]->data = (oyStruct_s*)oyImage_CreateForDisplay (
+          /* clone into a new image */
+          if(src_node->sockets[0]->data)
+            src_node->sockets[0]->data->release( 
+                                    (oyStruct_s**)&src_node->sockets[0]->data );
+          src_node->sockets[0]->data = (oyStruct_s*)oyImage_CreateForDisplay (
                                                 image->width, image->height,
                                                 0, image->layout_[0],
                                                 0, 0,0,0,0, 0 );
+        } else
+          error = oyFilterNode_Connect( input_node, "//" OY_TYPE_STD "/data",
+                                      rectangles, "//" OY_TYPE_STD "/data", 0 );
       }
     }
   }
