@@ -907,7 +907,8 @@ int      oyraFilterPlug_ImageRectanglesRun (
            backward array. @todo use direct array copy oyArray2d_DataCopy() */
         DBGs_NUM2_S( new_ticket,"%s[%d]",_("Read new_ticket->array into image"),
                      oyStruct_GetId( (oyStruct_s*)image ) );
-        error = oyImage_ReadArray( image, new_ticket->output_image_roi,
+        error = oyImage_ReadArray( new_ticket->output_image,
+                                   new_ticket->output_image_roi,
                                    new_ticket->array, 0 );
         if(error) WARNc2_S("%s %d", _("found issues"),error);
         DBGs_NUM2_S( ticket, "%s[%d]",
