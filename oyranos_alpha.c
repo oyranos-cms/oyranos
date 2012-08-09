@@ -20213,6 +20213,10 @@ int            oyFilterNode_DataSet  ( oyFilterNode_s    * node,
       socket->data = data->copy( data, object );
     else
       socket->data = data;
+  } else
+  {
+    WARNc_S("Node has no socket. Can not assign data.");
+    return -1;
   }
 
   return 0;
