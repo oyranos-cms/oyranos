@@ -82,7 +82,9 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
      * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
      * We rely on resolving the image later.
      */
-    oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
+    error = oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
+    if(error != 0)
+      fprintf( stderr, "could not add data\n" );
   } else
     icc = 0;
 
@@ -92,7 +94,6 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
 
 
   /* create a node for preparing the image for displaying */
-  if(icc)
   {
     out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, obj );
     options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
@@ -110,6 +111,7 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
                                   out, "//" OY_TYPE_STD "/data", 0 );
     if(error > 0)
       fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
+    oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
     in = out;
   }
 
@@ -117,6 +119,7 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
+
   /* set the output node of the conversion */
   oyConversion_Set( conversion, 0, out );
 
