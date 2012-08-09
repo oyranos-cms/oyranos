@@ -516,7 +516,7 @@ int            lcm2IntentFromOptions ( oyOptions_s       * opts,
                                          INTENT_ABSOLUTE_COLORIMETRIC;
 
   if(oy_debug)
-    lcm2_msg( oyMSG_WARN,0, OY_DBG_FORMAT_"\n"
+    lcm2_msg( oyMSG_WARN, (oyStruct_s*)opts, OY_DBG_FORMAT_"\n"
              "  proof: %d  intent: %d  intent_proof: %d\n",
              OY_DBG_ARGS_,
                 proof,     intent,     intent_proof );
@@ -572,7 +572,7 @@ uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
       }
 
   if(oy_debug)
-    lcm2_msg( oyMSG_DBG,0, OY_DBG_FORMAT_"\n"
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)opts, OY_DBG_FORMAT_"\n"
              "  bpc: %d  gamut_warning: %d  precalculation: %d precalculation_curves: %d\n",
              OY_DBG_ARGS_,
                 bpc,     gamut_warning,     precalculation,    precalculation_curves );
@@ -588,6 +588,7 @@ uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
  *  @date    2011/11/18
  */
 cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
+                                       oyFilterNode_s    * node,
                                        cmsHPROFILE       * lps,
                                        int                 profiles_n,
                                        oyProfiles_s      * simulation,
@@ -745,7 +746,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
               multi_profiles_n, intent, adaption_state,
               lcm2FlagsToText(flags));
     for(i=0; i < profiles_n; ++i)
-      lcm2_msg( level,(oyStruct_s*)opts, OY_DBG_FORMAT_"\n"
+      lcm2_msg( level,(oyStruct_s*)node, OY_DBG_FORMAT_"\n"
              "  ColourSpace:%s->PCS:%s DeviceClass:%s",
              OY_DBG_ARGS_,
              oyICCColourSpaceGetName(cmsGetColorSpace( lps[0])),
@@ -1578,7 +1579,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   *size = 0;
 
   /* create the context */
-  xform = lcm2CMMConversionContextCreate_( lps, profiles_n,
+  xform = lcm2CMMConversionContextCreate_( node, lps, profiles_n,
                                            profiles, profiles_proof_n, proof,
                                            image_input->layout_[0],
                                            image_output->layout_[0],
@@ -1749,7 +1750,7 @@ char * lcm2Image_GetText             ( oyImage_s         * image,
   oyImage_s * s = image;
 
   /* describe the image */
-  oySprintf_( text,   "  <oyImage_s\n");
+  oySprintf_( text,   "  <oyImage_s>\n");
   hashTextAdd_m( text );
   oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NAME));
   hashTextAdd_m( text );
@@ -1972,7 +1973,7 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
   {
     lps[0] = CMMProfileOpen_M( node, oyPointer_GetPointer(cmm_ptr_in),
                                oyPointer_GetSize( cmm_ptr_in) );
-    xform = lcm2CMMConversionContextCreate_( lps, 1, 0,0,0,
+    xform = lcm2CMMConversionContextCreate_( node, lps, 1, 0,0,0,
                                            image_input->layout_[0],
                                            image_output->layout_[0],
                                            node->core->options_,
@@ -2036,14 +2037,28 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     new_ticket->output_image = oyImage_Copy( image_input, 0 );
     error = oyImage_FillArray( image_input, new_ticket->output_image_roi, 1,
                                &new_ticket->array, 0, 0 );
+    if(oy_debug > 1)
+      lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s %d",
+                OY_DBG_ARGS_, _("Fill new_ticket->array from image_input"),
+                oyStruct_GetId( (oyStruct_s*)image_input ) );
   }
 
   /* We let the input filter do its processing first. */
   error = input_node->api7_->oyCMMFilterPlug_Run( plug, new_ticket );
   if(error != 0) return error;
 
+  if(oy_debug > 1)
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s %d (%s %d)",
+              OY_DBG_ARGS_,_("Read from new_ticket->array"),
+              oyStruct_GetId( (oyStruct_s*)new_ticket->array ),
+              _("Image"), oyStruct_GetId( (oyStruct_s*)new_ticket->output_image ) );
   array_in = new_ticket->array;
   array_out = ticket->array;
+  if(oy_debug > 1)
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"%s %d (%s %d)",
+              OY_DBG_ARGS_,_("Write to ticket->array"),
+              oyStruct_GetId( (oyStruct_s*)ticket->array ),
+              _("Image"), oyStruct_GetId( (oyStruct_s*)new_ticket->output_image ) );
 
   data_type_in = oyToDataType_m( oyImage_GetPixelLayout( image_input ) );
   bps_in = oySizeofDatatype( data_type_in );
@@ -2051,13 +2066,13 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   if(data_type_in == oyHALF)
   {
     oyFilterSocket_Callback( requestor_plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
-    lcm2_msg(oyMSG_WARN,0, OY_DBG_FORMAT_" can not handle oyHALF",OY_DBG_ARGS_);
+    lcm2_msg(oyMSG_WARN,(oyStruct_s*)ticket, OY_DBG_FORMAT_" can not handle oyHALF",OY_DBG_ARGS_);
     error = 1;
   }
 
   if(!ticket->output_image)
   {
-    lcm2_msg( oyMSG_WARN,0, OY_DBG_FORMAT_ " no ticket->output_image",
+    lcm2_msg( oyMSG_WARN,(oyStruct_s*)ticket, OY_DBG_FORMAT_ " no ticket->output_image",
              OY_DBG_ARGS_);
     error = 1;
   }
@@ -2071,12 +2086,12 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     error = lcm2CMMTransform_GetWrap_( node->backend_data, &ltw );
   }
 
-  DBG_NUM2_S( "channels in/out: %d->%d",
-              oyToChannels_m( pixel_layout_in ), channels );
+  DBGs_NUM2_S( ticket, "channels in/out: %d->%d",
+               oyToChannels_m( pixel_layout_in ), channels );
 
   if(ltw && !ticket->array)
   {
-    lcm2_msg( oyMSG_ERROR,0, OY_DBG_FORMAT_ " no ticket->array",
+    lcm2_msg( oyMSG_ERROR,(oyStruct_s*)ticket, OY_DBG_FORMAT_ " no ticket->array",
              OY_DBG_ARGS_);
     error = 1;
   }
@@ -2103,7 +2118,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     n = w_out / channels;
 
     if(oy_debug > 1)
-      lcm2_msg( oyMSG_DBG,(oyStruct_s*)requestor_plug, OY_DBG_FORMAT_
+      lcm2_msg( oyMSG_DBG,(oyStruct_s*)ticket, OY_DBG_FORMAT_
              " threads_n: %d",
              OY_DBG_ARGS_, threads_n );
 

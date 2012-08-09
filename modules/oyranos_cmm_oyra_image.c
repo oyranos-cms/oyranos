@@ -184,6 +184,8 @@ int      oyraFilterPlug_ImageWriteRun (
 
         if(file_write && image_pixel && found)
         {
+          DBGs_NUM2_S( ticket, "%s={%s}", _("Run ticket through api7"),
+                       api7->registration );
           result = api7->oyCMMFilterPlug_Run( requestor_plug, ticket );
           i = n;
           run = i;
@@ -538,6 +540,8 @@ int      oyraFilterPlug_ImageLoadRun (
 
         if(file_read && image_pixel && found)
         {
+          DBGs_NUM2_S( ticket, "%s={%s}", _("Run ticket through api7"),
+                       api7->registration );
           result = api7->oyCMMFilterPlug_Run( requestor_plug, ticket );
           i = n;
         }
@@ -860,6 +864,8 @@ int      oyraFilterPlug_ImageRectanglesRun (
       /* Map each matching plug to a new ticket with a corrected rectangle. */
       new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
       oyArray2d_Release( &new_ticket->array );
+      DBGs_NUM2_S( ticket, "%s[%d]", _("Created new_ticket"),
+                   oyStruct_GetId( (oyStruct_s*)new_ticket ) );
 
       if(r)
         oyRectangle_SetByRectangle( new_ticket->output_image_roi, r );
@@ -878,12 +884,20 @@ int      oyraFilterPlug_ImageRectanglesRun (
 
         /* fill the array rectangle for the following filter */
         if(!new_ticket->array)
+        {
+          DBGs_NUM2_S( new_ticket, "%s[%d]", 
+                      _("Fill new_ticket->array from new_ticket->output_image"),
+                      oyStruct_GetId( (oyStruct_s*)new_ticket->output_image ) );
           oyImage_FillArray( new_ticket->output_image,
                              new_ticket->output_image_roi, 0,
                              &new_ticket->array, new_ticket->output_image_roi,
                              0 );
+        }
 
         /* start new call into branch */
+        DBGs_NUM2_S( new_ticket, "%s[%d]",
+                     _("Run new_ticket through filter in node"),
+                     oyStruct_GetId( (oyStruct_s*)node ) );
         l_result = input_node->api7_->oyCMMFilterPlug_Run( node->plugs[i],
                                                            new_ticket );
         if(l_result != 0 && (result <= 0 || l_result > 0))
@@ -891,9 +905,14 @@ int      oyraFilterPlug_ImageRectanglesRun (
 
         /* The image is used as intermediate cache between the forward and
            backward array. @todo use direct array copy oyArray2d_DataCopy() */
+        DBGs_NUM2_S( new_ticket,"%s[%d]",_("Read new_ticket->array into image"),
+                     oyStruct_GetId( (oyStruct_s*)image ) );
         error = oyImage_ReadArray( image, new_ticket->output_image_roi,
                                    new_ticket->array, 0 );
         if(error) WARNc2_S("%s %d", _("found issues"),error);
+        DBGs_NUM2_S( ticket, "%s[%d]",
+                     _("Fill ticket->array from new_ticket->output_image"),
+                    oyStruct_GetId( (oyStruct_s*)new_ticket->output_image ) );
         error = oyImage_FillArray( new_ticket->output_image,
                                    new_ticket->output_image_roi, 1,
                                    &ticket->array, new_ticket->output_image_roi,
@@ -1376,8 +1395,11 @@ int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
 
   /* to reuse the requestor_plug is a exception for the starting request */
   if(node)
+  {
+    DBGs_NUM2_S( ticket, "%s[%d]", _("Call next filter in node"),
+                 oyStruct_GetId( (oyStruct_s*)node ) );
     result = node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket );
-  else
+  } else
     result = 1;
 
   return result;

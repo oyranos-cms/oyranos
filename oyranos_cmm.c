@@ -275,6 +275,9 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   oyImage_s * image = (oyImage_s*)socket->data;
   int width;
 
+  DBGs_NUM2_S( ticket, "%s[%d]", _("Work on remote socket image"),
+               oyStruct_GetId( (oyStruct_s*)image ) );
+
   /* Do not work on non existent data. */
   if(!image || !ticket->output_image)
     return result;
@@ -282,6 +285,8 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   /* Set a unknown output image dimension to something appropriate. */
   if(!ticket->output_image->width && !ticket->output_image->height)
   {
+    DBGs_NUM2_S( ticket, "%s[%d]", _("Set dimensions on ticket->output_image"),
+                oyStruct_GetId( (oyStruct_s*)ticket->output_image ) );
     ticket->output_image->width = image->width;
     ticket->output_image->height = image->height;
     oyImage_SetCritical( ticket->output_image, image->layout_[0], 0, 0 );
@@ -313,6 +318,8 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
     image_roi.y = y_pix / (double) image->width;
     image_roi.width *= correct;
     image_roi.height *= correct;
+    DBGs_NUM2_S( ticket, "%s[%d]", _("Fill ticket->array from image"),
+                oyStruct_GetId( (oyStruct_s*)image ) );
     error = oyImage_FillArray( image, &image_roi, 1,
                                &ticket->array, ticket->output_image_roi, 0 );
     if(error)
