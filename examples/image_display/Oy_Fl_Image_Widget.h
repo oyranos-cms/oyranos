@@ -163,7 +163,12 @@ public:
       {
         static int done = 0;
         if(!done)
-          oyShowGraph_( conversion()->input, 0 );
+        {
+          int oy_debug_old = oy_debug;
+          oy_debug = 1;
+          oyShowConversion_( conversion(), 0 );
+          oy_debug = oy_debug_old;
+        }
         done = 1;
       }
 
