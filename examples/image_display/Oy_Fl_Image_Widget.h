@@ -85,10 +85,14 @@ public:
       window = (void*)fl_xid( Fl_Widget::window() );
 #endif
 
-      /* Load the image before creating the oyPicelAccess_s object. */
-      image = oyConversion_GetImage( conversion(), OY_OUTPUT );
+      /* Get the source dimensions */
+      image = oyConversion_GetImage( conversion(), OY_INPUT );
       width = oyImage_GetWidth( image );
       height = oyImage_GetHeight( image );
+      oyImage_Release( &image );
+
+      /* Load the image before creating the oyPicelAccess_s object. */
+      image = oyConversion_GetImage( conversion(), OY_OUTPUT );
 
       if(image && !ticket)
       {
