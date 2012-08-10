@@ -163,6 +163,10 @@ public:
                   oyRectangle_Show(&output_rectangle));
       }
 
+      /* limit a too big display texture */
+      display_rectangle->width = OY_MIN( display_rectangle->width, width );
+      display_rectangle->height = OY_MIN( display_rectangle->height, height );
+
       if(image)
         dirty = oyDrawScreenImage(conversion(), ticket(), display_rectangle,
                                 old_display_rectangle,
