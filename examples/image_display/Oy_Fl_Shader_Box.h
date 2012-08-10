@@ -189,17 +189,25 @@ private:
     oyPixel_t pt = oyImage_GetPixelLayout( image );
     oyDATATYPE_e data_type = oyToDataType_m( pt );
     oyConversion_s * cc;
+    int width = oyImage_GetWidth( image ),
+        height = oyImage_GetHeight( image );
 
-    while (w_ < W)
+    /* set image texture size to the smaller of the image or viewport */
+    if(width > W)
+      width = W;
+    if(height > H)
+      height = H;
+
+    while (w_ < width)
     {
       w_ += w_;
-      if(w_ > W)
+      if(w_ > width)
         break;
     }
-    while (h_ < H)
+    while (h_ < height)
     {
       h_ += h_;
-      if(h_ > H)
+      if(h_ > height)
         break;
     }
 
@@ -302,7 +310,6 @@ private:
     if(image && clut_image && !valid())
     {
       make_image_texture ();
-
 
       setupShaderTexture();
 
