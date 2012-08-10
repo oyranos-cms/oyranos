@@ -60,6 +60,7 @@ double             oySeconds         ( );
 #define DBG4_S(format,arg,arg2,arg3,arg4) oyMessageFunc_p( oyMSG_DBG,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4);
 #define DBG5_S(format,arg,arg2,arg3,arg4,arg5) oyMessageFunc_p( oyMSG_DBG,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5);
 #define DBG6_S(format,arg,arg2,arg3,arg4,arg5,arg6) oyMessageFunc_p( oyMSG_DBG,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5,arg6);
+#define DBG7_S(format,arg,arg2,arg3,arg4,arg5,arg6,arg7) oyMessageFunc_p( oyMSG_DBG,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5,arg6,arg7);
 #define DBG_V(var) oyMessageFunc_p(oyMSG_DBG,0,OY_DBG_FORMAT_ #var ": %d", OY_DBG_ARGS_,(int)var);
 #define DBG_START {++level_PROG; oyMessageFunc_p( oyMSG_DBG,0,"Start: " OY_DBG_FORMAT_, OY_DBG_ARGS_ );}
 #define DBG_ENDE  {oyMessageFunc_p( oyMSG_DBG,0,"  End: " OY_DBG_FORMAT_, OY_DBG_ARGS_ ); --level_PROG;}
@@ -71,6 +72,7 @@ double             oySeconds         ( );
 #define DBGs4_S(s,format,arg,arg2,arg3,arg4) oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)s,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4);
 #define DBGs5_S(s,format,arg,arg2,arg3,arg4,arg5) oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)s,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5);
 #define DBGs6_S(s,format,arg,arg2,arg3,arg4,arg5,arg6) oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)s,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5,arg6);
+#define DBGs7_S(s,format,arg,arg2,arg3,arg4,arg5,arg6,arg7) oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)s,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5,arg6,arg7);
 #else
 #define DBG ;
 #define DBG_S(txt) ;
@@ -94,6 +96,7 @@ double             oySeconds         ( );
 #define DBGs4_S(s,a,b,c,d,e) ;
 #define DBGs5_S(s,a,b,c,d,e,f) ;
 #define DBGs6_S(s,a,b,c,d,e,f,h) ;
+#define DBGs7_S(s,a,b,c,d,e,f,h,i) ;
 #endif
 
 #define DBG_NUM if(oy_debug > 1)DBG
