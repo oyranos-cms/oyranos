@@ -315,9 +315,11 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
     char * t = 0;
 
     /* adapt the rectangle of interesst to the new image dimensions */
-    oyRectangle_s image_roi = {oyOBJECT_RECTANGLE_S,0,0,0};
+    oyRectangle_s image_roi = {oyOBJECT_RECTANGLE_S,0,0,0},
+                  output_image_roi = {oyOBJECT_RECTANGLE_S,0,0,0};
     double correct = ticket->output_image->width / (double) image->width;
     oyRectangle_SetByRectangle( &image_roi, ticket->output_image_roi );
+    oyRectangle_SetByRectangle( &output_image_roi, ticket->output_image_roi );
     /* x and y source image offset */
     image_roi.x = x_pix / (double) image->width;
     image_roi.y = y_pix / (double) image->width;
@@ -328,8 +330,9 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                  oyStruct_GetId( (oyStruct_s*)image ),
                  oyRectangle_Show( ticket->output_image_roi ),
                  t );
+    oyRectangle_Scale( &output_image_roi, correct );
     error = oyImage_FillArray( image, &image_roi, 1,
-                               &ticket->array, ticket->output_image_roi, 0 );
+                               &ticket->array, &output_image_roi, 0 );
     if(error)
       result = error;
     oyFree_m_( t );
