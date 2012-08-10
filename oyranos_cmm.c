@@ -285,8 +285,12 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   /* Set a unknown output image dimension to something appropriate. */
   if(!ticket->output_image->width && !ticket->output_image->height)
   {
-    DBGs_NUM2_S( ticket, "%s[%d]", _("Set dimensions on ticket->output_image"),
-                oyStruct_GetId( (oyStruct_s*)ticket->output_image ) );
+    DBGs_NUM7_S( ticket, "%s[%d] %s %.04gx%.04g %.04gx%.04g",
+                 _("Set dimensions on ticket->output_image"),
+                 oyStruct_GetId( (oyStruct_s*)ticket->output_image ),
+                 oyRectangle_Show( ticket->output_image_roi ),
+                 ticket->output_image->width, ticket->output_image->height,
+                 image->width, image->height );
     ticket->output_image->width = image->width;
     ticket->output_image->height = image->height;
     oyImage_SetCritical( ticket->output_image, image->layout_[0], 0, 0 );
@@ -308,6 +312,7 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
     result = !ptr;
 
   } else {
+    char * t = 0;
 
     /* adapt the rectangle of interesst to the new image dimensions */
     oyRectangle_s image_roi = {oyOBJECT_RECTANGLE_S,0,0,0};
@@ -318,12 +323,16 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
     image_roi.y = y_pix / (double) image->width;
     image_roi.width *= correct;
     image_roi.height *= correct;
-    DBGs_NUM2_S( ticket, "%s[%d]", _("Fill ticket->array from image"),
-                oyStruct_GetId( (oyStruct_s*)image ) );
+    STRING_ADD( t, oyRectangle_Show( &image_roi ) );
+    DBGs_NUM4_S( ticket, "%s[%d] %s %s", _("Fill ticket->array from image"),
+                 oyStruct_GetId( (oyStruct_s*)image ),
+                 oyRectangle_Show( ticket->output_image_roi ),
+                 t );
     error = oyImage_FillArray( image, &image_roi, 1,
                                &ticket->array, ticket->output_image_roi, 0 );
     if(error)
       result = error;
+    oyFree_m_( t );
   }
 
   return result;

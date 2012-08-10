@@ -864,8 +864,9 @@ int      oyraFilterPlug_ImageRectanglesRun (
       /* Map each matching plug to a new ticket with a corrected rectangle. */
       new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
       oyArray2d_Release( &new_ticket->array );
-      DBGs_NUM2_S( ticket, "%s[%d]", _("Created new_ticket"),
-                   oyStruct_GetId( (oyStruct_s*)new_ticket ) );
+      DBGs_NUM3_S( ticket, "%s[%d] %s", _("Created new_ticket"),
+                   oyStruct_GetId( (oyStruct_s*)new_ticket ),
+                   oyRectangle_Show( r ) );
 
       if(r)
         oyRectangle_SetByRectangle( new_ticket->output_image_roi, r );
@@ -885,9 +886,10 @@ int      oyraFilterPlug_ImageRectanglesRun (
         /* fill the array rectangle for the following filter */
         if(!new_ticket->array)
         {
-          DBGs_NUM2_S( new_ticket, "%s[%d]", 
+          DBGs_NUM3_S( new_ticket, "%s[%d] %s",
                       _("Fill new_ticket->array from new_ticket->output_image"),
-                      oyStruct_GetId( (oyStruct_s*)new_ticket->output_image ) );
+                      oyStruct_GetId( (oyStruct_s*)new_ticket->output_image ),
+                      oyRectangle_Show( new_ticket->output_image_roi ) );
           oyImage_FillArray( new_ticket->output_image,
                              new_ticket->output_image_roi, 0,
                              &new_ticket->array, new_ticket->output_image_roi,
@@ -895,9 +897,10 @@ int      oyraFilterPlug_ImageRectanglesRun (
         }
 
         /* start new call into branch */
-        DBGs_NUM2_S( new_ticket, "%s[%d]",
+        DBGs_NUM3_S( new_ticket, "%s[%d] %s",
                      _("Run new_ticket through filter in node"),
-                     oyStruct_GetId( (oyStruct_s*)node ) );
+                     oyStruct_GetId( (oyStruct_s*)node ),
+                     oyRectangle_Show( new_ticket->output_image_roi ) );
         l_result = input_node->api7_->oyCMMFilterPlug_Run( node->plugs[i],
                                                            new_ticket );
         if(l_result != 0 && (result <= 0 || l_result > 0))

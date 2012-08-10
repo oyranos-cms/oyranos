@@ -651,13 +651,14 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       roi_pix.y -= display_pos_y;
       if(oy_debug)
         oydi_msg( oyMSG_DBG, (oyStruct_s*)image,
-            OY_DBG_FORMAT_"image %d: roi_pix:%s", OY_DBG_ARGS_, i, oyRectangle_Show(&roi_pix));
+            OY_DBG_FORMAT_"image %d: roi_pix:%s", OY_DBG_ARGS_,
+            i, oyRectangle_Show(&roi_pix));
 
       /* all rectangles are relative to image dimensions */
       if(image && image->width != 0)
         oyRectangle_Scale( &roi_pix, 1./image->width );
 
-      /* select actual image from the according CMM node */
+      /* select actual image from the according  node */
       if(rectangles->plugs && rectangles->plugs[i] &&
          rectangles->plugs[i]->remote_socket_)
         image_input = (oyImage_s*)rectangles->plugs[i]->remote_socket_->data;
