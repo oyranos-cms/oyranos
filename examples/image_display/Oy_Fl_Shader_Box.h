@@ -296,11 +296,13 @@ private:
     glMatrixMode (GL_MODELVIEW);
     glLoadIdentity ();
 
+    glViewport(0,0, W,H );
+    glOrtho( -W,W, -H,H, -1.0,1.0);
+
     if(image && clut_image && !valid())
     {
       make_image_texture ();
 
-      glViewport(0,0, W,H );
 
       setupShaderTexture();
 
@@ -339,9 +341,6 @@ private:
       if(!valid())
       {
         valid(1);
-        glLoadIdentity();
-        glViewport( 0,0, W,H );
-        glOrtho( -W,W, -H,H, -1.0,1.0);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
       }
 
@@ -354,15 +353,19 @@ private:
 
     w_ = oyImage_GetWidth(  draw_image );
     h_ = oyImage_GetHeight( draw_image );
-    float tw = W/(float)w_;
-    float th = H/(float)h_;
+    /* border values */
+    float bw = OY_MAX( 0, W - oyImage_GetWidth(image)),
+          bh = OY_MAX( 0, H - oyImage_GetHeight(image));
+    /* maintain texture ratio */
+    float tw = (W - bw)/(float)w_;
+    float th = (H - bh)/(float)h_;
 
     if(oy_display_verbose)
       fprintf( stderr, _DBG_FORMAT_"w_ %d h_ %d  parent:%dx%d\n"
                "img:%d clut:%d scale:%f offset:%f prog:%d shader:%d %gx%g\n",
-               _DBG_ARGS_,
-                                               w_,h_,
-            Oy_Fl_Image_Widget::parent()->w(),Oy_Fl_Image_Widget::parent()->h(),
+               _DBG_ARGS_, w_,h_,
+               Oy_Fl_Image_Widget::parent()->w(),
+               Oy_Fl_Image_Widget::parent()->h(),
                img_texture, clut_texture, clut_scale, clut_offset,
                cmm_prog, cmm_shader, tw,th);
 
@@ -380,26 +383,15 @@ private:
     oyPointer disp_img = oyImage_GetPoint( draw_image, 0,0, 0, 0 );
     glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, w_, h_,
 		     GL_RGB, GL_UNSIGNED_SHORT, disp_img);
-    if(0&&oy_display_verbose)
-      oyImage_ToFile( draw_image, "draw_image.ppm", 0 );
-    if(0&&oy_display_verbose)
-      oyImage_ToFile( image, "image.ppm", 0 );
-    if(0&&oy_display_verbose)
-      fprintf( stderr,_DBG_FORMAT_
-               "image:0x%lx display_image:0x%lx draw_image:0x%lx\n" ,_DBG_ARGS_,
-               (unsigned long)image, (unsigned long)display_image,
-               (unsigned long)draw_image);
 
-    float x_ = OY_MAX(1.0, W / (float)oyImage_GetWidth( image )),
-          y_ = OY_MAX(1.0, H / (float)oyImage_GetHeight( image ));
-    x_ -= 1 * (x_-1.0)/2.0;
-    y_ -= 3 * (y_-1.0)/2.0;
+    /* draw surface */
     glBegin (GL_QUADS);
-	glTexCoord2f (0.0, th);  glVertex2f (x_-2.0, y_-2.0);
-	glTexCoord2f (0.0, 0.0); glVertex2f (x_-2.0, y_);
-	glTexCoord2f (tw,  0.0); glVertex2f (x_,     y_);
-	glTexCoord2f (tw,  th);  glVertex2f (x_,     y_-2.0);
+	glTexCoord2f (0.0, th);  glVertex2f (-W + bw, -H + bh);
+	glTexCoord2f (0.0, 0.0); glVertex2f (-W + bw,  H - bh);
+	glTexCoord2f (tw,  0.0); glVertex2f ( W - bw,  H - bh);
+	glTexCoord2f (tw,  th);  glVertex2f ( W - bw, -H + bh);
     glEnd ();
+
     glDisable (GL_TEXTURE_2D);
     oyImage_Release( &draw_image );
   }
