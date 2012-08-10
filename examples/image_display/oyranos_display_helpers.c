@@ -292,6 +292,8 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
                                        int                 dirty,
                                        oyImage_s         * image )
 {
+  int result = 0;
+
     if(context)
     {
       int X = display_rectangle->x;
@@ -383,7 +385,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
            /* Did the image move? */
            ticket->start_xy[0] != ticket->start_xy_old[0] ||
            ticket->start_xy[1] != ticket->start_xy_old[1]) ||
-           dirty ))
+           dirty > 0))
       {
 #ifdef DEBUG_
         printf( "%s:%d new display rectangle: %s +%d+%d\n", __FILE__,__LINE__,
@@ -398,9 +400,10 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
         oyRectangle_SetByRectangle( old_roi_rectangle,ticket->output_image_roi);
         ticket->start_xy_old[0] = ticket->start_xy[0];
         ticket->start_xy_old[1] = ticket->start_xy[1];
-      }
+      } else
+        result = -1;
     }
-  return 0;
+  return result;
 }
 
 extern "C" { int oyWriteMemToFile_(const char* name, const void* mem, size_t size); }

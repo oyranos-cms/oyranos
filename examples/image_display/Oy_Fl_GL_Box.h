@@ -53,20 +53,26 @@ private:
       oyPixel_t pt;
       int channels = 0;
       oyDATATYPE_e data_type = oyUINT8;
-      oyImage_s * image = 0;
+      oyImage_s * draw_image = 0;
       int gl_type = 0;
 
-      image = oyConversion_GetImage( conversion(), OY_INPUT );
-      pt = oyImage_GetPixelLayout( image );
+      draw_image = oyConversion_GetImage( conversion(), OY_INPUT );
+      pt = oyImage_GetPixelLayout( draw_image );
       data_type = oyToDataType_m( pt );
       if(data_type == oyUINT8)
         data_type = oyUINT16;
       sample_size = oySizeofDatatype( data_type );
-      oyImage_Release( & image );
+      oyImage_Release( &draw_image );
 
-      drawPrepare( &image, data_type, 1 );
+      int result = drawPrepare( &draw_image, data_type, 1 );
 
-      pt = oyImage_GetPixelLayout( image );
+      if(!draw_image || result != 0)
+      {
+        oyImage_Release( &draw_image );
+        return;
+      }
+
+      pt = oyImage_GetPixelLayout( draw_image );
       channels = oyToChannels_m( pt );
 
       if(channels == 3)
@@ -74,11 +80,11 @@ private:
       if(channels == 4)
         gl_type = GL_RGBA;
 
-      if(0&&oy_display_verbose && image)
+      if(0&&oy_display_verbose && draw_image)
         fprintf(stdout, "%s:%d pixellayout: %d width: %d channels: %d\n",
                     strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
                     __LINE__,
-                    pt, image->width, oyToChannels_m(pt) );
+                    pt, draw_image->width, oyToChannels_m(pt) );
 
       if(!valid() ||
          W_ != W || H_ != H || !frame_data)
@@ -99,11 +105,8 @@ private:
       glBegin(GL_LINE_STRIP); glVertex2f(W, H); glVertex2f(-W,-H); glEnd();
       glBegin(GL_LINE_STRIP); glVertex2f(W,-H); glVertex2f(-W, H); glEnd();
 
-      if(!image)
-        return;
-
-      int frame_height = OY_MIN(image->height,H),
-          frame_width = OY_MIN(image->width,W);
+      int frame_height = OY_MIN(draw_image->height,H),
+          frame_width = OY_MIN(draw_image->width,W);
 
       int pos[4] = {-2,-2,-2,-2};
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
@@ -112,10 +115,10 @@ private:
                  pos[0],pos[1],pos[2], pos[3] );
 
       /* get the data */
-      if(image && frame_data)
+      if(draw_image && frame_data)
       for(y = 0; y < frame_height; ++y)
       {
-        image_data = image->getLine( image, y, &height, -1, &is_allocated );
+        image_data = draw_image->getLine( draw_image, y, &height, -1, &is_allocated );
 
         memcpy( &frame_data[frame_width*(frame_height-y-1)*channels*sample_size], image_data,
                 frame_width*channels*sample_size );
@@ -141,7 +144,7 @@ private:
                     __LINE__,
                     frame_width,frame_height,W,H);
 
-      oyImage_Release( &image );
+      oyImage_Release( &draw_image );
     }
   }
 

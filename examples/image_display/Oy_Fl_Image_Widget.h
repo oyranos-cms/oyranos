@@ -55,7 +55,7 @@ public:
   }
 
 public:
-  void drawPrepare( oyImage_s ** draw_image, oyDATATYPE_e data_type_request,
+  int drawPrepare( oyImage_s ** draw_image, oyDATATYPE_e data_type_request,
                     int center_aligned )
   {
     {
@@ -201,11 +201,13 @@ public:
                 "need 4 or 3 channels with %s\n",_DBG_ARGS_,
                 image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "",
                 oyDatatypeToText( data_type_request ) );
-        return;
+        return 1;
       }
 
       *draw_image = image;
     }
+
+    return dirty;
   }
 
 public:

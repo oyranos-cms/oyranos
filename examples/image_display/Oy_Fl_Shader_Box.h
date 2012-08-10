@@ -336,7 +336,7 @@ private:
       data_type = oyToDataType_m( pt );
       sample_size = oySizeofDatatype( data_type );
 
-      drawPrepare( &draw_image, data_type, 1 );
+      int result = drawPrepare( &draw_image, data_type, 1 );
 
       pt = oyImage_GetPixelLayout( draw_image );
       channels = oyToChannels_m( pt );
@@ -357,9 +357,9 @@ private:
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
       }
 
-      if(!draw_image)
+      if(!draw_image || result != 0)
       {
-        fprintf( stderr, _DBG_FORMAT_"no draw_image!!!\n", _DBG_ARGS_);
+        oyImage_Release( &draw_image );
         return;
       }
     }
