@@ -242,7 +242,7 @@ private:
     disp_img = oyImage_GetPoint( display_image, 0,0, 0, 0 );
     glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, w_, h_,
 		     GL_RGB, GL_UNSIGNED_SHORT, disp_img);
-    if(oy_display_verbose)
+    if(0&&oy_display_verbose)
       oyImage_ToFile( display_image, "display_image.ppm", 0 );
   }
 
@@ -380,9 +380,9 @@ private:
     oyPointer disp_img = oyImage_GetPoint( draw_image, 0,0, 0, 0 );
     glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, w_, h_,
 		     GL_RGB, GL_UNSIGNED_SHORT, disp_img);
-    if(oy_display_verbose)
+    if(0&&oy_display_verbose)
       oyImage_ToFile( draw_image, "draw_image.ppm", 0 );
-    if(oy_display_verbose)
+    if(0&&oy_display_verbose)
       oyImage_ToFile( image, "image.ppm", 0 );
     if(oy_display_verbose)
       fprintf( stderr,_DBG_FORMAT_
