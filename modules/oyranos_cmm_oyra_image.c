@@ -492,7 +492,7 @@ int      oyraFilterPlug_ImageLoadRun (
     {
       STRING_ADD( file_ext, fileext );
       i = 0;
-      while(file_ext[i]) { file_ext[i] = tolower( file_ext[i] ); ++i; }
+      while(file_ext && file_ext[i]) { file_ext[i]=tolower(file_ext[i]); ++i; }
     }
 
     apis = oyCMMsGetFilterApis_( 0,0, "//" OY_TYPE_STD "/file_read", 
