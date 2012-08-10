@@ -28,6 +28,7 @@
 class Oy_Widget
 {
   oyConversion_s * context;
+  oyPixelAccess_s * pixel_access;
 
 public:
   oyRectangle_s * old_display_rectangle;
@@ -37,6 +38,7 @@ public:
   Oy_Widget()
   {
     context = 0;
+    pixel_access = 0;
     old_display_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
     old_roi_rectangle = oyRectangle_NewWith( 0,0,0,0, 0 );
     dirty = 0;
@@ -45,17 +47,25 @@ public:
   ~Oy_Widget(void)
   {
     oyConversion_Release( &context );
+    oyPixelAccess_Release( &pixel_access );
     oyRectangle_Release( &old_display_rectangle );
     oyRectangle_Release( &old_roi_rectangle );
   };
 
-  void conversion( oyConversion_s * c ) 
+  virtual void conversion( oyConversion_s * c ) 
   {
     oyConversion_Release( &context );
     context = oyConversion_Copy( c, 0 );
+    oyPixelAccess_Release( &pixel_access );
   }
+  virtual oyConversion_s * conversion() { return context; }
 
-  oyConversion_s * conversion() { return context; }
+  virtual void ticket( oyPixelAccess_s * t ) 
+  {
+    oyPixelAccess_Release( &pixel_access );
+    pixel_access = oyPixelAccess_Copy( t, 0 );
+  }
+  virtual oyPixelAccess_s * ticket() { return pixel_access; }
 
   oyFilterNode_s * setImageType( const char * file_name, oyDATATYPE_e data_type, const char * cc_name, oyOptions_s * cc_options )
   {

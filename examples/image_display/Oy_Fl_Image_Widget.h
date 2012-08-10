@@ -51,8 +51,6 @@ public:
       return ret;
   }
 
-private:
-  oyPixelAccess_s * ticket;
 public:
   void drawPrepare( oyImage_s ** draw_image, oyDATATYPE_e data_type_request,
                     int center_aligned )
@@ -94,14 +92,16 @@ public:
       /* Load the image before creating the oyPicelAccess_s object. */
       image = oyConversion_GetImage( conversion(), OY_OUTPUT );
 
-      if(image && !ticket)
+      if(image && !ticket())
       {
         oyFilterPlug_s * plug = oyFilterNode_GetPlug( node_out, 0 );
-        ticket = oyPixelAccess_Create( 0,0, plug, oyPIXEL_ACCESS_IMAGE, 0 );
+        ticket( oyPixelAccess_Create( 0,0, plug, oyPIXEL_ACCESS_IMAGE, 0 ) );
       }
 
       if(image)
       {
+        if(px || py)
+          int i = W;
         /* take care to not go over the borders */
         if(px < W - width) px = W - width;
         if(py < H - height) py = H - height;
@@ -126,7 +126,7 @@ public:
               oyRectangle_Show(display_rectangle), x(), y(), px, py );
 #endif
 
-      if(ticket)
+      if(ticket())
       {
         oyRectangle_s output_rectangle = {oyOBJECT_RECTANGLE_S,0,0,0};
         oyRectangle_SamplesFromImage( image, 0, &output_rectangle );
@@ -144,17 +144,17 @@ public:
         printf( _DBG_FORMAT_"output rectangle: %s start_xy:%.04g %.04g\n",
                 _DBG_ARGS_,
                 oyRectangle_Show(&r),
-                ticket->start_xy[0]*width, ticket->start_xy[1]*width );
+                ticket()->start_xy[0]*width, ticket()->start_xy[1]*width );
         }
 #endif
-        oyPixelAccess_ChangeRectangle( ticket,
+        oyPixelAccess_ChangeRectangle( ticket(),
                                        -px/(double)width,
                                        -py/(double)width,
                                        &output_rectangle );
       }
 
       if(image)
-        dirty = oyDrawScreenImage(conversion(), ticket, display_rectangle,
+        dirty = oyDrawScreenImage(conversion(), ticket(), display_rectangle,
                                 old_display_rectangle,
                                 old_roi_rectangle, "X11",
                                 data_type_request,
@@ -205,12 +205,10 @@ public:
   Oy_Fl_Image_Widget(int x, int y, int w, int h) : Fl_Widget(x,y,w,h)
   {
     px=py=ox=oy=0;
-    ticket = 0;
   };
 
   ~Oy_Fl_Image_Widget(void)
   {
-    oyPixelAccess_Release( &ticket );
   };
 
   void observeICC(                     oyFilterNode_s * icc,
