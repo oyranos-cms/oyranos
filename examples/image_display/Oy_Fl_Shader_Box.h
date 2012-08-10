@@ -214,12 +214,18 @@ private:
     /*if(data_type == oyUINT8)
       data_type = oyUINT16;*/
 
+    oyOptions_s * old_tags = oyImage_GetTags( display_image ), * tags;
     oyImage_Release( &display_image );
     display_image = oyImage_Create( w_, h_,
                          0,
                          oyChannels_m(3) | oyDataType_m(data_type),
                          oyImage_GetProfile( image ),
                          0 );
+    tags = oyImage_GetTags( display_image );
+    oyOptions_AppendOpts( tags, old_tags );
+    oyOptions_Release( &old_tags );
+    oyOptions_Release( &tags );
+
     if(oy_display_verbose)
       fprintf( stderr,_DBG_FORMAT_"%dx%d+%d+%d %dx%d+%d+%d %dx%d\n",_DBG_ARGS_,
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
