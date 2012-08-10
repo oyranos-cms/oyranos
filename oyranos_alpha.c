@@ -15387,7 +15387,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                        + OY_ROUND(image_roi_pix.x))
                       * data_size];
 
-        if(dst != src)
+        if(dst && src && dst != src)
           error = !memcpy( dst, src, wlen );
       }
 
