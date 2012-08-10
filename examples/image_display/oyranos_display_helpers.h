@@ -67,6 +67,7 @@ const char *   oyDatatypeToText      ( oyDATATYPE_e        t); }
 
 #ifndef OY_MIN
 #define OY_MIN(a,b)    (((a) <= (b)) ? (a) : (b))
+#define OY_MAX(a,b)    (((a) > (b)) ? (a) : (b))
 #endif
 
 
