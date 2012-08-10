@@ -390,11 +390,15 @@ private:
                (unsigned long)image, (unsigned long)display_image,
                (unsigned long)draw_image);
 
+    float x_ = OY_MAX(1.0, W / (float)oyImage_GetWidth( image )),
+          y_ = OY_MAX(1.0, H / (float)oyImage_GetHeight( image ));
+    x_ -= 1 * (x_-1.0)/2.0;
+    y_ -= 3 * (y_-1.0)/2.0;
     glBegin (GL_QUADS);
-	glTexCoord2f (0.0, th);  glVertex2f (-1.0, -1.0);
-	glTexCoord2f (0.0, 0.0); glVertex2f (-1.0,  1.0);
-	glTexCoord2f (tw,  0.0); glVertex2f ( 1.0,  1.0);
-	glTexCoord2f (tw,  th);  glVertex2f ( 1.0, -1.0);
+	glTexCoord2f (0.0, th);  glVertex2f (x_-2.0, y_-2.0);
+	glTexCoord2f (0.0, 0.0); glVertex2f (x_-2.0, y_);
+	glTexCoord2f (tw,  0.0); glVertex2f (x_,     y_);
+	glTexCoord2f (tw,  th);  glVertex2f (x_,     y_-2.0);
     glEnd ();
     glDisable (GL_TEXTURE_2D);
     oyImage_Release( &draw_image );
