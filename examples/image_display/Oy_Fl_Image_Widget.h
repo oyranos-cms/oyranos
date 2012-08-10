@@ -14,6 +14,8 @@
 #define _DBG_ARGS_ (strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__),__LINE__,__func__
 #endif
 
+//#define DEBUG_MOVE DEBUG
+
 class Oy_Fl_Image_Widget : public Fl_Widget, public Oy_Widget
 {
   int e, ox, oy, px, py;
@@ -26,14 +28,14 @@ public:
           ox = x() - Fl::event_x();
           oy = y() - Fl::event_y();
           fl_cursor( FL_CURSOR_MOVE, FL_BLACK, FL_WHITE );
-#if DEBUG_
-      printf(_DBG_FORMAT_"e: %d ox:%d px:%d\n",_DBG_ARGS_,e, ox, px);
+#if DEBUG_MOVE
+      if(oy_debug) printf(_DBG_FORMAT_"e: %d ox:%d px:%d\n",_DBG_ARGS_,e,ox,px);
 #endif
           return (1);
         case FL_RELEASE:
           fl_cursor( FL_CURSOR_DEFAULT, FL_BLACK, FL_WHITE );
-#if DEBUG_
-      printf(_DBG_FORMAT_"e: %d ox:%d px:%d\n",_DBG_ARGS_,e, ox, px);
+#if DEBUG_MOVE
+      if(oy_debug) printf(_DBG_FORMAT_"e: %d ox:%d px:%d\n",_DBG_ARGS_,e,ox,px);
 #endif
           return (1);
         case FL_DRAG:
@@ -41,8 +43,9 @@ public:
           py += oy + Fl::event_y();
           ox = x() - Fl::event_x();
           oy = y() - Fl::event_y();
-#if DEBUG_
-      printf(_DBG_FORMAT_"e: %d ox:%d px:%d oy: %d py:%d\n",_DBG_ARGS_,e, ox, px,oy,py);
+#if DEBUG_MOVE
+      if(oy_debug)
+        printf(_DBG_FORMAT_"e: %d ox:%d px:%d oy: %d py:%d\n",_DBG_ARGS_,e, ox, px,oy,py);
 #endif
           redraw();
           return (1);
@@ -100,8 +103,9 @@ public:
 
       if(image)
       {
-        if(px || py)
-          int i = W;
+        if(px || py) {
+          int i = W; i = 1;
+        }
         /* take care to not go over the borders */
         if(px < W - width) px = W - width;
         if(py < H - height) py = H - height;
@@ -120,7 +124,8 @@ public:
         display_rectangle = oyRectangle_NewWith( X+offset_x,Y+offset_y,W,H, 0 );
       }
 
-#if DEBUG_
+#if DEBUG_MOVE
+      if(oy_debug)
       printf( _DBG_FORMAT_"new display rectangle: %s +%d+%d +%d+%d\n",
               _DBG_ARGS_,
               oyRectangle_Show(display_rectangle), x(), y(), px, py );
@@ -128,29 +133,34 @@ public:
 
       if(ticket())
       {
+        int dst_width = oyImage_GetWidth( image ),
+            dst_height = oyImage_GetHeight( image );
         oyRectangle_s output_rectangle = {oyOBJECT_RECTANGLE_S,0,0,0};
         oyRectangle_SamplesFromImage( image, 0, &output_rectangle );
-        output_rectangle.width = OY_MIN( W, width );
-        output_rectangle.height = OY_MIN( H, height );
-        oyRectangle_Scale( &output_rectangle, 1.0/width );
-#if DEBUG_
+        output_rectangle.width = OY_MIN( OY_MIN( W, dst_width ), width );
+        output_rectangle.height = OY_MIN( OY_MIN( H, dst_height ), height );
+        oyRectangle_Scale( &output_rectangle, 1.0/dst_width );
+#if DEBUG_MOVE
         static int old_px = 0;
-        if(px != old_px)
+        if(px != old_px && oy_debug)
         {
         old_px = px;
         oyRectangle_s r = {oyOBJECT_RECTANGLE_S,0,0,0};
         oyRectangle_SetByRectangle( &r, &output_rectangle );
-        oyRectangle_Scale( &r, width );
+        oyRectangle_Scale( &r, dst_width );
         printf( _DBG_FORMAT_"output rectangle: %s start_xy:%.04g %.04g\n",
                 _DBG_ARGS_,
                 oyRectangle_Show(&r),
-                ticket()->start_xy[0]*width, ticket()->start_xy[1]*width );
+                ticket()->start_xy[0]*dst_width, ticket()->start_xy[1]*dst_width );
         }
 #endif
         oyPixelAccess_ChangeRectangle( ticket(),
-                                       -px/(double)width,
-                                       -py/(double)width,
+                                       -px/(double)dst_width,
+                                       -py/(double)dst_width,
                                        &output_rectangle );
+        if(oy_display_verbose)
+          printf( _DBG_FORMAT_"output rectangle: %s\n", _DBG_ARGS_,
+                  oyRectangle_Show(&output_rectangle));
       }
 
       if(image)

@@ -358,7 +358,7 @@ private:
     float th = H/(float)h_;
 
     if(oy_display_verbose)
-      fprintf( stderr, _DBG_FORMAT_"w_ %d h_ %d  %dx%d\n"
+      fprintf( stderr, _DBG_FORMAT_"w_ %d h_ %d  parent:%dx%d\n"
                "img:%d clut:%d scale:%f offset:%f prog:%d shader:%d %gx%g\n",
                _DBG_ARGS_,
                                                w_,h_,
@@ -384,7 +384,7 @@ private:
       oyImage_ToFile( draw_image, "draw_image.ppm", 0 );
     if(0&&oy_display_verbose)
       oyImage_ToFile( image, "image.ppm", 0 );
-    if(oy_display_verbose)
+    if(0&&oy_display_verbose)
       fprintf( stderr,_DBG_FORMAT_
                "image:0x%lx display_image:0x%lx draw_image:0x%lx\n" ,_DBG_ARGS_,
                (unsigned long)image, (unsigned long)display_image,
