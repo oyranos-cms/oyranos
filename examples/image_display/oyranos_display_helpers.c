@@ -403,6 +403,9 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
       } else
         result = -1;
     }
+
+  if(oy_debug)
+    fprintf( stderr, "%s:%d %s() result: %d\n", strrchr(__FILE__,'/'),__LINE__,__func__, result );
   return result;
 }
 

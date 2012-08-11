@@ -21,7 +21,7 @@ class Oy_Fl_GL_Box : public Fl_Gl_Window,
 public:
   Oy_Fl_GL_Box(int x, int y, int w, int h)
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
-  { frame_data = NULL; W=0; H=0; };
+  { frame_data = NULL; W=0; H=0; need_redraw=2; };
 
   ~Oy_Fl_GL_Box(void) { };
 
@@ -34,6 +34,7 @@ public:
 
 
 private:
+  int need_redraw;
   void draw()
   {
     int W_ = Oy_Fl_Image_Widget::w(),
@@ -66,12 +67,6 @@ private:
 
       int result = drawPrepare( &draw_image, data_type, 1 );
 
-      if(!draw_image || result != 0)
-      {
-        oyImage_Release( &draw_image );
-        return;
-      }
-
       pt = oyImage_GetPixelLayout( draw_image );
       channels = oyToChannels_m( pt );
 
@@ -98,6 +93,20 @@ private:
         glViewport( 0,0, W,H );
         glOrtho( -W,W, -H,H, -1.0,1.0);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+      }
+
+      if((!draw_image || result != 0) && valid())
+      {
+        if(!need_redraw)
+        {
+          oyImage_Release( &draw_image );
+          if(oy_debug)
+            fprintf(stderr, "%s:%d %s() return after result:%d ======  %lu ==========================\n", 
+                  strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
+                  __LINE__, __func__,result, (long unsigned)draw_image);
+          return;
+        }
+        --need_redraw;
       }
 
       glClear(GL_COLOR_BUFFER_BIT);
@@ -145,6 +154,10 @@ private:
                     frame_width,frame_height,W,H);
 
       oyImage_Release( &draw_image );
+      if(oy_debug)
+          fprintf(stderr, "%s:%d %s() ========== finished ========== result:%d valid:%d dirty:%d\n", 
+                  strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
+                  __LINE__, __func__, result, valid(), dirty);
     }
   }
 
