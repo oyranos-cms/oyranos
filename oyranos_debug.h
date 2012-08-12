@@ -1,12 +1,12 @@
-/** @file oyranos_debug.h
+/** @internal
+ *  @file oyranos_debug.h
  *
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2005-2009 (C) Kai-Uwe Behrmann
+ *            2005-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    internal helpers
- *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
@@ -30,7 +30,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/** debugging variable - set 0 to off (default), set 1 to switch debugging on */
+/** @internal
+ *  debugging variable - set 0 to off (default), set 1 to switch debugging on */
 extern clock_t oyranos_clock_;
 extern int level_PROG;
 

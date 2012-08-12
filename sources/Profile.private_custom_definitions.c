@@ -1,7 +1,7 @@
-/** Function    oyProfile_Release__Members
+/** @internal
+ *  Function    oyProfile_Release__Members
  *  @memberof   oyProfile_s
  *  @brief      Custom Profile destructor
- *  @internal
  *
  *  This function will free up all memmory allocated by the
  *  input object. First all object members witch have their
@@ -51,10 +51,10 @@ void oyProfile_Release__Members( oyProfile_s_ * profile )
   }
 }
 
-/** Function    oyProfile_Init__Members
+/** @internal
+ *  Function    oyProfile_Init__Members
  *  @memberof   oyProfile_s
  *  @brief      Custom Profile constructor 
- *  @internal
  *
  *  This function will allocate all memmory for the input object.
  *  For the basic member types this is done using the allocateFunc_
@@ -74,10 +74,10 @@ int oyProfile_Init__Members( oyProfile_s_ * profile )
   return 0;
 }
 
-/** Function    oyProfile_Copy__Members
+/** @internal
+ *  Function    oyProfile_Copy__Members
  *  @memberof   oyProfile_s
  *  @brief      Custom Profile copy constructor
- *  @internal
  *
  *  This function makes a copy of all values from the input
  *  to the output object. The destination object and all of its

@@ -1,7 +1,7 @@
-/** Function    oyHash_Release__Members
+/** @internal
+ *  Function    oyHash_Release__Members
  *  @memberof   oyHash_s
  *  @brief      Custom Hash destructor
- *  @internal
  *
  *  This function will free up all memmory allocated by the
  *  input object. First all object members witch have their
@@ -35,10 +35,10 @@ void oyHash_Release__Members( oyHash_s_ * hash )
   }
 }
 
-/** Function    oyHash_Init__Members
+/** @internal
+ *  Function    oyHash_Init__Members
  *  @memberof   oyHash_s
  *  @brief      Custom Hash constructor 
- *  @internal
  *
  *  This function will allocate all memmory for the input object.
  *  For the basic member types this is done using the allocateFunc_
@@ -61,10 +61,10 @@ int oyHash_Init__Members( oyHash_s_ * hash )
   return 0;
 }
 
-/** Function    oyHash_Copy__Members
+/** @internal
+ *  Function    oyHash_Copy__Members
  *  @memberof   oyHash_s
  *  @brief      Custom Hash copy constructor
- *  @internal
  *
  *  This function makes a copy of all values from the input
  *  to the output object. The destination object and all of its

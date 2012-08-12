@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/08/12
  */
 
 
@@ -32,10 +32,10 @@
 /* Include "Option.private_custom_definitions.c" { */
 #include "oyStructList_s.h"
 
-/** Function    oyOption_Release__Members
+/** @internal
+ *  Function    oyOption_Release__Members
  *  @memberof   oyOption_s
  *  @brief      Custom Option destructor
- *  @internal
  *
  *  This function will free up all memmory allocated by the
  *  input object. First all object members witch have their
@@ -71,10 +71,10 @@ void oyOption_Release__Members( oyOption_s_ * option )
 
 static int oy_option_id_ = 0;
 
-/** Function    oyOption_Init__Members
+/** @internal
+ *  Function    oyOption_Init__Members
  *  @memberof   oyOption_s
  *  @brief      Custom Option constructor 
- *  @internal
  *
  *  This function will allocate all memmory for the input object.
  *  For the basic member types this is done using the allocateFunc_
@@ -95,10 +95,10 @@ int oyOption_Init__Members( oyOption_s_ * option )
   return 0;
 }
 
-/** Function    oyOption_Copy__Members
+/** @internal
+ *  Function    oyOption_Copy__Members
  *  @memberof   oyOption_s
  *  @brief      Custom Option copy constructor
- *  @internal
  *
  *  This function makes a copy of all values from the input
  *  to the output object. The destination object and all of its

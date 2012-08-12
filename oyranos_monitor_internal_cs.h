@@ -1,4 +1,5 @@
-/** @file oyranos_monitor_internal_cs.h
+/** @internal
+ *  @file oyranos_monitor_internal_cs.h
  *
  *  Oyranos is an open source Colour Management System 
  *
@@ -8,7 +9,6 @@
 
 /**
  *  @brief    monitor device detection
- *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2005/02/01
@@ -28,7 +28,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/** \internal  platformdependent */
+/** @internal
+ *  platformdependent */
 typedef struct {
   oyOBJECT_e       type_;              /**< object type oyOBJECT_MONITOR_S */
   char           * name;               /**< display name, like screen */

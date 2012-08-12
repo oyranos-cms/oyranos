@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/08/12
  */
 
 
@@ -264,7 +264,8 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration1,
                                        oyOBJECT_e          api_number );
 
 
-/** @struct  oyRankPad
+/** @internal
+ *  @struct  oyRankPad
  *  @brief   a means to rank the result of comparing two key's
  *
  *  The structure is part of an other data structure and to be maintained by

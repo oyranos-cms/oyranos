@@ -1,4 +1,5 @@
-/** @file oyranos_helper.c
+/** @internal
+ *  @file oyranos_helper.c
  *
  *  Oyranos is an open source Colour Management System 
  *
@@ -6,7 +7,6 @@
  *            2005-2009 (C) Kai-Uwe Behrmann
  *
  *  @brief    helpers
- *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD <http://www.opensource.org/licenses/bsd-license.php>

@@ -1,4 +1,5 @@
-/** @file oyranos_alpha_internal.h
+/** @internal
+ *  @file oyranos_alpha_internal.h
  *
  *  Oyranos is an open source Colour Management System 
  *
@@ -7,7 +8,6 @@
  */
 
 /**
- *  @internal
  *  @brief    misc alpha internal APIs
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:

@@ -241,7 +241,8 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration1,
                                        oyOBJECT_e          api_number );
 
 
-/** @struct  oyRankPad
+/** @internal
+ *  @struct  oyRankPad
  *  @brief   a means to rank the result of comparing two key's
  *
  *  The structure is part of an other data structure and to be maintained by

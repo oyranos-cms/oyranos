@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/08/12
  */
 
 
@@ -43,12 +43,12 @@ typedef struct oyHash_s oyHash_s;
 
 
 /* Include "Hash.dox" { */
-/** @struct  oyHash_s
+/** @internal
+ *  @struct  oyHash_s
  *  @ingroup objects_generic
  *  @extends oyStruct_s
  *  @brief   A cache entry
- *  @internal
- *  
+ *
  *  Combine hash, description and oyPointer to one searchable struct. The struct
  *  can be used in a oyStructList_s for a hash map or searchable cache.
  *  @see oyCacheListNew_ oyHashGet_

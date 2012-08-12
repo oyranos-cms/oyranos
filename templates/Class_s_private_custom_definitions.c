@@ -1,4 +1,5 @@
-/** Function    oy{{ class.baseName }}_Release__Members
+/** @internal
+ *  Function    oy{{ class.baseName }}_Release__Members
  *  @memberof   {{ class.name }}
  *  @brief      Custom {{ class.baseName }} destructor
  *  @internal
@@ -31,7 +32,8 @@ void oy{{ class.baseName }}_Release__Members( {{ class.privName }} * {{ class.ba
   }
 }
 
-/** Function    oy{{ class.baseName }}_Init__Members
+/** @internal
+ *  Function    oy{{ class.baseName }}_Init__Members
  *  @memberof   {{ class.name }}
  *  @brief      Custom {{ class.baseName }} constructor 
  *  @internal
@@ -51,7 +53,8 @@ int oy{{ class.baseName }}_Init__Members( {{ class.privName }} * {{ class.baseNa
   return 0;
 }
 
-/** Function    oy{{ class.baseName }}_Copy__Members
+/** @internal
+ *  Function    oy{{ class.baseName }}_Copy__Members
  *  @memberof   {{ class.name }}
  *  @brief      Custom {{ class.baseName }} copy constructor
  *  @internal

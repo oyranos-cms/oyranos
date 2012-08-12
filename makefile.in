@@ -427,15 +427,17 @@ DOKU =  AUTHORS \
         ChangeLog \
         COPYING \
         README
-DOC_TEMPLATES = \
-	Doxyfile \
-	Doxyfile_alpha \
+DOC_TEMPLATES_LINK = \
 	doxymentation \
 	doxymentation_alpha \
 	doxymentation_common \
 	doxygen.css \
 	doxygen.footer \
 	doxygen.header
+DOC_TEMPLATES = \
+	Doxyfile \
+	Doxyfile_alpha \
+	$(DOC_TEMPLATES)
 
 LINGUAS_SRC = $(LING:.po=.gmo)
 POT_FILE = po/$(TARGET).pot
@@ -997,7 +999,7 @@ test2:	test2.o $(LIBSONAMEFULL)
 #endif
 
 $(SRCDIR)/test2.c.c:
-	test -f $(SRCDIR)/test2.c.c || ln -s $(SRCDIR)/test2.cpp $(SRCDIR)/test2.c.c
+	test -f $(SRCDIR)/test2.c.c || $(LNK) $(SRCDIR)/test2.cpp $(SRCDIR)/test2.c.c
 
 test2.c.o:	$(SRCDIR)/test2.c.c
 	$(CC) -I./ -I$(SRCDIR) $(CFLAGS) $(INCL) -c -o $*.o $(SRCDIR)/$*.c
@@ -1052,7 +1054,7 @@ $(LINGUAS_SRC):	$(SRCDIR)/$(POT_FILE)
             test -L po/$${lingua}/LC_MESSAGES/$(TARGET).mo \
               && $(RM) po/$${lingua}/LC_MESSAGES/$(TARGET).mo \
               || echo po/$${lingua}/LC_MESSAGES/$(TARGET).mo nicht gefunden; \
-            ln -s ../../$${lingua}.gmo po/$${lingua}/LC_MESSAGES/$(TARGET).mo;) \
+            $(LNK) ../../$${lingua}.gmo po/$${lingua}/LC_MESSAGES/$(TARGET).mo;) \
         || (echo $(SRCDIR)/$${ling}.po is not yet ready ... skipping) \
 	done;
 
@@ -1075,14 +1077,20 @@ $(SRCDIR)/$(POT_FILE):
 	done;
 	echo ... $(SRCDIR)/$(POT_FILE) done
 
+doxygen.header:
+	echo Linking doxygen files ...
+	test -L doxygen.header && $(RM) $(DOC_TEMPLATES_LINK) || echo no doxygen.header link
+	$(LNK) $(SRCDIR)/doxygen.header $(SRCDIR)/doxygen.footer $(SRCDIR)/doxygen.css $(SRCDIR)/doxymentation $(SRCDIR)/doxymentation_common $(SRCDIR)/doxymentation_alpha .
 
-docu:
+Doxyfile:	$(SRCDIR)/Doxyfile doxygen.header $(SRCDIR)/doxygen.header  $(SRCDIR)/doxygen.footer  $(SRCDIR)/doxygen.css  $(SRCDIR)/doxymentation  $(SRCDIR)/doxymentation_common  $(SRCDIR)/doxymentation_alpha
+	echo Update doxygen files ...
+	$(COPY) $(SRCDIR)/Doxyfile .
+	echo "INPUT = $(SRCDIR)" >> Doxyfile
+	$(COPY) $(SRCDIR)/Doxyfile_alpha .
+	echo "INPUT = $(SRCDIR) $(SRCDIR)/API_generated" >> Doxyfile_alpha
+
+docu:	Doxyfile
 	echo Documentation ...
-	test -f Doxyfile || ($(COPY) $(SRCDIR)/Doxyfile . && \
-	                     echo "INPUT = $(SRCDIR)" >> Doxyfile && \
-			     $(COPY) $(SRCDIR)/Doxyfile_alpha . && \
-                             echo "INPUT = $(SRCDIR) $(SRCDIR)/API_generated" >> Doxyfile_alpha && \
-			     ln -s $(SRCDIR)/doxygen.header $(SRCDIR)/doxygen.footer $(SRCDIR)/doxygen.css $(SRCDIR)/doxymentation $(SRCDIR)/doxymentation_common $(SRCDIR)/doxymentation_alpha .)
 	test -n 'which doxygen' && ( \
 		doxygen Doxyfile; $(COPY) $(SRCDIR)/$(TARGET)_logo.png doc/html/; \
 		doxygen Doxyfile_alpha; $(COPY) $(SRCDIR)/$(TARGET)_logo.png doc_alpha/html/;) || echo "Will not create Documentation because doxygen is missing"

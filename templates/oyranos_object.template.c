@@ -7,7 +7,8 @@
 #include "oyranos_object.h"
 #include "oyranos_string.h"
 
-/** @brief   test a boolean operator
+/** @internal
+ *  @brief   test a boolean operator
  *
  *  The function requires to receive proper object arguments and valid ranges.
  *  @todo test
