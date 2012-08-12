@@ -34,7 +34,7 @@ public:
   Oy_Fl_Shader_Box(int x, int y, int w, int h)
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
   { frame_data = NULL; W=0; H=0; clut_image = image = display_image = NULL;
-    grid_points = 0; clut = 0; clut_filled = 0; };
+    grid_points = 0; clut = 0; clut_filled = 0; need_redraw=2; };
 
   ~Oy_Fl_Shader_Box(void) { oyImage_Release( &clut_image );
     oyImage_Release( &image ); oyImage_Release( &display_image ); };
@@ -285,6 +285,7 @@ private:
     glActiveTextureARB (GL_TEXTURE0_ARB);
   }
 
+  int need_redraw;
   void draw()
   {
     int w_,h_;
@@ -336,7 +337,7 @@ private:
       data_type = oyToDataType_m( pt );
       sample_size = oySizeofDatatype( data_type );
 
-      drawPrepare( &draw_image, data_type, 1 );
+      int result = drawPrepare( &draw_image, data_type, 1 );
 
       pt = oyImage_GetPixelLayout( draw_image );
       channels = oyToChannels_m( pt );
@@ -357,10 +358,14 @@ private:
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
       }
 
-      if(!draw_image)
+      if((!draw_image || result != 0) && valid())
       {
-        fprintf( stderr, _DBG_FORMAT_"no draw_image!!!\n", _DBG_ARGS_);
-        return;
+        if(!need_redraw)
+        {
+          oyImage_Release( &draw_image );
+          return;
+        }
+        --need_redraw;
       }
     }
 

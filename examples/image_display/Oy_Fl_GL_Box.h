@@ -21,7 +21,7 @@ class Oy_Fl_GL_Box : public Fl_Gl_Window,
 public:
   Oy_Fl_GL_Box(int x, int y, int w, int h)
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
-  { frame_data = NULL; W=0; H=0; };
+  { frame_data = NULL; W=0; H=0; need_redraw=2; };
 
   ~Oy_Fl_GL_Box(void) { };
 
@@ -34,6 +34,7 @@ public:
 
 
 private:
+  int need_redraw;
   void draw()
   {
     int W_ = Oy_Fl_Image_Widget::w(),
@@ -53,20 +54,20 @@ private:
       oyPixel_t pt;
       int channels = 0;
       oyDATATYPE_e data_type = oyUINT8;
-      oyImage_s * image = 0;
+      oyImage_s * draw_image = 0;
       int gl_type = 0;
 
-      image = oyConversion_GetImage( conversion(), OY_INPUT );
-      pt = oyImage_GetPixelLayout( image );
+      draw_image = oyConversion_GetImage( conversion(), OY_INPUT );
+      pt = oyImage_GetPixelLayout( draw_image );
       data_type = oyToDataType_m( pt );
       if(data_type == oyUINT8)
         data_type = oyUINT16;
       sample_size = oySizeofDatatype( data_type );
-      oyImage_Release( & image );
+      oyImage_Release( &draw_image );
 
-      drawPrepare( &image, data_type, 1 );
+      int result = drawPrepare( &draw_image, data_type, 1 );
 
-      pt = oyImage_GetPixelLayout( image );
+      pt = oyImage_GetPixelLayout( draw_image );
       channels = oyToChannels_m( pt );
 
       if(channels == 3)
@@ -74,11 +75,11 @@ private:
       if(channels == 4)
         gl_type = GL_RGBA;
 
-      if(0&&oy_display_verbose && image)
+      if(0&&oy_display_verbose && draw_image)
         fprintf(stdout, "%s:%d pixellayout: %d width: %d channels: %d\n",
                     strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
                     __LINE__,
-                    pt, image->width, oyToChannels_m(pt) );
+                    pt, draw_image->width, oyToChannels_m(pt) );
 
       if(!valid() ||
          W_ != W || H_ != H || !frame_data)
@@ -94,16 +95,27 @@ private:
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
       }
 
+      if((!draw_image || result != 0) && valid())
+      {
+        if(!need_redraw)
+        {
+          oyImage_Release( &draw_image );
+          if(oy_debug)
+            fprintf(stderr, "%s:%d %s() return after result:%d ======  %lu ==========================\n", 
+                  strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
+                  __LINE__, __func__,result, (long unsigned)draw_image);
+          return;
+        }
+        --need_redraw;
+      }
+
       glClear(GL_COLOR_BUFFER_BIT);
       glColor3f(1.0, 1.0, 1.0);
       glBegin(GL_LINE_STRIP); glVertex2f(W, H); glVertex2f(-W,-H); glEnd();
       glBegin(GL_LINE_STRIP); glVertex2f(W,-H); glVertex2f(-W, H); glEnd();
 
-      if(!image)
-        return;
-
-      int frame_height = OY_MIN(image->height,H),
-          frame_width = OY_MIN(image->width,W);
+      int frame_height = OY_MIN(draw_image->height,H),
+          frame_width = OY_MIN(draw_image->width,W);
 
       int pos[4] = {-2,-2,-2,-2};
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
@@ -112,10 +124,10 @@ private:
                  pos[0],pos[1],pos[2], pos[3] );
 
       /* get the data */
-      if(image && frame_data)
+      if(draw_image && frame_data)
       for(y = 0; y < frame_height; ++y)
       {
-        image_data = image->getLine( image, y, &height, -1, &is_allocated );
+        image_data = draw_image->getLine( draw_image, y, &height, -1, &is_allocated );
 
         memcpy( &frame_data[frame_width*(frame_height-y-1)*channels*sample_size], image_data,
                 frame_width*channels*sample_size );
@@ -141,7 +153,11 @@ private:
                     __LINE__,
                     frame_width,frame_height,W,H);
 
-      oyImage_Release( &image );
+      oyImage_Release( &draw_image );
+      if(oy_debug)
+          fprintf(stderr, "%s:%d %s() ========== finished ========== result:%d valid:%d dirty:%d\n", 
+                  strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
+                  __LINE__, __func__, result, valid(), dirty);
     }
   }
 
