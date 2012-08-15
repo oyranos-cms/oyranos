@@ -4,7 +4,7 @@
     Oyranos depends on following libraries:\n
 
     <ul>
-    <li><a href="http://elektra.sf.net">Elektra</a>, this is the configuration module for linux, currently version 0.7 is requierd and included. </li>
+    <li><a href="http://freedesktop.org/wiki/Software/Elektra">Elektra</a>, this is the configuration module for linux, currently version 0.7 is requierd and included. </li>
     <li> libxml2 - http://www.xmlsoft.org/ </li>
     <li> OpenICC-Data is needed with its default ICC profiles </li>
     <li> libXinerama, libXrandr, libXfixes and libXxf86vm for X11 support - www.x.org </li>
@@ -66,7 +66,7 @@
     - Bug reports: https://sourceforge.net/tracker/?group_id=177017&atid=879553
     - Oyranos project page: http://www.oyranos.org/wiki/index.php?title=Oyranos
     - ColourWiki: http://www.oyranos.org/wiki
-    - Elektra, configuration engine used on Linux - http://elektra.sf.net
+    - Elektra, configuration engine used on Linux - http://freedesktop.org/wiki/Software/Elektra
     - littleCMS, colour conversion engine - http://www.littlecms.com
     - Xcalib, a vcgt to window server uploader - http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/
     - Directory paths for colour profiles and other configuration data <a href="http://www.oyranos.org/wiki/index.php?title=OpenIccDirectoryProposal">OpenIccDirectoryProposal at ColourWiki</a>
@@ -87,7 +87,7 @@
     This file contains all macros which are relevant to the Oyranos API using
     the Elektra library as configuration engine.\n
     For the Oyranos API see @file oyranos.h\n
-    @see Elektra at sourceforge <a href="http://elektra.sf.net">Elektra</a>
+    @see <a href="http://freedesktop.org/wiki/Software/Elektra">Elektra</a>
 */
 
 /** @file oyranos_monitor.h
