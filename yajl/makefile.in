@@ -10,9 +10,9 @@ SRCDIR = $(src_dir)
 BINTARGET = $(TARGET)
 
 API_FILES = \
-	api/$(TARGET)_common.h \
-	api/$(TARGET)_gen.h \
-	api/$(TARGET)_parse.h
+	yajl/$(TARGET)_common.h \
+	yajl/$(TARGET)_gen.h \
+	yajl/$(TARGET)_parse.h
 HEADERS = \
 	$(TARGET)_alloc.h \
 	$(TARGET)_buf.h \
@@ -162,11 +162,11 @@ copy_files:
 	  $(COPY) -R \
 	  $(ALL_FILES) \
 	  $(DESTDIR)
-	mkdir $(DESTDIR)/api
+	mkdir $(DESTDIR)/yajl
 	cd $(SRCDIR) && \
 	  $(COPY) -R \
 	  $(API_FILES) \
-	  $(DESTDIR)/api
+	  $(DESTDIR)/yajl
 
 
 dist: $(BASE) targz
