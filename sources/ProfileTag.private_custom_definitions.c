@@ -1,7 +1,7 @@
-/** Function    oyProfileTag_Release__Members
+/** @internal
+ *  Function    oyProfileTag_Release__Members
  *  @memberof   oyProfileTag_s
  *  @brief      Custom ProfileTag destructor
- *  @internal
  *
  *  This function will free up all memmory allocated by the
  *  input object. First all object members witch have their
@@ -20,10 +20,10 @@ void oyProfileTag_Release__Members( oyProfileTag_s_ * profiletag )
   /* Nothing to deallocate here */
 }
 
-/** Function    oyProfileTag_Init__Members
+/** @internal
+ *  Function    oyProfileTag_Init__Members
  *  @memberof   oyProfileTag_s
  *  @brief      Custom ProfileTag constructor 
- *  @internal
  *
  *  This function will allocate all memmory for the input object.
  *  For the basic member types this is done using the allocateFunc_
@@ -40,10 +40,10 @@ int oyProfileTag_Init__Members( oyProfileTag_s_ * profiletag )
   return 0;
 }
 
-/** Function    oyProfileTag_Copy__Members
+/** @internal
+ *  Function    oyProfileTag_Copy__Members
  *  @memberof   oyProfileTag_s
  *  @brief      Custom ProfileTag copy constructor
- *  @internal
  *
  *  This function makes a copy of all values from the input
  *  to the output object. The destination object and all of its

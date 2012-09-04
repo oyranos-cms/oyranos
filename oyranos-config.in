@@ -53,6 +53,12 @@ do
 	--settingsdirname)
 	    echo_settingsdirname=yes
 	    ;;
+        --cmmdir)
+	    echo_cmmdirname=yes
+	    ;;
+        --metadir)
+	    echo_metadirname=yes
+	    ;;
 	*)
 	    echo_help=yes
 	    ;;
@@ -72,9 +78,16 @@ if [ "$echo_help" = "yes" ]; then
   echo "  $0 --usercolordir      path to users main color directory"
   echo "  $0 --iccdirname        ICC profile directory name"
   echo "  $0 --settingsdirname   Oyranos settings directory name"
+  echo "  $0 --cmmdir            Oyranos CMM directory name"
+  echo "  $0 --metadir           Oyranos meta module directory name"
 fi
 
-  #elektra_dyn="`pkg-config --libs elektra`"
+if [ "$echo_ldflags" = "yes" ]; then
+    elektra_dyn="`pkg-config --libs elektra`"
+    elektra="$elektra_dyn"
+fi
+
+if [ -z "$elektra" ]; then
   if [ -f $libdir/libelektra.a ]; then
     elektra="$libdir/libelektra.a"
     if [ -f $libdir/libelektra-filesys.a ]; then
@@ -83,9 +96,12 @@ fi
     if [ -f $libdir/elektra/libelektra-filesys.a ]; then
       elektra="$elektra $libdir/elektra/libelektra-filesys.a"
     fi
-  else
-    elektra="$elektra_dyn"
   fi
+fi
+
+if [ -z "$elektra" ]; then
+    elektra="`pkg-config --libs elektra`"
+fi
 
 if [ "$echo_cflags" = "yes" ]; then
   echo "-I$includedir -I$includedir/alpha/object"
@@ -93,9 +109,9 @@ fi
 
 if [ "$echo_ldflags" = "yes" ]; then
   if [ -f liboyranos.so ]; then
-    echo "-L. -loyranos -loyranos_object -loyranos_core $elektra_dyn $oyranos_add"
+    echo "-L. -loyranos -loyranos_object -loyranos_core $elektra $oyranos_add"
   else
-    echo "-L$libdir -loyranos -loyranos_object -loyranos_core $elektra_dyn $oyranos_add"
+    echo "-L$libdir -loyranos -loyranos_object -loyranos_core $elektra $oyranos_add"
   fi
 fi
 
@@ -118,5 +134,11 @@ if [ "$echo_iccdirname" = "yes" ]; then
 fi
 if [ "$echo_settingsdirname" = "yes" ]; then
   echo "$settingsdirname"
+fi
+if [ "$echo_cmmdirname" = "yes" ]; then
+  echo "$cmmdir"
+fi
+if [ "$echo_metadirname" = "yes" ]; then
+  echo "$libdir/$metasubpath"
 fi
 

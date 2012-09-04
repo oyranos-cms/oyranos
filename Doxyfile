@@ -4,11 +4,10 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = Oyranos
-PROJECT_NUMBER         = 0.3.2
+PROJECT_NUMBER         = 0.5.0
 OUTPUT_DIRECTORY       = doc/
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
-USE_WINDOWS_ENCODING   = NO
 BRIEF_MEMBER_DESC      = YES
 REPEAT_BRIEF           = YES
 ABBREVIATE_BRIEF       = "The $name class" \
@@ -30,7 +29,6 @@ STRIP_FROM_INC_PATH    =
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = NO
 MULTILINE_CPP_IS_BRIEF = NO
-DETAILS_AT_TOP         = NO
 INHERIT_DOCS           = YES
 DISTRIBUTE_GROUP_DOC   = YES
 TAB_SIZE               = 4
@@ -81,11 +79,19 @@ INPUT                  = ./
 FILE_PATTERNS          = oyranos.c oyranos.h \
                          doxymentation \
                          doxymentation_common \
-                         oyranos_icc.h oyranos_icc.c
+                         oyranos_icc.h oyranos_icc.c \
+                         *.c *.h
 RECURSIVE              = NO
-EXCLUDE                = oyranos_gamma.c
+EXCLUDE                = 
 EXCLUDE_SYMLINKS       = YES
-EXCLUDE_PATTERNS       = 
+EXCLUDE_PATTERNS       = oyranos_gamma.c oyranos_alpha* \
+                         oyranos_check.* oyranos_io.* oyranos_io_core.* \
+                         oyranos_elektra.* oyrnois_internal* oyranos_misc.* \
+                         oyranos_module.* oyranos_cmm.h oyranos_cmm.c \
+                         oyranos_sentinel* \
+                         oyranos_widgets* oyranos_monitor_internal_cs.h \
+                         oyranos_cs.h oyranos_xml.* \
+                         oyranos_profile.c oyranos_profiles.c oyranos_policy.c
 EXAMPLE_PATH           = 
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
@@ -215,8 +221,6 @@ GRAPHICAL_HIERARCHY    = YES
 DOT_IMAGE_FORMAT       = png
 DOT_PATH               = 
 DOTFILE_DIRS           = 
-MAX_DOT_GRAPH_WIDTH    = 1024
-MAX_DOT_GRAPH_HEIGHT   = 1024
 MAX_DOT_GRAPH_DEPTH    = 1000
 GENERATE_LEGEND        = YES
 DOT_CLEANUP            = YES
@@ -224,4 +228,4 @@ DOT_TRANSPARENT        = YES
 #---------------------------------------------------------------------------
 # Configuration::additions related to the search engine   
 #---------------------------------------------------------------------------
-SEARCHENGINE           = NO
+SEARCHENGINE           = YES

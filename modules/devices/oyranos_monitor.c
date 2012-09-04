@@ -302,21 +302,21 @@ int          oyUnrollEdid1_          ( void              * edid,
       *mnft_id = list[i].value.integer;
     else if(model_id && oyStrcmp_( list[i].key, "model_id") == 0)
       *model_id = list[i].value.integer;
-    else if(c && oyStrcmp_( list[i].key, "redx") == 0)
+    else if(c && oyStrcmp_( list[i].key, XCM_EDID_KEY_REDx) == 0)
       c[0] = list[i].value.dbl;
-    else if(c && oyStrcmp_( list[i].key, "redy") == 0)
+    else if(c && oyStrcmp_( list[i].key, XCM_EDID_KEY_REDy) == 0)
       c[1] = list[i].value.dbl;
-    else if(c && oyStrcmp_( list[i].key, "greenx") == 0)
+    else if(c && oyStrcmp_( list[i].key, XCM_EDID_KEY_GREENx) == 0)
       c[2] = list[i].value.dbl;
-    else if(c && oyStrcmp_( list[i].key, "greeny") == 0)
+    else if(c && oyStrcmp_( list[i].key, XCM_EDID_KEY_GREENy) == 0)
       c[3] = list[i].value.dbl;
-    else if(c && oyStrcmp_( list[i].key, "bluex") == 0)
+    else if(c && oyStrcmp_( list[i].key, XCM_EDID_KEY_BLUEx) == 0)
       c[4] = list[i].value.dbl;
-    else if(c && oyStrcmp_( list[i].key, "bluey") == 0)
+    else if(c && oyStrcmp_( list[i].key, XCM_EDID_KEY_BLUEy) == 0)
       c[5] = list[i].value.dbl;
-    else if(c && oyStrcmp_( list[i].key, "whitex") == 0)
+    else if(c && oyStrcmp_( list[i].key, XCM_EDID_KEY_WHITEx) == 0)
       c[6] = list[i].value.dbl;
-    else if(c && oyStrcmp_( list[i].key, "whitey") == 0)
+    else if(c && oyStrcmp_( list[i].key, XCM_EDID_KEY_WHITEy) == 0)
       c[7] = list[i].value.dbl;
     else if(c && oyStrcmp_( list[i].key, "gamma") == 0)
       c[8] = list[i].value.dbl;

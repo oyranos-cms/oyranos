@@ -1,7 +1,7 @@
-/** Function    oyConfig_Release__Members
+/** @internal
+ +  Function    oyConfig_Release__Members
  *  @memberof   oyConfig_s
  *  @brief      Custom Config destructor
- *  @internal
  *
  *  This function will free up all memmory allocated by the
  *  input object. First all object members witch have their
@@ -42,10 +42,10 @@ void oyConfig_Release__Members( oyConfig_s_ * config )
   }
 }
 
-/** Function    oyConfig_Init__Members
+/** @internal
+ +  Function    oyConfig_Init__Members
  *  @memberof   oyConfig_s
  *  @brief      Custom Config constructor 
- *  @internal
  *
  *  This function will allocate all memmory for the input object.
  *  For the basic member types this is done using the allocateFunc_
@@ -66,10 +66,10 @@ int oyConfig_Init__Members( oyConfig_s_ * config )
   return 0;
 }
 
-/** Function    oyConfig_Copy__Members
+/** @internal
+ +  Function    oyConfig_Copy__Members
  *  @memberof   oyConfig_s
  *  @brief      Custom Config copy constructor
- *  @internal
  *
  *  This function makes a copy of all values from the input
  *  to the output object. The destination object and all of its

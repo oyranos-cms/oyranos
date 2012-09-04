@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2004-2011 (C) Kai-Uwe Behrmann
+ *            2004-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    object APIs
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -36,8 +36,17 @@
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
+
+#include "oyjl/oyjl_tree.h"
+
 #ifdef HAVE_POSIX
 #include <dlfcn.h>
+#else
+#include <ltdl.h>
+#define dlopen  lt_dlopen
+#define dlsym   lt_dlsym
+#define dlerror lt_dlerror
+#define dlclose lt_dlclose
 #endif
 #include <math.h>
 #include <locale.h>   /* LC_NUMERIC */
@@ -91,7 +100,7 @@ oyLab2XYZ (const double *CIELab, double * XYZ)
   const double * l = CIELab;
   /* double e = 216./24389.;             // 0.0088565 */
   /* double k = 24389./27.;              // 903.30 */
-  double d = 6./29.;                  /* 0.20690 */
+  double d = 6./29.;                  /* 24.0/116.0 0.20690 */
 
   double Xn = 0.964294;
   double Yn = 1.000000;
@@ -105,15 +114,15 @@ oyLab2XYZ (const double *CIELab, double * XYZ)
   if(fy > d)
     XYZ[1] = Yn * pow( fy, 3 );
   else
-    XYZ[1] = (fy - 16./116.) * 3 * pow( d, 2 ) * Yn;
+    XYZ[1] = (fy - 16./116.) * 108.0/841.0 * Yn;
   if(fx > d)
     XYZ[0] = Xn * pow( fx, 3 );
   else
-    XYZ[0] = (fx - 16./116.) * 3 * pow( d, 2 ) * Xn;
+    XYZ[0] = (fx - 16./116.) * 108.0/841.0 * Xn;
   if(fz > d)
     XYZ[2] = Zn * pow( fz, 3 );
   else
-    XYZ[2] = (fz - 16./116.) * 3 * pow( d, 2 ) * Zn;
+    XYZ[2] = (fz - 16./116.) * 108.0/841.0 * Zn;
 }
 
 /** */
@@ -1233,6 +1242,82 @@ int          oyCMMdsoSearch_         ( const char        * lib_name )
   return pos;
 }
 
+/* defined in sources/Struct.public_methods_definitions.c */
+extern const char * (*oyStruct_GetTextFromModule_p) (
+                                       oyStruct_s        * obj,
+                                       oyNAME_e            name_type,
+                                       uint32_t            flags );
+
+/** Function  oyStruct_GetTextFromModule
+ *  @memberof oyStruct_s
+ *  @brief    get object infos from a module
+ *
+ *  @param[in,out] obj                 the objects structure
+ *  @param[in]     name_type           the type
+ *  @param[in]     flags               @see oyStruct_GetText
+ *  @return                            the text
+ *
+ *  @version  Oyranos: 0.3.3
+ *  @since    2009/09/15 (Oyranos: 0.3.3)
+ *  @date     2011/10/31
+ */
+const char * oyStruct_GetTextFromModule (
+                                       oyStruct_s        * obj,
+                                       oyNAME_e            name_type,
+                                       uint32_t            flags )
+{
+  int error = !obj;
+  const char * text = 0;
+
+  if(!error)
+    text = oyObject_GetName( obj->oy_, oyNAME_NICK );
+
+  if(!error && !text)
+  {
+    if(obj->type_)
+    {
+      oyCMMapiFilters_s * apis;
+      int apis_n = 0, i,j,n;
+      oyCMMapi9_s * cmm_api9 = 0;
+      char * api_reg = 0;
+
+      apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S,
+                                   oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                                   0, 0);
+      apis_n = oyCMMapiFilters_Count( apis );
+      for(i = 0; i < apis_n; ++i)
+      {
+        cmm_api9 = (oyCMMapi9_s*) oyCMMapiFilters_Get( apis, i );
+
+        n = 0;
+        while( cmm_api9->object_types && cmm_api9->object_types[n])
+          ++n;
+        for(j = 0; j < n; ++j)
+          if( cmm_api9->object_types[j]->oyCMMobjectGetText &&
+              cmm_api9->object_types[j]->id == obj->type_ )
+          {
+            text = cmm_api9->object_types[j]->oyCMMobjectGetText( flags?0:obj,
+                                                   name_type, 0 );
+            if(text)
+              break;
+          }
+
+        if(cmm_api9->release)
+          cmm_api9->release( (oyStruct_s**)&cmm_api9 );
+
+        if(text)
+          break;
+      }
+      oyCMMapiFilters_Release( &apis );
+    }
+  }
+
+  if(!error && !text)
+    text = oyStructTypeToText( obj->type_ );
+
+  return text;
+}
+
 /** @internal
  *  @brief release Oyranos CMM dlopen handle
  *
@@ -1304,6 +1389,10 @@ if(!lib_name)
       WARNc2_S( "\n  dlopen( %s, RTLD_LAZY):\n  \"%s\"", lib_name, dlerror() );
       system("  echo $LD_LIBRARY_PATH");
     }
+
+    /* initialise module type lookup */
+    if(!oyStruct_GetTextFromModule_p)
+      oyStruct_GetTextFromModule_p = oyStruct_GetTextFromModule;
   }
 
   if(dso_handle)
@@ -2084,7 +2173,8 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_meta,
           if(!ret && reg)
           {
             rank = oyFilterRegistrationMatch( reg, registration, type );
-            if(rank && OYRANOS_VERSION == info->oy_compatibility)
+            if((rank && OYRANOS_VERSION == info->oy_compatibility) ||
+               !registration)
               ++rank;
 
             if(rank && rank_list)
@@ -2754,9 +2844,9 @@ digraph Anatomy_A {
  *  needed. This pattern follows the scheme of directories with attributes or
  *  XML elements with attributes.
  *  The sections are to be filled as follows:
- *  - top, e.g. "shared" (::oyFILTER_REG_TOP)
- *  - vendor, e.g. "oyranos.org" (::oyFILTER_REG_DOMAIN)
- *  - filter type, e.g. "imaging"
+ *  - top, e.g. OY_TOP_SHARED (::oyFILTER_REG_TOP)
+ *  - vendor, e.g. OY_DOMAIN_STD (::oyFILTER_REG_DOMAIN)
+ *  - filter type, e.g. OY_TYPE_STD
  *    (::oyFILTER_REG_TYPE)
  *  - filter name, e.g. "icc.lcms._NOACCEL._CPU" (::oyFILTER_REG_APPLICATION)
  *
@@ -2776,7 +2866,7 @@ digraph Anatomy_A {
  *    hardware acceleration features \n
  *  
  *  \b Example: a complete module registration: \n
- *  "shared/oyranos.org/imaging/icc.lcms._NOACCEL._CPU" registers a plain
+ *  "org/oyranos/openicc/icc.lcms._NOACCEL._CPU" registers a plain
  *  software CMM
  * 
  *  A underscore in front of a attribute makes the attribute optional during
@@ -2804,14 +2894,14 @@ digraph Anatomy_A {
  *  attibute must not match.
  *
  *  \b Example: a complete registration search pattern: \n
- *  "//imaging/4+icc.7+ACCEL.7_GPU.7_HLSL.7-GLSL" selects a accelerated CMM 
+ *  "//openicc/4+icc.7+ACCEL.7_GPU.7_HLSL.7-GLSL" selects a accelerated CMM 
  *  interpolator with prefered GPU and HLSL but no GLSL support together with a
  *  ICC compliant context generator and options.
  *
  *  The oyFilterRegistrationToText() and oyFilterRegistrationMatch() functions
  *  might be useful for canonical processing Oyranos registration text strings.
  *  Many functions allow for passing a registration string. Matching can be 
- *  obtained by omitting sections like in the string "//imaging/icc", where the
+ *  obtained by omitting sections like in the string "//openicc/icc", where the
  *  elements between slashes is o,itted. This string would result in a match 
  *  for any ICC compliant colour conversion filter.
  *
@@ -3001,6 +3091,102 @@ int          oyRegistrationEraseFromDB(const char        * registration )
   return error;
 }
 
+
+/** Function oyConfig_GetFromDB
+ *  @brief   search a configuration in the DB for a configuration from module
+ *  @memberof oyConfig_s
+ *
+ *  @param[in]     device              the to be checked configuration from
+ *                                     oyConfigs_FromPattern_f
+ *  @param[out]    rank_value          the number of matches between config and
+ *                                     pattern, -1 means invalid
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent
+ *
+ *  @version Oyranos: 0.3.2
+ *  @since   2009/01/26 (Oyranos: 0.3.2)
+ *  @date    2011/09/14
+ */
+OYAPI int  OYEXPORT
+               oyConfig_GetFromDB    ( oyConfig_s        * device,
+                                       oyConfigs_s       * configs,
+                                       int32_t           * rank_value )
+{
+  int error = !device;
+  int rank = 0, max_rank = 0, i, n;
+  oyConfig_s * config = 0, * max_config = 0;
+  oyConfig_s * s = device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
+
+  if(error <= 0)
+  {
+    n = oyConfigs_Count( configs );
+
+    for( i = 0; i < n; ++i )
+    {
+      config = oyConfigs_Get( configs, i );
+
+      error = oyConfig_Compare( device, config, &rank );
+      DBG_PROG1_S("rank: %d\n", rank);
+      if(max_rank < rank)
+      {
+        max_rank = rank;
+        oyConfig_Release( &max_config );
+        max_config = oyConfig_Copy( config, 0 );
+      }
+
+      oyConfig_Release( &config );
+    }
+  }
+
+  if(error <= 0 && rank_value)
+    *rank_value = max_rank;
+
+  if(error <= 0 && max_config)
+  {
+    oyOptions_Release( &device->db );
+    device->db = oyOptions_Copy( max_config->db, 0 );
+    oyConfig_Release( &max_config );
+  }
+
+  return error;
+}
+
+/** Function oyConfig_GetDB
+ *  @brief   search a configuration in the DB for a configuration from module
+ *  @memberof oyConfig_s
+ *
+ *  @param[in]     device              the to be checked configuration from
+ *                                     oyConfigs_FromPattern_f
+ *  @param[out]    rank_value          the number of matches between config and
+ *                                     pattern, -1 means invalid
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/26 (Oyranos: 0.1.10)
+ *  @date    2009/01/26
+ */
+OYAPI int  OYEXPORT
+               oyConfig_GetDB        ( oyConfig_s        * device,
+                                       int32_t           * rank_value )
+{
+  int error = !device;
+  oyConfigs_s * configs = 0;
+  oyConfig_s * s = device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
+
+  if(error <= 0)
+    error = oyConfigs_FromDB( device->registration, &configs, 0 );
+  if(error <= 0)
+    error = oyConfig_GetFromDB( device, configs, rank_value );
+  oyConfigs_Release( &configs );
+
+  return error;
+}
+
 /** Function oyConfigs_SelectSimiliars
  *  @memberof oyConfigs_s
  *  @brief   filter similiar configs compared by a pattern
@@ -3089,6 +3275,257 @@ OYAPI int  OYEXPORT
   }
 
   *filtered = result;
+
+  return error;
+}
+
+#define OPENICC_DEVICE_JSON_HEADER_BASE \
+  "{\n" \
+  "  \"org\": {\n" \
+  "    \"freedesktop\": {\n" \
+  "      \"openicc\": {\n" \
+  "        \"device\": {\n" \
+  "          \"%s\":\n"
+#define OPENICC_DEVICE_JSON_FOOTER_BASE \
+  "        }\n" \
+  "      }\n" \
+  "    }\n" \
+  "  }\n" \
+  "}\n"
+
+
+/** Function  oyDevicesFromTaxiDB
+ *  @brief    search a calibration state in the taxi DB for a device
+ *  @memberof oyConfig_s
+ *
+ *  @param[in]     device              the device
+ *  @param[in]     options             not used
+ *  @param[out]    devices             the obtained device calibrations
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent
+ *
+ *  @version Oyranos: 0.3.3
+ *  @since   2011/09/14 (Oyranos: 0.3.2)
+ *  @date    2012/01/06
+ */
+OYAPI int  OYEXPORT
+             oyDevicesFromTaxiDB     ( oyConfig_s        * device,
+                                       oyOptions_s       * options,
+                                       oyConfigs_s      ** devices,
+                                       oyObject_s          obj )
+{
+  int error = 0;
+  oyConfigs_s * configs_ = 0;
+  oyConfig_s * s = device;
+  char * manufacturers;
+  size_t size = 0;
+  const char * short_name = NULL,
+             * long_name = NULL,
+             * name = NULL;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
+
+  error = oyDeviceCheckProperties ( device );
+
+
+  manufacturers = oyReadUrlToMem_( "http://icc.opensuse.org/manufacturers",
+                                   &size, "r", oyAllocateFunc_ );
+
+  
+  if(manufacturers)
+  {
+    oyjl_value_s * root = 0;
+    int count = 0, i;
+    char * val = NULL,
+         * key = NULL;
+    char * json_text = NULL;
+    const char * prefix = oyConfig_FindString( device, "prefix", 0 );
+
+    error = oyjl_tree_from_json( manufacturers, &root, NULL );
+    if(prefix)
+      oyStringAddPrintf_( &key, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "%smnft", prefix );
+    else
+      oyStringAddPrintf_( &key, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "mnft" );
+    name = short_name = oyConfig_FindString( device, key, 0 );
+    oyFree_m_(key);
+    if(prefix)
+      oyStringAddPrintf_( &key, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "%smanufacturer", prefix );
+    else
+      oyStringAddPrintf_( &key, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "manufacturer" );
+    if(!short_name)
+      name = long_name = oyConfig_FindString( device, key, 0 );
+    oyFree_m_(key);
+
+    if(oy_debug)
+      WARNc1_S("manufacturers:\n%s", manufacturers);
+
+    if(root)
+    {
+      int done = 0;
+      oyjl_value_s * v = 0, * tv = 0;
+
+      count = oyjl_value_count(root);
+      for(i = 0; i < count; ++i)
+      {
+        if(short_name)
+          v = oyjl_tree_get_valuef( root, 
+                              "[%d]/short_name", i );
+        else if(long_name)
+          v = oyjl_tree_get_valuef( root, 
+                              "[%d]/long_name", i );
+
+        val = oyjl_value_text( v, oyAllocateFunc_ );
+        if( val && name && strcmp( val, name) == 0 )
+          done = 1;
+        else
+          DBG_NUM2_S("could not find device:\n%s %s",
+                   oyNoEmptyString_m_(name), oyNoEmptyString_m_(val));
+
+        if(done) break;
+        if(val) oyDeAllocateFunc_(val); val = 0;
+      }
+
+      error = oyjl_tree_free( &root );
+
+      /* get the devices */
+      if(done)
+      {
+        char * device_db, * t = NULL;
+        oyOptions_s * opts = NULL;
+        oyConfig_s * dev;
+
+        /* put a cloak around the bare meta data, so it behaves like OpenICC
+         * JSON */
+        oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                            OPENICC_DEVICE_JSON_HEADER_BASE, "dummy" );
+
+        /* the device DB JSON contains all device meta data for one
+         * mnft / manufacturer */
+        device_db = oyReadUrlToMemf_( &size, "r", oyAllocateFunc_,
+                            "http://icc.opensuse.org/devices/%s", val );
+        STRING_ADD( t, device_db );
+        oyFree_m_( device_db );
+
+        oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                            "\n"OPENICC_DEVICE_JSON_FOOTER_BASE );
+        device_db = t; t = NULL;
+
+        if(oy_debug)
+          oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)device,
+                       OY_DBG_FORMAT_
+                       "http://icc.opensuse.org/devices/%s with header:\n%s",
+                       OY_DBG_ARGS_,
+                       val, oyNoEmptyString_m_(device_db) );
+        error = oyjl_tree_from_json( device_db, &root, NULL );
+
+        error = oyOptions_SetFromText( &opts,
+                                 "//" OY_TYPE_STD "/argv/underline_key_suffix",
+                                 "TAXI", OY_CREATE_NEW );
+
+        tv = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]" );
+        count = oyjl_value_count(tv);
+        for(i = 0; i < count; ++i)
+        {
+          error = oyOptions_SetFromInt( &opts,
+                                 "//" OY_TYPE_STD "/argv/pos",
+                                 i, 0, OY_CREATE_NEW );
+
+          v = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]/[%d]/_id/$oid", i );
+          val = oyjl_value_text( v, oyAllocateFunc_ );
+          error = oyDeviceFromJSON( device_db, opts, &dev );
+
+          if(dev)
+          {
+            int j,n;
+            oyConfig_AddDBData( dev, "TAXI_id", val, OY_CREATE_NEW );
+            if(val) oyDeAllocateFunc_(val); val = 0;
+
+            v = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]/[%d]/profile_description", i );
+            n = oyjl_value_count(v);
+            for(j = 0; j < n; ++j)
+            {
+              v = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]/[%d]/profile_description/[%d]", i, j );
+              val = oyjl_value_text( v, oyAllocateFunc_ );
+              oyConfig_AddDBData( dev, "TAXI_profile_description", val, OY_CREATE_NEW );
+              if(val) oyDeAllocateFunc_(val); val = 0;
+              /* TODO store all profile descriptions */
+              break;
+            }
+
+            if(!configs_)
+              configs_ = oyConfigs_New(0);
+            oyConfigs_MoveIn( configs_, &dev, -1 );
+          }
+
+          if(val) oyDeAllocateFunc_(val); val = 0;
+          if(json_text) oyFree_m_( json_text );
+        }
+        oyOptions_Release( &opts );
+        if(device_db) oyDeAllocateFunc_(device_db); device_db = 0;
+      }
+      oyjl_tree_free( &root );
+    }
+
+    oyFree_m_( manufacturers );
+
+    if(!configs_)
+    {
+      oyDeviceToJSON( device, 0, &json_text, oyAllocateFunc_ );
+      WARNc1_S("no profile found for\n%s", json_text);
+      oyFree_m_(json_text);
+    } else if(oy_debug)
+    {
+      count = oyConfigs_Count( configs_ );
+      for( i = 0; i < count; ++i)
+        WARNc1_S("%d", i);
+    }
+
+    if(configs_)
+      *devices = configs_;
+  }
+
+  return error;
+}
+
+/** Function oyConfig_GetBestMatchFromTaxiDB
+ *  @brief   search a profile ID in the Taxi DB for a configuration
+ *  @memberof oyConfig_s
+ *
+ *  @param[in]     device              the to be checked configuration from
+ *                                     oyConfigs_FromPattern_f
+ *  @param[out]    rank_value          the number of matches between config and
+ *                                     pattern, -1 means invalid
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent
+ *
+ *  @version Oyranos: 0.3.2
+ *  @since   2009/01/26 (Oyranos: 0.3.2)
+ *  @date    2011/09/14
+ */
+OYAPI int  OYEXPORT
+               oyConfig_GetBestMatchFromTaxiDB(
+                                       oyConfig_s        * device,
+                                       int32_t           * rank_value )
+{
+  int error = !device;
+  oyConfigs_s * configs = 0;
+  oyConfig_s * s = device;
+  oyOptions_s * options = 0;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
+
+  if(error <= 0)
+  {
+    error = oyDevicesFromTaxiDB( device, options, &configs, 0 );
+    oyOptions_Release( &options );
+  }
+  if(error <= 0)
+    error = oyConfig_GetFromDB( device, configs, rank_value );
+  oyConfigs_Release( &configs );
 
   return error;
 }
@@ -5609,111 +6046,6 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
   return s;
 }
 
-/**
- *  @internal
- *  @brief   copy a image
- *  @memberof oyImage_s
- *
- *  @todo  implement
- * 
- *  @since Oyranos: version 0.1.8
- *  @date  october 2007 (API 0.1.8)
- */
-oyImage_s *    oyImage_Copy_          ( oyImage_s       * image,
-                                        oyObject_s        object )
-{
-  oyImage_s * s = 0;
-
-  if(!image)
-    return s;
-
-  /* TODO */
-
-  s = oyImage_Create( image->width, image->height,
-                      0, image->layout_[oyLAYOUT],
-                      image->profile_, object );
-
-  return s;
-}
-
-/** @brief   copy a image
- *  @memberof oyImage_s
- *
- *  @since Oyranos: version 0.1.8
- *  @date  october 2007 (API 0.1.8)
- */
-oyImage_s *    oyImage_Copy           ( oyImage_s       * image,
-                                        oyObject_s        object )
-{
-  oyImage_s * s = image;
-
-  if(!s)
-    return s;
-
-  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
-
-  if(!object)
-  {
-    oyObject_Copy( s->oy_ );
-    return s;
-  }
-
-  s = oyImage_Copy_( image, object );
-  /* TODO cache */
-  return s;
-}
-
-/** @brief   release a image
- *  @memberof oyImage_s
- *
- *  @since Oyranos: version 0.1.8
- *  @date  october 2007 (API 0.1.8)
- */
-int            oyImage_Release        ( oyImage_s      ** obj )
-{
-  /* ---- start of common object destructor ----- */
-  oyImage_s * s = 0;
-
-  if(!obj || !*obj)
-    return 0;
-
-  s = *obj;
-
-  oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
-
-  *obj = 0;
-
-  if(oyObject_UnRef(s->oy_))
-    return 0;
-  /* ---- end of common object destructor ------- */
-
-  s->width = 0;
-  s->height = 0;
-  if(s->pixel_data && s->pixel_data->release)
-    s->pixel_data->release( &s->pixel_data );
-
-  if(s->user_data && s->user_data->release)
-    s->user_data->release( &s->user_data );
-
-  oyProfile_Release( &s->profile_ );
-
-  if(s->oy_->deallocateFunc_)
-  {
-    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-
-    if(s->layout_)
-      deallocateFunc( s->layout_ ); s->layout_ = 0;
-
-    if(s->channel_layout)
-      deallocateFunc( s->channel_layout ); s->channel_layout = 0;
-
-    oyObject_Release( &s->oy_ );
-
-    deallocateFunc( s );
-  }
-
-  return 0;
-}
 
 /** @brief   set a image
  *  @memberof oyImage_s
@@ -5894,6 +6226,7265 @@ int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
   return error;
 }
 
+
+/** Function oyDeviceProfileFromDB
+ *  @brief   look up a profile of a device from DB
+ *
+ *  The function asks the module for a detailed and possible expensive list
+ *  of device information and tries to find a matching configuration in the
+ *  DB. The device informations are the same as for saving to DB.
+ *
+ *  @param[in]     device          a device
+ *  @param[in]     profile_name        profile's name in DB
+ *  @param[in]     allocateFunc        user allocator
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/21 (Oyranos: 0.1.10)
+ *  @date    2009/02/09
+ */
+OYAPI int OYEXPORT oyDeviceProfileFromDB
+                                     ( oyConfig_s        * device,
+                                       char             ** profile_name,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyOption_s * o = 0;
+  oyOptions_s * options = 0;
+  int error = !device || !profile_name;
+  const char * device_name = 0;
+  char * tmp = 0, * tmp2 = 0;
+  int32_t rank_value = 0;
+  oyConfig_s * s = device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  if(error <= 0)
+  {
+    o = oyConfig_Find( device, "profile_name" );
+    device_name = oyConfig_FindString( device, "device_name", 0);
+
+    /* 1. obtain detailed and expensive device informations */
+    if( !oyConfig_FindString(s,"manufacturer",0) ||
+        !oyConfig_FindString(s,"model",0) )
+    { 
+      /* 1.1 add "properties" call to module arguments */
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                     "properties", OY_CREATE_NEW );
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
+                                     device_name, OY_CREATE_NEW );
+
+      device_name = 0;
+
+      /* 1.2 get device */
+      if(error <= 0)
+        error = oyDeviceBackendCall( device, options );
+
+      oyOptions_Release( &options );
+
+      /* renew outdated string */
+      o = oyConfig_Find( device, "profile_name" );
+      device_name = oyConfig_FindString( device, "device_name", 0);
+      oyOption_Release( &o );
+    }
+
+    if(!o)
+    {
+      error = oyConfig_GetDB( device, &rank_value );
+      o = oyConfig_Find( device, "profile_name" );
+    }
+
+    if(!o)
+    {
+      o = oyOptions_Get( device->db, 0 );
+      if(o)
+        tmp = oyStringCopy_(oyOption_GetRegistration(o), oyAllocateFunc_);
+      if(tmp && oyStrrchr_( tmp, OY_SLASH_C))
+      {
+        tmp2 = oyStrrchr_( tmp, OY_SLASH_C);
+        tmp2[0] = 0;
+      }
+      WARNc3_S( "\n Could not get a \"profile_name\" from %s\n"
+                " registration: \"%s\" rank: %d", 
+                oyNoEmptyString_m_(device_name), oyNoEmptyString_m_(tmp),
+                (int)rank_value )
+      if(tmp)
+        oyFree_m_(tmp); tmp2 = 0;
+      oyOption_Release( &o );
+      error = -1;
+    } else if(!oyOption_GetValueString(o,0))
+    {
+      WARNc1_S( "Could not get \"profile_name\" data from %s", 
+                oyNoEmptyString_m_(device_name) )
+      error = -1;
+    } else
+      *profile_name = oyOption_GetValueText( o, allocateFunc );
+
+  } else
+    WARNc_S( "missed argument(s)" );
+
+  return error;
+}
+
+
+int          oyDeviceCheckProperties ( oyConfig_s        * device )
+{
+  oyOption_s * o = 0;
+  oyOptions_s * options = 0;
+  int error = !device;
+  const char * device_name = 0;
+  oyConfig_s * s = device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
+
+  if(error <= 0)
+  {
+    device_name = oyConfig_FindString( device, "device_name", 0);
+
+    /* 1. obtain detailed and expensive device informations */
+    if( !oyConfig_FindString(s,"manufacturer",0) ||
+        !oyConfig_FindString(s,"model",0) )
+    { 
+      /* 1.1 add "properties" call to module arguments */
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                     "properties", OY_CREATE_NEW );
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
+                                     device_name, OY_CREATE_NEW );
+
+      device_name = 0;
+
+      /* 1.2 get details about device */
+      if(error <= 0)
+        error = oyDeviceBackendCall( device, options );
+
+      oyOptions_Release( &options );
+
+      /* renew outdated string */
+      o = oyConfig_Find( device, "profile_name" );
+      device_name = oyConfig_FindString( device, "device_name", 0);
+      oyOption_Release( &o );
+    }
+  }
+
+  return error;
+}
+
+
+/** Function oyDeviceSelectSimiliar
+ *  @brief   get similiar devices by a pattern from a list
+ *
+ *  The function takes a device and tries to find exact matches, which can be
+ *  considered as belonging to the same device. The comparision can be 
+ *  influenced by the flags.
+ *  The option "profile_name" is ignored during the comparision.
+ *
+ *  @param[in]     pattern             Pass a device used as reference. String
+ *                                     options of this object are compared to
+ *                                     the objects in the heap argument
+ *                                     depending on the flags argument.
+ *                                     "profile_name" and other
+ *                                     options from heap objects are ignored.
+ *  @param[in]     heap                a list of device objects
+ *  @param[in]     flags               - 0 yields exact match
+ *                                     - 1 compare manufacturer model and serial
+ *                                     - 2 compare only manufacturer and model
+ *                                     - 4 compare only device_name
+ *  @param[out]    matched_devices     the devices selected from heap
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/08/27 (Oyranos: 0.1.10)
+ *  @date    2009/08/27
+ */
+OYAPI int OYEXPORT oyDeviceSelectSimiliar
+                                     ( oyConfig_s        * pattern,
+                                       oyConfigs_s       * heap,
+                                       uint32_t            flags,
+                                       oyConfigs_s      ** matched_devices )
+{
+  oyOption_s * odh = 0,
+             * od = 0;
+  int error  = !pattern || !matched_devices;
+  char * od_key = 0;
+  const char * od_val = 0,
+             * odh_val = 0;
+  oyConfig_s * s = pattern,
+             * dh = 0;
+  oyConfigs_s * matched = 0;
+  int i,j,n,j_n;
+  int match = 1;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
+
+  if(error <= 0)
+  {
+    n = oyConfigs_Count( heap );
+
+    /* Make shure the pattern has as well manufacturer, model included.
+     * If not try a "properties" command. */
+    if((flags == 0 || flags == 1 || flags == 2) &&
+       (!oyConfig_FindString(s,"manufacturer",0) ||
+        !oyConfig_FindString(s,"model",0)))
+    {
+      oyOptions_s * options = 0;
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                   "properties", OY_CREATE_NEW );
+      oyDeviceBackendCall( s, options );
+      oyOptions_Release( &options );
+    }
+
+    if((flags == 1 || flags == 2) &&
+       (!oyConfig_FindString(s,"manufacturer",0) ||
+        !oyConfig_FindString(s,"model",0)))
+    {
+      return 0;
+    }
+
+    matched = oyConfigs_New( 0 );
+
+    for(i = 0; i < n; ++i)
+    {
+      match = 0;
+      dh = oyConfigs_Get( heap, i );
+
+      j_n = oyConfig_Count( pattern );
+      for(j = 0; j < j_n; ++j)
+      {
+        match = 1;
+        od = oyConfig_Get( pattern, j );
+        od_key = oyFilterRegistrationToText( oyOption_GetRegistration(od),
+                                             oyFILTER_REG_MAX, 0);
+
+        od_val = oyOption_GetValueString( od, 0 );
+        if(!od_val)
+          /* ignore non text options */
+          continue;
+
+        /* handle selective flags */
+        if(flags == 4 &&
+           oyStrcmp_(od_key,"device_name") != 0
+          )
+          continue;
+        else
+        if(flags == 2 &&
+           oyStrcmp_(od_key,"manufacturer") != 0 &&
+           oyStrcmp_(od_key,"model") != 0
+          )
+          continue;
+        else
+        if(flags == 1 &&
+           oyStrcmp_(od_key,"manufacturer") != 0 &&
+           oyStrcmp_(od_key,"model") != 0 &&
+           oyStrcmp_(od_key,"serial") != 0
+          )
+          continue;
+
+        /* ignore a "profile_name" option */
+        if(oyStrcmp_(od_key,"profile_name") == 0)
+          continue;
+
+        odh = oyOptions_Find( dh->db, od_key );
+
+        odh_val = oyOption_GetValueString( odh, 0 );
+        if( !odh_val )
+          /* ignore non text options */
+          match = 0;
+
+        if(match && oyStrcmp_( od_val, odh_val ) != 0)
+          match = 0;
+
+        /*printf("pruefe: %s=%s match = %d flags=%d\n", od_key, od_val, match, flags);*/
+
+
+        oyOption_Release( &od );
+
+        oyOption_Release( &odh );
+
+        if(match == 0)
+          break;
+      }
+
+      if(match)
+        oyConfigs_MoveIn( matched, &dh, -1 );
+      else
+        oyConfig_Release( &dh );
+    }
+
+    if(oyConfigs_Count( matched ))
+      *matched_devices = matched;
+    else
+      oyConfigs_Release( &matched );
+
+  } else
+    WARNc_S( "missed argument(s)" );
+
+  return error;
+}
+
+/** Function oyDeviceFromJSON
+ *  @brief   generate a device from a JSON device calibration
+ *
+ *  @param[in]    json_text            the device calibration
+ *  @param[in]    options              optional
+ *                                     - "underline_key_suffix" will be used as
+ *                                       suffix for keys starting with underline
+ *                                       '_'
+ *                                     - "pos" integer selects position in array
+ *  @param[out]   config               the device
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.3.3
+ *  @since   2011/08/21 (Oyranos: 0.3.2)
+ *  @date    2012/01/06
+ */
+OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
+                                       oyOptions_s       * options,
+                                       oyConfig_s       ** device )
+{
+  int error = !json_text || !device;
+  oyConfig_s * device_ = NULL;
+  oyjl_value_s * json = 0,
+               * json_device;
+  char * val, * key, * t = NULL;
+  const char * xpath = "org/freedesktop/openicc/device/[0]/[%d]";
+  int count, i;
+  int32_t pos = 0;
+  const char * underline_key_suffix = oyOptions_FindString( options,
+                                                    "underline_key_suffix", 0 );
+
+  yajl_status status;
+
+  device_ = oyConfig_New( "//" OY_TYPE_STD "/config", 0 );
+  status = oyjl_tree_from_json( json_text, &json, 0 );
+  if(status != yajl_status_ok)
+    WARNc2_S( "\"%s\" %d\n", _("found issues parsing JSON"), status );
+
+  error = oyOptions_FindInt( options, "pos", 0, &pos );
+  oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                          xpath, pos );
+
+  json_device = oyjl_tree_get_value( json, t );
+
+  if(!json_device)
+    WARNc2_S( "\"%s\" %s\n", t,_("not found:") );
+  oyFree_m_( t );
+      
+  count = oyjl_value_count(json_device);
+  for(i = 0; i < count; ++i)
+  {
+    oyjl_value_s * v = oyjl_value_pos_get( json_device, i );
+    key = oyStringCopy_(oyjl_print_text( &v->value.object->key ), 0);
+    val = oyjl_value_text( v, oyAllocateFunc_ );
+
+    if(key && key[0] && key[0] == '_' && underline_key_suffix)
+    {
+      t = 0;
+      STRING_ADD( t, underline_key_suffix );
+      STRING_ADD( t, key );
+      oyFree_m_( key );
+      key = t; t = 0;
+    }
+
+    /* ignore empty keys or values */
+    if(key && val)
+      oyConfig_AddDBData( device_, key, val, OY_CREATE_NEW );
+
+    if(key) oyDeAllocateFunc_(key);
+    if(val) oyDeAllocateFunc_(val);
+  }
+
+  *device = device_;
+  device_ = NULL;
+
+  return error;
+}
+
+#define OPENICC_DEVICE_JSON_HEADER \
+  "{\n" \
+  "  \"org\": {\n" \
+  "    \"freedesktop\": {\n" \
+  "      \"openicc\": {\n" \
+  "        \"device\": {\n" \
+  "          \"%s\": [{\n"
+#define OPENICC_DEVICE_JSON_FOOTER \
+  "            }\n" \
+  "          ]\n" \
+  "        }\n" \
+  "      }\n" \
+  "    }\n" \
+  "  }\n" \
+  "}\n"
+
+/** Function oyDeviceToJSON
+ *  @brief   get JSON format device calibration text from a device
+ *
+ *  @param[in]     config              the device
+ *  @param[in]     options             unused
+ *  @param[out]    json_text           the device calibration
+ *  @param[in]     allocateFunc        user allocator
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.3.2
+ *  @since   2011/08/21 (Oyranos: 0.3.2)
+ *  @date    2011/08/21
+ */
+OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
+                                       oyOptions_s       * options,
+                                       char             ** json_text,
+                                       oyAlloc_f           allocateFunc )
+{
+  int error = 0;
+  int count = oyConfig_Count( device ), j, k;
+  char * t = NULL; 
+  char * value, * key;
+  const char * device_class = NULL;
+  oyConfDomain_s * domain;
+
+  if(!error)
+  {
+      {
+        oyOption_s * opt = oyConfig_Get( device, 0 );
+
+        domain = oyConfDomain_FromReg( oyOption_GetRegistration( opt ), 0 );
+        device_class = oyConfDomain_GetText( domain, "device_class", oyNAME_NICK );
+        oyOption_Release( &opt );
+
+        /* add device class */
+        oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                            OPENICC_DEVICE_JSON_HEADER, device_class );
+
+        /* add device and driver calibration properties */
+        for(j = 0; j < count; ++j)
+        {
+          int vals_n = 0;
+          char ** vals = 0, * val = 0;
+          opt = oyConfig_Get( device, j );
+
+          key = oyFilterRegistrationToText( oyOption_GetRegistration( opt ),
+                                            oyFILTER_REG_MAX, 0 );
+          value = oyOption_GetValueText( opt, oyAllocateFunc_ );
+
+          if(value && count > j)
+          {
+            if(value[0] == '<')
+               oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+               "              \"%s\": \"%s\"",
+                     key, value );
+            else
+            {
+              /* split into a array with a useful delimiter */
+              vals = oyStringSplit_( value, '?', &vals_n, malloc );
+              if(vals_n > 1)
+              {
+                STRING_ADD( val, "              \"");
+                STRING_ADD( val, key );
+                STRING_ADD( val, ": [" );
+                for(k = 0; k < vals_n; ++k)
+                {
+                  if(k != 0)
+                  STRING_ADD( val, "," );
+                  STRING_ADD( val, "\"" );
+                  STRING_ADD( val, vals[k] );
+                  STRING_ADD( val, "\"" );
+                }
+                STRING_ADD( val, "]");
+                oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                     "%s", val );
+                if(val) free( val );
+              } else
+                oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                     "              \"%s\": \"%s\"",
+                     key, value );
+
+              oyStringListRelease_( &vals, vals_n, free );
+            }
+          }
+          if(value && j < count - 1)
+            oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                                ",\n" );
+          oyOption_Release( &opt );
+          if(key)
+            oyFree_m_( key );
+          if(value)
+            oyFree_m_( value );
+        }
+
+        oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                            "\n"OPENICC_DEVICE_JSON_FOOTER );
+        oyConfDomain_Release( &domain );
+      }
+
+      if(json_text && t)
+      {
+        *json_text = oyStringCopy_( t, allocateFunc );
+        oyFree_m_( t );
+      }
+  }
+
+  return error;
+}
+
+
+/**
+ *  @} *//* devices_handling
+ */
+
+
+/** \addtogroup objects_profile Profile API
+ *
+ *  To open a profile exist several methods in the oyProfile_Fromxxx APIs.
+ *  oyProfile_FromStd(), oyProfile_FromFile() and oyProfile_FromMem() are basic
+ *  profile open functions. oyProfile_FromSignature() is used for creating a
+ *  dummy profile during profile filtering.
+ *  oyProfile_FromMD5() is a lookup function from a profile hash, e.g. as
+ *  provided by a 'psid' tag. \n
+ *  Profile properties can be obtained from oyProfile_GetSignature(), like
+ *  colour spaces, date, magic number and so on.
+ *  oyProfile_GetChannelNames(), oyProfile_GetText() and oyProfile_GetID()
+ *  provide additional informations. \n
+ *  The profile element functions have Tag in their names. They work together
+ *  with the oyProfileTag_s APIs. \n
+ *  oyProfile_GetFileName is a reverse lookup to obtain the name of a installed
+ *  file from a profile, e.g. find the name of a reachable display profile.
+
+ *  @{
+ */
+
+static int oy_profile_first = 0;
+static
+const char * oyProfile_Message_      ( oyPointer           profile,
+                                       int                 flags )
+{
+  oyStruct_s*s = profile;
+  return oyProfile_GetText( (oyProfile_s*)s, oyNAME_DESCRIPTION );
+}
+
+/** @internal
+ *  @memberof oyProfile_s
+ *  @brief   create a empty profile
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  november 2007 (API 0.1.8)
+ */
+oyProfile_s *
+oyProfile_New_ ( oyObject_s        object)
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_PROFILE_S;
+# define STRUCT_TYPE oyProfile_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyProfile_Copy;
+  s->release = (oyStruct_Release_f) oyProfile_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  s->tags_ = oyStructList_Create( s->type_, 0, 0 );
+  s->tags_modified_ = 0;
+
+  if(oy_profile_first)
+  {
+    oy_profile_first = 1;
+    oyStruct_RegisterStaticMessageFunc( oyOBJECT_PROFILE_S,
+                                        oyProfile_Message_ );
+  }
+
+  return s;
+}
+
+/** @internal
+ *  @memberof oyProfile_s
+ *  @brief   check internal ICC profile ID
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/04/10 (Oyranos: 0.3.0)
+ *  @date    2011/04/10
+ */
+static int oyProfile_HasID_          ( oyProfile_s       * s )
+{
+  int has_id = 0;
+
+  if(s->block_ && s->size_ >= 132 )
+  {
+    char * data = s->block_;
+    uint32_t id[4];
+    memcpy( id, &data[84], 16 );
+
+    if(id[0] || id[1] || id[2] || id[3])
+      has_id = 1;
+  }
+
+  return has_id;
+}
+
+/** @internal
+ *  @memberof oyProfile_s
+ *  @brief   hash for oyProfile_s
+ *
+ *  Get ICC ID from profile or compute.
+ +
+ *  @version Oyranos: 0.3.0
+ *  @since   2007/11/0 (Oyranos: 0.1.8)
+ *  @date    2011/04/10
+ */
+static int oyProfile_GetHash_        ( oyProfile_s       * s,
+                                       int                 flags )
+{
+  int error = 1;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
+
+  if(s->block_ && s->size_)
+  {
+    int has_id = oyProfile_HasID_( s );
+
+    oyObject_HashSet( s->oy_, 0 );
+    if(flags & OY_COMPUTE ||
+       !has_id)
+      error = oyProfileGetMD5( s->block_, s->size_, s->oy_->hash_ptr_ );
+    else
+    {
+      char * data = s->block_;
+      uint32_t id[4];
+      int i;
+      memcpy( id, &data[84], 16 );
+
+      for(i = 0; i < 4; ++i)
+        id[i] = oyValueUInt32( id[i] );
+      memcpy(s->oy_->hash_ptr_, id, 16);
+      error = 0;
+    }
+
+    if(error > 0)
+      oyObject_HashSet( s->oy_, 0 );
+  }
+  return error;
+}
+
+
+oyProfile_s ** oy_profile_s_std_cache_ = 0;
+
+/** @brief   create from default colour space settings
+ *  @memberof oyProfile_s
+ *
+ *  @param[in]    type           default colour space
+ *  @param[in]    object         the optional base
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  november 2007 (API 0.1.8)
+ */
+oyProfile_s *
+oyProfile_FromStd     ( oyPROFILE_e       type,
+                        oyObject_s        object)
+{
+  oyProfile_s * s = 0;
+  char * name = 0;
+  oyAlloc_f allocateFunc = 0;
+  int pos = type - oyDEFAULT_PROFILE_START;
+
+  if(!oy_profile_s_std_cache_)
+  {
+    int len = sizeof(oyProfile_s*) *
+                            (oyDEFAULT_PROFILE_END - oyDEFAULT_PROFILE_START);
+    oy_profile_s_std_cache_ = oyAllocateFunc_( len );
+    memset( oy_profile_s_std_cache_, 0, len );
+  }
+
+  if(object)
+    allocateFunc = object->allocateFunc_;
+
+  if(type)
+    name = oyGetDefaultProfileName ( type, allocateFunc );
+
+  if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
+    if(oy_profile_s_std_cache_[pos] &&
+       oy_profile_s_std_cache_[pos]->file_name_ && name &&
+       strcmp(oy_profile_s_std_cache_[pos]->file_name_, name) == 0 )
+    {
+      if(object->deallocateFunc_)
+        object->deallocateFunc_( name );
+      else
+        oyDeAllocateFunc_( name );
+      return oyProfile_Copy( oy_profile_s_std_cache_[pos], 0 );
+    }
+
+  s = oyProfile_FromFile_( name, 0, object );
+
+  if(s)
+    s->use_default_ = type;
+  else
+  {
+    int count = 0, i;
+    char * text = 0;
+    char ** path_names = oyProfilePathsGet_( &count, oyAllocateFunc_ );
+    for(i = 0; i < count; ++i)
+    {
+      STRING_ADD( text, path_names[i] );
+      STRING_ADD( text, "\n" );
+    }
+
+    if(strcmp("XYZ.icc",name) == 0 ||
+       strcmp("Lab.icc",name) == 0 ||
+       strcmp("LStar-RGB.icc",name) == 0 ||
+       strcmp("sRGB.icc",name) == 0 ||
+       strcmp("ISOcoated_v2_bas.ICC",name) == 0
+      )
+    {
+      oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)object,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s\n\t%s\n%s", OY_DBG_ARGS_,
+                _("Could not open default ICC profile"),name,
+                _("You can get them from http://sf.net/projects/openicc"),
+                _("install in the OpenIccDirectory icc path"), text );
+    } else
+      oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)object,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s\n%s", OY_DBG_ARGS_,
+                _("Could not open default ICC profile"), name,
+                _("install in the OpenIccDirectory icc path"), text );
+  }
+
+  if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
+    oy_profile_s_std_cache_[pos] = oyProfile_Copy( s, 0 );
+
+  oyProfile_GetID( s );
+
+  return s;
+}
+
+
+oyStructList_s * oy_profile_s_file_cache_ = 0;
+
+/**
+ *  @internal
+ *  @brief   create from file
+ *  @memberof oyProfile_s
+ *
+ *  @param[in]    name           profile file name
+ *  @param[in]    flags          for future extension
+ *  @param[in]    object         the optional base
+ *
+ *  flags supports OY_NO_CACHE_READ and OY_NO_CACHE_WRITE to disable cache
+ *  reading and writing. The cache flags are useful for one time profiles or
+ *  scanning large numbers of profiles.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/11/0 (Oyranos: 0.1.9)
+ *  @date    2010/05/18
+ */
+oyProfile_s *  oyProfile_FromFile_   ( const char        * name,
+                                       uint32_t            flags,
+                                       oyObject_s          object )
+{
+  oyProfile_s * s = 0;
+  int error = 0;
+  size_t size = 0;
+  oyPointer block = 0;
+  oyAlloc_f allocateFunc = 0;
+  oyHash_s * entry = 0;
+  char * file_name = 0;
+
+  if(object)
+    allocateFunc = object->allocateFunc_;
+
+  if(!oyToNoCacheRead_m(flags) || !oyToNoCacheWrite_m(flags))
+  {
+    if(!oy_profile_s_file_cache_)
+      oy_profile_s_file_cache_ = oyStructList_New( 0 );
+
+    if(!object)
+    {
+      entry = oyCacheListGetEntry_ ( oy_profile_s_file_cache_, 0, name );
+
+      if(!oyToNoCacheRead_m(flags))
+      {
+        s = (oyProfile_s*) oyHash_GetPointer( entry, oyOBJECT_PROFILE_S);
+        s = oyProfile_Copy( s, 0 );
+        if(s)
+          return s;
+      }
+    }
+  }
+
+  if(error <= 0 && name && !s)
+  {
+    file_name = oyFindProfile_( name );
+    block = oyGetProfileBlock( file_name, &size, allocateFunc );
+    if(!block || !size)
+      error = 1;
+  }
+
+  if(error <= 0)
+  {
+    s = oyProfile_FromMemMove_( size, &block, 0, &error, object );
+
+    if(!s)
+      error = 1;
+
+    if(error < -1)
+    {
+      const char * t = file_name;
+      oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"", OY_DBG_ARGS_,
+                _("Wrong ICC profile id detected"), t?t:OY_PROFILE_NONE );
+    } else
+    if(error == -1)
+    {
+      const char * t = file_name;
+      uint32_t md5[4];
+
+      if(oy_debug == 1)
+        oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"", OY_DBG_ARGS_,
+                _("No ICC profile id detected"), t?t:OY_PROFILE_NONE );
+
+      /* set ICC profile ID */
+      error = oyProfile_GetMD5( s, OY_COMPUTE, md5 );
+      if(oyIsFileFull_( file_name, "wb" ))
+      {
+        error = oyProfile_ToFile_( s, file_name );
+        if(!error)
+          oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
+                       OY_DBG_FORMAT_"\n\t%s: \"%s\"", OY_DBG_ARGS_,
+                _("ICC profile id written"), t?t:OY_PROFILE_NONE );
+      }
+    }
+
+    /* We expect a incomplete filename attached to s and try to correct this. */
+    if(error <= 0 && !file_name && s->file_name_)
+    {
+      file_name = oyFindProfile_( s->file_name_ );
+      if(file_name && s->oy_->deallocateFunc_)
+      {
+        s->oy_->deallocateFunc_( s->file_name_ );
+        s->file_name_ = 0;
+      }
+    }
+
+    if(error <= 0 && file_name)
+    {
+      s->file_name_ = oyStringCopy_( file_name, s->oy_->allocateFunc_ );
+      oyDeAllocateFunc_( file_name ); file_name = 0;
+    }
+
+    if(error <= 0 && !s->file_name_)
+      error = 1;
+  }
+
+  if(error <= 0 && s && entry)
+  {
+    if(!oyToNoCacheWrite_m(flags))
+    {
+      /* 3b.1. update cache entry */
+      error = oyHash_SetPointer( entry, (oyStruct_s*)s );
+#if 0
+    } else {
+      int i = 0, n = 0, pos = -1;
+
+      n = oyStructList_Count( oy_profile_s_file_cache_ );
+      for( i = 0; i < n; ++i )
+        if((oyStruct_s*)entry == oyStructList_Get_( oy_profile_s_file_cache_,i))
+          pos = i;
+      if(pos >= 0)
+        oyStructList_ReleaseAt( oy_profile_s_file_cache_, pos );
+#endif
+    }
+  }
+
+  oyHash_Release( &entry );
+
+  return s;
+}
+
+/** @brief   create from file
+ *  @memberof oyProfile_s
+ *
+ *  Supported are profiles with absolute path names, profiles in OpenICC 
+ *  profile paths and profiles relative to the current working path. 
+ *  Search will occure in this order.
+ *
+ *  @param[in]    name           profile file name
+ *  @param[in]    flags          for future extension
+ *  @param[in]    object         the optional base
+ *
+ *  flags supports OY_NO_CACHE_READ and OY_NO_CACHE_WRITE to disable cache
+ *  reading and writing. The cache flags are useful for one time profiles or
+ *  scanning large numbers of profiles.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/11/0 (Oyranos: 0.1.9)
+ *  @date    2010/05/18
+ */
+OYAPI oyProfile_s * OYEXPORT
+oyProfile_FromFile            ( const char      * name,
+                                uint32_t          flags,
+                                oyObject_s        object)
+{
+  oyProfile_s * s = 0;
+
+  s = oyProfile_FromFile_( name, flags, object );
+
+  oyProfile_GetID( s );
+
+  return s;
+}
+
+/**
+ *  @internal
+ *  @brief   create from in memory blob
+ *  @memberof oyProfile_s
+ *
+ *  @param[in]    size           buffer size
+ *  @param[in]    block          pointer to memory containing a profile
+ *  @param[in]    flags          for future use
+ *  @param[out]   error_return   error codes
+ *  @param[in]    object         the optional base
+ *
+ *  @since Oyranos: version 0.3.0
+ *  @date  november 2007 (API 0.1.8)
+ */
+oyProfile_s* oyProfile_FromMemMove_  ( size_t              size,
+                                       oyPointer         * block,
+                                       int                 flags,
+                                       int               * error_return,
+                                       oyObject_s          object)
+{
+  oyProfile_s * s = oyProfile_New_( object );
+  int error = 0;
+
+  if(block  && *block && size)
+  {
+    s->block_ = *block;
+    *block = 0;
+    if(!s->block_)
+      error = 1;
+    else
+      s->size_ = size;
+  }
+
+  if(error_return) *error_return = error;
+
+  if (!s->block_)
+  {
+    WARNc1_S( "%s", "no data" )
+    return 0;
+  }
+
+  /* Comparision strategies
+      A
+       - search for similiar arguments in the structure
+       - include the affect of the arguments (resolve type -> filename)
+       - exclude paralell structure elements (filename -> ignore blob)
+      B
+       - use always the ICC profiles md5
+      C
+       - always the flattened Oyranos profile md5
+
+       - A higher level API can maintain its own cache depending on costs.
+   */
+
+  if(error <= 0)
+    error = oyProfile_GetHash_( s, 0 );
+
+  if(error != 0)
+  {
+    if(error > 0 || error < -1)
+      WARNc1_S( "hash error %d", error )
+    if(error_return) *error_return = error;
+    
+    if(error > 0)
+      return NULL;
+  }
+
+  if(error <= 0)
+    error = !oyProfile_GetSignature ( s, oySIGNATURE_COLOUR_SPACE );
+
+  if(error)
+  {
+    if(error_return) *error_return = error;
+    WARNc1_S( "signature error %d", error )
+    return 0;
+  }
+
+  if(error <= 0)
+  {
+    s->names_chan_ = 0;
+    s->channels_n_ = 0;
+    s->channels_n_ = oyProfile_GetChannelsCount( s );
+    error = (s->channels_n_ <= 0);
+  }
+
+  if(error)
+  {
+    icHeader *h = 0;
+    icSignature sig = 0;
+
+    h = (icHeader*) s->block_;
+
+    sig = oyValueCSpaceSig( h->colorSpace );
+
+    WARNc3_S("Channels <= 0 %d %s %s", s->channels_n_,
+             oyICCColourSpaceGetName(sig),
+             oyICCColourSpaceGetName(h->colorSpace))
+
+    oyProfile_Release( &s );
+
+    if(error_return) *error_return = error;
+  }
+
+  return s;
+}
+
+/** @brief   create from in memory blob
+ *  @memberof oyProfile_s
+ *
+ *  @param[in]    size           buffer size
+ *  @param[in]    block          pointer to memory containing a profile
+ *  @param[in]    flags          for future use
+ *  @param[in]    object         the optional base
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  november 2007 (API 0.1.8)
+ */
+OYAPI oyProfile_s * OYEXPORT
+oyProfile_FromMem             ( size_t            size,
+                                const oyPointer   block,
+                                uint32_t          flags,
+                                oyObject_s        object)
+{
+  oyProfile_s * s = 0;
+  int error = 0;
+  oyPointer block_ = 0;
+  size_t size_ = 0;
+
+  if(block && size)
+  {
+    oyAllocHelper_m_( block_, char, size, object ? object->allocateFunc_:0,
+                      error = 1 );
+
+    if(!error)
+    {
+      size_ = size;
+      error = !memcpy( block_, block, size );
+    }
+  }
+
+  s = oyProfile_FromMemMove_( size_, &block_, flags, &error, object );
+
+  oyProfile_GetID( s );
+
+  return s;
+}
+
+
+/** @brief   create a fractional profile from signature
+ *  @memberof oyProfile_s
+ *
+ *  @param[in]    sig            signature
+ *  @param[in]    type           type of signature to set
+ *  @param[in]    object         the optional base
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/06/20
+ *  @since   2007/06/20 (Oyranos: 0.1.8)
+ */
+OYAPI oyProfile_s * OYEXPORT
+             oyProfile_FromSignature(  icSignature         sig,
+                                       oySIGNATURE_TYPE_e  type,
+                                       oyObject_s          object )
+{
+  oyProfile_s * s = oyProfile_New_( object );
+  int error = !s;
+
+  if(error <= 0)
+    error = oyProfile_SetSignature( s, sig, type );
+
+  return s;
+}
+
+/** @brief   look up a profile from it's md5 hash sum
+ *  @memberof oyProfile_s
+ *
+ *  @param[in]    md5            hash sum
+ *  @param[in]    object         the optional base
+ *  @return                      a profile
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/20 (Oyranos: 0.1.10)
+ *  @date    2009/03/20
+ */
+OYAPI oyProfile_s * OYEXPORT
+                   oyProfile_FromMD5(  uint32_t          * md5,
+                                       oyObject_s          object )
+{
+  oyProfile_s * s = 0, * tmp = 0;
+  int error = !md5,
+      equal = 0;
+  char ** names = 0;
+  uint32_t count = 0, i = 0;
+
+  if(error)
+    return 0;
+
+  if(error <= 0)
+  {
+    names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+
+    for(i = 0; i < count; ++i)
+    {
+      if(names[i])
+      {
+        if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
+          tmp = oyProfile_FromFile( names[i], 0, 0 );
+
+        if(tmp->oy_->hash_ptr_)
+          equal = memcmp( md5, tmp->oy_->hash_ptr_, OY_HASH_SIZE );
+        else
+          equal = 1;
+        if(equal == 0)
+          {
+            s = tmp;
+            break;
+          }
+
+          oyProfile_Release( &tmp );
+        }
+      }
+
+      oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
+  }
+
+  return s;
+}
+
+/** Function oyProfile_FromTaxiDB
+ *  @brief   look up a profile of a device from Taxi DB
+ *
+ *  The function asks the online ICC Taxi DB for a profile. It is therefore
+ *  blocking and can cause a serious delay before returning.
+ *
+ *  The TAXI_id option is expected to come from 
+ *  oyConfig_GetBestMatchFromTaxiDB() or oyDevicesFromTaxiDB().
+ *
+ *  @param[in]     options             - "TAXI_id" shall provide a string
+ *                                       for device driver parameter selection
+ *  @param[out]    profile             the resulting profile
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.3.3
+ *  @since   2012/01/08 (Oyranos: 0.3.3)
+ *  @date    2012/01/08
+ */
+OYAPI oyProfile_s * OYEXPORT
+                   oyProfile_FromTaxiDB (
+                                       oyOptions_s       * options,
+                                       oyObject_s          object )
+{
+  int error = !options;
+  oyProfile_s * p = NULL;
+  oyOptions_s * s = options;
+  size_t size = 0;
+  char * mem = NULL;
+  const char * taxi_id = NULL;
+
+  oyCheckType__m( oyOBJECT_OPTIONS_S, return p )
+
+  if(error > 0)
+  {
+    WARNc_S( "No options provided. Give up." );
+    return p;
+  }
+
+  taxi_id = oyOptions_FindString( options, "TAXI_id", 0 );
+
+  if(taxi_id)
+    mem = oyReadUrlToMemf_( &size, "r", oyAllocateFunc_,
+                            "http://icc.opensuse.org/profile/%s/profile.icc",
+                            taxi_id );
+  else
+    WARNc_S("No TAXI_id provided, Do not know what to download.");
+
+  if(mem && size)
+  {
+    p = oyProfile_FromMem( size, mem, 0, NULL);
+    oyFree_m_( mem ); size = 0;
+  }
+
+  return p;
+}
+
+
+/**
+ *  @internal
+ *  @brief   create new from existing profile struct
+ *  @memberof oyProfile_s
+ *
+ *  @param[in]    profile        other profile
+ *  @param[in]    object         the optional base
+ *  @return                      the profile copy
+ *
+ *  @version Oyranos: 0.1.10
+ *  @date    2010/06/03
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ */
+OYAPI oyProfile_s * OYEXPORT
+oyProfile_Copy_                      ( const oyProfile_s * profile,
+                                       oyObject_s          object)
+{
+  oyProfile_s * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc = 0;
+
+  if(!profile)
+    return s;
+
+  {
+    const oyProfile_s * s = profile;
+    oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+  }
+
+  s = oyProfile_New_( object );
+  allocateFunc = s->oy_->allocateFunc_;
+
+  if(profile->block_ && profile->size_)
+  {
+    s->block_ = s->oy_->allocateFunc_( profile->size_ );
+    if(!s->block_)
+      error = 1;
+    else
+    {
+      s->size_ = profile->size_;
+      error = !memcpy( s->block_, profile->block_, profile->size_ );
+    }
+  }
+
+  if(error <= 0)
+  {
+    if(!oyProfile_Hashed_(s))
+      error = oyProfile_GetHash_( s, 0 );
+  }
+
+  if(error <= 0)
+  {
+    if(profile->sig_)
+      s->sig_ = profile->sig_;
+    else
+      error = !oyProfile_GetSignature ( s, oySIGNATURE_COLOUR_SPACE );
+  }
+
+  if(error <= 0)
+    s->file_name_ = oyStringCopy_( profile->file_name_, allocateFunc );
+
+  if(error <= 0)
+    s->use_default_ = profile->use_default_;
+
+  if(error <= 0)
+  {
+    s->channels_n_ = oyProfile_GetChannelsCount( s );
+    error = (s->channels_n_ <= 0);
+  }
+
+  if(error <= 0)
+    oyProfile_SetChannelNames( s, profile->names_chan_ );
+
+  if(error)
+  {
+    WARNc_S("Could not create structure for profile.")
+  }
+
+  return s;
+}
+
+/** @brief   copy from existing profile struct
+ *  @memberof oyProfile_s
+ *
+ *  @param[in]    profile        other profile
+ *  @param[in]    object         the optional base
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  november 2007 (API 0.1.8)
+ */
+OYAPI oyProfile_s * OYEXPORT
+oyProfile_Copy                ( oyProfile_s     * profile,
+                                oyObject_s        object)
+{
+  oyProfile_s * s = profile;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  s = 0;
+
+  if(profile && !object)
+  {
+    s = profile;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyProfile_Copy_( profile, object );
+  /* TODO cache */
+  return s;
+}
+
+/** @brief   release correctly
+ *  @memberof oyProfile_s
+ *
+ *  set pointer to zero
+ *
+ *  @param[in]     obj                 address of Oyranos struct pointer
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  november 2007 (API 0.1.8)
+ */
+int 
+oyProfile_Release( oyProfile_s ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyProfile_s * s = 0;
+  int i;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  if(s->names_chan_)
+    for(i = 0; i < s->channels_n_; ++i)
+      if(s->names_chan_[i])
+        oyObject_Release( &s->names_chan_[i] );
+  /*oyOptions_Release( s->options );*/
+
+  s->sig_ = (icColorSpaceSignature)0;
+
+  oyStructList_Release(&s->tags_);
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    if(s->names_chan_)
+      deallocateFunc( s->names_chan_ ); s->names_chan_ = 0;
+
+    if(s->block_)
+      deallocateFunc( s->block_ ); s->block_ = 0; s->size_ = 0;
+
+    if(s->file_name_)
+      deallocateFunc( s->file_name_ ); s->file_name_ = 0;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+/** @brief   number of channels in a colour space
+ *  @memberof oyProfile_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  november 2007 (API 0.1.8)
+ */
+int
+oyProfile_GetChannelsCount( oyProfile_s * profile )
+{
+  oyProfile_s * s = profile;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(profile->channels_n_)
+    return profile->channels_n_;
+
+  profile->channels_n_ = oyICCColourSpaceGetChannelCount( profile->sig_ );
+
+  return profile->channels_n_;
+}
+
+/** @brief   get ICC colour space signature
+ *  @memberof oyProfile_s
+ *
+ *  \verbatim
+    // show some profile properties
+    oyProfile_s * p = ...; // get from somewhere
+    icSignature vs = oyValueUInt32( oyProfile_GetSignature(p,oySIGNATURE_VERSION) );      
+    char * v = (char*)&vs;
+    printf("  created %d.%d.%d %d:%d:%d\n", 
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_YEAR),
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_MONTH),
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_DAY),
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_HOURS),
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_MINUTES),
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_SECONDS)
+          );
+    printf("  pcs: %s  colour space: %s version: %d.%d.%d\n", 
+          oyICCColourSpaceGetName( (icColorSpaceSignature)
+                         oyProfile_GetSignature(p,oySIGNATURE_PCS) ),
+          oyICCColourSpaceGetName( (icColorSpaceSignature)
+                         oyProfile_GetSignature(p,oySIGNATURE_COLOUR_SPACE) ),
+          (int)v[0], (int)v[1]/16, (int)v[1]%16
+          );
+    \endverbatim
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  november 2007 (API 0.1.8)
+ */
+OYAPI icSignature OYEXPORT
+oyProfile_GetSignature ( oyProfile_s * s,
+                         oySIGNATURE_TYPE_e type )
+{
+  icHeader *h = 0;
+  icSignature sig = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(s->sig_ && type == oySIGNATURE_COLOUR_SPACE)
+    return s->sig_;
+
+  if(!s->block_)
+  {
+    if(type == oySIGNATURE_COLOUR_SPACE)
+      sig = s->sig_ = icSigXYZData;
+    return sig;
+  }
+
+  h = (icHeader*) s->block_;
+
+  switch(type)
+  {
+  case oySIGNATURE_COLOUR_SPACE:       /* colour space */
+       sig = s->sig_ = oyValueCSpaceSig( h->colorSpace ); break;
+  case oySIGNATURE_PCS:                /* profile connection space */
+       sig = oyValueCSpaceSig( h->pcs ); break;
+  case oySIGNATURE_SIZE:               /* internal stored size */
+       sig = oyValueUInt32( h->size ); break;
+  case oySIGNATURE_CMM:                /* prefered CMM */
+       sig = oyValueUInt32( h->cmmId ); break;
+  case oySIGNATURE_VERSION:            /* version */
+       sig = oyValueUInt32( h->version ); break;
+  case oySIGNATURE_CLASS:              /* usage class 'mntr' ... */
+       sig = oyValueUInt32( h->deviceClass ); break;
+  case oySIGNATURE_MAGIC:              /* magic; ICC: 'acsp' */
+       sig = oyValueUInt32( h->magic ); break;
+  case oySIGNATURE_PLATFORM:           /* operating system */
+       sig = oyValueUInt32( h->platform ); break;
+  case oySIGNATURE_OPTIONS:            /* various ICC header flags */
+       sig = oyValueUInt32( h->flags ); break;
+  case oySIGNATURE_MANUFACTURER:       /* device manufacturer */
+       sig = oyValueUInt32( h->manufacturer ); break;
+  case oySIGNATURE_MODEL:              /* device modell */
+       sig = oyValueUInt32( h->model ); break;
+  case oySIGNATURE_INTENT:             /* seldom used profile claimed intent*/
+       sig = oyValueUInt32( h->renderingIntent ); break;
+  case oySIGNATURE_CREATOR:            /* profile creator ID */
+       sig = oyValueUInt32( h->creator ); break;
+  case oySIGNATURE_DATETIME_YEAR:      /* creation time in UTC */
+       sig = oyValueUInt16( h->date.year ); break;
+  case oySIGNATURE_DATETIME_MONTH:     /* creation time in UTC */
+       sig = oyValueUInt16( h->date.month ); break;
+  case oySIGNATURE_DATETIME_DAY:       /* creation time in UTC */
+       sig = oyValueUInt16( h->date.day ); break;
+  case oySIGNATURE_DATETIME_HOURS:     /* creation time in UTC */
+       sig = oyValueUInt16( h->date.hours ); break;
+  case oySIGNATURE_DATETIME_MINUTES:   /* creation time in UTC */
+       sig = oyValueUInt16( h->date.minutes ); break;
+  case oySIGNATURE_DATETIME_SECONDS:   /* creation time in UTC */
+       sig = oyValueUInt16( h->date.seconds ); break;
+  case oySIGNATURE_MAX: break;
+  }
+
+  return sig;
+}
+
+/** @brief   set signature
+ *  @memberof oyProfile_s
+ *
+ *  @param[in]     profile             the profile
+ *  @param[in]     sig                 signature
+ *  @param[in]     type                type of signature to set
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/06/20
+ *  @since   2007/06/20 (Oyranos: 0.1.8)
+ */
+OYAPI int OYEXPORT
+             oyProfile_SetSignature (  oyProfile_s       * profile,
+                                       icSignature         sig,
+                                       oySIGNATURE_TYPE_e  type )
+{
+  oyProfile_s * s = profile;
+  int error = !s;
+  oyPointer block_ = 0;
+  size_t size_ = 128;
+  icHeader *h = 0;
+
+  if(!s)
+    return 1;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
+
+  if(error <= 0 && type == oySIGNATURE_COLOUR_SPACE)
+  {
+    if(sig)
+      s->sig_ = sig;
+    else
+      s->sig_ = icSigXYZData;
+  }
+
+  if(error <= 0 && !s->block_)
+  {
+    oyAllocHelper_m_( block_, char, size_, s->oy_ ? s->oy_->allocateFunc_:0,
+                      error = 1 );
+
+    if(error <= 0)
+    {
+      s->block_ = block_;
+      s->size_ = size_;
+    }
+  }
+
+  if(error <= 0)
+    h = (icHeader*) s->block_;
+
+  if(error <= 0)
+  switch(type)
+  {
+  case oySIGNATURE_COLOUR_SPACE:       /* colour space */
+       h->colorSpace = oyValueCSpaceSig( s->sig_ ); break;
+  case oySIGNATURE_PCS:                /* profile connection space */
+       h->pcs = oyValueCSpaceSig( sig ); break;
+  case oySIGNATURE_SIZE:               /* internal stored size */
+       h->size = oyValueUInt32( sig ); break;
+  case oySIGNATURE_CMM:                /* prefered CMM */
+       h->cmmId = oyValueUInt32( sig ); break;
+  case oySIGNATURE_VERSION:            /* version */
+       h->version = oyValueUInt32( sig ); break;
+  case oySIGNATURE_CLASS:              /* usage class 'mntr' ... */
+       h->deviceClass = oyValueUInt32( sig ); break;
+  case oySIGNATURE_MAGIC:              /* magic; ICC: 'acsp' */
+       h->magic = oyValueUInt32( sig ); break;
+  case oySIGNATURE_PLATFORM:           /* operating system */
+       h->platform = oyValueUInt32( sig ); break;
+  case oySIGNATURE_OPTIONS:            /* various ICC header flags */
+       h->flags = oyValueUInt32( sig ); break;
+  case oySIGNATURE_MANUFACTURER:       /* device manufacturer */
+       h->manufacturer = oyValueUInt32( sig ); break;
+  case oySIGNATURE_MODEL:              /* device modell */
+       h->model = oyValueUInt32( sig ); break;
+  case oySIGNATURE_INTENT:             /* seldom used profile claimed intent*/
+       h->renderingIntent = oyValueUInt32( sig ); break;
+  case oySIGNATURE_CREATOR:            /* profile creator ID */
+       h->creator = oyValueUInt32( sig ); break;
+  case oySIGNATURE_DATETIME_YEAR:      /* creation time in UTC */
+       h->date.year = oyValueUInt16( sig ); break;
+  case oySIGNATURE_DATETIME_MONTH:     /* creation time in UTC */
+       h->date.month = oyValueUInt16( sig ); break;
+  case oySIGNATURE_DATETIME_DAY:       /* creation time in UTC */
+       h->date.day = oyValueUInt16( sig ); break;
+  case oySIGNATURE_DATETIME_HOURS:     /* creation time in UTC */
+       h->date.hours = oyValueUInt16( sig ); break;
+  case oySIGNATURE_DATETIME_MINUTES:   /* creation time in UTC */
+       h->date.minutes = oyValueUInt16( sig ); break;
+  case oySIGNATURE_DATETIME_SECONDS:   /* creation time in UTC */
+       h->date.seconds = oyValueUInt16( sig ); break;
+  case oySIGNATURE_MAX: break;
+  }
+
+  return error;
+}
+
+/** @brief   set channel names
+ *  @memberof oyProfile_s
+ *
+ *  The function should be used to specify extra channels or unusual colour
+ *  layouts like CMYKRB. The number of elements in names_chan should fit to the
+ *  channels count or to the colour space signature.
+ *
+ *  You can let single entries empty if they are understandable by the
+ *  colour space signature. Oyranos will set them for you on request.
+ *
+ *  @param[in]     profile             profile
+ *  @param[in]     names_chan          pointer to channel names 
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  november 2007 (API 0.1.8)
+ */
+void
+oyProfile_SetChannelNames            ( oyProfile_s       * profile,
+                                       oyObject_s        * names_chan )
+{
+  oyProfile_s * s = profile;
+  int n = oyProfile_GetChannelsCount( profile );
+  int error = !s;
+
+  if(error)
+    return;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return )
+
+  if(names_chan && n)
+  {
+    int i = 0;
+    s->names_chan_ = s->oy_->allocateFunc_( (n + 1 ) * sizeof(oyObject_s) );
+    s->names_chan_[ n ] = NULL;
+    for( ; i < n; ++i )
+      if(names_chan[i])
+        s->names_chan_[i] = oyObject_Copy( names_chan[i] );
+  }
+}
+
+/** @brief   get a channels name
+ *  @memberof oyProfile_s
+ *
+ *  A convinience function to get a single name with a certain type.
+ *
+ *  @param[in] profile  address of a Oyranos named colour structure
+ *  @param[in] pos      position of channel 
+ *  @param[in] type     sort of text 
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  november 2007 (API 0.1.8)
+ */
+const oyChar *
+oyProfile_GetChannelName           ( oyProfile_s   * profile,
+                                        int                pos,
+                                        oyNAME_e           type )
+{
+  oyProfile_s * s = profile;
+  int n = oyProfile_GetChannelsCount( s );
+  const oyChar * text = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if( 0 <= pos && pos < n )
+    return "-";
+
+  if(!s->names_chan_)
+    oyProfile_GetChannelNames ( s );
+
+  if(s->names_chan_ && s->names_chan_[pos])
+    text = oyObject_GetName( s->names_chan_[pos], type );
+
+  return text;
+}
+
+/** @brief   get channel names
+ *  @memberof oyProfile_s
+ *
+ *  @param[in]     profile             the profile
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  october 2007 (API 0.1.8)
+ */
+const oyObject_s *
+oyProfile_GetChannelNames           ( oyProfile_s   * profile )
+{
+  oyProfile_s * s = profile;
+  int n = oyProfile_GetChannelsCount( profile );
+  int error = 0;
+  icColorSpaceSignature sig = oyProfile_GetSignature( profile, oySIGNATURE_COLOUR_SPACE );
+
+  if(!profile)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(!s->names_chan_ && n)
+  {
+    int i = 0;
+    s->names_chan_ = s->oy_->allocateFunc_( (n + 1 ) * sizeof(oyObject_s) );
+    if(!s->names_chan_)
+      error = 1;
+    if(error <= 0)
+    {
+      s->names_chan_[ n ] = NULL;
+      for( ; i < n; ++i )
+      {
+        s->names_chan_[i] = oyObject_NewFrom( s->oy_ );
+        if(!s->names_chan_[i])
+          error = 1;
+        else
+          error = oyObject_SetNames( s->names_chan_[i],
+                    oyICCColourSpaceGetChannelName ( sig, i, oyNAME_NICK ),
+                    oyICCColourSpaceGetChannelName ( sig, i, oyNAME_NAME ),
+                    oyICCColourSpaceGetChannelName ( sig, i, oyNAME_DESCRIPTION )
+                      );
+      }
+    }
+  }
+
+  if(error <= 0 && s->names_chan_)
+    return (const oyObject_s*) s->names_chan_;
+  else
+    return 0;
+}
+
+/** @brief   get unique name
+ *  @memberof oyProfile_s
+ *
+ *  the returned string is identical to oyNAME_ID
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  26 november 2007 (API 0.1.8)
+ */
+OYAPI const oyChar* OYEXPORT
+                   oyProfile_GetID   ( oyProfile_s       * s )
+{
+  int error = !s;
+  const oyChar * text = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(error <= 0)
+    text = oyObject_GetName( s->oy_, oyNAME_NICK );
+
+  if(error <= 0 && !text)
+  {
+    char * temp = 0;
+    int found = 0;
+
+    oyAllocHelper_m_( temp, oyChar, 1024, 0, error = 1 );
+
+    /* A short number represents a default profile,
+     * The length should not exceed OY_HASH_SIZE.
+     */
+    if(s->use_default_ && !found && error <= 0)
+    {
+      oySprintf_(temp, "%d", s->use_default_);
+      if(oyStrlen_(temp) < OY_HASH_SIZE)
+        found = 1;
+    }
+
+    /* Do we have a file_name_? */
+    if(s->file_name_ && !found && error <= 0)
+    {
+      oySprintf_(temp, "%s", s->file_name_);
+      if(temp[0])
+        found = 1;
+    }
+
+    /* Do we have a hash_? */
+    if(!found && error <= 0)
+    {
+      if(!oyProfile_Hashed_(s))
+        error = oyProfile_GetHash_( s,0 );
+
+      if(error <= 0)
+      {
+        uint32_t * i = (uint32_t*)s->oy_->hash_ptr_;
+        if(i)
+          oySprintf_(temp, "%x%x%x%x", i[0], i[1], i[2], i[3]);
+        else
+          oySprintf_(temp, "                " );
+        if(temp[0])
+          found = 1;
+      }
+    }
+
+    if(error <= 0 && !found)
+      error = 1;
+
+    if(error <= 0)
+      error = oyObject_SetName( s->oy_, temp, oyNAME_NICK );
+
+    oyFree_m_( temp );
+
+    if(error <= 0)
+      text = oyObject_GetName( s->oy_, oyNAME_NICK );
+  }
+
+  return text;
+}
+
+/** @brief   get a presentable name
+ *  @memberof oyProfile_s
+ *
+ *  The type argument should select the following string in return: \n
+ *  - oyNAME_NAME - a readable XML element
+ *  - oyNAME_NICK - the hash ID
+ *  - oyNAME_DESCRIPTION - profile internal name (icSigProfileDescriptionTag)
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/23
+ */
+OYAPI const oyChar* OYEXPORT
+                   oyProfile_GetText ( oyProfile_s       * s,
+                                       oyNAME_e            type )
+{
+  int error = !s;
+  const char * text = 0;
+  char ** texts = 0;
+  int32_t texts_n = 0;
+  oyProfileTag_s * tag = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(error <= 0 && type == oyNAME_NICK)
+    text = oyProfile_GetID( s );
+
+  if(error <= 0 && !text)
+    text = oyObject_GetName( s->oy_, type );
+
+  if(error <= 0 && !(text && text[0]))
+  {
+    char * temp = 0,
+         * tmp2 = 0;
+    int found = 0;
+
+    oyAllocHelper_m_( temp, char, 1024, 0, error = 1 );
+
+    /* Ask the CMM? */
+    if(!found && error <= 0 &&
+       type == oyNAME_DESCRIPTION)
+    {
+      {
+        tag = oyProfile_GetTagById( s, icSigProfileDescriptionTag );
+        texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
+
+        if(texts_n && texts[0] && texts[0][0])
+        {
+          memcpy(temp, texts[0], oyStrlen_(texts[0]));
+          temp[oyStrlen_(texts[0])] = 0;
+          found = 1;
+
+          oyStringListRelease_( &texts, texts_n, tag->oy_->deallocateFunc_ );
+        } else
+          /* we try to get something as oyNAME_NAME */
+        if(s->file_name_ && s->file_name_[0])
+        {
+          size_t len = oyStrlen_(s->file_name_);
+          if(strrchr(s->file_name_,'/'))
+          {
+            tmp2 = oyStrrchr_(s->file_name_,'/')+1;
+            len = oyStrlen_( tmp2 );
+            memcpy( temp, tmp2, len );
+          } else
+            memcpy( temp, s->file_name_, len );
+          temp[len] = 0;
+          found = 1;
+        }
+      }
+    }
+
+    if(type == oyNAME_NAME || type == oyNAME_XML_VALUE)
+    {
+      uint32_t * i = (uint32_t*)s->oy_->hash_ptr_;
+      char * file_name = oyProfile_GetFileName_r( s, oyAllocateFunc_ );
+
+      if(oyProfile_Hashed_(s))
+        error = oyProfile_GetHash_( s,0 );
+
+      if(s->use_default_ && error <= 0)
+        oyWidgetTitleGet( (oyWIDGET_e)s->use_default_, 0, &text, 0, 0 );
+
+      oySprintf_( temp, "<profile use_default=\"%s\" file_name=\"%s\" hash=\"",
+             oyNoEmptyName_m_(text),
+             oyNoEmptyName_m_(file_name) );
+      if(i)
+        oySprintf_( &temp[oyStrlen_(temp)], "%x%x%x%x\" />",
+             i[0], i[1], i[2], i[3] );
+      else
+        oySprintf_( &temp[oyStrlen_(temp)], "                \" />" );
+
+      if(file_name) free(file_name); file_name = 0;
+      found = 1;
+    }
+
+    if(!found)
+    {
+      text = oyProfile_GetID( s );
+      if(text[0])
+        found = 1;
+    }
+
+    /* last rescue */
+    if(!found && oyProfile_Hashed_(s))
+      error = oyProfile_GetHash_( s,0 );
+
+    if(!found && error <= 0)
+    {
+      uint32_t * i = (uint32_t*)s->oy_->hash_ptr_;
+      oySprintf_(temp, "%x%x%x%x", i[0], i[1], i[2], i[3]);
+      if(temp[0])
+        found = 1;
+    }
+
+    if(error <= 0 && !found)
+      error = 1;
+
+    if(error <= 0)
+      error = oyObject_SetName( s->oy_, temp, type );
+
+    oyFree_m_( temp );
+
+    if(error <= 0)
+      text = oyObject_GetName( s->oy_, type );
+  }
+
+  return text;
+}
+
+/** Function oyProfile_GetMem
+ *  @memberof oyProfile_s
+ *  @brief   get the ICC profile in memory
+ *
+ *  The prefered memory comes from the unmodified original memory.
+ *  Otherwise a previously modified tag list is serialised into memory.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/12/20 (Oyranos: 0.1.8)
+ *  @date    2010/04/16
+ */
+OYAPI oyPointer OYEXPORT
+                   oyProfile_GetMem  ( oyProfile_s       * profile,
+                                       size_t            * size,
+                                       uint32_t            flag,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyPointer block = 0;
+  oyProfile_s * s = profile;
+  int error = !s,
+      i;
+  uint32_t md5[4];
+  char * data;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(s)
+    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
+
+  if(error <= 0 && s->type_ == oyOBJECT_PROFILE_S)
+  {
+    if(s->size_ && s->block_ && !s->tags_modified_)
+    {
+      block = oyAllocateWrapFunc_( s->size_, allocateFunc );
+      error = !block;
+      if(error <= 0)
+        error = !memcpy( block, s->block_, s->size_ );
+      if(error <= 0 && size)
+        *size = s->size_;
+
+    } else
+    if( oyStructList_Count( s->tags_ ))
+    {
+      block = oyProfile_TagsToMem_ ( profile, size, allocateFunc );
+      profile->tags_modified_ = 0;
+      profile->use_default_ = 0;
+      if(profile->file_name_)
+        profile->oy_->deallocateFunc_( profile->file_name_ );
+      profile->file_name_ = 0;
+      if(profile->block_ && profile->size_)
+        profile->oy_->deallocateFunc_( profile->block_ );
+      profile->size_ = 0;
+      profile->block_ = oyAllocateWrapFunc_( *size,
+                                             profile->oy_->allocateFunc_ );
+      error = !memcpy( profile->block_, block, *size );
+      if(error <= 0)
+        profile->size_ = *size;
+      oyObject_SetNames( profile->oy_, 0,0,0 );
+      oyProfile_GetText(profile, oyNAME_NICK);
+      oyProfile_GetText(profile, oyNAME_NAME);
+      oyProfile_GetText(profile, oyNAME_DESCRIPTION);
+    }
+
+    /* get actual ICC profile ID */
+    oyProfile_GetMD5( profile, OY_COMPUTE, md5 );
+
+    /* Write ICC profile ID into memory */
+    for(i = 0; i < 4; ++i)
+      md5[i] = oyValueUInt32( md5[i] );
+    data = block;
+    if(data && (int)*size >= 132)
+      memcpy( &data[84], md5, 16 );
+  }
+
+  if(s)
+    oyObject_UnLock( s->oy_,__FILE__,__LINE__ );
+
+  return block;
+}
+
+
+/** Function oyProfile_GetMD5
+ *  @memberof oyProfile_s
+ *  @brief   get the ICC profile md5 hash sum
+ *
+ *  The ICC profiles ID is returned. On request it can be recomputed through
+ *  the OY_COMPUTE flag. That computed ID will be used internally as a hash
+ *  value. The original profile ID can always be obtained through the
+ *  OY_FROM_PROFILE flags until writing of the profile.
+ *
+ *  @param[in,out] profile             the profile
+ *  @param[in]     flags               OY_COMPUTE will calculate the hash
+ *                                     OY_FROM_PROFILE - original profile ID
+ *  @param[out]    md5                 the ICC md5 based profile ID
+ *                                     in host byte order
+ *  @return                            0 - good, 1 >= error, -1 <= issue(s)
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/30 (Oyranos: 0.3.0)
+ *  @date    2011/04/10
+ */
+int                oyProfile_GetMD5  ( oyProfile_s       * profile,
+                                       int                 flags,
+                                       uint32_t          * md5 )
+{
+  oyProfile_s * s = profile;
+  int error = !s;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(!oyProfile_Hashed_(s) ||
+     flags & OY_COMPUTE ||
+     s->tags_modified_)
+    error = oyProfile_GetHash_( s, OY_COMPUTE );
+
+  if(oyProfile_Hashed_(s))
+  {
+    if(!(flags & OY_FROM_PROFILE))
+      memcpy( md5, s->oy_->hash_ptr_, OY_HASH_SIZE );
+    else
+    if(s->block_ && s->size_ >= 132)
+    {
+      int i;
+      char * data = s->block_;
+      memcpy( md5, &data[84], 16 );
+      for(i = 0; i < 4; ++i)
+        md5[i] = oyValueUInt32( md5[i] );
+    } else
+      error = -3;
+  }
+  else if(error > 0)
+    error += 1;
+  else
+    error = 1;
+
+  return error;
+}
+
+/**
+ *  @internal
+ *  Function oyProfile_GetFileName_r
+ *  @memberof oyProfile_s
+ *  @brief   get the ICC profile location in the filesystem
+ *
+ *  This function tries to find a profile on disk matching a possibly memory
+ *  only profile. In case the profile was previously opened from file or 
+ *  from a Oyranos default profile, the associated filename will simply be
+ *  retuned.
+ *
+ *  @param         profile             the profile
+ *  @param         allocateFunc        memory allocator           
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/02/01 (Oyranos: 0.1.8)
+ *  @date    2008/02/01
+ */
+char *       oyProfile_GetFileName_r ( oyProfile_s       * profile,
+                                       oyAlloc_f           allocateFunc )
+{
+  char * name = 0;
+  oyProfile_s * s = profile, * tmp = 0;
+  int error = !s;
+  char ** names = 0;
+  uint32_t count = 0, i = 0;
+  char *  hash = 0;
+  char    tmp_hash[34];
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(error <= 0)
+  {
+    if(s->file_name_ && !hash)
+    {
+      name = s->file_name_;
+    } else {
+
+      names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+
+      for(i = 0; i < count; ++i)
+      {
+        if(names[i])
+        {
+          if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
+            tmp = oyProfile_FromFile( names[i], OY_NO_CACHE_WRITE, 0 );
+
+          if(hash && tmp)
+          {
+            uint32_t * h = (uint32_t*)s->oy_->hash_ptr_;
+            if(h)
+              oySprintf_(tmp_hash, "%x%x%x%x", h[0], h[1], h[2], h[3]);
+            else
+              oySprintf_(tmp_hash, "                " );
+            if(memcmp( hash, tmp_hash, 2*OY_HASH_SIZE ) == 0 )
+            {
+              name = names[i];
+              break;
+            }
+          } else
+          if(oyProfile_Equal( s, tmp ))
+          {
+            name = names[i];
+            break;
+          }
+
+          oyProfile_Release( &tmp );
+        }
+      }
+
+      name = oyFindProfile_( name );
+      if(name)
+      {
+        s->file_name_ = oyStringCopy_( name, s->oy_->allocateFunc_ );
+        oyDeAllocateFunc_( name );
+      }
+      oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
+    }
+  }
+
+  name = oyStringCopy_( s->file_name_, allocateFunc );
+
+  return name;
+}
+/** Function oyProfile_GetFileName
+ *  @memberof oyProfile_s
+ *  @brief   get the ICC profile location in the filesystem
+ *
+ *  This function tries to find a profile on disk matching a possibly memory
+ *  only profile. In case the profile was previously opened from file or as a
+ *  from Oyranos defaults the associated filename will simply be retuned.
+ *
+ *  @param         profile             the profile
+ *  @param         dl_pos              -1, or the position in a device links
+ *                                     source chain
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/02/01 (Oyranos: 0.1.8)
+ *  @date    2008/02/01
+ */
+const char *       oyProfile_GetFileName (
+                                       oyProfile_s       * profile,
+                                       int                 dl_pos )
+{
+  const char * name = 0;
+  oyProfile_s * s = profile, * tmp = 0;
+  int error = !s;
+  char ** names = 0;
+  uint32_t count = 0, i = 0;
+  oyProfileTag_s * psid = 0;
+  char ** texts = 0;
+  int32_t   texts_n = 0;
+  char *  hash = 0,
+       *  txt = 0;
+  char    tmp_hash[34];
+  int       dl_n = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(error <= 0)
+  {
+    if(dl_pos >= 0)
+    {
+      psid = oyProfile_GetTagById( s, icSigProfileSequenceIdentifierTag );
+      texts = oyProfileTag_GetText( psid, &texts_n, 0,0,0,0);
+
+      if(texts && texts_n > 1+dl_pos*5+2)
+      {
+        dl_n = 1 + dl_pos*5+2;
+        hash = texts[dl_n];
+      }
+    }
+
+
+    if(s->file_name_ && !hash)
+    {
+      name = s->file_name_;
+    } else
+    {
+      names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+
+      for(i = 0; i < count; ++i)
+      {
+        if(names[i])
+        {
+          if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
+            tmp = oyProfile_FromFile( names[i], OY_NO_CACHE_WRITE, 0 );
+
+          if(tmp)
+          {
+            if(hash)
+            {
+              uint32_t * h = (uint32_t*)tmp->oy_->hash_ptr_;
+              if(h)
+                oySprintf_(tmp_hash, "%x%x%x%x", h[0], h[1], h[2], h[3]);
+              else
+                oySprintf_(tmp_hash, "                " );
+              if(memcmp( hash, tmp_hash, 2*OY_HASH_SIZE ) == 0 )
+              {
+               name = names[i];
+                break;
+              }
+            } else
+            if(oyProfile_Equal( s, tmp ))
+            {
+              name = names[i];
+              break;
+            }
+
+            oyProfile_Release( &tmp );
+          }
+        }
+      }
+
+      if(hash)
+      {
+        char * key = oyAllocateFunc_(80);
+        txt = oyFindProfile_( name );
+        sprintf( key, "//"OY_TYPE_STD"/profile.icc/psid_%d", dl_pos );
+        oyOptions_SetFromText( &s->oy_->handles_,
+                               key,
+                               txt,
+                               OY_CREATE_NEW );
+        oyDeAllocateFunc_( txt );
+        name = oyOptions_FindString( s->oy_->handles_,
+                                     key, 0 );
+        oyFree_m_( key );
+      } else
+      {
+        s->file_name_ = oyFindProfile_( name );
+        name = oyStringCopy_( s->file_name_, s->oy_->allocateFunc_ );
+        if(s->file_name_)
+          oyDeAllocateFunc_( s->file_name_ );
+        s->file_name_ = (char*)name;
+      }
+
+      if(names)
+        oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
+    }
+
+    if(texts)
+      oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+  }
+
+  return name;
+}
+
+/**
+ *  Function oyProfile_DeviceAdd
+ *  @memberof oyProfile_s
+ *  @brief   add device and driver informations to a profile
+ *
+ *  oyProfile_DeviceAdd() is for storing device/driver informations in a 
+ *  ICC profile. So the profile can be sent over internet and Oyranos, or 
+ *  an other CMS, can better match to a device/driver on the new host.
+ *  The convention what to place into the ICC profile is dependent on each
+ *  device class and its actual driver or driver type.
+ *  The meta data is stored in the ICC 'meta' tag of type 'dict'.
+ *
+ *  @param[in,out] profile             the profile
+ *  @param[in]     device              device and driver informations
+ *  @param[in]     options             - "key_prefix_required" : prefix
+ *                                       accept only key names with the prefix
+ *                                       Separation by point '.' is allowed.
+ *                                     - "set_device_attributes"="true"
+ *                                       will write "manufacturer", "model",
+ *                                       "mnft" and "model_id" keys to the
+ *                                       appropriate profile tags and fields.
+ *
+ *  @version Oyranos: 0.3.2
+ *  @since   2009/05/18 (Oyranos: 0.1.10)
+ *  @date    2011/08/21
+ */
+#if 0
+TODO find a general form. Do we want to support the mluc type or is that better
+up to a specialised GUI?
+int                oyProfile_DeviceAdd(oyProfile_s       * profile,
+                                       oyConfig_s        * device )
+{
+  int error = !profile;
+  oyProfile_s * s = profile;
+  oyProfileTag_s * pddt = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(error <= 0)
+  {
+      pddt = oyProfile_GetTagById( s, icSigProfileDetailDescriptionTag_ );
+
+      /* icSigProfileDetailDescriptionTag_ */
+      if(error <= 0 && !pddt)
+      {
+        oyStructList_s * list = 0;
+
+        list = oyStructList_New(0);
+        error = oyStructList_MoveIn( list, (oyStruct_s**) &device, 0,
+                                     OY_OBSERVE_AS_WELL );
+
+        if(error <= 0)
+        {
+          pddt = oyProfileTag_Create( list, icSigProfileDetailDescriptionTag_,
+                                      0, OY_MODULE_NICK, 0);
+          error = !pddt;
+        }
+
+        if(error <= 0)
+          pddt->use = icSigProfileDetailDescriptionTag_;
+
+        oyStructList_Release( &list );
+
+        if(pddt)
+        {
+          error = oyProfile_TagMoveIn_( s, &pddt, -1 );
+          ++s->tags_modified_;
+        }
+      }
+  }
+
+  return error;
+}
+#else
+int                oyProfile_DeviceAdd(oyProfile_s       * profile,
+                                       oyConfig_s        * device,
+                                       oyOptions_s       * options )
+{
+  int error = 0;
+  int i,j, len, size, block_size, pos;
+
+  char ** keys,
+       ** values,
+        * key,
+        * val;
+  const char * r;
+  void * string = 0;
+  const char * key_prefix_required = oyOptions_FindString( options,
+                                            "key_prefix_required", 0 );
+  const char * key_prefix = oyConfig_FindString( device, "prefix", 0 );
+  const char * prefix = 0;
+  char ** key_prefix_texts = 0;
+  int key_prefix_texts_n = 0;
+  int * key_prefix_texts_len = 0;
+  char * manufacturer=0, * model=0, *mnft=0, *model_id=0;
+
+  /* get just some device */
+  oyOption_s * o = 0;
+  oyConfig_s * d = device;
+
+  oyProfile_s * p = profile;
+  oyProfileTag_s * dict_tag;
+  icDictTagType * dict;
+  icNameValueRecord * record;
+
+  int n = oyConfig_Count( d );
+  int count = 0;
+
+  if(key_prefix_required)
+    prefix = key_prefix_required;
+  else if(key_prefix)
+    prefix = key_prefix;
+
+  if(prefix)
+  {
+    key_prefix_texts = oyStringSplit_( prefix,'.',
+                                       &key_prefix_texts_n, oyAllocateFunc_);
+    oyAllocHelper_m_( key_prefix_texts_len,int,key_prefix_texts_n, 0, return 1);
+    for(j = 0; j < key_prefix_texts_n; ++j)
+      key_prefix_texts_len[j] = strlen( key_prefix_texts[j] );
+  }
+
+  /* count valid entries */
+  for(i = 0; i < n; ++i)
+  {
+    char * reg = 0;
+    o = oyConfig_Get( d, i );
+    r = oyOption_GetRegistration(o);
+    reg = oyFilterRegistrationToText( r, oyFILTER_REG_OPTION, oyAllocateFunc_ );
+    val = oyOption_GetValueText( o, oyAllocateFunc_ );
+    if(val)
+    {
+      int pass = 1;
+
+      if(prefix)
+      {
+        int len = strlen( reg );
+        if(key_prefix_required)
+          pass = 0;
+        for(j = 0; j < key_prefix_texts_n; ++j)
+        {
+          if(len >= key_prefix_texts_len[j] &&
+             memcmp( key_prefix_texts[j], reg, key_prefix_texts_len[j]) == 0)
+            pass = 1;
+          if(pass && len > key_prefix_texts_len[j])
+          {
+            if( strcmp( reg+key_prefix_texts_len[j], "manufacturer") == 0 )
+              manufacturer = oyStringCopy_( val, oyAllocateFunc_ );
+            if( strcmp( reg+key_prefix_texts_len[j], "model") == 0 )
+              model = oyStringCopy_( val, oyAllocateFunc_ );
+            if( strcmp( reg+key_prefix_texts_len[j], "mnft") == 0 )
+              mnft = oyStringCopy_( val, oyAllocateFunc_ );
+            if( strcmp( reg+key_prefix_texts_len[j], "model_id") == 0 )
+              model_id = oyStringCopy_( val, oyAllocateFunc_ );
+          }
+        }
+      }
+
+      if(pass)
+      {
+        DBG_PROG2_S("%s: %s", reg, val );
+        ++count;
+      }
+    }
+    if(reg) oyDeAllocateFunc_(reg);
+    if(val) oyDeAllocateFunc_(val);
+  }
+
+  /* collect data */
+  size = 16 /* or 24 or 32*/
+         * n + sizeof(icDictTagType),
+  block_size = size;
+  pos = 0;
+
+  keys = oyAllocateFunc_( 2 * count * sizeof(char*));
+  values = oyAllocateFunc_( 2 * count * sizeof(char*));
+  for(i = 0; i < n; ++i)
+  {
+    o = oyConfig_Get( d, i );
+    r = oyOption_GetRegistration(o);
+    key = oyFilterRegistrationToText( r, oyFILTER_REG_OPTION,
+                                             oyAllocateFunc_ );
+    val = oyOption_GetValueText( o, oyAllocateFunc_ );
+    if(val)
+    {
+      int pass = 1;
+
+      if(key_prefix_required)
+      {
+        len = strlen( key );
+        pass = 0;
+        for(j = 0; j < key_prefix_texts_n; ++j)
+        {
+          if(len >= key_prefix_texts_len[j] &&
+             memcmp( key_prefix_texts[j], key, key_prefix_texts_len[j]) == 0)
+            pass = 1;
+        }
+      }
+
+      if(pass)
+      {
+        keys[pos] = key;
+        values[pos] = oyStringCopy_(val,oyAllocateFunc_);
+        DBG_PROG2_S("%s: %s", key, val );
+        len = strlen( key ) * 2;
+        len = len + (len%4 ? 4 - len%4 : 0);
+        block_size += len;
+        len = strlen( val ) * 2;
+        len = len + (len%4 ? 4 - len%4 : 0);
+        block_size += len;
+        block_size += + 2;
+        ++pos;
+        key = 0;
+      }
+    }
+    if(key) oyDeAllocateFunc_( key ); key = 0;
+    if(val) oyDeAllocateFunc_(val);
+  }
+
+  dict = calloc(sizeof(char), block_size);
+  dict->sig = oyValueUInt32( icSigDictType );
+  dict->number = oyValueUInt32( count );
+  dict->size = oyValueUInt32( 16 );
+
+  pos = size;
+  for(i = 0; i < count; ++i)
+  {
+    record = (icNameValueRecord*)((char*)dict + sizeof(icDictTagType) + 16 * i);
+
+    len = 0;
+    string = NULL;
+    error = oyIconvGet( keys[i], &string, &len, "UTF-8", "UTF-16BE",
+                        oyAllocateFunc_ );
+    record->name_string_offset = oyValueUInt32( pos );
+    len = strlen( keys[i] ) * 2;
+    len = len + (len%4 ? 4 - len%4 : 0);
+    record->name_string_size =  oyValueUInt32( len );
+    memcpy(((char*)dict)+pos, string, len );
+    oyFree_m_( string );
+    pos += len;
+
+    len = 0;
+    string = NULL;
+    error = oyIconvGet( values[i], &string, &len, "UTF-8", "UTF-16BE", 
+                        oyAllocateFunc_ );
+    record->value_string_offset =  oyValueUInt32( pos );
+    len = strlen( values[i] ) * 2;
+    len = len + (len%4 ? 4 - len%4 : 0);
+    record->value_string_size =  oyValueUInt32( len );
+    memcpy(((char*)dict)+pos, string, len );
+    pos += len;
+    oyFree_m_( string );
+  }
+
+  dict_tag = oyProfileTag_New(NULL);
+  error = oyProfileTag_Set( dict_tag, icSigMetaDataTag, icSigDictType,
+                            oyOK, block_size, dict );
+  if(error <= 0)
+    error = oyProfile_TagMoveIn( p, &dict_tag, -1 );
+
+  if(oyOptions_FindString( options, "set_device_attributes", "true" ))
+  {
+      uint32_t model_idi = 0;
+      const char * t = 0;
+      char * data;
+      size_t size = 0;
+      icHeader * header = 0;
+
+      oyProfileTag_s * tag = oyProfile_GetTagByPos( p, 0 );
+      char h[5] = {"head"};
+      uint32_t * hi = (uint32_t*)&h;
+      char *tag_block = 0;
+
+      data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
+      header = (icHeader*) data;
+      t = mnft;
+      if(t)
+        sprintf( (char*)&header->manufacturer, "%s", t );
+      t = model_id;
+      if(t)
+        model_idi = atoi( t );
+      model_idi = oyValueUInt32( model_idi );
+      memcpy( &header->model, &model_idi, 4 );
+
+      oyAllocHelper_m_( tag_block, char, 132, 0, return 0 );
+      error = !memcpy( tag_block, data, 132 );
+      error = oyProfileTag_Set( tag, (icTagSignature)*hi,
+                                (icTagTypeSignature)*hi,
+                                oyOK, 132, tag_block );
+      t = manufacturer;
+      if(t)
+        error = oyProfile_AddTagText( p, icSigDeviceMfgDescTag, t );
+      t =  model;
+      if(t)
+        error = oyProfile_AddTagText( p, icSigDeviceModelDescTag, t );
+      if(data && size)
+        oyFree_m_( data );
+  }
+
+  oyStringListRelease_( &keys, count, oyDeAllocateFunc_ );
+  oyStringListRelease_( &values, count, oyDeAllocateFunc_ );
+  if(key_prefix_texts_n)
+  {
+    oyStringListRelease_( &key_prefix_texts, key_prefix_texts_n,
+                          oyDeAllocateFunc_ );
+    oyDeAllocateFunc_( key_prefix_texts_len );
+  }
+  if(manufacturer) oyFree_m_( manufacturer );
+  if(model) oyFree_m_( model );
+  if(model_id) oyFree_m_( model_id );
+  if(mnft) oyFree_m_( mnft );
+
+  return error;
+}
+#endif
+
+/** Function oyProfile_DeviceGet
+ *  @memberof oyProfile_s
+ *  @brief   obtain device informations from a profile
+ *
+ *  @verbatim
+    oyConfig_s * device = oyConfig_New( "//" OY_TYPE_STD "/config", object );
+    oyProfile_DeviceGet( profile, device ); @endverbatim
+ *
+ *  @param[in]     profile             the profile
+ *  @param[in,out] device              the device description
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/05/22 (Oyranos: 0.1.10)
+ *  @date    2010/10/26
+ */
+int              oyProfile_DeviceGet ( oyProfile_s       * profile,
+                                       oyConfig_s        * device )
+{
+  int error = !profile, l_error = 0;
+  oyProfile_s * s = profile;
+  oyProfileTag_s * tag = 0;
+  char ** texts = 0;
+  int32_t texts_n = 0;
+  int i,
+      dmnd_found = 0, dmdd_found = 0, serial_found = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(!error)
+  {
+    tag = oyProfile_GetTagById( s, icSigMetaDataTag );
+    texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
+    if(texts && texts[0] && texts_n > 0)
+    {
+      for(i = 2; i+1 < texts_n && error <= 0; i+=2)
+      {
+        if(!texts[i+0])
+          continue;
+
+        if(strcmp(texts[i+0],"model") == 0) dmdd_found = 1;
+        if(strcmp(texts[i+0],"manufacturer") == 0) dmnd_found = 1;
+        if(strcmp(texts[i+0],"serial") == 0) serial_found = 1;
+
+        error = oyOptions_SetRegistrationTextKey_( device->backend_core,
+                                                 device->registration,
+                                                 texts[i+0], texts[i+1] );
+      }
+
+      if(!serial_found)
+      {
+        /* search for a key ending on _serial to strip namespaces */
+        for(i = 2; i+1 < texts_n && error <= 0; i+=2)
+        {
+          int key_len = strlen(texts[i+0]),
+              s_len = strlen("serial");
+          if(key_len > s_len &&
+             strcmp(&texts[i+0][key_len-s_len-1],"_serial") == 0)
+          {
+            error = oyOptions_SetRegistrationTextKey_( device->backend_core,
+                                                 device->registration,
+                                                 "serial", texts[i+1] );
+            DBG_NUM1_S("added serial: %s", texts[i+1]);
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  if(!error)
+  {
+    tag = oyProfile_GetTagById( s, icSigDeviceModelDescTag );
+    texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
+    if(texts && texts[0] && texts[0][0] && texts_n == 1 && !dmdd_found)
+      error = oyOptions_SetRegistrationTextKey_( device->backend_core, 
+                                                 device->registration,
+                                                 "model", texts[0] );
+    if(texts_n && texts)
+      oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+  }
+
+  if(!error)
+  {
+    tag = oyProfile_GetTagById( s, icSigDeviceMfgDescTag );
+    texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
+    if(texts && texts[0] && texts[0][0] && texts_n == 1 && !dmnd_found)
+      error = oyOptions_SetRegistrationTextKey_( device->backend_core, 
+                                                 device->registration,
+                                                 "manufacturer", texts[0] );
+    if(texts_n && texts)
+      oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+  }
+
+  l_error = oyOptions_SetSource( device->backend_core,
+                                     oyOPTIONSOURCE_FILTER); OY_ERR
+
+  return error;
+}
+
+
+#if 0
+/** @brief get a CMM specific pointer
+ *  @memberof oyProfile_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  26 november 2007 (API 0.1.8)
+ */
+/*
+oyChar *       oyProfile_GetCMMText_ ( oyProfile_s       * profile,
+                                       oyNAME_e            type,
+                                       const char        * language,
+                                       const char        * country )
+{
+  oyProfile_s * s = profile;
+  int error = !s;
+  oyChar * name = 0;
+  char cmm_used[] = {0,0,0,0,0};
+
+  if(error <= 0)
+  {
+    oyCMMProfile_GetText_t funcP = 0;
+    oyPointer_s  * cmm_ptr = 0;
+
+
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S,
+                                      0, 0, cmm_used );
+    if(api && *(uint32_t*)&cmm_used)
+    {
+      oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
+      funcP = api1->oyCMMProfile_GetText;
+    }
+
+    if(*(uint32_t*)&cmm_used)
+      cmm_ptr = oyProfile_GetCMMPtr_( s, cmm_used );
+
+    if(funcP && cmm_ptr)
+    {
+      name = funcP(cmm_ptr, type, language, country, s->oy_->allocateFunc_);
+
+      oyCMMdsoRelease_( cmm_used );
+    }
+  }
+
+  return name;
+}
+*/
+#endif
+
+/**
+ *  @internal
+ *  Function oyProfile_Equal
+ *  @memberof oyProfile_s
+ *  @brief   check if two profiles are qual by their hash sum
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/02/03 (Oyranos: 0.1.8)
+ *  @date    2009/04/16
+ */
+OYAPI int OYEXPORT
+                   oyProfile_Equal   ( oyProfile_s       * profileA,
+                                       oyProfile_s       * profileB )
+{
+  int equal = 0;
+
+  if(profileA && profileB)
+    equal = oyObject_HashEqual( profileA->oy_, profileB->oy_ );
+
+  return equal;
+}
+
+/** @internal
+ *  Function oyProfile_Match_
+ *  @memberof oyProfile_s
+ *  @brief   check if a profiles matches by some properties
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/06/20
+ *  @since   2008/06/20 (Oyranos: 0.1.8)
+ */
+int32_t      oyProfile_Match_        ( oyProfile_s       * pattern,
+                                       oyProfile_s       * profile )
+{
+  int32_t match = 0;
+  int i;
+  icSignature pattern_sig, profile_sig;
+
+  if(pattern && profile)
+  {
+    /*match = oyProfile_Equal_(pattern, profile);*/ /* too expensive */
+    if(!match)
+    {
+      match = 1;
+      for( i = 0; i < (int)oySIGNATURE_MAX; ++i)
+      {
+        pattern_sig = oyProfile_GetSignature( pattern, (oySIGNATURE_TYPE_e) i );
+        profile_sig = oyProfile_GetSignature( profile, (oySIGNATURE_TYPE_e) i );
+
+        if(pattern_sig && profile_sig && pattern_sig != profile_sig)
+          match = 0;
+      }
+    }
+  }
+
+  return match;
+}
+
+/** @internal
+ *  Function oyProfile_Hashed_
+ *  @memberof oyProfile_s
+ *  @brief   check if a profile has a hash sum computed
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/06/20
+ *  @since   2008/06/20 (Oyranos: 0.1.8)
+ */
+int32_t      oyProfile_Hashed_       ( oyProfile_s       * s )
+{
+  if(s && s->type_ == oyOBJECT_PROFILE_S)
+    return oyObject_Hashed_( s->oy_ );
+  else
+    return 0;
+}
+
+/** @internal
+ *  @memberof oyProfile_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  20 december 2007 (API 0.1.8)
+ */
+int          oyProfile_ToFile_       ( oyProfile_s       * profile,
+                                       const char        * file_name )
+{
+  oyProfile_s * s = profile;
+  int error = !s || !file_name;
+  oyPointer buf = 0;
+  size_t size = 0;
+
+  if(!s)
+    return error;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
+
+  if(error <= 0)
+  {
+    buf = oyProfile_GetMem ( s, &size, 0, 0 );
+    if(buf && size)
+    error = oyWriteMemToFile_( file_name, buf, size );
+
+    if(buf) oyDeAllocateFunc_(buf);
+    size = 0;
+  }
+
+  return error;
+}
+
+/**
+ *  @internal
+ *  Function oyProfile_WriteHeader_
+ *  @memberof oyProfile_s
+ *  @brief   get the parsed ICC profile back into memory
+ *
+ *  @version Oyranos: 0.3.2
+ *  @date    2011/07/05
+ *  @since   2008/01/30 (Oyranos: 0.1.8)
+ */
+oyPointer    oyProfile_WriteHeader_  ( oyProfile_s       * profile,
+                                       size_t            * size )
+{
+  oyPointer block = 0;
+  char h[5] = {"head"};
+  uint32_t * hi = (uint32_t*)&h;
+
+  if(profile && profile->block_ && profile->size_ > 132 &&
+     profile->tags_)
+  {
+    int n = oyProfile_GetTagCount_( profile );
+    oyProfileTag_s * tag = oyProfile_GetTagByPos_ ( profile, 0 );
+
+    if(n && tag->use == *hi && tag->block_ && tag->size_ >= 128)
+    {
+      block = oyAllocateFunc_ (132);
+      if(block)
+      {
+        memset( block, 0, 132 );
+        memcpy( block, tag->block_, 128 );
+        /* unset profile ID */
+        memset( &((char*)block)[84], 0, OY_HASH_SIZE );
+      }
+    }
+
+    oyProfileTag_Release( &tag );
+  }
+
+  return block;
+}
+
+/**
+ *  @internal
+ *  Function oyProfile_WriteTagTable_
+ *  @memberof oyProfile_s
+ *  @brief   get the parsed ICC profile back into memory
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/01/30
+ *  @since   2008/01/30 (Oyranos: 0.1.8)
+ */
+oyPointer    oyProfile_WriteTagTable_( oyProfile_s       * profile,
+                                       size_t            * size )
+{
+  oyPointer block = 0;
+  int error = !(profile && profile->block_ &&
+                profile->size_ > 132 && profile->tags_ && size);
+
+  if(error <= 0)
+  {
+    int n = oyProfile_GetTagCount_( profile );
+    size_t size = 0;
+
+    size = sizeof (icTag) * n;
+    error = !size;
+
+    if(error <= 0)
+    {
+      block = oyAllocateFunc_( size );
+      error = !block;
+    }
+
+    if(error <= 0)
+      error = !memset( block, 0, size );
+  }
+
+  return block;
+}
+
+/**
+ *  @internal
+ *  Function oyProfile_WriteTags_
+ *  @memberof oyProfile_s
+ *  @brief   get the parsed ICC profile back into memory
+ *
+ *  Call in following order:
+ *         -  oyProfile_WriteHeader_
+ *         -  oyProfile_WriteTagTable_
+ *         -  oyProfile_WriteTags_
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/02/01
+ *  @since   2008/01/30 (Oyranos: 0.1.8)
+ */
+oyPointer    oyProfile_WriteTags_    ( oyProfile_s       * profile,
+                                       size_t            * size,
+                                       oyPointer           icc_header,
+                                       oyPointer           icc_list,
+                                       oyAlloc_f           allocateFunc )
+{
+  char * block = 0;
+  int error = !(profile && profile->block_ &&
+                profile->size_ > 132 && profile->tags_ && size &&
+                icc_header && icc_list);
+
+  if(error <= 0)
+  {
+    int n = 0, i, j;
+    size_t len = 0;
+
+    n = oyProfile_GetTagCount_( profile );
+    block = (char*) oyAllocateFunc_(132 + n * sizeof(icTag));
+    error = !block;
+
+    if(error <= 0)
+    {
+      memset( block, 0, 132 + n * sizeof(icTag) );
+      error = !memcpy( block, icc_header, 132 );
+    }
+
+    len = 132;
+
+    if(error <= 0)
+      error = !memcpy( &block[len], icc_list, (n-1) * sizeof(icTag) );
+
+    len += sizeof(icTag) * (n-1);
+
+    /* write tags */
+    for(i = 0; i < n - 1; ++i)
+    {
+      char h[5] = {"head"};
+      uint32_t * hi = (uint32_t*)&h;
+      char * temp = 0;
+      icTagList* list = (icTagList*) &block[128];
+      oyProfileTag_s * tag = oyProfile_GetTagByPos_ ( profile, i + 1 );
+      size_t size = 0;
+      uint32_t dup_offset = 0;
+
+      if(error <= 0)
+        error = !tag;
+
+      if(error <= 0)
+        size = tag->size_;
+
+      if(error <= 0 && tag->use == *hi)
+      {
+        oyProfileTag_Release( &tag );
+        continue;
+      }
+
+      /* detect duplicate tag contents */
+      for(j = 0; j < i; ++j)
+      {
+        oyProfileTag_s * comp = oyProfile_GetTagByPos_( profile, j + 1 );
+        if(tag->size_ == comp->size_ &&
+           tag->offset_orig == comp->offset_orig &&
+           memcmp(tag->block_, comp->block_, tag->size_) == 0)
+          dup_offset = list->tags[j].offset;
+      }
+
+      if(error <= 0)
+      {
+        list->tags[i].sig = oyValueUInt32( (icTagSignature)tag->use );
+        if(dup_offset)
+          list->tags[i].offset = dup_offset;
+        else
+        {
+          list->tags[i].offset = oyValueUInt32( (icUInt32Number)len );
+          temp = (char*) oyAllocateFunc_ ( len + size + 
+                                               (size%4 ? 4 - size%4 : 0));
+        }
+        list->tags[i].size = oyValueUInt32( (icUInt32Number)size );
+        if(temp)
+          memset( temp, 0, len + size + (size%4 ? 4 - size%4 : 0));
+      }
+
+      if(temp)
+        error = !memcpy( temp, block, len );
+      if(temp && error <= 0)
+      {
+        error = !memcpy( &temp[len], tag->block_, tag->size_);
+        len += size + (size%4 ? 4 - size%4 : 0);
+      }
+
+      if(temp && error <= 0)
+      {
+        oyDeAllocateFunc_(block);
+        block = temp;
+      }
+      if(error <= 0)
+      {
+        oyProfileTag_Release( &tag );
+      }
+      temp = 0;
+    }
+
+    /* modify header, e.g. size, platform signature  */
+    if(error <= 0)
+    {
+      char h[5] = {OY_MODULE_NICK};
+      uint32_t * hi = (uint32_t*)&h;
+      icProfile* p = 0;
+      icHeader* header = 0;
+      oyPointer temp = oyAllocateWrapFunc_( len, allocateFunc );
+
+      error = !temp;
+      if(error <= 0)
+        error = !memcpy( temp, block, len );
+
+      oyDeAllocateFunc_( block );
+      block = temp; temp = 0;
+
+      p = (icProfile*) block;
+      p->count = oyValueUInt32( (icUInt32Number) n - 1);
+
+      header = (icHeader*) block;
+      header->size = oyValueUInt32( (icUInt32Number) len);
+#if 0 /* we dont override the CMM's id */
+      header->creator = *hi;
+#endif
+#if defined(__APPLE__)
+      oySprintf_( h, "APPL" );
+#elif defined(WIN32)
+      oySprintf_( h, "MSFT" );
+#else
+      oySprintf_( h, "*nix" );
+#endif
+      header->platform = *hi;
+      *size = len;
+    }
+  }
+
+  return block;
+}
+
+/**
+ *  @internal
+ *  Function oyProfile_TagsToMem_
+ *  @memberof oyProfile_s
+ *  @brief   get the parsed ICC profile back into memory
+ *
+ *  non thread save
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/01/30
+ *  @since   2008/01/30 (Oyranos: 0.1.8)
+ */
+oyPointer    oyProfile_TagsToMem_    ( oyProfile_s       * profile,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyPointer block = 0;
+  int error = !(profile && profile->block_ &&
+                profile->size_ > 132 && profile->tags_ && size);
+
+  if(error <= 0)
+  {
+    size_t size_ = 0;
+
+    oyPointer icc_header = 0;
+    oyPointer icc_tagtable = 0;
+
+    /* 1. header */
+    icc_header = oyProfile_WriteHeader_( profile, &size_ );
+
+    error = !icc_header;
+
+    /* 2. tag table */
+    if(error <= 0)
+    {
+      icc_tagtable = oyProfile_WriteTagTable_( profile, &size_ );
+      error = !icc_tagtable;
+    }
+
+    /* 3. tags */
+    if(error <= 0)
+    {
+      block = oyProfile_WriteTags_( profile, &size_, icc_header, icc_tagtable,
+                                    allocateFunc );
+      error = !block;
+    }
+
+    if(error <= 0)
+    {
+      oyDeAllocateFunc_(icc_header);
+      oyDeAllocateFunc_(icc_tagtable);
+      *size = size_;
+    }
+  }
+
+  return block;
+}
+
+/** Function oyProfile_GetTagById
+ *  @memberof oyProfile_s
+ *  @brief   get a profile tag by its tag signature
+ *
+ *  @param[in]     profile             the profile
+ *  @param[in]     id                  icTagSignature
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  2 january 2008 (API 0.1.8)
+ */
+oyProfileTag_s * oyProfile_GetTagById( oyProfile_s       * profile,
+                                       icTagSignature      id )
+{
+  oyProfile_s * s = profile;
+  int error = !s;
+  oyProfileTag_s * tag = 0,
+                 * tmp = 0;
+  int i = 0, n = 0;
+  icTagSignature tag_id_ = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(error <= 0)
+    n = oyProfile_GetTagCount_( s );
+
+  if(error <= 0 && n)
+  {
+    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
+    for(i = 0; i < n; ++i)
+    {
+      tmp = oyProfile_GetTagByPos_( s, i );
+      tag_id_ = 0;
+
+      if(tmp)
+        tag_id_ = tmp->use;
+
+      if(tag_id_ == id)
+      {
+        tag = tmp; tmp = 0;
+        break;
+      } else
+        oyProfileTag_Release( &tmp );
+    }
+    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+  }
+
+  return tag;
+}
+
+
+/** @internal
+ *  Function oyProfile_GetTagByPos_
+ *  @memberof oyProfile_s
+ *  @brief   get a profile tag
+ *
+ *  non thread save
+ *
+ *  @param[in]     profile             the profile
+ *  @param[in]     pos                 header + tag position
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/01/01
+ *  @since   2008/01/01 (Oyranos: 0.1.8)
+ */
+oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s     * profile,
+                                       int                 pos )
+{
+  oyProfileTag_s * tag = 0;
+  oyProfile_s * s = profile;
+  int error = !profile;
+  int n = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(error <= 0 && profile->type_ != oyOBJECT_PROFILE_S)
+    error = 1;
+
+  if(error <= 0)
+  {
+    s = profile;
+    n = oyStructList_Count( profile->tags_ );
+  }
+
+  if(error <= 0 && n)
+  {
+    tag = (oyProfileTag_s*) oyStructList_GetRef( profile->tags_, pos );
+    return tag;
+  }
+
+  /* parse the ICC profile struct */
+  if(error <= 0 && s->block_)
+  {
+    icSignature magic = oyProfile_GetSignature( s, oySIGNATURE_MAGIC );
+    icSignature profile_cmmId = oyProfile_GetSignature( s, oySIGNATURE_CMM );
+    char profile_cmm[5] = {0,0,0,0,0};
+    icProfile * ic_profile = s->block_;
+    int min_icc_size = 132 + sizeof(icTag);
+
+    error = (magic != icMagicNumber);
+
+    profile_cmmId = oyValueUInt32( profile_cmmId );
+    error = !memcpy( profile_cmm, &profile_cmmId, 4 );
+    profile_cmmId = 0;
+
+    if(error <= 0 && s->size_ > min_icc_size)
+    {
+      uint32_t tag_count = 0;
+      icTag *tag_list = 0;
+      int i = 0;
+      oyProfileTag_s * tag_ = oyProfileTag_New( 0 );
+      char h[5] = {"head"};
+      uint32_t * hi = (uint32_t*)&h;
+      char *tag_block = 0;
+
+      oyAllocHelper_m_( tag_block, char, 132, 0, return 0 );
+      error = !memcpy( tag_block, s->block_, 132 );
+      error = oyProfileTag_Set( tag_, (icTagSignature)*hi,
+                                (icTagTypeSignature)*hi,
+                                oyOK, 132, tag_block );
+      if(error <= 0)
+        error = !memcpy( tag_->profile_cmm_, profile_cmm, 4 );
+
+      if(0 == pos)
+        tag = oyProfileTag_Copy( tag_, 0 );
+      error = oyProfile_TagMoveIn_( s, &tag_, -1 );
+
+
+      tag_count = oyValueUInt32( ic_profile->count );
+
+      tag_list = (icTag*)&((char*)s->block_)[132];
+
+      /* parse the profile and add tags to the oyProfile_s::tags_ list */
+      for(i = 0; i < tag_count; ++i)
+      {
+        icTag *ic_tag = &tag_list[i];
+        size_t offset = oyValueUInt32( ic_tag->offset );
+        size_t tag_size = oyValueUInt32( ic_tag->size );
+        char *tmp = 0;
+        char **texts = 0;
+        int32_t texts_n = 0;
+        int j;
+        oySTATUS_e status = oyOK;
+        icTagSignature sig = oyValueUInt32( ic_tag->sig );
+        icTagTypeSignature tag_type = 0;
+
+        oyProfileTag_s * tag_ = oyProfileTag_New( 0 );
+
+        tag_block = 0;
+
+        if((offset+tag_size) > s->size_)
+          status = oyCORRUPTED;
+        else
+        {
+          icTagBase * tag_base = 0;
+
+          oyAllocHelper_m_( tag_block, char, tag_size, 0, return 0 );
+          tmp = &((char*)s->block_)[offset];
+          error = !memcpy( tag_block, tmp, tag_size );
+
+          tag_base = (icTagBase*) tag_block; 
+          tag_type = oyValueUInt32( tag_base->sig );
+        }
+
+        error = oyProfileTag_Set( tag_, sig, tag_type,
+                                  status, tag_size, tag_block );
+        tag_->offset_orig = offset;
+        if(error <= 0)
+          error = !memcpy( tag_->profile_cmm_, profile_cmm, 4 );
+
+        if(oy_debug > 3)
+        {
+          DBG_PROG5_S("%d[%d @ %d]: %s %s", 
+            i, (int)tag_->size_, (int)tag_->offset_orig,
+            oyICCTagTypeName( tag_->tag_type_ ),
+            oyICCTagDescription( tag_->use ) );
+          texts = oyProfileTag_GetText(tag_,&texts_n,0,0,0,0);
+          for(j = 0; j < texts_n; ++j)
+            DBG_PROG2_S("%s: %s", tag_->last_cmm_, texts[j]?texts[j]:"");
+          if(texts_n && texts)
+            oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+        }
+
+        if(i == pos-1)
+          tag = oyProfileTag_Copy( tag_, 0 );
+
+        if(error <= 0)
+          error = oyProfile_TagMoveIn_( s, &tag_, -1 );
+      }
+    }
+  }
+
+  return tag;
+}
+
+/** Function oyProfile_GetTagByPos
+ *  @memberof oyProfile_s
+ *  @brief   get a profile tag
+ *
+ *  @param[in]     profile             the profile
+ *  @param[in]     pos                 header + tag position
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/02/06
+ *  @since   2008/02/06 (Oyranos: 0.1.8)
+ */
+oyProfileTag_s * oyProfile_GetTagByPos(oyProfile_s       * profile,
+                                       int                 pos )
+{
+  oyProfileTag_s * tag = 0;
+  oyProfile_s * s = profile;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(s)
+    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
+
+  tag = oyProfile_GetTagByPos_( s, pos );
+
+  if(s)
+    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+
+  return tag;
+}
+
+/** |internal
+ *  Function oyProfile_GetTagCount_
+ *  @memberof oyProfile_s
+ *
+ *  non thread save
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/01/01 (Oyranos: 0.1.8)
+ *  @date    2009/12/29
+ */
+int                oyProfile_GetTagCount_ (
+                                       oyProfile_s       * profile )
+{
+  int n = 0;
+  oyProfile_s *s = profile;
+  int error = !s;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(error <= 0 && !s->tags_)
+    error = 1;
+
+  if(error <= 0)
+    n = oyStructList_Count( s->tags_ );
+
+  if(error <= 0 && !n)
+  {
+    oyProfileTag_s * tag = oyProfile_GetTagByPos_ ( s, 0 );
+    oyProfileTag_Release( &tag );
+    n = oyStructList_Count( s->tags_ );
+  }
+
+  return n;
+}
+
+/** Function oyProfile_GetTagCount
+ *  @memberof oyProfile_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/01/01 (Oyranos: 0.1.8)
+ *  @date    2009/12/29
+ */
+int                oyProfile_GetTagCount( oyProfile_s    * profile )
+{
+  int n = 0;
+  oyProfile_s *s = profile;
+  int error = !s;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(error <= 0 && !s->tags_)
+    error = 1;
+
+  if(error <= 0)
+    n = oyStructList_Count( s->tags_ );
+
+  if(error <= 0 && !n)
+  {
+    oyProfileTag_s * tag = 0;
+    if(s)
+      oyObject_Lock( s->oy_, __FILE__, __LINE__ );
+
+    tag = oyProfile_GetTagByPos_ ( s, 0 );
+    oyProfileTag_Release( &tag );
+    n = oyStructList_Count( s->tags_ );
+
+    if(s)
+      oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+  }
+
+  return n;
+}
+
+/** @internal
+ *  Function oyProfile_TagMoveIn_
+ *  @memberof oyProfile_s
+ *  @brief   add a tag to a profile
+ *
+ *  non thread save
+ *
+ *  The profile is needs probably be marked as modified after calling this
+ *  function.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/06 (Oyranos: 0.1.10)
+ *  @date    2009/12/29
+ */
+int          oyProfile_TagMoveIn_    ( oyProfile_s       * profile,
+                                       oyProfileTag_s   ** obj,
+                                       int                 pos )
+{
+  oyProfile_s * s = profile;
+  int error = !s;
+
+  if(!s)
+    return error;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
+
+  if(!(obj && *obj && (*obj)->type_ == oyOBJECT_PROFILE_TAG_S))
+    error = 1;
+
+  if(error <= 0)
+    error = oyStructList_MoveIn ( s->tags_, (oyStruct_s**)obj, pos,
+                                  OY_OBSERVE_AS_WELL );
+
+  return error;
+}
+
+/** Function oyProfile_TagMoveIn
+ *  @memberof oyProfile_s
+ *  @brief   add a tag to a profile
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/02/01 (Oyranos: 0.1.8)
+ *  @date    2009/12/29
+ */
+int                oyProfile_TagMoveIn(oyProfile_s       * profile,
+                                       oyProfileTag_s   ** obj,
+                                       int                 pos )
+{
+  oyProfile_s * s = profile;
+  int error = !s, i,n;
+  oyProfileTag_s * tag = 0;
+
+  if(!s)
+    return error;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
+
+  if(!(obj && *obj && (*obj)->type_ == oyOBJECT_PROFILE_TAG_S))
+    error = 1;
+
+  if(s)
+    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
+
+
+  if(error <= 0)
+  {
+    /** Initialise tag list. */
+    n = oyProfile_GetTagCount_( s );
+
+    /** Avoid double occurencies of tags. */
+    for( i = 0; i < n; ++i )
+    {
+      tag = oyProfile_GetTagByPos_( s, i );
+      if(tag->use == (*obj)->use)
+      {
+        oyProfile_TagReleaseAt_(s, i);
+        n = oyProfile_GetTagCount_( s );
+      }
+      oyProfileTag_Release( &tag );
+    }
+    error = oyStructList_MoveIn ( s->tags_, (oyStruct_s**)obj, pos,
+                                  OY_OBSERVE_AS_WELL );
+    ++s->tags_modified_;
+  }
+
+  if(s)
+    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+
+  return error;
+}
+
+/** @internal
+ *  Function oyProfile_TagReleaseAt_
+ *  @memberof oyProfile_s
+ *  @brief   remove a tag from a profile
+ *
+ *  non thread save
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/03/11 (Oyranos: 0.1.8)
+ *  @date    2009/12/29
+ */
+int          oyProfile_TagReleaseAt_ ( oyProfile_s       * profile,
+                                       int                 pos )
+{
+  oyProfile_s * s = profile;
+  return oyStructList_ReleaseAt ( s->tags_, pos );
+}
+
+/** Function oyProfile_TagReleaseAt
+ *  @memberof oyProfile_s
+ *  @brief   remove a tag from a profile
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/03/11
+ *  @since   2008/03/11 (Oyranos: 0.1.8)
+ */
+int                oyProfile_TagReleaseAt ( oyProfile_s  * profile,
+                                       int                 pos )
+{
+  oyProfile_s * s = profile;
+  int error = !s;
+
+  if(!s)
+    return error;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
+
+  if(!(s && s->type_ == oyOBJECT_PROFILE_S))
+    error = 1;
+
+  if(s)
+    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
+
+  if(error <= 0)
+  {
+    error = oyStructList_ReleaseAt ( s->tags_, pos );
+    ++s->tags_modified_;
+  }
+
+  if(s)
+    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+
+  return error;
+}
+
+/** Function oyProfile_AddTagText
+ *  @memberof oyProfile_s
+ *  @brief   add a text tag
+ *
+ *  @version Oyranos: 0.1.10
+ *  @date    2009/10/18
+ *  @since   2009/10/18 (Oyranos: 0.1.10)
+ */
+int                oyProfile_AddTagText (
+                                       oyProfile_s       * profile,
+                                       icSignature         signature,
+                                       const char        * text )
+{
+  oyStructList_s * list = 0;
+  oyName_s * name = oyName_new(0);
+  int error = 0;
+  oyProfileTag_s * tag = 0;
+  icTagTypeSignature tt = icSigTextType;
+  icSignature vs = oyValueUInt32( oyProfile_GetSignature( profile,
+                                                         oySIGNATURE_VERSION) );
+  char * v = (char*)&vs;
+  int version_A = (int)v[0]/*,
+      version_B = (int)v[1]/16,
+      version_C =  (int)v[1]%16*/;
+
+  if(version_A <= 3 &&
+     (signature == icSigProfileDescriptionTag ||
+      signature == icSigDeviceMfgDescTag ||
+      signature == icSigDeviceModelDescTag ||
+      signature == icSigScreeningDescTag ||
+      signature == icSigViewingCondDescTag))
+    tt = icSigTextDescriptionType;
+  else if(version_A >= 4 &&
+     (signature == icSigProfileDescriptionTag ||
+      signature == icSigDeviceMfgDescTag ||
+      signature == icSigDeviceModelDescTag ||
+      signature == icSigCopyrightTag ||
+      signature == icSigViewingCondDescTag))
+    tt = icSigMultiLocalizedUnicodeType;
+
+  name = oyName_set_ ( name, text, oyNAME_NAME,
+                       oyAllocateFunc_, oyDeAllocateFunc_ );
+  list = oyStructList_New(0);
+  error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0, 0 );
+
+  if(!error)
+  {
+    tag = oyProfileTag_Create( list, tt, 0,OY_MODULE_NICK, 0);
+    error = !tag;
+  }
+
+  if(!error)
+    tag->use = signature;
+
+  oyStructList_Release( &list );
+
+  if(tag)
+    error = oyProfile_TagMoveIn ( profile, &tag, -1 );
+
+  return error;
+}
+
+
+
+
+/** Function oyProfileTag_New
+ *  @memberof oyProfileTag_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+OYAPI oyProfileTag_s * OYEXPORT
+                   oyProfileTag_New ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_PROFILE_TAG_S;
+# define STRUCT_TYPE oyProfileTag_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyProfileTag_Copy;
+  s->release = (oyStruct_Release_f) oyProfileTag_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  return s;
+}
+
+/** Function oyProfileTag_Create
+ *  @memberof oyProfileTag_s
+ *
+ *  The API relies on an generic arguments inside a list. The arguments are not
+ *  specified here but in the appropriate moduls. This allowes flixibility, 
+ *  which needs more understanding.
+ *
+ *  For the effect of the parameters look at the appropriate module
+ *  documentation and the function infos.
+ *  @see oyraProfileTag_Create
+ *  @see oyraFunctionGetInfo
+ *
+ *  @param[in]     list                a list of arguments
+ *  @param[in]     tag_type            type to create
+ *  @param[in]     version             version as supported
+ *  @param[in,out] required_cmm        in: CMM to create the tag; out: used CMM
+ *  @param[in]     object              the user object for the tag creation
+ *  @return                            a profile tag
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/01/08 (Oyranos: 0.1.8)
+ *  @date    2008/01/08
+ */
+OYAPI oyProfileTag_s * OYEXPORT
+               oyProfileTag_Create   ( oyStructList_s    * list,
+                                       icTagTypeSignature  tag_type,
+                                       uint32_t            version,
+                                       const char        * required_cmm,
+                                       oyObject_s          object)
+{
+  oyProfileTag_s * s = 0, * tag = 0;
+  int error = !list;
+  oyCMMProfileTag_Create_f funcP = 0;
+  char cmm[] = {0,0,0,0,0};
+  oyCMMapiQuery_s query = {oyQUERY_PROFILE_TAG_TYPE_WRITE, 0, oyREQUEST_HARD};
+  oyCMMapiQuery_s *query_[2] = {0,0};
+  oyCMMapiQueries_s queries = {1,0};
+
+  if(error <= 0 && list->type_ != oyOBJECT_STRUCT_LIST_S)
+    error = 1;
+
+  if(error <= 0)
+  {
+    query.value = tag_type;
+    query_[0] = &query;
+    queries.queries = query_;
+    if(required_cmm)
+      error = !memcpy( queries.prefered_cmm, required_cmm, 4 ); 
+
+    if(error <= 0 && required_cmm)
+      error = !memcpy( cmm, required_cmm, 4 );
+  }
+
+  if(error <= 0)
+  {
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API3_S, cmm, 0,
+                                      oyCMMapi3_Query_, &queries );
+    if(api)
+    {
+      oyCMMapi3_s * api3 = (oyCMMapi3_s*) api;
+      funcP = api3->oyCMMProfileTag_Create;
+    }
+    error = !funcP;
+  }
+
+  if(error <= 0)
+  {
+    tag = oyProfileTag_New( object );
+    error = !tag;
+    
+    if(error <= 0)
+      error = funcP( tag, list, tag_type, version );
+
+    if(error <= 0)
+      error = !memcpy( tag->last_cmm_, cmm, 4 );
+    if(error <= 0)
+      s = tag;
+  }
+
+  return s;
+}
+
+/** Function oyProfileTag_CreateFromText
+ *  @memberof oyProfileTag_s
+ *
+ *  @param[in]     text                a string
+ *  @param[in]     tag_type            type to create, e.g. icSigTextDescriptionType or icSigTextType
+ *  @param[in]     tag_usage           signature, e.g. icSigCopyrightTag
+ *  @param[in]     object              the user object for the tag creation
+ *  @return                            a profile tag
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/06 (Oyranos: 0.1.10)
+ *  @date    2009/01/06
+ */
+OYAPI oyProfileTag_s * OYEXPORT
+               oyProfileTag_CreateFromText (
+                                       const char        * text,
+                                       icTagTypeSignature  tag_type,
+                                       icTagSignature      tag_usage,
+                                       oyObject_s          object )
+{
+  int error = !text;
+  oyProfileTag_s * tag = 0;
+  oyName_s * name = 0;
+  oyStructList_s * list = 0;
+
+  if(error <= 0)
+  {
+    name = oyName_set_ ( name, text, oyNAME_NAME,
+                         oyAllocateFunc_, oyDeAllocateFunc_ );
+    error = !name;
+  }
+
+  if(error <= 0)
+  {
+    memcpy( name->lang, "en_GB", 5 );
+    list = oyStructList_New(0);
+    error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0,
+                                 OY_OBSERVE_AS_WELL );
+  }
+
+  if(error <= 0)
+  {
+    tag = oyProfileTag_Create( list, tag_type, 0, OY_MODULE_NICK, object);
+    error = !tag;
+  }
+
+  if(error <= 0)
+  tag->use = tag_usage;
+
+  oyStructList_Release( &list );
+
+  return tag;
+}
+
+/** Function oyProfileTag_CreateFromData
+ *  @memberof oyProfileTag_s
+ *
+ *  @param[in]     sig                 usage signature
+ *  @param[in]     type                content type
+ *  @param[in]     status              to be set
+ *  @param[in]     tag_size            memory size of tag_block
+ *  @param[in]     tag_block           the to be copied memory
+ *  @param[in]     object              the user object for the tag creation
+ *  @return                            a profile tag
+ *
+ *  @version Oyranos: 0.3.1
+ *  @since   2011/05/13 (Oyranos: 0.3.1)
+ *  @date    2011/05/13
+ */
+OYAPI oyProfileTag_s * OYEXPORT
+               oyProfileTag_CreateFromData ( 
+                                       icTagSignature      sig,
+                                       icTagTypeSignature  type,
+                                       oySTATUS_e          status,
+                                       size_t              tag_size,
+                                       oyPointer           tag_block,
+                                       oyObject_s          object )
+{
+  oyProfileTag_s * s = oyProfileTag_New(object);
+  int error = !s;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 0 )
+
+  if(error <= 0)
+  {
+    s->use = sig;
+    s->tag_type_ = type;
+    s->status_ = status;
+    s->size_ = tag_size;
+    if(s->size_)
+    {
+      oyAllocHelper_m_( s->block_, char, tag_size, s->oy_->allocateFunc_,
+                        return 0 );
+      memcpy( s->block_, tag_block, tag_size );
+    }
+  }
+
+  return s;
+}
+
+/** Function oyProfileTag_Copy
+ *  @memberof oyProfileTag_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+OYAPI oyProfileTag_s * OYEXPORT
+                   oyProfileTag_Copy   ( oyProfileTag_s  * obj,
+                                         oyObject_s        object)
+{
+  oyProfileTag_s * s = 0;
+  int error = 0;
+
+  if(!obj)
+    return s;
+
+  if(s)
+    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
+
+  if(error <= 0 && !object && obj->oy_)
+  {
+    oyObject_Ref( obj->oy_ );
+    return obj;
+  }
+
+  if(s)
+    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+
+  return s;
+}
+
+/** Function oyProfileTag_Release
+ *  @memberof oyProfileTag_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+OYAPI int  OYEXPORT
+                   oyProfileTag_Release(oyProfileTag_s  ** obj )
+{
+  int error = 0;
+  /* ---- start of common object destructor ----- */
+  oyProfileTag_s * s = 0;
+
+  if(!obj || !*obj)
+    return error;
+
+  s = *obj;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return error;
+  /* ---- end of common object destructor ------- */
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    if(s->block_ && s->size_)
+      deallocateFunc( s->block_ );
+    s->block_ = 0; s->size_ = 0;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return error;
+}
+
+/** Function oyProfileTag_Set
+ *  @memberof oyProfileTag_s
+ *
+ *  The function is a simple setter for the object elements.
+ *
+ *  @param[in,out] tag                 the to be manipulated ICC profile object
+ *  @param[in]     sig                 usage signature
+ *  @param[in]     type                content type
+ *  @param[in]     status              to be set
+ *  @param[in]     tag_size            memory size of tag_block
+ *  @param[in]     tag_block           the block to be moved into the object;
+ *                                     The pointer is owned by the object. Its
+ *                                     memory should be allocated as with the
+ *                                     same allocators as the object.
+ *  @return                            0 - success, 1 - error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/01/01 (Oyranos: 0.1.8)
+ *  @date    2009/11/06
+ */
+OYAPI int  OYEXPORT
+                   oyProfileTag_Set  ( oyProfileTag_s    * tag,
+                                       icTagSignature      sig,
+                                       icTagTypeSignature  type,
+                                       oySTATUS_e          status,
+                                       size_t              tag_size,
+                                       oyPointer           tag_block )
+{
+  oyProfileTag_s * s = tag;
+  int error = !s;
+
+  if(!s)
+    return error;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
+
+  if(error <= 0)
+  {
+    s->use = sig;
+    s->tag_type_ = type;
+    s->status_ = status;
+    s->size_ = tag_size;
+    if(s->block_)
+      s->oy_->deallocateFunc_( s->block_ );
+    s->block_ = tag_block;
+  }
+
+  return error;
+}
+
+/** @internal
+ *  Function oyCMMapi3_Query_
+ *
+ *  implements oyCMMapi_Check_f
+ *  The data argument is expected to be oyCMMapiQueries_s.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/09/02 (Oyranos: 0.1.10)
+ *  @date    2009/09/02
+ */
+oyOBJECT_e   oyCMMapi3_Query_        ( oyCMMInfo_s       * cmm_info,
+                                       oyCMMapi_s        * api,
+                                       oyPointer           data,
+                                       uint32_t          * rank )
+{
+  oyCMMapiQueries_s * queries = data;
+  uint32_t rank_ = 0;
+  int prefered = 1;
+  oyCMMapi3_s * api3 = 0;
+
+  if(api->type == oyOBJECT_CMM_API3_S)
+    api3 = (oyCMMapi3_s*) api;
+
+  if(memcmp( queries->prefered_cmm, cmm_info->cmm, 4 ) == 0)
+    prefered = 10;
+
+  rank_ = oyCMMCanHandle_( api3, queries );
+
+  if(rank)
+    *rank = rank_ * prefered;
+
+  if(rank_)
+    return api->type;
+  else
+    return oyOBJECT_NONE;
+}
+
+/** Function oyProfileTag_Get
+ *  @memberof oyProfileTag_s
+ *
+ *  Hint: to select a certain module use the oyProfileTag_s::required_cmm
+ *  element from the tag parameter.
+ *
+ *  @param[in]     tag                 the tag to read
+ *  @return                            a list of strings
+ *
+ *  @version Oyranos: 0.3.1
+ *  @since   2008/06/19 (Oyranos: 0.1.8)
+ *  @date    2008/05/17
+ */
+oyStructList_s*oyProfileTag_Get      ( oyProfileTag_s    * tag )
+{
+  oyProfileTag_s * s = tag;
+  int error = !s;
+  oyCMMProfileTag_GetValues_f funcP = 0;
+  char cmm[] = {0,0,0,0,0};
+  oyStructList_s * values = 0;
+  oyCMMapiQuery_s query = {oyQUERY_PROFILE_TAG_TYPE_READ, 0, oyREQUEST_HARD};
+  oyCMMapiQuery_s *query_[2] = {0,0};
+  oyCMMapiQueries_s queries = {1,0};
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 0 )
+
+  if(error <= 0)
+  {
+    query.value = tag->tag_type_;
+    query_[0] = &query;
+    queries.queries = query_;
+    error = !memcpy( queries.prefered_cmm, tag->profile_cmm_, 4 ); 
+
+    if(error <= 0)
+      error = !memcpy( cmm, tag->required_cmm, 4 );
+  }
+
+  if(error <= 0)
+  {
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API3_S, cmm, 0,
+                                      oyCMMapi3_Query_, &queries );
+    if(api)
+    {
+      oyCMMapi3_s * api3 = (oyCMMapi3_s*) api;
+      funcP = api3->oyCMMProfileTag_GetValues;
+    }
+    error = !funcP;
+  }
+
+  if(error <= 0)
+  {
+    values = funcP( tag );
+
+    error = !memcpy( tag->last_cmm_, cmm, 4 );
+  }
+
+  return values;
+}
+
+/** Function oyProfileTag_GetText
+ *  @memberof oyProfileTag_s
+ *
+ *  For the effect of the parameters look at the appropriate module.
+ *  @see oyIMProfileTag_GetValues
+ *
+ *  Hint: to select a certain module use the oyProfileTag_s::required_cmm
+ *  element from the tag parameter.
+ *
+ *  For localised strings, e.g. icSigMultiLocalizedUnicodeType: \n
+ *    - zero language and country args: all localisation strings are returned 
+ *    - with language and/or country args: return appropriate matches
+ *    - for language != "", the string starts with language code, the text follows after a colon ":"
+ *    - a non zero but empty language argument == "", 
+ *      returns the pure string in the actual Oyranos locale, no language code
+ *
+ *  @param[in]     tag                 the tag to read
+ *  @param[out]    n                   the number of returned strings
+ *  @param[in]     language            2 byte language code, or "" for current
+ *  @param[in]     country             2 byte country code
+ *  @param[out]    tag_size            the processed tag size
+ *  @param[in]     allocateFunc        the user allocator for the returned list
+ *  @return                            a list of strings
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/01/03 (Oyranos: 0.1.8)
+ *  @date    2008/06/19
+ */
+char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
+                                       int32_t           * n,
+                                       const char        * language,
+                                       const char        * country,
+                                       int32_t           * tag_size,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyProfileTag_s * s = tag;
+  int error = !s;
+  char t_l[8] = {0,0,0,0,0,0,0,0}, t_c[8] = {0,0,0,0,0,0,0,0}, *t_ptr;
+  int implicite_i18n = 0;
+  char ** texts = 0, * text = 0, * text_tmp = 0, * temp = 0;
+  oyStructList_s * values = 0;
+  oyName_s * name = 0;
+  oyBlob_s * blob = 0;
+  size_t size = 0;
+  int values_n = 0, i = 0, k;
+  int32_t texts_n = 0;
+
+  *n = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 0 )
+
+  if(error <= 0)
+  {
+    values = oyProfileTag_Get( tag );
+
+    /* check for a "" in the lang variable -> want the best i18n match */
+    if(language && !language[0])
+    {
+      implicite_i18n = 1;
+      language = oyLanguage() ? oyLanguage() : "";
+      country  = oyCountry() ? oyCountry() : "";
+    }
+
+    if(!allocateFunc)
+      allocateFunc = oyAllocateFunc_;
+
+    if(oyStructList_Count( values ) )
+      {
+        name = 0;
+        blob = 0;
+        values_n = oyStructList_Count( values );
+
+        for(k = 0; k < 4; ++k)
+        {
+          for(i = 0; i < values_n; ++i)
+          {
+            text = 0;
+            name = (oyName_s*) oyStructList_GetRefType( values, i,
+                                                        oyOBJECT_NAME_S );
+            if(!name)
+            blob = (oyBlob_s*) oyStructList_GetRefType( values, i,
+                                                        oyOBJECT_BLOB_S );
+            if(name)
+            {
+              memcpy(t_l, name->lang, 8); t_c[0] = 0;
+              t_ptr = oyStrchr_(t_l, '_');
+              if(t_ptr)
+              {
+                memcpy(t_c, t_ptr+1, 3);
+                *t_ptr = 0;
+              }
+            }
+
+            if(name)
+              text = name->name;
+            else if(blob && oyBlob_GetPointer(blob) && oyBlob_GetSize(blob))
+            {
+              error = oyStringFromData_( oyBlob_GetPointer(blob),
+                                         oyBlob_GetSize(blob), &text_tmp,
+                      &size, oyAllocateFunc_ );
+              if(error <= 0 && size && text_tmp)
+                text = text_tmp;
+            }
+
+            /* select by language and/or country or best i18n match or all */
+            if(
+               (k == 0 && language && language[0] &&
+                          oyStrcmp_( language, t_l ) == 0 &&
+                          country  && country[0] &&
+                          oyStrcmp_( country, t_c ) == 0 )              ||
+               (k == 1 && language && language[0] &&
+                          oyStrcmp_( language, t_l ) == 0 &&
+                          (!country || implicite_i18n ))                ||
+               (k == 2 && country  && country[0] &&
+                          oyStrcmp_( country, t_c ) == 0  &&
+                          (!language || implicite_i18n ))               ||
+               (k == 3 && ((!language && !country) || implicite_i18n))
+              )
+            {
+              if(name && name->lang[0] && !implicite_i18n)
+              {
+                /* string with i18n infos -> "de_DE:Licht" */
+                temp = oyStringAppend_(name->lang, ":", oyAllocateFunc_);
+                temp = oyStringAppend_(temp, text, oyAllocateFunc_);
+                oyStringListAddString_( &texts, &texts_n, &temp,
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+
+              } else {
+                /* pure string -> "Licht" */
+                oyStringListAddStaticString_( &texts, &texts_n, text,
+                                            oyAllocateFunc_, oyDeAllocateFunc_);
+                /* no selection for best i18n match and no lang: take all */
+                if(k == 3 && implicite_i18n)
+                {
+                  implicite_i18n = 0;
+                  language = 0;
+                  country = 0;
+                }
+              }
+            }
+
+            /* best i18n match found -> end */
+            if(implicite_i18n && texts_n)
+            {
+              k = 4;
+              break;
+            }
+
+            if(text_tmp)
+              oyFree_m_( text_tmp );
+          }
+        }
+
+        *n = texts_n;
+      }
+    oyStructList_Release( &values );
+  }
+
+  return texts;
+}
+
+/** Function oyProfileTag_GetBlock
+ *  @memberof oyProfileTag_s
+ *
+ *  Get the raw memory block of the tag.
+ *
+ *  @param[in]     tag                 the tag to read
+ *  @param[out]    tag_block           the raw data owned by the user; on success the block if it has a size; else undefined
+ *  @param[out]    tag_size            the data size; mandatory arg; on success the size returned in tag_block else undefined
+ *  @param[in]     allocateFunc        the user allocator
+ *  @return                            0 - success, >= 1 - error
+ *
+ *  @version Oyranos: 0.2.0
+ *  @since   2010/01/31 (Oyranos: 0.2.0)
+ *  @date    2010/06/31
+ */
+int            oyProfileTag_GetBlock ( oyProfileTag_s    * tag,
+                                       oyPointer         * tag_block,
+                                       size_t            * tag_size,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyProfileTag_s * s = tag;
+  int error = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
+
+  if(error <= 0)
+  {
+    if(!allocateFunc)
+      allocateFunc = oyAllocateFunc_;
+
+    if(tag->size_ && tag->block_ && tag_block)
+    {
+      *tag_block = allocateFunc( tag->size_ + 1 );
+      memcpy( *tag_block, tag->block_, tag->size_ );
+    }
+    if(tag_size)
+      *tag_size = tag->size_;
+  }
+
+  return error;
+}
+
+
+
+/**
+ *  @memberof oyProfiles_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  22 november 2007 (API 0.1.8)
+ */
+OYAPI oyProfiles_s * OYEXPORT
+                   oyProfiles_New ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_PROFILES_S;
+# define STRUCT_TYPE oyProfiles_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyProfiles_Copy;
+  s->release = (oyStruct_Release_f) oyProfiles_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  s->list_ = oyStructList_Create( s->type_, 0, 0 );
+
+  return s;
+}
+
+/** @internal
+ *  @memberof oyProfiles_s
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2007/11/22 (Oyranos: 0.1.8)
+ *  @date    2011/01/28
+ */
+OYAPI oyProfiles_s * OYEXPORT
+                   oyProfiles_Copy  ( oyProfiles_s * obj,
+                                         oyObject_s        object)
+{
+  oyProfiles_s * s = 0;
+  int error = 0;
+
+  if(!obj)
+    return 0;
+
+  s = obj;
+
+  oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
+
+  s = oyProfiles_New( object );
+  error = !s;
+
+  if(error <= 0)
+  {
+    if(obj->list_)
+    {
+      s->list_ = oyStructList_Copy(obj->list_, object);
+      error = !s->list_;
+    }
+  }
+
+  if(error)
+  {
+    WARNc_S("Could not create structure for profile.")
+    return 0;
+  }
+
+  return s;
+}
+
+oyProfiles_s * oy_profile_list_cache_ = 0;
+int oyLowerStrcmpWrap (const void * a_, const void * b_)
+{
+  const char * a = *(const char **)a_,
+             * b = *(const char **)b_;
+#ifdef HAVE_POSIX
+  return strcasecmp(a,b);
+#else
+  return strcmp(a,b);
+#endif
+}
+
+/** Function oyProfiles_Create
+ *  @memberof oyProfiles_s
+ *  @brief   get a list of installed profiles
+ *
+ *  @param[in]     patterns            a list properties, e.g. classes
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/20 (Oyranos: 0.1.8)
+ *  @date    2008/06/20
+ */
+OYAPI oyProfiles_s * OYEXPORT
+                 oyProfiles_Create   ( oyProfiles_s      * patterns,
+                                       oyObject_s          object)
+{
+  oyProfiles_s * s = 0, *tmps = 0;
+  int error = 0;
+
+  oyProfile_s * tmp = 0, * pattern = 0;
+  char  ** names = 0, *t;
+  uint32_t names_n = 0, i = 0, j = 0, n = 0,
+           patterns_n = oyProfiles_Count(patterns);
+  int sorts = 0;
+  const char ** sort = NULL;
+
+  s = oyProfiles_New( object );
+  error = !s;
+
+  if(error <= 0)
+  {
+    names = oyProfileListGet_ ( NULL, &names_n );
+
+    if(oyProfiles_Count( oy_profile_list_cache_ ) != names_n)
+    {
+      sorts = names_n;
+      sort = oyAllocateFunc_(sorts*sizeof(const char*)*2);
+      for(i = 0; i < names_n; ++i)
+      {
+        if(names[i])
+        {
+          if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
+          {
+            tmp = oyProfile_FromFile( names[i], OY_NO_CACHE_WRITE, 0 );
+#if !defined(HAVE_POSIX)
+            t = 0;
+            oyStringAdd_(&t, oyProfile_GetText(tmp, oyNAME_DESCRIPTION), oyAllocateFunc_, 0);
+            n = strlen(t);
+            /* the following upper caseing is portable,
+             * still strcasecmp() might be faster? */
+            for(j = 0; j < n; ++j)
+              if(isalpha(t[j]))
+                t[j] = tolower(t[j]);
+            sort[i*2] = t;
+#else
+            sort[i*2] = oyProfile_GetText(tmp, oyNAME_DESCRIPTION);
+#endif
+            sort[i*2+1] = names[i];
+          }
+        }
+      }
+      qsort( sort, sorts, sizeof(char**)*2, oyLowerStrcmpWrap );
+      for(i = 0; i < sorts; ++i)
+      {
+        tmp = oyProfile_FromFile( sort[i*2+1], OY_NO_CACHE_WRITE, 0 );
+        tmps = oyProfiles_MoveIn(tmps, &tmp, -1);
+        t = (char*)sort[i*2];
+#if !defined(HAVE_POSIX)
+        oyFree_m_(t);
+#endif
+      }
+      oyProfiles_Release(&oy_profile_list_cache_);
+      oy_profile_list_cache_ = tmps;
+      oyFree_m_(sort);
+    }
+
+    n = oyProfiles_Count( oy_profile_list_cache_ );
+    if(oyProfiles_Count( oy_profile_list_cache_ ) != names_n)
+      WARNc2_S("updated oy_profile_list_cache_ differs: %d %d",n, names_n);
+    oyStringListRelease_( &names, names_n, oyDeAllocateFunc_ ); names_n = 0;
+
+    for(i = 0; i < n; ++i)
+    {
+        tmp = oyProfiles_Get( oy_profile_list_cache_, i );
+
+        if(patterns_n > 0)
+        {
+          for(j = 0; j < patterns_n; ++j)
+          {
+            if(tmp)
+              pattern = oyProfiles_Get(patterns, j);
+
+            if(oyProfile_Match_( pattern, tmp ))
+            {
+              s = oyProfiles_MoveIn( s, &tmp, -1);
+              error = !s;
+              break;
+            }
+
+            oyProfile_Release( &pattern );
+          }
+
+        } else {
+
+          s = oyProfiles_MoveIn( s, &tmp, -1);
+          error = !s;
+        }
+
+        oyProfile_Release( &tmp );
+    }
+  }
+
+  return s;
+}
+
+/** Function oyProfiles_ForStd
+ *  @memberof oyProfiles_s
+ *  @brief   get a list of installed profiles
+ *
+ *  Allow for a special case with oyDEFAULT_PROFILE_START in the colour_space
+ *  argument, to select all possible standard colour profiles, e.g. for 
+ *  typical colour conversions.
+ *
+ *  oyASSUMED_WEB will result in exactly one profile added as long as it is
+ *  available in the file paths.
+ *
+ *  @param[in]     std_profile_class  standard profile class, e.g. oyEDITING_RGB
+ *  @param[out]    current             get the colour_space profile position
+ *  @param         object              a optional object
+ *  @return                            the profile list
+ *
+ *  @par Example - get all standard RGB profiles:
+ *  @verbatim
+    oyPROFILE_e type = oyEDITING_RGB;
+    int current = 0,
+        size, i;
+    oyProfile_s * temp_prof = 0;
+    oyProfiles_s * iccs = 0;
+
+    iccs = oyProfiles_ForStd( type, &current, 0 );
+
+    size = oyProfiles_Count(iccs);
+    for( i = 0; i < size; ++i)
+    {
+      temp_prof = oyProfiles_Get( iccs, i );
+      printf("%s %d: \"%s\" %s\n", i == current ? "*":" ", i,
+             oyProfile_GetText( temp_prof, oyNAME_DESCRIPTION ),
+             oyProfile_GetFileName(temp_prof, -1));
+      oyProfile_Release( &temp_prof );
+    } @endverbatim
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/25 (Oyranos: 0.1.8)
+ *  @date    2008/08/06
+ */
+OYAPI oyProfiles_s * OYEXPORT
+                 oyProfiles_ForStd   ( oyPROFILE_e         std_profile_class,
+                                       int               * current,
+                                       oyObject_s          object)
+{
+  oyPROFILE_e type = std_profile_class;
+    char * default_p = 0;
+    int i, val = -1;
+
+    char  * temp = 0,
+          * text = 0;
+    uint32_t size = 0;
+    oyProfiles_s * iccs = 0, * patterns = 0;
+    oyProfile_s * profile = 0, * temp_prof = 0;
+    icSignature csp;
+
+    if(type == oyASSUMED_WEB)
+    {
+      profile = oyProfile_FromStd( type, object );
+      iccs = oyProfiles_New( object );
+      if(current)
+      {
+        if(profile)
+          *current          = 0;
+        else
+          *current          = -1;
+      }
+      oyProfiles_MoveIn( iccs, &profile, 0 );
+      return iccs;
+    }
+
+    if(type == oyEDITING_XYZ ||
+       type == oyASSUMED_XYZ ||
+       type == oyEDITING_LAB ||
+       type == oyASSUMED_LAB ||
+       type == oyEDITING_RGB ||
+       type == oyASSUMED_RGB ||
+       type == oyEDITING_CMYK ||
+       type == oyASSUMED_CMYK ||
+       type == oyPROFILE_PROOF ||
+       type == oyEDITING_GRAY ||
+       type == oyASSUMED_GRAY)
+      default_p = oyGetDefaultProfileName( (oyPROFILE_e)type, oyAllocateFunc_);
+
+    /* prepare the patterns according to the profile type */
+    if(type == oyEDITING_XYZ ||
+       type == oyASSUMED_XYZ)
+    {
+      csp = icSigXYZData;
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigColorSpaceClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigInputClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+    }
+    if(type == oyEDITING_LAB ||
+       type == oyASSUMED_LAB)
+    {
+      csp = icSigLabData;
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigColorSpaceClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigInputClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+    }
+    if(type == oyEDITING_RGB ||
+       type == oyASSUMED_RGB)
+    {
+      csp = icSigRgbData;
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigColorSpaceClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigInputClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+    }
+    /* support typical output Rgb device for cinema and print proofing */
+    if(type == oyPROFILE_PROOF)
+    {
+      csp = icSigRgbData;
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigOutputClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+    }
+    if(type == oyEDITING_CMYK ||
+       type == oyASSUMED_CMYK ||
+       type == oyPROFILE_PROOF)
+    {
+      csp = icSigCmykData;
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigOutputClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigInputClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigColorSpaceClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+    }
+    if(type == oyEDITING_GRAY ||
+       type == oyASSUMED_GRAY)
+    {
+      csp = icSigGrayData;
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigInputClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigColorSpaceClass, oySIGNATURE_CLASS);
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+    }
+    if(type == oyDEFAULT_PROFILE_START)
+    {
+      profile = oyProfile_FromSignature( icSigColorSpaceClass,
+                                         oySIGNATURE_CLASS, 0 );
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+      profile = oyProfile_FromSignature( icSigInputClass,
+                                         oySIGNATURE_CLASS, 0 );
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+      profile = oyProfile_FromSignature( icSigOutputClass,
+                                         oySIGNATURE_CLASS, 0 );
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+      profile = oyProfile_FromSignature( icSigDisplayClass,
+                                         oySIGNATURE_CLASS, 0 );
+      patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+    }
+
+    /* get the profile list */
+    iccs = oyProfiles_Create( patterns, 0 );
+
+    /* detect the default profile position in our list */
+    size = oyProfiles_Count(iccs);
+    if(default_p)
+    for( i = 0; i < size; ++i)
+    {
+      temp_prof = oyProfiles_Get( iccs, i );
+      text = oyStringCopy_( oyProfile_GetFileName(temp_prof, -1),
+                            oyAllocateFunc_ );
+      temp = oyStrrchr_( text, '/' );
+      if(temp)
+        ++temp;
+      else
+        temp = text;
+
+      if(oyStrstr_( temp, default_p) &&
+         oyStrlen_( temp ) == oyStrlen_(default_p))
+      {
+        val = i;
+        break;
+      }
+
+      oyProfile_Release( &temp_prof );
+      oyDeAllocateFunc_( text );
+    }
+
+    if(current)
+      *current          = val;
+
+    if(default_p)
+      oyFree_m_( default_p );
+    oyProfiles_Release( &patterns );
+
+  return iccs;
+}
+
+/**
+ *  @memberof oyProfiles_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  22 november 2007 (API 0.1.8)
+ */
+OYAPI int  OYEXPORT
+                   oyProfiles_Release(oyProfiles_s** obj )
+{
+  int error = 0;
+  /* ---- start of common object destructor ----- */
+  oyProfiles_s * s = 0;
+
+  if(!obj || !*obj)
+    return error;
+
+  s = *obj;
+
+  oyCheckType__m( oyOBJECT_PROFILES_S, return 1 )
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return error;
+  /* ---- end of common object destructor ------- */
+
+  if(error <= 0 && s->list_)
+  error = oyStructList_Release(&s->list_);
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return error;
+}
+
+/**
+ *  @memberof oyProfiles_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  22 november 2007 (API 0.1.8)
+ */
+oyProfiles_s* oyProfiles_MoveIn      ( oyProfiles_s      * list,
+                                       oyProfile_s      ** obj,
+                                       int                 pos )
+{
+  int error = 0;
+  oyProfiles_s * s = list;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
+
+  if(obj && *obj && (*obj)->type_ == oyOBJECT_PROFILE_S)
+  {
+    if(!list)
+      list = oyProfiles_New(0);
+
+    if(list && list->list_)
+        error = oyStructList_MoveIn( list->list_, (oyStruct_s**) obj, pos,
+                                     OY_OBSERVE_AS_WELL );
+    if(error)
+      WARNc2_S("%s: %d",_("found issues while moving in profile"),error);
+  }
+
+  return list;
+}
+
+/**
+ *  @memberof oyProfiles_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  22 november 2007 (API 0.1.8)
+ */
+int              oyProfiles_ReleaseAt( oyProfiles_s      * list,
+                                       int                 pos )
+{
+  int error = 0;
+  oyProfiles_s * s = list;
+
+  if(!s)
+    return 1;
+
+  oyCheckType__m( oyOBJECT_PROFILES_S, return 1 )
+
+  if(list && list->list_)
+    error = oyStructList_ReleaseAt( list->list_, pos );
+
+  return error;
+}
+
+/**
+ *  @memberof oyProfiles_s
+ *
+ *  @param[in] list                    the profile list to use
+ *  @param[in] pos                     the position in list
+ *  @return                            a copy of the profile owned by the caller
+ *
+ *  @since Oyranos: version 0.1.8  2007/11/22
+ *  @date  20 december 2007 (API 0.1.8)
+ */
+oyProfile_s *    oyProfiles_Get      ( oyProfiles_s      * list,
+                                       int                 pos )
+{
+  oyProfile_s * obj = 0;
+  oyProfiles_s * s = list;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
+
+  if(list && list->list_)
+  {
+    oyProfile_s * p = (oyProfile_s*) oyStructList_GetType_( list->list_,
+                                                 pos, oyOBJECT_PROFILE_S );
+
+    if(p)
+      obj = oyProfile_Copy(p, 0);
+  }
+
+  return obj;
+}
+
+/**
+ *  @memberof oyProfiles_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  22 november 2007 (API 0.1.8)
+ */
+int              oyProfiles_Count ( oyProfiles_s   * list )
+{
+  int n = 0;
+  oyProfiles_s * s = list;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
+
+  if(list && list->list_)
+    n = oyStructList_Count( list->list_ );
+
+  return n;
+}
+
+/** Function oyProfiles_DeviceRank
+ *  @memberof oyProfiles_s
+ *  @brief   sort a profile list according to a given device
+ *
+ *  Profiles which match the device will placed according to a rank value on 
+ *  top of the list followed by the zero ranked profiles.
+ *
+ *  @verbatim
+    oyProfiles_s * p_list = oyProfiles_ForStd( oyASSUMED_RGB, 0,0 );
+    int32_t * rank_list = (int32_t*) malloc( oyProfiles_Count(p_list) *
+                                             sizeof(int32_t) );
+    oyProfiles_DeviceRank( p_list, oy_device, rank_list );
+    n = oyProfiles_Count( p_list );
+    for(i = 0; i < n; ++i)
+    {
+      temp_prof = oyProfiles_Get( p_list, i );
+      printf("%d %d: \"%s\" %s\n", rank_list[i], i,
+             oyProfile_GetText( temp_prof, oyNAME_DESCRIPTION ),
+             oyProfile_GetFileName(temp_prof, 0));
+      oyProfile_Release( &temp_prof );
+    } @endverbatim
+ *
+ *  @param[in,out] list                the to be sorted profile list
+ *  @param[in]     device              filter pattern
+ *  @param[in,out] rank_list           list of rank levels for the profile list
+ *
+ *  @version Oyranos: 0.4.0
+ *  @since   2009/05/22 (Oyranos: 0.1.10)
+ *  @date    2012/02/01
+ */
+int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
+                                       oyConfig_s        * device,
+                                       int32_t           * rank_list )
+{
+  int error = !list || !device || !rank_list;
+  oyProfiles_s * s = list;
+  int i,n,rank;
+  oyProfile_s * p = 0;
+  oyConfig_s * p_device = 0;
+  oyOptions_s * old_db = 0;
+
+  if(!list)
+    return 0;
+
+  if(error)
+    return error;
+
+  oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
+
+  p_device = oyConfig_New( device->registration, 0 );
+  n = oyProfiles_Count( list );
+
+  error = !memset( rank_list, 0, sizeof(int32_t) * n );
+
+  error = oyDeviceCheckProperties ( device );
+
+  /* oyConfig_Compare assumes its options in device->db, so it is filled here.*/
+  if(!oyOptions_Count( device->db ))
+  {
+    old_db = device->db;
+    device->db = device->backend_core;
+  }
+
+  for(i = 0; i < n; ++i)
+  {
+    p = oyProfiles_Get( list, i );
+
+    oyProfile_DeviceGet( p, p_device );
+    rank = 0;
+
+    error = oyConfig_Compare( p_device, device, &rank );
+    if(oyConfig_FindString( p_device, "OYRANOS_automatic_generated", "1" ) ||
+       oyConfig_FindString( p_device, "OPENICC_automatic_generated", "1" ))
+    {
+      DBG_NUM2_S( "found OYRANOS_automatic_generated: %d %s",
+                  rank, strrchr(oyProfile_GetFileName(p,-1),'/')+1);
+      /* substract serial number and accound for possible wrong model_id */
+      if(oyConfig_FindString( p_device, "serial", 0 ))
+        rank -= 12;
+      else
+        rank -= 1;
+      DBG_NUM1_S("after serial && OYRANOS_automatic_generated: %d", rank);
+    } else
+      DBG_NUM1_S( "%s",
+                  strrchr(oyProfile_GetFileName(p,-1),'/')+1);
+    if(oyConfig_FindString( p_device, "OYRANOS_automatic_assignment", "1" ))
+      rank -= 1;
+    rank_list[i] = rank;
+
+    oyOptions_Clear( p_device->backend_core );
+    oyProfile_Release( &p );
+  }
+
+  if(!error)
+    error = oyStructList_Sort( list->list_, rank_list );
+
+  if(old_db)
+    device->db = old_db;
+
+  return error;
+}
+
+/** @} *//* objects_profile */
+
+
+
+
+/** \addtogroup misc Miscellaneous
+
+ *  @{
+ */
+
+/** \addtogroup objects_rectangle Rectangle Handling
+
+ *  @{
+ */
+
+
+/** @internal
+ *  @brief   new
+ *  @memberof oyRectangle_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  4 december 2007 (API 0.1.8)
+ */
+oyRectangle_s* oyRectangle_New_      ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_RECTANGLE_S;
+# define STRUCT_TYPE oyRectangle_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyRectangle_Copy;
+  s->release = (oyStruct_Release_f) oyRectangle_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  return s;
+}
+
+/** 
+ *  @brief   new with geometry
+ *  @memberof oyRectangle_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  4 december 2007 (API 0.1.8)
+ */
+oyRectangle_s* oyRectangle_NewWith   ( double              x,
+                                       double              y,
+                                       double              width,
+                                       double              height,
+                                       oyObject_s          object )
+{
+  oyRectangle_s * s = oyRectangle_New_( object );
+  if(s)
+    oyRectangle_SetGeo( s, x, y, width, height );
+  return s;
+}
+
+/**
+ *  @brief   new from other rectangle
+ *  @memberof oyRectangle_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  4 december 2007 (API 0.1.8)
+ */
+oyRectangle_s* oyRectangle_NewFrom   ( oyRectangle_s     * ref,
+                                       oyObject_s          object )
+{
+  oyRectangle_s * s = oyRectangle_New_( object );
+  if(s)
+    oyRectangle_SetByRectangle(s, ref);
+  return s;
+}
+
+/** Function oyRectangle_SamplesFromImage
+ *  @memberof oyRectangle_s
+ *  @brief   new from image
+ *
+ *  @param[in]     image               a image
+ *  @param[in]     image_rectangle     optional rectangle from image
+ *  @param[in,out] pixel_rectangle     mandatory rectangle for pixel results
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/13 (Oyranos: 0.1.10)
+ *  @date    2009/06/08
+ */
+int            oyRectangle_SamplesFromImage (
+                                       oyImage_s         * image,
+                                       oyRectangle_s     * image_rectangle,
+                                       oyRectangle_s     * pixel_rectangle )
+{
+  int error = !image,
+      channel_n = 0;
+
+  if(!error && image->type_ != oyOBJECT_IMAGE_S)
+    return 0;
+
+  if(!error)
+  {
+    channel_n = image->layout_[oyCHANS];
+
+    if(!image_rectangle)
+    {
+      oyRectangle_SetGeo( pixel_rectangle, 0,0, oyImage_GetWidth(image),
+                                                oyImage_GetHeight(image) );
+      pixel_rectangle->width *= channel_n;
+
+    } else
+    {
+      oyRectangle_SetByRectangle( pixel_rectangle, image_rectangle );
+      oyRectangle_Scale( pixel_rectangle, oyImage_GetWidth(image) );
+      pixel_rectangle->x *= channel_n;
+      pixel_rectangle->width *= channel_n;
+      oyRectangle_Round( pixel_rectangle );
+    }
+  }
+
+  return error;
+}
+
+/**
+ *  @brief   copy/reference from other rectangle
+ *  @memberof oyRectangle_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  4 december 2007 (API 0.1.8)
+ */
+oyRectangle_s* oyRectangle_Copy      ( oyRectangle_s     * orig,
+                                       oyObject_s          object )
+{
+  oyRectangle_s * s = 0;
+
+  if(!orig)
+    return s;
+
+  if(!orig)
+    return 0;
+
+  s = orig;
+  oyCheckType__m( oyOBJECT_RECTANGLE_S, return 0 )
+
+  if(object)
+  {
+    s = oyRectangle_NewFrom( orig, object );
+
+  } else {
+
+    s = orig;
+    oyObject_Copy( s->oy_ );
+  }
+
+  return s;
+}
+
+/**
+ *  @brief   release
+ *  @memberof oyRectangle_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  4 december 2007 (API 0.1.8)
+ */
+int            oyRectangle_Release   ( oyRectangle_s    ** obj )
+{
+  int error = 0;
+  /* ---- start of common object destructor ----- */
+  oyRectangle_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  oyCheckType__m( oyOBJECT_RECTANGLE_S, return 1 )
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return error;
+}
+
+/**
+ *  @brief   set geometry
+ *  @memberof oyRectangle_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  4 december 2007 (API 0.1.8)
+ */
+void           oyRectangle_SetGeo    ( oyRectangle_s     * edit_rectangle,
+                                       double              x,
+                                       double              y,
+                                       double              width,
+                                       double              height )
+{
+  oyRectangle_s * s = edit_rectangle;
+  if(!s)
+    return;
+
+  s->x = x;
+  s->y = y;
+  s->width = width;
+  s->height = height;
+}
+
+/**
+ *  @brief    get geometry
+ *  @memberof oyRectangle_s
+ *
+ *  @version Oyranos: 0.4.0
+ *  @since   2012/01/11 (Oyranos: 0.4.0)
+ *  @date    2012/01/11
+ */
+void           oyRectangle_GetGeo    ( oyRectangle_s     * rectangle,
+                                       double            * x,
+                                       double            * y,
+                                       double            * width,
+                                       double            * height )
+{
+  oyRectangle_s * s = rectangle;
+  if(!s)
+    return;
+
+  *x = s->x;
+  *y = s->y;
+  *width = s->width;
+  *height = s->height;
+}
+
+/**
+ *  @brief   copy values
+ *  @memberof oyRectangle_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  4 december 2007 (API 0.1.8)
+ */
+void           oyRectangle_SetByRectangle (
+                                       oyRectangle_s     * edit_rectangle,
+                                       oyRectangle_s     * ref )
+{
+  oyRectangle_s * s = edit_rectangle;
+  if(!s || !ref)
+    return;
+
+  oyRectangle_SetGeo( s, ref->x, ref->y, ref->width, ref->height );
+}
+
+/**
+ *  @brief   trim edit_rectangle to ref extents
+ *  @memberof oyRectangle_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  4 december 2007 (API 0.1.8)
+ */
+void           oyRectangle_Trim      ( oyRectangle_s     * edit_rectangle,
+                                       oyRectangle_s     * ref )
+{
+  oyRectangle_s * s = edit_rectangle;
+  oyRectangle_s * r = s;
+  if(!s)
+    return;
+
+  if (r->x < ref->x)
+  { 
+    r->width -= ref->x - r->x;
+    r->x = ref->x;
+  }
+  if (r->x + r->width > ref->x + ref->width)
+    r->width -= (r->x + r->width) - (ref->x + ref->width);
+  if( r->width < 0 )
+    r->width = 0;
+  
+  if (r->y < ref->y)
+  {
+    r->height -= ref->y - r->y;
+    r->y = ref->y;
+  }
+  if (r->y + r->height > ref->y + ref->height)
+    r->height -= (r->y + r->height) - (ref->y + ref->height);
+  if( r->height < 0 )
+    r->height = 0;
+
+  oyRectangle_Normalise( r );
+}
+
+/**
+ *  @brief   trim edit_rectangle to ref extents
+ *  @memberof oyRectangle_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  4 december 2007 (API 0.1.8)
+ */
+void           oyRectangle_MoveInside( oyRectangle_s     * edit_rectangle,
+                                       oyRectangle_s     * ref )
+{
+  oyRectangle_s * s = edit_rectangle;
+  oyRectangle_s * a = ref;
+
+  if(!s)
+    return;
+
+  oyRectangle_Normalise( s );
+
+  if (s->x < a->x)
+    s->x = a->x;
+  if (s->x+s->width > a->x+a->width)
+  { if (s->width > a->width)
+      ; /* Lassen */
+    else
+      s->x = a->x+a->width - s->width;
+  }
+  if (s->y < a->y)
+    s->y = a->y;
+  if (s->y+s->height  > a->y+a->height)
+  { if (s->height > a->height)
+      ; /* Lassen */
+    else
+      s->y = a->y+a->height - s->height;
+  }
+}
+
+/**
+ *  @brief   scale with origin in the top left corner
+ *  @memberof oyRectangle_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  4 december 2007 (API 0.1.8)
+ */
+void           oyRectangle_Scale     ( oyRectangle_s     * edit_rectangle,
+                                       double              factor )
+{
+  oyRectangle_s * s = edit_rectangle;
+  oyRectangle_s * r = s;
+  
+  if(!s)
+    return;
+
+  r->x *= factor;
+  r->y *= factor;
+  r->width *= factor;
+  r->height *= factor;
+}
+
+/**
+ *  @brief   normalise swapped values for width and height
+ *  @memberof oyRectangle_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  4 december 2007 (API 0.1.8)
+ */
+void           oyRectangle_Normalise ( oyRectangle_s     * edit_rectangle )
+{
+  oyRectangle_s * s = edit_rectangle;
+  oyRectangle_s * r = s;
+  
+  if(!s)
+    return;
+
+  if(r->width < 0) {
+    r->x += r->width;
+    r->width = fabs(r->width);
+  }
+  if(r->height < 0) {
+    r->y += r->height;
+    r->height = fabs(r->height);
+  }
+}
+
+/**
+ *  @brief   scale with origin in the top left corner
+ *  @memberof oyRectangle_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  4 december 2007 (API 0.1.8)
+ */
+void           oyRectangle_Round     ( oyRectangle_s     * edit_rectangle )
+{
+  oyRectangle_s * s = edit_rectangle;
+  oyRectangle_s * r = s;
+  
+  if(!s)
+    return;
+
+  r->x = OY_ROUND(r->x);
+  r->y = OY_ROUND(r->y);
+  r->width = OY_ROUND(r->width);
+  r->height = OY_ROUND(r->height);
+}
+
+/**
+ *  @brief   compare
+ *  @memberof oyRectangle_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  4 december 2007 (API 0.1.8)
+ */
+int            oyRectangle_IsEqual   ( oyRectangle_s     * rectangle1,
+                                       oyRectangle_s     * rectangle2 )
+{
+  int gleich = TRUE;
+  oyRectangle_s * r1 = rectangle1;
+  oyRectangle_s * r2 = rectangle2;
+  
+  if(!r1 || !r2)
+    return FALSE;
+
+  if (r1->x != r2->x) gleich = FALSE;
+  if (r1->y != r2->y) gleich = FALSE;
+  if (r1->width != r2->width) gleich = FALSE;
+  if (r1->height != r2->height) gleich = FALSE;
+  return gleich;
+}
+
+/**
+ *  @brief   compare
+ *  @memberof oyRectangle_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/23 (Oyranos: 0.1.10)
+ *  @date    2009/02/23
+ */
+int            oyRectangle_IsInside  ( oyRectangle_s     * test,
+                                       oyRectangle_s     * ref )
+{
+  return oyRectangle_PointIsInside( ref, test->x, test->y ) &&
+         oyRectangle_PointIsInside( ref, test->x + test->width - 1, test->y ) &&
+         oyRectangle_PointIsInside( ref, test->x + test->width - 1,
+                                      test->y + test->height - 1) &&
+         oyRectangle_PointIsInside( ref, test->x, test->y + test->height - 1 );
+}
+
+/**
+ *  @brief   compare
+ *  @memberof oyRectangle_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/12/04 (Oyranos: 0.1.8)
+ *  @date    2009/02/23
+ */
+int            oyRectangle_PointIsInside (
+                                       oyRectangle_s     * rectangle,
+                                       double              x,
+                                       double              y )
+{
+  oyRectangle_s * s = rectangle;
+  oyRectangle_s * r = s;
+  int in = TRUE;
+  
+  if(!s)
+    return FALSE;
+
+  if (x < r->x) return FALSE;
+  if (y < r->y) return FALSE;
+  if (x >= (r->x + r->width)) return FALSE;
+  if (y >= (r->y + r->height)) return FALSE;
+  return in;
+}
+
+/**
+ *  @brief   count number of points covered by this rectangle
+ *  @memberof oyRectangle_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/12/04 (Oyranos: 0.1.8)
+ *  @date    2009/02/23
+ */
+double         oyRectangle_CountPoints(oyRectangle_s     * rectangle )
+{
+  oyRectangle_s * s = rectangle;
+  oyRectangle_s * r = s;
+  
+  if(!s)
+    return FALSE;
+
+  return r->width * r->height;
+}
+
+/** @brief   return position inside rectangle, assuming rectangle size
+ *  @memberof oyRectangle_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  4 december 2007 (API 0.1.8)
+ */
+int            oyRectangle_Index     ( oyRectangle_s     * rectangle,
+                                       double              x,
+                                       double              y )
+{
+  oyRectangle_s * s = rectangle;
+  oyRectangle_s * r = s;
+  
+  if(!s)
+    return FALSE;
+
+  return OY_ROUND((y - r->y) * r->width + (x - r->x));
+}
+
+/**
+ *  @memberof oyRectangle_s
+ *  @brief   debug text
+ *  not so threadsafe
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  4 december 2007 (API 0.1.8)
+ */
+const char*    oyRectangle_Show      ( oyRectangle_s     * r )
+{
+  static oyChar *text = 0;
+
+  if(!text)
+    text = oyAllocateFunc_(sizeof(char) * 512);
+
+  if(r)
+    oySprintf_(text, "%.02fx%.02f%s%.02f%s%.02f", r->width,r->height,
+                     r->x<0?"":"+", r->x, r->y<0?"":"+", r->y);
+  else
+    oySprintf_(text, "no rectangle");
+
+  return text;
+
+}
+
+
+/**
+ *  @} *//* objects_rectangle
+ */
+
+
+
+/**
+ *  @brief oyDATATYPE_e to byte mapping
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ *  @date    2007/11/00
+ */
+int      oySizeofDatatype            ( oyDATATYPE_e        t )
+{
+  int n = 0;
+  switch(t)
+  {
+    case oyUINT8:
+         return 1;
+    case oyUINT16:
+    case oyHALF:
+         return 2;
+    case oyUINT32:
+    case oyFLOAT:
+         return 4;
+    case oyDOUBLE:
+         return 8;
+  }
+  return n;
+}
+
+/**
+ *  @brief oyDATATYPE_e to string mapping
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  26 november 2007 (API 0.1.8)
+ */
+
+const char *   oyDatatypeToText      ( oyDATATYPE_e        t)
+{
+  const char * text = 0;
+  switch(t)
+  {
+    case oyUINT8:
+         text = "oyUINT8"; break;
+    case oyUINT16:
+         text = "oyUINT16"; break;
+    case oyHALF:
+         text = "oyHALF"; break;
+    case oyUINT32:
+         text = "oyUINT32"; break;
+    case oyFLOAT:
+         text = "oyFLOAT"; break;
+    case oyDOUBLE:
+         text = "oyDOUBLE"; break;
+  }
+  return text;
+}
+
+
+/** @} *//* misc */
+
+
+
+/** \addtogroup objects_image Image API
+ *
+ *  @{
+ */
+
+
+/** Function oyArray2d_New
+ *  @memberof oyArray2d_s
+ *  @brief   allocate a new Array2d object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+OYAPI oyArray2d_s * OYEXPORT
+                   oyArray2d_New ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_ARRAY2D_S;
+# define STRUCT_TYPE oyArray2d_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyArray2d_Copy;
+  s->release = (oyStruct_Release_f) oyArray2d_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+
+  return s;
+}
+
+/**
+ *  @internal
+ *  Function oyArray2d_Create_
+ *  @memberof oyArray2d_s
+ *  @brief   allocate and initialise a oyArray2d_s object widthout pixel
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/10/03
+ */
+OYAPI oyArray2d_s * OYEXPORT
+                   oyArray2d_Create_ ( int                 width,
+                                       int                 height,
+                                       oyDATATYPE_e        data_type,
+                                       oyObject_s          object )
+{
+  oyArray2d_s * s = 0;
+  int error = 0;
+
+  if(!width || !height)
+    return s;
+
+  s = oyArray2d_New( object );
+  error = !s;
+
+  if(error <= 0)
+  {
+    int y_len = sizeof(unsigned char *) * (height + 1);
+
+    s->width = width;
+    s->height = height;
+    s->t = data_type;
+    oyRectangle_SetGeo( &s->data_area, 0,0, width, height );
+    s->array2d = s->oy_->allocateFunc_( y_len );
+    error = !memset( s->array2d, 0, y_len );
+    s->own_lines = oyNO;
+  }
+
+  return s;
+}
+
+/** Function oyArray2d_Create
+ *  @memberof oyArray2d_s
+ *  @brief   allocate and initialise a oyArray2d_s object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+OYAPI oyArray2d_s * OYEXPORT
+                   oyArray2d_Create  ( oyPointer           data,
+                                       int                 width,
+                                       int                 height,
+                                       oyDATATYPE_e        data_type,
+                                       oyObject_s          object )
+{
+  oyArray2d_s * s = 0;
+  int error = 0;
+
+  if(!width || !height)
+    return s;
+
+  s = oyArray2d_Create_( width, height, data_type, object );
+  error = !s;
+
+  if(error <= 0)
+  {
+    if(data)
+      error = oyArray2d_DataSet( s, data );
+    else
+    {
+      data = s->oy_->allocateFunc_( width * height *
+                                    oySizeofDatatype( data_type ) );
+      DBGs_NUM2_S( s, "allocate image data: 0x%x size: %d ", (int)(intptr_t)
+                   data, width * height * oySizeofDatatype( data_type ) );
+      error = oyArray2d_DataSet( s, data );
+      s->own_lines = oyYES;
+    }
+  }
+
+  return s;
+}
+
+/**
+ *  @internal
+ *  Function oyArray2d_Copy_
+ *  @memberof oyArray2d_s
+ *  @brief   real copy a Array2d object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+oyArray2d_s * oyArray2d_Copy_
+                                     ( oyArray2d_s       * obj,
+                                       oyObject_s          object )
+{
+  oyArray2d_s * s = 0;
+  int error = 0;
+  int i;
+  oyAlloc_f allocateFunc_ = 0;
+  size_t size = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyArray2d_Create( 0, obj->height, 0, obj->t, object );
+  error = !s;
+
+  if(error <= 0)
+  {
+    allocateFunc_ = s->oy_->allocateFunc_;
+    s->own_lines = 2;
+    for(i = 0; i < s->height; ++i)
+    {
+      size = s->width * oySizeofDatatype( s->t );
+      oyAllocHelper_m_( s->array2d[i], unsigned char, size, allocateFunc_,
+                        error = 1; break );
+      error = !memcpy( s->array2d[i], obj->array2d[i], size );
+    }
+  }
+
+  if(error)
+    oyArray2d_Release( &s );
+
+  return s;
+}
+
+/** Function oyArray2d_Copy
+ *  @memberof oyArray2d_s
+ *  @brief   copy or reference a Array2d object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+OYAPI oyArray2d_s * OYEXPORT
+                   oyArray2d_Copy    ( oyArray2d_s       * obj,
+                                       oyObject_s          object )
+{
+  oyArray2d_s * s = 0;
+
+  if(!obj || obj->type_ != oyOBJECT_ARRAY2D_S)
+    return s;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyArray2d_Copy_( obj, object );
+
+  return s;
+}
+
+/** Function oyArray2d_ReleaseArray
+ *  @memberof oyArray2d_s
+ *  @brief   release Array2d::array member
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.11
+ *  @since   2010/09/07 (Oyranos: 0.1.11)
+ *  @date    2010/09/07
+ */
+int            oyArray2d_ReleaseArray( oyArray2d_s       * obj )
+{
+  int error = 0;
+  oyArray2d_s * s = obj;
+  if(s && s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+    int y, y_max = s->data_area.height + s->data_area.y;
+    size_t dsize = oySizeofDatatype( s->t );
+
+    if(oy_debug > 3)
+      oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)s,
+                       OY_DBG_FORMAT_ "s->data_area: %s", OY_DBG_ARGS_,
+                       oyRectangle_Show(&s->data_area) );
+
+    for( y = s->data_area.y; y < y_max; ++y )
+    {
+      if((s->own_lines == 1 && y == s->data_area.y) ||
+         s->own_lines == 2)
+        deallocateFunc( &s->array2d[y][dsize * (long)s->data_area.x] );
+      s->array2d[y] = 0;
+    }
+    deallocateFunc( s->array2d + (long)s->data_area.y );
+    s->array2d = 0;
+  }
+  return error;
+}
+ 
+/**
+ *  Function oyArray2d_Release
+ *  @memberof oyArray2d_s
+ *  @brief   release and possibly deallocate a Array2d object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+OYAPI int  OYEXPORT
+               oyArray2d_Release     ( oyArray2d_s      ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyArray2d_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  oyCheckType__m( oyOBJECT_ARRAY2D_S, return 1 )
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyArray2d_ReleaseArray( s );
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+/**
+ *  @internal
+ *  Function oyArray2d_DataSet
+ *  @memberof oyArray2d_s
+ *  @brief   set the data blob and (re-)initialise the object
+ *
+ *  @param[in,out] obj                 struct object
+ *  @param[in]     data                the data, remains in the property of the
+ *                                     caller
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+OYAPI int  OYEXPORT
+                 oyArray2d_DataSet   ( oyArray2d_s       * obj,
+                                       oyPointer           data )
+{
+  oyArray2d_s * s = 0;
+  int error = 0;
+
+  if(!data)
+    return 1;
+
+  if(!obj || obj->type_ != oyOBJECT_ARRAY2D_S)
+    return 1;
+
+  s = obj;
+
+  {
+    int y_len = sizeof(unsigned char *) * (s->height + 1),
+        y,
+        size = oySizeofDatatype( s->t );
+    uint8_t * u8 = data;
+
+    error = !s->array2d;
+
+    if(error <= 0)
+      error = !memset( s->array2d, 0, y_len );
+
+    s->own_lines = oyNO;
+
+    if(error <= 0)
+      for( y = 0; y < s->height; ++y )
+        s->array2d[y] = &u8[size * s->width * y];
+  }
+
+  return error;
+}
+
+/**
+ *  @internal
+ *  Function oyArray2d_RowsSet
+ *  @memberof oyArray2d_s
+ *  @brief   set the data and (re-)initialise the object
+ *
+ *  @param[in,out] obj                 struct object
+ *  @param[in]     data                the data
+ *  @param[in]     do_copy             - 0 : take the memory as is
+ *                                     - 1 : copy the memory monolithic
+ *                                     - 2 : copy the memory chunky
+ *
+ *  @version Oyranos: 0.1.11
+ *  @since   2010/09/07 (Oyranos: 0.1.11)
+ *  @date    2010/09/07
+ */
+OYAPI int  OYEXPORT
+                 oyArray2d_RowsSet   ( oyArray2d_s       * obj,
+                                       oyPointer         * rows,
+                                       int                 do_copy )
+{
+  oyArray2d_s * s = obj;
+  int error = 0;
+
+  if(!rows)
+    return 1;
+
+  if(!obj || obj->type_ != oyOBJECT_ARRAY2D_S)
+    return 1;
+
+  {
+    int y_len = sizeof(unsigned char *) * (s->height + 1),
+        y;
+    size_t size = 0;
+    oyAlloc_f allocateFunc_ = s->oy_->allocateFunc_;
+
+    error = !s->array2d;
+
+    size = s->width * oySizeofDatatype( s->t );
+
+    oyArray2d_ReleaseArray( s );
+
+    /* allocate the base array */
+    oyAllocHelper_m_( s->array2d, unsigned char *, s->height+1, allocateFunc_,
+                      error = 1; return 1 );
+    if(error <= 0)
+      error = !memset( s->array2d, 0, y_len );
+
+    s->own_lines = do_copy;
+
+    if(error <= 0 && s->own_lines == 2)
+    {
+      /* allocate each line separately */
+      for(y = 0; y < s->height; ++y)
+      {
+        oyAllocHelper_m_( s->array2d[y], unsigned char, size, allocateFunc_,
+                          error = 1; break );
+        error = !memcpy( s->array2d[y], rows[y], size );
+      }
+
+    } else
+    if(error <= 0 && s->own_lines == 1)
+    {
+      /* allocate all lines at once */
+      unsigned char * u8 = 0;
+      oyAllocHelper_m_( u8, unsigned char, size * s->height, allocateFunc_,
+                        error = 1; return 1 );
+
+      s->own_lines = do_copy;
+      if(error <= 0)
+      for( y = 0; y < s->height; ++y )
+      {
+        s->array2d[y] = &u8[size * y];
+        error = !memcpy( s->array2d[y], rows[y], size );
+      }
+
+    } else
+    if(error <= 0 && s->own_lines == 0)
+    {
+      /* just assign */
+      for( y = 0; y < s->height; ++y )
+        s->array2d[y] = rows[y];
+    }
+  }
+
+  return error;
+}
+
+#if 0
+/**
+ *  Function oyArray2d_DataCopy
+ *  @memberof oyArray2d_s
+ *  @brief   copy data
+ *
+ *  @todo just refere the other arrays, with refs_ and refered_ members,
+ *        reuse memory
+ *
+ *  @param[in,out] obj                 the array to fill in
+ *  @param[in]     roi_obj             rectangle of interesst in samples
+ *  @param[in]     source              the source data
+ *  @param[in]     roi_source          rectangle of interesst in samples
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/12 (Oyranos: 0.1.10)
+ *  @date    2009/03/12
+ */
+OYAPI int  OYEXPORT
+                 oyArray2d_DataCopy  ( oyArray2d_s      ** obj,
+                                       oyRectangle_s     * obj_source,
+                                       oyArray2d_s       * source,
+                                       oyRectangle_s     * roi_source )
+{
+  oyArray2d_s * s = *obj,
+              * src = source;
+  int error = 0;
+  int new_roi = !roi;
+
+  if(!src || !s)
+    return 1;
+
+  oyCheckType__m( oyOBJECT_ARRAY2D_S, return 1 )
+
+  if(error <= 0)
+  {
+    if(!roi)
+      roi = oyRectangle_NewWith( 0,0, s->width, s->height, s->oy_ );
+    error = !roi;
+  }
+
+  /* possibly expensive hack */
+  if(*obj)
+    oyArray2d_Release( obj );
+
+  if(!(*obj))
+  {
+    *obj = oyArray2d_Create( 0, roi->height, roi->width, src->t, src->oy_ );
+    error = !*obj;
+  }
+
+  if(error <= 0)
+  {
+    oyAlloc_f allocateFunc_ = s->oy_->allocateFunc_;
+    int i, size;
+
+    s->own_lines = 2;
+    for(i = 0; i < roi->height; ++i)
+    {
+      size = roi->width * oySizeofDatatype( s->t );
+      if(!s->array2d[i])
+        oyAllocHelper_m_( s->array2d[i], unsigned char, size, allocateFunc_,
+                          error = 1; break );
+      error = !memcpy( s->array2d[i], src->array2d[i], size );
+    }
+  }
+
+  if(error)
+    oyArray2d_Release( obj );
+
+  if(new_roi)
+    oyRectangle_Release( &roi );
+
+  return error;
+}
+#endif
+
+/** @internal
+ *  Function oyArray2d_ToPPM_
+ *  @memberof oyArray2d_s
+ *  @brief   dump array to a netppm file 
+ *
+ *  @param[in]     array               the array to fill read from
+ *  @param[in]     file_name           rectangle of interesst in samples
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/06/18 (Oyranos: 0.1.10)
+ *  @date    2009/06/18
+ */
+int              oyArray2d_ToPPM_    ( oyArray2d_s       * array,
+                                       const char        * file_name )
+{
+  oyArray2d_s * s = array;
+  int error = 0, i,j, len, shift;
+  size_t size,
+         byteps;
+  char * buf,
+       * data;
+
+  if(!array || !file_name || !file_name[0])
+    return 1;
+
+  oyCheckType__m( oyOBJECT_ARRAY2D_S, return 1 )
+
+  if(!error)
+  {
+    if(s->array2d[0] == NULL)
+    {
+      printf("oyArray2d_s[%d] is not yet used/allocated\n",
+             oyObject_GetId(s->oy_));
+      return 1;
+    }
+
+    byteps = oySizeofDatatype(s->t); /* byte per sample */
+    size = s->width * s->height * byteps;
+    buf = oyAllocateFunc_(size + 1024);
+
+    if(buf && size)
+    {
+      switch(s->t) {
+      case oyUINT8:     /*  8-bit integer */
+           sprintf( buf, "P5\n#%s:%d oyArray2d_s[%d]\n%d %d\n255\n", 
+                    __FILE__,__LINE__, oyObject_GetId(s->oy_),
+                    s->width, s->height );
+           break;
+      case oyUINT16:    /* 16-bit integer */
+      case oyUINT32:    /* 32-bit integer */
+           sprintf( buf, "P5\n#%s:%d oyArray2d_s[%d]\n%d %d\n65535\n", 
+                    __FILE__,__LINE__, oyObject_GetId(s->oy_),
+                    s->width, s->height );
+           break;
+      case oyHALF:      /* 16-bit floating point number */
+      case oyFLOAT:     /* IEEE floating point number */
+      case oyDOUBLE:    /* IEEE double precission floating point number */
+           sprintf( buf, "Pf\n#%s:%d oyArray2d_s[%d]\n%d %d\n%s\n", 
+                    __FILE__,__LINE__, oyObject_GetId(s->oy_),
+                    s->width, s->height,
+                    oyBigEndian()? "1.0" : "-1.0" );
+           break;
+      default: return 1;
+      }
+
+      len = oyStrlen_(buf);
+      data = &buf[len];
+      shift = oyBigEndian() ? 0 : 1;
+
+      switch(s->t) {
+      case oyUINT8:     /*  8-bit integer */
+      case oyFLOAT:     /* IEEE floating point number */
+           for(i = 0; i < s->height; ++i)
+             memcpy( &data[i * s->width * byteps],
+                     s->array2d[i],
+                     s->width * byteps );
+           break;
+      case oyUINT16:    /* 16-bit integer */
+           for(i = 0; i < s->height; ++i)
+             memcpy( &data[i * s->width * byteps + shift],
+                     s->array2d[i],
+                     s->width * byteps );
+           break;
+      case oyUINT32:    /* 32-bit integer */
+           for(i = 0; i < s->height; ++i)
+             for(j = 0; j < s->width; ++j)
+               ((uint16_t*)&data[i*s->width*2])[j] =
+                                       *((uint32_t*)&s->array2d[i][j*byteps]) /
+                                                     65537;
+           break;
+      case oyHALF:      /* 16-bit floating point number */
+           for(i = 0; i < s->height; ++i)
+             for(j = 0; j < s->width; ++j)
+               ((uint16_t*)&data[i*s->width*2])[j] = 
+                                       *((uint16_t*)&s->array2d[i][j*byteps]);
+           break;
+      case oyDOUBLE:    /* IEEE double precission floating point number */
+           for(i = 0; i < s->height; ++i)
+             for(j = 0; j < s->width; ++j)
+               ((float*)&data[i*s->width*2])[j] =
+                                       *((double*)&s->array2d[i][j*byteps]);
+           break;
+      default: return 1;
+      }
+
+      error = oyWriteMemToFile_( file_name, buf, len + size );
+    }
+
+    if(buf) oyDeAllocateFunc_(buf);
+      size = 0;
+  }
+
+  return error;
+}
+
+/**
+ *  @internal
+ *  Function oyImage_CombinePixelLayout2Mask_
+ *  @memberof oyImage_s
+ *  @brief   describe a images channel and pixel layout
+ *
+ *  - gather informations about the pixel layout
+ *  - describe the colour channels characteristic into oyImage_s::channel_layout
+ *  - store some text in the images nick name as a ID
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/26 (Oyranos: 0.1.8)
+ *  @date    2008/09/20
+ */
+int
+oyImage_CombinePixelLayout2Mask_ (
+                             oyImage_s   * image,
+                             oyPixel_t     pixel_layout )
+{
+  int n     = oyToChannels_m( pixel_layout );
+  oyProfile_s * profile = image->profile_;
+  int cchan_n = oyProfile_GetChannelsCount( profile );
+  int coff_x = oyToColourOffset_m( pixel_layout );
+  oyDATATYPE_e t = oyToDataType_m( pixel_layout );
+  int swap  = oyToSwapColourChannels_m( pixel_layout );
+  /*int revert= oyT_FLAVOR_M( pixel_layout );*/
+  oyPixel_t *mask = image->oy_->allocateFunc_( sizeof(oyPixel_t*) * (oyCHAN0 + 
+                    OY_MAX(n,cchan_n) + 1));
+  int error = !mask;
+  int so = oySizeofDatatype( t );
+  int w = image->width;
+  int h = image->height;
+  int i;
+  char * text = oyAllocateFunc_(512);
+  char * hash_text = 0;
+  oyImage_s * s = image;
+  oyCHANNELTYPE_e * clayout = 0; /* non profile described channels */
+
+  if(!s)
+    return 0;
+
+  if(!n && cchan_n)
+    n = cchan_n;
+
+  /* describe the pixel layout and access */
+  if(error <= 0)
+  {
+    error = !memset( mask, 0, sizeof(mask) * sizeof(oyPixel_t*));
+    if(oyToPlanar_m( pixel_layout ))
+    {
+      mask[oyPOFF_X] = 1;
+      mask[oyCOFF] = w*h*n;
+    } else {
+      mask[oyPOFF_X] = n;
+      mask[oyCOFF] = 1;
+    }
+    mask[oyPOFF_Y] = mask[oyPOFF_X] * w;
+    mask[oyDATA_SIZE] = so;
+    mask[oyLAYOUT] = pixel_layout;
+    mask[oyCHANS] = n;
+
+    if(swap)
+      for(i = 0; i < cchan_n; ++i)
+        mask[oyCHAN0 + i] = coff_x + cchan_n - i - 1;
+    else
+      for(i = 0; i < cchan_n; ++i)
+        mask[oyCHAN0 + i] = coff_x + i;
+  }
+
+  /* describe the channels characters */
+  if(!s->channel_layout)
+  {
+    clayout = image->oy_->allocateFunc_( sizeof(int) * ( OY_MAX(n,cchan_n)+ 1));
+    /* we dont know about the content */
+    for(i = 0; i < n; ++i)
+      clayout[i] = oyCHANNELTYPE_OTHER;
+    /* describe profile colours */
+    for(i = coff_x; i < coff_x + cchan_n; ++i)
+      clayout[i] = oyICCColourSpaceToChannelLayout( profile->sig_, i - coff_x );
+    /* place a end marker */
+    clayout[n] = oyCHANNELTYPE_UNDEFINED;
+      s->channel_layout = clayout;
+  }
+
+  /* describe the image */
+  oySprintf_( text, 
+                  "  <oyImage_s id=\"%d\" width=\"%d\" height=\"%d\" resolution=\"%.02f,%.02f\">\n",
+                  oyObject_GetId(image->oy_),
+                  image->width,
+                  image->height,
+                  image->resolution_x,
+                  image->resolution_y);
+  hashTextAdd_m( text );
+  /*if(oy_debug)*/
+    oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NAME));
+  /*else
+    oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NICK));*/
+  hashTextAdd_m( text );
+  oySprintf_( text, "    <channels all=\"%d\" colour=\"%d\" />\n", n, cchan_n );
+  hashTextAdd_m( text );
+  oySprintf_( text,
+              "    <offsets first_colour_sample=\"%d\" next_pixel=\"%d\" />\n"
+              /*"  next line = %d\n"*/,
+              coff_x, mask[oyPOFF_X]/*, mask[oyPOFF_Y]*/ );
+  hashTextAdd_m( text );
+
+  if(swap || oyToByteswap_m( pixel_layout ))
+  {
+    hashTextAdd_m( "    <swap" );
+    if(swap)
+      hashTextAdd_m( " colourswap=\"yes\"" );
+    if( oyToByteswap_m( pixel_layout ) )
+      hashTextAdd_m( " byteswap=\"yes\"" );
+    hashTextAdd_m( " />\n" );
+  }
+
+  if( oyToFlavor_m( pixel_layout ) )
+  {
+    oySprintf_( text, "    <flawor value=\"yes\" />\n" );
+    hashTextAdd_m( text );
+  }
+  oySprintf_( text, "    <sample_type value=\"%s[%dByte]\" />\n",
+                    oyDatatypeToText(t), so );
+  hashTextAdd_m( text );
+  oySprintf_( text, "  </oyImage_s>");
+  hashTextAdd_m( text );
+
+  if(error <= 0)
+    error = oyObject_SetName( s->oy_, hash_text, oyNAME_NICK );
+
+
+  oyDeAllocateFunc_(text);
+  oyDeAllocateFunc_(hash_text);
+
+  if(s->oy_->deallocateFunc_)
+  {
+    if(s->layout_)
+      s->oy_->deallocateFunc_(s->layout_);
+    s->layout_ = 0;
+  }
+  s->layout_ = mask;
+
+
+  return 0;
+}
+
+char *         oyPixelLayoutPrint_   ( oyPixel_t           pixel_layout )
+{
+  return oyPixelPrint(pixel_layout, oyAllocateFunc_);
+}
+
+char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyDATATYPE_e t = oyToDataType_m( pixel_layout );
+  char * text = 0;
+
+#define oyPixelLayoutPrint_FORMAT "channels: %d channel_offset: %d sample_type[%dByte]: %s planar: %d byte_swap %d colour_swap: %d flawor: %d"
+#define oyPixelLayoutPrint_ARGS \
+  oyToChannels_m( pixel_layout ), \
+  oyToColourOffset_m( pixel_layout ), \
+  oySizeofDatatype( t ), \
+  oyDatatypeToText(t), \
+  oyToPlanar_m( pixel_layout ), \
+  oyToByteswap_m( pixel_layout), \
+  oyToSwapColourChannels_m( pixel_layout ), \
+  oyToFlavor_m( pixel_layout )
+
+  /* describe the pixel layout and access */
+  oyStringAddPrintf_(&text, allocateFunc, 0, 
+                     oyPixelLayoutPrint_FORMAT, oyPixelLayoutPrint_ARGS);
+
+  /*printf(oyPixelLayoutPrint_FORMAT,oyPixelLayoutPrint_ARGS);*/
+
+#undef oyPixelLayoutPrint_FORMAT
+#undef oyPixelLayoutPrint_ARGS
+  return text;
+}
+
+
+/** Function oyImage_GetPointContinous
+ *  @memberof oyImage_s
+ *  @brief   standard continous layout pixel accessor
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/06/26
+ */
+oyPointer oyImage_GetArray2dPointContinous (
+                                         oyImage_s       * image,
+                                         int               point_x,
+                                         int               point_y,
+                                         int               channel,
+                                         int             * is_allocated )
+{
+  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  unsigned char ** array2d = a->array2d;
+  int pos = (point_x * image->layout_[oyCHANS]
+             + image->layout_[oyCHAN0+channel])
+            * image->layout_[oyDATA_SIZE];
+  if(is_allocated) *is_allocated = 0;
+  return &array2d[ point_y ][ pos ]; 
+
+}
+
+/** Function oyImage_GetLineContinous
+ *  @memberof oyImage_s
+ *  @brief   standard continous layout line accessor
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+oyPointer oyImage_GetArray2dLineContinous (
+                                         oyImage_s       * image,
+                                         int               point_y,
+                                         int             * height,
+                                         int               channel,
+                                         int             * is_allocated )
+{
+  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  unsigned char ** array2d = a->array2d;
+  if(height) *height = 1;
+  if(is_allocated) *is_allocated = 0;
+  if(point_y >= a->height)
+    WARNc2_S("point_y < a->height failed(%d/%d)", point_y, a->height)
+  return &array2d[ point_y ][ 0 ]; 
+}
+
+/** Function oyImage_SetPointContinous
+ *  @memberof oyImage_s
+ *  @brief   standard continous layout pixel accessor
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/22 (Oyranos: 0.1.10)
+ *  @date    2009/02/22
+ */
+int       oyImage_SetArray2dPointContinous (
+                                         oyImage_s       * image,
+                                         int               point_x,
+                                         int               point_y,
+                                         int               channel,
+                                         oyPointer         data )
+{
+  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  unsigned char ** array2d = a->array2d;
+  int pos = (point_x * image->layout_[oyCHANS]
+             + image->layout_[oyCHAN0+channel])
+            * image->layout_[oyDATA_SIZE];
+  oyDATATYPE_e data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
+  int byteps = oySizeofDatatype( data_type );
+  int channels = 1;
+
+  if(channel < 0)
+    channels = oyToChannels_m( image->layout_[oyLAYOUT] );
+
+  memcpy( &array2d[ point_y ][ pos ], data, byteps * channels );
+
+  return 0;
+
+}
+
+/** Function oyImage_SetLineContinous
+ *  @memberof oyImage_s
+ *  @brief   standard continous layout line accessor
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/22 (Oyranos: 0.1.10)
+ *  @date    2009/02/22
+ */
+int       oyImage_SetArray2dLineContinous (
+                                         oyImage_s       * image,
+                                         int               point_x,
+                                         int               point_y,
+                                         int               pixel_n,
+                                         int               channel,
+                                         oyPointer         data )
+{
+  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  unsigned char ** array2d = a->array2d;
+  oyDATATYPE_e data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
+  int byteps = oySizeofDatatype( data_type );
+  int channels = 1;
+  int offset = point_x;
+
+  if(pixel_n < 0)
+    pixel_n = image->width - point_x;
+
+  if(channel < 0)
+  {
+    channels = oyToChannels_m( image->layout_[oyLAYOUT] );
+    offset *= channels;
+  }
+
+  if(&array2d[ point_y ][ offset ] != data)
+    memcpy( &array2d[ point_y ][ offset ], data, pixel_n * byteps * channels );
+
+  return 0; 
+}
+
+/** Function oyImage_GetPointPlanar
+ *  @memberof oyImage_s
+ *  @brief   standard planar layout pixel accessor
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2008/08/24
+ */
+oyPointer oyImage_GetArray2dPointPlanar( oyImage_s       * image,
+                                         int               point_x,
+                                         int               point_y,
+                                         int               channel,
+                                         int             * is_allocated )
+{
+  WARNc_S("planar pixel access not implemented")
+  return 0;
+#if 0
+  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  unsigned char ** array2d = a->array2d;
+  if(is_allocated) *is_allocated = 0;
+  return &array2d[ point_y ][ (point_x + image->layout_[oyCOFF]
+                               * image->layout_[oyCHAN0+channel])
+                              * image->layout_[oyDATA_SIZE]       ]; 
+#endif
+}
+
+/** Function oyImage_GetLinePlanar
+ *  @memberof oyImage_s
+ *  @brief   standard continus layout line accessor
+ *
+ *  We assume a channel after channel behaviour without line interweaving.
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2008/08/24
+ */
+oyPointer oyImage_GetArray2dLinePlanar ( oyImage_s       * image,
+                                         int               point_y,
+                                         int             * height,
+                                         int               channel,
+                                         int             * is_allocated )
+{
+  if(height) *height = 1;
+  WARNc_S("planar pixel access not implemented")
+  return 0;
+#if 0 /* SunC: warning: statement not reached */
+  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  unsigned char ** array2d = a->array2d;
+  if(is_allocated) *is_allocated = 0;
+  /* it makes no sense to use more than one line */                   
+  return &array2d[ 0 ][   image->width
+                        * image->layout_[oyCOFF]
+                        * image->layout_[oyCHAN0+channel]
+                        * image->layout_[oyDATA_SIZE] ];
+#endif
+}
+
+
+/** @brief   collect infos about a image
+ *  @memberof oyImage_s
+ *
+ *  Create a image description and access object. The passed channels pointer
+ *  remains in the responsibility of the user. The image is a in memory blob.
+ *
+    @param[in]    width        image width
+    @param[in]    height       image height
+    @param[in]    channels     pointer to the data buffer
+    @param[in]    pixel_layout i.e. oyTYPE_123_16 for 16-bit RGB data
+    @param[in]    profile      colour space description
+    @param[in]    object       the optional base
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ *  @date    2008/08/23
+ */
+oyImage_s *    oyImage_Create         ( int               width,
+                                        int               height, 
+                                        oyPointer         channels,
+                                        oyPixel_t         pixel_layout,
+                                        oyProfile_s     * profile,
+                                        oyObject_s        object)
+{
+  oyRectangle_s * display_rectangle = 0;
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_IMAGE_S;
+# define STRUCT_TYPE oyImage_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyImage_Copy;
+  s->release = (oyStruct_Release_f) oyImage_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  if(!profile)
+  {
+    WARNc_S("no profile obtained");
+
+    oyImage_Release( &s );
+    return s;
+  }
+
+  s->width = width;
+  s->height = height;
+  {
+    int channels_n = oyToChannels_m(pixel_layout);
+    oyArray2d_s * a = oyArray2d_Create( channels,
+                                        s->width * channels_n,
+                                        s->height,
+                                        oyToDataType_m(pixel_layout),
+                                        s_obj );
+    oyImage_SetData ( s, (oyStruct_s**) &a, 0,0,0,0,0,0 );
+  }
+  s->profile_ = oyProfile_Copy( profile, 0 );
+  if(s->width != 0.0)
+    s->viewport = oyRectangle_NewWith( 0, 0, 1.0,
+                                   (double)s->height/(double)s->width, s->oy_ );
+
+  error = oyImage_CombinePixelLayout2Mask_ ( s, pixel_layout );
+
+  if(s->pixel_data && s->layout_[oyCOFF] == 1)
+    oyImage_SetData( s, 0, oyImage_GetArray2dPointContinous,
+                           oyImage_GetArray2dLineContinous, 0,
+                           oyImage_SetArray2dPointContinous,
+                           oyImage_SetArray2dLineContinous, 0 );
+  else if(s->pixel_data)
+    oyImage_SetData( s, 0, oyImage_GetArray2dPointPlanar,
+                           oyImage_GetArray2dLinePlanar, 0, 0,0,0 );
+
+  if(error <= 0)
+  {
+    display_rectangle = oyRectangle_New_( 0 );
+
+    error = !display_rectangle;
+    if(error <= 0)
+      oyOptions_MoveInStruct( &s->tags,
+                              "//"OY_TYPE_STD"/output/display_rectangle",
+                              (oyStruct_s**)&display_rectangle, OY_CREATE_NEW );
+  }
+
+  return s;
+}
+
+/** @brief   collect infos about a image for showing one a display
+ *  @memberof oyImage_s
+
+    @param[in]     width               image width
+    @param[in]     height              image height
+    @param[in]     channels            pointer to the data buffer
+    @param[in]     pixel_layout        i.e. oyTYPE_123_16 for 16-bit RGB data
+    @param[in]     display_name        display name
+    @param[in]     display_pos_x       left image position on display
+    @param[in]     display_pos_y       top image position on display
+    @param[in]     display_width       width to show in window
+    @param[in]     display_height      height to show in window
+    @param[in]     object              the optional base
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  october 2007 (API 0.1.8)
+ */
+oyImage_s *    oyImage_CreateForDisplay ( int              width,
+                                       int                 height, 
+                                       oyPointer           channels,
+                                       oyPixel_t           pixel_layout,
+                                       const char        * display_name,
+                                       int                 display_pos_x,
+                                       int                 display_pos_y,
+                                       int                 display_width,
+                                       int                 display_height,
+                                       oyObject_s          object)
+{
+  oyProfile_s * p = oyProfile_FromFile ("XYZ.icc",0,0);
+  oyImage_s * s = oyImage_Create( width, height, channels, pixel_layout,
+                                  p, object );
+  int error = !s;
+  oyRectangle_s * display_rectangle = 0;
+
+  oyProfile_Release( &p );
+
+  if(error <= 0)
+  {
+    if(!s->profile_)
+      error = 1;
+
+    if(error <= 0)
+      error = oyImage_CombinePixelLayout2Mask_ ( s, pixel_layout );
+
+    if(error <= 0)
+    {
+      display_rectangle = (oyRectangle_s*) oyOptions_GetType( s->tags, -1,
+                                    "display_rectangle", oyOBJECT_RECTANGLE_S );
+      oyRectangle_SetGeo( display_rectangle, display_pos_x, display_pos_y,
+                                             display_width, display_height );
+    }
+    error = !display_rectangle;
+    
+    if(error <= 0 && display_name)
+      error = oyOptions_SetFromText( &s->tags, "//"OY_TYPE_STD"/output/display_name",
+                                     display_name, OY_CREATE_NEW );
+
+    if(error > 0)
+    {
+      oyImage_Release( &s );
+      WARNc1_S("Could not create image %d", oyObject_GetId( object ));
+    }
+  }
+
+  return s;
+}
+
+/** Function oyImage_FromFile
+ *  @brief   generate a Oyranos image from a file name
+ *
+ *  @param[in]     file_name           input
+ *  @param[out]    image               output
+ *  @param[in]     obj                 Oyranos object (optional)
+ *  @return                            >0 == error, <0 == issue or zero
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/04/21 (Oyranos: 0.5.0)
+ *  @date    2012/04/21
+ */
+int    oyImage_FromFile              ( const char        * file_name,
+                                       oyImage_s        ** image,
+                                       oyObject_s          obj )
+{
+  oyFilterNode_s * in, * out;
+  int error = 0;
+  oyConversion_s * conversion = 0;
+  oyOptions_s * options = 0;
+
+  if(!file_name)
+    return 1;
+
+  /* start with an empty conversion object */
+  conversion = oyConversion_New( obj );
+  /* create a filter node */
+  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/file_read.meta", 0, obj );
+  /* set the above filter node as the input */
+  oyConversion_Set( conversion, in, 0 );
+
+  /* add a file name argument */
+  /* get the options of the input node */
+  if(in)
+  options = oyFilterNode_GetOptions( in, OY_SELECT_FILTER );
+  /* add a new option with the appropriate value */
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
+                                 file_name, OY_CREATE_NEW );
+  /* release the options object, this means its not any more refered from here*/
+  oyOptions_Release( &options );
+
+  /* add a closing node */
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+  /* set the output node of the conversion */
+  oyConversion_Set( conversion, 0, out );
+
+  *image = oyConversion_GetImage( conversion, OY_OUTPUT );
+  oyImage_Release( image );
+  *image = oyConversion_GetImage( conversion, OY_INPUT );
+
+  options = oyImage_GetTags( *image );
+  oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
+                                 file_name, OY_CREATE_NEW );
+  oyOptions_Release( &options );
+
+  oyConversion_Release( &conversion );
+
+  return error;
+}
+
+/** Function oyImage_ToFile
+ *  @brief   write a Oyranos image to a file name
+ *
+ *  @param[in]     image               input
+ *  @param[in]     file_name           output
+ *  @param[in]     opts                options for file_write node
+ *  @return                            >0 == error, <0 == issue or zero
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/07/18 (Oyranos: 0.5.0)
+ *  @date    2012/07/18
+ */
+int    oyImage_ToFile                ( oyImage_s         * image,
+                                       const char        * file_name,
+                                       oyOptions_s       * opts )
+{
+  oyFilterNode_s * in, * out;
+  int error = 0;
+  oyConversion_s * conversion = 0;
+  oyOptions_s * options = 0;
+
+  if(!file_name)
+    return 1;
+
+  /* start with an empty conversion object */
+  conversion = oyConversion_New( 0 );
+  /* create a filter node */
+  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0, 0 );
+  /* set the above filter node as the input */
+  oyConversion_Set( conversion, in, 0 );
+  /* set the image buffer */
+  oyFilterNode_DataSet( in, (oyStruct_s*)image, 0, 0 );
+
+  /* add a file name argument */
+  /* get the options of the input node */
+  if(in)
+  options = oyFilterNode_GetOptions( in, OY_SELECT_FILTER );
+  if(opts)
+    oyOptions_CopyFrom( &options, opts, oyBOOLEAN_UNION, 0,0);
+  /* add a new option with the appropriate value */
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_write/filename",
+                                 file_name, OY_CREATE_NEW );
+  /* release the options object, this means its not any more refered from here*/
+  oyOptions_Release( &options );
+
+  /* add a closing node */
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/file_write.meta", 0, 0 );
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+  /* set the output node of the conversion */
+  oyConversion_Set( conversion, 0, out );
+
+  options = oyImage_GetTags( image );
+  oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_write/filename",
+                                 file_name, OY_CREATE_NEW );
+  oyOptions_Release( &options );
+
+  oyConversion_RunPixels( conversion, 0 );
+  oyConversion_Release( &conversion );
+
+  return error;
+}
+
+/**
+ *  @internal
+ *  @brief   copy a image
+ *  @memberof oyImage_s
+ *
+ *  @todo  implement
+ * 
+ *  @since Oyranos: version 0.1.8
+ *  @date  october 2007 (API 0.1.8)
+ */
+oyImage_s *    oyImage_Copy_          ( oyImage_s       * image,
+                                        oyObject_s        object )
+{
+  oyImage_s * s = 0;
+
+  if(!image)
+    return s;
+
+  /* TODO */
+
+  s = oyImage_Create( image->width, image->height,
+                      0, image->layout_[oyLAYOUT],
+                      image->profile_, object );
+
+  return s;
+}
+
+/** @brief   copy a image
+ *  @memberof oyImage_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  october 2007 (API 0.1.8)
+ */
+oyImage_s *    oyImage_Copy           ( oyImage_s       * image,
+                                        oyObject_s        object )
+{
+  oyImage_s * s = image;
+
+  if(!s)
+    return s;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
+
+  if(!object)
+  {
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyImage_Copy_( image, object );
+  /* TODO cache */
+  return s;
+}
+
+/** @brief   release a image
+ *  @memberof oyImage_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  october 2007 (API 0.1.8)
+ */
+int            oyImage_Release        ( oyImage_s      ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyImage_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  s->width = 0;
+  s->height = 0;
+  if(s->pixel_data && s->pixel_data->release)
+    s->pixel_data->release( &s->pixel_data );
+
+  if(s->user_data && s->user_data->release)
+    s->user_data->release( &s->user_data );
+
+  oyProfile_Release( &s->profile_ );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    if(s->layout_)
+      deallocateFunc( s->layout_ ); s->layout_ = 0;
+
+    if(s->channel_layout)
+      deallocateFunc( s->channel_layout ); s->channel_layout = 0;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+/** @brief   set a image
+ *  @memberof oyImage_s
+ *
+ *  set critical options
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/12/19 (Oyranos: 0.1.8)
+ *  @date    2009/03/01
+ */
+int            oyImage_SetCritical    ( oyImage_s       * image,
+                                        oyPixel_t         pixel_layout,
+                                        oyProfile_s     * profile,
+                                        oyOptions_s     * options )
+{
+  oyImage_s * s = image;
+  int error = !s;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
+
+  if(profile)
+  {
+    oyProfile_Release( &s->profile_ );
+    s->profile_ = oyProfile_Copy( profile, 0 );
+  }
+
+  if(options)
+  {
+    oyOptions_Release( &s->tags );
+    s->tags = oyOptions_Copy( options, s->oy_ );
+  }
+
+  if(pixel_layout)
+    error = oyImage_CombinePixelLayout2Mask_ ( s, pixel_layout );
+  else
+    /* update to new ID for possible new context hashing */
+    error = oyImage_CombinePixelLayout2Mask_ ( s, s->layout_[oyLAYOUT] );
+
+  /* Not shure whether it is a good idea to have automatic image data
+     allocation here. Anyway this is intented as a fallback for empty images, 
+     like a unspecified output image to be catched here. */
+  if((!s->setLine || !s->getLine) &&
+     (!s->setPoint || !s->getPoint) &&
+     s->width && s->height)
+  {
+    oyPixel_t pixel_layout = s->layout_[oyLAYOUT];
+    oyPointer channels = 0;
+
+    oyArray2d_s * a = oyArray2d_Create( channels,
+                                        s->width * oyToChannels_m(pixel_layout),
+                                        s->height,
+                                        oyToDataType_m(pixel_layout),
+                                        s->oy_ );
+      
+    oyImage_SetData( s,    (oyStruct_s**) &a,
+                           oyImage_GetArray2dPointContinous,
+                           oyImage_GetArray2dLineContinous, 0,
+                           oyImage_SetArray2dPointContinous,
+                           oyImage_SetArray2dLineContinous, 0 );
+  }
+
+  return error;
+}
+
+/** Function oyImage_SetData
+ *  @memberof oyImage_s
+ *  @brief   set a custom image data module
+ *
+ *  This function allowes for exchanging of all the module components. 
+ *
+ *  The pixel_data structure can hold in memory or mmap representations or file
+ *  pointers. The according point, line and/or tile functions shall use
+ *  the oyImage_s::pixel_data member to access the data and provide in this
+ *  interface.
+ *
+ *  @param         image               the image
+ *  @param         pixel_data          data struct will be moved in
+ *  @param         getPoint            interface function
+ *  @param         getLine             interface function
+ *  @param         getTile             interface function
+ *  @param         setPoint            interface function
+ *  @param         setLine             interface function
+ *  @param         setTile             interface function
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2008/08/23 (Oyranos: 0.1.8)
+ *  @date    2012/06/19
+ */
+int            oyImage_SetData       ( oyImage_s         * image,
+                                       oyStruct_s       ** pixel_data,
+                                       oyImage_GetPoint_f  getPoint,
+                                       oyImage_GetLine_f   getLine,
+                                       oyImage_GetTile_f   getTile,
+                                       oyImage_SetPoint_f  setPoint,
+                                       oyImage_SetLine_f   setLine,
+                                       oyImage_SetTile_f   setTile )
+{
+  oyImage_s * s = image;
+  int error = 0;
+
+  if(!s)
+    return 1;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
+
+  if(pixel_data)
+  {
+    if(s->pixel_data && s->pixel_data->release)
+      s->pixel_data->release( &s->pixel_data );
+    s->pixel_data = *pixel_data;
+    DBGs_NUM1_S( s, "pixel_data[%d]", oyStruct_GetId((oyStruct_s*)*pixel_data));
+    *pixel_data = 0;
+  }
+
+  if(getPoint)
+    s->getPoint = getPoint;
+
+  if(getLine)
+    s->getLine = getLine;
+
+  if(getTile)
+    s->getTile = getTile;
+
+  if(setPoint)
+    s->setPoint = setPoint;
+
+  if(setLine)
+    s->setLine = setLine;
+
+  if(setTile)
+    s->setTile = setTile;
+
+  return error;
+}
+
+/** Function oyImage_GetPoint
+ *  @memberof oyImage_s
+ *  @brief   standard pixel accessor
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/06/27 (Oyranos: 0.5.0)
+ *  @date    2012/06/27
+ */
+oyPointer      oyImage_GetPoint      ( oyImage_s         * image,
+                                       int                 point_x,
+                                       int                 point_y,
+                                       int                 channel,
+                                       int               * is_allocated )
+{
+  oyImage_s * s = image;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
+
+  if(image->getPoint)
+    return image->getPoint( image, point_x, point_y, channel, is_allocated );
+  else
+    return 0;
+}
+
+/** Function oyArray2d_SetFocus
+ *  @memberof oyArray2d_s
+ *  @brief   move a arrays active area to a given rectangle
+ *
+ *  @param[in,out] array               the pixel array
+ *  @param[in]     rectangle           the new region in the array's wholes data
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/04/19 (Oyranos: 0.3.0)
+ *  @date    2011/04/19
+ */
+int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
+                                       oyRectangle_s     * rectangle )
+{
+  oyRectangle_s * array_roi_pix = rectangle;
+  oyArray2d_s * a = array;
+  int error = 0;
+  int y;
+
+  if(array && rectangle)
+  {
+    /* shift array focus to requested region */
+    int bps = oySizeofDatatype( array->t );
+    if(a->data_area.x != OY_ROUND(array_roi_pix->x))
+    {
+      int height = a->data_area.height + a->data_area.y;
+      int shift = (OY_ROUND(array_roi_pix->x) + OY_ROUND(a->data_area.x)) * bps;
+      for(y = a->data_area.y; y < height; ++y)
+        a->array2d[y] += shift;
+      a->data_area.x = -OY_ROUND(array_roi_pix->x);
+    }
+    if(a->data_area.y != OY_ROUND(array_roi_pix->y))
+    {
+      a->array2d += (long)(OY_ROUND(array_roi_pix->y) + a->data_area.y);
+      a->data_area.y = -OY_ROUND(array_roi_pix->y);
+    }
+    a->width = array_roi_pix->width;
+    a->height = array_roi_pix->height;
+  } else
+    error = 1;
+
+  return error;
+}
+
 /** Function oyImage_FillArray
  *  @memberof oyImage_s
  *  @brief   creata a array from a image and fill with data
@@ -5944,7 +13535,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   oyAlloc_f allocateFunc_ = 0;
   unsigned char * line_data = 0;
   int i,j, height;
-  size_t len, wlen;
+  size_t wlen;
 
   if(!image)
     return 1;
@@ -6067,7 +13658,6 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   {
     oyPointer src, dst;
 
-    len = (array_roi_pix.width + array_roi_pix.x) * data_size;
     wlen = image_roi_pix.width * data_size;
 
     if(allocate_method != 2)
@@ -6090,7 +13680,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                        + OY_ROUND(image_roi_pix.x))
                       * data_size];
 
-        if(dst != src)
+        if(dst && src && dst != src)
           error = !memcpy( dst, src, wlen );
       }
 
@@ -6200,6 +13790,1884 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
 
   return error;
 }
+
+/** Function oyImage_GetWidth
+ *  @memberof oyImage_s
+ *  @brief   get the width in pixel
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2009/03/05 (Oyranos: 0.1.10)
+ *  @date    2012/06/12
+ */
+int            oyImage_GetWidth      ( oyImage_s         * image )
+{
+  oyImage_s * s = image;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
+
+  return s->width;
+}
+
+/** Function oyImage_GetHeight
+ *  @memberof oyImage_s
+ *  @brief   get the width in pixel
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2009/03/05 (Oyranos: 0.1.10)
+ *  @date    2012/06/12
+ */
+int            oyImage_GetHeight     ( oyImage_s         * image )
+{
+  oyImage_s * s = image;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
+
+  return s->height;
+}
+
+/** Function oyImage_GetPixelLayout
+ *  @memberof oyImage_s
+ *  @brief   get the pixel layout
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2009/03/05 (Oyranos: 0.1.10)
+ *  @date    2012/06/12
+ */
+oyPixel_t      oyImage_GetPixelLayout( oyImage_s         * image )
+{
+  oyImage_s * s = image;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
+
+  return s->layout_[oyLAYOUT];
+}
+
+/** Function oyImage_GetProfile
+ *  @memberof oyImage_s
+ *  @brief   get the image profile
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2009/08/05 (Oyranos: 0.1.10)
+ *  @date    2012/06/12
+ */
+oyProfile_s *  oyImage_GetProfile    ( oyImage_s         * image )
+{
+  oyImage_s * s = image;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
+
+  return oyProfile_Copy( s->profile_, 0 );
+}
+
+/** Function oyImage_GetTags
+ *  @memberof oyImage_s
+ *  @brief   get object tags
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2009/03/05 (Oyranos: 0.1.10)
+ *  @date    2012/06/12
+ */
+oyOptions_s *  oyImage_GetTags       ( oyImage_s         * image )
+{
+  oyImage_s * s = image;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
+
+  return oyOptions_Copy( s->tags, 0 );
+}
+
+/**
+ *  @internal
+ *  @func    oyImage_WritePPM
+ *  @memberof oyArray2d_s
+ *  @brief   implement oyCMMFilter_GetNext_f()
+ *
+ *  @param[in]     image               the image
+ *  @param[in]     file_name           a writeable file name, The file can 
+ *                                     contain "%d" to include the image ID.
+ *  @param[in]     free_text           A text to include as comment.
+ *
+ *  @version Oyranos: 0.3.1
+ *  @since   2008/10/07 (Oyranos: 0.1.8)
+ *  @date    2011/05/12
+ */
+int          oyImage_WritePPM        ( oyImage_s         * image,
+                                       const char        * file_name,
+                                       const char        * free_text )
+{
+  int error = !file_name;
+  FILE * fp = 0;
+  char * filename = 0;
+  oyImage_s * s = image;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
+
+  if(!error)
+    oyAllocHelper_m_( filename, char, strlen(file_name)+80, 0, return 1 );
+
+  if(!error)
+  {
+    if(strstr(file_name, "%d"))
+      sprintf( filename, file_name, oyStruct_GetId( (oyStruct_s*)s ) );
+    else
+      strcpy(filename,file_name);
+  }
+
+  if(filename)
+    fp = fopen( filename, "wb" );
+  else
+    error = 2;
+
+  if(fp)
+  {
+      size_t pt = 0;
+      char text[128];
+      char * t = 0;
+      int  len = 0;
+      int  i,j,k,l, n;
+      char bytes[48];
+
+      int cchan_n = oyProfile_GetChannelsCount( image->profile_ );
+      int channels = oyToChannels_m( image->layout_[oyLAYOUT] );
+      oyDATATYPE_e data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
+      int alpha = channels - cchan_n;
+      int byteps = oySizeofDatatype( data_type );
+      const char * colourspacename = oyProfile_GetText( image->profile_,
+                                                        oyNAME_DESCRIPTION );
+      char * vs = oyVersionString(1,malloc);
+      uint8_t * out_values = 0;
+      const uint8_t * u8;
+      double * dbls;
+      float flt;
+
+            fputc( 'P', fp );
+      if(alpha) 
+            fputc( '7', fp );
+      else
+      {
+        if(byteps == 1 ||
+           byteps == 2)
+        {
+          if(channels == 1)
+            fputc( '5', fp );
+          else
+            fputc( '6', fp );
+        } else
+        if (byteps == 4 || byteps == 8)
+        {
+          if(channels == 1)
+            fputc( 'f', fp ); /* PFM gray */
+          else
+            fputc( 'F', fp ); /* PFM rgb */
+        }
+      }
+
+      fputc( '\n', fp );
+
+      oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                "# CREATOR: Oyranos-%s\n",
+                oyNoEmptyString_m_(vs) ); 
+      oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                " COMMENT: %s\n",
+                free_text?free_text:"" );
+      oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                " oyImage_s: %d\n",
+                oyObject_GetId( image->oy_ ) );
+      if(vs) free(vs); vs = 0;
+      len = strlen( t );
+      do { fputc ( t[pt] , fp); if(t[pt] == '\n') fputc( '#', fp ); pt++; } while (--len); pt = 0;
+      fputc( '\n', fp );
+      oyFree_m_( t );
+
+      {
+        time_t  cutime;         /* Time since epoch */
+        struct tm       *gmt;
+        char time_str[24];
+
+        cutime = time(NULL); /* time right NOW */
+        gmt = gmtime(&cutime);
+        strftime(time_str, 24, "%Y/%m/%d %H:%M:%S", gmt);
+        snprintf( text, 128, "# DATE/TIME: %s\n", time_str );
+        len = strlen( text );
+        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
+      }
+
+      snprintf( text, 128, "# COLORSPACE: %s\n", colourspacename ?
+                colourspacename : "--" );
+      len = strlen( text );
+      do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
+
+      if(byteps == 1)
+        snprintf( bytes, 48, "255" );
+      else
+      if(byteps == 2)
+        snprintf( bytes, 48, "65535" );
+      else
+      if (byteps == 4 || byteps == 8) 
+      {
+        if(oyBigEndian())
+          snprintf( bytes, 48, "1.0" );
+        else
+          snprintf( bytes, 48, "-1.0" );
+      }
+      else
+        oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)image,
+             OY_DBG_FORMAT_ " byteps: %d",
+             OY_DBG_ARGS_, byteps );
+
+
+      if(alpha)
+      {
+        const char *tupl = "RGB_ALPHA";
+
+        if(channels == 2)
+          tupl = "GRAYSCALE_ALPHA";
+        snprintf( text, 128, "WIDTH %d\nHEIGHT %d\nDEPTH %d\nMAXVAL "
+                  "%s\nTUPLTYPE %s\nENDHDR\n",
+                  image->width, image->height,
+                  channels, bytes, tupl );
+        len = strlen( text );
+        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
+
+      }
+      else
+      {
+        snprintf( text, 128, "%d %d\n", image->width,
+                                       image->height);
+        len = strlen( text );
+        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
+
+        snprintf( text, 128, "%s\n", bytes );
+        len = strlen( text );
+        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
+      }
+
+      n = image->width * channels;
+      if(byteps == 8)
+        u8 = (uint8_t*) &flt;
+
+      for( k = 0; k < image->height; ++k)
+      {
+        int height = 0,
+            is_allocated = 0;
+        out_values = image->getLine( image, k, &height, -1, 
+                                            &is_allocated );
+        len = n * byteps;
+
+        for( l = 0; l < height; ++l )
+        {
+          if(byteps == 8)
+          {
+            dbls = (double*)out_values;
+            for(i = 0; i < n; ++i)
+            {
+              flt = dbls[l * len + i];
+              for(j = 0; j < 4; ++j)
+                fputc ( u8[j], fp);
+            }
+          } else 
+          for(i = 0; i < len; ++i)
+          {
+            if(!oyBigEndian() && (byteps == 2))
+            { if(i%2)
+                fputc ( out_values[l * len + i - 1] , fp);
+              else
+                fputc ( out_values[l * len + i + 1] , fp);
+            } else
+              fputc ( out_values[l * len + i] , fp);
+          }
+        }
+
+        if(is_allocated)
+          image->oy_->deallocateFunc_(out_values);
+      }
+
+      fflush( fp );
+      fclose (fp);
+  }
+
+  return error;
+}
+
+
+/** @} *//* objects_image */ 
+
+
+
+/** \addtogroup objects_conversion Conversion API's
+ *  Colour conversion front end API's.
+ *
+ *  Colour conversions are realised by structures called acyclic graphs. A graph
+ *  combines several processing elements and their according stages into one
+ *  process model. A very simple graph will link elements just one by one to
+ *  form a chain. More complex graphs are possible by branching and rejoining of
+ *  data processing arms.
+ *  Datas are requested always from the end. This makes it simple to create
+ *  views at data. A observer tells the to be viewed plugin that it wants
+ *  to connect and can request the data stream.
+ *  In the other direction plug-ins can send events along the pipe through
+ *  callbacks, e.g. for reporting errors or requesting updating of parameters.
+ *  The @ref module_api explains how to create modules to plug into Oyranos.
+ *
+ *  \b About \b Graphs: \n
+ *  The top object a user will handle is of type oyConversion_s. This 
+ *  contains oyFilterNode_s objects, which describe the connections of each
+ *  processing element, such as images with attached data and profile, and the
+ *  filters. The Oyranos node connection concept is splitted into various
+ *  structures.
+ \dot
+digraph G {
+  bgcolor="transparent";
+  rankdir=LR
+  graph [fontname=Helvetica, fontsize=12];
+  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded,filled"];
+  edge [fontname=Helvetica, fontsize=10];
+
+  a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
+  b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
+
+  subgraph cluster_0 {
+    label="Oyranos Filter Graph";
+    color=gray;
+
+    a:socket -> b:plug [arrowhead=none, arrowtail=normal];
+    b:socket -> d:plug [arrowhead=none, arrowtail=normal];
+    a:socket -> c:plug [arrowhead=none, arrowtail=normal];
+    c:socket -> d:plug [arrowhead=none, arrowtail=normal];
+  }
+}
+ \enddot
+ *
+ *  \b Connectors \b have \b tree \b missions:
+ *  - The first is to tell others to about the 
+ *  filters intention to provide a connection endity. This is done by the pure
+ *  existence of the oyConnector_s inside the module filter structure
+ *  (oyCMMapi4_s) and the oyFilterNode_s::sockets and 
+ *  oyFilterNode_s::plugs members. \n
+ *  - The second is to tell about the connectors capabilities, to allow for 
+ *  automatic checking for fittness to other connectors. \n
+ *  - The thierd task of this struct is to differenciate between \a input or
+ *  \a plug and \a output or \a socket. This is delegated to the
+ *  oyFilterSocket_s and oyFilterPlug_s structures.
+ *  
+ *
+ *  \b Routing: \n
+ *  The connector output, called socket, side is primarily passive. The data
+ *  stream is requested or viewed by the input side, called plug. 
+ *  Changes are propagated by events. This turns the acyclic graph into a 
+ *  dual one. The events use the same graph just in the other direction.
+ *  Events and data requests are distinct.
+ *  A \a plug local to the filter or filter node can be connected to a remote
+ *  \a socket connector and vice versa.
+ \dot
+digraph G {
+  bgcolor="transparent";
+  node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
+  edge[ fontname=Helvetica, fontsize=10 ];
+  rankdir=LR
+  a [label=<
+<table border="0" cellborder="1" cellspacing="4">
+  <tr> <td>Filter Node A</td>
+      <td bgcolor="red" width="10" port="s"> socket </td>
+  </tr>
+</table>>
+  ]
+  b [label=< 
+<table border="0" cellborder="1" cellspacing="4">
+  <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
+      <td>Filter Node B</td>
+  </tr>
+</table>>
+  ]
+  subgraph { rank=min a }
+
+  b:p->a:s [label=request];
+} 
+ \enddot
+ * Status information can be passed from the input side to the output side by
+ * callbacks.
+ \dot
+digraph G {
+  bgcolor="transparent";
+  node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
+  edge[ fontname=Helvetica, fontsize=10 ];
+  rankdir=LR
+  a [label=<
+<table border="0" cellborder="1" cellspacing="4">
+  <tr> <td>Filter Node A</td>
+      <td bgcolor="red" width="10" port="s"> socket </td>
+  </tr>
+</table>>
+  ]
+  b [label=< 
+<table border="0" cellborder="1" cellspacing="4">
+  <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
+      <td>Filter Node B</td>
+  </tr>
+</table>>
+  ]
+  subgraph { rank=min a }
+
+  b:p->a:s [arrowhead=none, arrowtail=normal, label=callback];
+} 
+ \enddot
+ *
+ * The data flows from the socket to the plug.
+ \dot
+digraph G {
+  bgcolor="transparent";
+  node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
+  edge[ fontname=Helvetica, fontsize=10 ];
+  rankdir=LR
+  a [label=<
+<table border="0" cellborder="1" cellspacing="4">
+  <tr> <td>Filter Node A</td>
+      <td bgcolor="red" width="10" port="s"> socket </td>
+  </tr>
+</table>>
+  ]
+  b [label=< 
+<table border="0" cellborder="1" cellspacing="4">
+  <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
+      <td>Filter Node B</td>
+  </tr>
+</table>>
+  ]
+  subgraph { rank=min a }
+
+  b:p->a:s [arrowhead=none, arrowtail=normal, label=data];
+} 
+ \enddot
+ *
+ * A oyFilterNode_s can have various oyFilterPlug_s ' to obtain data from
+ * different sources. The required number is described in the oyCMMapi4_s 
+ * structure, which is part of oyFilterCore_s. But each plug can only connect to
+ * one socket.
+ \dot
+digraph G {
+  bgcolor="transparent";
+  rankdir=LR
+  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
+  edge [fontname=Helvetica, fontsize=10];
+
+  b [ label="{<plug> | Filter Node 2 |<socket>}"];
+  c [ label="{<plug> | Filter Node 3 |<socket>}"];
+  d [ label="{<plug> 2| Filter Node 4 |<socket>}"];
+
+  b:socket -> d:plug [arrowtail=normal, arrowhead=none];
+  c:socket -> d:plug [arrowtail=normal, arrowhead=none];
+}
+ \enddot
+ *
+ * oyFilterSocket_s is designed to accept arbitrary numbers of connections 
+ * to allow for viewing on a filters data output or observe its state changes.
+ \dot
+digraph G {
+  bgcolor="transparent";
+  rankdir=LR
+  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
+  edge [fontname=Helvetica, fontsize=10];
+
+  a [ label="{<plug> | Filter Node 1 |<socket>}"];
+  b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  d [ label="{<plug> 1| Filter Node 4 |<socket>}"];
+  e [ label="{<plug> 1| Filter Node 5 |<socket>}"];
+
+  a:socket -> b:plug [arrowtail=normal, arrowhead=none];
+  a:socket -> c:plug [arrowtail=normal, arrowhead=none];
+  a:socket -> d:plug [arrowtail=normal, arrowhead=none];
+  a:socket -> e:plug [arrowtail=normal, arrowhead=none];
+}
+ \enddot
+
+ *  @{
+ */
+
+/** Function oyConnector_New
+ *  @memberof oyConnector_s
+ *  @brief   allocate a new Connector object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI oyConnector_s * OYEXPORT
+                   oyConnector_New   ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_CONNECTOR_S;
+# define STRUCT_TYPE oyConnector_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyConnector_Copy;
+  s->release = (oyStruct_Release_f) oyConnector_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  s->is_plug = -1;
+
+  return s;
+}
+
+/**
+ *  @internal
+ *  Function oyConnector_Copy_
+ *  @memberof oyConnector_s
+ *  @brief   real copy a Connector object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2011/01/31
+ */
+oyConnector_s * oyConnector_Copy_    ( oyConnector_s     * obj,
+                                       oyObject_s          object )
+{
+  oyConnector_s * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyConnector_New( object );
+  error = !s;
+
+  if(error <= 0)
+  {
+    allocateFunc_ = s->oy_->allocateFunc_;
+
+    error = oyObject_CopyNames( s->oy_, obj->oy_ );
+
+    s->connector_type = oyStringCopy_( obj->connector_type, allocateFunc_ );
+    s->is_plug = obj->is_plug;
+  }
+
+  if(error)
+    oyConnector_Release( &s );
+
+  return s;
+}
+
+/** Function oyConnector_Copy
+ *  @memberof oyConnector_s
+ *  @brief   copy or reference a Connector object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI oyConnector_s * OYEXPORT
+                   oyConnector_Copy  ( oyConnector_s     * obj,
+                                       oyObject_s          object )
+{
+  oyConnector_s * s = 0;
+
+  if(!obj)
+    return s;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyConnector_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** Function oyConnector_Release
+ *  @memberof oyConnector_s
+ *  @brief   release and possibly deallocate a Connector object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI int  OYEXPORT
+               oyConnector_Release   ( oyConnector_s    ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyConnector_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 1 )
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    if(s->connector_type)
+      deallocateFunc( s->connector_type ); s->connector_type = 0;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+/** Function oyConnector_SetName
+ *  @memberof oyConnector_s
+ *  @brief   set the names in a connector
+ *
+ *  These are UI strings, e.g. "Img", "Image", "Image Socket" .
+ *
+ *  @param[in,out] obj                 Connector object
+ *  @param[in]     string              the name to set
+ *  @param[in]     type                the names type
+ *  @return                            1 - error; 0 - success; -1 - otherwise
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+int              oyConnector_SetName ( oyConnector_s     * obj,
+                                       const char        * string,
+                                       oyNAME_e            type )
+{
+  oyConnector_s * s = obj;
+  int error = 0;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 1 )
+
+  error = oyObject_SetName( obj->oy_, string, type );
+
+  return error;
+}
+
+/** Function oyConnector_GetName
+ *  @memberof oyConnector_s
+ *  @brief   set the names in a connector
+ *
+ *  Get UI strings.
+ *
+ *  @param[in]     obj                 Connector object
+ *  @param[in]     type                the names type
+ *  @return                            the name string
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+const char *     oyConnector_GetName ( oyConnector_s     * obj,
+                                       oyNAME_e            type )
+{
+  oyConnector_s * s = obj;
+  const char * string = 0;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 0 )
+
+  string = oyObject_GetName( obj->oy_, type );
+
+  return string;
+}
+
+/** Function oyConnector_IsPlug
+ *  @memberof oyConnector_s
+ *  @brief   is this connector a plug or a socket
+ *
+ *  @param[in]     obj                 Connector object
+ *  @return                            boolean; 0 - socket; 1 - plug
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+int              oyConnector_IsPlug  ( oyConnector_s     * obj )
+{
+  oyConnector_s * s = obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 0 )
+
+  return obj->is_plug;
+}
+
+/** Function oyConnector_SetIsPlug
+ *  @memberof oyConnector_s
+ *  @brief   Set this connector as a plug or a socket
+ *
+ *  @param[in,out] obj                 Connector object
+ *  @param[in]     is_plug             boolean; 0 - socket; 1 - plug
+ *  @return                            1 - error; 0 - success; -1 - otherwise
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+int              oyConnector_SetIsPlug(oyConnector_s     * obj,
+                                       int                 is_plug )
+{
+  oyConnector_s * s = obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 1 )
+
+  obj->is_plug = is_plug;
+
+  return 0;
+}
+
+/** Function oyConnector_GetReg
+ *  @memberof oyConnector_s
+ *  @brief   Get the registration for the connection type
+ *
+ *  This is use as a rough check, if connections are possible.
+ *
+ *  @param[in]     obj                 Connector object
+ *  @return                            registration string
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+const char *     oyConnector_GetReg  ( oyConnector_s     * obj )
+{
+  oyConnector_s * s = obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 0 )
+
+  return obj->connector_type;
+}
+
+/** Function oyConnector_SetReg
+ *  @memberof oyConnector_s
+ *  @brief   Set this connectors type string
+ *
+ *  This is use as a rough check, if connections are possible.
+ *
+ *  @param[in,out] obj                 Connector object
+ *  @param[in]     type_registration   the registration string to describe the
+ *                                     type
+ *  @return                            1 - error; 0 - success; -1 - otherwise
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+int              oyConnector_SetReg  ( oyConnector_s     * obj,
+                                       const char        * type_registration )
+{
+  oyConnector_s * s = obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 1 )
+
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+    oyAlloc_f allocateFunc = s->oy_->allocateFunc_;
+
+    if(s->connector_type)
+      deallocateFunc( s->connector_type ); s->connector_type = 0;
+
+    obj->connector_type = oyStringCopy_( type_registration, allocateFunc );
+  }
+
+  return 0;
+}
+
+/** Function oyConnector_SetMatch
+ *  @memberof oyConnector_s
+ *  @brief   Set this connectors type check function
+ *
+ *  This is use as a check, if connections are possible.
+ *  This allowes for a more fine grained control than the type registration.
+ *
+ *  @param[in,out] obj                 Connector object
+ *  @param[in]     func                the check function
+ *  @return                            1 - error; 0 - success; -1 - otherwise
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+int              oyConnector_SetMatch( oyConnector_s     * obj,
+                                       oyCMMFilterSocket_MatchPlug_f func )
+{
+  oyConnector_s * s = obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 1 )
+
+  obj->filterSocket_MatchPlug = func;
+
+  return 0;
+}
+
+/** Function oyConnector_GetMatch
+ *  @memberof oyConnector_s
+ *  @brief   Set this connectors type check function
+ *
+ *  This is use as a check, if connections are possible.
+ *  This allowes for a more fine grained control than the type registration.
+ *
+ *  @param[in]     obj                 Connector object
+ *  @return                            the check function
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+oyCMMFilterSocket_MatchPlug_f oyConnector_GetMatch (
+                                       oyConnector_s     * obj )
+{
+  oyConnector_s * s = obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 0 )
+
+  return obj->filterSocket_MatchPlug;
+}
+
+
+const char *       oyConnectorEventToText (
+                                       oyCONNECTOR_EVENT_e e )
+{
+  const char * text = "unknown";
+  switch(e)
+  {
+    case oyCONNECTOR_EVENT_OK: text = "oyCONNECTOR_EVENT_OK: kind of ping"; break;
+    case oyCONNECTOR_EVENT_CONNECTED: text = "oyCONNECTOR_EVENT_CONNECTED: connection established"; break;
+    case oyCONNECTOR_EVENT_RELEASED: text = "oyCONNECTOR_EVENT_RELEASED: released the connection"; break;
+    case oyCONNECTOR_EVENT_DATA_CHANGED: text = "oyCONNECTOR_EVENT_DATA_CHANGED: call to update image views"; break;
+    case oyCONNECTOR_EVENT_STORAGE_CHANGED: text = "oyCONNECTOR_EVENT_STORAGE_CHANGED: new data accessors"; break;
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_DATA: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_DATA: can not process data"; break;
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION: can not handle option"; break;
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT: can not handle context"; break;
+    case oyCONNECTOR_EVENT_INCOMPLETE_GRAPH: text = "oyCONNECTOR_EVENT_INCOMPLETE_GRAPH: can not completely process"; break;
+  }
+  return text;
+}
+
+/** Function oyFilterSocket_Callback
+ *  @memberof oyFilterSocket_s
+ *  @brief   tell about a oyConversion_s event
+ *
+ *  @param[in,out] c                   the connector
+ *  @param         e                   the event type
+ *  @return                            0 on success, else error
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/28 (Oyranos: 0.1.8)
+ *  @date    2009/02/19
+ */
+OYAPI int  OYEXPORT
+                 oyFilterSocket_Callback(
+                                       oyFilterPlug_s    * c,
+                                       oyCONNECTOR_EVENT_e e )
+{
+  int n, i;
+  oyFilterSocket_s * s;
+  oyFilterPlug_s * p;
+
+  if(e != oyCONNECTOR_EVENT_OK && oy_debug_signals)
+  {
+    WARNc5_S("\n  oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n"
+             "  event: \"%s\" plug[%d/node%d]",
+            (c && c->remote_socket_ && c->remote_socket_->node) ?
+                   oyObject_GetId(c->remote_socket_->node->oy_) : -1,
+            (c && c->remote_socket_) ? oyObject_GetId(c->remote_socket_->oy_)
+                                     : -1,
+            oyConnectorEventToText(e),
+            c ? oyObject_GetId( c->oy_ ) : -1,
+            c ? (c->node ? oyObject_GetId( c->node->oy_ ) : -1) : -1
+          );
+  }
+
+  if(!c)
+    return 1;
+
+  s = c->remote_socket_;
+
+  if(!s)
+    return 0;
+
+  n = oyFilterPlugs_Count( s->requesting_plugs_ );
+
+  if(e == oyCONNECTOR_EVENT_RELEASED)
+    for(i = 0; i < n; ++i)
+    {
+      p = oyFilterPlugs_Get( s->requesting_plugs_, i );
+      if(p == c)
+      {
+        oyFilterPlugs_ReleaseAt( s->requesting_plugs_, i );
+        break;
+      }
+    }
+
+  return 0;
+}
+
+/** Function oyFilterPlug_Callback
+ *  @memberof oyFilterPlug_s
+ *  @brief   tell about a oyConversion_s event
+ *
+ *  @param[in,out] c                   the connector
+ *  @param         e                   the event type
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/28 (Oyranos: 0.1.8)
+ *  @date    2008/07/28
+ */
+OYAPI int  OYEXPORT
+                 oyFilterPlug_Callback(
+                                       oyFilterPlug_s    * c,
+                                       oyCONNECTOR_EVENT_e e )
+{
+  if(oy_debug_signals)
+    WARNc4_S("oyFilterNode_s[%d]->oyFilterPlug_s[%d]\n"
+             "  event: \"%s\" socket[%d]",
+            (c && c->node) ? oyObject_GetId(c->node->oy_) : -1,
+            c ? oyObject_GetId(c->oy_) : -1,
+            oyConnectorEventToText(e),
+            (c && c->remote_socket_) ?
+                                   oyObject_GetId( c->remote_socket_->oy_ ) : -1
+          );
+
+  if(c && e == oyCONNECTOR_EVENT_RELEASED)
+    c->remote_socket_ = 0;
+
+  return 0;
+}
+
+
+/** Function oyFilterSocket_SignalToGraph
+ *  @memberof oyFilterSocket_s
+ *  @brief   send a signal through the graph
+ *
+ *  The traversal direction is defined as from the starting node to the output.
+ *
+ *  @return                            1 if handled or zero
+ *
+ *  @version Oyranos: 0.3.2
+ *  @since   2009/10/27 (Oyranos: 0.1.10)
+ *  @date    2011/07/10
+ */
+OYAPI int  OYEXPORT
+                 oyFilterSocket_SignalToGraph (
+                                       oyFilterSocket_s  * c,
+                                       oyCONNECTOR_EVENT_e e )
+{
+  oySIGNAL_e sig = oySIGNAL_OK;
+  int n, i, j_n,j, k,k_n, handled = 0, pos;
+  oyFilterPlug_s * p, * sp;
+  oyFilterGraph_s * graph = 0;
+
+  switch(e)
+  {
+    case oyCONNECTOR_EVENT_OK:                /**< kind of ping */
+    case oyCONNECTOR_EVENT_CONNECTED:         /**< connection established */
+    case oyCONNECTOR_EVENT_RELEASED:          /**< released the connection */
+    case oyCONNECTOR_EVENT_DATA_CHANGED:      /**< call to update image views */
+    case oyCONNECTOR_EVENT_STORAGE_CHANGED:   /**< new data accessors */
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_DATA: /**< can not process image */
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION:/**< can not handle option */
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT:/**< can not handle profile */
+    case oyCONNECTOR_EVENT_INCOMPLETE_GRAPH:  /**< can not completely process */
+         sig = (oySIGNAL_e) e; break;
+  }
+
+  handled = oyStruct_ObserverSignal( (oyStruct_s*) c->node, sig, 0 );
+  if(handled)
+    return handled;
+
+  if(e != oyCONNECTOR_EVENT_OK && oy_debug_signals)
+  {
+    WARNc4_S("oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n"
+             "  event: \"%s\" socket[%d]",
+            (c && c->node) ? oyObject_GetId(c->node->oy_) : -1,
+            c ? oyObject_GetId(c->oy_) : -1,
+            oyConnectorEventToText(e),
+            (c) ? oyObject_GetId( c->oy_ ) : -1
+          );
+  }
+
+  n = oyFilterPlugs_Count( c->requesting_plugs_ );
+
+  for(i = 0; i < n; ++i)
+  {
+    p = oyFilterPlugs_Get( c->requesting_plugs_, i );
+    handled = oyStruct_ObserverSignal( (oyStruct_s*) p->node, sig, 0 );
+
+    /* get all nodes in the output direction */
+    graph = oyFilterGraph_FromNode( p->node, OY_INPUT );
+
+    j_n = oyFilterNodes_Count( graph->nodes );
+    for( j = 0; j < j_n; ++j )
+    {
+      oyFilterNode_s * node = oyFilterNodes_Get( graph->nodes, j );
+
+      /* iterate over all node outputs */
+      k_n = oyFilterNode_EdgeCount( node, 1, OY_FILTEREDGE_CONNECTED );
+      for(k = 0; k < k_n; ++k)
+      {
+        pos = oyFilterNode_GetConnectorPos( node, 1, "///", k,
+                                            OY_FILTEREDGE_CONNECTED );
+        sp = oyFilterNode_GetPlug( node, pos );
+        oyFilterSocket_Callback( sp, e );
+      }
+
+      oyFilterNode_Release( &node );
+      if(handled)
+        break;
+    }
+
+    oyFilterGraph_Release( &graph );
+    if(handled)
+      break;
+  }
+
+  return handled;
+}
+
+
+/** Function oyFilterSocket_New
+ *  @memberof oyFilterSocket_s
+ *  @brief   allocate a new FilterSocket object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI oyFilterSocket_s * OYEXPORT
+                   oyFilterSocket_New( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_FILTER_SOCKET_S;
+# define STRUCT_TYPE oyFilterSocket_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyFilterSocket_Copy;
+  s->release = (oyStruct_Release_f) oyFilterSocket_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  s->relatives_ = 0;
+
+  return s;
+}
+
+/**
+ *  @internal
+ *  Function oyFilterSocket_Copy_
+ *  @memberof oyFilterSocket_s
+ *  @brief   real copy a FilterSocket object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+oyFilterSocket_s * oyFilterSocket_Copy_
+                                     ( oyFilterSocket_s  * obj,
+                                       oyObject_s          object )
+{
+  oyFilterSocket_s * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyFilterSocket_New( object );
+  error = !s;
+
+  if(error <= 0)
+  {
+    allocateFunc_ = s->oy_->allocateFunc_;
+
+    s->pattern = oyConnector_Copy( obj->pattern, s->oy_ );
+    s->node = oyFilterNode_Copy( obj->node, 0 );
+    if(obj->data && obj->data->copy)
+      s->data = obj->data->copy( obj->data, s->oy_ );
+  }
+
+  if(error)
+    oyFilterSocket_Release( &s );
+
+  return s;
+}
+
+/** Function oyFilterSocket_Copy
+ *  @memberof oyFilterSocket_s
+ *  @brief   copy or reference a FilterSocket object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI oyFilterSocket_s * OYEXPORT
+                   oyFilterSocket_Copy(oyFilterSocket_s  * obj,
+                                       oyObject_s          object )
+{
+  oyFilterSocket_s * s = 0;
+
+  if(!obj || obj->type_ != oyOBJECT_FILTER_SOCKET_S)
+    return s;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyFilterSocket_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** Function oyFilterSocket_Release
+ *  @memberof oyFilterSocket_s
+ *  @brief   release and possibly deallocate a FilterSocket object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI int  OYEXPORT
+               oyFilterSocket_Release( oyFilterSocket_s ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyFilterSocket_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 1 )
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  oyObject_Ref(s->oy_);
+
+  oyFilterNode_Release( &s->node );
+
+  {
+    int count = 0,
+        i;
+    oyFilterPlug_s * c = 0;
+
+    count = oyFilterPlugs_Count( s->requesting_plugs_ );
+    for(i = 0; i < count; ++i)
+    {
+      c = oyFilterPlugs_Get( s->requesting_plugs_, i );
+      oyFilterPlug_Callback( c, oyCONNECTOR_EVENT_RELEASED );
+      oyFilterPlug_Release( &c );
+    }
+  }
+
+  oyObject_UnRef(s->oy_);
+  oyConnector_Release( &s->pattern );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    if(s->relatives_)
+      deallocateFunc( s->relatives_ );
+    s->relatives_ = 0;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+/** Function oyFilterPlug_ConnectIntoSocket
+ *  @memberof oyFilterPlug_s
+ *  @brief   connect a oyFilterPlug_s with a oyFilterSocket_s
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/30 (Oyranos: 0.1.8)
+ *  @date    2008/07/31
+ */
+OYAPI int  OYEXPORT
+                 oyFilterPlug_ConnectIntoSocket (
+                                       oyFilterPlug_s   ** p,
+                                       oyFilterSocket_s ** s )
+{
+  oyFilterPlug_s * tp = 0;
+  oyFilterSocket_s * ts = 0;
+
+  if(!p || !*p || !s || !*s)
+    return 1;
+
+  tp = *p;
+  ts = *s;
+
+  if(tp->remote_socket_)
+    oyFilterSocket_Callback( tp, oyCONNECTOR_EVENT_RELEASED );
+  oyFilterSocket_Release( &tp->remote_socket_ );
+
+# if DEBUG_OBJECT
+      WARNc6_S("%s Id: %d -> %s Id: %d\n  %s -> %s",
+             oyStructTypeToText( (*p)->type_ ), oyObject_GetId((*p)->oy_),
+             oyStructTypeToText( (*s)->type_ ), oyObject_GetId((*s)->oy_),
+             (*p)->node->relatives_,
+             (*s)->node->relatives_ )
+#endif
+
+  tp->remote_socket_ = *s; *s = 0;
+  return !(ts->requesting_plugs_ =
+                          oyFilterPlugs_MoveIn( ts->requesting_plugs_, p, -1 ));
+}
+
+
+/** Function oyFilterPlug_New
+ *  @memberof oyFilterPlug_s
+ *  @brief   allocate a new FilterPlug object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI oyFilterPlug_s * OYEXPORT
+                   oyFilterPlug_New  ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_FILTER_PLUG_S;
+# define STRUCT_TYPE oyFilterPlug_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyFilterPlug_Copy;
+  s->release = (oyStruct_Release_f) oyFilterPlug_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  s->relatives_ = 0;
+
+  return s;
+}
+
+/**
+ *  @internal
+ *  Function oyFilterPlug_Copy_
+ *  @memberof oyFilterPlug_s
+ *  @brief   real copy a FilterPlug object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+oyFilterPlug_s * oyFilterPlug_Copy_
+                                     ( oyFilterPlug_s    * obj,
+                                       oyObject_s          object )
+{
+  oyFilterPlug_s * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyFilterPlug_New( object );
+  error = !s;
+
+  if(error <= 0)
+  {
+    allocateFunc_ = s->oy_->allocateFunc_;
+
+    s->pattern = oyConnector_Copy( obj->pattern, s->oy_ );
+    s->node = oyFilterNode_Copy( obj->node, 0 );
+  }
+
+  if(error)
+    oyFilterPlug_Release( &s );
+
+  return s;
+}
+
+/** Function oyFilterPlug_Copy
+ *  @memberof oyFilterPlug_s
+ *  @brief   copy or reference a FilterPlug object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI oyFilterPlug_s * OYEXPORT
+                   oyFilterPlug_Copy ( oyFilterPlug_s    * obj,
+                                       oyObject_s          object )
+{
+  oyFilterPlug_s * s = 0;
+
+  if(!obj || obj->type_ != oyOBJECT_FILTER_PLUG_S)
+    return s;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyFilterPlug_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** Function oyFilterPlug_Release
+ *  @memberof oyFilterPlug_s
+ *  @brief   release and possibly deallocate a FilterPlug object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/27 (Oyranos: 0.1.8)
+ *  @date    2008/07/27
+ */
+OYAPI int  OYEXPORT
+               oyFilterPlug_Release  ( oyFilterPlug_s   ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyFilterPlug_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  oyCheckType__m( oyOBJECT_FILTER_PLUG_S, return 1 )
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  oyFilterNode_Release( &s->node );
+
+  oyFilterSocket_Callback( s, oyCONNECTOR_EVENT_RELEASED );
+  oyFilterSocket_Release( &s->remote_socket_ );
+
+  oyConnector_Release( &s->pattern );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    if(s->relatives_)
+      deallocateFunc( s->relatives_ );
+    s->relatives_ = 0;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+/** Function oyFilterPlug_ResolveImage
+ *  @memberof oyFilterPlug_s
+ *  @brief   resolve processing data during a filter run
+ *
+ *  The function is a convenience function to use inside a filters
+ *  oyCMMFilterPlug_Run_f call. The function makes only sense for non root
+ *  filters.
+ *
+ *  @param[in,out] plug                the filters own plug
+ *  @param[in,out] socket              the filters own socket
+ *  @param[in,out] ticket              the actual ticket
+ *  @return                            the input image
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/05/01 (Oyranos: 0.1.10)
+ *  @date    2009/05/01
+ */
+OYAPI oyImage_s * OYEXPORT
+             oyFilterPlug_ResolveImage(oyFilterPlug_s    * plug,
+                                       oyFilterSocket_s  * socket,
+                                       oyPixelAccess_s   * ticket )
+{
+  int error = !plug || !plug->remote_socket_ ||
+              !ticket ||
+              !socket || !socket->node;
+  oyImage_s * image_input = 0, * image = 0;
+  oyFilterNode_s * input_node = 0,
+                 * node = socket->node;
+  oyPixel_t pixel_layout = 0;
+  oyOptions_s * options = 0,
+              * requests = 0,
+              * ticket_orig;
+  int32_t n = 0;
+
+  if(error)
+    return 0;
+
+  image_input = oyImage_Copy( (oyImage_s*)plug->remote_socket_->data, 0 );
+  input_node = plug->remote_socket_->node;
+
+ 
+  if(!image_input)
+  {
+    /* get options */
+    options = oyFilterNode_GetOptions( node, 0 );
+
+    /* store original queue */
+    ticket_orig = ticket->request_queue;
+    ticket->request_queue = 0;
+
+    /* select only resolve requests */
+    error = oyOptions_Filter( &requests, &n, 0,
+                              oyBOOLEAN_INTERSECTION,
+                              "////resolve", options );
+    oyOptions_Release( &options );
+
+    /* combine old queue and requests from the current node */
+    oyOptions_CopyFrom( &ticket->request_queue, requests, oyBOOLEAN_UNION, 0,0);
+    oyOptions_CopyFrom( &ticket->request_queue, ticket_orig, oyBOOLEAN_UNION,
+                        0, 0 );
+
+    /* filter again, (really needed?) */
+    oyOptions_Filter( &ticket->request_queue, &n, 0,
+                      oyBOOLEAN_INTERSECTION, "////resolve", requests );
+    oyOptions_Release( &requests );
+ 
+    /* try to obtain the processing data from a generator filter */
+    input_node->api7_->oyCMMFilterPlug_Run( node->plugs[0], ticket );
+    image_input = oyImage_Copy( (oyImage_s*)plug->remote_socket_->data, 0 );
+
+    /* clean up the queue */
+    oyOptions_Release( &ticket->request_queue );
+
+    /* restore old queue */
+    ticket->request_queue = ticket_orig; ticket_orig = 0;
+
+    if(!image_input)
+      return 0;
+  }
+
+  if(!socket->data)
+  {
+    /* Copy a root image or link to a non root image. */
+    if(!plug->remote_socket_->node->api7_->plugs_n)
+    {
+      options = oyFilterNode_GetOptions( node, 0 );
+      error = oyOptions_Filter( &requests, &n, 0,
+                                oyBOOLEAN_INTERSECTION,
+                                "////resolve", options );
+      oyOptions_Release( &options );
+      oyOptions_CopyFrom( &requests, ticket->request_queue,oyBOOLEAN_UNION,0,0);
+
+      error = oyOptions_FindInt( requests, "pixel_layout", 0,
+                                 (int32_t*)&pixel_layout );
+      oyOptions_Release( &requests );
+
+      if(error == 0)
+      {
+        /* possibly complete the pixel layout information */
+        int n = oyToChannels_m( pixel_layout );
+        int cchan_n = oyProfile_GetChannelsCount( image_input->profile_ );
+        oyPixel_t layout = oyDataType_m( oyToDataType_m(pixel_layout) ) |
+                           oyChannels_m( OY_MAX(n, cchan_n) );
+        /* create a new image */
+        image = oyImage_Create( image_input->width, image_input->height,
+                                0, layout,
+                                image_input->profile_, node->oy_ );
+
+      } else
+        image = oyImage_Copy( (oyImage_s*) image_input, node->oy_ );
+
+
+    } else
+      image = oyImage_Copy( (oyImage_s*) image_input, 0 );
+
+    error = oyFilterNode_DataSet( node, (oyStruct_s*)image, 0, 0 );
+    oyImage_Release( &image );
+  }
+
+  if(!ticket->output_image)
+    ticket->output_image = oyImage_Copy( (oyImage_s*) socket->data, 0 );
+
+  oyOptions_Release( &requests );
+
+  return image_input;
+}
+
+
+
+
+/** Function oyFilterPlugs_New
+ *  @memberof oyFilterPlugs_s
+ *  @brief   allocate a new FilterPlugs list
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+OYAPI oyFilterPlugs_s * OYEXPORT
+                   oyFilterPlugs_New ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_FILTER_PLUGS_S;
+# define STRUCT_TYPE oyFilterPlugs_s
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+  
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyFilterPlugs_Copy;
+  s->release = (oyStruct_Release_f) oyFilterPlugs_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  s->list_ = oyStructList_Create( s->type_, 0, 0 );
+
+  return s;
+}
+
+/**
+ *  @internal
+ *  Function oyFilterPlugs_Copy_
+ *  @memberof oyFilterPlugs_s
+ *  @brief   real copy a FilterPlugs object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+oyFilterPlugs_s * oyFilterPlugs_Copy_
+                                     ( oyFilterPlugs_s       * obj,
+                                       oyObject_s          object )
+{
+  oyFilterPlugs_s * s = 0;
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyFilterPlugs_New( object );
+  error = !s;
+
+  if(error <= 0)
+  {
+    allocateFunc_ = s->oy_->allocateFunc_;
+    s->list_ = oyStructList_Copy( obj->list_, s->oy_ );
+  }
+
+  if(error)
+    oyFilterPlugs_Release( &s );
+
+  return s;
+}
+
+/** Function oyFilterPlugs_Copy
+ *  @memberof oyFilterPlugs_s
+ *  @brief   copy or reference a FilterPlugs list
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+OYAPI oyFilterPlugs_s * OYEXPORT
+                   oyFilterPlugs_Copy ( oyFilterPlugs_s       * obj,
+                                       oyObject_s          object )
+{
+  oyFilterPlugs_s * s = 0;
+
+  if(!obj)
+    return s;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyFilterPlugs_Copy_( obj, object );
+
+  return s;
+}
+ 
+/** Function oyFilterPlugs_Release
+ *  @memberof oyFilterPlugs_s
+ *  @brief   release and possibly deallocate a FilterPlugs list
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+OYAPI int  OYEXPORT
+               oyFilterPlugs_Release     ( oyFilterPlugs_s      ** obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyFilterPlugs_s * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  oyCheckType__m( oyOBJECT_FILTER_PLUGS_S, return 1 )
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+  oyStructList_Release( &s->list_ );
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+
+/** Function oyFilterPlugs_MoveIn
+ *  @memberof oyFilterPlugs_s
+ *  @brief   add a element to a FilterPlugs list
+ *
+ *  @param[in]     list                list
+ *  @param[in,out] obj                 list element
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+OYAPI oyFilterPlugs_s * OYEXPORT
+                 oyFilterPlugs_MoveIn    ( oyFilterPlugs_s   * list,
+                                       oyFilterPlug_s   ** obj,
+                                       int                 pos )
+{
+  oyFilterPlugs_s * s = list;
+  int error = !s || s->type_ != oyOBJECT_FILTER_PLUGS_S;
+
+  if(obj && *obj && (*obj)->type_ == oyOBJECT_FILTER_PLUG_S)
+  {
+    if(!s)
+    {
+      s = oyFilterPlugs_New(0);
+      error = !s;
+    }                                  
+
+    if(error <= 0 && !s->list_)
+    {
+      s->list_ = oyStructList_Create( s->type_, 0, 0 );
+      error = !s->list_;
+    }
+      
+    if(error <= 0)
+      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos, 0 );
+  }   
+  
+  return s;
+}
+
+/** Function oyFilterPlugs_ReleaseAt
+ *  @memberof oyFilterPlugs_s
+ *  @brief   release a element from a FilterPlugs list
+ *
+ *  @param[in,out] list                the list
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+OYAPI int  OYEXPORT
+                 oyFilterPlugs_ReleaseAt ( oyFilterPlugs_s * list,
+                                       int                 pos )
+{ 
+  int error = !list;
+
+  if(error <= 0 && list->type_ != oyOBJECT_FILTER_PLUGS_S)
+    error = 1;
+  
+  if(error <= 0)
+    oyStructList_ReleaseAt( list->list_, pos );
+
+  return error;
+}
+
+/** Function oyFilterPlugs_Get
+ *  @memberof oyFilterPlugs_s
+ *  @brief   get a element of a FilterPlugs list
+ *
+ *  @param[in,out] list                the list
+ *  @param         pos                 position
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/29 (Oyranos: 0.1.8)
+ *  @date    2008/07/29
+ */
+OYAPI oyFilterPlug_s * OYEXPORT
+                 oyFilterPlugs_Get   ( oyFilterPlugs_s   * list,
+                                       int                 pos )
+{       
+  if(list && list->type_ == oyOBJECT_FILTER_PLUGS_S)
+    return (oyFilterPlug_s *) oyStructList_GetRefType( list->list_, pos, oyOBJECT_FILTER_PLUG_S ); 
+  else  
+    return 0;
+}   
+
 
 /** Function oyImage_PixelLayoutGet
  *  @memberof oyImage_s
@@ -7686,276 +17154,6 @@ const char * oyFilterCore_WidgetsGet ( oyFilterCore_s    * filter,
                                        int                 flags );
 
 
-
-/** Function: oyFilterCores_New
- *  @memberof oyFilterCores_s
- *  @brief   allocate a new Filters list
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/07/08 (Oyranos: 0.1.8)
- *  @date    2009/02/28
- */
-OYAPI oyFilterCores_s * OYEXPORT
-                   oyFilterCores_New ( oyObject_s          object )
-{
-  /* ---- start of common object constructor ----- */
-  oyOBJECT_e type = oyOBJECT_FILTER_CORES_S;
-# define STRUCT_TYPE oyFilterCores_s
-  int error = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = 0;
-  
-  if(s_obj)
-    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
-
-  if(!s || !s_obj)
-  {
-    WARNc_S(_("MEM Error."));
-    return NULL;
-  }
-
-  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
-
-  s->type_ = type;
-  s->copy = (oyStruct_Copy_f) oyFilterCores_Copy;
-  s->release = (oyStruct_Release_f) oyFilterCores_Release;
-
-  s->oy_ = s_obj;
-
-  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
-# undef STRUCT_TYPE
-  /* ---- end of common object constructor ------- */
-
-  s->list_ = oyStructList_Create( s->type_, 0, 0 );
-
-  return s;
-}
-
-/**
- *  @internal
- *  Function: oyFilterCores_Copy_
- *  @memberof oyFilterCores_s
- *  @brief   real copy a Filters object
- *
- *  @param[in]     obj                 struct object
- *  @param         object              the optional object
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/07/08 (Oyranos: 0.1.8)
- *  @date    2009/02/28
- */
-oyFilterCores_s * oyFilterCores_Copy_
-                                     ( oyFilterCores_s   * obj,
-                                       oyObject_s          object )
-{
-  oyFilterCores_s * s = 0;
-  int error = 0;
-  oyAlloc_f allocateFunc_ = 0;
-
-  if(!obj || !object)
-    return s;
-
-  s = oyFilterCores_New( object );
-  error = !s;
-
-  if(error <= 0)
-  {
-    allocateFunc_ = s->oy_->allocateFunc_;
-    s->list_ = oyStructList_Copy( obj->list_, s->oy_ );
-  }
-
-  if(error)
-    oyFilterCores_Release( &s );
-
-  return s;
-}
-
-/** Function: oyFilterCores_Copy
- *  @memberof oyFilterCores_s
- *  @brief   copy or reference a Filters list
- *
- *  @param[in]     obj                 struct object
- *  @param         object              the optional object
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/08 (Oyranos: 0.1.8)
- *  @date    2009/02/28
- */
-OYAPI oyFilterCores_s * OYEXPORT
-                   oyFilterCores_Copy( oyFilterCores_s   * obj,
-                                       oyObject_s          object )
-{
-  oyFilterCores_s * s = 0;
-
-  if(!obj)
-    return s;
-
-  if(obj && !object)
-  {
-    s = obj;
-    oyObject_Copy( s->oy_ );
-    return s;
-  }
-
-  s = oyFilterCores_Copy_( obj, object );
-
-  return s;
-}
- 
-/** Function: oyFilterCores_Release
- *  @memberof oyFilterCores_s
- *  @brief   release and possibly deallocate a Filters list
- *
- *  @param[in,out] obj                 struct object
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/07/08 (Oyranos: 0.1.8)
- *  @date    2009/02/28
- */
-OYAPI int  OYEXPORT
-               oyFilterCores_Release ( oyFilterCores_s  ** obj )
-{
-  /* ---- start of common object destructor ----- */
-  oyFilterCores_s * s = 0;
-
-  if(!obj || !*obj)
-    return 0;
-
-  s = *obj;
-
-  oyCheckType__m( oyOBJECT_FILTER_CORES_S, return 1 )
-
-  *obj = 0;
-
-  if(oyObject_UnRef(s->oy_))
-    return 0;
-  /* ---- end of common object destructor ------- */
-
-  oyStructList_Release( &s->list_ );
-
-  if(s->oy_->deallocateFunc_)
-  {
-    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-
-    oyObject_Release( &s->oy_ );
-
-    deallocateFunc( s );
-  }
-
-  return 0;
-}
-
-
-/** Function: oyFilterCores_MoveIn
- *  @memberof oyFilterCores_s
- *  @brief   add a element to a Filters list
- *
- *  @param[in]     list                list
- *  @param[in,out] obj                 list element
- *  @param         pos                 position
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/07/08 (Oyranos: 0.1.8)
- *  @date    2009/02/28
- */
-OYAPI oyFilterCores_s * OYEXPORT
-                 oyFilterCores_MoveIn( oyFilterCores_s   * list,
-                                       oyFilterCore_s   ** obj,
-                                       int                 pos )
-{
-  oyFilterCores_s * s = list;
-  int error = !s || s->type_ != oyOBJECT_FILTER_CORES_S;
-
-  if(obj && *obj && (*obj)->type_ == oyOBJECT_FILTER_CORE_S)
-  {
-    if(!s)
-    {
-      s = oyFilterCores_New(0);
-      error = !s;
-    }                                  
-
-    if(error <= 0 && !s->list_)
-    {
-      s->list_ = oyStructList_Create( s->type_, 0, 0 );
-      error = !s->list_;
-    }
-      
-    if(error <= 0)
-      error = oyStructList_MoveIn( s->list_, (oyStruct_s**)obj, pos, 0 );
-  }   
-  
-  return s;
-}
-
-/** Function: oyFilterCores_ReleaseAt
- *  @memberof oyFilterCores_s
- *  @brief   release a element from a Filters list
- *
- *  @param[in,out] list                the list
- *  @param         pos                 position
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/07/08 (Oyranos: 0.1.8)
- *  @date    2009/02/28
- */
-OYAPI int  OYEXPORT
-                  oyFilterCores_ReleaseAt( oyFilterCores_s   * list,
-                                       int                 pos )
-{ 
-  int error = !list;
-
-  if(error <= 0 && list->type_ != oyOBJECT_FILTER_CORES_S)
-    error = 1;
-  
-  if(error <= 0)
-    oyStructList_ReleaseAt( list->list_, pos );
-
-  return error;
-}
-
-/** Function: oyFilterCores_Get
- *  @memberof oyFilterCores_s
- *  @brief   get a element of a Filters list
- *
- *  @param[in,out] list                the list
- *  @param         pos                 position
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/07/08 (Oyranos: 0.1.8)
- *  @date    2009/02/28
- */
-OYAPI oyFilterCore_s * OYEXPORT
-                 oyFilterCores_Get   ( oyFilterCores_s   * list,
-                                       int                 pos )
-{       
-  if(list && list->type_ == oyOBJECT_FILTER_CORES_S)
-    return (oyFilterCore_s *) oyStructList_GetRefType( list->list_, pos, oyOBJECT_FILTER_CORE_S ); 
-  else  
-    return 0;
-}   
-
-/** Function: oyFilterCores_Count
- *  @memberof oyFilterCores_s
- *  @brief   count the elements in a Filters list
- *
- *  @param[in,out] list                the list
- *  @return                            element count
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/07/08 (Oyranos: 0.1.8)
- *  @date    2009/02/28
- */
-OYAPI int  OYEXPORT
-                 oyFilterCores_Count ( oyFilterCores_s   * list )
-{       
-  if(list)
-    return oyStructList_Count( list->list_ );
-  else return 0;
-}
-
-oyOptions_s* oyFilterNode_OptionsSet ( oyFilterNode_s    * node,
-                                       oyOptions_s       * options,
-                                       int                 flags );
 /**
  *  @internal
  *  Function oyFilterNodeObserve_
@@ -8008,6 +17206,279 @@ int      oyFilterNodeObserve_        ( oyObserver_s      * observer,
   return handled;
 }
 
+/** Function oyFilterNode_GetOptions
+ *  @memberof oyFilterNode_s
+ *  @brief   get filter options
+ *
+ *  @param[in,out] node                filter object
+ *  @param         flags               see oyOptions_s::oyOptions_ForFilter()
+ *  @return                            the options
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2012/06/12
+ */
+oyOptions_s* oyFilterNode_GetOptions ( oyFilterNode_s    * node,
+                                       int                 flags )
+{
+  oyOptions_s * options = 0;
+  oyFilterNode_s * s = node;
+  int error = 0;
+
+  if(!node)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
+
+  if(flags || !node->core->options_)
+  {
+    options = oyOptions_ForFilter_( node->core, flags, node->core->oy_ );
+    if(!node->core->options_)
+      node->core->options_ = oyOptions_Copy( options, 0 );
+    else
+      error = oyOptions_Filter( &node->core->options_, 0, 0,
+                                oyBOOLEAN_UNION,
+                                0, options );
+    if(error)
+      WARNc2_S("%s %d", _("found issues"),error);
+    if(!node->core->options_)
+      node->core->options_ = oyOptions_New( 0 );
+  }
+
+  options = oyOptions_Copy( node->core->options_, 0 );
+
+  /** Observe exported options for changes and propagate to a existing graph. */
+  error = oyOptions_ObserverAdd( options, (oyStruct_s*)node,
+                                 0, oyFilterNodeObserve_ );
+  if(error)
+    WARNc2_S("%s %d", _("found issues"),error);
+
+  return options;
+}
+
+/** Function oyFilterNode_GetUi
+ *  @memberof oyFilterNode_s
+ *  @brief   get filter options XFORMS
+ *
+ *  @param[in,out] node                filter object
+ *  @param[out]    ui_text             XFORMS fitting to the node Options
+ *  @param[out]    namespaces          additional XML namespaces
+ *  @param         allocateFunc        optional user allocator
+ *  @return                            the options
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2009/07/29 (Oyranos: 0.1.10)
+ *  @date    2012/06/12
+ */
+int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
+                                       char              ** ui_text,
+                                       char             *** namespaces,
+                                       oyAlloc_f            allocateFunc )
+{
+  int error = 0;
+  oyFilterNode_s * s = node;
+  oyOptions_s * options = 0;
+  char * text = 0,
+       * tmp = 0;
+
+  if(!node)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 1 )
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  if(!error)
+    options = oyFilterNode_GetOptions( node, 0 );
+
+  if(!error)
+  {
+    oyCMMapiFilters_s * apis;
+    int apis_n = 0, i,j = 0;
+    oyCMMapi9_s * cmm_api9 = 0;
+    char * class_name, * api_reg;
+    const char * reg = node->core->registration_;
+
+    class_name = oyFilterRegistrationToText( reg, oyFILTER_REG_TYPE, 0 );
+    api_reg = oyStringCopy_("//", oyAllocateFunc_ );
+    STRING_ADD( api_reg, class_name );
+    oyFree_m_( class_name );
+
+    apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S, 
+                                 oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                                 0,0 );
+    apis_n = oyCMMapiFilters_Count( apis );
+    for(i = 0; i < apis_n; ++i)
+    {
+      cmm_api9 = (oyCMMapi9_s*) oyCMMapiFilters_Get( apis, i );
+
+      if(oyFilterRegistrationMatch( reg, cmm_api9->pattern, 0 ))
+      {
+        if(cmm_api9->oyCMMuiGet)
+          error = cmm_api9->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
+
+        if(error)
+        {
+          WARNc2_S( "%s %s",_("error in module:"), cmm_api9->registration );
+          return 1;
+
+        } else
+        if(tmp)
+        {
+          STRING_ADD( text, tmp );
+          STRING_ADD( text, "\n" );
+          oyFree_m_(tmp);
+
+          if(namespaces && cmm_api9->xml_namespace)
+          {
+            if(j == 0)
+            {
+              size_t len = (apis_n - i + 1) * sizeof(char*);
+              *namespaces = allocateFunc( len );
+              memset(*namespaces, 0, len);
+            }
+            *namespaces[j] = oyStringCopy_( cmm_api9->xml_namespace,
+                                            allocateFunc );
+            ++j;
+            namespaces[j] = 0;
+          }
+        }
+      }
+
+      if(cmm_api9->release)
+        cmm_api9->release( (oyStruct_s**)&cmm_api9 );
+    }
+    oyCMMapiFilters_Release( &apis );
+  }
+
+  if(!error && node->core->api4_->ui->oyCMMuiGet)
+  {
+    /* @todo and how to mix in the values? */
+    error = node->core->api4_->ui->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
+    if(tmp)
+    {
+      STRING_ADD( text, tmp );
+      oyFree_m_(tmp);
+    }
+  }
+
+  oyOptions_Release( &options );
+
+  if(error <= 0 && text)
+  {
+    *ui_text = oyStringCopy_( text, allocateFunc );
+  }
+
+  return error;
+}
+
+/** Function oyFilterNode_GetText
+ *  @memberof oyFilterNode_s
+ *  @brief   serialise filter node to text
+ *
+ *  Serialise into:
+ *  - oyNAME_NICK: XML ID
+ *  - oyNAME_NAME: XML from module
+ *  - oyNAME_DESCRIPTION: ??
+ *
+ *  This function provides a complete description of the context. It might be 
+ *  more adequate to use only a subset for hashing as not all data and options
+ *  might have an effect to the context data result. 
+ *  The oyCMMapi4_s::oyCMMFilterNode_GetText() function provides a way to let a
+ *  module decide about what to place into a hash text.
+ *
+ *  @param[in,out] node                filter node
+ *  @param[out]    name_type           the type
+ *  @return                            the text
+ *
+ *  @version Oyranos: 0.3.3
+ *  @since   2008/07/17 (Oyranos: 0.1.8)
+ *  @date    2011/11/22
+ */
+const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
+                                       oyNAME_e            name_type )
+{
+  const char * tmp = 0;
+  char * hash_text = 0;
+  oyFilterNode_s * s = node;
+
+  oyStructList_s * in_datas = 0,
+                 * out_datas = 0;
+
+  if(!node)
+    return 0;
+
+  if( s->core && s->core->api4_ && s->core->api4_->oyCMMFilterNode_GetText &&
+      name_type == oyNAME_NAME )
+  {
+    hash_text = s->core->api4_->oyCMMFilterNode_GetText( node, oyNAME_NICK,
+                                                   oyAllocateFunc_ );
+    if(hash_text)
+    {
+      oyObject_SetName( s->oy_, hash_text, oyNAME_NAME );
+
+      oyDeAllocateFunc_( hash_text );
+      hash_text = 0;
+
+      hash_text = (oyChar*) oyObject_GetName( s->oy_, oyNAME_NAME );
+      return hash_text;
+    }
+  }
+
+  /* 1. create hash text */
+  hashTextAdd_m( "<oyFilterNode_s>\n  " );
+
+  /* the filter text */
+  hashTextAdd_m( oyFilterCore_GetText( node->core, oyNAME_NAME ) );
+
+  /* pick all plug (input) data */
+  in_datas = oyFilterNode_DataGet_( node, 1 );
+
+  /* pick all sockets (output) data */
+  out_datas = oyFilterNode_DataGet_( node, 0 );
+
+  /* make a description */
+  tmp = oyContextCollectData_( (oyStruct_s*)node, s->core->options_,
+                               in_datas, out_datas );
+  hashTextAdd_m( tmp );
+
+  hashTextAdd_m( "</oyFilterNode_s>\n" );
+
+
+  oyObject_SetName( s->oy_, hash_text, oyNAME_NICK );
+
+  if(s->oy_->deallocateFunc_)
+    s->oy_->deallocateFunc_( hash_text );
+  hash_text = 0;
+
+  hash_text = (oyChar*) oyObject_GetName( s->oy_, oyNAME_NICK );
+
+  return hash_text;
+}
+
+/** Function oyFilterNode_GetId
+ *  @memberof oyFilterNode_s
+ *  @brief   get the object Id
+ *
+ *  @param[in]     node                filter node
+ *  @return                            the object Id
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/25 (Oyranos: 0.1.10)
+ *  @date    2009/02/25
+ */
+OYAPI int  OYEXPORT
+               oyFilterNode_GetId    ( oyFilterNode_s    * node )
+{
+  oyFilterNode_s * s = node;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return -1 )
+
+  return oyObject_GetId( node->oy_ );
+}
+
+
 /** 
  *  @internal
  *  Info profilbody */
@@ -8055,6 +17526,272 @@ char info_profile_data[320] =
     0,0,0,0,0,0,0,0
   };
 
+/** Function oyFilterNode_TextToInfo_
+ *  @memberof oyFilterNode_s
+ *  @brief   serialise filter node to binary
+ *
+ *  Serialise into a Oyranos specific ICC profile containers "Info" text tag.
+ *  Not useable for binary contexts.
+ *
+ *  This function is currently a ICC only thing and yet just for debugging
+ *  useful.
+ *
+ *  @param[in,out] node                filter node
+ *  @param[out]    size                output size
+ *  @param[in]     allocateFunc        memory allocator
+ *  @return                            the profile container
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/17 (Oyranos: 0.1.8)
+ *  @date    2008/07/18
+ */
+oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s    * node,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyPointer ptr = 0;
+  icHeader * header = 0;
+  size_t len = 244, text_len = 0;
+  char * text = 0;
+  const char * temp = 0;
+  uint32_t * mem = 0;
+
+  if(!node)
+    return 0;
+
+  temp = oyFilterNode_GetText( node, oyNAME_NICK );
+
+  text_len = strlen(temp) + 1;
+  len += text_len + 1;
+  len = len > 320 ? len : 320;
+  ptr = allocateFunc(len);
+  header = ptr;
+  
+  if(ptr)
+  { 
+    *size = len;
+    memset(ptr,0,len);
+    memcpy(ptr, info_profile_data, 320);
+
+    text = ((char*)ptr)+244;
+    sprintf(text, "%s", temp);
+    header->size = oyValueUInt32( len );
+    mem = ptr;
+    mem[41] = oyValueUInt32( text_len + 8 );
+  }
+
+  return ptr;
+}
+
+/** Function oyFilterNode_DataGet
+ *  @memberof oyFilterNode_s
+ *  @brief   get process data from a filter socket
+ *
+ *  @param[in]     node                filter node
+ *  @param[in]     socket_pos          position of socket
+ *  @return                            the data
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/05 (Oyranos: 0.1.10)
+ *  @date    2009/03/05
+ */
+oyStruct_s *   oyFilterNode_DataGet  ( oyFilterNode_s    * node,
+                                       int                 socket_pos )
+{
+  oyFilterNode_s * s = node;
+  oyStruct_s * data = 0;
+  oyFilterSocket_s * socket = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 );
+
+  socket = oyFilterNode_GetSocket( node, socket_pos );
+  if(socket)
+    data = socket->data;
+
+  return data;
+}
+
+/** Function oyFilterNode_DataSet
+ *  @memberof oyFilterNode_s
+ *  @brief   Set process data to a filter socket
+ *
+ *  @param[in,out] node                filter node
+ *  @param[in]     data                data
+ *  @param[in]     socket_pos          position of socket
+ *  @param[in]     object              a object to not only set a reference
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/05 (Oyranos: 0.1.10)
+ *  @date    2009/03/05
+ */
+int            oyFilterNode_DataSet  ( oyFilterNode_s    * node,
+                                       oyStruct_s        * data,
+                                       int                 socket_pos,
+                                       oyObject_s        * object )
+{
+  oyFilterNode_s * s = node;
+  oyFilterSocket_s * socket = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 );
+
+  socket = oyFilterNode_GetSocket( node, socket_pos );
+  
+  if(socket)
+  {
+    if(socket->data && socket->data->release)
+      socket->data->release( &socket->data );
+
+    if(data && data->copy)
+      socket->data = data->copy( data, object );
+    else
+      socket->data = data;
+  } else
+  {
+    WARNc_S("Node has no socket. Can not assign data.");
+    return -1;
+  }
+
+  return 0;
+}
+
+
+/**
+ *  @internal
+ *  Function: oyFilterNode_GetNextFromLinear_
+ *  @memberof oyFilterNode_s
+ *  @brief   get next node from a linear graph 
+ *
+ *  @param[in]     first               filter
+ *  @return                            next node
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/11/01 (Oyranos: 0.1.8)
+ *  @date    2008/11/01
+ */
+oyFilterNode_s *   oyFilterNode_GetNextFromLinear_ (
+                                       oyFilterNode_s    * first )
+{
+      oyFilterNode_s * next = 0;
+      oyFilterSocket_s * socket = 0;
+      oyFilterPlug_s * plug = 0;
+
+      {
+        socket = first->sockets[0];
+
+        if(socket)
+          plug = oyFilterPlugs_Get( socket->requesting_plugs_, 0 );
+        if(plug)
+          next = plug->node;
+        else
+          next = 0;
+        oyFilterPlug_Release( &plug );
+      }
+
+  return next;
+}
+
+/**
+ *  @internal
+ *  Function: oyFilterNode_GetLastFromLinear_
+ *  @memberof oyFilterNode_s
+ *  @brief   get last node from a linear graph 
+ *
+ *  @param[in]     first               filter
+ *  @return                            last node
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/16 (Oyranos: 0.1.8)
+ *  @date    2008/07/16
+ */
+oyFilterNode_s *   oyFilterNode_GetLastFromLinear_ (
+                                       oyFilterNode_s    * first )
+{
+  oyFilterNode_s * next = 0,
+                 * last = 0;
+
+      next = last = first;
+
+      while(next)
+      {
+        next = oyFilterNode_GetNextFromLinear_( next );
+
+        if(next)
+          last = next;
+      }
+
+  return last;
+}
+
+/**
+ *  @internal
+ *  Function oyFilterNode_DataGet_
+ *  @memberof oyFilterNode_s
+ *  @brief   get the processing data from a filter node
+ *
+ *  @param[in]     node                filter
+ *  @param[in]     get_plug            1 get input, 0 get output data
+ *  @return                            the data list
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/11/04 (Oyranos: 0.1.8)
+ *  @date    2008/11/04
+ */
+oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
+                                       int                 get_plug )
+{
+  int error = !node;
+  oyStructList_s * datas = 0;
+  oyStruct_s * data = 0;
+  int i, n;
+
+  if(error <= 0)
+  {
+    datas = oyStructList_New(0);
+
+    if(get_plug)
+    {
+          /* pick all plug (input) data */
+          n = oyFilterNode_EdgeCount( node, 1, 0 );
+          for( i = 0; i < n && error <= 0; ++i)
+          if(node->plugs[i])
+          {
+            data = 0;
+            if(node->plugs[i]->remote_socket_->data)
+              data = node->plugs[i]->remote_socket_->data->copy( node->plugs[i]->remote_socket_->data, 0 );
+            else
+              data = (oyStruct_s*) oyOption_New(0);
+            error = oyStructList_MoveIn( datas, &data, -1, 0 );
+            ++i;
+          }
+    } else
+    {
+          /* pick all sockets (output) data */
+          n = oyFilterNode_EdgeCount( node, 0, 0 );
+          for( i = 0; i < n && error <= 0; ++i)
+          if(node->sockets[i])
+          {
+            data = 0;
+            if(node->sockets[i]->data)
+              data = node->sockets[i]->data->copy( node->sockets[i]->data, 0 );
+            else
+              data = (oyStruct_s*) oyOption_New(0);
+            error = oyStructList_MoveIn( datas, &data, -1, 0 );
+            ++i;
+          }
+
+    }
+  }
+
+  return datas;
+}
+
 /** @internal
  *  @brief   wrapper for oyDeAllocateFunc_
  *
@@ -8072,6 +17809,194 @@ int oyPointerRelease                 ( oyPointer         * ptr )
   }
   return 1;
 }
+
+
+/**
+ *  @internal
+ *  Function oyFilterNode_ContextSet_
+ *  @memberof oyFilterNode_s
+ *  @brief   set module context in a filter 
+ *
+ *  The api4 data is passed to a interpolator specific transformer. The result
+ *  of this transformer will on request be cached by Oyranos as well.
+ *
+ *  @param[in]     node                filter
+ *  @param[in,out] blob                context to fill
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/11/02 (Oyranos: 0.1.8)
+ *  @date    2009/06/12
+ */
+int          oyFilterNode_ContextSet_( oyFilterNode_s    * node,
+                                       oyBlob_s          * blob )
+{
+  int error = 0;
+  oyFilterCore_s * s = node->core;
+
+  if(error <= 0)
+  {
+          size_t size = 0;
+          oyHash_s * hash = 0,
+                   * hash_out = 0;
+          const char * hash_text_ = 0;
+          char * hash_text = 0,
+               * hash_temp = 0;
+          int hash_text_len;
+          oyPointer ptr = 0;
+          oyPointer_s * cmm_ptr = 0,
+                     * cmm_ptr_out = 0;
+
+
+          /*  Cache Search
+           *  1.     hash from input
+           *  2.     query for hash in cache
+           *  3.     check
+           *  3a.       eighter take cache entry
+           *  3b.       or ask CMM
+           *  3b.1.                update cache entry
+           */
+
+          /* 1. create hash text */
+          if(s->api4_->oyCMMFilterNode_GetText)
+          {
+            hash_temp = s->api4_->oyCMMFilterNode_GetText( node, oyNAME_NICK,
+                                                           oyAllocateFunc_ );
+            hash_text_ = hash_temp;
+          } else
+            hash_text_ = oyFilterNode_GetText( node, oyNAME_NICK );
+
+          hash_text_len = oyStrlen_( hash_text_ );
+
+          hash_text = oyAllocateFunc_(hash_text_len + 16);
+          oySprintf_( hash_text, "%s:%s", node->api7_->context_type,
+                                          hash_text_ );
+
+          if(oy_debug == 1)
+          {
+            size = 0;
+            ptr = oyFilterNode_TextToInfo_( node, &size, oyAllocateFunc_ );
+            if(ptr)
+              oyWriteMemToFile_( "test_dbg_colour.icc", ptr, size );
+          }
+
+          /* 2. query in cache for api7 */
+          hash_out = oyCMMCacheListGetEntry_( hash_text );
+
+          if(error <= 0)
+          {
+            /* 3. check and 3.a take*/
+            cmm_ptr_out = (oyPointer_s*) oyHash_GetPointer( hash_out,
+                                                        oyOBJECT_POINTER_S);
+
+            if(!(cmm_ptr_out && oyPointer_GetPointer(cmm_ptr_out)) || blob)
+            {
+              oySprintf_( hash_text, "%s:%s", s->api4_->context_type, 
+                                              hash_text_ );
+              /* 2. query in cache for api4 */
+              hash = oyCMMCacheListGetEntry_( hash_text );
+              cmm_ptr = (oyPointer_s*) oyHash_GetPointer( hash,
+                                                        oyOBJECT_POINTER_S);
+
+              if(!cmm_ptr)
+              {
+                size = 0;
+                cmm_ptr = oyPointer_New(0);
+              }
+
+              /* write the context to memory */
+              if(blob)
+              {
+
+                error = oyOptions_SetFromText( &node->tags, "////verbose",
+                                               "true", OY_CREATE_NEW );
+
+                /* oy_debug is used to obtain a complete data set */
+                ptr = s->api4_->oyCMMFilterNode_ContextToMem( node, &size,
+                                                              oyAllocateFunc_ );
+                oyBlob_SetFromData( blob, ptr, size, s->api4_->context_type );
+                error = oyOptions_SetFromText( &node->tags, "////verbose",
+                                               "false", 0 );
+
+                goto clean;
+              }
+
+              if(!oyPointer_GetPointer(cmm_ptr))
+              {
+                /* 3b. ask CMM */
+                ptr = s->api4_->oyCMMFilterNode_ContextToMem( node, &size,
+                                                              oyAllocateFunc_ );
+
+                if(!ptr || !size)
+                {
+                  oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*) node, 
+                  OY_DBG_FORMAT_ "no device link for caching\n%s", OY_DBG_ARGS_,
+                  oyFilterNode_GetText( node, oyNAME_NICK ));
+                  error = 1;
+                  oyPointer_Release( &cmm_ptr );
+                }
+
+                if(!error)
+                {
+                  error = oyPointer_Set( cmm_ptr, s->api4_->id_,
+                                         s->api4_->context_type,
+                                    ptr, "oyPointerRelease", oyPointerRelease);
+                  oyPointer_SetSize( cmm_ptr, size );
+
+                  /* 3b.1. update cache entry */
+                  error = oyHash_SetPointer( hash, (oyStruct_s*) cmm_ptr);
+                }
+              }
+
+
+              if(error <= 0 && cmm_ptr && oyPointer_GetPointer(cmm_ptr))
+              {
+                if(node->backend_data && node->backend_data->release)
+                node->backend_data->release( (oyStruct_s**)&node->backend_data);
+
+                if( oyStrcmp_( node->api7_->context_type,
+                               s->api4_->context_type ) != 0 )
+                {
+                  cmm_ptr_out = oyPointer_New(0);
+                  error = oyPointer_Set( cmm_ptr_out, node->api7_->id_,
+                                         node->api7_->context_type, 0, 0, 0);
+
+                  /* search for a convertor and convert */
+                  oyPointer_ConvertData( cmm_ptr, cmm_ptr_out, node );
+                  node->backend_data = cmm_ptr_out;
+                  /* 3b.1. update cache entry */
+                  error = oyHash_SetPointer( hash_out,
+                                              (oyStruct_s*) cmm_ptr_out);
+
+                } else
+                  node->backend_data = oyPointer_Copy( cmm_ptr, 0 );
+              }
+
+              if(oy_debug == 1)
+              {
+                int id = oyFilterNode_GetId( node );
+                char * file_name = 0;
+                oyAllocHelper_m_( file_name, char, 80, 0, return 1 );
+                sprintf( file_name, "test_dbg_colour_dl-%d.icc", id );
+                if(ptr && size && node->backend_data)
+                  oyWriteMemToFile_( file_name, ptr, size );
+                oyFree_m_(file_name);
+              }
+
+            } else
+              node->backend_data = cmm_ptr_out;
+
+          }
+
+
+    clean:
+    if(hash_temp) oyDeAllocateFunc_(hash_temp);
+    if(hash_text) oyDeAllocateFunc_(hash_text);
+  }
+
+  return error;
+}
+
 
 /** Function oyFilterNodes_New
  *  @memberof oyFilterNodes_s
@@ -8804,14 +18729,15 @@ OYAPI char * OYEXPORT
                                        oyAlloc_f           allocateFunc )
 {
   char * text = 0, 
-       * temp = oyAllocateFunc_(1024),
+       * temp =  oyAllocateFunc_(1024),
+       * temp2 = oyAllocateFunc_(1024),
        * tmp = 0, * txt = 0, * t = 0;
   oyFilterNode_s * node = 0;
   char * save_locale = 0;
   oyFilterGraph_s * s = graph;
 
   oyFilterPlug_s * p = 0;
-  int i, n,
+  int i, j, n, len,
       nodes_n = 0;
 
   oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
@@ -8862,7 +18788,59 @@ OYAPI char * OYEXPORT
       STRING_ADD( txt, t+1 );
       oyFree_m_(tmp);
     } else
+    {
       STRING_ADD( txt, node->core->api4_->id_ );
+      if(oy_debug)
+      for(j = 0; j < node->sockets_n_; ++j)
+      {
+        oyFilterSocket_s * socket = node->sockets[j];
+        if(socket && socket->data)
+        {
+          const char * name = oyObject_GetName( socket->data->oy_, 1 );
+          int k, pos = 0;
+          len = strlen(name);
+          for(k = 0; k < len; ++k)
+            if(k && name[k] == '"' && name[k-1] != '\\')
+            {
+              sprintf( &temp2[pos], "\\\"" );
+              pos += 2;
+            } else if(name[k] == '<')
+            {
+              sprintf( &temp2[pos], "\\<" );
+              pos += 2;
+            } else if(name[k] == '>')
+            {
+              sprintf( &temp2[pos], "\\>" );
+              pos += 2;
+            } else if(name[k] == '[')
+            {
+              sprintf( &temp2[pos], "\\[" );
+              pos += 2;
+            } else if(name[k] == ']')
+            {
+              sprintf( &temp2[pos], "\\]" );
+              pos += 2;
+            } else if(name[k] == '\n')
+            {
+              sprintf( &temp2[pos], "\\n" );
+              pos += 2;
+            } else
+              temp2[pos++] = name[k];
+          temp2[pos] = 0;
+          printf("%s\n", name);
+          printf("%s\n", temp2);
+          oySprintf_(temp, "  %d [ label=\"{<data> | Data %d\\n"
+                     " Type: \\\"%s\\\"\\n"
+                     " XML: \\\"%s\\\"|<socket>}\"];\n",
+                     oyObject_GetId( socket->oy_ ),
+                     j,
+                     oyStructTypeToText( socket->data->type_ ),
+                     temp2);
+          printf("%s\n", temp);
+          STRING_ADD( text, temp );
+        }
+      }
+    }
 
     oySprintf_(temp, "  %d [ label=\"{<plug> %d| Filter Node %d\\n"
                      " Category: \\\"%s\\\"\\n CMM: \\\"%s\\\"\\n"
@@ -8900,6 +18878,26 @@ OYAPI char * OYEXPORT
     STRING_ADD( text, temp );
 
     oyFilterPlug_Release( &p );
+  }
+  
+  for(i = 0; i < nodes_n; ++i)
+  {
+    node = oyFilterNodes_Get( s->nodes, i );
+    if(oy_debug)
+      for(j = 0; j < node->sockets_n_; ++j)
+      {
+        oyFilterSocket_s * socket = node->sockets[j];
+        if(socket && socket->data)
+        {
+          oySprintf_( temp,
+               "    %d:socket -> %d:data [arrowhead=crow, arrowtail=box];\n",
+                oyFilterNode_GetId( node ),
+                oyObject_GetId( socket->oy_ ));
+          STRING_ADD( text, temp );
+        }
+      }
+
+    oyFilterNode_Release( &node );
   }
 
   STRING_ADD( text, "\n" );
@@ -8962,196 +18960,53 @@ void oyShowGraph_( oyFilterNode_s * s, const char * selector )
 
   oyFilterGraph_Release( &adjacency_list );
 }
-
-#if 0
-/** @internal
- *  @brief   create and possibly precalculate a transform for a given image
- *  @memberof oyColourConversion_s
-
- *  @param[in]     opts                conversion opts
- *  @param[in]     in                  input image
- *  @param[in]     out                 output image
- *  @param         object              the optional object
- *  @return        conversion
- *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
- */
-oyColourConversion_s* oyColourConversion_Create (
-                                        oyOptions_s     * opts,
-                                        oyImage_s       * in,
-                                        oyImage_s       * out,
-                                        oyObject_s        object)
+void               oyShowConversion_ ( oyConversion_s    * conversion,
+                                       uint32_t            flags )
 {
-  oyColourConversion_s * s = 0;
-
-  DBG_PROG_START
-  oyExportStart_(EXPORT_CMMS);
-
-  s = oyColourConversion_Create_(opts, in, out, object);
-
-  oyExportEnd_();
-  DBG_PROG_ENDE
-  return s;
-}
-
-/**
- *  @internal
- *  Function: oyConcatenateImageProfiles_
- *  @brief   oyCMMColourConversion_ToMem_t implementation
- *
- *  @version Oyranos: 0.1.8
- *  @since   2007/12/21 (Oyranos: 0.1.8)
- *  @date    2007/06/26
- */
-oyProfiles_s * oyConcatenateImageProfiles_ (
-                                        oyProfiles_s    * list,
-                                        oyImage_s       * in,
-                                        oyImage_s       * out,
-                                        oyObject_s        obj )
-{
+  char * ptr = 0, * t = 0, * t2 = 0, * command = 0;
   int error = 0;
-  oyProfiles_s * p_list = 0;
+=======
+  oyConversion_s * s = conversion;
+  oyCheckType__m( oyOBJECT_CONVERSION_S, return )
+  /*return;*/
 
-  if(error <= 0)
+  ptr = oyConversion_ToText( s, "Conversion Graph", 0, oyAllocateFunc_ );
+
+  oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                      "test-%d.dot",
+                      oyStruct_GetId( (oyStruct_s*) conversion ) );
+  oyStringAddPrintf_( &t2, oyAllocateFunc_, oyDeAllocateFunc_,
+                      "test-%d.ps",
+                      oyStruct_GetId( (oyStruct_s*) conversion ) );
+
+  oyWriteMemToFile_( t, ptr, strlen(ptr) );
+  if(!(flags & 0x01))
   {
-    int i, n;
-
-    /* collect profiles */
-    if(error <= 0)
-    {
-      int p_list_n = 0;
-      oyProfile_s * tmp = 0;
-
-      if(obj)
-        p_list = oyProfiles_New( obj );
-      else
-        p_list = oyProfiles_New( 0 );
-      error = !p_list;
-
-      if(error <= 0)
-      {
-        tmp = oyProfile_Copy( in->profile_, 0);
-        error = oyProfiles_MoveIn( p_list, &tmp, 0 );
-      }
-
-      p_list_n = oyProfiles_Count( p_list );
-
-      if(error <= 0 && list && oyProfiles_Count(list))
-      {
-        n = oyProfiles_Count(list);
-        for(i = 0; i < n; ++i)
-        {
-          tmp = oyProfiles_Get( list,i );
-          error = oyProfiles_MoveIn( p_list, &tmp, i + p_list_n);
-        }
-      }
-
-      if(error <= 0)
-      {
-        tmp = oyProfile_Copy(out->profile_, 0);
-        error = oyProfiles_MoveIn( p_list, &tmp, p_list_n);
-      }
-    }
+    STRING_ADD( command, "dot -Tps ");
+    STRING_ADD( command, t );
+    STRING_ADD( command, " -o ");
+    STRING_ADD( command, t2 );
+    STRING_ADD( command, "; gv -spartan -antialias ");
+    STRING_ADD( command, t2 );
+    STRING_ADD( command, " &");
+  } else
+  {
+    STRING_ADD( command, "dot -Tps ");
+    STRING_ADD( command, t );
+    STRING_ADD( command, " -o ");
+    STRING_ADD( command, t2 );
+    STRING_ADD( command, " &");
   }
-  
-  return p_list;
+  error = system(command);
+  if(error)
+    WARNc2_S("error during calling \"%s\": %d", command, error);
+
+  oyFree_m_(ptr);
+  oyFree_m_(t);
+  oyFree_m_(t2);
+  oyFree_m_(command);
 }
 
-
-/** @internal 
- *  @memberof oyColourConversion_s
- *             precalculate a transform for a given image by the CMM
- *
- *  @since Oyranos: version 0.1.8
- *  @date  24 november 2007 (API 0.1.8)
- */
-oyCMMptr_s *       oyColourConversion_CallCMM_ (
-                                        const char      * cmm,
-                                        oyColourConversion_s * s,
-                                        oyProfiles_s * list,
-                                        oyOptions_s     * opts,
-                                        oyImage_s       * in,
-                                        oyImage_s       * out,
-                                        oyProfileTag_s ** psid,
-                                        oyObject_s        obj)
-{
-  oyCMMptr_s * cmm_ptr = 0;
-  oyCMMColourConversion_Create_f funcP = 0;
-  int error = !s;
-  char *lib_used = 0;
-
-  if(error <= 0)
-  {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API1_S, cmm, &lib_used,
-                                      0,0 );
-    if(api && *(uint32_t*)&cmm)
-    {
-      oyCMMapi1_s * api1 = (oyCMMapi1_s*) api;
-      funcP = api1->oyCMMColourConversion_Create;
-    }
-    error = !funcP;
-  }
-
-  if(error <= 0)
-  {
-    oyProfiles_s * p_list = 0;
-    int i, n;
-
-    if(obj)
-      cmm_ptr = oyCMMptr_New(0);
-    else
-      cmm_ptr = oyCMMptr_New(0);
-    error = !cmm_ptr;
-
-    if(error <= 0)
-      error = oyCMMptr_Set( cmm_ptr, lib_used, oyCMM_COLOUR_CONVERSION,0,0,0 );
-
-    /* collect profiles */
-    if(error <= 0)
-    {
-      p_list = oyConcatenateImageProfiles_( list, in, out, obj ? obj : s->oy_ );
-
-      error = !p_list;
-    }
-
-    if(error <= 0)
-    {
-      oyCMMptr_s ** p = oyStructList_GetCMMptrs_( p_list->list_, lib_used );
-      int layout_in = in->layout_[oyLAYOUT];
-      int layout_out = out->layout_[oyLAYOUT];
-
-      if(!opts)
-        opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcms",
-                                            0/* oyOPTIONATTRIBUTE_ADVANCED |
-                                            oyOPTIONATTRIBUTE_FRONT |
-                                            OY_SELECT_COMMON */, 0 );
-
-      n = oyProfiles_Count(p_list);
-
-      error = funcP( p, n, layout_in, layout_out, opts, cmm_ptr );
-
-      for(i = 0; i < n; ++i)
-        if(error <= 0)
-          error = oyCMMptr_Release_(&p[i]);
-      p_list->oy_->deallocateFunc_(p);
-
-      oyCMMdsoRelease_( lib_used );
-
-      if(psid)
-        *psid = oyProfileTag_Create( p_list->list_,
-                     icSigProfileSequenceIdentifierType, 0, OY_MODULE_NICK, 0 );
-
-      oyProfiles_Release( &p_list );
-    }
-  }
-
-  if(lib_used)
-    oyFree_m_(lib_used);
-
-  return cmm_ptr;
-}
-#endif
 
 /**
  *  @internal
@@ -9316,14 +19171,14 @@ oyPixelAccess_s *  oyPixelAccess_Create (
      
     s->data_in = filter->image_->data; */
     if(image)
-    w = image->width;
+    w = oyImage_GetWidth(image);
 
     /** The filters have no obligation to pass end to end informations.
         The ticket must hold all pices of interesst.
      */
     s->output_image_roi->width = 1.0;
     if(image)
-      s->output_image_roi->height = image->height / (double)image->width;
+      s->output_image_roi->height = oyImage_GetHeight(image) / (double)oyImage_GetWidth(image);
     s->output_image = oyImage_Copy( image, 0 );
     s->graph = oyFilterGraph_FromNode( sock->node, 0 );
 
@@ -9636,6 +19491,111 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
   return s;
 }
 
+/** Function oyConversion_CreateFromImage
+ *  @brief   generate a Oyranos graph from a image file name
+ *
+ *  @param[in]     image_in            input
+ *  @param[in]     module              tobe ussed icc node
+ *  @param[in]     flags               for inbuild defaults |
+ *                                     oyOPTIONSOURCE_FILTER;
+ *                                     for options marked as advanced |
+ *                                     oyOPTIONATTRIBUTE_ADVANCED |
+ *                                     OY_SELECT_FILTER |
+ *                                     OY_SELECT_COMMON
+ *  @param[in]     data_type           the desired data type for output
+ *  @param[in]     obj                 Oyranos object (optional)
+ *  @return                            generated new graph, owned by caller
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/04/21 (Oyranos: 0.5.0)
+ *  @date    2012/04/21
+ */
+oyConversion_s * oyConversion_CreateFromImage (
+                                       oyImage_s         * image_in,
+                                       const char        * module,
+                                       oyOptions_s       * module_options,
+                                       oyProfile_s       * output_profile,
+                                       oyDATATYPE_e        buf_type_out,
+                                       uint32_t            flags,
+                                       oyObject_s          obj )
+{
+  oyFilterNode_s * in, * out, * icc;
+  int error = 0;
+  oyConversion_s * conversion = 0;
+  oyOptions_s * options = 0;
+  char * module_reg = 0;
+  oyImage_s * image_out = 0;
+  int layout_out = 0;
+  oyProfile_s * profile_in;
+  int chan_in;
+  int cchan_in;
+
+  if(!image_in)
+    return NULL;
+
+  /* start with an empty conversion object */
+  conversion = oyConversion_New( obj );
+  /* create a filter node */
+  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0, obj );
+  /* set the above filter node as the input */
+  oyConversion_Set( conversion, in, 0 );
+  /* set the image buffer */
+  oyFilterNode_DataSet( in, (oyStruct_s*)image_in, 0, 0 );
+
+
+  STRING_ADD( module_reg, "//" OY_TYPE_STD "/" );
+  if(module)
+    STRING_ADD( module_reg, module );
+  else
+    STRING_ADD( module_reg, "icc" );
+
+  /* create a new CMM filter node */
+  icc = out = oyFilterNode_NewWith( module_reg, module_options, obj );
+  /* append the new to the previous one */
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+  if(error > 0)
+    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc" );
+
+  layout_out = oyDataType_m(buf_type_out);
+  profile_in = oyImage_GetProfile( image_in );
+  chan_in     = oyToChannels_m( oyImage_GetPixelLayout(image_in) );
+  cchan_in = oyProfile_GetChannelsCount( profile_in );
+
+  if(!chan_in && cchan_in)
+    chan_in = cchan_in;
+  /* preserve alpha */
+  layout_out |= oyChannels_m( oyProfile_GetChannelsCount(output_profile)
+                              + chan_in - cchan_in );
+
+  /* Create a output image with supplied channel depth and profile */
+  image_out   = oyImage_Create( oyImage_GetWidth( image_in ),
+                                oyImage_GetHeight( image_in ),
+                         0,
+                         layout_out,
+                         output_profile,
+                         0 );
+
+  /* swap in and out */
+  in = out;
+
+  /* add a closing node */
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+  oyFilterNode_DataSet( in, (oyStruct_s*)image_out, 0, 0 );
+  /* set the output node of the conversion */
+  oyConversion_Set( conversion, 0, out );
+
+  /* apply policies */
+  /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
+                                 "true", OY_CREATE_NEW );*/
+  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", flags,
+                        options );
+  oyOptions_Release( &options );
+
+  return conversion;
+}
 
 /**
  *  @internal
@@ -9788,7 +19748,7 @@ int                oyConversion_Set  ( oyConversion_s    * conversion,
     // use the output
     oyImage_s * image = oyConversion_GetImage( context, OY_OUTPUT );
     // get the data and draw the image
-    for(i = 0; i < image->height; ++i)
+    for(i = 0; i < oyImage_GetHeight(image); ++i)
     {
       image_data = image->getLine( image, i, &height, -1, &is_allocated );
 
@@ -9843,7 +19803,7 @@ int                oyConversion_RunPixels (
       pixel_access = oyPixelAccess_Create( 0,0, plug,
                                            oyPIXEL_ACCESS_IMAGE, 0 );
       clck = oyClock() - clck;
-      DBG_NUM1_S("oyPixelAccess_Create(): %g", clck/1000000.0 );
+      DBGs_NUM1_S(pixel_access,"oyPixelAccess_Create(): %g", clck/1000000.0 );
     }
     tmp_ticket = 1;
   }
@@ -9863,18 +19823,21 @@ int                oyConversion_RunPixels (
                                 &pixel_access->array,
                                 pixel_access->output_image_roi, 0 );
     clck = oyClock() - clck;
-    DBG_NUM1_S("oyImage_FillArray(): %g", clck/1000000.0 );
+    DBGs_NUM1_S( pixel_access,"oyImage_FillArray(): %g", clck/1000000.0 );
     error = ( result != 0 );
   }
 
   /* run on the graph */
   if(error <= 0)
   {
+    DBGs_NUM2_S( pixel_access, "Run: node_out[%d] image_out[%d]",
+                 oyStruct_GetId((oyStruct_s*)node_out),
+                 oyStruct_GetId((oyStruct_s*)image_out) );
     clck = oyClock();
     error = node_out->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
     clck = oyClock() - clck;
-    DBG_NUM1_S( "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g",
-                clck/1000000.0 );
+    DBGs_NUM1_S( pixel_access, 
+         "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g", clck/1000000.0 );
   }
 
   if(error != 0 && pixel_access)
@@ -9886,14 +19849,14 @@ int                oyConversion_RunPixels (
     clck = oyClock();
     oyFilterGraph_SetFromNode( pixel_access->graph, conversion->input, 0, 0 );
     clck = oyClock() - clck;
-    DBG_NUM1_S("oyFilterGraph_SetFromNode(): %g", clck/1000000.0 );
+    DBGs_NUM1_S(pixel_access,"oyFilterGraph_SetFromNode(): %g",clck/1000000.0 );
 
     /* resolve missing data */
     clck = oyClock();
     image_input = oyFilterPlug_ResolveImage( plug, plug->remote_socket_,
                                              pixel_access );
     clck = oyClock() - clck;
-    DBG_NUM1_S("oyFilterPlug_ResolveImage(): %g", clck/1000000.0 );
+    DBGs_NUM1_S(pixel_access,"oyFilterPlug_ResolveImage(): %g",clck/1000000.0 );
     oyImage_Release( &image_input );
 
     n = oyFilterNodes_Count( pixel_access->graph->nodes );
@@ -9923,12 +19886,14 @@ int                oyConversion_RunPixels (
         clck = oyClock();
         oyFilterGraph_PrepareContexts( pixel_access->graph, 0 );
         clck = oyClock() - clck;
-        DBG_NUM1_S("oyFilterGraph_PrepareContexts(): %g", clck/1000000.0 );
+        DBGs_NUM1_S( pixel_access,
+                     "oyFilterGraph_PrepareContexts(): %g", clck/1000000.0 );
         clck = oyClock();
         error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug,
                                                               pixel_access);
         clck = oyClock() - clck;
-        DBG_NUM1_S("conversion->out_->api7_->oyCMMFilterPlug_Run(): %g", clck/1000000.0 );
+        DBGs_NUM1_S( pixel_access,
+          "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g",clck/1000000.0 );
       }
 
       if(error == 0)
@@ -10321,12 +20286,12 @@ int                oyConversion_Correct (
     oyCMMapiFilters_s * apis;
     int apis_n = 0, i;
     oyCMMapi9_s * cmm_api9 = 0;
-    char * class, * api_reg;
+    char * class_name, * api_reg;
 
-    class = oyFilterRegistrationToText( pattern, oyFILTER_REG_TYPE, 0 );
+    class_name = oyFilterRegistrationToText( pattern, oyFILTER_REG_TYPE, 0 );
     api_reg = oyStringCopy_("//", oyAllocateFunc_ );
-    STRING_ADD( api_reg, class );
-    oyFree_m_( class );
+    STRING_ADD( api_reg, class_name );
+    oyFree_m_( class_name );
 
     apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S, 
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
@@ -11532,7 +21497,6 @@ icValue_to_icUInt32Number_m( oyValueCSpaceSig, icColorSpaceSignature )
 icValue_to_icUInt32Number_m( oyValuePlatSig, icPlatformSignature )
 icValue_to_icUInt32Number_m( oyValueProfCSig, icProfileClassSignature )
 icValue_to_icUInt32Number_m( oyValueTagSig, icTagSignature )
-
 
 
 

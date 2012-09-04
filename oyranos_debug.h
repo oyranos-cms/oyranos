@@ -1,12 +1,12 @@
-/** @file oyranos_debug.h
+/** @internal
+ *  @file oyranos_debug.h
  *
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2005-2009 (C) Kai-Uwe Behrmann
+ *            2005-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    internal helpers
- *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
@@ -30,7 +30,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/** debugging variable - set 0 to off (default), set 1 to switch debugging on */
+/** @internal
+ *  debugging variable - set 0 to off (default), set 1 to switch debugging on */
 extern clock_t oyranos_clock_;
 extern int level_PROG;
 
@@ -60,9 +61,19 @@ double             oySeconds         ( );
 #define DBG4_S(format,arg,arg2,arg3,arg4) oyMessageFunc_p( oyMSG_DBG,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4);
 #define DBG5_S(format,arg,arg2,arg3,arg4,arg5) oyMessageFunc_p( oyMSG_DBG,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5);
 #define DBG6_S(format,arg,arg2,arg3,arg4,arg5,arg6) oyMessageFunc_p( oyMSG_DBG,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5,arg6);
+#define DBG7_S(format,arg,arg2,arg3,arg4,arg5,arg6,arg7) oyMessageFunc_p( oyMSG_DBG,0,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5,arg6,arg7);
 #define DBG_V(var) oyMessageFunc_p(oyMSG_DBG,0,OY_DBG_FORMAT_ #var ": %d", OY_DBG_ARGS_,(int)var);
 #define DBG_START {++level_PROG; oyMessageFunc_p( oyMSG_DBG,0,"Start: " OY_DBG_FORMAT_, OY_DBG_ARGS_ );}
 #define DBG_ENDE  {oyMessageFunc_p( oyMSG_DBG,0,"  End: " OY_DBG_FORMAT_, OY_DBG_ARGS_ ); --level_PROG;}
+#define DBGs(s) oyMessageFunc_p(oyMSG_DBG,(oyStruct_s*)s,OY_DBG_FORMAT_, OY_DBG_ARGS_);
+#define DBGs_S(s,txt) oyMessageFunc_p(oyMSG_DBG,(oyStruct_s*)s,OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_,txt);
+#define DBGs1_S(s,format,arg) oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)s,OY_DBG_FORMAT_ format,OY_DBG_ARGS_,arg);
+#define DBGs2_S(s,format,arg,arg2) oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)s,OY_DBG_FORMAT_ format,OY_DBG_ARGS_,arg,arg2);
+#define DBGs3_S(s,format,arg,arg2,arg3) oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)s,OY_DBG_FORMAT_ format,OY_DBG_ARGS_,arg,arg2,arg3);
+#define DBGs4_S(s,format,arg,arg2,arg3,arg4) oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)s,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4);
+#define DBGs5_S(s,format,arg,arg2,arg3,arg4,arg5) oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)s,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5);
+#define DBGs6_S(s,format,arg,arg2,arg3,arg4,arg5,arg6) oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)s,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5,arg6);
+#define DBGs7_S(s,format,arg,arg2,arg3,arg4,arg5,arg6,arg7) oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)s,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5,arg6,arg7);
 #else
 #define DBG ;
 #define DBG_S(txt) ;
@@ -78,6 +89,15 @@ double             oySeconds         ( );
 #define DBG9_S(a,b,c,d,e,f,h,i,j,k) ;
 #define DBG_START ;
 #define DBG_ENDE  ;
+#define DBGs(s) ;
+#define DBGs_S(s,txt) ;
+#define DBGs1_S(s,a,b) ;
+#define DBGs2_S(s,a,b,c) ;
+#define DBGs3_S(s,a,b,c,d) ;
+#define DBGs4_S(s,a,b,c,d,e) ;
+#define DBGs5_S(s,a,b,c,d,e,f) ;
+#define DBGs6_S(s,a,b,c,d,e,f,h) ;
+#define DBGs7_S(s,a,b,c,d,e,f,h,i) ;
 #endif
 
 #define DBG_NUM if(oy_debug > 1)DBG
@@ -86,6 +106,22 @@ double             oySeconds         ( );
 #define DBG_NUM2_S if(oy_debug > 1)DBG2_S
 #define DBG_NUM3_S if(oy_debug > 1)DBG3_S
 #define DBG_NUM4_S if(oy_debug > 1)DBG4_S
+#define DBG_NUM5_S if(oy_debug > 1)DBG5_S
+#define DBG_NUM6_S if(oy_debug > 1)DBG6_S
+#define DBG_NUM7_S if(oy_debug > 1)DBG7_S
+#define DBG_NUM8_S if(oy_debug > 1)DBG8_S
+#define DBG_NUM9_S if(oy_debug > 1)DBG9_S
+#define DBGs_NUM if(oy_debug > 1)DBGs
+#define DBGs_NUM_S if(oy_debug > 1)DBGs_S
+#define DBGs_NUM1_S if(oy_debug > 1)DBGs1_S
+#define DBGs_NUM2_S if(oy_debug > 1)DBGs2_S
+#define DBGs_NUM3_S if(oy_debug > 1)DBGs3_S
+#define DBGs_NUM4_S if(oy_debug > 1)DBGs4_S
+#define DBGs_NUM5_S if(oy_debug > 1)DBGs5_S
+#define DBGs_NUM6_S if(oy_debug > 1)DBGs6_S
+#define DBGs_NUM7_S if(oy_debug > 1)DBGs7_S
+#define DBGs_NUM8_S if(oy_debug > 1)DBGs8_S
+#define DBGs_NUM9_S if(oy_debug > 1)DBGs9_S
 #define DBG_NUM_V if(oy_debug > 1)DBG_V
 
 #define DBG_PROG if(oy_debug > 2)DBG

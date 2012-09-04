@@ -12,19 +12,24 @@ TARGET5 = dummy_device/liboyranos_dDev_cmm_module.so
 TARGET6 = dummy_filter/liboyranos_dFil_cmm_module.so
 TARGET7 = oymd5icc/oymd5icc
 TARGET8 = xcmsevents/qcmsevents
+TARGET9 = libraw/oyranos-file
+TARGET10 = oyranos_profile_graph/oyranos-profile-graph
+TARGET11 = oyranos_convert/oyranos-icc
 TARGETS = $(TARGET1) $(TARGET2) $(TARGET4) $(TARGET5) $(TARGET6) \
-	$(TARGET7) $(TARGET8) ../oyranos_logo.ppm
-OY_CFLAGS := $(shell (oyranos-config --cflags))
-OY_LDFLAGS := $(shell (oyranos-config --ldflags))
+	$(TARGET7) $(TARGET8) $(TARGET9) $(TARGET10) $(TARGET11) \
+	../oyranos_logo.ppm
+OY_CFLAGS := $(shell (pkg-config --cflags oyranos))
+OY_LDFLAGS := $(shell (pkg-config --libs oyranos))
 FLTK_CFLAGS := $(shell (fltk-config --cflags --use-gl | sed 's/-O.//g'))
 FLTK_LDFLAGS := $(shell (fltk-config --ldflags --use-gl)) -pthread # FLTK on Fedora13 misses libpthread.so
 PKG_CONFIG_CFLAGS := $(shell (pkg-config --cflags xfixes x11))
 PKG_CONFIG_LIBS := $(shell (pkg-config --libs xfixes x11))
 XCM_CFLAGS := $(shell (pkg-config --cflags xcm))
 XCM_LDFLAGS := $(shell (pkg-config --libs xcm))
+OFORMS_FLAGS = -I$(SRCDIR)../oforms
 TARGET2_FLAGS = ../modules/devices/oyranos_monitor.o \
 		../modules/devices/oyranos_edid_parse.o $(XCM_CFLAGS)
-TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo lcms oyranos xcm))
+TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo oyranos))
 LDFLAGS = $(LIBS)
 DEBUG = -Wall -g -pedantic -O0
 CXXFLAGS_ = $(CXXFLAGS) $(OY_CFLAGS) $(INCLUDE) $(DEBUG) -std=c++98 $(XCM_CFLAGS)
@@ -71,17 +76,19 @@ all:
 	make $(TARGETS)
 	echo ... all done
 
-	
+image_display/GLee.o:	$(SRCDIR)image_display/GLee.c
+	-$(CC) $(CFLAGS_) -I$(SRCDIR)image_display/ \
+	  -c $(SRCDIR)image_display/GLee.c -o image_display/GLee.o
 
-$(TARGET1):	$(SRCDIR)$(TARGET1).cpp
+$(TARGET1):	$(SRCDIR)$(TARGET1).cpp image_display/GLee.o
 	mkdir -p image_display
 	echo Compiling $@ ...
 	-$(CXX) -DTARGET=\"$(TARGET)\" $(CXXFLAGS_) $(FLTK_CFLAGS) $< \
 	$(X11) $(LDFLAGS) $(OY_LDFLAGS) \
 	$(intl) ../fl_i18n/libfl_i18n.a  $(FLTK_LDFLAGS) $(PKG_CONFIG_CFLAGS) \
-	$(PKG_CONFIG_LIBS) -DUSE_GETTEXT=1 \
+	$(PKG_CONFIG_LIBS) -DUSE_GETTEXT=1 image_display/GLee.o \
 	-o $@
-	fltk-config --post $@
+	-fltk-config --post $@
 
 $(TARGET2):	$(SRCDIR)$(TARGET2).c
 	mkdir -p xcmsevents
@@ -116,6 +123,22 @@ $(TARGET8):	$(TARGET8_OBJECTS)
 	mkdir -p xcmsevents
 	echo "	LINK:	$(TARGET8) $(TARGET8_SOURCES) ..."
 	-$(CXX) -Wall -g -o $(TARGET8) $(TARGET8_OBJECTS) $(TARGET8_LDFLAGS)
+
+$(TARGET9):	$(SRCDIR)libraw/oyranos_file.cpp
+	mkdir -p libraw
+	echo Compiling $@ ...
+	-$(CXX) $(CXXFLAGS_) $< $(LDFLAGS) $(OY_LDFLAGS) -lm -o $@
+
+$(TARGET10):	$(SRCDIR)oyranos_profile_graph/oyranos_profile_graph.c
+	mkdir -p oyranos_profile_graph
+	echo Compiling $@ ...
+	-$(CC) $(CFLAGS_) $< $(TARGET4_FLAGS) $(LDFLAGS) \
+	$(OY_LDFLAGS) -o $@
+
+$(TARGET11):	$(SRCDIR)oyranos_convert/oyranos_convert.c
+	mkdir -p oyranos_convert
+	echo Compiling $@ ...
+	-$(CC) $(CFLAGS_) $< $(LDFLAGS) $(OY_LDFLAGS) $(OFORMS_FLAGS) -lm -o $@
 
 ../oyranos_logo.ppm:	$(SRCDIR)../oyranos_logo.png
 	-cat $(SRCDIR)../oyranos_logo.png | pngtopnm > $@

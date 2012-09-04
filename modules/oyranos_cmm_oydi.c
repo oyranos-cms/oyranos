@@ -42,7 +42,8 @@ oyMessage_f oydi_msg = 0;
 oyWIDGET_EVENT_e   oydiWidgetEvent   ( oyOptions_s       * options,
                                        oyWIDGET_EVENT_e    type,
                                        oyStruct_s        * event );
-int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
+int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
+                                       oyFilterSocket_s  * socket,
                                        oyImage_s         * image );
 oyOptions_s* oydiFilter_ImageDisplayValidateOptions
                                      ( oyFilterCore_s    * filter,
@@ -121,7 +122,7 @@ char *   oydiFilterNode_ImageDisplayID(oyFilterNode_s    * node )
   return ID;
 }
 
-int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
+int oydiFilterSocket_SetWindowRegion ( oyPixelAccess_s   * ticket,
                                        oyImage_s         * image )
 {
   int error = 0;
@@ -136,7 +137,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
   if(win_id && display_id)
   {
     int x,y, i,j;
-    Atom netColorTarget;
+    Atom xColorTarget;
     Window w = (Window) oyBlob_GetPointer(win_id), w_return;
     XWindowAttributes attr;
     const char * display_name = oyOptions_FindString( image->tags,
@@ -157,7 +158,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
 #ifdef DEBUG
     char * tmp = oyStringCopy_( oyRectangle_Show(display_rectangle), oyAllocateFunc_);
 
-    oydi_msg( oyMSG_DBG, (oyStruct_s*)image,
+    oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket,
              OY_DBG_FORMAT_"Display: %s Window id: %d  display_rectangle:%s old_window_rectangle:%s", OY_DBG_ARGS_,
              display_name, w, tmp, oyRectangle_Show( old_window_rectangle ) );
     oyFree_m_( tmp );
@@ -182,7 +183,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
     XTranslateCoordinates( display, w, attr.root, 
                                   -attr.border_width, -attr.border_width,
                                   &x, &y, &w_return);
-    oydi_msg( oyMSG_DBG, (oyStruct_s*)image,
+    oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket,
                OY_DBG_FORMAT_"Display: %s Window id: %d  display_rectangle:%s @+%d+%d",
                OY_DBG_ARGS_,
                display_name, (int)w, oyRectangle_Show(display_rectangle), x,y );
@@ -213,7 +214,7 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
       rect = XFixesFetchRegion( display, reg, &nRect );
       if(!nRect)
       {
-        oydi_msg( oyMSG_WARN, (oyStruct_s*)image,
+        oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket,
                  OY_DBG_FORMAT_
                  "Display: %s Window id: %d  Could not load Xregion:%d",
                  OY_DBG_ARGS_,
@@ -222,13 +223,13 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
       } else if(rect[0].x != rec[0].x ||
                 rect[0].y != rec[0].y )
       {
-        oydi_msg( oyMSG_WARN, (oyStruct_s*)image,
+        oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket,
                  OY_DBG_FORMAT_
                  "Display: %s Window id: %d  Xregion:%d has wrong position %d,%d",
                  OY_DBG_ARGS_,
                  display_name, (int)w, (int)reg, rect[0].x, rect[0].y );
       } else
-        oydi_msg( oyMSG_DBG, (oyStruct_s*)image,
+        oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket,
                  OY_DBG_FORMAT_
                  "Display: %s Window id: %d  Xregion:%d uploaded %dx%d+%d+%d",
                  OY_DBG_ARGS_,
@@ -268,15 +269,15 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
         XcolorRegionDelete( display, w, pos, 1 );
         old_regions = XcolorRegionFetch( display, w, &old_regions_n );
         if(undeleted_n - old_regions_n != 1)
-          oydi_msg( oyMSG_WARN, (oyStruct_s*)image,
+          oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket,
                    OY_DBG_FORMAT_"removed %d; have still %d", OY_DBG_ARGS_,
                    pos, (int)old_regions_n );
       }
 
       /* upload the new or changed region to the X server */
       error = XcolorRegionInsert( display, w, 0, &region, 1 );
-      netColorTarget = XInternAtom( display, "_NET_COLOR_TARGET", True );
-      XChangeProperty( display, w, netColorTarget, XA_STRING, 8,
+      xColorTarget = XInternAtom( display, "_ICC_COLOR_TARGET", True );
+      XChangeProperty( display, w, xColorTarget, XA_STRING, 8,
                        PropModeReplace,
                        (unsigned char*) display_string, strlen(display_string));
 
@@ -289,14 +290,15 @@ int oydiFilterSocket_SetWindowRegion ( oyFilterSocket_s  * socket,
     oyRectangle_Release( &window_rectangle );
     oyRectangle_Release( &old_window_rectangle );
   } else
-    oydi_msg( oyMSG_DBG, (oyStruct_s*)image,
+    oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket,
          OY_DBG_FORMAT_"no window_id/display_id image tags found",OY_DBG_ARGS_);
 # endif
 
   return error;
 }
 
-int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
+int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
+                                       oyFilterSocket_s  * socket,
                                        oyImage_s         * image )
 {
   int n = 0, i,m;
@@ -304,7 +306,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
   oyFilterGraph_s * display_graph = 0;
   oyFilterNode_s * input_node = 0,
                  * node = socket->node,
-                 * cmm_node = 0,
+                 * src_node = 0,
                  * rectangles = 0;
   oyOptions_s * options = 0;
   oyOption_s * o = 0;
@@ -314,7 +316,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
        * ID = 0;
 
   if(oy_debug) 
-    oydi_msg( oyMSG_WARN, (oyStruct_s*)image, OY_DBG_FORMAT_"Init Start",
+    oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_"Init Start",
                  OY_DBG_ARGS_);
 
   input_node = node->plugs[0]->remote_socket_->node;
@@ -374,50 +376,48 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
       /* The first rectangle is the one provided by the user graph. */
       if(m != 0 || i != 0)
       {
-        if(oyFilterRegistrationMatch( input_node->core->registration_,
-                                      "//" OY_TYPE_STD "/icc", 0 ))
+        /*if(oyFilterRegistrationMatch( input_node->core->registration_,
+                                      "//" OY_TYPE_STD "/icc", 0 ))*/
+        if(input_node->plugs[0])
         {
-          options = oyFilterNode_OptionsGet( input_node, 0 );
-          cmm_node = oyFilterNode_NewWith( input_node->core->registration_,
+          options = oyFilterNode_GetOptions( input_node, 0 );
+          src_node = oyFilterNode_NewWith( input_node->core->registration_,
                                            options, 0 );
-          error = oyStruct_ObserversCopy( (oyStruct_s*)cmm_node,
+          error = oyStruct_ObserversCopy( (oyStruct_s*)src_node,
                                           (oyStruct_s*)input_node, 0 );
           oyOptions_Release( &options );
           
-        } else
-          oydi_msg( oyMSG_WARN, (oyStruct_s*)image, OY_DBG_FORMAT_
-                   "\n  Filter %s expects a colour conversion filter as"
-                   " input\n  But obtained: %s",
-                   OY_DBG_ARGS_,
-                   node->relatives_,
-                   input_node->relatives_ );
+          /* mark the new node as belonging to this node */
+          oyOptions_SetFromText( &src_node->tags, ID, "true",
+                                 OY_CREATE_NEW );
 
-        /* mark the new node as belonging to this node */
-        oyOptions_SetFromText( &cmm_node->tags, ID, "true",
-                               OY_CREATE_NEW );
-
-        /* position the new CMM between the original CMMs input and 
-           "rectangles" */
-        error = oyFilterNode_Connect( cmm_node, "//" OY_TYPE_STD "/data",
+          /* position the new CMM between the original CMMs input and 
+             "rectangles" */
+          error = oyFilterNode_Connect( src_node, "//" OY_TYPE_STD "/data",
                                       rectangles, "//" OY_TYPE_STD "/data", 0 );
-        if(error > 0)
-          oydi_msg( oyMSG_WARN, (oyStruct_s*)image, OY_DBG_FORMAT_
-                    "could not add  new CMM: %s\n",
-                   OY_DBG_ARGS_,
-                    input_node->core->registration_ );
+          if(error > 0)
+            oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
+                      "could not add  new CMM: %s\n",
+                      OY_DBG_ARGS_,
+                      input_node->core->registration_ );
 
-        error = oyFilterNode_Connect( 
+          if(input_node->plugs[0] && 
+             input_node->plugs[0]->remote_socket_->node != src_node)
+            error = oyFilterNode_Connect( 
                                   input_node->plugs[0]->remote_socket_->node, 0,
-                                      cmm_node, "//" OY_TYPE_STD "/data", 0 );
+                                        src_node, "//" OY_TYPE_STD "/data", 0 );
 
-        /* clone into a new image */
-        if(cmm_node->sockets[0]->data)
-          cmm_node->sockets[0]->data->release( 
-                                    (oyStruct_s**)&cmm_node->sockets[0]->data );
-        cmm_node->sockets[0]->data = (oyStruct_s*)oyImage_CreateForDisplay (
+          /* clone into a new image */
+          if(src_node->sockets[0]->data)
+            src_node->sockets[0]->data->release( 
+                                    (oyStruct_s**)&src_node->sockets[0]->data );
+          src_node->sockets[0]->data = (oyStruct_s*)oyImage_CreateForDisplay (
                                                 image->width, image->height,
                                                 0, image->layout_[0],
                                                 0, 0,0,0,0, 0 );
+        } else
+          error = oyFilterNode_Connect( input_node, "//" OY_TYPE_STD "/data",
+                                      rectangles, "//" OY_TYPE_STD "/data", 0 );
       }
     }
   }
@@ -454,7 +454,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyFilterSocket_s  * socket,
 
 
   if(oy_debug)
-    oydi_msg( oyMSG_WARN, (oyStruct_s*)image,
+    oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket,
              OY_DBG_FORMAT_"  Init End", OY_DBG_ARGS_);
 
   free(ID); ID = 0;
@@ -498,7 +498,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
   if(!image_input)
   {
-    oydi_msg( oyMSG_WARN, (oyStruct_s*)image, 
+    oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, 
              OY_DBG_FORMAT_"no input image found", OY_DBG_ARGS_);
     error = 1;
   }
@@ -506,8 +506,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   /* Allocate missing local process data in a specific manner. */
   if(error <= 0 && !image)
   {
-    oyPixel_t pixel_layout = oyImage_PixelLayoutGet( image_input );
-    oyProfile_s * p_in = oyImage_ProfileGet( image_input );
+    oyPixel_t pixel_layout = oyImage_GetPixelLayout( image_input );
+    oyProfile_s * p_in = oyImage_GetProfile( image_input );
     oyDATATYPE_e data_type = oyToDataType_m(pixel_layout);
     int32_t datatype = -1;
     int32_t channels_in = oyToChannels_m(pixel_layout);
@@ -531,7 +531,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
     error = oyOptions_FindInt( node->core->options_, "datatype", 0, &datatype );
     if(error == 0)
     {
-      oydi_msg( oyMSG_DBG, (oyStruct_s*)image, OY_DBG_FORMAT_
+      oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_
                  "datatype opt found: %d",
                  OY_DBG_ARGS_, datatype);
       pixel_layout &= (~oyDataType_m(data_type));
@@ -540,7 +540,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
     error = oyOptions_FindInt( node->core->options_,"preserve_alpha",0, &alpha);
     if(error == 0)
     {
-      oydi_msg( oyMSG_DBG, (oyStruct_s*)image,
+      oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket,
                OY_DBG_FORMAT_"preserve_alpha opt found: %d",
                OY_DBG_ARGS_, alpha);
       pixel_layout &= (~oyChannels_m( oyToChannels_m(pixel_layout) ));
@@ -589,7 +589,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       init = 1;
 
       /* init this filter */
-      oydiFilterSocket_ImageDisplayInit( socket, image );
+      oydiFilterSocket_ImageDisplayInit( ticket, socket, image );
 
       display_graph = (oyFilterGraph_s*)oyOptions_GetType( node->core->options_,
                                   -1, "//" OY_TYPE_STD "/display/display_graph",
@@ -598,7 +598,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
     }
 
     /* set server side rectangle */
-    oydiFilterSocket_SetWindowRegion( socket, image );
+    oydiFilterSocket_SetWindowRegion( ticket, image );
 
     /* look for our requisites */
     rectangles = oyFilterGraph_GetNode( display_graph, -1, "//" OY_TYPE_STD "/rectangles", ID );
@@ -625,7 +625,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
       if(!device_rectangle)
       {
-        oydi_msg( oyMSG_WARN, (oyStruct_s*)image,
+        oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket,
         OY_DBG_FORMAT_"device %d: Could not obtain \"device_rectangle\" option",
                  OY_DBG_ARGS_, i);
         continue;
@@ -651,13 +651,14 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       roi_pix.y -= display_pos_y;
       if(oy_debug)
         oydi_msg( oyMSG_DBG, (oyStruct_s*)image,
-            OY_DBG_FORMAT_"image %d: roi_pix:%s", OY_DBG_ARGS_, i, oyRectangle_Show(&roi_pix));
+            OY_DBG_FORMAT_"image %d: roi_pix:%s", OY_DBG_ARGS_,
+            i, oyRectangle_Show(&roi_pix));
 
       /* all rectangles are relative to image dimensions */
       if(image && image->width != 0)
         oyRectangle_Scale( &roi_pix, 1./image->width );
 
-      /* select actual image from the according CMM node */
+      /* select actual image from the according  node */
       if(rectangles->plugs && rectangles->plugs[i] &&
          rectangles->plugs[i]->remote_socket_)
         image_input = (oyImage_s*)rectangles->plugs[i]->remote_socket_->data;
@@ -676,7 +677,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       {
         oyOptions_s * options = 0;
         error = oyOptions_SetFromText( &options,
-                               "//"OY_TYPE_STD"/config/net_color_region_target",
+                               "//"OY_TYPE_STD"/config/x_color_region_target",
                                        "yes", OY_CREATE_NEW );
         error = oyDeviceGetProfile( c, options, &p );
         oyOptions_Release( &options );

@@ -111,8 +111,8 @@ LIB_XNVCTRL = $(LIB_XNVCTRL_STATIC)
 LIB_XNVCTRL_NAME = $(LIB_XNVCTRL_NAME_STATIC)
 #endif
 LIBFL_I18N = fl_i18n/libfl_i18n.a
-#ifdef ELEKTRA_VERSION
 LIBLTDL=$(ltdl)
+#ifdef ELEKTRA_VERSION
 ELEKTRA_OBJ = \
 	$(ELEKTRA_VERSION)/src/libelektra/libelektra.a
 #endif
@@ -125,16 +125,16 @@ YAJL_SOURCES := $(shell cd $(SRCDIR) && ls $(YAJL_DIR)/*.c)
 
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(SRCDIR) \
 	-I$(SRCDIR)/$(GENDIR) \
-	$(LCMS_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) $(LIBXML2_H) \
-	$(XCM_H) $(LRAW_H) $(YAJL_H)
+	$(LCMS_H) $(LCMS2_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) \
+	$(LIBXML2_H) $(XCM_H) $(LRAW_H) $(YAJL_H)
 
 LDLIBS = $(LDFLAGS) -L$(libdir) -L. \
-	$(ELEKTRA_LIBS) $(YAJL_LIBS) $(LIBXML2_LIBS) -lc $(I18N_LIB) $(LIBLTDL)
+	$(ELEKTRA_LIBS) $(YAJL_LIBS) $(LIBXML2_LIBS) $(c) $(I18N_LIB) $(LIBLTDL)
 LDLIBSCORE = $(LDFLAGS) -L$(libdir) -L. \
-	$(LIBXML2_LIBS) -lc $(I18N_LIB) $(LIBLTDL)
+	$(LIBXML2_LIBS) $(c) $(I18N_LIB) $(LIBLTDL)
 
 
-MODULE_LDLIBS =	$(LIBSONAMEFULL) $(LIBSONAMEMODULESFULL) $(LIBSONAMEOBJECTFULL) $(LIBSONAMECOREFULL) $(lc) 
+MODULE_LDLIBS =	$(LIBSONAMEFULL) $(LIBSONAMEMODULESFULL) $(LIBSONAMEOBJECTFULL) $(LIBSONAMECOREFULL) $(intl) $(lc) 
 
 
 CHEADERS = \
@@ -401,16 +401,28 @@ EXAMPLE_SOURCES = \
 	examples/dummy_filter/oyranos_cmm_dFil.c \
 	examples/image2pdf/image2pdf.c \
 	examples/image_display/image_display.cpp \
-	examples/image_display/oyranos_display_helper_classes.cpp \
+	examples/libraw/oyranos_file.cpp \
 	examples/image_display/oyranos_display_helper_classes_fltk.cpp \
 	examples/image_display/oyranos_display_helpers.c \
+	examples/image_display/oyranos_display_helpers.h \
+	examples/image_display/Oy_Widget.h \
+	examples/image_display/Oy_Fl_Window_Base.h \
+	examples/image_display/Oy_Fl_Image_Widget.h \
+	examples/image_display/Oy_Fl_Double_Window.h \
+	examples/image_display/Oy_Fl_Group.h \
+	examples/image_display/Oy_Fl_Image_Box.h \
+	examples/image_display/Oy_Fl_Shader_Box.h \
 	examples/xcmsevents/qcmsevents.cpp \
 	examples/xcmsevents/qcmsevents.h \
+	examples/oyranos_convert/oyranos_convert.c \
+	examples/oyranos_profile_graph/oyranos_profile_graph.c \
+	examples/oyranos_profile_graph/ciexyz64_1.h \
 	examples/oymd5icc/oymd5icc.c
 
 EXAMPLE_FILES = \
 	$(EXAMPLE_SOURCES) \
 	examples/README \
+	examples/libraw/README \
 	examples/makefile \
 	examples/xcmsevents/plugin-compicc.svg \
 	examples/xcmsevents/plugin-compicc_gray.svg \
@@ -420,8 +432,11 @@ EXAMPLE_FILES = \
 MAN1 = \
 	oyranos-config-fltk.1 \
 	oyranos-monitor.1 \
+	oyranos-monitor-daemon.1 \
 	oyranos-monitor-nvidia.1 \
 	oyranos-policy.1 \
+	oyranos-profile.1 \
+	oyranos-profile-graph.1 \
 	oyranos-profiles.1 \
 	oyranos-profile-install.1 \
 	oyranos-xforms.1 \
@@ -437,21 +452,24 @@ DOKU =  AUTHORS \
         ChangeLog \
         COPYING \
         README
-DOC_TEMPLATES = \
-	Doxyfile \
-	Doxyfile_alpha \
+DOC_TEMPLATES_LINK = \
 	doxymentation \
 	doxymentation_alpha \
 	doxymentation_common \
 	doxygen.css \
 	doxygen.footer \
 	doxygen.header
+DOC_TEMPLATES = \
+	Doxyfile \
+	Doxyfile_alpha \
+	$(DOC_TEMPLATES)
 
 LINGUAS_SRC = $(LING:.po=.gmo)
 POT_FILE = po/$(TARGET).pot
 POT_SCRIPT = oyranos_xml_to_po.sh
 
 BIN_SCRIPTS = \
+	$(SRCDIR)/$(TARGET)-monitor-daemon \
 	$(SRCDIR)/$(TARGET)-profile-install
 SCRIPTS = 
 # $(POT_SCRIPT)
@@ -626,7 +644,8 @@ CONFIG_FILES = \
 	$(SRCDIR)/$(TARGET)_control.in \
 	$(SRCDIR)/$(TARGET)-config.in \
 	$(SRCDIR)/$(TARGET)-monitor-setup.desktop \
-	$(SRCDIR)/$(TARGET)-profile-install.desktop
+	$(SRCDIR)/$(TARGET)-profile-install.desktop \
+	$(SRCDIR)/examples/makefile
 
 ALL_FILES = \
 	$(DOKU) \
@@ -825,7 +844,7 @@ $(LIB_CMM_oyIM): $(LIBSONAMEFULL) $(CMM_oyIM_OBJECTS)
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_metadir)$@ \
 	-o $@ \
-	$(CMM_oyIM_OBJECTS) $(MODULE_LDLIBS) $(dl)
+	$(CMM_oyIM_OBJECTS) $(MODULE_LDLIBS) $(dl) $(LDLIBS)
 	$(RM)  lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(LNK) $@ lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO).$(VERSION_A)$(LIBEXT)
 	$(RM)  lib$(TARGET)_oyIM$(OY_MODULE_NAME)$(SO)$(LIBEXT)
@@ -859,14 +878,14 @@ $(LIB_XNVCTRL).a:
 
 
 # the twinview library
-$(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL_NAME) $(MONI_X11_OBJECTS)
+$(TARGET)-monitor-nvidia:	$(SRCDIR)/$(TARGET)_monitor_nvidia.c $(LIB_XNVCTRL_NAME) $(MONI_X11_OBJECTS) $(LIBSONAMEFULL)
 	echo Linking $@ $(LIB_XNVCTRL_)1 $(XNVCtrl)2 $(LIB_XNVCTRL)3 $(LIB_XNVCTRL_NAME)4 ...
 	-$(CC) -I./ $(CFLAGS) $(INCL) $(SRCDIR)/$(TARGET)_monitor_nvidia.c \
 	-I$(SRCDIR)/libXNVCtrl \
 	-o $(TARGET)-monitor-nvidia $(MONI_X11_OBJECTS) -L./ \
-	$(LDLIBS) $(X11_LIBS) $(m) \
+	$(LDLIBS) \
 	-L./$(LIB_XNVCTRL) -lXNVCtrl $(MODULE_LDLIBS) \
-	$(LINK_LIB_PATH)
+	$(LINK_LIB_PATH) $(X11_LIBS) $(m)
 
 oyjl/oyjl_tree_parse.o:	$(SRCDIR)/oyjl/oyjl_tree_parse.c
 	echo Compiling $<
@@ -887,7 +906,7 @@ $(FLTK_GUI):	$(FLTK_OBJECTS) $(LIBFL_I18N) $(LIBSONAMEFULL)
 	$(CXX) -I./ $(FLTK_H) -o $(FLTK_GUI) \
 	$(FLTK_OBJECTS) \
 	$(MODULE_LDLIBS) $(LINK_LIB_PATH) \
-	$(LDLIBS) $(FLTK_LIBS) $(PNG_LIBS) $(I18N_LIB) $(LIBFL_I18N) $(pthread)
+	$(LDLIBS) $(LIBFL_I18N) $(FLTK_LIBS) $(PNG_LIBS) $(I18N_LIB) $(pthread)
 	$(REZ)
 
 fltk-gui:	oyranos_config_fltk.o
@@ -900,11 +919,11 @@ $(LIB_FORMS_FLTK_NAME):	$(FLTK_OFORMS_OBJECTS)
 		$(FLTK_OFORMS_OBJECTS)
 	$(RANLIB) $(LIB_FORMS_FLTK_NAME)
 
-$(LIBNAME):	$(OBJECTS)
+$(LIBNAME):	$(OBJECTS) $(YAJL_OBJ)
 	echo Linking $@ ...
 	test -f $(LIBNAME) && $(RM) $(LIBNAME) || echo ""
 	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIBNAME) \
-		$(OBJECTS)
+		$(OBJECTS) $(YAJL_OBJECTS)
 	$(RANLIB) $(LIBNAME)
 $(LIBNAME_MODULES):	$(OBJECTS_MODULES)
 	echo Linking $@ ...
@@ -940,7 +959,7 @@ $(TARGET)-monitor:	$(LIBSONAMEFULL) $(TARGET)_gamma.o
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) -o $(TARGET)-monitor \
 	$(TARGET)_gamma.o \
-	$(MODULE_LDLIBS) $(LDLIBS) $(LINK_LIB_PATH)
+	$(MODULE_LDLIBS) $(LDLIBS) $(X11_LIBS) $(LINK_LIB_PATH)
 
 $(TARGET)-policy:	$(LIBSONAMEFULL) $(TARGET)_policy.o
 	echo Linking $@ ...
@@ -1005,7 +1024,7 @@ test2:	test2.o $(LIBSONAMEFULL)
 #endif
 
 $(SRCDIR)/test2.c.c:
-	test -f $(SRCDIR)/test2.c.c || ln -s $(SRCDIR)/test2.cpp $(SRCDIR)/test2.c.c
+	test -f $(SRCDIR)/test2.c.c || $(LNK) $(SRCDIR)/test2.cpp $(SRCDIR)/test2.c.c
 
 test2.c.o:	$(SRCDIR)/test2.c.c
 	$(CC) -I./ -I$(SRCDIR) $(CFLAGS) $(INCL) -c -o $*.o $(SRCDIR)/$*.c
@@ -1060,7 +1079,7 @@ $(LINGUAS_SRC):	$(SRCDIR)/$(POT_FILE)
             test -L po/$${lingua}/LC_MESSAGES/$(TARGET).mo \
               && $(RM) po/$${lingua}/LC_MESSAGES/$(TARGET).mo \
               || echo po/$${lingua}/LC_MESSAGES/$(TARGET).mo nicht gefunden; \
-            ln -s ../../$${lingua}.gmo po/$${lingua}/LC_MESSAGES/$(TARGET).mo;) \
+            $(LNK) ../../$${lingua}.gmo po/$${lingua}/LC_MESSAGES/$(TARGET).mo;) \
         || (echo $(SRCDIR)/$${ling}.po is not yet ready ... skipping) \
 	done;
 
@@ -1083,32 +1102,39 @@ $(SRCDIR)/$(POT_FILE):
 	done;
 	echo ... $(SRCDIR)/$(POT_FILE) done
 
+doxygen.header:
+	echo Linking doxygen files ...
+	test -L doxygen.header && $(RM) $(DOC_TEMPLATES_LINK) || echo no doxygen.header link
+	$(LNK) $(SRCDIR)/doxygen.header $(SRCDIR)/doxygen.footer $(SRCDIR)/doxygen.css $(SRCDIR)/doxymentation $(SRCDIR)/doxymentation_common $(SRCDIR)/doxymentation_alpha .
 
-docu:
+Doxyfile:	$(SRCDIR)/Doxyfile doxygen.header $(SRCDIR)/doxygen.header  $(SRCDIR)/doxygen.footer  $(SRCDIR)/doxygen.css  $(SRCDIR)/doxymentation  $(SRCDIR)/doxymentation_common  $(SRCDIR)/doxymentation_alpha
+	echo Update doxygen files ...
+	$(COPY) $(SRCDIR)/Doxyfile .
+	echo "INPUT = $(SRCDIR)" >> Doxyfile
+	$(COPY) $(SRCDIR)/Doxyfile_alpha .
+	echo "INPUT = $(SRCDIR) $(SRCDIR)/API_generated" >> Doxyfile_alpha
+
+docu:	Doxyfile
 	echo Documentation ...
-	test -f Doxyfile || ($(COPY) $(SRCDIR)/Doxyfile . && \
-	                     echo "INPUT = $(SRCDIR)" >> Doxyfile && \
-			     $(COPY) $(SRCDIR)/Doxyfile_alpha . && \
-                             echo "INPUT = $(SRCDIR) $(SRCDIR)/API_generated" >> Doxyfile_alpha && \
-			     ln -s $(SRCDIR)/doxygen.header $(SRCDIR)/doxygen.footer $(SRCDIR)/doxygen.css $(SRCDIR)/doxymentation $(SRCDIR)/doxymentation_common $(SRCDIR)/doxymentation_alpha .)
 	test -n 'which doxygen' && ( \
 		doxygen Doxyfile; $(COPY) $(SRCDIR)/$(TARGET)_logo.png doc/html/; \
 		doxygen Doxyfile_alpha; $(COPY) $(SRCDIR)/$(TARGET)_logo.png doc_alpha/html/;) || echo "Will not create Documentation because doxygen is missing"
 	echo ... Documentation done
 
 # the copy part for this directory level
-install_bin:	all install_gui
+install_bin:	all oforms install_gui
 	echo Installing binaries ...
 	mkdir -p "$(DESTDIR)$(bindir)"
 	$(INSTALL) -m 755 $(TARGET)-config     "$(DESTDIR)$(bindir)"
 	$(INSTALL) -m 755 $(TARGET)-monitor    "$(DESTDIR)$(bindir)"
 	$(INSTALL) -m 755 $(TARGET)-policy     "$(DESTDIR)$(bindir)"
+	$(INSTALL) -m 755 $(TARGET)-profile    "$(DESTDIR)$(bindir)"
 	$(INSTALL) -m 755 $(TARGET)-profiles   "$(DESTDIR)$(bindir)"
 	$(INSTALL) -m 755 $(BIN_SCRIPTS)       "$(DESTDIR)$(bindir)"
 	-$(INSTALL) -m 755 $(TARGET)-monitor-nvidia "$(DESTDIR)$(bindir)"
-	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms "$(DESTDIR)$(bindir)"
+	$(INSTALL) -m 755 oforms/$(TARGET)-xforms "$(DESTDIR)$(bindir)"
 	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms-fltk "$(DESTDIR)$(bindir)"
-	-$(INSTALL) -m 755 oforms/$(TARGET)-xforms-modules "$(DESTDIR)$(bindir)"
+	$(INSTALL) -m 755 oforms/$(TARGET)-xforms-modules "$(DESTDIR)$(bindir)"
 	mkdir -p "$(DESTDIR)$(libdir)"
 	mkdir -p "$(DESTDIR)$(libdir)/pkgconfig"
 	mkdir -p "$(DESTDIR)$(metadir)"
@@ -1194,10 +1220,13 @@ install_bin:	all install_gui
 	echo ... binary Installation finished
 
 # install recursive
-install:	oforms install-main examples
+install:	install-main examples
+#ifdef QT
 	$(INSTALL) -m 755 examples/xcmsevents/qcmsevents "$(DESTDIR)$(bindir)"
 	mkdir -p "$(DESTDIR)$(desktopdir)"
 	$(INSTALL) -m 644 "$(SRCDIR)/examples/xcmsevents/qcmsevents-applet.desktop" "$(DESTDIR)$(desktopdir)"
+#endif
+	$(INSTALL) -m 755 examples/oyranos_profile_graph/oyranos-profile-graph "$(DESTDIR)$(bindir)"
 	echo ... $@ done
 
 install-main:	install_bin install_linguas install_docu
@@ -1214,7 +1243,7 @@ install_doc:	install_docu
 install_docu: docu
 	echo Installing policy settings files ...
 	-mkdir -p "$(DESTDIR)$(syscolordir)/$(settingsdirname)"
-	-for i in `ls settings/*.policy.xml`; do \
+	-for i in `ls $(SRCDIR)/settings/*.policy.xml`; do \
 	     $(INSTALL) -m 644 "$${i}" "$(DESTDIR)$(syscolordir)/$(settingsdirname)";\
 	done
 	echo ... installing policy settings files done
@@ -1295,11 +1324,13 @@ uninstall:	uninstall_bin uninstall_docu uninstall_linguas
 uninstall_bin:
 	echo Uninstalling binaries ...
 	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-monitor"
+	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-monitor-daemon"
 	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-config"
 #ifdef FLTK_GUI
 	$(RM)   "$(DESTDIR)$(bindir)/$(FLTK_GUI)"
 #endif
 	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-policy"
+	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-profile"
 	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-profiles"
 	$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-profile-install"
 	-$(RM)   "$(DESTDIR)$(bindir)/$(TARGET)-monitor-nvidia"
@@ -1382,10 +1413,11 @@ clean:
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
 	test2 test_core test_object test tests/test_oyranos \
 	$(FLTK_GUI) \
-	oforms/$(TARGET)-xforms oforms/$(TARGET)-xforms-fltk;
+	oforms/$(TARGET)-xforms oforms/$(TARGET)-xforms-fltk \
+	oforms/$(TARGET)-xforms-modules;
 	for ling in $(LINGUAS); do \
 	  test -f po/$${ling}.gmo \
-        && $(RM) po/$${ling}.gmo; \
+        && $(RM) po/$${ling}.gmo || echo ""; \
 	done;
 	for lib in $(LIBRARIES); do \
 	   $(RM) lib$${lib}$(SO).$(VERSION)$(LIBEXT) \

@@ -1,6 +1,7 @@
-/** Function    oyRectangle_Release__Members
- *  @memberof   oyRectangle_s
- *  @brief      Custom Rectangle destructor
+/** @internal
+ *  Function    oy{{ class.baseName }}_Release__Members
+ *  @memberof   {{ class.name }}
+ *  @brief      Custom {{ class.baseName }} destructor
  *  @internal
  *
  *  This function will free up all memmory allocated by the
@@ -31,9 +32,10 @@ void oyRectangle_Release__Members( oyRectangle_s_ * rectangle )
   }
 }
 
-/** Function    oyRectangle_Init__Members
- *  @memberof   oyRectangle_s
- *  @brief      Custom Rectangle constructor 
+/** @internal
+ *  Function    oy{{ class.baseName }}_Init__Members
+ *  @memberof   {{ class.name }}
+ *  @brief      Custom {{ class.baseName }} constructor 
  *  @internal
  *
  *  This function will allocate all memmory for the input object.
@@ -51,9 +53,10 @@ int oyRectangle_Init__Members( oyRectangle_s_ * rectangle )
   return 0;
 }
 
-/** Function    oyRectangle_Copy__Members
- *  @memberof   oyRectangle_s
- *  @brief      Custom Rectangle copy constructor
+/** @internal
+ *  Function    oy{{ class.baseName }}_Copy__Members
+ *  @memberof   {{ class.name }}
+ *  @brief      Custom {{ class.baseName }} copy constructor
  *  @internal
  *
  *  This function makes a copy of all values from the input

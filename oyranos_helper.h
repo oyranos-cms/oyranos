@@ -1,4 +1,5 @@
-/** @file oyranos_helper.h
+/** @internal
+ *  @file oyranos_helper.h
  *
  *  Oyranos is an open source Colour Management System 
  *
@@ -6,7 +7,6 @@
  *            2005-2011 (C) Kai-Uwe Behrmann
  *
  *  @brief    helpers
- *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
@@ -46,6 +46,7 @@ void  oyDeAllocateFunc_         (void *        data);
 
 extern intptr_t oy_observe_pointer_;
 extern int oy_debug_memory;
+#define OY_PRINT_POINTER "0x%tx"
 extern int oy_debug_signals;
 extern const char * oy_backtrace;
 
@@ -99,6 +100,21 @@ char* oyReadFileToMem_  (const char* fullFileName, size_t *size,
                          oyAlloc_f     allocate_func);
 char * oyReadStdinToMem_             ( size_t            * size,
                                        oyAlloc_f           allocate_func );
+char * oyReadFilepToMem_             ( FILE              * file,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func );
+char * oyReadFileSToMem_             ( FILE              * fp,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func);
+char * oyReadUrlToMem_               ( const char        * url,
+                                       size_t            * size,
+                                       const char        * mode,
+                                       oyAlloc_f           allocate_func );
+char * oyReadUrlToMemf_              ( size_t            * size,
+                                       const char        * mode,
+                                       oyAlloc_f           allocate_func,
+                                       const char        * format,
+                                                           ... );
 
 
 /* --- mathematical helpers --- */

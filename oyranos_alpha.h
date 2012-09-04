@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2004-2011 (C) Kai-Uwe Behrmann
+ *            2004-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    object APIs
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -373,6 +373,11 @@ void           oyRectangle_SetGeo    ( oyRectangle_s     * edit_rectangle,
                                        double              y,
                                        double              width,
                                        double              height );
+void           oyRectangle_GetGeo    ( oyRectangle_s     * rectangle,
+                                       double            * x,
+                                       double            * y,
+                                       double            * width,
+                                       double            * height );
 void           oyRectangle_SetByRectangle (
                                        oyRectangle_s     * edit_rectangle,
                                        oyRectangle_s     * ref );
@@ -408,10 +413,8 @@ int      oySizeofDatatype            ( oyDATATYPE_e        t );
 oyCHANNELTYPE_e oyICCColourSpaceToChannelLayout (
                                        icColorSpaceSignature sig,
                                        int                 pos );
-#if 0
 char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
                                        oyAlloc_f           allocateFunc );
-#endif
 
 typedef struct oyArray2d_s oyArray2d_s;
 
@@ -536,7 +539,7 @@ OYAPI int  OYEXPORT  oyArray2d_SetFocus (
  *  - display rectangle information and
  *  - a reference to the data for conversion
  *
- *  To set a image data module use oyImage_DataSet().
+ *  To set a image data module use oyImage_SetData().
  *  \dot
  digraph oyImage_s {
   bgcolor="transparent";
@@ -659,6 +662,12 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
                                        int                 window_width,
                                        int                 window_height,
                                        oyObject_s          object);
+int            oyImage_FromFile      ( const char        * file_name,
+                                       oyImage_s        ** image,
+                                       oyObject_s          object );
+int            oyImage_ToFile        ( oyImage_s         * image,
+                                       const char        * file_name,
+                                       oyOptions_s       * opts );
 oyImage_s *    oyImage_Copy          ( oyImage_s         * image,
                                        oyObject_s          object );
 int            oyImage_Release       ( oyImage_s        ** image );
@@ -668,7 +677,7 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
                                        oyPixel_t           pixel_layout,
                                        oyProfile_s       * profile,
                                        oyOptions_s       * options );
-int            oyImage_DataSet       ( oyImage_s         * image,
+int            oyImage_SetData       ( oyImage_s         * image,
                                        oyStruct_s       ** pixel_data,
                                        oyImage_GetPoint_f  getPoint,
                                        oyImage_GetLine_f   getLine,
@@ -686,9 +695,19 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
                                        oyRectangle_s     * rectangle,
                                        oyArray2d_s       * array,
                                        oyRectangle_s     * array_rectangle );
-oyPixel_t      oyImage_PixelLayoutGet( oyImage_s         * image );
-oyProfile_s *  oyImage_ProfileGet    ( oyImage_s         * image );
-oyOptions_s *  oyImage_TagsGet       ( oyImage_s         * image );
+oyPointer      oyImage_GetPoint      ( oyImage_s         * image,
+                                       int                 point_x,
+                                       int                 point_y,
+                                       int                 channel,
+                                       int               * is_allocated );
+int            oyImage_GetWidth      ( oyImage_s         * image );
+int            oyImage_GetHeight     ( oyImage_s         * image );
+oyPixel_t      oyImage_GetPixelLayout( oyImage_s         * image );
+oyProfile_s *  oyImage_GetProfile    ( oyImage_s         * image );
+oyOptions_s *  oyImage_GetTags       ( oyImage_s         * image );
+int            oyImage_WritePPM      ( oyImage_s         * image,
+                                       const char        * file_name,
+                                       const char        * comment );
 
 
 
@@ -719,31 +738,31 @@ typedef struct oyUiHandler_s oyUiHandler_s;
  *  @date    2009/04/28
  */
 typedef enum {
-  /** a data manipulator. e.g. a normal filter - "//imaging/manipulator" */
+  /** a data manipulator. e.g. a normal filter - "//"OY_TYPE_STD"/manipulator" */
   oyCONNECTOR_IMAGE_MANIPULATOR,
-  /** a data generator, e.g. checkerboard, gradient "//imaging/generator" */
+  /** a data generator, e.g. checkerboard, gradient "//"OY_TYPE_STD"/generator" */
   oyCONNECTOR_IMAGE_GENERATOR,
-  /** a pixel data provider, e.g. image data connector "//imaging/data".
+  /** a pixel data provider, e.g. image data connector "//"OY_TYPE_STD"/data".
    *  This type should be always present to connect processing data.
    *  That data is stored in oyFilterSocket_s::data. */
   oyCONNECTOR_IMAGE,
   /** observer, a endpoint, only input, e.g. text log, thumbnail viewer 
-   *  "//imaging/observer" */
+   *  "//"OY_TYPE_STD"/observer" */
   oyCONNECTOR_IMAGE_OBSERVER,
-  /** a routing element, without data altering "//imaging/splitter.rectangle" */
+  /** a routing element, without data altering "//"OY_TYPE_STD"/splitter.rectangle" */
   oyCONNECTOR_IMAGE_SPLITTER,
-  /** combines or splits image data, e.g. blending "//imaging/blender.rectangle"*/
+  /** combines or splits image data, e.g. blending "//"OY_TYPE_STD"/blender.rectangle"*/
   oyCONNECTOR_IMAGE_COMPOSITOR,
 
-  /** converts pixel layout to other formats "//imaging/pixel.convertor" */
+  /** converts pixel layout to other formats "//"OY_TYPE_STD"/pixel.convertor" */
   oyCONNECTOR_CONVERTOR_PIXELDATA,
   /** converts pixel layout to other formats, with precission loss, e.g. 
    *  float -> uint8_t, only relevant for output connectors 
-   *  "//imaging/pixel.convertor.lossy" */
+   *  "//"OY_TYPE_STD"/pixel.convertor.lossy" */
   oyCONNECTOR_CONVERTOR_PIXELDATA_LOSSY,
-  /** combines gray channels, e.g. from colour "//imaging/combiner.channels" */
+  /** combines gray channels, e.g. from colour "//"OY_TYPE_STD"/combiner.channels" */
   oyCONNECTOR_COMPOSITOR_CHANNEL,
-  /** provides gray scale views of channels "//imaging/splitter.channels" */
+  /** provides gray scale views of channels "//"OY_TYPE_STD"/splitter.channels" */
   oyCONNECTOR_SPLITTER_CHANNEL,
 
   /** provides values or text, only output "///analysis" */
@@ -962,7 +981,7 @@ struct oyFilterCore_s {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< @private base object */
 
-  char               * registration_;  /**< @private a registration name, e.g. "shared/oyranos.org/imaging/scale", see as well @ref registration */
+  char               * registration_;  /**< @private a registration name, e.g. OY_STD"/scale", see as well @ref registration */
 
   char               * category_;      /**< @private the ui menue category for this filter, to be specified */
 
@@ -1594,6 +1613,14 @@ oyConversion_s  *  oyConversion_CreateBasicPixels (
                                        oyImage_s         * output,
                                        oyOptions_s       * options,
                                        oyObject_s          object );
+oyConversion_s *   oyConversion_CreateFromImage (
+                                       oyImage_s         * image_in,
+                                       const char        * module,
+                                       oyOptions_s       * module_options,
+                                       oyProfile_s       * output_profile,
+                                       oyDATATYPE_e        buf_type_out,
+                                       uint32_t            flags,
+                                       oyObject_s          obj );
 oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
                                        oyProfile_s       * p_in,
                                        oyPointer           buf_in,
@@ -1644,6 +1671,8 @@ int                oyConversion_Correct (
                                        uint32_t            flags,
                                        oyOptions_s       * options );
 
+void               oyShowConversion_ ( oyConversion_s    * conversion,
+                                       uint32_t            flags );
 
 /** @struct oyNamedColour_s
  *  @brief colour patch with meta informations
@@ -2024,6 +2053,13 @@ int      oyGetMonitorInfo            ( const char        * display,
                                        char             ** system_port,
                                        oyBlob_s         ** edit,
                                        oyAlloc_f           allocate_func );
+#if 1
+#define oyImage_PixelLayoutGet         oyImage_GetPixelLayout
+#define oyImage_ProfileGet             oyImage_GetProfile
+#define oyImage_TagsGet                oyImage_GetTags
+#define oyFilterNode_OptionsGet        oyFilterNode_GetOptions
+#define oyFilterNode_UiGet             oyFilterNode_GetUi
+#endif
 
 #ifdef __cplusplus
 } /* extern "C" */

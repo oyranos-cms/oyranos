@@ -8,12 +8,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2011 (C) Kai-Uwe Behrmann
+ *            2004-2012 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/05/30
+ *  @date     2012/08/12
  */
 
 
@@ -30,10 +30,10 @@
 
 
 /* Include "Hash.private_custom_definitions.c" { */
-/** Function    oyHash_Release__Members
+/** @internal
+ *  Function    oyHash_Release__Members
  *  @memberof   oyHash_s
  *  @brief      Custom Hash destructor
- *  @internal
  *
  *  This function will free up all memmory allocated by the
  *  input object. First all object members witch have their
@@ -67,10 +67,10 @@ void oyHash_Release__Members( oyHash_s_ * hash )
   }
 }
 
-/** Function    oyHash_Init__Members
+/** @internal
+ *  Function    oyHash_Init__Members
  *  @memberof   oyHash_s
  *  @brief      Custom Hash constructor 
- *  @internal
  *
  *  This function will allocate all memmory for the input object.
  *  For the basic member types this is done using the allocateFunc_
@@ -93,10 +93,10 @@ int oyHash_Init__Members( oyHash_s_ * hash )
   return 0;
 }
 
-/** Function    oyHash_Copy__Members
+/** @internal
+ *  Function    oyHash_Copy__Members
  *  @memberof   oyHash_s
  *  @brief      Custom Hash copy constructor
- *  @internal
  *
  *  This function makes a copy of all values from the input
  *  to the output object. The destination object and all of its
@@ -323,10 +323,10 @@ int oyHash_Release_( oyHash_s_ **hash )
 
 
 /* Include "Hash.private_methods_definitions.c" { */
-/** Function  oyHash_Get_
+/** @internal
+ *  Function  oyHash_Get_
  *  @memberof oyHash_s
  *  @brief    Get a new Oyranos cache entry
- *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  24 november 2007 (API 0.1.8)
@@ -365,10 +365,10 @@ oyHash_s_ *         oyHash_Get_       ( const char        * hash_text,
   return s;
 }
 
-/** Function  oyHash_IsOf_
+/** @internal
+ *  Function  oyHash_IsOf_
  *  @memberof oyHash_s
  *  @brief    Hash is of type
- *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  3 december 2007 (API 0.1.8)
@@ -379,9 +379,9 @@ int                oyHash_IsOf_      ( oyHash_s_         * hash,
   return (hash && hash->entry && hash->entry->type_ == type);
 }
 
-/** Function  oyHash_SetPointer_
+/** @internal
+ *  Function  oyHash_SetPointer_
  *  @memberof oyHash_s
- *  @internal
  *
  *  @param[in,out] hash                the to be set hash
  *  @param[in,out] obj                 the to be referenced object
@@ -405,9 +405,9 @@ int                oyHash_SetPointer_( oyHash_s_         * hash,
     return 1;
 }
 
-/** Function  oyHash_GetPointer_
+/** @internal
+ *  Function  oyHash_GetPointer_
  *  @memberof oyHash_s
- *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  3 december 2007 (API 0.1.8)

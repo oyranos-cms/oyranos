@@ -145,6 +145,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
                                        int                 intent_proof );
 oyPointer  lcm2CMMColourConversion_ToMem_ (
                                        cmsHTRANSFORM     * xform,
+                                       oyOptions_s       * opts,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
 oyOptions_s* lcm2Filter_CmmIccValidateOptions
@@ -321,9 +322,15 @@ int          lcm2CMMData_Open        ( oyStruct_s        * data,
     s->block = block;
 
     s->lcm2 = CMMProfileOpen_M( data, block, size );
+    if(!s->lcm2)
+      lcm2_msg( oyMSG_WARN, (oyStruct_s*)data,
+             OY_DBG_FORMAT_" %s() failed", OY_DBG_ARGS_, "CMMProfileOpen_M" );
     error = oyPointer_Set( oy, 0,
                           lcm2PROFILE, s, CMMToString_M(CMMProfileOpen_M),
                           lcm2CMMProfileReleaseWrap );
+    if(error)
+      lcm2_msg( oyMSG_WARN, (oyStruct_s*)data,
+             OY_DBG_FORMAT_" oyPointer_Set() failed", OY_DBG_ARGS_ );
   }
 
   if(!error)
@@ -508,6 +515,12 @@ int            lcm2IntentFromOptions ( oyOptions_s       * opts,
       intent_proof = intent_proof == 0 ? INTENT_RELATIVE_COLORIMETRIC :
                                          INTENT_ABSOLUTE_COLORIMETRIC;
 
+  if(oy_debug)
+    lcm2_msg( oyMSG_WARN, (oyStruct_s*)opts, OY_DBG_FORMAT_"\n"
+             "  proof: %d  intent: %d  intent_proof: %d\n",
+             OY_DBG_ARGS_,
+                proof,     intent,     intent_proof );
+
   if(proof)
     return intent_proof;
   else
@@ -517,9 +530,9 @@ int            lcm2IntentFromOptions ( oyOptions_s       * opts,
 uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
 {
   int bpc = 0,
-      cmyk_cmyk_black_preservation = 0,
       gamut_warning = 0,
-      precalculation = 0,
+      precalculation = 1,
+      precalculation_curves = 0,
       flags = 0;
   const char * o_txt = 0;
 
@@ -535,9 +548,9 @@ uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
       if(o_txt && oyStrlen_(o_txt))
         precalculation = atoi( o_txt );
 
-      o_txt = oyOptions_FindString  ( opts, "cmyk_cmyk_black_preservation", 0 );
+      o_txt = oyOptions_FindString  ( opts, "precalculation_curves", 0 );
       if(o_txt && oyStrlen_(o_txt))
-        cmyk_cmyk_black_preservation = atoi( o_txt );
+        precalculation_curves = atoi( o_txt );
 
       /* this should be moved to the CMM and not be handled here in Oyranos */
       flags = bpc ?           flags | cmsFLAGS_BLACKPOINTCOMPENSATION :
@@ -552,11 +565,17 @@ uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
       case 3: flags |= cmsFLAGS_LOWRESPRECALC; break;
       }
 
+      switch(precalculation_curves)
+      {
+      case 0: flags |= 0; break;
+      case 1: flags |= cmsFLAGS_CLUT_POST_LINEARIZATION | cmsFLAGS_CLUT_PRE_LINEARIZATION; break;
+      }
+
   if(oy_debug)
-    lcm2_msg( oyMSG_WARN,0, OY_DBG_FORMAT_"\n"
-             "  bpc: %d  gamut_warning: %d  precalculation: %d\n",
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)opts, OY_DBG_FORMAT_"\n"
+             "  bpc: %d  gamut_warning: %d  precalculation: %d precalculation_curves: %d\n",
              OY_DBG_ARGS_,
-                bpc,     gamut_warning,     precalculation );
+                bpc,     gamut_warning,     precalculation,    precalculation_curves );
 
   return flags;
 }
@@ -564,11 +583,12 @@ uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
 /** Function lcm2CMMConversionContextCreate_
  *  @brief   create a CMM transform
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.3
  *  @since   2008/12/28 (Oyranos: 0.1.10)
- *  @date    2009/11/04
+ *  @date    2011/11/18
  */
 cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
+                                       oyFilterNode_s    * node,
                                        cmsHPROFILE       * lps,
                                        int                 profiles_n,
                                        oyProfiles_s      * simulation,
@@ -591,9 +611,11 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
   int intent = lcm2IntentFromOptions( opts,0 ),
       intent_proof = lcm2IntentFromOptions( opts,1 ),
       cmyk_cmyk_black_preservation = 0,
-      flags = lcm2FlagsFromOptions( opts ) | cmsFLAGS_NOCACHE,
+      flags = lcm2FlagsFromOptions( opts ),
       gamut_warning = flags & cmsFLAGS_GAMUTCHECK;
   const char * o_txt = 0;
+  double adaption_state = 0.0;
+  int multi_profiles_n = profiles_n;
 
   if(!lps || !profiles_n || !oy_pixel_layout_in || !oy_pixel_layout_out)
     return 0;
@@ -624,7 +646,11 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
       if(cmyk_cmyk_black_preservation == 2)
         intent += 13;
 
+      o_txt = oyOptions_FindString  ( opts, "adaption_state", 0 );
+      if(o_txt && oyStrlen_(o_txt))
+        adaption_state = atof( o_txt );
 
+  cmsSetAdaptationState(adaption_state);
   if(!error)
   {
          if(profiles_n == 1 || profile_class_in == icSigLinkClass)
@@ -646,7 +672,6 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
                                     intent, flags );
     else
     {
-      int multi_profiles_n = profiles_n;
       int i;
 
       if(proof_n && (proof || gamut_warning))
@@ -678,8 +703,9 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
     printf ("%s:%d %s() float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
     f = lcm2_pixel_layout_out;
     printf ("%s:%d %s() float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
-      printf("multi_profiles_n: %d intent: %d flags: %d \"%s\" l1 %d, l2 %d\n",
-              multi_profiles_n, intent, flags, lcm2FlagsToText(flags),
+      printf("multi_profiles_n: %d intent: %d adaption: %g flags: %d \"%s\" l1 %d, l2 %d\n",
+              multi_profiles_n, intent, adaption_state, flags,
+              lcm2FlagsToText(flags),
               lcm2_pixel_layout_in, lcm2_pixel_layout_out);
     }
       xform =   cmsCreateMultiprofileTransform(
@@ -694,13 +720,38 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
     }
   }
 
-  if(!xform)
+  if(!xform || oy_debug)
   {
-    uint32_t f = lcm2_pixel_layout_in;
-    printf ("%s:%d %s() float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
+    int level = oyMSG_DBG;
+    uint32_t f = lcm2_pixel_layout_in, i;
+
+    if(!xform)
+    {
+      level = oyMSG_WARN;
+      error = 1;
+    }
+
+    lcm2_msg( level, (oyStruct_s*)opts, OY_DBG_FORMAT_
+              " float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes %d",
+              OY_DBG_ARGS_,
+              T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
     f = lcm2_pixel_layout_out;
-    printf ("%s:%d %s() float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
-    error = 1;
+    lcm2_msg( level, (oyStruct_s*)opts, OY_DBG_FORMAT_
+              "float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes %d",
+              OY_DBG_ARGS_,
+              T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
+    lcm2_msg( level, (oyStruct_s*)opts, OY_DBG_FORMAT_
+              "multi_profiles_n: %d intent: %d adaption: %g \"%s\"",
+              OY_DBG_ARGS_,
+              multi_profiles_n, intent, adaption_state,
+              lcm2FlagsToText(flags));
+    for(i=0; i < profiles_n; ++i)
+      lcm2_msg( level,(oyStruct_s*)node, OY_DBG_FORMAT_"\n"
+             "  ColourSpace:%s->PCS:%s DeviceClass:%s",
+             OY_DBG_ARGS_,
+             oyICCColourSpaceGetName(cmsGetColorSpace( lps[0])),
+             oyICCColourSpaceGetName(cmsGetPCS( lps[i] )),
+             oyICCDeviceClassDescription(cmsGetDeviceClass(lps[i])) );
   }
 
   if(!error && ltw && oy)
@@ -708,6 +759,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
                                   oy_pixel_layout_in, oy_pixel_layout_out, oy );
 
   end:
+  cmsSetAdaptationState(0.0);
   return xform;
 }
 
@@ -721,16 +773,19 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
  */
 oyPointer  lcm2CMMColourConversion_ToMem_ (
                                        cmsHTRANSFORM     * xform,
+                                       oyOptions_s       * opts,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc )
 {
   int error = !xform;
   oyPointer data = 0;
   cmsUInt32Number size_ = 0;
+  int flags = lcm2FlagsFromOptions( opts );
 
   if(!error)
   {
-    cmsHPROFILE dl= cmsTransform2DeviceLink( xform,4.2,cmsFLAGS_KEEP_SEQUENCE );
+    cmsHPROFILE dl= cmsTransform2DeviceLink( xform,4.3,
+                                             flags | cmsFLAGS_KEEP_SEQUENCE );
 
     *size = 0;
 
@@ -775,7 +830,7 @@ oyOptions_s* lcm2Filter_CmmIccValidateOptions
   uint32_t error = !filter;
 
   if(!error)
-    error = oyFilterRegistrationMatch(filter->registration_, "//imaging/icc",
+    error = oyFilterRegistrationMatch(filter->registration_, "//"OY_TYPE_STD"/icc",
                                       oyOBJECT_CMM_API4_S);
 
   *result = error;
@@ -998,10 +1053,17 @@ cmsHPROFILE  lcm2AddProfile          ( oyProfile_s       * p )
   if(!oyPointer_GetPointer(cmm_ptr))
     error = lcm2CMMData_Open( (oyStruct_s*)p, cmm_ptr );
 
-  if(!error)
+  if(error)
+  {
+    lcm2_msg( oyMSG_WARN, (oyStruct_s*)p,
+             OY_DBG_FORMAT_" lcm2CMMData_Open() failed", OY_DBG_ARGS_ );
+  } else
   {
     s = lcm2CMMProfile_GetWrap_( cmm_ptr );
     error = !s;
+    if(error)
+      lcm2_msg( oyMSG_WARN, (oyStruct_s*)p,
+             OY_DBG_FORMAT_" lcm2CMMProfile_GetWrap_() failed", OY_DBG_ARGS_ );
   }
 
   if(!error)
@@ -1020,14 +1082,13 @@ int gamutCheckSampler16(const cmsUInt16Number In[],
                         void                * Cargo)
 {
   cmsCIELab Lab1, Lab2;
-  double d;
   oyPointer * ptr = (oyPointer*)Cargo;
 
   cmsLabEncoded2Float(&Lab1, In);
   cmsDoTransform( ptr[0], In, Out, 1 );
   cmsLabEncoded2Float(&Lab2, Out);
-  d = cmsDeltaE( &Lab1, &Lab2 );
-  /*if(abs(d) > 10 && ptr[1] != NULL)
+  /*double d = cmsDeltaE( &Lab1, &Lab2 );
+  if(abs(d) > 10 && ptr[1] != NULL)
   {
     Lab2.L = 50.0;
     Lab2.a = Lab2.b = 0.0;
@@ -1359,14 +1420,11 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   /*int error = !node || !size;*/
   oyPointer block = 0;
   int error = 0;
-  int channels = 0;
   int n,i,len;
   oyDATATYPE_e data_type = 0;
   size_t size_ = 0;
   oyFilterSocket_s * socket = (oyFilterSocket_s *)node->sockets[0];
   oyFilterPlug_s * plug = (oyFilterPlug_s *)node->plugs[0];
-  oyFilterCore_s * filter = 0;
-  oyFilterNode_s * input_node = 0;
   oyImage_s * image_input = 0,
             * image_output = 0;
   cmsHPROFILE * lps = 0;
@@ -1385,8 +1443,6 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   int verbose = oyOptions_FindString( node->tags, "verbose", "true" ) ? 1 : 0;
   const char * o_txt = 0;
 
-  filter = node->core;
-  input_node = plug->remote_socket_->node;
   image_input = (oyImage_s*)plug->remote_socket_->data;
   image_output = (oyImage_s*)socket->data;
 
@@ -1415,8 +1471,6 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
     lcm2_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_" can not handle oyHALF", OY_DBG_ARGS_ );
   }
-
-  channels = oyToChannels_m( image_input->layout_[0] );
 
   len = sizeof(cmsHPROFILE) * (15 + 2 + 1);
   lps = oyAllocateFunc_( len );
@@ -1525,21 +1579,57 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   *size = 0;
 
   /* create the context */
-  xform = lcm2CMMConversionContextCreate_( lps, profiles_n,
+  xform = lcm2CMMConversionContextCreate_( node, lps, profiles_n,
                                            profiles, profiles_proof_n, proof,
                                            image_input->layout_[0],
                                            image_output->layout_[0],
                                            node->core->options_, 0, 0);
+  if(oy_debug)
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_"\n%s",
+              OY_DBG_ARGS_,
+              oyFilterNode_GetText( node, oyNAME_NAME ) );
   error = !xform;
 
   if(!error)
   {
     if(oy_debug)
-      block = lcm2CMMColourConversion_ToMem_( xform, size, oyAllocateFunc_ );
+      block = lcm2CMMColourConversion_ToMem_( xform, node->core->options_,
+                                              size, oyAllocateFunc_ );
     else
-      block = lcm2CMMColourConversion_ToMem_( xform, size, allocateFunc );
+      block = lcm2CMMColourConversion_ToMem_( xform, node->core->options_,
+                                              size, allocateFunc );
     error = !block || !*size;
     cmsDeleteTransform( xform ); xform = 0;
+  } else
+  {
+    lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_"\n"
+              "loading failed profiles_n:%d profiles_proof_n:%d profiles:%d",
+              OY_DBG_ARGS_,
+              profiles_n, profiles_proof_n, oyProfiles_Count(profiles) );
+    lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_"\n"
+              "  input profile: \"%s\" %s %s->%s %s\n  %s",
+              OY_DBG_ARGS_,
+              oyProfile_GetText( image_input->profile_, oyNAME_DESCRIPTION ),
+              oyProfile_GetText( image_input->profile_, oyNAME_NAME ),
+              oyICCColourSpaceGetName( oyProfile_GetSignature( 
+                            image_input->profile_, oySIGNATURE_COLOUR_SPACE ) ),
+              oyICCColourSpaceGetName( oyProfile_GetSignature( 
+                            image_input->profile_, oySIGNATURE_PCS ) ),
+              oyICCDeviceClassDescription( oyProfile_GetSignature( 
+                            image_input->profile_, oySIGNATURE_CLASS ) ),
+              oyPixelPrint(image_input->layout_[0], malloc));
+    lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_"\n"
+              "  output profile: \"%s\" %s %s->%s %s\n  %s",
+              OY_DBG_ARGS_,
+              oyProfile_GetText( image_input->profile_, oyNAME_DESCRIPTION ),
+              oyProfile_GetText( image_output->profile_, oyNAME_NAME ),
+              oyICCColourSpaceGetName( oyProfile_GetSignature( 
+                            image_input->profile_, oySIGNATURE_COLOUR_SPACE ) ),
+              oyICCColourSpaceGetName( oyProfile_GetSignature( 
+                            image_input->profile_, oySIGNATURE_PCS ) ),
+              oyICCDeviceClassDescription( oyProfile_GetSignature( 
+                            image_input->profile_, oySIGNATURE_CLASS ) ),
+              oyPixelPrint(image_output->layout_[0], malloc));
   }
 
   /* additional tags for debugging */
@@ -1660,13 +1750,9 @@ char * lcm2Image_GetText             ( oyImage_s         * image,
   oyImage_s * s = image;
 
   /* describe the image */
-  oySprintf_( text,   "  <oyImage_s\n");
+  oySprintf_( text,   "  <oyImage_s>\n");
   hashTextAdd_m( text );
-  if(oy_debug || verbose)
-    oySprintf_( text, "    profile=\"%s\"\n", oyProfile_GetText(profile,
-                                                                oyNAME_NAME));
-  else
-    oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NICK));
+  oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NAME));
   hashTextAdd_m( text );
   oySprintf_( text,   "    <channels all=\"%d\" colour=\"%d\" />\n", n,cchan_n);
   hashTextAdd_m( text );
@@ -1887,7 +1973,7 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
   {
     lps[0] = CMMProfileOpen_M( node, oyPointer_GetPointer(cmm_ptr_in),
                                oyPointer_GetSize( cmm_ptr_in) );
-    xform = lcm2CMMConversionContextCreate_( lps, 1, 0,0,0,
+    xform = lcm2CMMConversionContextCreate_( node, lps, 1, 0,0,0,
                                            image_input->layout_[0],
                                            image_output->layout_[0],
                                            node->core->options_,
@@ -1922,8 +2008,8 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   int channels = 0;
   oyDATATYPE_e data_type_in = 0,
                data_type_out = 0;
-  int bps_out, bps_in;
-  oyPixel_t pixel_layout_in, pixel_layout_out;
+  int bps_in;
+  oyPixel_t pixel_layout_in;
 
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
   oyFilterPlug_s * plug = 0;
@@ -1938,10 +2024,10 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   input_node = plug->remote_socket_->node;
 
   image_input = oyFilterPlug_ResolveImage( plug, socket, ticket );
-  pixel_layout_in = oyImage_PixelLayoutGet( image_input );
+  pixel_layout_in = oyImage_GetPixelLayout( image_input );
 
-  if(oyImage_PixelLayoutGet( image_input ) != 
-     oyImage_PixelLayoutGet( ticket->output_image ))
+  if(oyImage_GetPixelLayout( image_input ) != 
+     oyImage_GetPixelLayout( ticket->output_image ))
   {
     /* adapt the region of interesst to the new image dimensions */
     /* create a new ticket to avoid pixel layout conflicts */
@@ -1951,28 +2037,42 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     new_ticket->output_image = oyImage_Copy( image_input, 0 );
     error = oyImage_FillArray( image_input, new_ticket->output_image_roi, 1,
                                &new_ticket->array, 0, 0 );
+    if(oy_debug > 1)
+      lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s %d",
+                OY_DBG_ARGS_, _("Fill new_ticket->array from image_input"),
+                oyStruct_GetId( (oyStruct_s*)image_input ) );
   }
 
   /* We let the input filter do its processing first. */
   error = input_node->api7_->oyCMMFilterPlug_Run( plug, new_ticket );
   if(error != 0) return error;
 
+  if(oy_debug > 1)
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s %d (%s %d)",
+              OY_DBG_ARGS_,_("Read from new_ticket->array"),
+              oyStruct_GetId( (oyStruct_s*)new_ticket->array ),
+              _("Image"), oyStruct_GetId( (oyStruct_s*)new_ticket->output_image ) );
   array_in = new_ticket->array;
   array_out = ticket->array;
+  if(oy_debug > 1)
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"%s %d (%s %d)",
+              OY_DBG_ARGS_,_("Write to ticket->array"),
+              oyStruct_GetId( (oyStruct_s*)ticket->array ),
+              _("Image"), oyStruct_GetId( (oyStruct_s*)new_ticket->output_image ) );
 
-  data_type_in = oyToDataType_m( oyImage_PixelLayoutGet( image_input ) );
+  data_type_in = oyToDataType_m( oyImage_GetPixelLayout( image_input ) );
   bps_in = oySizeofDatatype( data_type_in );
 
   if(data_type_in == oyHALF)
   {
     oyFilterSocket_Callback( requestor_plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
-    lcm2_msg(oyMSG_WARN,0, OY_DBG_FORMAT_" can not handle oyHALF",OY_DBG_ARGS_);
+    lcm2_msg(oyMSG_WARN,(oyStruct_s*)ticket, OY_DBG_FORMAT_" can not handle oyHALF",OY_DBG_ARGS_);
     error = 1;
   }
 
   if(!ticket->output_image)
   {
-    lcm2_msg( oyMSG_WARN,0, OY_DBG_FORMAT_ " no ticket->output_image",
+    lcm2_msg( oyMSG_WARN,(oyStruct_s*)ticket, OY_DBG_FORMAT_ " no ticket->output_image",
              OY_DBG_ARGS_);
     error = 1;
   }
@@ -1980,20 +2080,18 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   if(!error)
   {
     image_output = ticket->output_image;
-    pixel_layout_out = oyImage_PixelLayoutGet( image_output );
-    data_type_out = oyToDataType_m( oyImage_PixelLayoutGet( image_output ) );
-    bps_out = oySizeofDatatype( data_type_out );
-    channels = oyToChannels_m( oyImage_PixelLayoutGet( image_output ) );
+    data_type_out = oyToDataType_m( oyImage_GetPixelLayout( image_output ) );
+    channels = oyToChannels_m( oyImage_GetPixelLayout( image_output ) );
 
     error = lcm2CMMTransform_GetWrap_( node->backend_data, &ltw );
   }
 
-  DBG_NUM2_S( "channels in/out: %d->%d",
-              oyToChannels_m( pixel_layout_in ), channels );
+  DBGs_NUM2_S( ticket, "channels in/out: %d->%d",
+               oyToChannels_m( pixel_layout_in ), channels );
 
   if(ltw && !ticket->array)
   {
-    lcm2_msg( oyMSG_ERROR,0, OY_DBG_FORMAT_ " no ticket->array",
+    lcm2_msg( oyMSG_ERROR,(oyStruct_s*)ticket, OY_DBG_FORMAT_ " no ticket->array",
              OY_DBG_ARGS_);
     error = 1;
   }
@@ -2019,7 +2117,8 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
     n = w_out / channels;
 
-    lcm2_msg( oyMSG_DBG,(oyStruct_s*)requestor_plug, OY_DBG_FORMAT_
+    if(oy_debug > 1)
+      lcm2_msg( oyMSG_DBG,(oyStruct_s*)ticket, OY_DBG_FORMAT_
              " threads_n: %d",
              OY_DBG_ARGS_, threads_n );
 
@@ -2166,8 +2265,8 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     error = 1;
   }
 
-  if(oyImage_PixelLayoutGet( image_input ) != 
-     oyImage_PixelLayoutGet( ticket->output_image ))
+  if(oyImage_GetPixelLayout( image_input ) != 
+     oyImage_GetPixelLayout( ticket->output_image ))
     oyPixelAccess_Release( &new_ticket );
 
   oyImage_Release( &image_input );
@@ -2229,7 +2328,9 @@ char lcm2_extra_options[] = {
     <" OY_TYPE_STD ">\n\
      <" "icc" ">\n\
       <cmyk_cmyk_black_preservation.advanced>0</cmyk_cmyk_black_preservation.advanced>\n\
-      <precalculation.advanced>2</precalculation.advanced>\n\
+      <precalculation.advanced>1</precalculation.advanced>\n\
+      <precalculation_curves.advanced>0</precalculation_curves.advanced>\n\
+      <adaption_state.advanced>1.0</adaption_state.advanced>\n\
      </" "icc" ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
@@ -2317,6 +2418,50 @@ int lcm2GetOptionsUI                 ( oyOptions_s        * options,
         <xf:label>LCMS2_LOWRESPRECALC</xf:label>\n\
        </xf:item>\n\
       </xf:choices>\n\
+     </xf:select1>\n");
+  A("\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc/precalculation_curves\">\n\
+      <xf:label>" );
+  A(          _("Curves for Optimization"));
+  A(                              "</xf:label>\n\
+      <xf:hint>" );
+  A(          _("Color Transform CLUT's can additionally use curves for special cases"));
+  A(                              "</xf:hint>\n\
+      <xf:help>" );
+  A(          _("Little CMS can use curves before and after CLUT's for special cases like gamma encoded values to and from linear gamma values. Performance will suffer."));
+  A(                              "</xf:help>\n\
+      <xf:choices>\n\
+       <xf:item>\n\
+        <xf:value>0</xf:value>\n\
+        <xf:label>none</xf:label>\n\
+       </xf:item>\n\
+       <xf:item>\n\
+        <xf:value>1</xf:value>\n\
+        <xf:label>LCMS2_POST+PRE_CURVES</xf:label>\n\
+       </xf:item>\n\
+      </xf:choices>\n\
+     </xf:select1>\n");
+  A("\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc/adaption_state\">\n\
+      <xf:label>" );
+  A(          _("Adaptation State"));
+  A(                              "</xf:label>\n\
+      <xf:hint>" );
+  A(          _("Adaptation state for absolute colorimetric intent"));
+  A(                              "</xf:hint>\n\
+      <xf:help>" );
+  A(          _("The adaption state should be between 0 and 1.0 and will apply to the absolute colorimetric intent."));
+  A(                              "</xf:help>\n\
+      <xf:choices>\n\
+       <xf:item>\n\
+        <xf:value>0.0</xf:value>\n\
+        <xf:label>0.0</xf:label>\n\
+       </xf:item>\n\
+       <xf:item>\n\
+        <xf:value>1.0</xf:value>\n\
+        <xf:label>1.0</xf:label>\n\
+       </xf:item>\n\
+      </xf:choices>\n\
      </xf:select1>\n\
    </xf:group>\n");
 
@@ -2360,14 +2505,20 @@ oyProfile_s *      lcm2CreateICCMatrixProfile (
 
   p.Red.x = rx; 
   p.Red.y = ry;
+  p.Red.Y = 1.0;
   p.Green.x = gx;
   p.Green.y = gy;
+  p.Green.Y = 1.0;
   p.Blue.x = bx;
   p.Blue.y = by;
+  p.Blue.Y = 1.0;
   wtpt_xyY.x = wx;
   wtpt_xyY.y = wy;
   wtpt_xyY.Y = 1.0;
   g[0] = g[1] = g[2] = cmsBuildGamma(0, (double)gamma);
+  lcm2_msg( oyMSG_DBG,0, OY_DBG_FORMAT_
+             " red: %g %g %g green: %g %g %g blue: %g %g %g white: %g %g gamma: %g",
+             OY_DBG_ARGS_, rx,ry,p.Red.Y, gx,gy,p.Green.Y,bx,by,p.Blue.Y,wx,wy,gamma );
   lp = cmsCreateRGBProfile( &wtpt_xyY, &p, g);
 
   cmsSaveProfileToMem( lp, 0, &size );
@@ -2381,6 +2532,7 @@ oyProfile_s *      lcm2CreateICCMatrixProfile (
 
   error = oyProfile_AddTagText( prof, icSigCopyrightTag,
                                       "no copyright; use freely" );
+  if(error) WARNc2_S("%s %d", _("found issues"),error);
 
   oyDeAllocateFunc_( data ); size = 0;
   return prof;
@@ -2483,7 +2635,7 @@ const char * lcm2InfoGetTextProfileC2( const char        * select,
     else if(type == oyNAME_NAME)
       return _("Create a ICC abstract proofing profile.");
     else
-      return _("The littleCMS \"create_profile.proofing_effect\" command lets you create ICC abstract profiles from a given ICC profile for proofing. The filter expects a oyOption_s object with name \"proofing_profile\" containing a oyProfile_s as value. The options \"rendering_intent\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_gamut_warning\", \"precalculation\" and \"cmyk_cmyk_black_preservation\" are honoured. The result will appear in \"icc_profile\" with the additional attributes \"create_profile.proofing_effect\" as a oyProfile_s object.");
+      return _("The littleCMS \"create_profile.proofing_effect\" command lets you create ICC abstract profiles from a given ICC profile for proofing. The filter expects a oyOption_s object with name \"proofing_profile\" containing a oyProfile_s as value. The options \"rendering_intent\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_gamut_warning\", \"precalculation\", \"precalculation_curves\", \"cmyk_cmyk_black_preservation\" and \"adaption_state\" are honoured. The result will appear in \"icc_profile\" with the additional attributes \"create_profile.proofing_effect\" as a oyProfile_s object.");
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)
@@ -2813,7 +2965,7 @@ const char * lcm2InfoGetText         ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("The lcms \"colour.icc\" filter is a one dimensional colour conversion filter. It can both create a colour conversion context, some precalculated for processing speed up, and the colour conversion with the help of that context. The adaption part of this filter transforms the Oyranos colour context, which is ICC device link based, to the internal lcms format.");
     else
-      return _("The following options are available to create colour contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract colour profiles.\n The following Oyranos options are supported: \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE] and \"precalculation\": [0 - cmsFLAGS_NOOPTIMIZE; 1 - normal; 2 - cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC] ." );
+      return _("The following options are available to create colour contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract colour profiles.\n The following Oyranos options are supported: \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], \"precalculation\": [0 - cmsFLAGS_NOOPTIMIZE; 1 - normal; 2 - cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], \"precalculation_curves\": [0 - none; 1 - cmsFLAGS_CLUT_POST_LINEARIZATION + cmsFLAGS_CLUT_PRE_LINEARIZATION] and \"adaption_state\": [0.0 - not adapted to screen, 1.0 - full adapted to screen]." );
   }
   return 0;
 }

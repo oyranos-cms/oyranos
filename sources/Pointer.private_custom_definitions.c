@@ -1,7 +1,7 @@
-/** Function    oyPointer_Release__Members
+/** @internal
+ *  Function    oyPointer_Release__Members
  *  @memberof   oyPointer_s
  *  @brief      Custom Pointer destructor
- *  @internal
  *
  *  This function will free up all memmory allocated by the
  *  input object. First all object members witch have their
@@ -48,10 +48,10 @@ void oyPointer_Release__Members( oyPointer_s_ * cmmptr )
   }
 }
 
-/** Function    oyPointer_Init__Members
+/** @internal
+ *  Function    oyPointer_Init__Members
  *  @memberof   oyPointer_s
  *  @brief      Custom Pointer constructor 
- *  @internal
  *
  *  This function will allocate all memmory for the input object.
  *  For the basic member types this is done using the allocateFunc_
@@ -70,10 +70,10 @@ int oyPointer_Init__Members( oyPointer_s_ * cmmptr )
   return 0;
 }
 
-/** Function    oyPointer_Copy__Members
+/** @internal
+ *  Function    oyPointer_Copy__Members
  *  @memberof   oyPointer_s
  *  @brief      Custom Pointer copy constructor
- *  @internal
  *
  *  This function makes a copy of all values from the input
  *  to the output object. The destination object and all of its

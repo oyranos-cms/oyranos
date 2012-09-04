@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Categories=Graphics;Viewer;
-Hidden=true
+NoDisplay=true
 Comment=Install a ICC profile for the actual user
 Comment[de]=Installiere ein ICC Farbprofil für den aktuellen Benutzer
 Exec=oyranos-profile-install %U

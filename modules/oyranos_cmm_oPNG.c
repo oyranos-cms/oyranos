@@ -177,6 +177,211 @@ oyOptions_s* oPNGFilter_ImageOutputPNGValidateOptions
   return 0;
 }
 
+/* the more heavily commented parts are from libpng/example.c */
+int  oyImage_WritePNG                ( oyImage_s         * image,
+                                       const char        * file_name,
+                                       oyOptions_s       * options )
+{
+  FILE *fp;
+  png_structp png_ptr;
+  png_infop info_ptr;
+  int y;
+
+  int width = oyImage_GetWidth( image );
+  int height = oyImage_GetHeight( image );
+  int pixel_layout = oyImage_PixelLayoutGet( image );
+  oyProfile_s * prof = oyImage_GetProfile( image );
+  const char * colourspacename = oyProfile_GetText( image->profile_,
+                                                    oyNAME_DESCRIPTION );
+  char * pmem;
+  size_t psize = 0;
+  icColorSpaceSignature sig = oyProfile_GetSignature( prof,
+                                                      oySIGNATURE_COLOUR_SPACE);
+  int cchan_n = oyProfile_GetChannelsCount( prof );
+  int channels_n = oyToChannels_m( pixel_layout );
+  oyDATATYPE_e data_type = oyToDataType_m( pixel_layout );
+  int alpha = channels_n - cchan_n;
+  int colour = PNG_COLOR_TYPE_GRAY;
+  int byteps = oySizeofDatatype( data_type );
+  png_text text_ptr[2];
+  time_t ttime;
+  png_time png_time_data;
+
+
+   /* Open the file */
+   fp = fopen(file_name, "wb");
+   if (fp == NULL)
+      return (1);
+
+   /* Create and initialize the png_struct with the desired error handler
+    * functions.  If you want to use the default stderr and longjump method,
+    * you can supply NULL for the last three parameters.  We also check that
+    * the library version is compatible with the one used at compile time,
+    * in case we are using dynamically linked libraries.  REQUIRED.
+    */
+   png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
+      (png_voidp) file_name, oPNGerror, oPNGwarn);
+
+   if (png_ptr == NULL)
+   {
+      fclose(fp);
+      return (1);
+   }
+
+   /* Allocate/initialize the image information data.  REQUIRED */
+   info_ptr = png_create_info_struct(png_ptr);
+   if (info_ptr == NULL)
+   {
+      fclose(fp);
+      png_destroy_write_struct(&png_ptr,  NULL);
+      return (1);
+   }
+
+   /* Set error handling.  REQUIRED if you aren't supplying your own
+    * error handling functions in the png_create_write_struct() call.
+    */
+   if (setjmp(png_jmpbuf(png_ptr)))
+   {
+      /* If we get here, we had a problem writing the file */
+      fclose(fp);
+      png_destroy_write_struct(&png_ptr, &info_ptr);
+      return (1);
+   }
+
+  if(sig != icSigGrayData)
+    colour = PNG_COLOR_MASK_COLOR;
+
+  if((channels_n == 2 && alpha == 0) ||
+      channels_n == 4 )
+    colour |= PNG_COLOR_MASK_ALPHA;
+
+   /* One of the following I/O initialization functions is REQUIRED */
+
+   /* Set up the output control if you are using standard C streams */
+   png_init_io(png_ptr, fp);
+
+   /* This is the hard way */
+
+   /* Set the image information here.  Width and height are up to 2^31,
+    * bit_depth is one of 1, 2, 4, 8, or 16, but valid values also depend on
+    * the color_type selected. color_type is one of PNG_COLOR_TYPE_GRAY,
+    * PNG_COLOR_TYPE_GRAY_ALPHA, PNG_COLOR_TYPE_PALETTE, PNG_COLOR_TYPE_RGB,
+    * or PNG_COLOR_TYPE_RGB_ALPHA.  interlace is either PNG_INTERLACE_NONE or
+    * PNG_INTERLACE_ADAM7, and the compression_type and filter_type MUST
+    * currently be PNG_COMPRESSION_TYPE_BASE and PNG_FILTER_TYPE_BASE. REQUIRED
+    */
+   png_set_IHDR(png_ptr, info_ptr, width, height, byteps*8, colour,
+      PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+
+  /* set ICC profile */
+  pmem = oyProfile_GetMem( prof, &psize, 0,0 );
+  png_set_iCCP( png_ptr, info_ptr, (char*)colourspacename, 0, pmem, psize);
+  oyDeAllocateFunc_( pmem ); pmem = 0;
+
+  /* set time stamp */
+  ttime= time(NULL); /* time right NOW */
+  png_convert_from_time_t( &png_time_data, ttime );
+  png_set_tIME( png_ptr, info_ptr, &png_time_data );
+
+  /* Optionally write comments into the image */
+  if(oyOptions_FindString( options, "comment", 0 ))
+  {
+    char * t = (char*) oyOptions_FindString( options, "comment", 0 );;
+    text_ptr[0].key = "Description";
+    text_ptr[0].text = t;
+    text_ptr[0].compression = PNG_TEXT_COMPRESSION_NONE;
+#ifdef PNG_iTXt_SUPPORTED
+    text_ptr[0].lang = NULL;
+    text_ptr[0].lang_key = NULL;
+#endif
+    t = oyVersionString(1,malloc);
+    text_ptr[1].key = "Software";
+    text_ptr[1].text = t;
+    text_ptr[1].compression = PNG_TEXT_COMPRESSION_NONE;
+#ifdef PNG_iTXt_SUPPORTED
+    text_ptr[1].lang = NULL;
+    text_ptr[1].lang_key = NULL;
+#endif
+    png_set_text(png_ptr, info_ptr, text_ptr, 2);
+    if(t) free(t); t = 0;
+  }
+
+   /* Other optional chunks like cHRM, bKGD, tRNS, tIME, oFFs, pHYs */
+
+   /* Note that if sRGB is present the gAMA and cHRM chunks must be ignored
+    * on read and, if your application chooses to write them, they must
+    * be written in accordance with the sRGB profile
+    */
+
+   /* Write the file header information.  REQUIRED */
+   png_write_info(png_ptr, info_ptr);
+
+   /* If you want, you can write the info in two steps, in case you need to
+    * write your private chunk ahead of PLTE:
+    *
+    *   png_write_info_before_PLTE(write_ptr, write_info_ptr);
+    *   write_my_chunk();
+    *   png_write_info(png_ptr, info_ptr);
+    *
+    * However, given the level of known- and unknown-chunk support in 1.2.0
+    * and up, this should no longer be necessary.
+    */
+
+   /* Once we write out the header, the compression type on the text
+    * chunks gets changed to PNG_TEXT_COMPRESSION_NONE_WR or
+    * PNG_TEXT_COMPRESSION_zTXt_WR, so it doesn't get written out again
+    * at the end.
+    */
+
+   /* Set up the transformations you want.  Note that these are
+    * all optional.  Only call them if you want them.
+    */
+
+   /* Pack pixels into bytes */
+   png_set_packing(png_ptr);
+
+   /* Swap bytes of 16-bit files to most significant byte first */
+   if(byteps > 1 && !oyBigEndian())
+     png_set_swap( png_ptr );
+
+   /* One of the following output methods is REQUIRED */
+
+      /* If you are only writing one row at a time, this works */
+  for(y = 0; y < height; ++y)
+  {
+    int is_allocated = 0;
+    void * p = oyImage_GetPoint( image, 0,y, 0, &is_allocated );
+    png_bytep pointers[2] = {0,0};
+
+    pointers[0] = p;
+    png_write_rows(png_ptr, pointers, 1);
+  }
+
+   /* You can write optional chunks like tEXt, zTXt, and tIME at the end
+    * as well.  Shouldn't be necessary in 1.2.0 and up as all the public
+    * chunks are supported and you can use png_set_unknown_chunks() to
+    * register unknown chunks into the info structure to be written out.
+    */
+
+   /* It is REQUIRED to call this to finish writing the rest of the file */
+   png_write_end(png_ptr, info_ptr);
+
+   /* Whenever you use png_free() it is a good idea to set the pointer to
+    * NULL in case your application inadvertently tries to png_free() it
+    * again.  When png_free() sees a NULL it returns without action, thus
+    * avoiding the double-free security problem.
+    */
+
+   /* Clean up after the write, and free any memory allocated */
+   png_destroy_write_struct(&png_ptr, &info_ptr);
+
+   /* Close the file */
+   fclose(fp);
+
+   /* That's it */
+   return 0;
+}
+
 /** @func    oPNGFilterPlug_ImageOutputPNGWrite
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
@@ -189,19 +394,19 @@ int      oPNGFilterPlug_ImageOutputPNGWrite (
                                        oyPixelAccess_s   * ticket )
 {
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyFilterPlug_s * plug = 0;
-  oyFilterNode_s * input_node = 0,
-                 * node = 0;
+  oyFilterNode_s * node = 0;
   int result = 0;
   const char * filename = 0;
   FILE * fp = 0;
 
-  node = socket->node;
-  plug = (oyFilterPlug_s *)node->plugs[0];
-  input_node = plug->remote_socket_->node;
+  if(socket)
+    node = socket->node;
 
   /* to reuse the requestor_plug is a exception for the starting request */
-  result = input_node->api7_->oyCMMFilterPlug_Run( plug, ticket );
+  if(node)
+    result = node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket );
+  else
+    result = 1;
 
   if(result <= 0)
     filename = oyOptions_FindString( node->core->options_, "filename", 0 );
@@ -211,165 +416,11 @@ int      oPNGFilterPlug_ImageOutputPNGWrite (
 
   if(fp)
   {
-      size_t pt = 0;
-      char text[128];
-      int  len = 0;
-      int  i,j,k,l, n;
-      char bytes[48];
-      oyImage_s *image_output = (oyImage_s*)socket->data;
+    oyImage_s *image = (oyImage_s*)socket->data;
 
-      int cchan_n = oyProfile_GetChannelsCount( image_output->profile_ );
-      int channels = oyToChannels_m( image_output->layout_[0] );
-      oyDATATYPE_e data_type = oyToDataType_m( image_output->layout_[0] );
-      int alpha = channels - cchan_n;
-      int byteps = oySizeofDatatype( data_type );
-      const char * colourspacename = oyProfile_GetText( image_output->profile_,
-                                                        oyNAME_DESCRIPTION );
-      char * vs = oyVersionString(1,malloc);
-      uint8_t * out_values = 0;
-      const uint8_t * u8;
-      double * dbls;
-      float flt;
+    fclose (fp); fp = 0;
 
-            fputc( 'P', fp );
-      if(alpha) 
-            fputc( '7', fp );
-      else
-      {
-        if(byteps == 1 ||
-           byteps == 2)
-        {
-          if(channels == 1)
-            fputc( '5', fp );
-          else
-            fputc( '6', fp );
-        } else
-        if (byteps == 4 || byteps == 8)
-        {
-          if(channels == 1)
-            fputc( 'f', fp ); /* PFM gray */
-          else
-            fputc( 'F', fp ); /* PFM rgb */
-        }
-      }
-
-      fputc( '\n', fp );
-
-      snprintf( text, 128, "# CREATOR: Oyranos-%s " CMM_NICK "\"%s\"\n",
-                oyNoEmptyString_m_(vs), node->relatives_ );
-      if(vs) free(vs); vs = 0;
-      len = strlen( text );
-      do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
-
-      {
-        time_t  cutime;         /* Time since epoch */
-        struct tm       *gmt;
-        char time_str[24];
-
-        cutime = time(NULL); /* time right NOW */
-        gmt = gmtime(&cutime);
-        strftime(time_str, 24, "%Y/%m/%d %H:%M:%S", gmt);
-        snprintf( text, 128, "# DATE/TIME: %s\n", time_str );
-        len = strlen( text );
-        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
-      }
-
-      snprintf( text, 128, "# COLORSPACE: %s\n", colourspacename ?
-                colourspacename : "--" );
-      len = strlen( text );
-      do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
-
-      if(byteps == 1)
-        snprintf( bytes, 48, "255" );
-      else
-      if(byteps == 2)
-        snprintf( bytes, 48, "65535" );
-      else
-      if (byteps == 4 || byteps == 8) 
-      {
-        if(oyBigEndian())
-          snprintf( bytes, 48, "1.0" );
-        else
-          snprintf( bytes, 48, "-1.0" );
-      }
-      else
-        message( oyMSG_WARN, (oyStruct_s*)node,
-             OY_DBG_FORMAT_ " byteps: %d",
-             OY_DBG_ARGS_, byteps );
-
-
-      if(alpha)
-      {
-        const char *tupl = "RGB_ALPHA";
-
-        if(channels == 2)
-          tupl = "GRAYSCALE_ALPHA";
-        snprintf( text, 128, "WIDTH %d\nHEIGHT %d\nDEPTH %d\nMAXVAL "
-                  "%s\nTUPLTYPE %s\nENDHDR\n",
-                  image_output->width, image_output->height,
-                  channels, bytes, tupl );
-        len = strlen( text );
-        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
-
-      }
-      else
-      {
-        snprintf( text, 128, "%d %d\n", image_output->width,
-                                       image_output->height);
-        len = strlen( text );
-        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
-
-        snprintf( text, 128, "%s\n", bytes );
-        len = strlen( text );
-        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
-      }
-
-      n = image_output->width * channels;
-      if(byteps == 8)
-        u8 = (uint8_t*) &flt;
-
-      for( k = 0; k < image_output->height; ++k)
-      {
-        int height = 0,
-            is_allocated = 0;
-        out_values = image_output->getLine( image_output, k, &height, -1, 
-                                            &is_allocated );
-        len = n * byteps;
-
-        for( l = 0; l < height; ++l )
-        {
-          if(byteps == 8)
-          {
-            dbls = (double*)out_values;
-            for(i = 0; i < n; ++i)
-            {
-              flt = dbls[l * len + i];
-              for(j = 0; j < 4; ++j)
-                fputc ( u8[j], fp);
-            }
-          } else 
-          for(i = 0; i < len; ++i)
-          {
-            if(!oyBigEndian() && (byteps == 2))
-            { if(i%2)
-                fputc ( out_values[l * len + i - 1] , fp);
-              else
-                fputc ( out_values[l * len + i + 1] , fp);
-            } else
-              fputc ( out_values[l * len + i] , fp);
-          }
-        }
-
-        if(is_allocated)
-          image_output->oy_->deallocateFunc_(out_values);
-      }
-
-      fflush( fp );
-      fclose (fp);
-
-    /*message( oyMSG_WARN, (oyStruct_s*)node,
-             OY_DBG_FORMAT_ "write file %s",
-             OY_DBG_ARGS_, filename );*/
+    result = oyImage_WritePNG( image, filename, node->core->options_ );
   }
 
   return result;
@@ -402,38 +453,6 @@ int  oPNGPNGwriteUiGet               ( oyOptions_s       * opts,
 oyDATATYPE_e oPNG_image_png_data_types[5] = {oyUINT8, oyUINT16,
                                              oyFLOAT, oyDOUBLE, 0};
 
-
-
-oyConnectorImaging_s oPNG_imageOutputPNG_connector_out = {
-  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
-                               (oyObject_s)&oy_connector_imaging_static_object,
-  oyCMMgetImageConnectorSocketText, /* getText */
-  oy_image_connector_texts, /* texts */
-  "//" OY_TYPE_STD "/image.data", /* connector_type */
-  oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
-  0, /* is_plug == oyFilterPlug_s */
-  oPNG_image_png_data_types,
-  4, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
-  1, /* min_channels_count; */
-  4, /* max_channels_count; */
-  1, /* min_colour_count; */
-  4, /* max_colour_count; */
-  0, /* can_planar; can read separated channels */
-  1, /* can_interwoven; can read continuous channels */
-  0, /* can_swap; can swap colour channels (BGR)*/
-  0, /* can_swap_bytes; non host byte order */
-  0, /* can_revert; revert 1 -> 0 and 0 -> 1 */
-  1, /* can_premultiplied_alpha; */
-  1, /* can_nonpremultiplied_alpha; */
-  0, /* can_subpixel; understand subpixel order */
-  0, /* oyCHANNELTYPE_e    * channel_types; */
-  0, /* count in channel_types */
-  1, /* id; relative to oyFilter_s, e.g. 1 */
-  0  /* is_mandatory; mandatory flag */
-};
-oyConnectorImaging_s * oPNG_imageOutputPNG_connectors_socket[2] = 
-             { &oPNG_imageOutputPNG_connector_out, 0 };
 
 
 oyConnectorImaging_s oPNG_imageOutputPNG_connector_in = {
@@ -580,6 +599,16 @@ oyCMMapi4_s   oPNG_api4_image_write_png = {
   &oPNG_api4_image_write_png_ui        /**< oyCMMui_s *ui */
 };
 
+char * oPNG_api7_image_output_png_properties[] =
+{
+  "file=write",    /* file load|write */
+  "image=pixel",  /* image type, pixel/vector/font */
+  "layers=1",     /* layer count, one for plain images */
+  "icc=1",        /* image type ICC profile support */
+  "ext=png", /* supported extensions */
+  0
+};
+
 /** @instance oPNG_api7
  *  @brief    oPNG oyCMMapi7_s implementation
  *
@@ -615,9 +644,11 @@ oyCMMapi7_s   oPNG_api7_image_write_png = {
   (oyConnector_s**) oPNG_imageOutputPNG_connectors_plug,   /* plugs */
   1,   /* plugs_n */
   0,   /* plugs_last_add */
-  (oyConnector_s**) oPNG_imageOutputPNG_connectors_socket,   /* sockets */
-  1,   /* sockets_n */
-  0    /* sockets_last_add */
+  0,   /* sockets */
+  0,   /* sockets_n */
+  0,   /* sockets_last_add */
+
+  oPNG_api7_image_output_png_properties /* char * properties */
 };
 
 
@@ -839,7 +870,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
       png_read_rows( png_ptr, a->array2d, NULL, height );
 #endif
 
-    oyImage_DataSet ( image_in, (oyStruct_s**) &a, 0,0,0,0,0,0 );
+    oyImage_SetData ( image_in, (oyStruct_s**) &a, 0,0,0,0,0,0 );
   }
 
   png_read_end( png_ptr, info_ptr );
@@ -858,6 +889,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
                                  "//" OY_TYPE_STD "/input_png.file_read"
                                                                     "/filename",
                                  filename, OY_CREATE_NEW );
+  if(error) WARNc2_S("%s %d", _("found issues"),error);
 
 
   png_read_clean:

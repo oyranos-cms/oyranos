@@ -10,12 +10,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2011 (C) Kai-Uwe Behrmann
+ *            2004-2012 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/02/15
+ *  @date     2012/08/12
  */
 
 
@@ -43,12 +43,12 @@ typedef struct oyHash_s oyHash_s;
 
 
 /* Include "Hash.dox" { */
-/** @struct  oyHash_s
+/** @internal
+ *  @struct  oyHash_s
  *  @ingroup objects_generic
  *  @extends oyStruct_s
  *  @brief   A cache entry
- *  @internal
- *  
+ *
  *  Combine hash, description and oyPointer to one searchable struct. The struct
  *  can be used in a oyStructList_s for a hash map or searchable cache.
  *  @see oyCacheListNew_ oyHashGet_

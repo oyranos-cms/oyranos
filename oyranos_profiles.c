@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2010 (C) Kai-Uwe Behrmann
+ *            2010-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC profile informations - on the command line
  *  @internal
@@ -31,6 +31,13 @@
 #include <stdio.h>
 #include <string.h>
 
+int    installProfile                ( oyProfile_s       * ip,
+                                       const char        * file_name,
+                                       const char        * path,
+                                       char             ** names,
+                                       int                 count,
+                                       char              * show_text,
+                                       int                 show_gui );
 void* oyAllocFunc(size_t size) {return malloc (size);}
 
 void  printfHelp (int argc, char** argv)
@@ -73,12 +80,14 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -m  %s\n",       _("machine specific path"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Install ICC profile:"));
-  fprintf( stderr, "      %s --install [-u|-s|-y|-m] ICC_file_name(s)\n", argv[0]);
+  fprintf( stderr, "      %s [--gui] --install [-u|-s|-y|-m] ICC_FILE_NAME(s)\n", argv[0]);
+  fprintf( stderr, "      %s --taxi=ID [--gui] --install [-u|-s|-y|-m]\n", argv[0]);
   fprintf( stderr, "      -u  %s\n",       _("user path"));
   fprintf( stderr, "      -s  %s\n",       _("system path"));
   fprintf( stderr, "      -y  %s\n",       _("oyranos install path"));
   fprintf( stderr, "      -m  %s\n",       _("machine specific path"));
   fprintf( stderr, "      --gui %s\n",     _("show hints and question GUI"));
+  fprintf( stderr, "      --taxi=ID %s\n", _("download ID from Taxi data base"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Print a help text:"));
   fprintf( stderr, "      %s -h\n",        argv[0]);
@@ -114,6 +123,7 @@ int main( int argc , char** argv )
   char ** install = 0;
   int install_n = 0,
       show_gui = 0;
+  const char * taxi_id = NULL;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -159,11 +169,11 @@ int main( int argc , char** argv )
                           {
                             if(strcmp(argv[pos+1],"-u") == 0)
                             {  user_path = 1; ++pos; }
-                            if(strcmp(argv[pos+1],"-s") == 0)
+                            else if(strcmp(argv[pos+1],"-s") == 0)
                             {  system_path = 1; ++pos; }
-                            if(strcmp(argv[pos+1],"-y") == 0)
+                            else if(strcmp(argv[pos+1],"-y") == 0)
                             {  oyranos_path = 1; ++pos; }
-                            if(strcmp(argv[pos+1],"-m") == 0)
+                            else if(strcmp(argv[pos+1],"-m") == 0)
                             {  machine_path = 1; ++pos; }
                           }
                           if(user_path + oyranos_path + system_path +
@@ -180,7 +190,7 @@ int main( int argc , char** argv )
                                 argv[pos], oyAllocateFunc_, oyDeAllocateFunc_ );
                             ++pos;
                           }
-                          if(!install_n)
+                          if(!install_n && !taxi_id)
                           {
                             fprintf(stderr, "%s: --install [-u|-s|-y|-m] ICC_file_name(s)\n", _("File name is missed"));
                             exit (0);
@@ -192,6 +202,8 @@ int main( int argc , char** argv )
                           show_gui = 1;
                           i=100; break;
                         }
+                        else if(OY_IS_ARG("taxi"))
+                        { OY_PARSE_STRING_ARG2(taxi_id, "taxi"); break; }
                         }
               default:
                         printfHelp(argc, argv);
@@ -222,16 +234,15 @@ int main( int argc , char** argv )
   /*oyPathAdd( OY_PROFILE_PATH_USER_DEFAULT );*/
 
 
-  if(list_profiles || list_paths || install_n)
+  if(list_profiles || list_paths || install_n || taxi_id)
   {
     oyProfile_s * p = 0;
+    oyProfiles_s * ps = 0;
     char ** names = NULL;
     uint32_t count = 0, i;
     int accept;
     const char * t = 0;
     const char * path = 0;
-
-    names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
 
     if(user_path || oyranos_path || system_path || machine_path)
     {
@@ -248,8 +259,25 @@ int main( int argc , char** argv )
     if(list_profiles)
     {
       fprintf(stderr, "%s:\n", _("ICC profiles"));
-      for(i = 0; i < (int)count; ++i)
+
+      if(!(list_profile_full_names || list_profile_internal_names ||
+           colour_space || input || display || output || abstract ||
+           named_colour || device_link))
       {
+      names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+      for(i = 0; i < (int)count; ++i)
+        {
+          const char * sfn = names[i];
+          if(strrchr(sfn, OY_SLASH_C))
+            sfn = strrchr(sfn, OY_SLASH_C) + 1;
+          fprintf(stdout, "%s\n", sfn);
+        }
+      } else
+      {
+      ps = oyProfiles_Create(0,0);
+      count = oyProfiles_Count(ps);
+      for(i = 0; i < (int)count; ++i)
+        {
         icSignature sig_class = 0;
 
         accept = 1;
@@ -258,7 +286,7 @@ int main( int argc , char** argv )
 
         if(list_profile_full_names || list_profile_internal_names)
         {
-          p = oyProfile_FromFile( names[i], 0,0 );
+          p = oyProfiles_Get( ps, i );
         }
 
         if( colour_space || input || display || output || abstract ||
@@ -266,7 +294,7 @@ int main( int argc , char** argv )
         {
           accept = 0;
           if(!p)
-            p = oyProfile_FromFile( names[i], 0,0 );
+            p = oyProfiles_Get( ps, i );
           sig_class = oyProfile_GetSignature( p, oySIGNATURE_CLASS );
         }
 
@@ -290,7 +318,12 @@ int main( int argc , char** argv )
 
         if(!list_profile_full_names && !list_profile_internal_names &&
            accept)
-            fprintf(stdout, "%s", names[i]);
+        {
+          const char * sfn = oyProfile_GetFileName(p, -1);
+          if(strrchr(sfn, OY_SLASH_C))
+            sfn = strrchr(sfn, OY_SLASH_C) + 1;
+          fprintf(stdout, "%s", sfn);
+        }
 
         if(list_profile_internal_names && accept)
         {
@@ -314,6 +347,8 @@ int main( int argc , char** argv )
             fprintf(stdout, "\n");
 
         oyProfile_Release( &p );
+        }
+        oyProfiles_Release( &ps );
       }
     }
 
@@ -337,14 +372,39 @@ int main( int argc , char** argv )
       oyStringListRelease_(&path_names, n, oyDeAllocateFunc_);
     }
 
+    if(taxi_id)
+    {
+      oyProfile_s * ip;
+      oyOptions_s * options = NULL;
+      char * show_text = 0;
+      const char * file_name = NULL;
+
+      error = oyOptions_SetFromText( &options,
+                                 "//" OY_TYPE_STD "/argv/TAXI_id",
+                                 taxi_id,
+                                 OY_CREATE_NEW );
+
+      ip = oyProfile_FromTaxiDB( options, NULL );
+      if(!ip)
+      {
+        STRING_ADD( show_text, _("Could not open: ") );
+        STRING_ADD( show_text, file_name );
+      } else
+      {
+        file_name = oyProfile_GetText( ip, oyNAME_DESCRIPTION );
+        names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+        installProfile( ip, file_name, path, names, count, show_text, show_gui);
+
+        oyProfile_Release( &ip );
+      }
+    }
+
     if(install_n)
       for(i = 0; i < install_n; ++i)
       {
         const char * file_name = install[i];
-        oyProfile_s * ip = oyProfile_FromFile( file_name, 0,0 );
-        const char * in = oyProfile_GetText( ip, oyNAME_DESCRIPTION );
-        int j;
-        char * show_text = 0, * txt = 0;
+        oyProfile_s * ip = oyProfile_FromFile( file_name, OY_NO_CACHE_WRITE, 0 );
+        char * show_text = 0;
 
         if(!ip)
         {
@@ -352,10 +412,38 @@ int main( int argc , char** argv )
           STRING_ADD( show_text, file_name );
         }
 
-        accept = 1;
-
         if(strrchr(file_name, OY_SLASH_C))
           file_name = strrchr(file_name, OY_SLASH_C) + 1;
+
+        names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+        installProfile( ip, file_name, path, names, count, show_text, show_gui);
+
+        oyProfile_Release( &ip );
+      }
+    if(names)
+      oyStringListRelease_(&names, count, oyDeAllocateFunc_);
+  }
+
+
+  return error;
+}
+
+
+int    installProfile                ( oyProfile_s       * ip,
+                                       const char        * file_name,
+                                       const char        * path,
+                                       char             ** names,
+                                       int                 count,
+                                       char              * show_text,
+                                       int                 show_gui )
+{
+      {
+        const char * in = oyProfile_GetText( ip, oyNAME_DESCRIPTION );
+        int j;
+        char * txt = 0;
+        int accept = 1;
+        const char * t = 0;
+        oyProfile_s * p = NULL;
 
         for(j = 0; j < (int)count; ++j)
         {
@@ -382,7 +470,7 @@ int main( int argc , char** argv )
           if(show_gui)
           {
             char * app = 0;
-            if(getenv("KDE_FULL_SESSION"))
+            if(getenv("KDE_FULL_SESSION") && (app = oyFindApplication( "kdialog" )) != NULL)
             {
               STRING_ADD( txt, "kdialog --sorry \"");
               STRING_ADD( txt, show_text );
@@ -427,7 +515,12 @@ int main( int argc , char** argv )
           const char * sfn = in;
           int error = 0;
 
-          data = oyReadFileToMem_(install[i], &size, oyAllocateFunc_);
+          if(!sfn)
+          {
+            WARNc_S("Could not write to profile");
+            return 1;
+          }
+          data = oyProfile_GetMem( ip, &size, 0, oyAllocateFunc_);
           STRING_ADD( fn, path );
           STRING_ADD( fn, OY_SLASH );
           if(strrchr(sfn, OY_SLASH_C))
@@ -435,17 +528,17 @@ int main( int argc , char** argv )
           STRING_ADD( fn, sfn );
           STRING_ADD( fn, ".icc" );
           if(size)
+          {
             error = oyWriteMemToFile_ ( fn, data, size );
-
-          fprintf(stderr, "%s[%d%s]: \"%s\" -> \"%s\"\n",
-                   _("Installed"), (int)size, _("bytes"), install[i], fn );
+            if(error)
+            {
+              WARNc_S("Could not write to profile");
+	    } else
+              fprintf(stderr, "%s[%d%s]: \"%s\" -> \"%s\"\n",
+                   _("Installed"), (int)size, _("bytes"), file_name, fn );
+          }
           oyDeAllocateFunc_(data); size = 0; data = 0;
         }
-        oyProfile_Release( &ip );
       }
-    oyStringListRelease_(&names, count, oyDeAllocateFunc_);
-  }
-
-
-  return error;
+  return 0;
 }

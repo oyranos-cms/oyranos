@@ -90,6 +90,8 @@ if [ -n "$LIBS" ] && [ $LIBS -gt 0 ]; then
             done
           fi
           rm tests/libtest$EXEC_END
+      else
+          echo "$l=" >> "$CONF_TEMP_SH"
       fi
     done
   fi
@@ -140,7 +142,7 @@ if [ -n "$ELEKTRA" ] && [ "$ELEKTRA" -gt "0" ]; then
     elektra_min="0.7"
   fi
   if [ -z "$elektra_max" ]; then
-    elektra_max="0.7.100"
+    elektra_max="0.9"
   fi
   if [ -z "$ELEKTRA_FOUND" ]; then
     elektra_mod=`pkg-config --modversion elektra`
@@ -266,7 +268,7 @@ fi
 
 if [ -n "$OYRANOS" ] && [ "$OYRANOS" != "0" ]; then
   name="oyranos"
-  minversion=0.2
+  minversion=0.4
   version=`pkg-config --modversion $name`
   url="http://www.oyranos.org"
   HAVE_LIB=0
@@ -601,8 +603,10 @@ if [ -n "$XCM" ] && [ $XCM -gt 0 ]; then
     pc_package=xcm
     name="xcm"
     libname=$name
-    minversion=0.7
+    minversion=0.5
     ID=XCM
+    TESTER=$XCM
+    url="http://sf.net/projects/oyranos/files/libXcm"
 
     ID_H="$ID"_H
     ID_LIBS="$ID"_LIBS
@@ -628,8 +632,14 @@ if [ -n "$XCM" ] && [ $XCM -gt 0 ]; then
         done
       fi
     elif [ $OSUNAME = "Linux" ]; then
-      echo_="X CM not found in"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-      echo_="  $pc_package.pc"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+      if [ $TESTER -eq 1 ]; then
+        echo_="!!! ERROR: no or too old $name found, !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+        ERROR=1
+      else
+        echo_="    Warning: no or too old $name found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+        WARNING=1
+      fi
+      echo_="  need at least version $minversion, download: $url"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     fi
 fi
 
@@ -855,10 +865,14 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
           if [ $OSUNAME = "Darwin" ]; then
             if [ -n "`otool -L tests/libtest | grep $l`" ]; then
               echo "$l=-l$l" >> "$CONF_TEMP_SH"
+            else
+              echo "$l=" >> "$CONF_TEMP_SH"
             fi
           else
             if [ -n "`ldd tests/libtest | grep $l`" ]; then
               echo "$l=-l$l" >> "$CONF_TEMP_SH"
+            else
+              echo "$l=" >> "$CONF_TEMP_SH"
             fi
           fi
           rm tests/libtest$EXEC_END
@@ -886,6 +900,7 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
           echo_="!!! ERROR lib$l is missed"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
           ERROR=1
         else
+          echo "$l=" >> "$CONF_TEMP_SH"
           echo_="lib$l is missed"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
         fi
       fi
@@ -894,7 +909,7 @@ if [ -n "$X11" ] && [ $X11 -gt 0 ]; then
   if [ -n "$MAKEFILE_DIR" ]; then
     for i in $MAKEFILE_DIR; do
       test -f "$ROOT_DIR/$i/makefile".in && echo "X11_INCL=\$(XF86VMODE_INC) \$(XINERAMA_INC) \$(XRANDR_INC)" >> "$i/makefile"
-      test -f "$ROOT_DIR/$i/makefile".in && echo "X11_LIBS=\$(X11_LIB_PATH) -lX11 $X_ADD_LIBS \$(XCM_LIBS)" >> "$i/makefile"
+      test -f "$ROOT_DIR/$i/makefile".in && echo "X11_LIBS=\$(X11_LIB_PATH)  \$(XCM_LIBS) $X_ADD_LIBS" >> "$i/makefile"
     done
   fi
 fi
@@ -1081,7 +1096,12 @@ if [ -n "$COMPIZ" ] && [ $COMPIZ -gt 0 ]; then
   if [ $? = 0 ]; then
     echo_="$pc_package	`pkg-config --modversion $pc_package`		detected"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     echo "#define HAVE_COMPIZ 1" >> $CONF_H
-    echo "COMPIZ = 1" >> $CONF
+    pkg-config  --atleast-version=0.9 $pc_package
+    if [ $? = 0 ]; then
+      echo "COMPIZ_CPP = 1" >> $CONF
+    else
+      echo "COMPIZ = 1" >> $CONF
+    fi
     echo "COMPIZ_H = `pkg-config --cflags $pc_package | sed \"$STRIPOPT\"`" >> $CONF
     echo "COMPIZ_LIBS = `pkg-config --libs $pc_package | sed \"$STRIPOPT\"`" >> $CONF
   else

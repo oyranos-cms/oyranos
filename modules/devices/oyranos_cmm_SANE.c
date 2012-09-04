@@ -862,7 +862,7 @@ oyCMMui_s _api8_ui = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,3,0},                            /**< int32_t module_api[3] */
+  {0,4,1},                            /**< int32_t module_api[3] */
 
   0, /* oyCMMFilter_ValidateOptions_f */
   0, /* oyWidgetEvent_f */
@@ -920,8 +920,8 @@ oyCMMapi8_s _api8 = {
    CMMInit,                                                           /**< oyCMMInit_f      oyCMMInit */
    CMMMessageFuncSet,                                                 /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
    CMM_BASE_REG,                                                      /**< registration */
-   {0, 1, 0},                                                         /**< int32_t version[3] */
-   {0,3,0},                                                        /**< int32_t module_api[3] */
+   CMM_VERSION,                                                         /**< int32_t version[3] */
+   {0,4,1},                                                        /**< int32_t module_api[3] */
    0,                                                                 /**< char * id_ */
    0,                                                                 /**< oyCMMapi5_s * api5_ */
    Configs_FromPattern,                                               /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/

@@ -1,4 +1,5 @@
-/** @file oyranos_alpha_internal.h
+/** @internal
+ *  @file oyranos_alpha_internal.h
  *
  *  Oyranos is an open source Colour Management System 
  *
@@ -7,7 +8,6 @@
  */
 
 /**
- *  @internal
  *  @brief    misc alpha internal APIs
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -82,10 +82,27 @@ int    oyOptions_SetRegistrationTextKey_(
                                        const char        * registration,
                                        const char        * key,
                                        const char        * value );
+int          oyDeviceCheckProperties ( oyConfig_s        * device );
 
-int          oyImage_PpmWrite        ( oyImage_s         * image_output,
-                                       const char        * file_name,
-                                       const char        * free_text );
+int    oyTextIccDictMatch            ( const char        * text,
+                                       const char        * pattern,
+                                       double              delta );
+
+
+oyFilterCore_s * oyFilterCore_New_   ( oyObject_s          object );
+int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
+                                       oyCMMapi4_s       * cmm_api4 );
+
+oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
+                                       int                 get_plug );
+int  oyColourConvert_ ( oyProfile_s       * p_in,
+                        oyProfile_s       * p_out,
+                        oyPointer           buf_in,
+                        oyPointer           buf_out,
+                        oyDATATYPE_e        buf_type_in,
+                        oyDATATYPE_e        buf_type_out,
+                        oyOptions_s       * options,
+                        int                 count );
 
 const char *   oyContextCollectData_ ( oyStruct_s        * s,
                                        oyOptions_s       * opts,

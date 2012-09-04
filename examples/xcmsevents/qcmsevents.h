@@ -23,6 +23,7 @@
 #include <cstring>
 
 #include <X11/Xcm/XcmEvents.h>
+#include <X11/Xcm/Xcm.h>
 
 class QcmseDialog : public QDialog
 {

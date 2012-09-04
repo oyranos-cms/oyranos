@@ -1,4 +1,4 @@
-.TH oyranos-profiles 1 "July 13, 2011" "User Commands"
+.TH oyranos-profiles 1 "January 08, 2012" "User Commands"
 .SH NAME
 oyranos-profiles \- Oyranos CMS ICC profiles tool
 .SH SYNOPSIS
@@ -56,6 +56,7 @@ show search paths according to the OS colour management system and to the actual
 \fB\-\-install\fR
 install a ICC profile into one of the following OpenICC paths.
 .sp
+One of the following options is a required arument to the \fB--install\fR option.
 .br
 \fB-u\fR user path
 .sp
@@ -68,8 +69,12 @@ install a ICC profile into one of the following OpenICC paths.
 .br
 \fB-m\fR machine specific path
 .sp
+The following options must be specified before the \fB--install\fR option.
 .br
 \fB\-\-gui\fR use a graphical X user interface for error messages
+.sp
+.br
+\fB\-\-taxi\fR \fITAXI_ID\fR Taxi profile ID to download
 .SH GENERAL OPTIONS
 .TP
 .B \-v, \-\-verbose
@@ -101,10 +106,14 @@ List all installed profiles in user path:
 Install a profile for the actual user and show error messages in a GUI:
 .B oyranos-profiles --gui --install -u profilename
 .PP
+.TP
+Install a profile for the actual user and show error messages in a GUI:
+.B oyranos-profiles --taxi=taxi_id/0 --gui --install -u
+.PP
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH COPYRIGHT
-(c) 2010-2011, Kai-Uwe Behrmann and others
+(c) 2010-2012, Kai-Uwe Behrmann and others
 .fi
 License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
 .SH "SEE ALSO"

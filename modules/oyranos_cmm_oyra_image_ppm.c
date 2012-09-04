@@ -100,26 +100,33 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
                                        oyPixelAccess_s   * ticket )
 {
   oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyFilterPlug_s * plug = 0;
-  oyFilterNode_s * input_node = 0,
-                 * node = 0;
+  oyFilterNode_s * node = 0;
   int result = 0;
   const char * filename = 0;
+  FILE * fp = 0;
 
-  node = socket->node;
-  plug = (oyFilterPlug_s *)node->plugs[0];
-  input_node = plug->remote_socket_->node;
+  if(socket)
+    node = socket->node;
 
   /* to reuse the requestor_plug is a exception for the starting request */
-  result = input_node->api7_->oyCMMFilterPlug_Run( plug, ticket );
+  if(node)
+    result = node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket );
+  else
+    result = 1;
 
   if(result <= 0)
     filename = oyOptions_FindString( node->core->options_, "filename", 0 );
 
-  if(filename && socket)
+  if(filename)
+    fp = fopen( filename, "wb" );
+
+  if(fp)
   {
     oyImage_s *image_output = (oyImage_s*)socket->data;
-    result = oyImage_PpmWrite( image_output, filename, node->relatives_ );
+
+    fclose (fp); fp = 0;
+
+    result = oyImage_WritePPM( image_output, filename, node->relatives_ );
   }
 
   return result;
@@ -327,6 +334,16 @@ oyCMMapi4_s   oyra_api4_image_write_ppm = {
   &oyra_api4_image_write_ppm_ui        /**< oyCMMui_s *ui */
 };
 
+char * oyra_api7_image_output_ppm_properties[] =
+{
+  "file=write",    /* file load|write */
+  "image=pixel",  /* image type, pixel/vector/font */
+  "layers=1",     /* layer count, one for plain images */
+  "icc=0",        /* image type ICC profile support */
+  "ext=ppm,pnm,pbm,pgm,pfm", /* supported extensions */
+  0
+};
+
 /** @instance oyra_api7
  *  @brief    oyra oyCMMapi7_s implementation
  *
@@ -364,7 +381,9 @@ oyCMMapi7_s   oyra_api7_image_write_ppm = {
   0,   /* plugs_last_add */
   (oyConnector_s**) oyra_imageOutputPPM_connectors_socket,   /* sockets */
   1,   /* sockets_n */
-  0    /* sockets_last_add */
+  0,    /* sockets_last_add */
+
+  oyra_api7_image_output_ppm_properties /* char * properties */
 };
 
 
@@ -406,6 +425,36 @@ int wread ( unsigned char* data, size_t pos, size_t max, size_t *start, size_t *
   *end = pos;
 
   return end_found;
+}
+
+oyProfile_s * oyProfile_FromName     ( const char        * name )
+{
+    oyProfile_s * p = 0;
+    char ** names = NULL;
+    uint32_t count = 0, i;
+    const char * t = 0;
+
+    names = /*(const char**)*/ oyProfileListGet ( NULL, &count, malloc );
+
+    if(name)
+    {
+      for(i = 0; i < (int)count; ++i)
+      {
+        p = oyProfile_FromFile( names[i], 0,0 );
+
+        t = oyProfile_GetText(p, oyNAME_DESCRIPTION);
+        if(t && strcmp(t,name) == 0)
+        {
+          free(names[i]);
+          break;
+        }
+        free(names[i]);
+
+        oyProfile_Release( &p );
+      }
+      free(names); names = 0;
+    }
+  return p;
 }
 
 /** @func    oyraFilterPlug_ImageInputPPMRun
@@ -567,6 +616,29 @@ int      oyraFilterPlug_ImageInputPPMRun (
         ++fpos;
       }
 
+      /* lockup colour space */
+      if(fpos - l_pos > 0)
+      {
+        if(fpos - l_pos >= 14 && memcmp(&data[l_pos],"# COLORSPACE: ", 14) == 0)
+        { 
+          char * t = oyAllocateFunc_(fpos - l_pos + 1);
+          if(t)
+          {
+            memcpy( t, &data[l_pos+14], fpos - l_pos - 15 );
+            t[fpos - l_pos - 15] = 0;
+            prof = oyProfile_FromName(t);
+            if(prof)
+              fprintf(stderr, "found: %s\n", t);
+            else
+              oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ " could not find ICC: %s",
+             OY_DBG_ARGS_, oyNoEmptyString_m_( t ) );
+              
+            oyDeAllocateFunc_(t);
+          }
+        }
+      }
+
       /* parse line */
       while(info_good &&
             v_read < v_need &&
@@ -585,7 +657,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
             var_s[l] = 0;
             var = atof(var_s);
 #           ifdef DEBUG_
-            printf("var = \"%s\"  %d\n",var_s, l);
+            fprintf(stderr, "var = \"%s\"  %d\n",var_s, l);
 #           endif
           }
           l_pos = end + 1;
@@ -757,6 +829,8 @@ int      oyraFilterPlug_ImageInputPPMRun (
   }
 
   oyAllocHelper_m_( buf, uint8_t, mem_n, 0, return 1);
+  DBG_NUM2_S("allocate image data: 0x%x size: %d ", (int)(intptr_t)
+              buf, mem_n );
 
   /* the following code is almost completely taken from ku.b's ppm CP plug-in */
   {
@@ -821,6 +895,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
           unsigned char *c_buf = &buf[ h * width * spp * byteps ];
           char  tmp;
           if (byteps == 2) {         /* 16 bit */
+#pragma omp parallel for private(tmp)
             for (p = 0; p < n_bytes; p += 2)
             {
               tmp = c_buf[p];
@@ -828,6 +903,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
               c_buf[p+1] = tmp;
             }
           } else if (byteps == 4) {  /* float */
+#pragma omp parallel for private(tmp)
             for (p = 0; p < n_bytes; p += 4)
             {
               tmp = c_buf[p];
@@ -841,12 +917,15 @@ int      oyraFilterPlug_ImageInputPPMRun (
         }
 
         if (byteps == 1 && maxval < 255) {         /*  8 bit */
+#pragma omp parallel for
           for (p = 0; p < n_samples; ++p)
             d_8[p] = (d_8[p] * 255) / maxval;
         } else if (byteps == 2 && maxval < 65535) {/* 16 bit */
+#pragma omp parallel for
           for (p = 0; p < n_samples; ++p)
             d_16 [p] = (d_16[p] * 65535) / maxval;
         } else if (byteps == 4 && maxval != 1.0) {  /* float */
+#pragma omp parallel for
           for (p = 0; p < n_samples; ++p)
             d_f[p] = d_f[p] * maxval;
         }
@@ -854,7 +933,8 @@ int      oyraFilterPlug_ImageInputPPMRun (
   }
 
   pixel_type = oyChannels_m(spp) | oyDataType_m(data_type); 
-  prof = oyProfile_FromStd( profile_type, 0 );
+  if(!prof)
+    prof = oyProfile_FromStd( profile_type, 0 );
 
   image_in = oyImage_Create( width, height, buf, pixel_type, prof, 0 );
 

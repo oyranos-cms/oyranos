@@ -144,6 +144,8 @@ typedef enum {
   oyNAME_DESCRIPTION                   /**< compatible to oyName_s/oyObject_s */
 } oyNAME_e;
 
+#define oyNAME_XML_VALUE (oyNAME_DESCRIPTION + 1)
+
 /** @brief   select from filter
  *  @ingroup objects_value
  *
@@ -242,7 +244,8 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration1,
                                        oyOBJECT_e          api_number );
 
 
-/** @struct  oyRankPad
+/** @internal
+ *  @struct  oyRankPad
  *  @brief   a means to rank the result of comparing two key's
  *
  *  The structure is part of an other data structure and to be maintained by

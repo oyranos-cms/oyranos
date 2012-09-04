@@ -7,7 +7,8 @@
 #include "oyranos_object.h"
 #include "oyranos_string.h"
 
-/** @brief   test a boolean operator
+/** @internal
+ *  @brief   test a boolean operator
  *
  *  The function requires to receive proper object arguments and valid ranges.
  *  @todo test
@@ -750,14 +751,16 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration_a,
  *
  *  @param         text                value string
  *  @param         pattern             pattern to compare with
+ *  @param         delta               say how far a difference can drift
  *  @return                            match, useable for ranking
  *
- *  @version Oyranos: 0.1.13
- *  @since   2010/11/21 (Oyranos: 0.1.13)
- *  @date    2010/11/21
+ *  @version Oyranos: 0.3.3
+ *  @since   2010/11/21 (Oyranos: 0.1.3)
+ *  @date    2011/12/29
  */
 int    oyTextIccDictMatch            ( const char        * text,
-                                       const char        * pattern )
+                                       const char        * pattern,
+                                       double              delta )
 {
   int match = 0;
   int n = 0, p_n = 0, i, j;
@@ -766,38 +769,87 @@ int    oyTextIccDictMatch            ( const char        * text,
   long num[2];
   int num_valid[2];
   double dbl[2];
-  int dbl_valid[2];
+  int dbl_valid[2]; 
+
+  DBG_MEM_START
 
   if(text && pattern)
+>>>>>>> master
   {
-    texts = oyStringSplit_(text, ',', &n, oyAllocateFunc_ );
-    patterns = oyStringSplit_(pattern, ',', &p_n, oyAllocateFunc_ );
+    oyPointer src, dst;
 
-    for( i = 0; i < n; ++i)
+    len = (array_roi_pix.width + array_roi_pix.x) * data_size;
+    wlen = image_roi_pix.width * data_size;
+
+    if(allocate_method != 2)
+    for( i = 0; i < image_roi_pix.height; )
     {
+<<<<<<< HEAD
+      height = is_allocated = 0;
+      line_data = image->getLine( image, image_roi_pix.y + i, &height, -1,
+                             &is_allocated );
+
+      for( j = 0; j < height; ++j )
+      {
+        if( i + j >= array_roi_pix.height )
+          break;
+
+        ay = i + j;
+
+        dst = &a->array2d[ay][0];
+        src = &line_data[(j
+                       * OY_ROUND(image->width * image->layout_[oyCHANS])
+                       + OY_ROUND(image_roi_pix.x))
+                      * data_size];
+
+        if(dst != src)
+          error = !memcpy( dst, src, wlen );
+=======
       t = texts[i];
+      DBG_MEM3_S( "%d: "OY_PRINT_POINTER" \"%s\"", i, (intptr_t)t, t );
       num_valid[0] = !oyStringToLong(t,&num[0]);
       dbl_valid[0] = !oyStringToDouble(t,&dbl[0]);
+      DBG_MEM
       for( j = 0; j < p_n; ++j )
       {
         p = patterns[j];
+        DBG_MEM4_S( "%d %d: "OY_PRINT_POINTER" \"%s\"", i, j, (intptr_t)t, p );
         num_valid[1] = !oyStringToLong(p,&num[1]);
         dbl_valid[1] = !oyStringToDouble(p,&dbl[1]);
+        DBG_MEM
 
         if((strcmp( t, p ) == 0) ||
            (num_valid[0] && num_valid[1] && num[0] == num[1]) ||
-           (dbl_valid[0] && dbl_valid[1] && dbl[0] == dbl[1]) )
+           (dbl_valid[0] && dbl_valid[1] && fabs(dbl[0] - dbl[1])/2.0 < delta))
         {
           match = 1;
           goto clean_oyTextIccDictMatch;
         }
+>>>>>>> master
       }
+
+      i += height;
+
+      if(error) break;
     }
-    clean_oyTextIccDictMatch:
-      oyStringListRelease_( &texts, n, oyDeAllocateFunc_ );
-      oyStringListRelease_( &patterns, p_n, oyDeAllocateFunc_ );
+
+  } else
+  if(image->getPoint)
+  {
+    WARNc_S("image->getPoint  not yet supported")
+  } else
+  if(image->getTile)
+  {
+    WARNc_S("image->getTile  not yet supported")
+    error = 1;
+  }
   }
 
+<<<<<<< HEAD
+  if(error)
+    oyArray2d_Release( &a );
+=======
+  DBG_MEM_ENDE
   return match;
 }
 

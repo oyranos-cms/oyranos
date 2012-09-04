@@ -41,7 +41,8 @@
 #define OY_ERR if(l_error != 0) error = l_error;
 
 int    oyTextIccDictMatch            ( const char        * text,
-                                       const char        * pattern );
+                                       const char        * pattern,
+                                       double              delta );
 int    oyPointerRelease              ( oyPointer         * ptr );
 
 #endif /* {{ file_name|cut:".h"|upper }}_H */

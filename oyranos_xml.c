@@ -556,8 +556,7 @@ oyPolicyToXML_  (oyGROUP_e           group,
            char *value = oyPolicyToXML_(i, 0, oyAllocateFunc_);
            if(value)
            {
-             oyStringAddPrintf_( &text,  oyAllocateFunc_, oyDeAllocateFunc_,
-                                   "%s", value);
+             oyStringAdd_( &text, value, oyAllocateFunc_, oyDeAllocateFunc_ );
              oyFree_m_(value);
            }
          }
@@ -742,14 +741,11 @@ void         oyWriteOptionToHTML_    ( oyGROUP_e           group,
                                        char             ** text )
 {
   int   i = 0;
-  const oyOption_t_ * opt = 0;
   int n = 0;
   oyWIDGET_e *tmp = NULL;
   DBG_PROG_START
 
   
-         opt = oyOptionGet_( (oyWIDGET_e)group );
-
   tmp = oyWidgetListGet_( group, &n, oyAllocateFunc_ );
 
        for(i = 0; i < n; ++i)

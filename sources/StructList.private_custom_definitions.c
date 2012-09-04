@@ -1,7 +1,7 @@
-/** Function    oyStructList_Release__Members
+/** @internal
+ *  Function    oyStructList_Release__Members
  *  @memberof   oyStructList_s
  *  @brief      Custom StructList destructor
- *  @internal
  *
  *  This function will free up all memmory allocated by the
  *  input object. First all object members witch have their
@@ -36,10 +36,10 @@ void oyStructList_Release__Members( oyStructList_s_ * structlist )
   }
 }
 
-/** Function    oyStructList_Init__Members
+/** @internal
+ *  Function    oyStructList_Init__Members
  *  @memberof   oyStructList_s
  *  @brief      Custom StructList constructor 
- *  @internal
  *
  *  This function will allocate all memmory for the input object.
  *  For the basic member types this is done using the allocateFunc_
@@ -52,10 +52,10 @@ int oyStructList_Init__Members( oyStructList_s_ * structlist )
   return 0;
 }
 
-/** Function    oyStructList_Copy__Members
+/** @internal
+ *  Function    oyStructList_Copy__Members
  *  @memberof   oyStructList_s
  *  @brief      Custom StructList copy constructor
- *  @internal
  *
  *  This function makes a copy of all values from the input
  *  to the output object. The destination object and all of its

@@ -71,6 +71,7 @@ using namespace std;
 #define _DBG_ARGS_ (__FILE__ && strrchr(__FILE__,'/')) ? \
                    strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
 #define _(x) x
+#define DUMMY "filename\nblob"
 
 const char * GetText                 ( const char        * select,
                                        oyNAME_e            type,
@@ -419,7 +420,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       if (!handle_opt)
          error = oyOptions_SetFromText(&device->data,
                                        CMM_BASE_REG OY_SLASH "device_handle",
-                                       "filename\nblob",
+                                       DUMMY,
                                        OY_CREATE_NEW);
 
       /*Handle "supported_devices_info" option [OUT:informative]*/
@@ -604,21 +605,26 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                                           CMM_BASE_REG OY_SLASH "driver_version_string",
                                           driver_version_string,
                                           OY_CREATE_NEW);
+            if(error) WARNc2_S("%s %d", _("found issues"),error);
             error = oyOptions_SetFromInt(&device->backend_core,
                                          CMM_BASE_REG OY_SLASH "driver_version_number",
                                          driver_version_number,
                                          0,
                                          OY_CREATE_NEW);
+            if(error) WARNc2_S("%s %d", _("found issues"),error);
          }
 
          //FIXME: Should probably be removed, because command_list creates it anyway
          /*Handle "device_handle" option [OUT:informative]*/
          oyOption_s *handle_opt_dev = oyConfig_Find(device, "device_handle");
          if (!handle_opt_dev && handle_opt)
+	 {
             error = oyOptions_SetFromText(&device->data,
                                           CMM_BASE_REG OY_SLASH "device_handle",
-                                          "filename\nblob",
+                                          DUMMY,
                                           OY_CREATE_NEW);
+            if(error) WARNc2_S("%s %d", _("found issues"),error);
+         }
 
          /*Handle "supported_devices_info" option [OUT:informative]*/
          //FIXME: It is not here, because command_list creates it anyway
@@ -793,7 +799,7 @@ oyCMMui_s _api8_ui = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,3,0},                            /**< int32_t module_api[3] */
+  {0,4,1},                            /**< int32_t module_api[3] */
 
   0, /* oyCMMFilter_ValidateOptions_f */
   0, /* oyWidgetEvent_f */
@@ -825,8 +831,8 @@ oyCMMapi8_s _api8 = {
    CMMInit,                                                           /**< oyCMMInit_f      oyCMMInit */
    CMMMessageFuncSet,                                                 /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
    const_cast < char *>(CMM_BASE_REG),                                /**< registration */
-   {0, 2, 0},                                                         /**< int32_t version[3] */
-   {0,3,0},                                                        /**< int32_t module_api[3] */
+   CMM_VERSION,                                                         /**< int32_t version[3] */
+   {0,4,1},                                                        /**< int32_t module_api[3] */
    0,                                                                 /**< char * id_ */
    0,                                                                 /**< oyCMMapi5_s * api5_ */
    Configs_FromPattern,                                               /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
@@ -1020,8 +1026,12 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
       if (device_handle.get() && device_handle->good())
          DeviceFromHandle(&device->backend_core, device_handle);
       else {
-         message( oyMSG_WARN, (oyStruct_s *) device, _DBG_FORMAT_
-               "Unable to open raw image %s", _DBG_ARGS_, filename?filename:"");
+         int level = oyMSG_WARN;
+         if(filename && strcmp( filename, DUMMY ) == 0)
+           level = oyMSG_DBG;
+
+         message( level, (oyStruct_s *) device, _DBG_FORMAT_
+               "Unable to open raw image \"%s\"", _DBG_ARGS_, filename?filename:"");
          return 1;
       }
       if(filename)

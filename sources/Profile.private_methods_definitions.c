@@ -69,10 +69,10 @@ int oyProfile_GetHash_        ( oyProfile_s_      * s,
 }
 /* } Static helper functions */
 
-/** Function  oyProfile_FromMemMove_
+/** @internal
+ *  Function  oyProfile_FromMemMove_
  *  @memberof oyProfile_s
  *  @brief    Create from in memory blob
- *  @internal
  *
  *  @param[in]    size           buffer size
  *  @param[in]    block          pointer to memory containing a profile
@@ -175,10 +175,10 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
 
 oyStructList_s_ * oy_profile_s_file_cache_ = 0;
 
-/** Function  oyProfile_FromFile_
+/** @internal
+ *  Function  oyProfile_FromFile_
  *  @memberof oyProfile_s
  *  @brief    Create from file
- *  @internal
  *
  *  @param[in]    name           profile file name
  *  @param[in]    flags          for future extension
@@ -315,10 +315,10 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
 
   return s;
 }
-/** Function  oyProfile_TagsToMem_
+/** @internal
+ *  Function  oyProfile_TagsToMem_
  *  @memberof oyProfile_s
  *  @brief    Get the parsed ICC profile back into memory
- *  @internal
  *
  *  Non thread save
  *
@@ -372,11 +372,10 @@ oyPointer    oyProfile_TagsToMem_    ( oyProfile_s_      * profile,
   return block;
 }
 
-/** Function  oyProfile_ToFile_
- *  @memberof oyProfile_s
+/** @internal
+ *  Function  oyProfile_FromMemMove_
  *  @brief    Save from in memory profile to file
- *  @internal
- *
+ *  @memberof oyProfile_s
  *
  *  @since Oyranos: version 0.1.8
  *  @date  20 december 2007 (API 0.1.8)
@@ -407,10 +406,10 @@ int          oyProfile_ToFile_       ( oyProfile_s_      * profile,
   return error;
 }
 
-/** Function  oyProfile_Match_
+/** @internal
+ *  Function  oyProfile_Match_
  *  @memberof oyProfile_s
  *  @brief    Check if a profiles matches by some properties
- *  @internal
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/06/20
@@ -443,10 +442,10 @@ int32_t      oyProfile_Match_        ( oyProfile_s_      * pattern,
   return match;
 }
 
-/** Function  oyProfile_Hashed_
+/** @internal
+ *  Function  oyProfile_Hashed_
  *  @memberof oyProfile_s
  *  @brief    Check if a profile has a hash sum computed
- *  @internal
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/06/20
@@ -460,10 +459,10 @@ int32_t      oyProfile_Hashed_       ( oyProfile_s_      * s )
     return 0;
 }
 
-/** Function  oyProfile_GetFileName_r
+/** @internal
+ *  Function  oyProfile_GetFileName_r
  *  @memberof oyProfile_s
  *  @brief    get the ICC profile location in the filesystem
- *  @internal
  *
  *  This function tries to find a profile on disk matching a possibly memory
  *  only profile. In case the profile was previously opened from file or
@@ -548,10 +547,10 @@ char *       oyProfile_GetFileName_r ( oyProfile_s_      * profile,
   return name;
 }
 
-/** Function  oyProfile_GetTagByPos_
+/** @internal
+ *  Function  oyProfile_GetTagByPos_
  *  @memberof oyProfile_s
  *  @brief    Get a profile tag
- *  @internal
  *
  *  Non thread save
  *
@@ -700,9 +699,9 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
   return tag;
 }
 
-/** Function  oyProfile_GetTagCount_
+/** @internal
+ *  Function  oyProfile_GetTagCount_
  *  @memberof oyProfile_s
- *  @internal
  *
  *  Non thread save
  *
@@ -737,10 +736,10 @@ int                oyProfile_GetTagCount_ ( oyProfile_s_      * profile )
   return n;
 }
 
-/** Function  oyProfile_TagMoveIn_
+/** @internal
+ *  Function  oyProfile_TagMoveIn_
  *  @memberof oyProfile_s
  *  @brief    Add a tag to a profile
- *  @internal
  *
  *  non thread save
  *
@@ -773,10 +772,10 @@ int          oyProfile_TagMoveIn_    ( oyProfile_s_      * profile,
   return error;
 }
 
-/** Function  oyProfile_TagReleaseAt_
+/** @internal
+ *  Function  oyProfile_TagReleaseAt_
  *  @memberof oyProfile_s
  *  @brief    Remove a tag from a profile
- *  @internal
  *
  *  Non thread save
  *
@@ -791,10 +790,10 @@ int          oyProfile_TagReleaseAt_ ( oyProfile_s_      * profile,
   return oyStructList_ReleaseAt ( s->tags_, pos );
 }
 
-/** Function  oyProfile_DeviceAdd_
+/** @internal
+ *  Function  oyProfile_DeviceAdd_
  *  @memberof oyProfile_s
  *  @brief    Add device and driver informations to a profile
- *  @internal
  *
  *  oyProfile_DeviceAdd_() is for storing device/driver informations in a
  *  ICC profile. So the profile can be sent over internet and Oyranos, or
@@ -855,10 +854,10 @@ int                oyProfile_DeviceAdd_(oyProfile_s_      * profile,
   return error;
 }
 
-/** Function  oyProfile_WriteHeader_
+/** @internal
+ *  Function  oyProfile_WriteHeader_
  *  @memberof oyProfile_s
  *  @brief    Get the parsed ICC profile back into memory
- *  @internal
  *
  *  @version Oyranos: 0.3.2
  *  @date    2011/07/05
@@ -895,10 +894,9 @@ oyPointer    oyProfile_WriteHeader_  ( oyProfile_s_      * profile,
   return block;
 }
 
-/** Function  oyProfile_WriteTags_
+ *  Function  oyProfile_WriteTags_
  *  @memberof oyProfile_s
  *  @brief    Get the parsed ICC profile back into memory
- *  @internal
  *
  *  Call in following order:
  *         -  oyProfile_WriteHeader_
@@ -1030,10 +1028,10 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s_      * profile,
   return block;
 }
 
-/** Function  oyProfile_WriteTagTable_
+/** @internal
+ *  Function  oyProfile_WriteTagTable_
  *  @memberof oyProfile_s
  *  @brief    Get the parsed ICC profile back into memory
- *  @internal
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/01/30

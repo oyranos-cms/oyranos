@@ -8,12 +8,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2011 (C) Kai-Uwe Behrmann
+ *            2004-2012 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/05/30
+ *  @date     2012/08/12
  */
 
 
@@ -30,12 +30,11 @@
 
 
 /* Include "Blob.private_custom_definitions.c" { */
-/** Function    oyBlob_Release__Members
+/** @internal
+ *  Function    oyBlob_Release__Members
  *  @memberof   oyBlob_s
  *  @brief      Custom Blob destructor
- *  @internal
- *
- *  This function will free up all memmory allocated by the
+ *   *  This function will free up all memmory allocated by the
  *  input object. First all object members witch have their
  *  own release method are deallocated. Then the deallocateFunc_
  *  of the oy_ object is used to release the rest of the members
@@ -67,10 +66,10 @@ void oyBlob_Release__Members( oyBlob_s_ * blob )
   }
 }
 
-/** Function    oyBlob_Init__Members
+/** @internal
+ *  Function    oyBlob_Init__Members
  *  @memberof   oyBlob_s
  *  @brief      Custom Blob constructor 
- *  @internal
  *
  *  This function will allocate all memmory for the input object.
  *  For the basic member types this is done using the allocateFunc_
@@ -89,10 +88,10 @@ int oyBlob_Init__Members( oyBlob_s_ * blob )
   return 0;
 }
 
-/** Function    oyBlob_Copy__Members
+/** @internal
+ *  Function    oyBlob_Copy__Members
  *  @memberof   oyBlob_s
  *  @brief      Custom Blob copy constructor
- *  @internal
  *
  *  This function makes a copy of all values from the input
  *  to the output object. The destination object and all of its

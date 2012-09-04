@@ -11,15 +11,20 @@
  *  @memberof oyCMMapi_s_
  *  @brief   check for completeness
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.3
  *  @since   2007/12/06 (Oyranos: 0.1.8)
- *  @date    2009/09/02
+ *  @date    2011/11/25
  */
 oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s_        * api )
 {
   int error = !api;
   oyOBJECT_e type = oyOBJECT_NONE;
-  int module_api = api->module_api[0]*10000 + api->module_api[1]*100
+  int module_api;
+
+  if(error)
+    return type;
+
+  module_api = api->module_api[0]*10000 + api->module_api[1]*100
                     + api->module_api[2];
 
   if(api->type_ <= oyOBJECT_CMM_API_S ||

@@ -68,33 +68,72 @@ oyReadFileSize_(const char* name)
       fclose (fp);
 
     } else
-      WARNc1_S( "could not read %s", filename );
+      WARNc2_S( "%s: %s", _("Could not open profile"), filename );
   }
 
   DBG_MEM_ENDE
   return size;
 }
 
-char*
-oyReadFileToMem_(const char* name, size_t *size,
-                 oyAlloc_f     allocate_func)
+/** @internal
+ *  Read a file stream without knowing its size in advance.
+ */
+char *       oyReadFileSToMem_       ( FILE              * fp,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func)
 {
-  FILE *fp = 0;
-  char* mem = 0;
-  const char* filename = name;
+  size_t mem_size = 256;
+  char* mem = malloc(mem_size),
+        c;
 
   DBG_MEM_START
 
   DBG_MEM
 
-  if(filename && filename[0] && strlen(filename) > 7 &&
-     memcmp(filename, "file://", 7) == 0)
-    filename = &filename[7];
+  if (fp && size)
+  {
+    *size = 0;
+    while((c = getc(fp)) && !feof(fp))
+    {
+      if(*size >= mem_size)
+      {
+        mem_size *= 2;
+        mem = realloc( mem, mem_size );
+      }
+      mem[(*size)++] = c;
+    }
+
+    if(mem)
+    {
+      /* copy to external allocator */
+      char* temp = mem;
+      mem = oyAllocateWrapFunc_( *size+1, allocate_func );
+      if(mem) {
+        memcpy( mem, temp, *size );
+        oyFree_m_ (temp)
+        mem[*size] = 0;
+      } else {
+        oyFree_m_ (mem)
+        *size = 0;
+      }
+    }
+  }
+ 
+  DBG_MEM_ENDE
+  return mem;
+}
+
+char *       oyReadFilepToMem_       ( FILE              * fp,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func)
+{
+  char* mem = 0;
+
+  DBG_MEM_START
+
+  DBG_MEM
 
   {
-    fp = fopen(filename, "rb");
-    DBG_MEM2_S ("fp = %u filename = %s\n", (unsigned int)((intptr_t)fp), filename)
-
     if (fp)
     {
       /* get size */
@@ -137,8 +176,38 @@ oyReadFileToMem_(const char* name, size_t *size,
           }
         }
       }
+    }
+  }
+ 
+  DBG_MEM_ENDE
+  return mem;
+}
+
+char*
+oyReadFileToMem_(const char* name, size_t *size,
+                 oyAlloc_f     allocate_func)
+{
+  FILE *fp = 0;
+  char* mem = 0;
+  const char* filename = name;
+
+  DBG_MEM_START
+
+  DBG_MEM
+
+  if(filename && filename[0] && strlen(filename) > 7 &&
+     memcmp(filename, "file://", 7) == 0)
+    filename = &filename[7];
+
+  {
+    fp = fopen(filename, "rb");
+    DBG_MEM2_S ("fp = %u filename = %s\n", (unsigned int)((intptr_t)fp), filename)
+
+    if(fp)
+    {
+      mem = oyReadFilepToMem_( fp, size, allocate_func );
     } else {
-      WARNc1_S( "could not read: \"%s\"\n", filename );
+      WARNc2_S( "%s: %s", _("Could not open profile"), filename );
     }
   }
  
@@ -179,6 +248,146 @@ char * oyReadStdinToMem_             ( size_t            * size,
   }
 
   return text;
+}
+
+/** @internal
+ *  Read a file stream without knowing its size in advance.
+ */
+char * oyReadUrlToMem_               ( const char        * url,
+                                       size_t            * size,
+                                       const char        * mode,
+                                       oyAlloc_f           allocate_func )
+{
+  char * text = 0;
+  char * command = 0;
+  FILE * fp;
+
+  if(url && strlen(url) && size )
+  {
+    int len = strlen(url), i, pos;
+    char * mem = oyAllocateFunc_(len*3+1);
+    char c;
+    char * app = 0;
+
+    for(i = 0, pos = 0; i < len; ++i)
+    {
+      c = url[i];
+           if(c == ' ')
+      { memcpy( &mem[pos], "%20", 3 ); pos += 3; }
+      else if(c == '&')
+      { memcpy( &mem[pos], "%26", 3 ); pos += 3; }
+      else
+        mem[pos++] = c;
+    }
+    mem[pos] = '\000';
+    
+    if(!app && (app = oyFindApplication( "curl" )) != NULL)
+    {
+      if(oy_debug)
+        oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
+                            "curl -v -s %s", mem );
+      else
+        oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
+                            "curl -s %s", mem );
+    } else if(!app && (app = oyFindApplication( "wget" )) != NULL)
+    {
+      if(oy_debug)
+        oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
+                            "wget -v %s -O -", mem );
+      else
+        oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
+                            "wget -q %s -O -", mem );
+    } else
+      WARNc_S(_("Could not download from WWW. Please install curl or wget."));
+
+    if(app) oyFree_m_( app );
+  
+    if(command)
+      fp = oyPOPEN_m( command, mode );
+    if(fp)
+    {
+      size_t mem_size = 0;
+      char* mem = NULL;
+
+      text = oyReadFileSToMem_(fp, size, allocate_func );
+
+      if(!feof(fp))
+      {
+        if(text) oyFree_m_(text);
+        *size = 0;
+        mem_size = 1024;
+        mem = malloc(mem_size);
+        pclose(fp);
+        fp = oyPOPEN_m( command, mode );
+      }
+      if(fp)
+      while(!feof(fp))
+      {
+        if(*size >= mem_size)
+        {
+          mem_size *= 10;
+          mem = realloc( mem, mem_size );
+        }
+        *size += fread( &mem[*size], sizeof(char), mem_size-*size, fp );
+      }
+      if(fp && mem)
+      {
+          /* copy to external allocator */
+          char* temp = mem;
+          mem = oyAllocateWrapFunc_( *size+1, allocate_func );
+          if(mem) {
+            memcpy( mem, temp, *size );
+            oyFree_m_ (temp)
+            mem[*size] = 0;
+          } else {
+            oyFree_m_ (mem)
+            *size = 0;
+          }
+        text = mem;
+      }
+      if(fp)
+        pclose(fp);
+      fp = 0;
+    }
+    if(command)
+      oyFree_m_(command);
+  }
+
+  return text;
+}
+
+/** @internal
+ *  Read a file stream without knowing its size in advance.
+ */
+char * oyReadUrlToMemf_              ( size_t            * size,
+                                       const char        * mode,
+                                       oyAlloc_f           allocate_func,
+                                       const char        * format,
+                                                           ... )
+{
+  char * result = NULL;
+  char * text = 0;
+  va_list list;
+  int len;
+  size_t sz = 0;
+
+  va_start( list, format);
+  len = vsnprintf( text, sz, format, list );
+  va_end  ( list );
+
+  if (len >= sz)
+  {
+    oyAllocHelper_m_(text, char, len + 1, oyAllocateFunc_, return NULL);
+    va_start( list, format);
+    len = vsnprintf( text, len+1, format, list );
+    va_end  ( list );
+  }
+
+  result = oyReadUrlToMem_( text, size, mode, allocate_func );
+
+  oyDeAllocateFunc_(text);
+
+  return result;
 }
 
 int
@@ -720,7 +929,12 @@ typedef int (*pathSelect_f_)(oyFileList_s*,const char*,const char*);
 int oyStrcmpWrap( const void * a, const void * b)
 {
   const char ** ca = (const char**)a, ** cb = (const char**)b;
-  return strcmp(*ca,*cb);
+  const char * ca_ = *ca, *cb_ = *cb;
+  if(strrchr(ca_, OY_SLASH_C))
+    ca_ = strrchr(ca_, OY_SLASH_C);
+  if(strrchr(cb_, OY_SLASH_C))
+    cb_ = strrchr(cb_, OY_SLASH_C);
+  return strcmp(ca_,cb_);
 }
 
 #define MAX_DEPTH 64
@@ -799,10 +1013,12 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
       WARNc3_S("%d. \"%s\" %s", i, path, _("path is not a directory"));
       continue;
     }
+#ifdef HAVE_POSIX
     if (S_ISLNK (statbuf.st_mode)) {
       WARNc3_S("%d. \"%s\" %s", i, path, _("path is a link: ignored"));
       continue;
     }
+#endif
     dir[l] = opendir (path);
     if (!dir[l]) {
       WARNc3_S("%d. \"%s\" %s", i, path, _("path is not readable"));
@@ -852,10 +1068,12 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
         DBG_MEM2_S("%d. %s does not exist", l, name)
         goto cont;
       }
+#ifdef HAVE_POSIX
       if (!S_ISLNK(statbuf.st_mode)){/*((statbuf.st_mode & S_IFMT) & S_IFLNK))  */
         DBG_MEM5_S("%d. %s is a link: ignored %d %d %d", l, name, (int)statbuf.st_mode , S_IFLNK, 0120000);
         /*goto cont; */
       }
+#endif
       if (S_ISDIR (statbuf.st_mode) &&
           l < MAX_DEPTH ) {
 

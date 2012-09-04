@@ -2,7 +2,7 @@
  *  Oyranos is an open source Colour Management System 
  * 
  *  @par Copyright:
- *            2009-2010 (C) Kai-Uwe Behrmann
+ *            2009-2012 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -13,19 +13,133 @@
  */
 
 #include <oyranos.h>
-#include <oyranos_alpha.h>
-#include <oyranos_cmm.h>   /* for hacking into module API */
+#include <alpha/oyranos_alpha.h>
+#include "oyranos_display_helpers.h"
 
-#ifdef HAVE_X11
-#include <X11/Xlib.h>
-#endif
+int oy_display_verbose = 0;
+
+/** Function oyConversion_FromImageForDisplay
+ *  @brief   generate a Oyranos graph from a image file name
+ *
+ *  @param[in]     image_in            input
+ *  @param[in]     image_out           output
+ *  @param[out]    cc_node             used icc node, owned by caller
+ *  @param[in]     flags               for inbuild defaults |
+ *                                     oyOPTIONSOURCE_FILTER;
+ *                                     for options marked as advanced |
+ *                                     oyOPTIONATTRIBUTE_ADVANCED |
+ *                                     OY_SELECT_FILTER |
+ *                                     OY_SELECT_COMMON
+ *  @param[in]     data_type           the desired data type for output
+ *  @param[in]     obj                 Oyranos object (optional)
+ *  @return                            generated new graph, owned by caller
+ *
+ *  @version Oyranos: 0.4.0
+ *  @since   2012/01/21 (Oyranos: 0.4.0)
+ *  @date    2012/01/22
+ */
+oyConversion_s * oyConversion_FromImageForDisplay  (
+                                       oyImage_s         * image_in,
+                                       oyImage_s         * image_out,
+                                       oyFilterNode_s   ** cc_node,
+                                       uint32_t            flags,
+                                       oyDATATYPE_e        data_type,
+                                       const char        * cc_name,
+                                       oyOptions_s       * cc_options,
+                                       oyObject_s          obj )
+{
+  oyFilterNode_s * in = 0, * out = 0, * icc = 0;
+  int error = 0;
+  oyConversion_s * conversion = 0;
+  oyOptions_s * options = 0;
+
+  if(!image_in || !image_out)
+    return NULL;
+
+  /* start with an empty conversion object */
+  conversion = oyConversion_New( obj );
+  /* create a filter node */
+  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0, obj );
+  /* set the above filter node as the input */
+  oyConversion_Set( conversion, in, 0 );
+  /* set the image buffer */
+  oyFilterNode_DataSet( in, (oyStruct_s*)image_in, 0, 0 );
 
 
+  /* create a new filter node */
+  if(!cc_name)
+    cc_name = "//" OY_TYPE_STD "/icc";
+  if(cc_name && cc_name[0])
+  {
+    icc = out = oyFilterNode_NewWith( cc_name, cc_options, obj );
+    /* append the new to the previous one */
+    error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                  out, "//" OY_TYPE_STD "/data", 0 );
+    if(error > 0)
+      fprintf( stderr, "could not add  filter: %s\n", cc_name );
+
+    /* Set the image to the first/only socket of the filter node.
+     * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
+     * We rely on resolving the image later.
+     */
+    error = oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
+    if(error != 0)
+      fprintf( stderr, "could not add data\n" );
+  }
+
+  /* swap in and out */
+  if(out)
+    in = out;
+
+
+  /* create a node for preparing the image for displaying */
+  {
+    out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, obj );
+    options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
+    /* data type for display */
+    error = oyOptions_SetFromInt( &options,
+                                  "//" OY_TYPE_STD "/display/datatype",
+                                  data_type, 0, OY_CREATE_NEW );
+    /* alpha might be support once by FLTK? */
+    error = oyOptions_SetFromInt( &options,
+                                  "//" OY_TYPE_STD "/display/preserve_alpha",
+                                  1, 0, OY_CREATE_NEW );
+    oyOptions_Release( &options );
+    /* append the node */
+    error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                  out, "//" OY_TYPE_STD "/data", 0 );
+    if(error > 0)
+      fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
+    oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
+    in = out;
+  }
+
+  /* add a closing node */
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+
+  /* set the output node of the conversion */
+  oyConversion_Set( conversion, 0, out );
+
+  /* apply policies */
+  /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
+                                 "true", OY_CREATE_NEW );*/
+  if(cc_name && cc_name[0])
+    oyConversion_Correct( conversion, cc_name, flags,
+                          options );
+  oyOptions_Release( &options );
+
+  if(cc_node)
+    *cc_node = icc;
+
+  return conversion;
+}
 /** Function oyConversion_FromImageFileNameForDisplay
  *  @brief   generate a Oyranos graph from a image file name
  *
  *  @param[in]     file_name           name of image file
- *  @param[out]    icc_node            used icc node, owned by caller
+ *  @param[out]    cc_node             used icc node, owned by caller
  *  @param[in]     flags               for inbuild defaults |
  *                                     oyOPTIONSOURCE_FILTER;
  *                                     for options marked as advanced |
@@ -42,9 +156,11 @@
  */
 oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
                                        const char        * file_name,
-                                       oyFilterNode_s   ** icc_node,
+                                       oyFilterNode_s   ** cc_node,
                                        uint32_t            flags,
                                        oyDATATYPE_e        data_type,
+                                       const char        * cc_name,
+                                       oyOptions_s       * cc_options,
                                        oyObject_s          obj )
 {
   oyFilterNode_s * in, * out, * icc;
@@ -66,7 +182,7 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
   /* add a file name argument */
   /* get the options of the input node */
   if(in)
-  options = oyFilterNode_OptionsGet( in, OY_SELECT_FILTER );
+  options = oyFilterNode_GetOptions( in, OY_SELECT_FILTER );
   /* add a new option with the appropriate value */
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
                                  file_name, OY_CREATE_NEW );
@@ -74,12 +190,14 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
   oyOptions_Release( &options );
 
   /* create a new filter node */
-  icc = out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, obj );
+  if(!cc_name)
+    cc_name = "//" OY_TYPE_STD "/icc";
+  icc = out = oyFilterNode_NewWith( cc_name, cc_options, obj );
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
   if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc" );
+    fprintf( stderr, "could not add  filter: %s\n", cc_name );
 
   /* Set the image to the first/only socket of the filter node.
    * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
@@ -88,27 +206,31 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
   oyFilterNode_DataSet( in, (oyStruct_s*)image_in, 0, 0 );
 
   /* swap in and out */
-  in = out;
+  if(out)
+    in = out;
 
 
   /* create a node for preparing the image for displaying */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, obj );
-  options = oyFilterNode_OptionsGet( out, OY_SELECT_FILTER );
-  /* 8 bit data for FLTK */
-  error = oyOptions_SetFromInt( &options,
-                                "//" OY_TYPE_STD "/display/datatype",
-                                data_type, 0, OY_CREATE_NEW );
-  /* alpha might be support once by FLTK? */
-  error = oyOptions_SetFromInt( &options,
-                                "//" OY_TYPE_STD "/display/preserve_alpha",
-                                1, 0, OY_CREATE_NEW );
-  oyOptions_Release( &options );
-  /* append the node */
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
-  in = out;
+  if(icc)
+  {
+    out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, obj );
+    options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
+    /* data type for display */
+    error = oyOptions_SetFromInt( &options,
+                                  "//" OY_TYPE_STD "/display/datatype",
+                                  data_type, 0, OY_CREATE_NEW );
+    /* alpha might be support once by FLTK? */
+    error = oyOptions_SetFromInt( &options,
+                                  "//" OY_TYPE_STD "/display/preserve_alpha",
+                                  1, 0, OY_CREATE_NEW );
+    oyOptions_Release( &options );
+    /* append the node */
+    error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                  out, "//" OY_TYPE_STD "/data", 0 );
+    if(error > 0)
+      fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
+    in = out;
+  }
 
 
   /* add a closing node */
@@ -121,12 +243,13 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
   /* apply policies */
   /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
                                  "true", OY_CREATE_NEW );*/
-  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", flags,
-                        options );
+  if(cc_name && cc_name[0])
+    oyConversion_Correct( conversion, cc_name, flags,
+                          options );
   oyOptions_Release( &options );
 
 
-  *icc_node = icc;
+  *cc_node = icc;
 
   return conversion;
 }
@@ -143,7 +266,7 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
  *                                     in relation to display
  *  @param[in,out] old_display_rectangle
  *                                     rembering of display_rectangle
- +  @param[in,out] old_roi_rectangle   remembering of ticket's ROI
+ +  @param[in,out] old_roi_rectangle   remembering of ticket's ROI (optional)
  *  @param[in]     system_type         the system dependent type specification
  *  @param[in]     display             the system display with system_type:
  *                                     - "X11": a Display object
@@ -151,11 +274,11 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
  *                                     - "X11": a Window ID
  *  @param[in]     dirty               explicite redraw
  *  @param[out]    image               the image from graph to display
- *  @return                            0 - success, >=  1 - error
+ *  @return                            0 - success, -1 - issue, >=  1 - error
  *
- *  @version Oyranos: 0.1.11
+ *  @version Oyranos: 0.4.0
  *  @since   2010/09/05 (Oyranos: 0.1.11)
- *  @date    2010/09/10
+ *  @date    2012/01/24
  */
 int  oyDrawScreenImage               ( oyConversion_s    * context,
                                        oyPixelAccess_s   * ticket,
@@ -169,6 +292,8 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
                                        int                 dirty,
                                        oyImage_s         * image )
 {
+  int result = 0;
+
     if(context)
     {
       int X = display_rectangle->x;
@@ -183,12 +308,14 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
 
       if(!image)
         return 1;
+      if( W <= 0 || H <= 0)
+        return -1;
 
-      image_tags = oyImage_TagsGet( image );
+      image_tags = oyImage_GetTags( image );
 
     if(window && strcmp("X11", system_type) == 0)
     {
-#if defined(HAVE_X11)
+#if defined(HAVE_X)
       /* add X11 window and display identifiers to output image */
       oyOption_s * o = 0;
       Display *disp = (Display*) display;
@@ -226,14 +353,14 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
 #endif
    }
       /* check if the actual data can be displayed */
-      pt = oyImage_PixelLayoutGet( image );
+      pt = oyImage_GetPixelLayout( image );
       data_type = oyToDataType_m( pt );
       channels = oyToChannels_m( pt );
       if(pt != 0 &&
          ((channels != 4 && channels != 3) || data_type != data_type_request))
       {
-        printf( "WARNING: wrong image data format: %s\n%s\n"
-                "need 4 or 3 channels with %s\n",
+        printf( "%s:%d WARNING: wrong image data format: %s\n%s\n"
+                "need 4 or 3 channels with %s\n", __FILE__,__LINE__,
                 oyOptions_FindString( image_tags, "filename", 0 ),
                 image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "",
                 oyDatatypeToText( data_type_request ) );
@@ -253,11 +380,12 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
           /* Did the window area move? */
          ((!oyRectangle_IsEqual( disp_rectangle, old_display_rectangle ) ||
            /* Something explicite to update? */
-           !oyRectangle_IsEqual( ticket->output_image_roi, old_roi_rectangle )||
+           (old_roi_rectangle &&
+            !oyRectangle_IsEqual( ticket->output_image_roi, old_roi_rectangle ))||
            /* Did the image move? */
            ticket->start_xy[0] != ticket->start_xy_old[0] ||
            ticket->start_xy[1] != ticket->start_xy_old[1]) ||
-           dirty ))
+           dirty > 0))
       {
 #ifdef DEBUG_
         printf( "%s:%d new display rectangle: %s +%d+%d\n", __FILE__,__LINE__,
@@ -272,9 +400,61 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
         oyRectangle_SetByRectangle( old_roi_rectangle,ticket->output_image_roi);
         ticket->start_xy_old[0] = ticket->start_xy[0];
         ticket->start_xy_old[1] = ticket->start_xy[1];
-      }
+      } else
+        result = -1;
     }
-  return 0;
+
+  if(oy_debug)
+    fprintf( stderr, "%s:%d %s() result: %d\n", strrchr(__FILE__,'/'),__LINE__,__func__, result );
+  return result;
 }
 
+extern "C" { int oyWriteMemToFile_(const char* name, const void* mem, size_t size); }
+
+oyProfile_s * getEditingProfile      ( )
+{
+  static oyProfile_s * editing = NULL;
+
+  if(!editing)
+  {
+    oyOption_s *matrix = oyOption_FromRegistration("///colour_matrix."
+              "from_primaries."
+              "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma", NULL );
+    /* http://www.color.org/chardata/rgb/rommrgb.xalter
+     * original gamma is 1.8, we adapt to typical LCD gamma of 2.2 */
+    oyOption_SetFromDouble( matrix, 0.7347, 0, 0);
+    oyOption_SetFromDouble( matrix, 0.2653, 1, 0);
+    oyOption_SetFromDouble( matrix, 0.1596, 2, 0);
+    oyOption_SetFromDouble( matrix, 0.8404, 3, 0);
+    oyOption_SetFromDouble( matrix, 0.0366, 4, 0);
+    oyOption_SetFromDouble( matrix, 0.0001, 5, 0);
+    oyOption_SetFromDouble( matrix, 0.3457, 6, 0);
+    oyOption_SetFromDouble( matrix, 0.3585, 7, 0);
+    oyOption_SetFromDouble( matrix, 2.2, 8, 0);
+
+    oyOptions_s * opts = oyOptions_New(0),
+                * result = 0;
+
+    oyOptions_MoveIn( opts, &matrix, -1 );
+    oyOptions_Handle( "//"OY_TYPE_STD"/create_profile.icc",
+                                opts,"create_profile.icc_profile.colour_matrix",
+                                &result );
+
+    editing = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
+                                               oyOBJECT_PROFILE_S );
+    oyOptions_Release( &result );
+
+    oyProfile_AddTagText( editing, icSigProfileDescriptionTag,
+                                            "ICC Examin ROMM gamma 2.2" );
+
+    if(oy_debug)
+    {
+      size_t size = 0;
+      char * data = (char*) oyProfile_GetMem( editing, &size, 0, malloc );
+      oyWriteMemToFile_( "ICC Examin ROMM gamma 2.2.icc", data, size );
+    }
+  }
+
+  return editing;
+}
 

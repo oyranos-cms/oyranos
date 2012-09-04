@@ -2,11 +2,11 @@ INCL    = $(INCLUDE) -I../ -I./ $(DEBUG)
 CC      = gcc
 DEBUG  = -Wall -g -O0
 LDFLAGS_ = $$LDFLAGS -L../fl_i18n
-OY_LIBS := $(shell pkg-config libxml-2.0 --libs --cflags)
-OY_FLAGS = -L../ -loyranos -loyranos_object -loyranos_core $(OY_LIBS)
+OY_LIBS := $(shell pkg-config oyranos libxml-2.0 --libs --cflags)
+OY_FLAGS = -L../ $(OY_LIBS)
 FLTK_FLAGS := $(shell fltk-config --ldflags --cxxflags | sed s/-O2//) -lpthread
 
-all:	oyranos-xforms oyranos-xforms-fltk oyranos-xforms-modules
+all:	oyranos-xforms oyranos-xforms-modules oyranos-xforms-fltk
 	echo ... done
 
 CXXFILES = \
@@ -24,7 +24,7 @@ oyranos-xforms-modules:	$(SRCDIR)oyranos_xforms_modules.c
 
 oyranos-xforms-fltk:	$(SRCDIR)oyranos_xforms_fltk.cxx $(SRCDIR)oyranos_forms_fltk.cxx $(SRCDIR)oyranos_widgets_fltk.cxx $(SRCDIR)oyranos_widgets_fltk.h
 	echo "Compiling $(SRCDIR)$< + Linking $@ ..."
-	c++ $(LDFLAGS_) -Wall -g $(CXXFLAGS) $(INCL)  $(SRCDIR)oyranos_xforms_fltk.cxx -o oyranos-xforms-fltk -pedantic -loyforms_fltk -lfl_i18n $(FLTK_FLAGS) $(OY_FLAGS)
+	-c++ $(LDFLAGS_) -Wall -g $(CXXFLAGS) $(INCL)  $(SRCDIR)oyranos_xforms_fltk.cxx -o oyranos-xforms-fltk -pedantic -loyforms_fltk -lfl_i18n $(FLTK_FLAGS) $(OY_FLAGS)
 
 
 # Build commands and filename extensions...

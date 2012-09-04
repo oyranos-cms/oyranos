@@ -6,12 +6,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2011 (C) Kai-Uwe Behrmann
+ *            2004-2012 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2011/05/30
+ *  @date     2012/02/14
  */
 
 
@@ -24,7 +24,7 @@
 
 
 /* Include "Object.public_methods_definitions.c" { */
-#include <stdint.h>           /* uint64_t uintptr_t */
+#include "oyranos_types.h"           /* uint64_t uintptr_t */
 
 static int oy_object_id_ = 0;
 #if OY_USE_OBJECT_POOL_
@@ -314,12 +314,25 @@ int          oyObject_SetName         ( oyObject_s        object,
                                         const char      * text,
                                         oyNAME_e          type )
 {
+  int error = 0;
+
   if( object->type_ != oyOBJECT_OBJECT_S )
     return 0;
 
-  object->name_ = oyName_set_( object->name_, text, type,
-                               object->allocateFunc_, object->deallocateFunc_ );
-  return (text && type && object && !object->name_);
+  if(type <= oyNAME_DESCRIPTION)
+  {
+    object->name_ = oyName_set_( object->name_, text, type,
+                                 object->allocateFunc_, object->deallocateFunc_ );
+    error = !object->name_;
+  } else
+  {
+    char key[24];
+    sprintf(key, "///oyNAME_s+%d", type );
+    error = oyOptions_SetFromText( &object->handles_,
+                                 key,
+                                 text, OY_CREATE_NEW );
+  }
+  return !(text && type >= oyNAME_NAME && object && error <= 0);
 }
 
 
@@ -408,10 +421,17 @@ const oyChar * oyObject_GetName       ( const oyObject_s        obj,
   if( obj->type_ != oyOBJECT_OBJECT_S)
     return 0;
 
-  if(!obj->name_)
+  if(type <= oyNAME_DESCRIPTION && !obj->name_)
     return 0;
 
-  text = oyName_get_( obj->name_, type );
+  if(type <= oyNAME_DESCRIPTION)
+    text = oyName_get_( obj->name_, type );
+  else
+  {
+    char key[24];
+    sprintf(key, "///oyNAME_s+%d", type );
+    text = oyOptions_FindString( obj->handles_, key, NULL );
+  }
 
   return text;
 }

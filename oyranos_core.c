@@ -356,29 +356,21 @@ int oyMessageFunc( int code, const oyPointer context_object, const char * format
   char * text = 0, * msg = 0;
   int error = 0;
   va_list list;
-  size_t sz = 256;
-  int len;
+  size_t sz = 0;
+  int len = 0,
+      l;
   oyStruct_s * c = (oyStruct_s*) context_object;
 
-  text = calloc( sizeof(char), sz );
-  if(!text)
-  {
-    fprintf(stderr,
-    "oyranos_core.c:257 oyMessageFunc() Could not allocate 256 byte of memory.\n");
-    return 1;
-  }
-
-  text[0] = 0;
-
   va_start( list, format);
-  len = vsnprintf( text, sz-1, format, list);
+  len = vsnprintf( text, sz, format, list);
   va_end  ( list );
 
-  if (len >= ((int)sz - 1))
   {
-    text = realloc( text, (len+2)*sizeof(char) );
+    oyAllocHelper_m_(text, char, len + 1, oyAllocateFunc_, return 1);
     va_start( list, format);
-    len = vsnprintf( text, len+1, format, list);
+    l = vsnprintf( text, len+1, format, list);
+    if(l != len)
+      fprintf(stderr, "vsnprintf lengths differ: %d %d\n", l,len );
     va_end  ( list );
   }
 
@@ -387,8 +379,8 @@ int oyMessageFunc( int code, const oyPointer context_object, const char * format
   if(msg)
     fprintf( stderr, "%s\n", msg );
 
-  free( text ); text = 0;
-  free( msg ); msg = 0;
+  oyDeAllocateFunc_( text ); text = 0;
+  if(msg) oyDeAllocateFunc_( msg ); msg = 0;
 
   return error;
 }

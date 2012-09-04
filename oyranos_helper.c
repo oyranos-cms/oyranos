@@ -1,4 +1,5 @@
-/** @file oyranos_helper.c
+/** @internal
+ *  @file oyranos_helper.c
  *
  *  Oyranos is an open source Colour Management System 
  *
@@ -6,7 +7,6 @@
  *            2005-2009 (C) Kai-Uwe Behrmann
  *
  *  @brief    helpers
- *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
@@ -29,7 +29,6 @@
 intptr_t oy_observe_pointer_ = 0;
 
 /* --- internal API definition --- */
-static int oy_alloc_count_ = 0;
 static int oy_allocs_count_ = 0;
 int oy_debug_memory = 0;
 int oy_debug_signals = 0;
@@ -39,6 +38,7 @@ const char * oy_backtrace = 0;
 #endif
 
 #if OY_USE_ALLOCATE_FUNC_POOL_
+static int oy_alloc_count_ = 0;
 #define OY_ALLOCATE_FUNC_POOL_CHUNK_ 128
 #define OY_ALLOCATE_FUNC_POOL_SIZE_ 64
 static int oy_allocate_func_pool_used_[OY_ALLOCATE_FUNC_POOL_SIZE_] = {
@@ -192,7 +192,18 @@ void* oyAllocateFunc_           (size_t        size)
 
   if(ptr == 0)
 #endif
-    ptr = malloc (size);
+  {
+    if(oy_debug_memory != 0)
+      printf( OY_DBG_FORMAT_"allocate %d %lu + %lu byte in", OY_DBG_ARGS_,
+              oy_allocs_count_, (unsigned long) size, (unsigned long) 2*sizeof(long));
+
+    /* sizeof(long) is for better alignment and less valgrind positives 
+     * 2*sizeof(long) helped on a oS-12.1 instal with glibc-2.14.1-14.27.1.x86_64 */
+    ptr = malloc (size + 2 * sizeof(long));
+
+    if(oy_debug_memory != 0)
+      printf( " "OY_PRINT_POINTER"\n", (intptr_t)ptr);
+  }
 
   if( !ptr )
   {
@@ -200,9 +211,11 @@ void* oyAllocateFunc_           (size_t        size)
   }
     else if(oy_debug_memory != 0)
   {
+#if OY_USE_ALLOCATE_FUNC_POOL_
     oy_alloc_count_ += size;
-    printf( "%s:%d %d allocate %d  %d\n", __FILE__,__LINE__,
+    printf( OY_DBG_FORMAT_"%d allocate %d  %d\n", OY_DBG_ARGS_,
             oy_allocs_count_, (int)size, oy_alloc_count_ );
+#endif
     ++oy_allocs_count_;
   }
 
@@ -222,8 +235,11 @@ void  oyDeAllocateFunc_           (void*       block)
       oy_allocate_func_pool_used_[i] = 0;
 
       if(oy_debug_memory)
-        printf( "%s:%d found block with pos:%d size=%d\n", __FILE__,__LINE__,
+      {
+        printf( OY_DBG_FORMAT_"found block with pos:%d size=%d", OY_DBG_ARGS_,
                 i, (int)oy_allocate_func_pool_size_[i] );
+        printf( " "OY_PRINT_POINTER"\n", (intptr_t)ptr);
+      }
 
       return;
     }
@@ -235,7 +251,10 @@ void  oyDeAllocateFunc_           (void*       block)
   {
     free( block );
     if(oy_debug_memory != 0)
-      printf( "%s:%d %d deallocated\n", __FILE__,__LINE__,--oy_allocs_count_ );
+    {
+      printf( OY_DBG_FORMAT_"%d remaining "OY_PRINT_POINTER"\n", OY_DBG_ARGS_,
+              --oy_allocs_count_, (intptr_t)block );
+    }
   }
 }
 

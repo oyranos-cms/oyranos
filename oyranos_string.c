@@ -62,16 +62,36 @@ int          oyStringToLong          ( const char        * text,
 int          oyStringToDouble        ( const char        * text,
                                        double            * value )
 {
-  char * p = 0;
-  *value = strtod( text, &p );
+  char * p = 0, * t;
+  char * save_locale = 0;
+  int len = strlen(text);
+  int found = 1;
+  save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_);
+  setlocale(LC_NUMERIC, "C");
+  /* avoid irritating valgrind output of "Invalid read of size 8"
+   * might be a glibc error or a false positive in valgrind */
+  t = oyAllocateFunc_( len + 2*sizeof(long) + 1 );
+  memcpy( t, text, len );
+  t[len] = 0;
+  if(0 && oy_debug_memory)
+  {
+    printf( OY_DBG_FORMAT_""OY_PRINT_POINTER" \"%s\" %d "OY_PRINT_POINTER" \"%s\"\n",
+            OY_DBG_ARGS_,(intptr_t)text, text, len,
+            t, t  );
+    fflush( stdout );
+  }
+
+  *value = strtod( t, &p );
+
+  setlocale(LC_NUMERIC, save_locale);
+
   if(p && p != text && p[0] == '\000')
-    return 0;
-#if 0
-  else if(errno)
-    return errno;
-#endif
-  else
-    return 1;
+    found = 0;
+
+  oyFree_m_( t );
+  oyFree_m_( save_locale );
+
+  return found;
 }
 
 
@@ -124,15 +144,25 @@ char*              oyStringAppend_   ( const char        * text,
 
   if(text_len || append_len)
   {
-    oyAllocHelper_m_( text_copy, oyChar,
+    oyAllocHelper_m_( text_copy, char,
                       text_len + append_len + 1,
                       allocateFunc, return 0 );
 
     if(text_len)
       memcpy( text_copy, text, text_len );
-      
+
     if(append_len)
+    {
+      if(0 && oy_debug_memory)
+      {
+        printf( OY_DBG_FORMAT_""OY_PRINT_POINTER" \"%s\" %d %d "OY_PRINT_POINTER" \"%s\"\n",
+                OY_DBG_ARGS_,(intptr_t)text_copy, text_copy, text_len,
+                append_len, append,append  );
+        fflush( stdout );
+      }
       memcpy( &text_copy[text_len], append, append_len );
+    }
+
     text_copy[text_len+append_len] = '\000';
   }
 
@@ -219,9 +249,11 @@ void               oyStringAdd_      ( char             ** text,
 /** @internal 
  *  @brief   printf style string add
  *
- *  @version Oyranos: 0.1.10
+ *  The deallocFunc can be omited in case the user provides no string.
+ *
+ *  @version Oyranos: 0.4.1
  *  @since   2009/02/07 (Oyranos: 0.1.10)
- *  @date    2009/02/07
+ *  @date    2012/06/12
  */
 int                oyStringAddPrintf_( char             ** string,
                                        oyAlloc_f           allocateFunc,
@@ -233,39 +265,31 @@ int                oyStringAddPrintf_( char             ** string,
   char * text = 0;
   va_list list;
   int len;
-  size_t sz = strlen(format) * 2;
-
-  text = allocateFunc( sz );
-  if(!text)
-  {
-    fprintf(stderr,
-     "oyranos_string.c:242 oyStringAddPrintf_() Could not allocate 256 byte of memory.\n");
-    return 1;
-  }
-
-  text[0] = 0;
+  size_t sz = 0;
 
   va_start( list, format);
   len = vsnprintf( text, sz, format, list );
   va_end  ( list );
 
-  if (len >= sz)
   {
-    text = realloc( text, (len+1)*sizeof(char) );
+    oyAllocHelper_m_(text, char, len + 1, allocateFunc, return 1);
     va_start( list, format);
     len = vsnprintf( text, len+1, format, list );
     va_end  ( list );
   }
 
+  if(string && *string)
+  {
+    text_copy = oyStringAppend_(*string, text, allocateFunc);
 
-  text_copy = oyStringAppend_(*string, text, allocateFunc);
+    if(deallocFunc)
+      deallocFunc(*string);
+    *string = text_copy;
 
-  if(string && *string && deallocFunc)
-    deallocFunc(*string);
+    deallocFunc(text);
 
-  *string = text_copy;
-
-  deallocFunc(text);
+  } else
+    *string = text;
 
   return 0;
 }
@@ -322,6 +346,9 @@ char**             oyStringSplit_    ( const char    * text,
 
         memcpy( list[i], start, len );
         list[i][len] = 0;
+        if(0 && oy_debug_memory)
+          printf( OY_DBG_FORMAT_""OY_PRINT_POINTER" %s %ld\n",
+                  OY_DBG_ARGS_,(intptr_t)list[i], list[i], len+1 );
         start += len + 1;
       }
     }

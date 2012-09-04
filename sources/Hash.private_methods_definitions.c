@@ -1,7 +1,7 @@
-/** Function  oyHash_Get_
+/** @internal
+ *  Function  oyHash_Get_
  *  @memberof oyHash_s
  *  @brief    Get a new Oyranos cache entry
- *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  24 november 2007 (API 0.1.8)
@@ -40,10 +40,10 @@ oyHash_s_ *         oyHash_Get_       ( const char        * hash_text,
   return s;
 }
 
-/** Function  oyHash_IsOf_
+/** @internal
+ *  Function  oyHash_IsOf_
  *  @memberof oyHash_s
  *  @brief    Hash is of type
- *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  3 december 2007 (API 0.1.8)
@@ -54,9 +54,9 @@ int                oyHash_IsOf_      ( oyHash_s_         * hash,
   return (hash && hash->entry && hash->entry->type_ == type);
 }
 
-/** Function  oyHash_SetPointer_
+/** @internal
+ *  Function  oyHash_SetPointer_
  *  @memberof oyHash_s
- *  @internal
  *
  *  @param[in,out] hash                the to be set hash
  *  @param[in,out] obj                 the to be referenced object
@@ -80,9 +80,9 @@ int                oyHash_SetPointer_( oyHash_s_         * hash,
     return 1;
 }
 
-/** Function  oyHash_GetPointer_
+/** @internal
+ *  Function  oyHash_GetPointer_
  *  @memberof oyHash_s
- *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  3 december 2007 (API 0.1.8)

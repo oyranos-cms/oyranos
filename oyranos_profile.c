@@ -27,8 +27,6 @@
 #include "oyranos_string.h"
 #include "oyranos_version.h"
 
-#include "oyjl/oyjl_tree.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -77,18 +75,18 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("List included ICC tags:"));
-  fprintf( stderr, "      %s -l [-d] FILE_NAME\n",        argv[0]);
+  fprintf( stderr, "      %s -l FILE_NAME\n",        argv[0]);
   fprintf( stderr, "      -p NUMBER  %s\n",     _("select tag"));
   fprintf( stderr, "      -n NAME  %s\n",       _("select tag"));
   fprintf( stderr, "      -s NAME  %s\n",       _("add prefix"));
   fprintf( stderr, "      -c NAME  %s\n",       _("use device class"));
   fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("Dump Device Infos to JSON:"));
+  fprintf( stderr, "  %s\n",               _("Dump Device Infos to OpenICC device JSON:"));
   fprintf( stderr, "      %s -o FILE_NAME\n",        argv[0]);
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Write to ICC profile:"));
   fprintf( stderr, "      %s -w NAME [-j FILE_NAME] FILE_NAME\n",        argv[0]);
-  fprintf( stderr, "      -w NAME  %s\n",       _("use new name"));
+  fprintf( stderr, "      -w NAME       %s\n",  _("use new name"));
   fprintf( stderr, "      -j FILE_NAME  %s\n",  _("embed OpenICC device JSON from file"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Print a help text:"));
@@ -98,7 +96,8 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      %s\n",           _("-v verbose"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s:\n",               _("Example"));
-  fprintf( stderr, "      oyranos-profile -lv -p=1 sRGB.icc");
+  fprintf( stderr, "      oyranos-profile -lv -p=1 sRGB.icc\n");
+  fprintf( stderr, "      oyranos-profile -w test -j test.json sRGB.icc");
   fprintf( stderr, "\n");
   fprintf( stderr, "\n");
 
@@ -203,16 +202,43 @@ int main( int argc , char** argv )
 
   if(file_name && profile_name)
   {
-    oyConfig_s * config;
-    oyjl_value_s * json = 0,
-                 * json_device,
-                 * json_tmp;
-    char * prefix, * val, * key, * tmp;
+    oyConfig_s * device;
+    oyOptions_s * opts = NULL;
+    char * json_text;
+    char * data = 0;
+    size_t size = 0;
+    char * pn = 0;
+    char * ext = 0;
+    const char * t = strrchr(profile_name, '.');
+    int i;
 
-    p = oyProfile_FromFile( profile_name, 0, 0 );
+    STRING_ADD( pn, profile_name );
+    if(t)
+    {
+      ++t;
+      STRING_ADD( ext, t );
+      i = 0;
+      while(ext[i])
+      {
+        ext[i] = tolower(ext[i]);
+        ++i;
+      }
+      if(strcmp(ext,"icc") != 0 &&
+         strcmp(ext,"icm") != 0)
+      {
+        oyFree_m_(ext);
+        ext = 0;
+      }
+    }
+    if(!ext)
+      STRING_ADD( pn, ".icc" );
+    else
+      oyFree_m_(ext);
+
+    p = oyProfile_FromFile( pn, 0, 0 );
     if(p)
     {
-      fprintf(stderr, "%s: %s %s\n", _("Profile exists already"), profile_name, _("Exit!"));
+      fprintf(stderr, "%s: \"%s\" - %s\n", _("Profile exists already"), pn, _("Exit!"));
       printfHelp(argc, argv);
       exit(1);
     }
@@ -224,19 +250,33 @@ int main( int argc , char** argv )
     error = oyProfile_AddTagText( p, icSigProfileDescriptionTag, profile_name );
 
     {
-      char * json_text;
       size_t json_size = 0;
-      yajl_status status;
       json_text = oyReadFileToMem_( json_name, &json_size, oyAllocateFunc_ );
-      config = oyConfig_FromRegistration( "//" OY_TYPE_STD "/config", 0 );
-      status = oyjl_tree_from_json( json_text, &json, 0 );
-      oyDeAllocateFunc_(json_text);
+      oyDeviceFromJSON( json_text, NULL, &device );
     }
-    json_device = oyjl_tree_get_value( json,
-                                      "org/freedesktop/openicc/device/[0]/");
-    json_tmp = oyjl_tree_get_value( json_device, "prefix" );
-    if(json_tmp)
-      prefix = oyjl_print_text( &json_tmp->value.text );
+      
+    error = oyOptions_SetFromText( &opts, "///set_device_attributes",
+                                   "true", OY_CREATE_NEW );
+    oyProfile_DeviceAdd( p, device, opts );
+    oyOptions_Release( &opts );
+    data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
+
+    if(data && size)
+    {
+      uint32_t id[4];
+
+      oyFree_m_(data);
+
+      oyProfile_GetMD5( p, OY_COMPUTE, id );
+      oyProfile_ToFile_( p, pn );
+      oyFree_m_( pn );
+    }
+
+    oyDeAllocateFunc_(json_text);
+
+    oyProfile_Release( &p );
+    oyConfig_Release( &device );
+
   } else
   if(file_name)
   {
@@ -245,7 +285,12 @@ int main( int argc , char** argv )
 
     p = oyProfile_FromFile( file_name, 0, 0 );
 
-    if(list_tags)
+    if(!p)
+    {
+      error = 1;
+    }
+
+    if(error <= 0 && list_tags)
     {
       fprintf(stderr, "%s \"%s\" %d:\n", _("ICC profile"), file_name,
               (int)p->size_);
@@ -281,7 +326,7 @@ int main( int argc , char** argv )
         oyProfileTag_Release( &tag );
       }
     } else
-    if( dump_openicc_json )
+    if( error <= 0 && dump_openicc_json )
     {
       tag = oyProfile_GetTagById( p, icSigMetaDataTag );
       if(tag)
@@ -299,13 +344,13 @@ int main( int argc , char** argv )
         /* collect key prefixes and detect device class */
         if(size == 2)
         for(j = 2; j < texts_n; j += 2)
-          if(strcmp(texts[j],"prefix") == 0)
+          if(texts[j] && strcmp(texts[j],"prefix") == 0)
             has_prefix = 1;
 
         if(size == 2)
         for(j = 2; j < texts_n; j += 2)
         {
-          int len = strlen( texts[j] );
+          int len = texts[j] ? strlen( texts[j] ) : 0;
 
           #define CHECK_PREFIX( name_, device_class_ ) { \
             int plen = strlen(name_), n=pn-1, found = 0; \
@@ -351,7 +396,7 @@ int main( int argc , char** argv )
           int vals_n = 0;
           char ** vals = 0, * val = 0;
 
-          if(texts_n > j+1)
+          if(texts[j] && texts[j+1] && texts_n > j+1)
           {
             if(texts[j+1][0] == '<')
               fprintf( stdout, "              \"%s\": \"%s\"",

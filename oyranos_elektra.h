@@ -42,50 +42,6 @@ void  oyClose_                  (void);
 int   oyPathsCount_             (void);
 char* oyPathName_               (int           number,
                                  oyAlloc_f     allocate_func);
-char* oyGetPathFromProfileName_ (const char*   profilename,
-                                 oyAlloc_f     allocate_func);
-int   oySetProfile_             (const char      * name,
-                                 oyPROFILE_e       type,
-                                 const char      * comment);
-
-
-char*   oyGetDeviceProfile_               (const char* manufacturer,
-                                           const char* model,
-                                           const char* product_id,
-                                           const char* host,
-                                           const char* port,
-                                           const char* attrib1,
-                                           const char* attrib2,
-                                           const char* attrib3,
-                                           oyAlloc_f    );
-char**  oyGetDeviceProfile_s              (const char* manufacturer,
-                                           const char* model,
-                                           const char* product_id,
-                                           const char* host,
-                                           const char* port,
-                                           const char* attrib1,
-                                           const char* attrib2,
-                                           const char* attrib3,
-                                           int** number);
-int     oySetDeviceProfile_               (const char* manufacturer,
-                                           const char* model,
-                                           const char* product_id,
-                                           const char* host,
-                                           const char* port,
-                                           const char* attrib1,
-                                           const char* attrib2,
-                                           const char* attrib3,
-                                           const char* profileName,
-                                           const void* mem,
-                                           size_t size);
-int     oyEraseDeviceProfile_             (const char* manufacturer,
-                                           const char* model,
-                                           const char* product_id,
-                                           const char* host,
-                                           const char* port,
-                                           const char* attrib1,
-                                           const char* attrib2,
-                                           const char* attrib3);
 
 
 void oyOpen  (void);

@@ -36,6 +36,7 @@
 #endif
 
 /* OY_IMAGE_LOAD_REGISTRATION */
+/* OY_IMAGE_WRITE_REGISTRATION */
 /* OY_IMAGE_REGIONS_REGISTRATION */
 /* OY_IMAGE_ROOT_REGISTRATION */
 /* OY_IMAGE_OUTPUT_REGISTRATION */
@@ -43,6 +44,362 @@
 
 oyDATATYPE_e oyra_image_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
                                          oyHALF, oyFLOAT, oyDOUBLE, 0};
+
+/* OY_IMAGE_WRITE_REGISTRATION ---------------------------------------------*/
+
+
+oyOptions_s* oyraFilter_ImageWriteValidateOptions
+                                     ( oyFilterCore_s    * filter,
+                                       oyOptions_s       * validate,
+                                       int                 statical,
+                                       uint32_t          * result )
+{
+  uint32_t error = !filter;
+
+  if(!error)
+    error = filter->type_ != oyOBJECT_FILTER_CORE_S;
+
+  *result = error;
+
+  return 0;
+}
+
+/** @func    oyraFilterNode_ImageWriteContextToMem
+ *  @brief   implement oyCMMFilter_ContextToMem_f()
+ *
+ *  Serialise into a Oyranos specific ICC profile containers "Info" tag.
+ *  We do not have any binary context to include.
+ *  Thus oyFilterNode_TextToInfo_() is fine.
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/07/19 (Oyranos: 0.5.0)
+ *  @date    2012/07/19
+ */
+oyPointer  oyraFilterNode_ImageWriteContextToMem (
+                                       oyFilterNode_s    * node,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc )
+{
+  return oyFilterNode_TextToInfo_( node, size, allocateFunc );
+}
+
+/** @func    oyraFilterPlug_ImageWriteRun
+ *  @brief   implement oyCMMFilter_GetNext_f()
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/07/19 (Oyranos: 0.5.0)
+ *  @date    2012/07/19
+ */
+int      oyraFilterPlug_ImageWriteRun (
+                                       oyFilterPlug_s    * requestor_plug,
+                                       oyPixelAccess_s   * ticket )
+{
+  int result = 0;
+  oyFilterSocket_s * socket = NULL;
+  oyFilterNode_s * node = NULL;
+  oyImage_s * image = NULL;
+  oyCMMapiFilter_s * api = 0;
+  oyCMMapiFilters_s * apis = 0;
+
+  if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S)
+    socket = requestor_plug->remote_socket_;
+  else if(requestor_plug->type_ == oyOBJECT_FILTER_SOCKET_S)
+    socket = (oyFilterSocket_s*) requestor_plug;
+
+  node = socket->node;
+
+  image = (oyImage_s*)socket->data;
+  if(image)
+  {
+    uint32_t i, j, k, n,
+           * rank_list = 0;
+    const char * filename = oyOptions_FindString( node->core->options_, "filename", 0 );
+    const char * fileext = 0;
+    char * file_ext = 0;
+    int run = -1;
+
+    if(filename)
+    {
+      fileext = strrchr( filename, '.' );
+      if(fileext)
+        ++fileext;
+    } else
+    {
+      oyra_msg( oyMSG_WARN, (oyStruct_s*)requestor_plug,
+         OY_DBG_FORMAT_ "Could not find a filename extension to select module.",
+               OY_DBG_ARGS_ );
+      result = 1;
+      return result;
+    }
+
+    if(fileext)
+    {
+      STRING_ADD( file_ext, fileext );
+      i = 0;
+      while(file_ext[i]) { file_ext[i] = tolower( file_ext[i] ); ++i; }
+    }
+
+    apis = oyCMMsGetFilterApis_( 0,0, "//" OY_TYPE_STD "/file_write", 
+                                 oyOBJECT_CMM_API7_S,
+                                 oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                                 &rank_list,0 );
+
+    n = oyCMMapiFilters_Count( apis );
+    if(apis)
+    {
+      for(i = 0; i < n; ++i)
+      {
+        int file_write = 0,
+            image_pixel = 0,
+            found = 0;
+        oyCMMapi7_s * api7;
+        char * api_ext = 0;
+
+        j = 0;
+        api = oyCMMapiFilters_Get( apis, i );
+        api7 = (oyCMMapi7_s*) api;
+
+        if(api7->properties)
+          while(api7->properties[j] && api7->properties[j][0])
+          {
+            if(strcmp( api7->properties[j], "file=write" ) == 0)
+              file_write = 1;
+
+            if(strstr( api7->properties[j], "image=" ) != 0 &&
+               strstr( api7->properties[j], "pixel" ) != 0)
+              image_pixel = 1;
+
+            if(file_ext && strstr( api7->properties[j], "ext=" ) != 0)
+            {
+              STRING_ADD( api_ext,  &api7->properties[j][4] );
+              k = 0;
+              while(api_ext[k]) { api_ext[k] = tolower( api_ext[k] ); ++k; }
+              if(strstr( api_ext, file_ext ) != 0)
+                found = 1;
+              oyFree_m_( api_ext );
+            }
+            ++j;
+          }
+
+
+        if(file_write && image_pixel && found)
+        {
+          DBGs_NUM2_S( ticket, "%s={%s}", _("Run ticket through api7"),
+                       api7->registration );
+          result = api7->oyCMMFilterPlug_Run( requestor_plug, ticket );
+          i = n;
+          run = i;
+        }
+
+        if(api->release)
+          api->release( (oyStruct_s**)&api );
+      }
+      oyCMMapiFilters_Release( &apis );
+    }
+
+    if( run < 0 )
+      oyra_msg( oyMSG_WARN, (oyStruct_s*)requestor_plug,
+             OY_DBG_FORMAT_ "Could not find fitting file_write plugin. %d",
+             OY_DBG_ARGS_, n );
+
+    if( !n )
+      oyra_msg( oyMSG_WARN, (oyStruct_s*)requestor_plug,
+             OY_DBG_FORMAT_ "Could not find any file_write plugin.",
+             OY_DBG_ARGS_ );
+
+    oyFree_m_(file_ext);
+  }
+
+  return result;
+}
+
+
+oyConnectorImaging_s oyra_imageWrite_plug = {
+  oyOBJECT_CONNECTOR_S,0,0,0,
+  oyCMMgetImageConnectorPlugText, /* getText */
+  oy_image_connector_texts, /* texts */
+  "//" OY_TYPE_STD "/image.data", /* connector_type */
+  oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
+  1, /* is_plug == oyFilterPlug_s */
+  oyra_image_data_types, /* data_types */
+  6, /* data_types_n; elements in data_types array */
+  -1, /* max_colour_offset */
+  1, /* min_channels_count; */
+  255, /* max_channels_count; */
+  1, /* min_colour_count; */
+  255, /* max_colour_count; */
+  0, /* can_planar; can read separated channels */
+  1, /* can_interwoven; can read continuous channels */
+  1, /* can_swap; can swap colour channels (BGR)*/
+  1, /* can_swap_bytes; non host byte order */
+  1, /* can_revert; revert 1 -> 0 and 0 -> 1 */
+  1, /* can_premultiplied_alpha; */
+  1, /* can_nonpremultiplied_alpha; */
+  1, /* can_subpixel; understand subpixel order */
+  0, /* oyCHANNELTYPE_e    * channel_types; */
+  0, /* count in channel_types */
+  1, /* id; relative to oyFilter_s, e.g. 1 */
+  0  /* is_mandatory; mandatory flag */
+};
+oyConnectorImaging_s *oyra_imageWrite_plugs[2] = {&oyra_imageWrite_plug,0};
+
+oyConnectorImaging_s oyra_imageWrite_socket = {
+  oyOBJECT_CONNECTOR_S,0,0,0,
+  oyCMMgetImageConnectorSocketText, /* getText */
+  oy_image_connector_texts, /* texts */
+  "//" OY_TYPE_STD "/image.data", /* connector_type */
+  oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
+  0, /* is_plug == oyFilterPlug_s */
+  oyra_image_data_types, /* data_types */
+  6, /* data_types_n; elements in data_types array */
+  -1, /* max_colour_offset */
+  1, /* min_channels_count; */
+  255, /* max_channels_count; */
+  1, /* min_colour_count; */
+  255, /* max_colour_count; */
+  0, /* can_planar; can read separated channels */
+  1, /* can_interwoven; can read continuous channels */
+  1, /* can_swap; can swap colour channels (BGR)*/
+  1, /* can_swap_bytes; non host byte order */
+  1, /* can_revert; revert 1 -> 0 and 0 -> 1 */
+  1, /* can_premultiplied_alpha; */
+  1, /* can_nonpremultiplied_alpha; */
+  1, /* can_subpixel; understand subpixel order */
+  0, /* oyCHANNELTYPE_e    * channel_types; */
+  0, /* count in channel_types */
+  2, /* id; relative to oyFilter_s, e.g. 1 */
+  0  /* is_mandatory; mandatory flag */
+};
+oyConnectorImaging_s *oyra_imageWrite_sockets[2] = {&oyra_imageWrite_socket,0};
+
+
+#define OY_IMAGE_WRITE_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_write.meta._" CMM_NICK
+/** @instance oyra_api7
+ *  @brief    oyra oyCMMapi7_s implementation
+ *
+ *  a filter abstraction image file writing
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/07/19 (Oyranos: 0.5.0)
+ *  @date    2012/07/19
+ */
+oyCMMapi7_s   oyra_api7_image_write = {
+
+  oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
+  0,0,0, /* unused oyStruct_s fileds; keep to zero */
+  0/*(oyCMMapi_s*) & oyra_api4_image_write*/, /* oyCMMapi_s * next */
+  
+  oyraCMMInit, /* oyCMMInit_f */
+  oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
+
+  /* registration */
+  OY_IMAGE_WRITE_REGISTRATION,
+
+  CMM_VERSION, /* int32_t version[3] */
+  {0,3,0},                  /**< int32_t module_api[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+
+  oyraFilterPlug_ImageWriteRun, /* oyCMMFilterPlug_Run_f */
+  {0}, /* char data_type[8] */
+
+  (oyConnector_s**) oyra_imageWrite_plugs,   /* plugs */
+  1,   /* plugs_n */
+  0,   /* plugs_last_add */
+  (oyConnector_s**) oyra_imageWrite_sockets,   /* sockets */
+  1,   /* sockets_n */
+  0,   /* sockets_last_add */
+
+  0    /* char * properties */
+};
+
+const char * oyraApi4UiImageWriteGetText (
+                                       const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
+{
+  if(strcmp(select,"name"))
+  {
+    if(type == oyNAME_NICK)
+      return "write";
+    else if(type == oyNAME_NAME)
+      return _("Write");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("Load Image File Object");
+  } else if(strcmp(select,"help"))
+  {
+    if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("unfinished");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("unfinished");
+  }
+  return 0;
+}
+const char * oyra_api4_ui_image_write_texts[] = {"name", "help", 0};
+
+/** @instance oyra_api4_ui_image_write
+ *  @brief    oyra oyCMMapi4_s::ui implementation
+ *
+ *  The UI for filter image write.
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/07/19 (Oyranos: 0.5.0)
+ *  @date    2012/07/19
+ */
+oyCMMui_s oyra_api4_ui_image_write = {
+  oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
+  0,0,0,                            /* unused oyStruct_s fields; keep to zero */
+
+  CMM_VERSION,                         /**< int32_t version[3] */
+  {0,5,0},                            /**< int32_t module_api[3] */
+
+  oyraFilter_ImageRootValidateOptions, /* oyCMMFilter_ValidateOptions_f */
+  oyraWidgetEvent, /* oyWidgetEvent_f */
+
+  "Graph/File Load", /* category */
+  0,   /* const char * options */
+  0,   /* oyCMMuiGet_f oyCMMuiGet */
+
+  oyraApi4UiImageWriteGetText,  /* oyCMMGetText_f getText */
+  oyra_api4_ui_image_write_texts  /* (const char**)texts */
+};
+
+/** @instance oyra_api4
+ *  @brief    oyra oyCMMapi4_s implementation
+ *
+ *  a filter abstraction image file writeing
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/07/19 (Oyranos: 0.5.0)
+ *  @date    2012/07/19
+ */
+oyCMMapi4_s   oyra_api4_image_write = {
+
+  oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
+  0,0,0, /* unused oyStruct_s fileds; keep to zero */
+  (oyCMMapi_s*) & oyra_api7_image_write, /* oyCMMapi_s * next */
+  
+  oyraCMMInit, /* oyCMMInit_f */
+  oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
+
+  /* registration */
+  OY_IMAGE_WRITE_REGISTRATION,
+
+  CMM_VERSION, /* int32_t version[3] */
+  {0,5,0},                  /**< int32_t module_api[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+
+  oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
+  0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
+  {0}, /* char context_type[8] */
+
+  &oyra_api4_ui_image_write             /**< filter UI */
+};
+
+/* OY_IMAGE_WRITE_REGISTRATION ---------------------------------------------*/
 
 /* OY_IMAGE_LOAD_REGISTRATION ---------------------------------------------*/
 
@@ -74,7 +431,7 @@ oyOptions_s* oyraFilter_ImageLoadValidateOptions
  *  @since   2009/07/15 (Oyranos: 0.1.10)
  *  @date    2009/07/15
  */
-oyPointer  oyraFilte15ode_ImageLoadContextToMem (
+oyPointer  oyraFilterNode_ImageLoadContextToMem (
                                        oyFilterNode_s    * node,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc )
@@ -94,11 +451,19 @@ int      oyraFilterPlug_ImageLoadRun (
                                        oyPixelAccess_s   * ticket )
 {
   int result = 0, error = 0;
-  oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyFilterNode_s * node = socket->node;
-  oyImage_s * image = (oyImage_s*)socket->data;
+  oyFilterSocket_s * socket = NULL;
+  oyFilterNode_s * node = NULL;
+  oyImage_s * image = NULL;
   oyCMMapiFilter_s * api = 0;
   oyCMMapiFilters_s * apis = 0;
+
+  if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S)
+    socket = requestor_plug->remote_socket_;
+  else if(requestor_plug->type_ == oyOBJECT_FILTER_SOCKET_S)
+    socket = (oyFilterSocket_s*) requestor_plug;
+
+  node = socket->node;
+  image = (oyImage_s*)socket->data;
 
   image = (oyImage_s*)socket->data;
   if(!image)
@@ -127,7 +492,7 @@ int      oyraFilterPlug_ImageLoadRun (
     {
       STRING_ADD( file_ext, fileext );
       i = 0;
-      while(file_ext[i]) { file_ext[i] = tolower( file_ext[i] ); ++i; }
+      while(file_ext && file_ext[i]) { file_ext[i]=tolower(file_ext[i]); ++i; }
     }
 
     apis = oyCMMsGetFilterApis_( 0,0, "//" OY_TYPE_STD "/file_read", 
@@ -175,6 +540,8 @@ int      oyraFilterPlug_ImageLoadRun (
 
         if(file_read && image_pixel && found)
         {
+          DBGs_NUM2_S( ticket, "%s={%s}", _("Run ticket through api7"),
+                       api7->registration );
           result = api7->oyCMMFilterPlug_Run( requestor_plug, ticket );
           i = n;
         }
@@ -279,7 +646,7 @@ oyCMMapi7_s   oyra_api7_image_load = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
-  0/*(oyCMMapi_s*) & oyra_api4_image_write*/, /* oyCMMapi_s * next */
+  (oyCMMapi_s*) & oyra_api4_image_write, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
@@ -497,6 +864,9 @@ int      oyraFilterPlug_ImageRectanglesRun (
       /* Map each matching plug to a new ticket with a corrected rectangle. */
       new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
       oyArray2d_Release( &new_ticket->array );
+      DBGs_NUM3_S( ticket, "%s[%d] %s", _("Created new_ticket"),
+                   oyStruct_GetId( (oyStruct_s*)new_ticket ),
+                   oyRectangle_Show( r ) );
 
       if(r)
         oyRectangle_SetByRectangle( new_ticket->output_image_roi, r );
@@ -515,12 +885,22 @@ int      oyraFilterPlug_ImageRectanglesRun (
 
         /* fill the array rectangle for the following filter */
         if(!new_ticket->array)
+        {
+          DBGs_NUM3_S( new_ticket, "%s[%d] %s",
+                      _("Fill new_ticket->array from new_ticket->output_image"),
+                      oyStruct_GetId( (oyStruct_s*)new_ticket->output_image ),
+                      oyRectangle_Show( new_ticket->output_image_roi ) );
           oyImage_FillArray( new_ticket->output_image,
                              new_ticket->output_image_roi, 0,
                              &new_ticket->array, new_ticket->output_image_roi,
                              0 );
+        }
 
         /* start new call into branch */
+        DBGs_NUM3_S( new_ticket, "%s[%d] %s",
+                     _("Run new_ticket through filter in node"),
+                     oyStruct_GetId( (oyStruct_s*)node ),
+                     oyRectangle_Show( new_ticket->output_image_roi ) );
         l_result = input_node->api7_->oyCMMFilterPlug_Run( node->plugs[i],
                                                            new_ticket );
         if(l_result != 0 && (result <= 0 || l_result > 0))
@@ -528,12 +908,20 @@ int      oyraFilterPlug_ImageRectanglesRun (
 
         /* The image is used as intermediate cache between the forward and
            backward array. @todo use direct array copy oyArray2d_DataCopy() */
-        error = oyImage_ReadArray( image, new_ticket->output_image_roi,
+        DBGs_NUM2_S( new_ticket,"%s[%d]",_("Read new_ticket->array into image"),
+                     oyStruct_GetId( (oyStruct_s*)image ) );
+        error = oyImage_ReadArray( new_ticket->output_image,
+                                   new_ticket->output_image_roi,
                                    new_ticket->array, 0 );
+        if(error) WARNc2_S("%s %d", _("found issues"),error);
+        DBGs_NUM2_S( ticket, "%s[%d]",
+                     _("Fill ticket->array from new_ticket->output_image"),
+                    oyStruct_GetId( (oyStruct_s*)new_ticket->output_image ) );
         error = oyImage_FillArray( new_ticket->output_image,
                                    new_ticket->output_image_roi, 1,
                                    &ticket->array, new_ticket->output_image_roi,
                                    0 );
+        if(error) WARNc2_S("%s %d", _("found issues"),error);
       }
       oyPixelAccess_Release( &new_ticket );
 
@@ -543,6 +931,7 @@ int      oyraFilterPlug_ImageRectanglesRun (
     oyRectangle_SetGeo( &array_pix, 0,0,
               ticket->array->data_area.width, ticket->array->data_area.height );
     error = oyArray2d_SetFocus( ticket->array, &array_pix );
+    if(error) WARNc2_S("%s %d", _("found issues"),error);
   }
 
   return result;
@@ -1010,8 +1399,11 @@ int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
 
   /* to reuse the requestor_plug is a exception for the starting request */
   if(node)
+  {
+    DBGs_NUM2_S( ticket, "%s[%d]", _("Call next filter in node"),
+                 oyStruct_GetId( (oyStruct_s*)node ) );
     result = node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket );
-  else
+  } else
     result = 1;
 
   return result;

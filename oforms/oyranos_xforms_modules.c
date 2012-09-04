@@ -19,23 +19,23 @@
 
 void usage(int argc, char ** argv)
 {
-  printf("\n");
-  printf("oyranos-xforms v%d.%d.%d %s\n",
+  fprintf( stderr, "\n");
+  fprintf( stderr, "oyranos-xforms v%d.%d.%d %s\n",
                           OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
                                 _("is a Oyranos module options tool"));
-  printf("%s\n",                 _("Usage"));
-  printf("  %s\n",               _("Show options [include policy]"));
-  printf("      %s -n \"module_name\" [-f]\n", argv[0]);
-  printf("\n");
-  printf("  %s\n",               _("Get XFORMS:"));
-  printf("      %s -n \"module_name\" -x \"xhtml_file\"\n", argv[0]);
-  printf("\n");
-  printf("  %s\n",               _("General options:"));
-  printf("      -v  %s\n",       _("verbose"));
-  printf("      -f  %s\n",       _("show policy options"));
-  printf("\n");
-  puts(_("For more informations read the man page:"));
-  printf("      man oyranos-xforms-modules\n");
+  fprintf( stderr, "%s\n",                 _("Usage"));
+  fprintf( stderr, "  %s\n",               _("Show options [include policy]"));
+  fprintf( stderr, "      %s -n \"module_name\" [-f]\n", argv[0]);
+  fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",               _("Get XFORMS:"));
+  fprintf( stderr, "      %s -n \"module_name\" -x \"xhtml_file\"\n", argv[0]);
+  fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",               _("General options:"));
+  fprintf( stderr, "      -v  %s\n",       _("verbose"));
+  fprintf( stderr, "      -f  %s\n",       _("show policy options"));
+  fprintf( stderr, "\n");
+  fputs( _("For more informations read the man page:"), stderr);
+  fprintf( stderr, "      man oyranos-xforms-modules\n");
 }
 
 
@@ -53,7 +53,8 @@ int main (int argc, char ** argv)
   char ** other_args = 0;
   int other_args_n = 0;
   int error = 0,
-      i;
+      i,
+      verbose = 0;
   oyOptions_s * opts = 0;
   oyOption_s * o = 0;
   int front = 0;  /* front end options */
@@ -79,7 +80,7 @@ int main (int argc, char ** argv)
                             wrong_arg = "-" #opt; \
                           i = 1000; \
                         } else wrong_arg = "-" #opt; \
-                        if(oy_debug) printf(#opt "=%s\n",opt)
+                        if(oy_debug || verbose) fprintf( stderr, #opt "=%s\n",opt)
 
   if(argc != 1)
   {
@@ -96,10 +97,10 @@ int main (int argc, char ** argv)
               case 'n': OY_PARSE_STRING_ARG( node_name ); break;
               case 'f': front = 1; break;
               case 'x': OY_PARSE_STRING_ARG( output_xml_file ); break;
-              case 'v': oy_debug += 1; break;
+              case 'v': if(verbose) oy_debug += 1; verbose = 1; break;
               case '-':
                         if(strcmp(&argv[pos][2],"verbose") == 0)
-                        { oy_debug += 1; i=100; break;
+                        { if(verbose) oy_debug += 1; verbose = 1; i=100; break;
                         }
                         STRING_ADD( t, &argv[pos][2] );
                         text = oyStrrchr_(t, '=');
@@ -127,7 +128,7 @@ int main (int argc, char ** argv)
                         t = 0;
                         i=100; break;
               default:
-                        printf("%s -%c\n", _("Unknown argument"), argv[pos][i]);
+                        fprintf( stderr, "%s -%c\n", _("Unknown argument"), argv[pos][i]);
                         usage(argc, argv);
                         exit (0);
                         break;
@@ -138,12 +139,12 @@ int main (int argc, char ** argv)
       }
       if( wrong_arg )
       {
-        printf("%s %s\n", _("wrong argument to option:"), wrong_arg);
+        fprintf( stderr, "%s %s\n", _("wrong argument to option:"), wrong_arg);
         exit(1);
       }
       ++pos;
     }
-    if(oy_debug) printf( "%s\n", argv[1] );
+    if(oy_debug || verbose) fprintf( stderr, "%s\n", argv[1] );
 
   }
 
@@ -160,7 +161,7 @@ int main (int argc, char ** argv)
     node = oyFilterNode_NewWith( node_name, 0,0 );
     if(!node)
     {
-      printf("No module found with name: %s", node_name);
+      fprintf( stderr, "No module found with name: %s", node_name);
       usage( argc, argv );
       exit( 1 );
     } else
@@ -186,7 +187,7 @@ int main (int argc, char ** argv)
         /* check for wrong args */
         if(strstr( opt_names, other_args[i] ) == NULL)
         {
-          printf("Unknown option: %s", other_args[i]);
+          fprintf( stderr, "Unknown option: %s", other_args[i]);
           usage( argc, argv );
           exit( 1 );
 
@@ -196,17 +197,17 @@ int main (int argc, char ** argv)
           if(i + 1 < other_args_n)
           {
             ct = oyOption_GetText( o, oyNAME_NICK );
-            printf( "%s => ",
+            fprintf( stderr, "%s => ",
                     ct ); ct = 0;
             oyOption_SetFromText( o, other_args[i + 1], 0 );
             data = oyOption_GetText( o, oyNAME_NICK );
 
-            printf( "%s\n",
+            fprintf( stderr, "%s\n",
                     oyStrchr_(data, ':') + 1 ); data = 0;
          }
           else
           {
-            printf("%s: --%s  argument missed\n", _("Option"), other_args[i] );
+            fprintf(stderr, "%s: --%s  argument missed\n", _("Option"), other_args[i] );
             exit( 1 );
           }
           oyOption_Release( &o );
@@ -227,8 +228,8 @@ int main (int argc, char ** argv)
       i = 0;
       while(namespaces[i])
       {
-        if(oy_debug)
-          printf("namespaces[%d]: %s\n", i, namespaces[i]);
+        if(oy_debug || verbose)
+          fprintf(stderr, "namespaces[%d]: %s\n", i, namespaces[i]);
         free( namespaces[i++] );
       }
       free(namespaces);
@@ -237,12 +238,14 @@ int main (int argc, char ** argv)
 
   }
 
-  if(oy_debug)
-    printf("%s\n", text);
 
   if(output_xml_file)
+  {
     oyWriteMemToFile_( output_xml_file, text, strlen(text) );
-  else if(!oy_debug)
+    if(oy_debug || verbose)
+      fprintf(stderr, "%s\n", text);
+  }
+  else
     printf("%s\n", text);
 
 

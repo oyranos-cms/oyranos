@@ -1,4 +1,5 @@
-/** @file oyranos_monitor_internal.h
+/** @internal
+ *  @file oyranos_monitor_internal.h
  *
  *  Oyranos is an open source Colour Management System 
  *
@@ -8,7 +9,6 @@
 
 /**
  *  @brief    monitor device detection
- *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2005/02/01

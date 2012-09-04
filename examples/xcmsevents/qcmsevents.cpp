@@ -14,6 +14,8 @@
 #include "oyranos_alpha.h"
 #include "oyranos_i18n.h"
 
+#include <X11/Xcm/Xcm.h>
+
 QcmseDialog * dialog = 0;
 
 QcmseDialog::QcmseDialog()
@@ -80,17 +82,17 @@ void QcmseDialog::log( const char * text, int code )
 
     if(strstr(text, "PropertyNotify : "))
       text = strstr(text, "PropertyNotify : ") + strlen("PropertyNotify : ");
-    if(strstr(text, "_NET_COLOR_DESKTOP "))
-      sscanf( text, "_NET_COLOR_DESKTOP %d", &pid );
+    if(strstr(text, XCM_COLOR_DESKTOP" "))
+      sscanf( text, XCM_COLOR_DESKTOP" %d", &pid );
     if(pid == 0)
     {
       colour.setHsvF( 0.6, 0.4, 0.9 );
       icon->setIcon( icons->itemIcon(0) );
     } else
     /*  base colour server should support opt-out 
-     *  through _NET_COLOR_REGIONS - NCR
+     *  through _ICC_COLOR_REGIONS - ICR
      */
-    if(pid > 0 && strstr(text, "|NCR|") != 0)
+    if(pid > 0 && strstr(text, "|ICR|") != 0)
     {
       colour.setHsvF( 0.41, 0.5, 0.9 );
       icon->setIcon( icons->itemIcon(1) );
@@ -118,17 +120,17 @@ void QcmseDialog::log( const char * text, int code )
   else if (XCME_MSG_DISPLAY_STATUS)
   {
     int i;
-    if(strstr(text, "atom: \"_NET_COLOR_DESKTOP\":"))
-      sscanf( text, "atom: \"_NET_COLOR_DESKTOP\": %d %d", &i, &pid );
+    if(strstr(text, "atom: \"" XCM_COLOR_DESKTOP "\":"))
+      sscanf( text, "atom: \"" XCM_COLOR_DESKTOP "\": %d %d", &i, &pid );
     if(pid == 0)
     {
       colour.setHsvF( 0.6, 0.4, 0.9 );
       icon->setIcon( icons->itemIcon(0) );
     } else
     /*  base colour server should support opt-out 
-     *  through _NET_COLOR_REGIONS - NCR
+     *  through _ICC_COLOR_REGIONS - ICR
      */
-    if(pid > 0 && strstr(text, "|NCR|") != 0)
+    if(pid > 0 && strstr(text, "|ICR|") != 0)
     {
       colour.setHsvF( 0.41, 0.5, 0.9 );
       icon->setIcon( icons->itemIcon(1) );
@@ -244,7 +246,8 @@ int main(int argc, char *argv[])
   XcmICCprofileGetNameFuncSet( getName );
 
   dialog = new QcmseDialog();
-  //dialog->show();
+  if(argc > 1 && strcmp(argv[1],"--show") == 0)
+    dialog->show();
 
   app.setup();
 

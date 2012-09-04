@@ -217,7 +217,6 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
  *  @brief   add a element to a Options list
  *
  *  We must not add any already listed option. 
- *  A "shared" key has higher priority and substitutes a non "shared" one.
  *  (oyFILTER_REG_TOP)
  *
  *  Adding a new element without any checks is as simple as following code:
@@ -270,15 +269,6 @@ int            oyOptions_Add         ( oyOptions_s       * options,
                                           oyFILTER_REG_TOP, 0 );
       if(oyStrcmp_(l_opt, o_opt) == 0)
         skip = 2;
-
-      /* replace as we priorise the "shared" namespace */
-      if(skip == 2)
-      {
-        if(oyStrcmp_(o_top, OY_TOP_SHARED) == 0 &&
-           oyStrcmp_(l_top, OY_TOP_SHARED) != 0)
-          oyOption_Copy__Members( oyOptionPriv_m(tmp), oyOptionPriv_m(option) );
-        -- skip;
-      }
 
       oyFree_m_( l_opt );
       oyFree_m_( l_top );
@@ -798,9 +788,9 @@ int            oyOptions_Filter      ( oyOptions_s      ** add_list,
  *  @param         type                oyNAME_NICK is equal to an ID
  *  @return                            the text
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.3
  *  @since   2008/11/25 (Oyranos: 0.1.9)
- *  @date    2008/09/01
+ *  @date    2011/10/31
  */
 const char *   oyOptions_GetText     ( oyOptions_s       * options,
                                        oyNAME_e            type )
@@ -814,6 +804,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
   int * sort, changed;
   char ** old_levels = 0;
   int old_levels_n = 0;
+  int close_oy_struct = 0;
 
   if(error <= 0)
   {
@@ -861,7 +852,9 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
 
     for( i = 0; i < n; ++i )
     {
+      oyOption_s_ * o_ = 0;
       o = oyOptions_Get( options, sort[i] );
+      o_ = (oyOption_s_*)o;
 
       /* Omit redundant XML level closes and opens based on alphabetical input.
        */
@@ -896,6 +889,12 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
               STRING_ADD ( text, " " );
           if(old_levels_n > j)
           {
+            if( close_oy_struct )
+            {
+              for(k = 0; k < indent+j_n-1; ++k)
+                STRING_ADD ( text, " " );
+              close_oy_struct = 0;
+            }
             STRING_ADD ( text, "</" );
             STRING_ADD ( text, old_levels[j] );
             if(j)
@@ -918,15 +917,25 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
             STRING_ADD ( text, ">\n" );
         }
 
-        tmp = oyOption_GetValueText( o, oyAllocateFunc_ );
-        STRING_ADD ( text, tmp );
+        if( o_->value_type == oyVAL_STRUCT )
+        {
+          STRING_ADD ( text, "\n" );
+          for(k = 0; k < indent+j_n-1; ++k)
+            STRING_ADD ( text, " " );
+          STRING_ADD ( text, oyOption_GetText( o, oyNAME_XML_VALUE ) );
+          close_oy_struct = 1;
+        }
+        else
+        {
+          tmp = oyOption_GetValueText( o, oyAllocateFunc_ );
+          STRING_ADD ( text, tmp );
+          oyFree_m_( tmp );
+        }
 
         if(old_levels)
           oyStringListRelease_( &old_levels, old_levels_n, oyDeAllocateFunc_ );
         old_levels = list;
         old_levels_n = j_n;
-
-        oyFree_m_( tmp );
       }
       else
       {
@@ -1138,7 +1147,7 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
  *
  *  @param         obj                 the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                     "org/my_org/openicc/my_app/my_opt"
  *  @param         value               the value to set
  *  @param         flags               can be OY_CREATE_NEW for a new option,
  *                                     OY_STRING_LIST or OY_ADD_ALWAYS
@@ -1197,7 +1206,7 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
  *
  *  @param         options             the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                     "org/my_org/openicc/my_app/my_opt"
  *                                     or simple key, e.g. "my_opt"
  *  @param         pos                 the values position in a possible list
  *  @param         result              the integer
@@ -1249,7 +1258,7 @@ int            oyOptions_FindInt     ( oyOptions_s       * options,
  *
  *  @param         obj                 the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                     "org/my_org/openicc/my_app/my_opt"
  *  @param         value               the value to set
  *  @param         pos                 the position in a value list
  *  @param         flags               can be OY_CREATE_NEW for a new option,
@@ -1308,7 +1317,7 @@ int            oyOptions_SetFromInt  ( oyOptions_s      ** obj,
  *
  *  @param         options             the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                     "org/my_org/openicc/my_app/my_opt"
  *                                     or simple key, e.g. "my_opt"
  *  @param         result              the double
  *  @param         pos                 the value position
@@ -1363,7 +1372,7 @@ int            oyOptions_FindDouble  ( oyOptions_s       * options,
  *
  *  @param         obj                 the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                     "org/my_org/openicc/my_app/my_opt"
  *  @param         value               the value to set
  *  @param         pos                 the position in a value list
  *  @param         flags               can be OY_CREATE_NEW for a new option,
@@ -1480,7 +1489,7 @@ oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
  *
  *  @param         obj                 the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                     "org/my_org/openicc/my_app/my_opt"
  *  @param         oy_struct           the Oyranos style object to move in
  *  @param         flags               can be OY_CREATE_NEW for a new option,
  *                                     or OY_ADD_ALWAYS
@@ -1537,7 +1546,7 @@ int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
  *
  *  @param         options             the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                     "org/my_org/openicc/my_app/my_opt"
  *  @param         ptr                 the pointer
  *  @param         size                the pointer size
  *  @param         flags               can be OY_CREATE_NEW for a new option,
@@ -1596,7 +1605,7 @@ int            oyOptions_SetFromData ( oyOptions_s      ** options,
  *
  *  @param         options             the options list or set to manipulate
  *  @param         registration        the options registration name, e.g.
- *                                 "share/freedesktop.org/imaging/my_app/my_opt"
+ *                                     "org/my_org/openicc/my_app/my_opt"
  *                                     or simply a key, e.g. "my_opt"
  *  @param[out]    result              the data; With size == zero, the pointer
  *                                     is static and owned somewhere else.

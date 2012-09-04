@@ -58,16 +58,16 @@ test -f $CONF_TEMP_SH && rm $CONF_TEMP_SH
 test -f libXNVCtrl.a && rm libXNVCtrl.a
 
 VERSION_A=0
-VERSION_B=3
-VERSION_C=2
+VERSION_B=5
+VERSION_C=0
 VERSION_ABI_A=1
-VERSION_ABI_B=1
+VERSION_ABI_B=3
 RELEASE=0
 OY_START_MONTH=11
 OY_START_YEAR=2004
-OY_DEVEL_MONTH=05
-OYRANOS_DEVEL_MONTH=5 # numeric
-OY_DEVEL_YEAR=2011
+OY_DEVEL_MONTH=06
+OYRANOS_DEVEL_MONTH=6 # numeric
+OY_DEVEL_YEAR=2012
 OY_GIT_MASTER="`cat $ROOT_DIR/.git/refs/heads/master`"
 time="`date +%y%m%d.%H%M%S`"
 DATE="$OY_START_MONTH $OY_START_YEAR - $OY_DEVEL_MONTH $OY_DEVEL_YEAR"
@@ -92,7 +92,7 @@ VERSION_L=`echo $VERSION_L | sed 's/^0*//g'`
 INFOECHO="echo"
 
 
-debug=0
+debug=1
 nodeps=0
 openmp=1
 rpm=0
@@ -100,8 +100,8 @@ static=1
 verbose=1
 fltk=1
 X11=0
-X_ADD_2="X11 Xext Xinerama Xxf86vm Xrandr"
-LIBS_TEST="ltdl dl iconv intl m xml2 Xfixes cups sane XNVCtrl yajl pthread"
+X_ADD_2="Xinerama Xxf86vm Xrandr Xext X11"
+LIBS_TEST="c ltdl dl iconv intl m xml2 Xfixes cups sane XNVCtrl yajl pthread"
 
 # find a suitable fltk-config script
 fltkconfig="fltk-config"
@@ -224,9 +224,9 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       quick="1"
     fi
-    switch=enable-debug
+    switch=disable-debug
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
-      debug="1"
+      debug="0"
     fi
     switch=enable-devel
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
@@ -292,7 +292,7 @@ test -n "$INFOECHO" && $INFOECHO "   --with-fltk-config=[fltk-config]     altern
 test -n "$INFOECHO" && $INFOECHO "   --with-x                             use X11 on Darwin"
 test -n "$INFOECHO" && $INFOECHO "   --with-rpath                         use rpath for ELF linking"
 test -n "$INFOECHO" && $INFOECHO "   --rpm-only                           generate only rpm spec file"
-test -n "$INFOECHO" && $INFOECHO "   --enable-debug                       debug version [default disable]"
+test -n "$INFOECHO" && $INFOECHO "   --disable-debug                       debug version [default enable]"
 test -n "$INFOECHO" && $INFOECHO "   --enable-devel                       devel mode for osX [default disable]"
 test -n "$INFOECHO" && $INFOECHO "   --disable-openmp                     SMP support [default automatic]"
 test -n "$INFOECHO" && $INFOECHO "   --disable-static                     no static libraries [default enable]"
@@ -366,6 +366,7 @@ test -n "$ECHO" && $ECHO "" > $CONF
 test -n "$ECHO" && $ECHO "" > $CONF_H
 test -n "$ECHO" && $ECHO "" > $CONF_I18N
 test -n "$ECHO" && $ECHO "" > $CONF_NV
+test -n "$ECHO" && $ECHO "" > yajl/makefile
 test -n "$ECHO" && $ECHO "# generated $PKGC automatically by configure from $PKGC.in" > $PKGC
 test -n "$ECHO" && $ECHO "" >> $PKGC
 test -n "$RPMECHO" && $RPMECHO "# generated $SPEC automatically by configure from $ROOT_DIR/$SPEC.in" > $SPEC
@@ -515,8 +516,18 @@ else
         test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
         OSUNAME=BSD
       else
-        echo_="Oyranos may or may not compile on your $UNAME_ system"
-        test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+        if [ `uname -a | grep W32 | wc -l` -gt 0 ]; then
+          test -n "$ECHO" && $ECHO "WIN32 = 1" >> $CONF
+          EXEC_END=.exe
+          export EXEC_END
+          test -n "$ECHO" && $ECHO "#define WIN32 1" >> $CONF_H
+          echo_="Windows $UNAME_             detected"
+          test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+          OSUNAME=WIN32
+        else
+          echo_="Oyranos may or may not compile on your $UNAME_ system"
+          test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+        fi
       fi
     fi
   fi
@@ -532,6 +543,8 @@ else
   COMPILER=$CC
 fi
 $COMPILER $CFLAGS $ROOT_DIR/tests/intptr_test.c -o tests/intptr_test 2>/dev/null
+FPIC=-fPIC
+DPIC=-DPIC
 if [ -f tests/intptr_test ]; then
   tests/intptr_test
   INTPTR_SIZE=$?
@@ -540,8 +553,6 @@ if [ -f tests/intptr_test ]; then
   elif [ $INTPTR_SIZE -gt 4 ]; then
     echo_="64-bit build            detected"
     BARCH=64
-    FPIC=-fPIC
-    DPIC=-DPIC
     test -n "$ECHO" && $ECHO "BUILD_64 = 1" >> $CONF
   elif [ $INTPTR_SIZE -ne 0 ]; then
     echo_="$INTPTR_SIZE-byte intptr_t          detected"
@@ -724,7 +735,7 @@ if [ $OSUNAME = "Darwin" ]; then
   test -n "$ECHO" && $ECHO "I18N_LIB = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
   test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
   INSTALL="install -p $DEBUG_SWITCH"
-  oyranos_add="-framework ApplicationServices \$ltdl \$xml2"
+  oyranos_add="-framework ApplicationServices \$ltdl \$xml2 \$yajl"
   if [ -n "$devel" ]; then
     DEVEL_LIBS="\$(LIBS_CMM)"
   fi
@@ -739,7 +750,7 @@ else
         --copyright-holder='Kai-Uwe Behrmann' \
         --msgid-bugs-address='ku.b@gmx.de' \
         --from-code=utf-8" >> $CONF
-  oyranos_add="-L\$libdir \$ltdl \$xml2 \$iconv \$intl"
+  oyranos_add="-L\$libdir \$ltdl \$xml2 \$iconv \$intl \$yajl"
   if [ $OSUNAME = "Linux" ]; then
     COPY="cp -vdpa"
     MOVE="mv -v"
@@ -774,8 +785,13 @@ else
     fi
     test -n "$ECHO" && $ECHO "I18N_LIB = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
     test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
-    CFLAGS="$CFLAGS $FPIC"
-    CXXFLAGS="$CXXFLAGS $FPIC"
+    if [ $OSUNAME = "WIN32" ]; then
+      CFLAGS="$CFLAGS"
+      CXXFLAGS="$CXXFLAGS"
+    else
+      CFLAGS="$CFLAGS $FPIC"
+      CXXFLAGS="$CXXFLAGS $FPIC"
+    fi
   fi
 fi
  
@@ -814,6 +830,12 @@ done
 if [ -n "$ECHO" ]; then
   echo_="\"$CFLAGS\" \"$CXXFLAGS\" \"$LDFLAGS\""
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  if [ $debug = 1 ]; then
+    echo_="Debug macros            enabled"
+  else
+    echo_="Debug macros            disabled"
+  fi
+  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
 
 export CFLAGS CXXFLAGS LDFLAGS
@@ -828,7 +850,10 @@ test -n "$INFOECHO" && $INFOECHO ""
 pkg-config  --atleast-version=0.7 elektra 2>/dev/null
 if [ $? != 0 ] && [ 0 -eq $rpm ]; then
   ELEKTRA_VERSION="elektra-0.7.1"
-  if [ -d $ELEKTRA_VERSION ]; then
+  if [ -d $ROOT_DIR/$ELEKTRA_VERSION ]; then
+    if [ ! -d $ELEKTRA_VERSION ]; then
+      mkdir -p $ELEKTRA_VERSION
+    fi
     test -n "$ECHO" && $ECHO "#define HAVE_ELEKTRA 1" >> $CONF_H
     test -n "$ECHO" && $ECHO "ELEKTRA = 1" >> $CONF
     test -n "$ECHO" && $ECHO "ELEKTRA_H = -I$ELEKTRA_VERSION/src/include -I$ROOT_DIR/$ELEKTRA_VERSION/src/include" >> $CONF
@@ -840,17 +865,41 @@ if [ $? != 0 ] && [ 0 -eq $rpm ]; then
       cd $ELEKTRA_VERSION && sh -c "$ROOT_DIR/$ELEKTRA_VERSION/configure --enable-static --enable-shared=false $nodeps_config_opt --prefix=$prefix"
       cd "$dir"
     fi
-    test -n "$ECHO" && $ECHO "ltdl=-lltdl" >> $PKGC
+    test -n "$ECHO" && $ECHO "elektra=" >> $PKGC
     test -n "$ECHO" && $ECHO ""
     test -n "$ECHO" && $ECHO "... $ELEKTRA_VERSION configured"
   else
+    echo_="  no $ROOT_DIR/$ELEKTRA_VERSION"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     echo_="!!! Elektra: !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     echo_="  no or too old Elektra found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     echo_="  need a version not greater than $elektra_max, download: elektra.sf.net"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     echo 1 > error.tmp
   fi
 else
-  test -n "$ECHO" && $ECHO "ltdl=" >> $PKGC
+    test -n "$ECHO" && $ECHO "elektra=`pkg-config --libs elektra`" >> $PKGC
+fi
+
+pkg-config  --atleast-version=1.0 yajl 2>/dev/null
+if [ $? != 0 ] && [ 0 -eq $rpm ]; then
+  l=yajl
+  $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
+  if [ -f tests/libtest ]; then
+    rm tests/libtest$EXEC_END
+  elif [ -d $l ]; then
+    YAJL_DIR="yajl"
+    test -n "$ECHO" && $ECHO "#define HAVE_YAJL 1" >> $CONF_H
+    test -n "$ECHO" && $ECHO "YAJL = 1" >> $CONF
+    test -n "$ECHO" && $ECHO "YAJL_H = -I$YAJL_DIR/ -I$ROOT_DIR/$YAJL_DIR/" >> $CONF
+    test -n "$ECHO" && $ECHO "YAJL_LIBS = \$(YAJL_OBJ)" >> $CONF
+    test -n "$ECHO" && $ECHO "YAJL_DIR = $YAJL_DIR" >> $CONF
+    test -n "$ECHO" && $ECHO "Yajl internal           $YAJL_DIR"
+    test -n "$ECHO" && $ECHO ""
+  else
+    echo_="!!! Yajl: !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo_="  no or too old Yajl found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo_="  need a version not greater than $elektra_max, download: http://lloyd.github.com/yajl/"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo 1 > error.tmp
+  fi
 fi
 
 pkg-config  --atleast-version=1.0 yajl 2>/dev/null
@@ -1117,6 +1166,8 @@ test -n "$ECHO" && $ECHO "targetdirname=$targetdirname" >> $PKGC
 test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $PKGC
 test -n "$ECHO" && $ECHO "icondir=$icondir" >> $PKGC
 test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $PKGC
+test -n "$ECHO" && cat $CONF_TEMP_SH >> $PKGC
+test -n "$ECHO" && $ECHO "oyranos_add=-L\${libdir} \${elektra} \${ltdl} \${xml2} \${iconv} \${intl} \${yajl}" >> $PKGC
 test -n "$ECHO" && cat  "$ROOT_DIR/$PKGC.in" >> $PKGC
 if [ -n "$ECHO" ]; then
   test -n "$INFOECHO" && $INFOECHO generated $PKGC from "$ROOT_DIR/$PKGC.in"
@@ -1201,27 +1252,25 @@ test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $CONF
 test -n "$ECHO" && $ECHO "" >> $CONF
 
 
-test -n "$ECHO" && $ECHO "" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_PREFIX         \"$prefix\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_BINDIR         \"$bindir\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_DATADIR        \"$datadir\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_LIBDIR         \"$libdir\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_CMMDIR         \"$cmmdir\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_CMMSUBPATH     \"$cmmsubpath\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_METASUBPATH    \"$metasubpath\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_SYSCOLORDIR    \"$syscolordir\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_USERCOLORDIR   \"$usercolordir\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_USERCOLORDATA  \"$usercolordata\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_ICCDIRNAME     \"$iccdirname\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_SETTINGSDIRNAME \"$settingsdirname\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_TARGETDIRNAME  \"$targetdirname\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_LOCALEDIR      \"$datadir/locale\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_SRCDIR         \"$BUILD_DIR\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_SRC_LOCALEDIR  \"$BUILD_DIR/po\"" >> $CONF_H
-test -n "$ECHO" && $ECHO "" >> $CONF_H
 test -n "$ECHO" && $ECHO $OYAPI >> $VERS_H
 test -n "$ECHO" && $ECHO $OYEXPORT >> $VERS_H
 test -n "$ECHO" && $ECHO "" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_PREFIX         \"$prefix\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_BINDIR         \"$bindir\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_DATADIR        \"$datadir\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_LIBDIR         \"$libdir\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_CMMDIR         \"$cmmdir\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_CMMSUBPATH     \"$cmmsubpath\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_METASUBPATH    \"$metasubpath\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_SYSCOLORDIR    \"$syscolordir\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_USERCOLORDIR   \"$usercolordir\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_USERCOLORDATA  \"$usercolordata\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_ICCDIRNAME     \"$iccdirname\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_SETTINGSDIRNAME \"$settingsdirname\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_TARGETDIRNAME  \"$targetdirname\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_LOCALEDIR      \"$datadir/locale\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_SRCDIR         \"$BUILD_DIR\"" >> $VERS_H
+test -n "$ECHO" && $ECHO "#define OY_SRC_LOCALEDIR  \"$BUILD_DIR/po\"" >> $VERS_H
 # Images formats availablility markers
 if [ `cat $CONF_H | grep "HAVE_PNG 1" | wc -l` -gt 0 ]; then
 test -n "$ECHO" && $ECHO "#define OY_HAVE_PNG 1" >> $VERS_H

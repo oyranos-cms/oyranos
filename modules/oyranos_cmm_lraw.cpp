@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2009-2011 (C) Kai-Uwe Behrmann
+ *            2009-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    libraw filter for Oyranos
  *  @internal
@@ -152,45 +152,6 @@ int            lrawCMMMessageFuncSet ( oyMessage_f         message_func )
 }
 
 
-int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
-{
-  int error = !texts || ! text;
-  oyName_s * name = 0;
-  oyStruct_s * oy_struct = 0;
-  if(!error)
-  {
-     name = oyName_new(0);
-     name->name = *text;
-     *text = 0;
-     oy_struct = (oyStruct_s*) name;
-     oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
-  }
-  return error;
-}
-
-int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
-{
-  int error = !texts;
-  oyName_s * name = 0;
-  oyStruct_s * oy_struct = 0;
-  char * tmp = 0;
-  if(!error)
-  {
-     name = oyName_new(0);
-     if(!name) return 1;
-     if(text)
-     {
-       tmp = (char*) oyAllocateFunc_( strlen(text) + 1 );
-       if(!tmp) return 1;
-       sprintf( tmp, "%s", text ); 
-       name->name = tmp;
-     }
-     oy_struct = (oyStruct_s*) name;
-     oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
-  }
-  return error;
-}
-
 
 
 const char * lrawWidget_GetDummy     ( const char        * func_name,
@@ -332,6 +293,199 @@ int wread ( unsigned char* data, size_t pos, size_t max, size_t *start, size_t *
   return end_found;
 }
 
+// The oyVEC3, oyMAT3 and oyMAT3inverse definitions origin from lcms2 cmsmtrx.c
+// Vectors                                                                  
+typedef struct {
+  double n[3];                                                  
+} oyVEC3;
+ 
+// 3x3 Matrix                                                               
+typedef struct {
+  oyVEC3 v[3];                                                           
+ 
+} oyMAT3; 
+
+#define MATRIX_DET_TOLERANCE    0.0001
+// Inverse of a matrix b = a^(-1)
+int _oyMAT3inverse(const oyMAT3* a, oyMAT3* b)
+{
+   double det, c0, c1, c2;
+
+   c0 =  a -> v[1].n[1]*a -> v[2].n[2] - a -> v[1].n[2]*a -> v[2].n[1];
+   c1 = -a -> v[1].n[0]*a -> v[2].n[2] + a -> v[1].n[2]*a -> v[2].n[0];
+   c2 =  a -> v[1].n[0]*a -> v[2].n[1] - a -> v[1].n[1]*a -> v[2].n[0];
+
+   det = a -> v[0].n[0]*c0 + a -> v[0].n[1]*c1 + a -> v[0].n[2]*c2;
+
+   if (fabs(det) < MATRIX_DET_TOLERANCE) return FALSE;  // singular matrix; can't invert
+
+   b -> v[0].n[0] = c0/det;
+   b -> v[0].n[1] = (a -> v[0].n[2]*a -> v[2].n[1] - a -> v[0].n[1]*a -> v[2].n[2])/det;
+   b -> v[0].n[2] = (a -> v[0].n[1]*a -> v[1].n[2] - a -> v[0].n[2]*a -> v[1].n[1])/det;
+   b -> v[1].n[0] = c1/det;
+   b -> v[1].n[1] = (a -> v[0].n[0]*a -> v[2].n[2] - a -> v[0].n[2]*a -> v[2].n[0])/det;
+   b -> v[1].n[2] = (a -> v[0].n[2]*a -> v[1].n[0] - a -> v[0].n[0]*a -> v[1].n[2])/det;
+   b -> v[2].n[0] = c2/det;
+   b -> v[2].n[1] = (a -> v[0].n[1]*a -> v[2].n[0] - a -> v[0].n[0]*a -> v[2].n[1])/det;
+   b -> v[2].n[2] = (a -> v[0].n[0]*a -> v[1].n[1] - a -> v[0].n[1]*a -> v[1].n[0])/det;
+
+   return TRUE;
+}
+
+oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color )
+{
+  static oyProfile_s * p = NULL;
+
+  if(color.profile_length)
+    p = oyProfile_FromMem( color.profile_length, color.profile, 0,0);
+
+  if(!p)
+  {
+    oyOption_s *matrix = oyOption_FromRegistration("///colour_matrix."
+              "from_primaries."
+              "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma", NULL );
+
+    int fail = 0;
+    if(oy_debug)
+      printf("cam_xyz:\n");
+    float cam_xy[3][2];
+    for(int i = 0; i < 4; ++i)
+    {
+      for(int j = 0; j < 3; ++j)
+      {
+        if(i < 3 && color.cam_xyz[i][j] == 0)
+          fail = 1;
+        if(oy_debug)
+          printf(" %g", color.cam_xyz[i][j]);
+      }
+      float sum = color.cam_xyz[i][0]+color.cam_xyz[i][1]+color.cam_xyz[i][2];
+      cam_xy[i][0] = color.cam_xyz[i][0]/sum;
+      cam_xy[i][1] = color.cam_xyz[i][1]/sum;
+      if(oy_debug)
+        printf("\n x:%g y:%g\n", cam_xy[i][0], cam_xy[i][1] );
+    }
+    oyMAT3 cam_xyz, xyz_cam;
+    float xyz_xy[3][2];
+    for(int i = 0; i < 3; ++i)
+    {
+      for(int j = 0; j < 3; ++j)
+      {
+        cam_xyz.v[i].n[j] = color.cam_xyz[i][j];
+      }
+    }
+    if(!_oyMAT3inverse( &cam_xyz, &xyz_cam ))
+    {
+      if(oy_debug)
+        printf("cam_xyz is singular\n");
+    } else
+    {
+      if(oy_debug)
+        printf("xyz_cam:\n");
+      for(int i = 0; i < 3; ++i)
+      {
+        for(int j = 0; j < 3; ++j)
+        {
+          if(i < 3 && xyz_cam.v[i].n[j] == 0)
+            fail = 1;
+          if(oy_debug)
+            printf(" %g", xyz_cam.v[i].n[j]);
+        }
+        float sum = xyz_cam.v[i].n[0]+xyz_cam.v[i].n[1]+xyz_cam.v[i].n[2];
+        xyz_xy[i][0] = xyz_cam.v[i].n[0]/sum;
+        xyz_xy[i][1] = xyz_cam.v[i].n[1]/sum;
+        if(oy_debug)
+          printf("\n x:%g y:%g\n", xyz_xy[i][0], xyz_xy[i][1] );
+      }
+    }
+      
+    if(oy_debug)
+    printf("cmatrix:\n");
+    if(oy_debug)
+    for(int i = 0; i < 3; ++i)
+    {
+      for(int j = 0; j < 4; ++j)
+      {
+        printf(" %g", color.cmatrix[i][j]);
+      }
+      printf("\n");
+    }
+    if(oy_debug)
+    printf("rgb_cam:\n");
+    if(oy_debug)
+    for(int i = 0; i < 3; ++i)
+    {
+      for(int j = 0; j < 4; ++j)
+      {
+        printf(" %g", color.rgb_cam[i][j]);
+      }
+      float sum = color.rgb_cam[i][0]+color.rgb_cam[i][1]+color.rgb_cam[i][2];
+      printf("\n x:%g y:%g\n", color.rgb_cam[i][0]/sum, color.rgb_cam[i][1]/sum );
+    }
+    /* we must assume, that negative values for primaries are not supported */
+    if(!fail)
+    {
+      oyOption_SetFromDouble( matrix, xyz_xy[0][0], 0, 0);
+      oyOption_SetFromDouble( matrix, xyz_xy[0][1], 1, 0);
+      oyOption_SetFromDouble( matrix, xyz_xy[1][0], 2, 0);
+      oyOption_SetFromDouble( matrix, xyz_xy[1][1], 3, 0);
+      oyOption_SetFromDouble( matrix, xyz_xy[2][0], 4, 0);
+      oyOption_SetFromDouble( matrix, xyz_xy[2][1], 5, 0);
+      oyOption_SetFromDouble( matrix, 0.3457, 6, 0);
+      oyOption_SetFromDouble( matrix, 0.3585, 7, 0);
+    } else
+    {
+    /* http://www.color.org/chardata/rgb/rommrgb.xalter
+     * original gamma is 1.8, we adapt to typical cameraRAW gamma of 1.0 */
+      oyOption_SetFromDouble( matrix, 0.7347, 0, 0);
+      oyOption_SetFromDouble( matrix, 0.2653, 1, 0);
+      oyOption_SetFromDouble( matrix, 0.1596, 2, 0);
+      oyOption_SetFromDouble( matrix, 0.8404, 3, 0);
+      oyOption_SetFromDouble( matrix, 0.0366, 4, 0);
+      oyOption_SetFromDouble( matrix, 0.0001, 5, 0);
+      oyOption_SetFromDouble( matrix, 0.3457, 6, 0);
+      oyOption_SetFromDouble( matrix, 0.3585, 7, 0);
+      fail = 1;
+    }
+    oyOption_SetFromDouble( matrix, 1.0, 8, 0);
+
+    oyOptions_s * opts = oyOptions_New(0),
+                * result = 0;
+
+    oyOptions_MoveIn( opts, &matrix, -1 );
+    const char * reg = "//"OY_TYPE_STD"/create_profile.icc";
+    oyOptions_Handle( reg, opts,"create_profile.icc_profile.colour_matrix",
+                      &result );
+
+    p = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
+                                               oyOBJECT_PROFILE_S );
+    oyOptions_Release( &result );
+    if(!p)
+      message(oyMSG_DBG, (oyStruct_s*)0,
+          OY_DBG_FORMAT_ " profile creation failed by \"%s\"",
+          OY_DBG_ARGS_, reg);
+
+    if(!fail)
+      oyProfile_AddTagText( p, icSigProfileDescriptionTag,
+                                            "cam_xyz gamma 1.0" );
+    else
+      oyProfile_AddTagText( p, icSigProfileDescriptionTag,
+                                            "ICC Examin ROMM gamma 1.0" );
+
+    if(oy_debug)
+    {
+      size_t size = 0;
+      char * data = (char*) oyProfile_GetMem( p, &size, 0, malloc );
+      if(!fail)
+        oyWriteMemToFile_( "cam_xyz gamma 1.0.icc", data, size );
+      else
+        oyWriteMemToFile_( "ICC Examin ROMM gamma 1.0.icc", data, size );
+    }
+  }
+
+  return p;
+}
+
+
 oyConfig_s * oyREgetColorInfo        ( const char        * filename,
                                        libraw_output_params_t * device_context,
                                        oyOptions_s       * options )
@@ -406,8 +560,8 @@ int      lrawFilterPlug_ImageInputRAWRun (
           params->gamm[0], params->gamm[1]);
 
   /* render at half size */
-  params->half_size = 1;
-  params->four_color_rgb = 1;
+  params->half_size = 0;
+  params->four_color_rgb = 0;
 
   /* passing through the data reading */
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S &&
@@ -625,9 +779,16 @@ int      lrawFilterPlug_ImageInputRAWRun (
   error = oyOptions_Filter( &options, &n, 0,
                       oyBOOLEAN_INTERSECTION, "///config",node->core->options_);
   device = oyREgetColorInfo( filename, params, options );
-  oyDeviceGetProfile( device, 0, &prof );
-  if(!prof)
-    prof = oyProfile_FromStd( profile_type, 0 );
+  error = oyDeviceGetProfile( device, 0, &prof );
+  if(!prof || error != 0)
+  {
+    if(prof)
+      oyProfile_Release( &prof );
+    if(profile_type == oyASSUMED_RGB)
+      prof = createMatrixProfile( rip.imgdata.color );
+    else
+      prof = oyProfile_FromStd( profile_type, 0 );
+  }
 
   if(oy_debug)
   {
@@ -640,15 +801,17 @@ int      lrawFilterPlug_ImageInputRAWRun (
   image_in = oyImage_Create( width, height, buf, pixel_type, prof, 0 );
   buf = 0;
 
+
+  oyOptions_s * image_in_tags = oyImage_GetTags( image_in );
   if(oyOptions_FindString( node->core->options_, "device", "1" ) != NULL)
   {
-    oyOptions_MoveInStruct( &image_in->tags,
+    oyOptions_MoveInStruct( &image_in_tags,
                             "//" OY_TYPE_STD OY_SLASH CMM_NICK "/device",
                             (oyStruct_s**)&device, OY_CREATE_NEW );
   }
   oyConfig_Release( &device );
 
-  if(oy_debug)
+  if(oy_debug && image_in)
     oyArray2d_ToPPM_  ( (oyArray2d_s*)image_in->pixel_data,
                         "test_oy_dbg_lraw.ppm" );
 
@@ -663,7 +826,8 @@ int      lrawFilterPlug_ImageInputRAWRun (
     return FALSE;
   }
 
-  error = oyOptions_SetFromText( &image_in->tags,
+  
+  error = oyOptions_SetFromText( &image_in_tags,
                               "//" OY_TYPE_STD OY_SLASH CMM_NICK "/filename",
                                  filename, OY_CREATE_NEW );
 
@@ -683,6 +847,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
   }
 
   oyImage_Release( &image_in );
+  oyOptions_Release( &image_in_tags );
 
   /* return an error to cause the graph to retry */
   return 1;

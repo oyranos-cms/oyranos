@@ -210,7 +210,6 @@ int        oyXML2XFORMsCmdLineHtmlHeadlineHandler (
   int print = forms_args ? forms_args->print : 1;
 
   xmlNodePtr group;
-  int error = 0;
 
 
   if(cur && print)
