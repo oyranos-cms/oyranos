@@ -1,0 +1,71 @@
+.TH oyranos-profile-graph 1 "June 14, 2012" "User Commands"
+.SH NAME
+oyranos-profile-graph \- ICC profile graph tool
+.SH SYNOPSIS
+\fBoyranos-profile-graph\fR [-o \fIFILENAME\fR] [-x] [-w NUMBER] [-b] [-s] \fIPROFILENAMES\fR
+.fi
+\fBoyranos-profile-graph\fR [ -h ]
+.SH DESCRIPTION
+The oyranos-profile-graph programm converts ICC profiles or embedded 
+ICC profiles from images to a graph image. By default the program shows the 
+saturation line of the specified profiles and writes to output.png .
+.SH OPTIONS
+.TP
+\fB-w\fR \fINUMBER\fR
+set output image width in pixel
+.TP
+\fB\-o\fR \fIFILENAME\fR
+write resulting image to file name.
+.TP
+\fB\-x\fR
+use CIE*xyY *x*y plane for saturation line projection.
+.TP
+\fB-s\fR
+omit the spectral line.
+.TP
+.B \-b
+omit border.
+.TP
+\fB-t\fR \fIFLOATINGPOINTNUMBER\fR
+increase the thickness of the graph lines
+.TP
+\fB-d\fR \fIFLOATINGPOINTNUMBER\fR
+incrementally increase the thickness of the graph lines. The default is 0.7 .
+.TP
+.B \-\-standard-observer
+show the standard observer spectral function as curves.
+.SH GENERAL OPTIONS
+.TP
+.B \-v, \-\-verbose
+increase verbosity
+.SH ENVIRONMENT
+.TP
+.B OYRANOS_DEBUG
+set the Oyranos debug level. Alternatively the -v option can be used.
+.TP
+.B XDG_DATA_HOME XDG_DATA_DIRS
+route Oyranos to top directories containing resources. The derived paths for
+ICC profiles have a "color/icc" appended.
+.nf
+http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
+.SH EXAMPLES
+.TP
+Show the saturation lines of two profile in CIE*ab 256 pixel width, without spectral line and with thicker lines:
+.B oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc
+.PP
+.TP
+Show the standard observer spectral function as curves:
+.B oyranos-profile-graph --standard-observer -o CIE-StdObserver.png
+.PP
+.SH AUTHOR
+Kai-Uwe Behrmann (ku.b (at) gmx.de)
+.SH COPYRIGHT
+(c) 2012 Kai-Uwe Behrmann and others
+.fi
+License: BSD-3-Clause <http://www.opensource.org/licenses/bsd-license.php>
+.SH "SEE ALSO"
+oyranos(3) oyranos-profile(1)
+.fi
+http://www.oyranos.org
+.SH "BUGS"
+at: http://sourceforge.net/tracker/?group_id=177017&atid=879553

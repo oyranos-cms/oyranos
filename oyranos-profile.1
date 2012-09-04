@@ -1,0 +1,67 @@
+.TH oyranos-profile 1 "July 13, 2011" "User Commands"
+.SH NAME
+oyranos-profile \- Oyranos CMS ICC profiles tool
+.SH SYNOPSIS
+\fBoyranos-profile\fR -l \fIPROFILENAME\fR
+.fi
+\fBoyranos-profile\fR -o \fIFILENAME\fR
+.fi
+\fBoyranos-profile\fR -w \fINAME\fR [-j \fIFILENAME\fR] \fIPROFILENAME\fR
+.fi
+\fBoyranos-profile\fR [ |-h ]
+.SH DESCRIPTION
+The oyranos-profile programm shows informations about a ICC profile and allows some modifications.
+.SH OPTIONS
+.TP
+.B \-l
+list contained tags.
+.sp
+.br
+\fB-p\fR \fINUMBER\fR select tag
+.sp
+.TP
+\fB\-o\fR \fIFILENAME\fR
+write device informations to OpenICC JSON.
+.TP
+\fB\-w\fR \fINAME\fR \fIPROFILENAME\fR
+write ICC profile. The -w option specifies the new internal and external 
+profile name. PROFILENAME specifies the source profile.
+.sp
+.br
+\fB-j\fR \fIFILENAME\fR
+embed OpenICC JSON device from file
+.SH GENERAL OPTIONS
+.TP
+.B \-v, \-\-verbose
+increase verbosity
+.SH ENVIRONMENT
+.TP
+.B OYRANOS_DEBUG
+set the Oyranos debug level. Alternatively the -v option can be used.
+.TP
+.B XDG_DATA_HOME XDG_DATA_DIRS
+route Oyranos to top directories containing resources. The derived paths for
+ICC profiles have a "color/icc" appended.
+.nf
+http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
+.SH EXAMPLES
+.TP
+Show first tags content of profile:
+.B oyranos-profile -lv -p=1 sRGB.icc
+.PP
+.TP
+Add calibration data to meta tag of a device profile:
+.B oyranos-profile -w my_profile -j my_device.json my_profile.icc
+.PP
+.SH AUTHOR
+Kai-Uwe Behrmann (ku.b (at) gmx.de)
+.SH COPYRIGHT
+(c) 2011, Kai-Uwe Behrmann and others
+.fi
+License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+.SH "SEE ALSO"
+oyranos-config-fltk(1) oyranos-config(1) oyranos(3) oyranos-profiles(1)
+.fi
+http://www.oyranos.org
+.SH "BUGS"
+at: http://sourceforge.net/tracker/?group_id=177017&atid=879553

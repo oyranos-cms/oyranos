@@ -1,0 +1,33 @@
+.TH oyranos-monitor-daemon 1 "October 29, 2011" "User Commands"
+.SH NAME
+oyranos-monitor-daemon \- Oyranos CMS monitor daemon
+.SH SYNOPSIS
+\fBoyranos-monitor-daemon\fR
+.SH DESCRIPTION
+The oyranos-monitor-daemon programm sets up the monitor according to the ICC_Profile in X spec. After that it observes hardware hotplugs and updates the monitor X11 setup.
+.SH OPTIONS
+.TP
+.SH ENVIRONMENT
+.TP
+.B OYRANOS_DEBUG
+set the Oyranos debug level. Alternatively the -v option can be used.
+.TP
+.B XDG_DATA_HOME XDG_DATA_DIRS
+route Oyranos to top directories containing resources. The derived paths for
+ICC profiles have a "color/icc" appended.
+.SH EXAMPLES
+.TP
+.B oyranos-monitor-daemon
+.PP
+.SH AUTHOR
+Kai-Uwe Behrmann (ku.b (at) gmx.de)
+.SH COPYRIGHT
+(c) 2011, Kai-Uwe Behrmann and others
+.fi
+License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+.SH "SEE ALSO"
+oyranos-monitor(1) oyranos-profiles(1) oyranos(3)
+.fi
+http://www.oyranos.org
+.SH "BUGS"
+at: http://sourceforge.net/tracker/?group_id=177017&atid=879553
