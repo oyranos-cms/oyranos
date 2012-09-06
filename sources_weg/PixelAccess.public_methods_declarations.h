@@ -9,3 +9,29 @@ oyPixelAccess_s *  oyPixelAccess_Create (
                                        oyFilterPlug_s    * plug,
                                        oyPIXEL_ACCESS_TYPE_e type,
                                        oyObject_s          object );
+oyImage_s *        oyPixelAccess_GetOutputImage (
+                                       oyPixelAccess_s   * pixel_access );
+oyRectangle_s *    oyPixelAccess_GetOutputROI (
+                                       oyPixelAccess_s   * pixel_access );
+oyFilterGraph_s *  oyPixelAccess_GetGraph (
+                                       oyPixelAccess_s   * pixel_access );
+oyOptions_s *      oyPixelAccess_GetRequestQueue (
+                                       oyPixelAccess_s   * pixel_access );
+oyArray2d_s *      oyPixelAccess_GetArray (
+                                       oyPixelAccess_s   * pixel_access );
+int                oyPixelAccess_SetArray (
+                                       oyPixelAccess_s   * pixel_access,
+                                       oyArray2d_s       * array );
+oyStruct_s *       oyPixelAccess_GetUserData (
+                                       oyPixelAccess_s   * pixel_access );
+int                oyPixelAccess_SetUserData (
+                                       oyPixelAccess_s   * pixel_access,
+                                       oyStruct_s        * user_data );
+int32_t            oyPixelAccess_GetWorkspaceID (
+                                       oyPixelAccess_s   * pixel_access );
+int                oyPixelAccess_SetWorkspaceID (
+                                       oyPixelAccess_s   * pixel_access,
+                                       int32_t             workspace_id );
+double             oyPixelAccess_GetStart (
+                                       oyPixelAccess_s   * pixel_access,
+                                       int                 vertical );

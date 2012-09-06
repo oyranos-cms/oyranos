@@ -138,3 +138,250 @@ oyPixelAccess_s *  oyPixelAccess_Create (
 
   return (oyPixelAccess_s*)s;
 }
+
+/** Function  oyPixelAccess_GetOutputImage
+ *  @memberof oyPixelAccess_s
+ *  @brief    Access oyPixelAccess_s::output_image
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/06
+ *  @since    2012/09/06 (Oyranos: 0.5.0)
+ */
+oyImage_s *        oyPixelAccess_GetOutputImage (
+                                       oyPixelAccess_s   * pixel_access )
+{
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
+
+  return oyImage_Copy( s->output_image, 0 );
+}
+/** Function  oyPixelAccess_GetOutputROI
+ *  @memberof oyPixelAccess_s
+ *  @brief    Access oyPixelAccess_s::output_image_roi
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/06
+ *  @since    2012/09/06 (Oyranos: 0.5.0)
+ */
+oyRectangle_s *    oyPixelAccess_GetOutputROI (
+                                       oyPixelAccess_s   * pixel_access )
+{
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
+
+  return oyRectangle_Copy( s->output_image_roi, 0 );
+}
+/** Function  oyPixelAccess_GetGraph
+ *  @memberof oyPixelAccess_s
+ *  @brief    Access oyPixelAccess_s::graph
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/06
+ *  @since    2012/09/06 (Oyranos: 0.5.0)
+ */
+oyFilterGraph_s *  oyPixelAccess_GetGraph (
+                                       oyPixelAccess_s   * pixel_access )
+{
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
+
+  return oyFilterGraph_Copy( s->graph, 0 );
+}
+/** Function  oyPixelAccess_GetRequestQueue
+ *  @memberof oyPixelAccess_s
+ *  @brief    Access oyPixelAccess_s::request_queue
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/06
+ *  @since    2012/09/06 (Oyranos: 0.5.0)
+ */
+oyOptions_s *      oyPixelAccess_GetRequestQueue (
+                                       oyPixelAccess_s   * pixel_access )
+{
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
+
+  return oyOptions_Copy( s->request_queue, 0 );
+}
+/** Function  oyPixelAccess_GetArray
+ *  @memberof oyPixelAccess_s
+ *  @brief    Access oyPixelAccess_s::array
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/06
+ *  @since    2012/09/06 (Oyranos: 0.5.0)
+ */
+oyArray2d_s *      oyPixelAccess_GetArray (
+                                       oyPixelAccess_s   * pixel_access )
+{
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
+
+  return oyArray2d_Copy( s->array, 0 );
+}
+/** Function  oyPixelAccess_SetArray
+ *  @memberof oyPixelAccess_s
+ *  @brief    Set oyPixelAccess_s::array
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/06
+ *  @since    2012/09/06 (Oyranos: 0.5.0)
+ */
+int                oyPixelAccess_SetArray (
+                                       oyPixelAccess_s   * pixel_access,
+                                       oyArray2d_s       * array )
+{
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 1 )
+
+  if(s->array != array)
+  {
+    if(s->array)
+      oyArray2d_Release( &s->array );
+    s->array = oyArray2d_Copy( array, 0 );
+  }
+
+  return 0;
+}
+/** Function  oyPixelAccess_GetUserData
+ *  @memberof oyPixelAccess_s
+ *  @brief    Access oyPixelAccess_s::user_data
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/06
+ *  @since    2012/09/06 (Oyranos: 0.5.0)
+ */
+oyStruct_s *       oyPixelAccess_GetUserData (
+                                       oyPixelAccess_s   * pixel_access )
+{
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
+
+  if(s->user_data->copy)
+    return s->user_data->copy( s->user_data, 0 );
+  else 
+    return s->user_data;
+}
+/** Function  oyPixelAccess_SetUserData
+ *  @memberof oyPixelAccess_s
+ *  @brief    Set oyPixelAccess_s::user_data
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/06
+ *  @since    2012/09/06 (Oyranos: 0.5.0)
+ */
+int                oyPixelAccess_SetUserData (
+                                       oyPixelAccess_s   * pixel_access,
+                                       oyStruct_s        * user_data )
+{
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 1 )
+
+  if(user_data->copy)
+    s->user_data = user_data->copy( user_data, 0 );
+  else 
+    s->user_data = user_data;
+
+  return 0;
+}
+/** Function  oyPixelAccess_GetWorkspaceID
+ *  @memberof oyPixelAccess_s
+ *  @brief    Access oyPixelAccess_s::workspace_id
+ *
+ *  A ID for distinct resources.
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/06
+ *  @since    2012/09/06 (Oyranos: 0.5.0)
+ */
+int32_t            oyPixelAccess_GetWorkspaceID (
+                                       oyPixelAccess_s   * pixel_access )
+{
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
+
+  return s->workspace_id;
+}
+/** Function  oyPixelAccess_SWorkspaceID
+ *  @memberof oyPixelAccess_s
+ *  @brief    Set oyPixelAccess_s::workspace_id
+ *
+ *  A ID for distinct resources.
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/06
+ *  @since    2012/09/06 (Oyranos: 0.5.0)
+ */
+int                oyPixelAccess_SetWorkspaceID (
+                                       oyPixelAccess_s   * pixel_access,
+                                       int32_t             workspace_id )
+{
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 1 )
+
+  return s->workspace_id = workspace_id;
+}
+/** Function  oyPixelAccess_GetStart
+ *  @memberof oyPixelAccess_s
+ *  @brief    Access oyPixelAccess_s::start_xy
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/06
+ *  @since    2012/09/06 (Oyranos: 0.5.0)
+ */
+double             oyPixelAccess_GetStart (
+                                       oyPixelAccess_s   * pixel_access,
+                                       int                 vertical );
+{
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
+
+  if(vertical == 0)
+    return s->start_xy[0];
+  else
+    return s->start_xy[1];
+}
