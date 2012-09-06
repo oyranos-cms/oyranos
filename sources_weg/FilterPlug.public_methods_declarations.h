@@ -10,3 +10,11 @@ OYAPI oyImage_s * OYEXPORT
              oyFilterPlug_ResolveImage(oyFilterPlug_s    * plug,
                                        oyFilterSocket_s  * socket,
                                        oyPixelAccess_s   * ticket );
+OYAPI oyFilterNode_s * OYEXPORT
+             oyFilterPlug_GetNode    ( oyFilterPlug_s    * p );
+OYAPI oyFilterSocket_s * OYEXPORT
+             oyFilterPlug_GetSocket  ( oyFilterPlug_s    * p );
+OYAPI oyConnector_s * OYEXPORT
+             oyFilterPlug_GetPattern ( oyFilterPlug_s    * p );
+OYAPI const char * OYEXPORT
+             oyFilterPlug_GetRelatives(oyFilterPlug_s    * p );

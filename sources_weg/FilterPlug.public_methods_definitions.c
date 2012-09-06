@@ -204,3 +204,96 @@ OYAPI oyImage_s * OYEXPORT
 
   return (oyImage_s*)image_input_;
 }
+
+/** Function  oyFilterPlug_GetNode
+ *  @memberof oyFilterPlug_s
+ *  @brief    Access oyFilterPlug_s::node
+ *
+ *  @param[in]     plug                the plug
+ *  @return                            the node
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI oyFilterNode_s * OYEXPORT
+             oyFilterPlug_GetNode    ( oyFilterPlug_s    * plug )
+{
+  oyFilterPlug_s_ * s = (oyFilterPlug_s_*)plug;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_PLUG_S, return 0 )
+
+  return oyFilterNode_Copy( s->node, 0 );
+}
+/** Function  oyFilterPlug_GetSocket
+ *  @memberof oyFilterPlug_s
+ *  @brief    Access oyFilterPlug_s::remote_socket_
+ *
+ *  @param[in]     plug                the plug
+ *  @return                            the remote socket
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI oyFilterSocket_s * OYEXPORT
+             oyFilterPlug_GetSocket  ( oyFilterPlug_s    * plug )
+{
+  oyFilterPlug_s_ * s = (oyFilterPlug_s_*)plug;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_PLUG_S, return 0 )
+
+  return oyFilterSocket_Copy( s->remote_socket_, 0 );
+}
+/** Function  oyFilterPlug_GetPattern
+ *  @memberof oyFilterPlug_s
+ *  @brief    Access oyFilterPlug_s::pattern
+ *
+ *  @param[in]     plug                the plug
+ *  @return                            capabilities pattern for this filter plug
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI oyConnector_s * OYEXPORT
+             oyFilterPlug_GetPattern ( oyFilterPlug_s    * plug )
+{
+  oyFilterPlug_s_ * s = (oyFilterPlug_s_*)plug;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_PLUG_S, return 0 )
+
+  return oyConnector_Copy( s->pattern, 0 );
+}
+/** Function  oyFilterPlug_GetRelatives
+ *  @memberof oyFilterPlug_s
+ *  @brief    get short description of belonging filter
+ *
+ *  @param[in]     plug                the plug
+ *  @return                            short text
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI const char * OYEXPORT
+             oyFilterPlug_GetRelatives(oyFilterPlug_s    * plug )
+{
+  oyFilterPlug_s_ * s = (oyFilterPlug_s_*)plug;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_PLUG_S, return 0 )
+
+  return s->relatives_;
+}
