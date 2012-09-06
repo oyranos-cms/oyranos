@@ -19,22 +19,30 @@
 #define OYRANOS_ALPHA_H
 
 #include "oyranos.h"
+#include "oyranos_conversion.h"
 #include "oyranos_icc.h"
+#include "oyranos_image.h"
+#include "oyranos_module.h"
 #include "oyranos_object.h"
+#include "oyArray2d_s.h"
 #include "oyBlob_s.h"
-#include "oyPointer_s.h"
+#include "oyConfigs_s.h"
+#include "oyConnector_s.h"
+#include "oyFilterNode_s.h"
+#include "oyFilterPlug_s.h"
+#include "oyFilterPlugs_s.h"
 #include "oyHash_s.h"
 #include "oyName_s.h"
+#include "oyImage_s.h"
 #include "oyObject_s.h"
 #include "oyObserver_s.h"
 #include "oyOption_s.h"
 #include "oyOptions_s.h"
-#include "oyConfigs_s.h"
+#include "oyPointer_s.h"
 #include "oyProfile_s.h"
 #include "oyProfiles_s.h"
 #include "oyStruct_s.h"
 #include "oyStructList_s.h"
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,45 +66,6 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
                                        const double      * XYZmax,
                                        const double      * XYZwhite );
 int                oyBigEndian       ( void );
-
-typedef struct oyImage_s oyImage_s;
-
-
-
-/** param[out]     is_allocated          are the points always newly allocated*/
-typedef oyPointer (*oyImage_GetPoint_f)( oyImage_s       * image,
-                                         int               point_x,
-                                         int               point_y,
-                                         int               channel,
-                                         int             * is_allocated );
-/** param[out]     is_allocated          are the lines always newly allocated */
-typedef oyPointer (*oyImage_GetLine_f) ( oyImage_s       * image,
-                                         int               line_y,
-                                         int             * height,
-                                         int               channel,
-                                         int             * is_allocated );
-/** param[out]     is_allocated          are the tiles always newly allocated */
-typedef oyPointer*(*oyImage_GetTile_f) ( oyImage_s       * image,
-                                         int               tile_x,
-                                         int               tile_y,
-                                         int               channel,
-                                         int             * is_allocated );
-typedef int       (*oyImage_SetPoint_f)( oyImage_s       * image,
-                                         int               point_x,
-                                         int               point_y,
-                                         int               channel,
-                                         oyPointer         data );
-typedef int       (*oyImage_SetLine_f) ( oyImage_s       * image,
-                                         int               point_x,
-                                         int               point_y,
-                                         int               pixel_n,
-                                         int               channel,
-                                         oyPointer         data );
-typedef int       (*oyImage_SetTile_f) ( oyImage_s       * image,
-                                         int               tile_x,
-                                         int               tile_y,
-                                         int               channel,
-                                         oyPointer         data );
 
 
 
@@ -339,23 +308,6 @@ typedef enum oyDATALAYOUT_e {
   oyDATALAYOUT_MAX                    /**< */
 } oyDATALAYOUT_e;
 
-/** @brief start with a simple rectangle
- *  @ingroup objects_rectangle
- *  @extends oyStruct_s
- */
-typedef struct oyRectangle_s {
-  oyOBJECT_e           type_;          /**< @private internal struct type oyOBJECT_RECTANGLE_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private */
-
-  double x;
-  double y;
-  double width;
-  double height;
-
-} oyRectangle_s;
-
 oyRectangle_s* oyRectangle_New_      ( oyObject_s          object );
 oyRectangle_s* oyRectangle_NewWith   ( double              x,
                                        double              y,
@@ -416,234 +368,7 @@ oyCHANNELTYPE_e oyICCColourSpaceToChannelLayout (
 char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
                                        oyAlloc_f           allocateFunc );
 
-typedef struct oyArray2d_s oyArray2d_s;
 
-/** @struct  oyArray2d_s
- *  @brief   2d data array
- *  @ingroup objects_image
- *  @extends oyStruct_s
- *
- *  oyArray2d_s is a in memory data view. The array2d holds pointers to lines in
- *  the original memory blob. The arrays contained in array2d represent the 
- *  samples. There is no information in which order the samples appear. No pixel
- *  layout or meaning is provided. Given the coordinates x and y, a samples 
- *  memory adress can be accessed by &array2d[y][x] . This adress must be
- *  converted to the data type provided in oyArray2d_s::t.
- *
- *  The oyArray2d_s::data pointer should be observed in order to be signaled
- *  about its invalidation.
- *
-  \dot
-  digraph a {
-  bgcolor="transparent";
-  nodesep=.05;
-  rankdir=LR
-      node [shape=record,fontname=Helvetica, fontsize=10, width=.1,height=.1];
-
-      e [ label="oyArray2d_s with 8 samples x 10 lines", shape=plaintext];
-
-      y [ label="<0>0|<1>1|<2>2|<3>3|<4>4|<5>5|<6>6|<7>7|<8>8|<9>9", height=2.0 , style=filled ];
-      node [width = 1.5];
-      0 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
-      1 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
-      2 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
-      3 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
-      4 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
-      5 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
-      6 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
-      7 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
-      8 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
-      9 [ label="{<0>0|1|2|3|4|5|6|<7>7}" ];
-      e
-      y:0 -> 0:0
-      y:1 -> 1:0
-      y:2 -> 2:0
-      y:3 -> 3:0
-      y:4 -> 4:0
-      y:5 -> 5:0
-      y:6 -> 6:0
-      y:7 -> 7:0
-      y:8 -> 8:0
-      y:9 -> 9:0
-      0:7 -> 1:0 [arrowhead="open", style="dashed"];
-      1:7 -> 2:0 [arrowhead="open", style="dashed"];
-  }
-  \enddot
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/08/23 (Oyranos: 0.1.8)
- *  @date    2008/08/23
- */
-struct oyArray2d_s {
-  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_ARRAY2D_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  oyDATATYPE_e         t;              /**< data type */
-  int                  width;          /**< width of actual data view */
-  int                  height;         /**< height of actual data view */
-  oyRectangle_s        data_area;      /**< size of reserve pixels, x,y <= 0, width,height >= data view width,height */
-
-  unsigned char     ** array2d;        /**< sorted data, pointer is always owned
-                                            by the object */
-  int                  own_lines;      /**< Are *array2d rows owned by object?
-                                            - 0 not owned by the object
-                                            - 1 one own monolithic memory block
-                                                starting in array2d[0]
-                                            - 2 several owned memory blocks */
-  oyStructList_s     * refs_;          /**< references of other arrays to this*/
-  oyArray2d_s        * refered_;       /**< array this one refers to */
-};
-
-OYAPI oyArray2d_s * OYEXPORT
-                   oyArray2d_Create  ( oyPointer           data,
-                                       int                 width,
-                                       int                 height,
-                                       oyDATATYPE_e        type,
-                                       oyObject_s          object );
-OYAPI oyArray2d_s * OYEXPORT
-                 oyArray2d_New       ( oyObject_s          object );
-OYAPI oyArray2d_s * OYEXPORT
-                 oyArray2d_Copy      ( oyArray2d_s       * obj,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-                 oyArray2d_Release   ( oyArray2d_s      ** obj );
-
-
-OYAPI int  OYEXPORT
-                 oyArray2d_DataSet   ( oyArray2d_s       * obj,
-                                       oyPointer           data );
-OYAPI int  OYEXPORT
-                 oyArray2d_RowsSet   ( oyArray2d_s       * obj,
-                                       oyPointer         * rows,
-                                       int                 do_copy );
-OYAPI int  OYEXPORT  oyArray2d_SetFocus (
-                                       oyArray2d_s       * array,
-                                       oyRectangle_s     * rectangle );
-
-/** @struct  oyImage_s
- *  @brief   a reference struct to gather information for image transformation
- *  @ingroup objects_image
- *  @extends oyStruct_s
- *
- *  as we dont target a complete imaging solution, only raster is supported
- *
- *  Resolution is in pixel per centimeter.
- *
- *  Requirements: \n
- *  - to provide a view on the image data we look at per line arrays
- *  - it should be possible to echange the to be processed data without altering
- *    the context
- *  - oyImage_s should hold image dimensions,
- *  - display rectangle information and
- *  - a reference to the data for conversion
- *
- *  To set a image data module use oyImage_SetData().
- *  \dot
- digraph oyImage_s {
-  bgcolor="transparent";
-  nodesep=.1;
-  ranksep=1.;
-  rankdir=LR;
-  graph [fontname=Helvetica, fontsize=12];
-  node [shape=record,fontname=Helvetica, fontsize=10, width=.1];
-
-  subgraph cluster_3 {
-    label="oyImage_s data modules";
-    color=white;
-    clusterrank=global;
-
-      i [ label="... | <0>oyStruct_s * pixel | <1> oyImage_GetPoint_f getPoint | <2>oyImage_GetLine_f getLine | <3>oyImage_GetTile_f getTile | ..."];
-
-      node [width = 2.5, style=filled];
-      pixel_A [label="oyArray2d_s arrayA"];
-      gp_p_A [label="Array2d_GetPointA"];
-      gp_l_A [label="Array2d_GetLineA"];
-      gp_t_A [label="Array2d_GetTileA"];
-
-      pixel_B [label="mmap arrayB"];
-      gp_p_B [label="mmap_GetPointB"];
-      gp_l_B [label="mmap_GetLineB"];
-      gp_t_B [label="mmap_GetTileB"];
-
-      subgraph cluster_0 {
-        rank=max;
-        color=red;
-        style=dashed;
-        node [style="filled"];
-        pixel_A; gp_p_A; gp_l_A; gp_t_A;
-        //pixel_A -> gp_p_A -> gp_l_A -> gp_t_A [color=white, arrowhead=none, dirtype=none];
-        label="module A";
-      }
-
-      subgraph cluster_1 {
-        color=blue;
-        style=dashed;
-        node [style="filled"];
-        pixel_B; gp_p_B; gp_l_B; gp_t_B;
-        label="module B";
-      }
-
-      subgraph cluster_2 {
-        color=gray;
-        node [style="filled"];
-        i;
-        label="oyImage_s";
-        URL="structoyImage__s.html";
-      }
-
-      i:0 -> pixel_A [arrowhead="open", color=red];
-      i:1 -> gp_p_A [arrowhead="open", color=red];
-      i:2 -> gp_l_A [arrowhead="open", color=red];
-      i:3 -> gp_t_A [arrowhead="open", color=red];
-      i:0 -> pixel_B [arrowhead="open", color=blue];
-      i:1 -> gp_p_B [arrowhead="open", color=blue];
-      i:2 -> gp_l_B [arrowhead="open", color=blue];
-      i:3 -> gp_t_B [arrowhead="open", color=blue];
-  }
- }
- \enddot
- *
- *  Should oyImage_s become internal and we provide a user interface?
- *
- *  @version Oyranos: 0.1.8
- *  @since   2007/11/00 (Oyranos: 0.1.8)
- *  @date    2008/08/23
- */
-struct oyImage_s {
-  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_IMAGE_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  oyRectangle_s      * viewport;       /**< intented viewing area, normalised to the pixel width == 1.0 */
-  double               resolution_x;   /**< resolution in horizontal direction*/
-  double               resolution_y;   /**< resolution in vertical direction */
-
-  oyPixel_t          * layout_;        /**< @private samples mask;
-                                            the oyPixel_t pixel_layout variable
-                                            passed during oyImage_Create is
-                                            stored in position 0 */
-  oyCHANNELTYPE_e    * channel_layout; /**< non profile described channels */
-  int                  width;          /*!< data width */
-  int                  height;         /*!< data height */
-  oyOptions_s        * tags;           /**< display_rectangle, display_name ... */
-  oyProfile_s        * profile_;       /*!< @private image profile */
-
-  oyStruct_s         * pixel_data;     /**< struct used by each subsequent call of g/set* pixel acessors */
-  oyImage_GetPoint_f   getPoint;       /**< the point interface */
-  oyImage_GetLine_f    getLine;        /**< the line interface */
-  oyImage_GetTile_f    getTile;        /**< the tile interface */
-  oyImage_SetPoint_f   setPoint;       /**< the point interface */
-  oyImage_SetLine_f    setLine;        /**< the line interface */
-  oyImage_SetTile_f    setTile;        /**< the tile interface */
-  int                  tile_width;     /**< needed by the tile interface */
-  int                  tile_height;    /**< needed by the tile interface */
-  uint16_t             subsampling[2]; /**< 1, 2 or 4 */
-  int                  sub_positioning;/**< 0 None, 1 Postscript, 2 CCIR 601-1*/
-  oyStruct_s         * user_data;      /**< user provided pointer */
-};
 
 
 oyImage_s *    oyImage_Create        ( int                 width,
@@ -652,39 +377,11 @@ oyImage_s *    oyImage_Create        ( int                 width,
                                        oyPixel_t           pixel_layout,
                                        oyProfile_s       * profile,
                                        oyObject_s          object);
-oyImage_s *    oyImage_CreateForDisplay ( int              width,
-                                       int                 height, 
-                                       oyPointer           channels,
-                                       oyPixel_t           pixel_layout,
-                                       const char        * display_name,
-                                       int                 window_pos_x,
-                                       int                 window_pos_y,
-                                       int                 window_width,
-                                       int                 window_height,
-                                       oyObject_s          object);
-int            oyImage_FromFile      ( const char        * file_name,
-                                       oyImage_s        ** image,
-                                       oyObject_s          object );
-int            oyImage_ToFile        ( oyImage_s         * image,
-                                       const char        * file_name,
-                                       oyOptions_s       * opts );
 oyImage_s *    oyImage_Copy          ( oyImage_s         * image,
                                        oyObject_s          object );
 int            oyImage_Release       ( oyImage_s        ** image );
 
 
-int            oyImage_SetCritical   ( oyImage_s         * image,
-                                       oyPixel_t           pixel_layout,
-                                       oyProfile_s       * profile,
-                                       oyOptions_s       * options );
-int            oyImage_SetData       ( oyImage_s         * image,
-                                       oyStruct_s       ** pixel_data,
-                                       oyImage_GetPoint_f  getPoint,
-                                       oyImage_GetLine_f   getLine,
-                                       oyImage_GetTile_f   getTile,
-                                       oyImage_SetPoint_f  setPoint,
-                                       oyImage_SetLine_f   setLine,
-                                       oyImage_SetTile_f   setTile );
 int            oyImage_FillArray     ( oyImage_s         * image,
                                        oyRectangle_s     * rectangle,
                                        int                 do_copy,
@@ -695,300 +392,19 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
                                        oyRectangle_s     * rectangle,
                                        oyArray2d_s       * array,
                                        oyRectangle_s     * array_rectangle );
-oyPointer      oyImage_GetPoint      ( oyImage_s         * image,
-                                       int                 point_x,
-                                       int                 point_y,
-                                       int                 channel,
-                                       int               * is_allocated );
-int            oyImage_GetWidth      ( oyImage_s         * image );
-int            oyImage_GetHeight     ( oyImage_s         * image );
-oyPixel_t      oyImage_GetPixelLayout( oyImage_s         * image );
-oyProfile_s *  oyImage_GetProfile    ( oyImage_s         * image );
-oyOptions_s *  oyImage_GetTags       ( oyImage_s         * image );
-int            oyImage_WritePPM      ( oyImage_s         * image,
-                                       const char        * file_name,
-                                       const char        * comment );
 
 
 
-typedef struct oyFilterCore_s oyFilterCore_s;
 typedef struct oyFilterCores_s oyFilterCores_s;
-typedef struct oyFilterGraph_s oyFilterGraph_s;
-typedef struct oyFilterNode_s oyFilterNode_s;
 typedef struct oyFilterNodes_s oyFilterNodes_s;
-typedef struct oyConnector_s oyConnector_s;
-typedef struct oyFilterPlug_s oyFilterPlug_s;
-typedef struct oyFilterPlugs_s oyFilterPlugs_s;
-typedef struct oyFilterSocket_s oyFilterSocket_s;
-typedef struct oyPixelAccess_s oyPixelAccess_s;
 typedef struct oyConversion_s oyConversion_s;
 typedef struct oyNamedColour_s oyNamedColour_s;
 typedef struct oyNamedColours_s oyNamedColours_s;
-typedef struct oyIcon_s oyIcon_s;
-typedef struct oyCMMInfo_s oyCMMInfo_s;
 typedef struct oyCMMapis_s oyCMMapis_s;
 typedef struct oyUiHandler_s oyUiHandler_s;
 
-/** @enum    oyCONNECTOR_e
- *  @brief   basic connector attributes
- *  @ingroup objects_conversion
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/00/00 (Oyranos: 0.1.8)
- *  @date    2009/04/28
- */
-typedef enum {
-  /** a data manipulator. e.g. a normal filter - "//"OY_TYPE_STD"/manipulator" */
-  oyCONNECTOR_IMAGE_MANIPULATOR,
-  /** a data generator, e.g. checkerboard, gradient "//"OY_TYPE_STD"/generator" */
-  oyCONNECTOR_IMAGE_GENERATOR,
-  /** a pixel data provider, e.g. image data connector "//"OY_TYPE_STD"/data".
-   *  This type should be always present to connect processing data.
-   *  That data is stored in oyFilterSocket_s::data. */
-  oyCONNECTOR_IMAGE,
-  /** observer, a endpoint, only input, e.g. text log, thumbnail viewer 
-   *  "//"OY_TYPE_STD"/observer" */
-  oyCONNECTOR_IMAGE_OBSERVER,
-  /** a routing element, without data altering "//"OY_TYPE_STD"/splitter.rectangle" */
-  oyCONNECTOR_IMAGE_SPLITTER,
-  /** combines or splits image data, e.g. blending "//"OY_TYPE_STD"/blender.rectangle"*/
-  oyCONNECTOR_IMAGE_COMPOSITOR,
-
-  /** converts pixel layout to other formats "//"OY_TYPE_STD"/pixel.convertor" */
-  oyCONNECTOR_CONVERTOR_PIXELDATA,
-  /** converts pixel layout to other formats, with precission loss, e.g. 
-   *  float -> uint8_t, only relevant for output connectors 
-   *  "//"OY_TYPE_STD"/pixel.convertor.lossy" */
-  oyCONNECTOR_CONVERTOR_PIXELDATA_LOSSY,
-  /** combines gray channels, e.g. from colour "//"OY_TYPE_STD"/combiner.channels" */
-  oyCONNECTOR_COMPOSITOR_CHANNEL,
-  /** provides gray scale views of channels "//"OY_TYPE_STD"/splitter.channels" */
-  oyCONNECTOR_SPLITTER_CHANNEL,
-
-  /** provides values or text, only output "///analysis" */
-  oyCONNECTOR_ANALYSIS
-} oyCONNECTOR_e;
-
-/** @struct  oyConnector_s
- *  @brief   a filter connection description structure
- *  @ingroup objects_conversion
- *  @extends oyStruct_s
- *
- *  This structure holds informations about the connection capabilities.
- *  It holds common structure members of oyFilterPlug_s and oyFilterSocket_s.
- *
- *  To signal a value is not initialised or does not apply, set the according
- *  integer value to -1.
- *
- *  @todo generalise the connector properties
- *
- *  @version Oyranos: 0.3.0
- *  @since   2008/07/26 (Oyranos: 0.1.8)
- *  @date    2011/01/31
- */
-struct oyConnector_s {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONNECTOR_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  /** Support at least "name" for UIs. */
-  oyCMMGetText_f       getText;
-  char              ** texts;          /**< zero terminated list for getText */
-
-  char               * connector_type; /**< a @ref registration string */
-  /** Check if two oyCMMapi7_s filter connectors of type oyConnector_s can 
-   *  match each other inside a given socket and a plug. */
-  oyCMMFilterSocket_MatchPlug_f  filterSocket_MatchPlug;
-
-  /** make requests and receive data, by part of oyFilterPlug_s */
-  int                  is_plug;
-};
-
-/** @struct  oyFilterSocket_s
- *  @brief   a filter connection structure
- *  @ingroup objects_conversion
- *  @extends oySocket_s
- *
- *  The passive output version of a oyConnector_s.
- \dot
-digraph G {
-  bgcolor="transparent";
-  node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
-  edge[ fontname=Helvetica, fontsize=10 ];
-  rankdir=LR
-  a [label=<
-<table border="0" cellborder="1" cellspacing="4">
-  <tr> <td>Filter A</td>
-      <td bgcolor="red" width="10" port="s"> socket </td>
-  </tr>
-</table>>
-  ]
-  b [URL="structoyFilterPlug__s.html", label=< 
-<table border="0" cellborder="1" cellspacing="4">
-  <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
-      <td>Filter B</td>
-  </tr>
-</table>>
-  ]
-  subgraph { rank=min a }
-
-  b:p->a:s [arrowtail=crow, arrowhead=box];
-} 
- \enddot
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/29 (Oyranos: 0.1.8)
- *  @date    2008/07/29
- */
-struct oyFilterSocket_s {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTER_SOCKET_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  oyFilterNode_s     * node;           /**< filter node for this connector */
-  oyFilterPlugs_s    * requesting_plugs_;/**< @private all remote inputs */
-  oyStruct_s         * data;           /**< unprocessed data model */
-
-  oyConnector_s      * pattern;        /**< a pattern the filter node can handle through this connector */
-  char               * relatives_;     /**< @private hint about belonging to a filter */
-
-};
-
-/** @struct oyFilterPlug_s
- *  @brief  a filter connection structure
- *  @ingroup objects_conversion
- *  @extends oyPlug_s
- *
- *  The active input version of a oyConnector_s.
- *  Each plug can connect to exact one socket.
- \dot
-digraph G {
-  bgcolor="transparent";
-  node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
-  edge[ fontname=Helvetica, fontsize=10 ];
-  rankdir=LR
-  a [URL="structoyFilterSocket__s.html", label=<
-<table border="0" cellborder="1" cellspacing="4">
-  <tr> <td>Filter A</td>
-      <td bgcolor="red" width="10" port="s"> socket </td>
-  </tr>
-</table>>
-  ]
-  b [label=< 
-<table border="0" cellborder="1" cellspacing="4">
-  <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
-      <td>Filter B</td>
-  </tr>
-</table>>
-  ]
-  subgraph { rank=min a }
-
-  b:p->a:s [arrowtail=crow, arrowhead=box];
-} 
- \enddot
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/29 (Oyranos: 0.1.8)
- *  @date    2008/07/29
- */
-struct oyFilterPlug_s {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTER_PLUG_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  oyFilterNode_s     * node;           /**< filter node for this connector */
-  oyFilterSocket_s   * remote_socket_; /**< @private the remote output */
-
-  oyConnector_s      * pattern;        /**< a pattern the filter node can handle through this connector */
-  char               * relatives_;     /**< @private hint about belonging to a filter */
-};
-
-/** @struct  oyFilterPlugs_s
- *  @brief   a FilterPlugs list
- *  @ingroup objects_conversion
- *  @extends oyPlugs_s
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/29 (Oyranos: 0.1.8)
- *  @date    2008/07/29
- */
-struct oyFilterPlugs_s {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTER_PLUGS_S */ 
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  oyStructList_s     * list_;          /**< @private the list data */
-};
-
-OYAPI oyFilterPlugs_s * OYEXPORT
-                 oyFilterPlugs_New   ( oyObject_s          object );
-OYAPI oyFilterPlugs_s * OYEXPORT
-                 oyFilterPlugs_Copy  ( oyFilterPlugs_s   * list,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-                 oyFilterPlugs_Release (
-                                       oyFilterPlugs_s  ** list );
 
 
-OYAPI oyFilterPlugs_s * OYEXPORT
-                 oyFilterPlugs_MoveIn( oyFilterPlugs_s   * list,
-                                       oyFilterPlug_s   ** ptr,
-                                       int                 pos );
-OYAPI int  OYEXPORT
-                 oyFilterPlugs_ReleaseAt (
-                                       oyFilterPlugs_s   * list,
-                                       int                 pos );
-OYAPI oyFilterPlug_s * OYEXPORT
-                 oyFilterPlugs_Get   ( oyFilterPlugs_s   * list,
-                                       int                 pos );
-OYAPI int  OYEXPORT
-                 oyFilterPlugs_Count ( oyFilterPlugs_s   * list );
-
-
-/** @struct oyFilterCore_s
- *  @brief  a basic filter to manipulate data
- *  @ingroup objects_conversion
- *  @extends oyStruct_s
- *
- *  This is the Oyranos filter object. Filters are categorised into basic
- *  classes of filters described in the registration_ (//xxx) member.
- *  Filters implement a container for data and options.
- *  Filters can be manipulated by changing their options or data set.
- *
- *  Filters are chained into a oyConversion_s in order to get applied to data.
- *  The relation of filters in a graph is defined through the oyFilterNode_s
- *  struct.
- *
- *  It is possible to chain filters in different ways together. The aimed way
- *  here is to use members and queries to find possible connections. For 
- *  instance a one in one out filter can not be connected to two sources at 
- *  once.
- *
- *  The registration_ describes different basic types of filters (//xxx).
- *  See oyranos::oyCONNECTOR_e.
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/06/08 (Oyranos: 0.1.8)
- *  @date    2009/11/17
- */
-struct oyFilterCore_s {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTER_S*/
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  char               * registration_;  /**< @private a registration name, e.g. OY_STD"/scale", see as well @ref registration */
-
-  char               * category_;      /**< @private the ui menue category for this filter, to be specified */
-
-  oyOptions_s        * options_;       /**< @private local options */
-
-  oyCMMapi4_s        * api4_;          /**< @private oyranos library interfaces */
-};
 
 #define OY_FILTER_SET_TEST             0x01        /** only test */
 #define OY_FILTER_GET_DEFAULT          0x01        /** defaults */
@@ -1048,120 +464,6 @@ OYAPI int  OYEXPORT
 
 
 
-/** @struct  oyFilterNode_s
- *  @brief   a FilterNode object
- *  @ingroup objects_conversion
- *  @extends oyNode_s
- *
- *  Filter nodes chain filters into a oyConversion_s graph. The filter nodes
- *  use plugs and sockets for creating connections. Each plug can only connect
- *  to one socket.
- \dot
-digraph G {
-  bgcolor="transparent";
-  node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
-  a [label=<
-<table border="0" cellborder="1" cellspacing="4">
-  <tr> <td>oyFilterCore_s A</td>
-      <td bgcolor="red" width="10" port="s"> socket </td>
-  </tr>
-</table>>
-  ]
-  b [label=<
-<table border="0" cellborder="1" cellspacing="4">
-  <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
-      <td>oyFilterCore_s B</td>
-  </tr>
-</table>>
-  ]
-
-  b:p->a:s [arrowtail=crow, arrowhead=box, constraint=false];
-
-  subgraph cluster_0 {
-    color=gray;
-    label="FilterNode A";
-    a;
-  }
-  subgraph cluster_1 {
-    color=gray;
-    label="FilterNode B";
-    b;
-  }
-}
- \enddot
- *
- *  This object provides support for separation of options from chaining.
- *  So it will be possible to implement options changing, which can affect
- *  the same filter instance in different graphs.
- *
- *  A oyFilterNode_s can have various oyFilterPlug_s ' to obtain data from
- *  different sources. The required number is described in the oyCMMapi4_s 
- *  structure, which is part of oyFilterCore_s.
- \dot
-digraph G {
-  bgcolor="transparent";
-  rankdir=LR
-  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
-  edge [fontname=Helvetica, fontsize=10];
-
-  b [ label="{<plug> | Filter Node 2 |<socket>}"];
-  c [ label="{<plug> | Filter Node 3 |<socket>}"];
-  d [ label="{<plug> 2| Filter Node 4 |<socket>}"];
-
-  b:socket -> d:plug [arrowtail=normal, arrowhead=none];
-  c:socket -> d:plug [arrowtail=normal, arrowhead=none];
-}
- \enddot
- *
- *  oyFilterSocket_s is designed to accept arbitrary numbers of connections 
- *  to allow for viewing on a filters data output or observe its state changes.
- \dot
-digraph G {
-  bgcolor="transparent";
-  rankdir=LR
-  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
-  edge [fontname=Helvetica, fontsize=10];
-
-  a [ label="{<plug> | Filter Node 1 |<socket>}"];
-  b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
-  c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
-  d [ label="{<plug> 1| Filter Node 4 |<socket>}"];
-  e [ label="{<plug> 1| Filter Node 5 |<socket>}"];
-
-  a:socket -> b:plug [arrowtail=normal, arrowhead=none];
-  a:socket -> c:plug [arrowtail=normal, arrowhead=none];
-  a:socket -> d:plug [arrowtail=normal, arrowhead=none];
-  a:socket -> e:plug [arrowtail=normal, arrowhead=none];
-}
- \enddot
- *
- *  @version Oyranos: 0.1.9
- *  @since   2008/07/08 (Oyranos: 0.1.8)
- *  @date    2008/12/16
- */
-struct oyFilterNode_s {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTER_NODE_S*/
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  oyFilterPlug_s    ** plugs;          /**< possible input connectors */
-  int                  plugs_n_;       /**< readonly number of inputs */
-  oyFilterSocket_s  ** sockets;        /**< possible output connectors */
-  int                  sockets_n_;     /**< readonly number of outputs */
-
-  oyFilterCore_s     * core;           /**< the filter core */
-  char               * relatives_;     /**< @private hint about belonging to a filter */
-  oyOptions_s        * tags;           /**< infos, e.g. group markers */
-
-  /** the filters private data, requested over 
-   *  oyCMMapi4_s::oyCMMFilterNode_ContextToMem() and converted to
-   *  oyCMMapi4_s::context_type */
-  oyPointer_s        * backend_data;
-  /** the processing function and node connector descriptions */
-  oyCMMapi7_s        * api7_;
-};
-
 #define OY_FILTEREDGE_FREE             0x01        /**< list free edges */
 #define OY_FILTEREDGE_CONNECTED        0x02        /**< list connected edges */
 #define OY_FILTEREDGE_LASTTYPE         0x04        /**< list last type edges */
@@ -1213,25 +515,6 @@ OYAPI int  OYEXPORT
 
 
 
-/** @struct  oyFilterGraph_s
- *  @brief   a FilterGraph object
- *  @extends oyStruct_s
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/02/28 (Oyranos: 0.1.10)
- *  @date    2009/02/28
- */
-struct oyFilterGraph_s {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTER_GRAPH_S */ 
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
-
-  oyFilterNodes_s    * nodes;          /**< the nodes in the graph */
-  oyFilterPlugs_s    * edges;          /**< the edges in the graph */
-  oyOptions_s        * options;        /**< options, "dirty" ... */
-};
-
 OYAPI oyFilterGraph_s * OYEXPORT
            oyFilterGraph_New         ( oyObject_s          object );
 OYAPI oyFilterGraph_s * OYEXPORT
@@ -1269,190 +552,6 @@ oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
                                        oyObject_s          object );
 
 
-/** @struct  oyPixelAccess_s
- *  @brief   control pixel access order
- *  @ingroup objects_conversion
- *  @extends oyStruct_s
- *
- *  A struct to control pixel access. It is a kind of flexible pixel 
- *  iterator. The order or pattern of access is defined by the [array_xy and]
- *  start_[x,y] variables.
- *
- *  oyPixelAccess_s is like a job ticket. Goal is to maintain all intermediate
- *  and processing dependend memory references in this structure.
- *
- * [The index variable specifies the iterator position in the array_xy index
- *  array.]
- *
- * [pixels_n says how many pixels are to be processed for the cache.
- *  pixels_n is used to calculate the buffers located with getBuffer
- *  and freeBuffer.
- *  The amount of pixel specified in pixels_n must be processed by
- *  each filter, because other filters are relying on a properly filled cache.
- *  This variable also determins the size of the next iteration.]
- *
- * [The relation of pixels_n to array_xy and start_[x,y] is that a
- *  minimum of pixels_n must be processed by starting with start_[x,y]
- *  and processing pixels_n through array_xy. array_xy specifies
- *  the offset pixel distance to a next pixel in x and y directions. In case
- *  pixels_n is larger than array_n the array_xy has to be continued
- *  at array_xy[0,1] after reaching its end (array_n). \n
- *  \b Example: \n
- *  Thus a line iterator behaviour can be specified by simply setting 
- *  array_xy = {1,0}, for a advancement in x direction of one, array_n = 1, 
- *  as we need just this type of advancement and pixels_n = image_width, 
- *  for saying how often the pattern descibed in array_xy has to be applied.]
- *
- *  Handling of pixel access is to be supported by a filter in a function of
- *  type oyCMMFilter_GetNext_f() in oyCMMapi4_s::oyCMMConnector_GetNext().
- *
- *  Access to the buffers by concurrenting threads is handled by passing
- *  different oyPixelAccess_s objects per thread.
- *
- *  From the module point of view it is a requirement to obtain the 
- *  intermediate buffers from somewhere. These are the ones to read from and
- *  to write computed results into. \n
- *
- *  Pixel in- and output buffers separation:
- *  - Copy the output area and request to manipulate it by each filter.
- *    There is no overwriting of results.
- *    Reads a bit fixed. How can filters decide upon the input size?
- *    However, if a filter works on more than one dimension, it can
- *    opt to get its area directly from a input mediator.
- *  -[Provide a opaque output and input area and request to copy by each filter.
- *    Filters would overwrite previous manipulations or some mechanism of
- *    swapping the input with the output side is needed.]
- *  - Some filters want different input and output areas. They see the mediator
- *    as the previous, or the input, element in the graph.
- *  - Will the mediators always be visible in order to get all informations
- *    about the image? During setting up the graph this should be handled.
- *
- *  Access to input and output buffers:
- *  - The output oyArray2d_s is to be reserved only.
- *  - The input oyArray2d_s is to be provided for multi dimensional
- *    manipulators directly from the input mediator.
- *
- *  Thread synchronisation:
- *  - The oyArray2d_s is a opaque memory blob. So different filters can act upon
- *    this resource. It would be in the resposiblity of the graph to avoid
- *    conflicts like using the same output for different manipulations. Given
- *    that the output is acting actively, the potential is small anyway.
- *  - The input should be neutral and not directly manipulated. What can happen
- *    is that different threads request the same input area and the according
- *    data is to be rendered first. So this easily could end in rendering two
- *    times for the same result. Some scheduling in the mediators may help
- *    solving this and improove on performance.
- *
- *  Area dimensions:
- *  - One point is very simple to provide. It may easily require additional
- *    preparations for area manipulations like blur.
- *  - Line is the next hard. The advantage it is still simple and speed
- *    efficient. Programming is a bit more demanding.
- *  - Areas of pixel are easy to provide through oyArray2d_s. It can include the
- *    above two cases.
- *  - Pattern accessors are very flexible for manipulators. It's not clear how
- *    the resulting complexity of translating the pattern to a array with known
- *    pixel positions can be hidden from other filters, which need to know about
- *    positions. One strategy would be to use mediators. They can request the
- *    according pixels from previous filters. A function to convert the pattern
- *    to a list of positions should be provided. Very elegant, but probably
- *    better to do later after oyArray2d_s.
- *
- *  Possible strategies are (old text):
- *  - Use mediators to convert between different pixel layouts and areas.
- *    These could cache the record of a successful query. Mediators are Nodes in
- *    the graph. As the graph and thus mediators can be accessed over
- *    concurrenting entries a cache tends to be expensive.
- *  - The oyPixelAccess_s could hold caches instead of mediators. It is the
- *    structure, which is owned by a given thread anyway.
- *    oyPixelAccess_s needs two buffers one for input and one for output.
- *    As the graph is asked to provide the next pixel via a oyPixelAccess_s
- *    struct, this struct must be associated with source and destination 
- *    buffers. The mediator on output has to search through the chain for the 
- *    previous
- *    mediator and ask there for the input buffer. The ouput buffer is provided
- *    by this mediator itself. These two buffers are set as the actual ones for
- *    processing by the normal filters. It must be clear, what is a mediator,
- *    for this scheme to work. As a mediator is reached in the processing graph,
- *    its task is not only to convert between buffers but as well to update the
- *    oyPixelAccess_s struct with the next mediators and its own buffer. Thus
- *    the next inbetween filters can process on their part.
- *    One advantage is that the mediators can pass their buffers to 
- *    oyPixelAccess_s, which are independent to threads and can be shared.
- *  - Each filter obtains a buffer being asked to fill it with the pixels 
- *    positions described in oyPixelAccess_s. A filter is free to create a new
- *    oyPixelAccess_s description and obtain for instance the surounding of the
- *    requested pixels. There is no caching to be expected other than in 
- *    the oyPixelAccess_s own output buffer.
- *
- *  @todo clear about pixel buffer copying, how to reach the buffers, thread
- *        synchronisation, simple or complex pixel areas (point, line, area,
- *        pattern )
- *
- *  @verbatim
-    Relation of positional parameters:
-
-                start_xy         output_image_roi
-                   |                /
-             +-----|---------------/--------------+
-    original |     |              /               |
-    image ---+     |             /                |
-             |  ---+------------/----------+      |
-             |     |           /           +---------- output_image
-             |     |   +------+--------+   |      |
-             |     |   |               |   |      |
-             |     |   |               |   |      |
-             |     |   +---------------+   |      |
-             |     |                       |      |
-             |     +-----------------------+      |
-             |                                    |
-             +------------------------------------+
-    @endverbatim
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/07/04 (Oyranos: 0.1.8)
- *  @date    2009/05/05
- */
-struct oyPixelAccess_s {
-  oyOBJECT_e           type;           /**< internal struct type oyOBJECT_PIXEL_ACCESS_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  double           start_xy[2];        /**< the start point of output_image */
-  double           start_xy_old[2];    /**< @deprecated the previous start point */
-  int32_t        * array_xy;           /**< @deprecated array of shifts, e.g. 1,0,2,0,1,0 */
-  int              array_n;            /**< @deprecated the number of points in array_xy */
-
-  int              index;              /**< @deprecated to be advanced by the last caller */
-  size_t           pixels_n;           /**< @deprecated pixels to process/cache at once; should be set to 0 or 1 */
-
-  int32_t          workspace_id;       /**< a ID to assign distinct resources to */
-  oyStruct_s     * user_data;          /**< user data, e.g. for error messages*/
-  oyArray2d_s    * array;              /**< processing data. The position is in
-                                            start_xy relative to the previous
-                                            mediator in the graph. */
-  oyRectangle_s  * output_image_roi;   /**< rectangle of interesst; The
-                                            rectangle is to be seen in relation
-                                            to the
-                                            output_image (of the last filter).*/
-  oyImage_s      * output_image;       /**< the image which issued the request*/
-  oyFilterGraph_s * graph;             /**< the graph to process */
-  oyOptions_s    * request_queue;      /**< messaging; requests to resolve */
-};
-
-/** @enum    oyPIXEL_ACCESS_TYPE_e
- *  @brief   pixel access types
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/00/00 (Oyranos: 0.1.8)
- *  @date    2008/00/00
- */
-typedef enum {
-  oyPIXEL_ACCESS_IMAGE,
-  oyPIXEL_ACCESS_POINT,                /**< dont use */
-  oyPIXEL_ACCESS_LINE                  /**< dont use */
-} oyPIXEL_ACCESS_TYPE_e;
 
 oyPixelAccess_s *  oyPixelAccess_Create (
                                        int32_t             start_x,
@@ -1800,72 +899,6 @@ void              oyCopyColour       ( const double      * from,
 
 /* --- CMM API --- */
 
-/** @brief   icon data
- *  @ingroup cmm_handling
- *  @extends oyStruct_s
- *
- *  Since: 0.1.8
- */
-struct oyIcon_s {
-  oyOBJECT_e       type;               /*!< struct type oyOBJECT_ICON_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyPointer        dummy;              /**< keep to zero */
-  int              width;              /**< */
-  int              height;             /**< */
-  float          * data;               /*!< should be sRGB matched */
-  char           * file_list;          /*!< colon ':' delimited list of icon file names, SVG, PNG */
-};
-
-/** @brief   the CMM API resources struct to implement and set by a CMM
- *  @ingroup cmm_handling
- *  @extends oyStruct_s
- *
- *  Given an example CMM with name "little cms", which wants to use the 
- *  four-char ID 'lcms', the CMM can register itself to Oyranos as follows:
- *  The CMM module file must be named
- *  something_lcms_cmm_module_something.something .
- *  On Linux this could be "liboyranos_lcms_cmm_module.so.0.1.8".
- *  The four-chars 'lcms' must be prepended with OY_MODULE_NAME alias
- *  "_cmm_module".
- *
- *  Oyranos will scan the $(libdir)/color/cmms/ path, opens the available 
- *  CMM's from this directory and extracts the four-chars before OY_MODULE_NAME
- *  from the library file names. Module paths can be added through the
- *  OY_MODULE_PATHS environment variable.
- *  Oyranos looks for a symbol to a oyCMMInfo_s struct of the four-byte ID plus
- *  OY_MODULE_NAME which results in our example in the name "lcms_cmm_module".
- *  On Posix system this should be loadable by dlsym.
- *  The lcms_cmm_module should be of type oyCMMInfo_s with the type field
- *  and all other fields set appropriately.
- *
- *  The api field is a placeholder to get a real api struct assigned. If the CMM
- *  wants to provide more than one API, they can be chained.
- *
- *  @version Oyranos: 0.1.10
- *  @since   2007/12/05 (Oyranos: 0.1.8)
- *  @date    2008/12/23
- */
-struct oyCMMInfo_s {
-  oyOBJECT_e       type;               /*!< struct type oyOBJECT_CMM_INFO_S */
-  oyStruct_Copy_f      copy_;          /**< copy function; zero for static data */
-  oyStruct_Release_f   release_;       /**< release function; zero for static data */
-  oyObject_s       oy_;                /**< @private zero for static data */
-  char             cmm[8];             /*!< ICC signature, eg 'lcms' */
-  char           * backend_version;    /*!< non translatable, eg "v1.17" */
-  /** translated, e.g. "name": "lcms" "little cms" "A CMM with 100k ..."
-   *  supported should be "name", "copyright" and "manufacturer".
-   *  Optional is "help".
-   */
-  oyCMMGetText_f   getText;
-  char          ** texts;              /**< zero terminated list for getText */
-
-  int              oy_compatibility;   /*!< last supported Oyranos CMM API : OYRANOS_VERSION */
-
-  oyCMMapi_s     * api;                /**< must be casted to a according API, zero terminated list */
-
-  oyIcon_s         icon;               /*!< zero terminated list of a icon pyramid */
-};
 
 OYAPI oyCMMInfo_s * OYEXPORT
                  oyCMMInfo_New       ( oyObject_s          object );
