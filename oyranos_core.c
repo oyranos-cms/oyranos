@@ -132,9 +132,9 @@ const char *   oyStruct_GetInfo      ( oyPointer           context_object,
  *
  *  Give a basic description of inbuild object types.
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.5.0
  *  @since   2008/06/24 (Oyranos: 0.1.8)
- *  @date    2008/12/28
+ *  @date    2012/09/05
  */
 const char *     oyStructTypeToText  ( oyOBJECT_e          type )
 {
@@ -181,8 +181,11 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_CMM_API8_S: text = "oyCMMapi8_s Devices"; break;
     case oyOBJECT_CMM_API9_S: text = "oyCMMapi9_s Graph Policies"; break;
     case oyOBJECT_CMM_API10_S: text = "oyCMMapi10_s generic command"; break;
-    case oyOBJECT_CMM_DATA_TYPES_S: text = "oyCMMDataTypes_s Filter"; break;
+    case oyOBJECT_CMM_DATA_TYPES_S: text = "oyCMMDataTypes_s Data types"; break;
+    case oyOBJECT_CMM_API_FILTER_S: text="oyCMMapiFilter_s Filter";break;
     case oyOBJECT_CMM_API_FILTERS_S: text="oyCMMapiFilters_s Filter list";break;
+    case oyOBJECT_CMM_UI_S: text = "oyCMMui_s UI part"; break;
+    case oyOBJECT_CMM_OBJECT_TYPE_S: text = "oyCMMobjectType_s Custom object handler"; break;
     case oyOBJECT_CMM_API_MAX: text = "not defined"; break;
     case oyOBJECT_ICON_S: text = "oyIcon_s"; break;
     case oyOBJECT_MODULE_S: text = "oyModule_s"; break;
