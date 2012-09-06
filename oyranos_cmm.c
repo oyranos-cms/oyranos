@@ -17,15 +17,19 @@
 
 #include "oyranos_alpha.h"
 #include "oyranos_alpha_internal.h"
-#include "oyranos_object_internal.h"
 #include "oyranos_cmm.h"
 #include "oyranos_elektra.h"
+#include "oyranos_generic.h"
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
 #include "oyranos_io.h"
+#include "oyranos_object_internal.h"
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
+
+#include "oyConnectorImaging_s.h"
+
 #if !defined(WIN32)
 #include <dlfcn.h>
 #endif
@@ -48,72 +52,71 @@
 int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
-  int x_pix = 0, y_pix = 0, n = 0;
+  int x_pix = 0, y_pix = 0;
   int result = 0, error = 0;
-  int is_allocated = 0;
-  oyPointer * ptr = 0;
-  oyFilterSocket_s * socket = requestor_plug->remote_socket_;
-  oyImage_s * image = (oyImage_s*)socket->data;
+  oyFilterSocket_s * socket = oyFilterPlug_GetSocket( requestor_plug );
+  oyImage_s * image = (oyImage_s*)oyFilterSocket_GetData( socket ),
+            * output_image;
   int width;
+  oyRectangle_s * output_image_roi;
 
   DBGs_NUM2_S( ticket, "%s[%d]", _("Work on remote socket image"),
                oyStruct_GetId( (oyStruct_s*)image ) );
 
+  oyFilterSocket_Release( &socket );
+
   /* Do not work on non existent data. */
-  if(!image || !ticket->output_image)
+  output_image = oyPixelAccess_GetOutputImage( ticket );
+  if(!image || !output_image)
     return result;
 
+  output_image_roi = oyPixelAccess_GetOutputROI( ticket );
+
   /* Set a unknown output image dimension to something appropriate. */
-  if(!ticket->output_image->width && !ticket->output_image->height)
+  if(!oyImage_GetWidth(output_image) && !oyImage_GetHeight(output_image))
   {
     DBGs_NUM7_S( ticket, "%s[%d] %s %.04gx%.04g %.04gx%.04g",
                  _("Set dimensions on ticket->output_image"),
-                 oyStruct_GetId( (oyStruct_s*)ticket->output_image ),
-                 oyRectangle_Show( ticket->output_image_roi ),
-                 ticket->output_image->width, ticket->output_image->height,
-                 image->width, image->height );
-    ticket->output_image->width = image->width;
-    ticket->output_image->height = image->height;
-    oyImage_SetCritical( ticket->output_image, image->layout_[0], 0, 0 );
+                 oyStruct_GetId( (oyStruct_s*)output_image ),
+                 oyRectangle_Show( output_image_roi ),
+                 oyImage_GetWidth(output_image), oyImage_GetHeight(output_image),
+                 oyImage_GetWidth(image), oyImage_GetHeight(image) );
+    oyImage_SetCritical( output_image,
+                         oyImage_GetPixelLayout(image, oyLAYOUT), 0, 0,
+                         oyImage_GetWidth(image), oyImage_GetHeight(image) );
   }
 
-  width = ticket->output_image->width;
+  width = oyImage_GetWidth(output_image);
 
-  x_pix = ticket->start_xy[0] * width;
-  y_pix = ticket->start_xy[1] * width;
+  x_pix = oyPixelAccess_GetStart(ticket,1) * width;
+  y_pix = oyPixelAccess_GetStart(ticket,0) * width;
 
-  if(x_pix < image->width &&
-     y_pix < image->height &&
-     ticket->pixels_n)
   {
-    n = ticket->pixels_n;
-    if(n == 1)
-      ptr = image->getPoint( image, x_pix, y_pix, 0, &is_allocated );
-
-    result = !ptr;
-
-  } else {
     char * t = 0;
+    oyArray2d_s * array = oyPixelAccess_GetArray( ticket );
 
     /* adapt the rectangle of interesst to the new image dimensions */
     oyRectangle_s image_roi = {oyOBJECT_RECTANGLE_S,0,0,0},
-                  output_image_roi = {oyOBJECT_RECTANGLE_S,0,0,0};
-    double correct = ticket->output_image->width / (double) image->width;
-    oyRectangle_SetByRectangle( &image_roi, ticket->output_image_roi );
-    oyRectangle_SetByRectangle( &output_image_roi, ticket->output_image_roi );
+                  output_image_roi_ = {oyOBJECT_RECTANGLE_S,0,0,0};
+    double correct = oyImage_GetWidth(output_image) / (double) oyImage_GetWidth(image);
+    oyRectangle_SetByRectangle( &image_roi, output_image_roi );
+    oyRectangle_SetByRectangle( &output_image_roi_, output_image_roi );
     /* x and y source image offset */
-    image_roi.x = x_pix / (double) image->width;
-    image_roi.y = y_pix / (double) image->width;
-    image_roi.width *= correct;
-    image_roi.height *= correct;
+    oyRectangle_SetGeo( &image_roi,
+                        x_pix / (double) oyImage_GetWidth(image),
+                        y_pix / (double) oyImage_GetWidth(image),
+                        oyRectangle_GetGeo1(&image_roi,3) * correct,
+                        oyRectangle_GetGeo1(&image_roi,4) * correct );
     STRING_ADD( t, oyRectangle_Show( &image_roi ) );
     DBGs_NUM4_S( ticket, "%s[%d] %s %s", _("Fill ticket->array from image"),
                  oyStruct_GetId( (oyStruct_s*)image ),
-                 oyRectangle_Show( ticket->output_image_roi ),
+                 oyRectangle_Show( output_image_roi ),
                  t );
-    oyRectangle_Scale( &output_image_roi, correct );
+    oyRectangle_Scale( &output_image_roi_, correct );
     error = oyImage_FillArray( image, &image_roi, 1,
-                               &ticket->array, &output_image_roi, 0 );
+                               &array, &output_image_roi_, 0 );
+    oyPixelAccess_SetArray( ticket, array );
+    oyArray2d_Release( &array );
     if(error)
       result = error;
     oyFree_m_( t );
@@ -146,87 +149,102 @@ int          oyFilterSocket_MatchImagingPlug (
   int colours_n = 0, n, i, j;
   oyDATATYPE_e data_type = 0;
 
-  if(socket && socket->type_ == oyOBJECT_FILTER_SOCKET_S &&
-     socket->pattern && socket->pattern->type_ == oyOBJECT_CONNECTOR_IMAGING_S)
-    a = (oyConnectorImaging_s*)socket->pattern;
+  if(socket && socket->type_ == oyOBJECT_FILTER_SOCKET_S)
+    a = (oyConnectorImaging_s*)oyFilterSocket_GetPattern(socket);
 
-  if(plug && plug->type_ == oyOBJECT_FILTER_PLUG_S &&
-     plug->pattern && plug->pattern->type_ == oyOBJECT_CONNECTOR_IMAGING_S)
-    b = (oyConnectorImaging_s*) plug->pattern;
+  if(plug && plug->type_ == oyOBJECT_FILTER_PLUG_S)
+    b = (oyConnectorImaging_s*) oyFilterPlug_GetPattern(plug);
 
   if(a && b)
   {
+    oyPixel_t layout;
     match = 1;
-    image = oyImage_Copy( (oyImage_s*)socket->data, 0 );
+    image = (oyImage_s*) oyFilterSocket_GetData(socket);
+    layout = oyImage_GetPixelLayout(image, oyLAYOUT);
 
-    if(!b->is_plug)
+    if(!oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_IS_PLUG))
       match = 0;
 
     /** For a zero set pixel layout we skip most tests and assume it will be
         checked later. */
-    if(image && image->layout_[oyLAYOUT] && match)
+    if(image && layout && match)
     {
       /* channel counts */
-      colours_n = oyProfile_GetChannelsCount( image->profile_ );
-      if(image->layout_[oyCHANS] < b->min_channels_count ||
-         image->layout_[oyCHANS] > b->max_channels_count ||
-         colours_n < b->min_colour_count ||
-         colours_n > b->max_colour_count)
+      int coff = oyImage_GetPixelLayout(image, oyCOFF);      
+      oyProfile_s * image_profile = oyImage_GetProfile( image );
+      colours_n = oyProfile_GetChannelsCount( image_profile );
+      oyProfile_Release( &image_profile );
+      if(oyChannels_m(layout) < oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT) ||
+         oyChannels_m(layout) > oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT) ||
+         colours_n < oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT) ||
+         colours_n > oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT))
         match = 0;
 
       /* data types */
       if(match)
       {
-        data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
-        n = b->data_types_n;
+        const oyDATATYPE_e * data_types = 0;
+        int data_types_n = 0;
+        oyConnectorImaging_GetDataTypes(b, &data_types, &data_types_n);
+        data_type = oyToDataType_m( layout );
+        n = data_types_n;
         match = 0;
         for(i = 0; i < n; ++i)
-          if(b->data_types[i] == data_type)
+          if(data_types[i] == data_type)
             match = 1;
       }
 
       /* planar and interwoven capabilities */
-      if(b->max_colour_offset < image->layout_[oyCOFF] ||
-         (!b->can_planar && oyToPlanar_m(image->layout_[oyCOFF])) ||
-         (!b->can_interwoven && !oyToPlanar_m(image->layout_[oyCOFF])))
+      if(oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MAX_COLOUR_OFFSET) < coff ||
+         (!oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_CAN_PLANAR) && oyToPlanar_m(layout)) ||
+         (!oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_CAN_INTERWOVEN) && !oyToPlanar_m(layout)))
         match = 0;
 
       /* swap and byteswapping capabilities */
-      if((!b->can_swap && oyToSwapColourChannels_m(image->layout_[oyCOFF])) ||
-         (!b->can_swap_bytes && oyToByteswap_m(image->layout_[oyCOFF])))
+      if((!oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_CAN_SWAP) && oyToSwapColourChannels_m(layout)) ||
+         (!oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_CAN_SWAP_BYTES) && oyToByteswap_m(coff)))
         match = 0;
 
       /* revert or chockolat and vanilla */
-      if((!b->can_revert && oyToFlavor_m(image->layout_[oyCOFF])))
+      if((!oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_CAN_REVERT) && oyToFlavor_m(coff)))
         match = 0;
 
       /* channel types */
-      if(match && b->channel_types)
+      if(match)
       {
-        n = image->layout_[oyCHANS];
-        for(i = 0; i < b->channel_types_n; ++i)
+        const oyCHANNELTYPE_e * channel_types = 0;
+        int channel_types_n = 0;
+        oyConnectorImaging_GetChannelTypes( b, &channel_types,
+                                            &channel_types_n );
+        n = oyChannels_m(layout);
+        for(i = 0; i < channel_types_n; ++i)
         {
           match = 0;
           for(j = 0; j < n; ++j)
-            if(b->channel_types[i] == image->channel_layout[j] &&
-               !(!b->can_nonpremultiplied_alpha &&
-                 image->channel_layout[j] == oyCHANNELTYPE_COLOUR_LIGHTNESS) &&
-               !(!b->can_premultiplied_alpha &&
-                 image->channel_layout[j] == oyCHANNELTYPE_COLOUR_LIGHTNESS_PREMULTIPLIED))
+          {
+            oyCHANNELTYPE_e channel_type = oyImage_GetChannelType( image, j );
+
+            if(channel_types[i] == channel_type &&
+               !(!oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_CAN_NONPREMULTIPLIED_ALPHA) &&
+                 channel_type == oyCHANNELTYPE_COLOUR_LIGHTNESS) &&
+               !(!oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_CAN_PREMULTIPLIED_ALPHA) &&
+                 channel_type == oyCHANNELTYPE_COLOUR_LIGHTNESS_PREMULTIPLIED))
               match = 1;
+          }
           if(!match)
             break;
         }
       }
 
       /* subpixels */
-      if(image->sub_positioning && !b->can_subpixel)
+      if(oyImage_GetSubPositioning(image) && !oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_CAN_SUBPIXEL))
         match = 0;
     }
   }
 
   oyImage_Release( &image );
   oyConnectorImaging_Release( &a );
+  oyConnectorImaging_Release( &b );
 
   return match;
 }

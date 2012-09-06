@@ -862,7 +862,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
   error = !texts || ! temp;
 
-  if(!error && tag->status_ == oyOK)
+  if(!error && oyProfileTag_GetStatus( tag ) == oyOK)
   {
     mem = tag->block_;
     sig = tag->tag_type_;
@@ -2151,7 +2151,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
  *      - oyName_s::name is considered to hold the name
  *
  *  - non supported types
- *    - the tag->status_ field will be set to oyUNDEFINED 
+ *    - the oyProfileTag_s::status_ field will be set to oyUNDEFINED 
  *
  *  - function description
  *    - set the tag argument to zero
@@ -2356,10 +2356,10 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
 
          if(error || !n)
          {
-           s->status_ = oyUNDEFINED;
+           oyProfileTag_SetStatus( s, oyUNDEFINED );
 
          } else {
-           oyProfileTag_Set( s, s->use, tag_type, oyOK, mem_len, mem );
+           oyProfileTag_Set( s, oyProfileTag_GetUse(s), tag_type, oyOK, mem_len, mem );
          }
        }
 
@@ -2398,7 +2398,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
                tmp = 0;
 
                if(!error)
-                 error = tmptag->status_;
+                 error = oyProfileTag_GetStatus( tmptag );
              }
            }
 
@@ -2524,12 +2524,12 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
 
          if(error || !n)
          {
-           s->status_ = oyUNDEFINED;
+           oyProfileTag_SetStatus( s, oyUNDEFINED );
 
          } else {
            len = mem_len + 1;
            mem_len = len + (len%4 ? len%4 : 0);
-           oyProfileTag_Set( s, s->use, tag_type, oyOK, mem_len, mem );
+           oyProfileTag_Set( s, oyProfileTag_GetUse(s), tag_type, oyOK, mem_len, mem );
          }
        }
 
@@ -2608,26 +2608,26 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
 
          if(error || !n)
          {
-           s->status_ = oyUNDEFINED;
+           oyProfileTag_SetStatus( s, oyUNDEFINED );
 
          } else {
            /*len = mem_len + 1;
            mem_len = len + (len%4 ? len%4 : 0);*/
-           oyProfileTag_Set( s, s->use, tag_type, oyOK, len, mem );
+           oyProfileTag_Set( s, oyProfile_GetUse( s ), tag_type, oyOK, len, mem );
          }
        }
 
        break;
 
     default:
-       s->status_ = oyUNDEFINED;
+       oyProfileTag_SetStatus( s, oyUNDEFINED );
        break;
   }
 
   if(s)
   {
-    memcpy( s->last_cmm_, CMM_NICK, 4 );
-    if(s->status_ == oyOK && s->block_)
+    oyProfileTag_SetLastCMM( s, CMM_NICK );
+    if(oyProfileTag_GetStatus( s ) == oyOK)
       *((uint32_t*)&mem[0]) = oyValueUInt32( tag_type );
   }
 
