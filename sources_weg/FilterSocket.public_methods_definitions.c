@@ -151,3 +151,97 @@ OYAPI int  OYEXPORT
   return handled;
 }
 #endif /*UNHIDE_FILTERSOCKET*/
+
+/** Function  oyFilterSocket_GetNode
+ *  @memberof oyFilterSocket_s
+ *  @brief    Access oyFilterSocket_s::node
+ *
+ *  @param[in]     socket              the socket
+ *  @return                            the node
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI oyFilterNode_s * OYEXPORT
+             oyFilterSocket_GetNode  ( oyFilterSocket_s  * socket )
+{
+  oyFilterSocket_s_ * s = (oyFilterSocket_s_*)socket;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 0 )
+
+  return oyFilterNode_Copy( s->node, 0 );
+}
+/** Function  oyFilterSocket_GetPlugs
+ *  @memberof oyFilterSocket_s
+ *  @brief    Access oyFilterSocket_s::requesting_plugs_
+ *
+ *  @param[in]     socket              the socket
+ *  @return                            the requesting plugs
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI oyFilterPlugs_s * OYEXPORT
+             oyFilterSocket_GetSocket( oyFilterSocket_s  * socket )
+{
+  oyFilterSocket_s_ * s = (oyFilterSocket_s_*)socket;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 0 )
+
+  return oyFilterPlugs_Copy( s->requesting_plugs_, 0 );
+}
+/** Function  oyFilterPlug_GetPattern
+ *  @memberof oyFilterPlug_s
+ *  @brief    Access oyFilterPlug_s::pattern
+ *
+ *  @param[in]     socket              the socket
+ *  @return                            capabilities pattern for this filter socket
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI oyConnector_s * OYEXPORT
+             oyFilterSocket_GetPattern(oyFilterSocket_s  * socket )
+{
+  oyFilterSocket_s_ * s = (oyFilterSocket_s_*)socket;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 0 )
+
+  return oyConnector_Copy( s->pattern, 0 );
+}
+/** Function  oyFilterSocket_GetRelatives
+ *  @memberof oyFilterSocket_s
+ *  @brief    get short description of belonging filter
+ *
+ *  @param[in]     socket              the socket
+ *  @return                            short text
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI const char * OYEXPORT
+             oyFilterSocket_GetRelatives (
+                                       oyFilterSocket_s    * socket )
+{
+  oyFilterSocket_s_ * s = (oyFilterSocket_s_*)socket;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 0 )
+
+  return s->relatives_;
+}

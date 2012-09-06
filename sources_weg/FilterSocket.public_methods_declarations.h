@@ -8,3 +8,14 @@ OYAPI int  OYEXPORT
                                        oyFilterSocket_s  * c,
                                        oyCONNECTOR_EVENT_e e );
 #endif /*UNHIDE_FILTERSOCKET*/
+OYAPI oyFilterNode_s * OYEXPORT
+             oyFilterSocket_GetNode  ( oyFilterSocket_s  * c );
+OYAPI oyStruct_s * OYEXPORT
+             oyFilterSocket_GetData  ( oyFilterSocket_s  * c );
+OYAPI oyFilterPlugs_s * OYEXPORT
+             oyFilterSocket_GetPlugs ( oyFilterSocket_s  * c );
+OYAPI oyConnector_s * OYEXPORT
+             oyFilterSocket_GetPattern(oyFilterSocket_s  * c );
+OYAPI const char * OYEXPORT
+             oyFilterSocket_GetRelatives (
+                                       oyFilterPlug_s    * c );
