@@ -1,3 +1,6 @@
+#include "oyranos_alpha.h"
+#include "oyranos_elektra.h"
+
 /** Function oyConfig_AddDBData
  *  @memberof oyConfig_s
  *  @brief   add a key value pair to a oyConfig_s::db
@@ -385,7 +388,7 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
            *        should be expandable to several values.
            *        Do we need more than the ICC dict style syntax here?
            */
-          if(p_val && oyTextIccDictMatch( d_val, p_val ))
+          if(p_val && oyTextIccDictMatch( d_val, p_val, 0.0005 ))
           {
             if(rank_map)
             {
