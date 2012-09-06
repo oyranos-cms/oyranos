@@ -342,6 +342,58 @@ void           oyRectangle_SetGeo    ( oyRectangle_s     * edit_rectangle,
   s->height = height;
 }
 
+/**
+ *  @brief    get geometry
+ *  @memberof oyRectangle_s
+ *
+ *  @version Oyranos: 0.4.0
+ *  @since   2012/01/11 (Oyranos: 0.4.0)
+ *  @date    2012/01/11
+ */
+void           oyRectangle_GetGeo    ( oyRectangle_s     * rectangle,
+                                       double            * x,
+                                       double            * y,
+                                       double            * width,
+                                       double            * height )
+{
+  oyRectangle_s * s = rectangle;
+  if(!s)
+    return;
+
+  *x = s->x;
+  *y = s->y;
+  *width = s->width;
+  *height = s->height;
+}
+
+/** Function  oyRectangle_GetGeo1
+ *  @brief    Get geometry
+ *  @memberof oyRectangle_s
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/06 (Oyranos: 0.5.0)
+ *  @date    2012/09/06
+ */
+OYAPI double  OYEXPORT
+                 oyRectangle_GetGeo1 ( oyRectangle_s     * rectangle,
+                                       int                 x_y_w_h );
+{
+  oyRectangle_s_ * s = (oyRectangle_s_*)rectangle;
+  if(!s)
+    return 0;
+
+  if(x_y_w_h == 0)
+    return s->x;
+  else if(x_y_w_h == 1)
+    return s->y;
+  else if(x_y_w_h == 2)
+    return s->width;
+  else if(x_y_w_h == 3)
+    return s->height;
+  else
+    return 0;
+}
+
 /** Function  oyRectangle_Show
  *  @memberof oyRectangle_s
  *  @brief    Debug text
