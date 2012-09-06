@@ -474,9 +474,9 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
  *  @brief    Get the raw memory block of the tag.
  *
  *  @param[in]     tag                 the tag to read
- *  @param[out]    tag_block           the raw data owned by the user; on success the block if it has a size; else undefined
- *  @param[out]    tag_size            the data size; mandatory arg; on success the size returned in tag_block else undefined
- *  @param[in]     allocateFunc        the user allocator
+ *  @param[out]    tag_block           the raw data owned by the user; on success the block if it has a size; else undefined; optional
+ *  @param[out]    tag_size            the data size; on success the size returned in tag_block else undefined
+ *  @param[in]     allocateFunc        the user allocator, optional
  *  @return                            0 - success, >= 1 - error
  *
  *  @version Oyranos: 0.2.0
@@ -511,4 +511,337 @@ int            oyProfileTag_GetBlock ( oyProfileTag_s    * tag,
   }
 
   return error;
+}
+
+/** Function  oyProfileTag_GetOffset
+ *  @memberof oyProfileTag_s
+ *  @brief    Get the offset of the tag in the profile.
+ *
+ *  @param[in]     tag                 the tag to read
+ *  @return                            offset
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+size_t         oyProfileTag_GetOffset( oyProfileTag_s    * tag )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 0 )
+
+  return s->offset_orig;
+}
+/** Function  oyProfileTag_SetOffset
+ *  @memberof oyProfileTag_s
+ *  @brief    Set the offset of the tag in the profile.
+ *
+ *  @param[in/out  tag                 the tag to read
+ *  @param[in]     offset              new offset
+ *  @return                            0 - success, >= 1 - error
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+int            oyProfileTag_SetOffset( oyProfileTag_s    * tag,
+                                       size_t              offset )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
+
+  s->offset_orig = offset;
+
+  return 0;
+}
+/** Function  oyProfileTag_GetStatus
+ *  @memberof oyProfileTag_s
+ *  @brief    Get the status.
+ *
+ *  @param[in]     tag                 the tag to read
+ *  @return                            status
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+oySTATUS_e     oyProfileTag_GetStatus( oyProfileTag_s    * tag )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
+
+  if(!s)
+    return oyUNDEFINED;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return oyCORRUPTED )
+
+  return s->status_;
+}
+/** Function  oyProfileTag_SetStatus
+ *  @memberof oyProfileTag_s
+ *  @brief    Set the status.
+ *
+ *  @param[in/out  tag                 the tag to read
+ *  @param[in]     status              new status
+ *  @return                            0 - success, >= 1 - error
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+int            oyProfileTag_SetStatus( oyProfileTag_s    * tag,
+                                       oySTATUS_e          status )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
+
+  s->status_ = status;
+
+  return 0;
+}
+
+/** Function  oyProfileTag_GetCMM
+ *  @memberof oyProfileTag_s
+ *  @brief    Get the profile cmm of the tag.
+ *
+ *  @param[in/out  tag                 the tag to read
+ *  @return                            cmm string
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI const char *  OYEXPORT
+               oyProfileTag_GetCMM   ( oyProfileTag_s    * tag )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 0 )
+
+  return s->profile_cmm_;
+}
+/** Function  oyProfileTag_SetCMM
+ *  @memberof oyProfileTag_s
+ *  @brief    Set the profile CMM in the tag.
+ *
+ *  @param[in/out  tag                 the tag to read
+ *  @param[in]     profile_cmm         new cmm, 4 bytes
+ *  @return                            0 - success, >= 1 - error
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI int  OYEXPORT
+               oyProfileTag_SetCMM   ( oyProfileTag_s    * tag,
+                                       const char        * profile_cmm )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
+  int error = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
+
+  if(profile_cmm)
+    error = !memcpy( s->profile_cmm_, profile_cmm, 4 );
+
+  return error;
+}
+/** Function  oyProfileTag_GetLastCMM
+ *  @memberof oyProfileTag_s
+ *  @brief    Get the last processing cmm of the tag.
+ *
+ *  @param[in/out  tag                 the tag to read
+ *  @return                            cmm string
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI const char *  OYEXPORT
+               oyProfileTag_GetLastCMM(oyProfileTag_s    * tag )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 0 )
+
+  return s->last_cmm_;
+}
+/** Function  oyProfileTag_SetLastCMM
+ *  @memberof oyProfileTag_s
+ *  @brief    Set the last processing CMM.
+ *
+ *  @param[in/out  tag                 the tag to read
+ *  @param[in]     cmm                 CMM, 4 bytes
+ *  @return                            0 - success, >= 1 - error
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI int  OYEXPORT
+               oyProfileTag_SetLastCMM(oyProfileTag_s    * tag,
+                                       const char        * cmm )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
+  int error = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
+
+  if(cmm)
+    error = !memcpy( s->last_cmm_, cmm, 4 );
+
+  return error;
+}
+/** Function  oyProfileTag_GetRequiredCMM
+ *  @memberof oyProfileTag_s
+ *  @brief    Get the certainly selected CMM.
+ *
+ *  @param[in/out  tag                 the tag to read
+ *  @return                            cmm string
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI const char *  OYEXPORT
+               oyProfileTag_GetRequiredCMM
+                                     ( oyProfileTag_s    * tag )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 0 )
+
+  return s->required_cmm;
+}
+/** Function  oyProfileTag_SetRequiredCMM
+ *  @memberof oyProfileTag_s
+ *  @brief    Require a certain CMM.
+ *
+ *  @param[in/out  tag                 the tag to read
+ *  @param[in]     cmm                 CMM, 4 bytes
+ *  @return                            0 - success, >= 1 - error
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI int  OYEXPORT
+               oyProfileTag_SetRequiredCMM
+                                     ( oyProfileTag_s    * tag,
+                                       const char        * cmm )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
+  int error = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
+
+  if(cmm)
+    error = !memcpy( s->required_cmm, cmm, 4 );
+
+  return error;
+}
+/** Function  oyProfileTag_GetUse
+ *  @memberof oyProfileTag_s
+ *  @brief    Get the usage signature.
+ *
+ *  @param[in/out  tag                 the tag to read
+ *  @return                            use signature
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI icTagSignature  OYEXPORT
+               oyProfileTag_GetUse   ( oyProfileTag_s    * tag )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 0 )
+
+  return s->use;
+}
+#if 0
+/** Function  oyProfileTag_SetUse
+ *  @memberof oyProfileTag_s
+ *  @brief    Set the usage signature.
+ *
+ *  @param[in/out  tag                 the tag to read
+ *  @param[in]     use                 usage signature
+ *  @return                            0 - success, >= 1 - error
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI int  OYEXPORT
+               oyProfileTag_SetUse   ( oyProfileTag_s    * tag,
+                                       icTagSignature      use )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
+  int error = 0;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
+
+  s->use = use;
+
+  return error;
+}
+#endif
+
+/** Function  oyProfileTag_GetType
+ *  @memberof oyProfileTag_s
+ *  @brief    Get the type signature.
+ *
+ *  @param[in/out  tag                 the tag to read
+ *  @return                            type signature
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI icTagTypeSignature  OYEXPORT
+               oyProfileTag_GetType  ( oyProfileTag_s    * tag )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
+
+  return s->tag_type_;
 }
