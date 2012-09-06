@@ -9,7 +9,7 @@
 #include "oyOptions_s.h"
 #include "oyStructList_s.h"
 
-/** @struct  oyObjectInfo_s
+/** @struct  oyObjectInfoStatic_s
  *  @brief   a static object
  *  @extends oyStruct_s
  *

@@ -22,6 +22,7 @@
 #define OYRANOS_DEBUG_H
 
 
+#include <string.h>
 #include <time.h>
 
 #include "config.h"

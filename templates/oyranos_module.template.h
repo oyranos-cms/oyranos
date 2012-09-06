@@ -11,7 +11,6 @@
 #include "oyCMMInfo_s.h"
 #include "oyCMMapi_s.h"
 
-//#include "oyStruct_s.h"
 /** @brief   CMM capabilities query enum
  *  @ingroup module_api
  *
