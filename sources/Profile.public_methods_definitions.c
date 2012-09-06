@@ -1501,7 +1501,7 @@ int                oyProfile_GetMD5  ( oyProfile_s       * profile,
  *  @param[in]     options             - "key_prefix_required" : prefix
  *                                       accept only key names with the prefix
  *                                       Separation by point '.' is allowed.
- *                                      "set_device_attributes"="true"
+ *                                     - "set_device_attributes"="true"
  *                                       will write "manufacturer", "model",
  *                                       "mnft" and "model_id" keys to the
  *                                       appropriate profile tags and fields.
@@ -1596,13 +1596,12 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
   int count = 0;
 
   if(key_prefix_required)
-  {
     prefix = key_prefix_required;
   else if(key_prefix)
     prefix = key_prefix;
 
   if(prefix)
-   {
+  {
     key_prefix_texts = oyStringSplit_( prefix,'.',
                                        &key_prefix_texts_n, oyAllocateFunc_);
     oyAllocHelper_m_( key_prefix_texts_len,int,key_prefix_texts_n, 0, return 1);
@@ -1632,10 +1631,21 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
           if(len >= key_prefix_texts_len[j] &&
              memcmp( key_prefix_texts[j], reg, key_prefix_texts_len[j]) == 0)
             pass = 1;
+          if(pass && len > key_prefix_texts_len[j])
+          {
+            if( strcmp( reg+key_prefix_texts_len[j], "manufacturer") == 0 )
+              manufacturer = oyStringCopy_( val, oyAllocateFunc_ );
+            if( strcmp( reg+key_prefix_texts_len[j], "model") == 0 )
+              model = oyStringCopy_( val, oyAllocateFunc_ );
+            if( strcmp( reg+key_prefix_texts_len[j], "mnft") == 0 )
+              mnft = oyStringCopy_( val, oyAllocateFunc_ );
+            if( strcmp( reg+key_prefix_texts_len[j], "model_id") == 0 )
+              model_id = oyStringCopy_( val, oyAllocateFunc_ );
+          }
         }
       }
 
-      if(val && pass)
+      if(pass)
       {
         DBG_PROG2_S("%s: %s", reg, val );
         ++count;

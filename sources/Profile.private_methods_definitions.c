@@ -639,16 +639,14 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
         size_t offset = oyValueUInt32( ic_tag->offset );
         size_t tag_size = oyValueUInt32( ic_tag->size );
         char *tmp = 0;
-#ifdef DEBUG
-        oyChar **texts = 0;
+        char **texts = 0;
         int32_t texts_n = 0;
         int j;
-#endif
         oySTATUS_e status = oyOK;
         icTagSignature sig = oyValueUInt32( ic_tag->sig );
         icTagTypeSignature tag_type = 0;
 
-        oyProfileTag_s_ * tag_ = oyProfileTag_New_( 0 ); //FIXME Redeclaration
+        oyProfileTag_s * tag_ = oyProfileTag_New( 0 );
 
         tag_block = 0;
 
@@ -666,32 +664,33 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
           tag_type = oyValueUInt32( tag_base->sig );
         }
 
-        error = oyProfileTag_Set( (oyProfileTag_s*)tag_, sig, tag_type,
+        error = oyProfileTag_Set( tag_, sig, tag_type,
                                   status, tag_size, tag_block );
-        tag_->offset_orig = offset;
         if(error <= 0)
-          error = !memcpy( tag_->profile_cmm_, profile_cmm, 4 );
+          error = oyProfileTag_SetOffset( tag_, offset );
+        if(error <= 0)
+          error = oyProfileTag_SetCMM( tag_, profile_cmm );
 
-#ifdef DEBUG
         if(oy_debug > 3)
         {
+          size_t size = 0;
+          oyProfileTag_GetBlock( tag_, 0, &size, 0 );
           DBG_PROG5_S("%d[%d @ %d]: %s %s",
-            i, (int)tag_->size_, (int)tag_->offset_orig,
-            oyICCTagTypeName( tag_->tag_type_ ),
-            oyICCTagDescription( tag_->use ) );
+            i, (int)size, (int)oyProfileTag_GetOffset(tag_),
+            oyICCTagTypeName( oyProfileTag_GetType(tag_) ),
+            oyICCTagDescription( oyProfileTag_GetUse(tag_) ) );
           texts = oyProfileTag_GetText((oyProfileTag_s*)tag_,&texts_n,0,0,0,0);
           for(j = 0; j < texts_n; ++j)
-            DBG_PROG2_S("%s: %s", tag_->last_cmm_, texts[j]?texts[j]:"");
+            DBG_PROG2_S("%s: %s", oyProfileTag_GetLastCMM(tag_), texts[j]?texts[j]:"");
           if(texts_n && texts)
             oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
         }
-#endif
 
         if(i == pos-1)
-          tag = oyProfileTag_Copy( (oyProfileTag_s*)tag_, 0 );
+          tag = oyProfileTag_Copy( tag_, 0 );
 
         if(error <= 0)
-          error = oyProfile_TagMoveIn_( s, (oyProfileTag_s**)&tag_, -1 );
+          error = oyProfile_TagMoveIn_( s, &tag_, -1 );
       }
     }
   }
@@ -894,6 +893,7 @@ oyPointer    oyProfile_WriteHeader_  ( oyProfile_s_      * profile,
   return block;
 }
 
+/** @internal
  *  Function  oyProfile_WriteTags_
  *  @memberof oyProfile_s
  *  @brief    Get the parsed ICC profile back into memory
