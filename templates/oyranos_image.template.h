@@ -78,6 +78,17 @@ typedef enum {
 
  */
 typedef uint32_t oyPixel_t;
+/** pixel mask description 
+ */
+typedef enum {
+  oyLAYOUT = 0, /* remembering the layout */
+  oyPOFF_X,     /* pixel count x offset */
+  oyPOFF_Y,     /* pixel count y offset */
+  oyCOFF,       /* channel offset */
+  oyDATA_SIZE,  /* sample size in byte */
+  oyCHANS,      /* number of channels */
+  oyCHAN0       /* first colour channel */
+} oyLAYOUT_e;
 
 #define oyChannels_m(c)             (c)
 #define oyColourOffset_m(o)         ((o) << 8)

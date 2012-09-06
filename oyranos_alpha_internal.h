@@ -20,7 +20,10 @@
 
 #include "oyranos_alpha.h"
 #include "oyranos_cmm.h"
+#include "oyranos_module.h"
 #include "oyObject_s_.h"
+#include "oyCMMapi4_s.h"
+#include "oyCMMapiFilters_s.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -160,10 +163,6 @@ typedef struct {
 } oyCMMapiQueries_s;
 
 
-typedef  oyOBJECT_e(*oyCMMapi_Check_f)(oyCMMInfo_s       * cmm_info,
-                                       oyCMMapi_s        * api,
-                                       oyPointer           data,
-                                       uint32_t          * rank );
 char *           oyCMMnameFromLibName_(const char        * lib_name);
 oyCMMInfo_s *    oyCMMInfoFromLibName_(const char        * lib_name );
 char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info );
@@ -232,18 +231,6 @@ void     oyAlphaFinish_              ( int                 unused );
  *  @{
  */
 
-/** @internal
- *  pixel mask description 
- */
-enum {
-  oyLAYOUT = 0, /* remembering the layout */
-  oyPOFF_X,     /* pixel count x offset */
-  oyPOFF_Y,     /* pixel count y offset */
-  oyCOFF,       /* channel offset */
-  oyDATA_SIZE,  /* sample size in byte */
-  oyCHANS,      /* number of channels */
-  oyCHAN0       /* first colour channel */
-};
 
 int      oySizeofDatatype            ( oyDATATYPE_e        t );
 const char *   oyDatatypeToText      ( oyDATATYPE_e        t);
