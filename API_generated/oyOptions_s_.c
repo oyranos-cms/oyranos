@@ -1,7 +1,7 @@
 /** @file oyOptions_s_.c
 
    [Template file inheritance graph]
-   +-> Options_s_.template.c
+   +-> oyOptions_s_.template.c
    |
    +-> BaseList_s_.c
    |
@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -24,6 +24,10 @@
 #include "oyOptions_s.h"
 #include "oyOptions_s_.h"
 
+
+
+
+
 #include "oyObject_s.h"
 #include "oyranos_object_internal.h"
 
@@ -31,6 +35,94 @@
   
 
 
+/* Include "Options.private_custom_definitions.c" { */
+/** Function    oyOptions_Release__Members
+ *  @memberof   oyOptions_s
+ *  @brief      Custom Options destructor
+ *  @internal
+ *
+ *  This function will free up all memmory allocated by the
+ *  input object. First all object members witch have their
+ *  own release method are deallocated. Then the deallocateFunc_
+ *  of the oy_ object is used to release the rest of the members
+ *  that were allocated with oy_->allocateFunc_.
+ *
+ *  @param[in]  options  the Options object
+ *
+ *  @version Oyranos: x.x.x
+ *  @since   YYYY/MM/DD (Oyranos: x.x.x)
+ *  @date    YYYY/MM/DD
+ */
+void oyOptions_Release__Members( oyOptions_s_ * options )
+{
+  /* Deallocate members here
+   * E.g: oyXXX_Release( &options->member );
+   */
+
+  if(options->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = options->oy_->deallocateFunc_;
+
+    /* Deallocate members of basic type here
+     * E.g.: deallocateFunc( options->member );
+     */
+  }
+}
+
+/** Function    oyOptions_Init__Members
+ *  @memberof   oyOptions_s
+ *  @brief      Custom Options constructor
+ *  @internal
+ *
+ *  This function will allocate all memmory for the input object.
+ *  For the basic member types this is done using the allocateFunc_
+ *  of the attatced (oyObject_s)oy_ object.
+ *
+ *  @param[in]  options  the Options object
+ *
+ *  @version Oyranos: x.x.x
+ *  @since   YYYY/MM/DD (Oyranos: x.x.x)
+ *  @date    YYYY/MM/DD
+ */
+int oyOptions_Init__Members( oyOptions_s_ * options )
+{
+  return 0;
+}
+
+/** Function    oyOptions_Copy__Members
+ *  @memberof   oyOptions_s
+ *  @brief      Custom Options copy constructor
+ *  @internal
+ *
+ *  This function makes a copy of all values from the input
+ *  to the output object. The destination object and all of its
+ *  members should already be allocated.
+ *
+ *  @param[in]   src  the oyOptions_s_ input object
+ *  @param[out]  dst  the output oyOptions_s_ object
+ *
+ *  @version Oyranos: x.x.x
+ *  @since   YYYY/MM/DD (Oyranos: x.x.x)
+ *  @date    YYYY/MM/DD
+ */
+int oyOptions_Copy__Members( oyOptions_s_ * dst, oyOptions_s_ * src)
+{
+  int error = 0;
+  oyAlloc_f allocateFunc_ = 0;
+  oyDeAlloc_f deallocateFunc_ = 0;
+
+  if(!dst || !src)
+    return 1;
+
+  allocateFunc_ = dst->oy_->allocateFunc_;
+  deallocateFunc_ = dst->oy_->deallocateFunc_;
+
+  /* Copy each value of src to dst here */
+
+  return error;
+}
+
+/* } Include "Options.private_custom_definitions.c" */
 
 
 
@@ -61,6 +153,8 @@ oyOptions_s_ * oyOptions_New_ ( oyObject_s object )
   }
 
   error = !memset( s, 0, sizeof(oyOptions_s_) );
+  if(error)
+    WARNc_S( "memset failed" );
 
   s->type_ = type;
   s->copy = (oyStruct_Copy_f) oyOptions_Copy;
@@ -70,13 +164,15 @@ oyOptions_s_ * oyOptions_New_ ( oyObject_s object )
 
   
   /* ---- start of custom Options constructor ----- */
-  error += !oyObject_SetParent( s_obj, oyOBJECT_OPTIONS_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_OPTIONS_S, (oyPointer)s );
   /* ---- end of custom Options constructor ------- */
   
   
   
   
   /* ---- end of common object constructor ------- */
+  if(error)
+    WARNc_S( "oyObject_SetParent failed" );
 
 
   
@@ -118,7 +214,7 @@ oyOptions_s_ * oyOptions_Copy__ ( oyOptions_s_ *options, oyObject_s object )
   if(!options || !object)
     return s;
 
-  s = oyOptions_New_( object );
+  s = (oyOptions_s_*) oyOptions_New( object );
   error = !s;
 
   if(!error) {
@@ -227,22 +323,6 @@ int oyOptions_Release_( oyOptions_s_ **options )
 
 
 /* Include "Options.private_methods_definitions.c" { */
-int            oyOptions_Init__Members(oyOptions_s_      * s )
-{
-  return 0;
-}
-int            oyOptions_Copy__Members(oyOptions_s_      * dest,
-                                       oyOptions_s_      * src )
-{
-  return 0;
-}
-int            oyOptions_Release__Members (
-                                       oyOptions_s_      * s )
-{
-  return 0;
-}
-
-
 /**
  *  @internal
  *  Function oyOptions_ParseXML_

@@ -1,11 +1,11 @@
 /** @file oyHash_s.h
 
    [Template file inheritance graph]
-   +-> Hash_s.template.h
+   +-> oyHash_s.template.h
    |
    +-> Base_s.h
    |
-   +-- Struct_s.template.h
+   +-- oyStruct_s.template.h
 
  *  Oyranos is an open source Colour Management System
  *
@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/08/12
+ *  @date     2012/09/06
  */
 
 
@@ -32,11 +32,12 @@
   
 #include <oyranos_object.h>
 
+typedef struct oyHash_s oyHash_s;
+
 
 #include "oyStruct_s.h"
 
 
-typedef struct oyHash_s oyHash_s;
 /* Include "Hash.public.h" { */
 
 /* } Include "Hash.public.h" */
@@ -53,7 +54,6 @@ typedef struct oyHash_s oyHash_s;
  *  can be used in a oyStructList_s for a hash map or searchable cache.
  *  @see oyCacheListNew_ oyHashGet_
  *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
- *  @note New templates will not be created automaticly [notemplates]
  *
  *  @since Oyranos: version 0.1.8
  *  @date  24 november 2007 (API 0.1.8)
@@ -82,15 +82,20 @@ OYAPI int OYEXPORT
 
 
 /* Include "Hash.public_methods_declarations.h" { */
-oyHash_s *         oyHash_Get        ( const char        * hash_text,
-                                       oyObject_s          object );
-oyOBJECT_e         oyHash_GetType    ( oyHash_s          * hash );
-int                oyHash_IsOf       ( oyHash_s          * hash,
-                                       oyOBJECT_e          type );
-int                oyHash_SetPointer ( oyHash_s          * hash,
-                                       oyStruct_s        * obj );
-oyStruct_s *       oyHash_GetPointer ( oyHash_s          * hash,
-                                       oyOBJECT_e          type );
+OYAPI oyHash_s *  OYEXPORT
+                 oyHash_Get        ( const char        * hash_text,
+                                     oyObject_s          object );
+OYAPI oyOBJECT_e  OYEXPORT
+                 oyHash_GetType    ( oyHash_s          * hash );
+OYAPI int  OYEXPORT
+                 oyHash_IsOf       ( oyHash_s          * hash,
+                                     oyOBJECT_e          type );
+OYAPI int  OYEXPORT
+                 oyHash_SetPointer ( oyHash_s          * hash,
+                                     oyStruct_s        * obj );
+OYAPI oyStruct_s * OYEXPORT
+                 oyHash_GetPointer ( oyHash_s          * hash,
+                                     oyOBJECT_e          type );
 
 /* } Include "Hash.public_methods_declarations.h" */
 

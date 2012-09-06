@@ -2,7 +2,7 @@
 /** @file oyObject_s_.h
 
    [Template file inheritance graph]
-   +-- Object_s_.template.h
+   +-- oyObject_s_.template.h
 
  *  Oyranos is an open source Colour Management System
  *
@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -35,7 +35,8 @@
  *  should almost all be derived from this struct.\n
  *  The memory management can be controlled by the user and will affect internal
  *  and derived data.
- *  Do not automaticly create templates [notemplates]
+ *
+ *  @note New templates will not be created automaticly [notemplates]
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/10/00 (Oyranos: 0.1.8)

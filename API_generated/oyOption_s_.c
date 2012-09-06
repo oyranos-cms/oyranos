@@ -1,7 +1,7 @@
 /** @file oyOption_s_.c
 
    [Template file inheritance graph]
-   +-> Option_s_.template.c
+   +-> oyOption_s_.template.c
    |
    +-- Base_s_.c
 
@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/08/12
+ *  @date     2012/09/06
  */
 
 
@@ -21,6 +21,10 @@
   
 #include "oyOption_s.h"
 #include "oyOption_s_.h"
+
+
+
+
 
 #include "oyObject_s.h"
 #include "oyranos_object_internal.h"
@@ -178,6 +182,8 @@ oyOption_s_ * oyOption_New_ ( oyObject_s object )
   }
 
   error = !memset( s, 0, sizeof(oyOption_s_) );
+  if(error)
+    WARNc_S( "memset failed" );
 
   s->type_ = type;
   s->copy = (oyStruct_Copy_f) oyOption_Copy;
@@ -187,13 +193,15 @@ oyOption_s_ * oyOption_New_ ( oyObject_s object )
 
   
   /* ---- start of custom Option constructor ----- */
-  error += !oyObject_SetParent( s_obj, oyOBJECT_OPTION_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_OPTION_S, (oyPointer)s );
   /* ---- end of custom Option constructor ------- */
   
   
   
   
   /* ---- end of common object constructor ------- */
+  if(error)
+    WARNc_S( "oyObject_SetParent failed" );
 
 
   
@@ -234,7 +242,7 @@ oyOption_s_ * oyOption_Copy__ ( oyOption_s_ *option, oyObject_s object )
   if(!option || !object)
     return s;
 
-  s = oyOption_New_( object );
+  s = (oyOption_s_*) oyOption_New( object );
   error = !s;
 
   if(!error) {
@@ -592,7 +600,7 @@ char *         oyOption_GetValueText_( oyOption_s_       * obj,
         oyStruct_s * oy_struct = 0;
 
         if(oy_struct_list && oy_struct_list->type_ == oyOBJECT_STRUCT_LIST_S)
-          oy_struct = oyStructList_Get_( oy_struct_list, i );
+          oy_struct = oyStructList_Get_( ( oyStructList_s_*)oy_struct_list, i );
         else if(v->oy_struct)
           oy_struct = v->oy_struct;
 

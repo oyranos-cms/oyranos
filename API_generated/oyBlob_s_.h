@@ -1,7 +1,7 @@
 /** @file oyBlob_s_.h
 
    [Template file inheritance graph]
-   +-> Blob_s_.template.h
+   +-> oyBlob_s_.template.h
    |
    +-- Base_s_.h
 
@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -22,13 +22,14 @@
 
 #define oyBlobPriv_m( var ) ((oyBlob_s_*) (var))
 
+typedef struct oyBlob_s_ oyBlob_s_;
+
   
 #include <oyranos_object.h>
   
 
 #include "oyBlob_s.h"
 
-typedef struct oyBlob_s_ oyBlob_s_;
 /* Include "Blob.private.h" { */
 
 /* } Include "Blob.private.h" */

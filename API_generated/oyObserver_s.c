@@ -1,7 +1,7 @@
 /** @file oyObserver_s.c
 
    [Template file inheritance graph]
-   +-- Observer_s.template.c
+   +-- oyObserver_s.template.c
 
  *  Oyranos is an open source Colour Management System
  *
@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -135,7 +135,7 @@ OYAPI int  OYEXPORT
 }
 /* } oyObserver_s common object functions */
 
-/* oyObserver_s object specific functions { */
+/* Include "Observer.public_methods_definitions.c" { */
 /** Function oyObserver_SignalSend
  *  @memberof oyObserver_s
  *  @brief   send a signal to a Observer object
@@ -543,7 +543,7 @@ OYAPI int  OYEXPORT
                                                   i, oyOBJECT_OBSERVER_S );
       if(obs &&
          (!(flags & 0x01) || obs->model == pattern))
-      { 
+      {
         if(oy_debug_signals)
         {
           WARNc5_S( "\n\tCopy %s: %s[%d]->%s[%d]", _("Signal"),
@@ -621,7 +621,7 @@ OYAPI int  OYEXPORT
                                                   i, oyOBJECT_OBSERVER_S );
       if(obs &&
          (!(flags & 0x01) || obs->observer == pattern))
-      { 
+      {
         if(oy_debug_signals)
         {
           WARNc5_S( "\n\tCopy %s: %s[%d]->%s[%d]", _("Signal"),
@@ -687,7 +687,7 @@ OYAPI int  OYEXPORT
     n = oyStructList_Count( handles->list_ );
   for(i = 0; i < n; ++i)
   {
-    o = (oyOption_s_*) oyStructList_Get_( handles->list_, i );
+    o = (oyOption_s_*) oyStructList_Get_( (oyStructList_s_*)(handles->list_), i );
     if( oyStrcmp_( o->registration, OY_SIGNAL_OBSERVERS ) == 0)
     {
       if(observer)
@@ -707,13 +707,12 @@ OYAPI int  OYEXPORT
             obs = (oyObserver_s*) oyStructList_GetType( observers,
                                                    j, oyOBJECT_OBSERVER_S );
             if(obs && obs->observer == observer)
-            { 
+            {
               observed = 1;
               break;
             }
           }
         }
-        
       } else
       {
         observed = 1;
@@ -783,8 +782,9 @@ OYAPI uint32_t OYEXPORT
  */
 OYAPI int  OYEXPORT
            oyObserverFlagsSet        ( uint32_t            flags )
-{ 
+{
   oy_observer_flags = flags;
   return 0;
 }
-/* } oyObserver_s object specific functions */
+
+/* } Include "Observer.public_methods_definitions.c" */

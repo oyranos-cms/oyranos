@@ -2,7 +2,7 @@
 /** @file oyName_s.h
 
    [Template file inheritance graph]
-   +-- Name_s.template.h
+   +-- oyName_s.template.h
 
  *  Oyranos is an open source Colour Management System
  *
@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 

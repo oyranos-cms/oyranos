@@ -1,7 +1,7 @@
 /** @file oyPointer_s_.c
 
    [Template file inheritance graph]
-   +-> Pointer_s_.template.c
+   +-> oyPointer_s_.template.c
    |
    +-- Base_s_.c
 
@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/08/12
+ *  @date     2012/09/06
  */
 
 
@@ -21,6 +21,10 @@
   
 #include "oyPointer_s.h"
 #include "oyPointer_s_.h"
+
+
+
+
 
 #include "oyObject_s.h"
 #include "oyranos_object_internal.h"
@@ -166,6 +170,8 @@ oyPointer_s_ * oyPointer_New_ ( oyObject_s object )
   }
 
   error = !memset( s, 0, sizeof(oyPointer_s_) );
+  if(error)
+    WARNc_S( "memset failed" );
 
   s->type_ = type;
   s->copy = (oyStruct_Copy_f) oyPointer_Copy;
@@ -175,13 +181,15 @@ oyPointer_s_ * oyPointer_New_ ( oyObject_s object )
 
   
   /* ---- start of custom Pointer constructor ----- */
-  error += !oyObject_SetParent( s_obj, oyOBJECT_POINTER_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_POINTER_S, (oyPointer)s );
   /* ---- end of custom Pointer constructor ------- */
   
   
   
   
   /* ---- end of common object constructor ------- */
+  if(error)
+    WARNc_S( "oyObject_SetParent failed" );
 
 
   
@@ -222,7 +230,7 @@ oyPointer_s_ * oyPointer_Copy__ ( oyPointer_s_ *pointer, oyObject_s object )
   if(!pointer || !object)
     return s;
 
-  s = oyPointer_New_( object );
+  s = (oyPointer_s_*) oyPointer_New( object );
   error = !s;
 
   if(!error) {

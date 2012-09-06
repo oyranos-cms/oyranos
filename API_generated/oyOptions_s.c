@@ -1,13 +1,13 @@
 /** @file oyOptions_s.c
 
    [Template file inheritance graph]
-   +-> Options_s.template.c
+   +-> oyOptions_s.template.c
    |
    +-> BaseList_s.c
    |
    +-> Base_s.c
    |
-   +-- Struct_s.template.c
+   +-- oyStruct_s.template.c
 
  *  Oyranos is an open source Colour Management System
  *
@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/03/23
+ *  @date     2012/09/06
  */
 
 
@@ -861,7 +861,7 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
  *
  *  @see oyOptions_Add
  *
- *  @param         s                   the options
+ *  @param         opts                the options
  *  @param[in]     flags               for inbuild defaults |
  *                                     oyOPTIONSOURCE_FILTER;
  *                                     for options marked as advanced |
@@ -875,13 +875,13 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
  *  @since   2008/11/27 (Oyranos: 0.1.9)
  *  @date    2008/11/27
  */
-int          oyOptions_DoFilter      ( oyOptions_s       * s,
+int          oyOptions_DoFilter      ( oyOptions_s       * opts,
                                        uint32_t            flags,
                                        const char        * filter_type )
 {
   oyOptions_s * opts_tmp = 0;
-  oyOption_s_ * o = 0;
-  int error = !s;
+  oyOption_s * o = 0;
+  int error = !opts;
   char * text;
   int i,n;
 
@@ -891,20 +891,20 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
   if(error <= 0 && (flags || filter_type))
   {
     /*  6. get stored values */
-    n = oyOptions_Count( s );
+    n = oyOptions_Count( opts );
     opts_tmp = oyOptions_New(0);
     for(i = 0; i < n; ++i)
     {
       int skip = 0;
 
-      o = (oyOption_s_*)oyOptions_Get( s, i );
+      o = oyOptions_Get( opts, i );
 
 
       /* usage/type range filter */
       if(filter_type)
       {
-        text = oyFilterRegistrationToText( o->registration, oyFILTER_REG_TYPE,
-                                           0);
+        text = oyFilterRegistrationToText( oyOption_GetRegistration(o),
+                                           oyFILTER_REG_TYPE, 0);
         if(oyStrcmp_( filter_type, text ) != 0)
           skip = 1;
 
@@ -914,7 +914,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
       /* front end options filter */
       if(!skip && !(flags & oyOPTIONATTRIBUTE_FRONT))
       {
-        text = oyStrrchr_( o->registration, '/' );
+        text = oyStrrchr_( oyOption_GetRegistration(o), '/' );
 
         if(text)
            text = oyStrchr_( text, '.' );
@@ -926,40 +926,44 @@ int          oyOptions_DoFilter      ( oyOptions_s       * s,
       /* advanced options mark and zero */
       if(!skip && !(flags & oyOPTIONATTRIBUTE_ADVANCED))
       {
-        text = oyStrrchr_( o->registration, '/' );
+        text = oyStrrchr_( oyOption_GetRegistration(o), '/' );
         if(text)
            text = oyStrchr_( text, '.' );
         if(text)
           if(oyStrstr_( text, "advanced" ))
           {
-            oyOption_SetFromText( (oyOption_s*)o, "0", 0 );
-            o->flags = o->flags & (~oyOPTIONATTRIBUTE_EDIT);
+            oyOption_SetFromText( o, "0", 0 );
+            oyOption_SetFlags( o,
+                              oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
           }
       } else
       /* Elektra settings, modify value */
       if(!skip && !(flags & oyOPTIONSOURCE_FILTER))
       {
-        text = oyGetKeyString_( oyOption_GetText( (oyOption_s*)o, oyNAME_DESCRIPTION),
+        text = oyGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                 oyAllocateFunc_ );
         if(text && text[0])
         {
-          error = oyOption_SetFromText( (oyOption_s*)o, text, 0 );
-          o->flags = o->flags & (~oyOPTIONATTRIBUTE_EDIT);
-          o->source = oyOPTIONSOURCE_USER;
+          error = oyOption_SetFromText( o, text, 0 );
+          oyOption_SetFlags(o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
+          oyOption_SetSource( o, oyOPTIONSOURCE_USER );
           oyFree_m_( text );
         }
       }
 
       if(!skip)
-        oyOptions_Add( opts_tmp, (oyOption_s*)o, -1, s->oy_ );
+        oyOptions_Add( opts_tmp, o, -1, opts->oy_ );
 
-      oyOption_Release( (oyOption_s**)&o );
+      oyOption_Release( &o );
     }
 
-    error = oyStructList_CopyFrom(
-              oyOptionsPriv_m(s)->list_,
-              oyOptionsPriv_m(opts_tmp)->list_, 0
-              );
+    n = oyOptions_Count( opts_tmp );
+    error = oyOptions_Clear(opts);
+    for( i = 0; i < n && !error; ++i )
+    {
+      o = oyOptions_Get( opts_tmp, i );
+      error = oyOptions_MoveIn( opts, &o, -1 );
+    }
     oyOptions_Release( &opts_tmp );
   }
 
@@ -2061,9 +2065,9 @@ OYAPI int  OYEXPORT
  *                                     <= -1 - issue,
  *                                     + a message should be sent
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.0
  *  @since   2009/12/11 (Oyranos: 0.1.10)
- *  @date    2009/12/11
+ *  @date    2011/02/22
  */
 int             oyOptions_Handle     ( const char        * registration,
                                        oyOptions_s       * options,
@@ -2081,10 +2085,12 @@ int             oyOptions_Handle     ( const char        * registration,
   if(!error)
   {
     oyCMMapiFilters_s * apis;
-    int apis_n = 0, i;
-    oyCMMapi10_s * cmm_api10 = 0;
+    int apis_n = 0, i, found = 0;
+    oyCMMapi10_s_ * cmm_api10 = 0;
     char * class, * api_reg;
     char * test = 0;
+    uint32_t * rank_list = 0,
+               api_n = 0;
 
     class = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE, 0 );
     api_reg = oyStringCopy_("//", oyAllocateFunc_ );
@@ -2097,12 +2103,14 @@ int             oyOptions_Handle     ( const char        * registration,
 
     apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API10_S,
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
-                                 0, 0);
+                                 &rank_list, &api_n );
+    if(rank_list) oyDeAllocateFunc_(rank_list); rank_list = 0;
+
     apis_n = oyCMMapiFilters_Count( apis );
     if(test)
       for(i = 0; i < apis_n; ++i)
       {
-        cmm_api10 = (oyCMMapi10_s*) oyCMMapiFilters_Get( apis, i );
+        cmm_api10 = (oyCMMapi10_s_*) oyCMMapiFilters_Get( apis, i );
 
         if(oyFilterRegistrationMatch( cmm_api10->registration, registration, 0))
         {
@@ -2110,12 +2118,15 @@ int             oyOptions_Handle     ( const char        * registration,
           {
             error = cmm_api10->oyMOptions_Handle( s, test, result );
             if(error == 0)
+            {
+              found = 1;
               error = cmm_api10->oyMOptions_Handle( s, command, result );
+            }
 
           } else
             error = 1;
 
-          if(error)
+          if(error > 0)
           {
             WARNc2_S( "%s %s",_("error in module:"), cmm_api10->registration );
           }
@@ -2130,11 +2141,91 @@ int             oyOptions_Handle     ( const char        * registration,
 
     oyFree_m_( test );
     oyCMMapiFilters_Release( &apis );
+    if(!found && error == 0)
+      error = -1;
   }
-  
+
   return error;
 }
 #endif /* OY_CMM_API_FILTERS_S_H */
+
+/** Function oyOptions_SetDriverContext
+ *  @memberof oyOptions_s
+ *  @brief   set a device option from a given external context
+ *
+ *  The options will be created in case they do not exist. The
+ *  driver_context_type accepts "xml". The data in driver_context will be
+ *  converted to a options set following the Oyranos options XML schemes with
+ *  the help oyOptions_FromText().
+ *  Any other pointer will be converted to a oyBlob_s object. The name of that
+ *  object will come from driver_context_type.
+ *
+ *  @param[in,out] options             options for the device
+ *  @param[in]     driver_context      driver context
+ *  @param[in]     driver_context_type "xml" or something related to the driver
+ *  @param[in]     driver_context_size size of driver_context
+ *  @param[in]     object              a optional object
+ *  @return                            1 - error; 0 - success; -1 - otherwise
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/05/18 (Oyranos: 0.1.10)
+ *  @date    2009/05/18
+ */
+OYAPI int  OYEXPORT
+           oyOptions_SetDriverContext( oyOptions_s      ** options,
+                                       oyPointer           driver_context,
+                                       const char        * driver_context_type,
+                                       size_t              driver_context_size,
+                                       oyObject_s          object )
+{
+  int error = !options || !driver_context_type,
+      l_error = 0;
+  oyOptions_s * s = 0,
+              * opts_tmp = 0;
+  oyOption_s * o = 0;
+  char * key = 0;
+
+  if(options && *options)
+  {
+    s = *options;
+    oyCheckType__m( oyOBJECT_OPTIONS_S, return 1 );
+  }
+
+  if(!error)
+  {
+    if(!s)
+      s = oyOptions_New( 0 );
+    error = !s;
+
+    key = oyStringAppend_( "driver_context.", driver_context_type,
+                           oyAllocateFunc_ );
+  }
+
+  if(!error)
+  {
+    o = oyOption_FromRegistration( key, object );
+
+    if(oyFilterRegistrationMatch( driver_context_type, "xml", 0 ))
+    {
+      opts_tmp = oyOptions_FromText( (char*)driver_context, 0, object );
+      error = oyOption_StructMoveIn ( o, (oyStruct_s**) &opts_tmp );
+    }
+    else
+      error = oyOption_SetFromData( o, driver_context, driver_context_size );
+
+    if(error <= 0)
+      l_error = oyOptions_MoveIn( s, &o, -1 ); OY_ERR
+
+    oyFree_m_( key );
+  }
+
+  if(!error)
+    *options = s;
+  else
+    oyOptions_Release( &s );
+
+  return error;
+}
 
 /* } Include "Options.public_methods_definitions.c" */
 

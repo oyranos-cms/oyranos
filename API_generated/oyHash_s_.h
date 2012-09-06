@@ -1,7 +1,7 @@
 /** @file oyHash_s_.h
 
    [Template file inheritance graph]
-   +-> Hash_s_.template.h
+   +-> oyHash_s_.template.h
    |
    +-- Base_s_.h
 
@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -22,13 +22,14 @@
 
 #define oyHashPriv_m( var ) ((oyHash_s_*) (var))
 
+typedef struct oyHash_s_ oyHash_s_;
+
   
 #include <oyranos_object.h>
   
 
 #include "oyHash_s.h"
 
-typedef struct oyHash_s_ oyHash_s_;
 /* Include "Hash.private.h" { */
 
 /* } Include "Hash.private.h" */

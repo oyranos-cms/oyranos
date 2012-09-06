@@ -1,7 +1,7 @@
 /** @file oyOptions_s_.h
 
    [Template file inheritance graph]
-   +-> Options_s_.template.h
+   +-> oyOptions_s_.template.h
    |
    +-> BaseList_s_.h
    |
@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -23,6 +23,8 @@
 #define OY_OPTIONS_S__H
 
 #define oyOptionsPriv_m( var ) ((oyOptions_s_*) (var))
+
+typedef struct oyOptions_s_ oyOptions_s_;
 
 
 
@@ -35,7 +37,6 @@
 
 #include "oyOptions_s.h"
 
-typedef struct oyOptions_s_ oyOptions_s_;
 /* Include "Options.private.h" { */
 
 /* } Include "Options.private.h" */
@@ -91,12 +92,6 @@ int
 
 
 /* Include "Options.private_methods_declarations.h" { */
-int            oyOptions_Init__Members(oyOptions_s_      * s );
-int            oyOptions_Copy__Members(oyOptions_s_      * dest,
-                                       oyOptions_s_      * src );
-int            oyOptions_Release__Members (
-                                       oyOptions_s_      * s );
-
 void           oyOptions_ParseXML_   ( oyOptions_s_      * s,
                                        char            *** texts,
                                        int               * texts_n,

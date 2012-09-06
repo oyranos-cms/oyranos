@@ -1,7 +1,7 @@
 /** @file oyOption_s_.h
 
    [Template file inheritance graph]
-   +-> Option_s_.template.h
+   +-> oyOption_s_.template.h
    |
    +-- Base_s_.h
 
@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -22,13 +22,14 @@
 
 #define oyOptionPriv_m( var ) ((oyOption_s_*) (var))
 
+typedef struct oyOption_s_ oyOption_s_;
+
   
 #include <oyranos_object.h>
   
 
 #include "oyOption_s.h"
 
-typedef struct oyOption_s_ oyOption_s_;
 /* Include "Option.private.h" { */
 
 /* } Include "Option.private.h" */

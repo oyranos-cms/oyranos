@@ -1,7 +1,7 @@
 /** @file oyHash_s_.c
 
    [Template file inheritance graph]
-   +-> Hash_s_.template.c
+   +-> oyHash_s_.template.c
    |
    +-- Base_s_.c
 
@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/08/12
+ *  @date     2012/09/06
  */
 
 
@@ -21,6 +21,10 @@
   
 #include "oyHash_s.h"
 #include "oyHash_s_.h"
+
+
+
+
 
 #include "oyObject_s.h"
 #include "oyranos_object_internal.h"
@@ -157,6 +161,8 @@ oyHash_s_ * oyHash_New_ ( oyObject_s object )
   }
 
   error = !memset( s, 0, sizeof(oyHash_s_) );
+  if(error)
+    WARNc_S( "memset failed" );
 
   s->type_ = type;
   s->copy = (oyStruct_Copy_f) oyHash_Copy;
@@ -166,13 +172,15 @@ oyHash_s_ * oyHash_New_ ( oyObject_s object )
 
   
   /* ---- start of custom Hash constructor ----- */
-  error += !oyObject_SetParent( s_obj, oyOBJECT_HASH_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_HASH_S, (oyPointer)s );
   /* ---- end of custom Hash constructor ------- */
   
   
   
   
   /* ---- end of common object constructor ------- */
+  if(error)
+    WARNc_S( "oyObject_SetParent failed" );
 
 
   
@@ -213,7 +221,7 @@ oyHash_s_ * oyHash_Copy__ ( oyHash_s_ *hash, oyObject_s object )
   if(!hash || !object)
     return s;
 
-  s = oyHash_New_( object );
+  s = (oyHash_s_*) oyHash_New( object );
   error = !s;
 
   if(!error) {

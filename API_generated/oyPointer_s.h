@@ -1,11 +1,11 @@
 /** @file oyPointer_s.h
 
    [Template file inheritance graph]
-   +-> Pointer_s.template.h
+   +-> oyPointer_s.template.h
    |
    +-> Base_s.h
    |
-   +-- Struct_s.template.h
+   +-- oyStruct_s.template.h
 
  *  Oyranos is an open source Colour Management System
  *
@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -32,11 +32,12 @@
   
 #include <oyranos_object.h>
 
+typedef struct oyPointer_s oyPointer_s;
+
 
 #include "oyStruct_s.h"
 
 
-typedef struct oyPointer_s oyPointer_s;
 /* Include "Pointer.public.h" { */
 
 /* } Include "Pointer.public.h" */
@@ -86,23 +87,35 @@ OYAPI int OYEXPORT
 
 
 /* Include "Pointer.public_methods_declarations.h" { */
-oyPointer_s * oyPointerLookUpFromText( const char        * text,
-                                       const char        * data_type );
-oyPointer_s * oyPointerLookUpFromObject(oyStruct_s       * data,
-                                       const char        * cmm );
-int          oyPointer_Set           ( oyPointer_s       * cmm_ptr,
-                                       const char        * lib_name,
-                                       const char        * resource,
-                                       oyPointer           ptr,
-                                       const char        * func_name,
-                                       oyPointer_release_f ptrRelease );
-const char * oyPointer_GetFuncName   ( oyPointer_s       * cmm_ptr );
-const char * oyPointer_GetLibName    ( oyPointer_s       * cmm_ptr );
-const char * oyPointer_GetResourceName(oyPointer_s       * cmm_ptr );
-int          oyPointer_GetSize       ( oyPointer_s       * cmm_ptr );
-int          oyPointer_SetSize       ( oyPointer_s       * cmm_ptr,
-                                       int                 size );
-oyPointer    oyPointer_GetPointer    ( oyPointer_s       * cmm_ptr );
+OYAPI int  OYEXPORT
+                 oyPointer_Set           ( oyPointer_s       * cmm_ptr,
+                                           const char        * lib_name,
+                                           const char        * resource,
+                                           oyPointer           ptr,
+                                           const char        * func_name,
+                                           oyPointer_release_f ptrRelease );
+OYAPI const char *  OYEXPORT
+                oyPointer_GetFuncName    ( oyPointer_s       * cmm_ptr );
+OYAPI const char *  OYEXPORT
+                oyPointer_GetLibName     ( oyPointer_s       * cmm_ptr );
+OYAPI const char *  OYEXPORT
+                oyPointer_GetResourceName(oyPointer_s       * cmm_ptr );
+OYAPI int  OYEXPORT
+                 oyPointer_GetSize       ( oyPointer_s       * cmm_ptr );
+OYAPI int  OYEXPORT
+                 oyPointer_SetSize       ( oyPointer_s       * cmm_ptr,
+                                           int                 size );
+OYAPI oyPointer  OYEXPORT
+                 oyPointer_GetPointer    ( oyPointer_s       * cmm_ptr );
+#ifdef UNHIDE_CMM
+OYAPI oyPointer_s *  OYEXPORT
+                oyPointer_LookUpFromObject (
+                                          oyStruct_s        * data,
+                                          const char        * data_type );
+OYAPI oyPointer_s *  OYEXPORT
+                oyPointer_LookUpFromText( const char        * text,
+                                          const char        * data_type );
+#endif
 
 /* } Include "Pointer.public_methods_declarations.h" */
 

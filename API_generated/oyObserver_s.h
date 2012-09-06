@@ -2,7 +2,7 @@
 /** @file oyObserver_s.h
 
    [Template file inheritance graph]
-   +-- Observer_s.template.h
+   +-- oyObserver_s.template.h
 
  *  Oyranos is an open source Colour Management System
  *
@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -103,6 +103,7 @@ typedef  int      (*oyObserver_Signal_f) (
 /* } Include "Observer.dox" */
 
 struct oyObserver_s {
+/* Include "Observer.members.h" { */
   oyOBJECT_e           type_;          /**< @private internal struct type oyOBJECT_OBSERVER_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -115,9 +116,11 @@ struct oyObserver_s {
   /** optional data; If no other user data is available this data will be
    *  passed with the signal. */
   oyStruct_s         * user_data;
-  oyObserver_Signal_f  signal;         /**< observers signaling function */ 
+  oyObserver_Signal_f  signal;         /**< observers signaling function */
   int                  disable_ref;    /**< disable signals reference counter
                                             == 0 -> enabled; otherwise not */
+
+/* } Include "Observer.members.h" */
 };
 
 /* oyObserver_s common object functions { */
@@ -130,7 +133,7 @@ OYAPI int  OYEXPORT
            oyObserver_Release        ( oyObserver_s     ** obj );
 /* } oyObserver_s common object functions */
 
-/* oyObserver_s object specific functions { */
+/* Include "Observer.public_methods_declarations.h" { */
 OYAPI int  OYEXPORT
            oyObserver_SignalSend     ( oyObserver_s      * observer,
                                        oySIGNAL_e          signal_type,
@@ -172,7 +175,8 @@ OYAPI uint32_t OYEXPORT
            oyObserverFlagsGet        ( void );
 OYAPI int  OYEXPORT
            oyObserverFlagsSet        ( uint32_t            flags );
-/* } oyObserver_s object specific functions */
+
+/* } Include "Observer.public_methods_declarations.h" */
 
 #ifdef __cplusplus
 } /* extern "C" */

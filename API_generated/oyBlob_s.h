@@ -1,11 +1,11 @@
 /** @file oyBlob_s.h
 
    [Template file inheritance graph]
-   +-> Blob_s.template.h
+   +-> oyBlob_s.template.h
    |
    +-> Base_s.h
    |
-   +-- Struct_s.template.h
+   +-- oyStruct_s.template.h
 
  *  Oyranos is an open source Colour Management System
  *
@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -32,11 +32,12 @@
   
 #include <oyranos_object.h>
 
+typedef struct oyBlob_s oyBlob_s;
+
 
 #include "oyStruct_s.h"
 
 
-typedef struct oyBlob_s oyBlob_s;
 /* Include "Blob.public.h" { */
 
 /* } Include "Blob.public.h" */
@@ -87,9 +88,12 @@ OYAPI int  OYEXPORT
                                        const oyPointer     ptr,
                                        size_t              size,
                                        const char        * type );
-oyPointer          oyBlob_GetPointer ( oyBlob_s          * blob );
-size_t             oyBlob_GetSize    ( oyBlob_s          * blob );
-const char *       oyBlob_GetType    ( oyBlob_s          * blob );
+OYAPI oyPointer  OYEXPORT
+                 oyBlob_GetPointer ( oyBlob_s          * blob );
+OYAPI size_t  OYEXPORT
+                 oyBlob_GetSize    ( oyBlob_s          * blob );
+OYAPI const char *  OYEXPORT
+                 oyBlob_GetType    ( oyBlob_s          * blob );
 
 /* } Include "Blob.public_methods_declarations.h" */
 

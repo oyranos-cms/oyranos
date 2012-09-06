@@ -1,7 +1,7 @@
 /** @file oyStructList_s_.c
 
    [Template file inheritance graph]
-   +-> StructList_s_.template.c
+   +-> oyStructList_s_.template.c
    |
    +-- Base_s_.c
 
@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/08/12
+ *  @date     2012/09/06
  */
 
 
@@ -21,6 +21,10 @@
   
 #include "oyStructList_s.h"
 #include "oyStructList_s_.h"
+
+
+
+
 
 #include "oyObject_s.h"
 #include "oyranos_object_internal.h"
@@ -163,6 +167,8 @@ oyStructList_s_ * oyStructList_New_ ( oyObject_s object )
   }
 
   error = !memset( s, 0, sizeof(oyStructList_s_) );
+  if(error)
+    WARNc_S( "memset failed" );
 
   s->type_ = type;
   s->copy = (oyStruct_Copy_f) oyStructList_Copy;
@@ -172,13 +178,15 @@ oyStructList_s_ * oyStructList_New_ ( oyObject_s object )
 
   
   /* ---- start of custom StructList constructor ----- */
-  error += !oyObject_SetParent( s_obj, oyOBJECT_STRUCT_LIST_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_STRUCT_LIST_S, (oyPointer)s );
   /* ---- end of custom StructList constructor ------- */
   
   
   
   
   /* ---- end of common object constructor ------- */
+  if(error)
+    WARNc_S( "oyObject_SetParent failed" );
 
 
   
@@ -219,7 +227,7 @@ oyStructList_s_ * oyStructList_Copy__ ( oyStructList_s_ *structlist, oyObject_s 
   if(!structlist || !object)
     return s;
 
-  s = oyStructList_New_( object );
+  s = (oyStructList_s_*) oyStructList_New( object );
   error = !s;
 
   if(!error) {
@@ -326,17 +334,21 @@ int oyStructList_Release_( oyStructList_s_ **structlist )
 
 
 /* Include "StructList.private_methods_definitions.c" { */
-/** @internal
- *  @brief oyStructList_s pointer access
+/** Function  oyStructList_GetRaw_
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s pointer access
+ *
+ *  Unused?? Consider changing the name to oyStructList_GetArray_()??
+ *  Get a pointer to the internal array of oyStruct_s objects
  *
  *  @since Oyranos: version 0.1.8
  *  @date  23 november 2007 (API 0.1.8)
  */
-/*oyHandle_s **    oyStructList_GetRaw_( oyStructList_s    * list )
+oyStruct_s **    oyStructList_GetRaw_( oyStructList_s_   * list )
 {
   int error = 0;
-  oyStructList_s_ * s = (oyStructList_s_*)list;
-  oyHandle_s ** p = 0;
+  oyStructList_s_ * s = list;
+  oyStruct_s ** p = 0;
 
   if(error <= 0)
   if(s->type_ != oyOBJECT_STRUCT_LIST_S)
@@ -346,50 +358,54 @@ int oyStructList_Release_( oyStructList_s_ **structlist )
     p = s->ptr_;
 
   return p;
-}*/
+}
 
-/** @internal
- *  @brief oyStructList_s pointer access
+/** Function  oyStructList_Get_
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s pointer access
+ *  @internal
  *
  *  non thread save
  *
  *  @since Oyranos: version 0.1.8
  *  @date  21 november 2007 (API 0.1.8)
  */
-oyStruct_s *     oyStructList_Get_   ( oyStructList_s    * list,
+oyStruct_s *     oyStructList_Get_   ( oyStructList_s_   * list,
                                        int                 pos )
 {
   int n = 0;
-  oyStructList_s_ * s = (oyStructList_s_*)list;
+  oyStructList_s_ * s = list;
   int error = !s;
   oyStruct_s * obj = 0;
 
   if(error <= 0)
-  if(s->type_ != oyOBJECT_STRUCT_LIST_S)
-    error = 1;
+    if(s->type_ != oyOBJECT_STRUCT_LIST_S)
+      error = 1;
 
   if(error <= 0)
     n = s->n_;
 
   if(error <= 0)
-  if(pos >= 0 && n > pos && s->ptr_[pos])
-    obj = s->ptr_[pos];
+    if(pos >= 0 && n > pos && s->ptr_[pos])
+      obj = s->ptr_[pos];
 
   return obj;
 }
 
-/** @internal
- *  @brief oyStructList_s pointer referencing
+/** Function  oyStructList_ReferenceAt_
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s pointer referencing
+ *  @internal
  *
  *  @since Oyranos: version 0.1.8
  *  @date  23 november 2007 (API 0.1.8)
  */
-int              oyStructList_ReferenceAt_( oyStructList_s * list,
-                                       int                 pos )
+int              oyStructList_ReferenceAt_(oyStructList_s_ * list,
+                                           int               pos )
 {
   int n = 0;
   int error = 0;
-  oyStructList_s_ * s = (oyStructList_s_*)list;
+  oyStructList_s_ * s = list;
   oyStruct_s * p = 0;
 
   if(s)
@@ -414,6 +430,26 @@ int              oyStructList_ReferenceAt_( oyStructList_s * list,
   return !p;
 }
 
+/** Function  oyStructList_GetType_
+ *  @memberof oyStructList_s
+ *  @brief    oyStructList_s pointer access
+ *  @internal
+ *
+ *  non thread save
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  1 january 2008 (API 0.1.8)
+ */
+oyStruct_s *     oyStructList_GetType_(oyStructList_s_   * list,
+                                       int                 pos,
+                                       oyOBJECT_e          type )
+{
+  oyStruct_s * obj = oyStructList_Get_( list, pos );
+
+  if(obj && obj->type_ != type)
+    obj = 0;
+  return obj;
+}
 
 /* } Include "StructList.private_methods_definitions.c" */
 

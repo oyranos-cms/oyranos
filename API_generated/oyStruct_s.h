@@ -1,7 +1,7 @@
 /** @file oyStruct_s.h
 
    [Template file inheritance graph]
-   +-- Struct_s.template.h
+   +-- oyStruct_s.template.h
 
  *  Oyranos is an open source Colour Management System
  *
@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -28,8 +28,9 @@
   
 #include <oyranos_object.h>
 
-
 typedef struct oyStruct_s oyStruct_s;
+
+
 /* Include "Struct.public.h" { */
 #include <oyranos_core.h>
 
@@ -63,7 +64,8 @@ void         oyThreadLockingSet      ( oyStruct_LockCreate_f  createLockFunc,
  *  @brief Oyranos base structure
  *
  *  All Oyranos structures should be castable to this basic one.
- *  Do not automaticly create templates [notemplates]
+ *
+ *  @note New templates will not be created automaticly [notemplates]
  *
  *  @version Oyranos: x.x.x
  *  @since Oyranos: version 0.1.8
@@ -86,14 +88,18 @@ oyObject_s           oy_;            /**< @private features name and hash */
 
 
 /* Include "Struct.public_methods_declarations.h" { */
-const char * oyStruct_GetText        ( oyStruct_s        * obj,
-                                       oyNAME_e            name_type,
-                                       uint32_t            flags );
+OYAPI const char *  OYEXPORT
+                oyStruct_GetText        ( oyStruct_s        * obj,
+                                          oyNAME_e            name_type,
+                                          uint32_t            flags );
 
-oyAlloc_f    oyStruct_GetAllocator   ( oyStruct_s        * obj );
-oyDeAlloc_f  oyStruct_GetDeAllocator ( oyStruct_s        * obj );
-int          oyStruct_CheckType      ( oyStruct_s        * obj,
-                                       oyOBJECT_e          type );
+OYAPI oyAlloc_f  OYEXPORT
+                 oyStruct_GetAllocator   ( oyStruct_s        * obj );
+OYAPI oyDeAlloc_f  OYEXPORT
+                 oyStruct_GetDeAllocator ( oyStruct_s        * obj );
+OYAPI int  OYEXPORT
+                 oyStruct_CheckType      ( oyStruct_s        * obj,
+                                           oyOBJECT_e          type );
 
 /* } Include "Struct.public_methods_declarations.h" */
 

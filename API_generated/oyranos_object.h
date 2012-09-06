@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/08/12
+ *  @date     2012/09/06
  */
 
 
@@ -72,10 +72,30 @@ typedef enum {
   oyOBJECT_CMM_API1_S,                 /**< oyCMMapi_s */
   oyOBJECT_CMM_API2_S,                /**< oyCMMapi2_s */
 
+  oyOBJECT_CMM_API_S,   /**< oyCMMapi_s */
+  oyOBJECT_CMM_API10_S,   /**< oyCMMapi10_s */
+  oyOBJECT_CMM_API3_S,   /**< oyCMMapi3_s */
+  oyOBJECT_CMM_API4_S,   /**< oyCMMapi4_s */
+  oyOBJECT_CMM_API5_S,   /**< oyCMMapi5_s */
+  oyOBJECT_CMM_API6_S,   /**< oyCMMapi6_s */
+  oyOBJECT_CMM_API7_S,   /**< oyCMMapi7_s */
+  oyOBJECT_CMM_API8_S,   /**< oyCMMapi8_s */
+  oyOBJECT_CMM_API9_S,   /**< oyCMMapi9_s */
+  oyOBJECT_CMM_API_FILTER_S,   /**< oyCMMapiFilter_s */
+  oyOBJECT_CMM_API_FILTERS_S,   /**< oyCMMapiFilters_s */
+  oyOBJECT_CMM_OBJECT_TYPE_S,   /**< oyCMMobjectType_s */
+  oyOBJECT_CMM_UI_S,   /**< oyCMMui_s */
   oyOBJECT_CMM_API_MAX,               /**< not defined */
 
+  
+  oyOBJECT_CMM_APIS_S,   /**< oyCMMapis_s */
+  
+  
+  oyOBJECT_CMMI_NFO_S,   /**< oyCMMInfo_s */
+  
 
   oyOBJECT_PROFILE_S,   /**< oyProfile_s */
+  oyOBJECT_PROFILES_S,   /**< oyProfiles_s */
   oyOBJECT_PROFILE_TAG_S,   /**< oyProfileTag_s */
   oyOBJECT_NAMED_COLOURS_S,
   oyOBJECT_MAX
@@ -122,9 +142,12 @@ typedef enum {
   oyOBJECT_CMM_API7_S,                /**< oyCMMapi7_s */
   oyOBJECT_CMM_DATA_TYPES_S,          /**< oyCMMDataTypes_s */
   oyOBJECT_CMM_API8_S,                /**< oyCMMapi8_s */
+  oyOBJECT_CMM_API_FILTER_S,          /**< oyCMMapiFilter_s */
   oyOBJECT_CMM_API_FILTERS_S,         /**< oyCMMapiFilters_s */
   oyOBJECT_CMM_API9_S,                /**< oyCMMapi9_s */
   oyOBJECT_CMM_API10_S,               /**< oyCMMapi10_s */
+  oyOBJECT_CMM_UI_S,                  /**< oyCMMui_s */
+  oyOBJECT_CMM_OBJECT_TYPE_S,         /**< oyCMMobjectType_s */
   oyOBJECT_CMM_API_MAX,               /**< not defined */
   oyOBJECT_ICON_S      = 80,          /*!< oyIcon_s */
   oyOBJECT_MODULE_S,                  /*!< oyModule_s */
@@ -308,6 +331,9 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration1,
                                        const char        * registration2,
                                        oyOBJECT_e          api_number );
 
+#define OY_OUTPUT                      0x01
+#define OY_INPUT                       0x02
+/* decode */
 
 
 #ifdef __cplusplus

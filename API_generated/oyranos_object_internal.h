@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -53,5 +53,11 @@
     action; \
   }
 
+#define OY_ERR if(l_error != 0) error = l_error;
+
+int    oyTextIccDictMatch            ( const char        * text,
+                                       const char        * pattern,
+                                       double              delta );
+int    oyPointerRelease              ( oyPointer         * ptr );
 
 #endif /* OYRANOS_OBJECT_INTERNAL_H */

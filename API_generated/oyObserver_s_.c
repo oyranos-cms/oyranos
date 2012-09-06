@@ -1,7 +1,7 @@
 /** @file oyObserver_s_.c
 
    [Template file inheritance graph]
-   +-- Observer_s_.template.c
+   +-- oyObserver_s_.template.c
 
  *  Oyranos is an open source Colour Management System
  *
@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -24,11 +24,12 @@
 #include "oyOption_s_.h"
 
 
-/**
- *  @internal
- *  Function oyStructSignalForward_
+/* Include "Observer.private_methods_definitions.c" { */
+/** Function  oyStructSignalForward_
  *  @memberof oyObserver_s
- *  @brief   observe all list members
+ *  @brief    Observe all list members
+ *  @internal
+ *
  *
  *  This function is useful to forward signals and fill holes in a chain.
  *  Implements oyObserver_Signal_f.
@@ -65,10 +66,10 @@ int      oyStructSignalForward_      ( oyObserver_s      * observer,
   return handled;
 }
 
-/** @internal
- *  Function oyObserver_Copy_
+/** Function  oyObserver_Copy_
  *  @memberof oyObserver_s
- *  @brief   real copy a Observer object
+ *  @brief    Real copy a Observer object
+ *  @internal
  *
  *  @param[in]     obj                 struct object
  *  @param         object              the optional object
@@ -77,8 +78,7 @@ int      oyStructSignalForward_      ( oyObserver_s      * observer,
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2009/10/26
  */
-oyObserver_s * oyObserver_Copy_
-                                     ( oyObserver_s      * obj,
+oyObserver_s * oyObserver_Copy_      ( oyObserver_s      * obj,
                                        oyObject_s          object )
 {
   oyObserver_s * s = 0;
@@ -104,10 +104,10 @@ oyObserver_s * oyObserver_Copy_
   return s;
 }
 
-/** @internal
- *  Function oyStruct_ObserverListGet_
+/** Function  oyStruct_ObserverListGet_
  *  @memberof oyObserver_s
- *  @brief   get the desired list of oyObserver_s'
+ *  @brief    Get the desired list of oyObserver_s'
+ *  @internal
  *
  *  @param[in]     obj                 the object to look in for the list
  *  @param[in]     reg                 the selector for the list
@@ -138,8 +138,7 @@ oyStructList_s * oyStruct_ObserverListGet_(
       if(!obj->oy_->handles_)
         obj->oy_->handles_ = oyOptions_New( 0 );
       error = oyOptions_MoveIn( obj->oy_->handles_, &o, -1);
-      o = oyOptions_Find( obj->oy_->handles_,
-                          reg );
+      o = oyOptions_Find( obj->oy_->handles_, reg );
     }
   }
 
@@ -162,10 +161,10 @@ oyStructList_s * oyStruct_ObserverListGet_(
   return list;
 }
 
-/** @internal
- *  Function oyStruct_ObserverRemove_
+/** Function  oyStruct_ObserverRemove_
  *  @memberof oyObserver_s
- *  @brief   remove a observer from the observer or model internal list
+ *  @brief    Remove a observer from the observer or model internal list
+ *  @internal
  *
  *  @param[in,out] list                the reference list
  *  @param[in]     obj                 comparision object
@@ -201,3 +200,5 @@ int        oyStruct_ObserverRemove_  ( oyStructList_s    * list,
   }
   return error;
 }
+
+/* } Include "Observer.private_methods_definitions.c" */

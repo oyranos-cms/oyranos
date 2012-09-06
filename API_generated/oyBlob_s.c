@@ -1,11 +1,11 @@
 /** @file oyBlob_s.c
 
    [Template file inheritance graph]
-   +-> Blob_s.template.c
+   +-> oyBlob_s.template.c
    |
    +-> Base_s.c
    |
-   +-- Struct_s.template.c
+   +-- oyStruct_s.template.c
 
  *  Oyranos is an open source Colour Management System
  *
@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 

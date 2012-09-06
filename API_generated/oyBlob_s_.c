@@ -1,7 +1,7 @@
 /** @file oyBlob_s_.c
 
    [Template file inheritance graph]
-   +-> Blob_s_.template.c
+   +-> oyBlob_s_.template.c
    |
    +-- Base_s_.c
 
@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/08/12
+ *  @date     2012/09/06
  */
 
 
@@ -21,6 +21,10 @@
   
 #include "oyBlob_s.h"
 #include "oyBlob_s_.h"
+
+
+
+
 
 #include "oyObject_s.h"
 #include "oyranos_object_internal.h"
@@ -170,6 +174,8 @@ oyBlob_s_ * oyBlob_New_ ( oyObject_s object )
   }
 
   error = !memset( s, 0, sizeof(oyBlob_s_) );
+  if(error)
+    WARNc_S( "memset failed" );
 
   s->type_ = type;
   s->copy = (oyStruct_Copy_f) oyBlob_Copy;
@@ -179,13 +185,15 @@ oyBlob_s_ * oyBlob_New_ ( oyObject_s object )
 
   
   /* ---- start of custom Blob constructor ----- */
-  error += !oyObject_SetParent( s_obj, oyOBJECT_BLOB_S, s );
+  error += !oyObject_SetParent( s_obj, oyOBJECT_BLOB_S, (oyPointer)s );
   /* ---- end of custom Blob constructor ------- */
   
   
   
   
   /* ---- end of common object constructor ------- */
+  if(error)
+    WARNc_S( "oyObject_SetParent failed" );
 
 
   
@@ -226,7 +234,7 @@ oyBlob_s_ * oyBlob_Copy__ ( oyBlob_s_ *blob, oyObject_s object )
   if(!blob || !object)
     return s;
 
-  s = oyBlob_New_( object );
+  s = (oyBlob_s_*) oyBlob_New( object );
   error = !s;
 
   if(!error) {

@@ -1,7 +1,7 @@
 /** @file oyStructList_s_.h
 
    [Template file inheritance graph]
-   +-> StructList_s_.template.h
+   +-> oyStructList_s_.template.h
    |
    +-- Base_s_.h
 
@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -22,13 +22,14 @@
 
 #define oyStructListPriv_m( var ) ((oyStructList_s_*) (var))
 
+typedef struct oyStructList_s_ oyStructList_s_;
+
   
 #include <oyranos_object.h>
   
 
 #include "oyStructList_s.h"
 
-typedef struct oyStructList_s_ oyStructList_s_;
 /* Include "StructList.private.h" { */
 
 /* } Include "StructList.private.h" */
@@ -75,12 +76,14 @@ int
 
 
 /* Include "StructList.private_methods_declarations.h" { */
-/*oyStruct_s **    oyStructList_GetRaw_( oyStructList_s    * list );*/
-oyStruct_s *     oyStructList_Get_   ( oyStructList_s    * list,
+oyStruct_s **    oyStructList_GetRaw_( oyStructList_s_   * list );
+oyStruct_s *     oyStructList_Get_   ( oyStructList_s_   * list,
                                        int                 pos );
-int              oyStructList_ReferenceAt_(oyStructList_s* list,
-                                       int                 pos );
-
+int              oyStructList_ReferenceAt_(oyStructList_s_ * list,
+                                           int               pos );
+oyStruct_s *     oyStructList_GetType_(oyStructList_s_   * list,
+                                       int                 pos,
+                                       oyOBJECT_e          type );
 
 /* } Include "StructList.private_methods_declarations.h" */
 

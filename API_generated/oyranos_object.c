@@ -743,4 +743,88 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration_a,
   return match;
 }
 
+/** Function oyTextIccDictMatch
+ *  @brief   analyse a string and compare with a given pattern
+ *
+ *  The rules are described in the ICC meta tag dict type at
+ *  http://www.color.org    ICCSpecRevision_25-02-10_dictType.pdf
+ *
+ *  @param         text                value string
+ *  @param         pattern             pattern to compare with
+ *  @param         delta               say how far a difference can drift
+ *  @return                            match, useable for ranking
+ *
+ *  @version Oyranos: 0.3.3
+ *  @since   2010/11/21 (Oyranos: 0.1.3)
+ *  @date    2011/12/29
+ */
+int    oyTextIccDictMatch            ( const char        * text,
+                                       const char        * pattern,
+                                       double              delta )
+{
+  int match = 0;
+  int n = 0, p_n = 0, i, j;
+  char ** texts = 0, * t;
+  char ** patterns = 0, * p;
+  long num[2];
+  int num_valid[2];
+  double dbl[2];
+  int dbl_valid[2]; 
 
+  DBG_MEM_START
+
+  if(text && pattern)
+  {
+    texts = oyStringSplit_(text, ',', &n, oyAllocateFunc_ );
+    patterns = oyStringSplit_(pattern, ',', &p_n, oyAllocateFunc_ );
+
+    for( i = 0; i < n; ++i)
+    {
+      t = texts[i];
+      DBG_MEM3_S( "%d: "OY_PRINT_POINTER" \"%s\"", i, (intptr_t)t, t );
+      num_valid[0] = !oyStringToLong(t,&num[0]);
+      dbl_valid[0] = !oyStringToDouble(t,&dbl[0]);
+      DBG_MEM
+      for( j = 0; j < p_n; ++j )
+      {
+        p = patterns[j];
+        DBG_MEM4_S( "%d %d: "OY_PRINT_POINTER" \"%s\"", i, j, (intptr_t)t, p );
+        num_valid[1] = !oyStringToLong(p,&num[1]);
+        dbl_valid[1] = !oyStringToDouble(p,&dbl[1]);
+        DBG_MEM
+
+        if((strcmp( t, p ) == 0) ||
+           (num_valid[0] && num_valid[1] && num[0] == num[1]) ||
+           (dbl_valid[0] && dbl_valid[1] && fabs(dbl[0] - dbl[1])/2.0 < delta))
+        {
+          match = 1;
+          goto clean_oyTextIccDictMatch;
+        }
+      }
+    }
+    clean_oyTextIccDictMatch:
+      oyStringListRelease_( &texts, n, oyDeAllocateFunc_ );
+      oyStringListRelease_( &patterns, p_n, oyDeAllocateFunc_ );
+  }
+
+  DBG_MEM_ENDE
+  return match;
+}
+
+/** @internal
+ *  @brief   wrapper for oyDeAllocateFunc_
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/27 (Oyranos: 0.1.10)
+ *  @date    2008/12/27
+ */
+int oyPointerRelease                 ( oyPointer         * ptr )
+{
+  if(ptr && *ptr)
+  {
+    oyDeAllocateFunc_(*ptr);
+    *ptr = 0;
+    return 0;
+  }
+  return 1;
+}

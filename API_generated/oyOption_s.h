@@ -1,11 +1,11 @@
 /** @file oyOption_s.h
 
    [Template file inheritance graph]
-   +-> Option_s.template.h
+   +-> oyOption_s.template.h
    |
    +-> Base_s.h
    |
-   +-- Struct_s.template.h
+   +-- oyStruct_s.template.h
 
  *  Oyranos is an open source Colour Management System
  *
@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -32,11 +32,12 @@
   
 #include <oyranos_object.h>
 
+typedef struct oyOption_s oyOption_s;
+
 
 #include "oyStruct_s.h"
 
 
-typedef struct oyOption_s oyOption_s;
 /* Include "Option.public.h" { */
 #define OY_STRING_LIST                 0x01 /** create a oyVAL_STRING_LIST */
 /* decode */
@@ -135,7 +136,6 @@ int            oyValueEqual          ( oyValue_u         * a,
  *  The id field maps to a oyWidget_s object.
  *  Options and widgets are to be queried by the according function / CMM
  *  combination.
- *  @note New templates will not be created automaticly [notemplates]
  *
  *  @version Oyranos: 0.1.8
  *  @since   2007/00/00 (Oyranos: 0.1.x)
@@ -165,51 +165,74 @@ OYAPI int OYEXPORT
 
 
 /* Include "Option.public_methods_declarations.h" { */
-oyOption_s *   oyOption_FromRegistration( const char        * registration,
+OYAPI oyOption_s  *    OYEXPORT
+                oyOption_FromRegistration( const char        * registration,
                                           oyObject_s          object );
-int            oyOption_GetId        ( oyOption_s        * option );
-const char *   oyOption_GetText      ( oyOption_s        * obj,
+OYAPI int  OYEXPORT
+                 oyOption_GetId        ( oyOption_s        * option );
+OYAPI const  char *    OYEXPORT
+                oyOption_GetText      ( oyOption_s        * obj,
                                        oyNAME_e            type );
-int            oyOption_SetFromText  ( oyOption_s        * obj,
+OYAPI int  OYEXPORT
+                 oyOption_SetFromText  ( oyOption_s        * obj,
                                        const char        * text,
                                        uint32_t            flags );
-char *         oyOption_GetValueText ( oyOption_s        * obj,
+OYAPI char  *  OYEXPORT
+                oyOption_GetValueText ( oyOption_s        * obj,
                                        oyAlloc_f           allocateFunc );
-const char *   oyOption_GetValueString(oyOption_s        * obj,
+OYAPI const  char *  OYEXPORT
+                oyOption_GetValueString(oyOption_s        * obj,
                                        int                 pos );
-int            oyOption_SetFromInt   ( oyOption_s        * obj,
+OYAPI int  OYEXPORT
+                 oyOption_SetFromInt   ( oyOption_s        * obj,
                                        int32_t             integer,
                                        int                 pos,
                                        uint32_t            flags );
-int32_t        oyOption_GetValueInt  ( oyOption_s        * obj,
+OYAPI int32_t  OYEXPORT
+                 oyOption_GetValueInt  ( oyOption_s        * obj,
                                        int                 pos );
-int            oyOption_SetFromDouble( oyOption_s        * obj,
+OYAPI int  OYEXPORT
+                 oyOption_SetFromDouble( oyOption_s        * obj,
                                        double              floating_point,
                                        int                 pos,
                                        uint32_t            flags );
-double         oyOption_GetValueDouble(oyOption_s        * obj,
+OYAPI double  OYEXPORT
+                 oyOption_GetValueDouble(oyOption_s        * obj,
                                        int                 pos );
-int            oyOption_Clear        ( oyOption_s        * s );
-int            oyOption_SetFromData  ( oyOption_s        * option,
+OYAPI int  OYEXPORT
+                 oyOption_Clear        ( oyOption_s        * s );
+OYAPI int  OYEXPORT
+                 oyOption_SetFromData  ( oyOption_s        * option,
                                        oyPointer           ptr,
                                        size_t              size );
-oyPointer      oyOption_GetData      ( oyOption_s        * option,
+OYAPI oyPointer  OYEXPORT
+                 oyOption_GetData      ( oyOption_s        * option,
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc );
-int            oyOption_SetRegistration (
+OYAPI int  OYEXPORT
+                 oyOption_SetRegistration (
                                        oyOption_s        * option,
                                        const char        * registration );
-const char *   oyOption_GetRegistration (
+OYAPI const  char *  OYEXPORT
+                oyOption_GetRegistration (
                                        oyOption_s        * option );
-int            oyOption_StructMoveIn ( oyOption_s        * option,
+OYAPI int  OYEXPORT
+                 oyOption_StructMoveIn ( oyOption_s        * option,
                                        oyStruct_s       ** s );
-oyStruct_s *   oyOption_StructGet    ( oyOption_s        * option,
+OYAPI oyStruct_s *  OYEXPORT
+                oyOption_StructGet    ( oyOption_s        * option,
                                        oyOBJECT_e          type );
-void           oyOption_SetSource    ( oyOption_s        * option,
+OYAPI int  OYEXPORT
+                 oyOption_SetValueFromDB  ( oyOption_s        * option );
+OYAPI void  OYEXPORT
+                 oyOption_SetSource    ( oyOption_s        * option,
                                        oyOPTIONSOURCE_e    source );
-oyOPTIONSOURCE_e oyOption_GetSource  ( oyOption_s        * option );
-int            oyOption_GetFlags     ( oyOption_s        * object );
-int            oyOption_SetFlags     ( oyOption_s        * object,
+OYAPI oyOPTIONSOURCE_e  OYEXPORT
+                 oyOption_GetSource  ( oyOption_s        * option );
+OYAPI int  OYEXPORT
+                 oyOption_GetFlags     ( oyOption_s        * object );
+OYAPI int  OYEXPORT
+                 oyOption_SetFlags     ( oyOption_s        * object,
                                        uint32_t            flags );
 
 /* } Include "Option.public_methods_declarations.h" */

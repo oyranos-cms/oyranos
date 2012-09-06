@@ -1,7 +1,7 @@
 /** @file oyPointer_s_.h
 
    [Template file inheritance graph]
-   +-> Pointer_s_.template.h
+   +-> oyPointer_s_.template.h
    |
    +-- Base_s_.h
 
@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -22,13 +22,14 @@
 
 #define oyPointerPriv_m( var ) ((oyPointer_s_*) (var))
 
+typedef struct oyPointer_s_ oyPointer_s_;
+
   
 #include <oyranos_object.h>
   
 
 #include "oyPointer_s.h"
 
-typedef struct oyPointer_s_ oyPointer_s_;
 /* Include "Pointer.private.h" { */
 
 /* } Include "Pointer.private.h" */

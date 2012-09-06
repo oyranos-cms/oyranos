@@ -1,7 +1,7 @@
 /** @file oyStruct_s.c
 
    [Template file inheritance graph]
-   +-- Struct_s.template.c
+   +-- oyStruct_s.template.c
 
  *  Oyranos is an open source Colour Management System
  *
@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/02/14
+ *  @date     2012/09/06
  */
 
 
@@ -25,8 +25,13 @@
 
 
 /* Include "Struct.public_methods_definitions.c" { */
+#include "oyranos_generic.h"
+#include "oyCMMapi9_s.h"
+#include "oyCMMapiFilters_s.h"
+/*=======*/
 #include "oyranos_types.h"/* uint64_t uintptr_t */
 #include "oyranos_cmm.h" /* oyObjectInfoStatic_s */
+/*>>>>>>> master*/
 
 const char * (*oyStruct_GetTextFromModule_p) (
                                        oyStruct_s        * obj,
