@@ -86,7 +86,6 @@ int    oyOptions_SetRegistrationTextKey_(
                                        const char        * registration,
                                        const char        * key,
                                        const char        * value );
-int          oyDeviceCheckProperties ( oyConfig_s        * device );
 
 int    oyTextIccDictMatch            ( const char        * text,
                                        const char        * pattern,
@@ -200,9 +199,6 @@ oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name );
 oyCMMInfo_s *    oyCMMGet_           ( const char        * cmm );
 int              oyCMMRelease_       ( const char        * cmm );
 unsigned int     oyCMMapiIsReady_    ( oyOBJECT_e          type );
-
-
-int          oyPointerReleaseFunc_   ( oyPointer         * ptr );
 
 
 uint32_t     oyCMMtoId               ( const char        * cmm );

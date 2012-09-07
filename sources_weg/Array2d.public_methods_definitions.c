@@ -202,7 +202,7 @@ int            oyArray2d_ReleaseArray( oyArray2d_s       * obj )
   return error;
 }
  
-/** Function  oyArray2d_RowsSet
+/** Function  oyArray2d_SetRows
  *  @memberof oyArray2d_s
  *  @brief    Set the data and (re-)initialise the object
  *
@@ -217,7 +217,7 @@ int            oyArray2d_ReleaseArray( oyArray2d_s       * obj )
  *  @date    2010/09/07
  */
 OYAPI int  OYEXPORT
-                 oyArray2d_RowsSet   ( oyArray2d_s       * obj,
+                 oyArray2d_SetRows   ( oyArray2d_s       * obj,
                                        oyPointer         * rows,
                                        int                 do_copy )
 {

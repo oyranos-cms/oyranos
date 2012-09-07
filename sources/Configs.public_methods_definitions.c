@@ -1,3 +1,5 @@
+#include "oyranos_sentinel.h"
+
 #ifdef UNHIDE_CMM
 /** Function  oyConfigs_FromDomain
  *  @memberof oyConfigs_s
@@ -225,6 +227,98 @@ OYAPI int  OYEXPORT
   }
 
   oyOptions_Release( &options );
+
+  return error;
+}
+
+/** Function oyConfigs_SelectSimilars
+ *  @memberof oyConfigs_s
+ *  @brief   filter similiar configs compared by a pattern
+ *
+ *  This is a simple convenience function to select from a list existing 
+ *  configurations.
+ *
+ *  @verbatim
+    const char * pattern[][2] = {{"device_name",0},
+                                 {"manufacturer",0},
+                                 {"model",0},
+                                 {"serial",0},
+                                 {0,0}};
+    oyConfigs_s * devices = 0, * filtered = 0;
+    int error = oyConfigs_FromDB( registration, &devices, 0 );
+    error = oyConfigs_SelectSimilars( devices, pattern, &filtered )
+ *  @endverbatim
+ *
+ *  @param[in]     list                the list
+ *  @param[in]     pattern             user supplied zero terminated pattern
+ *                                     list; The first element is a mandadory
+ *                                     key to meet. The second element is the 
+ *                                     optional value. Each 
+ *  @param[out]    filtered            the result
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/02/26 (Oyranos: 0.1.10)
+ *  @date    2009/02/26
+ */
+OYAPI int  OYEXPORT
+                 oyConfigs_SelectSimilars (
+                                       oyConfigs_s       * list,
+                                       const char        * pattern[][2],
+                                       oyConfigs_s      ** filtered )
+{
+  int error = !list;
+  int i,j, matches = 0, n, required = 0;
+  oyConfigs_s * s = list,
+              * result = 0;
+  oyConfig_s * device = 0;
+  const char * ct = 0;
+
+  if(!s)
+    return 0;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_CONFIGS_S, return 0 )
+
+  /** 0. setup Elektra */
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
+
+  result = oyConfigs_New(0);
+                 
+  n = oyConfigs_Count( list );
+  for(i = 0; i < n; ++i)
+  {
+    device = oyConfigs_Get( list, i );
+    j = 0;
+    matches = 0;
+    required = 0;
+
+    while(pattern[j][0])
+    {
+      ct = oyConfig_FindString( device, pattern[j][0], 0);
+      if(pattern[j][1])
+      {
+        ++required;
+
+        if(ct && strcmp(ct,pattern[j][1]) == 0)
+          ++matches;
+
+      } else
+      {
+        ++required;
+        ++matches;
+      }
+
+      ++j;
+    }
+
+    if(required == matches)
+      error = oyConfigs_MoveIn( result, &device, -1 );
+
+    oyConfig_Release( &device );
+  }
+
+  *filtered = result;
 
   return error;
 }

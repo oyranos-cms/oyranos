@@ -1,5 +1,9 @@
 #include "oyranos_alpha.h"
 #include "oyranos_elektra.h"
+#include "oyranos_devices.h"
+#include "oyranos_devices_internal.h"
+
+#include "oyjl/oyjl_tree.h"
 
 /** Function oyConfig_AddDBData
  *  @memberof oyConfig_s
@@ -90,7 +94,7 @@ OYAPI int  OYEXPORT
 }
 
 /** Function  oyConfig_GetDB
- *  @brief    Search a configuration in the DB for a configuration from module
+ *  @brief    search a configuration in the DB for a configuration from module
  *  @memberof oyConfig_s
  *
  *  @param[in]     device              the to be checked configuration from
@@ -100,31 +104,58 @@ OYAPI int  OYEXPORT
  *  @return                            0 - good, >= 1 - error + a message should
  *                                     be sent
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.3.0
  *  @since   2009/01/26 (Oyranos: 0.1.10)
- *  @date    2009/01/26
+ *  @date    2012/09/15
  */
 OYAPI int  OYEXPORT
                oyConfig_GetDB        ( oyConfig_s        * device,
                                        int32_t           * rank_value )
 {
   int error = !device;
-  int rank = 0, max_rank = 0, i, n;
   oyConfigs_s * configs = 0;
+  oyConfig_s_ * s = (oyConfig_s_*)device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
+
+  if(error <= 0)
+    error = oyConfigs_FromDB( s->registration, &configs, 0 );
+  if(error <= 0)
+    error = oyConfig_GetFromDB( device, configs, rank_value );
+  oyConfigs_Release( &configs );
+
+  return error;
+}
+
+/** Function  oyConfig_GetFromDB
+ *  @brief    search a configuration in the DB for a configuration from module
+ *  @memberof oyConfig_s
+ *
+ *  @param[in]     device              the to be checked configuration from
+ *                                     oyConfigs_FromPattern_f
+ *  @param[out]    rank_value          the number of matches between config and
+ *                                     pattern, -1 means invalid
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent
+ *
+ *  @version Oyranos: 0.3.2
+ *  @since   2009/01/26 (Oyranos: 0.3.2)
+ *  @date    2011/09/14
+ */
+OYAPI int  OYEXPORT
+               oyConfig_GetFromDB    ( oyConfig_s        * device,
+                                       oyConfigs_s       * configs,
+                                       int32_t           * rank_value )
+{
+  int error = !device;
+  int rank = 0, max_rank = 0, i, n;
   oyConfig_s * config = 0, * max_config = 0;
-  oyConfig_s_ * device_ = (oyConfig_s_*)device;
-  oyConfig_s * s = device;
+  oyConfig_s_ * s = (oyConfig_s_*)device;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   if(error <= 0)
   {
-#ifdef UNHIDE_CMM
-    error = oyConfigs_FromDB( device_->registration, &configs, 0 );
-#else
-    error = 1;
-#endif
-
     n = oyConfigs_Count( configs );
 
     for( i = 0; i < n; ++i )
@@ -149,13 +180,14 @@ OYAPI int  OYEXPORT
 
   if(error <= 0 && max_config)
   {
-    oyOptions_Release( &device_->db );
-    device_->db = oyOptions_Copy( oyConfigPriv_m(max_config)->db, 0 );
+    oyOptions_Release( &s->db );
+    s->db = oyOptions_Copy( ((oyConfig_s_*)max_config)->db, 0 );
     oyConfig_Release( &max_config );
   }
 
   return error;
 }
+
 
 /** Function  oyConfig_SaveToDB
  *  @memberof oyConfig_s
@@ -175,7 +207,7 @@ OYAPI int  OYEXPORT
 {
   int error = !config;
   oyOptions_s * opts = 0;
-  oyConfig_s * s = config;
+  oyConfig_s_ * s = (oyConfig_s_*)config;
   char * new_reg = 0;
   oyConfig_s_ * config_ = (oyConfig_s_*)config;
 
@@ -481,7 +513,7 @@ OYAPI int  OYEXPORT
            max_rank = 0;
   uint32_t apis_n = 0;
   oyCMMapi8_s_ * cmm_api8 = 0;
-  oyConfig_s * s = config;
+  oyConfig_s_ * s = (oyConfig_s_*)device;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
@@ -767,4 +799,256 @@ OYAPI oyConfig_s * OYEXPORT
     s->registration = oyStringCopy_( registration, s->oy_->allocateFunc_ );
 
   return (oyConfig_s*)s;
+}
+
+
+#define OPENICC_DEVICE_JSON_HEADER_BASE \
+  "{\n" \
+  "  \"org\": {\n" \
+  "    \"freedesktop\": {\n" \
+  "      \"openicc\": {\n" \
+  "        \"device\": {\n" \
+  "          \"%s\":\n"
+#define OPENICC_DEVICE_JSON_FOOTER_BASE \
+  "        }\n" \
+  "      }\n" \
+  "    }\n" \
+  "  }\n" \
+  "}\n"
+
+
+/** Function  oyDevicesFromTaxiDB
+ *  @brief    search a calibration state in the taxi DB for a device
+ *  @memberof oyConfig_s
+ *
+ *  @param[in]     device              the device
+ *  @param[in]     options             not used
+ *  @param[out]    devices             the obtained device calibrations
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent
+ *
+ *  @version Oyranos: 0.3.3
+ *  @since   2011/09/14 (Oyranos: 0.3.2)
+ *  @date    2012/01/06
+ */
+OYAPI int  OYEXPORT
+             oyDevicesFromTaxiDB     ( oyConfig_s        * device,
+                                       oyOptions_s       * options,
+                                       oyConfigs_s      ** devices,
+                                       oyObject_s          obj )
+{
+  int error = 0;
+  oyConfigs_s * configs_ = 0;
+  oyConfig_s_ * s = (oyConfig_s_*)device;
+  char * manufacturers;
+  size_t size = 0;
+  const char * short_name = NULL,
+             * long_name = NULL,
+             * name = NULL;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
+
+  error = oyDeviceCheckProperties ( device );
+
+
+  manufacturers = oyReadUrlToMem_( "http://icc.opensuse.org/manufacturers",
+                                   &size, "r", oyAllocateFunc_ );
+
+  
+  if(manufacturers)
+  {
+    oyjl_value_s * root = 0;
+    int count = 0, i;
+    char * val = NULL,
+         * key = NULL;
+    char * json_text = NULL;
+    const char * prefix = oyConfig_FindString( device, "prefix", 0 );
+
+    error = oyjl_tree_from_json( manufacturers, &root, NULL );
+    if(prefix)
+      oyStringAddPrintf_( &key, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "%smnft", prefix );
+    else
+      oyStringAddPrintf_( &key, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "mnft" );
+    name = short_name = oyConfig_FindString( device, key, 0 );
+    oyFree_m_(key);
+    if(prefix)
+      oyStringAddPrintf_( &key, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "%smanufacturer", prefix );
+    else
+      oyStringAddPrintf_( &key, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "manufacturer" );
+    if(!short_name)
+      name = long_name = oyConfig_FindString( device, key, 0 );
+    oyFree_m_(key);
+
+    if(oy_debug)
+      WARNc1_S("manufacturers:\n%s", manufacturers);
+
+    if(root)
+    {
+      int done = 0;
+      oyjl_value_s * v = 0, * tv = 0;
+
+      count = oyjl_value_count(root);
+      for(i = 0; i < count; ++i)
+      {
+        if(short_name)
+          v = oyjl_tree_get_valuef( root, 
+                              "[%d]/short_name", i );
+        else if(long_name)
+          v = oyjl_tree_get_valuef( root, 
+                              "[%d]/long_name", i );
+
+        val = oyjl_value_text( v, oyAllocateFunc_ );
+        if( val && name && strcmp( val, name) == 0 )
+          done = 1;
+        else
+          DBG_NUM2_S("could not find device:\n%s %s",
+                   oyNoEmptyString_m_(name), oyNoEmptyString_m_(val));
+
+        if(done) break;
+        if(val) oyDeAllocateFunc_(val); val = 0;
+      }
+
+      error = oyjl_tree_free( &root );
+
+      /* get the devices */
+      if(done)
+      {
+        char * device_db, * t = NULL;
+        oyOptions_s * opts = NULL;
+        oyConfig_s * dev;
+
+        /* put a cloak around the bare meta data, so it behaves like OpenICC
+         * JSON */
+        oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                            OPENICC_DEVICE_JSON_HEADER_BASE, "dummy" );
+
+        /* the device DB JSON contains all device meta data for one
+         * mnft / manufacturer */
+        device_db = oyReadUrlToMemf_( &size, "r", oyAllocateFunc_,
+                            "http://icc.opensuse.org/devices/%s", val );
+        STRING_ADD( t, device_db );
+        oyFree_m_( device_db );
+
+        oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                            "\n"OPENICC_DEVICE_JSON_FOOTER_BASE );
+        device_db = t; t = NULL;
+
+        if(oy_debug)
+          oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)device,
+                       OY_DBG_FORMAT_
+                       "http://icc.opensuse.org/devices/%s with header:\n%s",
+                       OY_DBG_ARGS_,
+                       val, oyNoEmptyString_m_(device_db) );
+        error = oyjl_tree_from_json( device_db, &root, NULL );
+
+        error = oyOptions_SetFromText( &opts,
+                                 "//" OY_TYPE_STD "/argv/underline_key_suffix",
+                                 "TAXI", OY_CREATE_NEW );
+
+        tv = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]" );
+        count = oyjl_value_count(tv);
+        for(i = 0; i < count; ++i)
+        {
+          error = oyOptions_SetFromInt( &opts,
+                                 "//" OY_TYPE_STD "/argv/pos",
+                                 i, 0, OY_CREATE_NEW );
+
+          v = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]/[%d]/_id/$oid", i );
+          val = oyjl_value_text( v, oyAllocateFunc_ );
+          error = oyDeviceFromJSON( device_db, opts, &dev );
+
+          if(dev)
+          {
+            int j,n;
+            oyConfig_AddDBData( dev, "TAXI_id", val, OY_CREATE_NEW );
+            if(val) oyDeAllocateFunc_(val); val = 0;
+
+            v = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]/[%d]/profile_description", i );
+            n = oyjl_value_count(v);
+            for(j = 0; j < n; ++j)
+            {
+              v = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]/[%d]/profile_description/[%d]", i, j );
+              val = oyjl_value_text( v, oyAllocateFunc_ );
+              oyConfig_AddDBData( dev, "TAXI_profile_description", val, OY_CREATE_NEW );
+              if(val) oyDeAllocateFunc_(val); val = 0;
+              /* TODO store all profile descriptions */
+              break;
+            }
+
+            if(!configs_)
+              configs_ = oyConfigs_New(0);
+            oyConfigs_MoveIn( configs_, &dev, -1 );
+          }
+
+          if(val) oyDeAllocateFunc_(val); val = 0;
+          if(json_text) oyFree_m_( json_text );
+        }
+        oyOptions_Release( &opts );
+        if(device_db) oyDeAllocateFunc_(device_db); device_db = 0;
+      }
+      oyjl_tree_free( &root );
+    }
+
+    oyFree_m_( manufacturers );
+
+    if(!configs_)
+    {
+      oyDeviceToJSON( device, 0, &json_text, oyAllocateFunc_ );
+      WARNc1_S("no profile found for\n%s", json_text);
+      oyFree_m_(json_text);
+    } else if(oy_debug)
+    {
+      count = oyConfigs_Count( configs_ );
+      for( i = 0; i < count; ++i)
+        WARNc1_S("%d", i);
+    }
+
+    if(configs_)
+      *devices = configs_;
+  }
+
+  return error;
+}
+
+/** Function oyConfig_GetBestMatchFromTaxiDB
+ *  @brief   search a profile ID in the Taxi DB for a configuration
+ *  @memberof oyConfig_s
+ *
+ *  @param[in]     device              the to be checked configuration from
+ *                                     oyConfigs_FromPattern_f
+ *  @param[out]    rank_value          the number of matches between config and
+ *                                     pattern, -1 means invalid
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent
+ *
+ *  @version Oyranos: 0.3.2
+ *  @since   2009/01/26 (Oyranos: 0.3.2)
+ *  @date    2011/09/14
+ */
+OYAPI int  OYEXPORT
+               oyConfig_GetBestMatchFromTaxiDB(
+                                       oyConfig_s        * device,
+                                       int32_t           * rank_value )
+{
+  int error = !device;
+  oyConfigs_s * configs = 0;
+  oyConfig_s_ * s = (oyConfig_s_*)device;
+  oyOptions_s * options = 0;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
+
+  if(error <= 0)
+  {
+    error = oyDevicesFromTaxiDB( device, options, &configs, 0 );
+    oyOptions_Release( &options );
+  }
+  if(error <= 0)
+    error = oyConfig_GetFromDB( device, configs, rank_value );
+  oyConfigs_Release( &configs );
+
+  return error;
 }

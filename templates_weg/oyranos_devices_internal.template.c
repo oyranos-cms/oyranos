@@ -3,6 +3,7 @@
 #include "oyranos_i18n.h"
 #include "oyranos_string.h"
 #include "oyranos_devices_internal.h"
+#include "oyranos_object_internal.h"
 
 
 /** \addtogroup devices_handling Device API
@@ -121,6 +122,49 @@ int    oyOptions_SetRegistrationTextKey_(
 
   return error;
 }
+
+int          oyDeviceCheckProperties ( oyConfig_s        * device )
+{
+  oyOption_s * o = 0;
+  oyOptions_s * options = 0;
+  int error = !device;
+  const char * device_name = 0;
+  oyConfig_s * s = device;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
+
+  if(error <= 0)
+  {
+    device_name = oyConfig_FindString( device, "device_name", 0);
+
+    /* 1. obtain detailed and expensive device informations */
+    if( !oyConfig_FindString(s,"manufacturer",0) ||
+        !oyConfig_FindString(s,"model",0) )
+    { 
+      /* 1.1 add "properties" call to module arguments */
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                     "properties", OY_CREATE_NEW );
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
+                                     device_name, OY_CREATE_NEW );
+
+      device_name = 0;
+
+      /* 1.2 get details about device */
+      if(error <= 0)
+        error = oyDeviceBackendCall( device, options );
+
+      oyOptions_Release( &options );
+
+      /* renew outdated string */
+      o = oyConfig_Find( device, "profile_name" );
+      device_name = oyConfig_FindString( device, "device_name", 0);
+      oyOption_Release( &o );
+    }
+  }
+
+  return error;
+}
+
 /**
  *  @} *//* devices_handling
  */

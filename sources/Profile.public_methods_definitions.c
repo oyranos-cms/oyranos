@@ -1,4 +1,4 @@
-static oyProfile_s ** oy_profile_s_std_cache_ = 0;
+static oyProfile_s_ ** oy_profile_s_std_cache_ = 0;
 
 /** Function  oyProfile_FromStd
  *  @memberof oyProfile_s
@@ -21,21 +21,29 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
 
   if(!oy_profile_s_std_cache_)
   {
-    int len = sizeof(oyProfile_s*) *
+    int len = sizeof(oyProfile_s_*) *
                             (oyDEFAULT_PROFILE_END - oyDEFAULT_PROFILE_START);
     oy_profile_s_std_cache_ = oyAllocateFunc_( len );
     memset( oy_profile_s_std_cache_, 0, len );
   }
-
-  if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
-    if(oy_profile_s_std_cache_[pos])
-      return oyProfile_Copy( oy_profile_s_std_cache_[pos], 0 );
 
   if(object)
     allocateFunc = object->allocateFunc_;
 
   if(type)
     name = oyGetDefaultProfileName ( type, allocateFunc );
+
+  if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
+    if(oy_profile_s_std_cache_[pos] &&
+       oy_profile_s_std_cache_[pos]->file_name_ && name &&
+       strcmp(oy_profile_s_std_cache_[pos]->file_name_, name) == 0 )
+    {
+      if(object->deallocateFunc_)
+        object->deallocateFunc_( name );
+      else
+        oyDeAllocateFunc_( name );
+      return oyProfile_Copy( (oyProfile_s*)oy_profile_s_std_cache_[pos], 0 );
+    }
 
   s = oyProfile_FromFile_( name, 0, object );
 
@@ -72,7 +80,7 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
   }
 
   if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
-    oy_profile_s_std_cache_[pos] = oyProfile_Copy( (oyProfile_s*)s, 0 );
+    oy_profile_s_std_cache_[pos] = (oyProfile_s_*)oyProfile_Copy( (oyProfile_s*)s, 0 );
 
   oyProfile_GetID( (oyProfile_s*)s );
 
@@ -236,6 +244,63 @@ OYAPI oyProfile_s * OYEXPORT
 
   return s;
 }
+
+/** Function oyProfile_FromTaxiDB
+ *  @brief   look up a profile of a device from Taxi DB
+ *
+ *  The function asks the online ICC Taxi DB for a profile. It is therefore
+ *  blocking and can cause a serious delay before returning.
+ *
+ *  The TAXI_id option is expected to come from 
+ *  oyConfig_GetBestMatchFromTaxiDB() or oyDevicesFromTaxiDB().
+ *
+ *  @param[in]     options             - "TAXI_id" shall provide a string
+ *                                       for device driver parameter selection
+ *  @param[out]    profile             the resulting profile
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.3.3
+ *  @since   2012/01/08 (Oyranos: 0.3.3)
+ *  @date    2012/01/08
+ */
+OYAPI oyProfile_s * OYEXPORT
+                   oyProfile_FromTaxiDB (
+                                       oyOptions_s       * options,
+                                       oyObject_s          object )
+{
+  int error = !options;
+  oyProfile_s * p = NULL;
+  oyOptions_s * s = options;
+  size_t size = 0;
+  char * mem = NULL;
+  const char * taxi_id = NULL;
+
+  oyCheckType__m( oyOBJECT_OPTIONS_S, return p )
+
+  if(error > 0)
+  {
+    WARNc_S( "No options provided. Give up." );
+    return p;
+  }
+
+  taxi_id = oyOptions_FindString( options, "TAXI_id", 0 );
+
+  if(taxi_id)
+    mem = oyReadUrlToMemf_( &size, "r", oyAllocateFunc_,
+                            "http://icc.opensuse.org/profile/%s/profile.icc",
+                            taxi_id );
+  else
+    WARNc_S("No TAXI_id provided, Do not know what to download.");
+
+  if(mem && size)
+  {
+    p = oyProfile_FromMem( size, mem, 0, NULL);
+    oyFree_m_( mem ); size = 0;
+  }
+
+  return p;
+}
+
 
 /** Function  oyProfile_GetChannelsCount
  *  @memberof oyProfile_s
@@ -1294,15 +1359,17 @@ OYAPI const char * OYEXPORT
 
       if(hash)
       {
+        char * key = oyAllocateFunc_(80);
         txt = oyFindProfile_( name );
-        sprintf( hash, "//"OY_TYPE_STD"/profile.icc/psid_%d", dl_pos );
+        sprintf( key, "//"OY_TYPE_STD"/profile.icc/psid_%d", dl_pos );
         oyOptions_SetFromText( &s->oy_->handles_,
-                               hash,
+                               key,
                                txt,
                                OY_CREATE_NEW );
         oyDeAllocateFunc_( txt );
         name = oyOptions_FindString( s->oy_->handles_,
-                                     hash, 0 );
+                                     key, 0 );
+        oyFree_m_( key );
       } else
       {
         s->file_name_ = oyFindProfile_( name );

@@ -5,6 +5,7 @@
 #include <oyranos_helper.h>
 #include <oyranos_icc.h>
 
+#include "oyranos_alpha.h"
 #include "oyranos_devices.h"
 #include "oyranos_devices_internal.h"
 #include "oyranos_object_internal.h"
@@ -12,6 +13,8 @@
 #include "oyOption_s_.h"
 #include "oyOptions_s_.h"
 #include "oyProfiles_s.h"
+
+#include "oyjl/oyjl_tree.h"
 
 
 /** \addtogroup devices_handling Device API
@@ -1309,6 +1312,211 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
 
   return error;
 }
+
+/** Function oyDeviceFromJSON
+ *  @brief   generate a device from a JSON device calibration
+ *
+ *  @param[in]    json_text            the device calibration
+ *  @param[in]    options              optional
+ *                                     - "underline_key_suffix" will be used as
+ *                                       suffix for keys starting with underline
+ *                                       '_'
+ *                                     - "pos" integer selects position in array
+ *  @param[out]   config               the device
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.3.3
+ *  @since   2011/08/21 (Oyranos: 0.3.2)
+ *  @date    2012/01/06
+ */
+OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
+                                       oyOptions_s       * options,
+                                       oyConfig_s       ** device )
+{
+  int error = !json_text || !device;
+  oyConfig_s * device_ = NULL;
+  oyjl_value_s * json = 0,
+               * json_device;
+  char * val, * key, * t = NULL;
+  const char * xpath = "org/freedesktop/openicc/device/[0]/[%d]";
+  int count, i;
+  int32_t pos = 0;
+  const char * underline_key_suffix = oyOptions_FindString( options,
+                                                    "underline_key_suffix", 0 );
+
+  yajl_status status;
+
+  device_ = oyConfig_FromRegistration( "//" OY_TYPE_STD "/config", 0 );
+  status = oyjl_tree_from_json( json_text, &json, 0 );
+  if(status != yajl_status_ok)
+    WARNc2_S( "\"%s\" %d\n", _("found issues parsing JSON"), status );
+
+  error = oyOptions_FindInt( options, "pos", 0, &pos );
+  oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                          xpath, pos );
+
+  json_device = oyjl_tree_get_value( json, t );
+
+  if(!json_device)
+    WARNc2_S( "\"%s\" %s\n", t,_("not found:") );
+  oyFree_m_( t );
+      
+  count = oyjl_value_count(json_device);
+  for(i = 0; i < count; ++i)
+  {
+    oyjl_value_s * v = oyjl_value_pos_get( json_device, i );
+    key = oyStringCopy_(oyjl_print_text( &v->value.object->key ), 0);
+    val = oyjl_value_text( v, oyAllocateFunc_ );
+
+    if(key && key[0] && key[0] == '_' && underline_key_suffix)
+    {
+      t = 0;
+      STRING_ADD( t, underline_key_suffix );
+      STRING_ADD( t, key );
+      oyFree_m_( key );
+      key = t; t = 0;
+    }
+
+    /* ignore empty keys or values */
+    if(key && val)
+      oyConfig_AddDBData( device_, key, val, OY_CREATE_NEW );
+
+    if(key) oyDeAllocateFunc_(key);
+    if(val) oyDeAllocateFunc_(val);
+  }
+
+  *device = device_;
+  device_ = NULL;
+
+  return error;
+}
+
+#define OPENICC_DEVICE_JSON_HEADER \
+  "{\n" \
+  "  \"org\": {\n" \
+  "    \"freedesktop\": {\n" \
+  "      \"openicc\": {\n" \
+  "        \"device\": {\n" \
+  "          \"%s\": [{\n"
+#define OPENICC_DEVICE_JSON_FOOTER \
+  "            }\n" \
+  "          ]\n" \
+  "        }\n" \
+  "      }\n" \
+  "    }\n" \
+  "  }\n" \
+  "}\n"
+
+/** Function oyDeviceToJSON
+ *  @brief   get JSON format device calibration text from a device
+ *
+ *  @param[in]     config              the device
+ *  @param[in]     options             unused
+ *  @param[out]    json_text           the device calibration
+ *  @param[in]     allocateFunc        user allocator
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.3.2
+ *  @since   2011/08/21 (Oyranos: 0.3.2)
+ *  @date    2011/08/21
+ */
+OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
+                                       oyOptions_s       * options,
+                                       char             ** json_text,
+                                       oyAlloc_f           allocateFunc )
+{
+  int error = 0;
+  int count = oyConfig_Count( device ), j, k;
+  char * t = NULL; 
+  char * value, * key;
+  const char * device_class = NULL;
+  oyConfDomain_s * domain;
+
+  if(!error)
+  {
+      {
+        oyOption_s * opt = oyConfig_Get( device, 0 );
+
+        domain = oyConfDomain_FromReg( oyOption_GetRegistration( opt ), 0 );
+        device_class = oyConfDomain_GetText( domain, "device_class", oyNAME_NICK );
+        oyOption_Release( &opt );
+
+        /* add device class */
+        oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                            OPENICC_DEVICE_JSON_HEADER, device_class );
+
+        /* add device and driver calibration properties */
+        for(j = 0; j < count; ++j)
+        {
+          int vals_n = 0;
+          char ** vals = 0, * val = 0;
+          opt = oyConfig_Get( device, j );
+
+          key = oyFilterRegistrationToText( oyOption_GetRegistration( opt ),
+                                            oyFILTER_REG_MAX, 0 );
+          value = oyOption_GetValueText( opt, oyAllocateFunc_ );
+
+          if(value && count > j)
+          {
+            if(value[0] == '<')
+               oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+               "              \"%s\": \"%s\"",
+                     key, value );
+            else
+            {
+              /* split into a array with a useful delimiter */
+              vals = oyStringSplit_( value, '?', &vals_n, malloc );
+              if(vals_n > 1)
+              {
+                STRING_ADD( val, "              \"");
+                STRING_ADD( val, key );
+                STRING_ADD( val, ": [" );
+                for(k = 0; k < vals_n; ++k)
+                {
+                  if(k != 0)
+                  STRING_ADD( val, "," );
+                  STRING_ADD( val, "\"" );
+                  STRING_ADD( val, vals[k] );
+                  STRING_ADD( val, "\"" );
+                }
+                STRING_ADD( val, "]");
+                oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                     "%s", val );
+                if(val) free( val );
+              } else
+                oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                     "              \"%s\": \"%s\"",
+                     key, value );
+
+              oyStringListRelease_( &vals, vals_n, free );
+            }
+          }
+          if(value && j < count - 1)
+            oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                                ",\n" );
+          oyOption_Release( &opt );
+          if(key)
+            oyFree_m_( key );
+          if(value)
+            oyFree_m_( value );
+        }
+
+        oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                            "\n"OPENICC_DEVICE_JSON_FOOTER );
+        oyConfDomain_Release( &domain );
+      }
+
+      if(json_text && t)
+      {
+        *json_text = oyStringCopy_( t, allocateFunc );
+        oyFree_m_( t );
+      }
+  }
+
+  return error;
+}
+
+
 /**
  *  @} *//* devices_handling
  */

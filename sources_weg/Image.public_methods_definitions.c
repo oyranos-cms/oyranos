@@ -721,7 +721,6 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
 }
 
 /**
- *  @internal
  *  @func    oyImage_WritePPM
  *  @memberof oyArray2d_s
  *  @brief   implement oyCMMFilter_GetNext_f()
@@ -1052,7 +1051,7 @@ int            oyImage_GetHeight     ( oyImage_s         * image )
  *  @since   2009/03/05 (Oyranos: 0.1.10)
  *  @date    2012/09/05
  */
-oyPixel_t      oyImage_GePixeltLayout( oyImage_s         * image,
+oyPixel_t      oyImage_GetPixelLayout( oyImage_s         * image,
                                        oyLAYOUT_e          type )
 {
   oyImage_s * s = image;

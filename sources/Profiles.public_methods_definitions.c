@@ -1,8 +1,18 @@
 extern oyProfiles_s * oy_profile_list_cache_;
+int oyLowerStrcmpWrap (const void * a_, const void * b_)
+{
+  const char * a = *(const char **)a_,
+             * b = *(const char **)b_;
+#ifdef HAVE_POSIX
+  return strcasecmp(a,b);
+#else
+  return strcmp(a,b);
+#endif
+}
 
-/** Function  oyProfiles_Create
+/** Function oyProfiles_Create
  *  @memberof oyProfiles_s
- *  @brief    Get a list of installed profiles
+ *  @brief   get a list of installed profiles
  *
  *  @param[in]     patterns            a list properties, e.g. classes
  *  @param         object              the optional object
@@ -12,18 +22,18 @@ extern oyProfiles_s * oy_profile_list_cache_;
  *  @date    2008/06/20
  */
 OYAPI oyProfiles_s * OYEXPORT
-                 oyProfiles_Create( oyProfiles_s   * patterns,
-                                    oyObject_s       object)
+                 oyProfiles_Create   ( oyProfiles_s      * patterns,
+                                       oyObject_s          object)
 {
-  oyProfiles_s * s = 0;
+  oyProfiles_s * s = 0, *tmps = 0;
   int error = 0;
 
   oyProfile_s * tmp = 0, * pattern = 0;
-  char  ** names = 0, * full_name = 0;
-  oyPointer block = 0;
+  char  ** names = 0, *t;
   uint32_t names_n = 0, i = 0, j = 0, n = 0,
            patterns_n = oyProfiles_Count(patterns);
-  size_t   size = 128;
+  int sorts = 0;
+  const char ** sort = NULL;
 
   s = oyProfiles_New( object );
   error = !s;
@@ -32,39 +42,47 @@ OYAPI oyProfiles_s * OYEXPORT
   {
     names = oyProfileListGet_ ( NULL, &names_n );
 
-    for(j = 0; j < patterns_n; ++j)
-    {
-      pattern = oyProfiles_Get(patterns, j);
-
-      if(oyProfilePriv_m(pattern)->size_ > 132)
-        size = 0;
-
-      oyProfile_Release( &pattern );
-    }
-
     if(oyProfiles_Count( oy_profile_list_cache_ ) != names_n)
     {
+      sorts = names_n;
+      sort = oyAllocateFunc_(sorts*sizeof(const char*)*2);
       for(i = 0; i < names_n; ++i)
       {
         if(names[i])
         {
           if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
           {
-            if(size && 0)
-            { /* TODO short readings */
-              full_name = oyFindProfile_(names[i]);
-              block = oyReadFileToMem_ (full_name, &size, oyAllocateFunc_);
-              tmp = (oyProfile_s*)oyProfile_FromMemMove_( size, &block, 0, &error, 0 );
-            }
-            else
-            {
-              tmp = oyProfile_FromFile( names[i], OY_NO_CACHE_WRITE, 0 );
-              error = oyProfiles_MoveIn(oy_profile_list_cache_,
-                                                         &tmp, -1);
-            }
+            tmp = oyProfile_FromFile( names[i], OY_NO_CACHE_WRITE, 0 );
+#if !defined(HAVE_POSIX)
+            t = 0;
+            oyStringAdd_(&t, oyProfile_GetText(tmp, oyNAME_DESCRIPTION), oyAllocateFunc_, 0);
+            n = strlen(t);
+            /* the following upper caseing is portable,
+             * still strcasecmp() might be faster? */
+            for(j = 0; j < n; ++j)
+              if(isalpha(t[j]))
+                t[j] = tolower(t[j]);
+            sort[i*2] = t;
+#else
+            sort[i*2] = oyProfile_GetText(tmp, oyNAME_DESCRIPTION);
+#endif
+            sort[i*2+1] = names[i];
           }
         }
       }
+      qsort( sort, sorts, sizeof(char**)*2, oyLowerStrcmpWrap );
+      for(i = 0; i < sorts; ++i)
+      {
+        tmp = oyProfile_FromFile( sort[i*2+1], OY_NO_CACHE_WRITE, 0 );
+        oyProfiles_MoveIn(tmps, &tmp, -1);
+        t = (char*)sort[i*2];
+#if !defined(HAVE_POSIX)
+        oyFree_m_(t);
+#endif
+      }
+      oyProfiles_Release(&oy_profile_list_cache_);
+      oy_profile_list_cache_ = tmps;
+      oyFree_m_(sort);
     }
 
     n = oyProfiles_Count( oy_profile_list_cache_ );
@@ -85,7 +103,8 @@ OYAPI oyProfiles_s * OYEXPORT
 
             if(oyProfile_Match_( (oyProfile_s_*)pattern, (oyProfile_s_*)tmp ))
             {
-              error = oyProfiles_MoveIn( s, &tmp, -1);
+              oyProfiles_MoveIn( s, (oyProfile_s**)&tmp, -1);
+              error = !s;
               break;
             }
 
@@ -94,7 +113,8 @@ OYAPI oyProfiles_s * OYEXPORT
 
         } else {
 
-          error = oyProfiles_MoveIn( s, &tmp, -1);
+          oyProfiles_MoveIn( s, (oyProfile_s**)&tmp, -1);
+          error = !s;
         }
 
         oyProfile_Release( &tmp );
@@ -372,9 +392,9 @@ OYAPI oyProfiles_s * OYEXPORT
  *  @param[in]     device              filter pattern
  *  @param[in,out] rank_list           list of rank levels for the profile list
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0..1
  *  @since   2009/05/22 (Oyranos: 0.1.10)
- *  @date    2009/05/22
+ *  @date    2012/02/01
  */
 int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
                                          oyConfig_s      * device,
@@ -421,8 +441,9 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
     {
       DBG_NUM2_S( "found OYRANOS_automatic_generated: %d %s",
                   rank, strrchr(oyProfile_GetFileName(p,-1),'/')+1);
+      /* substract serial number and accound for possible wrong model_id */
       if(oyConfig_FindString( p_device, "serial", 0 ))
-        rank -= 11;
+        rank -= 12;
       else
         rank -= 1;
       DBG_NUM1_S("after serial && OYRANOS_automatic_generated: %d", rank);

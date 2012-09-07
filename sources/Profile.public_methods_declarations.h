@@ -18,6 +18,10 @@ OYAPI oyProfile_s * OYEXPORT
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromMD5(  uint32_t          * md5,
                                        oyObject_s          object );
+OYAPI oyProfile_s * OYEXPORT
+                   oyProfile_FromTaxiDB (
+                                       oyOptions_s       * options,
+                                       oyObject_s          object );
 OYAPI int OYEXPORT
          oyProfile_GetChannelsCount ( oyProfile_s * colour );
 OYAPI icSignature OYEXPORT

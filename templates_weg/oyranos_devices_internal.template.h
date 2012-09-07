@@ -3,6 +3,7 @@
 #ifndef {{ file_name|underscores|upper|tr:". _" }}
 #define {{ file_name|underscores|upper|tr:". _" }}
 
+#include "oyConfig_s_.h"
 #include "oyOptions_s_.h"
 
 #define OY_ERR if(l_error != 0) error = l_error;
@@ -21,5 +22,6 @@ int    oyOptions_SetRegistrationTextKey_(
                                        const char        * registration,
                                        const char        * key,
                                        const char        * value );
+int          oyDeviceCheckProperties ( oyConfig_s        * device );
 
 #endif /* {{ file_name|underscores|upper|tr:". _" }} */

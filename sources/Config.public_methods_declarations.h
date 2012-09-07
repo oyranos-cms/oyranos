@@ -20,6 +20,10 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                oyConfig_SaveToDB     ( oyConfig_s        * config );
 OYAPI int  OYEXPORT
+               oyConfig_GetFromDB    ( oyConfig_s        * device,
+                                       oyConfigs_s       * configs,
+                                       int32_t           * rank_value );
+OYAPI int  OYEXPORT
                oyConfig_EraseFromDB  ( oyConfig_s        * config );
 OYAPI int  OYEXPORT
                oyConfig_Compare      ( oyConfig_s        * device,

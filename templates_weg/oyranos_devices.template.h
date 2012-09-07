@@ -56,6 +56,13 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
                                        oyConfigs_s       * heap,
                                        uint32_t            flags,
                                        oyConfigs_s      ** matched_devices );
+OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
+                                       oyOptions_s       * options,
+                                       oyConfig_s       ** device );
+OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
+                                       oyOptions_s       * options,
+                                       char             ** json_text,
+                                       oyAlloc_f           allocateFunc );
 
 
 {% include "cpp_end.h" %}

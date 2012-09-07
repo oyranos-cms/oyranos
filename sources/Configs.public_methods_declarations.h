@@ -28,3 +28,12 @@ OYAPI int  OYEXPORT
                                        uint32_t          * count,
                                        uint32_t         ** rank_list,
                                        oyAlloc_f           allocateFunc );
+OYAPI int  OYEXPORT
+             oyDevicesFromTaxiDB     ( oyConfig_s        * device,
+                                       oyOptions_s       * options,
+                                       oyConfigs_s      ** devices,
+                                       oyObject_s          obj );
+OYAPI int  OYEXPORT
+               oyConfig_GetBestMatchFromTaxiDB(
+                                       oyConfig_s        * device,
+                                       int32_t           * rank_value );
