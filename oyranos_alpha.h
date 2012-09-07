@@ -53,22 +53,6 @@ extern "C" {
 #ifdef OY_IN_PLANING
 
 
-void                    oyLab2XYZ       (const double * CIElab, double * XYZ);
-void                    oyXYZ2Lab       (const double * XYZ, double * CIElab);
-void         oyCIEabsXYZ2ICCrelXYZ   ( const double      * CIEXYZ,
-                                       double            * ICCXYZ,
-                                       const double      * XYZmin,
-                                       const double      * XYZmax,
-                                       const double      * XYZwhite );
-void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
-                                       double            * CIEXYZ,
-                                       const double      * XYZmin,
-                                       const double      * XYZmax,
-                                       const double      * XYZwhite );
-int                oyBigEndian       ( void );
-
-
-
 
 #define oyNAME_ID oyNAME_NICK
 
@@ -307,57 +291,6 @@ typedef enum oyDATALAYOUT_e {
   /*oyDATALAYOUT_,*/                /**< */
   oyDATALAYOUT_MAX                    /**< */
 } oyDATALAYOUT_e;
-
-oyRectangle_s* oyRectangle_New_      ( oyObject_s          object );
-oyRectangle_s* oyRectangle_NewWith   ( double              x,
-                                       double              y,
-                                       double              width,
-                                       double              height,
-                                       oyObject_s          object );
-oyRectangle_s* oyRectangle_NewFrom   ( oyRectangle_s     * ref,
-                                       oyObject_s          object );
-oyRectangle_s* oyRectangle_Copy      ( oyRectangle_s     * rectangle,
-                                       oyObject_s          object );
-int            oyRectangle_Release   ( oyRectangle_s    ** rectangle );
-
-void           oyRectangle_SetGeo    ( oyRectangle_s     * edit_rectangle,
-                                       double              x,
-                                       double              y,
-                                       double              width,
-                                       double              height );
-void           oyRectangle_GetGeo    ( oyRectangle_s     * rectangle,
-                                       double            * x,
-                                       double            * y,
-                                       double            * width,
-                                       double            * height );
-void           oyRectangle_SetByRectangle (
-                                       oyRectangle_s     * edit_rectangle,
-                                       oyRectangle_s     * ref );
-void           oyRectangle_Trim      ( oyRectangle_s     * edit_rectangle,
-                                       oyRectangle_s     * ref );
-void           oyRectangle_MoveInside( oyRectangle_s     * edit_rectangle,
-                                       oyRectangle_s     * ref );
-void           oyRectangle_Scale     ( oyRectangle_s     * edit_rectangle,
-                                       double              factor );
-void           oyRectangle_Normalise ( oyRectangle_s     * edit_rectangle );
-void           oyRectangle_Round     ( oyRectangle_s     * edit_rectangle );
-int            oyRectangle_IsEqual   ( oyRectangle_s     * rectangle1,
-                                       oyRectangle_s     * rectangle2 );
-int            oyRectangle_IsInside  ( oyRectangle_s     * test,
-                                       oyRectangle_s     * ref );
-int            oyRectangle_PointIsInside( oyRectangle_s  * rectangle,
-                                       double              x,
-                                       double              y );
-double         oyRectangle_CountPoints(oyRectangle_s     * rectangle );
-int            oyRectangle_Index     ( oyRectangle_s     * rectangle,
-                                       double              x,
-                                       double              y );
-int            oyRectangle_SamplesFromImage (
-                                       oyImage_s         * image,
-                                       oyRectangle_s     * image_rectangle,
-                                       oyRectangle_s     * pixel_rectangle );
-const char *   oyRectangle_Show      ( oyRectangle_s     * rectangle );
-
 
 int      oySizeofDatatype            ( oyDATATYPE_e        t );
 

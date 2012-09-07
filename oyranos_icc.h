@@ -255,4 +255,4 @@ typedef struct {
 } /* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* OYRANOS_H */
+#endif /* OYRANOS_ICC_H */
