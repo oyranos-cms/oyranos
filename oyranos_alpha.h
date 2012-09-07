@@ -57,11 +57,6 @@ extern "C" {
 #define oyNAME_ID oyNAME_NICK
 
 
-oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
-                                       size_t              size );
-int          oyStruct_GetId          ( oyStruct_s        * st );
-
-
 
 const char *       oySignalToString  ( oySIGNAL_e          signal_type );
 

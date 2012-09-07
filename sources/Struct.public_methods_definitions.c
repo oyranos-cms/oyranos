@@ -1,10 +1,8 @@
 #include "oyranos_generic.h"
 #include "oyCMMapi9_s.h"
 #include "oyCMMapiFilters_s.h"
-/*=======*/
 #include "oyranos_types.h"/* uint64_t uintptr_t */
 #include "oyranos_cmm.h" /* oyObjectInfoStatic_s */
-/*>>>>>>> master*/
 
 const char * (*oyStruct_GetTextFromModule_p) (
                                        oyStruct_s        * obj,
@@ -128,6 +126,18 @@ oyDeAlloc_f  oyStruct_GetDeAllocator ( oyStruct_s        * obj )
   else
     return 0;
 }
+
+int          oyStruct_GetId          ( oyStruct_s        * st )
+{
+  int id = -1;
+
+  if(st && st->oy_)
+    id = oyObject_GetId(st->oy_);
+
+  return id;
+}
+
+
 
 /* Locking function definitions { */
 oyPointer  oyStruct_LockCreateDummy_   ( oyStruct_s      * obj )    {return 0;}
