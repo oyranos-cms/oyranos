@@ -328,7 +328,6 @@ typedef struct oyFilterNodes_s oyFilterNodes_s;
 typedef struct oyConversion_s oyConversion_s;
 typedef struct oyNamedColour_s oyNamedColour_s;
 typedef struct oyNamedColours_s oyNamedColours_s;
-typedef struct oyCMMapis_s oyCMMapis_s;
 typedef struct oyUiHandler_s oyUiHandler_s;
 
 
@@ -826,56 +825,6 @@ void              oyCopyColour       ( const double      * from,
 
 
 /* --- CMM API --- */
-
-
-OYAPI oyCMMInfo_s * OYEXPORT
-                 oyCMMInfo_New       ( oyObject_s          object );
-OYAPI oyCMMInfo_s * OYEXPORT
-                 oyCMMInfo_Copy      ( oyCMMInfo_s       * obj,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-                 oyCMMInfo_Release   ( oyCMMInfo_s      ** obj );
-
-/** @struct  oyCMMapis_s
- *  @brief   a CMMapis list
- *  @extends oyStruct_s
- *
- *  @version Oyranos: 0.1.10
- *  @since   2010/06/25 (Oyranos: 0.1.10)
- *  @date    2010/06/25
- */
-struct oyCMMapis_s {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CMM_APIS_S */ 
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
-
-  oyStructList_s     * list_;          /**< the list data */
-};
-
-OYAPI oyCMMapis_s * OYEXPORT
-           oyCMMapis_New             ( oyObject_s          object );
-OYAPI oyCMMapis_s * OYEXPORT
-           oyCMMapis_Copy            ( oyCMMapis_s       * list,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-           oyCMMapis_Release         ( oyCMMapis_s      ** list );
-
-
-OYAPI int  OYEXPORT
-           oyCMMapis_MoveIn          ( oyCMMapis_s       * list,
-                                       oyCMMapi_s       ** ptr,
-                                       int                 pos );
-OYAPI int  OYEXPORT
-           oyCMMapis_ReleaseAt       ( oyCMMapis_s       * list,
-                                       int                 pos );
-OYAPI oyCMMapi_s * OYEXPORT
-           oyCMMapis_Get             ( oyCMMapis_s       * list,
-                                       int                 pos );
-OYAPI int  OYEXPORT
-           oyCMMapis_Count           ( oyCMMapis_s       * list );
-
-
 
 /** obtain 4 char CMM identifiers and count of CMM's */
 char **        oyModulsGetNames      ( int               * count,
