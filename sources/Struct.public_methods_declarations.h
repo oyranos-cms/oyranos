@@ -10,3 +10,5 @@ OYAPI oyDeAlloc_f  OYEXPORT
 OYAPI int  OYEXPORT
                  oyStruct_CheckType      ( oyStruct_s        * obj,
                                            oyOBJECT_e          type );
+OYAPI int  OYEXPORT
+                 oyStruct_GetId          ( oyStruct_s        * obj );

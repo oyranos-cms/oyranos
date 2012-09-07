@@ -23,6 +23,7 @@
 #include "oyranos_module.h"
 #include "oyObject_s_.h"
 #include "oyCMMapi4_s.h"
+#include "oyCMMapis_s.h"
 #include "oyCMMapiFilters_s.h"
 
 #ifdef __cplusplus

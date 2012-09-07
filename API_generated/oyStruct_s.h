@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/09/07
  */
 
 
@@ -100,6 +100,8 @@ OYAPI oyDeAlloc_f  OYEXPORT
 OYAPI int  OYEXPORT
                  oyStruct_CheckType      ( oyStruct_s        * obj,
                                            oyOBJECT_e          type );
+OYAPI int  OYEXPORT
+                 oyStruct_GetId          ( oyStruct_s        * obj );
 
 /* } Include "Struct.public_methods_declarations.h" */
 
