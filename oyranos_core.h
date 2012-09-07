@@ -89,6 +89,8 @@ const char *   oyLang                ( void );
 void           oyI18Nreset           ( void );
 
 
+int                oyBigEndian       ( void );
+
 
 #ifdef __cplusplus
 } /* extern "C" */
