@@ -310,16 +310,6 @@ oyImage_s *    oyImage_Copy          ( oyImage_s         * image,
 int            oyImage_Release       ( oyImage_s        ** image );
 
 
-int            oyImage_FillArray     ( oyImage_s         * image,
-                                       oyRectangle_s     * rectangle,
-                                       int                 do_copy,
-                                       oyArray2d_s      ** array,
-                                       oyRectangle_s     * array_rectangle,
-                                       oyObject_s          obj );
-int            oyImage_ReadArray     ( oyImage_s         * image,
-                                       oyRectangle_s     * rectangle,
-                                       oyArray2d_s       * array,
-                                       oyRectangle_s     * array_rectangle );
 
 
 
