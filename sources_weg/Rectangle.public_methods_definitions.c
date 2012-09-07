@@ -47,18 +47,18 @@ int            oyRectangle_Index     ( oyRectangle_s     * rectangle,
 int            oyRectangle_IsEqual   ( oyRectangle_s     * rectangle1,
                                        oyRectangle_s     * rectangle2 )
 {
-  int gleich = TRUE;
+  int equal = TRUE;
   oyRectangle_s_ * r1 = (oyRectangle_s_*)rectangle1;
   oyRectangle_s_ * r2 = (oyRectangle_s_*)rectangle2;
 
   if(!r1 || !r2)
     return FALSE;
 
-  if (r1->x != r2->x) gleich = FALSE;
-  if (r1->y != r2->y) gleich = FALSE;
-  if (r1->width != r2->width) gleich = FALSE;
-  if (r1->height != r2->height) gleich = FALSE;
-  return gleich;
+  if (r1->x != r2->x) equal = FALSE;
+  if (r1->y != r2->y) equal = FALSE;
+  if (r1->width != r2->width) equal = FALSE;
+  if (r1->height != r2->height) equal = FALSE;
+  return equal;
 }
 
 /** Function  oyRectangle_IsInside
@@ -103,7 +103,7 @@ void           oyRectangle_MoveInside( oyRectangle_s     * edit_rectangle,
     s->x = a->x;
   if (s->x+s->width > a->x+a->width)
   { if (s->width > a->width)
-      ; /* Lassen */
+      ; /* keep */
     else
       s->x = a->x+a->width - s->width;
   }
@@ -111,7 +111,7 @@ void           oyRectangle_MoveInside( oyRectangle_s     * edit_rectangle,
     s->y = a->y;
   if (s->y+s->height  > a->y+a->height)
   { if (s->height > a->height)
-      ; /* Lassen */
+      ; /* keep */
     else
       s->y = a->y+a->height - s->height;
   }
@@ -246,25 +246,25 @@ int            oyRectangle_SamplesFromImage (
   int error = !image,
       channel_n = 0;
 
-  oyImage_s_ ** image_ = (oyImage_s_**)&image;
   oyRectangle_s_ ** pixel_rectangle_ = (oyRectangle_s_**)&pixel_rectangle;
 
-  if(!error && (*image_)->type_ != oyOBJECT_IMAGE_S)
+  if(!error && image->type_ != oyOBJECT_IMAGE_S)
     return 0;
 
   if(!error)
   {
-    channel_n = (*image_)->layout_[oyCHANS];
+    channel_n = oyImage_GetPixelLayout( image, oyCHANS );
 
     if(!image_rectangle)
     {
-      oyRectangle_SetGeo( pixel_rectangle, 0,0, (*image_)->width, (*image_)->height );
+      oyRectangle_SetGeo( pixel_rectangle, 0,0, oyImage_GetWidth(image),
+                                                oyImage_GetHeight(image) );
       (*pixel_rectangle_)->width *= channel_n;
 
     } else
     {
       oyRectangle_SetByRectangle( pixel_rectangle, image_rectangle );
-      oyRectangle_Scale( pixel_rectangle, (*image_)->width );
+      oyRectangle_Scale( pixel_rectangle, oyImage_GetWidth(image) );
       (*pixel_rectangle_)->x *= channel_n;
       (*pixel_rectangle_)->width *= channel_n;
       oyRectangle_Round( pixel_rectangle );
