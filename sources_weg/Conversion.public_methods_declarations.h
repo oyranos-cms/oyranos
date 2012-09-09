@@ -20,6 +20,15 @@ OYAPI oyConversion_s *  OYEXPORT
                                        oyDATATYPE_e        buf_type_out,
                                        oyOptions_s       * options,
                                        int                 count );
+OYAPI oyConversion_s *  OYEXPORT
+                oyConversion_CreateFromImage (
+                                       oyImage_s         * image_in,
+                                       const char        * module,
+                                       oyOptions_s       * module_options,
+                                       oyProfile_s       * output_profile,
+                                       oyDATATYPE_e        buf_type_out,
+                                       uint32_t            flags,
+                                       oyObject_s          obj );
 #ifdef UNHIDE_FILTERGRAPH
 OYAPI oyFilterGraph_s *  OYEXPORT
                 oyConversion_GetGraph (

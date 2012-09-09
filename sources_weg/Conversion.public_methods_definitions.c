@@ -53,12 +53,12 @@ int                oyConversion_Correct (
     oyCMMapiFilters_s * apis;
     int apis_n = 0, i;
     oyCMMapi9_s_ * cmm_api9_ = 0;
-    char * class, * api_reg;
+    char * class_name, * api_reg;
 
-    class = oyFilterRegistrationToText( pattern, oyFILTER_REG_TYPE, 0 );
+    class_name = oyFilterRegistrationToText( pattern, oyFILTER_REG_TYPE, 0 );
     api_reg = oyStringCopy_("//", oyAllocateFunc_ );
-    STRING_ADD( api_reg, class );
-    oyFree_m_( class );
+    STRING_ADD( api_reg, class_name );
+    oyFree_m_( class_name );
 
     apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S,
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
@@ -219,6 +219,112 @@ oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
   oyImage_Release( &out );
 
   return conv;
+}
+
+/** Function oyConversion_CreateFromImage
+ *  @brief   generate a Oyranos graph from a image file name
+ *
+ *  @param[in]     image_in            input
+ *  @param[in]     module              tobe ussed icc node
+ *  @param[in]     flags               for inbuild defaults |
+ *                                     oyOPTIONSOURCE_FILTER;
+ *                                     for options marked as advanced |
+ *                                     oyOPTIONATTRIBUTE_ADVANCED |
+ *                                     OY_SELECT_FILTER |
+ *                                     OY_SELECT_COMMON
+ *  @param[in]     data_type           the desired data type for output
+ *  @param[in]     obj                 Oyranos object (optional)
+ *  @return                            generated new graph, owned by caller
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/04/21 (Oyranos: 0.5.0)
+ *  @date    2012/04/21
+ */
+oyConversion_s * oyConversion_CreateFromImage (
+                                       oyImage_s         * image_in,
+                                       const char        * module,
+                                       oyOptions_s       * module_options,
+                                       oyProfile_s       * output_profile,
+                                       oyDATATYPE_e        buf_type_out,
+                                       uint32_t            flags,
+                                       oyObject_s          obj )
+{
+  oyFilterNode_s * in, * out, * icc;
+  int error = 0;
+  oyConversion_s * conversion = 0;
+  oyOptions_s * options = 0;
+  char * module_reg = 0;
+  oyImage_s * image_out = 0;
+  int layout_out = 0;
+  oyProfile_s * profile_in;
+  int chan_in;
+  int cchan_in;
+
+  if(!image_in)
+    return NULL;
+
+  /* start with an empty conversion object */
+  conversion = oyConversion_New( obj );
+  /* create a filter node */
+  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0, obj );
+  /* set the above filter node as the input */
+  oyConversion_Set( conversion, in, 0 );
+  /* set the image buffer */
+  oyFilterNode_DataSet( in, (oyStruct_s*)image_in, 0, 0 );
+
+
+  STRING_ADD( module_reg, "//" OY_TYPE_STD "/" );
+  if(module)
+    STRING_ADD( module_reg, module );
+  else
+    STRING_ADD( module_reg, "icc" );
+
+  /* create a new CMM filter node */
+  icc = out = oyFilterNode_NewWith( module_reg, module_options, obj );
+  /* append the new to the previous one */
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+  if(error > 0)
+    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc" );
+
+  layout_out = oyDataType_m(buf_type_out);
+  profile_in = oyImage_GetProfile( image_in );
+  chan_in     = oyToChannels_m( oyImage_GetPixelLayout(image_in) );
+  cchan_in = oyProfile_GetChannelsCount( profile_in );
+
+  if(!chan_in && cchan_in)
+    chan_in = cchan_in;
+  /* preserve alpha */
+  layout_out |= oyChannels_m( oyProfile_GetChannelsCount(output_profile)
+                              + chan_in - cchan_in );
+
+  /* Create a output image with supplied channel depth and profile */
+  image_out   = oyImage_Create( oyImage_GetWidth( image_in ),
+                                oyImage_GetHeight( image_in ),
+                         0,
+                         layout_out,
+                         output_profile,
+                         0 );
+
+  /* swap in and out */
+  in = out;
+
+  /* add a closing node */
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+  oyFilterNode_DataSet( in, (oyStruct_s*)image_out, 0, 0 );
+  /* set the output node of the conversion */
+  oyConversion_Set( conversion, 0, out );
+
+  /* apply policies */
+  /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
+                                 "true", OY_CREATE_NEW );*/
+  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", flags,
+                        options );
+  oyOptions_Release( &options );
+
+  return conversion;
 }
 
 #ifdef UNHIDE_FILTERGRAPH
@@ -475,18 +581,23 @@ int                oyConversion_RunPixels (
                                 &(*pixel_access_)->array,
                                 (*pixel_access_)->output_image_roi, 0 );
     clck = oyClock() - clck;
-    DBG_NUM1_S("oyImage_FillArray(): %g", clck/1000000.0 );
+    DBGs_NUM1_S( pixel_access,"oyImage_FillArray(): %g", clck/1000000.0 );
     error = ( result != 0 );
   }
 
   /* run on the graph */
   if(error <= 0)
   {
+    DBGs_NUM2_S( pixel_access, "Run: node_out[%d] image_out[%d]",
+                 oyStruct_GetId((oyStruct_s*)node_out),
+                 oyStruct_GetId((oyStruct_s*)image_out) );
     clck = oyClock();
     error = oyFilterNodePriv_m(node_out)->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
     clck = oyClock() - clck;
     DBG_NUM1_S( "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g",
                 clck/1000000.0 );
+    DBGs_NUM1_S( pixel_access, 
+         "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g", clck/1000000.0 );
   }
 
   if(error != 0 && pixel_access)
@@ -498,14 +609,14 @@ int                oyConversion_RunPixels (
     clck = oyClock();
     oyFilterGraph_SetFromNode( (oyFilterGraph_s*)(*pixel_access_)->graph, (oyFilterNode_s*)(*conversion_)->input, 0, 0 );
     clck = oyClock() - clck;
-    DBG_NUM1_S("oyFilterGraph_SetFromNode(): %g", clck/1000000.0 );
+    DBGs_NUM1_S(pixel_access,"oyFilterGraph_SetFromNode(): %g",clck/1000000.0 );
 
     /* resolve missing data */
     clck = oyClock();
     image_input = oyFilterPlug_ResolveImage( plug, (oyFilterSocket_s*)((oyFilterPlug_s_*)plug)->remote_socket_,
                                              pixel_access );
     clck = oyClock() - clck;
-    DBG_NUM1_S("oyFilterPlug_ResolveImage(): %g", clck/1000000.0 );
+    DBGs_NUM1_S(pixel_access,"oyFilterPlug_ResolveImage(): %g",clck/1000000.0 );
     oyImage_Release( &image_input );
 
     n = oyFilterNodes_Count( (*pixel_access_)->graph->nodes );
@@ -535,12 +646,14 @@ int                oyConversion_RunPixels (
         clck = oyClock();
         oyFilterGraph_PrepareContexts( (oyFilterGraph_s*)(*pixel_access_)->graph, 0 );
         clck = oyClock() - clck;
-        DBG_NUM1_S("oyFilterGraph_PrepareContexts(): %g", clck/1000000.0 );
+        DBGs_NUM1_S( pixel_access,
+                     "oyFilterGraph_PrepareContexts(): %g", clck/1000000.0 );
         clck = oyClock();
         error = (*conversion_)->out_->api7_->oyCMMFilterPlug_Run( plug,
                                                               pixel_access);
         clck = oyClock() - clck;
-        DBG_NUM1_S("conversion->out_->api7_->oyCMMFilterPlug_Run(): %g", clck/1000000.0 );
+        DBGs_NUM1_S( pixel_access,
+          "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g",clck/1000000.0 );
       }
 
       if(error == 0)
