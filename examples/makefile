@@ -156,14 +156,17 @@ clean:
 	echo ... clean done
 
 xcmsevents/qrc_qcmsevents.cpp:
+	mkdir -p xcmsevents
 	echo "	RCC:	$@ ..."
 	-rcc $(SRCDIR)$(TARGET8).qrc -o $@
 
 xcmsevents/moc_qcmsevents.cpp:	$(SRCDIR)$(TARGET8).h
+	mkdir -p xcmsevents
 	echo "	MOC:	$@ ..."
 	-$(MOC) $(SRCDIR)$(TARGET8).h -o $@
 
 $(TARGET8).o:	$(SRCDIR)$(TARGET8).cpp
+	mkdir -p xcmsevents
 	echo "	C++:	$@ ..."
 	-$(CXX) -I. $(CXXFLAGS_) $(QT_CFLAGS) $(INCL) -c -o $@ $<
 
