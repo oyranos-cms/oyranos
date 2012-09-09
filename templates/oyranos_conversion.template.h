@@ -34,6 +34,9 @@ typedef enum {
   oyCONNECTOR_EVENT_INCOMPLETE_GRAPH   /**< can not completely process */
 } oyCONNECTOR_EVENT_e;
 
+const char *       oyConnectorEventToText (
+                                       oyCONNECTOR_EVENT_e e );
+
 /** @enum    oyFILTER_REG_MODE_e
  *  @ingroup objects_conversion
  *
