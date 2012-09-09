@@ -1806,15 +1806,15 @@ int             oyOptions_Handle     ( const char        * registration,
     oyCMMapiFilters_s * apis;
     int apis_n = 0, i, found = 0;
     oyCMMapi10_s_ * cmm_api10 = 0;
-    char * class, * api_reg;
+    char * class_name, * api_reg;
     char * test = 0;
     uint32_t * rank_list = 0,
                api_n = 0;
 
-    class = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE, 0 );
+    class_name = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE, 0 );
     api_reg = oyStringCopy_("//", oyAllocateFunc_ );
-    STRING_ADD( api_reg, class );
-    oyFree_m_( class );
+    STRING_ADD( api_reg, class_name );
+    oyFree_m_( class_name );
 
     STRING_ADD( test, "can_handle." );
     if(command && command[0])
