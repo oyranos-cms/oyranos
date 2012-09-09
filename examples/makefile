@@ -5,6 +5,8 @@
 
 #.SILENT:
 
+HAVE_FLTK := $(shell which fltk-config && echo yes)
+
 TARGET1 = image_display/image_display
 TARGET2 = 
 TARGET4 = image2pdf/image2pdf
@@ -15,13 +17,17 @@ TARGET8 = xcmsevents/qcmsevents
 TARGET9 = libraw/oyranos-file
 TARGET10 = oyranos_profile_graph/oyranos-profile-graph
 TARGET11 = oyranos_convert/oyranos-icc
-TARGETS = $(TARGET1) $(TARGET2) $(TARGET4) $(TARGET5) $(TARGET6) \
+TARGETS = $(TARGET2) $(TARGET4) $(TARGET5) $(TARGET6) \
 	$(TARGET7) $(TARGET8) $(TARGET9) $(TARGET10) $(TARGET11) \
 	../oyranos_logo.ppm
 OY_CFLAGS := $(shell (pkg-config --cflags oyranos))
 OY_LDFLAGS := $(shell (pkg-config --libs oyranos))
+ifeq ($(HAVE_FLTK),yes)
 FLTK_CFLAGS := $(shell (fltk-config --cflags --use-gl | sed 's/-O.//g'))
 FLTK_LDFLAGS := $(shell (fltk-config --ldflags --use-gl)) -pthread # FLTK on Fedora13 misses libpthread.so
+
+TARGETS += $(TARGET1)
+endif
 PKG_CONFIG_CFLAGS := $(shell (pkg-config --cflags xfixes x11))
 PKG_CONFIG_LIBS := $(shell (pkg-config --libs xfixes x11))
 XCM_CFLAGS := $(shell (pkg-config --cflags xcm))
