@@ -44,8 +44,8 @@ CFLAGS_ = $(CFLAGS) -std=c99 -D__USE_POSIX2=1 $(OY_CFLAGS) $(INCLUDE) $(DEBUG) \
 
 UNAME := $(shell (uname -s))
 
-MOC_QT4:= $(shell (which moc-qt4 2>&1 | grep "no moc" | wc -l))
-ifeq ($(MOC_QT4),0)
+MOC_QT4:= $(shell (which moc-qt4 >/dev/null 2>&1 && echo yes))
+ifeq ($(MOC_QT4),yes)
 MOC = moc-qt4
 else
 MOC = moc
