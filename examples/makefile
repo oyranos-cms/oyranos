@@ -18,7 +18,7 @@ TARGET9 = libraw/oyranos-file
 TARGET10 = oyranos_profile_graph/oyranos-profile-graph
 TARGET11 = oyranos_convert/oyranos-icc
 TARGETS = $(TARGET2) $(TARGET4) $(TARGET5) $(TARGET6) \
-	$(TARGET7) $(TARGET8) $(TARGET9) $(TARGET10) $(TARGET11) \
+	$(TARGET7) $(TARGET9) $(TARGET10) $(TARGET11) \
 	../oyranos_logo.ppm
 OY_CFLAGS := $(shell (pkg-config --cflags oyranos))
 OY_LDFLAGS := $(shell (pkg-config --libs oyranos))
@@ -51,7 +51,7 @@ else
 MOC = moc
 endif
 
-ifeq ($(strip $(UNAME)),Linux)
+ifdef QT
 # Qt needs somehow -O2 (Why???)
 QT_CFLAGS := $(shell pkg-config --cflags QtGui xcm) -O2 -std=c++0x
 INCL    := $(shell pkg-config --cflags-only-I QtGui)
@@ -61,6 +61,8 @@ TARGET8_GENERATED_SOURCES = \
 	xcmsevents/moc_qcmsevents.cpp \
 	xcmsevents/qrc_qcmsevents.cpp
 TARGET8_OBJECTS = $(TARGET8_SOURCES:.cpp=.o) $(TARGET8_GENERATED_SOURCES:.cpp=.o)
+
+TARGETS += $(TARGET8)
 endif
 
 
