@@ -54,7 +54,8 @@ OYAPI oyFilterNode_s *  OYEXPORT
                                        oyOptions_s       * options,
                                        oyObject_s          object );
 OYAPI oyOptions_s *  OYEXPORT
-                oyFilterNode_OptionsGet(oyFilterNode_s    * node,
+                oyFilterNode_GetOptions (
+                                       oyFilterNode_s    * node,
                                        int                 flags );
 OYAPI oyConnector_s * OYEXPORT
                oyFilterNode_ShowConnector (
@@ -62,7 +63,7 @@ OYAPI oyConnector_s * OYEXPORT
                                        int                 as_pos,
                                        int                 plug );
 OYAPI int  OYEXPORT
-                 oyFilterNode_UiGet    ( oyFilterNode_s     * node,
+                 oyFilterNode_GetUi  ( oyFilterNode_s     * node,
                                        char              ** ui_text,
                                        char             *** namespaces,
                                        oyAlloc_f            allocateFunc );
