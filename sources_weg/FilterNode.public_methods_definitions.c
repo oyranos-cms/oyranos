@@ -830,7 +830,7 @@ oyFilterNode_s *   oyFilterNode_NewWith (
   return node;
 }
 
-/** Function  oyFilterNode_OptionsGet
+/** Function  oyFilterNode_GetOptions
  *  @memberof oyFilterNode_s
  *  @brief    Get filter options
  *
@@ -838,11 +838,11 @@ oyFilterNode_s *   oyFilterNode_NewWith (
  *  @param         flags               see oyOptions_s::oyOptions_ForFilter()
  *  @return                            the options
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.5.0
  *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2009/06/26
+ *  @date    2012/06/12
  */
-oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
+oyOptions_s* oyFilterNode_GetOptions ( oyFilterNode_s    * node,
                                        int                 flags )
 {
   oyOptions_s * options = 0;
@@ -865,6 +865,8 @@ oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
       error = oyOptions_Filter( &(*node_)->core->options_, 0, 0,
                                 oyBOOLEAN_UNION,
                                 0, options );
+    if(error)
+      WARNc2_S("%s %d", _("found issues"),error);
     if(!(*node_)->core->options_)
       (*node_)->core->options_ = oyOptions_New( 0 );
   }
@@ -874,6 +876,8 @@ oyOptions_s* oyFilterNode_OptionsGet ( oyFilterNode_s    * node,
   /** Observe exported options for changes and propagate to a existing graph. */
   error = oyOptions_ObserverAdd( options, (oyStruct_s*)node,
                                  0, oyFilterNode_Observe_ );
+  if(error)
+    WARNc2_S("%s %d", _("found issues"),error);
 
   return options;
 }
@@ -935,7 +939,7 @@ OYAPI oyConnector_s * OYEXPORT
   return pattern;
 }
 
-/** Function  oyFilterNode_UiGet
+/** Function  oyFilterNode_GetUi
  *  @memberof oyFilterNode_s
  *  @brief    Get filter options XFORMS
  *
@@ -945,11 +949,11 @@ OYAPI oyConnector_s * OYEXPORT
  *  @param         allocateFunc        optional user allocator
  *  @return                            the options
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.5.0
  *  @since   2009/07/29 (Oyranos: 0.1.10)
- *  @date    2009/08/31
+ *  @date    2012/06/12
  */
-int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
+int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
                                        char              ** ui_text,
                                        char             *** namespaces,
                                        oyAlloc_f            allocateFunc )
@@ -971,7 +975,7 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
     allocateFunc = oyAllocateFunc_;
 
   if(!error)
-    options = oyFilterNode_OptionsGet( node, 0 );
+    options = oyFilterNode_GetOptions( node, 0 );
 
   if(!error)
   {
@@ -979,13 +983,13 @@ int            oyFilterNode_UiGet    ( oyFilterNode_s     * node,
     int apis_n = 0, i,j = 0;
     oyCMMapi9_s * cmm_api9 = 0;
     oyCMMapi9_s_ ** cmm_api9_ = (oyCMMapi9_s_**)&cmm_api9;
-    char * class, * api_reg;
+    char * class_name, * api_reg;
     const char * reg = (*node_)->core->registration_;
 
-    class = oyFilterRegistrationToText( reg, oyFILTER_REG_TYPE, 0 );
+    class_name = oyFilterRegistrationToText( reg, oyFILTER_REG_TYPE, 0 );
     api_reg = oyStringCopy_("//", oyAllocateFunc_ );
-    STRING_ADD( api_reg, class );
-    oyFree_m_( class );
+    STRING_ADD( api_reg, class_name );
+    oyFree_m_( class_name );
 
     apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S,
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,

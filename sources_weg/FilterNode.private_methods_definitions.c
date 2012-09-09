@@ -481,7 +481,7 @@ oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s_    * node,
 
 /**
  *  @internal
- *  Function oyFilterNodeObserve_
+ *  Function oyFilterNode_Observe_
  *  @memberof oyFilterNode_s
  *  @brief   observe filter options
  *

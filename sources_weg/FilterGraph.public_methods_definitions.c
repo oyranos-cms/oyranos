@@ -255,6 +255,7 @@ OYAPI char * OYEXPORT
 {
   char * text = 0,
        * temp = oyAllocateFunc_(1024),
+       * temp2 = oyAllocateFunc_(1024),
        * tmp = 0, * txt = 0, * t = 0;
   oyFilterNode_s * node = 0;
   oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
@@ -262,7 +263,7 @@ OYAPI char * OYEXPORT
   oyFilterGraph_s_ * s = (oyFilterGraph_s_*)graph;
 
   oyFilterPlug_s_ * p = 0;
-  int i, n,
+  int i, j, n, len,
       nodes_n = 0;
 
   oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
@@ -313,7 +314,59 @@ OYAPI char * OYEXPORT
       STRING_ADD( txt, t+1 );
       oyFree_m_(tmp);
     } else
+    {
       STRING_ADD( txt, (*node_)->core->api4_->id_ );
+      if(oy_debug)
+      for(j = 0; j < node->sockets_n_; ++j)
+      {
+        oyFilterSocket_s * socket = node->sockets[j];
+        if(socket && socket->data)
+        {
+          const char * name = oyObject_GetName( socket->data->oy_, 1 );
+          int k, pos = 0;
+          len = strlen(name);
+          for(k = 0; k < len; ++k)
+            if(k && name[k] == '"' && name[k-1] != '\\')
+            {
+              sprintf( &temp2[pos], "\\\"" );
+              pos += 2;
+            } else if(name[k] == '<')
+            {
+              sprintf( &temp2[pos], "\\<" );
+              pos += 2;
+            } else if(name[k] == '>')
+            {
+              sprintf( &temp2[pos], "\\>" );
+              pos += 2;
+            } else if(name[k] == '[')
+            {
+              sprintf( &temp2[pos], "\\[" );
+              pos += 2;
+            } else if(name[k] == ']')
+            {
+              sprintf( &temp2[pos], "\\]" );
+              pos += 2;
+            } else if(name[k] == '\n')
+            {
+              sprintf( &temp2[pos], "\\n" );
+              pos += 2;
+            } else
+              temp2[pos++] = name[k];
+          temp2[pos] = 0;
+          printf("%s\n", name);
+          printf("%s\n", temp2);
+          oySprintf_(temp, "  %d [ label=\"{<data> | Data %d\\n"
+                     " Type: \\\"%s\\\"\\n"
+                     " XML: \\\"%s\\\"|<socket>}\"];\n",
+                     oyObject_GetId( socket->oy_ ),
+                     j,
+                     oyStructTypeToText( socket->data->type_ ),
+                     temp2);
+          printf("%s\n", temp);
+          STRING_ADD( text, temp );
+        }
+      }
+    }
 
     oySprintf_(temp, "  %d [ label=\"{<plug> %d| Filter Node %d\\n"
                      " Category: \\\"%s\\\"\\n CMM: \\\"%s\\\"\\n"
@@ -351,6 +404,26 @@ OYAPI char * OYEXPORT
     STRING_ADD( text, temp );
 
     oyFilterPlug_Release( (oyFilterPlug_s**)&p );
+  }
+  
+  for(i = 0; i < nodes_n; ++i)
+  {
+    node = oyFilterNodes_Get( s->nodes, i );
+    if(oy_debug)
+      for(j = 0; j < node->sockets_n_; ++j)
+      {
+        oyFilterSocket_s * socket = node->sockets[j];
+        if(socket && socket->data)
+        {
+          oySprintf_( temp,
+               "    %d:socket -> %d:data [arrowhead=crow, arrowtail=box];\n",
+                oyFilterNode_GetId( node ),
+                oyObject_GetId( socket->oy_ ));
+          STRING_ADD( text, temp );
+        }
+      }
+
+    oyFilterNode_Release( &node );
   }
 
   STRING_ADD( text, "\n" );

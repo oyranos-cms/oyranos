@@ -122,7 +122,7 @@ OYAPI oyImage_s * OYEXPORT
   if(!image_input_)
   {
     /* get options */
-    options = oyFilterNode_OptionsGet( (oyFilterNode_s*)node, 0 );
+    options = oyFilterNode_GetOptions( (oyFilterNode_s*)node, 0 );
 
     /* store original queue */
     ticket_orig = (*ticket_)->request_queue;
@@ -163,7 +163,7 @@ OYAPI oyImage_s * OYEXPORT
     /* Copy a root image or link to a non root image. */
     if(!(*plug_)->remote_socket_->node->api7_->plugs_n)
     {
-      options = oyFilterNode_OptionsGet( (oyFilterNode_s*)node, 0 );
+      options = oyFilterNode_GetOptions( (oyFilterNode_s*)node, 0 );
       error = oyOptions_Filter( &requests, &n, 0,
                                 oyBOOLEAN_INTERSECTION,
                                 "////resolve", options );
