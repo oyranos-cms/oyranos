@@ -3,9 +3,7 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s_    * s,
                                        oyFilterPlugs_s_   * edges,
                                        const char         * mark,
                                        int                  flags );
-int          oyFilterNode_ContextSet_( oyFilterNode_s_    * node,
-                                       oyBlob_s_          * blob );
-oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s_    * node,
+oyStructList_s * oyFilterNode_GetData_(oyFilterNode_s_    * node,
                                        int                  get_plug );
 oyFilterNode_s *   oyFilterNode_GetLastFromLinear_ (
                                        oyFilterNode_s_    * first );

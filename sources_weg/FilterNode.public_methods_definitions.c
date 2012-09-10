@@ -291,7 +291,7 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
   return s;
 }
 
-/** Function  oyFilterNode_DataGet
+/** Function  oyFilterNode_GetData
  *  @memberof oyFilterNode_s
  *  @brief    Get process data from a filter socket
  *
@@ -303,7 +303,7 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
  *  @since   2009/03/05 (Oyranos: 0.1.10)
  *  @date    2009/03/05
  */
-oyStruct_s *   oyFilterNode_DataGet  ( oyFilterNode_s    * node,
+oyStruct_s *   oyFilterNode_GetData  ( oyFilterNode_s    * node,
                                        int                 socket_pos )
 {
   oyFilterNode_s * s = node;
@@ -322,7 +322,7 @@ oyStruct_s *   oyFilterNode_DataGet  ( oyFilterNode_s    * node,
   return data;
 }
 
-/** Function  oyFilterNode_DataSet
+/** Function  oyFilterNode_SetData
  *  @memberof oyFilterNode_s
  *  @brief    Set process data to a filter socket
  *
@@ -336,7 +336,7 @@ oyStruct_s *   oyFilterNode_DataGet  ( oyFilterNode_s    * node,
  *  @since   2009/03/05 (Oyranos: 0.1.10)
  *  @date    2009/03/05
  */
-int            oyFilterNode_DataSet  ( oyFilterNode_s    * node,
+int            oyFilterNode_SetData  ( oyFilterNode_s    * node,
                                        oyStruct_s        * data,
                                        int                 socket_pos,
                                        oyObject_s        * object )
@@ -803,10 +803,10 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
   hashTextAdd_m( oyFilterCore_GetText( (oyFilterCore_s*)s->core, oyNAME_NAME ) );
 
   /* pick all plug (input) data */
-  in_datas = oyFilterNode_DataGet_( s, 1 );
+  in_datas = oyFilterNode_GetData_( s, 1 );
 
   /* pick all sockets (output) data */
-  out_datas = oyFilterNode_DataGet_( s, 0 );
+  out_datas = oyFilterNode_GetData_( s, 0 );
 
   /* make a description */
   tmp = oyContextCollectData_( (oyStruct_s*)s, s->core->options_,

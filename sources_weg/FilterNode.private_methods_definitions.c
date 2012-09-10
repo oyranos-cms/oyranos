@@ -247,7 +247,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s_    * node_,
   return error;
 }
 
-/** Function  oyFilterNode_DataGet_
+/** Function  oyFilterNode_GetData_
  *  @memberof oyFilterNode_s
  *  @brief    Get the processing data from a filter node
  *  @internal
@@ -260,7 +260,7 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s_    * node_,
  *  @since   2008/11/04 (Oyranos: 0.1.8)
  *  @date    2008/11/04
  */
-oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s_    * node,
+oyStructList_s * oyFilterNode_GetData_(oyFilterNode_s_    * node,
                                        int                  get_plug )
 {
   int error = !node;

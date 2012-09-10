@@ -96,7 +96,7 @@ oyFilterCore_s * oyFilterCore_New_   ( oyObject_s          object );
 int          oyFilterCore_SetCMMapi4_( oyFilterCore_s    * s,
                                        oyCMMapi4_s       * cmm_api4 );
 
-oyStructList_s * oyFilterNode_DataGet_(oyFilterNode_s    * node,
+oyStructList_s * oyFilterNode_GetData_(oyFilterNode_s    * node,
                                        int                 get_plug );
 int  oyColourConvert_ ( oyProfile_s       * p_in,
                         oyProfile_s       * p_out,

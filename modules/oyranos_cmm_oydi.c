@@ -556,12 +556,12 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
                                       image_input->height,
                                       0, pixel_layout,
                                       0, 0,0,0,0, 0 );
-    oyFilterNode_DataSet( node, (oyStruct_s*)image, 0, 0 );
+    oyFilterNode_SetData( node, (oyStruct_s*)image, 0, 0 );
 
     /* set as well the ICC node previous in the DAG */
     if(oyFilterRegistrationMatch( input_node->core->registration_,
                                       "//" OY_TYPE_STD "/icc", 0 ))
-      oyFilterNode_DataSet( input_node, (oyStruct_s*)image, 0, 0 );
+      oyFilterNode_SetData( input_node, (oyStruct_s*)image, 0, 0 );
 
     oyImage_Release( &image );
     image = (oyImage_s*)socket->data;

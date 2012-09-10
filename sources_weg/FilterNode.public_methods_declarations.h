@@ -17,10 +17,10 @@ OYAPI oyFilterNode_s *  OYEXPORT
                 oyFilterNode_Create   (oyFilterCore_s    * filter,
                                        oyObject_s          object );
 OYAPI oyStruct_s *  OYEXPORT
-                oyFilterNode_DataGet  (oyFilterNode_s    * node,
+                oyFilterNode_GetData  (oyFilterNode_s    * node,
                                        int                 socket_pos );
 OYAPI int  OYEXPORT
-                 oyFilterNode_DataSet (oyFilterNode_s    * node,
+                 oyFilterNode_SetData (oyFilterNode_s    * node,
                                        oyStruct_s        * data,
                                        int                 socket_pos,
                                        oyObject_s        * object );
