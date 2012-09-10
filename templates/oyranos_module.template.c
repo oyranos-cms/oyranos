@@ -1,6 +1,16 @@
 {% include "source_file_header.txt" %}
 
+#include "oyranos_debug.h"
+#include "oyranos_sentinel.h"
+
 #include "oyranos_generic_internal.h"
+#include "oyranos_module_internal.h"
+#include "oyObject_s.h"
+#include "oyCMMapi5_s.h"
+#include "oyCMMapi9_s.h"
+#include "oyCMMapiFilters_s.h"
+#include "oyCMMapiFilters_s_.h"
+#include "oyFilterPlug_s.h"
 
 /** Function oyCMMsGetFilterApis_
  *  @brief   Let a oyCMMapi5_s meta module open a set of modules
@@ -599,3 +609,145 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm )
 
   return apis;
 }
+
+/** Function  oyStruct_GetTextFromModule
+ *  @memberof oyStruct_s
+ *  @brief    get object infos from a module
+ *
+ *  @param[in,out] obj                 the objects structure
+ *  @param[in]     name_type           the type
+ *  @param[in]     flags               @see oyStruct_GetText
+ *  @return                            the text
+ *
+ *  @version  Oyranos: 0.3.3
+ *  @since    2009/09/15 (Oyranos: 0.3.3)
+ *  @date     2011/10/31
+ */
+const char * oyStruct_GetTextFromModule (
+                                       oyStruct_s        * obj,
+                                       oyNAME_e            name_type,
+                                       uint32_t            flags )
+{
+  int error = !obj;
+  const char * text = 0;
+
+  if(!error)
+    text = oyObject_GetName( obj->oy_, oyNAME_NICK );
+
+  if(!error && !text)
+  {
+    if(obj->type_)
+    {
+      oyCMMapiFilters_s * apis;
+      int apis_n = 0, i,j,n;
+      oyCMMapi9_s * cmm_api9 = 0;
+      char * api_reg = 0;
+
+      apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S,
+                                   oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                                   0, 0);
+      apis_n = oyCMMapiFilters_Count( apis );
+      for(i = 0; i < apis_n; ++i)
+      {
+        cmm_api9 = (oyCMMapi9_s*) oyCMMapiFilters_Get( apis, i );
+
+        n = 0;
+        while( cmm_api9->object_types && cmm_api9->object_types[n])
+          ++n;
+        for(j = 0; j < n; ++j)
+          if( cmm_api9->object_types[j]->oyCMMobjectGetText &&
+              cmm_api9->object_types[j]->id == obj->type_ )
+          {
+            text = cmm_api9->object_types[j]->oyCMMobjectGetText( flags?0:obj,
+                                                   name_type, 0 );
+            if(text)
+              break;
+          }
+
+        if(cmm_api9->release)
+          cmm_api9->release( (oyStruct_s**)&cmm_api9 );
+
+        if(text)
+          break;
+      }
+      oyCMMapiFilters_Release( &apis );
+    }
+  }
+
+  if(!error && !text)
+    text = oyStructTypeToText( obj->type_ );
+
+  return text;
+}
+
+
+/** @internal
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/30 (Oyranos: 0.1.10)
+ *  @date    2009/01/30
+ */
+int    oyIsOfTypeCMMapiFilter        ( oyOBJECT_e          type )
+{
+  return        type == oyOBJECT_CMM_API4_S ||
+                type == oyOBJECT_CMM_API6_S ||
+                type == oyOBJECT_CMM_API7_S ||
+                type == oyOBJECT_CMM_API8_S ||
+                type == oyOBJECT_CMM_API9_S ||
+                type == oyOBJECT_CMM_API10_S;
+}
+
+/**
+ *  @brief oyDATATYPE_e to byte mapping
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ *  @date    2007/11/00
+ */
+int      oySizeofDatatype            ( oyDATATYPE_e        t )
+{
+  int n = 0;
+  switch(t)
+  {
+    case oyUINT8:
+         return 1;
+    case oyUINT16:
+    case oyHALF:
+         return 2;
+    case oyUINT32:
+    case oyFLOAT:
+         return 4;
+    case oyDOUBLE:
+         return 8;
+  }
+  return n;
+}
+
+/**
+ *  @brief oyDATATYPE_e to string mapping
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  26 november 2007 (API 0.1.8)
+ */
+
+const char *   oyDatatypeToText      ( oyDATATYPE_e        t)
+{
+  const char * text = 0;
+  switch(t)
+  {
+    case oyUINT8:
+         text = "oyUINT8"; break;
+    case oyUINT16:
+         text = "oyUINT16"; break;
+    case oyHALF:
+         text = "oyHALF"; break;
+    case oyUINT32:
+         text = "oyUINT32"; break;
+    case oyFLOAT:
+         text = "oyFLOAT"; break;
+    case oyDOUBLE:
+         text = "oyDOUBLE"; break;
+  }
+  return text;
+}
+

@@ -7,6 +7,7 @@
 
 #include "oyHash_s.h"
 #include "oyCMMapiFilters_s.h"
+#include "oyCMMapis_s.h"
 
 oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
                                          const char        * cmm_required,
@@ -26,8 +27,13 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        oyCMMapi_Check_f    apiCheck,
                                        oyPointer           check_pointer );
 oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text );
-oyCMMapis_s_ * oyCMMGetMetaApis_     ( const char        * cmm );
+oyCMMapis_s *  oyCMMGetMetaApis_     ( const char        * cmm );
 oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm );
+const char * oyStruct_GetTextFromModule (
+                                       oyStruct_s        * obj,
+                                       oyNAME_e            name_type,
+                                       uint32_t            flags );
+int    oyIsOfTypeCMMapiFilter        ( oyOBJECT_e          type );
 
 /**
  *  @internal

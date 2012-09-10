@@ -8,6 +8,9 @@
 
 #include "oyranos_image.h"
 
+int                oySizeofDatatype  ( oyDATATYPE_e        t );
+const char *       oyDatatypeToText  ( oyDATATYPE_e        t );
+
 
 /** @internal
  *  pixel mask description

@@ -22,6 +22,13 @@ int    oyOptions_SetRegistrationTextKey_(
                                        const char        * registration,
                                        const char        * key,
                                        const char        * value );
+oyOption_s *   oyOption_FromDB       ( const char        * registration,
+                                       oyObject_s          object );
+OYAPI int  OYEXPORT
+               oyOptions_SaveToDB    ( oyOptions_s       * options,
+                                       const char        * registration,
+                                       char             ** new_reg,
+                                       oyAlloc_f           allocateFunc );
 int          oyDeviceCheckProperties ( oyConfig_s        * device );
 
 #endif /* {{ file_name|underscores|upper|tr:". _" }} */

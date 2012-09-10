@@ -113,25 +113,6 @@ char   oyFilterRegistrationModify    ( const char        * registration,
 int          oyRegistrationEraseFromDB(const char        * registration );
 
 
-oyOption_s *   oyOption_FromDB       ( const char        * registration,
-                                       oyObject_s          object );
-
-
-#define OY_STRING_LIST                 0x01 /** create a oyVAL_STRING_LIST */
-/* decode */
-#define oyToStringList_m(r)            ((r)&1)
-
-
-#define OY_CREATE_NEW                  0x02        /** create */
-#define OY_ADD_ALWAYS                  0x04        /** do not use for configurations */
-/* decode */
-#define oyToCreateNew_m(r)             (((r) >> 1)&1)
-#define oyToAddAlways_m(r)             (((r) >> 2)&1)
-OYAPI int  OYEXPORT
-               oyOptions_SaveToDB    ( oyOptions_s       * options,
-                                       const char        * key_base_name,
-                                       char             ** new_reg,
-                                       oyAlloc_f           allocateFunc );
 
 OYAPI int  OYEXPORT
                oyConfig_Set          ( oyConfig_s        * config,
