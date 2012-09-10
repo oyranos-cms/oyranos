@@ -121,7 +121,7 @@ OYAPI int  OYEXPORT
     if(do_it &&
        (*node_)->core->api4_->oyCMMFilterNode_ContextToMem &&
        strlen((*node_)->api7_->context_type))
-      oyFilterNode_ContextSet_( *node_, 0 );
+      oyFilterNode_SetContext_( *node_, 0 );
 
     oyFilterNode_Release( &node );
   }
@@ -216,7 +216,7 @@ oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
        strlen((*node_)->core->api4_->context_type))
     {
       blob = oyBlob_New( object );
-      oyFilterNode_ContextSet_( *node_, (oyBlob_s_*)blob );
+      oyFilterNode_SetContext_( *node_, (oyBlob_s_*)blob );
     }
 
     oyFilterNode_Release( &node );

@@ -62,7 +62,7 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s_    * s,
   return 0;
 }
 
-/** Function  oyFilterNode_ContextSet_
+/** Function  oyFilterNode_SetContext_
  *  @memberof oyFilterNode_s
  *  @brief    Set module context in a filter
  *  @internal
@@ -78,7 +78,7 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s_    * s,
  *  @date    2012/06/12
  *  @since   2008/11/02 (Oyranos: 0.1.8)
  */
-int          oyFilterNode_ContextSet_( oyFilterNode_s_    * node_,
+int          oyFilterNode_SetContext_( oyFilterNode_s_    * node_,
                                        oyBlob_s_          * blob  )
 {
   int error = 0;
