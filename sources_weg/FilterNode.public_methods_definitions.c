@@ -360,6 +360,10 @@ int            oyFilterNode_DataSet  ( oyFilterNode_s    * node,
       socket->data = data->copy( data, object );
     else
       socket->data = data;
+  } else
+  {
+    WARNc_S("Node has no socket. Can not assign data.");
+    return -1;
   }
 
   return 0;
@@ -745,7 +749,7 @@ OYAPI oyFilterSocket_s * OYEXPORT
  *
  *  Serialise into:
  *  - oyNAME_NICK: XML ID
- *  - oyNAME_NAME: XML
+ *  - oyNAME_NAME: XML from module
  *  - oyNAME_DESCRIPTION: ??
  *
  *  This function provides a complete description of the context. It might be
@@ -758,9 +762,9 @@ OYAPI oyFilterSocket_s * OYEXPORT
  *  @param[out]    name_type           the type
  *  @return                            the text
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.3.3
+ *  @date    2011/11/22
  *  @since   2008/07/17 (Oyranos: 0.1.8)
- *  @date    2008/07/18
  */
 const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
                                        oyNAME_e            name_type )
@@ -774,6 +778,23 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
 
   if(!node)
     return 0;
+
+  if( s->core && s->core->api4_ && s->core->api4_->oyCMMFilterNode_GetText &&
+      name_type == oyNAME_NAME )
+  {
+    hash_text = s->core->api4_->oyCMMFilterNode_GetText( node, oyNAME_NICK,
+                                                   oyAllocateFunc_ );
+    if(hash_text)
+    {
+      oyObject_SetName( s->oy_, hash_text, oyNAME_NAME );
+
+      oyDeAllocateFunc_( hash_text );
+      hash_text = 0;
+
+      hash_text = (oyChar*) oyObject_GetName( s->oy_, oyNAME_NAME );
+      return hash_text;
+    }
+  }
 
   /* 1. create hash text */
   hashTextAdd_m( "<oyFilterNode_s>\n  " );
