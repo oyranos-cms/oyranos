@@ -249,7 +249,8 @@ CFILES_OBJECT_MODULES = \
 	$(GENDIR)oyConfigs_s_.c \
 	$(GENDIR)oyConfigs_s.c \
 	$(GENDIR)oyranos_devices.c \
-	$(GENDIR)oyranos_devices_internal.c
+	$(GENDIR)oyranos_devices_internal.c \
+	$(GENDIR)oyranos_module.c
 CHEADERS_OBJECT_MODULES_PUBLIC = \
 	$(GENDIR)oyConfig_s.h \
 	$(GENDIR)oyConfigs_s.h \
