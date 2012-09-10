@@ -74,9 +74,9 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s_    * s,
  *  @param[in,out] blob                context to fill
  *  @return                            error
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.5.0
+ *  @date    2012/06/12
  *  @since   2008/11/02 (Oyranos: 0.1.8)
- *  @date    2009/06/12
  */
 int          oyFilterNode_ContextSet_( oyFilterNode_s_    * node_,
                                        oyBlob_s_          * blob  )
@@ -181,7 +181,8 @@ int          oyFilterNode_ContextSet_( oyFilterNode_s_    * node_,
                 if(!ptr || !size)
                 {
                   oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*) node,
-                  OY_DBG_FORMAT_ "no device link for caching", OY_DBG_ARGS_);
+                  OY_DBG_FORMAT_ "no device link for caching\n%s", OY_DBG_ARGS_,
+                  oyFilterNode_GetText( node, oyNAME_NICK ));
                   error = 1;
                   oyPointer_Release( &cmm_ptr );
                 }
