@@ -34,8 +34,8 @@ XCM_CFLAGS := $(shell (pkg-config --cflags xcm))
 XCM_LDFLAGS := $(shell (pkg-config --libs xcm))
 OFORMS_FLAGS = -I$(SRCDIR)../oforms
 TARGET2_FLAGS = ../modules/devices/oyranos_monitor.o \
-		../modules/devices/oyranos_edid_parse.o $(XCM_CFLAGS)
-TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo oyranos))
+		../modules/devices/oyranos_edid_parse.o $(XCM_CFLAGS) $(LDFLAGS)
+TARGET4_FLAGS := $(LDFLAGS) $(shell (pkg-config --cflags --libs cairo oyranos))
 LDFLAGS = $(LIBS)
 DEBUG = -Wall -g -pedantic -O0
 CXXFLAGS_ = $(CXXFLAGS) $(OY_CFLAGS) $(INCLUDE) $(DEBUG) -std=c++98 $(XCM_CFLAGS)
