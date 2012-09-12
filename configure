@@ -560,7 +560,9 @@ if [ -f tests/intptr_test ]; then
     echo_="32-bit build            detected"
   elif [ $INTPTR_SIZE -gt 4 ]; then
     echo_="64-bit build            detected"
-    BARCH=64
+    if [ "$OSUNAME" != "BSD" ]; then
+      BARCH=64
+    fi
     test -n "$ECHO" && $ECHO "BUILD_64 = 1" >> $CONF
   elif [ $INTPTR_SIZE -ne 0 ]; then
     echo_="$INTPTR_SIZE-byte intptr_t          detected"
