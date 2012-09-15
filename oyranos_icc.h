@@ -187,8 +187,6 @@ typedef struct {
 
 
 
-#ifndef HAVE_LCMS
-
 #ifndef icSigChromaticityType
 #define icSigChromaticityType 0x6368726D /* chrm */
 #endif
@@ -247,9 +245,6 @@ typedef struct {
 #ifndef icSigHPGamutDescTag
 #define icSigHPGamutDescTag 1735226433 /* gmtA */
 #endif
-
-
-#endif /* HAVE_LCMS */
 
 #ifdef __cplusplus
 } /* extern "C" */
