@@ -145,7 +145,7 @@ OYAPI oyImage_s * OYEXPORT
     oyOptions_Release( &requests );
 
     /* try to obtain the processing data from a generator filter */
-    input_node_->api7_->oyCMMFilterPlug_Run( node->plugs[0], ticket );
+    input_node_->api7_->oyCMMFilterPlug_Run( (oyFilterPlug_s*)(node->plugs[0]), ticket );
     image_input_ = (oyImage_s_*)oyImage_Copy( (oyImage_s*)(*plug_)->remote_socket_->data, 0 );
 
     /* clean up the queue */
@@ -226,7 +226,7 @@ OYAPI oyFilterNode_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_PLUG_S, return 0 )
 
-  return oyFilterNode_Copy( s->node, 0 );
+  return oyFilterNode_Copy( (oyFilterNode_s*)(s->node), 0 );
 }
 /** Function  oyFilterPlug_GetSocket
  *  @memberof oyFilterPlug_s
@@ -249,7 +249,7 @@ OYAPI oyFilterSocket_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_PLUG_S, return 0 )
 
-  return oyFilterSocket_Copy( s->remote_socket_, 0 );
+  return oyFilterSocket_Copy( (oyFilterSocket_s*)(s->remote_socket_), 0 );
 }
 /** Function  oyFilterPlug_GetPattern
  *  @memberof oyFilterPlug_s
