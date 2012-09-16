@@ -67,3 +67,10 @@ OYAPI int  OYEXPORT
                                        char              ** ui_text,
                                        char             *** namespaces,
                                        oyAlloc_f            allocateFunc );
+OYAPI oyOptions_s *  OYEXPORT
+                 oyFilterNode_GetTags( oyFilterNode_s     * node );
+OYAPI oyFilterCore_s *  OYEXPORT
+                 oyFilterNode_GetCore( oyFilterNode_s     * node );
+OYAPI const char *  OYEXPORT
+                 oyFilterNode_GetRegistration
+                                     ( oyFilterNode_s     * node );

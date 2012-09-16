@@ -1,3 +1,5 @@
+#include "oyFilterCore_s_.h"
+
 /** @internal
  *  @brief   convert between oyPointer_s data
  *
@@ -1078,4 +1080,74 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
   }
 
   return error;
+}
+
+/** Function  oyFilterNode_GetCore
+ *  @memberof oyFilterNode_s
+ *  @brief    Get filter core
+ *
+ *  @param[in,out] node                filter object
+ *  @return                            the core
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/15
+ *  @since    2012/09/15 (Oyranos: 0.1.10)
+ */
+OYAPI oyFilterCore_s *  OYEXPORT
+                 oyFilterNode_GetCore( oyFilterNode_s     * node )
+{
+  oyFilterNode_s * s = node;
+
+  if(!node)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
+
+  return s->core;
+}
+/** Function  oyFilterNode_GetRegistration
+ *  @memberof oyFilterNode_s
+ *  @brief    Get filter core registration
+ *
+ *  @param[in,out] node                filter object
+ *  @return                            the registration string
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/15
+ *  @since    2012/09/15 (Oyranos: 0.5.0)
+ */
+OYAPI const char *  OYEXPORT
+                 oyFilterNode_GetRegistration( oyFilterNode_s     * node )
+{
+  oyFilterNode_s * s = node;
+
+  if(!node)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
+
+  return ((oyFilterCore_s_*)s->core)->registration_;
+}
+/** Function  oyFilterNode_GetTags
+ *  @memberof oyFilterNode_s
+ *  @brief    Get filter tags
+ *
+ *  @param[in,out] node                filter object
+ *  @return                            the tags
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/15
+ *  @since    2012/09/15 (Oyranos: 0.5.0)
+ */
+OYAPI oyOptions_s *  OYEXPORT
+                 oyFilterNode_GetTags( oyFilterNode_s     * node )
+{
+  oyFilterNode_s * s = node;
+
+  if(!node)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
+
+  return oyOptions_Copy( s->tags, 0 );
 }
