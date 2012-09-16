@@ -6,6 +6,8 @@
 
 {% include "cpp_begin.h" %}
 
+#include "oyranos_types.h"
+
 #define OY_FILTEREDGE_FREE             0x01        /**< list free edges */
 #define OY_FILTEREDGE_CONNECTED        0x02        /**< list connected edges */
 #define OY_FILTEREDGE_LASTTYPE         0x04        /**< list last type edges */
@@ -49,6 +51,10 @@ typedef enum {
   /** segments starting with underbar are implementation attributes */
   oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR = 0x0100
 } oyFILTER_REG_MODE_e;
+char   oyFilterRegistrationModify    ( const char        * registration,
+                                       oyFILTER_REG_MODE_e mode,
+                                       char             ** result,
+                                       oyAlloc_f           allocateFunc );
 
 {% include "cpp_end.h" %}
 
