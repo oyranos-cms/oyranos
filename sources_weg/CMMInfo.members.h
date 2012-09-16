@@ -11,4 +11,4 @@
 
   oyCMMapi_s     * api;                /**< must be casted to a according API, zero terminated list */
 
-  oyIcon_s         icon;               /*!< zero terminated list of a icon pyramid */
+  oyIcon_s       * icon;               /*!< zero terminated list of a icon pyramid */

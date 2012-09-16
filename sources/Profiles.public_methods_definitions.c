@@ -1,4 +1,5 @@
 extern oyProfiles_s * oy_profile_list_cache_;
+
 int oyLowerStrcmpWrap (const void * a_, const void * b_)
 {
   const char * a = *(const char **)a_,
