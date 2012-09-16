@@ -6,9 +6,10 @@
 
 {% include "cpp_begin.h" %}
 
+typedef struct oyIcon_s oyIcon_s;
+
 #include "oyOptions_s.h"
 #include "oyFilterCore_s.h"
-#include "oyCMMInfo_s.h"
 #include "oyCMMapi_s.h"
 
 /** @brief   CMM capabilities query enum
@@ -51,10 +52,16 @@ const char *    (* oyCMMGetText_f)   ( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context );
 
+#include "oyCMMInfo_s.h"
 typedef  oyOBJECT_e(*oyCMMapi_Check_f)(oyCMMInfo_s       * cmm_info,
                                        oyCMMapi_s        * api,
                                        oyPointer           data,
                                        uint32_t          * rank );
+char   oyCMMapiNumberToChar          ( oyOBJECT_e          api_number );
+oyCMMInfo_s *    oyCMMInfoFromLibName_(const char        * lib_name );
+char **          oyCMMsGetLibNames_  ( uint32_t          * n,
+                                       const char        * required_cmm );
+
 
 /** @brief   icon data
  *  @ingroup cmm_handling
@@ -62,7 +69,7 @@ typedef  oyOBJECT_e(*oyCMMapi_Check_f)(oyCMMInfo_s       * cmm_info,
  *
  *  Since: 0.1.8
  */
-typedef struct {
+struct oyIcon_s {
   oyOBJECT_e       type;               /*!< struct type oyOBJECT_ICON_S */
   oyStruct_Copy_f      copy;           /**< copy function */
   oyStruct_Release_f   release;        /**< release function */
@@ -71,7 +78,7 @@ typedef struct {
   int              height;             /**< */
   float          * data;               /*!< should be sRGB matched */
   char           * file_list;          /*!< colon ':' delimited list of icon file names, SVG, PNG */
-} oyIcon_s;
+};
 
 
 /** typedef  oyCMMFilter_ValidateOptions_f
