@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "oyranos_conversion.h"
 #include "oyranos_core.h"
 #include "oyranos_definitions.h"
 #include "oyranos_helper.h"
@@ -233,13 +234,23 @@ char *         oyFilterRegistrationToText (
 {
   char  * text = 0, * tmp = 0;
   int     texts_n = 0,
-          pos = 0, single = 0, len = 0;
+          single = 0, len = 0;
 
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
 
   if(registration)
   {
+    if(fields == oyFILTER_REG_TOP ||
+       fields == oyFILTER_REG_DOMAIN ||
+       fields == oyFILTER_REG_TYPE ||
+       fields == oyFILTER_REG_APPLICATION ||
+       fields == oyFILTER_REG_OPTION ||
+       fields == oyFILTER_REG_MAX)
+      single = 1;
+
+#if USE_OLD_STRING_API
+    int pos = 0;
          if(fields & oyFILTER_REG_TOP)
       pos = 1;
     else if(fields & oyFILTER_REG_DOMAIN)
@@ -253,15 +264,6 @@ char *         oyFilterRegistrationToText (
     else if(fields & oyFILTER_REG_MAX)
       pos = 6;
 
-    if(fields == oyFILTER_REG_TOP ||
-       fields == oyFILTER_REG_DOMAIN ||
-       fields == oyFILTER_REG_TYPE ||
-       fields == oyFILTER_REG_APPLICATION ||
-       fields == oyFILTER_REG_OPTION ||
-       fields == oyFILTER_REG_MAX)
-      single = 1;
-
-#if USE_OLD_STRING_API
     char ** texts = oyStringSplit_( registration, OY_SLASH_C, &texts_n,oyAllocateFunc_);
     if(texts_n >= pos && fields == oyFILTER_REG_TOP)
     {
@@ -828,3 +830,23 @@ int oyPointerRelease                 ( oyPointer         * ptr )
   }
   return 1;
 }
+
+const char *       oyConnectorEventToText (
+                                       oyCONNECTOR_EVENT_e e )
+{
+  const char * text = "unknown";
+  switch(e)
+  {
+    case oyCONNECTOR_EVENT_OK: text = "oyCONNECTOR_EVENT_OK: kind of ping"; break;
+    case oyCONNECTOR_EVENT_CONNECTED: text = "oyCONNECTOR_EVENT_CONNECTED: connection established"; break;
+    case oyCONNECTOR_EVENT_RELEASED: text = "oyCONNECTOR_EVENT_RELEASED: released the connection"; break;
+    case oyCONNECTOR_EVENT_DATA_CHANGED: text = "oyCONNECTOR_EVENT_DATA_CHANGED: call to update image views"; break;
+    case oyCONNECTOR_EVENT_STORAGE_CHANGED: text = "oyCONNECTOR_EVENT_STORAGE_CHANGED: new data accessors"; break;
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_DATA: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_DATA: can not process data"; break;
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION: can not handle option"; break;
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT: can not handle context"; break;
+    case oyCONNECTOR_EVENT_INCOMPLETE_GRAPH: text = "oyCONNECTOR_EVENT_INCOMPLETE_GRAPH: can not completely process"; break;
+  }
+  return text;
+}
+

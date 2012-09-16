@@ -11,39 +11,22 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/09/15
  */
 
 
 #ifndef OYRANOS_MODULE_INTERNAL_H
 #define OYRANOS_MODULE_INTERNAL_H
 
+#include "oyranos.h"
 #include "oyranos_module.h"
 
 #include "oyHash_s.h"
 #include "oyCMMapiFilters_s.h"
 #include "oyCMMapis_s.h"
-
-oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
-                                         const char        * cmm_required,
-                                         const char        * registration,
-                                         oyOBJECT_e          type,
-                                         uint32_t            flags,
-                                         uint32_t         ** rank_list,
-                                         uint32_t          * count );
-oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
-                                       const char        * lib_name,
-                                       oyCMMapi_Check_f    apiCheck,
-                                       oyPointer           check_pointer,
-                                       int                 num );
-oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
-                                       const char        * cmm_required,
-                                       char             ** lib_used,
-                                       oyCMMapi_Check_f    apiCheck,
-                                       oyPointer           check_pointer );
-oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text );
-oyCMMapis_s *  oyCMMGetMetaApis_     ( const char        * cmm );
-oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm );
+#include "oyFilterNodes_s.h"
+#include "oyFilterPlug_s.h"
+#include "oyFilterPlugs_s.h"
 
 /**
  *  @internal
@@ -90,6 +73,43 @@ typedef struct {
   char                 prefered_cmm[5];
 } oyCMMapiQueries_s;
 
+oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
+                                         const char        * cmm_required,
+                                         const char        * registration,
+                                         oyOBJECT_e          type,
+                                         uint32_t            flags,
+                                         uint32_t         ** rank_list,
+                                         uint32_t          * count );
+oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
+                                       const char        * lib_name,
+                                       oyCMMapi_Check_f    apiCheck,
+                                       oyPointer           check_pointer,
+                                       int                 num );
+oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
+                                       const char        * cmm_required,
+                                       char             ** lib_used,
+                                       oyCMMapi_Check_f    apiCheck,
+                                       oyPointer           check_pointer );
+oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text );
+oyCMMapis_s *  oyCMMGetMetaApis_     ( const char        * cmm );
+oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm );
+char **          oyCMMsGetNames_     ( uint32_t          * n,
+                                       const char        * sub_path,
+                                       const char        * ext,
+                                       const char        * required_cmm,
+                                       oyPATH_TYPE_e       path_type );
+int          oyCMMdsoReference_      ( const char        * lib_name,
+                                       oyPointer           ptr );
+const char * oyStruct_GetTextFromModule (
+                                       oyStruct_s        * obj,
+                                       oyNAME_e            name_type,
+                                       uint32_t            flags );
+int    oyIsOfTypeCMMapiFilter        ( oyOBJECT_e          type );
 
+int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
+                                       oyFilterNodes_s   * nodes,
+                                       oyFilterPlugs_s   * edges,
+                                       const char        * selector,
+                                       int                 flags );
 
 #endif /* OYRANOS_MODULE_INTERNAL_H */

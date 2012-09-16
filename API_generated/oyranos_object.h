@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/09/15
  */
 
 
@@ -169,7 +169,6 @@ typedef enum {
   oyOBJECT_MAX
 } oyOBJECT_e;
 #endif
-
 const char *     oyStructTypeToText  ( oyOBJECT_e          type );
 
 
