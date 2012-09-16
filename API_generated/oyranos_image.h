@@ -1,14 +1,33 @@
-{% load gsoc_extensions %}
-{% include "source_file_header.txt" %}
 
-#ifndef {{ file_name|underscores|upper|tr:". _" }}
-#define {{ file_name|underscores|upper|tr:". _" }}
+/** @file oyranos_image.h
+
+   [Template file inheritance graph]
+   +-- oyranos_image.template.h
+
+ *  Oyranos is an open source Colour Management System
+ *
+ *  @par Copyright:
+ *            2004-2012 (C) Kai-Uwe Behrmann
+ *
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @par License:
+ *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
+ *  @date     2012/09/15
+ */
+
+
+#ifndef OYRANOS_IMAGE_H
+#define OYRANOS_IMAGE_H
 
 #include <oyranos_helper.h>
 #include <oyranos_string.h>
 #include <oyranos_types.h>
 
-{% include "cpp_begin.h" %}
+#ifdef __cplusplus
+/*namespace oyranos {*/
+  extern "C" {
+#endif /* __cplusplus */
+
 
 /** @enum    oyDATATYPE_e
  *  @brief   basic data types for anonymous pointers
@@ -171,6 +190,10 @@ typedef enum {
 #define oyToFlavor_m(f)             (((f) >> 22)&1)
 #define oyToByteswap_m(x)           (((x) >> 23)&1)
 
-{% include "cpp_end.h" %}
+#ifdef __cplusplus
+} /* extern "C" */
+/*}*/ /* namespace oyranos */
+#endif /* __cplusplus */
 
-#endif /* {{ file_name|underscores|upper|tr:". _" }} */
+
+#endif /* OYRANOS_IMAGE_H */
