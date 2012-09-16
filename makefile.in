@@ -248,17 +248,19 @@ CFILES_OBJECT_MODULES = \
 	$(GENDIR)oyConfig_s.c \
 	$(GENDIR)oyConfigs_s_.c \
 	$(GENDIR)oyConfigs_s.c \
-	$(GENDIR)oyranos_devices.c \
-	$(GENDIR)oyranos_devices_internal.c \
-	$(GENDIR)oyranos_module.c
+	$(GENDIR)$(TARGET)_devices.c \
+	$(GENDIR)$(TARGET)_devices_internal.c \
+	$(GENDIR)$(TARGET)_image.c \
+	$(GENDIR)$(TARGET)_module.c
 CHEADERS_OBJECT_MODULES_PUBLIC = \
 	$(GENDIR)oyConfig_s.h \
 	$(GENDIR)oyConfigs_s.h \
-	$(GENDIR)oyranos_devices.h
+	$(GENDIR)$(TARGET)_devices.h \
+	$(GENDIR)$(TARGET)_image.h
 CHEADERS_OBJECT_MODULES = \
 	$(GENDIR)oyConfig_s_.h \
 	$(GENDIR)oyConfigs_s_.h \
-	$(GENDIR)oyranos_devices_internal.c \
+	$(GENDIR)$(TARGET)_devices_internal.c \
 	$(CHEADERS_OBJECT_MODULES_PUBLIC)
 
 CFILES = \
