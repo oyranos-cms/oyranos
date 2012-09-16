@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "oyranos_conversion.h"
 #include "oyranos_core.h"
 #include "oyranos_definitions.h"
 #include "oyranos_helper.h"
@@ -233,13 +234,23 @@ char *         oyFilterRegistrationToText (
 {
   char  * text = 0, * tmp = 0;
   int     texts_n = 0,
-          pos = 0, single = 0, len = 0;
+          single = 0, len = 0;
 
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
 
   if(registration)
   {
+    if(fields == oyFILTER_REG_TOP ||
+       fields == oyFILTER_REG_DOMAIN ||
+       fields == oyFILTER_REG_TYPE ||
+       fields == oyFILTER_REG_APPLICATION ||
+       fields == oyFILTER_REG_OPTION ||
+       fields == oyFILTER_REG_MAX)
+      single = 1;
+
+#if USE_OLD_STRING_API
+    int pos = 0;
          if(fields & oyFILTER_REG_TOP)
       pos = 1;
     else if(fields & oyFILTER_REG_DOMAIN)
@@ -253,15 +264,6 @@ char *         oyFilterRegistrationToText (
     else if(fields & oyFILTER_REG_MAX)
       pos = 6;
 
-    if(fields == oyFILTER_REG_TOP ||
-       fields == oyFILTER_REG_DOMAIN ||
-       fields == oyFILTER_REG_TYPE ||
-       fields == oyFILTER_REG_APPLICATION ||
-       fields == oyFILTER_REG_OPTION ||
-       fields == oyFILTER_REG_MAX)
-      single = 1;
-
-#if USE_OLD_STRING_API
     char ** texts = oyStringSplit_( registration, OY_SLASH_C, &texts_n,oyAllocateFunc_);
     if(texts_n >= pos && fields == oyFILTER_REG_TOP)
     {
@@ -774,37 +776,12 @@ int    oyTextIccDictMatch            ( const char        * text,
   DBG_MEM_START
 
   if(text && pattern)
->>>>>>> master
   {
-    oyPointer src, dst;
+    texts = oyStringSplit_(text, ',', &n, oyAllocateFunc_ );
+    patterns = oyStringSplit_(pattern, ',', &p_n, oyAllocateFunc_ );
 
-    len = (array_roi_pix.width + array_roi_pix.x) * data_size;
-    wlen = image_roi_pix.width * data_size;
-
-    if(allocate_method != 2)
-    for( i = 0; i < image_roi_pix.height; )
+    for( i = 0; i < n; ++i)
     {
-<<<<<<< HEAD
-      height = is_allocated = 0;
-      line_data = image->getLine( image, image_roi_pix.y + i, &height, -1,
-                             &is_allocated );
-
-      for( j = 0; j < height; ++j )
-      {
-        if( i + j >= array_roi_pix.height )
-          break;
-
-        ay = i + j;
-
-        dst = &a->array2d[ay][0];
-        src = &line_data[(j
-                       * OY_ROUND(image->width * image->layout_[oyCHANS])
-                       + OY_ROUND(image_roi_pix.x))
-                      * data_size];
-
-        if(dst != src)
-          error = !memcpy( dst, src, wlen );
-=======
       t = texts[i];
       DBG_MEM3_S( "%d: "OY_PRINT_POINTER" \"%s\"", i, (intptr_t)t, t );
       num_valid[0] = !oyStringToLong(t,&num[0]);
@@ -825,30 +802,13 @@ int    oyTextIccDictMatch            ( const char        * text,
           match = 1;
           goto clean_oyTextIccDictMatch;
         }
->>>>>>> master
       }
-
-      i += height;
-
-      if(error) break;
     }
-
-  } else
-  if(image->getPoint)
-  {
-    WARNc_S("image->getPoint  not yet supported")
-  } else
-  if(image->getTile)
-  {
-    WARNc_S("image->getTile  not yet supported")
-    error = 1;
-  }
+    clean_oyTextIccDictMatch:
+      oyStringListRelease_( &texts, n, oyDeAllocateFunc_ );
+      oyStringListRelease_( &patterns, p_n, oyDeAllocateFunc_ );
   }
 
-<<<<<<< HEAD
-  if(error)
-    oyArray2d_Release( &a );
-=======
   DBG_MEM_ENDE
   return match;
 }
@@ -870,3 +830,23 @@ int oyPointerRelease                 ( oyPointer         * ptr )
   }
   return 1;
 }
+
+const char *       oyConnectorEventToText (
+                                       oyCONNECTOR_EVENT_e e )
+{
+  const char * text = "unknown";
+  switch(e)
+  {
+    case oyCONNECTOR_EVENT_OK: text = "oyCONNECTOR_EVENT_OK: kind of ping"; break;
+    case oyCONNECTOR_EVENT_CONNECTED: text = "oyCONNECTOR_EVENT_CONNECTED: connection established"; break;
+    case oyCONNECTOR_EVENT_RELEASED: text = "oyCONNECTOR_EVENT_RELEASED: released the connection"; break;
+    case oyCONNECTOR_EVENT_DATA_CHANGED: text = "oyCONNECTOR_EVENT_DATA_CHANGED: call to update image views"; break;
+    case oyCONNECTOR_EVENT_STORAGE_CHANGED: text = "oyCONNECTOR_EVENT_STORAGE_CHANGED: new data accessors"; break;
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_DATA: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_DATA: can not process data"; break;
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION: can not handle option"; break;
+    case oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT: text = "oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT: can not handle context"; break;
+    case oyCONNECTOR_EVENT_INCOMPLETE_GRAPH: text = "oyCONNECTOR_EVENT_INCOMPLETE_GRAPH: can not completely process"; break;
+  }
+  return text;
+}
+

@@ -126,7 +126,6 @@ typedef enum {
   oyOBJECT_MAX
 } oyOBJECT_e;
 #endif
-
 const char *     oyStructTypeToText  ( oyOBJECT_e          type );
 
 
