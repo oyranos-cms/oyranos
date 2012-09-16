@@ -15,11 +15,12 @@
  *  @since   2007/12/06 (Oyranos: 0.1.8)
  *  @date    2011/11/25
  */
-oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s_        * api )
+oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
 {
   int error = !api;
   oyOBJECT_e type = oyOBJECT_NONE;
   int module_api;
+  oyCMMapi_s_ * api = api_;
 
   if(error)
     return type;
@@ -248,8 +249,8 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s_        * api )
  *  @since   2007/12/16 (Oyranos: 0.1.9)
  *  @date    2009/09/02
  */
-oyOBJECT_e   oyCMMapi_CheckWrap_     ( oyCMMInfo_s_      * cmm_info,
-                                       oyCMMapi_s_       * api,
+oyOBJECT_e   oyCMMapi_CheckWrap_     ( oyCMMInfo_s       * cmm_info,
+                                       oyCMMapi_s        * api,
                                        oyPointer           data,
                                        uint32_t          * rank )
 {
