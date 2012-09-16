@@ -27,9 +27,11 @@
 #include "oyBlob_s.h"
 #include "oyConfigs_s.h"
 #include "oyConnector_s.h"
+#include "oyConversion_s.h"
 #include "oyFilterNode_s.h"
 #include "oyFilterPlug_s.h"
 #include "oyFilterPlugs_s.h"
+#include "oyFilterGraph_s.h"
 #include "oyHash_s.h"
 #include "oyName_s.h"
 #include "oyImage_s.h"
@@ -208,16 +210,11 @@ int      oySizeofDatatype            ( oyDATATYPE_e        t );
 oyCHANNELTYPE_e oyICCColourSpaceToChannelLayout (
                                        icColorSpaceSignature sig,
                                        int                 pos );
-char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
-                                       oyAlloc_f           allocateFunc );
 
 
 
 
 
-typedef struct oyFilterCores_s oyFilterCores_s;
-typedef struct oyFilterNodes_s oyFilterNodes_s;
-typedef struct oyConversion_s oyConversion_s;
 typedef struct oyNamedColour_s oyNamedColour_s;
 typedef struct oyNamedColours_s oyNamedColours_s;
 typedef struct oyUiHandler_s oyUiHandler_s;
@@ -240,48 +237,6 @@ const char * oyFilterCore_WidgetsGet ( oyFilterCore_s    * filter,
                                        int                 flags );
 
 
-/** @struct  oyFilterCores_s
- *  @brief   a FilterCore list
- *  @ingroup objects_conversion
- *  @extends oyStruct_s
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/07/08 (Oyranos: 0.1.8)
- *  @date    2009/02/28
- */
-struct  oyFilterCores_s {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_FILTER_CORES_S */ 
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  oyStructList_s     * list_;          /**< @private the list data */
-};
-
-OYAPI oyFilterCores_s * OYEXPORT
-                 oyFilterCores_New   ( oyObject_s          object );
-OYAPI oyFilterCores_s * OYEXPORT
-                 oyFilterCores_Copy  ( oyFilterCores_s   * list,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-                 oyFilterCores_Release(oyFilterCores_s  ** list );
-
-
-OYAPI oyFilterCores_s * OYEXPORT
-                 oyFilterCores_MoveIn( oyFilterCores_s   * list,
-                                       oyFilterCore_s   ** ptr,
-                                       int                 pos );
-OYAPI int  OYEXPORT
-                 oyFilterCores_ReleaseAt (
-                                       oyFilterCores_s   * list,
-                                       int                 pos );
-OYAPI oyFilterCore_s * OYEXPORT
-                 oyFilterCores_Get   ( oyFilterCores_s   * list,
-                                       int                 pos );
-OYAPI int  OYEXPORT
-                 oyFilterCores_Count ( oyFilterCores_s   * list );
-
-
 
 #define OY_FILTEREDGE_FREE             0x01        /**< list free edges */
 #define OY_FILTEREDGE_CONNECTED        0x02        /**< list connected edges */
@@ -293,237 +248,7 @@ OYAPI int  OYEXPORT
 void oyShowGraph_( oyFilterNode_s * c, const char * selector );
 
 
-/** @struct  oyFilterNodes_s
- *  @brief   a FilterNodes list
- *  @extends oyStruct_s
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/02/28 (Oyranos: 0.1.10)
- *  @date    2009/02/28
- */
-struct oyFilterNodes_s {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_FILTER_NODES_S */ 
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
 
-  oyStructList_s     * list_;          /**< the list data */
-};
-
-OYAPI oyFilterNodes_s * OYEXPORT
-           oyFilterNodes_New         ( oyObject_s          object );
-OYAPI oyFilterNodes_s * OYEXPORT
-           oyFilterNodes_Copy        ( oyFilterNodes_s   * list,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-           oyFilterNodes_Release     ( oyFilterNodes_s  ** list );
-
-
-OYAPI int  OYEXPORT
-           oyFilterNodes_MoveIn      ( oyFilterNodes_s   * list,
-                                       oyFilterNode_s   ** ptr,
-                                       int                 pos );
-OYAPI int  OYEXPORT
-           oyFilterNodes_ReleaseAt   ( oyFilterNodes_s   * list,
-                                       int                 pos );
-OYAPI oyFilterNode_s * OYEXPORT
-           oyFilterNodes_Get         ( oyFilterNodes_s   * list,
-                                       int                 pos );
-OYAPI int  OYEXPORT
-           oyFilterNodes_Count       ( oyFilterNodes_s   * list );
-
-
-
-OYAPI oyFilterGraph_s * OYEXPORT
-           oyFilterGraph_New         ( oyObject_s          object );
-OYAPI oyFilterGraph_s * OYEXPORT
-           oyFilterGraph_FromNode    ( oyFilterNode_s    * node,
-                                       int                 flags );
-OYAPI oyFilterGraph_s * OYEXPORT
-           oyFilterGraph_Copy        ( oyFilterGraph_s   * obj,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-           oyFilterGraph_Release     ( oyFilterGraph_s  ** obj );
-
-OYAPI int  OYEXPORT
-           oyFilterGraph_PrepareContexts (
-                                       oyFilterGraph_s   * graph,
-                                       int                 flags );
-OYAPI oyFilterNode_s * OYEXPORT
-           oyFilterGraph_GetNode     ( oyFilterGraph_s   * graph,
-                                       int                 pos,
-                                       const char        * registration,
-                                       const char        * mark );
-OYAPI int  OYEXPORT
-           oyFilterGraph_SetFromNode ( oyFilterGraph_s   * graph,
-                                       oyFilterNode_s    * node,
-                                       const char        * mark,
-                                       int                 flags );
-OYAPI char * OYEXPORT
-           oyFilterGraph_ToText      ( oyFilterGraph_s   * graph,
-                                       oyFilterNode_s    * input,
-                                       oyFilterNode_s    * output,
-                                       const char        * head_line,
-                                       int                 reserved,
-                                       oyAlloc_f           allocateFunc );
-oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
-                                       int                 node_pos,
-                                       oyObject_s          object );
-
-
-
-oyPixelAccess_s *  oyPixelAccess_Create (
-                                       int32_t             start_x,
-                                       int32_t             start_y,
-                                       oyFilterPlug_s    * plug,
-                                       oyPIXEL_ACCESS_TYPE_e type,
-                                       oyObject_s          object );
-oyPixelAccess_s *  oyPixelAccess_Copy( oyPixelAccess_s   * obj,
-                                       oyObject_s          object );
-int                oyPixelAccess_Release(
-                                       oyPixelAccess_s  ** obj );
-int                oyPixelAccess_ChangeRectangle ( 
-                                       oyPixelAccess_s   * pixel_access,
-                                       double              start_x,
-                                       double              start_y,
-                                       oyRectangle_s     * output_rectangle );
-
-/** @struct oyConversion_s
- *  @brief  a filter chain or graph to manipulate a image
- *  @ingroup objects_conversion
- *  @extends oyStruct_s
- *
- *  Order of filters matters.
- *  The processing direction is a bit like raytracing as nodes request their
- *  parent.
- *
- *  The graph is allowed to be a directed graph without cycles.
- \dot
-digraph G {
-  bgcolor="transparent";
-  rankdir=LR
-  graph [fontname=Helvetica, fontsize=12];
-  node [shape=record, fontname=Helvetica, fontsize=10, style="filled,rounded"];
-  edge [fontname=Helvetica, fontsize=10];
-
-  a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
-  b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
-  c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
-  d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
-
-  subgraph cluster_0 {
-    label="Oyranos Filter Graph";
-    color=gray;
-
-    a:socket -> b:plug [arrowtail=normal, arrowhead=none, label=request];
-    b:socket -> d:plug [arrowtail=normal, arrowhead=none, label=request];
-    a:socket -> c:plug [arrowtail=normal, arrowhead=none, label=request];
-    c:socket -> d:plug [arrowtail=normal, arrowhead=none, label=request];
-  }
-}
- \enddot
- *  oyConversion_s shall provide access to the graph and help in processing
- *  and managing nodes.\n
- \dot
-digraph G {
-  bgcolor="transparent";
-  rankdir=LR
-  graph [fontname=Helvetica, fontsize=12];
-  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
-  edge [fontname=Helvetica, fontsize=10];
-
-  conversion [shape=plaintext, label=<
-<table border="0" cellborder="1" cellspacing="0" bgcolor="lightgray">
-  <tr><td>oyConversion_s</td></tr>
-  <tr><td>
-     <table border="0" cellborder="0" align="left">
-       <tr><td align="left">...</td></tr>
-       <tr><td align="left" port="in">+input</td></tr>
-       <tr><td align="left" port="out">+out_</td></tr>
-       <tr><td align="left">...</td></tr>
-     </table>
-     </td></tr>
-  <tr><td> </td></tr>
-</table>>,
-                    style=""];
-
-  a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
-  b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
-  c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
-  d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
-
-  subgraph cluster_0 {
-    label="oyConversion_s with attached Filter Graph";
-    color=gray;
-
-    a:socket -> b:plug [arrowtail=normal];
-    b:socket -> d:plug [arrowtail=normal];
-    a:socket -> c:plug [arrowtail=normal];
-    c:socket -> d:plug [arrowtail=normal];
-
-    conversion:in -> a;
-    conversion:out -> d;
-  }
-
-  conversion
-}
- \enddot
- *  \b Creating \b Graphs: \n
- *  Most simple is to use the oyConversion_CreateBasicPixles() function to 
- *  create a profile to profile and possible image buffer to image buffer linear
- *  graph.\n
- *  The other possibility is to create a non linear graph. The input member can
- *  be accessed for this directly.
- *
- *  While it would be possible to have several open ends in a graph, there
- *  are two endpoints considered as special. The input member prepresents the
- *  top most required node to be provided in a oyConversion_s graph. The
- *  input node is accessible for user manipulation. The other one is the out_
- *  member. It is the closing node in the graph. It will be set by Oyranos
- *  during closing the graph, e.g. in oyConversion_LinOutputAdd().
- *
- *  \b Using \b Graphs: \n
- *  To obtain the data the oyConversion_GetNextPixel() and
- *  oyConversion_GetOnePixel() functions are available.
- \dot
-digraph G {
-  bgcolor="transparent";
-  rankdir=LR
-  graph [fontname=Helvetica, fontsize=12];
-  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
-  edge [fontname=Helvetica, fontsize=12];
-
-  a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
-  b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
-  c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
-  d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
-  app [ label="application", style=filled ]
-
-  subgraph cluster_0 {
-    label="Data Flow";
-    color=gray;
-    a:socket -> b:plug [label=data];
-    b:socket -> d:plug [label=data];
-    a:socket -> c:plug [label=data];
-    c:socket -> d:plug [label=data];
-    d:socket -> app [label=<<table  border="0" cellborder="0"><tr><td>return of<br/>oyConversion_GetNextPixel()</td></tr></table>>];
-  }
-}
- \enddot
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/06/08 (Oyranos: 0.1.8)
- *  @date    2008/06/08
- */
-struct oyConversion_s {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_CONVERSION_S*/
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-
-  oyFilterNode_s     * input;          /**< the input image filter; Most users will start logically with this pice and chain their filters to get the final result. */
-  oyFilterNode_s     * out_;           /**< @private the Oyranos output image. Oyranos will stream the filters starting from the end. This element will be asked on its first plug. */
-};
 
 void               oyShowConversion_ ( oyConversion_s    * conversion,
                                        uint32_t            flags );

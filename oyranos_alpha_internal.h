@@ -117,54 +117,8 @@ int          oyCMMdsoSearch_         ( const char        * lib_name );
 oyPointer    oyCMMdsoGet_            ( const char        * cmm,
                                        const char        * lib_name );
 
-/**
- *  @internal
- *  @enum    oyREQUEST_e
- *  @brief   grade of request complying
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/00/00 (Oyranos: 0.1.8)
- *  @date    2008/00/00
- */
-typedef enum {
-  oyREQUEST_NONE,                      /**< deactives the request */
-  oyREQUEST_SLIGTH,
-  oyREQUEST_MID,
-  oyREQUEST_MUCH,
-  oyREQUEST_HARD                       /**< requirement, fail if not present */
-} oyREQUEST_e;
-
-/**
- *  @internal
- *  @struct oyCMMapiQuery_s
- *  @brief  check/prepare a module
- *
- *  @since  Oyranos: version 0.1.8
- *  @date   2008/01/03 (API 0.1.8)
- */
-typedef struct {
-  oyCMMQUERY_e         query;
-  uint32_t             value;
-  oyREQUEST_e          request;
-} oyCMMapiQuery_s;
-
-/**
- *  @internal
- *  @struct oyCMMapiQuerie_s
- *  @brief  check/prepare a module
- *
- *  @since  Oyranos: version 0.1.8
- *  @date   2008/01/03 (API 0.1.8)
- */
-typedef struct {
-  int                  n;
-  oyCMMapiQuery_s   ** queries;
-  char                 prefered_cmm[5];
-} oyCMMapiQueries_s;
-
 
 char *           oyCMMnameFromLibName_(const char        * lib_name);
-oyCMMInfo_s *    oyCMMInfoFromLibName_(const char        * lib_name );
 char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info );
 oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name );
 oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
@@ -189,7 +143,6 @@ oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
                                        const char        * registration,
                                        oyOBJECT_e          type );
 int    oyIsOfTypeCMMapiFilter        ( oyOBJECT_e          type );
-char   oyCMMapiNumberToChar          ( oyOBJECT_e          api_number );
 oyCMMapi_s * oyCMMsGetApiFromRegistration_(
                                        oyOBJECT_e          type,
                                        const char        * cmm_required,
