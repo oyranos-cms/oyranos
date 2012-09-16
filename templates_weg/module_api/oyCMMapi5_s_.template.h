@@ -4,6 +4,7 @@
 {{ block.super }}
 #include "oyCMMapiFilter_s.h"
 #include "oyCMMapi_s_.h"
+#include "oyFilterSocket_s.h"
 {% endblock %}
 
 {% block ChildMembers %}
