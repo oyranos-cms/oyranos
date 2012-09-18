@@ -96,7 +96,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      %s\n",           _("-v verbose"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s:\n",               _("Example"));
-  fprintf( stderr, "      SAVEIFS=$IFS ; IFS=$'\\n\\b'; for f in `oyranos-profiles -ldf`; do oymd5icc \"$f\"; done; IFS=$SAVEIFS");
+  fprintf( stderr, "      SAVEIFS=$IFS ; IFS=$'\\n\\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in \"${profiles[@]}\"; do ls \"$file\"; done");
   fprintf( stderr, "\n");
   fprintf( stderr, "\n");
 
