@@ -23,7 +23,9 @@ void oyCMMapi9_Release__Members( oyCMMapi9_s_ * cmmapi9 )
 
   if(cmmapi9->oy_->deallocateFunc_)
   {
+#if 0
     oyDeAlloc_f deallocateFunc = cmmapi9->oy_->deallocateFunc_;
+#endif
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( cmmapi9->member );

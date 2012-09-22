@@ -24,7 +24,9 @@ void oyRectangle_Release__Members( oyRectangle_s_ * rectangle )
 
   if(rectangle->oy_->deallocateFunc_)
   {
+#if 0
     oyDeAlloc_f deallocateFunc = rectangle->oy_->deallocateFunc_;
+#endif
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( rectangle->member );
