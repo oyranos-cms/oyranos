@@ -266,6 +266,8 @@ CFILES_OBJECT_MODULES = \
 	$(GENDIR)oyCMMapi9_s_.c \
 	$(GENDIR)oyCMMapis_s.c \
 	$(GENDIR)oyCMMapis_s_.c \
+	$(GENDIR)oyCMMapiFilters_s.c \
+	$(GENDIR)oyCMMapiFilters_s_.c \
 	$(GENDIR)oyConfig_s_.c \
 	$(GENDIR)oyConfig_s.c \
 	$(GENDIR)oyConfigs_s_.c \
@@ -284,6 +286,7 @@ CHEADERS_OBJECT_MODULES_PUBLIC = \
 	$(GENDIR)oyCMMapi8_s.h \
 	$(GENDIR)oyCMMapi9_s.h \
 	$(GENDIR)oyCMMapis_s.h \
+	$(GENDIR)oyCMMapiFilters_s.h \
 	$(GENDIR)oyConfig_s.h \
 	$(GENDIR)oyConfigs_s.h \
 	$(GENDIR)$(TARGET)_devices.h \
@@ -298,6 +301,7 @@ CHEADERS_OBJECT_MODULES = \
 	$(GENDIR)oyCMMapi8_s_.h \
 	$(GENDIR)oyCMMapi9_s_.h \
 	$(GENDIR)oyCMMapis_s_.h \
+	$(GENDIR)oyCMMapiFilters_s_.h \
 	$(GENDIR)oyConfig_s_.h \
 	$(GENDIR)oyConfigs_s_.h \
 	$(GENDIR)$(TARGET)_devices_internal.c \
