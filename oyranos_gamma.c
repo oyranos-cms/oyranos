@@ -590,7 +590,8 @@ int main( int argc , char** argv )
         /* We need a newly opened profile, otherwise we obtaine cached
            modifications. */
         oyProfile_s * p = oyProfile_FromFile( prof_name, OY_NO_CACHE_READ, 0 );
-        oyConfig_s * p_device = oyConfig_New( device->registration, 0 );
+        oyConfig_s * p_device = oyConfig_FromRegistration( 
+                                       oyConfig_GetRegistration( device ), 0 );
         int32_t rank = 0;
         int old_oy_debug = oy_debug;
         char * json = 0;
@@ -609,8 +610,8 @@ int main( int argc , char** argv )
           oyFree_m_( json );
         }
 
-        p_device->db = oyOptions_Copy( p_device->backend_core, 0 );
-        device->db = oyOptions_Copy( device->backend_core, 0 );
+        /*p_device->db = oyOptions_Copy( p_device->backend_core, 0 );
+        device->db = oyOptions_Copy( device->backend_core, 0 );*/
         if(oy_debug < 2) oy_debug = 2;
         error = oyConfig_Compare( p_device, device, &rank );
         oy_debug = old_oy_debug;
@@ -925,7 +926,9 @@ int            getDeviceProfile      ( Display           * display,
     if(device_name && device_name[0])
     {
       printf("%d %s %gx%g+%g+%g\n",
-             __LINE__, device_name, r->width,r->height,r->x,r->y );
+             __LINE__, device_name,
+             oyRectangle_GetGeo1(r,2), oyRectangle_GetGeo1(r,3),
+             oyRectangle_GetGeo1(r,0), oyRectangle_GetGeo1(r,1) );
 
     } else
     {
