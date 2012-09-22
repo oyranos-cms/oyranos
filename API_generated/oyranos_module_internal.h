@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/15
+ *  @date     2012/09/22
  */
 
 
@@ -22,6 +22,7 @@
 #include "oyranos_module.h"
 
 #include "oyHash_s.h"
+#include "oyCMMapi3_s_.h"
 #include "oyCMMapiFilters_s.h"
 #include "oyCMMapis_s.h"
 #include "oyFilterNodes_s.h"
@@ -92,6 +93,8 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        oyPointer           check_pointer );
 oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text );
 oyCMMapis_s *  oyCMMGetMetaApis_     ( const char        * cmm );
+int              oyCMMCanHandle_    ( oyCMMapi3_s        * api,
+                                      oyCMMapiQueries_s  * queries );
 oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm );
 char **          oyCMMsGetNames_     ( uint32_t          * n,
                                        const char        * sub_path,

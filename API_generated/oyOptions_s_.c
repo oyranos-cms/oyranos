@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/09/22
  */
 
 
@@ -61,7 +61,10 @@ void oyOptions_Release__Members( oyOptions_s_ * options )
 
   if(options->oy_->deallocateFunc_)
   {
+#if 0
+    /* not used */
     oyDeAlloc_f deallocateFunc = options->oy_->deallocateFunc_;
+#endif
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( options->member );
