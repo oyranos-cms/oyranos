@@ -793,7 +793,7 @@ oyCMMapi8_s _api8 = {
 
 
 /**
- *  This function implements oyCMMInfoGetText_f.
+ *  This function implements oyCMMinfoGetText_f.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/23 (Oyranos: 0.1.10)
@@ -848,7 +848,7 @@ const char * _texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2007/12/12 (Oyranos: 0.1.10)
  *  @date    2009/06/23
  */
-oyCMMInfo_s _cmm_module = {
+oyCMMinfo_s _cmm_module = {
 
   oyOBJECT_CMM_INFO_S, /**< ::type; the object type */
   0,0,0,               /**< static objects omit these fields */

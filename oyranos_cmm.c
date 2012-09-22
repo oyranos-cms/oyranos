@@ -250,7 +250,7 @@ int          oyFilterSocket_MatchImagingPlug (
 }
 
 /**
- *  This function implements oyCMMInfoGetText_f.
+ *  This function implements oyCMMinfoGetText_f.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/23 (Oyranos: 0.1.10)
@@ -290,7 +290,7 @@ const char * oyCMMgetText             ( const char        * select,
 const char *oyCMM_texts[4] = {"name","copyright","manufacturer",0};
 
 /**
- *  This function implements oyCMMInfoGetText_f for image connector plugs.
+ *  This function implements oyCMMinfoGetText_f for image connector plugs.
  *
  *  @version Oyranos: 0.3.0
  *  @since   2011/02/01 (Oyranos: 0.3.0)
@@ -314,7 +314,7 @@ const char * oyCMMgetImageConnectorPlugText (
 }
 const char * oy_image_connector_texts[] = {"name", 0};
 /**
- *  This function implements oyCMMInfoGetText_f for image connector sockets.
+ *  This function implements oyCMMinfoGetText_f for image connector sockets.
  *
  *  @version Oyranos: 0.3.0
  *  @since   2011/02/01 (Oyranos: 0.3.0)

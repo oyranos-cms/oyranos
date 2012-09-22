@@ -47,7 +47,7 @@ typedef struct {
   oyStruct_Release_f   release;        /**< release function */
   oyObject_s           oy_;            /**< base object */
   char               * lib_name;       /**< the CMM */
-  oyCMMInfo_s        * info;           /**< the modules info struct */
+  oyCMMinfo_s        * info;           /**< the modules info struct */
   oyPointer            dso_handle;     /**< the ldopen library handle */
 } oyCMMhandle_s;
 
@@ -57,7 +57,7 @@ oyCMMhandle_s *  oyCMMhandle_Copy_   ( oyCMMhandle_s     * handle,
 int              oyCMMhandle_Release_( oyCMMhandle_s    ** handle );
 
 int              oyCMMhandle_Set_    ( oyCMMhandle_s     * handle,
-                                       oyCMMInfo_s       * info,
+                                       oyCMMinfo_s       * info,
                                        oyPointer           dso_handle,
                                        const char        * lib_name );
 
@@ -119,8 +119,8 @@ oyPointer    oyCMMdsoGet_            ( const char        * cmm,
 
 
 char *           oyCMMnameFromLibName_(const char        * lib_name);
-char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info );
-oyCMMInfo_s *    oyCMMOpen_          ( const char        * lib_name );
+char *           oyCMMinfoPrint_     ( oyCMMinfo_s       * cmm_info );
+oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name );
 oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
                                        const char        * lib_name,
                                        oyCMMapi_Check_f    apiCheck,
@@ -148,7 +148,7 @@ oyCMMapi_s * oyCMMsGetApiFromRegistration_(
                                        const char        * registration );
 
 oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name );
-oyCMMInfo_s *    oyCMMGet_           ( const char        * cmm );
+oyCMMinfo_s *    oyCMMGet_           ( const char        * cmm );
 int              oyCMMRelease_       ( const char        * cmm );
 unsigned int     oyCMMapiIsReady_    ( oyOBJECT_e          type );
 

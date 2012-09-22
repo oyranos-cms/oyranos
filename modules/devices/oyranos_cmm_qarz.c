@@ -1144,7 +1144,7 @@ oyCMMapi8_s qarz_api8 = {
 
 
 /**
- *  This function implements oyCMMInfoGetText_f.
+ *  This function implements oyCMMinfoGetText_f.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/23 (Oyranos: 0.1.10)
@@ -1211,13 +1211,13 @@ const char *qarz_texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2007/12/12 (Oyranos: 0.1.8)
  *  @date    2010/11/08
  */
-oyCMMInfo_s qarz_cmm_module = {
+oyCMMinfo_s qarz_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,
   CMM_NICK,
   "0.3",
-  qarzGetText, /* oyCMMInfoGetText_f get Text */
+  qarzGetText, /* oyCMMinfoGetText_f get Text */
   (char**)qarz_texts, /* texts; list of arguments to getText */
   OYRANOS_VERSION,
 

@@ -1,5 +1,5 @@
-/** Function  oyCMMInfo_GetCMM
- *  @memberof oyCMMInfo_s
+/** Function  oyCMMinfo_GetCMM
+ *  @memberof oyCMMinfo_s
  *  @brief    Get CMM signature, e.g. "lcms"
  *
  *  It contains only four bytes
@@ -9,12 +9,12 @@
  *  @since    2012/09/14 (Oyranos: 0.5.0)
  */
 OYAPI const char *  OYEXPORT
-                   oyCMMInfo_GetCMM  ( oyCMMInfo_s       * info )
+                   oyCMMinfo_GetCMM  ( oyCMMinfo_s       * info )
 {
-  return ((oyCMMInfo_s_*)info)->cmm;
+  return ((oyCMMinfo_s_*)info)->cmm;
 }
-/** Function  oyCMMInfo_GetVersion
- *  @memberof oyCMMInfo_s
+/** Function  oyCMMinfo_GetVersion
+ *  @memberof oyCMMinfo_s
  *  @brief    Get Backend Version
  *
  *  non translatable, eg "v1.17"
@@ -24,13 +24,13 @@ OYAPI const char *  OYEXPORT
  *  @since    2012/09/14 (Oyranos: 0.5.0)
  */
 OYAPI const char *  OYEXPORT
-                   oyCMMInfo_GetVersion
-                                     ( oyCMMInfo_s       * info )
+                   oyCMMinfo_GetVersion
+                                     ( oyCMMinfo_s       * info )
 {
-  return ((oyCMMInfo_s_*)info)->backend_version;
+  return ((oyCMMinfo_s_*)info)->backend_version;
 }
-/** Function  oyCMMInfo_GetTextF
- *  @memberof oyCMMInfo_s
+/** Function  oyCMMinfo_GetTextF
+ *  @memberof oyCMMinfo_s
  *  @brief    Get oyCMMGetText_f function
  *
  *  @version  Oyranos: 0.5.0
@@ -38,12 +38,12 @@ OYAPI const char *  OYEXPORT
  *  @since    2012/09/14 (Oyranos: 0.5.0)
  */
 OYAPI oyCMMGetText_f  OYEXPORT
-                   oyCMMInfo_GetTextF( oyCMMInfo_s       * info )
+                   oyCMMinfo_GetTextF( oyCMMinfo_s       * info )
 {
-  return ((oyCMMInfo_s_*)info)->getText;
+  return ((oyCMMinfo_s_*)info)->getText;
 }
-/** Function  oyCMMInfo_GetTexts
- *  @memberof oyCMMInfo_s
+/** Function  oyCMMinfo_GetTexts
+ *  @memberof oyCMMinfo_s
  *  @brief    Get keywords for oyCMMGetText_f function
  *
  *  zero terminated list for getText
@@ -53,12 +53,12 @@ OYAPI oyCMMGetText_f  OYEXPORT
  *  @since    2012/09/14 (Oyranos: 0.5.0)
  */
 OYAPI const char **  OYEXPORT
-                   oyCMMInfo_GetTexts( oyCMMInfo_s       * info )
+                   oyCMMinfo_GetTexts( oyCMMinfo_s       * info )
 {
-  return ((oyCMMInfo_s_*)info)->texts;
+  return ((oyCMMinfo_s_*)info)->texts;
 }
-/** Function  oyCMMInfo_GetComp
- *  @memberof oyCMMInfo_s
+/** Function  oyCMMinfo_GetComp
+ *  @memberof oyCMMinfo_s
  *  @brief    Get Oyranos compatibility
  *
  *  last supported Oyranos CMM API : OYRANOS_VERSION
@@ -68,13 +68,13 @@ OYAPI const char **  OYEXPORT
  *  @since    2012/09/14 (Oyranos: 0.5.0)
  */
 OYAPI int  OYEXPORT
-                   oyCMMInfo_GetCompatibility
-                                     ( oyCMMInfo_s       * info )
+                   oyCMMinfo_GetCompatibility
+                                     ( oyCMMinfo_s       * info )
 {
-  return ((oyCMMInfo_s_*)info)->oy_compatibility;
+  return ((oyCMMinfo_s_*)info)->oy_compatibility;
 }
-/** Function  oyCMMInfo_GetApi
- *  @memberof oyCMMInfo_s
+/** Function  oyCMMinfo_GetApi
+ *  @memberof oyCMMinfo_s
  *  @brief    Get the first api
  *
  *  must be casted to a according API, zero terminated list
@@ -84,13 +84,13 @@ OYAPI int  OYEXPORT
  *  @since    2012/09/14 (Oyranos: 0.5.0)
  */
 OYAPI oyCMMapi_s * OYEXPORT
-                   oyCMMInfo_GetApi  ( oyCMMInfo_s       * info )
+                   oyCMMinfo_GetApi  ( oyCMMinfo_s       * info )
 {
-  return ((oyCMMInfo_s_*)info)->api;
+  return ((oyCMMinfo_s_*)info)->api;
 }
 
-/** Function  oyCMMInfo_GetIcon
- *  @memberof oyCMMInfo_s
+/** Function  oyCMMinfo_GetIcon
+ *  @memberof oyCMMinfo_s
  *  @brief    Get icon
  *
  *  zero terminated list of a icon pyramid
@@ -100,7 +100,7 @@ OYAPI oyCMMapi_s * OYEXPORT
  *  @since    2012/09/14 (Oyranos: 0.5.0)
  */
 OYAPI oyIcon_s * OYEXPORT
-                   oyCMMInfo_GetIcon ( oyCMMInfo_s       * info )
+                   oyCMMinfo_GetIcon ( oyCMMinfo_s       * info )
 {
-  return ((oyCMMInfo_s_*)info)->icon;
+  return ((oyCMMinfo_s_*)info)->icon;
 }

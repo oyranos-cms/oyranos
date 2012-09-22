@@ -972,7 +972,7 @@ const char *oicc_texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2009/07/23 (Oyranos: 0.1.10)
  *  @date    2009/07/23
  */
-oyCMMInfo_s oicc_cmm_module = {
+oyCMMinfo_s oicc_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,

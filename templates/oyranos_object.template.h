@@ -87,7 +87,7 @@ typedef enum {
   oyOBJECT_CONVERSION_S,              /**< oyConversion_s */
   oyOBJECT_CMM_HANDLE_S      = 50,    /**< oyCMMhandle_s */
   oyOBJECT_POINTER_S,                 /*!< oyPointer_s */
-  oyOBJECT_CMM_INFO_S,                /*!< oyCMMInfo_s */
+  oyOBJECT_CMM_INFO_S,                /*!< oyCMMinfo_s */
   oyOBJECT_CMM_API_S,                 /**< oyCMMapi_s */
   oyOBJECT_CMM_APIS_S,                /**< oyCMMapis_s */
   oyOBJECT_CMM_API1_S,                /**< oyCMMapi1_s */

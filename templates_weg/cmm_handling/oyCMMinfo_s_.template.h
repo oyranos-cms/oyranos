@@ -7,7 +7,7 @@
 
 {% block ChildMembers %}
 {{ block.super }}
-/* Include "CMMInfo.members.h" { */
-{% include "CMMInfo.members.h" %}
-/* } Include "CMMInfo.members.h" */
+/* Include "CMMinfo.members.h" { */
+{% include "CMMinfo.members.h" %}
+/* } Include "CMMinfo.members.h" */
 {% endblock %}

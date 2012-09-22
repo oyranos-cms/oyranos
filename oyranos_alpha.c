@@ -18,7 +18,6 @@
 #include "oyCMMapi6_s.h"
 #include "oyCMMapi8_s.h"
 #include "oyCMMapi9_s.h"
-#include "oyCMMInfo_s.h"
 #include "oyCMMui_s.h"
 #include "oyConfig_s.h"
 #include "oyConfigs_s.h"

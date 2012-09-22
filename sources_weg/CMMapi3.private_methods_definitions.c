@@ -9,7 +9,7 @@
  *  @since   2009/09/02 (Oyranos: 0.1.10)
  *  @date    2009/09/02
  */
-oyOBJECT_e   oyCMMapi3_Query_        ( oyCMMInfo_s_      * cmm_info,
+oyOBJECT_e   oyCMMapi3_Query_        ( oyCMMinfo_s_      * cmm_info,
                                        oyCMMapi_s_       * api,
                                        oyPointer           data,
                                        uint32_t          * rank )

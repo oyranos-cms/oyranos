@@ -153,7 +153,7 @@ const char *oyIM_texts[4] = {"name","copyright","manufacturer",0};
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  *  @date    2008/12/30
  */
-oyCMMInfo_s oyIM_cmm_module = {
+oyCMMinfo_s oyIM_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,

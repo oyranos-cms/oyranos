@@ -27,7 +27,7 @@
 char ** oyCMMsGetNames_              ( int               * n,
                                        oyOBJECT_e        * types,
                                        int                 types_n );
-char *           oyCMMInfoPrint_     ( oyCMMInfo_s       * cmm_info );
+char *           oyCMMinfoPrint_     ( oyCMMinfo_s       * cmm_info );
 char**             oyStringSplit_    ( const char    * text,
                                        const char      delimiter,
                                        int           * count,

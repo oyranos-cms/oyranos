@@ -168,7 +168,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_PIXEL_ACCESS_S: text = "oyPixelAccess_s"; break;
     case oyOBJECT_CMM_HANDLE_S: text = "oyCMMhandle_s"; break;
     case oyOBJECT_POINTER_S: text = "oyPointer_s"; break;
-    case oyOBJECT_CMM_INFO_S: text = "oyCMMInfo_s"; break;
+    case oyOBJECT_CMM_INFO_S: text = "oyCMMinfo_s"; break;
     case oyOBJECT_CMM_API_S: text = "oyCMMapi_s generic"; break;
     case oyOBJECT_CMM_APIS_S: text = "oyCMMapis_s generic"; break;
     case oyOBJECT_CMM_API1_S: text = "oyCMMapi1_s old CMM"; break;

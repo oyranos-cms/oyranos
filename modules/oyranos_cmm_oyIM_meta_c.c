@@ -114,10 +114,10 @@ int          oyIMFilterScan          ( oyPointer           data,
                                        char             ** registration,
                                        char             ** name,
                                        oyAlloc_f           allocateFunc,
-                                       oyCMMInfo_s      ** info,
+                                       oyCMMinfo_s      ** info,
                                        oyObject_s          object )
 {
-  oyCMMInfo_s * cmm_info = 0;
+  oyCMMinfo_s * cmm_info = 0;
   oyCMMapi_s * api = 0;
   oyCMMapi4_s * api4 = 0;
   int error = !lib_name;
@@ -156,12 +156,12 @@ int          oyIMFilterScan          ( oyPointer           data,
 #endif
 
 #if DLOPEN
-      cmm_info = (oyCMMInfo_s*) dlsym (dso_handle, info_sym);
+      cmm_info = (oyCMMinfo_s*) dlsym (dso_handle, info_sym);
 
       if(info_sym)
         oyFree_m_(info_sym);
 #else
-      cmm_info = oyCMMInfoFromLibName_( lib_name );
+      cmm_info = oyCMMinfoFromLibName_( lib_name );
 #endif
 
       error = !cmm_info;
@@ -210,7 +210,7 @@ int          oyIMFilterScan          ( oyPointer           data,
                                                      (oyStruct_s*)api4->ui),
                                    allocateFunc );
           if(info)
-            *info = oyCMMInfo_Copy( cmm_info, object );
+            *info = oyCMMinfo_Copy( cmm_info, object );
           ret = 0;
         } else
           ret = -1;

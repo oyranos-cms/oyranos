@@ -1234,7 +1234,7 @@ oyCMMapi8_s oyX1_api8 = {
 
 
 /**
- *  This function implements oyCMMInfoGetText_f.
+ *  This function implements oyCMMinfoGetText_f.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/23 (Oyranos: 0.1.10)
@@ -1301,13 +1301,13 @@ const char *oyX1_texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2007/12/12 (Oyranos: 0.1.8)
  *  @date    2008/12/30
  */
-oyCMMInfo_s oyX1_cmm_module = {
+oyCMMinfo_s oyX1_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,
   CMM_NICK,
   "0.3",
-  oyX1GetText, /* oyCMMInfoGetText_f get Text */
+  oyX1GetText, /* oyCMMinfoGetText_f get Text */
   (char**)oyX1_texts, /* texts; list of arguments to getText */
   OYRANOS_VERSION,
 
@@ -1536,7 +1536,7 @@ int          oyX1MOptions_Handle     ( oyOptions_s       * options,
 }
 
 /**
- *  This function implements oyCMMInfoGetText_f.
+ *  This function implements oyCMMinfoGetText_f.
  *
  *  @version Oyranos: 0.4.0
  *  @since   2012/01/11 (Oyranos: 0.4.0)

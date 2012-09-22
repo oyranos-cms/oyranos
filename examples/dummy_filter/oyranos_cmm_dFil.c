@@ -118,7 +118,7 @@ oyPointer  dFilFilterNode_MyContextToMem (
 
 
 /**
- *  This function implements oyCMMInfoGetText_f.
+ *  This function implements oyCMMinfoGetText_f.
  *
  *  Implement at least "name", "manufacturer" and "copyright". If you like with
  *  internationalisation.
@@ -182,7 +182,7 @@ const char *dFil_texts[5] = {"name","copyright","manufacturer","help",0};
  *  @date    2009/06/14
  *  @since   2009/06/14 (Oyranos: 0.1.10)
  */
-oyCMMInfo_s dFil_cmm_module = {
+oyCMMinfo_s dFil_cmm_module = {
 
   oyOBJECT_CMM_INFO_S, /**< ::type; the object type */
   0,0,0,               /**< static objects omit these fields */
@@ -575,7 +575,7 @@ int          dFilMOptions_Handle     ( oyOptions_s       * options,
 }
 
 /**
- *  This function implements oyCMMInfoGetText_f.
+ *  This function implements oyCMMinfoGetText_f.
  *
  *  @version Oyranos: 0.4.0
  *  @since   2012/01/11 (Oyranos: 0.4.0)

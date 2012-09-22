@@ -974,7 +974,7 @@ int            oydiCMMMessageFuncSet ( oyMessage_f         message_func )
 }
 
 /**
- *  This function implements oyCMMInfoGetText_f.
+ *  This function implements oyCMMinfoGetText_f.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/23 (Oyranos: 0.1.10)
@@ -1030,13 +1030,13 @@ const char *oydi_texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2009/01/00 (Oyranos: 0.1.10)
  *  @date    2009/01/00
  */
-oyCMMInfo_s oydi_cmm_module = {
+oyCMMinfo_s oydi_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,
   CMM_NICK,
   "0.2",
-  oydiGetText,                         /**< oyCMMInfoGetText_f getText */
+  oydiGetText,                         /**< oyCMMinfoGetText_f getText */
   (char**)oydi_texts,                  /**<texts; list of arguments to getText*/
 
   OYRANOS_VERSION,

@@ -69,7 +69,7 @@ int            oPNGCMMMessageFuncSet ( oyMessage_f         message_func )
 
 
 /**
- *  This function implements oyCMMInfoGetText_f.
+ *  This function implements oyCMMinfoGetText_f.
  *
  *  @version Oyranos: 0.1.11
  *  @since   2010/09/06 (Oyranos: 0.1.11)
@@ -94,7 +94,7 @@ const char * oPNGGetText             ( const char        * select,
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  *  @date    2008/01/02
  */
-oyCMMInfo_s oPNG_cmm_module = {
+oyCMMinfo_s oPNG_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,

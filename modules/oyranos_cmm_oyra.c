@@ -108,7 +108,7 @@ oyWIDGET_EVENT_e   oyraWidgetEvent   ( oyOptions_s       * options,
 
 
 /**
- *  This function implements oyCMMInfoGetText_f.
+ *  This function implements oyCMMinfoGetText_f.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/23 (Oyranos: 0.1.10)
@@ -155,7 +155,7 @@ const char *oyra_texts[4] = {"name","copyright","manufacturer",0};
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  *  @date    2008/01/02
  */
-oyCMMInfo_s oyra_cmm_module = {
+oyCMMinfo_s oyra_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,

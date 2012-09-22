@@ -53,13 +53,13 @@ const char *    (* oyCMMGetText_f)   ( const char        * select,
                                        oyStruct_s        * context );
 
 #include "oyCMMapi_s.h"
-#include "oyCMMInfo_s.h"
-typedef  oyOBJECT_e(*oyCMMapi_Check_f)(oyCMMInfo_s       * cmm_info,
+#include "oyCMMinfo_s.h"
+typedef  oyOBJECT_e(*oyCMMapi_Check_f)(oyCMMinfo_s       * cmm_info,
                                        oyCMMapi_s        * api,
                                        oyPointer           data,
                                        uint32_t          * rank );
 char   oyCMMapiNumberToChar          ( oyOBJECT_e          api_number );
-oyCMMInfo_s *    oyCMMInfoFromLibName_(const char        * lib_name );
+oyCMMinfo_s *    oyCMMinfoFromLibName_(const char        * lib_name );
 char **          oyCMMsGetLibNames_  ( uint32_t          * n,
                                        const char        * required_cmm );
 
@@ -117,7 +117,7 @@ typedef oyOptions_s * (*oyCMMFilter_ValidateOptions_f)
  *  @param[out]    registration        filter registration string
  *  @param[out]    name                filter name
  *  @param[in]     allocateFunc        e.g. malloc
- *  @param[out]    info                oyCMMInfo_s pointer to set
+ *  @param[out]    info                oyCMMinfo_s pointer to set
  *  @param[in]     object              e.g. Oyranos object
  *  @return                            0 on success; error >= 1; -1 not found; unknown < -1
  *
@@ -134,7 +134,7 @@ typedef int          (*oyCMMFilterScan_f) (
                                        char             ** registration,
                                        char             ** name,
                                        oyAlloc_f           allocateFunc,
-                                       oyCMMInfo_s      ** info,
+                                       oyCMMinfo_s      ** info,
                                        oyObject_s          object );
 
 /** typedef oyCMMFilterLoad_f

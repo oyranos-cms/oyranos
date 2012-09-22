@@ -1,6 +1,6 @@
-/** Function    oyCMMInfo_Release__Members
- *  @memberof   oyCMMInfo_s
- *  @brief      Custom CMMInfo destructor
+/** Function    oyCMMinfo_Release__Members
+ *  @memberof   oyCMMinfo_s
+ *  @brief      Custom CMMinfo destructor
  *  @internal
  *
  *  This function will free up all memmory allocated by the
@@ -9,13 +9,13 @@
  *  of the oy_ object is used to release the rest of the members
  *  that were allocated with oy_->allocateFunc_.
  *
- *  @param[in]  cmminfo  the CMMInfo object
+ *  @param[in]  cmminfo  the CMMinfo object
  *
  *  @version Oyranos: x.x.x
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-void oyCMMInfo_Release__Members( oyCMMInfo_s_ * cmminfo )
+void oyCMMinfo_Release__Members( oyCMMinfo_s_ * cmminfo )
 {
   /* Deallocate members here
    * E.g: oyXXX_Release( &cmminfo->member );
@@ -34,43 +34,43 @@ void oyCMMInfo_Release__Members( oyCMMInfo_s_ * cmminfo )
   }
 }
 
-/** Function    oyCMMInfo_Init__Members
- *  @memberof   oyCMMInfo_s
- *  @brief      Custom CMMInfo constructor 
+/** Function    oyCMMinfo_Init__Members
+ *  @memberof   oyCMMinfo_s
+ *  @brief      Custom CMMinfo constructor 
  *  @internal
  *
  *  This function will allocate all memmory for the input object.
  *  For the basic member types this is done using the allocateFunc_
  *  of the attatced (oyObject_s)oy_ object.
  *
- *  @param[in]  cmminfo  the CMMInfo object
+ *  @param[in]  cmminfo  the CMMinfo object
  *
  *  @version Oyranos: x.x.x
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyCMMInfo_Init__Members( oyCMMInfo_s_ * cmminfo )
+int oyCMMinfo_Init__Members( oyCMMinfo_s_ * cmminfo )
 {
   return 0;
 }
 
-/** Function    oyCMMInfo_Copy__Members
- *  @memberof   oyCMMInfo_s
- *  @brief      Custom CMMInfo copy constructor
+/** Function    oyCMMinfo_Copy__Members
+ *  @memberof   oyCMMinfo_s
+ *  @brief      Custom CMMinfo copy constructor
  *  @internal
  *
  *  This function makes a copy of all values from the input
  *  to the output object. The destination object and all of its
  *  members should already be allocated.
  *
- *  @param[in]   src  the oyCMMInfo_s_ input object
- *  @param[out]  dst  the output oyCMMInfo_s_ object
+ *  @param[in]   src  the oyCMMinfo_s_ input object
+ *  @param[out]  dst  the output oyCMMinfo_s_ object
  *
  *  @version Oyranos: x.x.x
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyCMMInfo_Copy__Members( oyCMMInfo_s_ * dst, oyCMMInfo_s_ * src)
+int oyCMMinfo_Copy__Members( oyCMMinfo_s_ * dst, oyCMMinfo_s_ * src)
 {
   oyAlloc_f allocateFunc_ = 0;
   oyDeAlloc_f deallocateFunc_ = 0;

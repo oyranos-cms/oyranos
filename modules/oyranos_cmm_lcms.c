@@ -30,7 +30,7 @@
 #endif
 
 /*
-oyCMMInfo_s   lcms_cmm_module;
+oyCMMinfo_s   lcms_cmm_module;
 oyCMMapi4_s     lcms_api4_cmm;
 oyCMMui_s         lcms_api4_ui;
 oyCMMapi7_s     lcms_api7_cmm;
@@ -2228,7 +2228,7 @@ int          lcmsMOptions_Handle     ( oyOptions_s       * options,
 }
 
 /**
- *  This function implements oyCMMInfoGetText_f.
+ *  This function implements oyCMMinfoGetText_f.
  *
  *  @version Oyranos: 0.3.0
  *  @since   2011/02/21 (Oyranos: 0.3.0)
@@ -2300,7 +2300,7 @@ oyCMMapi10_s    lcms_api10_cmm2 = {
 };
 
 /**
- *  This function implements oyCMMInfoGetText_f.
+ *  This function implements oyCMMinfoGetText_f.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/12/11 (Oyranos: 0.1.10)
@@ -2542,7 +2542,7 @@ oyCMMapi4_s   lcms_api4_cmm = {
 
 
 /**
- *  This function implements oyCMMInfoGetText_f.
+ *  This function implements oyCMMinfoGetText_f.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/23 (Oyranos: 0.1.10)
@@ -2596,7 +2596,7 @@ const char *lcms_texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2007/11/00 (Oyranos: 0.1.8)
  *  @date    2008/12/30
  */
-oyCMMInfo_s lcms_cmm_module = {
+oyCMMinfo_s lcms_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,                 /**< type, struct type */
   0,0,0,                               /**< ,dynamic object functions */
