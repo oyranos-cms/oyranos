@@ -26,6 +26,7 @@
 
 #include "config.h"
 #include "oyranos.h"
+#include "oyranos_alpha.h"
 #include "oyranos_debug.h"
 #include "oyranos_elektra.h"
 #include "oyranos_helper.h"
@@ -45,6 +46,10 @@ char** oyXMLgetArray_  (const char       *xml,
                  const char       *key,
                  int              *count);
 
+void               oyParseXMLDoc_    ( xmlDocPtr           doc,
+                                       xmlNodePtr          cur,
+                                       oyUiHandler_s    ** ui_handlers,
+                                       oyPointer           ui_handlers_context);
 
 /* miscellaneous */
 

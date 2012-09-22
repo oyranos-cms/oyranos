@@ -62,6 +62,7 @@ int          oyFormsArgs_ResourceGet ( oyFormsArgs_s     * args,
                                        const char        * name,
                                        oyPointer         * resource );
 
+#include "oyranos_alpha.h"
 extern oyUiHandler_s * oy_ui_cmd_line_handlers[];
 
 #define OYFORMS_FLTK_HELP_VIEW_REG  OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD \

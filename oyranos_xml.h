@@ -26,7 +26,6 @@
 
 #include "config.h"
 #include "oyranos.h"
-#include "oyranos_alpha.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
@@ -68,11 +67,6 @@ char *       oyXMLgetElement_        ( const char        * xml,
                                        const char        * xpath,
                                        const char        * key );
 
-
-void               oyParseXMLDoc_    ( xmlDocPtr           doc,
-                                       xmlNodePtr          cur,
-                                       oyUiHandler_s    ** ui_handlers,
-                                       oyPointer           ui_handlers_context);
 const char *       oyXFORMsModelGetAttrValue (
                                        xmlNodePtr          cur,
                                        const char        * attr_name );
