@@ -1,3 +1,8 @@
+#include "oyConnector_s.h"
+#include "oyFilterNode_s.h"
+#include "oyFilterSocket_s.h"
+#include "oyPixelAccess_s.h"
+#include "oyImage_s.h"
 OYAPI int  OYEXPORT
                  oyFilterPlug_Callback(
                                        oyFilterPlug_s    * c,
