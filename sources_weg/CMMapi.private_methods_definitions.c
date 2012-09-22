@@ -17,10 +17,10 @@
  */
 oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
 {
-  int error = !api;
+  int error = !api_;
   oyOBJECT_e type = oyOBJECT_NONE;
   int module_api;
-  oyCMMapi_s_ * api = api_;
+  oyCMMapi_s_ * api = (oyCMMapi_s_*) api_;
 
   if(error)
     return type;

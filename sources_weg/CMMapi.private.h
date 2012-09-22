@@ -12,12 +12,3 @@
  */
 typedef int  (*oyCMMOptions_Check_f) ( oyOptions_s       * validate );
 
-/**
- *  typedef oyCMMCanHandle_f
- *  @brief   CMM feature declaration function
- *  @ingroup module_api
- *  @memberof oyCMMapi_s
- */
-typedef int      (*oyCMMCanHandle_f) ( oyCMMQUERY_e        type,
-                                       uint32_t            value );
-

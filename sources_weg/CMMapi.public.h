@@ -1,3 +1,5 @@
+#include "oyranos_module.h"
+
 /**
  *  typedef oyCMMInit_f
  *  @brief   optional CMM init function
@@ -13,4 +15,13 @@ typedef int      (*oyCMMInit_f)      ( oyStruct_s        * filter );
  *  @memberof oyCMMapi_s
  */
 typedef int      (*oyCMMMessageFuncSet_f)( oyMessage_f     message_func );
+
+/**
+ *  typedef oyCMMCanHandle_f
+ *  @brief   CMM feature declaration function
+ *  @ingroup module_api
+ *  @memberof oyCMMapi_s
+ */
+typedef int      (*oyCMMCanHandle_f) ( oyCMMQUERY_e        type,
+                                       uint32_t            value );
 
