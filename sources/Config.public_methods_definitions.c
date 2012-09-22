@@ -1052,3 +1052,28 @@ OYAPI int  OYEXPORT
 
   return error;
 }
+
+/** Function  oyConfig_GetRegistration
+ *  @memberof oyConfig_s
+ *  @brief    Get the registration string @ref registration
+ *
+ *  @param[in]     config              the config
+ *  @return                            the registration string
+ *
+ *  @version Oyranos: 0.5.0
+ *  @date    2012/09/19
+ *  @since   2012/09/19 (Oyranos: 0.5.0)
+ */
+OYAPI const char *  OYEXPORT
+               oyConfig_GetRegistration
+                                     ( oyConfig_s        * config )
+{
+  oyConfig_s_ * s = (oyConfig_s_*)config;
+
+  if(!config)
+    return NULL;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
+
+  return s->registration;
+}
