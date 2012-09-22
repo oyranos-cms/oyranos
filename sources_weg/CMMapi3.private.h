@@ -1,3 +1,5 @@
+#include "oyranos_module_internal.h"
+
 /**
  *  typedef oyCMMProfileTag_GetValues_f
  *  @memberof oyCMMapi3_s

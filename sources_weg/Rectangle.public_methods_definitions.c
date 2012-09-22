@@ -356,7 +356,7 @@ void           oyRectangle_GetGeo    ( oyRectangle_s     * rectangle,
                                        double            * width,
                                        double            * height )
 {
-  oyRectangle_s * s = rectangle;
+  oyRectangle_s_ * s = (oyRectangle_s_*) rectangle;
   if(!s)
     return;
 
@@ -376,7 +376,7 @@ void           oyRectangle_GetGeo    ( oyRectangle_s     * rectangle,
  */
 OYAPI double  OYEXPORT
                  oyRectangle_GetGeo1 ( oyRectangle_s     * rectangle,
-                                       int                 x_y_w_h );
+                                       int                 x_y_w_h )
 {
   oyRectangle_s_ * s = (oyRectangle_s_*)rectangle;
   if(!s)
@@ -410,7 +410,7 @@ const char*    oyRectangle_Show      ( oyRectangle_s     * rect )
   oyRectangle_s_ * s = (oyRectangle_s_*)rect;
 
   if(!s)
-    return;
+    return "";
 
   if(!text)
     text = oyAllocateFunc_(sizeof(char) * 512);

@@ -25,7 +25,7 @@ oyOBJECT_e   oyCMMapi3_Query_        ( oyCMMInfo_s_      * cmm_info,
   if(memcmp( queries->prefered_cmm, cmm_info->cmm, 4 ) == 0)
     prefered = 10;
 
-  rank_ = oyCMMCanHandle_( api3, queries );
+  rank_ = oyCMMCanHandle_( (oyCMMapi3_s*)api3, queries );
 
   if(rank)
     *rank = rank_ * prefered;

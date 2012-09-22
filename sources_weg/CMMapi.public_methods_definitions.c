@@ -2,7 +2,7 @@ oyCMMapi_s *       oyCMMapi_GetNext  ( oyCMMapi_s        * api )
 {
   return ((oyCMMapi_s_*)api)->next;
 }
-oyCMMInit_f        oyCMMapi_GetInitF ( oyCMMapi_s        * api );
+oyCMMInit_f        oyCMMapi_GetInitF ( oyCMMapi_s        * api )
 {
   return ((oyCMMapi_s_*)api)->oyCMMInit;
 }
