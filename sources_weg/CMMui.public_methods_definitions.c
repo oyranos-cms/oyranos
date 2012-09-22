@@ -26,7 +26,7 @@ oyCMMGetText_f     oyCMMui_GetTextF  ( oyCMMui_s         * ui )
  *  @date     2012/09/15
  *  @since    2012/09/15 (Oyranos: 0.5.0)
  */
-const char *       oyCMMui_GetTexts  ( oyCMMui_s         * ui )
+const char **      oyCMMui_GetTexts  ( oyCMMui_s         * ui )
 {
   return ((oyCMMui_s_*)ui)->texts;
 }
