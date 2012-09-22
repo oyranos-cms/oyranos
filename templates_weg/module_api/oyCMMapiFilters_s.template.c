@@ -2,7 +2,7 @@
 
 {% block LocalIncludeFiles %}
 {{ block.super }}
-#include "oyranos_alpha_internal.h"
+#include "oyranos_module_internal.h"
 {% endblock %}
 
 {% block MoveIn_CheckTypes %}oyIsOfTypeCMMapiFilter( (*obj)->type_ ){% endblock %}
