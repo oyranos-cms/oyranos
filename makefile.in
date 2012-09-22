@@ -192,6 +192,8 @@ CFILES_OBJECT = \
 	$(GENDIR)oyProfiles_s.c \
 	$(GENDIR)oyProfileTag_s.c \
 	$(GENDIR)oyProfileTag_s_.c \
+	$(GENDIR)oyRectangle_s.c \
+	$(GENDIR)oyRectangle_s_.c \
 	$(GENDIR)oyHash_s_.c \
 	$(GENDIR)oyHash_s.c \
 	$(GENDIR)oyName_s_.c \
@@ -215,6 +217,7 @@ CHEADERS_OBJECT_PUBLIC = \
 	$(GENDIR)oyProfile_s.h \
 	$(GENDIR)oyProfiles_s.h \
 	$(GENDIR)oyProfileTag_s.h \
+	$(GENDIR)oyRectangle_s.h \
 	$(GENDIR)oyHash_s.h \
 	$(GENDIR)oyName_s.h \
 	$(GENDIR)oyObject_s.h \
@@ -232,6 +235,7 @@ CHEADERS_OBJECT = \
 	$(GENDIR)oyProfile_s_.h \
 	$(GENDIR)oyProfiles_s_.h \
 	$(GENDIR)oyProfileTag_s_.h \
+	$(GENDIR)oyRectangle_s_.h \
 	$(GENDIR)oyHash_s_.h \
 	$(GENDIR)oyName_s_.h \
 	$(GENDIR)oyObject_s_.h \
@@ -244,6 +248,24 @@ CHEADERS_OBJECT = \
 	$(GENDIR)$(TARGET)_object_internal.h
 
 CFILES_OBJECT_MODULES = \
+	$(GENDIR)oyCMMapi_s.c \
+	$(GENDIR)oyCMMapi_s_.c \
+	$(GENDIR)oyCMMapi3_s.c \
+	$(GENDIR)oyCMMapi3_s_.c \
+	$(GENDIR)oyCMMapi4_s.c \
+	$(GENDIR)oyCMMapi4_s_.c \
+	$(GENDIR)oyCMMapi5_s.c \
+	$(GENDIR)oyCMMapi5_s_.c \
+	$(GENDIR)oyCMMapi6_s.c \
+	$(GENDIR)oyCMMapi6_s_.c \
+	$(GENDIR)oyCMMapi7_s.c \
+	$(GENDIR)oyCMMapi7_s_.c \
+	$(GENDIR)oyCMMapi8_s.c \
+	$(GENDIR)oyCMMapi8_s_.c \
+	$(GENDIR)oyCMMapi9_s.c \
+	$(GENDIR)oyCMMapi9_s_.c \
+	$(GENDIR)oyCMMapis_s.c \
+	$(GENDIR)oyCMMapis_s_.c \
 	$(GENDIR)oyConfig_s_.c \
 	$(GENDIR)oyConfig_s.c \
 	$(GENDIR)oyConfigs_s_.c \
@@ -253,11 +275,29 @@ CFILES_OBJECT_MODULES = \
 	$(GENDIR)$(TARGET)_image.c \
 	$(GENDIR)$(TARGET)_module.c
 CHEADERS_OBJECT_MODULES_PUBLIC = \
+	$(GENDIR)oyCMMapi_s.h \
+	$(GENDIR)oyCMMapi3_s.h \
+	$(GENDIR)oyCMMapi4_s.h \
+	$(GENDIR)oyCMMapi5_s.h \
+	$(GENDIR)oyCMMapi6_s.h \
+	$(GENDIR)oyCMMapi7_s.h \
+	$(GENDIR)oyCMMapi8_s.h \
+	$(GENDIR)oyCMMapi9_s.h \
+	$(GENDIR)oyCMMapis_s.h \
 	$(GENDIR)oyConfig_s.h \
 	$(GENDIR)oyConfigs_s.h \
 	$(GENDIR)$(TARGET)_devices.h \
 	$(GENDIR)$(TARGET)_image.h
 CHEADERS_OBJECT_MODULES = \
+	$(GENDIR)oyCMMapi_s_.h \
+	$(GENDIR)oyCMMapi3_s_.h \
+	$(GENDIR)oyCMMapi4_s_.h \
+	$(GENDIR)oyCMMapi5_s_.h \
+	$(GENDIR)oyCMMapi6_s_.h \
+	$(GENDIR)oyCMMapi7_s_.h \
+	$(GENDIR)oyCMMapi8_s_.h \
+	$(GENDIR)oyCMMapi9_s_.h \
+	$(GENDIR)oyCMMapis_s_.h \
 	$(GENDIR)oyConfig_s_.h \
 	$(GENDIR)oyConfigs_s_.h \
 	$(GENDIR)$(TARGET)_devices_internal.c \
