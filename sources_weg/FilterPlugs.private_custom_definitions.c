@@ -23,7 +23,9 @@ void oyFilterPlugs_Release__Members( oyFilterPlugs_s_ * filterplugs )
 
   if(filterplugs->oy_->deallocateFunc_)
   {
+#if 0
     oyDeAlloc_f deallocateFunc = filterplugs->oy_->deallocateFunc_;
+#endif
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( filterplugs->member );

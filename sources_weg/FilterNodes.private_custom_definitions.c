@@ -23,7 +23,9 @@ void oyFilterNodes_Release__Members( oyFilterNodes_s_ * filternodes )
 
   if(filternodes->oy_->deallocateFunc_)
   {
+#if 0
     oyDeAlloc_f deallocateFunc = filternodes->oy_->deallocateFunc_;
+#endif
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( filternodes->member );

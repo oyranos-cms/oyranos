@@ -63,7 +63,7 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
   /* set the above filter node as the input */
   oyConversion_Set( conversion, in, 0 );
   /* set the image buffer */
-  oyFilterNode_DataSet( in, (oyStruct_s*)image_in, 0, 0 );
+  oyFilterNode_SetData( in, (oyStruct_s*)image_in, 0, 0 );
 
 
   /* create a new filter node */
@@ -82,7 +82,7 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
      * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
      * We rely on resolving the image later.
      */
-    error = oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
+    error = oyFilterNode_SetData( out, (oyStruct_s*)image_out, 0, 0 );
     if(error != 0)
       fprintf( stderr, "could not add data\n" );
   }
@@ -110,7 +110,7 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
                                   out, "//" OY_TYPE_STD "/data", 0 );
     if(error > 0)
       fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
-    oyFilterNode_DataSet( out, (oyStruct_s*)image_out, 0, 0 );
+    oyFilterNode_SetData( out, (oyStruct_s*)image_out, 0, 0 );
     in = out;
   }
 
@@ -203,7 +203,7 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
    * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
    * We rely on resolving the image later.
    */
-  oyFilterNode_DataSet( in, (oyStruct_s*)image_in, 0, 0 );
+  oyFilterNode_SetData( in, (oyStruct_s*)image_in, 0, 0 );
 
   /* swap in and out */
   if(out)

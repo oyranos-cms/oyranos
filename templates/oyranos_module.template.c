@@ -2,6 +2,7 @@
 
 #include "oyranos_alpha_internal.h"
 #include "oyranos_debug.h"
+#include "oyranos_elektra.h"
 #include "oyranos_i18n.h"
 #include "oyranos_internal.h"
 #include "oyranos_object_internal.h"
@@ -1964,5 +1965,135 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
   oyOptions_Release( &remote_socket_node_tags );
 
   return added;
+}
+
+/** Function oyOptions_DoFilter
+ *  @memberof oyOptions_s
+ *  @brief   filter the options
+ *
+ *  The returned options are read in from the Elektra settings and if thats not
+ *  available from the inbuild defaults. The later can explicitely selected with
+ *  oyOPTIONSOURCE_FILTER passed as flags argument. advanced options can be 
+ *  filtered out by adding oyOPTIONATTRIBUTE_ADVANCED.
+ *
+ *  Modules should handle the advanced options as well but shall normally
+ *  not act upon them. The convention to set them zero, keeps them inactive.
+ *  
+ *  On the front end side the CMM cache has to include them, as they will 
+ *  influence the hash sum generation. The question arrises, whether to include
+ *  these options marked as non visible along the path or require the CMM cache
+ *  code to check each time for them on cache lookup. The oyOption_s::flags
+ *  is already in place. So we use it and do inclusion. Front end options can be
+ *  filtered as they do not affect the CMM cache.
+ *
+ *  @see oyOptions_Add
+ *
+ *  @param         opts                the options
+ *  @param[in]     flags               for inbuild defaults |
+ *                                     oyOPTIONSOURCE_FILTER;
+ *                                     for options marked as advanced |
+ *                                     oyOPTIONATTRIBUTE_ADVANCED;
+ *                                     for front end options |
+ *                                     oyOPTIONATTRIBUTE_FRONT
+ *  @param         filter_type         the type level from a registration
+ *  @return                            options
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/27 (Oyranos: 0.1.9)
+ *  @date    2008/11/27
+ */
+int          oyOptions_DoFilter      ( oyOptions_s       * opts,
+                                       uint32_t            flags,
+                                       const char        * filter_type )
+{
+  oyOptions_s * opts_tmp = 0;
+  oyOption_s * o = 0;
+  int error = !opts;
+  char * text;
+  int i,n;
+
+  oyExportStart_(EXPORT_SETTING);
+  oyExportEnd_();
+
+  if(error <= 0 && (flags || filter_type))
+  {
+    /*  6. get stored values */
+    n = oyOptions_Count( opts );
+    opts_tmp = oyOptions_New(0);
+    for(i = 0; i < n; ++i)
+    {
+      int skip = 0;
+
+      o = oyOptions_Get( opts, i );
+
+
+      /* usage/type range filter */
+      if(filter_type)
+      {
+        text = oyFilterRegistrationToText( oyOption_GetRegistration(o),
+                                           oyFILTER_REG_TYPE, 0);
+        if(oyStrcmp_( filter_type, text ) != 0)
+          skip = 1;
+
+        oyFree_m_( text );
+      }
+
+      /* front end options filter */
+      if(!skip && !(flags & oyOPTIONATTRIBUTE_FRONT))
+      {
+        text = oyStrrchr_( oyOption_GetRegistration(o), '/' );
+
+        if(text)
+           text = oyStrchr_( text, '.' );
+        if(text)
+          if(oyStrstr_( text, "front" ))
+            skip = 1;
+      }
+
+      /* advanced options mark and zero */
+      if(!skip && !(flags & oyOPTIONATTRIBUTE_ADVANCED))
+      {
+        text = oyStrrchr_( oyOption_GetRegistration(o), '/' );
+        if(text)
+           text = oyStrchr_( text, '.' );
+        if(text)
+          if(oyStrstr_( text, "advanced" ))
+          {
+            oyOption_SetFromText( o, "0", 0 );
+            oyOption_SetFlags( o,
+                              oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
+          }
+      } else
+      /* Elektra settings, modify value */
+      if(!skip && !(flags & oyOPTIONSOURCE_FILTER))
+      {
+        text = oyGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
+                                oyAllocateFunc_ );
+        if(text && text[0])
+        {
+          error = oyOption_SetFromText( o, text, 0 );
+          oyOption_SetFlags(o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
+          oyOption_SetSource( o, oyOPTIONSOURCE_USER );
+          oyFree_m_( text );
+        }
+      }
+
+      if(!skip)
+        oyOptions_Add( opts_tmp, o, -1, opts->oy_ );
+
+      oyOption_Release( &o );
+    }
+
+    n = oyOptions_Count( opts_tmp );
+    error = oyOptions_Clear(opts);
+    for( i = 0; i < n && !error; ++i )
+    {
+      o = oyOptions_Get( opts_tmp, i );
+      error = oyOptions_MoveIn( opts, &o, -1 );
+    }
+    oyOptions_Release( &opts_tmp );
+  }
+
+  return error;
 }
 

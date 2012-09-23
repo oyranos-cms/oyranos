@@ -131,12 +131,12 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
     if(error <= 0)
       error = oyConversion_Set( s, in, 0 );
     if(error <= 0)
-      error = oyFilterNode_DataSet( in, (oyStruct_s*)input, 0, 0 );
+      error = oyFilterNode_SetData( in, (oyStruct_s*)input, 0, 0 );
 
     if(error <= 0)
       out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
     if(error <= 0)
-      error = oyFilterNode_DataSet( out, (oyStruct_s*)output, 0, 0 );
+      error = oyFilterNode_SetData( out, (oyStruct_s*)output, 0, 0 );
     if(error <= 0)
       error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                     out, "//" OY_TYPE_STD "/data", 0 );
@@ -270,7 +270,7 @@ oyConversion_s * oyConversion_CreateFromImage (
   /* set the above filter node as the input */
   oyConversion_Set( conversion, in, 0 );
   /* set the image buffer */
-  oyFilterNode_DataSet( in, (oyStruct_s*)image_in, 0, 0 );
+  oyFilterNode_SetData( in, (oyStruct_s*)image_in, 0, 0 );
 
 
   STRING_ADD( module_reg, "//" OY_TYPE_STD "/" );
@@ -313,7 +313,7 @@ oyConversion_s * oyConversion_CreateFromImage (
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
-  oyFilterNode_DataSet( in, (oyStruct_s*)image_out, 0, 0 );
+  oyFilterNode_SetData( in, (oyStruct_s*)image_out, 0, 0 );
   /* set the output node of the conversion */
   oyConversion_Set( conversion, 0, out );
 
@@ -409,7 +409,7 @@ oyImage_s        * oyConversion_GetImage (
           s->out_->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
 
           /* Link the tickets image. It should be real copied in a plug-in. */
-          /* error = oyFilterNode_DataSet( s->out_,
+          /* error = oyFilterNode_SetData( s->out_,
                                         (oyStruct_s*)pixel_access->output_image,
                                         0, 0 ); */
           oyPixelAccess_Release( &pixel_access );

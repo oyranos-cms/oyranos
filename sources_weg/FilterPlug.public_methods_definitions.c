@@ -193,7 +193,7 @@ OYAPI oyImage_s * OYEXPORT
     } else
       image = oyImage_Copy( (oyImage_s*) image_input_, 0 );
 
-    error = oyFilterNode_DataSet( (oyFilterNode_s*)node, (oyStruct_s*)image, 0, 0 );
+    error = oyFilterNode_SetData( (oyFilterNode_s*)node, (oyStruct_s*)image, 0, 0 );
     oyImage_Release( &image );
   }
 
