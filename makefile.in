@@ -276,6 +276,7 @@ CFILES_OBJECT_MODULES = \
 	$(GENDIR)oyConfig_s.c \
 	$(GENDIR)oyConfigs_s_.c \
 	$(GENDIR)oyConfigs_s.c \
+	$(GENDIR)$(TARGET)_conversion.c \
 	$(GENDIR)$(TARGET)_devices.c \
 	$(GENDIR)$(TARGET)_devices_internal.c \
 	$(GENDIR)$(TARGET)_image.c \
@@ -295,6 +296,7 @@ CHEADERS_OBJECT_MODULES_PUBLIC = \
 	$(GENDIR)oyCMMui_s.h \
 	$(GENDIR)oyConfig_s.h \
 	$(GENDIR)oyConfigs_s.h \
+	$(GENDIR)$(TARGET)_dconversion.h \
 	$(GENDIR)$(TARGET)_devices.h \
 	$(GENDIR)$(TARGET)_image.h
 CHEADERS_OBJECT_MODULES = \
@@ -312,7 +314,7 @@ CHEADERS_OBJECT_MODULES = \
 	$(GENDIR)oyCMMui_s_.h \
 	$(GENDIR)oyConfig_s_.h \
 	$(GENDIR)oyConfigs_s_.h \
-	$(GENDIR)$(TARGET)_devices_internal.c \
+	$(GENDIR)$(TARGET)_devices_internal.h \
 	$(CHEADERS_OBJECT_MODULES_PUBLIC)
 
 CFILES = \
