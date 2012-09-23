@@ -253,12 +253,16 @@ CHEADERS_OBJECT = \
 	$(GENDIR)$(TARGET)_object_internal.h
 
 CFILES_OBJECT_IMAGING = \
+	$(GENDIR)oyImage_s.c \
+	$(GENDIR)oyImage_s_.c \
 	$(GENDIR)$(TARGET)_conversion.c \
 	$(GENDIR)$(TARGET)_image.c
 CHEADERS_OBJECT_IMAGING_PUBLIC = \
+	$(GENDIR)oyImage_s.h \
 	$(GENDIR)$(TARGET)_conversion.h \
 	$(GENDIR)$(TARGET)_image.h
 CHEADERS_OBJECT_IMAGING = \
+	$(GENDIR)oyImage_s_.h \
 	$(GENDIR)$(TARGET)_devices_internal.h \
 	$(CHEADERS_OBJECT_IMAGING_PUBLIC)
 
