@@ -1096,14 +1096,14 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
 OYAPI oyFilterCore_s *  OYEXPORT
                  oyFilterNode_GetCore( oyFilterNode_s     * node )
 {
-  oyFilterNode_s * s = node;
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node;
 
   if(!node)
     return 0;
 
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
 
-  return s->core;
+  return (oyFilterCore_s*)s->core;
 }
 /** Function  oyFilterNode_GetRegistration
  *  @memberof oyFilterNode_s
@@ -1119,7 +1119,7 @@ OYAPI oyFilterCore_s *  OYEXPORT
 OYAPI const char *  OYEXPORT
                  oyFilterNode_GetRegistration( oyFilterNode_s     * node )
 {
-  oyFilterNode_s * s = node;
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node;
 
   if(!node)
     return 0;
@@ -1142,7 +1142,7 @@ OYAPI const char *  OYEXPORT
 OYAPI oyOptions_s *  OYEXPORT
                  oyFilterNode_GetTags( oyFilterNode_s     * node )
 {
-  oyFilterNode_s * s = node;
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node;
 
   if(!node)
     return 0;

@@ -8,6 +8,7 @@
 #include "oyFilterPlugs_s_.h"
 #include "oyFilterPlug_s_.h"
 #include "oyFilterCore_s_.h"
+#include "oyFilterSocket_s.h"
 #include "oyObserver_s_.h"
 {% endblock %}
 

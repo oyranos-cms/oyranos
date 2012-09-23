@@ -38,9 +38,6 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
       oyFilterPlug_Release( (oyFilterPlug_s**)&filternode->plugs[i] );
   }
 
-  oyObject_UnRef(filternode->oy_); //Is this really needed?
-
-
   if(filternode->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = filternode->oy_->deallocateFunc_;

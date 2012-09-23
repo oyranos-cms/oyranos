@@ -61,9 +61,6 @@ int              oyCMMhandle_Set_    ( oyCMMhandle_s     * handle,
                                        oyPointer           dso_handle,
                                        const char        * lib_name );
 
-int          oyPointer_ConvertData   ( oyPointer_s       * cmm_ptr,
-                                       oyPointer_s       * cmm_ptr_out,
-                                       oyFilterNode_s    * node );
 oyPointer_s * oyStruct_GetModulePtr_ ( oyStruct_s        * data,
                                        const char        * cmm );
 oyPointer_s** oyStructList_GetModulePtrs_ (

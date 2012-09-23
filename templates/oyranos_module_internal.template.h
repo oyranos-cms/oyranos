@@ -99,5 +99,8 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
                                        oyFilterPlugs_s   * edges,
                                        const char        * selector,
                                        int                 flags );
+int          oyPointer_ConvertData   ( oyPointer_s       * cmm_ptr,
+                                       oyPointer_s       * cmm_ptr_out,
+                                       oyFilterNode_s    * node );
 
 #endif /* {{ file_name|underscores|upper|tr:". _" }} */

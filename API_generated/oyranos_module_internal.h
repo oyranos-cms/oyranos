@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/22
+ *  @date     2012/09/23
  */
 
 
@@ -114,5 +114,8 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
                                        oyFilterPlugs_s   * edges,
                                        const char        * selector,
                                        int                 flags );
+int          oyPointer_ConvertData   ( oyPointer_s       * cmm_ptr,
+                                       oyPointer_s       * cmm_ptr_out,
+                                       oyFilterNode_s    * node );
 
 #endif /* OYRANOS_MODULE_INTERNAL_H */

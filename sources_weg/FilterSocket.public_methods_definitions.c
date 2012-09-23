@@ -59,7 +59,6 @@ OYAPI int  OYEXPORT
   return 0;
 }
 
-#ifdef UNHIDE_FILTERSOCKET
 /** Function  oyFilterSocket_SignalToGraph
  *  @memberof oyFilterSocket_s
  *  @brief    Send a signal through the graph
@@ -121,7 +120,7 @@ OYAPI int  OYEXPORT
     handled = oyStruct_ObserverSignal( (oyStruct_s*) oyFilterPlugPriv_m(p)->node, sig, 0 );
 
     /* get all nodes in the output direction */
-    graph = oyFilterGraph_FromNode( oyFilterPlugPriv_m(p)->node, OY_INPUT );
+    graph = oyFilterGraph_FromNode( (oyFilterNode_s*)oyFilterPlugPriv_m(p)->node, OY_INPUT );
 
     j_n = oyFilterNodes_Count( oyFilterGraphPriv_m(graph)->nodes );
     for( j = 0; j < j_n; ++j )
@@ -150,7 +149,6 @@ OYAPI int  OYEXPORT
 
   return handled;
 }
-#endif /*UNHIDE_FILTERSOCKET*/
 
 /** Function  oyFilterSocket_GetNode
  *  @memberof oyFilterSocket_s
@@ -173,7 +171,7 @@ OYAPI oyFilterNode_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 0 )
 
-  return oyFilterNode_Copy( s->node, 0 );
+  return oyFilterNode_Copy( (oyFilterNode_s*)s->node, 0 );
 }
 /** Function  oyFilterSocket_GetPlugs
  *  @memberof oyFilterSocket_s

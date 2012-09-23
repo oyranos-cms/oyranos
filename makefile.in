@@ -334,6 +334,10 @@ CFILES_OBJECT_IMAGING = \
 	$(GENDIR)oyArray2d_s_.c \
 	$(GENDIR)oyFilterGraph_s.c \
 	$(GENDIR)oyFilterGraph_s_.c \
+	$(GENDIR)oyFilterNode_s.c \
+	$(GENDIR)oyFilterNode_s_.c \
+	$(GENDIR)oyFilterSocket_s.c \
+	$(GENDIR)oyFilterSocket_s_.c \
 	$(GENDIR)oyImage_s.c \
 	$(GENDIR)oyImage_s_.c \
 	$(GENDIR)oyPixelAccess_s.c \
@@ -343,6 +347,8 @@ CFILES_OBJECT_IMAGING = \
 CHEADERS_OBJECT_IMAGING_PUBLIC = \
 	$(GENDIR)oyArray2d_s.h \
 	$(GENDIR)oyFilterGraph_s.h \
+	$(GENDIR)oyFilterNode_s.h \
+	$(GENDIR)oyFilterSocket_s.h \
 	$(GENDIR)oyImage_s.h \
 	$(GENDIR)oyPixelAccess_s_.h \
 	$(GENDIR)$(TARGET)_conversion.h \
@@ -350,6 +356,8 @@ CHEADERS_OBJECT_IMAGING_PUBLIC = \
 CHEADERS_OBJECT_IMAGING = \
 	$(GENDIR)oyArray2d_s_.h \
 	$(GENDIR)oyFilterGraph_s_.h \
+	$(GENDIR)oyFilterNode_s_.h \
+	$(GENDIR)oyFilterSocket_s_.h \
 	$(GENDIR)oyImage_s_.h \
 	$(GENDIR)oyPixelAccess_s.h \
 	$(GENDIR)$(TARGET)_devices_internal.h \
