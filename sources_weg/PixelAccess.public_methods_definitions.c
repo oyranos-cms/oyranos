@@ -90,14 +90,14 @@ oyPixelAccess_s *  oyPixelAccess_Create (
 
     s->data_in = filter->image_->data; */
     if(image)
-      w = oyImage_Width( image );
+      w = oyImage_GetWidth( image );
 
     /** The filters have no obligation to pass end to end informations.
         The ticket must hold all pices of interesst.
      */
     s->output_image_roi->width = 1.0;
     if(image)
-      s->output_image_roi->height = oyImage_Height( image ) / (double)oyImage_Width( image );
+      s->output_image_roi->height = oyImage_GetHeight( image ) / (double)oyImage_GetWidth( image );
     s->output_image = oyImage_Copy( image, 0 );
     s->graph = (oyFilterGraph_s_*)oyFilterGraph_FromNode( (oyFilterNode_s*)sock->node, 0 );
 
@@ -177,7 +177,7 @@ oyRectangle_s *    oyPixelAccess_GetOutputROI (
 
   oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
 
-  return oyRectangle_Copy( s->output_image_roi, 0 );
+  return oyRectangle_Copy( (oyRectangle_s*)s->output_image_roi, 0 );
 }
 /** Function  oyPixelAccess_GetGraph
  *  @memberof oyPixelAccess_s
@@ -197,7 +197,7 @@ oyFilterGraph_s *  oyPixelAccess_GetGraph (
 
   oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
 
-  return oyFilterGraph_Copy( s->graph, 0 );
+  return oyFilterGraph_Copy( (oyFilterGraph_s*)s->graph, 0 );
 }
 /** Function  oyPixelAccess_GetRequestQueue
  *  @memberof oyPixelAccess_s
@@ -371,7 +371,7 @@ int                oyPixelAccess_SetWorkspaceID (
  */
 double             oyPixelAccess_GetStart (
                                        oyPixelAccess_s   * pixel_access,
-                                       int                 vertical );
+                                       int                 vertical )
 {
   oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
 
