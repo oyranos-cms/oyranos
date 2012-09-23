@@ -93,7 +93,7 @@ OYAPI int  OYEXPORT
     case oyCONNECTOR_IMAGING_CAP_CAN_SUBPIXEL: return s->can_subpixel;
     case oyCONNECTOR_IMAGING_CAP_ID: return s->id;
     case oyCONNECTOR_IMAGING_CAP_IS_MANDATORY: return s->is_mandatory;
-    default; return 0; 
+    default: return 0; 
   }
   return 0;
 }

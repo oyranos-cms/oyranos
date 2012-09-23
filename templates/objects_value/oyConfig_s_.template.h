@@ -9,5 +9,11 @@
 
 {% block LocalIncludeFiles %}
 {{ block.super }}
+#include "oyCMMapi8_s_.h"
+#include "oyCMMapiFilter_s_.h"
+#include "oyCMMapiFilters_s.h"
 #include "oyOptions_s_.h"
+
+#include "oyranos_elektra.h"
+#include "oyranos_module_internal.h"
 {% endblock %}

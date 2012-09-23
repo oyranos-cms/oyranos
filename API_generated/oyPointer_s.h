@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/09/24
  */
 
 
@@ -107,7 +107,6 @@ OYAPI int  OYEXPORT
                                            int                 size );
 OYAPI oyPointer  OYEXPORT
                  oyPointer_GetPointer    ( oyPointer_s       * cmm_ptr );
-#ifdef UNHIDE_CMM
 OYAPI oyPointer_s *  OYEXPORT
                 oyPointer_LookUpFromObject (
                                           oyStruct_s        * data,
@@ -115,7 +114,6 @@ OYAPI oyPointer_s *  OYEXPORT
 OYAPI oyPointer_s *  OYEXPORT
                 oyPointer_LookUpFromText( const char        * text,
                                           const char        * data_type );
-#endif
 
 /* } Include "Pointer.public_methods_declarations.h" */
 
