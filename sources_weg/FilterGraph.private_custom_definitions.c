@@ -26,7 +26,9 @@ void oyFilterGraph_Release__Members( oyFilterGraph_s_ * filtergraph )
 
   if(filtergraph->oy_->deallocateFunc_)
   {
+#if 0
     oyDeAlloc_f deallocateFunc = filtergraph->oy_->deallocateFunc_;
+#endif
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( filtergraph->member );

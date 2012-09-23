@@ -1,4 +1,4 @@
-/** Function  oyFilterCore_CategoryGet
+/** Function  oyFilterCore_GetCategory
  *  @memberof oyFilterCore_s
  *  @brief    Get category string
  *
@@ -9,7 +9,7 @@
  *  @since   2008/06/26 (Oyranos: 0.1.8)
  *  @date    2009/02/28
  */
-const char * oyFilterCore_CategoryGet( oyFilterCore_s    * filter,
+const char * oyFilterCore_GetCategory( oyFilterCore_s    * filter,
                                        int                 nontranslated )
 {
   if(!filter)

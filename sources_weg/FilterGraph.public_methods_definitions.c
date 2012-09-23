@@ -65,7 +65,7 @@ OYAPI oyFilterNode_s * OYEXPORT
     found = 1;
 
     if(found && registration &&
-       !oyFilterRegistrationMatch( (*node_)->core->api4_->registration,
+       !oyFilterRegistrationMatch( ((oyCMMapi4_s_*)((oyFilterCore_s_*)(*node_)->core)->api4_)->registration,
                                    registration, 0 ))
       found = 0;
 
@@ -119,8 +119,8 @@ OYAPI int  OYEXPORT
       do_it = 0;
 
     if(do_it &&
-       (*node_)->core->api4_->oyCMMFilterNode_ContextToMem &&
-       strlen((*node_)->api7_->context_type))
+       ((oyCMMapi4_s_*)(*node_)->core->api4_)->oyCMMFilterNode_ContextToMem &&
+       strlen(((oyCMMapi7_s_*)(*node_)->api7_)->context_type))
       oyFilterNode_SetContext_( *node_, 0 );
 
     oyFilterNode_Release( &node );
@@ -212,8 +212,9 @@ oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
       do_it = 0;
 
     if(do_it &&
-       (*node_)->core->api4_->oyCMMFilterNode_ContextToMem &&
-       strlen((*node_)->core->api4_->context_type))
+       ((oyCMMapi4_s_*)(*node_)->core->api4_)->oyCMMFilterNode_ContextToMem &&
+       ((oyCMMapi4_s_*)(*node_)->core->api4_)->oyCMMFilterNode_ContextToMem &&
+       strlen(((oyCMMapi4_s_*)(*node_)->core->api4_)->context_type))
     {
       blob = oyBlob_New( object );
       oyFilterNode_SetContext_( *node_, (oyBlob_s_*)blob );
@@ -258,7 +259,6 @@ OYAPI char * OYEXPORT
        * temp2 = oyAllocateFunc_(1024),
        * tmp = 0, * txt = 0, * t = 0;
   oyFilterNode_s * node = 0;
-  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
   char * save_locale = 0;
   oyFilterGraph_s_ * s = (oyFilterGraph_s_*)graph;
 
@@ -301,28 +301,34 @@ OYAPI char * OYEXPORT
   nodes_n = oyFilterNodes_Count( s->nodes );
   for(i = 0; i < nodes_n; ++i)
   {
+    oyFilterCore_s_ * node_core;
     node = oyFilterNodes_Get( s->nodes, i );
     n = oyFilterNode_EdgeCount( node, 1, 0 );
+    node_core = (oyFilterCore_s_*)oyFilterNode_GetCore( node );
 
     /** The function is more verbose with the oy_debug variable set. */
     if(!oy_debug &&
-       oyStrchr_( (*node_)->core->api4_->id_, OY_SLASH_C ))
+       oyStrchr_( ((oyCMMapi4_s_*)node_core->api4_)->id_, OY_SLASH_C ))
     {
-      STRING_ADD( tmp, (*node_)->core->api4_->id_ );
+      STRING_ADD( tmp, ((oyCMMapi4_s_*)node_core->api4_)->id_ );
       t = oyStrrchr_( tmp, OY_SLASH_C );
       *t = 0;
       STRING_ADD( txt, t+1 );
       oyFree_m_(tmp);
     } else
     {
-      STRING_ADD( txt, (*node_)->core->api4_->id_ );
+      STRING_ADD( txt, ((oyCMMapi4_s_*)node_core->api4_)->id_ );
       if(oy_debug)
-      for(j = 0; j < node->sockets_n_; ++j)
       {
-        oyFilterSocket_s * socket = node->sockets[j];
-        if(socket && socket->data)
+        int node_sockets_n = oyFilterNode_EdgeCount( node, 0,
+                                                     OY_FILTEREDGE_CONNECTED );
+      for(j = 0; j < node_sockets_n; ++j)
+      {
+        oyFilterSocket_s * socket = oyFilterNode_GetSocket( node, j );
+        oyStruct_s * socket_data = oyFilterSocket_GetData( socket );
+        if(socket && socket_data)
         {
-          const char * name = oyObject_GetName( socket->data->oy_, 1 );
+          const char * name = oyObject_GetName( socket_data->oy_, 1 );
           int k, pos = 0;
           len = strlen(name);
           for(k = 0; k < len; ++k)
@@ -360,11 +366,12 @@ OYAPI char * OYEXPORT
                      " XML: \\\"%s\\\"|<socket>}\"];\n",
                      oyObject_GetId( socket->oy_ ),
                      j,
-                     oyStructTypeToText( socket->data->type_ ),
+                     oyStructTypeToText( socket_data->type_ ),
                      temp2);
           printf("%s\n", temp);
           STRING_ADD( text, temp );
         }
+      }
       }
     }
 
@@ -373,13 +380,14 @@ OYAPI char * OYEXPORT
                      " Type: \\\"%s\\\"|<socket>}\"];\n",
                      oyFilterNode_GetId( node ), n,
                      node->oy_->id_,
-                     (*node_)->core->category_,
+                     oyFilterCore_GetCategory( (oyFilterCore_s*)node_core, 1 ),
                      txt,
-                     (*node_)->core->registration_ );
+                     oyFilterNode_GetRegistration( node ));
     STRING_ADD( text, temp );
     oyFree_m_(txt);
 
     oyFilterNode_Release( &node );
+    oyFilterCore_Release( (oyFilterCore_s**)&node_core );
   }
 
 
@@ -410,19 +418,27 @@ OYAPI char * OYEXPORT
   {
     node = oyFilterNodes_Get( s->nodes, i );
     if(oy_debug)
-      for(j = 0; j < node->sockets_n_; ++j)
+    {
+      int node_sockets_n = oyFilterNode_EdgeCount( node, 0,
+                                                   OY_FILTEREDGE_CONNECTED );
+      for(j = 0; j < node_sockets_n; ++j)
       {
-        oyFilterSocket_s * socket = node->sockets[j];
-        if(socket && socket->data)
+        oyFilterSocket_s * socket = oyFilterNode_GetSocket( node, j );
+        oyStruct_s * socket_data = oyFilterSocket_GetData( socket );
+        if(socket && socket_data)
         {
           oySprintf_( temp,
                "    %d:socket -> %d:data [arrowhead=crow, arrowtail=box];\n",
                 oyFilterNode_GetId( node ),
                 oyObject_GetId( socket->oy_ ));
           STRING_ADD( text, temp );
+          if(socket_data->release)
+            socket_data->release( &socket_data );
         }
+        oyFilterSocket_Release( &socket );
+          
       }
-
+    }
     oyFilterNode_Release( &node );
   }
 
