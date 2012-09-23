@@ -23,7 +23,9 @@ void oyCMMapiFilter_Release__Members( oyCMMapiFilter_s_ * cmmapifilter )
 
   if(cmmapifilter->oy_->deallocateFunc_)
   {
+#if 0
     oyDeAlloc_f deallocateFunc = cmmapifilter->oy_->deallocateFunc_;
+#endif
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( cmmapifilter->member );

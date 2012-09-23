@@ -129,7 +129,7 @@ YAJL_SOURCES := $(shell cd $(SRCDIR) && ls $(YAJL_DIR)/*.c)
 #endif
 
 INCL= -I/usr/include -I$(includedir) -I/usr/X11R6/include -I$(SRCDIR) \
-	-I$(SRCDIR)/$(GENDIR) \
+	-I$(SRCDIR)/$(GENDIR) -I$(SRCDIR)/oforms \
 	$(LCMS_H) $(LCMS2_H) $(PNG_H) $(ELEKTRA_H) $(X_H) $(OS_INCL) \
 	$(LIBXML2_H) $(XCM_H) $(LRAW_H) $(YAJL_H)
 
@@ -173,8 +173,7 @@ CHEADERS = \
 	icc34.h \
 	md5.h \
 	lookup3.h \
-	dirent_custom.h \
-	oforms/$(TARGET)_forms.h
+	dirent_custom.h
 #	fl_$(TARGET).h
 CFILES_CORE = \
 	$(TARGET)_core.c \
@@ -285,6 +284,8 @@ CFILES_OBJECT_MODULES = \
 	$(GENDIR)oyCMMapi9_s_.c \
 	$(GENDIR)oyCMMapis_s.c \
 	$(GENDIR)oyCMMapis_s_.c \
+	$(GENDIR)oyCMMapiFilter_s.c \
+	$(GENDIR)oyCMMapiFilter_s_.c \
 	$(GENDIR)oyCMMapiFilters_s.c \
 	$(GENDIR)oyCMMapiFilters_s_.c \
 	$(GENDIR)oyCMMinfo_s.c \
@@ -310,6 +311,7 @@ CHEADERS_OBJECT_MODULES_PUBLIC = \
 	$(GENDIR)oyCMMapi8_s.h \
 	$(GENDIR)oyCMMapi9_s.h \
 	$(GENDIR)oyCMMapis_s.h \
+	$(GENDIR)oyCMMapiFilter_s.h \
 	$(GENDIR)oyCMMapiFilters_s.h \
 	$(GENDIR)oyCMMinfo_s.h \
 	$(GENDIR)oyCMMui_s.h \
@@ -328,6 +330,7 @@ CHEADERS_OBJECT_MODULES = \
 	$(GENDIR)oyCMMapi8_s_.h \
 	$(GENDIR)oyCMMapi9_s_.h \
 	$(GENDIR)oyCMMapis_s_.h \
+	$(GENDIR)oyCMMapiFilter_s_.h \
 	$(GENDIR)oyCMMapiFilters_s_.h \
 	$(GENDIR)oyCMMinfo_s_.h \
 	$(GENDIR)oyCMMui_s_.h \
@@ -734,6 +737,7 @@ ALL_FILES = \
 	$(ICONS) \
 	$(TOP_SOURCES) \
 	$(CHEADERS) \
+	$(CHEADERS_OFORMS) \
 	$(SCRIPTS) \
 	$(BIN_SCRIPTS) \
 	$(MAN1) $(MAN3) \
