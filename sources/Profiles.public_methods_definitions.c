@@ -1,4 +1,4 @@
-extern oyProfiles_s * oy_profile_list_cache_;
+oyProfiles_s * oy_profile_list_cache_ = 0;
 
 int oyLowerStrcmpWrap (const void * a_, const void * b_)
 {

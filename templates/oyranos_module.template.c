@@ -1645,9 +1645,7 @@ int              oyCMMhandle_Set_    ( oyCMMhandle_s     * handle,
   return error;
 }
 
-static oyStructList_s * oy_meta_module_cache_ = 0;
-
-
+oyStructList_s * oy_meta_module_cache_ = 0;
 oyStructList_s * oy_cmm_filter_cache_ = 0;
 
 
