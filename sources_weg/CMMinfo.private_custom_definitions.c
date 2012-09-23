@@ -74,6 +74,7 @@ int oyCMMinfo_Copy__Members( oyCMMinfo_s_ * dst, oyCMMinfo_s_ * src)
 {
   oyAlloc_f allocateFunc_ = 0;
   oyDeAlloc_f deallocateFunc_ = 0;
+  int error = 0;
 
   if(!dst || !src)
     return 1;
@@ -91,5 +92,5 @@ int oyCMMinfo_Copy__Members( oyCMMinfo_s_ * dst, oyCMMinfo_s_ * src)
 
   dst->oy_compatibility = src->oy_compatibility;
 
-  return 0;
+  return error;
 }
