@@ -207,10 +207,6 @@ typedef enum oyDATALAYOUT_e {
 int      oySizeofDatatype            ( oyDATATYPE_e        t );
 
 
-oyCHANNELTYPE_e oyICCColourSpaceToChannelLayout (
-                                       icColorSpaceSignature sig,
-                                       int                 pos );
-
 
 
 

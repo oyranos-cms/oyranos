@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/15
+ *  @date     2012/09/23
  */
 
 
@@ -20,6 +20,7 @@
 #define OYRANOS_IMAGE_H
 
 #include <oyranos_helper.h>
+#include <oyranos_icc.h>
 #include <oyranos_string.h>
 #include <oyranos_types.h>
 
@@ -68,6 +69,11 @@ typedef enum oyCHANNELTYPE_e {
   oyCHANNELTYPE_U,
   oyCHANNELTYPE_V
 } oyCHANNELTYPE_e;
+
+oyCHANNELTYPE_e oyICCColourSpaceToChannelLayout (
+                                       icColorSpaceSignature sig,
+                                       int                 pos );
+
 
 /** @enum    oyPIXEL_ACCESS_TYPE_e
  *  @brief   pixel access types

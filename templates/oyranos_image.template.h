@@ -5,6 +5,7 @@
 #define {{ file_name|underscores|upper|tr:". _" }}
 
 #include <oyranos_helper.h>
+#include <oyranos_icc.h>
 #include <oyranos_string.h>
 #include <oyranos_types.h>
 
@@ -49,6 +50,11 @@ typedef enum oyCHANNELTYPE_e {
   oyCHANNELTYPE_U,
   oyCHANNELTYPE_V
 } oyCHANNELTYPE_e;
+
+oyCHANNELTYPE_e oyICCColourSpaceToChannelLayout (
+                                       icColorSpaceSignature sig,
+                                       int                 pos );
+
 
 /** @enum    oyPIXEL_ACCESS_TYPE_e
  *  @brief   pixel access types
