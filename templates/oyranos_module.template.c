@@ -16,6 +16,7 @@
 #include "oyCMMapi5_s.h"
 #include "oyCMMapi6_s.h"
 #include "oyCMMapi9_s.h"
+#include "oyCMMapi10_s_.h"
 #include "oyCMMapiFilter_s_.h"
 #include "oyCMMapiFilters_s.h"
 #include "oyCMMapiFilters_s_.h"
@@ -2092,6 +2093,232 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
       error = oyOptions_MoveIn( opts, &o, -1 );
     }
     oyOptions_Release( &opts_tmp );
+  }
+
+  return error;
+}
+
+/** Function  oyPointer_LookUpFromObject
+ *  @brief    Get a module specific pointer from cache
+ *  @memberof oyPointer_s
+ *
+ *  The returned oyPointer_s has to be released after using by the module with
+ *  oyPointer_Release().
+ *  In case the the oyPointer_s::ptr member is empty, it should be set by the
+ *  requesting module.
+ *
+ *  @see oyPointer_LookUpFromText()
+ *
+ *  @param[in]     data                 object to look up
+ *  @param[in]     data_type            four byte module type for this object
+ *                                      type; The data_type shall enshure the
+ *                                      returned oyPointer_s is specific to the
+ *                                      calling module.
+ *  @return                             the CMM specific oyPointer_s; It is owned
+ *                                      by the CMM.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/28 (Oyranos: 0.1.10)
+ *  @date    2009/11/05
+ */
+oyPointer_s  * oyPointer_LookUpFromObject (
+                                       oyStruct_s        * data,
+                                       const char        * data_type )
+{
+  oyStruct_s * s = data;
+  int error = !s;
+  oyPointer_s * cmm_ptr = 0;
+
+  if(error <= 0 && !data_type)
+    error = !data_type;
+
+  if(error <= 0)
+  {
+    const char * tmp = 0;
+    tmp = oyObject_GetName( s->oy_, oyNAME_NICK );
+    cmm_ptr = oyPointer_LookUpFromText( tmp, data_type );
+  }
+
+  return cmm_ptr;
+}
+
+/** Function  oyPointer_LookUpFromText
+ *  @brief    Get a module specific pointer from cache
+ *  @memberof oyPointer_s
+ *
+ *  The returned oyPointer_s has to be released after using by the module with
+ *  oyPointer_Release().
+ *  In case the the oyPointer_s::ptr member is empty, it should be set by the
+ *  requesting module.
+ *
+ *  @see e.g. lcmsCMMData_Open()
+ *
+ *  @param[in]     text                 hash text to look up
+ *  @param[in]     data_type            four byte module type for this object
+ *                                      type; The data_type shall enshure the
+ *                                      returned oyPointer_s is specific to the
+ *                                      calling module.
+ *  @return                             the CMM specific oyPointer_s; It is owned
+ *                                      by the CMM.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/11/05 (Oyranos: 0.1.10)
+ *  @date    2009/11/05
+ */
+oyPointer_s * oyPointer_LookUpFromText( const char        * text,
+                                       const char        * data_type )
+{
+  int error = !text;
+  oyPointer_s * cmm_ptr = 0;
+
+  if(error <= 0 && !data_type)
+    error = !data_type;
+
+  if(error <= 0)
+  {
+    /*oyPointer_s *cmm_ptr = 0;*/
+    const char * tmp = 0;
+
+    oyHash_s * entry = 0;
+    oyChar * hash_text = 0;
+
+    /** Cache Search \n
+     *  1.     hash from input \n
+     *  2.     query for hash in cache \n
+     *  3.     check \n
+     *  3a.       eighter take cache entry or \n
+     *  3b.       update cache entry
+     */
+
+    /* 1. create hash text */
+    STRING_ADD( hash_text, data_type );
+    STRING_ADD( hash_text, ":" );
+    tmp = text;
+    STRING_ADD( hash_text, tmp );
+
+    /* 2. query in cache */
+    entry = oyCMMCacheListGetEntry_( hash_text );
+
+    if(error <= 0)
+    {
+      /* 3. check and 3.a take*/
+      cmm_ptr = (oyPointer_s*) oyHash_GetPointer( entry,
+                                                  oyOBJECT_POINTER_S);
+
+      if(!cmm_ptr)
+      {
+        cmm_ptr = oyPointer_New( 0 );
+        error = !cmm_ptr;
+
+        if(error <= 0)
+          error = oyPointer_Set( cmm_ptr, 0,
+                                 data_type, 0, 0, 0 );
+
+        error = !cmm_ptr;
+
+        if(error <= 0 && cmm_ptr)
+          /* 3b.1. update cache entry */
+          error = oyHash_SetPointer( entry,
+                                     (oyStruct_s*) cmm_ptr );
+      }
+    }
+
+    oyHash_Release( &entry );
+  }
+
+  return cmm_ptr;
+}
+
+
+/** Function oyOptions_Handle
+ *  @brief   handle a request by a module
+ *
+ *  @param[in]     registration        the module selector
+ *  @param[in]     options             options
+ *  @param[in]     command             the command to handle
+ *  @param[out]    result              options to the policy module
+ *  @return                            0 - indifferent, >= 1 - error,
+ *                                     <= -1 - issue,
+ *                                     + a message should be sent
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2009/12/11 (Oyranos: 0.1.10)
+ *  @date    2011/02/22
+ */
+int             oyOptions_Handle     ( const char        * registration,
+                                       oyOptions_s       * options,
+                                       const char        * command,
+                                       oyOptions_s      ** result )
+{
+  int error = 0;
+  oyOptions_s * s = options;
+
+  if(!options && !command)
+    return error;
+
+  oyCheckType__m( oyOBJECT_OPTIONS_S, return 1 )
+
+  if(!error)
+  {
+    oyCMMapiFilters_s * apis;
+    int apis_n = 0, i, found = 0;
+    oyCMMapi10_s_ * cmm_api10 = 0;
+    char * class_name, * api_reg;
+    char * test = 0;
+    uint32_t * rank_list = 0,
+               api_n = 0;
+
+    class_name = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE, 0 );
+    api_reg = oyStringCopy_("//", oyAllocateFunc_ );
+    STRING_ADD( api_reg, class_name );
+    oyFree_m_( class_name );
+
+    STRING_ADD( test, "can_handle." );
+    if(command && command[0])
+      STRING_ADD( test, command );
+
+    apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API10_S,
+                                 oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                                 &rank_list, &api_n );
+    if(rank_list) oyDeAllocateFunc_(rank_list); rank_list = 0;
+
+    apis_n = oyCMMapiFilters_Count( apis );
+    if(test)
+      for(i = 0; i < apis_n; ++i)
+      {
+        cmm_api10 = (oyCMMapi10_s_*) oyCMMapiFilters_Get( apis, i );
+
+        if(oyFilterRegistrationMatch( cmm_api10->registration, registration, 0))
+        {
+          if(cmm_api10->oyMOptions_Handle)
+          {
+            error = cmm_api10->oyMOptions_Handle( s, test, result );
+            if(error == 0)
+            {
+              found = 1;
+              error = cmm_api10->oyMOptions_Handle( s, command, result );
+            }
+
+          } else
+            error = 1;
+
+          if(error > 0)
+          {
+            WARNc2_S( "%s %s",_("error in module:"), cmm_api10->registration );
+          }
+        }
+
+        if(cmm_api10->release)
+          cmm_api10->release( (oyStruct_s**)&cmm_api10 );
+      }
+    else
+      WARNc2_S( "%s %s",_("Could not allocate memory for:"),
+                cmm_api10->registration );
+
+    oyFree_m_( test );
+    oyCMMapiFilters_Release( &apis );
+    if(!found && error == 0)
+      error = -1;
   }
 
   return error;

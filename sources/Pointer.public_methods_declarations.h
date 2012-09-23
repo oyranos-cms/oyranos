@@ -18,7 +18,6 @@ OYAPI int  OYEXPORT
                                            int                 size );
 OYAPI oyPointer  OYEXPORT
                  oyPointer_GetPointer    ( oyPointer_s       * cmm_ptr );
-#ifdef UNHIDE_CMM
 OYAPI oyPointer_s *  OYEXPORT
                 oyPointer_LookUpFromObject (
                                           oyStruct_s        * data,
@@ -26,4 +25,3 @@ OYAPI oyPointer_s *  OYEXPORT
 OYAPI oyPointer_s *  OYEXPORT
                 oyPointer_LookUpFromText( const char        * text,
                                           const char        * data_type );
-#endif

@@ -29,7 +29,6 @@ OYAPI oyProfileTag_s * OYEXPORT
                                        const char        * required_cmm,
                                        oyObject_s          object)
 {
-#ifdef UNHIDE_CMM
   oyProfileTag_s * s = 0, * tag = 0;
   int error = !list;
   oyCMMProfileTag_Create_f funcP = 0;
@@ -56,7 +55,7 @@ OYAPI oyProfileTag_s * OYEXPORT
   if(error <= 0)
   {
     oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API3_S, cmm, 0,
-                                      oyCMMapi3_Query_, &queries );
+                                      (oyCMMapi_Check_f)oyCMMapi3_Query_, &queries );
     if(api)
     {
       oyCMMapi3_s_ * api3 = (oyCMMapi3_s_*) api;
@@ -80,9 +79,6 @@ OYAPI oyProfileTag_s * OYEXPORT
   }
 
   return s;
-#else
-  return oyProfileTag_New(0);
-#endif
 }
 
 /** Function  oyProfileTag_CreateFromText
@@ -282,11 +278,7 @@ oyStructList_s*oyProfileTag_Get      ( oyProfileTag_s    * tag )
   if(error <= 0)
   {
     oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API3_S, cmm, 0,
-#ifdef UNHIDE_CMM
-                                      oyCMMapi3_Query_, &queries );
-#else
-                                      NULL, &queries );
-#endif
+                                      (oyCMMapi_Check_f)oyCMMapi3_Query_, &queries );
     if(api)
     {
       oyCMMapi3_s_ * api3 = (oyCMMapi3_s_*) api;

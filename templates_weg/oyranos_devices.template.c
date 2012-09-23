@@ -265,9 +265,7 @@ OYAPI int  OYEXPORT
   }
 
   /** 3. talk to the module */
-#ifdef UNHIDE_CMM
   l_error = oyConfigs_Modify( devices, options ); OY_ERR
-#endif
 
   oyConfigs_Release( &devices );
   if(new_options)

@@ -395,11 +395,7 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
         oyFree_m_( check_opt );
       }
 
-#ifdef UNHIDE_CMM
       d_rank = oyConfig_DomainRank( (oyConfig_s*)device );
-#else
-      d_rank = 1;
-#endif
       if(d_rank > 0 && d_val && d_opt)
       for( j = 0; j < pattern_n; ++j )
       {
@@ -488,7 +484,6 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
   return error;
 }
 
-#ifdef UNHIDE_CMM
 /** Function  oyConfig_DomainRank
  *  @memberof oyConfig_s
  *  @brief    Check for being recognised by a given module
@@ -513,7 +508,7 @@ OYAPI int  OYEXPORT
            max_rank = 0;
   uint32_t apis_n = 0;
   oyCMMapi8_s_ * cmm_api8 = 0;
-  oyConfig_s_ * s = (oyConfig_s_*)device;
+  oyConfig_s_ * s = (oyConfig_s_*)config;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
@@ -557,7 +552,6 @@ OYAPI int  OYEXPORT
   oyExportEnd_();
   return rank;
 }
-#endif
 
 /** Function  oyConfig_FindString
  *  @memberof oyConfig_s

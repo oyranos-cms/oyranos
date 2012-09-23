@@ -29,10 +29,8 @@ OYAPI int  OYEXPORT
                oyConfig_Compare      ( oyConfig_s        * device,
                                        oyConfig_s        * pattern,
                                        int32_t           * rank_value );
-#ifdef UNHIDE_CMM
 OYAPI int  OYEXPORT
                oyConfig_DomainRank   ( oyConfig_s        * config );
-#endif
 OYAPI const char * OYEXPORT
                oyConfig_FindString   ( oyConfig_s        * config,
                                        const char        * key,
