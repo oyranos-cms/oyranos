@@ -62,6 +62,9 @@ char   oyCMMapiNumberToChar          ( oyOBJECT_e          api_number );
 oyCMMinfo_s *    oyCMMinfoFromLibName_(const char        * lib_name );
 char **          oyCMMsGetLibNames_  ( uint32_t          * n,
                                        const char        * required_cmm );
+oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
+                                       const char        * registration,
+                                       oyOBJECT_e          type );
 
 
 /** @brief   icon data

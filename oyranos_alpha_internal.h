@@ -139,9 +139,6 @@ oyCMMapiFilters_s*oyCMMsGetFilterApis_(const char        * cmm_meta,
                                        uint32_t            flags,
                                        uint32_t         ** rank_list,
                                        uint32_t          * count );
-oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
-                                       const char        * registration,
-                                       oyOBJECT_e          type );
 oyCMMapi_s * oyCMMsGetApiFromRegistration_(
                                        oyOBJECT_e          type,
                                        const char        * cmm_required,
