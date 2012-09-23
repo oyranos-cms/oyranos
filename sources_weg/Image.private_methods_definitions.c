@@ -1,3 +1,5 @@
+#include "oyranos_image_internal.h"
+
 /**
  *  @internal
  *  Function oyImage_CombinePixelLayout2Mask_
@@ -31,7 +33,7 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
   int i;
   char * text = oyAllocateFunc_(512);
   char * hash_text = 0;
-  oyImage_s * s = image;
+  oyImage_s_ * s = image;
   oyCHANNELTYPE_e * clayout = 0; /* non profile described channels */
 
   if(!s)
@@ -74,7 +76,9 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
       clayout[i] = oyCHANNELTYPE_OTHER;
     /* describe profile colours */
     for(i = coff_x; i < coff_x + cchan_n; ++i)
-      clayout[i] = oyICCColourSpaceToChannelLayout( profile->sig_, i - coff_x );
+      clayout[i] = oyICCColourSpaceToChannelLayout( 
+                     oyProfile_GetSignature(profile, oySIGNATURE_COLOUR_SPACE),
+                     i - coff_x );
     /* place a end marker */
     clayout[n] = oyCHANNELTYPE_UNDEFINED;
       s->channel_layout = clayout;

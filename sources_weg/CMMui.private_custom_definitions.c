@@ -23,7 +23,9 @@ void oyCMMui_Release__Members( oyCMMui_s_ * cmmui )
 
   if(cmmui->oy_->deallocateFunc_)
   {
+#if 0
     oyDeAlloc_f deallocateFunc = cmmui->oy_->deallocateFunc_;
+#endif
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( cmmui->member );

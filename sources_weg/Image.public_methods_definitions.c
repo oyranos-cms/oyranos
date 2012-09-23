@@ -1,3 +1,7 @@
+#include "oyArray2d_s_.h"
+#include "oyRectangle_s_.h"
+#include "oyranos_image_internal.h"
+
 /** Function oyImage_GetPointContinous
  *  @memberof oyImage_s
  *  @brief   standard continous layout pixel accessor
@@ -13,11 +17,12 @@ oyPointer oyImage_GetArray2dPointContinous (
                                          int               channel,
                                          int             * is_allocated )
 {
-  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  oyImage_s_ * image_ = oyImagePriv_m(image);
+  oyArray2d_s_ * a = (oyArray2d_s_*) image_->pixel_data;
   unsigned char ** array2d = a->array2d;
-  int pos = (point_x * image->layout_[oyCHANS]
-             + image->layout_[oyCHAN0+channel])
-            * image->layout_[oyDATA_SIZE];
+  int pos = (point_x * image_->layout_[oyCHANS]
+             + image_->layout_[oyCHAN0+channel])
+            * image_->layout_[oyDATA_SIZE];
   if(is_allocated) *is_allocated = 0;
   return &array2d[ point_y ][ pos ]; 
 
@@ -38,7 +43,7 @@ oyPointer oyImage_GetArray2dLineContinous (
                                          int               channel,
                                          int             * is_allocated )
 {
-  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  oyArray2d_s_ * a = (oyArray2d_s_*) oyImagePriv_m(image)->pixel_data;
   unsigned char ** array2d = a->array2d;
   if(height) *height = 1;
   if(is_allocated) *is_allocated = 0;
@@ -62,17 +67,18 @@ int       oyImage_SetArray2dPointContinous (
                                          int               channel,
                                          oyPointer         data )
 {
-  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  oyImage_s_ * image_ = oyImagePriv_m(image);
+  oyArray2d_s_ * a = (oyArray2d_s_*) image_->pixel_data;
   unsigned char ** array2d = a->array2d;
-  int pos = (point_x * image->layout_[oyCHANS]
-             + image->layout_[oyCHAN0+channel])
-            * image->layout_[oyDATA_SIZE];
-  oyDATATYPE_e data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
+  int pos = (point_x * image_->layout_[oyCHANS]
+             + image_->layout_[oyCHAN0+channel])
+            * image_->layout_[oyDATA_SIZE];
+  oyDATATYPE_e data_type = oyToDataType_m( image_->layout_[oyLAYOUT] );
   int byteps = oySizeofDatatype( data_type );
   int channels = 1;
 
   if(channel < 0)
-    channels = oyToChannels_m( image->layout_[oyLAYOUT] );
+    channels = oyToChannels_m( image_->layout_[oyLAYOUT] );
 
   memcpy( &array2d[ point_y ][ pos ], data, byteps * channels );
 
@@ -96,19 +102,20 @@ int       oyImage_SetArray2dLineContinous (
                                          int               channel,
                                          oyPointer         data )
 {
-  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  oyImage_s_ * image_ = oyImagePriv_m(image);
+  oyArray2d_s_ * a = (oyArray2d_s_*) image_->pixel_data;
   unsigned char ** array2d = a->array2d;
-  oyDATATYPE_e data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
+  oyDATATYPE_e data_type = oyToDataType_m( image_->layout_[oyLAYOUT] );
   int byteps = oySizeofDatatype( data_type );
   int channels = 1;
   int offset = point_x;
 
   if(pixel_n < 0)
-    pixel_n = image->width - point_x;
+    pixel_n = image_->width - point_x;
 
   if(channel < 0)
   {
-    channels = oyToChannels_m( image->layout_[oyLAYOUT] );
+    channels = oyToChannels_m( image_->layout_[oyLAYOUT] );
     offset *= channels;
   }
 
@@ -203,7 +210,7 @@ oyImage_s *    oyImage_Create         ( int               width,
   oyRectangle_s * display_rectangle = 0;
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_IMAGE_S;
-# define STRUCT_TYPE oyImage_s
+# define STRUCT_TYPE oyImage_s_
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
   STRUCT_TYPE * s = 0;
@@ -233,8 +240,8 @@ oyImage_s *    oyImage_Create         ( int               width,
   {
     WARNc_S("no profile obtained");
 
-    oyImage_Release( &s );
-    return s;
+    oyImage_Release( (oyImage_s**)&s );
+    return (oyImage_s*) s;
   }
 
   s->width = width;
@@ -246,7 +253,7 @@ oyImage_s *    oyImage_Create         ( int               width,
                                         s->height,
                                         oyToDataType_m(pixel_layout),
                                         s_obj );
-    oyImage_SetData ( s, (oyStruct_s**) &a, 0,0,0,0,0,0 );
+    oyImage_SetData ( (oyImage_s*)s, (oyStruct_s**) &a, 0,0,0,0,0,0 );
   }
   s->profile_ = oyProfile_Copy( profile, 0 );
   if(s->width != 0.0)
@@ -256,17 +263,17 @@ oyImage_s *    oyImage_Create         ( int               width,
   error = oyImage_CombinePixelLayout2Mask_ ( s, pixel_layout );
 
   if(s->pixel_data && s->layout_[oyCOFF] == 1)
-    oyImage_SetData( s, 0, oyImage_GetArray2dPointContinous,
+    oyImage_SetData( (oyImage_s*)s, 0, oyImage_GetArray2dPointContinous,
                            oyImage_GetArray2dLineContinous, 0,
                            oyImage_SetArray2dPointContinous,
                            oyImage_SetArray2dLineContinous, 0 );
   else if(s->pixel_data)
-    oyImage_SetData( s, 0, oyImage_GetArray2dPointPlanar,
+    oyImage_SetData( (oyImage_s*)s, 0, oyImage_GetArray2dPointPlanar,
                            oyImage_GetArray2dLinePlanar, 0, 0,0,0 );
 
   if(error <= 0)
   {
-    display_rectangle = oyRectangle_New_( 0 );
+    display_rectangle = oyRectangle_New( 0 );
 
     error = !display_rectangle;
     if(error <= 0)
@@ -275,7 +282,7 @@ oyImage_s *    oyImage_Create         ( int               width,
                               (oyStruct_s**)&display_rectangle, OY_CREATE_NEW );
   }
 
-  return s;
+  return (oyImage_s*) s;
 }
 
 /** @brief   collect infos about a image for showing one a display
@@ -307,7 +314,8 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
                                        oyObject_s          object)
 {
   oyProfile_s * p = oyProfile_FromFile ("XYZ.icc",0,0);
-  oyImage_s * s = oyImage_Create( width, height, channels, pixel_layout,
+  oyImage_s_ * s = (oyImage_s_*)oyImage_Create( width, height,
+                                  channels, pixel_layout,
                                   p, object );
   int error = !s;
   oyRectangle_s * display_rectangle = 0;
@@ -337,12 +345,12 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
 
     if(error > 0)
     {
-      oyImage_Release( &s );
+      oyImage_Release( (oyImage_s**)&s );
       WARNc1_S("Could not create image %d", oyObject_GetId( object ));
     }
   }
 
-  return s;
+  return (oyImage_s*) s;
 }
 
 
@@ -452,14 +460,14 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                                        oyObject_s          obj )
 {
   int error;
-  oyArray2d_s * a = *array;
-  oyImage_s * s = image;
-  oyRectangle_s image_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0},
+  oyArray2d_s_ * a = (oyArray2d_s_*) *array;
+  oyImage_s_ * s = (oyImage_s_*)image;
+  oyRectangle_s_ image_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0},
                 r = {oyOBJECT_RECTANGLE_S,0,0,0};
   oyDATATYPE_e data_type = oyUINT8;
   int is_allocated = 0;
   int data_size, ay;
-  oyRectangle_s array_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0};
+  oyRectangle_s_ array_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0};
   int array_width, array_height;
   oyAlloc_f allocateFunc_ = 0;
   unsigned char * line_data = 0;
@@ -477,17 +485,21 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     error = 1;
   }
 
-  data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
+  data_type = oyToDataType_m( s->layout_[oyLAYOUT] );
   data_size = oySizeofDatatype( data_type );
-  error = oyRectangle_SamplesFromImage( image, rectangle, &image_roi_pix );
+  error = oyRectangle_SamplesFromImage( image, rectangle,
+                                        (oyRectangle_s*)&image_roi_pix );
 
   if(!error && array_rectangle)
     error = oyRectangle_SamplesFromImage( image, array_rectangle,
-                                          &array_roi_pix );
+                                          (oyRectangle_s*)&array_roi_pix );
   else
   {
-    oyRectangle_SetGeo( &r, 0,0, rectangle->width, rectangle->height );
-    error = oyRectangle_SamplesFromImage( image, &r, &array_roi_pix );
+    oyRectangle_SetGeo( (oyRectangle_s*)&r, 0,0,
+                                 oyRectanglePriv_m(rectangle)->width,
+                                 oyRectanglePriv_m(rectangle)->height );
+    error = oyRectangle_SamplesFromImage( image, (oyRectangle_s*)&r,
+                                          (oyRectangle_s*)&array_roi_pix );
   }
 
   array_width = array_roi_pix.x + array_roi_pix.width;
@@ -495,8 +507,8 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
   if(!error &&
      (!a ||
-      (a && ( array_width > a->data_area.width ||
-              array_height > a->data_area.height ))) &&
+      (a && ( array_width > oyRectanglePriv_m(&a->data_area)->width ||
+              array_height > oyRectanglePriv_m(&a->data_area)->height ))) &&
      array_width > 0 && array_height > 0
     )
   {
@@ -535,7 +547,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
             if(!a->array2d[i])
             {
               height = is_allocated = 0;
-              line_data = image->getLine( image, i, &height, -1,
+              line_data = s->getLine( image, i, &height, -1,
                              &is_allocated );
               for( j = 0; j < height; ++j )
               {
@@ -568,7 +580,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   if( !error && a )
   {
     /* shift array focus to requested region */
-    oyArray2d_SetFocus( a, &array_roi_pix );
+    oyArray2d_SetFocus( (oyArray2d_s*)a, (oyRectangle_s*)&array_roi_pix );
 
     /* change intermediately */
     if(a && a->width > image_roi_pix.width)
@@ -583,7 +595,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
   if(a && !error)
   {
-  if(image->getLine)
+  if(s->getLine)
   {
     oyPointer src, dst;
 
@@ -593,7 +605,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     for( i = 0; i < image_roi_pix.height; )
     {
       height = is_allocated = 0;
-      line_data = image->getLine( image, image_roi_pix.y + i, &height, -1,
+      line_data = s->getLine( image, image_roi_pix.y + i, &height, -1,
                              &is_allocated );
 
       for( j = 0; j < height; ++j )
@@ -605,7 +617,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
         dst = &a->array2d[ay][0];
         src = &line_data[(j
-                       * OY_ROUND(image->width * image->layout_[oyCHANS])
+                       * OY_ROUND(s->width * s->layout_[oyCHANS])
                        + OY_ROUND(image_roi_pix.x))
                       * data_size];
 
@@ -619,11 +631,11 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     }
 
   } else
-  if(image->getPoint)
+  if(s->getPoint)
   {
     WARNc_S("image->getPoint  not yet supported")
   } else
-  if(image->getTile)
+  if(s->getTile)
   {
     WARNc_S("image->getTile  not yet supported")
     error = 1;
@@ -631,9 +643,9 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   }
 
   if(error)
-    oyArray2d_Release( &a );
+    oyArray2d_Release( (oyArray2d_s**)&a );
 
-  *array = a;
+  *array = (oyArray2d_s*)a;
 
   return error;
 }
@@ -654,10 +666,11 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
                                        oyArray2d_s       * array,
                                        oyRectangle_s     * array_rectangle )
 {
-  oyImage_s * s = image;
+  oyImage_s_ * s = (oyImage_s_*)image;
+  oyArray2d_s_ * array_ = (oyArray2d_s_*)array;
   int error = !image || !array;
-  oyRectangle_s image_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0};
-  oyRectangle_s array_rect_pix = {oyOBJECT_RECTANGLE_S,0,0,0};
+  oyRectangle_s_ image_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0,0,0,0,0},
+                 array_rect_pix = {oyOBJECT_RECTANGLE_S,0,0,0,0,0,0,0};
   oyDATATYPE_e data_type = oyUINT8;
   int bps = 0, channel_n, i, offset, width, height;
 
@@ -666,22 +679,23 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
 
   oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
 
-  data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
+  data_type = oyToDataType_m( s->layout_[oyLAYOUT] );
   bps = oySizeofDatatype( data_type );
-  channel_n = image->layout_[oyCHANS];
+  channel_n = s->layout_[oyCHANS];
 
-  error = oyRectangle_SamplesFromImage( image, image_rectangle, &image_roi_pix );
+  error = oyRectangle_SamplesFromImage( image, image_rectangle,
+                                        (oyRectangle_s*)&image_roi_pix );
   /* We want to check if the array is big enough to hold the pixels */
-  if(array->data_area.width < image_roi_pix.width ||
-     array->data_area.height < image_roi_pix.height)
+  if(oyRectanglePriv_m(&array_->data_area)->width < image_roi_pix.width ||
+     oyRectanglePriv_m(&array_->data_area)->height < image_roi_pix.height)
   {
     WARNc3_S( "array (%dx%d) is too small for rectangle %s",
-               (int)array->width, (int)array->height,
-               oyRectangle_Show( &image_roi_pix ) );
+               (int)array_->width, (int)array_->height,
+               oyRectangle_Show( (oyRectangle_s*)&image_roi_pix ) );
     error = 1;
   }
 
-  if(!error & !image->setLine)
+  if(!error & !s->setLine)
   {
     WARNc1_S( "only the setLine() interface is yet supported; image[%d]",
               oyObject_GetId( image->oy_ ) );
@@ -692,13 +706,14 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   {
     if(array_rectangle)
     {
-      oyRectangle_SetByRectangle( &array_rect_pix, array_rectangle );
-      oyRectangle_Scale( &array_rect_pix, image->width );
+      oyRectangle_SetByRectangle( (oyRectangle_s*)&array_rect_pix, array_rectangle );
+      oyRectangle_Scale( (oyRectangle_s*)&array_rect_pix, s->width );
       array_rect_pix.x *= channel_n;
       array_rect_pix.width *= channel_n;
     } else
     {
-      oyRectangle_SetGeo( &array_rect_pix, 0,0, array->width, array->height );
+      oyRectangle_SetGeo( (oyRectangle_s*)&array_rect_pix, 
+                          0,0, array_->width, array_->height );
     }
   }
 
@@ -711,8 +726,8 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
 
     for(i = array_rect_pix.y; i < height; ++i)
     {
-      image->setLine( image, offset, image_roi_pix.y + i, width, -1,
-                      &array->array2d
+      s->setLine( image, offset, image_roi_pix.y + i, width, -1,
+                      &array_->array2d
                               [i][OY_ROUND(array_rect_pix.x) * bps] );
     }
   }
@@ -741,7 +756,7 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
   int error = !file_name;
   FILE * fp = 0;
   char * filename = 0;
-  oyImage_s * s = image;
+  oyImage_s_ * s = (oyImage_s_*)image;
 
   oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
 
@@ -770,12 +785,12 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       int  i,j,k,l, n;
       char bytes[48];
 
-      int cchan_n = oyProfile_GetChannelsCount( image->profile_ );
-      int channels = oyToChannels_m( image->layout_[oyLAYOUT] );
-      oyDATATYPE_e data_type = oyToDataType_m( image->layout_[oyLAYOUT] );
+      int cchan_n = oyProfile_GetChannelsCount( s->profile_ );
+      int channels = oyToChannels_m( s->layout_[oyLAYOUT] );
+      oyDATATYPE_e data_type = oyToDataType_m( s->layout_[oyLAYOUT] );
       int alpha = channels - cchan_n;
       int byteps = oySizeofDatatype( data_type );
-      const char * colourspacename = oyProfile_GetText( image->profile_,
+      const char * colourspacename = oyProfile_GetText( s->profile_,
                                                         oyNAME_DESCRIPTION );
       char * vs = oyVersionString(1,malloc);
       uint8_t * out_values = 0;
@@ -867,7 +882,7 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
           tupl = "GRAYSCALE_ALPHA";
         snprintf( text, 128, "WIDTH %d\nHEIGHT %d\nDEPTH %d\nMAXVAL "
                   "%s\nTUPLTYPE %s\nENDHDR\n",
-                  image->width, image->height,
+                  s->width, s->height,
                   channels, bytes, tupl );
         len = strlen( text );
         do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
@@ -875,8 +890,8 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       }
       else
       {
-        snprintf( text, 128, "%d %d\n", image->width,
-                                       image->height);
+        snprintf( text, 128, "%d %d\n", s->width,
+                                       s->height);
         len = strlen( text );
         do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
 
@@ -885,15 +900,15 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
         do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
       }
 
-      n = image->width * channels;
+      n = s->width * channels;
       if(byteps == 8)
         u8 = (uint8_t*) &flt;
 
-      for( k = 0; k < image->height; ++k)
+      for( k = 0; k < s->height; ++k)
       {
         int height = 0,
             is_allocated = 0;
-        out_values = image->getLine( image, k, &height, -1, 
+        out_values = s->getLine( image, k, &height, -1, 
                                             &is_allocated );
         len = n * byteps;
 
@@ -967,7 +982,7 @@ int            oyImage_SetData       ( oyImage_s         * image,
                                        oyImage_SetLine_f   setLine,
                                        oyImage_SetTile_f   setTile )
 {
-  oyImage_s * s = image;
+  oyImage_s_ * s = (oyImage_s_*)image;
   int error = 0;
 
   if(!s)
@@ -1013,7 +1028,7 @@ int            oyImage_SetData       ( oyImage_s         * image,
  */
 int            oyImage_GetWidth      ( oyImage_s         * image )
 {
-  oyImage_s * s = image;
+  oyImage_s_ * s = (oyImage_s_*)image;
 
   if(!s)
     return 0;
@@ -1033,7 +1048,7 @@ int            oyImage_GetWidth      ( oyImage_s         * image )
  */
 int            oyImage_GetHeight     ( oyImage_s         * image )
 {
-  oyImage_s * s = image;
+  oyImage_s_ * s = (oyImage_s_*)image;
 
   if(!s)
     return 0;
@@ -1051,10 +1066,10 @@ int            oyImage_GetHeight     ( oyImage_s         * image )
  *  @since   2009/03/05 (Oyranos: 0.1.10)
  *  @date    2012/09/05
  */
-oyPixel_t      oyImage_GetPixelLayout( oyImage_s         * image,
+int            oyImage_GetPixelLayout( oyImage_s         * image,
                                        oyLAYOUT_e          type )
 {
-  oyImage_s * s = image;
+  oyImage_s_ * s = (oyImage_s_*)image;
 
   if(!s)
     return 0;
@@ -1076,7 +1091,7 @@ oyCHANNELTYPE_e  oyImage_GetChannelType (
                                        oyImage_s         * image,
                                        int                 pos )
 {
-  oyImage_s * s = image;
+  oyImage_s_ * s = (oyImage_s_*)image;
 
   if(!s)
     return 0;
@@ -1096,7 +1111,7 @@ oyCHANNELTYPE_e  oyImage_GetChannelType (
 int            oyImage_GetSubPositioning (
                                        oyImage_s         * image )
 {
-  oyImage_s * s = image;
+  oyImage_s_ * s = (oyImage_s_*)image;
 
   if(!s)
     return 0;
@@ -1116,7 +1131,7 @@ int            oyImage_GetSubPositioning (
  */
 oyProfile_s *  oyImage_GetProfile    ( oyImage_s         * image )
 {
-  oyImage_s * s = image;
+  oyImage_s_ * s = (oyImage_s_*)image;
 
   if(!s)
     return 0;
@@ -1136,7 +1151,7 @@ oyProfile_s *  oyImage_GetProfile    ( oyImage_s         * image )
  */
 oyOptions_s *  oyImage_GetTags       ( oyImage_s         * image )
 {
-  oyImage_s * s = image;
+  oyImage_s_ * s = (oyImage_s_*)image;
 
   if(!s)
     return 0;
@@ -1155,7 +1170,7 @@ oyOptions_s *  oyImage_GetTags       ( oyImage_s         * image )
  */
 oyStruct_s *   oyImage_GetPixelData  ( oyImage_s         * image )
 {
-  oyImage_s * s = image;
+  oyImage_s_ * s = (oyImage_s_*)image;
 
   if(!s)
     return 0;
@@ -1174,7 +1189,7 @@ oyStruct_s *   oyImage_GetPixelData  ( oyImage_s         * image )
  */
 oyImage_GetPoint_f oyImage_GetPointF ( oyImage_s         * image )
 {
-  oyImage_s * s = image;
+  oyImage_s_ * s = (oyImage_s_*)image;
 
   if(!s)
     return 0;
@@ -1193,7 +1208,7 @@ oyImage_GetPoint_f oyImage_GetPointF ( oyImage_s         * image )
  */
 oyImage_GetLine_f  oyImage_GetLineF  ( oyImage_s         * image )
 {
-  oyImage_s * s = image;
+  oyImage_s_ * s = (oyImage_s_*)image;
 
   if(!s)
     return 0;
@@ -1212,7 +1227,7 @@ oyImage_GetLine_f  oyImage_GetLineF  ( oyImage_s         * image )
  */
 oyStruct_s *   oyImage_GetUserData ( oyImage_s         * image )
 {
-  oyImage_s * s = image;
+  oyImage_s_ * s = (oyImage_s_*)image;
 
   if(!s)
     return 0;
