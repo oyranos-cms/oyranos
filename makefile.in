@@ -251,24 +251,6 @@ CHEADERS_OBJECT = \
 	$(GENDIR)$(TARGET)_module_internal.h \
 	$(GENDIR)$(TARGET)_object_internal.h
 
-CFILES_OBJECT_IMAGING = \
-	$(GENDIR)oyImage_s.c \
-	$(GENDIR)oyImage_s_.c \
-	$(GENDIR)oyPixelAccess_s.c \
-	$(GENDIR)oyPixelAccess_s_.c \
-	$(GENDIR)$(TARGET)_conversion.c \
-	$(GENDIR)$(TARGET)_image.c
-CHEADERS_OBJECT_IMAGING_PUBLIC = \
-	$(GENDIR)oyImage_s.h \
-	$(GENDIR)oyPixelAccess_s_.h \
-	$(GENDIR)$(TARGET)_conversion.h \
-	$(GENDIR)$(TARGET)_image.h
-CHEADERS_OBJECT_IMAGING = \
-	$(GENDIR)oyPixelAccess_s.h \
-	$(GENDIR)oyImage_s_.h \
-	$(GENDIR)$(TARGET)_devices_internal.h \
-	$(CHEADERS_OBJECT_IMAGING_PUBLIC)
-
 CFILES_OBJECT_MODULES = \
 	$(GENDIR)oyCMMapi_s.c \
 	$(GENDIR)oyCMMapi_s_.c \
@@ -294,6 +276,8 @@ CFILES_OBJECT_MODULES = \
 	$(GENDIR)oyCMMapiFilters_s_.c \
 	$(GENDIR)oyCMMinfo_s.c \
 	$(GENDIR)oyCMMinfo_s_.c \
+	$(GENDIR)oyCMMobjectType_s.c \
+	$(GENDIR)oyCMMobjectType_s_.c \
 	$(GENDIR)oyCMMui_s.c \
 	$(GENDIR)oyCMMui_s_.c \
 	$(GENDIR)oyConfig_s_.c \
@@ -318,6 +302,7 @@ CHEADERS_OBJECT_MODULES_PUBLIC = \
 	$(GENDIR)oyCMMapiFilter_s.h \
 	$(GENDIR)oyCMMapiFilters_s.h \
 	$(GENDIR)oyCMMinfo_s.h \
+	$(GENDIR)oyCMMobjectType_s.h \
 	$(GENDIR)oyCMMui_s.h \
 	$(GENDIR)oyConfig_s.h \
 	$(GENDIR)oyConfigs_s.h \
@@ -337,11 +322,34 @@ CHEADERS_OBJECT_MODULES = \
 	$(GENDIR)oyCMMapiFilter_s_.h \
 	$(GENDIR)oyCMMapiFilters_s_.h \
 	$(GENDIR)oyCMMinfo_s_.h \
+	$(GENDIR)oyCMMobjectType_s_.h \
 	$(GENDIR)oyCMMui_s_.h \
 	$(GENDIR)oyConfig_s_.h \
 	$(GENDIR)oyConfigs_s_.h \
 	$(GENDIR)$(TARGET)_devices_internal.h \
 	$(CHEADERS_OBJECT_MODULES_PUBLIC)
+
+CFILES_OBJECT_IMAGING = \
+	$(GENDIR)oyArray2d_s.c \
+	$(GENDIR)oyArray2d_s_.c \
+	$(GENDIR)oyImage_s.c \
+	$(GENDIR)oyImage_s_.c \
+	$(GENDIR)oyPixelAccess_s.c \
+	$(GENDIR)oyPixelAccess_s_.c \
+	$(GENDIR)$(TARGET)_conversion.c \
+	$(GENDIR)$(TARGET)_image.c
+CHEADERS_OBJECT_IMAGING_PUBLIC = \
+	$(GENDIR)oyArray2d_s.h \
+	$(GENDIR)oyImage_s.h \
+	$(GENDIR)oyPixelAccess_s_.h \
+	$(GENDIR)$(TARGET)_conversion.h \
+	$(GENDIR)$(TARGET)_image.h
+CHEADERS_OBJECT_IMAGING = \
+	$(GENDIR)oyArray2d_s_.h \
+	$(GENDIR)oyImage_s_.h \
+	$(GENDIR)oyPixelAccess_s.h \
+	$(GENDIR)$(TARGET)_devices_internal.h \
+	$(CHEADERS_OBJECT_IMAGING_PUBLIC)
 
 CFILES = \
 	$(TARGET).c \

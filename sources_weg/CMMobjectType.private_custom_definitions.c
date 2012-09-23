@@ -23,7 +23,9 @@ void oyCMMobjectType_Release__Members( oyCMMobjectType_s_ * cmmobjecttype )
 
   if(cmmobjecttype->oy_->deallocateFunc_)
   {
+#if 0
     oyDeAlloc_f deallocateFunc = cmmobjecttype->oy_->deallocateFunc_;
+#endif
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( cmmobjecttype->member );

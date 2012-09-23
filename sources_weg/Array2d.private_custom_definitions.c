@@ -1,3 +1,5 @@
+#include "oyranos_image_internal.h"
+
 /** Function    oyArray2d_Release__Members
  *  @memberof   oyArray2d_s
  *  @brief      Custom Array2d destructor
@@ -24,7 +26,9 @@ void oyArray2d_Release__Members( oyArray2d_s_ * array2d )
 
   if(array2d->oy_->deallocateFunc_)
   {
+#if 0
     oyDeAlloc_f deallocateFunc = array2d->oy_->deallocateFunc_;
+#endif
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( array2d->member );

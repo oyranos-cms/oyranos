@@ -1,3 +1,5 @@
+#include "oyranos_image_internal.h"
+
 /** Function  oyArray2d_Create
  *  @memberof oyArray2d_s
  *  @brief    Allocate and initialise a oyArray2d_s object
