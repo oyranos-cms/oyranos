@@ -289,7 +289,7 @@ oyConversion_s * oyConversion_CreateFromImage (
 
   layout_out = oyDataType_m(buf_type_out);
   profile_in = oyImage_GetProfile( image_in );
-  chan_in     = oyToChannels_m( oyImage_GetPixelLayout(image_in) );
+  chan_in     = oyToChannels_m( oyImage_GetPixelLayout(image_in, oyLAYOUT ) );
   cchan_in = oyProfile_GetChannelsCount( profile_in );
 
   if(!chan_in && cchan_in)
@@ -530,7 +530,7 @@ int                oyConversion_RunPixels (
   oyFilterNode_s * node_out = 0;
   oyImage_s * image_out = 0, * image_input = 0;
   int error = 0, result = 0, i,n, dirty = 0, tmp_ticket = 0;
-  oyRectangle_s roi = {oyOBJECT_RECTANGLE_S, 0,0,0};
+  oyRectangle_s_ roi = {oyOBJECT_RECTANGLE_S, 0,0,0};
   double clck;
 
   oyConversion_s_ ** conversion_ = (oyConversion_s_**)&conversion;
@@ -572,14 +572,15 @@ int                oyConversion_RunPixels (
   image_out = oyConversion_GetImage( conversion, OY_OUTPUT );
 
   if(error <= 0)
-    oyRectangle_SetByRectangle( &roi, (*pixel_access_)->output_image_roi );
+    oyRectangle_SetByRectangle( (oyRectangle_s*)&roi,
+                                (oyRectangle_s*)(*pixel_access_)->output_image_roi );
 
   if(error <= 0 && !(*pixel_access_)->array)
   {
     clck = oyClock();
-    result = oyImage_FillArray( image_out, &roi, 0,
+    result = oyImage_FillArray( image_out, (oyRectangle_s*)&roi, 0,
                                 &(*pixel_access_)->array,
-                                (*pixel_access_)->output_image_roi, 0 );
+                                (oyRectangle_s*)(*pixel_access_)->output_image_roi, 0 );
     clck = oyClock() - clck;
     DBGs_NUM1_S( pixel_access,"oyImage_FillArray(): %g", clck/1000000.0 );
     error = ( result != 0 );
@@ -683,7 +684,7 @@ int                oyConversion_RunPixels (
      * same as : roi.x = roi.y = 0; */
     /*roi.x = (*pixel_access_)->start_xy[0];
     roi.y = (*pixel_access_)->start_xy[1];*/
-    result = oyImage_ReadArray( image_out, &roi,
+    result = oyImage_ReadArray( image_out, (oyRectangle_s*)&roi,
                                 (*pixel_access_)->array, 0 );
   }
 

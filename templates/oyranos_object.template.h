@@ -290,6 +290,8 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration1,
 #define OY_OUTPUT                      0x01
 #define OY_INPUT                       0x02
 /* decode */
+#define oyToOutput_m(v)                ((v)&0x01)
+#define oyToInput_m(v)                 ((v)&0x02)
 
 
 {% include "cpp_end.h" %}

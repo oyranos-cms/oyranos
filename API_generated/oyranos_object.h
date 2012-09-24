@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/22
+ *  @date     2012/09/24
  */
 
 
@@ -333,6 +333,8 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration1,
 #define OY_OUTPUT                      0x01
 #define OY_INPUT                       0x02
 /* decode */
+#define oyToOutput_m(v)                ((v)&0x01)
+#define oyToInput_m(v)                 ((v)&0x02)
 
 
 #ifdef __cplusplus

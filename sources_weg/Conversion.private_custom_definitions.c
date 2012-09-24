@@ -25,7 +25,9 @@ void oyConversion_Release__Members( oyConversion_s_ * conversion )
 
   if(conversion->oy_->deallocateFunc_)
   {
+#if 0
     oyDeAlloc_f deallocateFunc = conversion->oy_->deallocateFunc_;
+#endif
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( conversion->member );

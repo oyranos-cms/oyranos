@@ -336,6 +336,8 @@ CFILES_OBJECT_IMAGING = \
 	$(GENDIR)oyConnector_s_.c \
 	$(GENDIR)oyConnectorImaging_s.c \
 	$(GENDIR)oyConnectorImaging_s_.c \
+	$(GENDIR)oyConversion_s.c \
+	$(GENDIR)oyConversion_s_.c \
 	$(GENDIR)oyFilterCore_s.c \
 	$(GENDIR)oyFilterCore_s_.c \
 	$(GENDIR)oyFilterGraph_s.c \
@@ -360,6 +362,7 @@ CHEADERS_OBJECT_IMAGING_PUBLIC = \
 	$(GENDIR)oyArray2d_s.h \
 	$(GENDIR)oyConnector_s.h \
 	$(GENDIR)oyConnectorImaging_s.h \
+	$(GENDIR)oyConversion_s.h \
 	$(GENDIR)oyFilterCore_s.h \
 	$(GENDIR)oyFilterGraph_s.h \
 	$(GENDIR)oyFilterNode_s.h \
@@ -375,6 +378,7 @@ CHEADERS_OBJECT_IMAGING = \
 	$(GENDIR)oyArray2d_s_.h \
 	$(GENDIR)oyConnector_s_.h \
 	$(GENDIR)oyConnectorImaging_s_.h \
+	$(GENDIR)oyConversion_s_.h \
 	$(GENDIR)oyFilterCore_s_.h \
 	$(GENDIR)oyFilterGraph_s_.h \
 	$(GENDIR)oyFilterNode_s_.h \
