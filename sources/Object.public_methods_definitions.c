@@ -542,7 +542,7 @@ int          oyObject_UnRef          ( oyObject_s          obj )
   oyObject_s s = obj;
   int error = !s;
 
-  if( s->type_ != oyOBJECT_OBJECT_S)
+  if( !obj || s->type_ != oyOBJECT_OBJECT_S)
     return 1;
 
   if(error <= 0)

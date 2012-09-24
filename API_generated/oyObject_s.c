@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/09/24
  */
 
 
@@ -568,7 +568,7 @@ int          oyObject_UnRef          ( oyObject_s          obj )
   oyObject_s s = obj;
   int error = !s;
 
-  if( s->type_ != oyOBJECT_OBJECT_S)
+  if( !obj || s->type_ != oyOBJECT_OBJECT_S)
     return 1;
 
   if(error <= 0)
