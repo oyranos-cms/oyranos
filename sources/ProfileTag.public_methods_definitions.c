@@ -822,8 +822,8 @@ OYAPI int  OYEXPORT
  *  @return                            type signature
  *
  *  @version Oyranos: 0.5.0
- *  @since   2012/09/05 (Oyranos: 0.5.0)
- *  @date    2012/09/05
+ *  @since   2012/09/24 (Oyranos: 0.5.0)
+ *  @date    2012/09/24
  */
 OYAPI icTagTypeSignature  OYEXPORT
                oyProfileTag_GetType  ( oyProfileTag_s    * tag )
@@ -836,4 +836,76 @@ OYAPI icTagTypeSignature  OYEXPORT
   oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
 
   return s->tag_type_;
+}
+/** Function  oyProfileTag_GetSize
+ *  @memberof oyProfileTag_s
+ *  @brief    Get the data size.
+ *
+ *  @param[in]     tag                 the tag to read
+ *  @return                            size
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/05 (Oyranos: 0.5.0)
+ *  @date    2012/09/05
+ */
+OYAPI size_t  OYEXPORT
+               oyProfileTag_GetSize  ( oyProfileTag_s    * tag )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
+
+  return s->size_;
+}
+/** Function  oyProfileTag_GetSizeCheck
+ *  @memberof oyProfileTag_s
+ *  @brief    Get the data check size.
+ *
+ *  @param[in]     tag                 the tag to read
+ *  @return                            check size
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/24 (Oyranos: 0.5.0)
+ *  @date    2012/09/24
+ */
+OYAPI size_t  OYEXPORT
+               oyProfileTag_GetCheckSize
+                                     ( oyProfileTag_s    * tag )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 1 )
+
+  return s->size_;
+}
+/** Function  oyProfileTag_SetSizeCheck
+ *  @memberof oyProfileTag_s
+ *  @brief    Set the data check size.
+ *
+ *  @param[in/out] tag                 the tag to read
+ *  @param[in]                         check size
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/24 (Oyranos: 0.5.0)
+ *  @date    2012/09/24
+ */
+OYAPI void  OYEXPORT
+               oyProfileTag_SetSizeCheck (
+                                       oyProfileTag_s    * tag,
+                                       size_t              size_check )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
+
+  if(!s)
+    return;
+
+  oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return )
+
+  s->size_check_ = size_check;
 }

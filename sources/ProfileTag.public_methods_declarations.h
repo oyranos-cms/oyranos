@@ -70,3 +70,12 @@ OYAPI icTagSignature  OYEXPORT
                oyProfileTag_GetUse   ( oyProfileTag_s    * tag );
 OYAPI icTagTypeSignature  OYEXPORT
                oyProfileTag_GetType  ( oyProfileTag_s    * tag );
+OYAPI size_t  OYEXPORT
+               oyProfileTag_GetSize  ( oyProfileTag_s    * tag );
+OYAPI size_t  OYEXPORT
+               oyProfileTag_GetSizeCheck (
+                                       oyProfileTag_s    * tag );
+OYAPI void  OYEXPORT
+               oyProfileTag_SetSizeCheck (
+                                       oyProfileTag_s    * tag,
+                                       size_t              size_check );
