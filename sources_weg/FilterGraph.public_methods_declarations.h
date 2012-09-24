@@ -6,6 +6,15 @@ OYAPI oyFilterNode_s * OYEXPORT
                                        int                 pos,
                                        const char        * registration,
                                        const char        * mark );
+OYAPI int OYEXPORT
+           oyFilterGraph_CountNodes  ( oyFilterGraph_s   * graph,
+                                       const char        * registration,
+                                       const char        * mark );
+OYAPI int OYEXPORT
+           oyFilterGraph_CountEdges  ( oyFilterGraph_s   * graph );
+OYAPI oyFilterPlug_s * OYEXPORT
+           oyFilterGraph_GetEdge     ( oyFilterGraph_s   * graph,
+                                       int                 pos );
 OYAPI int  OYEXPORT
            oyFilterGraph_PrepareContexts (
                                        oyFilterGraph_s   * graph,

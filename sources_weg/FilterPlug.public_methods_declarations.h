@@ -17,6 +17,9 @@ OYAPI oyImage_s * OYEXPORT
                                        oyPixelAccess_s   * ticket );
 OYAPI oyFilterNode_s * OYEXPORT
              oyFilterPlug_GetNode    ( oyFilterPlug_s    * p );
+OYAPI oyFilterNode_s * OYEXPORT
+             oyFilterPlug_GetRemoteNode
+                                     ( oyFilterPlug_s    * p );
 OYAPI oyFilterSocket_s * OYEXPORT
              oyFilterPlug_GetSocket  ( oyFilterPlug_s    * p );
 OYAPI oyConnector_s * OYEXPORT

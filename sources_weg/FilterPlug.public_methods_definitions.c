@@ -228,6 +228,30 @@ OYAPI oyFilterNode_s * OYEXPORT
 
   return oyFilterNode_Copy( (oyFilterNode_s*)(s->node), 0 );
 }
+/** Function  oyFilterPlug_GetRemoteNode
+ *  @memberof oyFilterPlug_s
+ *  @brief    Access oyFilterPlug_s::remote_socket::node
+ *
+ *  @param[in]     plug                the plug
+ *  @return                            the remote node
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/24
+ *  @since    2012/09/24 (Oyranos: 0.5.0)
+ */
+OYAPI oyFilterNode_s * OYEXPORT
+             oyFilterPlug_GetRemoteNode
+                                     ( oyFilterPlug_s    * plug )
+{
+  oyFilterPlug_s_ * s = (oyFilterPlug_s_*)plug;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_PLUG_S, return 0 )
+
+  return oyFilterSocket_GetNode( (oyFilterSocket_s*)s->remote_socket_ ); 
+}
 /** Function  oyFilterPlug_GetSocket
  *  @memberof oyFilterPlug_s
  *  @brief    Access oyFilterPlug_s::remote_socket_

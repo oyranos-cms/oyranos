@@ -83,6 +83,100 @@ OYAPI oyFilterNode_s * OYEXPORT
   return node;
 }
 
+/** Function  oyFilterGraph_CountNodes
+ *  @memberof oyFilterGraph_s
+ *  @brief    Count nodes
+ *
+ *  @param[in]     graph               a filter graph
+ *  @param[in]     registration        criterium to generate the matching list,
+                                       or zero for no criterium
+ *  @param[in]     mark                marking string to use as a selector
+ *  @return                            the nodes count
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/24
+ *  @since    2012/09/24 (Oyranos: 0.5.0)
+ */
+OYAPI int OYEXPORT
+           oyFilterGraph_CountNodes  ( oyFilterGraph_s   * graph,
+                                       const char        * registration,
+                                       const char        * mark )
+{
+  oyFilterNode_s * node = 0;
+  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
+  oyFilterGraph_s_ * s = (oyFilterGraph_s_*)graph;
+  int i, n, m = 0, found;
+
+  oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
+
+  n = oyFilterNodes_Count( s->nodes );
+  for(i = 0; i < n; ++i)
+  {
+    node = oyFilterNodes_Get( s->nodes, i );
+
+    found = 1;
+
+    if(found && registration &&
+       !oyFilterRegistrationMatch( ((oyCMMapi4_s_*)((oyFilterCore_s_*)(*node_)->core)->api4_)->registration,
+                                   registration, 0 ))
+      found = 0;
+
+    if(found && mark &&
+       oyOptions_FindString( (*node_)->tags, mark, 0 ) == 0 )
+      found = 0;
+
+    if(found)
+      ++m;
+
+    oyFilterNode_Release( &node );
+  }
+
+  return m;
+}
+
+/** Function  oyFilterGraph_GetEdge
+ *  @memberof oyFilterGraph_s
+ *  @brief    Get edges
+ *
+ *  @param[in]     graph               a filter graph
+ *  @return                            the edges count
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/24
+ *  @since    2012/09/24 (Oyranos: 0.5.0)
+ */
+OYAPI oyFilterPlug_s * OYEXPORT
+           oyFilterGraph_GetEdge     ( oyFilterGraph_s   * graph,
+                                       int                 pos )
+{
+  oyFilterGraph_s_ * s = (oyFilterGraph_s_*)graph;
+
+  oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
+
+  return oyFilterPlugs_Get( s->edges, pos );
+}
+
+/** Function  oyFilterGraph_CountEdges
+ *  @memberof oyFilterGraph_s
+ *  @brief    Count edges
+ *
+ *  @param[in]     graph               a filter graph
+ *  @return                            the edges count
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/24
+ *  @since    2012/09/24 (Oyranos: 0.5.0)
+ */
+OYAPI int OYEXPORT
+           oyFilterGraph_CountEdges  ( oyFilterGraph_s   * graph )
+{
+  oyFilterGraph_s_ * s = (oyFilterGraph_s_*)graph;
+
+  oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
+
+  return oyFilterPlugs_Count( s->edges );
+}
+
 /** Function  oyFilterGraph_PrepareContexts
  *  @memberof oyFilterGraph_s
  *  @brief    Iterate over a filter graph and possibly prepare contexts
