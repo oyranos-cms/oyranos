@@ -15,7 +15,10 @@
 
 
 #include "config.h"
-#include "oyranos_alpha.h"
+
+#include "oyCMMapi9_s_.h"
+#include "oyCMMobjectType_s_.h"
+
 #include "oyranos_alpha_internal.h"
 #include "oyranos_cmm.h"
 #include "oyranos_helper.h"
@@ -563,7 +566,7 @@ int          oiccObjectScan          ( oyPointer           buf,
   return error;
 }
 
-oyCMMobjectType_s icc_profile = {
+oyCMMobjectType_s_ icc_profile = {
   oyOBJECT_CMM_DATA_TYPES_S, /* oyStruct_s::type; */
   0,0,0, /* unused oyStruct_s fields in static data; keep to zero */
   oyOBJECT_PROFILE_S, /* id; */
@@ -575,7 +578,7 @@ oyCMMobjectType_s icc_profile = {
   oiccProfileLoadFromMem, /* oyCMMobjectLoadFromMem; */
   oiccObjectScan /* oyCMMobjectScan; */
 };
-oyCMMobjectType_s icc_profiles = {
+oyCMMobjectType_s_ icc_profiles = {
   oyOBJECT_CMM_DATA_TYPES_S, /* oyStruct_s::type; */
   0,0,0, /* unused oyStruct_s fields in static data; keep to zero */
   oyOBJECT_PROFILES_S, /* id; */
@@ -587,7 +590,7 @@ oyCMMobjectType_s icc_profiles = {
   0, /* oyCMMobjectLoadFromMem; */
   0 /* oyCMMobjectScan; */
 };
-oyCMMobjectType_s * icc_objects[] = {
+oyCMMobjectType_s_ * icc_objects[] = {
   &icc_profile,
   &icc_profiles,
   0
@@ -654,7 +657,8 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
       search, old_id, it;
   int verbose = oyOptions_FindString( options, "verbose", 0 ) ? 1:0;
   oyFilterGraph_s * g = 0;
-  oyFilterNode_s * node = 0;
+  oyFilterNode_s * node = 0,
+                 * node_out = 0;
   oyFilterPlug_s * edge = 0;
   oyConversion_s * s = conversion;
   oyProfiles_s * proofs =  0;
@@ -681,29 +685,31 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               oyOptions_FindString( options, "display_mode", 0):"");
 
 
-  if(s->input)
-    g = oyFilterGraph_FromNode( s->input, 0 );
-  else
-    g = oyFilterGraph_FromNode( s->out_, 0 );
+  node = oyConversion_GetNode( s, OY_INPUT );
+  if(!node)
+    node = oyConversion_GetNode( s, OY_OUTPUT );
 
-  n = oyFilterNodes_Count( g->nodes );
+  g = oyFilterGraph_FromNode( node, 0 );
+  oyFilterNode_Release( &node );
+
+  n = oyFilterGraph_CountNodes( g, "", NULL );
   for(i = 0; i < n; ++i)
   {
-    node = oyFilterNodes_Get( g->nodes, i );
-    if(oyFilterRegistrationMatch( node->core->registration_,
+    node = oyFilterGraph_GetNode( g, i, "", NULL );
+    if(oyFilterRegistrationMatch( oyFilterNode_GetRegistration(node),
                                   "//" OY_TYPE_STD "/icc", 0 ))
     {
       if(verbose)
         WARNc2_S( "node: %s[%d]",
-                  node->core->registration_, oyFilterNode_GetId( node ));
+                  oyFilterNode_GetRegistration( node ), oyFilterNode_GetId( node ));
       ++icc_nodes_n;
     }
-    if(oyFilterRegistrationMatch( node->core->registration_,
+    if(oyFilterRegistrationMatch( oyFilterNode_GetRegistration( node ),
                                   "//" OY_TYPE_STD "/display", 0 ))
     {
       if(verbose)
         WARNc2_S( "node: %s[%d] - display mode",
-                  node->core->registration_, oyFilterNode_GetId( node ));
+                  oyFilterNode_GetRegistration( node ), oyFilterNode_GetId( node ));
       ++display_mode;
     }
     oyFilterNode_Release( &node );
@@ -711,22 +717,28 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
 
   /* How far is this ICC node from the output node? */
   if(verbose)
-    oyShowGraph_( conversion->input, 0 );
+  {
+    node = oyConversion_GetNode( s, OY_INPUT );
+    oyShowGraph_( node, 0 );
+    oyFilterNode_Release( &node );
+  }
 
-  m = oyFilterPlugs_Count( g->edges );
+  m = oyFilterGraph_CountEdges( g );
   old_id = -1;
   /* start from out_ and search all ICC CMMs */
-  if(s->out_)
+  node_out = oyConversion_GetNode( s, OY_OUTPUT );
+  if(node_out)
   for(i = 0; i < n; ++i)
   {
-    node = oyFilterNodes_Get( g->nodes, i );
+    node = oyFilterGraph_GetNode( g, i, "", NULL );
 
-    if(oyFilterNode_GetId( node ) == oyFilterNode_GetId( s->out_ ))
+    if(oyFilterNode_GetId( node ) == oyFilterNode_GetId( node_out ))
       search = 1;
     else
       search = 0;
 
     old_id = oyFilterNode_GetId( node );
+    oyFilterNode_Release( &node );
     if(verbose && search)
       fprintf( stderr, "ICC CMM search: %d - ", old_id);
 
@@ -738,26 +750,30 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
       /* follow the path along the filter node IDs */
       for(j = 0; j < m; ++j)
       {
-        edge = oyFilterPlugs_Get( g->edges, j );
-        if(oyFilterNode_GetId( edge->node ) == old_id)
+
+        edge = oyFilterGraph_GetEdge( g, j );
+        node = oyFilterPlug_GetNode( edge );
+        if(oyFilterNode_GetId( node ) == old_id)
         {
+          oyConnector_s * edge_pattern = oyFilterPlug_GetPattern( edge );
+          oyFilterSocket_s * edge_remote = oyFilterPlug_GetSocket( edge );
+          oyConnector_s * edge_remote_pattern = oyFilterSocket_GetPattern( edge_remote );
           /* select only application level "data" coonectors; follow the data */
-          if(oyFilterRegistrationMatch( edge->pattern->connector_type,
+          if(oyFilterRegistrationMatch( oyConnector_GetReg( edge_pattern ),
                                         "//" OY_TYPE_STD "/data", 0) &&
-             oyFilterRegistrationMatch( edge->remote_socket_->pattern->connector_type,
+             oyFilterRegistrationMatch( oyConnector_GetReg( edge_remote_pattern ),
                                         "//" OY_TYPE_STD "/data", 0))
           {
-            node = oyFilterNode_Copy( edge->remote_socket_->node, 0 );
             old_id = oyFilterNode_GetId( node );
             ++it;
             /* stop at the first hit if "icc" */
-            if( oyFilterRegistrationMatch( node->core->registration_,
+            if( oyFilterRegistrationMatch( oyFilterNode_GetRegistration( node ),
                                            "//" OY_TYPE_STD "/icc", 0))
             {
               search = 0;
 
               /* apply the found policy settings */
-              db_options = oyOptions_ForFilter( node->core->registration_, 0,
+              db_options = oyOptions_ForFilter( oyFilterNode_GetRegistration( node ), 0,
                                                 flags, 0 );
               f_options = oyFilterNode_GetOptions( node, flags );
               os_n = oyOptions_Count(f_options);
@@ -851,8 +867,12 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               break;
             }
           }
+          oyFilterSocket_Release( &edge_remote );
+          oyConnector_Release( &edge_pattern );
+          oyConnector_Release( &edge_remote_pattern );
         }
         oyFilterPlug_Release( &edge );
+        oyFilterNode_Release( &node );
       }
 
       if(verbose)
@@ -863,8 +883,8 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
           fprintf( stderr, "%d[icc]\n", old_id );
       }
     }
-    oyFilterNode_Release( &node );
   }
+  oyFilterNode_Release( &node_out );
 
   return error;
 }
@@ -879,7 +899,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
  *  @since   2008/11/13 (Oyranos: 0.1.9)
  *  @date    2009/07/23
  */
-oyCMMapi9_s  oicc_api9 = {
+oyCMMapi9_s_  oicc_api9 = {
 
   oyOBJECT_CMM_API9_S, /* oyStruct_s::type */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -903,7 +923,7 @@ oyCMMapi9_s  oicc_api9 = {
   oiccGetDefaultColourIccOptionsUI,  /* oyCMMuiGet */
   (char*)CMM_NICK"=\"http://www.oyranos.org/2009/oyranos_icc\"", /* xml_namespace */
 
-  icc_objects,  /* object_types */
+  (oyCMMobjectType_s**)icc_objects,  /* object_types */
 
   0,  /* getText */
   0,  /* texts */
@@ -972,7 +992,7 @@ const char *oicc_texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2009/07/23 (Oyranos: 0.1.10)
  *  @date    2009/07/23
  */
-oyCMMinfo_s oicc_cmm_module = {
+oyCMMinfo_s_ oicc_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,
