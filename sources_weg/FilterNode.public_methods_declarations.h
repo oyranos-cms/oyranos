@@ -42,6 +42,10 @@ OYAPI int  OYEXPORT
 OYAPI oyFilterPlug_s * OYEXPORT
                oyFilterNode_GetPlug  ( oyFilterNode_s    * node,
                                        int                 pos );
+OYAPI int  OYEXPORT
+                oyFilterNode_Run     ( oyFilterNode_s    * node,
+                                       oyFilterPlug_s *    plug,
+                                       oyPixelAccess_s *   ticket );
 OYAPI oyFilterSocket_s * OYEXPORT
                oyFilterNode_GetSocket( oyFilterNode_s    * node,
                                        int                 pos );

@@ -695,6 +695,37 @@ OYAPI oyFilterPlug_s * OYEXPORT
   return (oyFilterPlug_s*)s;
 }
 
+/** Function  oyFilterNode_Run
+ *  @memberof oyFilterNode_s
+ *  @brief    Run a connected oyFilterPlug_s through the FilterNode
+ *
+ *  @param         node                filter node
+ *  @param         plug                the plug
+ *  @param         ticket              the job ticket
+ *  @return                            error
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/24
+ *  @since    2012/09/24 (Oyranos: 0.5.0)
+ */
+OYAPI int  OYEXPORT
+                oyFilterNode_Run     ( oyFilterNode_s    * node,
+                                       oyFilterPlug_s *    plug,
+                                       oyPixelAccess_s *   ticket )
+{
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node;
+  int error = 0;
+
+  if(!node)
+    return -1;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 1 )
+
+  error = oyCMMapi7_Run( (oyCMMapi7_s*) s->api7_, plug, ticket );
+
+  return error;
+}
+
 /** Function  oyFilterNode_GetSocket
  *  @memberof oyFilterNode_s
  *  @brief    Get a oyFilterSocket_s of type from a FilterNode
