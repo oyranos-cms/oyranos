@@ -14,7 +14,9 @@
  */
 
 #include "config.h"
-#include "oyranos_alpha.h"
+
+#include "oyCMMapi4_s_.h"
+
 #include "oyranos_alpha_internal.h"
 #include "oyranos_cmm.h"
 #include "oyranos_cmm_oyIM.h"
@@ -56,9 +58,12 @@ char * oyIMstructGetText             ( oyStruct_s        * item,
     image = (oyImage_s*) item;
 
     if(flags == oyOBJECT_PROFILE_S)
-      text = oyStringCopy_( oyProfile_GetText( image->profile_,
-                                               type ),
+    {
+      oyProfile_s * p = oyImage_GetProfile( image );
+      text = oyStringCopy_( oyProfile_GetText( p, type ),
                             allocateFunc );
+      oyProfile_Release( &p );
+    }
     else
       text = oyStringCopy_( oyObject_GetName( image->oy_, type ),
                             allocateFunc );
@@ -117,9 +122,9 @@ int          oyIMFilterScan          ( oyPointer           data,
                                        oyCMMinfo_s      ** info,
                                        oyObject_s          object )
 {
-  oyCMMinfo_s * cmm_info = 0;
-  oyCMMapi_s * api = 0;
-  oyCMMapi4_s * api4 = 0;
+  oyCMMinfo_s_ * cmm_info = 0;
+  oyCMMapi_s_ * api = 0;
+  oyCMMapi4_s_ * api4 = 0;
   int error = !lib_name;
   int ret = -2;
   char * cmm = oyCMMnameFromLibName_(lib_name);
@@ -161,7 +166,7 @@ int          oyIMFilterScan          ( oyPointer           data,
       if(info_sym)
         oyFree_m_(info_sym);
 #else
-      cmm_info = oyCMMinfoFromLibName_( lib_name );
+      cmm_info = (oyCMMinfo_s_*)oyCMMinfoFromLibName_( lib_name );
 #endif
 
       error = !cmm_info;
@@ -178,7 +183,7 @@ int          oyIMFilterScan          ( oyPointer           data,
 
       if(!error)
         if(oyCMMapi_Check_( cmm_info->api ))
-          api = cmm_info->api;
+          api = (oyCMMapi_s_*)cmm_info->api;
 
       if(!error && api)
       {
@@ -186,7 +191,7 @@ int          oyIMFilterScan          ( oyPointer           data,
         int found = 0;
         while(!found)
         {
-          if(api && api->type == type)
+          if(api && api->type_ == type)
           {
             if(x == num)
               found = 1;
@@ -196,13 +201,13 @@ int          oyIMFilterScan          ( oyPointer           data,
           if(!api)
             found = 1;
           if(!found)
-            api = api->next;
+            api = (oyCMMapi_s_*)api->next;
         }
 
         if(api && found)
         {
-          if(api->type == type)
-            api4 = (oyCMMapi4_s *) api;
+          if(api->type_ == type)
+            api4 = (oyCMMapi4_s_ *) api;
           if(registration)
             *registration = oyStringCopy_( api4->registration, allocateFunc );
           if(name)
@@ -210,7 +215,7 @@ int          oyIMFilterScan          ( oyPointer           data,
                                                      (oyStruct_s*)api4->ui),
                                    allocateFunc );
           if(info)
-            *info = oyCMMinfo_Copy( cmm_info, object );
+            *info = oyCMMinfo_Copy( (oyCMMinfo_s*)cmm_info, object );
           ret = 0;
         } else
           ret = -1;
@@ -243,7 +248,7 @@ int          oyIMFilterScan          ( oyPointer           data,
  *  @since   2008/11/13 (Oyranos: 0.1.9)
  *  @date    2010/06/25
  */
-oyCMMapi5_s  oyIM_api5_meta_c = {
+oyCMMapi5_s_ oyIM_api5_meta_c = {
 
   oyOBJECT_CMM_API5_S, /* oyStruct_s::type */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */

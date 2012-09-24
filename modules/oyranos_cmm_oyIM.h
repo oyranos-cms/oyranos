@@ -17,7 +17,10 @@
 #define OYRANOS_CMM_OYIM_H
 
 #include "config.h"
-#include "oyranos_alpha.h"
+
+#include "oyCMMapi3_s_.h"
+#include "oyCMMapi5_s_.h"
+
 #include "oyranos_cmm.h"
 #include "oyranos_helper.h"
 #include "oyranos_icc.h"
@@ -50,7 +53,7 @@ oyWIDGET_EVENT_e   oyIMWidgetEvent   ( oyOptions_s       * options,
                                        oyWIDGET_EVENT_e    type,
                                        oyStruct_s        * event );
 
-extern oyCMMapi3_s   oyIM_api3;
-extern oyCMMapi5_s   oyIM_api5_meta_c;
+extern oyCMMapi3_s_  oyIM_api3;
+extern oyCMMapi5_s_  oyIM_api5_meta_c;
 
 #endif /* OYRANOS_CMM_OYIM_H */

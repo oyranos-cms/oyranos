@@ -14,7 +14,9 @@
  */
 
 #include "config.h"
-#include "oyranos_alpha.h"
+
+#include "oyCMMinfo_s_.h"
+
 #include "oyranos_cmm.h"
 #include "oyranos_cmm_oyIM.h"
 #include "oyranos_helper.h"
@@ -153,7 +155,7 @@ const char *oyIM_texts[4] = {"name","copyright","manufacturer",0};
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  *  @date    2008/12/30
  */
-oyCMMinfo_s oyIM_cmm_module = {
+oyCMMinfo_s_ oyIM_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,
@@ -165,6 +167,6 @@ oyCMMinfo_s oyIM_cmm_module = {
 
   (oyCMMapi_s*) & oyIM_api3,
 
-  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
+  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"}
 };
 
