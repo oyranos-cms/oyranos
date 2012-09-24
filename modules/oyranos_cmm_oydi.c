@@ -506,7 +506,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   /* Allocate missing local process data in a specific manner. */
   if(error <= 0 && !image)
   {
-    oyPixel_t pixel_layout = oyImage_GetPixelLayout( image_input );
+    oyPixel_t pixel_layout = oyImage_GetPixelLayout( image_input, oyLAYOUT );
     oyProfile_s * p_in = oyImage_GetProfile( image_input );
     oyDATATYPE_e data_type = oyToDataType_m(pixel_layout);
     int32_t datatype = -1;

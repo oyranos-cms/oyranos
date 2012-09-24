@@ -1684,11 +1684,11 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   input_node = plug->remote_socket_->node;
 
   image_input = oyFilterPlug_ResolveImage( plug, socket, ticket );
-  pixel_layout_in = oyImage_GetPixelLayout( image_input );
+  pixel_layout_in = oyImage_GetPixelLayout( image_input, oyLAYOUT );
 
 
-  if(oyImage_GetPixelLayout( image_input ) != 
-     oyImage_GetPixelLayout( ticket->output_image ))
+  if(oyImage_GetPixelLayout( image_input, oyLAYOUT ) != 
+     oyImage_GetPixelLayout( ticket->output_image, oyLAYOUT ))
   {
     /* adapt the region of interesst to the new image dimensions */
     /* create a new ticket to avoid pixel layout conflicts */
@@ -1707,7 +1707,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   array_in = new_ticket->array;
   array_out = ticket->array;
 
-  data_type_in = oyToDataType_m( oyImage_GetPixelLayout( image_input ) );
+  data_type_in = oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) );
   bps_in = oySizeofDatatype( data_type_in );
 
   if(data_type_in == oyFLOAT)
@@ -1727,8 +1727,8 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   if(!error)
   {
     image_output = ticket->output_image;
-    data_type_out = oyToDataType_m( oyImage_GetPixelLayout( image_output ) );
-    channels = oyToChannels_m( oyImage_GetPixelLayout( image_output ) );
+    data_type_out = oyToDataType_m( oyImage_GetPixelLayout( image_output, oyLAYOUT ) );
+    channels = oyToChannels_m( oyImage_GetPixelLayout( image_output, oyLAYOUT ) );
 
     error = lcmsCMMTransform_GetWrap_( node->backend_data, &ltw );
   }
@@ -1914,8 +1914,8 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     error = 1;
   }
 
-  if(oyImage_GetPixelLayout( image_input ) != 
-     oyImage_GetPixelLayout( ticket->output_image ))
+  if(oyImage_GetPixelLayout( image_input, oyLAYOUT ) != 
+     oyImage_GetPixelLayout( ticket->output_image, oyLAYOUT ))
     oyPixelAccess_Release( &new_ticket );
 
   oyImage_Release( &image_input );

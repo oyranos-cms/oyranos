@@ -353,7 +353,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
 #endif
    }
       /* check if the actual data can be displayed */
-      pt = oyImage_GetPixelLayout( image );
+      pt = oyImage_GetPixelLayout( image, oyLAYOUT );
       data_type = oyToDataType_m( pt );
       channels = oyToChannels_m( pt );
       if(pt != 0 &&

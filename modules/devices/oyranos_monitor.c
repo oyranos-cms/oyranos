@@ -25,8 +25,8 @@
 
 # include <X11/Xcm/XcmEdidParse.h>
 
+#include "oyConfig_s_.h"
 #include "oyranos.h"
-#include "oyranos_alpha.h"
 #include "oyranos_internal.h"
 #include "oyranos_monitor.h"
 #include "oyranos_monitor_internal.h"
@@ -53,7 +53,7 @@
 /* --- internal API definition --- */
 
 int            oyDeviceFillInfos     ( const char        * registration,
-                                       oyConfig_s       ** device,
+                                       oyConfig_s       ** device_,
                                        const char        * device_name,
                                        const char        * host,
                                        const char        * display_geometry,
@@ -70,8 +70,9 @@ int            oyDeviceFillInfos     ( const char        * registration,
                                        double            * colours,
                                        oyOptions_s       * options )
 {
-  int error = !device;
+  int error = !device_;
   char * text = 0;
+  oyConfig_s_ ** device = (oyConfig_s_**)device_;
 
   if(error <= 0)
   {
@@ -95,7 +96,7 @@ int            oyDeviceFillInfos     ( const char        * registration,
         sprintf( num, "%d", week );
         STRING_ADD(EDID_date, num);
         if(!*device)
-          *device = oyConfig_FromRegistration( registration, 0 );
+          *device = (oyConfig_s_*)oyConfig_FromRegistration( registration, 0 );
         error = !*device;
         if(!error && device_name)
         error = oyOptions_SetFromText( &(*device)->backend_core, t,
