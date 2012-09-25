@@ -28,12 +28,12 @@ OYAPI oyArray2d_s * OYEXPORT
   if(error <= 0)
   {
     if(data)
-      error = oyArray2d_DataSet( s, data );
+      error = oyArray2d_SetData( s, data );
     else
     {
       data = s->oy_->allocateFunc_( width * height *
                                     oySizeofDatatype( data_type ) );
-      error = oyArray2d_DataSet( s, data );
+      error = oyArray2d_SetData( s, data );
       (*s_)->own_lines = oyYES;
     }
   }
@@ -117,7 +117,31 @@ OYAPI int  OYEXPORT
 }
 #endif
 
-/** Function  oyArray2d_DataSet
+/** Function  oyArray2d_GetData
+ *  @memberof oyArray2d_s
+ *  @brief    Get the data blob
+ *
+ *  @param[in,out] obj                 struct object
+ *  @return                            the data, remains in the property of the
+ *                                     object
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/25
+ *  @since    2012/09/25 (Oyranos: 0.5.0)
+ */
+OYAPI oyPointer  OYEXPORT
+                 oyArray2d_GetData   ( oyArray2d_s       * obj )
+{
+  oyArray2d_s_ * s = (oyArray2d_s_*)obj;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_ARRAY2D_S, return 0 )
+
+  return s->array2d;
+}
+/** Function  oyArray2d_SetData
  *  @memberof oyArray2d_s
  *  @brief    Set the data blob and (re-)initialise the object
  *
@@ -130,7 +154,7 @@ OYAPI int  OYEXPORT
  *  @date    2008/08/23
  */
 OYAPI int  OYEXPORT
-                 oyArray2d_DataSet   ( oyArray2d_s       * obj,
+                 oyArray2d_SetData   ( oyArray2d_s       * obj,
                                        oyPointer           data )
 {
   oyArray2d_s_ * s = 0;
@@ -139,8 +163,10 @@ OYAPI int  OYEXPORT
   if(!data)
     return 1;
 
-  if(!obj || obj->type_ != oyOBJECT_ARRAY2D_S)
-    return 1;
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_ARRAY2D_S, return 1 )
 
   s = (oyArray2d_s_*)obj;
 
@@ -229,8 +255,10 @@ OYAPI int  OYEXPORT
   if(!rows)
     return 1;
 
-  if(!obj || obj->type_ != oyOBJECT_ARRAY2D_S)
-    return 1;
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_ARRAY2D_S, return 1 )
 
   {
     int y_len = sizeof(unsigned char *) * (s->height + 1),

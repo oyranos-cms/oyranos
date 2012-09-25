@@ -4,8 +4,10 @@ OYAPI oyArray2d_s * OYEXPORT
                                        int                 height,
                                        oyDATATYPE_e        type,
                                        oyObject_s          object );
+OYAPI oyPointer  OYEXPORT
+                 oyArray2d_GetData   ( oyArray2d_s       * obj );
 OYAPI int  OYEXPORT
-                 oyArray2d_DataSet   ( oyArray2d_s       * obj,
+                 oyArray2d_SetData   ( oyArray2d_s       * obj,
                                        oyPointer           data );
 OYAPI int  OYEXPORT
                oyArray2d_ReleaseArray( oyArray2d_s       * obj );
