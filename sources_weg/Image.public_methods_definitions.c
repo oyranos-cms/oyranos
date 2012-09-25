@@ -354,14 +354,24 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
 }
 
 
-/** @brief   set a image
+/** Function  oyImage_SetCritical
  *  @memberof oyImage_s
+ *  @brief    Set a image
  *
- *  set critical options
+ *  Set critical options and check consitency.
  *
- *  @version Oyranos: 0.1.8
- *  @since   2007/12/19 (Oyranos: 0.1.8)
- *  @date    2009/03/01
+ *  @param[in,out] image               the image
+ *  @param[in]     pixel_layout        the new layout or pass 0
+ *  @param[in]     profile             assign a new profile reinterprets colour,
+ *                                     optional
+ *  @param[in]     tags                new tags, replace any old tags, optional
+ *  @param[in]     width               new width or pass -1
+ *  @param[in]     height              new height or pass -1
+ *  @return                            error
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/25
+ *  @since    2007/12/19 (Oyranos: 0.1.8)
  */
 int            oyImage_SetCritical   ( oyImage_s         * image,
                                        oyPixel_t           pixel_layout,
@@ -387,8 +397,10 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
     s->tags = oyOptions_Copy( tags, s->oy_ );
   }
 
-  s->width = width;
-  s->height = height;
+  if(width >= 0)
+    s->width = width;
+  if(height >= 0)
+    s->height = height;
 
   if(pixel_layout)
     error = oyImage_CombinePixelLayout2Mask_ ( s, pixel_layout );
