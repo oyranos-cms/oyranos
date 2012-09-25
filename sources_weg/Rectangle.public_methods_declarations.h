@@ -50,6 +50,10 @@ OYAPI void  OYEXPORT
                                        double              width,
                                        double              height );
 OYAPI void  OYEXPORT
+                 oyRectangle_SetGeo1 ( oyRectangle_s     * rectangle,
+                                       int                 x_y_w_h,
+                                       double              value );
+OYAPI void  OYEXPORT
                  oyRectangle_GetGeo  ( oyRectangle_s     * rectangle,
                                        double            * x,
                                        double            * y,
