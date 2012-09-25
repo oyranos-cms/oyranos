@@ -14,8 +14,17 @@
  */
 
 #include "config.h"
-#include "oyranos_alpha.h"
+
+#include "oyCMMapi4_s.h"
+#include "oyCMMapi4_s_.h"
+#include "oyCMMapi7_s.h"
+#include "oyCMMapi7_s_.h"
+#include "oyCMMui_s_.h"
+#include "oyConnectorImaging_s_.h"
+#include "oyFilterNode_s_.h"         /* for oyFilterNode_TextToInfo_ */
+
 #include "oyranos_cmm.h"
+#include "oyranos_generic.h"
 #include "oyranos_helper.h"
 #include "oyranos_icc.h"
 #include "oyranos_i18n.h"
@@ -37,10 +46,10 @@
 
 oyMessage_f message = oyMessageFunc;
 
-extern oyCMMapi4_s   oPNG_api4_image_write_png;
-extern oyCMMapi7_s   oPNG_api7_image_write_png;
-extern oyCMMapi4_s   oPNG_api4_image_input_png;
-extern oyCMMapi7_s   oPNG_api7_image_input_png;
+extern oyCMMapi4_s_   oPNG_api4_image_write_png;
+extern oyCMMapi7_s_   oPNG_api7_image_write_png;
+extern oyCMMapi4_s_   oPNG_api4_image_input_png;
+extern oyCMMapi7_s_   oPNG_api7_image_input_png;
 
 /* OY_INPUT_PNG_REGISTRATION */
 /* OY_WRITE_PNG_REGISTRATION */
@@ -94,7 +103,7 @@ const char * oPNGGetText             ( const char        * select,
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  *  @date    2008/01/02
  */
-oyCMMinfo_s oPNG_cmm_module = {
+oyCMMinfo_s_ oPNG_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,
@@ -189,9 +198,9 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
 
   int width = oyImage_GetWidth( image );
   int height = oyImage_GetHeight( image );
-  int pixel_layout = oyImage_PixelLayoutGet( image );
+  int pixel_layout = oyImage_PixelLayoutGet( image, oyLAYOUT );
   oyProfile_s * prof = oyImage_GetProfile( image );
-  const char * colourspacename = oyProfile_GetText( image->profile_,
+  const char * colourspacename = oyProfile_GetText( prof,
                                                     oyNAME_DESCRIPTION );
   char * pmem;
   size_t psize = 0;
@@ -393,36 +402,45 @@ int      oPNGFilterPlug_ImageOutputPNGWrite (
                                        oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
-  oyFilterSocket_s * socket = requestor_plug->remote_socket_;
+  oyFilterSocket_s * socket = oyFilterPlug_GetSocket( requestor_plug );
   oyFilterNode_s * node = 0;
+  oyOptions_s * tags = 0;
   int result = 0;
   const char * filename = 0;
   FILE * fp = 0;
 
   if(socket)
-    node = socket->node;
+    node = oyFilterSocket_GetNode( socket );
 
   /* to reuse the requestor_plug is a exception for the starting request */
   if(node)
-    result = node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket );
-  else
+  {
+    result = oyFilterNode_Run( node, requestor_plug, ticket );
+    tags = oyFilterNode_GetTags( node );
+  } else
     result = 1;
 
   if(result <= 0)
-    filename = oyOptions_FindString( node->core->options_, "filename", 0 );
+  {
+    filename = oyOptions_FindString( tags, "filename", 0 );
+  }
 
   if(filename)
     fp = fopen( filename, "wb" );
 
   if(fp)
   {
-    oyImage_s *image = (oyImage_s*)socket->data;
+    oyImage_s *image = (oyImage_s*)oyFilterSocket_GetData( socket );
 
     fclose (fp); fp = 0;
 
-    result = oyImage_WritePNG( image, filename, node->core->options_ );
+    result = oyImage_WritePNG( image, filename, tags );
+    oyImage_Release( &image );
   }
 
+  oyOptions_Release( &tags );
+  oyFilterSocket_Release( &socket );
+  oyFilterNode_Release( &node );
   return result;
 }
 
@@ -455,7 +473,7 @@ oyDATATYPE_e oPNG_image_png_data_types[5] = {oyUINT8, oyUINT16,
 
 
 
-oyConnectorImaging_s oPNG_imageOutputPNG_connector_in = {
+oyConnectorImaging_s_ oPNG_imageOutputPNG_connector_in = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,
                                (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorPlugText, /* getText */
@@ -483,7 +501,7 @@ oyConnectorImaging_s oPNG_imageOutputPNG_connector_in = {
   2, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnectorImaging_s * oPNG_imageOutputPNG_connectors_plug[2] = 
+oyConnectorImaging_s_ * oPNG_imageOutputPNG_connectors_plug[2] = 
              { &oPNG_imageOutputPNG_connector_in, 0 };
 
 /**
@@ -545,7 +563,7 @@ const char * oPNG_api4_image_write_png_ui_texts[] = {"name", "category", "help",
  *  @since   2009/09/09 (Oyranos: 0.1.10)
  *  @date    2009/12/22
  */
-oyCMMui_s oPNG_api4_image_write_png_ui = {
+oyCMMui_s_ oPNG_api4_image_write_png_ui = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -575,7 +593,7 @@ oyCMMui_s oPNG_api4_image_write_png_ui = {
  *  @since   2008/10/07 (Oyranos: 0.1.8)
  *  @date    2008/10/07
  */
-oyCMMapi4_s   oPNG_api4_image_write_png = {
+oyCMMapi4_s_ oPNG_api4_image_write_png = {
 
   oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -592,11 +610,11 @@ oyCMMapi4_s   oPNG_api4_image_write_png = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  oyFilterNode_TextToInfo_, /* oyCMMFilterNode_ContextToMem_f */
+  (oyCMMFilterNode_ContextToMem_f)oyFilterNode_TextToInfo_, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText */
   {0}, /* char context_type[8] */
 
-  &oPNG_api4_image_write_png_ui        /**< oyCMMui_s *ui */
+  &oPNG_api4_image_write_png_ui        /**< oyCMMui_s_ *ui */
 };
 
 char * oPNG_api7_image_output_png_properties[] =
@@ -621,7 +639,7 @@ char * oPNG_api7_image_output_png_properties[] =
  *  @since   2008/10/07 (Oyranos: 0.1.8)
  *  @date    2008/10/07
  */
-oyCMMapi7_s   oPNG_api7_image_write_png = {
+oyCMMapi7_s_ oPNG_api7_image_write_png = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -860,14 +878,16 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
                                         height,
                                         oyToDataType_m(pixel_layout),
                                         0 );
+    oyPointer array2d = oyArray2d_GetData( a );
     int i;
+
     for( i = 0; i < num_passes; ++i )
 #if 0
       /* sequential reading */
       for( y = 0; y < height; ++y )
         png_read_rows( png_ptr, &a->array2d[y], NULL, 1 );
 #else
-      png_read_rows( png_ptr, a->array2d, NULL, height );
+      png_read_rows( png_ptr, array2d, NULL, height );
 #endif
 
     oyImage_SetData ( image_in, (oyStruct_s**) &a, 0,0,0,0,0,0 );
@@ -885,12 +905,15 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
     return NULL;
   }
 
-  error = oyOptions_SetFromText( &image_in->tags,
+  {
+    oyOptions_s * tags = oyImage_GetTags( image_in );
+    error = oyOptions_SetFromText( &tags,
                                  "//" OY_TYPE_STD "/input_png.file_read"
                                                                     "/filename",
                                  filename, OY_CREATE_NEW );
-  if(error) WARNc2_S("%s %d", _("found issues"),error);
-
+    if(error) WARNc2_S("%s %d", _("found issues"),error);
+    oyOptions_Release( &tags );
+  }
 
   png_read_clean:
   oyFree_m_ (data)
@@ -924,18 +947,27 @@ int      oPNGFilterPlug_ImageInputPNGRun (
 {
   /* module variables */
   oyFilterSocket_s * socket = 0;
+  oyStruct_s * data = 0;
   oyFilterNode_s * node = 0;
   int error = 0;
-  oyImage_s * image_in = 0;
+  oyImage_s * image_in = 0,
+            * output_image = 0;
+  oyOptions_s * tags = 0;
 
   /* file variables */
   const char * filename = 0;
 
   int info_good = 1;
 
+  if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S)
+  {
+    socket = oyFilterPlug_GetSocket( requestor_plug );
+    data = oyFilterSocket_GetData( socket );
+  }
+
   /* passing through the data reading */
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S &&
-     requestor_plug->remote_socket_->data)
+     data)
   {
     error = oyFilterPlug_ImageRootRun( requestor_plug, ticket );
 
@@ -947,18 +979,18 @@ int      oPNGFilterPlug_ImageInputPNGRun (
      * Still the plug-in should be prepared to initialise the image data before
      * normal processing occurs.
      */
-    socket = (oyFilterSocket_s*) requestor_plug;
+    socket = oyFilterSocket_Copy( (oyFilterSocket_s*)requestor_plug, 0 );
     requestor_plug = 0;
-    node = socket->node;
-
-  } else {
-    /* second option to open the file */
-    socket = requestor_plug->remote_socket_;
-    node = socket->node;
   }
 
+  node = oyFilterSocket_GetNode( socket );
+
   if(error <= 0)
-    filename = oyOptions_FindString( node->core->options_, "filename", 0 );
+  {
+    tags = oyFilterNode_GetTags( node );
+    filename = oyOptions_FindString( tags, "filename", 0 );
+    oyOptions_Release( &tags );
+  }
 
   image_in = oyImage_FromPNG( filename, (oyStruct_s*)node );
 
@@ -972,20 +1004,28 @@ int      oPNGFilterPlug_ImageInputPNGRun (
 
   if(error <= 0)
   {
-    socket->data = (oyStruct_s*)oyImage_Copy( image_in, 0 );
+    oyFilterSocket_SetData( socket, (oyStruct_s*)image_in );
   }
 
+  if(ticket)
+    output_image = oyPixelAccess_GetOutputImage( ticket );
+
   if(ticket &&
-     ticket->output_image &&
-     ticket->output_image->width == 0 &&
-     ticket->output_image->height == 0)
+     output_image &&
+     oyImage_GetWidth( output_image ) == 0 &&
+     oyImage_GetHeight( output_image ) == 0)
   {
-    ticket->output_image->width = image_in->width;
-    ticket->output_image->height = image_in->height;
-    oyImage_SetCritical( ticket->output_image, image_in->layout_[0], 0,0 );
+    oyImage_SetCritical( output_image, oyImage_GetPixelLayout( image_in,
+                                                               oyLAYOUT ),
+                         0,0,
+                         oyImage_GetWidth( image_in ),
+                         oyImage_GetHeight( image_in ) );
   }
 
   oyImage_Release( &image_in );
+  oyImage_Release( &output_image );
+  oyFilterNode_Release( &node );
+  oyFilterSocket_Release( &socket );
 
   /* return an error to cause the graph to retry */
   return info_good;
@@ -1032,7 +1072,7 @@ const char * oPNG_imageInputPNG_connectorGetText (
 }
 
 
-oyConnectorImaging_s oPNG_imageInputPNG_connector = {
+oyConnectorImaging_s_ oPNG_imageInputPNG_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,
                                (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorSocketText, /* getText */
@@ -1060,7 +1100,7 @@ oyConnectorImaging_s oPNG_imageInputPNG_connector = {
   1, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnectorImaging_s * oPNG_imageInputPNG_connectors[2] = 
+oyConnectorImaging_s_ * oPNG_imageInputPNG_connectors[2] = 
              { &oPNG_imageInputPNG_connector, 0 };
 
 
@@ -1123,7 +1163,7 @@ const char * oPNG_api4_image_input_png_ui_texts[] = {"name", "category", "help",
  *  @since   2009/09/09 (Oyranos: 0.1.10)
  *  @date    2009/09/09
  */
-oyCMMui_s oPNG_api4_ui_image_input_png = {
+oyCMMui_s_ oPNG_api4_ui_image_input_png = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -1153,7 +1193,7 @@ oyCMMui_s oPNG_api4_ui_image_input_png = {
  *  @since   2009/02/18 (Oyranos: 0.1.10)
  *  @date    2009/02/18
  */
-oyCMMapi4_s   oPNG_api4_image_input_png = {
+oyCMMapi4_s_ oPNG_api4_image_input_png = {
 
   oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -1170,11 +1210,11 @@ oyCMMapi4_s   oPNG_api4_image_input_png = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  oyFilterNode_TextToInfo_, /* oyCMMFilterNode_ContextToMem_f */
+  (oyCMMFilterNode_ContextToMem_f)oyFilterNode_TextToInfo_, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText */
   {0}, /* char context_type[8] */
 
-  &oPNG_api4_ui_image_input_png        /**< oyCMMui_s *ui */
+  &oPNG_api4_ui_image_input_png        /**< oyCMMui_s_ *ui */
 };
 
 char * oPNG_api7_image_input_png_properties[] =
@@ -1199,7 +1239,7 @@ char * oPNG_api7_image_input_png_properties[] =
  *  @since   2009/02/18 (Oyranos: 0.1.10)
  *  @date    2009/02/18
  */
-oyCMMapi7_s   oPNG_api7_image_input_png = {
+oyCMMapi7_s_ oPNG_api7_image_input_png = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
