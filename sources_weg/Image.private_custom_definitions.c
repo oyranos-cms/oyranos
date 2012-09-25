@@ -63,6 +63,7 @@ void oyImage_Release__Members( oyImage_s_ * image )
  */
 int oyImage_Init__Members( oyImage_s_ * image )
 {
+  image->tags = oyOptions_New(0);
   return 0;
 }
 
