@@ -719,7 +719,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   png_uint_32 width = 0;
   png_uint_32 height = 0;
   int spp = 0;         /* samples per pixel */
-  int byteps = 1;      /* byte per sample */
+  int bitps = 1;      /* byte per sample */
   /*double maxval = 0;*/
     
   /* PNG image variables */
@@ -727,7 +727,8 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   png_structp png_ptr = 0;
   png_infop info_ptr = 0;
   int color_type = 0,
-      num_passes;
+      num_passes,
+      channels_n = 0;
 
 
   if(filename)
@@ -797,11 +798,16 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   rewind( fp );
   png_init_io( png_ptr, fp );
   png_read_info( png_ptr, info_ptr );
+
+  num_passes = png_set_interlace_handling( png_ptr );
+  /* update after all the above changes to the png structures */
+  png_read_update_info( png_ptr, info_ptr );
+
   width = png_get_image_width( png_ptr, info_ptr );
   height = png_get_image_height( png_ptr, info_ptr );
-  byteps = png_get_bit_depth( png_ptr, info_ptr );
+  bitps = png_get_bit_depth( png_ptr, info_ptr );
   color_type = png_get_color_type( png_ptr, info_ptr );
-  
+  channels_n = png_get_channels( png_ptr, info_ptr );
 
   switch( color_type )
   {
@@ -820,9 +826,12 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
        spp = 4; break;
   default: goto png_read_clean;
   }
+  if(spp < channels_n)
+    spp = channels_n;
   pixel_layout |= oyChannels_m(spp);
 
-  switch(byteps)
+
+  switch(bitps)
   {
   case 1:
   case 2:
@@ -840,11 +849,6 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   message( oyMSG_DBG, object,
              OY_DBG_FORMAT_ " color_type: %d width: %d spp:%d channels: %d",
              OY_DBG_ARGS_, color_type, width, spp,oyToChannels_m(pixel_layout));
-
-  num_passes = png_set_interlace_handling( png_ptr );
-  /* update after all the above changes to the png structures */
-  png_read_update_info( png_ptr, info_ptr );
-
 
   {
 #if defined(PNG_iCCP_SUPPORTED)
@@ -878,7 +882,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
                                         height,
                                         oyToDataType_m(pixel_layout),
                                         0 );
-    oyPointer array2d = oyArray2d_GetData( a );
+    oyPointer * array2d = (oyPointer*) oyArray2d_GetData( a );
     int i;
 
     for( i = 0; i < num_passes; ++i )
@@ -887,7 +891,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
       for( y = 0; y < height; ++y )
         png_read_rows( png_ptr, &a->array2d[y], NULL, 1 );
 #else
-      png_read_rows( png_ptr, array2d, NULL, height );
+      png_read_row( png_ptr, array2d[0], NULL );
 #endif
 
     oyImage_SetData ( image_in, (oyStruct_s**) &a, 0,0,0,0,0,0 );
