@@ -1,6 +1,6 @@
   /** Support at least "name" for UIs. */
   oyCMMGetText_f       getText;
-  char              ** texts;          /**< zero terminated list for getText */
+  const char        ** texts;          /**< zero terminated list for getText */
 
   char               * connector_type; /**< a @ref registration string */
   /** Check if two oyCMMapi7_s filter connectors of type oyConnector_s can 

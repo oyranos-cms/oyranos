@@ -25,9 +25,12 @@ OYAPI int  OYEXPORT
                                        int                 socket_pos,
                                        oyObject_s        * object );
 OYAPI int  OYEXPORT
-                 oyFilterNode_Disconnect(oyFilterPlug_s    * edge );
+                 oyFilterNode_Disconnect (
+                                       oyFilterNode_s    * node,
+                                       int                 pos );
 OYAPI int  OYEXPORT
-                 oyFilterNode_EdgeCount( oyFilterNode_s    * node,
+                 oyFilterNode_EdgeCount (
+                                       oyFilterNode_s    * node,
                                        int                 input,
                                        int                 flags );
 OYAPI int  OYEXPORT
