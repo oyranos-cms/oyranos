@@ -563,3 +563,24 @@ OYAPI char * OYEXPORT
 
   return text;
 }
+
+/** Function  oyFilterGraph_GetOptions
+ *  @memberof oyFilterGraph_s
+ *  @brief    Get options
+ *
+ *  @param[in]     graph               a filter graph
+ *  @return                            the options
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/25
+ *  @since    2012/09/25 (Oyranos: 0.5.0)
+ */
+OYAPI oyOptions_s * OYEXPORT
+           oyFilterGraph_GetOptions  ( oyFilterGraph_s   * graph )
+{
+  oyFilterGraph_s_ * s = (oyFilterGraph_s_*)graph;
+
+  oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
+
+  return oyOptions_Copy( s->options, 0 );
+}

@@ -35,4 +35,5 @@ OYAPI char * OYEXPORT
                                        const char        * head_line,
                                        int                 reserved,
                                        oyAlloc_f           allocateFunc );
-
+OYAPI oyOptions_s * OYEXPORT
+           oyFilterGraph_GetOptions  ( oyFilterGraph_s   * graph );
