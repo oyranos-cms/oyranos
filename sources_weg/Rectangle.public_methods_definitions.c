@@ -394,7 +394,7 @@ OYAPI double  OYEXPORT
     return 0;
 }
 
-/** Function  oyRectangle_GetGeo1
+/** Function  oyRectangle_SetGeo1
  *  @brief    Set single geometry
  *  @memberof oyRectangle_s
  *
@@ -402,23 +402,23 @@ OYAPI double  OYEXPORT
  *  @date     2012/09/25
  *  @since    2012/09/25 (Oyranos: 0.5.0)
  */
-OYAPI void  OYEXPORT
+OYAPI double *  OYEXPORT
                  oyRectangle_SetGeo1 ( oyRectangle_s     * rectangle,
-                                       int                 x_y_w_h,
-                                       double              value )
+                                       int                 x_y_w_h )
 {
   oyRectangle_s_ * s = (oyRectangle_s_*)rectangle;
   if(!s)
-    return;
+    return NULL;
 
   if(x_y_w_h == 0)
-    s->x = value;
+    return &s->x;
   else if(x_y_w_h == 1)
-    s->y = value;
+    return &s->y;
   else if(x_y_w_h == 2)
-    s->width = value;
+    return &s->width;
   else if(x_y_w_h == 3)
-    s->height = value;
+    return &s->height;
+  return NULL;
 }
 
 /** Function  oyRectangle_Show

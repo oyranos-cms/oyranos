@@ -49,10 +49,9 @@ OYAPI void  OYEXPORT
                                        double              y,
                                        double              width,
                                        double              height );
-OYAPI void  OYEXPORT
+OYAPI double *  OYEXPORT
                  oyRectangle_SetGeo1 ( oyRectangle_s     * rectangle,
-                                       int                 x_y_w_h,
-                                       double              value );
+                                       int                 x_y_w_h );
 OYAPI void  OYEXPORT
                  oyRectangle_GetGeo  ( oyRectangle_s     * rectangle,
                                        double            * x,
