@@ -375,18 +375,28 @@ int            oyFilterNode_SetData  ( oyFilterNode_s    * node,
  *  @memberof oyFilterNode_s
  *  @brief    Disconnect two nodes by a edge
  *
- *  @param         edge                plug
+ *  @param         node                a node
+ *  @param         pos                 the plug number to release
  *  @return                            error
  *
- *  @version Oyranos: 0.1.10
- *  @since   2009/03/04 (Oyranos: 0.1.10)
- *  @date    2009/03/04
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/25
+ *  @since    2009/03/04 (Oyranos: 0.1.10)
  */
-int            oyFilterNode_Disconnect(oyFilterPlug_s    * edge )
+int            oyFilterNode_Disconnect(oyFilterNode_s    * node,
+                                       int                 pos )
 {
-  oyFilterPlug_s * s = edge;
-  oyFilterSocket_Callback( s, oyCONNECTOR_EVENT_RELEASED );
-  oyFilterSocket_Release( (oyFilterSocket_s**)&oyFilterPlugPriv_m(s)->remote_socket_ );
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node;
+  oyFilterPlug_s_ * edge;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 );
+
+  edge = s->plugs[pos];
+  oyFilterSocket_Callback( (oyFilterPlug_s*)edge, oyCONNECTOR_EVENT_RELEASED );
+  oyFilterSocket_Release( (oyFilterSocket_s**)&edge->remote_socket_ );
   return 0;
 }
 
