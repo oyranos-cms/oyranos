@@ -199,6 +199,36 @@ OYAPI oyStruct_s * OYEXPORT
   else
     return s->data;
 }
+/** Function  oyFilterSocket_SetData
+ *  @memberof oyFilterSocket_s
+ *  @brief    Set oyFilterSocket_s::data
+ *
+ *  @param[in]     socket              the socket
+ *  @param[in]     data                the data
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/09/25 (Oyranos: 0.5.0)
+ *  @date    2012/09/25
+ */
+OYAPI int OYEXPORT
+             oyFilterSocket_SetData  ( oyFilterSocket_s  * socket,
+                                       oyStruct_s        * data )
+{
+  oyFilterSocket_s_ * s = (oyFilterSocket_s_*)socket;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 1 )
+
+  if(data->copy)
+    s->data = data->copy(data, 0);
+  else
+    s->data = data;
+
+  return 0;
+}
 /** Function  oyFilterSocket_GetPlugs
  *  @memberof oyFilterSocket_s
  *  @brief    Access oyFilterSocket_s::requesting_plugs_
