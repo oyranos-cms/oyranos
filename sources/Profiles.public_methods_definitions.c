@@ -30,7 +30,10 @@ OYAPI oyProfiles_s * OYEXPORT
   int error = 0;
 
   oyProfile_s * tmp = 0, * pattern = 0;
-  char  ** names = 0, *t;
+  char  ** names = 0;
+#if !defined(HAVE_POSIX)
+  char *t;
+#endif
   uint32_t names_n = 0, i = 0, j = 0, n = 0,
            patterns_n = oyProfiles_Count(patterns);
   int sorts = 0;
@@ -76,8 +79,8 @@ OYAPI oyProfiles_s * OYEXPORT
       {
         tmp = oyProfile_FromFile( sort[i*2+1], OY_NO_CACHE_WRITE, 0 );
         oyProfiles_MoveIn(tmps, &tmp, -1);
-        t = (char*)sort[i*2];
 #if !defined(HAVE_POSIX)
+        t = (char*)sort[i*2];
         oyFree_m_(t);
 #endif
       }

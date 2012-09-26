@@ -36,6 +36,12 @@ oyName_s *   oyName_new              ( oyObject_s          object )
 
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
+  if(error)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
   s->type = type;
 
   s->copy = (oyStruct_Copy_f) oyName_copy;

@@ -216,6 +216,16 @@ OYAPI int  OYEXPORT
                     oyObject_GetId(   obs->observer->oy_) );
           }
           t_err = oyObserver_SignalSend( obs, signal_type, signal_data );
+          if(t_err)
+          {
+            WARNc7_S( "oyObserver_SignalSend() returned %d\n\t%s %s: %s[%d]->%s[%d]",
+                    t_err, _("Signal"),
+                    oySignalToString(signal_type),
+                    oyStruct_GetText( obs->model, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->model->oy_),
+                    oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
+                    oyObject_GetId(   obs->observer->oy_) );
+          }
           ++result;
         }
         else

@@ -80,14 +80,9 @@ int oyHash_Init__Members( oyHash_s_ * hash )
 int oyHash_Copy__Members( oyHash_s_ * dst, oyHash_s_ * src)
 {
   int error = 0;
-  oyAlloc_f allocateFunc_ = 0;
-  oyDeAlloc_f deallocateFunc_ = 0;
 
   if(!dst || !src)
     return 1;
-
-  allocateFunc_ = dst->oy_->allocateFunc_;
-  deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
 
