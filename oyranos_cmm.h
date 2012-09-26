@@ -18,9 +18,13 @@
 #ifndef OYRANOS_CMM_H
 #define OYRANOS_CMM_H
 
-#include "oyranos.h"
-#include "oyranos_alpha.h"
+#include "oyFilterPlug_s.h"
+#include "oyPixelAccess_s.h"
 #include "oyPointer_s.h"
+#include "oyStruct_s.h"
+
+#include "oyranos.h"
+#include "oyranos_icc.h"
 
 #ifdef __cplusplus
 extern "C" {

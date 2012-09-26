@@ -15,6 +15,10 @@
  *
  * @author Joseph Simon <j.simon.iii@astound.net>
 */
+#include "oyCMMapi8_s_.h"
+#include "oyCMMinfo_s_.h"
+#include "oyCMMui_s_.h"
+_
 #include "oyranos_cmm.h"
 #include "oyranos_debug.h"
 #include "oyranos_i18n.h"
@@ -96,7 +100,7 @@ int          LoadDevice              ( oyConfig_s        * device,
 
 oyMessage_f message = 0;
 
-extern oyCMMapi8_s _api8;
+extern oyCMMapi8_s_ _api8;
 extern oyRankPad _rank_map[];
 
 int CMMInit                          ( oyStruct_s        * filter )
@@ -853,7 +857,7 @@ const char * _api8_ui_texts[] = {"name", "help", "device_class", "icc_profile_cl
  *  @since   2009/09/06 (Oyranos: 0.1.10)
  *  @date    2009/09/06
  */
-oyCMMui_s _api8_ui = {
+oyCMMui_s_ _api8_ui = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -883,7 +887,7 @@ oyIcon_s _api8_icon = {
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/12/22
  */
-oyCMMapi8_s _api8 = {
+oyCMMapi8_s_ _api8 = {
   oyOBJECT_CMM_API8_S,
   0,0,0,
   0,                         /**< next */
@@ -976,7 +980,7 @@ const char * _texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2007/12/12 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
-oyCMMinfo_s _cmm_module = {
+oyCMMinfo_s_ _cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,

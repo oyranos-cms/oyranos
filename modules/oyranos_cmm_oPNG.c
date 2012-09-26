@@ -26,8 +26,9 @@
 #include "oyranos_cmm.h"
 #include "oyranos_generic.h"
 #include "oyranos_helper.h"
-#include "oyranos_icc.h"
 #include "oyranos_i18n.h"
+#include "oyranos_icc.h"
+#include "oyranos_image_internal.h"
 #include "oyranos_io.h"
 #include "oyranos_definitions.h"
 #include "oyranos_string.h"
@@ -198,7 +199,7 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
 
   int width = oyImage_GetWidth( image );
   int height = oyImage_GetHeight( image );
-  int pixel_layout = oyImage_PixelLayoutGet( image, oyLAYOUT );
+  int pixel_layout = oyImage_GetPixelLayout( image, oyLAYOUT );
   oyProfile_s * prof = oyImage_GetProfile( image );
   const char * colourspacename = oyProfile_GetText( prof,
                                                     oyNAME_DESCRIPTION );
