@@ -47,7 +47,7 @@ int            qarzCMMMessageFuncSet ( oyMessage_f         message_func );
 oyMessage_f message = 0;
 
 extern oyCMMapi8_s qarz_api8;
-oyRankPad qarz_rank_map[];
+oyRankMap qarz_rank_map[];
 
 int          qarzDeviceFromName_     ( const char        * device_name,
                                        oyOptions_s       * options,
@@ -996,13 +996,13 @@ int            qarzConfig_Rank       ( oyConfig_s        * config )
 }
 
 /** @instance qarz_rank_map
- *  @brief    oyRankPad map for mapping device to configuration informations
+ *  @brief    oyRankMap map for mapping device to configuration informations
  *
  *  @version Oyranos: 0.1.10
  *  @date    2009/01/27
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  */
-oyRankPad qarz_rank_map[] = {
+oyRankMap qarz_rank_map[] = {
   {"device_name", 2, -1, 0},           /**< is good */
   {"profile_name", 0, 0, 0},           /**< non relevant for device properties*/
   {"host", 1, 0, 0},                   /**< nice to match */
@@ -1137,7 +1137,7 @@ oyCMMapi8_s qarz_api8 = {
   &qarz_api8_ui,             /**< device class UI name and help */
   &qarz_api8_icon,           /**< device icon */
 
-  qarz_rank_map              /**< oyRankPad ** rank_map */
+  qarz_rank_map              /**< oyRankMap ** rank_map */
 };
 
 /* QARZ_MONITOR_REGISTRATION -------------------------------------------------*/
