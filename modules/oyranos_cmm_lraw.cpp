@@ -14,11 +14,23 @@
  */
 
 #include "config.h"
-#include "oyranos_alpha.h"
+
+#include "oyCMMapi4_s.h"
+#include "oyCMMapi4_s_.h"
+#include "oyCMMapi7_s.h"
+#include "oyCMMapi7_s_.h"
+#include "oyCMMinfo_s_.h"
+#include "oyCMMui_s_.h"
+#include "oyConnectorImaging_s_.h"
+#include "oyFilterNode_s_.h"         /* for oyFilterNode_TextToInfo_ */
+
 #include "oyranos_cmm.h"
+#include "oyranos_devices.h"
+#include "oyranos_generic.h"
 #include "oyranos_helper.h"
 #include "oyranos_icc.h"
 #include "oyranos_i18n.h"
+#include "oyranos_image_internal.h"
 #include "oyranos_io.h"
 #include "oyranos_definitions.h"
 #include "oyranos_string.h"
@@ -49,8 +61,8 @@ extern "C" {
 int lrawCMMWarnFunc( int code, const oyPointer context, const char * format, ... );
 oyMessage_f message = lrawCMMWarnFunc;
 
-extern oyCMMapi4_s   lraw_api4_image_input_libraw;
-extern oyCMMapi7_s   lraw_api7_image_input_libraw;
+extern oyCMMapi4_s_   lraw_api4_image_input_libraw;
+extern oyCMMapi7_s_   lraw_api7_image_input_libraw;
 
 #ifdef __cplusplus
 } /* extern "C" */
@@ -185,7 +197,7 @@ oyPointer  lrawFilterNode_LibrawContextToMem (
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc )
 {
-  return oyFilterNode_TextToInfo_( node, size, allocateFunc );
+  return oyFilterNode_TextToInfo_( (oyFilterNode_s_*)node, size, allocateFunc );
 }
 
 
@@ -237,7 +249,7 @@ const char *lraw_texts[4] = {"name","copyright","manufacturer",0};
  *  @date    2009/06/14
  *  @since   2009/06/14 (Oyranos: 0.1.10)
  */
-oyCMMInfo_s lraw_cmm_module = {
+oyCMMinfo_s_ lraw_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,
@@ -553,6 +565,13 @@ int      lrawFilterPlug_ImageInputRAWRun (
 
   libraw_output_params_t * params = rip.output_params_ptr();
 
+  if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S)
+    socket = oyFilterPlug_GetSocket( requestor_plug );
+  else if(requestor_plug->type_ == oyOBJECT_FILTER_SOCKET_S)
+    socket = (oyFilterSocket_s*) requestor_plug;
+
+  node = oyFilterSocket_GetNode( socket );
+
   message(oyMSG_DBG, (oyStruct_s*)node,
           OY_DBG_FORMAT_ " output_color was: %d  output_bps: %d no_auto_bright: %d\ng[0] %g g[1] %g",
           OY_DBG_ARGS_,
@@ -563,33 +582,26 @@ int      lrawFilterPlug_ImageInputRAWRun (
   params->half_size = 0;
   params->four_color_rgb = 0;
 
+  oyImage_s * image = (oyImage_s*)oyFilterSocket_GetData( socket );
   /* passing through the data reading */
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S &&
-     requestor_plug->remote_socket_->data)
+     image)
   {
-    socket = requestor_plug->remote_socket_;
     error = oyFilterPlug_ImageRootRun( requestor_plug, ticket );
+    oyImage_Release( &image );
+    oyFilterSocket_Release( &socket );
+    oyFilterNode_Release( &node );
 
     return error;
 
-  } else if(requestor_plug->type_ == oyOBJECT_FILTER_SOCKET_S)
-  {
-    /* To open the a image here seems not so straight forward.
-     * Still the plug-in should be prepared to initialise the image data before
-     * normal processing occurs.
-     */
-    socket = (oyFilterSocket_s*) requestor_plug;
-    requestor_plug = 0;
-    node = socket->node;
-
-  } else {
-    /* second option to open the file */
-    socket = requestor_plug->remote_socket_;
-    node = socket->node;
   }
 
   if(error <= 0)
-    filename = oyOptions_FindString( node->core->options_, "filename", 0 );
+    {
+      oyOptions_s * tags = oyFilterNode_GetTags( node );
+      filename = oyOptions_FindString( tags, "filename", 0 );
+      oyOptions_Release( &tags );
+    }
 
   if(filename)
     error = rip.open_file( filename );
@@ -614,7 +626,8 @@ int      lrawFilterPlug_ImageInputRAWRun (
   params->use_camera_wb = 1;
   params->no_auto_bright = 1;
 
-  int render = oyOptions_FindString( node->core->options_, "render", "0" ) == NULL ? 1 : 0;
+  oyOptions_s * node_options = oyFilterNode_GetOptions( node, 0 );
+  int render = oyOptions_FindString( node_options, "render", "0" ) == NULL ? 1 : 0;
 
   if(render)
   {
@@ -777,7 +790,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
   pixel_type = oyChannels_m(spp) | oyDataType_m(data_type);
   int32_t n = 0;
   error = oyOptions_Filter( &options, &n, 0,
-                      oyBOOLEAN_INTERSECTION, "///config",node->core->options_);
+                      oyBOOLEAN_INTERSECTION, "///config",node_options);
   device = oyREgetColorInfo( filename, params, options );
   error = oyDeviceGetProfile( device, 0, &prof );
   if(!prof || error != 0)
@@ -803,7 +816,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
 
 
   oyOptions_s * image_in_tags = oyImage_GetTags( image_in );
-  if(oyOptions_FindString( node->core->options_, "device", "1" ) != NULL)
+  if(oyOptions_FindString( node_options, "device", "1" ) != NULL)
   {
     oyOptions_MoveInStruct( &image_in_tags,
                             "//" OY_TYPE_STD OY_SLASH CMM_NICK "/device",
@@ -812,8 +825,11 @@ int      lrawFilterPlug_ImageInputRAWRun (
   oyConfig_Release( &device );
 
   if(oy_debug && image_in)
-    oyArray2d_ToPPM_  ( (oyArray2d_s*)image_in->pixel_data,
-                        "test_oy_dbg_lraw.ppm" );
+  {
+    oyArray2d_s * a = (oyArray2d_s*)oyImage_GetPixelData( image_in );
+    oyArray2d_ToPPM_( a, "test_oy_dbg_lraw.ppm" );
+    oyArray2d_Release( &a );
+  }
 
   oyProfile_Release( &prof );
 
@@ -833,21 +849,29 @@ int      lrawFilterPlug_ImageInputRAWRun (
 
   if(error <= 0)
   {
-    socket->data = (oyStruct_s*)oyImage_Copy( image_in, 0 );
+    oyFilterSocket_SetData( socket, (oyStruct_s*)image_in );
   }
 
+  oyImage_s * output_image = oyPixelAccess_GetOutputImage( ticket );
   if(ticket &&
-     ticket->output_image &&
-     ticket->output_image->width == 0 &&
-     ticket->output_image->height == 0)
+     output_image &&
+     oyImage_GetWidth( output_image ) == 0 &&
+     oyImage_GetHeight( output_image ) == 0)
   {
-    ticket->output_image->width = image_in->width;
-    ticket->output_image->height = image_in->height;
-    oyImage_SetCritical( ticket->output_image, image_in->layout_[0], 0,0 );
+    oyImage_SetCritical( output_image, oyImage_GetPixelLayout( image_in,
+                                                               oyLAYOUT ),
+                         0,0,
+                         oyImage_GetWidth( image_in ),
+                         oyImage_GetHeight( image_in ) );
   }
 
   oyImage_Release( &image_in );
   oyOptions_Release( &image_in_tags );
+  oyOptions_Release( &node_options );
+  oyImage_Release( &image );
+  oyImage_Release( &output_image );
+  oyFilterSocket_Release( &socket );
+  oyFilterNode_Release( &node );
 
   /* return an error to cause the graph to retry */
   return 1;
@@ -962,7 +986,7 @@ int  lrawUiGet                       ( oyOptions_s       * options,
 
 oyDATATYPE_e lraw_data_types[3] = {oyUINT8, oyUINT16, (oyDATATYPE_e)0};
 
-oyConnectorImaging_s lraw_imageInputRAW_connector = {
+oyConnectorImaging_s_ lraw_imageInputRAW_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,
                                (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorSocketText, /* getText */
@@ -990,7 +1014,7 @@ oyConnectorImaging_s lraw_imageInputRAW_connector = {
   1, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnectorImaging_s * lraw_imageInputRAW_connectors[2] = 
+oyConnectorImaging_s_ * lraw_imageInputRAW_connectors[2] = 
              { &lraw_imageInputRAW_connector, 0 };
 
 
@@ -1033,7 +1057,7 @@ const char * oyra_api4_ui_image_input_libraw_texts[] = {"name", "help", 0};
  *  @since   2009/09/09 (Oyranos: 0.1.10)
  *  @date    2009/09/09
  */
-oyCMMui_s oraw_api4_ui_image_input_libraw = {
+oyCMMui_s_   oraw_api4_ui_image_input_libraw = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -1063,7 +1087,7 @@ oyCMMui_s oraw_api4_ui_image_input_libraw = {
  *  @date    2009/06/14
  *  @since   2009/06/14 (Oyranos: 0.1.10)
  */
-oyCMMapi4_s   lraw_api4_image_input_libraw = {
+oyCMMapi4_s_ lraw_api4_image_input_libraw = {
 
   oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -1110,7 +1134,7 @@ const char * lraw_api7_image_input_raw_properties[] =
  *  @date    2009/06/14
  *  @since   2009/06/14 (Oyranos: 0.1.10)
  */
-oyCMMapi7_s   lraw_api7_image_input_libraw = {
+oyCMMapi7_s_ lraw_api7_image_input_libraw = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
