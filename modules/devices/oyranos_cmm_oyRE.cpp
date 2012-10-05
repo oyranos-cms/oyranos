@@ -12,8 +12,13 @@
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *  @since    2009/07/05
  */
+#include "oyCMMapi8_s_.h"
+#include "oyCMMinfo_s_.h"
+#include "oyCMMui_s_.h"
+#include "oyProfile_s_.h"
 
 #include <oyranos_cmm.h>
+#include "oyranos_devices.h"
 #include <oyranos_string.h>
 
 #include <string.h>
@@ -81,7 +86,7 @@ const char * Api8UiGetText           ( const char        * select,
                                        oyStruct_s        * context );
 
 /** @instance _rank_map
- *  @brief    oyRankPad map for mapping device to configuration informations
+ *  @brief    oyRankMap map for mapping device to configuration informations
  *
  *  @version Oyranos: 0.3.0
  *  @since   2009/01/27 (Oyranos: 0.1.10)
@@ -89,7 +94,7 @@ const char * Api8UiGetText           ( const char        * select,
  *
  *  \todo { Pick better rank fields }
  */
-oyRankPad _rank_map[] = {
+oyRankMap _rank_map[] = {
    {const_cast < char *>("device_name"), 0, 0, 0},                   /**< Unused?*/
    {const_cast < char *>(PRFX_LRAW "driver_version"), 2, -1, 0},               /**< is good */
    {const_cast < char *>("profile_name"), 0, 0, 0},                  /**< non relevant for device properties*/
@@ -168,7 +173,7 @@ oyRankPad _rank_map[] = {
 
 oyMessage_f message = 0;
 
-extern oyCMMapi8_s _api8;
+extern oyCMMapi8_s_ _api8;
 
 
 bool is_raw( int id );
@@ -385,8 +390,8 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    oyConfig_s *device = NULL;
    device = oyConfig_FromRegistration(CMM_BASE_REG, 0);
    /*A device *must* have a device_name!*/
-   oyOptions_SetFromText(&device->backend_core, CMM_BASE_REG OY_SLASH "device_name", "dummy", OY_CREATE_NEW);
-   oyOptions_SetFromText(&device->backend_core, CMM_BASE_REG OY_SLASH "prefix",
+   oyOptions_SetFromText(oyConfig_GetOptions(device,"backend_core"), CMM_BASE_REG OY_SLASH "device_name", "dummy", OY_CREATE_NEW);
+   oyOptions_SetFromText(oyConfig_GetOptions(device,"backend_core"), CMM_BASE_REG OY_SLASH "prefix",
                           PRFX_EXIF "," PRFX_LRAW, OY_CREATE_NEW);
 
    if (command_list) {
@@ -394,21 +399,21 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
       message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                "Backend core:\n%s", _DBG_ARGS_,
-               oyOptions_GetText(device->backend_core, oyNAME_NICK));
+               oyOptions_GetText(*oyConfig_GetOptions(device,"backend_core"), oyNAME_NICK));
       message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX
                "Data:\n%s", _DBG_ARGS_,
-               oyOptions_GetText(device->data, oyNAME_NICK));
+               oyOptions_GetText(*oyConfig_GetOptions(device,"data"), oyNAME_NICK));
 
       const char **device_list = LibRaw::cameraList();
       /*int num_devices = LibRaw::cameraCount();*/
 
       /*Handle "driver_version" option [IN] */
       if (version_opt) {
-         error = oyOptions_SetFromText(&device->data,
+         error = oyOptions_SetFromText(oyConfig_GetOptions(device,"data"),
                                        CMM_BASE_REG OY_SLASH "driver_version_string",
                                        driver_version_string,
                                        OY_CREATE_NEW);
-         error = oyOptions_SetFromInt(&device->data,
+         error = oyOptions_SetFromInt(oyConfig_GetOptions(device,"data"),
                                       CMM_BASE_REG OY_SLASH "driver_version_number",
                                       driver_version_number,
                                       0,
@@ -418,7 +423,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
       /*Handle "device_handle" option [OUT:informative]*/
       if (!handle_opt)
-         error = oyOptions_SetFromText(&device->data,
+         error = oyOptions_SetFromText(oyConfig_GetOptions(device,"data"),
                                        CMM_BASE_REG OY_SLASH "device_handle",
                                        DUMMY,
                                        OY_CREATE_NEW);
@@ -462,22 +467,22 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
            ++i;
          }
 
-         oyOptions_SetFromText ( &device->data,
+         oyOptions_SetFromText ( oyConfig_GetOptions(device,"data"),
                                  CMM_BASE_REG OY_SLASH "supported_devices_info",
                                  string_list,
                                  OY_CREATE_NEW | OY_STRING_LIST );
       }
 
       /*Copy the rank map*/
-      device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
+      oyConfig_SetRankMap( device, _rank_map );
 
    } else if (command_properties) {
       /* "properties" call section */
 
-      const char * t = oyOptions_GetText(device->backend_core, oyNAME_NICK);
+      const char * t = oyOptions_GetText(*oyConfig_GetOptions(device,"backend_core"), oyNAME_NICK);
       message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Backend core:\n%s", _DBG_ARGS_, t?t:"");
-      t = oyOptions_GetText(device->data, oyNAME_NICK);
+      t = oyOptions_GetText(*oyConfig_GetOptions(device,"data"), oyNAME_NICK);
       message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Data:\n%s", _DBG_ARGS_, t?t:"");
 
@@ -513,13 +518,13 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
                                        OY_CREATE_NEW );
         oyProfile_DeviceAdd( p, device, options );
         oyProfile_Release( &profile );
-        oyOptions_MoveInStruct( &device->data,
+        oyOptions_MoveInStruct( oyConfig_GetOptions(device,"data"),
                                 CMM_BASE_REG OY_SLASH "icc_profile.add_meta",
                                 (oyStruct_s**)&p, OY_CREATE_NEW );
       }
 
       /*Copy the rank map*/
-      device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
+      oyConfig_SetRankMap( device, _rank_map );
    } else {
       /* not to be reached section, e.g. warning */
       oyConfig_Release(&device);
@@ -591,22 +596,22 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          int error = 0;
          oyConfig_s *device = oyConfigs_Get(devices, i);
 
-         const char * t = oyOptions_GetText(device->backend_core, oyNAME_NICK);
+         const char * t = oyOptions_GetText(*oyConfig_GetOptions(device,"backend_core"), oyNAME_NICK);
          message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Backend core:\n%s", _DBG_ARGS_, t?t:"");
-         t = oyOptions_GetText(device->data, oyNAME_NICK);
+         t = oyOptions_GetText(*oyConfig_GetOptions(device,"data"), oyNAME_NICK);
          message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Data:\n%s", _DBG_ARGS_, t?t:"");
 
          /*Handle "driver_version" option [IN/OUT] */
          oyOption_s *version_opt_dev = oyConfig_Find(device, "driver_version");
          if (!version_opt_dev && version_opt) {
-            error = oyOptions_SetFromText(&device->backend_core,
+            error = oyOptions_SetFromText(oyConfig_GetOptions(device,"backend_core"),
                                           CMM_BASE_REG OY_SLASH "driver_version_string",
                                           driver_version_string,
                                           OY_CREATE_NEW);
             if(error) WARNc2_S("%s %d", _("found issues"),error);
-            error = oyOptions_SetFromInt(&device->backend_core,
+            error = oyOptions_SetFromInt(oyConfig_GetOptions(device,"backend_core"),
                                          CMM_BASE_REG OY_SLASH "driver_version_number",
                                          driver_version_number,
                                          0,
@@ -619,7 +624,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyOption_s *handle_opt_dev = oyConfig_Find(device, "device_handle");
          if (!handle_opt_dev && handle_opt)
 	 {
-            error = oyOptions_SetFromText(&device->data,
+            error = oyOptions_SetFromText(oyConfig_GetOptions(device,"data"),
                                           CMM_BASE_REG OY_SLASH "device_handle",
                                           DUMMY,
                                           OY_CREATE_NEW);
@@ -631,8 +636,8 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          //If used, it should become a function.
 
          /*Create static rank_map, if not already there*/
-         if (!device->rank_map)
-            device->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
+         if (!oyConfig_GetRankMap(device))
+            oyConfig_SetRankMap( device, _rank_map );
 
          /*Cleanup*/
          oyConfig_Release(&device);
@@ -646,10 +651,10 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyConfig_s *device = oyConfigs_Get(devices, i);
          oyConfig_s *device_new = oyConfig_FromRegistration(CMM_BASE_REG, 0);
 
-         const char * t = oyOptions_GetText(device->backend_core, oyNAME_NICK);
+         const char * t = oyOptions_GetText(*oyConfig_GetOptions(device,"backend_core"), oyNAME_NICK);
          message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Backend core:\n%s", _DBG_ARGS_, t?t:"");
-         t = oyOptions_GetText(device->data, oyNAME_NICK);
+         t = oyOptions_GetText(*oyConfig_GetOptions(device,"data"), oyNAME_NICK);
          message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Data:\n%s", _DBG_ARGS_, t?t:"");
 
@@ -663,10 +668,10 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          if (handle_opt_dev) {
             DeviceFromHandle_opt(device_new, handle_opt_dev);
             oyOption_s *tmp = oyOption_Copy(handle_opt_dev, 0);
-            oyOptions_MoveIn(device_new->data, &tmp, -1);
+            oyOptions_MoveIn(*oyConfig_GetOptions(device_new,"data"), &tmp, -1);
             oyOption_Release(&handle_opt_dev);
          } else { /*Ignore device without a "device_handle"*/
-           if(oyOptions_Count( device->backend_core ) < 2)
+           if(oyOptions_Count( *oyConfig_GetOptions(device,"backend_core") ) < 2)
              message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
                      _DBG_ARGS_, "The \"device_handle\" is missing from config object!");
             oyConfig_Release(&device);
@@ -678,7 +683,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyOption_s *version_opt_dev = oyConfig_Find(device, "driver_version");
          if (version_opt_dev) {
             oyOption_s *tmp = oyOption_Copy(version_opt_dev, 0);
-            oyOptions_MoveIn(device_new->backend_core, &tmp, -1);
+            oyOptions_MoveIn(*oyConfig_GetOptions(device_new,"backend_core"), &tmp, -1);
             oyOption_Release(&version_opt_dev);
          }
 
@@ -691,12 +696,12 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
             free(device_context);
 
             oyOption_s *tmp = oyOption_Copy(context_opt_dev, 0);
-            oyOptions_MoveIn(device_new->data, &tmp, -1);
+            oyOptions_MoveIn(*oyConfig_GetOptions(device_new,"data"), &tmp, -1);
             oyOption_Release(&context_opt_dev);
          }
 
          /*Copy the rank map*/
-         device_new->rank_map = oyRankMapCopy(_rank_map, device->oy_->allocateFunc_);
+         oyConfig_SetRankMap( device_new, _rank_map );
 
          /*Cleanup*/
          /* Remove old, add new device */
@@ -794,7 +799,7 @@ const char * _api8_ui_texts[] = {"name", "help", "device_class", "icc_profile_cl
  *  @since   2009/09/06 (Oyranos: 0.1.10)
  *  @date    2009/12/28
  */
-oyCMMui_s _api8_ui = {
+oyCMMui_s_ _api8_ui = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -824,7 +829,7 @@ oyIcon_s _api8_icon = {
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/12/28
  */
-oyCMMapi8_s _api8 = {
+oyCMMapi8_s_ _api8 = {
    oyOBJECT_CMM_API8_S,
    0, 0, 0,
    (oyCMMapi_s*) 0,                                                   /**< next */
@@ -839,10 +844,10 @@ oyCMMapi8_s _api8 = {
    Configs_Modify,                                                    /**< oyConfigs_Modify_f oyConfigs_Modify */
    Config_Rank,                                                       /**< oyConfig_Rank_f oyConfig_Rank */
 
-  &_api8_ui,                                                          /**< device class UI name and help */
+  (oyCMMui_s*)&_api8_ui,                                              /**< device class UI name and help */
   &_api8_icon,                                                        /**< device icon */
 
-   _rank_map                                                          /**< oyRankPad ** rank_map */
+   _rank_map                                                          /**< oyRankMap ** rank_map */
 };
 
 /**
@@ -899,7 +904,7 @@ const char *_texts[5] = { "name", "copyright", "manufacturer", "help", 0 };
  *  @since   2007/12/12 (Oyranos: 0.1.10)
  *  @date    2009/06/23
  */
-oyCMMInfo_s _cmm_module = {
+oyCMMinfo_s_ _cmm_module = {
 
    oyOBJECT_CMM_INFO_S,/**< ::type; the object type */
    0, 0, 0,            /**< static objects omit these fields */
@@ -927,26 +932,26 @@ oyCMMInfo_s _cmm_module = {
  * \todo { Untested }
  */
 #define DFC_OPT_ADD_INT_ARR(name, i) if(!error) \
-        error = oyOptions_SetFromInt( &((*config)->backend_core), \
+        error = oyOptions_SetFromInt( oyConfig_GetOptions(*config,"backend_core"), \
                                       CMM_BASE_REG OY_SLASH PRFX_LRAW #name, \
                                       params->name[i], i, OY_CREATE_NEW );
 #define DFC_OPT_ADD_INT(name) if(!error) \
-        error = oyOptions_SetFromInt( &((*config)->backend_core), \
+        error = oyOptions_SetFromInt( oyConfig_GetOptions(*config,"backend_core"), \
                                       CMM_BASE_REG OY_SLASH PRFX_LRAW #name, \
                                       params->name, 0, OY_CREATE_NEW );
 #define DFC_OPT_ADD_FLOAT_ARR(name, i, n) if(!error) { \
 if (i==n-1) { \
    oyOption_s *opt = oyOption_FromRegistration(CMM_BASE_REG OY_SLASH PRFX_LRAW #name, 0);\
    oyOption_SetFromDouble(opt, params->name[i], i, 0); \
-   oyOptions_MoveIn((*config)->backend_core, &opt, -1); \
+   oyOptions_MoveIn(*oyConfig_GetOptions(*config,"backend_core"), &opt, -1); \
 } else { \
-   oyOption_s *opt = oyOptions_Find((*config)->backend_core, #name); \
+   oyOption_s *opt = oyOptions_Find(*oyConfig_GetOptions(*config,"backend_core"), #name); \
    oyOption_SetFromDouble(opt, params->name[i], i, 0); \
 } }
 #define DFC_OPT_ADD_FLOAT(name) if(!error) { \
         oyOption_s *opt = oyOption_FromRegistration(CMM_BASE_REG OY_SLASH PRFX_LRAW #name, 0); \
         oyOption_SetFromDouble(opt, params->name, 0, 0); \
-        oyOptions_MoveIn((*config)->backend_core, &opt, -1); \
+        oyOptions_MoveIn(*oyConfig_GetOptions(*config,"backend_core"), &opt, -1); \
 }
 int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
 {
@@ -1024,7 +1029,7 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
 
       //The std::auto_ptr::get() method returns the pointer owned by the auto_ptr
       if (device_handle.get() && device_handle->good())
-         DeviceFromHandle(&device->backend_core, device_handle);
+         DeviceFromHandle(oyConfig_GetOptions(device,"backend_core"), device_handle);
       else {
          int level = oyMSG_WARN;
          if(filename && strcmp( filename, DUMMY ) == 0)
