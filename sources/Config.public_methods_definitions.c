@@ -341,7 +341,7 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
        * check_opt = 0, * check_val = 0;
   oyConfig_s_ * pattern = (oyConfig_s_*)db_pattern,
               * device  = (oyConfig_s_*)module_device;
-  oyRankPad  * rank_map = 0;
+  oyRankMap  * rank_map = 0;
   oyConfig_s * s = module_device;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
@@ -731,6 +731,129 @@ OYAPI oyOption_s * OYEXPORT
 
   return o;
 }
+/** Function  oyConfig_GetOptions
+ *  @memberof oyConfig_s
+ *  @brief    Get options from a source
+ *
+ *  This API allows low level operations on a Config object.
+ *  Do not release the returned Options without replacement inside the
+ *  Config object.
+ *
+ *  A Config object has three kind of options.
+ *
+ *  The data base "db" properties are for persistent storage in a DB,
+ *  e.g. "org/freedesktop/imaging/config.monitor.xorg/1/manufacturer=EIZO"
+ *
+ *  The "backend_core" options are the module core properties, the ones to
+ *  identify the device and store in DB. They must be filled by the module.
+ *  e.g. "org/freedesktop/imaging/config.monitor.xorg/manufacturer=EIZO"
+ *
+ *  The "data" properties are additional options without identification
+ *  purpose and not intended for DB storage,
+ *  e.g. "org/freedesktop/imaging/config.monitor.xorg/edid=oyBlob_s*"
+ *
+ *  @param[in]     config              the configuration
+ *  @param[in]     source              use of the options,
+ *                                     - "db" for persistent options
+ *                                     - "backend_core" for module options
+ *                                     - "data" for module options without 
+ *                                       identification purpose
+ *  @return                            the selected options, in the domain of
+ *                                     the config
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/10/03
+ *  @since    2012/10/03 (Oyranos: 0.5.0)
+ */
+OYAPI oyOptions_s ** OYEXPORT
+               oyConfig_GetOptions   ( oyConfig_s        * config,
+                                       const char        * source )
+{
+  oyConfig_s_ * s = (oyConfig_s_*)config;
+  static oyOptions_s * dummy = 0;
+
+  if(!dummy)
+    dummy = oyOptions_New( 0 );
+
+  if(!s)
+  {
+    oyOptions_Clear( dummy );
+    return &dummy;
+  }
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, oyOptions_Clear( dummy ); return &dummy )
+
+  if(source && strcmp(source,"db") == 0)
+  {
+    return &s->db;
+  } else
+  if(source && strcmp(source,"backend_core") == 0)
+  {
+    return &s->backend_core;
+  } else
+  if(source && strcmp(source,"data") == 0)
+  {
+    return &s->data;
+  }
+
+  oyOptions_Clear( dummy );
+  return &dummy;
+}
+
+/** Function  oyConfig_SetRankMap
+ *  @memberof oyConfig_s
+ *  @brief    Set the ranking table
+ *
+ *  @param[in,out] config              the configuration
+ *  @param[in]     rank_map            the new rank map
+ *  @return                            error
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/10/03
+ *  @since    2012/10/03 (Oyranos: 0.5.0)
+ */
+OYAPI int  OYEXPORT
+               oyConfig_SetRankMap   ( oyConfig_s        * config,
+                                       const oyRankMap   * rank_map )
+{
+  oyConfig_s_ * s = (oyConfig_s_*)config;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
+
+  if(s->rank_map)
+  {
+    oyRankMapRelease( &s->rank_map, s->oy_->deallocateFunc_ );
+  }
+  s->rank_map = oyRankMapCopy( rank_map, s->oy_->allocateFunc_ );
+
+  return 0;
+}
+/** Function  oyConfig_GetRankMap
+ *  @memberof oyConfig_s
+ *  @brief    Get the ranking table
+ *
+ *  @param[in]     config              the configuration
+ *  @return        rank_map            the rank map
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/10/03
+ *  @since    2012/10/03 (Oyranos: 0.5.0)
+ */
+OYAPI const oyRankMap *  OYEXPORT
+               oyConfig_GetRankMap   ( oyConfig_s        * config )
+{
+  oyConfig_s_ * s = (oyConfig_s_*)config;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
+
+  return s->rank_map;
+}
 
 /** Function  oyRankMapCopy
  *  @memberof oyConfig_s
@@ -740,10 +863,10 @@ OYAPI oyOption_s * OYEXPORT
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  *  @date    2009/01/27
  */
-oyRankPad *        oyRankMapCopy     ( const oyRankPad   * rank_map,
+oyRankMap *        oyRankMapCopy     ( const oyRankMap   * rank_map,
                                        oyAlloc_f           allocateFunc )
 {
-  oyRankPad * map = 0;
+  oyRankMap * map = 0;
   int error = !rank_map;
   int n = 0, i;
 
@@ -754,7 +877,7 @@ oyRankPad *        oyRankMapCopy     ( const oyRankPad   * rank_map,
   {
     while( rank_map[n++].key ) {}
 
-    oyAllocHelper_m_( map, oyRankPad, n + 1, allocateFunc, error = 1 );
+    oyAllocHelper_m_( map, oyRankMap, n + 1, allocateFunc, error = 1 );
   }
 
   if(error <= 0)
@@ -769,6 +892,44 @@ oyRankPad *        oyRankMapCopy     ( const oyRankPad   * rank_map,
   }
 
   return map;
+}
+/** Function  oyRankMapRelease
+ *  @memberof oyConfig_s
+ *  @brief    Release a Rank Map
+ *
+ *  @param[in,out] rank_map            the rank map
+ *  @param[in]     deAllocateFunc      the memory release function
+ *  @return                            error
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/10/03
+ *  @since    2012/10/03 (Oyranos: 0.5.0)
+ */
+OYAPI void  OYEXPORT
+                 oyRankMapRelease    ( oyRankMap        ** rank_map,
+                                       oyDeAlloc_f         deAllocateFunc )
+{
+  int error = !rank_map || !*rank_map;
+  int n = 0, i;
+
+  if(!deAllocateFunc)
+    deAllocateFunc = oyDeAllocateFunc_;
+
+  if(error <= 0)
+  {
+    oyRankMap * map = *rank_map;
+    while( (*rank_map)[n++].key ) {}
+    for(i = 0; i < n; ++i)
+    {
+      deAllocateFunc( map[i].key ); map[i].key = 0;
+      map[i].match_value = 0;
+      map[i].none_match_value = 0;
+      map[i].not_found_value = 0;
+    }
+    deAllocateFunc( map );
+    *rank_map = 0;
+  }
+
 }
 
 /** Function  oyConfig_FromRegistration
