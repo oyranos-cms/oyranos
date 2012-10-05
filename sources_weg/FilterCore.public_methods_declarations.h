@@ -3,6 +3,9 @@ OYAPI const char *  OYEXPORT
                                        oyFilterCore_s    * filter,
                                        int                 nontranslated );
 OYAPI const char *  OYEXPORT
+                oyFilterCore_GetRegistration (
+                                       oyFilterCore_s    * filter );
+OYAPI const char *  OYEXPORT
                 oyFilterCore_GetName ( oyFilterCore_s    * filter,
                                        oyNAME_e            name_type );
 OYAPI const char *  OYEXPORT

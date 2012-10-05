@@ -156,3 +156,27 @@ oyFilterCore_s * oyFilterCore_NewWith( const char        * registration,
 
   return s;
 }
+
+/** Function  oyFilterCore_GetRegistration
+ *  @memberof oyFilterCore_s
+ *  @brief    Get registration text
+ *
+ *  @param[in]     filter              filter object
+ *  @return                            registration string
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/10/04
+ *  @since    2012/10/04 (Oyranos: 0.5.0)
+ */
+OYAPI const char *  OYEXPORT
+                oyFilterCore_GetRegistration (
+                                       oyFilterCore_s    * filter )
+{
+  oyFilterCore_s_ * s = (oyFilterCore_s_*)filter;
+
+  if(!s)
+    return 0;
+
+  return s->registration_;
+}
+
