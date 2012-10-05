@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2008-2009 (C) Kai-Uwe Behrmann
+ *            2008-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    modules for Oyranos
  *  @internal
@@ -13,18 +13,29 @@
  *  @since    2008/01/02
  */
 
+#include "oyCMMapi4_s.h"
+#include "oyCMMapi4_s_.h"
+#include "oyCMMapi7_s.h"
+#include "oyCMMapi7_s_.h"
+#include "oyCMMapiFilters_s.h"
+#include "oyCMMui_s_.h"
+#include "oyConnectorImaging_s_.h"
+#include "oyFilterNode_s_.h"         /* for oyFilterNode_TextToInfo_ */
+#include "oyRectangle_s_.h"
+
 #include "config.h"
-#include "oyranos_alpha.h"
-#include "oyranos_alpha_internal.h"
 #include "oyranos_cmm.h"
 #include "oyranos_cmm_oyra.h"
+#include "oyranos_generic.h"         /* oy_connector_imaging_static_object */
 #include "oyranos_helper.h"
 #include "oyranos_icc.h"
 #include "oyranos_i18n.h"
 #include "oyranos_io.h"
 #include "oyranos_definitions.h"
+#include "oyranos_module_internal.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
+
 #include <iconv.h>
 #include <math.h>
 #include <stdarg.h>
@@ -64,24 +75,6 @@ oyOptions_s* oyraFilter_ImageWriteValidateOptions
   return 0;
 }
 
-/** @func    oyraFilterNode_ImageWriteContextToMem
- *  @brief   implement oyCMMFilter_ContextToMem_f()
- *
- *  Serialise into a Oyranos specific ICC profile containers "Info" tag.
- *  We do not have any binary context to include.
- *  Thus oyFilterNode_TextToInfo_() is fine.
- *
- *  @version Oyranos: 0.5.0
- *  @since   2012/07/19 (Oyranos: 0.5.0)
- *  @date    2012/07/19
- */
-oyPointer  oyraFilterNode_ImageWriteContextToMem (
-                                       oyFilterNode_s    * node,
-                                       size_t            * size,
-                                       oyAlloc_f           allocateFunc )
-{
-  return oyFilterNode_TextToInfo_( node, size, allocateFunc );
-}
 
 /** @func    oyraFilterPlug_ImageWriteRun
  *  @brief   implement oyCMMFilter_GetNext_f()
@@ -102,22 +95,27 @@ int      oyraFilterPlug_ImageWriteRun (
   oyCMMapiFilters_s * apis = 0;
 
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S)
-    socket = requestor_plug->remote_socket_;
+    socket = oyFilterPlug_GetSocket( requestor_plug );
   else if(requestor_plug->type_ == oyOBJECT_FILTER_SOCKET_S)
     socket = (oyFilterSocket_s*) requestor_plug;
 
-  node = socket->node;
+  node = oyFilterSocket_GetNode( socket );
 
-  image = (oyImage_s*)socket->data;
+  image = (oyImage_s*)oyFilterSocket_GetData( socket );
   if(image)
   {
     uint32_t i, j, k, n,
            * rank_list = 0;
-    const char * filename = oyOptions_FindString( node->core->options_, "filename", 0 );
+    const char * filename;
     const char * fileext = 0;
     char * file_ext = 0;
     int run = -1;
 
+    {
+      oyOptions_s * tags = oyFilterNode_GetTags( node );
+      filename = oyOptions_FindString( tags, "filename", 0 );
+      oyOptions_Release( &tags );
+    }
     if(filename)
     {
       fileext = strrchr( filename, '.' );
@@ -152,12 +150,12 @@ int      oyraFilterPlug_ImageWriteRun (
         int file_write = 0,
             image_pixel = 0,
             found = 0;
-        oyCMMapi7_s * api7;
+        oyCMMapi7_s_ * api7;
         char * api_ext = 0;
 
         j = 0;
         api = oyCMMapiFilters_Get( apis, i );
-        api7 = (oyCMMapi7_s*) api;
+        api7 = (oyCMMapi7_s_*) api;
 
         if(api7->properties)
           while(api7->properties[j] && api7->properties[j][0])
@@ -214,8 +212,9 @@ int      oyraFilterPlug_ImageWriteRun (
 }
 
 
-oyConnectorImaging_s oyra_imageWrite_plug = {
-  oyOBJECT_CONNECTOR_S,0,0,0,
+oyConnectorImaging_s_ oyra_imageWrite_plug = {
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorPlugText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
@@ -241,10 +240,11 @@ oyConnectorImaging_s oyra_imageWrite_plug = {
   1, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnectorImaging_s *oyra_imageWrite_plugs[2] = {&oyra_imageWrite_plug,0};
+oyConnectorImaging_s_ *oyra_imageWrite_plugs[2] = {&oyra_imageWrite_plug,0};
 
-oyConnectorImaging_s oyra_imageWrite_socket = {
-  oyOBJECT_CONNECTOR_S,0,0,0,
+oyConnectorImaging_s_ oyra_imageWrite_socket = {
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorSocketText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
@@ -270,7 +270,7 @@ oyConnectorImaging_s oyra_imageWrite_socket = {
   2, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnectorImaging_s *oyra_imageWrite_sockets[2] = {&oyra_imageWrite_socket,0};
+oyConnectorImaging_s_ *oyra_imageWrite_sockets[2] = {&oyra_imageWrite_socket,0};
 
 
 #define OY_IMAGE_WRITE_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_write.meta._" CMM_NICK
@@ -283,7 +283,7 @@ oyConnectorImaging_s *oyra_imageWrite_sockets[2] = {&oyra_imageWrite_socket,0};
  *  @since   2012/07/19 (Oyranos: 0.5.0)
  *  @date    2012/07/19
  */
-oyCMMapi7_s   oyra_api7_image_write = {
+oyCMMapi7_s_   oyra_api7_image_write = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -348,7 +348,7 @@ const char * oyra_api4_ui_image_write_texts[] = {"name", "help", 0};
  *  @since   2012/07/19 (Oyranos: 0.5.0)
  *  @date    2012/07/19
  */
-oyCMMui_s oyra_api4_ui_image_write = {
+oyCMMui_s_ oyra_api4_ui_image_write = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -375,7 +375,7 @@ oyCMMui_s oyra_api4_ui_image_write = {
  *  @since   2012/07/19 (Oyranos: 0.5.0)
  *  @date    2012/07/19
  */
-oyCMMapi4_s   oyra_api4_image_write = {
+oyCMMapi4_s_   oyra_api4_image_write = {
 
   oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -392,7 +392,7 @@ oyCMMapi4_s   oyra_api4_image_write = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
+  (oyCMMFilterNode_ContextToMem_f)oyFilterNode_TextToInfo_, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
   {0}, /* char context_type[8] */
 
@@ -436,7 +436,7 @@ oyPointer  oyraFilterNode_ImageLoadContextToMem (
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc )
 {
-  return oyFilterNode_TextToInfo_( node, size, allocateFunc );
+  return oyFilterNode_TextToInfo_( (oyFilterNode_s_*)node, size, allocateFunc );
 }
 
 /** @func    oyraFilterPlug_ImageLoadRun
@@ -458,22 +458,26 @@ int      oyraFilterPlug_ImageLoadRun (
   oyCMMapiFilters_s * apis = 0;
 
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S)
-    socket = requestor_plug->remote_socket_;
+    socket = oyFilterPlug_GetSocket( requestor_plug );
   else if(requestor_plug->type_ == oyOBJECT_FILTER_SOCKET_S)
     socket = (oyFilterSocket_s*) requestor_plug;
 
-  node = socket->node;
-  image = (oyImage_s*)socket->data;
+  node = oyFilterSocket_GetNode( socket );
 
-  image = (oyImage_s*)socket->data;
+  image = (oyImage_s*)oyFilterSocket_GetData( socket );
   if(!image)
   {
     uint32_t i, j, k, n,
            * rank_list = 0;
-    const char * filename = oyOptions_FindString( node->core->options_, "filename", 0 );
+    const char * filename;
     const char * fileext = 0;
     char * file_ext = 0;
 
+    {
+      oyOptions_s * tags = oyFilterNode_GetTags( node );
+      filename = oyOptions_FindString( tags, "filename", 0 );
+      oyOptions_Release( &tags );
+    }
     if(filename)
     {
       fileext = strrchr( filename, '.' );
@@ -508,12 +512,12 @@ int      oyraFilterPlug_ImageLoadRun (
         int file_read = 0,
             image_pixel = 0,
             found = 0;
-        oyCMMapi7_s * api7;
+        oyCMMapi7_s_ * api7;
         char * api_ext = 0;
 
         j = 0;
         api = oyCMMapiFilters_Get( apis, i );
-        api7 = (oyCMMapi7_s*) api;
+        api7 = (oyCMMapi7_s_*) api;
 
         if(api7->properties)
           while(api7->properties[j] && api7->properties[j][0])
@@ -562,19 +566,24 @@ int      oyraFilterPlug_ImageLoadRun (
 
   /* set the data */
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S &&
-     requestor_plug->remote_socket_->data)
+     image)
   {
     error = oyraFilterPlug_ImageRootRun( requestor_plug, ticket );
 
     return error;
   }
 
+  oyImage_Release( &image );
+  oyFilterNode_Release( &node );
+  oyFilterSocket_Release( &socket );
+
   return result;
 }
 
 
-oyConnectorImaging_s oyra_imageLoad_plug = {
-  oyOBJECT_CONNECTOR_S,0,0,0,
+oyConnectorImaging_s_ oyra_imageLoad_plug = {
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorPlugText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/generator.data", /* connector_type */
@@ -600,10 +609,11 @@ oyConnectorImaging_s oyra_imageLoad_plug = {
   1, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnectorImaging_s *oyra_imageLoad_plugs[2] = {&oyra_imageLoad_plug,0};
+oyConnectorImaging_s_ *oyra_imageLoad_plugs[2] = {&oyra_imageLoad_plug,0};
 
-oyConnectorImaging_s oyra_imageLoad_socket = {
-  oyOBJECT_CONNECTOR_S,0,0,0,
+oyConnectorImaging_s_ oyra_imageLoad_socket = {
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorSocketText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/generator.data", /* connector_type */
@@ -629,7 +639,7 @@ oyConnectorImaging_s oyra_imageLoad_socket = {
   2, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnectorImaging_s *oyra_imageLoad_sockets[2] = {&oyra_imageLoad_socket,0};
+oyConnectorImaging_s_ *oyra_imageLoad_sockets[2] = {&oyra_imageLoad_socket,0};
 
 
 #define OY_IMAGE_LOAD_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_read.meta._" CMM_NICK
@@ -642,7 +652,7 @@ oyConnectorImaging_s *oyra_imageLoad_sockets[2] = {&oyra_imageLoad_socket,0};
  *  @since   2009/07/15 (Oyranos: 0.1.10)
  *  @date    2009/07/15
  */
-oyCMMapi7_s   oyra_api7_image_load = {
+oyCMMapi7_s_   oyra_api7_image_load = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -707,7 +717,7 @@ const char * oyra_api4_ui_image_load_texts[] = {"name", "help", 0};
  *  @since   2009/09/09 (Oyranos: 0.1.10)
  *  @date    2009/09/09
  */
-oyCMMui_s oyra_api4_ui_image_load = {
+oyCMMui_s_ oyra_api4_ui_image_load = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -734,7 +744,7 @@ oyCMMui_s oyra_api4_ui_image_load = {
  *  @since   2009/07/15 (Oyranos: 0.1.10)
  *  @date    2009/07/15
  */
-oyCMMapi4_s   oyra_api4_image_load = {
+oyCMMapi4_s_   oyra_api4_image_load = {
 
   oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -751,7 +761,7 @@ oyCMMapi4_s   oyra_api4_image_load = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
+  (oyCMMFilterNode_ContextToMem_f)oyFilterNode_TextToInfo_, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
   {0}, /* char context_type[8] */
 
@@ -779,24 +789,6 @@ oyOptions_s* oyraFilter_ImageRectanglesValidateOptions
   return 0;
 }
 
-/** @func    oyraFilterNode_ImageRectanglesContextToMem
- *  @brief   implement oyCMMFilter_ContextToMem_f()
- *
- *  Serialise into a Oyranos specific ICC profile containers "Info" tag.
- *  We do not have any binary context to include.
- *  Thus oyFilterNode_TextToInfo_() is fine.
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/02/23 (Oyranos: 0.1.10)
- *  @date    2009/02/23
- */
-oyPointer  oyraFilterNode_ImageRectanglesContextToMem (
-                                       oyFilterNode_s    * node,
-                                       size_t            * size,
-                                       oyAlloc_f           allocateFunc )
-{
-  return oyFilterNode_TextToInfo_( node, size, allocateFunc );
-}
 
 /** @func    oyraFilterPlug_ImageRectanglesRun
  *  @brief   implement oyCMMFilter_GetNext_f()
@@ -811,88 +803,92 @@ int      oyraFilterPlug_ImageRectanglesRun (
 {
   int x = 0, y = 0, n = 0, i;
   int result = 0, l_result = 0, error = 0;
-  int is_allocated = 0;
-  oyPointer * ptr = 0;
-  oyFilterSocket_s * socket = requestor_plug->remote_socket_;
+  oyFilterSocket_s * socket;
   oyFilterNode_s * input_node = 0,
-                 * node = socket->node;
-  oyImage_s * image = (oyImage_s*)socket->data;
+                 * node;
+  oyImage_s * image;
   oyOption_s * o = 0;
+  oyOptions_s * node_opts = 0;
   oyRectangle_s * r;
-  oyRectangle_s array_pix = {oyOBJECT_RECTANGLE_S,0,0,0};
+  oyRectangle_s_ array_pix = {oyOBJECT_RECTANGLE_S,0,0,0};
 
   oyPixelAccess_s * new_ticket = 0;
   int dirty = 0;
 
-  image = (oyImage_s*)socket->data;
+  socket = oyFilterPlug_GetSocket( requestor_plug );
+  node = oyFilterSocket_GetNode( socket );
+
+  image = (oyImage_s*)oyFilterSocket_GetData( socket );
   if(!image)
     return 1;
 
-  x = ticket->start_xy[0] * image->width;
-  y = ticket->start_xy[1] * image->width;
+  x = oyPixelAccess_GetStart(ticket,0) * oyImage_GetWidth(image);
+  y = oyPixelAccess_GetStart(ticket,1) * oyImage_GetWidth(image);
 
-  if(x < image->width &&
-     y < image->height &&
-     ticket->pixels_n)
   {
-    n = ticket->pixels_n;
-    if(n == 1)
-      ptr = image->getPoint( image, x, y, 0, &is_allocated );
+    oyRectangle_s * ticket_roi = oyPixelAccess_GetOutputROI( ticket );
+    oyArray2d_s * ticket_array = oyPixelAccess_GetArray( ticket );
 
-    result = !ptr;
-
-  } else {
-
-    if(!node->core->options_)
+    node_opts = oyFilterNode_GetOptions( node, 0 );
+    if(!node_opts)
       dirty = 1;
 
     if(dirty)
       return dirty;
 
-    n = oyOptions_CountType( node->core->options_,
+    n = oyOptions_CountType( node_opts,
                              "//" OY_TYPE_STD "/rectangles/rectangle",
                              oyOBJECT_RECTANGLE_S );
 
     /* rectangles stuff */
     for(i = 0; i < n; ++i)
     {
+      oyRectangle_s * new_ticket_roi;
       /* select current rectangle */
-      r = (oyRectangle_s*)oyOptions_GetType( node->core->options_, i,
+      r = (oyRectangle_s*)oyOptions_GetType( node_opts, i,
                                        "//" OY_TYPE_STD "/rectangles/rectangle",
                                              oyOBJECT_RECTANGLE_S );
 
       /* Map each matching plug to a new ticket with a corrected rectangle. */
       new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
-      oyArray2d_Release( &new_ticket->array );
+      oyPixelAccess_SetArray( new_ticket, 0 );
       DBGs_NUM3_S( ticket, "%s[%d] %s", _("Created new_ticket"),
                    oyStruct_GetId( (oyStruct_s*)new_ticket ),
                    oyRectangle_Show( r ) );
 
+      new_ticket_roi = oyPixelAccess_GetOutputROI( new_ticket );
       if(r)
-        oyRectangle_SetByRectangle( new_ticket->output_image_roi, r );
+        oyRectangle_SetByRectangle( new_ticket_roi, r );
 
       /* select node */
-      input_node = node->plugs[i]->remote_socket_->node;
+      input_node = oyFilterNode_GetPlugNode( node, i );
       /* adapt the rectangle of interesst to the new image dimensions */
-      oyRectangle_Trim( new_ticket->output_image_roi, ticket->output_image_roi );
+      oyRectangle_Trim( new_ticket_roi, ticket_roi );
 
       /* use the correct source pixels */
-      new_ticket->start_xy[0] += new_ticket->output_image_roi->x;
-      new_ticket->start_xy[1] += new_ticket->output_image_roi->y;
+      oyPixelAccess_ChangeRectangle( new_ticket,
+                                     oyPixelAccess_GetStart( new_ticket, 0 )
+                                     + oyRectangle_GetGeo1( new_ticket_roi, 0 ),
+                                     oyPixelAccess_GetStart( new_ticket, 1 )
+                                     + oyRectangle_GetGeo1( new_ticket_roi, 1 ),
+                                     new_ticket_roi );
 
-      if(oyRectangle_CountPoints(  new_ticket->output_image_roi ) > 0)
+      if(oyRectangle_CountPoints(  new_ticket_roi ) > 0)
       {
+        oyArray2d_s * new_ticket_array = oyPixelAccess_GetArray( new_ticket );
+        oyFilterPlug_s * plug;
+        oyImage_s * new_ticket_image = oyPixelAccess_GetOutputImage( new_ticket );
 
         /* fill the array rectangle for the following filter */
-        if(!new_ticket->array)
+        if(!new_ticket_array)
         {
           DBGs_NUM3_S( new_ticket, "%s[%d] %s",
                       _("Fill new_ticket->array from new_ticket->output_image"),
-                      oyStruct_GetId( (oyStruct_s*)new_ticket->output_image ),
-                      oyRectangle_Show( new_ticket->output_image_roi ) );
-          oyImage_FillArray( new_ticket->output_image,
-                             new_ticket->output_image_roi, 0,
-                             &new_ticket->array, new_ticket->output_image_roi,
+                      oyStruct_GetId( (oyStruct_s*)new_ticket_image ),
+                      oyRectangle_Show( new_ticket_roi ) );
+          oyImage_FillArray( new_ticket_image,
+                             new_ticket_roi, 0,
+                             &new_ticket_array, new_ticket_roi,
                              0 );
         }
 
@@ -900,9 +896,9 @@ int      oyraFilterPlug_ImageRectanglesRun (
         DBGs_NUM3_S( new_ticket, "%s[%d] %s",
                      _("Run new_ticket through filter in node"),
                      oyStruct_GetId( (oyStruct_s*)node ),
-                     oyRectangle_Show( new_ticket->output_image_roi ) );
-        l_result = input_node->api7_->oyCMMFilterPlug_Run( node->plugs[i],
-                                                           new_ticket );
+                     oyRectangle_Show( new_ticket_roi ) );
+        plug = oyFilterNode_GetPlug( node, i );
+        l_result = oyFilterNode_Run( input_node, plug, new_ticket );
         if(l_result != 0 && (result <= 0 || l_result > 0))
           result = l_result;
 
@@ -910,36 +906,43 @@ int      oyraFilterPlug_ImageRectanglesRun (
            backward array. @todo use direct array copy oyArray2d_DataCopy() */
         DBGs_NUM2_S( new_ticket,"%s[%d]",_("Read new_ticket->array into image"),
                      oyStruct_GetId( (oyStruct_s*)image ) );
-        error = oyImage_ReadArray( new_ticket->output_image,
-                                   new_ticket->output_image_roi,
-                                   new_ticket->array, 0 );
+        error = oyImage_ReadArray( new_ticket_image,
+                                   new_ticket_roi,
+                                   new_ticket_array, 0 );
         if(error) WARNc2_S("%s %d", _("found issues"),error);
         DBGs_NUM2_S( ticket, "%s[%d]",
                      _("Fill ticket->array from new_ticket->output_image"),
-                    oyStruct_GetId( (oyStruct_s*)new_ticket->output_image ) );
-        error = oyImage_FillArray( new_ticket->output_image,
-                                   new_ticket->output_image_roi, 1,
-                                   &ticket->array, new_ticket->output_image_roi,
+                    oyStruct_GetId( (oyStruct_s*)new_ticket_image ) );
+        error = oyImage_FillArray( new_ticket_image,
+                                   new_ticket_roi, 1,
+                                   &ticket_array, new_ticket_roi,
                                    0 );
         if(error) WARNc2_S("%s %d", _("found issues"),error);
+
+        oyImage_Release( &new_ticket_image );
+        oyArray2d_Release( &new_ticket_array );
       }
       oyPixelAccess_Release( &new_ticket );
 
       oyOption_Release( &o );
     }
 
-    oyRectangle_SetGeo( &array_pix, 0,0,
-              ticket->array->data_area.width, ticket->array->data_area.height );
-    error = oyArray2d_SetFocus( ticket->array, &array_pix );
+    oyRectangle_SetGeo( (oyRectangle_s*)&array_pix, 0,0,
+                        oyArray2d_GetDataGeo1( ticket_array, 2 ),
+                        oyArray2d_GetDataGeo1( ticket_array, 3 ) );
+    error = oyArray2d_SetFocus( ticket_array, (oyRectangle_s*)&array_pix );
     if(error) WARNc2_S("%s %d", _("found issues"),error);
+    oyRectangle_Release( &ticket_roi );
+    oyArray2d_Release( &ticket_array );
   }
 
   return result;
 }
 
 
-oyConnectorImaging_s oyra_imageRectangles_plug = {
-  oyOBJECT_CONNECTOR_S,0,0,0,
+oyConnectorImaging_s_ oyra_imageRectangles_plug = {
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorPlugText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/splitter.data", /* connector_type */
@@ -965,10 +968,11 @@ oyConnectorImaging_s oyra_imageRectangles_plug = {
   1, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnectorImaging_s *oyra_imageRectangles_plugs[2] = {&oyra_imageRectangles_plug,0};
+oyConnectorImaging_s_ *oyra_imageRectangles_plugs[2] = {&oyra_imageRectangles_plug,0};
 
-oyConnectorImaging_s oyra_imageRectangles_socket = {
-  oyOBJECT_CONNECTOR_S,0,0,0,
+oyConnectorImaging_s_ oyra_imageRectangles_socket = {
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorSocketText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
@@ -994,7 +998,7 @@ oyConnectorImaging_s oyra_imageRectangles_socket = {
   2, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnectorImaging_s *oyra_imageRectangles_sockets[2] = {&oyra_imageRectangles_socket,0};
+oyConnectorImaging_s_ *oyra_imageRectangles_sockets[2] = {&oyra_imageRectangles_socket,0};
 
 
 #define OY_IMAGE_REGIONS_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "rectangles"
@@ -1007,7 +1011,7 @@ oyConnectorImaging_s *oyra_imageRectangles_sockets[2] = {&oyra_imageRectangles_s
  *  @since   2009/02/24 (Oyranos: 0.1.10)
  *  @date    2009/02/24
  */
-oyCMMapi7_s   oyra_api7_image_rectangles = {
+oyCMMapi7_s_   oyra_api7_image_rectangles = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -1070,7 +1074,7 @@ const char * oyra_api4_ui_image_rectangles_texts[] = {"name", "help", 0};
  *  @since   2009/09/09 (Oyranos: 0.1.10)
  *  @date    2009/09/09
  */
-oyCMMui_s oyra_api4_ui_image_rectangles = {
+oyCMMui_s_ oyra_api4_ui_image_rectangles = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -1097,7 +1101,7 @@ oyCMMui_s oyra_api4_ui_image_rectangles = {
  *  @since   2009/02/24 (Oyranos: 0.1.10)
  *  @date    2009/02/24
  */
-oyCMMapi4_s   oyra_api4_image_rectangles = {
+oyCMMapi4_s_   oyra_api4_image_rectangles = {
 
   oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -1114,7 +1118,7 @@ oyCMMapi4_s   oyra_api4_image_rectangles = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
+  (oyCMMFilterNode_ContextToMem_f)oyFilterNode_TextToInfo_, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
   {0}, /* char context_type[8] */
 
@@ -1158,25 +1162,6 @@ oyOptions_s* oyraFilter_ImageRootValidateOptions
   return 0;
 }
 
-/** @func    oyraFilterNode_ImageRootContextToMem
- *  @brief   implement oyCMMFilter_ContextToMem_f()
- *
- *  Serialise into a Oyranos specific ICC profile containers "Info" tag.
- *  We do not have any binary context to include.
- *  Thus oyFilterNode_TextToInfo_() is fine.
- *
- *  @version Oyranos: 0.1.8
- *  @since   2008/07/17 (Oyranos: 0.1.8)
- *  @date    2008/07/18
- */
-oyPointer  oyraFilterNode_ImageRootContextToMem (
-                                       oyFilterNode_s    * node,
-                                       size_t            * size,
-                                       oyAlloc_f           allocateFunc )
-{
-  return oyFilterNode_TextToInfo_( node, size, allocateFunc );
-}
-
 /** @func    oyraFilterPlug_ImageRootRun
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
@@ -1191,8 +1176,9 @@ int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
 }
 
 
-oyConnectorImaging_s oyra_imageRoot_connector = {
-  oyOBJECT_CONNECTOR_S,0,0,0,
+oyConnectorImaging_s_ oyra_imageRoot_connector = {
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorSocketText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
@@ -1218,7 +1204,7 @@ oyConnectorImaging_s oyra_imageRoot_connector = {
   1, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnectorImaging_s * oyra_imageRoot_connectors[2] = {&oyra_imageRoot_connector,0};
+oyConnectorImaging_s_ * oyra_imageRoot_connectors[2] = {&oyra_imageRoot_connector,0};
 
 
 #define OY_IMAGE_ROOT_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "root"
@@ -1231,7 +1217,7 @@ oyConnectorImaging_s * oyra_imageRoot_connectors[2] = {&oyra_imageRoot_connector
  *  @since   2008/12/27 (Oyranos: 0.1.10)
  *  @date    2008/12/27
  */
-oyCMMapi7_s   oyra_api7_image_root = {
+oyCMMapi7_s_   oyra_api7_image_root = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -1294,7 +1280,7 @@ const char * oyra_api4_ui_image_root_texts[] = {"name", "help", 0};
  *  @since   2009/09/09 (Oyranos: 0.1.10)
  *  @date    2009/09/09
  */
-oyCMMui_s oyra_api4_ui_image_root = {
+oyCMMui_s_ oyra_api4_ui_image_root = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -1321,7 +1307,7 @@ oyCMMui_s oyra_api4_ui_image_root = {
  *  @since   2008/02/08 (Oyranos: 0.1.8)
  *  @date    2008/06/26
  */
-oyCMMapi4_s   oyra_api4_image_root = {
+oyCMMapi4_s_   oyra_api4_image_root = {
 
   oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -1338,7 +1324,7 @@ oyCMMapi4_s   oyra_api4_image_root = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
+  (oyCMMFilterNode_ContextToMem_f)oyFilterNode_TextToInfo_, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
   {0}, /* char context_type[8] */
 
@@ -1350,8 +1336,9 @@ oyCMMapi4_s   oyra_api4_image_root = {
 
 /* OY_IMAGE_OUTPUT_REGISTRATION ----------------------------------------------*/
 
-oyConnectorImaging_s oyra_imageOutput_connector = {
-  oyOBJECT_CONNECTOR_S,0,0,0,
+oyConnectorImaging_s_ oyra_imageOutput_connector = {
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorPlugText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image.data", /* connector_type */
@@ -1377,7 +1364,7 @@ oyConnectorImaging_s oyra_imageOutput_connector = {
   1, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnectorImaging_s* oyra_imageOutput_connectors[2] = {&oyra_imageOutput_connector,0};
+oyConnectorImaging_s_* oyra_imageOutput_connectors[2] = {&oyra_imageOutput_connector,0};
 
 
 /** @func    oyraFilter_ImageOutputRun
@@ -1390,19 +1377,18 @@ oyConnectorImaging_s* oyra_imageOutput_connectors[2] = {&oyra_imageOutput_connec
 int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
-  oyFilterSocket_s * socket = requestor_plug->remote_socket_;
+  oyFilterSocket_s * socket = oyFilterPlug_GetSocket( requestor_plug );
   oyFilterNode_s * node = 0;
   int result = 0;
 
-  if(socket)
-    node = socket->node;
+  node = oyFilterSocket_GetNode( socket );
 
   /* to reuse the requestor_plug is a exception for the starting request */
   if(node)
   {
     DBGs_NUM2_S( ticket, "%s[%d]", _("Call next filter in node"),
                  oyStruct_GetId( (oyStruct_s*)node ) );
-    result = node->api7_->oyCMMFilterPlug_Run( requestor_plug, ticket );
+    result = oyFilterNode_Run( node, requestor_plug, ticket );
   } else
     result = 1;
 
@@ -1420,7 +1406,7 @@ int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
  *  @since   2008/12/27 (Oyranos: 0.1.10)
  *  @date    2008/12/27
  */
-oyCMMapi7_s   oyra_api7_image_output = {
+oyCMMapi7_s_   oyra_api7_image_output = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -1483,7 +1469,7 @@ const char * oyra_api4_ui_image_output_texts[] = {"name", "help", 0};
  *  @since   2009/09/09 (Oyranos: 0.1.10)
  *  @date    2009/09/09
  */
-oyCMMui_s oyra_api4_ui_image_output = {
+oyCMMui_s_ oyra_api4_ui_image_output = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -1510,7 +1496,7 @@ oyCMMui_s oyra_api4_ui_image_output = {
  *  @since   2008/07/19 (Oyranos: 0.1.8)
  *  @date    2008/07/19
  */
-oyCMMapi4_s   oyra_api4_image_output = {
+oyCMMapi4_s_   oyra_api4_image_output = {
 
   oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -1527,7 +1513,7 @@ oyCMMapi4_s   oyra_api4_image_output = {
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
-  oyraFilterNode_ImageRootContextToMem, /* oyCMMFilterNode_ContextToMem_f */
+  (oyCMMFilterNode_ContextToMem_f)oyFilterNode_TextToInfo_, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
   {0}, /* char context_type[8] */
 
