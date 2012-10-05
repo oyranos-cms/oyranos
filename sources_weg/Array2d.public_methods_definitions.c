@@ -367,31 +367,63 @@ int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
  *  @memberof oyArray2d_s
  *  @brief    Get Geometry of the data rectangle
  *
+ *  The function informs about reserves and possible offsets.
+ *
  *  @param[in,out] array               the pixel array
- *  @param[in]     roi                 the ROI - 0 or data - 1
- *  @param[in]     x_y_w_h             the position or dimension
- *  @return                            error
+ *  @return                            the position or dimension
  *
  *  @version  Oyranos: 0.5.0
- *  @date     2012/10/03
+ *  @date     2012/10/05
  *  @since    2012/10/03 (Oyranos: 0.5.0)
  */
 OYAPI double  OYEXPORT
-                 oyArray2d_GetGeo1   ( oyArray2d_s       * array,
-                                       int                 use_data,
+                 oyArray2d_GetDataGeo1(oyArray2d_s       * array,
                                        int                 x_y_w_h )
 {
   oyArray2d_s_ * s = (oyArray2d_s_*) array;
   if(!array)
     return 0;
-  if(use_data)
-    return oyRectangle_GetGeo1( (oyRectangle_s*)&s->data_area, x_y_w_h );
-  else
-  {
-    if(x_y_w_h == 2)
-      return s->width;
-    if(x_y_w_h == 3)
-      return s->height;
-  }
-  return 0;
+  return oyRectangle_GetGeo1( (oyRectangle_s*)&s->data_area, x_y_w_h );
 }
+
+/** Function  oyArray2d_GetWidth
+ *  @memberof oyArray2d_s
+ *  @brief    Get data Width
+ *
+ *  @param[in,out] array               the pixel array
+ *  @return                            the width
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/10/05
+ *  @since    2012/10/05 (Oyranos: 0.5.0)
+ */
+OYAPI int  OYEXPORT
+                 oyArray2d_GetWidth  ( oyArray2d_s       * array )
+{
+  oyArray2d_s_ * s = (oyArray2d_s_*) array;
+  if(!array)
+    return 0;
+  return s->width;
+}
+
+/** Function  oyArray2d_GetHeight
+ *  @memberof oyArray2d_s
+ *  @brief    Get data Height
+ *
+ *  @param[in,out] array               the pixel array
+ *  @return                            the height
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/10/05
+ *  @since    2012/10/05 (Oyranos: 0.5.0)
+ */
+OYAPI int  OYEXPORT
+                 oyArray2d_GetHeight ( oyArray2d_s       * array )
+{
+  oyArray2d_s_ * s = (oyArray2d_s_*) array;
+  if(!array)
+    return 0;
+  return s->height;
+}
+
+

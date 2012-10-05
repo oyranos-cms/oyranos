@@ -21,3 +21,7 @@ OYAPI int  OYEXPORT  oyArray2d_SetFocus (
 OYAPI double  OYEXPORT
                  oyArray2d_GetDataGeo1(oyArray2d_s       * obj,
                                        int                 x_y_w_h );
+OYAPI int  OYEXPORT
+                 oyArray2d_GetWidth  ( oyArray2d_s       * obj );
+OYAPI int  OYEXPORT
+                 oyArray2d_GetHeight ( oyArray2d_s       * obj );
