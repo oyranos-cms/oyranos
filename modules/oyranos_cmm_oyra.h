@@ -16,8 +16,10 @@
 #ifndef OYRANOS_CMM_OYRA_H
 #define OYRANOS_CMM_OYRA_H
 
+#include "oyCMMapi4_s_.h"
+#include "oyCMMapi7_s_.h"
+
 #include "config.h"
-#include "oyranos_alpha.h"
 #include "oyranos_cmm.h"
 #include "oyranos_helper.h"
 #include "oyranos_icc.h"
@@ -66,17 +68,17 @@ int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
 
 extern oyDATATYPE_e  oyra_image_data_types[7];
 
-extern oyCMMapi4_s   oyra_api4_image_load;
-extern oyCMMapi7_s   oyra_api7_image_load;
-extern oyCMMapi4_s   oyra_api4_image_input_ppm;
-extern oyCMMapi7_s   oyra_api7_image_input_ppm;
-extern oyCMMapi4_s   oyra_api4_image_write_ppm;
-extern oyCMMapi7_s   oyra_api7_image_write_ppm;
-extern oyCMMapi4_s   oyra_api4_image_rectangles;
-extern oyCMMapi7_s   oyra_api7_image_rectangles;
-extern oyCMMapi4_s   oyra_api4_image_output;
-extern oyCMMapi7_s   oyra_api7_image_output;
-extern oyCMMapi4_s   oyra_api4_image_root;
-extern oyCMMapi7_s   oyra_api7_image_root;
+extern oyCMMapi4_s_   oyra_api4_image_load;
+extern oyCMMapi7_s_   oyra_api7_image_load;
+extern oyCMMapi4_s_   oyra_api4_image_input_ppm;
+extern oyCMMapi7_s_   oyra_api7_image_input_ppm;
+extern oyCMMapi4_s_   oyra_api4_image_write_ppm;
+extern oyCMMapi7_s_   oyra_api7_image_write_ppm;
+extern oyCMMapi4_s_   oyra_api4_image_rectangles;
+extern oyCMMapi7_s_   oyra_api7_image_rectangles;
+extern oyCMMapi4_s_   oyra_api4_image_output;
+extern oyCMMapi7_s_   oyra_api7_image_output;
+extern oyCMMapi4_s_   oyra_api4_image_root;
+extern oyCMMapi7_s_   oyra_api7_image_root;
 
 #endif /* OYRANOS_CMM_OYRA_H */
