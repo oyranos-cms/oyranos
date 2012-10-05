@@ -16,11 +16,16 @@
  */
 
 
+#include "oyProfile_s.h"
+#include "oyProfile_s_.h"           /* oyProfile_ToFile_() */
+#include "oyProfileTag_s.h"
+
 #include "oyranos.h"
-#include "oyranos_alpha.h"
 #include "oyranos_debug.h"
+#include "oyranos_devices.h"
 #include "oyranos_elektra.h"
 #include "oyranos_helper.h"
+#include "oyranos_icc.h"
 #include "oyranos_internal.h"
 #include "oyranos_io.h"
 #include "oyranos_config.h"
@@ -268,7 +273,7 @@ int main( int argc , char** argv )
       oyFree_m_(data);
 
       oyProfile_GetMD5( p, OY_COMPUTE, id );
-      oyProfile_ToFile_( p, pn );
+      oyProfile_ToFile_( (oyProfile_s_*)p, pn );
       oyFree_m_( pn );
     }
 
@@ -293,7 +298,7 @@ int main( int argc , char** argv )
     if(error <= 0 && list_tags)
     {
       fprintf(stderr, "%s \"%s\" %d:\n", _("ICC profile"), file_name,
-              (int)p->size_);
+              (int)oyProfile_GetSize(p,0));
       count = oyProfile_GetTagCount( p );
       for(i = 0; i < count; ++i)
       {
@@ -301,7 +306,8 @@ int main( int argc , char** argv )
 
         if(tag &&
            ((tag_name == NULL && (tag_pos == -1 || tag_pos == i)) ||
-            (tag_name != NULL && (strcmp(oyICCTagName(tag->use),tag_name)==0)))
+            (tag_name != NULL && (strcmp(oyICCTagName(oyProfileTag_GetUse(tag)),
+                                         tag_name) == 0)))
           )
         {
           int32_t tag_size = 0;
@@ -309,9 +315,10 @@ int main( int argc , char** argv )
                                         &tag_size, malloc );
 
           fprintf( stdout, "%s/%s[%d] %d @ %d %s",
-                   oyICCTagName(tag->use), oyICCTagTypeName(tag->tag_type_), i,
-                   (int)tag->size_, (int)tag->offset_orig,
-                   oyICCTagDescription(tag->use));
+                   oyICCTagName(oyProfileTag_GetUse(tag)),
+                   oyICCTagTypeName(oyProfileTag_GetType(tag)), i,
+                   (int)tag_size, (int)oyProfileTag_GetOffset( tag ),
+                   oyICCTagDescription(oyProfileTag_GetUse(tag)));
           if(oy_debug && texts)
           {
             fprintf( stdout, ":\n" );
