@@ -31,11 +31,6 @@ OYAPI int  OYEXPORT
                                        double              y );
 OYAPI void  OYEXPORT
                  oyRectangle_Round   ( oyRectangle_s     * edit_rectangle );
-OYAPI int  OYEXPORT
-                 oyRectangle_SamplesFromImage (
-                                       oyImage_s         * image,
-                                       oyRectangle_s     * image_rectangle,
-                                       oyRectangle_s     * pixel_rectangle );
 OYAPI void  OYEXPORT
                  oyRectangle_Scale   ( oyRectangle_s     * edit_rectangle,
                                        double              factor );

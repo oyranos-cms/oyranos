@@ -225,55 +225,6 @@ void           oyRectangle_Round     ( oyRectangle_s     * edit_rectangle )
   r->height = OY_ROUND(r->height);
 }
 
-/** Function  oyRectangle_SamplesFromImage
- *  @memberof oyRectangle_s
- *  @brief    New from image
- *
- *  @param[in]     image               a image
- *  @param[in]     image_rectangle     optional rectangle from image
- *  @param[in,out] pixel_rectangle     mandatory rectangle for pixel results
- *  @return                            error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/03/13 (Oyranos: 0.1.10)
- *  @date    2009/06/08
- */
-int            oyRectangle_SamplesFromImage (
-                                       oyImage_s         * image,
-                                       oyRectangle_s     * image_rectangle,
-                                       oyRectangle_s     * pixel_rectangle )
-{
-  int error = !image,
-      channel_n = 0;
-
-  oyRectangle_s_ ** pixel_rectangle_ = (oyRectangle_s_**)&pixel_rectangle;
-
-  if(!error && image->type_ != oyOBJECT_IMAGE_S)
-    return 0;
-
-  if(!error)
-  {
-    channel_n = oyImage_GetPixelLayout( image, oyCHANS );
-
-    if(!image_rectangle)
-    {
-      oyRectangle_SetGeo( pixel_rectangle, 0,0, oyImage_GetWidth(image),
-                                                oyImage_GetHeight(image) );
-      (*pixel_rectangle_)->width *= channel_n;
-
-    } else
-    {
-      oyRectangle_SetByRectangle( pixel_rectangle, image_rectangle );
-      oyRectangle_Scale( pixel_rectangle, oyImage_GetWidth(image) );
-      (*pixel_rectangle_)->x *= channel_n;
-      (*pixel_rectangle_)->width *= channel_n;
-      oyRectangle_Round( pixel_rectangle );
-    }
-  }
-
-  return error;
-}
-
 /** Function  oyRectangle_Scale
  *  @brief    Scale with origin in the top left corner
  *  @memberof oyRectangle_s

@@ -64,6 +64,9 @@ oyPointer      oyImage_GetPoint      ( oyImage_s         * image,
                                        int                 point_y,
                                        int                 channel,
                                        int               * is_allocated );
+int            oyImage_PixelsToSamples(oyImage_s         * image,
+                                       oyRectangle_s     * image_rectangle,
+                                       oyRectangle_s     * pixel_rectangle );
 int            oyImage_WritePPM      ( oyImage_s         * image,
                                        const char        * file_name,
                                        const char        * comment );
