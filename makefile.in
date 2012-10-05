@@ -190,12 +190,6 @@ CFILES_OBJECT = \
 	$(GENDIR)oyBlob_s.c \
 	$(GENDIR)oyPointer_s_.c \
 	$(GENDIR)oyPointer_s.c \
-	$(GENDIR)oyProfile_s_.c \
-	$(GENDIR)oyProfile_s.c \
-	$(GENDIR)oyProfiles_s_.c \
-	$(GENDIR)oyProfiles_s.c \
-	$(GENDIR)oyProfileTag_s.c \
-	$(GENDIR)oyProfileTag_s_.c \
 	$(GENDIR)oyRectangle_s.c \
 	$(GENDIR)oyRectangle_s_.c \
 	$(GENDIR)oyHash_s_.c \
@@ -218,9 +212,6 @@ CFILES_OBJECT = \
 CHEADERS_OBJECT_PUBLIC = \
 	$(GENDIR)oyBlob_s.h \
 	$(GENDIR)oyPointer_s.h \
-	$(GENDIR)oyProfile_s.h \
-	$(GENDIR)oyProfiles_s.h \
-	$(GENDIR)oyProfileTag_s.h \
 	$(GENDIR)oyRectangle_s.h \
 	$(GENDIR)oyHash_s.h \
 	$(GENDIR)oyName_s.h \
@@ -236,9 +227,6 @@ CHEADERS_OBJECT = \
 	$(CHEADERS_OBJECT_PUBLIC) \
 	$(GENDIR)oyBlob_s_.h \
 	$(GENDIR)oyPointer_s_.h \
-	$(GENDIR)oyProfile_s_.h \
-	$(GENDIR)oyProfiles_s_.h \
-	$(GENDIR)oyProfileTag_s_.h \
 	$(GENDIR)oyRectangle_s_.h \
 	$(GENDIR)oyHash_s_.h \
 	$(GENDIR)oyName_s_.h \
@@ -356,6 +344,12 @@ CFILES_OBJECT_IMAGING = \
 	$(GENDIR)oyImage_s_.c \
 	$(GENDIR)oyPixelAccess_s.c \
 	$(GENDIR)oyPixelAccess_s_.c \
+	$(GENDIR)oyProfile_s_.c \
+	$(GENDIR)oyProfile_s.c \
+	$(GENDIR)oyProfiles_s_.c \
+	$(GENDIR)oyProfiles_s.c \
+	$(GENDIR)oyProfileTag_s.c \
+	$(GENDIR)oyProfileTag_s_.c \
 	$(GENDIR)$(TARGET)_conversion.c \
 	$(GENDIR)$(TARGET)_image.c
 CHEADERS_OBJECT_IMAGING_PUBLIC = \
@@ -372,6 +366,9 @@ CHEADERS_OBJECT_IMAGING_PUBLIC = \
 	$(GENDIR)oyFilterPlugs_s.h \
 	$(GENDIR)oyImage_s.h \
 	$(GENDIR)oyPixelAccess_s_.h \
+	$(GENDIR)oyProfile_s_.h \
+	$(GENDIR)oyProfiles_s_.h \
+	$(GENDIR)oyProfileTag_s_.h \
 	$(GENDIR)$(TARGET)_conversion.h \
 	$(GENDIR)$(TARGET)_image.h
 CHEADERS_OBJECT_IMAGING = \
@@ -387,6 +384,9 @@ CHEADERS_OBJECT_IMAGING = \
 	$(GENDIR)oyFilterPlugs_s_.h \
 	$(GENDIR)oyImage_s_.h \
 	$(GENDIR)oyPixelAccess_s.h \
+	$(GENDIR)oyProfile_s.h \
+	$(GENDIR)oyProfiles_s.h \
+	$(GENDIR)oyProfileTag_s.h \
 	$(GENDIR)$(TARGET)_devices_internal.h \
 	$(CHEADERS_OBJECT_IMAGING_PUBLIC)
 
