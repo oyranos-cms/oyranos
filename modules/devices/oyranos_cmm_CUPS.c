@@ -18,9 +18,11 @@
 #include "oyCMMapi8_s_.h"
 #include "oyCMMinfo_s_.h"
 #include "oyCMMui_s_.h"
-_
+#include "oyProfile_s_.h"
+
 #include "oyranos_cmm.h"
 #include "oyranos_debug.h"
+#include "oyranos_devices.h"
 #include "oyranos_i18n.h"
 
 #include <cups/cups.h>
@@ -101,7 +103,7 @@ int          LoadDevice              ( oyConfig_s        * device,
 oyMessage_f message = 0;
 
 extern oyCMMapi8_s_ _api8;
-extern oyRankPad _rank_map[];
+extern oyRankMap _rank_map[];
 
 int CMMInit                          ( oyStruct_s        * filter )
 {
@@ -138,7 +140,7 @@ int            CMMMessageFuncSet ( oyMessage_f message_func )
 
 
 #define OPTIONS_ADD(opts, name) if(!error && name) \
-        error = oyOptions_SetFromText( &opts, \
+        error = oyOptions_SetFromText( opts, \
                                        CMM_BASE_REG OY_SLASH #name, \
                                        name, OY_CREATE_NEW );
 const char * _help =
@@ -323,13 +325,14 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
       {
         size_t size = 0;
         char * data = 0;
+        oyConfig_s * d = device;
 
-        OPTIONS_ADD( device->backend_core, manufacturer )
-        OPTIONS_ADD( device->backend_core, model )
-        OPTIONS_ADD( device->backend_core, serial )
-        OPTIONS_ADD( device->backend_core, system_port )
-        OPTIONS_ADD( device->backend_core, host )
-        OPTIONS_ADD( device->backend_core, device_settings )
+        OPTIONS_ADD( oyConfig_GetOptions(d,"backend_core"), manufacturer )
+        OPTIONS_ADD( oyConfig_GetOptions(d,"backend_core"), model )
+        OPTIONS_ADD( oyConfig_GetOptions(d,"backend_core"), serial )
+        OPTIONS_ADD( oyConfig_GetOptions(d,"backend_core"), system_port )
+        OPTIONS_ADD( oyConfig_GetOptions(d,"backend_core"), host )
+        OPTIONS_ADD( oyConfig_GetOptions(d,"backend_core"), device_settings )
 
         if (value3)
         {
@@ -361,7 +364,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
               error = oyOption_SetFromData( o, data, size );
           
             if(!error)
-              oyOptions_MoveIn( device->data, &o, -1 );
+              oyOptions_MoveIn( *oyConfig_GetOptions(device,"data"), &o, -1 );
           }
         }
 
@@ -417,7 +420,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
           STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
           STRING_ADD( reg_name, keyword );
           if(value)
-            error = oyOptions_SetFromText( &device->backend_core,
+            error= oyOptions_SetFromText( oyConfig_GetOptions(d,"backend_core"),
                                                reg_name,
                                                value,
                                                OY_CREATE_NEW );
@@ -449,7 +452,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
               value = o->defchoice;
             
             if(value)
-              error = oyOptions_SetFromText( &device->backend_core,
+              error = oyOptions_SetFromText( oyConfig_GetOptions(d,"backend_core"),
                                                 reg_name,
                                                 value,
                                                 OY_CREATE_NEW );
@@ -513,7 +516,7 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         { 
           text = 0;
-          o = oyOptions_Find( device->data, "icc_profile" );
+          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "icc_profile" );
           if( o )
             p = (oyProfile_s*) oyOption_StructGet( o, oyOBJECT_PROFILE_S );
           if( p )
@@ -527,16 +530,15 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
 
             oyProfile_Release( &p );
 
-            error = oyOptions_SetFromText( &device->data,
+            error = oyOptions_SetFromText( oyConfig_GetOptions(device,"data"),
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
             if(text) oyDeAllocateFunc_( text ); text = 0;
           }
         }
 
-        if(error <= 0 && !device->rank_map)
-          device->rank_map = oyRankMapCopy( _rank_map,
-                                            device->oy_->allocateFunc_);
+        if(error <= 0 && !oyConfig_GetRankMap(device))
+          oyConfig_SetRankMap(device, _rank_map );
 
         oyConfig_Release( &device );
       }
@@ -636,7 +638,7 @@ int          LoadDevice              ( oyConfig_s        * device,
             oyConfig_s * d = oyConfigs_Get( devices_, j );
  
             /* set the device name */
-            error = oyOptions_SetFromText( &d->backend_core,
+            error = oyOptions_SetFromText( oyConfig_GetOptions(d,"backend_core"),
                                      CMM_BASE_REG OY_SLASH "device_name",
                                      device_name, OY_CREATE_NEW );
 
@@ -705,7 +707,7 @@ int            Configs_FromPattern (
         ppd_file_t * ppd_file = oyOption_GetData( o, &size, oyAllocateFunc_ );
         const char * device_name = NULL;
 
-        device = oyConfig_New( CMM_BASE_REG, 0 );
+        device = oyConfig_FromRegistration( CMM_BASE_REG, 0 );
         error = LoadDevice( device, devices, ppd_file, device_name, options );
         oyConfigs_MoveIn( devices, &device, -1 );
       }
@@ -754,13 +756,13 @@ int            Configs_FromPattern (
 }
 
 /** @instance dDev_rank_map
- *  @brief    oyRankPad map for mapping device to configuration informations
+ *  @brief    oyRankMap map for mapping device to configuration informations
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
-oyRankPad _rank_map[] = { 
+oyRankMap _rank_map[] = { 
   {"device_name", 2, -1, 0},       /**< is good */
   {"profile_name", 0, 0, 0},           /**< non relevant for device properties*/
   {"manufacturer", 1, -1, 0},          /**< is nice */
@@ -904,10 +906,10 @@ oyCMMapi8_s_ _api8 = {
   Configs_Modify,        /**< oyConfigs_Modify_f oyConfigs_Modify */
   Config_Check,          /**< oyConfig_Check_f oyConfig_Check */
 
-  &_api8_ui,             /**< device class UI name and help */
+  (oyCMMui_s*)&_api8_ui,             /**< device class UI name and help */
   &_api8_icon,           /**< device icon */
 
-  _rank_map              /**< oyRankPad ** rank_map */
+  _rank_map              /**< oyRankMap ** rank_map */
 };
 
 /**
@@ -1096,7 +1098,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
         must_move = 1;
       }
 
-      oyOptions_SetFromText( &device->data,
+      oyOptions_SetFromText( oyConfig_GetOptions(device,"data"),
                              CMM_BASE_REG OY_SLASH "profile_name",
                              profile_name, OY_CREATE_NEW );
  
@@ -1105,7 +1107,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
         char * reg_name = 0;
         STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
         STRING_ADD( reg_name, selectorA );
-        oyOptions_SetFromText( &device->backend_core,
+        oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
                                reg_name,
                                texts[0], OY_CREATE_NEW );
         if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
@@ -1115,7 +1117,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
         char * reg_name = 0;
         STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
         STRING_ADD( reg_name, selectorB );
-        oyOptions_SetFromText( &device->backend_core,
+        oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
                                reg_name,
                                texts[1], OY_CREATE_NEW );
         if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
@@ -1125,7 +1127,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
         char * reg_name = 0;
         STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
         STRING_ADD( reg_name, selectorC );
-        oyOptions_SetFromText( &device->backend_core,
+        oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
                                reg_name,
                                texts[2], OY_CREATE_NEW );
         if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
@@ -1212,7 +1214,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
               STRING_ADD( profile_path, profile_name );
 
               /* Output to file. */
-              oyProfile_ToFile_( p, profile_path);
+              oyProfile_ToFile_( (oyProfile_s_*)p, profile_path);
 
               is_custom_profile = 0;      /* Done. Unmark as a custom profile. */
           }
@@ -1222,7 +1224,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
             oyOption_s * o = oyOption_FromRegistration(
                                       CMM_BASE_REG OY_SLASH "icc_profile", 0 );
             int l_error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
-            oyOptions_MoveIn( device->data, &o, -1 );
+            oyOptions_MoveIn( *oyConfig_GetOptions(device,"data"), &o, -1 );
             if(l_error)
               error = l_error;
           }
