@@ -1,6 +1,5 @@
 {% include "source_file_header.txt" %}
 
-#include "oyranos_alpha_internal.h"
 #include "oyranos_debug.h"
 #include "oyranos_elektra.h"
 #include "oyranos_i18n.h"
@@ -13,6 +12,7 @@
 #include "oyranos_module_internal.h"
 #include "oyObject_s.h"
 #include "oyCMMapi3_s.h"
+#include "oyCMMapi4_s_.h"
 #include "oyCMMapi5_s.h"
 #include "oyCMMapi6_s.h"
 #include "oyCMMapi9_s.h"
@@ -21,8 +21,11 @@
 #include "oyCMMapiFilters_s.h"
 #include "oyCMMapiFilters_s_.h"
 #include "oyCMMapis_s.h"
+#include "oyConversion_s.h"
+#include "oyFilterCore_s_.h"
 #include "oyFilterNode_s.h"
 #include "oyFilterPlug_s.h"
+#include "oyOptions_s_.h"
 #include "oyStructList_s_.h"
 
 #ifdef HAVE_POSIX
@@ -2324,3 +2327,69 @@ int             oyOptions_Handle     ( const char        * registration,
   return error;
 }
 
+
+/** Function oyOptions_ForFilter
+ *  @memberof oyOptions_s
+ *  @brief   provide Oyranos behaviour settings
+ *
+ *  The returned options are read in from the Elektra settings and if thats not
+ *  available from the inbuild defaults. The later can explicitely selected with
+ *  oyOPTIONSOURCE_FILTER passed as flags argument.
+ *  The key names map to the registration and XML syntax.
+ *
+ *  To obtain all advanced front end options from a meta module use:@verbatim
+ *  flags = oyOPTIONATTRIBUTE_ADVANCED |
+ *          oyOPTIONATTRIBUTE_FRONT |
+ *          OY_SELECT_COMMON @endverbatim
+ *
+ *  @see OY_SELECT_FILTER OY_SELECT_COMMON oyOPTIONATTRIBUTE_e
+ *
+ *  @param[in]     registration        the filter registration to search for
+ *  @param[in]     cmm                 a CMM to match
+ *  @param[in]     flags               for inbuild defaults |
+ *                                     oyOPTIONSOURCE_FILTER;
+ *                                     for options marked as advanced |
+ *                                     oyOPTIONATTRIBUTE_ADVANCED |
+ *                                     OY_SELECT_FILTER |
+ *                                     OY_SELECT_COMMON
+ *  @param         object              the optional object
+ *  @return                            the options
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2008/10/08 (Oyranos: 0.1.8)
+ *  @date    2011/01/29
+ */
+oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
+                                       const char        * cmm,
+                                       uint32_t            flags,
+                                       oyObject_s          object )
+{
+  oyOptions_s * s = 0;
+  oyFilterCore_s_ * filter = 0;
+  oyCMMapi4_s_ * cmm_api4 = 0;
+  char * lib_name = 0;
+  int error = 0;
+
+  /*  1. get filter */
+  filter = oyFilterCore_New_( object );
+
+  error = !filter;
+
+  if(error <= 0)
+    cmm_api4 = (oyCMMapi4_s_*) oyCMMsGetFilterApi_( cmm, registration,
+                                                    oyOBJECT_CMM_API4_S );
+
+  if(cmm_api4)
+    lib_name = cmm_api4->id_;
+
+  error = !(cmm_api4 && lib_name);
+
+  if(error <= 0)
+    error = oyFilterCore_SetCMMapi4_( filter, cmm_api4 );
+
+  s = oyOptions_ForFilter_( filter, flags, object);
+
+  oyFilterCore_Release( (oyFilterCore_s**)&filter );
+
+  return s;
+}

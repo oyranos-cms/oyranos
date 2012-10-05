@@ -4,11 +4,6 @@ OYAPI oyOptions_s *  OYEXPORT
                                        oyBOOLEAN_e         type,
                                        oyObject_s          object );
 #ifdef OY_FILTER_CORE_S_H
-OYAPI oyOptions_s *  OYEXPORT
-                oyOptions_ForFilter   ( const char        * registration,
-                                       const char        * cmm,
-                                       uint32_t            flags,
-                                       oyObject_s          object );
 #endif /* OY_FILTER_CORE_S_H */
 OYAPI oyOptions_s *  OYEXPORT
                 oyOptions_FromText    ( const char        * text,
@@ -125,11 +120,18 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                oyOptions_ObserversEnable (
                                        oyOptions_s       * object );
+/* needs modules */
 OYAPI int  OYEXPORT
                  oyOptions_Handle     ( const char        * registration,
                                        oyOptions_s       * options,
                                        const char        * command,
                                        oyOptions_s      ** result );
+/* needs modules */
+OYAPI oyOptions_s *  OYEXPORT
+                oyOptions_ForFilter  ( const char        * registration,
+                                       const char        * cmm,
+                                       uint32_t            flags,
+                                       oyObject_s          object );
 OYAPI int  OYEXPORT
            oyOptions_SetDriverContext( oyOptions_s      ** options,
                                        oyPointer           driver_context,
