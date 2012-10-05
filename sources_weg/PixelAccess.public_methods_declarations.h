@@ -11,6 +11,9 @@ oyPixelAccess_s *  oyPixelAccess_Create (
                                        oyObject_s          object );
 oyImage_s *        oyPixelAccess_GetOutputImage (
                                        oyPixelAccess_s   * pixel_access );
+int                oyPixelAccess_SetOutputImage (
+                                       oyPixelAccess_s   * pixel_access,
+                                       oyImage_s         * image );
 oyRectangle_s *    oyPixelAccess_GetOutputROI (
                                        oyPixelAccess_s   * pixel_access );
 oyFilterGraph_s *  oyPixelAccess_GetGraph (

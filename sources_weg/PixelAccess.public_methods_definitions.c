@@ -159,6 +159,30 @@ oyImage_s *        oyPixelAccess_GetOutputImage (
 
   return oyImage_Copy( s->output_image, 0 );
 }
+/** Function  oyPixelAccess_SetOutputImage
+ *  @memberof oyPixelAccess_s
+ *  @brief    Set oyPixelAccess_s::output_image
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/10/04
+ *  @since    2012/10/04 (Oyranos: 0.5.0)
+ */
+int                oyPixelAccess_SetOutputImage (
+                                       oyPixelAccess_s   * pixel_access,
+                                       oyImage_s         * image )
+{
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 1 )
+
+  oyImage_Release( &s->output_image );
+  s->output_image = oyImage_Copy( image, 0 );
+
+  return 0;
+}
 /** Function  oyPixelAccess_GetOutputROI
  *  @memberof oyPixelAccess_s
  *  @brief    Access oyPixelAccess_s::output_image_roi
