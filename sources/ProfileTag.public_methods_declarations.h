@@ -1,5 +1,6 @@
 OYAPI oyProfileTag_s * OYEXPORT
                oyProfileTag_Create   ( oyStructList_s    * list,
+                                       icTagSignature      tag_use,
                                        icTagTypeSignature  tag_type,
                                        uint32_t            version,
                                        const char        * required_cmm,

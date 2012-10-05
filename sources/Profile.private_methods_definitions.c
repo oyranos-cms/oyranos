@@ -833,12 +833,10 @@ int                oyProfile_DeviceAdd_(oyProfile_s_      * profile,
         if(error <= 0)
         {
           pddt = (oyProfileTag_s_*)oyProfileTag_Create( list, icSigProfileDetailDescriptionTag_,
+                                                         icSigProfileDetailDescriptionTag_,
                                                         0, OY_MODULE_NICK, 0);
           error = !pddt;
         }
-
-        if(error <= 0)
-          pddt->use = icSigProfileDetailDescriptionTag_;
 
         oyStructList_Release( &list );
 

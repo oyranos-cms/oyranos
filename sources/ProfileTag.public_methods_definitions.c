@@ -24,6 +24,7 @@
  */
 OYAPI oyProfileTag_s * OYEXPORT
                oyProfileTag_Create   ( oyStructList_s    * list,
+                                       icTagSignature      tag_use,
                                        icTagTypeSignature  tag_type,
                                        uint32_t            version,
                                        const char        * required_cmm,
@@ -74,6 +75,10 @@ OYAPI oyProfileTag_s * OYEXPORT
 
     if(error <= 0)
       error = !memcpy( oyProfileTagPriv_m(tag)->last_cmm_, cmm, 4 );
+
+    if(error <= 0)
+      oyProfileTagPriv_m(tag)->use = tag_use;
+
     if(error <= 0)
       s = tag;
   }
@@ -124,12 +129,10 @@ OYAPI oyProfileTag_s * OYEXPORT
 
   if(error <= 0)
   {
-    tag = oyProfileTag_Create( list, tag_type, 0, OY_MODULE_NICK, object);
+    tag = oyProfileTag_Create( list, tag_usage, tag_type, 0,
+                               OY_MODULE_NICK, object);
     error = !tag;
   }
-
-  if(error <= 0)
-    oyProfileTagPriv_m(tag)->use = tag_usage;
 
   oyStructList_Release( &list );
 
