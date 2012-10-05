@@ -664,7 +664,7 @@ OYAPI int  OYEXPORT
  *
  *  @param         node                filter node
  *  @param         pos                 position of connector from filter
- *  @return                            the plug - no copy
+ *  @return                            the plug - is no copy
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/30 (Oyranos: 0.1.8)
@@ -742,7 +742,7 @@ OYAPI int  OYEXPORT
  *
  *  @param         node                filter node
  *  @param         pos                 absolute position of connector
- *  @return                            the socket - no copy!
+ *  @return                            the socket - is no copy!
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/30 (Oyranos: 0.1.8)
@@ -785,6 +785,133 @@ OYAPI oyFilterSocket_s * OYEXPORT
 
   return s;
 }
+
+/** Function  oyFilterNode_GetSocketNode
+ *  @memberof oyFilterNode_s
+ *  @brief    Get a neighbouring oyFilterNode_s
+ *
+ *  @param         node                filter node
+ *  @param         pos                 connector position
+ *  @param         plugs_pos           position in plug list
+ *  @return                            the node - is no copy!
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @since    2012/10/03 (Oyranos: 0.5.0)
+ *  @date     2012/10/03
+ */
+OYAPI oyFilterNode_s * OYEXPORT
+               oyFilterNode_GetSocketNode (
+                                       oyFilterNode_s    * node,
+                                       int                 pos,
+                                       int                 plugs_pos )
+{
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node,
+                  * remote = 0;
+  oyFilterPlugs_s * remote_plugs = 0;
+  oyFilterPlug_s_ * remote_plug = 0;
+
+  if(!node)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
+
+  remote_plugs = s->sockets[pos]->requesting_plugs_;
+  remote_plug = (oyFilterPlug_s_*)oyFilterPlugs_Get( remote_plugs, plugs_pos );
+  remote = remote_plug->node;
+
+  oyFilterPlug_Release( (oyFilterPlug_s**)&remote_plug );
+
+  return (oyFilterNode_s*)remote;
+}
+
+/** Function  oyFilterNode_CountSocketNodes
+ *  @memberof oyFilterNode_s
+ *  @brief    Get a neighbouring oyFilterNode_s
+ *
+ *  @param         node                filter node
+ *  @param         pos                 connector position
+ *  @param         flags               specify which number to return
+ *                                     - oyranos::OY_FILTEREDGE_FREE: count available
+ *                                     - oyranos::OY_FILTEREDGE_CONNECTED: count used
+ *                                     - oyranos::OY_FILTEREDGE_LASTTYPE: account only
+ *                                       for the last connector type
+ *  @return                            the number of possible edges
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @since    2012/10/03 (Oyranos: 0.5.0)
+ *  @date     2012/10/03
+ */
+OYAPI int OYEXPORT
+               oyFilterNode_CountSocketNodes (
+                                       oyFilterNode_s    * node,
+                                       int                 pos,
+                                       int                 flags )
+{
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node;
+  int n = 0,
+      possible = 0,
+      connected = 0;
+
+  if(!s || !s->core || !s->api7_)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
+
+  /* sockets */
+  {
+    if(oyToFilterEdge_LastType_m(flags))
+    {
+      possible = s->api7_->sockets_last_add + 1;
+    } else
+    {
+      possible = s->sockets_n_;
+    }
+
+    if(s->sockets)
+        if(s->sockets[pos])
+          connected += oyFilterPlugs_Count(s->sockets[pos]->requesting_plugs_);
+
+    if(oyToFilterEdge_Free_m(flags))
+      n = possible ? INT32_MAX : 0;
+    else if(oyToFilterEdge_Connected_m(flags))
+      n = connected;
+    else
+      n = possible;
+  }
+
+  return n;
+}
+
+/** Function  oyFilterNode_GetPlugNode
+ *  @memberof oyFilterNode_s
+ *  @brief    Get a neighbouring oyFilterNode_s
+ *
+ *  @param         node                filter node
+ *  @param         pos                 connector position
+ *  @return                            the node - is no copy!
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @since    2012/10/03 (Oyranos: 0.5.0)
+ *  @date     2012/10/03
+ */
+OYAPI oyFilterNode_s * OYEXPORT
+               oyFilterNode_GetPlugNode ( 
+                                       oyFilterNode_s    * node,
+                                       int                 pos )
+{
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node,
+                  * remote = 0;
+
+  if(!node)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
+
+  remote = s->plugs[pos]->remote_socket_->node;
+
+  return (oyFilterNode_s*)remote;
+}
+
 
 /** Function  oyFilterNode_GetText
  *  @memberof oyFilterNode_s
@@ -1168,6 +1295,114 @@ OYAPI const char *  OYEXPORT
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
 
   return ((oyFilterCore_s_*)s->core)->registration_;
+}
+/** Function  oyFilterNode_GetRelatives
+ *  @memberof oyFilterNode_s
+ *  @brief    Get filter relatives string
+ *
+ *  @param[in,out] node                filter object
+ *  @return                            the debug string
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/10/04
+ *  @since    2012/10/04 (Oyranos: 0.5.0)
+ */
+OYAPI const char *  OYEXPORT
+                 oyFilterNode_GetRelatives
+                                     ( oyFilterNode_s     * node )
+{
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node;
+
+  if(!node)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
+
+  return s->relatives_;
+}
+/** Function  oyFilterNode_GetModuleName
+ *  @memberof oyFilterNode_s
+ *  @brief    Get filter core module string
+ *
+ *  @param[in,out] node                filter object
+ *  @return                            the debug string
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/10/04
+ *  @since    2012/10/04 (Oyranos: 0.5.0)
+ */
+OYAPI const char *  OYEXPORT
+                 oyFilterNode_GetModuleName
+                                     ( oyFilterNode_s     * node )
+{
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node;
+
+  if(!node)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
+
+  return ((oyFilterCore_s_*)s->core)->api4_->id_;
+}
+/** Function  oyFilterNode_GetModuleData
+ *  @memberof oyFilterNode_s
+ *  @brief    Get module data
+ *
+ *  the filters private data, requested over 
+ *  oyCMMapi4_s::oyCMMFilterNode_ContextToMem() and converted to
+ *  oyCMMapi4_s::context_type
+ *
+ *  @param[in,out] node                filter object
+ *  @return                            the data
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/10/04
+ *  @since    2012/10/04 (Oyranos: 0.5.0)
+ */
+OYAPI oyPointer_s *  OYEXPORT
+                 oyFilterNode_GetModuleData
+                                     ( oyFilterNode_s     * node )
+{
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node;
+
+  if(!node)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
+
+  return oyPointer_Copy( s->backend_data, 0 );
+}
+/** Function  oyFilterNode_SetModuleData
+ *  @memberof oyFilterNode_s
+ *  @brief    Set module data
+ *
+ *  the filters private data, requested over 
+ *  oyCMMapi4_s::oyCMMFilterNode_ContextToMem() and converted to
+ *  oyCMMapi4_s::context_type
+ *
+ *  @param[in,out] node                filter object
+ *  @return                            the data
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/10/04
+ *  @since    2012/10/04 (Oyranos: 0.5.0)
+ */
+OYAPI int  OYEXPORT
+                 oyFilterNode_SetModuleData
+                                     ( oyFilterNode_s     * node,
+                                       oyPointer_s        * data )
+{
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node;
+
+  if(!node)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 1 )
+
+  oyPointer_Release( &s->backend_data );
+  s->backend_data = oyPointer_Copy( data, 0 );
+
+  return 0;
 }
 /** Function  oyFilterNode_GetTags
  *  @memberof oyFilterNode_s

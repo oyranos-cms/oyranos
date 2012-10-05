@@ -52,6 +52,20 @@ OYAPI int  OYEXPORT
 OYAPI oyFilterSocket_s * OYEXPORT
                oyFilterNode_GetSocket( oyFilterNode_s    * node,
                                        int                 pos );
+OYAPI oyFilterNode_s * OYEXPORT
+               oyFilterNode_GetSocketNode (
+                                       oyFilterNode_s    * node,
+                                       int                 pos,
+                                       int                 plugs_pos );
+OYAPI int OYEXPORT
+               oyFilterNode_CountSocketNodes (
+                                       oyFilterNode_s    * node,
+                                       int                 pos,
+                                       int                 flags );
+OYAPI oyFilterNode_s * OYEXPORT
+               oyFilterNode_GetPlugNode ( 
+                                       oyFilterNode_s    * node,
+                                       int                 pos );
 OYAPI const char *  OYEXPORT
                 oyFilterNode_GetText  ( oyFilterNode_s    * node,
                                        oyNAME_e            name_type );
@@ -81,3 +95,16 @@ OYAPI oyFilterCore_s *  OYEXPORT
 OYAPI const char *  OYEXPORT
                  oyFilterNode_GetRegistration
                                      ( oyFilterNode_s     * node );
+OYAPI const char *  OYEXPORT
+                 oyFilterNode_GetRelatives
+                                     ( oyFilterNode_s     * node );
+OYAPI const char *  OYEXPORT
+                 oyFilterNode_GetModuleName
+                                     ( oyFilterNode_s     * node );
+OYAPI oyPointer_s *  OYEXPORT
+                 oyFilterNode_GetModuleData(
+                                       oyFilterNode_s     * node );
+OYAPI int  OYEXPORT
+                 oyFilterNode_SetModuleData(
+                                       oyFilterNode_s     * node,
+                                       oyPointer_s        * data );
