@@ -12,9 +12,14 @@
  *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2007/12/12
  */
+#include "oyCMMapi8_s_.h"
+#include "oyCMMapi10_s_.h"
+#include "oyCMMinfo_s_.h"
+#include "oyCMMui_s_.h"
 
 #include "oyranos_cmm.h"
 #include "oyranos_debug.h"
+#include "oyranos_devices.h"
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
 #include "oyranos_monitor.h"
@@ -49,9 +54,9 @@ int            oyX1CMMMessageFuncSet ( oyMessage_f         message_func );
 
 oyMessage_f oyX1_msg = 0;
 
-extern oyCMMapi8_s oyX1_api8;
-extern oyCMMapi10_s    oyX1_api10_set_xcm_region_handler;
-oyRankPad oyX1_rank_map[];
+extern oyCMMapi8_s_ oyX1_api8;
+extern oyCMMapi10_s_    oyX1_api10_set_xcm_region_handler;
+oyRankMap oyX1_rank_map[];
 
 int          oyX1DeviceFromName_     ( const char        * device_name,
                                        oyOptions_s       * options,
@@ -264,7 +269,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
       } else if(error <= 0)
       {
         if(!error && device_name)
-        error = oyOptions_SetFromText( &(*device)->backend_core,
+        error = oyOptions_SetFromText( oyConfig_GetOptions(*device,"backend_core"),
                                        OYX1_MONITOR_REGISTRATION OY_SLASH "device_name",
                                        device_name, OY_CREATE_NEW );
 
@@ -306,7 +311,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
             if(has)
               oyOption_Release( &o );
             else
-              oyOptions_MoveIn( (*device)->data, &o, -1 );
+              oyOptions_MoveIn( *oyConfig_GetOptions(*device,"data"), &o, -1 );
           }
         }
       }
@@ -421,7 +426,7 @@ int            oyX1Configs_FromPattern (
 
          /** 3.1.2 tell the "device_name" */
         if(error <= 0)
-        error = oyOptions_SetFromText( &device->backend_core,
+        error = oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
                                        OYX1_MONITOR_REGISTRATION OY_SLASH
                                        "device_name",
                                        texts[i], OY_CREATE_NEW );
@@ -536,13 +541,12 @@ int            oyX1Configs_FromPattern (
         }
         oyProfile_DeviceAdd( prof, device, opts );
 
-        error = oyOptions_SetFromText( &device->backend_core,
+        error = oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
                                        OYX1_MONITOR_REGISTRATION OY_SLASH
                                        "device_name",
                                        device_name, OY_CREATE_NEW );
-        if(error <= 0 && !device->rank_map)
-          device->rank_map = oyRankMapCopy( oyX1_rank_map,
-                                            device->oy_->allocateFunc_ );
+        if(error <= 0 && !oyConfig_GetRankMap(device))
+          oyConfig_SetRankMap(device, oyX1_rank_map );
         oyConfigs_MoveIn( devices, &device, -1 );
         if(error <= 0)
           *s = devices;
@@ -611,7 +615,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
   {
     device = oyConfigs_Get( devices, i );
     rank += oyFilterRegistrationMatch( oyX1_api8.registration,
-                                       device->registration,
+                                       oyConfig_GetRegistration(device),
                                        oyOBJECT_CMM_API8_S );
     oyConfig_Release( &device );
   }
@@ -630,7 +634,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
       {
         device = oyConfigs_Get( devices, i );
         rank = oyFilterRegistrationMatch( oyX1_api8.registration,
-                                          device->registration,
+                                          oyConfig_GetRegistration(device),
                                           oyOBJECT_CMM_API8_S );
         if(!rank)
         {
@@ -664,7 +668,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
             if(has)
               oyOption_Release( &o );
             else
-              oyOptions_MoveIn( device->data, &o, -1 );
+              oyOptions_MoveIn( *oyConfig_GetOptions(device,"data"), &o, -1 );
           }
         }
 
@@ -816,7 +820,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
               else
                 error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag, t);
 
-              error = oyOptions_SetFromText( &device->backend_core,
+              error = oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
                                        OYX1_MONITOR_REGISTRATION OY_SLASH
                                        "OYRANOS_automatic_generated",
                                        "1", OY_CREATE_NEW );
@@ -880,7 +884,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           }
 
           if(!has)
-            oyOptions_Set( device->data, o, -1, 0 );
+            oyOptions_Set( *oyConfig_GetOptions(device,"data"), o, -1, 0 );
 
           oyOption_Release( &o );
         }
@@ -888,7 +892,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
         /** 3.1.5 construct a oyNAME_NAME string */
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
-          o = oyOptions_Find( device->data, "device_rectangle" );
+          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "device_rectangle" );
           r = (oyRectangle_s*) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
 
           text = 0; tmp = 0;
@@ -897,7 +901,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           STRING_ADD( text, tmp );
           oyOption_Release( &o );
 
-          o = oyOptions_Find( device->data, "icc_profile" );
+          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "icc_profile" );
 
           if( o )
           {
@@ -923,7 +927,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
 
           if(error <= 0)
           {
-            t_err = oyOptions_SetFromText( &device->data,
+            t_err = oyOptions_SetFromText( oyConfig_GetOptions(device,"data"),
                                          OYX1_MONITOR_REGISTRATION OY_SLASH
                                          "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
@@ -939,9 +943,8 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           error = oyX1DeviceFromName_( device_name, options, &device );
 
         /** 3.1.6 add the rank scheme to combine properties */
-        if(error <= 0 && !device->rank_map)
-          device->rank_map = oyRankMapCopy( oyX1_rank_map,
-                                            device->oy_->allocateFunc_ );
+        if(error <= 0 && !oyConfig_GetRankMap(device))
+          oyConfig_SetRankMap(device, oyX1_rank_map );
 
         oyConfig_Release( &device );
       }
@@ -961,7 +964,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
       {
         device = oyConfigs_Get( devices, i );
         rank = oyFilterRegistrationMatch( oyX1_api8.registration,
-                                          device->registration,
+                                          oyConfig_GetRegistration(device),
                                           oyOBJECT_CMM_API8_S );
         if(!rank)
         {
@@ -1002,7 +1005,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
       {
         device = oyConfigs_Get( devices, i );
         rank = oyFilterRegistrationMatch( oyX1_api8.registration,
-                                          device->registration,
+                                          oyConfig_GetRegistration(device),
                                           oyOBJECT_CMM_API8_S );
         if(!rank)
         {
@@ -1086,13 +1089,13 @@ int            oyX1Config_Rank       ( oyConfig_s        * config )
 }
 
 /** @instance oyX1_rank_map
- *  @brief    oyRankPad map for mapping device to configuration informations
+ *  @brief    oyRankMap map for mapping device to configuration informations
  *
  *  @version Oyranos: 0.1.10
  *  @date    2009/01/27
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  */
-oyRankPad oyX1_rank_map[] = {
+oyRankMap oyX1_rank_map[] = {
   {"device_name", 2, -1, 0},           /**< is good */
   {"profile_name", 0, 0, 0},           /**< non relevant for device properties*/
   {"host", 1, 0, 0},                   /**< nice to match */
@@ -1177,7 +1180,7 @@ const char * oyX1_api8_ui_texts[] = {"name", "help", "device_class", "icc_profil
  *  @since   2009/12/14 (Oyranos: 0.1.10)
  *  @date    2009/12/16
  */
-oyCMMui_s oyX1_api8_ui = {
+oyCMMui_s_ oyX1_api8_ui = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -1206,7 +1209,7 @@ oyIcon_s oyX1_api8_icon = {
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2010/12/09
  */
-oyCMMapi8_s oyX1_api8 = {
+oyCMMapi8_s_ oyX1_api8 = {
   oyOBJECT_CMM_API8_S,
   0,0,0,
   (oyCMMapi_s*) & oyX1_api10_set_xcm_region_handler, /**< next */
@@ -1224,10 +1227,10 @@ oyCMMapi8_s oyX1_api8 = {
   oyX1Configs_Modify,        /**< oyConfigs_Modify_f oyConfigs_Modify */
   oyX1Config_Rank,           /**< oyConfig_Rank_f oyConfig_Rank */
 
-  &oyX1_api8_ui,             /**< device class UI name and help */
+  (oyCMMui_s*)&oyX1_api8_ui,             /**< device class UI name and help */
   &oyX1_api8_icon,           /**< device icon */
 
-  oyX1_rank_map              /**< oyRankPad ** rank_map */
+  oyX1_rank_map              /**< oyRankMap ** rank_map */
 };
 
 /* OYX1_MONITOR_REGISTRATION -------------------------------------------------*/
@@ -1301,7 +1304,7 @@ const char *oyX1_texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2007/12/12 (Oyranos: 0.1.8)
  *  @date    2008/12/30
  */
-oyCMMinfo_s oyX1_cmm_module = {
+oyCMMinfo_s_ oyX1_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,
@@ -1596,7 +1599,7 @@ const char *oyX1_texts_set_xcm_region[4] = {"can_handle","set_xcm_region","help"
  *  @since   2012/01/11 (Oyranos: 0.4.0)
  *  @date    2012/01/11
  */
-oyCMMapi10_s    oyX1_api10_set_xcm_region_handler = {
+oyCMMapi10_s_    oyX1_api10_set_xcm_region_handler = {
 
   oyOBJECT_CMM_API10_S,
   0,0,0,
