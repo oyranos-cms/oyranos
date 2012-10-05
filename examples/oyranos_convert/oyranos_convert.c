@@ -17,9 +17,9 @@
  *  cc -Wall -g oyranos_convert.c -o oyranos-icc `pkg-config --libs --cflags oyranos` -I../../ -I../build_11.4 -I ../../API_generated/ -I ../../oforms/
  */
 
+#include "oyConversion_s.h"
 
 #include "oyranos.h"
-#include "oyranos_alpha.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_helper_macros.h"

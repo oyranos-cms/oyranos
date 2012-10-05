@@ -6,7 +6,6 @@
 #include <string.h>
 
 #include "oyranos.h"
-#include "oyranos_alpha.h"
 #include "oyranos_helper.h"
 #include "oyranos_elektra.h"
 #include "oyranos_string.h"

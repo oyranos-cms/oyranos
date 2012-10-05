@@ -15,9 +15,9 @@
  *  The program informs about installed ICC profiles.
  */
 
+#include "oyProfiles_s.h"
 
 #include "oyranos.h"
-#include "oyranos_alpha.h"
 #include "oyranos_debug.h"
 #include "oyranos_elektra.h"
 #include "oyranos_helper.h"
@@ -27,6 +27,7 @@
 #include "oyranos_config.h"
 #include "oyranos_string.h"
 #include "oyranos_version.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

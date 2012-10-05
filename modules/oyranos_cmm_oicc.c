@@ -18,14 +18,15 @@
 
 #include "oyCMMapi9_s_.h"
 #include "oyCMMobjectType_s_.h"
+#include "oyProfiles_s.h"
 
-#include "oyranos_alpha_internal.h"
 #include "oyranos_cmm.h"
+#include "oyranos_definitions.h"
 #include "oyranos_helper.h"
 #include "oyranos_icc.h"
 #include "oyranos_i18n.h"
 #include "oyranos_io.h"
-#include "oyranos_definitions.h"
+#include "oyranos_module_internal.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
 

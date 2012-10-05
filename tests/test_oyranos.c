@@ -266,7 +266,7 @@ oyTESTRESULT_e testElektra()
 }
 
 
-#include <oyranos_alpha.h>
+#include "oyOption_s.h"
 
 oyTESTRESULT_e testOption ()
 {

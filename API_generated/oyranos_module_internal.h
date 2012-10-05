@@ -25,6 +25,7 @@
 #include "oyCMMapi3_s_.h"
 #include "oyCMMapiFilters_s.h"
 #include "oyCMMapis_s.h"
+#include "oyConversion_s.h"
 #include "oyFilterNodes_s.h"
 #include "oyFilterPlug_s.h"
 #include "oyFilterPlugs_s.h"
@@ -158,5 +159,21 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
 int          oyPointer_ConvertData   ( oyPointer_s       * cmm_ptr,
                                        oyPointer_s       * cmm_ptr_out,
                                        oyFilterNode_s    * node );
+
+#define OY_FILTEREDGE_FREE             0x01        /**< list free edges */
+#define OY_FILTEREDGE_CONNECTED        0x02        /**< list connected edges */
+#define OY_FILTEREDGE_LASTTYPE         0x04        /**< list last type edges */
+/* decode */
+#define oyToFilterEdge_Free_m(r)       ((r)&1)
+#define oyToFilterEdge_Connected_m(r)  (((r) >> 1)&1)
+#define oyToFilterEdge_LastType_m(r)   (((r) >> 2)&1)
+void oyShowGraph_( oyFilterNode_s * c, const char * selector );
+
+
+
+
+void               oyShowConversion_ ( oyConversion_s    * conversion,
+                                       uint32_t            flags );
+
 
 #endif /* OYRANOS_MODULE_INTERNAL_H */

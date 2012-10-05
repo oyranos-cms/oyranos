@@ -13,7 +13,7 @@
  */
 
 #include <oyranos.h>
-#include <alpha/oyranos_alpha.h>
+#include <oyConversion_s.h>
 #include "oyranos_display_helpers.h"
 
 int oy_display_verbose = 0;

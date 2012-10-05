@@ -1,4 +1,3 @@
-#include "oyranos_alpha.h"
 #include "oyranos_elektra.h"
 #include "oyranos_devices.h"
 #include "oyranos_devices_internal.h"

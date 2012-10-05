@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Colour Management System 
  *
- *  Copyright (C) 2008  Kai-Uwe Behrmann
+ *  Copyright (C) 2008-2012  Kai-Uwe Behrmann
  *
  */
 
@@ -28,7 +28,9 @@
 FILE *popen ( const char *__command, const char *__modes);
 #include <math.h>
 #include <string.h>
-#include <oyranos_alpha.h>        /* Oyranos headers */
+#include <oyProfile_s.h  >        /* Oyranos headers */
+#include <oyConversion_s.h>
+#include <oyranos_devices.h>
 #include <cairo.h>                /* Cairo headers */
 #include <cairo-pdf.h>
 

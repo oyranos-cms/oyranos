@@ -33,17 +33,19 @@
 #endif
 
 #include "oyranos.h"
-#include "oyranos_alpha.h"
 #include "oyranos_debug.h"
 #include "oyranos_devices.h"
 #include "oyranos_helper.h"
 #include "oyranos_helper_macros.h"
+#include "oyranos_icc.h"
 #include "oyranos_internal.h"
 #include "oyranos_config.h"
 #include "oyranos_version.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
+
 #include "oyProfile_s_.h"
+#include "oyRectangle_s.h"
 
 
 #ifdef HAVE_X

@@ -14,7 +14,6 @@
  *  @since    2008/02/09
  */
 
-#include "oyranos_alpha.h"
 #include "oyranos_cmm.h"
 #include "oyranos_elektra.h"
 #include "oyranos_helper.h"

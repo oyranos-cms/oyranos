@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2005-2011 (C) Kai-Uwe Behrmann
+ *            2005-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    monitor device detection
  *  @internal
@@ -36,7 +36,6 @@
 # endif
 
 #include "oyranos.h"
-#include "oyranos_alpha.h"
 #include "oyranos_internal.h"
 #include "oyranos_monitor.h"
 #include "oyranos_monitor_internal_x11.h"

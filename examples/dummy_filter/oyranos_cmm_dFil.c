@@ -3,7 +3,7 @@
  *  a filter for Oyranos 
  *
  *  @par Copyright:
- *            2009 (C) My name
+ *            2012 (C) My name
  *
  *  @brief    my filter for Oyranos
  *  @internal
@@ -14,7 +14,6 @@
  */
 
 
-#include "oyranos_alpha.h"
 #include "oyranos_cmm.h"
 #include "oyranos_definitions.h"
 

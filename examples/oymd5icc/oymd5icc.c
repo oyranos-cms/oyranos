@@ -1,5 +1,6 @@
 /* cc -g -Wall `pkg-config oyranos --libs --cflags` oymd5icc.c -o oymd5icc */
-#include <oyranos_alpha.h>
+#include <oyProfile_s.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

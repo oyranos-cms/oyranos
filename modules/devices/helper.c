@@ -3,22 +3,9 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include <oyranos_cmm.h>
-#include <oyranos_alpha.h>
 
-static const char *oyValueTypeText( oyVALUETYPE_e       type )
-{
-  switch(type)
-  {
-  case oyVAL_INT:         return "Int";
-  case oyVAL_DOUBLE:      return "Double";
-  case oyVAL_INT_LIST:    return "IntList";
-  case oyVAL_DOUBLE_LIST: return "DoubleList";
-  case oyVAL_STRING:      return "String";
-  case oyVAL_STRING_LIST: return "StringList";
-  case oyVAL_STRUCT:      return "Struct";
-  }
-  return 0;
-}
+#include "oyOption_s.h"              /* oyValueTypeText() */
+
 
 #ifdef DEBUG_
 static void print_option(oyOption_s * opt, int j)
