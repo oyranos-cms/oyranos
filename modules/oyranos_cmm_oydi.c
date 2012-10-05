@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2009 (C) Kai-Uwe Behrmann
+ *            2009-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyranos X11 module for Oyranos
  *  @internal
@@ -656,7 +656,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
       /* get device dimension */
       o = oyConfig_Find( c, "device_rectangle" );
-      device_rectangle = (oyRectangle_s *) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
+      device_rectangle = (oyRectangle_s *) oyOption_GetStruct( o, oyOBJECT_RECTANGLE_S );
       oyOption_Release( &o );
 
       if(!device_rectangle)
@@ -675,7 +675,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       /* get display rectangle to project into */
       if(image)
         o = oyOptions_Find( image_tags, "display_rectangle" );
-      display_rectangle = (oyRectangle_s *) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
+      display_rectangle = (oyRectangle_s *) oyOption_GetStruct( o, oyOBJECT_RECTANGLE_S );
       oyOption_Release( &o );
 
       /* trim and adapt the work rectangle */

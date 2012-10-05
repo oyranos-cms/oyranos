@@ -2605,7 +2605,7 @@ char *   oyGetDisplayNameFromPosition2(const char        * device_type,
     device = oyConfigs_Get( devices, i );
     o = oyConfig_Find( device, "device_rectangle" );
 
-    r = (oyRectangle_s*) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
+    r = (oyRectangle_s*) oyOption_GetStruct( o, oyOBJECT_RECTANGLE_S );
 
     if(!device_name &&
        r && oyRectangle_PointIsInside( r, x,y ))
@@ -2676,7 +2676,7 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
     device = oyConfigs_Get( devices, i );
     o = oyConfig_Find( device, "device_rectangle" );
 
-    r = (oyRectangle_s*) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
+    r = (oyRectangle_s*) oyOption_GetStruct( o, oyOBJECT_RECTANGLE_S );
 
     if(!device_name &&
        r && oyRectangle_PointIsInside( r, x,y ))

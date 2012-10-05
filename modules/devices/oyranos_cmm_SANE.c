@@ -434,7 +434,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
             g_error++;
          }
       } else {
-        oyPointer_s * oy_struct = (oyPointer_s*) oyOption_StructGet( handle_opt,
+        oyPointer_s * oy_struct = (oyPointer_s*) oyOption_GetStruct( handle_opt,
                                                            oyOBJECT_POINTER_S );
         device_handle = (SANE_Handle)oyPointer_GetPointer(oy_struct);
         oyPointer_Release( &oy_struct );
@@ -711,7 +711,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          /* If not there, get one from SANE */
          handle_opt_dev = oyConfig_Find(device, "device_handle");
          if (handle_opt_dev) {
-           oyPointer_s * oy_struct = (oyPointer_s*)oyOption_StructGet(
+           oyPointer_s * oy_struct = (oyPointer_s*)oyOption_GetStruct(
                                            handle_opt_dev, oyOBJECT_POINTER_S );
            device_handle = (SANE_Handle)oyPointer_GetPointer(oy_struct);
            oyPointer_Release( &oy_struct );

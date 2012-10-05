@@ -24,7 +24,7 @@ static const char *oyValueTypeText( oyVALUETYPE_e       type )
 static void print_option(oyOption_s * opt, int j)
 {
    int id = oyOption_GetId(opt);
-   oyStruct_s *opt_struct = oyOption_StructGet( opt, oyOBJECT_NONE );
+   oyStruct_s *opt_struct = oyOption_GetStruct( opt, oyOBJECT_NONE );
    if (opt_struct) {
       oyCMMptr_s *cmm = NULL;
       oyBlob_s *blob = NULL;

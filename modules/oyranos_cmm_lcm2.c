@@ -1510,7 +1510,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   o = oyOptions_Find( node_options, "profiles_effect" );
   if(o)
   {
-    profiles = (oyProfiles_s*) oyOption_StructGet( o, oyOBJECT_PROFILES_S );
+    profiles = (oyProfiles_s*) oyOption_GetStruct( o, oyOBJECT_PROFILES_S );
     if( !profiles )
     {
       oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
@@ -1548,7 +1548,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
 
   if(o)
   {
-    profiles = (oyProfiles_s*) oyOption_StructGet( o, oyOBJECT_PROFILES_S );
+    profiles = (oyProfiles_s*) oyOption_GetStruct( o, oyOBJECT_PROFILES_S );
     if( !profiles )
     {
       oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );

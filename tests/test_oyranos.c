@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Colour Management System 
  *
- *  Copyright (C) 2004-2009  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2012  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test siute
  *  @internal
@@ -650,7 +650,7 @@ oyTESTRESULT_e testMonitor ()
   {
     c = oyConfigs_Get( devices, i );
     o = oyConfig_Find( c, "device_rectangle" );
-    r = (oyRectangle_s *) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
+    r = (oyRectangle_s *) oyOption_GetStruct( o, oyOBJECT_RECTANGLE_S );
 
     if(r)
     {

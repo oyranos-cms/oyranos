@@ -518,7 +518,7 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
           text = 0;
           o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "icc_profile" );
           if( o )
-            p = (oyProfile_s*) oyOption_StructGet( o, oyOBJECT_PROFILE_S );
+            p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
           if( p )
           {            
             tmp = oyProfile_GetFileName( p, 0 );

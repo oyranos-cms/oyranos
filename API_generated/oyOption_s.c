@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/10/05
  */
 
 
@@ -856,7 +856,7 @@ int            oyOption_StructMoveIn ( oyOption_s        * option,
   return oyOption_StructMoveIn_( s, oystruct );
 }
 
-/** Function oyOption_StructGet
+/** Function oyOption_GetStruct
  *  @memberof oyOption_s
  *  @brief   ask for a oyStruct_s object
  *
@@ -864,11 +864,11 @@ int            oyOption_StructMoveIn ( oyOption_s        * option,
  *  @param         type                the Oranos oyOBJECT_e object type
  *  @return                            Oyranos struct, as reference if possible
  *
- *  @version Oyranos: 0.1.10
- *  @since   2009/03/09 (Oyranos: 0.1.10)
- *  @date    2009/03/09
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/10/05
+ *  @since    2009/03/09 (Oyranos: 0.1.10)
  */
-oyStruct_s *   oyOption_StructGet    ( oyOption_s        * option,
+oyStruct_s *   oyOption_GetStruct    ( oyOption_s        * option,
                                        oyOBJECT_e          type )
 {
   oyStruct_s * s = 0;

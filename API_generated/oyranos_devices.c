@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/24
+ *  @date     2012/10/05
  */
 
 
@@ -881,7 +881,7 @@ OYAPI int  OYEXPORT
   if(error <= 0)
     o = oyConfig_Find( device, "icc_profile" );
 
-  p = (oyProfile_s*) oyOption_StructGet( o, oyOBJECT_PROFILE_S );
+  p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
   if(oyProfile_GetSignature( p, oySIGNATURE_MAGIC ) == icMagicNumber)
     *profile = p;
   else if(!error)

@@ -907,7 +907,7 @@ int            getDeviceProfile      ( Display           * display,
       oyMessageFunc_p( oyMSG_WARN, 0, "monitor rectangle request failed" );
       return 1;
     }
-    r = (oyRectangle_s*) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
+    r = (oyRectangle_s*) oyOption_GetStruct( o, oyOBJECT_RECTANGLE_S );
     if( !r )
     {
       oyMessageFunc_p( oyMSG_WARN, 0,

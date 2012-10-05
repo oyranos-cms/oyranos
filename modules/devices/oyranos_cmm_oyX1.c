@@ -703,7 +703,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           {
             /* the device might have assigned a dummy icc_profile, to show 
              * it can handle. But thats not relevant here. */
-            p = (oyProfile_s*) oyOption_StructGet( o, oyOBJECT_PROFILE_S );
+            p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
             if(oyProfile_GetSignature( p, oySIGNATURE_MAGIC ) == icMagicNumber)
               has = 1;
             else
@@ -893,7 +893,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
           o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "device_rectangle" );
-          r = (oyRectangle_s*) oyOption_StructGet( o, oyOBJECT_RECTANGLE_S );
+          r = (oyRectangle_s*) oyOption_GetStruct( o, oyOBJECT_RECTANGLE_S );
 
           text = 0; tmp = 0;
       
@@ -905,7 +905,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
 
           if( o )
           {
-            prof = (oyProfile_s*) oyOption_StructGet( o, oyOBJECT_PROFILE_S );
+            prof = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
             tmp = oyProfile_GetFileName( prof, 0 );
 
             STRING_ADD( text, "  " );

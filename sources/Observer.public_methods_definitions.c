@@ -22,7 +22,7 @@ OYAPI int  OYEXPORT
   oyCheckType__m( oyOBJECT_OBSERVER_S, return 0 )
 
      /* global signal disabling */
-  if(!oyToSignalBlock_m( oyObserverFlagsGet() ) &&
+  if(!oyToSignalBlock_m( oyObserverGetFlags() ) &&
      /* local signal disabling */
      !observer->disable_ref )
     result = observer->signal( observer, signal_type, signal_data );
@@ -184,7 +184,7 @@ OYAPI int  OYEXPORT
   oyStructList_s * observers = 0;
   int n,i, result = 0;
 
-  if(oyToSignalBlock_m( oyObserverFlagsGet() ))
+  if(oyToSignalBlock_m( oyObserverGetFlags() ))
     return 0;
 
   if(!error)
@@ -196,7 +196,7 @@ OYAPI int  OYEXPORT
 
   if(!error)
   {
-    observers = (oyStructList_s*)oyOption_StructGet( o, oyOBJECT_STRUCT_LIST_S);
+    observers = (oyStructList_s*)oyOption_GetStruct( o, oyOBJECT_STRUCT_LIST_S);
     n = oyStructList_Count( observers );
     for(i = 0; i < n; ++i)
     {
@@ -278,7 +278,7 @@ OYAPI int  OYEXPORT
 
   if(!error)
   {
-    observers = (oyStructList_s*)oyOption_StructGet( o, oyOBJECT_STRUCT_LIST_S );
+    observers = (oyStructList_s*)oyOption_GetStruct( o, oyOBJECT_STRUCT_LIST_S );
     n = oyStructList_Count( observers );
     for(i = 0; i < n; ++i)
     {
@@ -321,7 +321,7 @@ OYAPI int  OYEXPORT
 
   if(!error)
   {
-    observers = (oyStructList_s*)oyOption_StructGet( o, oyOBJECT_STRUCT_LIST_S );
+    observers = (oyStructList_s*)oyOption_GetStruct( o, oyOBJECT_STRUCT_LIST_S );
 
     n = oyStructList_Count( observers );
     for(i = 0; i < n; ++i)
@@ -567,7 +567,7 @@ OYAPI int  OYEXPORT
         oyStructList_s * observers = 0;
         int j_n,j;
 
-        observers = (oyStructList_s*)oyOption_StructGet( (oyOption_s*) o,
+        observers = (oyStructList_s*)oyOption_GetStruct( (oyOption_s*) o,
                                                        oyOBJECT_STRUCT_LIST_S );
 
         if(!error)
@@ -630,7 +630,7 @@ const char *       oySignalToString  ( oySIGNAL_e          signal_type )
 
 
 uint32_t   oy_observer_flags = 0;
-/** Function oyObserverFlagsGet
+/** Function oyObserverGetFlags
  *  @memberof oyObserver_s
  *  @brief   get global flags for Observation
  *
@@ -639,12 +639,12 @@ uint32_t   oy_observer_flags = 0;
  *  @date    2009/10/26
  */
 OYAPI uint32_t OYEXPORT
-           oyObserverFlagsGet        ( void )
+           oyObserverGetFlags        ( void )
 {
   return oy_observer_flags;
 }
 
-/** Function oyObserverFlagsSet
+/** Function oyObserverSetFlags
  *  @memberof oyObserver_s
  *  @brief   set global flags for Observation
  *
@@ -653,7 +653,7 @@ OYAPI uint32_t OYEXPORT
  *  @date    2009/10/26
  */
 OYAPI int  OYEXPORT
-           oyObserverFlagsSet        ( uint32_t            flags )
+           oyObserverSetFlags        ( uint32_t            flags )
 {
   oy_observer_flags = flags;
   return 0;
