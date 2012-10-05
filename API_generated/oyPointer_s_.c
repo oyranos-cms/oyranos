@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/10/04
  */
 
 
@@ -53,31 +53,39 @@
  */
 void oyPointer_Release__Members( oyPointer_s_ * cmmptr )
 {
+  oyPointer_s_ * s = cmmptr;
   /* Deallocate members here
    * E.g: oyXXX_Release( &cmmptr->member );
    */
 
-  if(cmmptr->oy_->deallocateFunc_)
+  if(s->oy_->deallocateFunc_)
   {
-    /*oyDeAlloc_f deallocateFunc = cmmptr->oy_->deallocateFunc_;*/
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( cmmptr->member );
      */
-    if(--cmmptr->ref)
+    if(--s->ref)
       return;
 
-    cmmptr->type_ = 0;
+    s->type_ = 0;
 
-    if(cmmptr->ptr)
+    if(s->ptr)
     {
-      if(cmmptr->ptrRelease)
-        cmmptr->ptrRelease( &cmmptr->ptr );
+      if(s->ptrRelease)
+        s->ptrRelease( &s->ptr );
       else
       {
-        oyDeAllocateFunc_( cmmptr->ptr );
-        cmmptr->ptr = 0;
+        oyDeAllocateFunc_( s->ptr );
+        s->ptr = 0;
       }
+
+      if(s->lib_name)
+      deallocateFunc( s->lib_name ); s->lib_name = 0;
+      if(s->func_name)
+      deallocateFunc( s->func_name ); s->func_name = 0;
+      if(s->resource)
+      deallocateFunc( s->resource ); s->resource = 0;
 
       /*oyCMMdsoRelease_( cmmptr->lib_name );*/
     }
@@ -125,16 +133,23 @@ int oyPointer_Init__Members( oyPointer_s_ * cmmptr )
 int oyPointer_Copy__Members( oyPointer_s_ * dst, oyPointer_s_ * src)
 {
   oyAlloc_f allocateFunc_ = 0;
-  oyDeAlloc_f deallocateFunc_ = 0;
 
   if(!dst || !src)
     return 1;
 
   allocateFunc_ = dst->oy_->allocateFunc_;
-  deallocateFunc_ = dst->oy_->deallocateFunc_;
+
+#define COPY_MEMBER_STRING(variable_name) { \
+  if(allocateFunc_) \
+    dst->variable_name = oyStringCopy_( src->variable_name, allocateFunc_ ); \
+  else \
+    dst->variable_name = src->variable_name; }
 
   /* Copy each value of src to dst here */
   dst->ref = src->ref;
+  COPY_MEMBER_STRING( lib_name )
+  COPY_MEMBER_STRING( func_name )
+  COPY_MEMBER_STRING( resource )
 
   return 0;
 }

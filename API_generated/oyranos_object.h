@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/24
+ *  @date     2012/10/04
  */
 
 
@@ -287,7 +287,7 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration1,
 
 
 /** @internal
- *  @struct  oyRankPad
+ *  @struct  oyRankMap
  *  @brief   a means to rank the result of comparing two key's
  *
  *  The structure is part of an other data structure and to be maintained by
@@ -302,9 +302,9 @@ typedef struct {
   int32_t match_value;                 /**< add to rank sum when matching */
   int32_t none_match_value;            /**< add to rank sum when not matching*/
   int32_t not_found_value;             /**< add to rank sum when entry is not found */
-} oyRankPad;
+} oyRankMap;
 
-oyRankPad *        oyRankMapCopy     ( const oyRankPad   * rank_map,
+oyRankMap *        oyRankMapCopy     ( const oyRankMap   * rank_map,
                                        oyAlloc_f           allocateFunc );
 
 /** @enum     oySTATUS_e

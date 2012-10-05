@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/10/04
  */
 
 
@@ -50,6 +50,12 @@ oyName_s *   oyName_new              ( oyObject_s          object )
   }
 
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  if(error)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
 
   s->type = type;
 

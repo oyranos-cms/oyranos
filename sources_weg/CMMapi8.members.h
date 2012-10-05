@@ -18,4 +18,4 @@
       @endverbatim
    *  For additional dynamic rank pads the allocation can be done individually.
    */
-  oyRankPad      * rank_map;
+  oyRankMap      * rank_map;

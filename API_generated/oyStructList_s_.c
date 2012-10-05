@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/10/04
  */
 
 
@@ -104,13 +104,11 @@ int oyStructList_Copy__Members( oyStructList_s_ * dst, oyStructList_s_ * src)
 {
   int error = 0, i;
   oyAlloc_f allocateFunc_ = 0;
-  oyDeAlloc_f deallocateFunc_ = 0;
 
   if(!dst || !src)
     return 1;
 
   allocateFunc_ = dst->oy_->allocateFunc_;
-  deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
   dst->parent_type_ = src->parent_type_;

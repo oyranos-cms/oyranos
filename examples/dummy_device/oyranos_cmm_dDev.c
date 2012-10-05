@@ -73,7 +73,7 @@ const char * Api8UiGetText           ( const char        * select,
 oyMessage_f message = 0;
 
 extern oyCMMapi8_s _api8;
-oyRankPad _rank_map[];
+oyRankMap _rank_map[];
 
 /* --- implementations --- */
 
@@ -662,13 +662,13 @@ int                Config_Check      ( oyConfig_s        * config )
 }
 
 /** @instance _rank_map
- *  @brief    oyRankPad map for mapping device to configuration informations
+ *  @brief    oyRankMap map for mapping device to configuration informations
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
-oyRankPad _rank_map[] = {
+oyRankMap _rank_map[] = {
   {"device_name", 2, -1, 0},           /**< is good */
   {"profile_name", 0, 0, 0},           /**< non relevant for device properties*/
   {"manufacturer", 1, -1, 0},          /**< is nice */
@@ -786,7 +786,7 @@ oyCMMapi8_s _api8 = {
   &_api8_ui,                 /**< device class UI name and help */
   &_api8_icon,               /**< device icon */
 
-  _rank_map                  /**< oyRankPad ** rank_map */
+  _rank_map                  /**< oyRankMap ** rank_map */
 };
 
 

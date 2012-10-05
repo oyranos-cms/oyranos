@@ -19,4 +19,4 @@
   e.g. "org/freedesktop/imaging/config.monitor.xorg/edid=oyBlob_s*" */
   oyOptions_s        * data;
 
-  oyRankPad          * rank_map;       /**< zero terminated list; key compare */
+  oyRankMap          * rank_map;       /**< zero terminated list; key compare */
