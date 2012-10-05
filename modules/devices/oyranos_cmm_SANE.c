@@ -76,10 +76,10 @@ const char * Api8UiGetText           ( const char        * select,
 oyMessage_f message = 0;
 
 extern oyCMMapi8_s _api8;
-oyRankPad _rank_map[];
+oyRankMap _rank_map[];
 
 int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options);
-int CreateRankMap_(SANE_Handle device_handle, oyRankPad ** rank_map);
+int CreateRankMap_(SANE_Handle device_handle, oyRankMap ** rank_map);
 int sane_release_handle(oyPointer * handle_ptr);
 int check_driver_version(oyOptions_s *options, oyOption_s **version_opt_p, int *call_sane_exit);
 
@@ -226,7 +226,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
               *handle_opt = NULL,
               *version_opt = NULL,
               *name_opt = NULL;
-   oyRankPad *dynamic_rank_map = NULL;
+   oyRankMap *dynamic_rank_map = NULL;
    int i, num_devices, g_error = 0, status, call_sane_exit = 0;
    const char *device_name = 0, *command_list = 0, *command_properties = 0;
    const SANE_Device **device_list = NULL;
@@ -649,7 +649,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                     *handle_opt_dev = NULL,
                     *context_opt_dev = NULL;
          oyConfig_s *device_new = NULL;
-         oyRankPad *dynamic_rank_map = NULL;
+         oyRankMap *dynamic_rank_map = NULL;
          char *device_name = NULL;
 
          /* All previous device properties are considered obsolete
@@ -881,7 +881,7 @@ oyIcon_s _api8_icon = {
 };
 
 /** @instance _rank_map
- *  @brief    oyRankPad map for mapping device to configuration informations
+ *  @brief    oyRankMap map for mapping device to configuration informations
  *
  *  This is the static part for the well known options. The final array will
  *  be created by the oyCreateRankMap_() function.
@@ -890,7 +890,7 @@ oyIcon_s _api8_icon = {
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
-oyRankPad _rank_map[] = {
+oyRankMap _rank_map[] = {
    /* Scanner H/W information */
    {"device_name", 2, -1, 0},                     /**< is good */
    {"profile_name", 0, 0, 0},                     /**< non relevant for device properties*/
@@ -929,7 +929,7 @@ oyCMMapi8_s _api8 = {
    Config_Rank,                                                       /**< oyConfig_Rank_f oyConfig_Rank */
    &_api8_ui,                                                         /**< device class UI name and help */
    &_api8_icon,                                                       /**< device icon */
-   _rank_map                                                          /**< oyRankPad ** rank_map */
+   _rank_map                                                          /**< oyRankMap ** rank_map */
 };
 
 /**
@@ -1130,9 +1130,9 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
  *
  * \todo { Untested }
  */
-int CreateRankMap_(SANE_Handle device_handle, oyRankPad ** rank_map)
+int CreateRankMap_(SANE_Handle device_handle, oyRankMap ** rank_map)
 {
-   oyRankPad *rm = NULL;
+   oyRankMap *rm = NULL;
 
    const SANE_Option_Descriptor *opt = NULL;
    SANE_Int num_options = 0;
@@ -1150,8 +1150,8 @@ int CreateRankMap_(SANE_Handle device_handle, oyRankPad ** rank_map)
    }
 
    /* we allocate enough memmory to hold all options */
-   rm = calloc(num_options, sizeof(oyRankPad));
-   memset(rm, 0, sizeof(oyRankPad) * num_options);
+   rm = calloc(num_options, sizeof(oyRankMap));
+   memset(rm, 0, sizeof(oyRankMap) * num_options);
 
    for (opt_num = 1; opt_num < num_options; opt_num++) {
       opt = sane_get_option_descriptor(device_handle, opt_num);
@@ -1164,9 +1164,9 @@ int CreateRankMap_(SANE_Handle device_handle, oyRankPad ** rank_map)
       }
    }
 
-   num_options = i + sizeof(_rank_map) / sizeof(oyRankPad); /* color options + static options */
+   num_options = i + sizeof(_rank_map) / sizeof(oyRankMap); /* color options + static options */
    /* resize rm array to hold only needed options */
-   *rank_map = realloc(rm, num_options * sizeof(oyRankPad));
+   *rank_map = realloc(rm, num_options * sizeof(oyRankMap));
    /* copy static options at end of new rank map */
    memcpy(*rank_map + i, _rank_map, sizeof(_rank_map));
 
