@@ -241,7 +241,7 @@ OYAPI int OYEXPORT
  *  @date    2012/09/05
  */
 OYAPI oyFilterPlugs_s * OYEXPORT
-             oyFilterSocket_GetSocket( oyFilterSocket_s  * socket )
+             oyFilterSocket_GetPlugs( oyFilterSocket_s  * socket )
 {
   oyFilterSocket_s_ * s = (oyFilterSocket_s_*)socket;
 
