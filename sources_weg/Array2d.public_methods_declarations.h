@@ -18,3 +18,6 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT  oyArray2d_SetFocus (
                                        oyArray2d_s       * array,
                                        oyRectangle_s     * rectangle );
+OYAPI double  OYEXPORT
+                 oyArray2d_GetDataGeo1(oyArray2d_s       * obj,
+                                       int                 x_y_w_h );
