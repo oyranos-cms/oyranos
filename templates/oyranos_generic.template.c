@@ -2,11 +2,11 @@
 
 #include <string.h>
 
-#include "oyranos_alpha_internal.h"
 #include "oyranos_helper_macros.h"
 #include "oyranos_helper.h"
 #include "oyranos_generic.h"
 #include "oyranos_object.h"
+#include "oyranos_object_internal.h"
 #include "oyranos_string.h"
 
 #include "oyObject_s.h"

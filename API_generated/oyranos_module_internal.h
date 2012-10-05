@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/23
+ *  @date     2012/10/05
  */
 
 
@@ -74,6 +74,32 @@ typedef struct {
   char                 prefered_cmm[5];
 } oyCMMapiQueries_s;
 
+/** @internal
+ *  @brief a CMM handle to collect resources
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  5 december 2007 (API 0.1.8)
+ */
+typedef struct {
+  oyOBJECT_e           type_;          /**< internal struct type oyOBJECT_CMM_HANDLE_S */
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+  char               * lib_name;       /**< the CMM */
+  oyCMMinfo_s        * info;           /**< the modules info struct */
+  oyPointer            dso_handle;     /**< the ldopen library handle */
+} oyCMMhandle_s;
+
+oyCMMhandle_s *  oyCMMhandle_New_    ( oyObject_s          object );
+oyCMMhandle_s *  oyCMMhandle_Copy_   ( oyCMMhandle_s     * handle,
+                                       oyObject_s          object );
+int              oyCMMhandle_Release_( oyCMMhandle_s    ** handle );
+
+int              oyCMMhandle_Set_    ( oyCMMhandle_s     * handle,
+                                       oyCMMinfo_s       * info,
+                                       oyPointer           dso_handle,
+                                       const char        * lib_name );
+
 oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
                                          const char        * cmm_required,
                                          const char        * registration,
@@ -81,6 +107,16 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
                                          uint32_t            flags,
                                          uint32_t         ** rank_list,
                                          uint32_t          * count );
+char *           oyCMMnameFromLibName_(const char        * lib_name);
+char *           oyCMMinfoPrint_     ( oyCMMinfo_s       * cmm_info );
+oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name );
+oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name );
+int              oyCMMRelease_       ( const char        * cmm );
+
+uint32_t     oyCMMtoId               ( const char        * cmm );
+int          oyIdToCMM               ( uint32_t            cmmId,
+                                       char              * cmm );
+
 oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
                                        const char        * lib_name,
                                        oyCMMapi_Check_f    apiCheck,
@@ -103,6 +139,11 @@ char **          oyCMMsGetNames_     ( uint32_t          * n,
                                        oyPATH_TYPE_e       path_type );
 int          oyCMMdsoReference_      ( const char        * lib_name,
                                        oyPointer           ptr );
+int          oyCMMdsoRelease_        ( const char        * lib_name );
+int          oyCMMdsoSearch_         ( const char        * lib_name );
+oyPointer    oyCMMdsoGet_            ( const char        * cmm,
+                                       const char        * lib_name );
+
 const char * oyStruct_GetTextFromModule (
                                        oyStruct_s        * obj,
                                        oyNAME_e            name_type,

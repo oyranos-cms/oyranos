@@ -458,8 +458,6 @@ oyTESTRESULT_e testStringRun ()
 }
 
 
-#include <oyranos_alpha.h>
-
 oyTESTRESULT_e testOption ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
@@ -820,6 +818,8 @@ oyTESTRESULT_e testOptionsCopy ()
 
   return result;
 }
+
+#include "oyBlob_s.h"
 
 oyTESTRESULT_e testBlob ()
 {

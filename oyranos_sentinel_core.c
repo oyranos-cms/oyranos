@@ -19,7 +19,6 @@
 
 #include "config.h"
 #include "oyranos.h"
-#include "oyranos_alpha_internal.h"
 #include "oyranos_debug.h"
 #include "oyranos_elektra.h"
 #include "oyranos_helper.h"
