@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2007-2011 (C) Kai-Uwe Behrmann
+ *            2007-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    littleCMS CMM module for Oyranos
  *  @internal
@@ -15,14 +15,26 @@
 
 
 
-
 #include <lcms2.h>
 #include <stdarg.h>
 
+#include "oyCMMapi4_s.h"
+#include "oyCMMapi4_s_.h"
+#include "oyCMMapi6_s_.h"
+#include "oyCMMapi7_s.h"
+#include "oyCMMapi7_s_.h"
+#include "oyCMMapi10_s_.h"
+#include "oyCMMui_s_.h"
+#include "oyConnectorImaging_s_.h"
+#include "oyFilterNode_s_.h"         /* for oyFilterNode_TextToInfo_ */
+#include "oyProfiles_s.h"
+
 #include "oyranos_cmm.h"         /* the API's this CMM implements */
+#include "oyranos_generic.h"         /* oy_connector_imaging_static_object */
 #include "oyranos_helper.h"      /* oySprintf_ and other local helpers */
-#include "oyranos_alpha_internal.h" /* hashTextAdd_m ... */
 #include "oyranos_i18n.h"
+#include "oyranos_image_internal.h"
+#include "oyranos_object_internal.h"
 #include "oyranos_string.h"
 
 #ifdef _OPENMP
@@ -313,8 +325,7 @@ int          lcm2CMMData_Open        ( oyStruct_s        * data,
     if(data->type_ == oyOBJECT_PROFILE_S)
     {
       oyProfile_s * p = (oyProfile_s*)data;
-      size = p->size_;
-      block = p->block_;
+      block = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
     }
 
     s->type = type;
@@ -830,7 +841,8 @@ oyOptions_s* lcm2Filter_CmmIccValidateOptions
   uint32_t error = !filter;
 
   if(!error)
-    error = oyFilterRegistrationMatch(filter->registration_, "//"OY_TYPE_STD"/icc",
+    error = oyFilterRegistrationMatch(oyFilterCore_GetRegistration(filter),
+                                      "//"OY_TYPE_STD"/icc",
                                       oyOBJECT_CMM_API4_S);
 
   *result = error;
@@ -846,7 +858,7 @@ oyWIDGET_EVENT_e   lcm2WidgetEvent   ( oyOptions_s       * options,
 
 oyDATATYPE_e lcm2_cmmIcc_data_types[7] = {oyUINT8, oyUINT16, oyFLOAT, oyDOUBLE, 0};
 
-oyConnectorImaging_s lcm2_cmmIccSocket_connector = {
+oyConnectorImaging_s_ lcm2_cmmIccSocket_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,
                                (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorSocketText, /* getText */
@@ -874,9 +886,9 @@ oyConnectorImaging_s lcm2_cmmIccSocket_connector = {
   1, /* id; relative to oyFilterCore_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnectorImaging_s* lcm2_cmmIccSocket_connectors[2]={&lcm2_cmmIccSocket_connector,0};
+oyConnectorImaging_s_* lcm2_cmmIccSocket_connectors[2]={&lcm2_cmmIccSocket_connector,0};
 
-oyConnectorImaging_s lcm2_cmmIccPlug_connector = {
+oyConnectorImaging_s_ lcm2_cmmIccPlug_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,
                                (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorPlugText, /* getText */
@@ -904,7 +916,7 @@ oyConnectorImaging_s lcm2_cmmIccPlug_connector = {
   1, /* id; relative to oyFilterCore_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnectorImaging_s* lcm2_cmmIccPlug_connectors[2]={&lcm2_cmmIccPlug_connector,0};
+oyConnectorImaging_s_* lcm2_cmmIccPlug_connectors[2]={&lcm2_cmmIccPlug_connector,0};
 
 /** Function lcm2AddProofProfile
  *  @brief   add a abstract proofing profile to the lcm2 profile stack 
@@ -1423,15 +1435,20 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   int n,i,len;
   oyDATATYPE_e data_type = 0;
   size_t size_ = 0;
-  oyFilterSocket_s * socket = (oyFilterSocket_s *)node->sockets[0];
-  oyFilterPlug_s * plug = (oyFilterPlug_s *)node->plugs[0];
+  oyFilterPlug_s * plug = oyFilterNode_GetPlug( node, 0 );
+  oyFilterSocket_s * socket = oyFilterNode_GetSocket( node, 0 ),
+                   * remote_socket = oyFilterPlug_GetSocket( plug );
   oyImage_s * image_input = 0,
             * image_output = 0;
   cmsHPROFILE * lps = 0;
   cmsHTRANSFORM xform = 0;
   oyOption_s * o = 0;
+  oyOptions_s * node_tags = oyFilterNode_GetTags( node ),
+              * node_options = oyFilterNode_GetOptions( node, 0 );
   oyProfile_s * p = 0,
-              * prof = 0;
+              * prof = 0,
+              * image_input_profile,
+              * image_output_profile;
   oyProfiles_s * profiles = 0,
                * profs = 0;
   oyProfileTag_s * psid = 0,
@@ -1440,11 +1457,13 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   int profiles_n = 0,
       profiles_proof_n = 0,
       proof = 0;
-  int verbose = oyOptions_FindString( node->tags, "verbose", "true" ) ? 1 : 0;
+  int verbose = oyOptions_FindString( node_tags, "verbose", "true" ) ? 1 : 0;
   const char * o_txt = 0;
 
-  image_input = (oyImage_s*)plug->remote_socket_->data;
-  image_output = (oyImage_s*)socket->data;
+  image_input = (oyImage_s*)oyFilterSocket_GetData( remote_socket );
+  image_output = (oyImage_s*)oyFilterSocket_GetData( socket );
+  image_input_profile = oyImage_GetProfile( image_input );
+  image_output_profile = oyImage_GetProfile( image_output );
 
   if(!image_input)
     return 0;
@@ -1463,7 +1482,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
              OY_DBG_FORMAT_" missed output image %d", OY_DBG_ARGS_, image_input->type_ );
   }
 
-  data_type = oyToDataType_m( image_input->layout_[0] );
+  data_type = oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) );
 
   if(data_type == oyHALF)
   {
@@ -1477,18 +1496,18 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   memset( lps, 0, len );
 
   /* input profile */
-  lps[ profiles_n++ ] = lcm2AddProfile( image_input->profile_ );
-  if(!image_input->profile_)
+  lps[ profiles_n++ ] = lcm2AddProfile( image_input_profile );
+  if(!image_input_profile)
   {
     lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_" "
              "missed image_input->profile_", OY_DBG_ARGS_ );
     return 0;
   }
-  p = oyProfile_Copy( image_input->profile_, 0 );
+  p = oyProfile_Copy( image_input_profile, 0 );
   error = oyProfiles_MoveIn( profs, &p, -1 );
 
   /* effect profiles */
-  o = oyOptions_Find( node->core->options_, "profiles_effect" );
+  o = oyOptions_Find( node_options, "profiles_effect" );
   if(o)
   {
     profiles = (oyProfiles_s*) oyOption_StructGet( o, oyOBJECT_PROFILES_S );
@@ -1514,12 +1533,12 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   }
 
   /* simulation profile */
-  o = oyOptions_Find( node->core->options_, "profiles_simulation" );
-  o_txt = oyOptions_FindString  ( node->core->options_, "proof_soft", 0 );
+  o = oyOptions_Find( node_options, "profiles_simulation" );
+  o_txt = oyOptions_FindString  ( node_options, "proof_soft", 0 );
   if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigDisplayClass*/)
     proof = atoi( o_txt );
 
-  o_txt = oyOptions_FindString  ( node->core->options_, "proof_hard", 0 );
+  o_txt = oyOptions_FindString  ( node_options, "proof_hard", 0 );
   if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigOutputClass*/)
     proof = atoi( o_txt ) ? atoi(o_txt) : proof;
 
@@ -1566,14 +1585,14 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
 
 
   /* output profile */
-  if(!image_output->profile_)
+  if(!image_output_profile)
   {
     lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_" "
              "missed image_output->profile_", OY_DBG_ARGS_ );
     return 0;
   }
-  lps[ profiles_n++ ] = lcm2AddProfile( image_output->profile_ );
-  p = oyProfile_Copy( image_output->profile_, 0 );
+  lps[ profiles_n++ ] = lcm2AddProfile( image_output_profile );
+  p = oyProfile_Copy( image_output_profile, 0 );
   error = oyProfiles_MoveIn( profs, &p, -1 );
 
   *size = 0;
@@ -1581,9 +1600,9 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   /* create the context */
   xform = lcm2CMMConversionContextCreate_( node, lps, profiles_n,
                                            profiles, profiles_proof_n, proof,
-                                           image_input->layout_[0],
-                                           image_output->layout_[0],
-                                           node->core->options_, 0, 0);
+                                oyImage_GetPixelLayout( image_input, oyLAYOUT ),
+                                oyImage_GetPixelLayout( image_output, oyLAYOUT ),
+                                           node_options, 0, 0);
   if(oy_debug)
     lcm2_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_"\n%s",
               OY_DBG_ARGS_,
@@ -1593,10 +1612,10 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   if(!error)
   {
     if(oy_debug)
-      block = lcm2CMMColourConversion_ToMem_( xform, node->core->options_,
+      block = lcm2CMMColourConversion_ToMem_( xform, node_options,
                                               size, oyAllocateFunc_ );
     else
-      block = lcm2CMMColourConversion_ToMem_( xform, node->core->options_,
+      block = lcm2CMMColourConversion_ToMem_( xform, node_options,
                                               size, allocateFunc );
     error = !block || !*size;
     cmsDeleteTransform( xform ); xform = 0;
@@ -1609,27 +1628,27 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
     lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_"\n"
               "  input profile: \"%s\" %s %s->%s %s\n  %s",
               OY_DBG_ARGS_,
-              oyProfile_GetText( image_input->profile_, oyNAME_DESCRIPTION ),
-              oyProfile_GetText( image_input->profile_, oyNAME_NAME ),
+              oyProfile_GetText( image_input_profile, oyNAME_DESCRIPTION ),
+              oyProfile_GetText( image_input_profile, oyNAME_NAME ),
               oyICCColourSpaceGetName( oyProfile_GetSignature( 
-                            image_input->profile_, oySIGNATURE_COLOUR_SPACE ) ),
+                            image_input_profile, oySIGNATURE_COLOUR_SPACE ) ),
               oyICCColourSpaceGetName( oyProfile_GetSignature( 
-                            image_input->profile_, oySIGNATURE_PCS ) ),
+                            image_input_profile, oySIGNATURE_PCS ) ),
               oyICCDeviceClassDescription( oyProfile_GetSignature( 
-                            image_input->profile_, oySIGNATURE_CLASS ) ),
-              oyPixelPrint(image_input->layout_[0], malloc));
+                            image_input_profile, oySIGNATURE_CLASS ) ),
+              oyPixelPrint(oyImage_GetPixelLayout( image_input, oyLAYOUT ), malloc));
     lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_"\n"
               "  output profile: \"%s\" %s %s->%s %s\n  %s",
               OY_DBG_ARGS_,
-              oyProfile_GetText( image_input->profile_, oyNAME_DESCRIPTION ),
-              oyProfile_GetText( image_output->profile_, oyNAME_NAME ),
+              oyProfile_GetText( image_input_profile, oyNAME_DESCRIPTION ),
+              oyProfile_GetText( image_output_profile, oyNAME_NAME ),
               oyICCColourSpaceGetName( oyProfile_GetSignature( 
-                            image_input->profile_, oySIGNATURE_COLOUR_SPACE ) ),
+                            image_input_profile, oySIGNATURE_COLOUR_SPACE ) ),
               oyICCColourSpaceGetName( oyProfile_GetSignature( 
-                            image_input->profile_, oySIGNATURE_PCS ) ),
+                            image_input_profile, oySIGNATURE_PCS ) ),
               oyICCDeviceClassDescription( oyProfile_GetSignature( 
-                            image_input->profile_, oySIGNATURE_CLASS ) ),
-              oyPixelPrint(image_output->layout_[0], malloc));
+                            image_input_profile, oySIGNATURE_CLASS ) ),
+              oyPixelPrint(oyImage_GetPixelLayout( image_output, oyLAYOUT ), malloc));
   }
 
   /* additional tags for debugging */
@@ -1648,11 +1667,19 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
       /* icSigProfileSequenceIdentifierType */
       if(!psid)
       {
-        psid = oyProfileTag_Create( profs->list_,
+        oyStructList_s * list = oyStructList_New(0);
+        int i, n = oyProfiles_Count( profs );
+        for( i = 0; i < n ; ++i )
+        {
+           oyProfile_s * p = oyProfiles_Get( profs, i );
+           oyStructList_MoveIn( list, (oyStruct_s**) &p, 0, 0 );
+        }
+        psid = oyProfileTag_Create( list, 0,
                      icSigProfileSequenceIdentifierType, 0, OY_MODULE_NICK, 0 );
-
         if(psid)
           error = oyProfile_TagMoveIn ( prof, &psid, -1 );
+
+        oyStructList_Release( &list );
       }
 
       /* Info tag */
@@ -1664,7 +1691,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
         char * cc_name = lcm2FilterNode_GetText( node, oyNAME_NICK,
                                                  oyAllocateFunc_ );
         oyName_s * name = oyName_new(0);
-        const char * lib_name = node->core->api4_->id_;
+        const char * lib_name = oyFilterNode_GetModuleName( node );
 
         name = oyName_set_ ( name, cc_name, oyNAME_NAME,
                              oyAllocateFunc_, oyDeAllocateFunc_ );
@@ -1676,12 +1703,10 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
 
         if(!error)
         {
-          info = oyProfileTag_Create( list, icSigTextType, 0,OY_MODULE_NICK, 0);
+          info = oyProfileTag_Create( list, (icTagSignature)oyValueUInt32(*hi),
+                                      icSigTextType, 0,OY_MODULE_NICK, 0);
           error = !info;
         }
-
-        if(!error)
-          info->use = (icTagSignature)oyValueUInt32(*hi);
 
         oyStructList_Release( &list );
 
@@ -1706,12 +1731,10 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
 
         if(!error)
         {
-          cprt = oyProfileTag_Create( list, icSigTextType, 0,OY_MODULE_NICK, 0);
+          cprt = oyProfileTag_Create( list, icSigCopyrightTag,
+                                      icSigTextType, 0,OY_MODULE_NICK, 0);
           error = !cprt;
         }
-
-        if(!error)
-          cprt->use = icSigCopyrightTag;
 
         oyStructList_Release( &list );
 
@@ -1729,6 +1752,16 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
     }
   }
 
+  oyFilterPlug_Release( &plug );
+  oyFilterSocket_Release( &socket );
+  oyFilterSocket_Release( & remote_socket );
+  oyOptions_Release( &node_tags );
+  oyImage_Release( &image_input );
+  oyImage_Release( &image_output );
+  oyProfile_Release( &image_input_profile );
+  oyProfile_Release( &image_output_profile );
+  oyOptions_Release( &node_options );
+
   return block;
 }
 
@@ -1736,9 +1769,9 @@ char * lcm2Image_GetText             ( oyImage_s         * image,
                                        int                 verbose,
                                        oyAlloc_f           allocateFunc )
 {
-  oyPixel_t pixel_layout = image->layout_[oyLAYOUT]; 
+  oyPixel_t pixel_layout = oyImage_GetPixelLayout(image,oyLAYOUT); 
   int n     = oyToChannels_m( pixel_layout );
-  oyProfile_s * profile = image->profile_;
+  oyProfile_s * profile = oyImage_GetProfile( image );
   int cchan_n = oyProfile_GetChannelsCount( profile );
   int coff_x = oyToColourOffset_m( pixel_layout );
   oyDATATYPE_e t = oyToDataType_m( pixel_layout );
@@ -1759,7 +1792,7 @@ char * lcm2Image_GetText             ( oyImage_s         * image,
   oySprintf_( text,
                       "    <offsets first_colour_sample=\"%d\" next_pixel=\"%d\" />\n"
               /*"  next line = %d\n"*/,
-              coff_x, s->layout_[oyPOFF_X]/*, mask[oyPOFF_Y]*/ );
+              coff_x, oyImage_GetPixelLayout( s,oyPOFF_X )/*, mask[oyPOFF_Y]*/ );
   hashTextAdd_m( text );
 
   if(swap || oyToByteswap_m( pixel_layout ))
@@ -1820,27 +1853,29 @@ char * lcm2FilterNode_GetText        ( oyFilterNode_s    * node,
   oyImage_s * in_image = 0,
             * out_image = 0;
   int verbose;
-  oyOptions_s * opts = node->core->options_,
-              * opts_tmp = 0,
-              * opts_tmp2 = 0,
-              * options = 0;
+  oyOptions_s * opts = oyFilterNode_GetOptions( node, 0 );
+  oyOptions_s * node_tags = oyFilterNode_GetTags( node ),
+              * opts_tmp, * opts_tmp2, * options;
+  oyFilterCore_s * node_core = oyFilterNode_GetCore( node );
+  oyFilterPlug_s * plug = oyFilterNode_GetPlug( node, 0 );
+  oyFilterSocket_s * socket = oyFilterNode_GetSocket( node, 0 ),
+                   * remote_socket = oyFilterPlug_GetSocket( plug );
+
+  /* pick all sockets (output) data */
+  out_image = (oyImage_s*)oyFilterSocket_GetData( remote_socket );
+  /* pick all plug (input) data */
+  in_image = (oyImage_s*)oyFilterSocket_GetData( socket );
 
   if(!node)
     return 0;
 
-  verbose = oyOptions_FindString( node->tags, "verbose", "true" ) ? 1 : 0;
+  verbose = oyOptions_FindString( node_tags, "verbose", "true" ) ? 1 : 0;
 
   /* 1. create hash text */
   hashTextAdd_m( "<oyFilterNode_s>\n  " );
 
   /* the filter text */
-  hashTextAdd_m( oyFilterCore_GetText( node->core, oyNAME_NAME ) );
-
-  /* pick all plug (input) data */
-  in_image = (oyImage_s*) node->plugs[0]->remote_socket_->data;
-
-  /* pick all sockets (output) data */
-  out_image = (oyImage_s*) node->sockets[0]->data;
+  hashTextAdd_m( oyFilterCore_GetText( node_core, oyNAME_NAME ) );
 
   /* make a description */
   {
@@ -1886,6 +1921,13 @@ char * lcm2FilterNode_GetText        ( oyFilterNode_s    * node,
   hashTextAdd_m( tmp );
 
   hashTextAdd_m(   "</oyFilterNode_s>\n" );
+
+  oyOptions_Release( &opts );
+  oyOptions_Release( &node_tags );
+  oyFilterCore_Release( &node_core );
+  oyFilterPlug_Release( &plug );
+  oyFilterSocket_Release( &socket );
+  oyFilterSocket_Release( &remote_socket );
 
   return oyStringCopy_( hash_text, allocateFunc );
 #endif
@@ -1949,14 +1991,12 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
   lcm2TransformWrap_s * ltw  = 0;
   cmsHTRANSFORM xform = 0;
   cmsHPROFILE lps[2] = {0,0};
-  oyFilterSocket_s * socket = (oyFilterSocket_s *)node->sockets[0];
-  oyFilterPlug_s * plug = (oyFilterPlug_s *)node->plugs[0];
-  oyImage_s * image_input = 0,
-            * image_output = 0;
-
-  image_input = (oyImage_s*)plug->remote_socket_->data;
-  image_output = (oyImage_s*)socket->data;
-
+  oyFilterPlug_s * plug = oyFilterNode_GetPlug( node, 0 );
+  oyFilterSocket_s * socket = oyFilterNode_GetSocket( node, 0 ),
+                   * remote_socket = oyFilterPlug_GetSocket( plug );
+  oyOptions_s * node_options = oyFilterNode_GetOptions( node, 0 );
+  oyImage_s * image_input = (oyImage_s*)oyFilterSocket_GetData( remote_socket ),
+            * image_output = (oyImage_s*)oyFilterSocket_GetData( socket );
 
   if(!error)
   {
@@ -1974,13 +2014,13 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
     lps[0] = CMMProfileOpen_M( node, oyPointer_GetPointer(cmm_ptr_in),
                                oyPointer_GetSize( cmm_ptr_in) );
     xform = lcm2CMMConversionContextCreate_( node, lps, 1, 0,0,0,
-                                           image_input->layout_[0],
-                                           image_output->layout_[0],
-                                           node->core->options_,
+                                oyImage_GetPixelLayout( image_input, oyLAYOUT ),
+                                oyImage_GetPixelLayout( image_output, oyLAYOUT ),
+                                           node_options,
                                            &ltw, cmm_ptr_out );
     if(!xform)
     {
-      uint32_t f = image_input->layout_[0];
+      uint32_t f = oyImage_GetPixelLayout( image_input, oyLAYOUT );
       lcm2_msg( oyMSG_WARN,(oyStruct_s*) node, OY_DBG_FORMAT_
       "float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes%d",
       OY_DBG_ARGS_,
@@ -1989,6 +2029,12 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
     }
     CMMProfileRelease_M (lps[0] );
   }
+  oyFilterPlug_Release( &plug );
+  oyFilterSocket_Release( &socket );
+  oyFilterSocket_Release( & remote_socket );
+  oyImage_Release( &image_input );
+  oyImage_Release( &image_output );
+  oyOptions_Release( &node_options );
 
   return error;
 }
@@ -2011,32 +2057,38 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   int bps_in;
   oyPixel_t pixel_layout_in;
 
-  oyFilterSocket_s * socket = requestor_plug->remote_socket_;
+  oyFilterSocket_s * socket = oyFilterPlug_GetSocket( requestor_plug );
   oyFilterPlug_s * plug = 0;
-  oyFilterNode_s * input_node = 0,
-                 * node = socket->node;
+  oyFilterNode_s * input_node,
+                 * node = oyFilterSocket_GetNode( socket );
   oyImage_s * image_input = 0, * image_output = 0;
   oyArray2d_s * array_in = 0, * array_out = 0;
   lcm2TransformWrap_s * ltw  = 0;
   oyPixelAccess_s * new_ticket = ticket;
 
-  plug = (oyFilterPlug_s *)node->plugs[0];
-  input_node = plug->remote_socket_->node;
+  plug = oyFilterNode_GetPlug( node, 0 );
+  input_node = oyFilterNode_GetPlugNode( node, 0 );
 
   image_input = oyFilterPlug_ResolveImage( plug, socket, ticket );
   pixel_layout_in = oyImage_GetPixelLayout( image_input, oyLAYOUT );
 
+  image_output = oyPixelAccess_GetOutputImage( ticket );
+
   if(oyImage_GetPixelLayout( image_input, oyLAYOUT ) != 
-     oyImage_GetPixelLayout( ticket->output_image, oyLAYOUT ))
+     oyImage_GetPixelLayout( image_output, oyLAYOUT ))
   {
     /* adapt the region of interesst to the new image dimensions */
     /* create a new ticket to avoid pixel layout conflicts */
+    oyRectangle_s * new_roi = oyPixelAccess_GetOutputROI( new_ticket );
+    oyArray2d_s * a = 0;
     new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
-    oyArray2d_Release( &new_ticket->array );
-    oyImage_Release( &new_ticket->output_image );
-    new_ticket->output_image = oyImage_Copy( image_input, 0 );
-    error = oyImage_FillArray( image_input, new_ticket->output_image_roi, 1,
-                               &new_ticket->array, 0, 0 );
+    oyPixelAccess_SetArray( new_ticket, 0 );
+    oyPixelAccess_SetOutputImage( new_ticket, image_input );
+    error = oyImage_FillArray( image_input, new_roi, 1,
+                               &a, 0, 0 );
+    oyPixelAccess_SetArray( new_ticket, a );
+    oyArray2d_Release( &a );
+    oyRectangle_Release( & new_roi );
     if(oy_debug > 1)
       lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s %d",
                 OY_DBG_ARGS_, _("Fill new_ticket->array from image_input"),
@@ -2044,21 +2096,21 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   }
 
   /* We let the input filter do its processing first. */
-  error = input_node->api7_->oyCMMFilterPlug_Run( plug, new_ticket );
+  error = oyFilterNode_Run( input_node, plug, new_ticket );
   if(error != 0) return error;
 
+  array_in = oyPixelAccess_GetArray( new_ticket );
+  array_out = oyPixelAccess_GetArray( ticket );
   if(oy_debug > 1)
     lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s %d (%s %d)",
               OY_DBG_ARGS_,_("Read from new_ticket->array"),
-              oyStruct_GetId( (oyStruct_s*)new_ticket->array ),
-              _("Image"), oyStruct_GetId( (oyStruct_s*)new_ticket->output_image ) );
-  array_in = new_ticket->array;
-  array_out = ticket->array;
+              oyStruct_GetId( (oyStruct_s*)array_in ),
+              _("Image"), oyStruct_GetId( (oyStruct_s*)image_input ) );
   if(oy_debug > 1)
     lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"%s %d (%s %d)",
               OY_DBG_ARGS_,_("Write to ticket->array"),
-              oyStruct_GetId( (oyStruct_s*)ticket->array ),
-              _("Image"), oyStruct_GetId( (oyStruct_s*)new_ticket->output_image ) );
+              oyStruct_GetId( (oyStruct_s*)array_out ),
+              _("Image"), oyStruct_GetId( (oyStruct_s*)image_input ) );
 
   data_type_in = oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) );
   bps_in = oySizeofDatatype( data_type_in );
@@ -2070,7 +2122,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     error = 1;
   }
 
-  if(!ticket->output_image)
+  if(!image_output)
   {
     lcm2_msg( oyMSG_WARN,(oyStruct_s*)ticket, OY_DBG_FORMAT_ " no ticket->output_image",
              OY_DBG_ARGS_);
@@ -2079,17 +2131,18 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
   if(!error)
   {
-    image_output = ticket->output_image;
+    oyPointer_s * backend_data = oyFilterNode_GetModuleData( node );
     data_type_out = oyToDataType_m( oyImage_GetPixelLayout( image_output, oyLAYOUT ) );
     channels = oyToChannels_m( oyImage_GetPixelLayout( image_output, oyLAYOUT ) );
 
-    error = lcm2CMMTransform_GetWrap_( node->backend_data, &ltw );
+    error = lcm2CMMTransform_GetWrap_( backend_data, &ltw );
+    oyPointer_Release( &backend_data );
   }
 
   DBGs_NUM2_S( ticket, "channels in/out: %d->%d",
                oyToChannels_m( pixel_layout_in ), channels );
 
-  if(ltw && !ticket->array)
+  if(ltw && !array_out)
   {
     lcm2_msg( oyMSG_ERROR,(oyStruct_s*)ticket, OY_DBG_FORMAT_ " no ticket->array",
              OY_DBG_ARGS_);
@@ -2105,14 +2158,16 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
           * array_out_tmp_flt;
     double * array_in_tmp_dbl,
            * array_out_tmp_dbl;
+    uint8_t ** array_in_data = oyArray2d_GetData( array_in ),
+            ** array_out_data = oyArray2d_GetData( array_out );
     int threads_n = 
 #if defined(_OPENMP) && defined(USE_OPENMP)
                     omp_get_max_threads();
 #else
                     1;
 #endif
-    int w_in =  (int)(array_in->width+0.5),
-        w_out = (int)(array_out->width+0.5);
+    int w_in =  (int)(oyArray2d_GetDataGeo1(array_in,2)+0.5),
+        w_out = (int)(oyArray2d_GetDataGeo1(array_out,2)+0.5);
     int stride_in = w_in * bps_in;
 
     n = w_out / channels;
@@ -2145,7 +2200,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
        (data_type_out == oyFLOAT ||
         data_type_out == oyDOUBLE))
     {
-      array_out_tmp = array_out->array2d[0];
+      array_out_tmp = array_out_data[0];
     }
     
 
@@ -2157,19 +2212,21 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
       const double xyz_factor = 1.0 + 32767.0/32768.0;
       const int use_xyz_scale = 1;
       int index = 0;
-      if(array_out->height > threads_n * 10)
+      int array_out_height = oyArray2d_GetDataGeo1(array_out,3);
+      if(array_out_height > threads_n * 10)
       {
 #if defined(USE_OPENMP)
 #pragma omp parallel for private(index,j,array_in_tmp_flt,array_in_tmp_dbl,array_out_tmp_flt,array_out_tmp_dbl)
 #endif
-        for( k = 0; k < array_out->height; ++k)
+        for( k = 0; k < array_out_height; ++k)
         {
           if(array_in_tmp && use_xyz_scale)
           {
 #if defined(_OPENMP) && defined(USE_OPENMP)
             index = omp_get_thread_num();
 #endif
-            memcpy( &array_in_tmp[stride_in*index], array_in->array2d[k], w_in * bps_in );
+            memcpy( &array_in_tmp[stride_in*index], array_in_data[k],
+                    w_in * bps_in );
             if(data_type_in == oyFLOAT)
             {
               array_in_tmp_flt = (float*) &array_in_tmp[stride_in*index];
@@ -2187,32 +2244,32 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
               }
             }
             cmsDoTransform( ltw->lcm2, &array_in_tmp[stride_in*index],
-                                       array_out->array2d[k], n );
+                                       array_out_data[k], n );
           } else
-            cmsDoTransform( ltw->lcm2, array_in->array2d[k],
-                                       array_out->array2d[k], n );
+            cmsDoTransform( ltw->lcm2, array_in_data[k],
+                                       array_out_data[k], n );
           if(array_out_tmp && use_xyz_scale)
           {
             if(data_type_out == oyFLOAT)
             {
-              array_out_tmp_flt = (float*) array_out->array2d[k];
+              array_out_tmp_flt = (float*) array_out_data[k];
               for(j = 0; j < w_out; ++j)
                 array_out_tmp_flt[j] *= xyz_factor;
             } else
             if(data_type_out == oyDOUBLE)
             {
-              array_out_tmp_dbl = (double*) array_out->array2d[k];
+              array_out_tmp_dbl = (double*) array_out_data[k];
               for(j = 0; j < w_out; ++j)
                 array_out_tmp_dbl[j] *= xyz_factor;
             }
           }
         }
       } else
-        for( k = 0; k < array_out->height; ++k)
+        for( k = 0; k < array_out_height; ++k)
         {
           if(array_in_tmp && use_xyz_scale)
           {
-            memcpy( array_in_tmp, array_in->array2d[k], w_in * bps_in );
+            memcpy( array_in_tmp, array_in_data[k], w_in * bps_in );
             if(data_type_in == oyFLOAT)
             for(j = 0; j < w_in; ++j)
             {
@@ -2224,21 +2281,21 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
               array_in_tmp_dbl[j] /= xyz_factor;
             }
             cmsDoTransform( ltw->lcm2, array_in_tmp,
-                                       array_out->array2d[k], n );
+                                       array_out_data[k], n );
           } else
-            cmsDoTransform( ltw->lcm2, array_in->array2d[k],
-                                       array_out->array2d[k], n );
+            cmsDoTransform( ltw->lcm2, array_in_data[k],
+                                       array_out_data[k], n );
           if(array_out_tmp && use_xyz_scale)
           {
             if(data_type_out == oyFLOAT)
             {
-              array_out_tmp_flt = (float*) array_out->array2d[k];
+              array_out_tmp_flt = (float*) array_out_data[k];
               for(j = 0; j < w_out; ++j)
                 array_out_tmp_flt[j] *= xyz_factor;
             } else
             if(data_type_out == oyDOUBLE)
             {
-              array_out_tmp_dbl = (double*) array_out->array2d[k];
+              array_out_tmp_dbl = (double*) array_out_data[k];
               for(j = 0; j < w_out; ++j)
                 array_out_tmp_dbl[j] *= xyz_factor;
             }
@@ -2253,6 +2310,9 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
   } else
   {
+    oyFilterGraph_s * ticket_graph = oyPixelAccess_GetGraph( ticket );
+    oyOptions_s * ticket_graph_opts = 
+                                       oyFilterGraph_GetOptions( ticket_graph );
     if(error)
       oyFilterSocket_Callback( requestor_plug,
                                oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT );
@@ -2260,16 +2320,25 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
       oyFilterSocket_Callback( requestor_plug,
                                oyCONNECTOR_EVENT_OK );
 
-    error = oyOptions_SetFromText( &ticket->graph->options,
+    error = oyOptions_SetFromText( &ticket_graph_opts,
                      "//" OY_TYPE_STD "/profile/dirty", "true", OY_CREATE_NEW );
+    oyFilterGraph_Release( &ticket_graph );
+    oyOptions_Release( &ticket_graph_opts );
     error = 1;
   }
 
   if(oyImage_GetPixelLayout( image_input, oyLAYOUT ) != 
-     oyImage_GetPixelLayout( ticket->output_image, oyLAYOUT ))
+     oyImage_GetPixelLayout( image_output, oyLAYOUT ))
     oyPixelAccess_Release( &new_ticket );
 
+  oyFilterPlug_Release( &plug );
+  oyFilterSocket_Release( &socket );
+  oyFilterNode_Release( &input_node );
+  oyFilterNode_Release( &node );
   oyImage_Release( &image_input );
+  oyImage_Release( &image_output );
+  oyArray2d_Release( &array_in );
+  oyArray2d_Release( &array_out );
 
   return error;
 }
@@ -2658,7 +2727,7 @@ const char *lcm2_texts_profile_create[4] = {"can_handle","create_profile","help"
  *  @since   2011/02/21 (Oyranos: 0.3.0)
  *  @date    2011/02/21
  */
-oyCMMapi10_s    lcm2_api10_cmm2 = {
+oyCMMapi10_s_    lcm2_api10_cmm2 = {
 
   oyOBJECT_CMM_API10_S,
   0,0,0,
@@ -2729,7 +2798,7 @@ const char * lcm2InfoGetTextProfileC ( const char        * select,
  *  @since   2009/12/11 (Oyranos: 0.1.10)
  *  @date    2009/12/11
  */
-oyCMMapi10_s    lcm2_api10_cmm = {
+oyCMMapi10_s_    lcm2_api10_cmm = {
 
   oyOBJECT_CMM_API10_S,
   0,0,0,
@@ -2762,7 +2831,7 @@ oyCMMapi10_s    lcm2_api10_cmm = {
  *  @since   2008/12/28 (Oyranos: 0.1.10)
  *  @date    2008/12/28
  */
-oyCMMapi6_s   lcm2_api6_cmm = {
+oyCMMapi6_s_ lcm2_api6_cmm = {
 
   oyOBJECT_CMM_API6_S,
   0,0,0,
@@ -2794,7 +2863,7 @@ oyCMMapi6_s   lcm2_api6_cmm = {
  *  @since   2008/12/27 (Oyranos: 0.1.10)
  *  @date    2008/12/27
  */
-oyCMMapi7_s   lcm2_api7_cmm = {
+oyCMMapi7_s_ lcm2_api7_cmm = {
 
   oyOBJECT_CMM_API7_S,
   0,0,0,
@@ -2870,7 +2939,7 @@ const char * lcm2_api4_ui_texts[] = {"name", "category", "help", 0};
  *  @since   2009/09/09 (Oyranos: 0.1.10)
  *  @date    2009/09/09
  */
-oyCMMui_s lcm2_api4_ui = {
+oyCMMui_s_ lcm2_api4_ui = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -2897,7 +2966,7 @@ oyCMMui_s lcm2_api4_ui = {
  *  @since   2008/07/18 (Oyranos: 0.1.8)
  *  @date    2008/07/18
  */
-oyCMMapi4_s   lcm2_api4_cmm = {
+oyCMMapi4_s_ lcm2_api4_cmm = {
 
   oyOBJECT_CMM_API4_S,
   0,0,0,
@@ -2978,7 +3047,7 @@ const char *lcm2_texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2007/11/00 (Oyranos: 0.1.8)
  *  @date    2008/12/30
  */
-oyCMMinfo_s lcm2_cmm_module = {
+oyCMMinfo_s_ lcm2_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,                 /**< type, struct type */
   0,0,0,                               /**< ,dynamic object functions */
