@@ -977,6 +977,48 @@ OYAPI oyPointer OYEXPORT
 
   return block;
 }
+/** Function  oyProfile_GetSize
+ *  @memberof oyProfile_s
+ *  @brief    Get the ICC profile in memory size
+ *
+ *  The prefered memory comes from the unmodified original memory.
+ *  Otherwise a previously modified tag list is serialised into memory.
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/10/05
+ *  @since    2012/10/05 (Oyranos: 0.5.0)
+ */
+OYAPI size_t OYEXPORT
+                   oyProfile_GetSize ( oyProfile_s       * profile,
+                                       uint32_t            flag )
+{
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
+  int error = !s;
+  size_t size = 0;
+  char * data;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
+
+  if(error <= 0 && s->type_ == oyOBJECT_PROFILE_S)
+  {
+    if(s->size_ && s->block_ && !s->tags_modified_)
+    {
+      return s->size_;
+
+    } else
+    {
+      data = oyProfile_GetMem( profile, &size, flag,
+                               profile->oy_->allocateFunc_ );
+      if(data && size)
+        profile->oy_->deallocateFunc_( data ); data = 0;
+    }
+  }
+
+  return size;
+}
 
 /** Function  oyProfile_GetTagByPos
  *  @memberof oyProfile_s

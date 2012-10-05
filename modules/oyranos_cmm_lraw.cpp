@@ -30,7 +30,6 @@
 #include "oyranos_helper.h"
 #include "oyranos_icc.h"
 #include "oyranos_i18n.h"
-#include "oyranos_image_internal.h"
 #include "oyranos_io.h"
 #include "oyranos_definitions.h"
 #include "oyranos_string.h"

@@ -53,6 +53,9 @@ OYAPI oyPointer OYEXPORT
                                        size_t            * size,
                                        uint32_t            flag,
                                        oyAlloc_f           allocateFunc );
+OYAPI size_t OYEXPORT
+                   oyProfile_GetSize ( oyProfile_s       * profile,
+                                       uint32_t            flag );
 OYAPI oyProfileTag_s * OYEXPORT
                oyProfile_GetTagByPos ( oyProfile_s   * profile,
                                        int                 pos );
