@@ -796,3 +796,26 @@ const oyChar *   oyICCMeasurementFlareDescription ( icMeasurementFlare sig )
 
 
 
+/** \addtogroup misc Miscellaneous
+
+ *  @{
+ */
+
+#define icValue_to_icUInt32Number_m(funkname, typ) \
+typ \
+funkname (typ val) \
+{ \
+  icUInt32Number i = (icUInt32Number) val; \
+  return (typ) oyValueUInt32 (i); \
+}
+
+icValue_to_icUInt32Number_m( oyValueCSpaceSig, icColorSpaceSignature )
+icValue_to_icUInt32Number_m( oyValuePlatSig, icPlatformSignature )
+icValue_to_icUInt32Number_m( oyValueProfCSig, icProfileClassSignature )
+icValue_to_icUInt32Number_m( oyValueTagSig, icTagSignature )
+
+
+
+
+/** @} *//*misc */
+

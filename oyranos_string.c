@@ -774,3 +774,92 @@ size_t oyStrblen_            (const char * start)
   return 0;
 }
 
+
+/** @func  oyIconv
+ *  @brief convert between codesets
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2008/05/27
+ *  @since   2008/07/23 (Oyranos: 0.1.8)
+ */
+int                oyIconv           ( const char        * input,
+                                       size_t              len_in,
+                                       size_t              len_out,
+                                       char              * output,
+                                       const char        * from_codeset,
+                                       const char        * to_codeset )
+{
+  int error = 0;
+
+  char * out_txt = output;
+  char * in_txt = (char*)input;
+  const char * loc_env = 
+# ifdef USE_GETTEXT
+  setlocale( LC_MESSAGES, 0 )
+# else
+  0
+# endif
+  , *loc = to_codeset;
+  iconv_t cd;
+  size_t size, in_left = len_in, out_left = len_out;
+
+  /* application codeset */
+  if(!loc && oy_domain_codeset)
+    loc = oy_domain_codeset;
+  /* environment codeset */
+  if(!loc && loc_env)
+  {
+    char * loc_tmp = strchr(loc_env, '.');
+    if(loc_tmp && strlen(loc_tmp) > 2)
+      loc = loc_tmp + 1;
+  }
+  /* fallback codeset */
+  if(!loc)
+    loc = "UTF-8";
+
+  if(!from_codeset && !oy_domain_codeset)
+  {
+    error = !memcpy(output, input, sizeof(char) * OY_MIN(len_in,len_out));
+    output[len_out] = 0;
+    return error;
+  }
+
+  cd = iconv_open( loc, from_codeset ? from_codeset : oy_domain_codeset );
+  size = iconv( cd, &in_txt, &in_left, &out_txt, &out_left);
+  iconv_close( cd );
+  *out_txt = 0;
+
+  if(size == (size_t)-1)
+    error = -1;
+  else
+    error = size;
+
+  return error;
+}
+
+/** @func  oyIconvGet
+ *  @brief convert between codesets
+ *
+ *  @version Oyranos: 0.1.13
+ *  @date    2010/10/24
+ *  @since   2010/10723 (Oyranos: 0.1.13)
+ */
+int          oyIconvGet              ( const char        * text,
+                                       void             ** string,
+                                       int               * len,
+                                       const char        * encoding_from,
+                                       const char        * encoding_to,
+                                       oyAlloc_f           alloc )
+{
+  int error = 0;
+    *len = strlen(text) * 4 + 4;
+    *string = alloc( *len );
+    memset( *string, 0, *len );
+    error = oyIconv( text, strlen(text), *len-2, *string,
+                     encoding_from, encoding_to );
+    if(error)
+      WARNc2_S("something went wrong. %s:%d\n", text, *len);
+    return error;
+}
+
+

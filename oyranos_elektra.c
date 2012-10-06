@@ -101,8 +101,6 @@ char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", r
 /* --- static variables   --- */
 
 static int oyranos_init = 0;
-int oy_warn_ = 1;
-#define OY_WEB_RGB "sRGB.icc"
 
 /* --- structs, typedefs, enums --- */
 

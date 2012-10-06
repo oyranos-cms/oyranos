@@ -1,3 +1,5 @@
+#include "oyranos_conversion_internal.h"
+
 /** Function  oyFilterNode_AddToAdjacencyLst_
  *  @memberof oyFilterNode_s
  *  @brief    Get a graphs adjazency list

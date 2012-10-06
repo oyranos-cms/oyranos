@@ -116,42 +116,14 @@ char **     oyDataPathsGet_          ( int             * count,
                                        int               data,
                                        int               owner,
                                        oyAlloc_f         allocateFunc );
-char **     oyDataFilesGet_          ( int             * count,
-                                       const char      * subdir,
-                                       int               data,
-                                       int               owner,
-                                       const char      * dir_string,
-                                       const char      * string,
-                                       const char      * suffix,
-                                       oyAlloc_f         allocateFunc );
 char **     oyProfilePathsGet_       ( int             * count,
                                        oyAlloc_f         allocate_func);
 char **     oyLibPathsGet_           ( int             * count,
                                        const char      * subdir,
                                        int               owner,
                                        oyAlloc_f         allocateFunc );
-char **     oyLibFilesGet_           ( int             * count,
-                                       const char      * subdir,
-                                       int               owner,
-                                       const char      * dir_string,
-                                       const char      * string,
-                                       const char      * suffix,
-                                       oyAlloc_f         allocateFunc );
 
 
-
-int                oyIconv           ( const char        * input,
-                                       size_t              len_in,
-                                       size_t              len_out,
-                                       char              * output,
-                                       const char        * from_codeset,
-                                       const char        * to_codeset );
-int          oyIconvGet              ( const char        * text,
-                                       void             ** string,
-                                       int               * len,
-                                       const char        * encoding_from,
-                                       const char        * encoding_to,
-                                       oyAlloc_f           alloc );
 
 
 #ifdef __cplusplus

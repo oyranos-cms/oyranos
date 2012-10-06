@@ -115,6 +115,19 @@ char**             oyStringListFilter_(const char       ** list,
                                        int               * count,
                                        oyAlloc_f           allocateFunc );
 
+int                oyIconv           ( const char        * input,
+                                       size_t              len_in,
+                                       size_t              len_out,
+                                       char              * output,
+                                       const char        * from_codeset,
+                                       const char        * to_codeset );
+int                oyIconvGet        ( const char        * text,
+                                       void             ** string,
+                                       int               * len,
+                                       const char        * encoding_from,
+                                       const char        * encoding_to,
+                                       oyAlloc_f           alloc );
+
 
 
 #ifdef __cplusplus

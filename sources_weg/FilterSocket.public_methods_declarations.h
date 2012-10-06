@@ -20,3 +20,7 @@ OYAPI oyConnector_s * OYEXPORT
 OYAPI const char * OYEXPORT
              oyFilterSocket_GetRelatives (
                                        oyFilterSocket_s  * c );
+OYAPI int  OYEXPORT
+             oyFilterSocket_MatchImagingPlug (
+                                       oyFilterSocket_s  * socket,
+                                       oyFilterPlug_s    * plug );

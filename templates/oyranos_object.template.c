@@ -1,10 +1,10 @@
 #include <string.h>
 
-#include "oyranos_conversion.h"
 #include "oyranos_core.h"
 #include "oyranos_definitions.h"
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
+#include "oyranos_module.h"
 #include "oyranos_object.h"
 #include "oyranos_string.h"
 

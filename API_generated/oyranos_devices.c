@@ -11,11 +11,18 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/05
+ *  @date     2012/10/06
  */
 
 
 #include <string.h>
+
+#include "oyCMMapi6_s.h"
+#include "oyCMMapiFilters_s.h"
+#include "oyCMMapi9_s_.h"
+#include "oyFilterCore_s_.h"
+#include "oyFilterNode_s_.h"
+#include "oyFilterNodes_s.h"
 
 #include <oyranos_helper.h>
 #include <oyranos_icc.h>
@@ -1533,3 +1540,1122 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
 /**
  *  @} *//* devices_handling
  */
+
+
+/** Function oyOptions_ForFilter
+ *  @memberof oyOptions_s
+ *  @brief   provide Oyranos behaviour settings
+ *
+ *  The returned options are read in from the Elektra settings and if thats not
+ *  available from the inbuild defaults. The later can explicitely selected with
+ *  oyOPTIONSOURCE_FILTER passed as flags argument.
+ *  The key names map to the registration and XML syntax.
+ *
+ *  To obtain all advanced front end options from a meta module use:@verbatim
+ *  flags = oyOPTIONATTRIBUTE_ADVANCED |
+ *          oyOPTIONATTRIBUTE_FRONT |
+ *          OY_SELECT_COMMON @endverbatim
+ *
+ *  @see OY_SELECT_FILTER OY_SELECT_COMMON oyOPTIONATTRIBUTE_e
+ *
+ *  @param[in]     registration        the filter registration to search for
+ *  @param[in]     cmm                 a CMM to match
+ *  @param[in]     flags               for inbuild defaults |
+ *                                     oyOPTIONSOURCE_FILTER;
+ *                                     for options marked as advanced |
+ *                                     oyOPTIONATTRIBUTE_ADVANCED |
+ *                                     OY_SELECT_FILTER |
+ *                                     OY_SELECT_COMMON
+ *  @param         object              the optional object
+ *  @return                            the options
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2008/10/08 (Oyranos: 0.1.8)
+ *  @date    2011/01/29
+ */
+oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
+                                       const char        * cmm,
+                                       uint32_t            flags,
+                                       oyObject_s          object )
+{
+  oyOptions_s * s = 0;
+  oyFilterCore_s_ * filter = 0;
+  oyCMMapi4_s_ * cmm_api4 = 0;
+  char * lib_name = 0;
+  int error = 0;
+
+  /*  1. get filter */
+  filter = oyFilterCore_New_( object );
+
+  error = !filter;
+
+  if(error <= 0)
+    cmm_api4 = (oyCMMapi4_s_*) oyCMMsGetFilterApi_( cmm, registration,
+                                                    oyOBJECT_CMM_API4_S );
+
+  if(cmm_api4)
+    lib_name = cmm_api4->id_;
+
+  error = !(cmm_api4 && lib_name);
+
+  if(error <= 0)
+    error = oyFilterCore_SetCMMapi4_( filter, cmm_api4 );
+
+  s = oyOptions_ForFilter_( filter, flags, object);
+
+  oyFilterCore_Release( (oyFilterCore_s**)&filter );
+
+  return s;
+}
+
+
+
+
+/** Function  oyOptions_ForFilter_
+ *  @memberof oyOptions_s
+ *  @brief    Provide Oyranos behaviour settings
+ *  @internal
+ *
+ *  The returned options are read in from the Elektra settings and if thats not
+ *  available from the inbuild defaults. The later can explicitely selected with
+ *  oyOPTIONSOURCE_FILTER passed as flags argument.
+ *  The key names map to the registration and XML syntax.
+ *
+ *  To obtain all front end options from a meta module use: @verbatim
+    flags = oyOPTIONATTRIBUTE_ADVANCED |
+            oyOPTIONATTRIBUTE_FRONT |
+            OY_SELECT_COMMON @endverbatim
+ *
+ *  @param[in]     filter              the filter
+ *  @param[in]     flags               for inbuild defaults |
+ *                                     oyOPTIONSOURCE_FILTER;
+ *                                     for options marked as advanced |
+ *                                     oyOPTIONATTRIBUTE_ADVANCED |
+ *                                     OY_SELECT_FILTER |
+ *                                     OY_SELECT_COMMON
+ *  @param         object              the optional object
+ *  @return                            the options
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/08 (Oyranos: 0.1.9)
+ *  @date    2009/07/27
+ */
+oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
+                                       uint32_t            flags,
+                                       oyObject_s          object )
+{
+  oyOptions_s * s = 0,
+              * opts_tmp = 0,
+              * opts_tmp2 = 0;
+  oyOption_s * o = 0;
+  int error = !filter || !filter->api4_;
+  char * type_txt = oyFilterRegistrationToText( filter->registration_,
+                                                oyFILTER_REG_TYPE, 0 );
+  oyCMMapi5_s * api5 = 0;
+  int i,n;
+
+  /* by default we parse both sources */
+  if(!(flags & OY_SELECT_FILTER) && !(flags & OY_SELECT_COMMON))
+    flags |= OY_SELECT_FILTER | OY_SELECT_COMMON;
+
+  if(!error)
+  {
+    /*
+        Programm:
+        1. get filter and its type
+        2. get implementation for filter type
+        3. parse static common options from meta module
+        4. parse static options from filter
+        5. merge both
+        6. get stored values from disk
+     */
+
+    /*  1. get filter */
+
+    /*  2. get implementation for filter type */
+    api5 = (oyCMMapi5_s*)filter->api4_->api5_;
+
+    /*  3. parse static common options from a policy module */
+    if(api5 && flags & OY_SELECT_COMMON)
+    {
+      oyCMMapiFilters_s * apis;
+      int apis_n = 0;
+      uint32_t         * rank_list = 0;
+      oyCMMapi9_s_ * cmm_api9_ = 0;
+      char * klass, * api_reg;
+
+      klass = oyFilterRegistrationToText( filter->registration_,
+                                          oyFILTER_REG_TYPE, 0 );
+      api_reg = oyStringCopy_("//", oyAllocateFunc_ );
+      STRING_ADD( api_reg, klass );
+      oyFree_m_( klass );
+
+      s = oyOptions_New( 0 );
+
+      apis = oyCMMsGetFilterApis_( 0,0, api_reg,
+                                   oyOBJECT_CMM_API9_S,
+                                   oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                                   &rank_list, 0);
+      apis_n = oyCMMapiFilters_Count( apis );
+      for(i = 0; i < apis_n; ++i)
+      {
+        cmm_api9_ = (oyCMMapi9_s_*) oyCMMapiFilters_Get( apis, i );
+        if(oyFilterRegistrationMatch( filter->registration_, cmm_api9_->pattern,
+                                      oyOBJECT_NONE ))
+        {
+          opts_tmp = oyOptions_FromText( cmm_api9_->options, 0, object );
+          oyOptions_AppendOpts( s, opts_tmp );
+          oyOptions_Release( &opts_tmp );
+        }
+        if(cmm_api9_->release)
+          cmm_api9_->release( (oyStruct_s**)&cmm_api9_ );
+      }
+      oyCMMapiFilters_Release( &apis );
+      oyFree_m_( api_reg );
+      opts_tmp = s; s = 0;
+    }
+    /* requires step 2 */
+
+    /*  4. parse static options from filter */
+    if(flags & OY_SELECT_FILTER)
+      opts_tmp2 = oyOptions_FromText( filter->api4_->ui->options, 0, object );
+
+    /*  5. merge */
+    s = oyOptions_FromBoolean( opts_tmp, opts_tmp2, oyBOOLEAN_UNION, object );
+
+    oyOptions_Release( &opts_tmp );
+    oyOptions_Release( &opts_tmp2 );
+
+    /*  6. get stored values */
+    n = oyOptions_Count( s );
+    for(i = 0; i < n && error <= 0; ++i)
+    {
+      o = oyOptions_Get( s, i );
+      oyOption_SetSource( o, oyOPTIONSOURCE_FILTER );
+      /* ask Elektra */
+      if(!(flags & oyOPTIONSOURCE_FILTER))
+        error = oyOption_SetValueFromDB( o );
+      oyOption_Release( &o );
+    }
+    error = oyOptions_DoFilter ( s, flags, type_txt );
+  }
+
+  if(type_txt)
+    oyDeAllocateFunc_( type_txt );
+
+  return s;
+}
+
+/** Function oyOption_FromDB
+ *  @memberof oyOption_s
+ *  @brief   new option with registration and value filled from DB if available
+ *
+ *  @param         registration        no or full qualified registration
+ *  @param         object              the optional object
+ *  @return                            the option
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/24 (Oyranos: 0.1.10)
+ *  @date    2009/01/24
+ */
+oyOption_s *   oyOption_FromDB       ( const char        * registration,
+                                       oyObject_s          object )
+{
+  int error = !registration;
+  oyOption_s * o = 0;
+
+  if(error <= 0)
+  {
+    /** This is merely a wrapper to oyOption_New() and
+     *  oyOption_SetValueFromDB(). */
+    o = oyOption_FromRegistration( registration, object );
+    error = oyOption_SetFromText( o, 0, 0 );
+    error = oyOption_SetValueFromDB( o );
+    oyOption_SetSource( o, oyOPTIONSOURCE_DATA );
+  }
+
+  return o;
+}
+
+
+/** Function oyOptions_SaveToDB
+ *  @memberof oyOptions_s
+ *  @brief   store a oyOptions_s in DB
+ *
+ *  @param[in]     options             the options
+ *  @param[in]     registration        the registration
+ *  @param[out]    new_reg             the new registration; optional
+ *  @param[in]     alloc               the user allocator for new_reg; optional
+ *  @return                            0 - good, 1 >= error
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2009/02/08 (Oyranos: 0.1.10)
+ *  @date    2011/01/29
+ */
+OYAPI int  OYEXPORT
+               oyOptions_SaveToDB    ( oyOptions_s       * options,
+                                       const char        * registration,
+                                       char             ** new_reg,
+                                       oyAlloc_f           allocateFunc )
+{
+  int error = !options || !registration;
+  oyOption_s * o = 0;
+  int n,i;
+  char * key_base_name = 0,
+       * key_name = 0,
+       * key_top = 0;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
+
+  if(error <= 0)
+  {
+    key_base_name = oySearchEmptyKeyname_( registration );
+    error = !key_base_name;
+    if(error <= 0)
+    {
+      STRING_ADD( key_base_name, OY_SLASH );
+    }
+
+    n = oyOptions_Count( options );
+    for( i = 0; i < n; ++i )
+    {
+      o = oyOptions_Get( options, i );
+      key_top = oyFilterRegistrationToText( oyOption_GetRegistration(o),
+                                            oyFILTER_REG_MAX, 0 );
+
+
+      STRING_ADD( key_name, key_base_name );
+      STRING_ADD( key_name, key_top );
+      if(oyOption_GetValueString(o,0))
+        error = oyAddKey_valueComment_( key_name, oyOption_GetValueString(o,0),
+                                        0 );
+# if 0
+      else if(o->value_type == oyVAL_STRUCT &&
+              o->value && o->value->oy_struct->type_ == oyOBJECT_BLOB_S)
+        error = 0;/*oyAddKeyBlobComment_();*/
+#endif
+      else
+        WARNcc_S( (oyStruct_s*)o,
+                    "Could not save non string / non binary option" );
+
+      oyOption_Release( &o );
+      oyFree_m_( key_name );
+    }
+
+    if(error <= 0 && new_reg && key_base_name)
+    {
+      key_base_name[strlen(key_base_name)-1] = '\000';
+      *new_reg = oyStringCopy_(key_base_name, allocateFunc);
+    }
+    oyFree_m_( key_base_name );
+  }
+
+  oyExportEnd_();
+  DBG_PROG_ENDE
+  return error;
+}
+
+/** Function  oyOption_SetValueFromDB
+ *  @memberof oyOption_s
+ *  @brief    Value filled from DB if available
+ *
+ *  @param         option              the option
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/24 (Oyranos: 0.1.10)
+ *  @date    2009/05/25
+ */
+int            oyOption_SetValueFromDB  ( oyOption_s        * option )
+{
+  int error = !option || !oyOption_GetRegistration(option);
+  char * text = 0;
+  oyPointer ptr = 0;
+  size_t size = 0;
+  oyOption_s * s = option;
+
+  if(error)
+    return error;
+
+  oyCheckType__m( oyOBJECT_OPTION_S, return 1 )
+
+  oyExportStart_(EXPORT_SETTING);
+
+  if(error <= 0)
+    text = oyGetKeyString_( oyOption_GetText( option, oyNAME_DESCRIPTION),
+                            oyAllocateFunc_ );
+
+  if(error <= 0)
+  {
+    /** Change the option value only if something was found in the DB. */
+    if(text && text[0])
+    {
+      oyOption_SetFromText( option, text, 0 );
+      oyOption_SetSource( s, oyOPTIONSOURCE_DATA );
+    }
+    else
+    {
+      ptr = oyGetKeyBinary_( oyOption_GetRegistration(s), &size, oyAllocateFunc_ );
+      if(ptr && size)
+      {
+        oyOption_SetFromData( option, ptr, size );
+        oyOption_SetSource( s, oyOPTIONSOURCE_DATA );
+        oyFree_m_( ptr );
+      }
+    }
+  }
+
+  if(text)
+    oyFree_m_( text );
+
+  oyExportEnd_();
+
+  return error;
+}
+
+/** Function oyOptions_DoFilter
+ *  @memberof oyOptions_s
+ *  @brief   filter the options
+ *
+ *  The returned options are read in from the Elektra settings and if thats not
+ *  available from the inbuild defaults. The later can explicitely selected with
+ *  oyOPTIONSOURCE_FILTER passed as flags argument. advanced options can be 
+ *  filtered out by adding oyOPTIONATTRIBUTE_ADVANCED.
+ *
+ *  Modules should handle the advanced options as well but shall normally
+ *  not act upon them. The convention to set them zero, keeps them inactive.
+ *  
+ *  On the front end side the CMM cache has to include them, as they will 
+ *  influence the hash sum generation. The question arrises, whether to include
+ *  these options marked as non visible along the path or require the CMM cache
+ *  code to check each time for them on cache lookup. The oyOption_s::flags
+ *  is already in place. So we use it and do inclusion. Front end options can be
+ *  filtered as they do not affect the CMM cache.
+ *
+ *  @see oyOptions_Add
+ *
+ *  @param         opts                the options
+ *  @param[in]     flags               for inbuild defaults |
+ *                                     oyOPTIONSOURCE_FILTER;
+ *                                     for options marked as advanced |
+ *                                     oyOPTIONATTRIBUTE_ADVANCED;
+ *                                     for front end options |
+ *                                     oyOPTIONATTRIBUTE_FRONT
+ *  @param         filter_type         the type level from a registration
+ *  @return                            options
+ *
+ *  @version Oyranos: 0.1.9
+ *  @since   2008/11/27 (Oyranos: 0.1.9)
+ *  @date    2008/11/27
+ */
+int          oyOptions_DoFilter      ( oyOptions_s       * opts,
+                                       uint32_t            flags,
+                                       const char        * filter_type )
+{
+  oyOptions_s * opts_tmp = 0;
+  oyOption_s * o = 0;
+  int error = !opts;
+  char * text;
+  int i,n;
+
+  oyExportStart_(EXPORT_SETTING);
+  oyExportEnd_();
+
+  if(error <= 0 && (flags || filter_type))
+  {
+    /*  6. get stored values */
+    n = oyOptions_Count( opts );
+    opts_tmp = oyOptions_New(0);
+    for(i = 0; i < n; ++i)
+    {
+      int skip = 0;
+
+      o = oyOptions_Get( opts, i );
+
+
+      /* usage/type range filter */
+      if(filter_type)
+      {
+        text = oyFilterRegistrationToText( oyOption_GetRegistration(o),
+                                           oyFILTER_REG_TYPE, 0);
+        if(oyStrcmp_( filter_type, text ) != 0)
+          skip = 1;
+
+        oyFree_m_( text );
+      }
+
+      /* front end options filter */
+      if(!skip && !(flags & oyOPTIONATTRIBUTE_FRONT))
+      {
+        text = oyStrrchr_( oyOption_GetRegistration(o), '/' );
+
+        if(text)
+           text = oyStrchr_( text, '.' );
+        if(text)
+          if(oyStrstr_( text, "front" ))
+            skip = 1;
+      }
+
+      /* advanced options mark and zero */
+      if(!skip && !(flags & oyOPTIONATTRIBUTE_ADVANCED))
+      {
+        text = oyStrrchr_( oyOption_GetRegistration(o), '/' );
+        if(text)
+           text = oyStrchr_( text, '.' );
+        if(text)
+          if(oyStrstr_( text, "advanced" ))
+          {
+            oyOption_SetFromText( o, "0", 0 );
+            oyOption_SetFlags( o,
+                              oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
+          }
+      } else
+      /* Elektra settings, modify value */
+      if(!skip && !(flags & oyOPTIONSOURCE_FILTER))
+      {
+        text = oyGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
+                                oyAllocateFunc_ );
+        if(text && text[0])
+        {
+          error = oyOption_SetFromText( o, text, 0 );
+          oyOption_SetFlags(o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
+          oyOption_SetSource( o, oyOPTIONSOURCE_USER );
+          oyFree_m_( text );
+        }
+      }
+
+      if(!skip)
+        oyOptions_Add( opts_tmp, o, -1, opts->oy_ );
+
+      oyOption_Release( &o );
+    }
+
+    n = oyOptions_Count( opts_tmp );
+    error = oyOptions_Clear(opts);
+    for( i = 0; i < n && !error; ++i )
+    {
+      o = oyOptions_Get( opts_tmp, i );
+      error = oyOptions_MoveIn( opts, &o, -1 );
+    }
+    oyOptions_Release( &opts_tmp );
+  }
+
+  return error;
+}
+
+
+/** Function  oyFilterNode_GetOptions
+ *  @memberof oyFilterNode_s
+ *  @brief    Get filter options
+ *
+ *  @param[in,out] node                filter object
+ *  @param         flags               see oyOptions_s::oyOptions_ForFilter()
+ *  @return                            the options
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2008/06/26 (Oyranos: 0.1.8)
+ *  @date    2012/06/12
+ */
+oyOptions_s* oyFilterNode_GetOptions ( oyFilterNode_s    * node,
+                                       int                 flags )
+{
+  oyOptions_s * options = 0;
+  oyFilterNode_s * s = node;
+  int error = 0;
+
+  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
+
+  if(!node)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
+
+  if(flags || !(*node_)->core->options_)
+  {
+    options = oyOptions_ForFilter_( (*node_)->core, flags, (*node_)->core->oy_ );
+    if(!(*node_)->core->options_)
+      (*node_)->core->options_ = oyOptions_Copy( options, 0 );
+    else
+      error = oyOptions_Filter( &(*node_)->core->options_, 0, 0,
+                                oyBOOLEAN_UNION,
+                                0, options );
+    if(error)
+      WARNc2_S("%s %d", _("found issues"),error);
+    if(!(*node_)->core->options_)
+      (*node_)->core->options_ = oyOptions_New( 0 );
+  }
+
+  options = oyOptions_Copy( (*node_)->core->options_, 0 );
+
+  /** Observe exported options for changes and propagate to a existing graph. */
+  error = oyOptions_ObserverAdd( options, (oyStruct_s*)node,
+                                 0, oyFilterNode_Observe_ );
+  if(error)
+    WARNc2_S("%s %d", _("found issues"),error);
+
+  return options;
+}
+
+/** Function  oyFilterNode_GetUi
+ *  @memberof oyFilterNode_s
+ *  @brief    Get filter options XFORMS
+ *
+ *  @param[in,out] node                filter object
+ *  @param[out]    ui_text             XFORMS fitting to the node Options
+ *  @param[out]    namespaces          additional XML namespaces
+ *  @param         allocateFunc        optional user allocator
+ *  @return                            the options
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2009/07/29 (Oyranos: 0.1.10)
+ *  @date    2012/06/12
+ */
+int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
+                                       char              ** ui_text,
+                                       char             *** namespaces,
+                                       oyAlloc_f            allocateFunc )
+{
+  int error = 0;
+  oyFilterNode_s * s = node;
+  oyOptions_s * options = 0;
+  char * text = 0,
+       * tmp = 0;
+
+  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
+
+  if(!node)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 1 )
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  if(!error)
+    options = oyFilterNode_GetOptions( node, 0 );
+
+  if(!error)
+  {
+    oyCMMapiFilters_s * apis;
+    int apis_n = 0, i,j = 0;
+    oyCMMapi9_s * cmm_api9 = 0;
+    oyCMMapi9_s_ ** cmm_api9_ = (oyCMMapi9_s_**)&cmm_api9;
+    char * class_name, * api_reg;
+    const char * reg = (*node_)->core->registration_;
+
+    class_name = oyFilterRegistrationToText( reg, oyFILTER_REG_TYPE, 0 );
+    api_reg = oyStringCopy_("//", oyAllocateFunc_ );
+    STRING_ADD( api_reg, class_name );
+    oyFree_m_( class_name );
+
+    apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S,
+                                 oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                                 0,0 );
+    apis_n = oyCMMapiFilters_Count( apis );
+    for(i = 0; i < apis_n; ++i)
+    {
+      cmm_api9 = (oyCMMapi9_s*) oyCMMapiFilters_Get( apis, i );
+
+      if(oyFilterRegistrationMatch( reg, (*cmm_api9_)->pattern, 0 ))
+      {
+        if((*cmm_api9_)->oyCMMuiGet)
+          error = (*cmm_api9_)->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
+
+        if(error)
+        {
+          WARNc2_S( "%s %s",_("error in module:"), (*cmm_api9_)->registration );
+          return 1;
+
+        } else
+        if(tmp)
+        {
+          STRING_ADD( text, tmp );
+          STRING_ADD( text, "\n" );
+          oyFree_m_(tmp);
+
+          if(namespaces && (*cmm_api9_)->xml_namespace)
+          {
+            if(j == 0)
+            {
+              size_t len = (apis_n - i + 1) * sizeof(char*);
+              *namespaces = allocateFunc( len );
+              memset(*namespaces, 0, len);
+            }
+            *namespaces[j] = oyStringCopy_( (*cmm_api9_)->xml_namespace,
+                                            allocateFunc );
+            ++j;
+            namespaces[j] = 0;
+          }
+        }
+      }
+
+      if(cmm_api9->release)
+        cmm_api9->release( (oyStruct_s**)&cmm_api9 );
+    }
+    oyCMMapiFilters_Release( &apis );
+  }
+
+  if(!error && (*node_)->core->api4_->ui->oyCMMuiGet)
+  {
+    /* @todo and how to mix in the values? */
+    error = (*node_)->core->api4_->ui->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
+    if(tmp)
+    {
+      STRING_ADD( text, tmp );
+      oyFree_m_(tmp);
+    }
+  }
+
+  oyOptions_Release( &options );
+
+  if(error <= 0 && text)
+  {
+    *ui_text = oyStringCopy_( text, allocateFunc );
+  }
+
+  return error;
+}
+
+/** \addtogroup misc Miscellaneous
+
+ *  @{
+ */
+
+
+/** \addtogroup objects_generic
+
+ *  @{
+ */
+
+
+
+/**
+ *  @} *//* objects_generic
+ */
+
+
+
+/** \addtogroup objects_value Values Handling
+
+ *  @{
+ */
+
+
+/** @internal
+ *  @struct  oyConfDomain_s_
+ *  @brief   a ConfDomain object
+ *  @extends oyStruct_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+typedef struct {
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CONF_DOMAIN_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+
+  oyCMMapi8_s        * api8;
+} oyConfDomain_s_;
+
+oyConfDomain_s_ *
+           oyConfDomain_New_         ( oyObject_s          object );
+oyConfDomain_s_ *
+           oyConfDomain_FromReg_     ( const char        * registration,
+                                       oyObject_s          object );
+oyConfDomain_s_ *
+           oyConfDomain_Copy_        ( oyConfDomain_s_   * obj,
+                                       oyObject_s          object);
+int
+           oyConfDomain_Release_     ( oyConfDomain_s_   **obj );
+
+const char * oyConfDomain_GetText_   ( oyConfDomain_s_   * obj,
+                                       const char        * name,
+                                       oyNAME_e            type );
+const char **oyConfDomain_GetTexts_  ( oyConfDomain_s_   * obj );
+
+/* --- Public_API Begin --- */
+
+/** Function oyConfDomain_New
+ *  @memberof oyConfDomain_s
+ *  @brief   allocate a new ConfDomain object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+OYAPI oyConfDomain_s * OYEXPORT
+           oyConfDomain_FromReg      ( const char        * registration_domain,
+                                       oyObject_s          object )
+{
+  oyConfDomain_s_ * obj = 0;
+
+  obj = oyConfDomain_FromReg_( registration_domain, object );
+
+  return (oyConfDomain_s*) obj;
+}
+
+/** Function oyConfDomain_Copy
+ *  @memberof oyConfDomain_s
+ *  @brief   copy or reference a ConfDomain object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+OYAPI oyConfDomain_s * OYEXPORT
+           oyConfDomain_Copy         ( oyConfDomain_s    * obj,
+                                       oyObject_s          object )
+{
+  oyConfDomain_s_ * s = (oyConfDomain_s_*) obj;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_CONF_DOMAIN_S, return 0 );
+
+  s = oyConfDomain_Copy_( s, (oyObject_s) object );
+
+  return (oyConfDomain_s*) s;
+}
+ 
+/** Function oyConfDomain_Release
+ *  @memberof oyConfDomain_s
+ *  @brief   release and possibly deallocate a ConfDomain object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+OYAPI int  OYEXPORT
+           oyConfDomain_Release      ( oyConfDomain_s    **obj )
+{
+  oyConfDomain_s_ * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = (oyConfDomain_s_*) *obj;
+
+  oyCheckType__m( oyOBJECT_CONF_DOMAIN_S, return 1 )
+
+  *obj = 0;
+
+  return oyConfDomain_Release_( &s );
+}
+
+/** Function oyConfDomain_GetText
+ *  @memberof oyConfDomain_s
+ *  @brief   obtain a UI text from a ConfDomain object
+ *
+ *  @param[in,out] obj                 struct object
+ *  @param[in]     name                the category to return
+ *  @param[in]     type                the type of string
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+OYAPI const char * OYEXPORT
+           oyConfDomain_GetText      ( oyConfDomain_s    * obj,
+                                       const char        * name,
+                                       oyNAME_e            type )
+{
+  oyConfDomain_s_ * s = (oyConfDomain_s_*) obj;
+  const char * text = 0;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_CONF_DOMAIN_S, return 0 );
+
+  text = oyConfDomain_GetText_( s, name, type );
+
+  return text;
+}
+
+/** Function oyConfDomain_GetTexts
+ *  @memberof oyConfDomain_s
+ *  @brief   obtain a list of possible UI text from a ConfDomain object
+ *
+ *  @return                            zero terminated list of strings,
+ *                                     Each string is a "name" option to
+ *                                     oyConfDomain_GetText().
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+OYAPI const char ** OYEXPORT
+           oyConfDomain_GetTexts     ( oyConfDomain_s    * obj )
+{
+  oyConfDomain_s_ * s = (oyConfDomain_s_*) obj;
+  const char ** texts = 0;
+
+  if(s)
+    oyCheckType__m( oyOBJECT_CONF_DOMAIN_S, return 0 );
+
+  texts = oyConfDomain_GetTexts_( s );
+
+  return texts;
+}
+
+/* --- Public_API End --- */
+
+
+/** @internal
+ *  Function oyConfDomain_New_
+ *  @memberof oyConfDomain_s_
+ *  @brief   allocate a new ConfDomain object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+oyConfDomain_s_ * oyConfDomain_New_  ( oyObject_s          object )
+{
+  /* ---- start of common object constructor ----- */
+  oyOBJECT_e type = oyOBJECT_CONF_DOMAIN_S;
+# define STRUCT_TYPE oyConfDomain_s_
+  int error = 0;
+  oyObject_s    s_obj = oyObject_NewFrom( object );
+  STRUCT_TYPE * s = 0;
+
+  if(s_obj)
+    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
+
+  if(!s || !s_obj)
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
+
+  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
+
+  s->type_ = type;
+  s->copy = (oyStruct_Copy_f) oyConfDomain_Copy;
+  s->release = (oyStruct_Release_f) oyConfDomain_Release;
+
+  s->oy_ = s_obj;
+
+  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+# undef STRUCT_TYPE
+  /* ---- end of common object constructor ------- */
+
+  s->api8 = 0;
+
+  return s;
+}
+
+oyConfDomain_s_ * oyConfDomain_FromReg_(
+                                       const char        * registration,
+                                       oyObject_s          object )
+{
+  oyConfDomain_s_ * s = oyConfDomain_New_( object );
+  int error = !s;
+  oyCMMapi8_s * cmm_api8 = 0;
+
+  if(error <= 0)
+  {
+    cmm_api8 = (oyCMMapi8_s*) oyCMMsGetFilterApi_( 0, registration,
+                                                   oyOBJECT_CMM_API8_S );
+    error = !cmm_api8;
+  }
+
+  if(error <= 0)
+    s->api8 = cmm_api8;
+
+  return s;
+}
+
+/** @internal
+ *  Function oyConfDomain_Copy__
+ *  @memberof oyConfDomain_s_
+ *  @brief   real copy a ConfDomain object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+oyConfDomain_s_ * oyConfDomain_Copy__ (
+                                       oyConfDomain_s_   * obj,
+                                       oyObject_s          object )
+{
+  oyConfDomain_s_ * s = 0;
+  int error = 0;
+
+  if(!obj || !object)
+    return s;
+
+  s = oyConfDomain_New_( object );
+  error = !s;
+
+  if(!error)
+  {
+
+    if(obj->api8)
+    {
+      if(obj->api8->copy)
+        s->api8 = (oyCMMapi8_s*) obj->api8->copy( (oyStruct_s*)s->api8,
+                                                  object );
+      else
+        s->api8 = obj->api8;
+    }
+  }
+
+  if(error)
+    oyConfDomain_Release_( &s );
+
+  return s;
+}
+
+/** @internal
+ *  Function oyConfDomain_Copy_
+ *  @memberof oyConfDomain_s_
+ *  @brief   copy or reference a ConfDomain object
+ *
+ *  @param[in]     obj                 struct object
+ *  @param         object              the optional object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+oyConfDomain_s_ * oyConfDomain_Copy_ ( oyConfDomain_s_   * obj,
+                                       oyObject_s          object )
+{
+  oyConfDomain_s_ * s = obj;
+
+  if(!obj)
+    return 0;
+
+  if(obj && !object)
+  {
+    s = obj;
+    oyObject_Copy( s->oy_ );
+    return s;
+  }
+
+  s = oyConfDomain_Copy__( obj, object );
+
+  return s;
+}
+ 
+/** @internal
+ *  Function oyConfDomain_Release_
+ *  @memberof oyConfDomain_s_
+ *  @brief   release and possibly deallocate a ConfDomain object
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+int        oyConfDomain_Release_     ( oyConfDomain_s_   **obj )
+{
+  /* ---- start of common object destructor ----- */
+  oyConfDomain_s_ * s = 0;
+
+  if(!obj || !*obj)
+    return 0;
+
+  s = *obj;
+
+  *obj = 0;
+
+  if(oyObject_UnRef(s->oy_))
+    return 0;
+  /* ---- end of common object destructor ------- */
+
+
+  if(s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+
+    if(s->api8)
+    {
+      if(s->api8->release)
+        s->api8->release( (oyStruct_s**) &s->api8 );
+      else
+        s->api8 = 0;
+    }
+
+    oyObject_Release( &s->oy_ );
+
+    deallocateFunc( s );
+  }
+
+  return 0;
+}
+
+/** @internal
+ *  Function oyConfDomain_GetText_
+ *  @memberof oyConfDomain_s
+ *  @brief   obtain a UI text from a ConfDomain object
+ *
+ *  @param[in,out] obj                 struct object
+ *  @param[in]     name                the category to return
+ *  @param[in]     type                the type of string
+ *
+ *  @version Oyranos: 0.1.10
+ *  @date    2009/12/30
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ */
+const char * oyConfDomain_GetText_   ( oyConfDomain_s_   * obj,
+                                       const char        * name,
+                                       oyNAME_e            type )
+{
+  const char * text = 0;
+  oyConfDomain_s_ * s = obj;
+  oyCMMui_s * ui = 0;
+
+  if(s->api8)
+    ui = oyCMMapi8_GetUi(s->api8);
+
+  if(ui && oyCMMui_GetTextF(ui))
+    text = oyCMMui_GetTextF(ui)( name, type, (oyStruct_s*)ui );
+
+  return text;
+}
+
+/** @internal
+ *  Function oyConfDomain_GetTexts
+ *  @memberof oyConfDomain_s
+ *  @brief   obtain a list of possible UI text from a ConfDomain object
+ *
+ *  @return                            zero terminated list of strings,
+ *                                     Each string is a "name" option to
+ *                                     oyConfDomain_GetText().
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+const char **oyConfDomain_GetTexts_  ( oyConfDomain_s_   * obj )
+{
+  oyConfDomain_s_ * s = obj;
+  const char ** texts = 0;
+  oyCMMui_s * ui = 0;
+
+  if(s->api8)
+    ui = oyCMMapi8_GetUi(s->api8);
+
+  if(ui)
+    texts = oyCMMui_GetTexts(ui);
+
+  return texts;
+}
+
+
+/**
+ *  @} *//* objects_value
+ */
+
+/** @} *//* misc */

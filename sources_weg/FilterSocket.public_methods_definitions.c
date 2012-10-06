@@ -1,3 +1,5 @@
+#include "oyranos_module.h"
+
 /** Function  oyFilterSocket_Callback
  *  @memberof oyFilterSocket_s
  *  @brief    Tell about a oyConversion_s event
@@ -299,3 +301,4 @@ OYAPI const char * OYEXPORT
 
   return s->relatives_;
 }
+

@@ -782,64 +782,6 @@ oyStruct_s *   oyOption_GetStruct    ( oyOption_s        * option,
   return s;
 }
 
-/** Function  oyOption_SetValueFromDB
- *  @memberof oyOption_s
- *  @brief    Value filled from DB if available
- *
- *  @param         option              the option
- *  @return                            error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/24 (Oyranos: 0.1.10)
- *  @date    2009/05/25
- */
-int            oyOption_SetValueFromDB  ( oyOption_s        * option )
-{
-  int error = !option || !oyOption_GetRegistration(option);
-  char * text = 0;
-  oyPointer ptr = 0;
-  size_t size = 0;
-  oyOption_s * s = option;
-
-  if(error)
-    return error;
-
-  oyCheckType__m( oyOBJECT_OPTION_S, return 1 )
-
-  oyExportStart_(EXPORT_SETTING);
-
-  if(error <= 0)
-    text = oyGetKeyString_( oyOption_GetText( option, oyNAME_DESCRIPTION),
-                            oyAllocateFunc_ );
-
-  if(error <= 0)
-  {
-    /** Change the option value only if something was found in the DB. */
-    if(text && text[0])
-    {
-      oyOption_SetFromText( option, text, 0 );
-      oyOption_SetSource( s, oyOPTIONSOURCE_DATA );
-    }
-    else
-    {
-      ptr = oyGetKeyBinary_( oyOption_GetRegistration(s), &size, oyAllocateFunc_ );
-      if(ptr && size)
-      {
-        oyOption_SetFromData( option, ptr, size );
-        oyOption_SetSource( s, oyOPTIONSOURCE_DATA );
-        oyFree_m_( ptr );
-      }
-    }
-  }
-
-  if(text)
-    oyFree_m_( text );
-
-  oyExportEnd_();
-
-  return error;
-}
-
 void           oyOption_SetSource    ( oyOption_s        * option,
                                        oyOPTIONSOURCE_e    source )
 {

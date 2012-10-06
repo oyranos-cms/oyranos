@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/05
+ *  @date     2012/10/06
  */
 
 
@@ -145,6 +145,22 @@ int          oyCMMdsoSearch_         ( const char        * lib_name );
 oyPointer    oyCMMdsoGet_            ( const char        * cmm,
                                        const char        * lib_name );
 
+char **     oyDataFilesGet_          ( int             * count,
+                                       const char      * subdir,
+                                       int               data,
+                                       int               owner,
+                                       const char      * dir_string,
+                                       const char      * string,
+                                       const char      * suffix,
+                                       oyAlloc_f         allocateFunc );
+char **     oyLibFilesGet_           ( int             * count,
+                                       const char      * subdir,
+                                       int               owner,
+                                       const char      * dir_string,
+                                       const char      * string,
+                                       const char      * suffix,
+                                       oyAlloc_f         allocateFunc );
+
 const char * oyStruct_GetTextFromModule (
                                        oyStruct_s        * obj,
                                        oyNAME_e            name_type,
@@ -156,9 +172,6 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
                                        oyFilterPlugs_s   * edges,
                                        const char        * selector,
                                        int                 flags );
-int          oyPointer_ConvertData   ( oyPointer_s       * cmm_ptr,
-                                       oyPointer_s       * cmm_ptr_out,
-                                       oyFilterNode_s    * node );
 
 #define OY_FILTEREDGE_FREE             0x01        /**< list free edges */
 #define OY_FILTEREDGE_CONNECTED        0x02        /**< list connected edges */

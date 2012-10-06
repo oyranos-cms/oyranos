@@ -36,6 +36,8 @@
 
 /* --- static variables   --- */
 
+int oy_warn_ = 1;
+
 /* --- structs, typedefs, enums --- */
 
 /* --- internal API definition --- */
@@ -1111,4 +1113,458 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
   return r;
 }
 
+int oyFileListCb_ ( oyFileList_s * data,
+                    const char * full_name, const char * filename)
+{
+  oyFileList_s *l = (oyFileList_s*)data;
+
+  if(l->type != oyOBJECT_FILE_LIST_S_)
+    WARNc_S("Could not find a oyFileList_s objetc.");
+
+  {
+        if(l->count_files >= l->mem_count)
+        {
+          char** temp = l->names;
+
+          l->names = 0;
+          oyAllocHelper_m_( l->names, char*, l->mem_count+l->hopp,
+                            oyAllocateFunc_, return 1);
+          memcpy(l->names, temp, sizeof(char*) * l->mem_count);
+          l->mem_count += l->hopp;
+        }
+
+        oyAllocString_m_( l->names[l->count_files], oyStrblen_(full_name),
+                          oyAllocateFunc_, return 1 );
+        
+        oyStrcpy_(l->names[l->count_files], full_name);
+        ++l->count_files;
+  }
+
+  return 0;
+}
+
+
+/** @internal
+ *  @brief query valid XDG paths
+ *
+ *  @see Directory paths for colour profiles and other configuration data
+ *       http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
+ *
+ *  @param[out]    count       number of paths found
+ *  @param[in]     data        oyYES/oyNO/oyALL for data or config text
+ *  @param[in]     owner       oyUSER/oySYS/oyUSER_SYS
+ *  @return                    a array to write the found paths into
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  november 2007 (API 0.1.8)
+ */
+char**  oyXDGPathsGet_( int             * count,
+                        int               data,
+                        int               owner,
+                        oyAlloc_f         allocateFunc )
+{
+  char ** paths = 0, ** tmp;
+  int     n = 0, tmp_n = 0;
+  char *  vars[] = {"XDG_DATA_HOME", "XDG_CONFIG_HOME", "XDG_DATA_DIRS", 
+                    "XDG_CONFIG_DIRS"};
+  int     vars_n = 4;
+  int     i, j;
+
+  for(i = 0; i < vars_n; ++i)
+  {
+    if( (i >= 2 && (owner != oyUSER)) ||
+        (i < 2 && (owner != oySYS)))
+      if( ((i == 0 || i == 2) && data != oyNO) ||
+          ((i == 1 || i == 3) && data != oyYES) )
+    {
+      const char * var = getenv(vars[i]);
+      if(var)
+      {
+        if(strlen(var))
+        {
+          char **tmp_neu;
+          int  tmp_neu_n;
+
+
+          tmp = oyStringSplit_( var, ':', &tmp_n, oyAllocateFunc_ );
+
+          /* remove slash */
+          for(j = 0; j < tmp_n; ++j)
+          {
+            char slash = 0;
+            int len = 0;
+            if(tmp[j])
+              len = oyStrlen_(tmp[j]);
+            if(len > 1)
+              slash = tmp[j][len-1];
+            if(slash == OY_SLASH_C)
+              tmp[j][oyStrlen_(tmp[j])-1] = 0;
+          }
+
+          tmp_neu = oyStringListAppend_( (const char**)paths, n, 
+                                         (const char**)tmp, tmp_n,
+                                         &tmp_neu_n, oyAllocateFunc_ );
+          oyStringListRelease_( &paths, n, oyDeAllocateFunc_ );
+          oyStringListRelease_( &tmp, tmp_n, oyDeAllocateFunc_ );
+          paths = tmp_neu;
+          n = tmp_neu_n;
+        }
+      } else
+      {
+        if(i == 0)
+          oyStringListAddStaticString_( &paths, &n, "~/.local/share",
+                                        oyAllocateFunc_, oyDeAllocateFunc_ );
+        if(i == 1)
+          oyStringListAddStaticString_( &paths, &n, "~/.config",
+                                        oyAllocateFunc_, oyDeAllocateFunc_ );
+        if(i == 4)
+          oyStringListAddStaticString_( &paths, &n, "/etc/xdg",
+                                        oyAllocateFunc_, oyDeAllocateFunc_ );
+      }
+
+      /* add the OpenIccDirectoryProposal default paths */
+      if(i == 0)
+      {
+          oyStringListAddStaticString_( &paths, &n, "/usr/share",
+                                        oyAllocateFunc_, oyDeAllocateFunc_ );
+          oyStringListAddStaticString_( &paths, &n, "/usr/local/share",
+                                        oyAllocateFunc_, oyDeAllocateFunc_ );
+          oyStringListAddStaticString_( &paths, &n, "/var/lib",
+                                        oyAllocateFunc_, oyDeAllocateFunc_ );
+      }
+    }
+  }
+
+  tmp = oyStringListAppend_( 0, 0, (const char**)paths, n,
+                             &tmp_n, allocateFunc );
+  oyStringListRelease_( &paths, n, oyDeAllocateFunc_ );
+  paths = tmp;
+  n = tmp_n;
+
+  if(count)
+    *count = n;
+
+  if(!n)
+  {
+    if(paths)
+      oyDeAllocateFunc_(paths);
+    paths = 0;
+  }
+
+  return paths;
+}
+
+char * oyPathContructAndTest_(char * path_, const char * subdir)
+{
+  char * text = 0, * tmp = 0;
+
+  if(!path_)
+    return 0;
+
+  STRING_ADD( text, path_ );
+  if(subdir)
+  {
+     STRING_ADD( text, OY_SLASH );
+     STRING_ADD( text, subdir );
+  }
+
+  tmp = oyResolveDirFileName_( text );
+  oyDeAllocateFunc_(text); text = tmp; tmp = 0;
+
+  if(!oyIsDir_( text ))
+  {
+    oyDeAllocateFunc_(text);
+    text = 0;
+  }
+
+  return text; 
+}
+
+
+/** @internal
+ *  @brief query valid Oyranos paths
+ *
+ *  @param[out]    count       number of paths found
+ *  @param[in]     subdir      the data directories sub path, a string 
+ *                             containing one path, e.g. "color/icc""
+ *  @param[in]     data        oyYES/oyNO/oyALL data or config text
+ *  @param[in]     owner       oyUSER/oySYS/oyUSER_SYS
+ *
+ *  @version Oyranos: 0.1.11
+ *  @date    2010/08/18
+ *  @since   2007/11/00 (Oyranos: 0.1.x)
+ */
+char**
+oyDataPathsGet_       (int             * count,
+                       const char      * subdir,
+                       int               data,
+                       int               owner,
+                       oyAlloc_f         allocateFunc )
+{
+  char ** paths = NULL;
+  int ndp = 0;        /* number of default paths */
+
+  /* the OpenICC agreed upon *nix default paths */
+  {
+    int xdg_n = 0, oy_n = 0, tmp_n = 0, i,j,has;
+    char ** oy_paths = 0;
+    char ** xdg_paths = 0;
+    char ** tmp_paths = 0;
+    char * text = 0;
+    char * xdg_sub = 0, * x = 0;
+
+    oyAllocHelper_m_( xdg_sub, char, MAX_PATH, oyAllocateFunc_, return 0);
+    oySprintf_( xdg_sub, "%s", subdir );
+
+    oyAllocHelper_m_( oy_paths, char*, 6, oyAllocateFunc_, return 0);
+
+    xdg_paths = oyXDGPathsGet_(&xdg_n, data, owner, oyAllocateFunc_);
+
+    if(xdg_n)
+      oyAllocHelper_m_( tmp_paths, char*, xdg_n, oyAllocateFunc_, return 0);
+
+    for(i = 0; i < xdg_n; ++i)
+    {
+      x = xdg_paths[i];
+      text = oyPathContructAndTest_(x, xdg_sub);
+      if(text)
+        tmp_paths[tmp_n++] = text;
+    }
+
+    oyStringListRelease_(&xdg_paths, xdg_n, oyDeAllocateFunc_);
+    xdg_paths = tmp_paths; tmp_paths = 0;
+    xdg_n = tmp_n; tmp_n = 0;
+    oyFree_m_(xdg_sub);
+
+    ndp += xdg_n;
+
+    text = oyPathContructAndTest_( "/usr/share", subdir );
+    if(text) oy_paths[oy_n++] = text;
+    text = oyPathContructAndTest_( "/usr/local/share", subdir );
+    if(text) oy_paths[oy_n++] = text;
+    text = oyPathContructAndTest_( "/val/lib", subdir );
+    if(text) oy_paths[oy_n++] = text;
+    text = 0;
+    if(subdir && strlen(subdir) > 6 && memcmp( subdir,"color/", 6 ) == 0)
+    text = oyPathContructAndTest_( OY_USERCOLORDATA, &subdir[6] );
+    if(text) oy_paths[oy_n++] = text;
+    if(oyIsDir_( OY_PROFILE_PATH_USER_DEFAULT ))
+    {
+      text = oyResolveDirFileName_(OY_PROFILE_PATH_USER_DEFAULT);
+      if(text) oy_paths[oy_n++] = text;
+    }
+    text = oyPathContructAndTest_( OY_DATADIR, subdir );
+    if(text) oy_paths[oy_n++] = text;
+
+    paths = oyStringListAppend_(0,0, (const char**)oy_paths, oy_n,
+                                &ndp, allocateFunc);
+    for(i = 0; i < xdg_n; ++i)
+    {
+      has = 0;
+      text = xdg_paths[i];
+
+      for(j = 0; j < oy_n; ++j)
+        if(text && oyStrcmp_( text, oy_paths[j] ) == 0)
+        {
+          has = 1;
+          break;
+        }
+
+      if(!has)
+        oyStringListAddStaticString_( &paths, &ndp, text,
+                                      oyAllocateFunc_, oyDeAllocateFunc_ );
+    }
+
+    oyStringListRelease_(&oy_paths, oy_n, oyDeAllocateFunc_);
+    oyStringListRelease_(&xdg_paths, xdg_n, oyDeAllocateFunc_);
+
+  }
+
+  *count = ndp;
+
+  return paths;
+}
+
+/** @internal
+ *  @brief get files out of the Oyranos default paths
+ *
+ *  Since: 0.1.8
+ */
+char**
+oyFileListGet_                  (const char * subpath,
+                                 int        * size,
+                                 int          data,
+                                 int          owner)
+{
+  oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
+  int count = 0;
+  char ** path_names = NULL;
+ 
+  DBG_PROG_START
+ 
+  path_names = oyDataPathsGet_( &count, subpath, oyALL, oyUSER_SYS,
+                                oyAllocateFunc_ );
+
+  oy_warn_ = 0;
+
+  l.names = 0;
+  l.mem_count = l.hopp;
+  l.count_files = 0;
+
+  oyAllocHelper_m_(l.names, char*, l.mem_count, oyAllocateFunc_, return 0);
+
+  oyRecursivePaths_(oyFileListCb_, &l, (const char**)path_names, count);
+
+  oyStringListRelease_(&path_names, count, oyDeAllocateFunc_);
+
+  *size = l.count_files;
+
+  if(!l.count_files && l.names)
+  {
+    oyDeAllocateFunc_(l.names);
+    l.names = 0;
+  }
+
+  oy_warn_ = 1;
+  DBG_PROG_ENDE
+  return l.names;
+}
+
+
+
+/* Oyranos text handling */
+
+/** @internal
+ *  @brief query library paths
+ *
+ *  @param[out]    count       number of paths found
+ *  @param[in]     owner       oyUSER/oySYS/oyUSER_SYS
+ *  @return                    a array to write the found paths into
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  november 2007 (API 0.1.8)
+ */
+char**  oyLibPathsGet_( int             * count,
+                        const char      * subdir,
+                        int               owner,
+                        oyAlloc_f         allocateFunc )
+{
+  char ** paths = 0, ** tmp;
+  int     n = 0, tmp_n = 0;
+  char *  vars[] = {"OY_MODULE_PATHS"};
+  int     vars_n = 1;
+  int     i;
+  char  * fix_paths[3] = {0,0,0};
+  int     fix_paths_n = 2;
+  char  * full_path = 0;
+
+  if(!subdir)
+  {
+    full_path = oyResolveDirFileName_( OY_LIBDIR OY_SLASH OY_METASUBPATH );
+    fix_paths[0] = full_path;
+    full_path = oyResolveDirFileName_(
+                          OY_USER_PATH OY_SLASH "lib" OY_SLASH OY_METASUBPATH );
+    fix_paths[1] = full_path;
+  } else {
+    full_path = oyResolveDirFileName_( OY_LIBDIR OY_SLASH );
+    STRING_ADD( fix_paths[0], full_path );
+    full_path = 0;
+    STRING_ADD( fix_paths[0], subdir );
+
+    full_path = oyResolveDirFileName_( OY_USER_PATH OY_SLASH );
+    STRING_ADD( fix_paths[1], full_path );
+    full_path = 0;
+    STRING_ADD( fix_paths[1], subdir );
+  }
+
+  oyStringListAdd_( &paths, &n, (const char**)fix_paths, fix_paths_n,
+                    oyAllocateFunc_, oyDeAllocateFunc_ );
+
+  for(i = 0; i < vars_n; ++i)
+  {
+    if( (i >= 2 && (owner != oyUSER)) ||
+        (i < 2 && (owner != oySYS)))
+    {
+      const char * var = getenv(vars[i]);
+      if(var)
+      {
+
+        if(strlen(var))
+        {
+          char **tmp_neu;
+          int  tmp_neu_n;
+
+          tmp = oyStringSplit_( var, ':', &tmp_n, oyAllocateFunc_ );
+
+          tmp_neu = oyStringListAppend_( (const char**)paths, n, 
+                                         (const char**)tmp, tmp_n,
+                                         &tmp_neu_n, oyAllocateFunc_ );
+          oyStringListRelease_( &paths, n, oyDeAllocateFunc_ );
+          paths = tmp_neu;
+          n = tmp_neu_n;
+        }
+      }
+    }
+  }
+
+  tmp = oyStringListAppend_( 0, 0, (const char**)paths, n,
+                             &tmp_n, allocateFunc );
+  oyStringListRelease_( &paths, n, oyDeAllocateFunc_ );
+  paths = tmp;
+  n = tmp_n;
+
+  if(fix_paths[0])
+    oyFree_m_(fix_paths[0]);
+  if(fix_paths[1])
+    oyFree_m_(fix_paths[1]);
+
+  if(count)
+    *count = n;
+
+  if(!n)
+  {
+    if(paths)
+      oyDeAllocateFunc_(paths);
+    paths = 0;
+  }
+
+  return paths;
+}
+
+/** @internal
+ *  @brief get files out of the Oyranos default paths
+ *
+ *  Since: 0.1.8
+ */
+char**
+oyLibListGet_                   (const char * subpath,
+                                 int        * size,
+                                 int          owner)
+{
+  struct oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
+  int count = 0;
+  char ** path_names = NULL;
+ 
+  DBG_PROG_START
+ 
+  path_names = oyLibPathsGet_( &count, subpath, oyUSER_SYS,
+                                  oyAllocateFunc_ );
+
+  oy_warn_ = 0;
+
+  l.names = 0;
+  l.mem_count = l.hopp;
+  l.count_files = 0;
+
+  oyAllocHelper_m_(l.names, char*, l.mem_count, oyAllocateFunc_, return 0);
+
+  oyRecursivePaths_(oyFileListCb_, &l, (const char**)path_names, count);
+
+  oyStringListRelease_(&path_names, count, oyDeAllocateFunc_);
+
+  *size = l.count_files;
+  oy_warn_ = 1;
+  DBG_PROG_ENDE
+  return l.names;
+}
 

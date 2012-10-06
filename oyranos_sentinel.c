@@ -95,3 +95,24 @@ void     oyFinish_                   ( int                 unused )
   oyAlphaFinish_( unused );
 }
 
+#include "oyProfiles_s.h"
+#include "oyStructList_s_.h"
+
+extern oyStructList_s_ * oy_profile_s_file_cache_;
+extern oyStructList_s * oy_cmm_cache_;
+extern oyStructList_s * oy_meta_module_cache_;
+extern oyProfiles_s * oy_profile_list_cache_;
+
+/** @internal
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/04/16 (Oyranos: 0.1.10)
+ *  @date    2009/04/16
+ */
+void     oyAlphaFinish_              ( int                 unused )
+{
+  oyProfiles_Release( &oy_profile_list_cache_ );
+  oyStructList_Release( &oy_meta_module_cache_ );
+  oyStructList_Release( &oy_cmm_cache_ );
+  oyStructList_Release_( &oy_profile_s_file_cache_ );
+}
