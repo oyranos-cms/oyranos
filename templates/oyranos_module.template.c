@@ -135,6 +135,9 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
 
       files_n = 0;
 
+      if(!api5 && error <= 0)
+        error = 1;
+
       if(error <= 0)
         files = oyCMMsGetNames_(&files_n, api5->sub_paths, api5->ext,
                                 cmm_required,
