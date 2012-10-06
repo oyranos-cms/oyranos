@@ -3689,8 +3689,10 @@ oyTESTRESULT_e testImagePixel()
 
   oyPixel_t pixel_layout = OY_TYPE_123_16;
   oyPointer channels = 0;
-  oyRectangle_s roi = {oyOBJECT_RECTANGLE_S, 0,0,0};
-  oyRectangle_s a_roi = {oyOBJECT_RECTANGLE_S, 0,0,0};
+  oyRectangle_s_ roi_ = {oyOBJECT_RECTANGLE_S, 0,0,0,0,0,0,0};
+  oyRectangle_s_ a_roi_ = {oyOBJECT_RECTANGLE_S, 0,0,0,0,0,0,0};
+  oyRectangle_s * roi = (oyRectangle_s*)&roi_,
+                * a_roi = (oyRectangle_s*)&a_roi_;
 
   oyArray2d_s * a = oyArray2d_Create( channels,
                                       2 * oyToChannels_m(pixel_layout),
@@ -3698,12 +3700,12 @@ oyTESTRESULT_e testImagePixel()
                                       oyToDataType_m(pixel_layout),
                                       0 );
 
-  oyRectangle_SetGeo( &roi, 0.5,0.5,0.5,0.5 );
-  oyRectangle_SetGeo( &a_roi, 0.5,0.5,0.5,0.5 );
+  oyRectangle_SetGeo( roi, 0.5,0.5,0.5,0.5 );
+  oyRectangle_SetGeo( a_roi, 0.5,0.5,0.5,0.5 );
   buf_16out2x2[9] = buf_16out2x2[10] = buf_16out2x2[11] = 65535;
-  error = oyImage_FillArray( output, &roi, 0,
+  error = oyImage_FillArray( output, roi, 0,
                              &a,
-                             &a_roi, 0 );
+                             a_roi, 0 );
 
   uint16_t ** rows_u16 = (uint16_t**)oyArray2d_GetData(a);
   uint16_t * output_u16 = rows_u16[0];
@@ -3736,9 +3738,9 @@ oyTESTRESULT_e testImagePixel()
                   buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
                   buf_16out2x2[9], buf_16out2x2[10], buf_16out2x2[11] );
 
-  oyRectangle_SetGeo( &a_roi, 0.0,0.0,0.5,0.5 );
-  error = oyImage_ReadArray( output, &roi,
-                             a, &a_roi );
+  oyRectangle_SetGeo( a_roi, 0.0,0.0,0.5,0.5 );
+  error = oyImage_ReadArray( output, roi,
+                             a, a_roi );
 
 
   rows_u16 = (uint16_t**)oyArray2d_GetData(a);
@@ -3754,7 +3756,7 @@ oyTESTRESULT_e testImagePixel()
 
   /* set lower right pixel */
   output_u16[0] = output_u16[1] = output_u16[2] = 3;
-  error = oyImage_ReadArray( output, &roi,
+  error = oyImage_ReadArray( output, roi,
                              a, 0 );
 
 
@@ -3796,7 +3798,7 @@ oyTESTRESULT_e testImagePixel()
 
   /* set lower right pixel */
   output_u16[0] = output_u16[1] = output_u16[2] = 4;
-  error = oyImage_ReadArray( output, &roi,
+  error = oyImage_ReadArray( output, roi,
                              a, 0 );
   rows_u16 = (uint16_t**)oyArray2d_GetData(a);
   if(!error &&
@@ -3811,9 +3813,9 @@ oyTESTRESULT_e testImagePixel()
 
   oyArray2d_Release( &a );
 
-  oyRectangle_SetGeo( &a_roi, 0.5,0.5,0.5,0.5 );
-  error = oyImage_FillArray( output, &roi, 0,
-                             &a, &a_roi, 0 );
+  oyRectangle_SetGeo( a_roi, 0.5,0.5,0.5,0.5 );
+  error = oyImage_FillArray( output, roi, 0,
+                             &a, a_roi, 0 );
 
   rows_u16 = (uint16_t**)oyArray2d_GetData(a);
   if(!error &&
