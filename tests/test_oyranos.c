@@ -476,6 +476,8 @@ oyTESTRESULT_e testSettings ()
   return result;
 }
 
+#include "oyProfiles_s.h"
+
 oyTESTRESULT_e testProfiles ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
@@ -568,6 +570,9 @@ oyTESTRESULT_e testProfiles ()
 
   return result;
 }
+
+#include "oyRectangle_s.h"
+#include "oyranos_devices.h"
 
 oyTESTRESULT_e testMonitor ()
 {
@@ -905,19 +910,20 @@ int myFilterSignalHandler            ( oyObserver_s      * observer,
        fprintf(stderr, "Signal: oySIGNAL_DATA_CHANGED\n" );
        if(observer->observer->type_ == oyOBJECT_FILTER_NODE_S)
        {
+         oyPointer_s * node_context;
          node = (oyFilterNode_s*) observer->observer;
-         if(node &&
-            node->backend_data &&
-            node->backend_data->release)
+         node_context = oyFilterNode_GetModuleData( node );
+         if(node && node_context)
          {
            if(observer->model->type_ == oyOBJECT_OPTION_S)
            {
              fprintf( stderr, "release context %s\n",
                       oyStruct_TypeToText( observer->observer ) );
-             node->backend_data->release( (oyStruct_s**)&node->backend_data);
+             oyFilterNode_SetModuleData( node, 0 );
            } else
              fprintf( stderr, "Model type not expected: %s\n",
                       oyStruct_TypeToText( observer->model ) );
+           oyPointer_Release( &node_context );
          } else
            fprintf( stderr, "no context %s\n",
                     oyStruct_TypeToText( observer->observer ) );
