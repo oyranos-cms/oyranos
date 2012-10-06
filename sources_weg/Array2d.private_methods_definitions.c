@@ -29,6 +29,7 @@ oyArray2d_s_ *
     s->width = width;
     s->height = height;
     s->t = data_type;
+    s->data_area.type_ = oyOBJECT_RECTANGLE_S;
     oyRectangle_SetGeo( (oyRectangle_s*)&s->data_area, 0,0, width, height );
     s->array2d = s->oy_->allocateFunc_( y_len );
     error = !memset( s->array2d, 0, y_len );
