@@ -1,14 +1,15 @@
 #!/bin/bash
+version=0.2.0
 
 mkdir -p grantlee
 cd grantlee
-if [ -f grantlee-0.1.7.tar.gz ]; then
+if [ -f grantlee-$version.tar.gz ]; then
   echo ""
 else
-  wget http://downloads.grantlee.org/grantlee-0.1.7.tar.gz
+  wget http://downloads.grantlee.org/grantlee-$version.tar.gz
 fi
-tar xzf grantlee-0.1.7.tar.gz
-cd grantlee-0.1.7
+tar xzf grantlee-$version.tar.gz
+cd grantlee-$version
 mkdir build
 cd build
 mkdir -p ../grantlee
