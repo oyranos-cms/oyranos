@@ -40,7 +40,7 @@
  *
  *  @since 0.1.8
  */
-#define OY_MODULE_PATHS                 "OY_MODULE_PATHS"
+#define OY_MODULE_PATH                 "OY_MODULE_PATH"
 /** @brief Oyranos modules/CMM's suffix after the four byte CMM ID
  *
  *  for instance LittleCMS has ID lcms, thus we get lcms_cmm_module

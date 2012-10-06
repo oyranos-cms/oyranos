@@ -40,7 +40,7 @@
     OY_LOCALEDIR is described together with the internal ::oy_domain_codeset.
 
     @section runtime_vars Runtime Variables
-    OY_MODULE_PATHS can contain paths to meta and normal modules together.
+    OY_MODULE_PATH can contain paths to meta and normal modules together.
     The given paths are scanned recursively to find the modules.
 
     @section debug_vars Debugging Variables

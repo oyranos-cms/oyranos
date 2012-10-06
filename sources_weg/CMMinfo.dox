@@ -15,7 +15,7 @@
  *  Oyranos will scan the $(libdir)/color/cmms/ path, opens the available 
  *  CMM's from this directory and extracts the four-chars before OY_MODULE_NAME
  *  from the library file names. Module paths can be added through the
- *  OY_MODULE_PATHS environment variable.
+ *  OY_MODULE_PATH environment variable.
  *  Oyranos looks for a symbol to a oyCMMinfo_s struct of the four-byte ID plus
  *  OY_MODULE_NAME which results in our example in the name "lcms_cmm_module".
  *  On Posix system this should be loadable by dlsym.

@@ -720,7 +720,7 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm )
 
     if(!files_n)
       WARNc_S(_("Could not find any meta module. "
-                "Did you set the OY_MODULE_PATHS variable,"
+                "Did you set the OY_MODULE_PATH variable,"
                 " to point to a Oyranos module loader library?"));
 
     /* open the modules */
