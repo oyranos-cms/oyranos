@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/05
+ *  @date     2012/10/06
  */
 
 
@@ -122,6 +122,9 @@ OYAPI int  OYEXPORT
   oyOptions_s_ * s = (oyOptions_s_*)list;
   int error = 0;
 
+  if(!s)
+    return -1;
+
   if(s)
     oyCheckType__m( oyOBJECT_OPTIONS_S, return 1 )
 
@@ -164,6 +167,9 @@ OYAPI int  OYEXPORT
   int error = !list;
   oyOptions_s_ * s = (oyOptions_s_*)list;
 
+  if(!s)
+    return -1;
+
   if(!error)
     oyCheckType__m( oyOBJECT_OPTIONS_S, return 1 )
 
@@ -194,6 +200,9 @@ OYAPI oyOption_s * OYEXPORT
   int error = !list;
   oyOptions_s_ * s = (oyOptions_s_*)list;
 
+  if(!s)
+    return 0;
+
   if(!error)
     oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
 
@@ -220,6 +229,9 @@ OYAPI int  OYEXPORT
   int error = !list;
   oyOptions_s_ * s = (oyOptions_s_*)list;
 
+  if(!s)
+    return 0;
+
   if(!error)
     oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
 
@@ -245,6 +257,9 @@ OYAPI int  OYEXPORT
   int error = !list;
   oyOptions_s_ * s = (oyOptions_s_*)list;
 
+  if(!s)
+    return -1;
+
   if(!error)
     oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
 
@@ -267,6 +282,9 @@ OYAPI int  OYEXPORT
 {       
   int error = !list;
   oyOptions_s_ * s = (oyOptions_s_*)list;
+
+  if(!s)
+    return -1;
 
   if(!error)
     oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )

@@ -28,6 +28,9 @@ OYAPI int  OYEXPORT
   {{ class.privName }} * s = ({{ class.privName }}*)list;
   int error = 0;
 
+  if(!s)
+    return -1;
+
   if(s)
     oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 1 )
 
@@ -65,6 +68,9 @@ OYAPI int  OYEXPORT
   int error = !list;
   {{ class.privName }} * s = ({{ class.privName }}*)list;
 
+  if(!s)
+    return -1;
+
   if(!error)
     oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 1 )
 
@@ -95,6 +101,9 @@ OYAPI {{ class.listOf }} * OYEXPORT
   int error = !list;
   {{ class.privName }} * s = ({{ class.privName }}*)list;
 
+  if(!s)
+    return 0;
+
   if(!error)
     oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
 
@@ -121,6 +130,9 @@ OYAPI int  OYEXPORT
   int error = !list;
   {{ class.privName }} * s = ({{ class.privName }}*)list;
 
+  if(!s)
+    return 0;
+
   if(!error)
     oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
 
@@ -146,6 +158,9 @@ OYAPI int  OYEXPORT
   int error = !list;
   {{ class.privName }} * s = ({{ class.privName }}*)list;
 
+  if(!s)
+    return -1;
+
   if(!error)
     oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
 
@@ -168,6 +183,9 @@ OYAPI int  OYEXPORT
 {       
   int error = !list;
   {{ class.privName }} * s = ({{ class.privName }}*)list;
+
+  if(!s)
+    return -1;
 
   if(!error)
     oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
