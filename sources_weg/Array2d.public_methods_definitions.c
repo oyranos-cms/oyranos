@@ -15,30 +15,29 @@ OYAPI oyArray2d_s * OYEXPORT
                                        oyDATATYPE_e        data_type,
                                        oyObject_s          object )
 {
-  oyArray2d_s * s = 0;
-  oyArray2d_s_ ** s_ = (oyArray2d_s_**)&s;
+  oyArray2d_s_ * s = NULL;
   int error = 0;
 
   if(!width || !height)
-    return s;
+    return (oyArray2d_s*)s;
 
-  (*s_)= oyArray2d_Create_( width, height, data_type, object );
+  s = oyArray2d_Create_( width, height, data_type, object );
   error = !s;
 
   if(error <= 0)
   {
     if(data)
-      error = oyArray2d_SetData( s, data );
+      error = oyArray2d_SetData( (oyArray2d_s*)s, data );
     else
     {
       data = s->oy_->allocateFunc_( width * height *
                                     oySizeofDatatype( data_type ) );
-      error = oyArray2d_SetData( s, data );
-      (*s_)->own_lines = oyYES;
+      error = oyArray2d_SetData( (oyArray2d_s*)s, data );
+      s->own_lines = oyYES;
     }
   }
 
-  return s;
+  return (oyArray2d_s*)s;
 }
 
 #if 0
@@ -157,7 +156,7 @@ OYAPI int  OYEXPORT
                  oyArray2d_SetData   ( oyArray2d_s       * obj,
                                        oyPointer           data )
 {
-  oyArray2d_s_ * s = 0;
+  oyArray2d_s_ * s = (oyArray2d_s_*) obj;
   int error = 0;
 
   if(!data)
@@ -167,8 +166,6 @@ OYAPI int  OYEXPORT
     return 0;
 
   oyCheckType__m( oyOBJECT_ARRAY2D_S, return 1 )
-
-  s = (oyArray2d_s_*)obj;
 
   {
     int y_len = sizeof(unsigned char *) * (s->height + 1),
