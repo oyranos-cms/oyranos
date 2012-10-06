@@ -3,6 +3,8 @@
 #ifndef {{ file_name|underscores|upper|tr:". _" }}
 #define {{ file_name|underscores|upper|tr:". _" }}
 
+{% include "cpp_begin.h" %}
+
 #define oy{{ class.baseName }}Priv_m( var ) (({{ class.privName }}*) (var))
 
 typedef struct {{ class.privName }} {{ class.privName }};
@@ -55,4 +57,5 @@ int oy{{ class.baseName }}_Init__Members( {{ class.privName }} * {{ class.baseNa
 int oy{{ class.baseName }}_Copy__Members( {{ class.privName }} * dst, {{ class.privName }} * src);
 {% endblock CustomPrivateMethodsDeclarations %}
 
+{% include "cpp_end.h" %}
 #endif /* {{ file_name|underscores|upper|tr:". _" }} */

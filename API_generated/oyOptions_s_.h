@@ -15,12 +15,18 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/10/06
  */
 
 
 #ifndef OY_OPTIONS_S__H
 #define OY_OPTIONS_S__H
+
+#ifdef __cplusplus
+/*namespace oyranos {*/
+  extern "C" {
+#endif /* __cplusplus */
+
 
 #define oyOptionsPriv_m( var ) ((oyOptions_s_*) (var))
 
@@ -102,5 +108,10 @@ void           oyOptions_ParseXML_   ( oyOptions_s_      * s,
 
 
 
+
+#ifdef __cplusplus
+} /* extern "C" */
+/*}*/ /* namespace oyranos */
+#endif /* __cplusplus */
 
 #endif /* OY_OPTIONS_S__H */

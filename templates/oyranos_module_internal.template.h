@@ -3,6 +3,8 @@
 #ifndef {{ file_name|underscores|upper|tr:". _" }}
 #define {{ file_name|underscores|upper|tr:". _" }}
 
+{% include "cpp_begin.h" %}
+
 #include "oyranos.h"
 #include "oyranos_module.h"
 
@@ -174,4 +176,5 @@ void               oyShowConversion_ ( oyConversion_s    * conversion,
                                        uint32_t            flags );
 
 
+{% include "cpp_end.h" %}
 #endif /* {{ file_name|underscores|upper|tr:". _" }} */

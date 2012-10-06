@@ -13,12 +13,18 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/10/06
  */
 
 
 #ifndef OY_POINTER_S__H
 #define OY_POINTER_S__H
+
+#ifdef __cplusplus
+/*namespace oyranos {*/
+  extern "C" {
+#endif /* __cplusplus */
+
 
 #define oyPointerPriv_m( var ) ((oyPointer_s_*) (var))
 
@@ -93,5 +99,10 @@ void oyPointer_Release__Members( oyPointer_s_ * pointer );
 int oyPointer_Init__Members( oyPointer_s_ * pointer );
 int oyPointer_Copy__Members( oyPointer_s_ * dst, oyPointer_s_ * src);
 
+
+#ifdef __cplusplus
+} /* extern "C" */
+/*}*/ /* namespace oyranos */
+#endif /* __cplusplus */
 
 #endif /* OY_POINTER_S__H */

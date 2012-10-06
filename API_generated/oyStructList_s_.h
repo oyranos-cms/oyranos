@@ -13,12 +13,18 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/10/06
  */
 
 
 #ifndef OY_STRUCT_LIST_S__H
 #define OY_STRUCT_LIST_S__H
+
+#ifdef __cplusplus
+/*namespace oyranos {*/
+  extern "C" {
+#endif /* __cplusplus */
+
 
 #define oyStructListPriv_m( var ) ((oyStructList_s_*) (var))
 
@@ -93,5 +99,10 @@ void oyStructList_Release__Members( oyStructList_s_ * structlist );
 int oyStructList_Init__Members( oyStructList_s_ * structlist );
 int oyStructList_Copy__Members( oyStructList_s_ * dst, oyStructList_s_ * src);
 
+
+#ifdef __cplusplus
+} /* extern "C" */
+/*}*/ /* namespace oyranos */
+#endif /* __cplusplus */
 
 #endif /* OY_STRUCT_LIST_S__H */

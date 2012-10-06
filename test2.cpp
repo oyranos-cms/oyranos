@@ -2679,14 +2679,6 @@ oyTESTRESULT_e testCMMsShow ()
 #endif
 #define KDB_VERSION_NUM (KDB_VERSION_MAJOR*10000 + KDB_VERSION_MINOR*100)
 #ifdef __cplusplus
-extern "C" {
-#endif
-oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s    * filter,
-                                       uint32_t            flags,
-                                       oyObject_s          object );
-int      oyKeyIsString_              ( const char        * full_key_name );
-#ifdef __cplusplus
-}
 #define ckdb ckdb::
 #else
 #define ckdb

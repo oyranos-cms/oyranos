@@ -18,6 +18,12 @@
 #ifndef OYRANOS_MODULE_INTERNAL_H
 #define OYRANOS_MODULE_INTERNAL_H
 
+#ifdef __cplusplus
+/*namespace oyranos {*/
+  extern "C" {
+#endif /* __cplusplus */
+
+
 #include "oyranos.h"
 #include "oyranos_module.h"
 
@@ -188,5 +194,10 @@ void oyShowGraph_( oyFilterNode_s * c, const char * selector );
 void               oyShowConversion_ ( oyConversion_s    * conversion,
                                        uint32_t            flags );
 
+
+#ifdef __cplusplus
+} /* extern "C" */
+/*}*/ /* namespace oyranos */
+#endif /* __cplusplus */
 
 #endif /* OYRANOS_MODULE_INTERNAL_H */

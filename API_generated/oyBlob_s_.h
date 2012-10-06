@@ -13,12 +13,18 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/10/06
  */
 
 
 #ifndef OY_BLOB_S__H
 #define OY_BLOB_S__H
+
+#ifdef __cplusplus
+/*namespace oyranos {*/
+  extern "C" {
+#endif /* __cplusplus */
+
 
 #define oyBlobPriv_m( var ) ((oyBlob_s_*) (var))
 
@@ -84,5 +90,10 @@ void oyBlob_Release__Members( oyBlob_s_ * blob );
 int oyBlob_Init__Members( oyBlob_s_ * blob );
 int oyBlob_Copy__Members( oyBlob_s_ * dst, oyBlob_s_ * src);
 
+
+#ifdef __cplusplus
+} /* extern "C" */
+/*}*/ /* namespace oyranos */
+#endif /* __cplusplus */
 
 #endif /* OY_BLOB_S__H */

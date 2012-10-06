@@ -13,12 +13,18 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/10/06
  */
 
 
 #ifndef OY_OPTION_S__H
 #define OY_OPTION_S__H
+
+#ifdef __cplusplus
+/*namespace oyranos {*/
+  extern "C" {
+#endif /* __cplusplus */
+
 
 #define oyOptionPriv_m( var ) ((oyOption_s_*) (var))
 
@@ -102,5 +108,10 @@ void oyOption_Release__Members( oyOption_s_ * option );
 int oyOption_Init__Members( oyOption_s_ * option );
 int oyOption_Copy__Members( oyOption_s_ * dst, oyOption_s_ * src);
 
+
+#ifdef __cplusplus
+} /* extern "C" */
+/*}*/ /* namespace oyranos */
+#endif /* __cplusplus */
 
 #endif /* OY_OPTION_S__H */
