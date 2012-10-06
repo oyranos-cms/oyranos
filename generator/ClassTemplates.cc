@@ -83,12 +83,14 @@ void ClassTemplates::createTemplates() const
     QString group( allClassesInfo.at(i)->group() );
     QDir templatesDir( allClassesInfo.at(i)->tmplDir() );
     if (!templatesDir.exists( group ))
+    {
       if (templatesDir.mkdir( group )) {
         qDebug() << "Creating directory" << templatesDir.dirName() << "/" << group;
       } else {
         qWarning() << "Could not create directory" << templatesDir.dirName() << "/" << group;
         continue;
       }
+    }
 
     QString catchBase;
     QStringList genericTemplateFiles;
