@@ -125,8 +125,7 @@ OYAPI int  OYEXPORT
   if(!s)
     return -1;
 
-  if(s)
-    oyCheckType__m( oyOBJECT_OPTIONS_S, return 1 )
+  oyCheckType__m( oyOBJECT_OPTIONS_S, return 1 )
 
   if(obj && *obj &&
      (*obj)->type_ == oyOBJECT_OPTION_S)
@@ -170,8 +169,7 @@ OYAPI int  OYEXPORT
   if(!s)
     return -1;
 
-  if(!error)
-    oyCheckType__m( oyOBJECT_OPTIONS_S, return 1 )
+  oyCheckType__m( oyOBJECT_OPTIONS_S, return 1 )
 
   if(!error && oyStructList_GetParentObjType(s->list_) != oyOBJECT_OPTIONS_S)
     error = 1;
@@ -203,11 +201,10 @@ OYAPI oyOption_s * OYEXPORT
   if(!s)
     return 0;
 
-  if(!error)
-    oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
+  oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
 
   if(!error)
-    return (oyOption_s *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_OPTION_S );
+    return (oyOption_s *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_OPTION_S);
   else
     return 0;
 }   
@@ -232,8 +229,7 @@ OYAPI int  OYEXPORT
   if(!s)
     return 0;
 
-  if(!error)
-    oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
+  oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
 
   if(!error)
     return oyStructList_Count( s->list_ );
@@ -260,8 +256,7 @@ OYAPI int  OYEXPORT
   if(!s)
     return -1;
 
-  if(!error)
-    oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
+  oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
 
   if(!error)
     return oyStructList_Clear( s->list_ );
@@ -286,8 +281,7 @@ OYAPI int  OYEXPORT
   if(!s)
     return -1;
 
-  if(!error)
-    oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
+  oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
 
   if(!error)
     return oyStructList_Sort( s->list_, rank_list );

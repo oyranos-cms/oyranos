@@ -31,8 +31,7 @@ OYAPI int  OYEXPORT
   if(!s)
     return -1;
 
-  if(s)
-    oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 1 )
+  oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 1 )
 
   if(obj && *obj &&
      {% block MoveIn_CheckTypes %}(*obj)->type_ == oyOBJECT_{{ class.content.baseName|underscores|upper }}_S{% endblock %})
@@ -71,8 +70,7 @@ OYAPI int  OYEXPORT
   if(!s)
     return -1;
 
-  if(!error)
-    oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 1 )
+  oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 1 )
 
   if(!error && oyStructList_GetParentObjType(s->list_) != oyOBJECT_{{ class.baseName|underscores|upper }}_S)
     error = 1;
@@ -104,11 +102,10 @@ OYAPI {{ class.listOf }} * OYEXPORT
   if(!s)
     return 0;
 
-  if(!error)
-    oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
+  oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
 
   if(!error)
-    return ({{ class.listOf }} *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_{{ class.content.baseName|underscores|upper }}_S );
+    return ({{ class.listOf }} *) {% block Get_RefType %}oyStructList_GetRefType( s->list_, pos, oyOBJECT_{{ class.content.baseName|underscores|upper }}_S){% endblock %};
   else
     return 0;
 }   
@@ -133,8 +130,7 @@ OYAPI int  OYEXPORT
   if(!s)
     return 0;
 
-  if(!error)
-    oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
+  oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
 
   if(!error)
     return oyStructList_Count( s->list_ );
@@ -161,8 +157,7 @@ OYAPI int  OYEXPORT
   if(!s)
     return -1;
 
-  if(!error)
-    oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
+  oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
 
   if(!error)
     return oyStructList_Clear( s->list_ );
@@ -187,8 +182,7 @@ OYAPI int  OYEXPORT
   if(!s)
     return -1;
 
-  if(!error)
-    oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
+  oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
 
   if(!error)
     return oyStructList_Sort( s->list_, rank_list );
