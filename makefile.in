@@ -1197,13 +1197,18 @@ test_config:	$(LIBSONAMECONFIGFULL) $(LIBNAME_CONFIG) test_config.o
 test2:	test2.o $(LIBSONAMEFULL)
 	echo Linking dynamic $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2_dyn \
-	test2.o -L./ `./oyranos-config --ldflags` -L$(libdir) $(intl)
+	test2.o -L./ $(LIBSONAMEFULL) $(LIBSONAMECONFIGFULL) \
+	  $(LIBSONAMEMODULESFULL) \
+	  $(LIBSONAMEOBJECTFULL) $(LIBSONAMECOREFULL) \
+	  $(LDLIBS)
 #ifdef ELEKTRA_VERSION
 	$(COPY) test2_dyn test2
 #else
 	echo Linking static $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o test2 \
-	test2.o -L./ `./oyranos-config --ldstaticflags` -L$(libdir) $(intl) $(dl)
+	test2.o -L./  $(LIBNAME) $(LIBNAME_CONFIG) \
+	  $(LIBNAME_MODULES) $(LIBNAME_OBJECT) $(LIBSONAMECORE) \
+	  $(LDLIBS)
 #endif
 
 $(SRCDIR)/test2.c.c:
