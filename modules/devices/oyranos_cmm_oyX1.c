@@ -1185,7 +1185,7 @@ oyCMMui_s_ oyX1_api8_ui = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,4,1},                            /**< int32_t module_api[3] */
+  {0,9,0},                            /**< int32_t module_api[3] */
 
   0, /* oyCMMFilter_ValidateOptions_f */
   0, /* oyWidgetEvent_f */
@@ -1219,7 +1219,7 @@ oyCMMapi8_s_ oyX1_api8 = {
 
   OYX1_MONITOR_REGISTRATION, /**< registration */
   CMM_VERSION,                   /**< int32_t version[3] */
-  {0,4,1},                  /**< int32_t module_api[3] */
+  {0,9,0},                  /**< int32_t module_api[3] */
   0,                         /**< char * id_ */
 
   0,                         /**< oyCMMapi5_s * api5_ */
@@ -1612,7 +1612,7 @@ oyCMMapi10_s_    oyX1_api10_set_xcm_region_handler = {
   "set_xcm_region._" CMM_NICK,
 
   {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
-  {0,4,1},                  /**< int32_t module_api[3] */
+  {0,9,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
  

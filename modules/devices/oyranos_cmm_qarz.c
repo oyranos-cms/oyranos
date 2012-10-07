@@ -1092,7 +1092,7 @@ oyCMMui_s qarz_api8_ui = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,4,1},                            /**< int32_t module_api[3] */
+  {0,9,0},                            /**< int32_t module_api[3] */
 
   0, /* oyCMMFilter_ValidateOptions_f */
   0, /* oyWidgetEvent_f */
@@ -1126,7 +1126,7 @@ oyCMMapi8_s qarz_api8 = {
 
   QARZ_MONITOR_REGISTRATION, /**< registration */
   CMM_VERSION,               /**< int32_t version[3] */
-  {0,4,1},                   /**< int32_t module_api[3] */
+  {0,9,0},                   /**< int32_t module_api[3] */
   0,                         /**< char * id_ */
 
   0,                         /**< oyCMMapi5_s * api5_ */

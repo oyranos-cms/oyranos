@@ -2378,7 +2378,7 @@ oyCMMapi10_s_  lcms_api10_cmm2 = {
   "create_profile.proofing_effect.icc._" CMM_NICK "._CPU",
 
   CMM_VERSION,
-  {0,3,0},                  /**< int32_t module_api[3] */
+  {0,9,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
  
@@ -2449,7 +2449,7 @@ oyCMMapi10_s_  lcms_api10_cmm = {
   "create_profile.colour_matrix.icc._" CMM_NICK "._CPU",
 
   CMM_VERSION,
-  {0,3,0},                  /**< int32_t module_api[3] */
+  {0,9,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
  
@@ -2482,7 +2482,7 @@ oyCMMapi6_s_ lcms_api6_cmm = {
   "icc._" CMM_NICK "._CPU." oyCOLOUR_ICC_DEVICE_LINK "_" lcmsTRANSFORM,
 
   CMM_VERSION,
-  {0,3,0},                  /**< int32_t module_api[3] */
+  {0,9,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
   
@@ -2514,7 +2514,7 @@ oyCMMapi7_s_ lcms_api7_cmm = {
   "icc.colour._" CMM_NICK "._CPU._ACCEL",
 
   CMM_VERSION,
-  {0,3,0},                  /**< int32_t module_api[3] */
+  {0,9,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -2582,7 +2582,7 @@ oyCMMui_s_ lcms_api4_ui = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,3,0},                            /**< int32_t module_api[3] */
+  {0,9,0},                            /**< int32_t module_api[3] */
 
   lcmsFilter_CmmIccValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   lcmsWidgetEvent, /* oyWidgetEvent_f */
@@ -2617,7 +2617,7 @@ oyCMMapi4_s_ lcms_api4_cmm = {
   "icc.colour._" CMM_NICK "._CPU._NOACCEL",
 
   CMM_VERSION,
-  {0,3,0},                  /**< int32_t module_api[3] */
+  {0,9,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
