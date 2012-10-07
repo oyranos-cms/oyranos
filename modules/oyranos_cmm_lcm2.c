@@ -1504,6 +1504,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
     return 0;
   }
   p = oyProfile_Copy( image_input_profile, 0 );
+  profs = oyProfiles_New( 0 );
   error = oyProfiles_MoveIn( profs, &p, -1 );
 
   /* effect profiles */

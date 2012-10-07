@@ -247,6 +247,7 @@ int main(int argc, char *argv[])
     const char * profile_file_name = 0;
     
     profile = oyProfile_FromSignature( profile_class, oySIGNATURE_CLASS, 0 );
+    patterns = oyProfiles_New( 0 );
     patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
     
     iccs = oyProfiles_Create( patterns, 0 );
