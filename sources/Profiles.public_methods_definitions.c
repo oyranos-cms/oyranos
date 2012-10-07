@@ -26,7 +26,8 @@ OYAPI oyProfiles_s * OYEXPORT
                  oyProfiles_Create   ( oyProfiles_s      * patterns,
                                        oyObject_s          object)
 {
-  oyProfiles_s * s = 0, *tmps = 0;
+  oyProfiles_s * s = oyProfiles_New( object ),
+               * tmps = oyProfiles_New( object );
   int error = 0;
 
   oyProfile_s * tmp = 0, * pattern = 0;
@@ -39,7 +40,6 @@ OYAPI oyProfiles_s * OYEXPORT
   int sorts = 0;
   const char ** sort = NULL;
 
-  s = oyProfiles_New( object );
   error = !s;
 
   if(error <= 0)
@@ -180,7 +180,7 @@ OYAPI oyProfiles_s * OYEXPORT
     char  * temp = 0,
           * text = 0;
     uint32_t size = 0;
-    oyProfiles_s * iccs = 0, * patterns = 0;
+    oyProfiles_s * iccs = 0, * patterns = oyProfiles_New( object );
     oyProfile_s * profile = 0, * temp_prof = 0;
     icSignature csp;
 
