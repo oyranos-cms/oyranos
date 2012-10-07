@@ -6,3 +6,4 @@
 {% endblock %}
 
 {% block MoveIn_CheckTypes %}oyIsOfTypeCMMapiFilter( (*obj)->type_ ){% endblock %}
+{% block Get_RefType %}oyStructList_GetRef( s->list_, pos ){% endblock %}

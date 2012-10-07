@@ -7,5 +7,4 @@
 
 {% block MoveIn_CheckTypes %}(*obj)->type_ >= oyOBJECT_CMM_API1_S &&
      (*obj)->type_ <= oyOBJECT_CMM_API_MAX{% endblock %}
-{% block Get_RefType %}oyStructList_GetRef( s->list_, pos){% endblock %}
-Get_RefType
+{% block Get_RefType %}oyStructList_GetRef( s->list_, pos ){% endblock %}
