@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/06
+ *  @date     2012/10/07
  */
 
 
@@ -115,7 +115,8 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
                                          uint32_t         ** rank_list,
                                          uint32_t          * count );
 char *           oyCMMnameFromLibName_(const char        * lib_name);
-char *           oyCMMinfoPrint_     ( oyCMMinfo_s       * cmm_info );
+char *           oyCMMinfoPrint_     ( oyCMMinfo_s       * cmm_info,
+                                       int                 simple );
 oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name );
 oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name );
 int              oyCMMRelease_       ( const char        * cmm );

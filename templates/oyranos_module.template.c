@@ -1283,7 +1283,8 @@ int          oyCMMdsoSearch_         ( const char        * lib_name )
 
 /** @internal
  */
-char *           oyCMMinfoPrint_     ( oyCMMinfo_s       * cmm_info )
+char *           oyCMMinfoPrint_     ( oyCMMinfo_s       * cmm_info,
+                                       int                 simple )
 {
   char * text = 0, num[48];
   oyCMMapi_s * tmp = 0;
@@ -1291,7 +1292,7 @@ char *           oyCMMinfoPrint_     ( oyCMMinfo_s       * cmm_info )
   oyOBJECT_e type = 0;
 
   if(!cmm_info || cmm_info->type_ != oyOBJECT_CMM_INFO_S)
-    return oyStringCopy_("---", oyAllocateFunc_);
+    return oyStringCopy_("---\n", oyAllocateFunc_);
 
   oySprintf_(num,"%d", oyCMMinfo_GetCompatibility( cmm_info ) );
 
@@ -1300,6 +1301,7 @@ char *           oyCMMinfoPrint_     ( oyCMMinfo_s       * cmm_info )
   STRING_ADD( text, oyCMMinfo_GetVersion(cmm_info) );
   STRING_ADD( text, "/" );
   STRING_ADD( text, num );
+  if(simple) { STRING_ADD( text, "\n" ); return text; }
   STRING_ADD( text, ":" );
 
 #define CMMINFO_ADD_NAME_TO_TEXT( name_, select ) \

@@ -107,30 +107,6 @@ const char  *  oyProfilingToString   ( int                 integer,
 }
 
 
-oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
-                                       const char        * test_name )
-{
-  oyTESTRESULT_e error = oyTESTRESULT_UNKNOWN;
-
-  fprintf( stdout, "\n________________________________________________________________\n" );
-  fprintf(stderr, "Test: %s ... ", test_name );
-
-  error = test();
-
-  fprintf(stderr, "\t%s", oyTestResultToString(error));
-
-  if(error == oyTESTRESULT_FAIL)
-    tests_failed[results[error]] = (char*)test_name;
-  results[error] += 1;
-
-  /* print */
-  if(error && error != oyTESTRESULT_XFAIL)
-    fprintf(stderr, " !!! ERROR !!!" );
-  fprintf(stderr, "\n" );
-
-  return error;
-}
-
 #define PRINT_SUB( result_, ... ) { \
   if(result == oyTESTRESULT_XFAIL || \
      result == oyTESTRESULT_SUCCESS || \
@@ -2413,17 +2389,28 @@ oyTESTRESULT_e testCMMsShow ()
   for( i = 0; i < (int)count; ++i)
   {
     cmm_info = (oyCMMinfo_s_*)oyCMMinfoFromLibName_( texts[i] );
-    text = oyCMMinfoPrint_( (oyCMMinfo_s*)cmm_info );
     if(cmm_info)
       tmp = (oyCMMapi_s_*)cmm_info->api;
     else
       tmp = 0;
+
+    /* short skip for non compatible modules */
+    if(oyCMMapi_Check_((oyCMMapi_s*)tmp) == oyOBJECT_NONE)
+    {
+      text = oyCMMinfoPrint_( (oyCMMinfo_s*)cmm_info, 1 );
+      STRING_ADD( text, "    Not accepted by oyCMMapi_Check_() - Stop\n");
+      printf("%d: \"%s\": %s\n\n", i, texts[i], text );
+      continue;
+    }
+
+    text = oyCMMinfoPrint_( (oyCMMinfo_s*)cmm_info, 0 );
 
         while(tmp)
         {
           oyOBJECT_e type = oyOBJECT_NONE;
           char num[48],
                * api_reg = 0;
+          const char * ctmp;
 
           /* oforms */
           CHOICE( "shared/dummy", oyStructTypeToText(tmp->type_), text )
@@ -2433,9 +2420,9 @@ oyTESTRESULT_e testCMMsShow ()
           type = oyCMMapi_Check_((oyCMMapi_s*)tmp);
 
           oySprintf_(num,"    %d:", type );
-          oyStringAdd_( &text, num, oyAllocateFunc_, oyDeAllocateFunc_ );
-          oyStringAdd_( &text, oyStruct_TypeToText((oyStruct_s*)tmp),
-                        oyAllocateFunc_, oyDeAllocateFunc_ );
+          STRING_ADD( text, num );
+          ctmp = oyStruct_TypeToText((oyStruct_s*)tmp);
+          STRING_ADD( text, ctmp );
           STRING_ADD( text, "\n" );
 
           if(type == oyOBJECT_CMM_API5_S)
@@ -2641,7 +2628,6 @@ oyTESTRESULT_e testCMMsShow ()
             STRING_ADD( text, text_tmp );
 
           }
-
           tmp = (oyCMMapi_s_*)tmp->next;
         }
 
@@ -3992,6 +3978,30 @@ oyTestRegistration_s test_registration[100];
     } \
   } else \
     oyTestRun( prog, text ); \
+}
+
+oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
+                                       const char        * test_name )
+{
+  oyTESTRESULT_e error = oyTESTRESULT_UNKNOWN;
+
+  fprintf( stdout, "\n________________________________________________________________\n" );
+  fprintf(stderr, "Test: %s ... ", test_name );
+
+  error = test();
+
+  fprintf(stderr, "\t%s", oyTestResultToString(error));
+
+  if(error == oyTESTRESULT_FAIL)
+    tests_failed[results[error]] = (char*)test_name;
+  results[error] += 1;
+
+  /* print */
+  if(error && error != oyTESTRESULT_XFAIL)
+    fprintf(stderr, " !!! ERROR !!!" );
+  fprintf(stderr, "\n" );
+
+  return error;
 }
 
 /*  main */
