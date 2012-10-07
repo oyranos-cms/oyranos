@@ -59,10 +59,6 @@ oyOptions_s* oyraFilter_ImageRootValidateOptions (
 oyWIDGET_EVENT_e   oyraWidgetEvent   ( oyOptions_s       * options,
                                        oyWIDGET_EVENT_e    type,
                                        oyStruct_s        * event );
-oyPointer  oyraFilterNode_ImageRootContextToMem (
-                                       oyFilterNode_s    * node,
-                                       size_t            * size,
-                                       oyAlloc_f           allocateFunc );
 int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket );
 
