@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/06
+ *  @date     2012/10/08
  */
 
 
@@ -359,6 +359,7 @@ OYAPI int  OYEXPORT
       double clck;
 
       profile = oyProfile_FromSignature( device_signature, oySIGNATURE_CLASS, 0 );
+      patterns = oyProfiles_New( 0 );
       oyProfiles_MoveIn( patterns, &profile, -1 );
 
       clck = oyClock();

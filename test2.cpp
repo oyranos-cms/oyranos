@@ -1930,16 +1930,13 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   error = oyConfig_AddDBData( config, "k2", "bla2", OY_CREATE_NEW );
   error = oyConfig_AddDBData( config, "k3", "bla3", OY_CREATE_NEW );
 
-  options = *oyConfig_GetOptions( config, "db" );
-  if( !error  && config && oyOptions_Count( options ))
+  if( !error  && config && oyOptions_Count(*oyConfig_GetOptions( config,"db") ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyConfig_AddDBData                    " );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyConfig_AddDBData                    " );
   }
-  oyOptions_Release( &options );
-
 
   char * registration = 0;
   if(config)
