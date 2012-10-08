@@ -1,3 +1,7 @@
+#define oyCheckConnectorType__m( type, action ) \
+if(!(oyOBJECT_CONNECTOR_S <= s->type_ && s->type_ < oyOBJECT_CONNECTOR_MAX_S)) \
+    { action; }
+
 /** Function oyConnector_SetName
  *  @memberof oyConnector_s
  *  @brief   set the names in a connector
@@ -23,7 +27,7 @@ int              oyConnector_SetName ( oyConnector_s     * obj,
   if(!obj)
     return 0;
 
-  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 1 )
+  oyCheckConnectorType__m( oyOBJECT_CONNECTOR_S, return 1 )
 
   error = oyObject_SetName( obj->oy_, string, type );
 
@@ -53,7 +57,7 @@ const char *     oyConnector_GetName ( oyConnector_s     * obj,
   if(!obj)
     return 0;
 
-  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 0 )
+  oyCheckConnectorType__m( oyOBJECT_CONNECTOR_S, return 0 )
 
   string = oyObject_GetName( obj->oy_, type );
 
@@ -78,7 +82,7 @@ int              oyConnector_IsPlug  ( oyConnector_s     * obj )
   if(!obj)
     return 0;
 
-  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 0 )
+  oyCheckConnectorType__m( oyOBJECT_CONNECTOR_S, return 0 )
 
   return s->is_plug;
 }
@@ -103,7 +107,7 @@ int              oyConnector_SetIsPlug(oyConnector_s     * obj,
   if(!obj)
     return 0;
 
-  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 1 )
+  oyCheckConnectorType__m( oyOBJECT_CONNECTOR_S, return 1 )
 
   s->is_plug = is_plug;
 
@@ -130,7 +134,7 @@ const char *     oyConnector_GetReg  ( oyConnector_s     * obj )
   if(!obj)
     return 0;
 
-  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 0 )
+  oyCheckConnectorType__m( oyOBJECT_CONNECTOR_S, return 0 )
 
   return s->connector_type;
 }
@@ -158,7 +162,7 @@ int              oyConnector_SetReg  ( oyConnector_s     * obj,
   if(!obj)
     return 0;
 
-  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 1 )
+  oyCheckConnectorType__m( oyOBJECT_CONNECTOR_S, return 1 )
 
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
@@ -196,7 +200,7 @@ int              oyConnector_SetMatch( oyConnector_s     * obj,
   if(!obj)
     return 0;
 
-  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 1 )
+  oyCheckConnectorType__m( oyOBJECT_CONNECTOR_S, return 1 )
 
   s->filterSocket_MatchPlug = func;
 
@@ -225,7 +229,7 @@ oyCMMFilterSocket_MatchPlug_f oyConnector_GetMatch (
   if(!obj)
     return 0;
 
-  oyCheckType__m( oyOBJECT_CONNECTOR_S, return 0 )
+  oyCheckConnectorType__m( oyOBJECT_CONNECTOR_S, return 0 )
 
   return s->filterSocket_MatchPlug;
 }
