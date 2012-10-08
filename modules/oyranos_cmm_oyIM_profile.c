@@ -2446,9 +2446,9 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
                *((uint32_t*)&mem[12 + 8*i + 0]) = oyValueUInt32( pos );
                oyFree_m_( tmptag_block );
 
-               profile_block = oyProfile_GetMem( prof, &profile_size, 0, oyAllocateFunc_ );
                prof = (oyProfile_s*) oyStructList_GetRefType( list,
                                                    i, oyOBJECT_PROFILE_S );
+               profile_block = oyProfile_GetMem( prof, &profile_size, 0, oyAllocateFunc_ );
                error = !prof || !profile_block || !profile_size;
                error = oyProfileGetMD5( profile_block, profile_size,
                                         (unsigned char*)&mem[pos] );
