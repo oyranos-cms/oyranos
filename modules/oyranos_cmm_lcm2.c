@@ -1675,7 +1675,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
            oyProfile_s * p = oyProfiles_Get( profs, i );
            oyStructList_MoveIn( list, (oyStruct_s**) &p, 0, 0 );
         }
-        psid = oyProfileTag_Create( list, 0,
+        psid = oyProfileTag_Create( list, icSigProfileSequenceIdentifierTag,
                      icSigProfileSequenceIdentifierType, 0, OY_MODULE_NICK, 0 );
         if(psid)
           error = oyProfile_TagMoveIn ( prof, &psid, -1 );
@@ -2151,7 +2151,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   }
 
   /* now do some position blind manipulations */
-  if(ltw)
+  if(ltw && error <= 0)
   {
     uint8_t * array_in_tmp = 0,
             * array_out_tmp = 0;
