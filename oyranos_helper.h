@@ -43,8 +43,6 @@ void* oyAllocateWrapFunc_       (size_t        size,
                                  oyAlloc_f     allocate_func);
 void  oyDeAllocateFunc_         (void *        data);
 
-oyPointer    oyStruct_Allocate       ( oyStruct_s        * st,
-                                       size_t              size );
 
 
 extern intptr_t oy_observe_pointer_;

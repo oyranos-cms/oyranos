@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/07
+ *  @date     2012/10/08
  */
 
 
@@ -164,6 +164,24 @@ int          oyStruct_GetId          ( oyStruct_s        * st )
   return id;
 }
 
+/** Function oyStruct_Allocate
+ *  @brief   let a object allocate some memory
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/00 (Oyranos: 0.1.10)
+ *  @date    2008/12/00
+ */
+OYAPI oyPointer  OYEXPORT
+                 oyStruct_Allocate       ( oyStruct_s        * st,
+                                           size_t              size )
+{
+  oyAlloc_f allocateFunc = oyAllocateFunc_;
+
+  if(st && st->oy_ && st->oy_->allocateFunc_)
+    allocateFunc = st->oy_->allocateFunc_;
+
+  return allocateFunc( size );
+}
 
 
 /* Locking function definitions { */
