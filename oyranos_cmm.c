@@ -27,6 +27,7 @@
 #include "oyranos_texts.h"
 
 #include "oyConnectorImaging_s.h"
+#include "oyRectangle_s_.h"
 
 #if !defined(WIN32)
 #include <dlfcn.h>
@@ -94,25 +95,25 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
     oyArray2d_s * array = oyPixelAccess_GetArray( ticket );
 
     /* adapt the rectangle of interesst to the new image dimensions */
-    oyRectangle_s image_roi = {oyOBJECT_RECTANGLE_S,0,0,0},
-                  output_image_roi_ = {oyOBJECT_RECTANGLE_S,0,0,0};
+    oyRectangle_s_ image_roi = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
+                   output_image_roi_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
     double correct = oyImage_GetWidth(output_image) / (double) oyImage_GetWidth(image);
-    oyRectangle_SetByRectangle( &image_roi, output_image_roi );
-    oyRectangle_SetByRectangle( &output_image_roi_, output_image_roi );
+    oyRectangle_SetByRectangle( (oyRectangle_s*)&image_roi, output_image_roi );
+    oyRectangle_SetByRectangle( (oyRectangle_s*)&output_image_roi_, output_image_roi );
     /* x and y source image offset */
-    oyRectangle_SetGeo( &image_roi,
+    oyRectangle_SetGeo( (oyRectangle_s*)&image_roi,
                         x_pix / (double) oyImage_GetWidth(image),
                         y_pix / (double) oyImage_GetWidth(image),
-                        oyRectangle_GetGeo1(&image_roi,3) * correct,
-                        oyRectangle_GetGeo1(&image_roi,4) * correct );
-    STRING_ADD( t, oyRectangle_Show( &image_roi ) );
+                        oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,2) * correct,
+                        oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,3) * correct );
+    STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&image_roi ) );
     DBGs_NUM4_S( ticket, "%s[%d] %s %s", _("Fill ticket->array from image"),
                  oyStruct_GetId( (oyStruct_s*)image ),
                  oyRectangle_Show( output_image_roi ),
                  t );
-    oyRectangle_Scale( &output_image_roi_, correct );
-    error = oyImage_FillArray( image, &image_roi, 1,
-                               &array, &output_image_roi_, 0 );
+    oyRectangle_Scale( (oyRectangle_s*)&output_image_roi_, correct );
+    error = oyImage_FillArray( image, (oyRectangle_s*)&image_roi, 1,
+                               &array, (oyRectangle_s*)&output_image_roi_, 0 );
     oyPixelAccess_SetArray( ticket, array );
     oyArray2d_Release( &array );
     if(error)
