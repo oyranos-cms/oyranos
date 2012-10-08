@@ -395,7 +395,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
       /* The first rectangle is the one provided by the user graph. */
       if(m != 0 || i != 0)
       {
-        oyFilterPlug_s * input_node_plug = oyFilterNode_GetPlug( input_node, 0 );
+        oyFilterPlug_s * input_node_plug = oyFilterNode_GetPlug( input_node, 0);
         /*if(oyFilterRegistrationMatch( input_node->core->registration_,
                                       "//" OY_TYPE_STD "/icc", 0 ))*/
         if(input_node_plug)
@@ -492,6 +492,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
   free(ID); ID = 0;
 
   oyFilterNode_Release( &node );
+  oyFilterNode_Release( &input_node );
   oyOptions_Release( &node_options );
   oyOptions_Release( &rectangles_options );
 
@@ -604,6 +605,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
     oyImage_Release( &image );
     image = (oyImage_s*)oyFilterSocket_GetData(socket);
+
+    oyFilterNode_Release( &input_node );
   }
   oyImage_Release( &image_input );
 
@@ -762,6 +765,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
   clean:
   oyFilterNode_Release( &rectangles );
+  oyFilterPlug_Release( &plug );
   oyImage_Release( &image );
   if(ID) free(ID);    
 

@@ -921,6 +921,7 @@ int      oyraFilterPlug_ImageRectanglesRun (
 
         oyImage_Release( &new_ticket_image );
         oyArray2d_Release( &new_ticket_array );
+        oyFilterPlug_Release( &plug );
       }
       oyPixelAccess_Release( &new_ticket );
 
@@ -932,8 +933,10 @@ int      oyraFilterPlug_ImageRectanglesRun (
                         oyArray2d_GetDataGeo1( ticket_array, 3 ) );
     error = oyArray2d_SetFocus( ticket_array, (oyRectangle_s*)&array_pix );
     if(error) WARNc2_S("%s %d", _("found issues"),error);
+
     oyRectangle_Release( &ticket_roi );
     oyArray2d_Release( &ticket_array );
+    oyFilterNode_Release( &input_node );
   }
 
   return result;

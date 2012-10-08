@@ -56,6 +56,7 @@ OYAPI int  OYEXPORT
         oyFilterPlugs_ReleaseAt( s_->requesting_plugs_, i );
         break;
       }
+      oyFilterPlug_Release( &p );
     }
 
   return 0;
@@ -137,6 +138,7 @@ OYAPI int  OYEXPORT
                                             OY_FILTEREDGE_CONNECTED );
         sp = oyFilterNode_GetPlug( node, pos );
         oyFilterSocket_Callback( sp, e );
+        oyFilterPlug_Release( &sp );
       }
 
       oyFilterNode_Release( &node );
@@ -145,6 +147,7 @@ OYAPI int  OYEXPORT
     }
 
     oyFilterGraph_Release( &graph );
+    oyFilterPlug_Release( &p );
     if(handled)
       break;
   }
