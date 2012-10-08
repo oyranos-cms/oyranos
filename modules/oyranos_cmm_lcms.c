@@ -1834,8 +1834,8 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 #else
                     1;
 #endif
-    int w_in =  (int)(oyArray2d_GetDataGeo1(array_in,2)+0.5),
-        w_out = (int)(oyArray2d_GetDataGeo1(array_out,2)+0.5);
+    int w_in =  (int)(oyArray2d_GetWidth(array_in)+0.5),
+        w_out = (int)(oyArray2d_GetWidth(array_out)+0.5);
     int stride_in = w_in * bps_in;
     double xyz_factor_in = 1.0,
            xyz_factor_out = 1.0;
@@ -1882,7 +1882,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     {
       const int use_xyz_scale = 1;
       int index = 0;
-      int array_out_height = oyArray2d_GetDataGeo1(array_out,3);
+      int array_out_height = oyArray2d_GetHeight(array_out);
       if(array_out_height > threads_n * 10)
       {
 #if defined(USE_OPENMP)
