@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/04
+ *  @date     2012/10/08
  */
 
 
@@ -115,10 +115,11 @@ typedef enum {
   oyOBJECT_RECTANGLE_S,               /**< oyRectangle_s */
   oyOBJECT_IMAGE_S,                   /*!< oyImage_s */
   oyOBJECT_ARRAY2D_S,                 /**< oyArray2d_s */
-  oyOBJECT_COLOUR_CONVERSION_S,       /*!< oyColourConversion_s */
-  oyOBJECT_CONNECTOR_S,               /**< oyConnector_s */
+  oyOBJECT_COLOUR_CONVERSION_S,       /*!< oyColourConversion_s deprecated */
+  oyOBJECT_CONNECTOR_S       = 20,    /**< oyConnector_s */
   oyOBJECT_CONNECTOR_IMAGING_S,       /**< oyConnectorImaging_s */
-  oyOBJECT_FILTER_PLUG_S,             /**< oyFilterPlug_s */
+  oyOBJECT_CONNECTOR_MAX_S,           /**< not defined */
+  oyOBJECT_FILTER_PLUG_S     = 30,    /**< oyFilterPlug_s */
   oyOBJECT_FILTER_PLUGS_S,            /**< oyFilterPlugs_s */
   oyOBJECT_FILTER_SOCKET_S,           /**< oyFilterSocket_s */
   oyOBJECT_FILTER_CORE_S,             /**< oyFilterCore_s */

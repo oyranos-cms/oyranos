@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/10/08
  */
 
 
@@ -39,7 +39,7 @@ OYAPI oyBlob_s * OYEXPORT
   oyBlob_s_ * blob = 0;
 
   if(s)
-    oyCheckType__m( oyOBJECT_OBJECT_S, return 0 );
+    oyCheckType__m( oyOBJECT_OBJECT_S, return 0 )
 
   blob = oyBlob_New_( s );
 
@@ -63,7 +63,7 @@ OYAPI oyBlob_s* OYEXPORT
   oyBlob_s_ * s = (oyBlob_s_*) blob;
 
   if(s)
-    oyCheckType__m( oyOBJECT_BLOB_S, return 0 );
+    oyCheckType__m( oyOBJECT_BLOB_S, return 0 )
 
   s = oyBlob_Copy_( s, object );
 

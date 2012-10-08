@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/10/08
  */
 
 
@@ -42,7 +42,7 @@ OYAPI oyStructList_s * OYEXPORT
   oyStructList_s_ * structlist = 0;
 
   if(s)
-    oyCheckType__m( oyOBJECT_OBJECT_S, return 0 );
+    oyCheckType__m( oyOBJECT_OBJECT_S, return 0 )
 
   structlist = oyStructList_New_( s );
 
@@ -66,7 +66,7 @@ OYAPI oyStructList_s* OYEXPORT
   oyStructList_s_ * s = (oyStructList_s_*) structlist;
 
   if(s)
-    oyCheckType__m( oyOBJECT_STRUCT_LIST_S, return 0 );
+    oyCheckType__m( oyOBJECT_STRUCT_LIST_S, return 0 )
 
   s = oyStructList_Copy_( s, object );
 

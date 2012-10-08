@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/24
+ *  @date     2012/10/08
  */
 
 
@@ -42,7 +42,7 @@ OYAPI oyPointer_s * OYEXPORT
   oyPointer_s_ * pointer = 0;
 
   if(s)
-    oyCheckType__m( oyOBJECT_OBJECT_S, return 0 );
+    oyCheckType__m( oyOBJECT_OBJECT_S, return 0 )
 
   pointer = oyPointer_New_( s );
 
@@ -66,7 +66,7 @@ OYAPI oyPointer_s* OYEXPORT
   oyPointer_s_ * s = (oyPointer_s_*) pointer;
 
   if(s)
-    oyCheckType__m( oyOBJECT_POINTER_S, return 0 );
+    oyCheckType__m( oyOBJECT_POINTER_S, return 0 )
 
   s = oyPointer_Copy_( s, object );
 

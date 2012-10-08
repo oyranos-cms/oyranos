@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/06
+ *  @date     2012/10/08
  */
 
 
@@ -48,7 +48,7 @@ OYAPI oyOptions_s * OYEXPORT
   oyOptions_s_ * options = 0;
 
   if(s)
-    oyCheckType__m( oyOBJECT_OBJECT_S, return 0 );
+    oyCheckType__m( oyOBJECT_OBJECT_S, return 0 )
 
   options = oyOptions_New_( s );
 
@@ -72,7 +72,7 @@ OYAPI oyOptions_s* OYEXPORT
   oyOptions_s_ * s = (oyOptions_s_*) options;
 
   if(s)
-    oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 );
+    oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
 
   s = oyOptions_Copy_( s, object );
 

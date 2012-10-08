@@ -80,12 +80,11 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s_    * s,
  *  @date    2012/06/12
  *  @since   2008/11/02 (Oyranos: 0.1.8)
  */
-int          oyFilterNode_SetContext_( oyFilterNode_s_    * node_,
+int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                                        oyBlob_s_          * blob  )
 {
   int error = 0;
-  oyFilterNode_s * node = (oyFilterNode_s*)node_;
-  oyFilterCore_s_ * s = (oyFilterCore_s_*)node_->core;
+  oyFilterCore_s_ * core_ = node->core;
 
   if(error <= 0)
   {
@@ -111,24 +110,25 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node_,
            */
 
           /* 1. create hash text */
-          if(s->api4_->oyCMMFilterNode_GetText)
+          if(core_->api4_->oyCMMFilterNode_GetText)
           {
-            hash_temp = s->api4_->oyCMMFilterNode_GetText( node, oyNAME_NICK,
+            hash_temp = core_->api4_->oyCMMFilterNode_GetText(
+                                             (oyFilterNode_s*)node, oyNAME_NICK,
                                                            oyAllocateFunc_ );
             hash_text_ = hash_temp;
           } else
-            hash_text_ = oyFilterNode_GetText( node, oyNAME_NICK );
+            hash_text_ =oyFilterNode_GetText((oyFilterNode_s*)node,oyNAME_NICK);
 
           hash_text_len = oyStrlen_( hash_text_ );
 
           hash_text = oyAllocateFunc_(hash_text_len + 16);
-          oySprintf_( hash_text, "%s:%s", node_->api7_->context_type,
+          oySprintf_( hash_text, "%s:%s", node->api7_->context_type,
                                           hash_text_ );
 
           if(oy_debug == 1)
           {
             size = 0;
-            ptr = oyFilterNode_TextToInfo_( node_, &size, oyAllocateFunc_ );
+            ptr = oyFilterNode_TextToInfo_( node, &size, oyAllocateFunc_ );
             if(ptr)
               oyWriteMemToFile_( "test_dbg_colour.icc", ptr, size );
           }
@@ -144,7 +144,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node_,
 
             if(!(cmm_ptr_out && oyPointer_GetPointer(cmm_ptr_out)) || blob)
             {
-              oySprintf_( hash_text, "%s:%s", s->api4_->context_type,
+              oySprintf_( hash_text, "%s:%s", core_->api4_->context_type,
                                               hash_text_ );
               /* 2. query in cache for api4 */
               hash = oyCMMCacheListGetEntry_( hash_text );
@@ -161,14 +161,15 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node_,
               if(blob)
               {
 
-                error = oyOptions_SetFromText( &node_->tags, "////verbose",
+                error = oyOptions_SetFromText( &node->tags, "////verbose",
                                                "true", OY_CREATE_NEW );
 
                 /* oy_debug is used to obtain a complete data set */
-                ptr = s->api4_->oyCMMFilterNode_ContextToMem( node, &size,
+                ptr = core_->api4_->oyCMMFilterNode_ContextToMem(
+                                                   (oyFilterNode_s*)node, &size,
                                                               oyAllocateFunc_ );
-                oyBlob_SetFromData( (oyBlob_s*)blob, ptr, size, s->api4_->context_type );
-                error = oyOptions_SetFromText( &node_->tags, "////verbose",
+                oyBlob_SetFromData( (oyBlob_s*)blob, ptr, size, core_->api4_->context_type );
+                error = oyOptions_SetFromText( &node->tags, "////verbose",
                                                "false", 0 );
 
                 goto clean;
@@ -177,22 +178,23 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node_,
               if(!oyPointer_GetPointer(cmm_ptr))
               {
                 /* 3b. ask CMM */
-                ptr = s->api4_->oyCMMFilterNode_ContextToMem( node, &size,
+                ptr = core_->api4_->oyCMMFilterNode_ContextToMem(
+                                                   (oyFilterNode_s*)node, &size,
                                                               oyAllocateFunc_ );
 
                 if(!ptr || !size)
                 {
                   oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*) node,
                   OY_DBG_FORMAT_ "no device link for caching\n%s", OY_DBG_ARGS_,
-                  oyFilterNode_GetText( node, oyNAME_NICK ));
+                  oyFilterNode_GetText( (oyFilterNode_s*)node, oyNAME_NICK ));
                   error = 1;
                   oyPointer_Release( &cmm_ptr );
                 }
 
                 if(!error)
                 {
-                  error = oyPointer_Set( cmm_ptr, s->api4_->id_,
-                                         s->api4_->context_type,
+                  error = oyPointer_Set( cmm_ptr, core_->api4_->id_,
+                                         core_->api4_->context_type,
                                     ptr, "oyPointerRelease", oyPointerRelease);
                   oyPointer_SetSize( cmm_ptr, size );
 
@@ -204,40 +206,41 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node_,
 
               if(error <= 0 && cmm_ptr && oyPointer_GetPointer(cmm_ptr))
               {
-                if(node_->backend_data && node_->backend_data->release)
-                node_->backend_data->release( (oyStruct_s**)&node_->backend_data);
+                if(node->backend_data && node->backend_data->release)
+                node->backend_data->release( (oyStruct_s**)&node->backend_data);
 
-                if( oyStrcmp_( node_->api7_->context_type,
-                               s->api4_->context_type ) != 0 )
+                if( oyStrcmp_( node->api7_->context_type,
+                               core_->api4_->context_type ) != 0 )
                 {
                   cmm_ptr_out = oyPointer_New(0);
-                  error = oyPointer_Set( cmm_ptr_out, node_->api7_->id_,
-                                         node_->api7_->context_type, 0, 0, 0);
+                  error = oyPointer_Set( cmm_ptr_out, node->api7_->id_,
+                                         node->api7_->context_type, 0, 0, 0);
 
                   /* search for a convertor and convert */
-                  oyPointer_ConvertData( cmm_ptr, cmm_ptr_out, node );
-                  node_->backend_data = cmm_ptr_out;
+                  oyPointer_ConvertData( cmm_ptr, cmm_ptr_out,
+                                         (oyFilterNode_s*)node );
+                  node->backend_data = cmm_ptr_out;
                   /* 3b.1. update cache entry */
                   error = oyHash_SetPointer( hash_out,
                                               (oyStruct_s*) cmm_ptr_out);
 
                 } else
-                  node_->backend_data = oyPointer_Copy( cmm_ptr, 0 );
+                  node->backend_data = oyPointer_Copy( cmm_ptr, 0 );
               }
 
               if(oy_debug == 1)
               {
-                int id = oyFilterNode_GetId( node );
+                int id = oyFilterNode_GetId( (oyFilterNode_s*)node );
                 char * file_name = 0;
                 oyAllocHelper_m_( file_name, char, 80, 0, return 1 );
                 sprintf( file_name, "test_dbg_colour_dl-%d.icc", id );
-                if(ptr && size && node_->backend_data)
+                if(ptr && size && node->backend_data)
                   oyWriteMemToFile_( file_name, ptr, size );
                 oyFree_m_(file_name);
               }
 
             } else
-              node_->backend_data = cmm_ptr_out;
+              node->backend_data = cmm_ptr_out;
 
           }
 
@@ -528,6 +531,7 @@ int      oyFilterNode_Observe_       ( oyObserver_s      * observer,
       socket = oyFilterNode_GetSocket( (oyFilterNode_s*)node, i );
       /* forward to the downward graph */
       oyFilterSocket_SignalToGraph( socket, signal_type );
+      oyFilterSocket_Release( &socket );
     }
   }
 

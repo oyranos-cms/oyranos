@@ -50,8 +50,7 @@ OYAPI oyFilterNode_s * OYEXPORT
                                        const char        * registration,
                                        const char        * mark )
 {
-  oyFilterNode_s * node = 0;
-  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
+  oyFilterNode_s_ * node = 0;
   oyFilterGraph_s_ * s = (oyFilterGraph_s_*)graph;
   int i, n, m = -1, found;
 
@@ -60,27 +59,27 @@ OYAPI oyFilterNode_s * OYEXPORT
   n = oyFilterNodes_Count( s->nodes );
   for(i = 0; i < n; ++i)
   {
-    node = oyFilterNodes_Get( s->nodes, i );
+    node = (oyFilterNode_s_*) oyFilterNodes_Get( s->nodes, i );
 
     found = 1;
 
     if(found && registration &&
-       !oyFilterRegistrationMatch( ((oyCMMapi4_s_*)((oyFilterCore_s_*)(*node_)->core)->api4_)->registration,
+       !oyFilterRegistrationMatch( ((oyCMMapi4_s_*)((oyFilterCore_s_*)node->core)->api4_)->registration,
                                    registration, 0 ))
       found = 0;
 
     if(found && mark &&
-       oyOptions_FindString( (*node_)->tags, mark, 0 ) == 0 )
+       oyOptions_FindString( node->tags, mark, 0 ) == 0 )
       found = 0;
 
     if(found)
     if(pos == -1 || ++m == pos)
       break;
 
-    oyFilterNode_Release( &node );
+    oyFilterNode_Release( (oyFilterNode_s**)&node );
   }
 
-  return node;
+  return (oyFilterNode_s*) node;
 }
 
 /** Function  oyFilterGraph_CountNodes
@@ -102,8 +101,7 @@ OYAPI int OYEXPORT
                                        const char        * registration,
                                        const char        * mark )
 {
-  oyFilterNode_s * node = 0;
-  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
+  oyFilterNode_s_ * node = 0;
   oyFilterGraph_s_ * s = (oyFilterGraph_s_*)graph;
   int i, n, m = 0, found;
 
@@ -112,23 +110,23 @@ OYAPI int OYEXPORT
   n = oyFilterNodes_Count( s->nodes );
   for(i = 0; i < n; ++i)
   {
-    node = oyFilterNodes_Get( s->nodes, i );
+    node = (oyFilterNode_s_*) oyFilterNodes_Get( s->nodes, i );
 
     found = 1;
 
     if(found && registration &&
-       !oyFilterRegistrationMatch( ((oyCMMapi4_s_*)((oyFilterCore_s_*)(*node_)->core)->api4_)->registration,
+       !oyFilterRegistrationMatch( ((oyCMMapi4_s_*)((oyFilterCore_s_*)node->core)->api4_)->registration,
                                    registration, 0 ))
       found = 0;
 
     if(found && mark &&
-       oyOptions_FindString( (*node_)->tags, mark, 0 ) == 0 )
+       oyOptions_FindString( node->tags, mark, 0 ) == 0 )
       found = 0;
 
     if(found)
       ++m;
 
-    oyFilterNode_Release( &node );
+    oyFilterNode_Release( (oyFilterNode_s**)&node );
   }
 
   return m;
@@ -195,8 +193,7 @@ OYAPI int  OYEXPORT
                                        int                 flags )
 {
   oyOption_s * o = 0;
-  oyFilterNode_s * node = 0;
-  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
+  oyFilterNode_s_ * node = 0;
   oyFilterGraph_s_ * s = (oyFilterGraph_s_*)graph;
   int i, n, do_it;
 
@@ -205,19 +202,19 @@ OYAPI int  OYEXPORT
   n = oyFilterNodes_Count( s->nodes );
   for(i = 0; i < n; ++i)
   {
-    node = oyFilterNodes_Get( s->nodes, i );
+    node = (oyFilterNode_s_*) oyFilterNodes_Get( s->nodes, i );
 
-    if(flags || !(*node_)->backend_data)
+    if(flags || !node->backend_data)
       do_it = 1;
     else
       do_it = 0;
 
     if(do_it &&
-       ((oyCMMapi4_s_*)(*node_)->core->api4_)->oyCMMFilterNode_ContextToMem &&
-       strlen(((oyCMMapi7_s_*)(*node_)->api7_)->context_type))
-      oyFilterNode_SetContext_( *node_, 0 );
+       ((oyCMMapi4_s_*)node->core->api4_)->oyCMMFilterNode_ContextToMem &&
+       strlen(((oyCMMapi7_s_*)node->api7_)->context_type))
+      oyFilterNode_SetContext_( node, 0 );
 
-    oyFilterNode_Release( &node );
+    oyFilterNode_Release( (oyFilterNode_s**)&node );
   }
 
   /* clean the graph */
@@ -288,33 +285,32 @@ oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
                                        oyObject_s          object )
 {
   int flags = 1;
-  oyFilterNode_s * node = 0;
-  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
+  oyFilterNode_s_ * node = 0;
   int do_it;
   oyFilterGraph_s_ * s = (oyFilterGraph_s_*)graph;
   oyBlob_s * blob = 0;
 
   oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
 
-  node = oyFilterNodes_Get( s->nodes, node_pos );
+  node = (oyFilterNode_s_*) oyFilterNodes_Get( s->nodes, node_pos );
 
   if(node)
   {
-    if(flags || !(*node_)->backend_data)
+    if(flags || !node->backend_data)
       do_it = 1;
     else
       do_it = 0;
 
     if(do_it &&
-       ((oyCMMapi4_s_*)(*node_)->core->api4_)->oyCMMFilterNode_ContextToMem &&
-       ((oyCMMapi4_s_*)(*node_)->core->api4_)->oyCMMFilterNode_ContextToMem &&
-       strlen(((oyCMMapi4_s_*)(*node_)->core->api4_)->context_type))
+       ((oyCMMapi4_s_*)node->core->api4_)->oyCMMFilterNode_ContextToMem &&
+       ((oyCMMapi4_s_*)node->core->api4_)->oyCMMFilterNode_ContextToMem &&
+       strlen(((oyCMMapi4_s_*)node->core->api4_)->context_type))
     {
       blob = oyBlob_New( object );
-      oyFilterNode_SetContext_( *node_, (oyBlob_s_*)blob );
+      oyFilterNode_SetContext_( node, (oyBlob_s_*)blob );
     }
 
-    oyFilterNode_Release( &node );
+    oyFilterNode_Release( (oyFilterNode_s**)&node );
   }
 
   return blob;
@@ -465,6 +461,7 @@ OYAPI char * OYEXPORT
           printf("%s\n", temp);
           STRING_ADD( text, temp );
         }
+        oyFilterSocket_Release( &socket );
       }
       }
     }
