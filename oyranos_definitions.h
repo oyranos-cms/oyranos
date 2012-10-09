@@ -36,6 +36,26 @@
  */
 #define OY_SYS_PATH1                    "/usr"
 #define OY_SYS_PATH2                    "/usr/local"
+/** @brief Oyranos debug environment variable
+ *
+ *  @since 0.9.0
+ */
+#define OY_DEBUG                       "OY_DEBUG"
+/** @brief Oyranos debug environment variable
+ *
+ *  @since 0.9.0
+ */
+#define OY_DEBUG_MEMORY                "OY_DEBUG_MEMORY"
+/** @brief Oyranos debug environment variable
+ *
+ *  @since 0.9.0
+ */
+#define OY_DEBUG_SIGNALS               "OY_DEBUG_SIGNALS"
+/** @brief Oyranos debug environment variable
+ *
+ *  @since 0.9.0
+ */
+#define OY_BACKTRACE                   "OY_BACKTRACE"
 /** @brief Oyranos modules/CMM's environment variable
  *
  *  @since 0.1.8

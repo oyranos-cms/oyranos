@@ -39,18 +39,18 @@ void oyInit_()
   }
   oy_sentinel_initialised_ = 1;
 
-  if(getenv("OYRANOS_DEBUG"))
-    oy_debug = atoi(getenv("OYRANOS_DEBUG"));
+  if(getenv(OY_DEBUG))
+    oy_debug = atoi(getenv(OY_DEBUG));
 
-  if(getenv("OYRANOS_DEBUG_MEMORY"))
-    oy_debug_memory = atoi(getenv("OYRANOS_DEBUG_MEMORY"));
+  if(getenv(OY_DEBUG_MEMORY))
+    oy_debug_memory = atoi(getenv(OY_DEBUG_MEMORY));
 
-  if(getenv("OYRANOS_DEBUG_SIGNALS"))
-    oy_debug_signals = atoi(getenv("OYRANOS_DEBUG_SIGNALS"));
+  if(getenv(OY_DEBUG_SIGNALS))
+    oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS));
 
-  if(getenv("OYRANOS_BACKTRACE"))
+  if(getenv(OY_BACKTRACE))
   {
-    oy_backtrace = getenv("OYRANOS_BACKTRACE");
+    oy_backtrace = getenv(OY_BACKTRACE);
     if(!oy_debug)
       ++oy_debug;
   }

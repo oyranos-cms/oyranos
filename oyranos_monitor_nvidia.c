@@ -132,9 +132,9 @@ main(int argc, char **argv)
   XineramaScreenInfo* xin_screens = 0;
 # endif
 
-  if(getenv("OYRANOS_DEBUG"))
+  if(getenv(OY_DEBUG))
   {
-    int value = atoi(getenv("OYRANOS_DEBUG"));
+    int value = atoi(getenv(OY_DEBUG));
     if(value > 0)
       oy_debug = value;
   }

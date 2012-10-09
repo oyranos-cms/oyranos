@@ -106,9 +106,9 @@ int main( int argc , char** argv )
   uint32_t n = 0;
   int i;
 
-  if(getenv("OYRANOS_DEBUG"))
+  if(getenv(OY_DEBUG))
   {
-    int value = atoi(getenv("OYRANOS_DEBUG"));
+    int value = atoi(getenv(OY_DEBUG));
     if(value > 0)
       oy_debug += value;
   }

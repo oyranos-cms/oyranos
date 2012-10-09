@@ -293,7 +293,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
 
     /* test twinview edid */
     if(oy_debug)
-      oySnprintf1_( txt, 1024, "OYRANOS_DEBUG=%d ", oy_debug);
+      oySnprintf1_( txt, 1024, "OY_DEBUG=%d ", oy_debug);
     oySnprintf1_( &txt[strlen(txt)], 1024, "%s",
               "PATH=" OY_BINDIR ":$PATH; oyranos-monitor-nvidia -p" );
 

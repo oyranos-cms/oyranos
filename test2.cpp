@@ -4006,9 +4006,9 @@ int main(int argc, char** argv)
 {
   int i, error;
 
-  if(getenv("OYRANOS_DEBUG"))
+  if(getenv("OY_DEBUG"))
   {
-    int value = atoi(getenv("OYRANOS_DEBUG"));
+    int value = atoi(getenv("OY_DEBUG"));
     if(value > 0)
       oy_debug += value;
   }
