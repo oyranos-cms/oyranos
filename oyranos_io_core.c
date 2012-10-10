@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2004-2011 (C) Kai-Uwe Behrmann
+ *            2004-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    input / output  methods
  *  @internal
@@ -1453,7 +1453,7 @@ char**  oyLibPathsGet_( int             * count,
   int     n = 0, tmp_n = 0;
   char *  vars[] = {"OY_MODULE_PATH"};
   int     vars_n = 1;
-  int     i;
+  int     i,j;
   char  * fix_paths[3] = {0,0,0};
   int     fix_paths_n = 2;
   char  * full_path = 0;
@@ -1468,12 +1468,12 @@ char**  oyLibPathsGet_( int             * count,
   } else {
     full_path = oyResolveDirFileName_( OY_LIBDIR OY_SLASH );
     STRING_ADD( fix_paths[0], full_path );
-    full_path = 0;
+    oyFree_m_( full_path );
     STRING_ADD( fix_paths[0], subdir );
 
     full_path = oyResolveDirFileName_( OY_USER_PATH OY_SLASH );
     STRING_ADD( fix_paths[1], full_path );
-    full_path = 0;
+    oyFree_m_( full_path );
     STRING_ADD( fix_paths[1], subdir );
   }
 
@@ -1491,15 +1491,31 @@ char**  oyLibPathsGet_( int             * count,
 
         if(strlen(var))
         {
-          char **tmp_neu;
+          char **tmp_neu,
+               **full_paths;
           int  tmp_neu_n;
 
           tmp = oyStringSplit_( var, ':', &tmp_n, oyAllocateFunc_ );
 
-          tmp_neu = oyStringListAppend_( (const char**)paths, n, 
-                                         (const char**)tmp, tmp_n,
+          full_paths = oyAllocateFunc_(sizeof(char*) * (tmp_n + 1));
+          for(j = 0; j < tmp_n; ++j)
+          {
+            char * full_name = oyResolveDirFileName_( tmp[i] ),
+                 * p;
+            full_paths[i] = oyExtractPathFromFileName_( full_name );
+            if(strrchr(full_paths[i],OY_SLASH_C) !=
+               ( full_paths[i] + strlen(full_paths[i]) ))
+            {
+              p = strrchr(full_paths[i],OY_SLASH_C);
+              p[0] = 0; 
+            }
+            oyFree_m_( full_name );
+          }
+          tmp_neu = oyStringListAppend_( (const char**)paths, n,
+                                         (const char**)full_paths, tmp_n,
                                          &tmp_neu_n, oyAllocateFunc_ );
           oyStringListRelease_( &paths, n, oyDeAllocateFunc_ );
+          oyStringListRelease_( &full_paths, tmp_n, oyDeAllocateFunc_ );
           paths = tmp_neu;
           n = tmp_neu_n;
         }
