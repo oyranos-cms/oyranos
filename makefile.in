@@ -173,7 +173,7 @@ CHEADERS = \
 	icc34.h \
 	md5.h \
 	lookup3.h \
-	dirent_custom.h
+	dirent_custom.h \
 #	fl_$(TARGET).h
 CFILES_CORE = \
 	$(TARGET)_core.c \
@@ -256,6 +256,8 @@ CFILES_OBJECT_MODULES = \
 	$(GENDIR)oyCMMapi8_s_.c \
 	$(GENDIR)oyCMMapi9_s.c \
 	$(GENDIR)oyCMMapi9_s_.c \
+	$(GENDIR)oyCMMapi10_s.c \
+	$(GENDIR)oyCMMapi10_s_.c \
 	$(GENDIR)oyCMMapis_s.c \
 	$(GENDIR)oyCMMapis_s_.c \
 	$(GENDIR)oyCMMapiFilter_s.c \
@@ -294,6 +296,7 @@ CHEADERS_OBJECT_MODULES_PUBLIC = \
 	$(GENDIR)oyCMMapi7_s.h \
 	$(GENDIR)oyCMMapi8_s.h \
 	$(GENDIR)oyCMMapi9_s.h \
+	$(GENDIR)oyCMMapi10_s.h \
 	$(GENDIR)oyCMMapis_s.h \
 	$(GENDIR)oyCMMapiFilter_s.h \
 	$(GENDIR)oyCMMapiFilters_s.h \
@@ -307,7 +310,8 @@ CHEADERS_OBJECT_MODULES_PUBLIC = \
 	$(GENDIR)oyFilterNodes_s.h \
 	$(GENDIR)oyFilterSocket_s.h \
 	$(GENDIR)oyFilterPlug_s.h \
-	$(GENDIR)oyFilterPlugs_s.h
+	$(GENDIR)oyFilterPlugs_s.h \
+	$(GENDIR)$(TARGET)_module.h
 CHEADERS_OBJECT_MODULES = \
 	$(GENDIR)oyCMMapi_s_.h \
 	$(GENDIR)oyCMMapi3_s_.h \
@@ -317,6 +321,7 @@ CHEADERS_OBJECT_MODULES = \
 	$(GENDIR)oyCMMapi7_s_.h \
 	$(GENDIR)oyCMMapi8_s_.h \
 	$(GENDIR)oyCMMapi9_s_.h \
+	$(GENDIR)oyCMMapi10_s_.h \
 	$(GENDIR)oyCMMapis_s_.h \
 	$(GENDIR)oyCMMapiFilter_s_.h \
 	$(GENDIR)oyCMMapiFilters_s_.h \
@@ -330,9 +335,11 @@ CHEADERS_OBJECT_MODULES = \
 	$(GENDIR)oyFilterNodes_s_.h \
 	$(GENDIR)oyFilterPlug_s_.h \
 	$(GENDIR)oyFilterPlugs_s_.h \
+	$(GENDIR)oyFilterSocket_s_.h \
+	$(GENDIR)$(TARGET)_module_internal.h \
 	$(CHEADERS_OBJECT_MODULES_PUBLIC)
 
-CFILES_OBJECT_CONFIG = \
+CFILES_OBJECT_CONFIG_GEN = \
 	$(GENDIR)oyConfig_s_.c \
 	$(GENDIR)oyConfig_s.c \
 	$(GENDIR)oyConfigs_s_.c \
@@ -344,7 +351,8 @@ CFILES_OBJECT_CONFIG = \
 	$(GENDIR)oyProfileTag_s.c \
 	$(GENDIR)oyProfileTag_s_.c \
 	$(GENDIR)$(TARGET)_devices.c \
-	$(GENDIR)$(TARGET)_devices_internal.c \
+	$(GENDIR)$(TARGET)_devices_internal.c
+CFILES_OBJECT_CONFIG_TOP = \
 	$(TARGET).c \
 	$(TARGET)_check.c \
 	$(TARGET)_colour.c \
@@ -355,36 +363,26 @@ CFILES_OBJECT_CONFIG = \
 	$(TARGET)_sentinel.c \
 	$(TARGET)_texts.c \
 	$(TARGET)_xml.c
+CFILES_OBJECT_CONFIG = \
+	$(CFILES_OBJECT_CONFIG_GEN) \
+	$(CFILES_OBJECT_CONFIG_TOP)
 CHEADERS_OBJECT_CONFIG_PUBLIC = \
-	$(GENDIR)oyArray2d_s.h \
 	$(GENDIR)oyConfig_s.h \
 	$(GENDIR)oyConfigs_s.h \
-	$(GENDIR)oyConnectorImaging_s.h \
-	$(GENDIR)oyConversion_s.h \
-	$(GENDIR)oyImage_s.h \
-	$(GENDIR)oyPixelAccess_s_.h \
 	$(GENDIR)oyProfile_s_.h \
 	$(GENDIR)oyProfiles_s_.h \
 	$(GENDIR)oyProfileTag_s_.h \
-	$(GENDIR)$(TARGET)_conversion.h \
-	$(GENDIR)$(TARGET)_devices.h \
-	$(GENDIR)$(TARGET)_image.h
+	$(GENDIR)$(TARGET)_devices.h
 CHEADERS_OBJECT_CONFIG = \
-	$(GENDIR)oyArray2d_s_.h \
 	$(GENDIR)oyConfig_s_.h \
 	$(GENDIR)oyConfigs_s_.h \
-	$(GENDIR)oyConnectorImaging_s_.h \
-	$(GENDIR)oyConversion_s_.h \
-	$(GENDIR)oyImage_s_.h \
-	$(GENDIR)oyPixelAccess_s.h \
 	$(GENDIR)oyProfile_s.h \
 	$(GENDIR)oyProfiles_s.h \
 	$(GENDIR)oyProfileTag_s.h \
 	$(GENDIR)$(TARGET)_devices_internal.h \
-	$(GENDIR)$(TARGET)_image_internal.h \
 	$(CHEADERS_OBJECT_CONFIG_PUBLIC)
 
-CFILES = \
+CFILES_OBJECT_IMAGING = \
 	$(GENDIR)oyArray2d_s.c \
 	$(GENDIR)oyArray2d_s_.c \
 	$(GENDIR)oyConnectorImaging_s.c \
@@ -396,7 +394,27 @@ CFILES = \
 	$(GENDIR)oyPixelAccess_s.c \
 	$(GENDIR)oyPixelAccess_s_.c \
 	$(GENDIR)$(TARGET)_conversion.c \
-	$(GENDIR)$(TARGET)_image.c \
+	$(GENDIR)$(TARGET)_image.c
+CHEADERS_OBJECT_IMAGING_PUBLIC = \
+	$(GENDIR)oyArray2d_s.h \
+	$(GENDIR)oyConnectorImaging_s.h \
+	$(GENDIR)oyConversion_s.h \
+	$(GENDIR)oyImage_s.h \
+	$(GENDIR)oyPixelAccess_s_.h \
+	$(GENDIR)$(TARGET)_conversion.h \
+	$(GENDIR)$(TARGET)_image.h \
+	$(GENDIR)$(TARGET)_profile.h
+CHEADERS_OBJECT_IMAGING = \
+	$(GENDIR)oyArray2d_s_.h \
+	$(GENDIR)oyConnectorImaging_s_.h \
+	$(GENDIR)oyConversion_s_.h \
+	$(GENDIR)oyImage_s_.h \
+	$(GENDIR)oyPixelAccess_s.h \
+	$(GENDIR)$(TARGET)_conversion_internal.h \
+	$(GENDIR)$(TARGET)_image_internal.h \
+	$(CHEADERS_OBJECT_IMAGING_PUBLIC)
+
+CFILES = \
 	$(TARGET)_cmm.c \
 
 CFILESC = \
@@ -534,6 +552,8 @@ EXAMPLE_SOURCES = \
 	examples/image_display/oyranos_display_helper_classes_fltk.cpp \
 	examples/image_display/oyranos_display_helpers.c \
 	examples/image_display/oyranos_display_helpers.h \
+	examples/image_display/GLee.c \
+	examples/image_display/GLee.h \
 	examples/image_display/Oy_Widget.h \
 	examples/image_display/Oy_Fl_Window_Base.h \
 	examples/image_display/Oy_Fl_Image_Widget.h \
@@ -591,7 +611,7 @@ DOC_TEMPLATES_LINK = \
 DOC_TEMPLATES = \
 	Doxyfile \
 	Doxyfile_alpha \
-	$(DOC_TEMPLATES)
+	$(DOC_TEMPLATES_LINK)
 
 LINGUAS_SRC = $(LING:.po=.gmo)
 POT_FILE = po/$(TARGET).pot
@@ -635,7 +655,7 @@ TOP_SOURCES = $(CPPFILES) $(CXXFILES) $(CFILES_CORE) $(CFILES) $(CFILESC) \
 SOURCES =  \
 		$(TOP_SOURCES) \
 		$(CFILES_OBJECT) $(CFILES_OBJECT_CONFIG) \
-		$(CFILES_OBJECT_MODULES) \
+		$(CFILES_OBJECT_MODULES) $(CFILES_OBJECT_IMAGING) \
 		$(CFILES_MODULES) $(CPPFILES_MODULES) \
 		$(CFILES_MODULES_DEVICES)\
 		$(CFILES_OFORMS) $(CFILES_OFORMS_CLI) $(CXXFILES_OFORMS_FLTK) \
@@ -652,6 +672,7 @@ COBJECTS = \
 	$(CFILES_OBJECT:.c=.o) \
 	$(CFILES_OBJECT_CONFIG:.c=.o) \
 	$(CFILES_OBJECT_MODULES:.c=.o) \
+	$(CFILES_OBJECT_IMAGING:.c=.o) \
 	$(CFILES_ALPHA:.c=.o) \
 	$(CFILES_OFORMS:.c=.o) $(OBJECTS_CS) \
 	$(MONI_X11_SPECIFIC_OBJECTS) \
@@ -682,7 +703,7 @@ CPPOBJECTS =	test2.o \
 	$(CPP_lraw_OBJECTS)
 CXXOBJECTS =	$(CXXFILES) $(FLTK_OFORMS_OBJECTS)
 
-OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILES_ALPHA:.c=.o) $(CFILES_OFORMS:.c=.o) $(OBJECTS_CS) $(OYJL_OBJECTS)
+OBJECTS = $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(CFILES:.c=.o) $(CFILES_ALPHA:.c=.o) $(CFILES_OFORMS:.c=.o) $(OBJECTS_CS) $(OYJL_OBJECTS) $(CFILES_OBJECT_IMAGING:.c=.o)
 OBJECTS_CONFIG = $(CFILES_OBJECT_CONFIG:.c=.o)
 OBJECTS_MODULES = $(CFILES_OBJECT_MODULES:.c=.o)
 OBJECTS_OBJECT = $(CFILES_OBJECT:.c=.o)
@@ -789,12 +810,13 @@ ALL_FILES = \
 	$(TOP_SOURCES) \
 	$(CHEADERS) \
 	$(CHEADERS_OFORMS) \
+	$(CFILES_OBJECT_CONFIG_TOP) \
 	$(SCRIPTS) \
 	$(BIN_SCRIPTS) \
 	$(MAN1) $(MAN3) \
 	$(DOC_TEMPLATES) \
 	$(FLTK_FILES) \
-	dirent.c \
+ 	dirent.c \
 	test.c test2.cpp test_core.c test_object.c test_module.c test_config.c
 
 # build all what is needed to run the libraries, helpers
@@ -1300,9 +1322,9 @@ doxygen.header:
 
 Doxyfile:	$(SRCDIR)/Doxyfile doxygen.header $(SRCDIR)/doxygen.header  $(SRCDIR)/doxygen.footer  $(SRCDIR)/doxygen.css  $(SRCDIR)/doxymentation  $(SRCDIR)/doxymentation_common  $(SRCDIR)/doxymentation_alpha
 	echo Update doxygen files ...
-	$(COPY) $(SRCDIR)/Doxyfile .
+	-$(COPY) $(SRCDIR)/Doxyfile .
 	echo "INPUT = $(SRCDIR)" >> Doxyfile
-	$(COPY) $(SRCDIR)/Doxyfile_alpha .
+	-$(COPY) $(SRCDIR)/Doxyfile_alpha .
 	echo "INPUT = $(SRCDIR) $(SRCDIR)/API_generated" >> Doxyfile_alpha
 
 docu:	Doxyfile
@@ -1744,6 +1766,8 @@ copy_files:
 	cd "$(SRCDIR)" && \
 	  $(COPY) $(CFILES_OBJECT) $(CHEADERS_OBJECT) \
 	  $(CFILES_OBJECT_MODULES) $(CHEADERS_OBJECT_MODULES) \
+	  $(CFILES_OBJECT_CONFIG_GEN) $(CHEADERS_OBJECT_CONFIG) \
+	  $(CFILES_OBJECT_IMAGING) $(CHEADERS_OBJECT_IMAGING) \
 	  "$(DESTDIR)/$(GENDIR)"
 	mkdir "$(DESTDIR)/libXNVCtrl"
 	$(COPY) -R $(SRCDIR)/libXNVCtrl "$(DESTDIR)"
