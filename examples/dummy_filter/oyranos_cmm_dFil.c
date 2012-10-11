@@ -13,9 +13,16 @@
  *  @since    2009/06/14
  */
 
+#include "oyCMMapi4_s_.h"
+#include "oyCMMapi7_s_.h"
+#include "oyCMMapi10_s_.h"
+#include "oyCMMui_s_.h"
+#include "oyConnectorImaging_s_.h"
+#include "oyFilterNode_s_.h"        /* for oyFilterNode_TextToInfo_ */
 
 #include "oyranos_cmm.h"
 #include "oyranos_definitions.h"
+#include "oyranos_generic.h"         /* oy_connector_imaging_static_object */
 
 #include <math.h>
 #include <stdarg.h>
@@ -34,9 +41,9 @@
 /** The message function pointer to use for messaging. */
 oyMessage_f dFil_msg = 0;
 
-extern oyCMMapi4_s   dFil_api4_my_filter;
-extern oyCMMapi7_s   dFil_api7_my_filter;
-extern oyCMMapi10_s  dFil_api10_my_handler;
+extern oyCMMapi4_s_   dFil_api4_my_filter;
+extern oyCMMapi7_s_   dFil_api7_my_filter;
+extern oyCMMapi10_s_  dFil_api10_my_handler;
 
 #ifndef USE_I18N
 /** i18n prototype */
@@ -112,7 +119,7 @@ oyPointer  dFilFilterNode_MyContextToMem (
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc )
 {
-  return oyFilterNode_TextToInfo_( node, size, allocateFunc );
+  return oyFilterNode_TextToInfo_( (oyFilterNode_s_*)node, size, allocateFunc );
 }
 
 
@@ -177,11 +184,11 @@ const char *dFil_texts[5] = {"name","copyright","manufacturer","help",0};
  *  - "_cmm_module"
  *  This string must be included in the the filters filename.
  *
- *  @version Oyranos: 0.1.10
- *  @date    2009/06/14
+ *  @version Oyranos: 0.9.0
+ *  @date    2012/10/11
  *  @since   2009/06/14 (Oyranos: 0.1.10)
  */
-oyCMMinfo_s dFil_cmm_module = {
+oyCMMinfo_s_ dFil_cmm_module = {
 
   oyOBJECT_CMM_INFO_S, /**< ::type; the object type */
   0,0,0,               /**< static objects omit these fields */
@@ -240,16 +247,24 @@ int      dFilFilterPlug_MyFilterRun (
 {
   oyFilterSocket_s * socket;
   oyFilterNode_s * node;
-  oyImage_s * image_input;
+  oyArray2d_s * array;
   uint8_t * u8_array;
   uint16_t * u16_array;
+  int array_width;
   int i;
   double my_max_value = 0.0;
 
   /** my filters socket */
-  socket = requestor_plug->remote_socket_;
+  socket = oyFilterPlug_GetSocket( requestor_plug );
   /** my filter node */
-  node = socket->node;
+  node = oyFilterSocket_GetNode( socket );
+
+  if( !ticket )
+  {
+    dFil_msg( oyMSG_WARN, (oyStruct_s*)node,
+             "failed to get a job ticket");
+    return 1;
+  }
 
 #if 0
   oyFilterPlug_s * plug;
@@ -260,29 +275,26 @@ int      dFilFilterPlug_MyFilterRun (
   image_input = oyFilterPlug_ResolveImage( plug, socket, ticket );
 #endif
 
-  if( !ticket )
-  {
-    dFil_msg( oyMSG_WARN, (oyStruct_s*)node,
-             "failed to get a job ticket");
-    return 1;
-  }
+  array = oyPixelAccess_GetArray( ticket );
+  array_width =  (int)(oyArray2d_GetWidth(array)+0.5);
 
   /** Handle all supported data types. Here is the core of my filter. */
-  if(ticket->array->t == oyUINT8)
+  if(oyArray2d_GetType(array) == oyUINT8)
   {
-    u8_array = (uint8_t*)ticket->array->array2d[0];
-    for(i = 0; i < ticket->array->width; ++i)
+    u8_array = (uint8_t*)oyArray2d_GetData( array );
+    for(i = 0; i < array_width; ++i)
       if(u8_array[i] > my_max_value)
         my_max_value = u8_array[i];
-  } else if(ticket->array->t == oyUINT16)
+  } else if(oyArray2d_GetType(array) == oyUINT16)
   {
-    u16_array = (uint16_t*)ticket->array->array2d[0];
-    for(i = 0; i < ticket->array->width; ++i)
+    u16_array = (uint16_t*)oyArray2d_GetData( array );
+    for(i = 0; i < array_width; ++i)
       if(u16_array[i] > my_max_value)
         my_max_value = u16_array[i];
   }
 
-  oyImage_Release( &image_input );
+  oyFilterSocket_Release( &socket );
+  oyFilterNode_Release( &node );
 
   return 0;
 }
@@ -292,8 +304,9 @@ oyDATATYPE_e dFil_data_types[3] = {oyUINT8, oyUINT16, (oyDATATYPE_e)0};
 
 
 /** My filters socket for delivering results */
-oyConnectorImaging_s dFil_myFilter_connectorSocket = {
-  oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
+oyConnectorImaging_s_ dFil_myFilter_connectorSocket = {
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorSocketText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image", /* connector_type */
@@ -320,12 +333,13 @@ oyConnectorImaging_s dFil_myFilter_connectorSocket = {
   0  /* is_mandatory; mandatory flag */
 };
 /** My filter has just one socket connector. Tell about it. */
-oyConnectorImaging_s * dFil_myFilter_connectorSockets[2] = 
+oyConnectorImaging_s_ * dFil_myFilter_connectorSockets[2] = 
              { &dFil_myFilter_connectorSocket, 0 };
 
 /** My filters plug for obtaining data */
-oyConnectorImaging_s dFil_myFilter_connectorPlug = {
-  oyOBJECT_CONNECTOR_IMAGING_S,0,0,0,
+oyConnectorImaging_s_ dFil_myFilter_connectorPlug = {
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorPlugText, /* getText */
   oy_image_connector_texts, /* texts */
   "//" OY_TYPE_STD "/image", /* connector_type */
@@ -352,7 +366,7 @@ oyConnectorImaging_s dFil_myFilter_connectorPlug = {
   0  /* is_mandatory; mandatory flag */
 };
 /** My filter has just one plug connector. Tell about it. */
-oyConnectorImaging_s * dFil_myFilter_connectorPlugs[2] = 
+oyConnectorImaging_s_ * dFil_myFilter_connectorPlugs[2] = 
              { &dFil_myFilter_connectorPlug, 0 };
 
 
@@ -420,7 +434,7 @@ const char * dFil_api4_ui_texts[] = {"name", "category", "help", 0};
  *  @since   2009/09/09 (Oyranos: 0.1.10)
  *  @date    2009/09/09
  */
-oyCMMui_s dFil_api4_ui_my_filter = {
+oyCMMui_s_   dFil_api4_ui_my_filter = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -450,7 +464,7 @@ oyCMMui_s dFil_api4_ui_my_filter = {
  *  @date    2009/06/14
  *  @since   2009/06/14 (Oyranos: 0.1.10)
  */
-oyCMMapi4_s   dFil_api4_my_filter = {
+oyCMMapi4_s_ dFil_api4_my_filter = {
 
   oyOBJECT_CMM_API4_S, /* oyStruct_s::type oyOBJECT_CMM_API4_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -484,7 +498,7 @@ oyCMMapi4_s   dFil_api4_my_filter = {
  *  @date    2009/06/14
  *  @since   2009/06/14 (Oyranos: 0.1.10)
  */
-oyCMMapi7_s   dFil_api7_my_filter = {
+oyCMMapi7_s_ dFil_api7_my_filter = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
@@ -622,7 +636,7 @@ const char *dFil_texts_my_handler[4] = {"can_handle","my_handler","help",0};
  *  @since   2012/01/11 (Oyranos: 0.4.0)
  *  @date    2012/01/11
  */
-oyCMMapi10_s    dFil_api10_my_handler = {
+oyCMMapi10_s_    dFil_api10_my_handler = {
 
   oyOBJECT_CMM_API10_S,
   0,0,0,

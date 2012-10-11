@@ -735,9 +735,9 @@ const char * _api8_ui_texts[] = {"name", "help", "device_class", "category", 0};
  *
  *  The UI parts for example devices.
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.0
+ *  @date    2012/10/11
  *  @since   2009/12/22 (Oyranos: 0.1.10)
- *  @date    2009/12/22
  */
 oyCMMui_s_   _api8_ui = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
@@ -765,9 +765,9 @@ oyIcon_s _api8_icon = {
 /** @instance _api8
  *  @brief    CMM_NICK oyCMMapi8_s implementations
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.0
+ *  @date    2012/10/11
  *  @since   2009/01/19 (Oyranos: 0.1.10)
- *  @date    2009/12/22
  */
 oyCMMapi8_s_ _api8 = {
   oyOBJECT_CMM_API8_S,
@@ -848,9 +848,9 @@ const char * _texts[5] = {"name","copyright","manufacturer","help",0};
 /** @instance _cmm_module
  *  @brief    CMM_NICK module infos
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.0
+ *  @date    2012/10/11
  *  @since   2007/12/12 (Oyranos: 0.1.10)
- *  @date    2009/06/23
  */
 oyCMMinfo_s_ _cmm_module = {
 
