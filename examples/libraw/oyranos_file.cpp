@@ -15,10 +15,17 @@
  */
 /* c++ -Wall -g oyranos_file.cpp `pkg-config --cflags --libs oyranos` -o oyranos-file */
 
-#include <alpha/oyranos_alpha.h>
+#include <oyConversion_s.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+extern "C" {
+typedef struct oyProfile_s_ oyProfile_s_;
+int          oyProfile_ToFile_       ( oyProfile_s_      * profile,
+                                       const char        * file_name );
+}
 
 /** Function oyConversion_FromImageFileName
  *  @brief   generate a Oyranos graph from a image file name
@@ -112,18 +119,20 @@ int main(int argc, char ** argv)
   oyImage_s * image = oyConversion_GetImage( c, OY_OUTPUT );
 
   oyConfig_s * device = 0;
+  oyOptions_s * image_tags = oyImage_GetTags( image );
   if(image)
-    device = (oyConfig_s*)oyOptions_GetType( image->tags, 0,
+    device = (oyConfig_s*)oyOptions_GetType( image_tags, 0,
                                            "device",
                                            oyOBJECT_CONFIG_S );
   oyOption_s * opt = oyConfig_Find( device, "icc_profile.add_meta" );
-  oyProfile_s * profile = (oyProfile_s*) oyOption_StructGet( opt,
+  oyProfile_s * profile = (oyProfile_s*) oyOption_GetStruct( opt,
                                                          oyOBJECT_PROFILE_S );
-  oyProfile_ToFile_( profile, "test_image_profile.icc" );
+  oyProfile_ToFile_( (oyProfile_s_*)profile, "test_image_profile.icc" );
   oyProfile_Release( &profile );
   oyOption_Release( &opt );
   oyConfig_Release( &device );
   oyConversion_Release( &c );
+  oyOptions_Release( &image_tags );
 
   char * nfn = (char*)malloc(strlen(argv[1])+12);
   sprintf( nfn, "%s", argv[1] );
