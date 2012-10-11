@@ -455,14 +455,7 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 %{_libdir}/lib%{name}.so
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/icc34.h
-%{_includedir}/%{name}/%{name}.h
-%{_includedir}/%{name}/%{name}_colour.h
-%{_includedir}/%{name}/%{name}_config.h
-%{_includedir}/%{name}/%{name}_core.h
-%{_includedir}/%{name}/%{name}_definitions.h
-%{_includedir}/%{name}/%{name}_icc.h
-%{_includedir}/%{name}/%{name}_version.h
-%{_includedir}/%{name}/%{name}_types.h
+%{_includedir}/%{name}/oy*.h
 %{_libdir}/pkgconfig/*
 %{_libdir}/lib%{name}_core.a
 %{_libdir}/lib%{name}_object.a
@@ -477,10 +470,8 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %dir %{_includedir}/%{name}/alpha
-%dir %{_includedir}/%{name}/alpha/object
 %{_includedir}/%{name}/alpha/%{name}_alpha.h
 %{_includedir}/%{name}/alpha/%{name}_cmm.h
-%{_includedir}/%{name}/alpha/object/*.h
 
 %files -n lib%{name}-alpha-devel-doc
 %defattr(-, root, root)
