@@ -1656,7 +1656,7 @@ clean:
 #endif
 	-$(RM) libXNVCtrl/libXNVCtrl.a
 	-cd fl_i18n/ && $(MAKE) -f $(MAKEFILE_ARCH) clean
-	-cd examples && $(MAKE) clean
+	-cd examples && $(MAKE) QT=$(QT) clean
 	echo ... $@ done
 
 # configure if the file config is not available
