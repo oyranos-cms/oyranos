@@ -5,6 +5,8 @@
 
 #.SILENT:
 
+HAVE_FLTK := $(shell which fltk-config && echo yes)
+
 TARGET1 = image_display/image_display
 TARGET2 = 
 TARGET4 = image2pdf/image2pdf
@@ -15,21 +17,25 @@ TARGET8 = xcmsevents/qcmsevents
 TARGET9 = libraw/oyranos-file
 TARGET10 = oyranos_profile_graph/oyranos-profile-graph
 TARGET11 = oyranos_convert/oyranos-icc
-TARGETS = $(TARGET1) $(TARGET2) $(TARGET4) $(TARGET5) $(TARGET6) \
-	$(TARGET7) $(TARGET8) $(TARGET9) $(TARGET10) $(TARGET11) \
+TARGETS = $(TARGET2) $(TARGET4) $(TARGET5) $(TARGET6) \
+	$(TARGET7) $(TARGET9) $(TARGET10) $(TARGET11) \
 	../oyranos_logo.ppm
 OY_CFLAGS := $(shell (pkg-config --cflags oyranos))
 OY_LDFLAGS := $(shell (pkg-config --libs oyranos))
+ifeq ($(HAVE_FLTK),yes)
 FLTK_CFLAGS := $(shell (fltk-config --cflags --use-gl | sed 's/-O.//g'))
 FLTK_LDFLAGS := $(shell (fltk-config --ldflags --use-gl)) -pthread # FLTK on Fedora13 misses libpthread.so
+
+TARGETS += $(TARGET1)
+endif
 PKG_CONFIG_CFLAGS := $(shell (pkg-config --cflags xfixes x11))
 PKG_CONFIG_LIBS := $(shell (pkg-config --libs xfixes x11))
 XCM_CFLAGS := $(shell (pkg-config --cflags xcm))
 XCM_LDFLAGS := $(shell (pkg-config --libs xcm))
 OFORMS_FLAGS = -I$(SRCDIR)../oforms
 TARGET2_FLAGS = ../modules/devices/oyranos_monitor.o \
-		../modules/devices/oyranos_edid_parse.o $(XCM_CFLAGS)
-TARGET4_FLAGS := $(shell (pkg-config --cflags --libs cairo oyranos))
+		../modules/devices/oyranos_edid_parse.o $(XCM_CFLAGS) $(LDFLAGS)
+TARGET4_FLAGS := $(LDFLAGS) $(shell (pkg-config --cflags --libs cairo oyranos))
 LDFLAGS = $(LIBS)
 DEBUG = -Wall -g -pedantic -O0
 CXXFLAGS_ = $(CXXFLAGS) $(OY_CFLAGS) $(INCLUDE) $(DEBUG) -std=c++98 $(XCM_CFLAGS)
@@ -38,14 +44,14 @@ CFLAGS_ = $(CFLAGS) -std=c99 -D__USE_POSIX2=1 $(OY_CFLAGS) $(INCLUDE) $(DEBUG) \
 
 UNAME := $(shell (uname -s))
 
-MOC_QT4:= $(shell (which moc-qt4 2>&1 | grep "no moc" | wc -l))
-ifeq ($(MOC_QT4),0)
+MOC_QT4:= $(shell (which moc-qt4 >/dev/null 2>&1 && echo yes))
+ifeq ($(MOC_QT4),yes)
 MOC = moc-qt4
 else
 MOC = moc
 endif
 
-ifeq ($(strip $(UNAME)),Linux)
+ifdef QT
 # Qt needs somehow -O2 (Why???)
 QT_CFLAGS := $(shell pkg-config --cflags QtGui xcm) -O2 -std=c++0x
 INCL    := $(shell pkg-config --cflags-only-I QtGui)
@@ -55,6 +61,8 @@ TARGET8_GENERATED_SOURCES = \
 	xcmsevents/moc_qcmsevents.cpp \
 	xcmsevents/qrc_qcmsevents.cpp
 TARGET8_OBJECTS = $(TARGET8_SOURCES:.cpp=.o) $(TARGET8_GENERATED_SOURCES:.cpp=.o)
+
+TARGETS += $(TARGET8)
 endif
 
 
@@ -73,7 +81,7 @@ all:
 	echo "PKG_CONFIG_PATH=$$PKG_CONFIG_PATH"
 	echo "CFLAGS=$(CFLAGS)"
 	echo "PATH=$$PATH"
-	make $(TARGETS)
+	$(MAKE) $(TARGETS)
 	echo ... all done
 
 image_display/GLee.o:	$(SRCDIR)image_display/GLee.c
@@ -150,14 +158,17 @@ clean:
 	echo ... clean done
 
 xcmsevents/qrc_qcmsevents.cpp:
+	mkdir -p xcmsevents
 	echo "	RCC:	$@ ..."
 	-rcc $(SRCDIR)$(TARGET8).qrc -o $@
 
 xcmsevents/moc_qcmsevents.cpp:	$(SRCDIR)$(TARGET8).h
+	mkdir -p xcmsevents
 	echo "	MOC:	$@ ..."
 	-$(MOC) $(SRCDIR)$(TARGET8).h -o $@
 
 $(TARGET8).o:	$(SRCDIR)$(TARGET8).cpp
+	mkdir -p xcmsevents
 	echo "	C++:	$@ ..."
 	-$(CXX) -I. $(CXXFLAGS_) $(QT_CFLAGS) $(INCL) -c -o $@ $<
 

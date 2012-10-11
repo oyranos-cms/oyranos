@@ -1201,14 +1201,14 @@ if [ -n "$PREPARE_MAKEFILES" ] && [ $PREPARE_MAKEFILES -gt 0 ]; then
       echo "### End of automatic generated options ###" >> "$i/makefile"
       echo "" >> "$i/makefile"
       echo "" >> "$i/makefile"
-      if [ $OSUNAME = "BSD" ]; then
+      if [ $OSUNAME = "BSD" -a "$MAKE" = 'make' ]; then
         test -f "$ROOT_DIR/$i/makefile".in && cat  "$ROOT_DIR/$i/makefile".in | sed 's/#if/.if/g ; s/#end/.end/g ; s/#else/.else/g '  >> "$i/makefile"
       else
         test -f "$ROOT_DIR/$i/makefile".in && cat  "$ROOT_DIR/$i/makefile".in | sed 's/#if/if/g ; s/#elif/elif/g ; s/#else/else/g ; s/#end/end/g '  >> "$i/makefile"
       fi
       mv "$i/makefile" "$i/Makefile"
       if [ "$i" != "." ]; then
-        (cd $i; make clean)
+        (cd $i; $MAKE clean)
       fi
     done
   fi

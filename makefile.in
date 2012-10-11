@@ -1126,12 +1126,12 @@ $(LIBNAME_CORE):	$(OBJECTS_CORE)
 $(ELEKTRA_VERSION):
 	echo building DB ...
 	cd $(ELEKTRA_VERSION); \
-	test -f Makefile && make || (./configure --enable-static $(nodeps_config_opt) --prefix=$(prefix); make)
+	test -f Makefile && $(MAKE) || (./configure --enable-static $(nodeps_config_opt) --prefix=$(prefix); $(MAKE))
 
 $(YAJL_OBJ):	$(YAJL_OBJECTS)
 	echo building Yajl ...
 	cd $(YAJL_DIR); \
-	test -f Makefile && make || (echo no makefile found)
+	test -f Makefile && $(MAKE) || (echo no makefile found)
 
 # the monitor profile tool
 $(TARGET)-monitor:	$(LIBSONAMEFULL) $(TARGET)_gamma.o
@@ -1167,7 +1167,7 @@ API_generated:	generator/oyAPIGenerator
 generator:
 	mkdir generator
 
-generator/oyAPIGenerator:	generator
+generator/oyAPIGenerator:
 	cd generator; CMAKE_PREFIX_PATH="$(SRCDIR)/generator/grantlee/lib/cmake/grantlee/" cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="-g -Wall" $(SRCDIR)/generator; make || echo Did you run download_grantlee.sh in generator/ ?
 
 
@@ -1252,7 +1252,7 @@ check:	all test_core test_object test_module test_config tests/test_oyranos $(TE
 	OY_MODULE_PATH=. LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} tests/test_oyranos
 
 examples:	all
-	cd examples && ($(MAKE) clean; PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." INCLUDE="-I$(includedir) -I$(SRCDIR) -I../ -I$(SRCDIR)/$(GENDIR)" SRCDIR=$(SRCDIR)/examples/ CFLAGS="$(CFLAGS)" LIBS="-L$(libdir) -L../" intl="$(intl)" $(MAKE))
+	cd examples && ($(MAKE) clean; PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." INCLUDE="-I$(SRCDIR) -I../ -I$(SRCDIR)/$(GENDIR) -I$(includedir)" SRCDIR=$(SRCDIR)/examples/ CFLAGS="$(CFLAGS)" LIBS="-L../ $(LDFLAGS) -L$(libdir)" intl="$(intl)" QT="$(QT)" $(MAKE))
 
 oforms:	all $(LIB_FORMS_FLTK_NAME)
 	cd oforms && (PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../ -I$(SRCDIR)/$(GENDIR)" SRCDIR=$(SRCDIR)/oforms/ LDFLAGS="-L../ $(intl) $(LDFLAGS)" $(MAKE) -f oyranos_xforms.makefile)
@@ -1525,7 +1525,7 @@ deb:	dist
 	tar xvzf $(TARGET)-$(VERSION).tar.gz
 	(cd $(TARGET)-$(VERSION); \
 	./configure --prefix=/usr; \
-	make "DESTDIR=$(build_dir)/debian/deb/DEBIAN" install;)
+	$(MAKE) "DESTDIR=$(build_dir)/debian/deb/DEBIAN" install;)
 	$(COPY) $(TARGET)-$(VERSION)/$(TARGET)_control $(build_dir)/debian/deb/DEBIAN/control
 	$(RM) -R $(TARGET)-$(VERSION)
 	dpkg -b $(build_dir)/debian/deb debian/$(TARGET)_$(VERSION)-$(RELEASE)_$(deb_arch).deb
@@ -1666,7 +1666,7 @@ depend:	cdepend
 	echo "#nicht editieren/dont edit - automatisch generiert von makefile.in" >> mkdepend
 	-(for file in $(INCL_DEP); do \
 	    incl_src="$${incl_src} $(SRCDIR)/$${file}"; done; \
-	  $(MAKEDEPEND) -I./ -I$(SRCDIR) $(INCL) $${incl_src} >> mkdepend)
+	  $(MAKEDEPEND) -I./ -I$(SRCDIR) -I$(SRCDIR)/oforms $(INCL) $${incl_src} >> mkdepend)
 	-for file in $(SUB_OBJECTS); do \
 	   obj=`echo $${file} | sed 's%modules/%% ; s%devices/%% ; s%FL/%% ; s%tests/%% ; s%oforms/%% ; s%oyjl/%% ; s%yajl/%%'`; \
 	   cat mkdepend | sed s%$${obj}%$${file}% > mkdepend.tmp; \
@@ -1811,7 +1811,7 @@ copy_files:
 	   [ -d "$(SRCDIR)/$(ELEKTRA_VERSION)" ] && \
 	   [ -d $(build_dir)/$(ELEKTRA_VERSION) ]; then \
           cd $(build_dir)/$(ELEKTRA_VERSION); \
-	  make dist-gzip; \
+	  $(MAKE) dist-gzip; \
 	  cd "$(DESTDIR)"; \
 	  test -f $(build_dir)/$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz && \
 	    tar xzf $(build_dir)/$(ELEKTRA_VERSION)/$(ELEKTRA_VERSION).tar.gz; \
