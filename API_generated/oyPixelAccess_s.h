@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/10
  */
 
 
@@ -261,6 +261,13 @@ int                oyPixelAccess_SetWorkspaceID (
 double             oyPixelAccess_GetStart (
                                        oyPixelAccess_s   * pixel_access,
                                        int                 vertical );
+double             oyPixelAccess_GetOldStart (
+                                       oyPixelAccess_s   * pixel_access,
+                                       int                 vertical );
+int                oyPixelAccess_SetOldStart (
+                                       oyPixelAccess_s   * pixel_access,
+                                       int                 vertical,
+                                       double              start );
 
 /* } Include "PixelAccess.public_methods_declarations.h" */
 

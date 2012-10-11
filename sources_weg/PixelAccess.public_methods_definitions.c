@@ -409,3 +409,53 @@ double             oyPixelAccess_GetStart (
   else
     return s->start_xy[1];
 }
+/** Function  oyPixelAccess_GetOldStart
+ *  @memberof oyPixelAccess_s
+ *  @brief    Access oyPixelAccess_s::start_xy_old
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/10
+ *  @since    2012/09/10 (Oyranos: 0.5.0)
+ */
+double             oyPixelAccess_GetOldStart (
+                                       oyPixelAccess_s   * pixel_access,
+                                       int                 vertical )
+{
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
+
+  if(vertical == 0)
+    return s->start_xy_old[0];
+  else
+    return s->start_xy_old[1];
+}
+/** Function  oyPixelAccess_SetOldStart
+ *  @memberof oyPixelAccess_s
+ *  @brief    Access oyPixelAccess_s::start_xy_old
+ *
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/09/10
+ *  @since    2012/09/10 (Oyranos: 0.5.0)
+ */
+int                oyPixelAccess_SetOldStart (
+                                       oyPixelAccess_s   * pixel_access,
+                                       int                 vertical,
+                                       double              start )
+{
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 1 )
+
+  if(vertical == 0)
+    s->start_xy_old[0] = start;
+  else
+    s->start_xy_old[1] = start;
+  return 0;
+}

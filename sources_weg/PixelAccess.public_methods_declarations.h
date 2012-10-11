@@ -38,3 +38,10 @@ int                oyPixelAccess_SetWorkspaceID (
 double             oyPixelAccess_GetStart (
                                        oyPixelAccess_s   * pixel_access,
                                        int                 vertical );
+double             oyPixelAccess_GetOldStart (
+                                       oyPixelAccess_s   * pixel_access,
+                                       int                 vertical );
+int                oyPixelAccess_SetOldStart (
+                                       oyPixelAccess_s   * pixel_access,
+                                       int                 vertical,
+                                       double              start );
