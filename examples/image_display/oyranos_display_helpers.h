@@ -15,8 +15,7 @@
 #ifndef oyranos_display_helpers_h
 #define oyranos_display_helpers_h
 
-#include <oyranos.h>
-#include <alpha/oyranos_alpha.h>
+#include <oyConversion_s.h>
 
 extern int oy_display_verbose;
 

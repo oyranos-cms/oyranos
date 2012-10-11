@@ -58,7 +58,7 @@ private:
       int gl_type = 0;
 
       draw_image = oyConversion_GetImage( conversion(), OY_INPUT );
-      pt = oyImage_GetPixelLayout( draw_image );
+      pt = oyImage_GetPixelLayout( draw_image, oyLAYOUT );
       data_type = oyToDataType_m( pt );
       if(data_type == oyUINT8)
         data_type = oyUINT16;
@@ -67,7 +67,7 @@ private:
 
       int result = drawPrepare( &draw_image, data_type, 1 );
 
-      pt = oyImage_GetPixelLayout( draw_image );
+      pt = oyImage_GetPixelLayout( draw_image, oyLAYOUT );
       channels = oyToChannels_m( pt );
 
       if(channels == 3)
@@ -79,7 +79,7 @@ private:
         fprintf(stdout, "%s:%d pixellayout: %d width: %d channels: %d\n",
                     strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
                     __LINE__,
-                    pt, draw_image->width, oyToChannels_m(pt) );
+                    pt, oyImage_GetWidth( draw_image ), oyToChannels_m(pt) );
 
       if(!valid() ||
          W_ != W || H_ != H || !frame_data)
@@ -114,8 +114,8 @@ private:
       glBegin(GL_LINE_STRIP); glVertex2f(W, H); glVertex2f(-W,-H); glEnd();
       glBegin(GL_LINE_STRIP); glVertex2f(W,-H); glVertex2f(-W, H); glEnd();
 
-      int frame_height = OY_MIN(draw_image->height,H),
-          frame_width = OY_MIN(draw_image->width,W);
+      int frame_height = OY_MIN(oyImage_GetHeight( draw_image ),H),
+          frame_width = OY_MIN(oyImage_GetWidth( draw_image ),W);
 
       int pos[4] = {-2,-2,-2,-2};
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
@@ -127,7 +127,7 @@ private:
       if(draw_image && frame_data)
       for(y = 0; y < frame_height; ++y)
       {
-        image_data = draw_image->getLine( draw_image, y, &height, -1, &is_allocated );
+        image_data = oyImage_GetLineF(draw_image)( draw_image, y, &height, -1, &is_allocated );
 
         memcpy( &frame_data[frame_width*(frame_height-y-1)*channels*sample_size], image_data,
                 frame_width*channels*sample_size );
@@ -187,7 +187,7 @@ public:
     oyPixel_t pt;
     oyDATATYPE_e data_type = oyUINT8;
 
-    pt = oyImage_GetPixelLayout( image );
+    pt = oyImage_GetPixelLayout( image, oyLAYOUT );
     data_type = oyToDataType_m( pt );
     if(data_type == oyUINT8)
       data_type = oyUINT16;

@@ -14,6 +14,11 @@
 #define _DBG_ARGS_ (strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__),__LINE__,__func__
 #endif
 
+extern "C" {
+void               oyShowConversion_ ( oyConversion_s    * conversion,
+                                       uint32_t            flags );
+}
+
 //#define DEBUG_MOVE DEBUG
 
 class Oy_Fl_Image_Widget : public Fl_Widget, public Oy_Widget
@@ -135,37 +140,41 @@ public:
       {
         int dst_width = oyImage_GetWidth( image ),
             dst_height = oyImage_GetHeight( image );
-        oyRectangle_s output_rectangle = {oyOBJECT_RECTANGLE_S,0,0,0};
-        oyRectangle_SamplesFromImage( image, 0, &output_rectangle );
-        output_rectangle.width = OY_MIN( OY_MIN( W, dst_width ), width );
-        output_rectangle.height = OY_MIN( OY_MIN( H, dst_height ), height );
-        oyRectangle_Scale( &output_rectangle, 1.0/dst_width );
+        oyRectangle_s * output_rectangle = oyRectangle_New( 0 );
+        oyImage_PixelsToSamples( image, 0, output_rectangle );
+        *oyRectangle_SetGeo1(output_rectangle,2) = OY_MIN( OY_MIN( W, dst_width ), width );
+        *oyRectangle_SetGeo1(output_rectangle,3) = OY_MIN( OY_MIN( H, dst_height ), height );
+        oyRectangle_Scale( output_rectangle, 1.0/dst_width );
 #if DEBUG_MOVE
         static int old_px = 0;
         if(px != old_px && oy_debug)
         {
-        old_px = px;
-        oyRectangle_s r = {oyOBJECT_RECTANGLE_S,0,0,0};
-        oyRectangle_SetByRectangle( &r, &output_rectangle );
-        oyRectangle_Scale( &r, dst_width );
-        printf( _DBG_FORMAT_"output rectangle: %s start_xy:%.04g %.04g\n",
+          old_px = px;
+          oyRectangle_s * r = oyRectangle_New(0);
+          oyRectangle_SetByRectangle( r, output_rectangle );
+          oyRectangle_Scale( r, dst_width );
+          printf( _DBG_FORMAT_"output rectangle: %s start_xy:%.04g %.04g\n",
                 _DBG_ARGS_,
-                oyRectangle_Show(&r),
-                ticket()->start_xy[0]*dst_width, ticket()->start_xy[1]*dst_width );
+                oyRectangle_Show(r),
+                oyPixelAccess_GetStart(ticket(),0)*dst_width,
+                oyPixelAccess_GetStart(ticket(),1)*dst_width );
+          oyRectangle_Release( &r );
         }
 #endif
         oyPixelAccess_ChangeRectangle( ticket(),
                                        -px/(double)dst_width,
                                        -py/(double)dst_width,
-                                       &output_rectangle );
+                                       output_rectangle );
         if(oy_display_verbose)
           printf( _DBG_FORMAT_"output rectangle: %s\n", _DBG_ARGS_,
-                  oyRectangle_Show(&output_rectangle));
+                  oyRectangle_Show(output_rectangle));
+
+        oyRectangle_Release( &output_rectangle );
       }
 
       /* limit a too big display texture */
-      display_rectangle->width = OY_MIN( display_rectangle->width, width );
-      display_rectangle->height = OY_MIN( display_rectangle->height, height );
+      *oyRectangle_SetGeo1(display_rectangle,2) = OY_MIN( oyRectangle_GetGeo1(display_rectangle,2), width );
+      *oyRectangle_SetGeo1(display_rectangle,3) = OY_MIN( oyRectangle_GetGeo1(display_rectangle,3), height );
 
       if(image)
         dirty = oyDrawScreenImage(conversion(), ticket(), display_rectangle,
@@ -191,7 +200,7 @@ public:
       }
 
       /* some error checks */
-      pt = oyImage_GetPixelLayout( image );
+      pt = oyImage_GetPixelLayout( image, oyLAYOUT );
       data_type = oyToDataType_m( pt );
       channels = oyToChannels_m( pt );
       if(pt != 0 &&

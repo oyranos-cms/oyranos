@@ -152,12 +152,12 @@ private:
       return 1;
     }
 
-    pt = oyImage_GetPixelLayout( clut_image );
+    pt = oyImage_GetPixelLayout( clut_image, oyLAYOUT );
     data_type = oyToDataType_m(pt);
     w = grid_points = oyImage_GetWidth( clut_image );
     h = oyImage_GetHeight( clut_image );
     int is_allocated = 0;
-    clut = (GLushort*)oyImage_GetPoint( clut_image, 0,0, 0, &is_allocated );
+    clut = (GLushort*)oyImage_GetPointF( clut_image )( clut_image, 0,0, 0, &is_allocated );
 
     if( h != w*w || data_type != oyUINT16 )
     {
@@ -186,7 +186,7 @@ private:
     int w_ = 8;
     int h_ = 8;
     oyPointer disp_img;
-    oyPixel_t pt = oyImage_GetPixelLayout( image );
+    oyPixel_t pt = oyImage_GetPixelLayout( image, oyLAYOUT );
     oyDATATYPE_e data_type = oyToDataType_m( pt );
     oyConversion_s * cc;
     int width = oyImage_GetWidth( image ),
@@ -253,7 +253,7 @@ private:
     /* size may be too big */
     check_error("glTexImage2D failed (image too large?)");
 
-    disp_img = oyImage_GetPoint( display_image, 0,0, 0, 0 );
+    disp_img = oyImage_GetPointF( display_image )( display_image, 0,0, 0, 0 );
     glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, w_, h_,
 		     GL_RGB, GL_UNSIGNED_SHORT, disp_img);
     if(0&&oy_display_verbose)
@@ -333,13 +333,13 @@ private:
       oyDATATYPE_e data_type = oyUINT8;
       int gl_type = 0;
 
-      pt = oyImage_GetPixelLayout( display_image );
+      pt = oyImage_GetPixelLayout( display_image, oyLAYOUT );
       data_type = oyToDataType_m( pt );
       sample_size = oySizeofDatatype( data_type );
 
       int result = drawPrepare( &draw_image, data_type, 1 );
 
-      pt = oyImage_GetPixelLayout( draw_image );
+      pt = oyImage_GetPixelLayout( draw_image, oyLAYOUT );
       channels = oyToChannels_m( pt );
 
       if(channels == 3)
@@ -398,7 +398,7 @@ private:
     glBindTexture (GL_TEXTURE_2D, img_texture);
     glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB16, w_, h_,
 		  0, GL_RGB, GL_UNSIGNED_SHORT, NULL);
-    oyPointer disp_img = oyImage_GetPoint( draw_image, 0,0, 0, 0 );
+    oyPointer disp_img = oyImage_GetPointF( draw_image )( draw_image, 0,0, 0, 0 );
     glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, w_, h_,
 		     GL_RGB, GL_UNSIGNED_SHORT, disp_img);
 

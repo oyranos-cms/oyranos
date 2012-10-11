@@ -296,15 +296,16 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
 
     if(context)
     {
-      int X = display_rectangle->x;
-      int Y = display_rectangle->y;
-      int W = display_rectangle->width;
-      int H = display_rectangle->height;
+      double X,Y,W,H;
       int channels = 0;
-      oyRectangle_s * disp_rectangle = 0;
+      oyFilterNode_s * node_out = 0;
+      oyRectangle_s * disp_rectangle = 0,
+                    * ticket_roi = 0;
       oyOptions_s * image_tags = 0;
       oyDATATYPE_e data_type = oyUINT8;
       oyPixel_t pt = 0;
+
+      oyRectangle_GetGeo( display_rectangle, &X, &Y, &W, &H );
 
       if(!image)
         return 1;
@@ -375,16 +376,20 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
 
       oyOptions_Release( &image_tags );
 
+      node_out = oyConversion_GetNode( context, OY_OUTPUT );
+      ticket_roi = oyPixelAccess_GetOutputROI( ticket );
       /* decide wether to refresh the cached rectangle of our static image */
-      if( context->out_ &&
+      if( node_out &&
           /* Did the window area move? */
          ((!oyRectangle_IsEqual( disp_rectangle, old_display_rectangle ) ||
            /* Something explicite to update? */
            (old_roi_rectangle &&
-            !oyRectangle_IsEqual( ticket->output_image_roi, old_roi_rectangle ))||
+            !oyRectangle_IsEqual( ticket_roi, old_roi_rectangle ))||
            /* Did the image move? */
-           ticket->start_xy[0] != ticket->start_xy_old[0] ||
-           ticket->start_xy[1] != ticket->start_xy_old[1]) ||
+           oyPixelAccess_GetStart( ticket,0 ) !=
+           oyPixelAccess_GetOldStart( ticket,0 ) ||
+           oyPixelAccess_GetStart( ticket,1 ) !=
+           oyPixelAccess_GetOldStart( ticket,1 )) ||
            dirty > 0))
       {
 #ifdef DEBUG_
@@ -397,9 +402,9 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
 
         /* remember the old rectangle */
         oyRectangle_SetByRectangle( old_display_rectangle, disp_rectangle );
-        oyRectangle_SetByRectangle( old_roi_rectangle,ticket->output_image_roi);
-        ticket->start_xy_old[0] = ticket->start_xy[0];
-        ticket->start_xy_old[1] = ticket->start_xy[1];
+        oyRectangle_SetByRectangle( old_roi_rectangle, ticket_roi );
+        oyPixelAccess_SetOldStart(ticket,0, oyPixelAccess_GetStart(ticket,0));
+        oyPixelAccess_SetOldStart(ticket,1, oyPixelAccess_GetStart(ticket,1));
       } else
         result = -1;
     }

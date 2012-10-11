@@ -61,17 +61,17 @@ private:
 
       drawPrepare( &image, oyUINT8, 0 );
 
-      pt = oyImage_GetPixelLayout( image );
+      pt = oyImage_GetPixelLayout( image, oyLAYOUT );
       channels = oyToChannels_m( pt );
 
       /* get the data and draw the image */
       if(image)
-      for(i = 0; i < image->height; ++i)
+      for(i = 0; i < oyImage_GetHeight( image ); ++i)
       {
-        image_data = image->getLine( image, i, &height, -1, &is_allocated );
+        image_data = oyImage_GetLineF(image)( image, i, &height, -1, &is_allocated );
 
         /* on osX it uses sRGB without alternative */
-        fl_draw_image( (const uchar*)image_data, 0, i, image->width, 1,
+        fl_draw_image( (const uchar*)image_data, 0, i, oyImage_GetWidth( image ), 1,
                        channels, Oy_Fl_Image_Widget::w()*channels);
         if(is_allocated)
           free( image_data );
