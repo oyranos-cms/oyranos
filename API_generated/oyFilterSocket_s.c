@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/10
  */
 
 
@@ -295,7 +295,7 @@ OYAPI oyStruct_s * OYEXPORT
 {
   oyFilterSocket_s_ * s = (oyFilterSocket_s_*)socket;
 
-  if(!s)
+  if(!s || !s->data)
     return 0;
 
   oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 0 )

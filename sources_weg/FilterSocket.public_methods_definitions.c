@@ -185,9 +185,9 @@ OYAPI oyFilterNode_s * OYEXPORT
  *  @param[in]     socket              the socket
  *  @return                            the data
  *
- *  @version Oyranos: 0.5.0
- *  @since   2012/09/23 (Oyranos: 0.5.0)
- *  @date    2012/09/23
+ *  @version  Oyranos: 0.5.0
+ *  @date     2012/10/11
+ *  @since    2012/09/23 (Oyranos: 0.5.0)
  */
 OYAPI oyStruct_s * OYEXPORT
              oyFilterSocket_GetData  ( oyFilterSocket_s  * socket )
@@ -199,7 +199,7 @@ OYAPI oyStruct_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 0 )
 
-  if(s->data->copy)
+  if(s->data && s->data->copy)
     return s->data->copy(s->data, 0);
   else
     return s->data;
