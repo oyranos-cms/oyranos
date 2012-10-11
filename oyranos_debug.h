@@ -47,8 +47,6 @@ double             oySeconds         ( );
 # define  OY_DBG_ARGS_   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
 #endif
 
-#if defined(OY_CONFIG_H)
-
 /* Debug system */
 
 #define DBG_UHR_ (double)clock()/(double)CLOCKS_PER_SEC
@@ -148,8 +146,6 @@ double             oySeconds         ( );
 #define DBG_MEM_V if(oy_debug > 3)DBG_V
 #define DBG_MEM_START  if(oy_debug > 3)DBG_START
 #define DBG_MEM_ENDE   if(oy_debug > 3)DBG_ENDE
-
-#endif /* defined OY_CONFIG_H */
 
 #define WARNcc(ptr)    oyMessageFunc_p( oyMSG_WARN,ptr,OY_DBG_FORMAT_, OY_DBG_ARGS_ ); 
 #define WARNcc_S(ptr,txt)   oyMessageFunc_p( oyMSG_WARN,ptr,OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_,txt);
