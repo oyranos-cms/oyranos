@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct oyProfile_s_ oyProfile_s_;
+int          oyProfile_ToFile_       ( oyProfile_s_      * profile,
+                                       const char        * file_name );
 
 int main( int argc, char ** argv )
 {
@@ -34,7 +37,7 @@ int main( int argc, char ** argv )
   oyProfile_GetMD5(p, OY_FROM_PROFILE, id);
 
   if(set_md5)
-    oyProfile_ToFile_( p, argv[profile_pos]);
+    oyProfile_ToFile_( (oyProfile_s_*)p, argv[profile_pos]);
 
   i = (uint32_t*)md5;
   if(p)
