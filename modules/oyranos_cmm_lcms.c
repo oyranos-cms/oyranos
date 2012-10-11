@@ -26,7 +26,6 @@
 #include "oyCMMapi10_s_.h"
 #include "oyCMMui_s_.h"
 #include "oyConnectorImaging_s_.h"
-#include "oyFilterNode_s_.h"         /* for oyFilterNode_TextToInfo_ */
 #include "oyProfiles_s.h"
 
 #include "oyranos_cmm.h"         /* the API's this CMM implements */
