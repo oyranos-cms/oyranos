@@ -392,7 +392,7 @@ int main( int argc , char** argv )
       oyProfile_Release( &p );
       sprintf( comment, "clut with %d levels", width );
 
-      pixel_layout = oyImage_PixelLayoutGet( image );
+      pixel_layout = oyImage_GetPixelLayout( image,oyLAYOUT );
       data_type = oyToDataType_m(pixel_layout);
       p = oyProfile_FromFile(output_profile, 0,0);
       oyConversion_s * cc = oyConversion_CreateFromImage (
@@ -408,7 +408,7 @@ int main( int argc , char** argv )
     } else
     {
       error = oyImage_FromFile( input, &image, NULL );
-      pixel_layout = oyImage_PixelLayoutGet( image );
+      pixel_layout = oyImage_GetPixelLayout( image,oyLAYOUT );
       data_type = oyToDataType_m(pixel_layout);
       p = oyProfile_FromFile(output_profile, 0,0);
       if(!p)
