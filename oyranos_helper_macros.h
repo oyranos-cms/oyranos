@@ -21,7 +21,7 @@
 #if defined(OY_CONFIG_H)
 #include "oyranos.h"
 #else
-#include "oyranos/oyranos.h"
+#include "oyranos.h"
 #endif
 
 #include "oyObject_s_.h"

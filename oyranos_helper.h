@@ -25,7 +25,7 @@
 #if defined(OY_CONFIG_H)
 #include "oyranos_core.h"
 #else
-#include "oyranos/oyranos.h"
+#include "oyranos.h"
 #endif
 
 #include "oyranos_helper_macros.h"
