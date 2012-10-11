@@ -1,5 +1,7 @@
 #include "oyArray2d_s_.h"
 #include "oyRectangle_s_.h"
+#include "oyFilterNode_s.h"
+#include "oyConversion_s.h"
 #include "oyranos_image_internal.h"
 
 /** Function oyImage_GetPointContinous
@@ -1293,6 +1295,130 @@ int            oyImage_PixelsToSamples(oyImage_s         * image,
       oyRectangle_Round( pixel_rectangle );
     }
   }
+
+  return error;
+}
+
+/** Function oyImage_FromFile
+ *  @brief   generate a Oyranos image from a file name
+ *
+ *  @param[in]     file_name           input
+ *  @param[out]    image               output
+ *  @param[in]     obj                 Oyranos object (optional)
+ *  @return                            >0 == error, <0 == issue or zero
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/04/21 (Oyranos: 0.5.0)
+ *  @date    2012/04/21
+ */
+int    oyImage_FromFile              ( const char        * file_name,
+                                       oyImage_s        ** image,
+                                       oyObject_s          obj )
+{
+  oyFilterNode_s * in, * out;
+  int error = 0;
+  oyConversion_s * conversion = 0;
+  oyOptions_s * options = 0;
+
+  if(!file_name)
+    return 1;
+
+  /* start with an empty conversion object */
+  conversion = oyConversion_New( obj );
+  /* create a filter node */
+  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/file_read.meta", 0, obj );
+  /* set the above filter node as the input */
+  oyConversion_Set( conversion, in, 0 );
+
+  /* add a file name argument */
+  /* get the options of the input node */
+  if(in)
+  options = oyFilterNode_GetOptions( in, OY_SELECT_FILTER );
+  /* add a new option with the appropriate value */
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
+                                 file_name, OY_CREATE_NEW );
+  /* release the options object, this means its not any more refered from here*/
+  oyOptions_Release( &options );
+
+  /* add a closing node */
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+  /* set the output node of the conversion */
+  oyConversion_Set( conversion, 0, out );
+
+  *image = oyConversion_GetImage( conversion, OY_OUTPUT );
+  oyImage_Release( image );
+  *image = oyConversion_GetImage( conversion, OY_INPUT );
+
+  options = oyImage_GetTags( *image );
+  oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
+                                 file_name, OY_CREATE_NEW );
+  oyOptions_Release( &options );
+
+  oyConversion_Release( &conversion );
+
+  return error;
+}
+/** Function oyImage_ToFile
+ *  @brief   write a Oyranos image to a file name
+ *
+ *  @param[in]     image               input
+ *  @param[in]     file_name           output
+ *  @param[in]     opts                options for file_write node
+ *  @return                            >0 == error, <0 == issue or zero
+ *
+ *  @version Oyranos: 0.5.0
+ *  @since   2012/07/18 (Oyranos: 0.5.0)
+ *  @date    2012/07/18
+ */
+int    oyImage_ToFile                ( oyImage_s         * image,
+                                       const char        * file_name,
+                                       oyOptions_s       * opts )
+{
+  oyFilterNode_s * in, * out;
+  int error = 0;
+  oyConversion_s * conversion = 0;
+  oyOptions_s * options = 0;
+
+  if(!file_name)
+    return 1;
+
+  /* start with an empty conversion object */
+  conversion = oyConversion_New( 0 );
+  /* create a filter node */
+  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0, 0 );
+  /* set the above filter node as the input */
+  oyConversion_Set( conversion, in, 0 );
+  /* set the image buffer */
+  oyFilterNode_SetData( in, (oyStruct_s*)image, 0, 0 );
+
+  /* add a file name argument */
+  /* get the options of the input node */
+  if(in)
+  options = oyFilterNode_GetOptions( in, OY_SELECT_FILTER );
+  if(opts)
+    oyOptions_CopyFrom( &options, opts, oyBOOLEAN_UNION, 0,0);
+  /* add a new option with the appropriate value */
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_write/filename",
+                                 file_name, OY_CREATE_NEW );
+  /* release the options object, this means its not any more refered from here*/
+  oyOptions_Release( &options );
+
+  /* add a closing node */
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/file_write.meta", 0, 0 );
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+  /* set the output node of the conversion */
+  oyConversion_Set( conversion, 0, out );
+
+  options = oyImage_GetTags( image );
+  oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_write/filename",
+                                 file_name, OY_CREATE_NEW );
+  oyOptions_Release( &options );
+
+  oyConversion_RunPixels( conversion, 0 );
+  oyConversion_Release( &conversion );
 
   return error;
 }
