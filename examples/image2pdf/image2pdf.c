@@ -28,8 +28,8 @@
 FILE *popen ( const char *__command, const char *__modes);
 #include <math.h>
 #include <string.h>
-#include <oyProfile_s.h  >        /* Oyranos headers */
 #include <oyConversion_s.h>
+#include <oyProfile_s.h>          /* Oyranos headers */
 #include <oyranos_devices.h>
 #include <cairo.h>                /* Cairo headers */
 #include <cairo-pdf.h>
