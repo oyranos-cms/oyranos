@@ -25,3 +25,5 @@ OYAPI int  OYEXPORT
                  oyArray2d_GetWidth  ( oyArray2d_s       * obj );
 OYAPI int  OYEXPORT
                  oyArray2d_GetHeight ( oyArray2d_s       * obj );
+OYAPI oyDATATYPE_e  OYEXPORT
+                 oyArray2d_GetType   ( oyArray2d_s       * array );

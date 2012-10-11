@@ -423,4 +423,24 @@ OYAPI int  OYEXPORT
   return s->height;
 }
 
+/** Function  oyArray2d_GetType
+ *  @memberof oyArray2d_s
+ *  @brief    Get data Type
+ *
+ *  @param[in,out] array               the pixel array
+ *  @return                            the data type
+ *
+ *  @version  Oyranos: 0.9.0
+ *  @date     2012/10/11
+ *  @since    2012/10/11 (Oyranos: 0.9.0)
+ */
+OYAPI oyDATATYPE_e  OYEXPORT
+                 oyArray2d_GetType   ( oyArray2d_s       * array )
+{
+  oyArray2d_s_ * s = (oyArray2d_s_*) array;
+  if(!array)
+    return 0;
+  return s->t;
+}
+
 

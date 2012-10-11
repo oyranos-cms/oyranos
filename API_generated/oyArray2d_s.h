@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/11
  */
 
 
@@ -155,6 +155,8 @@ OYAPI int  OYEXPORT
                  oyArray2d_GetWidth  ( oyArray2d_s       * obj );
 OYAPI int  OYEXPORT
                  oyArray2d_GetHeight ( oyArray2d_s       * obj );
+OYAPI oyDATATYPE_e  OYEXPORT
+                 oyArray2d_GetType   ( oyArray2d_s       * array );
 
 /* } Include "Array2d.public_methods_declarations.h" */
 
