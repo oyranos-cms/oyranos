@@ -26,8 +26,26 @@
 #include <string.h>
 #include <cairo.h>                /* Cairo headers */
 
-#include <oyranos_alpha.h>        /* Oyranos headers */
-#include "oyranos_alpha_internal.h"
+#include "oyProfile_s.h"
+#include "oyImage_s.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+int  oyColourConvert_ ( oyProfile_s       * p_in,
+                        oyProfile_s       * p_out,
+                        oyPointer           buf_in,
+                        oyPointer           buf_out,
+                        oyDATATYPE_e        buf_type_in,
+                        oyDATATYPE_e        buf_type_out,
+                        oyOptions_s       * options,
+                        int                 count );
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+
+#include "oyranos_colour.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_helper_macros.h"
