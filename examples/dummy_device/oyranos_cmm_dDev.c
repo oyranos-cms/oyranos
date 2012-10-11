@@ -19,6 +19,11 @@
  *  $(CC) $(CFLAGS) -shared oyranos_cmm_dDev.c -o liboyranos_dDev_cmm_module.so
  */
 
+#include "oyCMMapi8_s_.h"
+#include "oyCMMinfo_s_.h"
+#include "oyCMMui_s_.h"
+#include "oyProfile_s.h"
+
 #include "oyranos_cmm.h"
 
 #include <string.h>
@@ -72,7 +77,7 @@ const char * Api8UiGetText           ( const char        * select,
 
 oyMessage_f message = 0;
 
-extern oyCMMapi8_s _api8;
+extern oyCMMapi8_s_ _api8;
 oyRankMap _rank_map[];
 
 /* --- implementations --- */
@@ -113,7 +118,7 @@ int            CMMMessageFuncSet     ( oyMessage_f         message_func )
 }
 
 #define OPTIONS_ADD(opts, name) if(!error && name) \
-        error = oyOptions_SetFromText( &opts, \
+        error = oyOptions_SetFromText( opts, \
                                        CMM_BASE_REG OY_SLASH #name, \
                                        name, OY_CREATE_NEW );
 
@@ -229,15 +234,15 @@ int              DeviceFromName_     ( const char        * device_name,
           *device = oyConfig_FromRegistration( CMM_BASE_REG, 0 );
         error = !*device;
         if(!error && device_name)
-        error = oyOptions_SetFromText( &(*device)->backend_core,
+        error = oyOptions_SetFromText( oyConfig_GetOptions(*device,"backend_core"),
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        device_name, OY_CREATE_NEW );
 
-        OPTIONS_ADD( (*device)->backend_core, manufacturer )
-        OPTIONS_ADD( (*device)->backend_core, model )
-        OPTIONS_ADD( (*device)->backend_core, serial )
-        OPTIONS_ADD( (*device)->backend_core, system_port )
-        OPTIONS_ADD( (*device)->backend_core, host )
+        OPTIONS_ADD( oyConfig_GetOptions(*device,"backend_core"), manufacturer )
+        OPTIONS_ADD( oyConfig_GetOptions(*device,"backend_core"), model )
+        OPTIONS_ADD( oyConfig_GetOptions(*device,"backend_core"), serial )
+        OPTIONS_ADD( oyConfig_GetOptions(*device,"backend_core"), system_port )
+        OPTIONS_ADD( oyConfig_GetOptions(*device,"backend_core"), host )
         if(!error && data_blob)
         {
           o = oyOption_FromRegistration( CMM_BASE_REG OY_SLASH "data_blob", 0 );
@@ -246,7 +251,7 @@ int              DeviceFromName_     ( const char        * device_name,
           error = oyOption_SetFromData( o, oyBlob_GetPointer(data_blob),
                                         oyBlob_GetSize( data_blob) );
           if(!error)
-            oyOptions_MoveIn( (*device)->data, &o, -1 );
+            oyOptions_MoveIn( *oyConfig_GetOptions(*device,"data"), &o, -1 );
           oyBlob_Release( &data_blob );
         }
       }
@@ -306,7 +311,7 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
   { 
     device = oyConfigs_Get( devices, i );
     rank += oyFilterRegistrationMatch( _api8.registration,
-                                       device->registration,
+                                       oyConfig_GetRegistration(device),
                                        oyOBJECT_CMM_API8_S );
     oyConfig_Release( &device );
   }
@@ -324,7 +329,7 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
       {
         device = oyConfigs_Get( devices, i );
         rank = oyFilterRegistrationMatch( _api8.registration,
-                                          device->registration,
+                                          oyConfig_GetRegistration(device),
                                           oyOBJECT_CMM_API8_S );
         if(!rank)
         {
@@ -375,7 +380,7 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
             o = oyOption_FromRegistration( CMM_BASE_REG OY_SLASH "icc_profile",
                                            0 );
             error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
-            oyOptions_MoveIn( device->data, &o, -1 );
+            oyOptions_MoveIn( *oyConfig_GetOptions(device,"data"), &o, -1 );
           }
         }
 
@@ -383,7 +388,7 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
         {
           text = calloc( 4096, sizeof(char) );
 
-          o = oyOptions_Find( device->data, "icc_profile" );
+          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "icc_profile" );
 
           p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
           if( p )
@@ -401,15 +406,14 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
           }
 
           if(error <= 0)
-          error = oyOptions_SetFromText( &device->data,
+          error = oyOptions_SetFromText( oyConfig_GetOptions(device,"data"),
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
           free( text );
         }
 
-        if(error <= 0 && !device->rank_map)
-          device->rank_map = oyRankMapCopy( _rank_map,
-                                   oyStruct_GetAllocator((oyStruct_s*)device));
+        if(error <= 0 && !oyConfig_GetRankMap(device))
+          oyConfig_SetRankMap(device, _rank_map );
 
         oyConfig_Release( &device );
       }
@@ -426,7 +430,7 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
       {
         device = oyConfigs_Get( devices, i );
         rank = oyFilterRegistrationMatch( _api8.registration,
-                                          device->registration,
+                                          oyConfig_GetRegistration(device),
                                           oyOBJECT_CMM_API8_S );
         if(!rank)
         {
@@ -438,7 +442,7 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
         if(error <= 0)
         device_name = oyConfig_FindString( device, "device_name", 0 );
 
-        error = oyOptions_SetFromText( &device->data,
+        error = oyOptions_SetFromText( oyConfig_GetOptions(device,"data"),
                                          CMM_BASE_REG OY_SLASH "port",
                                          "8", OY_CREATE_NEW );
         oyConfig_Release( &device );
@@ -456,7 +460,7 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
       {
         device = oyConfigs_Get( devices, i );
         rank = oyFilterRegistrationMatch( _api8.registration,
-                                          device->registration,
+                                          oyConfig_GetRegistration(device),
                                           oyOBJECT_CMM_API8_S );
         if(!rank)
         {
@@ -493,7 +497,7 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
       {
         device = oyConfigs_Get( devices, i );
         rank = oyFilterRegistrationMatch( _api8.registration,
-                                          device->registration,
+                                          oyConfig_GetRegistration(device),
                                           oyOBJECT_CMM_API8_S );
         if(!rank)
         {
@@ -593,7 +597,7 @@ int              Configs_FromPattern ( const char        * registration,
         error = !device;
 
         if(error <= 0)
-        error = oyOptions_SetFromText( &device->backend_core,
+        error=oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 
@@ -735,7 +739,7 @@ const char * _api8_ui_texts[] = {"name", "help", "device_class", "category", 0};
  *  @since   2009/12/22 (Oyranos: 0.1.10)
  *  @date    2009/12/22
  */
-oyCMMui_s _api8_ui = {
+oyCMMui_s_   _api8_ui = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -765,7 +769,7 @@ oyIcon_s _api8_icon = {
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/12/22
  */
-oyCMMapi8_s _api8 = {
+oyCMMapi8_s_ _api8 = {
   oyOBJECT_CMM_API8_S,
   0,0,0,
   0,                         /**< next */
@@ -783,7 +787,7 @@ oyCMMapi8_s _api8 = {
   Configs_Modify,            /**< oyConfigs_Modify_f oyConfigs_Modify */
   Config_Check,              /**< oyConfig_Check_f oyConfig_Check */
 
-  &_api8_ui,                 /**< device class UI name and help */
+  (oyCMMui_s*)&_api8_ui,     /**< device class UI name and help */
   &_api8_icon,               /**< device icon */
 
   _rank_map                  /**< oyRankMap ** rank_map */
@@ -848,7 +852,7 @@ const char * _texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2007/12/12 (Oyranos: 0.1.10)
  *  @date    2009/06/23
  */
-oyCMMinfo_s _cmm_module = {
+oyCMMinfo_s_ _cmm_module = {
 
   oyOBJECT_CMM_INFO_S, /**< ::type; the object type */
   0,0,0,               /**< static objects omit these fields */
