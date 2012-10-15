@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/15
  */
 
 
@@ -555,11 +555,7 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
                                    device_name, OY_CREATE_NEW );
 
     /** 2.2 send the query to a module */
-#ifdef UNHIDE_CMM
     error = oyConfigs_FromDomain( oyConfigPriv_m(device)->registration, options, 0, 0 );
-#else
-    error = 1;
-#endif
 
     oyOptions_Release( &options );
     /* 3.1 send the query to a module */
@@ -1014,11 +1010,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   if(error <= 0)
   {
     /** 4.1 get stored DB's configurations */
-#ifdef UNHIDE_CMM
     error = oyConfigs_FromDB( oyConfigPriv_m(device)->registration, &configs, 0 );
-#else
-    error = 1;
-#endif
 
     n = oyConfigs_Count( configs );
     for( i = 0; i < n; ++i )
