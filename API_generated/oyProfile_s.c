@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/15
  */
 
 
@@ -1555,7 +1555,7 @@ OYAPI int OYEXPORT
                                          oyConfig_s      * device )
 {
   int error = !profile, l_error = 0;
-  oyProfile_s * s = profile;
+  oyProfile_s_ * s = profile;
   oyConfig_s_ * device_ = (oyConfig_s_*)device;
   oyProfileTag_s * tag = 0;
   char ** texts = 0;
@@ -1570,12 +1570,15 @@ OYAPI int OYEXPORT
 
   if(!error)
   {
-    tag = oyProfile_GetTagById( s, icSigMetaDataTag );
+    tag = oyProfile_GetTagById( (oyProfile_s*)s, icSigMetaDataTag );
     texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
     if(texts && texts[0] && texts_n > 0)
     {
       for(i = 2; i+1 < texts_n && error <= 0; i+=2)
       {
+        if(!texts[i+0])
+          continue;
+
         if(strcmp(texts[i+0],"model") == 0) dmdd_found = 1;
         if(strcmp(texts[i+0],"manufacturer") == 0) dmnd_found = 1;
         if(strcmp(texts[i+0],"serial") == 0) serial_found = 1;
@@ -1610,7 +1613,7 @@ OYAPI int OYEXPORT
 
   if(!error)
   {
-    tag = oyProfile_GetTagById( s, icSigDeviceModelDescTag );
+    tag = oyProfile_GetTagById( (oyProfile_s*)s, icSigDeviceModelDescTag );
     texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
     if(texts && texts[0] && texts[0][0] && texts_n == 1 && !dmdd_found)
       error = oyOptions_SetRegistrationTextKey_(
@@ -1623,7 +1626,7 @@ OYAPI int OYEXPORT
 
   if(!error)
   {
-    tag = oyProfile_GetTagById( s, icSigDeviceMfgDescTag );
+    tag = oyProfile_GetTagById( (oyProfile_s*)s, icSigDeviceMfgDescTag );
     texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
     if(texts && texts[0] && texts[0][0] && texts_n == 1 && !dmnd_found)
       error = oyOptions_SetRegistrationTextKey_(
