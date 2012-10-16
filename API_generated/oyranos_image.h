@@ -12,16 +12,14 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/23
+ *  @date     2012/10/15
  */
 
 
 #ifndef OYRANOS_IMAGE_H
 #define OYRANOS_IMAGE_H
 
-#include <oyranos_helper.h>
 #include <oyranos_icc.h>
-#include <oyranos_string.h>
 #include <oyranos_types.h>
 
 #ifdef __cplusplus

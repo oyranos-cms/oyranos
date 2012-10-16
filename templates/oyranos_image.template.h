@@ -4,9 +4,7 @@
 #ifndef {{ file_name|underscores|upper|tr:". _" }}
 #define {{ file_name|underscores|upper|tr:". _" }}
 
-#include <oyranos_helper.h>
 #include <oyranos_icc.h>
-#include <oyranos_string.h>
 #include <oyranos_types.h>
 
 {% include "cpp_begin.h" %}
