@@ -159,6 +159,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_CONVERSION_S: text = "oyConversion_s"; break;
     case oyOBJECT_CONNECTOR_S: text = "oyConnector_s"; break;
     case oyOBJECT_CONNECTOR_IMAGING_S: text = "oyConnectorImaging_s"; break;
+    case oyOBJECT_CONNECTOR_MAX_S: text = "CONNECTOR MAX - not defined"; break;
     case oyOBJECT_FILTER_PLUG_S: text = "oyFilterPlug_s"; break;
     case oyOBJECT_FILTER_PLUGS_S: text = "oyFilterPlugs_s"; break;
     case oyOBJECT_FILTER_SOCKET_S: text = "oyFilterSocket_s"; break;
@@ -186,7 +187,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_CMM_API_FILTERS_S: text="oyCMMapiFilters_s Filter list";break;
     case oyOBJECT_CMM_UI_S: text = "oyCMMui_s UI part"; break;
     case oyOBJECT_CMM_OBJECT_TYPE_S: text = "oyCMMobjectType_s Custom object handler"; break;
-    case oyOBJECT_CMM_API_MAX: text = "not defined"; break;
+    case oyOBJECT_CMM_API_MAX: text = "CMM_API MAX - not defined"; break;
     case oyOBJECT_ICON_S: text = "oyIcon_s"; break;
     case oyOBJECT_MODULE_S: text = "oyModule_s"; break;
     case oyOBJECT_EXTERNFUNC_S: text = "oyExternFunc_s"; break;
@@ -204,7 +205,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_OBSERVER_S: text = "oyObserver_s"; break;
     case oyOBJECT_CONF_DOMAIN_S: text = "oyConfDomain_s"; break;
     case oyOBJECT_INFO_STATIC_S: text = "oyObjectInfoStatic_s"; break;
-    case oyOBJECT_MAX: text = "Max - none"; break;
+    case oyOBJECT_MAX: text = "MAX - not defined"; break;
   }
   return text;
 }
