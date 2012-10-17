@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/10/17
  */
 
 
@@ -83,7 +83,7 @@ OYAPI int OYEXPORT
 
 /* Include "Hash.public_methods_declarations.h" { */
 OYAPI oyHash_s *  OYEXPORT
-                 oyHash_Get        ( const char        * hash_text,
+                 oyHash_Create     ( const char        * hash_text,
                                      oyObject_s          object );
 OYAPI oyOBJECT_e  OYEXPORT
                  oyHash_GetType    ( oyHash_s          * hash );

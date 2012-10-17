@@ -1,5 +1,5 @@
 OYAPI oyHash_s *  OYEXPORT
-                 oyHash_Get        ( const char        * hash_text,
+                 oyHash_Create     ( const char        * hash_text,
                                      oyObject_s          object );
 OYAPI oyOBJECT_e  OYEXPORT
                  oyHash_GetType    ( oyHash_s          * hash );

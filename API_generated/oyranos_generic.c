@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/17
  */
 
 
@@ -101,7 +101,7 @@ const char *   oyContextCollectData_ ( oyStruct_s        * s,
  *  @brief get always a Oyranos cache entry from a cache list
  *
  *  @param[in]     cache_list          the list to search in
- *  @param[in]     flags               0 - assume text, 1 - assume sized hash
+ *  @param[in]     flags               0 - assume text, 1 - assume 16 byte hash
  *  @param[in]     hash_text           the text to search for in the cache_list
  *  @return                            the cache entry may not have a entry
  *
@@ -156,7 +156,7 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
 
   if(error <= 0 && !entry)
   {
-    search_key = oyHash_Get(hash_text, 0);
+    search_key = oyHash_Create(hash_text, 0);
     error = !search_key;
 
     if(error <= 0)

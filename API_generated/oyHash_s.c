@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/17
  */
 
 
@@ -96,14 +96,15 @@ OYAPI int OYEXPORT
 
 
 /* Include "Hash.public_methods_definitions.c" { */
-/** Function  oyHash_Get
+/** Function  oyHash_Create
  *  @memberof oyHash_s
- *  @brief    Get a new Oyranos cache entry
+ *  @brief    Create a new Oyranos cache entry
  *
- *  @since Oyranos: version 0.3.0
- *  @date  24 november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.9.0
+ *  @date    2012/10/17
+ *  @since   2007/11/24 (Oyranos: 0.1.8)
  */
-oyHash_s *         oyHash_Get         ( const char        * hash_text,
+oyHash_s *         oyHash_Create      ( const char        * hash_text,
                                         oyObject_s          object )
 {
   return (oyHash_s*) oyHash_Get_( hash_text, object );
