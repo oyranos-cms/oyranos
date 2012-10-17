@@ -29,11 +29,9 @@ OYAPI oyConversion_s *  OYEXPORT
                                        oyDATATYPE_e        buf_type_out,
                                        uint32_t            flags,
                                        oyObject_s          obj );
-#ifdef UNHIDE_FILTERGRAPH
 OYAPI oyFilterGraph_s *  OYEXPORT
                 oyConversion_GetGraph (
                                        oyConversion_s    * conversion );
-#endif /*UNHIDE_FILTERGRAPH*/
 OYAPI oyImage_s *  OYEXPORT
                 oyConversion_GetImage (
                                        oyConversion_s    * conversion,

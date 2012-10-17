@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/17
  */
 
 
@@ -436,7 +436,6 @@ oyConversion_s * oyConversion_CreateFromImage (
   return conversion;
 }
 
-#ifdef UNHIDE_FILTERGRAPH
 /** Function  oyConversion_GetGraph
  *  @memberof oyConversion_s
  *  @brief    Get the filter graph from a conversion context
@@ -453,9 +452,9 @@ oyConversion_s * oyConversion_CreateFromImage (
 oyFilterGraph_s  * oyConversion_GetGraph (
                                        oyConversion_s    * conversion )
 {
-  return oyFilterGraph_FromNode( ((oyConversion_s_*)conversion)->input, 0 );
+  return oyFilterGraph_FromNode(
+                  (oyFilterNode_s*)(((oyConversion_s_*)conversion)->input), 0 );
 }
-#endif /*UNHIDE_FILTERGRAPH*/
 
 /** Function  oyConversion_GetImage
  *  @memberof oyConversion_s
