@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2012/10/17
  */
 
 
@@ -86,6 +86,7 @@ OYAPI int OYEXPORT
 
 
 /* Include "StructList.public_methods_declarations.h" { */
+#include "oyHash_s.h"
 OYAPI int  OYEXPORT
                  oyStructList_MoveIn ( oyStructList_s    * list,
                                        oyStruct_s       ** ptr,
@@ -141,20 +142,29 @@ OYAPI int  OYEXPORT
                                        const char        * text,
                                        int pos );
 OYAPI const char *  OYEXPORT
-                oyStructList_GetName( oyStructList_s    * texts,
+                 oyStructList_GetName( oyStructList_s    * texts,
                                        int pos );
 
 OYAPI oyStructList_s *  OYEXPORT
-                oyStructList_Create ( oyOBJECT_e          parent_type,
+                 oyStructList_Create ( oyOBJECT_e          parent_type,
                                        const char        * list_name,
                                        oyObject_s          object );
 OYAPI oyStruct_s *  OYEXPORT
-                oyStructList_GetType( oyStructList_s    * list,
+                 oyStructList_GetType( oyStructList_s    * list,
                                        int                 pos,
                                        oyOBJECT_e          type );
 OYAPI oyOBJECT_e  OYEXPORT
-                oyStructList_GetParentObjType (
+                 oyStructList_GetParentObjType (
                                        oyStructList_s    * list );
+
+oyHash_s *       oyStructList_GetHash( oyStructList_s    * cache_list,
+                                       uint32_t            flags,
+                                       const char        * hash_text );
+oyStruct_s *     oyStructList_GetHashStruct (
+                                       oyStructList_s    * cache_list,
+                                       uint32_t            flags,
+                                       const char        * hash_text,
+                                       oyOBJECT_e          type );
 
 /* } Include "StructList.public_methods_declarations.h" */
 

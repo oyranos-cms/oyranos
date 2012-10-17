@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/17
  */
 
 
@@ -99,6 +99,7 @@ OYAPI int OYEXPORT
 
 
 /* Include "StructList.public_methods_definitions.c" { */
+#include "oyranos_generic_internal.h"
 /** Function  oyStructList_MoveIn
  *  @memberof oyStructList_s
  *  @brief    oyStructList_s pointer add
@@ -792,6 +793,59 @@ const char * oyStructList_GetName( oyStructList_s * texts, int pos )
   return text;
 }
 
+/**
+ *  Function  oyStructList_GetHash
+ *  @memberof oyStructList_s
+ *  @brief    Get a hash from a cache
+ *
+ *  Get always a Oyranos cache entry from a cache list.
+ *
+ *  @param[in]     cache_list          the list to search in
+ *  @param[in]     flags               - 0 - assume text, length is strlen()
+ *                                     - 1 - assume 16 byte hash instead of text
+ *  @param[in]     hash_text           the text to search for in the cache_list
+ *  @return                            the cache entry may not have a entry
+ *
+ *  @version Oyranos: 0.9.0
+ *  @date    2012/10/17
+ *  @since   2012/10/17 (Oyranos: 0.9.0)
+ */
+oyHash_s *       oyStructList_GetHash( oyStructList_s    * cache_list,
+                                       uint32_t            flags,
+                                       const char        * hash_text )
+{
+  return oyCacheListGetEntry_( cache_list, flags, hash_text );
+}
+
+/**
+ *  Function  oyStructList_GetHashStruct
+ *  @memberof oyStructList_s
+ *  @brief    Get a hash from a cache
+ *
+ *  Get always a Oyranos cache entry from a cache list.
+ *
+ *  @param[in]     cache_list          the list to search in
+ *  @param[in]     flags               - 0 - assume text, length is strlen()
+ *                                     - 1 - assume 16 byte hash instead of text
+ *  @param[in]     hash_text           the text to search for in the cache_list
+ *  @param[in]     type                thre requested object type
+ *  @return                            the cache entry may not have a entry
+ *
+ *  @version Oyranos: 0.9.0
+ *  @date    2012/10/17
+ *  @since   2012/10/17 (Oyranos: 0.9.0)
+ */
+oyStruct_s *     oyStructList_GetHashStruct (
+                                       oyStructList_s    * cache_list,
+                                       uint32_t            flags,
+                                       const char        * hash_text,
+                                       oyOBJECT_e          type )
+{
+  oyHash_s * hash = oyCacheListGetEntry_( cache_list, flags, hash_text );
+  oyStruct_s * object = oyHash_GetPointer( hash, type );
+  oyHash_Release( &hash );
+  return object;
+}
 
 
 /* } Include "StructList.public_methods_definitions.c" */
