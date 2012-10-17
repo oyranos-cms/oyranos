@@ -207,8 +207,8 @@ CFILES_OBJECT = \
 	$(GENDIR)oyStruct_s.c \
 	$(GENDIR)oyStructList_s_.c \
 	$(GENDIR)oyStructList_s.c \
-	$(GENDIR)oyranos_object.c \
-	$(GENDIR)oyranos_generic.c
+	$(GENDIR)$(TARGET)_object.c \
+	$(GENDIR)$(TARGET)_generic.c
 CHEADERS_OBJECT_PUBLIC = \
 	$(GENDIR)oyBlob_s.h \
 	$(GENDIR)oyPointer_s.h \
@@ -222,7 +222,7 @@ CHEADERS_OBJECT_PUBLIC = \
 	$(GENDIR)oyStruct_s.h \
 	$(GENDIR)oyStructList_s.h \
 	$(GENDIR)$(TARGET)_object.h \
-	$(GENDIR)oyranos_generic.h
+	$(GENDIR)$(TARGET)_generic.h
 CHEADERS_OBJECT = \
 	$(CHEADERS_OBJECT_PUBLIC) \
 	$(GENDIR)oyBlob_s_.h \
@@ -400,7 +400,7 @@ CHEADERS_OBJECT_IMAGING_PUBLIC = \
 	$(GENDIR)oyConnectorImaging_s.h \
 	$(GENDIR)oyConversion_s.h \
 	$(GENDIR)oyImage_s.h \
-	$(GENDIR)oyPixelAccess_s_.h \
+	$(GENDIR)oyPixelAccess_s.h \
 	$(GENDIR)$(TARGET)_conversion.h \
 	$(GENDIR)$(TARGET)_image.h \
 	$(GENDIR)$(TARGET)_profile.h
@@ -409,7 +409,7 @@ CHEADERS_OBJECT_IMAGING = \
 	$(GENDIR)oyConnectorImaging_s_.h \
 	$(GENDIR)oyConversion_s_.h \
 	$(GENDIR)oyImage_s_.h \
-	$(GENDIR)oyPixelAccess_s.h \
+	$(GENDIR)oyPixelAccess_s_.h \
 	$(GENDIR)$(TARGET)_conversion_internal.h \
 	$(GENDIR)$(TARGET)_image_internal.h \
 	$(CHEADERS_OBJECT_IMAGING_PUBLIC)

@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/16
  */
 
 
@@ -38,7 +38,6 @@ typedef struct oyConnector_s oyConnector_s;
 
 #include "oyStruct_s.h"
 
-#include "oyCMMapi5_s_.h"
 
 
 /* Include "Connector.public.h" { */
