@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/16
  */
 
 
@@ -39,6 +39,7 @@ typedef struct oyFilterSocket_s oyFilterSocket_s;
 #include "oyStruct_s.h"
 
 #include "oyranos_conversion.h"
+#include "oyranos_module.h"
 #include "oyConnector_s.h"
 #include "oyFilterNode_s.h"
 #include "oyFilterPlug_s.h"

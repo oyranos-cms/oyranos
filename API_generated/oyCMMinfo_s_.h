@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/16
  */
 
 
@@ -40,6 +40,7 @@ typedef struct oyCMMinfo_s_ oyCMMinfo_s_;
 #include "oyCMMinfo_s.h"
 
 /* Include "CMMinfo.private.h" { */
+#include "oyranos_module_internal.h"
 
 /* } Include "CMMinfo.private.h" */
 

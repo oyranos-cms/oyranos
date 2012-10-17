@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/16
  */
 
 
@@ -39,7 +39,7 @@ typedef struct oyCMMapi10_s_ oyCMMapi10_s_;
 
 
 
-#include "oyranos_module.h"
+#include "oyranos_module_internal.h"
 #include "oyCMMinfo_s_.h"
 
 #include "oyCMMapi5_s_.h"

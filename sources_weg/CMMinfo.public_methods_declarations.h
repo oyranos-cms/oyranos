@@ -1,3 +1,5 @@
+#include "oyCMMapi_s.h"
+
 OYAPI const char *  OYEXPORT
                    oyCMMinfo_GetCMM  ( oyCMMinfo_s       * info );
 OYAPI const char *  OYEXPORT
@@ -12,5 +14,7 @@ OYAPI int  OYEXPORT
                                      ( oyCMMinfo_s       * info );
 OYAPI oyCMMapi_s * OYEXPORT
                    oyCMMinfo_GetApi  ( oyCMMinfo_s       * info );
+#ifdef ICON_IS_OBJECTIFIED
 OYAPI oyIcon_s * OYEXPORT
                    oyCMMinfo_GetIcon ( oyCMMinfo_s       * info );
+#endif

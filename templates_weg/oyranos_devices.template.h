@@ -65,5 +65,38 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
                                        oyAlloc_f           allocateFunc );
 
 
+/** @struct  oyConfDomain_s
+ *  @brief   a ConfDomain object
+ *  @extends oyStruct_s
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/30 (Oyranos: 0.1.10)
+ *  @date    2009/12/30
+ */
+typedef struct oyConfDomain_s {
+  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CONF_DOMAIN_S */ 
+  oyStruct_Copy_f      copy;           /**< copy function */
+  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s           oy_;            /**< base object */
+} oyConfDomain_s;
+
+OYAPI oyConfDomain_s * OYEXPORT
+           oyConfDomain_FromReg      ( const char        * registration_domain,
+                                       oyObject_s          object );
+OYAPI oyConfDomain_s * OYEXPORT
+           oyConfDomain_Copy         ( oyConfDomain_s    * obj,
+                                       oyObject_s          object );
+OYAPI int  OYEXPORT
+           oyConfDomain_Release      ( oyConfDomain_s    **obj );
+
+OYAPI const char * OYEXPORT
+           oyConfDomain_GetText      ( oyConfDomain_s    * obj,
+                                       const char        * name,
+                                       oyNAME_e            type );
+OYAPI const char ** OYEXPORT
+           oyConfDomain_GetTexts     ( oyConfDomain_s    * obj );
+
+
+
 {% include "cpp_end.h" %}
 #endif /* {{ file_name|underscores|upper|tr:". _" }} */

@@ -21,6 +21,9 @@
 #include "oyranos.h"
 #include "oyranos_internal.h"
 #include "oyranos_monitor.h"
+
+#include "oyRectangle_s.h"
+
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>

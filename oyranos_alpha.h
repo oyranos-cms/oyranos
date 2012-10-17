@@ -22,26 +22,14 @@
 #include "oyranos_conversion.h"
 #include "oyranos_icc.h"
 #include "oyranos_image.h"
-#include "oyranos_module.h"
 #include "oyranos_object.h"
 #include "oyBlob_s.h"
-#include "oyConfigs_s.h"
-#include "oyConnector_s.h"
-#include "oyConversion_s.h"
-#include "oyFilterNode_s.h"
-#include "oyFilterPlug_s.h"
-#include "oyFilterPlugs_s.h"
-#include "oyFilterGraph_s.h"
+#include "oyFilterCore_s.h"
 #include "oyHash_s.h"
 #include "oyName_s.h"
-#include "oyImage_s.h"
 #include "oyObject_s.h"
-#include "oyObserver_s.h"
-#include "oyOption_s.h"
 #include "oyOptions_s.h"
-#include "oyPointer_s.h"
 #include "oyProfile_s.h"
-#include "oyProfiles_s.h"
 #include "oyStruct_s.h"
 #include "oyStructList_s.h"
 
@@ -108,10 +96,6 @@ char   *     oyCMMCacheListPrint_    ( void );
 
 
 
-char   oyFilterRegistrationModify    ( const char        * registration,
-                                       oyFILTER_REG_MODE_e mode,
-                                       char             ** result,
-                                       oyAlloc_f           allocateFunc );
 int          oyRegistrationEraseFromDB(const char        * registration );
 
 
@@ -123,39 +107,6 @@ OYAPI int  OYEXPORT
                                        oyBlob_s          * data );
 
 
-
-
-
-/** @struct  oyConfDomain_s
- *  @brief   a ConfDomain object
- *  @extends oyStruct_s
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/12/30 (Oyranos: 0.1.10)
- *  @date    2009/12/30
- */
-typedef struct oyConfDomain_s {
-  oyOBJECT_e           type_;          /**< struct type oyOBJECT_CONF_DOMAIN_S */ 
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< base object */
-} oyConfDomain_s;
-
-OYAPI oyConfDomain_s * OYEXPORT
-           oyConfDomain_FromReg      ( const char        * registration_domain,
-                                       oyObject_s          object );
-OYAPI oyConfDomain_s * OYEXPORT
-           oyConfDomain_Copy         ( oyConfDomain_s    * obj,
-                                       oyObject_s          object );
-OYAPI int  OYEXPORT
-           oyConfDomain_Release      ( oyConfDomain_s    **obj );
-
-OYAPI const char * OYEXPORT
-           oyConfDomain_GetText      ( oyConfDomain_s    * obj,
-                                       const char        * name,
-                                       oyNAME_e            type );
-OYAPI const char ** OYEXPORT
-           oyConfDomain_GetTexts     ( oyConfDomain_s    * obj );
 
 
 /** @typedef oyIO_t

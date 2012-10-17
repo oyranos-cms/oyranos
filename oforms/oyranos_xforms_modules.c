@@ -5,8 +5,11 @@
 #include <oyranos_debug.h>
 #include <oyranos_helper.h>
 #include <oyranos_i18n.h>
-#include "oyranos_string.h"
+#include <oyranos_string.h>
 #include <oyranos_texts.h>
+
+#include <oyFilterNode_s.h>
+
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>

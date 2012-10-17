@@ -18,6 +18,7 @@
  */
 
 #include "oyConversion_s.h"
+#include "oyProfiles_s.h"
 
 #include "oyranos.h"
 #include "oyranos_debug.h"

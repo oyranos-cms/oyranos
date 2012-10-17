@@ -2,7 +2,7 @@
 
 {% block LocalIncludeFiles %}
 {{ block.super }}
-#include "oyranos_module.h"
+#include "oyranos_module_internal.h"
 {% endblock %}
 
 {% block ChildMembers %}

@@ -14,6 +14,7 @@
 
 #include <oyranos.h>
 #include <oyConversion_s.h>
+#include <oyObject_s.h>
 #include "oyranos_display_helpers.h"
 
 int oy_display_verbose = 0;

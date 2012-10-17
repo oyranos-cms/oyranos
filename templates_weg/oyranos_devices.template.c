@@ -12,7 +12,6 @@
 #include <oyranos_helper.h>
 #include <oyranos_icc.h>
 
-#include "oyranos_alpha.h"
 #include "oyranos_devices.h"
 #include "oyranos_devices_internal.h"
 #include "oyranos_object_internal.h"
