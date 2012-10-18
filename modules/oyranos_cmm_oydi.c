@@ -302,7 +302,9 @@ int oydiFilterSocket_SetWindowRegion ( oyPixelAccess_s   * ticket,
     oyRectangle_Release( &old_window_rectangle );
   } else
     oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket,
-         OY_DBG_FORMAT_"no window_id/display_id image tags found",OY_DBG_ARGS_);
+              OY_DBG_FORMAT_"no window_id/display_id image tags found image:%d",
+              OY_DBG_ARGS_,
+              oyStruct_GetId((oyStruct_s*)image) );
 # endif
 
   return error;
@@ -364,7 +366,6 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
                                  "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
   o = oyOptions_Find( image_tags, "display_name" );
-  o = oyOption_Copy( o, 0 );
   oyOptions_MoveIn( options, &o, -1 );
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   oyOptions_Release( &options );
@@ -535,7 +536,6 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
   image = (oyImage_s*)oyFilterSocket_GetData( socket );
   image_input = oyFilterPlug_ResolveImage( plug, socket, ticket );
-  image_tags = oyImage_GetTags( image );
 
   if(!image_input)
   {
@@ -640,7 +640,12 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
     /* look for our requisites */
     rectangles = oyFilterGraph_GetNode( display_graph, -1, "//" OY_TYPE_STD "/rectangles", ID );
+    if(!rectangles)
+        oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket,
+        OY_DBG_FORMAT_"Could not obtain \"rectangles\" option %s",
+                 OY_DBG_ARGS_, oyNoEmptyString_m_(ID) );
     rectangles_options = oyFilterNode_GetOptions( rectangles, 0 );
+    
 
     /* get cached devices */
     devices = (oyConfigs_s*)oyOptions_GetType( node_options, -1, 
@@ -676,8 +681,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
                                                oyOBJECT_RECTANGLE_S );
 
       /* get display rectangle to project into */
-      if(image)
-        o = oyOptions_Find( image_tags, "display_rectangle" );
+      image_tags = oyImage_GetTags( image );
+      o = oyOptions_Find( image_tags, "display_rectangle" );
       display_rectangle = (oyRectangle_s *) oyOption_GetStruct( o, oyOBJECT_RECTANGLE_S );
       oyOption_Release( &o );
 
@@ -759,7 +764,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
 
     /* make the graph flow: process the upstream "rectangles" node */
-    l_result = oyFilterNode_Run( node, 0, ticket );
+    plug = oyFilterNode_GetPlug( node, 0 );
+    l_result = oyFilterNode_Run( node, plug, ticket );
     if(l_result > 0 || result == 0) result = l_result;
   }
 
