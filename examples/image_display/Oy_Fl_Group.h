@@ -9,6 +9,11 @@
 #include "Oy_Fl_Double_Window.h"
 #include "oyranos_display_helpers.h"
 
+extern "C" {
+void               oyShowConversion_ ( oyConversion_s    * conversion,
+                                       uint32_t            flags );
+}
+
 class Oy_Fl_Group : public Fl_Group
 {
   Fl_Offscreen off;
