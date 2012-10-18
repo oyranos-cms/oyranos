@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/16
+ *  @date     2012/10/18
  */
 
 
@@ -2040,6 +2040,9 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
 /** Function  oyFilterNode_GetOptions
  *  @memberof oyFilterNode_s
  *  @brief    Get filter options
+ *
+ *  Options are typical user visible settings, which can be presistently stored
+ *  as user preferences and can be displayed in filter dialogs.
  *
  *  @param[in,out] node                filter object
  *  @param         flags               see oyOptions_s::oyOptions_ForFilter()

@@ -2026,6 +2026,9 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
  *  @memberof oyFilterNode_s
  *  @brief    Get filter options
  *
+ *  Options are typical user visible settings, which can be presistently stored
+ *  as user preferences and can be displayed in filter dialogs.
+ *
  *  @param[in,out] node                filter object
  *  @param         flags               see oyOptions_s::oyOptions_ForFilter()
  *  @return                            the options

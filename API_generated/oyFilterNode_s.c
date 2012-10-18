@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/18
  */
 
 
@@ -1350,6 +1350,9 @@ OYAPI int  OYEXPORT
  *  @memberof oyFilterNode_s
  *  @brief    Get filter tags
  *
+ *  Tags are non persistent informations. Typical they are not directly user 
+ *  visible other than filter core options, which can appear inside dialogs.
+ *
  *  @param[in,out] node                filter object
  *  @return                            the tags
  *
@@ -1366,6 +1369,9 @@ OYAPI oyOptions_s *  OYEXPORT
     return 0;
 
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
+
+  if(!s->tags)
+    s->tags = oyOptions_New( 0 );
 
   return oyOptions_Copy( s->tags, 0 );
 }
