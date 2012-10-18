@@ -1416,7 +1416,7 @@ install_bin:	all oforms install_gui
 		$(RANLIB) "$(DESTDIR)$(cmmdir)/lib$${lib}.a" \
 		) || a=1; \
 	done
-	test -d "$(DESTDIR)$(includedir)/$(TARGET)/alpha/object" || mkdir -p "$(DESTDIR)$(includedir)/$(TARGET)/alpha/object"
+	test -d "$(DESTDIR)$(includedir)/$(TARGET)/alpha" || mkdir -p "$(DESTDIR)$(includedir)/$(TARGET)/alpha"
 	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET).h" "$(DESTDIR)$(includedir)/$(TARGET)"
 	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)_types.h" "$(DESTDIR)$(includedir)/$(TARGET)"
 	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)_alpha.h" "$(DESTDIR)$(includedir)/$(TARGET)/alpha"
