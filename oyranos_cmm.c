@@ -87,8 +87,8 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
 
   width = oyImage_GetWidth(output_image);
 
-  x_pix = oyPixelAccess_GetStart(ticket,1) * width;
-  y_pix = oyPixelAccess_GetStart(ticket,0) * width;
+  x_pix = oyPixelAccess_GetStart(ticket,0) * width;
+  y_pix = oyPixelAccess_GetStart(ticket,1) * width;
 
   {
     char * t = 0;
