@@ -1337,6 +1337,7 @@ int    oyImage_FromFile              ( const char        * file_name,
   /* add a new option with the appropriate value */
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
                                  file_name, OY_CREATE_NEW );
+  DBGs_NUM1_S(in, "set //" OY_TYPE_STD "/file_read/filename to %s", file_name);
   /* release the options object, this means its not any more refered from here*/
   oyOptions_Release( &options );
 
