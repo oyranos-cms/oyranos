@@ -765,7 +765,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
     /* make the graph flow: process the upstream "rectangles" node */
     plug = oyFilterNode_GetPlug( node, 0 );
-    l_result = oyFilterNode_Run( node, plug, ticket );
+    l_result = oyFilterNode_Run( rectangles, plug, ticket );
     if(l_result > 0 || result == 0) result = l_result;
   }
 
