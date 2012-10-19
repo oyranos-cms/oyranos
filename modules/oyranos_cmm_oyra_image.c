@@ -112,9 +112,9 @@ int      oyraFilterPlug_ImageWriteRun (
     int run = -1;
 
     {
-      oyOptions_s * tags = oyFilterNode_GetTags( node );
-      filename = oyOptions_FindString( tags, "filename", 0 );
-      oyOptions_Release( &tags );
+      oyOptions_s * opts = oyFilterNode_GetOptions( node, 0 );
+      filename = oyOptions_FindString( opts, "filename", 0 );
+      oyOptions_Release( &opts );
     }
     if(filename)
     {
@@ -474,9 +474,9 @@ int      oyraFilterPlug_ImageLoadRun (
     char * file_ext = 0;
 
     {
-      oyOptions_s * tags = oyFilterNode_GetTags( node );
-      filename = oyOptions_FindString( tags, "filename", 0 );
-      oyOptions_Release( &tags );
+      oyOptions_s * opts = oyFilterNode_GetOptions( node, 0 );
+      filename = oyOptions_FindString( opts, "filename", 0 );
+      oyOptions_Release( &opts );
     }
     if(filename)
     {
@@ -810,7 +810,7 @@ int      oyraFilterPlug_ImageRectanglesRun (
   oyOption_s * o = 0;
   oyOptions_s * node_opts = 0;
   oyRectangle_s * r;
-  oyRectangle_s_ array_pix = {oyOBJECT_RECTANGLE_S,0,0,0};
+  oyRectangle_s_ array_pix = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
 
   oyPixelAccess_s * new_ticket = 0;
   int dirty = 0;

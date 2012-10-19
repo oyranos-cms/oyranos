@@ -536,9 +536,9 @@ int      oyraFilterPlug_ImageInputPPMRun (
 
   if(error <= 0)
   {
-    tags = oyFilterNode_GetTags( node );
-    filename = oyOptions_FindString( tags, "filename", 0 );
-    oyOptions_Release( &tags );
+    oyOptions_s * opts = oyFilterNode_GetOptions( node ,0 );
+    filename = oyOptions_FindString( opts, "filename", 0 );
+    oyOptions_Release( &opts );
   }
 
   if(filename)
@@ -971,6 +971,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
                                  "//" OY_TYPE_STD "/input_ppm.file_read"
                                                                     "/filename",
                                  filename, OY_CREATE_NEW );
+  oyOptions_Release( &tags );
 
   if(error <= 0)
   {

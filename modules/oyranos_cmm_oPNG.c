@@ -957,7 +957,6 @@ int      oPNGFilterPlug_ImageInputPNGRun (
   int error = 0;
   oyImage_s * image_in = 0,
             * output_image = 0;
-  oyOptions_s * tags = 0;
 
   /* file variables */
   const char * filename = 0;
@@ -992,9 +991,9 @@ int      oPNGFilterPlug_ImageInputPNGRun (
 
   if(error <= 0)
   {
-    tags = oyFilterNode_GetTags( node );
-    filename = oyOptions_FindString( tags, "filename", 0 );
-    oyOptions_Release( &tags );
+    oyOptions_s * opts = oyFilterNode_GetOptions( node, 0 );
+    filename = oyOptions_FindString( opts, "filename", 0 );
+    oyOptions_Release( &opts );
   }
 
   image_in = oyImage_FromPNG( filename, (oyStruct_s*)node );
