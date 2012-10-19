@@ -375,7 +375,6 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
                                     "display_rectangle", oyOBJECT_RECTANGLE_S );
       oyRectangle_SetGeo( disp_rectangle, X,Y,W,H );
 
-      oyOptions_Release( &image_tags );
 
       node_out = oyConversion_GetNode( context, OY_OUTPUT );
       ticket_roi = oyPixelAccess_GetOutputROI( ticket );
@@ -408,6 +407,11 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
         oyPixelAccess_SetOldStart(ticket,1, oyPixelAccess_GetStart(ticket,1));
       } else
         result = -1;
+
+      oyFilterNode_Release( &node_out );
+      oyOptions_Release( &image_tags );
+      oyRectangle_Release( &disp_rectangle );
+      oyRectangle_Release( &ticket_roi );
     }
 
   if(oy_debug)
