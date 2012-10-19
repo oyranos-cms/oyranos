@@ -476,12 +476,12 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   int error;
   oyArray2d_s_ * a = (oyArray2d_s_*) *array;
   oyImage_s_ * s = (oyImage_s_*)image;
-  oyRectangle_s_ image_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0},
-                r = {oyOBJECT_RECTANGLE_S,0,0,0};
+  oyRectangle_s_ image_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
+                r = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
   oyDATATYPE_e data_type = oyUINT8;
   int is_allocated = 0;
   int data_size, ay;
-  oyRectangle_s_ array_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0};
+  oyRectangle_s_ array_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
   int array_width, array_height;
   oyAlloc_f allocateFunc_ = 0;
   unsigned char * line_data = 0;
