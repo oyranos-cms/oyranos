@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/20
  */
 
 
@@ -58,7 +58,7 @@ void oyArray2d_Release__Members( oyArray2d_s_ * array2d )
   /* Deallocate members here
    * E.g: oyXXX_Release( &array2d->member );
    */
-  oyArray2d_ReleaseArray( (oyArray2d_s*)array2d );
+  oyArray2d_ReleaseArray_( (oyArray2d_s*)array2d );
 
   if(array2d->oy_->deallocateFunc_)
   {
@@ -332,6 +332,36 @@ int oyArray2d_Release_( oyArray2d_s_ **array2d )
 
 
 /* Include "Array2d.private_methods_definitions.c" { */
+/** Function  oyArray2d_Init_
+ *  @memberof oyArray2d_s
+ *  @brief    Initialise Array
+ *
+ *  @version  Oyranos: 0.9.0
+ *  @since    2012/10/20 (Oyranos: 0.9.0)
+ *  @date     2012/10/20
+ */
+int                oyArray2d_Init_   ( oyArray2d_s_      * s,
+                                       int                 width,
+                                       int                 height,
+                                       oyDATATYPE_e        data_type )
+{
+  int error = !(width || height);
+  if(error <= 0)
+  {
+    int y_len = sizeof(unsigned char *) * (height + 1);
+
+    s->width = width;
+    s->height = height;
+    s->t = data_type;
+    s->data_area.type_ = oyOBJECT_RECTANGLE_S;
+    oyRectangle_SetGeo( (oyRectangle_s*)&s->data_area, 0,0, width, height );
+    s->array2d = s->oy_->allocateFunc_( y_len );
+    error = !memset( s->array2d, 0, y_len );
+    s->own_lines = oyNO;
+  }
+  return error;
+}
+
 /** Function  oyArray2d_Create_
  *  @memberof oyArray2d_s
  *  @brief    Allocate and initialise a oyArray2d_s object widthout pixel
@@ -358,21 +388,52 @@ oyArray2d_s_ *
 
   if(error <= 0)
   {
-    int y_len = sizeof(unsigned char *) * (height + 1);
-
-    s->width = width;
-    s->height = height;
-    s->t = data_type;
-    s->data_area.type_ = oyOBJECT_RECTANGLE_S;
-    oyRectangle_SetGeo( (oyRectangle_s*)&s->data_area, 0,0, width, height );
-    s->array2d = s->oy_->allocateFunc_( y_len );
-    error = !memset( s->array2d, 0, y_len );
-    s->own_lines = oyNO;
+    error = oyArray2d_Init_( s, width, height, data_type );
   }
 
   return s;
 }
 
+/** Function  oyArray2d_ReleaseArray_
+ *  @memberof oyArray2d_s
+ *  @brief    Release Array2d::array member
+ *
+ *  @param[in,out] obj                 struct object
+ *
+ *  @version Oyranos: 0.1.11
+ *  @since   2010/09/07 (Oyranos: 0.1.11)
+ *  @date    2010/09/07
+ */
+int          oyArray2d_ReleaseArray_ ( oyArray2d_s       * obj )
+{
+  int error = 0;
+  oyArray2d_s_ * s = (oyArray2d_s_*)obj;
+
+  if(s && s->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+    int y, y_max = s->data_area.height + s->data_area.y;
+    size_t dsize = oySizeofDatatype( s->t );
+
+    if(oy_debug > 3)
+      oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)s,
+                       OY_DBG_FORMAT_ "s->data_area: %s", OY_DBG_ARGS_,
+                       oyRectangle_Show((oyRectangle_s*)&s->data_area) );
+
+    for( y = s->data_area.y; y < y_max; ++y )
+    {
+      if((s->own_lines == 1 && y == s->data_area.y) ||
+         s->own_lines == 2)
+        deallocateFunc( &s->array2d[y][dsize * (int)s->data_area.x] );
+      s->array2d[y] = 0;
+    }
+    deallocateFunc( s->array2d + (size_t)s->data_area.y );
+    s->array2d = 0;
+  }
+
+  return error;
+}
+ 
 /** Function  oyArray2d_ToPPM_
  *  @memberof oyArray2d_s
  *  @brief    Dump array to a netppm file 

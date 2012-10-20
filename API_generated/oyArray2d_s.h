@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/11
+ *  @date     2012/10/20
  */
 
 
@@ -134,13 +134,16 @@ OYAPI oyArray2d_s * OYEXPORT
                                        int                 height,
                                        oyDATATYPE_e        type,
                                        oyObject_s          object );
+OYAPI int OYEXPORT
+                 oyArray2d_Reset     ( oyArray2d_s       * array,
+                                       int                 width,
+                                       int                 height,
+                                       oyDATATYPE_e        data_type );
 OYAPI oyPointer  OYEXPORT
                  oyArray2d_GetData   ( oyArray2d_s       * obj );
 OYAPI int  OYEXPORT
                  oyArray2d_SetData   ( oyArray2d_s       * obj,
                                        oyPointer           data );
-OYAPI int  OYEXPORT
-               oyArray2d_ReleaseArray( oyArray2d_s       * obj );
 OYAPI int  OYEXPORT
                  oyArray2d_SetRows   ( oyArray2d_s       * obj,
                                        oyPointer         * rows,

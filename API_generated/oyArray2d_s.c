@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/11
+ *  @date     2012/10/20
  */
 
 
@@ -285,46 +285,6 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function  oyArray2d_ReleaseArray
- *  @memberof oyArray2d_s
- *  @brief    Release Array2d::array member
- *
- *  @param[in,out] obj                 struct object
- *
- *  @version Oyranos: 0.1.11
- *  @since   2010/09/07 (Oyranos: 0.1.11)
- *  @date    2010/09/07
- */
-int            oyArray2d_ReleaseArray( oyArray2d_s       * obj )
-{
-  int error = 0;
-  oyArray2d_s_ * s = (oyArray2d_s_*)obj;
-
-  if(s && s->oy_->deallocateFunc_)
-  {
-    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-    int y, y_max = s->data_area.height + s->data_area.y;
-    size_t dsize = oySizeofDatatype( s->t );
-
-    if(oy_debug > 3)
-      oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)s,
-                       OY_DBG_FORMAT_ "s->data_area: %s", OY_DBG_ARGS_,
-                       oyRectangle_Show((oyRectangle_s*)&s->data_area) );
-
-    for( y = s->data_area.y; y < y_max; ++y )
-    {
-      if((s->own_lines == 1 && y == s->data_area.y) ||
-         s->own_lines == 2)
-        deallocateFunc( &s->array2d[y][dsize * (int)s->data_area.x] );
-      s->array2d[y] = 0;
-    }
-    deallocateFunc( s->array2d + (size_t)s->data_area.y );
-    s->array2d = 0;
-  }
-
-  return error;
-}
- 
 /** Function  oyArray2d_SetRows
  *  @memberof oyArray2d_s
  *  @brief    Set the data and (re-)initialise the object
@@ -365,7 +325,7 @@ OYAPI int  OYEXPORT
 
     size = s->width * oySizeofDatatype( s->t );
 
-    oyArray2d_ReleaseArray( (oyArray2d_s*)s );
+    oyArray2d_ReleaseArray_( (oyArray2d_s*)s );
 
     /* allocate the base array */
     oyAllocHelper_m_( s->array2d, unsigned char *, s->height+1, allocateFunc_,
@@ -454,6 +414,51 @@ int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
     a->height = array_roi_pix->height;
   } else
     error = 1;
+
+  return error;
+}
+
+/** Function  oyArray2d_Reset
+ *  @memberof oyArray2d_s
+ *  @brief    Reinitialise Array
+ *
+ *  @version  Oyranos: 0.9.0
+ *  @since    2012/10/20 (Oyranos: 0.9.0)
+ *  @date     2012/10/20
+ */
+OYAPI int OYEXPORT
+                 oyArray2d_Reset     ( oyArray2d_s       * array,
+                                       int                 width,
+                                       int                 height,
+                                       oyDATATYPE_e        data_type )
+{
+  oyArray2d_s_ * s = (oyArray2d_s_*)array;
+  int error = 0;
+  int y_len = sizeof(unsigned char *) * (height + 1);
+
+  if(!data_type)
+    return 1;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_ARRAY2D_S, return 1 )
+
+  if(!width || !height)
+    return 1;
+
+  error = oyArray2d_ReleaseArray_( (oyArray2d_s*)s );
+  /* allocate the base array */
+  oyAllocHelper_m_( s->array2d, unsigned char *, height+1,
+                    s->oy_->allocateFunc_,
+                    error = 1; return 1 );
+  if(error <= 0)
+    error = !memset( s->array2d, 0, y_len );
+
+  if(error <= 0)
+  {
+    error = oyArray2d_Init_( s, width, height, data_type );
+  }
 
   return error;
 }
