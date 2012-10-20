@@ -800,10 +800,6 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   png_init_io( png_ptr, fp );
   png_read_info( png_ptr, info_ptr );
 
-  num_passes = png_set_interlace_handling( png_ptr );
-  /* update after all the above changes to the png structures */
-  png_read_update_info( png_ptr, info_ptr );
-
   width = png_get_image_width( png_ptr, info_ptr );
   height = png_get_image_height( png_ptr, info_ptr );
   bitps = png_get_bit_depth( png_ptr, info_ptr );
@@ -851,6 +847,10 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
              OY_DBG_FORMAT_ " color_type: %d width: %d spp:%d channels: %d",
              OY_DBG_ARGS_, color_type, width, spp,oyToChannels_m(pixel_layout));
 
+  num_passes = png_set_interlace_handling( png_ptr );
+  /* update after all the above changes to the png structures */
+  png_read_update_info( png_ptr, info_ptr );
+
   {
 #if defined(PNG_iCCP_SUPPORTED)
     png_charp name = 0;
@@ -883,17 +883,11 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
                                         height,
                                         oyToDataType_m(pixel_layout),
                                         0 );
-    oyPointer * array2d = (oyPointer*) oyArray2d_GetData( a );
+    png_byte ** array2d = (png_byte**) oyArray2d_GetData( a );
     int i;
 
     for( i = 0; i < num_passes; ++i )
-#if 0
-      /* sequential reading */
-      for( y = 0; y < height; ++y )
-        png_read_rows( png_ptr, &a->array2d[y], NULL, 1 );
-#else
-      png_read_row( png_ptr, array2d[0], NULL );
-#endif
+      png_read_rows( png_ptr, array2d, NULL, height );
 
     oyImage_SetData ( image_in, (oyStruct_s**) &a, 0,0,0,0,0,0 );
   }
