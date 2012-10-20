@@ -890,6 +890,7 @@ int      oyraFilterPlug_ImageRectanglesRun (
                              new_ticket_roi, 0,
                              &new_ticket_array, new_ticket_roi,
                              0 );
+          oyPixelAccess_SetArray( new_ticket, new_ticket_array );
         }
 
         /* start new call into branch */
