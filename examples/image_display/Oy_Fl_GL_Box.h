@@ -101,9 +101,10 @@ private:
         {
           oyImage_Release( &draw_image );
           if(oy_debug)
-            fprintf(stderr, "%s:%d %s() return after result:%d ======  %lu ==========================\n", 
+            fprintf(stderr, "%s:%d %s() return after result:%d ======  %lu ==========================\n0x%tx\n", 
                   strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
-                  __LINE__, __func__,result, (long unsigned)draw_image);
+                  __LINE__, __func__,result, (long unsigned)draw_image,
+                  (intptr_t)frame_data);
           return;
         }
         --need_redraw;

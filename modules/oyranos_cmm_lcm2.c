@@ -2174,8 +2174,9 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
     if(oy_debug > 1)
       lcm2_msg( oyMSG_DBG,(oyStruct_s*)ticket, OY_DBG_FORMAT_
-             " threads_n: %d",
-             OY_DBG_ARGS_, threads_n );
+             " threads_n: %d array_in_data: "OY_PRINT_POINTER
+             " array_out_data: "OY_PRINT_POINTER,
+             OY_DBG_ARGS_, threads_n, array_in_data, array_out_data );
 
     if(!(data_type_in == oyUINT8 ||
          data_type_in == oyUINT16 ||
