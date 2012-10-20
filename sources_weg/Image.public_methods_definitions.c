@@ -462,9 +462,9 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
  *                                     The unit is relative to the image.
  *  @param[in]     obj                 the optional user object
  *
- *  @version Oyranos: 0.3.0
+ *  @version Oyranos: 0.9.0
+ *  @date    2012/10/20
  *  @since   2008/10/02 (Oyranos: 0.1.8)
- *  @date    2011/05/02
  */
 int            oyImage_FillArray     ( oyImage_s         * image,
                                        oyRectangle_s     * rectangle,
@@ -526,16 +526,22 @@ int            oyImage_FillArray     ( oyImage_s         * image,
      array_width > 0 && array_height > 0
     )
   {
-    oyArray2d_Release( array );
     if(!(array_roi_pix.width && array_roi_pix.height))
       /* array creation is not possible */
       error = -1;
 
     if(!error)
     {
-      a = oyArray2d_Create_( array_width, array_height,
-                             data_type, obj );
+      if(!a)
+      {
+        a = oyArray2d_Create_( array_width, array_height, data_type, obj );
+      
+      } else
+        error = oyArray2d_Reset( *array, array_width, array_height, data_type );
+    }
 
+    if(!error)
+    {
       if(a->oy_)
         allocateFunc_ = a->oy_->allocateFunc_;
 
