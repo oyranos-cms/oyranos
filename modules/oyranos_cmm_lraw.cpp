@@ -597,9 +597,9 @@ int      lrawFilterPlug_ImageInputRAWRun (
 
   if(error <= 0)
     {
-      oyOptions_s * tags = oyFilterNode_GetTags( node );
-      filename = oyOptions_FindString( tags, "filename", 0 );
-      oyOptions_Release( &tags );
+      oyOptions_s * opts = oyFilterNode_GetOptions( node, 0 );
+      filename = oyOptions_FindString( opts, "filename", 0 );
+      oyOptions_Release( &opts );
     }
 
   if(filename)
