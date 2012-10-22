@@ -1,11 +1,6 @@
 #ifndef Oy_Fl_Shader_Box_H
 #define Oy_Fl_Shader_Box_H
 
-extern "C" {
-int              oyArray2d_ToPPM_    ( oyArray2d_s       * array,
-                                       const char        * file_name );
-    int oyImage_WritePPM( oyImage_s *, const char * , const char * );
-}
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -227,11 +222,12 @@ private:
     oyOptions_Release( &tags );
 
     if(oy_display_verbose)
-      fprintf( stderr,_DBG_FORMAT_"%dx%d+%d+%d %dx%d+%d+%d %dx%d\n",_DBG_ARGS_,
+      fprintf( stderr,_DBG_FORMAT_"%dx%d+%d+%d %dx%d+%d+%d %dx%d %s\n",
+        _DBG_ARGS_,
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
         Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
         Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y(),
-        w_,h_);
+        w_,h_, oyDatatypeToText(data_type));
 
     cc = oyConversion_FromImageForDisplay( image, display_image,
                          0, 0, data_type, "", 0, 0 );
@@ -247,15 +243,52 @@ private:
 
     // glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB16F_ARB, w_, h_,
     // glTexImage2D (GL_TEXTURE_2D, 0, GL_LUMINANCE8, w_, h_,
-    glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB16, w_, h_,
-		  0, GL_RGB, GL_UNSIGNED_SHORT, NULL);
+
+    int channels = oyToChannels_m( pt );
+    int gl_channels = 0;
+    if(channels == 3)
+      gl_channels = GL_RGB;
+    if(channels == 4)
+      gl_channels = GL_RGBA;
+
+    int gl_data_type = 0;
+    int gl_type = 0;
+    if(data_type == oyUINT16)
+    {
+      gl_data_type = GL_UNSIGNED_SHORT;
+      if(channels == 3)
+        gl_type = GL_RGB16;
+      if(channels == 4)
+        gl_type = GL_RGBA16;
+    } else if(data_type == oyUINT8)
+    {
+      gl_data_type = GL_UNSIGNED_BYTE;
+      if(channels == 3)
+        gl_type = GL_RGB8;
+      if(channels == 4)
+        gl_type = GL_RGBA8;
+    } else
+      fprintf( stderr,_DBG_FORMAT_"%dx%d+%d+%d %dx%d+%d+%d %dx%d not supported %s\n",
+        _DBG_ARGS_,
+        W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
+        Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
+        Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y(),
+        w_,h_, oyDatatypeToText(data_type));
+
+    if(oy_display_verbose)
+      fprintf( stderr,_DBG_FORMAT_"%dx%d %s %d %d %d %d %d %d\n", _DBG_ARGS_,
+        w_,h_, oyDatatypeToText(data_type),
+        GL_RGB16, gl_type, GL_UNSIGNED_SHORT, gl_data_type, GL_RGB, gl_channels);
+
+    glTexImage2D (GL_TEXTURE_2D, 0, gl_type, w_, h_,
+		  0, gl_channels, gl_data_type, NULL);
 
     /* size may be too big */
     check_error("glTexImage2D failed (image too large?)");
 
     disp_img = oyImage_GetPointF( display_image )( display_image, 0,0, 0, 0 );
     glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, w_, h_,
-		     GL_RGB, GL_UNSIGNED_SHORT, disp_img);
+		     gl_channels, gl_data_type, disp_img);
     if(0&&oy_display_verbose)
       oyImage_ToFile( display_image, "display_image.ppm", 0 );
   }
@@ -327,25 +360,24 @@ private:
     oyImage_s * draw_image = 0;
     if(conversion())
     {
-      int sample_size;
       oyPixel_t pt;
-      int channels = 0;
       oyDATATYPE_e data_type = oyUINT8;
-      int gl_type = 0;
 
       pt = oyImage_GetPixelLayout( display_image, oyLAYOUT );
       data_type = oyToDataType_m( pt );
-      sample_size = oySizeofDatatype( data_type );
 
       int result = drawPrepare( &draw_image, data_type, 1 );
 
       pt = oyImage_GetPixelLayout( draw_image, oyLAYOUT );
-      channels = oyToChannels_m( pt );
 
+#if 0
+      int channels = oyToChannels_m( pt );
+      int gl_type = 0;
       if(channels == 3)
         gl_type = GL_RGB;
       if(channels == 4)
         gl_type = GL_RGBA;
+#endif
 
       if(oy_display_verbose && draw_image)
         fprintf(stdout, _DBG_FORMAT_"pixellayout: %d width: %d channels: %d\n",
