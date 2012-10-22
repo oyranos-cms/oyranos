@@ -6,7 +6,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/fl_draw.H>
 
-#include "Oy_Fl_Double_Window.h"
+#include "Oy_Fl_Window_Base.h"
 #include "oyranos_display_helpers.h"
 
 extern "C" {
