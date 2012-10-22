@@ -76,7 +76,7 @@ int       oyImage_SetArray2dPointContinous (
              + image_->layout_[oyCHAN0+channel])
             * image_->layout_[oyDATA_SIZE];
   oyDATATYPE_e data_type = oyToDataType_m( image_->layout_[oyLAYOUT] );
-  int byteps = oySizeofDatatype( data_type );
+  int byteps = oyDataTypeGetSize( data_type );
   int channels = 1;
 
   if(channel < 0)
@@ -108,7 +108,7 @@ int       oyImage_SetArray2dLineContinous (
   oyArray2d_s_ * a = (oyArray2d_s_*) image_->pixel_data;
   unsigned char ** array2d = a->array2d;
   oyDATATYPE_e data_type = oyToDataType_m( image_->layout_[oyLAYOUT] );
-  int byteps = oySizeofDatatype( data_type );
+  int byteps = oyDataTypeGetSize( data_type );
   int channels = 1;
   int offset = point_x;
 
@@ -500,7 +500,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   }
 
   data_type = oyToDataType_m( s->layout_[oyLAYOUT] );
-  data_size = oySizeofDatatype( data_type );
+  data_size = oyDataTypeGetSize( data_type );
   error = oyImage_PixelsToSamples( image, rectangle,
                                    (oyRectangle_s*)&image_roi_pix );
 
@@ -700,7 +700,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
 
   data_type = oyToDataType_m( s->layout_[oyLAYOUT] );
-  bps = oySizeofDatatype( data_type );
+  bps = oyDataTypeGetSize( data_type );
   channel_n = s->layout_[oyCHANS];
 
   error = oyImage_PixelsToSamples( image, image_rectangle,
@@ -809,7 +809,7 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       int channels = oyToChannels_m( s->layout_[oyLAYOUT] );
       oyDATATYPE_e data_type = oyToDataType_m( s->layout_[oyLAYOUT] );
       int alpha = channels - cchan_n;
-      int byteps = oySizeofDatatype( data_type );
+      int byteps = oyDataTypeGetSize( data_type );
       const char * colourspacename = oyProfile_GetText( s->profile_,
                                                         oyNAME_DESCRIPTION );
       char * vs = oyVersionString(1,malloc);

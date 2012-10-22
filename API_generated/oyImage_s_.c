@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/22
  */
 
 
@@ -363,7 +363,7 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
   oyPixel_t *mask = image->oy_->allocateFunc_( sizeof(oyPixel_t*) * (oyCHAN0 + 
                     OY_MAX(n,cchan_n) + 1));
   int error = !mask;
-  int so = oySizeofDatatype( t );
+  int so = oyDataTypeGetSize( t );
   int w = image->width;
   int h = image->height;
   int i;
@@ -458,7 +458,7 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
     hashTextAdd_m( text );
   }
   oySprintf_( text, "    <sample_type value=\"%s[%dByte]\" />\n",
-                    oyDatatypeToText(t), so );
+                    oyDataTypeToText(t), so );
   hashTextAdd_m( text );
   oySprintf_( text, "  </oyImage_s>");
   hashTextAdd_m( text );

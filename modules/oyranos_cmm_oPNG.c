@@ -212,7 +212,7 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
   oyDATATYPE_e data_type = oyToDataType_m( pixel_layout );
   int alpha = channels_n - cchan_n;
   int colour = PNG_COLOR_TYPE_GRAY;
-  int byteps = oySizeofDatatype( data_type );
+  int byteps = oyDataTypeGetSize( data_type );
   png_text text_ptr[2];
   time_t ttime;
   png_time png_time_data;

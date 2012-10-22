@@ -26,6 +26,9 @@ typedef enum oyDATATYPE_e {
   oyDOUBLE     /*!< IEEE double precission floating point number */
 } oyDATATYPE_e;
 
+size_t             oyDataTypeGetSize ( oyDATATYPE_e        data_type ); 
+const char *       oyDataTypeToText  ( oyDATATYPE_e        data_type );
+
 /** @enum    oyCHANNELTYPE_e
  *  @brief   channels types
  *  @ingroup objects_image

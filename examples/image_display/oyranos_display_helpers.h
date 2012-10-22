@@ -16,6 +16,7 @@
 #define oyranos_display_helpers_h
 
 #include <oyConversion_s.h>
+#include <oyranos_image.h>
 
 extern int oy_display_verbose;
 
@@ -60,9 +61,6 @@ oyProfile_s * getEditingProfile      ( );
 #define _(text) text
 #endif
 
-
-extern "C" {
-const char *   oyDatatypeToText      ( oyDATATYPE_e        t); }
 
 #ifndef OY_MIN
 #define OY_MIN(a,b)    (((a) <= (b)) ? (a) : (b))

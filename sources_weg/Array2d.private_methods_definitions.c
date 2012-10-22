@@ -79,7 +79,7 @@ int          oyArray2d_ReleaseArray_ ( oyArray2d_s       * obj )
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
     int y, y_max = s->data_area.height + s->data_area.y;
-    size_t dsize = oySizeofDatatype( s->t );
+    size_t dsize = oyDataTypeGetSize( s->t );
 
     if(oy_debug > 3)
       oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)s,
@@ -136,7 +136,7 @@ int              oyArray2d_ToPPM_    ( oyArray2d_s_      * array,
       return 1;
     }
 
-    byteps = oySizeofDatatype(s->t); /* byte per sample */
+    byteps = oyDataTypeGetSize(s->t); /* byte per sample */
     size = s->width * s->height * byteps;
     buf = oyAllocateFunc_(size + 1024);
 

@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/15
+ *  @date     2012/10/22
  */
 
 
@@ -26,9 +26,6 @@
 
 
 #include "oyranos_image.h"
-
-int                oySizeofDatatype  ( oyDATATYPE_e        t );
-const char *       oyDatatypeToText  ( oyDATATYPE_e        t );
 
 #ifdef __cplusplus
 } /* extern "C" */

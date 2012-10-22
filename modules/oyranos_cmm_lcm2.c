@@ -32,7 +32,7 @@
 #include "oyranos_generic.h"         /* oy_connector_imaging_static_object */
 #include "oyranos_helper.h"      /* oySprintf_ and other local helpers */
 #include "oyranos_i18n.h"
-#include "oyranos_image_internal.h"
+#include "oyranos_image.h"
 #include "oyranos_object_internal.h"
 #include "oyranos_string.h"
 
@@ -1777,7 +1777,7 @@ char * lcm2Image_GetText             ( oyImage_s         * image,
   oyDATATYPE_e t = oyToDataType_m( pixel_layout );
   int swap  = oyToSwapColourChannels_m( pixel_layout );
   /*int revert= oyT_FLAVOR_M( pixel_layout );*/
-  int so = oySizeofDatatype( t );
+  int so = oyDataTypeGetSize( t );
   char * text = oyAllocateFunc_(512);
   char * hash_text = 0;
   oyImage_s * s = image;
@@ -1811,7 +1811,7 @@ char * lcm2Image_GetText             ( oyImage_s         * image,
     hashTextAdd_m( text );
   }
   oySprintf_( text,   "    <sample_type value=\"%s[%dByte]\" />\n",
-                    oyDatatypeToText(t), so );
+                    oyDataTypeToText(t), so );
   hashTextAdd_m( text );
   oySprintf_( text,   "  </oyImage_s>");
   hashTextAdd_m( text );
@@ -2113,7 +2113,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
               _("Image"), oyStruct_GetId( (oyStruct_s*)image_input ) );
 
   data_type_in = oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) );
-  bps_in = oySizeofDatatype( data_type_in );
+  bps_in = oyDataTypeGetSize( data_type_in );
 
   if(data_type_in == oyHALF)
   {

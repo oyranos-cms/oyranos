@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/15
+ *  @date     2012/10/22
  */
 
 
@@ -44,6 +44,9 @@ typedef enum oyDATATYPE_e {
   oyFLOAT,     /*!< IEEE floating point number */
   oyDOUBLE     /*!< IEEE double precission floating point number */
 } oyDATATYPE_e;
+
+size_t             oyDataTypeGetSize ( oyDATATYPE_e        data_type ); 
+const char *       oyDataTypeToText  ( oyDATATYPE_e        data_type );
 
 /** @enum    oyCHANNELTYPE_e
  *  @brief   channels types

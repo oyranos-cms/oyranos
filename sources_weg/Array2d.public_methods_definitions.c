@@ -31,7 +31,7 @@ OYAPI oyArray2d_s * OYEXPORT
     else
     {
       data = s->oy_->allocateFunc_( width * height *
-                                    oySizeofDatatype( data_type ) );
+                                    oyDataTypeGetSize( data_type ) );
       error = oyArray2d_SetData( (oyArray2d_s*)s, data );
       s->own_lines = oyYES;
     }
@@ -98,7 +98,7 @@ OYAPI int  OYEXPORT
     s->own_lines = 2;
     for(i = 0; i < roi->height; ++i)
     {
-      size = roi->width * oySizeofDatatype( s->t );
+      size = roi->width * oyDataTypeGetSize( s->t );
       if(!s->array2d[i])
         oyAllocHelper_m_( s->array2d[i], unsigned char, size, allocateFunc_,
                           error = 1; break );
@@ -181,7 +181,7 @@ OYAPI int  OYEXPORT
 
     if(error <= 0)
       for( y = 0; y < s->height; ++y )
-        s->array2d[y] = &u8[oySizeofDatatype( s->t ) * s->width * y];
+        s->array2d[y] = &u8[oyDataTypeGetSize( s->t ) * s->width * y];
   }
 
   return error;
@@ -225,7 +225,7 @@ OYAPI int  OYEXPORT
 
     error = !s->array2d;
 
-    size = s->width * oySizeofDatatype( s->t );
+    size = s->width * oyDataTypeGetSize( s->t );
 
     oyArray2d_ReleaseArray_( (oyArray2d_s*)s );
 
@@ -298,7 +298,7 @@ int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
   if(array && rectangle)
   {
     /* shift array focus to requested region */
-    int bps = oySizeofDatatype( a->t );
+    int bps = oyDataTypeGetSize( a->t );
     if(a->data_area.x != OY_ROUND(array_roi_pix->x))
     {
       int height = a->data_area.height + a->data_area.y;

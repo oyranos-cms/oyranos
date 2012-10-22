@@ -16,6 +16,7 @@
 #include <oyConversion_s.h>
 #include <oyObject_s.h>
 #include "oyranos_display_helpers.h"
+#include <oyranos_image.h>
 
 int oy_display_verbose = 0;
 
@@ -365,7 +366,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
                 "need 4 or 3 channels with %s\n", __FILE__,__LINE__,
                 oyOptions_FindString( image_tags, "filename", 0 ),
                 image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "",
-                oyDatatypeToText( data_type_request ) );
+                oyDataTypeToText( data_type_request ) );
         return 1;
       }
 

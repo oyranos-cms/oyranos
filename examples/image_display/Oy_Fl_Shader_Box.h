@@ -158,7 +158,7 @@ private:
     {
     	fprintf( stderr,_DBG_FORMAT_
                  "Cannot use clut file: %dx%d %s\nneed %dx%d oyUINT16\n",
-                 _DBG_ARGS_, w,h,oyDatatypeToText(data_type), w,w*w);
+                 _DBG_ARGS_, w,h,oyDataTypeToText(data_type), w,w*w);
 	return 1;
     }
 
@@ -171,7 +171,7 @@ private:
     	fprintf( stderr,_DBG_FORMAT_
                 "loaded clut: %s\ngrid_points:%d h:%d %s need %dx%d oyUINT16\n",
                  _DBG_ARGS_, file_name,
-                 grid_points, h,oyDatatypeToText(data_type), w,w*w);
+                 grid_points, h,oyDataTypeToText(data_type), w,w*w);
     }
     return 0;
   }
@@ -227,7 +227,7 @@ private:
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
         Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
         Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y(),
-        w_,h_, oyDatatypeToText(data_type));
+        w_,h_, oyDataTypeToText(data_type));
 
     cc = oyConversion_FromImageForDisplay( image, display_image,
                          0, 0, data_type, "", 0, 0 );
@@ -273,11 +273,11 @@ private:
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
         Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
         Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y(),
-        w_,h_, oyDatatypeToText(data_type));
+        w_,h_, oyDataTypeToText(data_type));
 
     if(oy_display_verbose)
       fprintf( stderr,_DBG_FORMAT_"%dx%d %s %d %d %d %d %d %d\n", _DBG_ARGS_,
-        w_,h_, oyDatatypeToText(data_type),
+        w_,h_, oyDataTypeToText(data_type),
         GL_RGB16, gl_type, GL_UNSIGNED_SHORT, gl_data_type, GL_RGB, gl_channels);
 
     glTexImage2D (GL_TEXTURE_2D, 0, gl_type, w_, h_,

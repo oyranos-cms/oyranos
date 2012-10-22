@@ -164,7 +164,7 @@ public:
         printf( "%s:%d WARNING: wrong image data format: %s\n"
                 "need 4 or 3 channels with %s\n", __FILE__,__LINE__,
                 image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "",
-                oyDatatypeToText( data_type_request ) );
+                oyDataTypeToText( data_type_request ) );
         return;
       }
 

@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/22
  */
 
 
@@ -1683,14 +1683,14 @@ int    oyIsOfTypeCMMapiFilter        ( oyOBJECT_e          type )
 /**
  *  @brief oyDATATYPE_e to byte mapping
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.0
+ *  @date    2012/10/22
  *  @since   2007/11/00 (Oyranos: 0.1.8)
- *  @date    2007/11/00
  */
-int      oySizeofDatatype            ( oyDATATYPE_e        t )
+size_t             oyDataTypeGetSize ( oyDATATYPE_e        data_type )
 {
-  int n = 0;
-  switch(t)
+  size_t n = 0;
+  switch(data_type)
   {
     case oyUINT8:
          return 1;
@@ -1706,18 +1706,18 @@ int      oySizeofDatatype            ( oyDATATYPE_e        t )
   return n;
 }
 
-
 /**
  *  @brief oyDATATYPE_e to string mapping
  *
- *  @since Oyranos: version 0.1.8
- *  @date  26 november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.9.0
+ *  @date    2012/10/22
+ *  @since   2007/11/26 (Oyranos: 0.1.8)
  */
 
-const char *   oyDatatypeToText      ( oyDATATYPE_e        t)
+const char *       oyDataTypeToText  ( oyDATATYPE_e        data_type )
 {
   const char * text = 0;
-  switch(t)
+  switch(data_type)
   {
     case oyUINT8:
          text = "oyUINT8"; break;
@@ -1734,6 +1734,7 @@ const char *   oyDatatypeToText      ( oyDATATYPE_e        t)
   }
   return text;
 }
+
 
 uint32_t     oyCMMtoId               ( const char        * cmm )
 {

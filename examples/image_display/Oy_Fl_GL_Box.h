@@ -62,7 +62,7 @@ private:
       data_type = oyToDataType_m( pt );
       if(data_type == oyUINT8)
         data_type = oyUINT16;
-      sample_size = oySizeofDatatype( data_type );
+      sample_size = oyDataTypeGetSize( data_type );
       oyImage_Release( &draw_image );
 
       int result = drawPrepare( &draw_image, data_type, 1 );

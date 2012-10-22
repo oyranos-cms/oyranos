@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/20
+ *  @date     2012/10/22
  */
 
 
@@ -125,7 +125,7 @@ int oyArray2d_Copy__Members( oyArray2d_s_ * dst, oyArray2d_s_ * src)
   dst->own_lines = 2;
   for(i = 0; i < dst->height; ++i)
   {
-    size = dst->width * oySizeofDatatype( dst->t );
+    size = dst->width * oyDataTypeGetSize( dst->t );
     oyAllocHelper_m_( dst->array2d[i], unsigned char, size, allocateFunc_,
                       error = 1; break );
     error = !memcpy( dst->array2d[i], src->array2d[i], size );
@@ -413,7 +413,7 @@ int          oyArray2d_ReleaseArray_ ( oyArray2d_s       * obj )
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
     int y, y_max = s->data_area.height + s->data_area.y;
-    size_t dsize = oySizeofDatatype( s->t );
+    size_t dsize = oyDataTypeGetSize( s->t );
 
     if(oy_debug > 3)
       oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)s,
@@ -470,7 +470,7 @@ int              oyArray2d_ToPPM_    ( oyArray2d_s_      * array,
       return 1;
     }
 
-    byteps = oySizeofDatatype(s->t); /* byte per sample */
+    byteps = oyDataTypeGetSize(s->t); /* byte per sample */
     size = s->width * s->height * byteps;
     buf = oyAllocateFunc_(size + 1024);
 
