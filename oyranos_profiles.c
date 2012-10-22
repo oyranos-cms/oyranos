@@ -513,7 +513,8 @@ int    installProfile                ( oyProfile_s       * ip,
         {
           size_t size = 0;
           char * data, * fn = 0;
-          const char * sfn = in;
+          const char * sfn = in,
+                     * fileext;
           int error = 0;
 
           if(!sfn)
@@ -527,7 +528,20 @@ int    installProfile                ( oyProfile_s       * ip,
           if(strrchr(sfn, OY_SLASH_C))
             sfn = strrchr(sfn, OY_SLASH_C) + 1;
           STRING_ADD( fn, sfn );
-          STRING_ADD( fn, ".icc" );
+          /* check profile extension and avoid .icc duplication  */
+          fileext = strrchr( sfn, '.' );
+          if(fileext)
+          {
+            char * file_ext = 0;
+            int i = 0;
+            ++fileext;
+            STRING_ADD( file_ext, fileext );
+            while(file_ext[i]) { file_ext[i] = tolower( file_ext[i] ); ++i; }
+            if(strcmp(file_ext,"icc") != 0 && strcmp(file_ext,"icm") != 0)
+              STRING_ADD( fn, ".icc" );
+            oyFree_m_(file_ext);
+          } else
+            STRING_ADD( fn, ".icc" );
           if(size)
           {
             error = oyWriteMemToFile_ ( fn, data, size );
