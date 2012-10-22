@@ -519,15 +519,15 @@ class ListEntry {open : {public OyFl_Pack} private
     new Fl_Box( 0, 0, BUTTON_HEIGHT, BUTTON_HEIGHT );
 
     int width=0, height=0;
-    int scroll_w = 50; //default_profiles_pack->w() - 3*H_SPACING - BUTTON_HEIGHT;
 
     box->measure_label(width, height);
 
+    /*int scroll_w = 50; //default_profiles_pack->w() - 3*H_SPACING - BUTTON_HEIGHT;
     int b_w = scroll_w;
     if(width > scroll_w)
       b_w = width;
 
-    //box->size( b_w + H_SPACING, 25 );
+    box->size( b_w + H_SPACING, 25 ); */
 
     Fl_Pack::resizable(box);
     //Fl_Pack::size( parent()->w(), Fl_Pack::h() );

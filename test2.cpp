@@ -306,7 +306,6 @@ oyTESTRESULT_e testStringRun ()
 
   const char * test = OY_INTERNAL "/display.oydi/display_name";
   
-  char * erg = oyStrnchr_( (char*) test, OY_SLASH_C, oyStrlen_(test) );
   int test_n = oyStringSegmentsN_( test, oyStrlen_(test), OY_SLASH_C );
   test_n = oyStringSegments_( test, OY_SLASH_C );
   char * test_out = (char*) malloc(strlen(test));
@@ -318,7 +317,7 @@ oyTESTRESULT_e testStringRun ()
   for(i = 0; i < test_n; ++i)
   {
     int test_end = 0;
-    char * test_sub = oyStringSegment_( (char*) test, OY_SLASH_C, i,
+    test_sub = oyStringSegment_( (char*) test, OY_SLASH_C, i,
                                            &test_end );
     int test_sub_n = oyStringSegmentsN_( test_sub, test_end, '.' );
 
@@ -386,7 +385,6 @@ oyTESTRESULT_e testStringRun ()
 
 
   test = "//" OY_TYPE_STD "/display.oydi/";
-  erg = oyStrnchr_( (char*) test, OY_SLASH_C, oyStrlen_(test) );
   test_n = oyStringSegmentsN_( test, oyStrlen_(test), OY_SLASH_C );
   test_n = oyStringSegments_( test, OY_SLASH_C );
 
@@ -395,7 +393,7 @@ oyTESTRESULT_e testStringRun ()
   for(i = 0; i < test_n; ++i)
   {
     int test_end = 0;
-    char * test_sub = oyStringSegment_( (char*) test, OY_SLASH_C, i,
+    test_sub = oyStringSegment_( (char*) test, OY_SLASH_C, i,
                                            &test_end );
     int test_sub_n = oyStringSegmentsN_( test_sub, test_end, '.' );
 
@@ -1022,7 +1020,7 @@ oyTESTRESULT_e testSettings ()
   doc = xmlParseMemory( text, oyStrlen_( text ) );
   error = !doc;
   {
-    if(!doc)
+    if(error)
     {
       PRINT_SUB( oyTESTRESULT_FAIL, 
       "libxml2::xmlParseMemory() returned could not parse the document" );
@@ -1170,6 +1168,7 @@ oyTESTRESULT_e testProfiles ()
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "profiles found for oyProfileListGet:        %d", size );
   }
+  oyStringListRelease_( &texts, size, oyDeAllocateFunc_ );
 
   if((int)size < count)
   {
@@ -2011,6 +2010,13 @@ oyTESTRESULT_e testCMMMonitorJSON ()
                                      "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
   error = oyDevicesGet( 0, "monitor", options, &configs );
+  if( !error && configs )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyDeviceGet() \"monitor\"          " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyDeviceGet() \"monitor\"          " );
+  }
   clck = oyClock() - clck;
   devices_n = oyConfigs_Count( configs );
   for( i = 0; i < devices_n; ++i )
@@ -2536,26 +2542,6 @@ oyTESTRESULT_e testCMMsShow ()
 
                   if(api->type_ == oyOBJECT_CMM_API8_S)
                   {
-                    /* a non useable filter definition */
-                    oyRankMap rank_map[2] = {{(char*)"key",1,2,3},
-                                             {(char*)"other",4,5,6}};
-                    oyCMMapi8_s_ cpp_api8 ={ oyOBJECT_CMM_API8_S,0,0,0,
-                                             0, /* next */
-                                             0,0, /* oyCMMapi_s stuff */
-                                             (char*)"invalid/registration",
-                                             {0,0,0}, /* version */
-                                             {0,0,0}, /* module_api */
-                                             0,0, /* Oyranos stuff */
-                                             0, /* oyConfigs_FromPattern */
-                                             0, /* oyConfigs_Modify */
-                                             0, /* oyConfig_Rank */
-                                             0, /* oyCMMui_s */
-                                             0, /* oyIcon_s */
-                                             (oyRankMap*)rank_map
-                                           };
-
-                    cpp_api8.version[2] = 1;
-
                     l = 0;
                     cmm_api8 = (oyCMMapi8_s_*) api;
                     snprintf( text_tmp, 65535,
@@ -3313,7 +3299,6 @@ oyTESTRESULT_e testCMMnmRun ()
   oyImage_s * in  = NULL,
             * out = NULL;
   oyConversion_s * conv = NULL;
-  int error = 0;
 
   in    = oyImage_Create( 1,1, 
                          buf_in ,
@@ -3329,6 +3314,7 @@ oyTESTRESULT_e testCMMnmRun ()
                          0 );
 
   conv   = oyConversion_CreateBasicPixels( in,out, options, 0 );
+  if(!error)
   error  = oyConversion_RunPixels( conv, 0 );
 
   oyConversion_Release( &conv );
@@ -3381,8 +3367,8 @@ oyTESTRESULT_e testCMMnmRun ()
   if(pixel_access)
   for(i = 0; i < n*10000; ++i)
   {
-    int error = 0;
-    error  = oyConversion_RunPixels( conv, pixel_access );
+    if(!error)
+      error  = oyConversion_RunPixels( conv, pixel_access );
   }
   clck = oyClock() - clck;
 
@@ -3403,8 +3389,8 @@ oyTESTRESULT_e testCMMnmRun ()
   if(pixel_access)
   for(i = 0; i < n*10000; ++i)
   {
-    int error = oyConversion_GetOnePixel( conv, 0,0, pixel_access );
-    error = 0;
+    if(!error)
+      error = oyConversion_GetOnePixel( conv, 0,0, pixel_access );
   }
   clck = oyClock() - clck;
   oyConversion_Release( &conv );
@@ -3443,7 +3429,8 @@ oyTESTRESULT_e testCMMnmRun ()
   clck = oyClock();
   for(i = 0; i < n*10000; ++i)
   {
-    oyConversion_RunPixels( conv, pixel_access );
+    if(!error)
+      error = oyConversion_RunPixels( conv, pixel_access );
   }
   clck = oyClock() - clck;
 

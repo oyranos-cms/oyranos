@@ -162,7 +162,6 @@ int        oyXML2XFORMsFLTKSelect1Handler (
   char * default_string = 0;
   oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
   int print = forms_args ? forms_args->print : 1;
-  int error = 0;
 
   xmlNodePtr select1, choices, items;
 
@@ -213,7 +212,7 @@ int        oyXML2XFORMsFLTKSelect1Handler (
       if(oyXMLNodeNameIs( select1, "xf:help") && print)
       {
           oyCallback_s * cb = 0;
-          error = oyOptions_FindData( (oyOptions_s*)forms_args->data_,
+          oyOptions_FindData( (oyOptions_s*)forms_args->data_,
                                       OYFORMS_FLTK_HELP_VIEW_REG,
                                       (oyPointer*)&cb, 0, 0);
           if(cb)
@@ -278,7 +277,7 @@ int        oyXML2XFORMsFLTKSelect1Handler (
               }
               len = 0;
               void * string = 0;
-              error = oyIconvGet( cb_data->label, &string, &len,
+              oyIconvGet( cb_data->label, &string, &len,
                                   "UTF-8", fl_i18n_codeset, malloc );
               c->add( (const char *) string, 0,
                       fltkCallback,
@@ -286,7 +285,7 @@ int        oyXML2XFORMsFLTKSelect1Handler (
               if(string) free(string); string = 0;
 
               if(is_default)
-                error = oyIconvGet( label, (void**)&default_string, &len,
+                oyIconvGet( label, (void**)&default_string, &len,
                                   "UTF-8", fl_i18n_codeset, malloc );
             }
 
@@ -360,7 +359,6 @@ int        oyXML2XFORMsFLTKHtmlHeadlineHandler (
   int print = forms_args ? forms_args->print : 1;
   OyFl_Box_c * box = 0;
   xmlNodePtr group;
-  int error = 0;
 
 
   if(cur && print)
@@ -408,7 +406,7 @@ int        oyXML2XFORMsFLTKHtmlHeadlineHandler (
       {
         oyCallback_s * cb = 0;
         help = oyXML2NodeValue(group);
-        error = oyOptions_FindData( (oyOptions_s*)forms_args->data_,
+        oyOptions_FindData( (oyOptions_s*)forms_args->data_,
                                       OYFORMS_FLTK_HELP_VIEW_REG,
                                       (oyPointer*)&cb, 0, 0);
         if(cb && box)

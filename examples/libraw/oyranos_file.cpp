@@ -97,7 +97,8 @@ oyConversion_s * oyConversion_FromImageFileName  (
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
   /* set the output node of the conversion */
-  oyConversion_Set( conversion, 0, out );
+  if(!error)
+    oyConversion_Set( conversion, 0, out );
 
   return conversion;
 }

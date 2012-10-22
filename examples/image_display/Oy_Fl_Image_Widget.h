@@ -108,9 +108,6 @@ public:
 
       if(image)
       {
-        if(px || py) {
-          int i = W; i = 1;
-        }
         /* take care to not go over the borders */
         if(px < W - width) px = W - width;
         if(py < H - height) py = H - height;

@@ -60,7 +60,6 @@ int main (int argc, char ** argv)
   oyOptions_s * opts = 0;
   oyOption_s * o = 0;
   int front = 0;  /* front end options */
-  int print = 1;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -204,7 +203,6 @@ int main (int argc, char ** argv)
           oyOption_Release( &o );
         }
       }
-      print = 0;
     }
 
     data = oyOptions_GetText( opts, oyNAME_NAME );

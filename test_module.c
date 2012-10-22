@@ -11,6 +11,8 @@ int main( int argc, char ** argv)
   in = oyCMMapi6_GetDataType(api,0);
   out = oyCMMapi6_GetDataType(api,1);
 
+  oyMessageFunc_p(oyMSG_WARN,api,"%s %s", in?in:"",out?out:"");
+
   oyCMMapi6_Release(&api);
 
   return 0;

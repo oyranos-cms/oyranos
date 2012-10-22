@@ -202,7 +202,10 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
   oyOptions_s * os = options;
   const oyOption_t_ * t = 0;
   int n, i = 0,j;
-  const char * policy_name = 0, * value;
+#if 0
+  const char * policy_name = 0;
+#endif
+  const char * value;
   oyWIDGET_e *wl = oyWidgetListGet( oyGROUP_ALL, &n, oyAllocateFunc_ );
 
   /* Sections or headline are placed as needed. They come before the options.
@@ -243,6 +246,7 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
           oyWidgetDescriptionGet( oywid, &description, 0 );
 
           /* TODO: When and how to display policy informations? */
+#if 0
           if(oywid == oyWIDGET_POLICY)
           {
             if(count && names && current >= 0)
@@ -250,6 +254,7 @@ int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
             else
               policy_name =  _("----");
           }
+#endif
 
           t = oyOptionGet_( oywid );
           value = oyOptions_FindString(os, t->config_string, 0);

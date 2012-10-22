@@ -67,8 +67,6 @@ void callback_done( Fl_Widget * w, void * )
 
 void callback_help_view( oyPointer * ptr, const char * help_text )
 {
-  int error = 0;
-
   Fl_Help_View * help_view = (Fl_Help_View*)ptr;
   if(help_view)
   {
@@ -124,8 +122,6 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
       help_view->leftline( 0 );
     }
   }
-  else
-    error = 1;
 }
 
 int main (int argc, char ** argv)
@@ -136,11 +132,9 @@ int main (int argc, char ** argv)
              * result_xml = 0;
   char * text = 0, * t = 0;
   oyFormsArgs_s * forms_args = oyFormsArgs_New( 0 );
-  const char * data = 0;
   char ** other_args = 0;
   int other_args_n = 0;
   int error = 0;
-  oyOptions_s * opts = 0;
   int print = 1;
 
   const char *locale_paths[3] = {0,0,0};
@@ -395,9 +389,6 @@ int main (int argc, char ** argv)
   }
 
   oyFormsArgs_Release( &forms_args );
-
-  /* xmlParseMemory sollte der Ebenen gewahr werden wie oyOptions_FromText. */
-  opts = oyOptions_FromText( data, 0,0 );
 
   if(text) free(text); text = 0;
 

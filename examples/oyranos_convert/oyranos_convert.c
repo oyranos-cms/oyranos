@@ -135,10 +135,7 @@ int main( int argc , char** argv )
 
   int levels = 0;
 
-  int output_model = 0;
-  const char * input_xml_file = 0;
-  const char * output_model_file = 0,
-             * result_xml = 0;
+  const char * result_xml = 0;
   char * text = 0, * t = 0;
   const char * opt_names = 0;
   oyFormsArgs_s * forms_args = oyFormsArgs_New( 0 );
@@ -146,7 +143,6 @@ int main( int argc , char** argv )
   char ** other_args = 0;
   int other_args_n = 0;
   int i;
-  int print = 1;
   oyOptions_s * opts = 0;
   oyOption_s * o = 0;
   oyImage_s * image = 0;
@@ -322,7 +318,6 @@ int main( int argc , char** argv )
           oyOption_Release( &o );
         }
       }
-      print = 0;
   }
 
   if(output_profile)

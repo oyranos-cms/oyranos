@@ -520,6 +520,7 @@ oyTESTRESULT_e testProfiles ()
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "profiles found for oyProfileListGet:        %d", size );
   }
+  oyStringListRelease_( &texts, size, oyDeAllocateFunc_ );
 
   if(size < count)
   {

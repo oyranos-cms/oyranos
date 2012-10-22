@@ -801,7 +801,7 @@ int      oyraFilterPlug_ImageRectanglesRun (
                                        oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
-  int x = 0, y = 0, n = 0, i;
+  int n = 0, i;
   int result = 0, l_result = 0, error = 0;
   oyFilterSocket_s * socket;
   oyFilterNode_s * input_node = 0,
@@ -821,9 +821,6 @@ int      oyraFilterPlug_ImageRectanglesRun (
   image = (oyImage_s*)oyFilterSocket_GetData( socket );
   if(!image)
     return 1;
-
-  x = oyPixelAccess_GetStart(ticket,0) * oyImage_GetWidth(image);
-  y = oyPixelAccess_GetStart(ticket,1) * oyImage_GetWidth(image);
 
   {
     oyRectangle_s * ticket_roi = oyPixelAccess_GetOutputROI( ticket );

@@ -175,6 +175,9 @@ int QcmseMessageFunc( XCME_MSG_e code, const void * context, const char * format
          break;
   }
 
+  if(id >= 0)
+    sprintf( &text[strlen(text)], " [%d]", id);
+
   va_start( list, format);
   vsnprintf( &text[strlen(text)], 4096 - strlen(text), format, list);
   va_end  ( list );
