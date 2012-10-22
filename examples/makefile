@@ -142,7 +142,7 @@ $(TARGET10):	$(SRCDIR)oyranos_profile_graph/oyranos_profile_graph.c
 	mkdir -p oyranos_profile_graph
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS_) $< $(TARGET4_FLAGS) $(LDFLAGS) \
-	$(OY_LDFLAGS) -o $@
+	$(OY_LDFLAGS) -lm -o $@
 
 $(TARGET11):	$(SRCDIR)oyranos_convert/oyranos_convert.c
 	mkdir -p oyranos_convert
