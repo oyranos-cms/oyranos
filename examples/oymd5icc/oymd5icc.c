@@ -17,17 +17,24 @@ int main( int argc, char ** argv )
            id[4];
   int profile_pos = 1,
       set_md5 = 0,
+      show_short = 0,
       error;
 
   if(argc == 1)
   {
-    printf("Usage: %s [--set] icc_profile.icc\n", argv[0]);
+    printf("Usage: %s [--set] [--short] icc_profile.icc\n", argv[0]);
     exit(0);
   }
 
-  if(strcmp(argv[1],"--set") == 0)
+  if(strcmp(argv[profile_pos],"--set") == 0)
   {
     set_md5 = 1;
+    ++profile_pos;
+  }
+
+  if(strcmp(argv[profile_pos],"--short") == 0)
+  {
+    show_short = 1;
     ++profile_pos;
   }
 
@@ -41,9 +48,14 @@ int main( int argc, char ** argv )
 
   i = (uint32_t*)md5;
   if(p)
-    printf( "%x%x%x%x[%x%x%x%x] %s\n",
+  {
+    if(show_short)
+      printf( "%x%x%x%x\n",
+            i[0],i[1],i[2],i[3] );
+    else
+      printf( "%x%x%x%x[%x%x%x%x] %s\n",
             i[0],i[1],i[2],i[3], id[0],id[1],id[2],id[3], argv[profile_pos] );
-  else
+  } else
     fprintf(stderr, "not found: %s\n", argv[profile_pos] );
 
   return error;
