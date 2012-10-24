@@ -76,13 +76,17 @@ int oyArray2d_Copy__Members( oyArray2d_s_ * dst, oyArray2d_s_ * src)
 {
   int error = 0, i, size;
   oyAlloc_f allocateFunc_ = 0;
+#if 0
   oyDeAlloc_f deallocateFunc_ = 0;
+#endif
 
   if(!dst || !src)
     return 1;
 
   allocateFunc_ = dst->oy_->allocateFunc_;
+#if 0
   deallocateFunc_ = dst->oy_->deallocateFunc_;
+#endif
 
   /* Copy each value of src to dst here */
 

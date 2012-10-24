@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/17
+ *  @date     2012/10/24
  */
 
 
@@ -358,7 +358,7 @@ oyConversion_s * oyConversion_CreateFromImage (
                                        uint32_t            flags,
                                        oyObject_s          obj )
 {
-  oyFilterNode_s * in, * out, * icc;
+  oyFilterNode_s * in, * out;
   int error = 0;
   oyConversion_s * conversion = 0;
   oyOptions_s * options = 0;
@@ -389,7 +389,7 @@ oyConversion_s * oyConversion_CreateFromImage (
     STRING_ADD( module_reg, "icc" );
 
   /* create a new CMM filter node */
-  icc = out = oyFilterNode_NewWith( module_reg, module_options, obj );
+  out = oyFilterNode_NewWith( module_reg, module_options, obj );
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );

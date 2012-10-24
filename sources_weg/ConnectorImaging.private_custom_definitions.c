@@ -94,13 +94,17 @@ int oyConnectorImaging_Copy__Members( oyConnectorImaging_s_ * dst, oyConnectorIm
 {
   int error = 0;
   oyAlloc_f allocateFunc_ = 0;
+#if 0
   oyDeAlloc_f deallocateFunc_ = 0;
+#endif
 
   if(!dst || !src)
     return 1;
 
   allocateFunc_ = dst->oy_->allocateFunc_;
+#if 0
   deallocateFunc_ = dst->oy_->deallocateFunc_;
+#endif
 
   /* Copy each value of src to dst here */
   if(src->data_types_n)

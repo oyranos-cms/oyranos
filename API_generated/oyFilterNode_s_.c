@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/24
  */
 
 
@@ -139,14 +139,18 @@ int oyFilterNode_Init__Members( oyFilterNode_s_ * filternode )
 int oyFilterNode_Copy__Members( oyFilterNode_s_ * dst, oyFilterNode_s_ * src)
 {
   int error = 0;
+#if 0
   oyAlloc_f allocateFunc_ = 0;
   oyDeAlloc_f deallocateFunc_ = 0;
+#endif
 
   if(!dst || !src)
     return 1;
 
+#if 0
   allocateFunc_ = dst->oy_->allocateFunc_;
   deallocateFunc_ = dst->oy_->deallocateFunc_;
+#endif
 
   /* Copy each value of src to dst here */
   if(src->backend_data && src->backend_data->copy)

@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/24
  */
 
 
@@ -120,13 +120,17 @@ int oyFilterCore_Copy__Members( oyFilterCore_s_ * dst, oyFilterCore_s_ * src)
 {
   int error = 0;
   oyAlloc_f allocateFunc_ = 0;
+#if 0
   oyDeAlloc_f deallocateFunc_ = 0;
+#endif
 
   if(!dst || !src)
     return 1;
 
   allocateFunc_ = dst->oy_->allocateFunc_;
+#if 0
   deallocateFunc_ = dst->oy_->deallocateFunc_;
+#endif
 
   /* Copy each value of src to dst here */
   dst->registration_ = oyStringCopy_( src->registration_, allocateFunc_ );
@@ -349,8 +353,10 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s_   * s,
 {
   int error = !s;
   oyAlloc_f allocateFunc_ = 0;
+#if 0
   static const char * lang = 0;
   int update = 1;
+#endif
 
   if(error <= 0)
     allocateFunc_ = s->oy_->allocateFunc_;
@@ -366,6 +372,7 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s_   * s,
 
     /* we lock here as cmm_api4->oyCMMuiGet might not be thread save */
     {
+#if 0
       if(!lang)
         lang = oyLanguage();
 
@@ -375,6 +382,7 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s_   * s,
         update = 0;
 
       oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+#endif
     }
 
     s->api4_ = cmm_api4;

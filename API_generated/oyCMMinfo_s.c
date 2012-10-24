@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/24
  */
 
 
@@ -153,7 +153,7 @@ OYAPI oyCMMGetText_f  OYEXPORT
 OYAPI const char **  OYEXPORT
                    oyCMMinfo_GetTexts( oyCMMinfo_s       * info )
 {
-  return ((oyCMMinfo_s_*)info)->texts;
+  return (const char **)((oyCMMinfo_s_*)info)->texts;
 }
 /** Function  oyCMMinfo_GetComp
  *  @memberof oyCMMinfo_s

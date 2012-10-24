@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/22
+ *  @date     2012/10/24
  */
 
 
@@ -1303,7 +1303,6 @@ char *           oyCMMinfoPrint_     ( oyCMMinfo_s       * cmm_info,
 {
   char * text = 0, num[48];
   oyCMMapi_s * tmp = 0;
-  oyCMMapi4_s * cmm_api4 = 0;
   oyOBJECT_e type = 0;
 
   if(!cmm_info || cmm_info->type_ != oyOBJECT_CMM_INFO_S)
@@ -1349,7 +1348,6 @@ char *           oyCMMinfoPrint_     ( oyCMMinfo_s       * cmm_info,
 
           if(type == oyOBJECT_CMM_API4_S)
           {
-            cmm_api4 = (oyCMMapi4_s*) tmp;
             STRING_ADD( text, "\n    Registration: " );
             STRING_ADD( text, oyCMMapi_GetRegistration( tmp ) );
             CMMINFO_ADD_NAME_TO_TEXT( "Name", "name" )

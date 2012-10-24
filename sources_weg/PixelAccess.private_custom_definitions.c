@@ -82,13 +82,17 @@ int oyPixelAccess_Copy__Members( oyPixelAccess_s_ * dst, oyPixelAccess_s_ * src)
 {
   int error = 0, len;
   oyAlloc_f allocateFunc_ = 0;
+#if 0
   oyDeAlloc_f deallocateFunc_ = 0;
+#endif
 
   if(!dst || !src)
     return 1;
 
   allocateFunc_ = dst->oy_->allocateFunc_;
+#if 0
   deallocateFunc_ = dst->oy_->deallocateFunc_;
+#endif
 
   /* Copy each value of src to dst here */
   dst->start_xy_old[0] = dst->start_xy[0] = src->start_xy[0];

@@ -2434,6 +2434,8 @@ oyConfDomain_s_ * oyConfDomain_New_  ( oyObject_s          object )
   s->oy_ = s_obj;
 
   error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
+  if(error)
+    return 0;
 # undef STRUCT_TYPE
   /* ---- end of common object constructor ------- */
 

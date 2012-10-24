@@ -71,14 +71,18 @@ int oyCMMapi8_Init__Members( oyCMMapi8_s_ * cmmapi8 )
  */
 int oyCMMapi8_Copy__Members( oyCMMapi8_s_ * dst, oyCMMapi8_s_ * src)
 {
+#if 0
   oyAlloc_f allocateFunc_ = 0;
   oyDeAlloc_f deallocateFunc_ = 0;
+#endif
 
   if(!dst || !src)
     return 1;
 
+#if 0
   allocateFunc_ = dst->oy_->allocateFunc_;
   deallocateFunc_ = dst->oy_->deallocateFunc_;
+#endif
 
   /* Copy each value of src to dst here */
 

@@ -12,8 +12,10 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s_   * s,
 {
   int error = !s;
   oyAlloc_f allocateFunc_ = 0;
+#if 0
   static const char * lang = 0;
   int update = 1;
+#endif
 
   if(error <= 0)
     allocateFunc_ = s->oy_->allocateFunc_;
@@ -29,6 +31,7 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s_   * s,
 
     /* we lock here as cmm_api4->oyCMMuiGet might not be thread save */
     {
+#if 0
       if(!lang)
         lang = oyLanguage();
 
@@ -38,6 +41,7 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s_   * s,
         update = 0;
 
       oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+#endif
     }
 
     s->api4_ = cmm_api4;

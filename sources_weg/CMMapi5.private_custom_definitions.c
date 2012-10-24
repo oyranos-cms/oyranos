@@ -71,14 +71,8 @@ int oyCMMapi5_Init__Members( oyCMMapi5_s_ * cmmapi5 )
  */
 int oyCMMapi5_Copy__Members( oyCMMapi5_s_ * dst, oyCMMapi5_s_ * src)
 {
-  oyAlloc_f allocateFunc_ = 0;
-  oyDeAlloc_f deallocateFunc_ = 0;
-
   if(!dst || !src)
     return 1;
-
-  allocateFunc_ = dst->oy_->allocateFunc_;
-  deallocateFunc_ = dst->oy_->deallocateFunc_;
 
   /* Copy each value of src to dst here */
 

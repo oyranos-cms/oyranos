@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/22
+ *  @date     2012/10/24
  */
 
 
@@ -111,14 +111,18 @@ int oyOptions_Init__Members( oyOptions_s_ * options )
 int oyOptions_Copy__Members( oyOptions_s_ * dst, oyOptions_s_ * src)
 {
   int error = 0;
+#if 0
   oyAlloc_f allocateFunc_ = 0;
   oyDeAlloc_f deallocateFunc_ = 0;
+#endif
 
   if(!dst || !src)
     return 1;
 
+#if 0
   allocateFunc_ = dst->oy_->allocateFunc_;
   deallocateFunc_ = dst->oy_->deallocateFunc_;
+#endif
 
   /* Copy each value of src to dst here */
 

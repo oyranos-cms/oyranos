@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/24
  */
 
 
@@ -109,14 +109,18 @@ int oyCMMinfo_Init__Members( oyCMMinfo_s_ * cmminfo )
 int oyCMMinfo_Copy__Members( oyCMMinfo_s_ * dst, oyCMMinfo_s_ * src)
 {
   oyAlloc_f allocateFunc_ = 0;
+#if 0
   oyDeAlloc_f deallocateFunc_ = 0;
+#endif
   int error = 0;
 
   if(!dst || !src)
     return 1;
 
   allocateFunc_ = dst->oy_->allocateFunc_;
+#if 0
   deallocateFunc_ = dst->oy_->deallocateFunc_;
+#endif
 
   /* Copy each value of src to dst here */
   error = !memcpy(dst->cmm, src->cmm, 8);

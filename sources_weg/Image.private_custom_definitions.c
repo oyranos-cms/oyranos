@@ -89,14 +89,18 @@ int oyImage_Init__Members( oyImage_s_ * image )
 int oyImage_Copy__Members( oyImage_s_ * dst, oyImage_s_ * src)
 {
   int error = 0;
+#if 0
   oyAlloc_f allocateFunc_ = 0;
   oyDeAlloc_f deallocateFunc_ = 0;
+#endif
 
   if(!dst || !src)
     return 1;
 
+#if 0
   allocateFunc_ = dst->oy_->allocateFunc_;
   deallocateFunc_ = dst->oy_->deallocateFunc_;
+#endif
 
   /* Copy each value of src to dst here */
 

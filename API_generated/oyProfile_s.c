@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/15
+ *  @date     2012/10/24
  */
 
 
@@ -1555,7 +1555,7 @@ OYAPI int OYEXPORT
                                          oyConfig_s      * device )
 {
   int error = !profile, l_error = 0;
-  oyProfile_s_ * s = profile;
+  oyProfile_s_ * s = (oyProfile_s_*)profile;
   oyConfig_s_ * device_ = (oyConfig_s_*)device;
   oyProfileTag_s * tag = 0;
   char ** texts = 0;
