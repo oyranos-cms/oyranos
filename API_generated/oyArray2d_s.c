@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/22
+ *  @date     2012/10/24
  */
 
 
@@ -436,7 +436,7 @@ OYAPI int OYEXPORT
   int error = 0;
   int y_len = sizeof(unsigned char *) * (height + 1);
 
-  if(!data_type)
+  if(!oyDataTypeGetSize(data_type))
     return 1;
 
   if(!s)
