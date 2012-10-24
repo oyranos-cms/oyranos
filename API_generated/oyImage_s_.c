@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/22
+ *  @date     2012/10/24
  */
 
 
@@ -100,6 +100,9 @@ void oyImage_Release__Members( oyImage_s_ * image )
 int oyImage_Init__Members( oyImage_s_ * image )
 {
   image->tags = oyOptions_New(0);
+  image->layout_ = image->oy_->allocateFunc_( sizeof(oyPixel_t*) * (oyCHAN0 + 
+                                             4 + 1));
+  memset(image->layout_,0,sizeof(oyPixel_t*) * (oyCHAN0 + 4 + 1));
   return 0;
 }
 
