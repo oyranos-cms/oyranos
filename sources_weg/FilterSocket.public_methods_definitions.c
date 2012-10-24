@@ -227,7 +227,7 @@ OYAPI int OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 1 )
 
-  if(data->copy)
+  if(data && data->copy)
     s->data = data->copy(data, 0);
   else
     s->data = data;
