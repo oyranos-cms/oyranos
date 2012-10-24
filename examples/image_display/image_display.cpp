@@ -241,7 +241,8 @@ void callback ( Fl_Widget* w, void* daten )
 
     error = oyFilterNode_GetUi( node, &ui_text, &namespaces, malloc );
 
-    opts = oyFilterNode_GetOptions( node, OY_SELECT_FILTER );
+    opts = oyFilterNode_GetOptions( node, OY_SELECT_FILTER |
+                                          oyOPTIONATTRIBUTE_ADVANCED );
     model = oyOptions_GetText( opts, oyNAME_NAME );
     in_text= oyXFORMsFromModelAndUi( model, ui_text, (const char**)namespaces,0,
                                      malloc );
