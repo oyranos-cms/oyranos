@@ -465,6 +465,10 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
             if(oyStrcmp_(rank_map[k].key, d_opt) == 0)
             {
               rank += rank_map[k].not_found_value;
+              DBG_NUM4_S( "%s %s/%s -> %d",
+                          oyNoEmptyString_m_(d_opt),
+                          oyNoEmptyString_m_(d_val),
+                          oyNoEmptyString_m_(p_val), rank); 
               break;
             }
             ++k;
@@ -472,8 +476,10 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
       }
 
       oyOption_Release( &d );
-      oyFree_m_( d_opt );
-      oyFree_m_( d_val );
+      if(d_opt)
+        oyFree_m_( d_opt );
+      if(d_val)
+        oyFree_m_( d_val );
     }
   }
 
