@@ -659,12 +659,10 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                        oyOptions_s       * options )
 {
   int error = 0, i,j,k,n,m,os_n,
-      icc_nodes_n = 0,
-      search, old_id, it;
+      icc_nodes_n = 0;
   int verbose = oyOptions_FindString( options, "verbose", 0 ) ? 1:0;
   oyFilterGraph_s * g = 0;
-  oyFilterNode_s * node = 0,
-                 * node_out = 0;
+  oyFilterNode_s * node = 0;
   oyFilterPlug_s * edge = 0;
   oyConversion_s * s = conversion;
   oyProfiles_s * proofs =  0;
@@ -730,36 +728,12 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
   }
 
   m = oyFilterGraph_CountEdges( g );
-  old_id = -1;
   /* start from out_ and search all ICC CMMs */
-  node_out = oyConversion_GetNode( s, OY_OUTPUT );
-  if(node_out)
-  for(i = 0; i < n; ++i)
+  for(j = 0; j < m; ++j)
   {
-    node = oyFilterGraph_GetNode( g, i, "", NULL );
-
-    if(oyFilterNode_GetId( node ) == oyFilterNode_GetId( node_out ))
-      search = 1;
-    else
-      search = 0;
-
-    old_id = oyFilterNode_GetId( node );
-    oyFilterNode_Release( &node );
-    if(verbose && search)
-      fprintf( stderr, "ICC CMM search: %d - ", old_id);
-
-    /* search for a path to a "icc" CMM */
-    if(search)
-    {
-      it = 0;
-
-      /* follow the path along the filter node IDs */
-      for(j = 0; j < m; ++j)
-      {
 
         edge = oyFilterGraph_GetEdge( g, j );
         node = oyFilterPlug_GetNode( edge );
-        if(oyFilterNode_GetId( node ) == old_id)
         {
           oyConnector_s * edge_pattern = oyFilterPlug_GetPattern( edge );
           oyFilterSocket_s * edge_remote = oyFilterPlug_GetSocket( edge );
@@ -770,14 +744,10 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
              oyFilterRegistrationMatch( oyConnector_GetReg( edge_remote_pattern ),
                                         "//" OY_TYPE_STD "/data", 0))
           {
-            old_id = oyFilterNode_GetId( node );
-            ++it;
             /* stop at the first hit if "icc" */
             if( oyFilterRegistrationMatch( oyFilterNode_GetRegistration( node ),
                                            "//" OY_TYPE_STD "/icc", 0))
             {
-              search = 0;
-
               /* apply the found policy settings */
               db_options = oyOptions_ForFilter( oyFilterNode_GetRegistration( node ), 0,
                                                 flags, 0 );
@@ -879,18 +849,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
         }
         oyFilterPlug_Release( &edge );
         oyFilterNode_Release( &node );
-      }
-
-      if(verbose)
-      {
-        if(search)
-          fprintf( stderr, OY_DBG_FORMAT_"%d - ", OY_DBG_ARGS_, old_id);
-        else
-          fprintf( stderr, "%d[icc]\n", old_id );
-      }
-    }
   }
-  oyFilterNode_Release( &node_out );
 
   return error;
 }
