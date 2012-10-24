@@ -541,7 +541,7 @@ uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
 {
   int bpc = 0,
       gamut_warning = 0,
-      precalculation = 1,
+      precalculation = 0,
       precalculation_curves = 0,
       flags = 0;
   const char * o_txt = 0;
@@ -569,8 +569,8 @@ uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
                               flags & (~cmsFLAGS_GAMUTCHECK);
       switch(precalculation)
       {
-      case 0: flags |= cmsFLAGS_NOOPTIMIZE; break;
-      case 1: flags |= 0; break;
+      case 0: flags |= 0; break;
+      case 1: flags |= cmsFLAGS_NOOPTIMIZE; break;
       case 2: flags |= cmsFLAGS_HIGHRESPRECALC; break;
       case 3: flags |= cmsFLAGS_LOWRESPRECALC; break;
       }
@@ -2079,16 +2079,18 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   {
     /* adapt the region of interesst to the new image dimensions */
     /* create a new ticket to avoid pixel layout conflicts */
-    oyRectangle_s * new_roi = oyPixelAccess_GetOutputROI( new_ticket );
+    oyRectangle_s * new_ticket_roi;
     oyArray2d_s * a = 0;
     new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
     oyPixelAccess_SetArray( new_ticket, 0 );
+    a = oyPixelAccess_GetArray( new_ticket );
+    new_ticket_roi = oyPixelAccess_GetOutputROI( new_ticket );
     oyPixelAccess_SetOutputImage( new_ticket, image_input );
-    error = oyImage_FillArray( image_input, new_roi, 1,
+    error = oyImage_FillArray( image_input, new_ticket_roi, 1,
                                &a, 0, 0 );
     oyPixelAccess_SetArray( new_ticket, a );
     oyArray2d_Release( &a );
-    oyRectangle_Release( & new_roi );
+    oyRectangle_Release( & new_ticket_roi );
     if(oy_debug > 1)
       lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s %d",
                 OY_DBG_ARGS_, _("Fill new_ticket->array from image_input"),
@@ -2097,7 +2099,13 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
   /* We let the input filter do its processing first. */
   error = oyFilterNode_Run( input_node, plug, new_ticket );
-  if(error != 0) return error;
+  if(error != 0)
+  {
+    lcm2_msg( oyMSG_ERROR, (oyStruct_s*)input_node, OY_DBG_FORMAT_"%s %d",
+                OY_DBG_ARGS_, _("running new ticket failed"),
+                oyStruct_GetId( (oyStruct_s*)new_ticket ) );
+    return error;
+  }
 
   array_in = oyPixelAccess_GetArray( new_ticket );
   array_out = oyPixelAccess_GetArray( ticket );
@@ -2398,7 +2406,7 @@ char lcm2_extra_options[] = {
     <" OY_TYPE_STD ">\n\
      <" "icc" ">\n\
       <cmyk_cmyk_black_preservation.advanced>0</cmyk_cmyk_black_preservation.advanced>\n\
-      <precalculation.advanced>1</precalculation.advanced>\n\
+      <precalculation.advanced>0</precalculation.advanced>\n\
       <precalculation_curves.advanced>0</precalculation_curves.advanced>\n\
       <adaption_state.advanced>1.0</adaption_state.advanced>\n\
      </" "icc" ">\n\
@@ -2473,11 +2481,11 @@ int lcm2GetOptionsUI                 ( oyOptions_s        * options,
       <xf:choices>\n\
        <xf:item>\n\
         <xf:value>0</xf:value>\n\
-        <xf:label>LCMS2_NOOPTIMIZE</xf:label>\n\
+        <xf:label>normal</xf:label>\n\
        </xf:item>\n\
        <xf:item>\n\
         <xf:value>1</xf:value>\n\
-        <xf:label>normal</xf:label>\n\
+        <xf:label>LCMS2_NOOPTIMIZE</xf:label>\n\
        </xf:item>\n\
        <xf:item>\n\
         <xf:value>2</xf:value>\n\
@@ -3035,7 +3043,7 @@ const char * lcm2InfoGetText         ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("The lcms \"colour.icc\" filter is a one dimensional colour conversion filter. It can both create a colour conversion context, some precalculated for processing speed up, and the colour conversion with the help of that context. The adaption part of this filter transforms the Oyranos colour context, which is ICC device link based, to the internal lcms format.");
     else
-      return _("The following options are available to create colour contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract colour profiles.\n The following Oyranos options are supported: \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], \"precalculation\": [0 - cmsFLAGS_NOOPTIMIZE; 1 - normal; 2 - cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], \"precalculation_curves\": [0 - none; 1 - cmsFLAGS_CLUT_POST_LINEARIZATION + cmsFLAGS_CLUT_PRE_LINEARIZATION] and \"adaption_state\": [0.0 - not adapted to screen, 1.0 - full adapted to screen]." );
+      return _("The following options are available to create colour contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract colour profiles.\n The following Oyranos options are supported: \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], \"precalculation\": [0 - normal; 1 - cmsFLAGS_NOOPTIMIZE; 2 - cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], \"precalculation_curves\": [0 - none; 1 - cmsFLAGS_CLUT_POST_LINEARIZATION + cmsFLAGS_CLUT_PRE_LINEARIZATION] and \"adaption_state\": [0.0 - not adapted to screen, 1.0 - full adapted to screen]." );
   }
   return 0;
 }
