@@ -1709,9 +1709,6 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
     {
       o = oyOptions_Get( s, i );
       oyOption_SetSource( o, oyOPTIONSOURCE_FILTER );
-      /* ask Elektra */
-      if(!(flags & oyOPTIONSOURCE_FILTER))
-        error = oyOption_SetValueFromDB( o );
       oyOption_Release( &o );
     }
     error = oyOptions_DoFilter ( s, flags, type_txt );
