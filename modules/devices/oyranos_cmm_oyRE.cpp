@@ -293,7 +293,7 @@ int DeviceFromHandle(oyOptions_s **options, Exiv2::Image::AutoPtr image)
    //e2o.add("Minolta"); //Non existant?
    error += e2o.add(PRFX_EXIF "Nikon3.SerialNumber");
    error += e2o.add(PRFX_EXIF "Nikon3.SerialNO");
-   error += e2o.add(PRFX_EXIF "Olympus.SerialNumber");
+   //error += e2o.add(PRFX_EXIF "Olympus.SerialNumber"); // !in exiv2-0.23
    error += e2o.add(PRFX_EXIF "Olympus.SerialNumber2");
    error += e2o.add(PRFX_EXIF "OlympusEq.SerialNumber");
    error += e2o.add(PRFX_EXIF "OlympusEq.InternalSerialNumber");
