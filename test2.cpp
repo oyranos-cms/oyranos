@@ -1315,7 +1315,7 @@ oyTESTRESULT_e testProofingEffect ()
 
   error = oyOptions_MoveInStruct( &opts, "//"OY_TYPE_STD"/icc_profile.proofing_profile",
                                   (oyStruct_s**) &prof, OY_CREATE_NEW );
-  error = oyOptions_Handle( "//"OY_TYPE_STD"/create_profile",
+  error = oyOptions_Handle( "//"OY_TYPE_STD"/create_profile.proofing_effect",
                             opts,"create_profile.proofing_effect",
                             &result_opts );
   abstract = (oyProfile_s*)oyOptions_GetType( result_opts, -1, "icc_profile",
@@ -2462,11 +2462,14 @@ oyTESTRESULT_e testCMMsShow ()
                 {
                   api = (oyCMMapiFilter_s_*)oyCMMapiFilters_Get( apis, k );
 
+                  if(api)
                   snprintf( text_tmp, 65535,
                             "      [%s]: \"%s\"  %d\n        %s\n",
                             oyStructTypeToText(api->type_),
                             api->registration,
                             (int)rank_list[k], api->id_ );
+                  else
+                    sprintf(text_tmp,"      no api obtained %d",k);
                   STRING_ADD( text, text_tmp );
                   /* oforms */
                   CHOICE( "shared/dummy", oyStructTypeToText(api->type_), text_tmp )
@@ -2844,7 +2847,6 @@ oyTESTRESULT_e testCMMnmRun ()
     {
       oyCMMapiFilters_s * apis;
       int apis_n = 0;
-      uint32_t         * rank_list = 0;
       oyCMMapi9_s_ * cmm_api9 = 0;
       char * klass, * api_reg;
 
@@ -2859,7 +2861,7 @@ oyTESTRESULT_e testCMMnmRun ()
       apis = oyCMMsGetFilterApis_( 0,0, api_reg,
                                    oyOBJECT_CMM_API9_S,
                                    oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
-                                   &rank_list, 0);
+                                   0,0);
       apis_n = oyCMMapiFilters_Count( apis );
       for(i = 0; i < apis_n; ++i)
       {
