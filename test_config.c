@@ -1,13 +1,25 @@
-#include "oyConversion_s.h"
+#include "oyranos_devices.h"
 
 int main( int argc, char ** argv)
 {
-  oyConversion_s * cc = oyConversion_New(0);
+  uint32_t count = 0,
+         * rank_list = 0;
+  int error = 0;
+  char ** texts = 0;
 
-  if(!cc)
-    oyMessageFunc_p(oyMSG_WARN,0,"No oyConversion_s generated");
+#ifdef USE_GETTEXT
+  setlocale(LC_ALL,"");
+#endif
 
-  oyConversion_Release(&cc);
+  /* get all configuration filters */
+  error = oyConfigDomainList( "//"OY_TYPE_STD"/config.device.icc_profile",
+                      &texts, &count, &rank_list ,0 );
+  
+
+  if(!count && !error)
+    oyMessageFunc_p(oyMSG_WARN,0,"No registration found by oyConfigDomainList");
+  else
+    oyMessageFunc_p(oyMSG_WARN,0,"found %d registrations", count);
 
   return 0;
 }
