@@ -1255,6 +1255,10 @@ check:	all test_core test_object test_module test_config tests/test_oyranos $(TE
 	OY_MODULE_PATH=. LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} ./test_config
 	OY_MODULE_PATH=. LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} tests/test_oyranos
 
+check-long:	check
+	echo run ./test2
+	OY_MODULE_PATH=. LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} ./test2
+
 examples:	all
 	cd examples && ($(MAKE) clean; PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." INCLUDE="-I$(SRCDIR) -I../ -I$(SRCDIR)/$(GENDIR) -I$(includedir)" SRCDIR=$(SRCDIR)/examples/ CFLAGS="$(CFLAGS)" LIBS="-L../ $(LDFLAGS) -L$(libdir)" intl="$(intl)" QT="$(QT)" $(MAKE))
 
@@ -1834,6 +1838,7 @@ help:
 	echo "... test :       do a test"
 	echo "... test2 :      build a second test binary"
 	echo "... check :      do a test build and run it"
+	echo "... check-long : do a test build and run a long test"
 	echo "... examples :   try building the example directory"
 	echo "... oforms :     try building the oforms directory"
 	echo "... "
