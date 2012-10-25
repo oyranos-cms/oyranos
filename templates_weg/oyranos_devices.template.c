@@ -1657,7 +1657,6 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
     {
       oyCMMapiFilters_s * apis;
       int apis_n = 0;
-      uint32_t         * rank_list = 0;
       oyCMMapi9_s_ * cmm_api9_ = 0;
       char * klass, * api_reg;
 
@@ -1672,7 +1671,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
       apis = oyCMMsGetFilterApis_( 0,0, api_reg,
                                    oyOBJECT_CMM_API9_S,
                                    oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
-                                   &rank_list, 0);
+                                   0,0);
       apis_n = oyCMMapiFilters_Count( apis );
       for(i = 0; i < apis_n; ++i)
       {
