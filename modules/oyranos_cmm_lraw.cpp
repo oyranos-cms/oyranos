@@ -304,7 +304,8 @@ int wread ( unsigned char* data, size_t pos, size_t max, size_t *start, size_t *
   return end_found;
 }
 
-// The oyVEC3, oyMAT3 and oyMAT3inverse definitions origin from lcms2 cmsmtrx.c
+// The oyVEC3, oyMAT3, oyMAT3inverse, _oyVEC3init and _oyMAT3per definitions 
+// origin from lcms2 cmsmtrx.c
 // Vectors                                                                  
 typedef struct {
   double n[3];                                                  
@@ -342,6 +343,30 @@ int _oyMAT3inverse(const oyMAT3* a, oyMAT3* b)
 
    return TRUE;
 }
+// Axis of the matrix/array. No specific meaning at all.
+#define VX      0
+#define VY      1
+#define VZ      2
+// Initiate a vector
+void _oyVEC3init(oyVEC3* r, double x, double y, double z)
+{
+    r -> n[VX] = x;
+    r -> n[VY] = y;
+    r -> n[VZ] = z;
+}
+// Multiply two matrices
+void _oyMAT3per(oyMAT3* r, const oyMAT3* a, const oyMAT3* b)
+{
+#define ROWCOL(i, j) \
+    a->v[i].n[0]*b->v[0].n[j] + a->v[i].n[1]*b->v[1].n[j] + a->v[i].n[2]*b->v[2].n[j]
+
+    _oyVEC3init(&r-> v[0], ROWCOL(0,0), ROWCOL(0,1), ROWCOL(0,2));
+    _oyVEC3init(&r-> v[1], ROWCOL(1,0), ROWCOL(1,1), ROWCOL(1,2));
+    _oyVEC3init(&r-> v[2], ROWCOL(2,0), ROWCOL(2,1), ROWCOL(2,2));
+
+#undef ROWCOL //(i, j)
+}
+
 
 oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color )
 {
