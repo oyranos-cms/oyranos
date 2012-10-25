@@ -40,8 +40,8 @@ extern const char * (*oyStruct_GetTextFromModule_p) (
                                        oyNAME_e            name_type,
                                        uint32_t            flags );
 
-/** Function oyCMMsGetFilterApis_
- *  @brief   Let a oyCMMapi5_s meta module open a set of modules
+/** Function  oyCMMsGetFilterApis_
+ *  @brief    Let a oyCMMapi5_s meta module open a set of modules
  *  @internal
  *
  *  The oyCMMapiLoadxxx_ function family loads a API from a external module.\n
@@ -79,9 +79,9 @@ extern const char * (*oyStruct_GetTextFromModule_p) (
  *  @param[out]  count                 count of returned modules
  *  @return                            a zero terminated list of modules
  *
- *  @version Oyranos: 0.1.11
- *  @since   2008/12/19 (Oyranos: 0.1.10)
- *  @date    2010/08/12
+ *  @version  Oyranos: 0.9.0
+ *  @date     2012/10/25
+ *  @since    2008/12/19 (Oyranos: 0.1.10)
  */
 oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
                                          const char        * cmm_required,
@@ -100,21 +100,48 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
   uint32_t * rank_list_ = 0, * rank_list2_ = 0;
   int rank_list_n = 5, count_ = 0;
   oyObject_s object = oyObject_New();
+  oyHash_s * entry = 0;
 
-  /*{
-    if(!oy_module_cache_)
-      oy_module_cache_ = oyStructList_New( 0 );
+  if(!rank_list)
+  {
+    char * hash_text = 0;
 
-    entry = oyCacheListGetEntry_ ( oy_module_cache_, registration );
-
-    api = (oyCMMapiFilter_s*) oyHash_GetPointer_( entry, type );
-
-    if(api)
+    /* query cache */
+    oyStringAddPrintf_( &hash_text, oyAllocateFunc_,oyDeAllocateFunc_,
+                "oyCMMapiFilters_s:meta:%s;required:%s;reg:%s;type:%u;flags:%u",
+                        oyNoEmptyString_m_( cmm_meta ),
+                        oyNoEmptyString_m_( cmm_required ),
+                        oyNoEmptyString_m_( registration ),
+                        type,
+                        flags );
+    entry = oyCMMCacheListGetEntry_( hash_text );
+    /* release hash string */
+    oyDeAllocateFunc_( hash_text ); hash_text = 0;
+    apis = (oyCMMapiFilters_s*) oyHash_GetPointer( entry,
+                                                   oyOBJECT_CMM_API_FILTERS_S );
+    if(apis)
     {
-      oyHash_Release_( &entry );
-      return api;
+      int i,n = oyCMMapiFilters_Count( apis );
+
+      if(count)
+        *count = n;
+
+      /* copy the result into a new container */
+      if(n)
+        apis2 = oyCMMapiFilters_New(0);
+      for( i = 0; i < n; ++i)
+      {
+        api = oyCMMapiFilters_Get( apis, i );
+        oyCMMapiFilters_MoveIn( apis2, &api, -1 );
+      }
+
+      oyHash_Release( &entry );
+      oyCMMapiFilters_Release( &apis );
+
+      /* return cached result */
+      return apis2;
     }
-  }*/
+  }
 
   if(error <= 0)
   {
@@ -301,14 +328,14 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
     oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
   }
 
-  /*if(api)
+  if(error <= 0 && apis2 && entry)
   {
-    (*api_)->id_ = lib_name;
-    error = oyHash_SetPointer_( entry, (oyStruct_s*) s );
-  }*/
+    error = oyHash_SetPointer( entry, (oyStruct_s*) apis2 );
+  }
 
   clean:
     oyObject_Release( &object );
+    oyHash_Release( &entry );
 
   return apis2;
 }
@@ -359,7 +386,10 @@ oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
   oyDeAllocateFunc_( hash_text ); hash_text = 0;
   api = (oyCMMapiFilter_s*) oyHash_GetPointer( entry, type );
   if(api)
+  {
+    oyHash_Release( &entry );
     return api;
+  }
 #endif
 
   apis = oyCMMsGetFilterApis_( 0,cmm_required, registration, type, 
@@ -377,6 +407,8 @@ oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
     oyHash_SetPointer( entry, (oyStruct_s*) api );
 #endif
   }
+
+  oyHash_Release( &entry );
 
   return api;
 }
@@ -623,6 +655,9 @@ oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text)
   if(!oy_cmm_cache_)
     oy_cmm_cache_ = oyStructList_New( 0 );
 
+  if(oy_debug > 0)
+    DBGs1_S(oy_cmm_cache_,"%s", hash_text)
+
   return oyCacheListGetEntry_(oy_cmm_cache_, 0, hash_text);
 }
 
@@ -695,20 +730,37 @@ oyCMMapis_s * oyCMMGetMetaApis_     ( const char        * cmm )
 }
 
 /** @internal
- *  Function oyCMMsGetMetaApis_
- *  @brief get oyranos modules
+ *  Function  oyCMMsGetMetaApis_
+ *  @brief    Get oyranos modules
  *
  *  @param[in]   cmm                  the selected module, optional
  *
- *  @version Oyranos: 0.1.11
- *  @since   2010/06/25 (Oyranos: 0.1.10)
- *  @date    2010/09/14
+ *  @version  Oyranos: 0.9.0
+ *  @date     2012/10/25
+ *  @since    2010/06/25 (Oyranos: 0.1.10)
  */
 oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm )
 {
   int error = 0;
   oyCMMapis_s * apis = 0;
   oyCMMapi_Check_f apiCheck = oyCMMapi_CheckWrap_;
+
+  oyHash_s * entry;
+  char * hash_text = 0;
+
+  /* query cache */
+  STRING_ADD( hash_text, "oyCMMapis_s:" );
+  STRING_ADD( hash_text, oyNoEmptyString_m_( cmm ) );
+  entry = oyCMMCacheListGetEntry_( hash_text );
+  /* release hash string */
+  oyDeAllocateFunc_( hash_text ); hash_text = 0;
+  apis = (oyCMMapis_s*) oyHash_GetPointer( entry, oyOBJECT_CMM_APIS_S );
+  if(apis)
+  {
+    oyHash_Release( &entry );
+    /* return cached result */
+    return apis;
+  }
 
   if(error <= 0)
   {
@@ -755,6 +807,10 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm )
 
     oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
   }
+
+  if(error <= 0 && apis)
+    error = oyHash_SetPointer( entry, (oyStruct_s*) apis );
+  oyHash_Release( &entry );
 
   return apis;
 }
@@ -1869,8 +1925,8 @@ oyPointer_s * oyPointer_LookUpFromText( const char        * text,
 }
 
 
-/** Function oyOptions_Handle
- *  @brief   handle a request by a module
+/** Function  oyOptions_Handle
+ *  @brief    Handle a request by a module
  *
  *  @param[in]     registration        the module selector
  *  @param[in]     options             options
@@ -1880,9 +1936,9 @@ oyPointer_s * oyPointer_LookUpFromText( const char        * text,
  *                                     <= -1 - issue,
  *                                     + a message should be sent
  *
- *  @version Oyranos: 0.3.0
- *  @since   2009/12/11 (Oyranos: 0.1.10)
- *  @date    2011/02/22
+ *  @version  Oyranos: 0.9.0
+ *  @date     2012/10/25
+ *  @since    2009/12/11 (Oyranos: 0.1.10)
  */
 int             oyOptions_Handle     ( const char        * registration,
                                        oyOptions_s       * options,
@@ -1902,24 +1958,15 @@ int             oyOptions_Handle     ( const char        * registration,
     oyCMMapiFilters_s * apis;
     int apis_n = 0, i, found = 0;
     oyCMMapi10_s_ * cmm_api10 = 0;
-    char * class_name, * api_reg;
     char * test = 0;
-    uint32_t * rank_list = 0,
-               api_n = 0;
-
-    class_name = oyFilterRegistrationToText( registration, oyFILTER_REG_TYPE, 0 );
-    api_reg = oyStringCopy_("//", oyAllocateFunc_ );
-    STRING_ADD( api_reg, class_name );
-    oyFree_m_( class_name );
 
     STRING_ADD( test, "can_handle." );
     if(command && command[0])
       STRING_ADD( test, command );
 
-    apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API10_S,
+    apis = oyCMMsGetFilterApis_( 0,0, registration, oyOBJECT_CMM_API10_S,
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
-                                 &rank_list, &api_n );
-    if(rank_list) oyDeAllocateFunc_(rank_list); rank_list = 0;
+                                 0,0 );
 
     apis_n = oyCMMapiFilters_Count( apis );
     if(test)
