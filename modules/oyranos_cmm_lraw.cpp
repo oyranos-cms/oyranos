@@ -382,6 +382,7 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color )
               "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma", NULL );
 
     int fail = 0;
+#if 0
     if(oy_debug)
       printf("cam_xyz:\n");
     float cam_xy[3][2];
@@ -395,11 +396,19 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color )
           printf(" %g", color.cam_xyz[i][j]);
       }
       float sum = color.cam_xyz[i][0]+color.cam_xyz[i][1]+color.cam_xyz[i][2];
-      cam_xy[i][0] = color.cam_xyz[i][0]/sum;
-      cam_xy[i][1] = color.cam_xyz[i][1]/sum;
-      if(oy_debug)
+      if(sum != 0)
+      {
+        cam_xy[i][0] = color.cam_xyz[i][0]/sum;
+        cam_xy[i][1] = color.cam_xyz[i][1]/sum;
+      } else
+      {
+        cam_xy[i][0] = 1;
+        cam_xy[i][1] = 1;
+      }
+      if(oy_debug || sum == 0.0)
         printf("\n x:%g y:%g\n", cam_xy[i][0], cam_xy[i][1] );
     }
+#endif
     oyMAT3 cam_xyz, xyz_cam;
     float xyz_xy[3][2];
     for(int i = 0; i < 3; ++i)
@@ -488,7 +497,7 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color )
                 * result = 0;
 
     oyOptions_MoveIn( opts, &matrix, -1 );
-    const char * reg = "//"OY_TYPE_STD"/create_profile.icc";
+    const char * reg = "//"OY_TYPE_STD"/create_profile.colour_matrix.icc";
     oyOptions_Handle( reg, opts,"create_profile.icc_profile.colour_matrix",
                       &result );
 
