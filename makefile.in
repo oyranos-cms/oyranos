@@ -1195,7 +1195,7 @@ test_object:	$(LIBSONAMEOBJECTFULL) $(LIBNAME_OBJECT) test_object.o
 test_module:	$(LIBSONAMEMODULESFULL) $(LIBNAME_MODULES) test_module.o
 	echo Linking dynamic $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall \
-	  -o test_modules_dyn \
+	  -o test_module_dyn \
 	  test_module.o -L./ $(LIBSONAMEMODULESFULL) $(LIBSONAMEOBJECTFULL) \
 	  $(LIBSONAMECOREFULL) \
 	  $(LDLIBSCORE) $(LIBXML2_LIBS) $(LINK_LIB_PATH) -L$(libdir) $(intl)
@@ -1208,15 +1208,15 @@ test_module:	$(LIBSONAMEMODULESFULL) $(LIBNAME_MODULES) test_module.o
 test_config:	$(LIBSONAMECONFIGFULL) $(LIBNAME_CONFIG) test_config.o
 	echo Linking dynamic $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall \
-	  -o test_modules_dyn \
-	  test_module.o -L./ $(LIBSONAMECONFIGFULL) $(LIBSONAMEMODULESFULL) \
+	  -o test_config_dyn \
+	  test_config.o -L./ $(LIBSONAMECONFIGFULL) $(LIBSONAMEMODULESFULL) \
 	  $(LIBSONAMEOBJECTFULL) $(LIBSONAMECOREFULL) \
 	  $(LDLIBSCORE) $(LDLIBS) $(LINK_LIB_PATH)
 	echo Linking static $@ ...
 	$(CXX) -I./ `echo $(CXXFLAGS) | sed s/-0.//g` -g -Wall -o $@ \
-	  test_module.o -L./ $(LIBNAME_CONFIG) \
+	  test_config.o -L./ $(LIBNAME_CONFIG) \
 	  $(LIBNAME_MODULES) $(LIBNAME_OBJECT) $(LIBSONAMECORE) \
-	  $(LIBXML2_LIBS) -L$(libdir) $(intl) $(dl)
+	  $(LDLIBS) $(LINK_LIB_PATH)
 
 
 test2:	test2.o $(LIBSONAMEFULL)
