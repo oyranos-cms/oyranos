@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2006-2009 (C) Kai-Uwe Behrmann
+ *            2006-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    input / output  methods
  *  @internal
@@ -194,7 +194,7 @@ oyProfileGetMD5_       ( void       *buffer,
         WARNc2_S("%s != %s", tmp_hash, tmp_hash2)
       error = -1 - has_profile_id;
     } else
-    if(oy_debug)
+    if(oy_debug > 2)
     {
       oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*) NULL, 
                 OY_DBG_FORMAT_ "[ICC md5]: %x%x%x%x", OY_DBG_ARGS_,

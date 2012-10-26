@@ -564,7 +564,7 @@ int                oyConversion_RunPixels (
       pixel_access_ = (oyPixelAccess_s_*)oyPixelAccess_Create( 0,0, plug,
                                                       oyPIXEL_ACCESS_IMAGE, 0 );
       clck = oyClock() - clck;
-      DBG_NUM1_S("oyPixelAccess_Create(): %g", clck/1000000.0 );
+      DBG_PROG1_S("oyPixelAccess_Create(): %g", clck/1000000.0 );
     }
     tmp_ticket = 1;
   }
@@ -585,23 +585,23 @@ int                oyConversion_RunPixels (
                                 &pixel_access_->array,
                                 (oyRectangle_s*)pixel_access_->output_image_roi, 0 );
     clck = oyClock() - clck;
-    DBGs_NUM1_S( pixel_access_,"oyImage_FillArray(): %g", clck/1000000.0 );
+    DBGs_PROG1_S( pixel_access_,"oyImage_FillArray(): %g", clck/1000000.0 );
     error = ( result != 0 );
   }
 
   /* run on the graph */
   if(error <= 0)
   {
-    DBGs_NUM2_S( pixel_access_, "Run: node_out[%d] image_out[%d]",
+    DBGs_PROG2_S( pixel_access_, "Run: node_out[%d] image_out[%d]",
                  oyStruct_GetId((oyStruct_s*)node_out),
                  oyStruct_GetId((oyStruct_s*)image_out) );
     clck = oyClock();
     error = oyFilterNodePriv_m(node_out)->api7_->oyCMMFilterPlug_Run( plug,
                                              (oyPixelAccess_s*)pixel_access_ );
     clck = oyClock() - clck;
-    DBG_NUM1_S( "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g",
+    DBG_PROG1_S( "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g",
                 clck/1000000.0 );
-    DBGs_NUM1_S( pixel_access_, 
+    DBGs_PROG1_S( pixel_access_, 
          "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g", clck/1000000.0 );
   }
 
@@ -614,14 +614,14 @@ int                oyConversion_RunPixels (
     clck = oyClock();
     oyFilterGraph_SetFromNode( (oyFilterGraph_s*)pixel_access_->graph, (oyFilterNode_s*)s->input, 0, 0 );
     clck = oyClock() - clck;
-    DBGs_NUM1_S(pixel_access_,"oyFilterGraph_SetFromNode(): %g",clck/1000000.0 );
+    DBGs_PROG1_S(pixel_access_,"oyFilterGraph_SetFromNode(): %g",clck/1000000.0 );
 
     /* resolve missing data */
     clck = oyClock();
     image_input = oyFilterPlug_ResolveImage( plug, (oyFilterSocket_s*)((oyFilterPlug_s_*)plug)->remote_socket_,
                                              (oyPixelAccess_s*)pixel_access_ );
     clck = oyClock() - clck;
-    DBGs_NUM1_S(pixel_access_,"oyFilterPlug_ResolveImage(): %g",clck/1000000.0 );
+    DBGs_PROG1_S(pixel_access_,"oyFilterPlug_ResolveImage(): %g",clck/1000000.0 );
     oyImage_Release( &image_input );
 
     n = oyFilterNodes_Count( pixel_access_->graph->nodes );
@@ -634,7 +634,7 @@ int                oyConversion_RunPixels (
                                    &(*pixel_access_)->array,
                                    (*pixel_access_)->output_image_roi, 0 ); OY_ERR
       clck = oyClock() - clck;
-      DBG_NUM1_S("oyImage_FillArray(): %g", clck/1000000.0 );
+      DBG_PROG1_S("oyImage_FillArray(): %g", clck/1000000.0 );
 #endif
 
       if(error != 0 &&
@@ -651,13 +651,13 @@ int                oyConversion_RunPixels (
         clck = oyClock();
         oyFilterGraph_PrepareContexts( (oyFilterGraph_s*)pixel_access_->graph, 0 );
         clck = oyClock() - clck;
-        DBGs_NUM1_S( pixel_access_,
+        DBGs_PROG1_S( pixel_access_,
                      "oyFilterGraph_PrepareContexts(): %g", clck/1000000.0 );
         clck = oyClock();
         error = s->out_->api7_->oyCMMFilterPlug_Run( plug,
                                               (oyPixelAccess_s*)pixel_access_);
         clck = oyClock() - clck;
-        DBGs_NUM1_S( pixel_access_,
+        DBGs_PROG1_S( pixel_access_,
           "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g",clck/1000000.0 );
       }
 

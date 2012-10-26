@@ -637,13 +637,13 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
                     oyFree_m_( text );
                   }
 
-                  if(oy_debug || verbose)
+                  if(oy_debug > 2 || verbose)
                     WARNc2_S("set %s: %s", key,
                              oyOptions_FindString(f_options,
                                                   key, 0) );
                 } else
                   WARNc1_S("no in filter defaults \"%s\" found.", key);
-              } else
+              } else if(oy_debug > 2)
               {
                 tmp = oyOptions_FindString(f_options, key, 0);
                 oicc_msg( oyMSG_DBG,(oyStruct_s*)f_options,
@@ -753,7 +753,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                                 flags, 0 );
               f_options = oyFilterNode_GetOptions( node, flags );
               os_n = oyOptions_Count(f_options);
-              if(oy_debug || verbose)
+              if(oy_debug > 2 || verbose)
               for(k = 0; k < os_n; k++)
               {
                 o = oyOptions_Get( f_options, k );
@@ -769,7 +769,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                 oyOption_Release( &o );
               }
               os_n = oyOptions_Count(db_options);
-              if(oy_debug || verbose)
+              if(oy_debug > 2 || verbose)
               for(k = 0; k < os_n; k++)
               {
                 o = oyOptions_Get( db_options, k );

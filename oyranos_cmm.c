@@ -59,7 +59,7 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   int width;
   oyRectangle_s * output_image_roi;
 
-  DBGs_NUM2_S( ticket, "%s[%d]", _("Work on remote socket image"),
+  DBGs_PROG2_S( ticket, "%s[%d]", _("Work on remote socket image"),
                oyStruct_GetId( (oyStruct_s*)image ) );
 
   oyFilterSocket_Release( &socket );
@@ -74,7 +74,7 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   /* Set a unknown output image dimension to something appropriate. */
   if(!oyImage_GetWidth(output_image) && !oyImage_GetHeight(output_image))
   {
-    DBGs_NUM7_S( ticket, "%s[%d] %s %.04gx%.04g %.04gx%.04g",
+    DBGs_PROG7_S( ticket, "%s[%d] %s %.04gx%.04g %.04gx%.04g",
                  _("Set dimensions on ticket->output_image"),
                  oyStruct_GetId( (oyStruct_s*)output_image ),
                  oyRectangle_Show( output_image_roi ),
@@ -107,7 +107,7 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                         oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,2) * correct,
                         oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,3) * correct );
     STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&image_roi ) );
-    DBGs_NUM4_S( ticket, "%s[%d] %s %s", _("Fill ticket->array from image"),
+    DBGs_PROG4_S( ticket, "%s[%d] %s %s", _("Fill ticket->array from image"),
                  oyStruct_GetId( (oyStruct_s*)image ),
                  oyRectangle_Show( output_image_roi ),
                  t );

@@ -655,7 +655,7 @@ oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text)
   if(!oy_cmm_cache_)
     oy_cmm_cache_ = oyStructList_New( 0 );
 
-  if(oy_debug > 0)
+  if(oy_debug > 3)
     DBGs1_S(oy_cmm_cache_,"%s", hash_text)
 
   return oyCacheListGetEntry_(oy_cmm_cache_, 0, hash_text);

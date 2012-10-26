@@ -92,7 +92,7 @@ public:
       }
 
 #if DEBUG
-      if(oy_debug)
+      if(oy_debug > 1)
       printf( "%s:%d new display rectangle: %s +%d+%d +%d+%d\n",
               strrchr(__FILE__,'/')+1, __LINE__,
               oyRectangle_Show(display_rectangle), x(), y(), px, py );
@@ -106,7 +106,7 @@ public:
         *oyRectangle_SetGeo1(output_rectangle,3) = OY_MIN( H, oyImage_GetHeight( image ) );
         oyRectangle_Scale( output_rectangle, 1.0/oyImage_GetWidth( image ) );
 #if DEBUG
-        if(oy_debug)
+        if(oy_debug > 1)
         {
           static int old_px = 0;
           if(px != old_px)
@@ -208,7 +208,7 @@ public:
 
       drawPrepare( &image, oyUINT8, 0 );
 
-      if(oy_debug)
+      if(oy_debug > 2)
       printf("%s:%d draw() %s\n",
               strrchr(__FILE__,'/')+1, __LINE__,
               oyFilterNode_GetText( icc, oyNAME_NAME ) );
@@ -244,7 +244,7 @@ public:
                           oyUINT8,
                          editing,
                          0 );
-    if(oy_debug)
+    if(oy_debug > 1)
       printf("%s:%d image:%s image_display:%s\n",
               strrchr(__FILE__,'/')+1, __LINE__,
               image?"created":"failed",
@@ -254,7 +254,7 @@ public:
     context = oyConversion_FromImageForDisplay( 
                              image, image_display, &icc,
                              oyOPTIONATTRIBUTE_ADVANCED, oyUINT8, 0,0, 0 );
-    if(oy_debug)
+    if(oy_debug > 2)
       printf("%s:%d context:%s\n",
               strrchr(__FILE__,'/')+1, __LINE__,
               oyFilterNode_GetText( icc, oyNAME_NAME ) );
