@@ -345,6 +345,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
                                         oyOBJECT_CMM_API8_S);
    oyAlloc_f allocateFunc = malloc;
 
+   if(oy_debug > 2)
    message( oyMSG_DBG, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
             "entered Options:\n%s", _DBG_ARGS_,
             oyOptions_GetText(options, oyNAME_NICK) );
@@ -397,9 +398,11 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    if (command_list) {
       /* "list" call section */
 
+      if(oy_debug > 2)
       message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                "Backend core:\n%s", _DBG_ARGS_,
                oyOptions_GetText(*oyConfig_GetOptions(device,"backend_core"), oyNAME_NICK));
+      if(oy_debug > 2)
       message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX
                "Data:\n%s", _DBG_ARGS_,
                oyOptions_GetText(*oyConfig_GetOptions(device,"data"), oyNAME_NICK));
@@ -432,6 +435,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       if (!handle_opt) {
          int i = 0;
          while(device_list[i++]);
+         if(oy_debug > 2)
          message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                  "################### Found %d devices #######################",
                   _DBG_ARGS_, i-1);
@@ -480,9 +484,11 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       /* "properties" call section */
 
       const char * t = oyOptions_GetText(*oyConfig_GetOptions(device,"backend_core"), oyNAME_NICK);
+      if(oy_debug > 2)
       message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Backend core:\n%s", _DBG_ARGS_, t?t:"");
       t = oyOptions_GetText(*oyConfig_GetOptions(device,"data"), oyNAME_NICK);
+      if(oy_debug > 2)
       message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Data:\n%s", _DBG_ARGS_, t?t:"");
 
@@ -560,6 +566,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
    oyAlloc_f allocateFunc = malloc;
 
    
+   if(oy_debug > 2)
    message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
             "Options:\n%s",_DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK));
 
@@ -597,9 +604,11 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyConfig_s *device = oyConfigs_Get(devices, i);
 
          const char * t = oyOptions_GetText(*oyConfig_GetOptions(device,"backend_core"), oyNAME_NICK);
+         if(oy_debug > 2)
          message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Backend core:\n%s", _DBG_ARGS_, t?t:"");
          t = oyOptions_GetText(*oyConfig_GetOptions(device,"data"), oyNAME_NICK);
+         if(oy_debug > 2)
          message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Data:\n%s", _DBG_ARGS_, t?t:"");
 
@@ -652,9 +661,11 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyConfig_s *device_new = oyConfig_FromRegistration(CMM_BASE_REG, 0);
 
          const char * t = oyOptions_GetText(*oyConfig_GetOptions(device,"backend_core"), oyNAME_NICK);
+         if(oy_debug > 2)
          message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Backend core:\n%s", _DBG_ARGS_, t?t:"");
          t = oyOptions_GetText(*oyConfig_GetOptions(device,"data"), oyNAME_NICK);
+         if(oy_debug > 2)
          message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Data:\n%s", _DBG_ARGS_, t?t:"");
 
@@ -729,6 +740,7 @@ int Config_Rank(oyConfig_s * config)
    int error = !config, rank = 1;
 
    if (!config) {
+      if(oy_debug > 2)
       message( oyMSG_DBG, (oyStruct_s *) config, _DBG_FORMAT_
                "\n No config argument provided.", _DBG_ARGS_);
       return 0;
@@ -1019,6 +1031,7 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
         {
           if (is_raw(Exiv2::ImageFactory::getType(filename)))
             device_handle = Exiv2::ImageFactory::open(filename);
+          if(oy_debug > 2)
           message( oyMSG_DBG, (oyStruct_s *) device, _DBG_FORMAT_
                "filename = %s", _DBG_ARGS_, filename );
         }
