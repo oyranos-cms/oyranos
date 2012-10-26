@@ -96,6 +96,7 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
          case icSigSignatureType:
          case icSigTextDescriptionType:
          case icSigTextType:
+         case icSigXYZType:
               ret = 1; break;
          default: ret = 0; break;
          }
@@ -578,6 +579,14 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
  *      - announce string
  *      - oyBlob_s data blob
  *
+ *   - icSigXYZType:
+ *    - since Oyranos 0.9.0 (API 0.9.0)
+ *      - a string describing the values
+ *      - a option containing doubles
+ *        - first entry :  CIE *X
+ *        - second entry:  CIE *Y
+ *        - third entry : CIE *Z
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  *  @date    2009/01/03
@@ -798,6 +807,21 @@ oyStructList_s * oyIMProfileTag_GetValues(
     - announce string\
     - oyBlob_s data blob"
     };
+
+    oyName_s description_XYZ = {
+      oyOBJECT_NAME_S, 0,0,0,
+      CMM_NICK,
+      "XYZ ",
+      "\
+- icSigXYZType:\
+  - since Oyranos 0.9.0 (API 0.9.0)\
+    - a string describing the values\
+    - a option containing doubles\
+      - first entry :  CIE *X\
+      - second entry:  CIE *Y\
+      - third entry :  CIE *Z"
+    };
+
     oyStruct_s * description = 0;
 
     description = (oyStruct_s*) &description_mluc;
@@ -852,6 +876,10 @@ oyStructList_s * oyIMProfileTag_GetValues(
       error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_DevS;
+    if(!error)
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
+
+    description = (oyStruct_s*) &description_XYZ;
     if(!error)
       error = oyStructList_MoveIn( list, &description, -1, 0 );
 
@@ -2117,6 +2145,33 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  error = 1;
              }
            }
+           break;
+      case icSigXYZType:
+
+           if (oyProfileTag_GetSize(tag) < 20)
+           { return texts; }
+
+           if(error <= 0)
+           {
+             icXYZNumber * vals = (icXYZNumber*)&mem[8];
+
+             opt = oyOption_FromRegistration( "////icSigXYZType", 0 );
+             oyOption_SetFromDouble( opt, oyValueInt32(vals->X)/65536.0, 0, 0 );
+             oyOption_SetFromDouble( opt, oyValueInt32(vals->Y)/65536.0, 1, 0 );
+             oyOption_SetFromDouble( opt, oyValueInt32(vals->Z)/65536.0, 2, 0 );
+
+             oyStringAddPrintf_( &tmp, AD, "%g %g %g",
+                                 oyOption_GetValueDouble(opt,0),
+                                 oyOption_GetValueDouble(opt,1),
+                                 oyOption_GetValueDouble(opt,2)
+                               );
+
+             oyStructList_AddName( texts, tmp, -1 );
+             oyStructList_MoveIn( texts, (oyStruct_s**)&opt, -1, 0 );
+
+             if(tmp) oyFree_m_(tmp);
+           }
+           
            break;
     }
     oyFree_m_(mem);
