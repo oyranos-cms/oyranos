@@ -25,6 +25,7 @@
 #include "oyFilterNode_s_.h"         /* for oyFilterNode_TextToInfo_ */
 
 #include "oyranos_cmm.h"
+#include "oyranos_debug.h"
 #include "oyranos_devices.h"
 #include "oyranos_generic.h"
 #include "oyranos_helper.h"
@@ -283,30 +284,10 @@ oyOptions_s* lrawFilter_ImageInputRAWValidateOptions
   return 0;
 }
 
-int wread ( unsigned char* data, size_t pos, size_t max, size_t *start, size_t *end )
-{
-  int end_found = 0;
-
-  if( max <= 1 ) return 0;
-
-  while(pos < max && isspace( data[pos] )) ++pos;
-  *start = pos;
-
-  while(pos < max && !end_found) {
-    if( isspace( data[pos] ) ) {
-      end_found = 1;
-      break;
-    } else
-      ++pos;
-  }
-  *end = pos;
-
-  return end_found;
-}
-
 // The oyVEC3, oyMAT3, oyMAT3inverse, _oyVEC3init and _oyMAT3per definitions 
-// origin from lcms2 cmsmtrx.c
-// Vectors                                                                  
+// origin from lcms2' cmsmtrx.c written by Marti Maria www.littlecms.com 
+// and is MIT licensed there
+// Vectors
 typedef struct {
   double n[3];                                                  
 } oyVEC3;
@@ -367,6 +348,101 @@ void _oyMAT3per(oyMAT3* r, const oyMAT3* a, const oyMAT3* b)
 #undef ROWCOL //(i, j)
 }
 
+// End of lcms code
+
+typedef struct {
+  double xy[2];
+} oyCIExyY;
+typedef struct {
+  oyCIExyY v[3];
+} oyCIExyYTriple;
+
+void _oyMAT3toCIExyYTriple ( const oyMAT3* a,oyCIExyYTriple * triple )
+{
+  int i,j,
+      fail=0;
+  double sum;
+    for(i = 0; i < 3; ++i)
+    {
+      for(j = 0; j < 3; ++j)
+      {
+        if(i < 3 && a->v[i].n[j] == 0)
+          fail = 1;
+      }
+      sum = a->v[i].n[0]+a->v[i].n[1]+a->v[i].n[2];
+      if(sum != 0)
+      {
+        triple->v[i].xy[0] = a->v[i].n[0]/sum;
+        triple->v[i].xy[1] = a->v[i].n[1]/sum;
+      } else
+      {
+        triple->v[i].xy[0] = 1;
+        triple->v[i].xy[1] = 1;
+      }
+    }
+}
+const char * _oyMAT3show ( const oyMAT3* a )
+{
+  static char * t = (char*) malloc(1024);
+  int i,j;
+  t[0] = 0;
+  for(i = 0; i < 3; ++i)
+  {
+    for(j = 0; j < 3; ++j)
+      sprintf( &t[strlen(t)], " %g", a->v[i].n[j]);
+    sprintf( &t[strlen(t)], "\n" );
+  }
+  return t;
+}
+const char * _oyMat34show ( const float a[3][4] )
+{
+  static char * t = (char*) malloc(1024);
+  int i,j;
+  t[0] = 0;
+  for(i = 0; i < 3; ++i)
+  {
+    for(j = 0; j < 4; ++j)
+      sprintf( &t[strlen(t)], " %g", a[i][j]);
+    sprintf( &t[strlen(t)], "\n" );
+  }
+  return t;
+}
+const char * _oyMat4show ( const float a[4] )
+{
+  static char * t = (char*) malloc(1024);
+  int i;
+  t[0] = 0;
+  for(i = 0; i < 4; ++i)
+    sprintf( &t[strlen(t)], " %g", a[i]);
+  sprintf( &t[strlen(t)], "\n" );
+  return t;
+}
+const char * _oyMat43show ( const float a[4][3] )
+{
+  static char * t = (char*) malloc(1024);
+  int i,j;
+  t[0] = 0;
+  for(i = 0; i < 4; ++i)
+  {
+    for(j = 0; j < 3; ++j)
+      sprintf( &t[strlen(t)], " %g", a[i][j]);
+    sprintf( &t[strlen(t)], "\n" );
+  }
+  return t;
+}
+const char * _oyCIExyYTriple_Show( oyCIExyYTriple * triple )
+{
+  static char * t = (char*) malloc(1024);
+  int i;
+  t[0] = 0;
+  for(i = 0; i < 3; ++i)
+  {
+    sprintf( &t[strlen(t)], " x:%g y:%g", triple->v[i].xy[0],
+                                          triple->v[i].xy[1]);
+    sprintf( &t[strlen(t)], "\n" );
+  }
+  return t;
+}
 
 oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color )
 {
@@ -382,102 +458,74 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color )
               "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma", NULL );
 
     int fail = 0;
-#if 0
-    if(oy_debug)
-      printf("cam_xyz:\n");
-    float cam_xy[3][2];
-    for(int i = 0; i < 4; ++i)
+    for(int i = 0; i < 3; ++i)
     {
       for(int j = 0; j < 3; ++j)
       {
         if(i < 3 && color.cam_xyz[i][j] == 0)
           fail = 1;
-        if(oy_debug)
-          printf(" %g", color.cam_xyz[i][j]);
       }
-      float sum = color.cam_xyz[i][0]+color.cam_xyz[i][1]+color.cam_xyz[i][2];
-      if(sum != 0)
-      {
-        cam_xy[i][0] = color.cam_xyz[i][0]/sum;
-        cam_xy[i][1] = color.cam_xyz[i][1]/sum;
-      } else
-      {
-        cam_xy[i][0] = 1;
-        cam_xy[i][1] = 1;
-      }
-      if(oy_debug || sum == 0.0)
-        printf("\n x:%g y:%g\n", cam_xy[i][0], cam_xy[i][1] );
     }
-#endif
-    oyMAT3 cam_xyz, xyz_cam;
-    float xyz_xy[3][2];
+    oyMAT3 cam_zyx, pre_mul, ab_cm, ab_cm_inverse;
+    oyCIExyYTriple ab_cm_inverse_xyY;
+    
+    // Convert camera matrix to ICC profile
+    // In theory that should perform the same conversion like dcraw/libraw do.
+
+    memset(&pre_mul,0,sizeof(oyMAT3));
     for(int i = 0; i < 3; ++i)
-    {
+      pre_mul.v[i].n[i] = color.pre_mul[i];
+    for(int i = 0; i < 3; ++i)
       for(int j = 0; j < 3; ++j)
-      {
-        cam_xyz.v[i].n[j] = color.cam_xyz[i][j];
-      }
-    }
-    if(!_oyMAT3inverse( &cam_xyz, &xyz_cam ))
+        // mirror diagonal
+        cam_zyx.v[j].n[i] = color.cam_xyz[i][j];
+
+    // DNG-1.3 says in Mapping Camera Color Space to CIE XYZ Space
+    // XYZtoCamera = AB (AnalogBalance:pre_mul?) * CC (CameraCalibration2:?)
+    //               * CM (ColorMatrix2:cam_xyz)
+
+    // multiply AB * CM
+    _oyMAT3per( &ab_cm, &cam_zyx, &pre_mul );
+    if(_oyMAT3inverse( &ab_cm, &ab_cm_inverse ))
+      // convert to CIE*xyY
+      _oyMAT3toCIExyYTriple( &ab_cm_inverse, &ab_cm_inverse_xyY );
+    else
     {
-      if(oy_debug)
-        printf("cam_xyz is singular\n");
-    } else
-    {
-      if(oy_debug)
-        printf("xyz_cam:\n");
-      for(int i = 0; i < 3; ++i)
-      {
-        for(int j = 0; j < 3; ++j)
-        {
-          if(i < 3 && xyz_cam.v[i].n[j] == 0)
-            fail = 1;
-          if(oy_debug)
-            printf(" %g", xyz_cam.v[i].n[j]);
-        }
-        float sum = xyz_cam.v[i].n[0]+xyz_cam.v[i].n[1]+xyz_cam.v[i].n[2];
-        xyz_xy[i][0] = xyz_cam.v[i].n[0]/sum;
-        xyz_xy[i][1] = xyz_cam.v[i].n[1]/sum;
-        if(oy_debug)
-          printf("\n x:%g y:%g\n", xyz_xy[i][0], xyz_xy[i][1] );
-      }
+      fail = 1;
+      message( oyMSG_WARN, (oyStruct_s*)0,
+             OY_DBG_FORMAT_ "ab_cm is singular",
+             OY_DBG_ARGS_ );
     }
-      
+
     if(oy_debug)
-    printf("cmatrix:\n");
-    if(oy_debug)
-    for(int i = 0; i < 3; ++i)
     {
-      for(int j = 0; j < 4; ++j)
-      {
-        printf(" %g", color.cmatrix[i][j]);
-      }
-      printf("\n");
+      printf("color.cam_xyz:\n%s",_oyMat43show( color.cam_xyz ));
+      printf("color.cam_mul:\n%s",_oyMat4show( color.cam_mul ));
+      printf("color.pre_mul:\n%s",_oyMat4show( color.pre_mul ));
+      printf("pre_mul:\n%s",_oyMAT3show( const_cast<oyMAT3*>(&pre_mul) ));
+      printf("color.rgb_cam:\n%s",_oyMat34show( color.rgb_cam ));
+      printf("color.cmatrix:\n%s",_oyMat34show( color.cmatrix ));
+      printf("ab*cm|pre_mul*cam_xyz:\n%s",_oyMAT3show( const_cast<oyMAT3*>(&ab_cm) ));
+      printf("ab_cm_inverse:\n%s",_oyMAT3show( const_cast<oyMAT3*>(&ab_cm_inverse) ));
+      if(!fail)
+      printf("=> ");
+      printf("ab_cm_inverse_xyY:\n%s", _oyCIExyYTriple_Show(const_cast<oyCIExyYTriple*>(&ab_cm_inverse_xyY)));
     }
-    if(oy_debug)
-    printf("rgb_cam:\n");
-    if(oy_debug)
-    for(int i = 0; i < 3; ++i)
-    {
-      for(int j = 0; j < 4; ++j)
-      {
-        printf(" %g", color.rgb_cam[i][j]);
-      }
-      float sum = color.rgb_cam[i][0]+color.rgb_cam[i][1]+color.rgb_cam[i][2];
-      printf("\n x:%g y:%g\n", color.rgb_cam[i][0]/sum, color.rgb_cam[i][1]/sum );
-    }
-    /* we must assume, that negative values for primaries are not supported */
     if(!fail)
     {
-      oyOption_SetFromDouble( matrix, xyz_xy[0][0], 0, 0);
-      oyOption_SetFromDouble( matrix, xyz_xy[0][1], 1, 0);
-      oyOption_SetFromDouble( matrix, xyz_xy[1][0], 2, 0);
-      oyOption_SetFromDouble( matrix, xyz_xy[1][1], 3, 0);
-      oyOption_SetFromDouble( matrix, xyz_xy[2][0], 4, 0);
-      oyOption_SetFromDouble( matrix, xyz_xy[2][1], 5, 0);
-      oyOption_SetFromDouble( matrix, 0.3457, 6, 0);
-      oyOption_SetFromDouble( matrix, 0.3585, 7, 0);
+      oyCIExyYTriple * use = &ab_cm_inverse_xyY;
+      oyOption_SetFromDouble( matrix, use->v[0].xy[0], 0, 0);
+      oyOption_SetFromDouble( matrix, use->v[0].xy[1], 1, 0);
+      oyOption_SetFromDouble( matrix, use->v[1].xy[0], 2, 0);
+      oyOption_SetFromDouble( matrix, use->v[1].xy[1], 3, 0);
+      oyOption_SetFromDouble( matrix, use->v[2].xy[0], 4, 0);
+      oyOption_SetFromDouble( matrix, use->v[2].xy[1], 5, 0);
+
+      /* D65 */
+      oyOption_SetFromDouble( matrix, 0.31271, 6, 0);
+      oyOption_SetFromDouble( matrix, 0.32902, 7, 0);
     } else
+    // fall back
     {
     /* http://www.color.org/chardata/rgb/rommrgb.xalter
      * original gamma is 1.8, we adapt to typical cameraRAW gamma of 1.0 */
@@ -498,7 +546,7 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color )
 
     oyOptions_MoveIn( opts, &matrix, -1 );
     const char * reg = "//"OY_TYPE_STD"/create_profile.colour_matrix.icc";
-    oyOptions_Handle( reg, opts,"create_profile.icc_profile.colour_matrix",
+    oyOptions_Handle( reg,opts,"create_profile.icc_profile.colour_matrix",
                       &result );
 
     p = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
