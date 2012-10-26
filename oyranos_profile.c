@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2011 (C) Kai-Uwe Behrmann
+ *            2011-2012 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC profile informations - on the command line
  *  @internal
@@ -118,7 +118,8 @@ int main( int argc , char** argv )
   int error = 0;
   int list_tags = 0,
       tag_pos = -1,
-      dump_openicc_json = 0;
+      dump_openicc_json = 0,
+      verbose = 0;
   const char * file_name = 0,
              * tag_name = 0,
              * name_space = 0,
@@ -164,7 +165,7 @@ int main( int argc , char** argv )
                             prefixes[pn++] = name_space;
                         }
                         break;
-              case 'v': oy_debug += 1; break;
+              case 'v': if(!verbose) verbose = 1; else oy_debug += 1; break;
               case 'w': OY_PARSE_STRING_ARG(profile_name); break;
               case 'h':
               default:
@@ -319,11 +320,12 @@ int main( int argc , char** argv )
                    oyICCTagTypeName(oyProfileTag_GetType(tag)), i,
                    (int)tag_size, (int)oyProfileTag_GetOffset( tag ),
                    oyICCTagDescription(oyProfileTag_GetUse(tag)));
-          if(oy_debug && texts)
+          if((verbose || oy_debug) && texts)
           {
             fprintf( stdout, ":\n" );
               for(j = 0; j < texts_n; ++j)
-                fprintf( stdout, "%s\n", texts[j] );
+                if(texts[j])
+                  fprintf( stdout, "%s\n", texts[j] );
           } else
           {
             fprintf( stdout, "\n" );
