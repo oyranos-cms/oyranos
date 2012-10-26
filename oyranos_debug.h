@@ -131,6 +131,17 @@ double             oySeconds         ( );
 #define DBG_PROG4_S if(oy_debug > 2)DBG4_S
 #define DBG_PROG5_S if(oy_debug > 2)DBG5_S
 #define DBG_PROG6_S if(oy_debug > 2)DBG6_S
+#define DBGs_PROG if(oy_debug > 2)DBGs
+#define DBGs_PROG_S if(oy_debug > 2)DBGs_S
+#define DBGs_PROG1_S if(oy_debug > 2)DBGs1_S
+#define DBGs_PROG2_S if(oy_debug > 2)DBGs2_S
+#define DBGs_PROG3_S if(oy_debug > 2)DBGs3_S
+#define DBGs_PROG4_S if(oy_debug > 2)DBGs4_S
+#define DBGs_PROG5_S if(oy_debug > 2)DBGs5_S
+#define DBGs_PROG6_S if(oy_debug > 2)DBGs6_S
+#define DBGs_PROG7_S if(oy_debug > 2)DBGs7_S
+#define DBGs_PROG8_S if(oy_debug > 2)DBGs8_S
+#define DBGs_PROG9_S if(oy_debug > 2)DBGs9_S
 #define DBG_PROG_V if(oy_debug > 2)DBG_V
 #define DBG_PROG_START if(oy_debug > 2)DBG_START
 #define DBG_PROG_ENDE  if(oy_debug > 2)DBG_ENDE
