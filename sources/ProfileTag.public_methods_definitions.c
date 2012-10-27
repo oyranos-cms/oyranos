@@ -875,7 +875,7 @@ OYAPI size_t  OYEXPORT
  *  @date    2012/09/24
  */
 OYAPI size_t  OYEXPORT
-               oyProfileTag_GetCheckSize
+               oyProfileTag_GetSizeCheck
                                      ( oyProfileTag_s    * tag )
 {
   oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;

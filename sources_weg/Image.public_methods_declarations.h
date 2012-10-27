@@ -59,11 +59,6 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
                                        oyRectangle_s     * rectangle,
                                        oyArray2d_s       * array,
                                        oyRectangle_s     * array_rectangle );
-oyPointer      oyImage_GetPoint      ( oyImage_s         * image,
-                                       int                 point_x,
-                                       int                 point_y,
-                                       int                 channel,
-                                       int               * is_allocated );
 int            oyImage_PixelsToSamples(oyImage_s         * image,
                                        oyRectangle_s     * image_rectangle,
                                        oyRectangle_s     * pixel_rectangle );
