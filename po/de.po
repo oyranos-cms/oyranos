@@ -1763,7 +1763,7 @@ msgstr "Aktivieren eines Profiles:"
 
 #: oyranos_gamma.c:199
 msgid "List devices:"
-msgstr "Instrumentenliste:"
+msgstr "Geräteliste:"
 
 #: oyranos_gamma.c:201
 msgid "--short print only the file name"
@@ -1771,7 +1771,7 @@ msgstr "--short zeige nur den Dateinamen"
 
 #: oyranos_gamma.c:203
 msgid "List Taxi profile for selected device:"
-msgstr "Liste profile von Taxi für gewähltes Gerät:"
+msgstr "Liste Profile von Taxi für gewähltes Gerät:"
 
 #: oyranos_gamma.c:206
 msgid "List modules:"
@@ -1832,7 +1832,7 @@ msgstr "Verfügbare Geräte"
 
 #: oyranos_gamma.c:330
 msgid "Please specify a monitor with the -d option."
-msgstr "Bitte einen Monitor mit der Option -s wählen."
+msgstr "Bitte einen Monitor mit der Option -d wählen."
 
 #: oyranos_gamma.c:343
 msgid "Zero profiles found in Taxi ICC DB"
