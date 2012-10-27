@@ -189,7 +189,4 @@
 #define OY_DEFAULT_PROOF_HARD          OY_BEHAVIOUR_STD "proof_hard"
 
 
-/** see http://www.freedesktop.org/wiki/Specifications/icc_profiles_in_x_spec */
-#define OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE "_ICC_PROFILE"
-
 #endif /* OYRANOS_DEFINITIONS_H */

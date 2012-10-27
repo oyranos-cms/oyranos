@@ -37,6 +37,7 @@
 #include <X11/Xlib.h>
 #include <X11/extensions/Xfixes.h>
 #include <X11/Xcm/Xcm.h>
+#include <X11/Xcm/XcmEvents.h>
 
 /* --- internal definitions --- */
 
@@ -688,8 +689,8 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                      "Try %s(_xxx) from %s",
                      OY_DBG_ARGS_,
                      oyOptions_FindString(options, "x_color_region_target", 0) ? 
-                     OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE :
-                     OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE,
+                     XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE :
+                     XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE,
                      device_name );
             flags |= 0x01;
           }
@@ -873,8 +874,8 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                      "Could not obtain %s(_xxx) information for %s",
                      OY_DBG_ARGS_,
                      oyOptions_FindString(options, "x_color_region_target", 0) ? 
-                     OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE :
-                     OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE,
+                     XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE :
+                     XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE,
                      device_name );
 
             /* Show the "icc_profile" option is understood. */
