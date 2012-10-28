@@ -1208,7 +1208,11 @@ if [ -n "$PREPARE_MAKEFILES" ] && [ $PREPARE_MAKEFILES -gt 0 ]; then
       fi
       mv "$i/makefile" "$i/Makefile"
       if [ "$i" != "." ]; then
-        (cd $i; $MAKE clean)
+        if [ -n "$MAKE" ]; then
+          (cd $i; $MAKE clean)
+        else
+          (cd $i; make clean)
+        fi
       fi
     done
   fi
