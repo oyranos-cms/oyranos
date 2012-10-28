@@ -28,6 +28,7 @@
 # include <X11/Xutil.h>
 # include <X11/Xatom.h>
 # include <X11/Xcm/XcmEdidParse.h>
+# include <X11/Xcm/XcmEvents.h>
 # if HAVE_XIN
 #  include <X11/extensions/Xinerama.h>
 # endif
@@ -180,7 +181,7 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
       if(atom)
         w = RootWindow( display, oyX1Monitor_deviceScreen_( disp ) );
       if(w)
-        /* AnyPropertyType does not work for OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE ---vvvvvvvvvv */
+        /* AnyPropertyType does not work for XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE ---vvvvvvvvvv */
         XGetWindowProperty( display, w, atom, 0, INT_MAX, False,
                      AnyPropertyType,
                      &a, &actual_format_return, &nitems_return, 
@@ -493,11 +494,11 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
   /* support the colour server device profile */
   if(flags & 0x01)
     prop = oyX1Monitor_getProperty_( disp,
-                             OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE, 0 );
+                             XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE, 0 );
 
   /* alternatively fall back to the non colour server or pre v0.4 atom */
   if(!prop)
-    prop = oyX1Monitor_getProperty_( disp, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, 0 );
+    prop = oyX1Monitor_getProperty_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, 0 );
 
   if(prop)
   {
@@ -773,7 +774,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
     if(oy_debug)
       DBG1_S( "system: %s", text )
 
-    /* set OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE atom in X */
+    /* set XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE atom in X */
     {
       Display *display;
       Atom atom = 0;
@@ -802,7 +803,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       if(!size || !moni_profile)
         WARNc_S(_("Error obtaining profile"));
 
-      atom_name = oyX1Monitor_getAtomName_( disp, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE );
+      atom_name = oyX1Monitor_getAtomName_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE );
       if( atom_name )
       {
         atom = XInternAtom (display, atom_name, False);
@@ -884,7 +885,7 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
 
 
   {
-    /* unset the OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE atom in X */
+    /* unset the XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE atom in X */
       Display *display;
       Atom atom;
       int screen = 0;
@@ -902,7 +903,7 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
 
       DBG_PROG
 
-      atom_name = oyX1Monitor_getAtomName_( disp, OY_ICC_V0_3_TARGET_PROFILE_IN_X_BASE );
+      atom_name = oyX1Monitor_getAtomName_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE );
       atom = XInternAtom (display, atom_name, True);
       if (atom != None)
         XDeleteProperty( display, w, atom );

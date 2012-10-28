@@ -377,7 +377,7 @@ int main( int argc , char** argv )
           {
             if(x_color_region_target)
             {
-              /* get OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
+              /* get XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
               error = oyOptions_SetFromText( &cs_options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
             }
@@ -512,7 +512,7 @@ int main( int argc , char** argv )
             oyOptions_s * cs_options = 0;
             if(x_color_region_target)
             {
-              /* get OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
+              /* get XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
               error = oyOptions_SetFromText( &cs_options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
             }
@@ -637,7 +637,7 @@ int main( int argc , char** argv )
 
       if(x_color_region_target)
       {
-        /* get OY_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
+        /* get XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
         error = oyOptions_SetFromText( &cs_options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
       }
