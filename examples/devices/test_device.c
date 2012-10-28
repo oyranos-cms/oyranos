@@ -6,10 +6,14 @@
 #include <string.h>
 
 #include "oyranos.h"
-#include "oyranos_helper.h"
+#include "oyranos_devices.h"
 #include "oyranos_elektra.h"
+#include "oyranos_helper.h"
+#include "oyranos_icc.h"
 #include "oyranos_string.h"
 #include "config.h"
+#include "oyProfiles_s.h"
+
 #include <locale.h>
 
 void myDeAllocFunc(void *block)
@@ -248,7 +252,7 @@ int main(int argc, char *argv[])
     
     profile = oyProfile_FromSignature( profile_class, oySIGNATURE_CLASS, 0 );
     patterns = oyProfiles_New( 0 );
-    patterns = oyProfiles_MoveIn( patterns, &profile, -1 );
+    oyProfiles_MoveIn( patterns, &profile, -1 );
     
     iccs = oyProfiles_Create( patterns, 0 );
     oyProfiles_Release( &patterns );
@@ -362,11 +366,11 @@ int main(int argc, char *argv[])
     else
       texttype = (icTagTypeSignature) icSigMultiLocalizedUnicodeType;
 
-    n = oyOptions_Count( oy_device->backend_core );
+    n = oyOptions_Count( *oyConfig_GetOptions( oy_device,"backend_core") );
 
     for(i = 0; i < n; ++i)
     {
-      o = oyOptions_Get( oy_device->backend_core, i );
+      o = oyOptions_Get( *oyConfig_GetOptions( oy_device,"backend_core"), i );
 
       text = oyOption_GetValueText( o, oyAllocateFunc_ );
       if(!text) continue;
@@ -412,15 +416,15 @@ int main(int argc, char *argv[])
 
     oyProfile_Release( &p );
 
-    oyConfig_s * device = oyConfig_New( "//" OY_TYPE_STD "/config",
-                                        0 );
+    oyConfig_s * device = oyConfig_FromRegistration( "//" OY_TYPE_STD "/config",
+                                                     0 );
     oyProfile_DeviceGet( p, device );
 
     printf("following key/values are in the devices backend_core set:\n");
-    n = oyOptions_Count( device->backend_core );
+    n = oyOptions_Count( *oyConfig_GetOptions( oy_device,"backend_core") );
     for(i = 0; i < n; ++i)
     {
-      o = oyOptions_Get( device->backend_core, i );
+      o = oyOptions_Get( *oyConfig_GetOptions( oy_device,"backend_core"), i );
 
       text = oyOption_GetValueText( o, oyAllocateFunc_ );
       if(!text) continue;
