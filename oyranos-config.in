@@ -109,17 +109,17 @@ fi
 
 if [ "$echo_ldflags" = "yes" ]; then
   if [ -f liboyranos.so ]; then
-    echo "-L. -loyranos -loyranos_object -loyranos_core $elektra $oyranos_add"
+    echo "-L. -loyranos -loyranos_config -loyranos_modules -loyranos_object -loyranos_core $elektra $oyranos_add"
   else
-    echo "-L$libdir -loyranos -loyranos_object -loyranos_core $elektra $oyranos_add"
+    echo "-L$libdir -loyranos -loyranos_config -loyranos_modules -loyranos_object -loyranos_core $elektra $oyranos_add"
   fi
 fi
 
 if [ "$echo_ldstaticflags" = "yes" ]; then
   if [ -f liboyranos.a ]; then
-    echo "liboyranos.a liboyranos_object.a liboyranos_core.a $elektra $oyranos_add"
+    echo "liboyranos.a liboyranos_config.a liboyranos_modules.a liboyranos_object.a liboyranos_core.a $elektra $oyranos_add"
   else
-    echo "$libdir/liboyranos.a $libdir/liboyranos_object.a $libdir/liboyranos_core.a $elektra $oyranos_add"
+    echo "$libdir/liboyranos.a $libdir/liboyranos_config.a $libdir/liboyranos_modules.a $libdir/liboyranos_object.a $libdir/liboyranos_core.a $elektra $oyranos_add"
   fi
 fi
 
