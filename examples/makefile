@@ -116,12 +116,12 @@ $(TARGET4):	$(SRCDIR)$(TARGET4).c
 $(TARGET5):	$(SRCDIR)dummy_device/oyranos_cmm_dDev.c
 	mkdir -p dummy_device
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS_) -shared $(LDFLAGS) $(OY_LDFLAGS) -fPIC $< -o $@
+	-$(CC) $(CFLAGS_) -fPIC $< -o $@ -shared $(LDFLAGS) $(OY_LDFLAGS)
 
 $(TARGET6):	$(SRCDIR)dummy_filter/oyranos_cmm_dFil.c
 	mkdir -p dummy_filter
 	echo Compiling $@ ...
-	-$(CC) $(CFLAGS_) -shared $(LDFLAGS) $(OY_LDFLAGS) -fPIC $< -o $@
+	-$(CC) $(CFLAGS_) -fPIC $< -o $@ -shared $(LDFLAGS) $(OY_LDFLAGS)
 
 $(TARGET7):	$(SRCDIR)oymd5icc/oymd5icc.c
 	mkdir -p oymd5icc
