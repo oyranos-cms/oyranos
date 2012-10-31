@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/22
+ *  @date     2012/10/31
  */
 
 
@@ -102,9 +102,13 @@ OYAPI int OYEXPORT
 #include "oyConversion_s.h"
 #include "oyranos_image_internal.h"
 
-/** Function oyImage_GetPointContinous
+/**
+ *  @internal
+ *  Function oyImage_GetArray2dPointContinous
  *  @memberof oyImage_s
- *  @brief   standard continous layout pixel accessor
+ *  @brief   Continous layout pixel accessor
+ *
+ *  Will be used by default.
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/26 (Oyranos: 0.1.8)
@@ -128,9 +132,13 @@ oyPointer oyImage_GetArray2dPointContinous (
 
 }
 
-/** Function oyImage_GetLineContinous
+/** 
+ *  @internal
+ *  Function oyImage_GetArray2dLineContinous
  *  @memberof oyImage_s
- *  @brief   standard continous layout line accessor
+ *  @brief   Continous layout line accessor
+ *
+ *  Will be used by default.
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/08/23 (Oyranos: 0.1.8)
@@ -152,9 +160,13 @@ oyPointer oyImage_GetArray2dLineContinous (
   return &array2d[ point_y ][ 0 ]; 
 }
 
-/** Function oyImage_SetPointContinous
+/**  
+ *  @internal
+ *  Function oyImage_SetArray2dPointContinous
  *  @memberof oyImage_s
- *  @brief   standard continous layout pixel accessor
+ *  @brief   Continous layout pixel accessor
+ *
+ *  Will be used by default.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/22 (Oyranos: 0.1.10)
@@ -186,9 +198,13 @@ int       oyImage_SetArray2dPointContinous (
 
 }
 
-/** Function oyImage_SetLineContinous
+/**  
+ *  @internal
+ *  Function oyImage_SetArray2dLineContinous
  *  @memberof oyImage_s
- *  @brief   standard continous layout line accessor
+ *  @brief   Continous layout line accessor
+ *
+ *  Will be used by default.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/22 (Oyranos: 0.1.10)
@@ -225,9 +241,13 @@ int       oyImage_SetArray2dLineContinous (
   return 0; 
 }
 
-/** Function oyImage_GetPointPlanar
+/** 
+ *  @internal
+ *  Function  oyImage_GetArray2dPointPlanar
  *  @memberof oyImage_s
- *  @brief   standard planar layout pixel accessor
+ *  @brief    Planar layout pixel accessor
+ *
+ *  Will be used by default.
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/26 (Oyranos: 0.1.8)
@@ -251,11 +271,14 @@ oyPointer oyImage_GetArray2dPointPlanar( oyImage_s       * image,
 #endif
 }
 
-/** Function oyImage_GetLinePlanar
+/** 
+ *  @internal
+ *  Function oyImage_GetArray2dLinePlanar
  *  @memberof oyImage_s
- *  @brief   standard continus layout line accessor
+ *  @brief    Continus layout line accessor
  *
  *  We assume a channel after channel behaviour without line interweaving.
+ *  Will be used by default.
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/08/23 (Oyranos: 0.1.8)
