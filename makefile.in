@@ -142,23 +142,28 @@ LDLIBSCORE = $(LDFLAGS) -L$(libdir) -L. \
 MODULE_LDLIBS =	$(LIBSONAMEFULL) $(LIBSONAMECONFIGFULL) $(LIBSONAMEMODULESFULL) $(LIBSONAMEOBJECTFULL) $(LIBSONAMECOREFULL) $(intl) $(lc) 
 
 
-CHEADERS = \
+CHEADERS_PUBLIC = \
 	$(TARGET).h \
+	$(TARGET)_colour.h \
+	$(TARGET)_config.h \
+	$(TARGET)_core.h \
+	$(TARGET)_debug.h \
+	$(TARGET)_definitions.h \
+	$(TARGET)_icc.h \
+	$(TARGET)_types.h \
+	icc34.h
+CHEADERS = \
+	$(CHEADERS_PUBLIC) \
 	$(TARGET)_alpha.h \
 	$(TARGET)_alpha_internal.h \
 	$(TARGET)_check.h \
-	$(TARGET)_colour.h \
 	$(TARGET)_cmm.h \
-	$(TARGET)_config.h \
-	$(TARGET)_core.h \
 	$(TARGET)_cs.h \
-	$(TARGET)_debug.h \
-	$(TARGET)_definitions.h \
 	$(TARGET)_elektra.h \
 	$(TARGET)_helper.h \
 	$(TARGET)_helper_macros.h \
+	$(TARGET)_helper_macros_cli.h \
 	$(TARGET)_i18n.h \
-	$(TARGET)_icc.h \
 	$(TARGET)_io.h \
 	$(TARGET)_internal.h \
 	$(TARGET)_monitor.h \
@@ -168,47 +173,49 @@ CHEADERS = \
 	$(TARGET)_sentinel.h \
 	$(TARGET)_string.h \
 	$(TARGET)_texts.h \
-	$(TARGET)_types.h \
 	$(TARGET)_xml.h \
-	icc34.h \
 	md5.h \
 	lookup3.h \
-	dirent_custom.h \
+	dirent_custom.h
 #	fl_$(TARGET).h
-CFILES_CORE = \
+CFILES_CORE_PUBLIC = \
 	$(TARGET)_core.c \
+	$(TARGET)_i18n.c
+CFILES_CORE = \
+	$(CFILES_CORE_PUBLIC) \
 	$(TARGET)_helper.c \
-	$(TARGET)_i18n.c \
 	$(TARGET)_io_core.c \
 	$(TARGET)_misc.c \
 	$(TARGET)_sentinel_core.c \
 	$(TARGET)_string.c \
 	md5.c \
 	lookup3.c
-CFILES_OBJECT = \
-	$(GENDIR)oyBlob_s_.c \
+CFILES_OBJECT_PUBLIC = \
 	$(GENDIR)oyBlob_s.c \
-	$(GENDIR)oyPointer_s_.c \
 	$(GENDIR)oyPointer_s.c \
 	$(GENDIR)oyRectangle_s.c \
-	$(GENDIR)oyRectangle_s_.c \
-	$(GENDIR)oyHash_s_.c \
 	$(GENDIR)oyHash_s.c \
-	$(GENDIR)oyName_s_.c \
-	$(GENDIR)oyName_s.c \
-	$(GENDIR)oyObject_s_.c \
 	$(GENDIR)oyObject_s.c \
-	$(GENDIR)oyObserver_s_.c \
 	$(GENDIR)oyObserver_s.c \
-	$(GENDIR)oyOption_s_.c \
 	$(GENDIR)oyOption_s.c \
-	$(GENDIR)oyOptions_s_.c \
 	$(GENDIR)oyOptions_s.c \
 	$(GENDIR)oyStruct_s.c \
-	$(GENDIR)oyStructList_s_.c \
 	$(GENDIR)oyStructList_s.c \
 	$(GENDIR)$(TARGET)_object.c \
 	$(GENDIR)$(TARGET)_generic.c
+CFILES_OBJECT = \
+	$(CFILES_OBJECT_PUBLIC) \
+	$(GENDIR)oyBlob_s_.c \
+	$(GENDIR)oyPointer_s_.c \
+	$(GENDIR)oyHash_s_.c \
+	$(GENDIR)oyName_s_.c \
+	$(GENDIR)oyName_s.c \
+	$(GENDIR)oyObject_s_.c \
+	$(GENDIR)oyObserver_s_.c \
+	$(GENDIR)oyOption_s_.c \
+	$(GENDIR)oyOptions_s_.c \
+	$(GENDIR)oyRectangle_s_.c \
+	$(GENDIR)oyStructList_s_.c
 CHEADERS_OBJECT_PUBLIC = \
 	$(GENDIR)oyBlob_s.h \
 	$(GENDIR)oyPointer_s.h \
@@ -239,7 +246,17 @@ CHEADERS_OBJECT = \
 	$(GENDIR)$(TARGET)_module_internal.h \
 	$(GENDIR)$(TARGET)_object_internal.h
 
+CFILES_OBJECT_MODULES_PUBLIC = \
+	$(GENDIR)oyConnector_s.c \
+	$(GENDIR)oyFilterCore_s.c \
+	$(GENDIR)oyFilterGraph_s.c \
+	$(GENDIR)oyFilterNode_s.c \
+	$(GENDIR)oyFilterNodes_s.c \
+	$(GENDIR)oyFilterSocket_s.c \
+	$(GENDIR)oyFilterPlug_s.c \
+	$(GENDIR)oyFilterPlugs_s.c
 CFILES_OBJECT_MODULES = \
+	$(CFILES_OBJECT_MODULES_PUBLIC) \
 	$(GENDIR)oyCMMapi_s.c \
 	$(GENDIR)oyCMMapi_s_.c \
 	$(GENDIR)oyCMMapi3_s.c \
@@ -270,21 +287,13 @@ CFILES_OBJECT_MODULES = \
 	$(GENDIR)oyCMMobjectType_s_.c \
 	$(GENDIR)oyCMMui_s.c \
 	$(GENDIR)oyCMMui_s_.c \
-	$(GENDIR)oyConnector_s.c \
 	$(GENDIR)oyConnector_s_.c \
-	$(GENDIR)oyFilterCore_s.c \
 	$(GENDIR)oyFilterCore_s_.c \
-	$(GENDIR)oyFilterGraph_s.c \
 	$(GENDIR)oyFilterGraph_s_.c \
-	$(GENDIR)oyFilterNode_s.c \
 	$(GENDIR)oyFilterNode_s_.c \
-	$(GENDIR)oyFilterNodes_s.c \
 	$(GENDIR)oyFilterNodes_s_.c \
-	$(GENDIR)oyFilterSocket_s.c \
 	$(GENDIR)oyFilterSocket_s_.c \
-	$(GENDIR)oyFilterPlug_s.c \
 	$(GENDIR)oyFilterPlug_s_.c \
-	$(GENDIR)oyFilterPlugs_s.c \
 	$(GENDIR)oyFilterPlugs_s_.c \
 	$(GENDIR)$(TARGET)_module.c
 CHEADERS_OBJECT_MODULES_PUBLIC = \
@@ -339,25 +348,30 @@ CHEADERS_OBJECT_MODULES = \
 	$(GENDIR)$(TARGET)_module_internal.h \
 	$(CHEADERS_OBJECT_MODULES_PUBLIC)
 
-CFILES_OBJECT_CONFIG_GEN = \
-	$(GENDIR)oyConfig_s_.c \
+
+CFILES_OBJECT_CONFIG_GEN_PUBLIC = \
 	$(GENDIR)oyConfig_s.c \
-	$(GENDIR)oyConfigs_s_.c \
 	$(GENDIR)oyConfigs_s.c \
-	$(GENDIR)oyProfile_s_.c \
 	$(GENDIR)oyProfile_s.c \
-	$(GENDIR)oyProfiles_s_.c \
 	$(GENDIR)oyProfiles_s.c \
 	$(GENDIR)oyProfileTag_s.c \
-	$(GENDIR)oyProfileTag_s_.c \
 	$(GENDIR)$(TARGET)_devices.c \
 	$(GENDIR)$(TARGET)_devices_internal.c
-CFILES_OBJECT_CONFIG_TOP = \
+CFILES_OBJECT_CONFIG_GEN = \
+	$(CFILES_OBJECT_CONFIG_GEN_PUBLIC) \
+	$(GENDIR)oyConfig_s_.c \
+	$(GENDIR)oyConfigs_s_.c \
+	$(GENDIR)oyProfile_s_.c \
+	$(GENDIR)oyProfiles_s_.c \
+	$(GENDIR)oyProfileTag_s_.c
+CFILES_OBJECT_CONFIG_TOP_PUBLIC = \
 	$(TARGET).c \
-	$(TARGET)_check.c \
 	$(TARGET)_colour.c \
+	$(TARGET)_icc.c
+CFILES_OBJECT_CONFIG_TOP = \
+	$(CFILES_OBJECT_CONFIG_TOP_PUBLIC) \
+	$(TARGET)_check.c \
 	$(TARGET)_elektra.c \
-	$(TARGET)_icc.c \
 	$(TARGET)_io.c \
 	$(TARGET)_widgets.c \
 	$(TARGET)_sentinel.c \
@@ -382,19 +396,21 @@ CHEADERS_OBJECT_CONFIG = \
 	$(GENDIR)$(TARGET)_devices_internal.h \
 	$(CHEADERS_OBJECT_CONFIG_PUBLIC)
 
-CFILES_OBJECT_IMAGING = \
+CFILES_OBJECT_IMAGING_PUBLIC = \
 	$(GENDIR)oyArray2d_s.c \
-	$(GENDIR)oyArray2d_s_.c \
 	$(GENDIR)oyConnectorImaging_s.c \
-	$(GENDIR)oyConnectorImaging_s_.c \
 	$(GENDIR)oyConversion_s.c \
-	$(GENDIR)oyConversion_s_.c \
 	$(GENDIR)oyImage_s.c \
-	$(GENDIR)oyImage_s_.c \
 	$(GENDIR)oyPixelAccess_s.c \
-	$(GENDIR)oyPixelAccess_s_.c \
 	$(GENDIR)$(TARGET)_conversion.c \
 	$(GENDIR)$(TARGET)_image.c
+CFILES_OBJECT_IMAGING = \
+	$(CFILES_OBJECT_IMAGING_PUBLIC) \
+	$(GENDIR)oyArray2d_s_.c \
+	$(GENDIR)oyConnectorImaging_s_.c \
+	$(GENDIR)oyConversion_s_.c \
+	$(GENDIR)oyImage_s_.c \
+	$(GENDIR)oyPixelAccess_s_.c
 CHEADERS_OBJECT_IMAGING_PUBLIC = \
 	$(GENDIR)oyArray2d_s.h \
 	$(GENDIR)oyConnectorImaging_s.h \
@@ -609,9 +625,23 @@ DOC_TEMPLATES_LINK = \
 	doxygen.footer \
 	doxygen.header
 DOC_TEMPLATES = \
-	Doxyfile \
-	Doxyfile_alpha \
+	Doxyfile.in \
+	Doxyfile_alpha.in \
 	$(DOC_TEMPLATES_LINK)
+
+DOC_SOURCES = \
+	doxymentation doxymentation_common \
+	$(CFILES_CORE_PUBLIC) \
+	$(CHEADERS_PUBLIC) \
+	$(CFILES_OBJECT_PUBLIC) \
+	$(CHEADERS_OBJECT_PUBLIC) \
+	$(CFILES_OBJECT_MODULES_PUBLIC) \
+	$(CHEADERS_OBJECT_MODULES_PUBLIC) \
+	$(CFILES_OBJECT_CONFIG_GEN_PUBLIC) \
+	$(CHEADERS_OBJECT_CONFIG_PUBLIC) \
+	$(CFILES_OBJECT_CONFIG_TOP_PUBLIC) \
+	$(CFILES_OBJECT_IMAGING_PUBLIC) \
+	$(CHEADERS_OBJECT_IMAGING_PUBLIC) \
 
 LINGUAS_SRC = $(LING:.po=.gmo)
 POT_FILE = po/$(TARGET).pot
@@ -784,7 +814,7 @@ INCL_DEP = $(SOURCES) $(CXXFILES_Flmm) $(CFILES_OYJL) $(YAJL_SOURCES) \
 	test.c test2.cpp test_core.c test_object.c test_module.c \
 	test_config.c tests/test_oyranos.c
 
-.PHONY:	check_environment docu examples oforms \
+.PHONY:	check_environment docu examples oforms Doxyfile \
 	$(ELEKTRA_VERSION)
 
 TEST  = test
@@ -1328,11 +1358,15 @@ doxygen.header:
 	test -L doxygen.header && $(RM) $(DOC_TEMPLATES_LINK) || echo no doxygen.header link
 	$(LNK) $(SRCDIR)/doxygen.header $(SRCDIR)/doxygen.footer $(SRCDIR)/doxygen.css $(SRCDIR)/doxymentation $(SRCDIR)/doxymentation_common $(SRCDIR)/doxymentation_alpha .
 
-Doxyfile:	$(SRCDIR)/Doxyfile doxygen.header $(SRCDIR)/doxygen.header  $(SRCDIR)/doxygen.footer  $(SRCDIR)/doxygen.css  $(SRCDIR)/doxymentation  $(SRCDIR)/doxymentation_common  $(SRCDIR)/doxymentation_alpha
+Doxyfile:	$(SRCDIR)/Doxyfile.in doxygen.header $(SRCDIR)/doxygen.header  $(SRCDIR)/doxygen.footer  $(SRCDIR)/doxygen.css  $(SRCDIR)/doxymentation  $(SRCDIR)/doxymentation_common  $(SRCDIR)/doxymentation_alpha
 	echo Update doxygen files ...
-	-$(COPY) $(SRCDIR)/Doxyfile .
-	echo "INPUT = $(SRCDIR)" >> Doxyfile
-	-$(COPY) $(SRCDIR)/Doxyfile_alpha .
+	echo Generate Doxyfile from $(SRCDIR)/Doxyfile.in ...
+	echo "PROJECT_NUMBER         = $(VERSION)" > Doxyfile
+	echo "INPUT                  = $(SRCDIR) $(SRCDIR)/API_generated" >> Doxyfile
+	echo "FILE_PATTERNS          = $(DOC_SOURCES)" | sed 's%API_generated/%%g' >> Doxyfile
+	cat $(SRCDIR)/Doxyfile.in >> Doxyfile
+	echo Generate Doxyfile_alpha from $(SRCDIR)/Doxyfile_alpha.in ...
+	-$(COPY) $(SRCDIR)/Doxyfile_alpha.in Doxyfile_alpha
 	echo "INPUT = $(SRCDIR) $(SRCDIR)/API_generated" >> Doxyfile_alpha
 
 docu:	Doxyfile

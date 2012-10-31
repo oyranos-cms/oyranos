@@ -4,7 +4,6 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = Oyranos
-PROJECT_NUMBER         = 0.5.0
 OUTPUT_DIRECTORY       = doc/
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
@@ -75,18 +74,12 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ./
-FILE_PATTERNS          = oyranos.c oyranos.h \
-                         doxymentation \
-                         doxymentation_common \
-                         oyranos_icc.h oyranos_icc.c \
-                         *.c *.h
 RECURSIVE              = NO
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = YES
 EXCLUDE_PATTERNS       = oyranos_gamma.c oyranos_alpha* \
                          oyranos_check.* oyranos_io.* oyranos_io_core.* \
-                         oyranos_elektra.* oyrnois_internal* oyranos_misc.* \
+                         oyranos_elektra.* oyranos_internal* oyranos_misc.* \
                          oyranos_module.* oyranos_cmm.h oyranos_cmm.c \
                          oyranos_sentinel* \
                          oyranos_widgets* oyranos_monitor_internal_cs.h \
