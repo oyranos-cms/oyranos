@@ -1,7 +1,7 @@
 #
 # spec file for package oyranos
 #
-# Copyright (c) 2011 Kai-Uwe Behrmann <ku.b@gmx.de>
+# Copyright (c) 2011-2012 Kai-Uwe Behrmann <ku.b@gmx.de>
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -13,9 +13,10 @@
 # published by the Open Source Initiative.
 
 Summary:        Color Management System
-Name:           oyranos
 License:        BSD-3-Clause and GPL-2.0
 Group:          Development/Libraries/Other
+
+Name:           oyranos
 Url:            http://www.oyranos.org
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 Prefix:         %{_prefix}
@@ -233,7 +234,7 @@ Requires:       lib%{name}-alpha-devel = %{version}
 Summary:        Oyranos Monitor dependent Libraries
 Group:          Development/Libraries/Other
 Requires:       xcalib
-Requires:       libXcm0 >= 0.5.0
+Requires:       libXcm0 >= 0.5.1
 
 %package      monitor
 Summary:        Oyranos Monitor Tools
