@@ -10,7 +10,7 @@
 {% include "cpp_begin.h" %}
 
 /** @enum    oyDATATYPE_e
- *  @brief   basic data types for anonymous pointers
+ *  @brief   Basic data types for anonymous pointers 
  *  @ingroup objects_image
  *
  *  @version Oyranos: 0.1.8
@@ -30,26 +30,29 @@ size_t             oyDataTypeGetSize ( oyDATATYPE_e        data_type );
 const char *       oyDataTypeToText  ( oyDATATYPE_e        data_type );
 
 /** @enum    oyCHANNELTYPE_e
- *  @brief   channels types
+ *  @brief   Channels types of Colours 
  *  @ingroup objects_image
+ *
+ *  This type is useful to present colour manipulation UI elements in a 
+ *  sensible way.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/00/00 (Oyranos: 0.1.8)
  *  @date    2009/08/03
  */
 typedef enum oyCHANNELTYPE_e {
-  oyCHANNELTYPE_UNDEFINED,            /**< as well for the list end */
-  oyCHANNELTYPE_OTHER,
-  oyCHANNELTYPE_LIGHTNESS,
-  oyCHANNELTYPE_COLOUR,
-  oyCHANNELTYPE_COLOUR_LIGHTNESS,
-  oyCHANNELTYPE_COLOUR_LIGHTNESS_PREMULTIPLIED,
-  oyCHANNELTYPE_DEPTH,
-  oyCHANNELTYPE_ALPHA1,
-  oyCHANNELTYPE_ALPHA2,
-  oyCHANNELTYPE_ALPHA3,
-  oyCHANNELTYPE_U,
-  oyCHANNELTYPE_V
+  oyCHANNELTYPE_UNDEFINED,            /*!< as well for the list end */
+  oyCHANNELTYPE_OTHER,                /*!< other */
+  oyCHANNELTYPE_LIGHTNESS,            /*!< pure lightness */
+  oyCHANNELTYPE_COLOUR,               /*!< pure colour */
+  oyCHANNELTYPE_COLOUR_LIGHTNESS,     /*!< lightness and colour */
+  oyCHANNELTYPE_COLOUR_LIGHTNESS_PREMULTIPLIED, /*!< premultiplied lightness and colour */
+  oyCHANNELTYPE_DEPTH,                /*!< depth field */
+  oyCHANNELTYPE_ALPHA1,               /*!< alpha */
+  oyCHANNELTYPE_ALPHA2,               /*!< alpha2 */
+  oyCHANNELTYPE_ALPHA3,               /*!< alpha3 */
+  oyCHANNELTYPE_U,                    /*!< u */
+  oyCHANNELTYPE_V                     /*!< v */
 } oyCHANNELTYPE_e;
 
 oyCHANNELTYPE_e oyICCColourSpaceToChannelLayout (
@@ -58,16 +61,16 @@ oyCHANNELTYPE_e oyICCColourSpaceToChannelLayout (
 
 
 /** @enum    oyPIXEL_ACCESS_TYPE_e
- *  @brief   pixel access types
+ *  @brief   Pixel access types 
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/00/00 (Oyranos: 0.1.8)
  *  @date    2008/00/00
  */
 typedef enum {
-  oyPIXEL_ACCESS_IMAGE,
-  oyPIXEL_ACCESS_POINT,                /**< dont use */
-  oyPIXEL_ACCESS_LINE                  /**< dont use */
+  oyPIXEL_ACCESS_IMAGE,                /*!< image accessor */
+  oyPIXEL_ACCESS_POINT,                /*!< dont use */
+  oyPIXEL_ACCESS_LINE                  /*!< dont use */
 } oyPIXEL_ACCESS_TYPE_e;
 
 /** @typedef oyPixel_t
@@ -94,16 +97,18 @@ char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
                                        oyAlloc_f           allocateFunc );
 
 
-/** pixel mask description 
+/** @enum    oyLAYOUT_e
+ *  @brief   Pixel mask descriptions.
+ *  @ingroup objects_image
  */
 typedef enum {
-  oyLAYOUT = 0, /* remembering the layout */
-  oyPOFF_X,     /* pixel count x offset */
-  oyPOFF_Y,     /* pixel count y offset */
-  oyCOFF,       /* channel offset */
-  oyDATA_SIZE,  /* sample size in byte */
-  oyCHANS,      /* number of channels */
-  oyCHAN0       /* first colour channel */
+  oyLAYOUT = 0, /*!< remembering the layout @see oyPixel_t */
+  oyPOFF_X,     /*!< pixel count x offset */
+  oyPOFF_Y,     /*!< pixel count y offset */
+  oyCOFF,       /*!< channel offset */
+  oyDATA_SIZE,  /*!< sample size in byte */
+  oyCHANS,      /*!< number of channels */
+  oyCHAN0       /*!< first colour channel position */
 } oyLAYOUT_e;
 
 #define oyChannels_m(c)             (c)
