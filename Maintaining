@@ -1,4 +1,4 @@
-o keep the API's consitent
+o keep the API's consistent
 o remove old stuff
 o git push remote (git push ssh://root@www.oyranos.org/git/icc_examin/)
 o update the feature page on ColourWiki
@@ -13,7 +13,6 @@ o sync
   https://www.oyranos.org/wiki/index.php?title=Device_Settings#Module_Protocol
 o create package
 o upload (SF) # rsync -avP -e ssh oyranos-0.1.8.tar.gz beku@frs.sourceforge.net:uploads/
-o update behrmann web site
 o give a note on oyranos.org site
 o email to at least Oyranos-devel and OpenICC
 
