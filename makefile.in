@@ -564,20 +564,21 @@ EXAMPLE_SOURCES = \
 	examples/dummy_device/oyranos_cmm_dDev.c \
 	examples/dummy_filter/oyranos_cmm_dFil.c \
 	examples/image2pdf/image2pdf.c \
-	examples/image_display/image_display.cpp \
 	examples/libraw/oyranos_file.cpp \
+	examples/image_display/GLee.c \
+	examples/image_display/GLee.h \
+	examples/image_display/image_display.cpp \
+	examples/image_display/Oy_Widget.h \
+	examples/image_display/Oy_Fl_Double_Window.h \
+	examples/image_display/Oy_Fl_GL_Box.h \
+	examples/image_display/Oy_Fl_Group.h \
+	examples/image_display/Oy_Fl_Image_Box.h \
+	examples/image_display/Oy_Fl_Image_Widget.h \
+	examples/image_display/Oy_Fl_Shader_Box.h \
+	examples/image_display/Oy_Fl_Window_Base.h \
 	examples/image_display/oyranos_display_helper_classes_fltk.cpp \
 	examples/image_display/oyranos_display_helpers.c \
 	examples/image_display/oyranos_display_helpers.h \
-	examples/image_display/GLee.c \
-	examples/image_display/GLee.h \
-	examples/image_display/Oy_Widget.h \
-	examples/image_display/Oy_Fl_Window_Base.h \
-	examples/image_display/Oy_Fl_Image_Widget.h \
-	examples/image_display/Oy_Fl_Double_Window.h \
-	examples/image_display/Oy_Fl_Group.h \
-	examples/image_display/Oy_Fl_Image_Box.h \
-	examples/image_display/Oy_Fl_Shader_Box.h \
 	examples/xcmsevents/qcmsevents.cpp \
 	examples/xcmsevents/qcmsevents.h \
 	examples/oyranos_convert/oyranos_convert.c \
