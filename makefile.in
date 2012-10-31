@@ -560,6 +560,7 @@ CXXFILES =
 TEST_FILES = $(TEST_CPP) $(TEST_H)
 
 EXAMPLE_SOURCES = \
+	examples/devices/test_device.c \
 	examples/dummy_device/oyranos_cmm_dDev.c \
 	examples/dummy_filter/oyranos_cmm_dFil.c \
 	examples/image2pdf/image2pdf.c \
