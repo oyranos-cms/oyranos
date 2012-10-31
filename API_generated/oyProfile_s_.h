@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/31
  */
 
 
@@ -120,7 +120,7 @@ int          oyProfile_TagMoveIn_    ( oyProfile_s_      * profile,
                                        int                 pos );
 int          oyProfile_TagReleaseAt_ ( oyProfile_s_      * profile,
                                        int                 pos );
-int               oyProfile_DeviceAdd_(oyProfile_s_      * profile,
+int               oyProfile_AddDevice_(oyProfile_s_      * profile,
                                        oyConfig_s        * config );
 oyPointer    oyProfile_WriteHeader_  ( oyProfile_s_      * profile,
                                        size_t            * size );

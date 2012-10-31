@@ -509,7 +509,7 @@ int            qarzConfigs_FromPattern (
         if(error <= 0)
           error = oyOptions_SetFromText( &opts, "///key_prefix_required",
                                                 "EDID_" , OY_CREATE_NEW );
-        oyProfile_DeviceAdd( prof, device, opts );
+        oyProfile_AddDevice( prof, device, opts );
         oyOptions_Release( &opts );
       }
 

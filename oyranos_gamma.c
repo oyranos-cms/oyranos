@@ -486,7 +486,7 @@ int main( int argc , char** argv )
                 oyOptions_s * opts = 0;
                 error = oyOptions_SetFromText( &opts, "///key_prefix_required",
                                                       "EDID_" , OY_CREATE_NEW );
-                oyProfile_DeviceAdd( prof, c, opts );
+                oyProfile_AddDevice( prof, c, opts );
                 oyOptions_Release( &opts );
               }
               data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
@@ -525,7 +525,7 @@ int main( int argc , char** argv )
                                                     "true", OY_CREATE_NEW );
               error = oyOptions_SetFromText( &opts, "///key_prefix_required",
                                                     "EDID_" , OY_CREATE_NEW );
-              oyProfile_DeviceAdd( prof, c, opts );
+              oyProfile_AddDevice( prof, c, opts );
               oyOptions_Release( &opts );
             }
             data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
@@ -591,7 +591,7 @@ int main( int argc , char** argv )
         int32_t rank = 0;
         int old_oy_debug = oy_debug;
         char * json = 0;
-        oyProfile_DeviceGet( p, p_device );
+        oyProfile_GetDevice( p, p_device );
 
         if(oy_debug > 1)
         {

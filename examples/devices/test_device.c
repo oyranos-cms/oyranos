@@ -418,7 +418,7 @@ int main(int argc, char *argv[])
 
     oyConfig_s * device = oyConfig_FromRegistration( "//" OY_TYPE_STD "/config",
                                                      0 );
-    oyProfile_DeviceGet( p, device );
+    oyProfile_GetDevice( p, device );
 
     printf("following key/values are in the devices backend_core set:\n");
     n = oyOptions_Count( *oyConfig_GetOptions( oy_device,"backend_core") );

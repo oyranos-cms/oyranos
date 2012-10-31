@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/31
  */
 
 
@@ -187,14 +187,14 @@ OYAPI const char * OYEXPORT
                    oyProfile_GetFileName ( oyProfile_s   * profile,
                                            int             dl_pos );
 OYAPI int OYEXPORT
-                   oyProfile_DeviceGet ( oyProfile_s     * profile,
+                   oyProfile_GetDevice ( oyProfile_s     * profile,
                                          oyConfig_s      * device );
 OYAPI int  OYEXPORT
                  oyProfile_GetMD5  ( oyProfile_s       * profile,
                                        int                 flags,
                                        uint32_t          * md5 );
 OYAPI int  OYEXPORT
-                 oyProfile_DeviceAdd(oyProfile_s       * profile,
+                 oyProfile_AddDevice(oyProfile_s       * profile,
                                        oyConfig_s        * device,
                                        oyOptions_s       * options );
 

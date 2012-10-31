@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/31
  */
 
 
@@ -721,7 +721,7 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
   {
     p = oyProfiles_Get( list, i );
 
-    oyProfile_DeviceGet( p, p_device );
+    oyProfile_GetDevice( p, p_device );
     rank = 0;
 
     error = oyConfig_Compare( p_device, device, &rank );

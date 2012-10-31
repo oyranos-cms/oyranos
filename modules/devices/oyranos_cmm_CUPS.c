@@ -1277,7 +1277,7 @@ tunePPDSettings_(const char* profile_string,
     if(!profile)      
       return 1;         
     
-    oyProfile_DeviceAdd(profile, printer, 0);  
+    oyProfile_AddDevice(profile, printer, 0);  
     tag = oyProfile_GetTagById(profile, icSigMetaDataTag); 
 
     if(!tag)

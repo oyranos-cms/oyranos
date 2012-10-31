@@ -540,7 +540,7 @@ int            oyX1Configs_FromPattern (
           error = oyOptions_SetFromText( &opts, "///key_prefix_required",
                                                 "EDID_.prefix", OY_CREATE_NEW );
         }
-        oyProfile_DeviceAdd( prof, device, opts );
+        oyProfile_AddDevice( prof, device, opts );
 
         error = oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
                                        OYX1_MONITOR_REGISTRATION OY_SLASH
@@ -830,7 +830,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
               error = oyOptions_SetFromText( &opts, "///key_prefix_required",
                                                 "EDID_.OYRANOS_",
                                                 OY_CREATE_NEW );
-              oyProfile_DeviceAdd( prof, device, opts );
+              oyProfile_AddDevice( prof, device, opts );
               oyOptions_Release( &opts);
 
               data = oyProfile_GetMem( prof, &size, 0, oyAllocateFunc_ );

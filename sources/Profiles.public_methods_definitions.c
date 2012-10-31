@@ -436,7 +436,7 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
   {
     p = oyProfiles_Get( list, i );
 
-    oyProfile_DeviceGet( p, p_device );
+    oyProfile_GetDevice( p, p_device );
     rank = 0;
 
     error = oyConfig_Compare( p_device, device, &rank );

@@ -263,7 +263,7 @@ int main( int argc , char** argv )
       
     error = oyOptions_SetFromText( &opts, "///set_device_attributes",
                                    "true", OY_CREATE_NEW );
-    oyProfile_DeviceAdd( p, device, opts );
+    oyProfile_AddDevice( p, device, opts );
     oyOptions_Release( &opts );
     data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
 

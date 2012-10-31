@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/10/31
  */
 
 
@@ -1203,11 +1203,11 @@ int          oyProfile_TagReleaseAt_ ( oyProfile_s_      * profile,
 }
 
 /** @internal
- *  Function  oyProfile_DeviceAdd_
+ *  Function  oyProfile_AddDevice_
  *  @memberof oyProfile_s
  *  @brief    Add device and driver informations to a profile
  *
- *  oyProfile_DeviceAdd_() is for storing device/driver informations in a
+ *  oyProfile_AddDevice_() is for storing device/driver informations in a
  *  ICC profile. So the profile can be sent over internet and Oyranos, or
  *  an other CMS, can better match to a device/driver on the new host.
  *
@@ -1218,7 +1218,7 @@ int          oyProfile_TagReleaseAt_ ( oyProfile_s_      * profile,
  *  @since   2009/05/18 (Oyranos: 0.1.10)
  *  @date    2009/05/18
  */
-int                oyProfile_DeviceAdd_(oyProfile_s_      * profile,
+int                oyProfile_AddDevice_(oyProfile_s_      * profile,
                                        oyConfig_s        * device )
 {
   int error = !profile;

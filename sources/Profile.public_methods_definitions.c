@@ -1429,13 +1429,13 @@ OYAPI const char * OYEXPORT
   return name;
 }
 
-/** Function  oyProfile_DeviceGet
+/** Function  oyProfile_GetDevice
  *  @memberof oyProfile_s
  *  @brief    Obtain device information from a profile
  *
  *  @verbatim
     oyConfig_s * device = oyConfig_FromRegistration( "//" OY_TYPE_STD "/config", object );
-    oyProfile_DeviceGet( profile, device ); @endverbatim
+    oyProfile_GetDevice( profile, device ); @endverbatim
  *
  *  @param[in]     profile             the profile
  *  @param[in,out] device              the device description
@@ -1446,7 +1446,7 @@ OYAPI const char * OYEXPORT
  *  @date    2010/10/26
  */
 OYAPI int OYEXPORT
-                   oyProfile_DeviceGet ( oyProfile_s     * profile,
+                   oyProfile_GetDevice ( oyProfile_s     * profile,
                                          oyConfig_s      * device )
 {
   int error = !profile, l_error = 0;
@@ -1598,11 +1598,11 @@ int                oyProfile_GetMD5  ( oyProfile_s       * profile,
 }
 
 /**
- *  Function  oyProfile_DeviceAdd
+ *  Function  oyProfile_AddDevice
  *  @memberof oyProfile_s
  *  @brief    Add device and driver informations to a profile
  *
- *  oyProfile_DeviceAdd() is for storing device/driver informations in a 
+ *  oyProfile_AddDevice() is for storing device/driver informations in a 
  *  ICC profile. So the profile can be sent over internet and Oyranos, or 
  *  an other CMS, can better match to a device/driver on the new host.
  *  The convention what to place into the ICC profile is dependent on each
@@ -1626,7 +1626,7 @@ int                oyProfile_GetMD5  ( oyProfile_s       * profile,
 #if 0
 TODO find a general form. Do we want to support the mluc type or is that better
 up to a specialised GUI?
-int                oyProfile_DeviceAdd(oyProfile_s       * profile,
+int                oyProfile_AddDevice(oyProfile_s       * profile,
                                        oyConfig_s        * device )
 {
   int error = !profile;
@@ -1672,7 +1672,7 @@ int                oyProfile_DeviceAdd(oyProfile_s       * profile,
   return error;
 }
 #else
-int                oyProfile_DeviceAdd(oyProfile_s       * profile,
+int                oyProfile_AddDevice(oyProfile_s       * profile,
                                        oyConfig_s        * device,
                                        oyOptions_s       * options )
 {

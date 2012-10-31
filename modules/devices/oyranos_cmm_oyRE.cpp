@@ -522,7 +522,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
         error = oyOptions_SetFromText( &options, "///key_prefix_required",
                                        PRFX_EXIF "." PRFX_LRAW ".prefix",
                                        OY_CREATE_NEW );
-        oyProfile_DeviceAdd( p, device, options );
+        oyProfile_AddDevice( p, device, options );
         oyProfile_Release( &profile );
         oyOptions_MoveInStruct( oyConfig_GetOptions(device,"data"),
                                 CMM_BASE_REG OY_SLASH "icc_profile.add_meta",
