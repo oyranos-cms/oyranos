@@ -38,6 +38,13 @@
 
 int level_PROG = 0;
 clock_t oyranos_clock_ = 0;
+/** Variable  oy_debug
+ *  @brief    Set debug level
+ *
+ *  @version  Oyranos: 0.0.1
+ *  @date     2005/02/01
+ *  @since    2005/02/01 (Oyranos: 0.0.1)
+ */
 int oy_debug = 0;
 
 void oy_backtrace_()
