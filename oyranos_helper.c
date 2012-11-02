@@ -249,12 +249,12 @@ void  oyDeAllocateFunc_           (void*       block)
     WARNc_S( "Memory block is empty." )
   } else
   {
-    free( block );
     if(oy_debug_memory != 0)
     {
       printf( OY_DBG_FORMAT_"%d remaining "OY_PRINT_POINTER"\n", OY_DBG_ARGS_,
               --oy_allocs_count_, (intptr_t)block );
     }
+    free( block );
   }
 }
 
