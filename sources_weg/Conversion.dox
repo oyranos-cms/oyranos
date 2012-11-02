@@ -79,7 +79,7 @@ digraph G {
 }
  \enddot
  *  \b Creating \b Graphs: \n
- *  Most simple is to use the oyConversion_CreateBasicPixles() function to 
+ *  Most simple is to use the oyConversion_CreateBasicPixels() function to 
  *  create a profile to profile and possible image buffer to image buffer linear
  *  graph.\n
  *  The other possibility is to create a non linear graph. The input member can
@@ -90,7 +90,7 @@ digraph G {
  *  top most required node to be provided in a oyConversion_s graph. The
  *  input node is accessible for user manipulation. The other one is the out_
  *  member. It is the closing node in the graph. It will be set by Oyranos
- *  during closing the graph, e.g. in oyConversion_LinOutputAdd().
+ *  during closing the graph.
  *
  *  \b Using \b Graphs: \n
  *  To obtain the data the oyConversion_RunPixels() and
