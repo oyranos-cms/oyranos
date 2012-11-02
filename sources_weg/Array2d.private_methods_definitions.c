@@ -66,9 +66,9 @@ oyArray2d_s_ *
  *
  *  @param[in,out] obj                 struct object
  *
- *  @version Oyranos: 0.1.11
+ *  @version Oyranos: 0.9.1
+ *  @date    2012/11/02
  *  @since   2010/09/07 (Oyranos: 0.1.11)
- *  @date    2010/09/07
  */
 int          oyArray2d_ReleaseArray_ ( oyArray2d_s       * obj )
 {
@@ -90,10 +90,10 @@ int          oyArray2d_ReleaseArray_ ( oyArray2d_s       * obj )
     {
       if((s->own_lines == 1 && y == s->data_area.y) ||
          s->own_lines == 2)
-        deallocateFunc( &s->array2d[y][dsize * (int)s->data_area.x] );
+        deallocateFunc( &s->array2d[y][dsize * (int)OY_ROUND(s->data_area.x)] );
       s->array2d[y] = 0;
     }
-    deallocateFunc( s->array2d + (size_t)s->data_area.y );
+    deallocateFunc( s->array2d + (int)OY_ROUND(s->data_area.y) );
     s->array2d = 0;
   }
 
