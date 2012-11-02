@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/11/02
  */
 
 
@@ -27,6 +27,12 @@
 
 #include "oyranos_types.h"
 
+/** \addtogroup objects_conversion DAG and Image processing API
+ *
+ *  @{
+ */
+
+/** @} *//* objects_conversion */ 
 
 #ifdef __cplusplus
 } /* extern "C" */

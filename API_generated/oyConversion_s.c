@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/24
+ *  @date     2012/11/02
  */
 
 
@@ -119,6 +119,8 @@ OYAPI int OYEXPORT
  *  - "verbose" - reporting changes as message
  *
  *  TODO: display and selection of policy modules
+ *
+ *  @see defaults_apis
  *
  *  @param   conversion                the to be checked configuration
  *  @param   registration              the to be used policy module
@@ -613,11 +615,12 @@ int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
  *
  *  @verbatim
     // use the output
+    oyConversion_RunPixels( context, NULL );
     oyImage_s * image = oyConversion_GetImage( context, OY_OUTPUT );
     // get the data and draw the image
     for(i = 0; i < image->height; ++i)
     {
-      image_data = image->getLine( image, i, &height, -1, &is_allocated );
+      image_data = oyImage_GetLineF(image)( image, i, &height, -1, &is_allocated );
 
       // ...
 

@@ -1105,6 +1105,8 @@ int            oyImage_GetHeight     ( oyImage_s         * image )
  *  @memberof oyImage_s
  *  @brief   Get the pixel layout
  *
+ *  @see oyPixel_t
+ *
  *  @version Oyranos: 0.5.0
  *  @since   2009/03/05 (Oyranos: 0.1.10)
  *  @date    2012/09/05

@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/31
+ *  @date     2012/11/02
  */
 
 
@@ -300,8 +300,24 @@ int oyLowerStrcmpWrap (const void * a_, const void * b_)
  *  @memberof oyProfiles_s
  *  @brief   get a list of installed profiles
  *
- *  @param[in]     patterns            a list properties, e.g. classes
+ *  @param[in]     patterns            a list properties, e.g. classes;
+ *                                     Only matching profiles are selected.
+ *                                     If NULL, all profiles are accepted.
  *  @param         object              the optional object
+ *  @return                            the found and selected profiles
+ *
+ *  @verbatim
+    // Put all ICC Display Class profiles in "profiles"
+    icSignature profile_class = icSigDisplayClass;
+    oyProfile_s * pattern = 0;
+    oyProfiles_s * patterns = oyProfiles_New( 0 ),
+                 * profiles = 0;
+
+    pattern = oyProfile_FromSignature( profile_class, oySIGNATURE_CLASS, 0 );
+    oyProfiles_MoveIn( patterns, &pattern, -1 );
+    
+    profiles = oyProfiles_Create( patterns, 0 );
+    oyProfiles_Release( &patterns );@endverbatim
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/20 (Oyranos: 0.1.8)
@@ -431,6 +447,7 @@ OYAPI oyProfiles_s * OYEXPORT
  *
  *  @par Example - get all standard RGB profiles:
  *  @verbatim
+    // Get all ICC profiles, which can be used as assumed RGB profile
     oyPROFILE_e type = oyEDITING_RGB;
     int current = 0,
         size, i;
@@ -443,6 +460,7 @@ OYAPI oyProfiles_s * OYEXPORT
     for( i = 0; i < size; ++i)
     {
       temp_prof = oyProfiles_Get( iccs, i );
+      // Show the profile internal and file names on the command line
       printf("%s %d: \"%s\" %s\n", i == current ? "*":" ", i,
              oyProfile_GetText( temp_prof, oyNAME_DESCRIPTION ),
              oyProfile_GetFileName(temp_prof, -1));
@@ -663,14 +681,18 @@ OYAPI oyProfiles_s * OYEXPORT
  *  top of the list followed by the zero ranked profiles.
  *
  *  @verbatim
+    // Get all ICC profiles, which can be used as assumed RGB profile
     oyProfiles_s * p_list = oyProfiles_ForStd( oyASSUMED_RGB, 0,0 );
     int32_t * rank_list = (int32_t*) malloc( oyProfiles_Count(p_list) *
                                              sizeof(int32_t) );
+    // Sort the profiles according to eaches match to a given device
     oyProfiles_DeviceRank( p_list, oy_device, rank_list );
+
     n = oyProfiles_Count( p_list );
     for(i = 0; i < n; ++i)
     {
       temp_prof = oyProfiles_Get( p_list, i );
+      // Show the rank value, the profile internal and file names on the command line
       printf("%d %d: \"%s\" %s\n", rank_list[i], i,
              oyProfile_GetText( temp_prof, oyNAME_DESCRIPTION ),
              oyProfile_GetFileName(temp_prof, 0));

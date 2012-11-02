@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/22
+ *  @date     2012/11/02
  */
 
 
@@ -22,7 +22,7 @@
 #include "oyranos_image.h"
 #include "oyranos_image_internal.h"
 
-/** \addtogroup objects_image Image API
+/** \addtogroup objects_image Image Container API
  *
  *  @{
  */

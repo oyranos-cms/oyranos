@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/11/02
  */
 
 
@@ -22,7 +22,6 @@
 /*namespace oyranos {*/
   extern "C" {
 #endif /* __cplusplus */
-
 
 
 /** \addtogroup objects_profile Profile API
@@ -39,8 +38,14 @@
  *  provide additional informations. \n
  *  The profile element functions have Tag in their names. They work together
  *  with the oyProfileTag_s APIs. \n
- *  oyProfile_GetFileName is a reverse lookup to obtain the name of a installed
+ *  oyProfile_GetFileName() is a reverse lookup to obtain the name of a installed
  *  file from a profile, e.g. find the name of a reachable display profile.
+ *
+ *  The oyProfiles_Create() allows to create profile lists with fine grained 
+ *  control. oyProfiles_ForStd() creates a list of profiles suitable to be set
+ *  as default profiles according to the oyPROFILE_e categories.
+ *  oyProfiles_DeviceRank() can be used together with a given device so sort
+ *  for a the best match in descenting order.
 
  *  @{
  */

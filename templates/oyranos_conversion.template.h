@@ -8,6 +8,12 @@
 
 #include "oyranos_types.h"
 
+/** \addtogroup objects_conversion DAG and Image processing API
+ *
+ *  @{
+ */
+
+/** @} *//* objects_conversion */ 
 
 {% include "cpp_end.h" %}
 

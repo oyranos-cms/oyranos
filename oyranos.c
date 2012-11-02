@@ -235,6 +235,21 @@ oySetProfile_Block (const char* name, void* mem, size_t size,
 
 #include "oyranos.h"
 
+/** \addtogroup defaults_apis Defaults API
+
+    - @ref policy - load / save of user policies
+    - @ref options - layout and describe options to the user; part of user policies
+    - @ref behaviour - get and set common behaviour; part of user policies
+    - @ref default_profiles - get and set commonly used profiles; part of user policies
+
+    oyProfile_FromStd() and oyProfiles_ForStd() offer default profile selection 
+    in a object oriented way.
+    oyConversion_Correct() applies settings from the above default APIs to a 
+    given DAG.
+
+ *  @{
+ */
+
 /** \addtogroup options Options API
  *  The idea behind this API is to provide one layout for
  *  presenting a configuration dialog to users. The advantage is, every 
@@ -730,9 +745,21 @@ oyGetDefaultProfileName    (oyPROFILE_e       type,
 }
 /*  @} */
 
+/*  @} *//* defaults_apis */
+
+/** \addtogroup objects_profile ICC Profile APIs
+ *  Functions to select, read, manipulate and write ICC Profiles. 
+ *  Low level APIs to obtain pure filenames and handle raw bits as well as 
+ *  object oriented APIs are in place.
+
+ *  - @ref profile_lists - provides the ICC profile search path content as string list
+ *  - @ref profile_handling - low level ICC profile I/O and more
+
+ *  @{
+ */
 
 /** \addtogroup profile_lists Profile Lists API
- *  Functions to handle profile name lists.
+ *  Low level and fast functions to handle profile name lists.
 
  *  @see @ref path_names
 
@@ -936,6 +963,7 @@ oyProfileGetMD5        ( void       *buffer,
   return error;
 }
 /** @} */
+/** @} *//* objects_profile  */
 
 /**
  *  @internal

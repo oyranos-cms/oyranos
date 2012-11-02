@@ -26,6 +26,11 @@
 #include <math.h>
 
 
+/** \addtogroup misc Miscellaneous
+
+ *  @{
+ */
+
 /** \addtogroup icc_low ICC helpers
 
  *  @{
@@ -790,16 +795,7 @@ const oyChar *   oyICCMeasurementFlareDescription ( icMeasurementFlare sig )
 }
 
 
-/**
- *  @} *//* icc_low
- */
 
-
-
-/** \addtogroup misc Miscellaneous
-
- *  @{
- */
 
 #define icValue_to_icUInt32Number_m(funkname, typ) \
 typ \
@@ -815,6 +811,10 @@ icValue_to_icUInt32Number_m( oyValueProfCSig, icProfileClassSignature )
 icValue_to_icUInt32Number_m( oyValueTagSig, icTagSignature )
 
 
+
+/**
+ *  @} *//* icc_low
+ */
 
 
 /** @} *//*misc */

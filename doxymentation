@@ -47,13 +47,12 @@
 
     @section user User API Documentation
     The basic Oyranos API gets included with oyranos.h. An application, which
-    wants to use these functions, needs to link against Oyranos and Elektra.
-    - @ref policy - load / save of user policies
-    - @ref options - layout and describe options to the user; part of user policies
-    - @ref behaviour - get and set common behaviour; part of user policies
-    - @ref default_profiles - get and set commonly used profiles; part of user policies
-    - @ref profile_lists - provides the search path content as profile lists for your GUI
-    - @ref profile_handling - file I/O and more
+    wants to use these functions, needs to link against Oyranos.
+    - @ref defaults_apis obtain and manipulate user preferences and UI translations
+    - @ref objects_profile - select, read, manipulate and write ICC Profiles 
+    - @ref devices_handling - select, read, manipulate and write colour Device Configurations
+    - @ref objects_image - image data objects
+    - @ref objects_conversion - build and process image graphs
 
     The monitor related API is contained in alpha/oyranos_alpha.h. Loading of
     the according module for the X11 libraries on Linux is done on runtime.

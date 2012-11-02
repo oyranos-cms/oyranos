@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/31
+ *  @date     2012/11/02
  */
 
 
@@ -1202,6 +1202,8 @@ int            oyImage_GetHeight     ( oyImage_s         * image )
 /** Function oyImage_GetPixelLayout
  *  @memberof oyImage_s
  *  @brief   Get the pixel layout
+ *
+ *  @see oyPixel_t
  *
  *  @version Oyranos: 0.5.0
  *  @since   2009/03/05 (Oyranos: 0.1.10)

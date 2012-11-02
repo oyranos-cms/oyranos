@@ -9,9 +9,13 @@
 
 {% include "cpp_begin.h" %}
 
+/** \addtogroup objects_image
+ *
+ *  @{
+ */
+
 /** @enum    oyDATATYPE_e
  *  @brief   Basic data types for anonymous pointers 
- *  @ingroup objects_image
  *
  *  @version Oyranos: 0.1.8
  *  @since   2007/00/00 (Oyranos: 0.1.8)
@@ -31,7 +35,6 @@ const char *       oyDataTypeToText  ( oyDATATYPE_e        data_type );
 
 /** @enum    oyCHANNELTYPE_e
  *  @brief   Channels types of Colours 
- *  @ingroup objects_image
  *
  *  This type is useful to present colour manipulation UI elements in a 
  *  sensible way.
@@ -74,7 +77,6 @@ typedef enum {
 } oyPIXEL_ACCESS_TYPE_e;
 
 /** @typedef oyPixel_t
- *  @ingroup objects_image
     parametric type as shorthand for the channel layout in bitmaps \n
 
     should fit into a 32bit type, usual unsigned int or uint32_t \n
@@ -99,7 +101,6 @@ char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
 
 /** @enum    oyLAYOUT_e
  *  @brief   Pixel mask descriptions.
- *  @ingroup objects_image
  */
 typedef enum {
   oyLAYOUT = 0, /*!< remembering the layout @see oyPixel_t */
@@ -111,29 +112,49 @@ typedef enum {
   oyCHAN0       /*!< first colour channel position */
 } oyLAYOUT_e;
 
+/** Set channels count in @ref oyPixel_t */
 #define oyChannels_m(c)             (c)
+/** Set offset count to first colour channel in  @ref oyPixel_t */
 #define oyColourOffset_m(o)         ((o) << 8)
+/** Set @ref oyDATATYPE_e in  @ref oyPixel_t */
 #define oyDataType_m(t)             ((t) << 16)
+/** Set swapping of colour channels in @ref oyPixel_t , e.g. BGR */
 #define oySwapColourChannels_m(s)   ((s) << 20)
+/** Set planar instead of interwoven colour channels in @ref oyPixel_t */
 #define oyPlanar_m(p)               ((p) << 21)
+/** Set min is white in @ref oyPixel_t */
 #define oyFlavor_m(p)               ((f) << 22)
+/** Set byte swapping for integers larger than 8 byte in @ref oyPixel_t */
 #define oyByteSwap_m(x)             ((x) << 23)
 
-/** define some common types */
+/* define some common types */
+/** 8-bit RGB/YUV/XYZ/... */
 #define OY_TYPE_123_8       (oyChannels_m(3)|oyDataType_m(oyUINT8))
+/** 16-bit RGB/... */
 #define OY_TYPE_123_16      (oyChannels_m(3)|oyDataType_m(oyUINT16))
+/** 16-bit float RGB/... */
 #define OY_TYPE_123_HALF    (oyChannels_m(3)|oyDataType_m(oyHALF))
+/** 32-bit float RGB/... */
 #define OY_TYPE_123_FLOAT   (oyChannels_m(3)|oyDataType_m(oyFLOAT))
+/** 64-bit double RGB/... */
 #define OY_TYPE_123_DBL     (oyChannels_m(3)|oyDataType_m(oyDOUBLE))
 
+/** 8-bit RGB/... alpha */
 #define OY_TYPE_123A_8      (oyChannels_m(4)|oyDataType_m(oyUINT8))
+/** 16-bit RGB/... alpha */
 #define OY_TYPE_123A_16     (oyChannels_m(4)|oyDataType_m(oyUINT16))
+/** 16-bit float RGB/... alpha */
 #define OY_TYPE_123A_HALF   (oyChannels_m(4)|oyDataType_m(oyHALF))
+/** 32-bit float RGB/... alpha */
 #define OY_TYPE_123A_FLOAT  (oyChannels_m(4)|oyDataType_m(oyFLOAT))
+/** 64-bit double RGB/... alpha */
 #define OY_TYPE_123A_DBL    (oyChannels_m(4)|oyDataType_m(oyDOUBLE))
 
+/** 16-bit float RGB/... alpha + Z */
 #define OY_TYPE_123AZ_HALF  (oyChannels_m(5)|oyDataType_m(oyHALF))
+/** 32-bit float RGB/... alpha + Z */
 #define OY_TYPE_123AZ_FLOAT (oyChannels_m(5)|oyDataType_m(oyFLOAT))
+/** 64-bit double RGB/... alpha + Z */
 #define OY_TYPE_123AZ_DBL   (oyChannels_m(5)|oyDataType_m(oyDOUBLE))
 
 #define OY_TYPE_A123_8      (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT8))
@@ -145,7 +166,9 @@ typedef enum {
 /* some intermixed types will work as well */
 #define OY_TYPE_123A_HALF_Z_FLOAT (oyChannels_m(4+1*2)|oyDataType_m(oyHALF))
 
+/** 8-bit Cmyk */
 #define OY_TYPE_1234_8      (oyChannels_m(4)|oyDataType_m(oyUINT8))
+/** 8-bit Cmyk alpha */
 #define OY_TYPE_1234A_8     (oyChannels_m(5)|oyDataType_m(oyUINT8))
 #define OY_TYPE_1234_16     (oyChannels_m(4)|oyDataType_m(oyUINT16))
 #define OY_TYPE_1234A_16    (oyChannels_m(5)|oyDataType_m(oyUINT16))
@@ -156,7 +179,9 @@ typedef enum {
 #define OY_TYPE_1234A_16_REV (oyChannels_m(5)|oyDataType_m(oyUINT16)|oyFlavor_m(oyYes))
 
 
+/** 8-bit Gray */
 #define OY_TYPE_1_8         (oyChannels_m(1)|oyDataType_m(oyUINT8))
+/** 16-bit Gray */
 #define OY_TYPE_1_16        (oyChannels_m(1)|oyDataType_m(oyUINT16))
 #define OY_TYPE_1_HALF      (oyChannels_m(1)|oyDataType_m(oyHALF))
 #define OY_TYPE_1_FLOAT     (oyChannels_m(1)|oyDataType_m(oyFLOAT))
@@ -175,13 +200,22 @@ typedef enum {
 #define OY_TYPE_1A_FLOAT_REV (oyChannels_m(2)|oyDataType_m(oyFLOAT)|oyFlavor_m(oyYes))
 
 /* decode */
+/** Get channels count in @ref oyPixel_t */
 #define oyToChannels_m(c)           ((c)&255)
+/** Get offset count to first colour channel in  @ref oyPixel_t */
 #define oyToColourOffset_m(o)       (((o) >> 8)&255)
+/** Get @ref oyDATATYPE_e in  @ref oyPixel_t */
 #define oyToDataType_m(t)           ((oyDATATYPE_e)(((t) >> 16)&15))
+/** Get swapping of colour channels in @ref oyPixel_t , e.g. BGR */
 #define oyToSwapColourChannels_m(s) (((s) >> 20)&1)
+/** Get planar instead of interwoven colour channels in @ref oyPixel_t */
 #define oyToPlanar_m(p)             (((p) >> 21)&1)
+/** Get min is white in @ref oyPixel_t */
 #define oyToFlavor_m(f)             (((f) >> 22)&1)
+/** Get byte swapping for integers larger than 8 byte in @ref oyPixel_t */
 #define oyToByteswap_m(x)           (((x) >> 23)&1)
+
+/** } *//* objects_image */
 
 {% include "cpp_end.h" %}
 

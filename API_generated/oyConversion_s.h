@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/17
+ *  @date     2012/11/02
  */
 
 
@@ -147,7 +147,7 @@ digraph G {
  *  during closing the graph, e.g. in oyConversion_LinOutputAdd().
  *
  *  \b Using \b Graphs: \n
- *  To obtain the data the oyConversion_GetNextPixel() and
+ *  To obtain the data the oyConversion_RunPixels() and
  *  oyConversion_GetOnePixel() functions are available.
  \dot
 digraph G {
@@ -170,7 +170,7 @@ digraph G {
     b:socket -> d:plug [label=data];
     a:socket -> c:plug [label=data];
     c:socket -> d:plug [label=data];
-    d:socket -> app [label=<<table  border="0" cellborder="0"><tr><td>return of<br/>oyConversion_GetNextPixel()</td></tr></table>>];
+    d:socket -> app [label=<<table  border="0" cellborder="0"><tr><td>return of<br/>oyConversion_RunPixels()</td></tr></table>>];
   }
 }
  \enddot
