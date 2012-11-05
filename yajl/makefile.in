@@ -12,7 +12,8 @@ BINTARGET = $(TARGET)
 API_FILES = \
 	yajl/$(TARGET)_common.h \
 	yajl/$(TARGET)_gen.h \
-	yajl/$(TARGET)_parse.h
+	yajl/$(TARGET)_parse.h \
+	yajl/$(TARGET)_version.h
 HEADERS = \
 	$(TARGET)_alloc.h \
 	$(TARGET)_buf.h \
