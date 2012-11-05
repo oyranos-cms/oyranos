@@ -878,7 +878,7 @@ time:
 	echo $(MTIME)
 
 # build all objects and libraries, link the headers to $(TARGET)
-$(LIBSONAMEFULL):	$(LIBSONAMEOBJECTFULL) $(LIBSONAMEMODULESFULL) $(LIBSONAMECONFIGFULL) $(LIBNAME) $(DEVEL_LIBS) $(ELEKTRA_VERSION) $(YAJL_OBJ)
+$(LIBSONAMEFULL):	$(LIBSONAMEOBJECTFULL) $(LIBSONAMEMODULESFULL) $(LIBSONAMECONFIGFULL) $(LIBNAME) $(DEVEL_LIBS) $(YAJL_OBJ)
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_libdir)$(LIBSONAME) \
 	-o $(LIBSONAMEFULL) \
@@ -891,7 +891,7 @@ $(LIBSONAMEFULL):	$(LIBSONAMEOBJECTFULL) $(LIBSONAMEMODULESFULL) $(LIBSONAMECONF
 	$(RM)  $(LIBSO)
 	$(LNK) $(LIBSONAMEFULL) $(LIBSO)
 
-$(LIBSONAMECONFIGFULL):	$(LIBNAME_CONFIG) $(LIBSONAMEMODULESFULL) $(LIBSONAMEOBJECTFULL) $(LIBSONAMECOREFULL) $(DEVEL_LIBS)
+$(LIBSONAMECONFIGFULL):	$(LIBNAME_CONFIG) $(LIBSONAMEMODULESFULL) $(LIBSONAMEOBJECTFULL) $(LIBSONAMECOREFULL) $(ELEKTRA_OBJ) $(DEVEL_LIBS)
 	echo Linking $@ ...
 	$(CC) -I./ $(CFLAGS) $(LINK_FLAGS_DYNAMIC)$(dyld_libdir)$(LIBSONAMECONFIG) \
 	-o $(LIBSONAMECONFIGFULL) \
@@ -1097,6 +1097,10 @@ oyjl/oyjl_tree_parse.o:	$(SRCDIR)/oyjl/oyjl_tree_parse.c
 	$(CC) -I./ -I./oyjl $(YAJL_VERSION) -I$(SRCDIR)/oyjl \
 	  $(CFLAGS) $(INCL) $(YAJL_H) -o $@ -c $<
 
+$(ELEKTRA_VERSION)/src/libelektra/libelektra.a:
+	echo Compiling $@
+	(cd $(ELEKTRA_VERSION) && $(MAKE))
+
 $(TARGET)_config_fltk.o:	$(SRCDIR)/$(TARGET)_config_fltk.cxx
 	echo Compiling $*.cxx
 	$(CXX) -I./ -I$(SRCDIR) $(CXXFLAGS) $(INCL) $(FLTK_H) -c $<
@@ -1154,11 +1158,6 @@ $(LIBNAME_CORE):	$(OBJECTS_CORE)
 	$(COLLECT) $(LINK_FLAGS_STATIC) $(LIBNAME_CORE) \
 		$(OBJECTS_CORE)
 	$(RANLIB) $(LIBNAME_CORE)
-
-$(ELEKTRA_VERSION):
-	echo building DB ...
-	cd $(ELEKTRA_VERSION); \
-	test -f Makefile && $(MAKE) || (./configure --enable-static $(nodeps_config_opt) --prefix=$(prefix); $(MAKE))
 
 $(YAJL_OBJ):	$(YAJL_OBJECTS)
 	echo building Yajl ...
