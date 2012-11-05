@@ -87,7 +87,7 @@ char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", r
 #define oyERR(k) { const Key *meta = NULL; keyRewindMeta(k); \
                    if(rc <= 0) { \
                      while((meta = keyNextMeta(k)) != 0) { \
-                       WARNc2_S( "%s:\t%s", \
+                       WARNc3_S( "rc:%d %s:\t%s", rc, \
                                  oyNoEmptyString_m_( keyName(meta) ), \
                                  oyNoEmptyString_m_( keyString(meta) ) ); \
                      } \
