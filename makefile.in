@@ -584,7 +584,8 @@ EXAMPLE_SOURCES = \
 	examples/oyranos_convert/oyranos_convert.c \
 	examples/oyranos_profile_graph/oyranos_profile_graph.c \
 	examples/oyranos_profile_graph/ciexyz64_1.h \
-	examples/oymd5icc/oymd5icc.c
+	examples/oymd5icc/oymd5icc.c \
+	examples/taxi/taxi.c
 
 EXAMPLE_FILES = \
 	$(EXAMPLE_SOURCES) \
