@@ -49,7 +49,7 @@ void  printfHelp (int argc, char** argv)
   char * devel_time = oyVersionString(4,0);
 
   fprintf( stderr, "\n");
-  fprintf( stderr, "oyranos-icc %s\n",
+  fprintf( stderr, "oyranos-icc %s - the arguments and interface will change\n",
                                 _("is a ICC color conversion tool"));
   fprintf( stderr, "  Oyranos v%s config: %s devel period: %s\n",
                   oyNoEmptyName_m_(version),

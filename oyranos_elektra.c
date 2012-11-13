@@ -38,6 +38,9 @@
 #include "oyranos_string.h"
 #include "oyranos_xml.h"
 
+#define DBG_EL1_S DBG_NUM1_S
+#define DBG_EL2_S DBG_NUM2_S
+#define DBG_EL_S DBG_NUM_S
 
 #ifndef KDB_VERSION_MAJOR
 #define KDB_VERSION_MAJOR 0
@@ -126,12 +129,14 @@ KDBHandle * oy_handle_ = 0;
 void oyOpen_ (void)
 {
   if(!oyranos_init) {
-    oy_handle_ = kdbOpen_m( /*&oy_handle_*/ );
-    if(!oy_handle_)
-      WARNc_S("Could not initialise Elektra.");
 #if KDB_VERSION_NUM >= 800
     error_key = keyNew( KEY_END );
+    DBG_EL1_S("error_key = keyNew( KEY_END ) == %s", error_key ? "good":"NULL");
 #endif
+    oy_handle_ = kdbOpen_m( /*&oy_handle_*/ );
+    DBG_EL1_S("oy_handle_ = kdbOpen_m() == %s", oy_handle_ ? "good":"NULL");
+    if(!oy_handle_)
+      WARNc_S("Could not initialise Elektra.");
     oyranos_init = 1;
   }
 }
@@ -170,43 +175,73 @@ int oyGetByName(KeySet * conf, const char * base)
 
 int  oyGetKey                        ( Key               * key )
 {
-  KeySet * ks = ksNew(0);
+  KeySet * ks;
   Key * result;
-  int rc = kdbGet( oy_handle_, ks, key );
+  int rc;
+
+  ks = ksNew(0);
+  DBG_EL1_S( "ks = ksNew( 0 ) == %s", ks ? "good":"NULL" );
+  rc = kdbGet( oy_handle_, ks, key ); oyERR(key)
+  DBG_EL1_S( "rc = kdbGet( oy_handle_, ks, key ) == %d", rc );
 
   result = ksLookup( ks, key, KDB_O_NONE);
+  DBG_EL1_S( "result = ksLookup( ks, key, KDB_O_NONE) == %s", result ? "good":"NULL" );
   if(!rc && !result)
   {
     rc = -1;
-    WARNc_S( oyNoEmptyString_m_(keyString(key)) );
+    WARNc1_S( "keyString(key) == %s", oyNoEmptyString_m_(keyString(key)) );
     oyERR(key)
   }
+  DBG_EL_S( "keyCopy( key, result )" );
   keyCopy( key, result );
   keyDel( result );
+  DBG_EL_S( "keyDel( result )" );
   ksDel( ks );
+  DBG_EL_S( "ksDel( ks )" );
   return rc;
 }
 
 int  oySetKey                        ( Key               * key )
 {
-  KeySet * ks = ksNew(0);
-  int rc = kdbGet( oy_handle_, ks, key ); oyERR(key)
+  KeySet * ks;
+  int rc;
+
+  ks = ksNew(0);
+  DBG_EL1_S( "ks = ksNew( 0 ) == %s", ks ? "good":"NULL" );
+  rc = kdbGet( oy_handle_, ks, key ); oyERR(key)
+  DBG_EL1_S( "kdbGet( oy_handle_, ks, key ) = %d", rc );
   if(!rc)
+  {
     rc = kdbSet( oy_handle_, ks, key ); oyERR(key)
+    DBG_EL1_S( "kdbSet( oy_handle_, ks, key ) = %d", rc );
+  }
   ksDel( ks );
+  DBG_EL_S( "ksDel( ks )" );
   return rc;
 }
 
 int  oyRemoveFromDB                  ( const char        * name )
 {
-  Key *key = keyNew(name,KEY_END);
-  KeySet * ks = ksNew(0);
-  int rc = kdbGet(oy_handle_, ks, key); oyERR(key)
+  Key *key;
+  KeySet * ks;
+  int rc;
+  
+  key = keyNew(name,KEY_END);
+  DBG_EL1_S( "key = keyNew( \"%s\", KEY_END) = %s", key ? "good":"NULL" );
+  ks = ksNew(0);
+  DBG_EL1_S( "ks = ksNew( 0 ) == %s", ks ? "good":"NULL" );
+  rc = kdbGet(oy_handle_, ks, key); oyERR(key)
+  DBG_EL1_S( "kdbGet( oy_handle_, ks, key ) = %d", rc );
   ksClear(ks);
   if(!rc)
+  {
     rc = kdbSet( oy_handle_, ks, key ); oyERR(key)
+    DBG_EL1_S( "kdbSet( oy_handle_, ks, key ) = %d", rc );
+  }
   ksDel( ks );
+  DBG_EL_S( "ksDel( ks )" );
   keyDel(key);
+  DBG_EL_S( "keyDel( key )" );
   return rc;
 }
 #endif /* KDB_VERSION_NUM >= 800 */
@@ -436,17 +471,21 @@ oyAddKey_valueComment_ (const char* key_name,
     WARNc_S( "no key_name given" );
 
   key = keyNew( KEY_END );
+  DBG_EL1_S( "key = keyNew( KEY_END ) == %s", key ? "good":"NULL" );
   keySetName( key, name );
+  DBG_EL1_S( "keySetName( key, \"%s\" )", name );
 
   if(!oy_handle_)
     goto clean;
   rc=kdbGetKey( oy_handle_, key ); oyERR(key)
+  DBG_EL1_S( "rc = kdbGetKey( oy_handle, key ) == %d", rc );
   if(rc < 0 && oy_debug)
     oyMessageFunc_p( oyMSG_WARN, 0, OY_DBG_FORMAT_"key new? code:%d %s name:%s",
                      OY_DBG_ARGS_, rc, kdbStrError(rc), name);
   if(value)
   {
     rc=keySetString (key, value_utf8);
+    DBG_EL2_S( "rc = keySetString( key, \"%s\" ) == %d", value_utf8, rc);
     if(rc <= 0)
       oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_"code:%d %s name:%s value:%s",
                        OY_DBG_ARGS_, rc, kdbStrError(rc), name, value);
@@ -454,6 +493,7 @@ oyAddKey_valueComment_ (const char* key_name,
   if(comment)
   {
     rc=keySetComment (key, comment_utf8);
+    DBG_EL2_S( "rc = keySetComment( key, \"%s\" ) == %d", comment_utf8, rc);
     if(rc <= 0)
       oyMessageFunc_p( oyMSG_WARN, 0, OY_DBG_FORMAT_"code:%d %s name:%s comment:%s",
                        OY_DBG_ARGS_, rc, kdbStrError(rc), name, comment);
@@ -461,11 +501,13 @@ oyAddKey_valueComment_ (const char* key_name,
 
   oyOpen_();
   rc=kdbSetKey( oy_handle_, key ); oyERR(key)
+  DBG_EL1_S( "rc = kdbSetKey( oy_handle, key ) == %d", rc );
   if(rc < 0)
     oyMessageFunc_p( oyMSG_WARN, 0, OY_DBG_FORMAT_ "code:%d %s name:%s",
                      OY_DBG_ARGS_, rc, kdbStrError(rc), name);
   oyClose_();
   keyDel( key );
+  DBG_EL_S( "keyDel( key )" );
 
 
   clean:

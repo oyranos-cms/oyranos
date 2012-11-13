@@ -584,7 +584,8 @@ EXAMPLE_SOURCES = \
 	examples/oyranos_convert/oyranos_convert.c \
 	examples/oyranos_profile_graph/oyranos_profile_graph.c \
 	examples/oyranos_profile_graph/ciexyz64_1.h \
-	examples/oymd5icc/oymd5icc.c
+	examples/oymd5icc/oymd5icc.c \
+	examples/taxi/taxi.c
 
 EXAMPLE_FILES = \
 	$(EXAMPLE_SOURCES) \
@@ -1486,6 +1487,7 @@ install:	install-main examples
 	$(INSTALL) -m 644 "$(SRCDIR)/examples/xcmsevents/qcmsevents-applet.desktop" "$(DESTDIR)$(desktopdir)"
 #endif
 	$(INSTALL) -m 755 examples/oyranos_profile_graph/oyranos-profile-graph "$(DESTDIR)$(bindir)"
+	$(INSTALL) -m 755 examples/oyranos_convert/oyranos-icc "$(DESTDIR)$(bindir)"
 	echo ... $@ done
 
 install-main:	install_bin install_linguas install_docu

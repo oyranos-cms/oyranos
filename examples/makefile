@@ -18,9 +18,10 @@ TARGET9 = libraw/oyranos-file
 TARGET10 = oyranos_profile_graph/oyranos-profile-graph
 TARGET11 = oyranos_convert/oyranos-icc
 TARGET12 = devices/test-device
+TARGET13 = taxi/taxi
 TARGETS = $(TARGET2) $(TARGET4) $(TARGET5) $(TARGET6) \
 	$(TARGET7) $(TARGET9) $(TARGET10) $(TARGET11) $(TARGET12) \
-	../oyranos_logo.ppm
+	$(TARGET13) ../oyranos_logo.ppm
 OY_CFLAGS := $(shell (pkg-config --cflags oyranos))
 OY_LDFLAGS := $(shell (pkg-config --libs oyranos))
 ifeq ($(HAVE_FLTK),yes)
@@ -152,6 +153,11 @@ $(TARGET11):	$(SRCDIR)oyranos_convert/oyranos_convert.c
 
 $(TARGET12):	$(SRCDIR)devices/test_device.c
 	mkdir -p devices
+	echo Compiling $@ ...
+	-$(CC) $(CFLAGS_) $< $(LDFLAGS) $(OY_LDFLAGS) -lm -o $@
+
+$(TARGET13):	$(SRCDIR)taxi/taxi.c
+	mkdir -p taxi
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS_) $< $(LDFLAGS) $(OY_LDFLAGS) -lm -o $@
 
