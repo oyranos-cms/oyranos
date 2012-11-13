@@ -326,6 +326,119 @@ int main(int argc, char *argv[])
     exit(0);
 
   } else
+  if(argc >= 3 && strcmp(argv[1], "--list-taxi-profiles" ) == 0)
+  {
+    oyConfig_s * oy_device = 0;
+    oyProfile_s * profile = 0;
+    const char * tmp = 0;
+    icSignature profile_class;
+    oyOptions_s * options = 0;
+    oyOptions_SetFromText( &options,
+                   "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
+                         "yes", OY_CREATE_NEW );
+
+    device_class = argv[2];
+    device_name = argv[3];
+
+    {
+      oyConfDomain_s * d = oyConfDomain_FromReg( device_class, 0 );
+      const char * icc_profile_class = oyConfDomain_GetText( d,
+                                             "icc_profile_class", oyNAME_NICK );
+      if(icc_profile_class && strcmp(icc_profile_class,"display") == 0)
+        profile_class = icSigDisplayClass;
+      else if(icc_profile_class && strcmp(icc_profile_class,"output") == 0)
+        profile_class = icSigOutputClass;
+      else if(icc_profile_class && strcmp(icc_profile_class,"input") == 0)
+        profile_class = icSigInputClass;
+
+       printf("icc_profile_class: %s\n", icc_profile_class );
+       oyConfDomain_Release( &d );
+    }
+
+    error = oyDeviceGet( 0, device_class, device_name, 0, &oy_device );
+    if(oy_device)
+      error = oyDeviceGetProfile( oy_device, options, &profile );
+
+    if(profile)
+      tmp = oyProfile_GetFileName( profile, -1 );
+
+    printf( "%s %s %s%s%s\n",
+            device_class, device_name, error?"":"good",
+            tmp?"\n has a profile: ":"", tmp?tmp:"" );
+
+    if(!oy_device)
+      exit(1);
+
+    {
+    int size, i, current = -1, current_tmp = 0, pos = 0;
+    oyProfile_s * profile = 0;
+    oyConfigs_s * taxi_devices = 0;
+    oyConfig_s * device = oy_device;
+    const char * profile_file_name = 0;
+    
+    oyDevicesFromTaxiDB( device, 0, &taxi_devices, 0 );
+    
+    size = oyConfigs_Count( taxi_devices );
+    
+    error = oyDeviceGetProfile( device, options, &profile );
+    profile_file_name = oyProfile_GetFileName( profile, 0 );
+    
+    int show_only_device_related = 1;
+    int empty_added = -1;                   
+    
+    for( i = 0; i < size; ++i)
+    {
+      {
+         oyConfig_s * taxi_dev = oyConfigs_Get( taxi_devices, i );
+         int32_t rank = 0;
+         error = oyConfig_Compare( device, taxi_dev, &rank );
+         
+         current_tmp = -1;
+         
+         if(current == -1 && current_tmp != -1)
+           current = current_tmp;
+           
+         if(empty_added == -1 &&
+            rank < 1) 
+         {
+           printf("\n");
+           empty_added = pos;
+           if(current != -1 &&                                                  
+              current == pos)
+             ++current;
+           ++pos;
+         } 
+
+         printf("%s/0 [%d] ", oyNoEmptyString_m_(
+                 oyConfig_FindString(taxi_dev, "TAXI_id", 0)), rank);
+         printf("\"%s\"\n", oyNoEmptyString_m_(
+                 oyConfig_FindString(taxi_dev, "TAXI_profile_description", 0)));
+         
+         if(show_only_device_related == 0 ||
+            rank > 0 ||
+            current_tmp != -1)
+           ++pos;
+         oyConfig_Release( &taxi_dev );
+      }  
+    } 
+    if(empty_added == -1)
+    {
+      ++pos;
+      if(current == -1 && current_tmp != -1)                                      
+        current = pos; 
+    }   
+    printf("current: %d\n", current);
+    oyConfig_Release( &device );
+    oyProfile_Release( &profile );                                                
+    oyConfigs_Release( &taxi_devices );
+    oyOptions_Release( &options );
+
+    }
+
+    oyConfig_Release( &oy_device );
+    exit(0);
+
+  } else
   {
     printf( "Usage - get all profiles for a device:\n  %s [device_class \"monitor\"] [device_name \":0.0\"]\n",
             strrchr(argv[0],'/') ? strrchr(argv[0],'/')+1 : argv[0] );
@@ -338,6 +451,8 @@ int main(int argc, char *argv[])
     printf( "Usage - tell verbosely about devices:\n  %s -v [device_class \"monitor\"]\n",
             strrchr(argv[0],'/') ? strrchr(argv[0],'/')+1 : argv[0] );
     printf( "Usage - list all profiles for a device:\n  %s --list-profiles \"device_class\" \"device_name\"\n",
+            strrchr(argv[0],'/') ? strrchr(argv[0],'/')+1 : argv[0] );
+    printf( "Usage - list all Taxi DB profiles for a device:\n  %s --list-taxi-profiles \"device_class\" \"device_name\"\n",
             strrchr(argv[0],'/') ? strrchr(argv[0],'/')+1 : argv[0] );
     exit(1);
   }
