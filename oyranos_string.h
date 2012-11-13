@@ -68,6 +68,8 @@ char *             oyStrnchrN_       ( char              * text,
                                        char                delimiter,
                                        int                 len,
                                        int               * end );
+int                oyStringCaseCmp_  ( const char        * a,
+                                       const char        * b );
 int                oyStringSegments_ ( const char        * text,
                                        char                delimiter );
 int                oyStringSegmentsN_( const char        * text,

@@ -396,6 +396,36 @@ char *             oyStrnchrN_       ( char              * text,
   return 0;
 }
 
+int                oyStringCaseCmp_  ( const char        * a,
+                                       const char        * b )
+{
+#ifdef HAVE_POSIX
+  return strcasecmp(a,b);
+#else
+  char * la = oyStringCopy_(a,0),
+       * lb = oyStringCopy_(b,0);
+  int n = strlen(a), i;
+  int result = 0;
+  /* the following un caseing is portable,
+   * still strcasecmp() might be faster? */
+  t = la;
+  for(i = 0; i < n; ++i)
+    if(isalpha(t[i]))
+      t[j] = tolower(t[i]);
+
+  n = strlen(b);
+  t = lb
+  for(i = 0; i < n; ++i)
+    if(isalpha(t[i]))
+      t[j] = tolower(t[i]);
+  
+  result = strcmp( la, lb );
+  oyFree_m_(la);
+  oyFree_m_(lb);
+  return result;
+#endif
+}
+
 int                oyStringSegments_ ( const char        * text,
                                        char                delimiter )
 {
