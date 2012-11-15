@@ -33,10 +33,7 @@
 #include <string.h>
 
 int    installProfile                ( oyProfile_s       * ip,
-                                       const char        * file_name,
                                        const char        * path,
-                                       char             ** names,
-                                       int                 count,
                                        char              * show_text,
                                        int                 show_gui );
 void* oyAllocFunc(size_t size) {return malloc (size);}
@@ -356,7 +353,7 @@ int main( int argc , char** argv )
     if(list_paths)
     {
       int n = 0;
-      char ** path_names = oyProfilePathsGet_( &n, oyAllocateFunc_ );
+      char ** path_names =  oyProfilePathsGet_( &n, oyAllocateFunc_ );
       fprintf(stderr, "%s:\n", _("ICC profile search paths"));
       if(path)
       {
@@ -392,9 +389,7 @@ int main( int argc , char** argv )
         STRING_ADD( show_text, file_name );
       } else
       {
-        file_name = oyProfile_GetText( ip, oyNAME_DESCRIPTION );
-        names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
-        installProfile( ip, file_name, path, names, count, show_text, show_gui);
+        installProfile( ip, path, show_text, show_gui);
 
         oyProfile_Release( &ip );
       }
@@ -409,15 +404,11 @@ int main( int argc , char** argv )
 
         if(!ip)
         {
-          STRING_ADD( show_text, _("Could not open: ") );
+          STRING_ADD( show_text, _("Could not open or invalid data: ") );
           STRING_ADD( show_text, file_name );
         }
 
-        if(strrchr(file_name, OY_SLASH_C))
-          file_name = strrchr(file_name, OY_SLASH_C) + 1;
-
-        names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
-        installProfile( ip, file_name, path, names, count, show_text, show_gui);
+        installProfile( ip, path, show_text, show_gui);
 
         oyProfile_Release( &ip );
       }
@@ -431,41 +422,56 @@ int main( int argc , char** argv )
 
 
 int    installProfile                ( oyProfile_s       * ip,
-                                       const char        * file_name,
                                        const char        * path,
-                                       char             ** names,
-                                       int                 count,
                                        char              * show_text,
                                        int                 show_gui )
 {
+  int error = 0;
       {
         const char * in = oyProfile_GetText( ip, oyNAME_DESCRIPTION );
-        int j;
         char * txt = 0;
-        int accept = 1;
-        const char * t = 0;
-        oyProfile_s * p = NULL;
+        oyOptions_s * opts = 0;
 
-        for(j = 0; j < (int)count; ++j)
+        oyOptions_SetFromText( &opts, "////path", path, OY_CREATE_NEW );
+        error = oyProfile_Install( ip, opts );
+
+        if(error == oyERROR_DATA_AMBIGUITY)
         {
-          p = oyProfile_FromFile(names[j], 0,0);
-          t = oyProfile_GetText(p, oyNAME_DESCRIPTION);
-
-          if(in && t && strcmp(in, t) == 0)
+          if(!show_text)
           {
-            if(!show_text)
-            {
-              STRING_ADD( show_text, _("Profile already installed") );
-              STRING_ADD( show_text, ":" );
-            }
-            STRING_ADD( show_text, " \'" );
-            STRING_ADD( show_text, t );
-            STRING_ADD( show_text, "\'" );
-            accept = 0;
+            STRING_ADD( show_text, _("Profile already installed") );
+            STRING_ADD( show_text, ":" );
           }
+          STRING_ADD( show_text, " \'" );
+          if(in)
+            STRING_ADD( show_text, in );
+          STRING_ADD( show_text, "\'" );
+        } else if(error == oyERROR_DATA_WRITE)
+        {
+          if(!show_text)
+          {
+            STRING_ADD( show_text, _("Path can not be written") );
+            STRING_ADD( show_text, ":" );
+          }
+          STRING_ADD( show_text, " \'" );
+          if(path)
+            STRING_ADD( show_text, path );
+          STRING_ADD( show_text, "\'" );
+        } else if(error == oyCORRUPTED)
+        {
+          if(!show_text)
+          {
+            STRING_ADD( show_text, _("Profile not useable") );
+            STRING_ADD( show_text, ":" );
+          }
+          STRING_ADD( show_text, " \'" );
+          if(in)
+            STRING_ADD( show_text, in );
+          STRING_ADD( show_text, "\'" );
+        } else if(error > 0 && !show_text)
+          oyStringAddPrintf_( &show_text, oyAllocateFunc_, oyDeAllocateFunc_,
+                              "%s - %d",_("Internal Error"), error );
 
-          oyProfile_Release( &p );
-        }
         if(show_text)
         {
           if(show_gui)
@@ -509,51 +515,7 @@ int    installProfile                ( oyProfile_s       * ip,
           oyFree_m_(show_text);
         }
  
-        if(accept)
-        {
-          size_t size = 0;
-          char * data, * fn = 0;
-          const char * sfn = in,
-                     * fileext;
-          int error = 0;
-
-          if(!sfn)
-          {
-            WARNc_S("Could not write to profile");
-            return 1;
-          }
-          data = oyProfile_GetMem( ip, &size, 0, oyAllocateFunc_);
-          STRING_ADD( fn, path );
-          STRING_ADD( fn, OY_SLASH );
-          if(strrchr(sfn, OY_SLASH_C))
-            sfn = strrchr(sfn, OY_SLASH_C) + 1;
-          STRING_ADD( fn, sfn );
-          /* check profile extension and avoid .icc duplication  */
-          fileext = strrchr( sfn, '.' );
-          if(fileext)
-          {
-            char * file_ext = 0;
-            int i = 0;
-            ++fileext;
-            STRING_ADD( file_ext, fileext );
-            while(file_ext[i]) { file_ext[i] = tolower( file_ext[i] ); ++i; }
-            if(strcmp(file_ext,"icc") != 0 && strcmp(file_ext,"icm") != 0)
-              STRING_ADD( fn, ".icc" );
-            oyFree_m_(file_ext);
-          } else
-            STRING_ADD( fn, ".icc" );
-          if(size)
-          {
-            error = oyWriteMemToFile_ ( fn, data, size );
-            if(error)
-            {
-              WARNc_S("Could not write to profile");
-	    } else
-              fprintf(stderr, "%s[%d%s]: \"%s\" -> \"%s\"\n",
-                   _("Installed"), (int)size, _("bytes"), file_name, fn );
-          }
-          oyDeAllocateFunc_(data); size = 0; data = 0;
-        }
       }
-  return 0;
+
+  return error;
 }
