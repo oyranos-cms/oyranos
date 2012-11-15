@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/11/15
  */
 
 
@@ -137,11 +137,6 @@ OYAPI int  OYEXPORT
                                        uint32_t          * count,
                                        uint32_t         ** rank_list,
                                        oyAlloc_f           allocateFunc );
-OYAPI int  OYEXPORT
-             oyDevicesFromTaxiDB     ( oyConfig_s        * device,
-                                       oyOptions_s       * options,
-                                       oyConfigs_s      ** devices,
-                                       oyObject_s          obj );
 OYAPI int  OYEXPORT
                oyConfig_GetBestMatchFromTaxiDB(
                                        oyConfig_s        * device,
