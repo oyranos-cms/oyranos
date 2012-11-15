@@ -213,10 +213,10 @@ typedef enum {
  *  @date    2008/06/28
  */
 typedef enum {
-  oyBOOLEAN_INTERSECTION,              /** and, the part covered by A and B */
-  oyBOOLEAN_SUBSTRACTION,              /** minus, the part covered by A but not by B */
-  oyBOOLEAN_DIFFERENZ,                 /** xor, exclusive parts of A and B */
-  oyBOOLEAN_UNION                      /** or, the parts covered by A or B or both */
+  oyBOOLEAN_INTERSECTION,              /**< and, the part covered by A and B */
+  oyBOOLEAN_SUBSTRACTION,              /**< minus, the part covered by A but not by B */
+  oyBOOLEAN_DIFFERENZ,                 /**< xor, exclusive parts of A and B */
+  oyBOOLEAN_UNION                      /**< or, the parts covered by A or B or both */
 } oyBOOLEAN_e;
 
 
@@ -274,6 +274,13 @@ typedef enum {
   oyCORRUPTED,
   oyUNDEFINED
 } oySTATUS_e;
+
+typedef enum {
+  oyERROR_USER      = 10,              /**< wrong or missing argument */
+  oyERROR_DATA_READ,                   /**< input error */
+  oyERROR_DATA_WRITE,                  /**< output error */
+  oyERROR_DATA_AMBIGUITY               /**< uniqueness of data is conflicted */
+} oyERROR_e;
 
 int          oyTextboolean_          ( const char        * text_a,
                                        const char        * text_b,
