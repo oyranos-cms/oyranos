@@ -427,8 +427,6 @@ int main(int argc, char *argv[])
       if(current == -1 && current_tmp != -1)                                      
         current = pos; 
     }   
-    printf("current: %d\n", current);
-    oyConfig_Release( &device );
     oyProfile_Release( &profile );                                                
     oyConfigs_Release( &taxi_devices );
     oyOptions_Release( &options );
