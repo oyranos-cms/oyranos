@@ -22,6 +22,8 @@ OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromTaxiDB (
                                        oyOptions_s       * options,
                                        oyObject_s          object );
+OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
+                                       oyOptions_s       * options );
 OYAPI int OYEXPORT
          oyProfile_GetChannelsCount ( oyProfile_s * colour );
 OYAPI icSignature OYEXPORT

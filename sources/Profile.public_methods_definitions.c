@@ -301,6 +301,167 @@ OYAPI oyProfile_s * OYEXPORT
   return p;
 }
 
+/** Function oyProfile_Install
+ *  @brief   Install a ICC profile
+ *
+ *  Without options, the ICC profile will be installed into the users 
+ *  ICC profile path.
+ *
+ *  @param[in]     profile             the profile
+ *  @param[in]     options             - "path" can provide a string
+ *                                       for manual path selection
+ *                                     - "device" = "1" - write to device paths
+ *  @return                            error
+ *                                     - oyOK - success
+ *                                     - >= 1  error
+ *                                     - oyERROR_USER msg -> wrong or missing
+ *                                       argument
+ *                                     - oyERROR_DATA_WRITE msg -> path can not
+ *                                       be written
+ *                                     - oyERROR_DATA_AMBIGUITY msg ->
+ *                                       "Profile already installed"
+ *                                     - oyCORRUPTED msg -> profile not useable
+ *
+ *  @version Oyranos: 0.9.1
+ *  @date    2012/11/13
+ *  @since   2012/01/13 (Oyranos: 0.9.1)
+ */
+OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
+                                       oyOptions_s       * options )
+{
+  int error = !profile ? oyERROR_USER : 0;
+  oyProfile_s * s = profile,
+              * p = 0;
+  size_t size = 0;
+  char * data = 0;
+  char ** names = 0;
+  uint32_t count = 0, i = 0;
+  const char * t = 0,
+             * desc = 0;
+  char * fn = 0;
+  char * pn = 0;
+
+  oyCheckType__m( oyOBJECT_PROFILE_S, return oyERROR_USER )
+
+  if(error > 0)
+  {
+    WARNc_S( "No profile provided for installation. Give up." );
+    return error;
+  }
+
+  /** 1. construct a profile name */
+  desc = oyProfile_GetText( s, oyNAME_DESCRIPTION );
+
+  if(desc && desc[0])
+  {
+    char * ext = 0;
+
+    /** 1.1 add user profile path name by default or custom from "path" option
+     */
+    if(oyOptions_FindString( options, "path", 0 ) != NULL)
+    {
+      STRING_ADD( fn, oyOptions_FindString( options, "path", 0 ) );
+      STRING_ADD( fn, OY_SLASH );
+    } else
+      STRING_ADD( fn, OY_USERCOLORDATA OY_SLASH OY_ICCDIRNAME OY_SLASH );
+
+    /** 1.2 for "device" = "1" option add 
+     *      xxx/devices/device_class_description_xxx/ */
+    if(oyOptions_FindString( options, "device", "1" ) != NULL)
+    {
+      STRING_ADD( fn, "devices" OY_SLASH );
+      STRING_ADD( fn, oyICCDeviceClassDescription(
+                      oyProfile_GetSignature( s, oySIGNATURE_CLASS ) ) );
+      STRING_ADD( fn, OY_SLASH );
+    }
+
+    /** 1.3 add ".icc" suffix as needed */
+    t = strrchr(desc, '.');
+    STRING_ADD( pn, desc );
+    if(t)
+    {
+      ++t;
+      STRING_ADD( ext, t );
+      if(oyStringCaseCmp_(ext,"icc") != 0 &&
+         oyStringCaseCmp_(ext,"icm") != 0)
+      {
+        oyFree_m_(ext);
+        ext = 0;
+      }
+    }
+    if(!ext)
+      STRING_ADD( pn, ".icc" );
+    else
+      oyFree_m_(ext);
+
+    STRING_ADD( fn, pn );
+  } else
+  {
+    WARNcc1_S( s, "%s: \"%s\"",_("Profile contains no description") );
+    return oyCORRUPTED;
+  }
+
+  /** 2. check if file or description name exists */
+  names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+  for(i = 0; i < (int)count; ++i)
+  {
+    p = oyProfile_FromFile(names[i], 0,0);
+    t = oyProfile_GetText(p, oyNAME_DESCRIPTION);
+
+    if(t && oyStringCaseCmp_(desc, t) == 0)
+    {
+      WARNcc2_S( s, "%s: \"%s\"", _("Profile already installed"), t );
+      error = oyERROR_DATA_AMBIGUITY;
+    }
+
+    if(names[i] && oyStringCaseCmp_(names[i], fn) == 0)
+    {
+      WARNcc2_S( s, "%s: \"%s\"", _("Profile already installed"), names[i] );
+      error = oyERROR_DATA_AMBIGUITY;
+    }
+
+    oyProfile_Release( &p );
+
+    if(error != 0) break;
+  }
+
+  oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
+  if(error != 0)
+    goto install_cleanup;
+
+  p = oyProfile_FromFile( pn, 0, 0 );
+  if(p)
+  {
+    WARNcc2_S(s, "%s: \"%s\"", _("Profile exists already"), pn);
+    error = oyERROR_DATA_AMBIGUITY;
+    goto install_cleanup;
+  }
+
+  /** 3. open profile */
+  data = oyProfile_GetMem( s, &size, 0, oyAllocateFunc_ );
+  if(data && size)
+  {
+    /** 3.1 write profile */
+    error = oyProfile_ToFile_( (oyProfile_s_*)s, fn );
+    if(error)
+    {
+      WARNcc2_S(s, "%s: \"%s\"", _("Can not write profile"), fn);
+      error = oyERROR_DATA_WRITE;
+    }
+  } else
+  {
+    WARNcc1_S( s, "%s",_("Could not open profile") );
+    error = oyERROR_DATA_READ;
+  }
+
+  install_cleanup:
+  if(pn) oyFree_m_(pn);
+  if(fn) oyFree_m_(fn);
+  if(data) oyFree_m_(data);
+  oyProfile_Release( &p );
+
+  return error;
+}
 
 /** Function  oyProfile_GetChannelsCount
  *  @memberof oyProfile_s

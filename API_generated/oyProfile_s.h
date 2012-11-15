@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/31
+ *  @date     2012/11/15
  */
 
 
@@ -130,6 +130,8 @@ OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromTaxiDB (
                                        oyOptions_s       * options,
                                        oyObject_s          object );
+OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
+                                       oyOptions_s       * options );
 OYAPI int OYEXPORT
          oyProfile_GetChannelsCount ( oyProfile_s * colour );
 OYAPI icSignature OYEXPORT
