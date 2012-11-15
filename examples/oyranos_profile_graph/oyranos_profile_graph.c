@@ -243,24 +243,9 @@ int main( int argc , char** argv )
   height_=(float)(pixel_h- 2*y - 2*tab_border_y - lower_text_border); /* height of diagram */
   height = MAX( 0, height_ );
 
-  /* draw a frame around the image */
-  frame = pixel_w/40.0;
-  cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
-  cairo_set_line_width (cr, 1.*thickness);
-  if(border)
-  cairo_rectangle( cr, x - frame, y - frame,
-                         w*scale + 2*frame, h*scale + 2*frame);
-  cairo_stroke(cr);
-
-#ifdef DEBUG_
-  cairo_set_source_rgba( cr, 1.0, 1.0, 1.0, 1.0);
-  cairo_rectangle( cr, xO, yO, width, -height );
-  cairo_stroke( cr );
-#endif
-
   if(spectral)
   {
-    cairo_set_source_rgba( cr, 1., 1., 1., 1.0);
+    cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
     if(proj == p_xyz)
     {
       i = nano_min;
@@ -289,14 +274,33 @@ int main( int argc , char** argv )
                             yToImage(Lab[2]/256.0+0.5));
       }
       cairo_close_path(cr);
-
-      cairo_move_to(cr, xToImage(.0), yToImage(.5));
-      cairo_line_to(cr, xToImage(1.0), yToImage(.5));
-      cairo_move_to(cr, xToImage(.5), yToImage(0));
-      cairo_line_to(cr, xToImage(.5), yToImage(1.0));
     }
     cairo_stroke(cr);
   }
+
+  /* draw a frame around the image */
+  frame = pixel_w/40.0;
+  cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
+  cairo_set_line_width (cr, 0.7*thickness);
+  if(border)
+  cairo_rectangle( cr, x - frame, y - frame,
+                         w*scale + 2*frame, h*scale + 2*frame);
+  cairo_stroke(cr);
+  if(border && proj == p_lab)
+  {
+    /* draw cross */
+    cairo_move_to(cr, xToImage(.0), yToImage(.5));
+    cairo_line_to(cr, xToImage(1.0), yToImage(.5));
+    cairo_move_to(cr, xToImage(.5), yToImage(0));
+    cairo_line_to(cr, xToImage(.5), yToImage(1.0));
+    cairo_stroke(cr);
+  }
+
+#ifdef DEBUG_
+  cairo_set_source_rgba( cr, 1.0, 1.0, 1.0, 1.0);
+  cairo_rectangle( cr, xO, yO, width, -height );
+  cairo_stroke( cr );
+#endif
 
   if(saturation)
   {
@@ -370,7 +374,7 @@ int main( int argc , char** argv )
         }
       }
       cairo_close_path(cr);
-      cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
+      cairo_set_source_rgba( cr, 1., 1., 1., 1.0);
       cairo_stroke(cr);
 
       oyProfile_Release( &p );
