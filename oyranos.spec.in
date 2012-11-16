@@ -408,6 +408,7 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 %files -f %{name}.lang
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
+%{_bindir}/%{name}-icc
 %{_bindir}/%{name}-policy
 %{_bindir}/%{name}-profile
 %{_bindir}/%{name}-profiles
@@ -553,6 +554,9 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 %{_mandir}/man1/%{name}-profile-graph.1*
 
 %changelog
+* Fri Nov 16 2012 Kai-Uwe Behrmann
+- add oyranos-icc
+
 * Tue Jun 14 2012 Kai-Uwe Behrmann
 - add oyranos-profile-graph
 
