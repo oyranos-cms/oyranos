@@ -1,3 +1,32 @@
+Version 0.9.1
+
+Kai-Uwe Behrmann (26):
+	* [build]: package oy-icc for spec file
+	* [docu]: fix typo
+	* [exmpl]: adjust oy-profile-graph graphics
+	* [test]: check for zero string length
+	* [docu]: update doxygen page footer
+	* [core]: use oyProfile_Install() in oy-profiles
+	* [sources]: add oyProfile_Install()
+	* [sources]: add some error numbers
+	* [exmpl]: fix test_device print out
+	* [sources]: move oyDevicesFromTaxiDB() to oy-devices.h
+	* [core]: add oyStringCaseCmp_()
+	* [exmpl]: show Taxi DB search result for device
+	* [build]: install oy-icc
+	* [exmpl]: build taxi example
+	* [exmpl]: add taxi client
+	* [core]: add debug output
+	* [build]: build internal elektra before linking
+	* [build]: package yajl version include
+	* [core]: add debug infos for elektra
+	* [docu]: fix typo
+	* [docu]: reorder, describe and add code snippets
+	* [conf]: bump version
+	* [sources]: fix negative array offsets
+	* [core]: move debug message before critical call
+	* [oPNG]: fix to read palette PNGs
+
 Version 0.9.0
 
 Jean-Sébastien Pédron (10):
