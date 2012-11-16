@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/11/15
+ *  @date     2012/11/16
  */
 
 
@@ -1538,7 +1538,7 @@ int   oyCompareRanks_                ( const void       * rank1,
  *  @brief    search a calibration state in the taxi DB for a device
  *
  *  oyDevicesFromTaxiDB() needs a device containing the calibration state and
- *  gives you a list of found device in Taxi DB. You can extract the
+ *  gives you a list of found devices in Taxi DB. You can extract the
  *  device ID inside the "TAXI_id" string from the returned devices "db"
  *  options sets.
  *  Typical you want one entry in the profiles list assigned with that
@@ -1589,6 +1589,7 @@ int   oyCompareRanks_                ( const void       * rank1,
                                          "////device", "1",
                                          OY_CREATE_NEW );
           error = oyProfile_Install( ip, options );
+          oyOptions_Release( &options );
           if(!ip)
             printf( "No valid Profile obtained: %s\n", id );
           if(error == oyERROR_DATA_AMBIGUITY)

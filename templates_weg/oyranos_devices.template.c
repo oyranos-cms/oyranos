@@ -1523,7 +1523,7 @@ int   oyCompareRanks_                ( const void       * rank1,
  *  @brief    search a calibration state in the taxi DB for a device
  *
  *  oyDevicesFromTaxiDB() needs a device containing the calibration state and
- *  gives you a list of found device in Taxi DB. You can extract the
+ *  gives you a list of found devices in Taxi DB. You can extract the
  *  device ID inside the "TAXI_id" string from the returned devices "db"
  *  options sets.
  *  Typical you want one entry in the profiles list assigned with that
