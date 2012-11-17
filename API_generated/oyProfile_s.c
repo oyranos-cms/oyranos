@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/11/15
+ *  @date     2012/11/17
  */
 
 
@@ -552,6 +552,12 @@ OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
     {
       WARNcc2_S(s, "%s: \"%s\"", _("Can not write profile"), fn);
       error = oyERROR_DATA_WRITE;
+    } else
+    {
+      oyProfile_s_ * s_ = (oyProfile_s_*)s;
+      if(s_->file_name_)
+        oyDeAllocateFunc_( s_->file_name_ );
+      s_->file_name_ = oyStringCopy_( fn, s_->oy_->allocateFunc_ );
     }
   } else
   {
