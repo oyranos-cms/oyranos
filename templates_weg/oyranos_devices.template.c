@@ -408,7 +408,7 @@ OYAPI int  OYEXPORT
           error = oyProfile_Install( p, opts );
           oyOptions_Release( &opts );
           if(!error)
-            profile_name = oyStringCopy_( oyProfile_GetText(p, oyNAME_DESCRIPTION),
+            profile_name = oyStringCopy_( oyProfile_GetFileName(p, -1),
                                       oyAllocateFunc_ );
           else
           {
@@ -1585,6 +1585,18 @@ int   oyCompareRanks_                ( const void       * rank1,
             printf( "Profile not useable: %s\n", oyProfile_GetText( ip, oyNAME_DESCRIPTION ) );
           else if(error > 0)
             printf( "%s - %d","Internal Error", error );
+          else
+          {
+            const char * filename = oyProfile_GetFileName( ip, -1 );
+            printf( "installed -> %s\n", filename );
+            // store new settings in the Oyranos data base
+            oyDeviceSetProfile( device, strrchr( filename, OY_SLASH_C ) + 1 );
+            // remove any device entries
+            oyDeviceUnset( device );
+            // update the device from the newly added Oyranos data base settings
+            oyDeviceSetup( device );
+            printf( "assigned -> %s\n", strrchr( filename, OY_SLASH_C ) + 1 );
+          }
         }
       }
       if(rank > 0)
