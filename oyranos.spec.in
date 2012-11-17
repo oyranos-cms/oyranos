@@ -108,10 +108,10 @@ BuildRequires:  xorg-x11-xtrans-devel
 %endif
 
 %if 0%{?suse_version} > 1130
-BuildRequires:  libyajl-devel
 BuildRequires:  libexiv2-devel
 BuildRequires:  libraw-devel
 BuildRequires:  libraw-devel-static
+BuildRequires:  libyajl-devel
 %endif
 
 %if 0%{?suse_version} > 1200
@@ -207,7 +207,8 @@ BuildRequires:  xorg-x11-libXpm-devel
 Summary:        Color Management System Libraries
 Group:          Development/Libraries/Other
 # assume users want the device modules
-Requires:       lib%{name}0-cups = %{version} lib%{name}0-monitor = %{version}
+Requires:       lib%{name}0-cups = %{version}
+Requires:       lib%{name}0-monitor = %{version}
 # we need rgb, lab, xyz gray and cmyk profiles
 # the proper names: sRGB.icc, XYZ.icc, Lab.icc are in the OpenICC-data package
 Requires:       icc-profiles
@@ -215,7 +216,8 @@ Requires:       icc-profiles
 %package      -n lib%{name}-devel
 Summary:        Headers, Configuration and static Libs + Documentation
 Group:          Development/Libraries/Other
-Requires:       lib%{name}0 = %{version} libxml2-devel
+Requires:       lib%{name}0 = %{version}
+Requires:       libxml2-devel
 %if 0%{?suse_version} > 1130
 Requires:       libyajl-devel
 %endif
@@ -245,6 +247,10 @@ Requires:       lib%{name}0-monitor >= %{version}
 Summary:        Nvidia card support
 Group:          System/X11/Utilities
 License:        GPL-2.0
+
+%package      profile-graph
+Summary:        Profile 2D graph tool
+Group:          Development/Libraries/Other
 
 %package      -n lib%{name}0-cups
 Summary:        CUPS device support
@@ -277,10 +283,6 @@ Group:          Development/Libraries/Other
 %package      qcmsevents
 Summary:        Xorg Color management Event observer applet
 Group:          System/Monitoring
-
-%package      profile-graph
-Summary:        profile 2D graph tool
-Group:          Development/Libraries/Other
 
 %description
 Oyranos is a colour management system.
@@ -349,6 +351,10 @@ Display setup tool for the
 Oyranos colour management system.
 The nvidia EDID configuration part.
 
+%description  profile-graph
+The grapher renders a simple gamut 
+hull of a ICC profile in 2D.
+
 %description  -n lib%{name}0-cups
 CUPS device support for the
 Oyranos colour management system.
@@ -379,9 +385,6 @@ options.
 %description  qcmsevents
 the applet shows if a colour server is running through a icon in 
 the system tray.
-
-%description  profile-graph
-the grapher renders a simple gamut hull in 2D of a ICC profile.
 
 %prep
 %setup -q
