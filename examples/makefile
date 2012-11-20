@@ -167,6 +167,7 @@ $(TARGET13):	$(SRCDIR)taxi/taxi.c
 clean:
 	echo cleaning ...
 	$(RM) $(TARGETS)
+	$(RM) image_display/GLee.o
 	$(RM) $(TARGET8_OBJECTS) $(TARGET8_GENERATED_SOURCES)
 	echo ... clean done
 

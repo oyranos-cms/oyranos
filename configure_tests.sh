@@ -378,6 +378,8 @@ if [ -n "$YAJL" ] && [ $YAJL -gt 0 ]; then
     if [ ! -f tests/yajl_test ]; then
       $CC $CFLAGS -I$includedir $ROOT_DIR/tests/yajl.c $LDFLAGS -L/usr/X11R6/lib$BARCH -l$l -o tests/yajl_test >> $CONF_LOG
       echo "YAJL_VERSION = -DYAJL_VERSION=10000" >> $CONF
+    else
+      rm tests/yajl_test$EXEC_END
     fi
 
   if [ $HAVE_LIB -ne 0 ]; then
@@ -396,7 +398,6 @@ if [ -n "$YAJL" ] && [ $YAJL -gt 0 ]; then
     fi
     echo_="  need at least version $minversion, download: $url"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
 
-    rm tests/yajl_test$EXEC_END
   fi
 fi
 

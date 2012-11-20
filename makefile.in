@@ -766,6 +766,7 @@ OYJL_OBJECTS = $(CFILES_OYJL:.c=.o)
 YAJL_OBJECTS = $(YAJL_SOURCES:.c=.o)
 
 CLEAN_OBJECTS = $(OBJECTS) \
+	$(OBJECTS_CONFIG) \
 	$(OBJECTS_MODULES) \
 	$(OBJECTS_OBJECT) \
 	$(OBJECTS_CORE) \
@@ -1647,6 +1648,7 @@ uninstall_docu:
 
 # remove in this directory
 distclean: clean clean-generator
+	echo cleaning generated files ...
 	-$(RM) Makefile
 	-$(RM) fl_i18n/Makefile
 #ifdef LIB_XNVCTRL
@@ -1657,7 +1659,13 @@ distclean: clean clean-generator
 	-$(RM) config.log oyranos_version.h oyranos-config
 	-$(RM) config.log.h config.tmp.sh testset.txt
 	(cd fl_i18n/po; $(RM) -R ar de eo fr hy ja ru uk zh_CN)
-	-$(RM) -R doc/html
+	-$(RM) -R doc/html doc/man/man3 doc_alpha
+	-$(RM) -R Doxyfile Doxyfile_alpha oyranos_control
+	-$(RM) -R warning.tmp yajl/Makefile 
+#ifdef ELEKTRA_VERSION
+	(cd $(ELEKTRA_VERSION) && $(MAKE) distclean)
+#endif
+	echo ... cleaning generated files done
 
 clean-generator:
 	-cd generator && $(MAKE) clean
@@ -1669,13 +1677,14 @@ clean:
 	$(TARGET)-profile \
 	$(TARGET)-profiles \
 	$(TARGET)-monitor $(TARGET)-monitor-nvidia \
-	test2 test_core test_object test_module test_config test tests/test_oyranos \
+	test2 test_core test_object test_module test_config tests/test_oyranos \
+	test2_dyn test_core_dyn test_object_dyn test_module_dyn test_config_dyn \
 	$(FLTK_GUI) \
 	oforms/$(TARGET)-xforms oforms/$(TARGET)-xforms-fltk \
 	oforms/$(TARGET)-xforms-modules;
 	for ling in $(LINGUAS); do \
 	  test -f po/$${ling}.gmo \
-        && $(RM) po/$${ling}.gmo || echo ""; \
+        && $(RM) po/$${ling}.gmo po/$${ling}/LC_MESSAGES/oyranos.mo || echo ""; \
 	done;
 	for lib in $(LIBRARIES); do \
 	   $(RM) lib$${lib}$(SO).$(VERSION)$(LIBEXT) \
