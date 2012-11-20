@@ -726,7 +726,7 @@ COBJECTS = \
 	$(TARGET)_profile.o \
 	$(TARGET)_profiles.o \
 	$(YAJL_OBJECTS) \
-	tests/test_oyranos.o test.o test_core.o test_object.o test_module.o \
+	tests/test_oyranos.o test_core.o test_object.o test_module.o \
 	test_config.o
 #ifdef LRAW_LIBS
 #CPP_lraw_OBJECTS = $(CMM_lraw_OBJECTS)
@@ -793,7 +793,7 @@ CLEAN_OBJECTS = $(OBJECTS) \
 	$(TARGET)_profile.o \
 	$(TARGET)_profiles.o \
 	test2.o test_core.o test_object.o test_module.o test_config.o \
-	tests/test_oyranos.o test.o
+	tests/test_oyranos.o
 
 SUB_OBJECTS = \
 	$(CMM_lcms_OBJECTS) \
@@ -814,7 +814,7 @@ SUB_OBJECTS = \
 	tests/test_oyranos.o
 
 INCL_DEP = $(SOURCES) $(CXXFILES_Flmm) $(CFILES_OYJL) $(YAJL_SOURCES) \
-	test.c test2.cpp test_core.c test_object.c test_module.c \
+	test2.cpp test_core.c test_object.c test_module.c \
 	test_config.c tests/test_oyranos.c
 
 .PHONY:	check_environment docu examples oforms Doxyfile \
@@ -850,7 +850,7 @@ ALL_FILES = \
 	$(DOC_TEMPLATES) \
 	$(FLTK_FILES) \
  	dirent.c \
-	test.c test2.cpp test_core.c test_object.c test_module.c test_config.c
+	test2.cpp test_core.c test_object.c test_module.c test_config.c
 
 # build all what is needed to run the libraries, helpers
 all:	check_environment config.log.h mkdepend \
@@ -1277,6 +1277,8 @@ test2c:	test2.c.o
 	$(CC) -I./ `echo $(CFLAGS) | sed s/-0.//g` -g -Wall -o test2c \
 	test2.c.o -L./ `./oyranos-config --ldstaticflags`
 
+test:	all check
+
 check:	all test_core test_object test_module test_config tests/test_oyranos $(TEST2) examples oforms
 	echo current git version is:
 	n=0; for i in `cd $(SRCDIR); git rev-list master`; do if [ $${n} -eq 0 ]; then echo git id:$${i}; fi; n=1; done
@@ -1296,11 +1298,6 @@ examples:	all
 
 oforms:	all $(LIB_FORMS_FLTK_NAME)
 	cd oforms && (PATH="$(PATH):$(bindir):.." LD_LIBRARY_PATH=./:$(libdir):$${LD_LIBRARY_PATH} PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(DESTDIR)$(libdir)/pkgconfig:.." CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" INCLUDE="-I$(includedir) -I$(SRCDIR) -I../ -I$(SRCDIR)/$(GENDIR)" SRCDIR=$(SRCDIR)/oforms/ LDFLAGS="-L../ $(intl) $(LDFLAGS)" $(MAKE) -f oyranos_xforms.makefile)
-
-test:	test.o
-	$(CC) -I./ $(CFLAGS) -o test \
-	test.o \
-	$(MODULE_LDLIBS) $(LDLIBS) $(LINK_SRC_PATH)
 
 tests/test_oyranos:	tests/test_oyranos.o
 	$(RM) tests/test_oyranos.o
