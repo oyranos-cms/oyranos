@@ -1958,7 +1958,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  memcpy( model_local, model, 4 );
                  model = model_local;
                  tech = oyICCTechnologyDescription( oyValueUInt32(desc->technology ));
-               }
+               } else
+                 continue;
 
                /* first mnf */
                tmptag = oyProfileTag_New(0);
