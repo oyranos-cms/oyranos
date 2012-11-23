@@ -660,9 +660,11 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
       if(o_txt && oyStrlen_(o_txt))
         adaption_state = atof( o_txt );
 
-  cmsSetAdaptationState(adaption_state);
   if(!error)
   {
+    cmsUInt32Number * intents=0;
+    cmsBool * bpc=0;
+    cmsFloat64Number * adaption_states=0;
          if(profiles_n == 1 || profile_class_in == icSigLinkClass)
     {
         /* we have to erase the colour space */
@@ -677,9 +679,19 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
                                     intent, flags );
     }
     else if(profiles_n == 2 && (!proof_n || (!proof && !gamut_warning)))
-        xform = cmsCreateTransform( lps[0], lcm2_pixel_layout_in,
-                                    lps[1], lcm2_pixel_layout_out,
-                                    intent, flags );
+    {
+      oyAllocHelper_m_( intents, cmsUInt32Number, 2,0, goto end);
+      oyAllocHelper_m_( bpc, cmsBool, 2,0, goto end);
+      oyAllocHelper_m_( adaption_states, cmsFloat64Number, 2,0, goto end);
+      intents[0] = intent; intents[1] = intent;
+      bpc[0] = flags & cmsFLAGS_BLACKPOINTCOMPENSATION;
+      bpc[1] = flags & cmsFLAGS_BLACKPOINTCOMPENSATION;
+      adaption_states[0] = adaption_state; adaption_states[1] = adaption_state;
+      xform = cmsCreateExtendedTransform( 0, profiles_n, lps, bpc,
+                                          intents, adaption_states, NULL, 0,
+                                          lcm2_pixel_layout_in,
+                                          lcm2_pixel_layout_out, flags );
+    }
     else
     {
       int i;
@@ -718,16 +730,25 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
               lcm2FlagsToText(flags),
               lcm2_pixel_layout_in, lcm2_pixel_layout_out);
     }
-      xform =   cmsCreateMultiprofileTransform(
-                                    lps, 
-                                    multi_profiles_n,
-                                    lcm2_pixel_layout_in,
-                                    lcm2_pixel_layout_out,
-                                    intent, flags );
+
+#define SET_ARR(arr,val,n) for(i = 0; i < n; ++i) arr[i] = val;
+      oyAllocHelper_m_( intents, cmsUInt32Number, multi_profiles_n,0, goto end);
+      oyAllocHelper_m_( bpc, cmsBool, multi_profiles_n,0, goto end);
+      oyAllocHelper_m_( adaption_states, cmsFloat64Number, multi_profiles_n,0, goto end);
+      SET_ARR(intents,intent,multi_profiles_n);
+      SET_ARR(bpc,flags & cmsFLAGS_BLACKPOINTCOMPENSATION,multi_profiles_n);
+      SET_ARR(adaption_states,adaption_state,multi_profiles_n);
+      xform = cmsCreateExtendedTransform( 0, multi_profiles_n, lps, bpc,
+                                          intents, adaption_states, NULL, 0,
+                                          lcm2_pixel_layout_in,
+                                          lcm2_pixel_layout_out, flags );
 
 
-      if(merge) oyDeAllocateFunc_( merge ); merge = 0;
+      oyFree_m_( intents );
+      oyFree_m_( bpc );
+      oyFree_m_( adaption_states );
     }
+    if(intents) free(intents);
   }
 
   if(!xform || oy_debug > 2)
@@ -769,7 +790,6 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
                                   oy_pixel_layout_in, oy_pixel_layout_out, oy );
 
   end:
-  cmsSetAdaptationState(0.0);
   return xform;
 }
 
