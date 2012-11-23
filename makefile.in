@@ -1492,6 +1492,7 @@ install-main:	install_bin install_linguas install_docu
 	mkdir -p $(DESTDIR)$(pixmapdir)
 	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)_logo.png" "$(DESTDIR)$(pixmapdir)/$(TARGET)_logo.png"
 	$(INSTALL) -m 644 "$(SRCDIR)/lcms_logo2.png" "$(DESTDIR)$(pixmapdir)/lcms_logo2.png"
+	$(INSTALL) -m 644 "$(SRCDIR)/examples/xcmsevents/qcmsevents-applet.desktop" "$(DESTDIR)$(desktopdir)"
 	$(INSTALL) -m 644 "$(SRCDIR)/examples/xcmsevents/plugin-compicc.svg" "$(DESTDIR)$(pixmapdir)/qcmsevents.svg"
 	$(INSTALL) -m 644 "$(SRCDIR)/$(TARGET)_logo.png" "$(DESTDIR)$(pixmapdir)/qcmsevents.png"
 
