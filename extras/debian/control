@@ -1,0 +1,94 @@
+Source: oyranos
+Priority: optional
+Maintainer: Kai-Uwe Behrmann (oy) <oy@oyranos.org>
+Build-Depends: debhelper (>= 8.0.0), autotools-dev,
+ autoconf,
+ libxml2-dev,
+ libyajl-dev,
+ gettext,
+ libpng-dev,
+ libqt4-dev,
+ libcairo2-dev,
+ x11proto-xf86vidmode-dev,
+ x11proto-xext-dev,
+ libxxf86vm-dev,
+ libxrandr-dev,
+ libxinerama-dev,
+ libxmu-dev,
+ libxpm-dev,
+ libxfixes-dev,
+ libxcm-dev,
+ libfltk1.3-dev,
+ fluid,
+ ftgl-dev,
+ liblcms2-dev,
+ liblcms1-dev,
+ libraw-dev,
+ libexiv2-dev,
+ libcups2-dev,
+ doxygen,
+ graphviz
+Standards-Version: 3.9.3
+Section: libs
+Homepage: http://www.oyranos.org
+Vcs-Git: git://www.oyranos.org/git/oyranos
+Vcs-Browser: http://www.oyranos.org/scm?p=oyranos.git;a=summary
+
+Package: oyranos-dev
+Section: libdevel
+Architecture: any
+Depends: oyranos (= ${binary:Version}), ${misc:Depends}
+Description: Color Management System Development Files
+ The library allows one to match predictably input device colours to 
+ output device colours across supporting applications. One goal 
+ is to make colour management useful for all users in a automated 
+ fashion and regardless of any technical knowledge.
+ Headers and development files for Oyranos.
+
+Package: oyranos-doc
+Section: doc
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Color Management System Programming Documentation
+ The library allows one to match predictably input device colours to 
+ output device colours across supporting applications. One goal 
+ is to make colour management useful for all users in a automated 
+ fashion and regardless of any technical knowledge.
+ Oyranos API documentation.
+
+Package: liboyranos0
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, icc-profiles
+Description: Color Management System Libraries
+ The library allows one to match predictably input device colours to 
+ output device colours across supporting applications. One goal 
+ is to make colour management useful for all users in a automated 
+ fashion and regardless of any technical knowledge.
+ Oyranos Libraries.
+
+Package: oyranos
+Section: graphics
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, xcalib
+Description: Color Management System Tools
+ The library allows one to match predictably input device colours to 
+ output device colours across supporting applications. One goal 
+ is to make colour management useful for all users in a automated 
+ fashion and regardless of any technical knowledge.
+ Oyranos Tools.
+
+Package: oyranos-config-fltk
+Section: graphics
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: X Color Management example panel
+ The example panel shows some of the basic settings of the Oyranos CMS.
+
+Package: oyranos-qcmsevents
+Section: graphics
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: X Color Management Event observer applet
+ The applet shows if a color server is running through a icon in 
+ the system tray.

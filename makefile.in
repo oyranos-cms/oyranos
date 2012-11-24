@@ -1577,6 +1577,14 @@ deb:	dist
 	$(RM) -R $(build_dir)/debian/deb
 	echo ... $@ done
 
+debian:	dist
+	test -d $(TARGET)-$(VERSION) && $(RM) -R $(TARGET)-$(VERSION) || echo ""
+	tar xvjf $(TARGET)-$(VERSION).tar.bz2
+	mv $(TARGET)-$(VERSION).tar.bz2 $(TARGET)_$(VERSION).orig.tar.bz2
+	cp -R extras/debian $(TARGET)-$(VERSION)
+	(cd $(TARGET)-$(VERSION)/debian; debuild)
+	echo ... $@ done
+
 # remove everything previously installed
 uninstall:	uninstall_bin uninstall_docu uninstall_linguas
 	echo ... $@ done
@@ -1891,6 +1899,7 @@ help:
 	echo "... clean :      remove binaries, object files and most processed data"
 	echo "... distclean :  remove all files processed from configure scripts"
 	echo "... rpm :        build RPM's"
+	echo "... debian :     build debian package"
 	echo "... dist :       build a distribution tarball and place local"
 	echo "... targz :      build a distribution tar ball"
 	echo "... tgz :        build a development tar ball"
