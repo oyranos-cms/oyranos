@@ -1577,11 +1577,15 @@ deb:	dist
 	$(RM) -R $(build_dir)/debian/deb
 	echo ... $@ done
 
-debian:	dist
+debsrc:	dist
 	test -d $(TARGET)-$(VERSION) && $(RM) -R $(TARGET)-$(VERSION) || echo ""
 	tar xvjf $(TARGET)-$(VERSION).tar.bz2
 	mv $(TARGET)-$(VERSION).tar.bz2 $(TARGET)_$(VERSION).orig.tar.bz2
-	cp -R extras/debian $(TARGET)-$(VERSION)
+	cp -R $(SRCDIR)/extras/debian $(TARGET)-$(VERSION)
+	dpkg-source -b $(TARGET)-$(VERSION)
+	echo ... $@ done
+
+debian:	debsrc
 	(cd $(TARGET)-$(VERSION)/debian; debuild)
 	echo ... $@ done
 
@@ -1900,6 +1904,7 @@ help:
 	echo "... distclean :  remove all files processed from configure scripts"
 	echo "... rpm :        build RPM's"
 	echo "... debian :     build debian package"
+	echo "... debsrc :     build debian source package"
 	echo "... dist :       build a distribution tarball and place local"
 	echo "... targz :      build a distribution tar ball"
 	echo "... tgz :        build a development tar ball"
