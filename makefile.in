@@ -1659,7 +1659,6 @@ distclean: clean clean-generator
 	-$(RM) mkdepend cobjects config.h oyranos.pc oyranos.spec
 	-$(RM) config.log oyranos_version.h oyranos-config
 	-$(RM) config.log.h config.tmp.sh testset.txt
-	(cd fl_i18n/po; $(RM) -R ar de eo fr hy ja ru uk zh_CN)
 	-$(RM) -R doc/html doc/man/man3 doc_alpha
 	-$(RM) -R Doxyfile Doxyfile_alpha oyranos_control
 	-$(RM) -R warning.tmp yajl/Makefile 

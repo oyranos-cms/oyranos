@@ -222,7 +222,7 @@ clean:
 	$(LIBNAME)
 	-for ling in $(LINGUAS); do \
 	  test -f po/$${ling}.gmo \
-        && $(RM) po/$${ling}.gmo; \
+        && $(RM) po/$${ling}.gmo po/$${ling}/LC_MESSAGES/fl_i18n.mo || echo ""; \
 	done;
 	echo ... $@ fertig
 
