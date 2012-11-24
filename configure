@@ -1049,7 +1049,7 @@ fi
   fi
 fi
 
-if [ `cat Makefile | grep LCMS | wc -l` = 0 ]; then
+if [ `cat makefile | grep LCMS | wc -l` = 0 ]; then
     echo_="!!! Lcms: !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     echo_="  need lcms in version 2 or at least version 1"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
     echo 1 > error.tmp
