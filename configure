@@ -969,7 +969,7 @@ if [ -n "$ECHO" ]; then
   EXIV2=2; export EXIV2
   #OYRANOS=1; export OYRANOS
   LCMS=2; export LCMS
-  LCMS2=1; export LCMS2
+  LCMS2=2; export LCMS2
   LRAW=2; export LRAW
   LIBXML2=1; export LIBXML2
   LIBPNG=2; export LIBPNG
@@ -1049,6 +1049,12 @@ fi
   fi
 fi
 
+if [ `cat Makefile | grep LCMS | wc -l` = 0 ]; then
+    echo_="!!! Lcms: !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo_="  need lcms in version 2 or at least version 1"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
+    echo 1 > error.tmp
+    ERROR=1
+fi
 
 # Alle ifdefs landen hier
 
