@@ -1195,7 +1195,7 @@ $(TARGET)-profiles:	$(TARGET)_profiles.o $(LIBSONAMEFULL)
 generate:	API_generated
 
 API_generated:	generator/oyAPIGenerator
-	cd generator/; ./oyAPIGenerator $(SRCDIR)/templates:$(SRCDIR)/sources $(SRCDIR)/templates_weg:$(SRCDIR)/sources_weg #valgrind --num-callers=20
+	cd generator/; ./oyAPIGenerator $(SRCDIR)/templates:$(SRCDIR)/sources:$(SRCDIR)/API_generated $(SRCDIR)/templates_weg:$(SRCDIR)/sources_weg:$(SRCDIR)/API_generated #valgrind --num-callers=20
 
 generator:
 	mkdir generator
