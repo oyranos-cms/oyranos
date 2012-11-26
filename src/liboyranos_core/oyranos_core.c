@@ -521,8 +521,8 @@ int            oyVersion             ( int                 type )
  *
  *  @param[in] type
                                - 1  OYRANOS_VERSION_NAME;
-                               - 2  git master hash;
-                               - 3  OYRANOS_CONFIG_DATE,
+                               - 2  git master hash, deprecated
+                               - 3  OYRANOS_CONFIG_DATE, deprecated
                                - 4  development period
  *  @param     allocateFunc    user allocator, e.g. malloc
  *
@@ -536,7 +536,7 @@ char *       oyVersionString         ( int                 type,
 {
   char * text = 0, * tmp = 0;
   char temp[24];
-  char * git = OYRANOS_GIT_MASTER;
+  char * git = "";
 
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
@@ -551,7 +551,7 @@ char *       oyVersionString         ( int                 type,
       return 0;
   }
   if(type == 3)
-    return oyStringCopy_(OYRANOS_CONFIG_DATE, allocateFunc);
+    return oyStringCopy_("", allocateFunc);
 
   if(type == 4)
   {
