@@ -1,30 +1,13 @@
-PROJECT(gsoc_2010_tests)
+FIND_PACKAGE(Oyranos REQUIRED)
 
-SET( AUTO_SRC_DIR "${PROJECT_BINARY_DIR}/../API_generated/" )
-SET( oyTEST_HEADERS "${AUTO_SRC_DIR}/oyTest.h" )
+ENABLE_TESTING()
 
-FIND_PACKAGE(Qt4 COMPONENTS QtCore QtTest REQUIRED)
-
-INCLUDE(${QT_USE_FILE})
-
-INCLUDE_DIRECTORIES(
-  ${AUTO_SRC_DIR}
-)
-
-#Setup MOC
-qt4_wrap_cpp( oyTEST_MOC_SOURCES ${oyTEST_HEADERS} )
-
-# Tests for the auto-generated oyranos object system
-ADD_EXECUTABLE( oyTest "${AUTO_SRC_DIR}/oyTest.cc" ${oyTEST_MOC_SOURCES} )
+# Test for liboyranos_core
+LINK_DIRECTORIES( "${CMAKE_BINARY_DIR}/src/liboyranos_core/" )
+ADD_EXECUTABLE( test_core "${CMAKE_CURRENT_SOURCE_DIR}/test_core.c" )
 TARGET_LINK_LIBRARIES(
-   oyTest
-   ${QT_LIBRARIES}
-   ${oyranos_object_LIBRARIES}
+   test_core
+   oyranos_core ${EXTRA_LIBS}
 )
-
-# A Qt Regular Expression testing helper program
-ADD_EXECUTABLE( qregexp "regexp.cc" )
-TARGET_LINK_LIBRARIES(
-   qregexp
-   ${QT_LIBRARIES}
-)
+ADD_CUSTOM_TARGET(test-core
+	"./test_core" "" "")
