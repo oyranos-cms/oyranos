@@ -1,0 +1,35 @@
+/* automatic generated variables */
+#ifndef OYRANOS_VERSION_H
+#define OYRANOS_VERSION_H
+
+#define OYRANOS_VERSION_A @OYRANOS_VERSION_MAJOR@
+#define OYRANOS_VERSION_B @OYRANOS_VERSION_MINOR@
+#define OYRANOS_VERSION_C @OYRANOS_VERSION_MICRO@
+#define OYRANOS_VERSION_NAME "@OYRANOS_VERSION_MAJOR@.@OYRANOS_VERSION_MINOR@.@OYRANOS_VERSION_MICRO@"
+#define OYRANOS_VERSION (@OYRANOS_VERSION_MAJOR@ * 10000 + @OYRANOS_VERSION_MINOR@ * 100 + @OYRANOS_VERSION_MICRO@)
+#define OYRANOS_START_MONTH 11
+#define OYRANOS_START_YEAR 2004
+#define OYRANOS_DEVEL_MONTH 11
+#define OYRANOS_DEVEL_YEAR 2012
+
+#define OYAPI
+#define OYEXPORT
+
+#define OY_PREFIX         "@CMAKE_INSTALL_PREFIX@"
+/*#define OY_BINDIR         "/opt/local/bin"*/
+#define OY_DATADIR        "@CMAKE_INSTALL_PREFIX@/share"
+#define OY_LIBDIR         "@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@"
+#define OY_CMMSUBPATH     "colour/modules"
+#define OY_METASUBPATH    "oyranos"
+#define OY_CMMDIR         OY_LIBDIR"/"OY_CMMSUBPATH
+#define OY_SYSCOLORDIR    OY_DATADIR"/color"
+#define OY_USERCOLORDIR   "~/.config/color"
+#define OY_USERCOLORDATA  "~/.local/share/color"
+#define OY_ICCDIRNAME     "icc"
+#define OY_SETTINGSDIRNAME "settings"
+#define OY_TARGETDIRNAME  "target"
+#define OY_LOCALEDIR      OY_DATADIR"/locale"
+
+
+#endif /*OYRANOS_VERSION_H*/
+
