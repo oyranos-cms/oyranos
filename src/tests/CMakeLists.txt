@@ -10,4 +10,6 @@ TARGET_LINK_LIBRARIES(
    oyranos_core ${EXTRA_LIBS}
 )
 ADD_CUSTOM_TARGET(test-core
-	"./test_core" "" "")
+	"./test_core"
+        DEPENDS test_core
+        COMMENT "Test basic linking against liboyranos_core." VERBATIM )
