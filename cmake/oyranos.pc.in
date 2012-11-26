@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}/bin
+libdir=${prefix}/lib@LIB_SUFFIX@
+includedir=${prefix}/include/@TARGET_INCLUDE_FOLDER@
+
+Name: @PACKAGE_NAME@
+Description: @PACKAGE_DESCRIPTION@
+Version: @OYRANOS_VERSION@
+Libs: -L${libdir} -l@PACKAGE_NAME@ -l@PACKAGE_NAME@_config -l@PACKAGE_NAME@_modules -l@PACKAGE_NAME@_object -l@PACKAGE_NAME@_core
+Cflags: -I${includedir}
+

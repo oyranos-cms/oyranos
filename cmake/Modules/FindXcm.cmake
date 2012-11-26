@@ -1,0 +1,26 @@
+find_package(PkgConfig)
+pkg_check_modules(XCM xcm)
+
+
+if(XCM_CFLAGS AND XCM_LIBRARY_DIRS)
+
+  if(_return_VALUE STREQUAL "0")
+    set(XCM_FOUND TRUE)
+    set(HAVE_XCM TRUE)
+  else(_return_VALUE STREQUAL "0")
+    message(STATUS "Xcm >= 0.5.0 was found")
+  endif(_return_VALUE STREQUAL "0")
+endif(XCM_CFLAGS AND XCM_LIBRARY_DIRS)
+
+if (XCM_FOUND)
+    if (NOT Xcm_FIND_QUIETLY)
+        message(STATUS "Found XCM: ${XCM_LIBRARY_DIRS} ${XCM_INCLUDE_DIRS}")
+    endif (NOT Xcm_FIND_QUIETLY)
+else (XCM_FOUND)
+    if (NOT Xcm_FIND_QUIETLY)
+        message(STATUS "Xcm was NOT found.")
+    endif (NOT Xcm_FIND_QUIETLY)
+    if (Xcm_FIND_REQUIRED)
+        message(FATAL_ERROR "Could NOT find Xcm")
+    endif (Xcm_FIND_REQUIRED)
+endif (XCM_FOUND)
