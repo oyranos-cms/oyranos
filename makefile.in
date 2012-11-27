@@ -1201,7 +1201,7 @@ generator:
 	mkdir generator
 
 generator/oyAPIGenerator:
-	cd generator; CMAKE_PREFIX_PATH="$(SRCDIR)/generator/grantlee/lib/cmake/grantlee/" cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="-g -Wall" $(SRCDIR)/generator; make || echo Did you run download_grantlee.sh in generator/ ?
+	cd generator; CMAKE_PREFIX_PATH="$(BUILDDIR)/generator/grantlee/0.2/lib/cmake/grantlee/" cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="-g -Wall" $(SRCDIR)/generator; make || echo Did you run download_grantlee.sh in generator/ ?
 
 
 test_core:	$(LIBSONAMECOREFULL) $(LIBNAME_CORE) test_core.o
