@@ -1173,7 +1173,7 @@ char *       oyXFORMsFromModelAndUi  ( const char        * data,
   int error = !data || !ui_text,
       pos = 0;
 
-#if USE_GETTEXT
+#ifdef USE_GETTEXT
   const char * save_locale = setlocale(LC_NUMERIC, 0 );
   char * tmp = 0;
   int i = 0;
@@ -1184,7 +1184,7 @@ char *       oyXFORMsFromModelAndUi  ( const char        * data,
 
   STRING_ADD( text,
    "<?xml version=\"1.0\" encoding=\"" );
-#if USE_GETTEXT
+#ifdef USE_GETTEXT
   if(save_locale && oyStrcmp_(save_locale,"C") != 0 &&
      oyStrchr_(save_locale,'.'))
   {
