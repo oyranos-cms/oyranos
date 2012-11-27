@@ -5,10 +5,10 @@ INCLUDE_DIRECTORIES(
                     "${CMAKE_BINARY_DIR}/src/include_private"
                     "${CMAKE_SOURCE_DIR}/src/liboyranos_core"
                     "${CMAKE_SOURCE_DIR}/src/liboyranos_object"
-                    "${CMAKE_SOURCE_DIR}/src/liboyranos_object/API_generated"
                     "${CMAKE_SOURCE_DIR}/src/liboyranos_modules"
                     "${CMAKE_SOURCE_DIR}/src/liboyranos_config"
                     "${CMAKE_SOURCE_DIR}/src/liboyranos"
+                    "${CMAKE_SOURCE_DIR}/src/API_generated"
 )
 
 
