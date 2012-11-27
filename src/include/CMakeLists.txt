@@ -1,3 +1,9 @@
-install (FILES
-	oyranos.h
-	DESTINATION include/${TARGET_INCLUDE_FOLDER})
+INSTALL( FILES
+        icc34.h
+	oyranos_colour.h
+	oyranos_config.h
+	oyranos_core.h
+	oyranos_definitions.h
+	oyranos_icc.h
+	oyranos_types.h
+	DESTINATION include/${PACKAGE_NAME})
