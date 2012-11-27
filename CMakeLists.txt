@@ -1,20 +1,22 @@
-cmake_minimum_required (VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
 
-project (Oyranos)
+PROJECT (Oyranos)
 
-set (OYRANOS_VERSION_MAJOR 0)
-set (OYRANOS_VERSION_MINOR 9)
-set (OYRANOS_VERSION_MICRO 2)
+SET (OYRANOS_VERSION_MAJOR 0)
+SET (OYRANOS_VERSION_MINOR 9)
+SET (OYRANOS_VERSION_MICRO 2)
 
-set (SO_VERSION 1)
+SET (SO_VERSION 1)
 
+SET (PACKAGE_NAME "oyranos")
+set (PACKAGE_DESCRIPTION "Oyranos is a Colour Management System (CMS) on operating system level. It allows to match predictably input device colours to output device colours across supporting applications. One goal is to make colour management useful for all users in a automated fashion and regardless of any technical knowledge.")
 
 #additional modules for loading libraries
-set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
-	if (NOT FORCE_IN_SOURCE_BUILD)
-		message(FATAL_ERROR
+IF(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+	IF (NOT FORCE_IN_SOURCE_BUILD)
+		MESSAGE(FATAL_ERROR
 				"In-source builds are not permitted.\n"
 				"Make a separate folder for building:\n"
 				"    mkdir build && cd build && cmake ..\n"
@@ -24,25 +26,25 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
 				"(will overwrite original files!) use:\n"
 				"    cmake -DFORCE_IN_SOURCE_BUILD=ON\n"
 			)
-	endif (NOT FORCE_IN_SOURCE_BUILD)
-endif(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+	ENDIF (NOT FORCE_IN_SOURCE_BUILD)
+ENDIF(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
 
-if (NOT CMAKE_BUILD_TYPE)
+IF (NOT CMAKE_BUILD_TYPE)
 	SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
-endif (NOT CMAKE_BUILD_TYPE)
+ENDIF (NOT CMAKE_BUILD_TYPE)
 
 
 #some basic and important variables
-set (DOMAIN oyranos.org) #needed by doxygen
-set (REVERSE_DOMAIN org.oyranos)
+SET (DOMAIN oyranos.org) #needed by doxygen
+SET (REVERSE_DOMAIN org.oyranos)
 
-set (OYRANOS_VERSION "${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR}.${OYRANOS_VERSION_MICRO}")
-set (OYRANOS_VERSION_MAJORMINOR "${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR}")
+SET (OYRANOS_VERSION "${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR}.${OYRANOS_VERSION_MICRO}")
+SET (OYRANOS_VERSION_MAJORMINOR "${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR}")
 
 
 #now add all directories
-add_subdirectory (src)
-add_subdirectory (cmake)
+ADD_SUBDIRECTORY (src)
+ADD_SUBDIRECTORY (cmake)
 
 
 ADD_CUSTOM_TARGET(uninstall
