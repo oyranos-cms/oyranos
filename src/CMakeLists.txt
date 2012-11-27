@@ -1,3 +1,5 @@
+SET (GENDIR "${CMAKE_SOURCE_DIR}/src/API_generated/" )
+
 INCLUDE_DIRECTORIES(
                     "${CMAKE_SOURCE_DIR}/src/include"
                     "${CMAKE_BINARY_DIR}/src/include"
@@ -8,7 +10,7 @@ INCLUDE_DIRECTORIES(
                     "${CMAKE_SOURCE_DIR}/src/liboyranos_modules"
                     "${CMAKE_SOURCE_DIR}/src/liboyranos_config"
                     "${CMAKE_SOURCE_DIR}/src/liboyranos"
-                    "${CMAKE_SOURCE_DIR}/src/API_generated"
+                    "${GENDIR}"
 )
 
 
@@ -24,6 +26,8 @@ ADD_SUBDIRECTORY (include)
 ADD_SUBDIRECTORY (include_private)
 
 ADD_SUBDIRECTORY (liboyranos_core)
+
+ADD_SUBDIRECTORY (liboyranos_object)
 
 ADD_SUBDIRECTORY (tests)
 
