@@ -111,7 +111,7 @@ SET( SOURCES ${CFILES_OBJECT_MODULES} ${CHEADERS_OBJECT_MODULES} )
 ADD_LIBRARY( oyranos_modules SHARED ${SOURCES} )
 TARGET_LINK_LIBRARIES (
    oyranos_modules
-   oyranos_core oyranos_object ${EXTRA_LIBS} )
+   oyranos_object oyranos_core ${EXTRA_LIBS} )
 
 INSTALL (TARGETS oyranos_modules DESTINATION lib${LIB_SUFFIX})
 INSTALL (FILES CHEADERS_OBJECT_MODULES_PUBLIC DESTINATION include/${PACKAGE_NAME})

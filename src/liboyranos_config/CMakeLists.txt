@@ -75,7 +75,7 @@ SET( EXTRA_LIBS ${EXTRA_LIBS} ${ELEKTRA_LIBRARIES} ${YAJL_LIBRARIES} )
 ADD_LIBRARY( oyranos_config SHARED ${SOURCES} )
 TARGET_LINK_LIBRARIES (
    oyranos_config
-   oyranos_core oyranos_object oyranos_modules ${EXTRA_LIBS} )
+   oyranos_modules oyranos_object oyranos_core ${EXTRA_LIBS} )
 
 INSTALL (TARGETS oyranos_config DESTINATION lib${LIB_SUFFIX})
 INSTALL (FILES CHEADERS_OBJECT_CONFIG_PUBLIC DESTINATION include/${PACKAGE_NAME})

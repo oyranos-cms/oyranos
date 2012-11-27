@@ -28,6 +28,6 @@ ADD_EXECUTABLE( test_config "${CMAKE_CURRENT_SOURCE_DIR}/test_config.c" )
 TARGET_LINK_LIBRARIES( test_config oyranos_config )
 ADD_CUSTOM_TARGET(test-config
 	"./test_config"
-        DEPENDS test-config test_modules test-object
+        DEPENDS test_config test-modules test-object
         COMMENT "Test basic linking against liboyranos_config." VERBATIM )
 
