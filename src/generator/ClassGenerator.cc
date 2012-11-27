@@ -190,7 +190,12 @@ void ClassGenerator::getTemplateParents( const QString& path, QVariantList& pare
     else if (basePath.contains(tmplParentName))
       getTemplateParents( basePath[tmplParentName], parentList );
     else
+    {
       qWarning() << "Could not find template" << tmplParentName;
+      QHash<QString,QString>::const_iterator t;
+      for (t = tmplPath.constBegin(); t != tmplPath.constEnd(); t++)
+        qWarning() << "Searched in: " << t.value();
+    }
   }
 }
 
