@@ -48,7 +48,7 @@ oyranos-profile-graph depends on lCC modules (oicc+lcm[s,2])
 
 Sources
 Some files contain non stable API's. E.g. oyranos_alpha.h is marked as in alpha 
-stage. These are In fact all installed files under $(prefix)/include/alpha.
+stage. These are In fact all installed files under $(prefix)/include/oyranos/alpha.
 
 
 Licenses
