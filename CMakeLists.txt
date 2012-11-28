@@ -14,7 +14,10 @@ SET (OYRANOS_DEVEL_YEAR 2012)
 SET (PACKAGE_NAME "oyranos")
 set (PACKAGE_DESCRIPTION "Oyranos is a Colour Management System (CMS) on operating system level. It allows to match predictably input device colours to output device colours across supporting applications. One goal is to make colour management useful for all users in a automated fashion and regardless of any technical knowledge.")
 
-#additional modules for loading libraries
+SET( OY_CMMSUBPATH     "colour/modules" )
+SET( OY_METASUBPATH    "${PACKAGE_NAME}" )
+
+#additional cmake modules for loading libraries
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 IF(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
@@ -44,15 +47,13 @@ SET (REVERSE_DOMAIN org.oyranos)
 SET (OYRANOS_VERSION "${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR}.${OYRANOS_VERSION_MICRO}")
 SET (OYRANOS_VERSION_MAJORMINOR "${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR}")
 
-IF   (NOT( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin"))
-  IF   (NOT( ${CMAKE_SYSTEM_NAME} MATCHES "Linux"))
-    SET(PLATFORM "${CMAKE_SYSTEM_NAME}")
-  ELSE (NOT( ${CMAKE_SYSTEM_NAME} MATCHES "Linux"))
-    SET(PLATFORM "Linux")
-  ENDIF(NOT( ${CMAKE_SYSTEM_NAME} MATCHES "Linux"))
-ELSE (NOT( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin"))
+IF( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   SET(PLATFORM "OSX")
-ENDIF(NOT( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin"))
+ELSEIF( ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  SET(PLATFORM "Linux")
+ELSE( ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  SET(PLATFORM "${CMAKE_SYSTEM_NAME}")
+ENDIF( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 MESSAGE( "-- Found PLATFORM: ${PLATFORM}" )
 
 #now add all directories
