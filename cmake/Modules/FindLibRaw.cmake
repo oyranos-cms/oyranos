@@ -13,6 +13,14 @@
 # This file is based on cmake-2.6/Modules/FindBZip2.cmake
 # Copyright (c) 2010, Yiannis Belias, <jonnyb@hol.gr>
 
+# use pkg-config to get the directories and then use these values
+# in the FIND_PATH() and FIND_LIBRARY() calls
+if(NOT WIN32)
+   find_package(PkgConfig)
+   pkg_check_modules(LIBRAW libraw)
+   set(LIBRAW_DEFINITIONS ${LIBRAW_CFLAGS_OTHER})
+endif(NOT WIN32)
+
 IF (LIBRAW_INCLUDE_DIR AND LIBRAW_LIBRARIES)
     SET(LibRaw_FIND_QUIETLY TRUE)
 ENDIF (LIBRAW_INCLUDE_DIR AND LIBRAW_LIBRARIES)
