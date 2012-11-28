@@ -17,11 +17,10 @@
 #define OYEXPORT
 
 #define OY_PREFIX         "@CMAKE_INSTALL_PREFIX@"
-/*#define OY_BINDIR         "/opt/local/bin"*/
 #define OY_DATADIR        "@CMAKE_INSTALL_PREFIX@/share"
 #define OY_LIBDIR         "@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@"
-#define OY_CMMSUBPATH     "colour/modules"
-#define OY_METASUBPATH    "oyranos"
+#define OY_CMMSUBPATH     "@OY_CMMSUBPATH@"
+#define OY_METASUBPATH    "@OY_METASUBPATH@"
 #define OY_CMMDIR         OY_LIBDIR"/"OY_CMMSUBPATH
 #define OY_SYSCOLORDIR    OY_DATADIR"/color"
 #define OY_USERCOLORDIR   "~/.config/color"
