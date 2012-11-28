@@ -34,6 +34,8 @@ ADD_SUBDIRECTORY (liboyranos_modules)
 
 ADD_SUBDIRECTORY (liboyranos_config)
 
+ADD_SUBDIRECTORY (liboyranos)
+
 ADD_SUBDIRECTORY (tests)
 
 ADD_CUSTOM_COMMAND( OUTPUT generator/oyAPIGenerator
