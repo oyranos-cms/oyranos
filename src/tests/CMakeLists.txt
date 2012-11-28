@@ -35,6 +35,10 @@ LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" ${EL
 ADD_EXECUTABLE( test_oyranos "${CMAKE_CURRENT_SOURCE_DIR}/test_oyranos.c" )
 TARGET_LINK_LIBRARIES( test_oyranos oyranos )
 ADD_CUSTOM_TARGET(test
-	"./test_oyranos"
-        DEPENDS test_oyranos test-config
+	"echo"
+        DEPENDS test-oyranos test_oyranos test-config
         COMMENT "Test liboyranos." VERBATIM )
+
+ADD_CUSTOM_COMMAND( OUTPUT test-oyranos
+                    DEPENDS test_oyranos
+                    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/RunTest.cmake )
