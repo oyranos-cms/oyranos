@@ -91,23 +91,16 @@ oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
 
 oyTESTRESULT_e testVersion()
 {
-  char * vs = oyVersionString(2,0);
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
   fprintf(stdout, "\n" );
   fprintf(stdout, "compiled version:     %d\n", OYRANOS_VERSION );
   fprintf(stdout, " runtime version:     %d\n", oyVersion(0) );
-  fprintf(stdout, "compiled git version: %s\n", OYRANOS_GIT_MASTER );
-  fprintf(stdout, " runtime git version: %s\n", vs ? vs : "---" );
 
   if(OYRANOS_VERSION == oyVersion(0))
     result = oyTESTRESULT_SUCCESS;
   else
     result = oyTESTRESULT_FAIL;
-
-  if(!result && vs && strlen(OYRANOS_GIT_MASTER))
-    if(strcmp(OYRANOS_GIT_MASTER, vs?vs:"quark") != 0)
-      result = oyTESTRESULT_FAIL;
 
   return result;
 }
@@ -1023,8 +1016,7 @@ int main(int argc, char** argv)
     results[i] = 0;
 
   fprintf( stderr, "\nOyranos Tests v" OYRANOS_VERSION_NAME
-           "  developed: " OYRANOS_DATE  "\n   git id:" OYRANOS_GIT_MASTER
-           "  configured: " OYRANOS_CONFIG_DATE "\n\n" );
+           "  developed: " OYRANOS_DATE  "\n\n" );
 
 
   /* do tests */
