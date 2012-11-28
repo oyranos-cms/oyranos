@@ -28,6 +28,13 @@ ADD_EXECUTABLE( test_config "${CMAKE_CURRENT_SOURCE_DIR}/test_config.c" )
 TARGET_LINK_LIBRARIES( test_config oyranos_config )
 ADD_CUSTOM_TARGET(test-config
 	"./test_config"
-        DEPENDS test_config test-modules test-object
+        DEPENDS test_config test-modules
         COMMENT "Test basic linking against liboyranos_config." VERBATIM )
 
+LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" ${ELEKTRA_LIBRARY_DIRS} )
+ADD_EXECUTABLE( test_oyranos "${CMAKE_CURRENT_SOURCE_DIR}/test_oyranos.c" )
+TARGET_LINK_LIBRARIES( test_oyranos oyranos )
+ADD_CUSTOM_TARGET(test
+	"./test_oyranos"
+        DEPENDS test_oyranos test-config
+        COMMENT "Test liboyranos." VERBATIM )
