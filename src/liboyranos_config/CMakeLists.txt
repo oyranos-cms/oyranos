@@ -57,16 +57,6 @@ SET( CHEADERS_OBJECT_CONFIG
 	${GENDIR}${PACKAGE_NAME}_devices_internal.h
 	${CHEADERS_OBJECT_CONFIG_PUBLIC}
    )
-SET( CFILES_OBJECT_MODULES_PUBLIC
-	${GENDIR}oyConnector_s.c
-	${GENDIR}oyFilterCore_s.c
-	${GENDIR}oyFilterGraph_s.c
-	${GENDIR}oyFilterNode_s.c
-	${GENDIR}oyFilterNodes_s.c
-	${GENDIR}oyFilterSocket_s.c
-	${GENDIR}oyFilterPlug_s.c
-	${GENDIR}oyFilterPlugs_s.c
-   )
 
 
 SET( SOURCES ${CFILES_OBJECT_CONFIG} ${CHEADERS_OBJECT_CONFIG} )
