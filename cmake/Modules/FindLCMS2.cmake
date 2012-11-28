@@ -1,0 +1,62 @@
+# - Find LCMS 2
+# Find the LCMS (Little Color Management System) library version 2 
+# and includes and
+# This module defines
+#  LCMS2_INCLUDE_DIR, where to find lcms2.h
+#  LCMS2_LIBRARIES, the libraries needed to use LCMS2.
+#  LCMS2_DOT_VERSION, The version number of the LCMS2 library, e.g. "2.1"
+#  LCMS2_VERSION, Similar to LCMS2_DOT_VERSION, but without the dots, e.g. "22"
+#  LCMS2_FOUND, If false, do not try to use LCMS2.
+#
+# The minimum required version of LCMS 2 can be specified using the
+# standard syntax, e.g. find_package(LCMS2 2.4)
+
+# Copyright (c) 2008, Adrian Page, <adrian@pagenet.plus.com>
+# Copyright (c) 2009, Cyrille Berger, <cberger@cberger.net>
+# Copyright (c) 2012, Kai-Uwe Behrmann, <ku.b@gmx.de>
+#
+# Redistribution and use is allowed according to the terms of the BSD license.
+# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+
+
+# use pkg-config to get the directories and then use these values
+# in the FIND_PATH() and FIND_LIBRARY() calls
+if(NOT WIN32)
+   find_package(PkgConfig)
+   pkg_check_modules(PC_LCMS2 lcms2)
+   set(LCMS2_DEFINITIONS ${PC_LCMS2_CFLAGS_OTHER})
+endif(NOT WIN32)
+
+find_path(LCMS2_INCLUDE_DIR lcms2.h
+   HINTS
+   ${PC_LCMS2_INCLUDEDIR}
+   ${PC_LCMS2_INCLUDE_DIRS}
+   PATH_SUFFIXES lcms2 liblcms2
+)
+
+find_library(LCMS2_LIBRARIES NAMES lcms2 liblcms2 lcms-2 liblcms-2
+   HINTS
+   ${PC_LCMS2_LIBDIR}
+   ${PC_LCMS2_LIBRARY_DIRS}
+   PATH_SUFFIXES lcms2
+)
+
+# Store the LCMS2 version number in the cache, so we don't have to search everytime again
+if(LCMS2_INCLUDE_DIR  AND NOT  LCMS2_VERSION)
+   file(READ ${LCMS2_INCLUDE_DIR}/lcms2.h LCMS2_VERSION_CONTENT)
+   string(REGEX MATCH "#define LCMS2_VERSION[ ]*[0-9]*\n" LCMS2_VERSION_MATCH ${LCMS2_VERSION_CONTENT})
+   if(LCMS2_VERSION_MATCH)
+      string(REGEX REPLACE "#define LCMS2_VERSION[ ]*([0-9]*)\n" "\\1" _LCMS2_VERSION ${LCMS2_VERSION_MATCH})
+      string(SUBSTRING ${_LCMS2_VERSION} 0 1 LCMS2_MAJOR_VERSION)
+      string(SUBSTRING ${_LCMS2_VERSION} 1 2 LCMS2_MINOR_VERSION)
+   endif(LCMS2_VERSION_MATCH)
+   set(LCMS2_VERSION "${LCMS2_MAJOR_VERSION}${LCMS2_MINOR_VERSION}" CACHE STRING "Version number of lcms2" FORCE)
+   set(LCMS2_DOT_VERSION "${LCMS2_MAJOR_VERSION}.${LCMS2_MINOR_VERSION}" CACHE STRING "Version number of lcms2 split into components" FORCE)
+endif(LCMS2_INCLUDE_DIR  AND NOT  LCMS2_VERSION)
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(LCMS2 REQUIRED_VARS LCMS2_LIBRARIES LCMS2_INCLUDE_DIR
+                                       VERSION_VAR LCMS2_DOT_VERSION )
+
+mark_as_advanced(LCMS2_INCLUDE_DIR LCMS2_LIBRARIES LCMS2_VERSION)
+
