@@ -1,8 +1,6 @@
 INCLUDE(CheckIncludeFile)
 INCLUDE(CheckSymbolExists)
 
-FIND_PACKAGE( Xcm REQUIRED )
-
 CHECK_SYMBOL_EXISTS(clearenv     "stdlib.h"         HAVE_CLEARENV)
 CHECK_SYMBOL_EXISTS(setenv       "stdlib.h"         HAVE_SETENV)
 CHECK_SYMBOL_EXISTS(omp_get_num_procs "stdio.h"     HAVE_OPENMP)
