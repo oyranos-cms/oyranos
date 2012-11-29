@@ -49,6 +49,7 @@ SET( CFILES_OBJECT_MODULES
 	${GENDIR}oyFilterPlug_s_.c
 	${GENDIR}oyFilterPlugs_s_.c
 	${GENDIR}${PACKAGE_NAME}_module.c
+	${PACKAGE_NAME}_forms.c
    )
 SET( CHEADERS_OBJECT_MODULES_PUBLIC
 	${GENDIR}oyConnector_s.h
