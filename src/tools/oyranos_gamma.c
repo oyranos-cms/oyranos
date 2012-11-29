@@ -26,10 +26,12 @@
 #include <string.h>
 
 #include "config.h"
-#ifdef HAVE_X
+#ifdef HAVE_X11
 #include <X11/Xcm/Xcm.h>
 #include <X11/Xcm/XcmEvents.h>
+#ifdef HAVE_XRANDR
 #include <X11/extensions/Xrandr.h>
+#endif
 #endif
 
 #include "oyranos.h"
@@ -48,7 +50,7 @@
 #include "oyRectangle_s.h"
 
 
-#ifdef HAVE_X
+#ifdef HAVE_X11
 int   updateOutputConfiguration      ( Display           * display );
 int            getDeviceProfile      ( Display           * display,
                                        oyConfig_s        * device,
@@ -792,7 +794,7 @@ int main( int argc , char** argv )
   if(oy_display_name)
     oyDeAllocFunc(oy_display_name);
 
-#if HAVE_X
+#if defined(HAVE_X11)
   if(daemon)
     error = runDaemon( display_name );
 #endif
@@ -800,7 +802,7 @@ int main( int argc , char** argv )
   return error;
 }
 
-#ifdef HAVE_X
+#ifdef HAVE_X11
 void cleanDisplay( Display * display )
 {
   int error = 0;
@@ -1032,7 +1034,9 @@ int  runDaemon                       ( const char        * display_name )
   if(!display)
     return 1;
 
+#ifdef HAVE_XRANDR
   XRRQueryExtension( display, &rr_event_base, &rr_error_base );
+#endif
 
   net_desktop_geometry = XInternAtom( display,
                                       "_NET_DESKTOP_GEOMETRY", False );
@@ -1052,6 +1056,7 @@ int  runDaemon                       ( const char        * display_name )
     if(n && data)
       continue;
 
+#ifdef HAVE_XRANDR
     if(event.type == rr_event_base + RRNotify)
     {
       XRRNotifyEvent *rrn = (XRRNotifyEvent *) &event;
@@ -1060,8 +1065,10 @@ int  runDaemon                       ( const char        * display_name )
         printf("detected RRNotify_OutputChange event -> update\n");
         updateOutputConfiguration( display );
       }
-    } else if( event.type == PropertyNotify &&
-               event.xproperty.atom == net_desktop_geometry)
+    } else
+#endif
+    if( event.type == PropertyNotify &&
+        event.xproperty.atom == net_desktop_geometry)
     {
         printf("detected _NET_DESKTOP_GEOMETRY event -> update\n");
         updateOutputConfiguration( display );

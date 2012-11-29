@@ -44,7 +44,7 @@
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
 # include <X11/Xcm/XcmEdidParse.h>
-#if HAVE_XIN
+#if define(HAVE_XINERAMA)
 # include <X11/extensions/Xinerama.h>
 #endif
 
@@ -128,7 +128,7 @@ main(int argc, char **argv)
   int put_edid = 0;
   char *app_name = argv[0];
   int traditional_screens_b = 1;
-# ifdef HAVE_XIN
+# ifdef HAVE_XINERAMA
   XineramaScreenInfo* xin_screens = 0;
 # endif
 
@@ -210,7 +210,7 @@ main(int argc, char **argv)
     number_of_screens = ScreenCount( display );
     traditional_screens_b = 1;
   }
-# ifdef HAVE_XIN
+# ifdef HAVE_XINERAMA
   else
   {
     if( XineramaIsActive( display ) )
