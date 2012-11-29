@@ -124,23 +124,16 @@ const char  *  oyProfilingToString   ( int                 integer,
 
 oyTESTRESULT_e testVersion()
 {
-  char * vs = oyVersionString(2,0);
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
   fprintf(stdout, "\n" );
   fprintf(stdout, "compiled version:     %d\n", OYRANOS_VERSION );
   fprintf(stdout, " runtime version:     %d\n", oyVersion(0) );
-  fprintf(stdout, "compiled git version: %s\n", OYRANOS_GIT_MASTER );
-  fprintf(stdout, " runtime git version: %s\n", vs ? vs : "---" );
 
   if(OYRANOS_VERSION == oyVersion(0))
     result = oyTESTRESULT_SUCCESS;
   else
     result = oyTESTRESULT_FAIL;
-
-  if(!result && vs && strlen(OYRANOS_GIT_MASTER))
-    if(strcmp(OYRANOS_GIT_MASTER, vs?vs:"quark") != 0)
-      result = oyTESTRESULT_FAIL;
 
   return result;
 }
@@ -2311,7 +2304,7 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
 }
 
 
-#include "oforms/oyranos_forms.h"
+#include "oyranos_forms.h"
 
 #define H(type,value) oyFormsAddHeadline( &t, type, value,\
                                            oyAllocateFunc_, oyDeAllocateFunc_ );
@@ -3972,11 +3965,11 @@ oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
   oyTESTRESULT_e error = oyTESTRESULT_UNKNOWN;
 
   fprintf( stdout, "\n________________________________________________________________\n" );
-  fprintf(stderr, "Test: %s ... ", test_name );
+  fprintf(stdout, "Test: %s ... ", test_name );
 
   error = test();
 
-  fprintf(stderr, "\t%s", oyTestResultToString(error));
+  fprintf(stdout, "\t%s", oyTestResultToString(error));
 
   if(error == oyTESTRESULT_FAIL)
     tests_failed[results[error]] = (char*)test_name;
@@ -3984,8 +3977,8 @@ oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
 
   /* print */
   if(error && error != oyTESTRESULT_XFAIL)
-    fprintf(stderr, " !!! ERROR !!!" );
-  fprintf(stderr, "\n" );
+    fprintf(stdout, " !!! ERROR !!!" );
+  fprintf(stdout, "\n" );
 
   return error;
 }
@@ -4006,9 +3999,9 @@ int main(int argc, char** argv)
   for(i = 0; i <= oyTESTRESULT_UNKNOWN; ++i)
     results[i] = 0;
 
-  fprintf( stderr, "\nOyranos Tests v" OYRANOS_VERSION_NAME
-           "  developed: " OYRANOS_DATE  "\n   git id:" OYRANOS_GIT_MASTER
-           "  configured: " OYRANOS_CONFIG_DATE "\n\n" );
+  fprintf( stdout, "\nOyranos Tests v" OYRANOS_VERSION_NAME
+           "  developed: " OYRANOS_DATE
+           "\n\n" );
 
 
   /* do tests */
@@ -4050,11 +4043,11 @@ int main(int argc, char** argv)
        strcmp("-l", argv[1]) == 0))
   {
 
-    fprintf( stderr, "\n################################################################\n" );
-    fprintf( stderr, "#                                                              #\n" );
-    fprintf( stderr, "#                     Results                                  #\n" );
+    fprintf( stdout, "\n################################################################\n" );
+    fprintf( stdout, "#                                                              #\n" );
+    fprintf( stdout, "#                     Results                                  #\n" );
     for(i = 0; i <= oyTESTRESULT_UNKNOWN; ++i)
-      fprintf( stderr, "    Tests with status %s:\t%d\n",
+      fprintf( stdout, "    Tests with status %s:\t%d\n",
                        oyTestResultToString( (oyTESTRESULT_e)i ), results[i] );
 
     error = (results[oyTESTRESULT_FAIL] ||
@@ -4063,15 +4056,15 @@ int main(int argc, char** argv)
             );
 
     for(i = 0; i < results[oyTESTRESULT_FAIL]; ++i)
-      fprintf( stderr, "    %s: \"%s\"\n",
+      fprintf( stdout, "    %s: \"%s\"\n",
                oyTestResultToString( oyTESTRESULT_FAIL), tests_failed[i] );
 
     if(error)
-      fprintf( stderr, "    Tests FAILED\n" );
+      fprintf( stdout, "    Tests FAILED\n" );
     else
-      fprintf( stderr, "    Tests SUCCEEDED\n" );
+      fprintf( stdout, "    Tests SUCCEEDED\n" );
 
-    fprintf( stderr, "\n    Hint: the '-l' option will list all test names\n" );
+    fprintf( stdout, "\n    Hint: the '-l' option will list all test names\n" );
 
   }
 
