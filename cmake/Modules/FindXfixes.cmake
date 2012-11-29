@@ -2,17 +2,8 @@ find_package(PkgConfig)
 pkg_check_modules(XFIXES xfixes)
 
 
-if(XFIXES_CFLAGS AND XFIXES_LIBRARY_DIRS)
-
-  if(_return_VALUE STREQUAL "0")
-    set(XFIXES_FOUND TRUE)
-    set(HAVE_XFIXES TRUE)
-  else(_return_VALUE STREQUAL "0")
-    message(STATUS "Xfixes was found")
-  endif(_return_VALUE STREQUAL "0")
-endif(XFIXES_CFLAGS AND XFIXES_LIBRARY_DIRS)
-
 if (XFIXES_FOUND)
+    set(HAVE_XFIXES TRUE)
     if (NOT Xfixes_FIND_QUIETLY)
         message(STATUS "Found XFIXES: ${XFIXES_LIBRARY_DIRS} ${XFIXES_INCLUDE_DIRS}")
     endif (NOT Xfixes_FIND_QUIETLY)

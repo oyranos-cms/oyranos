@@ -1,0 +1,17 @@
+find_package(PkgConfig)
+pkg_check_modules(X11 x11)
+
+
+if (X11_FOUND)
+    set(HAVE_X11 TRUE)
+    if (NOT X11_FIND_QUIETLY)
+        message(STATUS "Found X11: ${X11_LIBRARY_DIRS} ${X11_INCLUDE_DIRS}")
+    endif (NOT X11_FIND_QUIETLY)
+else (X11_FOUND)
+    if (NOT X11_FIND_QUIETLY)
+        message(STATUS "X11 was NOT found.")
+    endif (NOT X11_FIND_QUIETLY)
+    if (X11_FIND_REQUIRED)
+        message(FATAL_ERROR "Could NOT find X11")
+    endif (X11_FIND_REQUIRED)
+endif (X11_FOUND)

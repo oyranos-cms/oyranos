@@ -1,0 +1,17 @@
+find_package(PkgConfig)
+pkg_check_modules(XXF86VM xxf86vm)
+
+
+if (XXF86VM_FOUND)
+    set(HAVE_XXF86VM TRUE)
+    if (NOT Xxf86vm_FIND_QUIETLY)
+        message(STATUS "Found XXF86VM: ${XXF86VM_LIBRARY_DIRS} ${XXF86VM_INCLUDE_DIRS}")
+    endif (NOT Xxf86vm_FIND_QUIETLY)
+else (XXF86VM_FOUND)
+    if (NOT Xxf86vm_FIND_QUIETLY)
+        message(STATUS "Xxf86vm was NOT found.")
+    endif (NOT Xxf86vm_FIND_QUIETLY)
+    if (Xxf86vm_FIND_REQUIRED)
+        message(FATAL_ERROR "Could NOT find Xxf86vm")
+    endif (Xxf86vm_FIND_REQUIRED)
+endif (XXF86VM_FOUND)
