@@ -23,7 +23,7 @@
 # in the FIND_PATH() and FIND_LIBRARY() calls
 if(NOT WIN32)
    find_package(PkgConfig)
-   pkg_check_modules(PC_LCMS2 lcms2)
+   pkg_check_modules(LCMS2 lcms2)
    set(LCMS2_DEFINITIONS ${PC_LCMS2_CFLAGS_OTHER})
 endif(NOT WIN32)
 
@@ -57,6 +57,10 @@ endif(LCMS2_INCLUDE_DIR  AND NOT  LCMS2_VERSION)
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(LCMS2 REQUIRED_VARS LCMS2_LIBRARIES LCMS2_INCLUDE_DIR
                                        VERSION_VAR LCMS2_DOT_VERSION )
+
+IF(LCMS2_FOUND)
+  SET( HAVE_LCMS2 1 )
+ENDIF(LCMS2_FOUND)
 
 mark_as_advanced(LCMS2_INCLUDE_DIR LCMS2_LIBRARIES LCMS2_VERSION)
 

@@ -21,7 +21,7 @@
 # in the FIND_PATH() and FIND_LIBRARY() calls
 if(NOT WIN32)
    find_package(PkgConfig)
-   pkg_check_modules(PC_LCMS lcms)
+   pkg_check_modules(LCMS lcms)
    set(LCMS_DEFINITIONS ${PC_LCMS_CFLAGS_OTHER})
 endif(NOT WIN32)
 
@@ -55,6 +55,10 @@ endif(LCMS_INCLUDE_DIR  AND NOT  LCMS_VERSION)
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(LCMS REQUIRED_VARS LCMS_LIBRARIES LCMS_INCLUDE_DIR
                                        VERSION_VAR LCMS_DOT_VERSION )
+
+IF(LCMS_FOUND)
+  SET( HAVE_LCMS TRUE )
+ENDIF(LCMS_FOUND)
 
 mark_as_advanced(LCMS_INCLUDE_DIR LCMS_LIBRARIES LCMS_VERSION)
 
