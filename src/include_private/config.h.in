@@ -23,14 +23,11 @@
 #cmakedefine HAVE_EXIV2
 #cmakedefine HAVE_XFIXES
 #cmakedefine HAVE_XCM
-#cmakedefine HAVE_XF86VMODE
-#cmakedefine HAVE_XIN
 #cmakedefine HAVE_XRANDR
 #cmakedefine HAVE_XINERAMA
 #cmakedefine HAVE_XXF86VM
 #cmakedefine HAVE_XEXT
 #cmakedefine HAVE_X11
-#cmakedefine HAVE_X
 #cmakedefine HAVE_FLTK_UTF8
 #cmakedefine HAVE_FLTK
 #cmakedefine HAVE_QT
