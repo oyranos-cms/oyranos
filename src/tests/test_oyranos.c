@@ -58,18 +58,18 @@ oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
   oyTESTRESULT_e error = 0;
 
   fprintf( stdout, "\n________________________________________________________________\n" );
-  fprintf(stderr, "Test: %s ... ", test_name );
+  fprintf(stdout, "Test: %s ... ", test_name );
 
   error = test();
 
-  fprintf(stderr, "\t%s", oyTestResultToString(error));
+  fprintf(stdout, "\t%s", oyTestResultToString(error));
 
   results[error] += 1;
 
   /* print */
   if(error && error != oyTESTRESULT_XFAIL)
-    fprintf(stderr, " !!! ERROR !!!" );
-  fprintf(stderr, "\n" );
+    fprintf(stdout, " !!! ERROR !!!" );
+  fprintf(stdout, "\n" );
 
   return error;
 }
@@ -93,9 +93,9 @@ oyTESTRESULT_e testVersion()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
-  fprintf(stdout, "\n" );
-  fprintf(stdout, "compiled version:     %d\n", OYRANOS_VERSION );
-  fprintf(stdout, " runtime version:     %d\n", oyVersion(0) );
+  fprintf(stderr, "\n" );
+  fprintf(stderr, "compiled version:     %d\n", OYRANOS_VERSION );
+  fprintf(stderr, " runtime version:     %d\n", oyVersion(0) );
 
   if(OYRANOS_VERSION == oyVersion(0))
     result = oyTESTRESULT_SUCCESS;
@@ -113,7 +113,7 @@ oyTESTRESULT_e testI18N()
   const char * lang = 0;
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
-  fprintf(stdout, "\n" );
+  fprintf(stderr, "\n" );
 
   oyI18Nreset();
 
@@ -180,7 +180,7 @@ oyTESTRESULT_e testElektra()
 
   oyExportReset_(EXPORT_SETTING);
 
-  fprintf(stdout, "\n" );
+  fprintf(stderr, "\n" );
 
   error = oyAddKey_valueComment_("sw/Oyranos/Tests/test_key",
                                  "NULLTestValue", "NULLTestComment" );
@@ -207,15 +207,15 @@ oyTESTRESULT_e testElektra()
     "Elektra not initialised? try oyExportStart_(EXPORT_SETTING)" );
   }
   if(start && start[0])
-    fprintf(stdout, "start key value: %s\n", start );
+    fprintf(stderr, "start key value: %s\n", start );
   else
-    fprintf(stdout, "could not initialise\n" );
+    fprintf(stderr, "could not initialise\n" );
 
   error = oyAddKey_valueComment_("sw/Oyranos/Tests/test_key",
                                  "myTestValue", "myTestComment" );
   value = oyGetKeyString_("sw/Oyranos/Tests/test_key", 0);
   if(value)
-    fprintf(stdout, "result key value: %s\n", value );
+    fprintf(stderr, "result key value: %s\n", value );
 
   if(error)
   {
@@ -273,7 +273,7 @@ oyTESTRESULT_e testOption ()
 
   oyExportReset_(EXPORT_SETTING);
 
-  fprintf(stdout, "\n" );
+  fprintf(stderr, "\n" );
 
   o = oyOption_FromRegistration( "blabla", 0 );
   if(!o)
@@ -344,7 +344,7 @@ oyTESTRESULT_e testSettings ()
 
   oyExportReset_(EXPORT_SETTING);
 
-  fprintf(stdout, "\n" );
+  fprintf(stderr, "\n" );
 
   /* we check for out standard CMM */
   opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcms",
@@ -365,7 +365,7 @@ oyTESTRESULT_e testSettings ()
     {
       o = oyOptions_Get( opts, i );
       tmp = oyOption_GetValueText( o, 0 );
-      fprintf(stdout, "%s:", tmp );
+      fprintf(stderr, "%s:", tmp );
       oyDeAllocateFunc_(tmp);
 
       tmp = oyFilterRegistrationToText( oyOption_GetText(o, oyNAME_DESCRIPTION),
@@ -487,7 +487,7 @@ oyTESTRESULT_e testProfiles ()
 
   oyExportReset_(EXPORT_SETTING);
 
-  fprintf(stdout, "\n" );
+  fprintf(stderr, "\n" );
 
   /* compare the usual conversion profiles with the total of profiles */
   profs = oyProfiles_ForStd( oyDEFAULT_PROFILE_START, &current, 0 );
@@ -584,7 +584,7 @@ oyTESTRESULT_e testMonitor ()
   oyRectangle_s * r = 0;
 
   oyExportReset_(EXPORT_SETTING);
-  fprintf(stdout, "\n" );
+  fprintf(stderr, "\n" );
 
   /* get all monitors */
   error = oyDevicesGet( 0, "monitor", 0, &devices );
@@ -802,7 +802,7 @@ oyTESTRESULT_e testMonitor ()
       if(block) free(block); block = 0;
       oyConfig_Release( &c );
       oyProfile_Release( &p );
-      fprintf(stdout, "\n" );
+      fprintf(stderr, "\n" );
     }
   }
   oyConfigs_Release( &devices );
@@ -817,7 +817,7 @@ oyTESTRESULT_e testRegistrationMatch ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
-  fprintf(stdout, "\n" );
+  fprintf(stderr, "\n" );
 
   if( oyFilterRegistrationMatch(OY_INTERNAL "/icc.lcms",
                                 "//" OY_TYPE_STD "/icc",
@@ -960,7 +960,7 @@ oyTESTRESULT_e testObserver ()
   oyOption_s * o = oyOption_FromRegistration( "a/b/c/d/my_key", 0 );
   oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", 0, 0 );
 
-  fprintf(stdout, "\n" );
+  fprintf(stderr, "\n" );
 
   oyOption_SetFromText( o, "my_value", 0 );
 
@@ -1037,11 +1037,11 @@ int main(int argc, char** argv)
        strcmp("-l", argv[1]) == 0))
   {
 
-    fprintf( stderr, "\n################################################################\n" );
-    fprintf( stderr, "#                                                              #\n" );
-    fprintf( stderr, "#                     Results                                  #\n" );
+    fprintf( stdout, "\n################################################################\n" );
+    fprintf( stdout, "#                                                              #\n" );
+    fprintf( stdout, "#                     Results                                  #\n" );
     for(i = 0; i <= oyTESTRESULT_UNKNOWN; ++i)
-      fprintf( stderr, "    Tests with status %s: %d\n",
+      fprintf( stdout, "    Tests with status %s: %d\n",
                        oyTestResultToString( (oyTESTRESULT_e)i ), results[i] );
 
     error = (results[oyTESTRESULT_FAIL] ||
@@ -1050,11 +1050,11 @@ int main(int argc, char** argv)
             );
 
     if(error)
-      fprintf( stderr, "    Tests FAILED\n" );
+      fprintf( stdout, "    Tests FAILED\n" );
     else
-      fprintf( stderr, "    Tests SUCCEEDED\n" );
+      fprintf( stdout, "    Tests SUCCEEDED\n" );
 
-    fprintf( stderr, "\n    Hint: the '-l' option will list all test names\n" );
+    fprintf( stdout, "\n    Hint: the '-l' option will list all test names\n" );
 
   }
 
