@@ -29,10 +29,10 @@
 # include <X11/Xatom.h>
 # include <X11/Xcm/XcmEdidParse.h>
 # include <X11/Xcm/XcmEvents.h>
-# if HAVE_XIN
+# if defined(HAVE_XINERAMA)
 #  include <X11/extensions/Xinerama.h>
 # endif
-# ifdef HAVE_XF86VMODE
+# ifdef HAVE_XF86VM
 #  include <X11/extensions/xf86vmode.h>
 # endif
 
@@ -82,7 +82,7 @@ oyBlob_s *  oyX1Monitor_edid_( oyX1Monitor_s * disp ) { return oyBlob_Copy( disp
 
 oyX11INFO_SOURCE_e
     oyX1Monitor_infoSource_( oyX1Monitor_s *disp ) { return disp->info_source; }
-# ifdef HAVE_XRANDR
+# if defined(HAVE_XRANDR)
 XRRScreenResources *
     oyX1Monitor_xrrResource_( oyX1Monitor_s * disp ) { return disp->res; }
 RROutput
@@ -133,7 +133,7 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
   if(!error)
   {
     display = oyX1Monitor_device_( disp );
-# ifdef HAVE_XRANDR
+# if defined(HAVE_XRANDR)
     if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
     {
       int i = 0;
@@ -569,12 +569,12 @@ oyX1GetAllScreenNames_          (const char *display_name,
   if( !display || (len = ScreenCount( display )) == 0 )
     return 0;
 
-# if HAVE_XRANDR
+# if defined(HAVE_XRANDR)
   if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR)
     len = disp->active_outputs;
 # endif
 
-# if HAVE_XIN
+# if defined(HAVE_XINERAMA)
   /* test for Xinerama screens */
   if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XINERAMA)
     {
@@ -741,7 +741,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
         return 1;
       }
 
-#ifdef HAVE_XF86VMODE
+#ifdef HAVE_XF86VM
       if(effective_screen == screen)
       {
         XF86VidModeGamma gamma;
@@ -1120,7 +1120,7 @@ oyX1Monitor_getScreenGeometry_            (oyX1Monitor_s *disp)
   if(screen < 0)
     return screen;
 
-# if HAVE_XRANDR
+# if defined(HAVE_XRANDR)
   if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
   {
     XRRCrtcInfo * crtc_info = 0;
@@ -1145,7 +1145,7 @@ oyX1Monitor_getScreenGeometry_            (oyX1Monitor_s *disp)
   }
 # endif /* HAVE_XRANDR */
 
-# if HAVE_XIN
+# if defined(HAVE_XINERAMA)
   if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XINERAMA )
   {
     int n_scr_info = 0;
@@ -1172,7 +1172,7 @@ oyX1Monitor_getScreenGeometry_            (oyX1Monitor_s *disp)
     }
     XFree( scr_info );
   }
-# endif /* HAVE_XIN */
+# endif /* HAVE_XINERAMA */
 
   if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_SCREEN )
   {
@@ -1274,7 +1274,7 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
 
   if(len == 1)
   {
-# if HAVE_XRANDR
+# if defined(HAVE_XRANDR)
     int major_versionp = 0;
     int minor_versionp = 0;
     int i, n = 0;
@@ -1300,7 +1300,7 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
       int geo[4] = {-1,-1,-1,-1};
       int geo_monitors = 0;
 
-# if HAVE_XIN
+# if defined(HAVE_XINERAMA)
       /* sync numbering with Xinerama screens */
       if( XineramaIsActive( display ) )
       {
@@ -1316,7 +1316,7 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
         XFree( scr_info );
 
       }
-# endif /* HAVE_XIN */
+# endif /* HAVE_XINERAMA */
 
 
       /* a havily expensive call */
@@ -1411,7 +1411,7 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
 
     if(oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_SCREEN)
     {
-# if HAVE_XIN
+# if defined(HAVE_XINERAMA)
       /* test for Xinerama screens */
       if( XineramaIsActive( display ) )
       {
@@ -1432,7 +1432,7 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
 
         XFree( scr_info );
       }
-# endif /* HAVE_XIN */
+# endif /* HAVE_XINERAMA */
     }
   }
   }
@@ -1502,7 +1502,7 @@ int          oyX1Monitor_release_      ( oyX1Monitor_s      ** obj )
 
   if( s->display )
   {
-#  ifdef HAVE_XRANDR
+#  if defined(HAVE_XRANDR)
     if(s->output_info)
       XRRFreeOutputInfo( s->output_info ); s->output_info = 0;
     if(s->res)

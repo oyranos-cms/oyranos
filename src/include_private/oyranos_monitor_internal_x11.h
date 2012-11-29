@@ -28,10 +28,10 @@
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
 # include <X11/Xcm/XcmEdidParse.h>
-#if HAVE_XRANDR
+#if defined(HAVE_XRANDR)
 # include <X11/extensions/Xrandr.h>
 #endif
-#if HAVE_XIN
+#if defined(HAVE_XINERAMA)
 # include <X11/extensions/Xinerama.h>
 #endif
 
