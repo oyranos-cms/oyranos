@@ -11,117 +11,26 @@ ROOT_DIR=`echo $ROOT_DIR | sed 's%/configure%%1'`
 ROOT_DIR=`(cd $ROOT_DIR; pwd)`
 BUILD_DIR="`pwd`"
 
-if [ "$ROOT_DIR" != "$BUILD_DIR" ] && [ -f "$ROOT_DIR/config.h" ]; then
-  echo Found a "$ROOT_DIR/config.h", which will cause problems.
-  echo Please remove before continuing. Exit
-  echo Found a "$ROOT_DIR/config.h", which will cause problems. > error.tmp
+if [ "$ROOT_DIR" = "$BUILD_DIR" ]; then
+  echo Build directory is equal to source directory, which will cause problems.
+  echo Please create a separate directory and call from there. Exit
   exit 1
 fi
 
-CONF_H=config.h
-CONF=makefile
-CONF_SH=$TARGET-config
-CONF_NV=libXNVCtrl/makefile
-CONF_TEMP_SH=config.tmp.sh
-CONF_LOG=config.log
-CONF_I18N=fl_i18n/makefile
-SPEC=$TARGET.spec
-DEB="$TARGET"_control
-PKGC=$TARGET.pc
-VERS_H="$TARGET"_version.h
 zeile="$0 $@"
-MAKEFILE_DIR=". fl_i18n libXNVCtrl yajl"; export MAKEFILE_DIR
 
 if [ `uname` = "Linux" ]; then
   v=-v
 fi
 
-if [ "$ROOT_DIR" != "." ]; then
-  mkdir -p fl_i18n/
-  mkdir -p libXNVCtrl/
-  mkdir -p FL/
-  mkdir -p modules/devices
-  mkdir -p examples/
-  mkdir -p API_generated/
-  mkdir -p generator/
-  mkdir -p yajl/
-  cp $v $ROOT_DIR/examples/makefile examples/
-  mkdir -p oforms/
-  cp $v $ROOT_DIR/oforms/oyranos_xforms.makefile oforms/
-  mkdir -p tests/
-fi
 
-export ROOT_DIR
-export CONF_H CONF CONF_SH CONF_LOG CONF_I18N CONF_TEMP_SH CONF_NV
-
-test -f error.tmp && rm error.tmp
-test -f $CONF_TEMP_SH && rm $CONF_TEMP_SH
-test -f libXNVCtrl.a && rm libXNVCtrl.a
-
-VERSION_A=0
-VERSION_B=9
-VERSION_C=2
-VERSION_ABI_A=2
-VERSION_ABI_B=0
-RELEASE=0
-OY_START_MONTH=11
-OY_START_YEAR=2004
-OY_DEVEL_MONTH=11
-OYRANOS_DEVEL_MONTH=11 # numeric
-OY_DEVEL_YEAR=2012
 OY_GIT_MASTER="`cat $ROOT_DIR/.git/refs/heads/master`"
 time="`date +%y%m%d.%H%M%S`"
-DATE="$OY_START_MONTH $OY_START_YEAR - $OY_DEVEL_MONTH $OY_DEVEL_YEAR"
-VERSION=$VERSION_A.$VERSION_B.$VERSION_C
-if [ $VERSION_A -gt 9 ]; then
-  VERSION_L="$VERSION_A"
-else
-  VERSION_L="0$VERSION_A"
-fi
-if [ $VERSION_B -gt 9 ]; then
-  VERSION_L="$VERSION_L$VERSION_B"
-else
-  VERSION_L="${VERSION_L}0$VERSION_B"
-fi
-if [ $VERSION_C -gt 9 ]; then
-  VERSION_L="$VERSION_L$VERSION_C"
-else
-  VERSION_L="${VERSION_L}0$VERSION_C"
-fi
-VERSION_L=`echo $VERSION_L | sed 's/^0*//g'`
-
 INFOECHO="echo"
 
+CONF_LOG=config.log
 
-debug=1
-nodeps=0
-openmp=1
-rpm=0
-static=1
-verbose=1
-fltk=1
 X11=0
-X_ADD_2="Xinerama Xxf86vm Xrandr Xext X11"
-LIBS_TEST="c ltdl dl iconv intl m xml2 Xfixes cups sane XNVCtrl yajl pthread"
-
-# find a suitable fltk-config script
-fltkconfig="fltk-config"
-old_IFS=$IFS;
-IFS=:
-for i in $PATH; do
-  test -x "$i/$fltkconfig" && fltkconfig_="$i/$fltkconfig"
-done
-if [ -z "$fltkconfig_" ]; then
-  for i in $PATH; do
-    test -x "$i/fltk-utf8-config" && fltkconfig_="$i/fltk-utf8-config"
-  done
-fi
-if [ -n "$fltkconfig_" ]; then
-  fltkconfig="$fltkconfig_"
-fi
-IFS=$old_IFS
-
-STRIPOPT="sed s/-O.//"
 
 if [ $# -gt 0 ]; then
   prefix=""
@@ -245,10 +154,6 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       verbose="1"
     fi
-    switch=disable-verbose
-    if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
-      verbose="0"
-    fi
     switch=disable-dependency-tracking
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       nodeps="1"
@@ -269,50 +174,30 @@ done
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
 test -n "$INFOECHO" && $INFOECHO "Usage:"
 test -n "$INFOECHO" && $INFOECHO "   --prefix=[/usr/local]                package prefix"
-test -n "$INFOECHO" && $INFOECHO "   --exec-prefix=[\$prefix]              package exec-prefix"
-test -n "$INFOECHO" && $INFOECHO "   --bindir=[\$exec-prefix/bin]          binary installation path"
-test -n "$INFOECHO" && $INFOECHO "   --sbindir=[\$exec-prefix/sbin]        super user binary installation path"
+#test -n "$INFOECHO" && $INFOECHO "   --exec-prefix=[\$prefix]              package exec-prefix"
+#test -n "$INFOECHO" && $INFOECHO "   --bindir=[\$exec-prefix/bin]          binary installation path"
+#test -n "$INFOECHO" && $INFOECHO "   --sbindir=[\$exec-prefix/sbin]        super user binary installation path"
 test -n "$INFOECHO" && $INFOECHO "   --libdir=[\$exec-prefix/lib]          main library installation path"
-test -n "$INFOECHO" && $INFOECHO "   --cmmsubpath=[color/cmms]            module installation path"
-test -n "$INFOECHO" && $INFOECHO "   --includedir=[\$prefix/include]       include file installation"
-test -n "$INFOECHO" && $INFOECHO "                                        automatic appends oyranos/"
-test -n "$INFOECHO" && $INFOECHO "   --datadir=[\$prefix/data]             application data base path"
-test -n "$INFOECHO" && $INFOECHO "   --mandir=[\$datadir/man]              manual installation path"
-test -n "$INFOECHO" && $INFOECHO "   --syscolordir=[\$datadir/color]       Oyranos system color path"
-test -n "$INFOECHO" && $INFOECHO "   --usercolordir=[~/.config/color]     Oyranos user color config path"
-test -n "$INFOECHO" && $INFOECHO "   --usercolordata=[~/.local/share/color] Oyranos user color data path"
-test -n "$INFOECHO" && $INFOECHO "   --iccdirname=[icc]                   Oyranos ICC profile directory"
-test -n "$INFOECHO" && $INFOECHO "   --settingsdirname=[settings]         Oyranos settings directory"
-test -n "$INFOECHO" && $INFOECHO "   --targetdirname=[target]             Oyranos target directory"
-test -n "$INFOECHO" && $INFOECHO "   --pixmapdir=[\$datadir/pixmaps]       unthemed icon installation path"
-test -n "$INFOECHO" && $INFOECHO "   --icondir=[\$datadir/icons]           icon installation path"
-test -n "$INFOECHO" && $INFOECHO "   --desktopdir=[\$datadir/applications] xdg installation path"
-test -n "$INFOECHO" && $INFOECHO ""
-test -n "$INFOECHO" && $INFOECHO "   --disable-fltk                       skip FLTK parts"
-test -n "$INFOECHO" && $INFOECHO "   --with-fltk-config=[fltk-config]     alternative fltk version"
-test -n "$INFOECHO" && $INFOECHO "   --with-x                             use X11 on Darwin"
-test -n "$INFOECHO" && $INFOECHO "   --with-rpath                         use rpath for ELF linking"
-test -n "$INFOECHO" && $INFOECHO "   --rpm-only                           generate only rpm spec file"
-test -n "$INFOECHO" && $INFOECHO "   --disable-debug                       debug version [default enable]"
-test -n "$INFOECHO" && $INFOECHO "   --enable-devel                       devel mode for osX [default disable]"
-test -n "$INFOECHO" && $INFOECHO "   --disable-openmp                     SMP support [default automatic]"
-test -n "$INFOECHO" && $INFOECHO "   --disable-static                     no static libraries [default enable]"
-test -n "$INFOECHO" && $INFOECHO "   --enable-verbose                     verbose compiling [default enable]"
-test -n "$INFOECHO" && $INFOECHO "   --disable-verbose                    verbose compiling [default enable]"
-test -n "$INFOECHO" && $INFOECHO "   --disable-dependency-tracking        no dependencies [default check]"
-for i in $X_ADD_2; do
-checklib=$i
-test -n "$INFOECHO" && $INFOECHO "   --disable-lib$checklib			do not check for $checklib"
-done
-for i in $LIBS_TEST_1; do
-checklib=$i
-test -n "$INFOECHO" && $INFOECHO "   --disable-lib$checklib			do not check for $checklib"
-done
-
-test -n "$INFOECHO" && $INFOECHO "   --quick                              generate config files only"
+#test -n "$INFOECHO" && $INFOECHO "   --cmmsubpath=[color/cmms]            module installation path"
+#test -n "$INFOECHO" && $INFOECHO "   --includedir=[\$prefix/include]       include file installation"
+#test -n "$INFOECHO" && $INFOECHO "                                        automatic appends oyranos/"
+#test -n "$INFOECHO" && $INFOECHO "   --datadir=[\$prefix/data]             application data base path"
+#test -n "$INFOECHO" && $INFOECHO "   --mandir=[\$datadir/man]              manual installation path"
+#test -n "$INFOECHO" && $INFOECHO "   --syscolordir=[\$datadir/color]       Oyranos system color path"
+#test -n "$INFOECHO" && $INFOECHO "   --usercolordir=[~/.config/color]     Oyranos user color config path"
+#test -n "$INFOECHO" && $INFOECHO "   --usercolordata=[~/.local/share/color] Oyranos user color data path"
+#test -n "$INFOECHO" && $INFOECHO "   --iccdirname=[icc]                   Oyranos ICC profile directory"
+#test -n "$INFOECHO" && $INFOECHO "   --settingsdirname=[settings]         Oyranos settings directory"
+#test -n "$INFOECHO" && $INFOECHO "   --targetdirname=[target]             Oyranos target directory"
+#test -n "$INFOECHO" && $INFOECHO "   --pixmapdir=[\$datadir/pixmaps]       unthemed icon installation path"
+#test -n "$INFOECHO" && $INFOECHO "   --icondir=[\$datadir/icons]           icon installation path"
+#test -n "$INFOECHO" && $INFOECHO "   --desktopdir=[\$datadir/applications] xdg installation path"
+#test -n "$INFOECHO" && $INFOECHO ""
+#test -n "$INFOECHO" && $INFOECHO "   --with-x                             use X11 on Darwin"
+#test -n "$INFOECHO" && $INFOECHO "   --enable-verbose                     verbose compiling [default enable]"
 test -n "$INFOECHO" && $INFOECHO "   --help"
 test -n "$INFOECHO" && $INFOECHO ""
-test -n "$INFOECHO" && $INFOECHO " Optionally set the CC, CXX, CFLAGS, CXXFLAGS and LDFLAGS environment variables."
+#test -n "$INFOECHO" && $INFOECHO " Optionally set the CC, CXX, CFLAGS, CXXFLAGS and LDFLAGS environment variables."
 test -n "$INFOECHO" && $INFOECHO ""
       exit
     fi
@@ -324,54 +209,28 @@ fi
 if [ "-e" = "`echo -e `" ]; then
   e=""
 else
-  e=""
+  e="-e"
 fi
 
 # config.log will not work as expected if called as pure BSD shell
 test -z "$zeile" && zeile="exit 1" || echo ""
 
-# no RPM spec file generation
-if [ 0 -eq $rpm ]; then
-  ECHO="echo"
-  RPMECHO="echo"
-  test -f $CONF_LOG && rm $CONF_LOG
-  $ECHO $e "$zeile \$@" > $CONF_LOG
-  $ECHO $e "exit 0" >> $CONF_LOG
-  $ECHO $e "" >> $CONF_LOG
-  $ECHO $e "" >> $CONF_LOG
-  chmod 0755 $CONF_LOG
-  # avoid a warning
-  $ECHO "" >  $CONF_LOG.h
-else
-  ECHO=""
-  RPMECHO="echo"
-fi
+ECHO="echo"
 export ECHO
+
+$ECHO $e "$zeile \$@" > $CONF_LOG
+$ECHO $e "exit 0" >> $CONF_LOG
+$ECHO $e "" >> $CONF_LOG
+chmod 0755 $CONF_LOG
 
 if [ -n "$ECHO" ]; then
   echo_="";
   $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  echo_="################################################################"
+  echo_="$TARGET_NAME configuration helper"
   $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  echo_="#                                                              #"
-  $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  echo_="        Welcome to $TARGET_NAME Version $VERSION configurator"
-  $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  echo_="#                       $time                          #"
-  $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  echo_="#                       Configuration                          #"
+  echo_="                        $time                           "
   $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
-
-test -n "$ECHO" && $ECHO "" > $CONF
-test -n "$ECHO" && $ECHO "" > $CONF_H
-test -n "$ECHO" && $ECHO "" > $CONF_I18N
-test -n "$ECHO" && $ECHO "" > $CONF_NV
-test -n "$ECHO" && $ECHO "" > yajl/makefile
-test -n "$ECHO" && $ECHO "# generated $PKGC automatically by configure from $PKGC.in" > $PKGC
-test -n "$ECHO" && $ECHO "" >> $PKGC
-test -n "$RPMECHO" && $RPMECHO "# generated $SPEC automatically by configure from $ROOT_DIR/$SPEC.in" > $SPEC
-test -n "$RPMECHO" && $RPMECHO "" >> $SPEC
 
 
 #prefix
@@ -434,24 +293,6 @@ if [ -n "$ECHO" ]; then
 fi
 
 
-test -n "$ECHO" && $ECHO "# automatically generated by configure from $ROOT_DIR/$CONF.in - it will be overwritten" >> $CONF
-test -n "$ECHO" && $ECHO "/* automatically generated file from configure - iit will be overwritten */" >> $CONF_H
-test -n "$ECHO" && $ECHO "/* automatically generated file from configure - it will be overwritten */" > $VERS_H
-test -n "$ECHO" && $ECHO "" >> $CONF_H
-test -n "$ECHO" && $ECHO "#ifndef OY_CONFIG_H" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define OY_CONFIG_H" >> $CONF_H
-test -n "$ECHO" && $ECHO "" >> $CONF_H
-test -n "$ECHO" && $ECHO "#define oyIGNORE_DEPRECATED OYRANOS_VERSION" >> $CONF_H
-test -n "$ECHO" && $ECHO "" >> $CONF_H
-
-test -n "$ECHO" && $ECHO "" >> $CONF
-test -n "$ECHO" && $ECHO "TARGET = $TARGET" >> $CONF
-
-if [ -n "$ECHO" ]; then
-  echo_="#                                                              #"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-fi
-
 
 # detect System
 
@@ -469,14 +310,9 @@ if [ $? = 0 ] && [ $UNAME_ = "Darwin" ]; then
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   APPLE="1"
   OSX_H="-DHAVE_OSX"
-  test -n "$ECHO" && $ECHO "APPLE = 1" >> $CONF
-  test -n "$ECHO" && $ECHO "#define APPLE 1" >> $CONF_H
   OSUNAME=Darwin
 else
   if [ $UNAME_ = "Linux" ]; then
-    test -n "$ECHO" && $ECHO "LINUX = 1" >> $CONF
-    test -n "$ECHO" && $ECHO "LINUX = 1" >> $CONF_I18N
-    test -n "$ECHO" && $ECHO "#define LINUX 1" >> $CONF_H
     echo_="Linux system            detected"
     test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
     SYS=0
@@ -544,35 +380,34 @@ OS_EXT=""
 
 # detect the compilers bus width options
 BARCH=
-rm -f tests/intptr_test
+rm -f intptr_test
 if [ -z "$CC" ]; then
   COMPILER=cc
 else
   COMPILER=$CC
 fi
-$COMPILER $CFLAGS $ROOT_DIR/tests/intptr_test.c -o tests/intptr_test 2>/dev/null
+$COMPILER $CFLAGS $ROOT_DIR/src/tests/intptr_test.c -o intptr_test 2>/dev/null
 FPIC=-fPIC
 DPIC=-DPIC
-if [ -f tests/intptr_test ]; then
-  tests/intptr_test
+if [ -f intptr_test ]; then
+  intptr_test
   INTPTR_SIZE=$?
   if [ $INTPTR_SIZE -eq 4 ]; then
-    echo_="32-bit build            detected"
+    echo_="32-bit host"
   elif [ $INTPTR_SIZE -gt 4 ]; then
-    echo_="64-bit build            detected"
+    echo_="64-bit host"
     if [ "$OSUNAME" != "BSD" ]; then
       BARCH=64
     fi
-    test -n "$ECHO" && $ECHO "BUILD_64 = 1" >> $CONF
   elif [ $INTPTR_SIZE -ne 0 ]; then
     echo_="$INTPTR_SIZE-byte intptr_t          detected"
   else
     echo_="CPU bus width not         detected"
   fi
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  rm tests/intptr_test
+  rm intptr_test
 else
-  $COMPILER $CFLAGS $ROOT_DIR/tests/intptr_test.c -o tests/intptr_test
+  $COMPILER $CFLAGS $ROOT_DIR/src/tests/intptr_test.c -o intptr_test
 fi
 
 MACH_=`uname -m`
@@ -598,8 +433,7 @@ fi
 LIBDIR="lib"$BARCH
 export OSUNAME 
 echo_="deb_arch=$deb_arch"
-test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_";
-test -n "$ECHO" && $ECHO "$echo_" >> $CONF
+test -n "$ECHO" && test -n "$INFOECHO" && $INFOECHO "$echo_";
 
 
 # exec_prefix bindir sbindir libdir cmmsubpath includedir datadir
@@ -613,6 +447,14 @@ if [ -z "$sbindir" ]; then
   sbindir="$exec_prefix/sbin"
 fi
 if [ -z "$libdir" ]; then
+  libdir="$exec_prefix/$LIBDIR"
+else
+  if [ `echo $libdir | grep 64\$ | wc -l` -eq 1 ]; then
+    BARCH=64
+  else
+    BARCH=""
+  fi
+  LIBDIR=lib$BARCH
   libdir="$exec_prefix/$LIBDIR"
 fi
 metasubpath=$TARGET
@@ -658,174 +500,18 @@ fi
 if [ -z "$desktopdir" ]; then
   desktopdir="$datadir/applications"
 fi
-export prefix exec_prefix bindir sbindir libdir includedir datadir mandir
-export syscolordir usercolordir usercolordata pixmapdir icondir desktopdir
-export debug static verbose fltkconfig fltk
 
 PATH=$bindir:$PATH
 export PATH
 
-if [ -z "$CC" ]; then
+if [ -n "$CC" ]; then
   CC=cc
 fi
-if [ -z "$CXX" ]; then
+if [ -n "$CXX" ]; then
   CXX=c++
 fi
 
-test -n "$ECHO" && $ECHO "CXX = $CXX" >> $CONF
-test -n "$ECHO" && $ECHO "CC = $CC" >> $CONF
-test -n "$ECHO" && $ECHO "CXX = $CXX" >> $CONF_I18N
-test -n "$ECHO" && $ECHO "CC = $CC" >> $CONF_I18N
-test -n "$ECHO" && $ECHO "CXX = $CXX" >> $CONF_NV
-test -n "$ECHO" && $ECHO "CC = $CC" >> $CONF_NV
 export CC CXX
-
-# many constant strings are much longer than the C90 allowed, skip the warning
-CFLAGS_COMMON="`echo $CFLAGS_COMMON | $STRIPOPT` \$(DEBUG) \$(OPENMP)"
-CXXFLAGS_COMMON="`echo $CXXFLAGS_COMMON | $STRIPOPT` \$(DEBUG) \$(OPENMP)"
-CFLAGS="`echo $CFLAGS | $STRIPOPT`"
-CXXFLAGS="`echo $CXXFLAGS | $STRIPOPT`"
-
-if [ -z "$LDFLAGS" ]; then
-  LDFLAGS="-L./ -L$libdir"
-else
-  LDFLAGS="`echo $LDFLAGS | $STRIPOPT` -L./ -L$libdir"
-fi
-
-
-# detect Libraries
-
-test -n "$ECHO" && $ECHO "LIB=/"$LIBDIR >> $CONF
-
-PATH=$PATH:/usr/X11R6/bin; export PATH
-test -n "$ECHO" && $fltkconfig --cxxflags 2>>$CONF_LOG
-FLTK_=`$fltkconfig --cxxflags`
-if [ $? = 0 ] && [ -n "$FLTK_" ]; then
-  FLTK=1
-fi
-
-
-if [ $nodeps -eq 1 ]; then
-  GCC_MM="echo \"\#disable dependency tracking\""
-  nodeps_config_opt=--disable-dependency-tracking
-else
-  GCC_MM="$CC -MM"
-fi
-
-OYAPI="#define OYAPI"
-OYEXPORT="#define OYEXPORT"
-
-# set some compiler and linker options
-
-if [ `$CC -MM $ROOT_DIR/tests/library.c > test_tmp.txt; cat test_tmp.txt | grep library.o | wc -l` -gt 0 ]; then
-  MAKEDEPEND="$GCC_MM"
-else
-  MAKEDEPEND="$echo #"
-  cat test_tmp.txt
-fi
-rm test_tmp.txt
-
-test -n "$ECHO" && $ECHO "MAKEDEPEND	= $MAKEDEPEND" >> $CONF
-if [ $OSUNAME = "Darwin" ]; then
-  LIBEXT=".dylib"
-  GCC_VERSION_INFO="-Wl,-compatibility_version -Wl,$VERSION_A.$VERSION_B -Wl,-current_version -Wl,$VERSION"
-  DSO_LIB_VERSION=" -install_name "
-  LINK_FLAGS_DYNAMIC="$LDFLAGS -framework Carbon -dynamiclib $GCC_VERSION_INFO"
-  dyld_libdir="$libdir/"
-  dyld_cmmdir="$cmmdir/"
-  dyld_metadir="$metadir/"
-  COPY="cp -pv"
-  MOVE="mv -v"
-  RM="rm -vf"
-  LDFLAGS="$LDFLAGS -L."
-  test -n "$ECHO" && $ECHO "MSGMERGE = msgmerge" >> $CONF
-  CFLAGS="$CFLAGS $DPIC -Wunused -fno-exceptions -flat_namespace -undefined suppress"
-  CXXFLAGS="$CXXFLAGS $DPIC -Wunused -fno-exceptions -flat_namespace -undefined suppress"
-  test -n "$ECHO" && $ECHO "REZ = $fltkconfig --post \$@" >> $CONF
-  test -n "$ECHO" && $ECHO "I18N_LIB = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
-  test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
-  INSTALL="install -p $DEBUG_SWITCH"
-  oyranos_add="-framework ApplicationServices \$ltdl \$xml2 \$yajl"
-  if [ -n "$devel" ]; then
-    DEVEL_LIBS="\$(LIBS_CMM)"
-  fi
-else
-  SO=".so"
-  LINK_FLAGS_DYNAMIC="$LDFLAGS -shared $GCC_VERSION_INFO"
-  test -n "$ECHO" && $ECHO "MSGMERGE = msgmerge" >> $CONF
-  test -n "$ECHO" && $ECHO "MSGMERG_OPTS = --update" >> $CONF
-  test -n "$ECHO" && $ECHO "XGETTEXT_OPTIONS = --keyword=gettext --flag=gettext:1:pass-c-format \
-        --keyword=_ --flag=_:1:pass-c-format \
-        --keyword=N_ --flag=N_:1:pass-c-format \
-        --copyright-holder='Kai-Uwe Behrmann' \
-        --msgid-bugs-address='ku.b@gmx.de' \
-        --from-code=utf-8" >> $CONF
-  oyranos_add="-L\$libdir \$ltdl \$xml2 \$iconv \$intl \$yajl"
-  if [ $OSUNAME = "Linux" ]; then
-    COPY="cp -vdpa"
-    MOVE="mv -v"
-    RM="rm -vf"
-    LDFLAGS="$LDFLAGS -L."
-    test -n "$ECHO" && $ECHO "LINK_FLAGS_STATIC =" >> $CONF
-    if [ -n "$rpath" ]; then 
-      test -n "$ECHO" && $ECHO "LINK_LIB_PATH = -Wl,--rpath -Wl," >> $CONF
-      test -n "$ECHO" && $ECHO "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(build_dir)" >> $CONF
-    fi
-    CFLAGS="$CFLAGS $FPIC $DPIC -Wno-overlength-strings"
-    CXXFLAGS="$CXXFLAGS $FPIC $DPIC -Wno-overlength-strings"
-    INSTALL="install -p $DEBUG_SWITCH"
-  else
-    COPY="cp -p"
-    MOVE="mv"
-    RM="rm -f"
-    if [ $OSUNAME = "BSD" ]; then
-      LDFLAGS="$LDFLAGS"
-      if [ -n "$rpath" ]; then 
-        test -n "$ECHO" && $ECHO "LINK_LIB_PATH = -Wl,--rpath -Wl," >> $CONF
-        test -n "$ECHO" && $ECHO "LINK_SRC_PATH = -Wl,--rpath -Wl,\$(build_dir)" >> $CONF
-      fi
-      INSTALL="install -p $DEBUG_SWITCH"
-    fi
-    if [ $OSUNAME = "SunOS" ]; then
-      LDFLAGS="$LDFLAGS -lposix4"
-      INSTALL="install"
-    else
-      LDFLAGS="$LDFLAGS"
-      INSTALL="install -p"
-    fi
-    test -n "$ECHO" && $ECHO "I18N_LIB = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
-    test -n "$ECHO" && $ECHO "I18N_LIBSTAT = \$(iconv) \$(intl) \$(LIBNAMEV)" >> $CONF
-    if [ $OSUNAME = "WIN32" ]; then
-      CFLAGS="$CFLAGS"
-      CXXFLAGS="$CXXFLAGS"
-    else
-      CFLAGS="$CFLAGS $FPIC"
-      CXXFLAGS="$CXXFLAGS $FPIC"
-    fi
-  fi
-fi
- 
-if [ -n "$DSO_LIB_VERSION" ]; then
-  test -n "$ECHO" && $ECHO "DSO_LIB_VERSION = $DSO_LIB_VERSION" >> $CONF
-  export DSO_LIB_VERSION SO
-fi
-test -n "$ECHO" && $ECHO "LINK_FLAGS_DYNAMIC = $LINK_FLAGS_DYNAMIC \$(DSO_LIB_VERSION)" >> $CONF
-test -n "$ECHO" && $ECHO "SO = $SO" >> $CONF
-test -n "$ECHO" && $ECHO "LIBEXT = $LIBEXT" >> $CONF
-export LINK_FLAGS_DYNAMIC SO LIBEXT
-
-for i in $MAKEFILE_DIR; do
-  mkdir -p $i
-  test -n "$ECHO" && $ECHO "src_dir = $ROOT_DIR/$i" | sed 's%/\.%%' >> "$i/makefile"
-  test -n "$ECHO" && $ECHO "" >> "$i/makefile"
-  test -n "$ECHO" && $ECHO "COPY = $COPY" >> "$i/makefile"
-  test -n "$ECHO" && $ECHO "MOVE = $MOVE" >> "$i/makefile"
-  test -n "$ECHO" && $ECHO "RM = $RM" >> "$i/makefile"
-  test -n "$ECHO" && $ECHO "$osuname" >> "$i/makefile"
-  test -n "$ECHO" && $ECHO "OSX_H = $OSX_H" >> "$i/makefile"
-  test -n "$ECHO" && $ECHO "EXEC_END = $EXEC_END" >> "$i/makefile"
-  test -n "$ECHO" && $ECHO "MAKEFILE_ARCH = Makefile$OS_EXT" >> "$i/makefile"
-done
 
 
 # export
@@ -840,540 +526,59 @@ done
 if [ -n "$ECHO" ]; then
   echo_="\"$CFLAGS\" \"$CXXFLAGS\" \"$LDFLAGS\""
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  if [ $debug = 1 ]; then
-    echo_="Debug macros            enabled"
-  else
-    echo_="Debug macros            disabled"
-  fi
   test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
 
 export CFLAGS CXXFLAGS LDFLAGS
 
-test -n "$ECHO" && $ECHO "#!/bin/sh" > $CONF_SH
-test -n "$ECHO" && $ECHO "# generated auomatically by configure" >> $CONF_SH
-test -n "$ECHO" && $ECHO "" >> $CONF_SH
-
-test -n "$INFOECHO" && $INFOECHO ""
-
-# build sub project
-pkg-config  --atleast-version=0.7 elektra 2>/dev/null
-if [ $? != 0 ] && [ 0 -eq $rpm ]; then
-  ELEKTRA_VERSION="elektra-0.7.1"
-  if [ -d $ROOT_DIR/$ELEKTRA_VERSION ]; then
-    if [ ! -d $ELEKTRA_VERSION ]; then
-      mkdir -p $ELEKTRA_VERSION
-    fi
-    test -n "$ECHO" && $ECHO "#define HAVE_ELEKTRA 1" >> $CONF_H
-    test -n "$ECHO" && $ECHO "ELEKTRA = 1" >> $CONF
-    test -n "$ECHO" && $ECHO "ELEKTRA_H = -I$ELEKTRA_VERSION/src/include -I$ROOT_DIR/$ELEKTRA_VERSION/src/include" >> $CONF
-    test -n "$ECHO" && $ECHO "ELEKTRA_LIBS = \$(ELEKTRA_OBJ)" >> $CONF
-    test -n "$ECHO" && $ECHO "ELEKTRA_VERSION = $ELEKTRA_VERSION" >> $CONF
-    test -n "$ECHO" && $ECHO "Elektra internal        $ELEKTRA_VERSION"
-    if [ -n $ECHO ]; then
-      dir="$PWD"
-      cd $ELEKTRA_VERSION && sh -c "$ROOT_DIR/$ELEKTRA_VERSION/configure --enable-static --enable-shared=false $nodeps_config_opt --prefix=$prefix"
-      cd "$dir"
-    fi
-    test -n "$ECHO" && $ECHO "elektra=" >> $PKGC
-    test -n "$ECHO" && $ECHO ""
-    test -n "$ECHO" && $ECHO "... $ELEKTRA_VERSION configured"
-  else
-    echo_="  no $ROOT_DIR/$ELEKTRA_VERSION"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-    echo_="!!! Elektra: !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-    echo_="  no or too old Elektra found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-    echo_="  need a version not greater than $elektra_max, download: elektra.sf.net"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-    echo 1 > error.tmp
-  fi
-else
-    test -n "$ECHO" && $ECHO "elektra=`pkg-config --libs elektra`" >> $PKGC
-fi
-
-pkg-config  --atleast-version=1.0 yajl 2>/dev/null
-if [ $? != 0 ] && [ 0 -eq $rpm ]; then
-  l=yajl
-  $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
-  if [ -f tests/libtest ]; then
-    rm tests/libtest$EXEC_END
-  elif [ -d $l ]; then
-    YAJL_DIR="yajl"
-    test -n "$ECHO" && $ECHO "#define HAVE_YAJL 1" >> $CONF_H
-    test -n "$ECHO" && $ECHO "YAJL = 1" >> $CONF
-    test -n "$ECHO" && $ECHO "YAJL_H = -I$YAJL_DIR/ -I$ROOT_DIR/$YAJL_DIR/" >> $CONF
-    test -n "$ECHO" && $ECHO "YAJL_LIBS = \$(YAJL_OBJ)" >> $CONF
-    test -n "$ECHO" && $ECHO "YAJL_DIR = $YAJL_DIR" >> $CONF
-    test -n "$ECHO" && $ECHO "Yajl internal           $YAJL_DIR"
-    test -n "$ECHO" && $ECHO ""
-  else
-    echo_="!!! Yajl: !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-    echo_="  no or too old Yajl found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-    echo_="  need a version not greater than $elektra_max, download: http://lloyd.github.com/yajl/"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-    echo 1 > error.tmp
-  fi
-fi
-
-pkg-config  --atleast-version=1.0 yajl 2>/dev/null
-if [ $? != 0 ] && [ 0 -eq $rpm ]; then
-  l=yajl
-  $CXX $CFLAGS -I$includedir $ROOT_DIR/tests/lib_test.cxx $LDFLAGS -L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir -l$l -o tests/libtest 2>/dev/null
-  if [ -f tests/libtest ]; then
-    rm tests/libtest$EXEC_END
-  elif [ -d $l ]; then
-    YAJL_DIR="yajl"
-    test -n "$ECHO" && $ECHO "#define HAVE_YAJL 1" >> $CONF_H
-    test -n "$ECHO" && $ECHO "YAJL = 1" >> $CONF
-    test -n "$ECHO" && $ECHO "YAJL_H = -I$YAJL_DIR/ -I$ROOT_DIR/$YAJL_DIR/" >> $CONF
-    test -n "$ECHO" && $ECHO "YAJL_LIBS = \$(YAJL_OBJ)" >> $CONF
-    test -n "$ECHO" && $ECHO "YAJL_DIR = $YAJL_DIR" >> $CONF
-    test -n "$ECHO" && $ECHO "Yajl internal           $YAJL_DIR"
-    test -n "$ECHO" && $ECHO ""
-  else
-    echo_="!!! Yajl: !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-    echo_="  no or too old Yajl found,"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-    echo_="  need a version not greater than $elektra_max, download: http://lloyd.github.com/yajl/"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-    echo 1 > error.tmp
-  fi
-fi
-
-
-# tell about required libs
-new_libs=$LIBS_TEST_1
-for i in $nochecklibs; do
-  new_libs=`echo $new_libs | sed s/$i//`
-done
-LIBS_TEST_1=$new_libs
-new_libs=$X_ADD_2
-for i in $nochecklibs; do
-  new_libs=`echo $new_libs | sed s/$i//`
-done
-export nochecklibs
-X_ADD_2=$new_libs
-export X_ADD
-export X_ADD_2
-export LIBS_TEST
-export LIBS_TEST_1
-
-# detect external libs and headers
-if [ -n "$ECHO" ]; then
-  ECHO="echo"; export ECHO
-  LIBS=1; export LIBS
-  DSO_LINKING=1; export DSO_LINKING
-  test "1" = "$openmp" && OPENMP_LINKING=1; export OPENMP_LINKING
-  CUPS=2; export CUPS
-  if [ -z "$ELEKTRA_VERSION" ]; then
-  ELEKTRA=2; export ELEKTRA
-  fi
-  if [ -z "$YAJL_DIR" ]; then
-  YAJL=1; export YAJL
-  fi
-  EXIV2=2; export EXIV2
-  #OYRANOS=1; export OYRANOS
-  LCMS=2; export LCMS
-  LCMS2=2; export LCMS2
-  LRAW=2; export LRAW
-  LIBXML2=1; export LIBXML2
-  LIBPNG=2; export LIBPNG
-  LIBTIFF=2; export LIBTIFF
-  LIBOPENEXR=2; export LIBOPENEXR
-  SANE=2; export SANE
-  #FTGL=1; export FTGL
-if [ $fltk = 1 ]; then
-  FLTK=2; export FLTK
-else
-  FLTK=0; export FLTK
-fi
-  CAIRO=1; export CAIRO
-if [ $OSUNAME != "Darwin" ] ; then
-  X11=1; 
-  QT=1
-fi
-  XCM=1
-  export X11 XCM QT
-  XINERAMA=2; export XINERAMA
-  XRANDR=2; export XRANDR
-  XF86VMODE=2; export XF86VMODE
-  DOXYGEN=2; export DOXYGEN
-  DEBUG=1; export DEBUG
-  PO=1; export PO
-  GETTEXT=2; export GETTEXT
-  for i in $nochecklibs; do
-    if [ $i = Xrandr ]; then
-      XRANDR=0; export XRANDR
-    fi
-    if [ $i = Xxf86vm ]; then
-      XF86VMODE=0; export XF86VMODE
-    fi
-    if [ $i = Xinerama ]; then
-      XINERAMA=0; export XINERAMA
-    fi
-    if [ $i = X11 ]; then
-      X11=0; export X11
-    fi
-    if [ $i = cups ]; then
-      CUPS=0; export CUPS
-    fi
-    if [ $i = sane ]; then
-      SANE=0; export SANE
-    fi
-  done
-  $ROOT_DIR/configure_tests.sh
-  LIBS=0; export LIBS
-  DSO_LINKING=0; export DSO_LINKING
-  OPENMP_LINKING=0; export OPENMP_LINKING
-  CUPS=0; export CUPS
-  ELEKTRA=0; export ELEKTRA
-  EXIV2=0; export EXIV2
-  #OYRANOS=0; export OYRANOS
-  LCMS=0; export LCMS
-  LCMS2=0; export LCMS2
-  LRAW=0; export LRAW
-  LIBXML2=0; export LIBXML2
-  YAJL=0; export YAJL
-  LIBPNG=0; export LIBPNG
-  LIBTIFF=0; export LIBTIFF
-  LIBOPENEXR=0; export LIBOPENEXR
-  SANE=0; export SANE
-  #FTGL=0; export FTGL
-  FLTK=0; export FLTK
-  CAIRO=0; export CAIRO
-  X11=0; XCM=0; QT=0; export X11 XCM QT
-  XINERAMA=0; export XINERAMA
-  XRANDR=0; export XRANDR
-  XF86VMODE=0; export XF86VMODE
-  DOXYGEN=0; export DOXYGEN
-  DEBUG=0; export DEBUG
-  PO=0; export PO
-  GETTEXT=0; export GETTEXT
-  if [ $? -gt 0 ]; then
-    ERROR=1
-  fi
-fi
-
-if [ `cat makefile | grep LCMS | wc -l` = 0 ]; then
-    echo_="!!! Lcms: !!!"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-    echo_="  need lcms in version 2 or at least version 1"; echo "$echo_" >> $CONF_LOG; test -n "$ECHO" && $ECHO "$echo_"
-    echo 1 > error.tmp
-    ERROR=1
-fi
-
-# Alle ifdefs landen hier
-
-test -n "$ECHO" && $ECHO "" >> $CONF
-test -n "$ECHO" && $ECHO "VERSION_A = $VERSION_A" >> $CONF
-test -n "$ECHO" && $ECHO "VERSION_B = $VERSION_B" >> $CONF
-test -n "$ECHO" && $ECHO "VERSION_C = $VERSION_C" >> $CONF
-test -n "$ECHO" && $ECHO "VERSION   = $VERSION" >> $CONF
-test -n "$ECHO" && $ECHO "VERSION_L = $VERSION_L" >> $CONF
-test -n "$ECHO" && $ECHO "RELEASE = $RELEASE" >> $CONF
-test -n "$ECHO" && $ECHO "" >> $CONF
-
-test -n "$ECHO" && cat $CONF_TEMP_SH >> $CONF_SH
-test -n "$ECHO" && $ECHO "" >> $CONF_SH
-test -n "$ECHO" && $ECHO "TARGET=$TARGET" >> $CONF_SH
-test -n "$ECHO" && $ECHO "" >> $CONF_SH
-test -n "$ECHO" && $ECHO "VERSION=$VERSION" >> $CONF_SH
-test -n "$ECHO" && $ECHO "VERSION_L=$VERSION_L" >> $CONF_SH
-test -n "$ECHO" && $ECHO "VERSION_A=$VERSION_A" >> $CONF_SH
-test -n "$ECHO" && $ECHO "VERSION_B=$VERSION_B" >> $CONF_SH
-test -n "$ECHO" && $ECHO "VERSION_C=$VERSION_C" >> $CONF_SH
-test -n "$ECHO" && $ECHO "" >> $CONF_SH
-test -n "$ECHO" && $ECHO "prefix=$prefix" >> $CONF_SH
-test -n "$ECHO" && $ECHO "exec_prefix=$exec_prefix" >> $CONF_SH
-test -n "$ECHO" && $ECHO "bindir=$bindir" >> $CONF_SH
-test -n "$ECHO" && $ECHO "sbindir=$sbindir" >> $CONF_SH
-test -n "$ECHO" && $ECHO "libdir=$libdir" >> $CONF_SH
-test -n "$ECHO" && $ECHO "cmmdir=$cmmdir" >> $CONF_SH
-test -n "$ECHO" && $ECHO "cmmsubpath=$cmmsubpath" >> $CONF_SH
-test -n "$ECHO" && $ECHO "metasubpath=$metasubpath" >> $CONF_SH
-test -n "$ECHO" && $ECHO "includedir=$includedir/oyranos" >> $CONF_SH
-test -n "$ECHO" && $ECHO "datadir=$datadir" >> $CONF_SH
-test -n "$ECHO" && $ECHO "mandir=$mandir" >> $CONF_SH
-test -n "$ECHO" && $ECHO "syscolordir=$syscolordir" >> $CONF_SH
-test -n "$ECHO" && $ECHO "usercolordir=$usercolordir" >> $CONF_SH
-test -n "$ECHO" && $ECHO "usercolordata=$usercolordata" >> $CONF_SH
-test -n "$ECHO" && $ECHO "iccdirname=$iccdirname" >> $CONF_SH
-test -n "$ECHO" && $ECHO "settingsdirname=$settingsdirname" >> $CONF_SH
-test -n "$ECHO" && $ECHO "targetdirname=$targetdirname" >> $CONF_SH
-test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $CONF_SH
-test -n "$ECHO" && $ECHO "icondir=$icondir" >> $CONF_SH
-test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $CONF_SH
-test -n "$ECHO" && $ECHO "oyranos_add=\"$oyranos_add\"" >> $CONF_SH
-if [ -z "$ELEKTRA_VERSION" ]; then
-  test -n "$ECHO" && $ECHO "elektra_dyn=\"`pkg-config --libs elektra`\"" >> $CONF_SH
-fi
-test -n "$INFOECHO" && $INFOECHO ""
-test -n "$ECHO" && cat  "$ROOT_DIR/$CONF_SH.in" >> $CONF_SH
-chmod 0755 "$CONF_SH"
-if [ -n "$ECHO" ]; then
-  echo_="created   $CONF_SH"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-fi
-
-
-test -n "$ECHO" && $ECHO "#ifndef OYRANOS_VERSION_H" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_H" >> $VERS_H
-test -n "$ECHO" && $ECHO "" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_A $VERSION_A" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_B $VERSION_B" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_C $VERSION_C" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION_NAME \"$VERSION\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_VERSION $VERSION_L" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_START_MONTH $OY_START_MONTH" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_START_YEAR $OY_START_YEAR" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_DEVEL_MONTH $OYRANOS_DEVEL_MONTH" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_DEVEL_YEAR $OY_DEVEL_YEAR" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OYRANOS_CONFIG_DATE \"$time\"" >> $VERS_H
-if [ `echo $OY_GIT_MASTER | grep cat | wc -l` -lt 1 ]; then
-  test -n "$ECHO" && $ECHO "#define OYRANOS_GIT_MASTER \"$OY_GIT_MASTER\"" >> $VERS_H
-else
-  test -n "$ECHO" && $ECHO "#define OYRANOS_GIT_MASTER """ >> $VERS_H
-fi
-test -n "$ECHO" && $ECHO "#define OYRANOS_DATE \"$DATE\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "" >> $VERS_H
-
-test -n "$RPMECHO" && $RPMECHO "Version:         $VERSION" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "Source:          $TARGET"-"$VERSION".tar.bz2 >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "Release:         $RELEASE" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "%define syscolordir     $syscolordir" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "%define usercolordir    $usercolordir" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "%define usercolordata   $usercolordata" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "%define iccdirname      $iccdirname" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "%define cmmsubpath      $cmmsubpath" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "%define metasubpath     $metasubpath" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "%define settingsdirname $settingsdirname" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "%define targetdirname   $targetdirname" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "%define pixmapdir       $pixmapdir" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "%define icondir         $icondir" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "%define desktopdir      $desktopdir" >> $SPEC
-if [ -z "$ELEKTRA_VERSION" ]; then
-test -n "$RPMECHO" && $RPMECHO "" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "Requires: elektra 0.7" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "BuildRequires: elektra-devel" >> $SPEC
-test -n "$RPMECHO" && $RPMECHO "" >> $SPEC
-fi
-test -n "$RPMECHO" && cat  $ROOT_DIR/"$SPEC.in" >> $SPEC
-echo_="generated $SPEC from $ROOT_DIR/$SPEC.in"
-test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-
-test -n "$RPMECHO" && $RPMECHO "Version:         $VERSION-$RELEASE" > $DEB
-test -n "$RPMECHO" && $RPMECHO "Architecture:    $deb_arch" >> $DEB
-test -n "$RPMECHO" && cat  $ROOT_DIR/"$DEB.in" >> $DEB
-echo_="generated $DEB from $ROOT_DIR/$DEB.in"
-test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-
-test -n "$ECHO" && $ECHO "Version: $VERSION" >> $PKGC
-test -n "$ECHO" && $ECHO "prefix=$prefix" >> $PKGC
-test -n "$ECHO" && $ECHO "exec_prefix=$exec_prefix" >> $PKGC
-test -n "$ECHO" && $ECHO "bindir=$bindir" >> $PKGC
-test -n "$ECHO" && $ECHO "sbindir=$sbindir" >> $PKGC
-test -n "$ECHO" && $ECHO "libdir=$libdir" >> $PKGC
-test -n "$ECHO" && $ECHO "cmmdir=$cmmdir" >> $PKGC
-test -n "$ECHO" && $ECHO "cmmsubpath=$cmmsubpath" >> $PKGC
-test -n "$ECHO" && $ECHO "metasubpath=$metasubpath" >> $PKGC
-test -n "$ECHO" && $ECHO "includedir=$includedir/oyranos" >> $PKGC
-test -n "$ECHO" && $ECHO "datadir=$datadir" >> $PKGC
-test -n "$ECHO" && $ECHO "mandir=$mandir" >> $PKGC
-test -n "$ECHO" && $ECHO "syscolordir=$syscolordir" >> $PKGC
-test -n "$ECHO" && $ECHO "usercolordir=$usercolordir" >> $PKGC
-test -n "$ECHO" && $ECHO "usercolordata=$usercolordata" >> $PKGC
-test -n "$ECHO" && $ECHO "iccdirname=$iccdirname" >> $PKGC
-test -n "$ECHO" && $ECHO "settingsdirname=$settingsdirname" >> $PKGC
-test -n "$ECHO" && $ECHO "targetdirname=$targetdirname" >> $PKGC
-test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $PKGC
-test -n "$ECHO" && $ECHO "icondir=$icondir" >> $PKGC
-test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $PKGC
-test -n "$ECHO" && cat $CONF_TEMP_SH >> $PKGC
-test -n "$ECHO" && $ECHO "oyranos_add=-L\${libdir} \${elektra} \${ltdl} \${xml2} \${iconv} \${intl} \${yajl}" >> $PKGC
-test -n "$ECHO" && cat  "$ROOT_DIR/$PKGC.in" >> $PKGC
-if [ -n "$ECHO" ]; then
-  test -n "$INFOECHO" && $INFOECHO generated $PKGC from "$ROOT_DIR/$PKGC.in"
-fi
-
 if [ -n "$ECHO" ]; then
   echo_=""
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="#                       Paths                                  #"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="#                                                              #"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="prefix          =       $prefix"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="exec_prefix     =       $exec_prefix"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="bindir          =       $bindir"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="sbindir         =       $sbindir"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="libdir          =       $libdir"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="cmmdir          =       $cmmdir"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="cmmsubpath      =       $cmmsubpath"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="includedir      =       $includedir (install: += /oyranos)"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="datadir         =       $datadir"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="mandir          =       $mandir"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="syscolordir     =       $syscolordir"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="usercolordir    =       $usercolordir"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="usercolordata   =       $usercolordata"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="iccdirname      =       $iccdirname"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="settingsdirname =       $settingsdirname"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="targetdirname =         $targetdirname"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="pixmapdir       =       $pixmapdir"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="icondir         =       $icondir"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="desktopdir      =       $desktopdir"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="################################################################"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_=""
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
+  test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
-
-test -n "$ECHO" && $ECHO "build_dir = $BUILD_DIR" >> $CONF
-test -n "$ECHO" && $ECHO "prefix=$prefix" >> $CONF
-test -n "$ECHO" && $ECHO "exec_prefix=$exec_prefix" >> $CONF
-test -n "$ECHO" && $ECHO "bindir=$bindir" >> $CONF
-test -n "$ECHO" && $ECHO "sbindir=$sbindir" >> $CONF
-test -n "$ECHO" && $ECHO "libdir=$libdir" >> $CONF
-test -n "$ECHO" && $ECHO "cmmdir=$cmmdir" >> $CONF
-test -n "$ECHO" && $ECHO "metadir=$metadir" >> $CONF
-test -n "$ECHO" && $ECHO "cmmsubpath=$cmmsubpath" >> $CONF
-test -n "$ECHO" && $ECHO "metasubpath=$metasubpath" >> $CONF
-test -n "$ECHO" && $ECHO "includedir=$includedir" >> $CONF
-test -n "$ECHO" && $ECHO "dyld_libdir=$dyld_libdir" >> $CONF
-test -n "$ECHO" && $ECHO "dyld_cmmdir=$dyld_cmmdir" >> $CONF
-test -n "$ECHO" && $ECHO "dyld_metadir=$dyld_metadir" >> $CONF
-test -n "$ECHO" && $ECHO "datadir=$datadir" >> $CONF
-test -n "$ECHO" && $ECHO "mandir=$mandir" >> $CONF
-test -n "$ECHO" && $ECHO "syscolordir=$syscolordir" >> $CONF
-test -n "$ECHO" && $ECHO "usercolordir=$usercolordir" >> $CONF
-test -n "$ECHO" && $ECHO "usercolordata=$usercolordata" >> $CONF
-test -n "$ECHO" && $ECHO "iccdirname=$iccdirname" >> $CONF
-test -n "$ECHO" && $ECHO "settingsdirname=$settingsdirname" >> $CONF
-test -n "$ECHO" && $ECHO "targetdirname=$targetdirname" >> $CONF
-test -n "$ECHO" && $ECHO "pixmapdir=$pixmapdir" >> $CONF
-test -n "$ECHO" && $ECHO "icondir=$icondir" >> $CONF
-test -n "$ECHO" && $ECHO "desktopdir=$desktopdir" >> $CONF
-test -n "$ECHO" && $ECHO "" >> $CONF
-
-
-test -n "$ECHO" && $ECHO $OYAPI >> $VERS_H
-test -n "$ECHO" && $ECHO $OYEXPORT >> $VERS_H
-test -n "$ECHO" && $ECHO "" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_PREFIX         \"$prefix\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_BINDIR         \"$bindir\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_DATADIR        \"$datadir\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_LIBDIR         \"$libdir\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_CMMDIR         \"$cmmdir\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_CMMSUBPATH     \"$cmmsubpath\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_METASUBPATH    \"$metasubpath\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_SYSCOLORDIR    \"$syscolordir\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_USERCOLORDIR   \"$usercolordir\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_USERCOLORDATA  \"$usercolordata\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_ICCDIRNAME     \"$iccdirname\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_SETTINGSDIRNAME \"$settingsdirname\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_TARGETDIRNAME  \"$targetdirname\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_LOCALEDIR      \"$datadir/locale\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_SRCDIR         \"$BUILD_DIR\"" >> $VERS_H
-test -n "$ECHO" && $ECHO "#define OY_SRC_LOCALEDIR  \"$BUILD_DIR/po\"" >> $VERS_H
-# Images formats availablility markers
-if [ `cat $CONF_H | grep "HAVE_PNG 1" | wc -l` -gt 0 ]; then
-test -n "$ECHO" && $ECHO "#define OY_HAVE_PNG 1" >> $VERS_H
-fi
-if [ `cat $CONF_H | grep "HAVE_TIFF 1" | wc -l` -gt 0 ]; then
-test -n "$ECHO" && $ECHO "#define OY_HAVE_TIFF 1" >> $VERS_H
-fi
-if [ `cat $CONF_H | grep "HAVE_OPENEXR 1" | wc -l` -gt 0 ]; then
-test -n "$ECHO" && $ECHO "#define OY_HAVE_OPENEXR 1" >> $VERS_H
-fi
-test -n "$ECHO" && $ECHO "" >> $VERS_H
-test -n "$ECHO" && $ECHO "#endif /*OYRANOS_VERSION_H*/" >> $VERS_H
-
-CFLAGS="$CFLAGS_COMMON `echo $CFLAGS | $STRIPOPT`"
-CXXFLAGS="$CXXFLAGS_COMMON `echo $CXXFLAGS | $STRIPOPT`"
-LDFLAGS="`echo $LDFLAGS | $STRIPOPT` \$(dl) \$(DEVEL_LIBS)"
-
-test -n "$ECHO" && $ECHO "CFLAGS=$CFLAGS"     >> $CONF_NV
-test -n "$ECHO" && $ECHO "CFLAGS = $CFLAGS"   >> $CONF_I18N
-test -n "$ECHO" && $ECHO "CXXFLAGS = $CXXFLAGS">>$CONF_I18N
-test -n "$ECHO" && $ECHO "LDFLAGS = $LDFLAGS" >> $CONF_I18N
-test -n "$ECHO" && $ECHO "CFLAGS = $CFLAGS"   >> $CONF
-test -n "$ECHO" && $ECHO "CXXFLAGS = $CXXFLAGS">>$CONF
-test -n "$ECHO" && $ECHO "DEVEL_LIBS = $DEVEL_LIBS" >> $CONF
-test -n "$ECHO" && $ECHO "LDFLAGS = $LDFLAGS" >> $CONF
-test -n "$ECHO" && $ECHO "INSTALL = $INSTALL" >> $CONF
-
-
-test -n "$ECHO" && $ECHO "" >> $CONF
-test -n "$ECHO" && $ECHO "" >> $CONF
-
-test -n "$INFOECHO" && $INFOECHO ""
-test -n "$INFOECHO" && $INFOECHO ""
-
-# prepare makefile from MAKEFILE_DIR
-if [ -n "$ECHO" ]; then
-  PREPARE_MAKEFILES=1; export PREPARE_MAKEFILES
-  $ROOT_DIR/configure_tests.sh
-  PREPARE_MAKEFILES=0; export PREPARE_MAKEFILES
-fi
-
-test -n "$ECHO" && $ECHO "" >> $CONF_H
-test -n "$ECHO" && $ECHO "#endif /* OY_CONFIG_H */" >> $CONF_H
-
-test -f error.tmp && ERROR=1
-test -f error.tmp && rm error.tmp
-if [ $ERROR != 0 ] && [ -z "$quick" ]; then
-  echo_="!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  echo_="!!!                     An ERROR occured                     !!!"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  echo_="!!!                     See Log above                        !!!"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  echo_="!!!                     remove  $CONF                     !!!"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  echo_="!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  test -n "$INFOECHO" && $INFOECHO ""
-  rm Makefile $CONF_H $CONF_SH $SPEC $PKGC
-  exit
-elif [ $WARNING != 0 ]; then
-  echo_="!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  echo_="!!!                     Warning                              !!!"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  echo_="!!!                     See Log above                        !!!"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-  echo_="!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
-fi
-
-if [ -z "$quick" ]; then
-  test -n "$ECHO" && $ECHO "" > mkdepend
-  test -n "$ECHO" && $ECHO "" > cobjects
-  $MAKE depend
-fi
-
-echo_="char * oy_config_log_=\" \\"
-test -n "$ECHO" && $ECHO "$echo_" >  $CONF_LOG.h
-test -n "$ECHO" && cat $CONF_LOG | sed 's/\"/\\\"/g ; s/$/\ \\n\\/g'  >> $CONF_LOG.h
-echo_="\";"
-test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG.h
-
-
-if [ -f error.txt ] && [ `cat error.txt | wc -l` -lt 1 ]; then
-  rm error.txt
-fi
+cmake -DCMAKE_INSTALL_PREFIX=$prefix -DLIB_SUFFIX=$BARCH $ROOT_DIR
 
 exit 0
