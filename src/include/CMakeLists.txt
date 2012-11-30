@@ -1,5 +1,6 @@
 INSTALL( FILES
         icc34.h
+	oyranos.h
 	oyranos_colour.h
 	oyranos_config.h
 	oyranos_core.h

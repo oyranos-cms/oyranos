@@ -28,3 +28,6 @@ CONFIGURE_FILE (
 		@ONLY
 	)
 
+INSTALL( FILES
+	oyranos_alpha.h
+	DESTINATION include/${PACKAGE_NAME}/alpha)

@@ -26,3 +26,4 @@ ADD_LIBRARY( oyranos_core SHARED ${CFILES_CORE})
 TARGET_LINK_LIBRARIES ( oyranos_core ${EXTRA_LIBS} )
 
 INSTALL( TARGETS oyranos_core DESTINATION lib${LIB_SUFFIX} )
+INSTALL (FILES "${CMAKE_BINARY_DIR}/src/include/oyranos_version.h" DESTINATION include/${PACKAGE_NAME})
