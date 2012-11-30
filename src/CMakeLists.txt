@@ -138,6 +138,8 @@ ADD_SUBDIRECTORY (modules)
 
 ADD_SUBDIRECTORY (tests)
 
+ADD_SUBDIRECTORY (tools)
+
 ADD_CUSTOM_COMMAND( OUTPUT generator/oyAPIGenerator
                 COMMAND cd generator/ && CMAKE_PREFIX_PATH="${CMAKE_CURRENT_BINARY_DIR}/generator/grantlee/lib/cmake/grantlee/" cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-g -Wall ${CMAKE_CURRENT_SOURCE_DIR}/generator && make || echo "Did you run ${CMAKE_CURRENT_SOURCE_DIR}/generator/download_grantlee.sh in ${CMAKE_CURRENT_BINARY_DIR}/generator/ ?"
 		)
