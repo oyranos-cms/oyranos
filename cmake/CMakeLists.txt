@@ -52,15 +52,3 @@ install ( FILES
 		DESTINATION ${TARGET_CMAKE_FOLDER}
 	)
 
-#pkg-config files
-configure_file (
-		"${CMAKE_CURRENT_SOURCE_DIR}/oyranos.pc.in"
-		"${CMAKE_CURRENT_BINARY_DIR}/oyranos.pc"
-		@ONLY
-	)
-
-install ( FILES
-		"${CMAKE_CURRENT_BINARY_DIR}/oyranos.pc"
-		DESTINATION lib${LIB_SUFFIX}/${TARGET_PKGCONFIG_FOLDER}
-	)
-
