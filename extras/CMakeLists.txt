@@ -6,6 +6,9 @@ CONFIGURE_FILE(
 
 INSTALL( PROGRAMS "${CMAKE_BINARY_DIR}/oyranos-config" DESTINATION bin )
 INSTALL( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-profile-install" DESTINATION bin )
+INSTALL( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-monitor-daemon" DESTINATION bin )
+INSTALL( FILES oyranos-profile-install.desktop DESTINATION share/applications)
+INSTALL( FILES oyranos-monitor-setup.desktop DESTINATION share/applications)
 
 #pkg-config files
 CONFIGURE_FILE(
