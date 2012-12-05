@@ -28,3 +28,4 @@ IF( CAIRO_FOUND )
   INSTALL (TARGETS oyranos-profile-graph DESTINATION bin)
 ENDIF()
 
+ADD_SUBDIRECTORY (qcmsevents)
