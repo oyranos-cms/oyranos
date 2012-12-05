@@ -57,8 +57,9 @@ ENDIF( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 MESSAGE( "-- Found PLATFORM: ${PLATFORM}" )
 
 #now add all directories
-ADD_SUBDIRECTORY (src)
-ADD_SUBDIRECTORY (cmake)
+ADD_SUBDIRECTORY( src )
+ADD_SUBDIRECTORY( cmake )
+ADD_SUBDIRECTORY( extras )
 
 
 ADD_CUSTOM_TARGET(uninstall

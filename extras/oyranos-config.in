@@ -1,3 +1,55 @@
+#!/bin/sh
+# generated auomatically by configure
+
+X11_LIB_PATH="-L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir"
+c=-lc
+ltdl=-lltdl
+dl=-ldl
+iconv=
+intl=
+m=-lm
+xml2=-lxml2
+Xfixes=-lXfixes
+cups=-lcups
+sane=
+XNVCtrl=
+yajl=-lyajl
+pthread=-lpthread
+Xinerama=-lXinerama
+Xxf86vm=-lXxf86vm
+Xrandr=-lXrandr
+Xext=-lXext
+X11=-lX11
+
+TARGET=oyranos
+
+VERSION=@OYRANOS_VERSION@
+VERSION_L=$((@OYRANOS_VERSION_MAJOR@*10000+@OYRANOS_VERSION_MINOR@*100+@OYRANOS_VERSION_MICRO@))
+VERSION_A=@OYRANOS_VERSION_MAJOR@
+VERSION_B=@OYRANOS_VERSION_MINOR@
+VERSION_C=@OYRANOS_VERSION_MICRO@
+
+prefix="@CMAKE_INSTALL_PREFIX@"
+exec_prefix="$prefix"
+bindir="@CMAKE_INSTALL_PREFIX@/bin"
+libdir="@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@"
+cmmsubpath=@OY_CMMSUBPATH@
+metasubpath=@OY_METASUBPATH@
+cmmdir="$libdir/$cmmsubpath"
+includedir="$prefix/include/oyranos"
+datadir="$prefix/share"
+mandir="$datadir/man"
+syscolordir="$datadir/color"
+usercolordir=~/.config/color
+usercolordata=~/.local/share/color
+iccdirname=icc
+settingsdirname=settings
+targetdirname=target
+pixmapdir="$datadir/pixmaps"
+icondir="$datadir/icons"
+desktopdir="$datadir/applications"
+oyranos_add="-L$libdir $ltdl $xml2 $iconv $intl $yajl"
+
 if [ -n "$PKG_CONFIG_PATH" ]; then
   PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$libdir/pkgconfig
 else
@@ -104,7 +156,7 @@ if [ -z "$elektra" ]; then
 fi
 
 if [ "$echo_cflags" = "yes" ]; then
-  echo "-I$includedir -I$includedir/alpha/object"
+  echo "-I$includedir"
 fi
 
 if [ "$echo_ldflags" = "yes" ]; then
