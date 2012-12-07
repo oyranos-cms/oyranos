@@ -128,25 +128,27 @@ LINK_DIRECTORIES( ${LIBPNG_LIBRARY_DIRS} )
 get_property(inc_dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
 MESSAGE( "-- INCLUDE_DIRECTORIES: ${inc_dirs}" )
 
-ADD_SUBDIRECTORY (include)
+ADD_SUBDIRECTORY( include )
 
-ADD_SUBDIRECTORY (include_private)
+ADD_SUBDIRECTORY( include_private )
 
-ADD_SUBDIRECTORY (liboyranos_core)
+ADD_SUBDIRECTORY( liboyranos_core )
 
-ADD_SUBDIRECTORY (liboyranos_object)
+ADD_SUBDIRECTORY( liboyranos_object )
 
-ADD_SUBDIRECTORY (liboyranos_modules)
+ADD_SUBDIRECTORY( liboyranos_modules )
 
-ADD_SUBDIRECTORY (liboyranos_config)
+ADD_SUBDIRECTORY( liboyranos_config )
 
-ADD_SUBDIRECTORY (liboyranos)
+ADD_SUBDIRECTORY( liboyranos )
 
-ADD_SUBDIRECTORY (modules)
+ADD_SUBDIRECTORY( modules )
 
-ADD_SUBDIRECTORY (tests)
+ADD_SUBDIRECTORY( tests )
 
-ADD_SUBDIRECTORY (tools)
+ADD_SUBDIRECTORY( tools )
+
+ADD_SUBDIRECTORY( examples )
 
 SET( DOC_SOURCES
 	doxymentation doxymentation_common
