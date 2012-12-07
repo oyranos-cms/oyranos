@@ -14,8 +14,8 @@ IF( QT_FOUND AND UNIX AND NOT APPLE )
   ADD_EXECUTABLE( qcmsevents ${qcmsevents_SRCS} ${qcmsevents_RCC_SRCS} )
   TARGET_LINK_LIBRARIES ( qcmsevents oyranos ${EXTRA_LIBS}
                  ${QT_LIBRARIES} ${XCM_LIBRARIES} )
-  INSTALL (TARGETS qcmsevents DESTINATION bin)
-  INSTALL (FILES qcmsevents-applet.desktop DESTINATION share/applications)
-  INSTALL (FILES qcmsevents.svg DESTINATION share/icons)
+  INSTALL( TARGETS qcmsevents DESTINATION bin )
+  INSTALL( FILES qcmsevents-applet.desktop DESTINATION share/applications )
+  INSTALL( FILES qcmsevents.svg DESTINATION share/icons )
 ENDIF()
 

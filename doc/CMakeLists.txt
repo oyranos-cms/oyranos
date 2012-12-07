@@ -17,3 +17,19 @@ CONFIGURE_FILE(
                 "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile_alpha"
                 @ONLY
        )
+
+SET( MAN1_PAGES
+     man/oyranos-monitor.1
+     man/oyranos-policy.1
+     man/oyranos-profile.1
+     man/oyranos-profile-graph.1
+     man/oyranos-profile-install.1
+     man/oyranos-profiles.1
+   )
+SET( MAN3_PAGES
+     man/oyranos.3
+     man/oyranos-config.3
+   )
+
+INSTALL( FILES ${MAN1_PAGES} DESTINATION share/man/man1 )
+INSTALL( FILES ${MAN3_PAGES} DESTINATION share/man/man3 )
