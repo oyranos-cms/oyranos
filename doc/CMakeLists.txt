@@ -1,0 +1,19 @@
+ADD_CUSTOM_TARGET(docu
+	COMMAND
+test -n 'which doxygen' && ( cat ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.files | grep ^FILE_PATTERNS | sed 's%\;/home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/% %g \; s%\;% %g' >> Doxyfile \; doxygen Doxyfile \; cp ${CMAKE_SOURCE_DIR}/${PACKAGE_NAME}_logo.png html/ \; cp ${CMAKE_CURRENT_SOURCE_DIR}/doxygen.css html/ \; doxygen ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile_alpha \; cp ${CMAKE_SOURCE_DIR}/${PACKAGE_NAME}_logo.png doc_alpha/html/) || echo "Will not create Documentation because doxygen is missing" )
+
+CONFIGURE_FILE(
+                "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in"
+                "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile"
+                @ONLY
+       )
+CONFIGURE_FILE(
+                "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.files.in"
+                "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.files"
+                @ONLY
+       )
+CONFIGURE_FILE(
+                "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile_alpha.in"
+                "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile_alpha"
+                @ONLY
+       )
