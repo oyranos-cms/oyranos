@@ -33,7 +33,7 @@ OYAPI {{ class.name }} * OYEXPORT
  *
  *  @param[in]     {{ class.baseName|lower }}                 {{ class.baseName }} struct object
  *  @param         object              NULL - means reference,
- *                                     the optional object triffers a real copy
+ *                                     the optional object triggers a real copy
  */
 OYAPI {{ class.name }}* OYEXPORT
   oy{{ class.baseName }}_Copy( {{ class.name }} *{{ class.baseName|lower }}, oyObject_s object )
