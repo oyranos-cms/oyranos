@@ -272,6 +272,7 @@ int main( int argc , char** argv )
     }
   }
 
+#if 0
   if(other_args)
   {
     forms_args->print = 0;
@@ -319,6 +320,7 @@ int main( int argc , char** argv )
         }
       }
   }
+#endif
 
   if(output_profile)
   {

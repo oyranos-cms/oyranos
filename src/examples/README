@@ -1,0 +1,40 @@
+Overview:
+    This directory contains example applications.
+
+  oyranos_cmm_dDev.c: dummy device backend
+  oyranos_cmm_dFil.c: dummy filter module
+  image2pdf:      simple RAW to Cairo renderer
+  image_display:  simple image viewer using Oyranos
+  qcmsevents:     X11 CMS events observer (_ICC_PROFILE_xxx, _ICC_COLOR_xxx )
+
+
+Dependencies:
+  all:
+      * installed Oyranos
+  qcmsevents:
+      * libXcm from Tomas Carnecky and the Xfixes extension
+  image2pdf:
+      * Cairo, dcraw
+  image_display:
+      * FLTK
+
+
+Notes:
+    image_display is compatible to the X Color Management spec and
+    colour corrects its image area itself, while remaining the widget area un
+    changed. The desktop and the image_display non image area is colour
+    corrected by a colour server under Compiz/KWin. The colour server must 
+    be switched on to do so. A monitor profile should be installed eigther with
+    oyranos-monitor or some other tool.
+
+
+Building:
+    # to avoid trouble, use the Oyranos source dir "make examples" command
+    $ make
+
+
+Known Issues:
+  qcmsevents:
+    qcmsevents needs window manager supporting the extended ICCCM hint
+    _NET_CLIENT_LIST. E.g. twm does not provide this information.
+
