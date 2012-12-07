@@ -56,7 +56,7 @@ endif(LCMS2_INCLUDE_DIR  AND NOT  LCMS2_VERSION)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(LCMS2 REQUIRED_VARS LCMS2_LIBRARIES LCMS2_INCLUDE_DIR
-                                       VERSION_VAR LCMS2_DOT_VERSION )
+                                 )
 
 IF(LCMS2_FOUND)
   SET( HAVE_LCMS2 TRUE )
