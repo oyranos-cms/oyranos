@@ -28,4 +28,9 @@ IF( CAIRO_FOUND )
   INSTALL (TARGETS oyranos-profile-graph DESTINATION bin)
 ENDIF()
 
+# colour conversion
+ADD_EXECUTABLE( oyranos-icc "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_convert.c" )
+TARGET_LINK_LIBRARIES( oyranos-icc oyranos ${EXTRA_LIBS} )
+INSTALL (TARGETS oyranos-icc DESTINATION bin)
+
 ADD_SUBDIRECTORY (qcmsevents)

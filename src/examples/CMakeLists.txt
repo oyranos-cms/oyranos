@@ -34,11 +34,6 @@ ADD_EXECUTABLE( taxi "${CMAKE_CURRENT_SOURCE_DIR}/taxi/taxi.c" )
 TARGET_LINK_LIBRARIES( taxi oyranos ${EXTRA_LIBS} )
 #INSTALL (TARGETS taxi DESTINATION bin)
 
-# colour conversion
-ADD_EXECUTABLE( oyranos-icc "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_convert/oyranos_convert.c" )
-TARGET_LINK_LIBRARIES( oyranos-icc oyranos ${EXTRA_LIBS} )
-#INSTALL (TARGETS oyranos-icc DESTINATION bin)
-
 # primitive picture montage with ICC support
 IF( CAIRO_FOUND )
   ADD_EXECUTABLE( image2pdf "${CMAKE_CURRENT_SOURCE_DIR}/image2pdf/image2pdf.c" )
