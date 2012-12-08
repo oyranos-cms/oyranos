@@ -135,6 +135,8 @@ FIND_PACKAGE( LibPNG REQUIRED )
 INCLUDE_DIRECTORIES( ${LIBPNG_INCLUDE_DIRS} )
 LINK_DIRECTORIES( ${LIBPNG_LIBRARY_DIRS} )
 
+FIND_PACKAGE( GetText )
+
 get_property(inc_dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
 MESSAGE( "-- INCLUDE_DIRECTORIES: ${inc_dirs}" )
 
@@ -160,6 +162,7 @@ ADD_SUBDIRECTORY( tools )
 
 ADD_SUBDIRECTORY( examples )
 
+
 SET( DOC_SOURCES
 	doxymentation doxymentation_common
 	${CFILES_CORE_PUBLIC}
@@ -176,6 +179,48 @@ SET( DOC_SOURCES
         PARENT_SCOPE
    )
 
+
+# i18n
+IF( GETTEXT_FOUND )
+  SET(_potFile ${CMAKE_SOURCE_DIR}/po/${PACKAGE_NAME}.pot)
+  #SET( _xgettext_option_list --language=C --keyword=_ --keyword=N_ --keyword=C_:1c,2 --keyword=NC_:1c,2 -s --package-name=${PROJECT_NAME} --package-version=${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR} )
+  SET( _xgettext_option_list --keyword=gettext --flag=gettext:1:pass-c-format --keyword=_ --flag=_:1:pass-c-format --keyword=N_ --flag=N_:1:pass-c-format  --copyright-holder='Kai-Uwe Behrmann'  --msgid-bugs-address='ku.b@gmx.de' --from-code=utf-8 --package-name=${PROJECT_NAME} --package-version=${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR} )
+  SET( XGETTEXT_CMD xgettext )
+  FILE( GLOB _src_list 
+        API_generated/*.c API_generated/*.h
+        liboyranos/*.c
+        liboyranos_core/*.c
+        liboyranos_object/*.c
+        liboyranos_modules/*.c
+        liboyranos_config/*.c
+        modules/*.c
+        modules/devices/*.c
+        modules/*.cpp
+        modules/devices/*.cpp
+        tools/*.c tools/qcmsevents/*.cpp tools/qcmsevents/*.cxx
+      )
+  ADD_CUSTOM_COMMAND(OUTPUT ${_potFile}
+    COMMAND ${XGETTEXT_CMD} ${_xgettext_option_list} -o ${_potFile} ${_src_list}
+    DEPENDS ${_src_list}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Extract translatable messages to ${_potFile}"
+  )
+
+  ADD_CUSTOM_TARGET(i18n ALL
+    DEPENDS ${_potFile}
+  )
+
+  SET( LINGUAS ../po/cs.po ../po/de.po ../po/eo.po ../po/eu.po  ../po/fr.po )
+  GETTEXT_CREATE_TRANSLATIONS( ${_potFile} ${LINGUAS} )
+
+  # compile translations always to have them ready for installation
+  ADD_CUSTOM_TARGET(translate ALL
+    DEPENDS i18n translations
+  )
+ENDIF()
+
+
+# code generation
 ADD_CUSTOM_COMMAND( OUTPUT generator/oyAPIGenerator
                 COMMAND cd generator/ && CMAKE_PREFIX_PATH="${CMAKE_CURRENT_BINARY_DIR}/generator/grantlee/lib/cmake/grantlee/" cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-g -Wall ${CMAKE_CURRENT_SOURCE_DIR}/generator && make || echo "Did you run ${CMAKE_CURRENT_SOURCE_DIR}/generator/download_grantlee.sh in ${CMAKE_CURRENT_BINARY_DIR}/generator/ ?"
 		)
