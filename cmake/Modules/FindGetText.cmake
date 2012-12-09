@@ -65,7 +65,7 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gettext
                                   REQUIRED_VARS GETTEXT_MSGMERGE_EXECUTABLE GETTEXT_MSGFMT_EXECUTABLE
                                   VERSION_VAR GETTEXT_VERSION_STRING)
 
-INCLUDE(CMakeParseArguments)
+#INCLUDE(CMakeParseArguments)
 
 FUNCTION(_GETTEXT_GET_UNIQUE_TARGET_NAME _name _unique_name)
    SET(propertyName "_GETTEXT_UNIQUE_COUNTER_${_name}")
