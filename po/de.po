@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2012-12-08 10:56+0100\n"
+"POT-Creation-Date: 2012-12-09 18:11+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -19,313 +19,301 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: vim 6.0\n"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_core/oyranos_core.c:298
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/qcmsevents/qcmsevents.cpp:172
+#: liboyranos_core/oyranos_core.c:298 tools/qcmsevents/qcmsevents.cpp:172
 #, c-format
 msgid "!!! ERROR"
 msgstr "!!! Fehler"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:68
+#: tools/oyranos_profiles.c:68
 msgid "(device) link class"
 msgstr "(Geräte) Farbraumverknüpfung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_alpha.c:1759
+#: liboyranos/oyranos_alpha.c:1759
 msgid "---"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:437
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oicc.c:255
+#: liboyranos_config/oyranos_icc.c:437 modules/oyranos_cmm_oicc.c:255
 msgid "----"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:221
+#: tools/oyranos_gamma.c:221
 msgid "--module name"
 msgstr "--module Name"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:208
+#: tools/oyranos_gamma.c:208
 msgid "--short print only the file name"
 msgstr "--short zeige nur den Dateinamen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:222
+#: tools/oyranos_gamma.c:222
 msgid "-d device_position_start_from_zero"
 msgstr "-d garäte_position_startet_von_null"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:220
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:101
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile_graph.c:185
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:94
+#: tools/oyranos_gamma.c:220 tools/oyranos_profile.c:101
+#: tools/oyranos_profile_graph.c:185 tools/oyranos_profiles.c:94
 msgid "-v verbose"
 msgstr "-v plauders"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2946
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2949
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image_ppm.c:262
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image_ppm.c:1089
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2555
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2558
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:535
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:1138
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1158
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1161
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_CUPS.c:836
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_CUPS.c:839
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_qarz.c:1064
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_qarz.c:1067
+#: modules/oyranos_cmm_lcm2.c:2946 modules/oyranos_cmm_lcm2.c:2949
+#: modules/oyranos_cmm_oyra_image_ppm.c:262
+#: modules/oyranos_cmm_oyra_image_ppm.c:1089 modules/oyranos_cmm_lcms.c:2555
+#: modules/oyranos_cmm_lcms.c:2558 modules/oyranos_cmm_oPNG.c:535
+#: modules/oyranos_cmm_oPNG.c:1138 modules/devices/oyranos_cmm_oyX1.c:1158
+#: modules/devices/oyranos_cmm_oyX1.c:1161
+#: modules/devices/oyranos_cmm_CUPS.c:836
+#: modules/devices/oyranos_cmm_CUPS.c:839
+#: modules/devices/oyranos_cmm_qarz.c:1064
+#: modules/devices/oyranos_cmm_qarz.c:1067
 msgid "/"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:789
+#: liboyranos_config/oyranos_icc.c:789
 msgid "0"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:772
+#: liboyranos_config/oyranos_icc.c:772
 msgid "0/45, 45/0"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:773
+#: liboyranos_config/oyranos_icc.c:773
 msgid "0/d or d/0"
 msgstr "0/d oder d/0"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:265
+#: liboyranos_config/oyranos_icc.c:265
 msgid "1. Channel"
 msgstr "1. Kanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:754
+#: liboyranos_config/oyranos_icc.c:754
 msgid "10 degree (1964)"
 msgstr "10 Grad (1964)"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:274
+#: liboyranos_config/oyranos_icc.c:274
 msgid "10. Channel"
 msgstr "10. Kanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:790
+#: liboyranos_config/oyranos_icc.c:790
 msgid "100"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:140
+#: liboyranos_config/oyranos_icc.c:140
 msgid "10color"
 msgstr "10farbig"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:275
+#: liboyranos_config/oyranos_icc.c:275
 msgid "11. Channel"
 msgstr "11. Kanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:142
+#: liboyranos_config/oyranos_icc.c:142
 msgid "11color"
 msgstr "11farbig"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:276
+#: liboyranos_config/oyranos_icc.c:276
 msgid "12. Channel"
 msgstr "12. Kanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:144
+#: liboyranos_config/oyranos_icc.c:144
 msgid "12color"
 msgstr "12farbig"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:277
+#: liboyranos_config/oyranos_icc.c:277
 msgid "13. Channel"
 msgstr "13. Kanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:146
+#: liboyranos_config/oyranos_icc.c:146
 msgid "13color"
 msgstr "13farbig"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:278
+#: liboyranos_config/oyranos_icc.c:278
 msgid "14. Channel"
 msgstr "14. Kanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:148
+#: liboyranos_config/oyranos_icc.c:148
 msgid "14color"
 msgstr "14farbig"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:279
+#: liboyranos_config/oyranos_icc.c:279
 msgid "15. Channel"
 msgstr "15. Kanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:150
+#: liboyranos_config/oyranos_icc.c:150
 msgid "15color"
 msgstr "15farbig"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:1050
+#: modules/oyranos_cmm_lraw.cpp:1050
 msgid "16-bit"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:280
+#: liboyranos_config/oyranos_icc.c:280
 msgid "16. Channel"
 msgstr "16. Kanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:753
+#: liboyranos_config/oyranos_icc.c:753
 msgid "2 degree (1931)"
 msgstr "2 Grad (1931)"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:266
+#: liboyranos_config/oyranos_icc.c:266
 msgid "2. Channel"
 msgstr "2. Kanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile_graph.c:174
+#: tools/oyranos_profile_graph.c:174
 msgid "2D Graph from profiles:"
 msgstr "2D Zeichnung vom Farbprofil"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:126
+#: liboyranos_config/oyranos_icc.c:126
 msgid "2color"
 msgstr "2farbig"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:267
+#: liboyranos_config/oyranos_icc.c:267
 msgid "3. Channel"
 msgstr "3. Kanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:127
+#: liboyranos_config/oyranos_icc.c:127
 msgid "3color"
 msgstr "3farbig"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:268
+#: liboyranos_config/oyranos_icc.c:268
 msgid "4. Channel"
 msgstr "4. Kanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:128
+#: liboyranos_config/oyranos_icc.c:128
 msgid "4color"
 msgstr "4farbig"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:269
+#: liboyranos_config/oyranos_icc.c:269
 msgid "5. Channel"
 msgstr "5. Kanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:130
+#: liboyranos_config/oyranos_icc.c:130
 msgid "5color"
 msgstr "5farbig"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:270
+#: liboyranos_config/oyranos_icc.c:270
 msgid "6. Channel"
 msgstr "6. Kanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:132
+#: liboyranos_config/oyranos_icc.c:132
 msgid "6color"
 msgstr "6farbig"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:271
+#: liboyranos_config/oyranos_icc.c:271
 msgid "7. Channel"
 msgstr "7. Kanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:134
+#: liboyranos_config/oyranos_icc.c:134
 msgid "7color"
 msgstr "7farbig"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:1044
+#: modules/oyranos_cmm_lraw.cpp:1044
 msgid "8-bit"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:272
+#: liboyranos_config/oyranos_icc.c:272
 msgid "8. Channel"
 msgstr "8. Kanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:136
+#: liboyranos_config/oyranos_icc.c:136
 msgid "8color"
 msgstr "8farbig"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:273
+#: liboyranos_config/oyranos_icc.c:273
 msgid "9. Channel"
 msgstr "9. Kanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:138
+#: liboyranos_config/oyranos_icc.c:138
 msgid "9color"
 msgstr "9farbig"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyFilterNode_s.c:256
+#: API_generated/oyFilterNode_s.c:256
 msgid "?? Nothing to add ??"
 msgstr "?? Nichts hinzuzufügen ??"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:714
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:739
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:757
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:776
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:793
+#: liboyranos_config/oyranos_icc.c:714 liboyranos_config/oyranos_icc.c:739
+#: liboyranos_config/oyranos_icc.c:757 liboyranos_config/oyranos_icc.c:776
+#: liboyranos_config/oyranos_icc.c:793
 msgid "???"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:180
+#: tools/oyranos_profiles.c:180
 msgid "A single path option is required"
 msgstr "Eine einzelne Pfadangabe wird benötigt"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_xml.c:693
+#: liboyranos_config/oyranos_xml.c:693
 msgid "About Oyranos"
 msgstr "Über Oyranos"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:463
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:483
+#: liboyranos_config/oyranos_texts.c:463 liboyranos_config/oyranos_texts.c:483
 msgid "Absolute Colorimetric"
 msgstr "Absolut Farbmetrisch"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:545
+#: liboyranos_config/oyranos_icc.c:545
 msgid "Abstract"
 msgstr "Abstrakter Farbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:420
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:430
+#: liboyranos_config/oyranos_texts.c:420 liboyranos_config/oyranos_texts.c:430
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr "Verhalten bei Ungleichheit von Bild- und Editierfarbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:203
+#: tools/oyranos_gamma.c:203
 msgid "Activate profiles:"
 msgstr "Aktivieren eines Profiles:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:676
+#: liboyranos_config/oyranos_icc.c:676
 msgid "Active matrix monitor"
 msgstr "Aktivmatrixmonitor"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2545
+#: modules/oyranos_cmm_lcm2.c:2545
 msgid "Adaptation State"
 msgstr "Farbanpassungsgrad"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2548
+#: modules/oyranos_cmm_lcm2.c:2548
 msgid "Adaptation state for absolute colorimetric intent"
 msgstr "Farbanpassungsgrad für die absolut farbmetrische Übertragung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:253
+#: liboyranos_config/oyranos_texts.c:253
 msgid "All"
 msgstr "Alle"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_SANE.c:982
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:906
+#: modules/devices/oyranos_cmm_SANE.c:982
+#: modules/devices/oyranos_cmm_oyRE.cpp:906
 msgid "All the small details for using this module."
 msgstr "All die kleinen Details für dieses Modul"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyObserver_s.c:475
+#: API_generated/oyObserver_s.c:475
 msgid "Already enabled"
 msgstr "Bereits eingeschalten"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:1061
+#: modules/oyranos_cmm_oyra_image.c:1061
 msgid "Apply regions of interesst in form of simple rectangles."
 msgstr "Wende Regionen an in Form von einfachen Rechtecken."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:413
+#: liboyranos_config/oyranos_texts.c:413
 msgid "Assign Assumed Profile"
 msgstr "Vermutetes Profil Zuweisen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:413
+#: liboyranos_config/oyranos_texts.c:413
 msgid "Assign No Profile"
 msgstr "Weise kein Profil zu"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:348
+#: liboyranos_config/oyranos_texts.c:348
 msgid "Assigns an untagged CIE*Lab Image this color space"
 msgstr "Weise einem CIE*Lab Bild ohne Profil ein Farbraum zu"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:379
+#: liboyranos_config/oyranos_texts.c:379
 msgid "Assigns an untagged Cmyk Image this color space"
 msgstr "Weise einem nicht festgeschriebenen Cmyk Bild diesen Farbraum zu"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:389
+#: liboyranos_config/oyranos_texts.c:389
 msgid "Assigns an untagged Gray Image this color space"
 msgstr "Weise einem nicht festgeschriebenen Grau Bild diesen Farbraum zu"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:358
+#: liboyranos_config/oyranos_texts.c:358
 msgid "Assigns an untagged Rgb Image this color space"
 msgstr "Weise einem Rgb Bild ohne Profil ein Farbraum zu"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:368
+#: liboyranos_config/oyranos_texts.c:368
 msgid "Assigns an untagged Rgb Image with source from the WWW this color space"
 msgstr "Weise einem Rgb Bild ihne ICC Profil aus dem WWW diesen Farbraum zu"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:369
+#: liboyranos_config/oyranos_texts.c:369
 msgid ""
 "Assigns an untagged Rgb Image with source from the WWW this color space. "
 "This will always be sRGB as defined by W3C."
@@ -333,67 +321,66 @@ msgstr ""
 "Weise einem Rgb Bild ohne ICC Profile aus dem WWW diesen Farbraum zu. Das "
 "wird sRGB wie vom W3C vorgegeben sein."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:338
+#: liboyranos_config/oyranos_texts.c:338
 msgid "Assigns an untagged XYZ Image this color space"
 msgstr "Weise einem XYZ Bild ohne Profil ein Farbraum zu"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:378
+#: liboyranos_config/oyranos_texts.c:378
 msgid "Assumed Cmyk source"
 msgstr "Vermutete Cmyk Quelle"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:172
+#: liboyranos_config/oyranos_texts.c:172
 msgid "Assumed Color Space"
 msgstr "Vermuteter Farbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:173
+#: liboyranos_config/oyranos_texts.c:173
 msgid "Assumed Color Space for untagged colors"
 msgstr "Erwarteter Farbraum für Farben ohne Farbprofil"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:388
+#: liboyranos_config/oyranos_texts.c:388
 msgid "Assumed Gray source"
 msgstr "Vermutete Grau Quelle"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:347
+#: liboyranos_config/oyranos_texts.c:347
 msgid "Assumed Lab source"
 msgstr "Vermutete Lab Quelle"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:357
+#: liboyranos_config/oyranos_texts.c:357
 msgid "Assumed Rgb source"
 msgstr "Vermutete Rgb Quelle"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:367
+#: liboyranos_config/oyranos_texts.c:367
 msgid "Assumed Web source"
 msgstr "Vermutete Web Quelle"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:337
+#: liboyranos_config/oyranos_texts.c:337
 msgid "Assumed XYZ source"
 msgstr "Vermutete XYZ Quelle"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:304
+#: tools/oyranos_gamma.c:304
 msgid "Available devices"
 msgstr "Verfügbare Geräte"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:470
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:471
+#: liboyranos_config/oyranos_texts.c:470 liboyranos_config/oyranos_texts.c:471
 msgid "BPC affects often only the Relative Colorimetric Rendering intent."
 msgstr "BPC beeinflusst oft nur die Relativ Farbmetrische Übertragungsart."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:208
+#: liboyranos_config/oyranos_texts.c:208
 msgid "Behaviour"
 msgstr "Verhalten"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:500
+#: liboyranos_config/oyranos_texts.c:500
 msgid ""
 "Behaviour for preselecting Hardproofing with a Proofing Profile at print time"
 msgstr ""
 "Verhalten für die Gerätenachbildung mit dem Standardsimulationsprofil auf "
 "dem Drucker"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:480
+#: liboyranos_config/oyranos_texts.c:480
 msgid "Behaviour of color space transformation for proofing"
 msgstr "Verhalten von Farbtransformationen bei der Gerätesimulation"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:481
+#: liboyranos_config/oyranos_texts.c:481
 msgid ""
 "Behaviour of color space transformation for proofing. Most people want a "
 "preview on screen only. The Relative Colorimetric intent is right for that. "
@@ -406,92 +393,88 @@ msgstr ""
 "benötigt eine sorgfältige komplizierte Einrichtung für Seit an Seit "
 "Vergleiche."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:1035
+#: modules/oyranos_cmm_lraw.cpp:1035
 msgid "Bits per Sample"
 msgstr "Bit pro Farbkanal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:216
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:232
+#: liboyranos_config/oyranos_icc.c:216 liboyranos_config/oyranos_icc.c:232
 msgid "Black"
 msgstr "Schwarz"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2467
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2109
+#: modules/oyranos_cmm_lcm2.c:2467 modules/oyranos_cmm_lcms.c:2109
 msgid "Black Preservation"
 msgstr "Schwarzerhalt"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:213
+#: liboyranos_config/oyranos_icc.c:213
 msgid "Blue"
 msgstr "Blau"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:374
+#: liboyranos_config/oyranos_icc.c:374
 msgid "Blue Colorant"
 msgstr "Blaue Grundfarbe"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1888
+#: modules/oyranos_cmm_oyIM_profile.c:1888
 msgid "Blue Gamma:"
 msgstr "Blaue Tonwertkurve:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:375
+#: liboyranos_config/oyranos_icc.c:375
 msgid "Blue tone reproduction curve"
 msgstr "Blaue Farbwiedergabekurve"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1872
+#: modules/oyranos_cmm_oyIM_profile.c:1872
 msgid "Blue xy:"
 msgstr "Blau xy:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:191
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:196
+#: liboyranos_config/oyranos_icc.c:191 liboyranos_config/oyranos_icc.c:196
 msgid "CIE *L"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:192
+#: liboyranos_config/oyranos_icc.c:192
 msgid "CIE *a"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:193
+#: liboyranos_config/oyranos_icc.c:193
 msgid "CIE *b"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:197
+#: liboyranos_config/oyranos_icc.c:197
 msgid "CIE *u"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:198
+#: liboyranos_config/oyranos_icc.c:198
 msgid "CIE *v"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:186
+#: liboyranos_config/oyranos_icc.c:186
 msgid "CIE X"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:187
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:206
+#: liboyranos_config/oyranos_icc.c:187 liboyranos_config/oyranos_icc.c:206
 msgid "CIE Y (Luminance)"
 msgstr "CIE Y (Leuchtdichte)"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:188
+#: liboyranos_config/oyranos_icc.c:188
 msgid "CIE Z"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:207
+#: liboyranos_config/oyranos_icc.c:207
 msgid "CIE x"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:208
+#: liboyranos_config/oyranos_icc.c:208
 msgid "CIE y"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1191
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1203
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1211
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1292
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1304
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1312
+#: modules/oyranos_cmm_oyIM_profile.c:1191
+#: modules/oyranos_cmm_oyIM_profile.c:1203
+#: modules/oyranos_cmm_oyIM_profile.c:1211
+#: modules/oyranos_cmm_oyIM_profile.c:1292
+#: modules/oyranos_cmm_oyIM_profile.c:1304
+#: modules/oyranos_cmm_oyIM_profile.c:1312
 msgid "CLUT"
 msgstr "3D Interpolationstabelle"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:80
+#: tools/oyranos_convert.c:80
 msgid ""
 "CLUT is a levels x levels*levels sized PPM, --levels defaults for clut to 64"
 msgstr ""
@@ -499,74 +482,71 @@ msgstr ""
 "dimensionierte PPM-Bilder. --levels (Rastergröße) nutzt initial 64 für -f "
 "clut"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2948
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2557
+#: modules/oyranos_cmm_lcm2.c:2948 modules/oyranos_cmm_lcms.c:2557
 msgid "CMM"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:379
+#: liboyranos_config/oyranos_icc.c:379
 msgid "Calibration date"
 msgstr "Kalibrationsdatum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:1390
+#: modules/oyranos_cmm_oyra_image.c:1390
 msgid "Call next filter in node"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:786
+#: modules/devices/oyranos_cmm_oyRE.cpp:786
 msgid "CameraRaw"
 msgstr "Kamerarohdaten"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:453
+#: modules/devices/oyranos_monitor_x11.c:453
 msgid "Can not read hardware information from device."
 msgstr "Kann Geräteinformation nicht auslesen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfile_s.c:553
+#: API_generated/oyProfile_s.c:553
 msgid "Can not write profile"
 msgstr "Kann Profildatei nicht schreiben"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:320
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_cs.c:631
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_cs.c:637
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_cs.c:648
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_cs.c:666
+#: modules/devices/oyranos_monitor_x11.c:320
+#: modules/devices/oyranos_monitor_cs.c:631
+#: modules/devices/oyranos_monitor_cs.c:637
+#: modules/devices/oyranos_monitor_cs.c:648
+#: modules/devices/oyranos_monitor_cs.c:666
 msgid "Cant read hardware information from device."
 msgstr "Kann Geräteinformation nicht auslesen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:672
+#: liboyranos_config/oyranos_icc.c:672
 msgid "Cathode ray tube display"
 msgstr "Kathodenstrahlmonitor"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1221
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1225
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1322
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1326
+#: modules/oyranos_cmm_oyIM_profile.c:1221
+#: modules/oyranos_cmm_oyIM_profile.c:1225
+#: modules/oyranos_cmm_oyIM_profile.c:1322
+#: modules/oyranos_cmm_oyIM_profile.c:1326
 msgid "Channels"
 msgstr "Kanäle"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2728
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2800
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2337
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2409
+#: modules/oyranos_cmm_lcm2.c:2728 modules/oyranos_cmm_lcm2.c:2800
+#: modules/oyranos_cmm_lcms.c:2337 modules/oyranos_cmm_lcms.c:2409
 msgid "Check if LittleCMS can handle a certain command."
 msgstr "Prüfe ob LittleCMS ein bestimmtes Kommando behandeln kann."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1560
+#: modules/devices/oyranos_cmm_oyX1.c:1560
 msgid "Check if this module can handle a certain command."
 msgstr "Prüfe ob dieses Modul ein bestimmtes Kommando behandeln kann."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:430
+#: liboyranos_config/oyranos_icc.c:430
 msgid "Chromaticity"
 msgstr "Primärfarben"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:125
+#: liboyranos_config/oyranos_icc.c:125
 msgid "Cmy"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:124
+#: liboyranos_config/oyranos_icc.c:124
 msgid "Cmyk"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2473
+#: modules/oyranos_cmm_lcm2.c:2473
 msgid ""
 "Cmyk to Cmyk transforms can provide various strategies to preserve the black "
 "only channel. None means, black might change to Cmy and thus text prints not "
@@ -577,7 +557,7 @@ msgid ""
 "fair more complex and tries to preserve the WHOLE K plane."
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2115
+#: modules/oyranos_cmm_lcms.c:2115
 msgid ""
 "Cmyk to Cmyk transforms can provide various strategies to preserve the black "
 "only channel. None means, black might change to Cmy and thus text prints not "
@@ -588,27 +568,25 @@ msgid ""
 "complex and tries to preserve the WHOLE K plane."
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:200
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:265
+#: liboyranos_config/oyranos_texts.c:200 liboyranos_config/oyranos_texts.c:265
 msgid "Collections of settings in Oyranos"
 msgstr "Voreinstellungen in Oyranos"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:182
+#: liboyranos_config/oyranos_texts.c:182
 msgid "Color Space for Simulating real devices"
 msgstr "Farbraum für die Nachbildung eines Gerätes (Simulation)"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2526
+#: modules/oyranos_cmm_lcm2.c:2526
 msgid "Color Transform CLUT's can additionally use curves for special cases"
 msgstr ""
 "Farbtransformationstabellen können für spezielle Fälle zusätzlich mit Kurven "
 "kombiniert werden"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2496
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2138
+#: modules/oyranos_cmm_lcm2.c:2496 modules/oyranos_cmm_lcms.c:2138
 msgid "Color Transforms can be differently stored internally"
 msgstr "Farbumwandlung können intern unterschiedlich gespeichert werden"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:174
+#: liboyranos_config/oyranos_texts.c:174
 msgid ""
 "Color content can sometimes have no ICC profile assigned. This is a critical "
 "situation as the system can not properly convert these colors. Therefor the "
@@ -622,7 +600,7 @@ msgstr ""
 "Die Einstellungen beinflussen die Auswahl des Ersatzprofiles, damit eine "
 "Weiterverarbeitung und Mischung mit anderen Farben möglich wird."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:210
+#: liboyranos_config/oyranos_texts.c:210
 msgid ""
 "Color management has in some situations to resolve unclear situations. This "
 "can be done by automatic applying preselected choices or on a case to case "
@@ -634,7 +612,7 @@ msgstr ""
 "werden. Benutzer können über Konflikte informiert werden, so sie dies "
 "wünschen, und händisch eingreifen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_xml.c:1011
+#: liboyranos_config/oyranos_xml.c:1011
 msgid ""
 "Color matching between different devices is possible, provided that the "
 "color characteristics of the involved devices are known. The quality of a "
@@ -653,7 +631,7 @@ msgstr ""
 "(PCS). Der PCS wurde von der CIE auf Grund der Farbeindrücke von "
 "menschlichen Beobachtern ermittelt."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_xml.c:1026
+#: liboyranos_config/oyranos_xml.c:1026
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
 "digital cameras, monitors and printers. In Oyranos, ICC profiles are "
@@ -665,131 +643,124 @@ msgstr ""
 "mit dem Kalibrierzustand dieser Geräte verknüpft, um möglichst nahe an das  "
 "Farbverhalten wärend der ICC Profilerzeugung zu gelangen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:399
+#: liboyranos_config/oyranos_texts.c:399
 msgid "Color space for Simulating an Output Device"
 msgstr "Farbraum zur Nachbildung eines Ausgabegerätes"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2945
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2554
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1157
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_SANE.c:836
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_CUPS.c:835
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_qarz.c:1063
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:786
+#: modules/oyranos_cmm_lcm2.c:2945 modules/oyranos_cmm_lcms.c:2554
+#: modules/devices/oyranos_cmm_oyX1.c:1157
+#: modules/devices/oyranos_cmm_SANE.c:836
+#: modules/devices/oyranos_cmm_CUPS.c:835
+#: modules/devices/oyranos_cmm_qarz.c:1063
+#: modules/devices/oyranos_cmm_oyRE.cpp:786
 msgid "Colour"
 msgstr "Farbe"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:547
+#: liboyranos_config/oyranos_icc.c:547
 msgid "Colour Space"
 msgstr "Farbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:428
+#: liboyranos_config/oyranos_icc.c:428
 msgid "Colour adaption matrix"
 msgstr "Farbanpassungsmatrix"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:202
+#: liboyranos_config/oyranos_icc.c:202
 msgid "Colour b"
 msgstr "Farbanteil b"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:434
+#: liboyranos_config/oyranos_icc.c:434
 msgid "Colour channel names"
 msgstr "Farbkanalnamen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:432
+#: liboyranos_config/oyranos_icc.c:432
 msgid "Colour channel order"
 msgstr "Farbkanalordnung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:436
+#: liboyranos_config/oyranos_icc.c:436
 msgid "Colour channel output names"
 msgstr "Farbkanalnamen Ausgang"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:380
+#: liboyranos_config/oyranos_icc.c:380
 msgid "Colour measurement data"
 msgstr "Farbmessdaten"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:203
+#: liboyranos_config/oyranos_icc.c:203
 msgid "Colour r"
 msgstr "Farbanteil r"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:64
+#: tools/oyranos_convert.c:64
 msgid "Convert Image:"
 msgstr "Wandle Bild um"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:423
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:433
+#: liboyranos_config/oyranos_texts.c:423 liboyranos_config/oyranos_texts.c:433
 msgid "Convert automatically"
 msgstr "Wandle automatisch"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:103
+#: tools/oyranos_convert.c:103
 msgid "Convert image to ICC Color Space"
 msgstr "Wandle Bild nach Farbraum um"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:443
+#: liboyranos_config/oyranos_texts.c:443
 msgid "Convert to Default Cmyk Editing Space"
 msgstr "Übertrage in voreingestellten Cmyk Editierfarbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:453
+#: liboyranos_config/oyranos_texts.c:453
 msgid "Convert to Default Rgb Editing Space"
 msgstr "Umwandeln zum voreingestellten Rgb Editierfarbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:453
+#: liboyranos_config/oyranos_texts.c:453
 msgid "Convert to WWW (sRGB)"
 msgstr "Umwandeln für's WWW (sRGB)"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:443
+#: liboyranos_config/oyranos_texts.c:443
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr "Wandle in unspezifziertes Cmyk, erhalte Cmyk Zahlen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_module.c:1390
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:381
+#: API_generated/oyranos_module.c:1390 liboyranos_config/oyranos_icc.c:381
 msgid "Copyright"
 msgstr "Kopierrecht"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_xml.c:869
+#: liboyranos_config/oyranos_xml.c:869
 msgid "Copyright &copy;"
 msgstr "Kopierrecht &copy;"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:3056
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2665
+#: modules/oyranos_cmm_lcm2.c:3056 modules/oyranos_cmm_lcms.c:2665
 msgid "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM.c:144
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oicc.c:936
+#: modules/oyranos_cmm_oyIM.c:144 modules/oyranos_cmm_oicc.c:936
 msgid "Copyright (c) 2005-2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:160
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra.c:144
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1293
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_qarz.c:1199
+#: liboyranos/oyranos_cmm.c:160 modules/oyranos_cmm_oyra.c:144
+#: modules/devices/oyranos_cmm_oyX1.c:1293
+#: modules/devices/oyranos_cmm_qarz.c:1199
 msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_CUPS.c:950
+#: modules/devices/oyranos_cmm_CUPS.c:950
 msgid "Copyright (c) 2009 Joseph Simon; MIT"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_SANE.c:973
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:897
+#: modules/devices/oyranos_cmm_SANE.c:973
+#: modules/devices/oyranos_cmm_oyRE.cpp:897
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oydi.c:1070
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:236
+#: modules/oyranos_cmm_oydi.c:1070 modules/oyranos_cmm_lraw.cpp:236
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_module.c:2016
+#: API_generated/oyranos_module.c:2016
 msgid "Could not allocate memory for:"
 msgstr "Kann nicht reservieren für:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_core/oyranos_io_core.c:303
+#: liboyranos_core/oyranos_io_core.c:303
 msgid "Could not download from WWW. Please install curl or wget."
 msgstr ""
 "Konnte nicht aus dem Netz kopieren. Bitte installieren Sie curl oder wget."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_module.c:789
+#: API_generated/oyranos_module.c:789
 msgid ""
 "Could not find any meta module. Did you set the OY_MODULE_PATH variable, to "
 "point to a Oyranos module loader library?"
@@ -797,249 +768,236 @@ msgstr ""
 "Konnte keine Metamodul finden. Ist die OY_MODULE_PATHS Variable gesetzt? Sie "
 "zeigt auf Verzeichnisse in welchen die Moduleladebibliothek liegt."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_devices.c:485
+#: API_generated/oyranos_devices.c:485
 msgid "Could not open ICC profile"
 msgstr "Konnte Profil nicht öffnen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfile_s.c:177
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfile_s.c:183
+#: API_generated/oyProfile_s.c:177 API_generated/oyProfile_s.c:183
 msgid "Could not open default ICC profile"
 msgstr "Konnte voreingestelltes Profil nicht laden"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_devices.c:230
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_devices.c:980
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_alpha.c:2368
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_alpha.c:2451
+#: API_generated/oyranos_devices.c:230 API_generated/oyranos_devices.c:980
+#: liboyranos/oyranos_alpha.c:2368 liboyranos/oyranos_alpha.c:2451
 msgid "Could not open device"
 msgstr "Konnte Gerät nicht öffnen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_module.c:189
+#: API_generated/oyranos_module.c:189
 msgid "Could not open meta module API"
 msgstr "Konnte Meta Schnittstelle nicht öffnen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:407
+#: tools/oyranos_profiles.c:407
 msgid "Could not open or invalid data: "
 msgstr "Konnte nicht öffnen oder ungültige Daten: "
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_devices.c:991
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfile_s.c:564
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_core/oyranos_io_core.c:73
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_core/oyranos_io_core.c:212
+#: API_generated/oyranos_devices.c:991 API_generated/oyProfile_s.c:564
+#: liboyranos_core/oyranos_io_core.c:73 liboyranos_core/oyranos_io_core.c:212
 msgid "Could not open profile"
 msgstr "Konnte Profil nicht laden"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:388
+#: tools/oyranos_profiles.c:388
 msgid "Could not open: "
 msgstr "Konnte nicht öffnen: "
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:303
+#: tools/oyranos_gamma.c:303
 msgid "Could not resolve device"
 msgstr "Konnte Gerät nicht auflösen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_devices.c:443
+#: API_generated/oyranos_devices.c:443
 msgid "Could not write to file"
 msgstr "Konnte Datei nicht schreiben"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:106
+#: tools/oyranos_convert.c:106
 msgid "Create 3D CLUT"
 msgstr "Erzeuge eine 3D Interpolationstabelle"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2734
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2343
+#: modules/oyranos_cmm_lcm2.c:2734 modules/oyranos_cmm_lcms.c:2343
 msgid "Create a ICC abstract proofing profile."
 msgstr "Erstelle ein abstraktes ICC Simulationsprofile"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2806
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2814
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2415
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2423
+#: modules/oyranos_cmm_lcm2.c:2806 modules/oyranos_cmm_lcm2.c:2814
+#: modules/oyranos_cmm_lcms.c:2415 modules/oyranos_cmm_lcms.c:2423
 msgid "Create a ICC matrix profile."
 msgstr "Erstelle ein ICC Matrixprofile"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2742
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2351
+#: modules/oyranos_cmm_lcm2.c:2742 modules/oyranos_cmm_lcms.c:2351
 msgid "Create a ICC proofing profile."
 msgstr "Erstelle ein ICC Simulationsprofile"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:852
+#: modules/oyranos_cmm_oyra_image.c:852
 msgid "Created new_ticket"
 msgstr "Erzeugte new_ticket"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:60
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:207
+#: tools/oyranos_policy.c:60 tools/oyranos_policy.c:207
 msgid "Currently active policy:"
 msgstr "Aktive Richtlinie:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1900
+#: modules/oyranos_cmm_oyIM_profile.c:1900
 msgid "Curve Channels:"
 msgstr "Kurvenkanäle:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1904
+#: modules/oyranos_cmm_oyIM_profile.c:1904
 msgid "Curve Precission:"
 msgstr "Kurvenpräzission:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1902
+#: modules/oyranos_cmm_oyIM_profile.c:1902
 msgid "Curve Segments:"
 msgstr "Kurventeile:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:286
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:385
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:430
+#: modules/oyranos_cmm_oyIM_profile.c:286
+#: modules/oyranos_cmm_oyIM_profile.c:385
+#: modules/oyranos_cmm_oyIM_profile.c:430
 msgid "Curves"
 msgstr "Kurven"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2523
+#: modules/oyranos_cmm_lcm2.c:2523
 msgid "Curves for Optimization"
 msgstr "Kurven für Optimierungen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:229
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:235
+#: liboyranos_config/oyranos_icc.c:229 liboyranos_config/oyranos_icc.c:235
 msgid "Cyan"
 msgstr "Zyan"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:249
+#: tools/oyranos_gamma.c:249
 msgid "DISPLAY variable not set: giving up."
 msgstr "DISPLAY Variable nicht gesetzt: gebe auf."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1430
+#: modules/oyranos_cmm_oyIM_profile.c:1430
 msgid "Data:"
 msgstr "Daten:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1840
+#: modules/oyranos_cmm_oyIM_profile.c:1840
 msgid "Date:"
 msgstr "Datum:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2470
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2112
+#: modules/oyranos_cmm_lcm2.c:2470 modules/oyranos_cmm_lcms.c:2112
 msgid "Decide how to preserve the black channel for Cmyk to Cmyk transforms"
 msgstr ""
 "Entscheide wie der Schwarzkanal erhalten wird bei Umwandlungen von einem "
 "Druckfarbraum in einen Anderen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:237
+#: liboyranos_config/oyranos_texts.c:237
 msgid ""
 "Decide how to resolve conflicts with input color spaces and current settings."
 msgstr ""
 "Was ist zu tuen falls Standardfarbräume nicht mit den Eingestellten "
 "übereinstimmen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:236
+#: liboyranos_config/oyranos_texts.c:236
 msgid ""
 "Decide what to do when the default color spaces dont match the current ones."
 msgstr ""
 "Was ist zu tuen falls Standardfarbräume nicht mit den Eingestellten "
 "übereinstimmen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:154
+#: liboyranos_config/oyranos_texts.c:154
 msgid "Default Profiles"
 msgstr "Voreingestellte ICC Profile"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1160
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_SANE.c:837
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_CUPS.c:838
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_qarz.c:1066
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:786
+#: modules/devices/oyranos_cmm_oyX1.c:1160
+#: modules/devices/oyranos_cmm_SANE.c:837
+#: modules/devices/oyranos_cmm_CUPS.c:838
+#: modules/devices/oyranos_cmm_qarz.c:1066
+#: modules/devices/oyranos_cmm_oyRE.cpp:786
 msgid "Device"
 msgstr "Gerät"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1366
+#: modules/oyranos_cmm_oyIM_profile.c:1366
 msgid "Device Serial:"
 msgstr "Serien Nr.:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:385
+#: liboyranos_config/oyranos_icc.c:385
 msgid "Device Settings"
 msgstr "Geräte Einstellungen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:420
+#: liboyranos_config/oyranos_icc.c:420
 msgid "Device colours"
 msgstr "Farbmessflächen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:383
+#: liboyranos_config/oyranos_icc.c:383
 msgid "Device manufacturerer description"
 msgstr "Geräteherstellerbeschreibung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:384
+#: liboyranos_config/oyranos_icc.c:384
 msgid "Device model description"
 msgstr "Gerätebeschreibung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:646
+#: liboyranos_config/oyranos_icc.c:646
 msgid "Digital camera"
 msgstr "Digitale Kamera"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:539
+#: liboyranos_config/oyranos_icc.c:539
 msgid "Display"
 msgstr "Monitor"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1377
+#: modules/oyranos_cmm_oyIM_profile.c:1377
 msgid "Driver name:"
 msgstr "Gerätetreibername:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1399
+#: modules/oyranos_cmm_oyIM_profile.c:1399
 msgid "Driver signature/encoding:"
 msgstr "Gerätetreiberdatentyp:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1388
+#: modules/oyranos_cmm_oyIM_profile.c:1388
 msgid "Driver version:"
 msgstr "Gerätetreiberversion:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:89
+#: tools/oyranos_profile.c:89
 msgid "Dump Device Infos to OpenICC device JSON:"
 msgstr "Schreibe Geräteinformationen nach JSON:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:216
+#: tools/oyranos_gamma.c:216
 msgid "Dump data:"
 msgstr "Schreibe Daten:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:54
+#: tools/oyranos_policy.c:54
 msgid "Dump out the actual settings:"
 msgstr "Die aktuellen Einstellungen als XML ausgeben"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:660
+#: liboyranos_config/oyranos_icc.c:660
 msgid "Dye sublimation printer"
 msgstr "Thermosublimationsdrucker"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:711
+#: liboyranos_config/oyranos_icc.c:711
 msgid "EBU Tech.3213-E"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:297
+#: liboyranos_config/oyranos_texts.c:297
 msgid "Editing Cmyk"
 msgstr "Editier Cmyk"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:163
+#: liboyranos_config/oyranos_texts.c:163
 msgid "Editing Color Space"
 msgstr "Editierfarbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:327
+#: liboyranos_config/oyranos_texts.c:327
 msgid "Editing Gray"
 msgstr "Editier Grau"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:317
+#: liboyranos_config/oyranos_texts.c:317
 msgid "Editing Lab"
 msgstr "Editier Lab"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:287
+#: liboyranos_config/oyranos_texts.c:287
 msgid "Editing Rgb"
 msgstr "Editier Rgb"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:307
+#: liboyranos_config/oyranos_texts.c:307
 msgid "Editing XYZ"
 msgstr "Editier XYZ"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:69
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:77
+#: tools/oyranos_convert.c:69 tools/oyranos_convert.c:77
 msgid "Effect abtract Color Space"
 msgstr "Effectfarbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:656
+#: liboyranos_config/oyranos_icc.c:656
 msgid "Electrophotographic printer"
 msgstr "Elektrofotografischer Drucker"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:658
+#: liboyranos_config/oyranos_icc.c:658
 msgid "Electrostatic printer"
 msgstr "Electrostatischer Drucker"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:501
+#: liboyranos_config/oyranos_texts.c:501
 msgid ""
 "Enable simulation of an output color space on a local printer. Most users do "
 "not work for a certain media and leave color handling to the system. They "
@@ -1049,7 +1007,7 @@ msgstr ""
 "Benutzer arbeiten nicht für spezielle Ausgabemedien und überlassen die "
 "Farbanpassung dem System. Sie möchten keine Simulation."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:491
+#: liboyranos_config/oyranos_texts.c:491
 msgid ""
 "Enable simulation of output print on the monitor. Most users do not work for "
 "a certain media and leave color handling to the system. They want no "
@@ -1059,181 +1017,173 @@ msgstr ""
 "arbeiten nicht für spezielle Ausgabemedien und überlassen die Farbanpassung "
 "dem System. Sie möchten keine Simulation."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:200
+#: tools/oyranos_gamma.c:200
 msgid "Erase profile:"
 msgstr "Melde Profil ab:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:336
+#: modules/oyranos_cmm_oyIM_profile.c:336
 msgid "Error"
 msgstr "Fehler"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:912
+#: modules/devices/oyranos_monitor_x11.c:912
 msgid "Error getting atom"
 msgstr "Fehler beim Suchen des Xatoms"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1626
+#: modules/oyranos_cmm_oyIM_profile.c:1626
 msgid "Error in ICC profile tag found!"
 msgstr "Fehler in ICC Profilbaustein gefunden!"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:804
+#: modules/devices/oyranos_monitor_x11.c:804
 msgid "Error obtaining profile"
 msgstr "Fehler beim Erhalten des Profiles"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:811
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:813
+#: modules/devices/oyranos_monitor_x11.c:811
+#: modules/devices/oyranos_monitor_x11.c:813
 msgid "Error setting up atom"
 msgstr "Fehler beim Setzen eines Xatoms"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:103
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:99
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:96
+#: tools/oyranos_profile.c:103 tools/oyranos_convert.c:99
+#: tools/oyranos_profiles.c:96
 msgid "Example"
 msgstr "Beispiel"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:197
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:204
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:247
+#: tools/oyranos_profile.c:197 tools/oyranos_profile.c:204
+#: tools/oyranos_profile.c:247
 msgid "Exit!"
 msgstr "Beenden!"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2462
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2104
+#: modules/oyranos_cmm_lcm2.c:2462 modules/oyranos_cmm_lcms.c:2104
 msgid "Extended Options"
 msgstr "Erweiterte Optionen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:82
+#: tools/oyranos_convert.c:82
 msgid "Extract ICC profile:"
 msgstr "Extrahiere ICC Profil:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_core/oyranos_io_core.c:517
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_core/oyranos_io_core.c:562
+#: liboyranos_core/oyranos_io_core.c:517 liboyranos_core/oyranos_io_core.c:562
 msgid "File exists"
 msgstr "Datei existiert"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:193
+#: tools/oyranos_profiles.c:193
 msgid "File name is missed"
 msgstr "Dateiname wird vermißt"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image_ppm.c:261
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image_ppm.c:1088
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:534
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:1137
+#: modules/oyranos_cmm_oyra_image_ppm.c:261
+#: modules/oyranos_cmm_oyra_image_ppm.c:1088 modules/oyranos_cmm_oPNG.c:534
+#: modules/oyranos_cmm_oPNG.c:1137
 msgid "Files"
 msgstr "Dateien"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2116
+#: modules/oyranos_cmm_lcm2.c:2116
 msgid "Fill new_ticket->array from image_input"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:883
+#: modules/oyranos_cmm_oyra_image.c:883
 msgid "Fill new_ticket->array from new_ticket->output_image"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:110
+#: liboyranos/oyranos_cmm.c:110
 msgid "Fill ticket->array from image"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:912
+#: modules/oyranos_cmm_oyra_image.c:912
 msgid "Fill ticket->array from new_ticket->output_image"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:648
+#: liboyranos_config/oyranos_icc.c:648
 msgid "Film scanner"
 msgstr "Filmscanner"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:664
+#: liboyranos_config/oyranos_icc.c:664
 msgid "Film writer"
 msgstr "Filmbelichter"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:688
+#: liboyranos_config/oyranos_icc.c:688
 msgid "Flexography"
 msgstr "Flexodruck"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:439
+#: liboyranos_config/oyranos_texts.c:439
 msgid "For Print"
 msgstr "Für den Druck"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:449
+#: liboyranos_config/oyranos_texts.c:449
 msgid "For Screen"
 msgstr "Bildschirm"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:224
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile_graph.c:193
+#: tools/oyranos_gamma.c:224 tools/oyranos_profile_graph.c:193
 #, c-format
 msgid "For more informations read the man page:"
 msgstr "Mehr Informationen stehen im Handbuch:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyConversion_s.c:158
+#: API_generated/oyConversion_s.c:158
 msgid "Found no node in conversion. give up"
 msgstr "Fand keinen Knoten im Graph. Gebe auf."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:962
+#: modules/oyranos_cmm_oyIM_profile.c:962
 msgid "Gamma"
 msgstr "Gamma"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:509
+#: liboyranos_config/oyranos_texts.c:509
 msgid "Gamut Warning"
 msgstr "Farbumfangswarnung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:219
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:100
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile_graph.c:184
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:94
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:93
+#: tools/oyranos_gamma.c:219 tools/oyranos_profile.c:100
+#: tools/oyranos_profile_graph.c:184 tools/oyranos_convert.c:94
+#: tools/oyranos_profiles.c:93
 msgid "General options:"
 msgstr "Allgemeine Optionen:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:72
+#: tools/oyranos_convert.c:72
 msgid "Generate CLUT Image:"
 msgstr "Erzeuge 3D Interpolationstabelle:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:86
+#: tools/oyranos_convert.c:86
 msgid "Generate Image:"
 msgstr "Erzeuge Bild:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:100
+#: tools/oyranos_convert.c:100
 msgid "Get ICC profile"
 msgstr "Hole ICC Profil"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:682
+#: liboyranos_config/oyranos_icc.c:682
 msgid "Gravure"
 msgstr "Tiefdruck"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:121
+#: liboyranos_config/oyranos_icc.c:121
 msgid "Gray"
 msgstr "Grau"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:387
+#: liboyranos_config/oyranos_icc.c:387
 msgid "Gray tone reproduction curve"
 msgstr "Schwarze Wiedergabekurve"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:212
+#: liboyranos_config/oyranos_icc.c:212
 msgid "Green"
 msgstr "Grün"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:388
+#: liboyranos_config/oyranos_icc.c:388
 msgid "Green Colorant"
 msgstr "Grüne Grundfarbe"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1886
+#: modules/oyranos_cmm_oyIM_profile.c:1886
 msgid "Green Gamma:"
 msgstr "Grünes Tonwertkurve:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:389
+#: liboyranos_config/oyranos_icc.c:389
 msgid "Green tone reproduction curve"
 msgstr "Grüne Farbwiedergabekurve"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1870
+#: modules/oyranos_cmm_oyIM_profile.c:1870
 msgid "Green xy:"
 msgstr "Grün xy:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:440
+#: liboyranos_config/oyranos_texts.c:440
 msgid "Handle mixed color spaces in preparing a document for print output."
 msgstr ""
 "Behandlung von uneinheitlichen Farbräumen in Vorbereitung eines Dokumentes "
 "für die Druckausgabe"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:441
+#: liboyranos_config/oyranos_texts.c:441
 msgid ""
 "Handle mixed color spaces in preparing a document for print output. A "
 "conversion to the default editing color space is typically what most users "
@@ -1243,13 +1193,13 @@ msgstr ""
 "für die Druckausgabe. Die Umwandlung in den voreingestellten Editierfarbraum "
 "ist, was die meisten Benutzer benötigen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:450
+#: liboyranos_config/oyranos_texts.c:450
 msgid "Handle mixed color spaces in preparing a document for screen output."
 msgstr ""
 "Behandlung von uneinheitlichen Farbräumen in Vorbereitung eines Dokumentes "
 "für die Bildschirmausgabe"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:451
+#: liboyranos_config/oyranos_texts.c:451
 msgid ""
 "Handle mixed color spaces in preparing a document for screen output. A "
 "conversion to sRGB helps in easy data exchange and is what most users want."
@@ -1258,68 +1208,63 @@ msgstr ""
 "für die Bildschirmausgabe. Eine Umwandlung nach sRGB hilft für einen "
 "einfacheren Datenaustausch und ist, was die meisten Benutzer wünschen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1584
+#: modules/devices/oyranos_cmm_oyX1.c:1584
 msgid "Handle options."
 msgstr "Moduloptionen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:227
+#: liboyranos_config/oyranos_texts.c:227
 msgid "Handling of Mixed Color Spaces inside one single Document"
 msgstr "Behandlung von gemischten Farbräumen in einem einzelnen Dokument"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:499
+#: liboyranos_config/oyranos_texts.c:499
 msgid "Hardproof"
 msgstr "Nachbildung beim Ausdruck"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:79
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:61
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:58
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:51
+#: tools/oyranos_profile.c:79 tools/oyranos_convert.c:61
+#: tools/oyranos_profiles.c:58 tools/oyranos_policy.c:51
 msgid ""
 "Hint: search paths are influenced by the XDG_CONFIG_HOME shell variable."
 msgstr ""
 "Hinweis: Suchpfade werden durch die XDG_CONFIG_HOME Kommandozeilenvariable\n"
 "         beeinflusst."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:123
+#: liboyranos_config/oyranos_icc.c:123
 msgid "Hls"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:122
+#: liboyranos_config/oyranos_icc.c:122
 msgid "Hsv"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:219
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:224
+#: liboyranos_config/oyranos_icc.c:219 liboyranos_config/oyranos_icc.c:224
 msgid "Hue"
 msgstr "Farbton"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oicc.c:452
+#: modules/oyranos_cmm_oicc.c:452
 msgid "ICC colour profile for colour transformations"
 msgstr "ICC Farbprofil zur Farbraumtransformation."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oicc.c:492
+#: modules/oyranos_cmm_oicc.c:492
 msgid "ICC colour profiles for colour transformations"
 msgstr "ICC Farbprofile zur Farbraumumwandlung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oicc.c:450
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:301
+#: modules/oyranos_cmm_oicc.c:450 tools/oyranos_profile.c:301
 msgid "ICC profile"
 msgstr "ICC Profil"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfile_s_.c:682
+#: API_generated/oyProfile_s_.c:682
 msgid "ICC profile id written"
 msgstr "ICC Profil ID geschrieben"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:357
+#: tools/oyranos_profiles.c:357
 msgid "ICC profile search paths"
 msgstr "ICC Profilesuchpfade"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oicc.c:490
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:259
+#: modules/oyranos_cmm_oicc.c:490 tools/oyranos_profiles.c:259
 msgid "ICC profiles"
 msgstr "ICC Profile"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:192
+#: liboyranos_config/oyranos_texts.c:192
 msgid ""
 "ICC profiles reside in known paths. They are defined by OpenICC and can be "
 "used by every complying system or application."
@@ -1328,7 +1273,7 @@ msgstr ""
 "OpenICC definiert und stehen allen unterstützenden Systemen und Anwendungen "
 "zur Verfügung."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:278
+#: liboyranos_config/oyranos_texts.c:278
 msgid ""
 "ICC profiles reside in known paths. They are defined by OpenICC and can be "
 "used by every complying system or application. XDG_DATA_HOME and "
@@ -1342,7 +1287,7 @@ msgstr ""
 "Oyranos zu den oberen Verzeichnissen mit Resourcen. Die daraus gebildeten "
 "Pfade für ICC Farbprofile werden durch ein \"color/icc\" ergänzt."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:156
+#: liboyranos_config/oyranos_texts.c:156
 msgid ""
 "ICC profiles should always be attached to all colors. In the case that "
 "colors are undefined, users can set various default ICC profiles in Oyranos "
@@ -1352,105 +1297,100 @@ msgstr ""
 "Für nicht definierte Farben können Benutzer ICC Farbprofile in Oyranos "
 "voreinstellen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:709
+#: liboyranos_config/oyranos_icc.c:709
 msgid "ITU-R BT.709"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:956
+#: modules/oyranos_cmm_oyIM_profile.c:956
 msgid "Idendity"
 msgstr "Idendität"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:734
+#: liboyranos_config/oyranos_icc.c:734
 msgid "Illuminant A"
 msgstr "Farbtemperatur A"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:729
+#: liboyranos_config/oyranos_icc.c:729
 msgid "Illuminant D50"
 msgstr "Farbtemperatur D50"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:733
+#: liboyranos_config/oyranos_icc.c:733
 msgid "Illuminant D55"
 msgstr "Farbtemperatur D55"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:730
+#: liboyranos_config/oyranos_icc.c:730
 msgid "Illuminant D65"
 msgstr "Farbtemperatur D65"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:731
+#: liboyranos_config/oyranos_icc.c:731
 msgid "Illuminant D93"
 msgstr "Farbtemperatur D93"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:732
+#: liboyranos_config/oyranos_icc.c:732
 msgid "Illuminant F2"
 msgstr "Farbtemperatur F2"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:736
+#: liboyranos_config/oyranos_icc.c:736
 msgid "Illuminant F8"
 msgstr "Farbtemperatur F8"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:728
+#: liboyranos_config/oyranos_icc.c:728
 msgid "Illuminant unknown"
 msgstr "Illuminant unbekannt"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:735
+#: liboyranos_config/oyranos_icc.c:735
 msgid "Illuminant with equal energy E"
 msgstr "Farbtemperatur mit ausgeglichener Energie E"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:185
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:209
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2136
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2141
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:1071
+#: liboyranos/oyranos_cmm.c:185 liboyranos/oyranos_cmm.c:209
+#: modules/oyranos_cmm_lcm2.c:2136 modules/oyranos_cmm_lcm2.c:2141
+#: modules/oyranos_cmm_oPNG.c:1071
 msgid "Image"
 msgstr "Bild"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:187
+#: liboyranos/oyranos_cmm.c:187
 msgid "Image PNG Plug"
 msgstr "PNG Bildstecker"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:211
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:1073
+#: liboyranos/oyranos_cmm.c:211 modules/oyranos_cmm_oPNG.c:1073
 msgid "Image PNG Socket"
 msgstr "PNG Bilddose"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:410
+#: liboyranos_config/oyranos_texts.c:410
 msgid ""
 "Image has no color space embedded. What default action shall be performed?"
 msgstr ""
 "Bild enthält kein Farbprofil. Welche Standardhandlung soll ausgeführt werden?"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:1129
+#: modules/oyranos_cmm_oPNG.c:1129
 msgid "Image[input_png]"
 msgstr "Bild[input_png]"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image_ppm.c:1080
+#: modules/oyranos_cmm_oyra_image_ppm.c:1080
 msgid "Image[input_ppm]"
 msgstr "Bild[input_ppm]"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:1112
+#: modules/oyranos_cmm_lraw.cpp:1112
 msgid "Image[lraw]"
 msgstr "Bild[lraw]"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:1448
+#: modules/oyranos_cmm_oyra_image.c:1448
 msgid "Image[out]"
 msgstr "Bild[Ausgang]"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:526
+#: modules/oyranos_cmm_oPNG.c:526
 msgid "Image[write_png]"
 msgstr "Bild[write_png]"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image_ppm.c:253
+#: modules/oyranos_cmm_oyra_image_ppm.c:253
 msgid "Image[write_ppm]"
 msgstr "Bild[write_ppm]"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:183
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:207
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:1069
+#: liboyranos/oyranos_cmm.c:183 liboyranos/oyranos_cmm.c:207
+#: modules/oyranos_cmm_oPNG.c:1069
 msgid "Img"
 msgstr "Bild"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:421
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:431
+#: liboyranos_config/oyranos_texts.c:421 liboyranos_config/oyranos_texts.c:431
 msgid ""
 "Incoming color spaces can differ from the default editing color space. For "
 "most users, an automatic conversion is fine. However, for more demanding "
@@ -1460,120 +1400,110 @@ msgstr ""
 "Benutzer ist eine automatische Umwandlung kein Problem. Für anspruchsvollere "
 "Anwendungen sollten die Zahlenwerte stets erhalten bleiben."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:652
+#: liboyranos_config/oyranos_icc.c:652
 msgid "InkJet printer"
 msgstr "Tintenstrahldrucker"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:537
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1221
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1322
+#: liboyranos_config/oyranos_icc.c:537 modules/oyranos_cmm_oyIM_profile.c:1221
+#: modules/oyranos_cmm_oyIM_profile.c:1322
 msgid "Input"
 msgstr "Eingabe"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:1131
+#: modules/oyranos_cmm_oPNG.c:1131
 msgid "Input PNG Image Filter Object"
 msgstr "Filterobjekt eines zu lesendes PNG Bildes"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image_ppm.c:1082
+#: modules/oyranos_cmm_oyra_image_ppm.c:1082
 msgid "Input PPM Image Filter Object"
 msgstr "Filterobjekt eines zu lesendes PPM Bildes"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:1114
+#: modules/oyranos_cmm_lraw.cpp:1114
 msgid "Input libraw Image Filter Object"
 msgstr "Filterobjekt für libraw Eingangsbilder"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:80
+#: tools/oyranos_profiles.c:80
 msgid "Install ICC profile:"
 msgstr "Installiere ICC Profil:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:473
+#: tools/oyranos_profiles.c:473
 msgid "Internal Error"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_xml.c:992
+#: liboyranos_config/oyranos_xml.c:992
 msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_CUPS.c:939
+#: modules/devices/oyranos_cmm_CUPS.c:939
 msgid "Joe"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_CUPS.c:941
+#: modules/devices/oyranos_cmm_CUPS.c:941
 msgid "Joseph Simon III"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:150
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM.c:134
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oicc.c:926
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra.c:134
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oydi.c:1060
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1283
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_qarz.c:1189
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:226
+#: liboyranos/oyranos_cmm.c:150 modules/oyranos_cmm_oyIM.c:134
+#: modules/oyranos_cmm_oicc.c:926 modules/oyranos_cmm_oyra.c:134
+#: modules/oyranos_cmm_oydi.c:1060 modules/devices/oyranos_cmm_oyX1.c:1283
+#: modules/devices/oyranos_cmm_qarz.c:1189 modules/oyranos_cmm_lraw.cpp:226
 msgid "Kai-Uwe"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:152
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM.c:136
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oicc.c:928
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra.c:136
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oydi.c:1062
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1285
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_qarz.c:1191
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:228
+#: liboyranos/oyranos_cmm.c:152 modules/oyranos_cmm_oyIM.c:136
+#: modules/oyranos_cmm_oicc.c:928 modules/oyranos_cmm_oyra.c:136
+#: modules/oyranos_cmm_oydi.c:1062 modules/devices/oyranos_cmm_oyX1.c:1285
+#: modules/devices/oyranos_cmm_qarz.c:1191 modules/oyranos_cmm_lraw.cpp:228
 msgid "Kai-Uwe Behrmann"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:116
+#: liboyranos_config/oyranos_icc.c:116
 msgid "Lab"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:225
+#: liboyranos_config/oyranos_icc.c:225
 msgid "Lightness"
 msgstr "Helligkeit"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:543
+#: liboyranos_config/oyranos_icc.c:543
 msgid "Link"
 msgstr "Verknüpfung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:210
+#: tools/oyranos_gamma.c:210
 msgid "List Taxi profile for selected device:"
 msgstr "Liste Profile von Taxi für gewähltes Gerät:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:61
+#: tools/oyranos_profiles.c:61
 msgid "List available ICC profiles:"
 msgstr "Liste der verfügbaren ICC Farbprofile"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:58
+#: tools/oyranos_policy.c:58
 msgid "List available policies:"
 msgstr "Liste der verfügbaren Richtlinien:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:206
+#: tools/oyranos_gamma.c:206
 msgid "List devices:"
 msgstr "Geräteliste:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:82
+#: tools/oyranos_profile.c:82
 msgid "List included ICC tags:"
 msgstr "Liste der enthaltenen ICC Elemente:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:213
+#: tools/oyranos_gamma.c:213
 msgid "List modules:"
 msgstr "Modulliste:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:73
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:62
+#: tools/oyranos_profiles.c:73 tools/oyranos_policy.c:62
 msgid "List search paths:"
 msgstr "Zeige Suchpfade:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2649
+#: modules/oyranos_cmm_lcms.c:2649
 msgid "Little CMS"
 msgstr "Little CMS"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:3040
+#: modules/oyranos_cmm_lcm2.c:3040
 msgid "Little CMS 2"
 msgstr "Little CMS 2"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2529
+#: modules/oyranos_cmm_lcm2.c:2529
 msgid ""
 "Little CMS can use curves before and after CLUT's for special cases like "
 "gamma encoded values to and from linear gamma values. Performance will "
@@ -1583,8 +1513,7 @@ msgstr ""
 "Dadurch zeigen sich weniger Fehler bei der Übertragung zwischen linearen und "
 "gammabehafteten Werten auf Kosten der Geschwindigkeit."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2499
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2141
+#: modules/oyranos_cmm_lcm2.c:2499 modules/oyranos_cmm_lcms.c:2141
 msgid ""
 "Little CMS tries to optimize profile chains whatever possible. There are "
 "some built-in optimization schemes, and you can add new schemas by using a "
@@ -1596,7 +1525,7 @@ msgid ""
 "discussion of the flags."
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:3042
+#: modules/oyranos_cmm_lcm2.c:3042
 msgid ""
 "LittleCMS 2 is a CMM, a color management engine; it implements fast "
 "transforms between ICC profiles. \"Little\" stands for its small overhead. "
@@ -1607,7 +1536,7 @@ msgid ""
 "extremely liberal open source license."
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2651
+#: modules/oyranos_cmm_lcms.c:2651
 msgid ""
 "LittleCMS is a CMM, a color management engine; it implements fast transforms "
 "between ICC profiles. \"Little\" stands for its small overhead. With a "
@@ -1618,191 +1547,161 @@ msgid ""
 "extremely liberal open source license."
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:695
+#: modules/oyranos_cmm_oyra_image.c:695
 msgid "Load"
 msgstr "Lade"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:328
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:697
+#: modules/oyranos_cmm_oyra_image.c:328 modules/oyranos_cmm_oyra_image.c:697
 msgid "Load Image File Object"
 msgstr "Lade Bilddateiobjekt"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:376
+#: liboyranos_config/oyranos_icc.c:376
 msgid "Lookup table, PCS to device, intent perceptual"
 msgstr "Farbtabelle, Kontaktfarbraum an Gerät, Anpassung Fotografisch"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:377
+#: liboyranos_config/oyranos_icc.c:377
 msgid "Lookup table, PCS to device, intent relative colorimetric"
 msgstr "Farbtabelle, Kontaktfarbraum an Gerät, Anpassung Relativ Farbmetrisch"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:378
+#: liboyranos_config/oyranos_icc.c:378
 msgid "Lookup table, PCS to device, intent saturation"
 msgstr "Farbtabelle, Kontaktfarbraum an Gerät, Anpassung Sättigung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:371
+#: liboyranos_config/oyranos_icc.c:371
 msgid "Lookup table, device to PCS, intent perceptual"
 msgstr "Farbtabelle, Gerät an Kontaktfarbraum, Anpassung Fotografisch"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:372
+#: liboyranos_config/oyranos_icc.c:372
 msgid "Lookup table, device to PCS, intent relative colorimetric"
 msgstr "Farbtabelle, Gerät an Kontaktfarbraum, Anpassung Relativ Farbmetrisch"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:373
+#: liboyranos_config/oyranos_icc.c:373
 msgid "Lookup table, device to PCS, intent saturation"
 msgstr "Farbtabelle, Gerät an Kontaktfarbraum, Anpassung Sättigung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:390
+#: liboyranos_config/oyranos_icc.c:390
 msgid "Luminance"
 msgstr "Leuchtdichte"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:201
+#: liboyranos_config/oyranos_icc.c:201
 msgid "Luminance Y"
 msgstr "Leuchtdichte Y"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:117
+#: liboyranos_config/oyranos_icc.c:117
 msgid "Luv"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyCMMapi10_s_.c:160
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyFilterCore_s.c:201
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyConfig_s_.c:174
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyImage_s.c:346
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyStructList_s_.c:163
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyCMMapiFilters_s_.c:157
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyImage_s_.c:172
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyHash_s_.c:154
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyName_s_.c:48
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyName_s_.c:56
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyCMMapi_s_.c:157
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyArray2d_s_.c:167
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyCMMapis_s_.c:157
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyOption_s_.c:180
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyConversion_s_.c:158
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_devices.c:2753
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyFilterNodes_s_.c:157
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyCMMapi9_s_.c:164
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfile_s_.c:242
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyFilterCore_s_.c:170
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyPixelAccess_s_.c:187
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyCMMobjectType_s_.c:154
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfileTag_s_.c:133
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyFilterSocket_s_.c:180
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyCMMapi3_s_.c:151
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyCMMui_s_.c:154
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyConnector_s_.c:163
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyConnectorImaging_s_.c:219
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyRectangle_s_.c:149
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyFilterPlugs_s_.c:157
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyCMMapi4_s_.c:154
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyPointer_s_.c:183
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyObserver_s.c:51
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyBlob_s_.c:172
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyConfigs_s_.c:157
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyFilterPlug_s_.c:164
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyOptions_s_.c:158
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyCMMapiFilter_s_.c:161
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_module.c:1554
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyCMMapi7_s_.c:164
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyCMMapi5_s_.c:151
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyCMMapi8_s_.c:164
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfiles_s_.c:157
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyFilterGraph_s_.c:163
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyCMMapi6_s_.c:164
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyFilterNode_s_.c:189
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyCMMinfo_s_.c:164
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_alpha.c:377
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_alpha.c:1186
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_alpha.c:1793
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_modules/oyranos_forms.c:57
+#: API_generated/oyCMMapi10_s_.c:160 API_generated/oyFilterCore_s.c:201
+#: API_generated/oyConfig_s_.c:174 API_generated/oyImage_s.c:346
+#: API_generated/oyStructList_s_.c:163 API_generated/oyCMMapiFilters_s_.c:157
+#: API_generated/oyImage_s_.c:172 API_generated/oyHash_s_.c:154
+#: API_generated/oyName_s_.c:48 API_generated/oyName_s_.c:56
+#: API_generated/oyCMMapi_s_.c:157 API_generated/oyArray2d_s_.c:167
+#: API_generated/oyCMMapis_s_.c:157 API_generated/oyOption_s_.c:180
+#: API_generated/oyConversion_s_.c:158 API_generated/oyranos_devices.c:2753
+#: API_generated/oyFilterNodes_s_.c:157 API_generated/oyCMMapi9_s_.c:164
+#: API_generated/oyProfile_s_.c:242 API_generated/oyFilterCore_s_.c:170
+#: API_generated/oyPixelAccess_s_.c:187 API_generated/oyCMMobjectType_s_.c:154
+#: API_generated/oyProfileTag_s_.c:133 API_generated/oyFilterSocket_s_.c:180
+#: API_generated/oyCMMapi3_s_.c:151 API_generated/oyCMMui_s_.c:154
+#: API_generated/oyConnector_s_.c:163
+#: API_generated/oyConnectorImaging_s_.c:219
+#: API_generated/oyRectangle_s_.c:149 API_generated/oyFilterPlugs_s_.c:157
+#: API_generated/oyCMMapi4_s_.c:154 API_generated/oyPointer_s_.c:183
+#: API_generated/oyObserver_s.c:51 API_generated/oyBlob_s_.c:172
+#: API_generated/oyConfigs_s_.c:157 API_generated/oyFilterPlug_s_.c:164
+#: API_generated/oyOptions_s_.c:158 API_generated/oyCMMapiFilter_s_.c:161
+#: API_generated/oyranos_module.c:1554 API_generated/oyCMMapi7_s_.c:164
+#: API_generated/oyCMMapi5_s_.c:151 API_generated/oyCMMapi8_s_.c:164
+#: API_generated/oyProfiles_s_.c:157 API_generated/oyFilterGraph_s_.c:163
+#: API_generated/oyCMMapi6_s_.c:164 API_generated/oyFilterNode_s_.c:189
+#: API_generated/oyCMMinfo_s_.c:164 liboyranos/oyranos_alpha.c:377
+#: liboyranos/oyranos_alpha.c:1186 liboyranos/oyranos_alpha.c:1793
+#: liboyranos_modules/oyranos_forms.c:57
 msgid "MEM Error."
 msgstr "Speicher Fehler"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:3054
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2663
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_SANE.c:971
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:895
+#: modules/oyranos_cmm_lcm2.c:3054 modules/oyranos_cmm_lcms.c:2663
+#: modules/devices/oyranos_cmm_SANE.c:971
+#: modules/devices/oyranos_cmm_oyRE.cpp:895
 msgid "MIT"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:3058
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2667
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_SANE.c:975
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_CUPS.c:952
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:899
+#: modules/oyranos_cmm_lcm2.c:3058 modules/oyranos_cmm_lcms.c:2667
+#: modules/devices/oyranos_cmm_SANE.c:975
+#: modules/devices/oyranos_cmm_CUPS.c:952
+#: modules/devices/oyranos_cmm_oyRE.cpp:899
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr "MIT Lizenz: http://www.opensource.org/licenses/mit-license.php"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:569
+#: liboyranos_config/oyranos_icc.c:569
 msgid "Macintosh"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:230
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:236
+#: liboyranos_config/oyranos_icc.c:230 liboyranos_config/oyranos_icc.c:236
 msgid "Magenta"
 msgstr "Magenta"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_module.c:1389
+#: API_generated/oyranos_module.c:1389
 msgid "Manufacturer"
 msgstr "Hersteller"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1834
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:2015
+#: modules/oyranos_cmm_oyIM_profile.c:1834
+#: modules/oyranos_cmm_oyIM_profile.c:2015
 msgid "Manufacturer:"
 msgstr "Hersteller:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:510
+#: liboyranos_config/oyranos_texts.c:510
 msgid "Mark Out Of Gamut colors"
 msgstr "Markiere nicht darstellbare Farben"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:3046
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2655
+#: modules/oyranos_cmm_lcm2.c:3046 modules/oyranos_cmm_lcms.c:2655
 msgid "Marti"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:3048
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2657
+#: modules/oyranos_cmm_lcm2.c:3048 modules/oyranos_cmm_lcms.c:2657
 msgid "Marti Maria"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:403
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1179
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1203
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1213
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1280
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1304
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1314
+#: modules/oyranos_cmm_oyIM_profile.c:403
+#: modules/oyranos_cmm_oyIM_profile.c:1179
+#: modules/oyranos_cmm_oyIM_profile.c:1203
+#: modules/oyranos_cmm_oyIM_profile.c:1213
+#: modules/oyranos_cmm_oyIM_profile.c:1280
+#: modules/oyranos_cmm_oyIM_profile.c:1304
+#: modules/oyranos_cmm_oyIM_profile.c:1314
 msgid "Matrix"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:422
+#: liboyranos_config/oyranos_icc.c:422
 msgid "Measured colours"
 msgstr "Farbmessergebnisse"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:391
+#: liboyranos_config/oyranos_icc.c:391
 msgid "Measurement"
 msgstr "Messart"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:392
+#: liboyranos_config/oyranos_icc.c:392
 msgid "Media black point"
 msgstr "Medienschwarzpunkt"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:393
+#: liboyranos_config/oyranos_icc.c:393
 msgid "Media white point"
 msgstr "Medienweißpunkt"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:394
+#: liboyranos_config/oyranos_icc.c:394
 msgid "Meta Data"
 msgstr "Allgemeine Daten"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:570
+#: liboyranos_config/oyranos_icc.c:570
 msgid "Microsoft"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:235
+#: liboyranos_config/oyranos_texts.c:235
 msgid "Mismatching"
 msgstr "Abweichung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:228
+#: liboyranos_config/oyranos_texts.c:228
 msgid ""
 "Mixed color spaces inside one single document can be difficult to handle for "
 "some systems. The settings can give the option to flatten document color "
@@ -1812,37 +1711,37 @@ msgstr ""
 "Problemen führen. Die Einstellung bietet die Möglichkeit den Farbraum zu "
 "vereinheitlichen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1836
+#: modules/oyranos_cmm_oyIM_profile.c:1836
 msgid "Model:"
 msgstr "Modell:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:2020
+#: modules/oyranos_cmm_oyIM_profile.c:2020
 msgid "Modell:"
 msgstr "Modell:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:1030
+#: modules/oyranos_cmm_lraw.cpp:1030
 msgid "Module Options"
 msgstr "Moduloptionen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1141
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1162
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_qarz.c:1047
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_qarz.c:1068
+#: modules/devices/oyranos_cmm_oyX1.c:1141
+#: modules/devices/oyranos_cmm_oyX1.c:1162
+#: modules/devices/oyranos_cmm_qarz.c:1047
+#: modules/devices/oyranos_cmm_qarz.c:1068
 msgid "Monitor"
 msgstr "Bildschirm"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1143
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_qarz.c:1049
+#: modules/devices/oyranos_cmm_oyX1.c:1143
+#: modules/devices/oyranos_cmm_qarz.c:1049
 msgid ""
 "Monitors, which can be detected through the video card driver and windowing "
 "system."
 msgstr "Bildschirme, welche durch das Modul erkannt werden."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:1038
+#: modules/oyranos_cmm_lraw.cpp:1038
 msgid "More bits mean more precission for processing and more size."
 msgstr "Mehr Bit bedeutet mehr Daten für höhere Genauigkeit zu verarbeiten."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:511
+#: liboyranos_config/oyranos_texts.c:511
 msgid ""
 "Most users want a simple display of colors and will not check if colors "
 "match the simulation color space."
@@ -1850,150 +1749,142 @@ msgstr ""
 "Viele Benutzer möchten eine einfache Farbdarstellungen und wollen nicht "
 "prüfen ob Farben in den Simulationsfarbraum passen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_SANE.c:980
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:904
+#: modules/devices/oyranos_cmm_SANE.c:980
+#: modules/devices/oyranos_cmm_oyRE.cpp:904
 msgid "My filter introduction."
 msgstr "Meine Filter Einführung."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_module.c:1388
+#: API_generated/oyranos_module.c:1388
 msgid "Name"
 msgstr "Name"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:395
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:549
+#: liboyranos_config/oyranos_icc.c:395 liboyranos_config/oyranos_icc.c:549
 msgid "Named Colour"
 msgstr "Einzelarben"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:396
+#: liboyranos_config/oyranos_icc.c:396
 msgid "Named Colour 2"
 msgstr "Einzelfarben 2"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:204
+#: tools/oyranos_profile.c:204
 msgid "Need a ICC profile to modify."
 msgstr "Benötige ein ICC Profil zum Verändern."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:473
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:493
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:503
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:513
+#: liboyranos_config/oyranos_texts.c:473 liboyranos_config/oyranos_texts.c:493
+#: liboyranos_config/oyranos_texts.c:503 liboyranos_config/oyranos_texts.c:513
 msgid "No"
 msgstr "Nein"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfile_s_.c:672
+#: API_generated/oyProfile_s_.c:672
 msgid "No ICC profile id detected"
 msgstr "kein ICC Profil ID gefunden"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:409
+#: liboyranos_config/oyranos_texts.c:409
 msgid "No Image profile"
 msgstr "Kein Profil am Bild"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:766
+#: modules/devices/oyranos_monitor_x11.c:766
 msgid "No monitor gamma curves by profile:"
 msgstr "Keine Grafikkartengammakurven im Profil:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:142
+#: liboyranos/oyranos_cmm.c:142
 msgid "NoNo"
 msgstr "NeinNein"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:684
+#: liboyranos_config/oyranos_icc.c:684
 msgid "Offset Lithography"
 msgstr "Offsetdruck"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:429
+#: liboyranos_config/oyranos_texts.c:429
 msgid "On Cmyk Mismatch"
 msgstr "Bei Cmyk Ungleichheit"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:419
+#: liboyranos_config/oyranos_texts.c:419
 msgid "On Rgb Mismatch"
 msgstr "Bei Rgb Ungleichheit"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2493
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2135
+#: modules/oyranos_cmm_lcm2.c:2493 modules/oyranos_cmm_lcms.c:2135
 msgid "Optimization"
 msgstr "Optimierung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:316
+#: tools/oyranos_convert.c:316
 msgid "Option"
 msgstr "Option"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image_ppm.c:277
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:550
+#: modules/oyranos_cmm_oyra_image_ppm.c:277 modules/oyranos_cmm_oPNG.c:550
 msgid "Option \"filename\", a valid filename"
 msgstr "Option \"filename\", ein gültiger Dateiname"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:1153
+#: modules/oyranos_cmm_oPNG.c:1153
 msgid "Option \"filename\", a valid filename of a existing PNG image"
 msgstr ""
 "Option \"filename\", ein gültiger Dateiname eines existierenden PNG Bildes"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image_ppm.c:1104
+#: modules/oyranos_cmm_oyra_image_ppm.c:1104
 msgid "Option \"filename\", a valid filename of a existing PPM image"
 msgstr ""
 "Option \"filename\", ein gültiger Dateiname eines existierenden PPM Bildes"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos.c:144
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos.c:173
+#: liboyranos_config/oyranos.c:144 liboyranos_config/oyranos.c:173
 msgid "Option not supported type:"
 msgstr "Option nicht unterstützten Typs:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:541
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1225
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1326
+#: liboyranos_config/oyranos_icc.c:541 modules/oyranos_cmm_oyIM_profile.c:1225
+#: modules/oyranos_cmm_oyIM_profile.c:1326
 msgid "Output"
 msgstr "Ausgabe"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:67
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:75
+#: tools/oyranos_convert.c:67 tools/oyranos_convert.c:75
 msgid "Output Color Space"
 msgstr "Ausgabefarbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:1450
+#: modules/oyranos_cmm_oyra_image.c:1450
 msgid "Output Image Filter Object"
 msgstr "Filterobjekt eines Ausgangsbildes"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_CUPS.c:932
+#: modules/devices/oyranos_cmm_CUPS.c:932
 msgid "Oyranos CUPS"
 msgstr "Oyranos CUPS"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oicc.c:920
+#: modules/oyranos_cmm_oicc.c:920
 msgid "Oyranos ICC policy"
 msgstr "Oyranos ICC Richtlinie"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oicc.c:922
+#: modules/oyranos_cmm_oicc.c:922
 msgid "Oyranos ICC policy module"
 msgstr "Oyranos ICC Richtlinien Modul"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:881
+#: modules/devices/oyranos_cmm_oyRE.cpp:881
 msgid "Oyranos RAW Image"
 msgstr "Oyranos RAW Bild"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_SANE.c:957
+#: modules/devices/oyranos_cmm_SANE.c:957
 msgid "Oyranos Scanner"
 msgstr "Oyranos Scanner"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:254
+#: liboyranos_config/oyranos_texts.c:254
 msgid "Oyranos Settings"
 msgstr "Oyranos Einstellungen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:146
+#: liboyranos_config/oyranos_texts.c:146
 msgid "Oyranos Settings Group"
 msgstr "Oyranos Einstellungen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:255
+#: liboyranos_config/oyranos_texts.c:255
 msgid "Oyranos Settings allow to fine tune handling of color management."
 msgstr ""
 "Oyranos Einstellungen erlauben detailierte Farbmanagementeinstellungen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_xml.c:859
+#: liboyranos_config/oyranos_xml.c:859
 msgid "Oyranos Version"
 msgstr "Oyranos Version"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1256
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_qarz.c:1162
+#: modules/devices/oyranos_cmm_oyX1.c:1256
+#: modules/devices/oyranos_cmm_qarz.c:1162
 msgid "Oyranos X11"
 msgstr "Oyranos X11"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_xml.c:1036
+#: liboyranos_config/oyranos_xml.c:1036
 msgid ""
 "Oyranos allowes detailed settings like preferred editing color spaces and "
 "the behaviour of color conversions or simulation. Oyranos reduces the work "
@@ -2005,11 +1896,11 @@ msgstr ""
 "Oyranos verringert den Aufwand für Farbmanagemententscheidungen durch "
 "Automation, sinnvolle Voreinstellungen und wählbare Richtlinien."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oydi.c:1054
+#: modules/oyranos_cmm_oydi.c:1054
 msgid "Oyranos display filter"
 msgstr "Oyranos Monitor Modul"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_xml.c:999
+#: liboyranos_config/oyranos_xml.c:999
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "
 "format standard (<a href=\"http://www.color.org\">www.color.org</a>) for "
@@ -2024,23 +1915,18 @@ msgstr ""
 "Abgleich auf verschiedenen Geräten mit ihren jeweiligen physikalischen "
 "Gegebenheiten ermöglichen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:144
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM.c:128
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra.c:128
+#: liboyranos/oyranos_cmm.c:144 modules/oyranos_cmm_oyIM.c:128
+#: modules/oyranos_cmm_oyra.c:128
 msgid "Oyranos modules"
 msgstr "Oyranos Module"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:154
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM.c:138
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oicc.c:930
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra.c:138
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oydi.c:1064
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1287
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_SANE.c:968
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_CUPS.c:943
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_qarz.c:1193
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:230
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:892
+#: liboyranos/oyranos_cmm.c:154 modules/oyranos_cmm_oyIM.c:138
+#: modules/oyranos_cmm_oicc.c:930 modules/oyranos_cmm_oyra.c:138
+#: modules/oyranos_cmm_oydi.c:1064 modules/devices/oyranos_cmm_oyX1.c:1287
+#: modules/devices/oyranos_cmm_SANE.c:968
+#: modules/devices/oyranos_cmm_CUPS.c:943
+#: modules/devices/oyranos_cmm_qarz.c:1193 modules/oyranos_cmm_lraw.cpp:230
+#: modules/devices/oyranos_cmm_oyRE.cpp:892
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
 "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
@@ -2048,7 +1934,7 @@ msgstr ""
 "Oyranos Projekt: www: http://www.oyranos.com; Support/email: ku.b@gmx.de; "
 "Quellen: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:147
+#: liboyranos_config/oyranos_texts.c:147
 msgid ""
 "Oyranos settings let you configure ICC color management behaviour for a "
 "local computer. The settings can be per user and per system."
@@ -2057,55 +1943,52 @@ msgstr ""
 "Rechner zu konfigurieren. Die Einstellungen erfolgen für den Benutzer und "
 "für das System."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:146
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM.c:130
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra.c:130
+#: liboyranos/oyranos_cmm.c:146 modules/oyranos_cmm_oyIM.c:130
+#: modules/oyranos_cmm_oyra.c:130
 msgid "Oyranos supplied modules"
 msgstr "Oyranos mitgelieferte Module"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:712
+#: liboyranos_config/oyranos_icc.c:712
 msgid "P22"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:674
+#: liboyranos_config/oyranos_icc.c:674
 msgid "Passive matrix monitor"
 msgstr "Passivmatrixmonitor"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:453
+#: tools/oyranos_profiles.c:453
 msgid "Path can not be written"
 msgstr "Verzeichnis kann nicht beschrieben werden."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:190
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:276
+#: liboyranos_config/oyranos_texts.c:190 liboyranos_config/oyranos_texts.c:276
 msgid "Paths"
 msgstr "Pfade"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:191
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:277
+#: liboyranos_config/oyranos_texts.c:191 liboyranos_config/oyranos_texts.c:277
 msgid "Paths where ICC Profiles can be found"
 msgstr "Pfad zu ICC Farbprofilen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:463
+#: liboyranos_config/oyranos_texts.c:463
 msgid "Perceptual"
 msgstr "Fotografisch"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:678
+#: liboyranos_config/oyranos_icc.c:678
 msgid "Photo CD"
 msgstr "Foto CD"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:680
+#: liboyranos_config/oyranos_icc.c:680
 msgid "PhotoImageSetter"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:662
+#: liboyranos_config/oyranos_icc.c:662
 msgid "Photographic paper printer"
 msgstr "Photographischer Papierdrucker"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:337
+#: tools/oyranos_gamma.c:337
 msgid "Please specify a monitor with the -d option."
 msgstr "Bitte einen Monitor mit der Option -d wählen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:201
+#: liboyranos_config/oyranos_texts.c:201
 msgid ""
 "Policies summarise common settings for different user groups. Such settings "
 "make it easy to switch back to simple defaults. Other groups can define own "
@@ -2116,153 +1999,143 @@ msgstr ""
 "jeweiligen Voreinstellungen. Gruppen können eigene Richtlinien erstellen und "
 "zwischen Oyranos unterstützenden Systemen austauschen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:199
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:264
+#: liboyranos_config/oyranos_texts.c:199 liboyranos_config/oyranos_texts.c:264
 msgid "Policy"
 msgstr "Richtlinie"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:214
+#: tools/oyranos_policy.c:214
 msgid "Policy search paths"
 msgstr "Richtliniensuchpfade"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:318
+#: liboyranos_config/oyranos_texts.c:318
 msgid "Prefered CIE*Lab Editing Color Space"
 msgstr "Bevorzugter CIE*Lab Editierfarbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:298
+#: liboyranos_config/oyranos_texts.c:298
 msgid "Prefered Cmyk Editing Color Space"
 msgstr "Bevorzugter Cmyk Editierfarbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:328
+#: liboyranos_config/oyranos_texts.c:328
 msgid "Prefered Gray Editing Color Space"
 msgstr "Bevorzugter Grau Editierfarbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:288
+#: liboyranos_config/oyranos_texts.c:288
 msgid "Prefered Rgb Editing Color Space"
 msgstr "Bevorzugter Rgb Editierfarbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:308
+#: liboyranos_config/oyranos_texts.c:308
 msgid "Prefered XYZ Editing Color Space"
 msgstr "Bevorzugter XYZ Editierfarbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:423
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:433
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:443
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:453
+#: liboyranos_config/oyranos_texts.c:423 liboyranos_config/oyranos_texts.c:433
+#: liboyranos_config/oyranos_texts.c:443 liboyranos_config/oyranos_texts.c:453
 msgid "Preserve Numbers"
 msgstr "Erhalte Zahlen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:397
+#: liboyranos_config/oyranos_icc.c:397
 msgid "Preview, perceptual"
 msgstr "Voransicht, fotografisch"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:398
+#: liboyranos_config/oyranos_icc.c:398
 msgid "Preview, relative colorimetric"
 msgstr "Voransicht, relativ farbmetrisch"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:399
+#: liboyranos_config/oyranos_icc.c:399
 msgid "Preview, saturated"
 msgstr "Voransicht, farbgesättigt"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:97
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:91
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:90
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:66
+#: tools/oyranos_profile.c:97 tools/oyranos_convert.c:91
+#: tools/oyranos_profiles.c:90 tools/oyranos_policy.c:66
 msgid "Print a help text:"
 msgstr "Zeige einen Hilfetext an:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_CUPS.c:823
+#: modules/devices/oyranos_cmm_CUPS.c:823
 msgid "Printer"
 msgstr "Drucker"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_CUPS.c:840
+#: modules/devices/oyranos_cmm_CUPS.c:840
 msgid "Printer CUPS"
 msgstr "CUPS Drucker"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_CUPS.c:825
+#: modules/devices/oyranos_cmm_CUPS.c:825
 msgid "Printers, which are accessible through the CUPS spooling system."
 msgstr "Drucker, die durch das CUPS Drucksystem erreichbar sind."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1413
+#: modules/oyranos_cmm_oyIM_profile.c:1413
 msgid "Priority:"
 msgstr "Priorität:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfile_s.c:518
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfile_s.c:524
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:442
+#: API_generated/oyProfile_s.c:518 API_generated/oyProfile_s.c:524
+#: tools/oyranos_profiles.c:442
 msgid "Profile already installed"
 msgstr "Profil ist bereits installiert"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfile_s.c:505
+#: API_generated/oyProfile_s.c:505
 msgid "Profile contains no description"
 msgstr "Profilbeschreibung vermisst"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:400
+#: liboyranos_config/oyranos_icc.c:400
 msgid "Profile description"
 msgstr "Profilbeschreibung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:402
+#: liboyranos_config/oyranos_icc.c:402
 msgid "Profile description, multilingual"
 msgstr "Profilbeschreibung mehrsprachig"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfile_s.c:540
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:247
+#: API_generated/oyProfile_s.c:540 tools/oyranos_profile.c:247
 msgid "Profile exists already"
 msgstr "Profil ist bereits installiert"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:464
+#: tools/oyranos_profiles.c:464
 msgid "Profile not useable"
 msgstr "Profil nicht benutzbar"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:403
+#: liboyranos_config/oyranos_icc.c:403
 msgid "Profile sequence description"
 msgstr "Beschreibung der Profilverknüpfung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:404
+#: liboyranos_config/oyranos_icc.c:404
 msgid "Profile sequence identification"
 msgstr "Identifizierung der Profilverknüpfung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:424
+#: liboyranos_config/oyranos_icc.c:424
 msgid "Profiling parameters"
 msgstr "Profilierungsparameter"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:670
+#: liboyranos_config/oyranos_icc.c:670
 msgid "Projection Television"
 msgstr "Fernsehprojektion"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:413
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:423
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:433
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:443
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:453
+#: liboyranos_config/oyranos_texts.c:413 liboyranos_config/oyranos_texts.c:423
+#: liboyranos_config/oyranos_texts.c:433 liboyranos_config/oyranos_texts.c:443
+#: liboyranos_config/oyranos_texts.c:453
 msgid "Promt"
 msgstr "Abfragedialog"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:244
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:398
+#: liboyranos_config/oyranos_texts.c:244 liboyranos_config/oyranos_texts.c:398
 msgid "Proofing"
 msgstr "Simulation"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:181
+#: liboyranos_config/oyranos_texts.c:181
 msgid "Proofing Color Space"
 msgstr "Simulationsfarbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:479
+#: liboyranos_config/oyranos_texts.c:479
 msgid "Proofing Rendering Intent"
 msgstr "Nachbildungsübertragung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:245
+#: liboyranos_config/oyranos_texts.c:245
 msgid "Proofing Settings"
 msgstr "Einstellungen für Nachbildung (Simulation) von einem Ausgabegerät"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:246
+#: liboyranos_config/oyranos_texts.c:246
 msgid ""
 "Proofing Settings allows one to decide about the simulation color space."
 msgstr ""
 "Simulationseinstellungen erlauben die Simulation eines zusätzlichen "
 "Farbraumes."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:775
+#: modules/devices/oyranos_cmm_oyRE.cpp:775
 msgid ""
 "Raw camera data, which are in file containing raw sensor data from a camera "
 "still picture."
@@ -2270,142 +2143,139 @@ msgstr ""
 "Rohe Kamerasaten, welche in Dateien mit unbearbeiteten Kamerasensordaten "
 "enthalten sind."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:773
+#: modules/devices/oyranos_cmm_oyRE.cpp:773
 msgid "RawCamera"
 msgstr "Kamerarohdaten"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:1139
+#: modules/oyranos_cmm_oPNG.c:1139
 msgid "Read PNG"
 msgstr "Lese PNG"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image_ppm.c:1090
+#: modules/oyranos_cmm_oyra_image_ppm.c:1090
 msgid "Read PPM"
 msgstr "Lese PPM"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2134
+#: modules/oyranos_cmm_lcm2.c:2134
 msgid "Read from new_ticket->array"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:905
+#: modules/oyranos_cmm_oyra_image.c:905
 msgid "Read new_ticket->array into image"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:1053
+#: modules/oyranos_cmm_oyra_image.c:1053
 msgid "Rectangles"
 msgstr "Rechtecke"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:1055
+#: modules/oyranos_cmm_oyra_image.c:1055
 msgid "Rectangles Splitter Object"
 msgstr "Rechteck Regionen Objekt"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:211
+#: liboyranos_config/oyranos_icc.c:211
 msgid "Red"
 msgstr "Rot"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:411
+#: liboyranos_config/oyranos_icc.c:411
 msgid "Red Colorant"
 msgstr "Rote Grundfarbe"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1884
+#: modules/oyranos_cmm_oyIM_profile.c:1884
 msgid "Red Gamma:"
 msgstr "Rote Tonwertkurve:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:412
+#: liboyranos_config/oyranos_icc.c:412
 msgid "Red tone reproduction curve"
 msgstr "Rote Farbwiedergabekurve"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1868
+#: modules/oyranos_cmm_oyIM_profile.c:1868
 msgid "Red xy:"
 msgstr "Rot xy:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:650
+#: liboyranos_config/oyranos_icc.c:650
 msgid "Reflective scanner"
 msgstr "Auflichtscanner"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:463
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:483
+#: liboyranos_config/oyranos_texts.c:463 liboyranos_config/oyranos_texts.c:483
 msgid "Relative Colorimetric"
 msgstr "Relativ Farbmetrisch"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:217
+#: liboyranos_config/oyranos_texts.c:217
 msgid "Rendering"
 msgstr "Übertragung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:459
+#: liboyranos_config/oyranos_texts.c:459
 msgid "Rendering Intent"
 msgstr "Übertragungsart"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:461
+#: liboyranos_config/oyranos_texts.c:461
 msgid ""
 "Rendering intent for color space transformations is typical the Relative "
 "Colorimetric intent plus Black Point Compensation or the Perceptual intent."
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:460
+#: liboyranos_config/oyranos_texts.c:460
 msgid "Rendering intent for color space transformations."
 msgstr "Übertragungsart für Farbtransformationen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:120
+#: liboyranos_config/oyranos_icc.c:120
 msgid "Rgb"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:1259
+#: modules/oyranos_cmm_oyra_image.c:1259
 msgid "Root Image"
 msgstr "Quellbild"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:1261
+#: modules/oyranos_cmm_oyra_image.c:1261
 msgid "Root Image Filter Object"
 msgstr "iFilterObjekt eines Quellbildes"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:895
+#: modules/oyranos_cmm_oyra_image.c:895
 msgid "Run new_ticket through filter in node"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:185
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:547
+#: modules/oyranos_cmm_oyra_image.c:185 modules/oyranos_cmm_oyra_image.c:547
 msgid "Run ticket through api7"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:572
+#: liboyranos_config/oyranos_icc.c:572
 msgid "SGI"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:710
+#: liboyranos_config/oyranos_icc.c:710
 msgid "SMPTE RP145-1994"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:463
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:220
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:226
+#: liboyranos_config/oyranos_texts.c:463 liboyranos_config/oyranos_icc.c:220
+#: liboyranos_config/oyranos_icc.c:226
 msgid "Saturation"
 msgstr "Sättigung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile_graph.c:187
+#: tools/oyranos_profile_graph.c:187
 msgid "Saturation Graph:"
 msgstr "Sättigungs Zeichnung:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:226
+#: liboyranos_config/oyranos_texts.c:226
 msgid "Save Mixed Color Space Documents"
 msgstr "Speichere Dokumente mit gemischten Farbräumen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:64
+#: tools/oyranos_policy.c:64
 msgid "Save to a new policy:"
 msgstr "Speichern in eine neue Richtlinie:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_SANE.c:821
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_SANE.c:838
+#: modules/devices/oyranos_cmm_SANE.c:821
+#: modules/devices/oyranos_cmm_SANE.c:838
 msgid "Scanner"
 msgstr "Scanner"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_SANE.c:823
+#: modules/devices/oyranos_cmm_SANE.c:823
 msgid "Scanner data, which come from SANE library."
 msgstr "Scanndaten von der SANE Bibliothek."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:965
+#: modules/oyranos_cmm_oyIM_profile.c:965
 msgid "Segmented Curve"
 msgstr "Stückweise Kurve"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:400
+#: liboyranos_config/oyranos_texts.c:400
 msgid ""
 "Select a color profile representing a device to be simulated. This profile "
 "will only be applied if proofing is enabled."
@@ -2413,27 +2283,27 @@ msgstr ""
 "Diese Option wählt ein Farbprofil, welches ein zu simulierendes Gerät "
 "farblich abbildet. Das Profile wird nur wirksam bei aktivierter Simulation."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:56
+#: tools/oyranos_policy.c:56
 msgid "Select active policy:"
 msgstr "Wählen der Richtlinie:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1838
+#: modules/oyranos_cmm_oyIM_profile.c:1838
 msgid "Serial:"
 msgstr "Serien Nr.:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:78
+#: liboyranos/oyranos_cmm.c:78
 msgid "Set dimensions on ticket->output_image"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:196
+#: tools/oyranos_gamma.c:196
 msgid "Set new profile:"
 msgstr "Setze neues Profil:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:209
+#: liboyranos_config/oyranos_texts.c:209
 msgid "Settings affecting the Behaviour in various situations"
 msgstr "Einstellungen für das Verhalten unter verschiedenen Umständen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:266
+#: liboyranos_config/oyranos_texts.c:266
 msgid ""
 "Settings can be grouped in Oyranos policies for easier adaption to demands, "
 "better remembering and synchronisation."
@@ -2441,81 +2311,77 @@ msgstr ""
 "Einstellungen können zur Vereinfachung in Richtlinien zusammengefasst "
 "werden. Diese lassen sich besser merken und einfacher austauschen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyObserver_s.c:349
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyObserver_s.c:360
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyObserver_s.c:559
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyObserver_s.c:637
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyObserver_s_.c:54
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyFilterNode_s_.c:897
+#: API_generated/oyObserver_s.c:349 API_generated/oyObserver_s.c:360
+#: API_generated/oyObserver_s.c:559 API_generated/oyObserver_s.c:637
+#: API_generated/oyObserver_s_.c:54 API_generated/oyFilterNode_s_.c:897
 msgid "Signal"
 msgstr "Signal"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:686
+#: liboyranos_config/oyranos_icc.c:686
 msgid "Silkscreen"
 msgstr "Siebdruck"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:490
+#: liboyranos_config/oyranos_texts.c:490
 msgid "Simulate the output print on the monitor"
 msgstr "Bilde einen Ausdruck auf dem Bildschirm nach"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:68
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:76
+#: tools/oyranos_convert.c:68 tools/oyranos_convert.c:76
 msgid "Simulation/Proof Color Space"
 msgstr "Simulationsfarbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1856
+#: modules/oyranos_cmm_oyIM_profile.c:1856
 msgid "Size:"
 msgstr "Größe"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1566
+#: modules/devices/oyranos_cmm_oyX1.c:1566
 msgid "So something with options."
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:489
+#: liboyranos_config/oyranos_texts.c:489
 msgid "SoftProof"
 msgstr "Nachbildung am Bildschirm"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:571
+#: liboyranos_config/oyranos_icc.c:571
 msgid "Solaris"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:155
+#: liboyranos_config/oyranos_texts.c:155
 msgid "Source and Target Profiles for various situations"
 msgstr "Quell- und Zielprofile für verschiedene Situationen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile_graph.c:190
+#: tools/oyranos_profile_graph.c:190
 msgid "Standard Observer Graph:"
 msgstr "Standard Betrachter Zeichnung:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:145
+#: liboyranos_config/oyranos_texts.c:145
 msgid "Start"
 msgstr "Start"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1355
+#: modules/oyranos_cmm_oyIM_profile.c:1355
 msgid "Tag Version:"
 msgstr "Element Version:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:573
+#: liboyranos_config/oyranos_icc.c:573
 msgid "Taligent"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:394
+#: tools/oyranos_gamma.c:394
 msgid "Taxi DB entries for device"
 msgstr "Taxi DB Einträge für das Gerät"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:397
+#: tools/oyranos_gamma.c:397
 msgid "Taxi ID"
 msgstr "Taxi ID"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:415
+#: liboyranos_config/oyranos_icc.c:415
 msgid "Technologie"
 msgstr "Technologie"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:2025
+#: modules/oyranos_cmm_oyIM_profile.c:2025
 msgid "Technology:"
 msgstr "Technologie:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oydi.c:1078
+#: modules/oyranos_cmm_oydi.c:1078
 msgid ""
 "The \"display\" filter supports applications to show image content on single "
 "and multi monitor displays. It cares about the server communication in "
@@ -2533,15 +2399,15 @@ msgstr ""
 "hat allerding Nachteile bei deformierten Regionen wie wackelnden oder "
 "verzerrten Fenstern."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_CUPS.c:960
+#: modules/devices/oyranos_cmm_CUPS.c:960
 msgid "The CUPS module supports the generic device protocol."
 msgstr "Das CUPS Modul unterstützt Oyranos’ allgemeines Geräteprotokoll."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_CUPS.c:934
+#: modules/devices/oyranos_cmm_CUPS.c:934
 msgid "The CUPS/printer module for Oyranos."
 msgstr "Das CUPS/Drucker Modul für Oyranos"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:165
+#: liboyranos_config/oyranos_texts.c:165
 msgid ""
 "The Editing Color Spaces shall be well behaving in order to allow editing of "
 "per channel curves. Well behaving means for Rgb, that editing of all three "
@@ -2553,7 +2419,7 @@ msgstr ""
 "gleichzeitiges Verändern aller drei Farbkanäle die Neutralität der Grauachse "
 "nicht beeinflusst."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:1155
+#: modules/oyranos_cmm_oPNG.c:1155
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the png data "
 "from. If the file does not exist, a error will occure.\n"
@@ -2567,7 +2433,7 @@ msgstr ""
 "kann, wird ein oyASSUMED_WEB/oyASSUMED_GRAY ICC Farbprofil an das erzeugte "
 "Bild angehangen. Eine interne Farbübertragungsart wird ignoriert."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image_ppm.c:1106
+#: modules/oyranos_cmm_oyra_image_ppm.c:1106
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the ppm data "
 "from. If the file does not exist, a error will occure.\n"
@@ -2577,7 +2443,7 @@ msgstr ""
 "Bildes enthalten. Falls die Datei nicht existiert wird ein Fehler gemeldet.\n"
 "Das oyEDITING_RGB ICC Farbprofil wird angehangen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:552
+#: modules/oyranos_cmm_oPNG.c:552
 msgid ""
 "The Option \"filename\" should contain a valid filename to write the png "
 "data into. A existing file will be overwritten without notice."
@@ -2586,7 +2452,7 @@ msgstr ""
 "PNG Bildes enthalten. Eine existierende Datei wird ohne Warnung "
 "überschrieben."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image_ppm.c:279
+#: modules/oyranos_cmm_oyra_image_ppm.c:279
 msgid ""
 "The Option \"filename\" should contain a valid filename to write the ppm "
 "data into. A existing file will be overwritten without notice."
@@ -2595,7 +2461,7 @@ msgstr ""
 "PPM Bildes enthalten. Eine existierende Datei wird ohne Warnung "
 "überschrieben."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2551
+#: modules/oyranos_cmm_lcm2.c:2551
 msgid ""
 "The adaption state should be between 0 and 1.0 and will apply to the "
 "absolute colorimetric intent."
@@ -2603,11 +2469,11 @@ msgstr ""
 "Der Farbanpassungsgrad sollte zwischen 0 und 1.0 liegen und wird auf die "
 "absolut farbmetrische Übertragung angewendet."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oydi.c:1056
+#: modules/oyranos_cmm_oydi.c:1056
 msgid "The client side window data handler of Oyranos."
 msgstr "Die benutzerseitige Fensterdatenagent von Oyranos."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:219
+#: liboyranos_config/oyranos_texts.c:219
 msgid ""
 "The conversion between color spaces of different shape and size can happen "
 "in various ways. The Perceptual rendering intent is usual the best choice "
@@ -2636,7 +2502,7 @@ msgstr ""
 "Farbtabellen allen Übertragungsarten,  ausser die der Farbmetrischen, werden "
 "von den Profilerstellern gestaltet."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:1458
+#: modules/oyranos_cmm_oyra_image.c:1458
 msgid ""
 "The filter can query pixels from its successors in a graph. The results are "
 "stored in the internal buffer."
@@ -2644,7 +2510,7 @@ msgstr ""
 "Der Filter erfragt Rasterbildpunkte von seinem Vorgänger im Graphen. Das "
 "Ergebnis wird in internen Datenfeldern gespeichert."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:1122
+#: modules/oyranos_cmm_lraw.cpp:1122
 msgid ""
 "The filter is a libraw image reader. The option \"device\" with value \"1\" "
 "requestests a oyConfig_s object containing typical device informations about "
@@ -2652,11 +2518,11 @@ msgid ""
 "the data processing."
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:1456
+#: modules/oyranos_cmm_oyra_image.c:1456
 msgid "The filter is a possible pixel target in a graph."
 msgstr "Der Filter ist ein mögliches Rasterbildziel in einem Graphen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oicc.c:944
+#: modules/oyranos_cmm_oicc.c:944
 msgid ""
 "The filter is provides policy settings. These settings can be applied to a "
 "graph through the user function oyConversion_Correct()."
@@ -2665,7 +2531,7 @@ msgstr ""
 "mit Hilfe der oyConversion_Correct() Funktion auf einen Grafen angewendet "
 "werden."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oydi.c:1080
+#: modules/oyranos_cmm_oydi.c:1080
 msgid ""
 "The filter needs some informations attached to the output image tags of the "
 "\"output\" image filter. The following list describes the X11/Xorg "
@@ -2702,15 +2568,15 @@ msgstr ""
 " \"preserve_alpha\" ist eine Ganzzahloption die Deckkraft in einem neuen "
 "Bild zu erhalten."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:1120
+#: modules/oyranos_cmm_lraw.cpp:1120
 msgid "The filter obtains a image from libraw."
 msgstr "Der Filter erhält Bilder von libraw."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:1267
+#: modules/oyranos_cmm_oyra_image.c:1267
 msgid "The filter provides a generic image source."
 msgstr "Der Filter bietet eine allgemeine Bildquelle."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:1063
+#: modules/oyranos_cmm_oyra_image.c:1063
 msgid ""
 "The filter will expect a \"rectangle\" option and will create, fill and "
 "process a according rectangle with a new job ticket."
@@ -2718,7 +2584,7 @@ msgstr ""
 "Der Filter erwartet eine \"rectangle\" Option und erstellt, füllt und "
 "verarbeitet die bezüglichen Rechtecke in jeweils eigenen Arbeitsaufträgen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:3066
+#: modules/oyranos_cmm_lcm2.c:3066
 msgid ""
 "The following options are available to create colour contexts:\n"
 " \"profiles_simulation\", a option of type oyProfiles_s, can contain device "
@@ -2752,7 +2618,7 @@ msgstr ""
 "\"adaption_state\": [0.0 - not adapted to screen, 1.0 - full adapted to "
 "screen]."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2675
+#: modules/oyranos_cmm_lcms.c:2675
 msgid ""
 "The following options are available to create colour contexts:\n"
 " \"profiles_simulation\", a option of type oyProfiles_s, can contain device "
@@ -2778,15 +2644,14 @@ msgstr ""
 " The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 "
 "- none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE]."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:218
+#: liboyranos_config/oyranos_texts.c:218
 msgid ""
 "The kind of ICC gamut mapping for transforming colors between differently "
 "sized color spaces"
 msgstr ""
 "Die Art der Farbübertragung für verschieden große Farbräume nach ICC Standard"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:3064
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2673
+#: modules/oyranos_cmm_lcm2.c:3064 modules/oyranos_cmm_lcms.c:2673
 msgid ""
 "The lcms \"colour.icc\" filter is a one dimensional colour conversion "
 "filter. It can both create a colour conversion context, some precalculated "
@@ -2800,8 +2665,7 @@ msgstr ""
 "Modul, welcher die interne lcms Farbübertragungsdaten an das Oyranos' Format "
 "anpasst, welches auf ICC Geräteverknüpfungen, engl. device links, beruht."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2816
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2425
+#: modules/oyranos_cmm_lcm2.c:2816 modules/oyranos_cmm_lcms.c:2425
 msgid ""
 "The littleCMS \"create_profile.colour_matrix\" command lets you create ICC "
 "profiles from some given colourimetric coordinates. See the \"create_profile"
@@ -2811,7 +2675,7 @@ msgstr ""
 "Erstellung eines ICC Farbprofiles von farbmetrischen Koordinaten. Siehe auch "
 "den \"create_profile\" Info Eintrag. "
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2808
+#: modules/oyranos_cmm_lcm2.c:2808
 msgid ""
 "The littleCMS \"create_profile.colour_matrix\" command lets you create ICC "
 "profiles from some given colourimetric coordinates. The filter expects a "
@@ -2829,7 +2693,7 @@ msgstr ""
 "CIE*x für Rot, CIE*y für Rot, CIE*x für Grün, CIE*y für Grün, CIE*x für "
 "Blau, CIE*y für Blau, CIE*x für Weiß, CIE*y für Weiß und ein Gamma Wert."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2417
+#: modules/oyranos_cmm_lcms.c:2417
 msgid ""
 "The littleCMS \"create_profile.colour_matrix\" command lets you create ICC "
 "profiles from some given colourimetric coordinates. The filter expects a "
@@ -2850,7 +2714,7 @@ msgstr ""
 "Ergebnis wird in \"icc_profile\" mit den Attributen \"create_profile."
 "colour_matrix\" erscheinen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2345
+#: modules/oyranos_cmm_lcms.c:2345
 msgid ""
 "The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
 "abstract profiles from a given ICC profile for proofing. The filter expects "
@@ -2871,7 +2735,7 @@ msgstr ""
 "\"icc_profile\" mit den zusätzlichen Attributen \"create_profile."
 "proofing_effect\" erscheinen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2736
+#: modules/oyranos_cmm_lcm2.c:2736
 msgid ""
 "The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
 "abstract profiles from a given ICC profile for proofing. The filter expects "
@@ -2894,8 +2758,7 @@ msgstr ""
 "Attributen \"create_profile.proofing_effect\" as ein oyProfile_s Objekt "
 "erscheinen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2744
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2353
+#: modules/oyranos_cmm_lcm2.c:2744 modules/oyranos_cmm_lcms.c:2353
 msgid ""
 "The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
 "abstract profiles from some given ICC profile. See the \"proofing_effect\" "
@@ -2905,7 +2768,7 @@ msgstr ""
 "Erstellung eines abstrakten ICC Farbprofiles von einem Gerätefarbprofil. "
 "Siehe auch den \"proofing_effect\" Info Eintrag. "
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oicc.c:946
+#: modules/oyranos_cmm_oicc.c:946
 msgid ""
 "The module is responsible for many settings in the Oyranos colour management "
 "settings panel. If applied the module care about rendering intents, "
@@ -2916,22 +2779,22 @@ msgstr ""
 "das Modul automatisch um Farbübertragungsart, Simulation, gemischte "
 "Dokumente und voreingestellte Profile."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1265
+#: modules/devices/oyranos_cmm_oyX1.c:1265
 msgid "The oyX1 module supports the generic device protocol."
 msgstr "Das oyX1 Modul unterstützt Oyranos’ allgemeines Geräteprotokoll."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1586
+#: modules/devices/oyranos_cmm_oyX1.c:1586
 msgid ""
 "The oyX1 modules \"set_xcm_region\" handler lets you set X Color Management "
 "compatible client side colour regions. The implementation uses libXcm and "
 "Oyranos."
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:319
+#: liboyranos_config/oyranos_texts.c:319
 msgid "The preferred CIE*Lab Editing Color Space shall describe the CIE*Lab."
 msgstr "Der bevorzugter CIE*Lab Editierfarbraum soll CIE*Lab beschreiben."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:299
+#: liboyranos_config/oyranos_texts.c:299
 msgid ""
 "The preferred Cmyk Editing Color Space should represent a color space that "
 "complies to well defined printing conditions like FOGRA or SWOP."
@@ -2939,7 +2802,7 @@ msgstr ""
 "Der bevorzugte Cmyk Editierfarbraum sollte standard Druckbedingungen wie "
 "FOGRA oder SWOP representieren."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:329
+#: liboyranos_config/oyranos_texts.c:329
 msgid ""
 "The preferred Gray Editing Color Space shall describe a single lighness "
 "channel color space for grayscale images."
@@ -2947,17 +2810,17 @@ msgstr ""
 "Der bevorzugte Grautonfarbraum soll Farben mit einem einzigen "
 "Helligkeitsfarbkanal beschreiben."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:289
+#: liboyranos_config/oyranos_texts.c:289
 msgid ""
 "The preferred Rgb Editing Color Space should represent a well behaving color "
 "space like sRGB."
 msgstr "Der bevorzugte Rgb Editierfarbraum sollte wohlgeformt sein."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:309
+#: liboyranos_config/oyranos_texts.c:309
 msgid "The preferred XYZ Editing Color Space shall decribe CIE*XYZ."
 msgstr "Der bevorzugter XYZ Editierfarbraum soll CIE*XYZ definieren."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:183
+#: liboyranos_config/oyranos_texts.c:183
 msgid ""
 "The proofing color space represents a real color device for simulation. "
 "Possible uses cases are to simulate a print machine, a viewing environment "
@@ -2968,25 +2831,25 @@ msgstr ""
 "Betrachtungsbedingungen in einem Theater oder der kleinere Farbumfang eines "
 "Bildschirmes."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_qarz.c:1171
+#: modules/devices/oyranos_cmm_qarz.c:1171
 msgid "The qarz module supports the generic device protocol."
 msgstr "Das qarz Modul unterstützt Oyranos’ allgemeines Geräteprotokoll."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:883
+#: modules/devices/oyranos_cmm_oyRE.cpp:883
 msgid "The raw image backend of Oyranos."
 msgstr "Das KameraRAW Bild Modul für Oyranos."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:1269
+#: modules/oyranos_cmm_oyra_image.c:1269
 msgid "The root image filter can hold pixel data for processing in a graph."
 msgstr ""
 "Der Quellbildfilter kann Rasterdaten zur Bearbeitung in einen Graphen "
 "enthalten."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_SANE.c:959
+#: modules/devices/oyranos_cmm_SANE.c:959
 msgid "The scanner (hopefully)usefull backend of Oyranos."
 msgstr "The Scanner Modul für Oyranos."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:349
+#: liboyranos_config/oyranos_texts.c:349
 msgid ""
 "The selected color space will be assigned to untagged CIE*Lab color content "
 "and define colors for further processing."
@@ -2994,7 +2857,7 @@ msgstr ""
 "Der gewählte Farbraum wird CIE*Lab ohne ICC Farbprofil zugewiesen werden und "
 "Farben für die weitere Verarbeitung bestimmen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:380
+#: liboyranos_config/oyranos_texts.c:380
 msgid ""
 "The selected color space will be assigned to untagged Cmyk color content and "
 "define colors for further processing."
@@ -3002,7 +2865,7 @@ msgstr ""
 "Der gewählte Farbraum wird Cmyk ohne ICC Farbprofil zugewiesen werden und "
 "Farben für die weitere Verarbeitung bestimmen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:390
+#: liboyranos_config/oyranos_texts.c:390
 msgid ""
 "The selected color space will be assigned to untagged Gray color content and "
 "define colors for further processing."
@@ -3010,7 +2873,7 @@ msgstr ""
 "Der gewählte Farbraum wird einen Helligkeitsfarbraum ohne ICC Farbprofil "
 "zugewiesen werden und Farben für die weitere Verarbeitung bestimmen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:359
+#: liboyranos_config/oyranos_texts.c:359
 msgid ""
 "The selected color space will be assigned to untagged Rgb color content and "
 "define colors for further processing. Typical sRGB should be assumed."
@@ -3018,7 +2881,7 @@ msgstr ""
 "Der gewählte Farbraum wird Rgb ohne ICC Farbprofil zugewiesen werden und "
 "Farben für die weitere Verarbeitung bestimmen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:339
+#: liboyranos_config/oyranos_texts.c:339
 msgid ""
 "The selected color space will be assigned to untagged XYZ color content and "
 "define colors for further processing."
@@ -3026,7 +2889,7 @@ msgstr ""
 "Der gewählte Farbraum wird einem XYZ ohne ICC Farbprofil zugewiesen werden "
 "und Farben für die weitere Verarbeitung bestimmen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1568
+#: modules/devices/oyranos_cmm_oyX1.c:1568
 msgid ""
 "The set_xcm_region takes minimal three options. The key name "
 "\"window_rectangle\" specifies in a oyRectangle_s object the requested "
@@ -3039,16 +2902,16 @@ msgid ""
 "to upload to the server."
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1258
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_qarz.c:1164
+#: modules/devices/oyranos_cmm_oyX1.c:1258
+#: modules/devices/oyranos_cmm_qarz.c:1164
 msgid "The window support module of Oyranos."
 msgstr "Die Fenstersystemunterstützung für Oyranos"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:654
+#: liboyranos_config/oyranos_icc.c:654
 msgid "Thermal wax printer"
 msgstr "Thermischer Wachsdrucker"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:411
+#: liboyranos_config/oyranos_texts.c:411
 msgid ""
 "This setting decides what to do in the case that colors have no color space "
 "assigned. Typical the according assumed ICC profile should be assigned."
@@ -3056,427 +2919,397 @@ msgstr ""
 "Die Einstellung entscheidet was mit Farben ohne Farbprofil geschehen soll. "
 "Typischerweise wird das vermutete Farbprofil automatisch zugewiesen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1167
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1179
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1191
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1203
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1268
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1280
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1292
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1304
+#: modules/oyranos_cmm_oyIM_profile.c:1167
+#: modules/oyranos_cmm_oyIM_profile.c:1179
+#: modules/oyranos_cmm_oyIM_profile.c:1191
+#: modules/oyranos_cmm_oyIM_profile.c:1203
+#: modules/oyranos_cmm_oyIM_profile.c:1268
+#: modules/oyranos_cmm_oyIM_profile.c:1280
+#: modules/oyranos_cmm_oyIM_profile.c:1292
+#: modules/oyranos_cmm_oyIM_profile.c:1304
 msgid "Type"
 msgstr "Typ"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1209
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1310
+#: modules/oyranos_cmm_oyIM_profile.c:1209
+#: modules/oyranos_cmm_oyIM_profile.c:1310
 msgid "Undefined"
 msgstr "undefiniert"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_object_internal.h:42
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_object_internal.h:50
+#: API_generated/oyranos_object_internal.h:42
+#: API_generated/oyranos_object_internal.h:50
 msgid "Unexpected object type:"
 msgstr "Unerwarteter Objekttyp:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:574
+#: liboyranos_config/oyranos_icc.c:574
 msgid "Unix and derivatives"
 msgstr "Unix und unixartige"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:195
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:81
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile_graph.c:173
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:63
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:60
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:53
+#: tools/oyranos_gamma.c:195 tools/oyranos_profile.c:81
+#: tools/oyranos_profile_graph.c:173 tools/oyranos_convert.c:63
+#: tools/oyranos_profiles.c:60 tools/oyranos_policy.c:53
 msgid "Usage"
 msgstr "Benutzung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:469
+#: liboyranos_config/oyranos_texts.c:469
 msgid "Use Black Point Compensation"
 msgstr "Benutze Schwarzpunktkompensation (BPC)"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:221
+#: liboyranos_config/oyranos_icc.c:221
 msgid "Value"
 msgstr "Wert"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:666
+#: liboyranos_config/oyranos_icc.c:666
 msgid "Video Monitor"
 msgstr "Video Bildschirm"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:668
+#: liboyranos_config/oyranos_icc.c:668
 msgid "Video camera"
 msgstr "Video Kamera"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:426
+#: liboyranos_config/oyranos_icc.c:426
 msgid "VideoCardGammaTable"
 msgstr "Grafik Karten Gamma Tabelle (vcgt)"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:418
+#: liboyranos_config/oyranos_icc.c:418
 msgid "Viewing Conditions"
 msgstr "Betrachtungsbedingungen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:417
+#: liboyranos_config/oyranos_icc.c:417
 msgid "Viewing conditions description"
 msgstr "Beschreibung der Betrachtungbedingungen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_core/oyranos_core.c:295
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/qcmsevents/qcmsevents.cpp:169
+#: liboyranos_core/oyranos_core.c:295 tools/qcmsevents/qcmsevents.cpp:169
 #, c-format
 msgid "WARNING"
 msgstr "WARNUNG"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:164
+#: liboyranos_config/oyranos_texts.c:164
 msgid "Well behaving Color Space for Editing"
 msgstr "Gleichmäßiger Farbraum für die Bearbeitung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1874
+#: modules/oyranos_cmm_oyIM_profile.c:1874
 msgid "White xy:"
 msgstr "Weiß xy:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:62
+#: liboyranos/oyranos_cmm.c:62
 msgid "Work on remote socket image"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:326
+#: modules/oyranos_cmm_oyra_image.c:326
 msgid "Write"
 msgstr "Schreibe"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:536
+#: modules/oyranos_cmm_oPNG.c:536
 msgid "Write PNG"
 msgstr "Schreibe PNG"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:528
+#: modules/oyranos_cmm_oPNG.c:528
 msgid "Write PNG Image Filter Object"
 msgstr "Filterobjekt zum Schreiben eines PNG Bildes"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image_ppm.c:263
+#: modules/oyranos_cmm_oyra_image_ppm.c:263
 msgid "Write PPM"
 msgstr "Schreibe PPM"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image_ppm.c:255
+#: modules/oyranos_cmm_oyra_image_ppm.c:255
 msgid "Write PPM Image Filter Object"
 msgstr "Filterobjekt zum Schreiben eines PPM Bildes"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:92
+#: tools/oyranos_profile.c:92
 msgid "Write to ICC profile:"
 msgstr "Schreibe ICC Profil:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2139
+#: modules/oyranos_cmm_lcm2.c:2139
 msgid "Write to ticket->array"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfile_s_.c:662
+#: API_generated/oyProfile_s_.c:662
 msgid "Wrong ICC profile id detected"
 msgstr "Fehler in ICC Profil ID gefunden!"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:1141
+#: modules/devices/oyranos_monitor_x11.c:1141
 msgid "XRandR CrtcInfo request failed"
 msgstr "XRandR CrtcInfo Anfrage daneben"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:115
+#: liboyranos_config/oyranos_icc.c:115
 msgid "XYZ"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:1159
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:1164
+#: modules/devices/oyranos_monitor_x11.c:1159
+#: modules/devices/oyranos_monitor_x11.c:1164
 msgid "Xinerama request failed"
 msgstr "Xineramaanfrage daneben"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:118
+#: liboyranos_config/oyranos_icc.c:118
 msgid "YCbCr"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:231
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:237
+#: liboyranos_config/oyranos_icc.c:231 liboyranos_config/oyranos_icc.c:237
 msgid "Yellow"
 msgstr "Gelb"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:473
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:493
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:503
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_texts.c:513
+#: liboyranos_config/oyranos_texts.c:473 liboyranos_config/oyranos_texts.c:493
+#: liboyranos_config/oyranos_texts.c:503 liboyranos_config/oyranos_texts.c:513
 msgid "Yes"
 msgstr "Ja"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_SANE.c:964
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:888
+#: modules/devices/oyranos_cmm_SANE.c:964
+#: modules/devices/oyranos_cmm_oyRE.cpp:888
 msgid "Yiannis Belias"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfile_s.c:178
+#: API_generated/oyProfile_s.c:178
 msgid "You can get them from http://sf.net/projects/openicc"
 msgstr "Sie können es erhalten von http://sf.net/projects/openicc"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:119
+#: liboyranos_config/oyranos_icc.c:119
 msgid "Yxy"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:350
+#: tools/oyranos_gamma.c:350
 msgid "Zero profiles found in Taxi ICC DB"
 msgstr "Keine Profile in Taxi ICC DB gefunden"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:65
+#: tools/oyranos_profiles.c:65
 msgid "abstract class"
 msgstr "Abstrakter Farbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:86
+#: tools/oyranos_profile.c:86
 msgid "add prefix"
 msgstr "füge Vorsilbe hinzu"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:1250
+#: modules/devices/oyranos_monitor_x11.c:1250
 msgid "allocation failed"
 msgstr "kein Speicher"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyFilterNode_s.c:197
+#: API_generated/oyFilterNode_s.c:197
 msgid "attempt to add a incomplete filter"
 msgstr "Versuch einen unvollständigen Filter hinzuzufügen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:416
+#: liboyranos_config/oyranos_icc.c:416
 msgid "bfd"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2726
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2798
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2335
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2407
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1558
+#: modules/oyranos_cmm_lcm2.c:2726 modules/oyranos_cmm_lcm2.c:2798
+#: modules/oyranos_cmm_lcms.c:2335 modules/oyranos_cmm_lcms.c:2407
+#: modules/devices/oyranos_cmm_oyX1.c:1558
 msgid "check"
 msgstr "prüfe"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:66
+#: tools/oyranos_profiles.c:66
 msgid "colour space class"
 msgstr "Farbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:382
+#: liboyranos_config/oyranos_icc.c:382
 msgid "crdi"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_elektra.c:632
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_elektra.c:723
+#: liboyranos_config/oyranos_elektra.c:632
+#: liboyranos_config/oyranos_elektra.c:723
 msgid "default profile type does not exist:"
 msgstr "Standard Profiltyp existiert nicht:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:398
+#: tools/oyranos_gamma.c:398
 msgid "description"
 msgstr "Beschreibung"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:67
+#: tools/oyranos_profiles.c:67
 msgid "display class"
 msgstr "Monitor"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:88
+#: tools/oyranos_profiles.c:88
 msgid "download ID from Taxi data base"
 msgstr "Identifikation in Taxi Datenbank"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:95
+#: tools/oyranos_profile.c:95
 msgid "embed OpenICC device JSON from file"
 msgstr "bette OpenICC JSON Gerät von Datei ein"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:97
+#: tools/oyranos_convert.c:97
 msgid "enable simple defaults"
 msgstr "benutze einfache Grundeinstellungen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_devices.c:2488
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyConversion_s.c:188
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_module.c:2008
+#: API_generated/oyranos_devices.c:2488 API_generated/oyConversion_s.c:188
+#: API_generated/oyranos_module.c:2008
 msgid "error in module:"
 msgstr "Fehler in Modul:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1538
+#: modules/oyranos_cmm_oyIM_profile.c:1538
 msgid "f(X)=(a*X+b)^gamma + c for X>=-b/a"
 msgstr "f(X)=(a*X+b)^gamma + c für X>=-b/a"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1554
+#: modules/oyranos_cmm_oyIM_profile.c:1554
 msgid "f(X)=(a*X+b)^gamma + e for X>=d"
 msgstr "f(X)=(a*X+b)^gamma + e für X>=d"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1531
+#: modules/oyranos_cmm_oyIM_profile.c:1531
 msgid "f(X)=(a*X+b)^gamma for X>=-b/a"
 msgstr "f(X)=(a*X+b)^gamma für X>=-b/a"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1545
+#: modules/oyranos_cmm_oyIM_profile.c:1545
 msgid "f(X)=(a*X+b)^gamma for X>=d"
 msgstr "f(X)=(a*X+b)^gamma für X>=d"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1532
+#: modules/oyranos_cmm_oyIM_profile.c:1532
 msgid "f(X)=0 for (X<-b/a)"
 msgstr "f(X)=0 für (X<-b/a)"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1525
+#: modules/oyranos_cmm_oyIM_profile.c:1525
 msgid "f(X)=X^gamma"
 msgstr "f(X)=X^gamma"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1539
+#: modules/oyranos_cmm_oyIM_profile.c:1539
 msgid "f(X)=c for (X<-b/a)"
 msgstr "f(X)=c für (X<-b/a)"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1546
+#: modules/oyranos_cmm_oyIM_profile.c:1546
 msgid "f(X)=c*X for (X<d)"
 msgstr "f(X)=c*X für (X<d)"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1555
+#: modules/oyranos_cmm_oyIM_profile.c:1555
 msgid "f(X)=c*X+f for (X<d)"
 msgstr "f(X)=c*X+f für (X<d)"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos.c:218
+#: liboyranos_config/oyranos.c:218
 msgid "file exists, please remove befor installing new profile."
 msgstr ""
 "Datei existiert, Bitte vor der Installation eines neuen Profiles entfernen."
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_devices.c:2405
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_devices.c:2416
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2633
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2231
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oPNG.c:919
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:910
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:918
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:933
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:2767
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:160
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:190
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:302
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:329
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:818
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:837
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:846
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:933
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:622
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:628
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:640
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:825
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:844
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:855
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:859
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:861
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:875
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:882
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:886
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:993
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:996
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:998
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:1011
+#: API_generated/oyranos_devices.c:2405 API_generated/oyranos_devices.c:2416
+#: modules/oyranos_cmm_lcm2.c:2633 modules/oyranos_cmm_lcms.c:2231
+#: modules/oyranos_cmm_oPNG.c:919 modules/oyranos_cmm_oyra_image.c:910
+#: modules/oyranos_cmm_oyra_image.c:918 modules/oyranos_cmm_oyra_image.c:933
+#: modules/oyranos_cmm_oyIM_profile.c:2767
+#: modules/devices/oyranos_monitor_x11.c:160
+#: modules/devices/oyranos_monitor_x11.c:190
+#: modules/devices/oyranos_monitor_x11.c:302
+#: modules/devices/oyranos_monitor_x11.c:329
+#: modules/devices/oyranos_monitor_x11.c:818
+#: modules/devices/oyranos_monitor_x11.c:837
+#: modules/devices/oyranos_monitor_x11.c:846
+#: modules/devices/oyranos_monitor_x11.c:933
+#: modules/devices/oyranos_cmm_oyRE.cpp:622
+#: modules/devices/oyranos_cmm_oyRE.cpp:628
+#: modules/devices/oyranos_cmm_oyRE.cpp:640 tools/oyranos_gamma.c:825
+#: tools/oyranos_gamma.c:844 tools/oyranos_gamma.c:855
+#: tools/oyranos_gamma.c:859 tools/oyranos_gamma.c:861
+#: tools/oyranos_gamma.c:875 tools/oyranos_gamma.c:882
+#: tools/oyranos_gamma.c:886 tools/oyranos_gamma.c:993
+#: tools/oyranos_gamma.c:996 tools/oyranos_gamma.c:998
+#: tools/oyranos_gamma.c:1011
 msgid "found issues"
 msgstr "fand Probleme"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_devices.c:1352
+#: API_generated/oyranos_devices.c:1352
 msgid "found issues parsing JSON"
 msgstr "Fand Probleme beim Lesen des JSON"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyObserver_s_.c:154
+#: API_generated/oyObserver_s_.c:154
 msgid "found list of wrong type"
 msgstr "fand Liste falschen Typs"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyObserver_s.c:379
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyObserver_s.c:582
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyObserver_s.c:660
+#: API_generated/oyObserver_s.c:379 API_generated/oyObserver_s.c:582
+#: API_generated/oyObserver_s.c:660
 msgid "found no observer"
 msgstr "keinen Beobachter gefunden"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyObserver_s.c:371
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyObserver_s.c:574
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyObserver_s.c:652
+#: API_generated/oyObserver_s.c:371 API_generated/oyObserver_s.c:574
+#: API_generated/oyObserver_s.c:652
 msgid "found observer of wrong type"
 msgstr "Fand Beobachter falschen Typs"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:63
+#: tools/oyranos_profiles.c:63
 msgid "full path and file name"
 msgstr "kompletter Pfad- und Dateiname"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1526
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1533
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1540
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1547
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1556
+#: modules/oyranos_cmm_oyIM_profile.c:1526
+#: modules/oyranos_cmm_oyIM_profile.c:1533
+#: modules/oyranos_cmm_oyIM_profile.c:1540
+#: modules/oyranos_cmm_oyIM_profile.c:1547
+#: modules/oyranos_cmm_oyIM_profile.c:1556
 msgid "gamma"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:386
+#: liboyranos_config/oyranos_icc.c:386
 msgid "gamut"
 msgstr "Farbumfang"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2740
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2812
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:3062
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oicc.c:942
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2349
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2421
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2671
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oydi.c:1076
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1582
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_SANE.c:978
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:902
+#: modules/oyranos_cmm_lcm2.c:2740 modules/oyranos_cmm_lcm2.c:2812
+#: modules/oyranos_cmm_lcm2.c:3062 modules/oyranos_cmm_oicc.c:942
+#: modules/oyranos_cmm_lcms.c:2349 modules/oyranos_cmm_lcms.c:2421
+#: modules/oyranos_cmm_lcms.c:2671 modules/oyranos_cmm_oydi.c:1076
+#: modules/devices/oyranos_cmm_oyX1.c:1582
+#: modules/devices/oyranos_cmm_SANE.c:978
+#: modules/devices/oyranos_cmm_oyRE.cpp:902
 msgid "help"
 msgstr "Hilfe"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:71
+#: tools/oyranos_profiles.c:71
 msgid "input class"
 msgstr "Eingabefarbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_devices.c:486
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfile_s.c:179
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyProfile_s.c:184
+#: API_generated/oyranos_devices.c:486 API_generated/oyProfile_s.c:179
+#: API_generated/oyProfile_s.c:184
 msgid "install in the OpenIccDirectory icc path"
 msgstr "Installieren Sie in den OpenIccDirectory icc Pfad"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:192
+#: tools/oyranos_policy.c:192
 msgid "installation of new policy file failed with error:"
 msgstr "Speicherung der neuen Richtline schlug fehl mit Fehler:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:189
+#: tools/oyranos_policy.c:189
 msgid "installed new policy"
 msgstr "neue Richtlinie erfolgreich gespeichert"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:64
+#: tools/oyranos_profiles.c:64
 msgid "internal name"
 msgstr "interner Name"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:53
+#: tools/oyranos_convert.c:53
 msgid "is a ICC color conversion tool"
 msgstr "ist ein Farbumwandlungswerkzeug"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile_graph.c:172
+#: tools/oyranos_profile_graph.c:172
 msgid "is a ICC colour profile grapher"
 msgstr "ist ein ICC Farbprofile Zeichner"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:71
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:50
+#: tools/oyranos_profile.c:71 tools/oyranos_profiles.c:50
 msgid "is a ICC profile information tool"
 msgstr "ist ein ICC Profilinformationswerkzeug"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:194
+#: tools/oyranos_gamma.c:194
 msgid "is a colour profile administration tool for monitors"
 msgstr "ist ein Farbprofilverwaltungswerkzeug für Bildschirme"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:43
+#: tools/oyranos_policy.c:43
 msgid "is a policy administration tool"
 msgstr "ist ein Richtlinienverwaltungswerkzeug"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1116
+#: modules/oyranos_cmm_oyIM_profile.c:1116
 msgid "key/value pairs found:"
 msgstr "Schlüssel/Wertepaare gefunden:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:1428
+#: modules/devices/oyranos_monitor_x11.c:1428
 msgid "less Xinerama monitors than XRandR ones"
 msgstr "weniger Xinerama als XRandR Monitore"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:89
+#: tools/oyranos_convert.c:89
 msgid "levels from 4-16 make sense"
 msgstr "Werte von 4-16 sind sinnvoll"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:220
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:222
+#: modules/oyranos_cmm_lraw.cpp:220 modules/oyranos_cmm_lraw.cpp:222
 msgid "libraw input filter"
 msgstr "LibRaw Eingangsmodul"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:76
+#: tools/oyranos_profiles.c:76
 msgid "linux system path"
 msgstr "Linux Systempfad"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2950
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2559
+#: modules/oyranos_cmm_lcm2.c:2950 modules/oyranos_cmm_lcms.c:2559
 msgid "littleCMS"
 msgstr "littleCMS"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:3050
+#: modules/oyranos_cmm_lcm2.c:3050
 msgid ""
 "littleCMS 2 project; www: http://www.littlecms.com; support/email: "
 "support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "
@@ -3486,7 +3319,7 @@ msgstr ""
 "support@littlecms.com; Quellen: http://www.littlecms.com/downloads.htm; "
 "Oyranos Einbindung: Kai-Uwe Behrmann"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcms.c:2659
+#: modules/oyranos_cmm_lcms.c:2659
 msgid ""
 "littleCMS project; www: http://www.littlecms.com; support/email: "
 "support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "
@@ -3496,305 +3329,281 @@ msgstr ""
 "support@littlecms.com; Quellen: http://www.littlecms.com/downloads.htm; "
 "Oyranos Einbindung: Kai-Uwe Behrmann"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:78
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:86
+#: tools/oyranos_profiles.c:78 tools/oyranos_profiles.c:86
 msgid "machine specific path"
 msgstr "rechnerspezifischer Pfad"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:398
+#: tools/oyranos_gamma.c:398
 msgid "match value"
 msgstr "Übereinstimmungswert"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:197
+#: tools/oyranos_profile.c:197
 msgid "missed -w option to write a ICC profile"
 msgstr "vermisse -w Option für das Schreiben eines ICC Profiles"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:96
+#: tools/oyranos_convert.c:96
 msgid "module name"
 msgstr "Modulname"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:323
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:336
+#: modules/oyranos_cmm_oyIM_profile.c:323
+#: modules/oyranos_cmm_oyIM_profile.c:336
 msgid "nLUT"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_io.c:152
+#: liboyranos_config/oyranos_io.c:152
 msgid "name longer than"
 msgstr "Name ist länger als"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:69
+#: tools/oyranos_profiles.c:69
 msgid "named colour class"
 msgstr "Einzelfarben 2"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:162
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM.c:146
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oicc.c:938
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra.c:146
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oydi.c:1072
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1295
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_qarz.c:1201
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:238
+#: liboyranos/oyranos_cmm.c:162 modules/oyranos_cmm_oyIM.c:146
+#: modules/oyranos_cmm_oicc.c:938 modules/oyranos_cmm_oyra.c:146
+#: modules/oyranos_cmm_oydi.c:1072 modules/devices/oyranos_cmm_oyX1.c:1295
+#: modules/devices/oyranos_cmm_qarz.c:1201 modules/oyranos_cmm_lraw.cpp:238
 msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
 msgstr "Neue BSD Lizenz: http://www.opensource.org/licenses/bsd-license.php"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos/oyranos_cmm.c:158
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM.c:142
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oicc.c:934
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra.c:142
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oydi.c:1068
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyX1.c:1291
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_qarz.c:1197
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lraw.cpp:234
+#: liboyranos/oyranos_cmm.c:158 modules/oyranos_cmm_oyIM.c:142
+#: modules/oyranos_cmm_oicc.c:934 modules/oyranos_cmm_oyra.c:142
+#: modules/oyranos_cmm_oydi.c:1068 modules/devices/oyranos_cmm_oyX1.c:1291
+#: modules/devices/oyranos_cmm_qarz.c:1197 modules/oyranos_cmm_lraw.cpp:234
 msgid "newBSD"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_cs.c:629
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_cs.c:635
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_cs.c:646
+#: modules/devices/oyranos_monitor_cs.c:629
+#: modules/devices/oyranos_monitor_cs.c:635
+#: modules/devices/oyranos_monitor_cs.c:646
 msgid "no EDID available from"
 msgstr "kein EDID verfügbari von"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:463
+#: modules/devices/oyranos_monitor_x11.c:463
 msgid "no EDID available from X properties"
 msgstr "kein EDID von X Atomen verfügbar"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:1268
+#: modules/devices/oyranos_monitor_x11.c:1268
 msgid "no Screen found"
 msgstr "keine Anzeige gefunden"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:1462
+#: modules/devices/oyranos_monitor_x11.c:1462
 msgid "no oyX1Monitor_s created"
 msgstr "kein oyX1Monitor_s erzeugt"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_cs.c:664
+#: modules/devices/oyranos_monitor_cs.c:664
 msgid "no qarzMonitor_s from"
 msgstr "kein qarzMonitor_s von"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_io.c:108
+#: liboyranos_config/oyranos_io.c:108
 msgid "not a profile:"
 msgstr "kein Profil:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_devices.c:1361
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_check.c:72
+#: API_generated/oyranos_devices.c:1361 liboyranos_config/oyranos_check.c:72
 msgid "not found:"
 msgstr "nicht gefunden:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile_graph.c:180
+#: tools/oyranos_profile_graph.c:180
 msgid "omit border"
 msgstr "lasse Rand aus"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile_graph.c:179
+#: tools/oyranos_profile_graph.c:179
 msgid "omit the spectral line"
 msgstr "lasse Spektrallinie fort"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:740
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:1257
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_cs.c:130
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_cs.c:258
+#: modules/devices/oyranos_monitor_x11.c:740
+#: modules/devices/oyranos_monitor_x11.c:1257
+#: modules/devices/oyranos_monitor_cs.c:130
+#: modules/devices/oyranos_monitor_cs.c:258
 msgid "open X Display failed"
 msgstr "Öffnen des X Displays daneben"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:1180
+#: modules/devices/oyranos_monitor_x11.c:1180
 msgid "open X Screen failed"
 msgstr "Öffnen des X Screens daneben"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_SANE.c:962
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_cmm_oyRE.cpp:886
+#: modules/devices/oyranos_cmm_SANE.c:962
+#: modules/devices/oyranos_cmm_oyRE.cpp:886
 msgid "orionas"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:70
+#: tools/oyranos_profiles.c:70
 msgid "output class"
 msgstr "Ausgabefarbraum"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:77
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:85
+#: tools/oyranos_profiles.c:77 tools/oyranos_profiles.c:85
 msgid "oyranos install path"
 msgstr "Oyranos Installationspfad"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyIM_profile.c:1521
+#: modules/oyranos_cmm_oyIM_profile.c:1521
 msgid "parametric function type"
 msgstr "Parametrischer Funktionstyp"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_core/oyranos_io_core.c:1020
+#: liboyranos_core/oyranos_io_core.c:1020
 msgid "path is a link: ignored"
 msgstr "Pfad ist eine Verknüpfung: ignoriert"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_core/oyranos_io_core.c:1015
+#: liboyranos_core/oyranos_io_core.c:1015
 msgid "path is not a directory"
 msgstr "Pfad ist kein Verzeichnis"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_core/oyranos_io_core.c:1026
+#: liboyranos_core/oyranos_io_core.c:1026
 msgid "path is not readable"
 msgstr "Pfad ist nicht lesbar"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:65
+#: tools/oyranos_policy.c:65
 msgid "policy name"
 msgstr "Richtlinienname"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:57
+#: tools/oyranos_policy.c:57
 msgid "policy or filename"
 msgstr "Richtlinie oder Dateiname"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:198
+#: tools/oyranos_gamma.c:198
 msgid "profile name"
 msgstr "Profilname"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_io.c:180
+#: liboyranos_config/oyranos_io.c:180
 msgid "profile not found in colour path:"
 msgstr "Profil nicht im Profilepfad gefunden:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_io.c:201
+#: liboyranos_config/oyranos_io.c:201
 msgid "profile not found:"
 msgstr "Farbprofil nicht gefunden:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:410
+#: liboyranos_config/oyranos_icc.c:410
 msgid "ps2i"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:409
+#: liboyranos_config/oyranos_icc.c:409
 msgid "ps2s"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:405
+#: liboyranos_config/oyranos_icc.c:405
 msgid "psd0"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:406
+#: liboyranos_config/oyranos_icc.c:406
 msgid "psd1"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:407
+#: liboyranos_config/oyranos_icc.c:407
 msgid "psd2"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:408
+#: liboyranos_config/oyranos_icc.c:408
 msgid "psd3"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:66
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:74
+#: tools/oyranos_convert.c:66 tools/oyranos_convert.c:74
 msgid "read from file"
 msgstr "Lese von Datei"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_lcm2.c:2125
+#: modules/oyranos_cmm_lcm2.c:2125
 msgid "running new ticket failed"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:413
+#: liboyranos_config/oyranos_icc.c:413
 msgid "scrd"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:414
+#: liboyranos_config/oyranos_icc.c:414
 msgid "scrn"
 msgstr ""
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:79
+#: tools/oyranos_convert.c:79
 msgid "select format, currently only clut"
 msgstr "wähle Format, z.Z. nur clut möglich"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:84
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:85
+#: tools/oyranos_profile.c:84 tools/oyranos_profile.c:85
 msgid "select tag"
 msgstr "wähle Eintrag"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:87
+#: tools/oyranos_profiles.c:87
 msgid "show hints and question GUI"
 msgstr "zeigt Hinweise und Fragen Benutzeroberfläche"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile_graph.c:182
+#: tools/oyranos_profile_graph.c:182
 msgid "specify incemental increase of the thickness of the graph lines"
 msgstr "gib die Dickenzunahme zwischen verschiedenen Linien an"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile_graph.c:181
+#: tools/oyranos_profile_graph.c:181
 msgid "specify increase of the thickness of the graph lines"
 msgstr "gib die Verstärkung der Liniendicke an"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile_graph.c:177
+#: tools/oyranos_profile_graph.c:177
 msgid "specify output file name, default is output.png"
 msgstr "gib Ausgabedateiname an, voreingestellt ist output.png"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile_graph.c:176
+#: tools/oyranos_profile_graph.c:176
 msgid "specify output image width in pixel"
 msgstr "gib Ausgabebildbreite in Pixel an"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:84
+#: tools/oyranos_profiles.c:84
 msgid "system path"
 msgstr "Systempfad"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:317
+#: modules/devices/oyranos_monitor_x11.c:317
 msgid "unexpected EDID lenght"
 msgstr "unerwartetet EDID Größe"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/devices/oyranos_monitor_x11.c:252
+#: modules/devices/oyranos_monitor_x11.c:252
 msgid "unexpected user_data type"
 msgstr "Unerwarteter user_data Typ"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:334
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:336
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:703
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/modules/oyranos_cmm_oyra_image.c:705
+#: modules/oyranos_cmm_oyra_image.c:334 modules/oyranos_cmm_oyra_image.c:336
+#: modules/oyranos_cmm_oyra_image.c:703 modules/oyranos_cmm_oyra_image.c:705
 msgid "unfinished"
 msgstr "unvollendet"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:752
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos_icc.c:771
+#: liboyranos_config/oyranos_icc.c:752 liboyranos_config/oyranos_icc.c:771
 msgid "unknown"
 msgstr "unbekannt"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile_graph.c:178
+#: tools/oyranos_profile_graph.c:178
 msgid "use CIE*xyY *x*y plane for saturation line projection"
 msgstr "benutze CIE*xyY *x*y Ebene für Projektion"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:87
+#: tools/oyranos_profile.c:87
 msgid "use device class"
 msgstr "benutze Geräteklasse"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:94
+#: tools/oyranos_profile.c:94
 msgid "use new name"
 msgstr "Nutze neuen Namen"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:75
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:83
+#: tools/oyranos_profiles.c:75 tools/oyranos_profiles.c:83
 msgid "user path"
 msgstr "Benutzerpfad"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:95
+#: tools/oyranos_convert.c:95
 msgid "verbose"
 msgstr "plaudernd"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos.c:541
+#: liboyranos_config/oyranos.c:541
 msgid "will overwrite policy file"
 msgstr "werde Richtliniendatei überschreiben"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_object.c:159
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_object.c:177
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_object.c:279
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyranos_object.c:295
+#: API_generated/oyranos_object.c:159 API_generated/oyranos_object.c:177
+#: API_generated/oyranos_object.c:279 API_generated/oyranos_object.c:295
 msgid "with '.' is not allowed"
 msgstr "mit '.' ist nicht erlaubt"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:84
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:88
+#: tools/oyranos_convert.c:84 tools/oyranos_convert.c:88
 msgid "write to file"
 msgstr "Schreibe nach Datei"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:70
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:78
+#: tools/oyranos_convert.c:70 tools/oyranos_convert.c:78
 msgid "write to file, currently only PPM format"
 msgstr "schreibe zu einer Datei, derzeit nur im Format PPM"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/API_generated/oyOptions_s.c:1282
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_gamma.c:238
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile.c:183
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profile_graph.c:204
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_convert.c:241
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_profiles.c:219
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/tools/oyranos_policy.c:146
+#: API_generated/oyOptions_s.c:1282 tools/oyranos_gamma.c:238
+#: tools/oyranos_profile.c:183 tools/oyranos_profile_graph.c:204
+#: tools/oyranos_convert.c:241 tools/oyranos_profiles.c:219
+#: tools/oyranos_policy.c:146
 msgid "wrong argument to option:"
 msgstr "Falsches Argument für Option:"
 
-#: /home/kuwe/programme/CMS/Oyranos/Entwickeln/src/liboyranos_config/oyranos.c:92
+#: liboyranos_config/oyranos.c:92
 msgid "wrong profile for static web colour space selected, need sRGB"
 msgstr "Falsches Profil für statischen WWW Farbraum, benötige sRGB"
 
