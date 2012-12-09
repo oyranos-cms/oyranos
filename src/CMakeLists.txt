@@ -138,7 +138,7 @@ LINK_DIRECTORIES( ${LIBPNG_LIBRARY_DIRS} )
 FIND_PACKAGE( GetText )
 
 get_property(inc_dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
-MESSAGE( "-- INCLUDE_DIRECTORIES: ${inc_dirs}" )
+#MESSAGE( "-- INCLUDE_DIRECTORIES: ${inc_dirs}" )
 
 ADD_SUBDIRECTORY( include )
 
@@ -186,7 +186,7 @@ IF( GETTEXT_FOUND )
   #SET( _xgettext_option_list --language=C --keyword=_ --keyword=N_ --keyword=C_:1c,2 --keyword=NC_:1c,2 -s --package-name=${PROJECT_NAME} --package-version=${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR} )
   SET( _xgettext_option_list --keyword=gettext --flag=gettext:1:pass-c-format --keyword=_ --flag=_:1:pass-c-format --keyword=N_ --flag=N_:1:pass-c-format  --copyright-holder='Kai-Uwe Behrmann'  --msgid-bugs-address='ku.b@gmx.de' --from-code=utf-8 --package-name=${PROJECT_NAME} --package-version=${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR} )
   SET( XGETTEXT_CMD xgettext )
-  FILE( GLOB _src_list 
+  FILE( GLOB SRC_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         API_generated/*.c API_generated/*.h
         liboyranos/*.c
         liboyranos_core/*.c
@@ -199,24 +199,17 @@ IF( GETTEXT_FOUND )
         modules/devices/*.cpp
         tools/*.c tools/qcmsevents/*.cpp tools/qcmsevents/*.cxx
       )
+
   ADD_CUSTOM_COMMAND(OUTPUT ${_potFile}
-    COMMAND ${XGETTEXT_CMD} ${_xgettext_option_list} -o ${_potFile} ${_src_list}
-    DEPENDS ${_src_list}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMAND ${XGETTEXT_CMD} ${_xgettext_option_list} -o ${_potFile} ${SRC_FILES}
+    DEPENDS ${SRC_FILES}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Extract translatable messages to ${_potFile}"
   )
 
-  ADD_CUSTOM_TARGET(i18n ALL
-    DEPENDS ${_potFile}
-  )
-
   SET( LINGUAS ../po/cs.po ../po/de.po ../po/eo.po ../po/eu.po  ../po/fr.po )
-  GETTEXT_CREATE_TRANSLATIONS( ${_potFile} ${LINGUAS} )
-
   # compile translations always to have them ready for installation
-  ADD_CUSTOM_TARGET(translate ALL
-    DEPENDS i18n translations
-  )
+  GETTEXT_CREATE_TRANSLATIONS( ${_potFile} ALL ${LINGUAS} )
 ENDIF()
 
 
