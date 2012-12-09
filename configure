@@ -390,7 +390,7 @@ $COMPILER $CFLAGS $ROOT_DIR/src/tests/intptr_test.c -o intptr_test 2>/dev/null
 FPIC=-fPIC
 DPIC=-DPIC
 if [ -f intptr_test ]; then
-  intptr_test
+  ./intptr_test
   INTPTR_SIZE=$?
   if [ $INTPTR_SIZE -eq 4 ]; then
     echo_="32-bit host"
@@ -579,6 +579,8 @@ if [ -n "$ECHO" ]; then
   echo_=""
   test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
+
+echo "cmake -DCMAKE_INSTALL_PREFIX=$prefix -DLIB_SUFFIX=$BARCH $ROOT_DIR"
 cmake -DCMAKE_INSTALL_PREFIX=$prefix -DLIB_SUFFIX=$BARCH $ROOT_DIR
 
 exit 0
