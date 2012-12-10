@@ -20,11 +20,13 @@ CONFIGURE_FILE(
 
 SET( MAN1_PAGES
      man/oyranos-monitor.1
+     man/oyranos-monitor-daemon.1
      man/oyranos-policy.1
      man/oyranos-profile.1
      man/oyranos-profile-graph.1
      man/oyranos-profile-install.1
      man/oyranos-profiles.1
+     man/qcmsevents.1
    )
 SET( MAN3_PAGES
      man/oyranos.3
