@@ -1,7 +1,7 @@
 #
 # spec file for package oyranos
 #
-# Copyright (c) 2011-2012 Kai-Uwe Behrmann <ku.b@gmx.de>
+# Copyright (c) 2011-@OYRANOS_DEVEL_YEAR@ Kai-Uwe Behrmann <ku.b@gmx.de>
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -11,6 +11,23 @@
 # case the license is the MIT License). An "Open Source License" is a
 # license that conforms to the Open Source Definition (Version 1.9)
 # published by the Open Source Initiative.
+
+Version:         @OYRANOS_VERSION_MAJOR@.@OYRANOS_VERSION_MINOR@.@OYRANOS_VERSION_MICRO@
+Source:          oyranos-%{version}.tar.bz2
+Release:         0
+%define syscolordir     @CMAKE_INSTALL_PREFIX@/share/color
+%define usercolordir    ~/.config/color
+%define usercolordata   ~/.local/share/color
+%define iccdirname      icc
+%define cmmsubpath      @OY_CMMSUBPATH@
+%define metasubpath     @OY_METASUBPATH@
+%define settingsdirname settings
+%define targetdirname   target
+%define pixmapdir       @CMAKE_INSTALL_PREFIX@/share/pixmaps
+%define icondir         @CMAKE_INSTALL_PREFIX@/share/icons
+%define desktopdir      @CMAKE_INSTALL_PREFIX@/share/applications
+
+@ELEKTRA_SPEC@
 
 Summary:        Color Management System
 License:        BSD-3-Clause and GPL-2.0
