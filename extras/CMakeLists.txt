@@ -9,6 +9,8 @@ INSTALL( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-profile-install" DESTINAT
 INSTALL( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-monitor-daemon" DESTINATION bin )
 INSTALL( FILES oyranos-profile-install.desktop DESTINATION share/applications)
 INSTALL( FILES oyranos-monitor-setup.desktop DESTINATION share/applications)
+INSTALL( FILES icons/oyranos_logo.png DESTINATION share/pixmaps )
+INSTALL( FILES icons/lcms_logo2.png DESTINATION share/pixmaps )
 
 #pkg-config files
 CONFIGURE_FILE(
