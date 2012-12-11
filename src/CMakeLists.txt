@@ -166,6 +166,11 @@ ADD_SUBDIRECTORY( tools )
 
 ADD_SUBDIRECTORY( examples )
 
+SET_TARGET_PROPERTIES( oyranos_core oyranos_object oyranos_modules oyranos_config oyranos
+    PROPERTIES VERSION ${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR}.${OYRANOS_VERSION_MICRO}
+               SOVERSION ${OYRANOS_VERSION_MAJOR}
+                     )
+
 
 SET( DOC_SOURCES
 	doxymentation doxymentation_common
