@@ -26,5 +26,6 @@ ENDIF()
 ADD_EXECUTABLE( ../oyranos-xforms-modules oyranos_xforms_modules.c )
 TARGET_LINK_LIBRARIES( ../oyranos-xforms-modules
              oyranos ${OY_OFORMS_LIB} ${EXTRA_LIBS} )
-#INSTALL (TARGETS oyranos-xforms-modules DESTINATION bin)
+INSTALL (TARGETS ../oyranos-xforms-modules DESTINATION bin)
+INSTALL (FILES ./oyranos-xforms-modules.1 DESTINATION share/man/man1 )
 
