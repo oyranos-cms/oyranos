@@ -17,6 +17,9 @@
 #include <cstdio>
 #include <cstring>
 
+#include "config.h" /* I18N */
+#include "oyranos_i18n.h"
+
 #include <oyranos.h>
 #include <oyranos_cmm.h>   /* for hacking into module API */
 
@@ -37,13 +40,6 @@ extern "C" {
 
 #include <FL/Fl_Tile.H>
 #include <FL/Fl_Menu_Button.H>
-
-#ifdef USE_GETTEXT
-#include "config.h" /* I18N */
-#include "fl_i18n/fl_i18n.H"
-#else
-#define _(text) text
-#endif
 
 oyConversion_s * idcc = 0;
 
@@ -72,39 +68,15 @@ main(int argc, char** argv)
   int file_pos = 1;
   const char * file_name = NULL;
 
-
-#ifdef USE_GETTEXT
-  const char *locale_paths[2] = {OY_SRC_LOCALEDIR,OY_LOCALEDIR};
-  const char *domain = {"oyranos"};
-  int is_path = -1;
-
-  is_path = fl_search_locale_path  ( 2,
-                                locale_paths,
-                                "de",
-                                domain);
-  if(is_path < 0)
-    fprintf( stderr, "Locale not found\n");
-  else
-  {
-#if defined(_Xutf8_h) || HAVE_FLTK_UTF8
-    FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_UTF8;
-#else
-    FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_SELECT;
-#endif
-    int err = fl_initialise_locale ( domain, locale_paths[is_path],
-                                     set_charset );
-    if(err) {
-      fprintf( stderr,"i18n initialisation failed");
-    } /*else
-      fprintf( stderr, "Locale found in %s\n", locale_paths[is_path]);*/
-  }
-  oy_domain_codeset = fl_i18n_codeset;
-#endif
-
   int gl_box = 0x01;
   int logo = 0x02;
   const char * module_name = 0;
   const char * clut_name = 0;
+
+#ifdef USE_GETTEXT
+  setlocale(LC_ALL,"");
+#endif
+  oyI18NInit_();
 
   /* handle arguments */
   for(int i = 1; i < argc; ++i)

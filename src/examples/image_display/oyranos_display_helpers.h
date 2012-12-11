@@ -50,17 +50,9 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
                                        oyImage_s         * image );
 oyProfile_s * getEditingProfile      ( );
 
-#ifdef HAVE_X
+#ifdef HAVE_X11
 #include <X11/Xlib.h>
 #endif
-
-#ifdef USE_GETTEXT
-#include "config.h" /* I18N */
-#include "fl_i18n/fl_i18n.H"
-#else
-#define _(text) text
-#endif
-
 
 #ifndef OY_MIN
 #define OY_MIN(a,b)    (((a) <= (b)) ? (a) : (b))

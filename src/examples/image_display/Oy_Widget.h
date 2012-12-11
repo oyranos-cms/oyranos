@@ -18,12 +18,8 @@
 #include <oyranos.h>
 #include <oyranos_alpha.h>
 
-#ifdef USE_GETTEXT
 #include "config.h" /* I18N */
-#include "fl_i18n/fl_i18n.H"
-#else
-#define _(text) text
-#endif
+#include "oyranos_i18n.h"
 
 class Oy_Widget
 {
