@@ -20,21 +20,6 @@ SET( OY_METASUBPATH    "${PACKAGE_NAME}" )
 #additional cmake modules for loading libraries
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
-IF(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
-	IF (NOT FORCE_IN_SOURCE_BUILD)
-		MESSAGE(FATAL_ERROR
-				"In-source builds are not permitted.\n"
-				"Make a separate folder for building:\n"
-				"    mkdir build && cd build && cmake ..\n"
-				"Before that, remove the files already created:\n"
-				"    rm -rf CMakeCache.txt CMakeFiles\n"
-				"If you really know what you are doing\n"
-				"(will overwrite original files!) use:\n"
-				"    cmake -DFORCE_IN_SOURCE_BUILD=ON\n"
-			)
-	ENDIF (NOT FORCE_IN_SOURCE_BUILD)
-ENDIF(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
-
 IF (NOT CMAKE_BUILD_TYPE)
 	SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 ENDIF (NOT CMAKE_BUILD_TYPE)
@@ -65,10 +50,10 @@ ADD_SUBDIRECTORY( doc )
 
 
 
-ADD_CUSTOM_TARGET(uninstall
+ADD_CUSTOM_TARGET( uninstall
 	"${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/OyranosUninstall.cmake")
 
-ADD_CUSTOM_TARGET(dist
+ADD_CUSTOM_TARGET( dist
 		COMMAND cd ${CMAKE_CURRENT_SOURCE_DIR}/ && git archive --prefix=oyranos-${OYRANOS_VERSION}/ --format=tar HEAD > ${CMAKE_CURRENT_BINARY_DIR}/oyranos-${OYRANOS_VERSION}.tar 
                 COMMAND echo "git:       git clone git://www.oyranos.org/git/oyranos" > ${CMAKE_CURRENT_BINARY_DIR}/oyranos-${OYRANOS_VERSION}.tar.bz2.hashsum
                 COMMAND echo "git sha1:  " | tr -d "\\n" >> ${CMAKE_CURRENT_BINARY_DIR}/oyranos-${OYRANOS_VERSION}.tar.bz2.hashsum
@@ -87,5 +72,20 @@ ADD_CUSTOM_TARGET(dist
 		COMMENT Make a oyranos source package by using git
 		VERBATIM
 		WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+		)
+EXEC_PROGRAM (  rpmbuild 
+                ARGS --showrc | awk '/^build arch/ {print $$4}'
+                OUTPUT_VARIABLE RPMARCH
+             )
+SET( PWD ENV{PWD} )
+ADD_CUSTOM_TARGET( rpm
+		COMMAND rm -rf ${PACKAGE_NAME}-${OYRANOS_VERSION}/
+		COMMAND tar xjf ${PACKAGE_NAME}-${OYRANOS_VERSION}.tar.bz2
+                COMMAND mkdir -p rpmdir/BUILD rpmdir/SPECS rpmdir/SOURCES rpmdir/SRPMS rpmdir/RPMS/${RPMARCH}
+                COMMAND cp -f ${PACKAGE_NAME}-${OYRANOS_VERSION}.tar.bz2 rpmdir/SOURCES
+                COMMAND rpmbuild --clean -ba extras/${PACKAGE_NAME}.spec --define "_topdir ${CMAKE_CURRENT_BINARY_DIR}/rpmdir"
+                DEPENDS dist
+		COMMENT Make a oyranos RPM package by using git
+		VERBATIM
 		)
 

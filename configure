@@ -11,12 +11,6 @@ ROOT_DIR=`echo $ROOT_DIR | sed 's%/configure%%1'`
 ROOT_DIR=`(cd $ROOT_DIR; pwd)`
 BUILD_DIR="`pwd`"
 
-if [ "$ROOT_DIR" = "$BUILD_DIR" ]; then
-  echo Build directory is equal to source directory, which will cause problems.
-  echo Please create a separate directory and call from there. Exit
-  exit 1
-fi
-
 zeile="$0 $@"
 
 if [ `uname` = "Linux" ]; then
