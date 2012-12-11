@@ -53,3 +53,4 @@ IF( FLTK_FOUND )
   #INSTALL (TARGETS image-display DESTINATION bin)
 ENDIF()
 
+ADD_SUBDIRECTORY( oforms )

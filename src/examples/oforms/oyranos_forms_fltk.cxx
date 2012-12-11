@@ -33,8 +33,6 @@
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Scroll.H>
-//#include "../fl_i18n/fl_i18n.H"
-#include <FL/Flmm_Tabs.H>
 
 #include "config.h"
 #include "oyranos.h"
@@ -201,12 +199,7 @@ int        oyXML2XFORMsFLTKSelect1Handler (
     {
       if(oyXMLNodeNameIs( select1, "xf:label") && print)
       {
-        int len = 0;
-        void * string = 0;
-        oyIconvGet( oyXML2NodeValue(select1), &string, &len,
-                                  "UTF-8", fl_i18n_codeset, malloc );
-        box->copy_label( (const char *)string );
-        if(string) free(string); string = 0;
+        box->copy_label( (const char *)oyXML2NodeValue(select1) );
       }
       else
       if(oyXMLNodeNameIs( select1, "xf:help") && print)
@@ -275,18 +268,12 @@ int        oyXML2XFORMsFLTKSelect1Handler (
                   cb_data->label[pos++] = '\\';
                 cb_data->label[pos++] = label[k];
               }
-              len = 0;
-              void * string = 0;
-              oyIconvGet( cb_data->label, &string, &len,
-                                  "UTF-8", fl_i18n_codeset, malloc );
-              c->add( (const char *) string, 0,
+              c->add( (const char *) cb_data->label, 0,
                       fltkCallback,
                       (void*)cb_data, 0 );
-              if(string) free(string); string = 0;
 
               if(is_default)
-                oyIconvGet( label, (void**)&default_string, &len,
-                                  "UTF-8", fl_i18n_codeset, malloc );
+                default_string = oyStringCopy_( label, malloc );
             }
 
             ++choices_n;
@@ -381,8 +368,6 @@ int        oyXML2XFORMsFLTKHtmlHeadlineHandler (
     {
       if(oyXMLNodeNameIs( group, "xf:label") && print && !label)
       {
-        int len = 0;
-        void * string = 0;
         Fl_Widget *wid = (Fl_Widget*)0; //parent->user_data();
         if( !wid ) wid = parent;
 
@@ -391,10 +376,7 @@ int        oyXML2XFORMsFLTKHtmlHeadlineHandler (
             w = parent->w();
         box = new OyFl_Box_c( x,y,w,BUTTON_HEIGHT );
         label = oyXML2NodeValue(group);
-        oyIconvGet( label, &string, &len,
-                                  "UTF-8", fl_i18n_codeset, malloc );
-        box->copy_label( (const char *)string );
-        if(string) free(string); string = 0;
+        box->copy_label( (const char *)label );
         if(strcmp(type,"h3") ==  0)
           box->labelfont( FL_BOLD );
         else

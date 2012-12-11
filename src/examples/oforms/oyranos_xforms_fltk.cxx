@@ -28,7 +28,6 @@
 
 #include "oyranos_widgets_fltk.h"
 #include "oyranos_forms.h"
-#include "../fl_i18n/fl_i18n.H"
 #include "config.h"
 
 #include <FL/Fl.H>
@@ -85,11 +84,8 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
         text = (char*) malloc( len );
       }
 
-      int n = 0;
-      char * string = 0;
-      oyIconvGet( help_text, (void**)&string, &n,
-                                  "UTF-8", fl_i18n_codeset, malloc );
-
+      char * string = oyStringCopy_( help_text, malloc );
+      int n = strlen(string);
       
       while( string[i] )
       {
@@ -137,92 +133,11 @@ int main (int argc, char ** argv)
   int error = 0;
   int print = 1;
 
-  const char *locale_paths[3] = {0,0,0};
-  signed int is_path = -1;
-  int num_paths = 0;
-# if __APPLE__
-  std::string bdr;
-  // RESOURCESPATH is set in the bundle by "Contents/MacOS/ICC Examin.sh"
-  if(getenv("RESOURCESPATH")) {
-    bdr = getenv("RESOURCESPATH");
-    bdr += "/locale";
-    locale_paths[num_paths] = bdr.c_str(); ++num_paths;
-  }
-  if(!locale_paths[0]) {
-    //bdr = icc_examin_ns::holeBundleResource("locale","");
-    if(bdr.size())
-    {
-      locale_paths[num_paths] = bdr.c_str();
-      ++num_paths;
-    }
-  }
-  locale_paths[num_paths] = OY_LOCALEDIR; ++num_paths;
-  locale_paths[num_paths] = OY_SRC_LOCALEDIR; ++num_paths;
-# else
-  locale_paths[0] = OY_LOCALEDIR; ++num_paths;
-#ifdef WIN32
-#define DIR_SEPARATOR_C '\\'
-#define DIR_SEPARATOR "\\"
-#else
-#define DIR_SEPARATOR_C '/'
-#define DIR_SEPARATOR "/"
+#ifdef USE_GETTEXT
+  setlocale(LC_ALL,"");
 #endif
-  //DBG_NUM_V(( argc <<" "<< argv[0] )
-  if (argc)
-  { const char *reloc_path = {"../share/locale"};
-    int len = (strlen(argv[0]) + strlen(reloc_path)) * 2 + 128;
-    char *path = (char*) malloc( len ); // small one time leak
-    char *text = (char*) malloc( len );
-    text[0] = 0;
-    // whats the path for the executeable ?
-    strncpy (text, argv[0], len-1);
-    if (strrchr(text, DIR_SEPARATOR_C)) {
-      char *tmp = strrchr(text, DIR_SEPARATOR_C);
-      *tmp = 0;
-    } else {
-      FILE *pp = NULL;
+  oyI18NInit_();
 
-      if (text) free (text);
-      text = (char*) malloc( 1024 );
-
-      // Suche das ausfuehrbare Programm
-      // TODO symbolische Verknuepfungen
-      snprintf( text, 1024, "which %s", argv[0]);
-      pp = popen( text, "r" );
-      if (pp) {
-        if (fscanf (pp, "%s", text) != 1)
-        {
-          pclose (pp);
-          WARNc_S( "no executeable path found" );
-        }
-      } else {
-        WARNc_S( "could not ask for executeable path" );
-      }
-    }
-    snprintf (path, len-1, "%s%s%s",text,DIR_SEPARATOR,reloc_path);
-    locale_paths[1] = path; ++num_paths;
-    locale_paths[2] = OY_SRC_LOCALEDIR; ++num_paths;
-    //DBG_NUM_V( path );
-    if (text) free (text);
-  } else {
-    locale_paths[1] = OY_SRC_LOCALEDIR; ++num_paths;
-  }
-# endif
-  is_path = fl_search_locale_path (num_paths, locale_paths, "de", "oyranos");
-
-  if(is_path >= 0) {
-#if defined(_Xutf8_h) || HAVE_FLTK_UTF8
-    FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_UTF8;
-#else
-    FL_I18N_SETCODESET set_charset = FL_I18N_SETCODESET_SELECT;
-#endif
-    int err = fl_initialise_locale ( "oyranos", locale_paths[is_path],
-                                     set_charset );
-    oy_domain_codeset = fl_i18n_codeset;
-    if(err) {
-      WARNc_S("i18n initialisation failed");
-    }
-  }
   Fl::scheme("plastic");
 
 

@@ -29,8 +29,6 @@
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Scroll.H>
-//#include "../fl_i18n/fl_i18n.H"
-#include <FL/Flmm_Tabs.H>
 
 
 #include "config.h"

@@ -22,8 +22,7 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Widget.H>
-#include <FL/Flmm_Tabs.H>
-#include "../oyranos_alpha.h"
+#include "oyranos_types.h"
 #include "oyranos_forms.h"
 
 #define H_SPACING 10
