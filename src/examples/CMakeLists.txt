@@ -15,7 +15,7 @@ TARGET_LINK_LIBRARIES ( ${OY_MODULE_LIB} oyranos ${EXTRA_LIBS} )
 #INSTALL (TARGETS ${OY_MODULE_LIB} DESTINATION lib${LIB_SUFFIX}/${OY_CMMSUBPATH})
 
 # ICC profile hash calculation
-ADD_EXECUTABLE( oymd5icc "${CMAKE_CURRENT_SOURCE_DIR}/oymd5icc/oymd5icc.c" )
+ADD_EXECUTABLE( oymd5icc oymd5icc.c )
 TARGET_LINK_LIBRARIES( oymd5icc oyranos ${EXTRA_LIBS} )
 #INSTALL (TARGETS oymd5icc DESTINATION bin)
 
@@ -30,13 +30,13 @@ TARGET_LINK_LIBRARIES( oyranos-file oyranos ${EXTRA_LIBS} )
 #INSTALL (TARGETS oyranos-file DESTINATION bin)
 
 # Taxi DB tool for central hosted ICC profile distribution
-ADD_EXECUTABLE( taxi "${CMAKE_CURRENT_SOURCE_DIR}/taxi/taxi.c" )
+ADD_EXECUTABLE( taxi taxi.c )
 TARGET_LINK_LIBRARIES( taxi oyranos ${EXTRA_LIBS} )
 #INSTALL (TARGETS taxi DESTINATION bin)
 
 # primitive picture montage with ICC support
 IF( CAIRO_FOUND )
-  ADD_EXECUTABLE( image2pdf "${CMAKE_CURRENT_SOURCE_DIR}/image2pdf/image2pdf.c" )
+  ADD_EXECUTABLE( image2pdf image2pdf.c )
   TARGET_LINK_LIBRARIES ( image2pdf oyranos ${EXTRA_LIBS}
                  ${CAIRO_LIBRARIES} )
   #INSTALL (TARGETS oyranos-profile-graph DESTINATION bin)
