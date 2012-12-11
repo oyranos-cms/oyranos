@@ -15,7 +15,7 @@
 Version:         @OYRANOS_VERSION_MAJOR@.@OYRANOS_VERSION_MINOR@.@OYRANOS_VERSION_MICRO@
 Source:          oyranos-%{version}.tar.bz2
 Release:         0
-%define syscolordir     @CMAKE_INSTALL_PREFIX@/share/color
+%define syscolordir     %{_prefix}/share/color
 %define usercolordir    ~/.config/color
 %define usercolordata   ~/.local/share/color
 %define iccdirname      icc
@@ -23,9 +23,9 @@ Release:         0
 %define metasubpath     @OY_METASUBPATH@
 %define settingsdirname settings
 %define targetdirname   target
-%define pixmapdir       @CMAKE_INSTALL_PREFIX@/share/pixmaps
-%define icondir         @CMAKE_INSTALL_PREFIX@/share/icons
-%define desktopdir      @CMAKE_INSTALL_PREFIX@/share/applications
+%define pixmapdir       %{_prefix}/share/pixmaps
+%define icondir         %{_prefix}/share/icons
+%define desktopdir      %{_prefix}/share/applications
 
 @ELEKTRA_SPEC@
 
@@ -413,7 +413,8 @@ the system tray.
 %install
 %make_install
 rm -fr %{buildroot}/%{_datadir}/doc/%{name}
-cp -av examples/xcmsevents/qcmsevents-applet.desktop .
+cp -av src/tools/qcmsevents/qcmsevents-applet.desktop .
+cp -av extras/%{name}-profile-install.desktop .
 echo 'X-SuSE-translate=true' >> qcmsevents-applet.desktop
 echo 'X-SuSE-translate=true' >> %{name}-profile-install.desktop
 desktop-file-install --dir=%{buildroot}/%{desktopdir} qcmsevents-applet.desktop
