@@ -407,9 +407,8 @@ the system tray.
 %setup -q
 
 %build
-export CFLAGS="%{optflags}"
 %configure --enable-debug
-make %{_smp_mflags} || make
+%{__make} %{_smp_mflags} || make
 
 %install
 %make_install
