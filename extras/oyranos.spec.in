@@ -260,10 +260,10 @@ Summary:        Oyranos Monitor Tools
 Group:          Development/Libraries/Other
 Requires:       lib%{name}0-monitor >= %{version}
 
-%package      monitor-nvidia
-Summary:        Nvidia card support
-Group:          System/X11/Utilities
-License:        GPL-2.0
+#%package      monitor-nvidia
+#Summary:        Nvidia card support
+#Group:          System/X11/Utilities
+#License:        GPL-2.0
 
 %package      profile-graph
 Summary:        Profile 2D graph tool
@@ -363,10 +363,10 @@ The monitor profile configuration tool.
 The monitor support libraries of the
 Oyranos colour management system.
 
-%description  monitor-nvidia
-Display setup tool for the
-Oyranos colour management system.
-The nvidia EDID configuration part.
+#%description  monitor-nvidia
+#Display setup tool for the
+#Oyranos colour management system.
+#The nvidia EDID configuration part.
 
 %description  profile-graph
 The grapher renders a simple gamut 
@@ -419,6 +419,8 @@ echo 'X-SuSE-translate=true' >> qcmsevents-applet.desktop
 echo 'X-SuSE-translate=true' >> %{name}-profile-install.desktop
 desktop-file-install --dir=%{buildroot}/%{desktopdir} qcmsevents-applet.desktop
 desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.desktop
+mkdir -p %{buildroot}/etc/xdg/autostart/
+cp -av %{name}-profile-install.desktop %{buildroot}/etc/xdg/autostart/%{name}-monitor-setup.desktop
 %find_lang %{name}       # generate a special file list
 
 %post -n lib%{name}0 -p /sbin/ldconfig
@@ -493,11 +495,10 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 %doc AUTHORS COPYING ChangeLog README
 %dir %{_includedir}/%{name}/alpha
 %{_includedir}/%{name}/alpha/%{name}_alpha.h
-%{_includedir}/%{name}/alpha/%{name}_cmm.h
 
 %files -n lib%{name}-alpha-devel-doc
 %defattr(-, root, root)
-%doc doc_alpha/html
+%doc doc/doc_alpha/html
 
 %files monitor
 %defattr(-, root, root)
@@ -516,11 +517,11 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 %{_libdir}/%{cmmsubpath}/lib%{name}_oyX1_cmm_module*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oydi_cmm_module*
 
-%files monitor-nvidia
-%defattr(-, root, root)
-%doc AUTHORS COPYING ChangeLog README
-%{_bindir}/%{name}-monitor-nvidia
-%{_mandir}/man1/%{name}-monitor-nvidia.1*
+#%files monitor-nvidia
+#%defattr(-, root, root)
+#%doc AUTHORS COPYING ChangeLog README
+#%{_bindir}/%{name}-monitor-nvidia
+#%{_mandir}/man1/%{name}-monitor-nvidia.1*
 
 %files -n lib%{name}0-cups
 %defattr(-, root, root)
