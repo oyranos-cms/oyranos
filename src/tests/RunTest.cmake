@@ -1,3 +1,5 @@
 SET( ENV{OY_MODULE_PATH} "../.." )
-EXECUTE_PROCESS( COMMAND
-                 ./test_oyranos)
+EXECUTE_PROCESS( COMMAND echo "./test_oyranos")
+EXECUTE_PROCESS( COMMAND ./test_oyranos)
+EXECUTE_PROCESS( COMMAND echo "./test_oyranos-static")
+EXECUTE_PROCESS( COMMAND ./test_oyranos-static)

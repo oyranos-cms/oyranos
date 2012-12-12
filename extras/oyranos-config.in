@@ -168,10 +168,10 @@ if [ "$echo_ldflags" = "yes" ]; then
 fi
 
 if [ "$echo_ldstaticflags" = "yes" ]; then
-  if [ -f liboyranos.a ]; then
-    echo "liboyranos.a liboyranos_config.a liboyranos_modules.a liboyranos_object.a liboyranos_core.a $elektra $oyranos_add"
+  if [ -f liboyranos-static.a ]; then
+    echo "liboyranos-static.a liboyranos_config-static.a liboyranos_modules-static.a liboyranos_object-static.a liboyranos_core-static.a $elektra $oyranos_add"
   else
-    echo "$libdir/liboyranos.a $libdir/liboyranos_config.a $libdir/liboyranos_modules.a $libdir/liboyranos_object.a $libdir/liboyranos_core.a $elektra $oyranos_add"
+    echo "-L$libdir -loyranos-static -loyranos_config-static -loyranos_modules-static -loyranos_object-static -loyranos_core-static $elektra $oyranos_add"
   fi
 fi
 

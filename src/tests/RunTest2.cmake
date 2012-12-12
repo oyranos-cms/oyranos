@@ -1,3 +1,2 @@
 SET( ENV{OY_MODULE_PATH} "../.." )
-EXECUTE_PROCESS( COMMAND
-                 ./test2)
+EXECUTE_PROCESS( COMMAND ./test2)

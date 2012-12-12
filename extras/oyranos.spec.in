@@ -479,11 +479,11 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 %{_includedir}/%{name}/icc34.h
 %{_includedir}/%{name}/oy*.h
 %{_libdir}/pkgconfig/*
-%{_libdir}/lib%{name}_core.a
-%{_libdir}/lib%{name}_object.a
-%{_libdir}/lib%{name}_modules.a
-%{_libdir}/lib%{name}_config.a
-%{_libdir}/lib%{name}.a
+%{_libdir}/lib%{name}_core-static.a
+%{_libdir}/lib%{name}_object-static.a
+%{_libdir}/lib%{name}_modules-static.a
+%{_libdir}/lib%{name}_config-static.a
+%{_libdir}/lib%{name}-static.a
 %{_mandir}/man3/%{name}-config.3*
 %{_mandir}/man3/%{name}.*
 %doc doc/html

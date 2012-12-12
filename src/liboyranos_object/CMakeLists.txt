@@ -71,6 +71,10 @@ ADD_LIBRARY( oyranos_object SHARED ${SOURCES} )
 TARGET_LINK_LIBRARIES (
    oyranos_object
    oyranos_core ${EXTRA_LIBS} )
+ADD_LIBRARY( oyranos_object-static STATIC ${SOURCES} )
+TARGET_LINK_LIBRARIES (
+   oyranos_object-static
+   oyranos_core-static ${EXTRA_LIBS} )
 
-INSTALL (TARGETS oyranos_object DESTINATION lib${LIB_SUFFIX})
+INSTALL (TARGETS oyranos_object oyranos_object-static DESTINATION lib${LIB_SUFFIX})
 INSTALL (FILES ${CHEADERS_OBJECT_PUBLIC} DESTINATION include/${PACKAGE_NAME})
