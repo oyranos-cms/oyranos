@@ -51,6 +51,13 @@ IF( FLTK_FOUND )
   TARGET_LINK_LIBRARIES ( image-display oyranos ${EXTRA_LIBS}
                  ${FLTK_LIBRARIES} )
   #INSTALL (TARGETS image-display DESTINATION bin)
+  ADD_EXECUTABLE( oyranos-config-fltk
+                  oyranos_config_fltk.cxx
+                  ../../FL/Flmm_Tabs.cxx
+                )
+  TARGET_LINK_LIBRARIES ( oyranos-config-fltk oyranos ${EXTRA_LIBS}
+                 ${FLTK_LIBRARIES} )
+  INSTALL (TARGETS oyranos-config-fltk DESTINATION bin)
 ENDIF()
 
 ADD_SUBDIRECTORY( oforms )

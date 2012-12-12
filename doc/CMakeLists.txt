@@ -22,6 +22,7 @@ CONFIGURE_FILE(
        )
 
 SET( MAN1_PAGES
+     man/oyranos-config-fltk.1
      man/oyranos-monitor.1
      man/oyranos-monitor-daemon.1
      man/oyranos-policy.1
