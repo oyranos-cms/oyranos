@@ -77,7 +77,6 @@ EXEC_PROGRAM (  rpmbuild
                 ARGS --showrc | awk '/^build arch/ {print $$4}'
                 OUTPUT_VARIABLE RPMARCH
              )
-SET( PWD ENV{PWD} )
 ADD_CUSTOM_TARGET( rpm
 		COMMAND rm -rf ${PACKAGE_NAME}-${OYRANOS_VERSION}/
 		COMMAND tar xjf ${PACKAGE_NAME}-${OYRANOS_VERSION}.tar.bz2

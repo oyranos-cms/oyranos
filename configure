@@ -30,7 +30,7 @@ if [ $# -gt 0 ]; then
   prefix=""
   while [ $# -gt 0 ]; do
     arg=$1
-    # prefix exec_prefix bindir sbindir libdir includedir datadir mandir
+    # prefix exec_prefix bindir xdgsysdir libdir includedir datadir mandir
     switch=prefix
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       prefix="`echo \"$1\" | sed s/\"--$switch=\"//`"
@@ -43,9 +43,9 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
       bindir="`echo $1 | sed s/--$switch=//`"
     fi
-    switch=sbindir
+    switch=xdgsysdir
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
-      sbindir="`echo $1 | sed s/--$switch=//`"
+      xdgsysdir="`echo $1 | sed s/--$switch=//`"
     fi
     switch=libdir
     if [ "`echo \"$1\" | sed s/\"--$switch=\"//`" != "$1" ]; then
@@ -170,7 +170,7 @@ test -n "$INFOECHO" && $INFOECHO "Usage:"
 test -n "$INFOECHO" && $INFOECHO "   --prefix=[/usr/local]                package prefix"
 #test -n "$INFOECHO" && $INFOECHO "   --exec-prefix=[\$prefix]              package exec-prefix"
 #test -n "$INFOECHO" && $INFOECHO "   --bindir=[\$exec-prefix/bin]          binary installation path"
-#test -n "$INFOECHO" && $INFOECHO "   --sbindir=[\$exec-prefix/sbin]        super user binary installation path"
+test -n "$INFOECHO" && $INFOECHO "   --xdgsysdir=[/etc/xdg]               xdg config path"
 test -n "$INFOECHO" && $INFOECHO "   --libdir=[\$exec-prefix/lib]          main library installation path"
 #test -n "$INFOECHO" && $INFOECHO "   --cmmsubpath=[color/cmms]            module installation path"
 #test -n "$INFOECHO" && $INFOECHO "   --includedir=[\$prefix/include]       include file installation"
@@ -430,15 +430,15 @@ echo_="deb_arch=$deb_arch"
 test -n "$ECHO" && test -n "$INFOECHO" && $INFOECHO "$echo_";
 
 
-# exec_prefix bindir sbindir libdir cmmsubpath includedir datadir
+# exec_prefix bindir xdgsysdir libdir cmmsubpath includedir datadir
 if [ -z "$exec_prefix" ]; then
   exec_prefix="$prefix"
 fi
 if [ -z "$bindir" ]; then
   bindir="$exec_prefix/bin"
 fi
-if [ -z "$sbindir" ]; then
-  sbindir="$exec_prefix/sbin"
+if [ -z "$xdgsysdir" ]; then
+  xdgsysdir="/etc/xdg"
 fi
 if [ -z "$libdir" ]; then
   libdir="$exec_prefix/$LIBDIR"
@@ -536,7 +536,7 @@ if [ -n "$ECHO" ]; then
   test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="bindir          =       $bindir"
   test -n "$INFOECHO" && $INFOECHO "$echo_"
-  echo_="sbindir         =       $sbindir"
+  echo_="xdgsysdir       =       $xdgsysdir"
   test -n "$INFOECHO" && $INFOECHO "$echo_"
   echo_="libdir          =       $libdir"
   test -n "$INFOECHO" && $INFOECHO "$echo_"
@@ -574,7 +574,7 @@ if [ -n "$ECHO" ]; then
   test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
 
-echo "cmake -DCMAKE_INSTALL_PREFIX=$prefix -DLIB_SUFFIX=$BARCH $ROOT_DIR"
-cmake -DCMAKE_INSTALL_PREFIX=$prefix -DLIB_SUFFIX=$BARCH $ROOT_DIR
+echo "cmake -DCMAKE_INSTALL_PREFIX=$prefix -DXDG_CONFIG_DIR=$xdgsysdir -DLIB_SUFFIX=$BARCH $ROOT_DIR"
+cmake -DCMAKE_INSTALL_PREFIX=$prefix -DXDG_CONFIG_DIR=$xdgsysdir -DLIB_SUFFIX=$BARCH $ROOT_DIR
 
 exit 0
