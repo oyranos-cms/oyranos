@@ -29,7 +29,7 @@ QcmseDialog::QcmseDialog()
   init = 1;
   icons = new QComboBox;
   icons->addItem(QIcon(":/plugin-compicc_gray.svg"), tr("none"));
-  icons->addItem(QIcon(":/plugin-compicc.svg"), tr("active"));
+  icons->addItem(QIcon(":/qcmsevents.svg"), tr("active"));
  
 
   log_list = new QListWidget(this);
