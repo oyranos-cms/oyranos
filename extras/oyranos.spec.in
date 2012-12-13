@@ -399,7 +399,7 @@ the system tray.
 
 %build
 %configure --enable-debug
-%{__make} %{_smp_mflags} || make
+%{__make} VERBOSE=1 %{_smp_mflags} || make
 
 %install
 %make_install
