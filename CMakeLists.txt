@@ -80,7 +80,7 @@ ELSE(HAVE_ELEKTRA)
        ${LIBXML2_LIBRARIES}
      )
   include(ExternalProject)
-  ExternalProject_Add( elektra
+  ExternalProject_Add( elektra ALL
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${ELEKTRA_VERSION}
     # GCC flags (-fPIC) will fail on Windows, without we get relocation R_X86_64_32 errors
     CONFIGURE_COMMAND CFLAGS=-fPIC ${CMAKE_CURRENT_SOURCE_DIR}/${ELEKTRA_VERSION}/configure --enable-static --enable-shared=false
