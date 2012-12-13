@@ -40,6 +40,7 @@ Prefix:         %{_prefix}
 Source1:        oyranos-rpmlintrc
 BuildRequires:  color-filesystem
 
+BuildRequires:  cmake
 BuildRequires:  desktop-file-utils
 BuildRequires:  lcms2
 
@@ -260,11 +261,6 @@ Summary:        Oyranos Monitor Tools
 Group:          Development/Libraries/Other
 Requires:       lib%{name}0-monitor >= %{version}
 
-#%package      monitor-nvidia
-#Summary:        Nvidia card support
-#Group:          System/X11/Utilities
-#License:        GPL-2.0
-
 %package      profile-graph
 Summary:        Profile 2D graph tool
 Group:          Development/Libraries/Other
@@ -284,18 +280,18 @@ Summary:        Example Configuration Panel
 Group:          System/GUI/Other
 Requires:       fltk
 
-%package      forms-fltk
-Summary:        XFORMS subset rendering
-Group:          Development/Libraries/Other
+#%package      forms-fltk
+#Summary:        XFORMS subset rendering
+#Group:          Development/Libraries/Other
 
-%package      forms-fltk-devel
-Summary:        XFORMS subset rendering
-Group:          Development/Libraries/Other
-Requires:       fltk-devel
+#%package      forms-fltk-devel
+#Summary:        XFORMS subset rendering
+#Group:          Development/Libraries/Other
+#Requires:       fltk-devel
 
-%package      forms
-Summary:        XFORMS subset rendering
-Group:          Development/Libraries/Other
+#%package      forms
+#Summary:        XFORMS subset rendering
+#Group:          Development/Libraries/Other
 
 %package      qcmsevents
 Summary:        Xorg Color management Event observer applet
@@ -363,11 +359,6 @@ The monitor profile configuration tool.
 The monitor support libraries of the
 Oyranos colour management system.
 
-#%description  monitor-nvidia
-#Display setup tool for the
-#Oyranos colour management system.
-#The nvidia EDID configuration part.
-
 %description  profile-graph
 The grapher renders a simple gamut 
 hull of a ICC profile in 2D.
@@ -384,20 +375,20 @@ Oyranos colour management system.
 The example configuration GUI.
 Oyranos is a colour management system.
 
-%description  forms-fltk
-render a oyranos specific subset of xforms in fltk.
-a xforms subset is used by oyranos to describe filter node
-options.
+#%description  forms-fltk
+#render a oyranos specific subset of xforms in fltk.
+#a xforms subset is used by oyranos to describe filter node
+#options.
 
-%description  forms-fltk-devel
-render a oyranos specific subset of xforms in fltk.
-a xforms subset is used by oyranos to describe filter node
-options.
+#%description  forms-fltk-devel
+#render a oyranos specific subset of xforms in fltk.
+#a xforms subset is used by oyranos to describe filter node
+#options.
 
-%description  forms
-render a oyranos specific subset of xforms on cli.
-a xforms subset is used by oyranos to describe filter node
-options.
+#%description  forms
+#render a oyranos specific subset of xforms on cli.
+#a xforms subset is used by oyranos to describe filter node
+#options.
 
 %description  qcmsevents
 the applet shows if a colour server is running through a icon in 
@@ -481,6 +472,7 @@ cp -av %{name}-profile-install.desktop %{buildroot}/etc/xdg/autostart/%{name}-mo
 %{_includedir}/%{name}/icc34.h
 %{_includedir}/%{name}/oy*.h
 %{_libdir}/pkgconfig/*
+%{_prefix}/@TARGET_CMAKE_FOLDER@/FindOyranos.cmake
 %{_libdir}/lib%{name}_core-static.a
 %{_libdir}/lib%{name}_object-static.a
 %{_libdir}/lib%{name}_modules-static.a
@@ -517,12 +509,6 @@ cp -av %{name}-profile-install.desktop %{buildroot}/etc/xdg/autostart/%{name}-mo
 %{_libdir}/%{cmmsubpath}/lib%{name}_oyX1_cmm_module*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oydi_cmm_module*
 
-#%files monitor-nvidia
-#%defattr(-, root, root)
-#%doc AUTHORS COPYING ChangeLog README
-#%{_bindir}/%{name}-monitor-nvidia
-#%{_mandir}/man1/%{name}-monitor-nvidia.1*
-
 %files -n lib%{name}0-cups
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
@@ -543,22 +529,22 @@ cp -av %{name}-profile-install.desktop %{buildroot}/etc/xdg/autostart/%{name}-mo
 %{_bindir}/%{name}-config-fl*
 %{_mandir}/man1/%{name}-config-fltk.1*
 
-%files forms-fltk
-%defattr(-, root, root)
-%doc AUTHORS COPYING ChangeLog README
-%{_bindir}/%{name}-xforms-fltk
-%{_mandir}/man1/%{name}-xforms-fltk.1*
+#%files forms-fltk
+#%defattr(-, root, root)
+#%doc AUTHORS COPYING ChangeLog README
+#%{_bindir}/%{name}-xforms-fltk
+#%{_mandir}/man1/%{name}-xforms-fltk.1*
 
-%files forms-fltk-devel
-%defattr(-, root, root)
-%doc AUTHORS COPYING ChangeLog README
-%{_libdir}/liboyforms_fltk.a
+#%files forms-fltk-devel
+#%defattr(-, root, root)
+#%doc AUTHORS COPYING ChangeLog README
+#%{_libdir}/liboyforms_fltk.a
 
-%files forms
-%defattr(-, root, root)
-%doc AUTHORS COPYING ChangeLog README
-%{_bindir}/%{name}-xforms
-%{_mandir}/man1/%{name}-xforms.1*
+#%files forms
+#%defattr(-, root, root)
+#%doc AUTHORS COPYING ChangeLog README
+#%{_bindir}/%{name}-xforms
+#%{_mandir}/man1/%{name}-xforms.1*
 
 %files qcmsevents
 %defattr(-, root, root)
@@ -575,6 +561,14 @@ cp -av %{name}-profile-install.desktop %{buildroot}/etc/xdg/autostart/%{name}-mo
 %{_mandir}/man1/%{name}-profile-graph.1*
 
 %changelog
+* Thu Dec 13 2012 Kai-Uwe Behrmann
+- add BuildRequires:  cmake
+- install FindOyranos.cmake
+- remove monitor-nvidia
+- comment out oforms stuff
+- rename static libraries by prefixing
+- remove non needed smp build flags
+
 * Fri Nov 16 2012 Kai-Uwe Behrmann
 - add oyranos-icc
 
