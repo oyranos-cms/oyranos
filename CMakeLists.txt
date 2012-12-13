@@ -53,7 +53,7 @@ ELSE(HAVE_ELEKTRA)
   SET( ELEKTRA_VERSION elektra-0.7.1 )
   MESSAGE( "-- Using internal Elektra: ${ELEKTRA_VERSION}" )
   INCLUDE_DIRECTORIES( ${ELEKTRA_VERSION}/src/include )
-  SET( ELEKTRA_LIBRARIES 
+  SET( ELEKTRA_LIBRARIES_STATIC
        ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-kdb.o
        ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-kdbhandle.o
        ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-key.o
@@ -75,6 +75,8 @@ ELSE(HAVE_ELEKTRA)
        ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/backends/filesys/libelektra_filesys_a-filesys.o
        ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektratools/libelektratools_a-kdbtools.o
        ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektratools/libelektratools_a-stream.o
+     )
+  SET( ELEKTRA_LIBRARIES 
        ${LIBXML2_LIBRARIES}
      )
   include(ExternalProject)
