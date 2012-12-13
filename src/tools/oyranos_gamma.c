@@ -1020,6 +1020,7 @@ int updateOutputConfiguration( Display * display )
 int  runDaemon                       ( const char        * display_name )
 {
   Display * display;
+  Window root;
   Atom net_desktop_geometry, icc_color_desktop;
   int rr_event_base = 0, rr_error_base = 0;
   Atom actual;
@@ -1034,8 +1035,11 @@ int  runDaemon                       ( const char        * display_name )
   if(!display)
     return 1;
 
+  root = RootWindow( display, DefaultScreen( display ) );
+
 #ifdef HAVE_XRANDR
   XRRQueryExtension( display, &rr_event_base, &rr_error_base );
+  XRRSelectInput( display, root, RRScreenChangeNotifyMask | RRCrtcChangeNotifyMask | RROutputChangeNotifyMask | RROutputPropertyNotifyMask);
 #endif
 
   net_desktop_geometry = XInternAtom( display,
@@ -1060,7 +1064,8 @@ int  runDaemon                       ( const char        * display_name )
     if(event.type == rr_event_base + RRNotify)
     {
       XRRNotifyEvent *rrn = (XRRNotifyEvent *) &event;
-      if(rrn->subtype == RRNotify_OutputChange)
+      if(rrn->subtype == RRNotify_OutputChange ||
+         rrn->subtype == RR_Rotate_0)
       {
         printf("detected RRNotify_OutputChange event -> update\n");
         updateOutputConfiguration( display );
