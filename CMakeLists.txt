@@ -48,7 +48,7 @@ INCLUDE_DIRECTORIES( ${ELEKTRA_INCLUDE_DIRS} )
 LINK_DIRECTORIES( ${ELEKTRA_LIBRARY_DIRS} )
 IF(HAVE_ELEKTRA)
   SET( ELEKTRA_SPEC "Requires: elektra 0.7
-BuildRequires: elektra-devel" PARENT_SCOPE )
+BuildRequires: elektra-devel" )
 ELSE(HAVE_ELEKTRA)
   SET( ELEKTRA_VERSION elektra-0.7.1 )
   MESSAGE( "-- Using internal Elektra: ${ELEKTRA_VERSION}" )
@@ -80,7 +80,7 @@ ELSE(HAVE_ELEKTRA)
        ${LIBXML2_LIBRARIES}
      )
   include(ExternalProject)
-  ExternalProject_Add( elektra ALL
+  ExternalProject_Add( elektra
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${ELEKTRA_VERSION}
     # GCC flags (-fPIC) will fail on Windows, without we get relocation R_X86_64_32 errors
     CONFIGURE_COMMAND CFLAGS=-fPIC ${CMAKE_CURRENT_SOURCE_DIR}/${ELEKTRA_VERSION}/configure --enable-static --enable-shared=false
