@@ -18,7 +18,7 @@
 #include <oyranos.h>
 #include <oyranos_alpha.h>
 
-#include "config.h" /* I18N */
+#include "oyranos_config_internal.h" /* I18N */
 #include "oyranos_i18n.h"
 
 class Oy_Widget

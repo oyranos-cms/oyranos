@@ -22,7 +22,7 @@
 #include <unistd.h>  /* intptr_t */
 #include <locale.h>
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 
 # include <X11/Xlib.h>
 # include <X11/Xutil.h>

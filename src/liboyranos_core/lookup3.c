@@ -40,7 +40,7 @@ on 1 byte), but shoehorning those bytes into integers efficiently is messy.
 #include <stdio.h>      /* defines printf for tests */
 #include <time.h>       /* defines time_t for timings in the test */
 #include "oyranos_types.h"     /* defines uint32_t etc */
-#include "config.h"
+#include "oyranos_config_internal.h"
 #ifdef linux
 # include <sys/param.h>  /* attempt to define endianness */
 # include <endian.h>    /* attempt to define endianness */

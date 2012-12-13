@@ -21,7 +21,7 @@
 #include "limits.h"
 #include <unistd.h>  /* intptr_t */
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 
 # include <X11/Xcm/XcmEdidParse.h>
 

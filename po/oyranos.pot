@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2012-12-09 18:11+0100\n"
+"POT-Creation-Date: 2012-12-13 17:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -92,12 +92,11 @@ msgstr ""
 #: modules/oyranos_cmm_oyIM_profile.c:2767
 #: modules/devices/oyranos_monitor_x11.c:160
 #: modules/devices/oyranos_monitor_x11.c:190
-#: modules/devices/oyranos_monitor_x11.c:302
-#: modules/devices/oyranos_monitor_x11.c:329
-#: modules/devices/oyranos_monitor_x11.c:818
-#: modules/devices/oyranos_monitor_x11.c:837
-#: modules/devices/oyranos_monitor_x11.c:846
-#: modules/devices/oyranos_monitor_x11.c:933
+#: modules/devices/oyranos_monitor_x11.c:316
+#: modules/devices/oyranos_monitor_x11.c:805
+#: modules/devices/oyranos_monitor_x11.c:824
+#: modules/devices/oyranos_monitor_x11.c:833
+#: modules/devices/oyranos_monitor_x11.c:920
 #: modules/devices/oyranos_cmm_oyRE.cpp:622
 #: modules/devices/oyranos_cmm_oyRE.cpp:628
 #: modules/devices/oyranos_cmm_oyRE.cpp:640 tools/oyranos_gamma.c:825
@@ -2570,11 +2569,11 @@ msgstr ""
 msgid "unexpected user_data type"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:317
+#: modules/devices/oyranos_monitor_x11.c:304
 msgid "unexpected EDID lenght"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:320
+#: modules/devices/oyranos_monitor_x11.c:307
 #: modules/devices/oyranos_monitor_cs.c:631
 #: modules/devices/oyranos_monitor_cs.c:637
 #: modules/devices/oyranos_monitor_cs.c:648
@@ -2582,64 +2581,64 @@ msgstr ""
 msgid "Cant read hardware information from device."
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:453
+#: modules/devices/oyranos_monitor_x11.c:440
 msgid "Can not read hardware information from device."
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:463
+#: modules/devices/oyranos_monitor_x11.c:450
 msgid "no EDID available from X properties"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:740
-#: modules/devices/oyranos_monitor_x11.c:1257
+#: modules/devices/oyranos_monitor_x11.c:727
+#: modules/devices/oyranos_monitor_x11.c:1244
 #: modules/devices/oyranos_monitor_cs.c:130
 #: modules/devices/oyranos_monitor_cs.c:258
 msgid "open X Display failed"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:766
+#: modules/devices/oyranos_monitor_x11.c:753
 msgid "No monitor gamma curves by profile:"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:804
+#: modules/devices/oyranos_monitor_x11.c:791
 msgid "Error obtaining profile"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:811
-#: modules/devices/oyranos_monitor_x11.c:813
+#: modules/devices/oyranos_monitor_x11.c:798
+#: modules/devices/oyranos_monitor_x11.c:800
 msgid "Error setting up atom"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:912
+#: modules/devices/oyranos_monitor_x11.c:899
 msgid "Error getting atom"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:1141
+#: modules/devices/oyranos_monitor_x11.c:1128
 msgid "XRandR CrtcInfo request failed"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:1159
-#: modules/devices/oyranos_monitor_x11.c:1164
+#: modules/devices/oyranos_monitor_x11.c:1146
+#: modules/devices/oyranos_monitor_x11.c:1151
 msgid "Xinerama request failed"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:1180
+#: modules/devices/oyranos_monitor_x11.c:1167
 msgid "open X Screen failed"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:1250
+#: modules/devices/oyranos_monitor_x11.c:1237
 msgid "allocation failed"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:1268
+#: modules/devices/oyranos_monitor_x11.c:1255
 msgid "no Screen found"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:1428
+#: modules/devices/oyranos_monitor_x11.c:1415
 msgid "less Xinerama monitors than XRandR ones"
 msgstr ""
 
-#: modules/devices/oyranos_monitor_x11.c:1462
+#: modules/devices/oyranos_monitor_x11.c:1449
 msgid "no oyX1Monitor_s created"
 msgstr ""
 

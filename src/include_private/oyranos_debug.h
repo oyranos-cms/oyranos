@@ -25,7 +25,7 @@
 #include <string.h>
 #include <time.h>
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 
 #ifdef __cplusplus
 extern "C" {

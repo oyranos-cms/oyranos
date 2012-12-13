@@ -12,7 +12,7 @@
  *  @since    2004/11/25
  */
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 
 #include "oyCMMapis_s.h"
 #include "oyCMMapi6_s.h"

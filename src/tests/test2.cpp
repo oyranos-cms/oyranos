@@ -20,7 +20,7 @@
 
 #include "oyranos.h"
 #include "oyranos_string.h"
-#include "config.h"
+#include "oyranos_config_internal.h"
 
 /* C++ includes and definitions */
 #ifdef __cplusplus

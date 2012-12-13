@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"

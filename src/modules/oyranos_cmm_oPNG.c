@@ -13,7 +13,7 @@
  *  @since    2010/09/06
  */
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 
 #include "oyCMMapi4_s.h"
 #include "oyCMMapi4_s_.h"

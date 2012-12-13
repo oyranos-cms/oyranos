@@ -22,7 +22,7 @@
 #include <unistd.h>  /* intptr_t */
 #include <X11/Xcm/XcmEdidParse.h>
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 
 #ifdef __APPLE__
 /* old style Quicktime APIs */

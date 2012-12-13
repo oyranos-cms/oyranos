@@ -19,7 +19,7 @@
 #ifndef OYRANOS_HELPER_H
 #define OYRANOS_HELPER_H
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 #include "oyranos_debug.h"
 #include "oyStruct_s.h"
 #if defined(OY_CONFIG_H)

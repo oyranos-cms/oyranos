@@ -23,7 +23,7 @@
 #include "oyFilterNode_s_.h"         /* for oyFilterNode_TextToInfo_ */
 #include "oyRectangle_s_.h"
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 #include "oyranos_cmm.h"
 #include "oyranos_cmm_oyra.h"
 #include "oyranos_generic.h"         /* oy_connector_imaging_static_object */

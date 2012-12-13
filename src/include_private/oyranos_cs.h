@@ -17,7 +17,7 @@
 #ifndef OYRANOS_CS_H
 #define OYRANOS_CS_H
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 #include "oyranos.h"
 #include "oyranos_version.h"
 #include "oyranos_alpha.h"

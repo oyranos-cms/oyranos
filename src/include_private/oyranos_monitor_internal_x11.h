@@ -17,7 +17,7 @@
 #ifndef OYRANOS_MONITOR_INTERNAL_X11_H
 #define OYRANOS_MONITOR_INTERNAL_X11_H
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 #include "oyranos.h"
 #include "oyranos_internal.h"
 #include "oyranos_monitor.h"

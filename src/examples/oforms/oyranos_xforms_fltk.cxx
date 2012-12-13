@@ -28,7 +28,7 @@
 
 #include "oyranos_widgets_fltk.h"
 #include "oyranos_forms.h"
-#include "config.h"
+#include "oyranos_config_internal.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>

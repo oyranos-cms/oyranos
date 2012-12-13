@@ -19,7 +19,7 @@
 #include "oyCMMapi4_s_.h"
 #include "oyCMMapi7_s_.h"
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 #include "oyranos_cmm.h"
 #include "oyranos_helper.h"
 #include "oyranos_icc.h"

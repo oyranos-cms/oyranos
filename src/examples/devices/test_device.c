@@ -11,7 +11,7 @@
 #include "oyranos_helper.h"
 #include "oyranos_icc.h"
 #include "oyranos_string.h"
-#include "config.h"
+#include "oyranos_config_internal.h"
 #include "oyProfiles_s.h"
 
 #include <locale.h>

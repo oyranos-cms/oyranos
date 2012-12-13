@@ -14,7 +14,7 @@
  */
 
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 
 #include "oyCMMapi9_s_.h"
 #include "oyCMMobjectType_s_.h"

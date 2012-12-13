@@ -17,7 +17,7 @@
 #ifndef OYRANOS_INTERNAL_H
 #define OYRANOS_INTERNAL_H
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 #include "oyranos.h"
 #include "oyranos_version.h"
 #include "oyranos_i18n.h"

@@ -1,6 +1,6 @@
 /* automatic generated variables */
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef OYRANOS_CONFIG_INTERNAL_H
+#define OYRANOS_CONFIG_INTERNAL_H
 
 #define PLATFORM @PLATFORM@
 #cmakedefine UNIX 
@@ -36,5 +36,5 @@
 #cmakedefine HAVE_TIFF
 #cmakedefine USE_GETTEXT
 
-#endif /* CONFIG_H*/
+#endif /* OYRANOS_CONFIG_INTERNAL_H */
 

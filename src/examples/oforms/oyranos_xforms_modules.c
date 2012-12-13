@@ -1,6 +1,6 @@
 /*  gcc -Wall -g -I. -I../build_11.2 oforms/oyranos_xforms_modules.c `pkg-config oyranos libxml-2.0 --libs --cflags` -o oyranos-xforms-module
 */
-#include "config.h"
+#include "oyranos_config_internal.h"
 #include <oyranos.h>
 #include <oyranos_debug.h>
 #include <oyranos_helper.h>

@@ -16,7 +16,7 @@
 #ifndef OYRANOS_CMM_OYIM_H
 #define OYRANOS_CMM_OYIM_H
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 
 #include "oyCMMapi3_s_.h"
 #include "oyCMMapi5_s_.h"

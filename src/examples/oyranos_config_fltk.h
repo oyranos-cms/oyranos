@@ -13,7 +13,7 @@
 #include <FL/Flmm_Tabs.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
-#include "config.h"
+#include "oyranos_config_internal.h"
 #include "oyranos.h"
 #include "oyranos_debug.h"
 #include "oyranos_config.h"

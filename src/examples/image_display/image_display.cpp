@@ -17,7 +17,7 @@
 #include <cstdio>
 #include <cstring>
 
-#include "config.h" /* I18N */
+#include "oyranos_config_internal.h" /* I18N */
 #include "oyranos_i18n.h"
 
 #include <oyranos.h>

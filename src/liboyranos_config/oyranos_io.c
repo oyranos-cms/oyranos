@@ -21,7 +21,7 @@
 #include <string.h>
 #include <math.h>
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 #include "oyranos.h"
 #include "oyranos_check.h"
 #include "oyranos_debug.h"

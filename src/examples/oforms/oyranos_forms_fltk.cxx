@@ -34,7 +34,7 @@
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Scroll.H>
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 #include "oyranos.h"
 #include "oyranos_debug.h"
 #include "oyranos_elektra.h"

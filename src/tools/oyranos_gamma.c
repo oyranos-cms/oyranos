@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "config.h"
+#include "oyranos_config_internal.h"
 #ifdef HAVE_X11
 #include <X11/Xcm/Xcm.h>
 #include <X11/Xcm/XcmEvents.h>

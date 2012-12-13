@@ -35,7 +35,7 @@ decl {\#include <FL/fl_ask.H>} {public
 decl {\#include <FL/fl_draw.H>} {public
 } 
 
-decl {\#include "config.h"
+decl {\#include "oyranos_config_internal.h"
 \#include "oyranos.h"
 \#include "oyranos_debug.h"
 \#include "oyranos_config.h"
