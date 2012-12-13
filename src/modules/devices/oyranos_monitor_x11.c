@@ -289,19 +289,6 @@ oyX1GetMonitorInfo_               (const char* display_name,
       ((!prop || (prop && oyBlob_GetSize(prop)%128)) ||
        oyOptions_FindString( options, "edid", "refresh" )) )
   {
-    int error = 0;
-    char * txt = oyAllocateFunc_(1024); txt[0] = 0;
-
-    /* test twinview edid */
-    if(oy_debug)
-      oySnprintf1_( txt, 1024, "OY_DEBUG=%d ", oy_debug);
-    oySnprintf1_( &txt[strlen(txt)], 1024, "%s",
-              "PATH=" OY_BINDIR ":$PATH; oyranos-monitor-nvidia -p" );
-
-    error = system( txt );
-    if(error) WARNc2_S("%s %d", _("found issues"),error);
-    if(txt) { oyDeAllocateFunc_(txt); txt = 0; }
-
 #if !defined(IGNORE_EDID)
     prop = oyX1Monitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
                                          xrandr_edids );
