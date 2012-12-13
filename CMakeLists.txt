@@ -75,6 +75,7 @@ ELSE(HAVE_ELEKTRA)
        ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/backends/filesys/libelektra_filesys_a-filesys.o
        ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektratools/libelektratools_a-kdbtools.o
        ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektratools/libelektratools_a-stream.o
+       ${LIBXML2_LIBRARIES}
      )
   include(ExternalProject)
   ExternalProject_Add( elektra
