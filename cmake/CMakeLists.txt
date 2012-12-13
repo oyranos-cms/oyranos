@@ -2,30 +2,30 @@
 # Target installation folders
 #
 
-set (TARGET_INCLUDE_FOLDER
+SET (TARGET_INCLUDE_FOLDER
 		"oyranos"
 		CACHE STRING
 		"Optional folder below system include folder to install include files."
     )
 
-set (TARGET_CMAKE_FOLDER
+SET (TARGET_CMAKE_FOLDER
 		"share/cmake-${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}/Modules"
 		CACHE STRING
 		"The folder below system prefix where to install cmake files."
     )
 
-set (TARGET_PLUGIN_FOLDER "oyranos"
+SET (TARGET_PLUGIN_FOLDER "oyranos"
 		CACHE STRING
 		"Optional folder below system library folder where to install oyranos plugins. LIB_SUFFIX is honored."
     )
 
-set (TARGET_PKGCONFIG_FOLDER
+SET (TARGET_PKGCONFIG_FOLDER
 		"pkgconfig"
 		CACHE STRING
 		"The folder below system library folder where to install pkgconfig files. LIB_SUFFIX is honored."
     )
 
-set (TARGET_DOCUMENTATION_FOLDER
+SET (TARGET_DOCUMENTATION_FOLDER
 		"share/doc/oyranos-api"
 		CACHE STRING
 		"The folder below system prefix where to install api documentation files."
@@ -36,19 +36,19 @@ set (TARGET_DOCUMENTATION_FOLDER
 # Misc.
 #
 
-set (LIB_SUFFIX ""
+SET (LIB_SUFFIX ""
 		CACHE STRING
 		"Optional suffix to use on lib folders (e.g. 64 for lib64)"
     )
 #cmake settings for use by find_package
-configure_file (
+CONFIGURE_FILE (
 		"${CMAKE_CURRENT_SOURCE_DIR}/FindOyranos.cmake.in"
 		"${CMAKE_CURRENT_BINARY_DIR}/FindOyranos.cmake"
 		@ONLY
 	)
 
-install ( FILES
+INSTALL ( FILES
 		"${CMAKE_CURRENT_BINARY_DIR}/FindOyranos.cmake"
-		DESTINATION ${TARGET_CMAKE_FOLDER}
+		DESTINATION ${TARGET_CMAKE_FOLDER} COMPONENT dev
 	)
 
