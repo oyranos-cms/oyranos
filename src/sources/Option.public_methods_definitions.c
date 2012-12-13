@@ -268,7 +268,7 @@ const char *   oyOption_GetValueString(oyOption_s        * obj,
 {
   oyOption_s_ * s = (oyOption_s_*)obj;
   int error = !s,
-      n;
+      n = 0;
   const char * result = 0;
 
   if(!s)

@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/12/13
  */
 
 
@@ -64,7 +64,7 @@ OYAPI oyCMMapiFilters_s * OYEXPORT
  *
  *  @param[in]     cmmapifilters                 CMMapiFilters struct object
  *  @param         object              NULL - means reference,
- *                                     the optional object triffers a real copy
+ *                                     the optional object triggers a real copy
  */
 OYAPI oyCMMapiFilters_s* OYEXPORT
   oyCMMapiFilters_Copy( oyCMMapiFilters_s *cmmapifilters, oyObject_s object )

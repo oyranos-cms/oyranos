@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/12/13
  */
 
 
@@ -59,7 +59,7 @@ OYAPI oyRectangle_s * OYEXPORT
  *
  *  @param[in]     rectangle                 Rectangle struct object
  *  @param         object              NULL - means reference,
- *                                     the optional object triffers a real copy
+ *                                     the optional object triggers a real copy
  */
 OYAPI oyRectangle_s* OYEXPORT
   oyRectangle_Copy( oyRectangle_s *rectangle, oyObject_s object )

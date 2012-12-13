@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/17
+ *  @date     2012/12/13
  */
 
 
@@ -58,7 +58,7 @@ OYAPI oyStructList_s * OYEXPORT
  *
  *  @param[in]     structlist                 StructList struct object
  *  @param         object              NULL - means reference,
- *                                     the optional object triffers a real copy
+ *                                     the optional object triggers a real copy
  */
 OYAPI oyStructList_s* OYEXPORT
   oyStructList_Copy( oyStructList_s *structlist, oyObject_s object )

@@ -213,7 +213,7 @@ oyjl_tree_parse_context_s * oyjl_tree_parse_context_new( void )
   if(!error)
   {
     memset(s, 0, sizeof(oyjl_tree_parse_context_s));
-    strcpy(s->type,"yopc");
+    memcpy(s->type,"yopc",4);
   }
   return s;
 }

@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/12/13
  */
 
 
@@ -55,7 +55,7 @@ OYAPI oyBlob_s * OYEXPORT
  *
  *  @param[in]     blob                 Blob struct object
  *  @param         object              NULL - means reference,
- *                                     the optional object triffers a real copy
+ *                                     the optional object triggers a real copy
  */
 OYAPI oyBlob_s* OYEXPORT
   oyBlob_Copy( oyBlob_s *blob, oyObject_s object )

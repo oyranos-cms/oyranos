@@ -32,7 +32,7 @@
 # if defined(HAVE_XINERAMA)
 #  include <X11/extensions/Xinerama.h>
 # endif
-# ifdef HAVE_XF86VM
+# ifdef HAVE_XXF86VM
 #  include <X11/extensions/xf86vmode.h>
 # endif
 
@@ -728,7 +728,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
         return 1;
       }
 
-#ifdef HAVE_XF86VM
+#ifdef HAVE_XXF86VM
       if(effective_screen == screen)
       {
         XF86VidModeGamma gamma;

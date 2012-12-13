@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/10
+ *  @date     2012/12/13
  */
 
 
@@ -60,7 +60,7 @@ OYAPI oyPixelAccess_s * OYEXPORT
  *
  *  @param[in]     pixelaccess                 PixelAccess struct object
  *  @param         object              NULL - means reference,
- *                                     the optional object triffers a real copy
+ *                                     the optional object triggers a real copy
  */
 OYAPI oyPixelAccess_s* OYEXPORT
   oyPixelAccess_Copy( oyPixelAccess_s *pixelaccess, oyObject_s object )

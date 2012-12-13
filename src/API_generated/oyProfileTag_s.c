@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/12/13
  */
 
 
@@ -60,7 +60,7 @@ OYAPI oyProfileTag_s * OYEXPORT
  *
  *  @param[in]     profiletag                 ProfileTag struct object
  *  @param         object              NULL - means reference,
- *                                     the optional object triffers a real copy
+ *                                     the optional object triggers a real copy
  */
 OYAPI oyProfileTag_s* OYEXPORT
   oyProfileTag_Copy( oyProfileTag_s *profiletag, oyObject_s object )

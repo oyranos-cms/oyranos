@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/12/13
  */
 
 
@@ -61,7 +61,7 @@ OYAPI oyOption_s * OYEXPORT
  *
  *  @param[in]     option                 Option struct object
  *  @param         object              NULL - means reference,
- *                                     the optional object triffers a real copy
+ *                                     the optional object triggers a real copy
  */
 OYAPI oyOption_s* OYEXPORT
   oyOption_Copy( oyOption_s *option, oyObject_s object )
@@ -372,7 +372,7 @@ const char *   oyOption_GetValueString(oyOption_s        * obj,
 {
   oyOption_s_ * s = (oyOption_s_*)obj;
   int error = !s,
-      n;
+      n = 0;
   const char * result = 0;
 
   if(!s)

@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/18
+ *  @date     2012/12/13
  */
 
 
@@ -70,7 +70,7 @@ OYAPI oyFilterNode_s * OYEXPORT
  *
  *  @param[in]     filternode                 FilterNode struct object
  *  @param         object              NULL - means reference,
- *                                     the optional object triffers a real copy
+ *                                     the optional object triggers a real copy
  */
 OYAPI oyFilterNode_s* OYEXPORT
   oyFilterNode_Copy( oyFilterNode_s *filternode, oyObject_s object )

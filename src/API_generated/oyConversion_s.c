@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/11/02
+ *  @date     2012/12/13
  */
 
 
@@ -66,7 +66,7 @@ OYAPI oyConversion_s * OYEXPORT
  *
  *  @param[in]     conversion                 Conversion struct object
  *  @param         object              NULL - means reference,
- *                                     the optional object triffers a real copy
+ *                                     the optional object triggers a real copy
  */
 OYAPI oyConversion_s* OYEXPORT
   oyConversion_Copy( oyConversion_s *conversion, oyObject_s object )

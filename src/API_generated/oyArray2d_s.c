@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/24
+ *  @date     2012/12/13
  */
 
 
@@ -55,7 +55,7 @@ OYAPI oyArray2d_s * OYEXPORT
  *
  *  @param[in]     array2d                 Array2d struct object
  *  @param         object              NULL - means reference,
- *                                     the optional object triffers a real copy
+ *                                     the optional object triggers a real copy
  */
 OYAPI oyArray2d_s* OYEXPORT
   oyArray2d_Copy( oyArray2d_s *array2d, oyObject_s object )

@@ -184,13 +184,11 @@ int                oyStringFromData_ ( const oyPointer     ptr,
 {
   const char * text = (const char*) ptr;
   char * text_tmp = 0;
-  int j,
+  int j = 0,
       error = 0;
 
   if(ptr && size)
   {
-    j = 0;
-
     while(j < size)
       if(!isprint( text[j] ) && !isspace( text[j] ))
       {

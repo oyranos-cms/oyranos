@@ -19,7 +19,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2012/12/13
  */
 
 
@@ -59,7 +59,7 @@ OYAPI oyCMMapi10_s * OYEXPORT
  *
  *  @param[in]     cmmapi10                 CMMapi10 struct object
  *  @param         object              NULL - means reference,
- *                                     the optional object triffers a real copy
+ *                                     the optional object triggers a real copy
  */
 OYAPI oyCMMapi10_s* OYEXPORT
   oyCMMapi10_Copy( oyCMMapi10_s *cmmapi10, oyObject_s object )

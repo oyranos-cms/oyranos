@@ -262,7 +262,7 @@ char * oyReadUrlToMem_               ( const char        * url,
 {
   char * text = 0;
   char * command = 0;
-  FILE * fp;
+  FILE * fp = 0;
 
   if(url && strlen(url) && size )
   {
