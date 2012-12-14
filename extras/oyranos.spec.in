@@ -473,7 +473,7 @@ cp -av %{name}-profile-install.desktop %{buildroot}/etc/xdg/autostart/%{name}-mo
 %{_includedir}/%{name}/icc34.h
 %{_includedir}/%{name}/oy*.h
 %{_libdir}/pkgconfig/*
-%{_prefix}/@TARGET_CMAKE_FOLDER@/FindOyranos.cmake
+%{_prefix}/share/cmake/Modules/FindOyranos.cmake
 %{_libdir}/lib%{name}_core-static.a
 %{_libdir}/lib%{name}_object-static.a
 %{_libdir}/lib%{name}_modules-static.a
