@@ -18,7 +18,6 @@ if [ `uname` = "Linux" ]; then
 fi
 
 
-OY_GIT_MASTER="`cat $ROOT_DIR/.git/refs/heads/master`"
 time="`date +%y%m%d.%H%M%S`"
 INFOECHO="echo"
 
@@ -191,8 +190,6 @@ test -n "$INFOECHO" && $INFOECHO "   --libdir=[\$exec-prefix/lib]          main 
 #test -n "$INFOECHO" && $INFOECHO "   --enable-verbose                     verbose compiling [default enable]"
 test -n "$INFOECHO" && $INFOECHO "   --help"
 test -n "$INFOECHO" && $INFOECHO ""
-#test -n "$INFOECHO" && $INFOECHO " Optionally set the CC, CXX, CFLAGS, CXXFLAGS and LDFLAGS environment variables."
-test -n "$INFOECHO" && $INFOECHO ""
       exit
     fi
     shift
@@ -231,62 +228,6 @@ fi
 if [ -z "$prefix" ]; then
   prefix=/usr/local
 fi
-
-# define some common variables in front of config.site
-if [ -n "$CXX" ]; then
-  CXX_saved=$CXX
-fi
-if [ -n "$CC" ]; then
-  CC_saved=$CC
-fi
-if [ -n "$CFLAGS" ]; then
-  CFLAGS_saved=$CFLAGS
-  CFLAGS=""
-fi
-if [ -n "$CXXFLAGS" ]; then
-  CXXFLAGS_saved=$CXXFLAGS
-  CXXFLAGS=""
-fi
-if [ -n "$LDFLAGS" ]; then
-  LDFLAGS_saved=$LDFLAGS
-  LDFLAGS=""
-fi
-
-# import config.site
-if [ -z "$datadir" ]; then
-  if [ -f $prefix/share/config.site ]; then
-    . $prefix/share/config.site
-    test -n "$ECHO" && (. $prefix/share/config.site >> $CONF_LOG )
-  fi
-else
-  if [ -f $datadir/config.site ]; then
-    . $datadir/config.site
-    test -n "$ECHO" && (. $datadir/config.site >> $CONF_LOG )
-  fi
-fi
-
-# recover variables after config.site
-if [ -n "$CXX_saved" ]; then
-  CXX="$CXX_saved"
-fi
-if [ -n "$CC_saved" ]; then
-  CC="$CC_saved"
-fi
-if [ -n "$CFLAGS_saved" ]; then
-  CFLAGS="$CFLAGS_saved $CFLAGS"
-fi
-if [ -n "$CXXFLAGS_saved" ]; then
-  CXXFLAGS="$CXXFLAGS_saved $CXXFLAGS"
-fi
-if [ -n "$LDFLAGS_saved" ]; then
-  LDFLAGS="$LDFLAGS_saved $LDFLAGS"
-fi
-
-if [ -n "$ECHO" ]; then
-  test -f mkdepend && rm mkdepend config.h cobjects
-fi
-
-
 
 # detect System
 
