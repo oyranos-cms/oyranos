@@ -172,7 +172,7 @@ int main( int argc , char** argv )
                         else if(OY_IS_ARG("profile"))
                         { OY_PARSE_STRING_ARG2(prof_name, "profile"); break; }
                         else if(OY_IS_ARG("display"))
-                        { const char * t; OY_PARSE_STRING_ARG2(t, "display");
+                        { const char * t=0; OY_PARSE_STRING_ARG2(t, "display");
                           if(t) display_name = strdup(t); break; }
                         else if(OY_IS_ARG("modules"))
                         { list_modules = 1; i=100; break; }

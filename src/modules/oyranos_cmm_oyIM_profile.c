@@ -249,9 +249,9 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
                                        size_t              tag_size )
 {
   int error = 0;
-  int size, i;
+  int size = 0, i;
   size_t off;
-  uint8_t * dimensions, precission, *u8;
+  uint8_t * dimensions = 0, precission = 1, *u8;
   uint16_t u16;
   char * tmp = 0;
   char * text = oyAllocateFunc_(128);

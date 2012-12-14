@@ -135,16 +135,10 @@ int main( int argc , char** argv )
 
   int levels = 0;
 
-  const char * result_xml = 0;
-  char * text = 0, * t = 0;
-  const char * opt_names = 0;
-  oyFormsArgs_s * forms_args = oyFormsArgs_New( 0 );
-  const char * data = 0, * ct = 0;
   char ** other_args = 0;
   int other_args_n = 0;
-  int i;
+  char * text = 0, * t = 0;
   oyOptions_s * opts = 0;
-  oyOption_s * o = 0;
   oyImage_s * image = 0;
 
 #ifdef USE_GETTEXT
@@ -275,6 +269,13 @@ int main( int argc , char** argv )
 #if 0
   if(other_args)
   {
+    const char * result_xml = 0;
+    const char * opt_names = 0;
+    oyFormsArgs_s * forms_args = oyFormsArgs_New( 0 );
+    const char * data = 0, * ct = 0;
+    int i;
+    oyOption_s * o = 0;
+
     forms_args->print = 0;
 
     error = oyXFORMsRenderUi( text, oy_ui_cmd_line_handlers, forms_args );

@@ -684,7 +684,7 @@ yajl_status  oyjl_tree_from_json     ( const char        * text,
 #if YAJL_VERSION < 20000
   yajl_parser_config yconfig = { 1, 1 };
 #endif
-  yajl_handle yhandle;
+  yajl_handle yhandle = 0;
 
   if(!error && context)
   {

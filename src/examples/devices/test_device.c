@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
     oyConfig_s * oy_device = 0;
     oyProfile_s * profile = 0;
     const char * tmp = 0;
-    icSignature profile_class;
+    icSignature profile_class = icSigDisplayClass;
     oyOptions_s * options = 0;
     oyOptions_SetFromText( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
@@ -331,7 +331,6 @@ int main(int argc, char *argv[])
     oyConfig_s * oy_device = 0;
     oyProfile_s * profile = 0;
     const char * tmp = 0;
-    icSignature profile_class;
     oyOptions_s * options = 0;
     oyOptions_SetFromText( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
@@ -344,15 +343,9 @@ int main(int argc, char *argv[])
       oyConfDomain_s * d = oyConfDomain_FromReg( device_class, 0 );
       const char * icc_profile_class = oyConfDomain_GetText( d,
                                              "icc_profile_class", oyNAME_NICK );
-      if(icc_profile_class && strcmp(icc_profile_class,"display") == 0)
-        profile_class = icSigDisplayClass;
-      else if(icc_profile_class && strcmp(icc_profile_class,"output") == 0)
-        profile_class = icSigOutputClass;
-      else if(icc_profile_class && strcmp(icc_profile_class,"input") == 0)
-        profile_class = icSigInputClass;
 
-       printf("icc_profile_class: %s\n", icc_profile_class );
-       oyConfDomain_Release( &d );
+      printf("icc_profile_class: %s\n", icc_profile_class );
+      oyConfDomain_Release( &d );
     }
 
     error = oyDeviceGet( 0, device_class, device_name, 0, &oy_device );
@@ -374,14 +367,12 @@ int main(int argc, char *argv[])
     oyProfile_s * profile = 0;
     oyConfigs_s * taxi_devices = 0;
     oyConfig_s * device = oy_device;
-    const char * profile_file_name = 0;
     
     oyDevicesFromTaxiDB( device, 0, &taxi_devices, 0 );
     
     size = oyConfigs_Count( taxi_devices );
     
     error = oyDeviceGetProfile( device, options, &profile );
-    profile_file_name = oyProfile_GetFileName( profile, 0 );
     
     int show_only_device_related = 1;
     int empty_added = -1;                   

@@ -357,7 +357,7 @@ typedef struct {
   oyCIExyY v[3];
 } oyCIExyYTriple;
 
-void _oyMAT3toCIExyYTriple ( const oyMAT3* a,oyCIExyYTriple * triple )
+int _oyMAT3toCIExyYTriple ( const oyMAT3* a,oyCIExyYTriple * triple )
 {
   int i,j,
       fail=0;
@@ -380,6 +380,7 @@ void _oyMAT3toCIExyYTriple ( const oyMAT3* a,oyCIExyYTriple * triple )
         triple->v[i].xy[1] = 1;
       }
     }
+  return fail;
 }
 const char * _oyMAT3show ( const oyMAT3* a )
 {
@@ -488,7 +489,7 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color )
     _oyMAT3per( &ab_cm, &cam_zyx, &pre_mul );
     if(_oyMAT3inverse( &ab_cm, &ab_cm_inverse ))
       // convert to CIE*xyY
-      _oyMAT3toCIExyYTriple( &ab_cm_inverse, &ab_cm_inverse_xyY );
+      fail = _oyMAT3toCIExyYTriple( &ab_cm_inverse, &ab_cm_inverse_xyY );
     else
     {
       fail = 1;

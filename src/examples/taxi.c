@@ -7,9 +7,13 @@
 #include <oyConfigs_s.h>
 #include <oyProfile_s.h>
 
+#include "oyranos_config_internal.h"
 #include <oyranos_devices.h>
 #include "oyranos_helper_macros_cli.h"
+#include "oyranos_helper.h"
+#include "oyranos_i18n.h"
 #include "oyranos_sentinel.h"
+#include "oyranos_string.h"
 
 #include "oyjl/oyjl_tree.h"
 
@@ -86,7 +90,7 @@ int oyLowerStrcmpWrap (const void * a_, const void * b_)
 #endif
 }
 
-int oyStrCmp(char * a, char * b) { return (a && b) ? strcmp(a,b) : 1; }
+int oyStrCmp(const char * a, const char * b) { return (a && b) ? strcmp(a,b) : 1; }
 
 #define OPENICC_DEVICE_JSON_HEADER_BASE \
   "{\n" \
@@ -107,8 +111,8 @@ void storeTaxiProfile( const char * taxi_id, const char * taxi_full_id, const ch
 {
   oyOptions_s * options = 0;
   oyProfile_s * profile;
-  int error = oyOptions_SetFromText( &options,
-                                   "//" OY_TYPE_STD "/argv/TAXI_id",
+
+  oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/argv/TAXI_id",
                                    taxi_full_id,
                                    OY_CREATE_NEW );
 
@@ -138,15 +142,9 @@ void storeTaxiProfile( const char * taxi_id, const char * taxi_full_id, const ch
 
 int main( int argc, char ** argv )
 {
-  oyConfig_s * moni = NULL,
-             * device = NULL;
   int error = 0;
-  oyConfigs_s * devices = NULL;
-  oyOptions_s * options = NULL;
-  oyProfile_s * profile = NULL;
   char * profile_name = 0;          /* the file to write to */
-  int32_t rank_value = 0, max_rank_value = 0;
-  int i,n, max_device_pos = -1,
+  int i,
       verbose = 0,
       list_manufacturers = 0,
       list_urls = 0;
@@ -156,11 +154,9 @@ int main( int argc, char ** argv )
 
   size_t size = 0;
   const char * short_name = NULL,
-             * long_name = NULL,
-             * name = NULL;
+             * long_name = NULL;
   oyjl_value_s * root = 0;
-  char * val = NULL,
-       * key = NULL;
+  char * val = NULL;
   oyjl_value_s * v = 0, * tv = 0;
   int count;
 
@@ -229,10 +225,8 @@ int main( int argc, char ** argv )
       error = oyjl_tree_from_json( manufacturers, &root, NULL );
     if(root)
     {
-      int level = 0;
-
       int count = oyjl_value_count(root);
-      char ** sort = calloc( sizeof(char**), 2*count + 2 );
+      const char ** sort = calloc( sizeof(char**), 2*count + 2 );
 
       for(i = 0; i < count; ++i)
       {
@@ -392,5 +386,5 @@ int main( int argc, char ** argv )
         if(device_db) oyDeAllocateFunc_(device_db); device_db = 0;
   }
 
-  return 0;
+  return error;
 }

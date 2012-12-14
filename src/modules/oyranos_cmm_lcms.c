@@ -213,8 +213,8 @@ lcmsProfileWrap_s * lcmsCMMProfile_GetWrap_( oyPointer_s * cmm_ptr )
 {
   lcmsProfileWrap_s * s = 0;
 
-  char type_[4] = lcmsPROFILE;
-  int type = *((int*)&type_);
+  char * type_ = lcmsPROFILE;
+  int type = *((int32_t*)type_);
 
   if(cmm_ptr && !lcmsCMMCheckPointer( cmm_ptr, lcmsPROFILE ) &&
      oyPointer_GetPointer(cmm_ptr))
@@ -236,8 +236,8 @@ lcmsProfileWrap_s * lcmsCMMProfile_GetWrap_( oyPointer_s * cmm_ptr )
 int      lcmsCMMTransform_GetWrap_   ( oyPointer_s       * cmm_ptr,
                                        lcmsTransformWrap_s ** s )
 {
-  char type_[4] = lcmsTRANSFORM;
-  int type = *((int*)&type_);
+  char * type_ = lcmsTRANSFORM;
+  int type = *((int32_t*)type_);
 
   if(cmm_ptr && !lcmsCMMCheckPointer( cmm_ptr, lcmsTRANSFORM ) &&
      oyPointer_GetPointer(cmm_ptr))
@@ -264,8 +264,8 @@ int lcmsCMMProfileReleaseWrap(oyPointer *p)
   int error = !p;
   lcmsProfileWrap_s * s = 0;
   
-  char type_[4] = lcmsPROFILE;
-  int type = *((int*)&type_);
+  char * type_ = lcmsPROFILE;
+  int type = *((int32_t*)type_);
   char s_type[4];
 
   if(!error && *p)
@@ -313,8 +313,8 @@ int          lcmsCMMData_Open        ( oyStruct_s        * data,
 
   if(!error)
   {
-    char type_[4] = lcmsPROFILE;
-    int type = *((int*)&type_);
+    char * type_ = lcmsPROFILE;
+    int type = *((int32_t*)type_);
     size_t size = 0;
     oyPointer block = 0;
     lcmsProfileWrap_s * s = calloc(sizeof(lcmsProfileWrap_s), 1);
@@ -466,8 +466,8 @@ lcmsTransformWrap_s * lcmsTransformWrap_Set_ (
   
   if(!error)
   {
-    char type_[4] = lcmsTRANSFORM;
-    int type = *((int*)&type_);
+    char * type_ = lcmsTRANSFORM;
+    int type = *((int32_t*)type_);
     lcmsTransformWrap_s * ltw = calloc(sizeof(lcmsTransformWrap_s), 1);
 
     ltw->type = type;
@@ -879,8 +879,8 @@ cmsHPROFILE  lcmsAddProofProfile     ( oyProfile_s       * proof,
   {
     oyPointer_s * oy = cmm_ptr;
 
-    char type_[4] = lcmsPROFILE;
-    uint32_t type = *((uint32_t*)&type_);
+    char * type_ = lcmsPROFILE;
+    uint32_t type = *((uint32_t*)type_);
     size_t size = 0;
     oyPointer block = 0;
     lcmsProfileWrap_s * s = calloc(sizeof(lcmsProfileWrap_s), 1);
@@ -1821,10 +1821,10 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   {
     uint8_t * array_in_tmp = 0,
             * array_out_tmp = 0;
-    float * array_in_tmp_flt,
-          * array_out_tmp_flt;
-    double * array_in_tmp_dbl,
-           * array_out_tmp_dbl;
+    float * array_in_tmp_flt = 0,
+          * array_out_tmp_flt = 0;
+    double * array_in_tmp_dbl = 0,
+           * array_out_tmp_dbl = 0;
     uint8_t ** array_in_data = oyArray2d_GetData( array_in ),
             ** array_out_data = oyArray2d_GetData( array_out );
     int threads_n = 

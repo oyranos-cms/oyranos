@@ -3573,7 +3573,7 @@ oyTESTRESULT_e testImagePixel()
       /* all other buffer pixels shall remain untouched */
       buf_16out2x2[3]==0 && buf_16out2x2[4]==0 && buf_16out2x2[5]==0 &&
       buf_16out2x2[6]==0 && buf_16out2x2[7]==0 && buf_16out2x2[8]==0 &&
-      buf_16out2x2[9]==0 && buf_16out2x2[10]==0 && buf_16out2x2[10]==0
+      buf_16out2x2[9]==0 && buf_16out2x2[10]==0 && buf_16out2x2[11]==0
       )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "lower right source pixel in 1 pixel RoI  %s",
@@ -3621,7 +3621,7 @@ oyTESTRESULT_e testImagePixel()
       buf_16in2x2[6]==0 && buf_16in2x2[7]==0 && buf_16in2x2[8]==0 &&
       buf_16in2x2[9]==65535 && buf_16in2x2[10]==65535 &&buf_16in2x2[11]==65535&&
       /* the result shall appear in the lower right corner / last pixel */
-      buf_16out2x2[9]==65535 && buf_16out2x2[10]>20000&&buf_16out2x2[20]<40000&&
+      buf_16out2x2[9]==65535 && buf_16out2x2[10]>20000&&buf_16out2x2[11]<40000&&
       /* all other buffer pixels shall remain untouched */
       buf_16out2x2[0]==0 && buf_16out2x2[1]==0 && buf_16out2x2[2]==0 &&
       buf_16out2x2[3]==0 && buf_16out2x2[4]==0 && buf_16out2x2[5]==0 &&
@@ -3986,7 +3986,7 @@ oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
 /*  main */
 int main(int argc, char** argv)
 {
-  int i, error;
+  int i, error = 0;
 
   if(getenv("OY_DEBUG"))
   {

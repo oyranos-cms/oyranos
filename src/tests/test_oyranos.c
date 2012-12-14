@@ -1009,7 +1009,7 @@ oyTESTRESULT_e testObserver ()
 /*  main */
 int main(int argc, char** argv)
 {
-  int i, error;
+  int i, error = 0;
 
   /* init */
   for(i = 0; i <= oyTESTRESULT_UNKNOWN; ++i)

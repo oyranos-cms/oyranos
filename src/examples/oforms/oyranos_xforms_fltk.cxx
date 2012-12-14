@@ -85,7 +85,6 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
       }
 
       char * string = oyStringCopy_( help_text, malloc );
-      int n = strlen(string);
       
       while( string[i] )
       {
