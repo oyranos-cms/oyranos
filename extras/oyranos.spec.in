@@ -133,6 +133,7 @@ BuildRequires:  libyajl-devel
 %endif
 
 %if 0%{?suse_version} > 1200
+BuildRequires:  Mesa-libGLU-devel
 BuildRequires:  libltdl-devel
 %endif
 
