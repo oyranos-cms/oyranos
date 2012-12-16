@@ -2,7 +2,6 @@ usr/bin/oyranos-config
 usr/bin/oyranos-icc
 usr/bin/oyranos-monitor
 usr/bin/oyranos-monitor-daemon
-usr/bin/oyranos-monitor-nvidia
 usr/bin/oyranos-policy
 usr/bin/oyranos-profile
 usr/bin/oyranos-profiles
@@ -11,7 +10,6 @@ usr/bin/oyranos-profile-install
 usr/bin/oyranos-xforms-modules
 usr/share/man/man1/oyranos-monitor.1*
 usr/share/man/man1/oyranos-monitor-daemon.1*
-usr/share/man/man1/oyranos-monitor-nvidia.1*
 usr/share/man/man1/oyranos-policy*
 usr/share/man/man1/oyranos-profile.1*
 usr/share/man/man1/oyranos-profiles.1*

@@ -3,6 +3,7 @@ Priority: optional
 Maintainer: Kai-Uwe Behrmann (oy) <oy@oyranos.org>
 Build-Depends: debhelper (>= 8.0.0), autotools-dev,
  autoconf,
+ cmake,
  libxml2-dev,
  libyajl-dev,
  gettext,
