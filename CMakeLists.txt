@@ -127,7 +127,7 @@ EXEC_PROGRAM (  rpmbuild
                 OUTPUT_VARIABLE RPMARCH
              )
 ADD_CUSTOM_TARGET( rpm
-		COMMAND test -d ${PACKAGE_NAME}-${OYRANOS_VERSION}/ &&rm -rf ${PACKAGE_NAME}-${OYRANOS_VERSION}/
+		COMMAND test -d ${PACKAGE_NAME}-${OYRANOS_VERSION}/ && rm -rf ${PACKAGE_NAME}-${OYRANOS_VERSION}/
 		COMMAND tar xjf ${PACKAGE_NAME}-${OYRANOS_VERSION}.tar.bz2
                 COMMAND mkdir -p rpmdir/BUILD rpmdir/SPECS rpmdir/SOURCES rpmdir/SRPMS rpmdir/RPMS/${RPMARCH}
                 COMMAND cp -f ${PACKAGE_NAME}-${OYRANOS_VERSION}.tar.bz2 rpmdir/SOURCES
