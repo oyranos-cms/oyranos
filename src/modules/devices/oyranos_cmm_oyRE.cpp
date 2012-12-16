@@ -30,7 +30,7 @@
 #include <exiv2/image.hpp>
 #include <exiv2/exif.hpp>
 
-#include <libraw.h>
+#include <libraw/libraw.h>
 
 #include <string>
 #include <sstream>
