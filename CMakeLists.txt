@@ -127,13 +127,31 @@ EXEC_PROGRAM (  rpmbuild
                 OUTPUT_VARIABLE RPMARCH
              )
 ADD_CUSTOM_TARGET( rpm
-		COMMAND rm -rf ${PACKAGE_NAME}-${OYRANOS_VERSION}/
+		COMMAND test -d ${PACKAGE_NAME}-${OYRANOS_VERSION}/ &&rm -rf ${PACKAGE_NAME}-${OYRANOS_VERSION}/
 		COMMAND tar xjf ${PACKAGE_NAME}-${OYRANOS_VERSION}.tar.bz2
                 COMMAND mkdir -p rpmdir/BUILD rpmdir/SPECS rpmdir/SOURCES rpmdir/SRPMS rpmdir/RPMS/${RPMARCH}
                 COMMAND cp -f ${PACKAGE_NAME}-${OYRANOS_VERSION}.tar.bz2 rpmdir/SOURCES
                 COMMAND rpmbuild --clean -ba extras/${PACKAGE_NAME}.spec --define "_topdir ${CMAKE_CURRENT_BINARY_DIR}/rpmdir"
                 DEPENDS dist
-		COMMENT Make a oyranos RPM package by using git
+		COMMENT Make a oyranos RPM package
+		VERBATIM
+		)
+
+ADD_CUSTOM_TARGET( debsrc
+		COMMAND test -d ${PACKAGE_NAME}-${OYRANOS_VERSION}/ && rm -rf ${PACKAGE_NAME}-${OYRANOS_VERSION}/
+		COMMAND tar xjf ${PACKAGE_NAME}-${OYRANOS_VERSION}.tar.bz2
+                COMMAND mkdir -p rpmdir/BUILD rpmdir/SPECS rpmdir/SOURCES rpmdir/SRPMS rpmdir/RPMS/${RPMARCH}
+                COMMAND mv ${PACKAGE_NAME}-${OYRANOS_VERSION}.tar.bz2 ${PACKAGE_NAME}_${OYRANOS_VERSION}.orig.tar.bz2
+                COMMAND cp -R ${CMAKE_SOURCE_DIR}/extras/debian ${PACKAGE_NAME}-${OYRANOS_VERSION}/
+                COMMAND dpkg-source -b ${PACKAGE_NAME}-${OYRANOS_VERSION}/
+                DEPENDS dist
+		COMMENT Make a oyranos DEB source package
+		VERBATIM
+		)
+ADD_CUSTOM_TARGET( debian
+		COMMAND cd ${PACKAGE_NAME}-${OYRANOS_VERSION}/ && debuild
+                DEPENDS debsrc
+		COMMENT Make a oyranos DEB package
 		VERBATIM
 		)
 
