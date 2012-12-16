@@ -15,7 +15,7 @@
 Version:         @OYRANOS_VERSION_MAJOR@.@OYRANOS_VERSION_MINOR@.@OYRANOS_VERSION_MICRO@
 Source:          oyranos-%{version}.tar.bz2
 Release:         0
-%define syscolordir     %{_prefix}/share/color
+%define syscolordir     /usr/share/color
 %define usercolordir    ~/.config/color
 %define usercolordata   ~/.local/share/color
 %define iccdirname      icc
@@ -23,9 +23,9 @@ Release:         0
 %define metasubpath     @OY_METASUBPATH@
 %define settingsdirname settings
 %define targetdirname   target
-%define pixmapdir       %{_prefix}/share/pixmaps
-%define icondir         %{_prefix}/share/icons
-%define desktopdir      %{_prefix}/share/applications
+%define pixmapdir       /usr/share/pixmaps
+%define icondir         /usr/share/icons
+%define desktopdir      /usr/share/applications
 
 @ELEKTRA_SPEC@
 
@@ -133,8 +133,11 @@ BuildRequires:  libyajl-devel
 %endif
 
 %if 0%{?suse_version} > 1200
-BuildRequires:  Mesa-libGLU-devel
 BuildRequires:  libltdl-devel
+%endif
+
+%if 0%{?suse_version} > 1210
+BuildRequires:  Mesa-libGLU-devel
 %endif
 
 %if 0%{?mandriva_version} > 0
@@ -271,28 +274,10 @@ Summary:        CUPS device support
 Group:          Development/Libraries/Other
 Requires:       cups
 
-#%package      -n lib%{name}0-sane
-#Summary:        SANE device support
-#Group:          Development/Libraries/Other
-#Requires:       sane
-
 %package      ui-fltk
 Summary:        Example Configuration Panel
 Group:          System/GUI/Other
 Requires:       fltk
-
-#%package      forms-fltk
-#Summary:        XFORMS subset rendering
-#Group:          Development/Libraries/Other
-
-#%package      forms-fltk-devel
-#Summary:        XFORMS subset rendering
-#Group:          Development/Libraries/Other
-#Requires:       fltk-devel
-
-#%package      forms
-#Summary:        XFORMS subset rendering
-#Group:          Development/Libraries/Other
 
 %package      qcmsevents
 Summary:        Xorg Color management Event observer applet
@@ -368,28 +353,9 @@ hull of a ICC profile in 2D.
 CUPS device support for the
 Oyranos colour management system.
 
-#%description  -n lib%{name}0-sane
-#SANE device support for the
-#Oyranos colour management system.
-
 %description  ui-fltk
 The example configuration GUI.
 Oyranos is a colour management system.
-
-#%description  forms-fltk
-#render a oyranos specific subset of xforms in fltk.
-#a xforms subset is used by oyranos to describe filter node
-#options.
-
-#%description  forms-fltk-devel
-#render a oyranos specific subset of xforms in fltk.
-#a xforms subset is used by oyranos to describe filter node
-#options.
-
-#%description  forms
-#render a oyranos specific subset of xforms on cli.
-#a xforms subset is used by oyranos to describe filter node
-#options.
 
 %description  qcmsevents
 the applet shows if a colour server is running through a icon in 
@@ -517,35 +483,11 @@ cp -av %{name}-profile-install.desktop %{buildroot}/etc/xdg/autostart/%{name}-mo
 %dir %{_libdir}/%{cmmsubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_CUPS_cmm_module*
 
-#%files -n lib%{name}0-sane
-#%defattr(-, root, root)
-#%doc AUTHORS COPYING ChangeLog README
-#%dir %{_libdir}/colour/
-#%dir %{_libdir}/%{cmmsubpath}/
-#%{_libdir}/%{cmmsubpath}/lib%{name}_SANE_cmm_module*
-
 %files ui-fltk
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
 %{_bindir}/%{name}-config-fl*
 %{_mandir}/man1/%{name}-config-fltk.1*
-
-#%files forms-fltk
-#%defattr(-, root, root)
-#%doc AUTHORS COPYING ChangeLog README
-#%{_bindir}/%{name}-xforms-fltk
-#%{_mandir}/man1/%{name}-xforms-fltk.1*
-
-#%files forms-fltk-devel
-#%defattr(-, root, root)
-#%doc AUTHORS COPYING ChangeLog README
-#%{_libdir}/liboyforms_fltk.a
-
-#%files forms
-#%defattr(-, root, root)
-#%doc AUTHORS COPYING ChangeLog README
-#%{_bindir}/%{name}-xforms
-#%{_mandir}/man1/%{name}-xforms.1*
 
 %files qcmsevents
 %defattr(-, root, root)
