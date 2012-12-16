@@ -36,7 +36,7 @@ Dependencies:
   Debian/Ubuntu:
     elektra-0.7.0 - is included in the tar ball
 
-    sudo apt-get install locales build-essential git autoconf libxml2-dev gettext libfltk-dev libpng-dev libcairo2-dev x11proto-xf86vidmode-dev x11proto-xext-dev libxxf86vm-dev libxrandr-dev libxinerama-dev libxmu-dev libxpm-dev libxfixes-dev fluid ftgl-dev liblcms-dev libexiv2-dev libcups2-dev
+    sudo apt-get install locales build-essential git autoconf cmake libxml2-dev libyajl-dev gettext libfltk-dev libpng-dev libcairo2-dev x11proto-xf86vidmode-dev x11proto-xext-dev libxxf86vm-dev libxrandr-dev libxinerama-dev libxmu-dev libxpm-dev libxfixes-dev fluid ftgl-dev liblcms-dev libexiv2-dev libcups2-dev
     # oyranos-0.3.3 can now be installed successfully.
     sudo apt-get install libqt4-dev cmake                                  # Synnefo
     sudo apt-get install kdelibs5-dev                                      # KolorManager
