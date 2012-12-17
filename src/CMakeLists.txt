@@ -23,6 +23,7 @@ IF(UNIX)
   ENDIF(CMAKE_COMPILER_IS_GNUCC)
 ENDIF(UNIX)
 
+# dependencies
 INCLUDE(CheckLibraryExists)
 
 CHECK_LIBRARY_EXISTS(m pow "math.h" HAVE_M)
@@ -151,8 +152,10 @@ LINK_DIRECTORIES( ${LIBPNG_LIBRARY_DIRS} )
 
 FIND_PACKAGE( GetText )
 
+# debug
 get_property(inc_dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
 #MESSAGE( "-- INCLUDE_DIRECTORIES: ${inc_dirs}" )
+
 
 ADD_SUBDIRECTORY( include )
 
@@ -176,8 +179,10 @@ ADD_SUBDIRECTORY( tools )
 
 ADD_SUBDIRECTORY( examples )
 
+
+# versions for libraries
 SET_TARGET_PROPERTIES( oyranos_core oyranos_object oyranos_modules oyranos_config oyranos
-    PROPERTIES VERSION ${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR}.${OYRANOS_VERSION_MICRO}
+    PROPERTIES VERSION   ${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR}.${OYRANOS_VERSION_MICRO}
                SOVERSION ${OYRANOS_VERSION_MAJOR}
                      )
 
