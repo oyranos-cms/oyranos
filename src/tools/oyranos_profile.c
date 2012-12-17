@@ -81,18 +81,22 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("List included ICC tags:"));
   fprintf( stderr, "      %s -l FILE_NAME\n",        argv[0]);
-  fprintf( stderr, "      -p NUMBER  %s\n",     _("select tag"));
-  fprintf( stderr, "      -n NAME  %s\n",       _("select tag"));
-  fprintf( stderr, "      -s NAME  %s\n",       _("add prefix"));
-  fprintf( stderr, "      -c NAME  %s\n",       _("use device class"));
+  fprintf( stderr, "      -p NUMBER     %s\n",  _("select tag"));
+  fprintf( stderr, "      -n NAME       %s\n",  _("select tag"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Dump Device Infos to OpenICC device JSON:"));
   fprintf( stderr, "      %s -o FILE_NAME\n",        argv[0]);
+  fprintf( stderr, "      -c NAME       %s scanner, monitor, printer, camera ...\n",  _("use device class") );
+  fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",               _("Show Profile ID:"));
+  fprintf( stderr, "      %s -m FILE_NAME\n",        argv[0]);
+  fprintf( stderr, "      -w FILE_NAME  %s\n",  _("write profile with correct ID"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Write to ICC profile:"));
   fprintf( stderr, "      %s -w NAME [-j FILE_NAME] FILE_NAME\n",        argv[0]);
   fprintf( stderr, "      -w NAME       %s\n",  _("use new name"));
   fprintf( stderr, "      -j FILE_NAME  %s\n",  _("embed OpenICC device JSON from file"));
+  fprintf( stderr, "      -s NAME       %s\n",  _("add prefix"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Print a help text:"));
   fprintf( stderr, "      %s -h\n",        argv[0]);
@@ -102,7 +106,8 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s:\n",               _("Example"));
   fprintf( stderr, "      oyranos-profile -lv -p=1 sRGB.icc\n");
-  fprintf( stderr, "      oyranos-profile -w test -j test.json sRGB.icc");
+  fprintf( stderr, "      oyranos-profile -w test -j test.json sRGB.icc\n");
+  fprintf( stderr, "      oyranos-profile -mv sRGB.icc");
   fprintf( stderr, "\n");
   fprintf( stderr, "\n");
 
@@ -117,6 +122,7 @@ int main( int argc , char** argv )
 {
   int error = 0;
   int list_tags = 0,
+      list_hash = 0,
       tag_pos = -1,
       dump_openicc_json = 0,
       verbose = 0;
@@ -151,6 +157,7 @@ int main( int argc , char** argv )
               case 'c': OY_PARSE_STRING_ARG(device_class); break;
               case 'j': OY_PARSE_STRING_ARG(json_name); break;
               case 'l': list_tags = 1; break;
+              case 'm': list_hash = 1; break;
               case 'n': OY_PARSE_STRING_ARG(tag_name); break;
               case 'o': dump_openicc_json = 1; break;
               case 'p': OY_PARSE_INT_ARG( tag_pos ); break;
@@ -217,6 +224,17 @@ int main( int argc , char** argv )
     char * ext = 0;
     const char * t = strrchr(profile_name, '.');
     int i;
+
+    if(error <= 0 && list_hash)
+    {
+      uint32_t id[4];
+      p = oyProfile_FromFile( file_name, 0, 0 );
+      oyProfile_GetMD5( p, OY_COMPUTE, id );
+
+      fprintf( stderr, "%s %s\n", _("Write to ICC profile:"), profile_name);
+      error = oyProfile_ToFile_( (oyProfile_s_*)p, profile_name);
+      return error;
+    }
 
     STRING_ADD( pn, profile_name );
     if(t)
@@ -443,6 +461,23 @@ int main( int argc , char** argv )
 
         fprintf( stdout, "\n"OPENICC_DEVICE_JSON_FOOTER );
       }
+    }
+
+    if(error <= 0 && list_hash)
+    {
+      uint32_t * i;
+      uint32_t md5[4],
+               id[4];
+      oyProfile_GetMD5(p, OY_FROM_PROFILE, id);
+      error = oyProfile_GetMD5(p, OY_COMPUTE, md5);
+
+      i = (uint32_t*)md5;
+      if(!verbose)
+        fprintf( stdout, "%x%x%x%x\n",
+            i[0],i[1],i[2],i[3] );
+      else
+        fprintf( stdout, "%x%x%x%x[%x%x%x%x] %s\n",
+            i[0],i[1],i[2],i[3], id[0],id[1],id[2],id[3], file_name );
     }
 
     oyProfile_Release( &p );

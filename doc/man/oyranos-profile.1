@@ -4,9 +4,11 @@ oyranos-profile \- Oyranos CMS ICC profiles tool
 .SH SYNOPSIS
 \fBoyranos-profile\fR -l \fIPROFILENAME\fR
 .fi
+\fBoyranos-profile\fR -m [-w \fIFILENAME\fR] \fIPROFILENAME\fR
+.fi
 \fBoyranos-profile\fR -o \fIFILENAME\fR
 .fi
-\fBoyranos-profile\fR -w \fINAME\fR [-j \fIFILENAME\fR] \fIPROFILENAME\fR
+\fBoyranos-profile\fR -w \fINAME\fR [-j \fIFILENAME\fR | -m] \fIPROFILENAME\fR
 .fi
 \fBoyranos-profile\fR [ |-h ]
 .SH DESCRIPTION
@@ -18,10 +20,23 @@ list contained tags.
 .sp
 .br
 \fB-p\fR \fINUMBER\fR select tag
+.br
+\fB-n\fR \fINAME\fR select tag
+.sp
+.TP
+.B \-m
+show internal hash value.
+.sp
+.br
+\fB-w\fR \fIFILENAME\fR
+write profile with correct hash
 .sp
 .TP
 \fB\-o\fR \fIFILENAME\fR
 write device informations to OpenICC JSON.
+.sp
+.br
+\fB-c\fR \fINAME\fR use device class. Useful device classes are monitor, scanner, printer, camera.
 .TP
 \fB\-w\fR \fINAME\fR \fIPROFILENAME\fR
 write ICC profile. The -w option specifies the new internal and external 
@@ -30,6 +45,8 @@ profile name. PROFILENAME specifies the source profile.
 .br
 \fB-j\fR \fIFILENAME\fR
 embed OpenICC JSON device from file
+.br
+\fB-s\fR \fINAME\fR add prefix
 .SH GENERAL OPTIONS
 .TP
 .B \-v, \-\-verbose
@@ -49,6 +66,9 @@ http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
 Show first tags content of profile:
 .B oyranos-profile -lv -p=1 sRGB.icc
 .PP
+.TP
+Show the profile hash sum:
+.B oyranos-profile -m sRGB.icc
 .TP
 Add calibration data to meta tag of a device profile:
 .B oyranos-profile -w my_profile -j my_device.json my_profile.icc
