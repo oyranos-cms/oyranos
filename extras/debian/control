@@ -1,7 +1,7 @@
 Source: oyranos
 Priority: optional
 Maintainer: Kai-Uwe Behrmann (oy) <oy@oyranos.org>
-# optionaly add fluid for oy-config-fltk
+# optionaly add fluid and libfltk-dev for oy-config-fltk
 Build-Depends: debhelper (>= 8.0.0), autotools-dev,
  autoconf,
  cmake,
@@ -20,7 +20,6 @@ Build-Depends: debhelper (>= 8.0.0), autotools-dev,
  libxpm-dev,
  libxfixes-dev,
  libxcm-dev,
- libfltk-dev,
  liblcms1-dev,
  libraw-dev,
  libexiv2-dev,
@@ -34,7 +33,7 @@ Homepage: http://www.oyranos.org
 Vcs-Git: git://www.oyranos.org/git/oyranos
 Vcs-Browser: http://www.oyranos.org/scm?p=oyranos.git;a=summary
 
-Package: oyranos-dev
+Package: liboyranos-dev
 Section: libdevel
 Architecture: any
 Depends: oyranos (= ${binary:Version}), ${misc:Depends}
