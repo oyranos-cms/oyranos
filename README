@@ -46,17 +46,21 @@ Dependencies:
   optional:
     ICC Examin to build afterwards. oyranos-config-fltk uses the profile viewer.
 
-  Fedora 13:
+  Fedora 17:
     git
     gcc-c++
     elektra-devel
+    exiv2-devel
     cups-devel
     sane-backends-devel
-    lcms-devel
+    liblcms-devel
+    liblcms2-devel
     icc-profiles-basiccolor-lstarrgb
     icc-profiles-lcms-lab
     icc-profiles-openicc-printing
     icc-profiles-openicc-rgb
+    libtool
+    libtool-ltdl-devel
     libxml2-devel
     libpng-devel
     libtiff-devel
@@ -65,7 +69,9 @@ Dependencies:
     libXrandr-devel
     libXcm-devel
     fltk-devel
+    fltk-fluid
     gettext
+    yajl-devel
     doxygen
     graphviz
   optional:
@@ -73,8 +79,7 @@ Dependencies:
     libXmu-devel
     qt-devel
     netpbm-progs
-    libexiv2-devel
-    libraw-devel
+    exiv2-devel
 
   Arch Linux:
     extra/libxml2

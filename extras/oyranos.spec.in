@@ -175,8 +175,10 @@ BuildRequires:  cairo-devel
 BuildRequires:  cups-devel
 BuildRequires:  doxygen
 BuildRequires:  elektra-devel
+BuildRequires:  exiv2-devel
 BuildRequires:  fltk
 BuildRequires:  fltk-devel
+BuildRequires:  fltk-fluid
 BuildRequires:  gcc-c++
 BuildRequires:  gettext
 BuildRequires:  graphviz
@@ -186,15 +188,19 @@ BuildRequires:  libXxf86vm-devel
 BuildRequires:  libjpeg
 BuildRequires:  libjpeg-devel
 BuildRequires:  liblcms-devel
+BuildRequires:  liblcms2-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libqt4-devel
 BuildRequires:  libtiff-devel
 BuildRequires:  libxml2-devel
+BuildRequires:  libtool
+BuildRequires:  libtool-ltdl-devel
 BuildRequires:  netpbm
 BuildRequires:  pkgconfig
 BuildRequires:  xdg-utils
 BuildRequires:  xorg-x11-Mesa-devel
 BuildRequires:  xorg-x11-devel
+BuildRequires:  yajl-devel
 %endif
 
 %if 0%{?debian_version} > 0
@@ -417,7 +423,7 @@ cp -av %{name}-profile-install.desktop %{buildroot}/etc/xdg/autostart/%{name}-mo
 %dir %{_libdir}/%{cmmsubpath}/
 %dir %{_libdir}/%{metasubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_lcm*
-%if 0%{?suse_version} > 1130
+%if 0%{?suse_version} > 1130 || 0%{?fedora_version} > 0
 %{_libdir}/%{cmmsubpath}/lib%{name}_lraw_cmm_module*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oyRE_cmm_module*
 %endif
