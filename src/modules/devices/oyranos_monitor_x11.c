@@ -1323,22 +1323,16 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
         /* we work on connected outputs */
         if( output_info && output_info->crtc )
         {
-          XRRCrtcGamma * gamma = 0;
           XRRCrtcInfo * crtc_info = 0;
 
           if(monitors == 0)
           {
-            gamma = XRRGetCrtcGamma( display, output_info->crtc );
-            if(gamma && gamma->size &&
-               strcmp("default", output_info->name) != 0)
+            if(strcmp("default", output_info->name) != 0)
             {
               disp->info_source = oyX11INFO_SOURCE_XRANDR;
 
-              XRRFreeGamma( gamma );
             } else
             {
-              if(gamma)
-                XRRFreeGamma( gamma );
               XRRFreeOutputInfo( output_info );
               break;
             }
