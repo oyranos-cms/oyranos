@@ -1,6 +1,7 @@
 Source: oyranos
 Priority: optional
 Maintainer: Kai-Uwe Behrmann (oy) <oy@oyranos.org>
+# optionaly add fluid for oy-config-fltk
 Build-Depends: debhelper (>= 8.0.0), autotools-dev,
  autoconf,
  cmake,
@@ -77,12 +78,12 @@ Description: Color Management System Tools
  fashion and regardless of any technical knowledge.
  Oyranos Tools.
 
-Package: oyranos-config-fltk
-Section: graphics
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: X Color Management example panel
- The example panel shows some of the basic settings of the Oyranos CMS.
+#Package: oyranos-config-fltk
+#Section: graphics
+#Architecture: any
+#Depends: ${shlibs:Depends}, ${misc:Depends}
+#Description: X Color Management example panel
+# The example panel shows some of the basic settings of the Oyranos CMS.
 
 Package: oyranos-qcmsevents
 Section: graphics
