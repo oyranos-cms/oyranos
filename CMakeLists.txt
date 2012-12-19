@@ -50,7 +50,8 @@ BuildRequires: elektra-devel" )
 ELSE(HAVE_ELEKTRA)
   SET( ELEKTRA_VERSION elektra-0.7.1 )
   MESSAGE( "-- Using internal Elektra: ${ELEKTRA_VERSION}" )
-  INCLUDE_DIRECTORIES( ${ELEKTRA_VERSION}/src/include )
+  INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/${ELEKTRA_VERSION}/src/include
+       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/include )
   SET( ELEKTRA_LIBRARIES_STATIC
        ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-kdb.o
        ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-kdbhandle.o
