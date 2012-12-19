@@ -1,0 +1,3 @@
+usr/lib/lib*.so.*
+usr/lib/colour/modules/*
+usr/lib/oyranos/*
