@@ -47,6 +47,35 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
 
   s = oyProfile_FromFile_( name, 0, object );
 
+  if(!s)
+  {
+    /* try some aliases */
+    /* START Debian icc-profiles icc-profiles-icc */
+    if(strcmp("XYZ.icc",name))
+    {
+      s = oyProfile_FromFile_( "LCMSXYZI.ICM", 0, object );
+    }
+    else if(strcmp("Lab.icc",name) == 0)
+    {
+      s = oyProfile_FromFile_( "LCMSLABI.ICM", 0, object );
+    }
+    else if(strcmp("LStar-RGB.icc",name) == 0)
+    {
+      s = oyProfile_FromFile_( "eciRGB_v2.icc", 0, object );
+    }
+    else if(strcmp("sRGB.icc",name) == 0)
+    {
+      s = oyProfile_FromFile_( "sRGB.icm", 0, object );
+    }
+    else if(strcmp("ISOcoated_v2_bas.ICC",name))
+    {
+      s = oyProfile_FromFile_( "ISOcoated_v2_eci.icc", 0, object );
+      if(!s)
+        s = oyProfile_FromFile_( "Fogra27L.icm", 0, object );
+    }
+    /* END Debian icc-profiles icc-profiles-icc */
+  }
+
   if(s)
     s->use_default_ = type;
   else
