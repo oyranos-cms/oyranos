@@ -501,6 +501,31 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
   return error;
 }
 
+
+/** @func    oydiColourServerActive
+ *  @brief   wrap XcmColorServerCapabilities
+ *
+ *  @version Oyranos: 0.9.2
+ *  @since   2012/12/20 (Oyranos: 0.9.2)
+ *  @date    2012/12/20
+ */
+int      oydiColourServerActive( oyBlob_s * display_id )
+{
+  static int active = 0;
+#if defined(HAVE_X11)
+  static double z = 0;
+  Display * display = (Display *) oyBlob_GetPointer(display_id);
+  if(z + 1.0 < oySeconds())
+  {
+    active = XcmColorServerCapabilities( display );
+    z = oySeconds();
+    DBG_NUM2_S("colour server active: %d %g\n", active, z);
+  }
+#endif
+  return active;
+}
+
+
 /** @func    oydiFilterPlug_ImageDisplayRun
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
@@ -728,6 +753,15 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       {
         oyProfile_s * image_input_profile = oyImage_GetProfile( image_input );
         oyOptions_s * options = 0;
+        oyOptions_s * tags = oyImage_GetTags( image );
+        oyBlob_s * display_id = (oyBlob_s*) oyOptions_GetType( tags, -1, "display_id",
+                                          oyOBJECT_BLOB_S );
+        int active = oydiColourServerActive( display_id );
+        oyOptions_Release( &tags );
+        oyBlob_Release( &display_id );
+#if defined(HAVE_XCM)
+        if(active | XCM_COLOR_SERVER_REGIONS)
+#endif
         error = oyOptions_SetFromText( &options,
                                "//"OY_TYPE_STD"/config/x_color_region_target",
                                        "yes", OY_CREATE_NEW );
