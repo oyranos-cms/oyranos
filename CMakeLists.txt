@@ -139,7 +139,6 @@ ADD_CUSTOM_TARGET( rpm
 ADD_CUSTOM_TARGET( debsrc
 		COMMAND test -d ${PACKAGE_NAME}-${OYRANOS_VERSION}/ && rm -rf ${PACKAGE_NAME}-${OYRANOS_VERSION}/
 		COMMAND tar xjf ${PACKAGE_NAME}-${OYRANOS_VERSION}.tar.bz2
-                COMMAND mkdir -p rpmdir/BUILD rpmdir/SPECS rpmdir/SOURCES rpmdir/SRPMS rpmdir/RPMS/${RPMARCH}
                 COMMAND mv ${PACKAGE_NAME}-${OYRANOS_VERSION}.tar.bz2 ${PACKAGE_NAME}_${OYRANOS_VERSION}.orig.tar.bz2
                 COMMAND cp -R ${CMAKE_SOURCE_DIR}/extras/debian ${PACKAGE_NAME}-${OYRANOS_VERSION}/
                 COMMAND dpkg-source -b ${PACKAGE_NAME}-${OYRANOS_VERSION}/
