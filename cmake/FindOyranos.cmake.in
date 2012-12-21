@@ -1,14 +1,14 @@
-# - Find Elektra
-# Find the native Elektra headers and libraries.
+# - Find Oyranos
+# Find the native Oyranos headers and libraries.
 #
-#  OYRANOS_FOUND        - True if Elektra found.
+#  OYRANOS_FOUND        - True if Oyranos found.
 #  OYRANOS_INCLUDE_DIRS - where to find kdb.h, etc.
-#  OYRANOS_LIBRARIES    - List of libraries when using Elektra.
+#  OYRANOS_LIBRARIES    - List of libraries when using Oyranos.
 #
-#  OYRANOS_VERSION       - The version of elektra (x.y.z)
-#  OYRANOS_VERSION_MAJOR - The major version of elektra (x)
-#  OYRANOS_VERSION_MINOR - The minor version of elektra (y)
-#  OYRANOS_VERSION_MICRO - The patch version of elektra (z)
+#  OYRANOS_VERSION       - The version of oyranos (x.y.z)
+#  OYRANOS_VERSION_MAJOR - The major version of oyranos (x)
+#  OYRANOS_VERSION_MINOR - The minor version of oyranos (y)
+#  OYRANOS_VERSION_MICRO - The patch version of oyranos (z)
 #
 
 
@@ -33,7 +33,7 @@ MARK_AS_ADVANCED(OYRANOS_LIBRARY)
 # handle the QUIETLY and REQUIRED arguments and set OYRANOS_FOUND to TRUE if
 # all listed variables are TRUE
 INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Elektra DEFAULT_MSG OYRANOS_LIBRARY OYRANOS_INCLUDE_DIR)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Oyranos DEFAULT_MSG OYRANOS_LIBRARY OYRANOS_INCLUDE_DIR)
 
 if (OYRANOS_FOUND)
         SET( OYRANOS_VERSION_MAJOR @OYRANOS_VERSION_MAJOR@ )
