@@ -87,6 +87,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "  %s\n",               _("Dump Device Infos to OpenICC device JSON:"));
   fprintf( stderr, "      %s -o FILE_NAME\n",        argv[0]);
   fprintf( stderr, "      -c NAME       %s scanner, monitor, printer, camera ...\n",  _("use device class") );
+  fprintf( stderr, "      -f xml        %s\n",  _("use IccXML format") );
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Show Profile ID:"));
   fprintf( stderr, "      %s -m FILE_NAME\n",        argv[0]);
@@ -130,6 +131,7 @@ int main( int argc , char** argv )
              * tag_name = 0,
              * name_space = 0,
              * json_name = 0,
+             * format = "openicc",
              * profile_name = 0;
   const char * prefixes[24] = {0}; int pn = 0;
   const char * device_class = "unknown";
@@ -155,6 +157,7 @@ int main( int argc , char** argv )
             switch (argv[pos][i])
             {
               case 'c': OY_PARSE_STRING_ARG(device_class); break;
+              case 'f': OY_PARSE_STRING_ARG(format); break;
               case 'j': OY_PARSE_STRING_ARG(json_name); break;
               case 'l': list_tags = 1; break;
               case 'm': list_hash = 1; break;
@@ -362,6 +365,15 @@ int main( int argc , char** argv )
         int size = 0;
         int has_prefix = 0;
 
+        if(!(strcmp(format,"openicc") == 0 || 
+             strcmp(format,"xml") == 0))
+        {
+          fprintf( stderr, "%s %s\n%s\n",
+                   _("Allowed option values are -f openicc and -f xml. unknown format:"),
+                   format, _("Exit!") );
+          printfHelp(argc, argv);
+          exit(1);
+        }
         texts = oyProfileTag_GetText( tag, &texts_n, NULL, NULL,
                                       &tag_size, malloc );
 
@@ -397,10 +409,14 @@ int main( int argc , char** argv )
         }
 
         /* add device class */
-        fprintf( stdout, OPENICC_DEVICE_JSON_HEADER, device_class );
+        if(strcmp(format,"openicc") == 0)
+          fprintf( stdout, OPENICC_DEVICE_JSON_HEADER, device_class );
+        else
+          fprintf( stdout, "    <dictType>\n      <TagSignature>meta</TagSignature>\n" );
 
         /* add prefix key */
-        if(pn && !has_prefix)
+        if(pn && !has_prefix &&
+           strcmp(format,"openicc") == 0)
         {
           for(j = 0; j < pn; ++j)
           {
@@ -426,8 +442,14 @@ int main( int argc , char** argv )
           if(texts[j] && texts[j+1] && texts_n > j+1)
           {
             if(texts[j+1][0] == '<')
-              fprintf( stdout, "              \"%s\": \"%s\"",
-                     texts[j], texts[j+1] );
+            {
+              if(strcmp(format,"openicc") == 0)
+                fprintf( stdout, "              \"%s\": \"%s\"",
+                         texts[j], texts[j+1] );
+              else
+                fprintf( stdout, "       <DictEntry Name=\"%s\" Values\"%s\"/>",
+                         texts[j], texts[j+1] );
+            }
             else
             {
               /* split into a array with a useful delimiter */
@@ -449,17 +471,27 @@ int main( int argc , char** argv )
                 fprintf( stdout, "%s", val );
                 if(val) free( val );
               } else
-                fprintf( stdout, "              \"%s\": \"%s\"",
+                if(strcmp(format,"openicc") == 0)
+                  fprintf( stdout, "              \"%s\": \"%s\"",
+                     texts[j], texts[j+1] );
+                else
+                  fprintf( stdout, "       <DictEntry Name=\"%s\" Value=\"%s\"/>",
                      texts[j], texts[j+1] );
 
               oyStringListRelease_( &vals, vals_n, free );
             }
           }
           if(j < texts_n - 2)
-            fprintf( stdout, ",\n" );
+            if(strcmp(format,"openicc") == 0)
+              fprintf( stdout, ",\n" );
+            else
+              fprintf( stdout, "\n" );
         }
 
-        fprintf( stdout, "\n"OPENICC_DEVICE_JSON_FOOTER );
+        if(strcmp(format,"openicc") == 0)
+          fprintf( stdout, "\n"OPENICC_DEVICE_JSON_FOOTER );
+        else
+          fprintf( stdout, "\n    </dictType>\n" );
       }
     }
 
