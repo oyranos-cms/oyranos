@@ -42,13 +42,13 @@ SET (LIB_SUFFIX ""
     )
 #cmake settings for use by find_package
 CONFIGURE_FILE (
-		"${CMAKE_CURRENT_SOURCE_DIR}/FindOyranos.cmake.in"
-		"${CMAKE_CURRENT_BINARY_DIR}/FindOyranos.cmake"
+		"${CMAKE_CURRENT_SOURCE_DIR}/OyranosConfig.cmake.in"
+		"${CMAKE_CURRENT_BINARY_DIR}/OyranosConfig.cmake"
 		@ONLY
 	)
 
 INSTALL ( FILES
-		"${CMAKE_CURRENT_BINARY_DIR}/FindOyranos.cmake"
-		DESTINATION share/cmake/Modules COMPONENT dev
+		"${CMAKE_CURRENT_BINARY_DIR}/OyranosConfig.cmake"
+		DESTINATION lib${LIB_SUFFIX}/oyranos/cmake COMPONENT dev
 	)
 
