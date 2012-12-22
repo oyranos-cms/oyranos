@@ -1,3 +1,218 @@
+Version 0.9.2
+
+Adrian Page (1):
+	* [conf]: add FindLCMS.cmake
+
+Kai-Uwe Behrmann (208):
+	* [tools]: add oy-profile -f xml option
+	* [build]: add missed directory ownership
+	* [conf]: install OyConfig.cmake into lib path
+	* [build]: reduce linked libs per sub library
+	* [conf]: tell about all oyranos libs in FindOy.cmake
+	* [build]: omit creating unneeded directories
+	* [build]: package cmake file in debian
+	* [conf]: fix FindOyranos.cmake.in names
+	* [build]: require icc-profiles-free in debian
+	* [exmpl]: colour qcmevents icon when conversions occure
+	* [oydi]: fix conversion for region unaware colour server
+	* [sources]: add profile name aliases for Debian
+	* [oyX1]: remove XRRCrtcGamma check
+	* [build]: package translations files for debian
+	* [build]: add LibRaw + exiv2 dependenies to Fedora spec
+	* [build]: rename oy-dev to liboy-dev debian package
+	* [build]: disable oy-config-ltk on debian package
+	* [build]: skip non needed dependencies
+	* [build]: add liboyranos debian package
+	* [build]: add generated include path for internal elektra
+	* [build]: resort test target
+	* [conf]: add libraw -fPIC test
+	* [tools]: show profile ID with oy-profile -m option
+	* [build]: remove SO_VERSION and document
+	* [build]: let gcc use -fPIC
+	* [lraw]: fix includes
+	* [build]: tell in debian/rules to use cmake
+	* [conf]: use correct libraw include variable
+	* [docu]: add cmake to build dependencies in ubuntu
+	* [conf]: check for yajl_version.h
+	* [build]: rename elektra subpackage
+	* [build]: fixes for debian target
+	* [build]: fix small typo in rpm target
+	* [build]: use static paths in spec file
+	* [build]: add debian targets
+	* [oyX1]: support pur XRandR without Xinerama
+	* [conf]: use fltk-config --ldflags for FLTK deps
+	* [build]: adjuts cmake path in spec file
+	* [oyX1]: link to xxf86vm
+	* [build]: install cmake in proper place
+	* [core]: fix compiler warnings
+	* [conf]: add BuildRequires:  Mesa-libGLU-devel
+	* [conf]: skip env CFLAGS handling
+	* [build]: generate custom objects
+	* [build]: elektra allways
+	* [build]: add objects to library
+	* [build]: enable verbose RPM builds
+	* [build]: add libxml dependency to internal elektra
+	* [sources]: fix compiler warnings
+	* [core]: rename config.h to oy_config_internal.h
+	* [build]: add BuildRequires:  cmake
+	* [build]: internal elektra
+	* [oyX1]: use RR_Rotate_0 event
+	* [conf]: add versions to FindOyranos.cmake.in
+	* [exmpl]: use the installed icon in qcmsevents
+	* [oyX1]: remove oy-monitor-nvidia and XNVCtrl
+	* [build]: use old pixmap install path
+	* [conf]: add XDG_CONFIG_DIR cmake variable
+	* [build]: install oy-config-fltk
+	* [build]: fix xdg-autostart installation in spec file
+	* [build]: istall docu in proper place
+	* [build]: static libraries
+	* [build]: add so name versioning
+	* [build]: install oy-xforms-modules files
+	* [build]: install docu
+	* [build]: install docu
+	* [build]: install icons again
+	* [build]: adapt paths for extra install files
+	* [build]: avoid path overwriting
+	* [build]: remove parallel flags from spec file
+	* [conf]: allow insource builds
+	* [build]: reenable translations in image-display
+	* [build]: put oforms binaries near image-display
+	* [build]: simplified src/examples/oforms
+	* [build]: clean directory before building a tar ball
+	* [conf]: remove old build system files
+	* [build]: install two more man pages
+	* [conf]: write spec file
+	* [i18n]: simplify path names
+	* [build]: simplify gettext usage
+	* [conf]: use local executeable
+	* [conf]: fix gettext detection
+	* [i18n]: generate pot, translate po and install gmo files
+	* [conf]: add FindGetText.cmake for more verbosity
+	* [build]: install oy-icc
+	* [exmpl]: remove unused program
+	* [build]: install settings
+	* [conf]: remove unneeded cmake file
+	* [conf]: use system FindX11.cmake
+	* [build]: examples
+	* [build]: cmake formating
+	* [conf]: fix Yajl detection
+	* [core]: move WIN32 helper
+	* [build]: install hand written man pages
+	* [docu]: move man pages to doc/
+	* [docu]: fix typo
+	* [build]: readd docu from sources
+	* [build]: move doxygen files
+	* [build]: expose documentation sources
+	* [conf]: use FindLibXml2 non canonical include dir
+	* [conf]: use pkg-config in FindYajl.cmake
+	* [conf]: relax about version macro in lcms/2 cmake
+	* [build]: install oy-monitor-daemon
+	* [build]: remove unused cruft
+	* [build]: mv oy.pc.in to extras/
+	* [build]: install scripts
+	* [build]: install qcmsevents svg icon
+	* [build]: fix linking against OpenMP for lraw module
+	* [build]: qcmsevents
+	* [build]: oy-profile-graph
+	* [build]: simplify include_directories
+	* [build]: install some missing headers
+	* [build]: fix wrong installation variables
+	* [build] tools
+	* [conf]: require libXcm
+	* [conf]: minimalise configure script
+	* [test]: build test2 and add test-2 target
+	* [lraw]: fix linking
+	* [core]: add private oforms print helpers to liboy_modules
+	* [tools]: adapt to new config.h macros
+	* [test]: beautify test_oyranos output
+	* [build]: device modules
+	* [conf]: add FindCUPS.cmake
+	* [oyX1]: fix changed config macros
+	* [core]: readd OY_BINDIR macro
+	* [conf]: add FindExiv2.cmake and simplify
+	* [conf]: remove non supported macros from config.h
+	* [conf]: add X11, Xinerama, Xxf86vm and simplify
+	* [conf]: fix lcms version detection
+	* [build]: src/modules
+	* [build]: add RunTest.cmake wrapper for test_oyranos
+	* [conf]: move dependency checks up for config.h
+	* [conf]: massage config.h.in to match cmake macro names
+	* [conf]: add FindXfixes.cmake
+	* [conf]: add LCMS2.cmake and LibPNG.cmake
+	* [conf]: add PkgConfig section to FindLibRaw.cmake
+	* [conf]: isolate FindLibRaw.cmake II
+	* [conf]: isolate FindLibRaw.cmake
+	* [build]: remove double library detection
+	* [conf]: use cmake variables names in header
+	* [conf]: simplify platform detection code
+	* [build]: add test target
+	* [build]: move more code into src/liboy
+	* [build]: add platform test
+	* [test]: remove non available git variables
+	* [conf]: move devel date variables to top CMakeLists
+	* [build]: port liboy section to cmake
+	* [build]: remove wrong file listing
+	* [build]: fix dependency order
+	* [build]: port liboy_modules section to cmake
+	* [build]: add test-modules and test-config targets
+	* [build]: add liboy_config to cmake subdirectories
+	* [build]: move oyjl/ to src/
+	* [build]: move liboy_config files to src/
+	* [build]: post liboy_config section to cmake
+	* [build]: pass detected variables for xml2
+	* [conf]: add FindElektra.cmake
+	* [build]: mark install headers
+	* [build]: add test-object target
+	* [build]: check for libxml2
+	* [build]: add GENDIR variable
+	* [build]: port liboy_object section to cmake
+	* [build]: add PACKAGE_NAME PACKAGE_DESCRIPTION to cmake
+	* [build]: fix cmake for moved generated file path
+	* [docu]: correct include path
+	* [build]: mv remaining generated files to src/
+	* [build]: mv most generated files to src/
+	* [build]: move generated sources to common location
+	* [build]: switch to Debug target for oyAPIGenerator
+	* [build]: download and build grantlee in build path
+	* [generator]: debug template list
+	* [build]: add generate target
+	* [generator]: fix grantlee plugin lookup paths
+	* [build]: remove unneeded cmake parts
+	* [core]: add public lib capabilities header template
+	* [build]: add liboy_core cmake file
+	* [build]: add cmake macros and templates
+	* [build]: set test-core dependency
+	* [core]: move generator directory
+	* [sources]: merge directories
+	* [build]: add test-core target
+	* [conf]: add basic checks
+	* [build]: overhaul dist target
+	* [conf]: add local include paths
+	* [conf]: adapt config.h to cmake
+	* [conf]: add first version of configuration logging
+	* [build]: move test_core.c
+	* [core]: omit informations from git
+	* [build]: move files for liboy_core
+	* [build]: move sources and templates
+	* [build]: adapt debian control to ubuntu 12.04
+	* [generator]: support multiple output paths
+	* [conf]: fix lcms detection issue on debian
+	* [conf]: relax about lcms2 requirement
+	* [build]: add debsrc target
+	* [build]: add debian make target
+	* [build]: simplify fl_i18n clean
+	* [lcm2]: use per transform adaption state
+	* [exmpl]: install qcmsevents desktop file
+	* [build]: compile internal elektra before oy_elektra.o
+	* [docu]: update ubuntu build section
+	* [oyIM]: fix pseq crash
+	* [build]: adjust make distclean
+	* [build]: map test to check make target
+	* [build]: sync spec file with obs
+	* [conf]: bump version
+	* [docu]: show profile assignment after download from Taxi
+	* [sources]: add profile filename after installation
+
 Version 0.9.1
 
 Kai-Uwe Behrmann (26):
