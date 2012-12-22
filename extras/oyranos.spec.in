@@ -445,6 +445,7 @@ cp -av %{name}-profile-install.desktop %{buildroot}/etc/xdg/autostart/%{name}-mo
 %{_includedir}/%{name}/icc34.h
 %{_includedir}/%{name}/oy*.h
 %{_libdir}/pkgconfig/*
+%dir %{_libdir}/oyranos/cmake
 %{_libdir}/oyranos/cmake/*.cmake
 %{_libdir}/lib%{name}_core-static.a
 %{_libdir}/lib%{name}_object-static.a
