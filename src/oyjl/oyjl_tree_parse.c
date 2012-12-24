@@ -718,7 +718,7 @@ yajl_status  oyjl_tree_from_json     ( const char        * text,
   {
     *value = context->stack[0];
     (*value)->priv_ = yhandle;
-  } else
+  } else if(yhandle)
     yajl_free( yhandle );
   oyjl_tree_parse_context_free( &context );
 
