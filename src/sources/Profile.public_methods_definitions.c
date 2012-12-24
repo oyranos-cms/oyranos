@@ -51,7 +51,7 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
   {
     /* try some aliases */
     /* START Debian icc-profiles icc-profiles-icc */
-    if(strcmp("XYZ.icc",name))
+    if(strcmp("XYZ.icc",name) == 0)
     {
       s = oyProfile_FromFile_( "LCMSXYZI.ICM", 0, object );
     }

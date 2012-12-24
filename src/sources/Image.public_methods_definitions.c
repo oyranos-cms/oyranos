@@ -338,7 +338,7 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
                                        int                 display_height,
                                        oyObject_s          object)
 {
-  oyProfile_s * p = oyProfile_FromFile ("XYZ.icc",0,0);
+  oyProfile_s * p = oyProfile_FromStd (oyEDITING_XYZ,0);
   oyImage_s_ * s = (oyImage_s_*)oyImage_Create( width, height,
                                   channels, pixel_layout,
                                   p, object );
