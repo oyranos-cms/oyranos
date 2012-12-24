@@ -1225,12 +1225,12 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
              OY_DBG_FORMAT_" missed input image %d", OY_DBG_ARGS_,
              image_input->type_ );
   }
-  if(image_output->type_ != oyOBJECT_IMAGE_S)
+  if(!image_output || image_output->type_ != oyOBJECT_IMAGE_S)
   {
     oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
     lcms_msg( oyMSG_WARN, (oyStruct_s*)node,
               OY_DBG_FORMAT_" missed output image %d", OY_DBG_ARGS_,
-              image_input->type_ );
+              image_output?image_output->type_:0 );
   }
 
   data_type = oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) );
