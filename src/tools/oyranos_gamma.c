@@ -67,7 +67,7 @@ int   compareRanks                   ( const void       * rank1,
 
 int main( int argc , char** argv )
 {
-  char *display_name = strdup(getenv("DISPLAY"));
+  char *display_name = 0;
   char *monitor_profile = 0;
   int error = 0;
 
@@ -122,6 +122,8 @@ int main( int argc , char** argv )
 
   STRING_ADD( device_class, "monitor" );
 
+  if(getenv("DISPLAY"))
+    display_name = strdup(getenv("DISPLAY"));
 
   if(argc != 1)
   {
