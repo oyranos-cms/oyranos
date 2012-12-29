@@ -1,10 +1,12 @@
-.TH oyranos-profile 1 "July 13, 2011" "User Commands"
+.TH oyranos-profile 1 "December 29, 2012" "User Commands"
 .SH NAME
 oyranos-profile \- Oyranos CMS ICC profiles tool
 .SH SYNOPSIS
 \fBoyranos-profile\fR -l \fIPROFILENAME\fR
 .fi
 \fBoyranos-profile\fR -m [-w \fIFILENAME\fR] \fIPROFILENAME\fR
+.fi
+\fBoyranos-profile\fR --ppmcie \fIPROFILENAME\fR
 .fi
 \fBoyranos-profile\fR -o \fIFILENAME\fR
 .fi
@@ -30,6 +32,10 @@ show internal hash value.
 .br
 \fB-w\fR \fIFILENAME\fR
 write profile with correct hash
+.sp
+.TP
+.B \--ppmcie
+show CIE*xy chromaticities for use with ppmcie.
 .sp
 .TP
 \fB\-o\fR \fIFILENAME\fR
@@ -70,17 +76,20 @@ Show first tags content of profile:
 Show the profile hash sum:
 .B oyranos-profile -m sRGB.icc
 .TP
+Show the RGB primaries of a matrix profile inside a CIE*xy diagram:
+.B ppmcie `oyranos-profile --ppmcie sRGB.icc` > sRGB_cie-xy.ppm
+.TP
 Add calibration data to meta tag of a device profile:
 .B oyranos-profile -w my_profile -j my_device.json my_profile.icc
 .PP
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH COPYRIGHT
-(c) 2011, Kai-Uwe Behrmann and others
+(c) 2011-2012, Kai-Uwe Behrmann and others
 .fi
 License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
 .SH "SEE ALSO"
-oyranos-config-fltk(1) oyranos-config(1) oyranos(3) oyranos-profiles(1)
+oyranos-config-fltk(1) oyranos-config(1) oyranos(3) oyranos-profiles(1) ppmcie(1)
 .fi
 http://www.oyranos.org
 .SH "BUGS"

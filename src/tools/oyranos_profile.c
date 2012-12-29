@@ -19,6 +19,7 @@
 #include "oyProfile_s.h"
 #include "oyProfile_s_.h"           /* oyProfile_ToFile_() */
 #include "oyProfileTag_s.h"
+#include "oyStructList_s.h"
 
 #include "oyranos.h"
 #include "oyranos_debug.h"
@@ -93,6 +94,9 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      %s -m FILE_NAME\n",        argv[0]);
   fprintf( stderr, "      -w FILE_NAME  %s\n",  _("write profile with correct ID"));
   fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",               _("Show CIE*xy chromaticities:"));
+  fprintf( stderr, "      %s --ppmcie FILE_NAME\n",        argv[0]);
+  fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Write to ICC profile:"));
   fprintf( stderr, "      %s -w NAME [-j FILE_NAME] FILE_NAME\n",        argv[0]);
   fprintf( stderr, "      -w NAME       %s\n",  _("use new name"));
@@ -109,6 +113,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      oyranos-profile -lv -p=1 sRGB.icc\n");
   fprintf( stderr, "      oyranos-profile -w test -j test.json sRGB.icc\n");
   fprintf( stderr, "      oyranos-profile -mv sRGB.icc");
+  fprintf( stderr, "      ppmcie `oyranos-profile --ppmcie sRGB.icc` > sRGB-cie-xy.ppm");
   fprintf( stderr, "\n");
   fprintf( stderr, "\n");
 
@@ -126,6 +131,7 @@ int main( int argc , char** argv )
       list_hash = 0,
       tag_pos = -1,
       dump_openicc_json = 0,
+      dump_chromaticities = 0,
       verbose = 0;
   const char * file_name = 0,
              * tag_name = 0,
@@ -178,6 +184,12 @@ int main( int argc , char** argv )
               case 'v': if(!verbose) verbose = 1; else oy_debug += 1; break;
               case 'w': OY_PARSE_STRING_ARG(profile_name); break;
               case 'h':
+              case '-':
+                        if(i == 1)
+                        {
+                             if(OY_IS_ARG("ppmcie"))
+                        { dump_chromaticities = 1; i=100; break; }
+                        }
               default:
                         printfHelp(argc, argv);
                         exit (0);
@@ -493,6 +505,55 @@ int main( int argc , char** argv )
         else
           fprintf( stdout, "\n    </dictType>\n" );
       }
+    } else
+    if( error <= 0 && dump_chromaticities )
+    {
+      oyProfileTag_s * tags[4] = {0,0,0,0};
+      oyOptions_s * opts[4] = {0,0,0,0};
+      tags[0] = oyProfile_GetTagById( p, icSigRedColorantTag );
+      tags[1] = oyProfile_GetTagById( p, icSigGreenColorantTag );
+      tags[2] = oyProfile_GetTagById( p, icSigBlueColorantTag );
+      tags[3] = oyProfile_GetTagById( p, icSigMediaWhitePointTag );
+      if(!tags[0] || !tags[1] || !tags[2] || !tags[3])
+      {
+        fprintf(stderr, "%s: \"%s\" - %s\n", _("RGB primaries missed"), file_name, _("Exit!"));
+        printfHelp(argc, argv);
+        exit(1);
+      }
+
+#ifdef USE_GETTEXT
+      setlocale(LC_NUMERIC,"C");
+#endif
+
+      for(i = 0; i < 4; ++i)
+      {
+        oyStructList_s * s = oyProfileTag_Get( tags[i] );
+        count = oyStructList_Count( s );
+        for(j = 0; j < count; ++j)
+        {
+          oyOption_s * opt = (oyOption_s*) oyStructList_GetType( s, j,
+                                                    oyOBJECT_OPTION_S );
+          if(opt && strstr( oyOption_GetRegistration( opt ), "icSigXYZType" ) != NULL)
+          {
+            if(i == 0)
+              fprintf( stdout, "-red " );
+            if(i == 1)
+              fprintf( stdout, "-green " );
+            if(i == 2)
+              fprintf( stdout, "-blue " );
+            if(i == 3)
+              fprintf( stdout, "-white " );
+            fprintf( stdout, "%g %g ",
+              oyOption_GetValueDouble( opt, 0 ) /
+                  (oyOption_GetValueDouble( opt, 0 )+oyOption_GetValueDouble( opt, 1 )+oyOption_GetValueDouble( opt, 2 )),
+              oyOption_GetValueDouble( opt, 1 ) /
+                  (oyOption_GetValueDouble( opt, 0 )+oyOption_GetValueDouble( opt, 1 )+oyOption_GetValueDouble( opt, 2 ))
+                   );
+          }
+        }
+        oyProfileTag_Release( &tags[i] );
+      }
+      fprintf( stdout, "\n" );
     }
 
     if(error <= 0 && list_hash)
