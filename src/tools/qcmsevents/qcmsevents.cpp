@@ -236,7 +236,7 @@ char * getName                       ( const void        * data,
 
 int main(int argc, char *argv[])
 {
-  //Q_INIT_RESOURCE(systray);
+  Q_INIT_RESOURCE(qcmsevents);
 
   Qcmse app(argc,argv);
 
