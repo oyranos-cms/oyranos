@@ -59,7 +59,7 @@ class Qcmse : public QApplication
 {
   XcmeContext_s * c;
   public:
-    Qcmse(int argc, char ** argv) : QApplication(argc,argv)
+    Qcmse(int & argc, char ** argv) : QApplication(argc,argv)
     {
       c = XcmeContext_New( );
     };
