@@ -1278,9 +1278,7 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
       */
     }
 
-    expensive = 1;
-
-    if((major_versionp*100 + minor_versionp) >= 102 && expensive)
+    if((major_versionp*100 + minor_versionp) >= 102)
     {
       Window w = RootWindow(display, oyX1Monitor_screen_(disp));
       XRRScreenResources * res = 0;
@@ -1304,16 +1302,24 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
 
         XFree( scr_info );
 
+        if(n_scr_info > 0)
+          disp->info_source = oyX11INFO_SOURCE_XINERAMA;
       }
 # endif /* HAVE_XINERAMA */
 
+      if(disp->info_source != oyX11INFO_SOURCE_XINERAMA)
+        expensive = 1;
 
-      /* a havily expensive call */
-      DBG_NUM_S("going to call XRRGetScreenResources()");
-      res = XRRGetScreenResources(display, w);
-      DBG_NUM_S("end of call XRRGetScreenResources()");
-      if(res)
-        n = res->noutput;
+
+      if(expensive)
+      {
+        /* a havily expensive call */
+        DBG_NUM_S("going to call XRRGetScreenResources()");
+        res = XRRGetScreenResources(display, w);
+        DBG_NUM_S("end of call XRRGetScreenResources()");
+        if(res)
+          n = res->noutput;
+      }
       for(i = 0; i < n; ++i)
       {
         XRRScreenResources * res_temp = res ? res : disp->res;
