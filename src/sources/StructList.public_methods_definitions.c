@@ -639,7 +639,7 @@ int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
  *  @memberof oyStructList_s
  *  @brief    Add a name to a list
  *
- *  The text is added a a oyName_s::name member variable.
+ *  The text is added to a oyName_s::name member variable.
  *
  *  @version Oyranos: 0.1.13
  *  @date    2008/10/07
