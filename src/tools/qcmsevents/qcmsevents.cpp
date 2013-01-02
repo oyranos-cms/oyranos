@@ -89,7 +89,7 @@ void QcmseDialog::log( const char * text, int code )
       colour.setHsvF( 0.6, 0.4, 0.9 );
       icon->setIcon( icons->itemIcon(0) );
     } else
-    /*  base colour server should support opt-out 
+    /*  base colour server should support opt-out (ICR)
      *  through _ICC_COLOR_MANAGEMENT - ICM in _ICC_COLOR_DESKTOP
      */
     if(pid > 0 && strstr(text, "|ICM|") != 0)
@@ -127,10 +127,10 @@ void QcmseDialog::log( const char * text, int code )
       colour.setHsvF( 0.6, 0.4, 0.9 );
       icon->setIcon( icons->itemIcon(0) );
     } else
-    /*  base colour server should support opt-out 
-     *  through _ICC_COLOR_REGIONS - ICR
+    /*  base colour server should support opt-out (ICR)
+     *  through _ICC_COLOR_MANAGEMENT - ICM in _ICC_COLOR_DESKTOP
      */
-    if(pid > 0 && strstr(text, "|ICR|") != 0)
+    if(pid > 0 && strstr(text, "|ICM|") != 0)
     {
       colour.setHsvF( 0.41, 0.5, 0.9 );
       icon->setIcon( icons->itemIcon(1) );
