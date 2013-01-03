@@ -68,15 +68,17 @@ int          oyStringToDouble        ( const char        * text,
   setlocale(LC_NUMERIC, "C");
   /* avoid irritating valgrind output of "Invalid read of size 8"
    * might be a glibc error or a false positive in valgrind */
-  t = oyAllocateFunc_( len + 2*sizeof(long) + 1 );
+  t = oyAllocateFunc_( len + 2*sizeof(double) + 1 );
+  memset( t, 0, len + 2*sizeof(double) + 1 );
+
   memcpy( t, text, len );
-  t[len] = 0;
+
   if(0 && oy_debug_memory)
   {
-    printf( OY_DBG_FORMAT_""OY_PRINT_POINTER" \"%s\" %d "OY_PRINT_POINTER" \"%s\"\n",
+    fprintf( stderr, OY_DBG_FORMAT_""OY_PRINT_POINTER" \"%s\" %d "OY_PRINT_POINTER" \"%s\"\n",
             OY_DBG_ARGS_,(intptr_t)text, text, len,
             t, t  );
-    fflush( stdout );
+    fflush( stderr );
   }
 
   *value = strtod( t, &p );

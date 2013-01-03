@@ -768,10 +768,10 @@ int    oyTextIccDictMatch            ( const char        * text,
   int n = 0, p_n = 0, i, j;
   char ** texts = 0, * t;
   char ** patterns = 0, * p;
-  long num[2];
-  int num_valid[2];
-  double dbl[2];
-  int dbl_valid[2]; 
+  long num[2] = {0,0};
+  int num_valid[2] = {0,0};
+  double dbl[2] = {0,0};
+  int dbl_valid[2] = {0,0}; 
 
   DBG_MEM_START
 
