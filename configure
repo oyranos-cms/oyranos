@@ -24,6 +24,7 @@ INFOECHO="echo"
 CONF_LOG=config.log
 
 X11=0
+debug="0"
 
 if [ $# -gt 0 ]; then
   prefix=""
@@ -127,9 +128,9 @@ if [ $# -gt 0 ]; then
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
       quick="1"
     fi
-    switch=disable-debug
+    switch=enable-debug
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
-      debug="0"
+      debug="1"
     fi
     switch=enable-devel
     if [ "`echo \"$1\" | sed s/\"--$switch\"//`" != "$1" ]; then
@@ -515,7 +516,12 @@ if [ -n "$ECHO" ]; then
   test -n "$INFOECHO" && $INFOECHO "$echo_"
 fi
 
-echo "cmake -DCMAKE_INSTALL_PREFIX=$prefix -DXDG_CONFIG_DIR=$xdgsysdir -DLIB_SUFFIX=$BARCH $ROOT_DIR"
+if [ "$debug" = "1" ]; then
+  export CFLAGS="-Wall -g -DDEBUG=1"
+  debug_flags=CFLAGS="\"-Wall -g -DDEBUG=1\""
+fi
+
+echo "$debug_flags cmake -DCMAKE_INSTALL_PREFIX=$prefix -DXDG_CONFIG_DIR=$xdgsysdir -DLIB_SUFFIX=$BARCH $ROOT_DIR"
 cmake -DCMAKE_INSTALL_PREFIX=$prefix -DXDG_CONFIG_DIR=$xdgsysdir -DLIB_SUFFIX=$BARCH $ROOT_DIR
 
 exit 0
