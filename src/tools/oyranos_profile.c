@@ -493,11 +493,13 @@ int main( int argc , char** argv )
               oyStringListRelease_( &vals, vals_n, free );
             }
           }
-          if(j < texts_n - 2)
+          if(j < (texts_n - 2))
+          {
             if(strcmp(format,"openicc") == 0)
               fprintf( stdout, ",\n" );
             else
               fprintf( stdout, "\n" );
+          }
         }
 
         if(strcmp(format,"openicc") == 0)
@@ -509,7 +511,6 @@ int main( int argc , char** argv )
     if( error <= 0 && dump_chromaticities )
     {
       oyProfileTag_s * tags[4] = {0,0,0,0};
-      oyOptions_s * opts[4] = {0,0,0,0};
       tags[0] = oyProfile_GetTagById( p, icSigRedColorantTag );
       tags[1] = oyProfile_GetTagById( p, icSigGreenColorantTag );
       tags[2] = oyProfile_GetTagById( p, icSigBlueColorantTag );
