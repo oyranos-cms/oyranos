@@ -1,3 +1,21 @@
+Version 0.9.3
+
+Kai-Uwe Behrmann (14):
+	* [tools]: fix compile warning
+	* [conf]: support configure --enable-debug option
+	* [sources]: initialise memory for strtod
+	* [tools]: show initial XCM status in qcmsevents
+	* [tools]: fix derived QtApplication class constructor
+	* [tools]: set Qt app resources initialisation
+	* [oyX1]: avoid XRandR expensive call again
+	* [tools]: support download of ICC profiles in oy-profiles
+	* [tools]: add oy-profile --ppmcie options
+	* [tools]: fix oy-monitor running without DISPLAY
+	* [oyjl]: carefully release yhandle
+	* [souces]: use oyEDITING_XYZ instead of "XYZ.icc"
+	* [lcms]: fix crash over missed output image
+	* [build]: gracefully fail on docu installation
+
 Version 0.9.2
 
 Adrian Page (1):
