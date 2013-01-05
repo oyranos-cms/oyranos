@@ -18,7 +18,7 @@
 
   <!-- Editing XYZ
        Prefered XYZ Editing Colour Space -->
-  <oyEDITING_XYZ>XYZ.icc</oyEDITING_XYZ>
+  <oyEDITING_XYZ>LCMSXYZI.ICM</oyEDITING_XYZ>
 
   <!-- Editing Lab
        Prefered CIE*Lab Editing Colour Space -->
@@ -26,7 +26,7 @@
 
   <!-- Assumed XYZ source
        Assigning an untagged XYZ Image an colour space -->
-  <oyASSUMED_XYZ>XYZ.icc</oyASSUMED_XYZ>
+  <oyASSUMED_XYZ>LCMSXYZI.ICM</oyASSUMED_XYZ>
 
   <!-- Assumed Lab source
        Assigning an untagged CIE*Lab Image an colour space -->
