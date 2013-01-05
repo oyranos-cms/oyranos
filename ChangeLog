@@ -1,6 +1,11 @@
 Version 0.9.3
 
-Kai-Uwe Behrmann (14):
+Kai-Uwe Behrmann (19):
+	* [docu]: update ChangeLog
+	* [core]: use available XYZ/Lab from debian's icc-profiles
+	* [build]: fix html installation
+	* [conf]: bump version
+	* [docu]: update ChangeLog
 	* [tools]: fix compile warning
 	* [conf]: support configure --enable-debug option
 	* [sources]: initialise memory for strtod
