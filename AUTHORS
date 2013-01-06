@@ -8,14 +8,12 @@ Oyranos comes with following additional sources:
 
 md5:           L. Peter Deutsch   http://sourceforge.net/projects/libmd5-rfc/
 
-libXNVCtrl:    Nvidia
-
 FLMM:          Matthias Melcher   http://fltk.matthiasm.com/
 
 lookup3:       Bob Jenkins        http://burtleburtle.net/bob/c/lookup3.c
 
 Translators:
-cs:            Milan Knizek <knizek@volny.cz> 2008
+cs:            Milan Knizek <knizek@volny.cz> 2008-2012
 de:            Kai-Uwe Behrmann <www.behrmann.name>
 eu:            Iñaki Larrañaga Murgoitio <dooteo@euskalgnu.org>, 2007
 fr:            Pascal LACROIX <lacroixpascal at vfemail.net>, 2006
