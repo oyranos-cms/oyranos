@@ -842,7 +842,8 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       float flt;
 
             fputc( 'P', fp );
-      if(alpha) 
+      if(alpha ||
+         cchan_n > 3) 
             fputc( '7', fp );
       else
       {
@@ -917,7 +918,8 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
              OY_DBG_ARGS_, byteps );
 
 
-      if(alpha)
+      if(alpha ||
+         cchan_n > 3)
       {
         const char *tupl = "RGB_ALPHA";
 

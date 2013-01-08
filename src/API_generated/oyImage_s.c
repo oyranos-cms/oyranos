@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/12/13
+ *  @date     2013/01/08
  */
 
 
@@ -939,8 +939,10 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       double * dbls;
       float flt;
 
+
             fputc( 'P', fp );
-      if(alpha) 
+      if(alpha ||
+         cchan_n > 3)
             fputc( '7', fp );
       else
       {
@@ -1015,7 +1017,8 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
              OY_DBG_ARGS_, byteps );
 
 
-      if(alpha)
+      if(alpha ||
+         cchan_n > 3)
       {
         const char *tupl = "RGB_ALPHA";
 
