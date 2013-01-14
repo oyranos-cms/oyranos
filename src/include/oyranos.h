@@ -194,6 +194,8 @@ typedef enum  {
   oyWIDGET_GROUP_BEHAVIOUR_MISSMATCH,     /**< Profile Missmatch Behaviour */
   oyWIDGET_GROUP_BEHAVIOUR_PROOF,         /**< Profile Missmatch Behaviour */
   oyWIDGET_GROUP_ALL,                     /**< just for easen Gui design */
+  oyWIDGET_GROUP_DEVICES,                 /**< just for easen Gui design */
+  oyWIDGET_GROUP_INFORMATION,             /**< just for easen Gui design */
   oyWIDGET_GROUP_EXTERN = 200,      /**< start of groups in a extern module */
 
   oyWIDGET_POLICY = 20,                   /**< policy selection */

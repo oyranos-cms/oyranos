@@ -250,9 +250,27 @@ oyOptionStringsTranslate_ ()
       "oyGROUP_BEHAVIOUR_PROOF", 0,0)
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_ALL, 0,
       0, 0, 0,
-      _("All"),
+      _("Settings"),
       _("Oyranos Settings"),
-      _("Oyranos Settings allow to fine tune handling of color management."),
+      _("Oyranos allows to fine tune handling of ICC color management."),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      NULL,
+      "oyGROUP_ALL", 0,0)
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEVICES, 0,
+      0, 0, 0,
+      _("Devices"),
+      _("Color Managed Devices"),
+      _("Set ICC profiles in Oyranos for device Color Management."),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      NULL,
+      "oyGROUP_ALL", 0,0)
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_INFORMATION, 0,
+      0, 0, 0,
+      _("Information"),
+      _("Profile Information"),
+      _("Anylyze ICC profile information on your system."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
