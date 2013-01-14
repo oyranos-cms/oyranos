@@ -6,12 +6,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/11/02
+ *  @date     2013/01/14
  */
 
 
@@ -81,8 +81,13 @@ typedef enum {
   oySIGNATURE_DATETIME_HOURS,          /**< creation time in UTC */
   oySIGNATURE_DATETIME_MINUTES,        /**< creation time in UTC */
   oySIGNATURE_DATETIME_SECONDS,        /**< creation time in UTC */
+  oySIGNATURE_ILLUMINANT,              /**< profile illuminant */
   oySIGNATURE_MAX
 } oySIGNATURE_TYPE_e;
+
+const char   * oyProfileSignatureName( oySIGNATURE_TYPE_e  type );
+const char   * oyProfileSignatureDescription (
+                                       oySIGNATURE_TYPE_e  type );
 
 /** @} *//* objects_profile */
 
