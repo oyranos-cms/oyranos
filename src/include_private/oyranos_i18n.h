@@ -21,6 +21,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#include "oyranos_config_internal.h"
+
 #ifdef USE_GETTEXT
 # include <libintl.h>
 # include <locale.h>
