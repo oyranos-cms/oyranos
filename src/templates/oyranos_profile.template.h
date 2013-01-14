@@ -62,8 +62,13 @@ typedef enum {
   oySIGNATURE_DATETIME_HOURS,          /**< creation time in UTC */
   oySIGNATURE_DATETIME_MINUTES,        /**< creation time in UTC */
   oySIGNATURE_DATETIME_SECONDS,        /**< creation time in UTC */
+  oySIGNATURE_ILLUMINANT,              /**< profile illuminant */
   oySIGNATURE_MAX
 } oySIGNATURE_TYPE_e;
+
+const char   * oyProfileSignatureName( oySIGNATURE_TYPE_e  type );
+const char   * oyProfileSignatureDescription (
+                                       oySIGNATURE_TYPE_e  type );
 
 /** @} *//* objects_profile */
 
