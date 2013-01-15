@@ -285,7 +285,7 @@ msgstr "Bereits eingeschalten"
 
 #: liboyranos_config/oyranos_texts.c:273
 msgid "Anylyze ICC profile information on your system."
-msgstr "Dateils zu ICC Profilen in Ihrem System"
+msgstr "Details zu ICC Profilen in Ihrem System"
 
 #: modules/oyranos_cmm_oyra_image.c:1061
 msgid "Apply regions of interesst in form of simple rectangles."
