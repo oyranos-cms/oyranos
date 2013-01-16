@@ -18,11 +18,9 @@
 # use pkg-config to get the directories and then use these values
 # in the FIND_PATH() and FIND_LIBRARY() calls
 
-IF(NOT WIN32)
-   FIND_PACKAGE(PkgConfig)
-   pkg_check_modules(YAJL yajl)
-   SET(YAJL_DEFINITIONS ${YAJL_CFLAGS_OTHER})
-ENDIF(NOT WIN32)
+FIND_PACKAGE(PkgConfig)
+pkg_check_modules(YAJL yajl)
+SET(YAJL_DEFINITIONS ${YAJL_CFLAGS_OTHER})
 
 IF( YAJL_INCLUDE_DIR AND YAJL_LIBRARIES )
     SET(YAJL_FIND_QUIETLY TRUE)

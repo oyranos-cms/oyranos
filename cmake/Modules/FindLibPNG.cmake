@@ -17,11 +17,9 @@
 
 # use pkg-config to get the directories and then use these values
 # in the FIND_PATH() and FIND_LIBRARY() calls
-if(NOT WIN32)
-   find_package(PkgConfig)
-   pkg_check_modules(LIBPNG libpng)
-   set(LIBPNG_DEFINITIONS ${LIBPNG_CFLAGS_OTHER})
-endif(NOT WIN32)
+find_package(PkgConfig)
+pkg_check_modules(LIBPNG libpng)
+set(LIBPNG_DEFINITIONS ${LIBPNG_CFLAGS_OTHER})
 
 IF (LIBPNG_INCLUDE_DIR AND LIBPNG_LIBRARIES)
     SET(LibPNG_FIND_QUIETLY TRUE)
