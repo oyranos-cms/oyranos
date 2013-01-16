@@ -6,7 +6,7 @@
 #cmakedefine UNIX 
 #cmakedefine APPLE
 #cmakedefine BSD 
-#cmakedefine WIN32 
+/* #cmakedefine WIN32 */ /* already defined by the system */
 #cmakedefine HAVE_OPENMP
 #cmakedefine HAVE_C
 #cmakedefine HAVE_LTDL
