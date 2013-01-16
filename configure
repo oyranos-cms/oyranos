@@ -278,29 +278,19 @@ else
     OSUNAME=Linux
   else
     if [ $UNAME_ = "SunOS" ]; then
-      test -n "$ECHO" && $ECHO "SOLARIS = 1" >> $CONF
-      test -n "$ECHO" && $ECHO "SOLARIS = 1" >> $CONF_I18N
-      test -n "$ECHO" && $ECHO "#define SOLARIS 1" >> $CONF_H
       echo_="SunOS                   detected"
       test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
       OSUNAME=SunOS
     else
       if [ $UNAME_ = "OpenBSD" ] || [ $UNAME_ = "NetBSD" ] || [ $UNAME_ = "FreeBSD" ]; then
-        test -n "$ECHO" && $ECHO "BSD = 1" >> $CONF
-        test -n "$ECHO" && $ECHO "BSD = 1" >> $CONF_I18N
         if [ "$MAKE" = 'make' ]; then
           OS_EXT=.bsd
         fi
-        test -n "$ECHO" && $ECHO "#define BSD 1" >> $CONF_H
         echo_="BSD $UNAME_             detected"
         test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
         OSUNAME=BSD
       else
         if [ `uname -a | grep W32 | wc -l` -gt 0 ]; then
-          test -n "$ECHO" && $ECHO "WIN32 = 1" >> $CONF
-          EXEC_END=.exe
-          export EXEC_END
-          test -n "$ECHO" && $ECHO "#define WIN32 1" >> $CONF_H
           echo_="Windows $UNAME_             detected"
           test -n "$ECHO" && $ECHO $e "$echo_" >> $CONF_LOG; test -n "$INFOECHO" && $INFOECHO "$echo_"
           OSUNAME=WIN32
