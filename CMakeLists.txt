@@ -41,6 +41,33 @@ MESSAGE( "-- Found PLATFORM: ${PLATFORM}" )
 
 
 # detect top level projects
+FIND_PACKAGE( Yajl )
+IF( HAVE_YAJL )
+  INCLUDE_DIRECTORIES( ${YAJL_INCLUDE_DIRS} )
+  LINK_DIRECTORIES( ${YAJL_LIBRARY_DIRS} )
+  INCLUDE( CheckIncludeFiles )
+  CHECK_INCLUDE_FILES( yajl/yajl_version.h HAVE_YAJL_VERSION_H )
+  # yajl2 should come with yajl_version.h, the included yajl is version 1.0.x
+  IF( NOT HAVE_YAJL_VERSION_H )
+    INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/yajl/ )
+  ENDIF( NOT HAVE_YAJL_VERSION_H )
+ELSE( HAVE_YAJL )
+  IF(CMAKE_VERSION VERSION_GREATER 2.8.0)
+    include(ExternalProject)
+    ExternalProject_Add( yajl
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/yajl
+    CONFIGURE_COMMAND cmake ${CMAKE_CURRENT_SOURCE_DIR}/yajl
+    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/yajl
+    BUILD_COMMAND ${MAKE}
+    # skip installation
+    INSTALL_COMMAND echo )
+    INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/yajl )
+    LINK_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR}/yajl )
+    SET( YAJL_LIBRARIES yajl-static )
+  ENDIF()
+  
+ENDIF( HAVE_YAJL )
+
 FIND_PACKAGE( Elektra )
 IF(HAVE_ELEKTRA)
   SET( ELEKTRA_SPEC "Requires: elektra 0.7
