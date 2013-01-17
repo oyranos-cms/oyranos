@@ -17,6 +17,10 @@
 
 #include <oyConversion_s.h>
 #include <oyranos_image.h>
+#include "oyranos_config_internal.h" /* I18N */
+#if defined(HAVE_XCM)
+#include <X11/Xcm/Xcm.h>             /* check for proper X11/XCM support */
+#endif
 
 extern int oy_display_verbose;
 

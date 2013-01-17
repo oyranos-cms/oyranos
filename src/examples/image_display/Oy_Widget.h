@@ -20,6 +20,9 @@
 
 #include "oyranos_config_internal.h" /* I18N */
 #include "oyranos_i18n.h"
+#if defined(HAVE_XCM)
+#include <X11/Xcm/Xcm.h>             /* check for proper X11/XCM support */
+#endif
 
 class Oy_Widget
 {

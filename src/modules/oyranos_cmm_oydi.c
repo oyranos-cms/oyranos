@@ -21,6 +21,7 @@
 #include "oyFilterNode_s_.h"         /* for oyFilterNode_TextToInfo_ */
 #include "oyRectangle_s_.h"
 
+#include "oyranos_config_internal.h"
 #include "oyranos_cmm.h"
 #include "oyranos_debug.h"
 #include "oyranos_devices.h"
@@ -36,6 +37,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#if defined(HAVE_XCM)
+#include <X11/Xcm/Xcm.h>
+#endif
 
 /* --- internal definitions --- */
 
@@ -78,7 +82,6 @@ extern oyCMMapi7_s_   oydi_api7_image_display;
 #if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
 #include <X11/Xlib.h>
 #include <X11/extensions/Xfixes.h>
-#include <X11/Xcm/Xcm.h>
 #endif
 
 
@@ -754,9 +757,13 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         oyProfile_s * image_input_profile = oyImage_GetProfile( image_input );
         oyOptions_s * options = 0;
         oyOptions_s * tags = oyImage_GetTags( image );
+        int active;
         oyBlob_s * display_id = (oyBlob_s*) oyOptions_GetType( tags, -1, "display_id",
                                           oyOBJECT_BLOB_S );
-        int active = oydiColourServerActive( display_id );
+        if(!display_id)
+          oydi_msg( oyMSG_ERROR, (oyStruct_s*)image,
+            OY_DBG_FORMAT_"no display_id", OY_DBG_ARGS_ );
+        active = oydiColourServerActive( display_id );
         oyOptions_Release( &tags );
         oyBlob_Release( &display_id );
 # if defined(XCM_HAVE_X11) && defined (HAVE_XCM)
