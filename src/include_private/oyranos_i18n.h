@@ -23,9 +23,12 @@ extern "C" {
 
 #include "oyranos_config_internal.h"
 
+#if defined(HAVE_LOCALE_H)
+#include <locale.h>           /* setlocale LC_NUMERIC */
+#endif
+
 #ifdef USE_GETTEXT
 # include <libintl.h>
-# include <locale.h>
 # define _(text) dgettext( oy_domain, text )
 #else
 # define _(text) text
