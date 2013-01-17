@@ -23,6 +23,9 @@ SET( CFILES_OBJECT_CONFIG_PUBLIC
 	${PACKAGE_NAME}_icc.c
    )
 SET( CFILES_OBJECT_CONFIG_PUBLIC ${CFILES_OBJECT_CONFIG_PUBLIC} PARENT_SCOPE )
+IF( ${PLATFORM} MATCHES OSX )
+  SET( CFILES_OBJECT_CONFIG_CS ${PACKAGE_NAME}_cs.c )
+ENDIF()
 SET( CFILES_OBJECT_CONFIG
 	${CFILES_OBJECT_CONFIG_PUBLIC}
 	${PACKAGE_NAME}_check.c
@@ -34,6 +37,7 @@ SET( CFILES_OBJECT_CONFIG
 	${PACKAGE_NAME}_xml.c
         ../oyjl/oyjl_tree_parse.c
 	${CFILES_OBJECT_CONFIG_GEN}
+	${CFILES_OBJECT_CONFIG_CS}
    )
 SET( CHEADERS_OBJECT_CONFIG_PUBLIC
 	${GENDIR}oyConfig_s.h
@@ -65,14 +69,23 @@ IF(NOT HAVE_ELEKTRA)
                     )
 ENDIF()
 
+IF(APPLE)
+   INCLUDE_DIRECTORIES ( /Developer/Headers/FlatCarbon )
+   FIND_LIBRARY( CARBON_LIBRARY Carbon )
+   FIND_LIBRARY( IOKIT_LIBRARY IOKit )
+   MARK_AS_ADVANCED( CARBON_LIBRARY )
+   MARK_AS_ADVANCED( IOKIT_LIBRARY )
+   SET(EXTRA_LIBS_CS ${CARBON_LIBRARY} ${IOKIT_LIBRARY})
+ENDIF (APPLE)
+
 ADD_LIBRARY( oyranos_config SHARED ${SOURCES} )
 TARGET_LINK_LIBRARIES (
    oyranos_config
-   oyranos_modules oyranos_object oyranos_core ${EXTRA_LIBS} )
+   oyranos_modules oyranos_object oyranos_core ${EXTRA_LIBS} ${EXTRA_LIBS_CS} )
 ADD_LIBRARY( oyranos_config-static STATIC ${SOURCES} )
 TARGET_LINK_LIBRARIES (
    oyranos_config-static
-   oyranos_modules-static oyranos_object-static oyranos_core-static ${EXTRA_LIBS} )
+   oyranos_modules-static oyranos_object-static oyranos_core-static ${EXTRA_LIBS} ${EXTRA_LIBS_CS} )
 
 INSTALL (TARGETS oyranos_config oyranos_config-static DESTINATION lib${LIB_SUFFIX})
 INSTALL (FILES ${CHEADERS_OBJECT_CONFIG_PUBLIC} DESTINATION include/${PACKAGE_NAME})
