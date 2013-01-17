@@ -3,7 +3,7 @@
  *
  *  Oyranos is an open source Colour Management System 
  *
- *  Copyright (C) 2005-2010  Kai-Uwe Behrmann
+ *  Copyright (C) 2005-2013  Kai-Uwe Behrmann
  *
  */
 
@@ -21,6 +21,8 @@
 #include "oyranos.h"
 #include "oyranos_internal.h"
 #include "oyranos_monitor.h"
+
+#include "oyRectangle_s.h"
 
 #include <Carbon/Carbon.h>
 
