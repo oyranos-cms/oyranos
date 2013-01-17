@@ -1,4 +1,3 @@
-INCLUDE(CheckIncludeFile)
 INCLUDE(CheckSymbolExists)
 
 CHECK_SYMBOL_EXISTS(clearenv     "stdlib.h"         HAVE_CLEARENV)
@@ -7,7 +6,6 @@ CHECK_SYMBOL_EXISTS(omp_get_num_procs "stdio.h"     HAVE_OPENMP)
 
 CHECK_INCLUDE_FILE(ctype.h      HAVE_CTYPE_H)
 CHECK_INCLUDE_FILE(errno.h      HAVE_ERRNO_H)
-CHECK_INCLUDE_FILE(libintl.h    USE_GETTEXT)
 CHECK_INCLUDE_FILE(locale.h     HAVE_LOCALE_H)
 CHECK_INCLUDE_FILE(stdio.h      HAVE_STDIO_H)
 CHECK_INCLUDE_FILE(stdlib.h     HAVE_STDLIB_H)
