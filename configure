@@ -507,8 +507,8 @@ if [ -n "$ECHO" ]; then
 fi
 
 if [ "$debug" = "1" ]; then
-  export CFLAGS="-Wall -g -DDEBUG=1"
-  debug_flags=CFLAGS="\"-Wall -g -DDEBUG=1\""
+  export CFLAGS="-Wall -g -DDEBUG=1 $CFLAGS"
+  debug_flags=CFLAGS="\"$CFLAGS\""
 fi
 
 echo "$debug_flags cmake -DCMAKE_INSTALL_PREFIX=$prefix -DXDG_CONFIG_DIR=$xdgsysdir -DLIB_SUFFIX=$BARCH $ROOT_DIR"
