@@ -13,6 +13,11 @@
  *  @since    2007/12/12
  */
 
+#include "oyCMMapi8_s_.h"
+#include "oyCMMapi10_s_.h"
+#include "oyCMMinfo_s_.h"
+#include "oyCMMui_s_.h"
+
 #include "oyranos_cmm.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
@@ -46,7 +51,7 @@ int            qarzCMMMessageFuncSet ( oyMessage_f         message_func );
 
 oyMessage_f message = 0;
 
-extern oyCMMapi8_s qarz_api8;
+extern oyCMMapi8_s_ qarz_api8;
 oyRankMap qarz_rank_map[];
 
 int          qarzDeviceFromName_     ( const char        * device_name,
@@ -292,7 +297,7 @@ int          qarzDeviceFromName_     ( const char        * device_name,
             if(has)
               oyOption_Release( &o );
             else
-              oyOptions_MoveIn( (*device)->data, &o, -1 );
+              oyOptions_MoveIn( *oyConfig_GetOptions(*device,"data"), &o, -1 );
           }
         }
       }
@@ -398,7 +403,7 @@ int            qarzConfigs_FromPattern (
 
          /** 3.1.2 tell the "device_name" */
         if(error <= 0)
-        error = oyOptions_SetFromText( &device->backend_core,
+        error = oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
                                        QARZ_MONITOR_REGISTRATION OY_SLASH
                                        "device_name",
                                        texts[i], OY_CREATE_NEW );
@@ -574,7 +579,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
   {
     device = oyConfigs_Get( devices, i );
     rank += oyFilterRegistrationMatch( qarz_api8.registration,
-                                       device->registration,
+                                       oyConfig_GetRegistration(device),
                                        oyOBJECT_CMM_API8_S );
     oyConfig_Release( &device );
   }
@@ -593,7 +598,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
       {
         device = oyConfigs_Get( devices, i );
         rank = oyFilterRegistrationMatch( qarz_api8.registration,
-                                          device->registration,
+                                          oyConfig_GetRegistration(device),
                                           oyOBJECT_CMM_API8_S );
         if(!rank)
         {
@@ -627,7 +632,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
             if(has)
               oyOption_Release( &o );
             else
-              oyOptions_MoveIn( device->data, &o, -1 );
+              oyOptions_MoveIn( *oyConfig_GetOptions(device,"data"), &o, -1 );
           }
         }
 
@@ -790,7 +795,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
           }
 
           if(!has)
-            oyOptions_Set( device->data, o, -1, 0 );
+            oyOptions_Set( *oyConfig_GetOptions(device,"data"), o, -1, 0 );
 
           oyOption_Release( &o );
         }
@@ -798,7 +803,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
         /** 3.1.5 construct a oyNAME_NAME string */
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
-          o = oyOptions_Find( device->data, "device_rectangle" );
+          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "device_rectangle" );
           r = (oyRectangle_s*) oyOption_GetStruct( o, oyOBJECT_RECTANGLE_S );
 
           text = 0; tmp = 0;
@@ -807,7 +812,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
           STRING_ADD( text, tmp );
           oyOption_Release( &o );
 
-          o = oyOptions_Find( device->data, "icc_profile" );
+          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "icc_profile" );
 
           if( o )
           {
@@ -833,7 +838,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
 
           if(error <= 0)
           {
-            t_err = oyOptions_SetFromText( &device->data,
+            t_err = oyOptions_SetFromText( oyConfig_GetOptions(device,"data"),
                                          QARZ_MONITOR_REGISTRATION OY_SLASH
                                          "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
@@ -849,9 +854,8 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
           error = qarzDeviceFromName_( device_name, options, &device );
 
         /** 3.1.6 add the rank scheme to combine properties */
-        if(error <= 0 && !device->rank_map)
-          device->rank_map = oyRankMapCopy( qarz_rank_map,
-                                            device->oy_->allocateFunc_ );
+        if(error <= 0 && !oyConfig_GetRankMap(device))
+          oyConfig_SetRankMap(device, qarz_rank_map );
 
         oyConfig_Release( &device );
       }
@@ -871,7 +875,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
       {
         device = oyConfigs_Get( devices, i );
         rank = oyFilterRegistrationMatch( qarz_api8.registration,
-                                          device->registration,
+                                          oyConfig_GetRegistration(device),
                                           oyOBJECT_CMM_API8_S );
         if(!rank)
         {
@@ -912,7 +916,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
       {
         device = oyConfigs_Get( devices, i );
         rank = oyFilterRegistrationMatch( qarz_api8.registration,
-                                          device->registration,
+                                          oyConfig_GetRegistration(device),
                                           oyOBJECT_CMM_API8_S );
         if(!rank)
         {
@@ -1087,7 +1091,7 @@ const char * qarz_api8_ui_texts[] = {"name", "help", "device_class", "icc_profil
  *  @since   2009/12/14 (Oyranos: 0.1.10)
  *  @date    2009/12/16
  */
-oyCMMui_s qarz_api8_ui = {
+oyCMMui_s_ qarz_api8_ui = {
   oyOBJECT_CMM_DATA_TYPES_S,           /**< oyOBJECT_e       type; */
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
@@ -1116,7 +1120,7 @@ oyIcon_s qarz_api8_icon = {
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/08/21
  */
-oyCMMapi8_s qarz_api8 = {
+oyCMMapi8_s_ qarz_api8 = {
   oyOBJECT_CMM_API8_S,
   0,0,0,
   (oyCMMapi_s*) 0, /**< next */
@@ -1134,7 +1138,7 @@ oyCMMapi8_s qarz_api8 = {
   qarzConfigs_Modify,        /**< oyConfigs_Modify_f oyConfigs_Modify */
   qarzConfig_Rank,           /**< oyConfig_Rank_f oyConfig_Rank */
 
-  &qarz_api8_ui,             /**< device class UI name and help */
+  (oyCMMui_s*)&qarz_api8_ui,             /**< device class UI name and help */
   &qarz_api8_icon,           /**< device icon */
 
   qarz_rank_map              /**< oyRankMap ** rank_map */
@@ -1211,7 +1215,7 @@ const char *qarz_texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2007/12/12 (Oyranos: 0.1.8)
  *  @date    2010/11/08
  */
-oyCMMinfo_s qarz_cmm_module = {
+oyCMMinfo_s_ qarz_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,

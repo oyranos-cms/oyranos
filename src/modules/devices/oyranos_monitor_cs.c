@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2005-2012 (C) Kai-Uwe Behrmann
+ *            2005-2013 (C) Kai-Uwe Behrmann
  *
  *  @brief    monitor osX device detection
  *  @internal
@@ -23,6 +23,7 @@
 #include <X11/Xcm/XcmEdidParse.h>
 
 #include "oyranos_config_internal.h"
+#include "oyranos_string.h"
 
 #ifdef __APPLE__
 /* old style Quicktime APIs */
