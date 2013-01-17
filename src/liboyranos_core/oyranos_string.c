@@ -403,7 +403,8 @@ int                oyStringCaseCmp_  ( const char        * a,
   return strcasecmp(a,b);
 #else
   char * la = oyStringCopy_(a,0),
-       * lb = oyStringCopy_(b,0);
+       * lb = oyStringCopy_(b,0),
+       * t;
   int n = strlen(a), i;
   int result = 0;
   /* the following un caseing is portable,
@@ -411,13 +412,13 @@ int                oyStringCaseCmp_  ( const char        * a,
   t = la;
   for(i = 0; i < n; ++i)
     if(isalpha(t[i]))
-      t[j] = tolower(t[i]);
+      t[i] = tolower(t[i]);
 
   n = strlen(b);
-  t = lb
+  t = lb;
   for(i = 0; i < n; ++i)
     if(isalpha(t[i]))
-      t[j] = tolower(t[i]);
+      t[i] = tolower(t[i]);
   
   result = strcmp( la, lb );
   oyFree_m_(la);
