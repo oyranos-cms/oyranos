@@ -23,7 +23,7 @@
 
 
 #include <FL/Fl.H>
-#include <FL/x.H>
+#include <FL/x.H>                /* fl_offscreen */
 
 #include "Oy_Fl_Image_Widget.h"
 

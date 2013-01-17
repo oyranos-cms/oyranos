@@ -50,7 +50,7 @@
 #include "oyRectangle_s.h"
 
 
-#ifdef HAVE_X11
+#ifdef XCM_HAVE_X11
 int   updateOutputConfiguration      ( Display           * display );
 int            getDeviceProfile      ( Display           * display,
                                        oyConfig_s        * device,
@@ -796,15 +796,18 @@ int main( int argc , char** argv )
   if(oy_display_name)
     oyDeAllocFunc(oy_display_name);
 
-#if defined(HAVE_X11)
+#if defined(XCM_HAVE_X11)
   if(daemon)
     error = runDaemon( display_name );
+#else
+  if(daemon)
+    fprintf( stderr, "daemon mode not supported on your OS\n" );
 #endif
 
   return error;
 }
 
-#ifdef HAVE_X11
+#ifdef XCM_HAVE_X11
 void cleanDisplay( Display * display )
 {
   int error = 0;

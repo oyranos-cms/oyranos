@@ -75,7 +75,7 @@ extern oyCMMapi7_s_   oydi_api7_image_display;
 
 /* OY_IMAGE_DISPLAY_REGISTRATION ---------------------------------------------*/
 
-#if defined(HAVE_X11) && defined(HAVE_XCM)
+#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
 #include <X11/Xlib.h>
 #include <X11/extensions/Xfixes.h>
 #include <X11/Xcm/Xcm.h>
@@ -144,7 +144,7 @@ int oydiFilterSocket_SetWindowRegion ( oyPixelAccess_s   * ticket,
   display_id = (oyBlob_s*) oyOptions_GetType( tags, -1, "display_id",
                                           oyOBJECT_BLOB_S );
 
-# if defined(HAVE_X11) && defined (HAVE_XCM)
+# if defined(XCM_HAVE_X11) && defined (HAVE_XCM)
   if(win_id && display_id)
   {
     int x,y, i,j;
@@ -512,7 +512,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
 int      oydiColourServerActive( oyBlob_s * display_id )
 {
   static int active = 0;
-#if defined(HAVE_X11)
+#if defined(XCM_HAVE_X11)
   static double z = 0;
   Display * display = (Display *) oyBlob_GetPointer(display_id);
   if(z + 1.0 < oySeconds())
@@ -759,7 +759,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         int active = oydiColourServerActive( display_id );
         oyOptions_Release( &tags );
         oyBlob_Release( &display_id );
-#if defined(HAVE_XCM)
+# if defined(XCM_HAVE_X11) && defined (HAVE_XCM)
         if(active | XCM_COLOR_SERVER_REGIONS)
 #endif
         error = oyOptions_SetFromText( &options,

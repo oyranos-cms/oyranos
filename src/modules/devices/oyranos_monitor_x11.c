@@ -478,14 +478,20 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
   if(!disp)
     return 0;
 
+#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
   /* support the colour server device profile */
   if(flags & 0x01)
     prop = oyX1Monitor_getProperty_( disp,
                              XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE, 0 );
+#endif
 
   /* alternatively fall back to the non colour server or pre v0.4 atom */
   if(!prop)
+#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
     prop = oyX1Monitor_getProperty_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, 0 );
+#else
+    prop = oyX1Monitor_getProperty_( disp, "_ICC_PROFILE", 0 );
+#endif
 
   if(prop)
   {
@@ -790,7 +796,11 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       if(!size || !moni_profile)
         WARNc_S(_("Error obtaining profile"));
 
+#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
       atom_name = oyX1Monitor_getAtomName_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE );
+#else
+      atom_name = oyX1Monitor_getAtomName_( disp, "_ICC_PROFILE" );
+#endif
       if( atom_name )
       {
         atom = XInternAtom (display, atom_name, False);
@@ -890,7 +900,11 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
 
       DBG_PROG
 
+#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
       atom_name = oyX1Monitor_getAtomName_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE );
+#else
+      atom_name = oyX1Monitor_getAtomName_( disp, "_ICC_PROFILE" );
+#endif
       atom = XInternAtom (display, atom_name, True);
       if (atom != None)
         XDeleteProperty( display, w, atom );

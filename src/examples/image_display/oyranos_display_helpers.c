@@ -318,7 +318,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
 
     if(window && strcmp("X11", system_type) == 0)
     {
-#if defined(HAVE_X11)
+#if defined(XCM_HAVE_X11)
       /* add X11 window and display identifiers to output image */
       oyOption_s * o = 0;
       Display *disp = (Display*) display;

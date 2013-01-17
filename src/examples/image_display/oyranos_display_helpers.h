@@ -50,7 +50,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
                                        oyImage_s         * image );
 oyProfile_s * getEditingProfile      ( );
 
-#ifdef HAVE_X11
+#ifdef XCM_HAVE_X11
 #include <X11/Xlib.h>
 #endif
 

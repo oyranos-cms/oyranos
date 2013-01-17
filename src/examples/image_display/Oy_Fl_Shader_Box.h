@@ -52,8 +52,8 @@ private:
     GLfloat clut_scale;
     GLfloat clut_offset;
 
-    GLuint cmm_prog;
-    GLuint cmm_shader;
+    void * cmm_prog;
+    void * cmm_shader;
 
     static const char * cmm_shader_source;
 
@@ -106,20 +106,20 @@ private:
 
     glUseProgramObjectARB (cmm_prog);
 
-    loc = glGetUniformLocation (cmm_prog, "scale");
+    loc = glGetUniformLocation ((GLuint)cmm_prog, "scale");
     glUniform1fARB (loc, clut_scale);
 
-    loc = glGetUniformLocation (cmm_prog, "offset");
+    loc = glGetUniformLocation ((GLuint)cmm_prog, "offset");
     glUniform1fARB (loc, clut_offset);
 
-    loc = glGetUniformLocation (cmm_prog, "image");
+    loc = glGetUniformLocation ((GLuint)cmm_prog, "image");
     glUniform1iARB (loc, 0);
 
     /* texture 1 = clut */
     glActiveTextureARB (GL_TEXTURE0_ARB + 1);
     glBindTexture (GL_TEXTURE_3D, clut_texture);
 
-    loc = glGetUniformLocation (cmm_prog, "clut");
+    loc = glGetUniformLocation ((GLuint)cmm_prog, "clut");
     glUniform1iARB (loc, 1);
 
     /* back to texture 0 (image) */

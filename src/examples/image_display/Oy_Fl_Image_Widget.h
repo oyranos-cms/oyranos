@@ -85,7 +85,7 @@ public:
       int width;
       int height;
 
-#if defined(HAVE_X11)
+#if defined(XCM_HAVE_X11)
       /* add X11 window and display identifiers to output image */
       display = fl_display;
       window = (void*)fl_xid( Fl_Widget::window() );

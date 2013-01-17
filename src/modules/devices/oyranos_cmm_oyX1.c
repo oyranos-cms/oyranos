@@ -689,8 +689,12 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                      "Try %s(_xxx) from %s",
                      OY_DBG_ARGS_,
                      oyOptions_FindString(options, "x_color_region_target", 0) ? 
+#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
                      XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE :
                      XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE,
+#else
+                     "no XCM_X11 device":"no XCM_X11",
+#endif
                      device_name );
             flags |= 0x01;
           }
@@ -874,8 +878,12 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                      "Could not obtain %s(_xxx) information for %s",
                      OY_DBG_ARGS_,
                      oyOptions_FindString(options, "x_color_region_target", 0) ? 
+#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
                      XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE :
                      XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE,
+#else
+                     "no XCM_X11 device":"no XCM_X11",
+#endif
                      device_name );
 
             /* Show the "icc_profile" option is understood. */
@@ -1320,6 +1328,7 @@ oyCMMinfo_s_ oyX1_cmm_module = {
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
 };
 
+#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
 int XcolorRegionFind(XcolorRegion * old_regions, unsigned long old_regions_n, Display * dpy, Window win, XRectangle * rectangle)
 {   
   XRectangle * rect = 0;
@@ -1362,6 +1371,7 @@ int XcolorRegionFind(XcolorRegion * old_regions, unsigned long old_regions_n, Di
 
   return pos;
 }
+#endif
 
 /**
  *  This function implements oyMOptions_Handle_f.
@@ -1413,6 +1423,7 @@ int          oyX1MOptions_Handle     ( oyOptions_s       * options,
   }
   else if(oyFilterRegistrationMatch(command,"set_xcm_region", 0))
   {
+#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
     oyProfile_s * p = NULL;
     oyRectangle_s * win_rect = NULL;
     oyRectangle_s * old_rect = NULL;
@@ -1534,6 +1545,7 @@ int          oyX1MOptions_Handle     ( oyOptions_s       * options,
           oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
                     "XcolorRegionInsert failed %d\n", error );
     }
+#endif
   }
 
   return 0;
