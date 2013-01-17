@@ -52,8 +52,8 @@ private:
     GLfloat clut_scale;
     GLfloat clut_offset;
 
-    void * cmm_prog;
-    void * cmm_shader;
+    GLhandleARB cmm_prog;
+    GLhandleARB cmm_shader;
 
     static const char * cmm_shader_source;
 
