@@ -187,14 +187,6 @@ char *       qarzGetMonitorProfile   ( const char        * device_name,
     moni_profile = block;
     if (prof) CMCloseProfile(prof);
   }
-  else
-  {
-    oyProfile_s * p = oyProfile_FromStd( oyASSUMED_WEB, 0 );
-    block = oyProfile_GetMem( p, size, 0, allocate_func );
-    oyProfile_Release( &p );
-    moni_profile = block;
-  }
-
 
 #if 0
 {
@@ -348,6 +340,8 @@ int      qarzMonitorProfileSetup     ( const char        * display_name,
   oyProfile_s * prof = 0;
 
   DBG_PROG_START
+
+  DBG_NUM1_S( "display_name: %s", display_name );
 
   if(profil_name)
   {
