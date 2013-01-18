@@ -756,6 +756,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       {
         oyProfile_s * image_input_profile = oyImage_GetProfile( image_input );
         oyOptions_s * options = 0;
+# if defined(XCM_HAVE_X11) && defined (HAVE_XCM)
         oyOptions_s * tags = oyImage_GetTags( image );
         int active;
         oyBlob_s * display_id = (oyBlob_s*) oyOptions_GetType( tags, -1, "display_id",
@@ -766,7 +767,6 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         active = oydiColourServerActive( display_id );
         oyOptions_Release( &tags );
         oyBlob_Release( &display_id );
-# if defined(XCM_HAVE_X11) && defined (HAVE_XCM)
         if(active | XCM_COLOR_SERVER_REGIONS)
 #endif
         error = oyOptions_SetFromText( &options,
