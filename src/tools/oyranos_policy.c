@@ -21,6 +21,7 @@
 #include "oyranos_debug.h"
 #include "oyranos_elektra.h"
 #include "oyranos_helper.h"
+#include "oyranos_helper_macros.h"
 #include "oyranos_internal.h"
 #include "oyranos_config.h"
 #include "oyranos_string.h"
@@ -85,6 +86,7 @@ int main( int argc , char** argv )
   int current_policy = 0, list_policies = 0, list_paths = 0,
       dump_policy = 0;
   int long_help = 0;
+  int verbose = 0;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -102,27 +104,15 @@ int main( int argc , char** argv )
       {
         case '-':
             for(i = 1; i < strlen(argv[pos]); ++i)
-            switch (argv[pos][1])
+            switch (argv[pos][i])
             {
               case 'c': current_policy = 1; break;
               case 'd': dump_policy = 1; break;
-              case 'i': if( pos + 1 < argc )
-                        { import_policy = argv[pos+1];
-                          if( !oyStrlen_(import_policy) )
-                            wrong_arg = "-i";
-                        } else wrong_arg = "-i";
-                        if(oy_debug) fprintf(stderr,"import_policy=0\n"); ++pos;
-                        break;
+              case 'i': OY_PARSE_STRING_ARG(import_policy); break;
               case 'l': list_policies = 1; break;
               case 'p': list_paths = 1; break;
-              case 's': if( pos + 1 < argc )
-                        { save_policy = argv[pos+1];
-                          if( !oyStrlen_(save_policy) )
-                            wrong_arg = "-s";
-                        } else wrong_arg = "-s";
-                        if(oy_debug) fprintf(stderr,"save_policy=0\n"); ++pos;
-                        break;
-              case 'v': oy_debug += 1; break;
+              case 's': OY_PARSE_STRING_ARG(save_policy); break;
+              case 'v': if(verbose) oy_debug += 1; verbose = 1; break;
               case '-':
                         if(i == 1)
                         {
