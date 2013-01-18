@@ -133,9 +133,6 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
     return name;
   }
 
-#ifdef __APPLE__
-  name = oyGetDefaultProfileNameOSX_( type );
-#else
   {
     const oyOption_t_ * t = oyOptionGet_((oyWIDGET_e)type);
     if( !t || !t->config_string )
@@ -145,6 +142,9 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
     } else
       name = oyGetKeyString_( t->config_string, allocate_func );
   }
+#ifdef __APPLE__
+  if(!(name && name[0]))
+    name = oyGetDefaultProfileNameOSX_( type );
 #endif
 
   if(name && name[0])
