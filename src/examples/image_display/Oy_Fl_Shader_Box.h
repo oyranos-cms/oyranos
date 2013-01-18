@@ -106,20 +106,20 @@ private:
 
     glUseProgramObjectARB (cmm_prog);
 
-    loc = glGetUniformLocation ((GLuint)cmm_prog, "scale");
+    loc = glGetUniformLocation ((GLintptr)cmm_prog, "scale");
     glUniform1fARB (loc, clut_scale);
 
-    loc = glGetUniformLocation ((GLuint)cmm_prog, "offset");
+    loc = glGetUniformLocation ((GLintptr)cmm_prog, "offset");
     glUniform1fARB (loc, clut_offset);
 
-    loc = glGetUniformLocation ((GLuint)cmm_prog, "image");
+    loc = glGetUniformLocation ((GLintptr)cmm_prog, "image");
     glUniform1iARB (loc, 0);
 
     /* texture 1 = clut */
     glActiveTextureARB (GL_TEXTURE0_ARB + 1);
     glBindTexture (GL_TEXTURE_3D, clut_texture);
 
-    loc = glGetUniformLocation ((GLuint)cmm_prog, "clut");
+    loc = glGetUniformLocation ((GLintptr)cmm_prog, "clut");
     glUniform1iARB (loc, 1);
 
     /* back to texture 0 (image) */
