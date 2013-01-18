@@ -128,8 +128,7 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
 
   /* a static_profile */
   if(type == oyASSUMED_WEB) {
-    oyAllocHelper_m_( name, char, MAX_PATH, allocate_func, return NULL );
-    oySprintf_(name, OY_WEB_RGB);
+    name = oyStringCopy_( OY_WEB_RGB, allocate_func );
     DBG_PROG_S( name )
     return name;
   }
@@ -154,21 +153,15 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
     /* cut off the path part of a file name */
     if (oyStrrchr_ (name, OY_SLASH_C))
     {
-      char * f = NULL;
-
-      oyAllocHelper_m_( f, char, oyStrlen_(name) + 1, oyAllocateFunc_, return 0);
-      oySprintf_( f, "%s", name );
-      oySprintf_( name, "%s", oyStrrchr_ (f, OY_SLASH_C) + 1 );
+      char * f = oyStringCopy_( oyStrrchr_ (name, OY_SLASH_C) + 1, allocate_func );
+      name = f;
       oyFree_m_(f);
     }
   } else {
     const oyOption_t_ * t = oyOptionGet_((oyWIDGET_e)type);
     if(t && t->default_string)
     {
-      name = 0;
-      oyAllocHelper_m_( name, char, oyStrlen_( t->default_string ) + 1,
-                        allocate_func, return NULL );
-      oySprintf_( name, "%s", t->default_string );
+      name = oyStringCopy_( t->default_string, allocate_func );
     } else {
       WARNc2_S( "%s %d", _("Option not supported type:"), type)
     }
