@@ -1,5 +1,8 @@
 oyranos (0.9.4-1) unstable; urgency=low
 
+  * use available Lab from debian's icc-profile II
+  * fix argument parsing in oy-policy tool
+  * fix compile warnings
   * support cmake 2.6.4
   * build without LibRaw
   * write n-channel images
@@ -8,7 +11,7 @@ oyranos (0.9.4-1) unstable; urgency=low
   * add oyProfileSignatureName()
   * add oyWIDGET_GROUP_DEVICES
 
- -- Kai-Uwe Behrmann (oy) <oy@oyranos.org>  Fri, 04 Jan 2013 12:00:00 +0100
+ -- Kai-Uwe Behrmann (oy) <oy@oyranos.org>  Fri, 19 Jan 2013 12:00:00 +0100
 
 oyranos (0.9.3-1) unstable; urgency=low
 

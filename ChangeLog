@@ -1,3 +1,49 @@
+Version 0.9.4
+
+Kai-Uwe Behrmann (42):
+	* [qarz]: fix setting of monitor profiles
+	* [exmpl]: fix GL variable type conversions warnings
+	* [conf]: better detect iconv/libintl and GetText
+	* [core]: fix getting current policy on osX
+	* [core]: simplify string allocation
+	* [core]: honour user editing profiles on osX
+	* [core]: use available Lab from debian's icc-profile II
+	* [oydi]: fix error message
+	* [tools]: fix argument parsing in oy-policy
+	* [conf]: omit not detected include variables
+	* [exmpl]: fix ARB pointer definition
+	* [oydi]: fix Linux Xcm includes
+	* [exmpl]: various compile fixes around Xcm for osX
+	* [qarz]: port the CS module to the new APIs
+	* [build]: link against Carbon framework on osX again
+	* [build]: link oyranos_cs.c in liboy_config
+	* [qarz]: include missed header
+	* [conf]: add cairo to osX include
+	* [core]: include locale.h properly
+	* [conf]: add HAVE_LOCALE_H
+	* [build]: add cmake version to yajl CMlists.txt
+	* [conf]: alternate grantlee download with curl
+	* [build]: interal yajl if needed
+	* [conf]: use CFLAGS in configure script
+	* [conf]: detect ltdl.h and intl,iconv libs
+	* [core]: fix alternate strcasecmp
+	* [conf]: skip already placed system macro
+	* [conf]: skip X11 extension checks on non X systems
+	* [conf]: skip no longer used config files
+	* [conf]: use pkg-config on win32
+	* [i18n]: fix typo
+	* [conf]: update debian/changelog to 0.9.4
+	* [build]: relax cmake requirement for ExternalProject
+	* [core]: add oyWIDGET_GROUP_DEVICES/INFORMATION + i18n
+	* [sources]: add oyProfileSignatureName()
+	* [sources]: add oySIGNATURE_ILLUMINANT header sig
+	* [core]: include config header to see USE_GETTEXT
+	* [docu]: update and format copying files
+	* [sources]: write n channel images
+	* [conf]: support cmake 2.6.4
+	* [conf]: build without LibRaw
+	* [docu]: update AUTHORS
+
 Version 0.9.3
 
 Kai-Uwe Behrmann (19):
