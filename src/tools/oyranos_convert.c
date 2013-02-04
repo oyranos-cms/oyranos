@@ -406,6 +406,7 @@ int main( int argc , char** argv )
       oyImage_Release( &image );
     } else
     {
+      char * comment = 0;
       error = oyImage_FromFile( input, &image, NULL );
       pixel_layout = oyImage_GetPixelLayout( image,oyLAYOUT );
       data_type = oyToDataType_m(pixel_layout);
@@ -422,11 +423,15 @@ int main( int argc , char** argv )
       error = oyConversion_RunPixels( cc, 0 );
       image = oyConversion_GetImage( cc, OY_OUTPUT );
       oyConversion_Release( &cc );
+
+      STRING_ADD( comment, "source image was " );
+      STRING_ADD( comment, input );
       oyOptions_SetFromText( &opts, "//" OY_TYPE_STD "/file_write/comment",
-                             input, OY_CREATE_NEW );
+                             comment, OY_CREATE_NEW );
       error = oyImage_ToFile( image, output, opts );
 
       oyImage_Release( &image );
+      oyFree_m_( comment );
     }
     
   } else
