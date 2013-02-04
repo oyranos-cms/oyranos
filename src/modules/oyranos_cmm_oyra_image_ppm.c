@@ -133,10 +133,12 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
   if(fp)
   {
     oyImage_s *image_output = (oyImage_s*)oyFilterSocket_GetData( socket );
+    const char * comment = oyOptions_FindString( node_opts, "comment", NULL );
 
     fclose (fp); fp = 0;
 
     result = oyImage_WritePPM( image_output, filename,
+                               comment ? comment :
                                oyFilterNode_GetRelatives( node ) );
   }
 
@@ -150,6 +152,7 @@ const char ppm_write_extra_options[] = {
     <" OY_TYPE_STD ">\n\
      <" "file_write" ">\n\
       <filename></filename>\n\
+      <comment></comment>\n\
      </" "file_write" ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
