@@ -1,3 +1,9 @@
+oyranos (0.9.5-1) unstable; urgency=low
+
+  * improve image comment in oy-icc
+  * remove non needed debian/shlibs.local
+  * deambiguate install of cmake file
+
 oyranos (0.9.4-1) unstable; urgency=low
 
   * use available Lab from debian's icc-profile II
