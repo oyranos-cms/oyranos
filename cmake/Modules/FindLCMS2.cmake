@@ -22,7 +22,7 @@
 # use pkg-config to get the directories and then use these values
 # in the FIND_PATH() and FIND_LIBRARY() calls
 find_package(PkgConfig)
-pkg_check_modules(LCMS2 lcms2)
+pkg_check_modules(PC_LCMS2 lcms2)
 set(LCMS2_DEFINITIONS ${PC_LCMS2_CFLAGS_OTHER})
 
 find_path(LCMS2_INCLUDE_DIR lcms2.h

@@ -20,7 +20,7 @@
 # in the FIND_PATH() and FIND_LIBRARY() calls
 if(NOT WIN32)
    find_package(PkgConfig)
-   pkg_check_modules(EXIV2 exiv2)
+   pkg_check_modules(PC_EXIV2 exiv2)
    set(EXIV2_DEFINITIONS ${EXIV2_CFLAGS_OTHER})
 endif(NOT WIN32)
 
