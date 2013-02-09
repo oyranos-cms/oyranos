@@ -747,16 +747,32 @@ int main( int argc , char** argv )
 
       if(monitor_profile)
       {
+        if(verbose)
+          fprintf( stdout, "oyDeviceSetProfile()\n" );
         oyDeviceSetProfile( device, monitor_profile );
+        if(verbose)
+          fprintf( stdout, "oyDeviceUnset()\n" );
         oyDeviceUnset( device );
       } else
       if(erase || unset)
+      {
+        if(verbose)
+          fprintf( stdout, "oyDeviceUnset()\n" );
         oyDeviceUnset( device );
+      }
       if(erase)
+      {
+        if(verbose)
+          fprintf( stdout, "oyConfig_EraseFromDB()\n" );
         oyConfig_EraseFromDB( device );
+      }
 
       if(setup)
+      {
+        if(verbose)
+          fprintf( stdout, "oyDeviceSetup()\n" );
         oyDeviceSetup( device );
+      }
 
       oyConfig_Release( &device );
     }
