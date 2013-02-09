@@ -6,12 +6,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/11/17
+ *  @date     2013/02/09
  */
 
 
@@ -1411,7 +1411,8 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
  *  @brief   get JSON format device calibration text from a device
  *
  *  @param[in]     config              the device
- *  @param[in]     options             unused
+ *  @param[in]     options             "source" value is used for
+ *                                     oyConfig_GetOptions()
  *  @param[out]    json_text           the device calibration
  *  @param[in]     allocateFunc        user allocator
  *  @return                            error
@@ -1426,7 +1427,8 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
                                        oyAlloc_f           allocateFunc )
 {
   int error = 0;
-  int count = oyConfig_Count( device ), j, k;
+  oyOptions_s * opts = 0;
+  int count, j, k;
   char * t = NULL; 
   char * value, * key;
   const char * device_class = NULL;
@@ -1434,8 +1436,23 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
 
   if(!error)
   {
+    if(oyOptions_FindString( options, "source", 0 ))
+      opts = *oyConfig_GetOptions( device,
+                                 oyOptions_FindString( options, "source", 0 ));
+
+    if(opts)
+      count = oyOptions_Count( opts );
+    else
+      count = oyConfig_Count( device );
+
+      if(count)
       {
-        oyOption_s * opt = oyConfig_Get( device, 0 );
+        oyOption_s * opt;
+
+        if(opts)
+          opt = oyOptions_Get( opts, 0 );
+        else
+          opt = oyConfig_Get( device, 0 );
 
         domain = oyConfDomain_FromReg( oyOption_GetRegistration( opt ), 0 );
         device_class = oyConfDomain_GetText( domain, "device_class", oyNAME_NICK );
@@ -1450,7 +1467,11 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
         {
           int vals_n = 0;
           char ** vals = 0, * val = 0;
-          opt = oyConfig_Get( device, j );
+
+          if(opts)
+            opt = oyOptions_Get( opts, j );
+          else
+            opt = oyConfig_Get( device, j );
 
           key = oyFilterRegistrationToText( oyOption_GetRegistration( opt ),
                                             oyFILTER_REG_MAX, 0 );
@@ -1505,6 +1526,8 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
                             "\n"OPENICC_DEVICE_JSON_FOOTER );
         oyConfDomain_Release( &domain );
       }
+      else
+        error = -1;
 
       if(json_text && t)
       {
