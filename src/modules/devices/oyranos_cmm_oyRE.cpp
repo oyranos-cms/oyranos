@@ -768,7 +768,7 @@ const char * Api8UiGetText           ( const char        * select,
   else if(strcmp(select, "device_class") == 0)
     {
         if(type == oyNAME_NICK)
-            return "raw-image";
+            return "camera";
         else if(type == oyNAME_NAME)
             return _("RawCamera");
         else
