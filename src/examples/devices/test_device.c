@@ -30,6 +30,7 @@ void displayHelp(char ** argv)
   printf("%s:\n",                 _("Usage"));
   printf("  %s\n",               _("Assign profile to device:"));
   printf("      %s -a -c class -d number -p file.icc\n", argv[0]);
+  printf("         -p %s\t%s\n",    _("FILE"),   _("profile file name"));
   printf("\n");
   printf("  %s\n",               _("Unassign profile from device:"));
   printf("      %s -e -c class -d number\n", argv[0]);
@@ -42,23 +43,25 @@ void displayHelp(char ** argv)
   printf("\n");
   printf("  %s\n",               _("List device classes:"));
   printf("      %s -l [-v | --short]\n", argv[0]);
-  printf("         -v       %s\n",_("print the full module name"));
-  printf("         --short  %s\n",_("print the module ID"));
+  printf("         -v      \t%s\n", _("print the full module name"));
+  printf("         --short \t%s\n", _("print the module ID"));
   printf("\n");
   printf("  %s\n",               _("List devices:"));
   printf("      %s -l -c class [-d number] [-v | --short] [-r]\n", argv[0]);
-  printf("         --short  %s\n",_("print only the profile name"));
+  printf("         --short \t%s\n", _("print only the profile name"));
   printf("\n");
   printf("  %s\n",               _("List local DB profiles for selected device:"));
   printf("      %s --list-profiles -c class -d number [--show-non-device-related]\n", argv[0]);
-  printf("         --show-non-device-related %s\n",_("show non matching profiles"));
+  printf("         --show-non-device-related\t%s\n",_("show non matching profiles"));
   printf("\n");
   printf("  %s\n",               _("List Taxi DB profiles for selected device:"));
   printf("      %s --list-taxi-profiles -c class -d number [--show-non-device-related]\n", argv[0]);
-  printf("         --show-non-device-related %s\n",_("show non matching profiles"));
+  printf("         --show-non-device-related\t%s\n",_("show non matching profiles"));
   printf("\n");
   printf("  %s\n",               _("Dump data:"));
-  printf("      %s -f=[icc|json] [-o=file.icc] [-d number] [-m]\n", argv[0]);
+  printf("      %s -f=[icc|openicc] [-o=file.json] -c class -d number [--only-db]\n", argv[0]);
+  printf("         -o %s\t%s\n",    _("FILE"),   _("write to specified file"));
+  printf("         --only-db\t%s\n",_("use only DB keys for -f=openicc"));
   printf("\n");
   printf("  %s\n",               _("Show Help:"));
   printf("      %s [-h]\n", argv[0]);
@@ -67,7 +70,6 @@ void displayHelp(char ** argv)
   printf("         -v      \t%s\n", _("verbose"));
   printf("         -c %s\t%s\n",    _("CLASS"),  _("device class"));
   printf("         -d %s\t%s\n",    _("NUMBER"), _("device position start from zero"));
-  printf("         -p %s\t%s\n",    _("FILE"),  _("profile file name"));
   printf("         -r      \t%s\n", _("skip X Color Management device profile"));
   printf("\n");
   printf(_("For more informations read the man page:"));
@@ -92,6 +94,7 @@ int main(int argc, char *argv[])
   int device_pos = -1;
   char * format = 0;
   char * output = 0;
+  int only_db = 0;
   int skip_x_color_region_target = 0;
   char * display_name = 0,
        * prof_name = 0,
@@ -166,6 +169,8 @@ int main(int argc, char *argv[])
                         { OY_PARSE_STRING_ARG2(format, "format"); break; }
                         else if(OY_IS_ARG("output"))
                         { OY_PARSE_STRING_ARG2(output, "output"); break; }
+                        else if(OY_IS_ARG("only-db"))
+                        { only_db = 1; i=100; break; }
                         else if(OY_IS_ARG("name"))
                         { OY_PARSE_STRING_ARG2(new_profile_name, "name"); break; }
                         else if(OY_IS_ARG("profile"))
@@ -710,7 +715,7 @@ int main(int argc, char *argv[])
     const char * device_type = oyConfDomain_GetText( d, "device_class",
                                                      oyNAME_NICK );
     char * json = 0;
-    const char * profile_name = 0;
+    char * profile_name = 0;
     char * out_name = 0;
 
     /* get all device informations from the module */
@@ -733,11 +738,26 @@ int main(int argc, char *argv[])
     }
 
     /* query the full device information from DB */
-    error = oyDeviceProfileFromDB( c, &profile_name, 0 );
+    error = oyDeviceProfileFromDB( c, &profile_name, oyAllocFunc );
+    if(profile_name) oyDeAllocFunc( profile_name ); profile_name = 0;
 
     if(strcmp(format,"openicc") == 0)
     {
-      error = oyDeviceToJSON( c, 0, &json, oyAllocFunc );
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/options/source",
+                                   "db", OY_CREATE_NEW );  
+      error = oyDeviceToJSON( c, options, &json, oyAllocFunc );
+      oyOptions_Release( &options );
+
+      /* it is possible that no DB keys are available; use all others */
+      if(!json && !only_db)
+        error = oyDeviceToJSON( c, NULL, &json, oyAllocFunc );
+
+      if(!json)
+      {
+        fprintf( stderr, "no DB data available\n" );
+        exit(0);
+      }
+
       if(output)
         error = oyWriteMemToFile2_( output,
                                     json, strlen(json), 0x01,
