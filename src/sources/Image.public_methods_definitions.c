@@ -1451,8 +1451,13 @@ int    oyImage_ToFile                ( oyImage_s         * image,
                                  file_name, OY_CREATE_NEW );
   oyOptions_Release( &options );
 
-  oyConversion_RunPixels( conversion, 0 );
+  error = oyConversion_RunPixels( conversion, 0 );
+  if(error > 0)
+    WARNcc1_S(in,"oyConversion_RunPixels() returned error: %d", error);
+
   oyConversion_Release( &conversion );
+  oyFilterNode_Release( &in );
+  oyFilterNode_Release( &out );
 
   return error;
 }

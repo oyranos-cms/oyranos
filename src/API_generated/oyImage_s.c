@@ -10,12 +10,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/01/08
+ *  @date     2013/02/10
  */
 
 
@@ -939,10 +939,9 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       double * dbls;
       float flt;
 
-
             fputc( 'P', fp );
       if(alpha ||
-         cchan_n > 3)
+         cchan_n > 3) 
             fputc( '7', fp );
       else
       {
@@ -1550,8 +1549,12 @@ int    oyImage_ToFile                ( oyImage_s         * image,
                                  file_name, OY_CREATE_NEW );
   oyOptions_Release( &options );
 
-  oyConversion_RunPixels( conversion, 0 );
+  error = oyConversion_RunPixels( conversion, 0 );
+  if(error > 0)
+    WARNcc1_S(in,"oyConversion_RunPixels() returned error: %d", error);
   oyConversion_Release( &conversion );
+  oyFilterNode_Release( &in );
+  oyFilterNode_Release( &out );
 
   return error;
 }
