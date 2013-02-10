@@ -134,7 +134,7 @@ int      oyraFilterPlug_ImageWriteRun (
     {
       STRING_ADD( file_ext, fileext );
       i = 0;
-      while(file_ext[i]) { file_ext[i] = tolower( file_ext[i] ); ++i; }
+      while(file_ext && file_ext[i]) { file_ext[i]=tolower(file_ext[i]); ++i; }
     }
 
     apis = oyCMMsGetFilterApis_( 0,0, "//" OY_TYPE_STD "/file_write", 
@@ -185,6 +185,10 @@ int      oyraFilterPlug_ImageWriteRun (
           DBGs_PROG2_S( ticket, "%s={%s}", _("Run ticket through api7"),
                        api7->registration );
           result = api7->oyCMMFilterPlug_Run( requestor_plug, ticket );
+          if(result > 0)
+            oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ "Could not write to file: %s",
+             OY_DBG_ARGS_, oyNoEmptyString_m_(filename) );
           i = n;
           run = i;
         }
