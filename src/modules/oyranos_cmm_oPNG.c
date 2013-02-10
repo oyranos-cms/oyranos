@@ -405,7 +405,7 @@ int      oPNGFilterPlug_ImageOutputPNGWrite (
 {
   oyFilterSocket_s * socket = oyFilterPlug_GetSocket( requestor_plug );
   oyFilterNode_s * node = 0;
-  oyOptions_s * tags = 0;
+  oyOptions_s * opts = 0;
   int result = 0;
   const char * filename = 0;
   FILE * fp = 0;
@@ -417,13 +417,13 @@ int      oPNGFilterPlug_ImageOutputPNGWrite (
   if(node)
   {
     result = oyFilterNode_Run( node, requestor_plug, ticket );
-    tags = oyFilterNode_GetTags( node );
+    opts = oyFilterNode_GetOptions( node, 0 );
   } else
     result = 1;
 
   if(result <= 0)
   {
-    filename = oyOptions_FindString( tags, "filename", 0 );
+    filename = oyOptions_FindString( opts, "filename", 0 );
     if(!filename)
       result = 1;
   }
@@ -445,7 +445,7 @@ int      oPNGFilterPlug_ImageOutputPNGWrite (
 
     fclose (fp); fp = 0;
 
-    result = oyImage_WritePNG( image, filename, tags );
+    result = oyImage_WritePNG( image, filename, opts );
     oyImage_Release( &image );
   }
   else
@@ -453,7 +453,7 @@ int      oPNGFilterPlug_ImageOutputPNGWrite (
              OY_DBG_FORMAT_ "could not open: %s",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ) );
 
-  oyOptions_Release( &tags );
+  oyOptions_Release( &opts );
   oyFilterSocket_Release( &socket );
   oyFilterNode_Release( &node );
   return result;
