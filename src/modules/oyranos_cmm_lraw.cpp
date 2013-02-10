@@ -928,6 +928,11 @@ int      lrawFilterPlug_ImageInputRAWRun (
   error = oyOptions_SetFromText( &image_in_tags,
                               "//" OY_TYPE_STD OY_SLASH CMM_NICK "/filename",
                                  filename, OY_CREATE_NEW );
+  if(params->gamm[0] == 1.0 || params->gamm[1] == 1.0)
+    /* tell others that images are almost always linear */
+    error = oyOptions_SetFromText( &image_in_tags,
+                            "//" OY_TYPE_STD OY_SLASH CMM_NICK "/gamma_linear",
+                                   "1", OY_CREATE_NEW );
 
   if(error <= 0)
   {
@@ -1124,7 +1129,8 @@ const char * oyraApi4UiImageInputLibrawGetText (
                "with value \"1\" requestests a oyConfig_s object containing "
                "typical device informations about the cameraRAW file. "
                "The option \"render\" with value \"0\" will skip some of the "
-               "data processing.");
+               "data processing. The resulting image will be tagged with "
+               "\"filename\"=string and \"gamma_linear\"=\"1\".");
   }
   return 0;
 }
