@@ -1459,6 +1459,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
                    * remote_socket = oyFilterPlug_GetSocket( plug );
   oyImage_s * image_input = 0,
             * image_output = 0;
+  oyOptions_s * image_input_tags = 0;
   cmsHPROFILE * lps = 0;
   cmsHTRANSFORM xform = 0;
   oyOption_s * o = 0;
@@ -1513,6 +1514,27 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   len = sizeof(cmsHPROFILE) * (15 + 2 + 1);
   lps = oyAllocateFunc_( len );
   memset( lps, 0, len );
+
+  /* optimise for linear gamma */
+  image_input_tags = oyImage_GetTags( image_input );
+  if(oyOptions_FindString( image_input_tags, "gamma_linear", "1" ))
+  {
+    oyOption_s * opt =  oyOptions_Find( node_options, "precalculation_curves" );
+    oyOPTIONSOURCE_e precalculation_curves_source = oyOption_GetSource( opt );
+    WARNc3_S("gamma_linear: %s precalculation_curves: %s source: %d",
+             oyOptions_FindString( image_input_tags, "gamma_linear", "1" ),
+             oyOptions_FindString( node_options, "precalculation_curves", 0 ),
+             precalculation_curves_source );
+    if((precalculation_curves_source == oyOPTIONSOURCE_FILTER ||
+        precalculation_curves_source == oyOPTIONSOURCE_NONE) &&
+       !oyOptions_FindString( node_options, "precalculation_curves", "1" ))
+    {
+      oyOptions_SetFromText( &node_options, "precalculation_curves", "1", OY_CREATE_NEW );
+      WARNc_S("set precalculation_curves: 1");
+    }
+    oyOption_Release( &opt );
+  }
+  oyOptions_Release( &image_input_tags );
 
   /* input profile */
   lps[ profiles_n++ ] = lcm2AddProfile( image_input_profile );
@@ -2075,7 +2097,9 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   oyDATATYPE_e data_type_in = 0,
                data_type_out = 0;
   int bps_in;
+#if defined(DEBAUG)
   oyPixel_t pixel_layout_in;
+#endif
 
   oyFilterSocket_s * socket = oyFilterPlug_GetSocket( requestor_plug );
   oyFilterPlug_s * plug = 0;
@@ -2090,7 +2114,9 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   input_node = oyFilterNode_GetPlugNode( node, 0 );
 
   image_input = oyFilterPlug_ResolveImage( plug, socket, ticket );
+#if defined(DEBAUG)
   pixel_layout_in = oyImage_GetPixelLayout( image_input, oyLAYOUT );
+#endif
 
   image_output = oyPixelAccess_GetOutputImage( ticket );
 
