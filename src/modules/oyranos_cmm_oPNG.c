@@ -424,10 +424,20 @@ int      oPNGFilterPlug_ImageOutputPNGWrite (
   if(result <= 0)
   {
     filename = oyOptions_FindString( tags, "filename", 0 );
+    if(!filename)
+      result = 1;
   }
 
   if(filename)
     fp = fopen( filename, "wb" );
+  else
+  {
+    message( oyMSG_WARN, node,
+             OY_DBG_FORMAT_ "filename missed",
+             OY_DBG_ARGS_ );
+    if(result <= 0)
+      result = 1;
+  }
 
   if(fp)
   {
@@ -438,6 +448,10 @@ int      oPNGFilterPlug_ImageOutputPNGWrite (
     result = oyImage_WritePNG( image, filename, tags );
     oyImage_Release( &image );
   }
+  else
+    message( oyMSG_WARN, node,
+             OY_DBG_FORMAT_ "could not open: %s",
+             OY_DBG_ARGS_, oyNoEmptyString_m_( filename ) );
 
   oyOptions_Release( &tags );
   oyFilterSocket_Release( &socket );
