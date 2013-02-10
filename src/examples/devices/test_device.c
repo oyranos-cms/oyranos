@@ -294,6 +294,8 @@ int main(int argc, char *argv[])
 
         error = oyDeviceGetInfo( c, oyNAME_NICK, options, &text,
                                  oyAllocFunc );
+        oyDeviceAskProfile2( c, options, &prof );
+
         if(!simple)
         {
           oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
@@ -307,7 +309,6 @@ int main(int argc, char *argv[])
                               (i+1 == n) || device_pos != -1 ? "" : "\n" );
         } else
         {
-          oyDeviceAskProfile2( c, options, &prof );
           data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc);
           if(size && data)
             oyDeAllocFunc( data );
@@ -330,7 +331,6 @@ int main(int argc, char *argv[])
         /* verbose adds */
         if(verbose)
         {
-          oyDeviceAskProfile2( c, options, &prof );
           data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc);
           if(size && data)
             oyDeAllocFunc( data );
@@ -347,11 +347,11 @@ int main(int argc, char *argv[])
                       oyConfig_FindString( c, "key_set_name", 0 ) :
                       OY_PROFILE_NONE );
 
-          oyProfile_Release( &prof );
           oyDeAllocFunc( text );
           text = 0;
         }
 
+        oyProfile_Release( &prof );
         oyConfig_Release( &c );
       }
 
