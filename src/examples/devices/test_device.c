@@ -304,7 +304,7 @@ int main(int argc, char *argv[])
                                    oyAllocFunc );
           oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
                               "%s%s", text ? text : "???",
-                                    i+1 == n ? "" : "\n" );
+                              (i+1 == n) || device_pos != -1 ? "" : "\n" );
         } else
         {
           oyDeviceAskProfile2( c, options, &prof );
@@ -315,7 +315,7 @@ int main(int argc, char *argv[])
           filename = oyProfile_GetFileName( prof, -1 );
           oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
                               "%s%s", filename ? (strrchr(filename,OY_SLASH_C) ? strrchr(filename,OY_SLASH_C)+1:filename) : OY_PROFILE_NONE,
-                                    i+1 == n ? "" : "\n" );
+                              (i+1 == n) || device_pos != -1 ? "" : "\n" );
         }
         if(verbose)
         {
