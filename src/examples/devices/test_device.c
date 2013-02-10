@@ -59,8 +59,9 @@ void displayHelp(char ** argv)
   printf("         --show-non-device-related\t%s\n",_("show non matching profiles"));
   printf("\n");
   printf("  %s\n",               _("Dump data:"));
-  printf("      %s -f=[icc|openicc] [-o=file.json] -c class -d number [--only-db]\n", argv[0]);
+  printf("      %s -f=[icc|openicc] [-o=file.json] -c class -d number | -j device.json [--only-db]\n", argv[0]);
   printf("         -o %s\t%s\n",    _("FILE"),   _("write to specified file"));
+  printf("         -j %s\t%s\n",    _("FILE"),   _("use device JSON alternatively to -c and -d options"));
   printf("         --only-db\t%s\n",_("use only DB keys for -f=openicc"));
   printf("\n");
   printf("  %s\n",               _("Show Help:"));
@@ -97,7 +98,8 @@ int main(int argc, char *argv[])
   int skip_x_color_region_target = 0;
   char * prof_name = 0,
        * new_profile_name = 0;
-  char * device_class = 0;
+  char * device_class = 0,
+       * device_json = 0;
   int verbose = 0;
   int simple = 0;
 
@@ -139,6 +141,7 @@ int main(int argc, char *argv[])
               case 'e': erase = 1; break;
               case 'c': OY_PARSE_STRING_ARG(device_class); break;
               case 'd': OY_PARSE_INT_ARG( device_pos ); break;
+              case 'j': OY_PARSE_STRING_ARG( device_json ); break;
               case 'f': OY_PARSE_STRING_ARG(format); break;
               case 'l': list = 1; break;
               case 'o': OY_PARSE_STRING_ARG(output); break;
@@ -264,6 +267,21 @@ int main(int argc, char *argv[])
                _("Available devices"), n);
       exit(1);
     }
+  }
+
+  if(device_json)
+  {
+    size_t json_size = 0;
+    char * json_text = oyReadFileToMem_( device_json, &json_size, oyAllocateFunc_ );
+    error = oyDeviceFromJSON( json_text, 0, &c );
+    if(!c)
+    {
+      fprintf( stderr, "%s: %s\n", _("Could not resolve device_json"),
+               device_json);
+      exit(1);
+    }
+    device_name = oyConfig_FindString( c, "device_name", 0 );
+    device_class = oyConfig_FindString( c, "device_class", 0 );
   }
 
   if(list && device_class)
@@ -443,30 +461,36 @@ int main(int argc, char *argv[])
       if(strcmp(prof_name,"") == 0 ||
          strcmp(prof_name,"automatic") == 0)
       {
-        /* start with complete device info */
-        oyConfig_Release( &c );
-        if(!skip_x_color_region_target)
-          oyOptions_SetFromText( &options,
+        if(!device_json)
+        {
+          /* start with complete device info */
+          oyConfig_Release( &c );
+          if(!skip_x_color_region_target)
+            oyOptions_SetFromText( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                          "yes", OY_CREATE_NEW );
-        error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+          error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                    "properties", OY_CREATE_NEW );  
-        error = oyDeviceGet( 0, device_class, device_name, options, &c );
-        oyOptions_Release( &options );
+          error = oyDeviceGet( 0, device_class, device_name, options, &c );
+          oyOptions_Release( &options );
+        }
 
         /*error = oyDeviceSetProfile( c, NULL ); no profile name not supported*/
         error = oyDeviceUnset( c );
         error = oyConfig_EraseFromDB( c );
 
-        oyConfig_Release( &c );
-        if(!skip_x_color_region_target)
-          oyOptions_SetFromText( &options,
+        if(!device_json)
+        {
+          oyConfig_Release( &c );
+          if(!skip_x_color_region_target)
+            oyOptions_SetFromText( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                          "yes", OY_CREATE_NEW );
-        error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+          error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                    "properties", OY_CREATE_NEW );  
-        error = oyDeviceGet( 0, device_class, device_name, options, &c );
-        oyOptions_Release( &options );
+          error = oyDeviceGet( 0, device_class, device_name, options, &c );
+          oyOptions_Release( &options );
+        }
       } else
       {
         error = oyDeviceSetProfile( c, prof_name );
@@ -716,16 +740,19 @@ int main(int argc, char *argv[])
     char * profile_name = 0;
     char * out_name = 0;
 
-    /* get all device informations from the module */
-    oyConfig_Release( &c );
-    if(!skip_x_color_region_target)
-      oyOptions_SetFromText( &options,
+    if(!device_json)
+    {
+      /* get all device informations from the module */
+      oyConfig_Release( &c );
+      if(!skip_x_color_region_target)
+        oyOptions_SetFromText( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                          "yes", OY_CREATE_NEW );
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
-                                   "properties", OY_CREATE_NEW );  
-    error = oyDeviceGet( 0, device_class, device_name, options, &c );
-    oyOptions_Release( &options );
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                     "properties", OY_CREATE_NEW );  
+      error = oyDeviceGet( 0, device_class, device_name, options, &c );
+      oyOptions_Release( &options );
+    }
     if(!c)
     {
       fprintf( stderr, "%s\n  device_class: \"%s\" device_name: \"%s\"  %s: %d\n", _("Could not resolve device."),
