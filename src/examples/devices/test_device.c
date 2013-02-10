@@ -90,14 +90,12 @@ int main(int argc, char *argv[])
   int list_taxi_profiles = 0;
   int show_non_device_related = 0;
   int setup = 0;
-  int daemon = 0;
   int device_pos = -1;
   char * format = 0;
   char * output = 0;
   int only_db = 0;
   int skip_x_color_region_target = 0;
-  char * display_name = 0,
-       * prof_name = 0,
+  char * prof_name = 0,
        * new_profile_name = 0;
   char * device_class = 0;
   int verbose = 0;
@@ -163,8 +161,6 @@ int main(int argc, char *argv[])
                         { skip_x_color_region_target = 1; i=100; break; }
                         else if(OY_IS_ARG("setup"))
                         { setup = 1; i=100; break; }
-                        else if(OY_IS_ARG("daemon"))
-                        { daemon = 1; i=100; break; }
                         else if(OY_IS_ARG("format"))
                         { OY_PARSE_STRING_ARG2(format, "format"); break; }
                         else if(OY_IS_ARG("output"))
@@ -175,9 +171,6 @@ int main(int argc, char *argv[])
                         { OY_PARSE_STRING_ARG2(new_profile_name, "name"); break; }
                         else if(OY_IS_ARG("profile"))
                         { OY_PARSE_STRING_ARG2(prof_name, "profile"); break; }
-                        else if(OY_IS_ARG("display"))
-                        { const char * t=0; OY_PARSE_STRING_ARG2(t, "display");
-                          if(t) display_name = strdup(t); break; }
                         else if(OY_IS_ARG("list"))
                         { list = 1; i=100; break; }
                         else if(OY_IS_ARG("list-profiles"))
@@ -279,6 +272,10 @@ int main(int argc, char *argv[])
          * report = NULL;
     int i,n;
 
+    if(!skip_x_color_region_target)
+      error = oyOptions_SetFromText( &options,
+              "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes",
+                                     OY_CREATE_NEW );
     n = oyConfigs_Count( devices );
     if(error <= 0)
     {
@@ -314,6 +311,7 @@ int main(int argc, char *argv[])
           data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc);
           if(size && data)
             oyDeAllocFunc( data );
+          data = 0;
           filename = oyProfile_GetFileName( prof, -1 );
           oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
                               "%s%s", filename ? (strrchr(filename,OY_SLASH_C) ? strrchr(filename,OY_SLASH_C)+1:filename) : OY_PROFILE_NONE,
@@ -336,6 +334,7 @@ int main(int argc, char *argv[])
           data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc);
           if(size && data)
             oyDeAllocFunc( data );
+          data = 0;
           filename = oyProfile_GetFileName( prof, -1 );
           printf( " server profile \"%s\" size: %d\n",
                   filename?filename:OY_PROFILE_NONE, (int)size );
@@ -350,6 +349,7 @@ int main(int argc, char *argv[])
 
           oyProfile_Release( &prof );
           oyDeAllocFunc( text );
+          text = 0;
         }
 
         oyConfig_Release( &c );
@@ -712,8 +712,6 @@ int main(int argc, char *argv[])
   } else if(format && c)
   {
     oyConfDomain_s * d = oyConfDomain_FromReg( device_class, 0 );
-    const char * device_type = oyConfDomain_GetText( d, "device_class",
-                                                     oyNAME_NICK );
     char * json = 0;
     char * profile_name = 0;
     char * out_name = 0;
