@@ -519,6 +519,12 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
           o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "icc_profile" );
           if( o )
             p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
+          if(!p)
+          {
+            tmp = oyConfig_FindString( device, "profile_name", 0 );
+            p = oyProfile_FromFile( tmp, 0, 0 );
+            tmp = 0;
+          }
           if( p )
           {            
             tmp = oyProfile_GetFileName( p, 0 );
@@ -736,6 +742,31 @@ int            Configs_FromPattern (
           ppdClose( ppd_file ); ppd_file = 0;
         }
 
+        /* Build oyNAME_NAME */
+        if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
+        { 
+          char * text = 0;
+          oyProfile_s * p = 0;
+          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "icc_profile" );
+          if( o )
+            p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
+          if( p )
+          {            
+            const char * tmp = oyProfile_GetFileName( p, 0 );
+            STRING_ADD( text, "  " );
+            if(strrchr( tmp, OY_SLASH_C ))
+              STRING_ADD( text, strrchr( tmp, OY_SLASH_C ) + 1 );
+            else
+              STRING_ADD( text, tmp );
+
+            oyProfile_Release( &p );
+
+            error = oyOptions_SetFromText( oyConfig_GetOptions(device,"data"),
+                                         CMM_BASE_REG OY_SLASH "oyNAME_NAME",
+                                         text, OY_CREATE_NEW );
+            if(text) oyDeAllocateFunc_( text ); text = 0;
+          }
+        }
         oyConfigs_MoveIn( devices, &device, -1 );
       }
 
