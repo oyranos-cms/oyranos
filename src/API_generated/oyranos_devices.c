@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/02/09
+ *  @date     2013/02/10
  */
 
 
@@ -901,7 +901,7 @@ OYAPI int  OYEXPORT
 /** Function oyDeviceSetProfile
  *  @brief   set the device profile
  *
- *  The function will lookup the monitor in the Oyranos device database
+ *  The function will lookup the device in the Oyranos device database
  *  and stores the given profile there.
  *
  *  To set a new profile und update the device please call the following
@@ -958,7 +958,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                    "properties", OY_CREATE_NEW );
 
-    /** 1.2 get monitor device */
+    /** 1.2 call the device module */
     if(error <= 0)
       error = oyDeviceBackendCall( device, options );
 
@@ -1336,13 +1336,16 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
   int error = !json_text || !device;
   oyConfig_s * device_ = NULL;
   oyjl_value_s * json = 0,
-               * json_device;
+               * json_device,
+               * json_class;
   char * val, * key, * t = NULL;
   const char * xpath = "org/freedesktop/openicc/device/[0]/[%d]";
   int count, i;
   int32_t pos = 0;
   const char * underline_key_suffix = oyOptions_FindString( options,
                                                     "underline_key_suffix", 0 );
+  const char * device_class;
+  oyjl_value_s * v;
 
   yajl_status status;
 
@@ -1355,6 +1358,14 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
   oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                           xpath, pos );
 
+  json_class = oyjl_tree_get_value( json, "org/freedesktop/openicc/device" );
+  v = oyjl_value_pos_get( json_class, 0 );
+  device_class = oyjl_print_text( &v->value.object->key );
+  if(device_class)
+    oyConfig_AddDBData( device_, "device_class", device_class, OY_CREATE_NEW );
+  else
+    WARNc1_S( "%s\n", _("idevice_class not found:") );
+
   json_device = oyjl_tree_get_value( json, t );
 
   if(!json_device)
@@ -1364,7 +1375,7 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
   count = oyjl_value_count(json_device);
   for(i = 0; i < count; ++i)
   {
-    oyjl_value_s * v = oyjl_value_pos_get( json_device, i );
+    v = oyjl_value_pos_get( json_device, i );
     key = oyStringCopy_(oyjl_print_text( &v->value.object->key ), 0);
     val = oyjl_value_text( v, oyAllocateFunc_ );
 
@@ -1449,14 +1460,20 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
       {
         oyOption_s * opt;
 
-        if(opts)
-          opt = oyOptions_Get( opts, 0 );
-        else
-          opt = oyConfig_Get( device, 0 );
+        device_class = oyConfig_FindString( device, "device_class", 0 );
+        if(!device_class)
+        {
+          if(opts)
+            opt = oyOptions_Get( opts, 0 );
+          else
+            opt = oyConfig_Get( device, 0 );
 
-        domain = oyConfDomain_FromReg( oyOption_GetRegistration( opt ), 0 );
-        device_class = oyConfDomain_GetText( domain, "device_class", oyNAME_NICK );
-        oyOption_Release( &opt );
+          domain = oyConfDomain_FromReg( oyOption_GetRegistration( opt ), 0 );
+          device_class = oyConfDomain_GetText( domain, "device_class", oyNAME_NICK );
+          oyOption_Release( &opt );
+          oyConfDomain_Release( &domain );
+        }
+
 
         /* add device class */
         oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
@@ -1524,7 +1541,6 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
 
         oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                             "\n"OPENICC_DEVICE_JSON_FOOTER );
-        oyConfDomain_Release( &domain );
       }
       else
         error = -1;
