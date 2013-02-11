@@ -2097,7 +2097,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   oyDATATYPE_e data_type_in = 0,
                data_type_out = 0;
   int bps_in;
-#if defined(DEBAUG)
+#if defined(DEBUG)
   oyPixel_t pixel_layout_in;
 #endif
 
@@ -2114,7 +2114,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   input_node = oyFilterNode_GetPlugNode( node, 0 );
 
   image_input = oyFilterPlug_ResolveImage( plug, socket, ticket );
-#if defined(DEBAUG)
+#if defined(DEBUG)
   pixel_layout_in = oyImage_GetPixelLayout( image_input, oyLAYOUT );
 #endif
 
