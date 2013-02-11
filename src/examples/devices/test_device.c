@@ -98,8 +98,8 @@ int main(int argc, char *argv[])
   int skip_x_color_region_target = 0;
   char * prof_name = 0,
        * new_profile_name = 0;
-  char * device_class = 0,
-       * device_json = 0;
+  const char * device_class = 0,
+             * device_json = 0;
   int verbose = 0;
   int simple = 0;
 
