@@ -268,6 +268,7 @@ IF( GETTEXT_FOUND )
         modules/*.cpp
         modules/devices/*.cpp
         tools/*.c tools/qcmsevents/*.cpp tools/qcmsevents/*.cxx
+        examples/devices/*.c examples/libraw/*.cpp
       )
 
   ADD_CUSTOM_COMMAND(OUTPUT ${_potFile}
