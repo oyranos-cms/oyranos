@@ -209,7 +209,7 @@ int main( int argc , char** argv )
                         printf("      %s -l [-x pos -y pos | -d number] --short\n", argv[0]);
                         printf("      %s\n",           _("--short print only the file name"));
                         printf("\n");
-                        printf("  %s\n",               _("List Taxi profile for selected device:"));
+                        printf("  %s\n",               _("List Taxi DB profiles for selected device:"));
                         printf("      %s --list-taxi [-x pos -y pos | -d number]\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("List modules:"));

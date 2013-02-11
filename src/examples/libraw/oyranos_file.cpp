@@ -47,6 +47,8 @@ void displayHelp(char ** argv)
   printf("\n");
   printf("  %s\n",               _("Dump data:"));
   printf("      %s -f=[icc|openicc] -i file.dng [-o=device.json] [--only-db]\n", argv[0]);
+  printf("         -f icc   \t%s\n",_("extract ICC colour profile"));
+  printf("         -f openicc\t%s\n",_("generate OpenICC device colour reproduction JSON"));
   printf("         --only-db\t%s\n",_("use only DB keys for -f=openicc"));
   printf("\n");
   printf("  %s\n",               _("Show Help:"));
