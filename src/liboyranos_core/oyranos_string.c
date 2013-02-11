@@ -76,8 +76,8 @@ int          oyStringToDouble        ( const char        * text,
   if(0 && oy_debug_memory)
   {
     fprintf( stderr, OY_DBG_FORMAT_""OY_PRINT_POINTER" \"%s\" %d "OY_PRINT_POINTER" \"%s\"\n",
-            OY_DBG_ARGS_,(intptr_t)text, text, len,
-            t, t  );
+            OY_DBG_ARGS_,(ptrdiff_t)text, text, len,
+            (ptrdiff_t)t, t  );
     fflush( stderr );
   }
 
@@ -156,8 +156,8 @@ char*              oyStringAppend_   ( const char        * text,
       if(0 && oy_debug_memory)
       {
         printf( OY_DBG_FORMAT_""OY_PRINT_POINTER" \"%s\" %d %d "OY_PRINT_POINTER" \"%s\"\n",
-                OY_DBG_ARGS_,(intptr_t)text_copy, text_copy, text_len,
-                append_len, append,append  );
+                OY_DBG_ARGS_,(ptrdiff_t)text_copy, text_copy, text_len,
+                append_len, (ptrdiff_t)append,append  );
         fflush( stdout );
       }
       memcpy( &text_copy[text_len], append, append_len );
