@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2013-02-11 07:04+0100\n"
+"POT-Creation-Date: 2013-02-12 07:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3544,7 +3544,7 @@ msgid "List local DB profiles for selected device:"
 msgstr ""
 
 #: examples/devices/test_device.c:55 examples/devices/test_device.c:59
-msgid "show non matching profiles"
+msgid "show as well non matching profiles"
 msgstr ""
 
 #: examples/devices/test_device.c:63 examples/libraw/oyranos_file.cpp:59

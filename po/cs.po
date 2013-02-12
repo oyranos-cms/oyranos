@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2013-02-11 07:04+0100\n"
+"POT-Creation-Date: 2013-02-12 07:03+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -3895,14 +3895,14 @@ msgstr "zvolte formát, v současnosti pouze CLUT"
 msgid "select tag"
 msgstr "vybrat štítek"
 
+#: examples/devices/test_device.c:55 examples/devices/test_device.c:59
+#, fuzzy
+msgid "show as well non matching profiles"
+msgstr "Žádný profil obrázku"
+
 #: tools/oyranos_profiles.c:87
 msgid "show hints and question GUI"
 msgstr "ukázat GUI nápovědy a otázek"
-
-#: examples/devices/test_device.c:55 examples/devices/test_device.c:59
-#, fuzzy
-msgid "show non matching profiles"
-msgstr "Žádný profil obrázku"
 
 #: examples/devices/test_device.c:74
 msgid "skip X Color Management device profile"

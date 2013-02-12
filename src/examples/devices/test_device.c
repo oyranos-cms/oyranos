@@ -52,11 +52,11 @@ void displayHelp(char ** argv)
   printf("\n");
   printf("  %s\n",               _("List local DB profiles for selected device:"));
   printf("      %s --list-profiles -c class -d number [--show-non-device-related]\n", argv[0]);
-  printf("         --show-non-device-related\t%s\n",_("show non matching profiles"));
+  printf("         --show-non-device-related\t%s\n",_("show as well non matching profiles"));
   printf("\n");
   printf("  %s\n",               _("List Taxi DB profiles for selected device:"));
   printf("      %s --list-taxi-profiles -c class -d number [--show-non-device-related]\n", argv[0]);
-  printf("         --show-non-device-related\t%s\n",_("show non matching profiles"));
+  printf("         --show-non-device-related\t%s\n",_("show as well non matching profiles"));
   printf("\n");
   printf("  %s\n",               _("Dump data:"));
   printf("      %s -f=[icc|openicc] [-o=file.json] -c class -d number | -j device.json [--only-db]\n", argv[0]);

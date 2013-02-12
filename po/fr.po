@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2013-02-11 07:04+0100\n"
+"POT-Creation-Date: 2013-02-12 07:03+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: ALL <ku.b@gmx.de>\n"
@@ -3709,14 +3709,14 @@ msgstr ""
 msgid "select tag"
 msgstr ""
 
+#: examples/devices/test_device.c:55 examples/devices/test_device.c:59
+#, fuzzy
+msgid "show as well non matching profiles"
+msgstr "ICC Profils"
+
 #: tools/oyranos_profiles.c:87
 msgid "show hints and question GUI"
 msgstr ""
-
-#: examples/devices/test_device.c:55 examples/devices/test_device.c:59
-#, fuzzy
-msgid "show non matching profiles"
-msgstr "ICC Profils"
 
 #: examples/devices/test_device.c:74
 msgid "skip X Color Management device profile"

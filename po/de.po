@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2013-02-11 07:03+0100\n"
+"POT-Creation-Date: 2013-02-12 07:03+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -3782,17 +3782,17 @@ msgstr "wähle Format, z.Z. nur clut möglich"
 msgid "select tag"
 msgstr "wähle Eintrag"
 
+#: examples/devices/test_device.c:55 examples/devices/test_device.c:59
+msgid "show as well non matching profiles"
+msgstr "zeige auch nicht passende Profile"
+
 #: tools/oyranos_profiles.c:87
 msgid "show hints and question GUI"
 msgstr "zeigt Hinweise und Fragen Benutzeroberfläche"
 
-#: examples/devices/test_device.c:55 examples/devices/test_device.c:59
-msgid "show non matching profiles"
-msgstr "zeige auch nicht passende Profile"
-
 #: examples/devices/test_device.c:74
 msgid "skip X Color Management device profile"
-msgstr "ignore X Color Management Geräteprofil"
+msgstr "ignoriere X Color Management Geräteprofil"
 
 #: tools/oyranos_profile_graph.c:182
 msgid "specify incemental increase of the thickness of the graph lines"
