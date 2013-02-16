@@ -422,8 +422,8 @@ const oyChar *   oyICCTagDescription ( icTagSignature      sig )
     case 1128875332: return _("Measured colours");
     /*Pmtr*/
     case 1349350514: return _("Profiling parameters");
-    /*vcgt*/
-    case 1986226036: return _("VideoCardGammaTable");
+    /*vcgt 1986226036*/
+    case icSigVideoCardGammaTable: return _("VideoCardGammaTable");
     /*chad*/
     case 1667785060: return _("Colour adaption matrix"); 
     /*chrm*/
@@ -504,7 +504,7 @@ const oyChar *   oyICCTagName        ( icTagSignature      sig )
     case 1147500100: return "DevD";
     case 1128875332: return "CIED";
     case 1349350514: return "Pmtr";
-    case 1986226036: return "vcgt";
+    case icSigVideoCardGammaTable: return "vcgt";
     case 1667785060: return "chad";
     case icSigChromaticityType: return "chrm";
     case 1668051567: return "clro";

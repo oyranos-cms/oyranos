@@ -138,6 +138,11 @@ const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
 #define icSigNativeDisplayInfoType 0x6e64696e /* 'ndin' */
 #endif
 
+#ifndef icSigVideoCardGammaTable
+#define icSigVideoCardGammaTable 0x76636774 /* 'vcgt' */
+#endif
+
+
 /** @internal
  *  @brief deviceSettingsType tag for ICC profiles
  *  @ingroup icc_low
