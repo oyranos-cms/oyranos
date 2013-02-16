@@ -58,8 +58,11 @@ void displayHelp(char ** argv)
   printf("      %s --list-taxi-profiles -c class -d number [--show-non-device-related]\n", argv[0]);
   printf("         --show-non-device-related\t%s\n",_("show as well non matching profiles"));
   printf("\n");
-  printf("  %s\n",               _("Dump data:"));
-  printf("      %s -f=[icc|openicc] [-o=file.json] -c class -d number | -j device.json [--only-db]\n", argv[0]);
+  printf("  %s\n",               _("Dump device colour state:"));
+  printf("      %s -f=[icc|openicc|openicc-rank-map] [-o=file.json] -c class -d number | -j device.json [--only-db]\n", argv[0]);
+  printf("         -f icc  \t%s\n",              _("dump ICC profile"));
+  printf("         -f openicc\t%s\n",            _("dump OpenICC device JSON"));
+  printf("         -f openicc-rank-map\t%s\n",   _("dump OpenICC rank map JSON"));
   printf("         -o %s\t%s\n",    _("FILE"),   _("write to specified file"));
   printf("         -j %s\t%s\n",    _("FILE"),   _("use device JSON alternatively to -c and -d options"));
   printf("         --only-db\t%s\n",_("use only DB keys for -f=openicc"));
@@ -106,7 +109,8 @@ int main(int argc, char *argv[])
   oyProfile_s * prof = 0;
   oyConfigs_s * devices = 0;
   oyOptions_s * options = 0;
-  oyConfig_s * c = 0;
+  oyConfig_s * c = 0,
+             * dt = 0;
   size_t size = 0;
   const char * filename = 0,
              * device_name = 0;
@@ -471,7 +475,12 @@ int main(int argc, char *argv[])
                          "yes", OY_CREATE_NEW );
           error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                    "properties", OY_CREATE_NEW );  
-          error = oyDeviceGet( 0, device_class, device_name, options, &c );
+          error = oyDeviceGet( 0, device_class, device_name, options, &dt );
+          if(dt)
+          {
+            oyConfig_Release( &c );
+            c = dt; dt = 0;
+          }
           oyOptions_Release( &options );
         }
 
@@ -488,7 +497,12 @@ int main(int argc, char *argv[])
                          "yes", OY_CREATE_NEW );
           error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                    "properties", OY_CREATE_NEW );  
-          error = oyDeviceGet( 0, device_class, device_name, options, &c );
+          error = oyDeviceGet( 0, device_class, device_name, options, &dt );
+          if(dt)
+          {
+            oyConfig_Release( &c );
+            c = dt; dt = 0;
+          }
           oyOptions_Release( &options );
         }
       } else
@@ -743,14 +757,18 @@ int main(int argc, char *argv[])
     if(!device_json)
     {
       /* get all device informations from the module */
-      oyConfig_Release( &c );
       if(!skip_x_color_region_target)
         oyOptions_SetFromText( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                          "yes", OY_CREATE_NEW );
       error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );  
-      error = oyDeviceGet( 0, device_class, device_name, options, &c );
+      error = oyDeviceGet( 0, device_class, device_name, options, &dt );
+      if(dt)
+      {
+        oyConfig_Release( &c );
+        c = dt; dt = 0;
+      }
       oyOptions_Release( &options );
     }
     if(!c)
@@ -766,21 +784,39 @@ int main(int argc, char *argv[])
     error = oyDeviceProfileFromDB( c, &profile_name, oyAllocFunc );
     if(profile_name) oyDeAllocFunc( profile_name ); profile_name = 0;
 
-    if(strcmp(format,"openicc") == 0)
+    if(strcmp(format,"openicc") == 0 ||
+       strcmp(format,"openicc-rank-map") == 0)
     {
-      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/options/source",
-                                   "db", OY_CREATE_NEW );  
-      error = oyDeviceToJSON( c, options, &json, oyAllocFunc );
-      oyOptions_Release( &options );
-
-      /* it is possible that no DB keys are available; use all others */
-      if(!json && !only_db)
-        error = oyDeviceToJSON( c, NULL, &json, oyAllocFunc );
-
-      if(!json)
+      if(strcmp(format,"openicc") == 0)
       {
-        fprintf( stderr, "no DB data available\n" );
-        exit(0);
+        error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/options/source",
+                                   "db", OY_CREATE_NEW );  
+        error = oyDeviceToJSON( c, options, &json, oyAllocFunc );
+        oyOptions_Release( &options );
+
+        /* it is possible that no DB keys are available; use all others */
+        if(!json && !only_db)
+          error = oyDeviceToJSON( c, NULL, &json, oyAllocFunc );
+
+        if(!json)
+        {
+          fprintf( stderr, "no DB data available\n" );
+          exit(0);
+        }
+      } else
+      {
+        const oyRankMap * map = oyConfig_GetRankMap( c );
+        if(!map)
+        { fprintf( stderr, "no RankMap found\n" ); exit(0);
+        }
+
+        error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/options/device_class",
+                                       "camera", OY_CREATE_NEW );  
+        oyRankMapToJSON( map, options, &json, oyAllocFunc );
+        oyOptions_Release( &options );
+        if(!json)
+        { fprintf( stderr, "no JSON from RankMap available\n" ); exit(0);
+        }
       }
 
       if(output)
