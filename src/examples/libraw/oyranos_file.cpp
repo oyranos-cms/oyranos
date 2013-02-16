@@ -49,6 +49,7 @@ void displayHelp(char ** argv)
   printf("      %s -f=[icc|openicc] -i file.dng [-o=device.json] [--only-db]\n", argv[0]);
   printf("         -f icc   \t%s\n",_("extract ICC colour profile"));
   printf("         -f openicc\t%s\n",_("generate OpenICC device colour reproduction JSON"));
+  printf("         -f openicc-rank-map\t%s\n",_("dump OpenICC device colour reproduction rank map JSON"));
   printf("         --only-db\t%s\n",_("use only DB keys for -f=openicc"));
   printf("\n");
   printf("  %s\n",               _("Show Help:"));
@@ -266,23 +267,41 @@ int main(int argc, char ** argv)
 
       }
     } else
-    if(strcmp(format,"openicc") == 0)
+    if(strcmp(format,"openicc") == 0 ||
+       strcmp(format,"openicc-rank-map") == 0)
     {
       char * json = 0;
 
-      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/options/source",
-                                   "db", OY_CREATE_NEW );  
-      error = oyDeviceToJSON( device, options, &json, oyAllocFunc );
-      oyOptions_Release( &options );
-
-      /* it is possible that no DB keys are available; use all others */
-      if(!json && !only_db)
-        error = oyDeviceToJSON( device, NULL, &json, oyAllocFunc );
-
-      if(!json)
+      if(strcmp(format,"openicc") == 0)
       {
-        fprintf( stderr, "no DB data available\n" );
-        exit(0);
+        error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/options/source",
+                                       "db", OY_CREATE_NEW );  
+        error = oyDeviceToJSON( device, options, &json, oyAllocFunc );
+        oyOptions_Release( &options );
+
+        /* it is possible that no DB keys are available; use all others */
+        if(!json && !only_db)
+          error = oyDeviceToJSON( device, NULL, &json, oyAllocFunc );
+
+        if(!json)
+        {
+          fprintf( stderr, "no DB data available\n" );
+          exit(0);
+        }
+      } else
+      {
+        const oyRankMap * map = oyConfig_GetRankMap( device );
+        if(!map)
+        { fprintf( stderr, "no RankMap found\n" ); exit(0);
+        }
+
+        error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/options/device_class",
+                                       "camera", OY_CREATE_NEW );  
+        oyRankMapToJSON( map, options, &json, oyAllocFunc );
+        oyOptions_Release( &options );
+        if(!json)
+        { fprintf( stderr, "no JSON from RankMap available\n" ); exit(0);
+        }
       }
 
       if(output)
