@@ -10,12 +10,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/12/13
+ *  @date     2013/02/13
  */
 
 
@@ -740,7 +740,7 @@ int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
  *  @memberof oyStructList_s
  *  @brief    Add a name to a list
  *
- *  The text is added a a oyName_s::name member variable.
+ *  The text is added to a oyName_s::name member variable.
  *
  *  @version Oyranos: 0.1.13
  *  @date    2008/10/07

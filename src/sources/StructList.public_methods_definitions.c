@@ -613,7 +613,7 @@ oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
  *  @memberof oyStructList_s
  *  @brief    Add a name to a list
  *
- *  The text is added a a oyName_s::name member variable and owned by the list.
+ *  The text is added to a oyName_s::name member variable and owned by the list.
  *
  *  @version Oyranos: 0.1.13
  *  @date    2008/10/07
