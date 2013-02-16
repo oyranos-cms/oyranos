@@ -402,7 +402,7 @@ int main( int argc , char** argv )
         oyProfile_s * ip = 0;
         char * show_text = 0;
 
-        if(file_name && strlen(file_name) > 10 && strcmp(file_name,"http://"))
+        if(file_name && strlen(file_name) > 10 && memcmp(file_name,"http://", 10) == 0)
         {
           size_t size = 0;
           char * mem = NULL;
