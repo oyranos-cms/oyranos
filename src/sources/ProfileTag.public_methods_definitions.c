@@ -324,9 +324,9 @@ oyStructList_s*oyProfileTag_Get      ( oyProfileTag_s    * tag )
  *  @param[in]     allocateFunc        the user allocator for the returned list
  *  @return                            a list of strings
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.5
  *  @since   2008/01/03 (Oyranos: 0.1.8)
- *  @date    2008/06/19
+ *  @date    2013/02/17
  */
 char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
                                        int32_t           * n,
@@ -458,6 +458,10 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
 
         *n = texts_n;
       }
+
+    if(tag_size)
+      *tag_size = ((oyProfileTag_s_*)s)->size_;
+
     oyStructList_Release( &values );
   }
 
