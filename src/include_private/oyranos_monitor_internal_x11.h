@@ -60,6 +60,8 @@ typedef struct {
   RROutput             output;         /**< XRandR output */
   XRROutputInfo      * output_info;    /**< XRandR output info */
   int                  active_outputs; /**< outputs with crtc and gamma size */
+  int                  rr_version;     /**< XRandR version */
+  int                  rr_screen;      /**< nth XRandR output */
 # endif
   char               * system_port;    /**< the operating systems port name */
   oyBlob_s           * edid;           /**< edid for the device */
@@ -95,6 +97,8 @@ RROutput     oyX1Monitor_xrrOutput_    ( oyX1Monitor_s       * disp );
 XRROutputInfo *
              oyX1Monitor_xrrOutputInfo_( oyX1Monitor_s       * disp );
 int          oyX1Monitor_activeOutputs_( oyX1Monitor_s       * disp );
+int          oyX1Monitor_rrVersion_    ( oyX1Monitor_s       * disp );
+int          oyX1Monitor_rrScreen_     ( oyX1Monitor_s       * disp );
 # endif
 
 int          oyX1MonitorProfileSetup ( const char        * display_name,
