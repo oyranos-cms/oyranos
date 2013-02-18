@@ -1054,6 +1054,73 @@ oyTESTRESULT_e testSettings ()
   return result;
 }
 
+#include "oyranos_helper.h"
+oyTESTRESULT_e testInterpolation ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  uint16_t ramp[4] = { 0, 21845, 43690, 65535 };
+  float pol;
+
+  fprintf(stdout, "\n" );
+
+  pol = oyLinInterpolateRampU16( ramp, 4, 1.9 );
+  if(pol < ramp[3]/2.0)
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "Interpolation failed: %f                               ", pol );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "Interpolation is fine %f                     ", pol );
+  }
+
+  pol = oyLinInterpolateRampU16( ramp, 4, 1.5 );
+  if(pol != ramp[3]/2.0)
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "Interpolation failed: %f                               ", pol );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "Interpolation is fine.                                 " );
+  }
+
+  pol = oyLinInterpolateRampU16( ramp, 4, 2 );
+  if(pol != ramp[2])
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "Interpolation failed: %f                               ", pol );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "Interpolation is fine.                                 " );
+  }
+
+  pol = oyLinInterpolateRampU16( ramp, 4, -1 );
+  if(pol != 0)
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "Interpolation failed: %f                               ", pol );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "Interpolation is fine.                                 " );
+  }
+
+  pol = oyLinInterpolateRampU16( ramp, 4, 4 );
+  if(pol != ramp[3])
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "Interpolation failed: %f                               ", pol );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "Interpolation is fine.                                 " );
+  }
+  return result;
+}
+
 #include "oyProfile_s.h"
 
 oyTESTRESULT_e testProfile ()
@@ -4017,6 +4084,7 @@ int main(int argc, char** argv)
   TEST_RUN( testBlob, "oyBlob_s" );
   TEST_RUN( testSettings, "default oyOptions_s settings" );
   TEST_RUN( testConfDomain, "oyConfDomain_s");
+  TEST_RUN( testInterpolation, "Interpolation" );
   TEST_RUN( testProfile, "Profile handling" );
   TEST_RUN( testProfiles, "Profiles reading" );
   TEST_RUN( testProfileLists, "Profile lists" );

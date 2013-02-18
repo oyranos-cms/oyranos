@@ -120,6 +120,10 @@ char * oyReadUrlToMemf_              ( size_t            * size,
 
 /* --- mathematical helpers --- */
 
+float        oyLinInterpolateRampU16 ( uint16_t          * ramp,
+                                       int                 ramp_size,
+                                       float               pos );
+
 /* --- miscellaneous helpers --- */
 
 int                oyMiscBlobGetMD5_ ( void              * buffer,
