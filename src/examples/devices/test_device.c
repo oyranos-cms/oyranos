@@ -527,11 +527,6 @@ int main(int argc, char *argv[])
     icSignature profile_class = icSigDisplayClass;
     oyOptions_s * options = 0;
 
-    if(!skip_x_color_region_target)
-    oyOptions_SetFromText( &options,
-                   "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
-                         "yes", OY_CREATE_NEW );
-
     {
       oyConfDomain_s * d = oyConfDomain_FromReg( device_class, 0 );
       const char * icc_profile_class = oyConfDomain_GetText( d,
@@ -548,8 +543,33 @@ int main(int argc, char *argv[])
       oyConfDomain_Release( &d );
     }
 
-    if(c)
-      error = oyDeviceGetProfile( c, options, &profile );
+    {
+      /* get all device informations from the module */
+      oyConfig_Release( &c );
+      if(!skip_x_color_region_target)
+        oyOptions_SetFromText( &options,
+                   "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
+                         "yes", OY_CREATE_NEW );
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                     "properties", OY_CREATE_NEW );  
+      error = oyDeviceGet( 0, device_class, device_name, options, &c );
+      oyOptions_Release( &options );
+    }
+    if(!c)
+    {
+      fprintf( stderr, "%s\n  device_class: \"%s\" device_name: \"%s\"  %s: %d\n", _("Could not resolve device."),
+               device_class?device_class:"????", device_name,
+               _("Available devices"), n);
+      
+      exit (1);
+    }
+
+    if(!skip_x_color_region_target)
+    oyOptions_SetFromText( &options,
+                   "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
+                         "yes", OY_CREATE_NEW );
+
+    error = oyDeviceGetProfile( c, options, &profile );
 
     if(profile)
       tmp = oyProfile_GetFileName( profile, -1 );
@@ -560,8 +580,6 @@ int main(int argc, char *argv[])
                tmp?"\nassigned profile: ":"", tmp?tmp:"" );
 
     oyProfile_Release( &profile );                                                
-    if(!c)
-      exit(1);
 
     {
     int size, i, current = -1, current_tmp = 0, pos = 0;
