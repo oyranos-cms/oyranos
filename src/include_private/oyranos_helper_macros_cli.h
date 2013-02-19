@@ -36,7 +36,7 @@ extern "C" {
                             wrong_arg = "-" #opt; \
                           i = 1000; \
                         } else wrong_arg = "-" #opt; \
-                        if(oy_debug) printf(#opt "=%d\n",opt)
+                        if(oy_debug) fprintf(stderr,#opt "=%d\n",opt)
 #define OY_PARSE_INT_ARG2( opt, arg ) \
                         if( pos + 1 < argc && argv[pos][i+strlen(arg)+1] == 0 ) \
                         { opt = atoi(argv[pos+1]); \
@@ -47,21 +47,7 @@ extern "C" {
                           i = 1000; \
                         } else wrong_arg = "-" arg; \
                         if(oy_debug) fprintf(stderr,arg "=%d\n",opt)
-#define OY_PARSE_FLOAT_ARG( opt ) \
-                        if( pos + 1 < argc && argv[pos][i+1] == 0 ) \
-                        { opt = atof( argv[pos+1] ); \
-                          if( opt == 0 && strcmp(argv[pos+1],"0") ) \
-                            wrong_arg = "-" #opt; \
-                          ++pos; \
-                          i = 1000; \
-                        } else if(argv[pos][i+1] == '=') \
-                        { opt = atof( &argv[pos][i+2] ); \
-                          if( opt == 0 && strcmp(&argv[pos][i+2],"0") ) \
-                            wrong_arg = "-" #opt; \
-                          i = 1000; \
-                        } else wrong_arg = "-" #opt; \
-                        if(oy_debug) printf(#opt "=%g\n",opt)
-#define OY_PARSE_FLOAT_ARG2( opt, arg ) \
+#define OY_PARSE_FLOAT_ARG2( opt, arg, min, max, std ) \
                         if( pos + 1 < argc && argv[pos][i+strlen(arg)+1] == 0 ) \
                         { opt = atof(argv[pos+1]); \
                           ++pos; \
@@ -69,8 +55,19 @@ extern "C" {
                         } else if(argv[pos][i+strlen(arg)+1] == '=') \
                         { opt = atof(&argv[pos][i+strlen(arg)+2]); \
                           i = 1000; \
-                        } else wrong_arg = "-" arg; \
-                        if(oy_debug) fprintf(stderr,arg "=%g\n",opt)
+                        } else \
+                        { char * t = 0; const char * slash = strlen(arg)==1?"-":"--"; \
+                          oyStringAddPrintf_( &t, 0,0, "%s%s (%s%s %g)", slash,arg, slash,arg, std );\
+                          wrong_arg = t; \
+                          i = 1000; \
+                        } \
+                        if(min > opt || opt > max) \
+                        { char * t = 0; const char * slash = strlen(arg)==1?"-":"--"; \
+                          oyStringAddPrintf_( &t, 0,0, "%s%s=%g %s %s=%g %s=%g", slash,arg,opt, _("value out of range"), _("minimal"), min, _("maximal"), max ); \
+                          wrong_arg = t; \
+                          i = 1000; \
+                        } \
+                        if(oy_debug) fprintf(stderr,"%s=%g\n", arg, opt)
 #define OY_PARSE_STRING_ARG( opt ) \
                         if( pos + 1 < argc && argv[pos][i+1] == 0 ) \
                         { opt = argv[pos+1]; \
@@ -94,7 +91,7 @@ extern "C" {
                         { opt = &argv[pos][i+strlen(arg)+2]; \
                           i = 1000; \
                         } else wrong_arg = "-" arg; \
-                        if(oy_debug) printf(arg "=%s\n",opt)
+                        if(oy_debug) fprintf(stderr,arg "=%s\n",opt)
 #define OY_IS_ARG( arg ) \
                         ((strlen(argv[pos])-2 == strlen(arg) || \
                           (strlen(argv[pos])-2 > strlen(arg) && \
