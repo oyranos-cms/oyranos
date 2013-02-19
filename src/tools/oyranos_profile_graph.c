@@ -55,6 +55,7 @@ int  oyColourConvert_ ( oyProfile_s       * p_in,
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
 
+#include "ciexyz31_1.h"
 #include "ciexyz64_1.h"
 
 # define x_xyY cieXYZ[i][0]/(cieXYZ[i][0]+cieXYZ[i][1]+cieXYZ[i][2])
@@ -139,14 +140,14 @@ int main( int argc , char** argv )
             switch (argv[pos][i])
             {
               case 'b': border = 0; break;
-              case 'd': OY_PARSE_FLOAT_ARG( change_thickness ); break;
+              case 'd': i=0; OY_PARSE_FLOAT_ARG2( change_thickness, "d", -1000.0, 1000.0, .7 ); break;
               case 'f': OY_PARSE_STRING_ARG(format); break;
               case 'o': OY_PARSE_STRING_ARG(output); break;
               case 'w': OY_PARSE_INT_ARG( pixel_w ); break;
-              case 'v': if(verbose) oy_debug += 1; verbose = 1; break;
+              case 'v': oy_debug += 1; verbose = 1; break;
               case 'x': proj = p_xyz; break;
               case 's': spectral = 0; break;
-              case 't': OY_PARSE_FLOAT_ARG( thickness ); break;
+              case 't': i=0; OY_PARSE_FLOAT_ARG2( thickness, "t", 0.001, 10.0 , 1.0 ); break;
               case 'h':
               case '-':
                         if(i == 1)
@@ -159,8 +160,10 @@ int main( int argc , char** argv )
                         { OY_PARSE_STRING_ARG2(filename, "profile"); break; }
                         else if(OY_IS_ARG("standard-observer"))
                         { spectral = saturation = 0; standardobs = 1; i=100; break;}
+                        else if(OY_IS_ARG("standard-observer-64"))
+                        { spectral = saturation = 0; standardobs = 2; i=100; break;}
                         else if(OY_IS_ARG("verbose"))
-                        { if(verbose) oy_debug += 1; verbose = 1; i=100; break;}
+                        { oy_debug += 1; verbose = 1; i=100; break;}
                         }
               default:
                         printf("\n");
@@ -172,23 +175,23 @@ int main( int argc , char** argv )
                                 _("is a ICC colour profile grapher"));
                         printf("%s:\n",                 _("Usage"));
                         printf("  %s\n",               _("2D Graph from profiles:"));
-                        printf("      %s [-o FILENAME] [-x] [-w NUMBER] [-b] [-s] PROFILENAMES\n", argv[0] );
-                        printf("      -w  %s\n",       _("specify output image width in pixel"));
-                        printf("      -o  %s\n",       _("specify output file name, default is output.png"));
-                        printf("      -x  %s\n",       _("use CIE*xyY *x*y plane for saturation line projection"));
-                        printf("      -s  %s\n",       _("omit the spectral line"));
-                        printf("      -b  %s\n",       _("omit border"));
-                        printf("      -t  %s\n",       _("specify increase of the thickness of the graph lines"));
-                        printf("      -d  %s\n",       _("specify incemental increase of the thickness of the graph lines"));
-                        printf("\n");
-                        printf("  %s\n",               _("General options:"));
-                        printf("      %s\n",           _("-v verbose"));
-                        printf("\n");
-                        printf( "  %s\n",               _("Saturation Graph:"));
-                        printf( "      %s sRGB.icc\n",        argv[0]);
+                        printf("      %s [-o %s] [-x] [-w %s] [-b] [-s] PROFILENAMES\n", argv[0],_("FILE"),_("NUMBER") );
+                        printf("      -w %s\t%s\n",   _("NUMBER"), _("specify output image width in pixel"));
+                        printf("      -o %s\t%s\n",   _("FILE"),   _("specify output file name, default is output.png"));
+                        printf("      -x \t%s\n",     _("use CIE*xyY *x*y plane for saturation line projection"));
+                        printf("      -s \t%s\n",     _("omit the spectral line"));
+                        printf("      -b \t%s\n",     _("omit border"));
+                        printf("      -t %s\t%s\n",   _("NUMBER"), _("specify increase of the thickness of the graph lines"));
+                        printf("      -d %s\t%s\n",   _("NUMBER"), _("specify incemental increase of the thickness of the graph lines"));
                         printf("\n");
                         printf( "  %s\n",               _("Standard Observer Graph:"));
                         printf( "      %s --standard-observer\n",        argv[0]);
+                        printf("\n");
+                        printf( "  %s\n",               _("1964 Observer Graph:"));
+                        printf( "      %s --standard-observer-64\n",        argv[0]);
+                        printf("\n");
+                        printf("  %s\n",               _("General options:"));
+                        printf("      %s\n",           _("-v verbose"));
                         printf("\n");
                         printf(_("For more informations read the man page:"));
                         printf("\n");
@@ -382,9 +385,23 @@ int main( int argc , char** argv )
   }
 
   cairo_set_line_width (cr, 3.*thickness);
-  if(standardobs)
+  if(standardobs == 1)
   {
-    /* draw spectral sensitivity curves */
+    /* draw spectral sensitivity curves from 1931 standard observer */
+#define drawSpectralCurve(pos, r,g,b,a) i = 0; cairo_line_to(cr, xToImage(i/371.0), yToImage(cieXYZ_31[i][pos]/2.0)); \
+    cairo_set_source_rgba( cr, r,g,b,a); \
+    for(i = 0; i<=371; ++i) \
+      cairo_line_to(cr, xToImage(i/371.0), yToImage(cieXYZ_31[i][pos]/2.0)); \
+    cairo_stroke(cr);
+    drawSpectralCurve(0, 1.0, .0, .0, 1.)
+    drawSpectralCurve(1, .0, 1.0, .0, 1.)
+    drawSpectralCurve(2, .0, .0, 1.0, 1.)
+    cairo_stroke(cr);
+#undef drawSpectralCurve
+  }
+  if(standardobs == 2)
+  {
+    /* draw spectral sensitivity curves from 1964 standard observer */
 #define drawSpectralCurve(pos, r,g,b,a) i = 0; cairo_line_to(cr, xToImage(i/371.0), yToImage(cieXYZ[i][pos]/2.0)); \
     cairo_set_source_rgba( cr, r,g,b,a); \
     for(i = 0; i<=371; ++i) \
@@ -394,6 +411,7 @@ int main( int argc , char** argv )
     drawSpectralCurve(1, .0, 1.0, .0, 1.)
     drawSpectralCurve(2, .0, .0, 1.0, 1.)
     cairo_stroke(cr);
+#undef drawSpectralCurve
   }
 
   cairo_restore( cr );
