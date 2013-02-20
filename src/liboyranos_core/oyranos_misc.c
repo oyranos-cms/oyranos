@@ -42,3 +42,70 @@ float        oyLinInterpolateRampU16 ( uint16_t          * ramp,
 
   return result;
 }
+
+#define MANIPULATION_FUNCTION( type, operator, name ) \
+inline type name( type val1, type val2 ) \
+{ return val1 operator val2; }
+MANIPULATION_FUNCTION( uint16_t, +, oyAddU16 )
+MANIPULATION_FUNCTION( uint16_t, -, oySubstU16 )
+MANIPULATION_FUNCTION( uint16_t, *, oyMultU16 )
+MANIPULATION_FUNCTION( uint16_t, /, oyDivU16 )
+
+int            oyRampManipulateU16   ( uint16_t          * ramp1,
+                                       uint16_t          * ramp2,
+                                       uint16_t          * ramp_result,
+                                       int                 ramp_size,
+                                       uint16_t          (*manip_f)(uint16_t,uint16_t) )
+{
+  int error = !ramp1 || !ramp2 || !ramp_result || !manip_f,
+      i;
+
+  if(!error)
+    for(i = 0; i < ramp_size; ++i)
+      ramp_result[i] = manip_f( ramp1[i], ramp2[i] );
+
+  return error;
+}
+
+MANIPULATION_FUNCTION( float, +, oyAddF32 )
+MANIPULATION_FUNCTION( float, -, oySubstF32 )
+MANIPULATION_FUNCTION( float, *, oyMultF32 )
+MANIPULATION_FUNCTION( float, /, oyDivF32 )
+
+int            oyRampManipulateF32   ( float          * ramp1,
+                                       float          * ramp2,
+                                       float          * ramp_result,
+                                       int                 ramp_size,
+                                       float          (*manip_f)(float,float) )
+{
+  int error = !ramp1 || !ramp2 || !ramp_result || !manip_f,
+      i;
+
+  if(!error)
+    for(i = 0; i < ramp_size; ++i)
+      ramp_result[i] = manip_f( ramp1[i], ramp2[i] );
+
+  return error;
+}
+
+MANIPULATION_FUNCTION( double, +, oyAddF64 )
+MANIPULATION_FUNCTION( double, -, oySubstF64 )
+MANIPULATION_FUNCTION( double, *, oyMultF64 )
+MANIPULATION_FUNCTION( double, /, oyDivF64 )
+
+int            oyRampManipulateF64   ( double          * ramp1,
+                                       double          * ramp2,
+                                       double          * ramp_result,
+                                       int                 ramp_size,
+                                       double          (*manip_f)(double,double) )
+{
+  int error = !ramp1 || !ramp2 || !ramp_result || !manip_f,
+      i;
+
+  if(!error)
+    for(i = 0; i < ramp_size; ++i)
+      ramp_result[i] = manip_f( ramp1[i], ramp2[i] );
+
+  return error;
+}
+
