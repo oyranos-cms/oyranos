@@ -180,28 +180,30 @@ int main( int argc , char** argv )
                         printf("%s v%d.%d.%d %s\n", argv[0],
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
                                 _("is a ICC colour profile grapher"));
-                        printf("%s:\n",                 _("Usage"));
-                        printf("  %s\n",               _("2D Graph from profiles:"));
-                        printf("      %s [-o %s] [-x] [-w %s] [-b] [-s] PROFILENAMES\n", argv[0],_("FILE"),_("NUMBER") );
-                        printf("      -w %s\t%s\n",   _("NUMBER"), _("specify output image width in pixel"));
-                        printf("      -o %s\t%s\n",   _("FILE"),   _("specify output file name, default is output.png"));
+                        printf("%s:\n",               _("Usage"));
+                        printf("  %s\n",              _("2D Graph from profiles:"));
+                        printf("      %s [-o %s] [-x [-c]] [-w %s] [-b] [-s] %s\n", argv[0],
+                                                      _("FILE"),_("NUMBER"),_("PROFILENAMES") );
                         printf("      -x \t%s\n",     _("use CIE*xyY *x*y plane for saturation line projection"));
+                        printf("      \t-c\t%s\n",    _("omit white line of lambert light emitters"));
                         printf("      -s \t%s\n",     _("omit the spectral line"));
-                        printf("      -b \t%s\n",     _("omit border"));
-                        printf("      -t %s\t%s\n",   _("NUMBER"), _("specify increase of the thickness of the graph lines"));
                         printf("      -d %s\t%s\n",   _("NUMBER"), _("specify incemental increase of the thickness of the graph lines"));
                         printf("\n");
-                        printf( "  %s\n",               _("Standard Observer Graph:"));
-                        printf( "      %s --standard-observer\n",        argv[0]);
+                        printf( "  %s\n",             _("Standard Observer Graph:"));
+                        printf( "      %s --standard-observer [-vbowt]\n", argv[0]);
                         printf("\n");
-                        printf( "  %s\n",               _("1964 Observer Graph:"));
-                        printf( "      %s --standard-observer-64\n",        argv[0]);
+                        printf( "  %s\n",             _("1964 Observer Graph:"));
+                        printf( "      %s --standard-observer-64 [-vbowt]\n", argv[0]);
                         printf("\n");
-                        printf( "  %s\n",               _("Black Body Graph:"));
-                        printf( "      %s --kelvin %s\n",        argv[0], _("NUMBER"));
+                        printf( "  %s\n",             _("Blackbody Radiator Spectrum Graph:"));
+                        printf( "      %s --kelvin [-vbowt] %s\n", argv[0], _("NUMBER"));
                         printf("\n");
-                        printf("  %s\n",               _("General options:"));
-                        printf("      %s\n",           _("-v verbose"));
+                        printf("  %s\n",              _("General options:"));
+                        printf("      -v \t%s\n",     _("verbose"));
+                        printf("      -w %s\t%s\n",   _("NUMBER"), _("specify output image width in pixel"));
+                        printf("      -o %s\t%s\n",   _("FILE"),   _("specify output file name, default is output.png"));
+                        printf("      -b \t%s\n",     _("omit border"));
+                        printf("      -t %s\t%s\n",   _("NUMBER"), _("specify increase of the thickness of the graph lines"));
                         printf("\n");
                         printf(_("For more informations read the man page:"));
                         printf("\n");

@@ -1,8 +1,8 @@
-.TH oyranos-profile-graph 1 "June 14, 2012" "User Commands"
+.TH oyranos-profile-graph 1 "Fabruary 21, 2013" "User Commands"
 .SH NAME
 oyranos-profile-graph \- ICC profile graph tool
 .SH SYNOPSIS
-\fBoyranos-profile-graph\fR [-o \fIFILENAME\fR] [-x] [-w NUMBER] [-b] [-s] \fIPROFILENAMES\fR
+\fBoyranos-profile-graph\fR [-o \fIFILENAME\fR] [-x [-c]] [-w NUMBER] [-b] [-s] \fIPROFILENAMES\fR
 .fi
 \fBoyranos-profile-graph\fR [ -h ]
 .SH DESCRIPTION
@@ -11,33 +11,48 @@ ICC profiles from images to a graph image. By default the program shows the
 saturation line of the specified profiles and writes to output.png .
 .SH OPTIONS
 .TP
+\fIPROFILENAMES\fR
+2D Graph from profiles
+.sp
+.br
+\fB\-x\fR
+use CIE*xyY *x*y plane for saturation line projection.
+.sp
+.br
+\fB\-c\fR
+\twith -x omit white line of lambert light emitters in CIE*xyY *x*y plane
+.sp
+.br
+\fB-s\fR
+omit the spectral line.
+.sp
+\fB-d\fR \fIFLOATINGPOINTNUMBER\fR
+incrementally increase the thickness of the graph lines. The default is 0.7 .
+.TP
+.B \-\-standard-observer
+show the standard observer 1931 2° colour matching function (CMF) as curves.
+.TP
+.B \-\-standard-observer-64
+show the standard observer 1964 2° colour matching function (CMF) as curves.
+.TP
+.B \-\-kelvin \fINUMBER\fR
+show the blackbody radiator spectrum as curves.
+.SH GENERAL OPTIONS
+.TP
+.B \-v, \-\-verbose
+increase verbosity
+.TP
 \fB-w\fR \fINUMBER\fR
 set output image width in pixel
 .TP
 \fB\-o\fR \fIFILENAME\fR
 write resulting image to file name.
 .TP
-\fB\-x\fR
-use CIE*xyY *x*y plane for saturation line projection.
-.TP
-\fB-s\fR
-omit the spectral line.
-.TP
 .B \-b
 omit border.
 .TP
 \fB-t\fR \fIFLOATINGPOINTNUMBER\fR
 increase the thickness of the graph lines
-.TP
-\fB-d\fR \fIFLOATINGPOINTNUMBER\fR
-incrementally increase the thickness of the graph lines. The default is 0.7 .
-.TP
-.B \-\-standard-observer
-show the standard observer spectral function as curves.
-.SH GENERAL OPTIONS
-.TP
-.B \-v, \-\-verbose
-increase verbosity
 .SH ENVIRONMENT
 .TP
 .B OY_DEBUG
