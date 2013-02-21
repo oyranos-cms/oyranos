@@ -123,6 +123,43 @@ char * oyReadUrlToMemf_              ( size_t            * size,
 float        oyLinInterpolateRampU16 ( uint16_t          * ramp,
                                        int                 ramp_size,
                                        float               pos );
+float        oyLinInterpolateRampF32 ( float             * ramp,
+                                       int                 ramp_size,
+                                       float               pos );
+double       oyLinInterpolateRampF64 ( double            * ramp,
+                                       int                 ramp_size,
+                                       double              pos );
+uint16_t       oyAddU16              ( uint16_t            value1,
+                                       uint16_t            value2 );
+uint16_t       oySubstU16            ( uint16_t            value1,
+                                       uint16_t            value2 );
+uint16_t       oyMultU16             ( uint16_t            value1,
+                                       uint16_t            value2 );
+uint16_t       oyDivU16              ( uint16_t            value1,
+                                       uint16_t            value2 );
+int            oyRampManipulateU16   ( uint16_t          * ramp1,
+                                       uint16_t          * ramp2,
+                                       uint16_t          * ramp_result,
+                                       int                 ramp_size,
+                                       uint16_t          (*manip_f)(uint16_t,uint16_t) );
+float          oyAddF32              ( float               value1,
+                                       float               value2 );
+float          oySubstF32            ( float               value1,
+                                       float               value2 );
+float          oyMultF32             ( float               value1,
+                                       float               value2 );
+float          oyDivF32              ( float               value1,
+                                       float               value2 );
+int            oyRampManipulateF32   ( float             * ramp1,
+                                       float             * ramp2,
+                                       float             * ramp_result,
+                                       int                 ramp_size,
+                                       float             (*manip_f)(float,float) );
+int            oyRampManipulateF64   ( double            * ramp1,
+                                       double            * ramp2,
+                                       double            * ramp_result,
+                                       int                 ramp_size,
+                                       double            (*manip_f)(double,double) );
 
 /* --- miscellaneous helpers --- */
 

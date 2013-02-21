@@ -43,6 +43,60 @@ float        oyLinInterpolateRampU16 ( uint16_t          * ramp,
   return result;
 }
 
+float        oyLinInterpolateRampF32 ( float             * ramp,
+                                       int                 ramp_size,
+                                       float               pos )
+{
+  float val1, val2;
+  float start, dist, result;
+
+  if(!ramp)
+    return 0.0;
+
+  if(pos < 0)
+    return ramp[0];
+
+  if(pos > ramp_size-1)
+    return ramp[ramp_size-1];
+
+  dist = modff( pos, &start );
+  val1 = ramp[(int)start];
+  val2 = ramp[(int)start+1];
+
+  result = val2 - val1;
+  result *= dist;
+  result += val1;
+
+  return result;
+}
+
+double       oyLinInterpolateRampF64 ( double            * ramp,
+                                       int                 ramp_size,
+                                       double              pos )
+{
+  double val1, val2;
+  double start, dist, result;
+
+  if(!ramp)
+    return 0.0;
+
+  if(pos < 0)
+    return ramp[0];
+
+  if(pos > ramp_size-1)
+    return ramp[ramp_size-1];
+
+  dist = modf( pos, &start );
+  val1 = ramp[(int)start];
+  val2 = ramp[(int)start+1];
+
+  result = val2 - val1;
+  result *= dist;
+  result += val1;
+
+  return result;
+}
+
 #define MANIPULATION_FUNCTION( type, operator, name ) \
 inline type name( type val1, type val2 ) \
 { return val1 operator val2; }
@@ -72,11 +126,11 @@ MANIPULATION_FUNCTION( float, -, oySubstF32 )
 MANIPULATION_FUNCTION( float, *, oyMultF32 )
 MANIPULATION_FUNCTION( float, /, oyDivF32 )
 
-int            oyRampManipulateF32   ( float          * ramp1,
-                                       float          * ramp2,
-                                       float          * ramp_result,
+int            oyRampManipulateF32   ( float             * ramp1,
+                                       float             * ramp2,
+                                       float             * ramp_result,
                                        int                 ramp_size,
-                                       float          (*manip_f)(float,float) )
+                                       float             (*manip_f)(float,float) )
 {
   int error = !ramp1 || !ramp2 || !ramp_result || !manip_f,
       i;
@@ -93,11 +147,11 @@ MANIPULATION_FUNCTION( double, -, oySubstF64 )
 MANIPULATION_FUNCTION( double, *, oyMultF64 )
 MANIPULATION_FUNCTION( double, /, oyDivF64 )
 
-int            oyRampManipulateF64   ( double          * ramp1,
-                                       double          * ramp2,
-                                       double          * ramp_result,
+int            oyRampManipulateF64   ( double            * ramp1,
+                                       double            * ramp2,
+                                       double            * ramp_result,
                                        int                 ramp_size,
-                                       double          (*manip_f)(double,double) )
+                                       double            (*manip_f)(double,double) )
 {
   int error = !ramp1 || !ramp2 || !ramp_result || !manip_f,
       i;
