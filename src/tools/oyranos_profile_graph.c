@@ -57,9 +57,10 @@ int  oyColourConvert_ ( oyProfile_s       * p_in,
 
 #include "ciexyz31_1.h"
 #include "ciexyz64_1.h"
+#include "bb_500K.h"
 
-# define x_xyY cieXYZ[i][0]/(cieXYZ[i][0]+cieXYZ[i][1]+cieXYZ[i][2])
-# define y_xyY cieXYZ[i][1]/(cieXYZ[i][0]+cieXYZ[i][1]+cieXYZ[i][2])
+# define x_xyY cieXYZ_31_2[i][0]/(cieXYZ_31_2[i][0]+cieXYZ_31_2[i][1]+cieXYZ_31_2[i][2])
+# define y_xyY cieXYZ_31_2[i][1]/(cieXYZ_31_2[i][0]+cieXYZ_31_2[i][1]+cieXYZ_31_2[i][2])
 
 #define xToImage(val) (((float)xO + (val-min_x)*width \
                                               /(max_x-min_x)) + 0.5)
@@ -72,19 +73,21 @@ int  oyColourConvert_ ( oyProfile_s       * p_in,
 #define MAX(a,b) ((a>b)?(a):(b))
 
 double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, oyProfile_s * outspace);
+double   bb_spectrum( double wavelength, double bbTemp );
 
 int main( int argc , char** argv )
 {
   /* the functional switches */
   char * format = 0;
   char * output = 0;
-  int verbose = 0;
   int spectral = 1;
+  int blackbody = 1;
   float thickness = 1.0;
   float change_thickness = .7;
   int border = 1;
   int standardobs = 0;
   int saturation = 1;
+  double kelvin = 0.0;
 
   int max_x,max_y,min_x,min_y;
 
@@ -140,11 +143,12 @@ int main( int argc , char** argv )
             switch (argv[pos][i])
             {
               case 'b': border = 0; break;
+              case 'c': blackbody = 0; break;
               case 'd': i=0; OY_PARSE_FLOAT_ARG2( change_thickness, "d", -1000.0, 1000.0, .7 ); break;
               case 'f': OY_PARSE_STRING_ARG(format); break;
               case 'o': OY_PARSE_STRING_ARG(output); break;
               case 'w': OY_PARSE_INT_ARG( pixel_w ); break;
-              case 'v': oy_debug += 1; verbose = 1; break;
+              case 'v': oy_debug += 1; break;
               case 'x': proj = p_xyz; break;
               case 's': spectral = 0; break;
               case 't': i=0; OY_PARSE_FLOAT_ARG2( thickness, "t", 0.001, 10.0 , 1.0 ); break;
@@ -159,11 +163,14 @@ int main( int argc , char** argv )
                         else if(OY_IS_ARG("profile"))
                         { OY_PARSE_STRING_ARG2(filename, "profile"); break; }
                         else if(OY_IS_ARG("standard-observer"))
-                        { spectral = saturation = 0; standardobs = 1; i=100; break;}
+                        { blackbody = spectral = saturation = 0; standardobs = 1; i=100; break;}
                         else if(OY_IS_ARG("standard-observer-64"))
-                        { spectral = saturation = 0; standardobs = 2; i=100; break;}
+                        { blackbody = spectral = saturation = 0; standardobs = 2; i=100; break;}
+                        else if(OY_IS_ARG("kelvin"))
+                        { blackbody = spectral = saturation = 0;
+                          OY_PARSE_FLOAT_ARG2(kelvin, "kelvin", 1000.0,15000.0,5000.0); i=100; break;}
                         else if(OY_IS_ARG("verbose"))
-                        { oy_debug += 1; verbose = 1; i=100; break;}
+                        { oy_debug += 1; i=100; break;}
                         }
               default:
                         printf("\n");
@@ -189,6 +196,9 @@ int main( int argc , char** argv )
                         printf("\n");
                         printf( "  %s\n",               _("1964 Observer Graph:"));
                         printf( "      %s --standard-observer-64\n",        argv[0]);
+                        printf("\n");
+                        printf( "  %s\n",               _("Black Body Graph:"));
+                        printf( "      %s --kelvin %s\n",        argv[0], _("NUMBER"));
                         printf("\n");
                         printf("  %s\n",               _("General options:"));
                         printf("      %s\n",           _("-v verbose"));
@@ -267,7 +277,7 @@ int main( int argc , char** argv )
       {
         double XYZ[3];
         double Lab[3];
-        XYZ[0] = cieXYZ[i][0]; XYZ[1] = cieXYZ[i][1]; XYZ[2] = cieXYZ[i][2];
+        XYZ[0] = cieXYZ_64_2[i][0]; XYZ[1] = cieXYZ_64_2[i][1]; XYZ[2] = cieXYZ_64_2[i][2];
         oyXYZ2Lab( XYZ, Lab);
         if(i == 0)
           cairo_move_to(cr, xToImage(Lab[1]/256.0+.5),
@@ -277,6 +287,37 @@ int main( int argc , char** argv )
                             yToImage(Lab[2]/256.0+0.5));
       }
       cairo_close_path(cr);
+    }
+    cairo_stroke(cr);
+  }
+
+  if(blackbody && proj == p_xyz)
+  {
+    cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
+    if(proj == p_xyz)
+    {
+      cairo_move_to(cr, xToImage(bb_500K[0][0]*xs_xyz), yToImage(bb_500K[0][1]*ys_xyz));
+      for(i = 0; i<19; ++i)
+        cairo_line_to(cr, xToImage(bb_500K[i][0]*xs_xyz), yToImage(bb_500K[i][1]*ys_xyz));
+      cairo_stroke(cr);
+    }
+
+    if(proj == p_lab)
+    {
+      cairo_new_path(cr);
+      for(i = 0; i<19; ++i)
+      {
+        double XYZ[3];
+        double Lab[3];
+        XYZ[0] = bb_500K[i][0]; XYZ[1] = bb_500K[i][1]; XYZ[2] = bb_500K[i][2];
+        oyXYZ2Lab( XYZ, Lab);
+        if(i == 0)
+          cairo_move_to(cr, xToImage(Lab[1]/256.0+.5),
+                            yToImage(Lab[2]/256.0+0.5));
+        else
+          cairo_line_to(cr, xToImage(Lab[1]/256.0+.5),
+                            yToImage(Lab[2]/256.0+0.5));
+      }
     }
     cairo_stroke(cr);
   }
@@ -384,35 +425,45 @@ int main( int argc , char** argv )
     }
   }
 
+#define drawSpectralCurve(array, pos, r,g,b,a) i = 0; cairo_line_to(cr, xToImage(i/371.0), yToImage(array[i][pos]/2.0)); \
+    cairo_set_source_rgba( cr, r,g,b,a); \
+    for(i = 0; i<=371; ++i) \
+      cairo_line_to(cr, xToImage(i/371.0), yToImage(array[i][pos]/2.0)); \
+    cairo_stroke(cr);
+
   cairo_set_line_width (cr, 3.*thickness);
   if(standardobs == 1)
   {
     /* draw spectral sensitivity curves from 1931 standard observer */
-#define drawSpectralCurve(pos, r,g,b,a) i = 0; cairo_line_to(cr, xToImage(i/371.0), yToImage(cieXYZ_31[i][pos]/2.0)); \
-    cairo_set_source_rgba( cr, r,g,b,a); \
-    for(i = 0; i<=371; ++i) \
-      cairo_line_to(cr, xToImage(i/371.0), yToImage(cieXYZ_31[i][pos]/2.0)); \
+    drawSpectralCurve(cieXYZ_31_2, 0, 1.,.0,.0, 1.)
+    drawSpectralCurve(cieXYZ_31_2, 1, .0,1.,.0,1.)
+    drawSpectralCurve(cieXYZ_31_2, 2, .0,.0,1.,1.)
     cairo_stroke(cr);
-    drawSpectralCurve(0, 1.0, .0, .0, 1.)
-    drawSpectralCurve(1, .0, 1.0, .0, 1.)
-    drawSpectralCurve(2, .0, .0, 1.0, 1.)
-    cairo_stroke(cr);
-#undef drawSpectralCurve
   }
   if(standardobs == 2)
   {
     /* draw spectral sensitivity curves from 1964 standard observer */
-#define drawSpectralCurve(pos, r,g,b,a) i = 0; cairo_line_to(cr, xToImage(i/371.0), yToImage(cieXYZ[i][pos]/2.0)); \
-    cairo_set_source_rgba( cr, r,g,b,a); \
-    for(i = 0; i<=371; ++i) \
-      cairo_line_to(cr, xToImage(i/371.0), yToImage(cieXYZ[i][pos]/2.0)); \
+    drawSpectralCurve(cieXYZ_64_2, 0, 1.0, .0, .0, 1.)
+    drawSpectralCurve(cieXYZ_64_2, 1, .0, 1.0, .0, 1.)
+    drawSpectralCurve(cieXYZ_64_2, 2, .0, .0, 1.0, 1.)
     cairo_stroke(cr);
-    drawSpectralCurve(0, 1.0, .0, .0, 1.)
-    drawSpectralCurve(1, .0, 1.0, .0, 1.)
-    drawSpectralCurve(2, .0, .0, 1.0, 1.)
-    cairo_stroke(cr);
-#undef drawSpectralCurve
   }
+  if(kelvin > 0.0)
+  {
+    /* draw black body spectrum */
+    float bb[372];
+    double max = 0.0;
+
+    for(i=0;i<372;++i) bb[i] = bb_spectrum(360+i, kelvin);
+    for(i=0;i<372;++i) if(bb[i] > max) max = bb[i];
+    for(i=0;i<372;++i) bb[i] /= max;
+
+    cairo_set_source_rgba( cr, .0,.0,.0, 1. );
+    for(i = 0; i<=371; ++i)
+      cairo_line_to(cr, xToImage(i/371.0), yToImage(bb[i]));
+    cairo_stroke(cr);
+  }
+#undef drawSpectralCurve
 
   cairo_restore( cr );
 
@@ -611,4 +662,17 @@ double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, o
   return lab_erg;
 }
 
+/*                            BB_SPECTRUM
 
+    Calculate, by Planck's radiation law, the emittance of a black body
+    of temperature bbTemp at the given wavelength (in metres).
+    
+    source: http://www.fourmilab.ch/documents/specrend/
+ */ 
+double bb_spectrum(double wavelength, double bbTemp)
+{     
+    double wlm = wavelength * 1e-9;   /* Wavelength in meters */
+
+    return (3.74183e-16 * pow(wlm, -5.0)) /
+           (exp(1.4388e-2 / (wlm * bbTemp)) - 1.0);
+}
