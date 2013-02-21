@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2013-02-19 11:55+0100\n"
+"POT-Creation-Date: 2013-02-21 11:00+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -46,7 +46,7 @@ msgid "-d device_position_start_from_zero"
 msgstr "-d device_position_start_from_zero"
 
 #: tools/oyranos_gamma.c:222 tools/oyranos_profile.c:110
-#: tools/oyranos_profile_graph.c:194 tools/oyranos_profiles.c:94
+#: tools/oyranos_profiles.c:94
 msgid "-v verbose"
 msgstr "-v upovídaný výstup"
 
@@ -143,7 +143,7 @@ msgstr "16-bitů"
 msgid "16. Channel"
 msgstr "16. kanál"
 
-#: tools/oyranos_profile_graph.c:190
+#: tools/oyranos_profile_graph.c:195
 #, fuzzy
 msgid "1964 Observer Graph:"
 msgstr "Graf standardního pozorovatele:"
@@ -156,7 +156,7 @@ msgstr "2stupňový (1931)"
 msgid "2. Channel"
 msgstr "2. kanál"
 
-#: tools/oyranos_profile_graph.c:177
+#: tools/oyranos_profile_graph.c:184
 msgid "2D Graph from profiles:"
 msgstr "2D grafy z profilů:"
 
@@ -425,6 +425,10 @@ msgstr "Černá"
 #: modules/oyranos_cmm_lcm2.c:2493 modules/oyranos_cmm_lcms.c:2113
 msgid "Black Preservation"
 msgstr "Zachování černé"
+
+#: tools/oyranos_profile_graph.c:198
+msgid "Blackbody Radiator Spectrum Graph:"
+msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:213
 msgid "Blue"
@@ -1166,7 +1170,7 @@ msgstr "Rozšířené volby:"
 msgid "Extract ICC profile:"
 msgstr "Extrahovat profil ICC:"
 
-#: tools/oyranos_profile_graph.c:178 tools/oyranos_profile_graph.c:180
+#: tools/oyranos_profile_graph.c:186 tools/oyranos_profile_graph.c:204
 #: examples/devices/test_device.c:33 examples/devices/test_device.c:63
 #: examples/devices/test_device.c:64 examples/libraw/oyranos_file.cpp:58
 #: examples/libraw/oyranos_file.cpp:59
@@ -1227,7 +1231,7 @@ msgstr "Pro tisk"
 msgid "For Screen"
 msgstr "Pro obrazovku"
 
-#: tools/oyranos_gamma.c:226 tools/oyranos_profile_graph.c:196
+#: tools/oyranos_gamma.c:226 tools/oyranos_profile_graph.c:208
 #: examples/devices/test_device.c:76 examples/libraw/oyranos_file.cpp:62
 #, c-format
 msgid "For more informations read the man page:"
@@ -1246,7 +1250,7 @@ msgid "Gamut Warning"
 msgstr "Varování gamutu"
 
 #: tools/oyranos_gamma.c:221 tools/oyranos_profile.c:109
-#: tools/oyranos_profile_graph.c:193 tools/oyranos_convert.c:94
+#: tools/oyranos_profile_graph.c:201 tools/oyranos_convert.c:94
 #: tools/oyranos_profiles.c:93 examples/devices/test_device.c:70
 #: examples/libraw/oyranos_file.cpp:57
 msgid "General options:"
@@ -1960,9 +1964,9 @@ msgstr ""
 msgid "My filter introduction."
 msgstr "Úvod k filtrům."
 
-#: tools/oyranos_profile_graph.c:178 tools/oyranos_profile_graph.c:179
-#: tools/oyranos_profile_graph.c:184 tools/oyranos_profile_graph.c:185
-#: examples/devices/test_device.c:73
+#: tools/oyranos_profile_graph.c:186 tools/oyranos_profile_graph.c:190
+#: tools/oyranos_profile_graph.c:199 tools/oyranos_profile_graph.c:203
+#: tools/oyranos_profile_graph.c:206 examples/devices/test_device.c:73
 msgid "NUMBER"
 msgstr ""
 
@@ -2171,6 +2175,10 @@ msgstr "P22"
 #, fuzzy
 msgid "PCS"
 msgstr "PCS: "
+
+#: tools/oyranos_profile_graph.c:186
+msgid "PROFILENAMES"
+msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:674
 msgid "Passive matrix monitor"
@@ -2645,7 +2653,7 @@ msgstr "Solaris"
 msgid "Source and Target Profiles for various situations"
 msgstr "Vstupní a výstupní profily pro různé situace"
 
-#: tools/oyranos_profile_graph.c:187
+#: tools/oyranos_profile_graph.c:192
 msgid "Standard Observer Graph:"
 msgstr "Graf standardního pozorovatele:"
 
@@ -3268,7 +3276,7 @@ msgid "Unset device:"
 msgstr "Vypsat zařízení:"
 
 #: tools/oyranos_gamma.c:197 tools/oyranos_profile.c:82
-#: tools/oyranos_profile_graph.c:176 tools/oyranos_convert.c:63
+#: tools/oyranos_profile_graph.c:183 tools/oyranos_convert.c:63
 #: tools/oyranos_profiles.c:60 tools/oyranos_policy.c:54
 #: examples/devices/test_device.c:30 examples/libraw/oyranos_file.cpp:44
 msgid "Usage"
@@ -3629,7 +3637,7 @@ msgstr "je nástroj na transformace ICC"
 msgid "is a ICC color conversion tool"
 msgstr "je nástroj na transformace ICC"
 
-#: tools/oyranos_profile_graph.c:175
+#: tools/oyranos_profile_graph.c:182
 msgid "is a ICC colour profile grapher"
 msgstr "zobrazí graf barvového profilu ICC"
 
@@ -3767,13 +3775,17 @@ msgstr "není profil:"
 msgid "not found:"
 msgstr "nenalezeno:"
 
-#: tools/oyranos_profile_graph.c:183
+#: tools/oyranos_profile_graph.c:205
 msgid "omit border"
 msgstr "vynechat okraj"
 
-#: tools/oyranos_profile_graph.c:182
+#: tools/oyranos_profile_graph.c:189
 msgid "omit the spectral line"
 msgstr "vynechat spektrální linii"
+
+#: tools/oyranos_profile_graph.c:188
+msgid "omit white line of lambert light emitters"
+msgstr ""
 
 #: modules/devices/oyranos_monitor_x11.c:743
 #: modules/devices/oyranos_monitor_x11.c:1279
@@ -3915,19 +3927,19 @@ msgstr "ukázat GUI nápovědy a otázek"
 msgid "skip X Color Management device profile"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:185
+#: tools/oyranos_profile_graph.c:190
 msgid "specify incemental increase of the thickness of the graph lines"
 msgstr "specifikovat inkrementální zvýšení tloušťky čar grafu"
 
-#: tools/oyranos_profile_graph.c:184
+#: tools/oyranos_profile_graph.c:206
 msgid "specify increase of the thickness of the graph lines"
 msgstr "specifikovat zvýšení tloušťky čar grafu"
 
-#: tools/oyranos_profile_graph.c:180
+#: tools/oyranos_profile_graph.c:204
 msgid "specify output file name, default is output.png"
 msgstr "specifikujte výstupní jméno souboru, výchozí je output.png"
 
-#: tools/oyranos_profile_graph.c:179
+#: tools/oyranos_profile_graph.c:203
 msgid "specify output image width in pixel"
 msgstr "specifikujte šířku výstupního obrázku v pixelech"
 
@@ -3952,7 +3964,7 @@ msgstr "nedokončeno"
 msgid "unknown"
 msgstr "neznámý"
 
-#: tools/oyranos_profile_graph.c:181
+#: tools/oyranos_profile_graph.c:187
 msgid "use CIE*xyY *x*y plane for saturation line projection"
 msgstr "použít rovinu CIE*xyY *x*y pro projekci saturační linie"
 
@@ -3980,8 +3992,8 @@ msgstr ""
 msgid "user path"
 msgstr "uživatelská cesta"
 
-#: tools/oyranos_convert.c:95 examples/devices/test_device.c:71
-#: examples/libraw/oyranos_file.cpp:60
+#: tools/oyranos_profile_graph.c:202 tools/oyranos_convert.c:95
+#: examples/devices/test_device.c:71 examples/libraw/oyranos_file.cpp:60
 msgid "verbose"
 msgstr "upovídaný výstup"
 
@@ -4012,7 +4024,7 @@ msgid "write to specified file"
 msgstr "zapsat do souboru"
 
 #: API_generated/oyOptions_s.c:1282 tools/oyranos_gamma.c:240
-#: tools/oyranos_profile.c:205 tools/oyranos_profile_graph.c:207
+#: tools/oyranos_profile.c:205 tools/oyranos_profile_graph.c:219
 #: tools/oyranos_convert.c:235 tools/oyranos_profiles.c:219
 #: tools/oyranos_policy.c:136 examples/devices/test_device.c:202
 #: examples/libraw/oyranos_file.cpp:214
