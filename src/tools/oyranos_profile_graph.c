@@ -332,7 +332,7 @@ int main( int argc , char** argv )
   cairo_rectangle( cr, x - frame, y - frame,
                          w*scale + 2*frame, h*scale + 2*frame);
   cairo_stroke(cr);
-  if(border && proj == p_lab)
+  if(border && proj == p_lab && saturation)
   {
     /* draw cross */
     cairo_move_to(cr, xToImage(.0), yToImage(.5));
