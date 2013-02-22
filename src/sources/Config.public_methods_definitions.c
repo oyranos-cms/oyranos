@@ -868,19 +868,20 @@ OYAPI const oyRankMap *  OYEXPORT
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  *  @date    2009/01/27
  */
-oyRankMap *        oyRankMapCopy     ( const oyRankMap   * rank_map,
+OYAPI oyRankMap * OYEXPORT oyRankMapCopy
+                                     ( const oyRankMap   * rank_map,
                                        oyAlloc_f           allocateFunc )
 {
   oyRankMap * map = 0;
   int error = !rank_map;
-  int n = 0, i;
+  int n = 0, i = 0;
 
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
 
   if(error <= 0)
   {
-    while( rank_map[n++].key ) {}
+    while( rank_map[i++].key ) ++n;
 
     oyAllocHelper_m_( map, oyRankMap, n + 1, allocateFunc, error = 1 );
   }
@@ -910,12 +911,11 @@ oyRankMap *        oyRankMapCopy     ( const oyRankMap   * rank_map,
  *  @date     2012/10/03
  *  @since    2012/10/03 (Oyranos: 0.5.0)
  */
-OYAPI void  OYEXPORT
-                 oyRankMapRelease    ( oyRankMap        ** rank_map,
+OYAPI void  OYEXPORT oyRankMapRelease( oyRankMap        ** rank_map,
                                        oyDeAlloc_f         deAllocateFunc )
 {
   int error = !rank_map || !*rank_map;
-  int n = 0, i;
+  int n = 0, i = 0;
 
   if(!deAllocateFunc)
     deAllocateFunc = oyDeAllocateFunc_;
@@ -923,7 +923,7 @@ OYAPI void  OYEXPORT
   if(error <= 0)
   {
     oyRankMap * map = *rank_map;
-    while( (*rank_map)[n++].key ) {}
+    while( (*rank_map)[i++].key ) ++n;
     for(i = 0; i < n; ++i)
     {
       deAllocateFunc( map[i].key ); map[i].key = 0;
@@ -936,6 +936,77 @@ OYAPI void  OYEXPORT
   }
 
 }
+
+/** Function  oyRankMapAppend
+ *  @memberof oyConfig_s
+ *  @brief    Append a rank map entry
+ *
+ *  A helper function to continually construct rank maps.
+ *
+ *  @param[in,out] rank_map            a pointer to a data structure,
+ *                                     The pointed to structure can be NULL.
+ *  @param[in]     key                 the key to apply ranking to
+ *  @param[in]     match_value         a found and matched value
+ *  @param[in]     none_match_value    a found and not matched value
+ *  @param[in]     not_found_value     a not found value
+ *  @param[in]     allocateFunc        the memory allocation function, optional
+ *  @param[in]     deAllocateFunc      the memory release function, optional
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2013/02/22
+ *  @since   2013/02/22 (Oyranos: 0.9.5)
+ */
+OYAPI int  OYEXPORT oyRankMapAppend  ( oyRankMap        ** rank_map,
+                                       const char        * key,
+                                       int                 match_value,
+                                       int                 none_match_value,
+                                       int                 not_found_value,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deAllocateFunc )
+{
+  int n = 0, i = 0,
+      error = 0;
+  oyRankMap * rm;
+
+  if(*rank_map)
+    while((*rank_map)[i++].key) n++;
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+  if(!deAllocateFunc)
+    deAllocateFunc = oyDeAllocateFunc_;
+
+  rm = allocateFunc( sizeof(oyRankMap) * (n+2) );
+  if(!rm)
+  {
+      message( oyMSG_ERROR, (oyStruct_s*)0, _DBG_FORMAT_ "\n"
+                    "Could not allocate enough memory", _DBG_ARGS_ );
+      error = -1;
+      return error;
+  }
+  if(n)
+  {
+    memcpy(rm, *rank_map, n*sizeof(oyRankMap));
+    for(i = 0; i < n; ++i)
+      rm[i].key = oyStringCopy_((*rank_map)[i].key, allocateFunc);
+    oyRankMapRelease( rank_map, deAllocateFunc );
+  }
+
+  rm[n].key = oyStringCopy_(key, allocateFunc);
+  rm[n].match_value = match_value;
+  rm[n].none_match_value = none_match_value;
+  rm[n].not_found_value = not_found_value;
+
+  rm[n+1].key = NULL;
+  rm[n+1].match_value = 0;
+  rm[n+1].none_match_value = 0;
+  rm[n+1].not_found_value = 0;
+
+  *rank_map = rm;
+
+  return error;
+}
+
 
 /** Function  oyRankMapFromJSON
  *  @memberof oyConfig_s
@@ -1052,7 +1123,7 @@ OYAPI int OYEXPORT oyRankMapToJSON   ( const oyRankMap   * rank_map,
                                        oyAlloc_f           allocateFunc )
 {
   int error = !rank_map;
-  int n = 0, i;
+  int n = 0, i = 0;
   char * t = 0;
   const char * device_class = oyOptions_FindString( options, "device_class", 0 );
 
@@ -1062,7 +1133,7 @@ OYAPI int OYEXPORT oyRankMapToJSON   ( const oyRankMap   * rank_map,
   if(error <= 0)
   {
     const oyRankMap * map = rank_map;
-    while( (rank_map)[n++].key ) {}
+    while( (rank_map)[i++].key ) ++n;
 
     if(n)
       oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
@@ -1085,7 +1156,10 @@ OYAPI int OYEXPORT oyRankMapToJSON   ( const oyRankMap   * rank_map,
     }
 
     if(n)
+    {
+      STRING_ADD( t, "\n" );
       STRING_ADD( t, OPENICC_DEVICE_JSON_RANK_MAP_FOOTER );
+    }
 
     if(t && json_text)
     {
