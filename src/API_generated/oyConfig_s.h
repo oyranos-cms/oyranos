@@ -153,6 +153,13 @@ OYAPI oyRankMap * OYEXPORT
 OYAPI void OYEXPORT
                  oyRankMapRelease    ( oyRankMap        ** rank_map,
                                        oyDeAlloc_f         deAllocateFunc );
+OYAPI int  OYEXPORT oyRankMapAppend  ( oyRankMap        ** rank_map,
+                                       const char        * key,
+                                       int                 match_value,
+                                       int                 none_match_value,
+                                       int                 not_found_value,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deAllocateFunc );
 OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
                                        oyOptions_s       * options,
                                        oyRankMap        ** rank_map,
