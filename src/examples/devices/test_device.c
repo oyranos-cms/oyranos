@@ -806,12 +806,16 @@ int main(int argc, char *argv[])
       } else
       {
         const oyRankMap * map = oyConfig_GetRankMap( c );
+        oyConfDomain_s * domain = oyConfDomain_FromReg( device_class, 0 );
+        const char * device_class = oyConfDomain_GetText( domain, "device_class", oyNAME_NICK );
+        oyConfDomain_Release( &domain );
+
         if(!map)
         { fprintf( stderr, "no RankMap found\n" ); exit(0);
         }
 
         error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/options/device_class",
-                                       "camera", OY_CREATE_NEW );  
+                                       device_class, OY_CREATE_NEW );  
         oyRankMapToJSON( map, options, &json, oyAllocFunc );
         oyOptions_Release( &options );
         if(!json)
