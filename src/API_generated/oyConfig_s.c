@@ -1150,7 +1150,7 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
     oyjl_value_s * json = 0,
                  * json_rankm = 0;
     char * val, * key;
-    const char * xpath = "org/freedesktop/openicc/rank_mao/[0]/[%d]";
+    const char * xpath = "org/freedesktop/openicc/rank_map/[0]/[%d]";
     int count, i;
     int32_t pos = 0;
     oyjl_value_s * v;
