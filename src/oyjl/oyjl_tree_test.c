@@ -82,20 +82,33 @@ int main( int argc, char** argv )
   {
     int level = 0;
     oyjl_value_s * root = 0;
-    const char * xpath = "Inhaber/Vorname";
+    const char * xpath = 0;
 
-    yajl_status status = oyjl_message_func_set( message_func );
+    //yajl_status status = oyjl_message_func_set( message_func );
 
     error = oyjl_tree_from_json( text, &root, NULL );
 
 
-    if(argc > 1)
+    if(argc > 1 && strcmp(argv[1],"-v") != 0)
       xpath = argv[1];
-    else
-      oyjl_tree_print( root, &level, stderr );
 
-    value = oyjl_tree_get_value( root, xpath );
-    printf("%s xpath \"%s\"\n", value?"found":"found not", xpath);
+    if(!xpath)
+    {
+      if(argc > 1 && strcmp(argv[1],"-v") == 0)
+        oyjl_tree_print( root, &level, stderr );
+      else
+      {
+        char * json = 0;
+        oyjl_tree_to_json( root, &level, &json );
+        fwrite( json, sizeof(char), strlen(json), stdout );
+      }
+    }
+
+    if(xpath)
+    {
+      value = oyjl_tree_get_value( root, xpath );
+      printf("%s xpath \"%s\"\n", value?"found":"found not", xpath);
+    }
     if(value)
       oyjl_tree_print( value, &level, stderr );
 
