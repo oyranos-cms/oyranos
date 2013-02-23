@@ -146,6 +146,46 @@ void * oyjl_malloc( size_t size )
 void   oyjl_free_memory( void ** ptr )
 { free(*ptr); *ptr = 0; }
 
+int                   oyjl_string_add( char             ** string,
+                                       const char        * format,
+                                                           ... )
+{
+  char * text_copy = NULL;
+  char * text = 0;
+  va_list list;
+  int len;
+  size_t sz = 0;
+
+  va_start( list, format);
+  len = vsnprintf( text, sz, format, list );
+  va_end  ( list );
+
+  {
+    text = oyjl_malloc( len + 1 );
+    va_start( list, format);
+    len = vsnprintf( text, len+1, format, list );
+    va_end  ( list );
+  }
+
+  if(string && *string)
+  {
+    int l = strlen(*string);
+    text_copy = oyjl_malloc( len + l + 1 );
+    strcpy( text_copy, *string );
+    strcpy( &text_copy[l], text );
+    
+
+    oyjl_free_memory((void**)string);
+    *string = text_copy;
+
+    oyjl_free_memory((void**)&text);
+
+  } else
+    *string = text;
+
+  return 0;
+}
+
 oyjl_value_s  *  oyjl_value_new      ( )
 {
   oyjl_value_s  * s = oyjl_malloc(sizeof(oyjl_value_s ));
@@ -725,6 +765,112 @@ yajl_status  oyjl_tree_from_json     ( const char        * text,
   return error;
 }
 
+yajl_status    oyjl_tree_to_json( oyjl_value_s * v, int * level, char ** json )
+{
+  int n = *level;
+
+  if(v)
+  switch(v->type)
+  {
+    case oyjl_type_none:
+         break;
+    case oyjl_type_boolean:
+         oyjl_string_add( json, "%d", v->value.boolean); break;
+    case oyjl_type_integer:
+         oyjl_string_add(json, "%ld", v->value.integer); break;
+    case oyjl_type_double:
+         oyjl_string_add(json, "%g", v->value.floating); break;
+    case oyjl_type_text:
+         oyjl_string_add(json, "\"%s\"", oyjl_print_text(&v->value.text)); break;
+    case oyjl_type_array:
+         {
+           int count = 0, i,
+               close = 0;
+           while(v->value.array[count]) ++count;
+           if(count >= 1)
+           {
+             /* array->object==0->array>=1 */
+             if(v->value.array[0]->type == oyjl_type_object)
+             {
+               const char * text = oyjl_print_text(&v->value.array[0]->value.object->key);
+               int len = strlen(text);
+               if(len == 0 &&
+                  v->value.array[0]->value.object->value->type  == oyjl_type_array &&
+                  v->value.array[0]->value.object->value->value.array)
+               {
+                 int count = 0;
+                 while(v->value.array[0]->value.object->value->value.array[count])
+                   ++count;
+                 if(count >= 1)
+                 {
+                   oyjl_string_add( json, "[" );
+                   close = 2;
+                 }
+               }
+             }
+           }
+
+           /* array>1->object */
+           if(count > 1 &&
+                     v->value.array[0]->type != oyjl_type_object)
+           {
+             oyjl_string_add( json, "[" );
+             close = 1;
+           }
+
+           if(close)
+           *level += 2;
+           for(i = 0; i < count; ++i)
+           {
+             oyjl_tree_to_json( v->value.array[i], level, json );
+             if(count > 1)
+             {
+               if(i < count - 1)
+                 oyjl_string_add( json, "," );
+             }
+           }
+           if(close)
+           *level -= 2;
+
+           if(close == 2)
+           {
+             oyjl_string_add( json, "\n");
+             while(n--) oyjl_string_add(json, " ");
+             oyjl_string_add( json, "]");
+           } else if(close == 1)
+             oyjl_string_add( json, "]");
+         } break;
+    case oyjl_type_object:
+         {
+           const char * text = oyjl_print_text(&v->value.object->key);
+           int len = strlen(text);
+           if(len)
+           {
+             oyjl_string_add( json, "\n" );
+             while(n-- + 1) oyjl_string_add(json, " ");
+             oyjl_string_add( json, "\"%s\": ", text );
+           } else
+           {
+             oyjl_string_add( json, "{" );
+           }
+             ++ *level;
+           oyjl_tree_to_json( v->value.object->value, level, json );
+             -- *level;
+           if(!len)
+           {
+             oyjl_string_add( json, "\n");
+             n = *level; while(n--) oyjl_string_add(json, " ");
+             oyjl_string_add( json, "}");
+           }
+         }
+         break;
+    default:
+         fprintf( stderr, "unknown type: %d\n", v->type );
+         break;
+  }
+  return yajl_status_ok;
+}
+
 yajl_status    oyjl_tree_free        ( oyjl_value_s     ** object )
 {
   yajl_status error = yajl_status_ok;
@@ -783,7 +929,7 @@ yajl_status    oyjl_tree_print( oyjl_value_s * v, int * level, FILE * fp )
     case oyjl_type_boolean:
          fprintf(fp, "oyjl_type_boolean: %d\n", v->value.boolean); break;
     case oyjl_type_integer:
-         fprintf(fp, "oyjl_type_integer: %lu\n", v->value.integer); break;
+         fprintf(fp, "oyjl_type_integer: %ld\n", v->value.integer); break;
     case oyjl_type_double:
          fprintf(fp, "oyjl_type_double: %g\n", v->value.floating); break;
     case oyjl_type_text:
@@ -798,7 +944,7 @@ yajl_status    oyjl_tree_print( oyjl_value_s * v, int * level, FILE * fp )
              oyjl_tree_print( v->value.array[i], level, fp );
            -- *level;
            n = *level; while(n--) fprintf(fp, " ");
-           fprintf( fp, "oyjl_type_array: end\n");
+           fprintf( fp, "oyjl_type_array: end %d\n", count);
          } break;
     case oyjl_type_object:
          fprintf( fp, "oyjl_type_object: %s\n",
@@ -807,7 +953,7 @@ yajl_status    oyjl_tree_print( oyjl_value_s * v, int * level, FILE * fp )
          oyjl_tree_print( v->value.object->value, level, fp );
            -- *level;
          n = *level; while(n--) fprintf(fp, " ");
-         fprintf( fp, "oyjl_type_object: end\n");
+         fprintf( fp, "oyjl_type_object: end %s\n", oyjl_print_text(&v->value.object->key));
          break;
     default:
          fprintf( fp, "unknown type: %d\n", v->type );
