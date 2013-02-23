@@ -121,6 +121,9 @@ yajl_status    oyjl_tree_free        ( oyjl_value_s     ** object );
 yajl_status    oyjl_tree_print       ( oyjl_value_s      * root,
                                        int               * level,
                                        FILE              * fp );
+yajl_status    oyjl_tree_to_json     ( oyjl_value_s      * v,
+                                       int               * level,
+                                       char             ** json );
 
 oyjl_value_s * oyjl_tree_get_value   ( oyjl_value_s      * root,
                                        const char        * xpath );
