@@ -35,7 +35,7 @@ SET( CFILES_OBJECT_CONFIG
 	${PACKAGE_NAME}_sentinel.c
 	${PACKAGE_NAME}_texts.c
 	${PACKAGE_NAME}_xml.c
-        ../oyjl/oyjl_tree_parse.c
+        ../oyjl/oyjl_tree.c
 	${CFILES_OBJECT_CONFIG_GEN}
 	${CFILES_OBJECT_CONFIG_CS}
    )

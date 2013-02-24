@@ -2,12 +2,12 @@ prefix=/usr
 
 CC = gcc
 DEBUG= -Wall -g
-INCL = -I$(prefix)/include -I../yajl/
+INCL = -I$(prefix)/include -I../../yajl/
 LDFLAGS = -L$(prefix)/lib64
 TARGET = oyjl_tree_test
 CFLAGS=$(DEBUG) $(INCL) -fPIC
 SOURCES = \
-	oyjl_tree_parse.c \
+	oyjl_tree.c \
 	$(TARGET).c
 OBJECTS = $(SOURCES:.c=.o)
 
