@@ -279,7 +279,7 @@ int main( int argc , char** argv )
       {
         double XYZ[3];
         double Lab[3];
-        XYZ[0] = cieXYZ_64_2[i][0]; XYZ[1] = cieXYZ_64_2[i][1]; XYZ[2] = cieXYZ_64_2[i][2];
+        XYZ[0] = cieXYZ_64_10[i][0]; XYZ[1] = cieXYZ_64_10[i][1]; XYZ[2] = cieXYZ_64_10[i][2];
         oyXYZ2Lab( XYZ, Lab);
         if(i == 0)
           cairo_move_to(cr, xToImage(Lab[1]/256.0+.5),
@@ -445,9 +445,9 @@ int main( int argc , char** argv )
   if(standardobs == 2)
   {
     /* draw spectral sensitivity curves from 1964 standard observer */
-    drawSpectralCurve(cieXYZ_64_2, 0, 1.0, .0, .0, 1.)
-    drawSpectralCurve(cieXYZ_64_2, 1, .0, 1.0, .0, 1.)
-    drawSpectralCurve(cieXYZ_64_2, 2, .0, .0, 1.0, 1.)
+    drawSpectralCurve(cieXYZ_64_10, 0, 1.0, .0, .0, 1.)
+    drawSpectralCurve(cieXYZ_64_10, 1, .0, 1.0, .0, 1.)
+    drawSpectralCurve(cieXYZ_64_10, 2, .0, .0, 1.0, 1.)
     cairo_stroke(cr);
   }
   if(kelvin > 0.0)
