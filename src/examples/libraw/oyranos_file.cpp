@@ -43,7 +43,7 @@ void displayHelp(char ** argv)
          _("is a CameraRaw conversion tool"));
   printf("%s:\n",                 _("Usage"));
   printf("  %s\n",               _("Convert CameraRaw image to Rgb image:"));
-  printf("      %s -c -i file.dng -o file.ppm\n", argv[0]);
+  printf("      %s -i file.dng -o file.ppm\n", argv[0]);
   printf("\n");
   printf("  %s\n",               _("Dump data:"));
   printf("      %s -f=[icc|openicc] -i file.dng [-o=device.json] [--only-db]\n", argv[0]);
