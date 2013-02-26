@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Colour Management System 
  *
- *  Copyright (C) 2012  Kai-Uwe Behrmann
+ *  Copyright (C) 2012-2013  Kai-Uwe Behrmann
  *
  */
 
@@ -26,6 +26,7 @@
 #include <string.h>
 #include <cairo.h>                /* Cairo headers */
 
+#include "oyConversion_s.h"
 #include "oyProfile_s.h"
 #include "oyImage_s.h"
 
@@ -88,6 +89,7 @@ int main( int argc , char** argv )
   int standardobs = 0;
   int saturation = 1;
   double kelvin = 0.0;
+  int colour = 1;
 
   int max_x,max_y,min_x,min_y;
 
@@ -168,7 +170,9 @@ int main( int argc , char** argv )
                         { blackbody = spectral = saturation = 0; standardobs = 2; i=100; break;}
                         else if(OY_IS_ARG("kelvin"))
                         { blackbody = spectral = saturation = 0;
-                          OY_PARSE_FLOAT_ARG2(kelvin, "kelvin", 1000.0,15000.0,5000.0); i=100; break;}
+                          OY_PARSE_FLOAT_ARG2(kelvin, "kelvin", 800.0,15000.0,5000.0); i=100; break;}
+                        else if(OY_IS_ARG("no-colour"))
+                        { colour = 0; i=100; break;}
                         else if(OY_IS_ARG("verbose"))
                         { oy_debug += 1; i=100; break;}
                         }
@@ -182,21 +186,24 @@ int main( int argc , char** argv )
                                 _("is a ICC colour profile grapher"));
                         printf("%s:\n",               _("Usage"));
                         printf("  %s\n",              _("2D Graph from profiles:"));
-                        printf("      %s [-o %s] [-x [-c]] [-w %s] [-b] [-s] %s\n", argv[0],
+                        printf("      %s [-o %s] [-x [-c]] [-s] [-vbowt] %s\n", argv[0],
                                                       _("FILE"),_("NUMBER"),_("PROFILENAMES") );
                         printf("      -x \t%s\n",     _("use CIE*xyY *x*y plane for saturation line projection"));
                         printf("      \t-c\t%s\n",    _("omit white line of lambert light emitters"));
                         printf("      -s \t%s\n",     _("omit the spectral line"));
                         printf("      -d %s\t%s\n",   _("NUMBER"), _("specify incemental increase of the thickness of the graph lines"));
                         printf("\n");
-                        printf( "  %s\n",             _("Standard Observer Graph:"));
+                        printf( "  %s\n",             _("Standard Observer 1931 2° Graph:"));
                         printf( "      %s --standard-observer [-vbowt]\n", argv[0]);
+                        printf("      \t--no-colour\t%s\n",    _("draw gray"));
                         printf("\n");
-                        printf( "  %s\n",             _("1964 Observer Graph:"));
+                        printf( "  %s\n",             _("1964 10° Observer Graph:"));
                         printf( "      %s --standard-observer-64 [-vbowt]\n", argv[0]);
+                        printf("      \t--no-colour\t%s\n",    _("draw gray"));
                         printf("\n");
                         printf( "  %s\n",             _("Blackbody Radiator Spectrum Graph:"));
-                        printf( "      %s --kelvin [-vbowt] %s\n", argv[0], _("NUMBER"));
+                        printf( "      %s --kelvin %s [-vbowt]\n", argv[0], _("NUMBER"));
+                        printf("      \t--no-colour\t%s\n",    _("draw gray"));
                         printf("\n");
                         printf("  %s\n",              _("General options:"));
                         printf("      -v \t%s\n",     _("verbose"));
@@ -428,7 +435,7 @@ int main( int argc , char** argv )
   }
 
 #define drawSpectralCurve(array, pos, r,g,b,a) i = 0; cairo_line_to(cr, xToImage(i/371.0), yToImage(array[i][pos]/2.0)); \
-    cairo_set_source_rgba( cr, r,g,b,a); \
+    if(colour) cairo_set_source_rgba( cr, r,g,b,a); else cairo_set_source_rgba( cr, (r*0.2+g*0.7+b*0.1)/3.0,(r*0.2+g*0.7+b*0.1)/3.0,(r*0.2+g*0.7+b*0.1)/3.0,a); \
     for(i = 0; i<=371; ++i) \
       cairo_line_to(cr, xToImage(i/371.0), yToImage(array[i][pos]/2.0)); \
     cairo_stroke(cr);
@@ -455,15 +462,48 @@ int main( int argc , char** argv )
     /* draw black body spectrum */
     float bb[372];
     double max = 0.0;
-
+    /* float precission avoids clamping in CIE*XYZ space on input */
+    double rgb[3] = {0.0,0.0,0.0}, XYZ[3] = {0.0,0.0,0.0};
+    oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, 0 ),
+                * sRGB = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+    oyConversion_s * lab_srgb = oyConversion_CreateBasicPixelsFromBuffers (
+                                       pLab, rgb, oyDOUBLE,
+                                       sRGB, rgb, oyDOUBLE,
+                                       0, 1 );
     for(i=0;i<372;++i) bb[i] = bb_spectrum(360+i, kelvin);
     for(i=0;i<372;++i) if(bb[i] > max) max = bb[i];
     for(i=0;i<372;++i) bb[i] /= max;
 
-    cairo_set_source_rgba( cr, .0,.0,.0, 1. );
-    for(i = 0; i<=371; ++i)
-      cairo_line_to(cr, xToImage(i/371.0), yToImage(bb[i]));
-    cairo_stroke(cr);
+    cairo_set_source_rgba( cr, 0.0,0.0,0.0, 1.0); \
+    cairo_move_to(cr, xToImage(0/371.0), yToImage(bb[0]));
+    for(i = 0; i<371-1; ++i)
+    {
+      cairo_pattern_t * g = cairo_pattern_create_linear(
+                                     xToImage(    i/371.0),yToImage(bb[i]),
+                                     xToImage((i+1)/371.0),yToImage(bb[i+1]));
+      /* start with previous colour */
+      cairo_pattern_add_color_stop_rgba(g, 0, rgb[0],rgb[1],rgb[2], 1);
+      /* get spectral colour from colour matching function (CMF) */
+      for(j = 0; j<3; ++j)
+        XYZ[j] = cieXYZ_31_2[i][j];
+      oyXYZ2Lab( XYZ, rgb );
+      rgb[0] /= 100.0; rgb[1] = rgb[1]/256.0+0.5; rgb[2] = rgb[2]/256.0+0.5;
+      oyConversion_RunPixels( lab_srgb, 0 );
+      /* add different stop */
+      cairo_pattern_add_color_stop_rgba(g, 1, rgb[0],rgb[1],rgb[2], 1);
+      if(colour)
+      /* only one colour pattern can be drawn at each cairo_stroke;
+       * appears to be a cairo limitation */
+        cairo_set_source(cr, g);
+      cairo_move_to(cr, xToImage((i  )/371.0), yToImage(bb[i  ]));
+      /* draw a bit further and avoid empty space between lines */
+      cairo_line_to(cr, xToImage((i+2)/371.0), yToImage(bb[i+2]));
+      /* draw a disconnected single line segment with actual gradient pattern */
+      cairo_stroke(cr);
+    }
+    oyProfile_Release( &sRGB );
+    oyProfile_Release( &pLab );
+    oyConversion_Release( &lab_srgb );
   }
 #undef drawSpectralCurve
 
