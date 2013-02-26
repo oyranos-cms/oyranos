@@ -30,6 +30,7 @@
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_version.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -266,7 +267,7 @@ int main( int argc , char** argv )
     }
   }
 
-#if 0
+#if 1
   if(other_args)
   {
     const char * result_xml = 0;
@@ -278,13 +279,16 @@ int main( int argc , char** argv )
 
     forms_args->print = 0;
 
+    /* TODO */
     error = oyXFORMsRenderUi( text, oy_ui_cmd_line_handlers, forms_args );
     result_xml = oyFormsArgs_ModelGet( forms_args );
 
-    opts = oyOptions_FromText( result_xml, 0,0 );
+    if(result_xml)
+    {
+      opts = oyOptions_FromText( result_xml, 0,0 );
 
-    data = oyOptions_GetText( opts, oyNAME_NAME );
-    opt_names = oyOptions_GetText( opts, oyNAME_DESCRIPTION );
+      data = oyOptions_GetText( opts, oyNAME_NAME );
+      opt_names = oyOptions_GetText( opts, oyNAME_DESCRIPTION );
 
       for( i = 0; i < other_args_n; i += 2 )
       {
@@ -319,6 +323,14 @@ int main( int argc , char** argv )
           }
           oyOption_Release( &o );
         }
+      }
+    } else
+      /* handle the options as if they are commandline switches */
+      for( i = 0; i+1 < other_args_n; i += 2 )
+      {
+        oyOptions_SetFromText( &module_options, other_args[i],
+                               other_args[i+1], OY_CREATE_NEW );
+        
       }
   }
 #endif

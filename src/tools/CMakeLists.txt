@@ -30,7 +30,7 @@ ENDIF()
 
 # colour conversion
 ADD_EXECUTABLE( oyranos-icc "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_convert.c" )
-TARGET_LINK_LIBRARIES( oyranos-icc oyranos ${EXTRA_LIBS} )
+TARGET_LINK_LIBRARIES( oyranos-icc oyranos ${EXTRA_LIBS} oyranos_forms_cmd_line )
 INSTALL (TARGETS oyranos-icc DESTINATION bin)
 
 ADD_SUBDIRECTORY (qcmsevents)

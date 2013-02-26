@@ -715,6 +715,14 @@ double bb_spectrum(double wavelength, double bbTemp)
 {     
     double wlm = wavelength * 1e-9;   /* Wavelength in meters */
 
-    return (3.74183e-16 * pow(wlm, -5.0)) /
-           (exp(1.4388e-2 / (wlm * bbTemp)) - 1.0);
+    /*  c1 = 3.74183e-16  from 2*M_PI*h*pow(2,c)  2*pi*6.62606957e-34*299792458^2
+     *
+     *  h - Planck constant                       6.62606957(29)×10−34 J*s
+     *  c - light speed                           299 792 458          m/s
+     *
+     *  c2 = 1.4388e-2    from hc/k               6.62606957e-34*299792458/1.3806488e-23
+     *
+     *  k - Boltzmann contant                     1.3806488(13)×10−23  J/K
+     */
+    return (3.74183e-16/*c1*/ * pow(wlm, -5.0)) / (exp(1.4388e-2/*c2*/ / (wlm * bbTemp)) - 1.0); /* W / m² / m */
 }
