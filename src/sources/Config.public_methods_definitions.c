@@ -868,19 +868,20 @@ OYAPI const oyRankMap *  OYEXPORT
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  *  @date    2009/01/27
  */
-oyRankMap *        oyRankMapCopy     ( const oyRankMap   * rank_map,
+OYAPI oyRankMap * OYEXPORT oyRankMapCopy
+                                     ( const oyRankMap   * rank_map,
                                        oyAlloc_f           allocateFunc )
 {
   oyRankMap * map = 0;
   int error = !rank_map;
-  int n = 0, i;
+  int n = 0, i = 0;
 
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
 
   if(error <= 0)
   {
-    while( rank_map[n++].key ) {}
+    while( rank_map[i++].key ) ++n;
 
     oyAllocHelper_m_( map, oyRankMap, n + 1, allocateFunc, error = 1 );
   }
@@ -910,12 +911,11 @@ oyRankMap *        oyRankMapCopy     ( const oyRankMap   * rank_map,
  *  @date     2012/10/03
  *  @since    2012/10/03 (Oyranos: 0.5.0)
  */
-OYAPI void  OYEXPORT
-                 oyRankMapRelease    ( oyRankMap        ** rank_map,
+OYAPI void  OYEXPORT oyRankMapRelease( oyRankMap        ** rank_map,
                                        oyDeAlloc_f         deAllocateFunc )
 {
   int error = !rank_map || !*rank_map;
-  int n = 0, i;
+  int n = 0, i = 0;
 
   if(!deAllocateFunc)
     deAllocateFunc = oyDeAllocateFunc_;
@@ -923,7 +923,7 @@ OYAPI void  OYEXPORT
   if(error <= 0)
   {
     oyRankMap * map = *rank_map;
-    while( (*rank_map)[n++].key ) {}
+    while( (*rank_map)[i++].key ) ++n;
     for(i = 0; i < n; ++i)
     {
       deAllocateFunc( map[i].key ); map[i].key = 0;
@@ -935,6 +935,268 @@ OYAPI void  OYEXPORT
     *rank_map = 0;
   }
 
+}
+
+/** Function  oyRankMapAppend
+ *  @memberof oyConfig_s
+ *  @brief    Append a rank map entry
+ *
+ *  A helper function to continually construct rank maps.
+ *
+ *  @param[in,out] rank_map            a pointer to a data structure,
+ *                                     The pointed to structure can be NULL.
+ *  @param[in]     key                 the key to apply ranking to
+ *  @param[in]     match_value         a found and matched value
+ *  @param[in]     none_match_value    a found and not matched value
+ *  @param[in]     not_found_value     a not found value
+ *  @param[in]     allocateFunc        the memory allocation function, optional
+ *  @param[in]     deAllocateFunc      the memory release function, optional
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2013/02/22
+ *  @since   2013/02/22 (Oyranos: 0.9.5)
+ */
+OYAPI int  OYEXPORT oyRankMapAppend  ( oyRankMap        ** rank_map,
+                                       const char        * key,
+                                       int                 match_value,
+                                       int                 none_match_value,
+                                       int                 not_found_value,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deAllocateFunc )
+{
+  int n = 0, i = 0,
+      error = 0;
+  oyRankMap * rm;
+
+  if(*rank_map)
+    while((*rank_map)[i++].key) n++;
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+  if(!deAllocateFunc)
+    deAllocateFunc = oyDeAllocateFunc_;
+
+  rm = allocateFunc( sizeof(oyRankMap) * (n+2) );
+  if(!rm)
+  {
+      message( oyMSG_ERROR, (oyStruct_s*)0, _DBG_FORMAT_ "\n"
+                    "Could not allocate enough memory", _DBG_ARGS_ );
+      error = -1;
+      return error;
+  }
+  if(n)
+  {
+    memcpy(rm, *rank_map, n*sizeof(oyRankMap));
+    for(i = 0; i < n; ++i)
+      rm[i].key = oyStringCopy_((*rank_map)[i].key, allocateFunc);
+    oyRankMapRelease( rank_map, deAllocateFunc );
+  }
+
+  rm[n].key = oyStringCopy_(key, allocateFunc);
+  rm[n].match_value = match_value;
+  rm[n].none_match_value = none_match_value;
+  rm[n].not_found_value = not_found_value;
+
+  rm[n+1].key = NULL;
+  rm[n+1].match_value = 0;
+  rm[n+1].none_match_value = 0;
+  rm[n+1].not_found_value = 0;
+
+  *rank_map = rm;
+
+  return error;
+}
+
+
+/** Function  oyRankMapFromJSON
+ *  @memberof oyConfig_s
+ *  @brief    Create a Rank Map
+ *
+ *  @param[in]     json_text           the rank map definition
+ *  @param[in]     options             optional
+ *                                     - "pos" integer selects position in array
+ *  @param[out]    rank_map            the result
+ *  @param[in]     allocateFunc        the memory allocate function
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent, < 0 - an issue
+ *
+ *  @version  Oyranos: 0.9.5
+ *  @date     2013/02/13
+ *  @since    2013/02/13 (Oyranos: 0.9.5)
+ */
+OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
+                                       oyOptions_s       * options,
+                                       oyRankMap        ** rank_map,
+                                       oyAlloc_f           allocateFunc )
+{
+  oyRankMap * map = 0;
+  int error = !json_text;
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  if(error <= 0)
+  {
+    oyjl_val json = 0,
+             json_rankm = 0;
+    char * key, * t;
+    const char * xpath = "org/freedesktop/openicc/rank_map/[0]/[%d]";
+    int count, i;
+    int32_t pos = 0;
+    oyjl_val v;
+
+    t = oyAllocateFunc_(256);
+    json = oyjl_tree_parse( json_text, t, 256 );
+    if(t[0])
+    {
+      WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
+      error = 1;
+    }
+    oyFree_m_(t);
+
+    error = oyOptions_FindInt( options, "pos", 0, &pos );
+    json_rankm = oyjl_tree_get_valuef( json, xpath, pos );
+
+    count = oyjl_value_count( json_rankm );
+    oyAllocHelper_m_( map, oyRankMap, count + 1, allocateFunc, error = 1 );
+
+    for(i = 0; i < count; ++i)
+    {
+      v = oyjl_value_pos_get( json_rankm, i );
+      if(json_rankm->type == oyjl_t_object)
+        key = oyStringCopy_( json_rankm->u.object.keys[i], oyAllocateFunc_ );
+      else
+        key = 0;
+
+      if(key && oyjl_value_count( v ))
+      {
+        map[i].key = key; key = 0;
+        if(v->type == oyjl_t_array)
+        {
+#define ma( target, pos ) \
+          if( v->u.array.len >= pos+1) \
+          { \
+            if( v->u.array.values[pos]->type == oyjl_t_number && \
+                v->u.array.values[pos]->u.number.flags & OYJL_NUMBER_INT_VALID ) \
+              target = v->u.array.values[pos]->u.number.i; \
+            else if( v->u.array.values[pos]->type == oyjl_t_string ) \
+              target = atoi(v->u.array.values[pos]->u.string); \
+          }
+#if 0
+          if( v->u.array.len >= 1)
+          {
+            if( v->u.array.values[0]->type == oyjl_t_number &&
+                v->u.array.values[0]->u.number.flags & OYJL_NUMBER_INT_VALID )
+              map[i].match_value = v->u.array.values[0]->u.number.i;
+            else if( v->u.array.values[0]->type == oyjl_t_string )
+              map[i].match_value = atoi(v->u.array.values[0]->u.string);
+          }
+#else
+        ma( map[i].match_value, 0 )
+#endif
+        ma( map[i].none_match_value, 1)
+        ma( map[i].not_found_value, 2)
+#undef  ma
+    }
+  }
+
+  if(error <= 0 && rank_map)
+  {
+    *rank_map = map;
+  }
+
+  return error;
+}
+
+#define OPENICC_DEVICE_JSON_RANK_MAP_HEADER \
+  "{\n" \
+  "  \"org\": {\n" \
+  "    \"freedesktop\": {\n" \
+  "      \"openicc\": {\n" \
+  "        \"rank_map\": {\n" \
+  "          \"%s\": [{\n"
+#define OPENICC_DEVICE_JSON_RANK_MAP_FOOTER \
+  "            }\n" \
+  "          ]\n" \
+  "        }\n" \
+  "      }\n" \
+  "    }\n" \
+  "  }\n" \
+  "}\n"
+
+/** Function  oyRankMapToJSON
+ *  @memberof oyConfig_s
+ *  @brief    Create JSON from a Rank Map
+ *
+ *  @param[in]     rank_map            the rank map
+ *  @param[in]     options             optional
+ *                                     - "pos" integer selects position in array
+ *                                     - "device_class" will be placed into the JSON
+ *  @param[out]    json_text           the result
+ *  @param[in]     allocateFunc        the memory allocate function
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent, < 0 - an issue
+ *
+ *  @version  Oyranos: 0.9.5
+ *  @date     2013/02/13
+ *  @since    2013/02/13 (Oyranos: 0.9.5)
+ */
+OYAPI int OYEXPORT oyRankMapToJSON   ( const oyRankMap   * rank_map,
+                                       oyOptions_s       * options,
+                                       char             ** json_text,
+                                       oyAlloc_f           allocateFunc )
+{
+  int error = !rank_map;
+  int n = 0, i = 0;
+  char * t = 0;
+  const char * device_class = oyOptions_FindString( options, "device_class", 0 );
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  if(error <= 0)
+  {
+    const oyRankMap * map = rank_map;
+    while( (rank_map)[i++].key ) ++n;
+
+    if(n)
+      oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                          OPENICC_DEVICE_JSON_RANK_MAP_HEADER,
+                          oyNoEmptyString_m_( device_class ));
+
+    for(i = 0; i < n; ++i)
+    {
+      if(i > 0 && map[i].key)
+        STRING_ADD( t, ",\n" );
+      if(map[i].key)
+        oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+  "              \"%s\": [%d, %d, %d]",
+                            map[i].key,
+                            map[i].match_value,
+                            map[i].none_match_value,
+                            map[i].not_found_value );
+      else
+        STRING_ADD( t, "\n" );
+    }
+
+    if(n)
+    {
+      STRING_ADD( t, "\n" );
+      STRING_ADD( t, OPENICC_DEVICE_JSON_RANK_MAP_FOOTER );
+    }
+
+    if(t && json_text)
+    {
+      if(allocateFunc != oyAllocateFunc_)
+      {
+        *json_text = oyStringCopy_( t, allocateFunc );
+        oyFree_m_( t );
+      } else
+        *json_text = t;
+    }
+  }
+
+  return error;
 }
 
 /** Function  oyConfig_FromRegistration

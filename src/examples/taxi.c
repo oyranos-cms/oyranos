@@ -153,11 +153,11 @@ int main( int argc, char ** argv )
   int db_download = 0;
 
   size_t size = 0;
-  const char * short_name = NULL,
-             * long_name = NULL;
-  oyjl_value_s * root = 0;
+  char * short_name = NULL,
+       * long_name = NULL;
+  oyjl_val root = 0;
   char * val = NULL;
-  oyjl_value_s * v = 0, * tv = 0;
+  oyjl_val v = 0, tv = 0;
   int count;
 
 
@@ -222,7 +222,13 @@ int main( int argc, char ** argv )
     char * manufacturers = oyReadUrlToMem_( TAXI_URL "/manufacturers",
                                             &size, "r", oyAllocateFunc_ );
     if(manufacturers)
-      error = oyjl_tree_from_json( manufacturers, &root, NULL );
+    {
+      char * t = oyAllocateFunc_(256);
+      root = oyjl_tree_parse( manufacturers, t, 256 );
+      if(t[0])
+        WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
+      oyFree_m_(t);
+    }
     if(root)
     {
       int count = oyjl_value_count(root);
@@ -256,7 +262,7 @@ int main( int argc, char ** argv )
           printf("\n");
         }
       }
-      error = oyjl_tree_free( &root );
+      oyjl_tree_free( root ); root = 0;
     }
   }
 
@@ -299,7 +305,11 @@ int main( int argc, char ** argv )
         }
         device_db = t; t = NULL;
 
-        error = oyjl_tree_from_json( device_db, &root, NULL );
+        t = oyAllocateFunc_(256);
+        root = oyjl_tree_parse( device_db, t, 256 );
+        if(t[0])
+          WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
+        oyFree_m_(t);
 
 
         tv = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]" );

@@ -1320,32 +1320,32 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
 {
   int error = !json_text || !device;
   oyConfig_s * device_ = NULL;
-  oyjl_value_s * json = 0,
-               * json_device,
-               * json_class;
+  oyjl_val json = 0,
+           json_device,
+           json_class;
   char * val, * key, * t = NULL;
   const char * xpath = "org/freedesktop/openicc/device/[0]/[%d]";
   int count, i;
   int32_t pos = 0;
   const char * underline_key_suffix = oyOptions_FindString( options,
                                                     "underline_key_suffix", 0 );
-  const char * device_class;
-  oyjl_value_s * v;
-
-  yajl_status status;
+  const char * device_class = 0;
+  oyjl_val v;
 
   device_ = oyConfig_FromRegistration( "//" OY_TYPE_STD "/config", 0 );
-  status = oyjl_tree_from_json( json_text, &json, 0 );
-  if(status != yajl_status_ok)
-    WARNc2_S( "\"%s\" %d\n", _("found issues parsing JSON"), status );
+  t = oyAllocateFunc_(256);
+  json = oyjl_tree_parse( json_text, t, 256 );
+  if(t[0])
+    WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
+  oyFree_m_(t);
 
   error = oyOptions_FindInt( options, "pos", 0, &pos );
   oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                           xpath, pos );
 
   json_class = oyjl_tree_get_value( json, "org/freedesktop/openicc/device" );
-  v = oyjl_value_pos_get( json_class, 0 );
-  device_class = oyjl_print_text( &v->value.object->key );
+  if(json_class->type == oyjl_t_object)
+    device_class = json_class->u.object.keys[0];
   if(device_class)
     oyConfig_AddDBData( device_, "device_class", device_class, OY_CREATE_NEW );
   else
@@ -1360,8 +1360,9 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
   count = oyjl_value_count(json_device);
   for(i = 0; i < count; ++i)
   {
+    if(json_device->type == oyjl_t_object)
+      key = oyStringCopy_(json_device->u.object.keys[i], oyAllocateFunc_ );
     v = oyjl_value_pos_get( json_device, i );
-    key = oyStringCopy_(oyjl_print_text( &v->value.object->key ), 0);
     val = oyjl_value_text( v, oyAllocateFunc_ );
 
     if(key && key[0] && key[0] == '_' && underline_key_suffix)
@@ -1505,7 +1506,7 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
                 STRING_ADD( val, "]");
                 oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                      "%s", val );
-                if(val) free( val );
+                if(val) oyDeAllocateFunc_( val );
               } else
                 oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                      "              \"%s\": \"%s\"",
@@ -1686,14 +1687,19 @@ OYAPI int  OYEXPORT
   
   if(manufacturers)
   {
-    oyjl_value_s * root = 0;
+    oyjl_val root = 0;
     int count = 0, i;
     char * val = NULL,
          * key = NULL;
     char * json_text = NULL;
     const char * prefix = oyConfig_FindString( device, "prefix", 0 );
 
-    error = oyjl_tree_from_json( manufacturers, &root, NULL );
+    char * t = oyAllocateFunc_(256);
+    root = oyjl_tree_parse( manufacturers, t, 256 );
+    if(t[0])
+      WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
+    oyFree_m_(t);
+
     if(prefix)
       oyStringAddPrintf_( &key, oyAllocateFunc_, oyDeAllocateFunc_,
                           "%smnft", prefix );
@@ -1718,7 +1724,7 @@ OYAPI int  OYEXPORT
     if(root)
     {
       int done = 0;
-      oyjl_value_s * v = 0, * tv = 0;
+      oyjl_val v = 0, tv = 0;
 
       count = oyjl_value_count(root);
       for(i = 0; i < count; ++i)
@@ -1741,7 +1747,7 @@ OYAPI int  OYEXPORT
         if(val) oyDeAllocateFunc_(val); val = 0;
       }
 
-      error = oyjl_tree_free( &root );
+      oyjl_tree_free( root ); root = 0;
 
       /* get the devices */
       if(done)
@@ -1772,7 +1778,11 @@ OYAPI int  OYEXPORT
                        "http://icc.opensuse.org/devices/%s with header:\n%s",
                        OY_DBG_ARGS_,
                        val, oyNoEmptyString_m_(device_db) );
-        error = oyjl_tree_from_json( device_db, &root, NULL );
+        t = oyAllocateFunc_(256);
+        root = oyjl_tree_parse( device_db, t, 256 );
+        if(t[0])
+          WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
+        oyFree_m_(t);
 
         error = oyOptions_SetFromText( &opts,
                                  "//" OY_TYPE_STD "/argv/underline_key_suffix",
@@ -1819,7 +1829,7 @@ OYAPI int  OYEXPORT
         oyOptions_Release( &opts );
         if(device_db) oyDeAllocateFunc_(device_db); device_db = 0;
       }
-      oyjl_tree_free( &root );
+      oyjl_tree_free( root ); root = 0;
     }
 
     oyFree_m_( manufacturers );

@@ -327,6 +327,10 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
         char * data = 0;
         oyConfig_s * d = device;
 
+        oyRankMap * rank_map = oyRankMapCopy( oyConfig_GetRankMap( device ), oyAllocateFunc_ );
+        if(!rank_map)
+          rank_map = oyRankMapCopy( _rank_map, oyAllocateFunc_ );
+
         OPTIONS_ADD( oyConfig_GetOptions(d,"backend_core"), manufacturer )
         OPTIONS_ADD( oyConfig_GetOptions(d,"backend_core"), model )
         OPTIONS_ADD( oyConfig_GetOptions(d,"backend_core"), serial )
@@ -420,10 +424,13 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
           STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
           STRING_ADD( reg_name, keyword );
           if(value)
+          {
             error= oyOptions_SetFromText( oyConfig_GetOptions(d,"backend_core"),
                                                reg_name,
                                                value,
                                                OY_CREATE_NEW );
+            oyRankMapAppend( &rank_map, reg_name, 2, -2, 0, 0,0 );
+          }
           if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
         }
 
@@ -452,13 +459,19 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
               value = o->defchoice;
             
             if(value)
+            {
               error = oyOptions_SetFromText( oyConfig_GetOptions(d,"backend_core"),
                                                 reg_name,
                                                 value,
                                                 OY_CREATE_NEW );
+              oyRankMapAppend( &rank_map, reg_name, 2, -2, 0, 0,0 );
+            }
             if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
           }
         }
+
+        oyConfig_SetRankMap( device, rank_map );
+        oyRankMapRelease( &rank_map, oyDeAllocateFunc_ );
       }
 
       oyOption_Release( &value3 );
@@ -1049,6 +1062,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
     int attr_n;
     oyProfile_s * p = 0;
     oyConfig_s * device = 0;
+    oyRankMap * rank_map = 0;
 
     if(!ppd_file)
     {
@@ -1132,7 +1146,11 @@ int CUPSgetProfiles                  ( const char        * device_name,
       oyOptions_SetFromText( oyConfig_GetOptions(device,"data"),
                              CMM_BASE_REG OY_SLASH "profile_name",
                              profile_name, OY_CREATE_NEW );
- 
+
+      rank_map = oyRankMapCopy( oyConfig_GetRankMap( device ), oyAllocateFunc_ );
+      if(!rank_map)
+        rank_map = oyRankMapCopy( _rank_map, oyAllocateFunc_ );
+
       if(selectorA && texts[0] && texts[0][0])
       {
         char * reg_name = 0;
@@ -1141,6 +1159,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
         oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
                                reg_name,
                                texts[0], OY_CREATE_NEW );
+        oyRankMapAppend( &rank_map, selectorA, 2, -5, 0, 0,0 );
         if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
       }
       if(selectorB && texts[1] && texts[1][0])
@@ -1151,6 +1170,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
         oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
                                reg_name,
                                texts[1], OY_CREATE_NEW );
+        oyRankMapAppend( &rank_map, selectorB, 2, -5, 0, 0,0 );
         if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
       }
       if(selectorC && texts[2] && texts[2][0])
@@ -1161,8 +1181,11 @@ int CUPSgetProfiles                  ( const char        * device_name,
         oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
                                reg_name,
                                texts[2], OY_CREATE_NEW );
+        oyRankMapAppend( &rank_map, selectorC, 2, -5, 0, 0,0 );
         if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
       }
+      oyConfig_SetRankMap( device, rank_map );
+      oyRankMapRelease( &rank_map, oyDeAllocateFunc_ );
 
           /* Check to see if profile is a custom one.
              If Oyranos knows the profile, simply use the buffer. */
