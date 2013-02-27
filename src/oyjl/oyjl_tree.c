@@ -515,6 +515,19 @@ oyjl_val oyjl_tree_get(oyjl_val n, const char ** path, oyjl_type type)
     return n;
 }
 
+char *             oyjl_string_copy  ( char              * string,
+                                       void*            (* alloc)(size_t size))
+{
+  char * text = 0;
+
+  if(!alloc) alloc = malloc;
+
+  text = alloc( strlen(string) + 1 );
+  strcpy( text, string );
+    
+  return text;
+}
+
 int                   oyjl_string_add( char             ** string,
                                        const char        * format,
                                                            ... )
@@ -555,6 +568,44 @@ int                   oyjl_string_add( char             ** string,
   return 0;
 }
 
+char * oyjl_value_text (oyjl_val v, void*(*alloc)(size_t size))
+{
+  char * t = 0, * text = 0;
+
+  if(v)
+  switch(v->type)
+  {
+    case oyjl_t_null:
+         break;
+    case oyjl_t_number:
+         if(v->u.number.flags & OYJL_NUMBER_DOUBLE_VALID)
+           oyjl_string_add (&t, "%g", v->u.number.d);
+         else
+           oyjl_string_add (&t, "%ld", v->u.number.i);
+         break;
+    case oyjl_t_true:
+         oyjl_string_add (&t, "1"); break;
+    case oyjl_t_false:
+         oyjl_string_add (&t, "0"); break;
+    case oyjl_t_string:
+         oyjl_string_add (&t, "%s", v->u.string); break;
+    case oyjl_t_array:
+    case oyjl_t_object:
+         break;
+    default:
+         fprintf( stderr, "unknown type: %d\n", v->type );
+         break;
+  }
+
+  if(t)
+  {
+    text = oyjl_string_copy (t, alloc);
+    free (t); t = 0;
+  }
+
+  return text;
+}
+
 void oyjl_tree_to_json (oyjl_val v, int * level, char ** json)
 {
   int n = *level;
@@ -565,8 +616,11 @@ void oyjl_tree_to_json (oyjl_val v, int * level, char ** json)
     case oyjl_t_null:
          break;
     case oyjl_t_number:
-         oyjl_string_add (json, "%g", v->u.number.d); break;
-         oyjl_string_add (json, "%ld", v->u.number.i); break;
+         if(v->u.number.flags & OYJL_NUMBER_DOUBLE_VALID)
+           oyjl_string_add (json, "%g", v->u.number.d);
+         else
+           oyjl_string_add (json, "%ld", v->u.number.i);
+         break;
     case oyjl_t_true:
          oyjl_string_add (json, "1"); break;
     case oyjl_t_false:
@@ -708,7 +762,7 @@ char **        oyjl_string_split     ( const char        * text,
 oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
                                        const char        * xpath )
 {
-  oyjl_val tmp = 0, level = 0;
+  oyjl_val level = 0;
   int n = 0, i, found = 0;
   char ** list = oyjl_string_split(xpath, &n),
         * ttmp = 0;
