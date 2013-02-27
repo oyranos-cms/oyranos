@@ -1149,7 +1149,7 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
   {
     oyjl_val json = 0,
              json_rankm = 0;
-    char * val = 0, * key, * t;
+    char * key, * t;
     const char * xpath = "org/freedesktop/openicc/rank_map/[0]/[%d]";
     int count, i;
     int32_t pos = 0;
@@ -1158,7 +1158,10 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
     t = oyAllocateFunc_(256);
     json = oyjl_tree_parse( json_text, t, 256 );
     if(t[0])
+    {
       WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
+      error = 1;
+    }
     oyFree_m_(t);
 
     error = oyOptions_FindInt( options, "pos", 0, &pos );
@@ -1171,27 +1174,47 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
     {
       v = oyjl_value_pos_get( json_rankm, i );
       if(json_rankm->type == oyjl_t_object)
-        key = oyStringCopy_( json_rankm->u.object.keys[i], oyAllocateFunc_ );
+        key = oyStringCopy_( json_rankm->u.object.keys[i], allocateFunc );
       else
         key = 0;
-      val = oyjl_value_text( v, oyAllocateFunc_ );
 
-      /* TODO ignore empty keys or values */
       if(key && oyjl_value_count( v ))
       {
         map[i].key = key; key = 0;
-        map[i].match_value = 0;
-        map[i].none_match_value = 0;
-        map[i].not_found_value = 0;
+        if(v->type == oyjl_t_array)
+        {
+#define ma( target, pos ) \
+          if( v->u.array.len >= pos+1) \
+          { \
+            if( v->u.array.values[pos]->type == oyjl_t_number && \
+                v->u.array.values[pos]->u.number.flags & OYJL_NUMBER_INT_VALID ) \
+              target = v->u.array.values[pos]->u.number.i; \
+            else if( v->u.array.values[pos]->type == oyjl_t_string ) \
+              target = atoi(v->u.array.values[pos]->u.string); \
+          }
+#if 0
+          if( v->u.array.len >= 1)
+          {
+            if( v->u.array.values[0]->type == oyjl_t_number &&
+                v->u.array.values[0]->u.number.flags & OYJL_NUMBER_INT_VALID )
+              map[i].match_value = v->u.array.values[0]->u.number.i;
+            else if( v->u.array.values[0]->type == oyjl_t_string )
+              map[i].match_value = atoi(v->u.array.values[0]->u.string);
+          }
+#else
+        ma( map[i].match_value, 0 )
+#endif
+        ma( map[i].none_match_value, 1)
+        ma( map[i].not_found_value, 2)
+#undef  ma
+        }
       }
-
-      if(key) oyDeAllocateFunc_(key); key = 0;
-      if(val) oyDeAllocateFunc_(val); val = 0;
     }
   }
 
-  if(error <= 0)
+  if(error <= 0 && rank_map)
   {
+    *rank_map = map;
   }
 
   return error;
