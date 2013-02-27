@@ -2044,7 +2044,108 @@ oyTESTRESULT_e testCMMDevicesDetails ()
 
   return result;
 }
-      
+
+oyTESTRESULT_e testCMMRankMap ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+#ifdef USE_GETTEXT
+  setlocale(LC_ALL,"");
+#endif
+
+  int error = 0;
+  oyConfig_s * device;
+  oyOptions_s * options = 0;
+  oyConfigs_s * devices = 0;
+
+  oyOptions_SetFromText( &options,
+                   "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
+                         "yes", OY_CREATE_NEW );
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                   "properties", OY_CREATE_NEW );  
+  error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
+  oyOptions_Release( &options );
+
+  int count = oyConfigs_Count( devices ),
+      i;
+
+  if( count )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "monitor(s) found               %d     ", (int)count );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "no monitor found               %d     ", (int)count );
+  }
+
+  for(i = 0; i < count; ++i)
+  {
+    char * json_text = 0;
+    device = oyConfigs_Get( devices, i );
+    oyDeviceToJSON( device, 0, &json_text, malloc );
+
+    if( strlen(json_text) )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "json from device [%d]         %d    ", i, (int)strlen(json_text) );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+    "json from device failed for [%d]      ", i );
+    }
+
+    const oyRankMap * map = oyConfig_GetRankMap( device );
+    if( map )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "Map from device  [%d]                 ", i );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+    "Map from device failed for [%d]       ", i );
+    }
+
+    char * rank_map_text = 0;
+    error = oyRankMapToJSON( map, options, &rank_map_text, malloc );
+    if( rank_map_text )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "JSON from Map    [%d]          %d    ", i, strlen(rank_map_text) );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+    "JSON from Map failed  [%d]            ", i );
+    }
+
+    oyRankMap * rank_map2 = 0;
+    error = oyRankMapFromJSON( rank_map_text, options, &rank_map2, malloc );
+    if( rank_map2 )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "Map from JSON    [%d]                 ", i );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+    "Map from JSON failed [%d]             ", i );
+    }
+
+    oyConfig_Release( &device );
+
+
+    oyDeviceFromJSON( json_text, 0, &device );
+    if(json_text) free( json_text ); json_text = 0;
+    oyDeviceToJSON( device, 0, &json_text, malloc );
+
+    if( strlen(json_text) )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "json from device [%d]         %d    ", i, (int)strlen(json_text) );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+    "json from device failed for %d        ", i );
+    }
+
+    oyConfig_Release( &device );
+    fprintf( stdout, "\n");
+  }
+
+  fprintf( stdout, "\n");
+
+  return result;
+}
+
 oyTESTRESULT_e testCMMMonitorJSON ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
@@ -4097,6 +4198,7 @@ int main(int argc, char** argv)
   TEST_RUN( testPolicy, "Policy handling" );
   TEST_RUN( testCMMDevicesListing, "CMM devices listing" );
   TEST_RUN( testCMMDevicesDetails, "CMM devices details" );
+  TEST_RUN( testCMMRankMap, "rank map handling" );
   TEST_RUN( testCMMMonitorJSON, "monitor JSON" );
   TEST_RUN( testCMMMonitorListing, "CMM monitor listing" );
   TEST_RUN( testCMMMonitorModule, "CMM monitor module" );
