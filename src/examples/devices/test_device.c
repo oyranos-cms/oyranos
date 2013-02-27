@@ -15,6 +15,8 @@
 #include "oyranos_config_internal.h"
 #include "oyProfiles_s.h"
 
+#include "oyjl/oyjl_tree.h"
+
 #include <locale.h>
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
@@ -59,13 +61,14 @@ void displayHelp(char ** argv)
   printf("         --show-non-device-related\t%s\n",_("show as well non matching profiles"));
   printf("\n");
   printf("  %s\n",               _("Dump device colour state:"));
-  printf("      %s -f=[icc|openicc|openicc-rank-map] [-o=file.json] -c class -d number | -j device.json [--only-db]\n", argv[0]);
+  printf("      %s -f=[icc|openicc+rank-map|openicc|openicc-rank-map] [-o=file.json] -c class -d number | -j device.json [--only-db]\n", argv[0]);
   printf("         -f icc  \t%s\n",              _("dump ICC profile"));
-  printf("         -f openicc\t%s\n",            _("dump OpenICC device JSON"));
-  printf("         -f openicc-rank-map\t%s\n",   _("dump OpenICC rank map JSON"));
+  printf("         -f openicc+rank-map\t%s\n",   _("dump OpenICC device colour state JSON including the rank map"));
+  printf("         -f openicc\t%s\n",            _("dump OpenICC device colour state JSON"));
+  printf("            --only-db\t%s\n",_("use only DB keys for -f=openicc"));
+  printf("         -f openicc-rank-map\t%s\n",   _("dump OpenICC device colour state rank map JSON"));
   printf("         -o %s\t%s\n",    _("FILE"),   _("write to specified file"));
   printf("         -j %s\t%s\n",    _("FILE"),   _("use device JSON alternatively to -c and -d options"));
-  printf("         --only-db\t%s\n",_("use only DB keys for -f=openicc"));
   printf("\n");
   printf("  %s\n",               _("Show Help:"));
   printf("      %s [-h]\n", argv[0]);
@@ -114,7 +117,7 @@ int main(int argc, char *argv[])
   size_t size = 0;
   const char * filename = 0,
              * device_name = 0;
-  char * data = 0;
+  char * data = 0, *t;
   uint32_t n = 0;
   int i;
 
@@ -753,6 +756,9 @@ int main(int argc, char *argv[])
     char * json = 0;
     char * profile_name = 0;
     char * out_name = 0;
+    oyjl_val rank_root = 0,
+             rank_map = 0,
+             device = 0;
 
     if(!device_json)
     {
@@ -785,9 +791,11 @@ int main(int argc, char *argv[])
     if(profile_name) oyDeAllocFunc( profile_name ); profile_name = 0;
 
     if(strcmp(format,"openicc") == 0 ||
+       strcmp(format,"openicc+rank-map") == 0 ||
        strcmp(format,"openicc-rank-map") == 0)
     {
-      if(strcmp(format,"openicc") == 0)
+      if(strcmp(format,"openicc") == 0 ||
+         strcmp(format,"openicc+rank-map") == 0)
       {
         error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/options/source",
                                    "db", OY_CREATE_NEW );  
@@ -803,7 +811,15 @@ int main(int argc, char *argv[])
           fprintf( stderr, "no DB data available\n" );
           exit(0);
         }
-      } else
+
+        t = oyAllocateFunc_(256);
+        device = oyjl_tree_parse( json, t, 256 );
+        if(t[0])
+          WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
+        oyFree_m_(t);
+      }
+      if(strcmp(format,"openicc-rank-map") == 0 ||
+         strcmp(format,"openicc+rank-map") == 0)
       {
         const oyRankMap * map = oyConfig_GetRankMap( c );
         oyConfDomain_s * domain = oyConfDomain_FromReg( device_class, 0 );
@@ -821,6 +837,60 @@ int main(int argc, char *argv[])
         if(!json)
         { fprintf( stderr, "no JSON from RankMap available\n" ); exit(0);
         }
+
+        t = oyAllocateFunc_(256);
+        rank_root = oyjl_tree_parse( json, t, 256 );
+        if(t[0])
+          WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
+        oyFree_m_(t);
+      }
+
+      if(strcmp(format,"openicc+rank-map") == 0)
+      {
+        const char * xpath = "org/freedesktop/openicc/rank_map";
+
+        /*oyjl_message_func_set( (oyjl_message_f)oyMessageFunc );*/
+
+        rank_map = oyjl_tree_get_value( rank_root, xpath );
+        if(rank_map && rank_map->type == oyjl_t_object)
+        {
+          oyjl_val openicc = oyjl_tree_get_value( device, "org/freedesktop/openicc" );
+          /* copy the rank_map into the openicc node */
+          if(openicc && openicc->type == oyjl_t_object)
+          {
+            oyjl_val * values;
+            int level = 0;
+            char * keys;
+
+            oyDeAllocFunc( json ); json = 0;
+            oyjl_tree_to_json( rank_map, &level, &json );
+            rank_map = oyjl_tree_parse( json, 0,0 );
+            if(json) free(json); json = 0;
+
+            keys = openicc->u.object.keys;
+            values = openicc->u.object.values;
+
+            openicc->u.object.keys = malloc( sizeof(char*) * openicc->u.object.len + 1 );
+            openicc->u.object.values = malloc( sizeof(oyjl_val) * openicc->u.object.len + 1 );
+
+            if(rank_map && rank_map->type == oyjl_t_object &&
+               openicc->u.object.values && openicc->u.object.keys)
+            {
+              openicc->u.object.values[0] = rank_map;
+              memcpy( &openicc->u.object.values[1], values, sizeof(oyjl_val) * openicc->u.object.len );
+              openicc->u.object.keys[0] = oyStringCopy_("rank_map", oyAllocFunc);
+              memcpy( &openicc->u.object.keys[1], keys, sizeof(char*) * openicc->u.object.len );
+
+              ++openicc->u.object.len;
+
+              //level = 0;
+              oyjl_tree_to_json( device, &level, &json );
+            }
+          }
+        }
+
+        oyjl_tree_free( rank_root ); rank_root = 0;
+        oyjl_tree_free( device ); device = 0;
       }
 
       if(output)
@@ -858,7 +928,7 @@ int main(int argc, char *argv[])
       oyOptions_Release( &options );
 
     } else {
-      displayHelp(argv);
+      fprintf( stderr, "unsupported format: %s\n", format );
       exit (1);
     }
 
