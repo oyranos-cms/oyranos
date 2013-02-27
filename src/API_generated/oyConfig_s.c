@@ -1164,7 +1164,7 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
     }
     oyFree_m_(t);
 
-    error = oyOptions_FindInt( options, "pos", 0, &pos );
+    oyOptions_FindInt( options, "pos", 0, &pos );
     json_rankm = oyjl_tree_get_valuef( json, xpath, pos );
 
     count = oyjl_value_count( json_rankm );
