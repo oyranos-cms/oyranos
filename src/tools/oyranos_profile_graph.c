@@ -58,7 +58,7 @@ int  oyColourConvert_ ( oyProfile_s       * p_in,
 
 #include "ciexyz31_1.h"
 #include "ciexyz64_1.h"
-#include "bb_500K.h"
+#include "bb_100K.h"
 
 # define x_xyY cieXYZ_31_2[i][0]/(cieXYZ_31_2[i][0]+cieXYZ_31_2[i][1]+cieXYZ_31_2[i][2])
 # define y_xyY cieXYZ_31_2[i][1]/(cieXYZ_31_2[i][0]+cieXYZ_31_2[i][1]+cieXYZ_31_2[i][2])
@@ -187,7 +187,7 @@ int main( int argc , char** argv )
                         printf("%s:\n",               _("Usage"));
                         printf("  %s\n",              _("2D Graph from profiles:"));
                         printf("      %s [-o %s] [-x [-c]] [-s] [-vbowt] %s\n", argv[0],
-                                                      _("FILE"),_("NUMBER"),_("PROFILENAMES") );
+                                                      _("FILE"),_("PROFILENAMES") );
                         printf("      -x \t%s\n",     _("use CIE*xyY *x*y plane for saturation line projection"));
                         printf("      \t-c\t%s\n",    _("omit white line of lambert light emitters"));
                         printf("      -s \t%s\n",     _("omit the spectral line"));
@@ -305,20 +305,20 @@ int main( int argc , char** argv )
     cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
     if(proj == p_xyz)
     {
-      cairo_move_to(cr, xToImage(bb_500K[0][0]*xs_xyz), yToImage(bb_500K[0][1]*ys_xyz));
-      for(i = 0; i<19; ++i)
-        cairo_line_to(cr, xToImage(bb_500K[i][0]*xs_xyz), yToImage(bb_500K[i][1]*ys_xyz));
+      cairo_move_to(cr, xToImage(bb_100K[0][0]*xs_xyz), yToImage(bb_100K[0][1]*ys_xyz));
+      for(i = 0; i<91; ++i)
+        cairo_line_to(cr, xToImage(bb_100K[i][0]*xs_xyz), yToImage(bb_100K[i][1]*ys_xyz));
       cairo_stroke(cr);
     }
 
     if(proj == p_lab)
     {
       cairo_new_path(cr);
-      for(i = 0; i<19; ++i)
+      for(i = 0; i<91; ++i)
       {
         double XYZ[3];
         double Lab[3];
-        XYZ[0] = bb_500K[i][0]; XYZ[1] = bb_500K[i][1]; XYZ[2] = bb_500K[i][2];
+        XYZ[0] = bb_100K[i][0]; XYZ[1] = bb_100K[i][1]; XYZ[2] = bb_100K[i][2];
         oyXYZ2Lab( XYZ, Lab);
         if(i == 0)
           cairo_move_to(cr, xToImage(Lab[1]/256.0+.5),
