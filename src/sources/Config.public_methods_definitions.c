@@ -1037,19 +1037,19 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
 
   if(error <= 0)
   {
-    oyjl_value_s * json = 0,
-                 * json_rankm = 0;
-    char * val, * key;
+    oyjl_val json = 0,
+             json_rankm = 0;
+    char * val = 0, * key, * t;
     const char * xpath = "org/freedesktop/openicc/rank_map/[0]/[%d]";
     int count, i;
     int32_t pos = 0;
-    oyjl_value_s * v;
+    oyjl_val v;
 
-    yajl_status status;
-
-    status = oyjl_tree_from_json( json_text, &json, 0 );
-    if(status != yajl_status_ok)
-      WARNc2_S( "\"%s\" %d\n", _("found issues parsing JSON"), status );
+    t = oyAllocateFunc_(256);
+    json = oyjl_tree_parse( json_text, t, 256 );
+    if(t[0])
+      WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
+    oyFree_m_(t);
 
     error = oyOptions_FindInt( options, "pos", 0, &pos );
     json_rankm = oyjl_tree_get_valuef( json, xpath, pos );
@@ -1060,20 +1060,23 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
     for(i = 0; i < count; ++i)
     {
       v = oyjl_value_pos_get( json_rankm, i );
-      key = oyStringCopy_(oyjl_print_text( &v->value.object->key ), 0);
+      if(json_rankm->type == oyjl_t_object)
+        key = oyStringCopy_( json_rankm->u.object.keys[i], oyAllocateFunc_ );
+      else
+        key = 0;
       val = oyjl_value_text( v, oyAllocateFunc_ );
 
-      /* ignore empty keys or values */
+      /* TODO ignore empty keys or values */
       if(key && oyjl_value_count( v ))
       {
-        map[i].key = oyStringCopy_( key, allocateFunc );
-        map[i].match_value = v->value.object;
+        map[i].key = key; key = 0;
+        map[i].match_value = 0;
         map[i].none_match_value = 0;
         map[i].not_found_value = 0;
       }
 
-      if(key) oyDeAllocateFunc_(key);
-      if(val) oyDeAllocateFunc_(val);
+      if(key) oyDeAllocateFunc_(key); key = 0;
+      if(val) oyDeAllocateFunc_(val); val = 0;
     }
   }
 
