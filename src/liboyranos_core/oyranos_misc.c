@@ -29,10 +29,10 @@ float        oyLinInterpolateRampU16 ( uint16_t          * ramp,
   if(pos < 0)
     return ramp[0];
 
-  if(pos > ramp_size-1)
+  if(pos >= 1.0)
     return ramp[ramp_size-1];
 
-  dist = modff( pos, &start );
+  dist = modff( pos*(ramp_size-1), &start );
   val1 = ramp[(int)start];
   val2 = ramp[(int)start+1];
 
@@ -56,10 +56,10 @@ float        oyLinInterpolateRampF32 ( float             * ramp,
   if(pos < 0)
     return ramp[0];
 
-  if(pos > ramp_size-1)
+  if(pos >= 1.0)
     return ramp[ramp_size-1];
 
-  dist = modff( pos, &start );
+  dist = modff( pos*(ramp_size-1), &start );
   val1 = ramp[(int)start];
   val2 = ramp[(int)start+1];
 
@@ -83,10 +83,10 @@ double       oyLinInterpolateRampF64 ( double            * ramp,
   if(pos < 0)
     return ramp[0];
 
-  if(pos > ramp_size-1)
+  if(pos >= 1.0)
     return ramp[ramp_size-1];
 
-  dist = modf( pos, &start );
+  dist = modff( pos*(ramp_size-1), &start );
   val1 = ramp[(int)start];
   val2 = ramp[(int)start+1];
 
