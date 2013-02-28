@@ -15,6 +15,7 @@
  */
 
 #include <stdarg.h>  /* va_list */
+#include <stddef.h>  /* ptrdiff_t size_t */
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -470,12 +471,16 @@ static yajl_callbacks oyjl_tree_callbacks = {
                                                 &yconfig,
 #endif
                                                           NULL, (void*)&ctx);
+#if YAJL_VERSION > 19999
     yajl_config(handle, yajl_allow_comments, 1);
+#endif
 
     status = yajl_parse(handle,
                         (unsigned char *) input,
                         strlen (input));
+#if YAJL_VERSION > 19999
     status = yajl_complete_parse (handle);
+#endif
     if (status != yajl_status_ok) {
         if (error_buffer != NULL && error_buffer_size > 0) {
                internal_err_str = (char *) yajl_get_error(handle, 1,
