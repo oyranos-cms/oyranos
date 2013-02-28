@@ -31,6 +31,12 @@
 #include "oyImage_s.h"
 
 #ifdef __cplusplus
+#if defined(USE_CLIPPER)
+#include <cpp_cairo/cairo_clipper.hpp>
+#include <clipper.hpp>
+#include <cmath>
+#include <iostream>
+#endif
 extern "C" {
 #endif /* __cplusplus */
 int  oyColourConvert_ ( oyProfile_s       * p_in,
@@ -59,6 +65,8 @@ int  oyColourConvert_ ( oyProfile_s       * p_in,
 #include "ciexyz31_1.h"
 #include "ciexyz64_1.h"
 #include "bb_100K.h"
+#include "spd_A_5.h"
+#include "spd_D65_5.h"
 
 # define x_xyY cieXYZ_31_2[i][0]/(cieXYZ_31_2[i][0]+cieXYZ_31_2[i][1]+cieXYZ_31_2[i][2])
 # define y_xyY cieXYZ_31_2[i][1]/(cieXYZ_31_2[i][0]+cieXYZ_31_2[i][1]+cieXYZ_31_2[i][2])
@@ -75,6 +83,11 @@ int  oyColourConvert_ ( oyProfile_s       * p_in,
 
 double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, oyProfile_s * outspace);
 double   bb_spectrum( double wavelength, double bbTemp );
+void draw_illuminant( cairo_t * cr,
+                      float * spd, int start, int end, int lambda,
+                      float xO, float yO, float width, float height,
+                      int min_x, int max_x, int min_y, int max_y,
+                      int colour );
 
 int main( int argc , char** argv )
 {
@@ -89,6 +102,7 @@ int main( int argc , char** argv )
   int standardobs = 0;
   int saturation = 1;
   double kelvin = 0.0;
+  char * illuminant = 0;
   int colour = 1;
 
   int max_x,max_y,min_x,min_y;
@@ -141,7 +155,7 @@ int main( int argc , char** argv )
       switch(argv[pos][0])
       {
         case '-':
-            for(i = 1; i < strlen(argv[pos]); ++i)
+            for(i = 1; i < (int)strlen(argv[pos]); ++i)
             switch (argv[pos][i])
             {
               case 'b': border = 0; break;
@@ -171,6 +185,9 @@ int main( int argc , char** argv )
                         else if(OY_IS_ARG("kelvin"))
                         { blackbody = spectral = saturation = 0;
                           OY_PARSE_FLOAT_ARG2(kelvin, "kelvin", 800.0,15000.0,5000.0); i=100; break;}
+                        else if(OY_IS_ARG("illuminant"))
+                        { blackbody = spectral = saturation = 0;
+                          OY_PARSE_STRING_ARG2(illuminant, "illuminant"); break; }
                         else if(OY_IS_ARG("no-colour"))
                         { colour = 0; i=100; break;}
                         else if(OY_IS_ARG("verbose"))
@@ -203,6 +220,12 @@ int main( int argc , char** argv )
                         printf("\n");
                         printf( "  %s\n",             _("Blackbody Radiator Spectrum Graph:"));
                         printf( "      %s --kelvin %s [-vbowt]\n", argv[0], _("NUMBER"));
+                        printf("      \t--no-colour\t%s\n",    _("draw gray"));
+                        printf("\n");
+                        printf( "  %s\n",             _("Illuminant Spectrum Graph:"));
+                        printf( "      %s --illuminant A|D65 [-vbowt]\n", argv[0]);
+                        printf("      --illuminant A\t%s\n",   _("CIE A spectral power distribution"));
+                        printf("      --illuminant D65\t%s\n", _("CIE D65 spectral power distribution"));
                         printf("      \t--no-colour\t%s\n",    _("draw gray"));
                         printf("\n");
                         printf("  %s\n",              _("General options:"));
@@ -408,7 +431,7 @@ int main( int argc , char** argv )
           cairo_line_to(cr, xToImage(XYZ[0]/(XYZ[0]+XYZ[1]+XYZ[2])*xs_xyz),
                             yToImage(XYZ[1]/(XYZ[0]+XYZ[1]+XYZ[2])*ys_xyz));
         }
-        for(i = 0; i<size; ++i)
+        for(i = 0; i<(int)size; ++i)
         {
           if(proj == p_lab)
             cairo_line_to(cr, xToImage(saturation[i*3+1]/1.0),
@@ -504,6 +527,21 @@ int main( int argc , char** argv )
     oyProfile_Release( &sRGB );
     oyProfile_Release( &pLab );
     oyConversion_Release( &lab_srgb );
+  }
+  if(illuminant != 0)
+  {
+    if(strcmp(illuminant,"A") == 0)
+      draw_illuminant( cr,
+                       spd_A_5, 300, 780, 5,
+                       xO, yO, width, height,
+                       min_x, max_x, min_y, max_y,
+                       colour );
+    if(strcmp(illuminant,"D65") == 0)
+      draw_illuminant( cr,
+                       spd_D65_5, 300, 830, 5,
+                       xO, yO, width, height,
+                       min_x, max_x, min_y, max_y,
+                       colour );
   }
 #undef drawSpectralCurve
 
@@ -657,7 +695,8 @@ double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, o
   int i;
   double *lab_erg = 0;
 
-  icColorSpaceSignature csp = oyProfile_GetSignature( profile,
+  icColorSpaceSignature csp = (icColorSpaceSignature)
+                              oyProfile_GetSignature( profile,
                                                       oySIGNATURE_COLOUR_SPACE);
 
   if(csp == icSigRgbData || icSigXYZData ||
@@ -693,7 +732,7 @@ double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, o
       oyColourConvert_( profile, outspace, block, lab_block,
                         oyFLOAT, oyFLOAT, options, size );
       *size_ = size;
-      lab_erg =  calloc( sizeof(double), *size_ * 3);
+      lab_erg =  (double*) calloc( sizeof(double), *size_ * 3);
       for(i = 0; i < (int)(*size_ * 3); ++i) {
         lab_erg[i] = lab_block[i];
       }
@@ -703,6 +742,116 @@ double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, o
   }
   return lab_erg;
 }
+
+void draw_illuminant( cairo_t * cr,
+                      float * spd, int start, int end, int lambda,
+                      float xO, float yO, float width, float height,
+                      int min_x, int max_x, int min_y, int max_y,
+                      int colour )
+{
+  float n = (end-start)/lambda + 1;
+  /*  draw spectral power distribution
+   *  start and end are not very precise,
+   *  just some illustration
+   */
+  float * curve;
+  double max = 0.0;
+  double line_width = cairo_get_line_width( cr );
+  int i;
+  /* float precission avoids clamping in CIE*XYZ space on input */
+  double rgb[3] = {0.0,0.0,0.0};
+
+    oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, 0 ),
+                * sRGB = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+    oyConversion_s * lab_srgb = oyConversion_CreateBasicPixelsFromBuffers (
+                                       pLab, rgb, oyDOUBLE,
+                                       sRGB, rgb, oyDOUBLE,
+                                       0, 1 );
+
+
+    curve = (float*) malloc( sizeof(float) * (n+2) );
+    for(i=0;i<n;++i) curve[i] = spd[i];
+    for(i=0;i<n;++i) if(curve[i] > max) max = curve[i];
+    for(i=0;i<n;++i) curve[i] /= max;
+
+    fprintf( stderr, "drawing sprectrum %d nm - %d nm %d nm precission %f %f\n", start, end, lambda, max, n );
+
+    cairo_set_source_rgba( cr, 0.0,0.0,0.0, 1.0);
+    cairo_move_to(cr, xToImage(0/371.0), yToImage(curve[0]));
+#if defined(USE_CLIPPER)
+    // not good enough for illuminant A - lots of artefacts
+    cairo_set_line_width( cr, line_width/3 );
+    for(i = 0; i<371-1; ++i)
+    {
+      float y0 = oyLinInterpolateRampF32( curve, n, i/371.0 );
+      cairo_line_to(cr, xToImage((i  )/371.0), yToImage(y0));
+    }
+    cairo_close_path( cr );
+
+    using namespace ClipperLib;
+    Polygons pg; //std::vector for polygon(s) storage
+    int scaling = 3;
+    cairo::cairo_to_clipper(cr, pg, scaling);
+    // offset the graph
+    OffsetPolygons(pg, pg, line_width * std::pow((double)10,scaling), jtMiter, 0.125, false);
+    // finally copy the clipped path back to the cairo context and draw it ...
+    cairo::clipper_to_cairo(pg, cr, scaling);
+    std::cout << pg << std::endl;
+    cairo_stroke( cr );
+
+    for(i = 0; i<371-1; ++i)
+    {
+      float y0 = oyLinInterpolateRampF32( curve, n, i/371.0 );
+      cairo_line_to(cr, xToImage((i  )/371.0), yToImage(y0));
+    }
+    cairo_stroke( cr );
+#else
+    for(i = 0; i<371-1; ++i)
+    {
+      double XYZ[3] = {0.0,0.0,0.0};
+      int j;
+      double a_b;
+      float y0 = oyLinInterpolateRampF32( curve, n, i/371.0 ),
+            y1 = oyLinInterpolateRampF32( curve, n, (i+1)/371.0 );
+      cairo_pattern_t * g = cairo_pattern_create_linear(
+                                     xToImage(    i/371.0),yToImage(y0),
+                                     xToImage((i+1)/371.0),yToImage(y1));
+
+      /* start with previous colour */
+      cairo_pattern_add_color_stop_rgba(g, 0, rgb[0],rgb[1],rgb[2], 1);
+      /* get spectral colour from colour matching function (CMF) */
+      for(j = 0; j<3; ++j)
+        XYZ[j] = cieXYZ_31_2[i][j];
+      oyXYZ2Lab( XYZ, rgb );
+      rgb[0] /= 100.0; rgb[1] = rgb[1]/256.0+0.5; rgb[2] = rgb[2]/256.0+0.5;
+      oyConversion_RunPixels( lab_srgb, 0 );
+      /* add different stop */
+      cairo_pattern_add_color_stop_rgba(g, 1, rgb[0],rgb[1],rgb[2], 1);
+      if(colour)
+      /* only one colour pattern can be drawn at each cairo_stroke;
+       * appears to be a cairo limitation */
+        cairo_set_source(cr, g);
+
+      cairo_move_to(cr, xToImage((i  )/371.0), yToImage(y0));
+      /* draw a bit further and avoid empty space between lines */
+      cairo_line_to( cr, xToImage((i+1)/371.0), yToImage(y1) );
+      /* draw a disconnected single line segment with actual gradient pattern */
+      cairo_stroke(cr);
+
+      /* end with a half circle to cover empty areas toward the following line segment */
+      cairo_set_source_rgba( cr, rgb[0],rgb[1],rgb[2], 1);
+      a_b = atan((y0-y1)/(1/371.0));
+      cairo_arc_negative( cr, xToImage((i+1)/371.0), yToImage(y1), line_width/2.0, a_b+M_PI/2.0, a_b-M_PI/2.0);
+      cairo_fill(cr);
+    }
+#endif
+
+    free(curve);
+    oyProfile_Release( &sRGB );
+    oyProfile_Release( &pLab );
+    oyConversion_Release( &lab_srgb );
+}
+
 
 /*                            BB_SPECTRUM
 
