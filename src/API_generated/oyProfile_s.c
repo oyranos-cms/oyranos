@@ -10,12 +10,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/12/20
+ *  @date     2013/03/01
  */
 
 
@@ -664,6 +664,8 @@ oyProfile_GetSignature ( oyProfile_s * profile,
   icHeader *h = 0;
   icSignature sig = 0;
   oyProfile_s_ * s = (oyProfile_s_*)profile;
+  icUInt64Number ui64;
+  icUInt32Number * two32 = (icUInt32Number *) &ui64;
 
   if(!s)
     return 0;
@@ -702,6 +704,12 @@ oyProfile_GetSignature ( oyProfile_s * profile,
        sig = oyValueUInt32( h->platform ); break;
   case oySIGNATURE_OPTIONS:            /* various ICC header flags */
        sig = oyValueUInt32( h->flags ); break;
+  case oySIGNATURE_ATTRIBUTES:         /* various ICC header attributes */
+       memcpy( ui64, h->attributes, sizeof(ui64));
+       sig = (icSignature) two32[0]; break;
+  case oySIGNATURE_ATTRIBUTES2:        /* various ICC header attributes */
+       memcpy( ui64, h->attributes, sizeof(ui64));
+       sig = (icSignature) two32[1]; break;
   case oySIGNATURE_MANUFACTURER:       /* device manufacturer */
        sig = oyValueUInt32( h->manufacturer ); break;
   case oySIGNATURE_MODEL:              /* device modell */
@@ -722,6 +730,12 @@ oyProfile_GetSignature ( oyProfile_s * profile,
        sig = oyValueUInt16( h->date.minutes ); break;
   case oySIGNATURE_DATETIME_SECONDS:   /* creation time in UTC */
        sig = oyValueUInt16( h->date.seconds ); break;
+  case oySIGNATURE_ILLUMINANT:         /* creation time in UTC */
+       sig = oyValueInt32( h->illuminant.X ); break;
+  case oySIGNATURE_ILLUMINANT_Y:       /* creation time in UTC */
+       sig = oyValueInt32( h->illuminant.Y ); break;
+  case oySIGNATURE_ILLUMINANT_Z:       /* creation time in UTC */
+       sig = oyValueInt32( h->illuminant.Z ); break;
   case oySIGNATURE_MAX: break;
   }
 
@@ -821,6 +835,12 @@ OYAPI int OYEXPORT
        h->date.minutes = oyValueUInt16( sig ); break;
   case oySIGNATURE_DATETIME_SECONDS:   /* creation time in UTC */
        h->date.seconds = oyValueUInt16( sig ); break;
+  case oySIGNATURE_ILLUMINANT:         /* creation time in UTC */
+       h->illuminant.X = oyValueInt32( sig ); break;
+  case oySIGNATURE_ILLUMINANT_Y:       /* creation time in UTC */
+       h->illuminant.Y = oyValueInt32( sig ); break;
+  case oySIGNATURE_ILLUMINANT_Z:       /* creation time in UTC */
+       h->illuminant.Z = oyValueInt32( sig ); break;
   case oySIGNATURE_MAX: break;
   }
 

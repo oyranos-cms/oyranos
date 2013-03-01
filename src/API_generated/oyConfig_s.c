@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/02/13
+ *  @date     2013/03/01
  */
 
 
@@ -978,7 +978,8 @@ OYAPI const oyRankMap *  OYEXPORT
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  *  @date    2009/01/27
  */
-oyRankMap *        oyRankMapCopy     ( const oyRankMap   * rank_map,
+OYAPI oyRankMap * OYEXPORT oyRankMapCopy
+                                     ( const oyRankMap   * rank_map,
                                        oyAlloc_f           allocateFunc )
 {
   oyRankMap * map = 0;
@@ -1020,8 +1021,7 @@ oyRankMap *        oyRankMapCopy     ( const oyRankMap   * rank_map,
  *  @date     2012/10/03
  *  @since    2012/10/03 (Oyranos: 0.5.0)
  */
-OYAPI void  OYEXPORT
-                 oyRankMapRelease    ( oyRankMap        ** rank_map,
+OYAPI void  OYEXPORT oyRankMapRelease( oyRankMap        ** rank_map,
                                        oyDeAlloc_f         deAllocateFunc )
 {
   int error = !rank_map || !*rank_map;

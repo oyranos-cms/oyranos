@@ -979,8 +979,8 @@ OYAPI int  OYEXPORT oyRankMapAppend  ( oyRankMap        ** rank_map,
   rm = allocateFunc( sizeof(oyRankMap) * (n+2) );
   if(!rm)
   {
-      message( oyMSG_ERROR, (oyStruct_s*)0, _DBG_FORMAT_ "\n"
-                    "Could not allocate enough memory", _DBG_ARGS_ );
+      oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*)0, OY_DBG_FORMAT_ "\n"
+                       "Could not allocate enough memory", OY_DBG_ARGS_ );
       error = -1;
       return error;
   }
@@ -1064,7 +1064,7 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
     {
       v = oyjl_value_pos_get( json_rankm, i );
       if(json_rankm->type == oyjl_t_object)
-        key = oyStringCopy_( json_rankm->u.object.keys[i], oyAllocateFunc_ );
+        key = oyStringCopy_( json_rankm->u.object.keys[i], allocateFunc );
       else
         key = 0;
 
@@ -1097,6 +1097,8 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
         ma( map[i].none_match_value, 1)
         ma( map[i].not_found_value, 2)
 #undef  ma
+        }
+      }
     }
   }
 
