@@ -2170,13 +2170,14 @@ oyTESTRESULT_e testCMMMonitorJSON ()
                                      "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
   error = oyDevicesGet( 0, "monitor", options, &configs );
-  if( !error && configs )
+  if( error <= 0 && configs )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyDeviceGet() \"monitor\"          " );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyDeviceGet() \"monitor\"          " );
   }
+
   clck = oyClock() - clck;
   devices_n = oyConfigs_Count( configs );
   for( i = 0; i < devices_n; ++i )
