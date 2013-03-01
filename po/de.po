@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2013-03-01 23:19+0100\n"
+"POT-Creation-Date: 2013-03-01 23:48+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -286,7 +286,7 @@ msgstr "Farbanpassungsgrad für die absolut farbmetrische Übertragung"
 msgid "All the small details for using this module."
 msgstr "All die kleinen Details für dieses Modul"
 
-#: tools/oyranos_profile.c:526
+#: tools/oyranos_profile.c:528
 msgid "Allowed option values are -f openicc and -f xml. unknown format:"
 msgstr "Erlaubte Werte sind -f openicc und -f xml. Unbekanntes Format:"
 
@@ -384,7 +384,7 @@ msgid "Attributes"
 msgstr "Attribute"
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:451
+#: tools/oyranos_profile.c:453
 msgid "Attributes:      "
 msgstr "Attribute:       "
 
@@ -600,7 +600,7 @@ msgid "Class"
 msgstr "Klasse"
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:392
+#: tools/oyranos_profile.c:394
 msgid "Cmm:             "
 msgstr "CMM:             "
 
@@ -835,7 +835,7 @@ msgstr ""
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: tools/oyranos_profile.c:379
+#: tools/oyranos_profile.c:381
 msgid "Copyright:       "
 msgstr "Kopierrecht:     "
 
@@ -929,7 +929,7 @@ msgid "Created new_ticket"
 msgstr "Erzeugte new_ticket"
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:415
+#: tools/oyranos_profile.c:417
 msgid "Creation Date:   "
 msgstr "Datum:           "
 
@@ -978,7 +978,7 @@ msgid "DISPLAY variable not set: giving up."
 msgstr "DISPLAY Variable nicht gesetzt: gebe auf."
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:405
+#: tools/oyranos_profile.c:407
 msgid "Data Color Space:"
 msgstr "Farbraum:        "
 
@@ -1021,7 +1021,7 @@ msgid "Default Profiles"
 msgstr "Voreingestellte ICC Profile"
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:368
+#: tools/oyranos_profile.c:369
 msgid "Description:     "
 msgstr "Beschreibung:    "
 
@@ -1203,8 +1203,8 @@ msgid "Example"
 msgstr "Beispiel"
 
 #: tools/oyranos_profile.c:223 tools/oyranos_profile.c:247
-#: tools/oyranos_profile.c:301 tools/oyranos_profile.c:527
-#: tools/oyranos_profile.c:662
+#: tools/oyranos_profile.c:301 tools/oyranos_profile.c:529
+#: tools/oyranos_profile.c:664
 msgid "Exit!"
 msgstr "Beenden!"
 
@@ -1235,7 +1235,7 @@ msgstr "Datei existiert"
 msgid "File name is missed"
 msgstr "Dateiname wird vermißt"
 
-#: tools/oyranos_profile.c:369
+#: tools/oyranos_profile.c:371
 msgid "File:            "
 msgstr "Datei:           "
 
@@ -1272,7 +1272,7 @@ msgid "Film writer"
 msgstr "Filmbelichter"
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:435
+#: tools/oyranos_profile.c:437
 msgid "Flags:           "
 msgstr "Optionen:        "
 
@@ -1402,7 +1402,7 @@ msgstr "Behandlung von gemischten Farbräumen in einem einzelnen Dokument"
 msgid "Hardproof"
 msgstr "Nachbildung beim Ausdruck"
 
-#: tools/oyranos_profile.c:383
+#: tools/oyranos_profile.c:385
 msgid "Header"
 msgstr "Kopf"
 
@@ -1548,7 +1548,7 @@ msgid "Illuminant with equal energy E"
 msgstr "Farbtemperatur mit ausgeglichener Energie E"
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:461
+#: tools/oyranos_profile.c:463
 msgid "Illuminant:      "
 msgstr "Beleuchtung:     "
 
@@ -1881,7 +1881,7 @@ msgid "Magic"
 msgstr "Signatur"
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:425
+#: tools/oyranos_profile.c:427
 msgid "Magic:           "
 msgstr "Signatur:        "
 
@@ -1896,7 +1896,7 @@ msgid "Manufacturer:"
 msgstr "Hersteller:"
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:441
+#: tools/oyranos_profile.c:443
 msgid "Manufacturer:    "
 msgstr "Hersteller:      "
 
@@ -1970,7 +1970,7 @@ msgid "Model:"
 msgstr "Modell:"
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:446
+#: tools/oyranos_profile.c:448
 msgid "Model:           "
 msgstr "Modell:          "
 
@@ -2235,7 +2235,7 @@ msgid "PCS"
 msgstr "PCS"
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:410
+#: tools/oyranos_profile.c:412
 msgid "PCS Color Space: "
 msgstr "PCS Farbraum:    "
 
@@ -2285,7 +2285,7 @@ msgid "Platform"
 msgstr "Plattform"
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:429
+#: tools/oyranos_profile.c:431
 msgid "Platform:        "
 msgstr "Plattform:       "
 
@@ -2384,7 +2384,7 @@ msgid "Profile Creator ID"
 msgstr "Profilerzeuger"
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:470
+#: tools/oyranos_profile.c:472
 msgid "Profile ID:      "
 msgstr "Profil ID:       "
 
@@ -2396,7 +2396,7 @@ msgstr "Profile Beleuchtung"
 msgid "Profile Information"
 msgstr "Profilinformation"
 
-#: tools/oyranos_profile.c:476
+#: tools/oyranos_profile.c:478
 msgid "Profile Tags"
 msgstr "Profilbausteine"
 
@@ -2473,7 +2473,7 @@ msgstr ""
 "Simulationseinstellungen erlauben die Simulation eines zusätzlichen "
 "Farbraumes."
 
-#: tools/oyranos_profile.c:662
+#: tools/oyranos_profile.c:664
 msgid "RGB primaries missed"
 msgstr "RGB Primärfarben nicht gefunden"
 
@@ -2554,7 +2554,7 @@ msgid "Rendering Intent"
 msgstr "Übertragungsart"
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:457
+#: tools/oyranos_profile.c:459
 msgid "Rendering Intent:"
 msgstr "Übertragungsart: "
 
@@ -2714,7 +2714,7 @@ msgid "Size:"
 msgstr "Größe"
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:373 tools/oyranos_profile.c:388
+#: tools/oyranos_profile.c:375 tools/oyranos_profile.c:390
 msgid "Size:            "
 msgstr "Größe:           "
 
@@ -3318,7 +3318,7 @@ msgid "Type"
 msgstr "Typ"
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:400
+#: tools/oyranos_profile.c:402
 msgid "Type:            "
 msgstr "Klasse:          "
 
@@ -3364,7 +3364,7 @@ msgid "Version"
 msgstr "Version"
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:396
+#: tools/oyranos_profile.c:398
 msgid "Version:         "
 msgstr "Version:         "
 

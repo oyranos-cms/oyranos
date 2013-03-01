@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/02/10
+ *  @date     2013/03/01
  */
 
 
@@ -1552,6 +1552,7 @@ int    oyImage_ToFile                ( oyImage_s         * image,
   error = oyConversion_RunPixels( conversion, 0 );
   if(error > 0)
     WARNcc1_S(in,"oyConversion_RunPixels() returned error: %d", error);
+
   oyConversion_Release( &conversion );
   oyFilterNode_Release( &in );
   oyFilterNode_Release( &out );

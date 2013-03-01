@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2013-03-01 23:32+0100\n"
+"POT-Creation-Date: 2013-03-01 23:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3267,8 +3267,8 @@ msgid "missed -w option to write a ICC profile"
 msgstr ""
 
 #: tools/oyranos_profile.c:223 tools/oyranos_profile.c:247
-#: tools/oyranos_profile.c:301 tools/oyranos_profile.c:527
-#: tools/oyranos_profile.c:662
+#: tools/oyranos_profile.c:301 tools/oyranos_profile.c:529
+#: tools/oyranos_profile.c:664
 msgid "Exit!"
 msgstr ""
 
@@ -3277,111 +3277,111 @@ msgid "Need a ICC profile to modify."
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:368
+#: tools/oyranos_profile.c:369
 msgid "Description:     "
 msgstr ""
 
-#: tools/oyranos_profile.c:369
+#: tools/oyranos_profile.c:371
 msgid "File:            "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:373 tools/oyranos_profile.c:388
+#: tools/oyranos_profile.c:375 tools/oyranos_profile.c:390
 msgid "Size:            "
 msgstr ""
 
-#: tools/oyranos_profile.c:379
+#: tools/oyranos_profile.c:381
 msgid "Copyright:       "
 msgstr ""
 
-#: tools/oyranos_profile.c:383
+#: tools/oyranos_profile.c:385
 msgid "Header"
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:392
+#: tools/oyranos_profile.c:394
 msgid "Cmm:             "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:396
+#: tools/oyranos_profile.c:398
 msgid "Version:         "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:400
+#: tools/oyranos_profile.c:402
 msgid "Type:            "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:405
+#: tools/oyranos_profile.c:407
 msgid "Data Color Space:"
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:410
+#: tools/oyranos_profile.c:412
 msgid "PCS Color Space: "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:415
+#: tools/oyranos_profile.c:417
 msgid "Creation Date:   "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:425
+#: tools/oyranos_profile.c:427
 msgid "Magic:           "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:429
+#: tools/oyranos_profile.c:431
 msgid "Platform:        "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:435
+#: tools/oyranos_profile.c:437
 msgid "Flags:           "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:441
+#: tools/oyranos_profile.c:443
 msgid "Manufacturer:    "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:446
+#: tools/oyranos_profile.c:448
 msgid "Model:           "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:451
+#: tools/oyranos_profile.c:453
 msgid "Attributes:      "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:457
+#: tools/oyranos_profile.c:459
 msgid "Rendering Intent:"
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:461
+#: tools/oyranos_profile.c:463
 msgid "Illuminant:      "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile.c:470
+#: tools/oyranos_profile.c:472
 msgid "Profile ID:      "
 msgstr ""
 
-#: tools/oyranos_profile.c:476
+#: tools/oyranos_profile.c:478
 msgid "Profile Tags"
 msgstr ""
 
-#: tools/oyranos_profile.c:526
+#: tools/oyranos_profile.c:528
 msgid "Allowed option values are -f openicc and -f xml. unknown format:"
 msgstr ""
 
-#: tools/oyranos_profile.c:662
+#: tools/oyranos_profile.c:664
 msgid "RGB primaries missed"
 msgstr ""
 

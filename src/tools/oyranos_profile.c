@@ -108,7 +108,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("General options:"));
   fprintf( stderr, "      %s\n",           _("-v verbose"));
-  fprintf( stderr, "      -i %s\n",        _("read input sptream"));
+  fprintf( stderr, "      -i %s\n",        _("read input stream"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s:\n",               _("Example"));
   fprintf( stderr, "      oyranos-profile -lv -p=1 sRGB.icc\n");
@@ -348,10 +348,135 @@ int main( int argc , char** argv )
       error = 1;
     }
 
+    /* print header infos */
+    if(error <= 0 && !dump_chromaticities && !dump_openicc_json && !list_hash)
+    {
+      uint32_t id[4],
+               sig;
+      uint8_t * f = (uint8_t*) &sig;
+      size_t size = 0;
+      icSignature vs = oyValueUInt32( oyProfile_GetSignature(p,oySIGNATURE_VERSION) );
+      char * v = (char*)&vs;
+      const char   ** names = NULL;
+      int count;
+      int text_n;
+      char** tag_text = 0,
+          * fn;
+      oyProfileTag_s * tag;
+
+
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %s\n",_("Description:     "), oyProfile_GetText(p,oyNAME_DESCRIPTION) );
+      fn = oyProfile_GetFileName(p,-1);
+      fprintf( stdout, "%s %s\n",_("File:            "), fn?fn:"----" );
+
+      size = oyProfile_GetSize( p, 0 );
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %lu bytes\n",_("Size:            "), size );
+
+      tag = oyProfile_GetTagById( p, icSigCopyrightTag );
+      tag_text = oyProfileTag_GetText( tag, &text_n, 0,0, 0, 0 );
+      /* keep total number of chars equal to original for cli print */
+      if(text_n)
+      fprintf( stdout, "%s %s\n",_("Copyright:       "), tag_text[0] );
+      oyProfileTag_Release( &tag );
+
+      fprintf( stdout, "\n" );
+      fprintf( stdout, "%s\n",_("Header") );
+      fprintf( stdout, "------\n" );
+
+      sig = oyProfile_GetSignature(p,oySIGNATURE_SIZE);
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %u bytes\n",_("Size:            "), (unsigned)sig );
+
+      sig = oyValueUInt32(oyProfile_GetSignature(p,oySIGNATURE_CMM));
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %c%c%c%c\n",_("Cmm:             "),
+               f[0],f[1],f[2],f[3]);
+
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %d.%d.%d\n",_("Version:         "),
+             (int)v[0], (int)v[1]/16, (int)v[1]%16 );
+
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %s\n",_("Type:            "),
+             oyICCDeviceClassDescription( (icProfileClassSignature)
+                         oyProfile_GetSignature(p,oySIGNATURE_CLASS) ) );
+
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %s\n",_("Data Color Space:"),
+             oyICCColourSpaceGetName( (icColorSpaceSignature)
+                         oyProfile_GetSignature(p,oySIGNATURE_COLOUR_SPACE) ) );
+
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %s\n",_("PCS Color Space: "),
+             oyICCColourSpaceGetName( (icColorSpaceSignature)
+                         oyProfile_GetSignature(p,oySIGNATURE_PCS) ) );
+
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %d-%d-%d %d:%d:%d\n",_("Creation Date:   "),
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_YEAR),
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_MONTH),
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_DAY),
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_HOURS),
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_MINUTES),
+             oyProfile_GetSignature(p,oySIGNATURE_DATETIME_SECONDS) );
+
+      sig = oyValueUInt32(oyProfile_GetSignature(p,oySIGNATURE_MAGIC));
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %c%c%c%c\n",_("Magic:           "),
+               f[0],f[1],f[2],f[3]);
+
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %s\n",_("Platform:        "),
+             oyICCPlatformDescription( (icPlatformSignature)
+                         oyProfile_GetSignature(p,oySIGNATURE_PLATFORM) ) );
+
+      sig = oyValueUInt32(oyProfile_GetSignature(p,oySIGNATURE_OPTIONS));
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %s | %s\n",_("Flags:           "),
+               f[0]&0x80?"Profile is embedded":"Profile is not embedded",
+               f[0]&0x40 ? "Use not Anywhere" : "Use Anywhere" );
+
+      sig = oyValueUInt32(oyProfile_GetSignature(p,oySIGNATURE_MANUFACTURER));
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %c%c%c%c\n",_("Manufacturer:    "),
+               f[0],f[1],f[2],f[3]);
+
+      sig = oyValueUInt32(oyProfile_GetSignature(p,oySIGNATURE_MODEL));
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %c%c%c%c\n", _("Model:           "),
+               f[0],f[1],f[2],f[3]);
+
+      sig = oyValueUInt32(oyProfile_GetSignature(p,oySIGNATURE_ATTRIBUTES));
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %s | %s | %s | %s\n",_("Attributes:      "),
+               f[0]&0x80?"Transparent":"Reflective", f[0]&0x40 ? "Matte" : "Glossy",
+               f[0]&0x20?"Negative":"Positive", f[0]&0x10 ? "BW" : "Color" );
+
+      oyOptionChoicesGet( oyWIDGET_RENDERING_INTENT, &count, &names, 0 );
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %s\n", _("Rendering Intent:"),
+             names[oyProfile_GetSignature(p,oySIGNATURE_INTENT)]);
+
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %f %f %f\n", _("Illuminant:      "),
+             (float)oyProfile_GetSignature(p,oySIGNATURE_ILLUMINANT)/65535.0,
+             (float)oyProfile_GetSignature(p,oySIGNATURE_ILLUMINANT_Y)/65535.0,
+             (float)oyProfile_GetSignature(p,oySIGNATURE_ILLUMINANT_Z)/65535.0 );
+      sig = oyValueUInt32(oyProfile_GetSignature(p,oySIGNATURE_CREATOR));
+      fprintf( stdout, "Creator:          %c%c%c%c\n", f[0],f[1],f[2],f[3]);
+
+      oyProfile_GetMD5(p, OY_FROM_PROFILE, id);
+      /* keep total number of chars equal to original for cli print */
+      fprintf( stdout, "%s %x%x%x%x\n",_("Profile ID:      "),id[0],id[1],id[2],id[3] );
+    }
+
     if(error <= 0 && list_tags)
     {
-      fprintf(stderr, "%s \"%s\" %d:\n", _("ICC profile"), profile_desc,
-              (int)oyProfile_GetSize(p,0));
+      fprintf( stdout, "\n" );
+      fprintf( stdout, "%s\n", _("Profile Tags") );
+      fprintf( stdout, "------------\n" );
       count = oyProfile_GetTagCount( p );
       for(i = 0; i < count; ++i)
       {
@@ -367,7 +492,7 @@ int main( int argc , char** argv )
           texts = oyProfileTag_GetText( tag, &texts_n, NULL, NULL,
                                         &tag_size, malloc );
 
-          fprintf( stdout, "%s/%s[%d] %d @ %d %s",
+          fprintf( stdout, "%s/%s[%d]\t%d\t@ %d\t%s",
                    oyICCTagName(oyProfileTag_GetUse(tag)),
                    oyICCTagTypeName(oyProfileTag_GetType(tag)), i,
                    (int)tag_size, (int)oyProfileTag_GetOffset( tag ),
