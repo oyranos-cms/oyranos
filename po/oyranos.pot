@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2013-02-27 18:39+0100\n"
+"POT-Creation-Date: 2013-03-01 23:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -188,7 +188,7 @@ msgid "Creation Time in UTC"
 msgstr ""
 
 #: API_generated/oyOptions_s.c:1282 tools/oyranos_gamma.c:240
-#: tools/oyranos_profile.c:205 tools/oyranos_profile_graph.c:226
+#: tools/oyranos_profile.c:209 tools/oyranos_profile_graph.c:249
 #: tools/oyranos_convert.c:236 tools/oyranos_profiles.c:219
 #: tools/oyranos_policy.c:136 examples/devices/test_device.c:209
 #: examples/libraw/oyranos_file.cpp:216
@@ -353,7 +353,7 @@ msgstr ""
 msgid "Profile already installed"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:569 tools/oyranos_profile.c:280
+#: API_generated/oyProfile_s.c:569 tools/oyranos_profile.c:301
 msgid "Profile exists already"
 msgstr ""
 
@@ -2204,7 +2204,7 @@ msgid ""
 "to screen, 1.0 - full adapted to screen]."
 msgstr ""
 
-#: modules/oyranos_cmm_oicc.c:450 tools/oyranos_profile.c:334
+#: modules/oyranos_cmm_oicc.c:450
 msgid "ICC profile"
 msgstr ""
 
@@ -3084,7 +3084,7 @@ msgid "is a colour profile administration tool for monitors"
 msgstr ""
 
 #: tools/oyranos_gamma.c:197 tools/oyranos_profile.c:82
-#: tools/oyranos_profile_graph.c:187 tools/oyranos_convert.c:64
+#: tools/oyranos_profile_graph.c:204 tools/oyranos_convert.c:64
 #: tools/oyranos_profiles.c:60 tools/oyranos_policy.c:54
 #: examples/devices/test_device.c:32 examples/libraw/oyranos_file.cpp:44
 msgid "Usage"
@@ -3127,7 +3127,7 @@ msgid "Dump data:"
 msgstr ""
 
 #: tools/oyranos_gamma.c:221 tools/oyranos_profile.c:109
-#: tools/oyranos_profile_graph.c:208 tools/oyranos_convert.c:95
+#: tools/oyranos_profile_graph.c:231 tools/oyranos_convert.c:95
 #: tools/oyranos_profiles.c:93 examples/devices/test_device.c:76
 #: examples/libraw/oyranos_file.cpp:59
 msgid "General options:"
@@ -3146,7 +3146,7 @@ msgstr ""
 msgid "-d device_position_start_from_zero"
 msgstr ""
 
-#: tools/oyranos_gamma.c:226 tools/oyranos_profile_graph.c:215
+#: tools/oyranos_gamma.c:226 tools/oyranos_profile_graph.c:238
 #: examples/devices/test_device.c:82 examples/libraw/oyranos_file.cpp:64
 #, c-format
 msgid "For more informations read the man page:"
@@ -3232,7 +3232,7 @@ msgstr ""
 msgid "Show CIE*xy chromaticities:"
 msgstr ""
 
-#: tools/oyranos_profile.c:100 tools/oyranos_profile.c:249
+#: tools/oyranos_profile.c:100 tools/oyranos_profile.c:269
 msgid "Write to ICC profile:"
 msgstr ""
 
@@ -3253,109 +3253,226 @@ msgstr ""
 msgid "Print a help text:"
 msgstr ""
 
-#: tools/oyranos_profile.c:112 tools/oyranos_convert.c:100
+#: tools/oyranos_profile.c:111
+msgid "read input stream"
+msgstr ""
+
+#: tools/oyranos_profile.c:113 tools/oyranos_convert.c:100
 #: tools/oyranos_profiles.c:96
 msgid "Example"
 msgstr ""
 
-#: tools/oyranos_profile.c:219
+#: tools/oyranos_profile.c:223
 msgid "missed -w option to write a ICC profile"
 msgstr ""
 
-#: tools/oyranos_profile.c:219 tools/oyranos_profile.c:226
-#: tools/oyranos_profile.c:280 tools/oyranos_profile.c:385
-#: tools/oyranos_profile.c:520
+#: tools/oyranos_profile.c:223 tools/oyranos_profile.c:247
+#: tools/oyranos_profile.c:301 tools/oyranos_profile.c:527
+#: tools/oyranos_profile.c:662
 msgid "Exit!"
 msgstr ""
 
-#: tools/oyranos_profile.c:226
+#: tools/oyranos_profile.c:247
 msgid "Need a ICC profile to modify."
 msgstr ""
 
-#: tools/oyranos_profile.c:384
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:368
+msgid "Description:     "
+msgstr ""
+
+#: tools/oyranos_profile.c:369
+msgid "File:            "
+msgstr ""
+
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:373 tools/oyranos_profile.c:388
+msgid "Size:            "
+msgstr ""
+
+#: tools/oyranos_profile.c:379
+msgid "Copyright:       "
+msgstr ""
+
+#: tools/oyranos_profile.c:383
+msgid "Header"
+msgstr ""
+
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:392
+msgid "Cmm:             "
+msgstr ""
+
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:396
+msgid "Version:         "
+msgstr ""
+
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:400
+msgid "Type:            "
+msgstr ""
+
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:405
+msgid "Data Color Space:"
+msgstr ""
+
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:410
+msgid "PCS Color Space: "
+msgstr ""
+
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:415
+msgid "Creation Date:   "
+msgstr ""
+
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:425
+msgid "Magic:           "
+msgstr ""
+
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:429
+msgid "Platform:        "
+msgstr ""
+
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:435
+msgid "Flags:           "
+msgstr ""
+
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:441
+msgid "Manufacturer:    "
+msgstr ""
+
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:446
+msgid "Model:           "
+msgstr ""
+
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:451
+msgid "Attributes:      "
+msgstr ""
+
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:457
+msgid "Rendering Intent:"
+msgstr ""
+
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:461
+msgid "Illuminant:      "
+msgstr ""
+
+#. keep total number of chars equal to original for cli print
+#: tools/oyranos_profile.c:470
+msgid "Profile ID:      "
+msgstr ""
+
+#: tools/oyranos_profile.c:476
+msgid "Profile Tags"
+msgstr ""
+
+#: tools/oyranos_profile.c:526
 msgid "Allowed option values are -f openicc and -f xml. unknown format:"
 msgstr ""
 
-#: tools/oyranos_profile.c:520
+#: tools/oyranos_profile.c:662
 msgid "RGB primaries missed"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:186
+#: tools/oyranos_profile_graph.c:203
 msgid "is a ICC colour profile grapher"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:188
+#: tools/oyranos_profile_graph.c:205
 msgid "2D Graph from profiles:"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:190 tools/oyranos_profile_graph.c:211
+#: tools/oyranos_profile_graph.c:207 tools/oyranos_profile_graph.c:234
 #: examples/devices/test_device.c:35 examples/devices/test_device.c:70
 #: examples/devices/test_device.c:71 examples/libraw/oyranos_file.cpp:60
 #: examples/libraw/oyranos_file.cpp:61
 msgid "FILE"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:190 tools/oyranos_profile_graph.c:194
-#: tools/oyranos_profile_graph.c:205 tools/oyranos_profile_graph.c:210
-#: tools/oyranos_profile_graph.c:213 examples/devices/test_device.c:79
-msgid "NUMBER"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:190
+#: tools/oyranos_profile_graph.c:207
 msgid "PROFILENAMES"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:191
+#: tools/oyranos_profile_graph.c:208
 msgid "use CIE*xyY *x*y plane for saturation line projection"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:192
+#: tools/oyranos_profile_graph.c:209
 msgid "omit white line of lambert light emitters"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:193
+#: tools/oyranos_profile_graph.c:210
 msgid "omit the spectral line"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:194
+#: tools/oyranos_profile_graph.c:211 tools/oyranos_profile_graph.c:222
+#: tools/oyranos_profile_graph.c:233 tools/oyranos_profile_graph.c:236
+#: examples/devices/test_device.c:79
+msgid "NUMBER"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:211
 msgid "specify incemental increase of the thickness of the graph lines"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:196
+#: tools/oyranos_profile_graph.c:213
 msgid "Standard Observer 1931 2° Graph:"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:198 tools/oyranos_profile_graph.c:202
-#: tools/oyranos_profile_graph.c:206
+#: tools/oyranos_profile_graph.c:215 tools/oyranos_profile_graph.c:219
+#: tools/oyranos_profile_graph.c:223 tools/oyranos_profile_graph.c:229
 msgid "draw gray"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:200
+#: tools/oyranos_profile_graph.c:217
 msgid "1964 10° Observer Graph:"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:204
+#: tools/oyranos_profile_graph.c:221
 msgid "Blackbody Radiator Spectrum Graph:"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:209 tools/oyranos_convert.c:96
+#: tools/oyranos_profile_graph.c:225
+msgid "Illuminant Spectrum Graph:"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:227
+msgid "CIE A spectral power distribution"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:228
+msgid "CIE D65 spectral power distribution"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:232 tools/oyranos_convert.c:96
 #: examples/devices/test_device.c:77 examples/libraw/oyranos_file.cpp:62
 msgid "verbose"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:210
+#: tools/oyranos_profile_graph.c:233
 msgid "specify output image width in pixel"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:211
+#: tools/oyranos_profile_graph.c:234
 msgid "specify output file name, default is output.png"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:212
+#: tools/oyranos_profile_graph.c:235
 msgid "omit border"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:213
+#: tools/oyranos_profile_graph.c:236
 msgid "specify increase of the thickness of the graph lines"
 msgstr ""
 
