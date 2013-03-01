@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/01/14
+ *  @date     2013/03/01
  */
 
 
@@ -82,6 +82,10 @@ typedef enum {
   oySIGNATURE_DATETIME_MINUTES,        /**< creation time in UTC */
   oySIGNATURE_DATETIME_SECONDS,        /**< creation time in UTC */
   oySIGNATURE_ILLUMINANT,              /**< profile illuminant */
+  oySIGNATURE_ILLUMINANT_Y,            /**< profile illuminant */
+  oySIGNATURE_ILLUMINANT_Z,            /**< profile illuminant */
+  oySIGNATURE_ATTRIBUTES,              /**< various ICC header attributes */
+  oySIGNATURE_ATTRIBUTES2,             /**< various ICC header attributes */
   oySIGNATURE_MAX
 } oySIGNATURE_TYPE_e;
 
