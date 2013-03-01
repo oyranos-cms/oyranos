@@ -44,8 +44,6 @@ typedef enum {
   oyTESTRESULT_UNKNOWN
 } oyTESTRESULT_e;
 
-int results[oyTESTRESULT_UNKNOWN+1];
-char * tests_failed[64];
 
 const char * oyTestResultToString    ( oyTESTRESULT_e      error )
 {
@@ -106,6 +104,7 @@ const char  *  oyProfilingToString   ( int                 integer,
   return texts[a++];
 }
 
+FILE * zout = stdout;  /* printed inbetween results */
 
 #define PRINT_SUB( result_, ... ) { \
   if(result == oyTESTRESULT_XFAIL || \
@@ -127,8 +126,8 @@ oyTESTRESULT_e testVersion()
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
   fprintf(stdout, "\n" );
-  fprintf(stdout, "compiled version:     %d\n", OYRANOS_VERSION );
-  fprintf(stdout, " runtime version:     %d\n", oyVersion(0) );
+  fprintf(zout, "compiled version:     %d\n", OYRANOS_VERSION );
+  fprintf(zout, " runtime version:     %d\n", oyVersion(0) );
 
   if(OYRANOS_VERSION == oyVersion(0))
     result = oyTESTRESULT_SUCCESS;
@@ -213,15 +212,15 @@ oyTESTRESULT_e testElektra()
     "Elektra not initialised? try oyExportStart_(EXPORT_SETTING)" );
   }
   if(start)
-    fprintf(stdout, "start key value: %s\n", start );
+    fprintf(zout, "start key value: %s\n", start );
   else
-    fprintf(stdout, "could not initialise\n" );
+    fprintf(zout, "could not initialise\n" );
 
   error = oyAddKey_valueComment_("sw/Oyranos/Tests/test_key",
                                  "myTestValue", "myTestComment" );
   value = oyGetKeyString_("sw/Oyranos/Tests/test_key", 0);
   if(value)
-    fprintf(stdout, "result key value: %s\n", value );
+    fprintf(zout, "result key value: %s\n", value );
 
   if(error)
   {
@@ -331,7 +330,7 @@ oyTESTRESULT_e testStringRun ()
                                                &test_end2 );
       memcpy( test_out, test_sub2, test_end2 );
       test_out[test_end2] = 0;
-      fprintf(stdout, "%d%c%d%c \"%s\"\n", i, j?' ':'/',j, j ? '.': ' ',
+      fprintf(zout, "%d%c%d%c \"%s\"\n", i, j?' ':'/',j, j ? '.': ' ',
                       test_out);
     }
   }
@@ -407,7 +406,7 @@ oyTESTRESULT_e testStringRun ()
                                                &test_end2 );
       memcpy( test_out, test_sub2, test_end2 );
       test_out[test_end2] = 0;
-      fprintf(stdout, "%d%c%d%c \"%s\"\n", i, j?' ':'/', j, j ? '.': ' ',
+      fprintf(zout, "%d%c%d%c \"%s\"\n", i, j?' ':'/', j, j ? '.': ' ',
                       test_out);
     }
   }
@@ -670,13 +669,13 @@ oyTESTRESULT_e testOptionsSet ()
     oyOption_s * opt;
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOptions_GetText()                             good" );
-    fprintf( stdout, "%s\n", t );
+    fprintf( zout, "%s\n", t );
     opt = oyOptions_Get( setA, 3 );
-    fprintf( stdout, "fourth option\n" );
-    fprintf( stdout, "ValueText: %s\n", oyOption_GetValueText(opt, malloc ) );
-    fprintf( stdout, "NICK: %s\n", oyOption_GetText(opt, oyNAME_NICK) );
-    fprintf( stdout, "NAME: %s\n", oyOption_GetText(opt, oyNAME_NAME) );
-    fprintf( stdout, "DESCRIPTION: %s\n", oyOption_GetText(opt, oyNAME_DESCRIPTION) );
+    fprintf( zout, "fourth option\n" );
+    fprintf( zout, "ValueText: %s\n", oyOption_GetValueText(opt, malloc ) );
+    fprintf( zout, "NICK: %s\n", oyOption_GetText(opt, oyNAME_NICK) );
+    fprintf( zout, "NAME: %s\n", oyOption_GetText(opt, oyNAME_NAME) );
+    fprintf( zout, "DESCRIPTION: %s\n", oyOption_GetText(opt, oyNAME_DESCRIPTION) );
     
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL, 
@@ -907,7 +906,7 @@ oyTESTRESULT_e testSettings ()
 
   oyExportReset_(EXPORT_SETTING);
 
-  fprintf(stdout, "\n" );
+  fprintf(zout, "\n" );
 
   /* we check for out standard CMM */
   opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcms",
@@ -928,7 +927,7 @@ oyTESTRESULT_e testSettings ()
     {
       o = oyOptions_Get( opts, i );
       tmp = oyOption_GetValueText( o, 0 );
-      fprintf(stdout, "%s:", tmp );
+      fprintf(zout, "%s:", tmp );
       oyDeAllocateFunc_(tmp);
 
       tmp = oyFilterRegistrationToText( oyOption_GetText(o, oyNAME_DESCRIPTION),
@@ -998,7 +997,7 @@ oyTESTRESULT_e testSettings ()
     char * t;
     o = oyOptions_Get( opts, i );
     t = oyStringCopy_(oyOption_GetText(o, oyNAME_DESCRIPTION), oyAllocateFunc_);
-    printf("%d: \"%s\": \"%s\" %s %d\n", i, 
+    fprintf(zout,"%d: \"%s\": \"%s\" %s %d\n", i, 
            t, oyOption_GetValueText( o, malloc ),
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                        oyFILTER_REG_OPTION, 0 ),
@@ -1033,14 +1032,14 @@ oyTESTRESULT_e testSettings ()
                                             oyOPTIONATTRIBUTE_ADVANCED  |
                                             oyOPTIONATTRIBUTE_FRONT |
                                             OY_SELECT_COMMON, 0 );
-  printf("Show advanced common front end options:\n");
+  fprintf(zout,"Show advanced common front end options:\n");
   countB = oyOptions_Count( opts );
   for( i = 0; i < countB; ++i)
   {
     char * t;
     o = oyOptions_Get( opts, i );
     t = oyStringCopy_(oyOption_GetText(o, oyNAME_DESCRIPTION), oyAllocateFunc_);
-    printf("%d: \"%s\": \"%s\" %s %d\n", i, 
+    fprintf(zout,"%d: \"%s\": \"%s\" %s %d\n", i, 
            t, oyOption_GetValueText( o, malloc ),
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                        oyFILTER_REG_OPTION, 0 ),
@@ -1294,7 +1293,7 @@ oyTESTRESULT_e testProfileLists ()
 #ifdef __cplusplus
   std::cout << "Start: " << start_time << std::endl;
 #else
-  fprintf(stdout, "Start %.3f\n", start_time );
+  fprintf(zout, "Start %.3f\n", start_time );
 #endif
 
   uint32_t ref_count = 0;
@@ -1340,7 +1339,7 @@ oyTESTRESULT_e testProfileLists ()
     std::cout << "." << std::flush;
 #else
     if( names ) free( names );
-    fprintf(stdout, "." ); fflush(stdout);
+    fprintf(zout, "." ); fflush(zout);
 #endif
 
   }
@@ -1352,7 +1351,7 @@ oyTESTRESULT_e testProfileLists ()
   std::cout << "1000 + 1 calls to oyProfileListGet() took: "<< end - start_time
             << " seconds" << std::endl;
 #else
-  fprintf(stdout, "\n1000 + 1 calls to oyProfileListGet() took: %.03f seconds\n",
+  fprintf(zout, "\n1000 + 1 calls to oyProfileListGet() took: %.03f seconds\n",
                   end - start_time );
 #endif
 
@@ -1453,9 +1452,9 @@ oyTESTRESULT_e testDeviceLinkProfile ()
       error = oyWriteMemToFile_( name, oyBlob_GetPointer( blob ),
                                  oyBlob_GetSize( blob) );
       if(!error)
-        printf("wrote: %s\n", name );
+        fprintf(zout,"wrote: %s\n", name );
       else
-        printf("writing failed: %s\n", name );
+        fprintf(zout,"writing failed: %s\n", name );
       dl = oyProfile_FromMem( oyBlob_GetSize( blob ),
                               oyBlob_GetPointer( blob ), 0,0 );
     }
@@ -1637,7 +1636,7 @@ oyTESTRESULT_e testPolicy ()
 #if 0
   if(argc > 1)
   {
-    printf("%s\n", argv[1]);
+    fprintf(zout,"%s\n", argv[1]);
     std::ifstream f( argv[1], std::ios::binary | std::ios::ate);
     if(f.good())
     {
@@ -1667,7 +1666,7 @@ oyTESTRESULT_e testPolicy ()
 
   if(xml) {
     oyReadXMLPolicy(oyGROUP_ALL, xml);
-    printf("xml text: \n%s", xml);
+    fprintf(zout,"xml text: \n%s", xml);
 
     data = oyPolicyToXML( oyGROUP_ALL, 1, myAllocFunc );
 
@@ -1734,9 +1733,9 @@ oyTESTRESULT_e testCMMDevicesListing ()
   }
   for( i = 0; i < (int)count; ++i)
   {
-    fprintf( stdout, "%d: %s\n", i, texts[i] );
+    fprintf( zout, "%d: %s\n", i, texts[i] );
   }
-  fprintf(stdout, "\n" );
+  fprintf(zout, "\n" );
 
   oyConfigs_s * configs = 0;
   oyConfig_s * config = 0;
@@ -1756,7 +1755,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyConfigs_FromDomain \"%s\" help text ", texts[0] );
   }
-  fprintf( stdout, "\n");
+  fprintf( zout, "\n");
 
 
   /* add list call to module arguments */
@@ -1767,11 +1766,11 @@ oyTESTRESULT_e testCMMDevicesListing ()
                                  "//" OY_TYPE_STD "/config/icc_profile",
                                  "true", OY_CREATE_NEW );
 
-  fprintf( stdout, "oyConfigs_FromDomain() \"list\" call:\n" );
+  fprintf( zout, "oyConfigs_FromDomain() \"list\" call:\n" );
   for( i = 0; i < (int)count; ++i)
   {
     const char * registration_domain = texts[i];
-    printf("%d[rank %d]: %s\n", i, rank_list[i], registration_domain);
+    fprintf(zout,"%d[rank %d]: %s\n", i, rank_list[i], registration_domain);
 
     error = oyConfigs_FromDomain( registration_domain,
                                   options_list, &configs, 0 );
@@ -1787,7 +1786,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
 
       config = oyConfigs_Get( configs, j );
 
-      fprintf(stdout, "--------------------------------------------------------------------------------\n\"%s\":\n", oyConfig_FindString( config, "device_name", 0 ) );
+      fprintf(zout, "--------------------------------------------------------------------------------\n\"%s\":\n", oyConfig_FindString( config, "device_name", 0 ) );
       {
         oyOptions_s * options = 0;
         const char * t = 0;
@@ -1797,7 +1796,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
         error = oyDeviceGetProfile( config, options, &p );
         oyOptions_Release( &options );
         t = oyProfile_GetText( p, oyNAME_DESCRIPTION);
-        printf( "oyDeviceGetProfile(): \"%s\"\n", t ? t : "----" );
+        fprintf(zout, "oyDeviceGetProfile(): \"%s\"\n", t ? t : "----" );
         oyProfile_Release( &p );
       }
 
@@ -1822,7 +1821,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
       oyConfigs_Release( &heap );
 
 
-      printf( "\"%s\" has %d precise matches,\n"
+      fprintf(zout, "\"%s\" has %d precise matches,\n"
               "\t%d manufacturer/model/serial, %d manufacturer/model and\n"
               "\t%d \"device_name\" entries in DB\n",
               oyConfig_FindString( config, "device_name", 0 ),
@@ -1851,25 +1850,25 @@ oyTESTRESULT_e testCMMDevicesListing ()
               if(oi->value->string_list[mnft][pos] == '\n')
               {
                 if(mn && oi->value->string_list[mnft][pos+1])
-                  putc(',', stdout);
+                  putc(',', zout);
                 else if(mn == 0)
                 {
-                  putc(':', stdout);
-                  putc('\n', stdout);
-                  putc(' ', stdout);
-                  putc(' ', stdout);
+                  putc(':', zout);
+                  putc('\n', zout);
+                  putc(' ', zout);
+                  putc(' ', zout);
                 }
                 ++mn;
 
               } else
-                putc(oi->value->string_list[mnft][pos], stdout);
+                putc(oi->value->string_list[mnft][pos], zout);
             }
-            putc('\n', stdout);
+            putc('\n', zout);
           }
         } else
         {
           val = oyOption_GetValueText( o, oyAllocateFunc_ );
-          printf("  %d::%d::%d \"%s\": \"%s\"\n", i,j,k,
+          fprintf(zout,"  %d::%d::%d \"%s\": \"%s\"\n", i,j,k,
                  oyOption_GetRegistration(o), val?val:"(nix)" );
         }
 
@@ -1884,10 +1883,10 @@ oyTESTRESULT_e testCMMDevicesListing ()
 
     oyConfigs_Release( &configs );
   }
-  fprintf( stdout, "\n");
+  fprintf( zout, "\n");
   oyOptions_Release( &options_list );
 
-  fprintf( stdout, "\n");
+  fprintf( zout, "\n");
 
   return result;
 }
@@ -1928,11 +1927,11 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   int devices_n = 0;
 
 
-  fprintf( stdout, "oyConfigs_FromDomain() \"properties\" call:\n" );
+  fprintf( zout, "oyConfigs_FromDomain() \"properties\" call:\n" );
   for( i = 0; i < (int)count; ++i)
   {
     const char * registration_domain = texts[i];
-    printf("%d[rank %d]: %s\n", i, rank_list[i], registration_domain);
+    fprintf(zout,"%d[rank %d]: %s\n", i, rank_list[i], registration_domain);
 
     /* set a general request */
     error = oyOptions_SetFromText( &options,
@@ -1945,7 +1944,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
     for( l = 0; l < devices_n; ++l )
     {
       /* display results */
-      fprintf(stdout, "--------------------------------------------------------------------------------\n%s:\n", registration_domain );
+      fprintf(zout, "--------------------------------------------------------------------------------\n%s:\n", registration_domain );
       config = oyConfigs_Get( configs, l );
 
       k_n = oyConfig_Count( config );
@@ -1954,7 +1953,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
         o = oyConfig_Get( config, k );
 
         val = oyOption_GetValueText( o, oyAllocateFunc_ );
-        printf( "  %d::%d %s: \"%s\"\n", l,k, 
+        fprintf(zout, "  %d::%d %s: \"%s\"\n", l,k, 
                   oyStrrchr_(oyOption_GetRegistration(o),'/')+1, val );
 
         if(val) oyDeAllocateFunc_( val ); val = 0;
@@ -1965,7 +1964,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
       if(o)
       {
         val = oyOption_GetValueText( o, oyAllocateFunc_ );
-        printf( "  %d %s: \"%s\"\n", l, 
+        fprintf(zout, "  %d %s: \"%s\"\n", l, 
                 oyStrrchr_(oyOption_GetRegistration(o),'/')+1, val );
 
         if(val) oyDeAllocateFunc_( val ); val = 0;
@@ -1980,7 +1979,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
     oyOptions_Release( &options );
   }
 
-  fprintf( stdout, "\n");
+  fprintf( zout, "\n");
 
 
   if(texts && texts[0])
@@ -2040,7 +2039,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   if(registration)
     oyDeAllocateFunc_( registration ); registration = 0;
 
-  fprintf( stdout, "\n");
+  fprintf( zout, "\n");
 
   return result;
 }
@@ -2138,10 +2137,10 @@ oyTESTRESULT_e testCMMRankMap ()
     }
 
     oyConfig_Release( &device );
-    fprintf( stdout, "\n");
+    fprintf( zout, "\n");
   }
 
-  fprintf( stdout, "\n");
+  fprintf( zout, "\n");
 
   return result;
 }
@@ -2185,7 +2184,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
     char * json_text = 0;
     config = oyConfigs_Get( configs, i );
     oyDeviceToJSON( config, 0, &json_text, malloc );
-    printf( "  %d oyDeviceToJSON():\n%s\n", i,
+    fprintf(zout, "  %d oyDeviceToJSON():\n%s\n", i,
             json_text?json_text:"---" );
 
     oyConfig_Release( &config );
@@ -2223,7 +2222,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
   }
 
   oyConfigs_Release( &configs );
-  fprintf( stdout, "\n");
+  fprintf( zout, "\n");
 
   return result;
 }
@@ -2266,7 +2265,7 @@ oyTESTRESULT_e testCMMMonitorListing ()
   for( i = 0; i < devices_n; ++i )
   {
     config = oyConfigs_Get( configs, i );
-    printf( "  %d oyConfig_FindString(..\"device_name\"..): %s\n", i,
+    fprintf(zout, "  %d oyConfig_FindString(..\"device_name\"..): %s\n", i,
             oyConfig_FindString( config, "device_name",0 ) );
     if(i==0)
       device_name = oyStringCopy_(oyConfig_FindString( config, "device_name",0),
@@ -2276,28 +2275,28 @@ oyTESTRESULT_e testCMMMonitorListing ()
     error = oyDeviceProfileFromDB( config, &text, myAllocFunc );
     clck = oyClock() - clck;
     if(text)
-      fprintf( stdout, "  %d oyDeviceProfileFromDB(): %s %s\n", i, text,
+      fprintf( zout, "  %d oyDeviceProfileFromDB(): %s %s\n", i, text,
                    oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
     else
-      fprintf( stdout, "  %d oyDeviceProfileFromDB(): ---\n", i );
+      fprintf( zout, "  %d oyDeviceProfileFromDB(): ---\n", i );
 
     clck = oyClock();
     error = oyDeviceGetInfo( config, oyNAME_NICK, 0, &text, 0 );
     clck = oyClock() - clck;
-    fprintf( stdout, "  %d oyDeviceGetInfo)(..oyNAME_NICK..): \"%s\" %s\n",
+    fprintf( zout, "  %d oyDeviceGetInfo)(..oyNAME_NICK..): \"%s\" %s\n",
              i, text? text:"???",
                    oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
     clck = oyClock();
     error = oyDeviceGetInfo( config, oyNAME_NAME, 0, &text, 0 );
     clck = oyClock() - clck;
-    fprintf( stdout, "  %d oyDeviceGetInfo)(..oyNAME_NAME..): \"%s\" %s\n",
+    fprintf( zout, "  %d oyDeviceGetInfo)(..oyNAME_NAME..): \"%s\" %s\n",
              i, text? text:"???",
                    oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
 
     oyConfig_Release( &config );
   }
   oyConfigs_Release( &configs );
-  fprintf( stdout, "\n");
+  fprintf( zout, "\n");
 
   error = oyDeviceGet( 0, "monitor", device_name, 0, &config );
   k_n = oyConfig_Count( config );
@@ -2313,14 +2312,14 @@ oyTESTRESULT_e testCMMMonitorListing ()
       o = oyConfig_Get( config, k );
       val = oyOption_GetValueText( o, oyAllocateFunc_ );
 
-      printf( "  %d %s: \"%s\"\n", k, oyOption_GetRegistration(o), val );
+      fprintf(zout, "  %d %s: \"%s\"\n", k, oyOption_GetRegistration(o), val );
 
       if(val) oyDeAllocateFunc_( val ); val = 0;
       oyOption_Release( &o );
     }
   oyConfig_Release( &config );
   oyConfigs_Release( &configs );
-  fprintf( stdout, "\n");
+  fprintf( zout, "\n");
 
 
   return result;
@@ -2358,7 +2357,7 @@ oyTESTRESULT_e testCMMDBListing ()
       o = oyConfig_Get( config, k );
 
       val = oyOption_GetValueText( o, oyAllocateFunc_ );
-      printf( "  %d::%d %s %s\n", j,k, oyOption_GetRegistration(o), val );
+      fprintf(zout, "  %d::%d %s %s\n", j,k, oyOption_GetRegistration(o), val );
 
       if(val) oyDeAllocateFunc_( val ); val = 0;
       oyOption_Release( &o );
@@ -2421,7 +2420,7 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   double clck = 0;
   const char * device_name = NULL; /* getenv("DISPLAY") + ".0"; */
 
-  fprintf( stdout, "load a device ...\n");
+  fprintf( zout, "load a device ...\n");
   clck = oyClock();
   error = oyDeviceGet( 0, "monitor", device_name, 0, &device );
   clck = oyClock() - clck;
@@ -2435,7 +2434,7 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
     "oyDeviceGet(..\"monitor\" \"%s\".. &device) %d", device_name, k_n );
   }
 
-  fprintf( stdout, "... and search for the devices DB entry ...\n");
+  fprintf( zout, "... and search for the devices DB entry ...\n");
   clck = oyClock();
   error = oyConfig_GetDB( device, &rank );
   clck = oyClock() - clck;
@@ -2450,14 +2449,14 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   }
   if(device && rank > 0)
   {
-    printf("rank: %d\n", rank);
+    fprintf(zout,"rank: %d\n", rank);
     k_n = oyConfig_Count( device );
     for( k = 0; k < k_n; ++k )
     {
       o = oyConfig_Get( device, k );
 
       val = oyOption_GetValueText( o, oyAllocateFunc_ );
-      printf( "  d::%d %s: \"%s\"\n", k,
+      fprintf(zout, "  d::%d %s: \"%s\"\n", k,
       strchr(strchr(strchr(strchr(oyOption_GetRegistration(o),'/')+1,'/')+1,'/')+1,'/')+1,
               val );
 
@@ -2516,7 +2515,7 @@ oyTESTRESULT_e testCMMsShow ()
   oyCMMapiFilter_s_ * cmm_filter = 0;
 
 
-  fprintf(stdout, "\n" );
+  fprintf(zout, "\n" );
 
   texts = oyCMMsGetLibNames_( &count, 0 );
 
@@ -2563,7 +2562,7 @@ oyTESTRESULT_e testCMMsShow ()
     {
       text = oyCMMinfoPrint_( (oyCMMinfo_s*)cmm_info, 1 );
       STRING_ADD( text, "    Not accepted by oyCMMapi_Check_() - Stop\n");
-      printf("%d: \"%s\": %s\n\n", i, texts[i], text );
+      fprintf(zout,"%d: \"%s\": %s\n\n", i, texts[i], text );
       continue;
     }
 
@@ -2778,7 +2777,7 @@ oyTESTRESULT_e testCMMsShow ()
           tmp = (oyCMMapi_s_*)tmp->next;
         }
 
-    printf("%d: \"%s\": %s\n\n", i, texts[i], text );
+    fprintf(zout,"%d: \"%s\": %s\n\n", i, texts[i], text );
 
   }
   oyStringListRelease_( &texts, count, free );
@@ -2797,7 +2796,7 @@ oyTESTRESULT_e testCMMsShow ()
   remove("test2_CMMs.xhtml");
   oyWriteMemToFile2_( "test2_CMMs.xhtml", t, strlen(t),0/*OY_FILE_NAME_SEARCH*/,
                       &rfile, malloc );
-  printf( "Wrote %s\n", rfile?rfile:"test2_CMMs.xhtml" );
+  fprintf(zout, "Wrote %s\n", rfile?rfile:"test2_CMMs.xhtml" );
   free( rfile );
 
   return result;
@@ -3163,9 +3162,9 @@ oyTESTRESULT_e testCMMnmRun ()
     api4 = (oyCMMapi4_s_*) oyCMMsGetFilterApi_( 0,
                                             registration, oyOBJECT_CMM_API4_S );
     error = !api4;
-    if(!(i%30000)) fprintf(stdout, "." ); fflush(stdout);
+    if(!(i%30000)) fprintf(zout, "." ); fflush(zout);
   }
-  fprintf(stdout,"\n");
+  fprintf(zout,"\n");
   clck = oyClock() - clck;
 
   if( !error )
@@ -3242,9 +3241,9 @@ oyTESTRESULT_e testCMMnmRun ()
     oyConversion_Release( &s );
     oyImage_Release( &input );
     oyImage_Release( &output );
-    if(!(i%1000)) fprintf(stdout, "." ); fflush(stdout);
+    if(!(i%1000)) fprintf(zout, "." ); fflush(stdout);
   }
-  fprintf(stdout,"\n");
+  fprintf(zout,"\n");
   clck = oyClock() - clck;
 
   if( !error )
@@ -3416,9 +3415,9 @@ oyTESTRESULT_e testCMMnmRun ()
     s = oyConversion_CreateBasicPixels( input,output, options, 0 );
     error  = oyConversion_RunPixels( s, 0 );
     oyConversion_Release ( &s );
-    if(!(i%100)) fprintf(stdout, "." ); fflush(stdout);
+    if(!(i%100)) fprintf(zout, "." ); fflush(zout);
   }
-  fprintf(stdout, "\n" );
+  fprintf(zout, "\n" );
 
   clck = oyClock() - clck;
   if( !error )
@@ -3696,12 +3695,12 @@ oyTESTRESULT_e testImagePixel()
     "Plain Image                                        " );
   }
 
-  fprintf(stdout, "input:  %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
+  fprintf(zout, "input:  %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
                   buf_16in2x2[0], buf_16in2x2[1], buf_16in2x2[2],
                   buf_16in2x2[3], buf_16in2x2[4], buf_16in2x2[5],
                   buf_16in2x2[6], buf_16in2x2[7], buf_16in2x2[8],
                   buf_16in2x2[9], buf_16in2x2[10], buf_16in2x2[11] );
-  fprintf(stdout, "output: %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
+  fprintf(zout, "output: %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
                   buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
                   buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
                   buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
@@ -3751,12 +3750,12 @@ oyTESTRESULT_e testImagePixel()
     "lower right source pixel in 1 pixel RoI            " );
   }
 
-  fprintf(stdout, "input:  %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
+  fprintf(zout, "input:  %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
                   buf_16in2x2[0], buf_16in2x2[1], buf_16in2x2[2],
                   buf_16in2x2[3], buf_16in2x2[4], buf_16in2x2[5],
                   buf_16in2x2[6], buf_16in2x2[7], buf_16in2x2[8],
                   buf_16in2x2[9], buf_16in2x2[10], buf_16in2x2[11] );
-  fprintf(stdout, "output: %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
+  fprintf(zout, "output: %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
                   buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
                   buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
                   buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
@@ -3803,12 +3802,12 @@ oyTESTRESULT_e testImagePixel()
     "lower right source in lower right output           " );
   }
 
-  fprintf(stdout, "input:  %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
+  fprintf(zout, "input:  %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
                   buf_16in2x2[0], buf_16in2x2[1], buf_16in2x2[2],
                   buf_16in2x2[3], buf_16in2x2[4], buf_16in2x2[5],
                   buf_16in2x2[6], buf_16in2x2[7], buf_16in2x2[8],
                   buf_16in2x2[9], buf_16in2x2[10], buf_16in2x2[11] );
-  fprintf(stdout, "output: %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
+  fprintf(zout, "output: %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
                   buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
                   buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
                   buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
@@ -3865,7 +3864,7 @@ oyTESTRESULT_e testImagePixel()
   /* set lower right pixel */
   output_u16[0] = output_u16[1] = output_u16[2] = 2;
 
-  fprintf(stdout, "output: %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
+  fprintf(zout, "output: %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
                   buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
                   buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
                   buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
@@ -3904,7 +3903,7 @@ oyTESTRESULT_e testImagePixel()
     "oyImage_ReadArray()                                 " );
   }
 
-  fprintf(stdout, "output: %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
+  fprintf(zout, "output: %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
                   buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
                   buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
                   buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
@@ -4038,9 +4037,9 @@ oyTESTRESULT_e testConfDomain ()
   }
   for( i = 0; i < (int)count; ++i)
   {
-    fprintf( stdout, "%d: %s\n", i, domains[i] );
+    fprintf( zout, "%d: %s\n", i, domains[i] );
   }
-  fprintf( stdout, "\n");
+  fprintf( zout, "\n");
   
   for(i = 0; i < (int)count; ++i)
   {
@@ -4084,7 +4083,7 @@ oyTESTRESULT_e testConfDomain ()
         text_missed = 1;
       }
       if(strcmp(texts[j], "name") == 0)
-        printf("\"%s\" =\n  \"%s\" \"%s\" \"%s\"\n", texts[j],
+        fprintf(zout,"\"%s\" =\n  \"%s\" \"%s\" \"%s\"\n", texts[j],
                         t[oyNAME_NICK], t[oyNAME_NAME], t[oyNAME_DESCRIPTION]);
     }
 
@@ -4097,7 +4096,7 @@ oyTESTRESULT_e testConfDomain ()
     }
 
     oyConfDomain_Release( &a );
-    fprintf( stdout, "----------\n");
+    fprintf( zout, "----------\n");
   }
   oyStringListRelease_( &domains, count, free );
 
@@ -4105,27 +4104,19 @@ oyTESTRESULT_e testConfDomain ()
   return result;
 }
 
-typedef struct {
-  oyTESTRESULT_e (*oyTestRun)        ( oyTESTRESULT_e    (*test)(void),
-                                       const char        * test_name );
-  const char * title;
-} oyTestRegistration_s;
-
-oyTestRegistration_s test_registration[100];
-
 #define TEST_RUN( prog, text ) { \
-  if(argc > 1) { \
-    if(strcmp("-l", argv[1]) == 0) \
-    { \
-      printf( "%s\n", text); \
-    } else { \
-      for(i = 1; i < argc; ++i) \
+  if(argc > argpos) { \
+      for(i = argpos; i < argc; ++i) \
         if(strstr(text, argv[i]) != 0) \
           oyTestRun( prog, text ); \
-    } \
-  } else \
+  } else if(list) \
+    printf( "%s\n", text); \
+  else \
     oyTestRun( prog, text ); \
 }
+
+int results[oyTESTRESULT_UNKNOWN+1];
+char * tests_failed[64];
 
 oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
                                        const char        * test_name )
@@ -4154,7 +4145,9 @@ oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
 /*  main */
 int main(int argc, char** argv)
 {
-  int i, error = 0;
+  int i, error = 0,
+      argpos = 1,
+      list = 0;
 
   if(getenv("OY_DEBUG"))
   {
@@ -4167,10 +4160,20 @@ int main(int argc, char** argv)
   for(i = 0; i <= oyTESTRESULT_UNKNOWN; ++i)
     results[i] = 0;
 
-  fprintf( stdout, "\nOyranos Tests v" OYRANOS_VERSION_NAME
+  i = 1; while(i < argc) if( strcmp(argv[i++],"-l") == 0 )
+  { ++argpos;
+    zout = stderr;
+    list = 1;
+  }
+
+  i = 1; while(i < argc) if( strcmp(argv[i++],"--silent") == 0 )
+  { ++argpos;
+    zout = stderr;
+  }
+
+  fprintf( zout, "\nOyranos Tests v" OYRANOS_VERSION_NAME
            "  developed: " OYRANOS_DATE
            "\n\n" );
-
 
   /* do tests */
 
@@ -4209,8 +4212,7 @@ int main(int argc, char** argv)
   TEST_RUN( testImagePixel, "CMM Image Pixel run" );
 
   /* give a summary */
-  if(!(argc > 1 &&  
-       strcmp("-l", argv[1]) == 0))
+  if(!list)
   {
 
     fprintf( stdout, "\n################################################################\n" );
