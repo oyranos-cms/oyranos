@@ -3,7 +3,7 @@
  *  Oyranos is an open source Colour Management System 
  *
  *  @par Copyright:
- *            2011-2012 (C) Kai-Uwe Behrmann
+ *            2011-2013 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC profile informations - on the command line
  *  @internal
@@ -108,6 +108,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("General options:"));
   fprintf( stderr, "      %s\n",           _("-v verbose"));
+  fprintf( stderr, "      -i %s\n",        _("read input sptream"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s:\n",               _("Example"));
   fprintf( stderr, "      oyranos-profile -lv -p=1 sRGB.icc\n");
@@ -134,6 +135,7 @@ int main( int argc , char** argv )
       dump_chromaticities = 0,
       verbose = 0;
   const char * file_name = 0,
+             * profile_desc = 0,
              * tag_name = 0,
              * name_space = 0,
              * json_name = 0,
@@ -141,6 +143,7 @@ int main( int argc , char** argv )
              * profile_name = 0;
   const char * prefixes[24] = {0}; int pn = 0;
   const char * device_class = "unknown";
+  int read_stdin = 0;
   oyProfile_s * p;
   oyProfileTag_s * tag;
 
@@ -164,6 +167,7 @@ int main( int argc , char** argv )
             {
               case 'c': OY_PARSE_STRING_ARG(device_class); break;
               case 'f': OY_PARSE_STRING_ARG(format); break;
+              case 'i': read_stdin = 1; break;
               case 'j': OY_PARSE_STRING_ARG(json_name); break;
               case 'l': list_tags = 1; break;
               case 'm': list_hash = 1; break;
@@ -221,14 +225,31 @@ int main( int argc , char** argv )
     exit(1);
   }
 
-  if(profile_name && !file_name)
+  if(read_stdin)
+  {
+    size_t size = 0;
+    void * data = oyReadStdinToMem_(&size, oyAllocateFunc_);
+    p = oyProfile_FromMem( size, data, 0, 0 );
+    oyFree_m_( data );
+  } else
+    p = oyProfile_FromFile( file_name, 0, 0 );
+
+  if(p)
+  {
+    if(file_name)
+      profile_desc = file_name;
+    else
+      profile_desc = oyProfile_GetText( p, oyNAME_DESCRIPTION );
+  }
+
+  if(profile_name && !p)
   {
     fprintf(stderr, "%s %s\n", _("Need a ICC profile to modify."), _("Exit!"));
     printfHelp(argc, argv);
     exit(1);
   }
 
-  if(file_name && profile_name)
+  if(p && profile_name)
   {
     oyConfig_s * device;
     oyOptions_s * opts = NULL;
@@ -243,7 +264,6 @@ int main( int argc , char** argv )
     if(error <= 0 && list_hash)
     {
       uint32_t id[4];
-      p = oyProfile_FromFile( file_name, 0, 0 );
       oyProfile_GetMD5( p, OY_COMPUTE, id );
 
       fprintf( stderr, "%s %s\n", _("Write to ICC profile:"), profile_name);
@@ -274,15 +294,16 @@ int main( int argc , char** argv )
     else
       oyFree_m_(ext);
 
-    p = oyProfile_FromFile( pn, 0, 0 );
-    if(p)
     {
-      fprintf(stderr, "%s: \"%s\" - %s\n", _("Profile exists already"), pn, _("Exit!"));
-      printfHelp(argc, argv);
-      exit(1);
+      oyProfile_s * test = oyProfile_FromFile( pn, 0, 0 );
+      if(test)
+      {
+        fprintf(stderr, "%s: \"%s\" - %s\n", _("Profile exists already"), pn, _("Exit!"));
+        printfHelp(argc, argv);
+        exit(1);
+      }
     }
 
-    p = oyProfile_FromFile( file_name, 0, 0 );
     if(!p)
       exit(1);
 
@@ -317,12 +338,10 @@ int main( int argc , char** argv )
     oyConfig_Release( &device );
 
   } else
-  if(file_name)
+  if(p)
   {
     char ** texts = NULL;
     int32_t texts_n = 0, i,j,k, count;
-
-    p = oyProfile_FromFile( file_name, 0, 0 );
 
     if(!p)
     {
@@ -331,7 +350,7 @@ int main( int argc , char** argv )
 
     if(error <= 0 && list_tags)
     {
-      fprintf(stderr, "%s \"%s\" %d:\n", _("ICC profile"), file_name,
+      fprintf(stderr, "%s \"%s\" %d:\n", _("ICC profile"), profile_desc,
               (int)oyProfile_GetSize(p,0));
       count = oyProfile_GetTagCount( p );
       for(i = 0; i < count; ++i)
@@ -517,7 +536,7 @@ int main( int argc , char** argv )
       tags[3] = oyProfile_GetTagById( p, icSigMediaWhitePointTag );
       if(!tags[0] || !tags[1] || !tags[2] || !tags[3])
       {
-        fprintf(stderr, "%s: \"%s\" - %s\n", _("RGB primaries missed"), file_name, _("Exit!"));
+        fprintf(stderr, "%s: \"%s\" - %s\n", _("RGB primaries missed"), profile_desc, _("Exit!"));
         printfHelp(argc, argv);
         exit(1);
       }
@@ -571,7 +590,7 @@ int main( int argc , char** argv )
             i[0],i[1],i[2],i[3] );
       else
         fprintf( stdout, "%x%x%x%x[%x%x%x%x] %s\n",
-            i[0],i[1],i[2],i[3], id[0],id[1],id[2],id[3], file_name );
+            i[0],i[1],i[2],i[3], id[0],id[1],id[2],id[3], profile_desc );
     }
 
     oyProfile_Release( &p );
