@@ -592,8 +592,7 @@ int                oyBigEndian       ( void )
 
 
 /** @brief MSB<->LSB */
-icUInt16Number
-oyValueUInt16 (icUInt16Number val)
+icUInt16Number oyValueUInt16 (icUInt16Number val)
 {
   if(!oyBigEndian())
   {
@@ -624,8 +623,8 @@ oyValueUInt16 (icUInt16Number val)
   return (long)val;
 }
 
-icUInt32Number
-oyValueUInt32 (icUInt32Number val)
+/** @brief MSB<->LSB */
+icUInt32Number oyValueUInt32 (icUInt32Number val)
 {
   if(!oyBigEndian())
   {
@@ -649,6 +648,7 @@ oyValueUInt32 (icUInt32Number val)
 }
 
 
+/** @brief MSB<->LSB */
 icS15Fixed16Number      oyValueInt32    (icS15Fixed16Number val)
 {
   if(!oyBigEndian())
@@ -672,8 +672,8 @@ icS15Fixed16Number      oyValueInt32    (icS15Fixed16Number val)
     return (icS15Fixed16Number)val;
 }
 
-unsigned long
-oyValueUInt64 (icUInt64Number val)
+/** @brief MSB<->LSB */
+unsigned long oyValueUInt64 (icUInt64Number val)
 {
   if(!oyBigEndian())
   {
