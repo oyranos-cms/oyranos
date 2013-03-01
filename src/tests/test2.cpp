@@ -1064,59 +1064,59 @@ oyTESTRESULT_e testInterpolation ()
 
   fprintf(stdout, "\n" );
 
-  pol = oyLinInterpolateRampU16( ramp, 4, 1.9 );
+  pol = oyLinInterpolateRampU16( ramp, 4, 0.499999 );
   if(pol < ramp[3]/2.0)
-  {
-    PRINT_SUB( oyTESTRESULT_FAIL, 
-    "Interpolation failed: %f                               ", pol );
-  } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "Interpolation is fine %f                     ", pol );
-  }
-
-  pol = oyLinInterpolateRampU16( ramp, 4, 1.5 );
-  if(pol != ramp[3]/2.0)
+  } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "Interpolation failed: %f                               ", pol );
-  } else
+    "Interpolation failed: %f < %f                          ", pol, ramp[3]/2.0 );
+  }
+
+  pol = oyLinInterpolateRampU16( ramp, 4, 0.5 );
+  if(pol == ramp[3]/2.0)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "Interpolation is fine.                                 " );
-  }
-
-  pol = oyLinInterpolateRampU16( ramp, 4, 2 );
-  if(pol != ramp[2])
+  } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "Interpolation failed: %f                               ", pol );
-  } else
+    "Interpolation failed: %f == %f                         ", pol, ramp[3]/2.0 );
+  }
+
+  pol = oyLinInterpolateRampU16( ramp, 4, 2.0/3.0 );
+  if(pol == ramp[2])
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "Interpolation is fine.                                 " );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "Interpolation failed: %f == %u                         ", pol, ramp[2] );
   }
 
   pol = oyLinInterpolateRampU16( ramp, 4, -1 );
-  if(pol != 0)
-  {
-    PRINT_SUB( oyTESTRESULT_FAIL, 
-    "Interpolation failed: %f                               ", pol );
-  } else
+  if(pol == 0.0)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "Interpolation is fine.                                 " );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "Interpolation failed: %f == 0.0                        ", pol );
   }
 
-  pol = oyLinInterpolateRampU16( ramp, 4, 4 );
-  if(pol != ramp[3])
-  {
-    PRINT_SUB( oyTESTRESULT_FAIL, 
-    "Interpolation failed: %f                               ", pol );
-  } else
+  pol = oyLinInterpolateRampU16( ramp, 4, 1.1 );
+  if(pol == ramp[3])
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "Interpolation is fine.                                 " );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "Interpolation failed: %f == %u                         ", pol, ramp[3] );
   }
   return result;
 }
@@ -2106,7 +2106,7 @@ oyTESTRESULT_e testCMMRankMap ()
     error = oyRankMapToJSON( map, options, &rank_map_text, malloc );
     if( rank_map_text )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "JSON from Map    [%d]          %d    ", i, strlen(rank_map_text) );
+    "JSON from Map    [%d]          %lu    ", i, strlen(rank_map_text) );
     } else
     { PRINT_SUB( oyTESTRESULT_FAIL,
     "JSON from Map failed  [%d]            ", i );
