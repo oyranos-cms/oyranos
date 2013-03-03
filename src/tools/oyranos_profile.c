@@ -113,10 +113,12 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "  %s:\n",               _("Example"));
   fprintf( stderr, "      oyranos-profile -lv -p=1 sRGB.icc\n");
   fprintf( stderr, "      oyranos-profile -w test -j test.json sRGB.icc\n");
-  fprintf( stderr, "      oyranos-profile -mv sRGB.icc");
-  fprintf( stderr, "      ppmcie `oyranos-profile --ppmcie sRGB.icc` > sRGB-cie-xy.ppm");
+  fprintf( stderr, "      oyranos-profile -mv sRGB.icc\n");
+  fprintf( stderr, "      ppmcie `oyranos-profile --ppmcie sRGB.icc` > sRGB-cie-xy.ppm\n");
   fprintf( stderr, "\n");
-  fprintf( stderr, "\n");
+                        printf(_("For more informations read the man page:"));
+                        printf("\n");
+                        printf("      man oyranos-profile\n");
 
   if(version) oyDeAllocateFunc_(version);
   if(id) oyDeAllocateFunc_(id);
@@ -350,6 +352,7 @@ int main( int argc , char** argv )
 
     /* print header infos */
     if(error <= 0 && !dump_chromaticities && !dump_openicc_json && !list_hash)
+    if(tag_name == NULL && tag_pos == -1)
     {
       uint32_t id[4],
                sig;
@@ -363,7 +366,6 @@ int main( int argc , char** argv )
       char** tag_text = 0,
           * fn;
       oyProfileTag_s * tag;
-
 
       /* keep total number of chars equal to original for cli print */
       fprintf( stdout, "%s %s\n",_("Description:     "), oyProfile_GetText(p,oyNAME_DESCRIPTION) );

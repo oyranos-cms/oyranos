@@ -1,14 +1,16 @@
-.TH oyranos-profile 1 "December 29, 2012" "User Commands"
+.TH oyranos-profile 1 "March 03, 2013" "User Commands"
 .SH NAME
-oyranos-profile \- Oyranos CMS ICC profiles tool
+oyranos-profile \- Oyranos CMS ICC profile tool
 .SH SYNOPSIS
+\fBoyranos-profile\fR \fIPROFILENAME\fR
+.fi
 \fBoyranos-profile\fR -l \fIPROFILENAME\fR
 .fi
 \fBoyranos-profile\fR -m [-w \fIFILENAME\fR] \fIPROFILENAME\fR
 .fi
 \fBoyranos-profile\fR --ppmcie \fIPROFILENAME\fR
 .fi
-\fBoyranos-profile\fR -o \fIFILENAME\fR
+\fBoyranos-profile\fR -o \fIFILENAME\fR [-c CLASS] [-f xml]
 .fi
 \fBoyranos-profile\fR -w \fINAME\fR [-j \fIFILENAME\fR | -m] \fIPROFILENAME\fR
 .fi
@@ -18,7 +20,7 @@ The oyranos-profile programm shows informations about a ICC profile and allows s
 .SH OPTIONS
 .TP
 .B \-l
-list contained tags.
+list contained tags additional to overview and header.
 .sp
 .br
 \fB-p\fR \fINUMBER\fR select tag
@@ -35,7 +37,7 @@ write profile with correct hash
 .sp
 .TP
 .B \--ppmcie
-show CIE*xy chromaticities for use with ppmcie.
+show CIE*xy chromaticities, if available, for use with ppmcie.
 .sp
 .TP
 \fB\-o\fR \fIFILENAME\fR
@@ -43,6 +45,9 @@ write device informations to OpenICC JSON.
 .sp
 .br
 \fB-c\fR \fINAME\fR use device class. Useful device classes are monitor, scanner, printer, camera.
+.sp
+.br
+\fB-f\fR \fBxml\fR use IccXML format
 .TP
 \fB\-w\fR \fINAME\fR \fIPROFILENAME\fR
 write ICC profile. The -w option specifies the new internal and external 
@@ -57,6 +62,9 @@ embed OpenICC JSON device from file
 .TP
 .B \-v, \-\-verbose
 increase verbosity
+.TP
+.B \-h, \-\-help
+print a help text
 .SH ENVIRONMENT
 .TP
 .B OY_DEBUG
@@ -68,6 +76,10 @@ ICC profiles have a "color/icc" appended.
 .nf
 http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
 .SH EXAMPLES
+.TP
+Show overview and header of profile:
+.B oyranos-profile sRGB.icc
+.PP
 .TP
 Show first tags content of profile:
 .B oyranos-profile -lv -p=1 sRGB.icc
@@ -85,7 +97,7 @@ Add calibration data to meta tag of a device profile:
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH COPYRIGHT
-(c) 2011-2012, Kai-Uwe Behrmann and others
+(c) 2011-2013, Kai-Uwe Behrmann and others
 .fi
 License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
 .SH "SEE ALSO"

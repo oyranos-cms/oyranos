@@ -1,4 +1,4 @@
-.TH oyranos-profile-graph 1 "Fabruary 21, 2013" "User Commands"
+.TH oyranos-profile-graph 1 "March 03, 2013" "User Commands"
 .SH NAME
 oyranos-profile-graph \- ICC profile graph tool
 .SH SYNOPSIS
@@ -31,12 +31,39 @@ incrementally increase the thickness of the graph lines. The default is 0.7 .
 .TP
 .B \-\-standard-observer
 show the standard observer 1931 2° colour matching function (CMF) as curves.
+.sp
+.br
+\fB--no-colour\fR
+draw in gray
 .TP
 .B \-\-standard-observer-64
 show the standard observer 1964 2° colour matching function (CMF) as curves.
+.sp
+.br
+\fB--no-colour\fR
+draw in gray
 .TP
 .B \-\-kelvin \fINUMBER\fR
 show the blackbody radiator spectrum as curves.
+.sp
+.br
+\fB--no-colour\fR
+draw in gray
+.TP
+.B \-\-illuminant \fINAME\fR
+show illuminant spectrum as curves.
+.sp
+.br
+\fB--illuminant A\fR
+show the CIE A spectral power distribution (SPD)
+.sp
+.br
+\fB--illuminant D65\fR
+show the CIE D65 spectral power distribution, ~ 6500 Kelvin daylight
+.sp
+.br
+\fB--no-colour\fR
+draw in gray
 .SH GENERAL OPTIONS
 .TP
 .B \-v, \-\-verbose
@@ -53,6 +80,9 @@ omit border.
 .TP
 \fB-t\fR \fIFLOATINGPOINTNUMBER\fR
 increase the thickness of the graph lines
+.TP
+.B \-h, \-\-help
+print a help text
 .SH ENVIRONMENT
 .TP
 .B OY_DEBUG
@@ -75,7 +105,7 @@ Show the standard observer spectral function as curves:
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH COPYRIGHT
-(c) 2012 Kai-Uwe Behrmann and others
+(c) 2012-2013 Kai-Uwe Behrmann and others
 .fi
 License: BSD-3-Clause <http://www.opensource.org/licenses/bsd-license.php>
 .SH "SEE ALSO"
