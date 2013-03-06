@@ -655,6 +655,28 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
     if(!display_graph)
     {
+# if defined(XCM_HAVE_X11) && defined (HAVE_XCM)
+      oyOptions_s * tags = oyImage_GetTags( image );
+      oyBlob_s * display_id = (oyBlob_s*) oyOptions_GetType( tags, -1, "display_id",
+                                          oyOBJECT_BLOB_S );
+      if(!display_id)
+      {
+        oyFilterNode_s * input_node = oyFilterNode_GetPlugNode( node, 0 );
+        oydi_msg( oyMSG_DBG, (oyStruct_s*)image,
+            OY_DBG_FORMAT_"no display_id", OY_DBG_ARGS_ );
+        /* make the graph flow: process the upstream node */
+        l_result = oyFilterNode_Run( input_node, plug, ticket );
+        if(l_result > 0 || result == 0) result = l_result;
+
+        oyFilterPlug_Release( &plug );
+        oyFilterNode_Release( &input_node );
+        oyImage_Release( &image );
+        return result;
+      }
+      oyOptions_Release( &tags );
+      oyBlob_Release( &display_id );
+#endif
+
       init = 1;
 
       /* init this filter */
