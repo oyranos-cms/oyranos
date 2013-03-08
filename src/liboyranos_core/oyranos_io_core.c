@@ -305,7 +305,11 @@ char * oyReadUrlToMem_               ( const char        * url,
     if(app) oyFree_m_( app );
   
     if(command)
+    {
+      if(oy_debug)
+        oyMessageFunc_p( oyMSG_DBG, 0, OY_DBG_FORMAT_"%s",OY_DBG_ARGS_, command );
       fp = oyPOPEN_m( command, mode );
+    }
     if(fp)
     {
       size_t mem_size = 0;
