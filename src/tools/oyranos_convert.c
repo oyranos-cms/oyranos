@@ -71,14 +71,14 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -o FILENAME  %s\n", _("write to file, currently only PPM format"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Generate CLUT Image:"));
-  fprintf( stderr, "      %s -p PROFILE -f clut [-o FILENAME] [-n MODULE] -i FILENAME\n", argv[0]);
-  fprintf( stderr, "      -i FILENAME  %s\n", _("read from file"));
+  fprintf( stderr, "      %s -p PROFILE -f clut [-o FILENAME] [-n MODULE]  [-i PROFILE]\n", argv[0]);
+  fprintf( stderr, "      -i PROFILE   %s\n", _("Input Color Space"));
   fprintf( stderr, "      -p PROFILE   %s\n", _("Output Color Space"));
   fprintf( stderr, "      -s PROFILE   %s\n", _("Simulation/Proof Color Space"));
   fprintf( stderr, "      -e PROFILE   %s\n", _("Effect abtract Color Space"));
   fprintf( stderr, "      -o FILENAME  %s\n", _("write to file, currently only PPM format"));
   fprintf( stderr, "      -f FORMAT    %s\n", _("select format, currently only clut"));
-  fprintf( stderr, "                   %s\n", _("CLUT is a levels x levels*levels sized PPM, --levels defaults for clut to 64"));
+  fprintf( stderr, "      %s\n", _("CLUT is a levels x levels*levels sized PPM, --levels defaults for clut to 64"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Extract ICC profile:"));
   fprintf( stderr, "      %s -f icc [-o FILENAME] [-n MODULE] -i FILENAME\n", argv[0]);
