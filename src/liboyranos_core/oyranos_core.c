@@ -591,7 +591,7 @@ int                oyBigEndian       ( void )
 }
 
 
-/** @brief MSB<->LSB */
+/** @brief convert to network byte order on little endian machines */
 icUInt16Number oyValueUInt16 (icUInt16Number val)
 {
   if(!oyBigEndian())
@@ -623,7 +623,7 @@ icUInt16Number oyValueUInt16 (icUInt16Number val)
   return (long)val;
 }
 
-/** @brief MSB<->LSB */
+/** @brief convert to network byte order */
 icUInt32Number oyValueUInt32 (icUInt32Number val)
 {
   if(!oyBigEndian())
@@ -648,7 +648,7 @@ icUInt32Number oyValueUInt32 (icUInt32Number val)
 }
 
 
-/** @brief MSB<->LSB */
+/** @brief convert to network byte order */
 icS15Fixed16Number      oyValueInt32    (icS15Fixed16Number val)
 {
   if(!oyBigEndian())
@@ -672,7 +672,7 @@ icS15Fixed16Number      oyValueInt32    (icS15Fixed16Number val)
     return (icS15Fixed16Number)val;
 }
 
-/** @brief MSB<->LSB */
+/** @brief convert to network byte order */
 unsigned long oyValueUInt64 (icUInt64Number val)
 {
   if(!oyBigEndian())

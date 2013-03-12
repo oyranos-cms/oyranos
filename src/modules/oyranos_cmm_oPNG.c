@@ -91,7 +91,7 @@ const char * oPNGGetText             ( const char        * select,
 {
   if(strcmp(select, "name")==0)
     if(type == oyNAME_NICK)
-      return _(CMM_NICK);
+      return CMM_NICK;
 
   return oyCMMgetText( select, type, context );
 }

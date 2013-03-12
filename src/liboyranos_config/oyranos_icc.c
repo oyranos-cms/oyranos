@@ -379,7 +379,7 @@ const oyChar *   oyICCTagDescription ( icTagSignature      sig )
     case icSigCalibrationDateTimeTag: return _("Calibration date");
     case icSigCharTargetTag: return _("Colour measurement data");
     case icSigCopyrightTag: return _("Copyright");
-    case icSigCrdInfoTag: return _("crdi");
+    case icSigCrdInfoTag: return _("Postscript CRD Information");
     case icSigDeviceMfgDescTag: return _("Device manufacturerer description");
     case icSigDeviceModelDescTag: return _("Device model description");
     case icSigDeviceSettingsTag: return _("Device Settings");
@@ -402,18 +402,18 @@ const oyChar *   oyICCTagDescription ( icTagSignature      sig )
     case 1685283693: return _("Profile description, multilingual");
     case icSigProfileSequenceDescTag: return _("Profile sequence description");
     case icSigProfileSequenceIdentifierTag: return _("Profile sequence identification");
-    case icSigPs2CRD0Tag: return _("psd0");
-    case icSigPs2CRD1Tag: return _("psd1");
-    case icSigPs2CRD2Tag: return _("psd2");
-    case icSigPs2CRD3Tag: return _("psd3");
-    case icSigPs2CSATag: return _("ps2s");
-    case icSigPs2RenderingIntentTag: return _("ps2i");
+    case icSigPs2CRD0Tag: return _("Postscript 2 CRD, perceptual");
+    case icSigPs2CRD1Tag: return _("Postscript 2 CRD, relative colorimetric");
+    case icSigPs2CRD2Tag: return _("Postscript 2 CRD, saturated");
+    case icSigPs2CRD3Tag: return _("Postscript 2 CRD, absolute colorimetric");
+    case icSigPs2CSATag: return _("Postscript 2 CSA");
+    case icSigPs2RenderingIntentTag: return _("Postscript 2 Rendering Intent");
     case icSigRedColorantTag: return _("Red Colorant");
     case icSigRedTRCTag: return _("Red tone reproduction curve");
-    case icSigScreeningDescTag: return _("scrd");
-    case icSigScreeningTag: return _("scrn");
+    case icSigScreeningDescTag: return _("Screening Description");
+    case icSigScreeningTag: return _("Screening");
     case icSigTechnologyTag: return _("Technologie");
-    case icSigUcrBgTag: return _("bfd");
+    case icSigUcrBgTag: return _("Under Color Removal (UCR)");
     case icSigViewingCondDescTag: return _("Viewing conditions description");
     case icSigViewingConditionsTag: return _("Viewing Conditions");
     /*DevD*/

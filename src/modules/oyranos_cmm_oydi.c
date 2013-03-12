@@ -1120,15 +1120,15 @@ const char * oydiGetText             ( const char        * select,
   } else if(strcmp(select, "manufacturer")==0)
   {
          if(type == oyNAME_NICK)
-      return _("Kai-Uwe");
+      return "Kai-Uwe";
     else if(type == oyNAME_NAME)
-      return _("Kai-Uwe Behrmann");
+      return "Kai-Uwe Behrmann";
     else
       return _("Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download");
   } else if(strcmp(select, "copyright")==0)
   {
          if(type == oyNAME_NICK)
-      return _("newBSD");
+      return "newBSD";
     else if(type == oyNAME_NAME)
       return _("Copyright (c) 2009 Kai-Uwe Behrmann; newBSD");
     else
@@ -1136,7 +1136,7 @@ const char * oydiGetText             ( const char        * select,
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)
-      return _("help");
+      return "help";
     else if(type == oyNAME_NAME)
       return _("The \"display\" filter supports applications to show image content on single and multi monitor displays. It cares about the server communication in declaring the region as prematched. So a X11 server side colour correction does not disturb the displayed colours and omits the provided rectangle. The \"display\" filter matches the provided image content to each monitor it can find. Of course this has limitations to distorted windows, like wobbly effects or matrix deformed windows.");
     else

@@ -1259,7 +1259,7 @@ const char * oyX1GetText             ( const char        * select,
          if(strcmp(select, "name")==0)
   {
          if(type == oyNAME_NICK)
-      return _(CMM_NICK);
+      return CMM_NICK;
     else if(type == oyNAME_NAME)
       return _("Oyranos X11");
     else
@@ -1288,15 +1288,15 @@ const char * oyX1GetText             ( const char        * select,
   } else if(strcmp(select, "manufacturer")==0)
   {
          if(type == oyNAME_NICK)
-      return _("Kai-Uwe");
+      return "Kai-Uwe";
     else if(type == oyNAME_NAME)
-      return _("Kai-Uwe Behrmann");
+      return "Kai-Uwe Behrmann";
     else
       return _("Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download");
   } else if(strcmp(select, "copyright")==0)
   {
          if(type == oyNAME_NICK)
-      return _("newBSD");
+      return "newBSD";
     else if(type == oyNAME_NAME)
       return _("Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD");
     else
@@ -1491,10 +1491,11 @@ int          oyX1MOptions_Handle     ( oyOptions_s       * options,
         XcolorRegionDelete( dpy, win, pos, 1 );
         old_regions = XcolorRegionFetch( dpy, win, &old_regions_n );
         if(undeleted_n - old_regions_n != 1)
-          printf(  "removed %d; have still %d\n",
-                   pos, (int)old_regions_n );
+          oyX1_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "removed %d; have still %d",
+             OY_DBG_ARGS_, pos, (int)old_regions_n );
       } else
-        printf( "region not found in %lu\n", old_regions_n );
+        oyX1_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
+                  "region not found in %lu\n",OY_DBG_ARGS_, old_regions_n );
 
       XFlush( dpy );
 
@@ -1526,6 +1527,8 @@ int          oyX1MOptions_Handle     ( oyOptions_s       * options,
           if(result)
             oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
                 "XcolorProfileUpload: %d\n", result);
+
+          XFlush( dpy );
         }
     }
 
@@ -1544,6 +1547,7 @@ int          oyX1MOptions_Handle     ( oyOptions_s       * options,
       if(error)
           oyX1_msg( oyMSG_WARN, (oyStruct_s*)options,
                     "XcolorRegionInsert failed %d\n", error );
+      XFlush( dpy );
     }
 #endif
   }
@@ -1575,7 +1579,7 @@ const char * oyX1InfoGetTextMyHandler( const char        * select,
          if(type == oyNAME_NICK)
       return "set_xcm_region";
     else if(type == oyNAME_NAME)
-      return _("So something with options.");
+      return _("Set a X Color Management region.");
     else
       return _("The set_xcm_region takes minimal three options. The key name "
                "\"window_rectangle\" specifies in a oyRectangle_s object the "
@@ -1593,7 +1597,7 @@ const char * oyX1InfoGetTextMyHandler( const char        * select,
          if(type == oyNAME_NICK)
       return _("help");
     else if(type == oyNAME_NAME)
-      return _("Handle options.");
+      return _("Help");
     else
       return _("The oyX1 modules \"set_xcm_region\" handler lets you set "
                "X Color Management compatible client side colour regions. "

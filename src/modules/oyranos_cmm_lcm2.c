@@ -2139,7 +2139,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     oyRectangle_Release( & new_ticket_roi );
     if(oy_debug > 2)
       lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s %d",
-                OY_DBG_ARGS_, _("Fill new_ticket->array from image_input"),
+                OY_DBG_ARGS_, "Fill new_ticket->array from image_input",
                 oyStruct_GetId( (oyStruct_s*)image_input ) );
   }
 
@@ -2157,12 +2157,12 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   array_out = oyPixelAccess_GetArray( ticket );
   if(oy_debug > 2)
     lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s %d (%s %d)",
-              OY_DBG_ARGS_,_("Read from new_ticket->array"),
+              OY_DBG_ARGS_,"Read from new_ticket->array",
               oyStruct_GetId( (oyStruct_s*)array_in ),
               _("Image"), oyStruct_GetId( (oyStruct_s*)image_input ) );
   if(oy_debug > 2)
     lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"%s %d (%s %d)",
-              OY_DBG_ARGS_,_("Write to ticket->array"),
+              OY_DBG_ARGS_,"Write to ticket->array",
               oyStruct_GetId( (oyStruct_s*)array_out ),
               _("Image"), oyStruct_GetId( (oyStruct_s*)image_input ) );
 
@@ -2763,7 +2763,7 @@ const char * lcm2InfoGetTextProfileC2( const char        * select,
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)
-      return _("help");
+      return "help";
     else if(type == oyNAME_NAME)
       return _("Create a ICC proofing profile.");
     else
@@ -2835,7 +2835,7 @@ const char * lcm2InfoGetTextProfileC ( const char        * select,
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)
-      return _("help");
+      return "help";
     else if(type == oyNAME_NAME)
       return _("Create a ICC matrix profile.");
     else
@@ -3069,15 +3069,15 @@ const char * lcm2InfoGetText         ( const char        * select,
   } else if(strcmp(select, "manufacturer")==0)
   {
          if(type == oyNAME_NICK)
-      return _("Marti");
+      return "Marti";
     else if(type == oyNAME_NAME)
-      return _("Marti Maria");
+      return "Marti Maria";
     else
       return _("littleCMS 2 project; www: http://www.littlecms.com; support/email: support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project");
   } else if(strcmp(select, "copyright")==0)
   {
          if(type == oyNAME_NICK)
-      return _("MIT");
+      return "MIT";
     else if(type == oyNAME_NAME)
       return _("Copyright (c) 1998-2008 Marti Maria Saguer; MIT");
     else
@@ -3085,7 +3085,7 @@ const char * lcm2InfoGetText         ( const char        * select,
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)
-      return _("help");
+      return "help";
     else if(type == oyNAME_NAME)
       return _("The lcms \"colour.icc\" filter is a one dimensional colour conversion filter. It can both create a colour conversion context, some precalculated for processing speed up, and the colour conversion with the help of that context. The adaption part of this filter transforms the Oyranos colour context, which is ICC device link based, to the internal lcms format.");
     else

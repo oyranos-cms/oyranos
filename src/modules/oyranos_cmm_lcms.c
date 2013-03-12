@@ -2350,7 +2350,7 @@ const char * lcmsInfoGetTextProfileC2( const char        * select,
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)
-      return _("help");
+      return "help";
     else if(type == oyNAME_NAME)
       return _("Create a ICC proofing profile.");
     else
@@ -2422,7 +2422,7 @@ const char * lcmsInfoGetTextProfileC ( const char        * select,
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)
-      return _("help");
+      return "help";
     else if(type == oyNAME_NAME)
       return _("Create a ICC matrix profile.");
     else
@@ -2656,15 +2656,15 @@ const char * lcmsInfoGetText         ( const char        * select,
   } else if(strcmp(select, "manufacturer")==0)
   {
          if(type == oyNAME_NICK)
-      return _("Marti");
+      return "Marti";
     else if(type == oyNAME_NAME)
-      return _("Marti Maria");
+      return "Marti Maria";
     else
       return _("littleCMS project; www: http://www.littlecms.com; support/email: support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project");
   } else if(strcmp(select, "copyright")==0)
   {
          if(type == oyNAME_NICK)
-      return _("MIT");
+      return "MIT";
     else if(type == oyNAME_NAME)
       return _("Copyright (c) 1998-2008 Marti Maria Saguer; MIT");
     else
@@ -2672,7 +2672,7 @@ const char * lcmsInfoGetText         ( const char        * select,
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)
-      return _("help");
+      return "help";
     else if(type == oyNAME_NAME)
       return _("The lcms \"colour.icc\" filter is a one dimensional colour conversion filter. It can both create a colour conversion context, some precalculated for processing speed up, and the colour conversion with the help of that context. The adaption part of this filter transforms the Oyranos colour context, which is ICC device link based, to the internal lcms format.");
     else

@@ -59,7 +59,7 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   int width;
   oyRectangle_s * output_image_roi;
 
-  DBGs_PROG2_S( ticket, "%s[%d]", _("Work on remote socket image"),
+  DBGs_PROG2_S( ticket, "%s[%d]", "Work on remote socket image",
                oyStruct_GetId( (oyStruct_s*)image ) );
 
   oyFilterSocket_Release( &socket );
@@ -75,7 +75,7 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   if(!oyImage_GetWidth(output_image) && !oyImage_GetHeight(output_image))
   {
     DBGs_PROG7_S( ticket, "%s[%d] %s %.04gx%.04g %.04gx%.04g",
-                 _("Set dimensions on ticket->output_image"),
+                 "Set dimensions on ticket->output_image",
                  oyStruct_GetId( (oyStruct_s*)output_image ),
                  oyRectangle_Show( output_image_roi ),
                  oyImage_GetWidth(output_image), oyImage_GetHeight(output_image),
@@ -107,7 +107,7 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                         oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,2) * correct,
                         oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,3) * correct );
     STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&image_roi ) );
-    DBGs_PROG4_S( ticket, "%s[%d] %s %s", _("Fill ticket->array from image"),
+    DBGs_PROG4_S( ticket, "%s[%d] %s %s", "Fill ticket->array from image",
                  oyStruct_GetId( (oyStruct_s*)image ),
                  oyRectangle_Show( output_image_roi ),
                  t );
@@ -147,15 +147,15 @@ const char * oyCMMgetText             ( const char        * select,
   } else if(strcmp(select, "manufacturer")==0)
   {
          if(type == oyNAME_NICK)
-      return _("Kai-Uwe");
+      return "Kai-Uwe";
     else if(type == oyNAME_NAME)
-      return _("Kai-Uwe Behrmann");
+      return "Kai-Uwe Behrmann";
     else
       return _("Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download");
   } else if(strcmp(select, "copyright")==0)
   {
          if(type == oyNAME_NICK)
-      return _("newBSD");
+      return "newBSD";
     else if(type == oyNAME_NAME)
       return _("Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD");
     else

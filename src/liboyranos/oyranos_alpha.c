@@ -1756,7 +1756,7 @@ const oyChar *    oyNamedColour_GetName( oyNamedColour_s * s,
   if(!text && type < oyNAME_DESCRIPTION )
     text = oyObject_GetName( s->oy_, type + 1 );
   if(!text)
-    text = _("---");
+    text = _("----");
 
   return text;
 }

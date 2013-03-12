@@ -952,30 +952,30 @@ const char *GetText(const char *select, oyNAME_e type,
 {
    if (strcmp(select, "name") == 0) {
       if (type == oyNAME_NICK)
-         return _(CMM_NICK);
+         return CMM_NICK;
       else if (type == oyNAME_NAME)
          return _("Oyranos Scanner");
       else
          return _("The scanner (hopefully)usefull backend of Oyranos.");
    } else if (strcmp(select, "manufacturer") == 0) {
       if (type == oyNAME_NICK)
-         return _("orionas");
+         return "orionas";
       else if (type == oyNAME_NAME)
-         return _("Yiannis Belias");
+         return "Yiannis Belias";
       else
          return
              _
              ("Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download");
    } else if (strcmp(select, "copyright") == 0) {
       if (type == oyNAME_NICK)
-         return _("MIT");
+         return "MIT";
       else if (type == oyNAME_NAME)
          return _("Copyright (c) 2009 Kai-Uwe Behrmann; MIT");
       else
          return _("MIT license: http://www.opensource.org/licenses/mit-license.php");
    } else if (strcmp(select, "help") == 0) {
       if (type == oyNAME_NICK)
-         return _("help");
+         return "help";
       else if (type == oyNAME_NAME)
          return _("My filter introduction.");
       else
