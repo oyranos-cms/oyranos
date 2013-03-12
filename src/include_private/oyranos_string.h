@@ -84,6 +84,10 @@ char *             oyStringSegmentN_ ( char              * text,
                                        char                delimiter,
                                        int                 segment,
                                        int               * end );
+char*              oyStringReplace_  ( const char        * text,
+                                       const char        * search,
+                                       const char        * replacement,
+                                       oyAlloc_f           allocateFunc );
 char**             oyStringListAppend_(const char       ** list,
                                        int                 n_alt,
                                        const char       ** append,

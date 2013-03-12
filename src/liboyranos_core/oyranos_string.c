@@ -123,24 +123,16 @@ void               oyStringFree_     ( char             ** text,
   }
 }
 
-/** @internal 
- *  @brief append a string and care about allocation
- *
- *  @since Oyranos: version 0.1.8
- *  @date  26 november 2007 (API 0.1.8)
- */
-char*              oyStringAppend_   ( const char        * text,
+char*              oyStringAppendN_  ( const char        * text,
                                        const char        * append,
+                                       int                 append_len,
                                        oyAlloc_f           allocateFunc )
 {
   char * text_copy = NULL;
-  int text_len = 0, append_len = 0;
+  int text_len = 0;
 
   if(text)
     text_len = oyStrlen_(text);
-
-  if(append)
-    append_len = oyStrlen_(append);
 
   if(text_len || append_len)
   {
@@ -165,6 +157,27 @@ char*              oyStringAppend_   ( const char        * text,
 
     text_copy[text_len+append_len] = '\000';
   }
+
+  return text_copy;
+}
+
+/** @internal 
+ *  @brief append a string and care about allocation
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  26 november 2007 (API 0.1.8)
+ */
+char*              oyStringAppend_   ( const char        * text,
+                                       const char        * append,
+                                       oyAlloc_f           allocateFunc )
+{
+  char * text_copy = NULL;
+  int append_len = 0;
+
+  if(append)
+    append_len = oyStrlen_(append);
+
+  text_copy = oyStringAppendN_(text, append, append_len, allocateFunc);
 
   return text_copy;
 }
@@ -219,6 +232,24 @@ int                oyStringFromData_ ( const oyPointer     ptr,
   }
 
   return error;
+}
+
+void               oyStringAddN_     ( char             ** text,
+                                       const char        * append,
+                                       int                 append_len,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocFunc )
+{
+  char * text_copy = NULL;
+
+  text_copy = oyStringAppendN_(*text, append, append_len, allocateFunc);
+
+  if(text && *text && deallocFunc)
+    deallocFunc(*text);
+
+  *text = text_copy;
+
+  return;
 }
 
 /** @internal 
@@ -570,6 +601,37 @@ int    oyStringSegmentX_             ( const char        * text,
   return 0;
 }
 
+char*              oyStringReplace_  ( const char        * text,
+                                       const char        * search,
+                                       const char        * replacement,
+                                       oyAlloc_f           allocateFunc )
+{
+  char * t = 0, * p;
+  const char * start = text,
+             * end = text;
+  int s_len = strlen(search);
+
+  if(text && search && replacement)
+  while((end = strstr(start,search)) != 0)
+  {
+    oyStringAddN_( &t, start, end-start, oyAllocateFunc_, oyDeAllocateFunc_ );
+    oyStringAdd_( &t, replacement, oyAllocateFunc_, oyDeAllocateFunc_ );
+    if(strlen(end) > s_len)
+      start = end + s_len;
+    else
+    {
+      if(strstr(start,search) != 0)
+        oyStringAdd_( &t, replacement, oyAllocateFunc_, oyDeAllocateFunc_ );
+      start = end = end + s_len;
+      break;
+    }
+  }
+
+  if(start && strlen(start))
+    oyStringAdd_( &t, start, oyAllocateFunc_, oyDeAllocateFunc_ );
+
+  return t;
+}
 
 void               oyStringListAdd_  ( char            *** list,
                                        int               * n,
