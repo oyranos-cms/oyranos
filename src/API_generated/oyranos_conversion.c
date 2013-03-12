@@ -27,17 +27,42 @@
 #include "oyranos_elektra.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
+#include "oyranos_io.h"
 #include "oyranos_module_internal.h"
 #include "oyranos_object_internal.h"
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_types.h"
 
+char * oyGetPSViewer()
+{
+  /* Linux */
+  char * ps_viewer = oyFindApplication("xdg-open");
 
+  /* OS X */
+  if(!ps_viewer)
+    ps_viewer = oyFindApplication("open");
+
+  /* Ghostview */
+  if(!ps_viewer)
+  {
+    ps_viewer = oyFindApplication("gv");
+    if(ps_viewer)
+    {
+      oyFree_m_(ps_viewer);
+      ps_viewer = strdup("gv -spartan -antialias");
+    }
+  }
+
+  return ps_viewer;
+}
 void oyShowGraph__( oyFilterGraph_s * s )
 {
   char * ptr = 0;
   int error = 0;
+  char * ps_viewer = oyGetPSViewer(),
+       * command = 0;
+
   oyFilterGraph_s * adjacency_list = s;
 
   oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return )
@@ -46,11 +71,18 @@ void oyShowGraph__( oyFilterGraph_s * s )
   ptr = oyFilterGraph_ToText( adjacency_list, 0, 0,
                               "Oyranos Test Graph", 0, malloc );
   oyWriteMemToFile_( "test.dot", ptr, strlen(ptr) );
-  error = system("dot -Tps test.dot -o test.ps; gv -spartan -antialias test.ps &");
+
+  oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
+                      "dot -Tps test.dot -o test.ps; %s test.ps &",
+                      ps_viewer );
+
+  error = system(command);
   if(error)
-    WARNc1_S("error during calling \"dot -Tps test.dot -o test.ps; gv -spartan -antialias test.ps &\": %d", error);
+    WARNc2_S("error during calling \"%s\": %d", error, command);
 
   free(ptr); ptr = 0;
+  oyFree_m_(ps_viewer);
+  oyFree_m_(command);
 }
 void oyShowGraph_( oyFilterNode_s * s, const char * selector )
 {
@@ -72,6 +104,7 @@ void               oyShowConversion_ ( oyConversion_s    * conversion,
   char * ptr = 0, * t = 0, * t2 = 0, * command = 0;
   int error = 0;
   oyConversion_s * s = conversion;
+  char * ps_viewer = oyGetPSViewer();
   oyCheckType__m( oyOBJECT_CONVERSION_S, return )
   /*return;*/
 
@@ -91,7 +124,9 @@ void               oyShowConversion_ ( oyConversion_s    * conversion,
     STRING_ADD( command, t );
     STRING_ADD( command, " -o ");
     STRING_ADD( command, t2 );
-    STRING_ADD( command, "; gv -spartan -antialias ");
+    STRING_ADD( command, "; ");
+    STRING_ADD( command, ps_viewer);
+    STRING_ADD( command, " ");
     STRING_ADD( command, t2 );
     STRING_ADD( command, " &");
   } else
@@ -109,6 +144,7 @@ void               oyShowConversion_ ( oyConversion_s    * conversion,
   oyFree_m_(ptr);
   oyFree_m_(t);
   oyFree_m_(t2);
+  oyFree_m_(ps_viewer);
   oyFree_m_(command);
 }
 
