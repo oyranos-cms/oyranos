@@ -463,6 +463,7 @@ int                oyStringSegments_ ( const char        * text,
 {
   int n = 0;
 
+  if(text[0] == '\000') return n;
   if(text[0] == delimiter) ++n;
   do { ++n;
   } while( (text = oyStrchr_(text + 1, delimiter)) );
@@ -477,6 +478,7 @@ int                oyStringSegmentsN_( const char        * text,
   int n = 0;
   int end = 0;
 
+  if(text[0] == '\000') return n;
   if(text[0] == delimiter) ++n;
   do {
     ++n;
