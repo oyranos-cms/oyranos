@@ -499,7 +499,7 @@ char *             oyStringSegment_  ( char              * text,
   for(; i < segment; ++i)
   {
     t = oyStrchr_( t, delimiter );
-    ++t;
+    if(t) ++t;
   }
 
   end_pos = (uintptr_t) oyStrchr_(t, delimiter);
@@ -606,7 +606,7 @@ char*              oyStringReplace_  ( const char        * text,
                                        const char        * replacement,
                                        oyAlloc_f           allocateFunc )
 {
-  char * t = 0, * p;
+  char * t = 0;
   const char * start = text,
              * end = text;
   int s_len = strlen(search);
