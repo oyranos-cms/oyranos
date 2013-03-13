@@ -269,6 +269,60 @@ void* oyAllocateWrapFunc_       (size_t        size,
 
 
 /** @internal
+ *  @brief hash calculation
+ *
+ *  @param[in]     buffer              some buffer
+ *  @param[in]     size                size of buffer
+ *  @param[in]     flags               zero or oyHASH_MD5 or oyHASH_L3
+ *  @param[out]    digest              result in OY_HASH_SIZE * 2 bytes
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2013/03/13
+ *  @since   2013/03/13 (Oyranos: 0.9.5)
+ */
+int                oyMiscBlobGetHash_( void              * buffer,
+                                       size_t              size,
+                                       uint32_t            flags,
+                                       unsigned char     * digest )
+{
+  int error = 0;
+  DBG_PROG_START
+
+  if (digest) 
+  {
+    if(flags & oyHASH_L3)
+    {
+      uint32_t * dig = (uint32_t*)digest;
+
+      memset( digest, 0, OY_HASH_SIZE * 2 );
+
+      dig[0] = oy_hashlittle( buffer, size, 0 );
+    }
+    else
+    {
+      error = oyMiscBlobGetMD5_( buffer, size, digest );
+    }
+
+    if(oy_debug >= 4)
+    {
+      uint32_t * id = (uint32_t *)digest;
+      oyMessageFunc_p( oyMSG_DBG, 0, OY_DBG_FORMAT_
+                       "%x%x%x%x", OY_DBG_ARGS_,
+                       id[0],id[1],id[2],id[3] );
+    }
+
+  } else {
+    WARNc3_S ("False memory - size = %d pos = %lu digest = %lu",
+              (int)size, (long int)buffer, (long int)digest);
+
+    error = 1;
+  }
+
+  DBG_PROG_ENDE
+  return error;
+}
+
+/** @internal
  *  @brief md5 calculation
  *
  *  @since Oyranos: version 0.1.8
@@ -306,7 +360,7 @@ int                oyMiscBlobGetMD5_ ( void              * buffer,
   }
 }
 
-uint32_t           oyMiscBlobGetL3_ ( void              * buffer,
+uint32_t           oyMiscBlobL3_     ( void              * buffer,
                                        size_t              size )
 {
   uint32_t ret = 0;

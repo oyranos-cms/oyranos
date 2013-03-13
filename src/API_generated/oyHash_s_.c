@@ -8,12 +8,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/04
+ *  @date     2013/03/12
  */
 
 
@@ -354,12 +354,8 @@ oyHash_s_ *         oyHash_Get_       ( const char        * hash_text,
     if(oyStrlen_(hash_text) < OY_HASH_SIZE*2-1)
       memcpy(s->oy_->hash_ptr_, hash_text, oyStrlen_(hash_text)+1);
     else
-#if 0
-      error = oyMiscBlobGetMD5_( (void*)hash_text, oyStrlen_(hash_text),
-                                 s->oy_->hash_ );
-#else
-      (*val) = oyMiscBlobGetL3_( (void*)hash_text, oyStrlen_(hash_text) );
-#endif
+      error = oyMiscBlobGetHash_( (void*)hash_text, oyStrlen_(hash_text), 0,
+                                  s->oy_->hash_ptr_ );
   }
 
   if(error <= 0)

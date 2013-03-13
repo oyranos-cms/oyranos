@@ -166,8 +166,16 @@ int            oyRampManipulateF64   ( double            * ramp1,
 int                oyMiscBlobGetMD5_ ( void              * buffer,
                                        size_t              size,
                                        unsigned char     * md5_return );
-uint32_t           oyMiscBlobGetL3_  ( void              * buffer,
+uint32_t           oyMiscBlobL3_     ( void              * buffer,
                                        size_t              size );
+enum {
+  oyHASH_MD5  = 1,
+  oyHASH_L3   = 2
+};
+int                oyMiscBlobGetHash_( void              * buffer,
+                                       size_t              size,
+                                       uint32_t            flags,
+                                       unsigned char     * md5_return );
 
 #ifdef __cplusplus
 } /* extern "C" */

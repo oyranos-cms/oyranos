@@ -120,7 +120,8 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
       memcpy( hash_text_copy, hash_text, oyStrlen_(hash_text) );
       search_ptr = hash_text_copy;
     } else
-      search_int[0] = oyMiscBlobGetL3_( (void*)hash_text, oyStrlen_(hash_text));
+      error = oyMiscBlobGetHash_( (void*)hash_text, oyStrlen_(hash_text), 0,
+                                  (unsigned char*)search_int );
   }
 
   if(error <= 0)
