@@ -50,6 +50,8 @@ void oyPointer_Release__Members( oyPointer_s_ * cmmptr )
       deallocateFunc( s->func_name ); s->func_name = 0;
       if(s->resource)
       deallocateFunc( s->resource ); s->resource = 0;
+      if(s->id)
+      deallocateFunc( s->id ); s->id = 0;
 
       /*oyCMMdsoRelease_( cmmptr->lib_name );*/
     }
@@ -114,6 +116,7 @@ int oyPointer_Copy__Members( oyPointer_s_ * dst, oyPointer_s_ * src)
   COPY_MEMBER_STRING( lib_name )
   COPY_MEMBER_STRING( func_name )
   COPY_MEMBER_STRING( resource )
+  COPY_MEMBER_STRING( id )
 
   return 0;
 }

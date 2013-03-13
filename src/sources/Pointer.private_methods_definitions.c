@@ -12,6 +12,7 @@ int                oyPointer_Set_    ( oyPointer_s_      * cmm_ptr,
                                        const char        * resource,
                                        oyPointer           ptr,
                                        const char        * func_name,
+                                       const char        * id,
                                        oyPointer_release_f ptrRelease )
 {
   oyPointer_s_ * s = cmm_ptr;
@@ -39,6 +40,13 @@ int                oyPointer_Set_    ( oyPointer_s_      * cmm_ptr,
     if(s->resource)
       oyStringFree_( &s->resource, dealloc_func );
     s->resource = oyStringCopy_( resource, alloc_func );
+  }
+
+  if(error <= 0 && id)
+  {
+    if(s->id)
+      oyStringFree_( &s->id, dealloc_func );
+    s->id = oyStringCopy_( id, alloc_func );
   }
 
   if(error <= 0 && ptr)

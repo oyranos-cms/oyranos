@@ -8,12 +8,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/04
+ *  @date     2013/03/12
  */
 
 
@@ -86,6 +86,8 @@ void oyPointer_Release__Members( oyPointer_s_ * cmmptr )
       deallocateFunc( s->func_name ); s->func_name = 0;
       if(s->resource)
       deallocateFunc( s->resource ); s->resource = 0;
+      if(s->id)
+      deallocateFunc( s->id ); s->id = 0;
 
       /*oyCMMdsoRelease_( cmmptr->lib_name );*/
     }
@@ -150,6 +152,7 @@ int oyPointer_Copy__Members( oyPointer_s_ * dst, oyPointer_s_ * src)
   COPY_MEMBER_STRING( lib_name )
   COPY_MEMBER_STRING( func_name )
   COPY_MEMBER_STRING( resource )
+  COPY_MEMBER_STRING( id )
 
   return 0;
 }
@@ -366,6 +369,7 @@ int                oyPointer_Set_    ( oyPointer_s_      * cmm_ptr,
                                        const char        * resource,
                                        oyPointer           ptr,
                                        const char        * func_name,
+                                       const char        * id,
                                        oyPointer_release_f ptrRelease )
 {
   oyPointer_s_ * s = cmm_ptr;
@@ -393,6 +397,13 @@ int                oyPointer_Set_    ( oyPointer_s_      * cmm_ptr,
     if(s->resource)
       oyStringFree_( &s->resource, dealloc_func );
     s->resource = oyStringCopy_( resource, alloc_func );
+  }
+
+  if(error <= 0 && id)
+  {
+    if(s->id)
+      oyStringFree_( &s->id, dealloc_func );
+    s->id = oyStringCopy_( id, alloc_func );
   }
 
   if(error <= 0 && ptr)

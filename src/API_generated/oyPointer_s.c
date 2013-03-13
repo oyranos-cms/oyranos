@@ -10,12 +10,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/12/13
+ *  @date     2013/03/12
  */
 
 
@@ -117,7 +117,7 @@ int          oyPointer_Set           ( oyPointer_s       * cmm_ptr,
                                        const char        * func_name,
                                        oyPointer_release_f ptrRelease )
 {
-  return oyPointer_Set_( (oyPointer_s_*)cmm_ptr, lib_name, resource, ptr, func_name, ptrRelease);
+  return oyPointer_Set_( (oyPointer_s_*)cmm_ptr, lib_name, resource, ptr, func_name, NULL, ptrRelease);
 }
 
 const char * oyPointer_GetFuncName    ( oyPointer_s        * cmm_ptr )
@@ -168,7 +168,30 @@ oyPointer    oyPointer_GetPointer     ( oyPointer_s        * cmm_ptr )
   else
     return NULL;
 }
-
+OYAPI const char *  OYEXPORT
+                oyPointer_GetId         ( oyPointer_s       * cmm_ptr )
+{
+  oyPointer_s_ * c = (oyPointer_s_ *) cmm_ptr;
+  if(c)
+    return c->id;
+  else
+    return NULL;
+}
+OYAPI void OYEXPORT
+                oyPointer_SetId         ( oyPointer_s       * cmm_ptr,
+                                          const char        * id )
+{
+  oyPointer_s_ * s = (oyPointer_s_ *) cmm_ptr;
+  int error = !s;
+  oyAlloc_f alloc_func = oyStruct_GetAllocator( (oyStruct_s*) s );
+  oyDeAlloc_f dealloc_func = oyStruct_GetDeAllocator( (oyStruct_s*) s );
+  if(error <= 0 && id)
+  {
+    if(s->id)
+      oyStringFree_( &s->id, dealloc_func );
+    s->id = oyStringCopy_( id, alloc_func );
+  }
+}
 
 /* } Include "Pointer.public_methods_definitions.c" */
 

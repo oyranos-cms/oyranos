@@ -8,12 +8,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/06
+ *  @date     2013/03/12
  */
 
 
@@ -61,6 +61,7 @@ oyObject_s           oy_;            /**< @private features name and hash */
 /* Include "Pointer.members.h" { */
   char               * lib_name;       /*!< the CMM */
   char               * func_name;      /*!< optional the CMM's function name */
+  char               * id;             /*!< identification string */
   oyPointer            ptr;            /*!< a CMM's data pointer */
   int                  size;           /**< -1 && 0 - unknown, > 1 size of ptr*/
   char               * resource;       /**< the resource type, e.g. oyCMM_PROFILE, oyCMM_COLOUR_CONVERSION */
@@ -89,6 +90,7 @@ int                oyPointer_Set_    ( oyPointer_s_      * cmm_ptr,
                                        const char        * resource,
                                        oyPointer           ptr,
                                        const char        * func_name,
+                                       const char        * id,
                                        oyPointer_release_f ptrRelease );
 
 /* } Include "Pointer.private_methods_declarations.h" */

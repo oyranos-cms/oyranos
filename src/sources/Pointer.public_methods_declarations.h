@@ -25,3 +25,8 @@ OYAPI oyPointer_s *  OYEXPORT
 OYAPI oyPointer_s *  OYEXPORT
                 oyPointer_LookUpFromText( const char        * text,
                                           const char        * data_type );
+OYAPI const char *  OYEXPORT
+                oyPointer_GetId         ( oyPointer_s       * cmm_ptr );
+OYAPI void OYEXPORT
+                oyPointer_SetId         ( oyPointer_s       * cmm_ptr,
+                                          const char        * id_string );
