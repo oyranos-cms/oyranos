@@ -654,11 +654,96 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
               }
 }
 
+void     oiccFilterGraph_CountNodes  ( oyFilterGraph_s   * g,
+                                       int32_t           * display_mode,
+                                       int               * icc_nodes_n,
+                                       int                 verbose )
+{
+  int i,n;
+  oyFilterNode_s * node = 0;
+
+  n = oyFilterGraph_CountNodes( g, "", NULL );
+  for(i = 0; i < n; ++i)
+  {
+    node = oyFilterGraph_GetNode( g, i, "", NULL );
+    if(oyFilterRegistrationMatch( oyFilterNode_GetRegistration(node),
+                                  "//" OY_TYPE_STD "/icc", 0 ))
+    {
+      if(verbose)
+        WARNc2_S( "node: %s[%d]",
+                  oyFilterNode_GetRegistration( node ), oyFilterNode_GetId( node ));
+      ++(*icc_nodes_n);
+    }
+    if(oyFilterRegistrationMatch( oyFilterNode_GetRegistration( node ),
+                                  "//" OY_TYPE_STD "/display", 0 ))
+    {
+      if(verbose)
+        WARNc2_S( "node: %s[%d] - display mode",
+                  oyFilterNode_GetRegistration( node ), oyFilterNode_GetId( node ));
+      ++(*display_mode);
+    }
+    oyFilterNode_Release( &node );
+  }
+
+}
+
+void     oiccFilterNode_OptionsPrint ( oyFilterNode_s    * node,
+                                       oyOptions_s       * f_options,
+                                       oyOptions_s       * db_options )
+{
+  int k,os_n;
+  oyOption_s * o = 0;
+  char * tmp = 0;
+
+              os_n = oyOptions_Count(f_options);
+              {
+                oicc_msg( oyMSG_DBG,(oyStruct_s*)node,OY_DBG_FORMAT_
+                           "filter node options %s[%d]",OY_DBG_ARGS_,
+                           oyStruct_GetInfo( (oyStruct_s*)f_options, 0 ),
+                           oyObject_GetId( f_options->oy_ ));
+                for(k = 0; k < os_n; k++)
+                {
+                  o = oyOptions_Get( f_options, k );
+                  tmp  = oyOption_GetValueText(o, oyAllocateFunc_);
+                  fprintf( stderr, "%d: \"%s\": \"%s\" %s %d\n", k, 
+                       oyOption_GetText( o, oyNAME_DESCRIPTION ),
+                       tmp,
+           oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
+                                       oyFILTER_REG_OPTION, 0 ),
+                  oyOption_GetFlags(o) );
+
+                  oyFree_m_( tmp );
+                  oyOption_Release( &o );
+                }
+              }
+              os_n = oyOptions_Count(db_options);
+              {
+                oicc_msg( oyMSG_DBG,(oyStruct_s*)node,OY_DBG_FORMAT_
+                           "DB options for filter %s[%d]",OY_DBG_ARGS_,
+                           oyStruct_GetInfo( (oyStruct_s*)db_options, 0 ),
+                           oyObject_GetId( db_options->oy_ ));
+                for(k = 0; k < os_n; k++)
+                {
+                  o = oyOptions_Get( db_options, k );
+                  tmp  = oyOption_GetValueText(o, oyAllocateFunc_);
+                  fprintf( stderr, "%d: \"%s\": \"%s\" %s %d\n", k, 
+                       oyOption_GetText( o, oyNAME_DESCRIPTION ),
+                       tmp,
+           oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
+                                       oyFILTER_REG_OPTION, 0 ),
+                  oyOption_GetFlags(o) );
+
+                  oyFree_m_( tmp );
+                  oyOption_Release( &o );
+                }
+              }
+}
+
 int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                        uint32_t            flags,
                                        oyOptions_s       * options )
 {
-  int error = 0, i,j,k,n,m,os_n,
+  int error = 0, j,m,
       icc_nodes_n = 0;
   int verbose = oyOptions_FindString( options, "verbose", 0 ) ? 1:0;
   oyFilterGraph_s * g = 0;
@@ -671,7 +756,6 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               * f_options = 0;
   oyOption_s * o = 0;
   const char * val = 0;
-  char * tmp = 0;
   int32_t proofing = 0,
           display_mode = 0,
           rendering_gamut_warning = 0;
@@ -680,9 +764,8 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
     verbose = 1;
 
   if( oyOptions_FindString( options, "display_mode", "1" ) )
-  {
     ++display_mode;
-  }
+
   if(verbose)
     WARNc2_S( "display_mode option %sfound %s", display_mode?"":"not ",
               oyOptions_FindString( options, "display_mode", 0)?
@@ -696,28 +779,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
   g = oyFilterGraph_FromNode( node, 0 );
   oyFilterNode_Release( &node );
 
-  n = oyFilterGraph_CountNodes( g, "", NULL );
-  for(i = 0; i < n; ++i)
-  {
-    node = oyFilterGraph_GetNode( g, i, "", NULL );
-    if(oyFilterRegistrationMatch( oyFilterNode_GetRegistration(node),
-                                  "//" OY_TYPE_STD "/icc", 0 ))
-    {
-      if(verbose)
-        WARNc2_S( "node: %s[%d]",
-                  oyFilterNode_GetRegistration( node ), oyFilterNode_GetId( node ));
-      ++icc_nodes_n;
-    }
-    if(oyFilterRegistrationMatch( oyFilterNode_GetRegistration( node ),
-                                  "//" OY_TYPE_STD "/display", 0 ))
-    {
-      if(verbose)
-        WARNc2_S( "node: %s[%d] - display mode",
-                  oyFilterNode_GetRegistration( node ), oyFilterNode_GetId( node ));
-      ++display_mode;
-    }
-    oyFilterNode_Release( &node );
-  }
+  oiccFilterGraph_CountNodes( g, &display_mode, &icc_nodes_n, verbose );
 
   /* How far is this ICC node from the output node? */
   if(verbose)
@@ -752,50 +814,9 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               db_options = oyOptions_ForFilter( oyFilterNode_GetRegistration( node ), 0,
                                                 flags, 0 );
               f_options = oyFilterNode_GetOptions( node, flags );
-              os_n = oyOptions_Count(f_options);
-              if(oy_debug > 2 || verbose)
-              {
-                oicc_msg( oyMSG_DBG,(oyStruct_s*)node,OY_DBG_FORMAT_
-                           "filter node options %s[%d]",OY_DBG_ARGS_,
-                           oyStruct_GetInfo( (oyStruct_s*)f_options, 0 ),
-                           oyObject_GetId( f_options->oy_ ));
-                for(k = 0; k < os_n; k++)
-                {
-                  o = oyOptions_Get( f_options, k );
-                  tmp  = oyOption_GetValueText(o, oyAllocateFunc_);
-                  fprintf( stderr, "%d: \"%s\": \"%s\" %s %d\n", k, 
-                       oyOption_GetText( o, oyNAME_DESCRIPTION ),
-                       tmp,
-           oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
-                                       oyFILTER_REG_OPTION, 0 ),
-                  oyOption_GetFlags(o) );
 
-                  oyFree_m_( tmp );
-                  oyOption_Release( &o );
-                }
-              }
-              os_n = oyOptions_Count(db_options);
               if(oy_debug > 2 || verbose)
-              {
-                oicc_msg( oyMSG_DBG,(oyStruct_s*)node,OY_DBG_FORMAT_
-                           "DB options for filter %s[%d]",OY_DBG_ARGS_,
-                           oyStruct_GetInfo( (oyStruct_s*)db_options, 0 ),
-                           oyObject_GetId( db_options->oy_ ));
-                for(k = 0; k < os_n; k++)
-                {
-                  o = oyOptions_Get( db_options, k );
-                  tmp  = oyOption_GetValueText(o, oyAllocateFunc_);
-                  fprintf( stderr, "%d: \"%s\": \"%s\" %s %d\n", k, 
-                       oyOption_GetText( o, oyNAME_DESCRIPTION ),
-                       tmp,
-           oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
-                                       oyFILTER_REG_OPTION, 0 ),
-                  oyOption_GetFlags(o) );
-
-                  oyFree_m_( tmp );
-                  oyOption_Release( &o );
-                }
-              }
+                oiccFilterNode_OptionsPrint( node, f_options, db_options );
 
               oiccChangeNodeOption( f_options, db_options,
                                     "proof_soft", s, verbose);
@@ -848,7 +869,6 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                          proofing ? "proofing is set" :"proofing is not set" );
 
               oyOption_Release( &o );
-
               oyOptions_Release( &db_options );
               oyOptions_Release( &f_options );
 
