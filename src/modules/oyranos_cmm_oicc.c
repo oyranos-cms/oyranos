@@ -754,35 +754,47 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               f_options = oyFilterNode_GetOptions( node, flags );
               os_n = oyOptions_Count(f_options);
               if(oy_debug > 2 || verbose)
-              for(k = 0; k < os_n; k++)
               {
-                o = oyOptions_Get( f_options, k );
-                tmp  = oyOption_GetValueText(o, oyAllocateFunc_);
-                fprintf( stderr, "%d: \"%s\": \"%s\" %s %d\n", k, 
+                oicc_msg( oyMSG_DBG,(oyStruct_s*)node,OY_DBG_FORMAT_
+                           "filter node options %s[%d]",OY_DBG_ARGS_,
+                           oyStruct_GetInfo( (oyStruct_s*)f_options, 0 ),
+                           oyObject_GetId( f_options->oy_ ));
+                for(k = 0; k < os_n; k++)
+                {
+                  o = oyOptions_Get( f_options, k );
+                  tmp  = oyOption_GetValueText(o, oyAllocateFunc_);
+                  fprintf( stderr, "%d: \"%s\": \"%s\" %s %d\n", k, 
                        oyOption_GetText( o, oyNAME_DESCRIPTION ),
                        tmp,
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                        oyFILTER_REG_OPTION, 0 ),
-                oyOption_GetFlags(o) );
+                  oyOption_GetFlags(o) );
 
-                oyFree_m_( tmp );
-                oyOption_Release( &o );
+                  oyFree_m_( tmp );
+                  oyOption_Release( &o );
+                }
               }
               os_n = oyOptions_Count(db_options);
               if(oy_debug > 2 || verbose)
-              for(k = 0; k < os_n; k++)
               {
-                o = oyOptions_Get( db_options, k );
-                tmp  = oyOption_GetValueText(o, oyAllocateFunc_);
-                fprintf( stderr, "%d: \"%s\": \"%s\" %s %d\n", k, 
+                oicc_msg( oyMSG_DBG,(oyStruct_s*)node,OY_DBG_FORMAT_
+                           "DB options for filter %s[%d]",OY_DBG_ARGS_,
+                           oyStruct_GetInfo( (oyStruct_s*)db_options, 0 ),
+                           oyObject_GetId( db_options->oy_ ));
+                for(k = 0; k < os_n; k++)
+                {
+                  o = oyOptions_Get( db_options, k );
+                  tmp  = oyOption_GetValueText(o, oyAllocateFunc_);
+                  fprintf( stderr, "%d: \"%s\": \"%s\" %s %d\n", k, 
                        oyOption_GetText( o, oyNAME_DESCRIPTION ),
                        tmp,
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                        oyFILTER_REG_OPTION, 0 ),
-                oyOption_GetFlags(o) );
+                  oyOption_GetFlags(o) );
 
-                oyFree_m_( tmp );
-                oyOption_Release( &o );
+                  oyFree_m_( tmp );
+                  oyOption_Release( &o );
+                }
               }
 
               oiccChangeNodeOption( f_options, db_options,
