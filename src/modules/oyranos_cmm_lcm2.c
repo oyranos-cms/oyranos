@@ -2057,9 +2057,36 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
                                oyPointer_GetSize( cmm_ptr_in) );
     xform = lcm2CMMConversionContextCreate_( node, lps, 1, 0,0,0,
                                 oyImage_GetPixelLayout( image_input, oyLAYOUT ),
-                                oyImage_GetPixelLayout( image_output, oyLAYOUT ),
+                                oyImage_GetPixelLayout( image_output,oyLAYOUT ),
                                            node_options,
                                            &ltw, cmm_ptr_out );
+
+    if(oy_debug >= 1)
+    {
+      oyProfile_s *p = oyProfile_FromMem( oyPointer_GetSize( cmm_ptr_in),
+                                          oyPointer_GetPointer(cmm_ptr_in),0,0);
+      uint32_t id[8];
+      char * t = 0;
+      char * hash_text = lcm2FilterNode_GetText( node, oyNAME_NICK,
+                                                 oyAllocateFunc_ );
+
+      oyMiscBlobGetHash_((void*)hash_text, oyStrlen_(hash_text), 0,
+                         (unsigned char*)id);
+      oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "node: %d %x%x%x%x",oyStruct_GetId((oyStruct_s*)node),
+                          id[0],id[1],id[2],id[3] );
+      oyProfile_GetMD5( p, OY_COMPUTE, id );
+      oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                          " oyDL: %x%x%x%x", id[0],id[1],id[2],id[3] );
+      
+      lcm2_msg( oyMSG_DBG,(oyStruct_s*) node, OY_DBG_FORMAT_"%s",
+                OY_DBG_ARGS_, t );
+      oyPointer_SetId( cmm_ptr_out, t );
+
+      oyProfile_Release( &p );
+      oyFree_m_(t);
+    }
+
     if(!xform)
     {
       uint32_t f = oyImage_GetPixelLayout( image_input, oyLAYOUT );
@@ -2190,6 +2217,13 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     channels = oyToChannels_m( oyImage_GetPixelLayout( image_output, oyLAYOUT ) );
 
     error = lcm2CMMTransform_GetWrap_( backend_data, &ltw );
+
+    if(oy_debug)
+      lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"node: %d %s",
+              OY_DBG_ARGS_,
+              oyStruct_GetId( (oyStruct_s*)node ),
+              oyPointer_GetId( backend_data ) );
+
     oyPointer_Release( &backend_data );
   }
 
