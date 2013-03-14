@@ -1521,7 +1521,8 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   {
     oyOption_s * opt =  oyOptions_Find( node_options, "precalculation_curves" );
     oyOPTIONSOURCE_e precalculation_curves_source = oyOption_GetSource( opt );
-    WARNc3_S("gamma_linear: %s precalculation_curves: %s source: %d",
+    lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
+          "gamma_linear: %s precalculation_curves: %s source: %d", OY_DBG_ARGS_,
              oyOptions_FindString( image_input_tags, "gamma_linear", "1" ),
              oyOptions_FindString( node_options, "precalculation_curves", 0 ),
              precalculation_curves_source );
@@ -1530,7 +1531,8 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
        !oyOptions_FindString( node_options, "precalculation_curves", "1" ))
     {
       oyOptions_SetFromText( &node_options, "precalculation_curves", "1", OY_CREATE_NEW );
-      WARNc_S("set precalculation_curves: 1");
+      lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
+      "set precalculation_curves: 1", OY_DBG_ARGS_);
     }
     oyOption_Release( &opt );
   }
@@ -2061,7 +2063,6 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
                                            node_options,
                                            &ltw, cmm_ptr_out );
 
-    if(oy_debug >= 1)
     {
       oyProfile_s *p = oyProfile_FromMem( oyPointer_GetSize( cmm_ptr_in),
                                           oyPointer_GetPointer(cmm_ptr_in),0,0);
@@ -2073,12 +2074,14 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
       oyMiscBlobGetHash_((void*)hash_text, oyStrlen_(hash_text), 0,
                          (unsigned char*)id);
       oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
-                          "node: %d %x%x%x%x",oyStruct_GetId((oyStruct_s*)node),
+                          "node: %d hash: %x%x%x%x",
+                          oyStruct_GetId((oyStruct_s*)node),
                           id[0],id[1],id[2],id[3] );
       oyProfile_GetMD5( p, OY_COMPUTE, id );
       oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                           " oyDL: %x%x%x%x", id[0],id[1],id[2],id[3] );
       
+      if(oy_debug >= 1)
       lcm2_msg( oyMSG_DBG,(oyStruct_s*) node, OY_DBG_FORMAT_"%s",
                 OY_DBG_ARGS_, t );
       oyPointer_SetId( cmm_ptr_out, t );
@@ -2216,14 +2219,52 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     data_type_out = oyToDataType_m( oyImage_GetPixelLayout( image_output, oyLAYOUT ) );
     channels = oyToChannels_m( oyImage_GetPixelLayout( image_output, oyLAYOUT ) );
 
+    /* get transform */
     error = lcm2CMMTransform_GetWrap_( backend_data, &ltw );
 
-    if(oy_debug)
-      lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"node: %d %s",
-              OY_DBG_ARGS_,
-              oyStruct_GetId( (oyStruct_s*)node ),
-              oyPointer_GetId( backend_data ) );
+    /* verify context */
+    {
+      uint32_t id[8];
+      char * hash_text = lcm2FilterNode_GetText( node, oyNAME_NICK,
+                                                 oyAllocateFunc_ );
+      char * t = 0;
+      int msg_type = oyMSG_DBG;
 
+      oyMiscBlobGetHash_((void*)hash_text, oyStrlen_(hash_text), 0,
+                         (unsigned char*)id);
+      oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "node: %d hash: %x%x%x%x",
+                          oyStruct_GetId((oyStruct_s*)node),
+                          id[0],id[1],id[2],id[3] );
+
+      /* check if we obtained the context from our
+       * lcm2_api4_cmm::lcm2FilterNode_CmmIccContextToMem */
+      if(oyPointer_GetFuncName( backend_data ) &&
+         strstr(oyPointer_GetLibName( backend_data ),CMM_NICK) &&
+         /* check if context and actual options match */
+         oyPointer_GetId( backend_data ) &&
+         !strstr(oyPointer_GetId( backend_data ),t))
+      {
+        /* send error message */
+        error = 1;
+        msg_type = oyMSG_ERROR;
+
+        lcm2_msg( msg_type, (oyStruct_s*)ticket, OY_DBG_FORMAT_
+                  "requested and actual contexts differ by hash",OY_DBG_ARGS_ );
+      }
+
+      if(error || oy_debug)
+        lcm2_msg( msg_type, (oyStruct_s*)ticket, OY_DBG_FORMAT_
+                  "%s (context %s)", OY_DBG_ARGS_,
+                  t, oyNoEmptyString_m_(oyPointer_GetId( backend_data )) );
+      if(oy_debug > 4)
+        lcm2_msg( msg_type, (oyStruct_s*)ticket, OY_DBG_FORMAT_
+                  "%s", OY_DBG_ARGS_, hash_text );
+
+
+      oyFree_m_(hash_text);
+      oyFree_m_(t);
+    }
     oyPointer_Release( &backend_data );
   }
 
