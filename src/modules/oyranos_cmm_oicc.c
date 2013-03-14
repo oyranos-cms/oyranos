@@ -638,8 +638,9 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
                   }
 
                   if(oy_debug > 2 || verbose)
-                    WARNc2_S("set %s: %s", key,
-                             oyOptions_FindString(f_options,
+                    oicc_msg( oyMSG_DBG,(oyStruct_s*)f_options,
+                              OY_DBG_FORMAT_"set %s: %s", OY_DBG_ARGS_, key,
+                              oyOptions_FindString(f_options,
                                                   key, 0) );
                 } else
                   WARNc1_S("no in filter defaults \"%s\" found.", key);
@@ -670,7 +671,8 @@ void     oiccFilterGraph_CountNodes  ( oyFilterGraph_s   * g,
                                   "//" OY_TYPE_STD "/icc", 0 ))
     {
       if(verbose)
-        WARNc2_S( "node: %s[%d]",
+        oicc_msg( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
+                  "node: %s[%d]", OY_DBG_ARGS_,
                   oyFilterNode_GetRegistration( node ), oyFilterNode_GetId( node ));
       ++(*icc_nodes_n);
     }
@@ -678,7 +680,8 @@ void     oiccFilterGraph_CountNodes  ( oyFilterGraph_s   * g,
                                   "//" OY_TYPE_STD "/display", 0 ))
     {
       if(verbose)
-        WARNc2_S( "node: %s[%d] - display mode",
+        oicc_msg( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
+                  "node: %s[%d] - display mode", OY_DBG_ARGS_,
                   oyFilterNode_GetRegistration( node ), oyFilterNode_GetId( node ));
       ++(*display_mode);
     }
@@ -767,7 +770,9 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
     ++display_mode;
 
   if(verbose)
-    WARNc2_S( "display_mode option %sfound %s", display_mode?"":"not ",
+    oicc_msg( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
+              "display_mode option %sfound %s", OY_DBG_ARGS_,
+              display_mode?"":"not ",
               oyOptions_FindString( options, "display_mode", 0)?
               oyOptions_FindString( options, "display_mode", 0):"");
 
@@ -852,7 +857,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                         (oyStruct_s**)& proofs,
                                         OY_CREATE_NEW );
                 if(verbose)
-                  oicc_msg( oyMSG_WARN,(oyStruct_s*)node,
+                  oicc_msg( oyMSG_DBG,(oyStruct_s*)node,
                            "%s:%d set \"profiles_simulation\": %s %s in %s[%d]",
                            strrchr(__FILE__,'/') ?
                                  strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
@@ -861,7 +866,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                            oyStruct_GetInfo( (oyStruct_s*)f_options, 0 ),
                            oyObject_GetId( f_options->oy_ ));
               } else if(verbose)
-                oicc_msg( oyMSG_WARN,(oyStruct_s*)node,
+                oicc_msg( oyMSG_DBG,(oyStruct_s*)node,
                          "%s:%d \"profiles_simulation\" %s, %s",
                          strrchr(__FILE__,'/') ?
                                  strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,

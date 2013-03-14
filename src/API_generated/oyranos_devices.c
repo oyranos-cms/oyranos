@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/02/10
+ *  @date     2013/03/14
  */
 
 
@@ -2764,8 +2764,8 @@ OYAPI char * OYEXPORT
     if(t2) oyFree_m_(t2);
     t2 = oyStringReplace_( t, ">", "*", oyAllocateFunc_ );
     if(t) oyFree_m_(t);
-          oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)node,
-                           OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, t2 );
+    oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)node,
+                     OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, oyNoEmptyString_m_(t2) );
     sprintf( temp,   "  %d [ label=\"{<plug> %d| Filter Node %d\\n"
                      " Category: \\\"%s\\\"\\n CMM: \\\"%s\\\"\\n"
                      " Type: \\\"%s\\\"\\n"
@@ -2867,7 +2867,6 @@ OYAPI char * OYEXPORT
 
   return text;
 }
-
 
 /** \addtogroup misc Miscellaneous
 

@@ -1521,7 +1521,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   {
     oyOption_s * opt =  oyOptions_Find( node_options, "precalculation_curves" );
     oyOPTIONSOURCE_e precalculation_curves_source = oyOption_GetSource( opt );
-    lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_
           "gamma_linear: %s precalculation_curves: %s source: %d", OY_DBG_ARGS_,
              oyOptions_FindString( image_input_tags, "gamma_linear", "1" ),
              oyOptions_FindString( node_options, "precalculation_curves", 0 ),

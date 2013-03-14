@@ -685,7 +685,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           if(oyOptions_FindString( options, "x_color_region_target", 0 ))
           {
             if(oy_debug)
-              oyX1_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+              oyX1_msg( oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
                      "Try %s(_xxx) from %s",
                      OY_DBG_ARGS_,
                      oyOptions_FindString(options, "x_color_region_target", 0) ? 
