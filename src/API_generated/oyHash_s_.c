@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/03/12
+ *  @date     2013/03/14
  */
 
 
@@ -331,8 +331,9 @@ int oyHash_Release_( oyHash_s_ **hash )
  *  @memberof oyHash_s
  *  @brief    Get a new Oyranos cache entry
  *
- *  @since Oyranos: version 0.1.8
- *  @date  24 november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.9.5
+ *  @date    2013/03/13
+ *  @since   2007/11/24 (Oyranos: 0.1.8)
  */
 oyHash_s_ *         oyHash_Get_       ( const char        * hash_text,
                                         oyObject_s          object )

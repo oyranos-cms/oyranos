@@ -10,12 +10,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/12/13
+ *  @date     2013/03/14
  */
 
 
@@ -407,7 +407,6 @@ oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
       do_it = 0;
 
     if(do_it &&
-       ((oyCMMapi4_s_*)node->core->api4_)->oyCMMFilterNode_ContextToMem &&
        ((oyCMMapi4_s_*)node->core->api4_)->oyCMMFilterNode_ContextToMem &&
        strlen(((oyCMMapi4_s_*)node->core->api4_)->context_type))
     {

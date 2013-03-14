@@ -8,12 +8,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/24
+ *  @date     2013/03/14
  */
 
 
@@ -446,6 +446,41 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s_    * s,
   return 0;
 }
 
+oyHash_s *   oyFilterNode_GetHash_   ( oyFilterNode_s_   * node,
+                                       int                 api )
+{
+  oyFilterCore_s_ * core_ = node->core;
+  const char * hash_text_ = 0;
+  char * hash_text = 0,
+       * hash_temp = 0;
+  oyHash_s * hash = 0;
+
+  /* create hash text */
+  if(core_->api4_->oyCMMFilterNode_GetText)
+  {
+    hash_temp = core_->api4_->oyCMMFilterNode_GetText(
+                                             (oyFilterNode_s*)node, oyNAME_NICK,
+                                                       oyAllocateFunc_ );
+    hash_text_ = hash_temp;
+  } else
+    hash_text_ =oyFilterNode_GetText((oyFilterNode_s*)node,oyNAME_NICK);
+
+  if(api == 7)
+    oyStringAddPrintf_( &hash_text, oyAllocateFunc_, oyDeAllocateFunc_,
+                        "%s:%s", node->api7_->context_type, hash_text_ );
+  if(api == 4)
+    oyStringAddPrintf_( &hash_text, oyAllocateFunc_, oyDeAllocateFunc_,
+                        "%s:%s", core_->api4_->context_type, hash_text_ );
+
+  /* query in cache for api7 */
+  hash = oyCMMCacheListGetEntry_( hash_text );
+
+  if(hash_temp) oyDeAllocateFunc_(hash_temp);
+  if(hash_text) oyDeAllocateFunc_(hash_text);
+
+  return hash;
+}
+
 /** Function  oyFilterNode_SetContext_
  *  @memberof oyFilterNode_s
  *  @brief    Set module context in a filter
@@ -471,15 +506,11 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
   if(error <= 0)
   {
           size_t size = 0;
-          oyHash_s * hash = 0,
-                   * hash_out = 0;
-          const char * hash_text_ = 0;
-          char * hash_text = 0,
-               * hash_temp = 0;
-          int hash_text_len;
+          oyHash_s * hash4 = 0,          /* public context provider */
+                   * hash7 = 0;          /* data processor part */
           oyPointer ptr = 0;
-          oyPointer_s * cmm_ptr = 0,
-                     * cmm_ptr_out = 0;
+          oyPointer_s * cmm_ptr4 = 0,
+                     * cmm_ptr7 = 0;
 
 
           /*  Cache Search
@@ -491,21 +522,6 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
            *  3b.1.                update cache entry
            */
 
-          /* 1. create hash text */
-          if(core_->api4_->oyCMMFilterNode_GetText)
-          {
-            hash_temp = core_->api4_->oyCMMFilterNode_GetText(
-                                             (oyFilterNode_s*)node, oyNAME_NICK,
-                                                           oyAllocateFunc_ );
-            hash_text_ = hash_temp;
-          } else
-            hash_text_ =oyFilterNode_GetText((oyFilterNode_s*)node,oyNAME_NICK);
-
-          hash_text_len = oyStrlen_( hash_text_ );
-
-          hash_text = oyAllocateFunc_(hash_text_len + 16);
-          oySprintf_( hash_text, "%s:%s", node->api7_->context_type,
-                                          hash_text_ );
 
           if(oy_debug == 1)
           {
@@ -515,34 +531,20 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
               oyWriteMemToFile_( "test_dbg_colour.icc", ptr, size );
           }
 
-          /* 2. query in cache for api7 */
-          hash_out = oyCMMCacheListGetEntry_( hash_text );
+          /* 1. + 2. query in cache for api7 */
+          hash7 = oyFilterNode_GetHash_(node, 7);
 
           if(error <= 0)
           {
             /* 3. check and 3.a take*/
-            cmm_ptr_out = (oyPointer_s*) oyHash_GetPointer( hash_out,
+            cmm_ptr7 = (oyPointer_s*) oyHash_GetPointer( hash7,
                                                         oyOBJECT_POINTER_S);
 
-            if(!(cmm_ptr_out && oyPointer_GetPointer(cmm_ptr_out)) || blob)
+            if(!(cmm_ptr7 && oyPointer_GetPointer(cmm_ptr7)) || blob)
             {
-              oySprintf_( hash_text, "%s:%s", core_->api4_->context_type,
-                                              hash_text_ );
-              /* 2. query in cache for api4 */
-              hash = oyCMMCacheListGetEntry_( hash_text );
-              cmm_ptr = (oyPointer_s*) oyHash_GetPointer( hash,
-                                                        oyOBJECT_POINTER_S);
-
-              if(!cmm_ptr)
-              {
-                size = 0;
-                cmm_ptr = oyPointer_New(0);
-              }
-
               /* write the context to memory */
               if(blob)
               {
-
                 error = oyOptions_SetFromText( &node->tags, "////verbose",
                                                "true", OY_CREATE_NEW );
 
@@ -557,8 +559,19 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                 goto clean;
               }
 
-              if(!oyPointer_GetPointer(cmm_ptr))
+              /* 2. query in cache for api4 */
+              hash4 = oyFilterNode_GetHash_(node, 4);
+              cmm_ptr4 = (oyPointer_s*) oyHash_GetPointer( hash4,
+                                                        oyOBJECT_POINTER_S);
+
+              if(!cmm_ptr4)
               {
+                cmm_ptr4 = oyPointer_New(0);
+              }
+
+              if(!oyPointer_GetPointer(cmm_ptr4))
+              {
+                size = 0;
                 /* 3b. ask CMM */
                 ptr = core_->api4_->oyCMMFilterNode_ContextToMem(
                                                    (oyFilterNode_s*)node, &size,
@@ -570,23 +583,33 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                   OY_DBG_FORMAT_ "no device link for caching\n%s", OY_DBG_ARGS_,
                   oyFilterNode_GetText( (oyFilterNode_s*)node, oyNAME_NICK ));
                   error = 1;
-                  oyPointer_Release( &cmm_ptr );
+                  oyPointer_Release( &cmm_ptr4 );
                 }
 
                 if(!error)
                 {
-                  error = oyPointer_Set( cmm_ptr, core_->api4_->id_,
+                  /* 3b.1. update the hash as the CMM can change options */
+                  hash4 = oyFilterNode_GetHash_( node, 4 );
+                  oyPointer_Release( &cmm_ptr4 );
+                  cmm_ptr4 = (oyPointer_s*) oyHash_GetPointer( hash4,
+                                                        oyOBJECT_POINTER_S);
+                  hash7 = oyFilterNode_GetHash_( node, 7 );
+
+                  if(!cmm_ptr4)
+                    cmm_ptr4 = oyPointer_New(0);
+
+                  error = oyPointer_Set( cmm_ptr4, core_->api4_->id_,
                                          core_->api4_->context_type,
                                     ptr, "oyPointerRelease", oyPointerRelease);
-                  oyPointer_SetSize( cmm_ptr, size );
+                  oyPointer_SetSize( cmm_ptr4, size );
 
-                  /* 3b.1. update cache entry */
-                  error = oyHash_SetPointer( hash, (oyStruct_s*) cmm_ptr);
+                  /* 3b.2. update cache entry */
+                  error = oyHash_SetPointer( hash4, (oyStruct_s*) cmm_ptr4);
                 }
               }
 
 
-              if(error <= 0 && cmm_ptr && oyPointer_GetPointer(cmm_ptr))
+              if(error <= 0 && cmm_ptr4 && oyPointer_GetPointer(cmm_ptr4))
               {
                 if(node->backend_data && node->backend_data->release)
                 node->backend_data->release( (oyStruct_s**)&node->backend_data);
@@ -594,20 +617,20 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                 if( oyStrcmp_( node->api7_->context_type,
                                core_->api4_->context_type ) != 0 )
                 {
-                  cmm_ptr_out = oyPointer_New(0);
-                  error = oyPointer_Set( cmm_ptr_out, node->api7_->id_,
+                  cmm_ptr7 = oyPointer_New(0);
+                  error = oyPointer_Set( cmm_ptr7, node->api7_->id_,
                                          node->api7_->context_type, 0, 0, 0);
 
                   /* search for a convertor and convert */
-                  oyPointer_ConvertData( cmm_ptr, cmm_ptr_out,
+                  oyPointer_ConvertData( cmm_ptr4, cmm_ptr7,
                                          (oyFilterNode_s*)node );
-                  node->backend_data = cmm_ptr_out;
+                  node->backend_data = cmm_ptr7;
                   /* 3b.1. update cache entry */
-                  error = oyHash_SetPointer( hash_out,
-                                              (oyStruct_s*) cmm_ptr_out);
+                  error = oyHash_SetPointer( hash7,
+                                              (oyStruct_s*) cmm_ptr7);
 
                 } else
-                  node->backend_data = oyPointer_Copy( cmm_ptr, 0 );
+                  node->backend_data = oyPointer_Copy( cmm_ptr4, 0 );
               }
 
               if(oy_debug == 1)
@@ -622,16 +645,12 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
               }
 
             } else
-              node->backend_data = cmm_ptr_out;
+              node->backend_data = cmm_ptr7;
 
           }
-
-
-    clean:
-    if(hash_temp) oyDeAllocateFunc_(hash_temp);
-    if(hash_text) oyDeAllocateFunc_(hash_text);
   }
 
+  clean:
   return error;
 }
 

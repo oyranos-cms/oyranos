@@ -303,7 +303,6 @@ oyBlob_s * oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
 
     if(do_it &&
        ((oyCMMapi4_s_*)node->core->api4_)->oyCMMFilterNode_ContextToMem &&
-       ((oyCMMapi4_s_*)node->core->api4_)->oyCMMFilterNode_ContextToMem &&
        strlen(((oyCMMapi4_s_*)node->core->api4_)->context_type))
     {
       blob = oyBlob_New( object );
