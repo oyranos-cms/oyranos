@@ -4105,27 +4105,30 @@ oyTESTRESULT_e testConfDomain ()
   return result;
 }
 
+static int test_number = 0;
 #define TEST_RUN( prog, text ) { \
   if(argc > argpos) { \
       for(i = argpos; i < argc; ++i) \
         if(strstr(text, argv[i]) != 0) \
-          oyTestRun( prog, text ); \
+          oyTestRun( prog, text, test_number ); \
   } else if(list) \
-    printf( "%s\n", text); \
+    printf( "[%d] %s\n", test_number, text); \
   else \
-    oyTestRun( prog, text ); \
+    oyTestRun( prog, text, test_number ); \
+  ++test_number; \
 }
 
 int results[oyTESTRESULT_UNKNOWN+1];
 char * tests_failed[64];
 
 oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
-                                       const char        * test_name )
+                                       const char        * test_name,
+                                       int                 number )
 {
   oyTESTRESULT_e error = oyTESTRESULT_UNKNOWN;
 
   fprintf( stdout, "\n________________________________________________________________\n" );
-  fprintf(stdout, "Test: %s ... ", test_name );
+  fprintf(stdout, "Test[%d]: %s ... ", test_number, test_name );
 
   error = test();
 
