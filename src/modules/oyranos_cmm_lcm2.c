@@ -2233,7 +2233,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
       oyMiscBlobGetHash_((void*)hash_text, oyStrlen_(hash_text), 0,
                          (unsigned char*)id);
       oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
-                          "node: %d hash: %x%x%x%x",
+                          "hash: %x%x%x%x",
                           oyStruct_GetId((oyStruct_s*)node),
                           id[0],id[1],id[2],id[3] );
 
@@ -2255,8 +2255,9 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
       if(error || oy_debug)
         lcm2_msg( msg_type, (oyStruct_s*)ticket, OY_DBG_FORMAT_
-                  "%s (context %s)", OY_DBG_ARGS_,
-                  t, oyNoEmptyString_m_(oyPointer_GetId( backend_data )) );
+                  "node: %d \"%s\" (context %s)", OY_DBG_ARGS_,
+                  oyStruct_GetId((oyStruct_s*)node), t,
+                  oyNoEmptyString_m_(oyPointer_GetId( backend_data )) );
       if(oy_debug > 4)
         lcm2_msg( msg_type, (oyStruct_s*)ticket, OY_DBG_FORMAT_
                   "%s", OY_DBG_ARGS_, hash_text );
