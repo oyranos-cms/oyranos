@@ -108,14 +108,14 @@ char oicc_default_colour_icc_options[] = {
       <editing_rgb.front>eciRGB_v2.icc</editing_rgb.front>\n\
       <editing_cmyk.front>ISOcoated_v2_bas.ICC</editing_cmyk.front>\n\
       <editing_gray.front>Gray.icc</editing_gray.front>\n\
-      <editing_lab.front>Lab.icc</editing_lab.front>\n\
-      <editing_xyz.front>XYZ.icc</editing_xyz.front>\n\
+      <editing_lab.front>LCMSLABI.ICM</editing_lab.front>\n\
+      <editing_xyz.front>LCMSXYZI.ICM</editing_xyz.front>\n\
       <assumed_rgb.front>eciRGB_v2.icc</assumed_rgb.front>\n\
       <assumed_cmyk.front>ISOcoated_v2_bas.ICC</assumed_cmyk.front>\n\
       <assumed_gray.front>Gray.icc</assumed_gray.front>\n\
-      <assumed_lab.front>Lab.icc</assumed_lab.front>\n\
+      <assumed_lab.front>LCMSLABI.ICM</assumed_lab.front>\n\
       <assumed_web.front>sRGB.icc</assumed_web.front>\n\
-      <assumed_xyz.front>XYZ.icc</assumed_xyz.front>\n\
+      <assumed_xyz.front>LCMSXYZI.ICM</assumed_xyz.front>\n\
       <proof.advanced.front>0</proof.advanced.front>\n\
      </profile>\n\
      <behaviour>\n\
