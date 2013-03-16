@@ -194,8 +194,8 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
       STRING_ADD( text, "\n" );
     }
 
-    if(strcmp("XYZ.icc",name) == 0 ||
-       strcmp("Lab.icc",name) == 0 ||
+    if(strcmp("LCMSXYZI.ICM",name) == 0 ||
+       strcmp("LCMSLABI.ICM",name) == 0 ||
        strcmp("LStar-RGB.icc",name) == 0 ||
        strcmp("sRGB.icc",name) == 0 ||
        strcmp("ISOcoated_v2_bas.ICC",name) == 0
