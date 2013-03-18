@@ -2063,13 +2063,16 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
                                            node_options,
                                            &ltw, cmm_ptr_out );
 
+    if(oy_debug > 4)
     {
       oyProfile_s *p = oyProfile_FromMem( oyPointer_GetSize( cmm_ptr_in),
                                           oyPointer_GetPointer(cmm_ptr_in),0,0);
-      uint32_t id[8];
-      char * t = 0;
-      char * hash_text = lcm2FilterNode_GetText( node, oyNAME_NICK,
-                                                 oyAllocateFunc_ );
+      uint32_t id[8]={0,0,0,0,0,0,0,0};
+      char * hash_text = oyStringCopy_( lcm2TRANSFORM":", oyAllocateFunc_ );
+
+      char * t = lcm2FilterNode_GetText( node, oyNAME_NICK, oyAllocateFunc_ );
+      STRING_ADD( hash_text, t );
+      oyFree_m_(t);
 
       oyMiscBlobGetHash_((void*)hash_text, oyStrlen_(hash_text), 0,
                          (unsigned char*)id);
@@ -2077,13 +2080,15 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
                           "node: %d hash: %x%x%x%x",
                           oyStruct_GetId((oyStruct_s*)node),
                           id[0],id[1],id[2],id[3] );
+
       oyProfile_GetMD5( p, OY_COMPUTE, id );
       oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                           " oyDL: %x%x%x%x", id[0],id[1],id[2],id[3] );
       
       if(oy_debug >= 1)
-      lcm2_msg( oyMSG_DBG,(oyStruct_s*) node, OY_DBG_FORMAT_"%s",
-                OY_DBG_ARGS_, t );
+      lcm2_msg( oyMSG_DBG,(oyStruct_s*) node, OY_DBG_FORMAT_"oyDL: %x%x%x%x %s %s",
+                OY_DBG_ARGS_, id[0],id[1],id[2],id[3], t, hash_text );
+
       oyPointer_SetId( cmm_ptr_out, t );
 
       oyProfile_Release( &p );
@@ -2110,6 +2115,8 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
 
   return error;
 }
+
+char * oyCMMCacheListPrint_();
 
 /** Function lcm2FilterPlug_CmmIccRun
  *  @brief   implement oyCMMFilterPlug_GetNext_f()
@@ -2222,19 +2229,22 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     /* get transform */
     error = lcm2CMMTransform_GetWrap_( backend_data, &ltw );
 
+    if(oy_debug > 4)
     /* verify context */
     {
-      uint32_t id[8];
-      char * hash_text = lcm2FilterNode_GetText( node, oyNAME_NICK,
-                                                 oyAllocateFunc_ );
-      char * t = 0;
       int msg_type = oyMSG_DBG;
+      uint32_t id[8]={0,0,0,0,0,0,0,0};
+      char * hash_text = oyStringCopy_( lcm2TRANSFORM":", oyAllocateFunc_ );
+
+      char * t = 0;
+      t = lcm2FilterNode_GetText( node, oyNAME_NICK, oyAllocateFunc_ );
+      STRING_ADD( hash_text, t );
+      oyFree_m_(t);
 
       oyMiscBlobGetHash_((void*)hash_text, oyStrlen_(hash_text), 0,
                          (unsigned char*)id);
       oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                           "hash: %x%x%x%x",
-                          oyStruct_GetId((oyStruct_s*)node),
                           id[0],id[1],id[2],id[3] );
 
       /* check if we obtained the context from our
@@ -2253,12 +2263,14 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
                   "requested and actual contexts differ by hash",OY_DBG_ARGS_ );
       }
 
-      if(error || oy_debug)
+      if(error || oy_debug > 4)
         lcm2_msg( msg_type, (oyStruct_s*)ticket, OY_DBG_FORMAT_
-                  "node: %d \"%s\" (context %s)", OY_DBG_ARGS_,
+                  "node: %d \"%s\" (context %s)\nwant: %s\n%s", OY_DBG_ARGS_,
                   oyStruct_GetId((oyStruct_s*)node), t,
-                  oyNoEmptyString_m_(oyPointer_GetId( backend_data )) );
-      if(oy_debug > 4)
+                  oyNoEmptyString_m_(oyPointer_GetId( backend_data )),
+                  oy_debug > 0 && error > 0 ? hash_text : "----",
+                  oy_debug > 0 && error > 0 ? oyCMMCacheListPrint_() : "" );
+      if(oy_debug > 4 && error < 1)
         lcm2_msg( msg_type, (oyStruct_s*)ticket, OY_DBG_FORMAT_
                   "%s", OY_DBG_ARGS_, hash_text );
 
