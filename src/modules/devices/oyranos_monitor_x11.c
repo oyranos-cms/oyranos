@@ -1329,6 +1329,13 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
         int n_scr_info = 0;
         XineramaScreenInfo *scr_info = XineramaQueryScreens( display,
                                                              &n_scr_info );
+        if(n_scr_info <= selected_screen)
+        {
+          XFree( scr_info );
+          oyX1Monitor_release_( &disp );
+          return 0;
+        }
+
         geo[0] = scr_info[selected_screen].x_org;
         geo[1] = scr_info[selected_screen].y_org;
         geo[2] = scr_info[selected_screen].width;
