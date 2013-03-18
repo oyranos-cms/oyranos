@@ -304,6 +304,8 @@ oyTESTRESULT_e testStringRun ()
   char * test_sub = 0;
   int test_end;
 
+  fprintf(zout, "\"%s\"\n", test );
+
   error = 0;
   if(test_n != 5) error = 1;
   for(i = 0; i < test_n; ++i)
@@ -377,6 +379,7 @@ oyTESTRESULT_e testStringRun ()
 
 
   test = "//" OY_TYPE_STD "/display.oydi/";
+  fprintf(zout, "\"%s\"\n", test );
   test_n = oyStringSegmentsN_( test, oyStrlen_(test), OY_SLASH_C );
   test_n = oyStringSegments_( test, OY_SLASH_C );
 
