@@ -6,12 +6,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/25
+ *  @date     2013/03/18
  */
 
 
@@ -695,16 +695,15 @@ oyStructList_s** oyCMMCacheList_()
  *  @since Oyranos: version 0.1.8
  *  @date  17 december 2007 (API 0.1.8)
  */
-oyChar* oyCMMCacheListPrint_()
+char * oyCMMCacheListPrint_()
 {
   oyStructList_s ** cache_list = oyCMMCacheList_();
   int n = oyStructList_Count( *cache_list ), i;
   oyChar * text = 0;
-  oyChar refs[80];
 
-  oySprintf_( refs,"%s:%d Oyranos CMM cache with %d entries:\n", 
-              __FILE__,__LINE__, n);
-  STRING_ADD( text, refs );
+  oyStringAddPrintf_( &text, oyAllocateFunc_,oyDeAllocateFunc_,
+                      "Oyranos CMM cache with %d entries:\n", 
+                      n);
 
   for(i = 0; i < n ; ++i)
   {
@@ -713,9 +712,17 @@ oyChar* oyCMMCacheListPrint_()
 
     if(compare)
     {
-      oySprintf_(refs,"%d: ", compare->oy_->ref_);
-      STRING_ADD( text, refs );
-      STRING_ADD( text, oyObject_GetName(compare->oy_, oyNAME_NAME) );
+      const char * hash_text = oyObject_GetName(compare->oy_, oyNAME_NAME);
+      oyPointer_s * cmm_ptr = (oyPointer_s*) oyHash_GetPointer( compare,
+                                                  oyOBJECT_POINTER_S);
+      uint32_t * id = cmm_ptr && cmm_ptr->oy_ && cmm_ptr->oy_->hash_ptr_ ? cmm_ptr->oy_->hash_ptr_ : compare->oy_->hash_ptr_;
+      oyStringAddPrintf_( &text, oyAllocateFunc_,oyDeAllocateFunc_,
+                      "refs:%d hash: %x%x%x%x ", compare->oy_->ref_, id[0],id[1],id[2],id[3]);
+      oyMiscBlobGetHash_((void*)hash_text, oyStrlen_(hash_text), 0,
+                         (unsigned char*)id);
+      oyStringAddPrintf_( &text, oyAllocateFunc_,oyDeAllocateFunc_,
+                      "(%x%x%x%x) ", id[0],id[1],id[2],id[3]);
+      STRING_ADD( text, hash_text );
       STRING_ADD( text, "\n" );
     }
   }
