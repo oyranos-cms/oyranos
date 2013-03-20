@@ -1896,7 +1896,6 @@ OYAPI int  OYEXPORT
         oyConfigs_MoveIn( taxi_devices, &taxi_dev, -1 );
       }
       oyConfigs_Release( &configs_ );
-      oyOptions_Release( &options );
       oyFree_m_(ranks);
     }
 
