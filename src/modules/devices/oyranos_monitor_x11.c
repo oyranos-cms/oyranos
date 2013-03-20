@@ -243,7 +243,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
 
   disp = oyX1Monitor_newFrom_( display_name, 1 );
   if(!disp)
-    return 1;
+    return -1;
 
   if(!allocate_func)
     allocate_func = oyAllocateFunc_;
@@ -685,7 +685,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
   /* XRandR needs a expensive initialisation */
   disp = oyX1Monitor_newFrom_( display_name, 1 );
   if(!disp)
-    return 1;
+    return -1;
 
   dpy_name = calloc( sizeof(char), MAX_PATH );
   if( display_name && !strstr( disp->host, display_name ) )
@@ -892,7 +892,7 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
   if(!disp)
   {
     DBG_PROG_ENDE
-    return 1;
+    return -1;
   }
 
 
