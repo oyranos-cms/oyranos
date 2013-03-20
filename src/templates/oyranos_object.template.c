@@ -850,3 +850,13 @@ const char *       oyConnectorEventToText (
   return text;
 }
 
+int oyCheckType_( oyOBJECT_e type1, oyOBJECT_e type2 )
+{
+  int error = 0;
+
+  if(type1 != type2)
+    error = 1;
+
+  return error;
+}
+

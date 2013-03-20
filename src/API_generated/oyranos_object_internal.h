@@ -7,12 +7,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/06
+ *  @date     2013/03/19
  */
 
 
@@ -36,8 +36,10 @@
                             s->oy_->deallocateFunc_ );
 
 
+int oyCheckType_( oyOBJECT_e type1, oyOBJECT_e type2 );
+
 #define oyCheckType_m( typ, action ) \
-  if( !s || s->type != typ) \
+  if( !s || oyCheckType_(s->type_, typ)) \
   { \
     WARNc3_S( "%s %s(%s)", _("Unexpected object type:"), \
               oyStructTypeToText( s ? s->type : oyOBJECT_NONE ), \
@@ -45,7 +47,7 @@
     action; \
   }
 #define oyCheckType__m( type, action ) \
-  if( !s || s->type_ != type) \
+  if( !s || oyCheckType_( s->type_, type )) \
   { \
     WARNc3_S( "%s %s(%s)", _("Unexpected object type:"), \
               oyStructTypeToText( s ? s->type_ : oyOBJECT_NONE ), \
