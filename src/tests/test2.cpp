@@ -3300,7 +3300,7 @@ oyTESTRESULT_e testCMMnmRun ()
   oyFilterPlug_Release( &plug );
 
   clck = oyClock();
-  for(i = 0; i < n*10000; ++i)
+  for(i = 0; i < n*1000; ++i)
   if(error <= 0)
   {
 #if 1
@@ -3413,7 +3413,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
 
   clck = oyClock();
-  for(i = 0; i < 100*n; ++i)
+  for(i = 0; i < 20*n; ++i)
   if(error <= 0)
   {
     s = oyConversion_CreateBasicPixels( input,output, options, 0 );
@@ -3437,7 +3437,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   clck = oyClock();
 
-  for(i = 0; i < n*100 && error <= 0; ++i)
+  for(i = 0; i < n*10 && error <= 0; ++i)
   {
     l_error = oyNamedColour_SetColourStd ( c, oyASSUMED_WEB,
                                            (oyPointer)d, oyDOUBLE, 0, options );
@@ -3459,7 +3459,7 @@ oyTESTRESULT_e testCMMnmRun ()
   p_out = oyProfile_FromStd ( oyEDITING_XYZ, NULL );
 
   clck = oyClock();
-  for(i = 0; i < n*100; ++i)
+  for(i = 0; i < n*20; ++i)
   {
 
   oyImage_s * in  = NULL,
@@ -3531,7 +3531,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   clck = oyClock();
   if(pixel_access)
-  for(i = 0; i < n*10000; ++i)
+  for(i = 0; i < n*1000; ++i)
   {
     if(!error)
       error  = oyConversion_RunPixels( conv, pixel_access );
@@ -3553,7 +3553,7 @@ oyTESTRESULT_e testCMMnmRun ()
   d[0] = d[1] = d[2] = 1.0;
   d[3] = d[4] = d[5] = 0.0;
   if(pixel_access)
-  for(i = 0; i < n*10000; ++i)
+  for(i = 0; i < n*1000; ++i)
   {
     if(!error)
       error = oyConversion_GetOnePixel( conv, 0,0, pixel_access );
@@ -3578,7 +3578,7 @@ oyTESTRESULT_e testCMMnmRun ()
   oyConversion_Set( conv, in_node, 0 );
   oyFilterNode_SetData( in_node, (oyStruct_s*)input, 0, 0 );
   oyFilterNode_s * out_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, 0 );
-  oyFilterNode_SetData( out_node, (oyStruct_s*)output, 0, 0 );
+  /*oyFilterNode_SetData( out_node, (oyStruct_s*)output, 0, 0 );*/
   error = oyFilterNode_Connect( in_node, "//" OY_TYPE_STD "/data",
                                 out_node, "//" OY_TYPE_STD "/data", 0 );
   oyConversion_Set( conv, 0, out_node );
@@ -3593,7 +3593,7 @@ oyTESTRESULT_e testCMMnmRun ()
   error  = oyConversion_RunPixels( conv, pixel_access );
 
   clck = oyClock();
-  for(i = 0; i < n*10000; ++i)
+  for(i = 0; i < n*1000; ++i)
   {
     if(!error)
       error = oyConversion_RunPixels( conv, pixel_access );
