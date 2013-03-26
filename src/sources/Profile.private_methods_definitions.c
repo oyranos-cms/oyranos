@@ -311,6 +311,9 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
     }
   }
 
+  if(error >= 1 && s)
+    oyProfile_Release( (oyProfile_s**)&s );
+
   oyHash_Release_( &entry );
 
   return s;
