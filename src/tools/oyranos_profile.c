@@ -115,6 +115,8 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      oyranos-profile -w test -j test.json sRGB.icc\n");
   fprintf( stderr, "      oyranos-profile -mv sRGB.icc\n");
   fprintf( stderr, "      ppmcie `oyranos-profile --ppmcie sRGB.icc` > sRGB-cie-xy.ppm\n");
+  fprintf( stderr, "    %s:\n", _("Count all profiles with Lab PCS"));
+  fprintf( stderr, "      LANG=en_GB; n=0; SAVEIFS=$IFS ; IFS=$'\\n\\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in \"${profiles[@]}\"; do if [ \"`oyranos-profile -l \"$file\" | grep -a \"PCS Color Space:  Lab\"`\" != \"\" ]; then n=$((n+1)); fi; done; echo PCS-CIE*Lab: $n\n");
   fprintf( stderr, "\n");
                         printf(_("For more informations read the man page:"));
                         printf("\n");
