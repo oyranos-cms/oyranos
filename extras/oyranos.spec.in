@@ -42,7 +42,6 @@ BuildRequires:  color-filesystem
 
 BuildRequires:  cmake
 BuildRequires:  desktop-file-utils
-BuildRequires:  lcms2
 
 %if 0%{?suse_version} > 0
 BuildRequires:  cairo-devel
@@ -56,6 +55,7 @@ BuildRequires:  graphviz
 BuildRequires:  libXcm-devel >= 0.5.1
 BuildRequires:  libjpeg-devel
 BuildRequires:  liblcms-devel
+BuildRequires:  liblcms2
 BuildRequires:  libpng-devel
 BuildRequires:  libqt4-devel
 BuildRequires:  libtiff-devel
@@ -203,33 +203,6 @@ BuildRequires:  xorg-x11-devel
 BuildRequires:  yajl-devel
 %endif
 
-%if 0%{?debian_version} > 0
-BuildRequires:  cairo-devel
-BuildRequires:  cups-devel
-BuildRequires:  doxygen
-BuildRequires:  fltk
-BuildRequires:  fltk-devel
-BuildRequires:  gcc-c++
-BuildRequires:  gettext
-BuildRequires:  graphviz
-BuildRequires:  libXcm-dev
-BuildRequires:  libjpeg-devel
-BuildRequires:  liblcms-devel
-BuildRequires:  libpng-devel
-BuildRequires:  libqt4-devel
-BuildRequires:  libtiff-devel
-BuildRequires:  libxml2-devel
-BuildRequires:  netpbm
-BuildRequires:  pkgconfig
-BuildRequires:  xdg-utils
-BuildRequires:  xorg-x11
-BuildRequires:  xorg-x11-Mesa-devel
-BuildRequires:  xorg-x11-devel
-BuildRequires:  xorg-x11-libXext
-BuildRequires:  xorg-x11-libXext-devel
-BuildRequires:  xorg-x11-libXpm
-BuildRequires:  xorg-x11-libXpm-devel
-%endif
 
 %package      -n lib%{name}0
 Summary:        Color Management System Libraries
@@ -383,8 +356,6 @@ echo 'X-SuSE-translate=true' >> qcmsevents-applet.desktop
 echo 'X-SuSE-translate=true' >> %{name}-profile-install.desktop
 desktop-file-install --dir=%{buildroot}/%{desktopdir} qcmsevents-applet.desktop
 desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.desktop
-mkdir -p %{buildroot}/etc/xdg/autostart/
-cp -av %{name}-profile-install.desktop %{buildroot}/etc/xdg/autostart/%{name}-monitor-setup.desktop
 %find_lang %{name}       # generate a special file list
 
 %post -n lib%{name}0 -p /sbin/ldconfig
