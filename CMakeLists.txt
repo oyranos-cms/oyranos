@@ -125,10 +125,13 @@ ADD_SUBDIRECTORY( extras )
 ADD_SUBDIRECTORY( settings )
 ADD_SUBDIRECTORY( doc )
 
-
+CONFIGURE_FILE(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/OyranosUninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake/OyranosUninstall.cmake"
+    IMMEDIATE @ONLY)
 
 ADD_CUSTOM_TARGET( uninstall
-	"${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/OyranosUninstall.cmake")
+	"${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake/OyranosUninstall.cmake")
 
 ADD_CUSTOM_TARGET( dist
 		COMMAND cd ${CMAKE_CURRENT_SOURCE_DIR}/ && git archive --prefix=oyranos-${OYRANOS_VERSION}/ --format=tar HEAD > ${CMAKE_CURRENT_BINARY_DIR}/oyranos-${OYRANOS_VERSION}.tar 
