@@ -171,7 +171,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_DEFAULT_PROFILES, 0, 0,
       _("Assumed Color Space"),
       _("Assumed Color Space for untagged colors"),
-      _("Color content can sometimes have no ICC profile assigned. This is a critical situation as the system can not properly convert these colors. Therefor the color processing parts need to pick some profile as a guess. These settings allow to change the picked ICC profile to guide the processing components and allow proper conversion and compositing."),
+      _("Color content can sometimes have no ICC profile assigned. This is a critical situation as the system can not properly convert these colors. Therefore the color processing parts need to pick some profile as a guess. These settings allow to change the picked ICC profile to guide the processing components and allow proper conversion and compositing."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -180,7 +180,7 @@ oyOptionStringsTranslate_ ()
       0, 0, 0,
       _("Proofing Color Space"),
       _("Color Space for Simulating real devices"),
-      _("The proofing color space represents a real color device for simulation. Possible uses cases are to simulate a print machine, a viewing environment in a theater or a expected small monitor gamut."),
+      _("The proofing color space represents a real color device for simulation. Possible use cases are to simulate a print machine, a viewing environment in a theater or a expected small monitor gamut."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -216,7 +216,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, 0, 0,
       _("Rendering"),
       _("The kind of ICC gamut mapping for transforming colors between differently sized color spaces"),
-      _("The conversion between color spaces of different shape and size can happen in various ways. The Perceptual rendering intent is usual the best choice for photographs and artistic imagery. It is used in many automatic systems. The Relative Colorimetric rendering intent provides a well-defined standard, one-to-one color mapping, but without applying white point adaption. This can lead to color clipping in case of colors falling outside the target gamut as a price for the otherwise colorimetric correctness. The Relative Colorimetric intent is often used in combination with Black Point Compensation. The Saturation rendering intent shall provide an optimal use of saturated device colors. The Absolute Colorimetric rendering intent works like the relative colorimetric one except the white point is adapted. All rendering intents beside the colorimetric ones rely on the color tables designed by the profile vendor."),
+      _("The conversion between color spaces of different shape and size can happen in various ways. The Perceptual rendering intent is usually the best choice for photographs and artistic imagery. It is used in many automatic systems. The Relative Colorimetric rendering intent provides a well-defined standard, one-to-one color mapping, but without applying white point adaption. This can lead to color clipping in case of colors falling outside the target gamut as a price for the otherwise colorimetric correctness. The Relative Colorimetric intent is often used in combination with Black Point Compensation. The Saturation rendering intent shall provide an optimal use of saturated device colors. The Absolute Colorimetric rendering intent works like the relative colorimetric one except the white point is adapted. All rendering intents beside the colorimetric ones rely on the color tables designed by the profile vendor."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -233,7 +233,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_MISSMATCH, 1, 
       oyGROUP_BEHAVIOUR, 0, 0,
       _("Mismatching"),
-      _("Decide what to do when the default color spaces dont match the current ones."),
+      _("Decide what to do when the default color spaces don't match the current ones."),
       _("Decide how to resolve conflicts with input color spaces and current settings."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -270,7 +270,7 @@ oyOptionStringsTranslate_ ()
       0, 0, 0,
       _("Information"),
       _("Profile Information"),
-      _("Anylyze ICC profile information on your system."),
+      _("Analyze ICC profile information on your system."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       NULL,
@@ -303,7 +303,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_RGB, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Rgb"),
-      _("Prefered Rgb Editing Color Space"),
+      _("Preferred Rgb Editing Color Space"),
       _("The preferred Rgb Editing Color Space should represent a well behaving color space like sRGB."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -313,7 +313,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_CMYK, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Cmyk"),
-      _("Prefered Cmyk Editing Color Space"),
+      _("Preferred Cmyk Editing Color Space"),
       _("The preferred Cmyk Editing Color Space should represent a color space that complies to well defined printing conditions like FOGRA or SWOP."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -323,8 +323,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_XYZ, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing XYZ"),
-      _("Prefered XYZ Editing Color Space"),
-      _("The preferred XYZ Editing Color Space shall decribe CIE*XYZ."),
+      _("Preferred XYZ Editing Color Space"),
+      _("The preferred XYZ Editing Color Space shall describe CIE*XYZ."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_XYZ_PROFILE,
@@ -333,7 +333,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_LAB, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Lab"),
-      _("Prefered CIE*Lab Editing Color Space"),
+      _("Preferred CIE*Lab Editing Color Space"),
       _("The preferred CIE*Lab Editing Color Space shall describe the CIE*Lab."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
@@ -343,8 +343,8 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_EDITING_GRAY, 2,
       oyGROUP_DEFAULT_PROFILES, oyGROUP_DEFAULT_PROFILES_EDIT, 0,
       _("Editing Gray"),
-      _("Prefered Gray Editing Color Space"),
-      _("The preferred Gray Editing Color Space shall describe a single lighness channel color space for grayscale images."),
+      _("Preferred Gray Editing Color Space"),
+      _("The preferred Gray Editing Color Space shall describe a single lightness channel color space for grayscale images."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_EDITING_GRAY_PROFILE,
@@ -426,7 +426,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
       _("No Image profile"),
       _("Image has no color space embedded. What default action shall be performed?"),
-      _("This setting decides what to do in the case that colors have no color space assigned. Typical the according assumed ICC profile should be assigned."),
+      _("This setting decides what to do in the case that colors have no color space assigned. Typically the according assumed ICC profile should be assigned."),
       3, /* choices */
       _("Assign No Profile"),_("Assign Assumed Profile"),_("Prompt"), NULL,
       OY_ACTION_UNTAGGED_ASSIGN,
@@ -476,7 +476,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_RENDERING, 0,
       _("Rendering Intent"),
       _("Rendering intent for color space transformations."),
-      _("Rendering intent for color space transformations is typical the Relative Colorimetric intent plus Black Point Compensation or the Perceptual intent."),
+      _("Rendering intent for color space transformations is typically the Relative Colorimetric intent plus Black Point Compensation or the Perceptual intent."),
       4, /* choices */
       _("Perceptual"),_("Relative Colorimetric"),_("Saturation"),_("Absolute Colorimetric"),
       OY_DEFAULT_RENDERING_INTENT,
@@ -496,7 +496,7 @@ oyOptionStringsTranslate_ ()
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
       _("Proofing Rendering Intent"),
       _("Behaviour of color space transformation for proofing"),
-      _("Behaviour of color space transformation for proofing. Most people want a preview on screen only. The Relative Colorimetric intent is right for that. The Absolute Colorimetric intent needs a very careful profiling and non-trivial setup, but allowes for side-by-side comparisions."),
+      _("Behaviour of color space transformation for proofing. Most people want a preview on screen only. The Relative Colorimetric intent is right for that. The Absolute Colorimetric intent needs a very careful profiling and non-trivial setup, but allows for side-by-side comparisons."),
       2, /* choices */
       _("Relative Colorimetric"),_("Absolute Colorimetric"),NULL,NULL,
       OY_DEFAULT_RENDERING_INTENT_PROOF,

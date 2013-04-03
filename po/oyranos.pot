@@ -139,7 +139,7 @@ msgid "Internal stored Size"
 msgstr ""
 
 #: API_generated/oyranos_profile.c:66
-msgid "Prefered CMM"
+msgid "Preferred CMM"
 msgstr ""
 
 #: API_generated/oyranos_profile.c:67
@@ -552,7 +552,7 @@ msgstr ""
 #: liboyranos_config/oyranos_texts.c:174
 msgid ""
 "Color content can sometimes have no ICC profile assigned. This is a critical "
-"situation as the system can not properly convert these colors. Therefor the "
+"situation as the system can not properly convert these colors. Therefore the "
 "color processing parts need to pick some profile as a guess. These settings "
 "allow to change the picked ICC profile to guide the processing components "
 "and allow proper conversion and compositing."
@@ -569,7 +569,7 @@ msgstr ""
 #: liboyranos_config/oyranos_texts.c:183
 msgid ""
 "The proofing color space represents a real color device for simulation. "
-"Possible uses cases are to simulate a print machine, a viewing environment "
+"Possible use cases are to simulate a print machine, a viewing environment "
 "in a theater or a expected small monitor gamut."
 msgstr ""
 
@@ -631,7 +631,7 @@ msgstr ""
 #: liboyranos_config/oyranos_texts.c:219
 msgid ""
 "The conversion between color spaces of different shape and size can happen "
-"in various ways. The Perceptual rendering intent is usual the best choice "
+"in various ways. The Perceptual rendering intent is usually the best choice "
 "for photographs and artistic imagery. It is used in many automatic systems. "
 "The Relative Colorimetric rendering intent provides a well-defined standard, "
 "one-to-one color mapping, but without applying white point adaption. This "
@@ -666,7 +666,7 @@ msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:236
 msgid ""
-"Decide what to do when the default color spaces dont match the current ones."
+"Decide what to do when the default color spaces don't match the current ones."
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:237
@@ -720,7 +720,7 @@ msgid "Profile Information"
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:273
-msgid "Anylyze ICC profile information on your system."
+msgid "Analyze ICC profile information on your system."
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:284
@@ -743,7 +743,7 @@ msgid "Editing Rgb"
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:306
-msgid "Prefered Rgb Editing Color Space"
+msgid "Preferred Rgb Editing Color Space"
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:307
@@ -757,7 +757,7 @@ msgid "Editing Cmyk"
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:316
-msgid "Prefered Cmyk Editing Color Space"
+msgid "Preferred Cmyk Editing Color Space"
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:317
@@ -771,11 +771,11 @@ msgid "Editing XYZ"
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:326
-msgid "Prefered XYZ Editing Color Space"
+msgid "Preferred XYZ Editing Color Space"
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:327
-msgid "The preferred XYZ Editing Color Space shall decribe CIE*XYZ."
+msgid "The preferred XYZ Editing Color Space shall describe CIE*XYZ."
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:335
@@ -783,7 +783,7 @@ msgid "Editing Lab"
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:336
-msgid "Prefered CIE*Lab Editing Color Space"
+msgid "Preferred CIE*Lab Editing Color Space"
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:337
@@ -795,12 +795,12 @@ msgid "Editing Gray"
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:346
-msgid "Prefered Gray Editing Color Space"
+msgid "Preferred Gray Editing Color Space"
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:347
 msgid ""
-"The preferred Gray Editing Color Space shall describe a single lighness "
+"The preferred Gray Editing Color Space shall describe a single lightness "
 "channel color space for grayscale images."
 msgstr ""
 
@@ -910,7 +910,7 @@ msgstr ""
 #: liboyranos_config/oyranos_texts.c:429
 msgid ""
 "This setting decides what to do in the case that colors have no color space "
-"assigned. Typical the according assumed ICC profile should be assigned."
+"assigned. Typically the according assumed ICC profile should be assigned."
 msgstr ""
 
 #. choices
@@ -1012,7 +1012,7 @@ msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:479
 msgid ""
-"Rendering intent for color space transformations is typical the Relative "
+"Rendering intent for color space transformations is typically the Relative "
 "Colorimetric intent plus Black Point Compensation or the Perceptual intent."
 msgstr ""
 
@@ -1067,7 +1067,7 @@ msgid ""
 "Behaviour of color space transformation for proofing. Most people want a "
 "preview on screen only. The Relative Colorimetric intent is right for that. "
 "The Absolute Colorimetric intent needs a very careful profiling and non-"
-"trivial setup, but allowes for side-by-side comparisions."
+"trivial setup, but allows for side-by-side comparisons."
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:507
@@ -1168,7 +1168,7 @@ msgstr ""
 #. HTML
 #: liboyranos_config/oyranos_xml.c:1036
 msgid ""
-"Oyranos allowes detailed settings like preferred editing color spaces and "
+"Oyranos allows detailed settings like preferred editing color spaces and "
 "the behaviour of color conversions or simulation. Oyranos reduces the work "
 "involved in all color management related decisions through automation, "
 "useful defaults and grouping of settings in selectable policies."
