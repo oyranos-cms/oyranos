@@ -2501,7 +2501,7 @@ msgstr "Proiekziozko telebista"
 #: liboyranos_config/oyranos_texts.c:451 liboyranos_config/oyranos_texts.c:461
 #: liboyranos_config/oyranos_texts.c:471
 #, fuzzy
-msgid "Promt"
+msgid "Prompt"
 msgstr "Proiektua"
 
 #: liboyranos_config/oyranos_texts.c:244 liboyranos_config/oyranos_texts.c:416

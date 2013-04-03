@@ -93,7 +93,7 @@
      0 Preserve Numbers
      1 Convert to Default Cmyk Editing Space
      2 Convert to untagged Cmyk, preserving Cmyk numbers
-     3 Promt -->
+     3 Prompt -->
     <oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT>1</oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT>
 
     <!-- For Screen
@@ -101,7 +101,7 @@
      0 Preserve Numbers
      1 Convert to Default Rgb Editing Space
      2 Convert to WWW (sRGB)
-     3 Promt -->
+     3 Prompt -->
     <oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN>2</oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN>
 
 </oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS>
@@ -115,21 +115,21 @@
          Image has no colour space embedded. What default action shall be performed?
      0 Assign No Profile
      1 Assign Assumed Profile
-     2 Promt -->
+     2 Prompt -->
     <oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN>1</oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN>
 
     <!-- On Rgb Mismatch
          Action for Image profile and Editing profile mismatches.
      0 Preserve Numbers
      1 Convert automatically
-     2 Promt -->
+     2 Prompt -->
     <oyBEHAVIOUR_ACTION_MISMATCH_RGB>1</oyBEHAVIOUR_ACTION_MISMATCH_RGB>
 
     <!-- On Cmyk Mismatch
          Action for Image profile and Editing profile mismatches.
      0 Preserve Numbers
      1 Convert automatically
-     2 Promt -->
+     2 Prompt -->
     <oyBEHAVIOUR_ACTION_MISMATCH_CMYK>1</oyBEHAVIOUR_ACTION_MISMATCH_CMYK>
 
 </oyGROUP_BEHAVIOUR_MISSMATCH>

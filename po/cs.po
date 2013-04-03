@@ -2514,7 +2514,7 @@ msgstr "Projekční televize"
 #: liboyranos_config/oyranos_texts.c:431 liboyranos_config/oyranos_texts.c:441
 #: liboyranos_config/oyranos_texts.c:451 liboyranos_config/oyranos_texts.c:461
 #: liboyranos_config/oyranos_texts.c:471
-msgid "Promt"
+msgid "Prompt"
 msgstr "Dotázat se"
 
 #: liboyranos_config/oyranos_texts.c:244 liboyranos_config/oyranos_texts.c:416

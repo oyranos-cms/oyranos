@@ -428,7 +428,7 @@ oyOptionStringsTranslate_ ()
       _("Image has no color space embedded. What default action shall be performed?"),
       _("This setting decides what to do in the case that colors have no color space assigned. Typical the according assumed ICC profile should be assigned."),
       3, /* choices */
-      _("Assign No Profile"),_("Assign Assumed Profile"),_("Promt"), NULL,
+      _("Assign No Profile"),_("Assign Assumed Profile"),_("Prompt"), NULL,
       OY_ACTION_UNTAGGED_ASSIGN,
       "oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN" , 1,0)
 
@@ -438,7 +438,7 @@ oyOptionStringsTranslate_ ()
       _("Action for Image profile and Editing profile mismatches."),
       _("Incoming color spaces can differ from the default editing color space. For most users, an automatic conversion is fine. However, for more demanding work, the numbers need to be preserved."),
       3, /* choices */
-      _("Preserve Numbers"),_("Convert automatically"),_("Promt"), NULL,
+      _("Preserve Numbers"),_("Convert automatically"),_("Prompt"), NULL,
       OY_ACTION_MISMATCH_RGB,
       "oyBEHAVIOUR_ACTION_MISMATCH_RGB" , 1,0)
 
@@ -448,7 +448,7 @@ oyOptionStringsTranslate_ ()
       _("Action for Image profile and Editing profile mismatches."),
       _("Incoming color spaces can differ from the default editing color space. For most users, an automatic conversion is fine. However, for more demanding work, the numbers need to be preserved."),
       3, /* choices */
-      _("Preserve Numbers"),_("Convert automatically"),_("Promt"), NULL,
+      _("Preserve Numbers"),_("Convert automatically"),_("Prompt"), NULL,
       OY_ACTION_MISMATCH_CMYK,
       "oyBEHAVIOUR_ACTION_MISMATCH_CMYK", 1,0)
 
@@ -458,7 +458,7 @@ oyOptionStringsTranslate_ ()
       _("Handle mixed color spaces in preparing a document for print output."),
       _("Handle mixed color spaces in preparing a document for print output. A conversion to the default editing color space is typically what most users want."),
       4, /* choices */
-      _("Preserve Numbers"),_("Convert to Default Cmyk Editing Space"),_("Convert to untagged Cmyk, preserving Cmyk numbers"),_("Promt"),
+      _("Preserve Numbers"),_("Convert to Default Cmyk Editing Space"),_("Convert to untagged Cmyk, preserving Cmyk numbers"),_("Prompt"),
       OY_CONVERT_MIXED_COLOUR_SPACE_PRINT_DOCUMENT,
       "oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT", 1,0)
 
@@ -468,7 +468,7 @@ oyOptionStringsTranslate_ ()
       _("Handle mixed color spaces in preparing a document for screen output."),
       _("Handle mixed color spaces in preparing a document for screen output. A conversion to sRGB helps in easy data exchange and is what most users want."),
       4, /* choices */
-      _("Preserve Numbers"),_("Convert to Default Rgb Editing Space"),_("Convert to WWW (sRGB)"),_("Promt"),
+      _("Preserve Numbers"),_("Convert to Default Rgb Editing Space"),_("Convert to WWW (sRGB)"),_("Prompt"),
       OY_CONVERT_MIXED_COLOUR_SPACE_SCREEN_DOCUMENT,
       "oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN", 2,0)
 
