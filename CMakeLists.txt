@@ -10,7 +10,7 @@ SET (OYRANOS_DEVEL_MONTH 01)
 SET (OYRANOS_DEVEL_YEAR 2013)
 
 SET (PACKAGE_NAME "oyranos")
-set (PACKAGE_DESCRIPTION "Oyranos is a Colour Management System (CMS) on operating system level. It allows to match predictably input device colours to output device colours across supporting applications. One goal is to make colour management useful for all users in a automated fashion and regardless of any technical knowledge.")
+SET (PACKAGE_DESCRIPTION "Oyranos is a Colour Management System (CMS) on operating system level. It allows to match predictably input device colours to output device colours across supporting applications. One goal is to make colour management useful for all users in a automated fashion and regardless of any technical knowledge.")
 
 SET( OY_CMMSUBPATH     "colour/modules" )
 SET( OY_METASUBPATH    "${PACKAGE_NAME}" )
