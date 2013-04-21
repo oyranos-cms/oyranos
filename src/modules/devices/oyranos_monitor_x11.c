@@ -50,6 +50,7 @@
 
 /* --- internal API definition --- */
 
+extern oyMessage_f oyX1_msg;
 
 
 int   oyX1Monitor_getScreenFromDisplayName_( oyX1Monitor_s   * disp );
@@ -553,16 +554,33 @@ oyX1GetAllScreenNames_          (const char *display_name,
   *n_scr = 0;
 
   if(!display_name || !display_name[0])
+  {
+    oyX1_msg( oyMSG_WARN, NULL, OY_DBG_FORMAT_
+              "No display_name", OY_DBG_ARGS_ );
     return 0;
+  }
 
   disp = oyX1Monitor_newFrom_( display_name, 0 );
   if(!disp)
+  {
+    oyX1_msg( oyMSG_WARN, NULL, OY_DBG_FORMAT_
+              "No disp object", OY_DBG_ARGS_ );
     return 0;
+  }
 
   display = oyX1Monitor_device_( disp );
 
   if( !display || (len = ScreenCount( display )) == 0 )
+  {
+    if(!display)
+      oyX1_msg( oyMSG_WARN, NULL, OY_DBG_FORMAT_
+                "No display struct", OY_DBG_ARGS_ );
+    else
+      oyX1_msg( oyMSG_WARN, NULL, OY_DBG_FORMAT_
+                "No ScreenCount %d", OY_DBG_ARGS_,
+                len );
     return 0;
+  }
 
 # if defined(HAVE_XRANDR)
   if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR)
@@ -588,7 +606,12 @@ oyX1GetAllScreenNames_          (const char *display_name,
 
   for (i = 0; i < len; ++i)
     if( (list[i] = oyChangeScreenName_( display_name, i )) == 0 )
+    {
+      oyX1_msg( oyMSG_WARN, NULL, OY_DBG_FORMAT_
+                "oyChangeScreenName_failed %s %d", OY_DBG_ARGS_,
+                oyNoEmptyString_m_(display_name), i );
       return NULL;
+    }
 
   *n_scr = len;
   oyX1Monitor_release_( &disp );
