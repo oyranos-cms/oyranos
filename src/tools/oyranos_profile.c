@@ -222,6 +222,10 @@ int main( int argc , char** argv )
                         exit (0);
   }
 
+  if(verbose)
+    fprintf( stderr, "  Oyranos v%s\n",
+                  oyNoEmptyName_m_(oyVersionString(1,0)));
+
   if(json_name && !profile_name)
   {
     fprintf(stderr, "%s %s\n", _("missed -w option to write a ICC profile"), _("Exit!"));
@@ -365,8 +369,8 @@ int main( int argc , char** argv )
       const char   ** names = NULL;
       int count;
       int text_n;
-      char** tag_text = 0,
-          * fn;
+      char** tag_text = 0;
+      const char * fn;
       oyProfileTag_s * tag;
 
       /* keep total number of chars equal to original for cli print */

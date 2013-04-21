@@ -267,6 +267,10 @@ int main( int argc , char** argv )
     }
   }
 
+  if(verbose)
+    fprintf( stderr, "  Oyranos v%s\n",
+                  oyNoEmptyName_m_(oyVersionString(1,0)));
+
 #if 1
   if(other_args)
   {

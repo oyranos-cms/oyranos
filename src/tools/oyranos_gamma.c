@@ -245,6 +245,11 @@ int main( int argc , char** argv )
     if(oy_debug) printf( "%s\n", argv[1] );
   }
 
+  if(verbose)
+    fprintf(stderr, "oyranos-monitor v%d.%d.%d %s\n",
+                        OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
+                                _("is a colour profile administration tool for monitors"));
+
 #ifndef __APPLE__
   if(!display_name)
   {

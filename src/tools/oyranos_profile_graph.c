@@ -254,6 +254,10 @@ int main( int argc , char** argv )
     if(oy_debug) printf( "%s\n", argv[1] );
   }
 
+  if(oy_debug)
+    fprintf( stderr, "  Oyranos v%s\n",
+                  oyNoEmptyName_m_(oyVersionString(1,0)));
+
   pixel_h = pixel_w;
 
   thickness *= pixel_w/128.0;
