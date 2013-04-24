@@ -577,6 +577,9 @@ OYAPI int  OYEXPORT
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                  rank_list, &apis_n);
     error = !apis;
+    if(error && oy_debug)
+      WARNc1_S( "no modules available for pattern: \"%s\"",
+                       oyNoEmptyString_m_(registration_pattern) );
   }
 
   if(error <= 0)

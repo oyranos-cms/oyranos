@@ -333,7 +333,10 @@ int main(int argc, char ** argv)
       oyOptions_Release( &options );
       if(!error && verbose)
         fprintf( stderr, "wrote file to %s\n", output );
-  }
+  } else
+  if(!device)
+    fprintf( stderr, "No device found. Probably not a raw-image file  %s\n", oyNoEmptyString_m_(image_name) );
+    
 
   oyProfile_Release( &profile );
   oyOption_Release( &opt );

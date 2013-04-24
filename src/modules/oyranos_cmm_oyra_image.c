@@ -564,6 +564,10 @@ int      oyraFilterPlug_ImageLoadRun (
       oyra_msg( oyMSG_WARN, (oyStruct_s*)requestor_plug,
              OY_DBG_FORMAT_ "Could not find any file_load plugin.",
              OY_DBG_ARGS_ );
+    else if(!result)
+      oyra_msg( oyMSG_WARN, (oyStruct_s*)requestor_plug,
+             OY_DBG_FORMAT_ "Could not find file_load plugin for: %s %s",
+             OY_DBG_ARGS_, oyNoEmptyString_m_(filename), oyNoEmptyString_m_(file_ext) );
 
     oyFree_m_(file_ext);
   }

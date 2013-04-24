@@ -563,7 +563,9 @@ int main( int argc , char** argv )
           oyOption_Release( &o );
           oyConfig_Release( &c );
         }
-      }
+      } else
+        WARNc2_S("oyDevicesGet %s %d", _("found issues"),error);
+
       oyConfigs_Release( &devices );
       oyOptions_Release( &options );
 
@@ -739,7 +741,9 @@ int main( int argc , char** argv )
         if(report)
           fprintf( stdout, "%s\n", report );
         oyDeAllocFunc( report ); report = 0;
-      }
+      } else
+        WARNc2_S("oyDevicesGet %s %d", _("found issues"),error);
+        
       oyConfigs_Release( &devices );
       oyOptions_Release( &cs_options );
     }
