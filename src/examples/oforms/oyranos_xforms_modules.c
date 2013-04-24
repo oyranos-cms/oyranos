@@ -1,6 +1,9 @@
 /*  gcc -Wall -g -I. -I../build_11.2 oforms/oyranos_xforms_modules.c `pkg-config oyranos libxml-2.0 --libs --cflags` -o oyranos-xforms-module
 */
 #include "oyranos_config_internal.h"
+#include "oyCMMapiFilters_s.h"
+#include "oyCMMapiFilter_s_.h"
+#include "oyranos_module_internal.h"
 #include <oyranos.h>
 #include <oyranos_debug.h>
 #include <oyranos_helper.h>
@@ -32,6 +35,9 @@ void usage(int argc, char ** argv)
   fprintf( stderr, "  %s\n",               _("Get XFORMS:"));
   fprintf( stderr, "      %s -n \"module_name\" -x \"xhtml_file\"\n", argv[0]);
   fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",               _("List Modules:"));
+  fprintf( stderr, "      %s -l\n", argv[0]);
+  fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("General options:"));
   fprintf( stderr, "      -v  %s\n",       _("verbose"));
   fprintf( stderr, "      -f  %s\n",       _("show policy options"));
@@ -56,7 +62,8 @@ int main (int argc, char ** argv)
   int other_args_n = 0;
   int error = 0,
       i,
-      verbose = 0;
+      verbose = 0,
+      list = 0;
   oyOptions_s * opts = 0;
   oyOption_s * o = 0;
   int front = 0;  /* front end options */
@@ -82,6 +89,7 @@ int main (int argc, char ** argv)
             {
               case 'n': OY_PARSE_STRING_ARG( node_name ); break;
               case 'f': front = 1; break;
+              case 'l': list = 1; break;
               case 'x': OY_PARSE_STRING_ARG( output_xml_file ); break;
               case 'v': if(verbose) oy_debug += 1; verbose = 1; break;
               case '-':
@@ -134,7 +142,7 @@ int main (int argc, char ** argv)
 
   }
 
-  if(!node_name)
+  if(!node_name && !list)
   {
                         usage(argc, argv);
                         exit (0);
@@ -225,8 +233,34 @@ int main (int argc, char ** argv)
     }
     if(ui_text) free(ui_text); ui_text = 0;
 
-  }
+  } else if(list)
+  {
+    int j;
+    for(j = oyOBJECT_CMM_API4_S; j <= (int)oyOBJECT_CMM_API10_S; j++)
+    {
+      uint32_t * rank_list = 0;
+      uint32_t apis_n = 0;
+      oyCMMapiFilters_s * apis = oyCMMsGetFilterApis_( 0,0, "//",
+                                                       (oyOBJECT_e)j, 0,
+                                                       &rank_list, &apis_n );
+      int n = oyCMMapiFilters_Count( apis ), i;
+      for(i = 0; i < n; ++i)
+      {
+        oyCMMapiFilter_s_ * f = (oyCMMapiFilter_s_*) oyCMMapiFilters_Get( apis, i );
+        if(f)
+          fprintf( stdout,  "[%s]:\t\"%s\"\t%s\n",
+                            oyStructTypeToText(f->type_),
+                            f->registration,
+                            f->id_ );
+        else
+          fprintf( stdout, "      no api obtained %d",i);
+        /*oyCMMapiFilter_Release( (oyCMMapiFilter_s**)&f );*/
+      }
+      oyCMMapiFilters_Release( &apis );
+    }
 
+    return 0;
+  }
 
   if(output_xml_file)
   {
