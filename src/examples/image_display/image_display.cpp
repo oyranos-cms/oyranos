@@ -281,7 +281,7 @@ void view_cb ( Fl_Widget* w, void* daten )
     }
 
     /* export the options values */
-    sprintf( command, "iccexamin -g %s &", fn );
+    sprintf( command, "iccexamin -g \"%s\" &", fn );
 
     error = system(command);
     if(error)
