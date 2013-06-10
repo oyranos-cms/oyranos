@@ -14,12 +14,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2013/06/10
  */
 
 
@@ -43,6 +43,8 @@ typedef struct oyCMMapi4_s oyCMMapi4_s;
 
 
 /* Include "CMMapi4.public.h" { */
+#include "oyCMMui_s.h"
+#include "oyFilterNode_s.h"
 
 /* } Include "CMMapi4.public.h" */
 
@@ -70,9 +72,9 @@ typedef struct oyCMMapi4_s oyCMMapi4_s;
  *  this is not relyable, as the interpolator can not be shure that the context
  *  plug-in supports the same or larger set of connectors.
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.5
  *  @since   2008/06/24 (Oyranos: 0.1.8)
- *  @date    2009/09/06
+ *  @date    2013/06/09
  */
 
 /* } Include "CMMapi4.dox" */
@@ -98,6 +100,63 @@ OYAPI int OYEXPORT
 
 
 /* Include "CMMapi4.public_methods_declarations.h" { */
+/** typedef oyCMMFilterNode_ContextToMem_f
+ *  @brief   store a CMM filter context into a memory blob
+ *  @ingroup module_api
+ *  @memberof oyCMMapi4_s
+ *
+ *  The goal is to have a data blob for later reusing. It is as well used for
+ *  exchange and analysis. A oyCMMapi4_s filter with context_type member set to
+ *  something should implement this function and fill the data
+ *  blob with the according context data for easy forwarding and
+ *  on disk caching.
+ *
+ *  @param[in,out] node                access to the complete filter struct,
+ *                                     most important to handle is the options
+ *                                     and image members
+ *  @param[out]    size                size in return 
+ *  @param         allocateFunc        memory allocator for the returned data
+ *  @return                            the CMM memory blob, preferedly ICC
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2008/07/02 (Oyranos: 0.1.8)
+ *  @date    2008/07/02
+ */
+typedef oyPointer(*oyCMMFilterNode_ContextToMem_f) (
+                                       oyFilterNode_s    * node,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc );
+
+/** typedef oyCMMFilterNode_GetText_f
+ *  @brief   describe a CMM filter context
+ *  @ingroup module_api
+ *  @memberof oyCMMapi4_s
+ *
+ *  For a oyNAME_NICK and oyNAME_NAME type argument, the function shall
+ *  describe only those elements, which are relevant to the result of the
+ *  context creation. The resulting string is CMM specific by intention.
+ *
+ *  Serialise into:
+ *  - oyNAME_NICK: XML ID
+ *  - oyNAME_NAME: XML
+ *  - oyNAME_DESCRIPTION: ??
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/27 (Oyranos: 0.1.10)
+ *  @date    2008/12/27
+ */
+typedef char *(*oyCMMFilterNode_GetText_f) (
+                                       oyFilterNode_s    * node,
+                                       oyNAME_e            type,
+                                       oyAlloc_f           allocateFunc );
+
+OYAPI oyCMMapi4_s*  OYEXPORT
+                   oyCMMapi4_Create  ( const char        * context_type,
+                                       oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem,
+                                       oyCMMFilterNode_GetText_f oyCMMFilterNode_GetText,
+                                       oyCMMui_s         * ui,
+                                       oyObject_s          object );
+
 
 /* } Include "CMMapi4.public_methods_declarations.h" */
 

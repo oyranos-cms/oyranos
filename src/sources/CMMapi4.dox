@@ -20,7 +20,7 @@
  *  this is not relyable, as the interpolator can not be shure that the context
  *  plug-in supports the same or larger set of connectors.
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.5
  *  @since   2008/06/24 (Oyranos: 0.1.8)
- *  @date    2009/09/06
+ *  @date    2013/06/09
  */

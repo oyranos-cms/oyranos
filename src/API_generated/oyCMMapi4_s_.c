@@ -12,12 +12,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/24
+ *  @date     2013/06/10
  */
 
 
@@ -57,9 +57,9 @@
  *
  *  @param[in]  cmmapi4  the CMMapi4 object
  *
- *  @version Oyranos: x.x.x
- *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
+ *  @version Oyranos: 0.9.5
+ *  @since   2013/06/09 (Oyranos: 0.9.5)
+ *  @date    2013/06/09
  */
 void oyCMMapi4_Release__Members( oyCMMapi4_s_ * cmmapi4 )
 {
@@ -67,15 +67,18 @@ void oyCMMapi4_Release__Members( oyCMMapi4_s_ * cmmapi4 )
    * E.g: oyXXX_Release( &cmmapi4->member );
    */
 
-  if(cmmapi4->oy_->deallocateFunc_)
+  if(cmmapi4 && cmmapi4->oy_ && cmmapi4->oy_->deallocateFunc_)
   {
-#if 0
+#   if 0
     oyDeAlloc_f deallocateFunc = cmmapi4->oy_->deallocateFunc_;
-#endif
+#   endif
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( cmmapi4->member );
      */
+
+    oyCMMui_Release( (oyCMMui_s**) &cmmapi4->ui );
+    oyCMMapiFilter_Release( (oyCMMapiFilter_s**)&cmmapi4 );
   }
 }
 
@@ -111,9 +114,9 @@ int oyCMMapi4_Init__Members( oyCMMapi4_s_ * cmmapi4 )
  *  @param[in]   src  the oyCMMapi4_s_ input object
  *  @param[out]  dst  the output oyCMMapi4_s_ object
  *
- *  @version Oyranos: x.x.x
- *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
+ *  @version Oyranos: 0.9.5
+ *  @since   2013/06/09 (Oyranos: 0.9.5)
+ *  @date    2013/06/09
  */
 int oyCMMapi4_Copy__Members( oyCMMapi4_s_ * dst, oyCMMapi4_s_ * src)
 {
@@ -121,6 +124,11 @@ int oyCMMapi4_Copy__Members( oyCMMapi4_s_ * dst, oyCMMapi4_s_ * src)
     return 1;
 
   /* Copy each value of src to dst here */
+
+  memcpy( dst->context_type, src->context_type, 8 );
+  dst->oyCMMFilterNode_ContextToMem = src->oyCMMFilterNode_ContextToMem;
+  dst->oyCMMFilterNode_GetText = src->oyCMMFilterNode_GetText;
+  dst->ui = (oyCMMui_s_*) oyCMMui_Copy( (oyCMMui_s*)src->ui, src->oy_ );
 
   return 0;
 }
