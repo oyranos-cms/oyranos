@@ -157,7 +157,7 @@ const char * oyCMMgetText             ( const char        * select,
          if(type == oyNAME_NICK)
       return "newBSD";
     else if(type == oyNAME_NAME)
-      return _("Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD");
+      return _("Copyright (c) 2005-2013 Kai-Uwe Behrmann; newBSD");
     else
       return _("new BSD license: http://www.opensource.org/licenses/bsd-license.php");
   }
@@ -184,7 +184,7 @@ const char * oyCMMgetImageConnectorPlugText (
     else if(type == oyNAME_NAME)
       return _("Image");
     else if(type == oyNAME_DESCRIPTION)
-      return _("Image PNG Plug");
+      return _("Image Plug");
   }
   return NULL;
 }
@@ -208,7 +208,7 @@ const char * oyCMMgetImageConnectorSocketText (
     else if(type == oyNAME_NAME)
       return _("Image");
     else if(type == oyNAME_DESCRIPTION)
-      return _("Image PNG Socket");
+      return _("Image Socket");
   }
   return NULL;
 }
