@@ -2683,11 +2683,13 @@ oyTESTRESULT_e testCMMsShow ()
                     {
                       snprintf( text_tmp, 65535,
                             "        plug[%d]: type:\"%s\" id:\"%s\" \"%s\" \"%s\"\n", l,
-                            oyConnector_GetReg( cmm_api7->plugs[l]),
-                            oyConnector_GetName(cmm_api7->plugs[l],oyNAME_NICK),
-                            oyConnector_GetName(cmm_api7->plugs[l],oyNAME_NAME),
-                            oyConnector_GetName(cmm_api7->plugs[l],
-                                                            oyNAME_DESCRIPTION)
+                            oyNoEmptyString_m_(oyConnector_GetReg( cmm_api7->plugs[l])),
+                            oyNoEmptyString_m_(oyConnector_GetText(
+                                cmm_api7->plugs[l],"name",oyNAME_NICK)),
+                            oyNoEmptyString_m_(oyConnector_GetText(
+                                cmm_api7->plugs[l],"name",oyNAME_NAME)),
+                            oyNoEmptyString_m_(oyConnector_GetText(
+                                cmm_api7->plugs[l],"name",oyNAME_DESCRIPTION))
                             );
                       STRING_ADD( text, text_tmp );
                     }
@@ -2695,13 +2697,13 @@ oyTESTRESULT_e testCMMsShow ()
                     {
                       snprintf( text_tmp, 65535,
                             "        sock[%d]: type:\"%s\" id:\"%s\" \"%s\" \"%s\"\n", l,
-                            oyConnector_GetReg( cmm_api7->sockets[l]),
-                            oyConnector_GetName(cmm_api7->sockets[l],
-                                                            oyNAME_NICK),
-                            oyConnector_GetName(cmm_api7->sockets[l],
-                                                            oyNAME_NAME),
-                            oyConnector_GetName(cmm_api7->sockets[l],
-                                                            oyNAME_DESCRIPTION)
+                            oyNoEmptyString_m_(oyConnector_GetReg( cmm_api7->sockets[l])),
+                            oyNoEmptyString_m_(oyConnector_GetText(
+                                cmm_api7->sockets[l],"name",oyNAME_NICK)),
+                            oyNoEmptyString_m_(oyConnector_GetText(
+                                cmm_api7->sockets[l],"name",oyNAME_NAME)),
+                            oyNoEmptyString_m_(oyConnector_GetText(
+                                cmm_api7->sockets[l],"name",oyNAME_DESCRIPTION))
                             );
                       STRING_ADD( text, text_tmp );
                     }
