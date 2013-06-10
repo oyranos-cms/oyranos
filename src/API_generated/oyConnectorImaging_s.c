@@ -12,12 +12,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/12/13
+ *  @date     2013/06/10
  */
 
 
@@ -100,6 +100,7 @@ OYAPI int OYEXPORT
 
   return oyConnectorImaging_Release_( &s );
 }
+
 
 
 
@@ -205,4 +206,274 @@ OYAPI int  OYEXPORT
 }
 
 /* } Include "ConnectorImaging.public_methods_definitions.c" */
+
+#define oyCheckConnectorImagingType__m( type, action ) \
+if(!(oyOBJECT_CONNECTOR_S <= s->type_ && s->type_ < oyOBJECT_CONNECTOR_MAX_S)) \
+    { action; }
+
+/** Function  oyConnectorImaging_SetTexts
+ *  @memberof oyConnectorImaging_s
+ *  @brief    set the texts in a connector
+ *
+ *  Set UI strings.
+ *
+ *  @param[in]     obj                 ConnectorImaging object
+ *  @param[in]     getText             the name function
+ *  @param[in]     text_classes        zero terminated list of classes, 
+ *                                     e.g. {"name",NULL}
+ *                                     owned by the user, but has to live the
+ *                                     lifetime of the object
+ *  @return                            status
+ *
+ *  @version  Oyranos: 0.9.5
+ *  @date     2013/06/10
+ *  @since    2013/06/10 (Oyranos: 0.9.5)
+ */
+OYAPI int  OYEXPORT
+                 oyConnectorImaging_SetTexts( oyConnectorImaging_s     * obj,
+                                       oyCMMGetText_f      getText,
+                                       const char       ** text_classes )
+{
+  oyConnectorImaging_s_ * s = (oyConnectorImaging_s_*) obj;
+
+  if(!obj)
+    return 1;
+
+  oyCheckConnectorImagingType__m( oyOBJECT_CONNECTOR_S, return 1 )
+
+  s->getText = getText;
+  s->texts = text_classes;
+
+  return 0;
+}
+
+/** Function  oyConnectorImaging_GetTexts
+ *  @memberof oyConnectorImaging_s
+ *  @brief    get the text classes in a connector
+ *
+ *  Set UI strings.
+ *
+ *  @param[in]     obj                 ConnectorImaging object
+ *  @return        text_classes        zero terminated list of classes, 
+ *                                     e.g. {"name",NULL}
+ *
+ *  @version  Oyranos: 0.9.5
+ *  @date     2013/06/10
+ *  @since    2013/06/10 (Oyranos: 0.9.5)
+ */
+OYAPI const char **  OYEXPORT
+                 oyConnectorImaging_GetTexts( oyConnectorImaging_s     * obj )
+{
+  oyConnectorImaging_s_ * s = (oyConnectorImaging_s_*) obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckConnectorImagingType__m( oyOBJECT_CONNECTOR_S, return 0 )
+
+  return s->texts;
+}
+
+/** Function  oyConnectorImaging_GetText
+ *  @memberof oyConnectorImaging_s
+ *  @brief    get the names in a connector
+ *
+ *  Get UI strings.
+ *
+ *  @param[in]     obj                 ConnectorImaging object
+ *  @param[in]     name_class          the names class, e.g. "name", "help" ...
+ *  @param[in]     type                the names type
+ *  @return                            the name string
+ *
+ *  @version  Oyranos: 0.9.5
+ *  @since    2011/01/31 (Oyranos: 0.3.0)
+ *  @date     2013/06/10
+ */
+OYAPI const char *  OYEXPORT
+                 oyConnectorImaging_GetText ( oyConnectorImaging_s     * obj,
+                                       const char        * name_class,
+                                       oyNAME_e            type )
+{
+  oyConnectorImaging_s_ * s = (oyConnectorImaging_s_*) obj;
+  const char * string = 0;
+
+  if(!obj)
+    return 0;
+
+  oyCheckConnectorImagingType__m( oyOBJECT_CONNECTOR_S, return 0 )
+
+  string = s->getText( name_class, type, (oyStruct_s*)s );
+
+  return string;
+}
+
+/** Function  oyConnectorImaging_IsPlug
+ *  @memberof oyConnectorImaging_s
+ *  @brief    Is this connector a plug or a socket
+ *
+ *  @param[in]     obj                 ConnectorImaging object
+ *  @return                            boolean; 0 - socket; 1 - plug
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+int              oyConnectorImaging_IsPlug  ( oyConnectorImaging_s     * obj )
+{
+  oyConnectorImaging_s_ * s = (oyConnectorImaging_s_*)obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckConnectorImagingType__m( oyOBJECT_CONNECTOR_S, return 0 )
+
+  return s->is_plug;
+}
+
+/** Function  oyConnectorImaging_SetIsPlug
+ *  @memberof oyConnectorImaging_s
+ *  @brief    Set this connector as a plug or a socket
+ *
+ *  @param[in,out] obj                 ConnectorImaging object
+ *  @param[in]     is_plug             boolean; 0 - socket; 1 - plug
+ *  @return                            1 - error; 0 - success; -1 - otherwise
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+int              oyConnectorImaging_SetIsPlug(oyConnectorImaging_s     * obj,
+                                       int                 is_plug )
+{
+  oyConnectorImaging_s_ * s = (oyConnectorImaging_s_*)obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckConnectorImagingType__m( oyOBJECT_CONNECTOR_S, return 1 )
+
+  s->is_plug = is_plug;
+
+  return 0;
+}
+
+/** Function  oyConnectorImaging_GetReg
+ *  @memberof oyConnectorImaging_s
+ *  @brief    Get the registration for the connection type
+ *
+ *  This is use as a rough check, if connections are possible.
+ *
+ *  @param[in]     obj                 ConnectorImaging object
+ *  @return                            registration string
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+const char *     oyConnectorImaging_GetReg  ( oyConnectorImaging_s     * obj )
+{
+  oyConnectorImaging_s_ * s = (oyConnectorImaging_s_*)obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckConnectorImagingType__m( oyOBJECT_CONNECTOR_S, return 0 )
+
+  return s->connector_type;
+}
+
+/** Function  oyConnectorImaging_SetReg
+ *  @memberof oyConnectorImaging_s
+ *  @brief    Set this connectors type string
+ *
+ *  This is use as a rough check, if connections are possible.
+ *
+ *  @param[in,out] obj                 ConnectorImaging object
+ *  @param[in]     type_registration   the registration string to describe the
+ *                                     type
+ *  @return                            1 - error; 0 - success; -1 - otherwise
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+int              oyConnectorImaging_SetReg  ( oyConnectorImaging_s     * obj,
+                                       const char        * type_registration )
+{
+  oyConnectorImaging_s_ * s = (oyConnectorImaging_s_*)obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckConnectorImagingType__m( oyOBJECT_CONNECTOR_S, return 1 )
+
+  {
+    oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+    oyAlloc_f allocateFunc = s->oy_->allocateFunc_;
+
+    if(s->connector_type)
+      deallocateFunc( s->connector_type ); s->connector_type = 0;
+
+    s->connector_type = oyStringCopy_( type_registration, allocateFunc );
+  }
+
+  return 0;
+}
+
+/** Function  oyConnectorImaging_SetMatch
+ *  @memberof oyConnectorImaging_s
+ *  @brief    Set this connectors type check function
+ *
+ *  This is use as a check, if connections are possible.
+ *  This allowes for a more fine grained control than the type registration.
+ *
+ *  @param[in,out] obj                 ConnectorImaging object
+ *  @param[in]     func                the check function
+ *  @return                            1 - error; 0 - success; -1 - otherwise
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+int              oyConnectorImaging_SetMatch( oyConnectorImaging_s     * obj,
+                                       oyCMMFilterSocket_MatchPlug_f func )
+{
+  oyConnectorImaging_s_ * s = (oyConnectorImaging_s_*)obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckConnectorImagingType__m( oyOBJECT_CONNECTOR_S, return 1 )
+
+  s->filterSocket_MatchPlug = func;
+
+  return 0;
+}
+
+/** Function  oyConnectorImaging_GetMatch
+ *  @memberof oyConnectorImaging_s
+ *  @brief    Set this connectors type check function
+ *
+ *  This is use as a check, if connections are possible.
+ *  This allowes for a more fine grained control than the type registration.
+ *
+ *  @param[in]     obj                 ConnectorImaging object
+ *  @return                            the check function
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/01/31 (Oyranos: 0.3.0)
+ *  @date    2011/01/31
+ */
+oyCMMFilterSocket_MatchPlug_f oyConnectorImaging_GetMatch (
+                                       oyConnectorImaging_s     * obj )
+{
+  oyConnectorImaging_s_ * s = (oyConnectorImaging_s_*)obj;
+
+  if(!obj)
+    return 0;
+
+  oyCheckConnectorImagingType__m( oyOBJECT_CONNECTOR_S, return 0 )
+
+  return s->filterSocket_MatchPlug;
+}
 

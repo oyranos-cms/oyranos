@@ -10,12 +10,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/16
+ *  @date     2013/06/10
  */
 
 
@@ -38,6 +38,7 @@ typedef struct oyConnector_s oyConnector_s;
 
 #include "oyStruct_s.h"
 
+#include "oyConnector_s.h"
 
 
 /* Include "Connector.public.h" { */
@@ -86,24 +87,9 @@ OYAPI int OYEXPORT
 
 
 
+
 /* Include "Connector.public_methods_declarations.h" { */
-OYAPI int  OYEXPORT
-                 oyConnector_SetName ( oyConnector_s     * obj,
-                                       const char        * string,
-                                       oyNAME_e            type );
-OYAPI const char *  OYEXPORT
-                oyConnector_GetName ( oyConnector_s     * obj,
-                                       oyNAME_e            type );
-OYAPI int  OYEXPORT
-                 oyConnector_IsPlug  ( oyConnector_s     * obj );
-OYAPI int  OYEXPORT
-                 oyConnector_SetIsPlug(oyConnector_s     * obj,
-                                       int                 is_plug );
-OYAPI const char *  OYEXPORT
-                oyConnector_GetReg  ( oyConnector_s     * obj );
-OYAPI int  OYEXPORT
-                 oyConnector_SetReg  ( oyConnector_s     * obj,
-                                       const char        * type_registration );
+#include "oyranos_module.h"
 
 #include "oyFilterPlug_s.h"
 #include "oyFilterSocket_s.h"
@@ -127,14 +113,35 @@ typedef int          (*oyCMMFilterSocket_MatchPlug_f) (
                                        oyFilterSocket_s  * socket,
                                        oyFilterPlug_s    * plug );
 
+/* } Include "Connector.public_methods_declarations.h" */
+
+OYAPI int  OYEXPORT
+                 oyConnector_SetTexts( oyConnector_s     * obj,
+                                       oyCMMGetText_f      getText,
+                                       const char       ** text_classes );
+OYAPI const char **  OYEXPORT
+                 oyConnector_GetTexts( oyConnector_s     * obj );
+OYAPI const char *  OYEXPORT
+                 oyConnector_GetText ( oyConnector_s     * obj,
+                                       const char        * name_class,
+                                       oyNAME_e            type );
+OYAPI int  OYEXPORT
+                 oyConnector_IsPlug  ( oyConnector_s     * obj );
+OYAPI int  OYEXPORT
+                 oyConnector_SetIsPlug(oyConnector_s     * obj,
+                                       int                 is_plug );
+OYAPI const char *  OYEXPORT
+                oyConnector_GetReg  ( oyConnector_s     * obj );
+OYAPI int  OYEXPORT
+                 oyConnector_SetReg  ( oyConnector_s     * obj,
+                                       const char        * type_registration );
+
 OYAPI int  OYEXPORT
                  oyConnector_SetMatch( oyConnector_s     * obj,
                                        oyCMMFilterSocket_MatchPlug_f func );
 OYAPI oyCMMFilterSocket_MatchPlug_f  OYEXPORT
                  oyConnector_GetMatch (
                                        oyConnector_s     * obj );
-
-/* } Include "Connector.public_methods_declarations.h" */
 
 
 #ifdef __cplusplus

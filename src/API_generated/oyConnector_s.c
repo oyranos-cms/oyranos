@@ -10,12 +10,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/12/13
+ *  @date     2013/06/10
  */
 
 
@@ -101,61 +101,99 @@ OYAPI int OYEXPORT
 
 
 
+
 /* Include "Connector.public_methods_definitions.c" { */
+
+/* } Include "Connector.public_methods_definitions.c" */
+
 #define oyCheckConnectorType__m( type, action ) \
 if(!(oyOBJECT_CONNECTOR_S <= s->type_ && s->type_ < oyOBJECT_CONNECTOR_MAX_S)) \
     { action; }
 
-/** Function oyConnector_SetName
+/** Function  oyConnector_SetTexts
  *  @memberof oyConnector_s
- *  @brief   set the names in a connector
+ *  @brief    set the texts in a connector
  *
- *  These are UI strings, e.g. "Img", "Image", "Image Socket" .
+ *  Set UI strings.
  *
- *  @param[in,out] obj                 Connector object
- *  @param[in]     string              the name to set
- *  @param[in]     type                the names type
- *  @return                            1 - error; 0 - success; -1 - otherwise
+ *  @param[in]     obj                 Connector object
+ *  @param[in]     getText             the name function
+ *  @param[in]     text_classes        zero terminated list of classes, 
+ *                                     e.g. {"name",NULL}
+ *                                     owned by the user, but has to live the
+ *                                     lifetime of the object
+ *  @return                            status
  *
- *  @version Oyranos: 0.3.0
- *  @since   2011/01/31 (Oyranos: 0.3.0)
- *  @date    2011/01/31
+ *  @version  Oyranos: 0.9.5
+ *  @date     2013/06/10
+ *  @since    2013/06/10 (Oyranos: 0.9.5)
  */
-int              oyConnector_SetName ( oyConnector_s     * obj,
-                                       const char        * string,
-                                       oyNAME_e            type )
+OYAPI int  OYEXPORT
+                 oyConnector_SetTexts( oyConnector_s     * obj,
+                                       oyCMMGetText_f      getText,
+                                       const char       ** text_classes )
 {
-  oyConnector_s * s = obj;
-  int error = 0;
+  oyConnector_s_ * s = (oyConnector_s_*) obj;
+
+  if(!obj)
+    return 1;
+
+  oyCheckConnectorType__m( oyOBJECT_CONNECTOR_S, return 1 )
+
+  s->getText = getText;
+  s->texts = text_classes;
+
+  return 0;
+}
+
+/** Function  oyConnector_GetTexts
+ *  @memberof oyConnector_s
+ *  @brief    get the text classes in a connector
+ *
+ *  Set UI strings.
+ *
+ *  @param[in]     obj                 Connector object
+ *  @return        text_classes        zero terminated list of classes, 
+ *                                     e.g. {"name",NULL}
+ *
+ *  @version  Oyranos: 0.9.5
+ *  @date     2013/06/10
+ *  @since    2013/06/10 (Oyranos: 0.9.5)
+ */
+OYAPI const char **  OYEXPORT
+                 oyConnector_GetTexts( oyConnector_s     * obj )
+{
+  oyConnector_s_ * s = (oyConnector_s_*) obj;
 
   if(!obj)
     return 0;
 
-  oyCheckConnectorType__m( oyOBJECT_CONNECTOR_S, return 1 )
+  oyCheckConnectorType__m( oyOBJECT_CONNECTOR_S, return 0 )
 
-  error = oyObject_SetName( obj->oy_, string, type );
-
-  return error;
+  return s->texts;
 }
 
-/** Function oyConnector_GetName
+/** Function  oyConnector_GetText
  *  @memberof oyConnector_s
- *  @brief   set the names in a connector
+ *  @brief    get the names in a connector
  *
  *  Get UI strings.
  *
  *  @param[in]     obj                 Connector object
+ *  @param[in]     name_class          the names class, e.g. "name", "help" ...
  *  @param[in]     type                the names type
  *  @return                            the name string
  *
- *  @version Oyranos: 0.3.0
- *  @since   2011/01/31 (Oyranos: 0.3.0)
- *  @date    2011/01/31
+ *  @version  Oyranos: 0.9.5
+ *  @since    2011/01/31 (Oyranos: 0.3.0)
+ *  @date     2013/06/10
  */
-const char *     oyConnector_GetName ( oyConnector_s     * obj,
+OYAPI const char *  OYEXPORT
+                 oyConnector_GetText ( oyConnector_s     * obj,
+                                       const char        * name_class,
                                        oyNAME_e            type )
 {
-  oyConnector_s * s = obj;
+  oyConnector_s_ * s = (oyConnector_s_*) obj;
   const char * string = 0;
 
   if(!obj)
@@ -163,7 +201,7 @@ const char *     oyConnector_GetName ( oyConnector_s     * obj,
 
   oyCheckConnectorType__m( oyOBJECT_CONNECTOR_S, return 0 )
 
-  string = oyObject_GetName( obj->oy_, type );
+  string = s->getText( name_class, type, (oyStruct_s*)s );
 
   return string;
 }
@@ -337,6 +375,4 @@ oyCMMFilterSocket_MatchPlug_f oyConnector_GetMatch (
 
   return s->filterSocket_MatchPlug;
 }
-
-/* } Include "Connector.public_methods_definitions.c" */
 

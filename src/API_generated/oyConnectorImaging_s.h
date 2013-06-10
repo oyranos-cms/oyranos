@@ -12,12 +12,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/16
+ *  @date     2013/06/10
  */
 
 
@@ -41,6 +41,7 @@ typedef struct oyConnectorImaging_s oyConnectorImaging_s;
 
 #include "oyStruct_s.h"
 
+#include "oyConnector_s.h"
 
 #include "oyranos_image.h"
 
@@ -91,6 +92,7 @@ OYAPI int OYEXPORT
 
 
 
+
 /* Include "ConnectorImaging.public_methods_declarations.h" { */
 OYAPI int  OYEXPORT
                  oyConnectorImaging_GetDataTypes (
@@ -136,6 +138,34 @@ OYAPI int  OYEXPORT
 
 
 /* } Include "ConnectorImaging.public_methods_declarations.h" */
+
+OYAPI int  OYEXPORT
+                 oyConnectorImaging_SetTexts( oyConnectorImaging_s     * obj,
+                                       oyCMMGetText_f      getText,
+                                       const char       ** text_classes );
+OYAPI const char **  OYEXPORT
+                 oyConnectorImaging_GetTexts( oyConnectorImaging_s     * obj );
+OYAPI const char *  OYEXPORT
+                 oyConnectorImaging_GetText ( oyConnectorImaging_s     * obj,
+                                       const char        * name_class,
+                                       oyNAME_e            type );
+OYAPI int  OYEXPORT
+                 oyConnectorImaging_IsPlug  ( oyConnectorImaging_s     * obj );
+OYAPI int  OYEXPORT
+                 oyConnectorImaging_SetIsPlug(oyConnectorImaging_s     * obj,
+                                       int                 is_plug );
+OYAPI const char *  OYEXPORT
+                oyConnectorImaging_GetReg  ( oyConnectorImaging_s     * obj );
+OYAPI int  OYEXPORT
+                 oyConnectorImaging_SetReg  ( oyConnectorImaging_s     * obj,
+                                       const char        * type_registration );
+
+OYAPI int  OYEXPORT
+                 oyConnectorImaging_SetMatch( oyConnectorImaging_s     * obj,
+                                       oyCMMFilterSocket_MatchPlug_f func );
+OYAPI oyCMMFilterSocket_MatchPlug_f  OYEXPORT
+                 oyConnectorImaging_GetMatch (
+                                       oyConnectorImaging_s     * obj );
 
 
 #ifdef __cplusplus
