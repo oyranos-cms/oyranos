@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/06/10
+ *  @date     2013/06/11
  */
 
 
@@ -125,11 +125,18 @@ OYAPI int  OYEXPORT
                                      ( oyCMMinfo_s       * info );
 OYAPI oyCMMapi_s * OYEXPORT
                    oyCMMinfo_GetApi  ( oyCMMinfo_s       * info );
+OYAPI void  OYEXPORT
+                   oyCMMinfo_SetApi  ( oyCMMinfo_s       * info,
+                                       oyCMMapi_s        * first_api );
 #ifdef ICON_IS_OBJECTIFIED
 OYAPI oyIcon_s * OYEXPORT
                    oyCMMinfo_GetIcon ( oyCMMinfo_s       * info );
 #endif
-oyCMMinfoInit_f    oyCMMinfo_GetInitF( oyCMMinfo_s       * info );
+OYAPI oyCMMinfoInit_f  OYEXPORT
+                   oyCMMinfo_GetInitF( oyCMMinfo_s       * info );
+OYAPI void  OYEXPORT
+                   oyCMMinfo_SetInitF( oyCMMinfo_s       * info,
+                                       oyCMMinfoInit_f     init );
 
 /* } Include "CMMinfo.public_methods_declarations.h" */
 

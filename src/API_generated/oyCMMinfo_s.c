@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/06/10
+ *  @date     2013/06/11
  */
 
 
@@ -175,7 +175,9 @@ OYAPI int  OYEXPORT
  *  @memberof oyCMMinfo_s
  *  @brief    Get the first api
  *
- *  must be casted to a according API, zero terminated list
+ *  The returned struct must be casted to a according API. 
+ *  oyCMMapi_s forms a zero terminated list accesable through oyCMMapi_s::oyCMMapi_GetNext().
+ *  @see oyCMMinfo_SetApi()
  *
  *  @version  Oyranos: 0.5.0
  *  @date     2012/09/14
@@ -185,6 +187,27 @@ OYAPI oyCMMapi_s * OYEXPORT
                    oyCMMinfo_GetApi  ( oyCMMinfo_s       * info )
 {
   return ((oyCMMinfo_s_*)info)->api;
+}
+
+/** Function  oyCMMinfo_SetApi
+ *  @memberof oyCMMinfo_s
+ *  @brief    Set the first api
+ *
+ *  Set a zero terminated list, which will be visible by the module loader.
+ *  You can do this inside the oyCMMinfo_s init function setable by
+ *  oyCMMinfo_SetInitF().
+ *  Check if oyCMMinfo_s has already an api set 
+ *  through oyCMMinfo_GetApi(). Append more oyCMMapi_s 's through oyCMMapi_s::oyCMMapi_SetNext().
+ *
+ *  @version  Oyranos: 0.9.5
+ *  @date     2013/06/11
+ *  @since    2013/06/11 (Oyranos: 0.9.5)
+ */
+OYAPI void  OYEXPORT
+                   oyCMMinfo_SetApi  ( oyCMMinfo_s       * info,
+                                       oyCMMapi_s        * first_api )
+{
+  ((oyCMMinfo_s_*)info)->api = first_api;
 }
 
 /** Function  oyCMMinfo_GetIcon
@@ -205,9 +228,10 @@ OYAPI oyIcon_s * OYEXPORT
 
 /** Function  oyCMMinfo_GetInitF
  *  @memberof oyCMMinfo_s
- *  @brief    Get icon
+ *  @brief    Get a init function
  *
- *  zero terminated list of a icon pyramid
+ *  Get a init function for the actual oyCMMinfo_s.
+ *  @see oyCMMinfo_SetInitF
  *
  *  @version  Oyranos: 0.9.5
  *  @date     2013/06/10
@@ -217,6 +241,23 @@ OYAPI oyCMMinfoInit_f  OYEXPORT
                    oyCMMinfo_GetInitF( oyCMMinfo_s       * info )
 {
   return ((oyCMMinfo_s_*)info)->init;
+}
+/** Function  oyCMMinfo_SetInitF
+ *  @memberof oyCMMinfo_s
+ *  @brief    Set a init function
+ *
+ *  Set a init function for the actual oyCMMinfo_s.
+ *  @see oyCMMinfo_SetApi() oyCMMinfo_GetInitF()
+ *
+ *  @version  Oyranos: 0.9.5
+ *  @date     2013/06/11
+ *  @since    2013/06/11 (Oyranos: 0.9.5)
+ */
+OYAPI void  OYEXPORT
+                   oyCMMinfo_SetInitF( oyCMMinfo_s       * info,
+                                       oyCMMinfoInit_f     init )
+{
+  ((oyCMMinfo_s_*)info)->init = init;
 }
 
 /* } Include "CMMinfo.public_methods_definitions.c" */
