@@ -8,12 +8,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/16
+ *  @date     2013/06/14
  */
 
 
@@ -40,26 +40,6 @@ typedef struct oyCMMui_s_ oyCMMui_s_;
 #include "oyCMMui_s.h"
 
 /* Include "CMMui.private.h" { */
-/** typedef  oyCMMuiGet_f
- *  @brief   obtain a XFORMS ui description
- *  @ingroup module_api
- *  @memberof oyCMMui_s
- *
- *  The structures can provide a XFORMS ui based on the modules own
- *  set of options. The options are in the property of the caller.
- *
- *  @param[in]     options             the options to display
- *  @param[out]    ui_text             the XFORMS string
- *  @param[in]     allocateFunc        user allocator
- *  @return                            0 on success; error >= 1; -1 not understood; unknown < -1
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/18 (Oyranos: 0.1.10)
- *  @date    2009/01/18
- */
-typedef int  (*oyCMMuiGet_f)         ( oyOptions_s        * options,
-                                       char              ** ui_text,
-                                       oyAlloc_f            allocateFunc );
 
 /* } Include "CMMui.private.h" */
 

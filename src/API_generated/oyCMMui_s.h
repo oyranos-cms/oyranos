@@ -10,12 +10,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2013/06/14
  */
 
 
@@ -39,6 +39,28 @@ typedef struct oyCMMui_s oyCMMui_s;
 
 
 /* Include "CMMui.public.h" { */
+#include "oyOptions_s.h"
+/** typedef  oyCMMuiGet_f
+ *  @brief   obtain a XFORMS ui description
+ *  @ingroup module_api
+ *  @memberof oyCMMui_s
+ *
+ *  The structures can provide a XFORMS ui based on the modules own
+ *  set of options. The options are in the property of the caller.
+ *
+ *  @param[in]     options             the options to display
+ *  @param[out]    ui_text             the XFORMS string
+ *  @param[in]     allocateFunc        user allocator
+ *  @return                            0 on success; error >= 1; -1 not understood; unknown < -1
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/01/18 (Oyranos: 0.1.10)
+ *  @date    2009/01/18
+ */
+typedef int  (*oyCMMuiGet_f)         ( oyOptions_s        * options,
+                                       char              ** ui_text,
+                                       oyAlloc_f            allocateFunc );
+
 
 /* } Include "CMMui.public.h" */
 
@@ -79,6 +101,16 @@ OYAPI int OYEXPORT
 
 /* Include "CMMui.public_methods_declarations.h" { */
 #include "oyranos_module.h"
+OYAPI oyCMMui_s *  OYEXPORT
+                   oyCMMui_Create    ( const char        * category,
+                                       oyCMMGetText_f      getText,
+                                       const char       ** texts,
+                                       oyObject_s          object );
+OYAPI void  OYEXPORT
+                   oyCMMui_SetUiOptions(
+                                       oyCMMui_s         * ui,
+                                       const char        * options,
+                                       oyCMMuiGet_f        oyCMMuiGet );
 oyCMMGetText_f     oyCMMui_GetTextF  ( oyCMMui_s         * ui );
 const char **      oyCMMui_GetTexts  ( oyCMMui_s         * ui );
 

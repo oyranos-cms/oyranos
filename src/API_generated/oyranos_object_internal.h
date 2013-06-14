@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/03/19
+ *  @date     2013/06/14
  */
 
 
@@ -34,7 +34,6 @@
 #define hashTextAdd_m( text_ ) \
   oyStringAdd_( &hash_text, text_, s->oy_->allocateFunc_, \
                             s->oy_->deallocateFunc_ );
-
 
 int oyCheckType_( oyOBJECT_e type1, oyOBJECT_e type2 );
 
