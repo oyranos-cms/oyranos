@@ -48,8 +48,14 @@ typedef char *(*oyCMMFilterNode_GetText_f) (
                                        oyNAME_e            type,
                                        oyAlloc_f           allocateFunc );
 
+#include "oyCMMapi_s.h"
 OYAPI oyCMMapi4_s*  OYEXPORT
-                   oyCMMapi4_Create  ( const char        * context_type,
+                   oyCMMapi4_Create  ( oyCMMInit_f         init,
+                                       oyCMMMessageFuncSet_f msg_set,
+                                       const char        * registration,
+                                       int32_t             version[3],
+                                       int32_t             module_api[3],
+                                       const char        * context_type,
                                        oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem,
                                        oyCMMFilterNode_GetText_f oyCMMFilterNode_GetText,
                                        oyCMMui_s         * ui,
