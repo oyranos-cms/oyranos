@@ -155,7 +155,8 @@ OYAPI oyCMMapi4_s*  OYEXPORT
   oyCMMapi_Set( (oyCMMapi_s*) api4, init, msg_set, registration,
                 version, module_api );
 
-  memcpy( api4->context_type, context_type, 8 );
+  if(context_type)
+    memcpy( api4->context_type, context_type, 8 );
   api4->oyCMMFilterNode_ContextToMem = contextToMem;
   api4->oyCMMFilterNode_GetText = getText;
   api4->ui = (oyCMMui_s_*) oyCMMui_Copy( ui, object );
