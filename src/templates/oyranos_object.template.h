@@ -222,6 +222,8 @@ typedef enum {
 
 /** see:http://lists.freedesktop.org/archives/openicc/2008q4/001724.html
  *  @ingroup objects_conversion
+ *
+ *  @see @ref registration
  */
 typedef enum {
   oyFILTER_REG_NONE = 0,

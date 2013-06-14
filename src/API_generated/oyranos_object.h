@@ -7,12 +7,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/11/15
+ *  @date     2013/06/11
  */
 
 
@@ -265,6 +265,8 @@ typedef enum {
 
 /** see:http://lists.freedesktop.org/archives/openicc/2008q4/001724.html
  *  @ingroup objects_conversion
+ *
+ *  @see @ref registration
  */
 typedef enum {
   oyFILTER_REG_NONE = 0,
