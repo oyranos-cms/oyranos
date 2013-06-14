@@ -1,4 +1,9 @@
 OYAPI int  OYEXPORT
+                 oyConnectorImaging_SetDataTypes (
+                                       oyConnectorImaging_s  * c,
+                                       oyDATATYPE_e          * data_types,
+                                       int                     data_types_n );
+OYAPI int  OYEXPORT
                  oyConnectorImaging_GetDataTypes (
                                        oyConnectorImaging_s  * c,
                                        const oyDATATYPE_e   ** data_types,
@@ -39,4 +44,9 @@ OYAPI int  OYEXPORT
                  oyConnectorImaging_GetCapability (
                                        oyConnectorImaging_s    * c,
                                        oyCONNECTOR_IMAGING_CAP_e type );
+OYAPI int  OYEXPORT
+                 oyConnectorImaging_SetCapability (
+                                       oyConnectorImaging_s    * c,
+                                       oyCONNECTOR_IMAGING_CAP_e type,
+                                       int                       value );
 

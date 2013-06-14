@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/06/10
+ *  @date     2013/06/14
  */
 
 
@@ -105,6 +105,38 @@ OYAPI int OYEXPORT
 
 
 /* Include "ConnectorImaging.public_methods_definitions.c" { */
+/** Function  oyConnectorImaging_SetDataTypes
+ *  @memberof oyConnectorImaging_s
+ *  @brief    Set data types capability of oyConnectorImaging_s
+ *
+ *  @param         c                   the image connector
+ *  @param         data_types          array of supported data types, const
+ *  @param         data_types_n        number of elements in data_types
+ *  @return                            error
+ *
+ *  @version  Oyranos: 0.9.5
+ *  @date     2013/06/14
+ *  @since    2013/06/14 (Oyranos: 0.9.5)
+ */
+OYAPI int  OYEXPORT
+                 oyConnectorImaging_SetDataTypes (
+                                       oyConnectorImaging_s  * c,
+                                       oyDATATYPE_e          * data_types,
+                                       int                     data_types_n )
+{
+  oyConnectorImaging_s_ * s = (oyConnectorImaging_s_*)c;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_IMAGING_S, return 1 )
+
+  s->data_types = data_types;
+  s->data_types_n = data_types_n;
+
+  return 0;
+}
+
 /** Function  oyConnectorImaging_GetDataTypes
  *  @memberof oyConnectorImaging_s
  *  @brief    Get capabilities of oyConnectorImaging_s
@@ -201,6 +233,50 @@ OYAPI int  OYEXPORT
     case oyCONNECTOR_IMAGING_CAP_ID: return s->id;
     case oyCONNECTOR_IMAGING_CAP_IS_MANDATORY: return s->is_mandatory;
     default: return 0; 
+  }
+  return 0;
+}
+
+/** Function  oyConnectorImaging_SetCapability
+ *  @memberof oyConnectorImaging_s
+ *  @brief    Set capabilities of oyConnectorImaging_s
+ *
+ *  @version  Oyranos: 0.9.5
+ *  @date     2013/06/14
+ *  @since    2013/06/14 (Oyranos: 0.9.5)
+ */
+OYAPI int  OYEXPORT
+                 oyConnectorImaging_SetCapability (
+                                       oyConnectorImaging_s    * c,
+                                       oyCONNECTOR_IMAGING_CAP_e type,
+                                       int                       value )
+{
+  oyConnectorImaging_s_ * s = (oyConnectorImaging_s_*)c;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_CONNECTOR_IMAGING_S, return 1 )
+
+  switch(type)
+  {
+    case oyCONNECTOR_IMAGING_CAP_IS_PLUG: s->is_plug = value;
+    case oyCONNECTOR_IMAGING_CAP_MAX_COLOUR_OFFSET:  s->max_colour_offset = value;
+    case oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT:  s->min_channels_count = value;
+    case oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT:  s->max_channels_count = value;
+    case oyCONNECTOR_IMAGING_CAP_MIN_COLOUR_COUNT:  s->min_colour_count = value;
+    case oyCONNECTOR_IMAGING_CAP_MAX_COLOUR_COUNT:  s->max_colour_count = value;
+    case oyCONNECTOR_IMAGING_CAP_CAN_PLANAR:  s->can_planar = value;
+    case oyCONNECTOR_IMAGING_CAP_CAN_INTERWOVEN:  s->can_interwoven = value;
+    case oyCONNECTOR_IMAGING_CAP_CAN_SWAP:  s->can_swap = value;
+    case oyCONNECTOR_IMAGING_CAP_CAN_SWAP_BYTES:  s->can_swap_bytes = value;
+    case oyCONNECTOR_IMAGING_CAP_CAN_REVERT:  s->can_revert = value;
+    case oyCONNECTOR_IMAGING_CAP_CAN_PREMULTIPLIED_ALPHA:  s->can_premultiplied_alpha = value;
+    case oyCONNECTOR_IMAGING_CAP_CAN_NONPREMULTIPLIED_ALPHA:  s->can_nonpremultiplied_alpha = value;
+    case oyCONNECTOR_IMAGING_CAP_CAN_SUBPIXEL:  s->can_subpixel = value;
+    case oyCONNECTOR_IMAGING_CAP_ID:  s->id = value;
+    case oyCONNECTOR_IMAGING_CAP_IS_MANDATORY:  s->is_mandatory = value;
+    default: return 1;
   }
   return 0;
 }
