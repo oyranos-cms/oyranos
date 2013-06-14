@@ -18,3 +18,4 @@ OYAPI oyCMMapi_s * OYEXPORT
 OYAPI oyIcon_s * OYEXPORT
                    oyCMMinfo_GetIcon ( oyCMMinfo_s       * info );
 #endif
+oyCMMinfoInit_f    oyCMMinfo_GetInitF( oyCMMinfo_s       * info );

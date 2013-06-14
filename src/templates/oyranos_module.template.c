@@ -1153,6 +1153,13 @@ oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name )
         WARNc_S(dlerror());
 
       if(error <= 0)
+      {
+        oyCMMinfoInit_f init = oyCMMinfo_GetInitF(cmm_info);
+        if(init)
+          error = init( (oyStruct_s*)cmm_info );
+      }
+
+      if(error <= 0)
         if(oyCMMapi_Check_( oyCMMinfo_GetApi( cmm_info ) ))
           api = oyCMMinfo_GetApi( cmm_info );
 

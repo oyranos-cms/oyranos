@@ -8,7 +8,8 @@
   char          ** texts;              /**< zero terminated list for getText */
 
   int              oy_compatibility;   /*!< last supported Oyranos CMM API : OYRANOS_VERSION */
-
   oyCMMapi_s     * api;                /**< must be casted to a according API, zero terminated list */
 
   oyIcon_s         icon;               /*!< zero terminated list of a icon pyramid */
+
+  oyCMMinfoInit_f  init;      /**< should be called before any access to members of oyCMMinfo_s */

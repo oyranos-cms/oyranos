@@ -10,12 +10,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/16
+ *  @date     2013/06/10
  */
 
 
@@ -40,6 +40,15 @@ typedef struct oyCMMinfo_s oyCMMinfo_s;
 
 /* Include "CMMinfo.public.h" { */
 #include "oyranos_module.h"
+
+/**
+ *  typedef oyCMMinfoInit_f
+ *  @brief   optional module init function
+ *  @ingroup module_api
+ *  @memberof oyCMMinfo_s
+ */
+typedef int      (*oyCMMinfoInit_f)  ( oyStruct_s        * library );
+
 
 /* } Include "CMMinfo.public.h" */
 
@@ -120,6 +129,7 @@ OYAPI oyCMMapi_s * OYEXPORT
 OYAPI oyIcon_s * OYEXPORT
                    oyCMMinfo_GetIcon ( oyCMMinfo_s       * info );
 #endif
+oyCMMinfoInit_f    oyCMMinfo_GetInitF( oyCMMinfo_s       * info );
 
 /* } Include "CMMinfo.public_methods_declarations.h" */
 
