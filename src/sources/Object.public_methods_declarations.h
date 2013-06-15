@@ -42,4 +42,8 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                  oyObject_GetRefCount      ( oyObject_s        object );
 OYAPI int  OYEXPORT
-                 oyObject_UnRef          ( oyObject_s          obj );
+                 oyObject_UnRef      ( oyObject_s          obj );
+OYAPI oyAlloc_f  OYEXPORT
+                 oyObject_GetAlloc   ( oyObject_s        object );
+OYAPI oyDeAlloc_f  OYEXPORT
+                 oyObject_GetDeAlloc ( oyObject_s        object );

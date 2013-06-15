@@ -6,12 +6,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/09/24
+ *  @date     2013/06/15
  */
 
 
@@ -610,6 +610,41 @@ int          oyObject_UnRef          ( oyObject_s          obj )
   return ref;
 }
 
+/** Function oyObject_GetAlloc
+ *  @brief   get objects allocator
+ *
+ *  @param         object              the object
+ *  @param                             the allocator function
+ *
+ *  @version Oyranos: 0.9.5
+ *  @since   2013/06/14 (Oyranos: 0.9.5)
+ *  @date    2013/06/14
+ */
+OYAPI oyAlloc_f  OYEXPORT
+                 oyObject_GetAlloc   ( oyObject_s        object )
+{
+  oyAlloc_f f = 0;
+  if(object) f = object->allocateFunc_;
+  return f;
+}
+
+/** Function oyObject_GetDeAlloc
+ *  @brief   get objects deallocator
+ *
+ *  @param         object              the object
+ *  @param                             the deallocator function
+ *
+ *  @version Oyranos: 0.9.5
+ *  @since   2013/06/14 (Oyranos: 0.9.5)
+ *  @date    2013/06/14
+ */
+OYAPI oyDeAlloc_f  OYEXPORT
+                 oyObject_GetDeAlloc ( oyObject_s        object )
+{
+  oyDeAlloc_f f = 0;
+  if(object) f = object->deallocateFunc_;
+  return f;
+}
 
 /* } Include "Object.public_methods_definitions.c" */
 

@@ -584,3 +584,38 @@ int          oyObject_UnRef          ( oyObject_s          obj )
   return ref;
 }
 
+/** Function oyObject_GetAlloc
+ *  @brief   get objects allocator
+ *
+ *  @param         object              the object
+ *  @param                             the allocator function
+ *
+ *  @version Oyranos: 0.9.5
+ *  @since   2013/06/14 (Oyranos: 0.9.5)
+ *  @date    2013/06/14
+ */
+OYAPI oyAlloc_f  OYEXPORT
+                 oyObject_GetAlloc   ( oyObject_s        object )
+{
+  oyAlloc_f f = 0;
+  if(object) f = object->allocateFunc_;
+  return f;
+}
+
+/** Function oyObject_GetDeAlloc
+ *  @brief   get objects deallocator
+ *
+ *  @param         object              the object
+ *  @param                             the deallocator function
+ *
+ *  @version Oyranos: 0.9.5
+ *  @since   2013/06/14 (Oyranos: 0.9.5)
+ *  @date    2013/06/14
+ */
+OYAPI oyDeAlloc_f  OYEXPORT
+                 oyObject_GetDeAlloc ( oyObject_s        object )
+{
+  oyDeAlloc_f f = 0;
+  if(object) f = object->deallocateFunc_;
+  return f;
+}
