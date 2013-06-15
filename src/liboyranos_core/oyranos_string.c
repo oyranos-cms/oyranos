@@ -642,8 +642,11 @@ void               oyStringListAdd_  ( char            *** list,
                                        oyAlloc_f           allocateFunc,
                                        oyDeAlloc_f         deallocateFunc )
 {
-  int alt_n = *n;
-  char ** tmp = oyStringListAppend_((const char**)*list, alt_n, append, n_app,
+  int alt_n = 0;
+  char ** tmp;
+
+  if(n) alt_n = *n;
+  tmp = oyStringListAppend_((const char**)*list, alt_n, append, n_app,
                                      n, allocateFunc);
 
   oyStringListRelease_(list, alt_n, deallocateFunc);
