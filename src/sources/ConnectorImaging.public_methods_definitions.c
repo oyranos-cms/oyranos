@@ -153,22 +153,22 @@ OYAPI int  OYEXPORT
 
   switch(type)
   {
-    case oyCONNECTOR_IMAGING_CAP_IS_PLUG: s->is_plug = value;
-    case oyCONNECTOR_IMAGING_CAP_MAX_COLOUR_OFFSET:  s->max_colour_offset = value;
-    case oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT:  s->min_channels_count = value;
-    case oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT:  s->max_channels_count = value;
-    case oyCONNECTOR_IMAGING_CAP_MIN_COLOUR_COUNT:  s->min_colour_count = value;
-    case oyCONNECTOR_IMAGING_CAP_MAX_COLOUR_COUNT:  s->max_colour_count = value;
-    case oyCONNECTOR_IMAGING_CAP_CAN_PLANAR:  s->can_planar = value;
-    case oyCONNECTOR_IMAGING_CAP_CAN_INTERWOVEN:  s->can_interwoven = value;
-    case oyCONNECTOR_IMAGING_CAP_CAN_SWAP:  s->can_swap = value;
-    case oyCONNECTOR_IMAGING_CAP_CAN_SWAP_BYTES:  s->can_swap_bytes = value;
-    case oyCONNECTOR_IMAGING_CAP_CAN_REVERT:  s->can_revert = value;
-    case oyCONNECTOR_IMAGING_CAP_CAN_PREMULTIPLIED_ALPHA:  s->can_premultiplied_alpha = value;
-    case oyCONNECTOR_IMAGING_CAP_CAN_NONPREMULTIPLIED_ALPHA:  s->can_nonpremultiplied_alpha = value;
-    case oyCONNECTOR_IMAGING_CAP_CAN_SUBPIXEL:  s->can_subpixel = value;
-    case oyCONNECTOR_IMAGING_CAP_ID:  s->id = value;
-    case oyCONNECTOR_IMAGING_CAP_IS_MANDATORY:  s->is_mandatory = value;
+    case oyCONNECTOR_IMAGING_CAP_IS_PLUG: s->is_plug = value; break;
+    case oyCONNECTOR_IMAGING_CAP_MAX_COLOUR_OFFSET:  s->max_colour_offset = value; break;
+    case oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT:  s->min_channels_count = value; break;
+    case oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT:  s->max_channels_count = value; break;
+    case oyCONNECTOR_IMAGING_CAP_MIN_COLOUR_COUNT:  s->min_colour_count = value; break;
+    case oyCONNECTOR_IMAGING_CAP_MAX_COLOUR_COUNT:  s->max_colour_count = value; break;
+    case oyCONNECTOR_IMAGING_CAP_CAN_PLANAR:  s->can_planar = value; break;
+    case oyCONNECTOR_IMAGING_CAP_CAN_INTERWOVEN:  s->can_interwoven = value; break;
+    case oyCONNECTOR_IMAGING_CAP_CAN_SWAP:  s->can_swap = value; break;
+    case oyCONNECTOR_IMAGING_CAP_CAN_SWAP_BYTES:  s->can_swap_bytes = value; break;
+    case oyCONNECTOR_IMAGING_CAP_CAN_REVERT:  s->can_revert = value; break;
+    case oyCONNECTOR_IMAGING_CAP_CAN_PREMULTIPLIED_ALPHA:  s->can_premultiplied_alpha = value; break;
+    case oyCONNECTOR_IMAGING_CAP_CAN_NONPREMULTIPLIED_ALPHA:  s->can_nonpremultiplied_alpha = value; break;
+    case oyCONNECTOR_IMAGING_CAP_CAN_SUBPIXEL:  s->can_subpixel = value; break;
+    case oyCONNECTOR_IMAGING_CAP_ID:  s->id = value; break;
+    case oyCONNECTOR_IMAGING_CAP_IS_MANDATORY:  s->is_mandatory = value; break;
     default: return 1;
   }
   return 0;
