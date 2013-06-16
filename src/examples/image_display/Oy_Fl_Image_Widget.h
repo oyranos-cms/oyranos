@@ -170,8 +170,11 @@ public:
       }
 
       /* limit a too big display texture */
-      *oyRectangle_SetGeo1(display_rectangle,2) = OY_MIN( oyRectangle_GetGeo1(display_rectangle,2), width );
-      *oyRectangle_SetGeo1(display_rectangle,3) = OY_MIN( oyRectangle_GetGeo1(display_rectangle,3), height );
+      if(display_rectangle)
+      {
+        *oyRectangle_SetGeo1(display_rectangle,2) = OY_MIN( oyRectangle_GetGeo1(display_rectangle,2), width );
+        *oyRectangle_SetGeo1(display_rectangle,3) = OY_MIN( oyRectangle_GetGeo1(display_rectangle,3), height );
+      }
 
       if(image)
         dirty = oyDrawScreenImage(conversion(), ticket(), display_rectangle,
