@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/06/14
+ *  @date     2013/06/17
  */
 
 
@@ -94,11 +94,11 @@ OYAPI int OYEXPORT
 
 
 /* Include "ConnectorImaging.public_methods_declarations.h" { */
-OYAPI oyConnectorImaging_s *  OYEXPORT
-                 oyConnectorImaging_Create (
-                                       const oyDATATYPE_e   ** data_types,
-                                       int                   * data_types_n,
-                                       oyObject_s              object );
+OYAPI int  OYEXPORT
+                 oyConnectorImaging_SetDataTypes (
+                                       oyConnectorImaging_s  * c,
+                                       oyDATATYPE_e          * data_types,
+                                       int                     data_types_n );
 OYAPI int  OYEXPORT
                  oyConnectorImaging_GetDataTypes (
                                        oyConnectorImaging_s  * c,
