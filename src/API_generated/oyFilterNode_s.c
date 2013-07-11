@@ -10,12 +10,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/12/13
+ *  @date     2013/06/17
  */
 
 
@@ -1177,14 +1177,24 @@ OYAPI oyConnector_s * OYEXPORT
       as_pos = (*node_)->api7_->plugs_n - 1;
 
     if((*node_)->api7_->plugs_n > as_pos)
-      pattern = oyConnector_Copy( (*node_)->api7_->plugs[as_pos], object );
+    {
+      if((*node_)->api7_->plugs[as_pos] && (*node_)->api7_->plugs[as_pos]->copy)
+        pattern = (oyConnector_s*) (*node_)->api7_->plugs[as_pos]->copy( (oyStruct_s*) (*node_)->api7_->plugs[as_pos], object );
+      else
+        pattern = oyConnector_Copy( (*node_)->api7_->plugs[as_pos], object );
+    }
   } else {
     if((*node_)->api7_->sockets_n <= as_pos &&
        as_pos < oyFilterNode_EdgeCount( node, 0, 0 ))
       as_pos = (*node_)->api7_->sockets_n - 1;
 
     if((*node_)->api7_->sockets_n > as_pos)
-      pattern = oyConnector_Copy( (*node_)->api7_->sockets[as_pos], object );
+    {
+      if((*node_)->api7_->sockets[as_pos] && (*node_)->api7_->sockets[as_pos]->copy)
+        pattern = (oyConnector_s*) (*node_)->api7_->sockets[as_pos]->copy( (oyStruct_s*) (*node_)->api7_->sockets[as_pos], object );
+      else
+        pattern = oyConnector_Copy( (*node_)->api7_->sockets[as_pos], object );
+    }
   }
 
   oyObject_Release( &object );
