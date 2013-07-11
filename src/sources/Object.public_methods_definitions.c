@@ -280,6 +280,7 @@ oyObject_s   oyObject_SetParent      ( oyObject_s        o,
  *  @param[in]    object         the object
  *  @param[in]    text           the name to set
  *  @param[in]    type           the kind of name 
+ *  @return                      0 == success, > 0 error, < 0 issue
  *
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
@@ -317,6 +318,7 @@ int          oyObject_SetName         ( oyObject_s        object,
  *  @param[in]    nick           short name, about 1-4 letters
  *  @param[in]    name           the name should fit into usual labels
  *  @param[in]    description    the description 
+ *  @return                      0 == success, > 0 error, < 0 issue
  *
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)

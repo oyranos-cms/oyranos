@@ -1,3 +1,43 @@
+/** Function  oyCMMapi7_Create
+ *  @memberof oyCMMapi7_s
+ *  @brief    Create a oyCMMapi7_s filter object
+ *
+ *  @param         init                custom initialisation
+ *  @param         msg_set             message function setter
+ *  @param         registration        the modules @ref registration string,
+ *  @param         version             module version
+ *  - 0: major - should be stable for the live time of a filter
+ *  - 1: minor - mark new features
+ *  - 2: patch version - correct errors
+ *  @param         module_api          tell compatibility with Oyranos API
+ *  - 0: last major Oyranos version during development time, e.g. 0
+ *  - 1: last minor Oyranos version during development time, e.g. 9
+ *  - 2: last Oyranos patch version during development time, e.g. 5
+ *  @param         context_type        four byte identifier if a context is needed
+ *                                     A additional oyCMMapi6_s module can, 
+ *                                     then be provided to convert between
+ *                                     context formats, registred by this
+ *                                     identifier.
+ *  @param         run                 the filter function
+ *  @param         plugs               a zero terminated list of connectors
+ *  @param         plugs_n             the number of plugs in 'plugs'
+ *  @param         plugs_last_add      the number of accepted repeats of the
+ *                                     last plug
+ *  @param         sockets             a zero terminated list of connectors
+ *  @param         sockets_n           the number of sockets in 'sockets'
+ *  @param         sockets_last_add    the number of accepted repeats of the
+ *                                     last socket
+ *  @param         properties
+ *  A zero terminated list of strings. The semantics are plugin defined.
+ *  e.g.: {"key1=value1","key2=value2",0}
+ *  @param         object              Oyranos object (optional)
+ *
+ *  @see     oyCMMapi_s::oyCMMapi_Set()
+ *
+ *  @version Oyranos: 0.9.5
+ *  @since   2013/07/11 (Oyranos: 0.9.5)
+ *  @date    2013/07/11
+ */
 OYAPI oyCMMapi7_s *  OYEXPORT
              oyCMMapi7_Create        ( oyCMMInit_f         init,
                                        oyCMMMessageFuncSet_f msg_set,
