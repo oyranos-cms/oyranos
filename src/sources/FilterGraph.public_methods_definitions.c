@@ -1,5 +1,5 @@
 /** Function  oyFilterGraph_FromNode
- *  @memberof oyFilterNode_s
+ *  @memberof oyFilterGraph_s
  *  @brief    Get a graphs adjazency list
  *
  *  @param[in]     node                filter node
@@ -225,7 +225,7 @@ OYAPI int  OYEXPORT
 }
 
 /** Function  oyFilterGraph_SetFromNode
- *  @memberof oyFilterNode_s
+ *  @memberof oyFilterGraph_s
  *  @brief    Get a graphs adjazency list
  *
  *  @param[in]     graph               a graph object
