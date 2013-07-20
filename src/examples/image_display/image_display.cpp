@@ -2,7 +2,7 @@
  *  Oyranos is an open source Colour Management System 
  * 
  *  @par Copyright:
- *            2009-2012 (C) Kai-Uwe Behrmann
+ *            2009-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -56,6 +56,9 @@ void setWindowMenue                  ( Oy_Fl_Double_Window*win,
                                        Oy_Fl_Image_Widget* oy_box,
                                        oyFilterNode_s    * node );
 
+/* keep at least one node around to handle options */
+static oyFilterNode_s * icc = 0;
+
 int
 main(int argc, char** argv)
 {
@@ -64,7 +67,6 @@ main(int argc, char** argv)
 
   /* some Oyranos types */
 
-  oyFilterNode_s * icc = 0;
   int file_pos = 1;
   const char * file_name = NULL;
 
@@ -378,6 +380,90 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags
   return win;
 }
 
+oyOptions_s * findOpts( const char * filter_name )
+{
+  oyFilterGraph_s * g = oyFilterGraph_FromNode( icc, 0 );
+  oyFilterNode_s * n = oyFilterGraph_GetNode( g, -1, filter_name, NULL );
+  oyOptions_s * opts = oyFilterNode_GetOptions( n, 0 );
+  oyFilterGraph_Release( &g );
+  oyFilterNode_Release( &n );
+
+  return opts;
+}
+
+int
+event_handler(int e)
+{
+  int found = 0;
+  oyOptions_s * opts;
+
+  switch (e)
+  {
+  case FL_SHORTCUT:
+      if(Fl::event_key() == FL_Escape)
+      {
+        found = 1;
+      } else
+      if(Fl::event_key() == 'q'
+       && Fl::event_state() == FL_CTRL)
+     {
+        exit(0);
+        found = 1;
+      }
+    case FL_KEYBOARD:
+    {
+      int k = ((char*)Fl::event_text())[0];
+      double scale = 1.0;
+
+      switch (k)
+      {
+      case '-':
+        found = 1;
+        fprintf(stderr, "event_handler -\n" );
+        opts = findOpts( "//" OY_TYPE_STD "/scale" );
+        oyOptions_FindDouble( opts,
+                                   "scale",
+                                   0, &scale );
+        scale /= 2.0;
+        oyOptions_SetFromDouble( &opts,
+                                   "//" OY_TYPE_STD "/scale/scale",
+                                   scale, 0, OY_CREATE_NEW );
+        oyOptions_Release( &opts );
+        break;
+      case '+': // 43
+        found = 1;
+        fprintf(stderr, "event_handler +\n" );
+        opts = findOpts( "//" OY_TYPE_STD "/scale" );
+        oyOptions_FindDouble( opts,
+                                   "scale",
+                                   0, &scale );
+        scale *= 2.0;
+        oyOptions_SetFromDouble( &opts,
+                                   "//" OY_TYPE_STD "/scale/scale",
+                                   scale, 0, OY_CREATE_NEW );
+        oyOptions_Release( &opts );
+        break;
+      case '*':
+        found = 1;
+        break;
+      case '/':
+        found = 1;
+        break;
+      case '_':
+        break;
+      default:
+        break;
+      }
+    }
+    break;
+  default: 
+    break;
+  }
+  
+  return found;
+}
+
+
 void setWindowMenue                  ( Oy_Fl_Double_Window * win,
                                        Oy_Fl_Image_Widget  * oy_box,
                                        oyFilterNode_s    * node )
@@ -406,6 +492,8 @@ void setWindowMenue                  ( Oy_Fl_Double_Window * win,
       menue_->add( _("Quit"),
                    FL_CTRL + 'q', exit_cb, (void*)arg, 0 );
       menue_button_->copy(menue_->menu());
+
+      Fl::add_handler(event_handler);
   win->end();
 }
 

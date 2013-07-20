@@ -2,7 +2,7 @@
  *  Oyranos is an open source Colour Management System 
  * 
  *  @par Copyright:
- *            2009-2012 (C) Kai-Uwe Behrmann
+ *            2009-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -68,6 +68,22 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
   oyFilterNode_SetData( in, (oyStruct_s*)image_in, 0, 0 );
 
 
+  /* add a scale node */
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/scale", 0, obj );
+  options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
+  /* scale factor */
+  error = oyOptions_SetFromDouble( &options,
+                                   "//" OY_TYPE_STD "/scale/scale",
+                                   1.0, 0, OY_CREATE_NEW );
+  oyOptions_Release( &options );
+  /* append the node */
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+  if(error > 0)
+    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/scale" );
+  in = out;
+
+
   /* create a new filter node */
   if(!cc_name)
     cc_name = "//" OY_TYPE_STD "/icc";
@@ -116,10 +132,13 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
     in = out;
   }
 
+
   /* add a closing node */
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
+  if(error > 0)
+    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/output" );
 
   /* set the output node of the conversion */
   oyConversion_Set( conversion, 0, out );
@@ -233,6 +252,22 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
       fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
     in = out;
   }
+
+
+  /* add a scale node */
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/scale", 0, obj );
+  options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
+  /* scale factor */
+  error = oyOptions_SetFromDouble( &options,
+                                   "//" OY_TYPE_STD "/scale/scale",
+                                   0.2, 0, OY_CREATE_NEW );
+  oyOptions_Release( &options );
+  /* append the node */
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+  if(error > 0)
+    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
+  in = out;
 
 
   /* add a closing node */
