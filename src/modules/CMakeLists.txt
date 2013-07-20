@@ -64,6 +64,7 @@ ADD_LIBRARY( ${OY_MODULE_LIB}
              SHARED
              ${PACKAGE_NAME}_cmm_${OY_MODULE}.c
              ${PACKAGE_NAME}_cmm_${OY_MODULE}_image.c
+             ${PACKAGE_NAME}_cmm_${OY_MODULE}_image_scale.c
              ${PACKAGE_NAME}_cmm_${OY_MODULE}_image_ppm.c
            )
 TARGET_LINK_LIBRARIES ( ${OY_MODULE_LIB} oyranos ${EXTRA_LIBS} ${XCM_LIBRARIES} ${XFIXES_LIBRARIES} )

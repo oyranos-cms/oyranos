@@ -149,6 +149,26 @@ const char * oyraGetText             ( const char        * select,
 }
 const char *oyra_texts[4] = {"name","copyright","manufacturer",0};
 
+extern oyCMMinfo_s_ oyra_cmm_module;
+int  oyraInit                        ( oyStruct_s        * module_info )
+{
+  oyCMMapi_s * a = 0,
+             * a_tmp = 0,
+             * m = 0;
+
+  /* search the last filter */
+  a = oyCMMinfo_GetApi( (oyCMMinfo_s*) &oyra_cmm_module );
+  while((a_tmp = oyCMMapi_GetNext( a )) != 0)
+    a = a_tmp;
+
+  /* append new items */
+  m = oyraApi4ImageScaleCreate();
+  oyCMMapi_SetNext( a, m ); a = m;
+  m = oyraApi7ImageScaleCreate();
+  oyCMMapi_SetNext( a, m ); a = m;
+
+  return 0;
+}
 
 /** @instance oyra_cmm_module
  *  @brief    oyra module infos
@@ -170,5 +190,6 @@ oyCMMinfo_s_ oyra_cmm_module = {
   (oyCMMapi_s*) & oyra_api4_image_root,
 
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
+  oyraInit
 };
 
