@@ -12,6 +12,9 @@ oyProfile_s *  oyImage_GetProfile    ( oyImage_s         * image );
 oyStruct_s *   oyImage_GetPixelData  ( oyImage_s         * image );
 oyImage_GetPoint_f oyImage_GetPointF ( oyImage_s         * image );
 oyImage_GetLine_f oyImage_GetLineF   ( oyImage_s         * image );
+oyImage_SetPoint_f oyImage_GetSetPointF (
+                                       oyImage_s         * image );
+oyImage_SetLine_f oyImage_GetSetLineF( oyImage_s         * image );
 oyStruct_s *   oyImage_GetUserData   ( oyImage_s         * image );
 oyImage_s *    oyImage_Create        ( int                 width,
                                        int                 height,

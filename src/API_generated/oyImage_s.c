@@ -1362,6 +1362,44 @@ oyImage_GetLine_f  oyImage_GetLineF  ( oyImage_s         * image )
 
   return s->getLine;
 }
+/** Function  oyImage_GetSetPointF
+ *  @memberof oyImage_s
+ *  @brief    Get the point function
+ *
+ *  @version Oyranos: 0.9.5
+ *  @since   2013/07/22 (Oyranos: 0.9.5)
+ *  @date    2012/07/22
+ */
+oyImage_SetPoint_f oyImage_GetSetPointF ( oyImage_s         * image )
+{
+  oyImage_s_ * s = (oyImage_s_*)image;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
+
+  return s->setPoint;
+}
+/** Function  oyImage_GetSetLineF
+ *  @memberof oyImage_s
+ *  @brief    Get the Line function
+ *
+ *  @version Oyranos: 0.9.5
+ *  @since   2013/07/22 (Oyranos: 0.9.5)
+ *  @date    2012/07/22
+ */
+oyImage_SetLine_f  oyImage_GetSetLineF  ( oyImage_s         * image )
+{
+  oyImage_s_ * s = (oyImage_s_*)image;
+
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
+
+  return s->setLine;
+}
 /** Function  oyImage_GetUserData
  *  @memberof oyImage_s
  *  @brief    Get the user data
