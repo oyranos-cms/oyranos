@@ -377,7 +377,7 @@ char**             oyStringSplit_    ( const char    * text,
         list[i][len] = 0;
         if(0 && oy_debug_memory)
           printf( OY_DBG_FORMAT_""OY_PRINT_POINTER" %s %ld\n",
-                  OY_DBG_ARGS_,(intptr_t)list[i], list[i], len+1 );
+                  OY_DBG_ARGS_,(intptr_t)list[i], list[i], (long int)len+1 );
         start += len + 1;
       }
     }

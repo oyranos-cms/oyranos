@@ -878,7 +878,7 @@ int main(int argc, char *argv[])
           {
             oyjl_val * values;
             int level = 0;
-            char * keys;
+            const char ** keys;
 
             oyDeAllocFunc( json ); json = 0;
             oyjl_tree_to_json( rank_map, &level, &json );

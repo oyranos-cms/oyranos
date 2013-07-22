@@ -380,7 +380,7 @@ int main( int argc , char** argv )
 
       size = oyProfile_GetSize( p, 0 );
       /* keep total number of chars equal to original for cli print */
-      fprintf( stdout, "%s %lu bytes\n",_("Size:            "), size );
+      fprintf( stdout, "%s %lu bytes\n",_("Size:            "), (long unsigned int)size );
 
       tag = oyProfile_GetTagById( p, icSigCopyrightTag );
       tag_text = oyProfileTag_GetText( tag, &text_n, 0,0, 0, 0 );

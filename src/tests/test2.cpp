@@ -2108,7 +2108,7 @@ oyTESTRESULT_e testCMMRankMap ()
     error = oyRankMapToJSON( map, options, &rank_map_text, malloc );
     if( rank_map_text )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "JSON from Map    [%d]          %lu    ", i, strlen(rank_map_text) );
+    "JSON from Map    [%d]          %lu    ", i, (long unsigned int)strlen(rank_map_text) );
     } else
     { PRINT_SUB( oyTESTRESULT_FAIL,
     "JSON from Map failed  [%d]            ", i );
