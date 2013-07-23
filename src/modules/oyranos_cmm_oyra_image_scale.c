@@ -100,7 +100,7 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
       oyRectangle_s * array_pix = oyRectangle_New(0);
 
       oyRectangle_SetByRectangle( r, ticket_roi );
-      oyRectangle_Scale( r, scale );
+      /*oyRectangle_Scale( r, scale );*/
 
       new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
       oyPixelAccess_SetArray( new_ticket, 0 );
@@ -118,9 +118,22 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
 
       if(oyRectangle_CountPoints(  new_ticket_roi ) > 0)
       {
-        oyImage_s * new_ticket_image = oyPixelAccess_GetOutputImage( new_ticket );
-        int w,h,x,y,chan;
-        oyArray2d_s * new_ticket_array = oyPixelAccess_GetArray( new_ticket );
+        oyImage_s * ticket_image = oyPixelAccess_GetOutputImage( ticket ),
+                  * new_ticket_image = oyImage_Copy( ticket_image, ticket_image->oy_ );
+        int nw,nh,w,h,x,y;
+        oyArray2d_s * new_ticket_array,
+                    * array_in,
+                    * array_out;
+        uint8_t ** array_in_data,
+                ** array_out_data;
+        oyDATATYPE_e data_type_in = oyToDataType_m( oyImage_GetPixelLayout( ticket_image, oyLAYOUT ) );
+        int bps_in = oyDataTypeGetSize( data_type_in );
+        int w_in, stride_in;
+        int channels = oyToChannels_m( oyImage_GetPixelLayout( ticket_image, oyLAYOUT ) );
+
+        error = oyPixelAccess_SetOutputImage ( new_ticket, new_ticket_image );
+        if(error) WARNc2_S("%s %d", _("found issues"),error);
+        new_ticket_array = oyPixelAccess_GetArray( new_ticket );
 
         /* fill the array rectangle for the following filter */
         if(!new_ticket_array)
@@ -143,37 +156,36 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
                      oyRectangle_Show( new_ticket_roi ) );
         result = oyFilterNode_Run( input_node, plug, new_ticket );
 
-        /* The image is used as intermediate cache between the forward and
-           backward array. @todo use direct array copy oyArray2d_DataCopy() */
-        DBGs_PROG2_S( new_ticket,"%s[%d]","Read new_ticket->array into image",
-                     oyStruct_GetId( (oyStruct_s*)image ) );
-        error = oyImage_ReadArray( new_ticket_image,
-                                   new_ticket_roi,
-                                   new_ticket_array, 0 );
-        if(error) WARNc2_S("%s %d", _("found issues"),error);
-        DBGs_PROG2_S( ticket, "%s[%d]",
-                     "Fill ticket->array from new_ticket->output_image",
-                    oyStruct_GetId( (oyStruct_s*)new_ticket_image ) );
-        chan = oyToChannels_m (oyImage_GetPixelLayout( new_ticket_image, oyLAYOUT ));
-        w = oyImage_GetWidth( new_ticket_image );
-        h = oyImage_GetHeight( new_ticket_image );
-        for(y = 0; y < h; ++y)
+        array_in = oyPixelAccess_GetArray( new_ticket );
+        array_out = oyPixelAccess_GetArray( ticket );
+        array_in_data  = oyArray2d_GetData( array_in );
+        array_out_data = oyArray2d_GetData( array_out );
+        w_in =  (int)(oyArray2d_GetWidth(array_in)+0.5);
+        stride_in = w_in * bps_in;
+        w = oyArray2d_GetWidth( array_out )/channels;
+        h = oyArray2d_GetHeight( array_out );
+        nw = oyArray2d_GetWidth( array_in )/channels;
+        nh = oyArray2d_GetHeight( array_in );
+        for(y = oyPixelAccess_GetStart( new_ticket, 1 )
+                                    + oyRectangle_GetGeo1( new_ticket_roi, 1 );
+              y < h; ++y)
         {
           int is_allocated = 0;
-          void * p = oyImage_GetPointF(new_ticket_image)( new_ticket_image, 0,y, 0, &is_allocated );
+          void * p;
+          if(y/scale >= nh) break;
+          for(x = oyPixelAccess_GetStart( new_ticket, 0 )
+                                    + oyRectangle_GetGeo1( new_ticket_roi, 0 );
+                x < w; ++x)
+          {
+            if(x/scale >= nw) continue;
+            memcpy( &array_out_data[y][x*channels*bps_in],
+                    &array_in_data [(int)(y/scale)][(int)(x/scale)*channels*bps_in], channels*bps_in );
+            /*p = oyImage_GetPointF(new_ticket_image)( new_ticket_image, x,y, -1, &is_allocated );
+            oyImage_GetSetPointF(ticket_image)( ticket_image, x,y, -1, p );*/
+          }
         }
-        error = oyImage_FillArray( new_ticket_image,
-                                   new_ticket_roi, 1,
-                                   &ticket_array, new_ticket_roi,
-                                   0 );
-        if(error) WARNc2_S("%s %d", _("found issues"),error);
 
-        oyRectangle_SetGeo( array_pix, 0,0,
-                        oyArray2d_GetDataGeo1( ticket_array, 2 ),
-                        oyArray2d_GetDataGeo1( ticket_array, 3 ) );
-        error = oyArray2d_SetFocus( ticket_array, array_pix );
-        if(error) WARNc2_S("%s %d", _("found issues"),error);
-
+        oyImage_Release( &ticket_image );
         oyImage_Release( &new_ticket_image );
         oyArray2d_Release( &new_ticket_array );
         oyPixelAccess_Release( &new_ticket );
