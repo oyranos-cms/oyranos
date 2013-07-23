@@ -5,16 +5,17 @@
 #include "oyranos_image_internal.h"
 
 /**
- *  @internal
  *  Function oyImage_GetArray2dPointContinous
  *  @memberof oyImage_s
  *  @brief   Continous layout pixel accessor
  *
  *  Will be used by default.
  *
- *  @version Oyranos: 0.1.8
+ *  @see oyImage_GetPoint_f()
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2013/07/21
  *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2008/06/26
  */
 oyPointer oyImage_GetArray2dPointContinous (
                                          oyImage_s       * image,
@@ -26,16 +27,17 @@ oyPointer oyImage_GetArray2dPointContinous (
   oyImage_s_ * image_ = oyImagePriv_m(image);
   oyArray2d_s_ * a = (oyArray2d_s_*) image_->pixel_data;
   unsigned char ** array2d = a->array2d;
-  int pos = (point_x * image_->layout_[oyCHANS]
+  int pos;
+  if(channel < 0)
+    channel = 0;
+  pos = (point_x * image_->layout_[oyCHANS]
              + image_->layout_[oyCHAN0+channel])
             * image_->layout_[oyDATA_SIZE];
   if(is_allocated) *is_allocated = 0;
   return &array2d[ point_y ][ pos ]; 
-
 }
 
 /** 
- *  @internal
  *  Function oyImage_GetArray2dLineContinous
  *  @memberof oyImage_s
  *  @brief   Continous layout line accessor
@@ -43,8 +45,8 @@ oyPointer oyImage_GetArray2dPointContinous (
  *  Will be used by default.
  *
  *  @version Oyranos: 0.1.8
+ *  @date    2008/08/21
  *  @since   2008/08/23 (Oyranos: 0.1.8)
- *  @date    2008/08/23
  */
 oyPointer oyImage_GetArray2dLineContinous (
                                          oyImage_s       * image,
@@ -63,16 +65,17 @@ oyPointer oyImage_GetArray2dLineContinous (
 }
 
 /**  
- *  @internal
  *  Function oyImage_SetArray2dPointContinous
  *  @memberof oyImage_s
  *  @brief   Continous layout pixel accessor
  *
  *  Will be used by default.
  *
- *  @version Oyranos: 0.1.10
+ *  @see oyImage_SetPoint_f()
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2013/07/21
  *  @since   2009/02/22 (Oyranos: 0.1.10)
- *  @date    2009/02/22
  */
 int       oyImage_SetArray2dPointContinous (
                                          oyImage_s       * image,
@@ -84,15 +87,19 @@ int       oyImage_SetArray2dPointContinous (
   oyImage_s_ * image_ = oyImagePriv_m(image);
   oyArray2d_s_ * a = (oyArray2d_s_*) image_->pixel_data;
   unsigned char ** array2d = a->array2d;
-  int pos = (point_x * image_->layout_[oyCHANS]
-             + image_->layout_[oyCHAN0+channel])
-            * image_->layout_[oyDATA_SIZE];
+  int pos;
   oyDATATYPE_e data_type = oyToDataType_m( image_->layout_[oyLAYOUT] );
   int byteps = oyDataTypeGetSize( data_type );
   int channels = 1;
 
   if(channel < 0)
     channels = oyToChannels_m( image_->layout_[oyLAYOUT] );
+
+  if(channel < 0)
+    channel = 0;
+  pos = (point_x * image_->layout_[oyCHANS]
+             + image_->layout_[oyCHAN0+channel])
+            * image_->layout_[oyDATA_SIZE];
 
   memcpy( &array2d[ point_y ][ pos ], data, byteps * channels );
 
@@ -109,8 +116,8 @@ int       oyImage_SetArray2dPointContinous (
  *  Will be used by default.
  *
  *  @version Oyranos: 0.1.10
- *  @since   2009/02/22 (Oyranos: 0.1.10)
  *  @date    2009/02/22
+ *  @since   2009/02/22 (Oyranos: 0.1.10)
  */
 int       oyImage_SetArray2dLineContinous (
                                          oyImage_s       * image,
