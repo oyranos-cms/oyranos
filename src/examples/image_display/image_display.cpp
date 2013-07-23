@@ -396,12 +396,14 @@ event_handler(int e)
 {
   int found = 0;
   oyOptions_s * opts;
+  static double scale_changer = 2.0;
 
   switch (e)
   {
   case FL_SHORTCUT:
       if(Fl::event_key() == FL_Escape)
       {
+        exit(0);
         found = 1;
       } else
       if(Fl::event_key() == 'q'
@@ -424,7 +426,7 @@ event_handler(int e)
         oyOptions_FindDouble( opts,
                                    "scale",
                                    0, &scale );
-        scale /= 2.0;
+        scale /= scale_changer;
         oyOptions_SetFromDouble( &opts,
                                    "//" OY_TYPE_STD "/scale/scale",
                                    scale, 0, OY_CREATE_NEW );
@@ -437,7 +439,7 @@ event_handler(int e)
         oyOptions_FindDouble( opts,
                                    "scale",
                                    0, &scale );
-        scale *= 2.0;
+        scale *= scale_changer;
         oyOptions_SetFromDouble( &opts,
                                    "//" OY_TYPE_STD "/scale/scale",
                                    scale, 0, OY_CREATE_NEW );
@@ -445,11 +447,25 @@ event_handler(int e)
         break;
       case '*':
         found = 1;
+        scale_changer += (scale_changer-1.0)*.2;
         break;
       case '/':
         found = 1;
+        scale_changer -= (scale_changer-1.0)*.2;
         break;
-      case '_':
+      case '1':
+        scale = 1.0;
+        found = 1;
+        fprintf(stderr, "event_handler +\n" );
+        opts = findOpts( "//" OY_TYPE_STD "/scale" );
+        oyOptions_FindDouble( opts,
+                                   "scale",
+                                   0, &scale );
+        scale = 1.0;
+        oyOptions_SetFromDouble( &opts,
+                                   "//" OY_TYPE_STD "/scale/scale",
+                                   scale, 0, OY_CREATE_NEW );
+        oyOptions_Release( &opts );
         break;
       default:
         break;
