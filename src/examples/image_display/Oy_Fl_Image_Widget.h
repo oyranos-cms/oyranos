@@ -23,8 +23,9 @@ void               oyShowConversion_ ( oyConversion_s    * conversion,
 
 class Oy_Fl_Image_Widget : public Fl_Widget, public Oy_Widget
 {
-  int e, ox, oy, px, py;
+  int e, ox, oy;
 public:
+  int px, py;
   int handle(int event)
   {
       e = event;
