@@ -42,6 +42,7 @@ extern "C" {
 #include <FL/Fl_Menu_Button.H>
 
 oyConversion_s * idcc = 0;
+Oy_Fl_Image_Widget * oy_widget = 0;
 
 extern "C" {
 /* forward declaration of oyranos_alpha.c */
@@ -135,7 +136,6 @@ main(int argc, char** argv)
   Oy_Fl_Shader_Box * oy_shader_box = 0;
   Oy_Fl_GL_Box * oy_gl_box = 0;
   Oy_Fl_Image_Box * oy_box = 0;
-  Oy_Fl_Image_Widget * oy_widget = 0;
   Oy_Fl_Double_Window * win = createWindow( &oy_widget, gl_box | logo );
   int error = 0;
   if(oy_widget)
@@ -452,6 +452,30 @@ event_handler(int e)
       case '/':
         found = 1;
         scale_changer -= (scale_changer-1.0)*.2;
+        break;
+      case '0':
+        {
+          oyConversion_s * cc = oy_widget->conversion();
+          oyImage_s * image = oyConversion_GetImage( cc, OY_INPUT );
+          double widget_width = oy_widget->w(),
+                 widget_height = oy_widget->h(),
+                 image_height = oyImage_GetHeight( image ),
+                 image_width = oyImage_GetWidth( image );
+          if(widget_width/image_width < widget_height/image_height)
+            scale = widget_width/image_width;
+          else
+            scale = widget_height/image_height;
+          /* reset position to zero */
+          oy_widget->px = 0;
+          oy_widget->py = 0;
+        }
+        found = 1;
+        fprintf(stderr, "event_handler +\n" );
+        opts = findOpts( "//" OY_TYPE_STD "/scale" );
+        oyOptions_SetFromDouble( &opts,
+                                   "//" OY_TYPE_STD "/scale/scale",
+                                   scale, 0, OY_CREATE_NEW );
+        oyOptions_Release( &opts );
         break;
       case '1':
         scale = 1.0;
