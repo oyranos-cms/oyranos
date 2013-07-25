@@ -46,7 +46,7 @@
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
  *  @version Oyranos: 0.9.5
- *  @date    2013/06/10
+ *  @date    2013/07/25
  *  @since   2013/06/10 (Oyranos: 0.9.5)
  */
 int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
@@ -85,112 +85,107 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
     /* select node */
     input_node = oyFilterNode_GetPlugNode( node, 0 );
 
-    /* find scale factor */
+    /* find filters own scale factor */
     error = oyOptions_FindDouble( node_opts,
                                   "//" OY_TYPE_STD "/scale/scale",
                                   0, &scale );
     if(error) WARNc2_S("%s %d", _("found issues"),error);
-    WARNc2_S("%s %f", "scale factor:", scale);
+
+    oyOptions_Release( &node_opts );
 
     if(scale != 1.0)
     {
-      oyRectangle_s * new_ticket_roi;
+      int image_width = oyImage_GetWidth(image);
+      oyRectangle_s * new_ticket_roi,
+                    * roi_pix = oyRectangle_NewWith( 0,0,+
+                                     oyImage_GetWidth(image),
+                                     oyImage_GetHeight(image), 0);
       oyPixelAccess_s * new_ticket = 0;
-      oyRectangle_s * r = oyRectangle_New(0);
-      oyRectangle_s * array_pix = oyRectangle_New(0);
-
-      oyRectangle_SetByRectangle( r, ticket_roi );
-      /*oyRectangle_Scale( r, scale );*/
 
       new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
       oyPixelAccess_SetArray( new_ticket, 0 );
 
       new_ticket_roi = oyPixelAccess_GetOutputROI( new_ticket );
-      oyRectangle_SetByRectangle( new_ticket_roi, r );
 
-      /* use the correct source pixels */
+      /* adapt the access start */
       oyPixelAccess_ChangeRectangle( new_ticket,
-                                     oyPixelAccess_GetStart( new_ticket, 0 )
-                                     + oyRectangle_GetGeo1( new_ticket_roi, 0 ),
-                                     oyPixelAccess_GetStart( new_ticket, 1 )
-                                     + oyRectangle_GetGeo1( new_ticket_roi, 1 ),
-                                     new_ticket_roi );
+                          oyPixelAccess_GetStart( ticket, 0 ) / scale,
+                          oyPixelAccess_GetStart( ticket, 1 ) / scale, 0 );
+
+      /* use the available source image area */
+      oyRectangle_Scale( new_ticket_roi, 1.0/scale );
+
+      if(oy_debug > 2)
+      {
+        oyRectangle_Scale( new_ticket_roi, image_width );
+        oyra_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_
+                  "%s %f  new_ticket_roi: %s",OY_DBG_ARGS_, "scale factor:", scale, oyRectangle_Show(new_ticket_roi) );
+        oyRectangle_Scale( new_ticket_roi, 1.0/image_width );
+      }
+      if(oy_debug > 2)
+        oyra_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_
+                  "roi_pix: %s start_x:%g start_y:%g",OY_DBG_ARGS_,
+                  oyRectangle_Show(roi_pix), oyPixelAccess_GetStart( new_ticket, 0 )*image_width, oyPixelAccess_GetStart( new_ticket, 1 )*image_width );
+
+      /* prevent exceeding the the source image area , while moving the target roi */
+      oyRectangle_Scale( roi_pix, 1.0/image_width );
+      *oyRectangle_SetGeo1( roi_pix, 2 ) -= oyPixelAccess_GetStart( new_ticket, 0 ) - oyRectangle_GetGeo1( new_ticket_roi, 0 );
+      *oyRectangle_SetGeo1( roi_pix, 3 ) -= oyPixelAccess_GetStart( new_ticket, 1 ) - oyRectangle_GetGeo1( new_ticket_roi, 1 );
+      oyRectangle_Trim( new_ticket_roi, roi_pix );
+      oyRectangle_Scale( roi_pix, image_width );
+      if(oy_debug > 2)
+        oyra_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_
+                  "roi_pix: %s",OY_DBG_ARGS_, oyRectangle_Show(roi_pix) );
 
       if(oyRectangle_CountPoints(  new_ticket_roi ) > 0)
       {
-        oyImage_s * ticket_image = oyPixelAccess_GetOutputImage( ticket ),
-                  * new_ticket_image = oyImage_Copy( ticket_image, ticket_image->oy_ );
         int nw,nh,w,h,x,y;
-        oyArray2d_s * new_ticket_array,
-                    * array_in,
+        oyArray2d_s * array_in,
                     * array_out;
         uint8_t ** array_in_data,
                 ** array_out_data;
-        oyDATATYPE_e data_type_in = oyToDataType_m( oyImage_GetPixelLayout( ticket_image, oyLAYOUT ) );
+        /* get pixel layout infos for copying */
+        oyDATATYPE_e data_type_in = oyToDataType_m( oyImage_GetPixelLayout( image, oyLAYOUT ) );
         int bps_in = oyDataTypeGetSize( data_type_in );
-        int w_in, stride_in;
-        int channels = oyToChannels_m( oyImage_GetPixelLayout( ticket_image, oyLAYOUT ) );
+        int channels = oyToChannels_m( oyImage_GetPixelLayout( image, oyLAYOUT ) );
 
-        error = oyPixelAccess_SetOutputImage ( new_ticket, new_ticket_image );
-        if(error) WARNc2_S("%s %d", _("found issues"),error);
-        new_ticket_array = oyPixelAccess_GetArray( new_ticket );
-
-        /* fill the array rectangle for the following filter */
-        if(!new_ticket_array)
+        /* get the source pixels */
+        if(oy_debug > 2)
         {
-          DBGs_PROG3_S( new_ticket, "%s[%d] %s",
-                      "Fill new_ticket->array from new_ticket->output_image",
-                      oyStruct_GetId( (oyStruct_s*)new_ticket_image ),
-                      oyRectangle_Show( new_ticket_roi ) );
-          oyImage_FillArray( new_ticket_image,
-                             new_ticket_roi, 0,
-                             &new_ticket_array, new_ticket_roi,
-                             0 );
-          oyPixelAccess_SetArray( new_ticket, new_ticket_array );
-        }
-
-        /* start new call into branch */
-        DBGs_PROG3_S( new_ticket, "%s[%d] %s",
+          oyRectangle_Scale( new_ticket_roi, image_width );
+          oyra_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_
+                     "%s[%d] %s",OY_DBG_ARGS_,
                      "Run new_ticket through filter in node",
                      oyStruct_GetId( (oyStruct_s*)node ),
                      oyRectangle_Show( new_ticket_roi ) );
+          oyRectangle_Scale( new_ticket_roi, 1.0/image_width );
+        }
         result = oyFilterNode_Run( input_node, plug, new_ticket );
 
+        /* get the channel buffers */
         array_in = oyPixelAccess_GetArray( new_ticket );
         array_out = oyPixelAccess_GetArray( ticket );
         array_in_data  = oyArray2d_GetData( array_in );
         array_out_data = oyArray2d_GetData( array_out );
-        w_in =  (int)(oyArray2d_GetWidth(array_in)+0.5);
-        stride_in = w_in * bps_in;
         w = oyArray2d_GetWidth( array_out )/channels;
         h = oyArray2d_GetHeight( array_out );
         nw = oyArray2d_GetWidth( array_in )/channels;
         nh = oyArray2d_GetHeight( array_in );
-        for(y = oyPixelAccess_GetStart( new_ticket, 1 )
-                                    + oyRectangle_GetGeo1( new_ticket_roi, 1 );
-              y < h; ++y)
+
+        /* do the scaling while copying the channels */
+        for(y = 0; y < h; ++y)
         {
-          int is_allocated = 0;
-          void * p;
           if(y/scale >= nh) break;
-          for(x = oyPixelAccess_GetStart( new_ticket, 0 )
-                                    + oyRectangle_GetGeo1( new_ticket_roi, 0 );
-                x < w; ++x)
+          for(x = 0; x < w; ++x)
           {
             if(x/scale >= nw) continue;
             memcpy( &array_out_data[y][x*channels*bps_in],
                     &array_in_data [(int)(y/scale)][(int)(x/scale)*channels*bps_in], channels*bps_in );
-            /*p = oyImage_GetPointF(new_ticket_image)( new_ticket_image, x,y, -1, &is_allocated );
-            oyImage_GetSetPointF(ticket_image)( ticket_image, x,y, -1, p );*/
           }
         }
 
-        oyImage_Release( &ticket_image );
-        oyImage_Release( &new_ticket_image );
-        oyArray2d_Release( &new_ticket_array );
         oyPixelAccess_Release( &new_ticket );
-        oyRectangle_Release( &array_pix );
-        oyRectangle_Release( &r );
+        oyRectangle_Release( &new_ticket_roi );
       }
 
     } else /* scale == 1.0 */
