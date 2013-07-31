@@ -1810,8 +1810,14 @@ OYAPI int OYEXPORT
         /* search for a key ending on _serial to strip namespaces */
         for(i = 2; i+1 < texts_n && error <= 0; i+=2)
         {
-          int key_len = strlen(texts[i+0]),
-              s_len = strlen("serial");
+          int key_len, s_len;
+
+          if(!texts[i+0])
+            continue;
+
+          key_len = strlen(texts[i+0]);
+          s_len = strlen("serial");
+
           if(key_len > s_len &&
              strcmp(&texts[i+0][key_len-s_len-1],"_serial") == 0)
           {
