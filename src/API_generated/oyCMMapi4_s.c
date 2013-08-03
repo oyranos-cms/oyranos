@@ -100,11 +100,10 @@ OYAPI int OYEXPORT
 
 
 /* Include "CMMapi4.public_methods_definitions.c" { */
-/** Function    oyCMMapi4_Set
+/** Function    oyCMMapi4_Create
  *  @memberof   oyCMMapi4_s
  *  @brief      Custom CMMapi4 constructor
  *
- *  @param         api                 the struct
  *  @param         init                custom initialisation
  *  @param         msg_set             message function setter
  *  @param         registration        the modules @ref registration string,
@@ -120,13 +119,13 @@ OYAPI int OYEXPORT
  *  the data type of the context returned by oyCMMapi4_s::oyCMMFilterNode_ContextToMem_f, mandatory in case of a set oyCMMapi4_s::oyCMMFilterNode_ContextToMem
  *  e.g. oyCOLOUR_ICC_DEVICE_LINK / "oyDL"
  *  @param         contextToMem 
- *  mandatory for context producing filters, e.g. "//colour/icc"
- *  @param         getText             optional for a set 
+ *  only mandatory for context producing filters, e.g. "//colour/icc"
+ *  @param         getText             optionally set a 
  *                                     oyCMMFilterNode_ContextToMem,
  *  used to override a Oyranos side hash creation
  *  @param         ui                  a UI description
- *  Obligatory is a implemented oyCMMapi4_s::ui->getText( x, y ) call. The x
- *  argument shall cover "name" and "help"
+ *  provide a oyCMMapi4_s::ui->getText( select, type ) call. The "select"
+ *  argument shall cover at least "name" and "help"
  *  @param         object              a optional object
  *
  *  @version Oyranos: 0.9.5
