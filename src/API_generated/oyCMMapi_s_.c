@@ -8,12 +8,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/24
+ *  @date     2013/08/16
  */
 
 
@@ -361,7 +361,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
     error = 1;
   else
   {
-    if(module_api < 800 ||  /* last API break */
+    if(module_api < 905 ||  /* last API break */
        OYRANOS_VERSION < module_api)
     {
       error = 1;

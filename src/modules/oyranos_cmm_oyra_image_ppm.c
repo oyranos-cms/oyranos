@@ -299,7 +299,7 @@ oyCMMui_s_   oyra_api4_image_write_ppm_ui = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,9,0},                            /**< int32_t module_api[3] */
+  {0,9,5},                            /**< int32_t module_api[3] */
 
   oyraFilter_ImageOutputPPMValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
@@ -337,7 +337,7 @@ oyCMMapi4_s_ oyra_api4_image_write_ppm = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_ppm.file_write._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,9,0},                  /**< int32_t module_api[3] */
+  {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -383,7 +383,7 @@ oyCMMapi7_s_ oyra_api7_image_write_ppm = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_ppm.file_write._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,9,0},                  /**< int32_t module_api[3] */
+  {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -1126,7 +1126,7 @@ oyCMMui_s_   oyra_api4_ui_image_input_ppm = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,9,0},                            /**< int32_t module_api[3] */
+  {0,9,5},                            /**< int32_t module_api[3] */
 
   oyraFilter_ImageInputPPMValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
@@ -1164,7 +1164,7 @@ oyCMMapi4_s_ oyra_api4_image_input_ppm = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_ppm.file_read._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,9,0},                  /**< int32_t module_api[3] */
+  {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
@@ -1210,7 +1210,7 @@ oyCMMapi7_s_ oyra_api7_image_input_ppm = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_ppm.file_read._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,9,0},                  /**< int32_t module_api[3] */
+  {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
 
