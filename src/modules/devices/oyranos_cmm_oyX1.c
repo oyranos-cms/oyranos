@@ -665,7 +665,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
             else
               o = oyOption_FromRegistration( OYX1_MONITOR_REGISTRATION OY_SLASH
                                 "device_rectangle", 0 );
-            error = oyOption_StructMoveIn( o, (oyStruct_s**) &rect );
+            error = oyOption_MoveInStruct( o, (oyStruct_s**) &rect );
             if(has)
               oyOption_Release( &o );
             else
@@ -867,7 +867,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
 
           if(prof)
           {
-            t_err = oyOption_StructMoveIn( o, (oyStruct_s**) &prof );
+            t_err = oyOption_MoveInStruct( o, (oyStruct_s**) &prof );
             if(t_err > 0)
               error = t_err;
           }
@@ -888,7 +888,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
 
             /* Show the "icc_profile" option is understood. */
             prof = 0;
-            error = oyOption_StructMoveIn( o, (oyStruct_s**) &prof );
+            error = oyOption_MoveInStruct( o, (oyStruct_s**) &prof );
             error = -1;
           }
 

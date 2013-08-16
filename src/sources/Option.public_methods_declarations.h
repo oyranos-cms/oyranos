@@ -53,7 +53,7 @@ OYAPI const  char *  OYEXPORT
                 oyOption_GetRegistration (
                                        oyOption_s        * option );
 OYAPI int  OYEXPORT
-                 oyOption_StructMoveIn(oyOption_s        * option,
+                 oyOption_MoveInStruct(oyOption_s        * option,
                                        oyStruct_s       ** s );
 OYAPI oyStruct_s *  OYEXPORT
                 oyOption_GetStruct   ( oyOption_s        * option,

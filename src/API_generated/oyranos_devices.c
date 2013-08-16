@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/03/14
+ *  @date     2013/08/16
  */
 
 
@@ -475,7 +475,7 @@ OYAPI int  OYEXPORT
       if(p)
       {
         has = 1;
-        error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
+        error = oyOption_MoveInStruct( o, (oyStruct_s**) &p );
       }
       else
       /** Warn on not found profile. */

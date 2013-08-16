@@ -372,14 +372,14 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
                 _DBG_ARGS_, texts[i]);
             /* Show the "icc_profile" option is understood. */
             p = 0;
-            error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
+            error = oyOption_MoveInStruct( o, (oyStruct_s**) &p );
             error = -1;
           } else
           {
             p = oyProfile_FromMem( size, (const oyPointer)data, 0, 0 );
             o = oyOption_FromRegistration( CMM_BASE_REG OY_SLASH "icc_profile",
                                            0 );
-            error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
+            error = oyOption_MoveInStruct( o, (oyStruct_s**) &p );
             oyOptions_MoveIn( *oyConfig_GetOptions(device,"data"), &o, -1 );
           }
         }

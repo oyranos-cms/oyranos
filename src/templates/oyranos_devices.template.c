@@ -460,7 +460,7 @@ OYAPI int  OYEXPORT
       if(p)
       {
         has = 1;
-        error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
+        error = oyOption_MoveInStruct( o, (oyStruct_s**) &p );
       }
       else
       /** Warn on not found profile. */

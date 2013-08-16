@@ -1326,14 +1326,14 @@ int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
       error = !o;
 
       if(error <= 0)
-        error = oyOption_StructMoveIn( o, oy_struct );
+        error = oyOption_MoveInStruct( o, oy_struct );
 
       if(error <= 0)
         error = oyOptions_MoveIn( (*obj), &o, -1 );
     }
 
     if(error <= 0 && o && *oy_struct)
-      error = oyOption_StructMoveIn( o, oy_struct );
+      error = oyOption_MoveInStruct( o, oy_struct );
     oyOption_Release( &o );
   }
 
@@ -1631,7 +1631,7 @@ OYAPI int  OYEXPORT
     if(oyFilterRegistrationMatch( driver_context_type, "xml", 0 ))
     {
       opts_tmp = oyOptions_FromText( (char*)driver_context, 0, object );
-      error = oyOption_StructMoveIn ( o, (oyStruct_s**) &opts_tmp );
+      error = oyOption_MoveInStruct ( o, (oyStruct_s**) &opts_tmp );
     }
     else
       error = oyOption_SetFromData( o, driver_context, driver_context_size );

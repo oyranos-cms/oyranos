@@ -347,7 +347,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
                                      CMM_BASE_REG OY_SLASH "device_context", 0);
 
             oyBlob_SetFromData(context_blob, (oyPointer) device_list[i], sizeof(SANE_Device), "sane");
-            oyOption_StructMoveIn(context_opt, (oyStruct_s **) & context_blob);
+            oyOption_MoveInStruct(context_opt, (oyStruct_s **) & context_blob);
             oyOptions_MoveIn(*oyConfig_GetOptions(device,"data"), &context_opt, -1);
          }
 

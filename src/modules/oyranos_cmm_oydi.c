@@ -385,7 +385,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
   else
   {
     oyStruct_s * s = (oyStruct_s*) oyConfigs_Copy( devices, 0 );
-    oyOption_StructMoveIn( o, &s );
+    oyOption_MoveInStruct( o, &s );
   }
   oyOption_Release( &o );
 

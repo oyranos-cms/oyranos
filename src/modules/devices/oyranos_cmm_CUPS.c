@@ -1277,7 +1277,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
           {
             oyOption_s * o = oyOption_FromRegistration(
                                       CMM_BASE_REG OY_SLASH "icc_profile", 0 );
-            int l_error = oyOption_StructMoveIn( o, (oyStruct_s**) &p );
+            int l_error = oyOption_MoveInStruct( o, (oyStruct_s**) &p );
             oyOptions_MoveIn( *oyConfig_GetOptions(device,"data"), &o, -1 );
             if(l_error)
               error = l_error;

@@ -391,7 +391,7 @@ int            oyOption_SetFromInt_  ( oyOption_s_       * obj,
 
 /**
  *  @internal
- *  Function oyOption_StructMoveIn_
+ *  Function oyOption_MoveInStruct_
  *  @memberof oyOption_s
  *  @brief   value filled by a oyStruct_s object
  *
@@ -399,11 +399,11 @@ int            oyOption_SetFromInt_  ( oyOption_s_       * obj,
  *  @param         s                   the Oyranos style object
  *  @return                            error
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.5
+ *  @date    2013/08/13
  *  @since   2009/01/28 (Oyranos: 0.1.10)
- *  @date    2009/01/28
  */
-int            oyOption_StructMoveIn_( oyOption_s_       * option,
+int            oyOption_MoveInStruct_( oyOption_s_       * option,
                                        oyStruct_s       ** s )
 {
   int error = !option;

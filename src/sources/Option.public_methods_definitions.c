@@ -726,7 +726,7 @@ const char *   oyOption_GetRegistration (
   return s->registration;
 }
 
-/** Function oyOption_StructMoveIn
+/** Function oyOption_MoveInStruct
  *  @memberof oyOption_s
  *  @brief   value filled by a oyStruct_s object
  *
@@ -734,11 +734,11 @@ const char *   oyOption_GetRegistration (
  *  @param         s                   the Oyranos style object
  *  @return                            error
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.5
+ *  @date    2013/08/13
  *  @since   2009/01/28 (Oyranos: 0.1.10)
- *  @date    2009/01/28
  */
-int            oyOption_StructMoveIn ( oyOption_s        * option,
+int            oyOption_MoveInStruct ( oyOption_s        * option,
                                        oyStruct_s       ** oystruct )
 {
   int error = !option;
@@ -749,7 +749,7 @@ int            oyOption_StructMoveIn ( oyOption_s        * option,
 
   oyCheckType__m( oyOBJECT_OPTION_S, return 1 )
 
-  return oyOption_StructMoveIn_( s, oystruct );
+  return oyOption_MoveInStruct_( s, oystruct );
 }
 
 /** Function oyOption_GetStruct

@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/03/01
+ *  @date     2013/08/16
  */
 
 
@@ -1604,6 +1604,7 @@ int    oyImage_ToFile                ( oyImage_s         * image,
 
   return error;
 }
+
 
 /* } Include "Image.public_methods_definitions.c" */
 
