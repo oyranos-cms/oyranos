@@ -1,0 +1,9 @@
+/** @struct  oyNamedColor_s
+ *  @ingroup objects_single_color
+ *  @extends oyStruct_s
+ *  @brief   Single Color object
+ *
+ *  @version Oyranos: 0.9.5
+ *  @since   2007/10/00 (Oyranos: 0.1.8)
+ *  @date    2013/08/15
+ */

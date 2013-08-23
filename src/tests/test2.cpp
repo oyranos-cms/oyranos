@@ -2833,11 +2833,12 @@ extern "C" {int oyGetKey(ckdb Key*);}
 #endif
 
 #include "oyFilterCore_s_.h"
+#include "oyNamedColor_s.h"
 
 oyTESTRESULT_e testCMMnmRun ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
-  oyNamedColour_s * c = 0;
+  oyNamedColor_s * c = 0;
   oyProfile_s * prof = oyProfile_FromStd( oyEDITING_XYZ, NULL );
   int error = 0, l_error = 0,
       i,n = 10;
@@ -2847,19 +2848,19 @@ oyTESTRESULT_e testCMMnmRun ()
   double clck = oyClock();
   for(i = 0; i < n*10000; ++i)
   {
-    c = oyNamedColour_Create( NULL, NULL,0, prof, 0 );
-    oyNamedColour_Release( &c );
+    c = oyNamedColor_Create( NULL, NULL,0, prof, 0 );
+    oyNamedColor_Release( &c );
   }
   clck = oyClock() - clck;
 
-  c = oyNamedColour_Create( NULL, NULL,0, prof, 0 );
+  c = oyNamedColor_Create( NULL, NULL,0, prof, 0 );
   if( c )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyNamedColour_Create( )             %s",
+    "oyNamedColor_Create( )             %s",
                    oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Obj."));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyNamedColour_Create( )                            " );
+    "oyNamedColor_Create( )                            " );
   }
 
 
@@ -3441,7 +3442,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   for(i = 0; i < n*10 && error <= 0; ++i)
   {
-    l_error = oyNamedColour_SetColourStd ( c, oyASSUMED_WEB,
+    l_error = oyNamedColor_SetColorStd ( c, oyASSUMED_WEB,
                                            (oyPointer)d, oyDOUBLE, 0, options );
     if(error <= 0)
       error = l_error;
@@ -3450,11 +3451,11 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyNamedColour_SetColourStd()        %s",
+    "oyNamedColor_SetColorStd()        %s",
                           oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyNamedColour_SetColourStd() oyASSUMED_WEB         " );
+    "oyNamedColor_SetColorStd() oyASSUMED_WEB         " );
   }
 
   p_in = oyProfile_FromStd ( oyASSUMED_WEB, NULL );

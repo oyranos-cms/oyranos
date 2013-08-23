@@ -5,6 +5,8 @@ SET( CFILES_OBJECT_IMAGING_PUBLIC
 	${GENDIR}oyArray2d_s.c
 	${GENDIR}oyConnectorImaging_s.c
 	${GENDIR}oyConversion_s.c
+	${GENDIR}oyNamedColor_s.c
+	${GENDIR}oyNamedColors_s.c
 	${GENDIR}oyImage_s.c
 	${GENDIR}oyPixelAccess_s.c
 	${GENDIR}${PACKAGE_NAME}_conversion.c
@@ -16,6 +18,8 @@ SET( CFILES_OBJECT_IMAGING
 	${GENDIR}oyArray2d_s_.c
 	${GENDIR}oyConnectorImaging_s_.c
 	${GENDIR}oyConversion_s_.c
+	${GENDIR}oyNamedColor_s_.c
+	${GENDIR}oyNamedColors_s_.c
 	${GENDIR}oyImage_s_.c
 	${GENDIR}oyPixelAccess_s_.c
 	${PACKAGE_NAME}_alpha.c
@@ -25,6 +29,8 @@ SET( CHEADERS_OBJECT_IMAGING_PUBLIC
 	${GENDIR}oyArray2d_s.h
 	${GENDIR}oyConnectorImaging_s.h
 	${GENDIR}oyConversion_s.h
+	${GENDIR}oyNamedColor_s.h
+	${GENDIR}oyNamedColors_s.h
 	${GENDIR}oyImage_s.h
 	${GENDIR}oyPixelAccess_s.h
 	${GENDIR}${PACKAGE_NAME}_conversion.h
@@ -36,6 +42,8 @@ SET( CHEADERS_OBJECT_IMAGING
 	${GENDIR}oyArray2d_s_.h
 	${GENDIR}oyConnectorImaging_s_.h
 	${GENDIR}oyConversion_s_.h
+	${GENDIR}oyNamedColor_s_.h
+	${GENDIR}oyNamedColors_s_.h
 	${GENDIR}oyImage_s_.h
 	${GENDIR}oyPixelAccess_s_.h
 	${GENDIR}${PACKAGE_NAME}_conversion_internal.h

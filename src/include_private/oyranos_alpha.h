@@ -162,8 +162,6 @@ int      oySizeofDatatype            ( oyDATATYPE_e        t );
 
 
 
-typedef struct oyNamedColour_s oyNamedColour_s;
-typedef struct oyNamedColours_s oyNamedColours_s;
 typedef struct oyUiHandler_s oyUiHandler_s;
 
 
@@ -182,130 +180,6 @@ const char * oyFilterCore_WidgetsSet ( oyFilterCore_s    * filter,
                                        int                 flags );
 const char * oyFilterCore_WidgetsGet ( oyFilterCore_s    * filter,
                                        int                 flags );
-
-
-
-/** @struct oyNamedColour_s
- *  @brief colour patch with meta informations
- *  @ingroup objects_single_colour
- *  @extends oyStruct_s
- *
- *  Data management on library side.
- *  User can control memory management at creation time.
- *
- *  It has the complexity of a object, and should not be accessed directly.
- *
- *  @version Oyranos: 0.1.8
- *  @since   2007/10/00 (Oyranos: 0.1.8)
- *  @date    2007/10/00
- *
- *  TODO: needs to be Xatom compatible
- */
-struct oyNamedColour_s {
-  oyOBJECT_e           type_;          /**< @private struct type oyOBJECT_NAMED_COLOUR_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /**< @private base object */
-  double             * channels_;      /**< @private eigther parsed or calculated otherwise */
-  double               XYZ_[3];        /**< @private CIE*XYZ representation */
-  char               * blob_;          /**< @private advanced : CGATS / ICC ? */
-  size_t               blob_len_;      /**< @private advanced : CGATS / ICC ? */
-  oyProfile_s        * profile_;       /**< @private ICC */
-};
-
-oyNamedColour_s*  oyNamedColour_Create( const double      * chan,
-                                        const char        * blob,
-                                        int                 blob_len,
-                                        oyProfile_s       * profile_ref,
-                                        oyObject_s          object );
-oyNamedColour_s*  oyNamedColour_CreateWithName (
-                                       const char        * nick,
-                                       const char        * name,
-                                       const char        * description,
-                                       const double      * chan,
-                                       const double      * XYZ,
-                                       const char        * blob,
-                                       int                 blob_len,
-                                       oyProfile_s       * profile_ref,
-                                       oyObject_s          object );
-oyNamedColour_s*  oyNamedColour_Copy ( oyNamedColour_s   * colour,
-                                       oyObject_s          object );
-int               oyNamedColour_Release ( oyNamedColour_s  ** colour );
-
-oyProfile_s *     oyNamedColour_GetSpaceRef ( oyNamedColour_s  * colour );
-void              oyNamedColour_SetChannels ( oyNamedColour_s * colour,
-                                       const double      * channels,
-                                       uint32_t            flags );
-int               oyNamedColour_SetColourStd ( oyNamedColour_s * colour,
-                                       oyPROFILE_e         colour_space,
-                                       oyPointer           channels,
-                                       oyDATATYPE_e        channels_type,
-                                       uint32_t            flags,
-                                       oyOptions_s       * options );
-const double *    oyNamedColour_GetChannelsConst ( oyNamedColour_s * colour,
-                                       uint32_t          * flags );
-const double *    oyNamedColour_GetXYZConst      ( oyNamedColour_s * colour);
-int               oyNamedColour_GetColourStd     ( oyNamedColour_s * colour,
-                                       oyPROFILE_e         colour_space,
-                                       oyPointer           buf,
-                                       oyDATATYPE_e        buf_type,
-                                       uint32_t          * flags,
-                                       oyOptions_s       * options );
-int               oyNamedColour_GetColour ( oyNamedColour_s * colour,
-                                       oyProfile_s       * profile,
-                                       oyPointer           buf,
-                                       oyDATATYPE_e        buf_type,
-                                       uint32_t            flags,
-                                       oyOptions_s       * options );
-const char   *    oyNamedColour_GetName( oyNamedColour_s * s,
-                                       oyNAME_e            type,
-                                       uint32_t            flags );
-
-/** @brief list of colour patches
- *  @ingroup objects_single_colour
- *  @extends oyStruct_s
- *
- *  Data management on library side.
- *  User can control memory management at creation time.
- *
- *  It has the complexity of a object, and should not be accessed directly.
- *
- *  @since Oyranos: version 0.1.8
- *  @date  october 2007 (API 0.1.8)
- *
- *  TODO: make the object non visible
- */
-struct oyNamedColours_s {
-  oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_NAMED_COLOURS_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyObject_s           oy_;            /*!< @private base object */
-  oyStructList_s     * list_;          /**< @private colour list */
-};
-
-oyNamedColours_s* oyNamedColours_New ( oyObject_s       object );
-oyNamedColours_s* oyNamedColours_Copy( oyNamedColours_s  * colours,
-                                       oyObject_s          object );
-int               oyNamedColours_Release ( oyNamedColours_s** colours );
-
-int               oyNamedColours_Count(oyNamedColours_s  * swatch );
-oyNamedColour_s*  oyNamedColours_Get ( oyNamedColours_s  * swatch,
-                                       int                 position);
-oyNamedColours_s* oyNamedColours_MoveIn ( oyNamedColours_s  * list,
-                                       oyNamedColour_s  ** obj,
-                                       int                 pos );
-int               oyNamedColours_ReleaseAt ( oyNamedColours_s * swatch,
-                                       int                 position );
-
-
-
-
-void              oyCopyColour       ( const double      * from,
-                                       double            * to,
-                                       int                 n,
-                                       oyProfile_s       * profile_ref,
-                                       int                 channels_n );
-
 
 
 

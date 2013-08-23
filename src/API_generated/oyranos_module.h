@@ -7,12 +7,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/16
+ *  @date     2013/08/23
  */
 
 
@@ -42,6 +42,11 @@ typedef enum {
 } oyCMMQUERY_e;
 
 /**
+ *  typedef oyCMMGetText_f
+ *  @brief   get strings from a CMM
+ *  @ingroup module_api
+ *  @memberof oyCMMapi_s
+ *
  *  type:
  *  - oyNAME_NICK: compact, e.g. "GPU"
  *  - oyNAME_NAME: a short explanation, e.g. "Rendering with GPU"
@@ -59,8 +64,7 @@ typedef enum {
  *  @since   2008/12/23 (Oyranos: 0.1.10)
  *  @date    2011/02/01
  */
-typedef
-const char *    (* oyCMMGetText_f)   ( const char        * select,
+typedef const char*(* oyCMMGetText_f)( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context );
 

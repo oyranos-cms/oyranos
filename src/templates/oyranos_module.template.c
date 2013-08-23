@@ -35,6 +35,14 @@
 
 oyStructList_s * oy_cmm_handles_ = 0;
 /* defined in sources/Struct.public_methods_definitions.c */
+/** typedef   oyStruct_GetTextFromModule_p
+ *  @brief    get descriptions for object types
+ *  @internal
+ *
+ *  @version  Oyranos: 0.9.5
+ *  @date     2013/0/0
+ *  @since    2012/0/0 (Oyranos: 0.9.x)
+ */
 extern const char * (*oyStruct_GetTextFromModule_p) (
                                        oyStruct_s        * obj,
                                        oyNAME_e            name_type,

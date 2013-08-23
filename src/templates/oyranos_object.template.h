@@ -73,6 +73,8 @@ typedef enum {
   oyOBJECT_IMAGE_S,                   /*!< oyImage_s */
   oyOBJECT_ARRAY2D_S,                 /**< oyArray2d_s */
   oyOBJECT_COLOUR_CONVERSION_S,       /*!< oyColourConversion_s deprecated */
+  oyOBJECT_NAMED_COLOR_S,             /*!< oyNamedColor_s */
+  oyOBJECT_NAMED_COLORS_S,            /*!< oyNamedColors_s */
   oyOBJECT_CONNECTOR_S       = 20,    /**< oyConnector_s */
   oyOBJECT_CONNECTOR_IMAGING_S,       /**< oyConnectorImaging_s */
   oyOBJECT_CONNECTOR_MAX_S,           /**< not defined */

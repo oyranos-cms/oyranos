@@ -39,7 +39,7 @@
 #endif
 extern "C" {
 #endif /* __cplusplus */
-int  oyColourConvert_ ( oyProfile_s       * p_in,
+int  oyColorConvert_ ( oyProfile_s       * p_in,
                         oyProfile_s       * p_out,
                         oyPointer           buf_in,
                         oyPointer           buf_out,
@@ -733,7 +733,7 @@ double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, o
       oyOptions_SetFromText( &options, OY_BEHAVIOUR_STD "rendering_intent",
                             num, OY_CREATE_NEW);
 
-      oyColourConvert_( profile, outspace, block, lab_block,
+      oyColorConvert_( profile, outspace, block, lab_block,
                         oyFLOAT, oyFLOAT, options, size );
       *size_ = size;
       lab_erg =  (double*) calloc( sizeof(double), *size_ * 3);
