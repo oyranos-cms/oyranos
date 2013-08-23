@@ -26,7 +26,7 @@
 #include <math.h>
 
 
-/** \addtogroup misc Miscellaneous
+/** \addtogroup color Color
 
  *  @{
  */
@@ -817,5 +817,5 @@ icValue_to_icUInt32Number_m( oyValueTagSig, icTagSignature )
  */
 
 
-/** @} *//*misc */
+/** @} *//* color */
 

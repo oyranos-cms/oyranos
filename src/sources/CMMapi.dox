@@ -2,7 +2,6 @@
  *  @ingroup module_api
  *  @extends oyStruct_s
  *  @brief   the basic API interface
- *  @internal
  *  
  *  The registration should provide keywords for selection.
  *  The api5_ member is missed for oyCMMapi5_s.

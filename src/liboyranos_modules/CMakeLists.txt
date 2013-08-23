@@ -1,4 +1,11 @@
 SET( CFILES_OBJECT_MODULES_PUBLIC
+	${GENDIR}oyCMMapi_s.c
+	${GENDIR}oyCMMapi4_s.c
+	${GENDIR}oyCMMapi7_s.c
+	${GENDIR}oyCMMapis_s.c
+	${GENDIR}oyCMMapiFilter_s.c
+	${GENDIR}oyCMMapiFilters_s.c
+	${GENDIR}oyCMMui_s.c
 	${GENDIR}oyConnector_s.c
 	${GENDIR}oyFilterCore_s.c
 	${GENDIR}oyFilterGraph_s.c
@@ -7,21 +14,19 @@ SET( CFILES_OBJECT_MODULES_PUBLIC
 	${GENDIR}oyFilterSocket_s.c
 	${GENDIR}oyFilterPlug_s.c
 	${GENDIR}oyFilterPlugs_s.c
+	${GENDIR}${PACKAGE_NAME}_module.c
    )
 SET( CFILES_OBJECT_MODULES_PUBLIC ${CFILES_OBJECT_MODULES_PUBLIC} PARENT_SCOPE )
 SET( CFILES_OBJECT_MODULES
 	${CFILES_OBJECT_MODULES_PUBLIC}
-	${GENDIR}oyCMMapi_s.c
 	${GENDIR}oyCMMapi_s_.c
 	${GENDIR}oyCMMapi3_s.c
 	${GENDIR}oyCMMapi3_s_.c
-	${GENDIR}oyCMMapi4_s.c
 	${GENDIR}oyCMMapi4_s_.c
 	${GENDIR}oyCMMapi5_s.c
 	${GENDIR}oyCMMapi5_s_.c
 	${GENDIR}oyCMMapi6_s.c
 	${GENDIR}oyCMMapi6_s_.c
-	${GENDIR}oyCMMapi7_s.c
 	${GENDIR}oyCMMapi7_s_.c
 	${GENDIR}oyCMMapi8_s.c
 	${GENDIR}oyCMMapi8_s_.c
@@ -29,17 +34,13 @@ SET( CFILES_OBJECT_MODULES
 	${GENDIR}oyCMMapi9_s_.c
 	${GENDIR}oyCMMapi10_s.c
 	${GENDIR}oyCMMapi10_s_.c
-	${GENDIR}oyCMMapis_s.c
 	${GENDIR}oyCMMapis_s_.c
-	${GENDIR}oyCMMapiFilter_s.c
 	${GENDIR}oyCMMapiFilter_s_.c
-	${GENDIR}oyCMMapiFilters_s.c
 	${GENDIR}oyCMMapiFilters_s_.c
 	${GENDIR}oyCMMinfo_s.c
 	${GENDIR}oyCMMinfo_s_.c
 	${GENDIR}oyCMMobjectType_s.c
 	${GENDIR}oyCMMobjectType_s_.c
-	${GENDIR}oyCMMui_s.c
 	${GENDIR}oyCMMui_s_.c
 	${GENDIR}oyConnector_s_.c
 	${GENDIR}oyFilterCore_s_.c
@@ -49,10 +50,16 @@ SET( CFILES_OBJECT_MODULES
 	${GENDIR}oyFilterSocket_s_.c
 	${GENDIR}oyFilterPlug_s_.c
 	${GENDIR}oyFilterPlugs_s_.c
-	${GENDIR}${PACKAGE_NAME}_module.c
 	${PACKAGE_NAME}_forms.c
    )
 SET( CHEADERS_OBJECT_MODULES_PUBLIC
+	${GENDIR}oyCMMapi_s.h
+	${GENDIR}oyCMMapi4_s.h
+	${GENDIR}oyCMMapi7_s.h
+	${GENDIR}oyCMMapis_s.h
+	${GENDIR}oyCMMapiFilter_s.h
+	${GENDIR}oyCMMapiFilters_s.h
+	${GENDIR}oyCMMui_s.h
 	${GENDIR}oyConnector_s.h
 	${GENDIR}oyFilterCore_s.h
 	${GENDIR}oyFilterGraph_s.h
@@ -65,21 +72,14 @@ SET( CHEADERS_OBJECT_MODULES_PUBLIC
    )
 SET( CHEADERS_OBJECT_MODULES_PUBLIC ${CHEADERS_OBJECT_MODULES_PUBLIC} PARENT_SCOPE )
 SET( CHEADERS_OBJECT_MODULES
-	${GENDIR}oyCMMapi_s.h
 	${GENDIR}oyCMMapi3_s.h
-	${GENDIR}oyCMMapi4_s.h
 	${GENDIR}oyCMMapi5_s.h
 	${GENDIR}oyCMMapi6_s.h
-	${GENDIR}oyCMMapi7_s.h
 	${GENDIR}oyCMMapi8_s.h
 	${GENDIR}oyCMMapi9_s.h
 	${GENDIR}oyCMMapi10_s.h
-	${GENDIR}oyCMMapis_s.h
-	${GENDIR}oyCMMapiFilter_s.h
-	${GENDIR}oyCMMapiFilters_s.h
 	${GENDIR}oyCMMinfo_s.h
 	${GENDIR}oyCMMobjectType_s.h
-	${GENDIR}oyCMMui_s.h
 	${GENDIR}oyCMMapi_s_.h
 	${GENDIR}oyCMMapi3_s_.h
 	${GENDIR}oyCMMapi4_s_.h

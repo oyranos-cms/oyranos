@@ -19,7 +19,7 @@
     @n@n
     @section intro Introduction
   
-    Oyranos is intended as a entry point for colour savy applications.
+    Oyranos is intended as a entry point for color savy applications.
     In its current stage it configures profile paths, sets default profiles, 
     maps devices to profiles, sets a monitor profile in X and uploads a vcgt
     tag. This means for instance all applications using Oyranos will use for
@@ -28,6 +28,7 @@
     and so on.
 
     @section tools User Tools Documentation
+    - oyranos-icc - access embedded profiles from images, color convert images
     - oyranos-monitor - a commandline tool for calling from a setup script like
       .xinitrc. It selects a profile for the current monitor and sets up the
       X server at startup time. Usage:
@@ -41,6 +42,9 @@
     oyranos-policy `oyranos-config --syscolordir`/`oyranos-config --settingsdirname`/office.policy.xml
     @endverbatim
     Affected are default profiles and some behaviour settings.
+    - oyranos-profile - access profile information
+    - oyranos-profile-graph - draw a 2D graph from profiles
+    - oyranos-profiles - lookup profiles in the systems color paths, download and install
     - <a href="http://www.oyranos.org/wiki/index.php?title=Oyranos_Configuration_Dialog">oyranos-config-fltk</a> - a configuration UI application, using some functions      of the Oyranos APIs. If you have <a href="http://www.oyranos.org/wiki/index.php?title=ICC_Examin">ICC Examin</a> installed it can be called to
       show details of profiles. 
     - oyranos-config - a command line tool to get compiler flags to using Oyranos in your own project. Try  \a oyranos-config \a --help to see the appropriate options.
@@ -48,14 +52,14 @@
     @section user User API Documentation
     The basic Oyranos API gets included with oyranos.h. An application, which
     wants to use these functions, needs to link against Oyranos.
-    - @ref defaults_apis obtain and manipulate user preferences and UI translations
-    - @ref objects_profile - select, read, manipulate and write ICC Profiles 
-    - @ref devices_handling - select, read, manipulate and write colour Device Configurations
-    - @ref objects_image - image data objects
+    - @ref defaults_apis - obtain and manipulate user preferences and UI translations
+    - @ref objects_profile - select, read, manipulate and write ICC profiles 
+    - @ref devices_handling - select, read, manipulate and write color device configurations
     - @ref objects_conversion - build and process image graphs
 
-    The monitor related API is contained in alpha/oyranos_alpha.h. Loading of
-    the according module for the X11 libraries on Linux is done on runtime.
+    The monitor related interfaces are accessed through @ref devices_handling
+    interfaces. Loading of the according module for the device depedent
+    libraries is done on runtime.
 
     The key names, which Oyranos uses to store its configuration in an Elektra
     file tree, are defined in oyranos_definitions.h.

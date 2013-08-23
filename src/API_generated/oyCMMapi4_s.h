@@ -19,7 +19,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/06/11
+ *  @date     2013/08/23
  */
 
 
@@ -54,7 +54,6 @@ typedef struct oyCMMapi4_s oyCMMapi4_s;
  *  @ingroup module_api
  *  @extends oyCMMapiFilter_s
  *  @brief   Context creator
- *  @internal
  *  
  *  The structure contains functions to specify and prepare parameters or
  *  a context dedicated for a filter node class. UI elements can be included for

@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/06/11
+ *  @date     2013/08/23
  */
 
 
@@ -75,7 +75,6 @@ typedef int      (*oyCMMCanHandle_f) ( oyCMMQUERY_e        type,
  *  @ingroup module_api
  *  @extends oyStruct_s
  *  @brief   the basic API interface
- *  @internal
  *  
  *  The registration should provide keywords for selection.
  *  The api5_ member is missed for oyCMMapi5_s.

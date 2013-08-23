@@ -2,7 +2,6 @@
  *  @ingroup module_api
  *  @extends oyCMMapiFilter_s
  *  @brief   Data processing node
- *  @internal
  *  
  *  The structure forms a node element in a directed acyclic graph. It's 
  *  connectors allow to communicate cababilities and semantics. This node type

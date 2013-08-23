@@ -2,7 +2,6 @@
  *  @ingroup module_api
  *  @extends oyCMMapiFilter_s
  *  @brief   Context creator
- *  @internal
  *  
  *  The structure contains functions to specify and prepare parameters or
  *  a context dedicated for a filter node class. UI elements can be included for

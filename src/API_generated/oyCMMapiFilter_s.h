@@ -12,12 +12,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2013/08/23
  */
 
 
@@ -50,7 +50,6 @@ typedef struct oyCMMapiFilter_s oyCMMapiFilter_s;
  *  @ingroup module_api
  *  @extends oyCMMapi_s
  *  @brief   the module API 4,6,7 interface base
- *  @internal
  *  
  *  The registration should provide keywords for selection.
  *  The api5_ member is missed for oyCMMapi5_s.

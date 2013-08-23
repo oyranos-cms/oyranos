@@ -6,7 +6,7 @@
  *            2008-2012 (C) Kai-Uwe Behrmann
  *
  *  @internal
- *  @brief    misc colour APIs
+ *  @brief    misc color APIs
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
@@ -17,12 +17,12 @@
 #include <math.h>
 
 
-/** \addtogroup misc Miscellaneous
+/** \addtogroup color Color
 
  *  @{
  */
 
-/** \addtogroup colour_low Basic colour calculations
+/** \addtogroup color_low Basic color calculations
 
  *  @{
  */
@@ -103,10 +103,10 @@ oyXYZ2Lab (const double *XYZ, double * lab)
 }
 
 /** Function oyCIEabsXYZ2ICCrelXYZ
- *  @brief CIE absolute colourimetric to ICC relative colorimetric
+ *  @brief CIE absolute colorimetric to ICC relative colorimetric
  *
- *  @param[in]     CIEXYZ              CIE absolute colourimetric input
- *  @param[out]    ICCXYZ              ICC relative colourimetric output
+ *  @param[in]     CIEXYZ              CIE absolute colorimetric input
+ *  @param[out]    ICCXYZ              ICC relative colorimetric output
  *  @param[in]     XYZmin              CIE absolute black point
  *  @param[in]     XYZmax              CIE absolute media white
  *  @param[in]     XYZwhite            illuminant white
@@ -126,10 +126,10 @@ void         oyCIEabsXYZ2ICCrelXYZ   ( const double      * CIEXYZ,
 }
 
 /** Function oyICCXYZrel2CIEabsXYZ
- *  @brief ICC relative colourimetric to CIE absolute colorimetric
+ *  @brief ICC relative colorimetric to CIE absolute colorimetric
  *
- *  @param[in]     ICCXYZ              ICC relative colourimetric input
- *  @param[out]    CIEXYZ              CIE absolute colourimetric output
+ *  @param[in]     ICCXYZ              ICC relative colorimetric input
+ *  @param[out]    CIEXYZ              CIE absolute colorimetric output
  *  @param[in]     XYZmin              CIE absolute black point
  *  @param[in]     XYZmax              CIE absolute media white
  *  @param[in]     XYZwhite            illuminant white
@@ -149,12 +149,12 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
 }
 
 /**
- *  @} *//* colour_low
+ *  @} *//* color_low
  */
 
 
 /**
- *  @} *//* misc
+ *  @} *//* color
  */
 
 

@@ -19,7 +19,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/06/17
+ *  @date     2013/08/23
  */
 
 
@@ -84,7 +84,6 @@ typedef int (*oyCMMFilterPlug_Run_f) ( oyFilterPlug_s    * plug,
  *  @ingroup module_api
  *  @extends oyCMMapiFilter_s
  *  @brief   Data processing node
- *  @internal
  *  
  *  The structure forms a node element in a directed acyclic graph. It's 
  *  connectors allow to communicate cababilities and semantics. This node type

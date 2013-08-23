@@ -131,3 +131,540 @@
 */
 
 
+/** \addtogroup color Color
+ *
+ *  Oyranos is based one the well established ICC standard and various other specifications for color characterisation and processing. Defaults configuration and storage are provided. Oyranos covers a Color Matching Module (CMM) framework for color processing. Color devices settings, Named Color interfaces and some common calculations are provided.
+ *
+ *  @{
+ */
+
+/** \addtogroup devices_handling Device Handling
+ *
+ *  Include the oyranos_devices.h header file to use the interfaces.
+ *
+ *  @{ */
+/** @} *//* devices_handling */
+
+/** \addtogroup defaults_apis Defaults Handling
+ *  @{ */
+/** @} *//* defaults_apis */
+
+/** \addtogroup objects_profile Profile Handling
+ *  @{ */
+/** @} *//* objects_profile */
+
+
+/** \addtogroup objects_single_color Named Colors
+ *  A Named Color is a single color capsulated in a object with rich
+ *  information about that color. They are useful for palettes, measurements
+ *  and other color samples. For colors in pixel images use the oyImage_s object.
+
+ *  @{
+ */
+
+/** @} *//* objects_single_color */
+
+/** @} *//* color */
+
+
+
+/** \addtogroup objects_conversion Conversion
+ *  Conversion front end API's.
+ *
+ *  Data processing is organised by structures called acyclic graphs. A graph
+ *  combines several processing elements and their according stages into one
+ *  process model. A very simple graph will link elements just one by one to
+ *  form a chain. More complex graphs are possible by branching and rejoining of
+ *  data processing arms.
+ *  Datas are requested always from the end. This makes it simple to create
+ *  views at data. A observer tells the to be viewed plugin that it wants
+ *  to connect and can request the data stream.
+ *  In the other direction plug-ins can send events along the pipe through
+ *  callbacks, e.g. for reporting errors or requesting updating of parameters.
+ *  The @ref module_api explains how to create modules to plug into Oyranos.
+ *
+ *  \b About \b Graphs: \n
+ *  The top object a user will handle is of type oyConversion_s. This 
+ *  contains oyFilterNode_s objects, which describe the connections of each
+ *  processing element, such as images with attached data and profile, and the
+ *  filters. The Oyranos node connection concept is splitted into various
+ *  structures.
+ \dot
+digraph G {
+  bgcolor="transparent";
+  rankdir=LR
+  graph [fontname=Helvetica, fontsize=12];
+  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded,filled"];
+  edge [fontname=Helvetica, fontsize=10];
+
+  a [ label="{<plug> 0| Filter Node 1 == Input |<socket>}"];
+  b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  d [ label="{<plug> 2| Filter Node 4 == Output |<socket>}"];
+
+  subgraph cluster_0 {
+    label="Oyranos Filter Graph";
+    color=gray;
+
+    a:socket -> b:plug [arrowhead=none, arrowtail=normal];
+    b:socket -> d:plug [arrowhead=none, arrowtail=normal];
+    a:socket -> c:plug [arrowhead=none, arrowtail=normal];
+    c:socket -> d:plug [arrowhead=none, arrowtail=normal];
+  }
+}
+ \enddot
+ *
+ *  \b Connectors \b have \b tree \b missions:
+ *  - The first is to tell others to about the 
+ *  filters intention to provide a connection endity. This is done by the pure
+ *  existence of the oyConnector_s inside the module filter structure
+ *  (oyCMMapi4_s) and the oyFilterNode_s::sockets and 
+ *  oyFilterNode_s::plugs members. \n
+ *  - The second is to tell about the connectors capabilities, to allow for 
+ *  automatic checking for fittness to other connectors. \n
+ *  - The thierd task of this struct is to differenciate between \a input or
+ *  \a plug and \a output or \a socket. This is delegated to the
+ *  oyFilterSocket_s and oyFilterPlug_s structures.
+ *  
+ *
+ *  \b Routing: \n
+ *  The connector output, called socket, side is primarily passive. The data
+ *  stream is requested or viewed by the input side, called plug. 
+ *  Changes are propagated by events. This turns the acyclic graph into a 
+ *  dual one. The events use the same graph just in the other direction.
+ *  Events and data requests are distinct.
+ *  A \a plug local to the filter or filter node can be connected to a remote
+ *  \a socket connector and vice versa.
+ \dot
+digraph G {
+  bgcolor="transparent";
+  node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
+  edge[ fontname=Helvetica, fontsize=10 ];
+  rankdir=LR
+  a [label=<
+<table border="0" cellborder="1" cellspacing="4">
+  <tr> <td>Filter Node A</td>
+      <td bgcolor="red" width="10" port="s"> socket </td>
+  </tr>
+</table>>
+  ]
+  b [label=< 
+<table border="0" cellborder="1" cellspacing="4">
+  <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
+      <td>Filter Node B</td>
+  </tr>
+</table>>
+  ]
+  subgraph { rank=min a }
+
+  b:p->a:s [label=request];
+} 
+ \enddot
+ * Status information can be passed from the input side to the output side by
+ * callbacks.
+ \dot
+digraph G {
+  bgcolor="transparent";
+  node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
+  edge[ fontname=Helvetica, fontsize=10 ];
+  rankdir=LR
+  a [label=<
+<table border="0" cellborder="1" cellspacing="4">
+  <tr> <td>Filter Node A</td>
+      <td bgcolor="red" width="10" port="s"> socket </td>
+  </tr>
+</table>>
+  ]
+  b [label=< 
+<table border="0" cellborder="1" cellspacing="4">
+  <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
+      <td>Filter Node B</td>
+  </tr>
+</table>>
+  ]
+  subgraph { rank=min a }
+
+  b:p->a:s [arrowhead=none, arrowtail=normal, label=callback];
+} 
+ \enddot
+ *
+ * The data flows from the socket to the plug.
+ \dot
+digraph G {
+  bgcolor="transparent";
+  node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
+  edge[ fontname=Helvetica, fontsize=10 ];
+  rankdir=LR
+  a [label=<
+<table border="0" cellborder="1" cellspacing="4">
+  <tr> <td>Filter Node A</td>
+      <td bgcolor="red" width="10" port="s"> socket </td>
+  </tr>
+</table>>
+  ]
+  b [label=< 
+<table border="0" cellborder="1" cellspacing="4">
+  <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
+      <td>Filter Node B</td>
+  </tr>
+</table>>
+  ]
+  subgraph { rank=min a }
+
+  b:p->a:s [arrowhead=none, arrowtail=normal, label=data];
+} 
+ \enddot
+ *
+ * A oyFilterNode_s can have various oyFilterPlug_s ' to obtain data from
+ * different sources. The required number is described in the oyCMMapi4_s 
+ * structure, which is part of oyFilterCore_s. But each plug can only connect to
+ * one socket.
+ \dot
+digraph G {
+  bgcolor="transparent";
+  rankdir=LR
+  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
+  edge [fontname=Helvetica, fontsize=10];
+
+  b [ label="{<plug> | Filter Node 2 |<socket>}"];
+  c [ label="{<plug> | Filter Node 3 |<socket>}"];
+  d [ label="{<plug> 2| Filter Node 4 |<socket>}"];
+
+  b:socket -> d:plug [arrowtail=normal, arrowhead=none];
+  c:socket -> d:plug [arrowtail=normal, arrowhead=none];
+}
+ \enddot
+ *
+ * oyFilterSocket_s is designed to accept arbitrary numbers of connections 
+ * to allow for viewing on a filters data output or observe its state changes.
+ \dot
+digraph G {
+  bgcolor="transparent";
+  rankdir=LR
+  node [shape=record, fontname=Helvetica, fontsize=10, style="rounded"];
+  edge [fontname=Helvetica, fontsize=10];
+
+  a [ label="{<plug> | Filter Node 1 |<socket>}"];
+  b [ label="{<plug> 1| Filter Node 2 |<socket>}"];
+  c [ label="{<plug> 1| Filter Node 3 |<socket>}"];
+  d [ label="{<plug> 1| Filter Node 4 |<socket>}"];
+  e [ label="{<plug> 1| Filter Node 5 |<socket>}"];
+
+  a:socket -> b:plug [arrowtail=normal, arrowhead=none];
+  a:socket -> c:plug [arrowtail=normal, arrowhead=none];
+  a:socket -> d:plug [arrowtail=normal, arrowhead=none];
+  a:socket -> e:plug [arrowtail=normal, arrowhead=none];
+}
+ \enddot
+
+ *  @{
+ */
+
+/** \addtogroup objects_image
+ *  @{
+ */
+
+/** @} objects_image */
+
+/** @} objects_conversion */
+
+
+
+/** \addtogroup misc
+ *  @{ */
+/** @} *//* misc */
+
+
+
+/** \addtogroup module_api Backend Modules
+ *
+ *  Oyranos C modules provide support for data formats, data processing and
+ *  process control, as well as configuration.
+ *  The module architecture covers three basic layers. There are the Module 
+ *  APIs for the real stuff, the Meta Module APIs for language support and the
+ *  final Oyranos objects with their User APIs.\n
+ *  @dot
+digraph Modules {
+  bgcolor="transparent";
+  nodesep=.1;
+  ranksep=1.;
+  //rankdir=LR;
+  graph [fontname=Helvetica, fontsize=14];
+  node [shape=record,fontname=Helvetica, fontsize=11, width=.1];
+
+  subgraph cluster_0 {
+    label="Oyranos Module Framework";
+    color=white;
+    clusterrank=global;
+
+      node [width = 1.5, style=filled];
+      i [URL="structoyCMMapi5__s.html#_details", label="Module Importer\n oyCMMapi5_s"];
+
+      p [ label="Filter nodes / Graph handling APIs\n oyFilterNode_s"];
+
+
+      api4_A [URL="structoyCMMapi4__s.html#_details",label="Context Module + UI\n oyCMMapi4_s"];
+      api6_A [URL="structoyCMMapi6__s.html#_details",label="Context Converter\n oyCMMapi6_s"];
+      api7_A [URL="structoyCMMapi7__s.html#_details",label="Node Module\n oyCMMapi7_s"];
+
+      m [URL="structoyCMMapi8__s.html#_details", label="Config (Device) Functions\n oyCMMapi8_s"];
+      policy [URL="structoyCMMapi9__s.html#_details", label="Policy Functions\n oyCMMapi9_s"];
+
+
+      subgraph cluster_1 {
+        color=gray;
+        label="Module APIs"
+
+        subgraph cluster_2 {
+          rank=max;
+          color=red;
+         style=dashed;
+          node [style="filled"];
+          api4_A; api6_A; api7_A;
+          label="Graph Modules and Helpers";
+        }
+
+        subgraph cluster_6 {
+          color=green;
+          style=dashed;
+          m;
+          label="Device Modules";
+        }
+
+        subgraph cluster_9 {
+          color=blue;
+          style=dashed;
+          policy;
+          label="Policy Modules";
+        }
+
+      }
+
+      subgraph cluster_10 {
+        color=gray;
+        node [style="filled"];
+        i;
+        label="Meta Module API";
+      }
+
+      subgraph cluster_11 {
+        color=gray;
+        node [style="filled"];
+        p;
+        label="User APIs";
+      }
+
+      p -> i [arrowhead="open", color=gray];
+      i -> api4_A [arrowhead="open", color=red];
+      i -> api6_A [arrowhead="open", color=red];
+      i -> api7_A [arrowhead="open", color=red];
+      i -> m [arrowhead="open", color=green];
+      i -> policy [arrowhead="open", color=blue];
+  }
+} @enddot
+ *
+ *  \b User \b API:
+ *  The user API allowes to contruct a filter or configuration
+ *  object. Filters can be chained to directed acyclic graphs (DAGs) and data
+ *  can be processed through graphs or they are deployed by higher level APIs,
+ *  like named colour API.
+ *
+ *  \b Meta \b Modules:
+ *  The modules are loaded into Oyranos by meta modules. A Meta module can
+ *  support different formats of modules. The basic format are the native C
+ *  structures and function declarations, which allow very detailed access and 
+ *  control of Oyranos objects. These C data structures for building a module
+ *  are complex and need some expertise to handle. However the meta module 
+ *  interface allows to write support for modules which might be written even
+ *  in scripting languages. Such filters should then be loadable as normal
+ *  modules and are, depending on the choosen language, very easy to understand
+ *  and to write.
+ *  Beside reduced access to Oyranos native C data types, script filters might
+ *  become highly interchangeable outside of Oyranos.
+ *
+ *  \b Module \b APIs:
+ *  Several interfaces allow to write different module types. They can have
+ *  access to Oyranos' configuration system, build data dependent contexts,
+ *  provide access to user defined data types, create custom UIs via XFORMS and
+ *  possibly SVG, simply process data and connect as node into a Oyranos DAG or
+ *  expose to users as policy tool for a DAG. Different module APIs expose as
+ *  different user APIs.
+ *  Most module authors will want to write for one of these interfaces.
+ *
+ *  \b High \b Abstraction: Most module interfaces have no idea themselve about
+ *  what kind of data they handle. They follow very generic and abstract ideas
+ *  and rules on how to do data processing in a directed acyclic graph. 
+ *  The overal idea of Oyranos' graphs can be read in the 
+ *  @ref objects_conversion. 
+ *  The module interfaces can implement different processing stages and tell 
+ *  how to combine them in a graph by Oyranos. E.g. it is possible for on module
+ *  to build a cacheable context, which can be used by different modules to
+ *  process data.
+ *  Most of the processing logic is inside Oyranos's core. But for efficiency
+ *  and flexibility modules have access to their connected neighbour plug-ins.
+ *  For instance they have to call their forerunner to request for data.
+ *
+ *  \b Examples: For learning how modules can
+ *  do useful work see the delivered modules like the lcms and oyIM ones in
+ *  files like "oyranos_cmm_xxxx.c". They are linked as libraries and are
+ *  installed in the "$cmmdir" and "$libdir/oyranos" paths. These paths are
+ *  shown during the configuration process or through te provided oyranos-config
+ *  tool.
+ *
+ *  The Filter API's are subdivided to allow for automatical combining of 
+ *  preprocessing and processing stages. Especially in the case of expensive
+ *  preprocessing data, like in CMM's, it makes sense to provide the means for
+ *  combining general purpose libraries with hardware accelerated modules.
+ *  This architecture allowes for combining by just providing enough interface
+ *  information about their supported data formats.
+ *  The following paragraphs provide a overview.
+ *
+ *  The oyCMMapi5_s module structure defines a meta module to load modules,
+ *  from a to be defined directory with to be defined naming criterias. The 
+ *  meta module loads or constructs all parts of a module, oyCMMapi4_s,
+ *  oyCMMapi7_s, oyCMMapi6_s, oyCMMapi8_s and oyCMMapi9_s.
+ *
+ *  oyCMMapi7_s eighter deploys the context created in a oyCMMapi4_s filter, or
+ *  simply processes the data of a oyFilterNode_s graph element. It is 
+ *  responsible to request data from the graph and process them.
+ *  Members are responsible to describe the filters capabilities for connecting
+ *  to other filters in the graph. Modules can describe their own UI in 
+ *  oyCMMapi4_s.
+ *  oyCMMapi7_s is mandatory.
+ *
+ *  The oyCMMapi4_s is a structure to create a context for a oyCMMapi7_s
+ *  processor. This context is a intermediate processing stage for all of the
+ *  context data influencing options and input datas. The idea for tight 
+ *  integration of the context functionality is to provide a well defined way
+ *  of interaction for node modules with context modules. 
+ *  The oyCMMapi4_s structure contains as well the GUI. oyCMMapi4_s is 
+ *  mandatory because of its GUI parts.
+ *  A oyCMMapi4_s without a oyCMMapi7_s is useless.
+ *  oyCMMapi4_s must contain the same basic registration string like the 
+ *  according oyCMMapi7_s except some keywords in the application section. This
+ *  is explained more below in detail.
+ *  It is assumed that a generated context is worth to be cached. If Oyranos 
+ *  obtains a serialised data blob from the context generator it can be
+ *  automatically cached.
+ *  @dot
+digraph Anatomy_A {
+  bgcolor="transparent";
+  nodesep=.1;
+  ranksep=1.;
+  rankdir=LR;
+  graph [fontname=Helvetica, fontsize=14];
+  node [shape=record,fontname=Helvetica, fontsize=11, width=.1];
+
+  subgraph cluster_7 {
+    label="One Context - Different Data Processors";
+    color=white;
+    clusterrank=global;
+
+      node [width = 2.5, style=filled];
+
+      api4_A [label="lcms ICC colour profile Module\n oyCMMapi4_s | <f>Context Creation \"oyDL\" | ... | XFORMS UI"];
+
+      api6_A [label="lcms Context Converter\n oyCMMapi6_s\n \"oyDL\"-\>\"lcCC\" \(oyDL_lcCC\)"];
+      api7_A [label="lcms colour conversion Data Processor\n oyCMMapi7_s\n C implementation needs \"lcCC\" context" width = 3.5];
+
+      api6_C [label="ctl Context Converter\n oyCMMapi6_s\n \"oyDL\"-\>\"oCTL\" \(oyDL_oCTL\)"];
+      api7_C [label="ctl colour conversion Data Processor\n oyCMMapi7_s\n LLVM implementation needs \"oCTL\" context" width = 3.5];
+
+      api4_A; api6_A; api7_A;
+      api7_C; api6_C;
+
+      api4_A:f -> api6_A -> api7_A [arrowhead="open", color=black];
+      api4_A:f -> api6_C -> api7_C [arrowhead="open", color=black];
+  }
+} @enddot
+ *
+ *  In case a oyCMMapi7_s function can not handle a certain provided context
+ *  data format, Oyranos will try to convert it for the oyCMMapi7_s API through
+ *  a fitting oyCMMapi6_s data convertor. oyCMMapi6_s is only required for 
+ *  filters, which request incompatible contexts from a oyCMMapi4_s structure.
+ *
+ *  The oyCMMapi8_s handles configurations, like external module data
+ *  and options. The @ref devices_handling deployes these modules.
+ *
+ *  oyCMMapi9_s can be used to plug in new object types, policy settings and
+ *  a way to enforce the policies.
+ *
+ *  @section registration Registration
+ *  Each filter API provides a \b registration member string.
+ *  The registration member provides the means to later successfully select 
+ *  the according filter. The string is separated into sections by a slash'/'.
+ *  The sections can be subdivided by point'.' for additional attributes as 
+ *  needed. This pattern follows the scheme of directories with attributes or
+ *  XML elements with attributes.
+ *  The sections are to be filled as follows:
+ *  - top, e.g. OY_TOP_SHARED (::oyFILTER_REG_TOP)
+ *  - vendor, e.g. OY_DOMAIN_STD (::oyFILTER_REG_DOMAIN)
+ *  - filter type, e.g. OY_TYPE_STD
+ *    (::oyFILTER_REG_TYPE)
+ *  - filter name, e.g. "icc.lcms._NOACCEL._CPU" (::oyFILTER_REG_APPLICATION)
+ *
+ *  After that the options section follows (::oyFILTER_REG_OPTION).
+ *
+ *  The application registration string part should for general purpose modules
+ *  contain a convention string. "icc" signals to process colours with the help
+ *  of ICC style profiles, which can by convention be inserted into the options
+ *  list.
+ *
+ *  @par Filter registration:
+ *  A filter can add keywords but must omit the API number and the following
+ *  matching rule sign. Recommended keywords for the application section are:
+ *  - _ACCEL for acceleration, required
+ *  - _NOACCEL for no acceleration or plain software, required
+ *  - _GPU, _GLSL, _HLSL, _MMX, _SSE, _SSE2, _3DNow and so on for certain 
+ *    hardware acceleration features \n
+ *  
+ *  \b Example: a complete module registration: \n
+ *  "org/oyranos/openicc/icc.lcms._NOACCEL._CPU" registers a plain
+ *  software CMM
+ * 
+ *  A underscore in front of a attribute makes the attribute optional during
+ *  the matching process in oyFilterRegistrationMatch(). This is needed in case
+ *  a registration string is used itself as a search pattern.
+ *
+ *  @par Registration search pattern:
+ *  To explicitely select a different processor and context creator the
+ *  according registration attribute must have a number and prefix,
+ *  e.g. "4_lcms" "7_octl".
+ *  A search pattern can add keywords.
+ *  - a number followed by underscore, plus or minus signs the according API.
+ *    The feature of interesst must then be appended, e.g. "7_GPU" preferes
+ *    a GPU interpolator. This is useful to select a certain API of a module.
+ *    - underscore '_' means preference
+ *    - minus '-' means must skip
+ *    - plus '+' means must have
+ *  - "4[_,+,-]" - context+UI oyCMMapi4_s
+ *  - "6[_,+,-]" - context convertor oyCMMapi6_s
+ *  - "7[_,+,-]" - processor oyCMMapi7_s \n
+ *  
+ *  By default all attributes in a search pattern are considered mandatory.
+ *  A level can be omitted, "//", or a attribute can be tagged by a '_'
+ *  underscore in front for making it optional, or a '-' to indicate a 
+ *  attibute must not match.
+ *
+ *  \b Example: a complete registration search pattern: \n
+ *  "//openicc/4+icc.7+ACCEL.7_GPU.7_HLSL.7-GLSL" selects a accelerated CMM 
+ *  interpolator with prefered GPU and HLSL but no GLSL support together with a
+ *  ICC compliant context generator and options.
+ *
+ *  The oyFilterRegistrationToText() and oyFilterRegistrationMatch() functions
+ *  might be useful for canonical processing Oyranos registration text strings.
+ *  Many functions allow for passing a registration string. Matching can be 
+ *  obtained by omitting sections like in the string "//openicc/icc", where the
+ *  elements between slashes is o,itted. This string would result in a match 
+ *  for any ICC compliant colour conversion filter.
+ *
+ *  The registration attributes ".front", ".advanced" and more are described in
+ *  the objects_value::oyOPTIONATTRIBUTE_e enum.
+ *
+ *  See as well <a href="http://www.oyranos.org/wiki/index.php?title=Concepts#Elektra_namespace">Concepts#Elektra_namespace</a> on ColourWiki.
+ *  @{
+ */
+
+/** @} *//* module_api */
+
+
