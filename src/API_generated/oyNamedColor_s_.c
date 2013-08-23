@@ -69,10 +69,6 @@ void oyNamedColor_Release__Members( oyNamedColor_s_ * namedcolor )
 
     if(s->blob_) /* s->blob_len */
       deallocateFunc( s->blob_ ); s->blob_ = 0; s->blob_len_ = 0;
-
-    oyObject_Release( &s->oy_ );
-
-    deallocateFunc( s );
   }
 }
 

@@ -55,18 +55,6 @@
  */
 void oyNamedColors_Release__Members( oyNamedColors_s_ * namedcolors )
 {
-  /* Deallocate members here
-   * E.g: oyXXX_Release( &namedcolors->member );
-   */
-
-  if(namedcolors->oy_->deallocateFunc_)
-  {
-    oyDeAlloc_f deallocateFunc = namedcolors->oy_->deallocateFunc_;
-
-    /* Deallocate members of basic type here
-     * E.g.: deallocateFunc( namedcolors->member );
-     */
-  }
 }
 
 /** Function    oyNamedColors_Init__Members
