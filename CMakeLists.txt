@@ -153,10 +153,11 @@ ADD_CUSTOM_TARGET( dist
 		VERBATIM
 		WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
 		)
-EXEC_PROGRAM (  rpmbuild 
-                ARGS --showrc | awk '/^build arch/ {print $$4}'
+EXECUTE_PROCESS(COMMAND rpmbuild --showrc
+                COMMAND awk '/^build arch/ {print $$4}'
                 OUTPUT_VARIABLE RPMARCH
-             )
+                ERROR_VARIABLE RPMBUILD_ERROR
+               )
 ADD_CUSTOM_TARGET( rpm
 		COMMAND test -d ${PACKAGE_NAME}-${OYRANOS_VERSION}/ && rm -rf ${PACKAGE_NAME}-${OYRANOS_VERSION}/
 		COMMAND tar xjf ${PACKAGE_NAME}-${OYRANOS_VERSION}.tar.bz2
