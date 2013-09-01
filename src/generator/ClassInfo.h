@@ -18,6 +18,7 @@ class ClassInfo: public QObject
   Q_PROPERTY(QString name READ name)
   Q_PROPERTY(QString privName READ privName)
   Q_PROPERTY(QString baseName READ baseName)
+  Q_PROPERTY(QString listBaseName READ listBaseName)
   Q_PROPERTY(QString cppName READ cppName)
   Q_PROPERTY(QObject* parent READ parent)
   Q_PROPERTY(QObject* content READ content)
@@ -57,6 +58,12 @@ class ClassInfo: public QObject
     QString privName() const { return "oy" + base + "_s_"; }
     /// Get the class name without any prefix/suffix
     QString baseName() const { return base; }
+    /// Get the list object class name without any prefix/suffix
+    QString listBaseName() const {
+      QString s( base );
+      s.chop(1);
+      return s;
+    }
     /// Get the class C++ name
     QString cppName() const { return base; }
     /// Get the parent class
