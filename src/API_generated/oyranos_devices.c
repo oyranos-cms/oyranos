@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/08/16
+ *  @date     2013/09/04
  */
 
 
@@ -1338,7 +1338,7 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
   oyjl_val json = 0,
            json_device,
            json_class;
-  char * val, * key, * t = NULL;
+  char * val, * key = NULL, * t = NULL;
   const char * xpath = "org/freedesktop/openicc/device/[0]/[%d]";
   int count, i;
   int32_t pos = 0;
