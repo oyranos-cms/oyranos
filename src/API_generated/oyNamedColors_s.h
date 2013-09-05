@@ -3,7 +3,7 @@
    [Template file inheritance graph]
    +-> oyNamedColors_s.template.h
    |
-   +-> BaseList_s.h
+   +-> oyList_s.template.h
    |
    +-> Base_s.h
    |
@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/08/23
+ *  @date     2013/09/04
  */
 
 
@@ -51,10 +51,8 @@ typedef struct oyNamedColors_s oyNamedColors_s;
 /* Include "NamedColors.dox" { */
 /** @struct  oyNamedColors_s
  *  @ingroup objects_single_color
- *  @extends oyStruct_s
+ *  @extends oyList_s
  *  @brief   List of Single Color objects
- *
- *  @note This class holds a list of oyNamedColor_s objects [list]
  *
  *  @version Oyranos: 0.9.5
  *  @since   2007/10/00 (Oyranos: 0.1.8)
@@ -103,6 +101,20 @@ OYAPI int  OYEXPORT
 
 
 /* Include "NamedColors.public_methods_declarations.h" { */
+const char *       oyNamedColors_GetPrefix (
+                                       oyNamedColors_s   * colors );
+void               oyNamedColors_SetPrefix (
+                                       oyNamedColors_s   * colors,
+                                       const char        * blob );
+const char *       oyNamedColors_GetSuffix (
+                                       oyNamedColors_s   * colors );
+void               oyNamedColors_SetSuffix (
+                                       oyNamedColors_s   * colors,
+                                       const char        * blob );
+const char *       oyNamedColors_GetColorName (
+                                       oyNamedColors_s   * colors,
+                                       int                 pos );
+
 
 /* } Include "NamedColors.public_methods_declarations.h" */
 

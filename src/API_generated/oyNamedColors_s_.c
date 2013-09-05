@@ -3,6 +3,8 @@
    [Template file inheritance graph]
    +-> oyNamedColors_s_.template.c
    |
+   +-> oyList_s_.template.c
+   |
    +-> BaseList_s_.c
    |
    +-- Base_s_.c
@@ -15,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/08/23
+ *  @date     2013/09/04
  */
 
 
@@ -24,6 +26,8 @@
 #include "oyNamedColors_s.h"
 #include "oyNamedColors_s_.h"
 
+
+#include "oyList_s_.h"
 
 
 
@@ -55,6 +59,13 @@
  */
 void oyNamedColors_Release__Members( oyNamedColors_s_ * namedcolors )
 {
+  oyNamedColors_s_ * s = namedcolors;
+  if(s->prefix)
+    oyObject_GetDeAlloc( s->oy_ )( &s->prefix );
+  if(s->suffix)
+    oyObject_GetDeAlloc( s->oy_ )( &s->suffix );
+  if(s->single_color_name)
+    oyObject_GetDeAlloc( s->oy_ )( &s->single_color_name );
 }
 
 /** Function    oyNamedColors_Init__Members
@@ -97,15 +108,15 @@ int oyNamedColors_Copy__Members( oyNamedColors_s_ * dst, oyNamedColors_s_ * src)
 {
   int error = 0;
   oyAlloc_f allocateFunc_ = 0;
-  oyDeAlloc_f deallocateFunc_ = 0;
 
   if(!dst || !src)
     return 1;
 
-  allocateFunc_ = dst->oy_->allocateFunc_;
-  deallocateFunc_ = dst->oy_->deallocateFunc_;
+  allocateFunc_ = oyObject_GetAlloc( dst->oy_ );
 
   /* Copy each value of src to dst here */
+  if(src->prefix)
+    dst->prefix = oyStringCopy_(src->prefix, allocateFunc_);
 
   return error;
 }
@@ -151,10 +162,13 @@ oyNamedColors_s_ * oyNamedColors_New_ ( oyObject_s object )
   s->oy_ = s_obj;
 
   
+  
+  /* ---- start of custom List constructor ----- */
+  error += !oyObject_SetParent( s_obj, oyOBJECT_LIST_S, (oyPointer)s );
+  /* ---- end of custom List constructor ------- */
   /* ---- start of custom NamedColors constructor ----- */
   error += !oyObject_SetParent( s_obj, oyOBJECT_NAMED_COLORS_S, (oyPointer)s );
   /* ---- end of custom NamedColors constructor ------- */
-  
   
   
   
@@ -168,10 +182,13 @@ oyNamedColors_s_ * oyNamedColors_New_ ( oyObject_s object )
 
 
   
+  
+  /* ---- start of custom List constructor ----- */
+  error += oyList_Init__Members( (oyList_s_*)s );
+  /* ---- end of custom List constructor ------- */
   /* ---- start of custom NamedColors constructor ----- */
   error += oyNamedColors_Init__Members( s );
   /* ---- end of custom NamedColors constructor ------- */
-  
   
   
   
@@ -207,10 +224,13 @@ oyNamedColors_s_ * oyNamedColors_Copy__ ( oyNamedColors_s_ *namedcolors, oyObjec
 
   if(!error) {
     
+    
+    /* ---- start of custom List copy constructor ----- */
+    error = oyList_Copy__Members( (oyList_s_*)s, (oyList_s_*)namedcolors );
+    /* ---- end of custom List copy constructor ------- */
     /* ---- start of custom NamedColors copy constructor ----- */
     error = oyNamedColors_Copy__Members( s, namedcolors );
     /* ---- end of custom NamedColors copy constructor ------- */
-    
     
     
     
@@ -285,10 +305,13 @@ int oyNamedColors_Release_( oyNamedColors_s_ **namedcolors )
   /* ---- end of common object destructor ------- */
 
   
+  
+  /* ---- start of custom List destructor ----- */
+  oyList_Release__Members( (oyList_s_*)s );
+  /* ---- end of custom List destructor ------- */
   /* ---- start of custom NamedColors destructor ----- */
   oyNamedColors_Release__Members( s );
   /* ---- end of custom NamedColors destructor ------- */
-  
   
   
   

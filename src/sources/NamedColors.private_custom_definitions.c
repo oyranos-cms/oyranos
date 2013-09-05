@@ -17,6 +17,13 @@
  */
 void oyNamedColors_Release__Members( oyNamedColors_s_ * namedcolors )
 {
+  oyNamedColors_s_ * s = namedcolors;
+  if(s->prefix)
+    oyObject_GetDeAlloc( s->oy_ )( &s->prefix );
+  if(s->suffix)
+    oyObject_GetDeAlloc( s->oy_ )( &s->suffix );
+  if(s->single_color_name)
+    oyObject_GetDeAlloc( s->oy_ )( &s->single_color_name );
 }
 
 /** Function    oyNamedColors_Init__Members
@@ -59,15 +66,15 @@ int oyNamedColors_Copy__Members( oyNamedColors_s_ * dst, oyNamedColors_s_ * src)
 {
   int error = 0;
   oyAlloc_f allocateFunc_ = 0;
-  oyDeAlloc_f deallocateFunc_ = 0;
 
   if(!dst || !src)
     return 1;
 
-  allocateFunc_ = dst->oy_->allocateFunc_;
-  deallocateFunc_ = dst->oy_->deallocateFunc_;
+  allocateFunc_ = oyObject_GetAlloc( dst->oy_ );
 
   /* Copy each value of src to dst here */
+  if(src->prefix)
+    dst->prefix = oyStringCopy_(src->prefix, allocateFunc_);
 
   return error;
 }

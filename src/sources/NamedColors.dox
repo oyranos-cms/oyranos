@@ -1,9 +1,7 @@
 /** @struct  oyNamedColors_s
  *  @ingroup objects_single_color
- *  @extends oyStruct_s
+ *  @extends oyList_s
  *  @brief   List of Single Color objects
- *
- *  @note This class holds a list of oyNamedColor_s objects [list]
  *
  *  @version Oyranos: 0.9.5
  *  @since   2007/10/00 (Oyranos: 0.1.8)

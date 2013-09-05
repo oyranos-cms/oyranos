@@ -3,6 +3,8 @@
    [Template file inheritance graph]
    +-> oyNamedColors_s_.template.h
    |
+   +-> oyList_s_.template.h
+   |
    +-> BaseList_s_.h
    |
    +-- Base_s_.h
@@ -15,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/08/23
+ *  @date     2013/09/04
  */
 
 
@@ -31,6 +33,8 @@
 #define oyNamedColorsPriv_m( var ) ((oyNamedColors_s_*) (var))
 
 typedef struct oyNamedColors_s_ oyNamedColors_s_;
+
+
 
   
 #include <oyranos_object.h>
@@ -48,7 +52,7 @@ typedef struct oyNamedColors_s_ oyNamedColors_s_;
  *  @struct   oyNamedColors_s_
  *  @brief      List of Single Color objects
  *  @ingroup  objects_single_color
- *  @extends  oyStruct_s
+ *  @extends  oyList_s
  */
 struct oyNamedColors_s_ {
 
@@ -61,7 +65,22 @@ oyObject_s           oy_;            /**< @private features name and hash */
 /* } Include "Struct.members.h" */
 
 
-  oyStructList_s     * list_;          /**< the list data */
+
+
+/* Include "BaseList_s_.h" { */
+  oyStructList_s * list_;              /**< the list data */
+/* } Include "BaseList_s_.h" */
+
+/* Include "List.members.h" { */
+
+/* } Include "List.members.h" */
+
+/* Include "NamedColors.members.h" { */
+  char             * single_color_name;/**< cache a possibly composed single_color name */
+  char             * prefix;           /**< prefix to a single color name */
+  char             * suffix;           /**< suffix to a single color name */
+
+/* } Include "NamedColors.members.h" */
 
 };
 
@@ -80,12 +99,12 @@ int
 /* FIXME Are these needed at all?? */
 int
            oyNamedColors_MoveIn_         ( oyNamedColors_s_      * list,
-                                       oyNamedColor_s       ** ptr,
+                                              ** ptr,
                                        int                 pos );
 int
            oyNamedColors_ReleaseAt_      ( oyNamedColors_s_      * list,
                                        int                 pos );
-oyNamedColor_s *
+ *
            oyNamedColors_Get_            ( oyNamedColors_s_      * list,
                                        int                 pos );
 int
@@ -99,6 +118,10 @@ int
 /* } Include "NamedColors.private_methods_declarations.h" */
 
 
+
+void oyNamedColors_Release__Members( oyNamedColors_s_ * namedcolors );
+int oyNamedColors_Init__Members( oyNamedColors_s_ * namedcolors );
+int oyNamedColors_Copy__Members( oyNamedColors_s_ * dst, oyNamedColors_s_ * src);
 
 
 #ifdef __cplusplus

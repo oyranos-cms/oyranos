@@ -1,1 +1,1 @@
-{% extends "BaseList_s.h" %}
+{% extends "oyList_s.template.h" %}
