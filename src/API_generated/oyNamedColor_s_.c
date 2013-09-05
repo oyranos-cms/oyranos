@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/08/23
+ *  @date     2013/09/04
  */
 
 
@@ -111,16 +111,45 @@ int oyNamedColor_Init__Members( oyNamedColor_s_ * namedcolor )
 int oyNamedColor_Copy__Members( oyNamedColor_s_ * dst, oyNamedColor_s_ * src)
 {
   int error = 0;
+  oyNamedColor_s_ * s = dst;
   oyAlloc_f allocateFunc_ = 0;
-  oyDeAlloc_f deallocateFunc_ = 0;
+  const double    * chan;
+  const char      * blob;
+  int               blob_len;
+  oyProfile_s     * ref;
+  int n = 0;
 
   if(!dst || !src)
     return 1;
 
   allocateFunc_ = dst->oy_->allocateFunc_;
-  deallocateFunc_ = dst->oy_->deallocateFunc_;
+
+  chan = src->channels_;
+  blob = src->blob_;
+  blob_len = src->blob_len_;
+  ref = src->profile_;
 
   /* Copy each value of src to dst here */
+  if(error <= 0)
+    s->profile_  = oyProfile_Copy( ref, 0 );
+
+  n = oyProfile_GetChannelsCount( s->profile_ );
+  if(n)
+    s->channels_ = allocateFunc_( n * sizeof(double) );
+  oyCopyColor( chan, &s->channels_[0], 1, ref, n );
+  oyCopyColor( 0, &s->XYZ_[0], 1, 0, 0 );
+
+  if(error <= 0 && blob && blob_len)
+  {
+    s->blob_ = allocateFunc_( blob_len );
+    if(!s->blob_) error = 1;
+
+    if(error <= 0)
+      error = !memcpy( s->blob_, blob, blob_len );
+
+    if(error <= 0)
+      s->blob_len_ = blob_len;
+  }
 
   return error;
 }
