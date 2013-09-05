@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/08/23
+ *  @date     2013/09/01
  */
 
 
@@ -57,6 +57,7 @@ typedef enum {
   oyOBJECT_NONE,
 
   oyOBJECT_HASH_S,   /**< oyHash_s */
+  oyOBJECT_LIST_S,   /**< oyList_s */
   oyOBJECT_NAME_S,   /**< oyName_s */
   oyOBJECT_OBJECT_S,   /**< oyObject_s */
   oyOBJECT_OBSERVER_S,   /**< oyObserver_s */
@@ -169,6 +170,7 @@ typedef enum {
   oyOBJECT_OBSERVER_S,                /**< oyObserver_s */
   oyOBJECT_CONF_DOMAIN_S,             /**< oyConfDomain_s */
   oyOBJECT_INFO_STATIC_S,             /**< oyObjectInfoStatic_s */
+  oyOBJECT_LIST_S,                   /**< oyList_s */
   oyOBJECT_MAX
 } oyOBJECT_e;
 #endif
