@@ -5,7 +5,9 @@
 {% endblock %}
 
 {% block ChildMembers %}
-  oyStructList_s     * list_;          /**< the list data */
+/* Include "BaseList_s_.h" { */
+  oyStructList_s * list_;              /**< the list data */
+/* } Include "BaseList_s_.h" */
 {% endblock %}
 
 {% block GeneralPrivateMethodsDeclarations %}

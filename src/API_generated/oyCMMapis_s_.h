@@ -10,12 +10,12 @@
  *  Oyranos is an open source Colour Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2013/09/04
  */
 
 
@@ -61,7 +61,9 @@ oyObject_s           oy_;            /**< @private features name and hash */
 /* } Include "Struct.members.h" */
 
 
-  oyStructList_s     * list_;          /**< the list data */
+/* Include "BaseList_s_.h" { */
+  oyStructList_s * list_;              /**< the list data */
+/* } Include "BaseList_s_.h" */
 
 };
 
