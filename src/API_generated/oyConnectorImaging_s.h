@@ -9,7 +9,7 @@
    |
    +-- oyStruct_s.template.h
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2013 (C) Kai-Uwe Behrmann
@@ -119,14 +119,14 @@ OYAPI int  OYEXPORT
  */
 typedef enum {
   oyCONNECTOR_IMAGING_CAP_IS_PLUG,
-  oyCONNECTOR_IMAGING_CAP_MAX_COLOUR_OFFSET,
+  oyCONNECTOR_IMAGING_CAP_MAX_COLOR_OFFSET,
   oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT,
   oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT,
-  oyCONNECTOR_IMAGING_CAP_MIN_COLOUR_COUNT,
-  oyCONNECTOR_IMAGING_CAP_MAX_COLOUR_COUNT,
+  oyCONNECTOR_IMAGING_CAP_MIN_COLOR_COUNT,
+  oyCONNECTOR_IMAGING_CAP_MAX_COLOR_COUNT,
   oyCONNECTOR_IMAGING_CAP_CAN_PLANAR,        /**< can read separated channels */
   oyCONNECTOR_IMAGING_CAP_CAN_INTERWOVEN,    /**< can read continuous channels */
-  oyCONNECTOR_IMAGING_CAP_CAN_SWAP,          /**< can swap colour channels (BGR)*/
+  oyCONNECTOR_IMAGING_CAP_CAN_SWAP,          /**< can swap color channels (BGR)*/
   oyCONNECTOR_IMAGING_CAP_CAN_SWAP_BYTES,    /**< non host byte order */
   oyCONNECTOR_IMAGING_CAP_CAN_REVERT,        /**< revert 1 -> 0 and 0 -> 1 */
   oyCONNECTOR_IMAGING_CAP_CAN_PREMULTIPLIED_ALPHA,

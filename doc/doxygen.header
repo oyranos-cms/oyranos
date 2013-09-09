@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html><head>
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
-<meta name="keywords" content="Oyranos,Colour Management,Color Management,ICC,CMS,C,doxygen,API,documentation"/>
+<meta name="keywords" content="Oyranos,Color Management,Color Management,ICC,CMS,C,doxygen,API,documentation"/>
 <meta name="description" content="C source code API documentation for the Oyranos project."/>
 <title>$title</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
@@ -11,6 +11,6 @@
 <table class="title">
 <tr>
 <td class='logo' rowspan="2"><a href='http://www.oyranos.org'><img src='oyranos_logo.png' alt="Oyranos Icon linux/BSD/Unix/osX" border="0"/></a></td>
-<td>Oyranos Colour Management System API</td>
+<td>Oyranos Color Management System API</td>
 </tr>
 </table>

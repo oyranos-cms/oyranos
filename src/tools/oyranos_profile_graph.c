@@ -1,6 +1,6 @@
 /** @file oyranos_profile_graph.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  Copyright (C) 2012-2013  Kai-Uwe Behrmann
  *
@@ -52,7 +52,7 @@ int  oyColorConvert_ ( oyProfile_s       * p_in,
 #endif /* __cplusplus */
 
 
-#include "oyranos_colour.h"
+#include "oyranos_color.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_helper_macros.h"
@@ -87,7 +87,7 @@ void draw_illuminant( cairo_t * cr,
                       float * spd, int start, int end, int lambda,
                       float xO, float yO, float width, float height,
                       int min_x, int max_x, int min_y, int max_y,
-                      int colour );
+                      int color );
 
 int main( int argc , char** argv )
 {
@@ -103,7 +103,7 @@ int main( int argc , char** argv )
   int saturation = 1;
   double kelvin = 0.0;
   char * illuminant = 0;
-  int colour = 1;
+  int color = 1;
 
   int max_x,max_y,min_x,min_y;
 
@@ -188,8 +188,8 @@ int main( int argc , char** argv )
                         else if(OY_IS_ARG("illuminant"))
                         { blackbody = spectral = saturation = 0;
                           OY_PARSE_STRING_ARG2(illuminant, "illuminant"); break; }
-                        else if(OY_IS_ARG("no-colour"))
-                        { colour = 0; i=100; break;}
+                        else if(OY_IS_ARG("no-color"))
+                        { color = 0; i=100; break;}
                         else if(OY_IS_ARG("verbose"))
                         { oy_debug += 1; i=100; break;}
                         }
@@ -200,7 +200,7 @@ int main( int argc , char** argv )
                         printf("\n");
                         printf("%s v%d.%d.%d %s\n", argv[0],
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
-                                _("is a ICC colour profile grapher"));
+                                _("is a ICC color profile grapher"));
                         printf("%s:\n",               _("Usage"));
                         printf("  %s\n",              _("2D Graph from profiles:"));
                         printf("      %s [-o %s] [-x [-c]] [-s] [-vbowt] %s\n", argv[0],
@@ -212,21 +212,21 @@ int main( int argc , char** argv )
                         printf("\n");
                         printf( "  %s\n",             _("Standard Observer 1931 2° Graph:"));
                         printf( "      %s --standard-observer [-vbowt]\n", argv[0]);
-                        printf("      \t--no-colour\t%s\n",    _("draw gray"));
+                        printf("      \t--no-color\t%s\n",    _("draw gray"));
                         printf("\n");
                         printf( "  %s\n",             _("1964 10° Observer Graph:"));
                         printf( "      %s --standard-observer-64 [-vbowt]\n", argv[0]);
-                        printf("      \t--no-colour\t%s\n",    _("draw gray"));
+                        printf("      \t--no-color\t%s\n",    _("draw gray"));
                         printf("\n");
                         printf( "  %s\n",             _("Blackbody Radiator Spectrum Graph:"));
                         printf( "      %s --kelvin %s [-vbowt]\n", argv[0], _("NUMBER"));
-                        printf("      \t--no-colour\t%s\n",    _("draw gray"));
+                        printf("      \t--no-color\t%s\n",    _("draw gray"));
                         printf("\n");
                         printf( "  %s\n",             _("Illuminant Spectrum Graph:"));
                         printf( "      %s --illuminant A|D65 [-vbowt]\n", argv[0]);
                         printf("      --illuminant A\t%s\n",   _("CIE A spectral power distribution"));
                         printf("      --illuminant D65\t%s\n", _("CIE D65 spectral power distribution"));
-                        printf("      \t--no-colour\t%s\n",    _("draw gray"));
+                        printf("      \t--no-color\t%s\n",    _("draw gray"));
                         printf("\n");
                         printf("  %s\n",              _("General options:"));
                         printf("      -v \t%s\n",     _("verbose"));
@@ -462,7 +462,7 @@ int main( int argc , char** argv )
   }
 
 #define drawSpectralCurve(array, pos, r,g,b,a) i = 0; cairo_line_to(cr, xToImage(i/371.0), yToImage(array[i][pos]/2.0)); \
-    if(colour) cairo_set_source_rgba( cr, r,g,b,a); else cairo_set_source_rgba( cr, (r*0.2+g*0.7+b*0.1)/3.0,(r*0.2+g*0.7+b*0.1)/3.0,(r*0.2+g*0.7+b*0.1)/3.0,a); \
+    if(color) cairo_set_source_rgba( cr, r,g,b,a); else cairo_set_source_rgba( cr, (r*0.2+g*0.7+b*0.1)/3.0,(r*0.2+g*0.7+b*0.1)/3.0,(r*0.2+g*0.7+b*0.1)/3.0,a); \
     for(i = 0; i<=371; ++i) \
       cairo_line_to(cr, xToImage(i/371.0), yToImage(array[i][pos]/2.0)); \
     cairo_stroke(cr);
@@ -508,9 +508,9 @@ int main( int argc , char** argv )
       cairo_pattern_t * g = cairo_pattern_create_linear(
                                      xToImage(    i/371.0),yToImage(bb[i]),
                                      xToImage((i+1)/371.0),yToImage(bb[i+1]));
-      /* start with previous colour */
+      /* start with previous color */
       cairo_pattern_add_color_stop_rgba(g, 0, rgb[0],rgb[1],rgb[2], 1);
-      /* get spectral colour from colour matching function (CMF) */
+      /* get spectral color from color matching function (CMF) */
       for(j = 0; j<3; ++j)
         XYZ[j] = cieXYZ_31_2[i][j];
       oyXYZ2Lab( XYZ, rgb );
@@ -518,8 +518,8 @@ int main( int argc , char** argv )
       oyConversion_RunPixels( lab_srgb, 0 );
       /* add different stop */
       cairo_pattern_add_color_stop_rgba(g, 1, rgb[0],rgb[1],rgb[2], 1);
-      if(colour)
-      /* only one colour pattern can be drawn at each cairo_stroke;
+      if(color)
+      /* only one color pattern can be drawn at each cairo_stroke;
        * appears to be a cairo limitation */
         cairo_set_source(cr, g);
       cairo_move_to(cr, xToImage((i  )/371.0), yToImage(bb[i  ]));
@@ -539,13 +539,13 @@ int main( int argc , char** argv )
                        spd_A_5, 300, 780, 5,
                        xO, yO, width, height,
                        min_x, max_x, min_y, max_y,
-                       colour );
+                       color );
     if(strcmp(illuminant,"D65") == 0)
       draw_illuminant( cr,
                        spd_D65_5, 300, 830, 5,
                        xO, yO, width, height,
                        min_x, max_x, min_y, max_y,
-                       colour );
+                       color );
   }
 #undef drawSpectralCurve
 
@@ -693,7 +693,7 @@ float * createCMYKGradient_( int steps, size_t * size )
   return block;
 }
 
-/** @brief creates a linie around the saturated colours of Cmyk and Rgb profiles */
+/** @brief creates a linie around the saturated colors of Cmyk and Rgb profiles */
 double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, oyProfile_s * outspace)
 {
   int i;
@@ -701,7 +701,7 @@ double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, o
 
   icColorSpaceSignature csp = (icColorSpaceSignature)
                               oyProfile_GetSignature( profile,
-                                                      oySIGNATURE_COLOUR_SPACE);
+                                                      oySIGNATURE_COLOR_SPACE);
 
   if(csp == icSigRgbData || icSigXYZData ||
      csp == icSigCmykData ||
@@ -710,7 +710,7 @@ double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, o
     float *block = 0;
     float *lab_block = 0;
 
-    /* scan here the colour space border */
+    /* scan here the color space border */
     {
       size_t size = 0;
       oyOptions_s * options = NULL;
@@ -751,7 +751,7 @@ void draw_illuminant( cairo_t * cr,
                       float * spd, int start, int end, int lambda,
                       float xO, float yO, float width, float height,
                       int min_x, int max_x, int min_y, int max_y,
-                      int colour )
+                      int color )
 {
   float n = (end-start)/lambda + 1;
   /*  draw spectral power distribution
@@ -821,9 +821,9 @@ void draw_illuminant( cairo_t * cr,
                                      xToImage(    i/371.0),yToImage(y0),
                                      xToImage((i+1)/371.0),yToImage(y1));
 
-      /* start with previous colour */
+      /* start with previous color */
       cairo_pattern_add_color_stop_rgba(g, 0, rgb[0],rgb[1],rgb[2], 1);
-      /* get spectral colour from colour matching function (CMF) */
+      /* get spectral color from color matching function (CMF) */
       for(j = 0; j<3; ++j)
         XYZ[j] = cieXYZ_31_2[i][j];
       oyXYZ2Lab( XYZ, rgb );
@@ -831,8 +831,8 @@ void draw_illuminant( cairo_t * cr,
       oyConversion_RunPixels( lab_srgb, 0 );
       /* add different stop */
       cairo_pattern_add_color_stop_rgba(g, 1, rgb[0],rgb[1],rgb[2], 1);
-      if(colour)
-      /* only one colour pattern can be drawn at each cairo_stroke;
+      if(color)
+      /* only one color pattern can be drawn at each cairo_stroke;
        * appears to be a cairo limitation */
         cairo_set_source(cr, g);
 

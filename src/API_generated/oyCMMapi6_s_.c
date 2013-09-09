@@ -9,7 +9,7 @@
    |
    +-- Base_s_.c
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2012 (C) Kai-Uwe Behrmann

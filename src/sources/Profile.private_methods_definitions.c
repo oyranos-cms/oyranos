@@ -137,7 +137,7 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
   }
 
   if(error <= 0)
-    error = !oyProfile_GetSignature ( (oyProfile_s*)s, oySIGNATURE_COLOUR_SPACE );
+    error = !oyProfile_GetSignature ( (oyProfile_s*)s, oySIGNATURE_COLOR_SPACE );
 
   if(error)
   {
@@ -164,8 +164,8 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
     sig = oyValueCSpaceSig( h->colorSpace );
 
     WARNc3_S("Channels <= 0 %d %s %s", s->channels_n_,
-             oyICCColourSpaceGetName(sig),
-             oyICCColourSpaceGetName(h->colorSpace))
+             oyICCColorSpaceGetName(sig),
+             oyICCColorSpaceGetName(h->colorSpace))
 
     if(error_return) *error_return = error;
   }

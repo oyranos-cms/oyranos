@@ -1,11 +1,11 @@
-/** @file oyranos_colour.h
+/** @file oyranos_color.h
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2008-2012 (C) Kai-Uwe Behrmann
  *
- *  @brief    colour definitions
+ *  @brief    color definitions
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -14,8 +14,8 @@
  */
 
 
-#ifndef OYRANOS_COLOUR_H
-#define OYRANOS_COLOUR_H
+#ifndef OYRANOS_COLOR_H
+#define OYRANOS_COLOR_H
 
 #include <stdlib.h> /* for linux size_t */
 #include "icc34.h"
@@ -44,4 +44,4 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
 } /* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* OYRANOS_COLOUR_H */
+#endif /* OYRANOS_COLOR_H */

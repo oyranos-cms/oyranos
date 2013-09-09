@@ -21,9 +21,9 @@ Dependencies:
 
 Notes:
     image_display is compatible to the X Color Management spec and
-    colour corrects its image area itself, while remaining the widget area un
-    changed. The desktop and the image_display non image area is colour
-    corrected by a colour server under Compiz/KWin. The colour server must 
+    color corrects its image area itself, while remaining the widget area un
+    changed. The desktop and the image_display non image area is color
+    corrected by a color server under Compiz/KWin. The color server must 
     be switched on to do so. A monitor profile should be installed eigther with
     oyranos-monitor or some other tool.
 

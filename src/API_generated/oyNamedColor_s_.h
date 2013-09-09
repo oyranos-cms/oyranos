@@ -5,7 +5,7 @@
    |
    +-- Base_s_.h
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2013 (C) Kai-Uwe Behrmann
@@ -32,7 +32,7 @@ typedef struct oyNamedColor_s_ oyNamedColor_s_;
 
 
 
-#include "oyranos_colour.h"
+#include "oyranos_color.h"
 #include "oyranos_image.h"
 
 #include "oyProfile_s.h"

@@ -28,7 +28,7 @@ void displayHelp(char ** argv)
   printf("\n");
   printf("oyranos-device v%d.%d.%d %s\n",
          OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
-         _("is a colour profile administration tool for color devices"));
+         _("is a color profile administration tool for color devices"));
   printf("%s:\n",                 _("Usage"));
   printf("  %s\n",               _("Assign profile to device:"));
   printf("      %s -a -c class -d number -p file.icc\n", argv[0]);
@@ -60,13 +60,13 @@ void displayHelp(char ** argv)
   printf("      %s --list-taxi-profiles -c class -d number [--show-non-device-related]\n", argv[0]);
   printf("         --show-non-device-related\t%s\n",_("show as well non matching profiles"));
   printf("\n");
-  printf("  %s\n",               _("Dump device colour state:"));
+  printf("  %s\n",               _("Dump device color state:"));
   printf("      %s -f=[icc|openicc+rank-map|openicc|openicc-rank-map] [-o=file.json] -c class -d number | -j device.json [--only-db]\n", argv[0]);
   printf("         -f icc  \t%s\n",              _("dump ICC profile"));
-  printf("         -f openicc+rank-map\t%s\n",   _("dump OpenICC device colour state JSON including the rank map"));
-  printf("         -f openicc\t%s\n",            _("dump OpenICC device colour state JSON"));
+  printf("         -f openicc+rank-map\t%s\n",   _("dump OpenICC device color state JSON including the rank map"));
+  printf("         -f openicc\t%s\n",            _("dump OpenICC device color state JSON"));
   printf("            --only-db\t%s\n",_("use only DB keys for -f=openicc"));
-  printf("         -f openicc-rank-map\t%s\n",   _("dump OpenICC device colour state rank map JSON"));
+  printf("         -f openicc-rank-map\t%s\n",   _("dump OpenICC device color state rank map JSON"));
   printf("         -o %s\t%s\n",    _("FILE"),   _("write to specified file"));
   printf("         -j %s\t%s\n",    _("FILE"),   _("use device JSON alternatively to -c and -d options"));
   printf("\n");
@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
   /* resolve device_class */
   if(device_class)
   {
-    /* get XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
+    /* get XCM_ICC_COLOR_SERVER_TARGET_PROFILE_IN_X_BASE */
     if(!skip_x_color_region_target)
       error = oyOptions_SetFromText( &options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes",

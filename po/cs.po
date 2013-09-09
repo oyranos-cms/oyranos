@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2013-07-11 17:22+0200\n"
+"POT-Creation-Date: 2013-09-09 13:59+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
+"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: cs\n"
 
-#: liboyranos_core/oyranos_core.c:298 tools/qcmsevents/qcmsevents.cpp:172
+#: liboyranos_core/oyranos_core.c:297 tools/qcmsevents/qcmsevents.cpp:172
 #, c-format
 msgid "!!! ERROR"
 msgstr "!!! CHYBA"
@@ -24,8 +24,8 @@ msgstr "!!! CHYBA"
 msgid "(device) link class"
 msgstr "třída spojovacího profilu"
 
-#: API_generated/oyranos_profile.c:54 API_generated/oyranos_profile.c:83
-#: liboyranos/oyranos_alpha.c:1759 liboyranos_config/oyranos_icc.c:437
+#: API_generated/oyNamedColor_s.c:603 API_generated/oyranos_profile.c:54
+#: API_generated/oyranos_profile.c:83 liboyranos_config/oyranos_icc.c:437
 #: modules/oyranos_cmm_oicc.c:255
 msgid "----"
 msgstr "----"
@@ -529,7 +529,7 @@ msgstr ""
 "CLUT je PPM o velikosti úrovně x úrovně x úrovně, --levels má výchozí "
 "hodnotu pro CLUT rovnu 64"
 
-#. CMM: abbreviation for Colour Matching Module
+#. CMM: abbreviation for Color Matching Module
 #: API_generated/oyranos_profile.c:37 modules/oyranos_cmm_lcm2.c:3062
 #: modules/oyranos_cmm_lcms.c:2561
 msgid "CMM"
@@ -650,9 +650,25 @@ msgstr ""
 msgid "Collections of settings in Oyranos"
 msgstr "Sbírky nastavení Oyranosu"
 
+#. The following strings must match the categories for a menu entry.
+#: modules/oyranos_cmm_lcm2.c:3059 modules/oyranos_cmm_lcms.c:2558
+#: modules/devices/oyranos_cmm_qarz.c:1067
+#: modules/devices/oyranos_cmm_CUPS.c:879
+#: modules/devices/oyranos_cmm_SANE.c:836
+#: modules/devices/oyranos_cmm_oyX1.c:1165
+#: modules/devices/oyranos_cmm_oyRE.cpp:786
+msgid "Color"
+msgstr "Barva"
+
 #: liboyranos_config/oyranos_texts.c:263
 msgid "Color Managed Devices"
 msgstr ""
+
+#. spac
+#: API_generated/oyranos_profile.c:34 API_generated/oyranos_profile.c:63
+#: liboyranos_config/oyranos_icc.c:547
+msgid "Color Space"
+msgstr "Barvový prostor"
 
 #: liboyranos_config/oyranos_texts.c:182
 msgid "Color Space for Simulating real devices"
@@ -666,6 +682,30 @@ msgstr ""
 #: modules/oyranos_cmm_lcm2.c:2610 modules/oyranos_cmm_lcms.c:2142
 msgid "Color Transforms can be differently stored internally"
 msgstr "Transformace barev mohou být interně uloženy různými způsoby"
+
+#. chad
+#: liboyranos_config/oyranos_icc.c:428
+msgid "Color adaption matrix"
+msgstr "Matice přizpůsobení barev"
+
+#: liboyranos_config/oyranos_icc.c:202
+msgid "Color b"
+msgstr "Barva b"
+
+#. clrt
+#: liboyranos_config/oyranos_icc.c:434
+msgid "Color channel names"
+msgstr "Jména barevných kanálů"
+
+#. clro
+#: liboyranos_config/oyranos_icc.c:432
+msgid "Color channel order"
+msgstr "Pořadí barevných kanálů"
+
+#. clrt
+#: liboyranos_config/oyranos_icc.c:436
+msgid "Color channel output names"
+msgstr "Výstupní jména barevných kanálů"
 
 #: liboyranos_config/oyranos_texts.c:174
 msgid ""
@@ -711,6 +751,10 @@ msgstr ""
 "propojovací prostory (PCS). PCS je dobře známý barvový prostor založený na "
 "průměrném \"lidském pozorovateli\" dle definice CIE."
 
+#: liboyranos_config/oyranos_icc.c:380
+msgid "Color measurement data"
+msgstr "Data z měření barev"
+
 #. HTML
 #: liboyranos_config/oyranos_xml.c:1026
 msgid ""
@@ -724,57 +768,13 @@ msgstr ""
 "přiřazeny ke kalibrovaným stavům jednotlivých zařízení, aby se zajistilo "
 "shodné chování zařízení jako při přípravě profilu ICC."
 
+#: liboyranos_config/oyranos_icc.c:203
+msgid "Color r"
+msgstr "Barva r"
+
 #: liboyranos_config/oyranos_texts.c:417
 msgid "Color space for Simulating an Output Device"
 msgstr "Barvový prostor pro simulaci výstupniho zařízení"
-
-#. The following strings must match the categories for a menu entry.
-#: modules/oyranos_cmm_lcm2.c:3059 modules/oyranos_cmm_lcms.c:2558
-#: modules/devices/oyranos_cmm_qarz.c:1067
-#: modules/devices/oyranos_cmm_CUPS.c:879
-#: modules/devices/oyranos_cmm_SANE.c:836
-#: modules/devices/oyranos_cmm_oyX1.c:1165
-#: modules/devices/oyranos_cmm_oyRE.cpp:786
-msgid "Colour"
-msgstr "Barva"
-
-#. spac
-#: API_generated/oyranos_profile.c:34 API_generated/oyranos_profile.c:63
-#: liboyranos_config/oyranos_icc.c:547
-msgid "Colour Space"
-msgstr "Barvový prostor"
-
-#. chad
-#: liboyranos_config/oyranos_icc.c:428
-msgid "Colour adaption matrix"
-msgstr "Matice přizpůsobení barev"
-
-#: liboyranos_config/oyranos_icc.c:202
-msgid "Colour b"
-msgstr "Barva b"
-
-#. clrt
-#: liboyranos_config/oyranos_icc.c:434
-msgid "Colour channel names"
-msgstr "Jména barevných kanálů"
-
-#. clro
-#: liboyranos_config/oyranos_icc.c:432
-msgid "Colour channel order"
-msgstr "Pořadí barevných kanálů"
-
-#. clrt
-#: liboyranos_config/oyranos_icc.c:436
-msgid "Colour channel output names"
-msgstr "Výstupní jména barevných kanálů"
-
-#: liboyranos_config/oyranos_icc.c:380
-msgid "Colour measurement data"
-msgstr "Data z měření barev"
-
-#: liboyranos_config/oyranos_icc.c:203
-msgid "Colour r"
-msgstr "Barva r"
 
 #: examples/libraw/oyranos_file.cpp:45
 msgid "Convert CameraRaw image to Rgb image:"
@@ -808,7 +808,7 @@ msgstr "Konvertovat do WWW (sRGB)"
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr "Konvertovat do neoznačeného CMYK se zachováním CMYK hodnot"
 
-#: API_generated/oyranos_module.c:1404 liboyranos_config/oyranos_icc.c:381
+#: API_generated/oyranos_module.c:1412 liboyranos_config/oyranos_icc.c:381
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -853,7 +853,7 @@ msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgid "Copyright:       "
 msgstr "Copyright"
 
-#: API_generated/oyranos_module.c:2030
+#: API_generated/oyranos_module.c:2038
 msgid "Could not allocate memory for:"
 msgstr "Nelze alokovat paměť pro:"
 
@@ -861,7 +861,7 @@ msgstr "Nelze alokovat paměť pro:"
 msgid "Could not download from WWW. Please install curl or wget."
 msgstr "Nelze stáhnout z WWW. Nainstalujte prosím \"curl\" nebo \"wget\"."
 
-#: API_generated/oyranos_module.c:796
+#: API_generated/oyranos_module.c:804
 #, fuzzy
 msgid ""
 "Could not find any meta module. Did you set the OY_MODULE_PATH variable, to "
@@ -879,11 +879,11 @@ msgid "Could not open default ICC profile"
 msgstr "Nelze otevřít výchozí profil ICC"
 
 #: API_generated/oyranos_devices.c:230 API_generated/oyranos_devices.c:980
-#: liboyranos/oyranos_alpha.c:2368 liboyranos/oyranos_alpha.c:2451
+#: liboyranos/oyranos_alpha.c:840 liboyranos/oyranos_alpha.c:923
 msgid "Could not open device"
 msgstr "Nelze otevřít zařízení"
 
-#: API_generated/oyranos_module.c:189
+#: API_generated/oyranos_module.c:197
 msgid "Could not open meta module API"
 msgstr "Nelze otevřít meta modul API"
 
@@ -1046,7 +1046,7 @@ msgstr "Výchozí profily"
 msgid "Description:     "
 msgstr "popis"
 
-#. CMM: abbreviation for Colour Matching Module
+#. CMM: abbreviation for Color Matching Module
 #: modules/devices/oyranos_cmm_qarz.c:1070
 #: modules/devices/oyranos_cmm_CUPS.c:882
 #: modules/devices/oyranos_cmm_SANE.c:837
@@ -1075,7 +1075,7 @@ msgstr "Nastavení zařízení"
 
 #. DevD
 #: liboyranos_config/oyranos_icc.c:420
-msgid "Device colours"
+msgid "Device colors"
 msgstr "Barvy zařízení"
 
 #: liboyranos_config/oyranos_icc.c:383
@@ -1123,7 +1123,7 @@ msgstr "Vypsat data:"
 
 #: examples/devices/test_device.c:63
 #, fuzzy
-msgid "Dump device colour state:"
+msgid "Dump device color state:"
 msgstr "Barvy zařízení"
 
 #: tools/oyranos_policy.c:55
@@ -1449,11 +1449,11 @@ msgid "ICC Version"
 msgstr "ICC Examin Verze"
 
 #: modules/oyranos_cmm_oicc.c:452
-msgid "ICC colour profile for colour transformations"
+msgid "ICC color profile for color transformations"
 msgstr "Barvový profil ICC pro barvové transformace"
 
 #: modules/oyranos_cmm_oicc.c:492
-msgid "ICC colour profiles for colour transformations"
+msgid "ICC color profiles for color transformations"
 msgstr "Barvový profil ICC pro barvové transformace"
 
 #: API_generated/oyranos_profile.c:71
@@ -1596,7 +1596,7 @@ msgid ""
 msgstr ""
 "Obrázek nemá vložený barvový prostor. Jaká výchozí akce má být provedena?"
 
-#: modules/oyranos_cmm_oyra_image_scale.c:290
+#: modules/oyranos_cmm_oyra_image_scale.c:300
 #, fuzzy
 msgid "Image/Simple Image[scale]"
 msgstr "Image[lraw]"
@@ -1621,7 +1621,7 @@ msgstr "Image[lraw]"
 msgid "Image[out]"
 msgstr "Image[out]"
 
-#: modules/oyranos_cmm_oyra_image_scale.c:274
+#: modules/oyranos_cmm_oyra_image_scale.c:284
 #, fuzzy
 msgid "Image[scale]"
 msgstr "Image[lraw]"
@@ -1877,32 +1877,33 @@ msgstr "Jas Y"
 msgid "Luv"
 msgstr "Luv"
 
-#: API_generated/oyCMMapiFilters_s_.c:157 API_generated/oyPixelAccess_s_.c:187
-#: API_generated/oyProfile_s_.c:242 API_generated/oyOptions_s_.c:158
-#: API_generated/oyImage_s_.c:172 API_generated/oyName_s_.c:48
-#: API_generated/oyName_s_.c:56 API_generated/oyCMMapis_s_.c:157
-#: API_generated/oyHash_s_.c:154 API_generated/oyCMMapi_s_.c:157
+#: API_generated/oyList_s_.c:131 API_generated/oyCMMapiFilters_s_.c:157
+#: API_generated/oyPixelAccess_s_.c:187 API_generated/oyProfile_s_.c:242
+#: API_generated/oyOptions_s_.c:158 API_generated/oyImage_s_.c:172
+#: API_generated/oyName_s_.c:48 API_generated/oyName_s_.c:56
+#: API_generated/oyCMMapis_s_.c:157 API_generated/oyHash_s_.c:154
+#: API_generated/oyNamedColor_s_.c:183 API_generated/oyCMMapi_s_.c:157
 #: API_generated/oyCMMapi3_s_.c:151 API_generated/oyCMMapi7_s_.c:164
 #: API_generated/oyRectangle_s_.c:149 API_generated/oyFilterPlug_s_.c:164
 #: API_generated/oyCMMapiFilter_s_.c:161 API_generated/oyCMMapi8_s_.c:164
 #: API_generated/oyConfig_s_.c:174 API_generated/oyCMMapi6_s_.c:164
 #: API_generated/oyStructList_s_.c:163 API_generated/oyProfiles_s_.c:157
 #: API_generated/oyCMMapi4_s_.c:162 API_generated/oyConversion_s_.c:158
-#: API_generated/oyCMMui_s_.c:154 API_generated/oyImage_s.c:346
+#: API_generated/oyCMMui_s_.c:154 API_generated/oyImage_s.c:353
 #: API_generated/oyCMMapi9_s_.c:164 API_generated/oyFilterGraph_s_.c:163
 #: API_generated/oyCMMapi10_s_.c:160 API_generated/oyConnectorImaging_s_.c:219
-#: API_generated/oyConfigs_s_.c:157 API_generated/oyCMMobjectType_s_.c:154
-#: API_generated/oyCMMinfo_s_.c:164 API_generated/oyFilterPlugs_s_.c:157
-#: API_generated/oyFilterNode_s_.c:189 API_generated/oyCMMapi5_s_.c:151
-#: API_generated/oyBlob_s_.c:172 API_generated/oyOption_s_.c:180
-#: API_generated/oyArray2d_s_.c:167 API_generated/oyConnector_s_.c:163
-#: API_generated/oyProfileTag_s_.c:133 API_generated/oyFilterCore_s_.c:170
-#: API_generated/oyFilterNodes_s_.c:157 API_generated/oyObserver_s.c:51
-#: API_generated/oyPointer_s_.c:186 API_generated/oyranos_devices.c:3082
-#: API_generated/oyFilterSocket_s_.c:180 API_generated/oyCMMapi4_s.c:151
-#: API_generated/oyranos_module.c:1568 API_generated/oyFilterCore_s.c:201
-#: liboyranos/oyranos_alpha.c:377 liboyranos/oyranos_alpha.c:1186
-#: liboyranos/oyranos_alpha.c:1793 liboyranos_modules/oyranos_forms.c:57
+#: API_generated/oyNamedColors_s_.c:150 API_generated/oyConfigs_s_.c:157
+#: API_generated/oyCMMobjectType_s_.c:154 API_generated/oyCMMinfo_s_.c:164
+#: API_generated/oyFilterPlugs_s_.c:157 API_generated/oyFilterNode_s_.c:189
+#: API_generated/oyCMMapi5_s_.c:151 API_generated/oyBlob_s_.c:172
+#: API_generated/oyOption_s_.c:180 API_generated/oyArray2d_s_.c:167
+#: API_generated/oyConnector_s_.c:163 API_generated/oyProfileTag_s_.c:133
+#: API_generated/oyFilterCore_s_.c:170 API_generated/oyFilterNodes_s_.c:157
+#: API_generated/oyObserver_s.c:51 API_generated/oyPointer_s_.c:186
+#: API_generated/oyranos_devices.c:3082 API_generated/oyFilterSocket_s_.c:180
+#: API_generated/oyCMMapi4_s.c:150 API_generated/oyranos_module.c:1576
+#: API_generated/oyFilterCore_s.c:201 liboyranos/oyranos_alpha.c:295
+#: liboyranos_modules/oyranos_forms.c:57
 msgid "MEM Error."
 msgstr ""
 
@@ -1931,7 +1932,7 @@ msgstr ""
 msgid "Magic:           "
 msgstr "Datum:       "
 
-#: API_generated/oyranos_profile.c:43 API_generated/oyranos_module.c:1403
+#: API_generated/oyranos_profile.c:43 API_generated/oyranos_module.c:1411
 msgid "Manufacturer"
 msgstr "Výrobce"
 
@@ -1963,7 +1964,7 @@ msgstr "Matice"
 
 #. CIED
 #: liboyranos_config/oyranos_icc.c:422
-msgid "Measured colours"
+msgid "Measured colors"
 msgstr "Změřené barvy"
 
 #: liboyranos_config/oyranos_icc.c:391
@@ -2063,17 +2064,17 @@ msgstr "Úvod k filtrům."
 msgid "NUMBER"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1402
+#: API_generated/oyranos_module.c:1410
 msgid "Name"
 msgstr "Jméno"
 
 #. nmcl
 #: liboyranos_config/oyranos_icc.c:395 liboyranos_config/oyranos_icc.c:549
-msgid "Named Colour"
+msgid "Named Color"
 msgstr "Pojmenovaná barva"
 
 #: liboyranos_config/oyranos_icc.c:396
-msgid "Named Colour 2"
+msgid "Named Color 2"
 msgstr "Pojmenovaná barva 2"
 
 #: tools/oyranos_profile.c:255
@@ -2691,7 +2692,7 @@ msgstr "Uložit dokumenty se smíšenými barvovými prostory"
 msgid "Save to a new policy:"
 msgstr "Uložit jako novou politiku:"
 
-#: modules/oyranos_cmm_oyra_image_scale.c:276
+#: modules/oyranos_cmm_oyra_image_scale.c:286
 #, fuzzy
 msgid "Scale Image Filter Object"
 msgstr "Root Image Filter Object"
@@ -2870,8 +2871,8 @@ msgstr "Technologie:"
 msgid ""
 "The \"display\" filter supports applications to show image content on single "
 "and multi monitor displays. It cares about the server communication in "
-"declaring the region as prematched. So a X11 server side colour correction "
-"does not disturb the displayed colours and omits the provided rectangle. The "
+"declaring the region as prematched. So a X11 server side color correction "
+"does not disturb the displayed colors and omits the provided rectangle. The "
 "\"display\" filter matches the provided image content to each monitor it can "
 "find. Of course this has limitations to distorted windows, like wobbly "
 "effects or matrix deformed windows."
@@ -3023,8 +3024,8 @@ msgstr ""
 "Filtr poskytuje nastavení politiky. Tato nastavení mohou být použita v grafu "
 "pomocí uživatelské funkce oyConversion_Correct()."
 
-#: modules/oyranos_cmm_oyra_image_scale.c:282
 #: modules/oyranos_cmm_oyra_image_scale.c:292
+#: modules/oyranos_cmm_oyra_image_scale.c:302
 msgid "The filter is used to reduce pixels."
 msgstr ""
 
@@ -3083,7 +3084,7 @@ msgstr ""
 "The filter will expect a \"rectangle\" option and will create, fill and "
 "process a according rectangle with a new job ticket."
 
-#: modules/oyranos_cmm_oyra_image_scale.c:284
+#: modules/oyranos_cmm_oyra_image_scale.c:294
 #, fuzzy
 msgid ""
 "The filter will expect a \"scale\" option and will create, fill and process "
@@ -3095,11 +3096,11 @@ msgstr ""
 #: modules/oyranos_cmm_lcm2.c:3180
 #, fuzzy
 msgid ""
-"The following options are available to create colour contexts:\n"
+"The following options are available to create color contexts:\n"
 " \"profiles_simulation\", a option of type oyProfiles_s, can contain device "
 "profiles for proofing.\n"
 " \"profiles_effect\", a option of type oyProfiles_s, can contain abstract "
-"colour profiles.\n"
+"color profiles.\n"
 " The following Oyranos options are supported: \"rendering_gamut_warning\", "
 "\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
 "\"proof_soft\" and \"proof_hard\".\n"
@@ -3129,11 +3130,11 @@ msgstr ""
 
 #: modules/oyranos_cmm_lcms.c:2679
 msgid ""
-"The following options are available to create colour contexts:\n"
+"The following options are available to create color contexts:\n"
 " \"profiles_simulation\", a option of type oyProfiles_s, can contain device "
 "profiles for proofing.\n"
 " \"profiles_effect\", a option of type oyProfiles_s, can contain abstract "
-"colour profiles.\n"
+"color profiles.\n"
 " The following Oyranos options are supported: \"rendering_gamut_warning\", "
 "\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
 "\"proof_soft\" and \"proof_hard\".\n"
@@ -3163,64 +3164,63 @@ msgstr ""
 
 #: modules/oyranos_cmm_lcm2.c:3178 modules/oyranos_cmm_lcms.c:2677
 msgid ""
-"The lcms \"colour.icc\" filter is a one dimensional colour conversion "
-"filter. It can both create a colour conversion context, some precalculated "
-"for processing speed up, and the colour conversion with the help of that "
-"context. The adaption part of this filter transforms the Oyranos colour "
-"context, which is ICC device link based, to the internal lcms format."
+"The lcms \"color.icc\" filter is a one dimensional color conversion filter. "
+"It can both create a color conversion context, some precalculated for "
+"processing speed up, and the color conversion with the help of that context. "
+"The adaption part of this filter transforms the Oyranos color context, which "
+"is ICC device link based, to the internal lcms format."
 msgstr ""
-"Filter lcms \"colour.icc\" je jednorozměrný filtr pro transformaci barev. "
-"Umí vytvořit jak kontext transformace barev, některé předvypočtené pro "
-"urychlení následné transformace, tak i transformaci barev s pomocí toho "
-"kontextu. Adaptační část filtru transformuje barvový kontext Oyranosu, který "
-"je založen na tzv. spojovacích profilech ICC, do interního formátu lcms."
+"Filter lcms \"color.icc\" je jednorozměrný filtr pro transformaci barev. Umí "
+"vytvořit jak kontext transformace barev, některé předvypočtené pro urychlení "
+"následné transformace, tak i transformaci barev s pomocí toho kontextu. "
+"Adaptační část filtru transformuje barvový kontext Oyranosu, který je "
+"založen na tzv. spojovacích profilech ICC, do interního formátu lcms."
 
 #: modules/oyranos_cmm_lcm2.c:2930 modules/oyranos_cmm_lcms.c:2429
 msgid ""
-"The littleCMS \"create_profile.colour_matrix\" command lets you create ICC "
-"profiles from some given colourimetric coordinates. See the \"create_profile"
+"The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
+"profiles from some given colorimetric coordinates. See the \"create_profile"
 "\" info item."
 msgstr ""
-"Příkaz Little CMS \"create_profile.colour_matrix\" umožňuje vytvořit profily "
+"Příkaz Little CMS \"create_profile.color_matrix\" umožňuje vytvořit profily "
 "ICC z určených kolorimetrických souřadnic. Viz položka \"create_profile\"."
 
 #: modules/oyranos_cmm_lcm2.c:2922
 msgid ""
-"The littleCMS \"create_profile.colour_matrix\" command lets you create ICC "
-"profiles from some given colourimetric coordinates. The filter expects a "
-"oyOption_s object with name \"colour_matrix."
+"The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
+"profiles from some given colorimetric coordinates. The filter expects a "
+"oyOption_s object with name \"color_matrix."
 "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 "
 "floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, CIE*y "
 "for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y for white "
 "and a gamma value."
 msgstr ""
-"Příkaz littleCMS \"create_profile.colour_matrix\" umožní vytvořit profily "
-"ICC z daných kolorimetrických souřadnic. Filter očekává objekt oyOption_s se "
-"jménem \"colour_matrix."
-"redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" obsahujícím 9 "
-"hodnot v plovoucí čárce v pořadí CIE*x pro červenou, CIE*y pro červenou, "
-"CIE*x pro zelenou, CIE*y pro zelenou, CIE*x pro modrou, CIE*y pro modrou, "
-"CIE*x pro bílou, CIE*y pro bílou a hodnotu gama."
+"Příkaz littleCMS \"create_profile.color_matrix\" umožní vytvořit profily ICC "
+"z daných kolorimetrických souřadnic. Filter očekává objekt oyOption_s se "
+"jménem \"color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma"
+"\" obsahujícím 9 hodnot v plovoucí čárce v pořadí CIE*x pro červenou, CIE*y "
+"pro červenou, CIE*x pro zelenou, CIE*y pro zelenou, CIE*x pro modrou, CIE*y "
+"pro modrou, CIE*x pro bílou, CIE*y pro bílou a hodnotu gama."
 
 #: modules/oyranos_cmm_lcms.c:2421
 msgid ""
-"The littleCMS \"create_profile.colour_matrix\" command lets you create ICC "
-"profiles from some given colourimetric coordinates. The filter expects a "
-"oyOption_s object with name \"colour_matrix."
+"The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
+"profiles from some given colorimetric coordinates. The filter expects a "
+"oyOption_s object with name \"color_matrix."
 "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 "
 "floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, CIE*y "
 "for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y for white "
 "and a gamma value. The result will appear in \"icc_profile\" with the "
-"additional attributes \"create_profile.colour_matrix\"."
+"additional attributes \"create_profile.color_matrix\"."
 msgstr ""
-"Příkaz Little CMS \"create_profile.colour_matrix\" umožňuje vytvořit profily "
+"Příkaz Little CMS \"create_profile.color_matrix\" umožňuje vytvořit profily "
 "ICC z určených kolorimetrických souřadnic. Filter očekává objekt oyOption_s "
-"se jménem \"colour_matrix."
+"se jménem \"color_matrix."
 "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" obsahujícím 9 "
 "hodnot v plovoucí čárce v pořadí CIE*x pro červenou, CIE*y pro červenou, "
 "CIE*x pro zelenou, CIE*y pro zelenou, CIE*x pro modrou, CIE*y pro modrou, "
 "CIE*x pro bílou, CIE*y pro bílou a hodnotu gama. Výsledek bude v "
-"\"icc_profile\" s dodatečnými atributy \"create_profile.colour_matrix\"."
+"\"icc_profile\" s dodatečnými atributy \"create_profile.color_matrix\"."
 
 #: modules/oyranos_cmm_lcms.c:2349
 msgid ""
@@ -3275,9 +3275,9 @@ msgstr ""
 
 #: modules/oyranos_cmm_oicc.c:983
 msgid ""
-"The module is responsible for many settings in the Oyranos colour management "
+"The module is responsible for many settings in the Oyranos color management "
 "settings panel. If applied the module care about rendering intents, "
-"simulation, mixed colour documents and default profiles."
+"simulation, mixed color documents and default profiles."
 msgstr ""
 "Module je odpovědný za mnohá nastavení v ovládacím panelu správy barev "
 "Oyranosu. Pokud bude použit, modul se postará o záměry transformace, "
@@ -3290,7 +3290,7 @@ msgstr "Modul oyX1 podporuje protokol obecného zařízení."
 #: modules/devices/oyranos_cmm_oyX1.c:1602
 msgid ""
 "The oyX1 modules \"set_xcm_region\" handler lets you set X Color Management "
-"compatible client side colour regions. The implementation uses libXcm and "
+"compatible client side color regions. The implementation uses libXcm and "
 "Oyranos."
 msgstr ""
 "Obslužná rutina \"set_xcm_region\" modulů Oyranosu umožňuje nastavit regiony "
@@ -3530,7 +3530,7 @@ msgstr "Pozorovací podmínky"
 msgid "Viewing conditions description"
 msgstr "Popis pozorovacích podmínek"
 
-#: liboyranos_core/oyranos_core.c:295 tools/qcmsevents/qcmsevents.cpp:169
+#: liboyranos_core/oyranos_core.c:294 tools/qcmsevents/qcmsevents.cpp:169
 #, c-format
 msgid "WARNING"
 msgstr "VAROVÁNÍ"
@@ -3634,7 +3634,7 @@ msgid "check"
 msgstr "kontrola"
 
 #: tools/oyranos_profiles.c:66
-msgid "colour space class"
+msgid "color space class"
 msgstr "třída barvového prostoru"
 
 #: liboyranos_config/oyranos_elektra.c:632
@@ -3677,17 +3677,17 @@ msgstr "profil ICC"
 
 #: examples/devices/test_device.c:67
 #, fuzzy
-msgid "dump OpenICC device colour state JSON"
+msgid "dump OpenICC device color state JSON"
 msgstr "vložit JSON OpenICC ze souboru"
 
 #: examples/devices/test_device.c:66
-msgid "dump OpenICC device colour state JSON including the rank map"
+msgid "dump OpenICC device color state JSON including the rank map"
 msgstr ""
 
-#. JSON is a text based file format for exchange of data. The rank map is used to sort colour profiles according to their fit to a specific device.
+#. JSON is a text based file format for exchange of data. The rank map is used to sort color profiles according to their fit to a specific device.
 #: examples/devices/test_device.c:69 examples/libraw/oyranos_file.cpp:53
 #, fuzzy
-msgid "dump OpenICC device colour state rank map JSON"
+msgid "dump OpenICC device color state rank map JSON"
 msgstr "vložit JSON OpenICC ze souboru"
 
 #: tools/oyranos_profile.c:103
@@ -3699,13 +3699,13 @@ msgid "enable simple defaults"
 msgstr "aktivovat jednoduché výchozí hodnoty"
 
 #: API_generated/oyConversion_s.c:188 API_generated/oyranos_devices.c:2536
-#: API_generated/oyranos_module.c:2022
+#: API_generated/oyranos_module.c:2030
 msgid "error in module:"
 msgstr "chyba v modulu:"
 
 #: examples/libraw/oyranos_file.cpp:50
 #, fuzzy
-msgid "extract ICC colour profile"
+msgid "extract ICC color profile"
 msgstr "Extrahovat profil ICC:"
 
 #: modules/oyranos_cmm_oyIM_profile.c:1538
@@ -3754,9 +3754,6 @@ msgstr "soubor existuje, odstraňte jej prosím před instalací nového profilu
 #: modules/oyranos_cmm_oyra_image.c:918 modules/oyranos_cmm_oyra_image.c:926
 #: modules/oyranos_cmm_oyra_image.c:941
 #: modules/oyranos_cmm_oyra_image_scale.c:92
-#: modules/oyranos_cmm_oyra_image_scale.c:157
-#: modules/oyranos_cmm_oyra_image_scale.c:165
-#: modules/oyranos_cmm_oyra_image_scale.c:171
 #: modules/devices/oyranos_monitor_x11.c:163
 #: modules/devices/oyranos_monitor_x11.c:193
 #: modules/devices/oyranos_monitor_x11.c:319
@@ -3814,7 +3811,7 @@ msgid "gamut"
 msgstr "gamut"
 
 #: examples/libraw/oyranos_file.cpp:51
-msgid "generate OpenICC device colour reproduction JSON"
+msgid "generate OpenICC device color reproduction JSON"
 msgstr ""
 
 #: modules/devices/oyranos_cmm_oyX1.c:1598
@@ -3857,7 +3854,7 @@ msgid "is a ICC color conversion tool"
 msgstr "je nástroj na transformace ICC"
 
 #: tools/oyranos_profile_graph.c:203
-msgid "is a ICC colour profile grapher"
+msgid "is a ICC color profile grapher"
 msgstr "zobrazí graf barvového profilu ICC"
 
 #: tools/oyranos_profiles.c:50 tools/oyranos_profile.c:72
@@ -3866,11 +3863,11 @@ msgstr "umí zobrazit informace o profilu ICC"
 
 #: examples/devices/test_device.c:31
 #, fuzzy
-msgid "is a colour profile administration tool for color devices"
+msgid "is a color profile administration tool for color devices"
 msgstr "je nástroj pro barvové profily monitorů"
 
 #: tools/oyranos_gamma.c:196 tools/oyranos_gamma.c:251
-msgid "is a colour profile administration tool for monitors"
+msgid "is a color profile administration tool for monitors"
 msgstr "je nástroj pro barvové profily monitorů"
 
 #: tools/oyranos_policy.c:44
@@ -3948,7 +3945,7 @@ msgid "name longer than"
 msgstr "jméno delší než"
 
 #: tools/oyranos_profiles.c:69
-msgid "named colour class"
+msgid "named color class"
 msgstr "třída pojmenovaných barev"
 
 #: liboyranos/oyranos_cmm.c:162 modules/oyranos_cmm_oicc.c:975
@@ -4067,7 +4064,7 @@ msgid "profile name"
 msgstr "jméno profilu"
 
 #: liboyranos_config/oyranos_io.c:180
-msgid "profile not found in colour path:"
+msgid "profile not found in color path:"
 msgstr "profil nenalezen v předdefinovaném adresáři:"
 
 #: liboyranos_config/oyranos_io.c:201
@@ -4213,7 +4210,7 @@ msgid "wrong argument to option:"
 msgstr "chybný argument pro volbu:"
 
 #: liboyranos_config/oyranos.c:92
-msgid "wrong profile for static web colour space selected, need sRGB"
+msgid "wrong profile for static web color space selected, need sRGB"
 msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 
 #~ msgid ""
@@ -4332,7 +4329,7 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgid "BPC"
 #~ msgstr "BPC"
 
-#~ msgid "Background colour"
+#~ msgid "Background color"
 #~ msgstr "Barva pozadi"
 
 #~ msgid "Backsite"
@@ -4375,7 +4372,7 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgstr "Zavrit"
 
 #~ msgid ""
-#~ "Colour profiles are often available from manufacturers of optical devices "
+#~ "Color profiles are often available from manufacturers of optical devices "
 #~ "(digital camera, scanner, printer). With ICC Examin you can get an "
 #~ "impression of the internal data , stored in a ICC profile. For profiles "
 #~ "containing measurement data, ICC Examin can generate a quality report. "
@@ -4389,7 +4386,7 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ "Odchylka vypoctena ze zmerenych dat je tez zobrazena v tri rozmernem "
 #~ "prohlizeci gamutu.<br>"
 
-#~ msgid "Compare Measurement <-> Profile Colours"
+#~ msgid "Compare Measurement <-> Profile Colors"
 #~ msgstr "Porovnat Mereni <-> Barvy profilu"
 
 #~ msgid "Conversion table with 16-bit precission:"
@@ -4411,7 +4408,7 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgid "Debug"
 #~ msgstr "Ladění"
 
-#~ msgid "Device Colours"
+#~ msgid "Device Colors"
 #~ msgstr "Barvy zařízení"
 
 #~ msgid "Did not find a type for option:"
@@ -4516,7 +4513,7 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgstr "ICC Examin"
 
 #~ msgid ""
-#~ "ICC Examin is a viewer for colour profiles according to ICC standard  - "
+#~ "ICC Examin is a viewer for color profiles according to ICC standard  - "
 #~ "www.color.org . At the moment version 2 profiles are supported."
 #~ msgstr ""
 #~ "ICC Examin je prohlizec pro barvove profily dle ICC standardu - www.color."
@@ -4526,7 +4523,7 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgstr "ICC Examin pouziva nasledujici knihovny:<br>\n"
 
 #~ msgid ""
-#~ "ICC colour profiles (*.{I,i}{C,c}{M,m,C,c})\tMeasurement (*.{txt,it8,IT8,"
+#~ "ICC color profiles (*.{I,i}{C,c}{M,m,C,c})\tMeasurement (*.{txt,it8,IT8,"
 #~ "RGB,CMYK,ti*,cgats,CIE,cie,nCIE,oRPT,DLY,LAB,Q60})\tArgyll Gamuts (*.{wrl,"
 #~ "vrml}"
 #~ msgstr ""
@@ -4648,13 +4645,13 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgid "Me"
 #~ msgstr "Já"
 
-#~ msgid "Meas colour"
+#~ msgid "Meas color"
 #~ msgstr "Zmerene barvy"
 
 #~ msgid "Measurement patch"
 #~ msgstr "Mereny vzorek"
 
-#~ msgid "Measurment- and profile colours from <b>"
+#~ msgid "Measurment- and profile colors from <b>"
 #~ msgstr "Zmerene barvy a barvy profilu z <b>"
 
 #~ msgid "Model:      "
@@ -4696,7 +4693,7 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ "Můj projekt; www: http://www.moje-adresa.com; podpora/email: moje@adresa."
 #~ "com; zdrojové kódy: http://www.moje-adresa.com/download"
 
-#~ msgid "Named colour order"
+#~ msgid "Named color order"
 #~ msgstr "Poradi pojménovaných barev"
 
 #~ msgid "Native Gamut"
@@ -4705,7 +4702,7 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgid "New Directory?"
 #~ msgstr "Novy adresar?"
 
-#~ msgid "No Colour"
+#~ msgid "No Color"
 #~ msgstr "Bez barvy"
 
 #~ msgid "No active drawable found."
@@ -4717,7 +4714,7 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgid "No. Tag   Type   Size Description"
 #~ msgstr "C.  Tag   Typ     Vel. Popis"
 
-#~ msgid "Number of colours:"
+#~ msgid "Number of colors:"
 #~ msgstr "Pocet barev:"
 
 #~ msgid "Number of input channels"
@@ -4929,12 +4926,12 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgstr "Texty/Sipky zap./vyp."
 
 #~ msgid ""
-#~ "The appliance of colour profiles shall help to achive an easy colour data "
+#~ "The appliance of color profiles shall help to achive an easy color data "
 #~ "exchange, regardless which application or what kind of operating system "
-#~ "is used. As well colour adaption between different devices is possible, "
-#~ "provided the colour characteristics of both devices are known. The qulity "
-#~ "of a colour transform from one to an other device depends mainly on the "
-#~ "quality of the colour measurement and the used profiling algorithm during "
+#~ "is used. As well color adaption between different devices is possible, "
+#~ "provided the color characteristics of both devices are known. The qulity "
+#~ "of a color transform from one to an other device depends mainly on the "
+#~ "quality of the color measurement and the used profiling algorithm during "
 #~ "profile creation."
 #~ msgstr ""
 #~ "Pouzivani barvových profilu napomuze k dosazeni snadne vymeny barevných "
@@ -4948,7 +4945,7 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgstr "Hloupý a neužitečný modul Oyranosu."
 
 #~ msgid ""
-#~ "The internal colour transformations are currently realised with functions "
+#~ "The internal color transformations are currently realised with functions "
 #~ "of the littleCMS program library."
 #~ msgstr ""
 #~ "Interní barvove transformace jsou realizovany funkcemi knihoven programu "
@@ -4978,10 +4975,10 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgid "WARNING: Could not load profile."
 #~ msgstr "Varovani: Nelze načíst profil."
 
-#~ msgid "Watch Colours 3D..."
+#~ msgid "Watch Colors 3D..."
 #~ msgstr "Sledovat Barvy 3D..."
 
-#~ msgid "Watch Colours 3D.2..."
+#~ msgid "Watch Colors 3D.2..."
 #~ msgstr "Sledovat Barvy 3D.2..."
 
 #~ msgid "What kind of image is this?"
@@ -5075,10 +5072,10 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgid "can not be used independently from image."
 #~ msgstr "nemuze byt pouzit nezavisle na obrazku."
 
-#~ msgid "colour"
+#~ msgid "color"
 #~ msgstr "barevný"
 
-#~ msgid "coloured"
+#~ msgid "colored"
 #~ msgstr "barevne"
 
 #~ msgid "crdi"
@@ -5098,7 +5095,7 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgstr "dE2000"
 
 #, fuzzy
-#~ msgid "dump OpenICC device colour reproduction rank map JSON"
+#~ msgid "dump OpenICC device color reproduction rank map JSON"
 #~ msgstr "vložit JSON OpenICC ze souboru"
 
 #~ msgid "empty"
@@ -5290,7 +5287,7 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgid "tag_browser_invisible"
 #~ msgstr "tag_prohlizec_neviditelny"
 
-#~ msgid "unknown Colour"
+#~ msgid "unknown Color"
 #~ msgstr "neznama barva"
 
 #~ msgid "use sRGB"

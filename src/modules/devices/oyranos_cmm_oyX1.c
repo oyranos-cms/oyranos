@@ -1,6 +1,6 @@
 /** @file oyranos_cmm_oyX1.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2007-2012 (C) Kai-Uwe Behrmann
@@ -157,10 +157,10 @@ const char * oyX1_help_properties =
       " - \"EDID_red_x\" \"EDID_red_y\" \"EDID_green_x\" \"EDID_green_y\" "
       "   \"EDID_blue_x\" \"EDID_blue_x\" \"EDID_white_x\" \"EDID_white_x\" "
       "   \"EDID_gamma\","
-      " colour characteristics as found in EDID as text\n"
-      " - \"colour_matrix.from_edid."
+      " color characteristics as found in EDID as text\n"
+      " - \"color_matrix.from_edid."
                    "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\","
-      " colour characteristics as found in EDID as doubles\n"
+      " color characteristics as found in EDID as doubles\n"
       " \n"
       " One option \"device_name\" will select the according X display.\n"
       " If not the module will try to get this information from \n"
@@ -230,7 +230,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
       char * EDID_manufacturer=0, * EDID_mnft=0, * EDID_model=0,
            * EDID_serial=0, * EDID_vendor = 0,
            * host=0, * display_geometry=0, * system_port=0;
-      double colours[9] = {0,0,0,0,0,0,0,0,0};
+      double colors[9] = {0,0,0,0,0,0,0,0,0};
       oyBlob_s * edid = 0;
       uint32_t week=0, year=0, EDID_mnft_id=0, EDID_model_id=0;
 
@@ -248,7 +248,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
                       &EDID_manufacturer, &EDID_mnft, &EDID_model, &EDID_serial,
                       &EDID_vendor, &display_geometry, &system_port, &host,
                       &week, &year, &EDID_mnft_id, &EDID_model_id,
-                                        colours,
+                                        colors,
                                         &edid, oyAllocateFunc_,
                                         (oyStruct_s*)options );
 
@@ -281,7 +281,7 @@ int          oyX1DeviceFromName_     ( const char        * device_name,
                                    EDID_serial, EDID_vendor,
                                    week, year,
                                    EDID_mnft_id, EDID_model_id,
-                                   colours, options );
+                                   colors, options );
       }
 
       if(error != 0)
@@ -732,7 +732,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           {
             icHeader * header = 0;
             /* fallback: try to get EDID to build a profile */
-            o_tmp = oyConfig_Find( device, "colour_matrix."
+            o_tmp = oyConfig_Find( device, "color_matrix."
                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma");
             {
               oyOptions_SetFromText( &options,
@@ -742,7 +742,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
               error = oyX1DeviceFromName_( device_name, options, &device );
             }
             if(!o_tmp)
-              o_tmp = oyConfig_Find( device, "colour_matrix."
+              o_tmp = oyConfig_Find( device, "color_matrix."
                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma");
 
             if(o_tmp)
@@ -751,7 +751,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                           * result = 0;
               error = oyOptions_MoveIn( opts, &o_tmp, -1 );
               oyOptions_Handle( "//"OY_TYPE_STD"/create_profile.icc",
-                                opts,"create_profile.icc_profile.colour_matrix",
+                                opts,"create_profile.icc_profile.color_matrix",
                                 &result );
               prof = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
                                         oyOBJECT_PROFILE_S );
@@ -1162,9 +1162,9 @@ const char * oyX1Api8UiGetText       ( const char        * select,
   {
     if(!category)
     {
-      STRING_ADD( category, _("Colour") );
+      STRING_ADD( category, _("Color") );
       STRING_ADD( category, _("/") );
-      /* CMM: abbreviation for Colour Matching Module */
+      /* CMM: abbreviation for Color Matching Module */
       STRING_ADD( category, _("Device") );
       STRING_ADD( category, _("/") );
       STRING_ADD( category, _("Monitor") );
@@ -1199,7 +1199,7 @@ oyCMMui_s_ oyX1_api8_ui = {
   0, /* oyCMMFilter_ValidateOptions_f */
   0, /* oyWidgetEvent_f */
 
-  "Colour/Device/Monitor", /* category */
+  "Color/Device/Monitor", /* category */
   0,   /* const char * options */
   0,   /* oyCMMuiGet_f oyCMMuiGet */
 
@@ -1600,7 +1600,7 @@ const char * oyX1InfoGetTextMyHandler( const char        * select,
       return _("Help");
     else
       return _("The oyX1 modules \"set_xcm_region\" handler lets you set "
-               "X Color Management compatible client side colour regions. "
+               "X Color Management compatible client side color regions. "
                "The implementation uses libXcm and Oyranos.");
   }
   return 0;

@@ -1,5 +1,5 @@
 /**
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  * 
  *  @par Copyright:
  *            2009-2013 (C) Kai-Uwe Behrmann
@@ -463,7 +463,7 @@ oyProfile_s * getEditingProfile      ( )
 
   if(!editing)
   {
-    oyOption_s *matrix = oyOption_FromRegistration("///colour_matrix."
+    oyOption_s *matrix = oyOption_FromRegistration("///color_matrix."
               "from_primaries."
               "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma", NULL );
     /* http://www.color.org/chardata/rgb/rommrgb.xalter
@@ -483,7 +483,7 @@ oyProfile_s * getEditingProfile      ( )
 
     oyOptions_MoveIn( opts, &matrix, -1 );
     oyOptions_Handle( "//"OY_TYPE_STD"/create_profile.icc",
-                                opts,"create_profile.icc_profile.colour_matrix",
+                                opts,"create_profile.icc_profile.color_matrix",
                                 &result );
 
     editing = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",

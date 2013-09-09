@@ -9,7 +9,7 @@
     <li> icc-profiles-basiccolor-printing is needed as default ICC profiles - http://sourceforge.net/projects/openicc/files/basICColor-Profiles/ </li>
     <li> libXinerama, libXrandr, libXfixes and libXxf86vm for X11 support - http://www.x.org </li>
     <li> libXcm for X11 and Quarz monitor support - http://www.oyranos.org/libxcm </li>
-    <li> littleCMS lcms2 API and optionally lcms1 for colour conversions - http://www.littlecms.com </li>
+    <li> littleCMS lcms2 API and optionally lcms1 for color conversions - http://www.littlecms.com </li>
     <li> libpng for PNG image support - http://sourceforge.net/projects/libpng/files/ </li>
     </ul>
     Optional:
@@ -60,16 +60,16 @@
 
 /** @page links References
     @section links Links
-    - cross platform colour information exchange standard, called ICC - http://www.color.org
+    - cross platform color information exchange standard, called ICC - http://www.color.org
     - OpenICC: http://www.freedesktop.org/wiki/OpenIcc
     - Email list: https://lists.sourceforge.net/lists/listinfo/oyranos-devel
     - Bug reports: https://sourceforge.net/tracker/?group_id=177017&atid=879553
     - Oyranos project page: http://www.oyranos.org/wiki/index.php?title=Oyranos
     - ColourWiki: http://www.oyranos.org/wiki
     - Elektra, configuration engine used on Linux - http://freedesktop.org/wiki/Software/Elektra
-    - littleCMS, colour conversion engine - http://www.littlecms.com
+    - littleCMS, color conversion engine - http://www.littlecms.com
     - Xcalib, a vcgt to window server uploader - http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/
-    - Directory paths for colour profiles and other configuration data <a href="http://www.oyranos.org/wiki/index.php?title=OpenIccDirectoryProposal">OpenIccDirectoryProposal at ColourWiki</a>
+    - Directory paths for color profiles and other configuration data <a href="http://www.oyranos.org/wiki/index.php?title=OpenIccDirectoryProposal">OpenIccDirectoryProposal at ColourWiki</a>
     - X11 Requirements http://www.oyranos.org/wiki/index.php?title=Oyranos_X11_Requirements
  */
 
@@ -467,7 +467,7 @@ digraph Modules {
  *  The user API allowes to contruct a filter or configuration
  *  object. Filters can be chained to directed acyclic graphs (DAGs) and data
  *  can be processed through graphs or they are deployed by higher level APIs,
- *  like named colour API.
+ *  like named color API.
  *
  *  \b Meta \b Modules:
  *  The modules are loaded into Oyranos by meta modules. A Meta module can
@@ -562,13 +562,13 @@ digraph Anatomy_A {
 
       node [width = 2.5, style=filled];
 
-      api4_A [label="lcms ICC colour profile Module\n oyCMMapi4_s | <f>Context Creation \"oyDL\" | ... | XFORMS UI"];
+      api4_A [label="lcms ICC color profile Module\n oyCMMapi4_s | <f>Context Creation \"oyDL\" | ... | XFORMS UI"];
 
       api6_A [label="lcms Context Converter\n oyCMMapi6_s\n \"oyDL\"-\>\"lcCC\" \(oyDL_lcCC\)"];
-      api7_A [label="lcms colour conversion Data Processor\n oyCMMapi7_s\n C implementation needs \"lcCC\" context" width = 3.5];
+      api7_A [label="lcms color conversion Data Processor\n oyCMMapi7_s\n C implementation needs \"lcCC\" context" width = 3.5];
 
       api6_C [label="ctl Context Converter\n oyCMMapi6_s\n \"oyDL\"-\>\"oCTL\" \(oyDL_oCTL\)"];
-      api7_C [label="ctl colour conversion Data Processor\n oyCMMapi7_s\n LLVM implementation needs \"oCTL\" context" width = 3.5];
+      api7_C [label="ctl color conversion Data Processor\n oyCMMapi7_s\n LLVM implementation needs \"oCTL\" context" width = 3.5];
 
       api4_A; api6_A; api7_A;
       api7_C; api6_C;
@@ -606,7 +606,7 @@ digraph Anatomy_A {
  *  After that the options section follows (::oyFILTER_REG_OPTION).
  *
  *  The application registration string part should for general purpose modules
- *  contain a convention string. "icc" signals to process colours with the help
+ *  contain a convention string. "icc" signals to process colors with the help
  *  of ICC style profiles, which can by convention be inserted into the options
  *  list.
  *
@@ -656,7 +656,7 @@ digraph Anatomy_A {
  *  Many functions allow for passing a registration string. Matching can be 
  *  obtained by omitting sections like in the string "//openicc/icc", where the
  *  elements between slashes is o,itted. This string would result in a match 
- *  for any ICC compliant colour conversion filter.
+ *  for any ICC compliant color conversion filter.
  *
  *  The registration attributes ".front", ".advanced" and more are described in
  *  the objects_value::oyOPTIONATTRIBUTE_e enum.

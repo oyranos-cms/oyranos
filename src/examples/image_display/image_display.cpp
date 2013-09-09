@@ -1,5 +1,5 @@
 /**
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  * 
  *  @par Copyright:
  *            2009-2013 (C) Kai-Uwe Behrmann
@@ -119,7 +119,7 @@ main(int argc, char** argv)
              "\t--use-no-gl\tuse normal pixel copy\n"
              "\t--no-logo\tskip Oyranos logo\n"
              "\t--module <name>\tselect a Oyranos wrapped CMM\n"
-             "\t--shader <file>\tset a CLUT from PPM image for colour transform\n"
+             "\t--shader <file>\tset a CLUT from PPM image for color transform\n"
              "\t-v\t\tprint verbosely\n"
              "\t--help\t\tprint this help text\n"
             );
@@ -363,7 +363,7 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags
           box->box(FL_FLAT_BOX);
           og->resizable(box);
         }
-        /* place the colour managed logo */
+        /* place the color managed logo */
         {
           Fl_Box* o = new Fl_Box(16, 16+gh, 64, 64);
             o->image(image_oyranos_logo);

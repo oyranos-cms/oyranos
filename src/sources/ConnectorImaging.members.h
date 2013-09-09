@@ -1,13 +1,13 @@
   oyDATATYPE_e       * data_types;     /**< supported float's and int's */
   int                  data_types_n;   /**< # elements in data_types array */
-  int                  max_colour_offset;
+  int                  max_color_offset;
   int                  min_channels_count;
   int                  max_channels_count;
-  int                  min_colour_count;
-  int                  max_colour_count;
+  int                  min_color_count;
+  int                  max_color_count;
   int                  can_planar;     /**< can read separated channels */
   int                  can_interwoven; /**< can read continuous channels */
-  int                  can_swap;       /**< can swap colour channels (BGR)*/
+  int                  can_swap;       /**< can swap color channels (BGR)*/
   int                  can_swap_bytes; /**< non host byte order */
   int                  can_revert;     /**< revert 1 -> 0 and 0 -> 1 */
   int                  can_premultiplied_alpha;

@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2013-07-11 20:50+0200\n"
+"POT-Creation-Date: 2013-09-09 14:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -51,32 +52,33 @@ msgstr ""
 msgid "Could not open profile"
 msgstr ""
 
-#: API_generated/oyCMMapiFilters_s_.c:157 API_generated/oyPixelAccess_s_.c:187
-#: API_generated/oyProfile_s_.c:242 API_generated/oyOptions_s_.c:158
-#: API_generated/oyImage_s_.c:172 API_generated/oyName_s_.c:48
-#: API_generated/oyName_s_.c:56 API_generated/oyCMMapis_s_.c:157
-#: API_generated/oyHash_s_.c:154 API_generated/oyCMMapi_s_.c:157
+#: API_generated/oyList_s_.c:131 API_generated/oyCMMapiFilters_s_.c:157
+#: API_generated/oyPixelAccess_s_.c:187 API_generated/oyProfile_s_.c:242
+#: API_generated/oyOptions_s_.c:158 API_generated/oyImage_s_.c:172
+#: API_generated/oyName_s_.c:48 API_generated/oyName_s_.c:56
+#: API_generated/oyCMMapis_s_.c:157 API_generated/oyHash_s_.c:154
+#: API_generated/oyNamedColor_s_.c:183 API_generated/oyCMMapi_s_.c:157
 #: API_generated/oyCMMapi3_s_.c:151 API_generated/oyCMMapi7_s_.c:164
 #: API_generated/oyRectangle_s_.c:149 API_generated/oyFilterPlug_s_.c:164
 #: API_generated/oyCMMapiFilter_s_.c:161 API_generated/oyCMMapi8_s_.c:164
 #: API_generated/oyConfig_s_.c:174 API_generated/oyCMMapi6_s_.c:164
 #: API_generated/oyStructList_s_.c:163 API_generated/oyProfiles_s_.c:157
 #: API_generated/oyCMMapi4_s_.c:162 API_generated/oyConversion_s_.c:158
-#: API_generated/oyCMMui_s_.c:154 API_generated/oyImage_s.c:346
+#: API_generated/oyCMMui_s_.c:154 API_generated/oyImage_s.c:353
 #: API_generated/oyCMMapi9_s_.c:164 API_generated/oyFilterGraph_s_.c:163
 #: API_generated/oyCMMapi10_s_.c:160 API_generated/oyConnectorImaging_s_.c:219
-#: API_generated/oyConfigs_s_.c:157 API_generated/oyCMMobjectType_s_.c:154
-#: API_generated/oyCMMinfo_s_.c:164 API_generated/oyFilterPlugs_s_.c:157
-#: API_generated/oyFilterNode_s_.c:189 API_generated/oyCMMapi5_s_.c:151
-#: API_generated/oyBlob_s_.c:172 API_generated/oyOption_s_.c:180
-#: API_generated/oyArray2d_s_.c:167 API_generated/oyConnector_s_.c:163
-#: API_generated/oyProfileTag_s_.c:133 API_generated/oyFilterCore_s_.c:170
-#: API_generated/oyFilterNodes_s_.c:157 API_generated/oyObserver_s.c:51
-#: API_generated/oyPointer_s_.c:186 API_generated/oyranos_devices.c:3082
-#: API_generated/oyFilterSocket_s_.c:180 API_generated/oyCMMapi4_s.c:151
-#: API_generated/oyranos_module.c:1568 API_generated/oyFilterCore_s.c:201
-#: liboyranos/oyranos_alpha.c:377 liboyranos/oyranos_alpha.c:1186
-#: liboyranos/oyranos_alpha.c:1793 liboyranos_modules/oyranos_forms.c:57
+#: API_generated/oyNamedColors_s_.c:150 API_generated/oyConfigs_s_.c:157
+#: API_generated/oyCMMobjectType_s_.c:154 API_generated/oyCMMinfo_s_.c:164
+#: API_generated/oyFilterPlugs_s_.c:157 API_generated/oyFilterNode_s_.c:189
+#: API_generated/oyCMMapi5_s_.c:151 API_generated/oyBlob_s_.c:172
+#: API_generated/oyOption_s_.c:180 API_generated/oyArray2d_s_.c:167
+#: API_generated/oyConnector_s_.c:163 API_generated/oyProfileTag_s_.c:133
+#: API_generated/oyFilterCore_s_.c:170 API_generated/oyFilterNodes_s_.c:157
+#: API_generated/oyObserver_s.c:51 API_generated/oyPointer_s_.c:186
+#: API_generated/oyranos_devices.c:3082 API_generated/oyFilterSocket_s_.c:180
+#: API_generated/oyCMMapi4_s.c:150 API_generated/oyranos_module.c:1576
+#: API_generated/oyFilterCore_s.c:201 liboyranos/oyranos_alpha.c:295
+#: liboyranos_modules/oyranos_forms.c:57
 msgid "MEM Error."
 msgstr ""
 
@@ -105,8 +107,14 @@ msgid "Found no node in conversion. give up"
 msgstr ""
 
 #: API_generated/oyConversion_s.c:188 API_generated/oyranos_devices.c:2536
-#: API_generated/oyranos_module.c:2022
+#: API_generated/oyranos_module.c:2030
 msgid "error in module:"
+msgstr ""
+
+#: API_generated/oyNamedColor_s.c:603 API_generated/oyranos_profile.c:54
+#: API_generated/oyranos_profile.c:83 liboyranos_config/oyranos_icc.c:437
+#: modules/oyranos_cmm_oicc.c:255
+msgid "----"
 msgstr ""
 
 #: API_generated/oyFilterNode_s.c:197
@@ -147,7 +155,7 @@ msgid "Already enabled"
 msgstr ""
 
 #: API_generated/oyranos_devices.c:230 API_generated/oyranos_devices.c:980
-#: liboyranos/oyranos_alpha.c:2368 liboyranos/oyranos_alpha.c:2451
+#: liboyranos/oyranos_alpha.c:840 liboyranos/oyranos_alpha.c:923
 msgid "Could not open device"
 msgstr ""
 
@@ -179,9 +187,6 @@ msgstr ""
 #: modules/oyranos_cmm_oyra_image.c:918 modules/oyranos_cmm_oyra_image.c:926
 #: modules/oyranos_cmm_oyra_image.c:941
 #: modules/oyranos_cmm_oyra_image_scale.c:92
-#: modules/oyranos_cmm_oyra_image_scale.c:157
-#: modules/oyranos_cmm_oyra_image_scale.c:165
-#: modules/oyranos_cmm_oyra_image_scale.c:171
 #: modules/devices/oyranos_monitor_x11.c:163
 #: modules/devices/oyranos_monitor_x11.c:193
 #: modules/devices/oyranos_monitor_x11.c:319
@@ -205,7 +210,7 @@ msgstr ""
 #. spac
 #: API_generated/oyranos_profile.c:34 API_generated/oyranos_profile.c:63
 #: liboyranos_config/oyranos_icc.c:547
-msgid "Colour Space"
+msgid "Color Space"
 msgstr ""
 
 #: API_generated/oyranos_profile.c:35
@@ -216,7 +221,7 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#. CMM: abbreviation for Colour Matching Module
+#. CMM: abbreviation for Color Matching Module
 #: API_generated/oyranos_profile.c:37 modules/oyranos_cmm_lcm2.c:3062
 #: modules/oyranos_cmm_lcms.c:2561
 msgid "CMM"
@@ -242,7 +247,7 @@ msgstr ""
 msgid "Attributes"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:43 API_generated/oyranos_module.c:1403
+#: API_generated/oyranos_profile.c:43 API_generated/oyranos_module.c:1411
 msgid "Manufacturer"
 msgstr ""
 
@@ -266,12 +271,6 @@ msgstr ""
 #: API_generated/oyranos_profile.c:50 API_generated/oyranos_profile.c:51
 #: API_generated/oyranos_profile.c:52 API_generated/oyranos_profile.c:53
 msgid "Date"
-msgstr ""
-
-#: API_generated/oyranos_profile.c:54 API_generated/oyranos_profile.c:83
-#: liboyranos/oyranos_alpha.c:1759 liboyranos_config/oyranos_icc.c:437
-#: modules/oyranos_cmm_oicc.c:255
-msgid "----"
 msgstr ""
 
 #. case icMaxEnumIluminant: return _("Illuminant ---"); break;
@@ -343,25 +342,25 @@ msgstr ""
 msgid "Creation Time in UTC"
 msgstr ""
 
-#: API_generated/oyranos_module.c:189
+#: API_generated/oyranos_module.c:197
 msgid "Could not open meta module API"
 msgstr ""
 
-#: API_generated/oyranos_module.c:796
+#: API_generated/oyranos_module.c:804
 msgid ""
 "Could not find any meta module. Did you set the OY_MODULE_PATH variable, to "
 "point to a Oyranos module loader library?"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1402
+#: API_generated/oyranos_module.c:1410
 msgid "Name"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1404 liboyranos_config/oyranos_icc.c:381
+#: API_generated/oyranos_module.c:1412 liboyranos_config/oyranos_icc.c:381
 msgid "Copyright"
 msgstr ""
 
-#: API_generated/oyranos_module.c:2030
+#: API_generated/oyranos_module.c:2038
 msgid "Could not allocate memory for:"
 msgstr ""
 
@@ -446,12 +445,12 @@ msgstr ""
 msgid "path is not readable"
 msgstr ""
 
-#: liboyranos_core/oyranos_core.c:295 tools/qcmsevents/qcmsevents.cpp:169
+#: liboyranos_core/oyranos_core.c:294 tools/qcmsevents/qcmsevents.cpp:169
 #, c-format
 msgid "WARNING"
 msgstr ""
 
-#: liboyranos_core/oyranos_core.c:298 tools/qcmsevents/qcmsevents.cpp:172
+#: liboyranos_core/oyranos_core.c:297 tools/qcmsevents/qcmsevents.cpp:172
 #, c-format
 msgid "!!! ERROR"
 msgstr ""
@@ -524,7 +523,7 @@ msgid "name longer than"
 msgstr ""
 
 #: liboyranos_config/oyranos_io.c:180
-msgid "profile not found in colour path:"
+msgid "profile not found in color path:"
 msgstr ""
 
 #: liboyranos_config/oyranos_io.c:201
@@ -668,11 +667,11 @@ msgid "Luminance Y"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:202
-msgid "Colour b"
+msgid "Color b"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:203
-msgid "Colour r"
+msgid "Color r"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:207
@@ -829,7 +828,7 @@ msgid "Calibration date"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:380
-msgid "Colour measurement data"
+msgid "Color measurement data"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:382
@@ -886,11 +885,11 @@ msgstr ""
 
 #. nmcl
 #: liboyranos_config/oyranos_icc.c:395 liboyranos_config/oyranos_icc.c:549
-msgid "Named Colour"
+msgid "Named Color"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:396
-msgid "Named Colour 2"
+msgid "Named Color 2"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:397
@@ -980,12 +979,12 @@ msgstr ""
 
 #. DevD
 #: liboyranos_config/oyranos_icc.c:420
-msgid "Device colours"
+msgid "Device colors"
 msgstr ""
 
 #. CIED
 #: liboyranos_config/oyranos_icc.c:422
-msgid "Measured colours"
+msgid "Measured colors"
 msgstr ""
 
 #. Pmtr
@@ -1000,7 +999,7 @@ msgstr ""
 
 #. chad
 #: liboyranos_config/oyranos_icc.c:428
-msgid "Colour adaption matrix"
+msgid "Color adaption matrix"
 msgstr ""
 
 #. chrm
@@ -1010,17 +1009,17 @@ msgstr ""
 
 #. clro
 #: liboyranos_config/oyranos_icc.c:432
-msgid "Colour channel order"
+msgid "Color channel order"
 msgstr ""
 
 #. clrt
 #: liboyranos_config/oyranos_icc.c:434
-msgid "Colour channel names"
+msgid "Color channel names"
 msgstr ""
 
 #. clrt
 #: liboyranos_config/oyranos_icc.c:436
-msgid "Colour channel output names"
+msgid "Color channel output names"
 msgstr ""
 
 #. scnr
@@ -1886,7 +1885,7 @@ msgid "default profile type does not exist:"
 msgstr ""
 
 #: liboyranos_config/oyranos.c:92
-msgid "wrong profile for static web colour space selected, need sRGB"
+msgid "wrong profile for static web color space selected, need sRGB"
 msgstr ""
 
 #: liboyranos_config/oyranos.c:140 liboyranos_config/oyranos.c:166
@@ -2200,7 +2199,7 @@ msgid "ICC profile"
 msgstr ""
 
 #: modules/oyranos_cmm_oicc.c:452
-msgid "ICC colour profile for colour transformations"
+msgid "ICC color profile for color transformations"
 msgstr ""
 
 #: modules/oyranos_cmm_oicc.c:490 tools/oyranos_profiles.c:262
@@ -2208,7 +2207,7 @@ msgid "ICC profiles"
 msgstr ""
 
 #: modules/oyranos_cmm_oicc.c:492
-msgid "ICC colour profiles for colour transformations"
+msgid "ICC color profiles for color transformations"
 msgstr ""
 
 #: modules/oyranos_cmm_oicc.c:957
@@ -2231,9 +2230,9 @@ msgstr ""
 
 #: modules/oyranos_cmm_oicc.c:983
 msgid ""
-"The module is responsible for many settings in the Oyranos colour management "
+"The module is responsible for many settings in the Oyranos color management "
 "settings panel. If applied the module care about rendering intents, "
-"simulation, mixed colour documents and default profiles."
+"simulation, mixed color documents and default profiles."
 msgstr ""
 
 #: modules/oyranos_cmm_oyra_image_ppm.c:256
@@ -2399,9 +2398,9 @@ msgstr ""
 
 #: modules/oyranos_cmm_lcm2.c:2922
 msgid ""
-"The littleCMS \"create_profile.colour_matrix\" command lets you create ICC "
-"profiles from some given colourimetric coordinates. The filter expects a "
-"oyOption_s object with name \"colour_matrix."
+"The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
+"profiles from some given colorimetric coordinates. The filter expects a "
+"oyOption_s object with name \"color_matrix."
 "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 "
 "floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, CIE*y "
 "for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y for white "
@@ -2410,8 +2409,8 @@ msgstr ""
 
 #: modules/oyranos_cmm_lcm2.c:2930 modules/oyranos_cmm_lcms.c:2429
 msgid ""
-"The littleCMS \"create_profile.colour_matrix\" command lets you create ICC "
-"profiles from some given colourimetric coordinates. See the \"create_profile"
+"The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
+"profiles from some given colorimetric coordinates. See the \"create_profile"
 "\" info item."
 msgstr ""
 
@@ -2422,7 +2421,7 @@ msgstr ""
 #: modules/devices/oyranos_cmm_SANE.c:836
 #: modules/devices/oyranos_cmm_oyX1.c:1165
 #: modules/devices/oyranos_cmm_oyRE.cpp:786
-msgid "Colour"
+msgid "Color"
 msgstr ""
 
 #: modules/oyranos_cmm_lcm2.c:3064 modules/oyranos_cmm_lcms.c:2563
@@ -2464,20 +2463,20 @@ msgstr ""
 
 #: modules/oyranos_cmm_lcm2.c:3178 modules/oyranos_cmm_lcms.c:2677
 msgid ""
-"The lcms \"colour.icc\" filter is a one dimensional colour conversion "
-"filter. It can both create a colour conversion context, some precalculated "
-"for processing speed up, and the colour conversion with the help of that "
-"context. The adaption part of this filter transforms the Oyranos colour "
-"context, which is ICC device link based, to the internal lcms format."
+"The lcms \"color.icc\" filter is a one dimensional color conversion filter. "
+"It can both create a color conversion context, some precalculated for "
+"processing speed up, and the color conversion with the help of that context. "
+"The adaption part of this filter transforms the Oyranos color context, which "
+"is ICC device link based, to the internal lcms format."
 msgstr ""
 
 #: modules/oyranos_cmm_lcm2.c:3180
 msgid ""
-"The following options are available to create colour contexts:\n"
+"The following options are available to create color contexts:\n"
 " \"profiles_simulation\", a option of type oyProfiles_s, can contain device "
 "profiles for proofing.\n"
 " \"profiles_effect\", a option of type oyProfiles_s, can contain abstract "
-"colour profiles.\n"
+"color profiles.\n"
 " The following Oyranos options are supported: \"rendering_gamut_warning\", "
 "\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
 "\"proof_soft\" and \"proof_hard\".\n"
@@ -2506,8 +2505,8 @@ msgstr ""
 msgid ""
 "The \"display\" filter supports applications to show image content on single "
 "and multi monitor displays. It cares about the server communication in "
-"declaring the region as prematched. So a X11 server side colour correction "
-"does not disturb the displayed colours and omits the provided rectangle. The "
+"declaring the region as prematched. So a X11 server side color correction "
+"does not disturb the displayed colors and omits the provided rectangle. The "
 "\"display\" filter matches the provided image content to each monitor it can "
 "find. Of course this has limitations to distorted windows, like wobbly "
 "effects or matrix deformed windows."
@@ -2563,14 +2562,14 @@ msgstr ""
 
 #: modules/oyranos_cmm_lcms.c:2421
 msgid ""
-"The littleCMS \"create_profile.colour_matrix\" command lets you create ICC "
-"profiles from some given colourimetric coordinates. The filter expects a "
-"oyOption_s object with name \"colour_matrix."
+"The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
+"profiles from some given colorimetric coordinates. The filter expects a "
+"oyOption_s object with name \"color_matrix."
 "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 "
 "floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, CIE*y "
 "for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y for white "
 "and a gamma value. The result will appear in \"icc_profile\" with the "
-"additional attributes \"create_profile.colour_matrix\"."
+"additional attributes \"create_profile.color_matrix\"."
 msgstr ""
 
 #: modules/oyranos_cmm_lcms.c:2653
@@ -2597,11 +2596,11 @@ msgstr ""
 
 #: modules/oyranos_cmm_lcms.c:2679
 msgid ""
-"The following options are available to create colour contexts:\n"
+"The following options are available to create color contexts:\n"
 " \"profiles_simulation\", a option of type oyProfiles_s, can contain device "
 "profiles for proofing.\n"
 " \"profiles_effect\", a option of type oyProfiles_s, can contain abstract "
-"colour profiles.\n"
+"color profiles.\n"
 " The following Oyranos options are supported: \"rendering_gamut_warning\", "
 "\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
 "\"proof_soft\" and \"proof_hard\".\n"
@@ -2679,26 +2678,26 @@ msgid ""
 "stored in the internal buffer."
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image_scale.c:274
+#: modules/oyranos_cmm_oyra_image_scale.c:284
 msgid "Image[scale]"
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image_scale.c:276
+#: modules/oyranos_cmm_oyra_image_scale.c:286
 msgid "Scale Image Filter Object"
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image_scale.c:282
 #: modules/oyranos_cmm_oyra_image_scale.c:292
+#: modules/oyranos_cmm_oyra_image_scale.c:302
 msgid "The filter is used to reduce pixels."
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image_scale.c:284
+#: modules/oyranos_cmm_oyra_image_scale.c:294
 msgid ""
 "The filter will expect a \"scale\" option and will create, fill and process "
 "a according data version with a new job ticket."
 msgstr ""
 
-#: modules/oyranos_cmm_oyra_image_scale.c:290
+#: modules/oyranos_cmm_oyra_image_scale.c:300
 msgid "Image/Simple Image[scale]"
 msgstr ""
 
@@ -2716,7 +2715,7 @@ msgid ""
 "system."
 msgstr ""
 
-#. CMM: abbreviation for Colour Matching Module
+#. CMM: abbreviation for Color Matching Module
 #: modules/devices/oyranos_cmm_qarz.c:1070
 #: modules/devices/oyranos_cmm_CUPS.c:882
 #: modules/devices/oyranos_cmm_SANE.c:837
@@ -2923,7 +2922,7 @@ msgstr ""
 #: modules/devices/oyranos_cmm_oyX1.c:1602
 msgid ""
 "The oyX1 modules \"set_xcm_region\" handler lets you set X Color Management "
-"compatible client side colour regions. The implementation uses libXcm and "
+"compatible client side color regions. The implementation uses libXcm and "
 "Oyranos."
 msgstr ""
 
@@ -2995,7 +2994,7 @@ msgid "The raw image backend of Oyranos."
 msgstr ""
 
 #: tools/oyranos_gamma.c:196 tools/oyranos_gamma.c:251
-msgid "is a colour profile administration tool for monitors"
+msgid "is a color profile administration tool for monitors"
 msgstr ""
 
 #: tools/oyranos_gamma.c:197 tools/oyranos_policy.c:54
@@ -3166,7 +3165,7 @@ msgid "Policy search paths"
 msgstr ""
 
 #: tools/oyranos_profile_graph.c:203
-msgid "is a ICC colour profile grapher"
+msgid "is a ICC color profile grapher"
 msgstr ""
 
 #: tools/oyranos_profile_graph.c:205
@@ -3367,7 +3366,7 @@ msgid "abstract class"
 msgstr ""
 
 #: tools/oyranos_profiles.c:66
-msgid "colour space class"
+msgid "color space class"
 msgstr ""
 
 #: tools/oyranos_profiles.c:67
@@ -3379,7 +3378,7 @@ msgid "(device) link class"
 msgstr ""
 
 #: tools/oyranos_profiles.c:69
-msgid "named colour class"
+msgid "named color class"
 msgstr ""
 
 #: tools/oyranos_profiles.c:70
@@ -3634,7 +3633,7 @@ msgid "RGB primaries missed"
 msgstr ""
 
 #: examples/devices/test_device.c:31
-msgid "is a colour profile administration tool for color devices"
+msgid "is a color profile administration tool for color devices"
 msgstr ""
 
 #: examples/devices/test_device.c:33
@@ -3682,7 +3681,7 @@ msgid "show as well non matching profiles"
 msgstr ""
 
 #: examples/devices/test_device.c:63
-msgid "Dump device colour state:"
+msgid "Dump device color state:"
 msgstr ""
 
 #: examples/devices/test_device.c:65
@@ -3690,20 +3689,20 @@ msgid "dump ICC profile"
 msgstr ""
 
 #: examples/devices/test_device.c:66
-msgid "dump OpenICC device colour state JSON including the rank map"
+msgid "dump OpenICC device color state JSON including the rank map"
 msgstr ""
 
 #: examples/devices/test_device.c:67
-msgid "dump OpenICC device colour state JSON"
+msgid "dump OpenICC device color state JSON"
 msgstr ""
 
 #: examples/devices/test_device.c:68 examples/libraw/oyranos_file.cpp:54
 msgid "use only DB keys for -f=openicc"
 msgstr ""
 
-#. JSON is a text based file format for exchange of data. The rank map is used to sort colour profiles according to their fit to a specific device.
+#. JSON is a text based file format for exchange of data. The rank map is used to sort color profiles according to their fit to a specific device.
 #: examples/devices/test_device.c:69 examples/libraw/oyranos_file.cpp:53
-msgid "dump OpenICC device colour state rank map JSON"
+msgid "dump OpenICC device color state rank map JSON"
 msgstr ""
 
 #: examples/devices/test_device.c:70 examples/libraw/oyranos_file.cpp:61
@@ -3756,11 +3755,11 @@ msgid "Convert CameraRaw image to Rgb image:"
 msgstr ""
 
 #: examples/libraw/oyranos_file.cpp:50
-msgid "extract ICC colour profile"
+msgid "extract ICC color profile"
 msgstr ""
 
 #: examples/libraw/oyranos_file.cpp:51
-msgid "generate OpenICC device colour reproduction JSON"
+msgid "generate OpenICC device color reproduction JSON"
 msgstr ""
 
 #: examples/libraw/oyranos_file.cpp:60

@@ -146,7 +146,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
             size = 0;
             ptr = oyFilterNode_TextToInfo_( node, &size, oyAllocateFunc_ );
             if(ptr)
-              oyWriteMemToFile_( "test_dbg_colour.icc", ptr, size );
+              oyWriteMemToFile_( "test_dbg_color.icc", ptr, size );
           }
 
           /* 1. + 2. query in cache for api7 */
@@ -256,7 +256,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                 int id = oyFilterNode_GetId( (oyFilterNode_s*)node );
                 char * file_name = 0;
                 oyAllocHelper_m_( file_name, char, 80, 0, return 1 );
-                sprintf( file_name, "test_dbg_colour_dl-%d.icc", id );
+                sprintf( file_name, "test_dbg_color_dl-%d.icc", id );
                 if(ptr && size && node->backend_data)
                   oyWriteMemToFile_( file_name, ptr, size );
                 oyFree_m_(file_name);

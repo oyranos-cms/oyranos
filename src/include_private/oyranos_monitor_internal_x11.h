@@ -1,6 +1,6 @@
 /** @file oyranos_monitor_internal_x11.h
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  Copyright (C) 2005-2010  Kai-Uwe Behrmann
  *
@@ -128,7 +128,7 @@ int   oyX1GetMonitorInfo_lib      (const char* display,
                                        uint32_t          * year,
                                        uint32_t          * mnft_id,
                                        uint32_t          * model_id,
-                                       double            * colours,
+                                       double            * colors,
                                        oyBlob_s         ** edid,
                                    oyAlloc_f     allocate_func,
                                        oyStruct_s        * user_data );

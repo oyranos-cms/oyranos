@@ -4,7 +4,7 @@
    [Template file inheritance graph]
    +-- oyranos_module.template.h
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2013 (C) Kai-Uwe Behrmann
@@ -70,8 +70,8 @@ typedef const char*(* oyCMMGetText_f)( const char        * select,
 
 
 #define oyCMM_PROFILE "oyPR"
-#define oyCMM_COLOUR_CONVERSION "oyCC"
-#define oyCOLOUR_ICC_DEVICE_LINK "oyDL"
+#define oyCMM_COLOR_CONVERSION "oyCC"
+#define oyCOLOR_ICC_DEVICE_LINK "oyDL"
 
 
 #define OY_FILTEREDGE_FREE             0x01        /**< list free edges */

@@ -7,7 +7,7 @@
    |
    +-- oyStruct_s.template.c
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2012 (C) Kai-Uwe Behrmann
@@ -275,7 +275,7 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
 
 /** Function  oyConversion_CreateBasicPixelsFromBuffers
  *  @memberof oyConversion_s
- *  @brief    One dimensional colour conversion context
+ *  @brief    One dimensional color conversion context
  *
  *  The options are passed to oyConversion_CreateBasicPixels();
  *  The function does the lookups for the profiles and the modules contexts

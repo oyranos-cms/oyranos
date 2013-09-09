@@ -9,43 +9,43 @@
      Source and Target Profiles for various situations -->
 
   <!-- Editing Rgb
-       Prefered Rgb Editing Colour Space -->
+       Prefered Rgb Editing Color Space -->
   <oyEDITING_RGB>LStar-RGB.icc</oyEDITING_RGB>
 
   <!-- Editing Cmyk
-       Prefered Cmyk Editing Colour Space -->
+       Prefered Cmyk Editing Color Space -->
   <oyEDITING_CMYK>ISOcoated_v2_bas.ICC</oyEDITING_CMYK>
 
   <!-- Editing XYZ
-       Prefered XYZ Editing Colour Space -->
+       Prefered XYZ Editing Color Space -->
   <oyEDITING_XYZ>LCMSXYZI.ICM</oyEDITING_XYZ>
 
   <!-- Editing Lab
-       Prefered CIE*Lab Editing Colour Space -->
+       Prefered CIE*Lab Editing Color Space -->
   <oyEDITING_LAB>LCMSLABI.ICM</oyEDITING_LAB>
 
   <!-- Assumed XYZ source
-       Assigning an untagged XYZ Image an colour space -->
+       Assigning an untagged XYZ Image an color space -->
   <oyASSUMED_XYZ>LCMSXYZI.ICM</oyASSUMED_XYZ>
 
   <!-- Assumed Lab source
-       Assigning an untagged CIE*Lab Image an colour space -->
+       Assigning an untagged CIE*Lab Image an color space -->
   <oyASSUMED_LAB>LCMSLABI.ICM</oyASSUMED_LAB>
 
   <!-- Assumed Rgb source
-       Assigning an untagged Rgb Image an colour space -->
+       Assigning an untagged Rgb Image an color space -->
   <oyASSUMED_RGB>sRGB.icc</oyASSUMED_RGB>
 
   <!-- Assumed Web source
-       Assigning an untagged Rgb Image with source from the WWW an colour space -->
+       Assigning an untagged Rgb Image with source from the WWW an color space -->
   <oyASSUMED_WEB>sRGB.icc</oyASSUMED_WEB>
 
   <!-- Assumed Cmyk source
-       Assigning an untagged Cmyk Image this colour space -->
+       Assigning an untagged Cmyk Image this color space -->
   <oyASSUMED_CMYK>ISOcoated_v2_bas.ICC</oyASSUMED_CMYK>
 
     <!-- Proofing
-         Colour space for Simulating an Output Device -->
+         Color space for Simulating an Output Device -->
     <oyPROFILE_PROOF>ISOcoated_v2_bas.ICC</oyPROFILE_PROOF>
 
 </oyGROUP_DEFAULT_PROFILES>
@@ -53,10 +53,10 @@
 
 <oyGROUP_BEHAVIOUR_RENDERING>
 <!-- Rendering 
-     The kind of ICC standard gamut mapping for transforming colours between differently sized colour spaces -->
+     The kind of ICC standard gamut mapping for transforming colors between differently sized color spaces -->
 
     <!-- Default Rendering Intent
-         Rendering Intent for colour space Transformations.
+         Rendering Intent for color space Transformations.
      0 Perceptual
      1 Relative Colorimetric
      2 Saturation
@@ -70,7 +70,7 @@
     <oyBEHAVIOUR_RENDERING_BPC>1</oyBEHAVIOUR_RENDERING_BPC>
 
     <!-- Gamut Warning
-         Mark Out Of Gamut colours
+         Mark Out Of Gamut colors
      0 No
      1 Yes -->
     <oyBEHAVIOUR_RENDERING_GAMUT_WARNING>0</oyBEHAVIOUR_RENDERING_GAMUT_WARNING>
@@ -85,11 +85,11 @@
 
 
 <oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS>
-<!-- Save Mixed colour space Documents 
-     Default Handling of Mixed Colour Spaces inside one single Document -->
+<!-- Save Mixed color space Documents 
+     Default Handling of Mixed Color Spaces inside one single Document -->
 
     <!-- For Print
-         Handle Mixed colour spaces in Preparing a document for Print output.
+         Handle Mixed color spaces in Preparing a document for Print output.
      0 Preserve Numbers
      1 Convert to Default Cmyk Editing Space
      2 Convert to untagged Cmyk, preserving Cmyk numbers
@@ -97,7 +97,7 @@
     <oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT>2</oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT>
 
     <!-- For Screen
-         Handle Mixed colour spaces in Preparing a document for Screen output.
+         Handle Mixed color spaces in Preparing a document for Screen output.
      0 Preserve Numbers
      1 Convert to Default Rgb Editing Space
      2 Convert to WWW (sRGB)
@@ -109,10 +109,10 @@
 
 <oyGROUP_BEHAVIOUR_MISSMATCH>
 <!-- Mismatching 
-     Decide what to do when the default colour spaces dont match the current ones. -->
+     Decide what to do when the default color spaces dont match the current ones. -->
 
     <!-- No Image profile
-         Image has no colour space embedded. What default action shall be performed?
+         Image has no color space embedded. What default action shall be performed?
      0 Assign No Profile
      1 Assign Assumed Profile
      2 Prompt -->
@@ -140,7 +140,7 @@
      Default Proofing Settings -->
 
     <!-- Proofing Rendering Intent
-         Behaviour of colour space transformation for proofing
+         Behaviour of color space transformation for proofing
      0 Relative Colorimetric
      1 Absolute Colorimetric -->
     <oyBEHAVIOUR_RENDERING_INTENT_PROOF>0</oyBEHAVIOUR_RENDERING_INTENT_PROOF>

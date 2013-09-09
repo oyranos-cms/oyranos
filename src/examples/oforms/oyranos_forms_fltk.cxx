@@ -1,6 +1,6 @@
 /** @file oyranos_forms_fltk.cxx
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2009-2011 (C) Kai-Uwe Behrmann

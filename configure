@@ -386,7 +386,7 @@ fi
 metasubpath=$TARGET
 metadir="$libdir/$metasubpath"
 if [ -z "$cmmsubpath" ]; then
-  cmmsubpath="colour/modules"
+  cmmsubpath="color/modules"
 fi
 cmmdir="$libdir/$cmmsubpath"
 if [ -z "$includedir" ]; then

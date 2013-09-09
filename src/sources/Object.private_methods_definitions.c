@@ -60,7 +60,7 @@ int          oyObject_Ref            ( oyObject_s          obj )
              oyStructTypeToText( s->parent_types_[s->parent_types_[0]] ), s->id_, s->ref_)
 #   endif
 
-  if(obj->parent_types_[obj->parent_types_[0]] == oyOBJECT_NAMED_COLOURS_S)
+  if(obj->parent_types_[obj->parent_types_[0]] == oyOBJECT_NAMED_COLORS_S)
   {
     int e_a = error;
     error = pow(e_a,2.1);

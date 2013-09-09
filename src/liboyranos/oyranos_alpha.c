@@ -1,6 +1,6 @@
 /** @file oyranos_alpha.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2004-2012 (C) Kai-Uwe Behrmann
@@ -33,7 +33,7 @@
 
 #include "oyranos_types.h"
 #include "oyranos_alpha.h"
-#include "oyranos_colour.h"
+#include "oyranos_color.h"
 #include "oyranos_alpha_internal.h"
 #include "oyranos_object_internal.h"
 #include "oyranos_generic_internal.h"
@@ -146,10 +146,10 @@ int lcmsColorSpace(icColorSpaceSignature ProfileSpace)
        }
 }
 
-/** Function oyDumpColourToCGATS
+/** Function oyDumpColorToCGATS
  *  @brief create CGATS text from double value array and a profile
  *
- *  The funtion operates on raw colour values. Alpha is not supported.
+ *  The funtion operates on raw color values. Alpha is not supported.
  *  The intention is to have a small debugging only tool. The values are
  *  required to come prescaled (IE RGB 0...255, XYZ 0...1, CMYK 0...100 ...)
  *
@@ -158,7 +158,7 @@ int lcmsColorSpace(icColorSpaceSignature ProfileSpace)
  *  @since Oyranos: version 0.1.8
  *  @date  2008/01/21 (API 0.1.8)
  */
-oyChar *     oyDumpColourToCGATS     ( const double      * channels,
+oyChar *     oyDumpColorToCGATS     ( const double      * channels,
                                        size_t              n,
                                        oyProfile_s       * prof,
                                        oyAlloc_f           allocateFunc,
@@ -193,7 +193,7 @@ oyChar *     oyDumpColourToCGATS     ( const double      * channels,
     0
   };
 
-  icColorSpaceSignature cspace = oyProfile_GetSignature( prof, oySIGNATURE_COLOUR_SPACE );
+  icColorSpaceSignature cspace = oyProfile_GetSignature( prof, oySIGNATURE_COLOR_SPACE );
 
   int lcms_space = lcmsColorSpace( cspace );
   char * save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_);

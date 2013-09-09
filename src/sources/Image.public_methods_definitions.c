@@ -225,7 +225,7 @@ oyPointer oyImage_GetArray2dLinePlanar ( oyImage_s       * image,
     @param[in]    height       image height
     @param[in]    channels     pointer to the data buffer
     @param[in]    pixel_layout i.e. oyTYPE_123_16 for 16-bit RGB data
-    @param[in]    profile      colour space description
+    @param[in]    profile      color space description
     @param[in]    object       the optional base
  *
  *  @version Oyranos: 0.1.8
@@ -394,7 +394,7 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
  *
  *  @param[in,out] image               the image
  *  @param[in]     pixel_layout        the new layout or pass 0
- *  @param[in]     profile             assign a new profile reinterprets colour,
+ *  @param[in]     profile             assign a new profile reinterprets color,
  *                                     optional
  *  @param[in]     tags                new tags, replace any old tags, optional
  *  @param[in]     width               new width or pass -1
@@ -840,7 +840,7 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       oyDATATYPE_e data_type = oyToDataType_m( s->layout_[oyLAYOUT] );
       int alpha = channels - cchan_n;
       int byteps = oyDataTypeGetSize( data_type );
-      const char * colourspacename = oyProfile_GetText( s->profile_,
+      const char * colorspacename = oyProfile_GetText( s->profile_,
                                                         oyNAME_DESCRIPTION );
       char * vs = oyVersionString(1,malloc);
       uint8_t * out_values = 0;
@@ -901,8 +901,8 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
         do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
       }
 
-      snprintf( text, 128, "# COLORSPACE: %s\n", colourspacename ?
-                colourspacename : "--" );
+      snprintf( text, 128, "# COLORSPACE: %s\n", colorspacename ?
+                colorspacename : "--" );
       len = strlen( text );
       do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
 

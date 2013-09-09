@@ -1,6 +1,6 @@
 /** @file oyranos_icc.h
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2007-2010 (C) Kai-Uwe Behrmann
@@ -40,9 +40,9 @@ icProfileClassSignature oyValueProfCSig (icProfileClassSignature val);
 icTagSignature          oyValueTagSig   (icTagSignature val);
 
 
-int            oyICCColourSpaceGetChannelCount ( icColorSpaceSignature color );
-const char   * oyICCColourSpaceGetName ( icColorSpaceSignature sig );
-const char   * oyICCColourSpaceGetChannelName ( icColorSpaceSignature sig,
+int            oyICCColorSpaceGetChannelCount ( icColorSpaceSignature color );
+const char   * oyICCColorSpaceGetName ( icColorSpaceSignature sig );
+const char   * oyICCColorSpaceGetChannelName ( icColorSpaceSignature sig,
                                        int                 pos,
                                        int                 type );
 const char   * oyICCTagDescription   ( icTagSignature      sig );

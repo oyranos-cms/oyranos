@@ -3,7 +3,7 @@
    [Template file inheritance graph]
    +-- oyranos_conversion.template.c
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2012 (C) Kai-Uwe Behrmann
@@ -169,7 +169,7 @@ int          oyFilterSocket_MatchImagingPlug (
   int match = 0;
   oyConnectorImaging_s * a = 0,  * b = 0;
   oyImage_s * image = 0;
-  int colours_n = 0, n, i, j;
+  int colors_n = 0, n, i, j;
   oyDATATYPE_e data_type = 0;
 
   if(socket && socket->type_ == oyOBJECT_FILTER_SOCKET_S)
@@ -195,12 +195,12 @@ int          oyFilterSocket_MatchImagingPlug (
       /* channel counts */
       int coff = oyImage_GetPixelLayout(image, oyCOFF);      
       oyProfile_s * image_profile = oyImage_GetProfile( image );
-      colours_n = oyProfile_GetChannelsCount( image_profile );
+      colors_n = oyProfile_GetChannelsCount( image_profile );
       oyProfile_Release( &image_profile );
       if(oyChannels_m(layout) < oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT) ||
          oyChannels_m(layout) > oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT) ||
-         colours_n < oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT) ||
-         colours_n > oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT))
+         colors_n < oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT) ||
+         colors_n > oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT))
         match = 0;
 
       /* data types */
@@ -218,13 +218,13 @@ int          oyFilterSocket_MatchImagingPlug (
       }
 
       /* planar and interwoven capabilities */
-      if(oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MAX_COLOUR_OFFSET) < coff ||
+      if(oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MAX_COLOR_OFFSET) < coff ||
          (!oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_CAN_PLANAR) && oyToPlanar_m(layout)) ||
          (!oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_CAN_INTERWOVEN) && !oyToPlanar_m(layout)))
         match = 0;
 
       /* swap and byteswapping capabilities */
-      if((!oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_CAN_SWAP) && oyToSwapColourChannels_m(layout)) ||
+      if((!oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_CAN_SWAP) && oyToSwapColorChannels_m(layout)) ||
          (!oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_CAN_SWAP_BYTES) && oyToByteswap_m(coff)))
         match = 0;
 
@@ -249,9 +249,9 @@ int          oyFilterSocket_MatchImagingPlug (
 
             if(channel_types[i] == channel_type &&
                !(!oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_CAN_NONPREMULTIPLIED_ALPHA) &&
-                 channel_type == oyCHANNELTYPE_COLOUR_LIGHTNESS) &&
+                 channel_type == oyCHANNELTYPE_COLOR_LIGHTNESS) &&
                !(!oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_CAN_PREMULTIPLIED_ALPHA) &&
-                 channel_type == oyCHANNELTYPE_COLOUR_LIGHTNESS_PREMULTIPLIED))
+                 channel_type == oyCHANNELTYPE_COLOR_LIGHTNESS_PREMULTIPLIED))
               match = 1;
           }
           if(!match)

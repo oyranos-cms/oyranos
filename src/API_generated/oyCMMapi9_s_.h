@@ -9,7 +9,7 @@
    |
    +-- Base_s_.h
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2012 (C) Kai-Uwe Behrmann
@@ -115,7 +115,7 @@ oyObject_s           oy_;            /**< @private features name and hash */
   oyCMMInit_f      oyCMMInit;          /**< */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
 
-  /** e.g. "sw/oyranos.org/colour.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/colour/icc.lcms.CPU",
+  /** e.g. "sw/oyranos.org/color.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/color/icc.lcms.CPU",
       see as well @ref registration */
   const char     * registration;
 
@@ -154,7 +154,7 @@ oyObject_s           oy_;            /**< @private features name and hash */
   oyCMMobjectType_s ** object_types;   /**< zero terminated list of types */
 
   oyCMMGetText_f   getText;            /**< describe selectors in UI */
-  const char    ** texts;              /**< zero terminated categories for getText, e.g. {"///GPU","///CPU","//colour",0} */
+  const char    ** texts;              /**< zero terminated categories for getText, e.g. {"///GPU","///CPU","//color",0} */
 
   oyConversion_Correct_f oyConversion_Correct; /**< check a graph */
   /** registration pattern which are supported by oyConversion_Correct \n

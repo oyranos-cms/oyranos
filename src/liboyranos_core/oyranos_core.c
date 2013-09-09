@@ -1,6 +1,6 @@
 /** @file oyranos_core.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2004-2011 (C) Kai-Uwe Behrmann
@@ -143,8 +143,8 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_NONE: text = "Zero - none"; break;
     case oyOBJECT_OBJECT_S: text = "oyObject_s"; break;
     case oyOBJECT_MONITOR_S: text = "oyMonitor_s"; break;
-    case oyOBJECT_NAMED_COLOUR_S: text = "oyNamedColour_s"; break;
-    case oyOBJECT_NAMED_COLOURS_S: text = "oyNamedColours_s"; break;
+    case oyOBJECT_NAMED_COLOR_S: text = "oyNamedColor_s"; break;
+    case oyOBJECT_NAMED_COLORS_S: text = "oyNamedColors_s"; break;
     case oyOBJECT_PROFILE_S: text = "oyProfile_s"; break;
     case oyOBJECT_PROFILE_TAG_S: text = "oyProfileTag_s"; break;
     case oyOBJECT_PROFILES_S: text = "oyProfiles_s"; break;
@@ -153,7 +153,6 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_RECTANGLE_S: text = "oyRectangle_s"; break;
     case oyOBJECT_IMAGE_S: text = "oyImage_s"; break;
     case oyOBJECT_ARRAY2D_S: text = "oyArray2d_s"; break;
-    case oyOBJECT_COLOUR_CONVERSION_S: text = "oyColourConversion_s";break;
     case oyOBJECT_FILTER_CORE_S: text = "oyFilterCore_s"; break;
     case oyOBJECT_FILTER_CORES_S: text = "oyFilterCores_s"; break;
     case oyOBJECT_CONVERSION_S: text = "oyConversion_s"; break;
@@ -205,8 +204,6 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_OBSERVER_S: text = "oyObserver_s"; break;
     case oyOBJECT_CONF_DOMAIN_S: text = "oyConfDomain_s"; break;
     case oyOBJECT_INFO_STATIC_S: text = "oyObjectInfoStatic_s"; break;
-    case oyOBJECT_NAMED_COLOR_S: text = "oyNamedColor_s"; break;
-    case oyOBJECT_NAMED_COLORS_S: text = "oyNamedColors_s"; break;
     case oyOBJECT_MAX: text = "MAX - not defined"; break;
   }
   return text;

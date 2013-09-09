@@ -1,6 +1,6 @@
 /** @file oyranos_monitor.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2005-2012 (C) Kai-Uwe Behrmann
@@ -224,7 +224,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
                                        uint32_t          * year,
                                        uint32_t          * mnft_id,
                                        uint32_t          * model_id,
-                                       double            * colours,
+                                       double            * colors,
                                        oyBlob_s         ** edid,
                                    oyAlloc_f     allocate_func,
                                        oyStruct_s        * user_data )
@@ -315,7 +315,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
       edi = oyBlob_GetPointer(prop);
 
       error = oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, vendor,
-                      week, year, mnft_id, model_id, colours, allocate_func);
+                      week, year, mnft_id, model_id, colors, allocate_func);
       if(error) WARNc2_S("%s %d", _("found issues"),error);
 
       if(edid && error != XCM_EDID_OK)
@@ -403,15 +403,15 @@ oyX1GetMonitorInfo_               (const char* display_name,
       {
         *mnft = oyStringCopy_( mnft_, oyAllocateFunc_ );
         *model_id = model_id_;
-        colours[0] = rx;
-        colours[1] = ry;
-        colours[2] = gx;
-        colours[3] = gy;
-        colours[4] = bx;
-        colours[5] = by;
-        colours[6] = wx;
-        colours[7] = wy;
-        colours[8] = g;
+        colors[0] = rx;
+        colors[1] = ry;
+        colors[2] = gx;
+        colors[3] = gy;
+        colors[4] = bx;
+        colors[5] = by;
+        colors[6] = wx;
+        colors[7] = wy;
+        colors[8] = g;
         *year = year_;
         *week = week_;
         WARNcc5_S( user_data, "found %s in \"%s\": %s %d %s",
@@ -482,13 +482,13 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
     return 0;
 
 #if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
-  /* support the colour server device profile */
+  /* support the color server device profile */
   if(flags & 0x01)
     prop = oyX1Monitor_getProperty_( disp,
                              XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE, 0 );
 #endif
 
-  /* alternatively fall back to the non colour server or pre v0.4 atom */
+  /* alternatively fall back to the non color server or pre v0.4 atom */
   if(!prop)
 #if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
     prop = oyX1Monitor_getProperty_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, 0 );
@@ -1604,7 +1604,7 @@ oyX1GetMonitorInfo_lib            (const char* display_name,
                                        uint32_t          * year,
                                        uint32_t          * mnft_id,
                                        uint32_t          * model_id,
-                                       double            * colours,
+                                       double            * colors,
                                        oyBlob_s         ** edid,
                                    oyAlloc_f     allocate_func,
                                        oyStruct_s        * user_data)
@@ -1616,7 +1616,7 @@ oyX1GetMonitorInfo_lib            (const char* display_name,
   err = oyX1GetMonitorInfo_(display_name, manufacturer, mnft, model, serial,
                            vendor,
                            display_geometry, system_port, host, week, year,
-                           mnft_id, model_id, colours, edid,
+                           mnft_id, model_id, colors, edid,
                            allocate_func, user_data );
 
   if(*manufacturer)

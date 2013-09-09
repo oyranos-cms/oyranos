@@ -7,7 +7,7 @@
    |
    +-- oyStruct_s.template.c
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2013 (C) Kai-Uwe Behrmann
@@ -553,7 +553,7 @@ const char *     oyNamedColor_GetName( oyNamedColor_s    * color,
     double l[3];
     int i;
     icSignature sig = oyProfile_GetSignature( s->profile_,
-                                              oySIGNATURE_COLOUR_SPACE );
+                                              oySIGNATURE_COLOR_SPACE );
 
     oyAllocHelper_m_( txt, char, 1024, 0, return 0 );
     oyNamedColor_GetColorStd( color, oyEDITING_LAB, l, oyDOUBLE, 0, 0 );
@@ -572,12 +572,12 @@ const char *     oyNamedColor_GetName( oyNamedColor_s    * color,
            for(i = 0; i < 3; ++i)
              oySprintf_( &txt[ oyStrlen_(txt) ], "%.02f ", l[i] );
 
-           tmp = oyICCColourSpaceGetName( sig );
+           tmp = oyICCColorSpaceGetName( sig );
            if(tmp)
              oySprintf_( &txt[ oyStrlen_(txt) ], "; %s:", tmp );
 
            if( s->channels_ )
-           for(i = 0; i < oyICCColourSpaceGetChannelCount( sig ); ++i)
+           for(i = 0; i < oyICCColorSpaceGetChannelCount( sig ); ++i)
              oySprintf_( &txt[ oyStrlen_(txt) ], "%.02f ", s->channels_[i] );
            break;
       default:

@@ -1,6 +1,6 @@
 /** @file oyranos_monitor.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2005-2010 (C) Kai-Uwe Behrmann
@@ -67,7 +67,7 @@ int            oyDeviceFillInfos     ( const char        * registration,
                                        int                 year,
                                        int                 EDID_mnft_id,
                                        int                 EDID_model_id,
-                                       double            * colours,
+                                       double            * colors,
                                        oyOptions_s       * options )
 {
   int error = !device_;
@@ -123,18 +123,18 @@ int            oyDeviceFillInfos     ( const char        * registration,
           int  i;
           char * save_locale = 0;
 
-          if(colours[0] != 0.0 && colours[1] != 0.0 && colours[2] != 0.0 &&
-             colours[3] != 0.0 && colours[4] != 0.0 && colours[5] != 0.0 && 
-             colours[6] != 0.0 && colours[7] != 0.0 && colours[8] != 0.0 )
+          if(colors[0] != 0.0 && colors[1] != 0.0 && colors[2] != 0.0 &&
+             colors[3] != 0.0 && colors[4] != 0.0 && colors[5] != 0.0 && 
+             colors[6] != 0.0 && colors[7] != 0.0 && colors[8] != 0.0 )
           {
             STRING_ADD(t, registration);
             STRING_ADD(t, OY_SLASH );
-            STRING_ADD(t, "colour_matrix.from_edid."
+            STRING_ADD(t, "color_matrix.from_edid."
                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma");
               
             for(i = 0; i < 9; ++i)
               error = oyOptions_SetFromDouble( &(*device)->data, t,
-                                             colours[i], i, OY_CREATE_NEW );
+                                             colors[i], i, OY_CREATE_NEW );
 
             oyFree_m_( t );
           }
@@ -154,7 +154,7 @@ int            oyDeviceFillInfos     ( const char        * registration,
             save_locale = oyStringCopy_( setlocale( LC_NUMERIC, 0 ),
                                          oyAllocateFunc_ );
             setlocale( LC_NUMERIC, "C" );
-            sprintf( text, "%g", colours[0] );
+            sprintf( text, "%g", colors[0] );
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_red_x" );
             error = oyOptions_SetFromText( &(*device)->backend_core, t,
@@ -162,49 +162,49 @@ int            oyDeviceFillInfos     ( const char        * registration,
             oyFree_m_(t);
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_red_y" );
-            sprintf( text, "%g", colours[1] );
+            sprintf( text, "%g", colors[1] );
             error = oyOptions_SetFromText( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
             oyFree_m_(t);
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_green_x" );
-            sprintf( text, "%g", colours[2] );
+            sprintf( text, "%g", colors[2] );
             error = oyOptions_SetFromText( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
             oyFree_m_(t);
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_green_y" );
-            sprintf( text, "%g", colours[3] );
+            sprintf( text, "%g", colors[3] );
             error = oyOptions_SetFromText( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
             oyFree_m_(t);
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_blue_x" );
-            sprintf( text, "%g", colours[4] );
+            sprintf( text, "%g", colors[4] );
             error = oyOptions_SetFromText( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
             oyFree_m_(t);
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_blue_y" );
-            sprintf( text, "%g", colours[5] );
+            sprintf( text, "%g", colors[5] );
             error = oyOptions_SetFromText( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
             oyFree_m_(t);
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_white_x" );
-            sprintf( text, "%g", colours[6] );
+            sprintf( text, "%g", colors[6] );
             error = oyOptions_SetFromText( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
             oyFree_m_(t);
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_white_y" );
-            sprintf( text, "%g", colours[7] );
+            sprintf( text, "%g", colors[7] );
             error = oyOptions_SetFromText( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
             oyFree_m_(t);
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_gamma" );
-            sprintf( text, "%g", colours[8] );
+            sprintf( text, "%g", colors[8] );
             error = oyOptions_SetFromText( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
 
@@ -236,12 +236,12 @@ int            oyDeviceFillEdid      ( const char        * registration,
   {
       char * EDID_manufacturer=0, * EDID_mnft=0, * EDID_model=0,
            * EDID_serial=0, * EDID_vendor = 0;
-      double colours[9] = {0,0,0,0,0,0,0,0,0};
+      double colors[9] = {0,0,0,0,0,0,0,0,0};
       uint32_t week=0, year=0, EDID_mnft_id=0, EDID_model_id=0;
 
       error = oyUnrollEdid1_( edi, &EDID_manufacturer, &EDID_mnft,
                       &EDID_model, &EDID_serial, &EDID_vendor,
-                      &week, &year, &EDID_mnft_id, &EDID_model_id, colours,
+                      &week, &year, &EDID_mnft_id, &EDID_model_id, colors,
                       oyAllocateFunc_);
 
       error = oyDeviceFillInfos( registration, device,
@@ -251,7 +251,7 @@ int            oyDeviceFillEdid      ( const char        * registration,
                                    EDID_serial, EDID_vendor,
                                    week, year,
                                    EDID_mnft_id, EDID_model_id,
-                                   colours, options );
+                                   colors, options );
   }
 
   return error;

@@ -1,6 +1,6 @@
 /** @file oyranos_check.h
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2006-2009 (C) Kai-Uwe Behrmann
@@ -36,9 +36,9 @@
 
 /* separate from the external functions */
 
-int	oyCheckProfile_                   (const char* name,const char* coloursig);
+int	oyCheckProfile_                   (const char* name,const char* colorsig);
 int	oyCheckProfileMem_                (const void* mem, size_t size,
-                                           const char* coloursig);
+                                           const char* colorsig);
 
 int     oyProfileGetMD5_             ( void       * buffer,
                                        size_t       size,

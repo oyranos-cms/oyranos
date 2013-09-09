@@ -1,6 +1,6 @@
 /** @file oyranos_cmm_oyra_image.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2008-2009 (C) Kai-Uwe Behrmann
@@ -183,14 +183,14 @@ oyConnectorImaging_s_ oyra_imageOutputPPM_connector_out = {
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_ppm_data_types,
   4, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   4, /* max_channels_count; */
-  1, /* min_colour_count; */
-  4, /* max_colour_count; */
+  1, /* min_color_count; */
+  4, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  0, /* can_swap; can swap colour channels (BGR)*/
+  0, /* can_swap; can swap color channels (BGR)*/
   0, /* can_swap_bytes; non host byte order */
   0, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */
@@ -214,14 +214,14 @@ oyConnectorImaging_s_ oyra_imageOutputPPM_connector_in = {
   1, /* is_plug == oyFilterPlug_s */
   oyra_image_ppm_data_types,
   4, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   4, /* max_channels_count; */
-  1, /* min_colour_count; */
-  4, /* max_colour_count; */
+  1, /* min_color_count; */
+  4, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  0, /* can_swap; can swap colour channels (BGR)*/
+  0, /* can_swap; can swap color channels (BGR)*/
   0, /* can_swap_bytes; non host byte order */
   0, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */
@@ -638,7 +638,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
         ++fpos;
       }
 
-      /* lockup colour space */
+      /* lockup color space */
       if(fpos - l_pos > 0)
       {
         if(fpos - l_pos >= 14 && memcmp(&data[l_pos],"# COLORSPACE: ", 14) == 0)
@@ -1040,14 +1040,14 @@ oyConnectorImaging_s_ oyra_imageInputPPM_connector = {
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_ppm_data_types,
   4, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   4, /* max_channels_count; */
-  1, /* min_colour_count; */
-  4, /* max_colour_count; */
+  1, /* min_color_count; */
+  4, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  0, /* can_swap; can swap colour channels (BGR)*/
+  0, /* can_swap; can swap color channels (BGR)*/
   0, /* can_swap_bytes; non host byte order */
   0, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */

@@ -1,5 +1,5 @@
 /**
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  * 
  *  @par Copyright:
  *            2010 (C) Kai-Uwe Behrmann
@@ -9,7 +9,7 @@
  *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2010/09/10
  *
- *  Helpers to create colour managed widgets with Oyranos.
+ *  Helpers to create color managed widgets with Oyranos.
  */
 
 #ifndef Oy_Widget_H

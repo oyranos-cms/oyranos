@@ -1,6 +1,6 @@
 /** @file oyranos_string.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2004-2010 (C) Kai-Uwe Behrmann

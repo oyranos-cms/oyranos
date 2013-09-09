@@ -25,7 +25,7 @@ OYAPI oyProfile_s * OYEXPORT
 OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
                                        oyOptions_s       * options );
 OYAPI int OYEXPORT
-         oyProfile_GetChannelsCount ( oyProfile_s * colour );
+         oyProfile_GetChannelsCount ( oyProfile_s * color );
 OYAPI icSignature OYEXPORT
              oyProfile_GetSignature (  oyProfile_s       * profile,
                                        oySIGNATURE_TYPE_e  type );
@@ -34,10 +34,10 @@ OYAPI int OYEXPORT
                                        icSignature         sig,
                                        oySIGNATURE_TYPE_e  type );
 OYAPI void OYEXPORT
-            oyProfile_SetChannelNames( oyProfile_s * colour,
+            oyProfile_SetChannelNames( oyProfile_s * color,
                                        oyObject_s        * names_chan );
 OYAPI const oyObject_s * OYEXPORT
-                   oyProfile_GetChannelNames( oyProfile_s * colour);
+                   oyProfile_GetChannelNames( oyProfile_s * color);
 OYAPI const char   * OYEXPORT
                    oyProfile_GetChannelName ( oyProfile_s * profile,
                                          int               channel_pos,

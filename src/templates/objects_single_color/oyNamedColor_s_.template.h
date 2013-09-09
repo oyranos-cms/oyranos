@@ -2,7 +2,7 @@
 
 {% block GlobalIncludeFiles %}
 {{ block.super }}
-#include "oyranos_colour.h"
+#include "oyranos_color.h"
 #include "oyranos_image.h"
 
 #include "oyProfile_s.h"

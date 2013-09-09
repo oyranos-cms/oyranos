@@ -4,7 +4,7 @@
    +-{% if not forloop.last %}>{% else %}-{% endif %} {{ file }}{% if not forloop.last %}
    |{% endif %}{% endfor %}
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-{% now "yyyy" %} (C) Kai-Uwe Behrmann

@@ -1,6 +1,6 @@
 /** @file oyranos_gamma.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2005-2012 (C) Kai-Uwe Behrmann
@@ -193,7 +193,7 @@ int main( int argc , char** argv )
                         printf("\n");
                         printf("oyranos-monitor v%d.%d.%d %s\n",
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
-                                _("is a colour profile administration tool for monitors"));
+                                _("is a color profile administration tool for monitors"));
                         printf("%s:\n",                 _("Usage"));
                         printf("  %s\n",               _("Set new profile:"));
                         printf("      %s [-x pos -y pos | -d number] %s\n", argv[0],
@@ -248,7 +248,7 @@ int main( int argc , char** argv )
   if(verbose)
     fprintf(stderr, "oyranos-monitor v%d.%d.%d %s\n",
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
-                                _("is a colour profile administration tool for monitors"));
+                                _("is a color profile administration tool for monitors"));
 
 #ifndef __APPLE__
   if(!display_name)
@@ -386,7 +386,7 @@ int main( int argc , char** argv )
           {
             if(x_color_region_target)
             {
-              /* get XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
+              /* get XCM_ICC_COLOR_SERVER_TARGET_PROFILE_IN_X_BASE */
               error = oyOptions_SetFromText( &cs_options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
             }
@@ -461,7 +461,7 @@ int main( int argc , char** argv )
 
           if(strcmp(format,"edid_icc") == 0)
           {
-            o = oyConfig_Find( c, "colour_matrix.from_edid."
+            o = oyConfig_Find( c, "color_matrix.from_edid."
                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma");
 
             if(o)
@@ -471,7 +471,7 @@ int main( int argc , char** argv )
 
               error = oyOptions_MoveIn( opts, &o, -1 );
               oyOptions_Handle( "///create_profile.icc",
-                                opts,"create_profile.icc_profile.colour_matrix",
+                                opts,"create_profile.icc_profile.color_matrix",
                                 &result );
               prof = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
                                         oyOBJECT_PROFILE_S );
@@ -521,7 +521,7 @@ int main( int argc , char** argv )
             oyOptions_s * cs_options = 0;
             if(x_color_region_target)
             {
-              /* get XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
+              /* get XCM_ICC_COLOR_SERVER_TARGET_PROFILE_IN_X_BASE */
               error = oyOptions_SetFromText( &cs_options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
             }
@@ -648,7 +648,7 @@ int main( int argc , char** argv )
 
       if(x_color_region_target)
       {
-        /* get XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
+        /* get XCM_ICC_COLOR_SERVER_TARGET_PROFILE_IN_X_BASE */
         error = oyOptions_SetFromText( &cs_options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
       }
@@ -896,7 +896,7 @@ void cleanDisplay( Display * display )
      *  So first we erase the _ICC_PROFILE(_xxx) to get a clean state.
      *  We setup the EDID atoms and ICC profiles new.
      *  The ICC profiles are moved to the right places through the 
-     *  PropertyChange events recieved by the colour server.
+     *  PropertyChange events recieved by the color server.
      */
 
     /* refresh EDID */
@@ -1086,7 +1086,7 @@ int  runDaemon                       ( const char        * display_name )
                         icc_color_desktop, 0, ~0, False, XA_STRING,
                         &actual,&format, &n, &left, &data );
     n += left;
-    /* we rely on any colour server doing X11 setup by its own */
+    /* we rely on any color server doing X11 setup by its own */
     if(n && data)
       continue;
 

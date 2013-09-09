@@ -39,9 +39,9 @@ Section: libdevel
 Architecture: any
 Depends: oyranos (= ${binary:Version}), ${misc:Depends}
 Description: Color Management System Development Files
- The library allows one to match predictably input device colours to 
- output device colours across supporting applications. One goal 
- is to make colour management useful for all users in a automated 
+ The library allows one to match predictably input device colors to 
+ output device colors across supporting applications. One goal 
+ is to make color management useful for all users in a automated 
  fashion and regardless of any technical knowledge.
  Headers and development files for Oyranos.
 
@@ -50,9 +50,9 @@ Section: doc
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Color Management System Programming Documentation
- The library allows one to match predictably input device colours to 
- output device colours across supporting applications. One goal 
- is to make colour management useful for all users in a automated 
+ The library allows one to match predictably input device colors to 
+ output device colors across supporting applications. One goal 
+ is to make color management useful for all users in a automated 
  fashion and regardless of any technical knowledge.
  Oyranos API documentation.
 
@@ -61,9 +61,9 @@ Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, icc-profiles-free
 Description: Color Management System Libraries
- The library allows one to match predictably input device colours to 
- output device colours across supporting applications. One goal 
- is to make colour management useful for all users in a automated 
+ The library allows one to match predictably input device colors to 
+ output device colors across supporting applications. One goal 
+ is to make color management useful for all users in a automated 
  fashion and regardless of any technical knowledge.
  Oyranos Libraries.
 
@@ -72,9 +72,9 @@ Section: graphics
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, xcalib
 Description: Color Management System Tools
- The library allows one to match predictably input device colours to 
- output device colours across supporting applications. One goal 
- is to make colour management useful for all users in a automated 
+ The library allows one to match predictably input device colors to 
+ output device colors across supporting applications. One goal 
+ is to make color management useful for all users in a automated 
  fashion and regardless of any technical knowledge.
  Oyranos Tools.
 

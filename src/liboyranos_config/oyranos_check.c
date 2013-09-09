@@ -1,6 +1,6 @@
 /** @file oyranos_check.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2006-2012 (C) Kai-Uwe Behrmann
@@ -57,7 +57,7 @@
 
 int
 oyCheckProfile_                    (const char* name,
-                                    const char* coloursig)
+                                    const char* colorsig)
 {
   char *fullName = 0;
   char* header = 0; 
@@ -79,7 +79,7 @@ oyCheckProfile_                    (const char* name,
     size = 128;
     header = oyReadFileToMem_ (fullName, &size, oyAllocateFunc_); DBG_PROG
     if (size >= 128)
-      r = oyCheckProfileMem_ (header, 128, coloursig);
+      r = oyCheckProfileMem_ (header, 128, colorsig);
   }
 
   /* release memory */
@@ -93,7 +93,7 @@ oyCheckProfile_                    (const char* name,
 
 int
 oyCheckProfileMem_                 (const void* mem, size_t size,
-                                    const char* coloursig)
+                                    const char* colorsig)
 {
   char* block = (char*) mem;
   int offset = 36;
@@ -111,11 +111,11 @@ oyCheckProfileMem_                 (const void* mem, size_t size,
       icProfileClassSignature prof_device_class = h->deviceClass;
       icProfileClassSignature device_class = (icProfileClassSignature)0;
 
-      if(coloursig)
-        device_class = *((icProfileClassSignature*)coloursig);
+      if(colorsig)
+        device_class = *((icProfileClassSignature*)colorsig);
 
       DBG_MEM_ENDE
-      if(coloursig && memcmp(&prof_device_class,&device_class,4) != 0)
+      if(colorsig && memcmp(&prof_device_class,&device_class,4) != 0)
         return 1;
       else
         return 0;

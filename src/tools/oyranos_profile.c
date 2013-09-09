@@ -1,6 +1,6 @@
 /** @file oyranos_profile.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2011-2013 (C) Kai-Uwe Behrmann
@@ -413,12 +413,12 @@ int main( int argc , char** argv )
 
       /* keep total number of chars equal to original for cli print */
       fprintf( stdout, "%s %s\n",_("Data Color Space:"),
-             oyICCColourSpaceGetName( (icColorSpaceSignature)
-                         oyProfile_GetSignature(p,oySIGNATURE_COLOUR_SPACE) ) );
+             oyICCColorSpaceGetName( (icColorSpaceSignature)
+                         oyProfile_GetSignature(p,oySIGNATURE_COLOR_SPACE) ) );
 
       /* keep total number of chars equal to original for cli print */
       fprintf( stdout, "%s %s\n",_("PCS Color Space: "),
-             oyICCColourSpaceGetName( (icColorSpaceSignature)
+             oyICCColorSpaceGetName( (icColorSpaceSignature)
                          oyProfile_GetSignature(p,oySIGNATURE_PCS) ) );
 
       /* keep total number of chars equal to original for cli print */

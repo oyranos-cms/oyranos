@@ -5,7 +5,7 @@
    |
    +-- Base_s_.h
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2013 (C) Kai-Uwe Behrmann
@@ -64,7 +64,7 @@ oyObject_s           oy_;            /**< @private features name and hash */
   char               * id;             /*!< identification string */
   oyPointer            ptr;            /*!< a CMM's data pointer */
   int                  size;           /**< -1 && 0 - unknown, > 1 size of ptr*/
-  char               * resource;       /**< the resource type, e.g. oyCMM_PROFILE, oyCMM_COLOUR_CONVERSION */
+  char               * resource;       /**< the resource type, e.g. oyCMM_PROFILE, oyCMM_COLOR_CONVERSION */
   oyPointer_release_f  ptrRelease;     /*!< CMM's deallocation function */
   int                  ref;            /**< Oyranos reference counter */
 

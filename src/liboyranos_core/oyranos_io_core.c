@@ -1,6 +1,6 @@
 /** @file oyranos_io_core.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2004-2012 (C) Kai-Uwe Behrmann
@@ -1151,7 +1151,7 @@ int oyFileListCb_ ( oyFileList_s * data,
 /** @internal
  *  @brief query valid XDG paths
  *
- *  @see Directory paths for colour profiles and other configuration data
+ *  @see Directory paths for color profiles and other configuration data
  *       http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
  *
  *  @param[out]    count       number of paths found

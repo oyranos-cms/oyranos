@@ -1,6 +1,6 @@
 /** @file oyranos_cmm_lcm2.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2007-2012 (C) Kai-Uwe Behrmann
@@ -73,7 +73,7 @@ void  oyDeAllocateFunc_         (void *        data);
 #define CMMMaxChannels_M 16
 #define lcm2PROFILE "lcP2"
 #define lcm2TRANSFORM "lcC2"
-/** The proofing LUTs grid size may improove the sharpness of out of colour 
+/** The proofing LUTs grid size may improove the sharpness of out of color 
  *  marking, but at the prise of lost speed and increased memory consumption.
  *  53 is the grid size used internally in lcm2' gamut marking code. */
 #define lcm2PROOF_LUT_GRID_RASTER 53
@@ -123,8 +123,8 @@ typedef struct lcm2TransformWrap_s_ {
 
 lcm2TransformWrap_s * lcm2TransformWrap_Set_ (
                                        cmsHTRANSFORM       xform,
-                                       icColorSpaceSignature colour_in,
-                                       icColorSpaceSignature colour_out,
+                                       icColorSpaceSignature color_in,
+                                       icColorSpaceSignature color_out,
                                        oyPixel_t           oy_pixel_layout_in,
                                        oyPixel_t           oy_pixel_layout_out,
                                        oyPointer_s       * oy );
@@ -139,7 +139,7 @@ int lcm2CMMProfileReleaseWrap        ( oyPointer         * p );
 int                lcm2CMMCheckPointer(oyPointer_s       * cmm_ptr,
                                        const char        * resource );
 int        oyPixelToLcm2PixelLayout_ ( oyPixel_t           pixel_layout,
-                                       icColorSpaceSignature colour_space );
+                                       icColorSpaceSignature color_space );
 char * lcm2Image_GetText             ( oyImage_s         * image,
                                        int                 verbose,
                                        oyAlloc_f           allocateFunc );
@@ -154,7 +154,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
                                        cmsUInt32Number     flags,
                                        int                 intent,
                                        int                 intent_proof );
-oyPointer  lcm2CMMColourConversion_ToMem_ (
+oyPointer  lcm2CMMColorConversion_ToMem_ (
                                        cmsHTRANSFORM     * xform,
                                        oyOptions_s       * opts,
                                        size_t            * size,
@@ -389,16 +389,16 @@ int                lcm2CMMCheckPointer(oyPointer_s       * cmm_ptr,
  *  @since   2007/11/00 (Oyranos: 0.1.8)
  */
 int        oyPixelToLcm2PixelLayout_ ( oyPixel_t           pixel_layout,
-                                       icColorSpaceSignature colour_space )
+                                       icColorSpaceSignature color_space )
 {
   int cmm_pixel = 0;
   int chan_n = oyToChannels_m (pixel_layout);
-  int c_off = oyToColourOffset_m (pixel_layout);
+  int c_off = oyToColorOffset_m (pixel_layout);
   oyDATATYPE_e data_type = oyToDataType_m (pixel_layout);
   int planar = oyToPlanar_m (pixel_layout);
   int flavour = oyToFlavor_m (pixel_layout);
-  int cchans = cmsChannelsOf( colour_space );
-  int lcm2_colour_space = _cmsLCMScolorSpace( colour_space );
+  int cchans = cmsChannelsOf( color_space );
+  int lcm2_color_space = _cmsLCMScolorSpace( color_space );
   int extra = chan_n - cchans;
 
   if(chan_n > CMMMaxChannels_M)
@@ -419,7 +419,7 @@ int        oyPixelToLcm2PixelLayout_ ( oyPixel_t           pixel_layout,
     cmm_pixel |= BYTES_SH(4);
   if(data_type == oyDOUBLE || data_type == oyFLOAT || data_type == oyHALF)
     cmm_pixel |= FLOAT_SH(1);
-  if(oyToSwapColourChannels_m (pixel_layout))
+  if(oyToSwapColorChannels_m (pixel_layout))
     cmm_pixel |= DOSWAP_SH(1);
   if(oyToByteswap_m(pixel_layout))
     cmm_pixel |= ENDIAN16_SH(1);
@@ -429,7 +429,7 @@ int        oyPixelToLcm2PixelLayout_ ( oyPixel_t           pixel_layout,
     cmm_pixel |= FLAVOR_SH(1);
 
   /* lcms2 uses V4 style value ranges */
-  cmm_pixel |= COLORSPACE_SH( lcm2_colour_space );
+  cmm_pixel |= COLORSPACE_SH( lcm2_color_space );
 
 
   return cmm_pixel;
@@ -471,8 +471,8 @@ int lcm2CMMDeleteTransformWrap(oyPointer * wrap)
  */
 lcm2TransformWrap_s * lcm2TransformWrap_Set_ (
                                        cmsHTRANSFORM       xform,
-                                       icColorSpaceSignature colour_in,
-                                       icColorSpaceSignature colour_out,
+                                       icColorSpaceSignature color_in,
+                                       icColorSpaceSignature color_out,
                                        oyPixel_t           oy_pixel_layout_in,
                                        oyPixel_t           oy_pixel_layout_out,
                                        oyPointer_s       * oy )
@@ -490,8 +490,8 @@ lcm2TransformWrap_s * lcm2TransformWrap_Set_ (
 
     ltw->lcm2 = xform; xform = 0;
 
-    ltw->sig_in  = colour_in;
-    ltw->sig_out = colour_out;
+    ltw->sig_in  = color_in;
+    ltw->sig_out = color_out;
     ltw->oy_pixel_layout_in  = oy_pixel_layout_in;
     ltw->oy_pixel_layout_out = oy_pixel_layout_out;
     s = ltw;
@@ -615,8 +615,8 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
   int error = !lps;
   cmsHTRANSFORM xform = 0;
   cmsHPROFILE * merge = 0;
-  icColorSpaceSignature colour_in = 0;
-  icColorSpaceSignature colour_out = 0;
+  icColorSpaceSignature color_in = 0;
+  icColorSpaceSignature color_out = 0;
   icProfileClassSignature profile_class_in = 0;
   int intent = lcm2IntentFromOptions( opts,0 ),
       intent_proof = lcm2IntentFromOptions( opts,1 ),
@@ -635,18 +635,18 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
 
   if(!error && lps[0] && lps[profiles_n-1])
   {
-    colour_in = cmsGetColorSpace( lps[0] );
+    color_in = cmsGetColorSpace( lps[0] );
     if(profiles_n > 1)
-      colour_out = cmsGetColorSpace( lps[profiles_n-1] );
+      color_out = cmsGetColorSpace( lps[profiles_n-1] );
     else
-      colour_out = cmsGetPCS( lps[profiles_n-1] );
+      color_out = cmsGetPCS( lps[profiles_n-1] );
     profile_class_in = cmsGetDeviceClass( lps[0] );
   }
 
   lcm2_pixel_layout_in  = oyPixelToLcm2PixelLayout_(oy_pixel_layout_in,
-                                                   colour_in);
+                                                   color_in);
   lcm2_pixel_layout_out = oyPixelToLcm2PixelLayout_(oy_pixel_layout_out,
-                                                   colour_out);
+                                                   color_out);
 
       o_txt = oyOptions_FindString  ( opts, "cmyk_cmyk_black_preservation", 0 );
       if(o_txt && oyStrlen_(o_txt))
@@ -667,7 +667,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
     cmsFloat64Number * adaption_states=0;
          if(profiles_n == 1 || profile_class_in == icSigLinkClass)
     {
-        /* we have to erase the colour space */
+        /* we have to erase the color space */
 #if 1
         int csp = T_COLORSPACE(lcm2_pixel_layout_in);
         lcm2_pixel_layout_in &= (~COLORSPACE_SH( csp ));
@@ -722,9 +722,9 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
     if(oy_debug > 2)
     {
     uint32_t f = lcm2_pixel_layout_in;
-    printf ("%s:%d %s() float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
+    printf ("%s:%d %s() float:%d optimised:%d colorspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
     f = lcm2_pixel_layout_out;
-    printf ("%s:%d %s() float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
+    printf ("%s:%d %s() float:%d optimised:%d colorspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
       printf("multi_profiles_n: %d intent: %d adaption: %g flags: %d \"%s\" l1 %d, l2 %d\n",
               multi_profiles_n, intent, adaption_state, flags,
               lcm2FlagsToText(flags),
@@ -763,12 +763,12 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
     }
 
     lcm2_msg( level, (oyStruct_s*)opts, OY_DBG_FORMAT_
-              " float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes %d",
+              " float:%d optimised:%d colorspace:%d extra:%d channels:%d lcms_bytes %d",
               OY_DBG_ARGS_,
               T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
     f = lcm2_pixel_layout_out;
     lcm2_msg( level, (oyStruct_s*)opts, OY_DBG_FORMAT_
-              "float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes %d",
+              "float:%d optimised:%d colorspace:%d extra:%d channels:%d lcms_bytes %d",
               OY_DBG_ARGS_,
               T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
     lcm2_msg( level, (oyStruct_s*)opts, OY_DBG_FORMAT_
@@ -778,30 +778,30 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
               lcm2FlagsToText(flags));
     for(i=0; i < profiles_n; ++i)
       lcm2_msg( level,(oyStruct_s*)node, OY_DBG_FORMAT_"\n"
-             "  ColourSpace:%s->PCS:%s DeviceClass:%s",
+             "  ColorSpace:%s->PCS:%s DeviceClass:%s",
              OY_DBG_ARGS_,
-             oyICCColourSpaceGetName(cmsGetColorSpace( lps[0])),
-             oyICCColourSpaceGetName(cmsGetPCS( lps[i] )),
+             oyICCColorSpaceGetName(cmsGetColorSpace( lps[0])),
+             oyICCColorSpaceGetName(cmsGetPCS( lps[i] )),
              oyICCDeviceClassDescription(cmsGetDeviceClass(lps[i])) );
   }
 
   if(!error && ltw && oy)
-    *ltw= lcm2TransformWrap_Set_( xform, colour_in, colour_out,
+    *ltw= lcm2TransformWrap_Set_( xform, color_in, color_out,
                                   oy_pixel_layout_in, oy_pixel_layout_out, oy );
 
   end:
   return xform;
 }
 
-/** Function lcm2CMMColourConversion_ToMem_
+/** Function lcm2CMMColorConversion_ToMem_
  *
- *  convert a lcm2 colour conversion context to a device link
+ *  convert a lcm2 color conversion context to a device link
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/28 (Oyranos: 0.1.10)
  *  @date    2008/12/28
  */
-oyPointer  lcm2CMMColourConversion_ToMem_ (
+oyPointer  lcm2CMMColorConversion_ToMem_ (
                                        cmsHTRANSFORM     * xform,
                                        oyOptions_s       * opts,
                                        size_t            * size,
@@ -887,14 +887,14 @@ oyConnectorImaging_s_ lcm2_cmmIccSocket_connector = {
   0, /* is_plug == oyFilterPlug_s */
   lcm2_cmmIcc_data_types, /* data_types */
   3, /* data_types_n; elements in data_types array */
-  1, /* max_colour_offset */
+  1, /* max_color_offset */
   1, /* min_channels_count; */
   16, /* max_channels_count; */
-  1, /* min_colour_count; */
-  16, /* max_colour_count; */
+  1, /* min_color_count; */
+  16, /* max_color_count; */
   1, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  1, /* can_swap; can swap colour channels (BGR)*/
+  1, /* can_swap; can swap color channels (BGR)*/
   1, /* can_swap_bytes; non host byte order */
   1, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */
@@ -917,14 +917,14 @@ oyConnectorImaging_s_ lcm2_cmmIccPlug_connector = {
   1, /* is_plug == oyFilterPlug_s */
   lcm2_cmmIcc_data_types, /* data_types */
   3, /* data_types_n; elements in data_types array */
-  1, /* max_colour_offset */
+  1, /* max_color_offset */
   1, /* min_channels_count; */
   16, /* max_channels_count; */
-  1, /* min_colour_count; */
-  16, /* max_colour_count; */
+  1, /* min_color_count; */
+  16, /* max_color_count; */
   1, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  1, /* can_swap; can swap colour channels (BGR)*/
+  1, /* can_swap; can swap color channels (BGR)*/
   1, /* can_swap_bytes; non host byte order */
   1, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */
@@ -942,7 +942,7 @@ oyConnectorImaging_s_* lcm2_cmmIccPlug_connectors[2]={&lcm2_cmmIccPlug_connector
  *
  *  Look in the Oyranos cache for a CMM internal representation or generate a
  *  new abstract profile containing the proofing profiles changes. This can be
- *  a proofing colour space simulation or out of gamut marking.
+ *  a proofing color space simulation or out of gamut marking.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/11/05 (Oyranos: 0.1.10)
@@ -1656,10 +1656,10 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   if(!error)
   {
     if(oy_debug)
-      block = lcm2CMMColourConversion_ToMem_( xform, node_options,
+      block = lcm2CMMColorConversion_ToMem_( xform, node_options,
                                               size, oyAllocateFunc_ );
     else
-      block = lcm2CMMColourConversion_ToMem_( xform, node_options,
+      block = lcm2CMMColorConversion_ToMem_( xform, node_options,
                                               size, allocateFunc );
     error = !block || !*size;
     cmsDeleteTransform( xform ); xform = 0;
@@ -1674,9 +1674,9 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
               OY_DBG_ARGS_,
               oyProfile_GetText( image_input_profile, oyNAME_DESCRIPTION ),
               oyProfile_GetText( image_input_profile, oyNAME_NAME ),
-              oyICCColourSpaceGetName( oyProfile_GetSignature( 
-                            image_input_profile, oySIGNATURE_COLOUR_SPACE ) ),
-              oyICCColourSpaceGetName( oyProfile_GetSignature( 
+              oyICCColorSpaceGetName( oyProfile_GetSignature( 
+                            image_input_profile, oySIGNATURE_COLOR_SPACE ) ),
+              oyICCColorSpaceGetName( oyProfile_GetSignature( 
                             image_input_profile, oySIGNATURE_PCS ) ),
               oyICCDeviceClassDescription( oyProfile_GetSignature( 
                             image_input_profile, oySIGNATURE_CLASS ) ),
@@ -1686,9 +1686,9 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
               OY_DBG_ARGS_,
               oyProfile_GetText( image_input_profile, oyNAME_DESCRIPTION ),
               oyProfile_GetText( image_output_profile, oyNAME_NAME ),
-              oyICCColourSpaceGetName( oyProfile_GetSignature( 
-                            image_input_profile, oySIGNATURE_COLOUR_SPACE ) ),
-              oyICCColourSpaceGetName( oyProfile_GetSignature( 
+              oyICCColorSpaceGetName( oyProfile_GetSignature( 
+                            image_input_profile, oySIGNATURE_COLOR_SPACE ) ),
+              oyICCColorSpaceGetName( oyProfile_GetSignature( 
                             image_input_profile, oySIGNATURE_PCS ) ),
               oyICCDeviceClassDescription( oyProfile_GetSignature( 
                             image_input_profile, oySIGNATURE_CLASS ) ),
@@ -1817,9 +1817,9 @@ char * lcm2Image_GetText             ( oyImage_s         * image,
   int n     = oyToChannels_m( pixel_layout );
   oyProfile_s * profile = oyImage_GetProfile( image );
   int cchan_n = oyProfile_GetChannelsCount( profile );
-  int coff_x = oyToColourOffset_m( pixel_layout );
+  int coff_x = oyToColorOffset_m( pixel_layout );
   oyDATATYPE_e t = oyToDataType_m( pixel_layout );
-  int swap  = oyToSwapColourChannels_m( pixel_layout );
+  int swap  = oyToSwapColorChannels_m( pixel_layout );
   /*int revert= oyT_FLAVOR_M( pixel_layout );*/
   int so = oyDataTypeGetSize( t );
   char * text = oyAllocateFunc_(512);
@@ -1831,10 +1831,10 @@ char * lcm2Image_GetText             ( oyImage_s         * image,
   hashTextAdd_m( text );
   oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NAME));
   hashTextAdd_m( text );
-  oySprintf_( text,   "    <channels all=\"%d\" colour=\"%d\" />\n", n,cchan_n);
+  oySprintf_( text,   "    <channels all=\"%d\" color=\"%d\" />\n", n,cchan_n);
   hashTextAdd_m( text );
   oySprintf_( text,
-                      "    <offsets first_colour_sample=\"%d\" next_pixel=\"%d\" />\n"
+                      "    <offsets first_color_sample=\"%d\" next_pixel=\"%d\" />\n"
               /*"  next line = %d\n"*/,
               coff_x, oyImage_GetPixelLayout( s,oyPOFF_X )/*, mask[oyPOFF_Y]*/ );
   hashTextAdd_m( text );
@@ -1843,7 +1843,7 @@ char * lcm2Image_GetText             ( oyImage_s         * image,
   {
     hashTextAdd_m(    "    <swap" );
     if(swap)
-      hashTextAdd_m(  " colourswap=\"yes\"" );
+      hashTextAdd_m(  " colorswap=\"yes\"" );
     if( oyToByteswap_m( pixel_layout ) )
       hashTextAdd_m(  " byteswap=\"yes\"" );
     hashTextAdd_m(    " />\n" );
@@ -2049,7 +2049,7 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
   }
 
   if(!error &&
-     ( (strcmp( oyPointer_GetResourceName(cmm_ptr_in), oyCOLOUR_ICC_DEVICE_LINK ) != 0) ||
+     ( (strcmp( oyPointer_GetResourceName(cmm_ptr_in), oyCOLOR_ICC_DEVICE_LINK ) != 0) ||
        (strcmp( oyPointer_GetResourceName(cmm_ptr_out), lcm2TRANSFORM ) != 0) ) )
     error = 1;
 
@@ -2099,7 +2099,7 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
     {
       uint32_t f = oyImage_GetPixelLayout( image_input, oyLAYOUT );
       lcm2_msg( oyMSG_WARN,(oyStruct_s*) node, OY_DBG_FORMAT_
-      "float:%d optimised:%d colourspace:%d extra:%d channels:%d lcms_bytes%d",
+      "float:%d optimised:%d colorspace:%d extra:%d channels:%d lcms_bytes%d",
       OY_DBG_ARGS_,
       T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
       error = 1;
@@ -2770,20 +2770,20 @@ int          lcm2MOptions_Handle     ( oyOptions_s       * options,
     if(oyFilterRegistrationMatch(command,"create_profile", 0))
     {
       double val = 0.0;
-      o = oyOptions_Find( options, "colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma" );
+      o = oyOptions_Find( options, "color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma" );
       error = oyOptions_FindDouble( options,
-        "colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
+        "color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
                             8, &val );
       if(!o)
       {
         lcm2_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ " "
-                 "no option \"colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" found",
+                 "no option \"color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" found",
                  OY_DBG_ARGS_ );
         error = 1;
       } else if( error != 0 )
       {
         lcm2_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_" "
-                 "option \"colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" %s",
+                 "option \"color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" %s",
                  OY_DBG_ARGS_,
                  (error < 0) ? "contains less than 9 required values" :
                                "access returned with error" );
@@ -2798,7 +2798,7 @@ int          lcm2MOptions_Handle     ( oyOptions_s       * options,
   }
   else if(oyFilterRegistrationMatch(command,"create_profile", 0))
   {
-    o = oyOptions_Find( options, "colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma" );
+    o = oyOptions_Find( options, "color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma" );
     if(o)
     {
       prof = lcm2CreateICCMatrixProfile (
@@ -2809,7 +2809,7 @@ int          lcm2MOptions_Handle     ( oyOptions_s       * options,
                     oyOption_GetValueDouble(o,6), oyOption_GetValueDouble(o,7));
       oyOption_Release( &o );
 
-      o = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profile.colour_matrix._" CMM_NICK,
+      o = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profile.color_matrix._" CMM_NICK,
                         0 );
       error = oyOption_MoveInStruct( o, (oyStruct_s**) &prof );
       if(!*result)
@@ -2919,7 +2919,7 @@ const char * lcm2InfoGetTextProfileC ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("Create a ICC matrix profile.");
     else
-      return _("The littleCMS \"create_profile.colour_matrix\" command lets you create ICC profiles from some given colourimetric coordinates. The filter expects a oyOption_s object with name \"colour_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, CIE*y for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y for white and a gamma value.");
+      return _("The littleCMS \"create_profile.color_matrix\" command lets you create ICC profiles from some given colorimetric coordinates. The filter expects a oyOption_s object with name \"color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, CIE*y for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y for white and a gamma value.");
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)
@@ -2927,7 +2927,7 @@ const char * lcm2InfoGetTextProfileC ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("Create a ICC matrix profile.");
     else
-      return _("The littleCMS \"create_profile.colour_matrix\" command lets you create ICC profiles from some given colourimetric coordinates. See the \"create_profile\" info item.");
+      return _("The littleCMS \"create_profile.color_matrix\" command lets you create ICC profiles from some given colorimetric coordinates. See the \"create_profile\" info item.");
   }
   return 0;
 }
@@ -2951,7 +2951,7 @@ oyCMMapi10_s_    lcm2_api10_cmm = {
   lcm2CMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "create_profile.colour_matrix.icc._" CMM_NICK "._CPU",
+  "create_profile.color_matrix.icc._" CMM_NICK "._CPU",
 
   CMM_VERSION,
   {0,9,5},                  /**< int32_t module_api[3] */
@@ -2984,14 +2984,14 @@ oyCMMapi6_s_ lcm2_api6_cmm = {
   lcm2CMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc._" CMM_NICK "._CPU." oyCOLOUR_ICC_DEVICE_LINK "_" lcm2TRANSFORM,
+  "icc._" CMM_NICK "._CPU." oyCOLOR_ICC_DEVICE_LINK "_" lcm2TRANSFORM,
 
   CMM_VERSION,
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
   
-  oyCOLOUR_ICC_DEVICE_LINK,  /* data_type_in, "oyDL" */
+  oyCOLOR_ICC_DEVICE_LINK,  /* data_type_in, "oyDL" */
   lcm2TRANSFORM,             /* data_type_out, lcm2TRANSFORM */
   lcm2ModuleData_Convert     /* oyModuleData_Convert_f oyModuleData_Convert */
 };
@@ -3016,7 +3016,7 @@ oyCMMapi7_s_ lcm2_api7_cmm = {
   lcm2CMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc.colour._" CMM_NICK "._CPU._ACCEL",
+  "icc.color._" CMM_NICK "._CPU._ACCEL",
 
   CMM_VERSION,
   {0,9,5},                  /**< int32_t module_api[3] */
@@ -3056,9 +3056,9 @@ const char * lcm2Api4UiGetText (
   {
     if(!category)
     {
-      STRING_ADD( category, _("Colour") );
+      STRING_ADD( category, _("Color") );
       STRING_ADD( category, _("/") );
-      /* CMM: abbreviation for Colour Matching Module */
+      /* CMM: abbreviation for Color Matching Module */
       STRING_ADD( category, _("CMM") );
       STRING_ADD( category, _("/") );
       STRING_ADD( category, _("littleCMS") );
@@ -3092,7 +3092,7 @@ oyCMMui_s_ lcm2_api4_ui = {
   lcm2Filter_CmmIccValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   lcm2WidgetEvent, /* oyWidgetEvent_f */
 
-  "Colour/CMM/littleCMS2", /* category */
+  "Color/CMM/littleCMS2", /* category */
   lcm2_extra_options,   /* const char * options */
   lcm2GetOptionsUI,     /* oyCMMuiGet_f oyCMMuiGet */
 
@@ -3119,7 +3119,7 @@ oyCMMapi4_s_ lcm2_api4_cmm = {
   lcm2CMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc.colour._" CMM_NICK "._CPU._NOACCEL",
+  "icc.color._" CMM_NICK "._CPU._NOACCEL",
 
   CMM_VERSION,
   {0,9,5},                  /**< int32_t module_api[3] */
@@ -3128,7 +3128,7 @@ oyCMMapi4_s_ lcm2_api4_cmm = {
 
   lcm2FilterNode_CmmIccContextToMem, /* oyCMMFilterNode_ContextToMem_f */
   lcm2FilterNode_GetText, /* oyCMMFilterNode_GetText_f */
-  oyCOLOUR_ICC_DEVICE_LINK, /* context data_type */
+  oyCOLOR_ICC_DEVICE_LINK, /* context data_type */
 
   &lcm2_api4_ui                        /**< oyCMMui_s *ui */
 };
@@ -3175,9 +3175,9 @@ const char * lcm2InfoGetText         ( const char        * select,
          if(type == oyNAME_NICK)
       return "help";
     else if(type == oyNAME_NAME)
-      return _("The lcms \"colour.icc\" filter is a one dimensional colour conversion filter. It can both create a colour conversion context, some precalculated for processing speed up, and the colour conversion with the help of that context. The adaption part of this filter transforms the Oyranos colour context, which is ICC device link based, to the internal lcms format.");
+      return _("The lcms \"color.icc\" filter is a one dimensional color conversion filter. It can both create a color conversion context, some precalculated for processing speed up, and the color conversion with the help of that context. The adaption part of this filter transforms the Oyranos color context, which is ICC device link based, to the internal lcms format.");
     else
-      return _("The following options are available to create colour contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract colour profiles.\n The following Oyranos options are supported: \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], \"precalculation\": [0 - normal; 1 - cmsFLAGS_NOOPTIMIZE; 2 - cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], \"precalculation_curves\": [0 - none; 1 - cmsFLAGS_CLUT_POST_LINEARIZATION + cmsFLAGS_CLUT_PRE_LINEARIZATION] and \"adaption_state\": [0.0 - not adapted to screen, 1.0 - full adapted to screen]." );
+      return _("The following options are available to create color contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract color profiles.\n The following Oyranos options are supported: \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], \"precalculation\": [0 - normal; 1 - cmsFLAGS_NOOPTIMIZE; 2 - cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], \"precalculation_curves\": [0 - none; 1 - cmsFLAGS_CLUT_POST_LINEARIZATION + cmsFLAGS_CLUT_PRE_LINEARIZATION] and \"adaption_state\": [0.0 - not adapted to screen, 1.0 - full adapted to screen]." );
   }
   return 0;
 }

@@ -1,11 +1,11 @@
 /** @file oyranos_cmm_oicc.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2008-2011 (C) Kai-Uwe Behrmann
  *
- *  @brief    colour management policy module for Oyranos
+ *  @brief    color management policy module for Oyranos
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -99,7 +99,7 @@ oyOptions_s* oicc_defaultICCValidateOptions
 /*
  <xf:model> <xf:instance> - must be added in Oyranos to make the model complete
  */
-char oicc_default_colour_icc_options[] = {
+char oicc_default_color_icc_options[] = {
  "\n\
   <" OY_TOP_SHARED ">\n\
    <" OY_DOMAIN_STD ">\n\
@@ -122,8 +122,8 @@ char oicc_default_colour_icc_options[] = {
       <action_untagged_assign.front>1</action_untagged_assign.front>\n\
       <action_missmatch_cmyk.front>1</action_missmatch_cmyk.front>\n\
       <action_missmatch_rgb.front>1</action_missmatch_rgb.front>\n\
-      <mixed_colour_spaces_print_doc_convert.front>1</mixed_colour_spaces_print_doc_convert.front>\n\
-      <mixed_colour_spaces_screen_doc_convert.front>2</mixed_colour_spaces_screen_doc_convert.front>\n\
+      <mixed_color_spaces_print_doc_convert.front>1</mixed_color_spaces_print_doc_convert.front>\n\
+      <mixed_color_spaces_screen_doc_convert.front>2</mixed_color_spaces_screen_doc_convert.front>\n\
       <proof_hard.advanced>0</proof_hard.advanced>\n\
       <proof_soft.advanced>0</proof_soft.advanced>\n\
       <rendering_intent>0</rendering_intent>\n\
@@ -194,7 +194,7 @@ char * oiccAddStdProfiles_routine    ( char               * tmp,
   return tmp;
 }
 
-int oiccGetDefaultColourIccOptionsUI ( oyOptions_s        * options,
+int oiccGetDefaultColorIccOptionsUI ( oyOptions_s        * options,
                                        char              ** ui_text,
                                        oyAlloc_f            allocateFunc )
 {
@@ -449,7 +449,7 @@ const char * oiccProfileGetText      ( oyStruct_s        * obj,
     if(type == oyNAME_NAME)
       text = _("ICC profile");
     else if(type == oyNAME_DESCRIPTION)
-      text = _("ICC colour profile for colour transformations");
+      text = _("ICC color profile for color transformations");
     else
       text = "oyProfile_s";
   } else
@@ -489,7 +489,7 @@ const char * oiccProfilesGetText     ( oyStruct_s        * obj,
     if(type == oyNAME_NAME)
       text = _("ICC profiles");
     else if(type == oyNAME_DESCRIPTION)
-      text = _("ICC colour profiles for colour transformations");
+      text = _("ICC color profiles for color transformations");
     else
       text = "oyProfiles_s";
   } else
@@ -921,8 +921,8 @@ oyCMMapi9_s_  oicc_api9 = {
   oicc_defaultICCValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oiccWidgetEvent, /* oyWidgetEvent_f */
 
-  oicc_default_colour_icc_options,   /* options */
-  oiccGetDefaultColourIccOptionsUI,  /* oyCMMuiGet */
+  oicc_default_color_icc_options,   /* options */
+  oiccGetDefaultColorIccOptionsUI,  /* oyCMMuiGet */
   (char*)CMM_NICK"=\"http://www.oyranos.org/2009/oyranos_icc\"", /* xml_namespace */
 
   (oyCMMobjectType_s**)icc_objects,  /* object_types */
@@ -980,7 +980,7 @@ const char * oiccInfoGetText         ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("The filter is provides policy settings. These settings can be applied to a graph through the user function oyConversion_Correct().");
     else
-      return _("The module is responsible for many settings in the Oyranos colour management settings panel. If applied the module care about rendering intents, simulation, mixed colour documents and default profiles.");
+      return _("The module is responsible for many settings in the Oyranos color management settings panel. If applied the module care about rendering intents, simulation, mixed color documents and default profiles.");
   }
   return 0;
 }

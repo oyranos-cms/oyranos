@@ -12,7 +12,7 @@
   oyCMMobjectType_s ** object_types;   /**< zero terminated list of types */
 
   oyCMMGetText_f   getText;            /**< describe selectors in UI */
-  const char    ** texts;              /**< zero terminated categories for getText, e.g. {"///GPU","///CPU","//colour",0} */
+  const char    ** texts;              /**< zero terminated categories for getText, e.g. {"///GPU","///CPU","//color",0} */
 
   oyConversion_Correct_f oyConversion_Correct; /**< check a graph */
   /** registration pattern which are supported by oyConversion_Correct \n

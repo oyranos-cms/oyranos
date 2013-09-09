@@ -1,6 +1,6 @@
 /** @file oyranos_monitor.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2005-2013 (C) Kai-Uwe Behrmann
@@ -578,7 +578,7 @@ qarzGetMonitorInfo_lib            (const char* display_name,
                                        uint32_t          * year,
                                        uint32_t          * mnft_id,
                                        uint32_t          * model_id,
-                                       double            * colours,
+                                       double            * colors,
                                        oyBlob_s         ** edid,
                                    oyAlloc_f     allocate_func,
                                        oyStruct_s        * user_data)
@@ -644,7 +644,7 @@ qarzGetMonitorInfo_lib            (const char* display_name,
 
       if(edi_[0] || edi_[1])
         oyUnrollEdid1_( edi_, manufacturer, mnft, model, serial, vendor,
-                        week, year, mnft_id, model_id, colours, allocate_func);
+                        week, year, mnft_id, model_id, colors, allocate_func);
 
       if(edid)
       {

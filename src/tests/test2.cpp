@@ -1,6 +1,6 @@
 /** @file test_oyranos.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  Copyright (C) 2004-2012  Kai-Uwe Behrmann
  *
@@ -702,7 +702,7 @@ oyTESTRESULT_e testOptionsCopy ()
   fprintf(stdout, "\n" );
 
   error = oyOptions_SetFromText( &setA,
-                OY_INTERNAL "/lcm2.colour.icc/rendering_bpc.advanced",
+                OY_INTERNAL "/lcm2.color.icc/rendering_bpc.advanced",
                                  "1", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &setA,
                                  "//" OY_TYPE_STD "/image/A", "true",
@@ -3495,11 +3495,11 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyColourConvert_()                  %s",
+    "oyColorConvert_()                  %s",
                           oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyColourConvert_()                                 " );
+    "oyColorConvert_()                                 " );
   }
 
 
@@ -3545,11 +3545,11 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyColourConvert_() sans oyPixelAcce.%s",
+    "oyColorConvert_() sans oyPixelAcce.%s",
                           oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyColourConvert_() sans oyPixelAccess_Create()     " );
+    "oyColorConvert_() sans oyPixelAccess_Create()     " );
   }
 
   clck = oyClock();
@@ -4218,7 +4218,7 @@ int main(int argc, char** argv)
   TEST_RUN( testCMMDBListing, "CMM DB listing" );
   TEST_RUN( testCMMmonitorDBmatch, "CMM monitor DB match" );
   TEST_RUN( testCMMsShow, "CMMs show" );
-  TEST_RUN( testCMMnmRun, "CMM named colour run" );
+  TEST_RUN( testCMMnmRun, "CMM named color run" );
   TEST_RUN( testImagePixel, "CMM Image Pixel run" );
 
   /* give a summary */

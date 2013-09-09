@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
   <mime-type type="application/vnd.iccprofile">
-         <comment>ICC colour profile</comment>
+         <comment>ICC color profile</comment>
          <comment xml:lang="de">ICC Farbprofil</comment>
          <comment xml:lang="en_US">ICC color profile</comment>
          <magic priority="50">

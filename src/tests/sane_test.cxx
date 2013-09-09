@@ -14,10 +14,10 @@ int main(void)
                 SANE_VERSION_BUILD(driver_version));
   sane_exit();
 
-#ifdef SANE_CAP_COLOUR
-  printf("SANE_CAP_COLOUR");
+#ifdef SANE_CAP_COLOR
+  printf("SANE_CAP_COLOR");
 #else
-  printf("!!!Non colour manageable SANE: no SANE_CAP_COLOUR defined!!!");
+  printf("!!!Non color manageable SANE: no SANE_CAP_COLOR defined!!!");
   return 1;
 #endif
   return 0;

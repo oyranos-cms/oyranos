@@ -263,13 +263,13 @@ Summary:        Xorg Color management Event observer applet
 Group:          System/Monitoring
 
 %description
-Oyranos is a colour management system.
+Oyranos is a color management system.
 Features:
-o configuration for cross application colour agreement 
+o configuration for cross application color agreement 
 o plugable and selectable modules (known as CMM's)
 o pixel conversions
 o profile handling
-o named colours
+o named colors
 o device profile assignment
 
 
@@ -295,7 +295,7 @@ profile in X.
 The documentation in html format is included.
 The object oriented Oyranos API's provide advanced access to
 ICC profiles, allow for filtering profile lists and provide
-a CMM independent colour conversion API. Single colour lookups 
+a CMM independent color conversion API. Single color lookups 
 are supported.
 These API's are to be considered for changing very frequently.
 
@@ -309,7 +309,7 @@ The documentation in html format is included.
 Header files and libraries for development.
 The object oriented Oyranos API's provide advanced access to
 ICC profiles, allow for filtering profile lists and provide
-a CMM independent colour conversion API. Single colour lookups 
+a CMM independent color conversion API. Single color lookups 
 are supported.
 These API's are to be considered for changing very frequently.
 
@@ -322,7 +322,7 @@ The monitor profile configuration tool.
 
 %description  -n lib%{name}0-monitor
 The monitor support libraries of the
-Oyranos colour management system.
+Oyranos color management system.
 
 %description  profile-graph
 The grapher renders a simple gamut 
@@ -330,14 +330,14 @@ hull of a ICC profile in 2D.
 
 %description  -n lib%{name}0-cups
 CUPS device support for the
-Oyranos colour management system.
+Oyranos color management system.
 
 %description  ui-fltk
 The example configuration GUI.
-Oyranos is a colour management system.
+Oyranos is a color management system.
 
 %description  qcmsevents
-the applet shows if a colour server is running through a icon in 
+the applet shows if a color server is running through a icon in 
 the system tray.
 
 %prep
@@ -390,7 +390,7 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 %{_libdir}/lib%{name}_modules.so.*
 %{_libdir}/lib%{name}_config.so.*
 %{_libdir}/lib%{name}.so.*
-%dir %{_libdir}/colour/
+%dir %{_libdir}/color/
 %dir %{_libdir}/%{cmmsubpath}/
 %dir %{_libdir}/%{metasubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_lcm*
@@ -449,7 +449,7 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 %files -n lib%{name}0-monitor
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
-%dir %{_libdir}/colour/
+%dir %{_libdir}/color/
 %dir %{_libdir}/%{cmmsubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_oyX1_cmm_module*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oydi_cmm_module*
@@ -457,7 +457,7 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 %files -n lib%{name}0-cups
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
-%dir %{_libdir}/colour/
+%dir %{_libdir}/color/
 %dir %{_libdir}/%{cmmsubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_CUPS_cmm_module*
 

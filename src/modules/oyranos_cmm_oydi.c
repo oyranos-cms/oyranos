@@ -1,6 +1,6 @@
 /** @file oyranos_cmm_oydi.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2009-2012 (C) Kai-Uwe Behrmann
@@ -392,7 +392,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
 
   m = oyFilterNode_EdgeCount( rectangles, 1, OY_FILTEREDGE_CONNECTED );
 
-  /* add new rectangles and colour CMMs as needed */
+  /* add new rectangles and color CMMs as needed */
   if(n > m)
   {
     for(i = 0; i < n-m; ++i)
@@ -505,14 +505,14 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
 }
 
 
-/** @func    oydiColourServerActive
+/** @func    oydiColorServerActive
  *  @brief   wrap XcmColorServerCapabilities
  *
  *  @version Oyranos: 0.9.2
  *  @since   2012/12/20 (Oyranos: 0.9.2)
  *  @date    2012/12/20
  */
-int      oydiColourServerActive( oyBlob_s * display_id )
+int      oydiColorServerActive( oyBlob_s * display_id )
 {
   static int active = 0;
 #if defined(XCM_HAVE_X11)
@@ -522,7 +522,7 @@ int      oydiColourServerActive( oyBlob_s * display_id )
   {
     active = XcmColorServerCapabilities( display );
     z = oySeconds();
-    DBG_NUM2_S("colour server active: %d %g\n", active, z);
+    DBG_NUM2_S("color server active: %d %g\n", active, z);
   }
 #endif
   return active;
@@ -581,9 +581,9 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
     oyDATATYPE_e data_type = oyToDataType_m(pixel_layout);
     int32_t datatype = -1;
     int32_t channels_in = oyToChannels_m(pixel_layout);
-    int32_t colours_in = oyProfile_GetChannelsCount( p_in );
+    int32_t colors_in = oyProfile_GetChannelsCount( p_in );
     /* keep extra channels */
-    int32_t extra_in = channels_in - colours_in;
+    int32_t extra_in = channels_in - colors_in;
     int32_t alpha = -1;
     /* fixed RGB? */
     int32_t channels_out = 3 + extra_in;
@@ -786,7 +786,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         if(!display_id)
           oydi_msg( oyMSG_ERROR, (oyStruct_s*)image,
             OY_DBG_FORMAT_"no display_id", OY_DBG_ARGS_ );
-        active = oydiColourServerActive( display_id );
+        active = oydiColorServerActive( display_id );
         oyOptions_Release( &tags );
         oyBlob_Release( &display_id );
         if(active | XCM_COLOR_SERVER_REGIONS)
@@ -895,14 +895,14 @@ oyConnectorImaging_s_ oyx1_Display_plug = {
   1, /* is_plug == oyFilterPlug_s */
   oyx1_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   255, /* max_channels_count; */
-  1, /* min_colour_count; */
-  255, /* max_colour_count; */
+  1, /* min_color_count; */
+  255, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  1, /* can_swap; can swap colour channels (BGR)*/
+  1, /* can_swap; can swap color channels (BGR)*/
   1, /* can_swap_bytes; non host byte order */
   1, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */
@@ -925,14 +925,14 @@ oyConnectorImaging_s_ oyx1_Display_socket = {
   0, /* is_plug == oyFilterPlug_s */
   oyx1_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   255, /* max_channels_count; */
-  1, /* min_colour_count; */
-  255, /* max_colour_count; */
+  1, /* min_color_count; */
+  255, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  1, /* can_swap; can swap colour channels (BGR)*/
+  1, /* can_swap; can swap color channels (BGR)*/
   1, /* can_swap_bytes; non host byte order */
   1, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */
@@ -1138,7 +1138,7 @@ const char * oydiGetText             ( const char        * select,
          if(type == oyNAME_NICK)
       return "help";
     else if(type == oyNAME_NAME)
-      return _("The \"display\" filter supports applications to show image content on single and multi monitor displays. It cares about the server communication in declaring the region as prematched. So a X11 server side colour correction does not disturb the displayed colours and omits the provided rectangle. The \"display\" filter matches the provided image content to each monitor it can find. Of course this has limitations to distorted windows, like wobbly effects or matrix deformed windows.");
+      return _("The \"display\" filter supports applications to show image content on single and multi monitor displays. It cares about the server communication in declaring the region as prematched. So a X11 server side color correction does not disturb the displayed colors and omits the provided rectangle. The \"display\" filter matches the provided image content to each monitor it can find. Of course this has limitations to distorted windows, like wobbly effects or matrix deformed windows.");
     else
       return _("The filter needs some informations attached to the output image tags of the \"output\" image filter. The following list describes the X11/Xorg requirements.\n A \"window_id\" option shall consist of a oyBlob_s object containing the X11 \"Window\" type in its pointer element.\n A \"display_id\" option shall consist of a oyBlob_s object containing the X11 \"Display\" of the application. This is typically exposed as system specific pointer by each individual toolkit.\n A \"display_rectangle\" option of type oyRectangle_s shall represent the application image region in pixel of the absolute display coordinates. \n In the \"datatype\" option, a oyDATATYPE_e encoded as integer is expected, to deliver that data type in a not yet allocated output image. The output data type is by default not changed. A newly not yet allocated output image will be stored as processing data in the socket.\n \"preserve_alpha\" is a integer option to keep a given alpha in a not yet allocated output image. \
 ");

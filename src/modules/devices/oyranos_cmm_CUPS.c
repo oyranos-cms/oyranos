@@ -1,6 +1,6 @@
 /** @file oyranos_cmm_CUPS.c
  *
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2009-2011 (C) Joseph Simon III
@@ -288,9 +288,9 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
       const char * keyword = 0;
       ppd_attr_t * attrs = 0;
       int attr_n, i, j;
-      char ** colour_key_words = 0,
+      char ** color_key_words = 0,
             * tmp = 0;
-      int colour_key_words_n = 0;
+      int color_key_words_n = 0;
 
       if(!device_name && !value3 && !ppd_file_location && !ppd)
       {
@@ -396,15 +396,15 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
 
         if(tmp)
         {
-          colour_key_words = oyStringSplit_( tmp, ';', &colour_key_words_n,
+          color_key_words = oyStringSplit_( tmp, ';', &color_key_words_n,
                                              oyAllocateFunc_);
           oyDeAllocateFunc_( tmp ); tmp = 0;
         }
 
         /* add the key/value pairs to the devices backend_core options. */
-        for(j = 0; j < colour_key_words_n; ++j)
+        for(j = 0; j < color_key_words_n; ++j)
         {
-          const char * keyword = colour_key_words[j],
+          const char * keyword = color_key_words[j],
                      * value = NULL;
           ppd_choice_t * c = ppdFindMarkedChoice( ppd, keyword );
           ppd_option_t * o = ppdFindOption( ppd, keyword );
@@ -434,8 +434,8 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
           if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
         }
 
-        if( colour_key_words && colour_key_words_n)
-          oyStringListRelease_( &colour_key_words, colour_key_words_n,
+        if( color_key_words && color_key_words_n)
+          oyStringListRelease_( &color_key_words, color_key_words_n,
                                 oyDeAllocateFunc_ );
         else
         {
@@ -876,9 +876,9 @@ const char * Api8UiGetText           ( const char        * select,
   {
     if(!category)
     {
-      STRING_ADD( category, _("Colour") );
+      STRING_ADD( category, _("Color") );
       STRING_ADD( category, _("/") );
-      /* CMM: abbreviation for Colour Matching Module */
+      /* CMM: abbreviation for Color Matching Module */
       STRING_ADD( category, _("Device") );
       STRING_ADD( category, _("/") );
       STRING_ADD( category, _("Printer CUPS") );
@@ -913,7 +913,7 @@ oyCMMui_s_ _api8_ui = {
   0, /* oyCMMFilter_ValidateOptions_f */
   0, /* oyWidgetEvent_f */
 
-  "Colour/Device/Printer", /* category */
+  "Color/Device/Printer", /* category */
   0,   /* const char * options */
 
   0,    /* oyCMMuiGet_f oyCMMuiGet */

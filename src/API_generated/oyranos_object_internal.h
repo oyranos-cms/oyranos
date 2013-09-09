@@ -4,7 +4,7 @@
    [Template file inheritance graph]
    +-- oyranos_object_internal.template.h
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2013 (C) Kai-Uwe Behrmann

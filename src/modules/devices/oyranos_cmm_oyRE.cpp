@@ -1,6 +1,6 @@
 /** @file oyranos_cmm_oyRE.cc
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2009 (C) Yiannis Belias
@@ -783,7 +783,7 @@ const char * Api8UiGetText           ( const char        * select,
     if(!category)
     {
       /* The following strings must match the categories for a menu entry. */
-      const char * i18n[] = {_("Colour"),_("Device"),_("CameraRaw"),0};
+      const char * i18n[] = {_("Color"),_("Device"),_("CameraRaw"),0};
       int len =  strlen(i18n[0]) + strlen(i18n[1]) + strlen(i18n[2]);
       category = (char*)malloc( len + 64 );
       if(category)
@@ -821,7 +821,7 @@ oyCMMui_s_ _api8_ui = {
   0, /* oyCMMFilter_ValidateOptions_f */
   0, /* oyWidgetEvent_f */
 
-  "Colour/Device/CameraRaw", /* category */
+  "Color/Device/CameraRaw", /* category */
   0,   /* const char * options */
 
   0,    /* oyCMMuiGet_f oyCMMuiGet */

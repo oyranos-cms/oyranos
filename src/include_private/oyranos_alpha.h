@@ -1,6 +1,6 @@
 /** @file oyranos_alpha.h
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2004-2012 (C) Kai-Uwe Behrmann
@@ -92,7 +92,7 @@ oyStructList_s** oyCMMCacheList_     ( void );
 char   *     oyCMMCacheListPrint_    ( void );
 
 
-/* --- colour conversion --- */
+/* --- color conversion --- */
 
 
 
@@ -199,7 +199,7 @@ const char *   oyModulGetOptions     ( const char        * cmm,
 const char *   oyModuleGetActual     ( const char        * type );
 
 
-/* --- Image Colour Profile API --- */
+/* --- Image Color Profile API --- */
 /* needs extra libraries liboyranos_png liboyranos_tiff ... */
 #ifdef OY_HAVE_PNG_
 #include <png.h>
@@ -233,7 +233,7 @@ oyIMAGE_EMBED_ICC_MINIMAL  ...
 oyIMAGE_EMBED_ICC_FULL (while for OpenEXR this would not make sense) */
 
 
-char   *       oyDumpColourToCGATS   ( const double      * channels,
+char   *       oyDumpColorToCGATS   ( const double      * channels,
                                        size_t              n,
                                        oyProfile_s       * prof,
                                        oyAlloc_f           allocateFunc,

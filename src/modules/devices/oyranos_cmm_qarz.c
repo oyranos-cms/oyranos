@@ -1,6 +1,6 @@
 /** @file oyranos_cmm_qarz.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2007-2010 (C) Kai-Uwe Behrmann
@@ -164,10 +164,10 @@ const char * qarz_help_properties =
       " - \"EDID_red_x\" \"EDID_red_y\" \"EDID_green_x\" \"EDID_green_y\" "
       "   \"EDID_blue_x\" \"EDID_blue_x\" \"EDID_white_x\" \"EDID_white_x\" "
       "   \"EDID_gamma\","
-      " colour characteristics as found in EDID as text\n"
-      " - \"colour_matrix.from_edid."
+      " color characteristics as found in EDID as text\n"
+      " - \"color_matrix.from_edid."
                    "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\","
-      " colour characteristics as found in EDID as doubles\n"
+      " color characteristics as found in EDID as doubles\n"
       " \n"
       " One option \"device_name\" will select the according X display.\n"
       " If not the module will try to get this information from \n"
@@ -236,7 +236,7 @@ int          qarzDeviceFromName_     ( const char        * device_name,
     {
       char * manufacturer=0, * mnft=0, * model=0, * serial=0, * vendor = 0,
            * host=0, * display_geometry=0, * system_port=0;
-      double colours[9] = {0,0,0,0,0,0,0,0,0};
+      double colors[9] = {0,0,0,0,0,0,0,0,0};
       oyBlob_s * edid = 0;
       uint32_t week=0, year=0, mnft_id=0, model_id=0;
 
@@ -254,7 +254,7 @@ int          qarzDeviceFromName_     ( const char        * device_name,
                                       &manufacturer, &mnft, &model, &serial,
                                       &vendor, &display_geometry, &system_port,
                                       &host, &week, &year, &mnft_id, &model_id,
-                                      colours,
+                                      colors,
                                       &edid, oyAllocateFunc_,
                                       (oyStruct_s*)options );
 
@@ -690,7 +690,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
           {
             icHeader * header = 0;
             /* fallback: try to get EDID to build a profile */
-            o_tmp = oyConfig_Find( device, "colour_matrix."
+            o_tmp = oyConfig_Find( device, "color_matrix."
                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma");
             if(!o_tmp)
             {
@@ -699,7 +699,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
                                      "edid",
                                      "yes", OY_CREATE_NEW );
               error = qarzDeviceFromName_( device_name, options, &device );
-              o_tmp = oyConfig_Find( device, "colour_matrix."
+              o_tmp = oyConfig_Find( device, "color_matrix."
                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma");
             }
 
@@ -709,7 +709,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
                           * result = 0;
               error = oyOptions_MoveIn( opts, &o_tmp, -1 );
               oyOptions_Handle( "///create_profile.icc",
-                                opts,"create_profile.icc_profile.colour_matrix",
+                                opts,"create_profile.icc_profile.color_matrix",
                                 &result );
               prof = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
                                         oyOBJECT_PROFILE_S );
@@ -1064,9 +1064,9 @@ const char * qarzApi8UiGetText       ( const char        * select,
   {
     if(!category)
     {
-      STRING_ADD( category, _("Colour") );
+      STRING_ADD( category, _("Color") );
       STRING_ADD( category, _("/") );
-      /* CMM: abbreviation for Colour Matching Module */
+      /* CMM: abbreviation for Color Matching Module */
       STRING_ADD( category, _("Device") );
       STRING_ADD( category, _("/") );
       STRING_ADD( category, _("Monitor") );
@@ -1101,7 +1101,7 @@ oyCMMui_s_ qarz_api8_ui = {
   0, /* oyCMMFilter_ValidateOptions_f */
   0, /* oyWidgetEvent_f */
 
-  "Colour/Device/Monitor", /* category */
+  "Color/Device/Monitor", /* category */
   0,   /* const char * options */
   0,   /* oyCMMuiGet_f oyCMMuiGet */
 

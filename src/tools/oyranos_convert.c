@@ -1,6 +1,6 @@
 /** @file oyranos_convert.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2012 (C) Kai-Uwe Behrmann
@@ -12,7 +12,7 @@
  *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2012/02/19
  *
- *  The program uses ICC profiles to perform colour transforms.
+ *  The program uses ICC profiles to perform color transforms.
  *
  *  cc -Wall -g oyranos_convert.c -o oyranos-icc `pkg-config --libs --cflags oyranos` -I../../ -I../build_11.4 -I ../../API_generated/ -I ../../oforms/
  */

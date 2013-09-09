@@ -54,7 +54,7 @@ typedef enum {
   {% endifequal %}{% endifequal %}{% endfor %}
 {% for class in classes %}{% ifequal class.group "objects_profile" %}
   oyOBJECT_{{ class.baseName|underscores|upper }}_S,   /**< {{ class.name }} */{% endifequal %}{% endfor %}
-  oyOBJECT_NAMED_COLOURS_S,
+  oyOBJECT_NAMED_COLORS_S,
   oyOBJECT_MAX
 } oyOBJECT_e;
 #else
@@ -62,8 +62,8 @@ typedef enum {
   oyOBJECT_NONE,
   oyOBJECT_OBJECT_S,                  /**< oyObject_s */
   oyOBJECT_MONITOR_S,                 /**< oyMonitor_s */
-  oyOBJECT_NAMED_COLOUR_S,            /*!< oyNamedColour_s */
-  oyOBJECT_NAMED_COLOURS_S,           /*!< oyNamedColours_s */
+  oyOBJECT_NAMED_COLOR_S,            /*!< oyNamedColor_s */
+  oyOBJECT_NAMED_COLORS_S,           /*!< oyNamedColors_s */
   oyOBJECT_PROFILE_S,                 /*!< oyProfile_s */
   oyOBJECT_PROFILE_TAG_S,             /*!< oyProfileTag_s */
   oyOBJECT_PROFILES_S,                /*!< oyProfiles_s */
@@ -72,9 +72,6 @@ typedef enum {
   oyOBJECT_RECTANGLE_S,               /**< oyRectangle_s */
   oyOBJECT_IMAGE_S,                   /*!< oyImage_s */
   oyOBJECT_ARRAY2D_S,                 /**< oyArray2d_s */
-  oyOBJECT_COLOUR_CONVERSION_S,       /*!< oyColourConversion_s deprecated */
-  oyOBJECT_NAMED_COLOR_S,             /*!< oyNamedColor_s */
-  oyOBJECT_NAMED_COLORS_S,            /*!< oyNamedColors_s */
   oyOBJECT_CONNECTOR_S       = 20,    /**< oyConnector_s */
   oyOBJECT_CONNECTOR_IMAGING_S,       /**< oyConnectorImaging_s */
   oyOBJECT_CONNECTOR_MAX_S,           /**< not defined */
@@ -191,7 +188,7 @@ typedef enum {
  */
 typedef enum {
   /** basic settings, as typical for toolkits and office/web applications,
-   *  e.g. disable proofing or disable mark out of gamut colours */
+   *  e.g. disable proofing or disable mark out of gamut colors */
   oyOPTIONATTRIBUTE_BASIC = 0,
   /** user modified, e.g. after oyOption_SetFromText() */
   oyOPTIONATTRIBUTE_EDIT = 32,

@@ -1,6 +1,6 @@
 /** @file oyranos_cmm_lraw.cpp
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2009-2012 (C) Kai-Uwe Behrmann
@@ -454,7 +454,7 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color )
 
   if(!p)
   {
-    oyOption_s *matrix = oyOption_FromRegistration("///colour_matrix."
+    oyOption_s *matrix = oyOption_FromRegistration("///color_matrix."
               "from_primaries."
               "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma", NULL );
 
@@ -546,8 +546,8 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color )
                 * result = 0;
 
     oyOptions_MoveIn( opts, &matrix, -1 );
-    const char * reg = "//"OY_TYPE_STD"/create_profile.colour_matrix.icc";
-    oyOptions_Handle( reg,opts,"create_profile.icc_profile.colour_matrix",
+    const char * reg = "//"OY_TYPE_STD"/create_profile.color_matrix.icc";
+    oyOptions_Handle( reg,opts,"create_profile.icc_profile.color_matrix",
                       &result );
 
     p = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
@@ -1083,14 +1083,14 @@ oyConnectorImaging_s_ lraw_imageInputRAW_connector = {
   0, /* is_plug == oyFilterPlug_s */
   lraw_data_types,
   2, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   3, /* max_channels_count; */
-  1, /* min_colour_count; */
-  3, /* max_colour_count; */
+  1, /* min_color_count; */
+  3, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  0, /* can_swap; can swap colour channels (BGR)*/
+  0, /* can_swap; can swap color channels (BGR)*/
   0, /* can_swap_bytes; non host byte order */
   0, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */

@@ -148,15 +148,15 @@ OYAPI oyProfiles_s * OYEXPORT
  *  @memberof oyProfiles_s
  *  @brief    Get a list of installed profiles
  *
- *  Allow for a special case with oyDEFAULT_PROFILE_START in the colour_space
- *  argument, to select all possible standard colour profiles, e.g. for 
- *  typical colour conversions.
+ *  Allow for a special case with oyDEFAULT_PROFILE_START in the color_space
+ *  argument, to select all possible standard color profiles, e.g. for 
+ *  typical color conversions.
  *
  *  oyASSUMED_WEB will result in exactly one profile added as long as it is
  *  available in the file paths.
  *
  *  @param[in]     std_profile_class  standard profile class, e.g. oyEDITING_RGB
- *  @param[out]    current             get the colour_space profile position
+ *  @param[out]    current             get the color_space profile position
  *  @param         object              a optional object
  *  @return                            the profile list
  *
@@ -236,15 +236,15 @@ OYAPI oyProfiles_s * OYEXPORT
     {
       csp = icSigXYZData;
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigColorSpaceClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigInputClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
     }
@@ -253,15 +253,15 @@ OYAPI oyProfiles_s * OYEXPORT
     {
       csp = icSigLabData;
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigColorSpaceClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigInputClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
     }
@@ -270,15 +270,15 @@ OYAPI oyProfiles_s * OYEXPORT
     {
       csp = icSigRgbData;
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigColorSpaceClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigInputClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
     }
@@ -287,11 +287,11 @@ OYAPI oyProfiles_s * OYEXPORT
     {
       csp = icSigRgbData;
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigOutputClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
     }
@@ -301,19 +301,19 @@ OYAPI oyProfiles_s * OYEXPORT
     {
       csp = icSigCmykData;
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigOutputClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigInputClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigColorSpaceClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
     }
@@ -322,15 +322,15 @@ OYAPI oyProfiles_s * OYEXPORT
     {
       csp = icSigGrayData;
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigInputClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigDisplayClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
 
-      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOUR_SPACE, 0 );
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigColorSpaceClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
     }

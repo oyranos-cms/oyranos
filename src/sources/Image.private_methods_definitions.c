@@ -7,7 +7,7 @@
  *  @brief   describe a images channel and pixel layout
  *
  *  - gather informations about the pixel layout
- *  - describe the colour channels characteristic into oyImage_s::channel_layout
+ *  - describe the color channels characteristic into oyImage_s::channel_layout
  *  - store some text in the images nick name as a ID
  *
  *  @version Oyranos: 0.5.0
@@ -20,9 +20,9 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
   int n     = oyToChannels_m( pixel_layout );
   oyProfile_s * profile = image->profile_;
   int cchan_n = oyProfile_GetChannelsCount( profile );
-  int coff_x = oyToColourOffset_m( pixel_layout );
+  int coff_x = oyToColorOffset_m( pixel_layout );
   oyDATATYPE_e t = oyToDataType_m( pixel_layout );
-  int swap  = oyToSwapColourChannels_m( pixel_layout );
+  int swap  = oyToSwapColorChannels_m( pixel_layout );
   /*int revert= oyT_FLAVOR_M( pixel_layout );*/
   oyPixel_t *mask = image->oy_->allocateFunc_( sizeof(oyPixel_t*) * (oyCHAN0 + 
                     OY_MAX(n,cchan_n) + 1));
@@ -74,10 +74,10 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
     /* we dont know about the content */
     for(i = 0; i < n; ++i)
       clayout[i] = oyCHANNELTYPE_OTHER;
-    /* describe profile colours */
+    /* describe profile colors */
     for(i = coff_x; i < coff_x + cchan_n; ++i)
-      clayout[i] = oyICCColourSpaceToChannelLayout( 
-                     oyProfile_GetSignature(profile, oySIGNATURE_COLOUR_SPACE),
+      clayout[i] = oyICCColorSpaceToChannelLayout( 
+                     oyProfile_GetSignature(profile, oySIGNATURE_COLOR_SPACE),
                      i - coff_x );
     /* place a end marker */
     clayout[n] = oyCHANNELTYPE_UNDEFINED;
@@ -98,10 +98,10 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
   /*else
     oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NICK));*/
   hashTextAdd_m( text );
-  oySprintf_( text, "    <channels all=\"%d\" colour=\"%d\" />\n", n, cchan_n );
+  oySprintf_( text, "    <channels all=\"%d\" color=\"%d\" />\n", n, cchan_n );
   hashTextAdd_m( text );
   oySprintf_( text,
-              "    <offsets first_colour_sample=\"%d\" next_pixel=\"%d\" />\n"
+              "    <offsets first_color_sample=\"%d\" next_pixel=\"%d\" />\n"
               /*"  next line = %d\n"*/,
               coff_x, mask[oyPOFF_X]/*, mask[oyPOFF_Y]*/ );
   hashTextAdd_m( text );
@@ -110,7 +110,7 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
   {
     hashTextAdd_m( "    <swap" );
     if(swap)
-      hashTextAdd_m( " colourswap=\"yes\"" );
+      hashTextAdd_m( " colorswap=\"yes\"" );
     if( oyToByteswap_m( pixel_layout ) )
       hashTextAdd_m( " byteswap=\"yes\"" );
     hashTextAdd_m( " />\n" );

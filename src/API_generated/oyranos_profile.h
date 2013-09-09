@@ -3,7 +3,7 @@
    [Template file inheritance graph]
    +-- oyranos_profile.template.h
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2013 (C) Kai-Uwe Behrmann
@@ -33,7 +33,7 @@
  *  oyProfile_FromMD5() is a lookup function from a profile hash, e.g. as
  *  provided by a 'psid' tag. \n
  *  Profile properties can be obtained from oyProfile_GetSignature(), like
- *  colour spaces, date, magic number and so on.
+ *  color spaces, date, magic number and so on.
  *  oyProfile_GetChannelNames(), oyProfile_GetText() and oyProfile_GetID()
  *  provide additional informations. \n
  *  The profile element functions have Tag in their names. They work together
@@ -62,7 +62,7 @@
  *  @date  10 december 2007 (API 0.1.8)
  */
 typedef enum {
-  oySIGNATURE_COLOUR_SPACE,            /**< colour space */
+  oySIGNATURE_COLOR_SPACE,            /**< color space */
   oySIGNATURE_PCS,                     /**< profile connection space */
   oySIGNATURE_SIZE,                    /**< internal stored size */
   oySIGNATURE_CMM,                     /**< prefered CMM */

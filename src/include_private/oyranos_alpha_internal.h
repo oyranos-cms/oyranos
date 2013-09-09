@@ -1,7 +1,7 @@
 /** @internal
  *  @file oyranos_alpha_internal.h
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  Copyright (C) 2004-2008  Kai-Uwe Behrmann
  *
@@ -33,7 +33,7 @@ extern "C" {
 
 
 
-int  oyColourConvert_ ( oyProfile_s       * p_in,
+int  oyColorConvert_ ( oyProfile_s       * p_in,
                         oyProfile_s       * p_out,
                         oyPointer           buf_in,
                         oyPointer           buf_out,

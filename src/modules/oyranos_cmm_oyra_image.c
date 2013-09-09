@@ -1,6 +1,6 @@
 /** @file oyranos_cmm_oyra_image.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2008-2012 (C) Kai-Uwe Behrmann
@@ -226,14 +226,14 @@ oyConnectorImaging_s_ oyra_imageWrite_plug = {
   1, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   255, /* max_channels_count; */
-  1, /* min_colour_count; */
-  255, /* max_colour_count; */
+  1, /* min_color_count; */
+  255, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  1, /* can_swap; can swap colour channels (BGR)*/
+  1, /* can_swap; can swap color channels (BGR)*/
   1, /* can_swap_bytes; non host byte order */
   1, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */
@@ -256,14 +256,14 @@ oyConnectorImaging_s_ oyra_imageWrite_socket = {
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   255, /* max_channels_count; */
-  1, /* min_colour_count; */
-  255, /* max_colour_count; */
+  1, /* min_color_count; */
+  255, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  1, /* can_swap; can swap colour channels (BGR)*/
+  1, /* can_swap; can swap color channels (BGR)*/
   1, /* can_swap_bytes; non host byte order */
   1, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */
@@ -599,14 +599,14 @@ oyConnectorImaging_s_ oyra_imageLoad_plug = {
   1, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   255, /* max_channels_count; */
-  1, /* min_colour_count; */
-  255, /* max_colour_count; */
+  1, /* min_color_count; */
+  255, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  1, /* can_swap; can swap colour channels (BGR)*/
+  1, /* can_swap; can swap color channels (BGR)*/
   1, /* can_swap_bytes; non host byte order */
   1, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */
@@ -629,14 +629,14 @@ oyConnectorImaging_s_ oyra_imageLoad_socket = {
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   255, /* max_channels_count; */
-  1, /* min_colour_count; */
-  255, /* max_colour_count; */
+  1, /* min_color_count; */
+  255, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  1, /* can_swap; can swap colour channels (BGR)*/
+  1, /* can_swap; can swap color channels (BGR)*/
   1, /* can_swap_bytes; non host byte order */
   1, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */
@@ -959,14 +959,14 @@ oyConnectorImaging_s_ oyra_imageRectangles_plug = {
   1, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   255, /* max_channels_count; */
-  1, /* min_colour_count; */
-  255, /* max_colour_count; */
+  1, /* min_color_count; */
+  255, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  1, /* can_swap; can swap colour channels (BGR)*/
+  1, /* can_swap; can swap color channels (BGR)*/
   1, /* can_swap_bytes; non host byte order */
   1, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */
@@ -989,14 +989,14 @@ oyConnectorImaging_s_ oyra_imageRectangles_socket = {
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   255, /* max_channels_count; */
-  1, /* min_colour_count; */
-  255, /* max_colour_count; */
+  1, /* min_color_count; */
+  255, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  1, /* can_swap; can swap colour channels (BGR)*/
+  1, /* can_swap; can swap color channels (BGR)*/
   1, /* can_swap_bytes; non host byte order */
   1, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */
@@ -1195,14 +1195,14 @@ oyConnectorImaging_s_ oyra_imageRoot_connector = {
   0, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   255, /* max_channels_count; */
-  1, /* min_colour_count; */
-  255, /* max_colour_count; */
+  1, /* min_color_count; */
+  255, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  0, /* can_swap; can swap colour channels (BGR)*/
+  0, /* can_swap; can swap color channels (BGR)*/
   0, /* can_swap_bytes; non host byte order */
   0, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */
@@ -1355,14 +1355,14 @@ oyConnectorImaging_s_ oyra_imageOutput_connector = {
   1, /* is_plug == oyFilterPlug_s */
   oyra_image_data_types, /* data_types */
   6, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   255, /* max_channels_count; */
-  1, /* min_colour_count; */
-  255, /* max_colour_count; */
+  1, /* min_color_count; */
+  255, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  0, /* can_swap; can swap colour channels (BGR)*/
+  0, /* can_swap; can swap color channels (BGR)*/
   0, /* can_swap_bytes; non host byte order */
   0, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */

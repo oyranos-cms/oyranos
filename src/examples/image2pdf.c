@@ -1,6 +1,6 @@
 /** @file image2pdf.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  Copyright (C) 2008-2012  Kai-Uwe Behrmann
  *
@@ -15,7 +15,7 @@
  *  @since    2008/09/26
  *
  *  A sample application on how to compose a set of camera raw files into a pdf,
- *  while keeping attention to user colour settings.
+ *  while keeping attention to user color settings.
  *  Beside Cairo and Oyranos you need DCraw during runtime.
  *  
  *  Compile: cc -pedantic -Wall -g `oyranos-config --cflags` `oyranos-config --ld_x_flags` `pkg-config --cflags --libs cairo` image2pdf.c -o image2pdf
@@ -135,7 +135,7 @@ int main (int argc, char ** argv)
     image_data = cairo_image_surface_get_data( image_surf );
     size = w*h;
 
-    /* build the colour context */
+    /* build the color context */
     if( to_moni )
       output = oyProfile_Copy( monitor, 0 );
     else
@@ -155,7 +155,7 @@ int main (int argc, char ** argv)
     oyConversion_Correct( to_output, "//" OY_TYPE_STD "/icc",
                           oyOPTIONATTRIBUTE_ADVANCED, 0 );
 
-    /* transform colours */
+    /* transform colors */
     oyConversion_RunPixels( to_output, NULL );
     oyConversion_Release( &to_output );
 

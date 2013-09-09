@@ -1,6 +1,6 @@
 /** @file oyranos_cmm_SANE.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2009-2010 (C) Yiannis Belias
@@ -833,7 +833,7 @@ const char * Api8UiGetText           ( const char        * select,
       /* The following strings must match the categories for a menu entry. */
       const char * i18n[4] = {0,0,0,0};
       int len;
-      i18n[0] = _("Colour");
+      i18n[0] = _("Color");
       i18n[1] = _("Device");
       i18n[2] = _("Scanner");
       len =  strlen(i18n[0]) + strlen(i18n[1]) + strlen(i18n[2]);
@@ -873,7 +873,7 @@ oyCMMui_s_   _api8_ui = {
   0, /* oyCMMFilter_ValidateOptions_f */
   0, /* oyWidgetEvent_f */
 
-  "Colour/Device/CameraRaw", /* category */
+  "Color/Device/CameraRaw", /* category */
   0,   /* const char * options */
 
   0,    /* oyCMMuiGet_f oyCMMuiGet */
@@ -1044,7 +1044,7 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
 
    for (opt_num = 1; opt_num < num_options; opt_num++) {
       opt = sane_get_option_descriptor(device_handle, opt_num);
-      if ((opt->cap & SANE_CAP_COLOUR) /*&& !(opt->cap & SANE_CAP_INACTIVE)*/) {
+      if ((opt->cap & SANE_CAP_COLOR) /*&& !(opt->cap & SANE_CAP_INACTIVE)*/) {
          void *value = malloc(opt->size);
          char *registration = malloc(sizeof(cmm_base_reg)+strlen(opt->name)+1);
 
@@ -1161,7 +1161,7 @@ int CreateRankMap_(SANE_Handle device_handle, oyRankMap ** rank_map)
 
    for (opt_num = 1; opt_num < num_options; opt_num++) {
       opt = sane_get_option_descriptor(device_handle, opt_num);
-      if (opt->cap & SANE_CAP_COLOUR) {
+      if (opt->cap & SANE_CAP_COLOR) {
          rm[i].key = (char *)malloc(strlen(opt->name) + 1);
          strcpy(rm[i].key, opt->name);
          rm[i].match_value = 5;

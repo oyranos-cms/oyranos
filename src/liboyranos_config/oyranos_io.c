@@ -1,6 +1,6 @@
 /** @file oyranos_io.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2004-2011 (C) Kai-Uwe Behrmann
@@ -177,7 +177,7 @@ oyGetPathFromProfileName_       (const char*   fileName,
 
     if (!success && !strchr(fileName, OY_SLASH_C)) {
       if(oy_warn_)
-        WARNc_PROFILE_S(_("profile not found in colour path:"), fileName);
+        WARNc_PROFILE_S(_("profile not found in color path:"), fileName);
       DBG_PROG_ENDE
       return 0;
     }
@@ -359,7 +359,7 @@ int oyProfileListCb_ (oyFileList_s * data,
   if(l->type != oyOBJECT_FILE_LIST_S_)
     WARNc_S("Could not find a oyFileList_s objetc.");
 
-      if (!oyCheckProfile_(full_name, l->coloursig))
+      if (!oyCheckProfile_(full_name, l->colorsig))
       {
         if(l->count_files >= l->mem_count)
         {
@@ -422,7 +422,7 @@ int oyPolicyListCb_ (oyFileList_s * data,
 }
 
 
-char **  oyProfileListGet_           ( const char        * coloursig,
+char **  oyProfileListGet_           ( const char        * colorsig,
                                        uint32_t          * size )
 {
   oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
@@ -431,7 +431,7 @@ char **  oyProfileListGet_           ( const char        * coloursig,
 
   path_names = oyProfilePathsGet_( &count, oyAllocateFunc_ );
 
-  l.coloursig = coloursig;
+  l.colorsig = colorsig;
 
   DBG_PROG_START
  

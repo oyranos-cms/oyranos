@@ -1,6 +1,6 @@
 /** @file oyranos_file.cpp
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2011-2013 (C) Kai-Uwe Behrmann
@@ -47,10 +47,10 @@ void displayHelp(char ** argv)
   printf("\n");
   printf("  %s\n",               _("Dump data:"));
   printf("      %s -f=[icc|openicc] -i file.dng [-o=device.json] [--only-db]\n", argv[0]);
-  printf("         -f icc   \t%s\n",_("extract ICC colour profile"));
-  printf("         -f openicc\t%s\n",_("generate OpenICC device colour reproduction JSON"));
-  /* JSON is a text based file format for exchange of data. The rank map is used to sort colour profiles according to their fit to a specific device. */
-  printf("         -f openicc-rank-map\t%s\n",_("dump OpenICC device colour state rank map JSON"));
+  printf("         -f icc   \t%s\n",_("extract ICC color profile"));
+  printf("         -f openicc\t%s\n",_("generate OpenICC device color reproduction JSON"));
+  /* JSON is a text based file format for exchange of data. The rank map is used to sort color profiles according to their fit to a specific device. */
+  printf("         -f openicc-rank-map\t%s\n",_("dump OpenICC device color state rank map JSON"));
   printf("         --only-db\t%s\n",_("use only DB keys for -f=openicc"));
   printf("\n");
   printf("  %s\n",               _("Show Help:"));

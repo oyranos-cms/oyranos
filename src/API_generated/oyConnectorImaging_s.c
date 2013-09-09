@@ -9,7 +9,7 @@
    |
    +-- oyStruct_s.template.c
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2013 (C) Kai-Uwe Behrmann
@@ -217,11 +217,11 @@ OYAPI int  OYEXPORT
   switch(type)
   {
     case oyCONNECTOR_IMAGING_CAP_IS_PLUG: return s->is_plug;
-    case oyCONNECTOR_IMAGING_CAP_MAX_COLOUR_OFFSET: return s->max_colour_offset;
+    case oyCONNECTOR_IMAGING_CAP_MAX_COLOR_OFFSET: return s->max_color_offset;
     case oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT: return s->min_channels_count;
     case oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT: return s->max_channels_count;
-    case oyCONNECTOR_IMAGING_CAP_MIN_COLOUR_COUNT: return s->min_colour_count;
-    case oyCONNECTOR_IMAGING_CAP_MAX_COLOUR_COUNT: return s->max_colour_count;
+    case oyCONNECTOR_IMAGING_CAP_MIN_COLOR_COUNT: return s->min_color_count;
+    case oyCONNECTOR_IMAGING_CAP_MAX_COLOR_COUNT: return s->max_color_count;
     case oyCONNECTOR_IMAGING_CAP_CAN_PLANAR: return s->can_planar;
     case oyCONNECTOR_IMAGING_CAP_CAN_INTERWOVEN: return s->can_interwoven;
     case oyCONNECTOR_IMAGING_CAP_CAN_SWAP: return s->can_swap;
@@ -261,11 +261,11 @@ OYAPI int  OYEXPORT
   switch(type)
   {
     case oyCONNECTOR_IMAGING_CAP_IS_PLUG: s->is_plug = value; break;
-    case oyCONNECTOR_IMAGING_CAP_MAX_COLOUR_OFFSET:  s->max_colour_offset = value; break;
+    case oyCONNECTOR_IMAGING_CAP_MAX_COLOR_OFFSET:  s->max_color_offset = value; break;
     case oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT:  s->min_channels_count = value; break;
     case oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT:  s->max_channels_count = value; break;
-    case oyCONNECTOR_IMAGING_CAP_MIN_COLOUR_COUNT:  s->min_colour_count = value; break;
-    case oyCONNECTOR_IMAGING_CAP_MAX_COLOUR_COUNT:  s->max_colour_count = value; break;
+    case oyCONNECTOR_IMAGING_CAP_MIN_COLOR_COUNT:  s->min_color_count = value; break;
+    case oyCONNECTOR_IMAGING_CAP_MAX_COLOR_COUNT:  s->max_color_count = value; break;
     case oyCONNECTOR_IMAGING_CAP_CAN_PLANAR:  s->can_planar = value; break;
     case oyCONNECTOR_IMAGING_CAP_CAN_INTERWOVEN:  s->can_interwoven = value; break;
     case oyCONNECTOR_IMAGING_CAP_CAN_SWAP:  s->can_swap = value; break;

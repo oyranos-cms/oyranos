@@ -7,7 +7,7 @@
    |
    +-- oyStruct_s.template.h
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2013 (C) Kai-Uwe Behrmann
@@ -125,7 +125,7 @@ int            oyValueEqual          ( oyValue_u         * a,
  *  @brief   Option object
  *  
     @todo include the oyOptions_t_ type for gui elements
-    should be used in a list oyColourTransformOptions_s to form a options set
+    should be used in a list oyColorTransformOptions_s to form a options set
     oyOptions_t_ covers as well the UI part which should be separated as of the
     SimpleToolkitAbstraction project:
     http://www.oyranos.org/wiki/index.php?title=XML_Plug-in_options

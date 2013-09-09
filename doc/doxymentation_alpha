@@ -21,7 +21,7 @@
     @n@n
     @section intro Introduction
   
-    Oyranos is intended as a entry point for colour savy applications.
+    Oyranos is intended as a entry point for color savy applications.
     In its current stage it configures profile paths, sets default profiles, 
     maps devices to profiles, sets a monitor profile in X and uploads a vcgt
     tag. This means for instance all applications using Oyranos will use for
@@ -147,7 +147,7 @@
       ::oyChar \n
       Function alike macros are named like normal functions followed by
       a \b _m:
-      oyColourOffset_m() \n
+      oyColorOffset_m() \n
       For enum alike macros it is more appropriate to omit the _M suffix:
       ::OY_TYPE_123A_8 \n
     \b Stucts words start upper case followed by a \b _s:
@@ -169,7 +169,7 @@
     @section development Development Conventions
 
     @subsection api_design API Design
-    Oyranos API's handle various tasks. A important idea is to make colour 
+    Oyranos API's handle various tasks. A important idea is to make color 
     management easy. Thus some API's are high level and only a few calls
     are needed to do the, hopefully, right thing. For finer control
     many low level API's are exposed.\n
@@ -207,9 +207,9 @@
     @subsection api_naming API Naming
     Keeping API members in a lexical relation allowes
     for later easy searching with tools of choice. So you find rather a 
-    \a getOyNamedColourName but \a oyNamedColour_GetName and can easily find the
-    related functions in the appropriate NamedColour API. The sheme follows
-    C++ syntax: (namespace)\b oy(ranos)::(class)\b NamedColour::(function)
+    \a getOyNamedColorName but \a oyNamedColor_GetName and can easily find the
+    related functions in the appropriate NamedColor API. The sheme follows
+    C++ syntax: (namespace)\b oy(ranos)::(class)\b NamedColor::(function)
     \b getName.
     This should as well help in designing OO wrappers to allow consistency among
     C Oyranos and its wrappers for various languages.
@@ -260,7 +260,7 @@
     \n
     The oyCMMapi4_s holds most static informations of the module. It can be used
     to provide a processing context. A context is use in case it is very 
-    expensive to compute such a context like in ICC CMMs for colour conversions
+    expensive to compute such a context like in ICC CMMs for color conversions
     and the context shall be chached by Oyranos. The oyCMMapi7_s holds the 
     dFilFilterPlug_MyFilterRun function and the plugs and sockets. \n
     \n
@@ -468,7 +468,7 @@ backend_core part.
 <td>   device handles </td><td>  SANE, CUPS, oyRE </td><td> in: abreviation to talk with drivers </td><td> in[c]: oyOption_GetData()
 </td></tr>
 <tr>
-<td>   device settings </td><td> oyX1,<br> SANE,<br> CUPS,<br> oyRE </td><td> out[r]: "display_geometry" ...<br> ...<br> static colour related PPD attributes <br> libraw options </td><td> out[c]: string
+<td>   device settings </td><td> oyX1,<br> SANE,<br> CUPS,<br> oyRE </td><td> out[r]: "display_geometry" ...<br> ...<br> static color related PPD attributes <br> libraw options </td><td> out[c]: string
 
 </td></tr></tbody></table>
 <p><br>
@@ -570,7 +570,7 @@ accepted by the module.
 The module has implicitely to assume, that the user has no background about
 the called device class, and to initialise a device by its own.
 In case the user has already a context and passes 
-this one to Oyranos, the module needs to extract the colour related device 
+this one to Oyranos, the module needs to extract the color related device 
 settings from this and pass the device settings as string to Oyranos.
 Oyranos will then be able to search for a according ICC profile.
 </p><p>It is important for Oyranos, the module and the user to agree who is 
@@ -588,7 +588,7 @@ driver configurations. Such backends are best implemented in that they
 resolve the oyConfig_s objects right from the beginning, e.g. the "list" 
 call. Otherwise the oyConfig_s devices are not uniquely
 defined. On a practical example, a CUPS device would be uniquely defined, 
-if all colour related and to be included PPD entries are included in the 
+if all color related and to be included PPD entries are included in the 
 oyConfig_s::backend_core options as strings.
 </p><p>Users can subsummarise such devices in that they look at the 
 registration, manufacturer, model and serial number strings. However they 

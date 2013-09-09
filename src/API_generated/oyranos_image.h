@@ -4,7 +4,7 @@
    [Template file inheritance graph]
    +-- oyranos_image.template.h
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2012 (C) Kai-Uwe Behrmann
@@ -53,9 +53,9 @@ size_t             oyDataTypeGetSize ( oyDATATYPE_e        data_type );
 const char *       oyDataTypeToText  ( oyDATATYPE_e        data_type );
 
 /** @enum    oyCHANNELTYPE_e
- *  @brief   Channels types of Colours 
+ *  @brief   Channels types of Colors 
  *
- *  This type is useful to present colour manipulation UI elements in a 
+ *  This type is useful to present color manipulation UI elements in a 
  *  sensible way.
  *
  *  @version Oyranos: 0.1.10
@@ -66,9 +66,9 @@ typedef enum oyCHANNELTYPE_e {
   oyCHANNELTYPE_UNDEFINED,            /*!< as well for the list end */
   oyCHANNELTYPE_OTHER,                /*!< other */
   oyCHANNELTYPE_LIGHTNESS,            /*!< pure lightness */
-  oyCHANNELTYPE_COLOUR,               /*!< pure colour */
-  oyCHANNELTYPE_COLOUR_LIGHTNESS,     /*!< lightness and colour */
-  oyCHANNELTYPE_COLOUR_LIGHTNESS_PREMULTIPLIED, /*!< premultiplied lightness and colour */
+  oyCHANNELTYPE_COLOR,               /*!< pure color */
+  oyCHANNELTYPE_COLOR_LIGHTNESS,     /*!< lightness and color */
+  oyCHANNELTYPE_COLOR_LIGHTNESS_PREMULTIPLIED, /*!< premultiplied lightness and color */
   oyCHANNELTYPE_DEPTH,                /*!< depth field */
   oyCHANNELTYPE_ALPHA1,               /*!< alpha */
   oyCHANNELTYPE_ALPHA2,               /*!< alpha2 */
@@ -77,7 +77,7 @@ typedef enum oyCHANNELTYPE_e {
   oyCHANNELTYPE_V                     /*!< v */
 } oyCHANNELTYPE_e;
 
-oyCHANNELTYPE_e oyICCColourSpaceToChannelLayout (
+oyCHANNELTYPE_e oyICCColorSpaceToChannelLayout (
                                        icColorSpaceSignature sig,
                                        int                 pos );
 
@@ -103,9 +103,9 @@ typedef enum {
     X F P S TTTT OOOOOOOO CCCCCCCC \n
 
     C  channels count per pixel (3 for RGB); max 255 \n
-    O  colour channel offset (0 for RGB, 1 for ARGB) \n
+    O  color channel offset (0 for RGB, 1 for ARGB) \n
     P  Planar bit: 0 - interwoven, 1 - one channel after the other \n
-    S  Swap colour channels bit (BGR) \n
+    S  Swap color channels bit (BGR) \n
     T  Type oyDATATYPE_e \n
     X  non host byte order bit \n
     F  Revert bit: 0 - MinIsBlack(Chocolate) 1 - MinIsWhite(Vanilla); \n
@@ -128,18 +128,18 @@ typedef enum {
   oyCOFF,       /*!< channel offset */
   oyDATA_SIZE,  /*!< sample size in byte */
   oyCHANS,      /*!< number of channels */
-  oyCHAN0       /*!< first colour channel position */
+  oyCHAN0       /*!< first color channel position */
 } oyLAYOUT_e;
 
 /** Set channels count in @ref oyPixel_t */
 #define oyChannels_m(c)             (c)
-/** Set offset count to first colour channel in  @ref oyPixel_t */
-#define oyColourOffset_m(o)         ((o) << 8)
+/** Set offset count to first color channel in  @ref oyPixel_t */
+#define oyColorOffset_m(o)         ((o) << 8)
 /** Set @ref oyDATATYPE_e in  @ref oyPixel_t */
 #define oyDataType_m(t)             ((t) << 16)
-/** Set swapping of colour channels in @ref oyPixel_t , e.g. BGR */
-#define oySwapColourChannels_m(s)   ((s) << 20)
-/** Set planar instead of interwoven colour channels in @ref oyPixel_t */
+/** Set swapping of color channels in @ref oyPixel_t , e.g. BGR */
+#define oySwapColorChannels_m(s)   ((s) << 20)
+/** Set planar instead of interwoven color channels in @ref oyPixel_t */
 #define oyPlanar_m(p)               ((p) << 21)
 /** Set min is white in @ref oyPixel_t */
 #define oyFlavor_m(p)               ((f) << 22)
@@ -176,11 +176,11 @@ typedef enum {
 /** 64-bit double RGB/... alpha + Z */
 #define OY_TYPE_123AZ_DBL   (oyChannels_m(5)|oyDataType_m(oyDOUBLE))
 
-#define OY_TYPE_A123_8      (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT8))
-#define OY_TYPE_A123_16     (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT16))
+#define OY_TYPE_A123_8      (oyChannels_m(4)|oyColorOffset_m(1)|oyDataType_m(oyUINT8))
+#define OY_TYPE_A123_16     (oyChannels_m(4)|oyColorOffset_m(1)|oyDataType_m(oyUINT16))
 
-#define OY_TYPE_A321_8      (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT8)|oySwapColourChannels_m(oyYES))
-#define OY_TYPE_A321_16     (oyChannels_m(4)|oyColourOffset_m(1)|oyDataType_m(oyUINT16)|oySwapColourChannels_m(oyYES))
+#define OY_TYPE_A321_8      (oyChannels_m(4)|oyColorOffset_m(1)|oyDataType_m(oyUINT8)|oySwapColorChannels_m(oyYES))
+#define OY_TYPE_A321_16     (oyChannels_m(4)|oyColorOffset_m(1)|oyDataType_m(oyUINT16)|oySwapColorChannels_m(oyYES))
 
 /* some intermixed types will work as well */
 #define OY_TYPE_123A_HALF_Z_FLOAT (oyChannels_m(4+1*2)|oyDataType_m(oyHALF))
@@ -221,13 +221,13 @@ typedef enum {
 /* decode */
 /** Get channels count in @ref oyPixel_t */
 #define oyToChannels_m(c)           ((c)&255)
-/** Get offset count to first colour channel in  @ref oyPixel_t */
-#define oyToColourOffset_m(o)       (((o) >> 8)&255)
+/** Get offset count to first color channel in  @ref oyPixel_t */
+#define oyToColorOffset_m(o)       (((o) >> 8)&255)
 /** Get @ref oyDATATYPE_e in  @ref oyPixel_t */
 #define oyToDataType_m(t)           ((oyDATATYPE_e)(((t) >> 16)&15))
-/** Get swapping of colour channels in @ref oyPixel_t , e.g. BGR */
-#define oyToSwapColourChannels_m(s) (((s) >> 20)&1)
-/** Get planar instead of interwoven colour channels in @ref oyPixel_t */
+/** Get swapping of color channels in @ref oyPixel_t , e.g. BGR */
+#define oyToSwapColorChannels_m(s) (((s) >> 20)&1)
+/** Get planar instead of interwoven color channels in @ref oyPixel_t */
 #define oyToPlanar_m(p)             (((p) >> 21)&1)
 /** Get min is white in @ref oyPixel_t */
 #define oyToFlavor_m(f)             (((f) >> 22)&1)

@@ -28,7 +28,7 @@ IF( CAIRO_FOUND )
   INSTALL (TARGETS oyranos-profile-graph DESTINATION bin)
 ENDIF()
 
-# colour conversion
+# color conversion
 ADD_EXECUTABLE( oyranos-icc "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_convert.c" )
 TARGET_LINK_LIBRARIES( oyranos-icc oyranos ${EXTRA_LIBS} oyranos_forms_cmd_line-static )
 INSTALL (TARGETS oyranos-icc DESTINATION bin)

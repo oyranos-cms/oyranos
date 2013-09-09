@@ -3,7 +3,7 @@
    [Template file inheritance graph]
    +-- oyranos_profile.template.c
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2013 (C) Kai-Uwe Behrmann
@@ -31,7 +31,7 @@
 const char   * oyProfileSignatureName( oySIGNATURE_TYPE_e  type )
 {
   switch(type) {
-    case oySIGNATURE_COLOUR_SPACE: return _( "Colour Space" );
+    case oySIGNATURE_COLOR_SPACE: return _( "Color Space" );
     case oySIGNATURE_PCS: return _( "PCS" );
     case oySIGNATURE_SIZE: return _( "Size" );
     case oySIGNATURE_CMM: return _( "CMM" );
@@ -60,7 +60,7 @@ const char   * oyProfileSignatureDescription (
                                        oySIGNATURE_TYPE_e  type )
 {
   switch(type) {
-    case oySIGNATURE_COLOUR_SPACE: return _( "Colour Space" );
+    case oySIGNATURE_COLOR_SPACE: return _( "Color Space" );
     case oySIGNATURE_PCS: return _( "Profile Connection Space" );
     case oySIGNATURE_SIZE: return _( "Internal stored Size" );
     case oySIGNATURE_CMM: return _( "Prefered CMM" );

@@ -1,6 +1,6 @@
 /** @file oyranos.h
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2004-2010 (C) Kai-Uwe Behrmann
@@ -60,12 +60,12 @@ typedef enum  {
   oyBEHAVIOUR_ACTION_OPEN_MISMATCH_CMYK,/**< What to do if profiles mismatch ?*/
   oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT,/**< Convert befor save for Print? */
   oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN,/**< Convert befor save for Screen? */
-  oyBEHAVIOUR_RENDERING_INTENT,        /**< Standard colour transformations */
+  oyBEHAVIOUR_RENDERING_INTENT,        /**< Standard color transformations */
   oyBEHAVIOUR_RENDERING_BPC,           /**< use BlackPointCompensation */
-  oyBEHAVIOUR_RENDERING_INTENT_PROOF,  /**< Proofing colour transformations */
+  oyBEHAVIOUR_RENDERING_INTENT_PROOF,  /**< Proofing color transformations */
   oyBEHAVIOUR_PROOF_SOFT,              /**< Proofing by default for screen */
   oyBEHAVIOUR_PROOF_HARD,              /**< Proofing by default for printing */
-  oyBEHAVIOUR_RENDERING_GAMUT_WARNING, /**< mark out of gamut colours */
+  oyBEHAVIOUR_RENDERING_GAMUT_WARNING, /**< mark out of gamut colors */
   oyBEHAVIOUR_END                      /**< just for easen Gui design */
 } oyBEHAVIOUR_e;
 
@@ -158,7 +158,7 @@ char*       oyGetDefaultProfileName    (oyPROFILE_e       type,
 
 /* --- profile lists --- */
 
-char **  oyProfileListGet            ( const char        * coloursig,
+char **  oyProfileListGet            ( const char        * colorsig,
                                        uint32_t          * size,
                                        oyAlloc_f           allocateFunc );
 
@@ -207,12 +207,12 @@ typedef enum  {
   oyWIDGET_ACTION_OPEN_MISMATCH_CMYK, /**< What to do if profiles mismatch ?*/
   oyWIDGET_MIXED_MOD_DOCUMENTS_PRINT, /**< Convert befor save for Print? */
   oyWIDGET_MIXED_MOD_DOCUMENTS_SCREEN,/**< Convert befor save for Screen? */
-  oyWIDGET_RENDERING_INTENT,          /**< Standard colour transformations */
+  oyWIDGET_RENDERING_INTENT,          /**< Standard color transformations */
   oyWIDGET_RENDERING_BPC,             /**< use BlackPointCompensation */
-  oyWIDGET_RENDERING_INTENT_PROOF,    /**< Proofing colour transformations */
+  oyWIDGET_RENDERING_INTENT_PROOF,    /**< Proofing color transformations */
   oyWIDGET_PROOF_SOFT,                /**< Proofing by default for screen */
   oyWIDGET_PROOF_HARD,                /**< Proofing by default for printing */
-  oyWIDGET_RENDERING_GAMUT_WARNING,   /**< mark out of gamut colours */
+  oyWIDGET_RENDERING_GAMUT_WARNING,   /**< mark out of gamut colors */
   oyWIDGET_BEHAVIOUR_END,             /**< just for easen Gui design */
 
   oyWIDGET_DEFAULT_PROFILE_START = 100,
@@ -236,7 +236,7 @@ typedef enum  {
   oyWIDGET_CMM_SELECT,             /**< CMM selection */
   oyWIDGET_CMM_INTENT,             /**< CMM rendering intent */
   oyWIDGET_CMM_BPC,                /**< black point compensation switch */
-  oyWIDGET_CMM_INTENT_PROOF        /**< Proofing colour transformations */
+  oyWIDGET_CMM_INTENT_PROOF        /**< Proofing color transformations */
 } oyWIDGET_e;
 
 

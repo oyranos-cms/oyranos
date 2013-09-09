@@ -1,6 +1,6 @@
 /** @file oyranos_definitions.h
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2004-2009 (C) Kai-Uwe Behrmann
@@ -171,10 +171,10 @@
 #define OY_ACTION_MISMATCH_RGB         OY_BEHAVIOUR_STD "action_missmatch_rgb"
 /** key name for the cmyk profile mismatch action */
 #define OY_ACTION_MISMATCH_CMYK        OY_BEHAVIOUR_STD "action_missmatch_cmyk"
-/** key name for the allow mixed colour space switch */
-#define OY_CONVERT_MIXED_COLOUR_SPACE_PRINT_DOCUMENT OY_BEHAVIOUR_STD "mixed_colour_spaces_print_doc_convert"
-/** key name for generating a mixed colour space for internet warning */
-#define OY_CONVERT_MIXED_COLOUR_SPACE_SCREEN_DOCUMENT OY_BEHAVIOUR_STD "mixed_colour_spaces_screen_doc_convert"
+/** key name for the allow mixed color space switch */
+#define OY_CONVERT_MIXED_COLOR_SPACE_PRINT_DOCUMENT OY_BEHAVIOUR_STD "mixed_color_spaces_print_doc_convert"
+/** key name for generating a mixed color space for internet warning */
+#define OY_CONVERT_MIXED_COLOR_SPACE_SCREEN_DOCUMENT OY_BEHAVIOUR_STD "mixed_color_spaces_screen_doc_convert"
 /** key name for the default rendering intent */
 #define OY_DEFAULT_RENDERING_INTENT    OY_BEHAVIOUR_STD "rendering_intent"
 /** key name for the default rendering with BPC */

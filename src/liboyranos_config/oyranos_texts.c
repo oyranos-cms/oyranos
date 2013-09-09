@@ -1,6 +1,6 @@
 /** @file oyranos_texts.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2004-2012 (C) Kai-Uwe Behrmann
@@ -459,7 +459,7 @@ oyOptionStringsTranslate_ ()
       _("Handle mixed color spaces in preparing a document for print output. A conversion to the default editing color space is typically what most users want."),
       4, /* choices */
       _("Preserve Numbers"),_("Convert to Default Cmyk Editing Space"),_("Convert to untagged Cmyk, preserving Cmyk numbers"),_("Prompt"),
-      OY_CONVERT_MIXED_COLOUR_SPACE_PRINT_DOCUMENT,
+      OY_CONVERT_MIXED_COLOR_SPACE_PRINT_DOCUMENT,
       "oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT", 1,0)
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_MIXED_MOD_DOCUMENTS_SCREEN, 2,
@@ -469,7 +469,7 @@ oyOptionStringsTranslate_ ()
       _("Handle mixed color spaces in preparing a document for screen output. A conversion to sRGB helps in easy data exchange and is what most users want."),
       4, /* choices */
       _("Preserve Numbers"),_("Convert to Default Rgb Editing Space"),_("Convert to WWW (sRGB)"),_("Prompt"),
-      OY_CONVERT_MIXED_COLOUR_SPACE_SCREEN_DOCUMENT,
+      OY_CONVERT_MIXED_COLOR_SPACE_SCREEN_DOCUMENT,
       "oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN", 2,0)
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_RENDERING_INTENT, 2,

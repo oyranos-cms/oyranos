@@ -141,7 +141,7 @@ int oyProfile_Copy__Members( oyProfile_s_ * dst, oyProfile_s_ * src)
     if(src->sig_)
       dst->sig_ = src->sig_;
     else
-      error = !oyProfile_GetSignature( (oyProfile_s*)dst, oySIGNATURE_COLOUR_SPACE );
+      error = !oyProfile_GetSignature( (oyProfile_s*)dst, oySIGNATURE_COLOR_SPACE );
   }
 
   if(error <= 0)

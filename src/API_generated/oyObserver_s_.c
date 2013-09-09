@@ -3,7 +3,7 @@
    [Template file inheritance graph]
    +-- oyObserver_s_.template.c
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2013 (C) Kai-Uwe Behrmann

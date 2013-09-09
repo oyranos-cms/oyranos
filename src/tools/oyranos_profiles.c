@@ -1,6 +1,6 @@
 /** @file oyranos_profiles.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2010-2012 (C) Kai-Uwe Behrmann
@@ -63,10 +63,10 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -f  %s\n",       _("full path and file name"));
   fprintf( stderr, "      -e  %s\n",       _("internal name"));
   fprintf( stderr, "      -a  %s\n",       _("abstract class"));
-  fprintf( stderr, "      -c  %s\n",       _("colour space class"));
+  fprintf( stderr, "      -c  %s\n",       _("color space class"));
   fprintf( stderr, "      -d  %s\n",       _("display class"));
   fprintf( stderr, "      -k  %s\n",       _("(device) link class"));
-  fprintf( stderr, "      -n  %s\n",       _("named colour class"));
+  fprintf( stderr, "      -n  %s\n",       _("named color class"));
   fprintf( stderr, "      -o  %s\n",       _("output class"));
   fprintf( stderr, "      -i  %s\n",       _("input class"));
   fprintf( stderr, "\n");
@@ -111,12 +111,12 @@ int main( int argc , char** argv )
   int list_profiles = 0, 
       list_profile_full_names = 0, list_profile_internal_names = 0,
       list_paths = 0, user_path = 0, oyranos_path = 0, system_path = 0, machine_path = 0;
-  int colour_space = 0,
+  int color_space = 0,
       display = 0,
       input = 0,
       output = 0,
       abstract = 0,
-      named_colour = 0,
+      named_color = 0,
       device_link = 0;
   char ** install = 0;
   int install_n = 0,
@@ -144,13 +144,13 @@ int main( int argc , char** argv )
               case 'l': list_profiles = 1; break;
               case 'f': list_profile_full_names = 1; break;
               case 'e': list_profile_internal_names = 1; break;
-              case 'c': colour_space = 1; break;
+              case 'c': color_space = 1; break;
               case 'd': display = 1; break;
               case 'i': input = 1; break;
               case 'o': output = 1; break;
               case 'a': abstract = 1; break;
               case 'k': device_link = 1; break;
-              case 'n': named_colour = 1; break;
+              case 'n': named_color = 1; break;
               case 'p': list_paths = 1; break;
               case 'u': user_path = 1; break;
               case 'y': oyranos_path = 1; break;
@@ -262,8 +262,8 @@ int main( int argc , char** argv )
       fprintf(stderr, "%s:\n", _("ICC profiles"));
 
       if(!(list_profile_full_names || list_profile_internal_names ||
-           colour_space || input || display || output || abstract ||
-           named_colour || device_link))
+           color_space || input || display || output || abstract ||
+           named_color || device_link))
       {
       names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
       for(i = 0; i < (int)count; ++i)
@@ -290,8 +290,8 @@ int main( int argc , char** argv )
           p = oyProfiles_Get( ps, i );
         }
 
-        if( colour_space || input || display || output || abstract ||
-            named_colour || device_link)
+        if( color_space || input || display || output || abstract ||
+            named_color || device_link)
         {
           accept = 0;
           if(!p)
@@ -301,7 +301,7 @@ int main( int argc , char** argv )
 
         if(!accept)
         {
-          if(colour_space && sig_class == icSigColorSpaceClass)
+          if(color_space && sig_class == icSigColorSpaceClass)
             accept = 1;
           else if(input && sig_class == icSigInputClass)
             accept = 1;
@@ -313,7 +313,7 @@ int main( int argc , char** argv )
             accept = 1;
           else if(device_link && sig_class == icSigLinkClass)
             accept = 1;
-          else if(named_colour && sig_class == icSigNamedColorClass)
+          else if(named_color && sig_class == icSigNamedColorClass)
             accept = 1;
         }
 

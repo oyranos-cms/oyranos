@@ -3,7 +3,7 @@
 pkgname=oyranos-git
 pkgver=20110602
 pkgrel=1
-pkgdesc="The Colour Management System (CMS) Oyranos allows the coordination of
+pkgdesc="The Color Management System (CMS) Oyranos allows the coordination of
 device specific Information (ICC profiles) and system wide settings."
 arch=('i686' 'x86_64')
 url="http://www.oyranos.org"

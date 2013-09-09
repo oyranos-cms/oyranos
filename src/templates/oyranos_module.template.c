@@ -62,7 +62,7 @@ extern const char * (*oyStruct_GetTextFromModule_p) (
  *  We have modules with well defined capabilities and some with fuzzy ones.\n
  *  For instance the X11 API's is well defined and we can use it, once it is
  *  loaded.\n
- *  A CMM for colour conversion has often limitations or certain features,
+ *  A CMM for color conversion has often limitations or certain features,
  *  which makes the search for alternatives desireable. So we search
  *  for match to our automatic criteria.\n
  *
@@ -361,7 +361,7 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
  *  We have modules with well defined capabilities and some with fuzzy ones.\n
  *  For instance the X11 API's is well defined and we can use it, once it is
  *  loaded.\n
- *  A CMM for colour conversion has often limitations or certain features,
+ *  A CMM for color conversion has often limitations or certain features,
  *  which makes the search for alternatives desireable. So we search
  *  for match to our automatic criteria.\n
  *
@@ -505,7 +505,7 @@ oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
  *  We have modules with well defined capabilities and some with fuzzy ones.\n
  *  For instance the X11 API's is well defined and we can use it, once it is
  *  loaded.\n
- *  A CMM for colour conversion has often limitations or certain features,
+ *  A CMM for color conversion has often limitations or certain features,
  *  which make it desireable. So we have to search for match to our automatic
  *  criteria.\n
  *

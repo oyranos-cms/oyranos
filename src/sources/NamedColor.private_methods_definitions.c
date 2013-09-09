@@ -21,11 +21,11 @@ void   oyCopyColor                   ( const double      * from,
     return;
 
   if(ref)
-    sig = oyProfile_GetSignature ( ref, oySIGNATURE_COLOUR_SPACE );
+    sig = oyProfile_GetSignature ( ref, oySIGNATURE_COLOR_SPACE );
   else
     sig = icSigXYZData;
 
-  c = oyICCColourSpaceGetChannelCount( sig );
+  c = oyICCColorSpaceGetChannelCount( sig );
 
   if(from)
   {

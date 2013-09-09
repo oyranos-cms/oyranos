@@ -6,11 +6,11 @@ Installed-Size: 17104
 Maintainer: Kai-Uwe Behrmann <ku.b@gmx.de>
 Homepage: http://www.oyranos.org
 Depends: libc6, cups
-Description: Colour Management System
+Description: Color Management System
  Features
- configuration for cross application colour agreement,
+ configuration for cross application color agreement,
  plugable and selectable modules (known as CMM's),
  pixel conversions,
  profile handling,
- named colours,
+ named colors,
  device profile assignment

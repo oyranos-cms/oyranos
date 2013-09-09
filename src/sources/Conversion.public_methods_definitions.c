@@ -166,7 +166,7 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
 
 /** Function  oyConversion_CreateBasicPixelsFromBuffers
  *  @memberof oyConversion_s
- *  @brief    One dimensional colour conversion context
+ *  @brief    One dimensional color conversion context
  *
  *  The options are passed to oyConversion_CreateBasicPixels();
  *  The function does the lookups for the profiles and the modules contexts

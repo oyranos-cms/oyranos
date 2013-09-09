@@ -1,6 +1,6 @@
 /** @file oyranos_cmm_oyra_image_png.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2008-2012 (C) Kai-Uwe Behrmann
@@ -201,17 +201,17 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
   int height = oyImage_GetHeight( image );
   int pixel_layout = oyImage_GetPixelLayout( image, oyLAYOUT );
   oyProfile_s * prof = oyImage_GetProfile( image );
-  const char * colourspacename = oyProfile_GetText( prof,
+  const char * colorspacename = oyProfile_GetText( prof,
                                                     oyNAME_DESCRIPTION );
   char * pmem;
   size_t psize = 0;
   icColorSpaceSignature sig = oyProfile_GetSignature( prof,
-                                                      oySIGNATURE_COLOUR_SPACE);
+                                                      oySIGNATURE_COLOR_SPACE);
   int cchan_n = oyProfile_GetChannelsCount( prof );
   int channels_n = oyToChannels_m( pixel_layout );
   oyDATATYPE_e data_type = oyToDataType_m( pixel_layout );
   int alpha = channels_n - cchan_n;
-  int colour = PNG_COLOR_TYPE_GRAY;
+  int color = PNG_COLOR_TYPE_GRAY;
   int byteps = oyDataTypeGetSize( data_type );
   png_text text_ptr[2];
   time_t ttime;
@@ -259,11 +259,11 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
    }
 
   if(sig != icSigGrayData)
-    colour = PNG_COLOR_MASK_COLOR;
+    color = PNG_COLOR_MASK_COLOR;
 
   if((channels_n == 2 && alpha == 0) ||
       channels_n == 4 )
-    colour |= PNG_COLOR_MASK_ALPHA;
+    color |= PNG_COLOR_MASK_ALPHA;
 
    /* One of the following I/O initialization functions is REQUIRED */
 
@@ -280,12 +280,12 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
     * PNG_INTERLACE_ADAM7, and the compression_type and filter_type MUST
     * currently be PNG_COMPRESSION_TYPE_BASE and PNG_FILTER_TYPE_BASE. REQUIRED
     */
-   png_set_IHDR(png_ptr, info_ptr, width, height, byteps*8, colour,
+   png_set_IHDR(png_ptr, info_ptr, width, height, byteps*8, color,
       PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
   /* set ICC profile */
   pmem = oyProfile_GetMem( prof, &psize, 0,0 );
-  png_set_iCCP( png_ptr, info_ptr, (char*)colourspacename, 0, pmem, psize);
+  png_set_iCCP( png_ptr, info_ptr, (char*)colorspacename, 0, pmem, psize);
   oyDeAllocateFunc_( pmem ); pmem = 0;
 
   /* set time stamp */
@@ -498,14 +498,14 @@ oyConnectorImaging_s_ oPNG_imageOutputPNG_connector_in = {
   1, /* is_plug == oyFilterPlug_s */
   oPNG_image_png_data_types,
   4, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   4, /* max_channels_count; */
-  1, /* min_colour_count; */
-  4, /* max_colour_count; */
+  1, /* min_color_count; */
+  4, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  0, /* can_swap; can swap colour channels (BGR)*/
+  0, /* can_swap; can swap color channels (BGR)*/
   0, /* can_swap_bytes; non host byte order */
   0, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */
@@ -1100,14 +1100,14 @@ oyConnectorImaging_s_ oPNG_imageInputPNG_connector = {
   0, /* is_plug == oyFilterPlug_s */
   oPNG_image_png_data_types,
   4, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   4, /* max_channels_count; */
-  1, /* min_colour_count; */
-  4, /* max_colour_count; */
+  1, /* min_color_count; */
+  4, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  0, /* can_swap; can swap colour channels (BGR)*/
+  0, /* can_swap; can swap color channels (BGR)*/
   0, /* can_swap_bytes; non host byte order */
   0, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */

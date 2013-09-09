@@ -51,8 +51,8 @@ typedef const char*(* oyCMMGetText_f)( const char        * select,
 
 
 #define oyCMM_PROFILE "oyPR"
-#define oyCMM_COLOUR_CONVERSION "oyCC"
-#define oyCOLOUR_ICC_DEVICE_LINK "oyDL"
+#define oyCMM_COLOR_CONVERSION "oyCC"
+#define oyCOLOR_ICC_DEVICE_LINK "oyDL"
 
 
 #define OY_FILTEREDGE_FREE             0x01        /**< list free edges */

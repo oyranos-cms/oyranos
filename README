@@ -1,6 +1,6 @@
 Oyranos (gr. sky):
 
-    The Colour Management System (CMS) Oyranos allows the coordination of
+    The Color Management System (CMS) Oyranos allows the coordination of
     device specific Informations (ICC profiles) und system wide settings.
 
 
@@ -17,7 +17,7 @@ Dependencies:
     libXinerama, libXrandr, libXfixes and libXxf86vm for X11 support - www.x.org
     libXcm >= 0.5.1 for X11 and Quarz monitor support - http://www.oyranos.org
     Xcm for X11 and Quarz monitor support - http://www.oyranos.org
-    lcms and/or lcms2 for colour conversions - http://www.littlecms.com
+    lcms and/or lcms2 for color conversions - http://www.littlecms.com
 
     Optional:
     Elektra - http://www.libelektra.org

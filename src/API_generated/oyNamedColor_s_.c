@@ -5,7 +5,7 @@
    |
    +-- Base_s_.c
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2013 (C) Kai-Uwe Behrmann
@@ -375,11 +375,11 @@ void   oyCopyColor                   ( const double      * from,
     return;
 
   if(ref)
-    sig = oyProfile_GetSignature ( ref, oySIGNATURE_COLOUR_SPACE );
+    sig = oyProfile_GetSignature ( ref, oySIGNATURE_COLOR_SPACE );
   else
     sig = icSigXYZData;
 
-  c = oyICCColourSpaceGetChannelCount( sig );
+  c = oyICCColorSpaceGetChannelCount( sig );
 
   if(from)
   {

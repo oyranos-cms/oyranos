@@ -2,9 +2,9 @@ static oyProfile_s_ ** oy_profile_s_std_cache_ = 0;
 
 /** Function  oyProfile_FromStd
  *  @memberof oyProfile_s
- *  @brief    Create from default colour space settings
+ *  @brief    Create from default color space settings
  *
- *  @param[in]    type           default colour space
+ *  @param[in]    type           default color space
  *  @param[in]    object         the optional base
  *
  *  @since Oyranos: version 0.1.8
@@ -500,7 +500,7 @@ OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
 
 /** Function  oyProfile_GetChannelsCount
  *  @memberof oyProfile_s
- *  @brief    Number of channels in a colour space
+ *  @brief    Number of channels in a color space
  *
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
@@ -518,14 +518,14 @@ oyProfile_GetChannelsCount( oyProfile_s * profile )
   if(s->channels_n_)
     return s->channels_n_;
 
-  s->channels_n_ = oyICCColourSpaceGetChannelCount( s->sig_ );
+  s->channels_n_ = oyICCColorSpaceGetChannelCount( s->sig_ );
 
   return s->channels_n_;
 }
 
 /** Function  oyProfile_GetSignature
  *  @memberof oyProfile_s
- *  @brief    Get ICC colour space signature
+ *  @brief    Get ICC color space signature
  *
  *  \verbatim
     // show some profile properties
@@ -540,11 +540,11 @@ oyProfile_GetChannelsCount( oyProfile_s * profile )
              oyProfile_GetSignature(p,oySIGNATURE_DATETIME_MINUTES),
              oyProfile_GetSignature(p,oySIGNATURE_DATETIME_SECONDS)
           );
-    printf("  pcs: %s  colour space: %s version: %d.%d.%d\n", 
-          oyICCColourSpaceGetName( (icColorSpaceSignature)
+    printf("  pcs: %s  color space: %s version: %d.%d.%d\n", 
+          oyICCColorSpaceGetName( (icColorSpaceSignature)
                          oyProfile_GetSignature(p,oySIGNATURE_PCS) ),
-          oyICCColourSpaceGetName( (icColorSpaceSignature)
-                         oyProfile_GetSignature(p,oySIGNATURE_COLOUR_SPACE) ),
+          oyICCColorSpaceGetName( (icColorSpaceSignature)
+                         oyProfile_GetSignature(p,oySIGNATURE_COLOR_SPACE) ),
           (int)v[0], (int)v[1]/16, (int)v[1]%16
           );
     \endverbatim
@@ -567,12 +567,12 @@ oyProfile_GetSignature ( oyProfile_s * profile,
 
   oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
 
-  if(s->sig_ && type == oySIGNATURE_COLOUR_SPACE)
+  if(s->sig_ && type == oySIGNATURE_COLOR_SPACE)
     return s->sig_;
 
   if(!s->block_)
   {
-    if(type == oySIGNATURE_COLOUR_SPACE)
+    if(type == oySIGNATURE_COLOR_SPACE)
       sig = s->sig_ = icSigXYZData;
     return sig;
   }
@@ -581,7 +581,7 @@ oyProfile_GetSignature ( oyProfile_s * profile,
 
   switch(type)
   {
-  case oySIGNATURE_COLOUR_SPACE:       /* colour space */
+  case oySIGNATURE_COLOR_SPACE:       /* color space */
        sig = s->sig_ = oyValueCSpaceSig( h->colorSpace ); break;
   case oySIGNATURE_PCS:                /* profile connection space */
        sig = oyValueCSpaceSig( h->pcs ); break;
@@ -665,7 +665,7 @@ OYAPI int OYEXPORT
 
   oyCheckType__m( oyOBJECT_PROFILE_S, return 1 )
 
-  if(error <= 0 && type == oySIGNATURE_COLOUR_SPACE)
+  if(error <= 0 && type == oySIGNATURE_COLOR_SPACE)
   {
     if(sig)
       s->sig_ = sig;
@@ -692,7 +692,7 @@ OYAPI int OYEXPORT
   if(error <= 0)
   switch(type)
   {
-  case oySIGNATURE_COLOUR_SPACE:       /* colour space */
+  case oySIGNATURE_COLOR_SPACE:       /* color space */
        h->colorSpace = oyValueCSpaceSig( s->sig_ ); break;
   case oySIGNATURE_PCS:                /* profile connection space */
        h->pcs = oyValueCSpaceSig( sig ); break;
@@ -746,12 +746,12 @@ OYAPI int OYEXPORT
  *  @memberof oyProfile_s
  *  @brief    Set channel names
  *
- *  The function should be used to specify extra channels or unusual colour
+ *  The function should be used to specify extra channels or unusual color
  *  layouts like CMYKRB. The number of elements in names_chan should fit to the
- *  channels count or to the colour space signature.
+ *  channels count or to the color space signature.
  *
  *  You can let single entries empty if they are understandable by the
- *  colour space signature. Oyranos will set them for you on request.
+ *  color space signature. Oyranos will set them for you on request.
  *
  *  @param[in]     profile             profile
  *  @param[in]     names_chan          pointer to channel names 
@@ -798,7 +798,7 @@ oyProfile_GetChannelNames           ( oyProfile_s   * profile )
   oyProfile_s_ * s = (oyProfile_s_*)profile;
   int n = oyProfile_GetChannelsCount( profile );
   int error = 0;
-  icColorSpaceSignature sig = oyProfile_GetSignature( profile, oySIGNATURE_COLOUR_SPACE );
+  icColorSpaceSignature sig = oyProfile_GetSignature( profile, oySIGNATURE_COLOR_SPACE );
 
   if(!profile)
     return 0;
@@ -821,9 +821,9 @@ oyProfile_GetChannelNames           ( oyProfile_s   * profile )
           error = 1;
         else
           error = oyObject_SetNames( s->names_chan_[i],
-                    oyICCColourSpaceGetChannelName ( sig, i, oyNAME_NICK ),
-                    oyICCColourSpaceGetChannelName ( sig, i, oyNAME_NAME ),
-                    oyICCColourSpaceGetChannelName ( sig, i, oyNAME_DESCRIPTION )
+                    oyICCColorSpaceGetChannelName ( sig, i, oyNAME_NICK ),
+                    oyICCColorSpaceGetChannelName ( sig, i, oyNAME_NAME ),
+                    oyICCColorSpaceGetChannelName ( sig, i, oyNAME_DESCRIPTION )
                       );
       }
     }
@@ -841,7 +841,7 @@ oyProfile_GetChannelNames           ( oyProfile_s   * profile )
  *
  *  A convinience function to get a single name with a certain type.
  *
- *  @param[in] profile  address of a Oyranos named colour structure
+ *  @param[in] profile  address of a Oyranos named color structure
  *  @param[in] pos      position of channel 
  *  @param[in] type     sort of text 
  *

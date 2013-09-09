@@ -1,6 +1,6 @@
 /** qcmsevents.h
  *
- *  A small X11 colour management event observer.
+ *  A small X11 color management event observer.
  *
  *  License: newBSD
  *  Copyright: (c)2009-2010 - Kai-Uwe Behrmann <ku.b@gmx.de>

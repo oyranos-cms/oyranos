@@ -11,7 +11,7 @@
    |
    +-- oyStruct_s.template.c
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2013 (C) Kai-Uwe Behrmann
@@ -117,9 +117,9 @@ OYAPI int OYEXPORT
  *  - 2: last Oyranos patch version during development time, e.g. 5
  *  @param         context_type        tell the context type, if any
  *  the data type of the context returned by oyCMMapi4_s::oyCMMFilterNode_ContextToMem_f, mandatory in case of a set oyCMMapi4_s::oyCMMFilterNode_ContextToMem
- *  e.g. oyCOLOUR_ICC_DEVICE_LINK / "oyDL"
+ *  e.g. oyCOLOR_ICC_DEVICE_LINK / "oyDL"
  *  @param         contextToMem 
- *  only mandatory for context producing filters, e.g. "//colour/icc"
+ *  only mandatory for context producing filters, e.g. "//color/icc"
  *  @param         getText             optionally set a 
  *                                     oyCMMFilterNode_ContextToMem,
  *  used to override a Oyranos side hash creation

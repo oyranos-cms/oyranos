@@ -314,14 +314,14 @@ oyConnectorImaging_s_ dFil_myFilter_connectorSocket = {
   0, /* is_plug == oyFilterPlug_s */
   dFil_data_types,
   2, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   3, /* max_channels_count; */
-  1, /* min_colour_count; */
-  3, /* max_colour_count; */
+  1, /* min_color_count; */
+  3, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  0, /* can_swap; can swap colour channels (BGR)*/
+  0, /* can_swap; can swap color channels (BGR)*/
   0, /* can_swap_bytes; non host byte order */
   0, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */
@@ -347,14 +347,14 @@ oyConnectorImaging_s_ dFil_myFilter_connectorPlug = {
   1, /* is_plug == oyFilterPlug_s */
   dFil_data_types,
   2, /* data_types_n; elements in data_types array */
-  -1, /* max_colour_offset */
+  -1, /* max_color_offset */
   1, /* min_channels_count; */
   65535, /* max_channels_count; */
-  1, /* min_colour_count; */
-  65535, /* max_colour_count; */
+  1, /* min_color_count; */
+  65535, /* max_color_count; */
   1, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
-  0, /* can_swap; can swap colour channels (BGR)*/
+  0, /* can_swap; can swap color channels (BGR)*/
   0, /* can_swap_bytes; non host byte order */
   0, /* can_revert; revert 1 -> 0 and 0 -> 1 */
   1, /* can_premultiplied_alpha; */
@@ -406,7 +406,7 @@ const char * dFilApi4UiGetText (
     if(!category)
     {
       /* The following strings must match the categories for a menu entry. */
-      const char * i18n[] = {_("Colour"),_("My Filter"),0};
+      const char * i18n[] = {_("Color"),_("My Filter"),0};
       int len =  strlen(i18n[0]) + strlen(i18n[1]);
       category = (char*)malloc( len + 64 );
       if(category)

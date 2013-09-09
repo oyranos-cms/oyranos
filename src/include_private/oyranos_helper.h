@@ -1,7 +1,7 @@
 /** @internal
  *  @file oyranos_helper.h
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2005-2011 (C) Kai-Uwe Behrmann
@@ -68,7 +68,7 @@ char*   oyGetParent_               (const char* name);
 struct oyFileList_s {
   oyOBJECT_e type;                  /* oyOBJECT_FILE_LIST_S_ */
   int hopp;
-  const char* coloursig;
+  const char* colorsig;
   int mem_count;
   int count_files;
   char** names;

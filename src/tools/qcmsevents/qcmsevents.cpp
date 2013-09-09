@@ -1,6 +1,6 @@
 /** qcmsevents.c
  *
- *  Qt based X11 colour management event observer
+ *  Qt based X11 color management event observer
  *
  *  License: newBSD
  *  Copyright: (c)2009-2010 - Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -65,19 +65,19 @@ void QcmseDialog::log( const char * text, int code )
   dialog->icon->setToolTip( text );
 
   QListWidgetItem * item = new QListWidgetItem;
-  QColor colour;
+  QColor color;
   if(code == XCME_MSG_DISPLAY_EVENT)
   {
     static int zebra = 0;
     if(zebra)
     {
       zebra = 0;
-      colour.setHsvF( 0.17, 0.05, 0.9 );
+      color.setHsvF( 0.17, 0.05, 0.9 );
     }
     else
     {
       zebra = 1;
-      colour.setHsvF( 0.17, 0.05, 0.75 );
+      color.setHsvF( 0.17, 0.05, 0.75 );
     }
 
     if(strstr(text, "PropertyNotify : "))
@@ -86,18 +86,18 @@ void QcmseDialog::log( const char * text, int code )
       sscanf( text, XCM_COLOR_DESKTOP" %d", &pid );
     if(pid == 0)
     {
-      colour.setHsvF( 0.6, 0.4, 0.9 );
+      color.setHsvF( 0.6, 0.4, 0.9 );
       icon->setIcon( icons->itemIcon(0) );
     } else
-    /*  base colour server should support opt-out (ICR)
+    /*  base color server should support opt-out (ICR)
      *  through _ICC_COLOR_MANAGEMENT - ICM in _ICC_COLOR_DESKTOP
      */
     if(pid > 0 && strstr(text, "|ICM|") != 0)
     {
-      colour.setHsvF( 0.41, 0.5, 0.9 );
+      color.setHsvF( 0.41, 0.5, 0.9 );
       icon->setIcon( icons->itemIcon(1) );
     }
-    item->setBackground( QBrush( colour ) );
+    item->setBackground( QBrush( color ) );
   }
   else if(code == XCME_MSG_DISPLAY_ERROR)
   {
@@ -105,17 +105,17 @@ void QcmseDialog::log( const char * text, int code )
     if(zebra)
     {
       zebra = 0;
-      colour.setHsvF( 0.0, 0.7, 0.9 );
+      color.setHsvF( 0.0, 0.7, 0.9 );
     }
     else
     {
       zebra = 1;
-      colour.setHsvF( 0.0, 0.7, 0.75 );
+      color.setHsvF( 0.0, 0.7, 0.75 );
     }
 
     if(strstr(text, "PropertyNotify : "))
       text = strstr(text, "PropertyNotify : ") + strlen("PropertyNotify : ");
-    item->setBackground( QBrush( colour ) );
+    item->setBackground( QBrush( color ) );
   }
   else if (XCME_MSG_DISPLAY_STATUS)
   {
@@ -124,15 +124,15 @@ void QcmseDialog::log( const char * text, int code )
       sscanf( text, "atom: \"" XCM_COLOR_DESKTOP "\": %d %d", &i, &pid );
     if(pid == 0)
     {
-      colour.setHsvF( 0.6, 0.4, 0.9 );
+      color.setHsvF( 0.6, 0.4, 0.9 );
       icon->setIcon( icons->itemIcon(0) );
     } else
-    /*  base colour server should support opt-out (ICR)
+    /*  base color server should support opt-out (ICR)
      *  through _ICC_COLOR_MANAGEMENT - ICM in _ICC_COLOR_DESKTOP
      */
     if(pid > 0 && strstr(text, "|ICM|") != 0)
     {
-      colour.setHsvF( 0.41, 0.5, 0.9 );
+      color.setHsvF( 0.41, 0.5, 0.9 );
       icon->setIcon( icons->itemIcon(1) );
     }
   }

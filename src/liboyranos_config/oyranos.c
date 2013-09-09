@@ -1,6 +1,6 @@
 /** @file oyranos.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2004-2011 (C) Kai-Uwe Behrmann
@@ -89,7 +89,7 @@ oySetDefaultProfile_       (oyPROFILE_e       type,
   if( type == oyASSUMED_WEB &&
       !strstr( file_name,"sRGB" ) )
   {
-    WARNc_S(_("wrong profile for static web colour space selected, need sRGB"))
+    WARNc_S(_("wrong profile for static web color space selected, need sRGB"))
     return 1;
   }
   r = oySetProfile_ (file_name, type, 0);
@@ -459,7 +459,7 @@ oyGetBehaviour         (oyBEHAVIOUR_e       type)
 /** \addtogroup policy Policy API
  *  Functions to set and export policies in Oyranos.
  *
- *  Policies are a set of options used to group colour management settings.
+ *  Policies are a set of options used to group color management settings.
  *
  *  The core API consists of oyReadXMLPolicy() and its reversal oyPolicyToXML().
  *
@@ -474,7 +474,7 @@ oyGetBehaviour         (oyBEHAVIOUR_e       type)
  *  @par Future:
  *       The policies are abstracted into the backend API oyCMMapi9_s. The 
  *       layout of these options can be obtained from the according backends.
- *       The colour management policy module for Oyranos is named "oicc".
+ *       The color management policy module for Oyranos is named "oicc".
  *
  *  @todo define some default policies internally
  *
@@ -760,13 +760,13 @@ oyGetDefaultProfileName    (oyPROFILE_e       type,
  */
 
 /** @brief get a list of profile filenames
- *  @param coloursig filter as ICC 4 byte string
+ *  @param colorsig filter as ICC 4 byte string
  *  @param[out] size profile filenames count
  *  @return the profiles filename list allocated within Oyranos
  *
  *  @see @ref path_names
  */
-char **  oyProfileListGet            ( const char        * coloursig,
+char **  oyProfileListGet            ( const char        * colorsig,
                                        uint32_t          * size,
                                        oyAlloc_f           allocateFunc )
 {
@@ -782,7 +782,7 @@ char **  oyProfileListGet            ( const char        * coloursig,
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
 
-  tmp = oyProfileListGet_(coloursig, &n);
+  tmp = oyProfileListGet_(colorsig, &n);
   names = oyStringListAppend_( (const char**)tmp, n, 0,0, &tmp_n,
                                allocateFunc );
 
@@ -807,12 +807,12 @@ char **  oyProfileListGet            ( const char        * coloursig,
 /** @brief check an file if it is a profile
  *
  *  @param  filename  the filename to check
- *  @param  coloursig colour space signature as described in the
+ *  @param  colorsig color space signature as described in the
                       <a href="http://www.color.org">ICC specification</a>
  *  @return true/false
  */
 int
-oyCheckProfile (const char* filename, const char* coloursig)
+oyCheckProfile (const char* filename, const char* colorsig)
 {
   int n = 0;
 
@@ -820,8 +820,8 @@ oyCheckProfile (const char* filename, const char* coloursig)
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
   oyTextsCheck_ ();
 
-  /* coloursig is currently ignored */
-  n = oyCheckProfile_ (filename, coloursig);
+  /* colorsig is currently ignored */
+  n = oyCheckProfile_ (filename, colorsig);
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -832,11 +832,11 @@ oyCheckProfile (const char* filename, const char* coloursig)
  *
  *  @param  mem  the memory containing the profile
  *  @param  size the size of the memory block
- *  @param  coloursig currently ignored
+ *  @param  colorsig currently ignored
  *  @return true/false
  */
 int
-oyCheckProfileMem (const void* mem, size_t size, const char* coloursig)
+oyCheckProfileMem (const void* mem, size_t size, const char* colorsig)
 {
   int n = 0;
 
@@ -844,8 +844,8 @@ oyCheckProfileMem (const void* mem, size_t size, const char* coloursig)
   oyExportStart_(EXPORT_CHECK_NO);
   oyTextsCheck_ ();
 
-  /* coloursig is currently ignored */
-  n = oyCheckProfileMem_ (mem, size, coloursig);
+  /* colorsig is currently ignored */
+  n = oyCheckProfileMem_ (mem, size, colorsig);
 
   oyExportEnd_();
   DBG_PROG_ENDE

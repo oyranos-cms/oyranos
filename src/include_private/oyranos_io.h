@@ -1,6 +1,6 @@
 /** @file oyranos_io.h
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2004-2009 (C) Kai-Uwe Behrmann
@@ -67,7 +67,7 @@ char* oyGetPathFromProfileName_           (const char*   profilename,
                                            oyAlloc_f     allocate_func);
 
 
-char **  oyProfileListGet_           ( const char        * coloursig,
+char **  oyProfileListGet_           ( const char        * colorsig,
                                        uint32_t          * size );
 
 size_t	oyGetProfileSize_                 (const char*   profilename);

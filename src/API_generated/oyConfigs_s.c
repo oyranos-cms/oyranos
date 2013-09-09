@@ -9,7 +9,7 @@
    |
    +-- oyStruct_s.template.c
 
- *  Oyranos is an open source Colour Management System
+ *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
  *            2004-2013 (C) Kai-Uwe Behrmann
@@ -297,7 +297,7 @@ OYAPI int  OYEXPORT
  *  programmers. Otherwise the calls are pure convention and depend on the usage
  *  and agreement of the partners.
  *
- *  For the convention to call to colour devices
+ *  For the convention to call to color devices
  *  @see oyX1Configs_FromPatternUsage().
  *
  *  @param[in]     registration_domain                     the module to call to

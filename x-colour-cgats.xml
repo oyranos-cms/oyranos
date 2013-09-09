@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
   <mime-type type="text/vnd.cgats">
-         <comment>CGATS colour measurements</comment>
+         <comment>CGATS color measurements</comment>
          <comment xml:lang="de">CGATS Farbmessdaten</comment>
          <comment xml:lang="en_US">CGATS color measurements</comment>
          <glob pattern="*.cgats"/>

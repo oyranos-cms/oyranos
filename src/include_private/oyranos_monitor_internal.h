@@ -1,7 +1,7 @@
 /** @internal
  *  @file oyranos_monitor_internal.h
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  Copyright (C) 2005-2010  Kai-Uwe Behrmann
  *
@@ -53,7 +53,7 @@ int            oyDeviceFillInfos     ( const char        * registration,
                                        int                 year,
                                        int                 EDID_mnft_id,
                                        int                 EDID_model_id,
-                                       double            * colours,
+                                       double            * colors,
                                        oyOptions_s       * options );
 int            oyDeviceFillEdid      ( const char        * registration,
                                        oyConfig_s       ** device,

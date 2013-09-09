@@ -57,11 +57,11 @@ void oyConnectorImaging_Release__Members( oyConnectorImaging_s_ * connectorimagi
  */
 int oyConnectorImaging_Init__Members( oyConnectorImaging_s_ * connectorimaging )
 {
-  connectorimaging->max_colour_offset = -1;
+  connectorimaging->max_color_offset = -1;
   connectorimaging->min_channels_count = -1;
   connectorimaging->max_channels_count = -1;
-  connectorimaging->min_colour_count = -1;
-  connectorimaging->max_colour_count = -1;
+  connectorimaging->min_color_count = -1;
+  connectorimaging->max_color_count = -1;
   connectorimaging->can_planar = -1;
   connectorimaging->can_interwoven = -1;
   connectorimaging->can_swap = -1;
@@ -118,11 +118,11 @@ int oyConnectorImaging_Copy__Members( oyConnectorImaging_s_ * dst, oyConnectorIm
       dst->data_types_n = src->data_types_n;
   }
 
-  dst->max_colour_offset = src->max_colour_offset;
+  dst->max_color_offset = src->max_color_offset;
   dst->min_channels_count = src->min_channels_count;
   dst->max_channels_count = src->max_channels_count;
-  dst->min_colour_count = src->min_colour_count;
-  dst->max_colour_count = src->max_colour_count;
+  dst->min_color_count = src->min_color_count;
+  dst->max_color_count = src->max_color_count;
   dst->can_planar = src->can_planar;
   dst->can_interwoven = src->can_interwoven;
   dst->can_swap = src->can_swap;

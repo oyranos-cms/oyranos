@@ -1,6 +1,6 @@
 /** @file oyranos_icc.c
  *
- *  Oyranos is an open source Colour Management System 
+ *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
  *            2004-2012 (C) Kai-Uwe Behrmann
@@ -36,14 +36,14 @@
  *  @{
  */
 
-/** Function: oyICCColourSpaceGetChannelCount
- *  @brief number of channels in a colour space
+/** Function: oyICCColorSpaceGetChannelCount
+ *  @brief number of channels in a color space
  *
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
  */
 int
-oyICCColourSpaceGetChannelCount ( icColorSpaceSignature color )
+oyICCColorSpaceGetChannelCount ( icColorSpaceSignature color )
 {
   int n;
 
@@ -100,14 +100,14 @@ oyICCColourSpaceGetChannelCount ( icColorSpaceSignature color )
   return n;
 }
 
-/** Function: oyICCColourSpaceGetName
- *  @brief name of a colour space
+/** Function: oyICCColorSpaceGetName
+ *  @brief name of a color space
  *
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
  */
 const char *
-oyICCColourSpaceGetName ( icColorSpaceSignature sig )
+oyICCColorSpaceGetName ( icColorSpaceSignature sig )
 {
   const char * text = 0;
 
@@ -159,18 +159,18 @@ oyICCColourSpaceGetName ( icColorSpaceSignature sig )
   return text;
 }
 
-/** Function: oyICCColourSpaceGetChannelName
- *  @brief channel names of a colour space
+/** Function: oyICCColorSpaceGetChannelName
+ *  @brief channel names of a color space
  *
  *  @since Oyranos: version 0.1.8
  *  @date  september 2007 (API 0.1.8)
  */
 const oyChar*
-oyICCColourSpaceGetChannelName ( icColorSpaceSignature sig,
+oyICCColorSpaceGetChannelName ( icColorSpaceSignature sig,
                                     int                   pos,
                                     int                   type )
 {
-  int n = oyICCColourSpaceGetChannelCount( sig );
+  int n = oyICCColorSpaceGetChannelCount( sig );
 
   if( 0 <= pos && pos < n )
     return "-";
@@ -199,8 +199,8 @@ oyICCColourSpaceGetChannelName ( icColorSpaceSignature sig,
          } break;
     case icSigYCbCrData: switch(pos) {
          case 0: return type ? "Y"  : _("Luminance Y");
-         case 1: return type ? "Cb" : _("Colour b");
-         case 2: return type ? "Cr" : _("Colour r");
+         case 1: return type ? "Cb" : _("Color b");
+         case 2: return type ? "Cr" : _("Color r");
          } break;
     case icSigYxyData: switch(pos) {
          case 0: return type ? "Y"  : _("CIE Y (Luminance)");
@@ -284,75 +284,75 @@ oyICCColourSpaceGetChannelName ( icColorSpaceSignature sig,
   return "-";
 }
 
-/** Function: oyICCColourSpaceToChannelLayout
+/** Function: oyICCColorSpaceToChannelLayout
  *  @brief   describe a channels characteristic
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/29 (Oyranos: 0.1.8)
  *  @date    2008/07/29
  */
-oyCHANNELTYPE_e oyICCColourSpaceToChannelLayout (
+oyCHANNELTYPE_e oyICCColorSpaceToChannelLayout (
                                        icColorSpaceSignature sig,
                                        int                 pos )
 {
-  int n = oyICCColourSpaceGetChannelCount( sig );
+  int n = oyICCColorSpaceGetChannelCount( sig );
 
     if(sig == icSigXYZData) {
-         if(pos == 0) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
-         if(pos == 1) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
-         if(pos == 2) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+         if(pos == 0) return oyCHANNELTYPE_COLOR_LIGHTNESS;
+         if(pos == 1) return oyCHANNELTYPE_COLOR_LIGHTNESS;
+         if(pos == 2) return oyCHANNELTYPE_COLOR_LIGHTNESS;
     }
     if(sig == icSigLabData) {
          if(pos == 0) return oyCHANNELTYPE_LIGHTNESS;
-         if(pos == 1) return oyCHANNELTYPE_COLOUR;
-         if(pos == 2) return oyCHANNELTYPE_COLOUR;
+         if(pos == 1) return oyCHANNELTYPE_COLOR;
+         if(pos == 2) return oyCHANNELTYPE_COLOR;
     }
     if(sig == icSigLuvData) {
          if(pos == 0) return oyCHANNELTYPE_LIGHTNESS;
-         if(pos == 1) return oyCHANNELTYPE_COLOUR;
-         if(pos == 2) return oyCHANNELTYPE_COLOUR;
+         if(pos == 1) return oyCHANNELTYPE_COLOR;
+         if(pos == 2) return oyCHANNELTYPE_COLOR;
     }
     if(sig == icSigYCbCrData) {
          if(pos == 0) return oyCHANNELTYPE_LIGHTNESS;
-         if(pos == 1) return oyCHANNELTYPE_COLOUR;
-         if(pos == 2) return oyCHANNELTYPE_COLOUR;
+         if(pos == 1) return oyCHANNELTYPE_COLOR;
+         if(pos == 2) return oyCHANNELTYPE_COLOR;
     }
     if(sig == icSigYxyData) {
          if(pos == 0) return oyCHANNELTYPE_LIGHTNESS;
-         if(pos == 1) return oyCHANNELTYPE_COLOUR;
-         if(pos == 2) return oyCHANNELTYPE_COLOUR;
+         if(pos == 1) return oyCHANNELTYPE_COLOR;
+         if(pos == 2) return oyCHANNELTYPE_COLOR;
     }
     if(sig == icSigRgbData) {
-         if(pos == 0) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
-         if(pos == 1) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
-         if(pos == 2) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+         if(pos == 0) return oyCHANNELTYPE_COLOR_LIGHTNESS;
+         if(pos == 1) return oyCHANNELTYPE_COLOR_LIGHTNESS;
+         if(pos == 2) return oyCHANNELTYPE_COLOR_LIGHTNESS;
     }
     if(sig == icSigGrayData) {
-         if(pos == 0) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+         if(pos == 0) return oyCHANNELTYPE_COLOR_LIGHTNESS;
     }
     if(sig == icSigHsvData) {
-         if(pos == 0) return oyCHANNELTYPE_COLOUR;
-         if(pos == 1) return oyCHANNELTYPE_COLOUR;
+         if(pos == 0) return oyCHANNELTYPE_COLOR;
+         if(pos == 1) return oyCHANNELTYPE_COLOR;
          if(pos == 2) return oyCHANNELTYPE_LIGHTNESS;
     }
     if(sig == icSigHlsData) {
-         if(pos == 0) return oyCHANNELTYPE_COLOUR;
-         if(pos == 1) return oyCHANNELTYPE_COLOUR;
+         if(pos == 0) return oyCHANNELTYPE_COLOR;
+         if(pos == 1) return oyCHANNELTYPE_COLOR;
          if(pos == 2) return oyCHANNELTYPE_LIGHTNESS;
     }
     if(sig == icSigCmykData) {
-         if(pos == 0) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
-         if(pos == 1) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
-         if(pos == 2) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+         if(pos == 0) return oyCHANNELTYPE_COLOR_LIGHTNESS;
+         if(pos == 1) return oyCHANNELTYPE_COLOR_LIGHTNESS;
+         if(pos == 2) return oyCHANNELTYPE_COLOR_LIGHTNESS;
     }
     if(sig == icSigCmyData) {
-         if(pos == 0) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
-         if(pos == 1) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
-         if(pos == 2) return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+         if(pos == 0) return oyCHANNELTYPE_COLOR_LIGHTNESS;
+         if(pos == 1) return oyCHANNELTYPE_COLOR_LIGHTNESS;
+         if(pos == 2) return oyCHANNELTYPE_COLOR_LIGHTNESS;
     }
 
   if(pos < n)
-    return oyCHANNELTYPE_COLOUR_LIGHTNESS;
+    return oyCHANNELTYPE_COLOR_LIGHTNESS;
   else
     return oyCHANNELTYPE_OTHER;
 }
@@ -377,7 +377,7 @@ const oyChar *   oyICCTagDescription ( icTagSignature      sig )
     case icSigBToA1Tag: return _("Lookup table, PCS to device, intent relative colorimetric");
     case icSigBToA2Tag: return _("Lookup table, PCS to device, intent saturation");
     case icSigCalibrationDateTimeTag: return _("Calibration date");
-    case icSigCharTargetTag: return _("Colour measurement data");
+    case icSigCharTargetTag: return _("Color measurement data");
     case icSigCopyrightTag: return _("Copyright");
     case icSigCrdInfoTag: return _("Postscript CRD Information");
     case icSigDeviceMfgDescTag: return _("Device manufacturerer description");
@@ -392,8 +392,8 @@ const oyChar *   oyICCTagDescription ( icTagSignature      sig )
     case icSigMediaBlackPointTag: return _("Media black point");
     case icSigMediaWhitePointTag: return _("Media white point");
     case icSigMetaDataTag: return _("Meta Data");
-    case icSigNamedColorTag: return _("Named Colour");
-    case icSigNamedColor2Tag: return _("Named Colour 2");
+    case icSigNamedColorTag: return _("Named Color");
+    case icSigNamedColor2Tag: return _("Named Color 2");
     case icSigPreview0Tag: return _("Preview, perceptual");
     case icSigPreview1Tag: return _("Preview, relative colorimetric");
     case icSigPreview2Tag: return _("Preview, saturated");
@@ -417,23 +417,23 @@ const oyChar *   oyICCTagDescription ( icTagSignature      sig )
     case icSigViewingCondDescTag: return _("Viewing conditions description");
     case icSigViewingConditionsTag: return _("Viewing Conditions");
     /*DevD*/
-    case 1147500100: return _("Device colours");
+    case 1147500100: return _("Device colors");
     /*CIED*/
-    case 1128875332: return _("Measured colours");
+    case 1128875332: return _("Measured colors");
     /*Pmtr*/
     case 1349350514: return _("Profiling parameters");
     /*vcgt 1986226036*/
     case icSigVideoCardGammaTable: return _("VideoCardGammaTable");
     /*chad*/
-    case 1667785060: return _("Colour adaption matrix"); 
+    case 1667785060: return _("Color adaption matrix"); 
     /*chrm*/
     case icSigChromaticityType: return _("Chromaticity"); 
     /*clro*/
-    case icSigColorantOrderType: return _("Colour channel order");
+    case icSigColorantOrderType: return _("Color channel order");
     /*clrt*/
-    case icSigColorantTableType: return _("Colour channel names");
+    case icSigColorantTableType: return _("Color channel names");
     /*clrt*/
-    case icSigColorantTableOutType: return _("Colour channel output names");
+    case icSigColorantTableOutType: return _("Color channel output names");
     case 0: return _("----");
     default: { icUInt32Number i = oyValueUInt32(sig);
                static oyChar t[5];
@@ -544,9 +544,9 @@ const oyChar *   oyICCDeviceClassDescription ( icProfileClassSignature sig )
     /* abst */
     case icSigAbstractClass: return _("Abstract");
     /* spac */
-    case icSigColorSpaceClass: return _("Colour Space");
+    case icSigColorSpaceClass: return _("Color Space");
     /* nmcl */
-    case icSigNamedColorClass: return _("Named Colour");
+    case icSigNamedColorClass: return _("Named Color");
     default: { icUInt32Number i = oyValueUInt32( sig );
                static oyChar t[5];
                memcpy (t,(char*)&i, 4);
