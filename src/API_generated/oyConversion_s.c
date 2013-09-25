@@ -10,12 +10,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/12/13
+ *  @date     2013/09/25
  */
 
 
@@ -336,20 +336,22 @@ oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
  *  @brief   generate a Oyranos graph from a image file name
  *
  *  @param[in]     image_in            input
- *  @param[in]     module              tobe ussed icc node
+ *  @param[in]     module              to be used icc node type
+ *  @param[in]     module_options      options for icc node
+ *  @param[in]     output_profile      profile to convert colors to;
+ *  @param[in]     buf_type_out        the desired data type for output
  *  @param[in]     flags               for inbuild defaults |
  *                                     oyOPTIONSOURCE_FILTER;
  *                                     for options marked as advanced |
  *                                     oyOPTIONATTRIBUTE_ADVANCED |
  *                                     OY_SELECT_FILTER |
  *                                     OY_SELECT_COMMON
- *  @param[in]     data_type           the desired data type for output
  *  @param[in]     obj                 Oyranos object (optional)
  *  @return                            generated new graph, owned by caller
  *
- *  @version Oyranos: 0.5.0
+ *  @version Oyranos: 0.9.5
  *  @since   2012/04/21 (Oyranos: 0.5.0)
- *  @date    2012/04/21
+ *  @date    2013/09/25
  */
 oyConversion_s * oyConversion_CreateFromImage (
                                        oyImage_s         * image_in,
