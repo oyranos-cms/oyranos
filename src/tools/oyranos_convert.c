@@ -65,6 +65,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "  %s\n",               _("Convert Image:"));
   fprintf( stderr, "      %s -p PROFILE [-o FILENAME] [-n MODULE] -i FILENAME\n", argv[0]);
   fprintf( stderr, "      -i FILENAME  %s\n", _("read from file"));
+  fprintf( stderr, "      --device-link PROFILE   %s\n", _("Conversion"));
   fprintf( stderr, "      -p PROFILE   %s\n", _("Output Color Space"));
   fprintf( stderr, "      -s PROFILE   %s\n", _("Simulation/Proof Color Space"));
   fprintf( stderr, "      -e PROFILE   %s\n", _("Effect abtract Color Space"));
@@ -122,6 +123,7 @@ int main( int argc , char** argv )
   char * format = 0;
   char * output = 0;
   char * input = 0;
+  char * device_link = 0;
   char * node_name = 0;
   int help = 0;
   int verbose = 0;
@@ -185,6 +187,8 @@ int main( int argc , char** argv )
                         { OY_PARSE_INT_ARG2(levels, "levels"); break; }
                         else if(OY_IS_ARG("output"))
                         { OY_PARSE_STRING_ARG2(output, "output"); break; }
+                        else if(OY_IS_ARG("device-link"))
+                        { OY_PARSE_STRING_ARG2(device_link, "device-link"); break; }
                         else if(strcmp(&argv[pos][2],"verbose") == 0)
                         { oy_debug += 1; i=100; break;
                         } else if(argv[pos][2])
@@ -339,11 +343,12 @@ int main( int argc , char** argv )
   }
 #endif
 
-  if(output_profile)
+  if(output_profile || device_link)
   {
     uint32_t flags = 0;
     oyPixel_t pixel_layout;
     oyDATATYPE_e data_type = oyUINT8;
+    oyConversion_s * cc;
 
     if(!output)
       WARNc_S("No output file name provided");
@@ -410,7 +415,7 @@ int main( int argc , char** argv )
       pixel_layout = oyImage_GetPixelLayout( image,oyLAYOUT );
       data_type = oyToDataType_m(pixel_layout);
       p = oyProfile_FromFile(output_profile, 0,0);
-      oyConversion_s * cc = oyConversion_CreateFromImage (
+      cc = oyConversion_CreateFromImage (
                                 image, node_name, module_options, 
                                 p, data_type, flags, 0 );
 
@@ -425,15 +430,50 @@ int main( int argc , char** argv )
       char * comment = 0;
       error = oyImage_FromFile( input, &image, NULL );
       pixel_layout = oyImage_GetPixelLayout( image,oyLAYOUT );
-      data_type = oyToDataType_m(pixel_layout);
-      p = oyProfile_FromFile(output_profile, 0,0);
+      if(device_link)
+      {
+        p = oyProfile_FromFile(device_link, 0,0);
+        if(!p)
+        {
+          WARNc1_S("Could not open profile: %s", device_link);
+          error = 1;
+        } else
+        {
+          const char * t;
+          char * dln = NULL;
+          oyProfile_s * dl;
+
+          oyImage_SetCritical( image, 0, p, 0, -1,-1 );
+          t = oyProfile_GetFileName( p, 1 );
+          if(t)
+          {
+            dln = strdup( t );
+            dl = oyProfile_FromFile(t, 0,0);
+          }
+          if(dl && strcmp(t,dln) != 0)
+          {
+            oyProfile_Release( &p );
+            WARNc2_S("Set output profile %s from %s", t,dln);
+            p = dl;
+          } else if(!output_profile)
+          {
+            fprintf( stderr, "No output profile found in: %s - use the -p option", t );
+            printfHelp( argc, argv );
+            exit(1);
+          } else
+            oyProfile_Release( &p );
+        }
+      }
+      if(!p)
+        p = oyProfile_FromFile(output_profile, 0,0);
       if(!p)
       {
-          WARNc1_S("Could not open profile: %s", input);
+          WARNc1_S("Could not open output profile: %s", output_profile);
           error = 1;
       }
-      oyConversion_s * cc = oyConversion_CreateFromImage (
-                                image, node_name, module_options, 
+      data_type = oyToDataType_m(pixel_layout);
+      cc = oyConversion_CreateFromImage (
+                                image, node_name, module_options,
                                 p, data_type, flags, 0 );
 
       error = oyConversion_RunPixels( cc, 0 );
