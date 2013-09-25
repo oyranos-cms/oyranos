@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/08/27
+ *  @date     2013/09/25
  */
 
 
@@ -100,10 +100,6 @@ int oyList_Copy__Members( oyList_s_ * dst, oyList_s_ * src)
 
 /* } Include "List.private_custom_definitions.c" */
 
-oyList_s * oyList_New ( oyObject_s object )
-{
-  return (oyList_s*) oyList_New_( object );
-}
 
 
 /** @internal
@@ -174,29 +170,24 @@ oyList_s_ * oyList_New_ ( oyObject_s object )
   return s;
 }
 
-oyList_s * oyList_Copy ( oyList_s *lists, oyObject_s object )
-{
-  return (oyList_s*) oyList_Copy_( (oyList_s_*) lists, object );
-}
-
 /** @internal
  *  Function oyList_Copy__
  *  @memberof oyList_s_
  *  @brief   real copy a List object
  *
- *  @param[in]     lists                 List struct object
+ *  @param[in]     list                 List struct object
  *  @param         object              the optional object
  *
  *  @version Oyranos: 
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-oyList_s_ * oyList_Copy__ ( oyList_s_ *lists, oyObject_s object )
+oyList_s_ * oyList_Copy__ ( oyList_s_ *list, oyObject_s object )
 {
   oyList_s_ *s = 0;
   int error = 0;
 
-  if(!lists || !object)
+  if(!list || !object)
     return s;
 
   s = (oyList_s_*) oyList_New( object );
@@ -205,14 +196,14 @@ oyList_s_ * oyList_Copy__ ( oyList_s_ *lists, oyObject_s object )
   if(!error) {
     
     /* ---- start of custom List copy constructor ----- */
-    error = oyList_Copy__Members( s, lists );
+    error = oyList_Copy__Members( s, list );
     /* ---- end of custom List copy constructor ------- */
     
     
     
     
     
-    s->list_ = oyStructList_Copy( lists->list_, s->oy_ );
+    s->list_ = oyStructList_Copy( list->list_, s->oy_ );
 
   }
 
@@ -227,60 +218,55 @@ oyList_s_ * oyList_Copy__ ( oyList_s_ *lists, oyObject_s object )
  *  @memberof oyList_s_
  *  @brief   copy or reference a List object
  *
- *  @param[in]     lists                 List struct object
+ *  @param[in]     list                 List struct object
  *  @param         object              the optional object
  *
  *  @version Oyranos: 
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-oyList_s_ * oyList_Copy_ ( oyList_s_ *lists, oyObject_s object )
+oyList_s_ * oyList_Copy_ ( oyList_s_ *list, oyObject_s object )
 {
-  oyList_s_ *s = lists;
+  oyList_s_ *s = list;
 
-  if(!lists)
+  if(!list)
     return 0;
 
-  if(lists && !object)
+  if(list && !object)
   {
-    s = lists;
+    s = list;
     
     oyObject_Copy( s->oy_ );
     return s;
   }
 
-  s = oyList_Copy__( lists, object );
+  s = oyList_Copy__( list, object );
 
   return s;
 }
  
-int oyList_Release( oyList_s **lists )
-{
-  return oyList_Release_( (oyList_s_**) lists );
-}
-
 /** @internal
  *  Function oyList_Release_
  *  @memberof oyList_s_
  *  @brief   release and possibly deallocate a List list
  *
- *  @param[in,out] lists                 List struct object
+ *  @param[in,out] list                 List struct object
  *
  *  @version Oyranos: 
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  *  @date    2010/04/26
  */
-int oyList_Release_( oyList_s_ **lists )
+int oyList_Release_( oyList_s_ **list )
 {
   /* ---- start of common object destructor ----- */
   oyList_s_ *s = 0;
 
-  if(!lists || !*lists)
+  if(!list || !*list)
     return 0;
 
-  s = *lists;
+  s = *list;
 
-  *lists = 0;
+  *list = 0;
 
   if(oyObject_UnRef(s->oy_))
     return 0;

@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/08/27
+ *  @date     2013/09/25
  */
 
 
@@ -79,12 +79,27 @@ oyObject_s           oy_;            /**< @private features name and hash */
 oyList_s_*
   oyList_New_( oyObject_s object );
 oyList_s_*
-  oyList_Copy_( oyList_s_ *lists, oyObject_s object);
+  oyList_Copy_( oyList_s_ *list, oyObject_s object);
 oyList_s_*
-  oyList_Copy__( oyList_s_ *lists, oyObject_s object);
+  oyList_Copy__( oyList_s_ *list, oyObject_s object);
 int
-  oyList_Release_( oyList_s_ **lists );
+  oyList_Release_( oyList_s_ **list );
 
+#if 0
+/* FIXME Are these needed at all?? */
+int
+           oyList_MoveIn_         ( oyList_s_      * list,
+                                              ** ptr,
+                                       int                 pos );
+int
+           oyList_ReleaseAt_      ( oyList_s_      * list,
+                                       int                 pos );
+ *
+           oyList_Get_            ( oyList_s_      * list,
+                                       int                 pos );
+int
+           oyList_Count_          ( oyList_s_      * list );
+#endif
 
 
 
@@ -93,8 +108,9 @@ int
 /* } Include "List.private_methods_declarations.h" */
 
 
-void oyList_Release__Members( oyList_s_ * );
-int oyList_Init__Members( oyList_s_ * );
+
+void oyList_Release__Members( oyList_s_ * list );
+int oyList_Init__Members( oyList_s_ * list );
 int oyList_Copy__Members( oyList_s_ * dst, oyList_s_ * src);
 
 

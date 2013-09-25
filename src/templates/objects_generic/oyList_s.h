@@ -9,12 +9,12 @@
 {{ block.super }}
 OYAPI int  OYEXPORT
            oy{{ class.baseName }}_MoveIn          ( {{ class.name }}       * list,
-                                       {{ class.listOf }}       ** ptr,
+                                       oy{{ class.listBaseName }}_s       ** ptr,
                                        int                 pos );
 OYAPI int  OYEXPORT
            oy{{ class.baseName }}_ReleaseAt       ( {{ class.name }}       * list,
                                        int                 pos );
-OYAPI {{ class.listOf }} * OYEXPORT
+OYAPI oy{{ class.listBaseName }}_s * OYEXPORT
            oy{{ class.baseName }}_Get             ( {{ class.name }}       * list,
                                        int                 pos );
 OYAPI int  OYEXPORT

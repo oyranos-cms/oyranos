@@ -1,0 +1,10 @@
+/** @struct oyList_s
+ *  @ingroup objects_generic
+ *  @extends oyStruct_s
+ *  @brief   a pointer list
+ *  @internal
+ *  
+ *  @version Oyranos: x.x.x
+ *  @since Oyranos: version 0.1.8
+ *  @date  november 2007 (API 0.1.8)
+ */

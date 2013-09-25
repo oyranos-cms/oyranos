@@ -22,6 +22,7 @@ SET ( CFILES_OBJECT  ${CFILES_OBJECT_PUBLIC}
 	${GENDIR}oyBlob_s_.c
 	${GENDIR}oyPointer_s_.c
 	${GENDIR}oyHash_s_.c
+	${GENDIR}oyList_s.c
 	${GENDIR}oyList_s_.c
 	${GENDIR}oyName_s_.c
 	${GENDIR}oyName_s.c
@@ -54,6 +55,7 @@ SET ( CHEADERS_OBJECT
 	${GENDIR}oyPointer_s_.h
 	${GENDIR}oyRectangle_s_.h
 	${GENDIR}oyHash_s_.h
+	${GENDIR}oyList_s.h
 	${GENDIR}oyList_s_.h
 	${GENDIR}oyName_s_.h
 	${GENDIR}oyObject_s_.h

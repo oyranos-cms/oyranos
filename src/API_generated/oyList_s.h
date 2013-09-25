@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/09/01
+ *  @date     2013/09/25
  */
 
 
@@ -38,7 +38,7 @@ typedef struct oyList_s oyList_s;
 
 #include "oyStruct_s.h"
 
-#include "oyList_s.h"
+#include "oyLis_s.h"
 
 
 /* Include "List.public.h" { */
@@ -75,18 +75,18 @@ oyObject_s           oy_;            /**< @private features name and hash */
 OYAPI oyList_s* OYEXPORT
   oyList_New( oyObject_s object );
 OYAPI oyList_s* OYEXPORT
-  oyList_Copy( oyList_s *lists, oyObject_s obj );
+  oyList_Copy( oyList_s *list, oyObject_s obj );
 OYAPI int OYEXPORT
-  oyList_Release( oyList_s **lists );
+  oyList_Release( oyList_s **list );
 
 OYAPI int  OYEXPORT
            oyList_MoveIn          ( oyList_s       * list,
-                                       oyList_s       ** ptr,
+                                       oyLis_s       ** ptr,
                                        int                 pos );
 OYAPI int  OYEXPORT
            oyList_ReleaseAt       ( oyList_s       * list,
                                        int                 pos );
-OYAPI oyList_s * OYEXPORT
+OYAPI oyLis_s * OYEXPORT
            oyList_Get             ( oyList_s       * list,
                                        int                 pos );
 OYAPI int  OYEXPORT
