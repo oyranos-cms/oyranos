@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2012 (C) Kai-Uwe Behrmann
+ *            2012-2013 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC conversion - on the command line
  *  @internal
@@ -69,7 +69,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -p PROFILE   %s\n", _("Output Color Space"));
   fprintf( stderr, "      -s PROFILE   %s\n", _("Simulation/Proof Color Space"));
   fprintf( stderr, "      -e PROFILE   %s\n", _("Effect abtract Color Space"));
-  fprintf( stderr, "      -o FILENAME  %s\n", _("write to file, currently only PPM format"));
+  fprintf( stderr, "      -o FILENAME  %s\n", _("write to file, currently only PPM and PNG formats"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Generate CLUT Image:"));
   fprintf( stderr, "      %s -p PROFILE -f clut [-o FILENAME] [-n MODULE]  [-i PROFILE]\n", argv[0]);
@@ -104,6 +104,9 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "    %s:\n",             _("Convert image to ICC Color Space"));
   fprintf( stderr, "      oyranos-icc -i image.png -n lcm2 -p Lab.icc -o image.ppm\n");
+  fprintf( stderr, "\n");
+  fprintf( stderr, "    %s:\n",             _("Get Conversion"));
+  fprintf( stderr, "      oyranos-icc -f icc -i input.icc -n lcm2 -p sRGB.icc -o device_link.icc\n");
   fprintf( stderr, "\n");
   fprintf( stderr, "    %s:\n",             _("Create 3D CLUT"));
   fprintf( stderr, "      oyranos-icc -i Lab.icc -n lcm2 -p sRGB.icc -f clut -o clut.ppm\n");
@@ -425,6 +428,75 @@ int main( int argc , char** argv )
       error = oyImage_WritePPM( image, output, comment);
 
       oyImage_Release( &image );
+    } else
+    if(format && strcmp(format,"icc") == 0)
+    {
+      double buf[24];
+      oyImage_s * in;
+      oyImage_s * out;
+      oyFilterGraph_s * graph;
+      oyBlob_s * blob;
+      int error = 0;
+      int i,n=0;
+
+      if(input)
+      {
+        p = oyProfile_FromFile( input, 0,0 );
+        if(!p)
+        {
+          WARNc1_S("Could not open profile: %s", input);
+          error = 1;
+        }
+      } else
+        p = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+      n = oyProfile_GetChannelsCount(p);
+      pixel_layout = oyChannels_m(n) | oyDataType_m(oyUINT16);
+      in = oyImage_Create( 2, 2, buf, pixel_layout, p, 0 );
+      oyProfile_Release( &p );
+
+      p = oyProfile_FromFile(output_profile, 0,0);
+      n = oyProfile_GetChannelsCount(p);
+      pixel_layout = oyChannels_m(n) | oyDataType_m(oyUINT16);
+      out = oyImage_Create( 2, 2, buf, pixel_layout, p, 0 );
+      oyProfile_Release( &p );
+
+      cc = oyConversion_CreateBasicPixels( in, out, 0, 0 );
+      graph = oyFilterGraph_New( 0 );
+
+      memset( buf, 0, sizeof(double)*24);
+
+      if(cc)
+      {
+        oyFilterNode_s * in = oyConversion_GetNode( cc, OY_INPUT );
+        oyFilterGraph_SetFromNode( graph, in, 0, 0 );
+        oyFilterNode_Release( &in );
+      }
+      if(graph)
+        n = oyFilterGraph_CountEdges( graph );
+      for(i = 0; i < n; ++i)
+      {
+        blob = oyFilterGraph_ToBlob( graph, i, 0 );
+        if(blob && oyBlob_GetSize( blob ))
+        {
+          size_t size = oyBlob_GetSize( blob);
+          char * data = oyBlob_GetPointer( blob );
+
+          if(output)
+          {
+            error = oyWriteMemToFile_ ( output, data, size );
+            if(error)
+            {
+              WARNc_S("Could not write to profile");
+            }
+          } else
+          {
+            fwrite( data, sizeof(char), size, stdout );
+          }
+          break;
+        }
+        oyBlob_Release( &blob );
+      }
+
     } else
     {
       char * comment = 0;

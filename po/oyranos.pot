@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2013-09-09 14:26+0200\n"
+"POT-Creation-Date: 2013-10-05 16:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,7 +52,7 @@ msgstr ""
 msgid "Could not open profile"
 msgstr ""
 
-#: API_generated/oyList_s_.c:131 API_generated/oyCMMapiFilters_s_.c:157
+#: API_generated/oyList_s_.c:127 API_generated/oyCMMapiFilters_s_.c:157
 #: API_generated/oyPixelAccess_s_.c:187 API_generated/oyProfile_s_.c:242
 #: API_generated/oyOptions_s_.c:158 API_generated/oyImage_s_.c:172
 #: API_generated/oyName_s_.c:48 API_generated/oyName_s_.c:56
@@ -69,16 +69,16 @@ msgstr ""
 #: API_generated/oyCMMapi10_s_.c:160 API_generated/oyConnectorImaging_s_.c:219
 #: API_generated/oyNamedColors_s_.c:150 API_generated/oyConfigs_s_.c:157
 #: API_generated/oyCMMobjectType_s_.c:154 API_generated/oyCMMinfo_s_.c:164
-#: API_generated/oyFilterPlugs_s_.c:157 API_generated/oyFilterNode_s_.c:189
-#: API_generated/oyCMMapi5_s_.c:151 API_generated/oyBlob_s_.c:172
-#: API_generated/oyOption_s_.c:180 API_generated/oyArray2d_s_.c:167
-#: API_generated/oyConnector_s_.c:163 API_generated/oyProfileTag_s_.c:133
-#: API_generated/oyFilterCore_s_.c:170 API_generated/oyFilterNodes_s_.c:157
-#: API_generated/oyObserver_s.c:51 API_generated/oyPointer_s_.c:186
-#: API_generated/oyranos_devices.c:3082 API_generated/oyFilterSocket_s_.c:180
-#: API_generated/oyCMMapi4_s.c:150 API_generated/oyranos_module.c:1576
-#: API_generated/oyFilterCore_s.c:201 liboyranos/oyranos_alpha.c:295
-#: liboyranos_modules/oyranos_forms.c:57
+#: API_generated/oyFilterPlugs_s_.c:157 API_generated/oyLis_s_.c:149
+#: API_generated/oyFilterNode_s_.c:189 API_generated/oyCMMapi5_s_.c:151
+#: API_generated/oyBlob_s_.c:172 API_generated/oyOption_s_.c:180
+#: API_generated/oyArray2d_s_.c:167 API_generated/oyConnector_s_.c:163
+#: API_generated/oyProfileTag_s_.c:133 API_generated/oyFilterCore_s_.c:170
+#: API_generated/oyFilterNodes_s_.c:157 API_generated/oyObserver_s.c:51
+#: API_generated/oyPointer_s_.c:186 API_generated/oyranos_devices.c:3082
+#: API_generated/oyFilterSocket_s_.c:180 API_generated/oyCMMapi4_s.c:150
+#: API_generated/oyranos_module.c:1576 API_generated/oyFilterCore_s.c:201
+#: liboyranos/oyranos_alpha.c:295 liboyranos_modules/oyranos_forms.c:57
 msgid "MEM Error."
 msgstr ""
 
@@ -96,7 +96,7 @@ msgstr ""
 
 #: API_generated/oyOptions_s.c:1282 tools/oyranos_gamma.c:240
 #: tools/oyranos_policy.c:136 tools/oyranos_profile_graph.c:249
-#: tools/oyranos_convert.c:236 tools/oyranos_profiles.c:219
+#: tools/oyranos_convert.c:243 tools/oyranos_profiles.c:219
 #: tools/oyranos_profile.c:213 examples/devices/test_device.c:209
 #: examples/libraw/oyranos_file.cpp:216
 msgid "wrong argument to option:"
@@ -3041,7 +3041,7 @@ msgid "Dump data:"
 msgstr ""
 
 #: tools/oyranos_gamma.c:221 tools/oyranos_profile_graph.c:231
-#: tools/oyranos_convert.c:95 tools/oyranos_profiles.c:93
+#: tools/oyranos_convert.c:96 tools/oyranos_profiles.c:93
 #: tools/oyranos_profile.c:109 examples/devices/test_device.c:76
 #: examples/libraw/oyranos_file.cpp:59
 msgid "General options:"
@@ -3147,7 +3147,7 @@ msgstr ""
 msgid "policy name"
 msgstr ""
 
-#: tools/oyranos_policy.c:67 tools/oyranos_convert.c:92
+#: tools/oyranos_policy.c:67 tools/oyranos_convert.c:93
 #: tools/oyranos_profiles.c:90 tools/oyranos_profile.c:106
 msgid "Print a help text:"
 msgstr ""
@@ -3234,7 +3234,7 @@ msgstr ""
 msgid "CIE D65 spectral power distribution"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:232 tools/oyranos_convert.c:96
+#: tools/oyranos_profile_graph.c:232 tools/oyranos_convert.c:97
 #: examples/devices/test_device.c:77 examples/libraw/oyranos_file.cpp:62
 msgid "verbose"
 msgstr ""
@@ -3267,81 +3267,93 @@ msgstr ""
 msgid "read from file"
 msgstr ""
 
-#: tools/oyranos_convert.c:68 tools/oyranos_convert.c:76
-msgid "Output Color Space"
+#: tools/oyranos_convert.c:68
+msgid "Conversion"
 msgstr ""
 
 #: tools/oyranos_convert.c:69 tools/oyranos_convert.c:77
-msgid "Simulation/Proof Color Space"
+msgid "Output Color Space"
 msgstr ""
 
 #: tools/oyranos_convert.c:70 tools/oyranos_convert.c:78
-msgid "Effect abtract Color Space"
+msgid "Simulation/Proof Color Space"
 msgstr ""
 
 #: tools/oyranos_convert.c:71 tools/oyranos_convert.c:79
-msgid "write to file, currently only PPM format"
+msgid "Effect abtract Color Space"
 msgstr ""
 
-#: tools/oyranos_convert.c:73
+#: tools/oyranos_convert.c:72
+msgid "write to file, currently only PPM and PNG formats"
+msgstr ""
+
+#: tools/oyranos_convert.c:74
 msgid "Generate CLUT Image:"
 msgstr ""
 
-#: tools/oyranos_convert.c:75
+#: tools/oyranos_convert.c:76
 msgid "Input Color Space"
 msgstr ""
 
 #: tools/oyranos_convert.c:80
-msgid "select format, currently only clut"
+msgid "write to file, currently only PPM format"
 msgstr ""
 
 #: tools/oyranos_convert.c:81
+msgid "select format, currently only clut"
+msgstr ""
+
+#: tools/oyranos_convert.c:82
 msgid ""
 "CLUT is a levels x levels*levels sized PPM, --levels defaults for clut to 64"
 msgstr ""
 
-#: tools/oyranos_convert.c:83
+#: tools/oyranos_convert.c:84
 msgid "Extract ICC profile:"
 msgstr ""
 
-#: tools/oyranos_convert.c:85 tools/oyranos_convert.c:89
+#: tools/oyranos_convert.c:86 tools/oyranos_convert.c:90
 msgid "write to file"
 msgstr ""
 
-#: tools/oyranos_convert.c:87
+#: tools/oyranos_convert.c:88
 msgid "Generate Image:"
 msgstr ""
 
-#: tools/oyranos_convert.c:90
+#: tools/oyranos_convert.c:91
 msgid "levels from 4-16 make sense"
 msgstr ""
 
-#: tools/oyranos_convert.c:97
+#: tools/oyranos_convert.c:98
 msgid "module name"
 msgstr ""
 
-#: tools/oyranos_convert.c:98
+#: tools/oyranos_convert.c:99
 msgid "enable simple defaults"
 msgstr ""
 
-#: tools/oyranos_convert.c:100 tools/oyranos_profiles.c:96
+#: tools/oyranos_convert.c:101 tools/oyranos_profiles.c:96
 #: tools/oyranos_profile.c:113
 msgid "Example"
 msgstr ""
 
-#: tools/oyranos_convert.c:101
+#: tools/oyranos_convert.c:102
 msgid "Get ICC profile"
 msgstr ""
 
-#: tools/oyranos_convert.c:104
+#: tools/oyranos_convert.c:105
 msgid "Convert image to ICC Color Space"
 msgstr ""
 
-#: tools/oyranos_convert.c:107
+#: tools/oyranos_convert.c:108
+msgid "Get Conversion"
+msgstr ""
+
+#: tools/oyranos_convert.c:111
 msgid "Create 3D CLUT"
 msgstr ""
 
-#: tools/oyranos_convert.c:325
+#: tools/oyranos_convert.c:332
 msgid "Option"
 msgstr ""
 

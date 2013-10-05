@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2013-09-09 13:59+0200\n"
+"POT-Creation-Date: 2013-10-05 16:12+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -520,7 +520,7 @@ msgstr "KLASSE"
 msgid "CLUT"
 msgstr "3D Interpolationstabelle"
 
-#: tools/oyranos_convert.c:81
+#: tools/oyranos_convert.c:82
 msgid ""
 "CLUT is a levels x levels*levels sized PPM, --levels defaults for clut to 64"
 msgstr ""
@@ -760,6 +760,10 @@ msgstr "Farbanteil r"
 msgid "Color space for Simulating an Output Device"
 msgstr "Farbraum zur Nachbildung eines Ausgabegerätes"
 
+#: tools/oyranos_convert.c:68
+msgid "Conversion"
+msgstr "Farbumwandlung"
+
 #: examples/libraw/oyranos_file.cpp:45
 msgid "Convert CameraRaw image to Rgb image:"
 msgstr "Wandle Kamera Rohdaten in Rgb Bild um:"
@@ -772,7 +776,7 @@ msgstr "Wandle Bild um:"
 msgid "Convert automatically"
 msgstr "Wandle automatisch"
 
-#: tools/oyranos_convert.c:104
+#: tools/oyranos_convert.c:105
 msgid "Convert image to ICC Color Space"
 msgstr "Wandle Bild nach Farbraum um"
 
@@ -907,7 +911,7 @@ msgstr "Konnte Datei nicht schreiben"
 msgid "Count all profiles with Lab PCS"
 msgstr ""
 
-#: tools/oyranos_convert.c:107
+#: tools/oyranos_convert.c:111
 msgid "Create 3D CLUT"
 msgstr "Erzeuge eine 3D Interpolationstabelle"
 
@@ -1134,7 +1138,7 @@ msgstr "Editier Rgb"
 msgid "Editing XYZ"
 msgstr "Editier XYZ"
 
-#: tools/oyranos_convert.c:70 tools/oyranos_convert.c:78
+#: tools/oyranos_convert.c:71 tools/oyranos_convert.c:79
 msgid "Effect abtract Color Space"
 msgstr "Effectfarbraum"
 
@@ -1193,7 +1197,7 @@ msgstr "Fehler beim Erhalten des Profiles"
 msgid "Error setting up atom"
 msgstr "Fehler beim Setzen eines Xatoms"
 
-#: tools/oyranos_convert.c:100 tools/oyranos_profiles.c:96
+#: tools/oyranos_convert.c:101 tools/oyranos_profiles.c:96
 #: tools/oyranos_profile.c:113
 msgid "Example"
 msgstr "Beispiel"
@@ -1208,7 +1212,7 @@ msgstr "Beenden!"
 msgid "Extended Options"
 msgstr "Erweiterte Optionen"
 
-#: tools/oyranos_convert.c:83
+#: tools/oyranos_convert.c:84
 msgid "Extract ICC profile:"
 msgstr "Extrahiere ICC Profil:"
 
@@ -1289,21 +1293,25 @@ msgid "Gamut Warning"
 msgstr "Farbumfangswarnung"
 
 #: tools/oyranos_gamma.c:221 tools/oyranos_profile_graph.c:231
-#: tools/oyranos_convert.c:95 tools/oyranos_profiles.c:93
+#: tools/oyranos_convert.c:96 tools/oyranos_profiles.c:93
 #: tools/oyranos_profile.c:109 examples/devices/test_device.c:76
 #: examples/libraw/oyranos_file.cpp:59
 msgid "General options:"
 msgstr "Allgemeine Optionen:"
 
-#: tools/oyranos_convert.c:73
+#: tools/oyranos_convert.c:74
 msgid "Generate CLUT Image:"
 msgstr "Erzeuge 3D Interpolationstabelle:"
 
-#: tools/oyranos_convert.c:87
+#: tools/oyranos_convert.c:88
 msgid "Generate Image:"
 msgstr "Erzeuge Bild:"
 
-#: tools/oyranos_convert.c:101
+#: tools/oyranos_convert.c:108
+msgid "Get Conversion"
+msgstr "Hole Farbumwandlung"
+
+#: tools/oyranos_convert.c:102
 msgid "Get ICC profile"
 msgstr "Hole ICC Profil"
 
@@ -1544,14 +1552,12 @@ msgid "Image PNG Socket"
 msgstr "PNG Bilddose"
 
 #: liboyranos/oyranos_cmm.c:187
-#, fuzzy
 msgid "Image Plug"
-msgstr "PNG Bildstecker"
+msgstr "Bildstecker"
 
 #: liboyranos/oyranos_cmm.c:211
-#, fuzzy
 msgid "Image Socket"
-msgstr "PNG Bilddose"
+msgstr "Bilddose"
 
 #: liboyranos_config/oyranos_texts.c:428
 msgid ""
@@ -1560,9 +1566,8 @@ msgstr ""
 "Bild enthält kein Farbprofil. Welche Standardhandlung soll ausgeführt werden?"
 
 #: modules/oyranos_cmm_oyra_image_scale.c:300
-#, fuzzy
 msgid "Image/Simple Image[scale]"
-msgstr "Bild[lraw]"
+msgstr "Bild/Einfaches Bild[Skalierung]"
 
 #: modules/oyranos_cmm_oPNG.c:1143
 msgid "Image[input_png]"
@@ -1581,9 +1586,8 @@ msgid "Image[out]"
 msgstr "Bild[Ausgang]"
 
 #: modules/oyranos_cmm_oyra_image_scale.c:284
-#, fuzzy
 msgid "Image[scale]"
-msgstr "Bild[lraw]"
+msgstr "Bild[Skalierung]"
 
 #: modules/oyranos_cmm_oPNG.c:540
 msgid "Image[write_png]"
@@ -1623,7 +1627,7 @@ msgstr "Tintenstrahldrucker"
 msgid "Input"
 msgstr "Eingabe"
 
-#: tools/oyranos_convert.c:75
+#: tools/oyranos_convert.c:76
 msgid "Input Color Space"
 msgstr "Eingabefarbraum"
 
@@ -1804,7 +1808,7 @@ msgstr "Leuchtdichte Y"
 msgid "Luv"
 msgstr "Luv"
 
-#: API_generated/oyList_s_.c:131 API_generated/oyCMMapiFilters_s_.c:157
+#: API_generated/oyList_s_.c:127 API_generated/oyCMMapiFilters_s_.c:157
 #: API_generated/oyPixelAccess_s_.c:187 API_generated/oyProfile_s_.c:242
 #: API_generated/oyOptions_s_.c:158 API_generated/oyImage_s_.c:172
 #: API_generated/oyName_s_.c:48 API_generated/oyName_s_.c:56
@@ -1821,16 +1825,16 @@ msgstr "Luv"
 #: API_generated/oyCMMapi10_s_.c:160 API_generated/oyConnectorImaging_s_.c:219
 #: API_generated/oyNamedColors_s_.c:150 API_generated/oyConfigs_s_.c:157
 #: API_generated/oyCMMobjectType_s_.c:154 API_generated/oyCMMinfo_s_.c:164
-#: API_generated/oyFilterPlugs_s_.c:157 API_generated/oyFilterNode_s_.c:189
-#: API_generated/oyCMMapi5_s_.c:151 API_generated/oyBlob_s_.c:172
-#: API_generated/oyOption_s_.c:180 API_generated/oyArray2d_s_.c:167
-#: API_generated/oyConnector_s_.c:163 API_generated/oyProfileTag_s_.c:133
-#: API_generated/oyFilterCore_s_.c:170 API_generated/oyFilterNodes_s_.c:157
-#: API_generated/oyObserver_s.c:51 API_generated/oyPointer_s_.c:186
-#: API_generated/oyranos_devices.c:3082 API_generated/oyFilterSocket_s_.c:180
-#: API_generated/oyCMMapi4_s.c:150 API_generated/oyranos_module.c:1576
-#: API_generated/oyFilterCore_s.c:201 liboyranos/oyranos_alpha.c:295
-#: liboyranos_modules/oyranos_forms.c:57
+#: API_generated/oyFilterPlugs_s_.c:157 API_generated/oyLis_s_.c:149
+#: API_generated/oyFilterNode_s_.c:189 API_generated/oyCMMapi5_s_.c:151
+#: API_generated/oyBlob_s_.c:172 API_generated/oyOption_s_.c:180
+#: API_generated/oyArray2d_s_.c:167 API_generated/oyConnector_s_.c:163
+#: API_generated/oyProfileTag_s_.c:133 API_generated/oyFilterCore_s_.c:170
+#: API_generated/oyFilterNodes_s_.c:157 API_generated/oyObserver_s.c:51
+#: API_generated/oyPointer_s_.c:186 API_generated/oyranos_devices.c:3082
+#: API_generated/oyFilterSocket_s_.c:180 API_generated/oyCMMapi4_s.c:150
+#: API_generated/oyranos_module.c:1576 API_generated/oyFilterCore_s.c:201
+#: liboyranos/oyranos_alpha.c:295 liboyranos_modules/oyranos_forms.c:57
 msgid "MEM Error."
 msgstr "Speicher Fehler"
 
@@ -2045,7 +2049,7 @@ msgstr "Betriebssystem"
 msgid "Optimization"
 msgstr "Optimierung"
 
-#: tools/oyranos_convert.c:325
+#: tools/oyranos_convert.c:332
 msgid "Option"
 msgstr "Option"
 
@@ -2073,7 +2077,7 @@ msgstr "Option nicht unterstützten Typs:"
 msgid "Output"
 msgstr "Ausgabe"
 
-#: tools/oyranos_convert.c:68 tools/oyranos_convert.c:76
+#: tools/oyranos_convert.c:69 tools/oyranos_convert.c:77
 msgid "Output Color Space"
 msgstr "Ausgabefarbraum"
 
@@ -2122,7 +2126,6 @@ msgstr "Oyranos X11"
 
 #. HTML
 #: liboyranos_config/oyranos_xml.c:1036
-#, fuzzy
 msgid ""
 "Oyranos allowes detailed settings like preferred editing color spaces and "
 "the behaviour of color conversions or simulation. Oyranos reduces the work "
@@ -2307,7 +2310,6 @@ msgid "Postscript CRD Information"
 msgstr "Postscript CRD Information"
 
 #: API_generated/oyranos_profile.c:66
-#, fuzzy
 msgid "Prefered CMM"
 msgstr "Bevorzugte CMM"
 
@@ -2349,7 +2351,7 @@ msgstr "Voransicht, relativ farbmetrisch"
 msgid "Preview, saturated"
 msgstr "Voransicht, farbgesättigt"
 
-#: tools/oyranos_policy.c:67 tools/oyranos_convert.c:92
+#: tools/oyranos_policy.c:67 tools/oyranos_convert.c:93
 #: tools/oyranos_profiles.c:90 tools/oyranos_profile.c:106
 msgid "Print a help text:"
 msgstr "Zeige einen Hilfetext an:"
@@ -2587,9 +2589,8 @@ msgid "Save to a new policy:"
 msgstr "Speichern in eine neue Richtlinie:"
 
 #: modules/oyranos_cmm_oyra_image_scale.c:286
-#, fuzzy
 msgid "Scale Image Filter Object"
-msgstr "iFilterObjekt eines Quellbildes"
+msgstr "Skalierfilterobjekt"
 
 #: modules/devices/oyranos_cmm_SANE.c:821
 #: modules/devices/oyranos_cmm_SANE.c:838
@@ -2691,7 +2692,7 @@ msgstr "Siebdruck"
 msgid "Simulate the output print on the monitor"
 msgstr "Bilde einen Ausdruck auf dem Bildschirm nach"
 
-#: tools/oyranos_convert.c:69 tools/oyranos_convert.c:77
+#: tools/oyranos_convert.c:70 tools/oyranos_convert.c:78
 msgid "Simulation/Proof Color Space"
 msgstr "Simulationsfarbraum"
 
@@ -2962,13 +2963,12 @@ msgstr ""
 "verarbeitet die bezüglichen Rechtecke in jeweils eigenen Arbeitsaufträgen."
 
 #: modules/oyranos_cmm_oyra_image_scale.c:294
-#, fuzzy
 msgid ""
 "The filter will expect a \"scale\" option and will create, fill and process "
 "a according data version with a new job ticket."
 msgstr ""
-"Der Filter erwartet eine \"rectangle\" Option und erstellt, füllt und "
-"verarbeitet die bezüglichen Rechtecke in jeweils eigenen Arbeitsaufträgen."
+"Der Filter erwartet eine \"scale\" Option und erstellt, füllt und "
+"verarbeitet die bezüglichen daten in jeweils neuen Arbeitsauftrag."
 
 #: modules/oyranos_cmm_lcm2.c:3180
 msgid ""
@@ -3551,7 +3551,7 @@ msgstr "erzeuge OpenICC Wichtungstabelle JSON zu Gerätefarbeinstellungen"
 msgid "embed OpenICC device JSON from file"
 msgstr "bette OpenICC JSON Gerät von Datei ein"
 
-#: tools/oyranos_convert.c:98
+#: tools/oyranos_convert.c:99
 msgid "enable simple defaults"
 msgstr "benutze einfache Grundeinstellungen"
 
@@ -3737,7 +3737,7 @@ msgstr "Schlüssel/Wertepaare gefunden:"
 msgid "less Xinerama monitors than XRandR ones"
 msgstr "weniger Xinerama als XRandR Monitore"
 
-#: tools/oyranos_convert.c:90
+#: tools/oyranos_convert.c:91
 msgid "levels from 4-16 make sense"
 msgstr "Werte von 4-16 sind sinnvoll"
 
@@ -3785,7 +3785,7 @@ msgstr "Übereinstimmungswert"
 msgid "missed -w option to write a ICC profile"
 msgstr "vermisse -w Option für das Schreiben eines ICC Profiles"
 
-#: tools/oyranos_convert.c:97
+#: tools/oyranos_convert.c:98
 msgid "module name"
 msgstr "Modulname"
 
@@ -3934,7 +3934,7 @@ msgstr "lese Daten von Eingangsstrom"
 msgid "running new ticket failed"
 msgstr "neue Ausführung schlug fehl"
 
-#: tools/oyranos_convert.c:80
+#: tools/oyranos_convert.c:81
 msgid "select format, currently only clut"
 msgstr "wähle Format, z.Z. nur clut möglich"
 
@@ -4019,7 +4019,7 @@ msgstr "benutze nur DB Schlüssel/Wertepaare für -f=openicc"
 msgid "user path"
 msgstr "Benutzerpfad"
 
-#: tools/oyranos_profile_graph.c:232 tools/oyranos_convert.c:96
+#: tools/oyranos_profile_graph.c:232 tools/oyranos_convert.c:97
 #: examples/devices/test_device.c:77 examples/libraw/oyranos_file.cpp:62
 msgid "verbose"
 msgstr "plaudernd"
@@ -4037,11 +4037,15 @@ msgstr "mit '.' ist nicht erlaubt"
 msgid "write profile with correct ID"
 msgstr "schreibe Profil mit korrekter ID"
 
-#: tools/oyranos_convert.c:85 tools/oyranos_convert.c:89
+#: tools/oyranos_convert.c:86 tools/oyranos_convert.c:90
 msgid "write to file"
 msgstr "schreibe nach Datei"
 
-#: tools/oyranos_convert.c:71 tools/oyranos_convert.c:79
+#: tools/oyranos_convert.c:72
+msgid "write to file, currently only PPM and PNG formats"
+msgstr "schreibe zu einer Datei, derzeit nur im Format PPM und PNG"
+
+#: tools/oyranos_convert.c:80
 msgid "write to file, currently only PPM format"
 msgstr "schreibe zu einer Datei, derzeit nur im Format PPM"
 
@@ -4051,7 +4055,7 @@ msgstr "schreibe nach Datei"
 
 #: API_generated/oyOptions_s.c:1282 tools/oyranos_gamma.c:240
 #: tools/oyranos_policy.c:136 tools/oyranos_profile_graph.c:249
-#: tools/oyranos_convert.c:236 tools/oyranos_profiles.c:219
+#: tools/oyranos_convert.c:243 tools/oyranos_profiles.c:219
 #: tools/oyranos_profile.c:213 examples/devices/test_device.c:209
 #: examples/libraw/oyranos_file.cpp:216
 msgid "wrong argument to option:"

@@ -1496,6 +1496,7 @@ oyTESTRESULT_e testDeviceLinkProfile ()
 
   return result;
 }
+
 oyTESTRESULT_e testRegistrationMatch ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
