@@ -186,10 +186,12 @@ oyTESTRESULT_e testElektra()
   oyExportReset_(EXPORT_SETTING);
 
   fprintf(stdout, "\n" );
+  oyOpen();
 
   error = oyAddKey_valueComment_(TEST_DOMAIN "/test_key",
                                  "NULLTestValue", "NULLTestComment" );
   start = oyGetKeyString_("sw/Oyranos/Tests/test_key", 0);
+  printf ("start is %s\n", start);
   if(!start)
   {
     oyExportStart_(EXPORT_CHECK_NO);
@@ -197,6 +199,7 @@ oyTESTRESULT_e testElektra()
     error = oyAddKey_valueComment_("sw/Oyranos/Tests/test_key",
                                  "NULLTestValue", "NULLTestComment" );
     start = oyGetKeyString_("sw/Oyranos/Tests/test_key", 0);
+    printf ("start is %s\n", start);
     
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL,
     "Elektra not initialised? try oyExportStart_(EXPORT_CHECK_NO)" );
@@ -227,7 +230,7 @@ oyTESTRESULT_e testElektra()
     PRINT_SUB( oyTESTRESULT_SYSERROR, 
     "Elektra error: %d", error );
   } else
-  if(start && value && strcmp(start,value) == 0)
+  if(start && value && strcmp(start,value) != 0)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
     "Elektra (start!=value) failed: %s|%s", start, value );
@@ -254,6 +257,8 @@ oyTESTRESULT_e testElektra()
     }
   } else
     result = oyTESTRESULT_SUCCESS;
+
+  oyClose();
 
   return result;
 }

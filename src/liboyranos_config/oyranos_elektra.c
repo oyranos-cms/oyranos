@@ -101,9 +101,19 @@ char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", r
 
 /* --- Helpers  --- */
 
+
+/* test2.cpp references variables for testing */
+#if DEBUG_NEVER
+#define STATIC_IF_NDEBUG static
+#else
+#define STATIC_IF_NDEBUG
+#endif
+
 /* --- static variables   --- */
 
-static int oyranos_init = 0;
+STATIC_IF_NDEBUG int oyranos_init = 0;
+STATIC_IF_NDEBUG KeySet * oy_config_ = 0;
+STATIC_IF_NDEBUG KDBHandle * oy_handle_ = 0;
 
 /* --- structs, typedefs, enums --- */
 
@@ -120,20 +130,18 @@ KeySet* oyReturnChildrenList_  (const char* keyParentName,int* rc);
 
 #define oyDEVICE_PROFILE oyDEFAULT_PROFILE_END
 
-/* test2.cpp references oy_handle_ for testing */
-#if DEBUG_NEVER
-static 
-#endif
-KDBHandle * oy_handle_ = 0;
-
 void oyOpen_ (void)
 {
   if(!oyranos_init) {
+	  printf ("______________\n");
 #if KDB_VERSION_NUM >= 800
+	  printf ("v800 ______________\n");
     error_key = keyNew( KEY_END );
     DBG_EL1_S("error_key = keyNew( KEY_END ) == %s", error_key ? "good":"NULL");
 #endif
+    oy_config_ = ksNew(0);
     oy_handle_ = kdbOpen_m( /*&oy_handle_*/ );
+	  printf ("______________%p\n", oy_handle_);
     DBG_EL1_S("oy_handle_ = kdbOpen_m() == %s", oy_handle_ ? "good":"NULL");
     if(!oy_handle_)
       WARNc_S("Could not initialise Elektra.");
@@ -146,11 +154,14 @@ void oyOpen  (void) { oyOpen_(); }
 void oyClose (void) { oyClose_(); }
 void oyCloseReal__() {
 #if KDB_VERSION_NUM >= 800
-                       int rc=
+  int rc=
 #endif
-                       kdbClose_m( oy_handle_ ); oyERR(error_key)
-                       oy_handle_ = 0;
-                       oyranos_init = 0; }
+  kdbClose_m( oy_handle_ ); oyERR(error_key)
+  ksDel(oy_config_);
+  oy_config_ = 0;
+  oy_handle_ = 0;
+  oyranos_init = 0;
+}
 
 /* oyranos part */
 
@@ -175,71 +186,74 @@ int oyGetByName(KeySet * conf, const char * base)
 
 int  oyGetKey                        ( Key               * key )
 {
-  KeySet * ks;
   Key * result;
   int rc;
 
-  ks = ksNew(0);
-  DBG_EL1_S( "ks = ksNew( 0 ) == %s", ks ? "good":"NULL" );
-  rc = kdbGet( oy_handle_, ks, key ); oyERR(key)
-  DBG_EL1_S( "rc = kdbGet( oy_handle_, ks, key ) == %d", rc );
+  printf ("xxxxxxxxxxxx Try to get %s\n", keyName(key));
 
-  result = ksLookup( ks, key, KDB_O_NONE);
-  DBG_EL1_S( "result = ksLookup( ks, key, KDB_O_NONE) == %s", result ? "good":"NULL" );
+  DBG_EL1_S( "oy_config_ == %s", oy_config_ ? "good":"NULL" );
+  rc = kdbGet( oy_handle_, oy_config_, key ); oyERR(key)
+  DBG_EL1_S( "rc = kdbGet( oy_handle_, oy_config_, key ) == %d", rc );
+
+  result = ksLookup( oy_config_, key, KDB_O_NONE);
+  DBG_EL1_S( "result = ksLookup( oy_config_, key, KDB_O_NONE) == %s", result ? "good":"NULL" );
   if(!rc && !result)
   {
     rc = -1;
     WARNc1_S( "keyString(key) == %s", oyNoEmptyString_m_(keyString(key)) );
     oyERR(key)
   }
+  else
+  {
+    rc = 0;
+  }
+  printf ("xxxxxxxxxxxx Got %s\n", keyString(result));
   DBG_EL_S( "keyCopy( key, result )" );
   keyCopy( key, result );
   keyDel( result );
   DBG_EL_S( "keyDel( result )" );
-  ksDel( ks );
-  DBG_EL_S( "ksDel( ks )" );
   return rc;
 }
 
 int  oySetKey                        ( Key               * key )
 {
-  KeySet * ks;
   int rc;
 
-  ks = ksNew(0);
-  DBG_EL1_S( "ks = ksNew( 0 ) == %s", ks ? "good":"NULL" );
-  rc = kdbGet( oy_handle_, ks, key ); oyERR(key)
-  DBG_EL1_S( "kdbGet( oy_handle_, ks, key ) = %d", rc );
+  DBG_EL1_S( "oy_config_ == %s", oy_config_ ? "good":"NULL" );
+  rc = kdbGet( oy_handle_, oy_config_, key ); oyERR(key)
+  DBG_EL1_S( "kdbGet( oy_handle_, oy_config_, key ) = %d", rc );
   if(!rc)
   {
-    rc = kdbSet( oy_handle_, ks, key ); oyERR(key)
-    DBG_EL1_S( "kdbSet( oy_handle_, ks, key ) = %d", rc );
+    rc = kdbSet( oy_handle_, oy_config_, key ); oyERR(key)
+    DBG_EL1_S( "kdbSet( oy_handle_, oy_config_, key ) = %d", rc );
   }
-  ksDel( ks );
-  DBG_EL_S( "ksDel( ks )" );
   return rc;
 }
 
 int  oyRemoveFromDB                  ( const char        * name )
 {
+  Key *found=0;
   Key *key;
-  KeySet * ks;
   int rc;
-  
+
   key = keyNew(name,KEY_END);
   DBG_EL1_S( "key = keyNew( \"%s\", KEY_END) = %s", key ? "good":"NULL" );
-  ks = ksNew(0);
-  DBG_EL1_S( "ks = ksNew( 0 ) == %s", ks ? "good":"NULL" );
-  rc = kdbGet(oy_handle_, ks, key); oyERR(key)
-  DBG_EL1_S( "kdbGet( oy_handle_, ks, key ) = %d", rc );
-  ksClear(ks);
+  DBG_EL1_S( "oy_config_ = ksNew( 0 ) == %s", oy_config_ ? "good":"NULL" );
+  rc = kdbGet(oy_handle_, oy_config_, key); oyERR(key)
+  DBG_EL1_S( "kdbGet( oy_handle_, oy_config_, key ) = %d", rc );
+
   if(!rc)
   {
-    rc = kdbSet( oy_handle_, ks, key ); oyERR(key)
-    DBG_EL1_S( "kdbSet( oy_handle_, ks, key ) = %d", rc );
+    found = ksLookup(oy_config_, key, KDB_O_POP);
   }
-  ksDel( ks );
-  DBG_EL_S( "ksDel( ks )" );
+  if(found)
+  {
+    DBG_EL1_S( "ksLookup found: %s ", keyName(found) );
+    rc = kdbSet( oy_handle_, oy_config_, key ); oyERR(key)
+    DBG_EL1_S( "kdbSet( oy_handle_, oy_config_, key ) = %d", rc );
+    keyDel(found);
+    DBG_EL_S( "keyDel( found )" );
+  }
   keyDel(key);
   DBG_EL_S( "keyDel( key )" );
   return rc;
@@ -499,13 +513,11 @@ oyAddKey_valueComment_ (const char* key_name,
                        OY_DBG_ARGS_, rc, kdbStrError(rc), name, comment);
   }
 
-  oyOpen_();
   rc=kdbSetKey( oy_handle_, key ); oyERR(key)
   DBG_EL1_S( "rc = kdbSetKey( oy_handle, key ) == %d", rc );
   if(rc < 0)
     oyMessageFunc_p( oyMSG_WARN, 0, OY_DBG_FORMAT_ "code:%d %s name:%s",
                      OY_DBG_ARGS_, rc, kdbStrError(rc), name);
-  oyClose_();
   keyDel( key );
   DBG_EL_S( "keyDel( key )" );
 
@@ -837,9 +849,10 @@ oyGetKeyString_ ( const char       *key_name,
   success = keyIsString(key);
 
   if(success)
-    rc = keyGetString ( key, name, MAX_PATH );
+    keyGetString ( key, name, MAX_PATH );
   keyDel( key ); key = 0;
 
+  /** Fallback to system key otherwise */
   if( rc || !strlen( name ))
   {
     sprintf( full_key_name, "%s%s", OY_SYS, key_name );
@@ -847,7 +860,7 @@ oyGetKeyString_ ( const char       *key_name,
     rc=kdbGetKey( oy_handle_, key ); oyERR(key)
     success = keyIsString(key);
     if(success)
-      rc = keyGetString( key, name, MAX_PATH );
+      keyGetString( key, name, MAX_PATH );
     keyDel( key ); key = 0;
   }
 
@@ -856,10 +869,7 @@ oyGetKeyString_ ( const char       *key_name,
 
   DBG_PROG_S((name))
   DBG_PROG_ENDE
-  if(rc)
-    return name;
-  else
-    return 0;
+  return name;
 
   clean3:
   if(name)
