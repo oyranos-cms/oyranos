@@ -133,15 +133,17 @@ KeySet* oyReturnChildrenList_  (const char* keyParentName,int* rc);
 void oyOpen_ (void)
 {
   if(!oyranos_init) {
-	  printf ("______________\n");
+	  fprintf ( stderr, "______________\n");
 #if KDB_VERSION_NUM >= 800
-	  printf ("v800 ______________\n");
+	  fprintf ( stderr, "v%d _________\n", KDB_VERSION_NUM);
     error_key = keyNew( KEY_END );
     DBG_EL1_S("error_key = keyNew( KEY_END ) == %s", error_key ? "good":"NULL");
+#else
+	  fprintf ( stderr, "v%d _________\n", KDB_VERSION_NUM);
 #endif
     oy_config_ = ksNew(0);
     oy_handle_ = kdbOpen_m( /*&oy_handle_*/ );
-	  printf ("______________%p\n", oy_handle_);
+	  fprintf ( stderr, "______________ %p\n", oy_handle_);
     DBG_EL1_S("oy_handle_ = kdbOpen_m() == %s", oy_handle_ ? "good":"NULL");
     if(!oy_handle_)
       WARNc_S("Could not initialise Elektra.");
@@ -189,7 +191,7 @@ int  oyGetKey                        ( Key               * key )
   Key * result;
   int rc;
 
-  printf ("xxxxxxxxxxxx Try to get %s\n", keyName(key));
+  fprintf ( stderr, "xxxxxxxxxxxx Try to get %s\n", keyName(key));
 
   DBG_EL1_S( "oy_config_ == %s", oy_config_ ? "good":"NULL" );
   rc = kdbGet( oy_handle_, oy_config_, key ); oyERR(key)
@@ -207,7 +209,7 @@ int  oyGetKey                        ( Key               * key )
   {
     rc = 0;
   }
-  printf ("xxxxxxxxxxxx Got %s\n", keyString(result));
+  fprintf ( stderr, "xxxxxxxxxxxx Got %s\n", keyString(result));
   DBG_EL_S( "keyCopy( key, result )" );
   keyCopy( key, result );
   keyDel( result );
