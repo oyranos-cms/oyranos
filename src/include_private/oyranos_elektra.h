@@ -16,17 +16,7 @@
 #ifndef OYRANOS_ELEKTRA_H
 #define OYRANOS_ELEKTRA_H
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
-#include "oyranos_config_internal.h"
 #include "oyranos.h"
-#include "oyranos_debug.h"
-#include "oyranos_helper.h"
-#include "oyranos_internal.h"
-#include "oyranos_sentinel.h"
-#include "oyranos_xml.h"
 
 
 #ifdef __cplusplus

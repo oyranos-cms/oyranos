@@ -30,6 +30,7 @@
 #include "oyranos_internal.h"
 #include "oyranos_io.h"
 #include "oyranos_config.h"
+#include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_version.h"
 

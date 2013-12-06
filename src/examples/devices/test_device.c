@@ -10,6 +10,7 @@
 #include "oyranos_elektra.h"
 #include "oyranos_helper.h"
 #include "oyranos_helper_macros_cli.h"
+#include "oyranos_i18n.h"
 #include "oyranos_icc.h"
 #include "oyranos_string.h"
 #include "oyranos_config_internal.h"

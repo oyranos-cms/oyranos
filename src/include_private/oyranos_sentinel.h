@@ -20,8 +20,6 @@
 #ifndef OYRANOS_SENTINEL_H
 #define OYRANOS_SENTINEL_H
 
-/*/#include <oyranos/oyranos_internal.h>*/
-
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
