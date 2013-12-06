@@ -51,27 +51,20 @@
 #define KDB_VERSION_NUM (KDB_VERSION_MAJOR*10000 + KDB_VERSION_MINOR*100)
 
 #if KDB_VERSION_NUM >= 800
-Key * error_key = 0;
-#define kdbOpen_m() kdbOpen(error_key)
-#define kdbClose_m(a) kdbClose(a, error_key)
 #define kdbGetString_m kdbGetString
 #define kdbGetChildKeys(a,b,c,d) oyGetByName(c,b)
 #define kdbGetKey(a,b) oyGetKey(b)
 #define kdbSetKey(a,b) oySetKey(b)
 #define kdbRemove(a,b) oyRemoveFromDB(b)
 #define ksAppendKeys ksAppend
-#define KDBHandle KDB
 #define keyIsDir(a) 0
 #define keyRemove(a) 0
 #define keySetComment(a,b) keySetMeta(a,"comment",b)
 
 #elif KDB_VERSION_NUM >= 700
-#define kdbOpen_m() kdbOpen()
-#define kdbClose_m(a) kdbClose(a)
 #define kdbGetString_m kdbGetString
 #define kdbGetChildKeys(a,b,c,d) kdbGetByName(a,c,b,d)
 #define ksAppendKeys ksAppend
-#define KDBHandle KDB
 
 #else
 #define kdbGetString_m kdbGetValue
@@ -88,7 +81,7 @@ char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", r
 
 #if KDB_VERSION_NUM >= 800
 #define oyERR(k) { const Key *meta = NULL; keyRewindMeta(k); \
-                   if(rc <= 0) { \
+                   if(rc < 0) { \
                      while((meta = keyNextMeta(k)) != 0) { \
                        WARNc3_S( "rc:%d %s:\t%s", rc, \
                                  oyNoEmptyString_m_( keyName(meta) ), \
@@ -112,8 +105,14 @@ char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", r
 /* --- static variables   --- */
 
 STATIC_IF_NDEBUG int oyranos_init = 0;
+#if KDB_VERSION_NUM >= 800
 STATIC_IF_NDEBUG KeySet * oy_config_ = 0;
-STATIC_IF_NDEBUG KDBHandle * oy_handle_ = 0;
+STATIC_IF_NDEBUG KDB * oy_handle_ = 0;
+Key * error_key = 0;
+#else
+STATIC_IF_NDEBUG KeySet * oy_config_ = 0;
+STATIC_IF_NDEBUG KDB * oy_handle_ = 0;
+#endif
 
 /* --- structs, typedefs, enums --- */
 
@@ -134,19 +133,16 @@ void oyOpen_ (void)
 {
   if(!oyranos_init) {
 	  fprintf ( stderr, "______________\n");
+	  fprintf ( stderr, "v%d _________\n", KDB_VERSION_NUM);
 #if KDB_VERSION_NUM >= 800
-	  fprintf ( stderr, "v%d _________\n", KDB_VERSION_NUM);
-    error_key = keyNew( KEY_END );
-    DBG_EL1_S("error_key = keyNew( KEY_END ) == %s", error_key ? "good":"NULL");
 #else
-	  fprintf ( stderr, "v%d _________\n", KDB_VERSION_NUM);
-#endif
     oy_config_ = ksNew(0);
-    oy_handle_ = kdbOpen_m( /*&oy_handle_*/ );
+    oy_handle_ = kdbOpen( /*&oy_handle_*/ );
 	  fprintf ( stderr, "______________ %p\n", oy_handle_);
-    DBG_EL1_S("oy_handle_ = kdbOpen_m() == %s", oy_handle_ ? "good":"NULL");
+    DBG_EL1_S("oy_handle_ = kdbOpen() == %s", oy_handle_ ? "good":"NULL");
     if(!oy_handle_)
       WARNc_S("Could not initialise Elektra.");
+#endif
     oyranos_init = 1;
   }
 }
@@ -156,12 +152,12 @@ void oyOpen  (void) { oyOpen_(); }
 void oyClose (void) { oyClose_(); }
 void oyCloseReal__() {
 #if KDB_VERSION_NUM >= 800
-  int rc=
-#endif
-  kdbClose_m( oy_handle_ ); oyERR(error_key)
+#else
+  kdbClose( oy_handle_ ); oyERR(error_key)
   ksDel(oy_config_);
   oy_config_ = 0;
   oy_handle_ = 0;
+#endif
   oyranos_init = 0;
 }
 
@@ -178,11 +174,18 @@ void oyCloseReal__() {
 
 
 #if KDB_VERSION_NUM >= 800
-int oyGetByName(KeySet * conf, const char * base)
+int oyGetByName(KeySet * ks, const char * key_name)
 {
-  Key *key = keyNew(base,KEY_END);
-  int rc = kdbGet(oy_handle_, conf, key); oyERR(key)
-  keyDel(key);
+  Key * error_key = keyNew(KEY_END);
+  KDB * kdb_handle = kdbOpen(error_key);
+  Key * top =  keyNew(key_name, KEY_END);
+
+  int rc = kdbGet(kdb_handle, ks, top); oyERR(top)
+
+  keyDel(top);
+  kdbClose(kdb_handle, error_key);
+  keyDel(error_key);
+
   return rc;
 }
 
@@ -884,13 +887,34 @@ oyGetKeyString_ ( const char       *key_name,
 int                oyEraseKey_       ( const char        * key_name )
 {
   int error = !key_name,
-      rc = 0,
-      success = 0;
+      rc = 0;
+  KeySet * ks = 0;
+
+#if KDB_VERSION_NUM >= 800
+  Key * error_key = keyNew(KEY_END);
+  KDB * kdb_handle = kdbOpen(error_key);
+  Key * top =  keyNew(key_name, KEY_END);
+  KeySet * cut;
+
+  ks = ksNew(0);
+  kdbGet(kdb_handle, ks, top);
+  cut = ksCut(ks, top);
+  rc = kdbSet(kdb_handle, ks, top); oyERR( top )
+
+  ksDel(ks);
+  ksDel(cut);
+  keyDel(top);
+  kdbClose(kdb_handle, error_key);
+  keyDel(error_key);
+
+#else /* KDB_VERSION_NUM >= 800 */
+  int success = 0;
   Key * key = 0,
       * current = 0;
-  KeySet * ks = 0;
   char * name = NULL,
        * value = NULL;
+
+  
 
   if(!oy_handle_)
     return 1;
@@ -959,6 +983,7 @@ int                oyEraseKey_       ( const char        * key_name )
 
 
   oyFree_m_( name );
+#endif /* KDB_VERSION_NUM >= 800 */
 
   return error;
 }
