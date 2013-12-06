@@ -19,7 +19,9 @@
 
 
 #include "oyranos.h"
+#include "oyranos_i18n.h"
 #include "oyranos_string.h"
+#include "oyranos_xml.h"
 #include "oyranos_config_internal.h"
 
 /* C++ includes and definitions */
@@ -2925,9 +2927,8 @@ oyTESTRESULT_e testCMMnmRun ()
   for(i = 0; i < n*3*17; ++i)
   {
   int error = !option || !oyOption_GetRegistration(option);
-  char * text = 0;
-  oyPointer ptr = 0;
-  size_t size = 0;
+  char * text = 0,
+       * ptr = 0;
 
   oyExportStart_(EXPORT_SETTING);
 
@@ -2940,10 +2941,10 @@ oyTESTRESULT_e testCMMnmRun ()
       oyOption_SetFromText( option, text, 0 );
     else
     {
-      ptr = oyGetKeyBinary_( oyOption_GetRegistration(option), &size, oyAllocateFunc_ );
-      if(ptr && size)
+      ptr = oyGetKeyString_( oyOption_GetRegistration(option), oyAllocateFunc_ );
+      if(ptr)
       {
-        oyOption_SetFromData( option, ptr, size );
+        oyOption_SetFromData( option, ptr, strlen(ptr) );
         oyFree_m_( ptr );
       }
     }

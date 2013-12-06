@@ -9,12 +9,13 @@
 #include "oyFilterNode_s_.h"
 #include "oyFilterNodes_s.h"
 
-#include <oyranos_helper.h>
-#include <oyranos_icc.h>
+#include "oyranos_helper.h"
+#include "oyranos_icc.h"
 
 #include "oyranos_devices.h"
 #include "oyranos_devices_internal.h"
 #include "oyranos_object_internal.h"
+#include "oyranos_sentinel.h"
 #include "oyConfig_s_.h"
 #include "oyOption_s_.h"
 #include "oyOptions_s_.h"
@@ -2221,9 +2222,8 @@ OYAPI int  OYEXPORT
 int            oyOption_SetValueFromDB  ( oyOption_s        * option )
 {
   int error = !option || !oyOption_GetRegistration(option);
-  char * text = 0;
-  oyPointer ptr = 0;
-  size_t size = 0;
+  char * text = 0,
+       * ptr = 0;
   oyOption_s * s = option;
 
   if(error)
@@ -2247,10 +2247,10 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
     }
     else
     {
-      ptr = oyGetKeyBinary_( oyOption_GetRegistration(s), &size, oyAllocateFunc_ );
-      if(ptr && size)
+      ptr = oyGetKeyString_( oyOption_GetRegistration(s), oyAllocateFunc_ );
+      if(ptr)
       {
-        oyOption_SetFromData( option, ptr, size );
+        oyOption_SetFromData( option, ptr, strlen(ptr) );
         oyOption_SetSource( s, oyOPTIONSOURCE_DATA );
         oyFree_m_( ptr );
       }

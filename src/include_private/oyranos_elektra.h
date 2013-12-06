@@ -36,22 +36,10 @@ extern "C" {
 /* --- internal API definition --- */
 
 /* separate from the external functions */
-void  oyOpen_                   (void);
-void  oyClose_                  (void);
-
-int   oyPathsCount_             (void);
-char* oyPathName_               (int           number,
-                                 oyAlloc_f     allocate_func);
-
-
 void oyOpen  (void);
 void oyClose (void);
 /* better use oyExportReset_(EXPORT_SETTING) */
 void oyCloseReal__(void);
-
-
-
-const char* oySelectUserSys_   ();
 
 int     oyGetBehaviour_        (oyBEHAVIOUR_e type);
 int     oySetBehaviour_        (oyBEHAVIOUR_e type,
@@ -60,13 +48,8 @@ int     oySetBehaviour_        (oyBEHAVIOUR_e type,
 /* elektra key wrappers */
 char*   oyGetKeyString_        (const char       *key_name,
                                 oyAlloc_f         allocFunc );
-oyPointer  oyGetKeyBinary_           ( const char        * key_name,
-                                       size_t            * size,
-                                       oyAlloc_f           allocate_func );
 int     oyAddKey_valueComment_ (const char* keyName,
                                 const char* value, const char* comment);
-int     oyKeySetHasValue_      (const char* keyParentName,
-                                const char* ask_value);
 char*   oySearchEmptyKeyname_        ( const char        * keyParentName );
 char **            oyKeySetGetNames_ ( const char        * key_parent_name,
                                        int               * n );

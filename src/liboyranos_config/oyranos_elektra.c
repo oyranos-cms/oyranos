@@ -119,6 +119,9 @@ STATIC_IF_NDEBUG KDB * oy_handle_ = 0;
 
 /* --- internal API definition --- */
 
+const char* oySelectUserSys_   ();
+
+
 /* elektra key list handling */
 KeySet* oyReturnChildrenList_  (const char* keyParentName,int* rc);
 
@@ -416,37 +419,6 @@ char **            oyKeySetGetNames_ ( const char        * key_parent_name,
   return texts;
 }
 
-int
-oyKeySetHasValue_     (const char* keyParentName, const char* ask_value)
-{
-  int result = 0;
-  int rc=0;
-  char* value = (char*) calloc (sizeof(char), MAX_PATH);
-  KeySet *myKeySet;
-  Key *current;
-
-  DBG_PROG_START
-
-  myKeySet = oyReturnChildrenList_( keyParentName, &rc );
-        if(myKeySet)
-        {
-          FOR_EACH_IN_KDBKEYSET( current, myKeySet )
-          {
-            keyGetName(current, value, MAX_PATH);
-            if(strstr(value, ask_value) != 0 &&
-               strlen(value) == strlen(ask_value))
-            {
-              result = 1;
-              break;
-            }
-          }
-        }
-  ksDel (myKeySet);
-  oyClose_();
-
-  DBG_PROG_ENDE
-  return result;
-}
 
 int
 oyAddKey_valueComment_ (const char* key_name,
@@ -715,106 +687,8 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
 }
 
 
-int      oyKeyIsString_              ( const char        * full_key_name )
-{
-  Key * key = 0;
-  int success = 0,
-      rc = 0;
-
-  /** check if the key is a binary one */
-  key = keyNew( full_key_name, KEY_END );
-  rc=kdbGetKey( oy_handle_, key ); oyERR(key)
-  if(rc > 0)
-    WARNc1_S("kdbGetKey returned with %d", rc);
-  success = keyIsString(key);
-  keyDel( key ); key = 0;
-
-  return success;
-}
-int      oyKeyIsBinary_              ( const char        * full_key_name )
-{
-  Key * key = 0;
-  int success = 0,
-      rc = 0;
-
-  /** check if the key is a binary one */
-  key = keyNew( full_key_name, KEY_END );
-  rc=kdbGetKey( oy_handle_, key ); oyERR(key)
-  if(rc > 0)
-    WARNc1_S("kdbGetKey returned with %d", rc);
-  success = keyIsBinary(key);
-  keyDel( key ); key = 0;
-
-  return success;
-}
-
-oyPointer  oyGetKeyBinary__          ( const char        * full_key_name,
-                                       size_t            * size,
-                                       oyAlloc_f           allocate_func )
-{
-  oyPointer ptr = 0;
-  Key * key = 0;
-  int rc = 0;
-  ssize_t new_size = 0;
-
-  key = keyNew( full_key_name, KEY_END );
-  rc=kdbGetKey( oy_handle_, key ); oyERR(key)
-  if(rc > 0)
-    WARNc1_S("kdbGetKey returned with %d", rc);
-  if(keyIsBinary(key))
-  {
-    new_size = keyGetValueSize( key );
-    oyAllocHelper_m_( ptr, uint8_t, new_size, allocate_func, return 0 )
-    new_size = keyGetBinary( key, ptr, new_size );
-    if(new_size)
-      * size = new_size;
-  }
-
-  keyDel( key ); key = 0;
-
-  return ptr;
-}
-
 /* public API implementation */
 
-oyPointer  oyGetKeyBinary_           ( const char        * key_name,
-                                       size_t            * size,
-                                       oyAlloc_f           allocate_func )
-{
-  oyPointer ptr = 0;
-  char* full_key_name = 0;
-
-  if( !key_name || strlen( key_name ) > MAX_PATH-1 )
-  { WARNc_S("wrong string format given");
-    goto clean2;
-  }
-
-  full_key_name = (char*) oyAllocateFunc_ (MAX_PATH);
-
-  if( !full_key_name )
-    goto clean2;
-
-  sprintf( full_key_name, "%s%s", OY_USER, key_name );
-
-  if(!oy_handle_)
-    goto clean2;
-
-  if(oyKeyIsBinary_(full_key_name))
-    ptr = oyGetKeyBinary__ ( full_key_name, size, allocate_func );
-
-  if( !ptr || !*size )
-  {
-    sprintf( full_key_name, "%s%s", OY_SYS, key_name );
-    if(oyKeyIsBinary_(full_key_name))
-      ptr = oyGetKeyBinary__ ( full_key_name, size, allocate_func );
-  }
-
-  clean2:
-  oyDeAllocateFunc_( full_key_name );
-
-  DBG_PROG_ENDE
-  return ptr;
-}
 
 /**@brief read Key value
  *
