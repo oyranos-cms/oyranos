@@ -189,15 +189,15 @@ oyTESTRESULT_e testElektra()
 
   error = oyAddKey_valueComment_(TEST_DOMAIN "/test_key",
                                  "NULLTestValue", "NULLTestComment" );
-  start = oyGetKeyString_("sw/Oyranos/Tests/test_key", 0);
+  start = oyGetKeyString_(TEST_DOMAIN "/test_key", 0);
   printf ("start is %s\n", start);
   if(!start)
   {
     oyExportStart_(EXPORT_CHECK_NO);
     oyExportEnd_();
-    error = oyAddKey_valueComment_("sw/Oyranos/Tests/test_key",
+    error = oyAddKey_valueComment_(TEST_DOMAIN "/test_key",
                                  "NULLTestValue", "NULLTestComment" );
-    start = oyGetKeyString_("sw/Oyranos/Tests/test_key", 0);
+    start = oyGetKeyString_(TEST_DOMAIN "/test_key", 0);
     printf ("start is %s\n", start);
     
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL,
@@ -207,9 +207,9 @@ oyTESTRESULT_e testElektra()
   {
     oyExportStart_(EXPORT_SETTING);
     oyExportEnd_();
-    error = oyAddKey_valueComment_("sw/Oyranos/Tests/test_key",
+    error = oyAddKey_valueComment_(TEST_DOMAIN "/test_key",
                                  "NULLTestValue", "NULLTestComment" );
-    start = oyGetKeyString_("sw/Oyranos/Tests/test_key", 0);
+    start = oyGetKeyString_(TEST_DOMAIN "/test_key", 0);
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL, 
     "Elektra not initialised? try oyExportStart_(EXPORT_SETTING)" );
   }
@@ -218,9 +218,9 @@ oyTESTRESULT_e testElektra()
   else
     fprintf(zout, "could not initialise\n" );
 
-  error = oyAddKey_valueComment_("sw/Oyranos/Tests/test_key",
+  error = oyAddKey_valueComment_(TEST_DOMAIN "/test_key",
                                  "myTestValue", "myTestComment" );
-  value = oyGetKeyString_("sw/Oyranos/Tests/test_key", 0);
+  value = oyGetKeyString_(TEST_DOMAIN "/test_key", 0);
   if(value)
     fprintf(zout, "result key value: %s\n", value );
 
