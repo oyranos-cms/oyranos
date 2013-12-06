@@ -260,6 +260,18 @@ oyTESTRESULT_e testElektra()
   } else
     result = oyTESTRESULT_SUCCESS;
 
+  error = oyEraseKey_( TEST_DOMAIN "/test_key" );
+  value = oyGetKeyString_(TEST_DOMAIN "/test_key", 0);
+  if(value && strlen(value))
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "Elektra key not erased" );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "Elektra key erased" );
+  }
+
   return result;
 }
 
