@@ -1925,6 +1925,12 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   char ** texts = 0,
         * val = 0;
 
+  oyConfigs_s * configs = 0;
+  oyConfig_s * config = 0;
+  oyOptions_s * options = 0;
+  oyOption_s * o = 0;
+  int devices_n = 0;
+
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
 #endif
@@ -1940,12 +1946,6 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyConfigDomainList Found CMM's %d     ", (int)count );
   }
-
-  oyConfigs_s * configs = 0;
-  oyConfig_s * config = 0;
-  oyOptions_s * options = 0;
-  oyOption_s * o = 0;
-  int devices_n = 0;
 
 
   fprintf( zout, "oyConfigs_FromDomain() \"properties\" call:\n" );
@@ -2026,6 +2026,15 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   error = oyConfigs_FromDB( registration, &configs, 0 );
   count = oyConfigs_Count( configs );
   oyConfigs_Release( &configs );
+
+  if( count > 0 )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyConfigs_FromDB() %d                  ", (int)count );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyConfigs_FromDB() failed %d           ", (int)count );
+  }
+
 
   int32_t rank = 0;
   error = oyConfig_GetDB( config, &rank );
