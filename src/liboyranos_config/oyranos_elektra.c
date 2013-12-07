@@ -83,9 +83,10 @@ char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", r
 #define oyERR(k) { const Key *meta = NULL; keyRewindMeta(k); \
                    if(rc < 0) { \
                      while((meta = keyNextMeta(k)) != 0) { \
-                       WARNc3_S( "rc:%d %s:\t%s", rc, \
-                                 oyNoEmptyString_m_( keyName(meta) ), \
-                                 oyNoEmptyString_m_( keyString(meta) ) ); \
+                       if(oy_debug || strstr(oyNoEmptyString_m_( keyName(meta) ),"warnings") == 0) \
+                         WARNc3_S( "rc:%d %s:\t%s", rc, \
+                                   oyNoEmptyString_m_( keyName(meta) ), \
+                                   oyNoEmptyString_m_( keyString(meta) ) ); \
                      } \
                  } }
 #else
@@ -362,10 +363,8 @@ char* oySearchEmptyKeyname_ (const char* key_parent_name)
     key = keyNew( new_key_name, KEY_END );
 
     rc=kdbGetKey( oy_handle_, key ); oyERR(key)
-    if( rc == -1 &&
-        !keyIsDir( key ) &&
-        !keyIsString(key) &&
-        !keyIsBinary(key) )
+    if( rc <= 0 &&
+        !keyIsDir( key ) )
       nth = i;
     keyDel( key );
     i++;
