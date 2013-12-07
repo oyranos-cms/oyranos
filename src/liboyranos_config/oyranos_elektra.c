@@ -384,6 +384,7 @@ char* oySearchEmptyKeyname_ (const char* key_parent_name)
   return new_key_name;
 } 
 
+/** @brief The function returns keys found just one level under the arguments one. */
 char **            oyKeySetGetNames_ ( const char        * key_parent_name,
                                        int               * n )
 {
@@ -411,12 +412,24 @@ char **            oyKeySetGetNames_ ( const char        * key_parent_name,
     {
       keyGetName(current, current_name, MAX_PATH);
       if(current_name &&
-         oyStrstr_(current_name, name) &&
-         !oyStrrchr_(&((char*)oyStrstr_(current_name, name))[oyStrlen_(name)+1],
-                     OY_SLASH_C ) )
-        oyStringListAddStaticString_( &texts, n,
-                                      oyStrstr_(current_name, name),
-                                      oyAllocateFunc_, oyDeAllocateFunc_);
+         oyStrstr_(current_name, name) )
+      {
+        const char * t = oyStrstr_(current_name, name);
+        char * txt = NULL, * tmp;
+        if( oyStrrchr_( &t[oyStrlen_(name)+1], OY_SLASH_C ) )
+        {
+          txt = oyStringCopy_( t, oyAllocateFunc_ );
+          tmp = &txt[oyStrlen_(name)+1];
+          tmp = oyStrchr_(tmp, OY_SLASH_C);
+          if(tmp)
+            tmp[0] = '\000';
+          t = txt;
+        }
+        if(!oyStringListHas_( (const char **)texts, *n, t ) )
+          oyStringListAddStaticString_( &texts, n, t,
+                                        oyAllocateFunc_, oyDeAllocateFunc_);
+        if(txt) oyFree_m_(txt);
+      }
     }
   }
   ksDel (my_key_set);
