@@ -113,6 +113,9 @@ void               oyStringListAddStaticString_ ( char *** list,
 void               oyStringListRelease_(char           *** l,
                                        int                 size,
                                        oyDeAlloc_f         deallocFunc );
+int                oyStringListHas_  ( const char       ** list,
+                                       int                 list_n,
+                                       const char        * string );
 char**             oyStringListFilter_(const char       ** list,
                                        int                 n_alt,
                                        const char        * dir_string,

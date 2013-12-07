@@ -726,6 +726,36 @@ char**             oyStringListAppend_( const char   ** list,
 
 
 /** @internal
+ *  @brief   find duplicates with strstr()
+ *
+ *  @version Oyranos: 0.9.5
+ *  @since   2013/12/07 (Oyranos: 0.9.5)
+ *  @date    2013/12/07
+ */
+int                oyStringListHas_  ( const char       ** list,
+                                       int                 list_n,
+                                       const char        * string )
+{
+  int n = 0;
+  int i;
+
+  for(i = 0; i < list_n; ++i)
+  {
+    if(list[i] && list[i][0])
+    {
+      if(string && string[0])
+      {
+        const char * t = oyStrstr_(list[i], string);
+        if(t)
+          ++n;
+      }
+    }
+  }
+
+  return n;
+}
+
+/** @internal
  *  @brief reducing filter
  *
  *  In order to collect all possible matches chain this filter.
