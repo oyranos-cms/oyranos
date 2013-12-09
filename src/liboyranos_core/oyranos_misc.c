@@ -86,7 +86,7 @@ double       oyLinInterpolateRampF64 ( double            * ramp,
   if(pos >= 1.0)
     return ramp[ramp_size-1];
 
-  dist = modff( pos*(ramp_size-1), &start );
+  dist = modf( pos*(ramp_size-1), &start );
   val1 = ramp[(int)start];
   val2 = ramp[(int)start+1];
 
