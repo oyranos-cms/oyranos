@@ -185,6 +185,8 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         }
 
         oyPixelAccess_Release( &new_ticket );
+        oyArray2d_Release( &array_in );
+        oyArray2d_Release( &array_out );
         oyRectangle_Release( &new_ticket_roi );
       }
 
