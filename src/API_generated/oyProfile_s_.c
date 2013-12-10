@@ -948,6 +948,8 @@ char *       oyProfile_GetFileName_r ( oyProfile_s_      * profile,
         }
       }
 
+      oyProfile_Release( &tmp );
+
       name = oyFindProfile_( name );
       if(name)
       {
