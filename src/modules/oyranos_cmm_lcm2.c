@@ -3167,7 +3167,7 @@ const char * lcm2InfoGetText         ( const char        * select,
          if(type == oyNAME_NICK)
       return "MIT";
     else if(type == oyNAME_NAME)
-      return _("Copyright (c) 1998-2008 Marti Maria Saguer; MIT");
+      return _("Copyright (c) 1998-2013 Marti Maria Saguer; MIT");
     else
       return _("MIT license: http://www.opensource.org/licenses/mit-license.php");
   } else if(strcmp(select, "help")==0)

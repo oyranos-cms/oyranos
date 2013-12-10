@@ -258,7 +258,7 @@ typedef enum {
 /** @brief layout flags for widgets */
 #define OY_LAYOUT_NO_CHOICES    0x01  /**!< show informational */
 #define OY_LAYOUT_MIDDLE        0x02  /**!< Arrange in the middle. */
-#define OY_LAYOUT_PATH_SELECTOR 0x04  /**!< add a path selector tp each entry */ 
+#define OY_LAYOUT_PATH_SELECTOR 0x04  /**!< add a path selector to each entry */ 
 
 oyWIDGET_e  * oyWidgetListGet          (oyGROUP_e         group,
                                         int             * count,

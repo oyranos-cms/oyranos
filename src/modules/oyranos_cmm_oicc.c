@@ -15,6 +15,7 @@
 
 
 #include "oyranos_config_internal.h"
+#include "oyranos_oicc.h"
 
 #include "oyCMMapi9_s_.h"
 #include "oyCMMobjectType_s_.h"
@@ -40,7 +41,6 @@
 #include <dlfcn.h>
 #endif
 
-#define CMM_NICK "oicc"
 oyMessage_f oicc_msg = oyMessageFunc;
 int            oiccFilterMessageFuncSet( oyMessage_f       message_func );
 int                oiccFilterInit    ( oyStruct_s        * filter );
@@ -1007,5 +1007,6 @@ oyCMMinfo_s_ oicc_cmm_module = {
   (oyCMMapi_s*) & oicc_api9,
 
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
+  oiccInit
 };
 

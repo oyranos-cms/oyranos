@@ -655,7 +655,7 @@ digraph Anatomy_A {
  *  might be useful for canonical processing Oyranos registration text strings.
  *  Many functions allow for passing a registration string. Matching can be 
  *  obtained by omitting sections like in the string "//openicc/icc", where the
- *  elements between slashes is o,itted. This string would result in a match 
+ *  elements between slashes is omitted. This string would result in a match 
  *  for any ICC compliant color conversion filter.
  *
  *  The registration attributes ".front", ".advanced" and more are described in
