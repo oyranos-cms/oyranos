@@ -206,9 +206,8 @@ int  oyGetKey                        ( Key               * key )
 
   result = ksLookup( oy_config_, key, KDB_O_NONE);
   DBG_EL1_S( "result = ksLookup( oy_config_, key, KDB_O_NONE) == %s", result ? "good":"NULL" );
-  if(!rc && !result)
+  if(rc < 0 && !result)
   {
-    rc = -1;
     WARNc1_S( "keyString(key) == %s", oyNoEmptyString_m_(keyString(key)) );
     oyERR(key)
   }
