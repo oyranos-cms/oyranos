@@ -75,6 +75,19 @@ int                oiccFilterInit    ( oyStruct_s        * filter )
   return error;
 }
 
+/** Function oiccInit
+ *  @brief   API requirement
+ *
+ *  @version Oyranos: 0.9.5
+ *  @since   2013/12/11 (Oyranos: 0.9.5)
+ *  @date    2013/12/11
+ */
+int                oiccInit          ( oyStruct_s        * filter )
+{
+  int error = 0;
+  return error;
+}
+
 /** Function oicc_defaultICCValidateOptions
  *  @brief   dummy
  *
