@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2008-2012 (C) Kai-Uwe Behrmann
+ *            2008-2013 (C) Kai-Uwe Behrmann
  *
  *  @brief    modules for Oyranos
  *  @internal
@@ -24,6 +24,8 @@
 #include "oyranos_definitions.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
+#include "oyNamedColor_s.h"
+#include "oyNamedColors_s.h"
 
 #include <iconv.h>
 #include <math.h>
@@ -49,6 +51,21 @@ oyStructList_s *   oyCurveFromTag    ( char              * data,
 oyStructList_s *   oyCurvesFromTag   ( char              * data,
                                        size_t              size,
                                        int                 count );
+struct Ncl2Color {
+  char name[32];
+  icUInt16Number pcs[3]; // PCS Lab or XYZ
+  icUInt16Number device[16];
+};
+
+struct Ncl2 {
+  char vendor_flag[4];
+  icUInt32Number count;
+  icUInt32Number device;
+  char suffix[32];
+  char prefix[32];
+  struct Ncl2Color *colors;
+};
+
 
 #define AD oyAllocateFunc_, oyDeAllocateFunc_
 
@@ -86,6 +103,7 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
          case icSigLutAtoBType:
          case icSigLutBtoAType:
          case icSigMakeAndModelType:
+         case icSigNamedColor2Type:
          case icSigNativeDisplayInfoType:
          case icSigDictType:
          case icSigMultiLocalizedUnicodeType:
@@ -107,6 +125,7 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
          case icSigProfileSequenceIdentifierType:
          case icSigTextDescriptionType:
          case icSigTextType:
+         case icSigNamedColor2Type:
               ret = 1; break;
          default: ret = 0; break;
          }
@@ -527,6 +546,15 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
  *    - since Oyranos 0.1.11 (API 0.1.11)
  *    - returns a list of strings, uneven is descriptive, even contains values
  *
+ *  - icSigNamedColor2Type:
+ *    - since Oyranos 0.9.5 (API 0.9.0)
+ *    - list: should contain the objects to create the tag
+ *      - oyOption_s::string is considered to hold the prefix
+ *      - oyOption_s::string is considered to hold the suffix
+ *      - oyOptions_s::double contains in each option three PCS values
+ *      - oyOptions_s::double contains in each option the device values
+ *      - oyOptions_s::string_list contains in each option the color name
+ *
  *  - icSigDictType:
  *    - since Oyranos 0.1.10 (API 0.1.12)
  *    - returns four strings each originating from a uint32_t
@@ -587,9 +615,9 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
  *        - second entry:  CIE *Y
  *        - third entry : CIE *Z
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.5
  *  @since   2008/01/02 (Oyranos: 0.1.8)
- *  @date    2009/01/03
+ *  @date    2013/12/11
  */
 oyStructList_s * oyIMProfileTag_GetValues(
                                        oyProfileTag_s    * tag )
@@ -736,6 +764,22 @@ oyStructList_s * oyIMProfileTag_GetValues(
     - the icSigProfileDescriptionTag according to language in 1 + i * 5 + 4"
     };
 
+    oyName_s description_ncl2 = {
+      oyOBJECT_NAME_S, 0,0,0,
+      CMM_NICK,
+      "ncl2",
+      "\
+- icSigNamedColor2Type:\
+  - since Oyranos 0.9.5 (API 0.9.0)\
+  - list: should contain the objects to create the tag\
+    - a string describing the tag\
+    - oyOption_s::string is considered to hold the prefix\
+    - oyOption_s::string is considered to hold the suffix\
+    - oyOptions_s::double contains in each option three PCS values\
+    - oyOptions_s::double contains in each option the device values\
+    - oyOptions_s::string_list contains in each option the color name"
+    };
+
     oyName_s description_MS10 = {
       oyOBJECT_NAME_S, 0,0,0,
       CMM_NICK,
@@ -856,6 +900,10 @@ oyStructList_s * oyIMProfileTag_GetValues(
       error = oyStructList_MoveIn( list, &description, -1, 0 );
 
     description = (oyStruct_s*) &description_psid;
+    if(!error)
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
+
+    description = (oyStruct_s*) &description_ncl2;
     if(!error)
       error = oyStructList_MoveIn( list, &description, -1, 0 );
 
@@ -2147,6 +2195,59 @@ oyStructList_s * oyIMProfileTag_GetValues(
              }
            }
            break;
+      case icSigNamedColor2Type:
+           if (oyProfileTag_GetSize(tag) < 76)
+           { return texts; }
+
+           if(error <= 0)
+           {
+             struct Ncl2 * ncl2 = (struct Ncl2*)&mem[8];
+             int colors_n        = oyValueUInt32( ncl2->count );
+             int device_colors_n = oyValueUInt32( ncl2->device ), i,j;
+             oyOption_s * lab = oyOption_FromRegistration( "////lab", 0 );
+
+             oyStringAddPrintf_( &tmp, AD, "\n\n   %s  %d (%d)\n\
+   %s    %s | %s\n\
+%s\t%s\n",
+                                 _("Number of colors:"),
+                                 colors_n, device_colors_n,
+                                 _("Name"),_("CIE*Lab"),_("Device Colors"),
+                                 ncl2->prefix, ncl2->suffix
+                               );
+
+             for (i = 0; i < colors_n; ++i)
+             {
+               struct Ncl2Color *f = (struct Ncl2Color*) ((char*)ncl2 + 76 + /* base site of Ncl2 */
+                                     (i * (38 +                 /* base size of Ncl2Color */
+                                           device_colors_n      /* number of device colors */
+                                           * sizeof(icUInt16Number))));/* Ncl2Color::device_colors_n */
+               oyStringAddPrintf_( &tmp, AD, "%s%s%s  %d %d %d | ",
+                                   ncl2->prefix,
+                                   f->name,
+                                   ncl2->suffix,
+                                   oyValueUInt16( f->pcs[0]),
+                                   oyValueUInt16( f->pcs[1]),
+                                   oyValueUInt16( f->pcs[2])
+                                 );
+               for( j=0; j < device_colors_n; ++j)
+                 oyStringAddPrintf_( &tmp, AD, "%d ", oyValueUInt16(f->device[j]));
+               oyStringAddPrintf_( &tmp, AD, "\n" );
+             }
+
+             oyStructList_AddName( texts, tmp, -1 );
+
+             /* max 31 byte */
+             opt = oyOption_FromRegistration( "////prefix", 0 );
+             oyOption_SetFromText( opt, ncl2->prefix, 0 );
+             oyStructList_MoveIn( texts, (oyStruct_s**)&opt, -1, 0 );
+
+             opt = oyOption_FromRegistration( "////sufffix", 0 );
+             oyOption_SetFromText( opt, ncl2->suffix, 0 );
+             oyStructList_MoveIn( texts, (oyStruct_s**)&opt, -1, 0 );
+             if(tmp) oyFree_m_(tmp);
+           }
+           
+           break;
       case icSigXYZType:
 
            if (oyProfileTag_GetSize(tag) < 20)
@@ -2207,6 +2308,14 @@ oyStructList_s * oyIMProfileTag_GetValues(
  *    - since Oyranos 0.1.8 (API 0.1.8)
  *    - list: should contain only names in oyName_s objects
  *      - oyName_s::name is considered to hold the name
+ *  - icSigNamedColor2Type:
+ *    - since Oyranos 0.9.5 (API 0.9.5)
+ *    - list: should contain the objects to create the tag
+ *      - oyOption_s::string is considered to hold the prefix
+ *      - oyOption_s::string is considered to hold the suffix
+ *      - oyOptions_s::double contains in each option three PCS values
+ *      - oyOptions_s::double contains in each option the device values
+ *      - oyOptions_s::string_list contains in each option the color name
  *
  *  - non supported types
  *    - the oyProfileTag_s::status_ field will be set to oyUNDEFINED 
@@ -2225,9 +2334,9 @@ oyStructList_s * oyIMProfileTag_GetValues(
  *  @param[in]     version             version as supported
  *  @return                            oySTATUS_e status
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.5
+ *  @date    2013/08/05
  *  @since   2008/01/08 (Oyranos: 0.1.8)
- *  @date    2008/03/11
  */
 int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
                                        oyStructList_s    * list,
@@ -2681,6 +2790,27 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
            /*len = mem_len + 1;
            mem_len = len + (len%4 ? len%4 : 0);*/
            oyProfileTag_Set( s, oyProfileTag_GetUse( s ), tag_type, oyOK, len, mem );
+         }
+       }
+
+       break;
+
+    case icSigNamedColor2Type:
+       {
+         oyOption_s * prefix = (oyOption_s*) oyStructList_GetRefType( list,
+                                                   0, oyOBJECT_OPTION_S );
+         oyOption_s * suffix = (oyOption_s*) oyStructList_GetRefType( list,
+                                                   1, oyOBJECT_OPTION_S );
+         oyNamedColors_s * colors = (oyNamedColors_s*) oyStructList_GetRefType( list,
+                                                   2, oyOBJECT_NAMED_COLORS_S );
+         int count = oyNamedColors_Count( colors );
+         oyNamedColor_s * ncl = 0;
+
+         error = count <= 0;
+         for(i = 0; i < count; ++i)
+         {
+           ncl = oyNamedColors_Get(colors, 0);
+           oyNamedColor_Release( &ncl );
          }
        }
 
