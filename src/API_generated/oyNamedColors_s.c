@@ -305,7 +305,8 @@ void   oyNamedColors_SetPrefix       ( oyNamedColors_s   * colors,
   if(s->prefix)
     oyObject_GetDeAlloc( s->oy_ )( &s->prefix );
 
-  s->prefix = oyStringCopy_( string, oyObject_GetAlloc( s->oy_) );
+  if(string)
+    s->prefix = oyStringCopy_( string, oyObject_GetAlloc( s->oy_) );
 }
 
 /** @memberof oyNamedColors_s
@@ -330,7 +331,8 @@ void   oyNamedColors_SetSuffix       ( oyNamedColors_s   * colors,
   if(s->suffix)
     oyObject_GetDeAlloc( s->oy_ )( &s->suffix );
 
-  s->suffix = oyStringCopy_( string, oyObject_GetAlloc( s->oy_) );
+  if(string)
+    s->suffix = oyStringCopy_( string, oyObject_GetAlloc( s->oy_) );
 }
 
 /** @memberof oyNamedColors_s
@@ -351,7 +353,10 @@ const char * oyNamedColors_GetPrefix ( oyNamedColors_s   * colors )
 
   oyCheckType__m( oyOBJECT_NAMED_COLORS_S, return 0 )
 
-  return s->prefix;
+  if(s->prefix)
+    return s->prefix;
+  else
+    return "";
 }
 
 /** @memberof oyNamedColors_s
@@ -372,7 +377,10 @@ const char * oyNamedColors_GetSuffix ( oyNamedColors_s   * colors )
 
   oyCheckType__m( oyOBJECT_NAMED_COLORS_S, return 0 )
 
-  return s->suffix;
+  if(s->suffix)
+    return s->suffix;
+  else
+    return "";
 }
 
 /** @memberof oyNamedColors_s
