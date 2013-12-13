@@ -19,9 +19,9 @@ void oyNamedColors_Release__Members( oyNamedColors_s_ * namedcolors )
 {
   oyNamedColors_s_ * s = namedcolors;
   if(s->prefix)
-    oyObject_GetDeAlloc( s->oy_ )( &s->prefix );
+    oyObject_GetDeAlloc( s->oy_ )( s->prefix );
   if(s->suffix)
-    oyObject_GetDeAlloc( s->oy_ )( &s->suffix );
+    oyObject_GetDeAlloc( s->oy_ )( s->suffix );
 }
 
 /** Function    oyNamedColors_Init__Members
