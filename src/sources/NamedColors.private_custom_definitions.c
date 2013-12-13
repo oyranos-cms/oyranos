@@ -22,8 +22,6 @@ void oyNamedColors_Release__Members( oyNamedColors_s_ * namedcolors )
     oyObject_GetDeAlloc( s->oy_ )( &s->prefix );
   if(s->suffix)
     oyObject_GetDeAlloc( s->oy_ )( &s->suffix );
-  if(s->single_color_name)
-    oyObject_GetDeAlloc( s->oy_ )( &s->single_color_name );
 }
 
 /** Function    oyNamedColors_Init__Members

@@ -293,7 +293,7 @@ OYAPI int  OYEXPORT
  *  @date    2013/08/25
  *  @since   2013/08/25 (Oyranos: 0.9.5)
  */
-void   oyNamedColor_SetPrefix        ( oyNamedColors_s   * colors,
+void   oyNamedColors_SetPrefix       ( oyNamedColors_s   * colors,
                                        const char        * string )
 {
   oyNamedColors_s_ * s = (oyNamedColors_s_*) colors;
@@ -318,7 +318,7 @@ void   oyNamedColor_SetPrefix        ( oyNamedColors_s   * colors,
  *  @date    2013/08/25
  *  @since   2013/08/25 (Oyranos: 0.9.5)
  */
-void   oyNamedColor_SetSuffix        ( oyNamedColors_s   * colors,
+void   oyNamedColors_SetSuffix       ( oyNamedColors_s   * colors,
                                        const char        * string )
 {
   oyNamedColors_s_ * s = (oyNamedColors_s_*) colors;
@@ -343,7 +343,7 @@ void   oyNamedColor_SetSuffix        ( oyNamedColors_s   * colors,
  *  @date    2013/09/03
  *  @since   2013/09/03 (Oyranos: 0.9.5)
  */
-const char * oyNamedColor_GetPrefix  ( oyNamedColors_s   * colors )
+const char * oyNamedColors_GetPrefix ( oyNamedColors_s   * colors )
 {
   oyNamedColors_s_ * s = (oyNamedColors_s_*) colors;
   if(!colors)
@@ -364,7 +364,7 @@ const char * oyNamedColor_GetPrefix  ( oyNamedColors_s   * colors )
  *  @date    2013/09/03
  *  @since   2013/09/03 (Oyranos: 0.9.5)
  */
-const char * oyNamedColor_GetSuffix  ( oyNamedColors_s   * colors )
+const char * oyNamedColors_GetSuffix ( oyNamedColors_s   * colors )
 {
   oyNamedColors_s_ * s = (oyNamedColors_s_*) colors;
   if(!colors)
@@ -379,14 +379,13 @@ const char * oyNamedColor_GetSuffix  ( oyNamedColors_s   * colors )
  *  @brief    get full length name
  *
  *  The name is constructed from suffix, name and prefix.
- *  The function is not reentrant.
  *
  *  @param[in]     colors              Oyranos colors struct pointer
  *  @param[in]     pos                 nth color in list
  *  @return                            string
  *
  *  @version Oyranos: 0.9.5
- *  @date    2013/09/03
+ *  @date    2013/12/12
  *  @since   2013/09/03 (Oyranos: 0.9.5)
  */
 const char * oyNamedColors_GetColorName (
@@ -395,6 +394,8 @@ const char * oyNamedColors_GetColorName (
 {
   oyNamedColors_s_ * s = (oyNamedColors_s_*) colors;
   oyNamedColor_s * c;
+  const char * text = "----";
+  char * txt = NULL;
 
   if(!colors)
     return 0;
@@ -404,23 +405,23 @@ const char * oyNamedColors_GetColorName (
   c = (oyNamedColor_s*) oyStructList_GetRefType( s->list_, pos,
                                                  oyOBJECT_NAMED_COLOR_S );
 
-  if(s->single_color_name)
-    oyObject_GetDeAlloc( s->oy_ )( &s->single_color_name );
-
-  oyStringAddPrintf_( &s->single_color_name,
+  oyStringAddPrintf_( &txt,
                       oyObject_GetAlloc( s->oy_ ),
                       oyObject_GetDeAlloc( s->oy_ ),
                       "%s%s%s",
                       oyNoEmptyString_m_(s->prefix),
                       oyNoEmptyString_m_(
                         oyNamedColor_GetName( c,
-                                              oyNAME_NAME,0) ),
+                                              oyNAME_NICK,0) ),
                       oyNoEmptyString_m_(s->suffix)
                     );
+  oyObject_SetName ( c->oy_, txt, oyNAME_NAME );
+  oyFree_m_( txt );
+  text = oyObject_GetName( s->oy_, oyNAME_NAME );
 
   oyNamedColor_Release( &c );
 
-  return s->single_color_name;
+  return text;
 }
 
 /* } Include "NamedColors.public_methods_definitions.c" */
