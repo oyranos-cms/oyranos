@@ -4,7 +4,7 @@ TARGET_LINK_LIBRARIES( oyranos-profiles oyranos ${EXTRA_LIBS} )
 INSTALL (TARGETS oyranos-profiles DESTINATION bin)
 
 # ICC profile information and manipulations
-ADD_EXECUTABLE( oyranos-profile "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_profile.c" )
+ADD_EXECUTABLE( oyranos-profile "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_profile_tool.c" )
 TARGET_LINK_LIBRARIES( oyranos-profile oyranos ${EXTRA_LIBS} )
 INSTALL (TARGETS oyranos-profile DESTINATION bin)
 
