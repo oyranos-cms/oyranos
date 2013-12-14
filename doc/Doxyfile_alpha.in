@@ -77,17 +77,6 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-FILE_PATTERNS          = oyranos.c oyranos.h \
-                         doxymentation_alpha \
-                         doxymentation_common \
-                         oyranos_alpha.c oyranos_alpha.h \
-                         oyranos_generic.h oyranos_module.h \
-                         oyranos_object.h \
-                         oy*_s*.c oy*_s*.h *.dox \
-                         oyranos_core.h oyranos_core.c \
-                         oyranos_icc.h oyranos_icc.c \
-                         oyranos_xml.h oyranos_xml.c \
-                         oyranos_cmm.h
 RECURSIVE              = NO
 EXCLUDE                = oyranos_gamma.c
 EXCLUDE_SYMLINKS       = YES
@@ -228,3 +217,11 @@ DOT_TRANSPARENT        = YES
 # Configuration::additions related to the search engine   
 #---------------------------------------------------------------------------
 SEARCHENGINE           = YES
+FILE_PATTERNS          = doxymentation_alpha \
+                         oyranos.h \
+                         oyranos_alpha.c oyranos_alpha.h \
+                         oy*_s_.c oy*_s_.h *.dox \
+                         oyranos_core.h \
+                         oyranos_icc.h \
+                         oyranos_xml.h oyranos_xml.c \
+                         oyranos_cmm.h \

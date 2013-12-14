@@ -30,6 +30,7 @@
     and so on.
 
     @section tools User Tools Documentation
+    - oyranos-icc - access embedded profiles from images, color convert images
     - oyranos-monitor - a commandline tool for calling from a setup script like
       .xinitrc. It selects a profile for the current monitor and sets up the
       X server at startup time. Usage:
@@ -43,23 +44,24 @@
     oyranos-policy `oyranos-config --syscolordir`/`oyranos-config --settingsdirname`/office.policy.xml
     @endverbatim
     Affected are default profiles and some behaviour settings.
+    - oyranos-profile - access profile information
+    - oyranos-profile-graph - draw a 2D graph from profiles
+    - oyranos-profiles - lookup profiles in the systems color paths, download and install
     - <a href="http://www.oyranos.org/wiki/index.php?title=Oyranos_Configuration_Dialog">oyranos-config-fltk</a> - a configuration UI application, using some functions      of the Oyranos APIs. If you have <a href="http://www.oyranos.org/wiki/index.php?title=ICC_Examin">ICC Examin</a> installed it can be called to
       show details of profiles. 
     - oyranos-config - a command line tool to get compiler flags to using Oyranos in your own project. Try  \a oyranos-config \a --help to see the appropriate options.
 
     @section user User API Documentation
     The basic Oyranos API gets included with oyranos.h. An application, which
-    wants to use these functions, needs to link against Oyranos and Elektra.
-    - @ref policy - load / save of user policies
-    - @ref options - layout and describe options to the user; part of user policies
-    - @ref behaviour - get and set common behaviour; part of user policies
-    - @ref default_profiles - get and set commonly used profiles; part of user policies
-    - @ref profile_lists - provides the search path content as profile lists for your GUI
-    - @ref profile_handling - file I/O and more
+    wants to use these functions, needs to link against Oyranos.
+    - @ref defaults_apis - obtain and manipulate user preferences and UI translations
+    - @ref objects_profile - select, read, manipulate and write ICC profiles 
+    - @ref devices_handling - select, read, manipulate and write color device configurations
+    - @ref objects_conversion - build and process image graphs
 
-    The monitor related API is contained in oyranos_monitor.h. Linking against
-    the X11 libraries on Linux is done on runtime.
-    - @ref monitor_api - monitor profile configuration
+    The monitor related interfaces are accessed through @ref devices_handling
+    interfaces. Loading of the according module for the device depedent
+    libraries is done on runtime.
 
     The key names, which Oyranos uses to store its configuration in an Elektra
     file tree, are defined in oyranos_definitions.h.
@@ -74,19 +76,21 @@
     #include <oyranos.h> @endverbatim
     in your source text, in order to use Oyranos. 
     @verbatim
-    int oyranos_version = oyVersion(); @endverbatim
+    int main( int argc, char ** argv ) {
+      int oyranos_version = oyVersion( 0 );
+      return 0;
+    }@endverbatim
     \b oyranos-config \b --cflags delivers the compiler flags and \b oyranos-config \b --ldflags the linker flags.
 
     Then you can put Oyranos functions in your code and compile with:
     @verbatim
-    cc `oyranos-config --cflags` `oyranos-config --ldflags` mycode.c -o myApp @endverbatim
+    cc `oyranos-config --cflags --ldflags` mycode.c -o myApp @endverbatim
     to link Oyranos into your application.
-
-    The namespace in C++ is oyranos:: , e.g. oyranos::oyVersion().
 
     Writing of filters and modules for Oyranos is covered in the @ref
     extending_oyranos page.
  */
+
 /*    - @ref device_profiles - profiles which characterise devices */
 
 

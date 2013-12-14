@@ -234,7 +234,7 @@ SET_TARGET_PROPERTIES( oyranos_core oyranos_object oyranos_modules oyranos_confi
 
 
 SET( DOC_SOURCES
-	doxymentation doxymentation_common
+	doxymentation_common
 	${CFILES_CORE_PUBLIC}
 	${CHEADERS_PUBLIC}
 	${CFILES_OBJECT_PUBLIC}
