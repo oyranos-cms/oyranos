@@ -100,6 +100,79 @@ oyICCColorSpaceGetChannelCount ( icColorSpaceSignature color )
   return n;
 }
 
+/**
+ *  @brief get color spaces using a certain number of channels
+ *
+ *  @param[in]     channels_n          desired color channels count
+ *  @return                            zero terminated list of color spaces;
+ *  The returned value is not reentrant.
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2013/12/14
+ *  @since   2013/12/14 (Oyranos: 0.9.5)
+ */
+icColorSpaceSignature * oyICCGetColorSpaceWithChannelCount ( int channels_n )
+{
+  static icColorSpaceSignature sigs[12];
+
+  memset( sigs, 0, sizeof(icColorSpaceSignature) * 12 );
+
+  switch (channels_n)
+  {
+    case 1: sigs[0] = icSigGrayData; break;
+    case 2: sigs[0] = icSig2colorData; break;
+    case 3: sigs[0] = icSigXYZData;
+            sigs[1] = icSigLabData;
+            sigs[2] = icSigLabData;
+            sigs[3] = icSigLuvData;
+            sigs[4] = icSigYCbCrData;
+            sigs[5] = icSigYxyData;
+            sigs[6] = icSigRgbData;
+            sigs[7] = icSigHsvData;
+            sigs[8] = icSigHlsData;
+            sigs[9] = icSigCmyData;
+            sigs[10] = icSig3colorData;
+            break;
+    case 4: sigs[0] = icSigCmykData;
+            sigs[1] = icSig4colorData;
+            break;
+    case 5: sigs[0] = icSig5colorData;
+            sigs[1] = icSigMCH5Data;
+            break;
+    case 6: sigs[0] = icSig6colorData;
+            sigs[1] = icSigMCH6Data;
+            break;
+    case 7: sigs[0] = icSig7colorData;
+            sigs[1] = icSigMCH7Data;
+            break;
+    case 8: sigs[0] = icSig8colorData;
+            sigs[1] = icSigMCH8Data;
+            break;
+    case 9: sigs[0] = icSig9colorData;
+            sigs[1] = icSigMCH9Data;
+            break;
+    case 10:sigs[0]= icSig10colorData;
+            sigs[1] = icSigMCHAData;
+            break;
+    case 11:sigs[0] = icSig11colorData;
+            sigs[1] = icSigMCHBData;
+            break;
+    case 12:sigs[0] = icSig12colorData;
+            sigs[1] = icSigMCHCData;
+            break;
+    case 13:sigs[0] = icSig13colorData;
+            sigs[1] = icSigMCHDData;
+            break;
+    case 14:sigs[0] = icSig14colorData;
+            sigs[1] = icSigMCHEData;
+            break;
+    case 15:sigs[0] = icSig15colorData;
+            sigs[1] = icSigMCHFData;
+            break;
+  }
+  return sigs;
+}
+
 /** Function: oyICCColorSpaceGetName
  *  @brief name of a color space
  *

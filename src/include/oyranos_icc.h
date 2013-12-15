@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2007-2010 (C) Kai-Uwe Behrmann
+ *            2007-2013 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC definitions
  *  @internal
@@ -41,6 +41,7 @@ icTagSignature          oyValueTagSig   (icTagSignature val);
 
 
 int            oyICCColorSpaceGetChannelCount ( icColorSpaceSignature color );
+icColorSpaceSignature * oyICCGetColorSpaceWithChannelCount ( int channels_n );
 const char   * oyICCColorSpaceGetName ( icColorSpaceSignature sig );
 const char   * oyICCColorSpaceGetChannelName ( icColorSpaceSignature sig,
                                        int                 pos,
