@@ -2200,7 +2200,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
              int device_colors_n = oyValueUInt32( ncl2->device ), i,j;
              oyNamedColors_s * colors = oyNamedColors_New( 0 );
              oyProfile_s * ref;
-             uint16_t lab[3], device[16];
+             double lab[3], device[16];
 
              icColorSpaceSignature * profile_cs = oyICCGetColorSpaceWithChannelCount( device_colors_n );
 
@@ -2249,23 +2249,29 @@ oyStructList_s * oyIMProfileTag_GetValues(
                                  );
                ncl = oyNamedColor_CreateWithName( f->name, name, name, NULL, NULL, NULL, 0, ref, NULL );
 
-               for( j=0; j < 3; ++j)
-                 lab[j] = oyValueUInt16( f->pcs[j]) ;
-               oyNamedColor_SetColorStd( ncl, oyASSUMED_LAB, lab, oyUINT16, 0, NULL );
+               lab[0] = oyValueUInt16( f->pcs[0] )/65280.0;
+               lab[1] = oyValueUInt16( f->pcs[1] )/65535.0;
+               lab[2] = oyValueUInt16( f->pcs[2] )/65535.0;
+               oyNamedColor_SetColorStd( ncl, oyEDITING_LAB, lab, oyDOUBLE, 0, NULL );
 
                oyStringAddPrintf_( &tmp, AD, "%s%s%s  %d %d %d | ",
                                    ncl2->prefix,
                                    f->name,
                                    ncl2->suffix,
-                                   lab[0],
-                                   lab[1],
-                                   lab[2]
+                                   f->pcs[0],
+                                   f->pcs[1],
+                                   f->pcs[2]
                                  );
 
                for( j=0; j < device_colors_n; ++j)
+               {
                  oyStringAddPrintf_( &tmp, AD, "%d ", oyValueUInt16(f->device[j]));
+                 device[j] = oyValueUInt16(f->device[j])/65535.0;
+               }
 
                oyStringAddPrintf_( &tmp, AD, "\n" );
+
+               oyNamedColor_SetChannels( ncl, device, 0 );
 
                oyNamedColors_MoveIn( colors, &ncl, i );
                oyFree_m_( name );
