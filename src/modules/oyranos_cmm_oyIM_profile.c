@@ -2258,9 +2258,9 @@ oyStructList_s * oyIMProfileTag_GetValues(
                                    ncl2->prefix,
                                    f->name,
                                    ncl2->suffix,
-                                   f->pcs[0],
-                                   f->pcs[1],
-                                   f->pcs[2]
+                                   oyValueUInt16(f->pcs[0]),
+                                   oyValueUInt16(f->pcs[1]),
+                                   oyValueUInt16(f->pcs[2])
                                  );
 
                for( j=0; j < device_colors_n; ++j)
