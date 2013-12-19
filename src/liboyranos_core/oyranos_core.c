@@ -235,7 +235,7 @@ int            oyObject_GetId        ( oyObject_s          object )
  *  This default message function is used as a message formatter.
  *  The resulting string can be placed anywhere, e.g. in a GUI.
  *
- *  @see the oyMessageFunc() needs just to replaxe the fprintf with your 
+ *  @see the oyMessageFunc() needs just to replace the fprintf with your 
  *  favourite GUI call.
  *
  *  @version Oyranos: 0.2.1
