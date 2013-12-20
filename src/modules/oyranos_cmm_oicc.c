@@ -991,7 +991,7 @@ const char * oiccInfoGetText         ( const char        * select,
          if(type == oyNAME_NICK)
       return "help";
     else if(type == oyNAME_NAME)
-      return _("The filter is provides policy settings. These settings can be applied to a graph through the user function oyConversion_Correct().");
+      return _("The filter provides policy settings. These settings can be applied to a graph through the user function oyConversion_Correct().");
     else
       return _("The module is responsible for many settings in the Oyranos color management settings panel. If applied the module care about rendering intents, simulation, mixed color documents and default profiles.");
   }
