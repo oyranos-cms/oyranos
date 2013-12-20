@@ -410,9 +410,9 @@ int            oyFilterNode_Disconnect(oyFilterNode_s    * node,
  *  @param         node                the node
  *  @param         is_input            1 - plugs; 0 - sockets
  *  @param         flags               specify which number to return
- *                                     - oyranos::OY_FILTEREDGE_FREE: count available
- *                                     - oyranos::OY_FILTEREDGE_CONNECTED: count used
- *                                     - oyranos::OY_FILTEREDGE_LASTTYPE: account only
+ *                                     - ::OY_FILTEREDGE_FREE: count available
+ *                                     - ::OY_FILTEREDGE_CONNECTED: count used
+ *                                     - ::OY_FILTEREDGE_LASTTYPE: account only
  *                                       for the last connector type
  *  @return                            the number of possible edges
  *
@@ -499,7 +499,6 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
  *                                     searched plug or socket. Its a
  *                                     @ref registration string. E.g. a typical
  *                                     data connection: "//" OY_TYPE_STD "/data"
- *                                     See as well oyranos::oyCONNECTOR_e.
  *  @param         nth_of_type         the position in the group of the
  *                                     connector type for this filter; Note
  *                                     this parameter makes only sense for the
@@ -507,8 +506,8 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
  *                                     this one can occure multiple times.
  *  @param         flags               specify which status to return
  *                                     - zero means: take all into account
- *                                     - oyranos::OY_FILTEREDGE_FREE: next free available
- *                                     - oyranos::OY_FILTEREDGE_CONNECTED: consider used
+ *                                     - ::OY_FILTEREDGE_FREE: next free available
+ *                                     - ::OY_FILTEREDGE_CONNECTED: consider used
  *  @return                            the absolute position
  *
  *  @version Oyranos: 0.1.10
@@ -832,9 +831,9 @@ OYAPI oyFilterNode_s * OYEXPORT
  *  @param         node                filter node
  *  @param         pos                 connector position
  *  @param         flags               specify which number to return
- *                                     - oyranos::OY_FILTEREDGE_FREE: count available
- *                                     - oyranos::OY_FILTEREDGE_CONNECTED: count used
- *                                     - oyranos::OY_FILTEREDGE_LASTTYPE: account only
+ *                                     - ::OY_FILTEREDGE_FREE: count available
+ *                                     - ::OY_FILTEREDGE_CONNECTED: count used
+ *                                     - ::OY_FILTEREDGE_LASTTYPE: account only
  *                                       for the last connector type
  *  @return                            the number of possible edges
  *

@@ -83,7 +83,6 @@ EXCLUDE_SYMLINKS       = YES
 EXCLUDE_PATTERNS       = oyranos_gamma.c oyranos_alpha* \
                          oyranos_check.* oyranos_io.* oyranos_io_core.* \
                          oyranos_elektra.* oyranos_internal* oyranos_misc.* \
-                         oyranos_module.* oyranos_cmm.h oyranos_cmm.c \
                          oyranos_sentinel* \
                          oyranos_widgets* oyranos_monitor_internal_cs.h \
                          oyranos_cs.h oyranos_xml.* \
