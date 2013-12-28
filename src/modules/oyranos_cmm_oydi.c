@@ -972,6 +972,7 @@ oyCMMapi7_s_   oydi_api7_image_display = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   oydiFilterPlug_ImageDisplayRun, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */
@@ -1060,6 +1061,7 @@ oyCMMapi4_s_   oydi_api4_image_display = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   oydiFilterNode_ImageDisplayContextToMem, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText */

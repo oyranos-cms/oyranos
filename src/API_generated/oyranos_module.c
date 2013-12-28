@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/08/23
+ *  @date     2013/12/23
  */
 
 
@@ -1434,8 +1434,7 @@ char *           oyCMMinfoPrint_     ( oyCMMinfo_s       * cmm_info,
 }
 
 
-/** 
- *  @memberof oyStruct_s
+/** @memberof oyStruct_s
  *  @brief    get object infos from a module
  *
  *  @param[in,out] obj                 the objects structure
@@ -1822,8 +1821,7 @@ int          oyIdToCMM               ( uint32_t            cmmId,
     return 0;
 }
 
-/** 
- *  @brief    Get a module specific pointer from cache
+/** @brief    Get a module specific pointer from cache
  *  @memberof oyPointer_s
  *
  *  The returned oyPointer_s has to be released after using by the module with
@@ -1866,8 +1864,7 @@ oyPointer_s  * oyPointer_LookUpFromObject (
   return cmm_ptr;
 }
 
-/** 
- *  @brief    Get a module specific pointer from cache
+/** @brief    Get a module specific pointer from cache
  *  @memberof oyPointer_s
  *
  *  The returned oyPointer_s has to be released after using by the module with

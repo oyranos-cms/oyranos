@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/09/04
+ *  @date     2013/12/23
  */
 
 
@@ -2237,8 +2237,8 @@ OYAPI int  OYEXPORT
 int            oyOption_SetValueFromDB  ( oyOption_s        * option )
 {
   int error = !option || !oyOption_GetRegistration(option);
-  char * text = 0;
-  oyPointer ptr = 0;
+  char * text = 0,
+       * ptr = 0;
   oyOption_s * s = option;
 
   if(error)
@@ -2746,7 +2746,7 @@ OYAPI char * OYEXPORT
       }
     }
 
-    backend_data = oyFilterNode_GetModuleData( node );
+    backend_data = oyFilterNode_GetContext( node );
 #if 0
     tc = oyFilterNode_GetText( node, oyNAME_NICK );
 #else

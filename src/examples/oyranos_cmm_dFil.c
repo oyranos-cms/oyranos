@@ -480,6 +480,7 @@ oyCMMapi4_s_ dFil_api4_my_filter = {
   {0,9,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,                         /**< oyPointer_s * runtime_context */
 
   dFilFilterNode_MyContextToMem, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText */
@@ -514,6 +515,7 @@ oyCMMapi7_s_ dFil_api7_my_filter = {
   {0,9,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,                         /**< oyPointer_s * runtime_context */
 
   dFilFilterPlug_MyFilterRun, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */
@@ -652,6 +654,7 @@ oyCMMapi10_s_    dFil_api10_my_handler = {
   {0,9,0},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,                         /**< oyPointer_s * runtime_context */
  
   dFilInfoGetTextMyHandler,             /**< getText */
   (char**)dFil_texts_my_handler,       /**<texts; list of arguments to getText*/

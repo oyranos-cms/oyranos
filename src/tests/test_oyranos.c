@@ -906,14 +906,14 @@ int myFilterSignalHandler            ( oyObserver_s      * observer,
        {
          oyPointer_s * node_context;
          node = (oyFilterNode_s*) observer->observer;
-         node_context = oyFilterNode_GetModuleData( node );
+         node_context = oyFilterNode_GetContext( node );
          if(node && node_context)
          {
            if(observer->model->type_ == oyOBJECT_OPTION_S)
            {
              fprintf( stderr, "release context %s\n",
                       oyStruct_TypeToText( observer->observer ) );
-             oyFilterNode_SetModuleData( node, 0 );
+             oyFilterNode_SetContext( node, 0 );
            } else
              fprintf( stderr, "Model type not expected: %s\n",
                       oyStruct_TypeToText( observer->model ) );

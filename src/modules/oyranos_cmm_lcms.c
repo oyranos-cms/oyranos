@@ -1802,7 +1802,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
   if(!error)
   {
-    oyPointer_s * backend_data = oyFilterNode_GetModuleData( node );
+    oyPointer_s * backend_data = oyFilterNode_GetContext( node );
     data_type_out = oyToDataType_m( oyImage_GetPixelLayout( image_output, oyLAYOUT ) );
     channels = oyToChannels_m( oyImage_GetPixelLayout( image_output, oyLAYOUT ) );
 
@@ -2385,6 +2385,7 @@ oyCMMapi10_s_  lcms_api10_cmm2 = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
  
   lcmsInfoGetTextProfileC2,            /**< getText */
   (char**)lcms_texts_profile_create,   /**<texts; list of arguments to getText*/
@@ -2456,6 +2457,7 @@ oyCMMapi10_s_  lcms_api10_cmm = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
  
   lcmsInfoGetTextProfileC,             /**< getText */
   (char**)lcms_texts_profile_create,   /**<texts; list of arguments to getText*/
@@ -2489,6 +2491,7 @@ oyCMMapi6_s_ lcms_api6_cmm = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
   
   oyCOLOR_ICC_DEVICE_LINK,  /* data_type_in, "oyDL" */
   lcmsTRANSFORM,             /* data_type_out, "lcCC" */
@@ -2521,6 +2524,7 @@ oyCMMapi7_s_ lcms_api7_cmm = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   lcmsFilterPlug_CmmIccRun,  /* oyCMMFilterPlug_Run_f */
   lcmsTRANSFORM,             /* data_type, "lcCC" */
@@ -2624,6 +2628,7 @@ oyCMMapi4_s_ lcms_api4_cmm = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   lcmsFilterNode_CmmIccContextToMem, /* oyCMMFilterNode_ContextToMem_f */
   lcmsFilterNode_GetText, /* oyCMMFilterNode_GetText_f */

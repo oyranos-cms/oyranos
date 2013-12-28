@@ -2222,7 +2222,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
   if(!error)
   {
-    oyPointer_s * backend_data = oyFilterNode_GetModuleData( node );
+    oyPointer_s * backend_data = oyFilterNode_GetContext( node );
     data_type_out = oyToDataType_m( oyImage_GetPixelLayout( image_output, oyLAYOUT ) );
     channels = oyToChannels_m( oyImage_GetPixelLayout( image_output, oyLAYOUT ) );
 
@@ -2886,6 +2886,7 @@ oyCMMapi10_s_    lcm2_api10_cmm2 = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
  
   lcm2InfoGetTextProfileC2,            /**< getText */
   (char**)lcm2_texts_profile_create,   /**<texts; list of arguments to getText*/
@@ -2957,6 +2958,7 @@ oyCMMapi10_s_    lcm2_api10_cmm = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
  
   lcm2InfoGetTextProfileC,             /**< getText */
   (char**)lcm2_texts_profile_create,   /**<texts; list of arguments to getText*/
@@ -2990,6 +2992,7 @@ oyCMMapi6_s_ lcm2_api6_cmm = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
   
   oyCOLOR_ICC_DEVICE_LINK,  /* data_type_in, "oyDL" */
   lcm2TRANSFORM,             /* data_type_out, lcm2TRANSFORM */
@@ -3022,6 +3025,7 @@ oyCMMapi7_s_ lcm2_api7_cmm = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   lcm2FilterPlug_CmmIccRun,  /* oyCMMFilterPlug_Run_f */
   lcm2TRANSFORM,             /* data_type, lcm2TRANSFORM */
@@ -3125,6 +3129,7 @@ oyCMMapi4_s_ lcm2_api4_cmm = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   lcm2FilterNode_CmmIccContextToMem, /* oyCMMFilterNode_ContextToMem_f */
   lcm2FilterNode_GetText, /* oyCMMFilterNode_GetText_f */

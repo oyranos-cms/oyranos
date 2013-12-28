@@ -624,6 +624,7 @@ oyCMMapi4_s_ oPNG_api4_image_write_png = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   (oyCMMFilterNode_ContextToMem_f)oyFilterNode_TextToInfo_, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText */
@@ -670,6 +671,7 @@ oyCMMapi7_s_ oPNG_api7_image_write_png = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   oPNGFilterPlug_ImageOutputPNGWrite, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */
@@ -1227,6 +1229,7 @@ oyCMMapi4_s_ oPNG_api4_image_input_png = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   (oyCMMFilterNode_ContextToMem_f)oyFilterNode_TextToInfo_, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_GetText_f        oyCMMFilterNode_GetText */
@@ -1273,6 +1276,7 @@ oyCMMapi7_s_ oPNG_api7_image_input_png = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   oPNGFilterPlug_ImageInputPNGRun, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */

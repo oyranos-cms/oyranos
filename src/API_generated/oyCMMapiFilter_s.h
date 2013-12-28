@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/08/23
+ *  @date     2013/12/23
  */
 
 
@@ -37,7 +37,10 @@
 typedef struct oyCMMapiFilter_s oyCMMapiFilter_s;
 
 
+
 #include "oyStruct_s.h"
+
+#include "oyPointer_s.h"
 
 
 /* Include "CMMapiFilter.public.h" { */
@@ -72,12 +75,19 @@ oyObject_s           oy_;            /**< @private features name and hash */
 };
 
 
+
 OYAPI oyCMMapiFilter_s* OYEXPORT
   oyCMMapiFilter_New( oyObject_s object );
 OYAPI oyCMMapiFilter_s* OYEXPORT
   oyCMMapiFilter_Copy( oyCMMapiFilter_s *cmmapifilter, oyObject_s obj );
 OYAPI int OYEXPORT
   oyCMMapiFilter_Release( oyCMMapiFilter_s **cmmapifilter );
+
+OYAPI int  OYEXPORT
+           oyCMMapiFilter_SetBackendContext          ( oyCMMapiFilter_s       * api,
+                                       oyPointer_s       * ptr );
+OYAPI oyPointer_s * OYEXPORT
+           oyCMMapiFilter_GetBackendContext          ( oyCMMapiFilter_s       * api );
 
 
 

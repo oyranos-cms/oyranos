@@ -12,12 +12,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/12/13
+ *  @date     2013/12/23
  */
 
 
@@ -28,6 +28,7 @@
 
 #include "oyCMMapiFilter_s_.h"
   
+
 
 
 /** Function oyCMMapiFilter_New
@@ -93,6 +94,77 @@ OYAPI int OYEXPORT
   *cmmapifilter = 0;
 
   return oyCMMapiFilter_Release_( &s );
+}
+
+/**
+ *  @memberof oyCMMapiFilter_s
+ *  @brief   set filter type specific runtime data
+ *
+ *  Runtime data can be used as context by a backend during execution. The data
+ *  is typical set during backend load.
+ *
+ *  That data is apart from a filter object, which can have lifetime data
+ *  associated through a oyFilterNode_GetContext(). A filter connector
+ *  can have its processing data associated through oyFilterNode_SetData().
+ *
+ *  @param[in,out] api                 api object
+ *  @param[in]     ptr                 the data needed to run the filter type
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2013/12/19
+ *  @since   2013/12/19 (Oyranos: 0.9.5)
+ */
+OYAPI int  OYEXPORT
+           oyCMMapiFilter_SetBackendContext ( oyCMMapiFilter_s       * api,
+                                       oyPointer_s       * ptr )
+{
+  oyCMMapiFilter_s_ * s = (oyCMMapiFilter_s_*)api;
+  int error = 0;
+
+  if(!s)
+    return -1;
+
+  oyCheckType__m( oyOBJECT_CMM_API_FILTER_S, return 1 )
+
+  {
+    if(s->runtime_context)
+      oyPointer_Release( &s->runtime_context );
+    s->runtime_context = oyPointer_Copy( ptr, NULL );
+  }   
+
+  return error;
+}
+
+/**
+ *  @memberof oyCMMapiFilter_s
+ *  @brief   get filter type specific runtime data
+ *
+ *  Runtime data can be used as context by a backend during execution.
+ *
+ *  That data is apart from a filter object, which can have lifetime data
+ *  associated through a oyFilterNode_GetContext(). A filter connector
+ *  can have its processing data associated through oyFilterNode_SetData().
+ *
+ *  @param[in]     api                 api object
+ *  @return                            the context needed to run the filter type
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2013/12/19
+ *  @since   2013/12/19 (Oyranos: 0.9.5)
+ */
+OYAPI oyPointer_s * OYEXPORT
+           oyCMMapiFilter_GetBackendContext ( oyCMMapiFilter_s       * api )
+{
+  oyCMMapiFilter_s_ * s = (oyCMMapiFilter_s_*)api;
+  oyPointer_s * ptr = NULL;
+
+  if(!s)
+    return ptr;
+
+  oyCheckType__m( oyOBJECT_CMM_API_FILTER_S, return NULL )
+
+  return oyPointer_Copy( s->runtime_context, NULL );
 }
 
 

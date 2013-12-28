@@ -1232,6 +1232,8 @@ oyCMMapi8_s_ oyX1_api8 = {
   0,                         /**< char * id_ */
 
   0,                         /**< oyCMMapi5_s * api5_ */
+  0,                         /**< oyPointer_s * runtime_context */
+
   oyX1Configs_FromPattern,   /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
   oyX1Configs_Modify,        /**< oyConfigs_Modify_f oyConfigs_Modify */
   oyX1Config_Rank,           /**< oyConfig_Rank_f oyConfig_Rank */
@@ -1632,6 +1634,7 @@ oyCMMapi10_s_    oyX1_api10_set_xcm_region_handler = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,                         /**< oyPointer_s * runtime_context */
  
   oyX1InfoGetTextMyHandler,             /**< getText */
   (char**)oyX1_texts_set_xcm_region,       /**<texts; list of arguments to getText*/

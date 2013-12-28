@@ -303,6 +303,7 @@ oyCMMapi7_s_   oyra_api7_image_write = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   oyraFilterPlug_ImageWriteRun, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */
@@ -395,6 +396,7 @@ oyCMMapi4_s_   oyra_api4_image_write = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   (oyCMMFilterNode_ContextToMem_f)oyFilterNode_TextToInfo_, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
@@ -676,6 +678,7 @@ oyCMMapi7_s_   oyra_api7_image_load = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   oyraFilterPlug_ImageLoadRun, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */
@@ -768,6 +771,7 @@ oyCMMapi4_s_   oyra_api4_image_load = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   (oyCMMFilterNode_ContextToMem_f)oyFilterNode_TextToInfo_, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
@@ -1036,6 +1040,7 @@ oyCMMapi7_s_   oyra_api7_image_rectangles = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   oyraFilterPlug_ImageRectanglesRun, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */
@@ -1126,6 +1131,7 @@ oyCMMapi4_s_   oyra_api4_image_rectangles = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   (oyCMMFilterNode_ContextToMem_f)oyFilterNode_TextToInfo_, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
@@ -1242,6 +1248,7 @@ oyCMMapi7_s_   oyra_api7_image_root = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   oyraFilterPlug_ImageRootRun, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */
@@ -1332,6 +1339,7 @@ oyCMMapi4_s_   oyra_api4_image_root = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   (oyCMMFilterNode_ContextToMem_f)oyFilterNode_TextToInfo_, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */
@@ -1431,6 +1439,7 @@ oyCMMapi7_s_   oyra_api7_image_output = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   oyraFilterPlug_ImageOutputRun, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */
@@ -1521,6 +1530,7 @@ oyCMMapi4_s_   oyra_api4_image_output = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
+  0,   /* runtime_context */
 
   (oyCMMFilterNode_ContextToMem_f)oyFilterNode_TextToInfo_, /* oyCMMFilterNode_ContextToMem_f */
   0, /* oyCMMFilterNode_ContextToMem_f oyCMMFilterNode_ContextToMem */

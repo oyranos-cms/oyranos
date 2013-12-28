@@ -1134,6 +1134,8 @@ oyCMMapi8_s_ qarz_api8 = {
   0,                         /**< char * id_ */
 
   0,                         /**< oyCMMapi5_s * api5_ */
+  0,                         /**< runtime_context */
+
   qarzConfigs_FromPattern,   /**<oyConfigs_FromPattern_f oyConfigs_FromPattern*/
   qarzConfigs_Modify,        /**< oyConfigs_Modify_f oyConfigs_Modify */
   qarzConfig_Rank,           /**< oyConfig_Rank_f oyConfig_Rank */

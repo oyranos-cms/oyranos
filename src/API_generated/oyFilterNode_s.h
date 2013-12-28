@@ -10,12 +10,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2013/12/23
  */
 
 
@@ -56,7 +56,6 @@ typedef struct oyFilterNode_s oyFilterNode_s;
  *  @ingroup objects_conversion
  *  @extends oyStruct_s
  *  @brief   A FilterNode object
- *  @internal
  *
  *  Filter nodes chain filters into a oyConversion_s graph. The filter nodes
  *  use plugs and sockets for creating connections. Each plug can only connect
@@ -67,7 +66,7 @@ digraph G {
   node[ shape=plaintext, fontname=Helvetica, fontsize=10 ];
   a [label=<
 <table border="0" cellborder="1" cellspacing="4">
-  <tr> <td>oyFilterCore_s A</td>
+  <tr> <td>oyFilterNode_s A</td>
       <td bgcolor="red" width="10" port="s"> socket </td>
   </tr>
 </table>>
@@ -75,7 +74,7 @@ digraph G {
   b [label=<
 <table border="0" cellborder="1" cellspacing="4">
   <tr><td bgcolor="lightblue" width="10" port="p"> plug </td>
-      <td>oyFilterCore_s B</td>
+      <td>oyFilterNode_s B</td>
   </tr>
 </table>>
   ]
@@ -97,11 +96,14 @@ digraph G {
  *
  *  This object provides support for separation of options from chaining.
  *  So it will be possible to implement options changing, which can affect
- *  the same filter instance in different graphs.
+ *  the same filter instance in different graphs. Options and UI data is
+ *  defined in the oyCMMapi4_s structure, which is part of the oyFilterCore_s
+ *  part of a oyFilterNode_s.
  *
  *  A oyFilterNode_s can have various oyFilterPlug_s ' to obtain data from
- *  different sources. The required number is described in the oyCMMapi4_s 
- *  structure, which is part of oyFilterCore_s.
+ *  different sources. The required number is described in the oyCMMapi7_s 
+ *  structure. This structure defines as well the data processing method for
+ *  running the DAC.
  \dot
 digraph G {
   bgcolor="transparent";
@@ -272,10 +274,17 @@ OYAPI const char *  OYEXPORT
                  oyFilterNode_GetModuleName
                                      ( oyFilterNode_s     * node );
 OYAPI oyPointer_s *  OYEXPORT
-                 oyFilterNode_GetModuleData(
+                 oyFilterNode_GetContext(
                                        oyFilterNode_s     * node );
 OYAPI int  OYEXPORT
-                 oyFilterNode_SetModuleData(
+                 oyFilterNode_SetContext(
+                                       oyFilterNode_s     * node,
+                                       oyPointer_s        * data );
+OYAPI oyPointer_s *  OYEXPORT
+                 oyFilterNode_GetBackendContext(
+                                       oyFilterNode_s     * node );
+OYAPI int  OYEXPORT
+                 oyFilterNode_SetBackendContext(
                                        oyFilterNode_s     * node,
                                        oyPointer_s        * data );
 

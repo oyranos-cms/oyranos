@@ -930,6 +930,7 @@ oyCMMapi9_s_  oicc_api9 = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* oyCMMapi5_s    * api5_; keep empty */
+  0,   /* runtime_context */
 
   oicc_defaultICCValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oiccWidgetEvent, /* oyWidgetEvent_f */

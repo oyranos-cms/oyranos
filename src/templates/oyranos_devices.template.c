@@ -2731,7 +2731,7 @@ OYAPI char * OYEXPORT
       }
     }
 
-    backend_data = oyFilterNode_GetModuleData( node );
+    backend_data = oyFilterNode_GetContext( node );
 #if 0
     tc = oyFilterNode_GetText( node, oyNAME_NICK );
 #else

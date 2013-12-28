@@ -19,7 +19,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/06/17
+ *  @date     2013/12/23
  */
 
 
@@ -30,6 +30,7 @@
 
 #include "oyCMMapi7_s_.h"
   
+
 
 
 /** Function oyCMMapi7_New
@@ -95,6 +96,77 @@ OYAPI int OYEXPORT
   *cmmapi7 = 0;
 
   return oyCMMapi7_Release_( &s );
+}
+
+/**
+ *  @memberof oyCMMapi7_s
+ *  @brief   set filter type specific runtime data
+ *
+ *  Runtime data can be used as context by a backend during execution. The data
+ *  is typical set during backend load.
+ *
+ *  That data is apart from a filter object, which can have lifetime data
+ *  associated through a oyFilterNode_GetContext(). A filter connector
+ *  can have its processing data associated through oyFilterNode_SetData().
+ *
+ *  @param[in,out] api                 api object
+ *  @param[in]     ptr                 the data needed to run the filter type
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2013/12/19
+ *  @since   2013/12/19 (Oyranos: 0.9.5)
+ */
+OYAPI int  OYEXPORT
+           oyCMMapi7_SetBackendContext ( oyCMMapi7_s       * api,
+                                       oyPointer_s       * ptr )
+{
+  oyCMMapi7_s_ * s = (oyCMMapi7_s_*)api;
+  int error = 0;
+
+  if(!s)
+    return -1;
+
+  oyCheckType__m( oyOBJECT_CMM_API7_S, return 1 )
+
+  {
+    if(s->runtime_context)
+      oyPointer_Release( &s->runtime_context );
+    s->runtime_context = oyPointer_Copy( ptr, NULL );
+  }   
+
+  return error;
+}
+
+/**
+ *  @memberof oyCMMapi7_s
+ *  @brief   get filter type specific runtime data
+ *
+ *  Runtime data can be used as context by a backend during execution.
+ *
+ *  That data is apart from a filter object, which can have lifetime data
+ *  associated through a oyFilterNode_GetContext(). A filter connector
+ *  can have its processing data associated through oyFilterNode_SetData().
+ *
+ *  @param[in]     api                 api object
+ *  @return                            the context needed to run the filter type
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2013/12/19
+ *  @since   2013/12/19 (Oyranos: 0.9.5)
+ */
+OYAPI oyPointer_s * OYEXPORT
+           oyCMMapi7_GetBackendContext ( oyCMMapi7_s       * api )
+{
+  oyCMMapi7_s_ * s = (oyCMMapi7_s_*)api;
+  oyPointer_s * ptr = NULL;
+
+  if(!s)
+    return ptr;
+
+  oyCheckType__m( oyOBJECT_CMM_API7_S, return NULL )
+
+  return oyPointer_Copy( s->runtime_context, NULL );
 }
 
 
@@ -181,6 +253,7 @@ OYAPI oyCMMapi7_s *  OYEXPORT
 
   return (oyCMMapi7_s*) s;
 }
+
 
 OYAPI int OYEXPORT
              oyCMMapi7_Run           ( oyCMMapi7_s       * api7,
