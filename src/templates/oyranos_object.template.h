@@ -10,17 +10,46 @@
 
 /* Function Pointers Definitions Start */
 typedef oyPointer (*oyPointer_copy_f )   ( oyPointer, size_t );
+/**
+ *  @brief   oyPointer_s release function type
+ *
+ *  @version Oyranos: 0.3.0
+ *  @date    2011/02/15
+ *  @since   2011/02/15 (Oyranos: 0.3.0)
+ */
 typedef int       (*oyPointer_release_f )( oyPointer * );
+/**
+ *  @brief   Lock release function type
+ *
+ *  @version Oyranos: 0.3.0
+ *  @date    2011/02/15
+ *  @since   2011/02/15 (Oyranos: 0.3.0)
+ */
 typedef void      (*oyLockRelease_f )( oyPointer           lock,
                                        const char        * marker,
                                        int                 line );
+/**
+ *  @brief   Lock function type
+ *
+ *  @version Oyranos: 0.3.0
+ *  @date    2011/02/15
+ *  @since   2011/02/15 (Oyranos: 0.3.0)
+ */
 typedef void      (*oyLock_f )       ( oyPointer           lock,
                                        const char        * marker,
                                        int                 line );
+/**
+ *  @brief   Unlock function type
+ *
+ *  @version Oyranos: 0.3.0
+ *  @date    2011/02/15
+ *  @since   2011/02/15 (Oyranos: 0.3.0)
+ */
 typedef void      (*oyUnLock_f )     ( oyPointer           look,
                                        const char        * marker,
                                        int                 line );
 /* Function Pointers Definitions Stop */
+
 
 /* Declare oyObject_s Globally */
 typedef struct oyObject_s_* oyObject_s;
