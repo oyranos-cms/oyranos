@@ -1,27 +1,9 @@
 #!/bin/sh
 # generated auomatically by configure
 
-X11_LIB_PATH="-L/usr/X11R6/lib$BARCH -L/usr/lib$BARCH -L$libdir"
-c=-lc
-ltdl=-lltdl
-dl=-ldl
-iconv=
-intl=
-m=-lm
-xml2=-lxml2
-Xfixes=-lXfixes
-cups=-lcups
-sane=
-XNVCtrl=
-yajl=-lyajl
-pthread=-lpthread
-Xinerama=-lXinerama
-Xxf86vm=-lXxf86vm
-Xrandr=-lXrandr
-Xext=-lXext
-X11=-lX11
+yajl="@ELEKTRA_LIBS@"
 
-TARGET=oyranos
+TARGET=@PACKAGE_NAME@
 
 VERSION=@OYRANOS_VERSION@
 VERSION_L=$((@OYRANOS_VERSION_MAJOR@*10000+@OYRANOS_VERSION_MINOR@*100+@OYRANOS_VERSION_MICRO@))
