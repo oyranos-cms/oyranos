@@ -102,9 +102,16 @@ OYAPI const char *  OYEXPORT
                  oyFilterNode_GetModuleName
                                      ( oyFilterNode_s     * node );
 OYAPI oyPointer_s *  OYEXPORT
-                 oyFilterNode_GetModuleData(
+                 oyFilterNode_GetContext(
                                        oyFilterNode_s     * node );
 OYAPI int  OYEXPORT
-                 oyFilterNode_SetModuleData(
+                 oyFilterNode_SetContext(
+                                       oyFilterNode_s     * node,
+                                       oyPointer_s        * data );
+OYAPI oyPointer_s *  OYEXPORT
+                 oyFilterNode_GetBackendContext(
+                                       oyFilterNode_s     * node );
+OYAPI int  OYEXPORT
+                 oyFilterNode_SetBackendContext(
                                        oyFilterNode_s     * node,
                                        oyPointer_s        * data );

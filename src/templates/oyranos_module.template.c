@@ -35,9 +35,8 @@
 
 oyStructList_s * oy_cmm_handles_ = 0;
 /* defined in sources/Struct.public_methods_definitions.c */
-/** typedef   oyStruct_GetTextFromModule_p
+/** @internal
  *  @brief    get descriptions for object types
- *  @internal
  *
  *  @version  Oyranos: 0.9.5
  *  @date     2013/0/0
@@ -48,9 +47,8 @@ extern const char * (*oyStruct_GetTextFromModule_p) (
                                        oyNAME_e            name_type,
                                        uint32_t            flags );
 
-/** Function  oyCMMsGetFilterApis_
+/** @internal
  *  @brief    Let a oyCMMapi5_s meta module open a set of modules
- *  @internal
  *
  *  The oyCMMapiLoadxxx_ function family loads a API from a external module.\n
  *  The module system shall support:
@@ -349,7 +347,6 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
 }
 
 /** @internal
- *  Function oyCMMsGetFilterApi_
  *  @brief let a oyCMMapi5_s meta module open a module
  *
  *  The oyCMMapiLoadxxx_ function family loads a API from a external module.\n
@@ -422,7 +419,6 @@ oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
 }
 
 /** @internal
- *  Function oyCMMsGetApi__
  *  @brief get a specified module
  *
  *  The oyCMMapiLoadxxx_ function family loads a API from a external module.\n
@@ -493,7 +489,6 @@ oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
 }
 
 /** @internal
- *  Function oyCMMsGetApi_
  *  @brief get a oyranos module
  *
  *  The oyCMMapiLoadxxx_ function family loads a API from a external module.\n
@@ -725,9 +720,8 @@ char * oyCMMCacheListPrint_()
 
 
 
-/** Function oyCMMGetMetaApis_
+/** @internal
  *  @brief   Get module loaders
- *  @internal
  *
  *  This function searches for a meta modul API.
  *
@@ -745,7 +739,6 @@ oyCMMapis_s * oyCMMGetMetaApis_     ( const char        * cmm )
 }
 
 /** @internal
- *  Function  oyCMMsGetMetaApis_
  *  @brief    Get oyranos modules
  *
  *  @param[in]   cmm                  the selected module, optional
@@ -1426,8 +1419,7 @@ char *           oyCMMinfoPrint_     ( oyCMMinfo_s       * cmm_info,
 }
 
 
-/** Function  oyStruct_GetTextFromModule
- *  @memberof oyStruct_s
+/** @memberof oyStruct_s
  *  @brief    get object infos from a module
  *
  *  @param[in,out] obj                 the objects structure
@@ -1498,7 +1490,6 @@ const char * oyStruct_GetTextFromModule (
 }
 
 /** @internal
- *  Function oyCMMCanHandle_
  *  @brief query a module for certain capabilities
  *
  *  @return                           sum of asked capabilities
@@ -1815,8 +1806,7 @@ int          oyIdToCMM               ( uint32_t            cmmId,
     return 0;
 }
 
-/** Function  oyPointer_LookUpFromObject
- *  @brief    Get a module specific pointer from cache
+/** @brief    Get a module specific pointer from cache
  *  @memberof oyPointer_s
  *
  *  The returned oyPointer_s has to be released after using by the module with
@@ -1859,8 +1849,7 @@ oyPointer_s  * oyPointer_LookUpFromObject (
   return cmm_ptr;
 }
 
-/** Function  oyPointer_LookUpFromText
- *  @brief    Get a module specific pointer from cache
+/** @brief    Get a module specific pointer from cache
  *  @memberof oyPointer_s
  *
  *  The returned oyPointer_s has to be released after using by the module with
@@ -1947,7 +1936,7 @@ oyPointer_s * oyPointer_LookUpFromText( const char        * text,
 }
 
 
-/** Function  oyOptions_Handle
+/** 
  *  @brief    Handle a request by a module
  *
  *  @param[in]     registration        the module selector
@@ -2077,7 +2066,6 @@ int          oyPointer_ConvertData   ( oyPointer_s       * cmm_ptr,
 }
 
 /** @internal
- *  Function oyAdjacencyListAdd_
  *  @brief   get a graphs adjacency list
  *
  *  Try to add an edge, if not yet found in the scanned graph.
@@ -2176,7 +2164,7 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
   return added;
 }
 
-/** Function oyFilterRegistrationModify
+/** 
  *  @brief   process a registration string
  *
  *  A semantical overview is given in @ref module_api.

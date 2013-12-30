@@ -67,7 +67,6 @@ typedef struct oyFilterCore_s oyFilterCore_s;
  *  once.
  *
  *  The registration_ describes different basic types of filters (//xxx).
- *  See oyranos::oyCONNECTOR_e.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/08 (Oyranos: 0.1.8)

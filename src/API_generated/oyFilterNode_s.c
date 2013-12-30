@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/06/17
+ *  @date     2013/12/23
  */
 
 
@@ -523,9 +523,9 @@ int            oyFilterNode_Disconnect(oyFilterNode_s    * node,
  *  @param         node                the node
  *  @param         is_input            1 - plugs; 0 - sockets
  *  @param         flags               specify which number to return
- *                                     - oyranos::OY_FILTEREDGE_FREE: count available
- *                                     - oyranos::OY_FILTEREDGE_CONNECTED: count used
- *                                     - oyranos::OY_FILTEREDGE_LASTTYPE: account only
+ *                                     - ::OY_FILTEREDGE_FREE: count available
+ *                                     - ::OY_FILTEREDGE_CONNECTED: count used
+ *                                     - ::OY_FILTEREDGE_LASTTYPE: account only
  *                                       for the last connector type
  *  @return                            the number of possible edges
  *
@@ -612,7 +612,6 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
  *                                     searched plug or socket. Its a
  *                                     @ref registration string. E.g. a typical
  *                                     data connection: "//" OY_TYPE_STD "/data"
- *                                     See as well oyranos::oyCONNECTOR_e.
  *  @param         nth_of_type         the position in the group of the
  *                                     connector type for this filter; Note
  *                                     this parameter makes only sense for the
@@ -620,8 +619,8 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
  *                                     this one can occure multiple times.
  *  @param         flags               specify which status to return
  *                                     - zero means: take all into account
- *                                     - oyranos::OY_FILTEREDGE_FREE: next free available
- *                                     - oyranos::OY_FILTEREDGE_CONNECTED: consider used
+ *                                     - ::OY_FILTEREDGE_FREE: next free available
+ *                                     - ::OY_FILTEREDGE_CONNECTED: consider used
  *  @return                            the absolute position
  *
  *  @version Oyranos: 0.1.10
@@ -945,9 +944,9 @@ OYAPI oyFilterNode_s * OYEXPORT
  *  @param         node                filter node
  *  @param         pos                 connector position
  *  @param         flags               specify which number to return
- *                                     - oyranos::OY_FILTEREDGE_FREE: count available
- *                                     - oyranos::OY_FILTEREDGE_CONNECTED: count used
- *                                     - oyranos::OY_FILTEREDGE_LASTTYPE: account only
+ *                                     - ::OY_FILTEREDGE_FREE: count available
+ *                                     - ::OY_FILTEREDGE_CONNECTED: count used
+ *                                     - ::OY_FILTEREDGE_LASTTYPE: account only
  *                                       for the last connector type
  *  @return                            the number of possible edges
  *
@@ -1296,7 +1295,7 @@ OYAPI const char *  OYEXPORT
 
   return ((oyFilterCore_s_*)s->core)->api4_->id_;
 }
-/** Function  oyFilterNode_GetModuleData
+/**
  *  @memberof oyFilterNode_s
  *  @brief    Get module data
  *
@@ -1307,12 +1306,12 @@ OYAPI const char *  OYEXPORT
  *  @param[in,out] node                filter object
  *  @return                            the data
  *
- *  @version  Oyranos: 0.5.0
- *  @date     2012/10/04
+ *  @version  Oyranos: 0.9.5
+ *  @date     2013/12/22
  *  @since    2012/10/04 (Oyranos: 0.5.0)
  */
 OYAPI oyPointer_s *  OYEXPORT
-                 oyFilterNode_GetModuleData
+                 oyFilterNode_GetContext
                                      ( oyFilterNode_s     * node )
 {
   oyFilterNode_s_ * s = (oyFilterNode_s_*)node;
@@ -1324,23 +1323,26 @@ OYAPI oyPointer_s *  OYEXPORT
 
   return oyPointer_Copy( s->backend_data, 0 );
 }
-/** Function  oyFilterNode_SetModuleData
+/**
  *  @memberof oyFilterNode_s
  *  @brief    Set module data
+ *  @internal
  *
  *  the filters private data, requested over 
  *  oyCMMapi4_s::oyCMMFilterNode_ContextToMem() and converted to
  *  oyCMMapi4_s::context_type
  *
+ *  Oyranos' core provides that data.
+ *
  *  @param[in,out] node                filter object
  *  @return                            the data
  *
- *  @version  Oyranos: 0.5.0
- *  @date     2012/10/04
+ *  @version  Oyranos: 0.9.5
+ *  @date     2013/12/22
  *  @since    2012/10/04 (Oyranos: 0.5.0)
  */
 OYAPI int  OYEXPORT
-                 oyFilterNode_SetModuleData
+                 oyFilterNode_SetContext
                                      ( oyFilterNode_s     * node,
                                        oyPointer_s        * data )
 {
@@ -1384,6 +1386,71 @@ OYAPI oyOptions_s *  OYEXPORT
     s->tags = oyOptions_New( 0 );
 
   return oyOptions_Copy( s->tags, 0 );
+}
+
+/**
+ *  @memberof oyFilterNode_s
+ *  @brief   set backend specific runtime data
+ *
+ *  Runtime data can be used as context by a backend during execution. The data
+ *  is typical set during oyCMMapi7_s creation. This function provides 
+ *  access for a backend inside a DAC in order to change that data during 
+ *  backend lifetime.
+ *
+ *  That data is apart from a filter object, which can have lifetime data
+ *  associated through a oyFilterNode_GetContext(). A filter connector
+ *  can have its processing data associated through oyFilterNode_SetData().
+ *
+ *  @param[in,out] obj                 the node object
+ *  @param[in]     ptr                 the data needed to run the filter type
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2013/12/23
+ *  @since   2013/12/19 (Oyranos: 0.9.5)
+ */
+OYAPI int  OYEXPORT
+           oyFilterNode_SetBackendContext (
+                                       oyFilterNode_s    * obj,
+                                       oyPointer_s       * ptr )
+{
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)obj;
+
+  if(!s)
+    return -1;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 1 )
+
+  return oyCMMapi7_SetBackendContext( (oyCMMapi7_s*)s->api7_, ptr );
+}
+
+/**
+ *  @memberof oyFilterNode_s
+ *  @brief   get backend specific runtime data
+ *
+ *  Backend context is used by a filter type during execution.
+ *  That is apart from a filter, which can have it's object data
+ *  associated through a oyFilterNode_GetContext().
+ *
+ *  @param[in]     obj                 the node object
+ *  @return                            the context needed to run the filter type
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2013/12/19
+ *  @since   2013/12/19 (Oyranos: 0.9.5)
+ */
+OYAPI oyPointer_s * OYEXPORT
+           oyFilterNode_GetBackendContext
+                                     ( oyFilterNode_s    * obj )
+{
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)obj;
+
+  if(!s)
+    return NULL;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
+
+  return oyCMMapi7_GetBackendContext( (oyCMMapi7_s*)s->api7_ );
 }
 
 /* } Include "FilterNode.public_methods_definitions.c" */

@@ -19,7 +19,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/08/23
+ *  @date     2013/12/23
  */
 
 
@@ -42,7 +42,10 @@ typedef struct oyCMMapi7_s oyCMMapi7_s;
 #include "oyPixelAccess_s.h"
 
 
+
 #include "oyStruct_s.h"
+
+#include "oyPointer_s.h"
 
 
 
@@ -115,12 +118,19 @@ oyObject_s           oy_;            /**< @private features name and hash */
 };
 
 
+
 OYAPI oyCMMapi7_s* OYEXPORT
   oyCMMapi7_New( oyObject_s object );
 OYAPI oyCMMapi7_s* OYEXPORT
   oyCMMapi7_Copy( oyCMMapi7_s *cmmapi7, oyObject_s obj );
 OYAPI int OYEXPORT
   oyCMMapi7_Release( oyCMMapi7_s **cmmapi7 );
+
+OYAPI int  OYEXPORT
+           oyCMMapi7_SetBackendContext          ( oyCMMapi7_s       * api,
+                                       oyPointer_s       * ptr );
+OYAPI oyPointer_s * OYEXPORT
+           oyCMMapi7_GetBackendContext          ( oyCMMapi7_s       * api );
 
 
 

@@ -946,6 +946,7 @@ oyCMMapi8_s_ _api8 = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,                     /**< char * id_ */
   0,                     /**< oyCMMapi5_s * api5_ */
+  0,                     /**< runtime_context */
   Configs_FromPattern,   /**< oyConfigs_FromPattern_f oyConfigs_FromPattern */
   Configs_Modify,        /**< oyConfigs_Modify_f oyConfigs_Modify */
   Config_Check,          /**< oyConfig_Check_f oyConfig_Check */

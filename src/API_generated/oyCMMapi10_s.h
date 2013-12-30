@@ -14,12 +14,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2013 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2013/12/23
  */
 
 
@@ -39,7 +39,10 @@
 typedef struct oyCMMapi10_s oyCMMapi10_s;
 
 
+
 #include "oyStruct_s.h"
+
+#include "oyPointer_s.h"
 
 
 /* Include "CMMapi10.public.h" { */
@@ -75,12 +78,19 @@ oyObject_s           oy_;            /**< @private features name and hash */
 };
 
 
+
 OYAPI oyCMMapi10_s* OYEXPORT
   oyCMMapi10_New( oyObject_s object );
 OYAPI oyCMMapi10_s* OYEXPORT
   oyCMMapi10_Copy( oyCMMapi10_s *cmmapi10, oyObject_s obj );
 OYAPI int OYEXPORT
   oyCMMapi10_Release( oyCMMapi10_s **cmmapi10 );
+
+OYAPI int  OYEXPORT
+           oyCMMapi10_SetBackendContext          ( oyCMMapi10_s       * api,
+                                       oyPointer_s       * ptr );
+OYAPI oyPointer_s * OYEXPORT
+           oyCMMapi10_GetBackendContext          ( oyCMMapi10_s       * api );
 
 
 

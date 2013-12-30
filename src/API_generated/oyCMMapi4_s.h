@@ -19,7 +19,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/08/23
+ *  @date     2013/12/23
  */
 
 
@@ -39,7 +39,10 @@
 typedef struct oyCMMapi4_s oyCMMapi4_s;
 
 
+
 #include "oyStruct_s.h"
+
+#include "oyPointer_s.h"
 
 
 /* Include "CMMapi4.public.h" { */
@@ -89,12 +92,19 @@ oyObject_s           oy_;            /**< @private features name and hash */
 };
 
 
+
 OYAPI oyCMMapi4_s* OYEXPORT
   oyCMMapi4_New( oyObject_s object );
 OYAPI oyCMMapi4_s* OYEXPORT
   oyCMMapi4_Copy( oyCMMapi4_s *cmmapi4, oyObject_s obj );
 OYAPI int OYEXPORT
   oyCMMapi4_Release( oyCMMapi4_s **cmmapi4 );
+
+OYAPI int  OYEXPORT
+           oyCMMapi4_SetBackendContext          ( oyCMMapi4_s       * api,
+                                       oyPointer_s       * ptr );
+OYAPI oyPointer_s * OYEXPORT
+           oyCMMapi4_GetBackendContext          ( oyCMMapi4_s       * api );
 
 
 

@@ -930,6 +930,7 @@ oyCMMapi9_s_  oicc_api9 = {
   {0,9,5},                  /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* oyCMMapi5_s    * api5_; keep empty */
+  0,   /* runtime_context */
 
   oicc_defaultICCValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oiccWidgetEvent, /* oyWidgetEvent_f */
@@ -991,7 +992,7 @@ const char * oiccInfoGetText         ( const char        * select,
          if(type == oyNAME_NICK)
       return "help";
     else if(type == oyNAME_NAME)
-      return _("The filter is provides policy settings. These settings can be applied to a graph through the user function oyConversion_Correct().");
+      return _("The filter provides policy settings. These settings can be applied to a graph through the user function oyConversion_Correct().");
     else
       return _("The module is responsible for many settings in the Oyranos color management settings panel. If applied the module care about rendering intents, simulation, mixed color documents and default profiles.");
   }

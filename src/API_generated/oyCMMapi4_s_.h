@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/06/10
+ *  @date     2013/12/23
  */
 
 
@@ -115,6 +115,7 @@ oyObject_s           oy_;            /**< @private features name and hash */
 
 /* Include "CMMapiFilter.members.h" { */
   oyCMMapi5_s_   * api5_;            /**< @private meta module; keep to zero */
+  oyPointer_s    * runtime_context;  /**< data needed to run the filter */
 
 /* } Include "CMMapiFilter.members.h" */
 
