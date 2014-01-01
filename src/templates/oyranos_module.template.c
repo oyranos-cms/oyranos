@@ -85,8 +85,8 @@ extern const char * (*oyStruct_GetTextFromModule_p) (
  *  @param[out]  count                 count of returned modules
  *  @return                            a zero terminated list of modules
  *
- *  @version  Oyranos: 0.9.0
- *  @date     2012/10/25
+ *  @version  Oyranos: 0.9.5
+ *  @date     2014/01/01
  *  @since    2008/12/19 (Oyranos: 0.1.10)
  */
 oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
@@ -292,17 +292,20 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
           char * api2r = 0;
 
           api2 = oyCMMapiFilters_Get( apis, j );
-          if(flags | oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR)
+          if(flags & oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR)
             oyFilterRegistrationModify( (*api2_)->registration,
                                     oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                         &api2r, 0 );
 
           /* for equal registration compare rank and version */
-          if(oyStrcmp_( apir,  api2r ) == 0 &&
-             rank_list_[i] <= rank_list_[j])
-            accept = 0;
+          if(api2r)
+          {
+            if(oyStrcmp_( apir,  api2r ) == 0 &&
+               rank_list_[i] <= rank_list_[j])
+              accept = 0;
 
-          oyFree_m_(api2r);
+            oyFree_m_(api2r);
+          }
 
           if(api2->release)
             api2->release( (oyStruct_s**)&api2 );
