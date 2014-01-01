@@ -706,7 +706,7 @@ char * oyCMMCacheListPrint_()
       const char * hash_text = oyObject_GetName(compare->oy_, oyNAME_NAME);
       oyPointer_s * cmm_ptr = (oyPointer_s*) oyHash_GetPointer( compare,
                                                   oyOBJECT_POINTER_S);
-      uint32_t * id = cmm_ptr && cmm_ptr->oy_ && cmm_ptr->oy_->hash_ptr_ ? cmm_ptr->oy_->hash_ptr_ : compare->oy_->hash_ptr_;
+      uint32_t * id = (uint32_t*) ((cmm_ptr && cmm_ptr->oy_ && cmm_ptr->oy_->hash_ptr_) ? cmm_ptr->oy_->hash_ptr_ : compare->oy_->hash_ptr_);
       oyStringAddPrintf_( &text, oyAllocateFunc_,oyDeAllocateFunc_,
                       "refs:%d hash: %x%x%x%x ", compare->oy_->ref_, id[0],id[1],id[2],id[3]);
       oyMiscBlobGetHash_((void*)hash_text, oyStrlen_(hash_text), 0,
