@@ -659,6 +659,7 @@ OYAPI int OYEXPORT
   oyPointer block_ = 0;
   size_t size_ = 128;
   icHeader *h = 0;
+  icUInt32Number * two32;
 
   if(!s)
     return 1;
@@ -710,6 +711,12 @@ OYAPI int OYEXPORT
        h->platform = oyValueUInt32( sig ); break;
   case oySIGNATURE_OPTIONS:            /* various ICC header flags */
        h->flags = oyValueUInt32( sig ); break;
+  case oySIGNATURE_ATTRIBUTES:         /* various ICC header attributes */
+       two32 = (icUInt32Number *) h->attributes;
+       two32[0] = oyValueUInt32( sig ); break;
+  case oySIGNATURE_ATTRIBUTES2:        /* various ICC header attributes */
+       two32 = (icUInt32Number *) h->attributes;
+       two32[1] = oyValueUInt32( sig ); break;
   case oySIGNATURE_MANUFACTURER:       /* device manufacturer */
        h->manufacturer = oyValueUInt32( sig ); break;
   case oySIGNATURE_MODEL:              /* device modell */
