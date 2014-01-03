@@ -9,6 +9,7 @@
 #include <oyranos_helper.h>
 #include <oyranos_i18n.h>
 #include <oyranos_string.h>
+#include <oyranos_sentinel.h>
 #include <oyranos_texts.h>
 
 #include <oyFilterNode_s.h>
@@ -71,8 +72,7 @@ int main (int argc, char ** argv)
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
 #endif
-  oyI18NInit_();
-
+  oyExportStart_(EXPORT_CHECK_NO);
 
 /* allow "-opt val" and "-opt=val" syntax */
   if(argc != 1)
