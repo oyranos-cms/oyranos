@@ -34,6 +34,8 @@
 
 /* --- Helpers  --- */
 
+#define AD oyAllocateFunc_, oyDeAllocateFunc_
+
 /* --- static variables   --- */
 
 int oy_warn_ = 1;
@@ -1346,7 +1348,7 @@ oyDataPathsGet_       (int             * count,
     if(text) oy_paths[oy_n++] = text;
     text = oyPathContructAndTest_( "/usr/local/share", subdir );
     if(text) oy_paths[oy_n++] = text;
-    text = oyPathContructAndTest_( "/val/lib", subdir );
+    text = oyPathContructAndTest_( "/var/lib", subdir );
     if(text) oy_paths[oy_n++] = text;
     text = 0;
     if(subdir && strlen(subdir) > 6 && memcmp( subdir,"color/", 6 ) == 0)
@@ -1442,11 +1444,14 @@ oyFileListGet_                  (const char * subpath,
  *  @brief query library paths
  *
  *  @param[out]    count       number of paths found
+ *  @param[in]     subdir      sub path; use "" to skip, otherwise OY_METASUBPATH is assumed; optional
  *  @param[in]     owner       oyUSER/oySYS/oyUSER_SYS
+ *  @param[in]     allocateFunc  user specified allocator
  *  @return                    a array to write the found paths into
  *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.9.5
+ *  @date    2014/01/02
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
  */
 char**  oyLibPathsGet_( int             * count,
                         const char      * subdir,
@@ -1455,31 +1460,49 @@ char**  oyLibPathsGet_( int             * count,
 {
   char ** paths = 0, ** tmp;
   int     n = 0, tmp_n = 0;
-  char *  vars[] = {"OY_MODULE_PATH"};
-  int     vars_n = 1;
+  char *  vars[] = {"OY_MODULE_PATH","LD_LIBRARY_PATH"};
+  int     vars_n = 2;
   int     i,j;
-  char  * fix_paths[3] = {0,0,0};
+  char  * fix_paths[5] = {0,0,0,0,0};
   int     fix_paths_n = 2;
-  char  * full_path = 0;
+  char  * full_path = 0, * fp = NULL;
+  const char * lib = "lib";
+
+  /* guesswork */
+  if(strstr(OY_LIBDIR,"lib64") != NULL)
+    lib = "lib64";
 
   if(!subdir)
   {
     full_path = oyResolveDirFileName_( OY_LIBDIR OY_SLASH OY_METASUBPATH );
     fix_paths[0] = full_path;
-    full_path = oyResolveDirFileName_(
-                          OY_USER_PATH OY_SLASH "lib" OY_SLASH OY_METASUBPATH );
+    oyStringAddPrintf_( &fp, AD, "%s%s%s", OY_USER_PATH OY_SLASH, lib, OY_SLASH OY_METASUBPATH );
+    full_path = oyResolveDirFileName_( fp );
     fix_paths[1] = full_path;
+    oyFree_m_(fp);
+
+    subdir = OY_METASUBPATH;
   } else {
     full_path = oyResolveDirFileName_( OY_LIBDIR OY_SLASH );
     STRING_ADD( fix_paths[0], full_path );
     oyFree_m_( full_path );
     STRING_ADD( fix_paths[0], subdir );
 
-    full_path = oyResolveDirFileName_( OY_USER_PATH OY_SLASH );
+    oyStringAddPrintf_( &fp, AD, "%s%s%s", OY_USER_PATH OY_SLASH, lib, OY_SLASH );
+    full_path = oyResolveDirFileName_( fp );
+    oyFree_m_(fp);
     STRING_ADD( fix_paths[1], full_path );
     oyFree_m_( full_path );
     STRING_ADD( fix_paths[1], subdir );
   }
+
+  oyStringAddPrintf_( &fp, AD, "/usr/" "%s" OY_SLASH "%s", lib, subdir );
+  fix_paths[fix_paths_n++] = oyResolveDirFileName_( fp );
+  oyFree_m_(fp);
+
+  oyStringAddPrintf_( &fp, AD, "/usr/local/" "%s" OY_SLASH "%s", lib, subdir );
+  fix_paths[fix_paths_n++] = oyResolveDirFileName_( fp );
+  oyFree_m_(fp);
 
   oyStringListAdd_( &paths, &n, (const char**)fix_paths, fix_paths_n,
                     oyAllocateFunc_, oyDeAllocateFunc_ );
@@ -1497,29 +1520,27 @@ char**  oyLibPathsGet_( int             * count,
         {
           char **tmp_neu,
                **full_paths;
-          int  tmp_neu_n;
+          int  tmp_neu_n, full_paths_n = 0;
 
           tmp = oyStringSplit_( var, ':', &tmp_n, oyAllocateFunc_ );
 
           full_paths = oyAllocateFunc_(sizeof(char*) * (tmp_n + 1));
           for(j = 0; j < tmp_n; ++j)
           {
-            char * full_name = oyResolveDirFileName_( tmp[i] ),
-                 * p;
-            full_paths[i] = oyExtractPathFromFileName_( full_name );
-            if(strrchr(full_paths[i],OY_SLASH_C) !=
-               ( full_paths[i] + strlen(full_paths[i]) ))
+            char * full_name = oyResolveDirFileName_( tmp[j] );
+            oyStringAddPrintf_( &fp, AD, "%s" OY_SLASH "%s", full_name, subdir );
+            if(!oyStringListHas_((const char**)paths,n,fp))
             {
-              p = strrchr(full_paths[i],OY_SLASH_C);
-              p[0] = 0; 
-            }
+              full_paths[full_paths_n++] = fp; fp = NULL;
+            } else
+              oyFree_m_( fp );
             oyFree_m_( full_name );
           }
           tmp_neu = oyStringListAppend_( (const char**)paths, n,
-                                         (const char**)full_paths, tmp_n,
+                                         (const char**)full_paths, full_paths_n,
                                          &tmp_neu_n, oyAllocateFunc_ );
           oyStringListRelease_( &paths, n, oyDeAllocateFunc_ );
-          oyStringListRelease_( &full_paths, tmp_n, oyDeAllocateFunc_ );
+          oyStringListRelease_( &full_paths, full_paths_n, oyDeAllocateFunc_ );
           paths = tmp_neu;
           n = tmp_neu_n;
         }
@@ -1533,10 +1554,9 @@ char**  oyLibPathsGet_( int             * count,
   paths = tmp;
   n = tmp_n;
 
-  if(fix_paths[0])
-    oyFree_m_(fix_paths[0]);
-  if(fix_paths[1])
-    oyFree_m_(fix_paths[1]);
+  for(i = 0; i < fix_paths_n; ++i)
+    if(fix_paths[i])
+      oyFree_m_(fix_paths[i]);
 
   if(count)
     *count = n;
