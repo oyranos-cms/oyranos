@@ -8,12 +8,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/24
+ *  @date     2014/01/07
  */
 
 
@@ -54,8 +54,10 @@
 void oyCMMui_Release__Members( oyCMMui_s_ * cmmui )
 {
   /* Deallocate members here
-   * E.g: oyXXX_Release( &cmmui->member );
    */
+  if(cmmui->parent && cmmui->parent->release)
+    cmmui->parent->release( (oyStruct_s**) &cmmui->parent );
+  cmmui->parent = NULL;
 
   if(cmmui->oy_->deallocateFunc_)
   {
@@ -121,6 +123,10 @@ int oyCMMui_Copy__Members( oyCMMui_s_ * dst, oyCMMui_s_ * src)
 #endif
 
   /* Copy each value of src to dst here */
+  if(src->parent && src->parent->copy)
+    dst->parent = (oyCMMapiFilter_s*) src->parent->copy( (oyStruct_s*) src->parent, src->oy_ );
+  else
+    dst->parent = src->parent;
 
   return 0;
 }

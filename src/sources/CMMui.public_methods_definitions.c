@@ -116,3 +116,22 @@ const char **      oyCMMui_GetTexts  ( oyCMMui_s         * ui )
 {
   return ((oyCMMui_s_*)ui)->texts;
 }
+
+/** @memberof oyCMMui_s
+ *  @brief    Get the parent structure
+ *
+ *  @param[in]     ui                  ui object
+ *  @return                            the parent object
+ *
+ *  @version  Oyranos: 0.9.5
+ *  @date     2014/01/07
+ *  @since    2014/01/07 (Oyranos: 0.9.5)
+ */
+oyCMMapiFilter_s * oyCMMui_GetParent ( oyCMMui_s         * ui )
+{
+  oyCMMapiFilter_s * p = ((oyCMMui_s_*)ui)->parent;
+  if(p && p->copy)
+    return (oyCMMapiFilter_s*) p->copy( (oyStruct_s*) p, NULL);
+  else
+   return p;
+}

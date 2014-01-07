@@ -32,3 +32,4 @@
    *  other texts like "help" and "category" oyNAME_NICK makes no sense.
    */
   const char    ** texts;
+  oyCMMapiFilter_s*parent;             /**< link to the owner of this structure */

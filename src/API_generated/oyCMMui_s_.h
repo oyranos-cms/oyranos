@@ -8,12 +8,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2013 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/06/14
+ *  @date     2014/01/07
  */
 
 
@@ -96,6 +96,7 @@ oyObject_s           oy_;            /**< @private features name and hash */
    *  other texts like "help" and "category" oyNAME_NICK makes no sense.
    */
   const char    ** texts;
+  oyCMMapiFilter_s*parent;             /**< link to the owner of this structure */
 
 /* } Include "CMMui.members.h" */
 

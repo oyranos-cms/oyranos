@@ -10,12 +10,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2013 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/06/14
+ *  @date     2014/01/07
  */
 
 
@@ -101,6 +101,7 @@ OYAPI int OYEXPORT
 
 /* Include "CMMui.public_methods_declarations.h" { */
 #include "oyranos_module.h"
+#include "oyCMMapiFilter_s.h"
 OYAPI oyCMMui_s *  OYEXPORT
                    oyCMMui_Create    ( const char        * category,
                                        oyCMMGetText_f      getText,
@@ -113,7 +114,7 @@ OYAPI void  OYEXPORT
                                        oyCMMuiGet_f        oyCMMuiGet );
 oyCMMGetText_f     oyCMMui_GetTextF  ( oyCMMui_s         * ui );
 const char **      oyCMMui_GetTexts  ( oyCMMui_s         * ui );
-
+oyCMMapiFilter_s * oyCMMui_GetParent ( oyCMMui_s         * ui );
 
 /* } Include "CMMui.public_methods_declarations.h" */
 

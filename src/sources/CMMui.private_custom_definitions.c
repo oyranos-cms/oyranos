@@ -18,8 +18,10 @@
 void oyCMMui_Release__Members( oyCMMui_s_ * cmmui )
 {
   /* Deallocate members here
-   * E.g: oyXXX_Release( &cmmui->member );
    */
+  if(cmmui->parent && cmmui->parent->release)
+    cmmui->parent->release( (oyStruct_s**) &cmmui->parent );
+  cmmui->parent = NULL;
 
   if(cmmui->oy_->deallocateFunc_)
   {
@@ -85,6 +87,10 @@ int oyCMMui_Copy__Members( oyCMMui_s_ * dst, oyCMMui_s_ * src)
 #endif
 
   /* Copy each value of src to dst here */
+  if(src->parent && src->parent->copy)
+    dst->parent = (oyCMMapiFilter_s*) src->parent->copy( (oyStruct_s*) src->parent, src->oy_ );
+  else
+    dst->parent = src->parent;
 
   return 0;
 }
