@@ -7,12 +7,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2013 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/12/23
+ *  @date     2014/01/07
  */
 
 
@@ -164,6 +164,7 @@ typedef enum {
   oyOBJECT_CMM_INFO_S,                /*!< oyCMMinfo_s */
   oyOBJECT_CMM_API_S,                 /**< oyCMMapi_s */
   oyOBJECT_CMM_APIS_S,                /**< oyCMMapis_s */
+  oyOBJECT_CMM_API_FILTER_S,          /**< oyCMMapiFilter_s */
   oyOBJECT_CMM_API1_S,                /**< oyCMMapi1_s */
   oyOBJECT_CMM_API2_S,                /**< oyCMMapi2_s */
   oyOBJECT_CMM_API3_S,                /**< oyCMMapi3_s */
@@ -173,12 +174,11 @@ typedef enum {
   oyOBJECT_CMM_API7_S,                /**< oyCMMapi7_s */
   oyOBJECT_CMM_DATA_TYPES_S,          /**< oyCMMDataTypes_s */
   oyOBJECT_CMM_API8_S,                /**< oyCMMapi8_s */
-  oyOBJECT_CMM_API_FILTER_S,          /**< oyCMMapiFilter_s */
-  oyOBJECT_CMM_API_FILTERS_S,         /**< oyCMMapiFilters_s */
   oyOBJECT_CMM_API9_S,                /**< oyCMMapi9_s */
   oyOBJECT_CMM_API10_S,               /**< oyCMMapi10_s */
   oyOBJECT_CMM_UI_S,                  /**< oyCMMui_s */
   oyOBJECT_CMM_OBJECT_TYPE_S,         /**< oyCMMobjectType_s */
+  oyOBJECT_CMM_API_FILTERS_S,         /**< oyCMMapiFilters_s */
   oyOBJECT_CMM_API_MAX,               /**< not defined */
   oyOBJECT_ICON_S      = 80,          /*!< oyIcon_s */
   oyOBJECT_MODULE_S,                  /*!< oyModule_s */

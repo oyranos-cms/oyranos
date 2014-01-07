@@ -7,12 +7,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2013 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/08/23
+ *  @date     2014/01/07
  */
 
 
@@ -54,7 +54,7 @@ typedef enum {
  *
  *  @param         select              one from "name", "manufacturer" or "copyright"
  *  @param         type                select flavour
- *  @param         object              the object to ask for a optional context
+ *  @param         context             the object to ask for a optional context
  *                                     This will typical be the object to which
  *                                     this function belongs, but can be stated
  *                                     otherwise.

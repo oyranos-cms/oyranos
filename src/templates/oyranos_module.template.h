@@ -35,7 +35,7 @@ typedef enum {
  *
  *  @param         select              one from "name", "manufacturer" or "copyright"
  *  @param         type                select flavour
- *  @param         object              the object to ask for a optional context
+ *  @param         context             the object to ask for a optional context
  *                                     This will typical be the object to which
  *                                     this function belongs, but can be stated
  *                                     otherwise.

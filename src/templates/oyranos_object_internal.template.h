@@ -38,6 +38,14 @@ int oyCheckType_( oyOBJECT_e type1, oyOBJECT_e type2 );
               oyStructTypeToText( type )) \
     action; \
   }
+#define oyCheckTypeRange_m( type1, type2, action ) \
+  if( !s || ( s->type_ < type1 || s->type_ > type2 )) \
+  { \
+    WARNc4_S( "%s %s(%s-%s)", _("Unexpected object type:"), \
+              oyStructTypeToText( s ? s->type_ : oyOBJECT_NONE ), \
+              oyStructTypeToText( type1 ), oyStructTypeToText( type2 )) \
+    action; \
+  }
 
 #define OY_ERR if(l_error != 0) error = l_error;
 
