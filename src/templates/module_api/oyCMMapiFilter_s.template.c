@@ -32,7 +32,8 @@ OYAPI int  OYEXPORT
   if(!s)
     return -1;
 
-  oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 1 )
+  /* slightly fragile but inheritable */
+  oyCheckTypeRange_m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, oyOBJECT_CMM_API_MAX, return 1 )
 
   {
     if(s->runtime_context)
@@ -69,7 +70,8 @@ OYAPI oyPointer_s * OYEXPORT
   if(!s)
     return ptr;
 
-  oyCheckType__m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return NULL )
+  /* slightly fragile but inheritable */
+  oyCheckTypeRange_m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, oyOBJECT_CMM_API_MAX, return NULL )
 
   return oyPointer_Copy( s->runtime_context, NULL );
 }

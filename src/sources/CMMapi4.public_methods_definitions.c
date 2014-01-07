@@ -57,6 +57,8 @@ OYAPI oyCMMapi4_s*  OYEXPORT
   api4->oyCMMFilterNode_ContextToMem = contextToMem;
   api4->oyCMMFilterNode_GetText = getText;
   api4->ui = (oyCMMui_s_*) oyCMMui_Copy( ui, object );
+  if(api4->ui)
+    api4->ui->parent = (oyCMMapiFilter_s*) oyCMMapi4_Copy( (oyCMMapi4_s*) api4, NULL );
 
   return (oyCMMapi4_s*) api4;
 }
