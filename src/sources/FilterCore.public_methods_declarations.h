@@ -15,3 +15,11 @@ OYAPI oyFilterCore_s *  OYEXPORT
                 oyFilterCore_NewWith ( const char        * registration,
                                        oyOptions_s       * options,
                                        oyObject_s          object );
+#include "oyPointer_s.h"
+OYAPI oyPointer_s *  OYEXPORT
+                 oyFilterCore_GetBackendContext(
+                                       oyFilterCore_s     * filter );
+OYAPI int  OYEXPORT
+                 oyFilterCore_SetBackendContext(
+                                       oyFilterCore_s     * filter,
+                                       oyPointer_s        * data );

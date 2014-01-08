@@ -10,12 +10,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/12/13
+ *  @date     2014/01/08
  */
 
 
@@ -281,6 +281,64 @@ OYAPI const char *  OYEXPORT
   return s->registration_;
 }
 
+/**
+ *  @memberof oyFilterCore_s
+ *  @brief   set backend specific runtime data
+ *
+ *  Runtime data can be used as context by a backend during execution. The data
+ *  is typical set during oyCMMapi4_s creation. This function provides 
+ *  access for a backend inside a DAC in order to change that data during 
+ *  backend lifetime.
+ *
+ *  @param[in,out] obj                 the node object
+ *  @param[in]     ptr                 the data needed to run the filter type
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2014/01/08
+ *  @since   2014/01/08(Oyranos: 0.9.5)
+ */
+OYAPI int  OYEXPORT
+           oyFilterCore_SetBackendContext (
+                                       oyFilterCore_s    * obj,
+                                       oyPointer_s       * ptr )
+{
+  oyFilterCore_s_ * s = (oyFilterCore_s_*)obj;
+
+  if(!s)
+    return -1;
+
+  oyCheckType__m( oyOBJECT_FILTER_CORE_S, return 1 )
+
+  return oyCMMapi4_SetBackendContext( (oyCMMapi4_s*)s->api4_, ptr );
+}
+
+/**
+ *  @memberof oyFilterCore_s
+ *  @brief   get backend specific runtime data
+ *
+ *  Backend context is used by a filter type during execution.
+ *
+ *  @param[in]     obj                 the node object
+ *  @return                            the context needed to run the filter type
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2014/01/08
+ *  @since   2014/01/08(Oyranos: 0.9.5)
+ */
+OYAPI oyPointer_s * OYEXPORT
+           oyFilterCore_GetBackendContext
+                                     ( oyFilterCore_s    * obj )
+{
+  oyFilterCore_s_ * s = (oyFilterCore_s_*)obj;
+
+  if(!s)
+    return NULL;
+
+  oyCheckType__m( oyOBJECT_FILTER_CORE_S, return NULL )
+
+  return oyCMMapi4_GetBackendContext( (oyCMMapi4_s*)s->api4_ );
+}
 
 /* } Include "FilterCore.public_methods_definitions.c" */
 
