@@ -2514,7 +2514,7 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
       if(oyFilterRegistrationMatch( reg, (*cmm_api9_)->pattern, 0 ))
       {
         if((*cmm_api9_)->oyCMMuiGet)
-          error = (*cmm_api9_)->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
+          error = (*cmm_api9_)->oyCMMuiGet( (oyCMMapiFilter_s*) cmm_api9_, options, &tmp, oyAllocateFunc_ );
 
         if(error)
         {
@@ -2553,7 +2553,7 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
   if(!error && (*node_)->core->api4_->ui->oyCMMuiGet)
   {
     /* @todo and how to mix in the values? */
-    error = (*node_)->core->api4_->ui->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
+    error = (*node_)->core->api4_->ui->oyCMMuiGet( (oyCMMapiFilter_s*) (*node_)->core->api4_, options, &tmp, oyAllocateFunc_ );
     if(tmp)
     {
       STRING_ADD( text, tmp );

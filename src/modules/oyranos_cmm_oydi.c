@@ -869,7 +869,8 @@ char oydi_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
-int  oydiUiGet                       ( oyOptions_s       * opts,
+int  oydiUiGet                       ( oyCMMapiFilter_s   * module,
+                                       oyOptions_s       * opts,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {

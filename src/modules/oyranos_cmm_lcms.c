@@ -2086,11 +2086,12 @@ char lcms_extra_options[] = {
 /** Function lcmsGetOptionsUI
  *  @brief   return XFORMS for matching options
  *
- *  @version Oyranos: 0.3.2
+ *  @version Oyranos: 0.9.5
+ *  @date    2014/01/08
  *  @since   2009/07/29 (Oyranos: 0.1.10)
- *  @date    2011/07/31
  */
-int lcmsGetOptionsUI                 ( oyOptions_s        * options,
+int lcmsGetOptionsUI                 ( oyCMMapiFilter_s   * module,
+                                       oyOptions_s        * options,
                                        char              ** ui_text,
                                        oyAlloc_f            allocateFunc )
 {

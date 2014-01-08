@@ -159,7 +159,8 @@ const char ppm_write_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
-int  oyraPPMwriteUiGet               ( oyOptions_s       * opts,
+int  oyraPPMwriteUiGet               ( oyCMMapiFilter_s   * module,
+                                       oyOptions_s       * opts,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {
@@ -1021,7 +1022,8 @@ const char ppm_read_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
-int  oyraPPMreadUiGet                ( oyOptions_s       * opts,
+int  oyraPPMreadUiGet                ( oyCMMapiFilter_s   * module,
+                                       oyOptions_s       * opts,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {

@@ -6,12 +6,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2013 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/12/23
+ *  @date     2014/01/08
  */
 
 
@@ -2529,7 +2529,7 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
       if(oyFilterRegistrationMatch( reg, (*cmm_api9_)->pattern, 0 ))
       {
         if((*cmm_api9_)->oyCMMuiGet)
-          error = (*cmm_api9_)->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
+          error = (*cmm_api9_)->oyCMMuiGet( (oyCMMapiFilter_s*) cmm_api9_, options, &tmp, oyAllocateFunc_ );
 
         if(error)
         {
@@ -2568,7 +2568,7 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
   if(!error && (*node_)->core->api4_->ui->oyCMMuiGet)
   {
     /* @todo and how to mix in the values? */
-    error = (*node_)->core->api4_->ui->oyCMMuiGet( options, &tmp, oyAllocateFunc_ );
+    error = (*node_)->core->api4_->ui->oyCMMuiGet( (oyCMMapiFilter_s*) (*node_)->core->api4_, options, &tmp, oyAllocateFunc_ );
     if(tmp)
     {
       STRING_ADD( text, tmp );

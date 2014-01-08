@@ -472,7 +472,8 @@ const char png_write_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
-int  oPNGPNGwriteUiGet               ( oyOptions_s       * opts,
+int  oPNGPNGwriteUiGet               ( oyCMMapiFilter_s   * module,
+                                       oyOptions_s       * opts,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {
@@ -1064,7 +1065,8 @@ const char png_read_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
-int  oPNGPNGreadUiGet                ( oyOptions_s       * opts,
+int  oPNGPNGreadUiGet                ( oyCMMapiFilter_s   * module,
+                                       oyOptions_s       * opts,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {

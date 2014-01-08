@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/07
+ *  @date     2014/01/08
  */
 
 
@@ -40,6 +40,7 @@ typedef struct oyCMMui_s oyCMMui_s;
 
 /* Include "CMMui.public.h" { */
 #include "oyOptions_s.h"
+#include "oyCMMapiFilter_s.h"
 /** typedef  oyCMMuiGet_f
  *  @brief   obtain a XFORMS ui description
  *  @ingroup module_api
@@ -48,16 +49,18 @@ typedef struct oyCMMui_s oyCMMui_s;
  *  The structures can provide a XFORMS ui based on the modules own
  *  set of options. The options are in the property of the caller.
  *
+ *  @param[in]     module              the owner
  *  @param[in]     options             the options to display
  *  @param[out]    ui_text             the XFORMS string
  *  @param[in]     allocateFunc        user allocator
  *  @return                            0 on success; error >= 1; -1 not understood; unknown < -1
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.5
+ *  @date    2014/01/08
  *  @since   2009/01/18 (Oyranos: 0.1.10)
- *  @date    2009/01/18
  */
-typedef int  (*oyCMMuiGet_f)         ( oyOptions_s        * options,
+typedef int  (*oyCMMuiGet_f)         ( oyCMMapiFilter_s   * module,
+                                       oyOptions_s        * options,
                                        char              ** ui_text,
                                        oyAlloc_f            allocateFunc );
 

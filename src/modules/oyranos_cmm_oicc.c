@@ -207,7 +207,8 @@ char * oiccAddStdProfiles_routine    ( char               * tmp,
   return tmp;
 }
 
-int oiccGetDefaultColorIccOptionsUI ( oyOptions_s        * options,
+int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module,
+                                       oyOptions_s        * options,
                                        char              ** ui_text,
                                        oyAlloc_f            allocateFunc )
 {
@@ -936,7 +937,7 @@ oyCMMapi9_s_  oicc_api9 = {
   oiccWidgetEvent, /* oyWidgetEvent_f */
 
   oicc_default_color_icc_options,   /* options */
-  oiccGetDefaultColorIccOptionsUI,  /* oyCMMuiGet */
+  oiccGetDefaultColorIccOptionsUI,  /* oyCMMuiGet_f */
   (char*)CMM_NICK"=\"http://www.oyranos.org/2009/oyranos_icc\"", /* xml_namespace */
 
   (oyCMMobjectType_s**)icc_objects,  /* object_types */
