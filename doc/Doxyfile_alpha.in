@@ -220,7 +220,7 @@ SEARCHENGINE           = YES
 FILE_PATTERNS          = doxymentation_alpha \
                          oyranos.h \
                          oyranos_alpha.c oyranos_alpha.h \
-                         oy*_s_.c oy*_s_.h *.dox \
+                         oy*_s.c oy*_s.h oy*_s_.c oy*_s_.h *.dox \
                          oyranos_core.h \
                          oyranos_icc.h \
                          oyranos_xml.h oyranos_xml.c \
