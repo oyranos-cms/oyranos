@@ -10,12 +10,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2013 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/12/23
+ *  @date     2014/01/10
  */
 
 
@@ -112,49 +112,6 @@ OYAPI int OYEXPORT
 
 /* Include "FilterNode.public_methods_definitions.c" { */
 #include "oyFilterCore_s_.h"
-
-/** @internal
- *  @brief   convert between oyPointer_s data
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/12/28 (Oyranos: 0.1.10)
- *  @date    2008/12/28
- */
-int          oyCMMptr_ConvertData    ( oyPointer_s       * cmm_ptr,
-                                       oyPointer_s       * cmm_ptr_out,
-                                       oyFilterNode_s    * node )
-{
-  int error = !cmm_ptr || !cmm_ptr_out;
-  oyCMMapi6_s_ * api6 = 0;
-  char * reg = 0, * tmp = 0;
-
-  if(error <= 0)
-  {
-    reg = oyStringCopy_( "//", oyAllocateFunc_ );
-    tmp = oyFilterRegistrationToText( oyFilterNodePriv_m(node)->core->registration_,
-                                      oyFILTER_REG_TYPE,0);
-    STRING_ADD( reg, tmp );
-    oyFree_m_( tmp );
-    STRING_ADD( reg, "/" );
-    STRING_ADD( reg, ((oyPointer_s_*)cmm_ptr)->resource );
-    STRING_ADD( reg, "_" );
-    STRING_ADD( reg, ((oyPointer_s_*)cmm_ptr_out)->resource );
-
-    api6 = (oyCMMapi6_s_*) oyCMMsGetFilterApi_( 0, reg, oyOBJECT_CMM_API6_S );
-
-    error = !api6;
-  }
-
-  if(error <= 0 && api6->oyModuleData_Convert)
-    error = api6->oyModuleData_Convert( cmm_ptr, cmm_ptr_out, node );
-  else
-    error = 1;
-
-  if(error)
-    WARNc_S("Could not convert context");
-
-  return error;
-}
 
 /** Function  oyFilterNode_Connect
  *  @memberof oyFilterNode_s

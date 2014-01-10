@@ -19,7 +19,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/07
+ *  @date     2014/01/10
  */
 
 
@@ -174,6 +174,20 @@ OYAPI oyPointer_s * OYEXPORT
 
 
 /* Include "CMMapi6.public_methods_definitions.c" { */
+/**
+ *  @memberof   oyCMMapi6_s
+ *  @brief      Get data type identifier
+ *
+ *  @param         api                 object
+ *  @param         out_direction       
+ *                                     - 0 - input data type
+ *                                     - 1 - output data type
+ *  @return                            the identifier string
+ *
+ *  @version Oyranos: 0.9.5
+ *  @since   2014/01/10 (Oyranos: 0.9.5)
+ *  @date    2014/01/10
+ */
 const char *       oyCMMapi6_GetDataType
                                      ( oyCMMapi6_s       * api,
                                        int                 out_direction )
@@ -184,6 +198,17 @@ const char *       oyCMMapi6_GetDataType
     return ((oyCMMapi6_s_*)api)->data_type_in;
 }
 
+/**
+ *  @memberof   oyCMMapi6_s
+ *  @brief      Get data conversion function
+ *
+ *  @param         api                 object
+ *  @return                            the function
+ *
+ *  @version Oyranos: 0.9.5
+ *  @since   2014/01/10 (Oyranos: 0.9.5)
+ *  @date    2014/01/10
+ */
 oyModuleData_Convert_f
                    oyCMMapi6_GetConvertF
                                      ( oyCMMapi6_s       * api )

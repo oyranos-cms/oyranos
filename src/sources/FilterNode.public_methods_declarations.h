@@ -1,8 +1,4 @@
 OYAPI int  OYEXPORT
-                 oyCMMptr_ConvertData (oyPointer_s       * cmm_ptr,
-                                       oyPointer_s       * cmm_ptr_out,
-                                       oyFilterNode_s    * node );
-OYAPI int  OYEXPORT
                  oyFilterNode_Connect (oyFilterNode_s    * input,
                                        const char        * socket_nick,
                                        oyFilterNode_s    * output,
