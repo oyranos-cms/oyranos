@@ -18,11 +18,13 @@
 
 
 /** \addtogroup color Color
+ *  @brief Color and Color Management APIs
 
  *  @{
  */
 
-/** \addtogroup color_low Basic color calculations
+/** \addtogroup color_low Color calculations
+ *  @brief Fast hardcoded color conversions
 
  *  @{
  */

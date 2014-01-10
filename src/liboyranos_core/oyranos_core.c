@@ -412,7 +412,7 @@ int            oyMessageFuncSet      ( oyMessage_f         message_func )
 
 
 /** \addtogroup misc Miscellaneous
- *  Miscellaneous stuff.
+ *  @brief Miscellaneous stuff.
 
  *  @{
  */

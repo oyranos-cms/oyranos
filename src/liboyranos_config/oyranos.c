@@ -228,7 +228,8 @@ oySetProfile_Block (const char* name, void* mem, size_t size,
 
 #include "oyranos.h"
 
-/** \addtogroup defaults_apis Defaults API
+/** \addtogroup defaults_apis
+ *  @brief Percistently stored user and system preferences
 
     - @ref policy - load / save of user policies
     - @ref options - layout and describe options to the user; part of user policies
@@ -244,7 +245,7 @@ oySetProfile_Block (const char* name, void* mem, size_t size,
  */
 
 /** \addtogroup options Options API
- *  The idea behind this API is to provide one layout for
+ *  @brief The idea behind this API is to provide one layout for
  *  presenting a configuration dialog to users. The advantage is, every 
  *  application, like KDE and Gnome control panels, will inherit the same logic.
  *  A user can easily use the one and the other panel
@@ -393,7 +394,7 @@ oyOptionChoicesFree                  (oyWIDGET_e        option,
 
 
 /** \addtogroup behaviour Behaviour API
- *  Functions to set and query for behaviour on various actions in Oyranos.
+ *  @brief Set and query for behaviour on various actions
 
  *  @todo is the missing description of available choices<br>
 
@@ -457,7 +458,7 @@ oyGetBehaviour         (oyBEHAVIOUR_e       type)
 /*  @} */
 
 /** \addtogroup policy Policy API
- *  Functions to set and export policies in Oyranos.
+ *  @brief Set and export policies in Oyranos
  *
  *  Policies are a set of options used to group color management settings.
  *
@@ -653,8 +654,8 @@ oyPolicySet                (const char      * policy_file,
 
 /*  @} */
 
-/** \addtogroup default_profiles Default Profiles API
- *  Functions to handle and configure default profiles.
+/** \addtogroup default_profiles Default Profiles
+ *  @brief Configure default profiles
 
  *  @see @ref path_names
 
@@ -740,19 +741,12 @@ oyGetDefaultProfileName    (oyPROFILE_e       type,
 
 /*  @} *//* defaults_apis */
 
-/** \addtogroup objects_profile ICC Profile APIs
- *  Functions to select, read, manipulate and write ICC Profiles. 
- *  Low level APIs to obtain pure filenames and handle raw bits as well as 
- *  object oriented APIs are in place.
-
- *  - @ref profile_lists - provides the ICC profile search path content as string list
- *  - @ref profile_handling - low level ICC profile I/O and more
-
+/** \addtogroup objects_profile
  *  @{
  */
 
 /** \addtogroup profile_lists Profile Lists API
- *  Low level and fast functions to handle profile name lists.
+ *  @brief Fast profile name lists
 
  *  @see @ref path_names
 
@@ -799,7 +793,7 @@ char **  oyProfileListGet            ( const char        * colorsig,
 
 
 /** \addtogroup profile_handling Profile Handling API
- *  Functions to handle profiles.
+ *  @brief Basic profile helpers
 
  *  @{
  */
@@ -968,7 +962,7 @@ oyProfileGetMD5        ( void       *buffer,
 /** @} */
 
 /** \addtogroup misc Miscellaneous
- *  Miscellaneous stuff.
+ *  @brief Miscellaneous stuff
 
  *  @{
  */

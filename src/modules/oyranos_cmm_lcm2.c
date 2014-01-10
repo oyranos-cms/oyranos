@@ -1448,7 +1448,6 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
                                        size_t            * size,
                                        oyAlloc_f           allocateFunc )
 {
-  /*int error = !node || !size;*/
   oyPointer block = 0;
   int error = 0;
   int n,i,len;

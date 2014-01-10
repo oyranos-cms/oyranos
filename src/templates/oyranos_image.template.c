@@ -7,7 +7,7 @@
 #include "oyranos_image.h"
 #include "oyranos_image_internal.h"
 
-/** \addtogroup objects_image Image Container API
+/** \addtogroup objects_image
  *
  *  @{
  */

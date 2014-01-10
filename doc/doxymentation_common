@@ -149,12 +149,14 @@
  *  @{ */
 /** @} *//* defaults_apis */
 
-/** \addtogroup objects_profile Profile Handling
+/** \addtogroup objects_profile
  *  @{ */
 /** @} *//* objects_profile */
 
 
 /** \addtogroup objects_single_color Named Colors
+ *  @brief High level color objects
+ *
  *  A Named Color is a single color capsulated in a object with rich
  *  information about that color. They are useful for palettes, measurements
  *  and other color samples. For colors in pixel images use the oyImage_s object.
@@ -377,6 +379,7 @@ digraph G {
 
 
 /** \addtogroup module_api Backend Modules
+ *  @brief Write extensions that integrate with Oyranos front end APIs
  *
  *  Oyranos C modules provide support for data formats, data processing and
  *  process control, as well as configuration.

@@ -3,11 +3,6 @@
 #include "oyranos_i18n.h"
 #include "oyranos_profile.h"
 
-/** \addtogroup misc Miscellaneous
-
- *  @{
- */
-
 /** \addtogroup icc_low ICC helpers
 
  *  @{
@@ -74,8 +69,5 @@ const char   * oyProfileSignatureDescription (
 /**
  *  @} *//* icc_low
  */
-
-
-/** @} *//*misc */
 
 

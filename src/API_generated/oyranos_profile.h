@@ -6,12 +6,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2013 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/03/01
+ *  @date     2014/01/10
  */
 
 
@@ -24,7 +24,8 @@
 #endif /* __cplusplus */
 
 
-/** \addtogroup objects_profile Profile API
+/** \addtogroup objects_profile ICC Profile APIs
+    @brief Select, read, manipulate and write ICC Profiles in memory and on disk.
  *
  *  To open a profile exist several methods in the oyProfile_Fromxxx APIs.
  *  oyProfile_FromStd(), oyProfile_FromFile() and oyProfile_FromMem() are basic
@@ -47,8 +48,11 @@
  *  oyProfiles_DeviceRank() can be used together with a given device so sort
  *  for a the best match in descenting order.
 
- *  @{
- */
+ *  Low level APIs to obtain pure filenames and handle raw bits are in place:
+
+ *  - @ref profile_lists - provides the ICC profile search path content as string list
+ *  - @ref profile_handling - low level ICC profile I/O and more
+ *  @{ */
 
 
 

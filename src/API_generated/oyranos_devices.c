@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/08
+ *  @date     2014/01/10
  */
 
 
@@ -40,6 +40,7 @@
 
 
 /** \addtogroup devices_handling Device API
+ *  @brief Color device meta data and profile handling
  *
  *  Devices are a special form of configurations. Their access is grouped
  *  for effective performance. Known devices are queried with
@@ -2873,7 +2874,8 @@ OYAPI char * OYEXPORT
  */
 
 
-/** \addtogroup objects_generic
+/** \addtogroup objects_generic Generic object system
+ *  @brief Basic objects to make all higher level object types happy
 
  *  @{
  */
@@ -2887,6 +2889,7 @@ OYAPI char * OYEXPORT
 
 
 /** \addtogroup objects_value Values Handling
+ *  @brief Manipulate and abstract values
 
  *  @{
  */

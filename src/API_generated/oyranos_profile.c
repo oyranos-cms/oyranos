@@ -6,22 +6,17 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2013 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/01/14
+ *  @date     2014/01/10
  */
 
 
 #include "oyranos_i18n.h"
 #include "oyranos_profile.h"
-
-/** \addtogroup misc Miscellaneous
-
- *  @{
- */
 
 /** \addtogroup icc_low ICC helpers
 
@@ -89,8 +84,5 @@ const char   * oyProfileSignatureDescription (
 /**
  *  @} *//* icc_low
  */
-
-
-/** @} *//*misc */
 
 

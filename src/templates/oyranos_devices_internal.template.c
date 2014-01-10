@@ -10,6 +10,7 @@
 
 
 /** \addtogroup devices_handling Device API
+ *
  *  @{
  */
 

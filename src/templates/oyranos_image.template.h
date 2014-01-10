@@ -9,7 +9,8 @@
 
 {% include "cpp_begin.h" %}
 
-/** \addtogroup objects_image
+/** \addtogroup objects_image Image Containers
+ *  @brief Pixel buffer abstraction
  *
  *  @{
  */

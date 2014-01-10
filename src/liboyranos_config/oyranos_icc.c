@@ -31,7 +31,13 @@
  *  @{
  */
 
+/** \addtogroup objects_profile
+
+ *  @{
+ */
+
 /** \addtogroup icc_low ICC helpers
+    @brief Functions to convert and interprete ICC defined enums
 
  *  @{
  */
@@ -889,6 +895,7 @@ icValue_to_icUInt32Number_m( oyValueTagSig, icTagSignature )
  *  @} *//* icc_low
  */
 
+/** @} *//* objects_profile */
 
 /** @} *//* color */
 

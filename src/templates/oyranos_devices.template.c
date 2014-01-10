@@ -25,6 +25,7 @@
 
 
 /** \addtogroup devices_handling Device API
+ *  @brief Color device meta data and profile handling
  *
  *  Devices are a special form of configurations. Their access is grouped
  *  for effective performance. Known devices are queried with
@@ -2858,7 +2859,8 @@ OYAPI char * OYEXPORT
  */
 
 
-/** \addtogroup objects_generic
+/** \addtogroup objects_generic Generic object system
+ *  @brief Basic objects to make all higher level object types happy
 
  *  @{
  */
@@ -2872,6 +2874,7 @@ OYAPI char * OYEXPORT
 
 
 /** \addtogroup objects_value Values Handling
+ *  @brief Manipulate and abstract values
 
  *  @{
  */
