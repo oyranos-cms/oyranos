@@ -2,7 +2,7 @@
  *  @ingroup objects_generic
  *  @brief Oyranos base structure
  *
- *  All Oyranos structures should be castable to this basic one.
+ *  All inherited Oyranos structures should be castable to this basic one.
  *
  *  @note New templates will not be created automaticly [notemplates]
  *
