@@ -14,12 +14,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2013 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/12/23
+ *  @date     2014/01/11
  */
 
 
@@ -72,24 +72,36 @@ typedef int(*oyModuleData_Convert_f) ( oyPointer_s       * data_in,
  *  @ingroup module_api
  *  @extends oyCMMapiFilter_s
  *  @brief   Context convertor
- *  @internal
  *  
  *  The context provided by a filter can be exotic. The API provides the means
  *  to get him into a known format. With this format connector it is possible to
  *  interface otherwise divergine formats.
  *
- \dot
+ *  The context is set by calling into oyConversion_RunPixels(), which calls
+ *  oyFilterGraph_PrepareContexts() as needed, that oyPointer_ConvertData() 
+ *  and then a suitable oyCMMapi6_s format connector. The result is cached 
+ *  in memory by higher than this layer.
+ *
+ *  @dot
 digraph G {
+  bgcolor="transparent";
   rankdir=LR
-  node [shape=record, fontname=Helvetica, fontsize=10];
-  edge [fontname=Helvetica, fontsize=10];
+  graph [fontname=Helvetica, fontsize=14];
+  subgraph cluster_7 {
+    label="Context Format Conversion";
+    color=white;
+    clusterrank=global;
 
-  a [ label="ICC device link - oyDL" ];
-  b [ label="littleCMS specific device link - lcCC" ];
+   node [shape=record, fontname=Helvetica, fontsize=10, style=filled];
+    edge [fontname=Helvetica, fontsize=10];
 
-  a -> b [arrowtail=none, arrowhead=normal];
+    a [ label="ICC device link - \"oyDL\"" ];
+    b [ label="littleCMS specific device link - \"lcCC\"" ];
+
+    a -> b [arrowtail=none, arrowhead=normal];
+  }
 }
- \enddot
+ @enddot
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/15 (Oyranos: 0.1.9)
