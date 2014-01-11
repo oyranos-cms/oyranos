@@ -8,12 +8,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/11/02
+ *  @date     2014/01/11
  */
 
 
@@ -172,7 +172,7 @@ oyArray2d_s_ * oyArray2d_New_ ( oyObject_s object )
   if(error)
     WARNc_S( "memset failed" );
 
-  s->type_ = type;
+  memcpy( s, &type, sizeof(oyOBJECT_e) );
   s->copy = (oyStruct_Copy_f) oyArray2d_Copy;
   s->release = (oyStruct_Release_f) oyArray2d_Release;
 
@@ -353,11 +353,12 @@ int                oyArray2d_Init_   ( oyArray2d_s_      * s,
   if(error <= 0)
   {
     int y_len = sizeof(unsigned char *) * (height + 1);
+    oyOBJECT_e rtype = oyOBJECT_RECTANGLE_S;
 
     s->width = width;
     s->height = height;
     s->t = data_type;
-    s->data_area.type_ = oyOBJECT_RECTANGLE_S;
+    memcpy( &s->data_area, &rtype, sizeof(oyOBJECT_e) );
     oyRectangle_SetGeo( (oyRectangle_s*)&s->data_area, 0,0, width, height );
     s->array2d = s->oy_->allocateFunc_( y_len );
     error = !memset( s->array2d, 0, y_len );

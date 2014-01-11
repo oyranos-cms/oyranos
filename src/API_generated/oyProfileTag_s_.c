@@ -8,12 +8,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/10/08
+ *  @date     2014/01/11
  */
 
 
@@ -138,7 +138,7 @@ oyProfileTag_s_ * oyProfileTag_New_ ( oyObject_s object )
   if(error)
     WARNc_S( "memset failed" );
 
-  s->type_ = type;
+  memcpy( s, &type, sizeof(oyOBJECT_e) );
   s->copy = (oyStruct_Copy_f) oyProfileTag_Copy;
   s->release = (oyStruct_Release_f) oyProfileTag_Release;
 

@@ -32,7 +32,7 @@ void oyStructList_Release__Members( oyStructList_s_ * structlist )
     if(structlist->list_name)
       deallocateFunc(structlist->list_name);
 
-    structlist->type_ = 0;
+    memset( structlist, 0, sizeof(oyOBJECT_e) );
   }
 }
 

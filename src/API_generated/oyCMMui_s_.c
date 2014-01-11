@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/07
+ *  @date     2014/01/11
  */
 
 
@@ -165,7 +165,7 @@ oyCMMui_s_ * oyCMMui_New_ ( oyObject_s object )
   if(error)
     WARNc_S( "memset failed" );
 
-  s->type_ = type;
+  memcpy( s, &type, sizeof(oyOBJECT_e) );
   s->copy = (oyStruct_Copy_f) oyCMMui_Copy;
   s->release = (oyStruct_Release_f) oyCMMui_Release;
 

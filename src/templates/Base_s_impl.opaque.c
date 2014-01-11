@@ -33,7 +33,7 @@
 
   error = !memset( s, 0, sizeof(struct {{ struct.name }}) );
 
-  s->type_ = type;
+  memcpy( s, &type, sizeof(oyOBJECT_e) );
   s->copy = (oyStruct_Copy_f) oy{{ class.baseName }}_Copy;
   s->release = (oyStruct_Release_f) oy{{ class.baseName }}_Release;
 

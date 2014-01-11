@@ -32,7 +32,7 @@ void oyPointer_Release__Members( oyPointer_s_ * cmmptr )
     if(--s->ref)
       return;
 
-    s->type_ = 0;
+    memset( s, 0, sizeof(oyOBJECT_e) );
 
     if(s->ptr)
     {
