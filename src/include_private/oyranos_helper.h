@@ -91,6 +91,9 @@ int   oyWriteMemToFile_ (const char* name, const void* mem, size_t size);
 #define OY_FILE_APPEND 0x01
 #define OY_FILE_NAME_SEARCH 0x02
 #define OY_FILE_TEMP_DIR 0x04
+char * oyGetTempFileName_            ( const char        * name,
+                                       uint32_t            flags,
+                                       oyAlloc_f           allocateFunc );
 int  oyWriteMemToFile2_              ( const char        * name,
                                        void              * mem,
                                        size_t              size,

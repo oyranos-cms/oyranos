@@ -474,12 +474,8 @@ oyWriteMemToFile_(const char* name, const void* mem, size_t size)
   return r;
 }
 
-/* TODO: support flags - OY_FILE_APPEND */
-int  oyWriteMemToFile2_              ( const char        * name,
-                                       void              * mem,
-                                       size_t              size,
+char * oyGetTempFileName_            ( const char        * name,
                                        uint32_t            flags,
-                                       char             ** result,
                                        oyAlloc_f           allocateFunc )
 {
   int error = 0;
@@ -488,10 +484,11 @@ int  oyWriteMemToFile2_              ( const char        * name,
   char * filename_tmp = 0;
   char * full_name = 0;
   int exist = 0, pos = 1;
-  char * tmp = 0;
+  char * tmp = 0,
+       * result = NULL;
 
   if(!name)
-    return 1;
+    return NULL;
 
   if(flags & OY_FILE_TEMP_DIR)
   {
@@ -521,7 +518,7 @@ int  oyWriteMemToFile2_              ( const char        * name,
      !(flags & OY_FILE_APPEND) && !(flags & OY_FILE_NAME_SEARCH))
   {
     WARNc2_S( "%s: %s", _("File exists"), full_name );
-    return 1;
+    return NULL;
   }
 
   if(exist && flags & OY_FILE_NAME_SEARCH && !(flags & OY_FILE_APPEND))
@@ -534,7 +531,7 @@ int  oyWriteMemToFile2_              ( const char        * name,
     int max = 1000;
 
     /* allocate memory */
-    oyAllocHelper_m_( tmp, char, strlen(full_name)+12, oyAllocateFunc_, return 1);
+    oyAllocHelper_m_( tmp, char, strlen(full_name)+12, oyAllocateFunc_, return NULL);
 
     oySprintf_( tmp, "%s", full_name );
     ext = end = oyStrrchr_( tmp, '.' );
@@ -566,7 +563,7 @@ int  oyWriteMemToFile2_              ( const char        * name,
     if(pos >= max)
     {
       WARNc2_S( "%s: %s", _("File exists"), full_name );
-      return 1;
+      return NULL;
     }
 
     filename = tmp;
@@ -575,13 +572,39 @@ int  oyWriteMemToFile2_              ( const char        * name,
 
   if(!error)
   {
-    error = oyWriteMemToFile_( filename, mem, size );
-    if(result)
-      *result = oyStringCopy_( filename,
-                               allocateFunc?allocateFunc:oyAllocateFunc_ );
+    result = oyStringCopy_( filename,
+                            allocateFunc?allocateFunc:oyAllocateFunc_ );
   }
 
   if(tmp) oyFree_m_(tmp)
+
+  return result;
+}
+ 
+
+/* TODO: support flags - OY_FILE_APPEND */
+int  oyWriteMemToFile2_              ( const char        * name,
+                                       void              * mem,
+                                       size_t              size,
+                                       uint32_t            flags,
+                                       char             ** result,
+                                       oyAlloc_f           allocateFunc )
+{
+  int error = 0;
+  char * filename = NULL;
+
+  if(!name)
+    return 1;
+
+  filename = oyGetTempFileName_( name, flags, allocateFunc );
+
+  error = !filename;
+
+  if(!error)
+  {
+    error = oyWriteMemToFile_( filename, mem, size );
+    *result = filename;
+  }
 
   return error;
 }
