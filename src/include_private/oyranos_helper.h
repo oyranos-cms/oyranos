@@ -83,6 +83,7 @@ int     oyRecursivePaths_      (int (*doInPath) (oyFileList_s *,
 int oyIsDir_      (const char* path);
 int oyIsFile_     (const char* fileName);
 int oyIsFileFull_ (const char* fullFileName, const char * read_mode);
+size_t oyReadFileSize_(const char* name);
 int oyMakeDir_    (const char* path);
 int  oyRemoveFile_                   ( const char        * full_file_name );
 
@@ -166,7 +167,7 @@ int            oyRampManipulateF64   ( double            * ramp1,
 
 /* --- miscellaneous helpers --- */
 
-int                oyMiscBlobGetMD5_ ( void              * buffer,
+int                oyMiscBlobGetMD5_ ( const void        * buffer,
                                        size_t              size,
                                        unsigned char     * md5_return );
 uint32_t           oyMiscBlobL3_     ( void              * buffer,
