@@ -211,7 +211,7 @@ oyReadFileToMem_(const char* name, size_t *size,
     {
       mem = oyReadFilepToMem_( fp, size, allocate_func );
     } else {
-      WARNc2_S( "%s: %s", _("Could not open profile"), filename );
+      WARNc2_S( "%s: %s", _("Could not open profile"), oyNoEmptyString_m_(filename) );
     }
   }
  
@@ -488,7 +488,10 @@ char * oyGetTempFileName_            ( const char        * name,
        * result = NULL;
 
   if(!name)
-    return NULL;
+  {
+    filename = tmpnam(NULL);
+    flags &= ~OY_FILE_TEMP_DIR;
+  }
 
   if(flags & OY_FILE_TEMP_DIR)
   {
@@ -562,7 +565,7 @@ char * oyGetTempFileName_            ( const char        * name,
     max = (int)pow( 10, digits);
     if(pos >= max)
     {
-      WARNc2_S( "%s: %s", _("File exists"), full_name );
+      WARNc2_S( "%s: %s", _("File exists"), tmp );
       return NULL;
     }
 
