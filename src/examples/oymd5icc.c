@@ -50,10 +50,10 @@ int main( int argc, char ** argv )
   if(p)
   {
     if(show_short)
-      printf( "%x%x%x%x\n",
+      printf( "%08x%08x%08x%08x\n",
             i[0],i[1],i[2],i[3] );
     else
-      printf( "%x%x%x%x[%x%x%x%x] %s\n",
+      printf( "%08x%08x%08x%08x[%08x%08x%08x%08x] %s\n",
             i[0],i[1],i[2],i[3], id[0],id[1],id[2],id[3], argv[profile_pos] );
   } else
     fprintf(stderr, "not found: %s\n", argv[profile_pos] );

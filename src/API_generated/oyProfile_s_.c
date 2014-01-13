@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/01/13
  */
 
 
@@ -929,7 +929,7 @@ char *       oyProfile_GetFileName_r ( oyProfile_s_      * profile,
           {
             uint32_t * h = (uint32_t*)s->oy_->hash_ptr_;
             if(h)
-              oySprintf_(tmp_hash, "%x%x%x%x", h[0], h[1], h[2], h[3]);
+              oySprintf_(tmp_hash, "%08x%08x%08x%08x", h[0], h[1], h[2], h[3]);
             else
               oySprintf_(tmp_hash, "                " );
             if(memcmp( hash, tmp_hash, 2*OY_HASH_SIZE ) == 0 )

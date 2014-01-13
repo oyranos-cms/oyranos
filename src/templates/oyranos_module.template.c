@@ -708,11 +708,11 @@ char * oyCMMCacheListPrint_()
                                                   oyOBJECT_POINTER_S);
       uint32_t * id = (uint32_t*) ((cmm_ptr && cmm_ptr->oy_ && cmm_ptr->oy_->hash_ptr_) ? cmm_ptr->oy_->hash_ptr_ : compare->oy_->hash_ptr_);
       oyStringAddPrintf_( &text, oyAllocateFunc_,oyDeAllocateFunc_,
-                      "refs:%d hash: %x%x%x%x ", compare->oy_->ref_, id[0],id[1],id[2],id[3]);
+                      "refs:%d hash: %08x%08x%08x%08x ", compare->oy_->ref_, id[0],id[1],id[2],id[3]);
       oyMiscBlobGetHash_((void*)hash_text, oyStrlen_(hash_text), 0,
                          (unsigned char*)id);
       oyStringAddPrintf_( &text, oyAllocateFunc_,oyDeAllocateFunc_,
-                      "(%x%x%x%x) ", id[0],id[1],id[2],id[3]);
+                      "(%08x%08x%08x%08x) ", id[0],id[1],id[2],id[3]);
       STRING_ADD( text, hash_text );
       STRING_ADD( text, "\n" );
     }

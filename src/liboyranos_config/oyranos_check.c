@@ -185,10 +185,10 @@ oyProfileGetMD5_       ( void       *buffer,
     {
       char tmp_hash[34], tmp_hash2[34];
 
-      oySprintf_(tmp_hash, "%x%x%x%x", oyValueUInt32(h[0]),
+      oySprintf_(tmp_hash, "%08x%08x%08x%08x", oyValueUInt32(h[0]),
                 oyValueUInt32(h[1]), oyValueUInt32(h[2]), oyValueUInt32(h[3]));
 
-      oySprintf_(tmp_hash2, "%x%x%x%x", m[0], m[1], m[2], m[3]);
+      oySprintf_(tmp_hash2, "%08x%08x%08x%08x", m[0], m[1], m[2], m[3]);
 
       if(has_profile_id)
         WARNc2_S("%s != %s", tmp_hash, tmp_hash2)
@@ -197,7 +197,7 @@ oyProfileGetMD5_       ( void       *buffer,
     if(oy_debug > 2)
     {
       oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*) NULL, 
-                OY_DBG_FORMAT_ "[ICC md5]: %x%x%x%x", OY_DBG_ARGS_,
+                OY_DBG_FORMAT_ "[ICC md5]: %08x%08x%08x%08x", OY_DBG_ARGS_,
                 oyValueUInt32(h[0]),
                 oyValueUInt32(h[1]), oyValueUInt32(h[2]), oyValueUInt32(h[3]));
     }

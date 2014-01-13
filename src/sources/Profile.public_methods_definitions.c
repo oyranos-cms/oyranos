@@ -940,7 +940,7 @@ OYAPI const oyChar* OYEXPORT
       {
         uint32_t * i = (uint32_t*)s->oy_->hash_ptr_;
         if(i)
-          oySprintf_(temp, "%x%x%x%x", i[0], i[1], i[2], i[3]);
+          oySprintf_(temp, "%08x%08x%08x%08x", i[0], i[1], i[2], i[3]);
         else
           oySprintf_(temp, "                " );
         if(temp[0])
@@ -1075,7 +1075,7 @@ OYAPI const oyChar* OYEXPORT
              oyNoEmptyName_m_(text),
              oyNoEmptyName_m_(file_name) );
       if(i)
-        oySprintf_( &temp[oyStrlen_(temp)], "%x%x%x%x\" />",
+        oySprintf_( &temp[oyStrlen_(temp)], "%08x%08x%08x%08x\" />",
              i[0], i[1], i[2], i[3] );
       else
         oySprintf_( &temp[oyStrlen_(temp)], "                \" />" );
@@ -1098,7 +1098,7 @@ OYAPI const oyChar* OYEXPORT
     if(!found && error <= 0)
     {
       uint32_t * i = (uint32_t*)s->oy_->hash_ptr_;
-      oySprintf_(temp, "%x%x%x%x", i[0], i[1], i[2], i[3]);
+      oySprintf_(temp, "%08x%08x%08x%08x", i[0], i[1], i[2], i[3]);
       if(temp[0])
         found = 1;
     }
@@ -1599,7 +1599,7 @@ OYAPI const char * OYEXPORT
             {
               uint32_t * h = (uint32_t*)tmp->oy_->hash_ptr_;
               if(h)
-                oySprintf_(tmp_hash, "%x%x%x%x", h[0], h[1], h[2], h[3]);
+                oySprintf_(tmp_hash, "%08x%08x%08x%08x", h[0], h[1], h[2], h[3]);
               else
                 oySprintf_(tmp_hash, "                " );
               if(memcmp( hash, tmp_hash, 2*OY_HASH_SIZE ) == 0 )

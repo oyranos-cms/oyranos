@@ -307,7 +307,7 @@ int                oyMiscBlobGetHash_( void              * buffer,
     {
       uint32_t * id = (uint32_t *)digest;
       oyMessageFunc_p( oyMSG_DBG, 0, OY_DBG_FORMAT_
-                       "%x%x%x%x", OY_DBG_ARGS_,
+                       "%08x%08x%08x%08x", OY_DBG_ARGS_,
                        id[0],id[1],id[2],id[3] );
     }
 
@@ -328,7 +328,7 @@ int                oyMiscBlobGetHash_( void              * buffer,
  *  @since Oyranos: version 0.1.8
  *  @date  24 november 2007 (API 0.1.8)
  */
-int                oyMiscBlobGetMD5_ ( void              * buffer,
+int                oyMiscBlobGetMD5_ ( const void        * buffer,
                                        size_t              size,
                                        unsigned char     * digest )
 {

@@ -2136,7 +2136,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                    md5[j] = oyValueUInt32( hash[j] );
                  tmp = oyAllocateFunc_(80);
                  error = !tmp;
-                 oySprintf_(tmp, "%x%x%x%x",md5[0], md5[1], md5[2], md5[3]);
+                 oySprintf_(tmp, "%08x%08x%08x%08x",md5[0], md5[1], md5[2], md5[3]);
                  oyStructList_AddName( texts, "md5id:", -1 );
                  oyStructList_MoveInName( texts, &tmp, -1 );
 
@@ -2832,14 +2832,93 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
        {
          oyNamedColors_s * colors = (oyNamedColors_s*) oyStructList_GetRefType( list,
                                                    0, oyOBJECT_NAMED_COLORS_S );
-         int count = oyNamedColors_Count( colors );
-         oyNamedColor_s * ncl = 0;
 
-         error = count <= 0;
-         for(i = 0; i < count; ++i)
+         int colors_n = oyNamedColors_Count( colors );
+         if(colors_n)
+           {
+             size_t size;
+             struct Ncl2 * ncl2;
+             oyProfile_s * ref = NULL, * cmp;
+             double lab[3];
+             const double * device;
+             oyNamedColor_s * ncl;
+             int device_colors_n = 0, j;
+             const char * tc;
+
+             for (i = 0; i < colors_n; ++i)
+             {
+               ncl = oyNamedColors_Get( colors, i );
+               if(i == 0)
+               {
+                 ref = oyNamedColor_GetSpaceRef( ncl );
+                 oyProfile_Release( &ref );
+
+               } else
+               {
+                 cmp = oyNamedColor_GetSpaceRef( ncl );
+                 if(!oyProfile_Equal( ref, cmp))
+                 {
+                   oyProfile_Release( &ref );
+                   device_colors_n = 0;
+                 }
+                 oyProfile_Release( &cmp );
+               }
+               oyNamedColor_Release( &ncl );
+             }
+
+             device_colors_n = oyProfile_GetChannelsCount( ref );
+
+             size = sizeof(struct Ncl2) + colors_n * (38 + device_colors_n * sizeof(icUInt16Number));
+             ncl2 = (struct Ncl2*)oyAllocateFunc_( size );
+             memset(ncl2, 0, size);
+             ncl2->count = oyValueUInt32( colors_n );
+             ncl2->device = oyValueUInt32( device_colors_n );
+
+             tc = oyNamedColors_GetPrefix( colors );
+             if(tc)
+               memcpy( ncl2->prefix, tc, strlen(tc) < 32 ? strlen(tc):31 );
+             tc = oyNamedColors_GetSuffix( colors );
+             if(tc)
+               memcpy( ncl2->suffix, tc, strlen(tc) < 32 ? strlen(tc):31 );
+
+             for (i = 0; i < colors_n; ++i)
+             {
+               struct Ncl2Color *f = (struct Ncl2Color*) ((char*)ncl2 + 76 + /* base site of Ncl2 */
+                                     (i * (38 +                 /* base size of Ncl2Color */
+                                           device_colors_n      /* number of device colors */
+                                           * sizeof(icUInt16Number))));/* Ncl2Color::device_colors_n */
+               oyNamedColor_s * ncl = oyNamedColors_Get( colors, i );
+
+               tc = oyNamedColor_GetName( ncl, oyNAME_NICK, 0 );
+               if(tc)
+                 memcpy( f->name, tc, strlen(tc) < 32 ? strlen(tc):31 );
+
+               oyNamedColor_GetColorStd( ncl, oyEDITING_LAB, lab, oyDOUBLE, 0, NULL );
+
+               f->pcs[0] = oyValueUInt16( lab[0] )*65280.0;
+               f->pcs[1] = oyValueUInt16( lab[1] )*65535.0;
+               f->pcs[2] = oyValueUInt16( lab[2] )*65535.0;
+
+               device = oyNamedColor_GetChannelsConst( ncl, 0 );
+               for( j=0; j < device_colors_n; ++j)
+                 f->device[j] = oyValueUInt16( device[j] )*65535.0;
+
+               oyNamedColor_Release( &ncl );
+             }
+
+             oyProfileTag_Set( s, oyProfileTag_GetUse( s ), tag_type, oyOK, size, ncl2 );
+             oyProfile_Release( &ref );
+           }
+         else
          {
-           ncl = oyNamedColors_Get(colors, 0);
-           oyNamedColor_Release( &ncl );
+           if(!colors)
+           {
+             error = 1;
+             oyIM_msg( oyMSG_ERROR,0, OY_DBG_FORMAT_"\n"
+                       "no oyNamedColors_s object found in first position",
+                       OY_DBG_ARGS_ );
+           } else
+             error = -1;
          }
        }
 

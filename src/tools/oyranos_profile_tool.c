@@ -478,7 +478,7 @@ int main( int argc , char** argv )
 
       oyProfile_GetMD5(p, OY_FROM_PROFILE, id);
       /* keep total number of chars equal to original for cli print */
-      fprintf( stdout, "%s %x%x%x%x\n",_("Profile ID:      "),id[0],id[1],id[2],id[3] );
+      fprintf( stdout, "%s %08x%08x%08x%08x\n",_("Profile ID:      "),id[0],id[1],id[2],id[3] );
     }
 
     if(error <= 0 && list_tags)
@@ -720,10 +720,10 @@ int main( int argc , char** argv )
 
       i = (uint32_t*)md5;
       if(!verbose)
-        fprintf( stdout, "%x%x%x%x\n",
+        fprintf( stdout, "%08x%08x%08x%08x\n",
             i[0],i[1],i[2],i[3] );
       else
-        fprintf( stdout, "%x%x%x%x[%x%x%x%x] %s\n",
+        fprintf( stdout, "%08x%08x%08x%08x[%08x%08x%08x%08x] %s\n",
             i[0],i[1],i[2],i[3], id[0],id[1],id[2],id[3], profile_desc );
     }
 
