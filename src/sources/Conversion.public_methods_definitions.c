@@ -539,7 +539,7 @@ int                oyConversion_RunPixels (
   oyFilterNode_s * node_out = 0;
   oyImage_s * image_out = 0,
             * image_input = 0;
-  int error = 0, result = 0, i,n, dirty = 0, tmp_ticket = 0;
+  int error = 0, result = 0, dirty = 0, tmp_ticket = 0;
   oyRectangle_s_ roi = {oyOBJECT_RECTANGLE_S, 0,0,0, 0,0,0,0};
   double clck;
 
@@ -629,8 +629,6 @@ int                oyConversion_RunPixels (
     DBGs_PROG1_S(pixel_access_,"oyFilterPlug_ResolveImage(): %g",clck/1000000.0 );
     oyImage_Release( &image_input );
 
-    n = oyFilterNodes_Count( pixel_access_->graph->nodes );
-    for(i = 0; i < n; ++i)
     {
 #if 0
       clck = oyClock();
@@ -665,9 +663,6 @@ int                oyConversion_RunPixels (
         DBGs_PROG1_S( pixel_access_,
           "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g",clck/1000000.0 );
       }
-
-      if(error == 0)
-        break;
     }
   }
 
