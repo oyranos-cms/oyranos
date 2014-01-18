@@ -3649,6 +3649,55 @@ oyTESTRESULT_e testCMMnmRun ()
   return result;
 }
 
+#include "oyNamedColors_s.h"
+oyTESTRESULT_e testNcl2()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  int i, error = 0;
+  oyProfile_s * p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL );
+  oyNamedColor_s * ncl = 0;
+  oyNamedColors_s * colors = oyNamedColors_New(0);
+
+  oyNamedColors_SetPrefix( colors, "test" );
+  oyNamedColors_SetSuffix( colors, "color" );
+
+  fprintf(stdout, "\n" );
+
+  double clck = oyClock();
+  for( i = 0; i < 10*100; ++i )
+  {
+    char name[12];
+    double lab[3], device[4] = {0.2,0.2,0.1,0.5};
+
+    lab[0] = i*0.001;
+    lab[1] = lab[2] = 0.5;
+    sprintf( name, "%d", i );
+
+    ncl = oyNamedColor_CreateWithName( name, name, name, NULL, NULL, NULL, 0, p_cmyk, NULL );
+
+    if(!error)
+      error = oyNamedColor_SetColorStd( ncl, oyEDITING_LAB, lab, oyDOUBLE, 0, NULL );
+    if(!error)
+      oyNamedColor_SetChannels( ncl, device, 0 );
+
+    oyNamedColors_MoveIn( colors, &ncl, i );
+  }
+  clck = oyClock() - clck;
+
+  if( !error )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyNamedColor_CreateWithName()     %s",
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Ncl"));
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyNamedColor_CreateWithName()            " );
+  }
+
+  
+
+  return result;
+}
+
 #include "oyRectangle_s_.h"
 
 oyTESTRESULT_e testImagePixel()
@@ -3717,8 +3766,8 @@ oyTESTRESULT_e testImagePixel()
       buf_16in2x2[6]==0 && buf_16in2x2[7]==0 && buf_16in2x2[8]==0 &&
       buf_16in2x2[9]==65535 && buf_16in2x2[10]==65535 &&buf_16in2x2[11]==65535&&
       /* check black and white in lower row with typical *ab of 32896 */
-      buf_16out2x2[6]==0 && buf_16out2x2[7]>20000 && buf_16out2x2[7]<40000 &&
-      buf_16out2x2[9]==65535 && buf_16out2x2[10]>20000 && buf_16out2x2[10]<40000
+      buf_16out2x2[6]<5000 && buf_16out2x2[7]>20000 && buf_16out2x2[7]<40000 &&
+      buf_16out2x2[9]>65000 && buf_16out2x2[10]>20000 && buf_16out2x2[10]<40000
       )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "Plain Image                              %s",
@@ -3769,7 +3818,7 @@ oyTESTRESULT_e testImagePixel()
       buf_16in2x2[6]==0 && buf_16in2x2[7]==0 && buf_16in2x2[8]==0 &&
       buf_16in2x2[9]==65535 && buf_16in2x2[10]==65535 &&buf_16in2x2[11]==65535&&
       /* the result shall appear in the upper left corner / first pixel */
-      buf_16out2x2[0]==65535 && buf_16out2x2[1]>20000 && buf_16out2x2[2]<40000&&
+      buf_16out2x2[0]>65000 && buf_16out2x2[1]>20000 && buf_16out2x2[2]<40000&&
       /* all other buffer pixels shall remain untouched */
       buf_16out2x2[3]==0 && buf_16out2x2[4]==0 && buf_16out2x2[5]==0 &&
       buf_16out2x2[6]==0 && buf_16out2x2[7]==0 && buf_16out2x2[8]==0 &&
@@ -3821,7 +3870,7 @@ oyTESTRESULT_e testImagePixel()
       buf_16in2x2[6]==0 && buf_16in2x2[7]==0 && buf_16in2x2[8]==0 &&
       buf_16in2x2[9]==65535 && buf_16in2x2[10]==65535 &&buf_16in2x2[11]==65535&&
       /* the result shall appear in the lower right corner / last pixel */
-      buf_16out2x2[9]==65535 && buf_16out2x2[10]>20000&&buf_16out2x2[11]<40000&&
+      buf_16out2x2[9]>65000 && buf_16out2x2[10]>20000&&buf_16out2x2[11]<40000&&
       /* all other buffer pixels shall remain untouched */
       buf_16out2x2[0]==0 && buf_16out2x2[1]==0 && buf_16out2x2[2]==0 &&
       buf_16out2x2[3]==0 && buf_16out2x2[4]==0 && buf_16out2x2[5]==0 &&
@@ -4246,6 +4295,7 @@ int main(int argc, char** argv)
   TEST_RUN( testCMMmonitorDBmatch, "CMM monitor DB match" );
   TEST_RUN( testCMMsShow, "CMMs show" );
   TEST_RUN( testCMMnmRun, "CMM named color run" );
+  TEST_RUN( testNcl2, "named color serialisation" );
   TEST_RUN( testImagePixel, "CMM Image Pixel run" );
 
   /* give a summary */
