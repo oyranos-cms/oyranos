@@ -242,7 +242,7 @@ int main( int argc , char** argv )
       }
       ++pos;
     }
-    if(oy_debug) printf( "%s\n", argv[1] );
+    if(oy_debug) fprintf( stderr, "%s\n", argv[1] );
   }
 
   if(verbose)
@@ -415,7 +415,7 @@ int main( int argc , char** argv )
         {
           char * json_text = 0;
           oyDeviceToJSON( taxi_dev, 0, &json_text, oyAllocateFunc_ );
-          printf("%s\n", json_text );
+          fprintf(stderr, "%s\n", json_text );
           oyFree_m_(json_text);
         }
 
@@ -553,7 +553,7 @@ int main( int argc , char** argv )
             error = 1;
 
           if(!error)
-          { if(verbose) printf( "  written to %s\n", out_name ); }
+          { if(verbose) fprintf( stderr, "  written to %s\n", out_name ); }
           else
             printf( "Could not write %d bytes to %s\n",
                     (int)size, out_name?out_name:format);
@@ -607,13 +607,13 @@ int main( int argc , char** argv )
         if(oy_debug > 1)
         {
           error = oyDeviceToJSON( p_device, 0, &json, oyAllocateFunc_ );
-          printf("device from profile %s:\n%s\n", prof_name, json );
+          fprintf(stderr, "device from profile %s:\n%s\n", prof_name, json );
           oyFree_m_( json );
         }
         if(oy_debug > 1)
         {
           error = oyDeviceToJSON( device, 0, &json, oyAllocateFunc_ );
-          printf("device from edid %s:\n%s\n", edid_fn, json );
+          fprintf(stderr, "device from edid %s:\n%s\n", edid_fn, json );
           oyFree_m_( json );
         }
 
@@ -622,7 +622,7 @@ int main( int argc , char** argv )
         if(oy_debug < 2) oy_debug = 2;
         error = oyConfig_Compare( p_device, device, &rank );
         oy_debug = old_oy_debug;
-        printf("rank of edid to previous profile %d\n", rank);
+        fprintf(stderr, "rank of edid to previous profile %d\n", rank);
       }
       oyConfig_Release( &device );
       oyFree_m_(edid_fn);
@@ -676,7 +676,7 @@ int main( int argc , char** argv )
           }
 
           if(verbose)
-          printf("------------------------ %d ---------------------------\n",i);
+          fprintf(stderr,"------------------------ %d ---------------------------\n",i);
 
           error = oyDeviceGetInfo( c, oyNAME_NICK, cs_options, &text,
                                    oyAllocFunc );
@@ -706,7 +706,7 @@ int main( int argc , char** argv )
           {
             error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, cs_options, &text,
                                      oyAllocFunc );
-            printf( "%s\n", text ? text : "???" );
+            fprintf( stderr,"%s\n", text ? text : "???" );
           }
 
           if(text)
@@ -720,12 +720,12 @@ int main( int argc , char** argv )
             if(size && data)
               oyDeAllocFunc( data );
             filename = oyProfile_GetFileName( prof, -1 );
-            printf( " server profile \"%s\" size: %d\n",
+            fprintf( stderr, " server profile \"%s\" size: %d\n",
                     filename?filename:OY_PROFILE_NONE, (int)size );
 
             text = 0;
             oyDeviceProfileFromDB( c, &text, oyAllocFunc );
-            printf( " DB profile \"%s\"\n  keys: %s\n",
+            fprintf( stderr, " DB profile \"%s\"\n  keys: %s\n",
                     text?text:OY_PROFILE_NONE,
                     oyConfig_FindString( c, "key_set_name", 0 ) ?
                       oyConfig_FindString( c, "key_set_name", 0 ) :
@@ -953,7 +953,7 @@ int            getDeviceProfile      ( Display           * display,
     device_name = oyConfig_FindString( device, "device_name", 0 );
     if(device_name && device_name[0])
     {
-      printf("%d %s %gx%g+%g+%g\n",
+      fprintf( stderr,"%d %s %gx%g+%g+%g\n",
              __LINE__, device_name,
              oyRectangle_GetGeo1(r,2), oyRectangle_GetGeo1(r,3),
              oyRectangle_GetGeo1(r,0), oyRectangle_GetGeo1(r,1) );
@@ -1011,7 +1011,7 @@ int updateOutputConfiguration( Display * display )
   oyConfigs_s * devices = 0;
   oyConfig_s * device = 0;
 
-  printf("%s:%d %s()\n", __FILE__, __LINE__, __func__);
+  fprintf( stderr,"%s:%d %s()\n", __FILE__, __LINE__, __func__);
 
   /* allow Oyranos to see modifications made to the compiz Xlib context */
   XFlush( display );
@@ -1097,7 +1097,7 @@ int  runDaemon                       ( const char        * display_name )
       if(rrn->subtype == RRNotify_OutputChange ||
          rrn->subtype == RR_Rotate_0)
       {
-        printf("detected RRNotify_OutputChange event -> update\n");
+        fprintf( stderr,"detected RRNotify_OutputChange event -> update\n");
         updateOutputConfiguration( display );
       }
     } else
@@ -1105,7 +1105,7 @@ int  runDaemon                       ( const char        * display_name )
     if( event.type == PropertyNotify &&
         event.xproperty.atom == net_desktop_geometry)
     {
-        printf("detected _NET_DESKTOP_GEOMETRY event -> update\n");
+        fprintf( stderr,"detected _NET_DESKTOP_GEOMETRY event -> update\n");
         updateOutputConfiguration( display );
     }
   }
