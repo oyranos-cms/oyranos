@@ -52,7 +52,7 @@ int                oyPointer_Set_    ( oyPointer_s_      * cmm_ptr,
   if(error <= 0 && ptr)
   {
     if(s->ptrRelease && s->ptr)
-      s->ptrRelease( &ptr );
+      s->ptrRelease( &s->ptr );
     s->ptr = ptr;
   }
 

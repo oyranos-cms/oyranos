@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/01/19
  */
 
 
@@ -409,7 +409,7 @@ int                oyPointer_Set_    ( oyPointer_s_      * cmm_ptr,
   if(error <= 0 && ptr)
   {
     if(s->ptrRelease && s->ptr)
-      s->ptrRelease( &ptr );
+      s->ptrRelease( &s->ptr );
     s->ptr = ptr;
   }
 
