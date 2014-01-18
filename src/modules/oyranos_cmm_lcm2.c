@@ -17,6 +17,7 @@
 
 #include <lcms2.h>
 #include <stdarg.h>
+#include <dlfcn.h> /* dlopen() */
 
 #include "oyCMMapi4_s.h"
 #include "oyCMMapi4_s_.h"
@@ -67,8 +68,8 @@ void  oyDeAllocateFunc_         (void *        data);
 /* --- internal definitions --- */
 
 #define CMM_NICK "lcm2"
-#define CMMProfileOpen_M    cmsOpenProfileFromMemTHR
-#define CMMProfileRelease_M cmsCloseProfile
+#define CMMProfileOpen_M    lcmsOpenProfileFromMemTHR
+#define CMMProfileRelease_M lcmsCloseProfile
 #define CMMToString_M(text) #text
 #define CMMMaxChannels_M 16
 #define lcm2PROFILE "lcP2"
@@ -186,19 +187,177 @@ const char * lcm2InfoGetText         ( const char        * select,
 
 
 /* --- implementations --- */
+/* explicitely load liblcms functions, to avoid conflicts */
+static int lcms_initialised = 0;
+static void * lcms_handle = NULL;
+
+static void (*lcmsSetLogErrorHandler)(cmsLogErrorHandlerFunction Fn) = NULL;
+static icColorSpaceSignature (*lcmsGetColorSpace)(cmsHPROFILE hProfile) = NULL;
+static icColorSpaceSignature (*lcmsGetPCS)(cmsHPROFILE hProfile) = NULL;
+static icProfileClassSignature (*lcmsGetDeviceClass)(cmsHPROFILE hProfile) = NULL;
+static int (*l_cmsLCMScolorSpace)(cmsColorSpaceSignature ProfileSpace) = NULL;
+static cmsUInt32Number (*lcmsChannelsOf)(cmsColorSpaceSignature ColorSpace) = NULL;
+static cmsHTRANSFORM (*lcmsCreateTransform)(cmsHPROFILE Input,
+                                               cmsUInt32Number InputFormat,
+                                               cmsHPROFILE Output,
+                                               cmsUInt32Number OutputFormat,
+                                               cmsUInt32Number Intent,
+                                               cmsUInt32Number dwFlags) = NULL;
+static cmsHTRANSFORM (*lcmsCreateProofingTransform)(cmsHPROFILE Input,
+                                               cmsUInt32Number InputFormat,
+                                               cmsHPROFILE Output,
+                                               cmsUInt32Number OutputFormat,
+                                               cmsHPROFILE Proofing,
+                                               int Intent,
+                                               int ProofingIntent,
+                                               cmsUInt32Number dwFlags) = NULL;
+static cmsHTRANSFORM (*lcmsCreateProofingTransformTHR)(cmsContext ContextID,
+                                                  cmsHPROFILE Input,
+                                                  cmsUInt32Number InputFormat,
+                                                  cmsHPROFILE Output,
+                                                  cmsUInt32Number OutputFormat,
+                                                  cmsHPROFILE Proofing,
+                                                  cmsUInt32Number Intent,
+                                                  cmsUInt32Number ProofingIntent,
+                                                  cmsUInt32Number dwFlags) = NULL;
+static cmsHTRANSFORM (*lcmsCreateMultiprofileTransform)(cmsHPROFILE hProfiles[],
+                                                                int nProfiles,
+                                                                cmsUInt32Number InputFormat,
+                                                                cmsUInt32Number OutputFormat,
+                                                                int Intent,
+                                                                cmsUInt32Number dwFlags) = NULL;
+static cmsHTRANSFORM (*lcmsCreateExtendedTransform)(cmsContext ContextID,
+                                                   cmsUInt32Number nProfiles, cmsHPROFILE hProfiles[],
+                                                   cmsBool  BPC[],
+                                                   cmsUInt32Number Intents[],
+                                                   cmsFloat64Number AdaptationStates[],
+                                                   cmsHPROFILE hGamutProfile,
+                                                   cmsUInt32Number nGamutPCSposition,
+                                                   cmsUInt32Number InputFormat,
+                                                   cmsUInt32Number OutputFormat,
+                                                   cmsUInt32Number dwFlags) = NULL;
+static void (*lcmsDeleteTransform)(cmsHTRANSFORM hTransform) = NULL;
+static void (*lcmsDoTransform)(cmsHTRANSFORM Transform,
+                                                 const void * InputBuffer,
+                                                 void * OutputBuffer,
+                                                 cmsUInt32Number Size) = NULL;
+static cmsHPROFILE (*lcmsTransform2DeviceLink)(cmsHTRANSFORM hTransform, cmsFloat64Number Version, cmsUInt32Number dwFlags) = NULL;
+static cmsBool (*lcmsSaveProfileToMem)(cmsHPROFILE hProfile, void *MemPtr, 
+                                                                cmsUInt32Number* BytesNeeded) = NULL;
+static cmsHPROFILE (*lcmsOpenProfileFromMemTHR)(cmsContext ContextID, const void * MemPtr, cmsUInt32Number dwSize) = NULL;
+static cmsBool (*lcmsCloseProfile)(cmsHPROFILE hProfile) = NULL;
+static cmsHPROFILE (*lcmsCreateProfilePlaceholder)(cmsContext ContextID) = NULL;
+static cmsHPROFILE (*lcmsCreateLab4ProfileTHR)(cmsContext ContextID, const cmsCIExyY* WhitePoint) = NULL;
+static cmsHPROFILE (*lcmsCreateLab4Profile)(const cmsCIExyY* WhitePoint) = NULL;
+static void (*lcmsSetProfileVersion)(cmsHPROFILE hProfile, cmsFloat64Number Version) = NULL;
+static void (*lcmsSetDeviceClass)(cmsHPROFILE hProfile, icProfileClassSignature sig) = NULL;
+static void (*lcmsSetColorSpace)(cmsHPROFILE hProfile, icColorSpaceSignature sig) = NULL;
+static void (*lcmsSetPCS)(cmsHPROFILE hProfile, icColorSpaceSignature pcs) = NULL;
+static cmsToneCurve* (*lcmsBuildGamma)(cmsContext ContextID, cmsFloat64Number Gamma) = NULL;
+static cmsToneCurve*(*lcmsBuildSegmentedToneCurve)(cmsContext ContextID, cmsInt32Number nSegments, const cmsCurveSegment Segments[]) = NULL;
+static void (*lcmsFreeToneCurve)(cmsToneCurve* Curve) = NULL;
+static cmsPipeline*(*lcmsPipelineAlloc)(cmsContext ContextID, cmsUInt32Number InputChannels, cmsUInt32Number OutputChannels) = NULL;
+static int (*lcmsPipelineInsertStage)(cmsPipeline* lut, cmsStageLoc loc, cmsStage* mpe) = NULL;
+static void (*lcmsPipelineFree)(cmsPipeline* lut) = NULL;
+static cmsStage*(*lcmsStageAllocCLut16bit)(cmsContext ContextID, cmsUInt32Number nGridPoints, cmsUInt32Number inputChan, cmsUInt32Number outputChan, const cmsUInt16Number* Table) = NULL;
+static cmsStage*(*lcmsStageAllocCLutFloat)(cmsContext ContextID, cmsUInt32Number nGridPoints, cmsUInt32Number inputChan, cmsUInt32Number outputChan, const cmsFloat32Number* Table) = NULL;
+static cmsBool (*lcmsStageSampleCLut16bit)(cmsStage* mpe,    cmsSAMPLER16 Sampler, void* Cargo, cmsUInt32Number dwFlags) = NULL;
+static cmsBool (*lcmsStageSampleCLutFloat)(cmsStage* mpe, cmsSAMPLERFLOAT Sampler, void* Cargo, cmsUInt32Number dwFlags) = NULL;
+static cmsStage*(*lcmsStageAllocToneCurves)(cmsContext ContextID, cmsUInt32Number nChannels, cmsToneCurve* const Curves[]) = NULL;
+static cmsBool (*lcmsWriteTag)(cmsHPROFILE hProfile, cmsTagSignature sig, const void* data) = NULL;
+static cmsMLU*(*lcmsMLUalloc)(cmsContext ContextID, cmsUInt32Number nItems) = NULL;
+static cmsBool (*lcmsMLUsetASCII)(cmsMLU* mlu,
+                                                  const char LanguageCode[3], const char CountryCode[3],
+                                                  const char* ASCIIString) = NULL;
+static void (*lcmsMLUfree)(cmsMLU* mlu) = NULL;
+static cmsHPROFILE (*lcmsCreateRGBProfile)(const cmsCIExyY* WhitePoint,
+                                        const cmsCIExyYTRIPLE* Primaries,
+                                        cmsToneCurve* TransferFunction[3]) = NULL;
+static void (*lcmsLabEncoded2Float)(cmsCIELab* Lab, const cmsUInt16Number wLab[3]) = NULL;
+static void (*lcmsFloat2LabEncoded)(cmsUInt16Number wLab[3], const cmsCIELab* Lab) = NULL;
+static const cmsCIEXYZ*  (*lcmsD50_XYZ)(void);
+static const cmsCIExyY*  (*lcmsD50_xyY)(void);
+static cmsFloat64Number (*lcmsDeltaE)(const cmsCIELab* Lab1, const cmsCIELab* Lab2) = NULL;
+static void (*lcmsGetAlarmCodes)(cmsUInt16Number NewAlarm[cmsMAXCHANNELS]) = NULL;
+
+#define LOAD_FUNC( func ) l##func = dlsym(lcms_handle, #func ); \
+               if(!l##func) lcm2_msg( oyMSG_ERROR,0, OY_DBG_FORMAT_" " \
+                                      "init failed: %s", \
+                                      OY_DBG_ARGS_, dlerror() );
 
 /** Function lcm2CMMInit
  *  @brief   API requirement
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.5
+ *  @date    2014/01/18
  *  @since   2007/12/11 (Oyranos: 0.1.8)
- *  @date    2009/12/17
  */
 int                lcm2CMMInit       ( oyStruct_s        * filter )
 {
   int error = 0;
-  /*cmsErrorAction( LCMS_ERROR_SHOW );*/
-  cmsSetLogErrorHandler( lcm2ErrorHandlerFunction );
+  if(!lcms_initialised)
+  {
+    lcms_initialised = 1;
+
+    lcms_handle = dlopen("liblcms2.so", RTLD_LAZY);
+    if(!lcms_handle)
+    {
+      lcm2_msg( oyMSG_ERROR,0, OY_DBG_FORMAT_" "
+               "init failed: %s",
+                OY_DBG_ARGS_, dlerror() );
+      error = 1;
+    } else
+    {
+      LOAD_FUNC( cmsSetLogErrorHandler );
+      LOAD_FUNC( cmsGetColorSpace );
+      LOAD_FUNC( cmsGetPCS );
+      LOAD_FUNC( cmsGetDeviceClass );
+      LOAD_FUNC( _cmsLCMScolorSpace );
+      LOAD_FUNC( cmsChannelsOf );
+      LOAD_FUNC( cmsCreateTransform );
+      LOAD_FUNC( cmsCreateProofingTransform );
+      LOAD_FUNC( cmsCreateProofingTransformTHR );
+      LOAD_FUNC( cmsCreateMultiprofileTransform );
+      LOAD_FUNC( cmsCreateExtendedTransform );
+      LOAD_FUNC( cmsDeleteTransform );
+      LOAD_FUNC( cmsDoTransform );
+      LOAD_FUNC( cmsTransform2DeviceLink );
+      LOAD_FUNC( cmsSaveProfileToMem );
+      LOAD_FUNC( cmsOpenProfileFromMemTHR );
+      LOAD_FUNC( cmsCloseProfile );
+      LOAD_FUNC( cmsCreateProfilePlaceholder );
+      LOAD_FUNC( cmsSetProfileVersion );
+      LOAD_FUNC( cmsCreateLab4ProfileTHR );
+      LOAD_FUNC( cmsCreateLab4Profile );
+      LOAD_FUNC( cmsCreateRGBProfile );
+      LOAD_FUNC( cmsSetDeviceClass );
+      LOAD_FUNC( cmsSetColorSpace );
+      LOAD_FUNC( cmsSetPCS );
+      LOAD_FUNC( cmsBuildGamma );
+      LOAD_FUNC( cmsBuildSegmentedToneCurve );
+      LOAD_FUNC( cmsFreeToneCurve );
+      LOAD_FUNC( cmsPipelineAlloc );
+      LOAD_FUNC( cmsPipelineFree );
+      LOAD_FUNC( cmsPipelineInsertStage );
+      LOAD_FUNC( cmsStageAllocCLut16bit );
+      LOAD_FUNC( cmsStageAllocCLutFloat );
+      LOAD_FUNC( cmsStageSampleCLut16bit );
+      LOAD_FUNC( cmsStageSampleCLutFloat );
+      LOAD_FUNC( cmsStageAllocToneCurves );
+      LOAD_FUNC( cmsWriteTag );
+      LOAD_FUNC( cmsMLUalloc );
+      LOAD_FUNC( cmsMLUsetASCII );
+      LOAD_FUNC( cmsMLUfree );
+      LOAD_FUNC( cmsLabEncoded2Float );
+      LOAD_FUNC( cmsFloat2LabEncoded );
+      LOAD_FUNC( cmsD50_XYZ );
+      LOAD_FUNC( cmsD50_xyY );
+      LOAD_FUNC( cmsDeltaE );
+      LOAD_FUNC( cmsGetAlarmCodes );
+
+      lcmsSetLogErrorHandler( lcm2ErrorHandlerFunction );
+    }
+  }
   return error;
 }
 
@@ -397,8 +556,8 @@ int        oyPixelToLcm2PixelLayout_ ( oyPixel_t           pixel_layout,
   oyDATATYPE_e data_type = oyToDataType_m (pixel_layout);
   int planar = oyToPlanar_m (pixel_layout);
   int flavour = oyToFlavor_m (pixel_layout);
-  int cchans = cmsChannelsOf( color_space );
-  int lcm2_color_space = _cmsLCMScolorSpace( color_space );
+  int cchans = lcmsChannelsOf( color_space );
+  int lcm2_color_space = l_cmsLCMScolorSpace( color_space );
   int extra = chan_n - cchans;
 
   if(chan_n > CMMMaxChannels_M)
@@ -449,7 +608,7 @@ int lcm2CMMDeleteTransformWrap(oyPointer * wrap)
   {
     lcm2TransformWrap_s * s = (lcm2TransformWrap_s*) *wrap;
 
-    cmsDeleteTransform (s->lcm2);
+    lcmsDeleteTransform (s->lcm2);
     s->lcm2 = 0;
 
     free(s);
@@ -635,12 +794,12 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
 
   if(!error && lps[0] && lps[profiles_n-1])
   {
-    color_in = cmsGetColorSpace( lps[0] );
+    color_in = lcmsGetColorSpace( lps[0] );
     if(profiles_n > 1)
-      color_out = cmsGetColorSpace( lps[profiles_n-1] );
+      color_out = lcmsGetColorSpace( lps[profiles_n-1] );
     else
-      color_out = cmsGetPCS( lps[profiles_n-1] );
-    profile_class_in = cmsGetDeviceClass( lps[0] );
+      color_out = lcmsGetPCS( lps[profiles_n-1] );
+    profile_class_in = lcmsGetDeviceClass( lps[0] );
   }
 
   lcm2_pixel_layout_in  = oyPixelToLcm2PixelLayout_(oy_pixel_layout_in,
@@ -674,7 +833,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
         csp = T_COLORSPACE(lcm2_pixel_layout_out);
         lcm2_pixel_layout_out &= (~COLORSPACE_SH( csp ));
 #endif
-        xform = cmsCreateTransform( lps[0], lcm2_pixel_layout_in,
+        xform = lcmsCreateTransform( lps[0], lcm2_pixel_layout_in,
                                     0, lcm2_pixel_layout_out,
                                     intent, flags );
     }
@@ -687,7 +846,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
       bpc[0] = flags & cmsFLAGS_BLACKPOINTCOMPENSATION;
       bpc[1] = flags & cmsFLAGS_BLACKPOINTCOMPENSATION;
       adaption_states[0] = adaption_state; adaption_states[1] = adaption_state;
-      xform = cmsCreateExtendedTransform( 0, profiles_n, lps, bpc,
+      xform = lcmsCreateExtendedTransform( 0, profiles_n, lps, bpc,
                                           intents, adaption_states, NULL, 0,
                                           lcm2_pixel_layout_in,
                                           lcm2_pixel_layout_out, flags );
@@ -738,7 +897,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
       SET_ARR(intents,intent,multi_profiles_n);
       SET_ARR(bpc,flags & cmsFLAGS_BLACKPOINTCOMPENSATION,multi_profiles_n);
       SET_ARR(adaption_states,adaption_state,multi_profiles_n);
-      xform = cmsCreateExtendedTransform( 0, multi_profiles_n, lps, bpc,
+      xform = lcmsCreateExtendedTransform( 0, multi_profiles_n, lps, bpc,
                                           intents, adaption_states, NULL, 0,
                                           lcm2_pixel_layout_in,
                                           lcm2_pixel_layout_out, flags );
@@ -780,9 +939,9 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
       lcm2_msg( level,(oyStruct_s*)node, OY_DBG_FORMAT_"\n"
              "  ColorSpace:%s->PCS:%s DeviceClass:%s",
              OY_DBG_ARGS_,
-             oyICCColorSpaceGetName(cmsGetColorSpace( lps[0])),
-             oyICCColorSpaceGetName(cmsGetPCS( lps[i] )),
-             oyICCDeviceClassDescription(cmsGetDeviceClass(lps[i])) );
+             oyICCColorSpaceGetName(lcmsGetColorSpace( lps[0])),
+             oyICCColorSpaceGetName(lcmsGetPCS( lps[i] )),
+             oyICCDeviceClassDescription(lcmsGetDeviceClass(lps[i])) );
   }
 
   if(!error && ltw && oy)
@@ -814,7 +973,7 @@ oyPointer  lcm2CMMColorConversion_ToMem_ (
 
   if(!error)
   {
-    cmsHPROFILE dl= cmsTransform2DeviceLink( xform,4.3,
+    cmsHPROFILE dl= lcmsTransform2DeviceLink( xform,4.3,
                                              flags | cmsFLAGS_KEEP_SEQUENCE );
 
     *size = 0;
@@ -839,11 +998,11 @@ oyPointer  lcm2CMMColorConversion_ToMem_ (
     }
 #endif
 
-    cmsSaveProfileToMem( dl, 0, &size_ );
+    lcmsSaveProfileToMem( dl, 0, &size_ );
     if(size_)
     {
       data = allocateFunc( size_ );
-      cmsSaveProfileToMem( dl, data, &size_ );
+      lcmsSaveProfileToMem( dl, data, &size_ );
     }
     *size = size_;
   }
@@ -1010,10 +1169,10 @@ cmsHPROFILE  lcm2AddProofProfile     ( oyProfile_s       * proof,
     if(hp)
     {
       /* save to memory */
-      cmsSaveProfileToMem( hp, 0, &size );
+      lcmsSaveProfileToMem( hp, 0, &size );
       block = oyAllocateFunc_( size );
-      cmsSaveProfileToMem( hp, block, &size );
-      cmsCloseProfile( hp ); hp = 0;
+      lcmsSaveProfileToMem( hp, block, &size );
+      lcmsCloseProfile( hp ); hp = 0;
     }
 
     s->type = type;
@@ -1115,16 +1274,16 @@ int gamutCheckSampler16(const cmsUInt16Number In[],
   cmsCIELab Lab1, Lab2;
   oyPointer * ptr = (oyPointer*)Cargo;
 
-  cmsLabEncoded2Float(&Lab1, In);
-  cmsDoTransform( ptr[0], In, Out, 1 );
-  cmsLabEncoded2Float(&Lab2, Out);
+  lcmsLabEncoded2Float(&Lab1, In);
+  lcmsDoTransform( ptr[0], In, Out, 1 );
+  lcmsLabEncoded2Float(&Lab2, Out);
   /*double d = cmsDeltaE( &Lab1, &Lab2 );
   if(abs(d) > 10 && ptr[1] != NULL)
   {
     Lab2.L = 50.0;
     Lab2.a = Lab2.b = 0.0;
   }*/
-  cmsFloat2LabEncoded(Out, &Lab2); 
+  lcmsFloat2LabEncoded(Out, &Lab2); 
 
   return TRUE;
 }
@@ -1142,11 +1301,11 @@ int  gamutCheckSamplerFloat          ( const cmsFloat32Number In[],
   i[1] = Lab1.a = In[1] * 257.0 - 128.0;
   i[2] = Lab1.b = In[2] * 257.0 - 128.0;
 
-  cmsDoTransform( ptr[0], i, o, 1 );
+  lcmsDoTransform( ptr[0], i, o, 1 );
 
   Lab2.L = o[0]; Lab2.a = o[1]; Lab2.b = o[2];
 
-  d = cmsDeltaE( &Lab1, &Lab2 );
+  d = lcmsDeltaE( &Lab1, &Lab2 );
   if((abs(d) > 10) && ptr[1] != NULL)
   {
     Lab2.L = 50.0;
@@ -1188,8 +1347,8 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       cmsHTRANSFORM tr = 0, tr16 = 0;
       cmsStage * gmt_lut = 0,
                * gmt_lut16 = 0;
-      cmsPipeline * gmt_pl = cmsPipelineAlloc( 0,3,3 ),
-                  * gmt_pl16 = cmsPipelineAlloc( 0,3,3 );
+      cmsPipeline * gmt_pl = lcmsPipelineAlloc( 0,3,3 ),
+                  * gmt_pl16 = lcmsPipelineAlloc( 0,3,3 );
       cmsToneCurve * t[3] = {0,0,0},
                    * g[3] = {0,0,0};
 
@@ -1209,7 +1368,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       if(!(flags & cmsFLAGS_GAMUTCHECK || flags & cmsFLAGS_SOFTPROOFING))
         return gmt;
 
-      hLab  = cmsCreateLab4Profile(cmsD50_xyY());
+      hLab  = lcmsCreateLab4Profile(lcmsD50_xyY());
       hproof = lcm2AddProfile( proof );
       if(!hLab || !hproof)
       { lcm2_msg( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
@@ -1223,7 +1382,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
   {
     if(i)
     {
-      tr = cmsCreateProofingTransformTHR ( id, hLab, TYPE_Lab_FLT,
+      tr = lcmsCreateProofingTransformTHR ( id, hLab, TYPE_Lab_FLT,
                                                hLab, TYPE_Lab_FLT,
                                                hproof,
                                                intent,
@@ -1240,8 +1399,8 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       ptr[1] = flags & cmsFLAGS_GAMUTCHECK ? (oyPointer)1 : 0;
       if(!error)
       {
-        gmt_lut = cmsStageAllocCLutFloat( 0,lcm2PROOF_LUT_GRID_RASTER, 3,3, 0);
-        r = cmsStageSampleCLutFloat( gmt_lut, gamutCheckSamplerFloat, ptr, 0 );
+        gmt_lut = lcmsStageAllocCLutFloat( 0,lcm2PROOF_LUT_GRID_RASTER, 3,3, 0);
+        r = lcmsStageSampleCLutFloat( gmt_lut, gamutCheckSamplerFloat, ptr, 0 );
         if(!r) { lcm2_msg( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
                           "cmsStageSampleCLutFloat() failed", OY_DBG_ARGS_);
                  error = 1; }
@@ -1249,7 +1408,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
 
     } else
     {
-      tr16 = cmsCreateProofingTransformTHR( id16, hLab, TYPE_Lab_16,
+      tr16 = lcmsCreateProofingTransformTHR( id16, hLab, TYPE_Lab_16,
                                                hLab, TYPE_Lab_16,
                                                hproof,
                                                intent,
@@ -1267,8 +1426,8 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
 
       if(!error)
       {
-        gmt_lut16 = cmsStageAllocCLut16bit( 0, lcm2PROOF_LUT_GRID_RASTER,3,3,0);
-        r = cmsStageSampleCLut16bit( gmt_lut16, gamutCheckSampler16, ptr16, 0);
+        gmt_lut16 = lcmsStageAllocCLut16bit( 0, lcm2PROOF_LUT_GRID_RASTER,3,3,0);
+        r = lcmsStageSampleCLut16bit( gmt_lut16, gamutCheckSampler16, ptr16, 0);
         if(!r)   { lcm2_msg( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
                           "cmsStageSampleCLut16bit() failed", OY_DBG_ARGS_);
                    error = 1; }
@@ -1278,22 +1437,22 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
 
       if(error) goto clean;
 
-      gmt = cmsCreateProfilePlaceholder( 0 ); if(!gmt) goto clean;
-      cmsSetProfileVersion( gmt, 4.2 );
-      cmsSetDeviceClass( gmt, icSigAbstractClass );
-      cmsSetColorSpace( gmt, icSigLabData );
-      cmsSetPCS( gmt, icSigLabData );
+      gmt = lcmsCreateProfilePlaceholder( 0 ); if(!gmt) goto clean;
+      lcmsSetProfileVersion( gmt, 4.2 );
+      lcmsSetDeviceClass( gmt, icSigAbstractClass );
+      lcmsSetColorSpace( gmt, icSigLabData );
+      lcmsSetPCS( gmt, icSigLabData );
 #define E if(!r) { lcm2_msg( oyMSG_ERROR, (oyStruct_s*)proof, \
                    OY_DBG_FORMAT_ "could not write tag", OY_DBG_ARGS_); \
-                   if(gmt) cmsCloseProfile( gmt ); gmt = 0; \
+                   if(gmt) lcmsCloseProfile( gmt ); gmt = 0; \
                    goto clean; }
-      mlu[0] = cmsMLUalloc(0,1);
-      mlu[1] = cmsMLUalloc(0,1);
-      r = cmsMLUsetASCII(mlu[0], "EN", "us", "proofing"); E
-      r = cmsWriteTag( gmt, icSigProfileDescriptionTag, mlu[0] ); E
-      r = cmsMLUsetASCII(mlu[1], "EN", "us", "no copyright; use freely"); E
-      r = cmsWriteTag( gmt, icSigCopyrightTag, mlu[1]); E
-      r = cmsWriteTag( gmt, icSigMediaWhitePointTag, cmsD50_XYZ() ); E
+      mlu[0] = lcmsMLUalloc(0,1);
+      mlu[1] = lcmsMLUalloc(0,1);
+      r = lcmsMLUsetASCII(mlu[0], "EN", "us", "proofing"); E
+      r = lcmsWriteTag( gmt, icSigProfileDescriptionTag, mlu[0] ); E
+      r = lcmsMLUsetASCII(mlu[1], "EN", "us", "no copyright; use freely"); E
+      r = lcmsWriteTag( gmt, icSigCopyrightTag, mlu[1]); E
+      r = lcmsWriteTag( gmt, icSigMediaWhitePointTag, lcmsD50_XYZ() ); E
 
       /* Initialize segmented curve
          Segment 0: from minus infinite */
@@ -1309,49 +1468,49 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       seg[0].Params[3] = 0;
       seg[0].Params[4] = 0;
 
-      t[0] = t[1] = t[2] = cmsBuildSegmentedToneCurve(0, 1, seg);
+      t[0] = t[1] = t[2] = lcmsBuildSegmentedToneCurve(0, 1, seg);
       /* float */
       /* cmsPipeline owns the cmsStage memory */
-      cmsPipelineInsertStage( gmt_pl, cmsAT_BEGIN,
-                              cmsStageAllocToneCurves( 0, 3, t ) );
-      cmsPipelineInsertStage( gmt_pl, cmsAT_END, gmt_lut );
-      cmsPipelineInsertStage( gmt_pl, cmsAT_END,
-                              cmsStageAllocToneCurves( 0, 3, t ) );
-      r = cmsWriteTag( gmt, cmsSigDToB0Tag, gmt_pl ); E
+      lcmsPipelineInsertStage( gmt_pl, cmsAT_BEGIN,
+                              lcmsStageAllocToneCurves( 0, 3, t ) );
+      lcmsPipelineInsertStage( gmt_pl, cmsAT_END, gmt_lut );
+      lcmsPipelineInsertStage( gmt_pl, cmsAT_END,
+                              lcmsStageAllocToneCurves( 0, 3, t ) );
+      r = lcmsWriteTag( gmt, cmsSigDToB0Tag, gmt_pl ); E
 
       /* 16-bit int */
-      g[0] = g[1] = g[2] = cmsBuildGamma(0, 1.0);
-      cmsPipelineInsertStage( gmt_pl16, cmsAT_BEGIN,
-                              cmsStageAllocToneCurves( 0, 3, g ) );
-      cmsPipelineInsertStage( gmt_pl16, cmsAT_END, gmt_lut16 );
-      cmsPipelineInsertStage( gmt_pl16, cmsAT_END,
-                              cmsStageAllocToneCurves( 0, 3, g ) );
-      r = cmsWriteTag( gmt, cmsSigAToB0Tag, gmt_pl16 ); E
+      g[0] = g[1] = g[2] = lcmsBuildGamma(0, 1.0);
+      lcmsPipelineInsertStage( gmt_pl16, cmsAT_BEGIN,
+                              lcmsStageAllocToneCurves( 0, 3, g ) );
+      lcmsPipelineInsertStage( gmt_pl16, cmsAT_END, gmt_lut16 );
+      lcmsPipelineInsertStage( gmt_pl16, cmsAT_END,
+                              lcmsStageAllocToneCurves( 0, 3, g ) );
+      r = lcmsWriteTag( gmt, cmsSigAToB0Tag, gmt_pl16 ); E
 #undef E
 
   if(oy_debug)
   {
-      cmsSaveProfileToMem( gmt, 0, &size );
+      lcmsSaveProfileToMem( gmt, 0, &size );
       data = oyAllocateFunc_( size );
-      cmsSaveProfileToMem( gmt, data, &size );
+      lcmsSaveProfileToMem( gmt, data, &size );
       oyWriteMemToFile_( "dbg_abstract_proof.icc", data, size );
       if(data) oyDeAllocateFunc_( data ); data = 0;
   }
 
   cmsUInt16Number OldAlarm[cmsMAXCHANNELS];
-  cmsGetAlarmCodes(OldAlarm);
+  lcmsGetAlarmCodes(OldAlarm);
 
   clean:
 
-      if(hLab) cmsCloseProfile( hLab ); hLab = 0;
-      if(tr) cmsDeleteTransform( tr ); tr = 0;
-      if(tr16) cmsDeleteTransform( tr16 ); tr16 = 0;
-      if(t[0])  cmsFreeToneCurve( t[0] );
-      if(g[0])  cmsFreeToneCurve( g[0] );
-      if(gmt_pl) cmsPipelineFree( gmt_pl );
-      if(gmt_pl16) cmsPipelineFree( gmt_pl16 );
-      if(mlu[0]) cmsMLUfree( mlu[0] ); mlu[0] = 0;
-      if(mlu[1]) cmsMLUfree( mlu[1] ); mlu[1] = 0;
+      if(hLab) lcmsCloseProfile( hLab ); hLab = 0;
+      if(tr) lcmsDeleteTransform( tr ); tr = 0;
+      if(tr16) lcmsDeleteTransform( tr16 ); tr16 = 0;
+      if(t[0])  lcmsFreeToneCurve( t[0] );
+      if(g[0])  lcmsFreeToneCurve( g[0] );
+      if(gmt_pl) lcmsPipelineFree( gmt_pl );
+      if(gmt_pl16) lcmsPipelineFree( gmt_pl16 );
+      if(mlu[0]) lcmsMLUfree( mlu[0] ); mlu[0] = 0;
+      if(mlu[1]) lcmsMLUfree( mlu[1] ); mlu[1] = 0;
 
   oyProfile_Release( &proof );
   oyOption_Release( &id );
@@ -1411,10 +1570,10 @@ int          lcm2MOptions_Handle2    ( oyOptions_s       * options,
       oyProfile_Release( &p );
       if(hp)
       {
-        cmsSaveProfileToMem( hp, 0, &size );
+        lcmsSaveProfileToMem( hp, 0, &size );
         block = oyAllocateFunc_( size );
-        cmsSaveProfileToMem( hp, block, &size );
-        cmsCloseProfile( hp ); hp = 0;
+        lcmsSaveProfileToMem( hp, block, &size );
+        lcmsCloseProfile( hp ); hp = 0;
       }
 
       prof = oyProfile_FromMem( size, block, 0, 0 );
@@ -1661,7 +1820,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
       block = lcm2CMMColorConversion_ToMem_( xform, node_options,
                                               size, allocateFunc );
     error = !block || !*size;
-    cmsDeleteTransform( xform ); xform = 0;
+    lcmsDeleteTransform( xform ); xform = 0;
   } else
   {
     lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_"\n"
@@ -2385,10 +2544,10 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
                 array_in_tmp_dbl[j] /= xyz_factor;
               }
             }
-            cmsDoTransform( ltw->lcm2, &array_in_tmp[stride_in*index],
+            lcmsDoTransform( ltw->lcm2, &array_in_tmp[stride_in*index],
                                        array_out_data[k], n );
           } else
-            cmsDoTransform( ltw->lcm2, array_in_data[k],
+            lcmsDoTransform( ltw->lcm2, array_in_data[k],
                                        array_out_data[k], n );
           if(array_out_tmp && use_xyz_scale)
           {
@@ -2422,10 +2581,10 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
             {
               array_in_tmp_dbl[j] /= xyz_factor;
             }
-            cmsDoTransform( ltw->lcm2, array_in_tmp,
+            lcmsDoTransform( ltw->lcm2, array_in_tmp,
                                        array_out_data[k], n );
           } else
-            cmsDoTransform( ltw->lcm2, array_in_data[k],
+            lcmsDoTransform( ltw->lcm2, array_in_data[k],
                                        array_out_data[k], n );
           if(array_out_tmp && use_xyz_scale)
           {
@@ -2727,17 +2886,17 @@ oyProfile_s *      lcm2CreateICCMatrixProfile (
   wtpt_xyY.x = wx;
   wtpt_xyY.y = wy;
   wtpt_xyY.Y = 1.0;
-  g[0] = g[1] = g[2] = cmsBuildGamma(0, (double)gamma);
+  g[0] = g[1] = g[2] = lcmsBuildGamma(0, (double)gamma);
   lcm2_msg( oyMSG_DBG,0, OY_DBG_FORMAT_
              " red: %g %g %g green: %g %g %g blue: %g %g %g white: %g %g gamma: %g",
              OY_DBG_ARGS_, rx,ry,p.Red.Y, gx,gy,p.Green.Y,bx,by,p.Blue.Y,wx,wy,gamma );
-  lp = cmsCreateRGBProfile( &wtpt_xyY, &p, g);
+  lp = lcmsCreateRGBProfile( &wtpt_xyY, &p, g);
 
-  cmsSaveProfileToMem( lp, 0, &size );
+  lcmsSaveProfileToMem( lp, 0, &size );
   data = oyAllocateFunc_( size );
-  cmsSaveProfileToMem( lp, data, &size );
-  cmsCloseProfile( lp );
-  cmsFreeToneCurve( g[0] );
+  lcmsSaveProfileToMem( lp, data, &size );
+  lcmsCloseProfile( lp );
+  lcmsFreeToneCurve( g[0] );
 
   prof = oyProfile_FromMem( size, data, 0,0 );
 
