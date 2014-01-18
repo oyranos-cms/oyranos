@@ -10,12 +10,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2013 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/02/17
+ *  @date     2014/01/13
  */
 
 
@@ -403,6 +403,8 @@ oyStructList_s*oyProfileTag_Get      ( oyProfileTag_s    * tag )
   return values;
 }
 
+#include <ctype.h> /* isalpha() */
+
 /** Function oyProfileTag_GetText
  *  @memberof oyProfileTag_s
  *
@@ -429,7 +431,7 @@ oyStructList_s*oyProfileTag_Get      ( oyProfileTag_s    * tag )
  *
  *  @version Oyranos: 0.9.5
  *  @since   2008/01/03 (Oyranos: 0.1.8)
- *  @date    2013/02/17
+ *  @date    2014/01/18
  */
 char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
                                        int32_t           * n,
@@ -525,7 +527,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
                (k == 3 && ((!language && !country) || implicite_i18n))
               )
             {
-              if(name && name->lang[0] && !implicite_i18n)
+              if(name && isalpha(name->lang[0]) && !implicite_i18n)
               {
                 /* string with i18n infos -> "de_DE:Licht" */
                 temp = oyStringAppend_(name->lang, ":", oyAllocateFunc_);
