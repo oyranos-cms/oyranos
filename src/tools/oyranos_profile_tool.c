@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2011-2013 (C) Kai-Uwe Behrmann
+ *            2011-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC profile informations - on the command line
  *  @internal
@@ -483,9 +483,13 @@ int main( int argc , char** argv )
 
     if(error <= 0 && list_tags)
     {
-      fprintf( stdout, "\n" );
-      fprintf( stdout, "%s\n", _("Profile Tags") );
-      fprintf( stdout, "------------\n" );
+      FILE * out = stdout;
+
+      if(verbose && (tag_name || tag_pos != -1))
+        out = stderr;
+      fprintf( out, "\n" );
+      fprintf( out, "%s\n", _("Profile Tags") );
+      fprintf( out, "------------\n" );
       count = oyProfile_GetTagCount( p );
       for(i = 0; i < count; ++i)
       {
@@ -501,20 +505,23 @@ int main( int argc , char** argv )
           texts = oyProfileTag_GetText( tag, &texts_n, NULL, NULL,
                                         &tag_size, malloc );
 
-          fprintf( stdout, "%s/%s[%d]\t%d\t@ %d\t%s",
+          fprintf( out, "%s/%s[%d]\t%d\t@ %d\t%s",
                    oyICCTagName(oyProfileTag_GetUse(tag)),
                    oyICCTagTypeName(oyProfileTag_GetType(tag)), i,
                    (int)tag_size, (int)oyProfileTag_GetOffset( tag ),
                    oyICCTagDescription(oyProfileTag_GetUse(tag)));
           if((verbose || oy_debug) && texts)
           {
-            fprintf( stdout, ":\n" );
+            fprintf( out, ":\n" );
               for(j = 0; j < texts_n; ++j)
                 if(texts[j])
-                  fprintf( stdout, "%s\n", texts[j] );
+                {
+                  fprintf( stdout, "%s", texts[j] );
+                  fprintf( out, "\n" );
+                }
           } else
           {
-            fprintf( stdout, "\n" );
+            fprintf( out, "\n" );
           }
         }
 
