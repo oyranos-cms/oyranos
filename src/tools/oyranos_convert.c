@@ -466,11 +466,8 @@ int main( int argc , char** argv )
       memset( buf, 0, sizeof(double)*24);
 
       if(cc)
-      {
-        oyFilterNode_s * in = oyConversion_GetNode( cc, OY_INPUT );
-        oyFilterGraph_SetFromNode( graph, in, 0, 0 );
-        oyFilterNode_Release( &in );
-      }
+        graph = oyConversion_GetGraph( cc );
+      n = 0;
       if(graph)
         n = oyFilterGraph_CountEdges( graph );
       for(i = 0; i < n; ++i)
