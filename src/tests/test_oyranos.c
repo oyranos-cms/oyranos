@@ -52,8 +52,12 @@ const char * oyTestResultToString( oyTESTRESULT_e error )
   return text;
 }
 
+FILE * zout;
+char * tests_failed[64];
+
 oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
-                                       const char        * test_name )
+                                       const char        * test_name,
+                                       int                 number )
 {
   oyTESTRESULT_e error = 0;
 
@@ -64,6 +68,8 @@ oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
 
   fprintf(stdout, "\t%s", oyTestResultToString(error));
 
+  if(error == oyTESTRESULT_FAIL)
+    tests_failed[results[error]] = (char*)test_name;
   results[error] += 1;
 
   /* print */
@@ -94,8 +100,8 @@ oyTESTRESULT_e testVersion()
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
   fprintf(stderr, "\n" );
-  fprintf(stderr, "compiled version:     %d\n", OYRANOS_VERSION );
-  fprintf(stderr, " runtime version:     %d\n", oyVersion(0) );
+  fprintf(zout, "compiled version:     %d\n", OYRANOS_VERSION );
+  fprintf(zout, " runtime version:     %d\n", oyVersion(0) );
 
   if(OYRANOS_VERSION == oyVersion(0))
     result = oyTESTRESULT_SUCCESS;
@@ -207,15 +213,15 @@ oyTESTRESULT_e testElektra()
     "Elektra not initialised? try oyExportStart_(EXPORT_SETTING)" );
   }
   if(start && start[0])
-    fprintf(stderr, "start key value: %s\n", start );
+    fprintf(zout, "start key value: %s\n", start );
   else
-    fprintf(stderr, "could not initialise\n" );
+    fprintf(zout, "could not initialise\n" );
 
   error = oyAddKey_valueComment_("sw/Oyranos/Tests/test_key",
                                  "myTestValue", "myTestComment" );
   value = oyGetKeyString_("sw/Oyranos/Tests/test_key", 0);
   if(value)
-    fprintf(stderr, "result key value: %s\n", value );
+    fprintf(zout, "result key value: %s\n", value );
 
   if(error)
   {
@@ -365,7 +371,7 @@ oyTESTRESULT_e testSettings ()
     {
       o = oyOptions_Get( opts, i );
       tmp = oyOption_GetValueText( o, 0 );
-      fprintf(stderr, "%s:", tmp );
+      fprintf(zout, "%s:", tmp );
       oyDeAllocateFunc_(tmp);
 
       tmp = oyFilterRegistrationToText( oyOption_GetText(o, oyNAME_DESCRIPTION),
@@ -802,7 +808,7 @@ oyTESTRESULT_e testMonitor ()
       if(block) free(block); block = 0;
       oyConfig_Release( &c );
       oyProfile_Release( &p );
-      fprintf(stderr, "\n" );
+      fprintf(zout, "\n" );
     }
   }
   oyConfigs_Release( &devices );
@@ -892,16 +898,16 @@ int myFilterSignalHandler            ( oyObserver_s      * observer,
   switch(signal_type)
   {
   case oySIGNAL_OK:
-       fprintf(stderr, "Signal: oySIGNAL_OK\n" );
+       fprintf(zout, "Signal: oySIGNAL_OK\n" );
        break;
   case oySIGNAL_CONNECTED:                  /**< connection established */
-       fprintf(stderr, "Signal: oySIGNAL_CONNECTED\n" );
+       fprintf(zout, "Signal: oySIGNAL_CONNECTED\n" );
        break;
   case oySIGNAL_RELEASED:                   /**< released the connection */
-       fprintf(stderr, "Signal: oySIGNAL_RELEASED\n" );
+       fprintf(zout, "Signal: oySIGNAL_RELEASED\n" );
        break;
   case oySIGNAL_DATA_CHANGED:               /**< call to update image views */
-       fprintf(stderr, "Signal: oySIGNAL_DATA_CHANGED\n" );
+       fprintf(zout, "Signal: oySIGNAL_DATA_CHANGED\n" );
        if(observer->observer->type_ == oyOBJECT_FILTER_NODE_S)
        {
          oyPointer_s * node_context;
@@ -911,46 +917,49 @@ int myFilterSignalHandler            ( oyObserver_s      * observer,
          {
            if(observer->model->type_ == oyOBJECT_OPTION_S)
            {
-             fprintf( stderr, "release context %s\n",
+             fprintf( zout, "release context %s\n",
                       oyStruct_TypeToText( observer->observer ) );
              oyFilterNode_SetContext( node, 0 );
            } else
-             fprintf( stderr, "Model type not expected: %s\n",
+             fprintf( zout, "Model type not expected: %s\n",
                       oyStruct_TypeToText( observer->model ) );
            oyPointer_Release( &node_context );
          } else
-           fprintf( stderr, "no context %s\n",
+           fprintf( zout, "no context %s\n",
                     oyStruct_TypeToText( observer->observer ) );
        }
        else
-         fprintf( stderr, "wrong signal handler for %s\n",
+         fprintf( zout, "wrong signal handler for %s\n",
                   oyStruct_TypeToText( observer->observer ) );
        break;
   case oySIGNAL_STORAGE_CHANGED:            /**< new data accessors */
-       fprintf(stderr, "Signal: oySIGNAL_STORAGE_CHANGED\n" );
+       fprintf(zout, "Signal: oySIGNAL_STORAGE_CHANGED\n" );
        break;
   case oySIGNAL_INCOMPATIBLE_DATA:          /**< can not process image */
-       fprintf(stderr, "Signal: oySIGNAL_INCOMPATIBLE_DATA\n" );
+       fprintf(zout, "Signal: oySIGNAL_INCOMPATIBLE_DATA\n" );
        break;
   case oySIGNAL_INCOMPATIBLE_OPTION:        /**< can not handle option */
-       fprintf(stderr, "Signal: oySIGNAL_INCOMPATIBLE_OPTION\n" );
+       fprintf(zout, "Signal: oySIGNAL_INCOMPATIBLE_OPTION\n" );
        break;
   case oySIGNAL_INCOMPATIBLE_CONTEXT:       /**< can not handle profile */
-       fprintf(stderr, "Signal: oySIGNAL_INCOMPATIBLE_CONTEXT\n" );
+       fprintf(zout, "Signal: oySIGNAL_INCOMPATIBLE_CONTEXT\n" );
        break;
   case oySIGNAL_USER1: 
-       fprintf(stderr, "Signal: oySIGNAL_USER1\n" );
+       fprintf(zout, "Signal: oySIGNAL_USER1\n" );
        break;
   case oySIGNAL_USER2: 
-       fprintf(stderr, "Signal: oySIGNAL_USER2\n" );
+       fprintf(zout, "Signal: oySIGNAL_USER2\n" );
        break;
   case oySIGNAL_USER3:                      /**< more signal types are possible */
-       fprintf(stderr, "Signal: oySIGNAL_USER3\n" );
+       fprintf(zout, "Signal: oySIGNAL_USER3\n" );
        break;
   default:
-       fprintf(stderr, "Signal: unknown\n" );
+       fprintf(zout, "Signal: unknown\n" );
        break;
   }
+  fflush(zout);
+  fflush(zout);
+  fflush(zout);
   return handled;
 }
 
@@ -992,28 +1001,50 @@ oyTESTRESULT_e testObserver ()
 }
 
 
+static int test_number = 0;
 #define TEST_RUN( prog, text ) { \
-  if(argc > 1) { \
-    if(strcmp("-l", argv[1]) == 0) \
-    { \
-      printf( "%s\n", text); \
-    } else { \
-      for(i = 1; i < argc; ++i) \
-        if(strstr(text, argv[i]) != 0) \
-          oyTestRun( prog, text ); \
-    } \
-  } else \
-    oyTestRun( prog, text ); \
+  if(argc > argpos) { \
+      for(i = argpos; i < argc; ++i) \
+        if(strstr(text, argv[i]) != 0 || \
+           atoi(argv[i]) == test_number ) \
+          oyTestRun( prog, text, test_number ); \
+  } else if(list) \
+    printf( "[%d] %s\n", test_number, text); \
+  else \
+    oyTestRun( prog, text, test_number ); \
+  ++test_number; \
 }
 
 /*  main */
 int main(int argc, char** argv)
 {
-  int i, error = 0;
+  int i, error = 0,
+      argpos = 1,
+      list = 0;
+
+  zout = stdout;  /* printed inbetween results */
+
+  if(getenv("OY_DEBUG"))
+  {
+    int value = atoi(getenv("OY_DEBUG"));
+    if(value > 0)
+      oy_debug += value;
+  }
 
   /* init */
   for(i = 0; i <= oyTESTRESULT_UNKNOWN; ++i)
     results[i] = 0;
+
+  i = 1; while(i < argc) if( strcmp(argv[i++],"-l") == 0 )
+  { ++argpos;
+    zout = stderr;
+    list = 1;
+  }
+
+  i = 1; while(i < argc) if( strcmp(argv[i++],"--silent") == 0 )
+  { ++argpos;
+    zout = stderr;
+  }
 
   fprintf( stderr, "\nOyranos Tests v" OYRANOS_VERSION_NAME
            "  developed: " OYRANOS_DATE  "\n\n" );
@@ -1033,8 +1064,7 @@ int main(int argc, char** argv)
 
   /* give a summary */
 
-  if(!(argc > 1 &&  
-       strcmp("-l", argv[1]) == 0))
+  if(!list)
   {
 
     fprintf( stdout, "\n################################################################\n" );
@@ -1048,6 +1078,10 @@ int main(int argc, char** argv)
              results[oyTESTRESULT_SYSERROR] ||
              results[oyTESTRESULT_UNKNOWN]
             );
+
+    for(i = 0; i < results[oyTESTRESULT_FAIL]; ++i)
+      fprintf( stdout, "    %s: \"%s\"\n",
+               oyTestResultToString( oyTESTRESULT_FAIL), tests_failed[i] );
 
     if(error)
       fprintf( stdout, "    Tests FAILED\n" );
