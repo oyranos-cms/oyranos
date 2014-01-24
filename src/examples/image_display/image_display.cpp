@@ -186,18 +186,26 @@ struct box_n_opts {
   Oy_Fl_Image_Widget * box;
 };
 
-void callback ( Fl_Widget* w, void* daten )
+#include "../../liboyranos_core/oyranos_threads.c"
+void update(void*daten)
+{
+  struct box_n_opts * arg = (box_n_opts*) daten;
+
+#if 0
+  ((Fl_Widget*)arg->box)->damage(FL_DAMAGE_ALL,arg->box->x(),arg->box->y(),arg->box->w(),arg->box->h());
+  arg->box->damage_resize(arg->box->x(),arg->box->y(),arg->box->w(),arg->box->h());
+#else
+  arg->box->deactivate();
+  arg->box->activate();
+#endif
+}
+
+extern "C" {
+void * id_worker ( void* daten )
 {
   struct box_n_opts * arg = (box_n_opts*) daten;
   oyStruct_s * object = (oyStruct_s*) arg->node;
 
-  if(!w->parent())
-    printf("Could not find parents.\n");
-  else
-  if(!object)
-    printf("Oyranos argument missed.\n");
-  else
-  if(object && object->type_ == oyOBJECT_FILTER_NODE_S)
   {
     oyFilterNode_s * node = (oyFilterNode_s*) object;
     oyOptions_s * opts = 0,
@@ -248,8 +256,28 @@ void callback ( Fl_Widget* w, void* daten )
      */
     arg->box->damage( FL_DAMAGE_USER1 );
 
+    Fl::awake(update,arg);
+
     delete [] command;
   }
+  return NULL;
+}
+}
+
+void callback ( Fl_Widget* w, void* daten )
+{
+  struct box_n_opts * arg = (box_n_opts*) daten;
+  oyStruct_s * object = (oyStruct_s*) arg->node;
+  oyThread_t thread;
+
+  if(!w->parent())
+    printf("Could not find parents.\n");
+  else
+  if(!object)
+    printf("Oyranos argument missed.\n");
+  else
+  if(object && object->type_ == oyOBJECT_FILTER_NODE_S)
+    oyThreadCreate( id_worker, daten, &thread );
   else
     printf("could not find a suitable program structure\n");
 }
