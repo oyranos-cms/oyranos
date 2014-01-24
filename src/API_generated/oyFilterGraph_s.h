@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/01/24
  */
 
 
@@ -106,10 +106,6 @@ OYAPI int  OYEXPORT
                                        oyFilterNode_s    * node,
                                        const char        * mark,
                                        int                 flags );
-OYAPI oyBlob_s * OYEXPORT
-           oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
-                                       int                 node_pos,
-                                       oyObject_s          object );
 OYAPI char * OYEXPORT
            oyFilterGraph_ToText      ( oyFilterGraph_s   * graph,
                                        oyFilterNode_s    * input,

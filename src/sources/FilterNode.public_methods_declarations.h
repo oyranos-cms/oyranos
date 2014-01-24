@@ -104,6 +104,9 @@ OYAPI int  OYEXPORT
                  oyFilterNode_SetContext(
                                        oyFilterNode_s     * node,
                                        oyPointer_s        * data );
+OYAPI oyBlob_s * OYEXPORT
+                 oyFilterNode_ToBlob ( oyFilterNode_s    * node,
+                                       oyObject_s          object );
 OYAPI oyPointer_s *  OYEXPORT
                  oyFilterNode_GetBackendContext(
                                        oyFilterNode_s     * node );

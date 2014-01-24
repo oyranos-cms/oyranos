@@ -435,9 +435,10 @@ int main( int argc , char** argv )
       oyImage_s * in;
       oyImage_s * out;
       oyFilterGraph_s * graph;
+      oyFilterNode_s * icc;
       oyBlob_s * blob;
       int error = 0;
-      int i,n=0;
+      int n=0;
 
       if(input)
       {
@@ -461,18 +462,16 @@ int main( int argc , char** argv )
       oyProfile_Release( &p );
 
       cc = oyConversion_CreateBasicPixels( in, out, 0, 0 );
-      graph = oyFilterGraph_New( 0 );
 
       memset( buf, 0, sizeof(double)*24);
 
       if(cc)
         graph = oyConversion_GetGraph( cc );
-      n = 0;
       if(graph)
-        n = oyFilterGraph_CountEdges( graph );
-      for(i = 0; i < n; ++i)
+        icc = oyFilterGraph_GetNode( graph, -1, "///icc", NULL );
+      if(icc)
       {
-        blob = oyFilterGraph_ToBlob( graph, i, 0 );
+        blob = oyFilterNode_ToBlob( icc, 0 );
         if(blob && oyBlob_GetSize( blob ))
         {
           size_t size = oyBlob_GetSize( blob);
@@ -489,10 +488,11 @@ int main( int argc , char** argv )
           {
             fwrite( data, sizeof(char), size, stdout );
           }
-          break;
         }
         oyBlob_Release( &blob );
+        oyFilterNode_Release( &icc );
       }
+      oyFilterGraph_Release( &graph );
 
     } else
     {

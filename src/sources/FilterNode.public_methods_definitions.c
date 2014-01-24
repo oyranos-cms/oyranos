@@ -1176,7 +1176,7 @@ OYAPI oyPointer_s *  OYEXPORT
  *  oyCMMapi4_s::oyCMMFilterNode_ContextToMem() and converted to
  *  oyCMMapi4_s::context_type
  *
- *  Oyranos' core provides that data.
+ *  Oyranos' core provides that data. See oyFilterNode_ToBlob()
  *
  *  @param[in,out] node                filter object
  *  @return                            the data
@@ -1202,6 +1202,45 @@ OYAPI int  OYEXPORT
 
   return 0;
 }
+
+/**
+ *  @memberof oyFilterNode_s
+ *  @brief    Node context to binary blob
+ *
+ *  Typical a context from a CMM will be returned. It is a intermediate
+ *  context from oyCMMapi4_s backend. 
+ *  A converted context, which is ready for precessing by oyCMMapi7_s backends,
+ *  is stored inside the node and can be obtained by oyFilterNode_GetContext().
+ *
+ *  @param         node                node object
+ *  @param         object              the optional object
+ *  @return                            the data blob
+ *
+ *  @version Oyranos: 0.9.5
+ *  @since   2014/01/25 (Oyranos: 0.9.5)
+ *  @date    2014/01/25
+ */
+oyBlob_s * oyFilterNode_ToBlob       ( oyFilterNode_s    * node,
+                                       oyObject_s          object )
+{
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node;
+  oyBlob_s * blob = 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
+
+  if(s)
+  {
+    if(((oyCMMapi4_s_*)s->core->api4_)->oyCMMFilterNode_ContextToMem &&
+       strlen(((oyCMMapi4_s_*)s->core->api4_)->context_type))
+    {
+      blob = oyBlob_New( object );
+      oyFilterNode_SetContext_( s, (oyBlob_s_*)blob );
+    }
+  }
+
+  return blob;
+}
+
 /** Function  oyFilterNode_GetTags
  *  @memberof oyFilterNode_s
  *  @brief    Get filter tags

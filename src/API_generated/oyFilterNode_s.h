@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/01/24
  */
 
 
@@ -276,6 +276,9 @@ OYAPI int  OYEXPORT
                  oyFilterNode_SetContext(
                                        oyFilterNode_s     * node,
                                        oyPointer_s        * data );
+OYAPI oyBlob_s * OYEXPORT
+                 oyFilterNode_ToBlob ( oyFilterNode_s    * node,
+                                       oyObject_s          object );
 OYAPI oyPointer_s *  OYEXPORT
                  oyFilterNode_GetBackendContext(
                                        oyFilterNode_s     * node );

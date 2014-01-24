@@ -24,10 +24,6 @@ OYAPI int  OYEXPORT
                                        oyFilterNode_s    * node,
                                        const char        * mark,
                                        int                 flags );
-OYAPI oyBlob_s * OYEXPORT
-           oyFilterGraph_ToBlob      ( oyFilterGraph_s   * graph,
-                                       int                 node_pos,
-                                       oyObject_s          object );
 OYAPI char * OYEXPORT
            oyFilterGraph_ToText      ( oyFilterGraph_s   * graph,
                                        oyFilterNode_s    * input,

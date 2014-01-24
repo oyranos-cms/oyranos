@@ -1459,7 +1459,8 @@ oyTESTRESULT_e testDeviceLinkProfile ()
     n = oyFilterGraph_CountEdges( graph );
   for(i = 0; i < n; ++i)
   {
-    blob = oyFilterGraph_ToBlob( graph, i, 0 );
+    oyFilterNode_s * node = oyFilterGraph_GetNode( graph, i, NULL, NULL );
+    blob = oyFilterNode_ToBlob( node, NULL );
     if(blob && oyBlob_GetSize( blob ))
     {
       char name[64];
@@ -1480,6 +1481,7 @@ oyTESTRESULT_e testDeviceLinkProfile ()
     }
 
     oyBlob_Release( &blob );
+    oyFilterNode_Release( &node );
   }
 
   fn = oyProfile_GetFileName( dl, 0 );
