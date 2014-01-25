@@ -433,10 +433,9 @@ int main( int argc , char** argv )
     {
       double buf[24];
       oyImage_s * in;
-      oyImage_s * out;
-      oyFilterGraph_s * graph;
-      oyFilterNode_s * icc;
-      oyBlob_s * blob;
+      oyFilterGraph_s * graph = NULL;
+      oyFilterNode_s * icc = NULL;
+      oyBlob_s * blob = NULL;
       int error = 0;
       int n=0;
 
@@ -456,12 +455,11 @@ int main( int argc , char** argv )
       oyProfile_Release( &p );
 
       p = oyProfile_FromFile(output_profile, 0,0);
-      n = oyProfile_GetChannelsCount(p);
-      pixel_layout = oyChannels_m(n) | oyDataType_m(oyUINT16);
-      out = oyImage_Create( 2, 2, buf, pixel_layout, p, 0 );
-      oyProfile_Release( &p );
 
-      cc = oyConversion_CreateBasicPixels( in, out, 0, 0 );
+      cc = oyConversion_CreateFromImage (
+                                in, node_name, module_options, 
+                                p, oyUINT16, 0, 0 );
+      oyProfile_Release( &p );
 
       memset( buf, 0, sizeof(double)*24);
 
