@@ -1235,6 +1235,8 @@ oyBlob_s * oyFilterNode_ToBlob       ( oyFilterNode_s    * node,
     {
       blob = oyBlob_New( object );
       oyFilterNode_SetContext_( s, (oyBlob_s_*)blob );
+      if(oyBlob_GetSize( blob ) == 0 && oyBlob_GetPointer( blob ) == NULL)
+        oyBlob_Release( &blob );
     }
   }
 

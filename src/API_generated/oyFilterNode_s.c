@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/24
+ *  @date     2014/01/26
  */
 
 
@@ -1348,6 +1348,8 @@ oyBlob_s * oyFilterNode_ToBlob       ( oyFilterNode_s    * node,
     {
       blob = oyBlob_New( object );
       oyFilterNode_SetContext_( s, (oyBlob_s_*)blob );
+      if(oyBlob_GetSize( blob ) == 0 && oyBlob_GetPointer( blob ) == NULL)
+        oyBlob_Release( &blob );
     }
   }
 
