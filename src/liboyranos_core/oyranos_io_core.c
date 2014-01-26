@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    input / output  methods
  *  @internal
@@ -131,7 +131,7 @@ char *       oyReadFilepToMem_       ( FILE              * fp,
                                        size_t            * size,
                                        oyAlloc_f           allocate_func)
 {
-  char* mem = 0;
+  char* mem = NULL;
 
   DBG_MEM_START
 
@@ -148,6 +148,9 @@ char *       oyReadFilepToMem_       ( FILE              * fp,
       rewind(fp);
 
       DBG_MEM1_S("%u\n",((unsigned int)((size_t)size)));
+
+      if(!*size)
+        return mem;
 
       /* allocate memory */
       oyAllocHelper_m_( mem, char, *size+1, oyAllocateFunc_, return 0);
