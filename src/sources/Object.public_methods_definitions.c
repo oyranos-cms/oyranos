@@ -421,14 +421,14 @@ const oyChar * oyObject_GetName       ( const oyObject_s        obj,
  *  @param[in]     object              the object
  *  @param[in]     marker              debug hints, e.g. __FILE__
  *  @param[in]     line                source line number, e.g. __LINE__
- *  @return                      error
+ *  @return                            error
  *
  *  @since Oyranos: version 0.1.8
  *  @date  2008/01/22 (API 0.1.8)
  */
-int          oyObject_Lock             ( oyObject_s        object,
-                                         const char      * marker,
-                                         int               line )
+int          oyObject_Lock           ( oyObject_s          object,
+                                       const char        * marker,
+                                       int                 line )
 {
   int error = !object;
 
@@ -460,9 +460,9 @@ int          oyObject_Lock             ( oyObject_s        object,
  *  @since Oyranos: version 0.1.8
  *  @date  2008/01/22 (API 0.1.8)
  */
-int          oyObject_UnLock           ( oyObject_s        object,
-                                         const char      * marker,
-                                         int               line )
+int          oyObject_UnLock         ( oyObject_s          object,
+                                       const char        * marker,
+                                       int                 line )
 {
   int error = !object;
 

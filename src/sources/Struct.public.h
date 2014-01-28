@@ -2,8 +2,11 @@
 
 const char * oyStruct_TypeToText     ( const oyStruct_s  * st );
 
+/** @brief reference a object or with second argument present do a copy */
 typedef oyStruct_s * (*oyStruct_Copy_f ) ( oyStruct_s *, oyPointer );
+/** @brief release object */
 typedef int       (*oyStruct_Release_f ) ( oyStruct_s ** );
+/** @brief create a lock object */
 typedef oyPointer (*oyStruct_LockCreate_f)(oyStruct_s * obj );
 
 /* Locking function declarations { */

@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/01/28
  */
 
 
@@ -36,8 +36,11 @@ typedef struct oyStruct_s oyStruct_s;
 
 const char * oyStruct_TypeToText     ( const oyStruct_s  * st );
 
+/** @brief reference a object or with second argument present do a copy */
 typedef oyStruct_s * (*oyStruct_Copy_f ) ( oyStruct_s *, oyPointer );
+/** @brief release object */
 typedef int       (*oyStruct_Release_f ) ( oyStruct_s ** );
+/** @brief create a lock object */
 typedef oyPointer (*oyStruct_LockCreate_f)(oyStruct_s * obj );
 
 /* Locking function declarations { */
