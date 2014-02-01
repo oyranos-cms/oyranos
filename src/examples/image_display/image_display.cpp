@@ -57,6 +57,12 @@ void setWindowMenue                  ( Oy_Fl_Double_Window*win,
                                        Oy_Fl_Image_Widget* oy_box,
                                        oyFilterNode_s    * node );
 
+void jobResultRepeatCb(void*)
+{
+  oyJobResult();
+  Fl::repeat_timeout(0.02, (void(*)(void*))jobResultRepeatCb);
+}
+
 /* keep at least one node around to handle options */
 static oyFilterNode_s * icc = 0;
 
@@ -170,9 +176,9 @@ main(int argc, char** argv)
     win->label( file_name );
   }
 
-
   win->show();
 
+  Fl::add_timeout(0.02, (void(*)(void*))jobResultRepeatCb);
   Fl::run();
 
   return 0;
@@ -187,9 +193,9 @@ struct box_n_opts {
 };
 
 #include "../../liboyranos_core/oyranos_threads.c"
-void update(void*daten)
+int changeIccOptionsUpdate ( oyJob_s * job )
 {
-  struct box_n_opts * arg = (box_n_opts*) daten;
+  struct box_n_opts * arg = (box_n_opts*) job->context;
 
 #if 0
   ((Fl_Widget*)arg->box)->damage(FL_DAMAGE_ALL,arg->box->x(),arg->box->y(),arg->box->w(),arg->box->h());
@@ -198,12 +204,13 @@ void update(void*daten)
   arg->box->deactivate();
   arg->box->activate();
 #endif
+  return 0;
 }
 
 extern "C" {
-void * id_worker ( void* daten )
+int changeIccOptions ( oyJob_s * job )
 {
-  struct box_n_opts * arg = (box_n_opts*) daten;
+  struct box_n_opts * arg = (box_n_opts*) job->context;
   oyStruct_s * object = (oyStruct_s*) arg->node;
 
   {
@@ -256,19 +263,22 @@ void * id_worker ( void* daten )
      */
     arg->box->damage( FL_DAMAGE_USER1 );
 
-    Fl::awake(update,arg);
-
     delete [] command;
   }
-  return NULL;
+  return 0;
 }
+void jobCallback                     ( double              progress_zero_till_one,
+                                       char              * status_text,
+                                       int                 thread_id_,
+                                       int                 job_id )
+{ printf( "%s():%d %02f %s %d/%d\n",__func__,__LINE__,progress_zero_till_one,
+          status_text?status_text:"",thread_id_,job_id); }
 }
 
 void callback ( Fl_Widget* w, void* daten )
 {
   struct box_n_opts * arg = (box_n_opts*) daten;
   oyStruct_s * object = (oyStruct_s*) arg->node;
-  oyThread_t thread;
 
   if(!w->parent())
     printf("Could not find parents.\n");
@@ -277,8 +287,15 @@ void callback ( Fl_Widget* w, void* daten )
     printf("Oyranos argument missed.\n");
   else
   if(object && object->type_ == oyOBJECT_FILTER_NODE_S)
-    oyThreadCreate( id_worker, daten, &thread );
-  else
+  {
+    oyJob_s * job = (oyJob_s*) calloc(sizeof(oyJob_s),1);
+    job->work = changeIccOptions;
+    job->finish = changeIccOptionsUpdate;
+    job->context = (oyStruct_s*)daten;
+    job->cb_progress = jobCallback;
+    oyJob_Add(job, 0);
+    job = NULL;
+  } else
     printf("could not find a suitable program structure\n");
 }
 

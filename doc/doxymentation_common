@@ -58,6 +58,18 @@
     to be visible.
  */
 
+/** @page threads Threading
+    @section basics Concept
+    Threading support in Oyranos is kept intentionally simple. Object level locking is available.
+    Eigther avoid Oyranos locking by encapsulating it into a own locking model.
+    Or provide locking functions in oyThreadLockingSet(), which can 
+    detect recursive lock conditions. Recursive locks might not be a problem
+    with POSIX systems and pthreads PTHREAD_MUTEX_RECURSIVE.
+
+    @section init Initialisation
+    Call oyThreadLockingSet() in order to use own thread locking functions. The function must be used before any call to Oyranos.
+ */
+
 /** @page links References
     @section links Links
     - cross platform color information exchange standard, called ICC - http://www.color.org

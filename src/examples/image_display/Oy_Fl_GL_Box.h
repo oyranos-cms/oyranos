@@ -12,6 +12,7 @@ int              oyArray2d_ToPPM_    ( oyArray2d_s       * array,
 #include <FL/gl.h>
 
 #include "Oy_Fl_Image_Widget.h"
+#include "oyranos_threads.h"
 
 class Oy_Fl_GL_Box : public Fl_Gl_Window,
                          public Oy_Fl_Image_Widget
@@ -178,12 +179,63 @@ private:
     Fl_Gl_Window::redraw();
   }
 
+  static int loadImageName( oyJob_s * job )
+  {
+    char * t = NULL;
+    const char * tmp = oyOption_GetText((oyOption_s*)job->context,oyNAME_NICK);
+    if(job->cb_progress)
+    {
+      if(tmp)
+      {
+        t = (char*) malloc(80+strlen(__func__)+strlen(tmp));
+        sprintf( t, "%s():%d --->\n%s", __func__,__LINE__,
+                 oyOption_GetText((oyOption_s*)job->context,oyNAME_NICK));
+      }
+      oyMsg_Add(job, .1, t);
+    }
+    return 0;
+  }
+  static int finishImageName( oyJob_s * job )
+  {
+    char * t = NULL;
+    const char * tmp = oyOption_GetText((oyOption_s*)job->context,oyNAME_NICK);
+    if(job->cb_progress)
+    {
+      if(tmp)
+      {
+        t = (char*) malloc(80+strlen(__func__)+strlen(tmp));
+        sprintf( t, "%s():%d --->\n%s\n<--- finished", __func__,__LINE__,
+                 oyOption_GetText((oyOption_s*)job->context,oyNAME_NICK));
+      }
+      oyMsg_Add(job, 1., t);
+    }
+    job->context->release( &job->context );
+    free(job); job = NULL;
+    return 0;
+  }
+  static void jobCallback            ( double              progress_zero_till_one,
+                                       char              * status_text,
+                                       int                 thread_id_,
+                                       int                 job_id )
+  { printf("%s():%d %02f %s %d/%d\n",__func__,__LINE__,progress_zero_till_one,
+           status_text?status_text:"",thread_id_,job_id); }
+
 public:
   oyFilterNode_s * setImage          ( const char        * file_name,
                                        const char        * cc_name,
                                        oyOptions_s       * cc_options )
   {
     oyImage_s * image = 0;
+    oyJob_s * job = (oyJob_s*) calloc(sizeof(oyJob_s),1);
+    job->work = loadImageName;
+    job->finish = finishImageName;
+    oyOption_s * o = oyOption_FromRegistration( "///file_name", NULL );
+    oyOption_SetFromText( o, file_name, 0 );
+    job->context = (oyStruct_s*)o;
+    job->cb_progress = jobCallback;
+    oyJob_Add(job, 0);
+    job = NULL;
+
     oyImage_FromFile( file_name, &image, 0 );
     oyPixel_t pt;
     oyDATATYPE_e data_type = oyUINT8;
