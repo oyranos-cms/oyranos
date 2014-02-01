@@ -1450,11 +1450,7 @@ oyTESTRESULT_e testDeviceLinkProfile ()
   /*oyConversion_RunPixels( cc, 0 );*/
 
   if(cc)
-  {
-    oyFilterNode_s * in = oyConversion_GetNode( cc, OY_INPUT );
-    oyFilterGraph_SetFromNode( graph, in, 0, 0 );
-    oyFilterNode_Release( &in );
-  }
+    graph = oyConversion_GetGraph( cc );
   if(graph)
     n = oyFilterGraph_CountEdges( graph );
   for(i = 0; i < n; ++i)
