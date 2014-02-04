@@ -83,6 +83,7 @@ oyPointer  oyStruct_LockCreate_        ( oyStruct_s      * obj )
 #else
   pthread_mutexattr_t mattr_local;
   pthread_mutexattr_t * mattr = &mattr_local;
+  pthread_mutexattr_init( mattr );
   pthread_mutexattr_settype( mattr, PTHREAD_MUTEX_RECURSIVE );
   pthread_mutexattr_setrobust( mattr, PTHREAD_MUTEX_ROBUST );
 #endif
@@ -136,9 +137,9 @@ void       oyUnLock_                   ( oyPointer         lock,
 
   {
     DBG_PROG4_S("%s %d thread[%d] ref:%d", marker, line, oyGetThreadID( oyThreadSelf()), ms->ref );
-    oyMutexUnLock_m( &ms->m );
     /* Lessen the reference counter one level. */
     ms->ref--;
+    oyMutexUnLock_m( &ms->m );
   }
   /* Discussion:
    * Several conditions are thinkable and would indicate errors in the system.
@@ -149,7 +150,6 @@ void       oyUnLock_                   ( oyPointer         lock,
 
 
 /* forward declaration from src/API_generated/oyStruct_s.c */
-oyPointer  oyStruct_LockCreateDummy_   ( oyStruct_s      * obj );
 
 //oyStructList_s * oy_thread_cache_ = NULL;
 oyStructList_s * oy_job_list_ = NULL;
@@ -162,15 +162,21 @@ void oyThreadsInit_(void)
   /* initialise threadsafe job and message queues */
   if(!oy_job_list_)
   {
+    /* check threading */
+    if(!oyThreadLockingReady())
+      /* initialise our locking */
+      oyThreadLockingSet( oyStruct_LockCreate_, oyLockRelease_,
+                          oyLock_, oyUnLock_ );
+
     oy_job_list_ = oyStructList_Create( oyOBJECT_NONE, "oy_job_list_", NULL );
     oy_job_message_list_ = oyStructList_Create( oyOBJECT_NONE,
                                                 "oy_job_message_list_", NULL );
 
-    /* check threading */
-    if(oyStruct_LockCreateFunc_ == oyStruct_LockCreateDummy_)
-      /* initialise our locking */
-      oyThreadLockingSet( oyStruct_LockCreate_, oyLockRelease_,
-                          oyLock_, oyUnLock_ );
+    /* setup mutexes */
+    oyObject_Lock( oy_job_list_->oy_, __func__, __LINE__ );
+    oyObject_UnLock( oy_job_list_->oy_, __func__, __LINE__ );
+    oyObject_Lock( oy_job_message_list_->oy_, __func__, __LINE__ );
+    oyObject_UnLock( oy_job_message_list_->oy_, __func__, __LINE__ );
 
     if((omp_get_num_procs() - 1) >= 1)
       oy_thread_count_ = omp_get_num_procs() - 1;
@@ -189,6 +195,7 @@ void oyThreadsInit_(void)
       thread_ids[i+1] = i+1;
 
       oyThreadCreate( oyJobWorker, &thread_ids[i+1], &background_thread );
+      printf("thread created [%ld]\n", background_thread);
 
       oy_threads_[i+1] = background_thread;
     }
