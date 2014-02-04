@@ -1,6 +1,5 @@
 #include "oyranos_types.h"           /* uint64_t uintptr_t */
 
-static int oy_object_id_ = 0;
 #if OY_USE_OBJECT_POOL_
 static oyObject_s oy_object_pool_[100] = {
 0,0,0,0,0, 0,0,0,0,0,
@@ -82,7 +81,7 @@ oyObject_NewWithAllocators  ( oyAlloc_f         allocateFunc,
     return o;
 #endif
 
-  o->id_ = oy_object_id_++;
+  o->id_ = oyGetNewObjectID();
   o->type_ = oyOBJECT_OBJECT_S;
   o->version_ = oyVersion(0);
   o->hash_ptr_ = 0;

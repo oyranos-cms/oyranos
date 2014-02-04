@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/28
+ *  @date     2014/02/04
  */
 
 
@@ -54,9 +54,8 @@ void         oyThreadLockingSet      ( oyStruct_LockCreate_f  createLockFunc,
                                        oyLockRelease_f     releaseLockFunc,
                                        oyLock_f            lockFunc,
                                        oyUnLock_f          unlockFunc );
+int          oyThreadLockingReady    ( void );
 
-
-/* } Message function declarations */
 
 /* } Include "Struct.public.h" */
 

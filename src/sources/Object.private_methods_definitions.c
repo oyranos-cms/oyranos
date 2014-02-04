@@ -152,3 +152,27 @@ int          oyObject_HashEqual        ( oyObject_s        s1,
 
   return equal;
 }
+
+static oyPointer oy_object_id_mutex_ = NULL;
+
+/** @internal
+ *  @memberof oyObject_s
+ *  @brief    get a object identification number
+ *
+ *  @version  Oyranos: 0.9.5
+ *  @date     2014/02/04
+ *  @since    2014/02/04 (Oyranos: 0.9.5)
+ */
+int oyGetNewObjectID()
+{
+  static int oy_object_id_ = 0;
+  int val = -1;
+  if(!oy_object_id_mutex_)
+    oy_object_id_mutex_ = oyStruct_LockCreateFunc_(NULL);
+
+  oyLockFunc_(oy_object_id_mutex_,__FILE__,__LINE__);
+  val = oy_object_id_++;
+  oyUnLockFunc_(oy_object_id_mutex_,__FILE__,__LINE__);
+  return val;
+}
+

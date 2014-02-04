@@ -20,6 +20,5 @@ void         oyThreadLockingSet      ( oyStruct_LockCreate_f  createLockFunc,
                                        oyLockRelease_f     releaseLockFunc,
                                        oyLock_f            lockFunc,
                                        oyUnLock_f          unlockFunc );
+int          oyThreadLockingReady    ( void );
 
-
-/* } Message function declarations */

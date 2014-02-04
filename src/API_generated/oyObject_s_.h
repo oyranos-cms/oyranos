@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/02/04
  */
 
 
@@ -77,6 +77,7 @@ int          oyObject_HashSet          ( oyObject_s        s,
                                          const unsigned char * hash );
 int          oyObject_HashEqual        ( oyObject_s        s1,
                                          oyObject_s        s2 );
+int          oyGetNewObjectID        ( );
 
 /* } Include "Object.private_methods_declarations.h" */
 
