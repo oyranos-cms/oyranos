@@ -172,23 +172,34 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
  *  The function does the lookups for the profiles and the modules contexts
  *  in the Oyranos cache on the fly.
  *
- *  @version Oyranos: 0.3.0
+ *  @param[in]     p_in                the input profile
+ *  @param[in]     buf_in              the input channels
+ *  @param[in]     buf_type_in         the input pixel type; channel count can be omitted
+ *  @param[in]     p_out               the output profile
+ *  @param[in]     buf_out             the output channels
+ *  @param[in]     buf_type_out        the output pixel type; channel count can be omitted
+ *  @param[in]     options             see the same option in  oyConversion_CreateBasicPixels()
+ *  @param[in]     count               the pixel count to convert in buf_in and buf_out
+ *  @return                            the conversion context
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2014/02/05
  *  @since   2011/02/22 (Oyranos: 0.3.0)
- *  @date    2011/02/22
  */
 oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
                                        oyProfile_s       * p_in,
                                        oyPointer           buf_in,
-                                       oyDATATYPE_e        buf_type_in,
+                                       oyPixel_t           buf_type_in,
                                        oyProfile_s       * p_out,
                                        oyPointer           buf_out,
-                                       oyDATATYPE_e        buf_type_out,
+                                       oyPixel_t           buf_type_out,
                                        oyOptions_s       * options,
                                        int                 count )
 {
   oyImage_s * in  = NULL,
             * out = NULL;
   oyConversion_s * conv = NULL;
+  int chan, cchan;
 
   if(count <= 0)
   {
@@ -202,16 +213,30 @@ oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
     return NULL;
   }
 
-  in    = oyImage_Create( count, 1,
+  chan  = oyToChannels_m( buf_type_in );
+  cchan = oyProfile_GetChannelsCount( p_in );
+  if(!chan && cchan)
+  {
+    chan = cchan;
+    buf_type_in |= oyChannels_m(cchan);
+  }
+  in   = oyImage_Create( count, 1,
                          buf_in ,
-                         oyChannels_m(oyProfile_GetChannelsCount(p_in)) |
-                         oyDataType_m(buf_type_in),
+                         buf_type_in,
                          p_in,
                          0 );
-  out   = oyImage_Create( count, 1,
+
+  
+  chan  = oyToChannels_m( buf_type_out );
+  cchan = oyProfile_GetChannelsCount( p_out );
+  if(!chan && cchan)
+  {
+    chan = cchan;
+    buf_type_out |= oyChannels_m(cchan);
+  }
+  out  = oyImage_Create( count, 1,
                          buf_out ,
-                         oyChannels_m(oyProfile_GetChannelsCount(p_out)) |
-                         oyDataType_m(buf_type_out),
+                         buf_type_out,
                          p_out,
                          0 );
 
