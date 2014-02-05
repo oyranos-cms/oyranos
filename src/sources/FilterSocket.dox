@@ -3,7 +3,7 @@
  *  @extends oyStruct_s
  *  @brief   A filter connection structure
  *  
- *  The passive output version of a oyConnector_s.
+ * The passive output version of a oyConnector_s.
  \dot
 digraph G {
   bgcolor="transparent";

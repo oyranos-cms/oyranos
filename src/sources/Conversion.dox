@@ -3,7 +3,7 @@
  *  @extends oyStruct_s
  *  @brief   A filter chain or graph to manipulate a image
  *
- *  Order of filters matters.
+ * Order of filters matters.
  *  The processing direction is a bit like raytracing as nodes request their
  *  parent.
  *

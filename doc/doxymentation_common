@@ -183,8 +183,7 @@
 
 
 /** \addtogroup objects_conversion Conversion
- *  Conversion front end API's.
- *
+ *  \details Conversion front end API's.
  *  Data processing is organised by structures called acyclic graphs. A graph
  *  combines several processing elements and their according stages into one
  *  process model. A very simple graph will link elements just one by one to
@@ -239,7 +238,6 @@ digraph G {
  *  - The thierd task of this struct is to differenciate between \a input or
  *  \a plug and \a output or \a socket. This is delegated to the
  *  oyFilterSocket_s and oyFilterPlug_s structures.
- *  
  *
  *  \b Routing: \n
  *  The connector output, called socket, side is primarily passive. The data
@@ -393,7 +391,7 @@ digraph G {
 /** \addtogroup module_api Backend Modules
  *  @brief Write extensions that integrate with Oyranos front end APIs
  *
- *  Oyranos C modules provide support for data formats, data processing and
+ * Oyranos C modules provide support for data formats, data processing and
  *  process control, as well as configuration.
  *  The module architecture covers three basic layers. There are the Module 
  *  APIs for the real stuff, the Meta Module APIs for language support and the
@@ -478,7 +476,7 @@ digraph Modules {
   }
 } @enddot
  *
- *  \b User \b API:
+ * \b User \b API:
  *  The user API allowes to contruct a filter or configuration
  *  object. Filters can be chained to directed acyclic graphs (DAGs) and data
  *  can be processed through graphs or they are deployed by higher level APIs,
@@ -593,7 +591,7 @@ digraph Anatomy_A {
   }
 } @enddot
  *
- *  In case a oyCMMapi7_s function can not handle a certain provided context
+ * In case a oyCMMapi7_s function can not handle a certain provided context
  *  data format, Oyranos will try to convert it for the oyCMMapi7_s API through
  *  a fitting oyCMMapi6_s data convertor. oyCMMapi6_s is only required for 
  *  filters, which request incompatible contexts from a oyCMMapi4_s structure.

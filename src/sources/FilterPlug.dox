@@ -3,7 +3,7 @@
  *  @extends oyStruct_s
  *  @brief   A filter connection structure
  *
- *  The active input version of a oyConnector_s.
+ * The active input version of a oyConnector_s.
  *  Each plug can connect to exact one socket.
  \dot
 digraph G {

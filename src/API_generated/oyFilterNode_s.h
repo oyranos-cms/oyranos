@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/24
+ *  @date     2014/02/05
  */
 
 
@@ -57,7 +57,7 @@ typedef struct oyFilterNode_s oyFilterNode_s;
  *  @extends oyStruct_s
  *  @brief   A FilterNode object
  *
- *  Filter nodes chain filters into a oyConversion_s graph. The filter nodes
+ * Filter nodes chain filters into a oyConversion_s graph. The filter nodes
  *  use plugs and sockets for creating connections. Each plug can only connect
  *  to one socket.
  \dot

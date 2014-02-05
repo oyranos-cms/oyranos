@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/02/05
  */
 
 
@@ -57,7 +57,7 @@ typedef struct oyFilterSocket_s oyFilterSocket_s;
  *  @extends oyStruct_s
  *  @brief   A filter connection structure
  *  
- *  The passive output version of a oyConnector_s.
+ * The passive output version of a oyConnector_s.
  \dot
 digraph G {
   bgcolor="transparent";

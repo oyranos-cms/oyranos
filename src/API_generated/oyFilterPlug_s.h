@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/02/05
  */
 
 
@@ -51,7 +51,7 @@ typedef struct oyFilterPlug_s oyFilterPlug_s;
  *  @extends oyStruct_s
  *  @brief   A filter connection structure
  *
- *  The active input version of a oyConnector_s.
+ * The active input version of a oyConnector_s.
  *  Each plug can connect to exact one socket.
  \dot
 digraph G {

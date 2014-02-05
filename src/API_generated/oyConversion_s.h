@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/02/05
  */
 
 
@@ -57,7 +57,7 @@ typedef struct oyConversion_s oyConversion_s;
  *  @extends oyStruct_s
  *  @brief   A filter chain or graph to manipulate a image
  *
- *  Order of filters matters.
+ * Order of filters matters.
  *  The processing direction is a bit like raytracing as nodes request their
  *  parent.
  *
