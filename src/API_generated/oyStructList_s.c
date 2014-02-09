@@ -10,12 +10,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2013 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/03/01
+ *  @date     2014/02/09
  */
 
 
@@ -138,6 +138,8 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
 
   if(error <= 0)
     oyObject_Lock( s->oy_, __FILE__, __LINE__ );
+  else
+    return error;
 
   if(error <= 0)
     error = !(ptr && *ptr && (*ptr)->type_);
@@ -226,8 +228,7 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
     *ptr = 0;
   }
 
-  if(error <= 0)
-    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+  oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
 
   return error;
 }
@@ -246,7 +247,7 @@ oyStruct_s *     oyStructList_GetRef ( oyStructList_s    * list,
   int error = !s;
   oyStruct_s * obj = 0;
 
-  if(!error)
+  if(s)
     oyObject_Lock( s->oy_, __FILE__, __LINE__ );
 
   obj = oyStructList_Get_(s, pos);
@@ -307,6 +308,8 @@ int            oyStructList_ReleaseAt( oyStructList_s    * list,
 
   if(error <= 0)
     oyObject_Lock( s->oy_, __FILE__, __LINE__ );
+  else
+    return error;
 
   if(error <= 0 && s)
   {
@@ -323,8 +326,7 @@ int            oyStructList_ReleaseAt( oyStructList_s    * list,
       }
   }
 
-  if(error <= 0)
-    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
+  oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
 
   return error;
 }
@@ -597,6 +599,8 @@ int              oyStructList_Sort   ( oyStructList_s    * list,
     error = !memmove( s->ptr_, ptr, n * sizeof(oyPointer) );
     if(!error)
       error = !memmove( rank_list, rank_copy, n * sizeof(int32_t) );
+
+    oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
   }
 
   return error;
