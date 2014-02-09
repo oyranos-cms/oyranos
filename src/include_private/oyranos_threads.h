@@ -39,11 +39,14 @@ typedef CRITICAL_SECTION oyMutex_t;
 typedef pthread_t oyThread_t;
 # define oyThreadSelf  pthread_self
 # define oyThreadEqual(a,b) pthread_equal((a),(b))
-typedef pthread_mutex_t oyMutex_t;
-# define oyMutexInit_m(m,a) pthread_mutex_init(m,a)
-# define oyMutexLock_m(m) pthread_mutex_lock(m)
-# define oyMutexUnLock_m(m) pthread_mutex_unlock(m)
-# define oyMutexDestroy_m(m) pthread_mutex_destroy(m)
+typedef struct {
+  pthread_mutex_t mutex;
+  pthread_cond_t cond;
+} oyMutex_t;
+# define oyMutexInit_m(m,a) { pthread_mutex_init(m.mutex, a); pthread_cond_init(m.cond, NULL); }
+# define oyMutexLock_m(m) pthread_mutex_lock(m.mutex)
+# define oyMutexUnLock_m(m) pthread_mutex_unlock(m.mutex)
+# define oyMutexDestroy_m(m) { pthread_mutex_destroy(m.mutex); pthread_cond_destroy(m.cond); }
 #endif 
 
 int oyThreadCreate                   ( void             *(*func) (void * data),

@@ -97,8 +97,12 @@ void       oyLockRelease_              ( oyPointer         lock,
                                          int               line )
 {
   oyMutex_s * ms = (oyMutex_s*)lock;
+  if(ms->ref != 0)
+    WARNc3_S("%s %d ref counter=%d", marker, line, ms->ref);
+    
   oyMutexDestroy_m( &ms->m );
-  ms->ref = 0;
+  /* paranoid */
+  ms->ref = -10000;
   free(ms);
 }
 
@@ -239,6 +243,17 @@ int                oyJob_Add         ( oyJob_s           * job,
   if(error)
     WARNc2_S("error=%d %d", error, finished);
 
+#if defined(WIN32) && !defined(__GNU__)
+#else
+  if(finished == 0)
+  {
+    oyMutex_t * m = (oyMutex_t*) oy_job_list_->oy_->lock_;
+    oyObject_Lock( oy_job_list_->oy_, __func__, __LINE__ );
+    pthread_cond_signal( &m->cond );
+    oyObject_UnLock( oy_job_list_->oy_, __func__, __LINE__ );
+  }
+#endif
+
   return job_id;
 }
 int                oyJob_Get         ( oyJob_s          ** job,
@@ -271,6 +286,15 @@ int                oyJob_Get         ( oyJob_s          ** job,
     }
     oyBlob_Release( &blob );
   }
+#if defined(WIN32) && !defined(__GNU__)
+#else
+  else if(finished == 0)
+  {
+    oyMutex_t * m = (oyMutex_t*) oy_job_list_->oy_->lock_;
+    pthread_cond_wait( &m->cond, &m->mutex );
+  }
+#endif
+
   if(oy_debug >= 2)
   {
     char * t = NULL;
