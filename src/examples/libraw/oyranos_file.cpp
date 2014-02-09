@@ -48,6 +48,7 @@ void displayHelp(char ** argv)
   printf("  %s\n",               _("Dump data:"));
   printf("      %s -f=[icc|openicc] -i file.dng [-o=device.json] [--only-db]\n", argv[0]);
   printf("         -f icc   \t%s\n",_("extract ICC color profile"));
+  printf("            --profile %s\t%s\n",_("ICC_FILENAME"),_("Embedd device informations into ICC meta tag"));
   printf("         -f openicc\t%s\n",_("generate OpenICC device color reproduction JSON"));
   /* JSON is a text based file format for exchange of data. The rank map is used to sort color profiles according to their fit to a specific device. */
   printf("         -f openicc-rank-map\t%s\n",_("dump OpenICC device color state rank map JSON"));
