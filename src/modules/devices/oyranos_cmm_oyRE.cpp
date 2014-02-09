@@ -171,7 +171,7 @@ oyRankMap _rank_map[] = {
 };
 
 
-oyMessage_f message = 0;
+oyMessage_f oyRE_msg = 0;
 
 extern oyCMMapi8_s_ _api8;
 
@@ -211,16 +211,16 @@ void CMMdeallocateFunc(oyPointer mem)
  */
 int CMMMessageFuncSet(oyMessage_f message_func)
 {
-   message = message_func;
+   oyRE_msg = message_func;
    return 0;
 }
 
 void ConfigsFromPatternUsage(oyStruct_s * options)
 {
     /** oyMSG_WARN should make shure our message is visible. */
-   message(oyMSG_WARN, options, _DBG_FORMAT_ "\n %s",
+   oyRE_msg(oyMSG_WARN, options, _DBG_FORMAT_ "\n %s",
            _DBG_ARGS_, "The following help text informs about the communication protocol.");
-   message(oyMSG_WARN, options, "%s", help_message);
+   oyRE_msg(oyMSG_WARN, options, "%s", help_message);
 
    return;
 }
@@ -346,25 +346,25 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    oyAlloc_f allocateFunc = malloc;
 
    if(oy_debug > 2)
-   message( oyMSG_DBG, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+   oyRE_msg( oyMSG_DBG, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
             "entered Options:\n%s", _DBG_ARGS_,
             oyOptions_GetText(options, oyNAME_NICK) );
 
    /* "error handling" section */
    if (rank == 0) {
-      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+      oyRE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
               "Registration match Failed. Options:\n%s", _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK)
           );
       return 1;
    }
    if (s == NULL) {
-      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+      oyRE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
               "oyConfigs_s is NULL! Options:\n%s", _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK)
           );
       return 1;
    }
    if (*s != NULL) {
-      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+      oyRE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
               "Devices struct already present! Options:\n%s", _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK)
           );
       return 1;
@@ -399,11 +399,11 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       /* "list" call section */
 
       if(oy_debug > 2)
-      message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+      oyRE_msg( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                "Backend core:\n%s", _DBG_ARGS_,
                oyOptions_GetText(*oyConfig_GetOptions(device,"backend_core"), oyNAME_NICK));
       if(oy_debug > 2)
-      message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX
+      oyRE_msg( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX
                "Data:\n%s", _DBG_ARGS_,
                oyOptions_GetText(*oyConfig_GetOptions(device,"data"), oyNAME_NICK));
 
@@ -436,7 +436,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          int i = 0;
          while(device_list[i++]);
          if(oy_debug > 2)
-         message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+         oyRE_msg( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                  "################### Found %d devices #######################",
                   _DBG_ARGS_, i-1);
          char *string_list = 0;
@@ -485,18 +485,18 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
       const char * t = oyOptions_GetText(*oyConfig_GetOptions(device,"backend_core"), oyNAME_NICK);
       if(oy_debug > 2)
-      message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+      oyRE_msg( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Backend core:\n%s", _DBG_ARGS_, t?t:"");
       t = oyOptions_GetText(*oyConfig_GetOptions(device,"data"), oyNAME_NICK);
       if(oy_debug > 2)
-      message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+      oyRE_msg( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Data:\n%s", _DBG_ARGS_, t?t:"");
 
       /*Handle "device_handle" option [IN]*/
       if (handle_opt) {
          DeviceFromHandle_opt(device, handle_opt);
       } else { /*Bail out if no "device_handle" given*/
-         message( oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ PRFX
+         oyRE_msg( oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ PRFX
                   "Missing \"device_handle\" option", _DBG_ARGS_);
          return -1;
       }
@@ -535,7 +535,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       /* not to be reached section, e.g. warning */
       oyConfig_Release(&device);
 
-      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+      oyRE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
            "This point should not be reached. Options:\n%s", _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK)
        );
 
@@ -567,12 +567,12 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
    
    if(oy_debug > 2)
-   message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+   oyRE_msg( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
             "Options:\n%s",_DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK));
 
    /* "error handling" section */
    if (!devices || !oyConfigs_Count(devices)) {
-      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+      oyRE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
               "No devices given! Options:\n%s", _DBG_ARGS_,
               oyOptions_GetText(options, oyNAME_NICK) );
       return 1;
@@ -605,11 +605,11 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          const char * t = oyOptions_GetText(*oyConfig_GetOptions(device,"backend_core"), oyNAME_NICK);
          if(oy_debug > 2)
-         message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+         oyRE_msg( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Backend core:\n%s", _DBG_ARGS_, t?t:"");
          t = oyOptions_GetText(*oyConfig_GetOptions(device,"data"), oyNAME_NICK);
          if(oy_debug > 2)
-         message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+         oyRE_msg( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Data:\n%s", _DBG_ARGS_, t?t:"");
 
          /*Handle "driver_version" option [IN/OUT] */
@@ -662,11 +662,11 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          const char * t = oyOptions_GetText(*oyConfig_GetOptions(device,"backend_core"), oyNAME_NICK);
          if(oy_debug > 2)
-         message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+         oyRE_msg( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Backend core:\n%s", _DBG_ARGS_, t?t:"");
          t = oyOptions_GetText(*oyConfig_GetOptions(device,"data"), oyNAME_NICK);
          if(oy_debug > 2)
-         message( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
+         oyRE_msg( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
                   "Data:\n%s", _DBG_ARGS_, t?t:"");
 
          /* All previous device properties are considered obsolete
@@ -683,7 +683,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
             oyOption_Release(&handle_opt_dev);
          } else { /*Ignore device without a "device_handle"*/
            if(oyOptions_Count( *oyConfig_GetOptions(device,"backend_core") ) < 2)
-             message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
+             oyRE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
                      _DBG_ARGS_, "The \"device_handle\" is missing from config object!");
             oyConfig_Release(&device);
             oyConfig_Release(&device_new);
@@ -741,7 +741,7 @@ int Config_Rank(oyConfig_s * config)
 
    if (!config) {
       if(oy_debug > 2)
-      message( oyMSG_DBG, (oyStruct_s *) config, _DBG_FORMAT_
+      oyRE_msg( oyMSG_DBG, (oyStruct_s *) config, _DBG_FORMAT_
                "\n No config argument provided.", _DBG_ARGS_);
       return 0;
    }
@@ -789,7 +789,7 @@ const char * Api8UiGetText           ( const char        * select,
       if(category)
         sprintf( category,"%s/%s/%s", i18n[0], i18n[1], i18n[2] );
       else
-        message(oyMSG_WARN, (oyStruct_s *) 0, _DBG_FORMAT_ "\n " "Could not allocate enough memory.", _DBG_ARGS_);
+        oyRE_msg(oyMSG_WARN, (oyStruct_s *) 0, _DBG_FORMAT_ "\n " "Could not allocate enough memory.", _DBG_ARGS_);
     }
          if(type == oyNAME_NICK)
       return "category";
@@ -1033,11 +1033,11 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
           if (is_raw(Exiv2::ImageFactory::getType(filename)))
             device_handle = Exiv2::ImageFactory::open(filename);
           if(oy_debug > 2)
-          message( oyMSG_DBG, (oyStruct_s *) device, _DBG_FORMAT_
+          oyRE_msg( oyMSG_DBG, (oyStruct_s *) device, _DBG_FORMAT_
                "filename = %s", _DBG_ARGS_, filename );
         }
         else
-          message( oyMSG_WARN, (oyStruct_s *) device, _DBG_FORMAT_
+          oyRE_msg( oyMSG_WARN, (oyStruct_s *) device, _DBG_FORMAT_
                   "Option \"device_handle\" is of a wrong type", _DBG_ARGS_);
       }
 
@@ -1049,7 +1049,7 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
          if(filename && strcmp( filename, DUMMY ) == 0)
            level = oyMSG_DBG;
 
-         message( level, (oyStruct_s *) device, _DBG_FORMAT_
+         oyRE_msg( level, (oyStruct_s *) device, _DBG_FORMAT_
                "Unable to open raw image \"%s\"", _DBG_ARGS_, filename?filename:"");
          return 1;
       }
