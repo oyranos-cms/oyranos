@@ -559,11 +559,27 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color )
           OY_DBG_ARGS_, reg);
 
     if(!fail)
-      oyProfile_AddTagText( p, icSigProfileDescriptionTag,
-                                            "cam_xyz gamma 1.0" );
-    else
+    {
+      matrix = oyOptions_Find( opts, "color_matrix" );
+      const char * ts = oyStringCopy_(oyOption_GetText( matrix, oyNAME_NICK ), oyAllocateFunc_ );
+      oyOption_Release( &matrix );
+      ts = strstr( ts, "color_matrix:" ) + strlen("color_matrix:");
+      char * t = oyStringReplace_( ts, ",", " ", oyAllocateFunc_ );
+      char * name = NULL;
+      oyStringAddPrintf_( &name, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "cam_xyz linear %s", t );
+      oyFree_m_( t );
+      message(oyMSG_WARN, (oyStruct_s*)0,
+          OY_DBG_FORMAT_ " name: \"%s\"",
+          OY_DBG_ARGS_, name);
+
+      oyProfile_AddTagText( p, icSigProfileDescriptionTag, name);
+      oyFree_m_( name );
+    } else
       oyProfile_AddTagText( p, icSigProfileDescriptionTag,
                                             "ICC Examin ROMM gamma 1.0" );
+
+    oyOptions_Release( &opts );
 
     if(oy_debug)
     {
