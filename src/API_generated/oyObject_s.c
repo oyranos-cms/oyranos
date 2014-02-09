@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/02/04
+ *  @date     2014/02/09
  */
 
 
@@ -111,6 +111,7 @@ oyObject_NewWithAllocators  ( oyAlloc_f         allocateFunc,
   o->type_ = oyOBJECT_OBJECT_S;
   o->version_ = oyVersion(0);
   o->hash_ptr_ = 0;
+  o->lock_ = NULL;
   o->parent_types_ = o->allocateFunc_(sizeof(oyOBJECT_e)*2);
   memset(o->parent_types_,0,sizeof(oyOBJECT_e)*2);
 
@@ -241,7 +242,8 @@ int          oyObject_Release         ( oyObject_s      * obj )
       s->handles_->release( (oyStruct_s**)&s->handles_ );
 
     deallocateFunc( s );
-    oyLockReleaseFunc_( lock, __FILE__, __LINE__ );
+    if(lock)
+      oyLockReleaseFunc_( lock, __FILE__, __LINE__ );
   }
 
   return 0;
@@ -529,7 +531,8 @@ int          oyObject_UnSetLocking   ( oyObject_s          object,
     if( object->type_ != oyOBJECT_OBJECT_S)
       return 1;
 
-    oyLockReleaseFunc_( object->lock_, marker, line );
+    if(object->lock_)
+      oyLockReleaseFunc_( object->lock_, marker, line );
   }
 
   return error;
