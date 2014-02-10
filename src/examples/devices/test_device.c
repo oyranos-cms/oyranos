@@ -381,6 +381,19 @@ int main(int argc, char *argv[])
 
           oyDeAllocFunc( text );
           text = 0;
+
+          if(oyConfig_FindString( c, "supported_devices_info", NULL ))
+          {
+            oyOption_s * o = oyConfig_Find( c, "supported_devices_info" );
+            int j = 0;
+            const char * t = NULL;
+            oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc, "\n\n" );
+            while((t = oyOption_GetValueString( o, j++ )) != NULL)
+            {
+              oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
+                                  "%s\n", t );
+            }
+          }
         }
 
         oyProfile_Release( &prof );
