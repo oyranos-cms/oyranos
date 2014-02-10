@@ -236,10 +236,10 @@ int main(int argc, char *argv[])
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                    "list", OY_CREATE_NEW );
     if(device_name)
-      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
-                                     device_name, OY_CREATE_NEW );
+      error = oyDeviceGet( OY_TYPE_STD, device_class, device_name, options, &c );
+    else
+      error = oyDevicesGet( OY_TYPE_STD, device_class, options, &devices );
 
-    error = oyConfigs_FromDeviceClass( 0, device_class, options, &devices, 0 );
     oyOptions_Release( &options );
 
     n = oyConfigs_Count( devices );
@@ -311,9 +311,10 @@ int main(int argc, char *argv[])
     n = oyConfigs_Count( devices );
     if(error <= 0)
     {
-      for(i = 0; i < n; ++i)
+      for(i = 0; i < n || (n == 0 && c); ++i)
       {
-        c = oyConfigs_Get( devices, i );
+        if(n != 0)
+          c = oyConfigs_Get( devices, i );
 
         if( device_pos != -1 && device_pos != i )
         {
@@ -397,7 +398,10 @@ int main(int argc, char *argv[])
         }
 
         oyProfile_Release( &prof );
-        oyConfig_Release( &c );
+        if(n != 0)
+          oyConfig_Release( &c );
+        else
+          break;
       }
 
       if(report)
