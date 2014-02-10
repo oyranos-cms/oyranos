@@ -50,7 +50,7 @@ void displayHelp(char ** argv)
   printf("         --short \t%s\n", _("print the module ID"));
   printf("\n");
   printf("  %s\n",               _("List devices:"));
-  printf("      %s -l -c class [-d number] [-v | --short] [-r]\n", argv[0]);
+  printf("      %s -l -c class [-d %s | --device-name %s] [-v | --short] [-r]\n", argv[0], _("NUMBER"), _("NAME"));
   printf("         --short \t%s\n", _("print only the profile name"));
   printf("\n");
   printf("  %s\n",               _("List local DB profiles for selected device:"));
@@ -78,6 +78,7 @@ void displayHelp(char ** argv)
   printf("         -v      \t%s\n", _("verbose"));
   printf("         -c %s\t%s\n",    _("CLASS"),  _("device class"));
   printf("         -d %s\t%s\n",    _("NUMBER"), _("device position start from zero"));
+  printf("         --device-name %s\t%s\n",    _("NAME"), _("alternatively specify the name of a device"));
   printf("         -r      \t%s\n", _("skip X Color Management device profile"));
   printf("\n");
   printf(_("For more informations read the man page:"));
@@ -180,6 +181,8 @@ int main(int argc, char *argv[])
                         { only_db = 1; i=100; break; }
                         else if(OY_IS_ARG("name"))
                         { OY_PARSE_STRING_ARG2(new_profile_name, "name"); break; }
+                        else if(OY_IS_ARG("device-name"))
+                        { OY_PARSE_STRING_ARG2(device_name, "device-name"); break; }
                         else if(OY_IS_ARG("profile"))
                         { OY_PARSE_STRING_ARG2(prof_name, "profile"); break; }
                         else if(OY_IS_ARG("list"))
@@ -231,7 +234,10 @@ int main(int argc, char *argv[])
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes",
                                      OY_CREATE_NEW );
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
-                                   "list", OY_CREATE_NEW );  
+                                   "list", OY_CREATE_NEW );
+    if(device_name)
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
+                                     device_name, OY_CREATE_NEW );
 
     error = oyConfigs_FromDeviceClass( 0, device_class, options, &devices, 0 );
     oyOptions_Release( &options );
