@@ -707,7 +707,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
           if(o)
           {
             /* the device might have assigned a dummy icc_profile, to show 
-             * it can handle. But thats not relevant here. */
+             * it can handle the format. But thats not relevant here. */
             p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
             if(oyProfile_GetSignature( p, oySIGNATURE_MAGIC ) == icMagicNumber)
               has = 1;
