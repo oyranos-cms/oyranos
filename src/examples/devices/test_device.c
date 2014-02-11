@@ -233,8 +233,13 @@ int main(int argc, char *argv[])
       error = oyOptions_SetFromText( &options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes",
                                      OY_CREATE_NEW );
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
-                                   "list", OY_CREATE_NEW );
+    if(verbose)
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                     "properties", OY_CREATE_NEW );
+    else
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                     "list", OY_CREATE_NEW );
+
     if(device_name)
       error = oyDeviceGet( OY_TYPE_STD, device_class, device_name, options, &c );
     else
