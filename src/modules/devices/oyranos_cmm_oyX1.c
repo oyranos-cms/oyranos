@@ -120,8 +120,9 @@ const char * oyX1_help_list =
       " The bidirectional option \"device_rectangle\" will cause to\n"
       " additionally add display geometry information as a oyRectangle_s\n"
       " object.\n"
-      " The bidirectional option \"icc_profile\" will always add a\n"
-      " oyProfile_s being it filled or set to NULL to show it was not found.\n"
+      " The bidirectional option \"icc_profile\" will always add in the\n"
+      " devices \"data\" section a\n"
+      " oyProfile_s being filled or set to NULL to show it was not found.\n"
       " The bidirectional option \"oyNAME_DESCRIPTION\" adds a string\n"
       " containting all properties. The text is separated by newline. The\n"
       " first line contains the actual key word, the even one the belonging\n"
@@ -698,9 +699,6 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
                      device_name );
             flags |= 0x01;
           }
-          data = oyX1GetMonitorProfile( device_name, flags, &size,
-                                        allocateFunc );
-
 
           has = 0;
           o = oyConfig_Find( device, "icc_profile" );
@@ -717,18 +715,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
             oyProfile_Release( &p );
           }
 
-          if(data && size)
-          {
-            prof = oyProfile_FromMem( size, data, 0, 0 );
-            free( data );
-            if(has == 0)
-            {
-              const char * key = OYX1_MONITOR_REGISTRATION OY_SLASH "icc_profile";
-              if(oyOptions_FindString(options, "x_color_region_target", 0))
-                key = OYX1_MONITOR_REGISTRATION OY_SLASH "icc_profile.x_color_region_target";
-              o = oyOption_FromRegistration( key, 0 );
-            }
-          } else if(oyOptions_FindString( options, "icc_profile.fallback", 0 ))
+          if(oyOptions_FindString( options, "icc_profile.fallback", 0 ))
           {
             icHeader * header = 0;
             /* fallback: try to get EDID to build a profile */
@@ -768,7 +755,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
               if((t = oyConfig_FindString( device, "manufacturer", 0 )) != 0)
               {
                 STRING_ADD( text, t );
-                STRING_ADD( text, "-" );
+                STRING_ADD( text, " " );
               } else
               {
                 t = oyConfig_FindString( device, "EDID_model_id", 0 );
@@ -782,7 +769,7 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
               if((t = oyConfig_FindString( device, "model", 0 )) != 0)
               {
                 STRING_ADD( text, t );
-                STRING_ADD( text, "-" );
+                STRING_ADD( text, " " );
               }
               if((t = oyConfig_FindString( device, "serial", 0 )) != 0)
                 STRING_ADD( text, t );
@@ -855,10 +842,28 @@ int            oyX1Configs_Modify    ( oyConfigs_s       * devices,
               prof = oyProfile_FromMem( size, data, 0, 0 );
               oyDeAllocateFunc_( data ); data = NULL; size = 0;
             }
-            if(has == 0)
+
+            if(!has)
               o = oyOption_FromRegistration( OYX1_MONITOR_REGISTRATION OY_SLASH
                                 "icc_profile.fallback", 0 );
             error = -1;
+          } else
+          {
+            data = oyX1GetMonitorProfile( device_name, flags, &size,
+                                          allocateFunc );
+
+            if(data && size)
+            {
+              prof = oyProfile_FromMem( size, data, 0, 0 );
+              free( data );
+              if(has == 0)
+              {
+                const char * key = OYX1_MONITOR_REGISTRATION OY_SLASH "icc_profile";
+                if(oyOptions_FindString(options, "x_color_region_target", 0))
+                  key = OYX1_MONITOR_REGISTRATION OY_SLASH "icc_profile.x_color_region_target";
+                o = oyOption_FromRegistration( key, 0 );
+              }
+            }
           }
 
           if(!o)
