@@ -62,14 +62,16 @@ void displayHelp(char ** argv)
   printf("         --show-non-device-related\t%s\n",_("show as well non matching profiles"));
   printf("\n");
   printf("  %s\n",               _("Dump device color state:"));
-  printf("      %s -f=[icc|openicc+rank-map|openicc|openicc-rank-map] [-o=file.json] -c class -d number | -j device.json [--only-db]\n", argv[0]);
+  printf("      %s -f=[icc|openicc+rank-map|openicc|openicc-rank-map] [-o=file.json] -c class -d number | -j device.json [--only-db] [-m]\n", argv[0]);
   printf("         -f icc  \t%s\n",              _("dump ICC profile"));
+  printf("         -f fallback-icc  \t%s\n",     _("dump fallback ICC profile"));
   printf("         -f openicc+rank-map\t%s\n",   _("dump OpenICC device color state JSON including the rank map"));
   printf("         -f openicc\t%s\n",            _("dump OpenICC device color state JSON"));
   printf("            --only-db\t%s\n",_("use only DB keys for -f=openicc"));
   printf("         -f openicc-rank-map\t%s\n",   _("dump OpenICC device color state rank map JSON"));
   printf("         -o %s\t%s\n",    _("FILE"),   _("write to specified file"));
   printf("         -j %s\t%s\n",    _("FILE"),   _("use device JSON alternatively to -c and -d options"));
+  printf("         -m \t%s\n",       _("embedd device and driver information into ICC meta tag"));
   printf("\n");
   printf("  %s\n",               _("Show Help:"));
   printf("      %s [-h]\n", argv[0]);
@@ -104,6 +106,7 @@ int main(int argc, char *argv[])
   char * output = 0;
   int only_db = 0;
   int skip_x_color_region_target = 0;
+  int device_meta_tag = 0;
   char * prof_name = 0,
        * new_profile_name = 0;
   const char * device_class = 0,
@@ -153,6 +156,7 @@ int main(int argc, char *argv[])
               case 'j': OY_PARSE_STRING_ARG( device_json ); break;
               case 'f': OY_PARSE_STRING_ARG(format); break;
               case 'l': list = 1; break;
+              case 'm': device_meta_tag = 1; break;
               case 'o': OY_PARSE_STRING_ARG(output); break;
               case 'p': OY_PARSE_STRING_ARG(prof_name); break;
               case 'r': skip_x_color_region_target = 1; break;
@@ -952,13 +956,77 @@ int main(int argc, char *argv[])
       oyDeAllocFunc( json ); json = 0;
 
     } else
-    if(strcmp(format,"icc") == 0)
+    if(strcmp(format,"icc") == 0 ||
+       strcmp(format,"fallback-icc") == 0)
     {
+      if(strcmp(format,"fallback-icc") == 0)
+        oyOptions_SetFromText( &options,
+                   "//"OY_TYPE_STD"/config/icc_profile.fallback",
+                         "yes", OY_CREATE_NEW );
       if(!skip_x_color_region_target)
         oyOptions_SetFromText( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                          "yes", OY_CREATE_NEW );
-      oyDeviceAskProfile2( c, options, &prof );
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                     "properties", OY_CREATE_NEW );  
+      error = oyDeviceGet( 0, device_class, device_name, options, &dt );
+      if(dt)
+      {
+        oyConfig_Release( &c );
+        c = dt; dt = 0;
+      }
+      if(strcmp(format,"fallback-icc") == 0)
+      {
+        icHeader * header;
+        oyOption_s * o;
+
+        o = oyOptions_Find( *oyConfig_GetOptions(c, "data"), "icc_profile.fallback" );
+        if( o )
+        {
+          prof = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
+          oyOption_Release( &o );
+        }
+
+        if(prof)
+        {
+          uint32_t model_id = 0;
+          const char * t = 0;
+          error = oyProfile_AddTagText( prof, icSigProfileDescriptionTag,
+                                        (char*) output );
+          t = oyConfig_FindString( c, "manufacturer", 0 );
+          if(t)
+            error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag, t );
+          t =  oyConfig_FindString( c, "model", 0 );
+          if(t)
+            error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag, t);
+
+          if(device_meta_tag)
+          {
+            oyOptions_s * opts = 0;
+            t = oyConfig_FindString( c, "prefix", 0 );
+            error = oyOptions_SetFromText( &opts, "///key_prefix_required",
+                                                  t, OY_CREATE_NEW );
+            oyProfile_AddDevice( prof, c, opts );
+            oyOptions_Release( &opts );
+          }
+
+          data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
+          header = (icHeader*) data;
+          t = oyConfig_FindString( c, "mnft", 0 );
+          if(t)
+            sprintf( (char*)&header->manufacturer, "%s", t );
+          t = oyConfig_FindString( c, "model_id", 0 );
+          if(t)
+            model_id = atoi( t );
+          model_id = oyValueUInt32( model_id );
+          memcpy( &header->model, &model_id, 4 );
+          oyOption_Release( &o );
+        }
+      } else /* strcmp(format,"icc") == 0 */
+        oyDeviceAskProfile2( c, options, &prof );
+
+      oyOptions_Release( &options );
+
       data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc);
       if(size && data)
       {
@@ -979,13 +1047,9 @@ int main(int argc, char *argv[])
       exit (1);
     }
 
-    if(!error)
-    { if(verbose)
-        fprintf( stderr, "  written %d bytes to %s\n", (int)size,
-                 out_name ? out_name : "stdout" );
-    } else
-      fprintf( stderr, "Could not write %d bytes to %s\n",
-               (int)size, out_name?out_name:format);
+    if(verbose || (error && !size) || !size)
+      fprintf( stderr, "  written %d bytes to %s\n", (int)size,
+               out_name ? out_name : "stdout" );
 
     if(out_name) oyDeAllocFunc(out_name); out_name = 0;
     oyConfDomain_Release( &d );

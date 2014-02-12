@@ -227,48 +227,80 @@ int main(int argc, char ** argv)
                         exit (0);
   }
 
-  oyConversion_s * c = oyConversion_FromImageFileName( image_name, prof_name,
-                                  0x01 | 0x04, oyUINT16, 0 );
+  oyConversion_s * c;
+  oyImage_s * image = NULL;
+  oyOptions_s * image_tags = NULL;
+  oyConfig_s * device = NULL;
+  char * out_name = NULL;
+  oyOption_s * o = NULL;
+  oyProfile_s * profile = NULL;
+  oyOption_s * opt = NULL;
 
-  oyImage_s * image = oyConversion_GetImage( c, OY_OUTPUT );
+  if(format &&
+     (strcmp(format,"icc") == 0 ||
+      strcmp(format,"fallback-icc") == 0))
+  {
+    oyOptions_s * options = NULL;
+    if(strcmp(format,"fallback-icc") == 0)
+      oyOptions_SetFromText( &options,
+                   "//"OY_TYPE_STD"/config/icc_profile.fallback",
+                             "yes", OY_CREATE_NEW );
+    else
+      oyOptions_SetFromText( &options,
+                   "//"OY_TYPE_STD"/config/icc_profile",
+                             "yes", OY_CREATE_NEW );
+    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                   "properties", OY_CREATE_NEW );  
+    error = oyDeviceGet( 0, "raw-image", image_name, options, &device );
 
-  oyConfig_s * device = 0;
-  oyOptions_s * image_tags = oyImage_GetTags( image );
-  if(image)
-    device = (oyConfig_s*)oyOptions_GetType( image_tags, 0,
+    oyOption_s * o = oyOptions_Find( *oyConfig_GetOptions(device, "data"), "icc_profile" );
+    if( o )
+    {
+      profile = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
+      oyOption_Release( &o );
+    }
+
+    if(strcmp(format,"icc") == 0 && !profile)
+    {
+      c = oyConversion_FromImageFileName( image_name, prof_name,
+                                          0x01 | 0x04, oyUINT16, 0 );
+      image = oyConversion_GetImage( c, OY_OUTPUT );
+      oyImage_Release( &image );
+      image = oyConversion_GetImage( c, OY_INPUT );
+      profile = oyImage_GetProfile( image );
+    }
+
+    data = (char*) oyProfile_GetMem( profile, &size, 0, oyAllocFunc);
+    if(size && data)
+    {
+      if(output)
+        error = oyWriteMemToFile2_( output,
+                                    data, size, 0x01,
+                                    &out_name, oyAllocFunc );
+      else
+        fwrite( data, sizeof(char), size, stdout );
+
+      oyDeAllocFunc( data ); data = 0;
+    }
+    exit(0);
+
+  } else
+  {
+    c = oyConversion_FromImageFileName( image_name, prof_name,
+                                        0x01 | 0x04, oyUINT16, 0 );
+    image = oyConversion_GetImage( c, OY_OUTPUT );
+
+    oyOptions_s * image_tags = oyImage_GetTags( image );
+    if(image)
+      device = (oyConfig_s*)oyOptions_GetType( image_tags, 0,
                                            "device",
                                            oyOBJECT_CONFIG_S );
-  oyOption_s * opt = oyConfig_Find( device, "icc_profile.add_meta" );
-  oyProfile_s * profile = (oyProfile_s*) oyOption_GetStruct( opt,
-                                                         oyOBJECT_PROFILE_S );
+    opt = oyConfig_Find( device, "icc_profile.add_meta" );
+    profile = (oyProfile_s*) oyOption_GetStruct( opt, oyOBJECT_PROFILE_S );
+  }
 
   if(format && device)
   {
-    char * out_name = 0;
-    if(strcmp(format,"icc") == 0)
-    {
-      if(!profile)
-        error = oyDeviceGetProfile( device, 0, &profile );
-      if(profile && error < 0)
-        /* The profile is a system fallback. skip it */
-        oyProfile_Release( &profile );
-      if(!profile)
-        profile = oyImage_GetProfile( image );
-
-      data = (char*) oyProfile_GetMem( profile, &size, 0, oyAllocFunc);
-      if(size && data)
-      {
-        if(output)
-          error = oyWriteMemToFile2_( output,
-                                      data, size, 0x01,
-                                      &out_name, oyAllocFunc );
-        else
-          fwrite( data, sizeof(char), size, stdout );
-
-        oyDeAllocFunc( data ); data = 0;
-
-      }
-    } else
     if(strcmp(format,"openicc") == 0 ||
        strcmp(format,"openicc-rank-map") == 0)
     {
