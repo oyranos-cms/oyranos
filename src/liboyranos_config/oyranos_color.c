@@ -16,6 +16,7 @@
 
 #include <math.h>
 
+#include "oyranos_color.h"
 
 /** \addtogroup color Color
  *  @brief Color and Color Management APIs
@@ -149,6 +150,7 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
   for( ; i < 3; ++i )
     CIEXYZ[i] = (ICCXYZ[i] * (XYZmax[i] - XYZmin[i]) + XYZmin[i]) / XYZwhite[i];
 }
+
 
 /**
  *  @} *//* color_low

@@ -87,6 +87,56 @@ const char * Api8UiGetText           ( const char        * select,
                                        oyStruct_s        * context );
 int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options);
 
+/* The oyVEC3, oyMAT3, oyMAT3inverse, oyVEC3init and oyMAT3per definitions 
+ * origin from lcms2' cmsmtrx.c written by Marti Maria www.littlecms.com 
+ * and is MIT licensed there
+ */
+/** Vectors
+ */
+typedef struct {
+  double n[3];                         /**< triple */ 
+} oyVEC3;
+ 
+/** 3x3 Matrix
+ */
+typedef struct {
+  oyVEC3 v[3];                         /**< 3x3 matrix */
+} oyMAT3;
+
+int          oyMAT3inverse           ( const oyMAT3      * a,
+                                       oyMAT3            * b);
+void         oyVEC3init              ( oyVEC3            * r,
+                                       double              x,
+                                       double              y,
+                                       double              z );
+void         oyMAT3per               ( oyMAT3            * r,
+                                       const oyMAT3      * a,
+                                       const oyMAT3      * b );
+
+/* End of lcms code */
+
+/** CIE*xy
+ */
+typedef struct {
+  double xy[2];                        /**< CIE*xy */
+} oyCIExyY;
+/** CIE*xy triple
+ */
+typedef struct {
+  oyCIExyY v[3];                       /**< CIE*xy triple */
+} oyCIExyYTriple;
+
+int          oyMAT3toCIExyYTriple    ( const oyMAT3      * a,
+                                       oyCIExyYTriple    * triple );
+const char * oyMAT3show ( const oyMAT3* a );
+const char * oyMat34show ( const float a[3][4] );
+const char * oyMat4show ( const float a[4] );
+const char * oyMat43show ( const float a[4][3] );
+const char * oyCIExyYTriple_Show( oyCIExyYTriple * triple );
+
+
+
+
 /** @instance _rank_map
  *  @brief    oyRankMap map for mapping device to configuration informations
  *
@@ -227,6 +277,314 @@ void ConfigsFromPatternUsage(oyStruct_s * options)
    return;
 }
 
+
+/* The oyVEC3, oyMAT3, oyMAT3inverse, oyVEC3init and oyMAT3per definitions 
+ * origin from lcms2' cmsmtrx.c written by Marti Maria www.littlecms.com 
+ * and is MIT licensed there
+ * Vectors
+ */
+#define MATRIX_DET_TOLERANCE    0.0001
+/** Inverse of a matrix b = a^(-1) */
+int oyMAT3inverse(const oyMAT3* a, oyMAT3* b)
+{
+   double det, c0, c1, c2;
+
+   c0 =  a -> v[1].n[1]*a -> v[2].n[2] - a -> v[1].n[2]*a -> v[2].n[1];
+   c1 = -a -> v[1].n[0]*a -> v[2].n[2] + a -> v[1].n[2]*a -> v[2].n[0];
+   c2 =  a -> v[1].n[0]*a -> v[2].n[1] - a -> v[1].n[1]*a -> v[2].n[0];
+
+   det = a -> v[0].n[0]*c0 + a -> v[0].n[1]*c1 + a -> v[0].n[2]*c2;
+
+   if (fabs(det) < MATRIX_DET_TOLERANCE) return 0;  // singular matrix; can't invert
+
+   b -> v[0].n[0] = c0/det;
+   b -> v[0].n[1] = (a -> v[0].n[2]*a -> v[2].n[1] - a -> v[0].n[1]*a -> v[2].n[2])/det;
+   b -> v[0].n[2] = (a -> v[0].n[1]*a -> v[1].n[2] - a -> v[0].n[2]*a -> v[1].n[1])/det;
+   b -> v[1].n[0] = c1/det;
+   b -> v[1].n[1] = (a -> v[0].n[0]*a -> v[2].n[2] - a -> v[0].n[2]*a -> v[2].n[0])/det;
+   b -> v[1].n[2] = (a -> v[0].n[2]*a -> v[1].n[0] - a -> v[0].n[0]*a -> v[1].n[2])/det;
+   b -> v[2].n[0] = c2/det;
+   b -> v[2].n[1] = (a -> v[0].n[1]*a -> v[2].n[0] - a -> v[0].n[0]*a -> v[2].n[1])/det;
+   b -> v[2].n[2] = (a -> v[0].n[0]*a -> v[1].n[1] - a -> v[0].n[1]*a -> v[1].n[0])/det;
+
+   return 1;
+}
+/* Axis of the matrix/array. No specific meaning at all. */
+#define VX      0
+#define VY      1
+#define VZ      2
+/** Initiate a vector */
+void oyVEC3init(oyVEC3* r, double x, double y, double z)
+{
+    r -> n[VX] = x;
+    r -> n[VY] = y;
+    r -> n[VZ] = z;
+}
+/** Multiply two matrices */
+void oyMAT3per(oyMAT3* r, const oyMAT3* a, const oyMAT3* b)
+{
+#define ROWCOL(i, j) \
+    a->v[i].n[0]*b->v[0].n[j] + a->v[i].n[1]*b->v[1].n[j] + a->v[i].n[2]*b->v[2].n[j]
+
+    oyVEC3init(&r-> v[0], ROWCOL(0,0), ROWCOL(0,1), ROWCOL(0,2));
+    oyVEC3init(&r-> v[1], ROWCOL(1,0), ROWCOL(1,1), ROWCOL(1,2));
+    oyVEC3init(&r-> v[2], ROWCOL(2,0), ROWCOL(2,1), ROWCOL(2,2));
+
+#undef ROWCOL //(i, j)
+}
+
+/* end of lcms code */
+
+/** convert a matrix to CIE * xy triple */
+int oyMAT3toCIExyYTriple ( const oyMAT3* a, oyCIExyYTriple * triple )
+{
+  int i,j,
+      fail=0;
+  double sum;
+    for(i = 0; i < 3; ++i)
+    {
+      for(j = 0; j < 3; ++j)
+      {
+        if(i < 3 && a->v[i].n[j] == 0)
+          fail = 1;
+      }
+      sum = a->v[i].n[0]+a->v[i].n[1]+a->v[i].n[2];
+      if(sum != 0)
+      {
+        triple->v[i].xy[0] = a->v[i].n[0]/sum;
+        triple->v[i].xy[1] = a->v[i].n[1]/sum;
+      } else
+      {
+        triple->v[i].xy[0] = 1;
+        triple->v[i].xy[1] = 1;
+      }
+    }
+  return fail;
+}
+
+const char * oyMAT3show ( const oyMAT3* a )
+{
+  static char * t = NULL;
+  if(!t) t = (char*) malloc(1024);
+  int i,j;
+  t[0] = 0;
+  for(i = 0; i < 3; ++i)
+  {
+    for(j = 0; j < 3; ++j)
+      sprintf( &t[strlen(t)], " %g", a->v[i].n[j]);
+    sprintf( &t[strlen(t)], "\n" );
+  }
+  return t;
+}
+const char * oyMat34show ( const float a[3][4] )
+{
+  static char * t = NULL;
+  if(!t) t = (char*) malloc(1024);
+  int i,j;
+  t[0] = 0;
+  for(i = 0; i < 3; ++i)
+  {
+    for(j = 0; j < 4; ++j)
+      sprintf( &t[strlen(t)], " %g", a[i][j]);
+    sprintf( &t[strlen(t)], "\n" );
+  }
+  return t;
+}
+const char * oyMat4show ( const float a[4] )
+{
+  static char * t = NULL;
+  if(!t) t = (char*) malloc(1024);
+  int i;
+  t[0] = 0;
+  for(i = 0; i < 4; ++i)
+    sprintf( &t[strlen(t)], " %g", a[i]);
+  sprintf( &t[strlen(t)], "\n" );
+  return t;
+}
+const char * oyMat43show ( const float a[4][3] )
+{
+  static char * t = NULL;
+  if(!t) t = (char*) malloc(1024);
+  int i,j;
+  t[0] = 0;
+  for(i = 0; i < 4; ++i)
+  {
+    for(j = 0; j < 3; ++j)
+      sprintf( &t[strlen(t)], " %g", a[i][j]);
+    sprintf( &t[strlen(t)], "\n" );
+  }
+  return t;
+}
+const char * oyCIExyYTriple_Show( oyCIExyYTriple * triple )
+{
+  static char * t = NULL;
+  if(!t) t = (char*) malloc(1024);
+  int i;
+  t[0] = 0;
+  for(i = 0; i < 3; ++i)
+  {
+    sprintf( &t[strlen(t)], " x:%g y:%g", triple->v[i].xy[0],
+                                          triple->v[i].xy[1]);
+    sprintf( &t[strlen(t)], "\n" );
+  }
+  return t;
+}
+
+oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
+                                         const char * manufacturer,
+                                         const char * model )
+{
+  static oyProfile_s * p = NULL;
+
+  if(color.profile_length)
+    p = oyProfile_FromMem( color.profile_length, color.profile, 0,0);
+
+  if(!p)
+  {
+    oyOption_s *matrix = oyOption_FromRegistration("///color_matrix."
+              "from_primaries."
+              "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma", NULL );
+
+    int fail = 0;
+    for(int i = 0; i < 3; ++i)
+    {
+      for(int j = 0; j < 3; ++j)
+      {
+        if(i < 3 && color.cam_xyz[i][j] == 0)
+          fail = 1;
+      }
+    }
+    oyMAT3 cam_zyx, pre_mul, ab_cm, ab_cm_inverse;
+    oyCIExyYTriple ab_cm_inverse_xyY;
+    
+    // Convert camera matrix to ICC profile
+    // In theory that should perform the same conversion like dcraw/libraw do.
+
+    memset(&pre_mul,0,sizeof(oyMAT3));
+    for(int i = 0; i < 3; ++i)
+      pre_mul.v[i].n[i] = color.pre_mul[i];
+    for(int i = 0; i < 3; ++i)
+      for(int j = 0; j < 3; ++j)
+        // mirror diagonal
+        cam_zyx.v[j].n[i] = color.cam_xyz[i][j];
+
+    // DNG-1.3 says in Mapping Camera Color Space to CIE XYZ Space
+    // XYZtoCamera = AB (AnalogBalance:pre_mul?) * CC (CameraCalibration2:?)
+    //               * CM (ColorMatrix2:cam_xyz)
+
+    // multiply AB * CM
+    oyMAT3per( &ab_cm, &cam_zyx, &pre_mul );
+    if(oyMAT3inverse( &ab_cm, &ab_cm_inverse ))
+      // convert to CIE*xyY
+      fail = oyMAT3toCIExyYTriple( &ab_cm_inverse, &ab_cm_inverse_xyY );
+    else
+    {
+      fail = 1;
+      oyRE_msg( oyMSG_WARN, (oyStruct_s*)0,
+             OY_DBG_FORMAT_ "ab_cm is singular",
+             OY_DBG_ARGS_ );
+    }
+
+    if(oy_debug)
+    {
+      printf("color.cam_xyz:\n%s",oyMat43show( color.cam_xyz ));
+      printf("color.cam_mul:\n%s",oyMat4show( color.cam_mul ));
+      printf("color.pre_mul:\n%s",oyMat4show( color.pre_mul ));
+      printf("pre_mul:\n%s",oyMAT3show( const_cast<oyMAT3*>(&pre_mul) ));
+      printf("color.rgb_cam:\n%s",oyMat34show( color.rgb_cam ));
+      printf("color.cmatrix:\n%s",oyMat34show( color.cmatrix ));
+      printf("ab*cm|pre_mul*cam_xyz:\n%s",oyMAT3show( const_cast<oyMAT3*>(&ab_cm) ));
+      printf("ab_cm_inverse:\n%s",oyMAT3show( const_cast<oyMAT3*>(&ab_cm_inverse) ));
+      if(!fail)
+      printf("=> ");
+      printf("ab_cm_inverse_xyY:\n%s", oyCIExyYTriple_Show(const_cast<oyCIExyYTriple*>(&ab_cm_inverse_xyY)));
+    }
+    if(!fail)
+    {
+      oyCIExyYTriple * use = &ab_cm_inverse_xyY;
+      oyOption_SetFromDouble( matrix, use->v[0].xy[0], 0, 0);
+      oyOption_SetFromDouble( matrix, use->v[0].xy[1], 1, 0);
+      oyOption_SetFromDouble( matrix, use->v[1].xy[0], 2, 0);
+      oyOption_SetFromDouble( matrix, use->v[1].xy[1], 3, 0);
+      oyOption_SetFromDouble( matrix, use->v[2].xy[0], 4, 0);
+      oyOption_SetFromDouble( matrix, use->v[2].xy[1], 5, 0);
+
+      /* D65 */
+      oyOption_SetFromDouble( matrix, 0.31271, 6, 0);
+      oyOption_SetFromDouble( matrix, 0.32902, 7, 0);
+    } else
+    // fall back
+    {
+    /* http://www.color.org/chardata/rgb/rommrgb.xalter
+     * original gamma is 1.8, we adapt to typical cameraRAW gamma of 1.0 */
+      oyOption_SetFromDouble( matrix, 0.7347, 0, 0);
+      oyOption_SetFromDouble( matrix, 0.2653, 1, 0);
+      oyOption_SetFromDouble( matrix, 0.1596, 2, 0);
+      oyOption_SetFromDouble( matrix, 0.8404, 3, 0);
+      oyOption_SetFromDouble( matrix, 0.0366, 4, 0);
+      oyOption_SetFromDouble( matrix, 0.0001, 5, 0);
+      oyOption_SetFromDouble( matrix, 0.3457, 6, 0);
+      oyOption_SetFromDouble( matrix, 0.3585, 7, 0);
+      fail = 1;
+    }
+    oyOption_SetFromDouble( matrix, 1.0, 8, 0);
+
+    oyOptions_s * opts = oyOptions_New(0),
+                * result = 0;
+
+    oyOptions_MoveIn( opts, &matrix, -1 );
+    const char * reg = "//"OY_TYPE_STD"/create_profile.color_matrix.icc";
+    oyOptions_Handle( reg,opts,"create_profile.icc_profile.color_matrix",
+                      &result );
+
+    p = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
+                                               oyOBJECT_PROFILE_S );
+    oyOptions_Release( &result );
+    if(!p)
+      oyRE_msg(oyMSG_DBG, (oyStruct_s*)0,
+          OY_DBG_FORMAT_ " profile creation failed by \"%s\"",
+          OY_DBG_ARGS_, reg);
+
+    if(!fail)
+    {
+      matrix = oyOptions_Find( opts, "color_matrix" );
+      const char * ts = oyStringCopy_(oyOption_GetText( matrix, oyNAME_NICK ), oyAllocateFunc_ );
+      oyOption_Release( &matrix );
+      ts = strstr( ts, "color_matrix:" ) + strlen("color_matrix:");
+      char * t = oyStringReplace_( ts, ",", " ", oyAllocateFunc_ );
+      char * name = NULL;
+      const char * mnf = NULL;
+      if(manufacturer && model)
+        mnf = strstr(model, manufacturer);
+      oyStringAddPrintf_( &name, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "%s%s%s cam_xyz linear %s", mnf?"":manufacturer,
+                          mnf?"":" ", model, t );
+      oyFree_m_( t );
+      oyRE_msg(oyMSG_WARN, (oyStruct_s*)0,
+          OY_DBG_FORMAT_ " name: \"%s\"",
+          OY_DBG_ARGS_, name);
+
+      oyProfile_AddTagText( p, icSigProfileDescriptionTag, name);
+      oyFree_m_( name );
+    } else
+      oyProfile_AddTagText( p, icSigProfileDescriptionTag,
+                                            "ICC Examin ROMM gamma 1.0" );
+
+    oyOptions_Release( &opts );
+
+    if(oy_debug)
+    {
+      size_t size = 0;
+      char * data = (char*) oyProfile_GetMem( p, &size, 0, malloc );
+      if(!fail)
+        oyWriteMemToFile_( "cam_xyz gamma 1.0.icc", data, size );
+      else
+        oyWriteMemToFile_( "ICC Examin ROMM gamma 1.0.icc", data, size );
+    }
+  }
+
+  return p;
+}
 
 class exif2options {
    public:
@@ -652,8 +1010,10 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
       for (int i = 0; i < num_devices; ++i) {
          oyConfig_s *device = oyConfigs_Get(devices, i);
          oyConfig_s *device_new = oyConfig_FromRegistration(CMM_BASE_REG, 0);
+         oyProfile_s * p = 0;
 
-         const char * t = NULL;
+         const char * t = NULL,
+                    * device_name = oyConfig_FindString(device, "device_name", 0);
          if(oy_debug > 2)
          {
            t = oyOptions_GetText(*oyConfig_GetOptions(device,"backend_core"), oyNAME_NICK);
@@ -674,8 +1034,8 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyOption_s *handle_opt_dev = oyConfig_Find(device, "device_handle");
          if(!handle_opt_dev)
          {
-           handle_opt_dev = oyOption_FromRegistration( "///device_handle", NULL );
-           oyOption_SetFromText( handle_opt_dev, oyConfig_FindString(device, "device_name", 0), 0 );
+           handle_opt_dev = oyOption_FromRegistration( CMM_BASE_REG OY_SLASH "device_handle", NULL );
+           oyOption_SetFromText( handle_opt_dev, device_name, 0 );
          }
 
          if (handle_opt_dev) {
@@ -701,19 +1061,33 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          }
 
          /*Handle "device_name" option [OUT] */
-         t = oyConfig_FindString(device, "device_name", 0);
-         if (t) {
-            oyOptions_SetFromText(oyConfig_GetOptions(device_new,"backend_core"), CMM_BASE_REG OY_SLASH "device_name", t, OY_CREATE_NEW);
+         if (device_name) {
+            oyOptions_SetFromText(oyConfig_GetOptions(device_new,"backend_core"), CMM_BASE_REG OY_SLASH "device_name", device_name, OY_CREATE_NEW);
          }
 
 
          /*Handle "device_context" option [OUT]*/
          oyOption_s *context_opt_dev = oyConfig_Find(device, "device_context");
-         if (context_opt_dev) {
-            libraw_output_params_t *device_context =
-               *(libraw_output_params_t**)oyOption_GetData(context_opt, NULL, allocateFunc);
+         if (context_opt_dev || device_name) {
+            LibRaw rip;
+            libraw_output_params_t * device_context = NULL;
+
+            if(!context_opt_dev && device_name)
+            {
+              error = rip.open_file( device_name );
+              device_context = rip.output_params_ptr();
+            } else
+              device_context = *(libraw_output_params_t**)oyOption_GetData(context_opt, NULL, allocateFunc);
+
             DeviceFromContext(&device_new, device_context);
-            free(device_context);
+            if(oyOptions_FindString( options, "icc_profile.fallback", 0 ))
+              /* fallback: try to get color matrix to build a profile */
+              p = createMatrixProfile( rip.imgdata.color,
+                                       oyConfig_FindString( device_new, PRFX_EXIF "manufacturer", 0 ),
+                                       oyConfig_FindString( device_new, PRFX_EXIF "model", 0 ) );
+
+            if(context_opt_dev)
+              free(device_context);
 
             oyOption_s *tmp = oyOption_Copy(context_opt_dev, 0);
             oyOptions_MoveIn(*oyConfig_GetOptions(device_new,"data"), &tmp, -1);
@@ -739,6 +1113,95 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
            oyOptions_MoveInStruct( oyConfig_GetOptions(device_new,"data"),
                                 CMM_BASE_REG OY_SLASH "icc_profile.add_meta",
                                 (oyStruct_s**)&p, OY_CREATE_NEW );
+         }
+
+         /** tell the "icc_profile" in a oyProfile_s */
+         if( oyOptions_FindString( options, "icc_profile", 0 ) ||
+             oyOptions_FindString( options, "oyNAME_NAME", 0 ))
+         {
+            size_t size = 0;
+            uint32_t flags = 0;
+            char * data = 0;
+            int has;
+            oyOption_s * o,
+                       * o_tmp = NULL;
+
+            has = 0;
+            o = oyConfig_Find( device_new, "icc_profile" );
+            if(o)
+            {
+              /* the device might have assigned a dummy icc_profile, to show 
+               * it can handle the format. But thats not relevant here. */
+              p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
+              if(oyProfile_GetSignature( p, oySIGNATURE_MAGIC ) == icMagicNumber)
+                has = 1;
+              else
+                oyOption_Release( &o );
+
+              oyProfile_Release( &p );
+            }
+
+            if(oyOptions_FindString( options, "icc_profile.fallback", 0 ))
+            {
+              /* tried to build profile p from rip.imgdata.color above */
+              if(p)
+              {
+                const char * t = 0;
+                oyOptions_s * opts = NULL;
+
+                if((t = oyConfig_FindString( device_new, PRFX_EXIF "manufacturer", 0 )) != 0)
+                  error = oyProfile_AddTagText( p, icSigDeviceMfgDescTag, t);
+                if((t = oyConfig_FindString( device_new, PRFX_EXIF "model", 0 )) != 0)
+                  error = oyProfile_AddTagText( p, icSigDeviceModelDescTag, t);
+
+                error = oyOptions_SetFromText( oyConfig_GetOptions(device_new,"backend_core"),
+                                       CMM_BASE_REG OY_SLASH
+                                       "OYRANOS_automatic_generated",
+                                       "1", OY_CREATE_NEW );
+
+                /* embed meta tag */
+                error = oyOptions_SetFromText( &opts, "///key_prefix_required",
+                                               PRFX_EXIF "." PRFX_LRAW ".OYRANOS_",
+                                               OY_CREATE_NEW );
+                oyProfile_AddDevice( p, device_new, opts );
+                oyOptions_Release( &opts);
+
+                data = (char*) oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
+              }
+              oyOption_Release( &o_tmp );
+              oyProfile_Release( &p );
+              if(data && size)
+              {
+                p = oyProfile_FromMem( size, data, 0, 0 );
+                oyDeAllocateFunc_( data ); data = NULL; size = 0;
+              }
+              if(has == 0)
+                o = oyOption_FromRegistration( CMM_BASE_REG OY_SLASH
+                                "icc_profile.fallback", 0 );
+              error = -1;
+            }
+
+            if(!o)
+              o = oyOption_FromRegistration( CMM_BASE_REG OY_SLASH
+                                "icc_profile", 0 );
+
+            if(p)
+            {
+              int t_err = oyOption_MoveInStruct( o, (oyStruct_s**) &p );
+              if(t_err > 0)
+                error = t_err;
+            }
+            else
+            /** Warn and return issue on not found profile. */
+            {
+              /* Show the "icc_profile" option is understood. */
+              p = 0;
+              error = oyOption_MoveInStruct( o, (oyStruct_s**) &p );
+              error = -1;
+            }
+
+            if(!has)
+              oyOptions_Set( *oyConfig_GetOptions(device_new,"data"), o, -1, 0 );
          }
 
          /*Copy the rank map*/
@@ -1076,7 +1539,7 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
          DeviceFromHandle(oyConfig_GetOptions(device,"backend_core"), device_handle);
       else {
          int level = oyMSG_WARN;
-         if(filename && strcmp( filename, DUMMY ) == 0)
+         if(filename && strcmp( filename, "dummy" ) == 0)
            level = oyMSG_DBG;
 
          oyRE_msg( level, (oyStruct_s *) device, _DBG_FORMAT_

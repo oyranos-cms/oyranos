@@ -40,6 +40,7 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
                                        const double      * XYZmax,
                                        const double      * XYZwhite );
 
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */
