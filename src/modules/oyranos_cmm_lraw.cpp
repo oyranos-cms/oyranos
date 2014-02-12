@@ -25,6 +25,7 @@
 #include "oyFilterNode_s_.h"         /* for oyFilterNode_TextToInfo_ */
 
 #include "oyranos_cmm.h"
+#include "oyranos_color.h"
 #include "oyranos_debug.h"
 #include "oyranos_devices.h"
 #include "oyranos_generic.h"
@@ -284,316 +285,6 @@ oyOptions_s* lrawFilter_ImageInputRAWValidateOptions
   return 0;
 }
 
-// The oyVEC3, oyMAT3, oyMAT3inverse, _oyVEC3init and _oyMAT3per definitions 
-// origin from lcms2' cmsmtrx.c written by Marti Maria www.littlecms.com 
-// and is MIT licensed there
-// Vectors
-typedef struct {
-  double n[3];                                                  
-} oyVEC3;
- 
-// 3x3 Matrix                                                               
-typedef struct {
-  oyVEC3 v[3];                                                           
- 
-} oyMAT3; 
-
-#define MATRIX_DET_TOLERANCE    0.0001
-// Inverse of a matrix b = a^(-1)
-int _oyMAT3inverse(const oyMAT3* a, oyMAT3* b)
-{
-   double det, c0, c1, c2;
-
-   c0 =  a -> v[1].n[1]*a -> v[2].n[2] - a -> v[1].n[2]*a -> v[2].n[1];
-   c1 = -a -> v[1].n[0]*a -> v[2].n[2] + a -> v[1].n[2]*a -> v[2].n[0];
-   c2 =  a -> v[1].n[0]*a -> v[2].n[1] - a -> v[1].n[1]*a -> v[2].n[0];
-
-   det = a -> v[0].n[0]*c0 + a -> v[0].n[1]*c1 + a -> v[0].n[2]*c2;
-
-   if (fabs(det) < MATRIX_DET_TOLERANCE) return FALSE;  // singular matrix; can't invert
-
-   b -> v[0].n[0] = c0/det;
-   b -> v[0].n[1] = (a -> v[0].n[2]*a -> v[2].n[1] - a -> v[0].n[1]*a -> v[2].n[2])/det;
-   b -> v[0].n[2] = (a -> v[0].n[1]*a -> v[1].n[2] - a -> v[0].n[2]*a -> v[1].n[1])/det;
-   b -> v[1].n[0] = c1/det;
-   b -> v[1].n[1] = (a -> v[0].n[0]*a -> v[2].n[2] - a -> v[0].n[2]*a -> v[2].n[0])/det;
-   b -> v[1].n[2] = (a -> v[0].n[2]*a -> v[1].n[0] - a -> v[0].n[0]*a -> v[1].n[2])/det;
-   b -> v[2].n[0] = c2/det;
-   b -> v[2].n[1] = (a -> v[0].n[1]*a -> v[2].n[0] - a -> v[0].n[0]*a -> v[2].n[1])/det;
-   b -> v[2].n[2] = (a -> v[0].n[0]*a -> v[1].n[1] - a -> v[0].n[1]*a -> v[1].n[0])/det;
-
-   return TRUE;
-}
-// Axis of the matrix/array. No specific meaning at all.
-#define VX      0
-#define VY      1
-#define VZ      2
-// Initiate a vector
-void _oyVEC3init(oyVEC3* r, double x, double y, double z)
-{
-    r -> n[VX] = x;
-    r -> n[VY] = y;
-    r -> n[VZ] = z;
-}
-// Multiply two matrices
-void _oyMAT3per(oyMAT3* r, const oyMAT3* a, const oyMAT3* b)
-{
-#define ROWCOL(i, j) \
-    a->v[i].n[0]*b->v[0].n[j] + a->v[i].n[1]*b->v[1].n[j] + a->v[i].n[2]*b->v[2].n[j]
-
-    _oyVEC3init(&r-> v[0], ROWCOL(0,0), ROWCOL(0,1), ROWCOL(0,2));
-    _oyVEC3init(&r-> v[1], ROWCOL(1,0), ROWCOL(1,1), ROWCOL(1,2));
-    _oyVEC3init(&r-> v[2], ROWCOL(2,0), ROWCOL(2,1), ROWCOL(2,2));
-
-#undef ROWCOL //(i, j)
-}
-
-// End of lcms code
-
-typedef struct {
-  double xy[2];
-} oyCIExyY;
-typedef struct {
-  oyCIExyY v[3];
-} oyCIExyYTriple;
-
-int _oyMAT3toCIExyYTriple ( const oyMAT3* a,oyCIExyYTriple * triple )
-{
-  int i,j,
-      fail=0;
-  double sum;
-    for(i = 0; i < 3; ++i)
-    {
-      for(j = 0; j < 3; ++j)
-      {
-        if(i < 3 && a->v[i].n[j] == 0)
-          fail = 1;
-      }
-      sum = a->v[i].n[0]+a->v[i].n[1]+a->v[i].n[2];
-      if(sum != 0)
-      {
-        triple->v[i].xy[0] = a->v[i].n[0]/sum;
-        triple->v[i].xy[1] = a->v[i].n[1]/sum;
-      } else
-      {
-        triple->v[i].xy[0] = 1;
-        triple->v[i].xy[1] = 1;
-      }
-    }
-  return fail;
-}
-const char * _oyMAT3show ( const oyMAT3* a )
-{
-  static char * t = (char*) malloc(1024);
-  int i,j;
-  t[0] = 0;
-  for(i = 0; i < 3; ++i)
-  {
-    for(j = 0; j < 3; ++j)
-      sprintf( &t[strlen(t)], " %g", a->v[i].n[j]);
-    sprintf( &t[strlen(t)], "\n" );
-  }
-  return t;
-}
-const char * _oyMat34show ( const float a[3][4] )
-{
-  static char * t = (char*) malloc(1024);
-  int i,j;
-  t[0] = 0;
-  for(i = 0; i < 3; ++i)
-  {
-    for(j = 0; j < 4; ++j)
-      sprintf( &t[strlen(t)], " %g", a[i][j]);
-    sprintf( &t[strlen(t)], "\n" );
-  }
-  return t;
-}
-const char * _oyMat4show ( const float a[4] )
-{
-  static char * t = (char*) malloc(1024);
-  int i;
-  t[0] = 0;
-  for(i = 0; i < 4; ++i)
-    sprintf( &t[strlen(t)], " %g", a[i]);
-  sprintf( &t[strlen(t)], "\n" );
-  return t;
-}
-const char * _oyMat43show ( const float a[4][3] )
-{
-  static char * t = (char*) malloc(1024);
-  int i,j;
-  t[0] = 0;
-  for(i = 0; i < 4; ++i)
-  {
-    for(j = 0; j < 3; ++j)
-      sprintf( &t[strlen(t)], " %g", a[i][j]);
-    sprintf( &t[strlen(t)], "\n" );
-  }
-  return t;
-}
-const char * _oyCIExyYTriple_Show( oyCIExyYTriple * triple )
-{
-  static char * t = (char*) malloc(1024);
-  int i;
-  t[0] = 0;
-  for(i = 0; i < 3; ++i)
-  {
-    sprintf( &t[strlen(t)], " x:%g y:%g", triple->v[i].xy[0],
-                                          triple->v[i].xy[1]);
-    sprintf( &t[strlen(t)], "\n" );
-  }
-  return t;
-}
-
-oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color )
-{
-  static oyProfile_s * p = NULL;
-
-  if(color.profile_length)
-    p = oyProfile_FromMem( color.profile_length, color.profile, 0,0);
-
-  if(!p)
-  {
-    oyOption_s *matrix = oyOption_FromRegistration("///color_matrix."
-              "from_primaries."
-              "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma", NULL );
-
-    int fail = 0;
-    for(int i = 0; i < 3; ++i)
-    {
-      for(int j = 0; j < 3; ++j)
-      {
-        if(i < 3 && color.cam_xyz[i][j] == 0)
-          fail = 1;
-      }
-    }
-    oyMAT3 cam_zyx, pre_mul, ab_cm, ab_cm_inverse;
-    oyCIExyYTriple ab_cm_inverse_xyY;
-    
-    // Convert camera matrix to ICC profile
-    // In theory that should perform the same conversion like dcraw/libraw do.
-
-    memset(&pre_mul,0,sizeof(oyMAT3));
-    for(int i = 0; i < 3; ++i)
-      pre_mul.v[i].n[i] = color.pre_mul[i];
-    for(int i = 0; i < 3; ++i)
-      for(int j = 0; j < 3; ++j)
-        // mirror diagonal
-        cam_zyx.v[j].n[i] = color.cam_xyz[i][j];
-
-    // DNG-1.3 says in Mapping Camera Color Space to CIE XYZ Space
-    // XYZtoCamera = AB (AnalogBalance:pre_mul?) * CC (CameraCalibration2:?)
-    //               * CM (ColorMatrix2:cam_xyz)
-
-    // multiply AB * CM
-    _oyMAT3per( &ab_cm, &cam_zyx, &pre_mul );
-    if(_oyMAT3inverse( &ab_cm, &ab_cm_inverse ))
-      // convert to CIE*xyY
-      fail = _oyMAT3toCIExyYTriple( &ab_cm_inverse, &ab_cm_inverse_xyY );
-    else
-    {
-      fail = 1;
-      message( oyMSG_WARN, (oyStruct_s*)0,
-             OY_DBG_FORMAT_ "ab_cm is singular",
-             OY_DBG_ARGS_ );
-    }
-
-    if(oy_debug)
-    {
-      printf("color.cam_xyz:\n%s",_oyMat43show( color.cam_xyz ));
-      printf("color.cam_mul:\n%s",_oyMat4show( color.cam_mul ));
-      printf("color.pre_mul:\n%s",_oyMat4show( color.pre_mul ));
-      printf("pre_mul:\n%s",_oyMAT3show( const_cast<oyMAT3*>(&pre_mul) ));
-      printf("color.rgb_cam:\n%s",_oyMat34show( color.rgb_cam ));
-      printf("color.cmatrix:\n%s",_oyMat34show( color.cmatrix ));
-      printf("ab*cm|pre_mul*cam_xyz:\n%s",_oyMAT3show( const_cast<oyMAT3*>(&ab_cm) ));
-      printf("ab_cm_inverse:\n%s",_oyMAT3show( const_cast<oyMAT3*>(&ab_cm_inverse) ));
-      if(!fail)
-      printf("=> ");
-      printf("ab_cm_inverse_xyY:\n%s", _oyCIExyYTriple_Show(const_cast<oyCIExyYTriple*>(&ab_cm_inverse_xyY)));
-    }
-    if(!fail)
-    {
-      oyCIExyYTriple * use = &ab_cm_inverse_xyY;
-      oyOption_SetFromDouble( matrix, use->v[0].xy[0], 0, 0);
-      oyOption_SetFromDouble( matrix, use->v[0].xy[1], 1, 0);
-      oyOption_SetFromDouble( matrix, use->v[1].xy[0], 2, 0);
-      oyOption_SetFromDouble( matrix, use->v[1].xy[1], 3, 0);
-      oyOption_SetFromDouble( matrix, use->v[2].xy[0], 4, 0);
-      oyOption_SetFromDouble( matrix, use->v[2].xy[1], 5, 0);
-
-      /* D65 */
-      oyOption_SetFromDouble( matrix, 0.31271, 6, 0);
-      oyOption_SetFromDouble( matrix, 0.32902, 7, 0);
-    } else
-    // fall back
-    {
-    /* http://www.color.org/chardata/rgb/rommrgb.xalter
-     * original gamma is 1.8, we adapt to typical cameraRAW gamma of 1.0 */
-      oyOption_SetFromDouble( matrix, 0.7347, 0, 0);
-      oyOption_SetFromDouble( matrix, 0.2653, 1, 0);
-      oyOption_SetFromDouble( matrix, 0.1596, 2, 0);
-      oyOption_SetFromDouble( matrix, 0.8404, 3, 0);
-      oyOption_SetFromDouble( matrix, 0.0366, 4, 0);
-      oyOption_SetFromDouble( matrix, 0.0001, 5, 0);
-      oyOption_SetFromDouble( matrix, 0.3457, 6, 0);
-      oyOption_SetFromDouble( matrix, 0.3585, 7, 0);
-      fail = 1;
-    }
-    oyOption_SetFromDouble( matrix, 1.0, 8, 0);
-
-    oyOptions_s * opts = oyOptions_New(0),
-                * result = 0;
-
-    oyOptions_MoveIn( opts, &matrix, -1 );
-    const char * reg = "//"OY_TYPE_STD"/create_profile.color_matrix.icc";
-    oyOptions_Handle( reg,opts,"create_profile.icc_profile.color_matrix",
-                      &result );
-
-    p = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
-                                               oyOBJECT_PROFILE_S );
-    oyOptions_Release( &result );
-    if(!p)
-      message(oyMSG_DBG, (oyStruct_s*)0,
-          OY_DBG_FORMAT_ " profile creation failed by \"%s\"",
-          OY_DBG_ARGS_, reg);
-
-    if(!fail)
-    {
-      matrix = oyOptions_Find( opts, "color_matrix" );
-      const char * ts = oyStringCopy_(oyOption_GetText( matrix, oyNAME_NICK ), oyAllocateFunc_ );
-      oyOption_Release( &matrix );
-      ts = strstr( ts, "color_matrix:" ) + strlen("color_matrix:");
-      char * t = oyStringReplace_( ts, ",", " ", oyAllocateFunc_ );
-      char * name = NULL;
-      oyStringAddPrintf_( &name, oyAllocateFunc_, oyDeAllocateFunc_,
-                          "cam_xyz linear %s", t );
-      oyFree_m_( t );
-      message(oyMSG_WARN, (oyStruct_s*)0,
-          OY_DBG_FORMAT_ " name: \"%s\"",
-          OY_DBG_ARGS_, name);
-
-      oyProfile_AddTagText( p, icSigProfileDescriptionTag, name);
-      oyFree_m_( name );
-    } else
-      oyProfile_AddTagText( p, icSigProfileDescriptionTag,
-                                            "ICC Examin ROMM gamma 1.0" );
-
-    oyOptions_Release( &opts );
-
-    if(oy_debug)
-    {
-      size_t size = 0;
-      char * data = (char*) oyProfile_GetMem( p, &size, 0, malloc );
-      if(!fail)
-        oyWriteMemToFile_( "cam_xyz gamma 1.0.icc", data, size );
-      else
-        oyWriteMemToFile_( "ICC Examin ROMM gamma 1.0.icc", data, size );
-    }
-  }
-
-  return p;
-}
 
 
 oyConfig_s * oyREgetColorInfo        ( const char        * filename,
@@ -605,7 +296,7 @@ oyConfig_s * oyREgetColorInfo        ( const char        * filename,
    //    This is the "command" -> "properties" call
    //Request the properties call
    oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "command", "properties", OY_CREATE_NEW);
-   oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "device_name", "dummy", OY_CREATE_NEW);
+   oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "device_name", filename, OY_CREATE_NEW);
    //Pass in the filename
    oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "device_handle", filename, OY_CREATE_NEW);
    //Pass in the libraw object with the raw image rendering options
@@ -615,7 +306,7 @@ oyConfig_s * oyREgetColorInfo        ( const char        * filename,
    oyOptions_MoveIn(options, &context_opt, -1);
 
    /*Call Oyranos*/
-   oyDeviceGet(OY_TYPE_STD, "raw-image", "dummy", options, &device);
+   oyDeviceGet(OY_TYPE_STD, "raw-image", filename, options, &device);
 
   return device;
 }
@@ -896,8 +587,26 @@ int      lrawFilterPlug_ImageInputRAWRun (
     if(prof)
       oyProfile_Release( &prof );
     if(profile_type == oyASSUMED_RGB)
-      prof = createMatrixProfile( rip.imgdata.color );
-    else
+    {
+      oyOption_s * o = NULL;
+
+      oyConfig_Release( &device );
+
+      error = oyOptions_SetFromText( &options,
+                   "//"OY_TYPE_STD"/config/icc_profile.fallback",
+                         "yes", OY_CREATE_NEW );
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+                                     "properties", OY_CREATE_NEW );  
+
+      error = oyDeviceGet( 0, "raw-image", filename, options, &device );
+
+      o = oyOptions_Find( *oyConfig_GetOptions(device, "data"), "icc_profile.fallback" );
+      if( o )
+      {
+        prof = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
+        oyOption_Release( &o );
+      }
+    } else
       prof = oyProfile_FromStd( profile_type, 0 );
   }
 
