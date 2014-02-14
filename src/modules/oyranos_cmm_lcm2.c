@@ -1390,8 +1390,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
 
       cmsHTRANSFORM ptr[2] = {0,0},
                 ptr16[2] = {0,0};
-      int r = 0, i,
-          error = 0;
+      int r = 0, i;
       cmsMLU * mlu[2] = {0,0};
       cmsCurveSegment seg[2];
 
@@ -1405,15 +1404,20 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
         return gmt;
 
       hLab  = lcmsCreateLab4ProfileTHR(tc, lcmsD50_xyY());
+#if LCMS_VERSION < 2060
       hproof = lcm2AddProfile( proof );
+#else
+      const char * fn = oyProfile_GetFileName( proof, -1 );
+      hproof = lcmsOpenProfileFromFileTHR( tc, fn, "r" );
+#endif
 
       if(!hLab || !hproof)
       { lcm2_msg( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
                  "hLab or hproof failed", OY_DBG_ARGS_);
                  goto clean; }
 
-#if 0
-#pragma omp parallel for
+#if LCMS_VERSION >= 2060 && defined(USE_OPENMP)
+#pragma omp parallel for private(i)
 #endif
   for(i = 0; i < 2; ++i)
   {
@@ -1424,6 +1428,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
 #else
       void * tc = NULL;
 #endif
+      int error = 0;
       tr = lcmsCreateProofingTransformTHR (  tc,
                                                hLab, TYPE_Lab_FLT,
                                                hLab, TYPE_Lab_FLT,
@@ -1456,6 +1461,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
 #else
       void * tc = NULL;
 #endif
+      int error = 0;
       tr16 = lcmsCreateProofingTransformTHR( tc,
                                                hLab, TYPE_Lab_16,
                                                hLab, TYPE_Lab_16,
