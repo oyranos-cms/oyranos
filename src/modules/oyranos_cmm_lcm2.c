@@ -453,6 +453,10 @@ int lcm2CMMProfileReleaseWrap(oyPointer *p)
 
   if(!error)
   {
+#if LCMS_VERSION >= 2060
+    oyProfile_s * p = lcmsGetContextUserData( lcmsGetProfileContextID( s->lcm2 ) );
+    oyProfile_Release ( &p );
+#endif
     CMMProfileRelease_M (s->lcm2);
 
     s->lcm2 = 0;
@@ -488,11 +492,12 @@ int          lcm2CMMData_Open        ( oyStruct_s        * data,
     int type = *((int32_t*)type_);
     size_t size = 0;
     oyPointer block = 0;
+    oyProfile_s * p = NULL;
     lcm2ProfileWrap_s * s = calloc(sizeof(lcm2ProfileWrap_s), 1);
 
     if(data->type_ == oyOBJECT_PROFILE_S)
     {
-      oyProfile_s * p = (oyProfile_s*)data;
+      p = (oyProfile_s*)data;
       block = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
     }
 
@@ -500,7 +505,14 @@ int          lcm2CMMData_Open        ( oyStruct_s        * data,
     s->size = size;
     s->block = block;
 
+#if LCMS_VERSION < 2060
     s->lcm2 = CMMProfileOpen_M( data, block, size );
+#else
+    {
+      cmsContext tc = lcmsCreateContext( NULL, oyProfile_Copy( p, NULL ) ); /* threading context */
+      s->lcm2 = CMMProfileOpen_M( tc, block, size );
+    }
+#endif
     if(!s->lcm2)
       lcm2_msg( oyMSG_WARN, (oyStruct_s*)data,
              OY_DBG_FORMAT_" %s() failed", OY_DBG_ARGS_, "CMMProfileOpen_M" );
@@ -1190,7 +1202,14 @@ cmsHPROFILE  lcm2AddProofProfile     ( oyProfile_s       * proof,
     s->block = block;
 
     /* reopen */
+#if LCMS_VERSION < 2060
     s->lcm2 = CMMProfileOpen_M( proof, block, size );
+#else
+    {
+      cmsContext tc = lcmsCreateContext( NULL, oyProfile_Copy( proof, NULL ) ); /* threading context */
+      s->lcm2 = CMMProfileOpen_M( tc, block, size );
+    }
+#endif
     error = oyPointer_Set( oy, 0,
                           lcm2PROFILE, s, CMMToString_M(CMMProfileOpen_M),
                           lcm2CMMProfileReleaseWrap );
@@ -1277,6 +1296,7 @@ cmsHPROFILE  lcm2AddProfile          ( oyProfile_s       * p )
     return 0;
 }
 
+
 int gamutCheckSampler16(const cmsUInt16Number In[],
                               cmsUInt16Number Out[],
                         void                * Cargo)
@@ -1329,6 +1349,7 @@ int  gamutCheckSamplerFloat          ( const cmsFloat32Number In[],
   return TRUE;
 }
 
+
 /** Function lcm2GamutCheckAbstract
  *  @brief   convert a proofing profile into a abstract one
  *
@@ -1349,6 +1370,11 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
                                        int                 intent,
                                        int                 intent_proof )
 {
+#if LCMS_VERSION >= 2060
+      cmsContext tc = lcmsCreateContext( NULL, NULL ); /* threading context */
+#else
+      void * tc = NULL;
+#endif
       cmsUInt32Number size = 0;
       char * data = 0;
       cmsHPROFILE gmt = 0,
@@ -1362,24 +1388,25 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       cmsToneCurve * t[3] = {0,0,0},
                    * g[3] = {0,0,0};
 
-      oyPointer ptr[2] = {0,0},
+      cmsHTRANSFORM ptr[2] = {0,0},
                 ptr16[2] = {0,0};
       int r = 0, i,
           error = 0;
       cmsMLU * mlu[2] = {0,0};
       cmsCurveSegment seg[2];
-      oyOption_s * id = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH 
-                              OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-                                      "gmt_pl.TYPE_Lab_FLT." CMM_NICK, 0);
-      oyOption_s * id16 = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH 
-                               OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-                                        "gmt_pl.TYPE_Lab_16." CMM_NICK, 0);
+
+      lcm2_msg( oyMSG_DBG, (oyStruct_s*)proof, OY_DBG_FORMAT_
+                "softproofing %d gamutcheck %d intent %d intent_proof %d", OY_DBG_ARGS_,
+                flags & cmsFLAGS_SOFTPROOFING,
+                flags & cmsFLAGS_GAMUTCHECK,
+                intent, intent_proof );
 
       if(!(flags & cmsFLAGS_GAMUTCHECK || flags & cmsFLAGS_SOFTPROOFING))
         return gmt;
 
-      hLab  = lcmsCreateLab4Profile(lcmsD50_xyY());
+      hLab  = lcmsCreateLab4ProfileTHR(tc, lcmsD50_xyY());
       hproof = lcm2AddProfile( proof );
+
       if(!hLab || !hproof)
       { lcm2_msg( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
                  "hLab or hproof failed", OY_DBG_ARGS_);
@@ -1392,7 +1419,13 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
   {
     if(i)
     {
-      tr = lcmsCreateProofingTransformTHR ( id, hLab, TYPE_Lab_FLT,
+#if LCMS_VERSION >= 2060
+      cmsContext tc = lcmsCreateContext( NULL, NULL ); /* threading context */
+#else
+      void * tc = NULL;
+#endif
+      tr = lcmsCreateProofingTransformTHR (  tc,
+                                               hLab, TYPE_Lab_FLT,
                                                hLab, TYPE_Lab_FLT,
                                                hproof,
                                                intent,
@@ -1409,7 +1442,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       ptr[1] = flags & cmsFLAGS_GAMUTCHECK ? (oyPointer)1 : 0;
       if(!error)
       {
-        gmt_lut = lcmsStageAllocCLutFloat( 0,lcm2PROOF_LUT_GRID_RASTER, 3,3, 0);
+        gmt_lut = lcmsStageAllocCLutFloat( tc,lcm2PROOF_LUT_GRID_RASTER, 3,3, 0);
         r = lcmsStageSampleCLutFloat( gmt_lut, gamutCheckSamplerFloat, ptr, 0 );
         if(!r) { lcm2_msg( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
                           "cmsStageSampleCLutFloat() failed", OY_DBG_ARGS_);
@@ -1418,7 +1451,13 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
 
     } else
     {
-      tr16 = lcmsCreateProofingTransformTHR( id16, hLab, TYPE_Lab_16,
+#if LCMS_VERSION >= 2060
+      cmsContext tc = lcmsCreateContext( NULL, NULL ); /* threading context */
+#else
+      void * tc = NULL;
+#endif
+      tr16 = lcmsCreateProofingTransformTHR( tc,
+                                               hLab, TYPE_Lab_16,
                                                hLab, TYPE_Lab_16,
                                                hproof,
                                                intent,
@@ -1436,7 +1475,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
 
       if(!error)
       {
-        gmt_lut16 = lcmsStageAllocCLut16bit( 0, lcm2PROOF_LUT_GRID_RASTER,3,3,0);
+        gmt_lut16 = lcmsStageAllocCLut16bit( tc, lcm2PROOF_LUT_GRID_RASTER,3,3,0);
         r = lcmsStageSampleCLut16bit( gmt_lut16, gamutCheckSampler16, ptr16, 0);
         if(!r)   { lcm2_msg( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
                           "cmsStageSampleCLut16bit() failed", OY_DBG_ARGS_);
@@ -1445,9 +1484,9 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
     }
   }
 
-      if(error) goto clean;
+      if(!gmt_lut || !gmt_lut16) goto clean;
 
-      gmt = lcmsCreateProfilePlaceholder( 0 ); if(!gmt) goto clean;
+      gmt = lcmsCreateProfilePlaceholder( tc ); if(!gmt) goto clean;
       lcmsSetProfileVersion( gmt, 4.2 );
       lcmsSetDeviceClass( gmt, icSigAbstractClass );
       lcmsSetColorSpace( gmt, icSigLabData );
@@ -1456,8 +1495,8 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
                    OY_DBG_FORMAT_ "could not write tag", OY_DBG_ARGS_); \
                    if(gmt) lcmsCloseProfile( gmt ); gmt = 0; \
                    goto clean; }
-      mlu[0] = lcmsMLUalloc(0,1);
-      mlu[1] = lcmsMLUalloc(0,1);
+      mlu[0] = lcmsMLUalloc(tc,1);
+      mlu[1] = lcmsMLUalloc(tc,1);
       r = lcmsMLUsetASCII(mlu[0], "EN", "us", "proofing"); E
       r = lcmsWriteTag( gmt, icSigProfileDescriptionTag, mlu[0] ); E
       r = lcmsMLUsetASCII(mlu[1], "EN", "us", "no copyright; use freely"); E
@@ -1478,23 +1517,23 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       seg[0].Params[3] = 0;
       seg[0].Params[4] = 0;
 
-      t[0] = t[1] = t[2] = lcmsBuildSegmentedToneCurve(0, 1, seg);
+      t[0] = t[1] = t[2] = lcmsBuildSegmentedToneCurve(tc, 1, seg);
       /* float */
       /* cmsPipeline owns the cmsStage memory */
       lcmsPipelineInsertStage( gmt_pl, cmsAT_BEGIN,
-                              lcmsStageAllocToneCurves( 0, 3, t ) );
+                              lcmsStageAllocToneCurves( tc, 3, t ) );
       lcmsPipelineInsertStage( gmt_pl, cmsAT_END, gmt_lut );
       lcmsPipelineInsertStage( gmt_pl, cmsAT_END,
-                              lcmsStageAllocToneCurves( 0, 3, t ) );
+                              lcmsStageAllocToneCurves( tc, 3, t ) );
       r = lcmsWriteTag( gmt, cmsSigDToB0Tag, gmt_pl ); E
 
       /* 16-bit int */
-      g[0] = g[1] = g[2] = lcmsBuildGamma(0, 1.0);
+      g[0] = g[1] = g[2] = lcmsBuildGamma(tc, 1.0);
       lcmsPipelineInsertStage( gmt_pl16, cmsAT_BEGIN,
-                              lcmsStageAllocToneCurves( 0, 3, g ) );
+                              lcmsStageAllocToneCurves( tc, 3, g ) );
       lcmsPipelineInsertStage( gmt_pl16, cmsAT_END, gmt_lut16 );
       lcmsPipelineInsertStage( gmt_pl16, cmsAT_END,
-                              lcmsStageAllocToneCurves( 0, 3, g ) );
+                              lcmsStageAllocToneCurves( tc, 3, g ) );
       r = lcmsWriteTag( gmt, cmsSigAToB0Tag, gmt_pl16 ); E
 #undef E
 
@@ -1523,8 +1562,6 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       if(mlu[1]) lcmsMLUfree( mlu[1] ); mlu[1] = 0;
 
   oyProfile_Release( &proof );
-  oyOption_Release( &id );
-  oyOption_Release( &id16 );
 
   return gmt;
 }
@@ -2223,8 +2260,16 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
 
   if(!error)
   {
+#if LCMS_VERSION < 2060
     lps[0] = CMMProfileOpen_M( node, oyPointer_GetPointer(cmm_ptr_in),
                                oyPointer_GetSize( cmm_ptr_in) );
+#else
+    {
+      cmsContext tc = lcmsCreateContext( NULL, oyFilterNode_Copy( node, NULL ) ); /* threading context */
+      lps[0] = CMMProfileOpen_M( tc, oyPointer_GetPointer(cmm_ptr_in),
+                                 oyPointer_GetSize( cmm_ptr_in) );
+    }
+#endif
     xform = lcm2CMMConversionContextCreate_( node, lps, 1, 0,0,0,
                                 oyImage_GetPixelLayout( image_input, oyLAYOUT ),
                                 oyImage_GetPixelLayout( image_output,oyLAYOUT ),
@@ -2272,7 +2317,13 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
       T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
       error = 1;
     }
-    CMMProfileRelease_M (lps[0] );
+    {
+#if LCMS_VERSION >= 2060
+      oyFilterNode_s * node = lcmsGetContextUserData( lcmsGetProfileContextID( lps[0] ) );
+      oyFilterNode_Release( &node );
+#endif
+      CMMProfileRelease_M (lps[0] );
+    }
   }
   oyFilterPlug_Release( &plug );
   oyFilterSocket_Release( &socket );
@@ -2684,8 +2735,13 @@ void lcm2ErrorHandlerFunction        ( cmsContext          ContextID,
                                        const char        * ErrorText )
 {
   int code = 0;
+#if LCMS_VERSION < 2060
+  oyStruct_s * s = ContextID;
+#else
+  oyStruct_s * s = ContextID ? lcmsGetContextUserData( ContextID ) : NULL;
+#endif
   code = oyMSG_ERROR;
-  lcm2_msg( code, ContextID, CMM_NICK ": %s", ErrorText );
+  lcm2_msg( code, s, CMM_NICK ": %s", ErrorText );
 }
 
 /** Function lcm2CMMMessageFuncSet
