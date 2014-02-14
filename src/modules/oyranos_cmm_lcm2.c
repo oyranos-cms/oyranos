@@ -245,6 +245,7 @@ static cmsHPROFILE (*lcmsTransform2DeviceLink)(cmsHTRANSFORM hTransform, cmsFloa
 static cmsBool (*lcmsSaveProfileToMem)(cmsHPROFILE hProfile, void *MemPtr, 
                                                                 cmsUInt32Number* BytesNeeded) = NULL;
 static cmsHPROFILE (*lcmsOpenProfileFromMemTHR)(cmsContext ContextID, const void * MemPtr, cmsUInt32Number dwSize) = NULL;
+static cmsHPROFILE (*lcmsOpenProfileFromFileTHR)(cmsContext ContextID, const char *ICCProfile, const char *sAccess) = NULL;
 static cmsBool (*lcmsCloseProfile)(cmsHPROFILE hProfile) = NULL;
 static cmsHPROFILE (*lcmsCreateProfilePlaceholder)(cmsContext ContextID) = NULL;
 static cmsHPROFILE (*lcmsCreateLab4ProfileTHR)(cmsContext ContextID, const cmsCIExyY* WhitePoint) = NULL;
@@ -279,6 +280,10 @@ static const cmsCIEXYZ*  (*lcmsD50_XYZ)(void);
 static const cmsCIExyY*  (*lcmsD50_xyY)(void);
 static cmsFloat64Number (*lcmsDeltaE)(const cmsCIELab* Lab1, const cmsCIELab* Lab2) = NULL;
 static void (*lcmsGetAlarmCodes)(cmsUInt16Number NewAlarm[cmsMAXCHANNELS]) = NULL;
+static cmsContext (*lcmsCreateContext)(void* Plugin, void* UserData) = NULL;
+static void* (*lcmsGetContextUserData)(cmsContext ContextID) = NULL;
+static cmsContext (*lcmsGetProfileContextID)(cmsHPROFILE hProfile) = NULL;
+static cmsContext (*lcmsGetTransformContextID)(cmsHPROFILE hProfile) = NULL;
 
 #define LOAD_FUNC( func ) l##func = dlsym(lcms_handle, #func ); \
                if(!l##func) lcm2_msg( oyMSG_ERROR,0, OY_DBG_FORMAT_" " \
@@ -324,6 +329,7 @@ int                lcm2CMMInit       ( oyStruct_s        * filter )
       LOAD_FUNC( cmsTransform2DeviceLink );
       LOAD_FUNC( cmsSaveProfileToMem );
       LOAD_FUNC( cmsOpenProfileFromMemTHR );
+      LOAD_FUNC( cmsOpenProfileFromFileTHR );
       LOAD_FUNC( cmsCloseProfile );
       LOAD_FUNC( cmsCreateProfilePlaceholder );
       LOAD_FUNC( cmsSetProfileVersion );
@@ -354,6 +360,10 @@ int                lcm2CMMInit       ( oyStruct_s        * filter )
       LOAD_FUNC( cmsD50_xyY );
       LOAD_FUNC( cmsDeltaE );
       LOAD_FUNC( cmsGetAlarmCodes );
+      LOAD_FUNC( cmsCreateContext );
+      LOAD_FUNC( cmsGetContextUserData );
+      LOAD_FUNC( cmsGetProfileContextID );
+      LOAD_FUNC( cmsGetTransformContextID );
 
       lcmsSetLogErrorHandler( lcm2ErrorHandlerFunction );
     }
