@@ -3644,6 +3644,12 @@ oyTESTRESULT_e testCMMnmRun ()
   }
 
 
+  conv = oyConversion_CreateBasicPixelsFromBuffers(
+                                        p_in, buf_in, oyDataType_m(buf_type_in),
+                                        p_out, buf_out, oyDataType_m(buf_type_out),
+                                        0, 1 );
+  oyConversion_Release( &conv );
+
   return result;
 }
 
