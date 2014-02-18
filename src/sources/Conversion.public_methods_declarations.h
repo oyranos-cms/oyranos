@@ -14,10 +14,10 @@ OYAPI oyConversion_s *  OYEXPORT
                 oyConversion_CreateBasicPixelsFromBuffers (
                                        oyProfile_s       * p_in,
                                        oyPointer           buf_in,
-                                       oyDATATYPE_e        buf_type_in,
+                                       oyPixel_t           buf_type_in,
                                        oyProfile_s       * p_out,
                                        oyPointer           buf_out,
-                                       oyDATATYPE_e        buf_type_out,
+                                       oyPixel_t           buf_type_out,
                                        oyOptions_s       * options,
                                        int                 count );
 OYAPI oyConversion_s *  OYEXPORT
