@@ -79,7 +79,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -m  %s\n",       _("machine specific path"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Install ICC profile:"));
-  fprintf( stderr, "      %s [--gui] --install [-u|-s|-y|-m] ICC_FILE_NAME(s)\n", argv[0]);
+  fprintf( stderr, "      %s [--gui] --install [-u|-s|-y|-m] %s\n", argv[0], _("ICC_FILE_NAME"));
   fprintf( stderr, "      %s --taxi=ID [--gui] --install [-u|-s|-y|-m]\n", argv[0]);
   fprintf( stderr, "      -u  %s\n",       _("user path"));
   fprintf( stderr, "      -s  %s\n",       _("system path"));

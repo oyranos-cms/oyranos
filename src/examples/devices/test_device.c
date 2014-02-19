@@ -63,12 +63,12 @@ void displayHelp(char ** argv)
   printf("\n");
   printf("  %s\n",               _("Dump device color state:"));
   printf("      %s -f=[icc|openicc+rank-map|openicc|openicc-rank-map] [-o=file.json] -c class -d number | -j device.json [--only-db] [-m]\n", argv[0]);
-  printf("         -f icc  \t%s\n",              _("dump ICC profile"));
-  printf("         -f fallback-icc  \t%s\n",     _("dump fallback ICC profile"));
-  printf("         -f openicc+rank-map\t%s\n",   _("dump OpenICC device color state JSON including the rank map"));
-  printf("         -f openicc\t%s\n",            _("dump OpenICC device color state JSON"));
+  printf("         -f icc  \t%s\n",              _("write assigned ICC profile"));
+  printf("         -f fallback-icc  \t%s\n",     _("create fallback ICC profile"));
+  printf("         -f openicc+rank-map\t%s\n",   _("create OpenICC device color state JSON including the rank map"));
+  printf("         -f openicc\t%s\n",            _("create OpenICC device color state JSON"));
   printf("            --only-db\t%s\n",_("use only DB keys for -f=openicc"));
-  printf("         -f openicc-rank-map\t%s\n",   _("dump OpenICC device color state rank map JSON"));
+  printf("         -f openicc-rank-map\t%s\n",   _("create OpenICC device color state rank map JSON"));
   printf("         -o %s\t%s\n",    _("FILE"),   _("write to specified file"));
   printf("         -j %s\t%s\n",    _("FILE"),   _("use device JSON alternatively to -c and -d options"));
   printf("         -m \t%s\n",       _("embedd device and driver information into ICC meta tag"));
