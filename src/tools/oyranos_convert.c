@@ -508,7 +508,7 @@ int main( int argc , char** argv )
         {
           const char * t;
           char * dln = NULL;
-          oyProfile_s * dl;
+          oyProfile_s * dl = NULL;
 
           oyImage_SetCritical( image, 0, p, 0, -1,-1 );
           t = oyProfile_GetFileName( p, 1 );
