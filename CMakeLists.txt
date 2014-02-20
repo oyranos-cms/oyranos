@@ -70,7 +70,7 @@ ENDIF( HAVE_YAJL )
 
 FIND_PACKAGE( Elektra )
 IF(HAVE_ELEKTRA)
-  SET( ELEKTRA_SPEC "Requires: elektra 0.7
+  SET( ELEKTRA_SPEC "Requires: elektra
 BuildRequires: elektra-devel" )
   INCLUDE_DIRECTORIES( ${ELEKTRA_INCLUDE_DIRS} )
   LINK_DIRECTORIES( ${ELEKTRA_LIBRARY_DIRS} )
