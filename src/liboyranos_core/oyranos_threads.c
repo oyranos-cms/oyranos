@@ -85,7 +85,9 @@ oyPointer  oyStruct_LockCreate_        ( oyStruct_s      * obj )
   pthread_mutexattr_t * mattr = &mattr_local;
   pthread_mutexattr_init( mattr );
   pthread_mutexattr_settype( mattr, PTHREAD_MUTEX_RECURSIVE );
+# ifdef __USE_XOPEN2K
   pthread_mutexattr_setrobust( mattr, PTHREAD_MUTEX_ROBUST );
+# endif
 #endif
   oyMutexInit_m( &ms->m, mattr );
   ms->t = oyThreadSelf();
