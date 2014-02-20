@@ -1,7 +1,7 @@
 #!/bin/sh
 # generated auomatically by configure
 
-yajl="@ELEKTRA_LIBS@"
+yajl="@YAJL_LIBS@"
 
 TARGET=@PACKAGE_NAME@
 
@@ -30,7 +30,7 @@ targetdirname=target
 pixmapdir="$datadir/pixmaps"
 icondir="$datadir/icons"
 desktopdir="$datadir/applications"
-oyranos_add="-L$libdir $ltdl $xml2 $iconv $intl $yajl"
+oyranos_add="$ltdl $xml2 $iconv $intl $yajl"
 
 if [ -n "$PKG_CONFIG_PATH" ]; then
   PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$libdir/pkgconfig
@@ -131,6 +131,9 @@ if [ -z "$elektra" ]; then
       elektra="$elektra $libdir/elektra/libelektra-filesys.a"
     fi
   fi
+  if [ -f $libdir/libelektra-static.a ]; then
+    elektra="-lelektra-static"
+  fi
 fi
 
 if [ -z "$elektra" ]; then
@@ -143,9 +146,9 @@ fi
 
 if [ "$echo_ldflags" = "yes" ]; then
   if [ -f liboyranos.so ]; then
-    echo "-L. -loyranos -loyranos_config -loyranos_modules -loyranos_object -loyranos_core $elektra $oyranos_add"
+    echo "-L. -loyranos -loyranos_config -loyranos_modules -loyranos_object -loyranos_core"
   else
-    echo "-L$libdir -loyranos -loyranos_config -loyranos_modules -loyranos_object -loyranos_core $elektra $oyranos_add"
+    echo "-L$libdir -loyranos -loyranos_config -loyranos_modules -loyranos_object -loyranos_core"
   fi
 fi
 
