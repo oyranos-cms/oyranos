@@ -27,7 +27,6 @@ Release:         0
 %define icondir         /usr/share/icons
 %define desktopdir      /usr/share/applications
 
-@ELEKTRA_SPEC@
 
 Summary:        Color Management System
 License:        BSD-3-Clause and GPL-2.0
@@ -37,10 +36,10 @@ Name:           oyranos
 Url:            http://www.oyranos.org
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 Prefix:         %{_prefix}
-Source1:        oyranos-rpmlintrc
-BuildRequires:  color-filesystem
 
+Source1:        oyranos-rpmlintrc
 BuildRequires:  cmake
+BuildRequires:  color-filesystem
 BuildRequires:  desktop-file-utils
 
 %if 0%{?suse_version} > 0
@@ -52,10 +51,9 @@ BuildRequires:  fltk-devel
 BuildRequires:  gcc-c++
 BuildRequires:  gettext
 BuildRequires:  graphviz
-BuildRequires:  libXcm-devel >= 0.5.1
 BuildRequires:  libjpeg-devel
 BuildRequires:  liblcms-devel
-BuildRequires:  liblcms2
+BuildRequires:  liblcms2-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libqt4-devel
 BuildRequires:  libtiff-devel
@@ -168,13 +166,13 @@ BuildRequires:  xdg-utils
 BuildRequires:  xorg-x11
 %endif
 
-%if 0%{?fedora_version} > 0
+%if 0%{?fedora_version} > 0 && 0%{?rhel_version} < 600
+BuildRequires:  LibRaw-devel
 BuildRequires:  Mesa
 BuildRequires:  Mesa-devel
 BuildRequires:  cairo-devel
 BuildRequires:  cups-devel
 BuildRequires:  doxygen
-BuildRequires:  elektra-devel
 BuildRequires:  exiv2-devel
 BuildRequires:  fltk
 BuildRequires:  fltk-devel
@@ -192,9 +190,9 @@ BuildRequires:  liblcms2-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libqt4-devel
 BuildRequires:  libtiff-devel
-BuildRequires:  libxml2-devel
 BuildRequires:  libtool
 BuildRequires:  libtool-ltdl-devel
+BuildRequires:  libxml2-devel
 BuildRequires:  netpbm
 BuildRequires:  pkgconfig
 BuildRequires:  xdg-utils
@@ -203,12 +201,74 @@ BuildRequires:  xorg-x11-devel
 BuildRequires:  yajl-devel
 %endif
 
+%if 0%{?centos_version} >= 600
+BuildRequires:  Mesa
+BuildRequires:  Mesa-devel
+BuildRequires:  cairo-devel
+BuildRequires:  cups-devel
+BuildRequires:  doxygen
+BuildRequires:  exiv2-devel
+BuildRequires:  gcc-c++
+BuildRequires:  gettext
+BuildRequires:  graphviz
+BuildRequires:  libXcm-devel >= 0.5.1
+BuildRequires:  libXmu-devel
+BuildRequires:  libXxf86vm-devel
+BuildRequires:  libjpeg
+BuildRequires:  libjpeg-devel
+BuildRequires:  liblcms-devel
+BuildRequires:  liblcms2-devel
+BuildRequires:  libpng-devel
+BuildRequires:  libqt4-devel
+BuildRequires:  libtiff-devel
+BuildRequires:  libtool
+BuildRequires:  libtool-ltdl-devel
+BuildRequires:  libtool-ltdl
+BuildRequires:  libxml2-devel
+BuildRequires:  netpbm
+BuildRequires:  pkgconfig
+BuildRequires:  xdg-utils
+BuildRequires:  xorg-x11-Mesa-devel
+BuildRequires:  xorg-x11-devel
+BuildRequires:  yajl-devel
+%endif
+
+%if 0%{?rhel_version} >= 600
+BuildRequires:  Mesa
+BuildRequires:  Mesa-devel
+BuildRequires:  cairo-devel
+BuildRequires:  cups-devel
+BuildRequires:  doxygen
+BuildRequires:  gcc-c++
+BuildRequires:  gettext
+BuildRequires:  libXcm-devel >= 0.5.1
+BuildRequires:  libXmu-devel
+BuildRequires:  libXxf86vm-devel
+BuildRequires:  libjpeg
+BuildRequires:  libjpeg-devel
+BuildRequires:  liblcms2-devel
+BuildRequires:  libpng-devel
+BuildRequires:  libqt4-devel
+BuildRequires:  libtiff-devel
+BuildRequires:  libtool
+BuildRequires:  libxml2-devel
+BuildRequires:  libyajl2-devel
+BuildRequires:  netpbm
+BuildRequires:  pkgconfig
+BuildRequires:  xdg-utils
+BuildRequires:  xorg-x11-Mesa-devel
+BuildRequires:  xorg-x11-devel
+%endif
+
 
 %package      -n lib%{name}0
 Summary:        Color Management System Libraries
 Group:          Development/Libraries/Other
 # assume users want the device modules
 Requires:       lib%{name}0-cups = %{version}
+%if 0%{?suse_version} > 1130 || 0%{?fedora_version} > 0
+Requires:       lib%{name}0-lraw = %{version}
+%endif
 Requires:       lib%{name}0-monitor = %{version}
 # we need rgb, lab, xyz gray and cmyk profiles
 # the proper names: sRGB.icc, XYZ.icc, Lab.icc are in the OpenICC-data package
@@ -236,8 +296,8 @@ Requires:       lib%{name}-alpha-devel = %{version}
 %package      -n lib%{name}0-monitor
 Summary:        Oyranos Monitor dependent Libraries
 Group:          Development/Libraries/Other
+Requires:       libXcm0 >= 0.5.2
 Requires:       xcalib
-Requires:       libXcm0 >= 0.5.1
 
 %package      monitor
 Summary:        Oyranos Monitor Tools
@@ -252,6 +312,12 @@ Group:          Development/Libraries/Other
 Summary:        CUPS device support
 Group:          Development/Libraries/Other
 Requires:       cups
+
+%if 0%{?suse_version} > 1130 || 0%{?fedora_version} > 0
+%package      -n lib%{name}0-lraw
+Summary:        LibRaw device support
+Group:          Development/Libraries/Other
+%endif
 
 %package      ui-fltk
 Summary:        Example Configuration Panel
@@ -332,6 +398,12 @@ hull of a ICC profile in 2D.
 CUPS device support for the
 Oyranos color management system.
 
+%if 0%{?suse_version} > 1130 || 0%{?fedora_version} > 0
+%description  -n lib%{name}0-lraw
+LibRaw device support for the
+Oyranos color management system.
+%endif
+
 %description  ui-fltk
 The example configuration GUI.
 Oyranos is a color management system.
@@ -394,10 +466,6 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 %dir %{_libdir}/%{cmmsubpath}/
 %dir %{_libdir}/%{metasubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_lcm*
-%if 0%{?suse_version} > 1130 || 0%{?fedora_version} > 0
-%{_libdir}/%{cmmsubpath}/lib%{name}_lraw_cmm_module*
-%{_libdir}/%{cmmsubpath}/lib%{name}_oyRE_cmm_module*
-%endif
 %{_libdir}/%{cmmsubpath}/lib%{name}_oyra_cmm_module*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oicc_cmm_module*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oPNG_cmm_module*
@@ -461,6 +529,16 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 %dir %{_libdir}/%{cmmsubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_CUPS_cmm_module*
 
+%if 0%{?suse_version} > 1130 || 0%{?fedora_version} > 0
+%files -n lib%{name}0-lraw
+%defattr(-, root, root)
+%doc AUTHORS COPYING ChangeLog README
+%dir %{_libdir}/color/
+%dir %{_libdir}/%{cmmsubpath}/
+%{_libdir}/%{cmmsubpath}/lib%{name}_lraw_cmm_module*
+%{_libdir}/%{cmmsubpath}/lib%{name}_oyRE_cmm_module*
+%endif
+
 %files ui-fltk
 %defattr(-, root, root)
 %doc AUTHORS COPYING ChangeLog README
@@ -482,6 +560,9 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 %{_mandir}/man1/%{name}-profile-graph.1*
 
 %changelog
+* Thu Feb 20 2014 Kai-Uwe Behrmann
+- add liboyranos-lraw
+
 * Thu Dec 13 2012 Kai-Uwe Behrmann
 - add BuildRequires:  cmake
 - install FindOyranos.cmake
