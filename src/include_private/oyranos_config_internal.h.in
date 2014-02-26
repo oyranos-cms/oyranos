@@ -3,6 +3,8 @@
 #define OYRANOS_CONFIG_INTERNAL_H
 
 #define PLATFORM @PLATFORM@
+#define OY_LIB_PREFIX "@CMAKE_SHARED_LIBRARY_PREFIX@"
+#define OY_LIB_SUFFIX "@CMAKE_SHARED_LIBRARY_SUFFIX@"
 #cmakedefine UNIX 
 #cmakedefine APPLE
 #cmakedefine BSD 
