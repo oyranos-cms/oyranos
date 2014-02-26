@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/10
+ *  @date     2014/02/25
  */
 
 
@@ -387,14 +387,18 @@ OYAPI int  OYEXPORT
         if(oy_debug > 1)
         {
           int i, n = oyProfiles_Count( iccs );
+#if defined(DEBUG)
           const char * fn;
+#endif
           oyProfile_Release( &p );
           for(i = 0; i < n; ++i)
           {
             p = oyProfiles_Get( iccs, i );
+#if defined(DEBUG)
             fn = oyProfile_GetFileName(p, -1);
             if(rank_list[i])
               DBG_NUM2_S("%d: %s", rank_list[i], fn);
+#endif
           }
         }
         oyFree_m_( rank_list );
