@@ -30,6 +30,7 @@
 #include "oyProfiles_s.h"
 
 #include "oyranos_cmm.h"         /* the API's this CMM implements */
+#include "oyranos_config_internal.h"
 #include "oyranos_generic.h"         /* oy_connector_imaging_static_object */
 #include "oyranos_helper.h"      /* oySprintf_ and other local helpers */
 #include "oyranos_i18n.h"
@@ -188,7 +189,7 @@ const char * lcm2InfoGetText         ( const char        * select,
 
 /* --- implementations --- */
 /* explicitely load liblcms functions, to avoid conflicts */
-static int lcms_initialised = 0;
+static int lcms_initialised = 0; /* 0 - need init; 1 - successful init; -1 - error on init */
 static void * lcms_handle = NULL;
 
 static void (*lcmsSetLogErrorHandler)(cmsLogErrorHandlerFunction Fn) = NULL;
@@ -281,20 +282,34 @@ static const cmsCIExyY*  (*lcmsD50_xyY)(void);
 static cmsFloat64Number (*lcmsDeltaE)(const cmsCIELab* Lab1, const cmsCIELab* Lab2) = NULL;
 static void (*lcmsGetAlarmCodes)(cmsUInt16Number NewAlarm[cmsMAXCHANNELS]) = NULL;
 static cmsContext (*lcmsCreateContext)(void* Plugin, void* UserData) = NULL;
+static cmsContext dummyCreateContext(void* Plugin, void* UserData) {return NULL;}
 static void* (*lcmsGetContextUserData)(cmsContext ContextID) = NULL;
+static void* dummyGetContextUserData(cmsContext ContextID) {return NULL;}
 static cmsContext (*lcmsGetProfileContextID)(cmsHPROFILE hProfile) = NULL;
 static cmsContext (*lcmsGetTransformContextID)(cmsHPROFILE hProfile) = NULL;
 
-#define LOAD_FUNC( func ) l##func = dlsym(lcms_handle, #func ); \
-               if(!l##func) lcm2_msg( oyMSG_ERROR,0, OY_DBG_FORMAT_" " \
-                                      "init failed: %s", \
-                                      OY_DBG_ARGS_, dlerror() );
+#define LOAD_FUNC( func, fallback_func ) l##func = dlsym(lcms_handle, #func ); \
+               if(!l##func) \
+               { \
+                 oyMSG_e type = oyMSG_ERROR; \
+                 if(#fallback_func != NULL) \
+                 { \
+                   l##func = fallback_func; \
+                   type = oyMSG_WARN; \
+                 } else \
+                 { \
+                   error = 1; \
+                 } \
+                 lcm2_msg( type,0, OY_DBG_FORMAT_" " \
+                                      "dlsym failed: %s", \
+                                      OY_DBG_ARGS_, dlerror() ); \
+               }
 
 /** Function lcm2CMMInit
  *  @brief   API requirement
  *
  *  @version Oyranos: 0.9.5
- *  @date    2014/01/18
+ *  @date    2014/02/27
  *  @since   2007/12/11 (Oyranos: 0.1.8)
  */
 int                lcm2CMMInit       ( oyStruct_s        * filter )
@@ -302,72 +317,84 @@ int                lcm2CMMInit       ( oyStruct_s        * filter )
   int error = 0;
   if(!lcms_initialised)
   {
-    lcms_initialised = 1;
+    char * fn = NULL;
 
-    lcms_handle = dlopen("liblcms2.so", RTLD_LAZY);
+    oyStringAddPrintf_( &fn, oyAllocateFunc_, oyDeAllocateFunc_,
+                        "%slcms2%s.2", OY_LIB_PREFIX, OY_LIB_SUFFIX );
+    lcms_handle = dlopen(fn, RTLD_LAZY);
+    oyFree_m_( fn );
+
     if(!lcms_handle)
     {
       lcm2_msg( oyMSG_ERROR,0, OY_DBG_FORMAT_" "
                "init failed: %s",
                 OY_DBG_ARGS_, dlerror() );
       error = 1;
+      lcms_initialised = -1;
     } else
     {
-      LOAD_FUNC( cmsSetLogErrorHandler );
-      LOAD_FUNC( cmsGetColorSpace );
-      LOAD_FUNC( cmsGetPCS );
-      LOAD_FUNC( cmsGetDeviceClass );
-      LOAD_FUNC( _cmsLCMScolorSpace );
-      LOAD_FUNC( cmsChannelsOf );
-      LOAD_FUNC( cmsCreateTransform );
-      LOAD_FUNC( cmsCreateProofingTransform );
-      LOAD_FUNC( cmsCreateProofingTransformTHR );
-      LOAD_FUNC( cmsCreateMultiprofileTransform );
-      LOAD_FUNC( cmsCreateExtendedTransform );
-      LOAD_FUNC( cmsDeleteTransform );
-      LOAD_FUNC( cmsDoTransform );
-      LOAD_FUNC( cmsTransform2DeviceLink );
-      LOAD_FUNC( cmsSaveProfileToMem );
-      LOAD_FUNC( cmsOpenProfileFromMemTHR );
-      LOAD_FUNC( cmsOpenProfileFromFileTHR );
-      LOAD_FUNC( cmsCloseProfile );
-      LOAD_FUNC( cmsCreateProfilePlaceholder );
-      LOAD_FUNC( cmsSetProfileVersion );
-      LOAD_FUNC( cmsCreateLab4ProfileTHR );
-      LOAD_FUNC( cmsCreateLab4Profile );
-      LOAD_FUNC( cmsCreateRGBProfile );
-      LOAD_FUNC( cmsSetDeviceClass );
-      LOAD_FUNC( cmsSetColorSpace );
-      LOAD_FUNC( cmsSetPCS );
-      LOAD_FUNC( cmsBuildGamma );
-      LOAD_FUNC( cmsBuildSegmentedToneCurve );
-      LOAD_FUNC( cmsFreeToneCurve );
-      LOAD_FUNC( cmsPipelineAlloc );
-      LOAD_FUNC( cmsPipelineFree );
-      LOAD_FUNC( cmsPipelineInsertStage );
-      LOAD_FUNC( cmsStageAllocCLut16bit );
-      LOAD_FUNC( cmsStageAllocCLutFloat );
-      LOAD_FUNC( cmsStageSampleCLut16bit );
-      LOAD_FUNC( cmsStageSampleCLutFloat );
-      LOAD_FUNC( cmsStageAllocToneCurves );
-      LOAD_FUNC( cmsWriteTag );
-      LOAD_FUNC( cmsMLUalloc );
-      LOAD_FUNC( cmsMLUsetASCII );
-      LOAD_FUNC( cmsMLUfree );
-      LOAD_FUNC( cmsLabEncoded2Float );
-      LOAD_FUNC( cmsFloat2LabEncoded );
-      LOAD_FUNC( cmsD50_XYZ );
-      LOAD_FUNC( cmsD50_xyY );
-      LOAD_FUNC( cmsDeltaE );
-      LOAD_FUNC( cmsGetAlarmCodes );
-      LOAD_FUNC( cmsCreateContext );
-      LOAD_FUNC( cmsGetContextUserData );
-      LOAD_FUNC( cmsGetProfileContextID );
-      LOAD_FUNC( cmsGetTransformContextID );
+      LOAD_FUNC( cmsSetLogErrorHandler, NULL );
+      LOAD_FUNC( cmsGetColorSpace, NULL );
+      LOAD_FUNC( cmsGetPCS, NULL );
+      LOAD_FUNC( cmsGetDeviceClass, NULL );
+      LOAD_FUNC( _cmsLCMScolorSpace, NULL );
+      LOAD_FUNC( cmsChannelsOf, NULL );
+      LOAD_FUNC( cmsCreateTransform, NULL );
+      LOAD_FUNC( cmsCreateProofingTransform, NULL );
+      LOAD_FUNC( cmsCreateProofingTransformTHR, NULL );
+      LOAD_FUNC( cmsCreateMultiprofileTransform, NULL );
+      LOAD_FUNC( cmsCreateExtendedTransform, NULL );
+      LOAD_FUNC( cmsDeleteTransform, NULL );
+      LOAD_FUNC( cmsDoTransform, NULL );
+      LOAD_FUNC( cmsTransform2DeviceLink, NULL );
+      LOAD_FUNC( cmsSaveProfileToMem, NULL );
+      LOAD_FUNC( cmsOpenProfileFromMemTHR, NULL );
+      LOAD_FUNC( cmsOpenProfileFromFileTHR, NULL );
+      LOAD_FUNC( cmsCloseProfile, NULL );
+      LOAD_FUNC( cmsCreateProfilePlaceholder, NULL );
+      LOAD_FUNC( cmsSetProfileVersion, NULL );
+      LOAD_FUNC( cmsCreateLab4ProfileTHR, NULL );
+      LOAD_FUNC( cmsCreateLab4Profile, NULL );
+      LOAD_FUNC( cmsCreateRGBProfile, NULL );
+      LOAD_FUNC( cmsSetDeviceClass, NULL );
+      LOAD_FUNC( cmsSetColorSpace, NULL );
+      LOAD_FUNC( cmsSetPCS, NULL );
+      LOAD_FUNC( cmsBuildGamma, NULL );
+      LOAD_FUNC( cmsBuildSegmentedToneCurve, NULL );
+      LOAD_FUNC( cmsFreeToneCurve, NULL );
+      LOAD_FUNC( cmsPipelineAlloc, NULL );
+      LOAD_FUNC( cmsPipelineFree, NULL );
+      LOAD_FUNC( cmsPipelineInsertStage, NULL );
+      LOAD_FUNC( cmsStageAllocCLut16bit, NULL );
+      LOAD_FUNC( cmsStageAllocCLutFloat, NULL );
+      LOAD_FUNC( cmsStageSampleCLut16bit, NULL );
+      LOAD_FUNC( cmsStageSampleCLutFloat, NULL );
+      LOAD_FUNC( cmsStageAllocToneCurves, NULL );
+      LOAD_FUNC( cmsWriteTag, NULL );
+      LOAD_FUNC( cmsMLUalloc, NULL );
+      LOAD_FUNC( cmsMLUsetASCII, NULL );
+      LOAD_FUNC( cmsMLUfree, NULL );
+      LOAD_FUNC( cmsLabEncoded2Float, NULL );
+      LOAD_FUNC( cmsFloat2LabEncoded, NULL );
+      LOAD_FUNC( cmsD50_XYZ, NULL );
+      LOAD_FUNC( cmsD50_xyY, NULL );
+      LOAD_FUNC( cmsDeltaE, NULL );
+      LOAD_FUNC( cmsGetAlarmCodes, NULL );
+      LOAD_FUNC( cmsCreateContext, dummyCreateContext ); /* available since lcms 2.6 */
+      LOAD_FUNC( cmsGetContextUserData, dummyGetContextUserData ); /* available since lcms 2.6 */
+      LOAD_FUNC( cmsGetProfileContextID, NULL );
+      LOAD_FUNC( cmsGetTransformContextID, NULL );
 
-      lcmsSetLogErrorHandler( lcm2ErrorHandlerFunction );
+      if(lcmsSetLogErrorHandler)
+        lcmsSetLogErrorHandler( lcm2ErrorHandlerFunction );
+
+      if(error)
+        lcms_initialised = -1;
+      else
+        lcms_initialised = 1;
     }
-  }
+  } else if(lcms_initialised == -1)
+    error = 1;
   return error;
 }
 
@@ -3439,5 +3466,6 @@ oyCMMinfo_s_ lcm2_cmm_module = {
   (oyCMMapi_s*) & lcm2_api4_cmm,       /**< api */
 
   {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "lcms_logo2.png"}, /**< icon */
+  lcm2CMMInit                          /**< oyCMMinfoInit_f */
 };
 
