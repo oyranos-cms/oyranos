@@ -789,7 +789,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         active = oydiColorServerActive( display_id );
         oyOptions_Release( &tags );
         oyBlob_Release( &display_id );
-        if(active | XCM_COLOR_SERVER_REGIONS)
+        if(active & XCM_COLOR_SERVER_REGIONS)
 #endif
         error = oyOptions_SetFromText( &options,
                                "//"OY_TYPE_STD"/config/x_color_region_target",
