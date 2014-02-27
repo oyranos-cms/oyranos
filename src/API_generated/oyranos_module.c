@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/13
+ *  @date     2014/02/25
  */
 
 
@@ -1175,7 +1175,11 @@ oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name )
       {
         oyCMMinfoInit_f init = oyCMMinfo_GetInitF(cmm_info);
         if(init)
+        {
           error = init( (oyStruct_s*)cmm_info );
+          if(error > 0)
+            cmm_info = NULL;
+        }
       }
 
       if(error <= 0)
@@ -1192,9 +1196,14 @@ oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name )
         if(error <= 0)
         error = oyCMMapi_GetInitF(api)( (oyStruct_s*) api );
         if(error <= 0)
+        {
           error = oyCMMhandle_Set_( cmm_handle, cmm_info, dso_handle, lib_name);
-
-        api_found = 1;
+          api_found = 1;
+        } else
+        {
+          cmm_info = NULL;
+          oyCMMhandle_Release_( &cmm_handle );
+        }
       }
 
       /* store */
