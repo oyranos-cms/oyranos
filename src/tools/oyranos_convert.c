@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2012-2013 (C) Kai-Uwe Behrmann
+ *            2012-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC conversion - on the command line
  *  @internal
@@ -36,9 +36,6 @@
 #include <string.h>
 
 #include "oyranos_forms.h"
-#ifdef USE_LCMS
-#include "lcms2.h"
-#endif
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
 
