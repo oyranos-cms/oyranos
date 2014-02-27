@@ -14,7 +14,6 @@
  */
 
 /* gcc -Wall -g `pkg-config oyranos libxml-2.0 --libs --cflags` oy_filter_node.c -o oy_filter_node */
-#include <oyranos_alpha.h>
 #include <oyranos_helper.h>
 #include <oyranos_i18n.h>
 #include "oyranos_string.h"
