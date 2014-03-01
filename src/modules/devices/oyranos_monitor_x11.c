@@ -748,8 +748,13 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
     sprintf(text,"xcalib -d %s -s %d %s \'%s\'", dpy_name, disp->geo[1],
                  oy_debug?"-v":"", profile_fullname);
     if(oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR)
+#if defined(HAVE_XRANDR)
       sprintf(text,"xcalib -d %s -s %d %s \'%s\'", dpy_name, oyX1Monitor_rrScreen_(disp),
               oy_debug?"-v":"", profile_fullname);
+#else
+      sprintf(text,"xcalib -d %s -s %d %s \'%s\'", dpy_name, 0,
+              oy_debug?"-v":"", profile_fullname);
+#endif
     else
       sprintf(text,"xcalib -d %s -s %d %s \'%s\'", dpy_name, disp->geo[1],
               oy_debug?"-v":"", profile_fullname);
