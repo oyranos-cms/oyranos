@@ -83,6 +83,8 @@ char**  oyFileListGet_                    (const char * subpath,
 char**  oyLibListGet_                     (const char * subpath,
                                            int        * size,
                                            int          owner);
+char*   oyLibNameCreate_                 ( const char * lib_base_name,
+                                           int          version );
 
 
 /* oyranos part */

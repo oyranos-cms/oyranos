@@ -1637,3 +1637,22 @@ oyLibListGet_                   (const char * subpath,
   return l.names;
 }
 
+/** @internal
+ *  @brief construct library name for dlopen'ing
+ *
+ *  Since: 0.9.5
+ */
+char*   oyLibNameCreate_                 ( const char * lib_base_name,
+                                           int          version )
+{
+  char * fn = NULL;
+
+#ifdef __APPLE__
+    oyStringAddPrintf_( &fn, oyAllocateFunc_, oyDeAllocateFunc_,
+                        "%s%s.%d%s", OY_LIB_PREFIX, lib_base_name, version, OY_LIB_SUFFIX );
+#else
+    oyStringAddPrintf_( &fn, oyAllocateFunc_, oyDeAllocateFunc_,
+                        "%s%s%s.%d", OY_LIB_PREFIX, lib_base_name, OY_LIB_SUFFIX, version );
+#endif
+  return fn;  
+}
