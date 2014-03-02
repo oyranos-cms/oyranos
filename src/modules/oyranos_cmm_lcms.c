@@ -33,6 +33,7 @@
 #include "oyranos_generic.h"         /* oy_connector_imaging_static_object */
 #include "oyranos_helper.h"      /* oySprintf_ and other local helpers */
 #include "oyranos_i18n.h"
+#include "oyranos_io.h"
 #include "oyranos_image.h"
 #include "oyranos_object_internal.h"
 #include "oyranos_string.h"
@@ -270,7 +271,10 @@ int                lcmsCMMInit       ( oyStruct_s        * filter )
   {
     lcms_initialised = 1;
 
-    lcms_handle = dlopen("liblcms.so", RTLD_LAZY);
+    char * fn = oyLibNameCreate_( "lcms", 1 );
+    lcms_handle = dlopen(fn, RTLD_LAZY);
+    oyFree_m_( fn );
+
     if(!lcms_handle)
     {
       lcms_msg( oyMSG_ERROR,0, OY_DBG_FORMAT_" "

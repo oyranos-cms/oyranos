@@ -34,6 +34,7 @@
 #include "oyranos_generic.h"         /* oy_connector_imaging_static_object */
 #include "oyranos_helper.h"      /* oySprintf_ and other local helpers */
 #include "oyranos_i18n.h"
+#include "oyranos_io.h"
 #include "oyranos_image.h"
 #include "oyranos_object_internal.h"
 #include "oyranos_string.h"
@@ -317,10 +318,7 @@ int                lcm2CMMInit       ( oyStruct_s        * filter )
   int error = 0;
   if(!lcms_initialised)
   {
-    char * fn = NULL;
-
-    oyStringAddPrintf_( &fn, oyAllocateFunc_, oyDeAllocateFunc_,
-                        "%slcms2%s.2", OY_LIB_PREFIX, OY_LIB_SUFFIX );
+    char * fn = oyLibNameCreate_( "lcms2", 2 );
     lcms_handle = dlopen(fn, RTLD_LAZY);
     oyFree_m_( fn );
 
