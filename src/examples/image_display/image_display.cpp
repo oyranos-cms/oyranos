@@ -81,14 +81,20 @@ main(int argc, char** argv)
   int logo = 0x02;
   const char * module_name = 0;
   const char * clut_name = 0;
+  int i;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
 #endif
   oyI18NInit_();
 
+/* workaround to initialise OpenMP in order to get code compiled under osX 10.6.8 */
+#pragma omp parallel for private(i)
+  for(i = 0; i < 1; ++i)
+    file_pos = 1;
+
   /* handle arguments */
-  for(int i = 1; i < argc; ++i)
+  for(i = 1; i < argc; ++i)
   {
     if(argc > 1 && strcmp(argv[i], "-v") == 0)
     {
