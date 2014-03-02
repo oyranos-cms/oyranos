@@ -873,7 +873,7 @@ oyPointer    oyCMMdsoGet_            ( const char        * cmm,
   int found = -1;
   oyPointer dso_handle = 0;
 
-if(!lib_name)
+  if(!lib_name)
     return 0;
 
 #ifdef HAVE_POSIX
@@ -1148,9 +1148,6 @@ oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name )
 
       cmm_info = (oyCMMinfo_s*) dlsym (dso_handle, info_sym);
 
-      if(info_sym)
-        oyFree_m_(info_sym);
-
       error = !cmm_info;
 
       if(error)
@@ -1163,9 +1160,15 @@ oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name )
         {
           error = init( (oyStruct_s*)cmm_info );
           if(error > 0)
+          {
+            WARNc2_S("init returned with %d %s" , error, info_sym);
             cmm_info = NULL;
+          }
         }
       }
+
+      if(info_sym)
+        oyFree_m_(info_sym);
 
       if(error <= 0)
         if(oyCMMapi_Check_( oyCMMinfo_GetApi( cmm_info ) ))
