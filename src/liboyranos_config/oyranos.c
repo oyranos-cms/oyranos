@@ -154,8 +154,8 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
     if (oyStrrchr_ (name, OY_SLASH_C))
     {
       char * f = oyStringCopy_( oyStrrchr_ (name, OY_SLASH_C) + 1, allocate_func );
+      oyFree_m_(name);
       name = f;
-      oyFree_m_(f);
     }
   } else {
     const oyOption_t_ * t = oyOptionGet_((oyWIDGET_e)type);
