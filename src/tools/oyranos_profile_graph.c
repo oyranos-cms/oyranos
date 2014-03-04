@@ -494,8 +494,8 @@ int main( int argc , char** argv )
     oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, 0 ),
                 * sRGB = oyProfile_FromStd( oyASSUMED_WEB, 0 );
     oyConversion_s * lab_srgb = oyConversion_CreateBasicPixelsFromBuffers (
-                                       pLab, rgb, oyDOUBLE,
-                                       sRGB, rgb, oyDOUBLE,
+                                       pLab, rgb, oyDataType_m(oyDOUBLE),
+                                       sRGB, rgb, oyDataType_m(oyDOUBLE),
                                        0, 1 );
     for(i=0;i<372;++i) bb[i] = bb_spectrum(360+i, kelvin);
     for(i=0;i<372;++i) if(bb[i] > max) max = bb[i];
@@ -768,8 +768,8 @@ void draw_illuminant( cairo_t * cr,
     oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, 0 ),
                 * sRGB = oyProfile_FromStd( oyASSUMED_WEB, 0 );
     oyConversion_s * lab_srgb = oyConversion_CreateBasicPixelsFromBuffers (
-                                       pLab, rgb, oyDOUBLE,
-                                       sRGB, rgb, oyDOUBLE,
+                                       pLab, rgb, oyDataType_m(oyDOUBLE),
+                                       sRGB, rgb, oyDataType_m(oyDOUBLE),
                                        0, 1 );
 
 
