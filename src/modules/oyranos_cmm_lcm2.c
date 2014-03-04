@@ -378,8 +378,13 @@ int                lcm2CMMInit       ( oyStruct_s        * filter )
       LOAD_FUNC( cmsD50_xyY, NULL );
       LOAD_FUNC( cmsDeltaE, NULL );
       LOAD_FUNC( cmsGetAlarmCodes, NULL );
+#if LCMS_VERSION >= 2060
       LOAD_FUNC( cmsCreateContext, dummyCreateContext ); /* available since lcms 2.6 */
       LOAD_FUNC( cmsGetContextUserData, dummyGetContextUserData ); /* available since lcms 2.6 */
+#else
+      lcmsCreateContext = dummyCreateContext;
+      lcmsGetContextUserData = dummyGetContextUserData;
+#endif
       LOAD_FUNC( cmsGetProfileContextID, NULL );
       LOAD_FUNC( cmsGetTransformContextID, NULL );
 
