@@ -50,7 +50,7 @@ int oyProfile_GetHash_        ( oyProfile_s_      * s,
        !has_id)
     {
       error = oyProfileGetMD5( s->block_, s->size_, s->oy_->hash_ptr_ );
-      if(error)
+      if(error == -2)
         oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
                          OY_DBG_FORMAT_"%s \"%s\": %d", OY_DBG_ARGS_,
                          oyProfile_GetText( (oyProfile_s*) s, oyNAME_DESCRIPTION ),
