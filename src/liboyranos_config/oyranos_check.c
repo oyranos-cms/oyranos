@@ -191,7 +191,7 @@ oyProfileGetMD5_       ( void       *buffer,
       oySprintf_(tmp_hash2, "%08x%08x%08x%08x", m[0], m[1], m[2], m[3]);
 
       if(has_profile_id)
-        WARNc2_S("%s != %s", tmp_hash, tmp_hash2)
+        WARNc2_S("internal: %s != compute: %s", tmp_hash, tmp_hash2)
       error = -1 - has_profile_id;
     } else
     if(oy_debug > 2)
