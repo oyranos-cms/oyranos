@@ -77,8 +77,9 @@ int          qarzMonitorProfileSetup ( const char        * display_name,
 int          qarzMonitorProfileUnset ( const char        * display_name );
 oyRectangle_s * qarzRectangle_FromDevice (
                                        const char        * device_name );
-char *       qarzGetMonitorProfile   ( const char        * device_name,
+int          qarzGetMonitorProfile   ( const char        * device_name,
                                        uint32_t            flags,
+                                       char             ** block,
                                        size_t            * size,
                                        oyAlloc_f           allocate_func );
 int      qarzGetAllScreenNames       ( const char        * display_name,

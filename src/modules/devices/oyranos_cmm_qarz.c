@@ -266,11 +266,29 @@ int          qarzDeviceFromName_     ( const char        * device_name,
                  oyNoEmptyString_m_( device_name ) );
 
       if(error <= 0 && edid)
+      {
         error = oyDeviceFillEdid(   QARZ_MONITOR_REGISTRATION,
                                     device, oyBlob_GetPointer(edid), oyBlob_GetSize(edid),
                                     device_name,
                                     host, display_geometry, system_port,
                                     options );
+      } else if(error <= 0)
+      {
+        if(!error && device_name)
+        error = oyOptions_SetFromText( oyConfig_GetOptions(*device,"backend_core"),
+                                       QARZ_MONITOR_REGISTRATION OY_SLASH "device_name",
+                                       device_name, OY_CREATE_NEW );
+
+        error = oyDeviceFillInfos( QARZ_MONITOR_REGISTRATION, device,
+                                   device_name, host, display_geometry,
+                                   system_port,
+                                   manufacturer, mnft, model,
+                                   serial, vendor,
+                                   week, year,
+                                   mnft_id, model_id,
+                                   colors, options );
+      }
+
       if(error != 0)
         message( oyMSG_WARN, (oyStruct_s*)options,
                  OY_DBG_FORMAT_ "\n  Could not complete \"properties\" call.\n"
@@ -656,8 +674,8 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
                      device_name );
             flags |= 0x01;
           }
-          data = qarzGetMonitorProfile( device_name, flags, &size,
-                                        allocateFunc );
+          error = qarzGetMonitorProfile( device_name, flags, &data, &size,
+                                         allocateFunc );
 
 
           has = 0;

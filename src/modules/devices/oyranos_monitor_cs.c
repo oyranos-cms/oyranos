@@ -154,8 +154,9 @@ CGDirectDisplayID qarzMonitor_nameToOsxID ( const char        * display_name )
 
 
 
-char *       qarzGetMonitorProfile   ( const char        * device_name,
+int          qarzGetMonitorProfile   ( const char        * device_name,
                                        uint32_t            flags,
+                                       char             ** block,
                                        size_t            * size,
                                        oyAlloc_f           allocate_func )
 {
@@ -167,7 +168,6 @@ char *       qarzGetMonitorProfile   ( const char        * device_name,
   CGDirectDisplayID screenID = 0;
   CMProfileLocation loc;
   int err = 0;
-  char * block = NULL;
   UInt32 locationSize = sizeof(CMProfileLocation);
   int version = oyOSxVersionAtRuntime();
 
@@ -183,9 +183,16 @@ char *       qarzGetMonitorProfile   ( const char        * device_name,
     CMGetProfileByAVID( (CMDisplayIDType)screenID, &prof );
     NCMGetProfileLocation(prof, &loc, &locationSize );
 
-    err = oyGetProfileBlockOSX (prof, &block, size, allocate_func);
-    moni_profile = block;
+    err = oyGetProfileBlockOSX (prof, &moni_profile, size, allocate_func);
     if (prof) CMCloseProfile(prof);
+
+    if(!moni_profile || !size)
+      error = 1;
+
+  } else if(version >= 100600)
+  {
+    oyProfile_s * prof = oyProfile_FromStd( oyASSUMED_WEB, NULL );
+    moni_profile = oyProfile_GetMem( prof, size, 0, oyAllocateFunc_ );
   }
 
 #if 0
@@ -198,12 +205,10 @@ char *       qarzGetMonitorProfile   ( const char        * device_name,
   }
 #endif
 
+  *block = moni_profile;
 
   DBG_PROG_ENDE
-  if(!error)
-    return moni_profile;
-  else
-    return NULL;
+  return error;
 }
 
 
