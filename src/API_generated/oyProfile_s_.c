@@ -461,8 +461,15 @@ int oyProfile_GetHash_        ( oyProfile_s_      * s,
     oyObject_HashSet( s->oy_, 0 );
     if(flags & OY_COMPUTE ||
        !has_id)
+    {
       error = oyProfileGetMD5( s->block_, s->size_, s->oy_->hash_ptr_ );
-    else
+      if(error)
+        oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
+                         OY_DBG_FORMAT_"%s \"%s\": %d", OY_DBG_ARGS_,
+                         oyProfile_GetText( (oyProfile_s*) s, oyNAME_DESCRIPTION ),
+                         oyProfile_GetFileName( (oyProfile_s*) s, -1 ),
+                         error );
+    } else
     {
       char * data = s->block_;
       uint32_t id[4];

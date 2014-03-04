@@ -155,7 +155,7 @@ oyProfileGetMD5_       ( void       *buffer,
 {
   char* block = NULL;
   int error = 0;
-  char profile_id[16];
+  char profile_id[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   uint32_t * h = (uint32_t*)profile_id,
            * m = (uint32_t*)md5_return;
   int has_profile_id;
