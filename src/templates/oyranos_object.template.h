@@ -317,15 +317,6 @@ typedef enum {
 int          oyTextboolean_          ( const char        * text_a,
                                        const char        * text_b,
                                        oyBOOLEAN_e         type );
-char * oyFilterRegistrationToText    ( const char        * registration,
-                                       oyFILTER_REG_e      type,
-                                       oyAlloc_f           allocateFunc );
-int    oyFilterRegistrationMatch     ( const char        * registration,
-                                       const char        * pattern,
-                                       oyOBJECT_e          api_number );
-int    oyFilterRegistrationMatchKey  ( const char        * registration1,
-                                       const char        * registration2,
-                                       oyOBJECT_e          api_number );
 
 #define OY_OUTPUT                      0x01
 #define OY_INPUT                       0x02
