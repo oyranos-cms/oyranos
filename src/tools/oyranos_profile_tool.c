@@ -241,7 +241,7 @@ int main( int argc , char** argv )
     p = oyProfile_FromMem( size, data, 0, 0 );
     oyFree_m_( data );
   } else
-    p = oyProfile_FromFile( file_name, 0, 0 );
+    p = oyProfile_FromFile( file_name, verbose?OY_COMPUTE:0, 0 );
 
   if(p)
   {
@@ -304,7 +304,7 @@ int main( int argc , char** argv )
       oyFree_m_(ext);
 
     {
-      oyProfile_s * test = oyProfile_FromFile( pn, 0, 0 );
+      oyProfile_s * test = oyProfile_FromFile( pn, verbose?OY_COMPUTE:0, 0 );
       if(test)
       {
         fprintf(stderr, "%s: \"%s\" - %s\n", _("Profile exists already"), pn, _("Exit!"));
