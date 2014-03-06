@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/02/06
  */
 
 
@@ -65,8 +65,8 @@ typedef struct oyProfile_s oyProfile_s;
 #define oyToNoCacheRead_m(r)        ((r)&1)
 #define oyToNoCacheWrite_m(w)       (((w) >> 1)&1)
 
-#define OY_COMPUTE      0x01                    /**< compute newly */
 #define OY_FROM_PROFILE 0x04                    /**< use from profile */
+#define OY_COMPUTE      0x08                    /**< compute newly */
 
 /* } Include "Profile.public.h" */
 
