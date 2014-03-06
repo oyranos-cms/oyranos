@@ -148,10 +148,6 @@ typedef enum  {
 
 int         oySetDefaultProfile        (oyPROFILE_e       type,
                                         const char*       file_name);
-int         oySetDefaultProfileBlock   (oyPROFILE_e       type,
-                                        const char*       file_name,
-                                        void*             mem,
-                                        size_t            size);
 char*       oyGetDefaultProfileName    (oyPROFILE_e       type,
                                         oyAlloc_f         alloc_func);
 

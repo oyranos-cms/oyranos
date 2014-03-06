@@ -97,19 +97,6 @@ oySetDefaultProfile_       (oyPROFILE_e       type,
   return r;
 }
 
-int
-oySetDefaultProfileBlock_  (oyPROFILE_e type,
-                            const char* file_name, void* mem, size_t size)
-{
-  int r;
-
-  DBG_PROG_START
-
-  r = oySetProfile_Block (file_name, mem, size, type, 0);
-  DBG_PROG_ENDE
-  return r;
-}
-
 /*int*
 oyGroupSetGet            (oyGROUP_e group, int * count )
 {
@@ -172,57 +159,6 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
 }
 
 
-/* profile handling API */
-
-int
-oySetProfile_Block (const char* name, void* mem, size_t size,
-                    oyPROFILE_e type, const char* comnt)
-{
-  int r = 0, len = 0;
-  char *fullFileName = NULL, *resolvedFN = NULL;
-  const char *fileName = NULL;
-
-  DBG_PROG_START
-
-  if (oyStrrchr_ (name, OY_SLASH_C))
-    fileName = oyStrrchr_ (name, OY_SLASH_C);
-  else
-    fileName = name;
-
-  oyAllocHelper_m_( fullFileName, char,
-                    oyStrlen_(OY_PROFILE_PATH_USER_DEFAULT) +
-                      oyStrlen_ (fileName) + 4,
-                    oyAllocateFunc_, return 1);
-
-  oySprintf_ (fullFileName, "%s%s", OY_PROFILE_PATH_USER_DEFAULT, OY_SLASH);
-  len = oyStrlen_(fullFileName);
-  memcpy( &fullFileName[len], fileName, oyStrlen_(fileName) );
-  fullFileName[len + oyStrlen_(fileName)] = 0;
-
-  resolvedFN = oyResolveDirFileName_ (fullFileName);
-  oyFree_m_(fullFileName);
-  fullFileName = resolvedFN;
-
-  if (!oyCheckProfileMem_( mem, size, 0))
-  {
-    DBG_PROG_S(fullFileName)
-    if ( oyIsFile_(fullFileName) ) {
-      WARNc_PROFILE_S( fullFileName,
-                _("file exists, please remove befor installing new profile."))
-    } else
-    { r = oyWriteMemToFile_ (fullFileName, mem, size);
-      oySetProfile_ ( name, type, comnt);
-    }
-  }
-
-  DBG_PROG1_S("%s", name)
-  DBG_PROG1_S("%s", fileName)
-  DBG_PROG2_S("%ld %d", (long int)&((char*)mem)[0] , (int)size)
-  oyFree_m_(fullFileName);
-
-  DBG_PROG_ENDE
-  return r;
-}
 
 /* --- internal API decoupling --- */
 
@@ -686,33 +622,6 @@ oySetDefaultProfile        (oyPROFILE_e       type,
   return n;
 }
 
-/** Sets a profile, which is available in the current configured path.
- *
- *  @param  type      the kind of default profile
- *  @param  file_name the profile which shall become the default for the above
- *          specified profile type
- *  @param  mem       the memory containing the profile
- *  @param  size      the profile size in mem
- *  @return success
- */
-int
-oySetDefaultProfileBlock   (oyPROFILE_e       type,
-                            const char*       file_name,
-                            void*             mem,
-                            size_t            size)
-{
-  int n = 0;
-
-  DBG_PROG_START
-  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
-  oyTextsCheck_ ();
-
-  n = oySetDefaultProfileBlock_ (type, file_name, mem, size);
-
-  oyExportEnd_();
-  DBG_PROG_ENDE
-  return n;
-}
 
 /** Gets a default profile filename.
  *

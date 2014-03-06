@@ -37,10 +37,6 @@ int         oySetBehaviour             (oyBEHAVIOUR_e       type,
 
 int         oySetDefaultProfile        (oyPROFILE_e       type,
                                         const char*       file_name);
-int         oySetDefaultProfileBlock   (oyPROFILE_e       type,
-                                        const char*       file_name,
-                                        void*             mem,
-                                        size_t            size);
 
 
 /* --- profile lists --- */

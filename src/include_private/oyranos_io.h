@@ -54,12 +54,6 @@ extern "C" {
 extern int oy_warn_;
 
 
-int     oySetProfile_Block                (const char      * name,
-                                           void            * mem,
-                                           size_t            size,
-                                           oyPROFILE_e       type,
-                                           const char      * comnt);
-
 /* --- internal API definition --- */
 
 /* separate from the external functions */

@@ -57,11 +57,6 @@ void    oyDestroyCompList_ (oyComp_t_* list);
 char*   printComp          (oyComp_t_* entry);
 
 
-int     oySetProfile_Block                (const char      * name, 
-                                           void            * mem,
-                                           size_t            size,
-                                           oyPROFILE_e       type,
-                                           const char      * comnt);
 int   oySetProfile_             (const char      * name,
                                  oyPROFILE_e       type,
                                  const char      * comment);

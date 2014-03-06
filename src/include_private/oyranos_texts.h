@@ -96,10 +96,6 @@ int           oyGroupRemove_           (oyGROUP_e     id);
 
 int         oySetDefaultProfile_       (oyPROFILE_e       type,
                                         const char*       file_name);
-int         oySetDefaultProfileBlock_  (oyPROFILE_e       type,
-                                        const char*       file_name,
-                                        void*             mem,
-                                        size_t            size);
 char*       oyGetDefaultProfileName_   (oyPROFILE_e       type,
                                        oyAlloc_f           alloc_func);
 
