@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/13
+ *  @date     2014/03/06
  */
 
 
@@ -229,17 +229,17 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
  *  profile paths and profiles relative to the current working path. 
  *  Search will occure in this order.
  *
- *  @param[in]    name           profile file name
- *  @param[in]    flags          for future extension
+ *  @param[in]    name           profile file name or ICC ID
+ *  @param[in]    flags          OY_COMPUTE - compute ID
  *  @param[in]    object         the optional base
  *
  *  flags supports OY_NO_CACHE_READ and OY_NO_CACHE_WRITE to disable cache
  *  reading and writing. The cache flags are useful for one time profiles or
  *  scanning large numbers of profiles.
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.5
  *  @since   2007/11/0 (Oyranos: 0.1.9)
- *  @date    2010/05/18
+ *  @date    2014/03/05
  */
 OYAPI oyProfile_s * OYEXPORT
 oyProfile_FromFile            ( const char      * name,
@@ -247,10 +247,27 @@ oyProfile_FromFile            ( const char      * name,
                                 oyObject_s        object)
 {
   oyProfile_s_ * s = 0;
+  uint32_t md5[4];
 
-  s = oyProfile_FromFile_( name, flags, object );
+  char * fn = oyFindProfile_( name );
+  if(fn)
+    s = oyProfile_FromFile_( name, flags, object );
+
+  if(fn) oyFree_m_(fn);
+
+  if(flags & OY_COMPUTE)
+    oyProfile_GetHash_( s, OY_COMPUTE );
 
   oyProfile_GetID( (oyProfile_s*)s );
+
+  if(s)
+    return (oyProfile_s*)s;
+
+  if(name && strlen(name) == 32)
+  {
+    sscanf(name, "%08x%08x%08x%08x", &md5[0],&md5[1],&md5[2],&md5[3] );
+    s = (oyProfile_s_*) oyProfile_FromMD5( md5, object );
+  }
 
   return (oyProfile_s*)s;
 }
@@ -335,8 +352,8 @@ OYAPI oyProfile_s * OYEXPORT
  *  @since   2009/03/20 (Oyranos: 0.1.10)
  *  @date    2009/03/20
  */
-OYAPI oyProfile_s * OYEXPORT
-                   oyProfile_FromMD5(  uint32_t          * md5,
+OYAPI oyProfile_s * OYEXPORT oyProfile_FromMD5(
+                                       uint32_t          * md5,
                                        oyObject_s          object )
 {
   oyProfile_s * s = 0, * tmp = 0;
@@ -357,7 +374,8 @@ OYAPI oyProfile_s * OYEXPORT
       if(names[i])
       {
         if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
-          tmp = oyProfile_FromFile( names[i], 0, 0 );
+          /* ICC ID's are not relyable so we recompute it here */
+          tmp = oyProfile_FromFile( names[i], OY_COMPUTE, 0 );
 
         if(tmp->oy_->hash_ptr_)
           equal = memcmp( md5, tmp->oy_->hash_ptr_, OY_HASH_SIZE );
@@ -397,8 +415,7 @@ OYAPI oyProfile_s * OYEXPORT
  *  @since   2012/01/08 (Oyranos: 0.3.3)
  *  @date    2012/01/08
  */
-OYAPI oyProfile_s * OYEXPORT
-                   oyProfile_FromTaxiDB (
+OYAPI oyProfile_s * OYEXPORT oyProfile_FromTaxiDB (
                                        oyOptions_s       * options,
                                        oyObject_s          object )
 {
@@ -1646,8 +1663,8 @@ OYAPI int OYEXPORT
  *  @since   2008/02/01 (Oyranos: 0.1.8)
  *  @date    2008/02/01
  */
-OYAPI const char * OYEXPORT
-                   oyProfile_GetFileName ( oyProfile_s       * profile,
+OYAPI const char * OYEXPORT oyProfile_GetFileName (
+                                           oyProfile_s       * profile,
                                            int                 dl_pos )
 {
   const char * name = 0;
@@ -1722,6 +1739,15 @@ OYAPI const char * OYEXPORT
             oyProfile_Release( &tmp );
           }
         }
+      }
+
+      if(!name && hash)
+      {
+        uint32_t md5[4];
+        sscanf(hash, "%08x%08x%08x%08x", &md5[0],&md5[1],&md5[2],&md5[3] );
+        tmp = oyProfile_FromMD5( md5, NULL );
+        name = oyStringCopy_( oyProfile_GetFileName(tmp, -1), s->oy_->allocateFunc_ );
+        oyProfile_Release( &tmp );
       }
 
       if(hash)
