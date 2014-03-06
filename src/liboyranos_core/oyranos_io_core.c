@@ -999,7 +999,7 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
 
   ++war;
   if(war >= 413)
-    ;/* WARNc_S(("schon %d mal\n", war)); */
+    { ;/* WARNc_S(("schon %d mal\n", war)); */ }
 
   for(i = 0; i < count ; ++i)
   {
