@@ -74,29 +74,29 @@ double             oySeconds         ( );
 #define DBGs6_S(s,format,arg,arg2,arg3,arg4,arg5,arg6) oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)s,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5,arg6);
 #define DBGs7_S(s,format,arg,arg2,arg3,arg4,arg5,arg6,arg7) oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)s,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5,arg6,arg7);
 #else
-#define DBG ;
-#define DBG_S(txt) ;
-#define DBG_V(var) ;
-#define DBG1_S(a,b) ;
-#define DBG2_S(a,b,c) ;
-#define DBG3_S(a,b,c,d) ;
-#define DBG4_S(a,b,c,d,e) ;
-#define DBG5_S(a,b,c,d,e,f) ;
-#define DBG6_S(a,b,c,d,e,f,h) ;
-#define DBG7_S(a,b,c,d,e,f,h,i) ;
-#define DBG8_S(a,b,c,d,e,f,h,i,j) ;
-#define DBG9_S(a,b,c,d,e,f,h,i,j,k) ;
-#define DBG_START ;
-#define DBG_ENDE  ;
-#define DBGs(s) ;
-#define DBGs_S(s,txt) ;
-#define DBGs1_S(s,a,b) ;
-#define DBGs2_S(s,a,b,c) ;
-#define DBGs3_S(s,a,b,c,d) ;
-#define DBGs4_S(s,a,b,c,d,e) ;
-#define DBGs5_S(s,a,b,c,d,e,f) ;
-#define DBGs6_S(s,a,b,c,d,e,f,h) ;
-#define DBGs7_S(s,a,b,c,d,e,f,h,i) ;
+#define DBG {;}
+#define DBG_S(txt) {;}
+#define DBG_V(var) {;}
+#define DBG1_S(a,b) {;}
+#define DBG2_S(a,b,c) {;}
+#define DBG3_S(a,b,c,d) {;}
+#define DBG4_S(a,b,c,d,e) {;}
+#define DBG5_S(a,b,c,d,e,f) {;}
+#define DBG6_S(a,b,c,d,e,f,h) {;}
+#define DBG7_S(a,b,c,d,e,f,h,i) {;}
+#define DBG8_S(a,b,c,d,e,f,h,i,j) {;}
+#define DBG9_S(a,b,c,d,e,f,h,i,j,k) {;}
+#define DBG_START {;}
+#define DBG_ENDE  {;}
+#define DBGs(s) {;}
+#define DBGs_S(s,txt) {;}
+#define DBGs1_S(s,a,b) {;}
+#define DBGs2_S(s,a,b,c) {;}
+#define DBGs3_S(s,a,b,c,d) {;}
+#define DBGs4_S(s,a,b,c,d,e) {;}
+#define DBGs5_S(s,a,b,c,d,e,f) {;}
+#define DBGs6_S(s,a,b,c,d,e,f,h) {;}
+#define DBGs7_S(s,a,b,c,d,e,f,h,i) {;}
 #endif
 
 #define DBG_NUM if(oy_debug > 1)DBG
