@@ -1400,6 +1400,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
                                        int                 intent,
                                        int                 intent_proof )
 {
+  cmsUInt16Number OldAlarm[cmsMAXCHANNELS];
 #if LCMS_VERSION >= 2060
       cmsContext tc = lcmsCreateContext( NULL, NULL ); /* threading context */
 #else
@@ -1582,7 +1583,6 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       if(data) oyDeAllocateFunc_( data ); data = 0;
   }
 
-  cmsUInt16Number OldAlarm[cmsMAXCHANNELS];
   lcmsGetAlarmCodes(OldAlarm);
 
   clean:

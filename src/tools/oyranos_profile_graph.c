@@ -783,7 +783,7 @@ void draw_illuminant( cairo_t * cr,
     cairo_set_source_rgba( cr, 0.0,0.0,0.0, 1.0);
     cairo_move_to(cr, xToImage(0/371.0), yToImage(curve[0]));
 #if defined(USE_CLIPPER)
-    // not good enough for illuminant A - lots of artefacts
+    /*/ not good enough for illuminant A - lots of artefacts */
     cairo_set_line_width( cr, line_width/3 );
     for(i = 0; i<371-1; ++i)
     {
@@ -793,12 +793,12 @@ void draw_illuminant( cairo_t * cr,
     cairo_close_path( cr );
 
     using namespace ClipperLib;
-    Polygons pg; //std::vector for polygon(s) storage
+    Polygons pg; /* std::vector for polygon(s) storage */
     int scaling = 3;
     cairo::cairo_to_clipper(cr, pg, scaling);
-    // offset the graph
+    /* offset the graph */
     OffsetPolygons(pg, pg, line_width * std::pow((double)10,scaling), jtMiter, 0.125, false);
-    // finally copy the clipped path back to the cairo context and draw it ...
+    /* finally copy the clipped path back to the cairo context and draw it ... */
     cairo::clipper_to_cairo(pg, cr, scaling);
     std::cout << pg << std::endl;
     cairo_stroke( cr );

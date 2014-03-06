@@ -1,6 +1,6 @@
-// !cc -Wall -g test_device.c -o test_device2 -L. `oyranos-config --cflags --ldstaticflags` -lm -lltdl
+/* !cc -Wall -g test_device.c -o test_device2 -L. `oyranos-config --cflags --ldstaticflags` -lm -lltdl */
 
-// cc -Wall -g test_device.c -o test_device2 -L. `oyranos-config --cflags --ldstaticflags` `pkg-config --cflags --libs libxml-2.0` -lm -I ../../ -I ../../API_generated/
+/* cc -Wall -g test_device.c -o test_device2 -L. `oyranos-config --cflags --ldstaticflags` `pkg-config --cflags --libs libxml-2.0` -lm -I ../../ -I ../../API_generated/ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -226,8 +226,6 @@ int main(int argc, char *argv[])
                         displayHelp(argv);
                         exit (0);
   }
-
-  oyProfile_s * p = 0;//oyProfile_FromStd( oyASSUMED_RGB, 0 );
 
   /* resolve device_class */
   if(device_class)
@@ -636,27 +634,28 @@ int main(int argc, char *argv[])
     oyProfile_s * profile = 0, * temp_profile = 0;
     oyProfiles_s * patterns = 0, * iccs = 0;
     const char * profile_file_name = 0;
-    
+    int32_t * rank_list;
+    int empty_added;
+ 
     profile = oyProfile_FromSignature( profile_class, oySIGNATURE_CLASS, 0 );
     patterns = oyProfiles_New( 0 );
     oyProfiles_MoveIn( patterns, &profile, -1 );
-    
+ 
     iccs = oyProfiles_Create( patterns, 0 );
     oyProfiles_Release( &patterns );
-    
-    
+ 
+ 
     size = oyProfiles_Count(iccs);
-    int32_t * rank_list = (int32_t*) malloc( size *           
-                                             sizeof(int32_t) );
+    rank_list = (int32_t*) malloc( size * sizeof(int32_t) );
     oyProfiles_DeviceRank( iccs, c, rank_list );
-    
+ 
     size = oyProfiles_Count(iccs);
-    
+ 
     error = oyDeviceGetProfile( c, options, &profile );
     profile_file_name = oyProfile_GetFileName( profile, 0 );
-    
-    int empty_added = -1;                   
-    
+
+    empty_added = -1;
+ 
     for( i = 0; i < size; ++i)
     {
       const char * temp_profile_file_name, * description;
@@ -664,26 +663,26 @@ int main(int argc, char *argv[])
          temp_profile = oyProfiles_Get( iccs, i );
          description = oyProfile_GetText( temp_profile, oyNAME_DESCRIPTION );
          temp_profile_file_name = oyProfile_GetFileName( temp_profile, 0);
-         
+ 
          current_tmp = -1;
-         
-         if(profile_file_name && temp_profile_file_name &&                      
-            strcmp( profile_file_name, temp_profile_file_name ) == 0)           
+
+         if(profile_file_name && temp_profile_file_name &&
+            strcmp( profile_file_name, temp_profile_file_name ) == 0)
            current_tmp = pos;
-           
+ 
          if(current == -1 && current_tmp != -1)
            current = current_tmp;
-           
+ 
          if(empty_added == -1 &&
-            rank_list[i] < 1) 
+            rank_list[i] < 1)
          {
            fprintf(stdout, "automatic\n");
            empty_added = pos;
-           if(current != -1 &&                                                  
+           if(current != -1 &&
               current == pos)
              ++current;
            ++pos;
-         } 
+         }
 
          if(show_non_device_related == 1 ||
             rank_list[i] > 0 ||
@@ -691,18 +690,18 @@ int main(int argc, char *argv[])
          {
            fprintf( stdout, "[%d] %s (%s)\n",
                   rank_list[i], description, temp_profile_file_name);
-         
+ 
            ++pos;
          }
-      }  
+      }
       oyProfile_Release( &temp_profile );
-    } 
+    }
     if(empty_added == -1)
     {
       ++pos;
-      if(current == -1 && current_tmp != -1)                                      
-        current = pos; 
-    }   
+      if(current == -1 && current_tmp != -1)
+        current = pos;
+    }
     if(verbose)
       fprintf( stderr, "current: %d\n", current );
 
@@ -934,7 +933,7 @@ int main(int argc, char *argv[])
 
               ++openicc->u.object.len;
 
-              //level = 0;
+              /* level = 0; */
               oyjl_tree_to_json( device, &level, &json );
             }
           }
@@ -1073,6 +1072,10 @@ int main(int argc, char *argv[])
     icSignature vs;
     char * v = 0;
     icTagTypeSignature texttype;
+    oyProfile_s * p = 0;
+    oyConfig_s * device;
+    oyProfiles_s * p_list;
+    int32_t * rank_list;
 
     error = oyDeviceGet( 0, device_class, device_name, 0, &oy_device );
     /* pick expensive informations */
@@ -1137,8 +1140,7 @@ int main(int argc, char *argv[])
 
     oyProfile_Release( &p );
 
-    oyConfig_s * device = oyConfig_FromRegistration( "//" OY_TYPE_STD "/config",
-                                                     0 );
+    device = oyConfig_FromRegistration( "//" OY_TYPE_STD "/config", 0 );
     oyProfile_GetDevice( p, device );
 
     printf("following key/values are in the devices backend_core set:\n");
@@ -1156,8 +1158,8 @@ int main(int argc, char *argv[])
     }
 
     printf("\ngoing to rank installed profiles according to the device[\"%s\",\"%s\"]:\n", device_class, device_name );
-    oyProfiles_s * p_list = oyProfiles_ForStd( oyASSUMED_RGB, 0,0 );
-    int32_t * rank_list = (int32_t*) oyAllocateFunc_( oyProfiles_Count(p_list)
+    p_list = oyProfiles_ForStd( oyASSUMED_RGB, 0,0 );
+    rank_list = (int32_t*) oyAllocateFunc_( oyProfiles_Count(p_list)
                                                         * sizeof(int32_t) );
     oyProfiles_DeviceRank( p_list, oy_device, rank_list );
     n = oyProfiles_Count( p_list );

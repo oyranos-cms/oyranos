@@ -120,6 +120,7 @@ int main (int argc, char ** argv)
   for ( i=0; i < argc-o; ++i )
   {
     const char * filename = argv[i+o];
+    oyOptions_s * options = NULL;
 
     oyImage_s * in = NULL, * out = NULL;
     error = oyImage_FromFile( filename, &in, NULL );
@@ -148,7 +149,6 @@ int main (int argc, char ** argv)
                          0 );
 
     /* create a processing graph to convert from one image to an other */
-    oyOptions_s * options = NULL;
     to_output = oyConversion_CreateBasicPixels( in, out, options, 0 );
 
     /* tell Oyranos to apply defaults */

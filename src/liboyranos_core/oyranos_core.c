@@ -575,7 +575,6 @@ char *       oyVersionString         ( int                 type,
   }
 
 #ifdef HAVE_POSIX
-  // return oyStringCopy_(oy_config_log_, allocateFunc);
   return oyStringCopy_("----", allocateFunc);
 #else
   return oyStringCopy_("----", allocateFunc);
