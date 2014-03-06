@@ -6,7 +6,7 @@ o update the feature page on ColourWiki
 release:
 o update translation
 o update README
-o update Chanagelog (version hint + date) # git shortlog --no-merges --reverse 0.1.8 ^0.1.7 | sed s'/^      /\t/g' > ShortLog; cat ChangeLog >> ShortLog; mv ShortLog ChangeLog
+o update Changelog (version hint + date) # git shortlog --no-merges --reverse 0.1.8 ^0.1.7 | sed s'/^      /\t/g' > ShortLog; cat ChangeLog >> ShortLog; mv ShortLog ChangeLog
 o update doxymentation
 o sync
   http://www.oyranos.org/doc_intern/extending_oyranos.html#write_device_backends
