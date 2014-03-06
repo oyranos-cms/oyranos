@@ -256,29 +256,6 @@ oyProfilePathsGet_    (int             * count,
   path_names = tmp; tmp = 0;
   *count = tmp_n;
 
-#else
-  int i,
-      n = 0;
-  int c = oyPathsCount_();
-
-  oyAllocHelper_m_ (path_names, char*, c, allocateFunc, return NULL);
-
-  for( i = 0; i < c; ++i)
-  {
-    char * test = oyPathName_( i, oyAllocateFunc_ );
-    char * checked = oyMakeFullFileDirName_( test );
-
-    if( checked )
-    {
-      path_names[n] = allocateFunc( oyStrblen_(checked) + 1 );
-      oySprintf_( path_names[n], "%s", checked );
-      oyFree_m_( checked );
-      ++n;
-    }
-    oyFree_m_( test );
-  }
-
-  *count = n;
 #endif
   return path_names;
 }
@@ -426,7 +403,7 @@ char **  oyProfileListGet_           ( const char        * colorsig,
                                        uint32_t          * size )
 {
   oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
-  int32_t count = 0;/*oyPathsCount_();*/
+  int32_t count = 0;
   char ** path_names = NULL;
 
   path_names = oyProfilePathsGet_( &count, oyAllocateFunc_ );

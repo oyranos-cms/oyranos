@@ -48,7 +48,6 @@ int oyExportStart_(int export_check)
   }
 
   EXPORT_( EXPORT_SETTING, export_setting, oyOpen() )
-  /*EXPORT_( EXPORT_PATH, export_path, oyPathAdd_ (OY_PROFILE_PATH_USER_DEFAULT) )*/
   /* Currently the monitor API is a link time module and outside the basic API.
      So we cant rely on it on runtime here. 
      This will change when Monitor support will be a runtime link in module.

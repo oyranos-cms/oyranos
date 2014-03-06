@@ -62,15 +62,6 @@ int   oySetProfile_             (const char      * name,
                                  const char      * comment);
 
 /* separate from the external functions */
-int   oyPathsCount_             (void);
-char* oyPathName_               (int           number,
-                                 oyAlloc_f     allocate_func);
-int   oyPathAdd_                (const char* pathname);
-void  oyPathRemove_             (const char* pathname);
-/*void  oyPathSleep_              (const char* pathname);
-void  oyPathActivate_           (const char* pathname);*/
-char* oyGetPathFromProfileName_ (const char*   profilename,
-                                 oyAlloc_f     allocate_func);
 
 enum {
   oyUSER_SYS = 0,
