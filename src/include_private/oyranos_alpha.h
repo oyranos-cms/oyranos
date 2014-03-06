@@ -132,9 +132,6 @@ OYAPI oyPointer OYEXPORT
                                        oyAlloc_f         allocateFunc );
 #endif
 
-#define OY_COMPUTE      0x01
-#define OY_FROM_PROFILE 0x04
-
 
 /** @enum    oyDATALAYOUT_e
  *  @brief   ideas for basic data arrangements
