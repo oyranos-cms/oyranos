@@ -432,13 +432,13 @@ int main(int argc, char *argv[])
     int i,j, attributes_n;
     char separator;
 
-    // get all configuration filters
+    /* get all configuration filters */
     oyConfigDomainList("//"OY_TYPE_STD"/config", &texts, &count,&rank_list ,0 );
     for( i = 0; i < count; ++i )
     {
       attributes_n = 0;
  
-      // pick the filters name and remove the common config part
+      /* pick the filters name and remove the common config part */
       temp = oyFilterRegistrationToText( texts[i], oyFILTER_REG_APPLICATION,
                                          malloc );
       attributes = oyStringSplit_( temp, '.', &attributes_n, malloc );
@@ -454,8 +454,9 @@ int main(int argc, char *argv[])
         sprintf( &temp[strlen(temp)], "%s", attributes[j]);
       }
 
-      // The string in temp can be passed as the device_class argument to
-      // oyDevicesGet().
+      /*  The string in temp can be passed as the device_class argument to
+       *  oyDevicesGet().
+       */
       if(verbose)
         fprintf( stdout, "%d: %s \"%s\"\n", i, texts[i], temp);
       else

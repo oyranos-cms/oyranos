@@ -1438,8 +1438,10 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
 #if LCMS_VERSION < 2060
       hproof = lcm2AddProfile( proof );
 #else
-      const char * fn = oyProfile_GetFileName( proof, -1 );
-      hproof = lcmsOpenProfileFromFileTHR( tc, fn, "r" );
+      {
+        const char * fn = oyProfile_GetFileName( proof, -1 );
+        hproof = lcmsOpenProfileFromFileTHR( tc, fn, "r" );
+      }
 #endif
 
       if(!hLab || !hproof)
