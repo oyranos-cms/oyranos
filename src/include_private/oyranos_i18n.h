@@ -35,7 +35,6 @@ extern "C" {
 #endif
 extern const char *oy_domain;
 extern const char *oy_domain_path;
-extern const char *oy_domain_codeset;
 
 #define OY_TEXTDOMAIN "oyranos"
 
