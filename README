@@ -15,7 +15,7 @@ Dependencies:
     icc-profiles-openicc and icc-profiles-basiccolor - default ICC profiles
                                 http://sourceforge.net/projects/openicc/files/
     libXinerama, libXrandr, libXfixes and libXxf86vm for X11 support - www.x.org
-    libXcm >= 0.5.1 for X11 and Quarz monitor support - http://www.oyranos.org
+    libXcm >= 0.5.3 for X11 and Quarz monitor support - http://www.oyranos.org
     Xcm for X11 and Quarz monitor support - http://www.oyranos.org
     lcms and/or lcms2 for color conversions - http://www.littlecms.com
 
@@ -31,7 +31,7 @@ Dependencies:
     libraw for cameraRAW decoding - http://www.libraw.org
     exiv2 for cameraRAW decoding - http://www.exiv2.org/
     SANE only with Oyranos SANE_CAP_COLOUR patch - http://www.sane-project.org/
-    Cairo for a tool and example - http://www.cairographics.org/
+    Cairo for a tool and a example - http://www.cairographics.org/
 
   Debian/Ubuntu:
     elektra-0.7.0 - is included in the tar ball
