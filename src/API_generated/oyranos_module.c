@@ -797,9 +797,13 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm )
     files = oyCMMsGetLibNames_(&files_n, cmm);
 
     if(!files_n)
-      WARNc_S(_("Could not find any meta module. "
+    {
+      WARNc2_S("%s %s",
+               _("Could not find any meta module. "
                 "Did you set the OY_MODULE_PATH variable,"
-                " to point to a Oyranos module loader library?"));
+                " to point to a Oyranos module loader library?"),
+                getenv("OY_MODULE_PATH"));
+    }
 
     /* open the modules */
     for( i = 0; i < files_n; ++i)

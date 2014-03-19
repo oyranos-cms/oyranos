@@ -669,12 +669,10 @@ oyPathGetParent_ (const char* name)
   return parentDir;
 }
 
-int
-oyIsDir_ (const char* path)
+int oyIsDirFull_ (const char* name)
 {
   struct stat status;
   int r = 0;
-  char* name = oyResolveDirFileName_ (path);
 
   DBG_MEM_START
 
@@ -683,9 +681,23 @@ oyIsDir_ (const char* path)
   DBG_MEM1_S("status.st_mode = %d", (int)(status.st_mode&S_IFMT)&S_IFDIR)
   DBG_MEM1_S("status.st_mode = %d", (int)status.st_mode)
   DBG_MEM1_S("name = %s ", name)
-  oyFree_m_ (name)
   r = !r &&
        ((status.st_mode & S_IFMT) & S_IFDIR);
+
+  DBG_MEM_ENDE
+  return r;
+}
+
+int oyIsDir_ (const char* path)
+{
+  int r = 0;
+  DBG_MEM_START
+
+  char* name = oyResolveDirFileName_ (path);
+
+  r = oyIsDirFull_(name);
+
+  oyFree_m_(name)
 
   DBG_MEM_ENDE
   return r;
@@ -1560,6 +1572,8 @@ char**  oyLibPathsGet_( int             * count,
             oyStringAddPrintf_( &fp, AD, "%s" OY_SLASH "%s", full_name, subdir );
             if(!oyStringListHas_((const char**)paths,n,fp))
             {
+              if(!oyIsDir_(fp))
+                WARNc4_S("%s %s:\"%s\"/\"%s\"",_("path is not readable"), vars[i], full_name, subdir );
               full_paths[full_paths_n++] = fp; fp = NULL;
             } else
               oyFree_m_( fp );
