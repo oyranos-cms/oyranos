@@ -1,4 +1,4 @@
-SET( ENV{OY_MODULE_PATH} "../.." )
+SET( ENV{OY_MODULE_PATH} "../../src/modules" )
 EXECUTE_PROCESS( COMMAND echo "./test_core")
 EXECUTE_PROCESS( COMMAND ./test_core)
 EXECUTE_PROCESS( COMMAND echo "./test_core-static")
