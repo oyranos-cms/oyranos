@@ -783,7 +783,7 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm )
 
     if(!files_n)
     {
-      const char * v = getenv("OY_MODULE_PATH");
+      const char * v = getenv(OY_MODULE_PATH);
       WARNc2_S("%s %s",
                _("Could not find any meta module. "
                 "Did you set the OY_MODULE_PATH variable,"

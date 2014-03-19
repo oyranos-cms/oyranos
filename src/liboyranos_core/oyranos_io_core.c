@@ -1501,7 +1501,7 @@ char**  oyLibPathsGet_( int             * count,
 {
   char ** paths = 0, ** tmp;
   int     n = 0, tmp_n = 0;
-  char *  vars[] = {"OY_MODULE_PATH","LD_LIBRARY_PATH"};
+  char *  vars[] = {OY_MODULE_PATH,"LD_LIBRARY_PATH"};
   int     vars_n = 2;
   int     i,j;
   char  * fix_paths[5] = {0,0,0,0,0};
