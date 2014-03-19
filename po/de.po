@@ -861,7 +861,7 @@ msgid ""
 "Could not find any meta module. Did you set the OY_MODULE_PATH variable, to "
 "point to a Oyranos module loader library?"
 msgstr ""
-"Konnte keine Metamodul finden. Ist die OY_MODULE_PATHS Variable gesetzt? Sie "
+"Konnte keine Metamodul finden. Ist die OY_MODULE_PATH Variable gesetzt? Sie "
 "zeigt auf Verzeichnisse in welchen die Moduleladebibliothek liegt."
 
 #: API_generated/oyranos_devices.c:487

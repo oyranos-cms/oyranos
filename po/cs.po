@@ -831,9 +831,8 @@ msgid "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
 msgstr "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
 
 #: modules/oyranos_cmm_lcm2.c:3406
-#, fuzzy
 msgid "Copyright (c) 1998-2013 Marti Maria Saguer; MIT"
-msgstr "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
+msgstr "Copyright (c) 1998-2013 Marti Maria Saguer; MIT"
 
 #: modules/oyranos_cmm_oyIM.c:144 modules/oyranos_cmm_oicc.c:988
 msgid "Copyright (c) 2005-2009 Kai-Uwe Behrmann; newBSD"
@@ -845,9 +844,8 @@ msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 
 #: liboyranos/oyranos_cmm.c:160
-#, fuzzy
 msgid "Copyright (c) 2005-2013 Kai-Uwe Behrmann; newBSD"
-msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
+msgstr "Copyright (c) 2005-2013 Kai-Uwe Behrmann; newBSD"
 
 #: modules/devices/oyranos_cmm_CUPS.c:995
 msgid "Copyright (c) 2009 Joseph Simon; MIT"
@@ -863,9 +861,8 @@ msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 
 #: tools/oyranos_profile_tool.c:390
-#, fuzzy
 msgid "Copyright:       "
-msgstr "Copyright"
+msgstr "Copyright:       "
 
 #: API_generated/oyranos_module.c:2030
 msgid "Could not allocate memory for:"
@@ -876,12 +873,11 @@ msgid "Could not download from WWW. Please install curl or wget."
 msgstr "Nelze stáhnout z WWW. Nainstalujte prosím \"curl\" nebo \"wget\"."
 
 #: API_generated/oyranos_module.c:800
-#, fuzzy
 msgid ""
 "Could not find any meta module. Did you set the OY_MODULE_PATH variable, to "
 "point to a Oyranos module loader library?"
 msgstr ""
-"Nenalezen žádný meta modul. Nastavili jste proměnnou OY_MODULE_PATHS, aby "
+"Nenalezen žádný meta modul. Nastavili jste proměnnou OY_MODULE_PATH, aby "
 "odkazovala na knihovnu zavaděče modulu Oyranos?"
 
 #: API_generated/oyranos_devices.c:487
@@ -1023,9 +1019,8 @@ msgstr "Data:"
 #: API_generated/oyranos_profile.c:43 API_generated/oyranos_profile.c:44
 #: API_generated/oyranos_profile.c:45 API_generated/oyranos_profile.c:46
 #: API_generated/oyranos_profile.c:47 API_generated/oyranos_profile.c:48
-#, fuzzy
 msgid "Date"
-msgstr "Datum:"
+msgstr "Datum"
 
 #: modules/oyranos_cmm_oyIM_profile.c:1882
 msgid "Date:"
@@ -1567,9 +1562,8 @@ msgid "Idendity"
 msgstr "Identita"
 
 #: API_generated/oyranos_profile.c:42
-#, fuzzy
 msgid "Illuminant"
-msgstr "Iluminant A"
+msgstr "Iluminant"
 
 #: liboyranos_config/oyranos_icc.c:813
 msgid "Illuminant A"
