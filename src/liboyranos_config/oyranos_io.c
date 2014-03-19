@@ -237,12 +237,6 @@ oyProfilePathsGet_    (int             * count,
     oyStringListAddStaticString_ ( &path_names, count, path, oyAllocateFunc_, \
                                    oyDeAllocateFunc_ );
 
-  /* Apples ColorSync default paths */
-
-# define CSSystemPATH        "/System/Library/ColorSync/Profiles"
-# define CSGlobalInstallPATH "/Library/ColorSync/Profiles"
-# define CSUserPATH          "~/Library/ColorSync/Profiles"
-# define CSNetworkPath       "/Network/Library/ColorSync/Profiles"
   TestAndSetDefaultPATH( CSSystemPATH );
   TestAndSetDefaultPATH( CSGlobalInstallPATH );
   TestAndSetDefaultPATH( CSUserPATH );

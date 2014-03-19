@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2004-2009 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    input / output  methods
  *  @internal
@@ -89,6 +89,15 @@ void oyCheckDefaultDirectories_ ();
 char* oyFindProfile_ (const char* name);
 
 char * oyFindApplication(const char * app_name);
+
+# if defined(__APPLE__)
+  /* Apples ColorSync default paths */
+
+# define CSSystemPATH        "/System/Library/ColorSync/Profiles"
+# define CSGlobalInstallPATH "/Library/ColorSync/Profiles"
+# define CSUserPATH          "~/Library/ColorSync/Profiles"
+# define CSNetworkPath       "/Network/Library/ColorSync/Profiles"
+# endif
 
 #ifdef __cplusplus
 } /* extern "C" */
