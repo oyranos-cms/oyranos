@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/02/25
+ *  @date     2014/03/19
  */
 
 
@@ -798,11 +798,12 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm )
 
     if(!files_n)
     {
+      const char * v = getenv("OY_MODULE_PATH");
       WARNc2_S("%s %s",
                _("Could not find any meta module. "
                 "Did you set the OY_MODULE_PATH variable,"
                 " to point to a Oyranos module loader library?"),
-                getenv("OY_MODULE_PATH"));
+                oyNoEmptyString_m_(v) );
     }
 
     /* open the modules */
