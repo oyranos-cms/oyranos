@@ -181,7 +181,7 @@ void oyThreadsInit_(void)
     oyObject_Lock( oy_job_message_list_->oy_, __func__, __LINE__ );
     oyObject_UnLock( oy_job_message_list_->oy_, __func__, __LINE__ );
 
-#ifdef _OPENMP && defined(USE_OPENMP)
+#if defined(_OPENMP) && defined(USE_OPENMP)
     if((omp_get_num_procs() - 1) >= 1)
       oy_thread_count_ = omp_get_num_procs() - 1;
     else
