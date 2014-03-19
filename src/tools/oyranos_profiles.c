@@ -249,13 +249,25 @@ int main( int argc , char** argv )
     if(user_path || oyranos_path || system_path || machine_path)
     {
         if(user_path)
+#if defined(__APPLE__)
+          path = CSUserPATH;
+#else
           path = OY_USERCOLORDATA OY_SLASH OY_ICCDIRNAME;
+#endif
         if(system_path)
+#if defined(__APPLE__)
+          path = CSGlobalInstallPATH;
+#else
           path = "/usr/share/color/" OY_ICCDIRNAME;
+#endif
         if(oyranos_path)
           path = OY_SYSCOLORDIR OY_SLASH OY_ICCDIRNAME;
         if(machine_path)
+#if defined(__APPLE__)
+          path = CSSystemPATH;
+#else
           path = "/var/lib/color/" OY_ICCDIRNAME;
+#endif
     }
 
     if(list_profiles)
