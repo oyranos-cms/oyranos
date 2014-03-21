@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2008-2012 (C) Kai-Uwe Behrmann
+ *            2008-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    PNG module for Oyranos
  *  @internal
@@ -619,7 +619,7 @@ oyCMMapi4_s_ oPNG_api4_image_write_png = {
   oPNGCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_png.file_write._CPU._" CMM_NICK,
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/file_write.write_png._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
   {0,9,5},                  /**< int32_t module_api[3] */
@@ -666,7 +666,7 @@ oyCMMapi7_s_ oPNG_api7_image_write_png = {
   oPNGCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_png.file_write._CPU._" CMM_NICK,
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/file_write.write_png._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
   {0,9,5},                  /**< int32_t module_api[3] */
@@ -930,7 +930,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   {
     oyOptions_s * tags = oyImage_GetTags( image_in );
     error = oyOptions_SetFromText( &tags,
-                                 "//" OY_TYPE_STD "/input_png.file_read"
+                                 "//" OY_TYPE_STD "/file_read.input_png"
                                                                     "/filename",
                                  filename, OY_CREATE_NEW );
     if(error) WARNc2_S("%s %d", _("found issues"),error);
@@ -1225,7 +1225,7 @@ oyCMMapi4_s_ oPNG_api4_image_input_png = {
   oPNGCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_png.file_read._CPU._" CMM_NICK,
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/file_read.input_png._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
   {0,9,5},                  /**< int32_t module_api[3] */
@@ -1272,7 +1272,7 @@ oyCMMapi7_s_ oPNG_api7_image_input_png = {
   oPNGCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_png.file_read._CPU._" CMM_NICK,
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/file_read.input_png._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
   {0,9,5},                  /**< int32_t module_api[3] */
