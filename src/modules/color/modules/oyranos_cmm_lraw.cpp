@@ -928,7 +928,7 @@ oyCMMapi4_s_ lraw_api4_image_input_libraw = {
 
 const char * lraw_api7_image_input_raw_properties[] =
 {
-  "file=read",    /* file load|write */
+  "file=read",    /* file read|write */
   "image=pixel",  /* image type, pixel/vector/font */
   "layers=1",     /* layer count, one for plain images */
   "icc=0",        /* image type ICC profile support */

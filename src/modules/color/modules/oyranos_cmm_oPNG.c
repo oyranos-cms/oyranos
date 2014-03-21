@@ -636,7 +636,7 @@ oyCMMapi4_s_ oPNG_api4_image_write_png = {
 
 char * oPNG_api7_image_output_png_properties[] =
 {
-  "file=write",    /* file load|write */
+  "file=write",   /* file read|write */
   "image=pixel",  /* image type, pixel/vector/font */
   "layers=1",     /* layer count, one for plain images */
   "icc=1",        /* image type ICC profile support */
@@ -1242,7 +1242,7 @@ oyCMMapi4_s_ oPNG_api4_image_input_png = {
 
 char * oPNG_api7_image_input_png_properties[] =
 {
-  "file=read",    /* file load|write */
+  "file=read",    /* file read|write */
   "image=pixel",  /* image type, pixel/vector/font */
   "layers=1",     /* layer count, one for plain images */
   "icc=0",        /* image type ICC profile support */
