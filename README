@@ -126,3 +126,5 @@ Build Flags
   line through -DCMAKE_INSTALL_PATH=/my/path .
   LIB_SUFFIX - allows to append a architecture specific suffix like 
   LIB_SUFFIX=64 for 64bit non debian style Linux systems.
+  XDG_CONFIG_DIR - path to install oyranos-monitor-setup.desktop; defaults to /etc/xdg/autostart/
+
