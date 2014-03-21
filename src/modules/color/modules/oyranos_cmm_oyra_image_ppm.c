@@ -335,7 +335,7 @@ oyCMMapi4_s_ oyra_api4_image_write_ppm = {
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_ppm.file_write._CPU._" CMM_NICK,
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/file_write.write_ppm._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
   {0,9,5},                  /**< int32_t module_api[3] */
@@ -382,7 +382,7 @@ oyCMMapi7_s_ oyra_api7_image_write_ppm = {
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/write_ppm.file_write._CPU._" CMM_NICK,
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/file_write.write_ppm._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
   {0,9,5},                  /**< int32_t module_api[3] */
@@ -974,7 +974,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
 
   tags = oyImage_GetTags( image_in );
   error = oyOptions_SetFromText( &tags,
-                                 "//" OY_TYPE_STD "/input_ppm.file_read"
+                                 "//" OY_TYPE_STD "/file_read.input_ppm"
                                                                     "/filename",
                                  filename, OY_CREATE_NEW );
   oyOptions_Release( &tags );
@@ -1165,7 +1165,7 @@ oyCMMapi4_s_ oyra_api4_image_input_ppm = {
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_ppm.file_read._CPU._" CMM_NICK,
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/file_read.input_ppm._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
   {0,9,5},                  /**< int32_t module_api[3] */
@@ -1212,7 +1212,7 @@ oyCMMapi7_s_ oyra_api7_image_input_ppm = {
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/input_ppm.file_read._CPU._" CMM_NICK,
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/file_read.input_ppm._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
   {0,9,5},                  /**< int32_t module_api[3] */
