@@ -70,6 +70,127 @@
     Call oyThreadLockingSet() in order to use own thread locking functions. The function must be used before any call to Oyranos.
  */
 
+/** @page extending_oyranos Extending Oyranos
+
+    @section oyranos_modules_writing Oyranos modules writing
+
+    Note known object types, like oyCMM_s or oyCMMapi4_s, are linked to their 
+    according documention. All others are still internal data structures, 
+    which might get exported in future versions of Oyranos.
+
+    @subsection write_modules Writing C Modules for Oyranos
+    Oyranos modules can be filters, plug-ins, backends, CMMs or meta modules.
+    The API design can be seen in the @ref module_api page. To start with a 
+    module use the example code from the
+    src/examples/oyranos_cmm_dFil.c file.
+    Change the header, e.g. "My name" string. Select a four byte identifier for
+    the new module and define it in CMM_NICK. The comment above CMM_NICK
+    describes how the module library and the xxxx_cmm_module data structure 
+    (vtable) interact. Oyranos will search the appropriate
+    path for libraries and will try to dlopen the oyCMM_s xxxx_cmm_module data 
+    structure. It therefore parses the library file name and takes the four 
+    bytes before "_cmm_module" as the modules identifier. The "xxxx_cmm_module"
+    symbol will be searched and if found the information form there will be used
+    to access the module functions and data. E.G. Oyranos will on Linux dlopen 
+    a module library name of "liboyranos_lcm2_cmm_module.so" and search for a 
+    "lcm2_cmm_module" symbol. CMM_NICK is defined as "lcm2" in this module. \n
+    \n
+    If you choose your four byte identifier, substitute every occurence of
+    "dFil" with the new identifier. \n
+    \n
+    In the OY_DUMMY_FILTER_REGISTRATION macro the "my_filter" name should be
+    changed to something appropriate for the new module. Oyranos users will use
+    primarily this name to select the module. A description on how a module 
+    registration string is to be build and how it works can be found at the end
+    of the Detailed Description section on @ref module_api. All occurences
+    of "my_filter" in the file should be substituted accordingly. \n
+    \n
+    The old function dFilGetText should be adapted to provide the new 
+    appropriate names, copyrights and a help texts on how to use the module.
+    Go through all functions and adapt them to the filter needs. The
+    dFilFilterPlug_MyFilterRun function is the core of the module. It contains
+    the processing part or algorythm. Typically a filter contains two
+    connectors, a plug and a socket. The connectors describe their capabilities
+    and according to this Oyranos can check in advance if two filters fit each
+    to the other. \n
+    \n
+    The oyCMMapi4_s holds most static informations of the module. It can be used
+    to provide a processing context. A context is use in case it is very 
+    expensive to compute such a context like in ICC CMMs for color conversions
+    and the context shall be chached by Oyranos. The oyCMMapi7_s holds the 
+    dFilFilterPlug_MyFilterRun function and the plugs and sockets. \n
+    \n
+    Compile and install the module library to see if Oyranos detects it 
+    correctly. Use the test2 application therefore. It is in the source tree
+    compiled through the "make check" shell command. The shell command to run is
+    "test2 'CMMS list'". The test run will list all detected meta modules and
+    the modules loaded by a meta module. The filters are sorted by their 
+    provided APIs. The test2 command might be substituted by a dedicated module
+    utility in the future. As external checker use oyranos-xforms-modules -l.
+
+    @subsection write_device_modules Writing Device Modules for Oyranos
+    To start with a module use the src/examples/oyranos_cmm_dDev.c 
+    file and modify it. Please follow the @ref write_modules subsection.
+    The parts which differ are that instead of oyCMMapi4_s the oyCMMapi8_s
+    will be implemented. The dDevConfigs_FromPattern 
+    (oyCMMapi8_s::oyConfigs_FromPattern) is a function to
+    call into the device module and create new oyConfig_s object(s).
+    The dDevConfigs_Modify (oyCMMapi8_s::oyConfigs_Modify) function can use the
+    same protocol with the difference, that it works on existing oyConfig_s 
+    object(s). The "device_name" option should be ignored by dDevConfigs_Modify.
+    The dDev_rank_map (oyCMMapi8_s::rank_map) tells how each option shall
+    be wighted by Oyranos to select a profile from the Oyranos DB independent 
+    from the device module. The calls into dDevConfigs_FromPattern and
+    oyConfigs_Modify are string based. The option "command" will contain the 
+    command name the device module shall act upon. \n
+    \n
+    The oyCMMapi8_s::registration string needs in its oyFILTER_REG_APPLICATION
+    section a starting "config.device.icc_profile." followed by the
+    device class name and separated by point '.' the the module nick. This
+    convention shall enshure a proper mechanism is available to select the
+    desired config domains from several ones. \n
+    \n
+    All "dDev" occurences in the source code need to be substituted by the 
+    modules own four byte identifier. \n
+    \n
+    To test the device module use oyDeviceAskProfile(), oyDeviceGetInfo() and
+    oyDeviceGet():
+    @verbatim
+    oyConfig_s * device = 0; /* initialise with zero to avoid errors */
+    oyProfile_s * profile = 0;
+    oyOptions_s * options = 0;  /* not used in this example */
+    char * text = 0;
+
+    /* Call into the device modules oyCMMapi8_s::oyConfigs_FromPattern
+     * function with the "list" command.
+     * "monitor" is to be exchanged by the actual device class and
+     * ":0.0" by the actual device nick name.
+     */
+    int error = oyDeviceGet( 0, "monitor", ":0.0", options, &device );
+
+    /* obtain a expensive list of key/value pairs from the device module */
+    error = oyDeviceGetInfo( device, oyNAME_DESCRIPTION, 0, &text,
+                                     malloc );
+
+    /* assign a profile to the device/driver */
+    error = oyDeviceSetProfile( device, "some_real_profile_in_your_path.icc" );
+
+    /* Ask Oyranos to lookup its DB for a matching profile. It is only useful
+     * if a profile is already set for the devices keys. The set devices can be
+     * viewed at the command line with:
+     * ls -d ~/.kdb/user/org/freedesktop/openicc/config.device.icc_profile.*
+     */
+    error = oyDeviceAskProfile( device, &profile );
+    @endverbatim
+    It is useful to step through the code. Oyranos provides the --enable-debug
+    configure option to aid debugging and stepping through. To build the module
+    add the -g compiler option.
+
+    The protocal on how the modules communicate with the core and the front end
+    is described in the @ref device_protocol_1.
+ */
+
+
 /** @page links References
     @section links Links
     - cross platform color information exchange standard, called ICC - http://www.color.org
@@ -522,7 +643,8 @@ digraph Modules {
  *  files like "oyranos_cmm_xxxx.c". They are linked as libraries and are
  *  installed in the "$cmmdir" and "$libdir/oyranos" paths. These paths are
  *  shown during the configuration process or through te provided oyranos-config
- *  tool.
+ *  tool. Some more coding details can be found on the @ref extending_oyranos 
+ *  page.
  *
  *  The Filter API's are subdivided to allow for automatical combining of 
  *  preprocessing and processing stages. Especially in the case of expensive
