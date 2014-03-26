@@ -39,6 +39,10 @@ ELSE( ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 ENDIF( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 MESSAGE( "-- Found PLATFORM: ${PLATFORM}" )
 
+IF( CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]" )
+  MESSAGE( "-- Info build \"${CMAKE_BUILD_TYPE}\"" )
+  SET( DEBUG 1 )
+ENDIF()
 
 # detect top level projects
 FIND_PACKAGE( Yajl )
