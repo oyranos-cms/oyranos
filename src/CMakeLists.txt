@@ -263,10 +263,11 @@ IF( GETTEXT_FOUND )
         liboyranos_object/*.c
         liboyranos_modules/*.c
         liboyranos_config/*.c
-        modules/*.c
-        modules/devices/*.c
-        modules/*.cpp
-        modules/devices/*.cpp
+        modules/oyranos/*.c
+        modules/color/modules/*.c
+        modules/color/modules/devices/*.c
+        modules/color/modules/*.cpp
+        modules/color/modules/devices/*.cpp
         tools/*.c tools/qcmsevents/*.cpp tools/qcmsevents/*.cxx
         examples/devices/*.c examples/libraw/*.cpp
       )
