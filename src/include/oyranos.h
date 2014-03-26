@@ -19,9 +19,6 @@
 #include "oyranos_definitions.h"
 #include "oyranos_core.h"
 
-/** \namespace oyranos
-    @brief The Oyranos namespace.
- */
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

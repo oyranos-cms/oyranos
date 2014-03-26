@@ -45,9 +45,6 @@
 #endif
 #endif
 
-/** \namespace oyranos
-    @brief The Oyranos namespace.
- */
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

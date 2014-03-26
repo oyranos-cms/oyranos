@@ -21,9 +21,6 @@
 #include "oyranos_version.h"
 #include "oyranos_types.h"
 
-/** \namespace oyranos
-    @brief The Oyranos namespace.
- */
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

@@ -20,9 +20,6 @@
 #include <stdlib.h> /* for linux size_t */
 #include "oyranos_definitions.h"
 
-/** \namespace oyranos
-    @brief The Oyranos namespace.
- */
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
