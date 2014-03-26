@@ -875,6 +875,9 @@ oyProfileGetMD5        ( void       *buffer,
 
  *  @{
  */
+/** \addtogroup i18n
+ *  @{
+ */
 
 /** @brief  switch internationalisation of strings on or off
  *
@@ -894,6 +897,7 @@ oyI18NSet              ( int active,
   DBG_PROG_ENDE
 }
 
+/** @} */ /* i18n */
 
 /** @} */
 

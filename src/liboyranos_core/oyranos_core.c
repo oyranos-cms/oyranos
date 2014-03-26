@@ -417,6 +417,21 @@ int            oyMessageFuncSet      ( oyMessage_f         message_func )
  *  @{
  */
 
+/** \addtogroup i18n Internationalisation
+ *  @brief      helpers for translating UI texts
+
+    Internationalisation is handled for Oyranos by a external library. 
+    To sync locale settings with the Oyranos use the 
+    standard C infaces. For debugging purposes the internal settings are 
+    exported read only.
+
+    A external application might want a different code set than Oyranos'
+    default UTF-8. Thus a ::oy_domain_codeset variable is available and can be 
+    set to match the applications needs.
+
+ *  @{
+ */
+
 /** @brief  get language code
  *
  *  @since Oyranos: version 0.1.8
@@ -492,6 +507,7 @@ void           oyI18Nreset           ( void )
   DBG_PROG_ENDE
 }
 
+/** @} */ /* i18n */
 
 /** @brief  give the compiled in library version
  *

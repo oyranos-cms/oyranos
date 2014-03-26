@@ -35,7 +35,15 @@
 /* --- static variables   --- */
 const char *oy_domain = OY_TEXTDOMAIN;
 const char *oy_domain_path = OY_LOCALEDIR;
+/** \addtogroup misc
+ *  @{
+ */
+/** \addtogroup i18n
+ *  @{
+ */
 const char *oy_domain_codeset = 0;
+/** @} */ /* i18n */
+/** @} */ /* misc */
 char *oy_lang_ = 0;
 char *oy_language_ = 0;
 char *oy_country_ = 0;
