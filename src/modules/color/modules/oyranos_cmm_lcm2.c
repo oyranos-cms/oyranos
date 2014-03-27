@@ -1747,12 +1747,12 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
 
   data_type = oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) );
 
-  if(data_type == oyHALF)
+  /*if(data_type == oyHALF)
   {
     oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
     lcm2_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_" can not handle oyHALF", OY_DBG_ARGS_ );
-  }
+  }*/
 
   len = sizeof(cmsHPROFILE) * (15 + 2 + 1);
   lps = oyAllocateFunc_( len );
@@ -2463,12 +2463,12 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   data_type_in = oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) );
   bps_in = oyDataTypeGetSize( data_type_in );
 
-  if(data_type_in == oyHALF)
+  /*if(data_type_in == oyHALF)
   {
     oyFilterSocket_Callback( requestor_plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
     lcm2_msg(oyMSG_WARN,(oyStruct_s*)ticket, OY_DBG_FORMAT_" can not handle oyHALF",OY_DBG_ARGS_);
     error = 1;
-  }
+  }*/
 
   if(!image_output)
   {
@@ -2579,6 +2579,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
     if(!(data_type_in == oyUINT8 ||
          data_type_in == oyUINT16 ||
+         data_type_in == oyHALF ||
          data_type_in == oyFLOAT ||
          data_type_in == oyDOUBLE))
     {
