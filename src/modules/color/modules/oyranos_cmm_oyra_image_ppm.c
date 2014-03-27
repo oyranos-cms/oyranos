@@ -653,10 +653,14 @@ int      oyraFilterPlug_ImageInputPPMRun (
             t[fpos - l_pos - 15] = 0;
             prof = oyProfile_FromName(t);
             if(prof)
-              fprintf(stderr, "found: %s\n", t);
-            else
+            {
+              if(oy_debug)
+              oyra_msg( oyMSG_DBG, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ "found ICC: %s",
+             OY_DBG_ARGS_, oyNoEmptyString_m_( t ) );
+            } else
               oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
-             OY_DBG_FORMAT_ " could not find ICC: %s",
+             OY_DBG_FORMAT_ "could not find ICC: %s",
              OY_DBG_ARGS_, oyNoEmptyString_m_( t ) );
               
             oyDeAllocateFunc_(t);
@@ -1185,7 +1189,7 @@ char * oyra_api7_image_input_ppm_properties[] =
   "file=read",    /* file read|write */
   "image=pixel",  /* image type, pixel/vector/font */
   "layers=1",     /* layer count, one for plain images */
-  "icc=0",        /* image type ICC profile support */
+  "icc=1",        /* image type ICC profile support */
   "ext=ppm,pnm,pbm,pgm,pfm", /* supported extensions */
   0
 };
