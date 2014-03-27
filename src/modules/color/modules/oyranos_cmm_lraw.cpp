@@ -836,7 +836,7 @@ const char * oyraApi4UiImageInputLibrawGetText (
                                        oyNAME_e            type,
                                        oyStruct_s        * context )
 {
-  if(strcmp(select,"name"))
+  if(strcmp(select,"name") == 0)
   {
     if(type == oyNAME_NICK)
       return CMM_NICK;
@@ -844,7 +844,7 @@ const char * oyraApi4UiImageInputLibrawGetText (
       return _("Image[lraw]");
     else if(type == oyNAME_DESCRIPTION)
       return _("Input libraw Image Filter Object");
-  } else if(strcmp(select,"help"))
+  } else if(strcmp(select,"help") == 0)
   {
     if(type == oyNAME_NICK)
       return "help";

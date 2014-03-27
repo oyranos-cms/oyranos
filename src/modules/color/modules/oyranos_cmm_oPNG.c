@@ -1139,7 +1139,7 @@ const char * oPNGApi4ImageInputUiGetText (
                                        oyStruct_s        * context )
 {
   static char * category = 0;
-  if(strcmp(select,"name"))
+  if(strcmp(select,"name") == 0)
   {
          if(type == oyNAME_NICK)
       return "input_png";
@@ -1148,7 +1148,7 @@ const char * oPNGApi4ImageInputUiGetText (
     else
       return _("Input PNG Image Filter Object");
   }
-  else if(strcmp(select,"category"))
+  else if(strcmp(select,"category") == 0)
   {
     if(!category)
     {
@@ -1163,7 +1163,7 @@ const char * oPNGApi4ImageInputUiGetText (
     else
       return category;
   }
-  else if(strcmp(select,"help"))
+  else if(strcmp(select,"help") == 0)
   {
          if(type == oyNAME_NICK)
       return "help";

@@ -991,7 +991,7 @@ const char * oydiApi4UiImageDisplayGetText (
                                        oyNAME_e            type,
                                        oyStruct_s        * context )
 {
-  if(strcmp(select,"name"))
+  if(strcmp(select,"name") == 0)
   {
     if(type == oyNAME_NICK)
       return "display";
@@ -999,7 +999,7 @@ const char * oydiApi4UiImageDisplayGetText (
       return "Display";
     else if(type == oyNAME_DESCRIPTION)
       return "Display Splitter Object";
-  } else if(strcmp(select,"help"))
+  } else if(strcmp(select,"help") == 0)
   {
     /* The help text is identical, as the module contains only one filter to
      * provide help for. */

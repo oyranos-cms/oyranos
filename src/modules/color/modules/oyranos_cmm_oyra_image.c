@@ -554,7 +554,9 @@ int      oyraFilterPlug_ImageLoadRun (
                        api7->registration );
           result = api7->oyCMMFilterPlug_Run( requestor_plug, ticket );
           i = n;
-        }
+        } else
+          DBG_PROG2_S( "%s={%s}", "api7 not fitting",
+                      api7->registration );
 
         if(api->release)
           api->release( (oyStruct_s**)&api );
@@ -698,7 +700,7 @@ const char * oyraApi4UiImageLoadGetText (
                                        oyNAME_e            type,
                                        oyStruct_s        * context )
 {
-  if(strcmp(select,"name"))
+  if(strcmp(select,"name") == 0)
   {
     if(type == oyNAME_NICK)
       return "load";
@@ -706,7 +708,7 @@ const char * oyraApi4UiImageLoadGetText (
       return _("Load");
     else if(type == oyNAME_DESCRIPTION)
       return _("Load Image File Object");
-  } else if(strcmp(select,"help"))
+  } else if(strcmp(select,"help") == 0)
   {
     if(type == oyNAME_NICK)
       return "help";
