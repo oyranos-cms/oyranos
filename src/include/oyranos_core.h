@@ -72,8 +72,8 @@ char *         oyDescriptionToHTML   ( int                 group,
  *  set here the codeset part, e.g. "UTF-8", which shall be delivered from
  *  Oyranos string translations.
  *  Set this variable before any call to Oyranos.
- *  The environment variable OY_LOCALEDIR overrides the static inbuild 
- *  OY_LOCALEDIR macro defined in oyranos_config_internal.h . OY_LOCALEDIR
+ *  The environment variable ::OY_LOCALEDIR overrides the static inbuild 
+ *  ::OY_LOCALEDIR macro defined in oyranos_version.h . ::OY_LOCALEDIR
  *  should match a corresponding $prefix/share/locale path.
  */
 extern const char *oy_domain_codeset;

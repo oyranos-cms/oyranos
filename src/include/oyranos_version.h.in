@@ -1,35 +1,37 @@
-/* automatic generated variables */
+/** @file  oyranos_version.h
+ *  @brief automatic generated variables
+ */
 #ifndef OYRANOS_VERSION_H
 #define OYRANOS_VERSION_H
 
-#define OYRANOS_VERSION_A @OYRANOS_VERSION_MAJOR@
-#define OYRANOS_VERSION_B @OYRANOS_VERSION_MINOR@
-#define OYRANOS_VERSION_C @OYRANOS_VERSION_MICRO@
-#define OYRANOS_VERSION_NAME "@OYRANOS_VERSION_MAJOR@.@OYRANOS_VERSION_MINOR@.@OYRANOS_VERSION_MICRO@"
-#define OYRANOS_VERSION (@OYRANOS_VERSION_MAJOR@ * 10000 + @OYRANOS_VERSION_MINOR@ * 100 + @OYRANOS_VERSION_MICRO@)
-#define OYRANOS_START_MONTH 11
-#define OYRANOS_START_YEAR 2004
-#define OYRANOS_DEVEL_MONTH @OYRANOS_DEVEL_MONTH@
-#define OYRANOS_DEVEL_YEAR @OYRANOS_DEVEL_YEAR@
-#define OYRANOS_DATE "11 2004 - @OYRANOS_DEVEL_MONTH@ @OYRANOS_DEVEL_YEAR@"
+#define OYRANOS_VERSION_A @OYRANOS_VERSION_MAJOR@	/**< version variable */
+#define OYRANOS_VERSION_B @OYRANOS_VERSION_MINOR@	/**< version variable */
+#define OYRANOS_VERSION_C @OYRANOS_VERSION_MICRO@	/**< version variable */
+#define OYRANOS_VERSION_NAME "@OYRANOS_VERSION_MAJOR@.@OYRANOS_VERSION_MINOR@.@OYRANOS_VERSION_MICRO@"	/**< version variable */
+#define OYRANOS_VERSION (@OYRANOS_VERSION_MAJOR@ * 10000 + @OYRANOS_VERSION_MINOR@ * 100 + @OYRANOS_VERSION_MICRO@)	/**< version variable */
+#define OYRANOS_START_MONTH 11	/**< date variable */
+#define OYRANOS_START_YEAR 2004	/**< date variable */
+#define OYRANOS_DEVEL_MONTH @OYRANOS_DEVEL_MONTH@	/**< date variable */
+#define OYRANOS_DEVEL_YEAR @OYRANOS_DEVEL_YEAR@	/**< date variable */
+#define OYRANOS_DATE "11 2004 - @OYRANOS_DEVEL_MONTH@ @OYRANOS_DEVEL_YEAR@"	/**< date variable */
 
 #define OYAPI
 #define OYEXPORT
 
-#define OY_PREFIX         "@CMAKE_INSTALL_PREFIX@"
-#define OY_BINDIR         "@CMAKE_INSTALL_PREFIX@/bin"
-#define OY_DATADIR        "@CMAKE_INSTALL_PREFIX@/share"
-#define OY_LIBDIR         "@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@"
-#define OY_CMMSUBPATH     "@OY_CMMSUBPATH@"
-#define OY_METASUBPATH    "@OY_METASUBPATH@"
-#define OY_CMMDIR         OY_LIBDIR"/"OY_CMMSUBPATH
-#define OY_SYSCOLORDIR    OY_DATADIR"/color"
-#define OY_USERCOLORDIR   "~/.config/color"
-#define OY_USERCOLORDATA  "~/.local/share/color"
-#define OY_ICCDIRNAME     "icc"
-#define OY_SETTINGSDIRNAME "settings"
-#define OY_TARGETDIRNAME  "target"
-#define OY_LOCALEDIR      OY_DATADIR"/locale"
+#define OY_PREFIX         "@CMAKE_INSTALL_PREFIX@"	/**< install variable */
+#define OY_BINDIR         "@CMAKE_INSTALL_PREFIX@/bin"	/**< install variable */
+#define OY_DATADIR        "@CMAKE_INSTALL_PREFIX@/share"	/**< install variable */
+#define OY_LIBDIR         "@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@"	/**< install variable */
+#define OY_CMMSUBPATH     "@OY_CMMSUBPATH@"	/**< install variable */
+#define OY_METASUBPATH    "@OY_METASUBPATH@"	/**< install variable */
+#define OY_CMMDIR         OY_LIBDIR"/"OY_CMMSUBPATH	/**< install variable */
+#define OY_SYSCOLORDIR    OY_DATADIR"/color"	/**< install variable */
+#define OY_USERCOLORDIR   "~/.config/color"	/**< install variable */
+#define OY_USERCOLORDATA  "~/.local/share/color"	/**< install variable */
+#define OY_ICCDIRNAME     "icc"	/**< install variable */
+#define OY_SETTINGSDIRNAME "settings"	/**< install variable */
+#define OY_TARGETDIRNAME  "target"	/**< install variable */
+#define OY_LOCALEDIR      OY_DATADIR"/locale"	/**< install variable */
 
 
 #endif /*OYRANOS_VERSION_H*/
