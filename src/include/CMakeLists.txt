@@ -13,6 +13,8 @@ SET( CHEADERS_PUBLIC
 	oyranos_definitions.h
 	oyranos_icc.h
 	oyranos_types.h
+        oyranos_version.h
+        oyCMM_s.h
         PARENT_SCOPE
    )
 
@@ -25,4 +27,6 @@ INSTALL( FILES
 	oyranos_definitions.h
 	oyranos_icc.h
 	oyranos_types.h
+        "${CMAKE_BINARY_DIR}/src/include/oyranos_version.h"
+        oyCMM_s.h
 	DESTINATION include/${PACKAGE_NAME})

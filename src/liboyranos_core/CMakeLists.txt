@@ -26,4 +26,3 @@ ADD_LIBRARY( oyranos_core-static STATIC ${CFILES_CORE})
 TARGET_LINK_LIBRARIES ( oyranos_core-static ${EXTRA_LIBS_CORE} )
 
 INSTALL( TARGETS oyranos_core oyranos_core-static DESTINATION lib${LIB_SUFFIX} )
-INSTALL (FILES "${CMAKE_BINARY_DIR}/src/include/oyranos_version.h" DESTINATION include/${PACKAGE_NAME})
