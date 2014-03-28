@@ -30,6 +30,16 @@
 
 typedef struct oyIcon_s oyIcon_s;
 
+const char * oyCMMgetImageConnectorPlugText (
+                                       const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
+const char * oyCMMgetImageConnectorSocketText (
+                                       const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
+extern const char * oy_image_connector_texts[2];
+
 /** @brief   CMM capabilities query enum
  *  @ingroup module_api
  *

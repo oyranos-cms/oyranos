@@ -72,15 +72,6 @@ const char * oyCMMgetText            ( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context );
 extern const char * oyCMM_texts[4];
-const char * oyCMMgetImageConnectorPlugText (
-                                       const char        * select,
-                                       oyNAME_e            type,
-                                       oyStruct_s        * context );
-const char * oyCMMgetImageConnectorSocketText (
-                                       const char        * select,
-                                       oyNAME_e            type,
-                                       oyStruct_s        * context );
-extern const char * oy_image_connector_texts[2];
 
 /* miscellaneous helpers */
 int oyCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
