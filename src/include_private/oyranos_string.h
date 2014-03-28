@@ -51,7 +51,8 @@ void               oyStringAdd_      ( char             ** text,
                                        const char        * append,
                                        oyAlloc_f           allocateFunc,
                                        oyDeAlloc_f         deallocFunc );
-int                oyStringAddPrintf_( char             ** text,
+#define oyStringAddPrintf oyStringAddPrintf_
+int                oyStringAddPrintf ( char             ** text,
                                        oyAlloc_f           allocateFunc,
                                        oyDeAlloc_f         deallocFunc,
                                        const char        * format,

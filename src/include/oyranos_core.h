@@ -89,6 +89,20 @@ void           oyI18Nreset           ( void );
 int                oyBigEndian       ( void );
 
 
+/* String Helpers */
+#define oyNoEmptyString_m( text_nem ) text_nem?text_nem:"---"
+int                oyStringAddPrintf ( char             ** text,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocFunc,
+                                       const char        * format,
+                                                           ... );
+
+char**             oyStringSplit     ( const char        * text,
+                                       const char          delimiter,
+                                       int               * count,
+                                       oyAlloc_f           allocateFunc );
+
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */

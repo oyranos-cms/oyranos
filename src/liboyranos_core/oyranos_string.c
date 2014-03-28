@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    pure string handling functions
  *  @internal
@@ -275,16 +275,16 @@ void               oyStringAdd_      ( char             ** text,
   return;
 }
 
-/** @internal 
+/**
  *  @brief   printf style string add
  *
  *  The deallocFunc can be omited in case the user provides no string.
  *
- *  @version Oyranos: 0.4.1
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/03/28
  *  @since   2009/02/07 (Oyranos: 0.1.10)
- *  @date    2012/06/12
  */
-int                oyStringAddPrintf_( char             ** string,
+int                oyStringAddPrintf ( char             ** string,
                                        oyAlloc_f           allocateFunc,
                                        oyDeAlloc_f         deallocFunc,
                                        const char        * format,
@@ -324,6 +324,7 @@ int                oyStringAddPrintf_( char             ** string,
 }
 
 
+/** @brief split a string by one character */
 char**             oyStringSplit     ( const char    * text,
                                        const char      delimiter,
                                        int           * count,
