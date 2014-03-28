@@ -98,6 +98,11 @@ typedef enum {
 const char *       oyConnectorEventToText (
                                        oyCONNECTOR_EVENT_e e );
 
+#include "oyFilterPlug_s.h"
+#include "oyPixelAccess_s.h"
+int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
+                                       oyPixelAccess_s   * ticket );
+
 /** @enum    oyFILTER_REG_MODE_e
  *  @ingroup objects_conversion
  *

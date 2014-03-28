@@ -65,16 +65,12 @@ typedef const char* (*oyWidgetGet_f) ( uint32_t          * result );
 /* -------------------------------------------------------------------------*/
 
 /* implemented filter functions */
-int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
-                                       oyPixelAccess_s   * ticket );
-
 const char * oyCMMgetText            ( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context );
 extern const char * oyCMM_texts[4];
 
 /* miscellaneous helpers */
-int oyCMMWarnFunc( int code, const oyStruct_s * context, const char * format, ... );
 
 #ifdef __cplusplus
 } /* extern "C" */
