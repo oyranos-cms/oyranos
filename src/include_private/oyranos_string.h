@@ -33,7 +33,8 @@ int          oyStringToLong          ( const char        * text,
 int          oyStringToDouble        ( const char        * text,
                                        double            * value );
 size_t             oyStrblen_        ( const char        * s );
-char*              oyStringCopy_     ( const char        * text,
+#define oyStringCopy oyStringCopy_
+char*              oyStringCopy      ( const char        * text,
                                        oyAlloc_f           allocateFunc );
 void               oyStringFree_     ( char             ** text,
                                        oyDeAlloc_f         deallocFunc );

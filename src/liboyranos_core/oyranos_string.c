@@ -97,8 +97,7 @@ int          oyStringToDouble        ( const char        * text,
 
 /* string manipulation */
 
-char*
-oyStringCopy_      ( const char    * text,
+char* oyStringCopy ( const char    * text,
                      oyAlloc_f       allocateFunc )
 {
   char * text_copy = NULL;

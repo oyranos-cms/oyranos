@@ -101,6 +101,8 @@ char**             oyStringSplit     ( const char        * text,
                                        const char          delimiter,
                                        int               * count,
                                        oyAlloc_f           allocateFunc );
+char*              oyStringCopy      ( const char        * text,
+                                       oyAlloc_f           allocateFunc );
 
 
 #ifdef __cplusplus
