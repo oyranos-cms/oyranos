@@ -9,6 +9,8 @@
 #include "oyFilterCore_s.h"
 #include "oyOptions_s.h"
 
+typedef struct oyIcon_s oyIcon_s;
+
 /** @brief   CMM capabilities query enum
  *  @ingroup module_api
  *

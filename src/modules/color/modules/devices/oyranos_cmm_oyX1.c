@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2007-2012 (C) Kai-Uwe Behrmann
+ *            2007-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyranos X11 module for Oyranos
  *  @internal
@@ -12,9 +12,9 @@
  *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
  *  @since    2007/12/12
  */
+#include "oyCMM_s.h"
 #include "oyCMMapi8_s_.h"
 #include "oyCMMapi10_s_.h"
-#include "oyCMMinfo_s_.h"
 #include "oyCMMui_s_.h"
 
 #include "oyranos_cmm.h"
@@ -1320,7 +1320,7 @@ const char *oyX1_texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2007/12/12 (Oyranos: 0.1.8)
  *  @date    2008/12/30
  */
-oyCMMinfo_s_ oyX1_cmm_module = {
+oyCMM_s oyX1_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,
@@ -1332,7 +1332,7 @@ oyCMMinfo_s_ oyX1_cmm_module = {
 
   (oyCMMapi_s*) & oyX1_api8,
 
-  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
+  &oyX1_api8_icon
 };
 
 #if defined(XCM_HAVE_X11) && defined(HAVE_XCM)

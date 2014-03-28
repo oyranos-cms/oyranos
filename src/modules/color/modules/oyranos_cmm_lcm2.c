@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2007-2012 (C) Kai-Uwe Behrmann
+ *            2007-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    littleCMS CMM module for Oyranos
  *  @internal
@@ -19,6 +19,7 @@
 #include <stdarg.h>
 #include <dlfcn.h> /* dlopen() */
 
+#include "oyCMM_s.h"
 #include "oyCMMapi4_s.h"
 #include "oyCMMapi4_s_.h"
 #include "oyCMMapi6_s_.h"
@@ -45,7 +46,7 @@
 #endif
 
 /*
-oyCMMinfo_s   lcm2_cmm_module;
+oyCMM_s   lcm2_cmm_module;
 oyCMMapi4_s     lcm2_api4_cmm;
 oyCMMui_s         lcm2_api4_ui;
 oyCMMapi7_s     lcm2_api7_cmm;
@@ -3451,6 +3452,7 @@ const char * lcm2InfoGetText         ( const char        * select,
   return 0;
 }
 const char *lcm2_texts[5] = {"name","copyright","manufacturer","help",0};
+oyIcon_s lcm2_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "lcms_logo2.png"};
 
 /** @instance lcm2_cmm_module
  *  @brief    lcm2 module infos
@@ -3459,7 +3461,7 @@ const char *lcm2_texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2007/11/00 (Oyranos: 0.1.8)
  *  @date    2008/12/30
  */
-oyCMMinfo_s_ lcm2_cmm_module = {
+oyCMM_s lcm2_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,                 /**< type, struct type */
   0,0,0,                               /**< ,dynamic object functions */
@@ -3471,7 +3473,7 @@ oyCMMinfo_s_ lcm2_cmm_module = {
 
   (oyCMMapi_s*) & lcm2_api4_cmm,       /**< api */
 
-  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "lcms_logo2.png"}, /**< icon */
+  &lcm2_icon, /**< icon */
   lcm2CMMInit                          /**< oyCMMinfoInit_f */
 };
 

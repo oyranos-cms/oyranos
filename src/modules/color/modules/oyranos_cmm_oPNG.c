@@ -15,6 +15,7 @@
 
 #include "oyranos_config_internal.h"
 
+#include "oyCMM_s.h"
 #include "oyCMMapi4_s.h"
 #include "oyCMMapi4_s_.h"
 #include "oyCMMapi7_s.h"
@@ -96,6 +97,7 @@ const char * oPNGGetText             ( const char        * select,
   return oyCMMgetText( select, type, context );
 }
 
+oyIcon_s oPNG_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
 /** @instance oPNG_cmm_module
  *  @brief    oPNG module infos
@@ -104,7 +106,7 @@ const char * oPNGGetText             ( const char        * select,
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  *  @date    2008/01/02
  */
-oyCMMinfo_s_ oPNG_cmm_module = {
+oyCMM_s oPNG_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,
@@ -116,7 +118,7 @@ oyCMMinfo_s_ oPNG_cmm_module = {
 
   (oyCMMapi_s*) & oPNG_api4_image_write_png,
 
-  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
+  &oPNG_icon
 };
 
 

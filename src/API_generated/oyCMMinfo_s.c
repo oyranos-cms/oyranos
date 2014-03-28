@@ -10,12 +10,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2013 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/06/11
+ *  @date     2014/03/28
  */
 
 
@@ -223,7 +223,7 @@ OYAPI void  OYEXPORT
 OYAPI oyIcon_s * OYEXPORT
                    oyCMMinfo_GetIcon ( oyCMMinfo_s       * info )
 {
-  return &((oyCMMinfo_s_*)info)->icon;
+  return ((oyCMMinfo_s_*)info)->icon;
 }
 
 /** Function  oyCMMinfo_GetInitF

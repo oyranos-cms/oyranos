@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/07
+ *  @date     2014/03/28
  */
 
 
@@ -27,6 +27,8 @@
 
 #include "oyFilterCore_s.h"
 #include "oyOptions_s.h"
+
+typedef struct oyIcon_s oyIcon_s;
 
 /** @brief   CMM capabilities query enum
  *  @ingroup module_api

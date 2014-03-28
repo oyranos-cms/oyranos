@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/03/28
  */
 
 
@@ -75,7 +75,7 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
   int              oy_compatibility;   /*!< last supported Oyranos CMM API : OYRANOS_VERSION */
   oyCMMapi_s     * api;                /**< must be casted to a according API, zero terminated list */
 
-  oyIcon_s         icon;               /*!< zero terminated list of a icon pyramid */
+  oyIcon_s       * icon;               /*!< module GUI icon */
 
   oyCMMinfoInit_f  init;      /**< should be called before any access to members of oyCMMinfo_s */
 

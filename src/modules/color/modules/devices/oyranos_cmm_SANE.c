@@ -16,8 +16,8 @@
 #include "oyranos_cmm.h"
 #include "oyranos_i18n.h"
 #include "oyObject_s_.h"
+#include "oyCMM_s.h"
 #include "oyCMMapi8_s_.h"
-#include "oyCMMinfo_s_.h"
 #include "oyCMMui_s_.h"
 
 #include <sane/sane.h>
@@ -883,7 +883,7 @@ oyCMMui_s_   _api8_ui = {
 };
 
 oyIcon_s _api8_icon = {
-  oyOBJECT_ICON_S, 0,0,0, 0,0,0, (char*)"oyranos_logo.png"
+  oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"
 };
 
 /** @instance _rank_map
@@ -993,7 +993,7 @@ const char *_texts[5] = { "name", "copyright", "manufacturer", "help", 0 };
  *  @since   2007/12/12 (Oyranos: 0.1.10)
  *  @date    2009/06/23
  */
-oyCMMinfo_s_ _cmm_module = {
+oyCMM_s _cmm_module = {
 
    oyOBJECT_CMM_INFO_S,/**< ::type; the object type */
    0, 0, 0,            /**< static objects omit these fields */
@@ -1007,7 +1007,7 @@ oyCMMinfo_s_ _cmm_module = {
    (oyCMMapi_s *) & _api8,
 
   /** ::icon; zero terminated list of a icon pyramid */
-   {oyOBJECT_ICON_S, 0, 0, 0, 0, 0, 0, "oyranos_logo.png"},
+   &_api8_icon
 };
 
 /* Helper functions */

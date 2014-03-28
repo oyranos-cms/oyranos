@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2008-2009 (C) Kai-Uwe Behrmann
+ *            2008-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    modules for Oyranos
  *  @internal
@@ -15,7 +15,7 @@
 
 #include "oyranos_config_internal.h"
 
-#include "oyCMMinfo_s_.h"
+#include "oyCMM_s.h"
 
 #include "oyranos_cmm.h"
 #include "oyranos_cmm_oyIM.h"
@@ -149,6 +149,7 @@ const char * oyIMInfoGetText         ( const char        * select,
 }
 const char *oyIM_texts[4] = {"name","copyright","manufacturer",0};
 
+oyIcon_s oyIM_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
 /** @instance oyIM_cmm_module
  *  @brief    oyIM module infos
@@ -157,7 +158,7 @@ const char *oyIM_texts[4] = {"name","copyright","manufacturer",0};
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  *  @date    2008/12/30
  */
-oyCMMinfo_s_ oyIM_cmm_module = {
+oyCMM_s oyIM_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,
@@ -169,6 +170,6 @@ oyCMMinfo_s_ oyIM_cmm_module = {
 
   (oyCMMapi_s*) & oyIM_api3,
 
-  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"}
+  &oyIM_icon
 };
 

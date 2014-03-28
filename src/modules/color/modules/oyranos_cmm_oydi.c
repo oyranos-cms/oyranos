@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2009-2012 (C) Kai-Uwe Behrmann
+ *            2009-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyranos X11 module for Oyranos
  *  @internal
@@ -13,9 +13,9 @@
  *  @since    2009/02/23
  */
 
+#include "oyCMM_s.h"
 #include "oyCMMapi4_s_.h"
 #include "oyCMMapi7_s_.h"
-#include "oyCMMinfo_s_.h"
 #include "oyCMMui_s_.h"
 #include "oyConnectorImaging_s_.h"
 #include "oyFilterNode_s_.h"         /* for oyFilterNode_TextToInfo_ */
@@ -1150,6 +1150,7 @@ const char * oydiGetText             ( const char        * select,
 }
 
 const char *oydi_texts[5] = {"name","copyright","manufacturer","help",0};
+oyIcon_s oydi_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
 /** @instance oydi_cmm_module
  *  @brief    oydi module infos
@@ -1158,7 +1159,7 @@ const char *oydi_texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2009/01/00 (Oyranos: 0.1.10)
  *  @date    2009/01/00
  */
-oyCMMinfo_s_ oydi_cmm_module = {
+oyCMM_s oydi_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,
@@ -1171,6 +1172,6 @@ oyCMMinfo_s_ oydi_cmm_module = {
 
   (oyCMMapi_s*) & oydi_api4_image_display,
 
-  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
+  &oydi_icon
 };
 

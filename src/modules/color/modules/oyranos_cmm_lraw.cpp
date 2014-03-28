@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2009-2012 (C) Kai-Uwe Behrmann
+ *            2009-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    libraw filter for Oyranos
  *  @internal
@@ -15,11 +15,11 @@
 
 #include "oyranos_config_internal.h"
 
+#include "oyCMM_s.h"
 #include "oyCMMapi4_s.h"
 #include "oyCMMapi4_s_.h"
 #include "oyCMMapi7_s.h"
 #include "oyCMMapi7_s_.h"
-#include "oyCMMinfo_s_.h"
 #include "oyCMMui_s_.h"
 #include "oyConnectorImaging_s_.h"
 #include "oyFilterNode_s_.h"         /* for oyFilterNode_TextToInfo_ */
@@ -242,6 +242,7 @@ const char * lrawGetText             ( const char        * select,
 }
 const char *lraw_texts[4] = {"name","copyright","manufacturer",0};
 
+oyIcon_s lraw_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
 /** @instance lraw_cmm_module
  *  @brief    lraw module infos
@@ -250,7 +251,7 @@ const char *lraw_texts[4] = {"name","copyright","manufacturer",0};
  *  @date    2009/06/14
  *  @since   2009/06/14 (Oyranos: 0.1.10)
  */
-oyCMMinfo_s_ lraw_cmm_module = {
+oyCMM_s lraw_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,
@@ -262,7 +263,7 @@ oyCMMinfo_s_ lraw_cmm_module = {
 
   (oyCMMapi_s*) & lraw_api4_image_input_libraw,
 
-  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, (char*)"oyranos_logo.png"},
+  &lraw_icon
 };
 
 

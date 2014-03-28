@@ -125,7 +125,7 @@ OYAPI void  OYEXPORT
 OYAPI oyIcon_s * OYEXPORT
                    oyCMMinfo_GetIcon ( oyCMMinfo_s       * info )
 {
-  return &((oyCMMinfo_s_*)info)->icon;
+  return ((oyCMMinfo_s_*)info)->icon;
 }
 
 /** Function  oyCMMinfo_GetInitF

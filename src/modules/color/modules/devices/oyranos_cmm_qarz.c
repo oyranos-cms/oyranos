@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2007-2010 (C) Kai-Uwe Behrmann
+ *            2007-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyranos Quarz module for Oyranos
  *  @internal
@@ -13,9 +13,9 @@
  *  @since    2007/12/12
  */
 
+#include "oyCMM_s.h"
 #include "oyCMMapi8_s_.h"
 #include "oyCMMapi10_s_.h"
-#include "oyCMMinfo_s_.h"
 #include "oyCMMui_s_.h"
 
 #include "oyranos_cmm.h"
@@ -1235,7 +1235,7 @@ const char *qarz_texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2007/12/12 (Oyranos: 0.1.8)
  *  @date    2010/11/08
  */
-oyCMMinfo_s_ qarz_cmm_module = {
+oyCMM_s qarz_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,
@@ -1247,6 +1247,6 @@ oyCMMinfo_s_ qarz_cmm_module = {
 
   (oyCMMapi_s*) & qarz_api8,
 
-  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
+  &qarz_api8_icon
 };
 

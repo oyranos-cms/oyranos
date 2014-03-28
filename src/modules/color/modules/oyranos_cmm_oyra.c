@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2008-2012 (C) Kai-Uwe Behrmann
+ *            2008-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    modules for Oyranos
  *  @internal
@@ -15,6 +15,7 @@
 
 #include "oyranos_config_internal.h"
 
+#include "oyCMM_s.h"
 #include "oyranos_cmm.h"
 #include "oyranos_cmm_oyra.h"
 #include "oyranos_helper.h"
@@ -149,7 +150,7 @@ const char * oyraGetText             ( const char        * select,
 }
 const char *oyra_texts[4] = {"name","copyright","manufacturer",0};
 
-extern oyCMMinfo_s_ oyra_cmm_module;
+extern oyCMM_s oyra_cmm_module;
 int  oyraInit                        ( oyStruct_s        * module_info )
 {
   oyCMMapi_s * a = 0,
@@ -170,6 +171,8 @@ int  oyraInit                        ( oyStruct_s        * module_info )
   return 0;
 }
 
+oyIcon_s oyra_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
+
 /** @instance oyra_cmm_module
  *  @brief    oyra module infos
  *
@@ -177,7 +180,7 @@ int  oyraInit                        ( oyStruct_s        * module_info )
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  *  @date    2008/01/02
  */
-oyCMMinfo_s_ oyra_cmm_module = {
+oyCMM_s oyra_cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,
@@ -189,7 +192,7 @@ oyCMMinfo_s_ oyra_cmm_module = {
 
   (oyCMMapi_s*) & oyra_api4_image_root,
 
-  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
+  &oyra_icon,
   oyraInit
 };
 

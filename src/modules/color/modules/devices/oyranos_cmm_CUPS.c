@@ -15,8 +15,8 @@
  *
  * @author Joseph Simon <j.simon.iii@astound.net>
 */
+#include "oyCMM_s.h"
 #include "oyCMMapi8_s_.h"
-#include "oyCMMinfo_s_.h"
 #include "oyCMMui_s_.h"
 #include "oyProfile_s_.h"
 
@@ -1027,7 +1027,7 @@ const char * _texts[5] = {"name","copyright","manufacturer","help",0};
  *  @since   2007/12/12 (Oyranos: 0.1.10)
  *  @date    2009/02/09
  */
-oyCMMinfo_s_ _cmm_module = {
+oyCMM_s _cmm_module = {
 
   oyOBJECT_CMM_INFO_S,
   0,0,0,
@@ -1039,7 +1039,7 @@ oyCMMinfo_s_ _cmm_module = {
 
   (oyCMMapi_s*) & _api8,
 
-  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"},
+  &_api8_icon
 };
 
 /** @brief get for possible profiles eachs qualifier

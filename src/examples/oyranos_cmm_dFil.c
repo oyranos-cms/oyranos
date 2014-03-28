@@ -3,7 +3,7 @@
  *  a filter for Oyranos 
  *
  *  @par Copyright:
- *            2012 (C) My name
+ *            2014 (C) My name
  *
  *  @brief    my filter for Oyranos
  *  @internal
@@ -13,6 +13,7 @@
  *  @since    2009/06/14
  */
 
+#include "oyCMM_s.h"
 #include "oyCMMapi4_s_.h"
 #include "oyCMMapi7_s_.h"
 #include "oyCMMapi10_s_.h"
@@ -174,6 +175,7 @@ const char * dFilGetText             ( const char        * select,
 }
 const char *dFil_texts[5] = {"name","copyright","manufacturer","help",0};
 
+oyIcon_s dFil_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
 /** @instance dFil_cmm_module
  *  @brief    dFil module infos
@@ -188,7 +190,7 @@ const char *dFil_texts[5] = {"name","copyright","manufacturer","help",0};
  *  @date    2012/10/11
  *  @since   2009/06/14 (Oyranos: 0.1.10)
  */
-oyCMMinfo_s_ dFil_cmm_module = {
+oyCMM_s dFil_cmm_module = {
 
   oyOBJECT_CMM_INFO_S, /**< ::type; the object type */
   0,0,0,               /**< static objects omit these fields */
@@ -202,7 +204,7 @@ oyCMMinfo_s_ dFil_cmm_module = {
   (oyCMMapi_s*) & dFil_api4_my_filter,
 
   /** ::icon; zero terminated list of a icon pyramid */
-  {oyOBJECT_ICON_S, 0,0,0, 0,0,0, (char*)"oyranos_logo.png"}
+  &dFil_icon
 };
 
 

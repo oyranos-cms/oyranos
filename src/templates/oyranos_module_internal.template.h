@@ -8,8 +8,6 @@
 #include "oyranos.h"
 #include "oyranos_module.h"
 
-typedef struct oyIcon_s oyIcon_s;
-
 /**
  *  @internal
  *  @enum    oyREQUEST_e
@@ -54,23 +52,6 @@ typedef struct {
   oyCMMapiQuery_s   ** queries;
   char                 prefered_cmm[5];
 } oyCMMapiQueries_s;
-
-/** @brief   icon data
- *  @ingroup cmm_handling
- *  @extends oyStruct_s
- *
- *  Since: 0.1.8
- */
-struct oyIcon_s {
-  oyOBJECT_e       type;               /*!< struct type oyOBJECT_ICON_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyPointer        dummy;              /**< keep to zero */
-  int              width;              /**< */
-  int              height;             /**< */
-  float          * data;               /*!< should be sRGB matched */
-  char           * file_list;          /*!< colon ':' delimited list of icon file names, SVG, PNG */
-};
 
 #include "oyHash_s.h"
 #include "oyCMMapi3_s.h"

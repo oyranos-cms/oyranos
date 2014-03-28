@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2008-2012 (C) Kai-Uwe Behrmann
+ *            2008-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    meta module for C language module support in Oyranos
  *  @internal
@@ -15,6 +15,7 @@
 
 #include "oyranos_config_internal.h"
 
+#include "oyCMM_s.h"
 #include "oyCMMapi4_s_.h"
 
 #include "oyranos_cmm.h"
@@ -121,7 +122,7 @@ int          oyIMFilterScan          ( oyPointer           data,
                                        oyCMMinfo_s      ** info,
                                        oyObject_s          object )
 {
-  oyCMMinfo_s_ * cmm_info = 0;
+  oyCMM_s * cmm_info = 0;
   oyCMMapi_s_ * api = 0;
   oyCMMapi4_s_ * api4 = 0;
   int error = !lib_name;
@@ -160,12 +161,12 @@ int          oyIMFilterScan          ( oyPointer           data,
 #endif
 
 #if DLOPEN
-      cmm_info = (oyCMMinfo_s*) dlsym (dso_handle, info_sym);
+      cmm_info = (oyCMM_s*) dlsym (dso_handle, info_sym);
 
       if(info_sym)
         oyFree_m_(info_sym);
 #else
-      cmm_info = (oyCMMinfo_s_*)oyCMMinfoFromLibName_( lib_name );
+      cmm_info = (oyCMM_s*)oyCMMinfoFromLibName_( lib_name );
 #endif
 
       error = !cmm_info;
