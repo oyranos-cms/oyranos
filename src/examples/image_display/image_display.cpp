@@ -25,6 +25,9 @@
 
 #include <oyConversion_s.h>
 
+#ifdef DEBUG
+#undef DEBUG
+#endif
 #define DEBUG 1
 
 extern "C" {
