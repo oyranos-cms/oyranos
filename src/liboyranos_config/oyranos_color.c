@@ -31,9 +31,11 @@
  */
 
 
-/** */
-void
-oyLab2XYZ (const double *CIELab, double * XYZ)
+/**
+ *  @brief CIE Lab to ICC XYZ
+ */
+void     oyLab2XYZ                   ( const double      * CIELab,
+                                       double            * XYZ )
 {
   const double * l = CIELab;
   /* double e = 216./24389.;             // 0.0088565 */
@@ -63,9 +65,11 @@ oyLab2XYZ (const double *CIELab, double * XYZ)
     XYZ[2] = (fz - 16./116.) * 108.0/841.0 * Zn;
 }
 
-/** */
-void
-oyXYZ2Lab (const double *XYZ, double * lab)
+/**
+ *  @brief ICC XYZ to CIE * Lab
+ */
+void     oyXYZ2Lab                   ( const double      * XYZ,
+                                       double            * lab )
 {
     /* white point D50 [0.964294 , 1.000000 , 0.825104]
      * XYZ->Lab is defined as (found with the help of Marti Maria):
