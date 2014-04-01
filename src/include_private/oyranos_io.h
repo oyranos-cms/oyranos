@@ -57,17 +57,18 @@ extern int oy_warn_;
 /* --- internal API definition --- */
 
 /* separate from the external functions */
-char* oyGetPathFromProfileName_           (const char*   profilename,
-                                           oyAlloc_f     allocate_func);
+char *   oyGetPathFromProfileName_   ( const char        * profilename,
+                                       int                 flags,
+                                       oyAlloc_f           allocate_func );
 
 
 char **  oyProfileListGet_           ( const char        * colorsig,
                                        uint32_t          * size );
 
-size_t	oyGetProfileSize_                 (const char*   profilename);
-void*	oyGetProfileBlock_                (const char*   profilename,
-                                           size_t       *size,
-                                           oyAlloc_f     allocate_func);
+size_t	 oyGetProfileSize_           ( const char        * fullFileName );
+void *   oyGetProfileBlock_          ( const char        * fullFileName,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func );
 
 char**  oyPolicyListGet_                  (int         * size);
 char**  oyFileListGet_                    (const char * subpath,
@@ -86,7 +87,8 @@ char*   oyLibNameCreate_                 ( const char * lib_base_name,
 void oyCheckDefaultDirectories_ ();
 
 /* search in profile path and in current path */
-char* oyFindProfile_ (const char* name);
+char *   oyFindProfile_              ( const char        * name,
+                                       int                 flags);
 
 char * oyFindApplication(const char * app_name);
 

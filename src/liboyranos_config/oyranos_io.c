@@ -41,11 +41,6 @@
 
 /* --- internal API definition --- */
 
-/* search in profile path and in current path */
-char* oyFindProfile_ (const char* name);
-
-
-
 /* --- Helpers  --- */
 /* small helpers */
 #define WARNc_PROFILE_S(text_,fileName_) \
@@ -94,17 +89,20 @@ oyGetPathFromProfileNameCb_          ( oyFileList_s      * data,
   {
     size_t size = 128;
     char* header = oyReadFileToMem_ (full_name, &size, oyAllocateFunc_);
-    success = !oyCheckProfileMem_ (header, size, 0);
+    int result = oyCheckProfileMem_ (header, size, 0, l->flags);
+    success = !result;
     oyFree_m_ (header);
-    if (success) {
+    if (success)
+    {
       DBG_MEM_S(full_name)
       DBG_MEM_V(oyStrlen_(full_name))
-      if (oyStrlen_(full_name) < MAX_PATH) {
+      if (oyStrlen_(full_name) < MAX_PATH)
+      {
         oySprintf_( search, "%s", full_name );
         search[oyStrlen_(full_name)] = '\000';
       } else
         search[0] = '\000';
-    } else
+    } else if(result == 1)
       WARNc_PROFILE_S( _("not a profile:"), oyNoEmptyName_m_(full_name) )
   }
   /* break on success */
@@ -112,9 +110,9 @@ oyGetPathFromProfileNameCb_          ( oyFileList_s      * data,
   return success;
 }
 
-char*
-oyGetPathFromProfileName_       (const char*   fileName,
-                                 oyAlloc_f     allocate_func)
+char *   oyGetPathFromProfileName_   ( const char        * fileName,
+                                       int                 flags,
+                                       oyAlloc_f           allocate_func )
 {
   char  *fullFileName = 0;
   char  *pathName = 0;
@@ -138,9 +136,10 @@ oyGetPathFromProfileName_       (const char*   fileName,
                           oyStrlen_(fileName) : MAX_PATH;
     char ** path_names = oyProfilePathsGet_( &count, oyAllocateFunc_ );
     char * l_names[2] = { 0, 0 };
-    oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 0, NULL, 0, 0, 0};
+    oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 0, NULL, 0, 0, 0, 0};
 
     l_names[0] = search;
+    l.flags = flags;
     l.names = l_names;
 
     DBG_PROG
@@ -184,7 +183,9 @@ oyGetPathFromProfileName_       (const char*   fileName,
   }
 
   if(fileName && !success)
-  {/* use fileName as an full qualified name, check name and test profile*/
+  {
+    int result = 0;
+    /* use fileName as an full qualified name, check name and test profile*/
     DBG_PROG_S("dir/filename found")
     fullFileName = oyMakeFullFileDirName_ (fileName);
 
@@ -194,11 +195,16 @@ oyGetPathFromProfileName_       (const char*   fileName,
       header = oyReadFileToMem_ (fullFileName, &size, allocate_func);
 
       if (size >= 128)
-        success = !oyCheckProfileMem_ (header, 128, 0);
+      {
+        result = oyCheckProfileMem_ (header, 128, 0, flags);
+        success = !result;
+      }
     }
 
-    if (!success) {
-      WARNc_PROFILE_S( _("profile not found:"), oyNoEmptyName_m_(fileName))
+    if (!success)
+    {
+      if(result == 1)
+        WARNc_PROFILE_S( _("profile not found:"), oyNoEmptyName_m_(fileName))
       DBG_PROG_ENDE
       return 0;
     }
@@ -255,11 +261,12 @@ oyProfilePathsGet_    (int             * count,
 }
 
 
-char*
-oyFindProfile_ (const char* fileName)
+/* search in profile path and in current path */
+char *   oyFindProfile_              ( const char        * fileName,
+                                       int                 flags)
 {
-  char  *fullFileName = 0;
-  char* path_name = 0;
+  char * fullFileName = 0;
+  char * path_name = 0;
 
   DBG_PROG_START
 
@@ -269,7 +276,7 @@ oyFindProfile_ (const char* fileName)
   /*DBG_NUM_S((fileName)) */
   if (fileName && fileName[0] != OY_SLASH_C)
   {
-    path_name = oyGetPathFromProfileName_(fileName, oyAllocateFunc_);
+    path_name = oyGetPathFromProfileName_(fileName, flags, oyAllocateFunc_);
 
     if(!path_name)
     {
@@ -330,7 +337,7 @@ int oyProfileListCb_ (oyFileList_s * data,
   if(l->type != oyOBJECT_FILE_LIST_S_)
     WARNc_S("Could not find a oyFileList_s objetc.");
 
-      if (!oyCheckProfile_(full_name, l->colorsig))
+      if (!oyCheckProfile_(full_name, l->colorsig, l->flags))
       {
         if(l->count_files >= l->mem_count)
         {
@@ -396,7 +403,7 @@ int oyPolicyListCb_ (oyFileList_s * data,
 char **  oyProfileListGet_           ( const char        * colorsig,
                                        uint32_t          * size )
 {
-  oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
+  oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 0, 128, 0, 0};
   int32_t count = 0;
   char ** path_names = NULL;
 
@@ -428,7 +435,7 @@ char **  oyProfileListGet_           ( const char        * colorsig,
 char**
 oyPolicyListGet_                  (int * size)
 {
-  oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
+  oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 0, 128, 0, 0};
   int count = 0;
   char ** path_names = NULL;
   DBG_PROG_START
@@ -455,15 +462,11 @@ oyPolicyListGet_                  (int * size)
 }
 
 /* profile handling API */
-size_t
-oyReadFileSize_(const char* name);
+size_t   oyReadFileSize_(const char* name);
 
-size_t
-oyGetProfileSize_                  (const char* profilename)
+size_t	 oyGetProfileSize_           ( const char        * fullFileName )
 {
   size_t size = 0;
-  char* fullFileName = oyFindProfile_ (profilename);
-
   DBG_PROG_START
 
   size = oyReadFileSize_ (fullFileName);
@@ -472,22 +475,14 @@ oyGetProfileSize_                  (const char* profilename)
   return size;
 }
 
-void*
-oyGetProfileBlock_                 (const char* profilename, size_t *size,
-                                    oyAlloc_f     allocate_func)
+void *   oyGetProfileBlock_          ( const char        * fullFileName,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func )
 {
-  char* fullFileName = 0;
   char* block = 0;
-
   DBG_PROG_START
 
-  fullFileName = oyFindProfile_ (profilename);
-
-  if(fullFileName)
-  {
-    block = oyReadFileToMem_ (fullFileName, size, allocate_func);
-    oyFree_m_( fullFileName );
-  }
+  block = oyReadFileToMem_ (fullFileName, size, allocate_func);
 
   DBG_PROG_ENDE
   return block;

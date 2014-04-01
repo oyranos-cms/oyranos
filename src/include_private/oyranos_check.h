@@ -36,9 +36,9 @@
 
 /* separate from the external functions */
 
-int	oyCheckProfile_                   (const char* name,const char* colorsig);
+int	oyCheckProfile_                   (const char* name,const char* colorsig, int flags);
 int	oyCheckProfileMem_                (const void* mem, size_t size,
-                                           const char* colorsig);
+                                           const char* colorsig, int flags);
 
 int     oyProfileGetMD5_             ( void       * buffer,
                                        size_t       size,

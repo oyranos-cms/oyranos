@@ -69,6 +69,7 @@ struct oyFileList_s {
   oyOBJECT_e type;                  /* oyOBJECT_FILE_LIST_S_ */
   int hopp;
   const char* colorsig;
+  int flags;
   int mem_count;
   int count_files;
   char** names;

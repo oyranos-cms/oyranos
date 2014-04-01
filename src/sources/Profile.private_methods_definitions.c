@@ -193,7 +193,8 @@ oyStructList_s_ * oy_profile_s_file_cache_ = 0;
  *
  *  flags supports OY_NO_CACHE_READ and OY_NO_CACHE_WRITE to disable cache
  *  reading and writing. The cache flags are useful for one time profiles or
- *  scanning large numbers of profiles.
+ *  scanning large numbers of profiles. OY_COMPUTE and OY_ICC_VERSION_2 and
+ *  OY_ICC_VERSION_4 are supported too.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/11/0 (Oyranos: 0.1.9)
@@ -226,6 +227,17 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
       if(!oyToNoCacheRead_m(flags))
       {
         s = (oyProfile_s_*) oyHash_GetPointer_( entry, oyOBJECT_PROFILE_S);
+        if(s &&
+           (flags & OY_ICC_VERSION_2 || flags & OY_ICC_VERSION_4))
+        {
+          icSignature vs = (icSignature) oyValueUInt32( oyProfile_GetSignature((oyProfile_s*)s,oySIGNATURE_VERSION) );      
+          char * v = (char*)&vs;
+
+          if((flags & OY_ICC_VERSION_2 || flags & OY_ICC_VERSION_4) &&
+             !((flags & OY_ICC_VERSION_2 && v[0] == 2) ||
+               (flags & OY_ICC_VERSION_4 && v[0] == 4)))
+            s = NULL;
+        }
         s = (oyProfile_s_*) oyProfile_Copy( (oyProfile_s*)s, 0 );
         if(s)
           return s;
@@ -235,7 +247,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
 
   if(error <= 0 && name && !s)
   {
-    file_name = oyFindProfile_( name );
+    file_name = oyFindProfile_( name, flags );
     block = oyGetProfileBlock( file_name, &size, allocateFunc );
     if(!block || !size)
       error = 1;
@@ -280,7 +292,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
     /* We expect a incomplete filename attached to s and try to correct this. */
     if(error <= 0 && !file_name && s->file_name_)
     {
-      file_name = oyFindProfile_( s->file_name_ );
+      file_name = oyFindProfile_( s->file_name_, flags );
       if(file_name && s->oy_->deallocateFunc_)
       {
         s->oy_->deallocateFunc_( s->file_name_ );
@@ -544,7 +556,7 @@ char *       oyProfile_GetFileName_r ( oyProfile_s_      * profile,
 
       oyProfile_Release( &tmp );
 
-      name = oyFindProfile_( name );
+      name = oyFindProfile_( name, 0 );
       if(name)
       {
         s->file_name_ = oyStringCopy_( name, s->oy_->allocateFunc_ );

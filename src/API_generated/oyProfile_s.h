@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/03/06
+ *  @date     2014/04/01
  */
 
 
@@ -48,6 +48,9 @@ typedef struct oyProfile_s oyProfile_s;
 
 
 /* Include "Profile.public.h" { */
+/** \addtogroup objects_profile ICC Profile APIs
+ *
+ *  @{ */
 /** @typedef oyIO_t
     parametric type as shorthand for IO flags \n
 
@@ -67,6 +70,9 @@ typedef struct oyProfile_s oyProfile_s;
 
 #define OY_FROM_PROFILE 0x04                    /**< use from profile */
 #define OY_COMPUTE      0x08                    /**< compute newly */
+#define OY_ICC_VERSION_2 0x10                   /**< filter for version 2 profiles */
+#define OY_ICC_VERSION_4 0x20                   /**< filter for version 4 profiles */
+/** @} *//* objects_profile */
 
 /* } Include "Profile.public.h" */
 

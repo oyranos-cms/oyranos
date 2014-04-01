@@ -646,7 +646,7 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
 
   DBG_PROG2_S( "name = %s type %d", name, type )
 
-  if ( name == 0 || !oyCheckProfile_ (fileName, 0) )
+  if ( name == 0 || !oyCheckProfile_ (fileName, 0, 0) )
   {
     const char* config_name = 0;
     DBG_PROG2_S("set fileName = %s as %d profile\n",fileName, type)

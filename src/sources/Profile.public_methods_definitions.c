@@ -125,12 +125,15 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
  *  Search will occure in this order.
  *
  *  @param[in]    name           profile file name or ICC ID
- *  @param[in]    flags          OY_COMPUTE - compute ID
+ *  @param[in]    flags          OY_NO_CACHE_READ, OY_NO_CACHE_WRITE, OY_COMPUTE - compute ID
  *  @param[in]    object         the optional base
  *
- *  flags supports OY_NO_CACHE_READ and OY_NO_CACHE_WRITE to disable cache
+ *  flags supports 
+ *  - ::OY_NO_CACHE_READ and ::OY_NO_CACHE_WRITE to disable cache
  *  reading and writing. The cache flags are useful for one time profiles or
  *  scanning large numbers of profiles.
+ *  - ::OY_COMPUTE lets newly compute ID
+ *  - ::OY_ICC_VERSION_2 and ::OY_ICC_VERSION_4 let select version 2 and 4 profiles separately.
  *
  *  @version Oyranos: 0.9.5
  *  @since   2007/11/0 (Oyranos: 0.1.9)
@@ -144,7 +147,7 @@ oyProfile_FromFile            ( const char      * name,
   oyProfile_s_ * s = 0;
   uint32_t md5[4];
 
-  char * fn = oyFindProfile_( name );
+  char * fn = oyFindProfile_( name, flags );
   if(fn)
     s = oyProfile_FromFile_( name, flags, object );
 
@@ -293,6 +296,7 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromMD5(
 }
 
 /** Function oyProfile_FromTaxiDB
+ *  @memberof oyProfile_s
  *  @brief   look up a profile of a device from Taxi DB
  *
  *  The function asks the online ICC Taxi DB for a profile. It is therefore
@@ -348,6 +352,7 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromTaxiDB (
 }
 
 /** Function oyProfile_Install
+ *  @memberof oyProfile_s
  *  @brief   Install a ICC profile
  *
  *  Without options, the ICC profile will be installed into the users 
@@ -1648,7 +1653,7 @@ OYAPI const char * OYEXPORT oyProfile_GetFileName (
       if(hash)
       {
         char * key = oyAllocateFunc_(80);
-        txt = oyFindProfile_( name );
+        txt = oyFindProfile_( name, 0 );
         sprintf( key, "//"OY_TYPE_STD"/profile.icc/psid_%d", dl_pos );
         oyOptions_SetFromText( &s->oy_->handles_,
                                key,
@@ -1660,7 +1665,7 @@ OYAPI const char * OYEXPORT oyProfile_GetFileName (
         oyFree_m_( key );
       } else
       {
-        s->file_name_ = oyFindProfile_( name );
+        s->file_name_ = oyFindProfile_( name, 0 );
         name = oyStringCopy_( s->file_name_, s->oy_->allocateFunc_ );
         if(s->file_name_)
           oyDeAllocateFunc_( s->file_name_ );

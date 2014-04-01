@@ -1443,7 +1443,7 @@ oyFileListGet_                  (const char * subpath,
                                  int          data,
                                  int          owner)
 {
-  oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
+  oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 0, 128, 0, 0};
   int count = 0;
   char ** path_names = NULL;
  
@@ -1624,7 +1624,7 @@ oyLibListGet_                   (const char * subpath,
                                  int        * size,
                                  int          owner)
 {
-  struct oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 128, 0, 0};
+  struct oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 0, 128, 0, 0};
   int count = 0;
   char ** path_names = NULL;
  

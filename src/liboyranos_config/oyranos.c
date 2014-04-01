@@ -724,7 +724,7 @@ oyCheckProfile (const char* filename, const char* colorsig)
   oyTextsCheck_ ();
 
   /* colorsig is currently ignored */
-  n = oyCheckProfile_ (filename, colorsig);
+  n = oyCheckProfile_ (filename, colorsig, 0);
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -748,7 +748,7 @@ oyCheckProfileMem (const void* mem, size_t size, const char* colorsig)
   oyTextsCheck_ ();
 
   /* colorsig is currently ignored */
-  n = oyCheckProfileMem_ (mem, size, colorsig);
+  n = oyCheckProfileMem_ (mem, size, colorsig, 0);
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -760,15 +760,21 @@ oyCheckProfileMem (const void* mem, size_t size, const char* colorsig)
  *  @param  profilename  specifies the profile
  *  @return size
  */
-size_t
-oyGetProfileSize                  (const char* profilename)
+size_t   oyGetProfileSize            ( const char        * profilename )
 {
   size_t size = 0;
+  char * fullFileName = NULL;
 
   DBG_PROG_START
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  size = oyGetProfileSize_ (profilename);
+  fullFileName = oyFindProfile_( profilename, 0 );
+
+  if(fullFileName)
+  {
+    size = oyGetProfileSize_( fullFileName );
+    oyFree_m_( fullFileName );
+  }
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -788,16 +794,24 @@ oyGetProfileSize                  (const char* profilename)
  *  @param      allocate_func the users memory allocation function
  *  @return             the profile block in memory allocated by oyAlloc_f    
  */
-void*
-oyGetProfileBlock                 (const char* profilename, size_t *size,
-                                   oyAlloc_f     allocate_func)
+void *   oyGetProfileBlock           ( const char        * profilename,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func)
 {
-  char* block = NULL;
+  char * block = NULL;
+  char * fullFileName = NULL;
 
   DBG_PROG_START
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  block = oyGetProfileBlock_ (profilename, size, allocate_func);
+  fullFileName = oyFindProfile_( profilename, 0 );
+
+  if(fullFileName)
+  {
+    block = oyGetProfileBlock_ (fullFileName, size, allocate_func);
+    oyFree_m_( fullFileName );
+  }
+
   DBG_PROG3_S( "%s %hd %d", profilename, (int)(intptr_t)block, (int)(intptr_t)*size)
   DBG_PROG
 
@@ -820,11 +834,12 @@ char*
 oyGetPathFromProfileName (const char* profile_name, oyAlloc_f     allocate_func)
 {
   char* path_name = NULL;
+  int flags = 0;
 
   DBG_PROG_START
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
-  path_name = oyGetPathFromProfileName_ (profile_name, allocate_func);
+  path_name = oyGetPathFromProfileName_ (profile_name, flags, allocate_func);
 
   oyExportEnd_();
   DBG_PROG_ENDE

@@ -32,6 +32,7 @@
 #include "oyranos_internal.h"
 #include "oyranos_check.h"
 #include "oyranos_sentinel.h"
+#include "oyProfile_s.h"
 /*#include "oyranos_xml.h" */
 
 /* --- Helpers  --- */
@@ -55,9 +56,12 @@
 
 /* profile check API */
 
-int
-oyCheckProfile_                    (const char* name,
-                                    const char* colorsig)
+/** @internal
+ *  supported flags are OY_ICC_PROFILE_2 and OY_ICC_VERSION_4
+ */
+int      oyCheckProfile_             ( const char        * name,
+                                       const char        * colorsig,
+                                       int                 flags )
 {
   char *fullName = 0;
   char* header = 0; 
@@ -67,7 +71,7 @@ oyCheckProfile_                    (const char* name,
   DBG_MEM_START
 
   /*if(name) DBG_NUM_S((name)); */
-  fullName = oyFindProfile_(name);
+  fullName = oyFindProfile_(name, flags);
   if (!fullName)
     WARNc2_S("%s %s", _("not found:"),name)
   else
@@ -79,7 +83,7 @@ oyCheckProfile_                    (const char* name,
     size = 128;
     header = oyReadFileToMem_ (fullName, &size, oyAllocateFunc_); DBG_PROG
     if (size >= 128)
-      r = oyCheckProfileMem_ (header, 128, colorsig);
+      r = oyCheckProfileMem_ (header, 128, colorsig, flags);
   }
 
   /* release memory */
@@ -91,9 +95,10 @@ oyCheckProfile_                    (const char* name,
   return r;
 }
 
-int
-oyCheckProfileMem_                 (const void* mem, size_t size,
-                                    const char* colorsig)
+int      oyCheckProfileMem_          ( const void        * mem,
+                                       size_t              size,
+                                       const char        * colorsig,
+                                       int                 flags )
 {
   char* block = (char*) mem;
   int offset = 36;
@@ -108,15 +113,22 @@ oyCheckProfileMem_                 (const void* mem, size_t size,
         block[offset+3] == 'p' )
     {
       icHeader* h = (icHeader*)mem;
+      icSignature vs = h->version;
+      char * v = (char*)&vs;
       icProfileClassSignature prof_device_class = h->deviceClass;
       icProfileClassSignature device_class = (icProfileClassSignature)0;
+      int v2 = OY_ICC_VERSION_2, v4 = OY_ICC_VERSION_4;
 
       if(colorsig)
         device_class = *((icProfileClassSignature*)colorsig);
 
       DBG_MEM_ENDE
-      if(colorsig && memcmp(&prof_device_class,&device_class,4) != 0)
-        return 1;
+      if((colorsig && memcmp(&prof_device_class,&device_class,4) != 0) ||
+         ((flags & v2 || flags & v4) &&
+           !((flags & v2 && v[0] == 2) ||
+            (flags & v4 && v[0] == 4) 
+            )))
+        return 2;
       else
         return 0;
     } else {
