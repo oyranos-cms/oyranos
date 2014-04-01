@@ -82,12 +82,12 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("List included ICC tags:"));
-  fprintf( stderr, "      %s -l %s\n",        argv[0], _("FILE_NAME"));
+  fprintf( stderr, "      %s -l %s\n",        argv[0], _("ICC_FILE_NAME"));
   fprintf( stderr, "      -p %s\t%s\n",  _("NUMMER"), _("select tag"));
   fprintf( stderr, "      -n %s\t%s\n",  _("NAME"), _("select tag"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Dump Device Infos to OpenICC device JSON:"));
-  fprintf( stderr, "      %s -o %s\n",        argv[0], _("FILE_NAME"));
+  fprintf( stderr, "      %s -o %s\n",        argv[0], _("ICC_FILE_NAME"));
   fprintf( stderr, "      -c NAME       %s scanner, monitor, printer, camera ...\n",  _("use device class") );
   fprintf( stderr, "      -f xml        %s\n",  _("use IccXML format") );
   fprintf( stderr, "\n");
@@ -108,8 +108,10 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      %s -h\n",        argv[0]);
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("General options:"));
-  fprintf( stderr, "      %s\n",           _("-v verbose"));
+  fprintf( stderr, "      -v %s\n",        _("verbose"));
   fprintf( stderr, "      -i %s\n",        _("read input stream"));
+  fprintf( stderr, "      -2 %s\n",        _("select a ICC v2 profile"));
+  fprintf( stderr, "      -4 %s\n",        _("select a ICC v4 profile"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s:\n",               _("Example"));
   fprintf( stderr, "      oyranos-profile -lv -p=1 sRGB.icc\n");

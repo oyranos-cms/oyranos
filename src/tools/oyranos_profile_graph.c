@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2012-2013  Kai-Uwe Behrmann
+ *  Copyright (C) 2012-2014  Kai-Uwe Behrmann
  *
  */
 
@@ -104,6 +104,7 @@ int main( int argc , char** argv )
   double kelvin = 0.0;
   char * illuminant = 0;
   int color = 1;
+  int flags = 0;
 
   int max_x,max_y,min_x,min_y;
 
@@ -158,6 +159,8 @@ int main( int argc , char** argv )
             for(i = 1; i < (int)strlen(argv[pos]); ++i)
             switch (argv[pos][i])
             {
+              case '2': flags |= OY_ICC_VERSION_2; break;
+              case '4': flags |= OY_ICC_VERSION_4; break;
               case 'b': border = 0; break;
               case 'c': blackbody = 0; break;
               case 'd': i=0; OY_PARSE_FLOAT_ARG2( change_thickness, "d", -1000.0, 1000.0, .7 ); break;
@@ -234,6 +237,8 @@ int main( int argc , char** argv )
                         printf("      -o %s\t%s\n",   _("FILE"),   _("specify output file name, default is output.png"));
                         printf("      -b \t%s\n",     _("omit border"));
                         printf("      -t %s\t%s\n",   _("NUMBER"), _("specify increase of the thickness of the graph lines"));
+                        printf("      -2 \t%s\n",     _("select a ICC v2 profile"));
+                        printf("      -4 \t%s\n",     _("select a ICC v4 profile"));
                         printf("\n");
                         printf(_("For more informations read the man page:"));
                         printf("\n");
@@ -402,7 +407,7 @@ int main( int argc , char** argv )
       const char * filename = argv[j];
       size_t size = 0;
 
-      oyProfile_s * p = oyProfile_FromFile( filename, 0, NULL );
+      oyProfile_s * p = oyProfile_FromFile( filename, flags, NULL );
       double * saturation;
 
       if(!p)

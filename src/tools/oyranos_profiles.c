@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2010-2012 (C) Kai-Uwe Behrmann
+ *            2010-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC profile informations - on the command line
  *  @internal
@@ -23,6 +23,7 @@
 #include "oyranos_helper.h"
 #include "oyranos_helper_macros.h"
 #include "oyranos_internal.h"
+#include "oyranos_icc.h"
 #include "oyranos_io.h"
 #include "oyranos_config.h"
 #include "oyranos_sentinel.h"
@@ -70,6 +71,8 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -n  %s\n",       _("named color class"));
   fprintf( stderr, "      -o  %s\n",       _("output class"));
   fprintf( stderr, "      -i  %s\n",       _("input class"));
+  fprintf( stderr, "      -2  %s\n",       _("select ICC v2 profiles"));
+  fprintf( stderr, "      -4  %s\n",       _("select ICC v4 profiles"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("List search paths:"));
   fprintf( stderr, "      %s -p [-usym]\n",        argv[0]);
@@ -92,7 +95,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      %s -h\n",        argv[0]);
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("General options:"));
-  fprintf( stderr, "      %s\n",           _("-v verbose"));
+  fprintf( stderr, "      -v  %s\n",       _("verbose"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s:\n",               _("Example"));
   fprintf( stderr, "      SAVEIFS=$IFS ; IFS=$'\\n\\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in \"${profiles[@]}\"; do ls \"$file\"; done");
@@ -111,7 +114,8 @@ int main( int argc , char** argv )
   int error = 0;
   int list_profiles = 0, 
       list_profile_full_names = 0, list_profile_internal_names = 0,
-      list_paths = 0, user_path = 0, oyranos_path = 0, system_path = 0, machine_path = 0;
+      list_paths = 0, user_path = 0, oyranos_path = 0, system_path = 0, machine_path = 0,
+      flags = 0;
   int color_space = 0,
       display = 0,
       input = 0,
@@ -142,6 +146,8 @@ int main( int argc , char** argv )
             for(i = 1; pos < argc && i < strlen(argv[pos]); ++i)
             switch (argv[pos][i])
             {
+              case '2': flags |= OY_ICC_VERSION_2; break;
+              case '4': flags |= OY_ICC_VERSION_4; break;
               case 'l': list_profiles = 1; break;
               case 'f': list_profile_full_names = 1; break;
               case 'e': list_profile_internal_names = 1; break;
@@ -276,7 +282,8 @@ int main( int argc , char** argv )
 
       if(!(list_profile_full_names || list_profile_internal_names ||
            color_space || input || display || output || abstract ||
-           named_color || device_link))
+           named_color || device_link || flags & OY_ICC_VERSION_2 ||
+           flags & OY_ICC_VERSION_4))
       {
       names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
       for(i = 0; i < (int)count; ++i)
@@ -298,7 +305,8 @@ int main( int argc , char** argv )
         p = 0;
         t = 0;
 
-        if(list_profile_full_names || list_profile_internal_names)
+        if(list_profile_full_names || list_profile_internal_names ||
+           flags & OY_ICC_VERSION_2 || flags & OY_ICC_VERSION_4)
         {
           p = oyProfiles_Get( ps, i );
         }
@@ -329,6 +337,16 @@ int main( int argc , char** argv )
           else if(named_color && sig_class == icSigNamedColorClass)
             accept = 1;
         }
+
+        if( accept && (flags & OY_ICC_VERSION_2 || flags & OY_ICC_VERSION_4) )
+        {
+          icSignature vs = oyValueUInt32( oyProfile_GetSignature(p,oySIGNATURE_VERSION) );      
+          char * v = (char*)&vs;
+          if(!((flags & OY_ICC_VERSION_2 && (int)v[0] == 2) ||
+               (flags & OY_ICC_VERSION_4 && (int)v[0] == 4)))
+            accept = 0;
+        }
+
 
         if(!list_profile_full_names && !list_profile_internal_names &&
            accept)
@@ -433,7 +451,7 @@ int main( int argc , char** argv )
           }
 
         } else
-          ip = oyProfile_FromFile( file_name, OY_NO_CACHE_WRITE, 0 );
+          ip = oyProfile_FromFile( file_name, OY_NO_CACHE_WRITE | flags, 0 );
 
         if(!ip)
         {
