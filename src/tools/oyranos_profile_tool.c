@@ -133,7 +133,8 @@ void  printfHelp (int argc, char** argv)
 int main( int argc , char** argv )
 {
   int error = 0;
-  int list_tags = 0,
+  int flags = 0,
+      list_tags = 0,
       list_hash = 0,
       tag_pos = -1,
       dump_openicc_json = 0,
@@ -170,6 +171,8 @@ int main( int argc , char** argv )
             for(i = 1; pos < argc && i < strlen(argv[pos]); ++i)
             switch (argv[pos][i])
             {
+              case '2': flags |= OY_ICC_VERSION_2; break;
+              case '4': flags |= OY_ICC_VERSION_4; break;
               case 'c': OY_PARSE_STRING_ARG(device_class); break;
               case 'f': OY_PARSE_STRING_ARG(format); break;
               case 'i': read_stdin = 1; break;
@@ -241,7 +244,7 @@ int main( int argc , char** argv )
     p = oyProfile_FromMem( size, data, 0, 0 );
     oyFree_m_( data );
   } else
-    p = oyProfile_FromFile( file_name, verbose?OY_COMPUTE:0, 0 );
+    p = oyProfile_FromFile( file_name, (verbose?OY_COMPUTE:0) | flags, 0 );
 
   if(p)
   {
@@ -304,7 +307,7 @@ int main( int argc , char** argv )
       oyFree_m_(ext);
 
     {
-      oyProfile_s * test = oyProfile_FromFile( pn, verbose?OY_COMPUTE:0, 0 );
+      oyProfile_s * test = oyProfile_FromFile( pn, (verbose?OY_COMPUTE:0) | flags, 0 );
       if(test)
       {
         fprintf(stderr, "%s: \"%s\" - %s\n", _("Profile exists already"), pn, _("Exit!"));
