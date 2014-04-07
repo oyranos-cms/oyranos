@@ -2956,18 +2956,21 @@ int lcm2GetOptionsUI                 ( oyCMMapiFilter_s   * module,
 }
 
 /** Function lcm2CreateICCMatrixProfile
- *  @brief   ICC from EDID
+ *  @brief   create a profile from primaries, white point and one gamma value
  *
- *  @version Oyranos: 0.1.10
+ *  Used for ICC from EDID, Camera RAW etc. Marti calls these matrix/shaper.
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/04/07
  *  @since   2009/10/24 (Oyranos: 0.1.10)
- *  @date    2009/12/10
  */
 oyProfile_s *      lcm2CreateICCMatrixProfile (
                                        float             gamma,
                                        float rx, float ry,
                                        float gx, float gy,
                                        float bx, float by,
-                                       float wx, float wy)
+                                       float wx, float wy,
+                                       int icc_profile_flags )
 {
   cmsCIExyYTRIPLE p;
   cmsToneCurve * g[3] = {0,0,0};
@@ -2997,6 +3000,9 @@ oyProfile_s *      lcm2CreateICCMatrixProfile (
              " red: %g %g %g green: %g %g %g blue: %g %g %g white: %g %g gamma: %g",
              OY_DBG_ARGS_, rx,ry,p.Red.Y, gx,gy,p.Green.Y,bx,by,p.Blue.Y,wx,wy,gamma );
   lp = lcmsCreateRGBProfile( &wtpt_xyY, &p, g);
+
+  if(icc_profile_flags & OY_ICC_VERSION_2)
+    lcmsSetProfileVersion(lp, 2.1);
 
   lcmsSaveProfileToMem( lp, 0, &size );
   data = oyAllocateFunc_( size );
@@ -3066,12 +3072,16 @@ int          lcm2MOptions_Handle     ( oyOptions_s       * options,
     o = oyOptions_Find( options, "color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma" );
     if(o)
     {
+      int32_t icc_profile_flags = 0;
+      oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags ); 
+
       prof = lcm2CreateICCMatrixProfile (
                     oyOption_GetValueDouble(o,8),
                     oyOption_GetValueDouble(o,0), oyOption_GetValueDouble(o,1),
                     oyOption_GetValueDouble(o,2), oyOption_GetValueDouble(o,3),
                     oyOption_GetValueDouble(o,4), oyOption_GetValueDouble(o,5),
-                    oyOption_GetValueDouble(o,6), oyOption_GetValueDouble(o,7));
+                    oyOption_GetValueDouble(o,6), oyOption_GetValueDouble(o,7),
+                    icc_profile_flags );
       oyOption_Release( &o );
 
       o = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profile.color_matrix._" CMM_NICK,
