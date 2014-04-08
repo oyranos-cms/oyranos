@@ -522,7 +522,7 @@ int main( int argc , char** argv )
                 if(texts[j])
                 {
                   fprintf( stdout, "%s", texts[j] );
-                  fprintf( out, "\n" );
+                  fprintf( stdout, "\n" );
                 }
           } else
           {
