@@ -151,10 +151,10 @@ oyRankMap _rank_map[] = {
    {const_cast < char *>(PRFX_LRAW "driver_version"), 2, -1, 0},               /**< is good */
    {const_cast < char *>("profile_name"), 0, 0, 0},                  /**< non relevant for device properties*/
        /* EXIF Fields */
-   {const_cast < char *>(PRFX_EXIF "manufacturer"), 1, -1, 0},              /**< is nice */
-   {const_cast < char *>(PRFX_EXIF "model"), 5, -5, 0},             /**< important, should not fail */
-   {const_cast < char *>(PRFX_EXIF "serial"), 1, 0, 0},                    /**< is nice */
-   {const_cast < char *>(PRFX_EXIF "Photo_ISOSpeedRatings"), 1, 0, 0},    /**< is nice */
+   {const_cast < char *>(PRFX_EXIF "manufacturer"), 2, -10, 0},           /**< is nice */
+   {const_cast < char *>(PRFX_EXIF "model"), 2, -10, 0},                  /**< important, should not fail */
+   {const_cast < char *>(PRFX_EXIF "serial"), 1, 0, 0},                   /**< is nice */
+   {const_cast < char *>(PRFX_EXIF "Photo_ISOSpeedRatings"), 3, 0, 0},    /**< is nice */
    {const_cast < char *>(PRFX_EXIF "Photo_ExposureProgram"), 1, 0, 0},    /**< nice to match */
    {const_cast < char *>(PRFX_EXIF "Photo_Flash"), 1, 0, 0},              /**< nice to match */
 
@@ -431,6 +431,7 @@ const char * oyCIExyYTriple_Show( oyCIExyYTriple * triple )
 }
 
 oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
+                                         int32_t      icc_profile_flags,
                                          const char * manufacturer,
                                          const char * model )
 {
@@ -532,9 +533,10 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
     oyOptions_s * opts = oyOptions_New(0),
                 * result = 0;
 
+    oyOptions_SetFromInt( &opts, "///icc_profile_flags", icc_profile_flags, 0, OY_CREATE_NEW );
     oyOptions_MoveIn( opts, &matrix, -1 );
     const char * reg = "//"OY_TYPE_STD"/create_profile.color_matrix.icc";
-    oyOptions_Handle( reg,opts,"create_profile.icc_profile.color_matrix",
+    oyOptions_Handle( reg, opts, "create_profile.icc_profile.color_matrix",
                       &result );
 
     p = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
@@ -557,14 +559,18 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
       if(manufacturer && model)
         mnf = strstr(model, manufacturer);
       oyStringAddPrintf_( &name, oyAllocateFunc_, oyDeAllocateFunc_,
-                          "%s%s%s cam_xyz linear %s", mnf?"":manufacturer,
-                          mnf?"":" ", model, t );
+                          "%s%s%s cam_xyz linear %s%s", mnf?"":manufacturer,
+                          mnf?"":" ", model, t,
+                          (icc_profile_flags & OY_ICC_VERSION_2) ? " v2" : " v4" );
       oyFree_m_( t );
       oyRE_msg(oyMSG_WARN, (oyStruct_s*)0,
           OY_DBG_FORMAT_ " name: \"%s\"",
           OY_DBG_ARGS_, name);
 
       oyProfile_AddTagText( p, icSigProfileDescriptionTag, name);
+
+      oyProfile_SetSignature( p, icSigInputClass, oySIGNATURE_CLASS);
+
       oyFree_m_( name );
     } else
       oyProfile_AddTagText( p, icSigProfileDescriptionTag,
@@ -1011,6 +1017,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyConfig_s *device = oyConfigs_Get(devices, i);
          oyConfig_s *device_new = oyConfig_FromRegistration(CMM_BASE_REG, 0);
          oyProfile_s * p = 0;
+         int32_t icc_profile_flags = 0;
 
          const char * t = NULL,
                     * device_name = oyConfig_FindString(device, "device_name", 0);
@@ -1079,10 +1086,12 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
             } else
               device_context = *(libraw_output_params_t**)oyOption_GetData(context_opt, NULL, allocateFunc);
 
+            oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags );
+
             DeviceFromContext(&device_new, device_context);
             if(oyOptions_FindString( options, "icc_profile.fallback", 0 ))
               /* fallback: try to get color matrix to build a profile */
-              p = createMatrixProfile( rip.imgdata.color,
+              p = createMatrixProfile( rip.imgdata.color, icc_profile_flags,
                                        oyConfig_FindString( device_new, PRFX_EXIF "manufacturer", 0 ),
                                        oyConfig_FindString( device_new, PRFX_EXIF "model", 0 ) );
 
@@ -1105,11 +1114,15 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
            oyPointer data = oyProfile_GetMem( profile, &size, 0, malloc );
            oyProfile_s * p = oyProfile_FromMem( size, data, 0, 0 );
            /* Filter the typical name spaces for embedding into the ICC profile.  */
+           error = oyOptions_SetFromText( &options, "///set_device_attributes",
+                                          "true", OY_CREATE_NEW );
            error = oyOptions_SetFromText( &options, "///key_prefix_required",
                                        PRFX_EXIF "." PRFX_LRAW ".prefix",
                                        OY_CREATE_NEW );
            oyProfile_AddDevice( p, device_new, options );
+
            oyProfile_Release( &profile );
+           oyOptions_Release( &options );
            oyOptions_MoveInStruct( oyConfig_GetOptions(device_new,"data"),
                                 CMM_BASE_REG OY_SLASH "icc_profile.add_meta",
                                 (oyStruct_s**)&p, OY_CREATE_NEW );
@@ -1120,7 +1133,6 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
              oyOptions_FindString( options, "oyNAME_NAME", 0 ))
          {
             size_t size = 0;
-            uint32_t flags = 0;
             char * data = 0;
             int has;
             oyOption_s * o,
@@ -1160,10 +1172,17 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                                        "1", OY_CREATE_NEW );
 
                 /* embed meta tag */
+                error = oyOptions_SetFromText( &opts, "///set_device_attributes",
+                                               "true", OY_CREATE_NEW );
                 error = oyOptions_SetFromText( &opts, "///key_prefix_required",
                                                PRFX_EXIF "." PRFX_LRAW ".OYRANOS_",
                                                OY_CREATE_NEW );
                 oyProfile_AddDevice( p, device_new, opts );
+                oyOptions_Release( &opts );
+
+                /* install here as images are not permanent devices */
+                error = oyOptions_SetFromText( &opts, "////device", "1", OY_CREATE_NEW );
+                error = oyProfile_Install( p, opts );
                 oyOptions_Release( &opts);
 
                 data = (char*) oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
