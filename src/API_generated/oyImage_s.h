@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/04/08
  */
 
 
@@ -265,8 +265,10 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
                                        int                 window_pos_y,
                                        int                 window_width,
                                        int                 window_height,
+                                       int                 icc_profile_flags,
                                        oyObject_s          object);
 int            oyImage_FromFile      ( const char        * file_name,
+                                       int                 icc_profile_flags,
                                        oyImage_s        ** image,
                                        oyObject_s          object );
 int            oyImage_ToFile        ( oyImage_s         * image,
