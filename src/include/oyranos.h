@@ -271,6 +271,13 @@ int           oyOptionChoicesGet       (oyWIDGET_e        option,
                                         int             * choices,
                                         const char    *** choices_string_list,
                                         int             * current);
+uint32_t oyICCProfileSelectionFlagsFromRegistration (
+                                       const char        * registration );
+int          oyOptionChoicesGet2     ( oyWIDGET_e          option,
+                                       uint32_t            flags,
+                                       int               * choices,
+                                       const char      *** choices_string_list,
+                                       int               * current );
 void          oyOptionChoicesFree      (oyWIDGET_e        option,
                                         char          *** list,
                                         int               size);
