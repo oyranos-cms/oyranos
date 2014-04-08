@@ -97,15 +97,16 @@ char *       oyReadFileSToMem_       ( FILE              * fp,
   if (fp && size)
   {
     *size = 0;
-    while((c = getc(fp)) && !feof(fp))
+    do
     {
+      c = getc(fp);
       if(*size >= mem_size)
       {
         mem_size *= 2;
         mem = realloc( mem, mem_size );
       }
       mem[(*size)++] = c;
-    }
+    } while(!feof(fp));
 
     if(mem)
     {
