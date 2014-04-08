@@ -63,6 +63,7 @@ char *   oyGetPathFromProfileName_   ( const char        * profilename,
 
 
 char **  oyProfileListGet_           ( const char        * colorsig,
+                                       uint32_t            flags,
                                        uint32_t          * size );
 
 size_t	 oyGetProfileSize_           ( const char        * fullFileName );

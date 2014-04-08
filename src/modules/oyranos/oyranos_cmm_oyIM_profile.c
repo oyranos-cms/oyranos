@@ -2213,7 +2213,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                pattern = oyProfile_FromSignature( (icSignature)profile_cs[0], oySIGNATURE_COLOR_SPACE, 0 );
                oyProfiles_MoveIn( patterns, &pattern, -1 );
  
-               profiles = oyProfiles_Create( patterns, 0 );
+               profiles = oyProfiles_Create( patterns, 0, 0 );
                oyProfiles_Release( &patterns );
                ref = oyProfiles_Get( profiles, 0 );
                oyProfiles_Release( &profiles );
@@ -2313,7 +2313,13 @@ oyStructList_s * oyIMProfileTag_GetValues(
            
            break;
     }
-    oyFree_m_(mem);
+
+    if(!mem)
+      oyIM_msg( oyMSG_WARN, tag, OY_DBG_FORMAT_"\n"
+                   "no memory in tag: %s",
+                            OY_DBG_ARGS_, oyICCTagTypeName( sig ) );
+    else
+      oyFree_m_(mem);
   }
 
   values = texts;

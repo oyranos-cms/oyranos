@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/04/01
+ *  @date     2014/04/08
  */
 
 
@@ -905,6 +905,7 @@ int32_t      oyProfile_Hashed_       ( oyProfile_s_      * s )
  *  retuned.
  *
  *  @param         profile             the profile
+ *  @param         flags               see oyProfile_FromFile()
  *  @param         allocateFunc        memory allocator
  *
  *  @version Oyranos: 0.1.8
@@ -912,6 +913,7 @@ int32_t      oyProfile_Hashed_       ( oyProfile_s_      * s )
  *  @date    2008/02/01
  */
 char *       oyProfile_GetFileName_r ( oyProfile_s_      * profile,
+                                       uint32_t            flags,
                                        oyAlloc_f           allocateFunc )
 {
   char * name = 0;
@@ -935,7 +937,7 @@ char *       oyProfile_GetFileName_r ( oyProfile_s_      * profile,
       name = s->file_name_;
     } else {
 
-      names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+      names = /*(const char**)*/ oyProfileListGet_ ( NULL, flags, &count );
 
       for(i = 0; i < count; ++i)
       {
@@ -1227,68 +1229,6 @@ int          oyProfile_TagReleaseAt_ ( oyProfile_s_      * profile,
 }
 
 /** @internal
- *  Function  oyProfile_AddDevice_
- *  @memberof oyProfile_s
- *  @brief    Add device and driver informations to a profile
- *
- *  oyProfile_AddDevice_() is for storing device/driver informations in a
- *  ICC profile. So the profile can be sent over internet and Oyranos, or
- *  an other CMS, can better match to a device/driver on the new host.
- *
- *  @param         profile             the profile
- *  @param         device              device and driver informations
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/05/18 (Oyranos: 0.1.10)
- *  @date    2009/05/18
- */
-int                oyProfile_AddDevice_(oyProfile_s_      * profile,
-                                       oyConfig_s        * device )
-{
-  int error = !profile;
-  oyProfile_s_ * s = profile;
-  oyProfileTag_s_ * pddt = 0;
-
-  if(!s)
-    return 0;
-
-  oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
-
-  if(error <= 0)
-  {
-      pddt = (oyProfileTag_s_*)oyProfile_GetTagById( (oyProfile_s*)s, icSigProfileDetailDescriptionTag_ );
-
-      /* icSigProfileDetailDescriptionTag_ */
-      if(error <= 0 && !pddt)
-      {
-        oyStructList_s * list = 0;
-
-        list = oyStructList_New(0);
-        error = oyStructList_MoveIn( list, (oyStruct_s**) &device, 0,
-                                     OY_OBSERVE_AS_WELL );
-
-        if(error <= 0)
-        {
-          pddt = (oyProfileTag_s_*)oyProfileTag_Create( list, icSigProfileDetailDescriptionTag_,
-                                                         icSigProfileDetailDescriptionTag_,
-                                                        0, OY_MODULE_NICK, 0);
-          error = !pddt;
-        }
-
-        oyStructList_Release( &list );
-
-        if(pddt)
-        {
-          error = oyProfile_TagMoveIn_( s, (oyProfileTag_s**)&pddt, -1 );
-          ++s->tags_modified_;
-        }
-      }
-  }
-
-  return error;
-}
-
-/** @internal
  *  Function  oyProfile_WriteHeader_
  *  @memberof oyProfile_s
  *  @brief    Get the parsed ICC profile back into memory
@@ -1304,8 +1244,16 @@ oyPointer    oyProfile_WriteHeader_  ( oyProfile_s_      * profile,
   char h[5] = {"head"};
   uint32_t * hi = (uint32_t*)&h;
 
-  if(profile && profile->block_ && profile->size_ > 132 &&
-     profile->tags_)
+  /* not sure where we could damage the profile block and need a parallel header block */
+  if(profile && profile->block_ && profile->size_ > 132)
+  {
+    /* copy header with all modifications into new block */
+    block = oyAllocateFunc_ (132);
+    memset( block, 0, 132 );
+    memcpy( block, profile->block_, 128 );
+
+  } else
+  if(profile && profile->tags_)
   {
     int n = oyProfile_GetTagCount_( profile );
     oyProfileTag_s_ * tag = (oyProfileTag_s_*)oyProfile_GetTagByPos_ ( profile, 0 );

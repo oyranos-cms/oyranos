@@ -12,12 +12,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2012/12/13
+ *  @date     2014/04/08
  */
 
 
@@ -303,12 +303,14 @@ int oyLowerStrcmpWrap (const void * a_, const void * b_)
  *  @param[in]     patterns            a list properties, e.g. classes;
  *                                     Only matching profiles are selected.
  *                                     If NULL, all profiles are accepted.
+ *  @param         flags               see oyProfile_FromFile()
  *  @param         object              the optional object
  *  @return                            the found and selected profiles
  *
  *  @verbatim
     // Put all ICC Display Class profiles in "profiles"
     icSignature profile_class = icSigDisplayClass;
+    int flags = 0;
     oyProfile_s * pattern = 0;
     oyProfiles_s * patterns = oyProfiles_New( 0 ),
                  * profiles = 0;
@@ -316,15 +318,16 @@ int oyLowerStrcmpWrap (const void * a_, const void * b_)
     pattern = oyProfile_FromSignature( profile_class, oySIGNATURE_CLASS, 0 );
     oyProfiles_MoveIn( patterns, &pattern, -1 );
     
-    profiles = oyProfiles_Create( patterns, 0 );
+    profiles = oyProfiles_Create( patterns, flags, 0 );
     oyProfiles_Release( &patterns );@endverbatim
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/04/04
  *  @since   2008/06/20 (Oyranos: 0.1.8)
- *  @date    2008/06/20
  */
 OYAPI oyProfiles_s * OYEXPORT
                  oyProfiles_Create   ( oyProfiles_s      * patterns,
+                                       uint32_t            flags,
                                        oyObject_s          object)
 {
   oyProfiles_s * s = oyProfiles_New( object ),
@@ -345,7 +348,7 @@ OYAPI oyProfiles_s * OYEXPORT
 
   if(error <= 0)
   {
-    names = oyProfileListGet_ ( NULL, &names_n );
+    names = oyProfileListGet_ ( NULL, flags, &names_n );
 
     if(oyProfiles_Count( oy_profile_list_cache_ ) != names_n)
     {
@@ -357,7 +360,7 @@ OYAPI oyProfiles_s * OYEXPORT
         {
           if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
           {
-            tmp = oyProfile_FromFile( names[i], OY_NO_CACHE_WRITE, 0 );
+            tmp = oyProfile_FromFile( names[i], OY_NO_CACHE_WRITE | flags, 0 );
 #if !defined(HAVE_POSIX)
             t = 0;
             oyStringAdd_(&t, oyProfile_GetText(tmp, oyNAME_DESCRIPTION), oyAllocateFunc_, 0);
@@ -378,7 +381,7 @@ OYAPI oyProfiles_s * OYEXPORT
       qsort( sort, sorts, sizeof(char**)*2, oyLowerStrcmpWrap );
       for(i = 0; i < sorts; ++i)
       {
-        tmp = oyProfile_FromFile( sort[i*2+1], OY_NO_CACHE_WRITE, 0 );
+        tmp = oyProfile_FromFile( sort[i*2+1], OY_NO_CACHE_WRITE | flags, 0 );
         oyProfiles_MoveIn(tmps, &tmp, -1);
 #if !defined(HAVE_POSIX)
         t = (char*)sort[i*2];
@@ -441,6 +444,7 @@ OYAPI oyProfiles_s * OYEXPORT
  *  available in the file paths.
  *
  *  @param[in]     std_profile_class  standard profile class, e.g. oyEDITING_RGB
+ *  @param         flags               see oyProfile_FromFile()
  *  @param[out]    current             get the color_space profile position
  *  @param         object              a optional object
  *  @return                            the profile list
@@ -467,12 +471,13 @@ OYAPI oyProfiles_s * OYEXPORT
       oyProfile_Release( &temp_prof );
     } @endverbatim
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/04/04
  *  @since   2008/07/25 (Oyranos: 0.1.8)
- *  @date    2008/08/06
  */
 OYAPI oyProfiles_s * OYEXPORT
                  oyProfiles_ForStd   ( oyPROFILE_e         std_profile_class,
+                                       uint32_t            flags,
                                        int               * current,
                                        oyObject_s          object)
 {
@@ -489,7 +494,7 @@ OYAPI oyProfiles_s * OYEXPORT
 
     if(type == oyASSUMED_WEB)
     {
-      profile = oyProfile_FromStd( type, object );
+      profile = oyProfile_FromStd( type, flags, object );
       iccs = oyProfiles_New( object );
       if(current)
       {
@@ -636,7 +641,7 @@ OYAPI oyProfiles_s * OYEXPORT
     }
 
     /* get the profile list */
-    iccs = oyProfiles_Create( patterns, 0 );
+    iccs = oyProfiles_Create( patterns, flags, 0 );
 
     /* detect the default profile position in our list */
     size = oyProfiles_Count(iccs);

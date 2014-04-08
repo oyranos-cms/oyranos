@@ -718,6 +718,7 @@ oyOptions_s* oPNGFilter_ImageInputPNGValidateOptions
  *  @date    2010/09/12
  */
 oyImage_s *  oyImage_FromPNG         ( const char        * filename,
+                                       int32_t             icc_profile_flags,
                                        oyStruct_s        * object )
 {
   int error = 0;
@@ -891,7 +892,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
              OY_DBG_ARGS_, (int)proflen, oyNoEmptyString_m_( name ) );
     } else
 #endif
-    prof = oyProfile_FromStd( profile_type, 0 );
+    prof = oyProfile_FromStd( profile_type, icc_profile_flags, 0 );
   }
 
   /* create the image */
@@ -981,6 +982,7 @@ int      oPNGFilterPlug_ImageInputPNGRun (
   const char * filename = 0;
 
   int info_good = 1;
+  int32_t icc_profile_flags = 0;
 
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S)
   {
@@ -1012,10 +1014,11 @@ int      oPNGFilterPlug_ImageInputPNGRun (
   {
     oyOptions_s * opts = oyFilterNode_GetOptions( node, 0 );
     filename = oyOptions_FindString( opts, "filename", 0 );
+    oyOptions_FindInt( opts, "icc_profile_flags", 0, &icc_profile_flags );
     oyOptions_Release( &opts );
   }
 
-  image_in = oyImage_FromPNG( filename, (oyStruct_s*)node );
+  image_in = oyImage_FromPNG( filename, icc_profile_flags, (oyStruct_s*)node );
 
   if(!image_in)
   {

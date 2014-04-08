@@ -82,6 +82,8 @@ void displayHelp(char ** argv)
   printf("         -d %s\t%s\n",    _("NUMBER"), _("device position start from zero"));
   printf("         --device-name %s\t%s\n",    _("NAME"), _("alternatively specify the name of a device"));
   printf("         -r      \t%s\n", _("skip X Color Management device profile"));
+  printf("         -2      \t%s\n", _("select ICC v2 profiles"));
+  printf("         -4      \t%s\n", _("select ICC v4 profiles"));
   printf("\n");
   printf(_("For more informations read the man page:"));
   printf("\n");
@@ -125,6 +127,7 @@ int main(int argc, char *argv[])
   char * data = 0, *t;
   uint32_t n = 0;
   int i;
+  uint32_t flags = 0;
 
   if(getenv(OY_DEBUG))
   {
@@ -149,6 +152,8 @@ int main(int argc, char *argv[])
             for(i = 1; i < strlen(argv[pos]); ++i)
             switch (argv[pos][i])
             {
+              case '2': flags |= OY_ICC_VERSION_2; break;
+              case '4': flags |= OY_ICC_VERSION_4; break;
               case 'a': assign = 1; break;
               case 'e': erase = 1; break;
               case 'c': OY_PARSE_STRING_ARG(device_class); break;
@@ -642,7 +647,7 @@ int main(int argc, char *argv[])
     patterns = oyProfiles_New( 0 );
     oyProfiles_MoveIn( patterns, &profile, -1 );
  
-    iccs = oyProfiles_Create( patterns, 0 );
+    iccs = oyProfiles_Create( patterns, flags, 0 );
     oyProfiles_Release( &patterns );
  
  
@@ -1159,7 +1164,7 @@ int main(int argc, char *argv[])
     }
 
     printf("\ngoing to rank installed profiles according to the device[\"%s\",\"%s\"]:\n", device_class, device_name );
-    p_list = oyProfiles_ForStd( oyASSUMED_RGB, 0,0 );
+    p_list = oyProfiles_ForStd( oyASSUMED_RGB, flags, 0,0 );
     rank_list = (int32_t*) oyAllocateFunc_( oyProfiles_Count(p_list)
                                                         * sizeof(int32_t) );
     oyProfiles_DeviceRank( p_list, oy_device, rank_list );

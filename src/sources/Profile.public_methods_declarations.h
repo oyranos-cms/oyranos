@@ -1,5 +1,6 @@
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromStd ( oyPROFILE_e         type,
+                                       uint32_t            flags,
                                        oyObject_s          object);
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromFile( const char*         file_name,

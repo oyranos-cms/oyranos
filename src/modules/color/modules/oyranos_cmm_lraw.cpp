@@ -418,6 +418,8 @@ int      lrawFilterPlug_ImageInputRAWRun (
 
   oyOptions_s * node_options = oyFilterNode_GetOptions( node, 0 );
   int render = oyOptions_FindString( node_options, "render", "0" ) == NULL ? 1 : 0;
+  int32_t icc_profile_flags = 0;
+  oyOptions_FindInt( node_options, "icc_profile_flags", 0, &icc_profile_flags );
 
   if(render)
   {
@@ -581,8 +583,10 @@ int      lrawFilterPlug_ImageInputRAWRun (
   int32_t n = 0;
   error = oyOptions_Filter( &options, &n, 0,
                       oyBOOLEAN_INTERSECTION, "///config",node_options);
+  if(icc_profile_flags)
+    oyOptions_SetFromInt( &options, "///icc_profile_flags", icc_profile_flags, 0, OY_CREATE_NEW );
   device = oyREgetColorInfo( filename, params, options );
-  error = oyDeviceGetProfile( device, 0, &prof );
+  error = oyDeviceGetProfile( device, options, &prof );
   if(!prof || error != 0)
   {
     if(prof)
@@ -608,7 +612,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
         oyOption_Release( &o );
       }
     } else
-      prof = oyProfile_FromStd( profile_type, 0 );
+      prof = oyProfile_FromStd( profile_type, icc_profile_flags, 0 );
   }
 
   if(oy_debug)

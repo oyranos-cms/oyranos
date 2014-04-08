@@ -504,6 +504,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
   size_t  mem_n = 0;   /* needed memory in bytes */
     
   int info_good = 1;
+  int32_t icc_profile_flags = 0;
 
   int type = 0;        /* PNM type */
   int width = 0;
@@ -544,6 +545,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
   {
     oyOptions_s * opts = oyFilterNode_GetOptions( node ,0 );
     filename = oyOptions_FindString( opts, "filename", 0 );
+    oyOptions_FindInt( opts, "icc_profile_flags", 0, &icc_profile_flags );
     oyOptions_Release( &opts );
   }
 
@@ -963,7 +965,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
 
   pixel_type = oyChannels_m(spp) | oyDataType_m(data_type); 
   if(!prof)
-    prof = oyProfile_FromStd( profile_type, 0 );
+    prof = oyProfile_FromStd( profile_type, icc_profile_flags, 0 );
 
   image_in = oyImage_Create( width, height, buf, pixel_type, prof, 0 );
 

@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/02/25
+ *  @date     2014/04/08
  */
 
 
@@ -364,7 +364,7 @@ OYAPI int  OYEXPORT
       oyProfiles_MoveIn( patterns, &profile, -1 );
 
       clck = oyClock();
-      iccs = oyProfiles_Create( patterns, 0 );
+      iccs = oyProfiles_Create( patterns, 0, 0 );
       clck = oyClock() - clck;
       DBG_NUM1_S("oyProfiles_Create(): %g", clck/1000000.0 );
       oyProfiles_Release( &patterns );
@@ -804,7 +804,7 @@ OYAPI int  OYEXPORT
   /** As a last means oyASSUMED_WEB is delivered. */
   if(!*profile)
   {
-    *profile = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+    *profile = oyProfile_FromStd( oyASSUMED_WEB, 0, 0 );
     if(error == 0)
       error = -1;
   }

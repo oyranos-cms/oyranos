@@ -58,6 +58,9 @@ int main (int argc, char ** argv)
   oyProfile_s * monitor, * print, * output;
   oyConversion_s * to_output = 0;
   oyConfig_s * device = 0;
+  oyFilterNode_s * node;
+  const char * reg;
+  uint32_t icc_profile_flags;
 
   if(argc < 2)
   {
@@ -94,6 +97,12 @@ int main (int argc, char ** argv)
   status = cairo_surface_status( surface );
   if(status) return 1;
 
+  /* select profiles matching actual capabilities */
+  node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", NULL, 0 );
+  reg = oyFilterNode_GetRegistration( node );
+  icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+  oyFilterNode_Release( &node );
+
   /*  The monitor profile is located in the Xserver. For details see:
    *  http://www.freedesktop.org/wiki/Specifications/icc_profiles_in_x_spec
    */
@@ -108,7 +117,7 @@ int main (int argc, char ** argv)
   /*  The output profile is equal to sRGB, as output profiles are curently not
    *  supported in Cairo. 
    */
-  print = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+  print = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
   printf("print:    %s\n", oyProfile_GetText( print, oyNAME_DESCRIPTION ));
 
   cr = cairo_create( surface );
@@ -123,7 +132,7 @@ int main (int argc, char ** argv)
     oyOptions_s * options = NULL;
 
     oyImage_s * in = NULL, * out = NULL;
-    error = oyImage_FromFile( filename, &in, NULL );
+    error = oyImage_FromFile( filename, icc_profile_flags, &in, NULL );
 
     w = oyImage_GetWidth( in );
     h = oyImage_GetHeight( in );

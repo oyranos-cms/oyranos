@@ -28,14 +28,14 @@ int                oyNamedColor_SetColorStd (
                                        oyOptions_s       * options );
 const double *    oyNamedColor_GetChannelsConst (
                                        oyNamedColor_s    * color,
-                                       uint32_t          * flags );
+                                       uint32_t            flags );
 const double *     oyNamedColor_GetXYZConst ( oyNamedColor_s * color);
 int                oyNamedColor_GetColorStd (
                                        oyNamedColor_s    * color,
                                        oyPROFILE_e         color_space,
                                        oyPointer           buf,
                                        oyDATATYPE_e        buf_type,
-                                       uint32_t          * flags,
+                                       uint32_t            flags,
                                        oyOptions_s       * options );
 int                oyNamedColor_GetColor (
                                        oyNamedColor_s    * color,

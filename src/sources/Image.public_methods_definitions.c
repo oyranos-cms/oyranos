@@ -329,10 +329,12 @@ oyImage_s *    oyImage_Create         ( int               width,
     @param[in]     display_pos_y       top image position on display
     @param[in]     display_width       width to show in window
     @param[in]     display_height      height to show in window
+    @param[in]     icc_profile_flags   profile selection flags, see oyProfile_FromFile()
     @param[in]     object              the optional base
  *
- *  @since Oyranos: version 0.1.8
- *  @date  october 2007 (API 0.1.8)
+ *  @version  Oyranos: 0.9.6
+ *  @date     2014/04/06
+ *  @since    2007/10/00 (Oyranos: 0.1.8)
  */
 oyImage_s *    oyImage_CreateForDisplay ( int              width,
                                        int                 height, 
@@ -343,9 +345,10 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
                                        int                 display_pos_y,
                                        int                 display_width,
                                        int                 display_height,
+                                       int                 icc_profile_flags,
                                        oyObject_s          object)
 {
-  oyProfile_s * p = oyProfile_FromStd (oyEDITING_XYZ,0);
+  oyProfile_s * p = oyProfile_FromStd(oyEDITING_XYZ, icc_profile_flags, 0);
   oyImage_s_ * s = (oyImage_s_*)oyImage_Create( width, height,
                                   channels, pixel_layout,
                                   p, object );
@@ -374,6 +377,9 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
     if(error <= 0 && display_name)
       error = oyOptions_SetFromText( &s->tags, "//imaging/output/display_name",
                                      display_name, OY_CREATE_NEW );
+
+    if(error <= 0 && icc_profile_flags)
+      oyOptions_SetFromInt( &s->tags, "///icc_profile_flags", icc_profile_flags, 0, OY_CREATE_NEW );
 
     if(error > 0)
     {
@@ -1381,15 +1387,17 @@ int            oyImage_PixelsToSamples(oyImage_s         * image,
  *  @brief   generate a Oyranos image from a file name
  *
  *  @param[in]     file_name           input
+ *  @param[in]     icc_profile_flags   profile selection flags, see oyProfile_FromFile()
  *  @param[out]    image               output
  *  @param[in]     obj                 Oyranos object (optional)
  *  @return                            >0 == error, <0 == issue or zero
  *
- *  @version Oyranos: 0.5.0
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/04/06
  *  @since   2012/04/21 (Oyranos: 0.5.0)
- *  @date    2012/04/21
  */
 int    oyImage_FromFile              ( const char        * file_name,
+                                       int                 icc_profile_flags,
                                        oyImage_s        ** image,
                                        oyObject_s          obj )
 {
@@ -1416,6 +1424,8 @@ int    oyImage_FromFile              ( const char        * file_name,
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
                                  file_name, OY_CREATE_NEW );
   DBGs_NUM1_S(in, "set //" OY_TYPE_STD "/file_read/filename to %s", file_name);
+  if(icc_profile_flags)
+    oyOptions_SetFromInt( &options, "///icc_profile_flags", icc_profile_flags, 0, OY_CREATE_NEW );
   /* release the options object, this means its not any more refered from here*/
   oyOptions_Release( &options );
 

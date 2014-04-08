@@ -1155,7 +1155,7 @@ oyTESTRESULT_e testProfile ()
 
   fprintf(stdout, "\n" );
 
-  p_a = oyProfile_FromStd ( oyASSUMED_WEB, NULL );
+  p_a = oyProfile_FromStd ( oyASSUMED_WEB, 0, NULL );
   if(!p_a)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
@@ -1224,7 +1224,7 @@ oyTESTRESULT_e testProfiles ()
   fprintf(stdout, "\n" );
 
   /* compare the usual conversion profiles with the total of profiles */
-  profs = oyProfiles_ForStd( oyDEFAULT_PROFILE_START, &current, 0 );
+  profs = oyProfiles_ForStd( oyDEFAULT_PROFILE_START, 0, &current, 0 );
   count = oyProfiles_Count( profs );
   if(!count)
   {
@@ -1269,7 +1269,7 @@ oyTESTRESULT_e testProfiles ()
 #pragma omp parallel for private(current,count,p,tmp,profs) */
   for(i = oyEDITING_XYZ; i <= oyEDITING_GRAY; ++i)
   {
-    profs = oyProfiles_ForStd( (oyPROFILE_e)i, &current, 0 );
+    profs = oyProfiles_ForStd( (oyPROFILE_e)i, 0, &current, 0 );
 
     count = oyProfiles_Count( profs );
     countB += count;
@@ -1386,7 +1386,7 @@ oyTESTRESULT_e testProofingEffect ()
   oyOptions_s * opts = oyOptions_New(0),
               * result_opts = 0;
   const char * text = 0;
-  oyProfile_s * prof = oyProfile_FromStd( oyEDITING_CMYK, NULL ),
+  oyProfile_s * prof = oyProfile_FromStd( oyEDITING_CMYK, 0, NULL ),
               * abstract;
   int error;
 
@@ -1432,10 +1432,14 @@ oyTESTRESULT_e testDeviceLinkProfile ()
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
   double buf[24];
-  oyProfile_s * prof = oyProfile_FromStd( oyASSUMED_WEB, 0 ), *dl = 0;
+  oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", NULL, 0 );
+  const char * reg = oyFilterNode_GetRegistration( node );
+  uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+  oyProfile_s * prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 ), *dl = 0;
   oyImage_s * in = oyImage_Create( 2, 2, buf, OY_TYPE_123_DBL, prof, 0 );
   oyImage_s * out = oyImage_CreateForDisplay( 2, 2, buf, OY_TYPE_123_DBL, 0,
-                                              0,0, 12,12, 0 );
+                                              0,0, 12,12,
+                                              icc_profile_flags, 0 );
   oyConversion_s *cc = oyConversion_CreateBasicPixels( in, out, 0, 0 );
   oyFilterGraph_s * graph = oyFilterGraph_New( 0 );
   oyBlob_s * blob = oyBlob_New(0);
@@ -1447,6 +1451,7 @@ oyTESTRESULT_e testDeviceLinkProfile ()
 
   memset( buf, 0, sizeof(double)*24);
 
+  oyFilterNode_Release( &node );
   /*oyConversion_RunPixels( cc, 0 );*/
 
   if(cc)
@@ -1455,7 +1460,7 @@ oyTESTRESULT_e testDeviceLinkProfile ()
     n = oyFilterGraph_CountEdges( graph );
   for(i = 0; i < n; ++i)
   {
-    oyFilterNode_s * node = oyFilterGraph_GetNode( graph, i, NULL, NULL );
+    node = oyFilterGraph_GetNode( graph, i, NULL, NULL );
     blob = oyFilterNode_ToBlob( node, NULL );
     if(blob && oyBlob_GetSize( blob ))
     {
@@ -2864,7 +2869,7 @@ oyTESTRESULT_e testCMMnmRun ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
   oyNamedColor_s * c = 0;
-  oyProfile_s * prof = oyProfile_FromStd( oyEDITING_XYZ, NULL );
+  oyProfile_s * prof = oyProfile_FromStd( oyEDITING_XYZ, 0, NULL );
   int error = 0, l_error = 0,
       i,n = 10;
 
@@ -3217,8 +3222,13 @@ oyTESTRESULT_e testCMMnmRun ()
          * buf_out = &d[3];
   oyDATATYPE_e buf_type_in = oyDOUBLE,
                buf_type_out = oyDOUBLE;
+  oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", NULL, 0 );
+  const char * reg = oyFilterNode_GetRegistration( node );
+  uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
   oyProfile_s * p_in = prof,
-              * p_out = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+              * p_out = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
+
+  oyFilterNode_Release( &node );
 
   for(i = 0; i < n*100; ++i)
   if(error <= 0)
@@ -3295,7 +3305,7 @@ oyTESTRESULT_e testCMMnmRun ()
   oyDATATYPE_e buf_type_in = oyDOUBLE,
                buf_type_out = oyDOUBLE;
   oyProfile_s * p_in = prof,
-              * p_out = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+              * p_out = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
   double clck;
 #endif
 
@@ -3482,8 +3492,8 @@ oyTESTRESULT_e testCMMnmRun ()
     "oyNamedColor_SetColorStd() oyASSUMED_WEB         " );
   }
 
-  p_in = oyProfile_FromStd ( oyASSUMED_WEB, NULL );
-  p_out = oyProfile_FromStd ( oyEDITING_XYZ, NULL );
+  p_in = oyProfile_FromStd ( oyASSUMED_WEB, icc_profile_flags, NULL );
+  p_out = oyProfile_FromStd ( oyEDITING_XYZ, icc_profile_flags, NULL );
 
   clck = oyClock();
   for(i = 0; i < n*20; ++i)
@@ -3658,9 +3668,14 @@ oyTESTRESULT_e testNcl2()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
   int i, error = 0;
-  oyProfile_s * p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL );
+  oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", NULL, 0 );
+  const char * reg = oyFilterNode_GetRegistration( node );
+  uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+  oyProfile_s * p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, icc_profile_flags, NULL );
   oyNamedColor_s * ncl = 0;
   oyNamedColors_s * colors = oyNamedColors_New(0);
+
+  oyFilterNode_Release( &node );
 
   oyNamedColors_SetPrefix( colors, "test" );
   oyNamedColors_SetSuffix( colors, "color" );
@@ -3707,8 +3722,11 @@ oyTESTRESULT_e testNcl2()
 oyTESTRESULT_e testImagePixel()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
-  oyProfile_s * p_lab = oyProfile_FromStd( oyEDITING_LAB, NULL );
-  oyProfile_s * p_web = oyProfile_FromStd( oyASSUMED_WEB, NULL );
+  oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", NULL, 0 );
+  const char * reg = oyFilterNode_GetRegistration( node );
+  uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+  oyProfile_s * p_lab = oyProfile_FromStd( oyEDITING_LAB, icc_profile_flags, NULL );
+  oyProfile_s * p_web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL );
   oyProfile_s /** p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),*/
               * p_in, * p_out;
   int error = 0,
@@ -3723,6 +3741,8 @@ oyTESTRESULT_e testImagePixel()
   oyImage_s *input, *output;
 
   fprintf(stdout, "\n" );
+
+  oyFilterNode_Release( &node );
 
   double clck = oyClock();
   p_in = p_web;

@@ -981,7 +981,7 @@ int            getDeviceProfile      ( Display           * display,
       /* check that no sRGB is delivered */
       if(t_err)
       {
-        oyProfile_s * web = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+        oyProfile_s * web = oyProfile_FromStd( oyASSUMED_WEB, 0, 0 );
         if(oyProfile_Equal( web, dst_profile ))
         {
           oyMessageFunc_p( oyMSG_WARN, 0,

@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "oyProfile_s.h" /* OY_ICC_VERSION_2 */
 #include "oyranos_config_internal.h"
 #include "oyranos_check.h"
 #include "oyranos_debug.h"
@@ -270,7 +271,7 @@ oyWIDGET_TYPE_e  oyWidgetDescriptionGet (
   oyExportStart_(EXPORT_CHECK_NO);
   oyTextsCheck_ ();
 
-  type = oyWidgetDescriptionGet_           ( option, description, choice );
+  type = oyWidgetDescriptionGet_           ( option, 0, description, choice );
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -284,7 +285,7 @@ oyWIDGET_TYPE_e  oyWidgetDescriptionGet (
  *
  *  @param       option          merge oyBEHAVIOUR_e and oyPROFILE_e
  *  @param[out]  choices         n choices; if choices is zero then you need to
- *                              optain the choices otherwise, like for profiles
+ *                               optain the choices otherwise, like for profiles
  *  @param[out]  choices_strings translated list of n choices
  *  @param[out]  current         the actual setting
  *
@@ -301,7 +302,52 @@ int         oyOptionChoicesGet         (oyWIDGET_e          option,
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
   oyTextsCheck_ ();
 
-  error =   oyOptionChoicesGet_            ( option,
+  error =   oyOptionChoicesGet_            ( option, 0,
+                                             choices, choices_string_list,
+                                             current );
+  oyExportEnd_();
+  DBG_PROG_ENDE
+  return error;
+}
+
+/**
+ *  @brief Get flags for oyProfile_FromFile() and friends
+ *
+ *  supported are "icc_version_2" - OY_ICC_VERSION_2 and
+ *  "icc_version_4" - OY_ICC_VERSION_4 .
+ */
+uint32_t oyICCProfileSelectionFlagsFromRegistration (
+                                       const char        * registration )
+{
+  uint32_t profile_flags = 0;
+
+  if(strstr( registration, "icc_version_2") != NULL)
+    profile_flags = OY_ICC_VERSION_2;
+  if(strstr( registration, "icc_version_4") != NULL)
+    profile_flags = OY_ICC_VERSION_4;
+
+  return profile_flags;
+}
+
+/**
+ *  @brief see oyOptionChoicesGet()
+ *
+ *  flags can come from oyICCProfileSelectionFlagsFromRegistration 
+ *  and is for oyProfile_FromFile()
+ */
+int          oyOptionChoicesGet2     ( oyWIDGET_e          option,
+                                       uint32_t            flags,
+                                       int               * choices,
+                                       const char      *** choices_string_list,
+                                       int               * current )
+{
+  int error = 0;
+
+  DBG_PROG_START
+  oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
+  oyTextsCheck_ ();
+
+  error =   oyOptionChoicesGet_            ( option, flags,
                                              choices, choices_string_list,
                                              current );
   oyExportEnd_();
@@ -685,7 +731,7 @@ char **  oyProfileListGet            ( const char        * colorsig,
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
 
-  tmp = oyProfileListGet_(colorsig, &n);
+  tmp = oyProfileListGet_(colorsig, 0, &n);
   names = oyStringListAppend_( (const char**)tmp, n, 0,0, &tmp_n,
                                allocateFunc );
 

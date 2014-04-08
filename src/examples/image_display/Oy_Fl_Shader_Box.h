@@ -139,7 +139,7 @@ private:
     }
 
     oyImage_Release( &clut_image );
-    oyImage_FromFile( file_name, &clut_image, 0 );
+    oyImage_FromFile( file_name, 0, &clut_image, 0 );
     if(!clut_image)
     {
       fprintf(stderr, _DBG_FORMAT_"Cannot open clut file: %s\n", _DBG_ARGS_,
@@ -469,7 +469,7 @@ public:
                                        const char        * clut_name )
   {
     oyImage_Release( &image );
-    oyImage_FromFile( file_name, &image, 0 );
+    oyImage_FromFile( file_name, 0, &image, 0 );
 
     int error = load3DTextureFromFile( clut_name );
     if(!error && oy_display_verbose)

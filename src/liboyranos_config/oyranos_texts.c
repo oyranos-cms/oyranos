@@ -584,6 +584,7 @@ oyWIDGET_TYPE_e oyWidgetTitleGet_      (oyWIDGET_e        type,
 
 oyWIDGET_TYPE_e  oyWidgetDescriptionGet_(
                                        oyWIDGET_e          type,
+                                       uint32_t            flags,
                                        const char       ** description,
                                        int                 choice )
 {
@@ -598,7 +599,7 @@ oyWIDGET_TYPE_e  oyWidgetDescriptionGet_(
        int choices = 0, current = -1;
        const char ** choices_string_list = 0;
 
-       oyOptionChoicesGet_( type, &choices, &choices_string_list, &current );
+       oyOptionChoicesGet_( type, flags, &choices, &choices_string_list, &current );
        if(choice <= choices)
          *description     = choices_string_list[choice-1];
     }
@@ -1038,6 +1039,7 @@ int          oyPolicyFilesToDisplay  ( int               * choices,
 }
 
 int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
+                                       uint32_t            flags,
                                        int               * choices,
                                        const char      *** choices_string_list,
                                        int               * current)
@@ -1067,7 +1069,7 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
     oyProfiles_s * iccs = 0;
     oyProfile_s * temp_prof = 0;
 
-    iccs = oyProfiles_ForStd( (oyPROFILE_e)type, current, 0 );
+    iccs = oyProfiles_ForStd( (oyPROFILE_e)type, flags, current, 0 );
     n = oyProfiles_Count( iccs );
 
     for(i = 0; i < n; ++i)

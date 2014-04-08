@@ -496,7 +496,7 @@ oyTESTRESULT_e testProfiles ()
   fprintf(stderr, "\n" );
 
   /* compare the usual conversion profiles with the total of profiles */
-  profs = oyProfiles_ForStd( oyDEFAULT_PROFILE_START, &current, 0 );
+  profs = oyProfiles_ForStd( oyDEFAULT_PROFILE_START, 0, &current, 0 );
   count = oyProfiles_Count( profs );
   if(!count)
   {
@@ -539,7 +539,7 @@ oyTESTRESULT_e testProfiles ()
   countB = 0;
   for(i = oyEDITING_XYZ; i <= oyEDITING_GRAY; ++i)
   {
-    profs = oyProfiles_ForStd( (oyPROFILE_e)i, &current, 0 );
+    profs = oyProfiles_ForStd( (oyPROFILE_e)i, 0, &current, 0 );
 
     count = oyProfiles_Count( profs );
     countB += count;

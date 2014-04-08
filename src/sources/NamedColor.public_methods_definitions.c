@@ -219,7 +219,7 @@ int          oyNamedColor_GetColor   ( oyNamedColor_s    * color,
   if(error <= 0 &&
      s->XYZ_[0] != -1 && s->XYZ_[1] != -1 && s->XYZ_[2] != -1)
   {
-    p_in = oyProfile_FromStd ( oyEDITING_XYZ, NULL );
+    p_in = oyProfile_FromStd ( oyEDITING_XYZ, flags, NULL );
     if(!profile)
       return 1;
  
@@ -283,7 +283,7 @@ int               oyNamedColor_SetColorStd ( oyNamedColor_s * color,
 
   if(error <= 0)
   {
-    p_in = oyProfile_FromStd ( color_space, NULL );
+    p_in = oyProfile_FromStd ( color_space, flags, NULL );
     error = !p_in;
   }
 
@@ -322,7 +322,7 @@ int               oyNamedColor_SetColorStd ( oyNamedColor_s * color,
 
   if(error <= 0)                               
   {  
-    p_out = oyProfile_FromStd( oyEDITING_XYZ, 0 );
+    p_out = oyProfile_FromStd( oyEDITING_XYZ, flags, 0 );
     error = oyColorConvert_( p_in, p_out,
                               channels, s->XYZ_,
                               channels_type , oyDOUBLE, options, 1 );
@@ -345,7 +345,7 @@ int               oyNamedColor_SetColorStd ( oyNamedColor_s * color,
  *  @date  october 2007 (API 0.1.8)
  */
 const double *    oyNamedColor_GetChannelsConst ( oyNamedColor_s * color,
-                                       uint32_t          * flags )
+                                       uint32_t            flags )
 {
   static double l[3] = {-1.f,-1.f,-1.f};
   oyNamedColor_s_ * s = (oyNamedColor_s_*) color;
@@ -389,7 +389,7 @@ int      oyNamedColor_GetColorStd    ( oyNamedColor_s    * color,
                                        oyPROFILE_e         color_space,
                                        oyPointer           buf,
                                        oyDATATYPE_e        buf_type,
-                                       uint32_t          * flags,
+                                       uint32_t            flags,
                                        oyOptions_s       * options )
 {                        
   int ret = 0;
@@ -416,7 +416,7 @@ int      oyNamedColor_GetColorStd    ( oyNamedColor_s    * color,
     }
   }
 
-  profile = oyProfile_FromStd ( color_space, NULL );
+  profile = oyProfile_FromStd ( color_space, flags, NULL );
   if(!profile)
     return 1;
 

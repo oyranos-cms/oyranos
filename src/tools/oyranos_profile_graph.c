@@ -87,7 +87,8 @@ void draw_illuminant( cairo_t * cr,
                       float * spd, int start, int end, int lambda,
                       float xO, float yO, float width, float height,
                       int min_x, int max_x, int min_y, int max_y,
-                      int color );
+                      int color,
+                      uint32_t icc_profile_flags );
 
 int main( int argc , char** argv )
 {
@@ -119,8 +120,8 @@ int main( int argc , char** argv )
          frame = 0;
   int pixel_w=128, pixel_h=128,  /* size in pixel */
       x,y,w=0,h=0;               /* image dimensions */
-  oyProfile_s * p_xyz = oyProfile_FromStd(oyASSUMED_XYZ,0),
-              * p_lab = oyProfile_FromStd(oyASSUMED_LAB,0),
+  oyProfile_s * p_xyz = oyProfile_FromStd(oyASSUMED_XYZ, flags, 0),
+              * p_lab = oyProfile_FromStd(oyASSUMED_LAB, flags, 0),
               * proj = p_lab;
   double xs_xyz = 1.2,           /* scaling of CIE*xy graph */
          ys_xyz = 1.2;
@@ -413,7 +414,7 @@ int main( int argc , char** argv )
       if(!p)
       {
         oyImage_s * image = 0;
-        oyImage_FromFile( filename, &image, NULL );
+        oyImage_FromFile( filename, flags, &image, NULL );
         p = oyImage_GetProfile( image );
       }
 
@@ -496,8 +497,8 @@ int main( int argc , char** argv )
     double max = 0.0;
     /* float precission avoids clamping in CIE*XYZ space on input */
     double rgb[3] = {0.0,0.0,0.0}, XYZ[3] = {0.0,0.0,0.0};
-    oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, 0 ),
-                * sRGB = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+    oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, flags, 0 ),
+                * sRGB = oyProfile_FromStd( oyASSUMED_WEB, flags, 0 );
     oyConversion_s * lab_srgb = oyConversion_CreateBasicPixelsFromBuffers (
                                        pLab, rgb, oyDataType_m(oyDOUBLE),
                                        sRGB, rgb, oyDataType_m(oyDOUBLE),
@@ -544,13 +545,13 @@ int main( int argc , char** argv )
                        spd_A_5, 300, 780, 5,
                        xO, yO, width, height,
                        min_x, max_x, min_y, max_y,
-                       color );
+                       color, flags );
     if(strcmp(illuminant,"D65") == 0)
       draw_illuminant( cr,
                        spd_D65_5, 300, 830, 5,
                        xO, yO, width, height,
                        min_x, max_x, min_y, max_y,
-                       color );
+                       color, flags );
   }
 #undef drawSpectralCurve
 
@@ -756,7 +757,8 @@ void draw_illuminant( cairo_t * cr,
                       float * spd, int start, int end, int lambda,
                       float xO, float yO, float width, float height,
                       int min_x, int max_x, int min_y, int max_y,
-                      int color )
+                      int color,
+                      uint32_t icc_profile_flags )
 {
   float n = (end-start)/lambda + 1;
   /*  draw spectral power distribution
@@ -770,8 +772,8 @@ void draw_illuminant( cairo_t * cr,
   /* float precission avoids clamping in CIE*XYZ space on input */
   double rgb[3] = {0.0,0.0,0.0};
 
-    oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, 0 ),
-                * sRGB = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+    oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, icc_profile_flags, 0 ),
+                * sRGB = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
     oyConversion_s * lab_srgb = oyConversion_CreateBasicPixelsFromBuffers (
                                        pLab, rgb, oyDataType_m(oyDOUBLE),
                                        sRGB, rgb, oyDataType_m(oyDOUBLE),

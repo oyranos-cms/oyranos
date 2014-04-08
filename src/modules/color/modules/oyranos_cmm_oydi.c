@@ -336,15 +336,19 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
   oyConfigs_s * devices = 0;
   char * tmp = 0,
        * ID = 0;
-
-  if(oy_debug > 2) 
-    oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_"Init Start",
-                 OY_DBG_ARGS_);
+  int icc_profile_flags = 0;
 
   input_node = oyFilterPlug_GetRemoteNode( plug );
   oyFilterPlug_Release( &plug );
 
+  if(oy_debug > 2) 
+    oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_"Init Start behind %s",
+              OY_DBG_ARGS_, oyFilterNode_GetRegistration( input_node ));
+
   ID = oydiFilterNode_ImageDisplayID( node );
+
+  icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration(
+                                  oyFilterNode_GetRegistration( input_node ) );
 
   /* insert a "rectangles" filter to handle multiple monitors */
   rectangles = oyFilterNode_NewWith( "//" OY_TYPE_STD "/rectangles", 0, 0 );
@@ -447,7 +451,8 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
                                                 oyImage_GetWidth(image),
                                                 oyImage_GetHeight(image), 0,
                                         oyImage_GetPixelLayout(image, oyLAYOUT),
-                                                0, 0,0,0,0, 0 );
+                                                0, 0,0,0,0,
+                                                icc_profile_flags, 0 );
             oyFilterNode_SetData( src_node, (oyStruct_s*)display_image, 0,0 );
             oyImage_Release( &display_image );
           }
@@ -562,6 +567,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   int dirty = 0,
       init = 0;
   char * ID = 0;
+  int icc_profile_flags = 0;
 
   image = (oyImage_s*)oyFilterSocket_GetData( socket );
   image_input = oyFilterPlug_ResolveImage( plug, socket, ticket );
@@ -621,12 +627,16 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         pixel_layout |= oyChannels_m(3);
     }
 
+    icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration(
+                                  oyFilterNode_GetRegistration( input_node ) );
+
     /* eigther copy the input image with a oyObject_s argument or
      * create it as follows */
     image = oyImage_CreateForDisplay( oyImage_GetWidth(image_input),
                                       oyImage_GetHeight(image_input),
                                       0, pixel_layout,
-                                      0, 0,0,0,0, 0 );
+                                      0, 0,0,0,0,
+                                      icc_profile_flags, 0 );
     oyFilterNode_SetData( node, (oyStruct_s*)image, 0, 0 );
 
     /* set as well the ICC node previous in the DAG */

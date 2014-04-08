@@ -152,62 +152,6 @@ char oicc_default_color_icc_options[] = {
 
 #define A(long_text) STRING_ADD( tmp, long_text)
 
-char * oiccAddStdProfiles_routine    ( char               * tmp,
-                                       oyPROFILE_e          profile_type )
-{
-  oyProfiles_s * iccs = 0;
-  oyProfile_s * p = 0;
-  int n,i;
-  const char * profile_text,
-             * file_name;
-  const char * t = 0;
-
-  iccs = oyProfiles_ForStd( profile_type, 0, 0 );
-  n = oyProfiles_Count( iccs );
-  for(i = 0; i < n; ++i)
-  {
-    p = oyProfiles_Get( iccs, i );
-    file_name = oyProfile_GetFileName( p, 0 );
-    profile_text = oyProfile_GetText( p, oyNAME_DESCRIPTION );
-
-    if(oyStrrchr_(file_name,OY_SLASH_C))
-      t = oyStrrchr_(file_name,OY_SLASH_C) + 1;
-    else
-      t = file_name;
-
-    A("\n\
-       <xf:item>\n");
-
-    if(profile_text)
-    {
-      A("\
-        <xf:label>");
-      A(          profile_text);
-      if(file_name)
-      {
-        A(                   " (");
-        A(                      file_name);
-        A(                              ")");
-      }
-      A(                     "</xf:label>\n");
-    }
-
-    if(t)
-    {
-    A("\
-        <xf:value>");
-    A(            t);
-    A(            "</xf:value>\n");
-    }
-    A("\
-       </xf:item>\n");
-
-    oyProfile_Release( &p );
-  }
-
-  return tmp;
-}
-
 int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module,
                                        oyOptions_s        * options,
                                        char              ** ui_text,
@@ -233,6 +177,9 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module,
 
   char num[12];
   oyProfile_s * p = 0;
+  int32_t icc_profile_flags = 0;
+
+  oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags );
 
   /* fill in all the options */
   for( i = 0 ; i < n ; ++i )
@@ -256,7 +203,7 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module,
            type == oyWIDGETTYPE_PROFILE ||
            type == oyWIDGETTYPE_LIST)
         {
-          oyOptionChoicesGet( oywid, &count, &names, &current );
+          oyOptionChoicesGet2( oywid, icc_profile_flags, &count, &names, &current );
           type = oyWidgetTitleGet(  oywid, &groups, &name, &tooltip, &flags );
           oyWidgetDescriptionGet( oywid, &description, 0 );
 
@@ -830,9 +777,11 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
             if( oyFilterRegistrationMatch( oyFilterNode_GetRegistration( node ),
                                            "//" OY_TYPE_STD "/icc", 0))
             {
+              const char * reg = oyFilterNode_GetRegistration( node );
+              uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+
               /* apply the found policy settings */
-              db_options = oyOptions_ForFilter( oyFilterNode_GetRegistration( node ), 0,
-                                                flags, 0 );
+              db_options = oyOptions_ForFilter( reg, 0, flags, 0 );
               f_options = oyFilterNode_GetOptions( node, flags );
 
               if(oy_debug > 2 || verbose)
@@ -863,7 +812,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               o = oyOptions_Find( f_options, "profiles_simulation" );
               if(!o && (proofing || rendering_gamut_warning))
               {
-                proof = oyProfile_FromStd( oyPROFILE_PROOF, 0 );
+                proof = oyProfile_FromStd( oyPROFILE_PROOF, icc_profile_flags, 0 );
                 proofs = oyProfiles_New(0);
                 val = oyProfile_GetText( proof, oyNAME_NAME );
                 oyProfiles_MoveIn( proofs, &proof, -1 );

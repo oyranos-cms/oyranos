@@ -76,12 +76,14 @@ oyWIDGET_TYPE_e oyWidgetTitleGet_        (oyWIDGET_e          option,
                                         int             * flags );
 oyWIDGET_TYPE_e  oyWidgetDescriptionGet_(
                                        oyWIDGET_e          option,
+                                       uint32_t            flags,
                                        const char       ** description,
                                        int                 choice );
-int           oyOptionChoicesGet_      (oyWIDGET_e          option,
-                                        int             * choices,
-                                        const char    *** choices_string_list,
-                                        int             * current);
+int           oyOptionChoicesGet_    ( oyWIDGET_e          option,
+                                       uint32_t            flags,
+                                       int               * choices,
+                                       const char      *** choices_string_list,
+                                       int               * current);
 void          oyOptionChoicesFree_     (oyWIDGET_e        option,
                                         char          *** list,
                                         int               size);

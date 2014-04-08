@@ -225,8 +225,21 @@ public:
                                        const char        * cc_name,
                                        oyOptions_s       * cc_options )
   {
+    int icc_profile_flags = 0;
+    oyFilterNode_s * node;
+    const char * reg;
+    char * t = NULL;
     oyImage_s * image = 0;
     oyJob_s * job = (oyJob_s*) calloc(sizeof(oyJob_s),1);
+
+    if(!(cc_name && strchr(cc_name, '/')))
+      oyStringAddPrintf( &t, malloc, free,
+                         "//" OY_TYPE_STD "/%s", cc_name ? cc_name : "icc" );
+
+    node = oyFilterNode_NewWith( t, NULL, 0 );
+    reg = oyFilterNode_GetRegistration( node );
+    icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+
     job->work = loadImageName;
     job->finish = finishImageName;
     oyOption_s * o = oyOption_FromRegistration( "///file_name", NULL );
@@ -236,7 +249,7 @@ public:
     oyJob_Add(job, 0);
     job = NULL;
 
-    oyImage_FromFile( file_name, &image, 0 );
+    oyImage_FromFile( file_name, icc_profile_flags, &image, 0 );
     oyPixel_t pt;
     oyDATATYPE_e data_type = oyUINT8;
 

@@ -401,6 +401,7 @@ int oyPolicyListCb_ (oyFileList_s * data,
 
 
 char **  oyProfileListGet_           ( const char        * colorsig,
+                                       uint32_t            flags,
                                        uint32_t          * size )
 {
   oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 0, 128, 0, 0};
@@ -418,6 +419,7 @@ char **  oyProfileListGet_           ( const char        * colorsig,
   l.names = 0;
   l.mem_count = l.hopp;
   l.count_files = 0;
+  l.flags = flags;
 
   oyAllocHelper_m_(l.names, char*, l.mem_count, oyAllocateFunc_, return 0);
 

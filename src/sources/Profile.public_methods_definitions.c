@@ -5,14 +5,17 @@ static oyProfile_s_ ** oy_profile_s_std_cache_ = 0;
  *  @brief    Create from default color space settings
  *
  *  @param[in]    type           default color space
+ *  @param[in]    flags          see -> oyProfile_FromFile()
  *  @param[in]    object         the optional base
  *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.9.6
+ *  @since   2007/11/0 (Oyranos: 0.1.9)
+ *  @date    2014/04/04
  */
 OYAPI oyProfile_s * OYEXPORT
-oyProfile_FromStd     ( oyPROFILE_e       type,
-                        oyObject_s        object)
+         oyProfile_FromStd           ( oyPROFILE_e         type,
+                                       uint32_t            flags,
+                                       oyObject_s          object )
 {
   oyProfile_s_ * s = 0;
   char * name = 0;
@@ -45,7 +48,7 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
       return oyProfile_Copy( (oyProfile_s*)oy_profile_s_std_cache_[pos], 0 );
     }
 
-  s = oyProfile_FromFile_( name, 0, object );
+  s = oyProfile_FromFile_( name, flags, object );
 
   if(!s)
   {
@@ -53,25 +56,25 @@ oyProfile_FromStd     ( oyPROFILE_e       type,
     /* START Debian icc-profiles icc-profiles-icc */
     if(strcmp("XYZ.icc",name) == 0)
     {
-      s = oyProfile_FromFile_( "LCMSXYZI.ICM", 0, object );
+      s = oyProfile_FromFile_( "LCMSXYZI.ICM", flags, object );
     }
     else if(strcmp("Lab.icc",name) == 0)
     {
-      s = oyProfile_FromFile_( "LCMSLABI.ICM", 0, object );
+      s = oyProfile_FromFile_( "LCMSLABI.ICM", flags, object );
     }
     else if(strcmp("LStar-RGB.icc",name) == 0)
     {
-      s = oyProfile_FromFile_( "eciRGB_v2.icc", 0, object );
+      s = oyProfile_FromFile_( "eciRGB_v2.icc", flags, object );
     }
     else if(strcmp("sRGB.icc",name) == 0)
     {
-      s = oyProfile_FromFile_( "sRGB.icm", 0, object );
+      s = oyProfile_FromFile_( "sRGB.icm", flags, object );
     }
     else if(strcmp("ISOcoated_v2_bas.ICC",name))
     {
-      s = oyProfile_FromFile_( "ISOcoated_v2_eci.icc", 0, object );
+      s = oyProfile_FromFile_( "ISOcoated_v2_eci.icc", flags, object );
       if(!s)
-        s = oyProfile_FromFile_( "Fogra27L.icm", 0, object );
+        s = oyProfile_FromFile_( "Fogra27L.icm", flags, object );
     }
     /* END Debian icc-profiles icc-profiles-icc */
   }
@@ -265,7 +268,7 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromMD5(
 
   if(error <= 0)
   {
-    names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+    names = /*(const char**)*/ oyProfileListGet_ ( NULL, 0, &count );
 
     for(i = 0; i < count; ++i)
     {
@@ -453,7 +456,7 @@ OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
   }
 
   /** 2. check if file or description name exists */
-  names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+  names = /*(const char**)*/ oyProfileListGet_ ( NULL, 0, &count );
   for(i = 0; i < (int)count; ++i)
   {
     p = oyProfile_FromFile(names[i], 0,0);
@@ -1085,7 +1088,7 @@ OYAPI const oyChar* OYEXPORT
     if(type == oyNAME_NAME)
     {
       uint32_t * i = (uint32_t*)s->oy_->hash_ptr_;
-      char * file_name = oyProfile_GetFileName_r( s, oyAllocateFunc_ );
+      char * file_name = oyProfile_GetFileName_r( s, 0, oyAllocateFunc_ );
 
       if(oyProfile_Hashed_(s))
         error = oyProfile_GetHash_( s, 0 );
@@ -1606,7 +1609,7 @@ OYAPI const char * OYEXPORT oyProfile_GetFileName (
       name = s->file_name_;
     } else
     {
-      names = /*(const char**)*/ oyProfileListGet_ ( NULL, &count );
+      names = /*(const char**)*/ oyProfileListGet_ ( NULL, 0, &count );
 
       for(i = 0; i < count; ++i)
       {
@@ -1963,7 +1966,7 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
   icDictTagType * dict;
   icNameValueRecord * record;
 
-  int n = oyConfig_Count( d );
+  int n = 0;
   int count = 0;
 
   if(key_prefix_required)
@@ -1978,9 +1981,18 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
     oyAllocHelper_m_( key_prefix_texts_len,int,key_prefix_texts_n, 0, return 1);
     for(j = 0; j < key_prefix_texts_n; ++j)
       key_prefix_texts_len[j] = strlen( key_prefix_texts[j] );
+
+    if(!key_prefix)
+    {
+      o = oyOption_New( NULL );
+      oyOption_SetRegistration( o, "////prefix" );
+      oyOption_SetFromText( o, prefix, 0 );
+      oyOptions_MoveIn( *oyConfig_GetOptions(d,"backend_core"), &o, 0 );
+    }
   }
 
   /* count valid entries */
+  n = oyConfig_Count( d );
   for(i = 0; i < n; ++i)
   {
     char * reg = 0;
@@ -1997,6 +2009,9 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
         int len = strlen( reg );
         if(key_prefix_required)
           pass = 0;
+        if(strcmp(reg,"prefix") == 0)
+          pass = 1;
+        else
         for(j = 0; j < key_prefix_texts_n; ++j)
         {
           if(len >= key_prefix_texts_len[j] &&
@@ -2049,6 +2064,9 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
       {
         len = strlen( key );
         pass = 0;
+        if(strcmp(key,"prefix") == 0)
+          pass = 1;
+        else
         for(j = 0; j < key_prefix_texts_n; ++j)
         {
           if(len >= key_prefix_texts_len[j] &&

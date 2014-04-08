@@ -267,7 +267,14 @@ public:
     if(p)
       editing = oyProfile_Copy( p, NULL );
     else
-      editing = oyProfile_FromStd( oyASSUMED_WEB, NULL );
+    {
+      oyFilterNode_s * node = icc ? icc : oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", NULL, 0 );
+      const char * reg = oyFilterNode_GetRegistration( node );
+      uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+      editing = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL );
+      if(!icc)
+        oyFilterNode_Release( &node );
+    }
     oyConversion_Release( &context );
   }
 

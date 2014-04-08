@@ -131,6 +131,7 @@ int main( int argc , char** argv )
   char * output_profile = 0;
   char * simulation_profile = 0;
   char * effect_profile = 0;
+  uint32_t icc_profile_flags = 0;
   oyProfiles_s * proofing = oyProfiles_New(0),
                * effects = oyProfiles_New(0);
   oyProfile_s * p = 0;
@@ -167,12 +168,12 @@ int main( int argc , char** argv )
               case 'o': OY_PARSE_STRING_ARG(output); break;
               case 'p': OY_PARSE_STRING_ARG(output_profile); break;
               case 's': OY_PARSE_STRING_ARG(simulation_profile);
-                        p = oyProfile_FromFile( simulation_profile, 0,0 );
+                        p = oyProfile_FromFile( simulation_profile, icc_profile_flags, 0 );
                         if(!p) wrong_arg = effect_profile;
                         oyProfiles_MoveIn( proofing, &p, -1 );
                         break;
               case 'e': OY_PARSE_STRING_ARG(effect_profile);
-                        p = oyProfile_FromFile( effect_profile, 0,0 );
+                        p = oyProfile_FromFile( effect_profile, icc_profile_flags, 0 );
                         if(!p) wrong_arg = effect_profile;
                         oyProfiles_MoveIn( effects, &p, -1 );
                         break;
@@ -343,6 +344,25 @@ int main( int argc , char** argv )
   }
 #endif
 
+  {
+    oyFilterNode_s * node;
+    const char * reg;
+    char * t = NULL;
+
+    if(!(node_name && strchr(node_name, '/')))
+    {
+      oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                         "//" OY_TYPE_STD "/%s", node_name ? node_name : "icc" );
+      if(node_name)
+        oyFree_m_(node_name);
+      node_name = t; t = NULL;
+    }
+
+    node = oyFilterNode_NewWith( node_name, NULL, 0 );
+    reg = oyFilterNode_GetRegistration( node );
+    icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+  }
+
   if(output_profile || device_link)
   {
     uint32_t flags = 0;
@@ -401,12 +421,12 @@ int main( int argc , char** argv )
       }
       if(input)
       {
-        p = oyProfile_FromFile( input, 0,0 );
+        p = oyProfile_FromFile( input, icc_profile_flags, 0 );
         if(!p)
           WARNc1_S("Could not open profile: %s", input);
           error = 1;
       } else
-        p = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+        p = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
       image = oyImage_Create( width,width*width, buf, OY_TYPE_123_16,
                               p, 0 );
       oyProfile_Release( &p );
@@ -414,7 +434,7 @@ int main( int argc , char** argv )
 
       pixel_layout = oyImage_GetPixelLayout( image,oyLAYOUT );
       data_type = oyToDataType_m(pixel_layout);
-      p = oyProfile_FromFile(output_profile, 0,0);
+      p = oyProfile_FromFile(output_profile, icc_profile_flags, 0);
       cc = oyConversion_CreateFromImage (
                                 image, node_name, module_options, 
                                 p, data_type, flags, 0 );
@@ -438,20 +458,20 @@ int main( int argc , char** argv )
 
       if(input)
       {
-        p = oyProfile_FromFile( input, 0,0 );
+        p = oyProfile_FromFile( input, icc_profile_flags, 0 );
         if(!p)
         {
           WARNc1_S("Could not open profile: %s", input);
           error = 1;
         }
       } else
-        p = oyProfile_FromStd( oyASSUMED_WEB, 0 );
+        p = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
       n = oyProfile_GetChannelsCount(p);
       pixel_layout = oyChannels_m(n) | oyDataType_m(oyUINT16);
       in = oyImage_Create( 2, 2, buf, pixel_layout, p, 0 );
       oyProfile_Release( &p );
 
-      p = oyProfile_FromFile(output_profile, 0,0);
+      p = oyProfile_FromFile(output_profile, icc_profile_flags, 0);
 
       cc = oyConversion_CreateFromImage (
                                 in, node_name, module_options, 
@@ -492,11 +512,11 @@ int main( int argc , char** argv )
     } else
     {
       char * comment = 0;
-      error = oyImage_FromFile( input, &image, NULL );
+      error = oyImage_FromFile( input, icc_profile_flags, &image, NULL );
       pixel_layout = oyImage_GetPixelLayout( image,oyLAYOUT );
       if(device_link)
       {
-        p = oyProfile_FromFile(device_link, 0,0);
+        p = oyProfile_FromFile(device_link, icc_profile_flags, 0);
         if(!p)
         {
           WARNc1_S("Could not open profile: %s", device_link);
@@ -512,7 +532,7 @@ int main( int argc , char** argv )
           if(t)
           {
             dln = strdup( t );
-            dl = oyProfile_FromFile(t, 0,0);
+            dl = oyProfile_FromFile(t, icc_profile_flags, 0);
           }
           if(dl && strcmp(t,dln) != 0)
           {
@@ -529,7 +549,7 @@ int main( int argc , char** argv )
         }
       }
       if(!p)
-        p = oyProfile_FromFile(output_profile, 0,0);
+        p = oyProfile_FromFile(output_profile, icc_profile_flags, 0);
       if(!p)
       {
           WARNc1_S("Could not open output profile: %s", output_profile);
@@ -562,7 +582,7 @@ int main( int argc , char** argv )
     size_t size = 0;
     char * data = 0;
     fprintf(stderr, "%s\n", input);
-    error = oyImage_FromFile( input, &image, NULL );
+    error = oyImage_FromFile( input, icc_profile_flags, &image, NULL );
     prof = oyImage_ProfileGet( image );
     data = oyProfile_GetMem( prof, &size, 0, oyAllocateFunc_);
     if(size)
@@ -597,7 +617,7 @@ int main( int argc , char** argv )
     if(!output)
       WARNc_S("No output file name provided");
 
-    p = oyProfile_FromStd( oyEDITING_LAB, 0 );
+    p = oyProfile_FromStd( oyEDITING_LAB, icc_profile_flags, 0 );
     if(strcmp(format,"hald") == 0)
     {
       if(!width)
