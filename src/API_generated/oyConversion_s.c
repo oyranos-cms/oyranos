@@ -215,6 +215,8 @@ int                oyConversion_Correct (
  *                                     The available options are particial
  *                                     defined by plugable policy modules,
  *                                     e.g. "oicc", and a filters own options.
+ *                                     "icc_module" can contain string to select
+ *                                     the icc module, e.g. "icc_module=lcm2" .
  *  @param         object              the optional object
  *  @return                            the conversion context
  *
@@ -231,6 +233,14 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
   oyConversion_s * s = 0;
   int error = !input || !output;
   oyFilterNode_s * in = 0, * out = 0;
+  char * icc_module = NULL;
+  const char * module = oyOptions_FindString( options, "icc_module", NULL );
+
+  if(!(module && strchr(module, '/')))
+    oyStringAddPrintf( &icc_module, oyAllocateFunc_, oyDeAllocateFunc_,
+                       "//" OY_TYPE_STD "/%s", module ? module : "icc" );
+  else
+    icc_module = oyStringCopy( module, oyAllocateFunc_ );
 
   if(error <= 0)
   {
@@ -245,7 +255,7 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
       error = oyFilterNode_SetData( in, (oyStruct_s*)input, 0, 0 );
 
     if(error <= 0)
-      out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
+      out = oyFilterNode_NewWith( icc_module, options, 0 );
     if(error <= 0)
       error = oyFilterNode_SetData( out, (oyStruct_s*)output, 0, 0 );
     if(error <= 0)
@@ -269,6 +279,8 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
 
   if(error)
     oyConversion_Release ( &s );
+
+  oyFree_m_( icc_module );
 
   return s;
 }
@@ -391,7 +403,7 @@ oyConversion_s * oyConversion_CreateFromImage (
   int error = 0;
   oyConversion_s * conversion = 0;
   oyOptions_s * options = 0;
-  char * module_reg = 0;
+  char * icc_module = 0;
   oyImage_s * image_out = 0;
   int layout_out = 0;
   oyProfile_s * profile_in;
@@ -410,20 +422,19 @@ oyConversion_s * oyConversion_CreateFromImage (
   /* set the image buffer */
   oyFilterNode_SetData( in, (oyStruct_s*)image_in, 0, 0 );
 
-
-  STRING_ADD( module_reg, "//" OY_TYPE_STD "/" );
-  if(module)
-    STRING_ADD( module_reg, module );
+  if(!(module && strchr(module, '/')))
+    oyStringAddPrintf( &icc_module, oyAllocateFunc_, oyDeAllocateFunc_,
+                       "//" OY_TYPE_STD "/%s", module ? module : "icc" );
   else
-    STRING_ADD( module_reg, "icc" );
+    icc_module = oyStringCopy( module, oyAllocateFunc_ );
 
   /* create a new CMM filter node */
-  out = oyFilterNode_NewWith( module_reg, module_options, obj );
+  out = oyFilterNode_NewWith( icc_module, module_options, obj );
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
   if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc" );
+    fprintf( stderr, "could not add  filter: %s\n", icc_module );
 
   layout_out = oyDataType_m(buf_type_out);
   profile_in = oyImage_GetProfile( image_in );
@@ -461,6 +472,7 @@ oyConversion_s * oyConversion_CreateFromImage (
   oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", flags,
                         options );
   oyOptions_Release( &options );
+  oyFree_m_( icc_module );
 
   return conversion;
 }
