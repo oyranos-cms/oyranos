@@ -1440,14 +1440,19 @@ oyTESTRESULT_e testDeviceLinkProfile ()
   oyImage_s * out = oyImage_CreateForDisplay( 2, 2, buf, OY_TYPE_123_DBL, 0,
                                               0,0, 12,12,
                                               icc_profile_flags, 0 );
-  oyConversion_s *cc = oyConversion_CreateBasicPixels( in, out, 0, 0 );
-  oyFilterGraph_s * graph = oyFilterGraph_New( 0 );
-  oyBlob_s * blob = oyBlob_New(0);
+  oyOptions_s * options = NULL;
+  oyOptions_SetFromText( &options, "////icc_module", "lcm2", OY_CREATE_NEW );
+  oyConversion_s *cc = oyConversion_CreateBasicPixels( in, out, options, 0 );
+  oyFilterGraph_s * graph = NULL;
+  oyBlob_s * blob = NULL;
   int error = 0;
-  const char * fn = 0;
+  const char * fn = NULL,
+             * prof_fn = oyProfile_GetFileName( prof, -1 );
   int i,n=0, len;
 
   fprintf(stdout, "\n" );
+
+  fprintf(stdout, "creating DL from sRGB to CIE*XYZ\n" );
 
   memset( buf, 0, sizeof(double)*24);
 
@@ -1486,14 +1491,14 @@ oyTESTRESULT_e testDeviceLinkProfile ()
   }
 
   fn = oyProfile_GetFileName( dl, 0 );
-  if(fn)
+  if(strcmp(fn,prof_fn) == 0)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyProfile_GetFileName(dl, 0): %s", fn );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyProfile_GetFileName(dl, 0): ----" );
+    "oyProfile_GetFileName(dl, 0): %s  %s", oyNoEmptyString_m_(fn), prof_fn );
   }
 
   fn = oyProfile_GetFileName( dl, 1 );
@@ -1504,7 +1509,7 @@ oyTESTRESULT_e testDeviceLinkProfile ()
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyProfile_GetFileName(dl, 1): ----" );
+    "oyProfile_GetFileName(dl, 1): %s", oyNoEmptyString_m_(fn) );
   }
 
   error = oyConversion_Release( &cc );
@@ -4073,6 +4078,88 @@ oyTESTRESULT_e testImagePixel()
   return result;
 }
 
+oyTESTRESULT_e testConversion()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", NULL, 0 );
+  const char * reg = oyFilterNode_GetRegistration( node );
+  uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+  oyProfile_s * p_lab = oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, NULL );
+  oyProfile_s * p_web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL );
+  oyProfile_s /** p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),*/
+              * p_in, * p_out;
+  uint16_t buf_16in2x2[12] = {
+  20000,20000,20000, 10000,10000,10000,
+  0,0,0,             65535,65535,65535
+  };
+  uint16_t buf_16out2x2[12];
+  oyDATATYPE_e buf_type_in = oyUINT16,
+               buf_type_out = oyUINT16;
+  oyImage_s *input, *output;
+
+  fprintf(stdout, "\n" );
+
+  p_in = p_web;
+  p_out = p_lab;
+  input =oyImage_Create( 2,2, 
+                         buf_16in2x2,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_in)) |
+                          oyDataType_m(buf_type_in),
+                         p_in,
+                         0 );
+  output=oyImage_Create( 2,2, 
+                         buf_16out2x2,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_out)) |
+                          oyDataType_m(buf_type_out),
+                         p_out,
+                         0 );
+
+  oyOptions_s * options = NULL;
+
+  oyOptions_SetFromText( &options, "////cached", "1", OY_CREATE_NEW );
+  oyConversion_s * cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
+  oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
+  oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc", 0 );
+  oyBlob_s * blob = oyFilterNode_ToBlob( icc, NULL );
+  if(blob)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyConversion_CreateBasicPixels( \"cached\"=\"1\" )" );
+  } else
+  { PRINT_SUB( oyTESTRESULT_XFAIL,
+    "oyConversion_CreateBasicPixels( \"cached\"=\"1\" )" );
+  }
+
+  oyOptions_Release( &options );
+
+  oyOptions_SetFromText( &options, "////icc_module", "lcm2", OY_CREATE_NEW );
+  cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
+  cc_graph = oyConversion_GetGraph( cc );
+  icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc", 0 );
+  
+  if(strstr(oyFilterNode_GetRegistration( icc ), "lcm2"))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyConversion_CreateBasicPixels( \"icc_module\"=\"lcm2\" )" );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyConversion_CreateBasicPixels( \"icc_module\"=\"lcm2\" ) %s", oyFilterNode_GetRegistration( icc ) );
+  }
+
+  blob = oyFilterNode_ToBlob( icc, NULL );
+  if(blob)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyFilterNode_ToBlob( \"lcm2\" )                 " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyFilterNode_ToBlob( \"lcm2\" )                 " );
+  }
+
+
+  oyImage_Release( &input );
+  oyImage_Release( &output );
+
+  return result;
+}
+
 #include "oyranos_alpha.h"
 
 oyTESTRESULT_e testConfDomain ()
@@ -4321,6 +4408,7 @@ int main(int argc, char** argv)
   TEST_RUN( testCMMnmRun, "CMM named color run" );
   TEST_RUN( testNcl2, "named color serialisation" );
   TEST_RUN( testImagePixel, "CMM Image Pixel run" );
+  TEST_RUN( testConversion, "Color Conversion" );
 
   /* give a summary */
   if(!list)
