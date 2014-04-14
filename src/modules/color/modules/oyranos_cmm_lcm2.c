@@ -1959,8 +1959,8 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
         int i, n = oyProfiles_Count( profs );
         for( i = 0; i < n ; ++i )
         {
-           oyProfile_s * p = oyProfiles_Get( profs, i );
-           oyStructList_MoveIn( list, (oyStruct_s**) &p, 0, 0 );
+          oyProfile_s * p = oyProfiles_Get( profs, i );
+          oyStructList_MoveIn( list, (oyStruct_s**) &p, -1, 0 );
         }
         psid = oyProfileTag_Create( list, icSigProfileSequenceIdentifierTag,
                      icSigProfileSequenceIdentifierType, 0, OY_MODULE_NICK, 0 );
@@ -1987,7 +1987,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
                              oyAllocateFunc_, oyDeAllocateFunc_ );
         oyDeAllocateFunc_( cc_name );
         list = oyStructList_New(0);
-        error = oyStructList_MoveIn( list,  (oyStruct_s**) &name, 0, 0 );
+        error = oyStructList_MoveIn( list,  (oyStruct_s**) &name, -1, 0 );
 
         if(!error)
         {
@@ -2015,7 +2015,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
         name = oyName_set_ ( name, c_text, oyNAME_NAME,
                              oyAllocateFunc_, oyDeAllocateFunc_ );
         list = oyStructList_New(0);
-        error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0, 0 );
+        error = oyStructList_MoveIn( list, (oyStruct_s**) &name, -1, 0 );
 
         if(!error)
         {
