@@ -62,6 +62,10 @@ void displayHelp(char ** argv)
   printf("         -o %s\t%s\n",    _("FILE"),   _("write to specified file"));
   printf("         -v      \t%s\n", _("verbose"));
   printf("\n");
+  printf("  %s:\n",               _("Example"));
+  printf("    %s:\n",             _("Embedd device meta tag from image device into given device profile"));
+  printf("      %s -i image.dng -p camera.icc -o camera_new.icc\n", argv[0]);
+  printf("\n");
   printf(_("For more informations read the man page:"));
   printf("\n");
   printf("      man oyranos-camera-raw\n");
@@ -235,6 +239,7 @@ int main(int argc, char ** argv)
   oyOption_s * o = NULL;
   oyProfile_s * profile = NULL;
   oyOption_s * opt = NULL;
+  icHeader * header;
 
   if(format &&
      (strcmp(format,"icc") == 0 ||
@@ -297,6 +302,60 @@ int main(int argc, char ** argv)
                                            oyOBJECT_CONFIG_S );
     opt = oyConfig_Find( device, "icc_profile.add_meta" );
     profile = (oyProfile_s*) oyOption_GetStruct( opt, oyOBJECT_PROFILE_S );
+    if(profile)
+    {
+      char * new_name = NULL, * tmp;
+      oyStringAddPrintf( &new_name, oyAllocFunc, oyDeAllocFunc,
+                         "%s", output );
+      if((tmp = strstr(new_name, ".icc")) != NULL)
+        tmp[0] = '\000';
+
+          uint32_t model_id = 0;
+          const char * t = 0;
+          error = oyProfile_AddTagText( profile, icSigProfileDescriptionTag,
+                                        (char*) new_name );
+          t = oyConfig_FindString( device, "manufacturer", 0 );
+          if(t)
+            error = oyProfile_AddTagText( profile, icSigDeviceMfgDescTag, t );
+          t =  oyConfig_FindString( device, "model", 0 );
+          if(t)
+            error = oyProfile_AddTagText( profile, icSigDeviceModelDescTag, t);
+
+          {
+            oyOptions_s * opts = 0;
+            t = oyConfig_FindString( device, "prefix", 0 );
+            error = oyOptions_SetFromText( &opts, "///key_prefix_required",
+                                                  t, OY_CREATE_NEW );
+            oyProfile_AddDevice( profile, device, opts );
+            oyOptions_Release( &opts );
+          }
+
+          data = (char*) oyProfile_GetMem( profile, &size, 0, oyAllocFunc );
+          header = (icHeader*) data;
+          t = oyConfig_FindString( device, "mnft", 0 );
+          if(t)
+            sprintf( (char*)&header->manufacturer, "%s", t );
+          t = oyConfig_FindString( device, "model_id", 0 );
+          if(t)
+            model_id = atoi( t );
+          model_id = oyValueUInt32( model_id );
+          memcpy( &header->model, &model_id, 4 );
+          oyOption_Release( &o );
+
+      oyFree_m_( new_name );
+    }
+
+    if(output)
+    {
+      error = oyWriteMemToFile2_( output,
+                                  data, size, 0x01,
+                                  &out_name, oyAllocFunc );
+      fprintf( stderr, "wrote to %s\n", out_name );
+
+    } else
+      fwrite( data, sizeof(char), size, stdout );
+
+    exit(0);
   }
 
   if(format && device)
