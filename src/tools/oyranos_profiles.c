@@ -36,6 +36,7 @@
 
 int    installProfile                ( oyProfile_s       * ip,
                                        const char        * path,
+                                       int                 is_device_profile,
                                        char              * show_text,
                                        int                 show_gui );
 void* oyAllocFunc(size_t size) {return malloc (size);}
@@ -82,12 +83,13 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -m  %s\n",       _("machine specific path"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Install ICC profile:"));
-  fprintf( stderr, "      %s [--gui] --install [-u|-s|-y|-m] %s\n", argv[0], _("ICC_FILE_NAME"));
-  fprintf( stderr, "      %s --taxi=ID [--gui] --install [-u|-s|-y|-m]\n", argv[0]);
+  fprintf( stderr, "      %s [--gui] --install -u|-s|-y|-m [-d] %s\n", argv[0], _("ICC_FILE_NAME"));
+  fprintf( stderr, "      %s --taxi=ID [--gui] --install -u|-s|-y|-m [-d]\n", argv[0]);
   fprintf( stderr, "      -u  %s\n",       _("user path"));
   fprintf( stderr, "      -s  %s\n",       _("system path"));
   fprintf( stderr, "      -y  %s\n",       _("oyranos install path"));
   fprintf( stderr, "      -m  %s\n",       _("machine specific path"));
+  fprintf( stderr, "      -d  %s\n",       _("use device sub path"));
   fprintf( stderr, "      --gui %s\n",     _("show hints and question GUI"));
   fprintf( stderr, "      --taxi=ID %s\n", _("download ID from Taxi data base"));
   fprintf( stderr, "\n");
@@ -124,6 +126,7 @@ int main( int argc , char** argv )
       named_color = 0,
       device_link = 0;
   char ** install = 0;
+  int is_device_profile = 0;
   int install_n = 0,
       show_gui = 0;
   const char * taxi_id = NULL;
@@ -152,7 +155,7 @@ int main( int argc , char** argv )
               case 'f': list_profile_full_names = 1; break;
               case 'e': list_profile_internal_names = 1; break;
               case 'c': color_space = 1; break;
-              case 'd': display = 1; break;
+              case 'd': is_device_profile = display = 1; break;
               case 'i': input = 1; break;
               case 'o': output = 1; break;
               case 'a': abstract = 1; break;
@@ -423,7 +426,8 @@ int main( int argc , char** argv )
         STRING_ADD( show_text, file_name );
       } else
       {
-        installProfile( ip, path, show_text, show_gui);
+        is_device_profile = 1;
+        installProfile( ip, path, is_device_profile, show_text, show_gui);
 
         oyProfile_Release( &ip );
       }
@@ -459,7 +463,7 @@ int main( int argc , char** argv )
           STRING_ADD( show_text, file_name );
         }
 
-        installProfile( ip, path, show_text, show_gui);
+        installProfile( ip, path, is_device_profile, show_text, show_gui);
 
         oyProfile_Release( &ip );
       }
@@ -474,6 +478,7 @@ int main( int argc , char** argv )
 
 int    installProfile                ( oyProfile_s       * ip,
                                        const char        * path,
+                                       int                 is_device_profile,
                                        char              * show_text,
                                        int                 show_gui )
 {
@@ -484,6 +489,8 @@ int    installProfile                ( oyProfile_s       * ip,
         oyOptions_s * opts = 0;
 
         oyOptions_SetFromText( &opts, "////path", path, OY_CREATE_NEW );
+        if(is_device_profile)
+          oyOptions_SetFromText( &opts, "////device", "1", OY_CREATE_NEW );
         error = oyProfile_Install( ip, opts );
 
         if(error == oyERROR_DATA_AMBIGUITY)
