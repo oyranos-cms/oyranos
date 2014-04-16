@@ -452,7 +452,7 @@ OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
     STRING_ADD( fn, pn );
   } else
   {
-    WARNcc1_S( s, "%s: \"%s\"",_("Profile contains no description") );
+    WARNcc1_S( s, "%s",_("Profile contains no description") );
     return oyCORRUPTED;
   }
 
