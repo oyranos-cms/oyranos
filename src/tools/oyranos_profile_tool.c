@@ -243,7 +243,15 @@ int main( int argc , char** argv )
   {
     size_t size = 0;
     void * data = oyReadStdinToMem_(&size, oyAllocateFunc_);
-    p = oyProfile_FromMem( size, data, 0, 0 );
+    if(size > 128 && oyCheckProfileMem( data, size, 0 ) == 0)
+    {
+      fprintf(stderr, "%s: %s\n", _("read input stream"), _("ok"));
+      p = oyProfile_FromMem( size, data, 0, 0 );
+    } else
+    {
+      fprintf(stderr, "%s: %s %s\n", _("read input stream"), _("failed!"), _("Exit!"));
+      exit(1);
+    }
     oyFree_m_( data );
   } else
     p = oyProfile_FromFile( file_name, (verbose?OY_COMPUTE:0) | flags, 0 );
