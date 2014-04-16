@@ -102,6 +102,9 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "    %s:\n",             _("Convert image to ICC Color Space"));
   fprintf( stderr, "      oyranos-icc -i image.png -n lcm2 -p Lab.icc -o image.ppm\n");
   fprintf( stderr, "\n");
+  fprintf( stderr, "    %s:\n",             _("Convert image through ICC device link profile"));
+  fprintf( stderr, "      oyranos-icc -i image.png --device-link deviceLink.icc -o image.ppm\n");
+  fprintf( stderr, "\n");
   fprintf( stderr, "    %s:\n",             _("Get Conversion"));
   fprintf( stderr, "      oyranos-icc -f icc -i input.icc -n lcm2 -p sRGB.icc -o device_link.icc\n");
   fprintf( stderr, "\n");
@@ -134,7 +137,7 @@ int main( int argc , char** argv )
   uint32_t icc_profile_flags = 0;
   oyProfiles_s * proofing = oyProfiles_New(0),
                * effects = oyProfiles_New(0);
-  oyProfile_s * p = 0;
+  oyProfile_s * p = NULL;
   oyOptions_s * module_options = 0;
 
   int levels = 0;
@@ -353,14 +356,15 @@ int main( int argc , char** argv )
     {
       oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                          "//" OY_TYPE_STD "/%s", node_name ? node_name : "icc" );
-      if(node_name)
-        oyFree_m_(node_name);
       node_name = t; t = NULL;
     }
 
     node = oyFilterNode_NewWith( node_name, NULL, 0 );
     reg = oyFilterNode_GetRegistration( node );
+
     icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+
+    oyFilterNode_Release( &node );
   }
 
   if(output_profile || device_link)
@@ -526,12 +530,19 @@ int main( int argc , char** argv )
           const char * t;
           char * dln = NULL;
           oyProfile_s * dl = NULL;
+          oyProfileTag_s * psid = oyProfile_GetTagById( p, icSigProfileSequenceIdentifierTag );
+          int32_t texts_n = 0;
+          char ** texts = oyProfileTag_GetText( psid, &texts_n, 0,0,0,0);
+          int count = (texts_n-1)/5;
+
+          oyProfileTag_Release( &psid );
+          oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
 
           oyImage_SetCritical( image, 0, p, 0, -1,-1 );
-          t = oyProfile_GetFileName( p, 1 );
+          t = oyProfile_GetFileName( p, count - 1 );
           if(t)
           {
-            dln = strdup( t );
+            output_profile = dln = strdup( t );
             dl = oyProfile_FromFile(t, icc_profile_flags, 0);
           }
           if(dl && strcmp(t,dln) != 0)
