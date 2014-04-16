@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    elektra dependent functions
  *  @internal
@@ -38,9 +38,9 @@
 #include "oyranos_string.h"
 #include "oyranos_xml.h"
 
-#define DBG_EL1_S DBG_NUM1_S
-#define DBG_EL2_S DBG_NUM2_S
-#define DBG_EL_S DBG_NUM_S
+#define DBG_EL1_S DBG_MEM1_S
+#define DBG_EL2_S DBG_MEM2_S
+#define DBG_EL_S DBG_MEM_S
 
 #ifndef KDB_VERSION_MAJOR
 #define KDB_VERSION_MAJOR 0
