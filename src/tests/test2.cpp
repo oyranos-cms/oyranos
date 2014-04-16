@@ -1199,6 +1199,86 @@ oyTESTRESULT_e testProfile ()
     "oyASSUMED_WEB is equal to memory loaded oyProfile_s.   " );
   }
 
+  oyOption_s * matrix = oyOption_FromRegistration("///color_matrix."
+              "from_primaries."
+              "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma", NULL );
+  {
+    /* http://www.color.org/chardata/rgb/rommrgb.xalter
+     * original gamma is 1.8, we adapt to typical cameraRAW gamma of 1.0 */
+      oyOption_SetFromDouble( matrix, 0.7347, 0, 0);
+      oyOption_SetFromDouble( matrix, 0.2653, 1, 0);
+      oyOption_SetFromDouble( matrix, 0.1596, 2, 0);
+      oyOption_SetFromDouble( matrix, 0.8404, 3, 0);
+      oyOption_SetFromDouble( matrix, 0.0366, 4, 0);
+      oyOption_SetFromDouble( matrix, 0.0001, 5, 0);
+      oyOption_SetFromDouble( matrix, 0.3457, 6, 0);
+      oyOption_SetFromDouble( matrix, 0.3585, 7, 0);
+  }
+  oyOption_SetFromDouble( matrix, 1.8, 8, 0);
+
+  oyOptions_s * opts = oyOptions_New(0),
+              * r = 0;
+
+  //oyOptions_SetFromInt( &opts, "///icc_profile_flags", icc_profile_flags, 0, OY_CREATE_NEW );
+  oyOptions_MoveIn( opts, &matrix, -1 );
+  const char * reg = "//"OY_TYPE_STD"/create_profile.color_matrix.icc";
+  oyOptions_Handle( reg, opts, "create_profile.icc_profile.color_matrix",
+                    &r );
+
+  oyProfile_s * p = NULL;
+  p = (oyProfile_s*)oyOptions_GetType( r, -1, "icc_profile",
+                                               oyOBJECT_PROFILE_S );
+  oyOptions_Release( &r );
+
+# define ICC_TEST_NAME "TEST ROMM gamma 1.0"
+  oyProfile_AddTagText( p, icSigProfileDescriptionTag,
+                           ICC_TEST_NAME );
+
+  oyOptions_Release( &opts );
+
+  if(!p )
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOptions_Handle( \"create_profile.icc_profile.color_matrix\") failed" );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyOptions_Handle( \"create_profile.icc_profile.color_matrix\")       " );
+  }
+
+  FILE * fp = fopen( ICC_TEST_NAME".icc", "r" );
+  if(fp)
+  {
+    fclose(fp); fp = 0;
+    remove( ICC_TEST_NAME".icc" );
+  }
+  
+  data = oyProfile_GetMem( p, &size, 0, malloc );
+  int error = oyWriteMemToFile_( ICC_TEST_NAME".icc", data, size );
+  if(!error )
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyWriteMemToFile_( \"%s\")          ", ICC_TEST_NAME".icc" );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyWriteMemToFile_( \"%s\")  failed  ", ICC_TEST_NAME".icc" );
+  }
+
+  oyProfile_Release( &p );
+
+  p = oyProfile_FromFile( ICC_TEST_NAME".icc", OY_SKIP_NON_DEFAULT_PATH, NULL );
+  if(!p )
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyProfile_FromFile( OY_SKIP_NON_DEFAULT_PATH )       " );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyProfile_FromFile( OY_SKIP_NON_DEFAULT_PATH ) failed" );
+  }
+
+  
 
   return result;
 }
@@ -4408,7 +4488,7 @@ int main(int argc, char** argv)
   TEST_RUN( testCMMnmRun, "CMM named color run" );
   TEST_RUN( testNcl2, "named color serialisation" );
   TEST_RUN( testImagePixel, "CMM Image Pixel run" );
-  TEST_RUN( testConversion, "Color Conversion" );
+  TEST_RUN( testConversion, "CMM selection" );
 
   /* give a summary */
   if(!list)
