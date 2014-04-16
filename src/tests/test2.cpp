@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2004-2012  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2014  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -1263,6 +1263,17 @@ oyTESTRESULT_e testProfile ()
   {
     PRINT_SUB( oyTESTRESULT_FAIL,
     "oyWriteMemToFile_( \"%s\")  failed  ", ICC_TEST_NAME".icc" );
+  }
+
+  if(size >= 128 &&
+     oyCheckProfileMem( data, 128, 0 ) == 0)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyCheckProfileMem( \"%d\")          ", (int)size );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyCheckProfileMem( \"%d\")          ", (int)size );
   }
 
   oyProfile_Release( &p );
