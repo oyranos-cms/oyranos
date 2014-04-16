@@ -33,6 +33,8 @@
 #include "oyranos_string.h"
 #include "oyranos_xml.h"
 
+#include "oyProfile_s.h"
+
 /* --- Helpers  --- */
 
 /* --- static variables   --- */
@@ -277,6 +279,13 @@ char *   oyFindProfile_              ( const char        * fileName,
   if (fileName && fileName[0] != OY_SLASH_C)
   {
     path_name = oyGetPathFromProfileName_(fileName, flags, oyAllocateFunc_);
+
+    if(!path_name &&
+       flags & OY_SKIP_NON_DEFAULT_PATH)
+    {
+      DBG_PROG_ENDE
+      return NULL;
+    }
 
     if(!path_name)
     {

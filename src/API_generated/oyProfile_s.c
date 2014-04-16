@@ -242,10 +242,11 @@ OYAPI oyProfile_s * OYEXPORT
  *  scanning large numbers of profiles.
  *  - ::OY_COMPUTE lets newly compute ID
  *  - ::OY_ICC_VERSION_2 and ::OY_ICC_VERSION_4 let select version 2 and 4 profiles separately.
+ *  - ::OY_SKIP_NON_DEFAULT_PATH ignore profiles outside of default paths
  *
- *  @version Oyranos: 0.9.5
+ *  @version Oyranos: 0.9.6
  *  @since   2007/11/0 (Oyranos: 0.1.9)
- *  @date    2014/03/05
+ *  @date    2014/04/16
  */
 OYAPI oyProfile_s * OYEXPORT
 oyProfile_FromFile            ( const char      * name,
@@ -588,7 +589,7 @@ OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
   if(error != 0)
     goto install_cleanup;
 
-  p = oyProfile_FromFile( pn, 0, 0 );
+  p = oyProfile_FromFile( pn, OY_SKIP_NON_DEFAULT_PATH, 0 );
   if(p)
   {
     WARNcc2_S(s, "%s: \"%s\"", _("Profile exists already"), pn);
