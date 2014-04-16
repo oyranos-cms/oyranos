@@ -108,6 +108,8 @@ char *       oyReadFileSToMem_       ( FILE              * fp,
       mem[(*size)++] = c;
     } while(!feof(fp));
 
+    --*size;
+
     if(mem)
     {
       /* copy to external allocator */
