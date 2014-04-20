@@ -46,13 +46,18 @@ void displayHelp(char ** argv)
   printf("      %s -i file.dng -o file.ppm\n", argv[0]);
   printf("\n");
   printf("  %s\n",               _("Dump data:"));
-  printf("      %s -f=[icc|openicc] -i file.dng [-o=device.json] [--only-db]\n", argv[0]);
+  printf("      %s -f=[icc|fallback-icc|openicc|openicc-rank-map] -i file.dng [-o=device.json] [--only-db]\n", argv[0]);
   printf("         -f icc   \t%s\n",_("extract ICC color profile"));
-  printf("            --profile %s\t%s\n",_("ICC_FILE_NAME"),_("embedd device and driver information into ICC meta tag"));
+  printf("         -f fallback-icc   \t%s\n",_("create fallback ICC profile"));
   printf("         -f openicc\t%s\n",_("generate OpenICC device color reproduction JSON"));
   /* JSON is a text based file format for exchange of data. The rank map is used to sort color profiles according to their fit to a specific device. */
   printf("         -f openicc-rank-map\t%s\n",_("dump OpenICC device color state rank map JSON"));
   printf("         --only-db\t%s\n",_("use only DB keys for -f=openicc"));
+  printf("\n");
+  printf("  %s\n",               _("Modify Profile:"));
+  printf("      %s -i file.dng -p my_profile.icc -o my_modified_profile.icc\n", argv[0]);
+  printf("         -p %s\t%s\n",    _("ICC_FILE_NAME"), _("embedd device and driver information into ICC meta tag"));
+  printf("         -o %s\t%s\n",    _("ICC_FILE_NAME"), _("write to specified file"));
   printf("\n");
   printf("  %s\n",               _("Show Help:"));
   printf("      %s [-h]\n", argv[0]);
@@ -64,7 +69,7 @@ void displayHelp(char ** argv)
   printf("\n");
   printf("  %s:\n",               _("Example"));
   printf("    %s:\n",             _("Embedd device meta tag from image device into given device profile"));
-  printf("      %s -i image.dng -p camera.icc -o camera_new.icc\n", argv[0]);
+  printf("      %s --image image.dng --profile camera.icc --output camera_new.icc\n", argv[0]);
   printf("\n");
   printf("    %s\n",             _("Convert CameraRaw image to Rgb image:"));
   printf("      %s -i image.dng -o image.png\n", argv[0]);
@@ -272,6 +277,10 @@ int main(int argc, char ** argv)
                              "yes", OY_CREATE_NEW );
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                    "properties", OY_CREATE_NEW );  
+    if(icc_profile_flags)
+      error = oyOptions_SetFromInt( &options,
+                                  "//" OY_TYPE_STD "/icc_profile_flags",
+                                  icc_profile_flags, 0, OY_CREATE_NEW );
     error = oyDeviceGet( 0, "raw-image", image_name, options, &device );
 
     oyOption_s * o = oyOptions_Find( *oyConfig_GetOptions(device, "data"), "icc_profile" );
@@ -387,29 +396,8 @@ int main(int argc, char ** argv)
           oyOption_Release( &o );
 
       oyFree_m_( new_name );
-    } else
+    } else if(format && device)
     {
-      oyImage_Release( &image );
-      image = oyConversion_GetImage( c, OY_INPUT );
-      oyImage_ToFile( image, output, NULL );
-      exit(0);
-    }
-
-    if(output)
-    {
-      error = oyWriteMemToFile2_( output,
-                                  data, size, 0x01,
-                                  &out_name, oyAllocFunc );
-      fprintf( stderr, "wrote to %s\n", out_name );
-
-    } else
-      fwrite( data, sizeof(char), size, stdout );
-
-    exit(0);
-  }
-
-  if(format && device)
-  {
     if(strcmp(format,"openicc") == 0 ||
        strcmp(format,"openicc-rank-map") == 0)
     {
@@ -461,24 +449,35 @@ int main(int argc, char ** argv)
       displayHelp(argv);
       exit (1);
     }
-  } else
-  if(output)
-  {
+    } else
+    {
+      oyImage_Release( &image );
+      image = oyConversion_GetImage( c, OY_INPUT );
       char * comment = 0;
       STRING_ADD( comment, "source image was " );
       STRING_ADD( comment, image_name );
       oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_write/comment",
                              comment, OY_CREATE_NEW );
-      error = oyImage_ToFile( image, output, options );
+      if((error = oyImage_ToFile( image, output, options )) != 0)
+        fprintf( stderr, "error in oyImage_ToFile( %s )\n", output );
+      else if(verbose)
+        fprintf( stderr, "wrote to %s\n", output );
+      exit(0);
+    }
 
-      oyFree_m_( comment );
-      oyOptions_Release( &options );
-      if(!error && verbose)
-        fprintf( stderr, "wrote file to %s\n", output );
-  } else
-  if(!device)
-    fprintf( stderr, "No device found. Probably not a raw-image file  %s\n", oyNoEmptyString_m_(image_name) );
-    
+    if(output)
+    {
+      error = oyWriteMemToFile2_( output,
+                                  data, size, 0x01,
+                                  &out_name, oyAllocFunc );
+      fprintf( stderr, "wrote to %s\n", out_name );
+
+    } else
+      fwrite( data, sizeof(char), size, stdout );
+
+    exit(0);
+  }
+
 
   oyProfile_Release( &profile );
   oyOption_Release( &opt );
