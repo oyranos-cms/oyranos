@@ -1384,6 +1384,7 @@ int            oyImage_PixelsToSamples(oyImage_s         * image,
 }
 
 /** Function oyImage_FromFile
+ *  @memberof oyImage_s
  *  @brief   generate a Oyranos image from a file name
  *
  *  @param[in]     file_name           input
@@ -1450,6 +1451,7 @@ int    oyImage_FromFile              ( const char        * file_name,
   return error;
 }
 /** Function oyImage_ToFile
+ *  @memberof oyImage_s
  *  @brief   write a Oyranos image to a file name
  *
  *  @param[in]     image               input
