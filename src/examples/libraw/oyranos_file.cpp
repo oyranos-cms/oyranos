@@ -305,6 +305,34 @@ int main(int argc, char ** argv)
     if(profile)
     {
       char * new_name = NULL, * tmp;
+
+      if(output)
+      {
+        char * t = strrchr(output, '.'),
+             * ext = NULL;
+
+        tmp = oyStringCopy( output, oyAllocFunc );
+
+        if(t)
+        {
+          ++t;
+          STRING_ADD( ext, t );
+          if(oyStringCaseCmp_(ext,"icc") != 0 &&
+             oyStringCaseCmp_(ext,"icm") != 0)
+          {
+            oyFree_m_(ext);
+            ext = NULL;
+          }
+        }
+        if(!ext)
+          STRING_ADD( tmp, ".icc" );
+        else
+          oyFree_m_(ext);
+
+        output = tmp;
+        tmp = NULL;
+      }
+
       oyStringAddPrintf( &new_name, oyAllocFunc, oyDeAllocFunc,
                          "%s", output );
       if((tmp = strstr(new_name, ".icc")) != NULL)
