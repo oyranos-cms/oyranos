@@ -66,6 +66,9 @@ void displayHelp(char ** argv)
   printf("    %s:\n",             _("Embedd device meta tag from image device into given device profile"));
   printf("      %s -i image.dng -p camera.icc -o camera_new.icc\n", argv[0]);
   printf("\n");
+  printf("    %s\n",             _("Convert CameraRaw image to Rgb image:"));
+  printf("      %s -i image.dng -o image.png\n", argv[0]);
+  printf("\n");
   printf(_("For more informations read the man page:"));
   printf("\n");
   printf("      man oyranos-camera-raw\n");
@@ -79,7 +82,7 @@ void displayHelp(char ** argv)
  *  @param[in]     flags               set options
  *                                     - 0x01 - request device
  *                                     - 0x02 - no data processing
- *  @param[in]     data_type           the desired data type for output
+ *  @param[in]     icc_profile_flags   ICC profile selection flags, see ::oyProfile_FromFile()
  *  @param[in]     obj                 Oyranos object (optional)
  *  @return                            generated new graph, owned by caller
  *
@@ -91,7 +94,7 @@ oyConversion_s * oyConversion_FromImageFileName  (
                                        const char        * file_name,
                                        const char        * profile_name,
                                        uint32_t            flags,
-                                       oyDATATYPE_e        data_type,
+                                       uint32_t            icc_profile_flags,
                                        oyObject_s          obj )
 {
   oyFilterNode_s * in, * out;
@@ -124,7 +127,7 @@ oyConversion_s * oyConversion_FromImageFileName  (
 
   if(profile_name)
   {
-    oyProfile_s * prof = oyProfile_FromFile( profile_name, 0, 0 );
+    oyProfile_s * prof = oyProfile_FromFile( profile_name, icc_profile_flags, 0 );
     error = oyOptions_MoveInStruct( &options,
                                 "//" OY_TYPE_STD "/config/icc_profile.add_meta",
                                     (oyStruct_s**)&prof, OY_CREATE_NEW );
@@ -133,6 +136,11 @@ oyConversion_s * oyConversion_FromImageFileName  (
     error = oyOptions_SetFromText( &options,
                                    "//" OY_TYPE_STD "/file_read/render",
                                    "0", OY_CREATE_NEW );
+
+  if(icc_profile_flags)
+    error = oyOptions_SetFromInt( &options,
+                                  "//" OY_TYPE_STD "/icc_profile_flags",
+                                  icc_profile_flags, 0, OY_CREATE_NEW );
   /* release the options object, this means its not any more refered from here*/
   oyOptions_Release( &options );
 
@@ -160,6 +168,7 @@ int main(int argc, char ** argv)
        * new_profile_name = 0,
        * image_name = 0;
   int verbose = 0;
+  uint32_t icc_profile_flags = 0;
 
   int i;
   oyOptions_s * options = 0;
@@ -241,6 +250,13 @@ int main(int argc, char ** argv)
   oyOption_s * opt = NULL;
   icHeader * header;
 
+  oyFilterNode_s * node;
+  const char * reg;
+
+  node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", NULL, 0 );
+  reg = oyFilterNode_GetRegistration( node );
+  icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+
   if(format &&
      (strcmp(format,"icc") == 0 ||
       strcmp(format,"fallback-icc") == 0))
@@ -268,7 +284,7 @@ int main(int argc, char ** argv)
     if(strcmp(format,"icc") == 0 && !profile)
     {
       c = oyConversion_FromImageFileName( image_name, prof_name,
-                                          0x01 | 0x04, oyUINT16, 0 );
+                                          0x01 | 0x04, icc_profile_flags, 0 );
       image = oyConversion_GetImage( c, OY_OUTPUT );
       oyImage_Release( &image );
       image = oyConversion_GetImage( c, OY_INPUT );
@@ -292,7 +308,7 @@ int main(int argc, char ** argv)
   } else
   {
     c = oyConversion_FromImageFileName( image_name, prof_name,
-                                        0x01 | 0x04, oyUINT16, 0 );
+                                        0x01 | 0x04, icc_profile_flags, 0 );
     image = oyConversion_GetImage( c, OY_OUTPUT );
 
     oyOptions_s * image_tags = oyImage_GetTags( image );
@@ -302,7 +318,7 @@ int main(int argc, char ** argv)
                                            oyOBJECT_CONFIG_S );
     opt = oyConfig_Find( device, "icc_profile.add_meta" );
     profile = (oyProfile_s*) oyOption_GetStruct( opt, oyOBJECT_PROFILE_S );
-    if(profile)
+    if(prof_name && profile)
     {
       char * new_name = NULL, * tmp;
 
@@ -371,6 +387,12 @@ int main(int argc, char ** argv)
           oyOption_Release( &o );
 
       oyFree_m_( new_name );
+    } else
+    {
+      oyImage_Release( &image );
+      image = oyConversion_GetImage( c, OY_INPUT );
+      oyImage_ToFile( image, output, NULL );
+      exit(0);
     }
 
     if(output)
