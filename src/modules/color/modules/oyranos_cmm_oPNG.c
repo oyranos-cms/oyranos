@@ -362,7 +362,7 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
   for(y = 0; y < height; ++y)
   {
     int is_allocated = 0;
-    void * p = oyImage_GetPointF(image)( image, 0,y, 0, &is_allocated );
+    void * p = oyImage_GetPointF(image)( image, 0,y, -1, &is_allocated );
     png_bytep pointers[2] = {0,0};
 
     pointers[0] = p;
