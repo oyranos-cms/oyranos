@@ -119,6 +119,137 @@ OYAPI oyProfile_s * OYEXPORT
   return (oyProfile_s*)s;
 }
 
+/** Function  oyProfile_FromName
+ *  @memberof oyProfile_s
+ *  @brief    Create from name
+ *
+ *  Supported are profiles with absolute path names, profiles in OpenICC 
+ *  profile paths and profiles relative to the current working path. 
+ *  Search will occure in this order. Hash names, internal descriptions 
+ *  and wildcards can be used.
+ *
+ *  @param[in]    name           name can be profile file name, ICC ID, 
+ *                               wildcard or internal description.
+ *  Following are some examples.
+ *  A possible file name could be "sRGB.icc". A valid ICC ID would be
+ *  "7fb30d688bf82d32a0e748daf3dba95d".
+ *  A internal description could be "sRGB".
+ *  Supported name wildcards are
+ *  - "rgb" for default editing RGB
+ *  - "cmyk" for default editing CMYK profile
+ *  - "gray" for default editing Gray profile
+ *  - "lab" for default editing CIE*Lab profile
+ *  - "xyz" for default editing CIE*XYZ profile
+ *  - "web" for default web profile sRGB
+ *  - "rgbi" for default assumed RGB profile
+ *  - "cmyki" for default assumed CMYK profile
+ *  - "grayi" for default assumed Gray profile
+ *  - "labi" for default assumed CIE*Lab profile
+ *  - "xyzi" for default assumed CIE*XYZ profile
+ *  @param[in]    flags          flags are OY_NO_CACHE_READ, OY_NO_CACHE_WRITE, OY_COMPUTE
+ *  - ::OY_NO_CACHE_READ and ::OY_NO_CACHE_WRITE to disable cache
+ *  reading and writing. The cache flags are useful for one time profiles or
+ *  scanning large numbers of profiles.
+ *  - ::OY_COMPUTE lets newly compute ID
+ *  - ::OY_ICC_VERSION_2 and ::OY_ICC_VERSION_4 let select version 2 and 4 profiles separately.
+ *  - ::OY_SKIP_NON_DEFAULT_PATH ignore profiles outside of default paths
+ *  @param[in]    object         the optional base
+ *
+ *  @see oyProfile_FromFile() and oyProfile_FromMD5()
+ *
+ *  @version Oyranos: 0.9.6
+ *  @since   2014/05/06 (Oyranos: 0.9.6)
+ *  @date    2014/05/06
+ */
+OYAPI oyProfile_s * OYEXPORT
+oyProfile_FromName            ( const char      * name,
+                                uint32_t          flags,
+                                oyObject_s        object)
+{
+  oyProfile_s * s = NULL;
+  uint32_t md5[4];
+
+  /* try file name */
+  s = oyProfile_FromFile( name, flags, object );
+
+  if(s)
+    return s;
+
+  /* try ICC ID */
+  if(!s && name && strlen(name) == 32)
+  {
+    sscanf(name, "%08x%08x%08x%08x", &md5[0],&md5[1],&md5[2],&md5[3] );
+    s = oyProfile_FromMD5( md5, object );
+  }
+
+  /* try wildcard */
+  if(!s)
+  {
+    char * fn = NULL;
+    if(strcmp(name,"rgb") == 0)
+      fn = oyGetDefaultProfileName( oyEDITING_RGB, oyAllocateFunc_ );
+    else if(strcmp(name,"web") == 0)
+      fn = oyGetDefaultProfileName( oyASSUMED_WEB, oyAllocateFunc_ );
+    else if(strcmp(name,"cmyk") == 0)
+      fn = oyGetDefaultProfileName( oyEDITING_CMYK, oyAllocateFunc_ );
+    else if(strcmp(name,"gray") == 0)
+      fn = oyGetDefaultProfileName( oyEDITING_GRAY, oyAllocateFunc_ );
+    else if(strcmp(name,"lab") == 0)
+      fn = oyGetDefaultProfileName( oyEDITING_LAB, oyAllocateFunc_ );
+    else if(strcmp(name,"xyz") == 0)
+      fn = oyGetDefaultProfileName( oyEDITING_XYZ, oyAllocateFunc_ );
+    else if(strcmp(name,"rgbi") == 0)
+      fn = oyGetDefaultProfileName( oyASSUMED_RGB, oyAllocateFunc_ );
+    else if(strcmp(name,"cmyki") == 0)
+      fn = oyGetDefaultProfileName( oyASSUMED_CMYK, oyAllocateFunc_ );
+    else if(strcmp(name,"grayi") == 0)
+      fn = oyGetDefaultProfileName( oyASSUMED_GRAY, oyAllocateFunc_ );
+    else if(strcmp(name,"labi") == 0)
+      fn = oyGetDefaultProfileName( oyASSUMED_LAB, oyAllocateFunc_ );
+    else if(strcmp(name,"xyzi") == 0)
+      fn = oyGetDefaultProfileName( oyASSUMED_XYZ, oyAllocateFunc_ );
+
+    if(fn)
+    {
+      s = oyProfile_FromFile( fn, flags, object );
+      oyFree_m_( fn );
+    }
+  }
+
+  /* try internal name */
+  if(!s)
+  {
+    oyProfile_s * p = 0;
+    char ** names = NULL;
+    uint32_t count = 0, i;
+    const char * t = 0;
+
+    names = /*(const char**)*/ oyProfileListGet ( NULL, &count, oyAllocateFunc_ );
+
+    if(name)
+    {
+      for(i = 0; i < (int)count; ++i)
+      {
+        p = oyProfile_FromFile( names[i], 0,0 );
+
+        t = oyProfile_GetText(p, oyNAME_DESCRIPTION);
+        if(t && strcmp(t,name) == 0)
+        {
+          oyDeAllocateFunc_(names[i]);
+          s = p;
+          break;
+        }
+        oyDeAllocateFunc_(names[i]);
+
+        oyProfile_Release( &p );
+      }
+      oyDeAllocateFunc_(names); names = 0;
+    }
+  }
+
+  return s;
+}
+
 /** Function  oyProfile_FromFile
  *  @memberof oyProfile_s
  *  @brief    Create from file
@@ -127,7 +258,7 @@ OYAPI oyProfile_s * OYEXPORT
  *  profile paths and profiles relative to the current working path. 
  *  Search will occure in this order.
  *
- *  @param[in]    name           profile file name or ICC ID
+ *  @param[in]    name           profile file name
  *  @param[in]    flags          OY_NO_CACHE_READ, OY_NO_CACHE_WRITE, OY_COMPUTE - compute ID
  *  @param[in]    object         the optional base
  *
@@ -149,7 +280,6 @@ oyProfile_FromFile            ( const char      * name,
                                 oyObject_s        object)
 {
   oyProfile_s_ * s = 0;
-  uint32_t md5[4];
 
   char * fn = oyFindProfile_( name, flags );
   if(fn)
@@ -161,15 +291,6 @@ oyProfile_FromFile            ( const char      * name,
     oyProfile_GetHash_( s, OY_COMPUTE );
 
   oyProfile_GetID( (oyProfile_s*)s );
-
-  if(s)
-    return (oyProfile_s*)s;
-
-  if(name && strlen(name) == 32)
-  {
-    sscanf(name, "%08x%08x%08x%08x", &md5[0],&md5[1],&md5[2],&md5[3] );
-    s = (oyProfile_s_*) oyProfile_FromMD5( md5, object );
-  }
 
   return (oyProfile_s*)s;
 }

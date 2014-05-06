@@ -9,7 +9,8 @@
     @brief Select, read, manipulate and write ICC Profiles in memory and on disk.
  *
  *  To open a profile exist several methods in the oyProfile_Fromxxx APIs.
- *  oyProfile_FromStd(), oyProfile_FromFile() and oyProfile_FromMem() are basic
+ *  The highest level call is oyProfile_FromName() and supports several names.
+ *  oyProfile_FromStd(), oyProfile_FromFile() and oyProfile_FromMem() are specispecialisedd
  *  profile open functions. oyProfile_FromSignature() is used for creating a
  *  dummy profile during profile filtering.
  *  oyProfile_FromMD5() is a lookup function from a profile hash, e.g. as

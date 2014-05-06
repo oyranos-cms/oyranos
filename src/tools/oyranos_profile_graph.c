@@ -408,7 +408,7 @@ int main( int argc , char** argv )
       const char * filename = argv[j];
       size_t size = 0;
 
-      oyProfile_s * p = oyProfile_FromFile( filename, flags, NULL );
+      oyProfile_s * p = oyProfile_FromName( filename, flags, NULL );
       double * saturation;
 
       if(!p)

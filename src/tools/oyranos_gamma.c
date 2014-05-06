@@ -579,7 +579,7 @@ int main( int argc , char** argv )
       data = oyReadFileToMem_( edid_fn, &size, oyAllocateFunc_ );
       oyBlob_SetFromData( edid, data, size, "edid" );
       oyFree_m_(data);
-      prof = oyProfile_FromFile( prof_name, OY_NO_CACHE_READ, 0 );
+      prof = oyProfile_FromName( prof_name, OY_NO_CACHE_READ, 0 );
       device = 0;
       oyOptions_Release( &options );
       error = oyOptions_SetFromText( &options,
@@ -596,7 +596,7 @@ int main( int argc , char** argv )
       {
         /* We need a newly opened profile, otherwise we obtaine cached
            modifications. */
-        oyProfile_s * p = oyProfile_FromFile( prof_name, OY_NO_CACHE_READ, 0 );
+        oyProfile_s * p = oyProfile_FromName( prof_name, OY_NO_CACHE_READ, 0 );
         oyConfig_s * p_device = oyConfig_FromRegistration( 
                                        oyConfig_GetRegistration( device ), 0 );
         int32_t rank = 0;

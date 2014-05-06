@@ -60,8 +60,15 @@ embed OpenICC JSON device from file
 \fB-s\fR \fINAME\fR add prefix
 .SH GENERAL OPTIONS
 .TP
+.B \PROFILENAME
+can be file name, internal description string, ICC profile ID or 
+wildcard "rgb", "cmyk", "gray", "lab", "xyz", "web", "rgbi", "cmyki", "grayi", "labi", "xyzi".
+Wildcards ending with "i" are assumed profiles. "web" is a sRGB profile. The other wildcards
+are editing profiles.
+.TP
 .B \-v, \-\-verbose
 increase verbosity
+.TP
 .TP
 .B \-h, \-\-help
 print a help text

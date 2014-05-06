@@ -108,6 +108,9 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      %s -h\n",        argv[0]);
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("General options:"));
+  fprintf( stderr, "      %s \t%s\n", _("ICC_FILE_NAME"), _("can be file name, internal description string, ICC profile ID or" \
+                   " wildcard \"rgb\", \"cmyk\", \"gray\", \"lab\", \"xyz\", \"web\", \"rgbi\", \"cmyki\", \"grayi\", \"labi\", \"xyzi\"." \
+                   " Wildcards ending with \"i\" are assumed profiles. \"web\" is a sRGB profile. The other wildcards are editing profiles."));
   fprintf( stderr, "      -v %s\n",        _("verbose"));
   fprintf( stderr, "      -i %s\n",        _("read input stream"));
   fprintf( stderr, "      -2 %s\n",        _("select a ICC v2 profile"));
@@ -254,7 +257,7 @@ int main( int argc , char** argv )
     }
     oyFree_m_( data );
   } else
-    p = oyProfile_FromFile( file_name, (verbose?OY_COMPUTE:0) | flags, 0 );
+    p = oyProfile_FromName( file_name, (verbose?OY_COMPUTE:0) | flags, 0 );
 
   if(p)
   {
@@ -317,7 +320,7 @@ int main( int argc , char** argv )
       oyFree_m_(ext);
 
     {
-      oyProfile_s * test = oyProfile_FromFile( pn, (verbose?OY_COMPUTE:0) | flags, 0 );
+      oyProfile_s * test = oyProfile_FromName( pn, (verbose?OY_COMPUTE:0) | flags, 0 );
       if(test)
       {
         fprintf(stderr, "%s: \"%s\" - %s\n", _("Profile exists already"), pn, _("Exit!"));

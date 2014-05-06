@@ -132,7 +132,7 @@ oyConversion_s * oyConversion_FromImageFileName  (
 
   if(profile_name)
   {
-    oyProfile_s * prof = oyProfile_FromFile( profile_name, icc_profile_flags, 0 );
+    oyProfile_s * prof = oyProfile_FromName( profile_name, icc_profile_flags, 0 );
     error = oyOptions_MoveInStruct( &options,
                                 "//" OY_TYPE_STD "/config/icc_profile.add_meta",
                                     (oyStruct_s**)&prof, OY_CREATE_NEW );

@@ -171,12 +171,12 @@ int main( int argc , char** argv )
               case 'o': OY_PARSE_STRING_ARG(output); break;
               case 'p': OY_PARSE_STRING_ARG(output_profile); break;
               case 's': OY_PARSE_STRING_ARG(simulation_profile);
-                        p = oyProfile_FromFile( simulation_profile, icc_profile_flags, 0 );
+                        p = oyProfile_FromName( simulation_profile, icc_profile_flags, 0 );
                         if(!p) wrong_arg = effect_profile;
                         oyProfiles_MoveIn( proofing, &p, -1 );
                         break;
               case 'e': OY_PARSE_STRING_ARG(effect_profile);
-                        p = oyProfile_FromFile( effect_profile, icc_profile_flags, 0 );
+                        p = oyProfile_FromName( effect_profile, icc_profile_flags, 0 );
                         if(!p) wrong_arg = effect_profile;
                         oyProfiles_MoveIn( effects, &p, -1 );
                         break;
@@ -389,6 +389,7 @@ int main( int argc , char** argv )
                                        (oyStruct_s**) &proofing,
                                        OY_CREATE_NEW );
 
+
     if(format && strcmp(format,"clut") == 0)
     {
       int width = levels,
@@ -425,7 +426,7 @@ int main( int argc , char** argv )
       }
       if(input)
       {
-        p = oyProfile_FromFile( input, icc_profile_flags, 0 );
+        p = oyProfile_FromName( input, icc_profile_flags, 0 );
         if(!p)
           WARNc1_S("Could not open profile: %s", input);
           error = 1;
@@ -438,7 +439,7 @@ int main( int argc , char** argv )
 
       pixel_layout = oyImage_GetPixelLayout( image,oyLAYOUT );
       data_type = oyToDataType_m(pixel_layout);
-      p = oyProfile_FromFile(output_profile, icc_profile_flags, 0);
+      p = oyProfile_FromName(output_profile, icc_profile_flags, 0);
       cc = oyConversion_CreateFromImage (
                                 image, node_name, module_options, 
                                 p, data_type, flags, 0 );
@@ -462,7 +463,7 @@ int main( int argc , char** argv )
 
       if(input)
       {
-        p = oyProfile_FromFile( input, icc_profile_flags, 0 );
+        p = oyProfile_FromName( input, icc_profile_flags, 0 );
         if(!p)
         {
           WARNc1_S("Could not open profile: %s", input);
@@ -475,7 +476,7 @@ int main( int argc , char** argv )
       in = oyImage_Create( 2, 2, buf, pixel_layout, p, 0 );
       oyProfile_Release( &p );
 
-      p = oyProfile_FromFile(output_profile, icc_profile_flags, 0);
+      p = oyProfile_FromName(output_profile, icc_profile_flags, 0);
 
       cc = oyConversion_CreateFromImage (
                                 in, node_name, module_options, 
@@ -520,7 +521,7 @@ int main( int argc , char** argv )
       pixel_layout = oyImage_GetPixelLayout( image,oyLAYOUT );
       if(device_link)
       {
-        p = oyProfile_FromFile(device_link, icc_profile_flags, 0);
+        p = oyProfile_FromName(device_link, icc_profile_flags, 0);
         if(!p)
         {
           WARNc1_S("Could not open profile: %s", device_link);
@@ -543,7 +544,7 @@ int main( int argc , char** argv )
           if(t)
           {
             output_profile = dln = strdup( t );
-            dl = oyProfile_FromFile(t, icc_profile_flags, 0);
+            dl = oyProfile_FromName(t, icc_profile_flags, 0);
           }
           if(dl && strcmp(t,dln) != 0)
           {
@@ -560,7 +561,7 @@ int main( int argc , char** argv )
         }
       }
       if(!p)
-        p = oyProfile_FromFile(output_profile, icc_profile_flags, 0);
+        p = oyProfile_FromName(output_profile, icc_profile_flags, 0);
       if(!p)
       {
           WARNc1_S("Could not open output profile: %s", output_profile);

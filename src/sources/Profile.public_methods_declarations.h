@@ -3,6 +3,10 @@ OYAPI oyProfile_s * OYEXPORT
                                        uint32_t            flags,
                                        oyObject_s          object);
 OYAPI oyProfile_s * OYEXPORT
+                   oyProfile_FromName( const char*         name,
+                                       uint32_t            flags,
+                                       oyObject_s          object);
+OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromFile( const char*         file_name,
                                        uint32_t            flags,
                                        oyObject_s          object);

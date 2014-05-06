@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/04/08
+ *  @date     2014/05/06
  */
 
 
@@ -115,6 +115,10 @@ OYAPI int OYEXPORT
 /* Include "Profile.public_methods_declarations.h" { */
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromStd ( oyPROFILE_e         type,
+                                       uint32_t            flags,
+                                       oyObject_s          object);
+OYAPI oyProfile_s * OYEXPORT
+                   oyProfile_FromName( const char*         name,
                                        uint32_t            flags,
                                        oyObject_s          object);
 OYAPI oyProfile_s * OYEXPORT

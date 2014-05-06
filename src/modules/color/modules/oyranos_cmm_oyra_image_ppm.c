@@ -444,36 +444,6 @@ int wread ( unsigned char* data, size_t pos, size_t max, size_t *start, size_t *
   return end_found;
 }
 
-oyProfile_s * oyProfile_FromName     ( const char        * name )
-{
-    oyProfile_s * p = 0;
-    char ** names = NULL;
-    uint32_t count = 0, i;
-    const char * t = 0;
-
-    names = /*(const char**)*/ oyProfileListGet ( NULL, &count, malloc );
-
-    if(name)
-    {
-      for(i = 0; i < (int)count; ++i)
-      {
-        p = oyProfile_FromFile( names[i], 0,0 );
-
-        t = oyProfile_GetText(p, oyNAME_DESCRIPTION);
-        if(t && strcmp(t,name) == 0)
-        {
-          free(names[i]);
-          break;
-        }
-        free(names[i]);
-
-        oyProfile_Release( &p );
-      }
-      free(names); names = 0;
-    }
-  return p;
-}
-
 /** @func    oyraFilterPlug_ImageInputPPMRun
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
@@ -653,7 +623,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
           {
             memcpy( t, &data[l_pos+14], fpos - l_pos - 15 );
             t[fpos - l_pos - 15] = 0;
-            prof = oyProfile_FromName(t);
+            prof = oyProfile_FromName(t, icc_profile_flags, NULL);
             if(prof)
             {
               if(oy_debug)
