@@ -236,22 +236,22 @@ typedef enum  {
 /** @brief type of widget */
 typedef enum {
     oyWIDGETTYPE_START,
-    oyWIDGETTYPE_GROUP_TREE,/**!< group creating a new visibility (tab, leave) */
+    oyWIDGETTYPE_GROUP_TREE,/**< group creating a new visibility (tab, leave) */
     oyWIDGETTYPE_BEHAVIOUR,
     oyWIDGETTYPE_DEFAULT_PROFILE,
-    oyWIDGETTYPE_PROFILE,   /**!< select a profile through a list widget */
-    oyWIDGETTYPE_INT,       /**!< TODO @todo value range */
-    oyWIDGETTYPE_FLOAT,     /**!< IEEE floating point number */
-    oyWIDGETTYPE_CHOICE,    /**!< option from a array of choices */
-    oyWIDGETTYPE_LIST,      /**!< list widget, like for paths */
-    oyWIDGETTYPE_VOID,      /**!< data block, should not be selectable */
+    oyWIDGETTYPE_PROFILE,   /**< select a profile through a list widget */
+    oyWIDGETTYPE_INT,       /**< TODO @todo value range */
+    oyWIDGETTYPE_FLOAT,     /**< IEEE floating point number */
+    oyWIDGETTYPE_CHOICE,    /**< option from a array of choices */
+    oyWIDGETTYPE_LIST,      /**< list widget, like for paths */
+    oyWIDGETTYPE_VOID,      /**< data block, should not be selectable */
     oyWIDGETTYPE_END
 } oyWIDGET_TYPE_e;
 
 /** @brief layout flags for widgets */
-#define OY_LAYOUT_NO_CHOICES    0x01  /**!< show informational */
-#define OY_LAYOUT_MIDDLE        0x02  /**!< Arrange in the middle. */
-#define OY_LAYOUT_PATH_SELECTOR 0x04  /**!< add a path selector to each entry */ 
+#define OY_LAYOUT_NO_CHOICES    0x01  /**< show informational */
+#define OY_LAYOUT_MIDDLE        0x02  /**< Arrange in the middle. */
+#define OY_LAYOUT_PATH_SELECTOR 0x04  /**< add a path selector to each entry */ 
 
 oyWIDGET_e  * oyWidgetListGet          (oyGROUP_e         group,
                                         int             * count,
