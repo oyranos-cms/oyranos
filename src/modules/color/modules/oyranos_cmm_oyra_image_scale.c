@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2013 (C) Kai-Uwe Behrmann
+ *            2013-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    modules for Oyranos
  *  @internal
@@ -220,7 +220,7 @@ oyCMMapi_s * oyraApi7ImageScaleCreate(void)
 {
   oyCMMapi7_s * scale7;
   int32_t cmm_version[3] = {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},
-          module_api[3]  = {0,9,5};
+          module_api[3]  = {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C};
   static oyDATATYPE_e data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
                                        oyHALF, oyFLOAT, oyDOUBLE, 0};
   oyConnectorImaging_s * plug = oyConnectorImaging_New(0),
@@ -324,7 +324,7 @@ oyCMMapi_s * oyraApi4ImageScaleCreate(void)
                                    oyraApi4UiImageScaleGetText,
                                    oyra_api4_ui_image_scale_texts, 0 );
   int32_t cmm_version[3] = {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},
-          module_api[3]  = {0,9,5};
+          module_api[3]  = {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C};
 
   oyCMMapi4_s * scale4 = oyCMMapi4_Create( oyraCMMInit, oyraCMMMessageFuncSet,
                                        OY_IMAGE_SCALE_REGISTRATION,

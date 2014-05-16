@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2008-2009 (C) Kai-Uwe Behrmann
+ *            2008-2014 (C) Kai-Uwe Behrmann
  *
  *  @brief    modules for Oyranos
  *  @internal
@@ -300,7 +300,7 @@ oyCMMui_s_   oyra_api4_image_write_ppm_ui = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,9,5},                            /**< int32_t module_api[3] */
+  CMM_API_VERSION,                     /**< int32_t module_api[3] */
 
   oyraFilter_ImageOutputPPMValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
@@ -338,7 +338,7 @@ oyCMMapi4_s_ oyra_api4_image_write_ppm = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/file_write.write_ppm._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,9,5},                  /**< int32_t module_api[3] */
+  CMM_API_VERSION,                     /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
   0,   /* runtime_context */
@@ -385,7 +385,7 @@ oyCMMapi7_s_ oyra_api7_image_write_ppm = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/file_write.write_ppm._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,9,5},                  /**< int32_t module_api[3] */
+  CMM_API_VERSION,                     /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
   0,   /* runtime_context */
@@ -1106,7 +1106,7 @@ oyCMMui_s_   oyra_api4_ui_image_input_ppm = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,9,5},                            /**< int32_t module_api[3] */
+  CMM_API_VERSION,                     /**< int32_t module_api[3] */
 
   oyraFilter_ImageInputPPMValidateOptions, /* oyCMMFilter_ValidateOptions_f */
   oyraWidgetEvent, /* oyWidgetEvent_f */
@@ -1144,7 +1144,7 @@ oyCMMapi4_s_ oyra_api4_image_input_ppm = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/file_read.input_ppm._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,9,5},                  /**< int32_t module_api[3] */
+  CMM_API_VERSION,                     /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
   0,   /* runtime_context */
@@ -1191,7 +1191,7 @@ oyCMMapi7_s_ oyra_api7_image_input_ppm = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD "/file_read.input_ppm._CPU._" CMM_NICK,
 
   CMM_VERSION, /* int32_t version[3] */
-  {0,9,5},                  /**< int32_t module_api[3] */
+  CMM_API_VERSION,                     /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* api5_; keep empty */
   0,   /* runtime_context */

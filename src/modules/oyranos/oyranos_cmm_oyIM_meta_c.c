@@ -261,7 +261,7 @@ oyCMMapi5_s_ oyIM_api5_meta_c = {
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH CMM_NICK,
 
   {0,0,2}, /* int32_t version[3] */
-  {0,9,5},                  /**< int32_t module_api[3] */
+  CMM_API_VERSION, /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
 
   OY_CMMSUBPATH, /* sub_paths */

@@ -163,7 +163,7 @@ oyCMM_s oyIM_cmm_module = {
   oyOBJECT_CMM_INFO_S,
   0,0,0,
   CMM_NICK,
-  "0.1.10",
+  "0.9.6",
   oyIMInfoGetText,                     /**< oyCMMGetText_f getText */
   (char**)oyIM_texts,                  /**<texts; list of arguments to getText*/
   OYRANOS_VERSION,

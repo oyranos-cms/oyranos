@@ -151,8 +151,8 @@ oyRankMap _rank_map[] = {
    {const_cast < char *>(PRFX_LRAW "driver_version"), 2, -1, 0},               /**< is good */
    {const_cast < char *>("profile_name"), 0, 0, 0},                  /**< non relevant for device properties*/
        /* EXIF Fields */
-   {const_cast < char *>(PRFX_EXIF "manufacturer"), 2, -10, 0},           /**< is nice */
-   {const_cast < char *>(PRFX_EXIF "model"), 2, -10, 0},                  /**< important, should not fail */
+   {const_cast < char *>(PRFX_EXIF "manufacturer"), 2, -20, 0},           /**< important, should not fail */
+   {const_cast < char *>(PRFX_EXIF "model"), 2, -22, 0},                  /**< important, should not fail */
    {const_cast < char *>(PRFX_EXIF "serial"), 1, 0, 0},                   /**< is nice */
    {const_cast < char *>(PRFX_EXIF "Photo_ISOSpeedRatings"), 3, 0, 0},    /**< is nice */
    {const_cast < char *>(PRFX_EXIF "Photo_ExposureProgram"), 1, 0, 0},    /**< nice to match */
@@ -1328,7 +1328,7 @@ oyCMMui_s_ _api8_ui = {
   0,0,0,                            /* unused oyStruct_s fields; keep to zero */
 
   CMM_VERSION,                         /**< int32_t version[3] */
-  {0,9,5},                            /**< int32_t module_api[3] */
+  CMM_API_VERSION,                     /**< int32_t module_api[3] */
 
   0, /* oyCMMFilter_ValidateOptions_f */
   0, /* oyWidgetEvent_f */
@@ -1361,7 +1361,7 @@ oyCMMapi8_s_ _api8 = {
    CMMMessageFuncSet,                                                 /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
    const_cast < char *>(CMM_BASE_REG),                                /**< registration */
    CMM_VERSION,                                                         /**< int32_t version[3] */
-   {0,9,5},                                                        /**< int32_t module_api[3] */
+   CMM_API_VERSION,                                                   /**< int32_t module_api[3] */
    0,                                                                 /**< char * id_ */
    0,                                                                 /**< oyCMMapi5_s * api5_ */
    0,                                                                 /**< runtime_context */
