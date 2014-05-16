@@ -33,7 +33,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
     error = 1;
   else
   {
-    if(module_api < 905 ||  /* last API break */
+    if(module_api < 906 ||  /* last API break */
        OYRANOS_VERSION < module_api)
     {
       error = 1;

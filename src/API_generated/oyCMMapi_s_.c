@@ -339,9 +339,9 @@ int oyCMMapi_Release_( oyCMMapi_s_ **cmmapi )
  *  @memberof oyCMMapi_s_
  *  @brief   check for completeness
  *
- *  @version Oyranos: 0.3.3
+ *  @version Oyranos: 0.9.6
  *  @since   2007/12/06 (Oyranos: 0.1.8)
- *  @date    2011/11/25
+ *  @date    2014/05/16
  */
 oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
 {
@@ -361,7 +361,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
     error = 1;
   else
   {
-    if(module_api < 905 ||  /* last API break */
+    if(module_api < 906 ||  /* last API break */
        OYRANOS_VERSION < module_api)
     {
       error = 1;
