@@ -1,4 +1,5 @@
 o keep the API's consistent
+o API break: update oyCMMapi_Check_() -> module_api test 
 o remove old stuff
 o git push remote (git push ssh://root@www.oyranos.org/git/icc_examin/)
 o update the feature page on ColourWiki
