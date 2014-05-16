@@ -30,7 +30,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-
+#define CMM_API_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 
 /** @brief   CMM data to Oyranos cache
  *
