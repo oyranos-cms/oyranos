@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/05/06
+ *  @date     2014/06/04
  */
 
 
@@ -603,8 +603,8 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromTaxiDB (
  *                                       "Profile already installed"
  *                                     - oyCORRUPTED msg -> profile not useable
  *
- *  @version Oyranos: 0.9.1
- *  @date    2012/11/13
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/06/04
  *  @since   2012/01/13 (Oyranos: 0.9.1)
  */
 OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
@@ -617,8 +617,8 @@ OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
   char * data = 0;
   char ** names = 0;
   uint32_t count = 0, i = 0;
-  const char * t = 0,
-             * desc = 0;
+  const char * t = 0;
+  char * desc = 0;
   char * fn = 0;
   char * pn = 0;
 
@@ -631,11 +631,17 @@ OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
   }
 
   /** 1. construct a profile name */
-  desc = oyProfile_GetText( s, oyNAME_DESCRIPTION );
+  desc = oyStringCopy_( oyProfile_GetText( s, oyNAME_DESCRIPTION ), oyAllocateFunc_ );
 
   if(desc && desc[0])
   {
     char * ext = 0;
+    int len;
+
+    len = strlen( desc );
+    for(i = 0; i < len; ++i)
+      if(desc[i] == OY_SLASH_C)
+        desc[i] = '-';
 
     /** 1.1 add user profile path name by default or custom from "path" option
      */
@@ -742,6 +748,7 @@ OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
   }
 
   install_cleanup:
+  if(desc) oyFree_m_(desc);
   if(pn) oyFree_m_(pn);
   if(fn) oyFree_m_(fn);
   if(data) oyFree_m_(data);
