@@ -25,6 +25,7 @@
 #include "oyranos_i18n.h"
 #include "oyranos_internal.h"
 #include "oyranos_sentinel.h"
+#include "oyranos_string.h"
 
 int oy_sentinel_initialised_ = 0;
 
@@ -40,7 +41,19 @@ void oyInit_()
   oy_sentinel_initialised_ = 1;
 
   if(getenv(OY_DEBUG))
+  {
+    char * version = oyVersionString(1,0);
+    char * id = oyVersionString(2,0);
+    char * cfg_date =  oyVersionString(3,0);
+    char * devel_time = oyVersionString(4,0);
+
     oy_debug = atoi(getenv(OY_DEBUG));
+    DBG3_S( "Oyranos v%s config: %s devel period: %s",
+                  oyNoEmptyName_m_(version),
+                  oyNoEmptyName_m_(cfg_date), oyNoEmptyName_m_(devel_time) );
+    if(id)
+      DBG1_S( "Oyranos git id %s", oyNoEmptyName_m_(id) );
+  }
 
   if(getenv(OY_DEBUG_MEMORY))
     oy_debug_memory = atoi(getenv(OY_DEBUG_MEMORY));
