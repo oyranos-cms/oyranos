@@ -859,7 +859,8 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
 /** @instance oicc_api9
  *  @brief    oicc oyCMMapi9_s implementation
  *
- *  a policy ashuring plug-in interpreter for ICC CMM's
+ *  A module to match ICC CMM default settings to Oyranos policy settings.
+ *  Per object user settings have priority and are not touched.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/11/13 (Oyranos: 0.1.9)
@@ -877,7 +878,7 @@ oyCMMapi9_s_  oicc_api9 = {
   /* registration */
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc." CMM_NICK,
 
-  {0,0,1}, /* int32_t version[3] */
+  {0,1,0}, /* int32_t version[3] */
   CMM_API_VERSION, /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* oyCMMapi5_s    * api5_; keep empty */
