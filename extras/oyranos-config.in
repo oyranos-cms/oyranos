@@ -31,6 +31,8 @@ pixmapdir="$datadir/pixmaps"
 icondir="$datadir/icons"
 desktopdir="$datadir/applications"
 oyranos_add="$ltdl $xml2 $iconv $intl $yajl"
+sourcedir=@CMAKE_SOURCE_DIR@
+builddir=@CMAKE_BINARY_DIR@
 
 if [ -n "$PKG_CONFIG_PATH" ]; then
   PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$libdir/pkgconfig
@@ -93,6 +95,12 @@ do
         --metadir)
 	    echo_metadirname=yes
 	    ;;
+        --builddir)
+	    echo_builddirname=yes
+	    ;;
+        --sourcedir)
+	    echo_sourcedirname=yes
+	    ;;
 	*)
 	    echo_help=yes
 	    ;;
@@ -114,6 +122,8 @@ if [ "$echo_help" = "yes" ]; then
   echo "  $0 --settingsdirname   Oyranos settings directory name"
   echo "  $0 --cmmdir            Oyranos CMM directory name"
   echo "  $0 --metadir           Oyranos meta module directory name"
+  echo "  $0 --sourcedir         Oyranos local source directory name"
+  echo "  $0 --builddir          Oyranos local build directory name"
 fi
 
 if [ "$echo_ldflags" = "yes" ]; then
@@ -177,5 +187,11 @@ if [ "$echo_cmmdirname" = "yes" ]; then
 fi
 if [ "$echo_metadirname" = "yes" ]; then
   echo "$libdir/$metasubpath"
+fi
+if [ "$echo_sourcedirname" = "yes" ]; then
+  echo "$sourcedir"
+fi
+if [ "$echo_builddirname" = "yes" ]; then
+  echo "$builddir"
 fi
 
