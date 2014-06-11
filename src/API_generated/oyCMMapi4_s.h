@@ -19,7 +19,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/06/10
  */
 
 
@@ -171,6 +171,8 @@ OYAPI oyCMMapi4_s*  OYEXPORT
                                        oyCMMFilterNode_GetText_f oyCMMFilterNode_GetText,
                                        oyCMMui_s         * ui,
                                        oyObject_s          object );
+OYAPI oyCMMui_s*  OYEXPORT
+                   oyCMMapi4_GetUi   ( oyCMMapi4_s       * object );
 
 
 /* } Include "CMMapi4.public_methods_declarations.h" */

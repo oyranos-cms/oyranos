@@ -60,4 +60,5 @@ OYAPI oyCMMapi4_s*  OYEXPORT
                                        oyCMMFilterNode_GetText_f oyCMMFilterNode_GetText,
                                        oyCMMui_s         * ui,
                                        oyObject_s          object );
-
+OYAPI oyCMMui_s*  OYEXPORT
+                   oyCMMapi4_GetUi   ( oyCMMapi4_s       * object );

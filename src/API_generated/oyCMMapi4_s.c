@@ -19,7 +19,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/07
+ *  @date     2014/06/10
  */
 
 
@@ -237,6 +237,27 @@ OYAPI oyCMMapi4_s*  OYEXPORT
     api4->ui->parent = (oyCMMapiFilter_s*) oyCMMapi4_Copy( (oyCMMapi4_s*) api4, NULL );
 
   return (oyCMMapi4_s*) api4;
+}
+
+/** Function    oyCMMapi4_GetUi
+ *  @memberof   oyCMMapi4_s
+ *  @brief      Get ui object from module
+ *
+ *  @param         obj                 the api4 module
+ *  @return                            a ui object
+ *
+ *  @version Oyranos: 0.9.6
+ *  @since   2014/06/10 (Oyranos: 0.9.4)
+ *  @date    2014/06/10
+ */
+OYAPI oyCMMui_s*  OYEXPORT
+                   oyCMMapi4_GetUi   ( oyCMMapi4_s       * obj )
+{
+  oyCMMapi4_s_ * api4 = (oyCMMapi4_s_*) obj; 
+  if(!api4)
+    return NULL;
+
+  return (oyCMMui_s*) api4->ui;
 }
 
 
