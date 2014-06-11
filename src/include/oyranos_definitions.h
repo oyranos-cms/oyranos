@@ -120,6 +120,8 @@
 #define OY_PROFILE_STD           OY_STD OY_SLASH "profile" OY_SLASH
 /** Type path for standard settings */
 #define OY_BEHAVIOUR_STD         OY_STD OY_SLASH "behaviour" OY_SLASH
+/** Type path for standard settings */
+#define OY_CMM_STD               OY_STD OY_SLASH "cmm" OY_SLASH
 
 /** Oyranos default profiles key path in the data base */
 #define OY_REGISTRED_PROFILES    OY_STD OY_SLASH "device_profiles"
@@ -187,6 +189,11 @@
 #define OY_DEFAULT_PROOF_SOFT          OY_BEHAVIOUR_STD "proof_soft"
 /** key name for hard proofing by default */
 #define OY_DEFAULT_PROOF_HARD          OY_BEHAVIOUR_STD "proof_hard"
+
+/** key name for context CMM */
+#define OY_DEFAULT_CMM_CONTEXT         OY_CMM_STD "cmm_context"
+/** key name for renderer CMM */
+#define OY_DEFAULT_CMM_RENDERER        OY_CMM_STD "cmm_renderer"
 
 
 #endif /* OYRANOS_DEFINITIONS_H */
