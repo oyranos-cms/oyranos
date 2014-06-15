@@ -37,7 +37,9 @@
 #cmakedefine HAVE_LIBPNG
 #cmakedefine USE_GETTEXT
 #cmakedefine HAVE_LOCALE_H
+#ifndef DEBUG 
 #cmakedefine01 DEBUG
+#endif
 
 #endif /* OYRANOS_CONFIG_INTERNAL_H */
 
