@@ -55,7 +55,7 @@ typedef int      (*oyCMMinfoInit_f)  ( oyStruct_s        * library );
 
 /* Include "CMMinfo.dox" { */
 /** @struct  oyCMMinfo_s 
- *  @ingroup cmm_handling
+ *  @ingroup module_api
  *  @extends oyStruct_s
  *  @brief   The CMM API resources struct to implement and set by a CMM
  *  @internal

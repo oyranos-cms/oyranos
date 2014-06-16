@@ -47,7 +47,7 @@ typedef struct oyCMMapis_s_ oyCMMapis_s_;
 /** @internal
  *  @struct   oyCMMapis_s_
  *  @brief      A CMMapis list
- *  @ingroup  cmm_handling
+ *  @ingroup  module_api
  *  @extends  oyStruct_s
  */
 struct oyCMMapis_s_ {

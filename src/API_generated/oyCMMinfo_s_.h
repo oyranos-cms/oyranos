@@ -47,7 +47,7 @@ typedef struct oyCMMinfo_s_ oyCMMinfo_s_;
 /** @internal
  *  @struct   oyCMMinfo_s_
  *  @brief      The CMM API resources struct to implement and set by a CMM
- *  @ingroup  cmm_handling
+ *  @ingroup  module_api
  *  @extends  oyStruct_s
  */
 struct oyCMMinfo_s_ {

@@ -50,7 +50,7 @@ typedef struct oyCMMapis_s oyCMMapis_s;
 
 /* Include "CMMapis.dox" { */
 /** @struct  oyCMMapis_s
- *  @ingroup cmm_handling
+ *  @ingroup module_api
  *  @extends oyStruct_s
  *  @brief   A CMMapis list
  *
