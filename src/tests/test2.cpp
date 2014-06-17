@@ -4251,6 +4251,117 @@ oyTESTRESULT_e testConversion()
   return result;
 }
 
+oyTESTRESULT_e testCMMlists()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  char ** list = oyGetCMMs( oyCMM_CONTEXT, oyNAME_NAME, 0, malloc );
+  int i = 0;
+
+  while(list && list[i])
+  {
+    fprintf(zout, "  %d: \"%s\" (%s)\n", i, list[i], oyCMMNameToRegistration( list[i], oyCMM_CONTEXT, oyNAME_NAME, 0, malloc ) );
+    ++i;
+  }
+
+  if(list)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyGetCMMs(oyCMM_CONTEXT, oyNAME_NAME,) fine %d  ", i );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyGetCMMs(oyCMM_CONTEXT, oyNAME_NAME,) failed   " );
+  }
+
+  list = oyGetCMMs( oyCMM_CONTEXT, oyNAME_REGISTRATION, 0, malloc );
+  i = 0;
+
+  while(list && list[i])
+  {
+    fprintf(zout, "  %d: \"%s\" (%s)\n", i, list[i], oyCMMRegistrationToName(list[i], oyCMM_CONTEXT, oyNAME_NAME, 0, malloc) );
+    ++i;
+  }
+
+  if(list)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyGetCMMs(oyCMM_CONTEXT, oyNAME_REGISTRATION,) fine %d", i );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyGetCMMs(oyCMM_CONTEXT, oyNAME_REGISTRATION,) failed " );
+  }
+
+  list = oyGetCMMs( oyCMM_CONTEXT, oyNAME_NICK, 0, malloc );
+  i = 0;
+
+  while(list && list[i])
+  {
+    fprintf(zout, "  %d: \"%s\" (%s)\n", i, list[i], oyCMMRegistrationToName(list[i], oyCMM_CONTEXT, oyNAME_PATTERN, 0, malloc) );
+    ++i;
+  }
+
+  if(list)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyGetCMMs(oyCMM_CONTEXT, oyNAME_NICK,) fine %d        ", i );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyGetCMMs(oyCMM_CONTEXT, oyNAME_NICK,) failed         " );
+  }
+
+  int current = -1;
+  oyOptionChoicesGet2( oyWIDGET_CMM_CONTEXT, 0, oyNAME_NAME, &i,
+                       (const char***)&list, &current );
+
+  if(current != -1)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyOptionChoicesGet2( 0, current == %s [%d])      ", list[current],
+                                                              current );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptionChoicesGet2( current == ?? ) failed           " );
+  }
+
+  oyOptionChoicesFree( oyWIDGET_CMM_CONTEXT, &list, i );
+
+
+  char * default_cmm = oyGetCMMPattern( oyCMM_CONTEXT, oySOURCE_DATA, malloc );
+
+  if(default_cmm && default_cmm[0])
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyGetCMMPattern( oySOURCE_DATA ) == %s         ", default_cmm );
+  } else
+  { PRINT_SUB( oyTESTRESULT_XFAIL,
+    "oyGetCMMPattern( oySOURCE_DATA ) not set              " );
+  }
+  if(default_cmm) free(default_cmm);
+
+
+  default_cmm = oyGetCMMPattern( oyCMM_CONTEXT, oySOURCE_FILTER, malloc );
+
+  if(default_cmm && default_cmm[0])
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyGetCMMPattern( oySOURCE_FILTER )==%s", default_cmm );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyGetCMMPattern( oySOURCE_FILTER ) failed             " );
+  }
+  if(default_cmm) free(default_cmm);
+
+
+  default_cmm = oyGetCMMPattern( oyCMM_CONTEXT, 0, malloc );
+
+  if(default_cmm && default_cmm[0])
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyGetCMMPattern( ) == %s             ", default_cmm );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyGetCMMPattern( ) failed                             " );
+  }
+  if(default_cmm) free(default_cmm);
+
+  return result;
+}
+
 #include "oyranos_alpha.h"
 
 oyTESTRESULT_e testConfDomain ()
@@ -4500,6 +4611,7 @@ int main(int argc, char** argv)
   TEST_RUN( testNcl2, "named color serialisation" );
   TEST_RUN( testImagePixel, "CMM Image Pixel run" );
   TEST_RUN( testConversion, "CMM selection" );
+  TEST_RUN( testCMMlists, "CMMs listing" );
 
   /* give a summary */
   if(!list)
