@@ -65,6 +65,16 @@ void selectBehaviourCallback( Fl_Widget* w, void* x ) {
         if(op->option == oyWIDGET_POLICY)
         {
           error = oyPolicySet( c->text(), NULL );
+        } else if(oyWIDGET_CMM_START < op->option &&
+                  op->option < oyWIDGET_CMM_END)
+        {
+          char * t = oyCMMNameToRegistration( c->text(), (oyCMM_e)op->option,
+                                              oyNAME_NAME, 0, malloc ),
+               * pattern = oyCMMRegistrationToName( t, (oyCMM_e)op->option,
+                                              oyNAME_PATTERN, 0, malloc );
+          error = oySetCMMPattern( (oyCMM_e)op->option, 0, pattern );
+          if(t); free(t);
+          if(pattern); free(pattern);
         } else
           error = oySetBehaviour( (oyBEHAVIOUR_e)op->option, c->value());
   
@@ -619,7 +629,7 @@ static void refreshOptions() {
           {
             Fl_Group *w = addTab( top_tabs, groups );
   
-            oyOptionChoicesGet( oywid, &count, &names, &current );
+            oyOptionChoicesGet2( oywid, 0, oyNAME_NAME, &count, &names, &current );
             /*for(int en = 0; en < count; ++en)
               printf("%s\n", names[en]);*/
   
