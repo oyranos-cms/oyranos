@@ -39,6 +39,7 @@ typedef enum  {
   oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, /**< PDF Generation Options */
   oyGROUP_BEHAVIOUR_MISSMATCH,            /**< Profile Missmatch Behaviour */
   oyGROUP_BEHAVIOUR_PROOF,                /**< Profile Missmatch Behaviour */
+  oyGROUP_CMM,                     /**< CMM selection */
   oyGROUP_ALL,                     /**< just for easen Gui design */
   oyGROUP_EXTERN = 200             /**< start of groups in a extern module */
 } oyGROUP_e;
@@ -77,6 +78,53 @@ enum  {
 int         oyGetBehaviour             (oyBEHAVIOUR_e     type);
 int         oySetBehaviour             (oyBEHAVIOUR_e     type,
                                         int               choice);
+
+/* --- CMM --- */
+
+/** @brief CMM Types
+ */
+typedef enum {
+  oyCMM_START = 300,
+  oyCMM_CONTEXT,                       /**< parse profiles, options and create a device link */
+  oyCMM_RENDERER,                      /**< take a device link and color convert */
+  oyCMM_CONTEXT_FALLBACK,              /**< parse profiles, options and create a device link */
+  oyCMM_RENDERER_FALLBACK,             /**< take a device link and color convert */
+  oyCMM_END                            /**< just for easen Gui design */
+} oyCMM_e;
+
+char *       oyGetCMMPattern         ( oyCMM_e             type,
+                                       uint32_t            flags,
+                                       oyAlloc_f           allocate_func );
+int          oySetCMMPattern         ( oyCMM_e             type,
+                                       uint32_t            flags,
+                                       const char        * name );
+/** \addtogroup cmm_handling
+ *  @{ */
+/** @brief the system specific module name; e.g. a library name */
+#define oyNAME_MODULE (oyNAME_DESCRIPTION + 2)
+/** @brief the logical name for selection */
+#define oyNAME_REGISTRATION (oyNAME_DESCRIPTION + 3)
+/** @brief a logical name for registration search */
+#define oyNAME_PATTERN (oyNAME_DESCRIPTION + 4)
+/** @brief use inbuild values */
+#define oySOURCE_FILTER 0x02
+/** @brief use persistenly stored DB values */
+#define oySOURCE_DATA 0x04
+/** @} */
+char **      oyGetCMMs               ( oyCMM_e             type,
+                                       int                 name_type,
+                                       uint32_t            flags,
+                                       oyAlloc_f           allocate_func );
+char *       oyCMMRegistrationToName ( const char        * registration,
+                                       oyCMM_e             type,
+                                       int                 name_type,
+                                       uint32_t            flags,
+                                       oyAlloc_f           allocate_func );
+char *       oyCMMNameToRegistration ( const char        * name,
+                                       oyCMM_e             type,
+                                       int                 name_type,
+                                       uint32_t            flags,
+                                       oyAlloc_f           allocate_func );
 
 /* --- policies --- */
 
@@ -186,6 +234,7 @@ typedef enum  {
   oyWIDGET_GROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, /**< PDF Generation Options*/
   oyWIDGET_GROUP_BEHAVIOUR_MISSMATCH,     /**< Profile Missmatch Behaviour */
   oyWIDGET_GROUP_BEHAVIOUR_PROOF,         /**< Profile Missmatch Behaviour */
+  oyWIDGET_GROUP_CMM,                     /**< Color Matching Modules */
   oyWIDGET_GROUP_ALL,                     /**< just for easen Gui design */
   oyWIDGET_GROUP_DEVICES,                 /**< just for easen Gui design */
   oyWIDGET_GROUP_INFORMATION,             /**< just for easen Gui design */
@@ -225,11 +274,12 @@ typedef enum  {
   oyWIDGET_PROFILE_PROOF = 120,/**< standard proofing profile */
   oyWIDGET_DEFAULT_PROFILE_END,/**< just for easen Gui design */
 
-  oyWIDGET_CMM_START = 300,        /**< CMM options */
-  oyWIDGET_CMM_SELECT,             /**< CMM selection */
-  oyWIDGET_CMM_INTENT,             /**< CMM rendering intent */
-  oyWIDGET_CMM_BPC,                /**< black point compensation switch */
-  oyWIDGET_CMM_INTENT_PROOF        /**< Proofing color transformations */
+  oyWIDGET_CMM_START = 300,            /**< CMM options */
+  oyWIDGET_CMM_CONTEXT,                /**< CMM core selection */
+  oyWIDGET_CMM_RENDERER,               /**< take a device link and color convert */
+  oyWIDGET_CMM_CONTEXT_FALLBACK,       /**< CMM core fallback selection */
+  oyWIDGET_CMM_RENDERER_FALLBACK,      /**< take a device link and color convert */
+  oyWIDGET_CMM_END                     /**< just for easen Gui design */
 } oyWIDGET_e;
 
 
@@ -267,14 +317,15 @@ oyWIDGET_TYPE_e  oyWidgetDescriptionGet (
                                        const char       ** description,
                                        int                 choice );
 
-int           oyOptionChoicesGet       (oyWIDGET_e        option,
-                                        int             * choices,
-                                        const char    *** choices_string_list,
-                                        int             * current);
+int           oyOptionChoicesGet     ( oyWIDGET_e          option,
+                                       int               * choices,
+                                       const char      *** choices_string_list,
+                                       int               * current);
 uint32_t oyICCProfileSelectionFlagsFromRegistration (
                                        const char        * registration );
-int          oyOptionChoicesGet2     ( oyWIDGET_e          option,
+int           oyOptionChoicesGet2    ( oyWIDGET_e          option,
                                        uint32_t            flags,
+                                       int                 name_type,
                                        int               * choices,
                                        const char      *** choices_string_list,
                                        int               * current );
