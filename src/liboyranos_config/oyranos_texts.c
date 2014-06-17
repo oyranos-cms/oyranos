@@ -20,6 +20,8 @@
 #include <iconv.h>
 
 #include "oyProfiles_s.h"
+#include "oyCMMapi4_s.h"
+#include "oyCMMapiFilter_s_.h"
 
 #include "oyranos_config_internal.h"
 #include "oyranos.h"
@@ -43,9 +45,16 @@
 void        oyOptionStringsTranslate_     ();
 void        oyOptionStringsTranslateCheck_();
 
+char *             oyGetCMMName_     ( oyCMMapiFilter_s  * cmm,
+                                       oyCMM_e             type,
+                                       int                 name_type,
+                                       oyAlloc_f           allocate_func );
+
 
 /* separate from the external functions */
 
+/** \addtogroup defaults_apis
+ *  @{ */
 /** \addtogroup cmm_handling
 
  *  @{
@@ -65,7 +74,8 @@ oyGROUP_e oy_groups_descriptions_ = oyGROUP_ALL + 1;
  */
 const char ***oy_groups_description_ = NULL;
 
-/** @} */
+/** @} *//* cmm_handling */
+/** @} *//* defaults_apis */
 
 oyWIDGET_TYPE_e
 oyWidgetTypeGet_(oyWIDGET_e         type)
@@ -248,6 +258,15 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_PROOF", 0,0)
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_CMM, 0,
+      0, 0, 0,
+      _("CMM"),
+      _("Select a CMM in Oyranos"),
+      _("A Color Matching Module (CMM) does the computational work to transform colors. It can provide alternative features regarding appearance, security, speed or resource overhead."),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      NULL,
+      "oyGROUP_CMM", 0,0)
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_ALL, 0,
       0, 0, 0,
       _("Settings"),
@@ -532,6 +551,26 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_RENDERING_GAMUT_WARNING,
       "oyBEHAVIOUR_RENDERING_GAMUT_WARNING", 1,0)
 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_CHOICE, oyWIDGET_CMM_CONTEXT, 1,
+      oyGROUP_CMM, 0, 0,
+      _("CMM Core"),
+      _("Select the core CMM"),
+      _("The core Color Matching Module (CMM) takes individual profiles and options and backes a device link. It can provide alternative features regarding appearance, security, speed or resource overhead."),
+      0, /* choices */
+      NULL,NULL,NULL,NULL,
+      OY_DEFAULT_CMM_CONTEXT,
+      "oyWIDGET_CMM_CONTEXT", 0, "//" OY_TYPE_STD "/icc.color.lcm2")
+
+    oySET_OPTIONS_M_( oyWIDGETTYPE_CHOICE, oyWIDGET_CMM_RENDERER, 1,
+      oyGROUP_CMM, 0, 0,
+      _("CMM Renderer"),
+      _("Select the processing CMM"),
+      _("The processing Color Matching Module (CMM) takes one device link as argument. It can provide alternative features regarding security, speed or resource overhead."),
+      0, /* choices */
+      NULL,NULL,NULL,NULL,
+      OY_DEFAULT_CMM_RENDERER,
+      "oyWIDGET_CMM_RENDERER", 0, "//" OY_TYPE_STD "/icc.color.lcm2")
+
 /*#   undef oySET_OPTIONS_M_*/
   }
 }
@@ -599,7 +638,7 @@ oyWIDGET_TYPE_e  oyWidgetDescriptionGet_(
        int choices = 0, current = -1;
        const char ** choices_string_list = 0;
 
-       oyOptionChoicesGet_( type, flags, &choices, &choices_string_list, &current );
+       oyOptionChoicesGet_( type, flags, oyNAME_DESCRIPTION, &choices, &choices_string_list, &current );
        if(choice <= choices)
          *description     = choices_string_list[choice-1];
     }
@@ -765,7 +804,8 @@ int                oyPoliciesEqual   ( const char        * policyA,
   return is_equal;
 }
 
-/** @func    oyPolicyNameGet_
+/** @internal
+ *  @func    oyPolicyNameGet_
  *  @brief   get the name of a actual policy file
  *
  *  @version Oyranos: 0.1.8
@@ -1038,8 +1078,91 @@ int          oyPolicyFilesToDisplay  ( int               * choices,
   return error;
 }
 
+/** \addtogroup defaults_apis
+ *  @{ */
+/** \addtogroup cmm_handling
+
+ *  @{
+ */
+
+/** Function oyGetCMMs
+ *  @brief   Get a CMM list as strings
+ *
+ *  Useful for displaying UI strings.
+ *
+ *  @param         type                the CMM type to set
+ *  @param         name_type           oyNAME_e or oyNAME_REGISTRATION or oyNAME_MODULE
+ *  @param         flags               unused
+ *  @param         allocate_func       user allocator
+ *  @return                            a UI string
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/06/11
+ *  @since   2014/06/11 (Oyranos: 0.9.6)
+ */
+char **            oyGetCMMs         ( oyCMM_e             type,
+                                       int                 name_type,
+                                       uint32_t            flags,
+                                       oyAlloc_f           allocate_func )
+{
+  oyOBJECT_e otype = oyOBJECT_CMM_API4_S;
+  char ** texts = NULL,
+       ** cmms = NULL;
+  int texts_n = 0;
+
+  if(type == oyCMM_CONTEXT ||
+     type == oyCMM_CONTEXT_FALLBACK)
+    otype = oyOBJECT_CMM_API4_S;
+  else
+    otype = oyOBJECT_CMM_API7_S;
+
+  {
+    uint32_t * rank_list = 0;
+    uint32_t apis_n = 0;
+    oyCMMapiFilters_s * apis = oyCMMsGetFilterApis_( 0,0, "///icc.color",
+                                                     otype, 0,
+                                                     &rank_list, &apis_n );
+    int n = oyCMMapiFilters_Count( apis ), i;
+    for(i = 0; i < n; ++i)
+    {
+      oyCMMapiFilter_s_ * f = (oyCMMapiFilter_s_*) oyCMMapiFilters_Get( apis, i );
+      if(f)
+      {
+        char * t = oyGetCMMName_( (oyCMMapiFilter_s *) f, type, name_type, allocate_func );
+
+        oyStringListAddStaticString_( &texts, &texts_n, t,
+                                      oyAllocateFunc_, oyDeAllocateFunc_);
+
+        if(oy_debug > 1)
+        fprintf( stderr,  "[%s]:\t\"%s\"\t%s \"%s\"\n",
+                            oyStructTypeToText(f->type_),
+                            f->registration,
+                            f->id_,
+                            t );
+
+        oyFree_m_( t );
+        if(f->release)
+          f->release( (oyStruct_s**)&f );
+
+      } else
+        WARNc1_S( "      no api obtained %d",i);
+    }
+    oyCMMapiFilters_Release( &apis );
+  }
+
+  cmms = oyStringListAppend_( 0, 0, (const char**)texts, texts_n, &texts_n,
+                              allocate_func ? allocate_func : oyAllocateFunc_ );
+  oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+
+  return cmms;
+}
+
+/** @} *//* cmm_handling */
+/** @} *//* defaults_apis */
+
 int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
                                        uint32_t            flags,
+                                       int                 name_type,
                                        int               * choices,
                                        const char      *** choices_string_list,
                                        int               * current)
@@ -1121,6 +1244,36 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
     if( current )
       *current              = c;
   }
+  else
+  if( type == oyWIDGET_CMM_CONTEXT ||
+      type == oyWIDGET_CMM_RENDERER)
+  {
+    int count = 0;
+    char ** list = oyGetCMMs( type, name_type, flags, oyAllocateFunc_ );
+    int c = -1;
+    char * cu = oyGetCMMPattern( type, 0, oyAllocateFunc_ );
+
+    if( !list )
+      return 1;
+
+    while(list[count])
+    {
+      char * t = oyCMMNameToRegistration( list[count], type, name_type, 0,
+                                          oyAllocateFunc_ );
+      if(oyFilterRegistrationMatch( t, cu, 0))
+        c = count;
+      oyFree_m_( t );
+
+      ++count;
+    }
+
+    if( choices )
+      *choices              = count;
+    if( choices_string_list )
+      *choices_string_list  = (const oyChar**) list;
+    if( current )
+      *current              = c;
+  }
 
   DBG_PROG_ENDE
   return error;
@@ -1159,10 +1312,11 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
 #define oyGROUP_BEHAVIOUR_PROOF_LEN 4+1
 #define oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS_LEN 6+1
 #define oyGROUP_BEHAVIOUR_MISSMATCH_LEN 6+1
+#define oyGROUP_CMM_LEN 2+1
 
 #define oyGROUP_BEHAVIOUR_LEN oyGROUP_BEHAVIOUR_RENDERING_LEN + oyGROUP_BEHAVIOUR_PROOF_LEN + oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS_LEN + oyGROUP_BEHAVIOUR_MISSMATCH_LEN + 1
 
-#define oyGROUP_ALL_LEN oyGROUP_DEFAULT_PROFILES_LEN + oyGROUP_BEHAVIOUR_LEN
+#define oyGROUP_ALL_LEN oyGROUP_DEFAULT_PROFILES_LEN + oyGROUP_BEHAVIOUR_LEN + oyGROUP_CMM_LEN
 
   oyWIDGET_e *w = NULL;
   oyWIDGET_e *lw = NULL;
@@ -1347,6 +1501,19 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
            w = lw;
          }
          break;
+    case oyGROUP_CMM:
+         {
+           oyAllocHelper_m_( lw, oyWIDGET_e, oyGROUP_CMM_LEN,
+                             allocate_func, return NULL);
+
+           lw[pos++] = oyWIDGET_GROUP_CMM;
+           lw[pos++] = oyWIDGET_CMM_CONTEXT;
+           lw[pos++] = oyWIDGET_CMM_RENDERER;
+
+           *count = pos;
+           w = lw;
+         }
+         break;
     case oyGROUP_ALL:
          {
            oyAllocHelper_m_( lw, oyWIDGET_e, oyGROUP_ALL_LEN,
@@ -1371,6 +1538,12 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
            oyFree_m_( tmp );
 
            tmp = oyWidgetListGet_( oyGROUP_BEHAVIOUR, &n,
+                                   oyAllocateFunc_);
+           for(i = 0; i < n; ++i)
+             lw[pos++] = tmp[i];
+           oyFree_m_( tmp );
+
+           tmp = oyWidgetListGet_( oyGROUP_CMM, &n,
                                    oyAllocateFunc_);
            for(i = 0; i < n; ++i)
              lw[pos++] = tmp[i];
@@ -1476,6 +1649,363 @@ oyGetBehaviourUITitle_     (oyBEHAVIOUR_e       type,
   DBG_PROG_ENDE
   return NULL;
 }
+
+/** \addtogroup defaults_apis
+ *  @{ */
+
+/** \addtogroup cmm_handling Default CMMs
+ *  @brief Provide logical and UI support for Color Matching Module selection
+
+ *  CMMs are modules, which do color calculations. The core part is 
+ *  responsible to do profile concatenation into one single 
+ *  color transform according to the provided options. It is loaded
+ *  as a oyCMMapi4_s module.
+ *  A policy module, implemented as a oyCMMapi9_s module,
+ *  ensures the options follow the user and system settings.
+ *  The renderer CMM (oyCMMapi7_s) module does the actual color transform, which is
+ *  expressed as a device link for data exchange. So different core and
+ *  renderer modules can easily be combined.
+
+ *  @{
+ */
+
+char *             oyGetCMMName_     ( oyCMMapiFilter_s  * cmm,
+                                       oyCMM_e             type,
+                                       int                 name_type,
+                                       oyAlloc_f           allocate_func )
+{
+  oyOBJECT_e otype = oyOBJECT_CMM_API4_S;
+  oyCMMapiFilter_s_ * f = (oyCMMapiFilter_s_ *) cmm;
+  char * name = NULL;
+
+  if(type == oyCMM_CONTEXT ||
+     type == oyCMM_CONTEXT_FALLBACK)
+    otype = oyOBJECT_CMM_API4_S;
+  else
+    otype = oyOBJECT_CMM_API7_S;
+
+  if(f)
+  {
+    oyCMMui_s * ui = NULL;
+
+    if(name_type <= oyNAME_DESCRIPTION)
+    {
+      if(otype == oyOBJECT_CMM_API4_S)
+      {
+        ui = oyCMMapi4_GetUi((oyCMMapi4_s*)f);
+        name = oyStringCopy( oyCMMui_GetTextF(ui)("name", name_type, (oyStruct_s*)ui),
+                             allocate_func );
+        
+      } else
+      {
+        char * x = strstr(f->registration, "icc.color");
+        if(x)
+        {
+          char * d;
+          x = oyStringCopy(x+strlen("icc.color."), oyAllocateFunc_);
+          d = strchr(x,'.');
+          if(d)
+            d[0] = '\000';
+          name = oyStringCopy( x + 1, allocate_func );
+          oyFree_m_( x );
+        }
+      }
+    } else
+    if(name_type == oyNAME_MODULE)
+      name = oyStringCopy( f->id_, allocate_func );
+    else
+    if(name_type == oyNAME_REGISTRATION)
+      name = oyStringCopy( f->registration, allocate_func );
+    else
+    if(name_type == oyNAME_PATTERN)
+    {
+      char * t = NULL,
+           * nick = oyGetCMMName_( cmm, type, oyNAME_NICK, oyAllocateFunc_ );
+      oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                         "///icc.color.%s", nick );
+      oyFree_m_( nick );
+      name = oyStringCopy( t, allocate_func );
+      oyFree_m_( t );
+    }
+  }
+
+  return name;
+}
+
+oyCMMapiFilter_s * oyGetCMM_         ( oyCMM_e             type,
+                                       int                 name_type,
+                                       const char        * name )
+{
+  uint32_t * rank_list = 0;
+  uint32_t apis_n = 0;
+  oyCMMapiFilters_s * apis;
+  int i, n;
+
+  oyOBJECT_e otype = oyOBJECT_CMM_API4_S;
+
+  if(type == oyCMM_CONTEXT ||
+     type == oyCMM_CONTEXT_FALLBACK)
+    otype = oyOBJECT_CMM_API4_S;
+  else
+    otype = oyOBJECT_CMM_API7_S;
+
+  apis = oyCMMsGetFilterApis_( 0,0, "///icc.color", otype, 0,
+                               &rank_list, &apis_n );
+  n = oyCMMapiFilters_Count( apis ), i;
+  for(i = 0; i < n; ++i)
+  {
+    oyCMMapiFilter_s * f = oyCMMapiFilters_Get( apis, i );
+    if(f)
+    {
+      char * t = NULL;
+      int found = 0;
+
+      if(name_type == oyNAME_REGISTRATION)
+      {
+        const char * r = ((oyCMMapiFilter_s_*) f)->registration;
+        if(strcmp(r, name) == 0 ||
+           (!strchr( name, '_' ) && oyFilterRegistrationMatch(r, name, 0)))
+          found = 1;
+      }
+      else
+      {
+        t = oyGetCMMName_( f, type, name_type, oyAllocateFunc_ );
+        if(strcmp(t, name) == 0)
+          found = 1;
+      }
+
+      if(t)
+        oyFree_m_( t );
+
+      if(found)
+      {
+        oyCMMapiFilters_Release( &apis );
+        return f;
+      }
+
+      if(f->release)
+        f->release( (oyStruct_s**)&f );
+
+    } else
+      WARNc1_S( "      no api obtained %d",i);
+  }
+  oyCMMapiFilters_Release( &apis );
+
+  return NULL;
+}
+
+
+/** Function oyCMMRegistrationToName
+ *  @brief   Get a CMM string
+ *
+ *  Useful for displaying UI strings.
+ *
+ *  @param         registration        a registration string to match a existing CMM
+ *  @param         type                the CMM type to set
+ *  @param         name_type           oyNAME_e or oyNAME_PATTERN or oyNAME_REGISTRATION or oyNAME_MODULE
+ *  @param         flags               unused
+ *  @param         allocate_func       user allocator
+ *  @return                            a UI string
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/06/11
+ *  @since   2014/06/11 (Oyranos: 0.9.6)
+ */
+char *       oyCMMRegistrationToName ( const char        * registration,
+                                       oyCMM_e             type,
+                                       int                 name_type,
+                                       uint32_t            flags,
+                                       oyAlloc_f           allocate_func )
+{
+  char * name = NULL;
+
+  DBG_PROG_START
+
+  DBG_PROG1_S( "type = %d CMM", type )
+
+  if(oyCMM_START < type && type < oyCMM_END)
+  {
+    oyCMMapiFilter_s * f = oyGetCMM_( type, oyNAME_REGISTRATION, registration );
+    if(f)
+    {
+      name = oyGetCMMName_( f, type, name_type, allocate_func );
+
+      if(f->release)
+        f->release( (oyStruct_s**)&f );
+    }
+
+  } else
+      WARNc1_S( "type %d not supported", type);
+
+  DBG_PROG_ENDE
+  return name;
+}
+
+/** Function oyCMMNameToRegistration
+ *  @brief   Get a CMM registration from UI string
+ *
+ *  Useful for matching UI strings to registration in e.g. oySetCMMRegistration().
+ *
+ *  @param         name                a UI string
+ *  @param         type                the CMM type to set
+ *  @param         name_type           oyNAME_e or oyNAME_REGISTRATION or oyNAME_MODULE or oyNAME_PATTERN
+ *  @param         flags               unused
+ *  @param         allocate_func       user allocator
+ *  @return                            a registration string to match a existing CMM
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/06/11
+ *  @since   2014/06/11 (Oyranos: 0.9.6)
+ */
+char *       oyCMMNameToRegistration ( const char        * name,
+                                       oyCMM_e             type,
+                                       int                 name_type,
+                                       uint32_t            flags,
+                                       oyAlloc_f           allocate_func )
+{
+  char * reg = NULL;
+
+  DBG_PROG_START
+
+  DBG_PROG1_S( "type = %d CMM", type )
+
+  if(oyCMM_START < type && type < oyCMM_END)
+  {
+    oyCMMapiFilter_s * f = oyGetCMM_( type, name_type, name );
+    if(f)
+    {
+      reg = oyGetCMMName_( f, type, oyNAME_REGISTRATION, allocate_func );
+
+      if(f->release)
+        f->release( (oyStruct_s**)&f );
+    }
+
+  } else
+      WARNc1_S( "type %d not supported", type);
+
+  DBG_PROG_ENDE
+  return reg;
+}
+
+/** Function oyGetCMMPattern
+ *  @brief   Get a default CMM
+ *
+ *  The stored value will contain a registration pattern string.
+ *
+ *  @param         type                the CMM type to set
+ *  @param         flags               oySOURCE_DATA for persistent DB only settings, oySOURCE_FILTER for Oyranos inbuild default
+ *  @param         allocate_func       user allocator
+ *  @return                            a registration pattern to match a CMM registration string
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/06/11
+ *  @since   2014/06/11 (Oyranos: 0.9.6)
+ */
+char *       oyGetCMMPattern         ( oyCMM_e             type,
+                                       uint32_t            flags,
+                                       oyAlloc_f           allocate_func )
+{
+  const char* key_name = NULL;
+  char * name = NULL;
+
+  DBG_PROG_START
+
+  DBG_PROG1_S( "type = %d CMM", type )
+
+  if(oyCMM_START < type && type < oyCMM_END)
+  {
+    const oyOption_t_ * t = oyOptionGet_((oyWIDGET_e)type);
+
+    if(t)
+      key_name = t->config_string;
+
+    if(key_name &&
+       (!flags || flags & oySOURCE_DATA))
+      name = oyGetKeyString_( key_name, allocate_func );
+    else if(!key_name)
+      WARNc1_S( "type %d not supported", type);
+
+    if((!name || !name[0]) &&
+       (!flags || flags & oySOURCE_FILTER))
+      name = oyStringCopy( oyOptionGet_((oyWIDGET_e)type)->default_string, allocate_func );
+
+  } else
+      WARNc1_S( "type %d not supported", type);
+
+  DBG_PROG_ENDE
+  return name;
+}
+
+/** Function oySetCMMPattern
+ *  @brief   set a CMM as default
+ *
+ *  The stored value will contain a registration pattern string, which 
+ *  shall fit a installed module registration string. However the caller has to 
+ *  check the existence of the CMM itself.
+ *
+ *  @param         type                the CMM type to set
+ *  @param         flags               unused
+ *  @param         pattern             a registration pattern to match a installed CMM registration
+ *  @return                            -1 in case of an issue, 0 for proper operation, 1 for error
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/06/10
+ *  @since   2014/06/10 (Oyranos: 0.9.6)
+ */
+int          oySetCMMPattern         ( oyCMM_e             type,
+                                       uint32_t            flags,
+                                       const char        * pattern )
+{
+  int r = 1;
+
+  DBG_PROG_START
+
+  if(oyCMM_START < type && type < oyCMM_END)
+  {
+    const char *key_name = 0;
+
+    key_name = oyOptionGet_((oyWIDGET_e)type)-> config_string;
+
+    if(key_name)
+      r = oyAddKey_valueComment_ (key_name, pattern, NULL);
+    else
+      WARNc1_S( "type %d setting CMM not possible", type);
+  } else
+      WARNc1_S( "type %d not supported", type);
+
+  DBG_PROG_ENDE
+  return r;
+}
+
+/**
+ *  @brief Get flags for oyProfile_FromFile() and friends
+ *
+ *  supported are "icc_version_2" - OY_ICC_VERSION_2 and
+ *  "icc_version_4" - OY_ICC_VERSION_4 .
+ *
+ *  @param       registration    plain module registration; oyNAME_REGISTRATION
+ *  @return                      profile selection flags
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/04/08
+ *  @since   2014/04/08 (Oyranos: 0.9.6)
+ */
+uint32_t oyICCProfileSelectionFlagsFromRegistration (
+                                       const char        * registration )
+{
+  uint32_t profile_flags = 0;
+
+  if(strstr( registration, "icc_version_2") != NULL)
+    profile_flags = OY_ICC_VERSION_2;
+  if(strstr( registration, "icc_version_4") != NULL)
+    profile_flags = OY_ICC_VERSION_4;
+
+  return profile_flags;
+}
+
+
+/** @} *//* cmm_handling */
+/** @} *//* defaults_apis */
 
 /* not  */
 void
