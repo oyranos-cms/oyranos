@@ -145,6 +145,10 @@ char oicc_default_color_icc_options[] = {
       <rendering_intent_proof.advanced>0</rendering_intent_proof.advanced>\n\
       <rendering_gamut_warning.advanced>0</rendering_gamut_warning.advanced>\n\
      </behaviour>\n\
+     <cmm>\n\
+      <cmm_context.advanced>///lcm2</cmm_context.advanced>\n\
+      <cmm_renderer.advanced>///lcm2</cmm_renderer.advanced>\n\
+     </cmm>\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_STD ">\n\
   </" OY_TOP_SHARED ">\n"
@@ -203,7 +207,7 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module,
            type == oyWIDGETTYPE_PROFILE ||
            type == oyWIDGETTYPE_LIST)
         {
-          oyOptionChoicesGet2( oywid, icc_profile_flags, &count, &names, &current );
+          oyOptionChoicesGet2( oywid, icc_profile_flags, oyNAME_NAME, &count, &names, &current );
           type = oyWidgetTitleGet(  oywid, &groups, &name, &tooltip, &flags );
           oyWidgetDescriptionGet( oywid, &description, 0 );
 
@@ -331,6 +335,23 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module,
        </xf:item>\n");
                 oyProfile_Release( &p );
 
+              } else if(oyWIDGET_CMM_START < oywid && oywid < oyWIDGET_CMM_END)
+              {
+                char * reg = oyCMMNameToRegistration( names[j], (oyCMM_e)oywid, oyNAME_NAME, 0, oyAllocateFunc_ );
+                char * t = oyCMMRegistrationToName( reg, (oyCMM_e)oywid, oyNAME_NICK, 0, oyAllocateFunc_ );
+
+                A("\
+       <xf:item>\n\
+        <xf:label>");
+                A( names[j] );
+                A(                    "</xf:label>\n\
+        <xf:value>");
+                /* take the item position as value */
+                A( t );
+                A(                    "</xf:value>\n\
+       </xf:item>\n");
+                oyFree_m_( reg );
+                oyFree_m_( t );
               } else
               {
                 sprintf( num, "%d", j );
