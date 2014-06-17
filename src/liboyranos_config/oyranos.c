@@ -172,6 +172,7 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
     - @ref options - layout and describe options to the user; part of user policies
     - @ref behaviour - get and set common behaviour; part of user policies
     - @ref default_profiles - get and set commonly used profiles; part of user policies
+    - @ref cmm_handling - get and set commonly used CMMs
 
     oyProfile_FromStd() and oyProfiles_ForStd() offer default profile selection 
     in a object oriented way.
@@ -289,7 +290,7 @@ oyWIDGET_TYPE_e  oyWidgetDescriptionGet (
  *  @param[out]  choices_strings translated list of n choices
  *  @param[out]  current         the actual setting
  *
- *  @return                      success
+ *  @return                      error
  */
 int         oyOptionChoicesGet         (oyWIDGET_e          option,
                                         int             * choices,
@@ -302,7 +303,7 @@ int         oyOptionChoicesGet         (oyWIDGET_e          option,
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
   oyTextsCheck_ ();
 
-  error =   oyOptionChoicesGet_            ( option, 0,
+  error =   oyOptionChoicesGet_            ( option, 0, oyNAME_NAME,
                                              choices, choices_string_list,
                                              current );
   oyExportEnd_();
@@ -311,32 +312,19 @@ int         oyOptionChoicesGet         (oyWIDGET_e          option,
 }
 
 /**
- *  @brief Get flags for oyProfile_FromFile() and friends
- *
- *  supported are "icc_version_2" - OY_ICC_VERSION_2 and
- *  "icc_version_4" - OY_ICC_VERSION_4 .
- */
-uint32_t oyICCProfileSelectionFlagsFromRegistration (
-                                       const char        * registration )
-{
-  uint32_t profile_flags = 0;
-
-  if(strstr( registration, "icc_version_2") != NULL)
-    profile_flags = OY_ICC_VERSION_2;
-  if(strstr( registration, "icc_version_4") != NULL)
-    profile_flags = OY_ICC_VERSION_4;
-
-  return profile_flags;
-}
-
-/**
  *  @brief see oyOptionChoicesGet()
  *
- *  flags can come from oyICCProfileSelectionFlagsFromRegistration 
- *  and is for oyProfile_FromFile()
+ *  flags can come from oyICCProfileSelectionFlagsFromRegistration() 
+ *  and is for oyProfile_FromFile() . Possible values for name_type come
+ *  from oyNAME_e.
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/06/13
+ *  @since   2014/04/08 (Oyranos: 0.9.6)
  */
 int          oyOptionChoicesGet2     ( oyWIDGET_e          option,
                                        uint32_t            flags,
+                                       int                 name_type,
                                        int               * choices,
                                        const char      *** choices_string_list,
                                        int               * current )
@@ -347,7 +335,7 @@ int          oyOptionChoicesGet2     ( oyWIDGET_e          option,
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
   oyTextsCheck_ ();
 
-  error =   oyOptionChoicesGet_            ( option, flags,
+  error =   oyOptionChoicesGet_            ( option, flags, name_type,
                                              choices, choices_string_list,
                                              current );
   oyExportEnd_();
