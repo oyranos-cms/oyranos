@@ -45,7 +45,7 @@ static oyObject_s oy_object_pool_[100] = {
 /* oyObject common object Functions { */
 
 /** @brief   object management 
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/11/00 (Oyranos: 0.1.8)
@@ -58,7 +58,7 @@ oyObject_New  ( void )
 }
 
 /** @brief   object management 
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/11/00 (Oyranos: 0.1.8)
@@ -119,7 +119,7 @@ oyObject_NewWithAllocators  ( oyAlloc_f         allocateFunc,
 }
 
 /** @brief   object management 
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *
  *  @param[in]    object         the object
  *
@@ -158,7 +158,7 @@ oyObject_NewFrom ( oyObject_s      object )
 }
 
 /** @brief   object management 
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *
  *  @param[in]    object         the object
  *
@@ -177,7 +177,7 @@ oyObject_Copy ( oyObject_s      object )
 }
 
 /** @brief   release an Oyranos object
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
@@ -253,7 +253,7 @@ int          oyObject_Release         ( oyObject_s      * obj )
 
 
 /** @brief   custom object memory managers
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *
  *  Normally a sub object should not know about its parent structure, but
  *  follow a hierarchical design. We break this here to allow the observation of
@@ -302,7 +302,7 @@ oyObject_s   oyObject_SetParent      ( oyObject_s        o,
 }
 
 /** @brief   object naming
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *
  *  @param[in]    object         the object
  *  @param[in]    text           the name to set
@@ -339,7 +339,7 @@ int          oyObject_SetName         ( oyObject_s        object,
 
 
 /** @brief   object naming
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *
  *  @param[in]    object         the object
  *  @param[in]    nick           short name, about 1-4 letters
@@ -374,7 +374,7 @@ int          oyObject_SetNames        ( oyObject_s        object,
 }
 
 /** @brief   object naming
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *
  *  @param[in]    dest           the object to modify
  *  @param[in]    src            the object to take names from
@@ -404,7 +404,7 @@ int          oyObject_CopyNames       ( oyObject_s        dest,
 }
 
 /** Function oyObject_GetName
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *  @brief   object get names
  *
  *  @param[in]    obj            the object
@@ -440,7 +440,7 @@ const oyChar * oyObject_GetName       ( const oyObject_s        obj,
 }
 
 /** Function oyObject_Lock
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *  @brief   Lock a object
  *
  *  @see   oyThreadLockingSet
@@ -474,7 +474,7 @@ int          oyObject_Lock           ( oyObject_s          object,
 }
 
 /** Function oyObject_UnLock
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *  @brief   Unlock a object
  *
  *  @see   oyThreadLockingSet
@@ -507,7 +507,7 @@ int          oyObject_UnLock         ( oyObject_s          object,
 }
 
 /** Function oyObject_UnSetLocking
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *  @brief   remove a object's lock pointer
  *
  *  @see     oyThreadLockingSet
@@ -539,7 +539,7 @@ int          oyObject_UnSetLocking   ( oyObject_s          object,
 }
 
 /** Function oyObject_GetRefCount
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *  @brief   get the identification number of a object 
  *
  *  @version Oyranos: 0.1.10
@@ -559,7 +559,7 @@ int            oyObject_GetRefCount  ( oyObject_s          obj )
 
 /**
  *  Function oyObject_UnRef
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *  @brief   decrease the ref counter and return the above zero ref value
  *
  *  @version Oyranos: 0.1.8
@@ -615,10 +615,11 @@ int          oyObject_UnRef          ( oyObject_s          obj )
 }
 
 /** Function oyObject_GetAlloc
+ *  @ingroup  objects_generic
  *  @brief   get objects allocator
  *
  *  @param         object              the object
- *  @param                             the allocator function
+ *  @return                            the allocator function
  *
  *  @version Oyranos: 0.9.5
  *  @since   2013/06/14 (Oyranos: 0.9.5)
@@ -633,10 +634,11 @@ OYAPI oyAlloc_f  OYEXPORT
 }
 
 /** Function oyObject_GetDeAlloc
+ *  @ingroup  objects_generic
  *  @brief   get objects deallocator
  *
  *  @param         object              the object
- *  @param                             the deallocator function
+ *  @return                            the deallocator function
  *
  *  @version Oyranos: 0.9.5
  *  @since   2013/06/14 (Oyranos: 0.9.5)

@@ -51,7 +51,9 @@ typedef void      (*oyUnLock_f )     ( oyPointer           look,
 /* Function Pointers Definitions Stop */
 
 
-/* Declare oyObject_s Globally */
+/** @ingroup objects_generic
+ *
+ *  Declare oyObject_s Globally */
 typedef struct oyObject_s_* oyObject_s;
 
 /**
