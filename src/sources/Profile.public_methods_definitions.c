@@ -259,7 +259,7 @@ oyProfile_FromName            ( const char      * name,
  *  Search will occure in this order.
  *
  *  @param[in]    name           profile file name
- *  @param[in]    flags          OY_NO_CACHE_READ, OY_NO_CACHE_WRITE, OY_COMPUTE - compute ID
+ *  @param[in]    flags          OY_NO_CACHE_READ, OY_NO_CACHE_WRITE, OY_COMPUTE - compute ID, OY_NO_REPAIR
  *  @param[in]    object         the optional base
  *
  *  flags supports 
@@ -269,6 +269,7 @@ oyProfile_FromName            ( const char      * name,
  *  - ::OY_COMPUTE lets newly compute ID
  *  - ::OY_ICC_VERSION_2 and ::OY_ICC_VERSION_4 let select version 2 and 4 profiles separately.
  *  - ::OY_SKIP_NON_DEFAULT_PATH ignore profiles outside of default paths
+ *  - ::OY_NO_REPAIR skip automatic adding a ID hash if missed, useful for pure analysis
  *
  *  @version Oyranos: 0.9.6
  *  @since   2007/11/0 (Oyranos: 0.1.9)

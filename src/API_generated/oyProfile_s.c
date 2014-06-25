@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/06/04
+ *  @date     2014/06/25
  */
 
 
@@ -364,7 +364,7 @@ oyProfile_FromName            ( const char      * name,
  *  Search will occure in this order.
  *
  *  @param[in]    name           profile file name
- *  @param[in]    flags          OY_NO_CACHE_READ, OY_NO_CACHE_WRITE, OY_COMPUTE - compute ID
+ *  @param[in]    flags          OY_NO_CACHE_READ, OY_NO_CACHE_WRITE, OY_COMPUTE - compute ID, OY_NO_REPAIR
  *  @param[in]    object         the optional base
  *
  *  flags supports 
@@ -373,6 +373,7 @@ oyProfile_FromName            ( const char      * name,
  *  scanning large numbers of profiles.
  *  - ::OY_COMPUTE lets newly compute ID
  *  - ::OY_ICC_VERSION_2 and ::OY_ICC_VERSION_4 let select version 2 and 4 profiles separately.
+ *  - ::OY_NO_REPAIR skip automatic adding a ID hash if missed, useful for pure analysis
  *  - ::OY_SKIP_NON_DEFAULT_PATH ignore profiles outside of default paths
  *
  *  @version Oyranos: 0.9.6

@@ -138,7 +138,7 @@ void  printfHelp (int argc, char** argv)
 int main( int argc , char** argv )
 {
   int error = 0;
-  int flags = 0,
+  int flags = OY_NO_REPAIR,
       list_tags = 0,
       list_hash = 0,
       tag_pos = -1,

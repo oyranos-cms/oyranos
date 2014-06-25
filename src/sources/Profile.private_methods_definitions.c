@@ -194,11 +194,11 @@ oyStructList_s_ * oy_profile_s_file_cache_ = 0;
  *  flags supports OY_NO_CACHE_READ and OY_NO_CACHE_WRITE to disable cache
  *  reading and writing. The cache flags are useful for one time profiles or
  *  scanning large numbers of profiles. OY_COMPUTE and OY_ICC_VERSION_2 and
- *  OY_ICC_VERSION_4 are supported too.
+ *  OY_ICC_VERSION_4 and OY_NO_REPAIR are supported too.
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/06/25
  *  @since   2007/11/0 (Oyranos: 0.1.9)
- *  @date    2010/05/18
  */
 oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
                                        uint32_t            flags,
@@ -278,14 +278,17 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
                 _("No ICC profile id detected"), t?t:OY_PROFILE_NONE );
 
       /* set ICC profile ID */
-      error = oyProfile_GetMD5( (oyProfile_s*)s, OY_COMPUTE, md5 );
-      if(oyIsFileFull_( file_name, "wb" ))
+      if(!(flags & OY_NO_REPAIR))
       {
-        error = oyProfile_ToFile_( s, file_name );
-        if(!error)
-          oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
+        error = oyProfile_GetMD5( (oyProfile_s*)s, OY_COMPUTE, md5 );
+        if(oyIsFileFull_( file_name, "wb" ))
+        {
+          error = oyProfile_ToFile_( s, file_name );
+          if(!error)
+            oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
                        OY_DBG_FORMAT_"\n\t%s: \"%s\"", OY_DBG_ARGS_,
                 _("ICC profile id written"), t?t:OY_PROFILE_NONE );
+        }
       }
     }
 

@@ -23,4 +23,5 @@
 #define OY_ICC_VERSION_2 0x10                   /**< filter for version 2 profiles */
 #define OY_ICC_VERSION_4 0x20                   /**< filter for version 4 profiles */
 #define OY_SKIP_NON_DEFAULT_PATH 0x40           /**< ignore profiles outside of default paths */
+#define OY_NO_REPAIR     0x80                   /**< do not try to repair or fix profiles */
 /** @} *//* objects_profile */
