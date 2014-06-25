@@ -338,7 +338,12 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module,
               } else if(oyWIDGET_CMM_START < oywid && oywid < oyWIDGET_CMM_END)
               {
                 char * reg = oyCMMNameToRegistration( names[j], (oyCMM_e)oywid, oyNAME_NAME, 0, oyAllocateFunc_ );
-                char * t = oyCMMRegistrationToName( reg, (oyCMM_e)oywid, oyNAME_NICK, 0, oyAllocateFunc_ );
+                char * t = NULL;
+
+                if(j == current)
+                  t = oyGetCMMPattern( (oyCMM_e)oywid, 0, oyAllocateFunc_ );
+                else
+                  t = oyCMMRegistrationToName( reg, (oyCMM_e)oywid, oyNAME_PATTERN, 0, oyAllocateFunc_ );
 
                 A("\
        <xf:item>\n\
