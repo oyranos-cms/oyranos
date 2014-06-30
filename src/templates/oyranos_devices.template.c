@@ -2466,9 +2466,9 @@ oyOptions_s* oyFilterNode_GetOptions ( oyFilterNode_s    * node,
  *  @param         allocateFunc        optional user allocator
  *  @return                            the options
  *
- *  @version Oyranos: 0.5.0
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/06/29
  *  @since   2009/07/29 (Oyranos: 0.1.10)
- *  @date    2012/06/12
  */
 int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
                                        char              ** ui_text,
@@ -2503,8 +2503,8 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
     char * class_name, * api_reg;
     const char * reg = (*node_)->core->registration_;
 
-    class_name = oyFilterRegistrationToText( reg, oyFILTER_REG_TYPE, 0 );
-    api_reg = oyStringCopy_("//", oyAllocateFunc_ );
+    class_name = oyFilterRegistrationToText( reg, oyFILTER_REG_APPLICATION, 0 );
+    api_reg = oyStringCopy_("///", oyAllocateFunc_ );
     STRING_ADD( api_reg, class_name );
     oyFree_m_( class_name );
 
@@ -2518,6 +2518,23 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
 
       if(oyFilterRegistrationMatch( reg, (*cmm_api9_)->pattern, 0 ))
       {
+        char * api_pattern = NULL;
+        if((*cmm_api9_)->oyCMMRegistrationToName)
+        {
+          api_pattern = (*cmm_api9_)->oyCMMRegistrationToName(
+                                 (*node_)->api7_->registration,
+                                 oyNAME_PATTERN, 0, 0, oyAllocateFunc_ );
+          oyOptions_SetFromText( &options, OY_DEFAULT_CMM_RENDERER,
+                                 api_pattern, OY_CREATE_NEW );
+          oyFree_m_( api_pattern );
+
+          api_pattern = (*cmm_api9_)->oyCMMRegistrationToName(
+                                 (*node_)->core->registration_,
+                                 oyNAME_PATTERN, 0, 1, oyAllocateFunc_ );
+          oyOptions_SetFromText( &options, OY_DEFAULT_CMM_CONTEXT,
+                                 api_pattern, OY_CREATE_NEW );
+        }
+
         if((*cmm_api9_)->oyCMMuiGet)
           error = (*cmm_api9_)->oyCMMuiGet( (oyCMMapiFilter_s*) cmm_api9_, options, &tmp, oyAllocateFunc_ );
 
