@@ -339,8 +339,20 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module,
               {
                 char * reg = oyCMMNameToRegistration( names[j], (oyCMM_e)oywid, oyNAME_NAME, 0, oyAllocateFunc_ );
                 char * t = NULL;
+                const char * node_pattern = NULL;
 
-                if(j == current)
+                if(oywid == oyWIDGET_CMM_CONTEXT)
+                  node_pattern = oyOptions_FindString( options, OY_DEFAULT_CMM_CONTEXT, NULL );
+                else if(oywid == oyWIDGET_CMM_CONTEXT_FALLBACK)
+                  node_pattern = oyOptions_FindString( options, OY_DEFAULT_CMM_CONTEXT_FALLBACK, NULL );
+                else if(oywid == oyWIDGET_CMM_RENDERER)
+                  node_pattern = oyOptions_FindString( options, OY_DEFAULT_CMM_RENDERER, NULL );
+                else if(oywid == oyWIDGET_CMM_RENDERER_FALLBACK)
+                  node_pattern = oyOptions_FindString( options, OY_DEFAULT_CMM_RENDERER_FALLBACK, NULL );
+
+                if(node_pattern && oyFilterRegistrationMatch( reg, node_pattern, 0 ))
+                  t = oyStringCopy( node_pattern, oyAllocateFunc_ );
+                else if(j == current)
                   t = oyGetCMMPattern( (oyCMM_e)oywid, 0, oyAllocateFunc_ );
                 else
                   t = oyCMMRegistrationToName( reg, (oyCMM_e)oywid, oyNAME_PATTERN, 0, oyAllocateFunc_ );
@@ -497,7 +509,7 @@ const char * oiccProfilesGetText     ( oyStruct_s        * obj,
           oyStringAddPrintf_( &tmp, oyAllocateFunc_, oyDeAllocateFunc_,
                               "  %s\n", t );
         else
-          STRING_ADD( tmp,    "  <no info available/>\n" );
+          STRING_ADD( tmp,    "  no info available\n" );
         oyProfile_Release( &p );
       }
       if(type == oyNAME_NAME)
@@ -881,6 +893,28 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
   return error;
 }
 
+char * oiccCMMGetFallback            ( oyFilterNode_s    * node,
+                                       uint32_t            flags,
+                                       int                 select_core,
+                                       oyAlloc_f           allocate_func )
+{
+  if(select_core)
+    return oyGetCMMPattern( oyCMM_CONTEXT_FALLBACK, flags, allocate_func );
+  else
+    return oyGetCMMPattern( oyCMM_RENDERER_FALLBACK, flags, allocate_func );
+}
+
+char * oiccCMMRegistrationToName     ( const char        * registration,
+                                       int                 name_type,
+                                       uint32_t            flags,
+                                       int                 select_core,
+                                       oyAlloc_f           allocate_func )
+{
+  if(select_core)
+    return oyCMMRegistrationToName( registration, oyCMM_CONTEXT, name_type, flags, allocate_func );
+  else
+    return oyCMMRegistrationToName( registration, oyCMM_RENDERER, name_type, flags, allocate_func );
+}
 
 /** @instance oicc_api9
  *  @brief    oicc oyCMMapi9_s implementation
@@ -902,7 +936,7 @@ oyCMMapi9_s_  oicc_api9 = {
   oiccFilterMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc." CMM_NICK,
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc.color." CMM_NICK,
 
   {0,1,0}, /* int32_t version[3] */
   CMM_API_VERSION, /**< int32_t module_api[3] */
@@ -926,7 +960,13 @@ oyCMMapi9_s_  oicc_api9 = {
   oiccConversion_Correct,
 
   /** const char * pattern; a pattern supported by oiccConversion_Correct */
-  "//" OY_TYPE_STD "/icc"
+  "//" OY_TYPE_STD "/icc.color",
+
+  /** oyCMMGetFallback_f oyCMMGetFallback; get pattern specific module fallback */
+  oiccCMMGetFallback,
+
+  /** oyCMMRegistrationToName_f oyCMMRegistrationToName; get pattern from registration */
+  oiccCMMRegistrationToName
 };
 
 
