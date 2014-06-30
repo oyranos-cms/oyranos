@@ -18,29 +18,14 @@
 #include "oyranos_display_helpers.h"
 #include <oyranos_image.h>
 
+#ifndef _DBG_FORMAT_
+#define _DBG_FORMAT_ "%s:%d %s() "
+#define _DBG_ARGS_ (strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__),__LINE__,__func__
+#endif
 int oy_display_verbose = 0;
+extern "C" { int oyWriteMemToFile_(const char* name, const void* mem, size_t size); }
 
-/** Function oyConversion_FromImageForDisplay
- *  @brief   generate a Oyranos graph from a image file name
- *
- *  @param[in]     image_in            input
- *  @param[in]     image_out           output
- *  @param[out]    cc_node             used icc node, owned by caller
- *  @param[in]     flags               for inbuild defaults |
- *                                     oyOPTIONSOURCE_FILTER;
- *                                     for options marked as advanced |
- *                                     oyOPTIONATTRIBUTE_ADVANCED |
- *                                     OY_SELECT_FILTER |
- *                                     OY_SELECT_COMMON
- *  @param[in]     data_type           the desired data type for output
- *  @param[in]     obj                 Oyranos object (optional)
- *  @return                            generated new graph, owned by caller
- *
- *  @version Oyranos: 0.4.0
- *  @since   2012/01/21 (Oyranos: 0.4.0)
- *  @date    2012/01/22
- */
-oyConversion_s * oyConversion_FromImageForDisplay  (
+oyConversion_s * oyConversion_FromImageForDisplay_ (
                                        oyImage_s         * image_in,
                                        oyImage_s         * image_out,
                                        oyFilterNode_s   ** cc_node,
@@ -54,6 +39,7 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
   int error = 0;
   oyConversion_s * conversion = 0;
   oyOptions_s * options = 0;
+  const char * icc_module = cc_name;
 
   if(!image_in || !image_out)
     return NULL;
@@ -85,16 +71,21 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
 
 
   /* create a new filter node */
-  if(!cc_name)
-    cc_name = "//" OY_TYPE_STD "/icc";
-  if(cc_name && cc_name[0])
+  if(!icc_module)
+    icc_module = "//" OY_TYPE_STD "/icc";
   {
-    icc = out = oyFilterNode_NewWith( cc_name, cc_options, obj );
+    icc = out = oyFilterNode_NewWith( icc_module, cc_options, obj );
+    if(cc_name)
+    {
+      oyFilterCore_s * core = oyFilterNode_GetCore( out );
+      oyObject_SetName( core->oy_, cc_name, oyNAME_DESCRIPTION );
+      oyFilterCore_Release( &core );
+    }
     /* append the new to the previous one */
     error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                   out, "//" OY_TYPE_STD "/data", 0 );
     if(error > 0)
-      fprintf( stderr, "could not add  filter: %s\n", cc_name );
+      fprintf( stderr, "could not add  filter: %s\n", icc_module );
 
     /* Set the image to the first/only socket of the filter node.
      * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
@@ -146,8 +137,8 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
   /* apply policies */
   /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
                                  "true", OY_CREATE_NEW );*/
-  if(cc_name && cc_name[0])
-    oyConversion_Correct( conversion, cc_name, flags,
+  if(icc_module && icc_module[0])
+    oyConversion_Correct( conversion, icc_module, flags,
                           options );
   oyOptions_Release( &options );
 
@@ -156,10 +147,11 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
 
   return conversion;
 }
-/** Function oyConversion_FromImageFileNameForDisplay
+/** Function oyConversion_FromImageForDisplay
  *  @brief   generate a Oyranos graph from a image file name
  *
- *  @param[in]     file_name           name of image file
+ *  @param[in]     image_in            input
+ *  @param[in]     image_out           output
  *  @param[out]    cc_node             used icc node, owned by caller
  *  @param[in]     flags               for inbuild defaults |
  *                                     oyOPTIONSOURCE_FILTER;
@@ -171,11 +163,27 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
  *  @param[in]     obj                 Oyranos object (optional)
  *  @return                            generated new graph, owned by caller
  *
- *  @version Oyranos: 0.3.0
- *  @since   2010/09/05 (Oyranos: 0.1.11)
- *  @date    2011/02/16
+ *  @version Oyranos: 0.9.6
+ *  @since   2012/01/21 (Oyranos: 0.4.0)
+ *  @date    2014/05/16
  */
-oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
+oyConversion_s * oyConversion_FromImageForDisplay  (
+                                       oyImage_s         * image_in,
+                                       oyImage_s         * image_out,
+                                       oyFilterNode_s   ** cc_node,
+                                       uint32_t            flags,
+                                       oyDATATYPE_e        data_type,
+                                       const char        * cc_name,
+                                       oyOptions_s       * cc_options,
+                                       oyObject_s          obj )
+{
+  oyConversion_s * conversion =
+     oyConversion_FromImageForDisplay_( image_in, image_out, cc_node, flags,
+                                        data_type, cc_name, cc_options, obj );
+
+  return conversion;
+}
+oyConversion_s * oyConversion_FromImageFileNameForDisplay_ (
                                        const char        * file_name,
                                        oyFilterNode_s   ** cc_node,
                                        uint32_t            flags,
@@ -189,6 +197,7 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
   oyConversion_s * conversion = 0;
   oyOptions_s * options = 0;
   oyImage_s * image_in = 0;
+  const char * icc_module = cc_name;
 
   if(!file_name)
     return NULL;
@@ -211,14 +220,20 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
   oyOptions_Release( &options );
 
   /* create a new filter node */
-  if(!cc_name)
-    cc_name = "//" OY_TYPE_STD "/icc";
-  icc = out = oyFilterNode_NewWith( cc_name, cc_options, obj );
+  if(!icc_module)
+    icc_module = "//" OY_TYPE_STD "/icc";
+  icc = out = oyFilterNode_NewWith( icc_module, cc_options, obj );
+  if(cc_name)
+  {
+    oyFilterCore_s * core = oyFilterNode_GetCore( out );
+    oyObject_SetName( core->oy_, cc_name, oyNAME_DESCRIPTION );
+    oyFilterCore_Release( &core );
+  }
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
   if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", cc_name );
+    fprintf( stderr, "could not add  filter: %s\n", icc_module );
 
   /* Set the image to the first/only socket of the filter node.
    * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
@@ -280,13 +295,47 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
   /* apply policies */
   /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
                                  "true", OY_CREATE_NEW );*/
-  if(cc_name && cc_name[0])
-    oyConversion_Correct( conversion, cc_name, flags,
+  if(icc_module && icc_module[0])
+    oyConversion_Correct( conversion, icc_module, flags,
                           options );
   oyOptions_Release( &options );
 
 
   *cc_node = icc;
+
+  return conversion;
+}
+/** Function oyConversion_FromImageFileNameForDisplay
+ *  @brief   generate a Oyranos graph from a image file name
+ *
+ *  @param[in]     file_name           name of image file
+ *  @param[out]    cc_node             used icc node, owned by caller
+ *  @param[in]     flags               for inbuild defaults |
+ *                                     oyOPTIONSOURCE_FILTER;
+ *                                     for options marked as advanced |
+ *                                     oyOPTIONATTRIBUTE_ADVANCED |
+ *                                     OY_SELECT_FILTER |
+ *                                     OY_SELECT_COMMON
+ *  @param[in]     data_type           the desired data type for output
+ *  @param[in]     obj                 Oyranos object (optional)
+ *  @return                            generated new graph, owned by caller
+ *
+ *  @version Oyranos: 0.9.6
+ *  @since   2010/09/05 (Oyranos: 0.1.11)
+ *  @date    2014/05/16
+ */
+oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
+                                       const char        * file_name,
+                                       oyFilterNode_s   ** cc_node,
+                                       uint32_t            flags,
+                                       oyDATATYPE_e        data_type,
+                                       const char        * cc_name,
+                                       oyOptions_s       * cc_options,
+                                       oyObject_s          obj )
+{
+  oyConversion_s * conversion =
+     oyConversion_FromImageFileNameForDisplay_( file_name, cc_node, flags,
+                                        data_type, cc_name, cc_options, obj );
 
   return conversion;
 }
@@ -455,7 +504,6 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
   return result;
 }
 
-extern "C" { int oyWriteMemToFile_(const char* name, const void* mem, size_t size); }
 
 oyProfile_s * getEditingProfile      ( )
 {
