@@ -2301,9 +2301,9 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
  *  @param         filter_type         the type level from a registration
  *  @return                            options
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/06/30
  *  @since   2008/11/27 (Oyranos: 0.1.9)
- *  @date    2008/11/27
  */
 int          oyOptions_DoFilter      ( oyOptions_s       * opts,
                                        uint32_t            flags,
@@ -2353,7 +2353,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
             skip = 1;
       }
 
-      /* advanced options mark and zero */
+      /* advanced options filter */
       if(!skip && !(flags & oyOPTIONATTRIBUTE_ADVANCED))
       {
         text = oyStrrchr_( oyOption_GetRegistration(o), '/' );
@@ -2361,12 +2361,9 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
            text = oyStrchr_( text, '.' );
         if(text)
           if(oyStrstr_( text, "advanced" ))
-          {
-            oyOption_SetFromText( o, "0", 0 );
-            oyOption_SetFlags( o,
-                              oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
-          }
-      } else
+            skip = 1;
+      }
+
       /* Elektra settings, modify value */
       if(!skip && !(flags & oyOPTIONSOURCE_FILTER))
       {
