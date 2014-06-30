@@ -571,6 +571,26 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_CMM_RENDERER,
       "oyWIDGET_CMM_RENDERER", 0, "//" OY_TYPE_STD "/icc.color.lcm2")
 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_CHOICE, oyWIDGET_CMM_CONTEXT_FALLBACK, 1,
+      oyGROUP_CMM, 0, 0,
+      _("CMM Core Fallback"),
+      _("Select the core CMM"),
+      _("The core Color Matching Module (CMM) takes individual profiles and options and backes a device link. It can provide alternative features regarding appearance, security, speed or resource overhead."),
+      0, /* choices */
+      NULL,NULL,NULL,NULL,
+      OY_DEFAULT_CMM_CONTEXT_FALLBACK,
+      "oyWIDGET_CMM_CONTEXT_FALLBACK", 0, "//" OY_TYPE_STD "/icc.color.lcm2")
+
+    oySET_OPTIONS_M_( oyWIDGETTYPE_CHOICE, oyWIDGET_CMM_RENDERER_FALLBACK, 1,
+      oyGROUP_CMM, 0, 0,
+      _("CMM Renderer Fallback"),
+      _("Select the processing CMM"),
+      _("The processing Color Matching Module (CMM) takes one device link as argument. It can provide alternative features regarding security, speed or resource overhead."),
+      0, /* choices */
+      NULL,NULL,NULL,NULL,
+      OY_DEFAULT_CMM_RENDERER_FALLBACK,
+      "oyWIDGET_CMM_RENDERER_FALLBACK", 0, "//" OY_TYPE_STD "/icc.color.lcm2")
+
 /*#   undef oySET_OPTIONS_M_*/
   }
 }
