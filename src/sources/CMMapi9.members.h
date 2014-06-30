@@ -20,3 +20,9 @@
    *  e.g. for imaging this could be "//imaging"
    */
   const char     * pattern;
+
+  /** get registration of fallback module for this pattern */
+  oyCMMGetFallback_f oyCMMGetFallback;
+
+  /** get name from module registration */
+  oyCMMRegistrationToName_f oyCMMRegistrationToName;
