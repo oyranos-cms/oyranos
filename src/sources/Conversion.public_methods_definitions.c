@@ -25,9 +25,9 @@
  *  @return                            0 - indifferent, >= 1 - error
  *                                     + a message should be sent
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/06/26
  *  @since   2009/07/24 (Oyranos: 0.1.10)
- *  @date    2009/07/24
  */
 int                oyConversion_Correct (
                                        oyConversion_s    * conversion,
@@ -57,8 +57,8 @@ int                oyConversion_Correct (
     oyCMMapi9_s_ * cmm_api9_ = 0;
     char * class_name, * api_reg;
 
-    class_name = oyFilterRegistrationToText( pattern, oyFILTER_REG_TYPE, 0 );
-    api_reg = oyStringCopy_("//", oyAllocateFunc_ );
+    class_name = oyFilterRegistrationToText( pattern, oyFILTER_REG_APPLICATION, 0 );
+    api_reg = oyStringCopy_("///", oyAllocateFunc_ );
     STRING_ADD( api_reg, class_name );
     oyFree_m_( class_name );
 
@@ -111,9 +111,9 @@ int                oyConversion_Correct (
  *  @param         object              the optional object
  *  @return                            the conversion context
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/06/29
  *  @since   2008/06/26 (Oyranos: 0.1.8)
- *  @date    2009/08/01
  */
 oyConversion_s   * oyConversion_CreateBasicPixels (
                                        oyImage_s         * input,
@@ -127,9 +127,11 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
   char * icc_module = NULL;
   const char * module = oyOptions_FindString( options, "icc_module", NULL );
 
-  if(!(module && strchr(module, '/')))
+  if(!module)
+    icc_module = oyGetCMMPattern( oyCMM_CONTEXT, 0, oyAllocateFunc_ );
+  else if(strchr(module, '/'))
     oyStringAddPrintf( &icc_module, oyAllocateFunc_, oyDeAllocateFunc_,
-                       "//" OY_TYPE_STD "/%s", module ? module : "icc" );
+                       "//" OY_TYPE_STD "/%s", module );
   else
     icc_module = oyStringCopy( module, oyAllocateFunc_ );
 
@@ -147,6 +149,12 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
 
     if(error <= 0)
       out = oyFilterNode_NewWith( icc_module, options, 0 );
+    if(error <= 0 && module)
+    {
+      oyFilterCore_s * core = oyFilterNode_GetCore( out );
+      oyObject_SetName( core->oy_, icc_module, oyNAME_DESCRIPTION );
+      oyFilterCore_Release( &core );
+    }
     if(error <= 0)
       error = oyFilterNode_SetData( out, (oyStruct_s*)output, 0, 0 );
     if(error <= 0)
@@ -275,9 +283,9 @@ oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
  *  @param[in]     obj                 Oyranos object (optional)
  *  @return                            generated new graph, owned by caller
  *
- *  @version Oyranos: 0.9.5
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/06/26
  *  @since   2012/04/21 (Oyranos: 0.5.0)
- *  @date    2013/09/25
  */
 oyConversion_s * oyConversion_CreateFromImage (
                                        oyImage_s         * image_in,
@@ -311,10 +319,11 @@ oyConversion_s * oyConversion_CreateFromImage (
   /* set the image buffer */
   oyFilterNode_SetData( in, (oyStruct_s*)image_in, 0, 0 );
 
-
-  if(!(module && strchr(module, '/')))
+  if(!module)
+    icc_module = oyGetCMMPattern( oyCMM_CONTEXT, 0, oyAllocateFunc_ );
+  else if(strchr(module, '/'))
     oyStringAddPrintf( &icc_module, oyAllocateFunc_, oyDeAllocateFunc_,
-                       "//" OY_TYPE_STD "/%s", module ? module : "icc" );
+                       "//" OY_TYPE_STD "/%s", module );
   else
     icc_module = oyStringCopy( module, oyAllocateFunc_ );
 
@@ -350,6 +359,12 @@ oyConversion_s * oyConversion_CreateFromImage (
 
   /* add a closing node */
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
+  if(module)
+  {
+    oyFilterCore_s * core = oyFilterNode_GetCore( out );
+    oyObject_SetName( core->oy_, icc_module, oyNAME_DESCRIPTION );
+    oyFilterCore_Release( &core );
+  }
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
   oyFilterNode_SetData( in, (oyStruct_s*)image_out, 0, 0 );
