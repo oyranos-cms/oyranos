@@ -1,4 +1,5 @@
 #include "oyranos_conversion_internal.h"
+#include "oyCMMapi9_s_.h"
 
 /** Function  oyFilterNode_AddToAdjacencyLst_
  *  @memberof oyFilterNode_s
@@ -99,6 +100,89 @@ oyHash_s *   oyFilterNode_GetHash_   ( oyFilterNode_s_   * node,
   return hash;
 }
 
+char *             oyFilterNode_GetFallback_(
+                                       oyFilterNode_s_   * node,
+                                       int                 select_core )
+{
+  char * fallback = NULL;
+
+  oyCMMapiFilters_s * apis;
+  int apis_n = 0, i;
+  oyCMMapi9_s_ * cmm_api9_ = 0;
+  char * class_name, * api_reg;
+
+  oyFilterCore_s_ * core_ = node->core;
+  const char * pattern = core_->registration_;
+
+  class_name = oyFilterRegistrationToText( pattern, oyFILTER_REG_APPLICATION,0);
+  api_reg = oyStringCopy_("///", oyAllocateFunc_ );
+  STRING_ADD( api_reg, class_name );
+  oyFree_m_( class_name );
+
+  apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S,
+                               oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                               0,0 );
+  oyFree_m_( api_reg );
+  apis_n = oyCMMapiFilters_Count( apis );
+  for(i = 0; i < apis_n; ++i)
+  {
+    cmm_api9_ = (oyCMMapi9_s_*) oyCMMapiFilters_Get( apis, i );
+
+    if(oyFilterRegistrationMatch( cmm_api9_->pattern, pattern, 0 ))
+    {
+      if(cmm_api9_->oyCMMGetFallback)
+        fallback = cmm_api9_->oyCMMGetFallback( (oyFilterNode_s*)node, 0,
+                                                select_core, oyAllocateFunc_ );
+      if(!fallback)
+        WARNc2_S( "%s %s",_("error in module:"), cmm_api9_->registration );
+    }
+
+    if(cmm_api9_->release)
+      cmm_api9_->release( (oyStruct_s**)&cmm_api9_ );
+  }
+  oyCMMapiFilters_Release( &apis );
+
+  return fallback;
+}
+
+/** Function  oyFilterNode_SetCore_
+ *  @memberof oyFilterNode_s
+ *  @brief    Set module core in a filter
+ *  @internal
+ *
+ *  @param[in]     node                filter
+ *  @param[in]     pattern             registration pattern
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/06/26
+ *  @since   2004/06/26 (Oyranos: 0.9.6)
+ */
+oyFilterCore_s_* oyFilterNode_SetCore_(oyFilterNode_s_   * node,
+                                       const char        * pattern )
+{
+  oyFilterCore_s_ * core;
+
+  core = (oyFilterCore_s_*)oyFilterCore_NewWith( pattern, node->core->options_,
+                                                 NULL );
+  if(core)
+  {
+    oyFilterCore_Release( (oyFilterCore_s**) &node->core );
+
+    oyObject_SetName( core->oy_, pattern, oyNAME_DESCRIPTION );
+
+    node->core = core;
+    return core;
+  }
+  else
+    oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*) node,
+                     OY_DBG_FORMAT_ "could not create new core: %s",
+                     OY_DBG_ARGS_,
+                     pattern);
+
+  return NULL;
+}
+
 /** Function  oyFilterNode_SetContext_
  *  @memberof oyFilterNode_s
  *  @brief    Set module context in a filter
@@ -111,8 +195,8 @@ oyHash_s *   oyFilterNode_GetHash_   ( oyFilterNode_s_   * node,
  *  @param[in,out] blob                context to fill
  *  @return                            error
  *
- *  @version Oyranos: 0.5.0
- *  @date    2012/06/12
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/06/26
  *  @since   2008/11/02 (Oyranos: 0.1.8)
  */
 int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
@@ -128,7 +212,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                    * hash7 = 0;          /* data processor part */
           oyPointer ptr = 0;
           oyPointer_s * cmm_ptr4 = 0,
-                     * cmm_ptr7 = 0;
+                      * cmm_ptr7 = 0;
 
 
           /*  Cache Search
@@ -154,9 +238,31 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
 
           if(error <= 0)
           {
+            const char * pattern = oyOptions_FindString( node->core->options_,
+                                                   "///cmm/cmm_context", NULL );
+            if(pattern &&
+               !oyFilterRegistrationMatch( core_->registration_, pattern, 0 ))
+            {
+              oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*) node,
+                               OY_DBG_FORMAT_ "create core from pattern: %s",
+                               OY_DBG_ARGS_,
+                     oyFilterNode_GetText( (oyFilterNode_s*)node,oyNAME_NICK) );
+
+              core_ = oyFilterNode_SetCore_( node, pattern );
+
+              if(!core_)
+              {
+                error = 1;
+                goto clean;
+              }
+
+              oyHash_Release( &hash7 );
+              hash7 = oyFilterNode_GetHash_(node, 7);
+            }
+
             /* 3. check and 3.a take*/
             cmm_ptr7 = (oyPointer_s*) oyHash_GetPointer( hash7,
-                                                        oyOBJECT_POINTER_S);
+                                                         oyOBJECT_POINTER_S);
 
             if(!(cmm_ptr7 && oyPointer_GetPointer(cmm_ptr7)) || blob)
             {
@@ -170,7 +276,8 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                 ptr = core_->api4_->oyCMMFilterNode_ContextToMem(
                                                    (oyFilterNode_s*)node, &size,
                                                               oyAllocateFunc_ );
-                oyBlob_SetFromData( (oyBlob_s*)blob, ptr, size, core_->api4_->context_type );
+                oyBlob_SetFromData( (oyBlob_s*)blob, ptr, size,
+                                    core_->api4_->context_type );
                 error = oyOptions_SetFromText( &node->tags, "////verbose",
                                                "false", 0 );
 
@@ -197,11 +304,49 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
 
                 if(!ptr || !size)
                 {
-                  oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*) node,
-                  OY_DBG_FORMAT_ "no device link for caching\n%s", OY_DBG_ARGS_,
-                  oyFilterNode_GetText( (oyFilterNode_s*)node, oyNAME_NICK ));
-                  error = 1;
-                  oyPointer_Release( &cmm_ptr4 );
+                  const char * ct = oyObject_GetName( core_->oy_,
+                                                      oyNAME_DESCRIPTION );
+                  oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*) node,
+                    OY_DBG_FORMAT_ "device link creation failed", OY_DBG_ARGS_);
+                  if(!ct)
+                  {
+                    char * pattern = oyFilterNode_GetFallback_( node, 1 );
+
+                    oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*) node,
+                               OY_DBG_FORMAT_ "create core from fallback: %s",
+                               OY_DBG_ARGS_, pattern );
+
+                    core_ = oyFilterNode_SetCore_( node, pattern );
+                    if(!core_)
+                    {
+                      error = 1;
+                      oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*) node,
+                      OY_DBG_FORMAT_ "no device link for caching\n%s",
+                      OY_DBG_ARGS_,
+                      oyFilterNode_GetText( (oyFilterNode_s*)node,oyNAME_NICK));
+                      goto clean;
+                    }
+                    
+                    ptr = core_->api4_->oyCMMFilterNode_ContextToMem(
+                                                   (oyFilterNode_s*)node, &size,
+                                                    oyAllocateFunc_ );
+                    oyFree_m_( pattern );
+                  }
+
+                  if(!ptr || !size)
+                  {
+                    oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*) node,
+                      OY_DBG_FORMAT_ "no device link for caching\n%s",
+                      OY_DBG_ARGS_,
+                      oyFilterNode_GetText( (oyFilterNode_s*)node,oyNAME_NICK));
+                    error = 1;
+                    oyPointer_Release( &cmm_ptr4 );
+
+                  } else if(oy_debug)
+                    oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*) node,
+                        OY_DBG_FORMAT_ "use fallback CMM\n%s", OY_DBG_ARGS_,
+                        oyFilterNode_GetText( (oyFilterNode_s*)node,
+                                              oyNAME_NICK ));
                 }
 
                 if(!error)
