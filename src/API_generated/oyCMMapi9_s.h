@@ -19,7 +19,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/06/29
  */
 
 
@@ -56,8 +56,13 @@ typedef struct oyCMMapi9_s oyCMMapi9_s;
 /** @struct  oyCMMapi9_s
  *  @ingroup module_api
  *  @extends oyCMMapiFilter_s
- *  @brief   Graph policies
+ *  @brief   Graph policies and various pattern handlers
  *  @internal
+ *
+ *  The oyCMMapi9_s module is responsible to handle all requests for a
+ *  certain filter pattern. Be that policy checking, object type registration
+ *  or module specific tasks like registration name conversion or fallback
+ *  resolving.
  *
  *  The user visible Oyranos settings are subject to be applied to graphs.
  *  This module type provides an interface to check and verified a graph
@@ -72,9 +77,9 @@ typedef struct oyCMMapi9_s oyCMMapi9_s;
  *  the graph starts data processing, it can provide options for a group of 
  *  node modules including a UI and provide additional object types.
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/06/29
  *  @since   2009/07/23 (Oyranos: 0.1.10)
- *  @date    2009/09/14
  */
 
 /* } Include "CMMapi9.dox" */
