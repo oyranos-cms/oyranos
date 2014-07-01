@@ -48,8 +48,7 @@ typedef int  (*oyConversion_Correct_f) (
  *  @date    2014/06/25
  *  @since   2014/06/25 (Oyranos: 0.9.6)
  */
-typedef const char * (*oyCMMGetFallback_f) (
-                                       oyFilterNode_s    * node,
+typedef char * (*oyCMMGetFallback_f) ( oyFilterNode_s    * node,
                                        uint32_t            flags,
                                        int                 select_core,
                                        oyAlloc_f           allocate_func );

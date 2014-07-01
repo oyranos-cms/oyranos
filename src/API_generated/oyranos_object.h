@@ -12,7 +12,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/03/06
+ *  @date     2014/07/01
  */
 
 
@@ -116,16 +116,12 @@ typedef enum {
   oyOBJECT_CMM_API9_S,   /**< oyCMMapi9_s */
   oyOBJECT_CMM_API_FILTER_S,   /**< oyCMMapiFilter_s */
   oyOBJECT_CMM_API_FILTERS_S,   /**< oyCMMapiFilters_s */
+  oyOBJECT_CMM_APIS_S,   /**< oyCMMapis_s */
+  oyOBJECT_CMM_INFO_S,   /**< oyCMMinfo_s */
   oyOBJECT_CMM_OBJECT_TYPE_S,   /**< oyCMMobjectType_s */
   oyOBJECT_CMM_UI_S,   /**< oyCMMui_s */
   oyOBJECT_CMM_API_MAX,               /**< not defined */
 
-  
-  oyOBJECT_CMM_APIS_S,   /**< oyCMMapis_s */
-  
-  
-  oyOBJECT_CMM_INFO_S,   /**< oyCMMinfo_s */
-  
 
   oyOBJECT_PROFILE_S,   /**< oyProfile_s */
   oyOBJECT_PROFILES_S,   /**< oyProfiles_s */

@@ -179,6 +179,8 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
   if(error)
     oyConversion_Release ( &s );
 
+  oyFree_m_( icc_module );
+
   return s;
 }
 
@@ -329,11 +331,17 @@ oyConversion_s * oyConversion_CreateFromImage (
 
   /* create a new CMM filter node */
   out = oyFilterNode_NewWith( icc_module, module_options, obj );
+  if(module)
+  {
+    oyFilterCore_s * core = oyFilterNode_GetCore( out );
+    oyObject_SetName( core->oy_, icc_module, oyNAME_DESCRIPTION );
+    oyFilterCore_Release( &core );
+  }
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
   if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc" );
+    fprintf( stderr, "could not add  filter: %s\n", icc_module );
 
   layout_out = oyDataType_m(buf_type_out);
   profile_in = oyImage_GetProfile( image_in );
@@ -359,12 +367,6 @@ oyConversion_s * oyConversion_CreateFromImage (
 
   /* add a closing node */
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
-  if(module)
-  {
-    oyFilterCore_s * core = oyFilterNode_GetCore( out );
-    oyObject_SetName( core->oy_, icc_module, oyNAME_DESCRIPTION );
-    oyFilterCore_Release( &core );
-  }
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
   oyFilterNode_SetData( in, (oyStruct_s*)image_out, 0, 0 );

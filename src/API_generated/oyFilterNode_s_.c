@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/06/26
+ *  @date     2014/07/01
  */
 
 
@@ -28,7 +28,7 @@
 
 #include "oyObject_s.h"
 #include "oyranos_object_internal.h"
-#include "oyCMMapi9_s_.h"
+
 
 
 
@@ -381,6 +381,7 @@ int oyFilterNode_Release_( oyFilterNode_s_ **filternode )
 
 /* Include "FilterNode.private_methods_definitions.c" { */
 #include "oyranos_conversion_internal.h"
+#include "oyCMMapi9_s_.h"
 
 /** Function  oyFilterNode_AddToAdjacencyLst_
  *  @memberof oyFilterNode_s
@@ -651,7 +652,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
 
             /* 3. check and 3.a take*/
             cmm_ptr7 = (oyPointer_s*) oyHash_GetPointer( hash7,
-                                                         oyOBJECT_POINTER_S );
+                                                         oyOBJECT_POINTER_S);
 
             if(!(cmm_ptr7 && oyPointer_GetPointer(cmm_ptr7)) || blob)
             {

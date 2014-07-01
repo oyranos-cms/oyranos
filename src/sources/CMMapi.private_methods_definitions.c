@@ -11,9 +11,9 @@
  *  @memberof oyCMMapi_s_
  *  @brief   check for completeness
  *
- *  @version Oyranos: 0.3.3
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/05/16
  *  @since   2007/12/06 (Oyranos: 0.1.8)
- *  @date    2011/11/25
  */
 oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
 {
