@@ -145,40 +145,48 @@ char *             oyFilterNode_GetFallback_(
   return fallback;
 }
 
-/** Function  oyFilterNode_SetCore_
+/** Function  oyFilterNode_SetFromPattern_
  *  @memberof oyFilterNode_s
  *  @brief    Set module core in a filter
  *  @internal
  *
  *  @param[in]     node                filter
+ *  @param[in]     select_core         1 - core/context, 0 - processor/renderer
  *  @param[in]     pattern             registration pattern
  *  @return                            error
  *
  *  @version Oyranos: 0.9.6
- *  @date    2014/06/26
+ *  @date    2014/07/01
  *  @since   2004/06/26 (Oyranos: 0.9.6)
  */
-oyFilterCore_s_* oyFilterNode_SetCore_(oyFilterNode_s_   * node,
+oyFilterCore_s_* oyFilterNode_SetFromPattern_ (
+                                       oyFilterNode_s_   * node,
+                                       int                 select_core,
                                        const char        * pattern )
 {
-  oyFilterCore_s_ * core;
-
-  core = (oyFilterCore_s_*)oyFilterCore_NewWith( pattern, node->core->options_,
-                                                 NULL );
-  if(core)
+  if(select_core)
   {
-    oyFilterCore_Release( (oyFilterCore_s**) &node->core );
+    oyFilterCore_s_ * core;
 
-    oyObject_SetName( core->oy_, pattern, oyNAME_DESCRIPTION );
+    core= (oyFilterCore_s_*)oyFilterCore_NewWith( pattern, node->core->options_,
+                                                  NULL );
+    if(core)
+    {
+      oyFilterCore_Release( (oyFilterCore_s**) &node->core );
 
-    node->core = core;
-    return core;
+      oyObject_SetName( core->oy_, pattern, oyNAME_DESCRIPTION );
+
+      node->core = core;
+      return core;
+    }
+    else
+      oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*) node,
+                       OY_DBG_FORMAT_ "could not create new core: %s",
+                       OY_DBG_ARGS_,
+                       pattern);
+  } else
+  {
   }
-  else
-    oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*) node,
-                     OY_DBG_FORMAT_ "could not create new core: %s",
-                     OY_DBG_ARGS_,
-                     pattern);
 
   return NULL;
 }
@@ -248,7 +256,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                                OY_DBG_ARGS_,
                      oyFilterNode_GetText( (oyFilterNode_s*)node,oyNAME_NICK) );
 
-              core_ = oyFilterNode_SetCore_( node, pattern );
+              core_ = oyFilterNode_SetFromPattern_( node, 1, pattern );
 
               if(!core_)
               {
@@ -316,7 +324,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                                OY_DBG_FORMAT_ "create core from fallback: %s",
                                OY_DBG_ARGS_, pattern );
 
-                    core_ = oyFilterNode_SetCore_( node, pattern );
+                    core_ = oyFilterNode_SetFromPattern_( node, 1, pattern );
                     if(!core_)
                     {
                       error = 1;
