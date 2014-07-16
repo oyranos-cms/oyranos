@@ -191,13 +191,13 @@
 #define OY_DEFAULT_PROOF_HARD          OY_BEHAVIOUR_STD "proof_hard"
 
 /** key name for context CMM */
-#define OY_DEFAULT_CMM_CONTEXT         OY_CMM_STD "cmm_context"
+#define OY_DEFAULT_CMM_CONTEXT         OY_CMM_STD "context"
 /** key name for renderer CMM */
-#define OY_DEFAULT_CMM_RENDERER        OY_CMM_STD "cmm_renderer"
+#define OY_DEFAULT_CMM_RENDERER        OY_CMM_STD "renderer"
 /** key name for context CMM fallback */
-#define OY_DEFAULT_CMM_CONTEXT_FALLBACK  OY_CMM_STD "cmm_context_fallback"
+#define OY_DEFAULT_CMM_CONTEXT_FALLBACK  OY_CMM_STD "context_fallback"
 /** key name for renderer CMM fallback */
-#define OY_DEFAULT_CMM_RENDERER_FALLBACK OY_CMM_STD "cmm_renderer_fallback"
+#define OY_DEFAULT_CMM_RENDERER_FALLBACK OY_CMM_STD "renderer_fallback"
 
 
 #endif /* OYRANOS_DEFINITIONS_H */
