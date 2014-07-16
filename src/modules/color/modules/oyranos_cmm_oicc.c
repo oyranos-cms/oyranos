@@ -146,8 +146,8 @@ char oicc_default_color_icc_options[] = {
       <rendering_gamut_warning.advanced>0</rendering_gamut_warning.advanced>\n\
      </behaviour>\n\
      <cmm>\n\
-      <cmm_context.advanced>///lcm2</cmm_context.advanced>\n\
-      <cmm_renderer.advanced>///lcm2</cmm_renderer.advanced>\n\
+      <context.advanced>///lcm2</context.advanced>\n\
+      <renderer.advanced>///lcm2</renderer.advanced>\n\
      </cmm>\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_STD ">\n\
