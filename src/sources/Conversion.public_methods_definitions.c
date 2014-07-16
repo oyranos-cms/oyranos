@@ -90,6 +90,60 @@ int                oyConversion_Correct (
   return 0;
 }
 
+char *   oyCMMPatternFromOptions_    ( oyOptions_s       * options,
+                                       int                 select_core )
+{
+  char * icc_module = NULL;
+  const char * module = NULL;
+  oyCMM_e type = oyCMM_RENDERER;
+  const char * key = OY_DEFAULT_CMM_RENDERER;
+
+  if(select_core)
+  {
+    type = oyCMM_CONTEXT;
+    key = OY_DEFAULT_CMM_CONTEXT;
+  }
+
+  module = oyOptions_FindString( options, key, NULL );
+
+  if(!module)
+    icc_module = oyGetCMMPattern( type, 0, oyAllocateFunc_ );
+  else if(strchr(module, '/'))
+    oyStringAddPrintf( &icc_module, oyAllocateFunc_, oyDeAllocateFunc_,
+                       "//" OY_TYPE_STD "/%s", module );
+  else
+    icc_module = oyStringCopy( module, oyAllocateFunc_ );
+
+  return icc_module;
+}
+
+oyFilterNode_s *   oyFilterNode_CMMFromOptions (
+                                       oyOptions_s       * options )
+{
+  oyFilterCore_s * core = NULL;
+  oyFilterNode_s * node = NULL;
+  char * pattern = NULL;
+
+  pattern = oyCMMPatternFromOptions_( options, 1 );
+  core = (oyFilterCore_s_*)oyFilterCore_NewWith( pattern, options,
+                                                 NULL );
+  if(!core)
+    oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*) node,
+                       OY_DBG_FORMAT_ "could not create new core: %s",
+                       OY_DBG_ARGS_,
+                       pattern);
+
+  oyFree_m_( pattern );
+
+  pattern = oyCMMPatternFromOptions_( options, 0 );
+  node = oyFilterNode_Create( pattern, core, NULL );
+
+  oyFree_m_( pattern );
+  oyFilterCore_Release( &core );
+
+  return node;
+}
+
 /** Function  oyConversion_CreateBasicPixels
  *  @memberof oyConversion_s
  *  @brief    Allocate initialise a basic oyConversion_s object
@@ -106,8 +160,10 @@ int                oyConversion_Correct (
  *                                     The available options are particial
  *                                     defined by plugable policy modules,
  *                                     e.g. "oicc", and a filters own options.
- *                                     "icc_module" can contain string to select
- *                                     the icc module, e.g. "icc_module=lcm2" .
+ *                                     OY_DEFAULT_CMM_CONTEXT and 
+ *                                     OY_DEFAULT_CMM_RENDERER can contain  
+ *                                     string to explicitely select the icc 
+ *                                     module.
  *  @param         object              the optional object
  *  @return                            the conversion context
  *
@@ -124,16 +180,6 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
   oyConversion_s * s = 0;
   int error = !input || !output;
   oyFilterNode_s * in = 0, * out = 0;
-  char * icc_module = NULL;
-  const char * module = oyOptions_FindString( options, "icc_module", NULL );
-
-  if(!module)
-    icc_module = oyGetCMMPattern( oyCMM_CONTEXT, 0, oyAllocateFunc_ );
-  else if(strchr(module, '/'))
-    oyStringAddPrintf( &icc_module, oyAllocateFunc_, oyDeAllocateFunc_,
-                       "//" OY_TYPE_STD "/%s", module );
-  else
-    icc_module = oyStringCopy( module, oyAllocateFunc_ );
 
   if(error <= 0)
   {
@@ -148,13 +194,7 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
       error = oyFilterNode_SetData( in, (oyStruct_s*)input, 0, 0 );
 
     if(error <= 0)
-      out = oyFilterNode_NewWith( icc_module, options, 0 );
-    if(error <= 0 && module)
-    {
-      oyFilterCore_s * core = oyFilterNode_GetCore( out );
-      oyObject_SetName( core->oy_, icc_module, oyNAME_DESCRIPTION );
-      oyFilterCore_Release( &core );
-    }
+      out = oyFilterNode_CMMFromOptions( options );
     if(error <= 0)
       error = oyFilterNode_SetData( out, (oyStruct_s*)output, 0, 0 );
     if(error <= 0)
@@ -178,8 +218,6 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
 
   if(error)
     oyConversion_Release ( &s );
-
-  oyFree_m_( icc_module );
 
   return s;
 }
@@ -269,10 +307,10 @@ oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
 }
 
 /** Function oyConversion_CreateFromImage
+ *  @memberof oyConversion_s
  *  @brief   generate a Oyranos graph from a image file name
  *
  *  @param[in]     image_in            input
- *  @param[in]     module              to be used icc node type
  *  @param[in]     module_options      options for icc node
  *  @param[in]     output_profile      profile to convert colors to;
  *  @param[in]     buf_type_out        the desired data type for output
@@ -286,12 +324,11 @@ oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
  *  @return                            generated new graph, owned by caller
  *
  *  @version Oyranos: 0.9.6
- *  @date    2014/06/26
+ *  @date    2014/07/01
  *  @since   2012/04/21 (Oyranos: 0.5.0)
  */
 oyConversion_s * oyConversion_CreateFromImage (
                                        oyImage_s         * image_in,
-                                       const char        * module,
                                        oyOptions_s       * module_options,
                                        oyProfile_s       * output_profile,
                                        oyDATATYPE_e        buf_type_out,
@@ -302,6 +339,7 @@ oyConversion_s * oyConversion_CreateFromImage (
   int error = 0;
   oyConversion_s * conversion = 0;
   oyOptions_s * options = 0;
+  const char * module = oyOptions_FindString( module_options, OY_DEFAULT_CMM_CONTEXT, NULL );
   char * icc_module = 0;
   oyImage_s * image_out = 0;
   int layout_out = 0;
@@ -331,12 +369,6 @@ oyConversion_s * oyConversion_CreateFromImage (
 
   /* create a new CMM filter node */
   out = oyFilterNode_NewWith( icc_module, module_options, obj );
-  if(module)
-  {
-    oyFilterCore_s * core = oyFilterNode_GetCore( out );
-    oyObject_SetName( core->oy_, icc_module, oyNAME_DESCRIPTION );
-    oyFilterCore_Release( &core );
-  }
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
