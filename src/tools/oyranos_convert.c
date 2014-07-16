@@ -352,6 +352,10 @@ int main( int argc , char** argv )
     const char * reg;
     char * t = NULL;
 
+    if(node_name)
+      oyOptions_SetFromText( &module_options, OY_DEFAULT_CMM_CONTEXT,
+                             node_name, OY_CREATE_NEW );
+
     if(!(node_name && strchr(node_name, '/')))
     {
       oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_,
@@ -437,11 +441,11 @@ int main( int argc , char** argv )
       oyProfile_Release( &p );
       sprintf( comment, "clut with %d levels", width );
 
-      pixel_layout = oyImage_GetPixelLayout( image,oyLAYOUT );
+      pixel_layout = oyImage_GetPixelLayout( image, oyLAYOUT );
       data_type = oyToDataType_m(pixel_layout);
       p = oyProfile_FromName(output_profile, icc_profile_flags, 0);
       cc = oyConversion_CreateFromImage (
-                                image, node_name, module_options, 
+                                image, module_options,
                                 p, data_type, flags, 0 );
 
       error = oyConversion_RunPixels( cc, 0 );
@@ -479,7 +483,7 @@ int main( int argc , char** argv )
       p = oyProfile_FromName(output_profile, icc_profile_flags, 0);
 
       cc = oyConversion_CreateFromImage (
-                                in, node_name, module_options, 
+                                in, module_options, 
                                 p, oyUINT16, 0, 0 );
       oyProfile_Release( &p );
 
@@ -569,7 +573,7 @@ int main( int argc , char** argv )
       }
       data_type = oyToDataType_m(pixel_layout);
       cc = oyConversion_CreateFromImage (
-                                image, node_name, module_options,
+                                image, module_options,
                                 p, data_type, flags, 0 );
 
       error = oyConversion_RunPixels( cc, 0 );
