@@ -1532,7 +1532,7 @@ oyTESTRESULT_e testDeviceLinkProfile ()
                                               0,0, 12,12,
                                               icc_profile_flags, 0 );
   oyOptions_s * options = NULL;
-  oyOptions_SetFromText( &options, "////icc_module", "lcm2", OY_CREATE_NEW );
+  oyOptions_SetFromText( &options, "////context", "lcm2", OY_CREATE_NEW );
   oyConversion_s *cc = oyConversion_CreateBasicPixels( in, out, options, 0 );
   oyFilterGraph_s * graph = NULL;
   oyBlob_s * blob = NULL;
@@ -4222,17 +4222,17 @@ oyTESTRESULT_e testConversion()
 
   oyOptions_Release( &options );
 
-  oyOptions_SetFromText( &options, "////icc_module", "lcm2", OY_CREATE_NEW );
+  oyOptions_SetFromText( &options, "////context", "lcm2", OY_CREATE_NEW );
   cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
   cc_graph = oyConversion_GetGraph( cc );
   icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc", 0 );
   
   if(strstr(oyFilterNode_GetRegistration( icc ), "lcm2"))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConversion_CreateBasicPixels( \"icc_module\"=\"lcm2\" )" );
+    "oyConversion_CreateBasicPixels( \"context\"=\"lcm2\" )" );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyConversion_CreateBasicPixels( \"icc_module\"=\"lcm2\" ) %s", oyFilterNode_GetRegistration( icc ) );
+    "oyConversion_CreateBasicPixels( \"context\"=\"lcm2\" ) %s", oyFilterNode_GetRegistration( icc ) );
   }
 
   blob = oyFilterNode_ToBlob( icc, NULL );
