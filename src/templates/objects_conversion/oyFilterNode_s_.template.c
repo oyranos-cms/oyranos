@@ -7,7 +7,7 @@
 #include "oyranos_object_internal.h"
 {% endblock %}
 
-{% block altConstructor %}(oyFilterNode_s_*)oyFilterNode_Create( (oyFilterCore_s*){{ class.baseName|lower }}->core, object );{% endblock %}
+{% block altConstructor %}(oyFilterNode_s_*)oyFilterNode_Create( filternode->api7_->registration, (oyFilterCore_s*){{ class.baseName|lower }}->core, object );{% endblock %}
 
 {% block refCount %}
   {

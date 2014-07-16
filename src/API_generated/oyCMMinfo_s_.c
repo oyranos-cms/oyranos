@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/07/07
  */
 
 
@@ -28,7 +28,7 @@
 
 #include "oyObject_s.h"
 #include "oyranos_object_internal.h"
-
+#include "oyranos_module_internal.h"
 
   
 

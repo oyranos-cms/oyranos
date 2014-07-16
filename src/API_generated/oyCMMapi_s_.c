@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/07/07
  */
 
 
@@ -340,8 +340,8 @@ int oyCMMapi_Release_( oyCMMapi_s_ **cmmapi )
  *  @brief   check for completeness
  *
  *  @version Oyranos: 0.9.6
- *  @since   2007/12/06 (Oyranos: 0.1.8)
  *  @date    2014/05/16
+ *  @since   2007/12/06 (Oyranos: 0.1.8)
  */
 oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
 {
