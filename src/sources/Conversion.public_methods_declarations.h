@@ -23,7 +23,6 @@ OYAPI oyConversion_s *  OYEXPORT
 OYAPI oyConversion_s *  OYEXPORT
                 oyConversion_CreateFromImage (
                                        oyImage_s         * image_in,
-                                       const char        * module,
                                        oyOptions_s       * module_options,
                                        oyProfile_s       * output_profile,
                                        oyDATATYPE_e        buf_type_out,

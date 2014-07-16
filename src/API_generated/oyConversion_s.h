@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/02/18
+ *  @date     2014/07/07
  */
 
 
@@ -228,7 +228,6 @@ OYAPI oyConversion_s *  OYEXPORT
 OYAPI oyConversion_s *  OYEXPORT
                 oyConversion_CreateFromImage (
                                        oyImage_s         * image_in,
-                                       const char        * module,
                                        oyOptions_s       * module_options,
                                        oyProfile_s       * output_profile,
                                        oyDATATYPE_e        buf_type_out,
