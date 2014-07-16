@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/26
+ *  @date     2014/07/07
  */
 
 
@@ -282,14 +282,16 @@ OYAPI int  OYEXPORT
  *  @memberof oyFilterNode_s
  *  @brief    Initialise a new filter node object properly
  *
- *  @param         filter              the mandatory filter
+ *  @param         registration        the processing filter registration string
+ *  @param         filter              the context filter
  *  @param         object              the optional object
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/07/01
  *  @since   2008/07/30 (Oyranos: 0.1.8)
- *  @date    2008/07/30
- TODO select oyCMMapi7_s over registration string */
-oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
+ */
+oyFilterNode_s *   oyFilterNode_Create(const char        * registration,
+                                       oyFilterCore_s    * filter,
                                        oyObject_s          object )
 {
   oyFilterNode_s_ * s = 0;
@@ -317,7 +319,7 @@ oyFilterNode_s *   oyFilterNode_Create(oyFilterCore_s    * filter,
 
     if(error <= 0)
       s->api7_ = (oyCMMapi7_s_*) oyCMMsGetFilterApi_( 0,
-                                s->core->registration_, oyOBJECT_CMM_API7_S );
+                                           registration, oyOBJECT_CMM_API7_S );
     if(error <= 0 && !s->api7_)
     {
       WARNc2_S("Could not obtain filter api7 for: %s %s",
@@ -1085,7 +1087,7 @@ oyFilterNode_s *   oyFilterNode_NewWith (
                                        oyObject_s          object )
 {
   oyFilterCore_s * core = oyFilterCore_NewWith( registration, options, object);
-  oyFilterNode_s * node = oyFilterNode_Create( core, object );
+  oyFilterNode_s * node = oyFilterNode_Create( registration, core, object );
 
   oyFilterCore_Release( &core );
   return node;

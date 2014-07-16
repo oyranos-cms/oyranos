@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/02/05
+ *  @date     2014/07/07
  */
 
 
@@ -182,13 +182,14 @@ OYAPI int  OYEXPORT
                                        int                 pos_first,
                                        oyFilterPlug_s    * plug );
 OYAPI oyFilterNode_s *  OYEXPORT
-                oyFilterNode_Create   (oyFilterCore_s    * filter,
+                oyFilterNode_Create  ( const char        * registration,
+                                       oyFilterCore_s    * filter,
                                        oyObject_s          object );
 OYAPI oyStruct_s *  OYEXPORT
-                oyFilterNode_GetData  (oyFilterNode_s    * node,
+                oyFilterNode_GetData ( oyFilterNode_s    * node,
                                        int                 socket_pos );
 OYAPI int  OYEXPORT
-                 oyFilterNode_SetData (oyFilterNode_s    * node,
+                 oyFilterNode_SetData( oyFilterNode_s    * node,
                                        oyStruct_s        * data,
                                        int                 socket_pos,
                                        oyObject_s        * object );

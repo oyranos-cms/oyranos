@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/07/01
+ *  @date     2014/07/07
  */
 
 
@@ -251,7 +251,7 @@ oyFilterNode_s_ * oyFilterNode_Copy__ ( oyFilterNode_s_ *filternode, oyObject_s 
   if(!filternode || !object)
     return s;
 
-  s = (oyFilterNode_s_*)oyFilterNode_Create( (oyFilterCore_s*)filternode->core, object );
+  s = (oyFilterNode_s_*)oyFilterNode_Create( filternode->api7_->registration, (oyFilterCore_s*)filternode->core, object );
   error = !s;
 
   if(!error) {
@@ -541,7 +541,7 @@ char *             oyFilterNode_GetFallback_(
  *  @date    2014/07/01
  *  @since   2004/06/26 (Oyranos: 0.9.6)
  */
-oyFilterCore_s_* oyFilterNode_SetFromPattern_ (
+int          oyFilterNode_SetFromPattern_ (
                                        oyFilterNode_s_   * node,
                                        int                 select_core,
                                        const char        * pattern )
@@ -559,7 +559,7 @@ oyFilterCore_s_* oyFilterNode_SetFromPattern_ (
       oyObject_SetName( core->oy_, pattern, oyNAME_DESCRIPTION );
 
       node->core = core;
-      return core;
+      return 0;
     }
     else
       oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*) node,
@@ -568,9 +568,23 @@ oyFilterCore_s_* oyFilterNode_SetFromPattern_ (
                        pattern);
   } else
   {
+    oyFilterNode_s_ * node_ = (oyFilterNode_s_*) oyFilterNode_Create( pattern, (oyFilterCore_s*)node->core, NULL );
+
+    if(node_)
+    {
+      if(node->api7_->release)
+        node->api7_->release( (oyStruct_s**) &node->api7_ );
+      node->api7_ = node_->api7_;
+      return 0;
+    }
+    else
+      oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*) node,
+                       OY_DBG_FORMAT_ "could not create new node module: %s",
+                       OY_DBG_ARGS_,
+                       pattern);
   }
 
-  return NULL;
+  return 1;
 }
 
 /** Function  oyFilterNode_SetContext_
@@ -629,7 +643,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
           if(error <= 0)
           {
             const char * pattern = oyOptions_FindString( node->core->options_,
-                                                   "///cmm/cmm_context", NULL );
+                                                   "///cmm/context", NULL );
             if(pattern &&
                !oyFilterRegistrationMatch( core_->registration_, pattern, 0 ))
             {
@@ -638,13 +652,14 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                                OY_DBG_ARGS_,
                      oyFilterNode_GetText( (oyFilterNode_s*)node,oyNAME_NICK) );
 
-              core_ = oyFilterNode_SetFromPattern_( node, 1, pattern );
+              error = oyFilterNode_SetFromPattern_( node, 1, pattern );
 
-              if(!core_)
+              if(error)
               {
                 error = 1;
                 goto clean;
-              }
+              } else
+                core_ = node->core;
 
               oyHash_Release( &hash7 );
               hash7 = oyFilterNode_GetHash_(node, 7);
@@ -706,8 +721,8 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                                OY_DBG_FORMAT_ "create core from fallback: %s",
                                OY_DBG_ARGS_, pattern );
 
-                    core_ = oyFilterNode_SetFromPattern_( node, 1, pattern );
-                    if(!core_)
+                    error = oyFilterNode_SetFromPattern_( node, 1, pattern );
+                    if(error)
                     {
                       error = 1;
                       oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*) node,
@@ -715,7 +730,8 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                       OY_DBG_ARGS_,
                       oyFilterNode_GetText( (oyFilterNode_s*)node,oyNAME_NICK));
                       goto clean;
-                    }
+                    } else
+                      core_ = node->core;
                     
                     ptr = core_->api4_->oyCMMFilterNode_ContextToMem(
                                                    (oyFilterNode_s*)node, &size,
