@@ -36,12 +36,12 @@ Dependencies:
   Debian/Ubuntu:
     elektra-0.7.0 - is included in the tar ball
 
-    sudo apt-get install locales build-essential git autoconf cmake ruby libxml2-dev libyajl-dev gettext libfltk1.3-dev libjpeg-dev libpng-dev libcairo2-dev x11proto-xf86vidmode-dev x11proto-xext-dev libxxf86vm-dev libxrandr-dev libxinerama-dev libxmu-dev libxpm-dev libxfixes-dev libxft-dev fluid ftgl-dev liblcms-dev libexiv2-dev libcups2-dev
+    sudo apt-get install locales build-essential git autoconf cmake ruby libxml2-dev libyajl-dev gettext libfltk1.3-dev libjpeg-dev libpng-dev libcairo2-dev x11proto-xf86vidmode-dev x11proto-xext-dev libxxf86vm-dev libxrandr-dev libxinerama-dev libxmu-dev libxpm-dev libxfixes-dev libxft-dev fluid ftgl-dev liblcms-dev libexiv2-dev libcups2-dev cmake
     # oyranos-0.3.3 can now be installed successfully.
-    sudo apt-get install libqt4-dev cmake                                  # Synnefo
-    sudo apt-get install kdelibs5-dev                                      # KolorManager
+    sudo apt-get install libqt4-dev                        # Synnefo
+    sudo apt-get install kdelibs5-dev                      # KolorManager
     sudo apt-get install libgtk2.0-dev libglib2.0-dev libgutenprintui2-dev libopenexr-dev # CinePaint
-    sudo apt-get install doxygen graphviz                                  # for documentation
+    sudo apt-get install doxygen graphviz                  # for documentation
 
   optional:
     ICC Examin to build afterwards. oyranos-config-fltk uses the profile viewer.
@@ -51,6 +51,7 @@ Dependencies:
     gcc-c++
     elektra-devel
     exiv2-devel
+    cmake
     cups-devel
     sane-backends-devel
     liblcms-devel
@@ -108,9 +109,9 @@ Dependencies:
   (b) replace the branch name in line 44.
 
   openSUSE-12.1
-    zypper install gcc-c++ git autoconf libtool make patch pkgconfig desktop-file-utils xdg-utils update-desktop-files Mesa-devel cups-devel libxml2-devel libyajl-devel liblcms-devel liblcms2-devel libjpeg-devel libpng-devel libtiff-devel libraw-devel libexiv2-devel xorg-x11-libXfixes-devel xorg-x11-libXmu-devel xorg-x11-libXpm-devel libXinerama-devel libXrandr-devel fltk-devel libXft-devel ftgl-devel gettext cairo-devel netpbm
+    zypper install cmake gcc-c++ git autoconf libtool make patch pkgconfig desktop-file-utils xdg-utils update-desktop-files Mesa-devel cups-devel libxml2-devel libyajl-devel liblcms-devel liblcms2-devel libjpeg-devel libpng-devel libtiff-devel libraw-devel libexiv2-devel xorg-x11-libXfixes-devel xorg-x11-libXmu-devel xorg-x11-libXpm-devel libXinerama-devel libXrandr-devel fltk-devel libXft-devel ftgl-devel gettext cairo-devel netpbm
     # oyranos-0.9.0 can now be installed successfully.
-    zypper install cmake qt-devel                                   # Synnefo
+    zypper install qt-devel                                         # Synnefo
     zypper install libkde4-devel                                    # KolorManager
     zypper install gtk2-devel libopenexr-devel gutenprint-devel     # CinePaint
     zypper install doxygen graphviz                                 # for documentation
