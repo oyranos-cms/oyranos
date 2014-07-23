@@ -559,7 +559,7 @@ oyOptionStringsTranslate_ ()
       0, /* choices */
       NULL,NULL,NULL,NULL,
       OY_DEFAULT_CMM_CONTEXT,
-      "oyWIDGET_CMM_CONTEXT", 0, "//" OY_TYPE_STD "/icc.color.lcm2")
+      "oyWIDGET_CMM_CONTEXT", 0, "//" OY_TYPE_STD "/icc_color.lcm2")
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_CHOICE, oyWIDGET_CMM_RENDERER, 1,
       oyGROUP_CMM, 0, 0,
@@ -569,7 +569,7 @@ oyOptionStringsTranslate_ ()
       0, /* choices */
       NULL,NULL,NULL,NULL,
       OY_DEFAULT_CMM_RENDERER,
-      "oyWIDGET_CMM_RENDERER", 0, "//" OY_TYPE_STD "/icc.color.lcm2")
+      "oyWIDGET_CMM_RENDERER", 0, "//" OY_TYPE_STD "/icc_color.lcm2")
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_CHOICE, oyWIDGET_CMM_CONTEXT_FALLBACK, 1,
       oyGROUP_CMM, 0, 0,
@@ -579,7 +579,7 @@ oyOptionStringsTranslate_ ()
       0, /* choices */
       NULL,NULL,NULL,NULL,
       OY_DEFAULT_CMM_CONTEXT_FALLBACK,
-      "oyWIDGET_CMM_CONTEXT_FALLBACK", 0, "//" OY_TYPE_STD "/icc.color.lcm2")
+      "oyWIDGET_CMM_CONTEXT_FALLBACK", 0, "//" OY_TYPE_STD "/icc_color.lcm2")
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_CHOICE, oyWIDGET_CMM_RENDERER_FALLBACK, 1,
       oyGROUP_CMM, 0, 0,
@@ -589,7 +589,7 @@ oyOptionStringsTranslate_ ()
       0, /* choices */
       NULL,NULL,NULL,NULL,
       OY_DEFAULT_CMM_RENDERER_FALLBACK,
-      "oyWIDGET_CMM_RENDERER_FALLBACK", 0, "//" OY_TYPE_STD "/icc.color.lcm2")
+      "oyWIDGET_CMM_RENDERER_FALLBACK", 0, "//" OY_TYPE_STD "/icc_color.lcm2")
 
 /*#   undef oySET_OPTIONS_M_*/
   }
@@ -1139,7 +1139,7 @@ char **            oyGetCMMs         ( oyCMM_e             type,
   {
     uint32_t * rank_list = 0;
     uint32_t apis_n = 0;
-    oyCMMapiFilters_s * apis = oyCMMsGetFilterApis_( 0,0, "///icc.color",
+    oyCMMapiFilters_s * apis = oyCMMsGetFilterApis_( 0,0, "///icc_color",
                                                      otype, 0,
                                                      &rank_list, &apis_n );
     int n = oyCMMapiFilters_Count( apis ), i;
@@ -1718,11 +1718,11 @@ char *             oyGetCMMName_     ( oyCMMapiFilter_s  * cmm,
         
       } else
       {
-        char * x = strstr(f->registration, "icc.color");
+        char * x = strstr(f->registration, "icc_color");
         if(x)
         {
           char * d;
-          x = oyStringCopy(x+strlen("icc.color."), oyAllocateFunc_);
+          x = oyStringCopy(x+strlen("icc_color."), oyAllocateFunc_);
           d = strchr(x,'.');
           if(d)
             d[0] = '\000';
@@ -1742,7 +1742,7 @@ char *             oyGetCMMName_     ( oyCMMapiFilter_s  * cmm,
       char * t = NULL,
            * nick = oyGetCMMName_( cmm, type, oyNAME_NICK, oyAllocateFunc_ );
       oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_,
-                         "///icc.color.%s", nick );
+                         "///icc_color.%s", nick );
       oyFree_m_( nick );
       name = oyStringCopy( t, allocate_func );
       oyFree_m_( t );
@@ -1769,7 +1769,7 @@ oyCMMapiFilter_s * oyGetCMM_         ( oyCMM_e             type,
   else
     otype = oyOBJECT_CMM_API7_S;
 
-  apis = oyCMMsGetFilterApis_( 0,0, "///icc.color", otype, 0,
+  apis = oyCMMsGetFilterApis_( 0,0, "///icc_color", otype, 0,
                                &rank_list, &apis_n );
   n = oyCMMapiFilters_Count( apis ), i;
   for(i = 0; i < n; ++i)

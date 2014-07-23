@@ -121,7 +121,7 @@
 /** Type path for standard settings */
 #define OY_BEHAVIOUR_STD         OY_STD OY_SLASH "behaviour" OY_SLASH
 /** Type path for standard settings */
-#define OY_CMM_STD               OY_STD OY_SLASH "cmm" OY_SLASH
+#define OY_CMM_STD               OY_STD OY_SLASH "icc_color" OY_SLASH
 
 /** Oyranos default profiles key path in the data base */
 #define OY_REGISTRED_PROFILES    OY_STD OY_SLASH "device_profiles"

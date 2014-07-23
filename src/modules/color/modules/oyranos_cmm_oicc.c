@@ -936,7 +936,7 @@ oyCMMapi9_s_  oicc_api9 = {
   oiccFilterMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc.color." CMM_NICK,
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_color." CMM_NICK,
 
   {0,1,0}, /* int32_t version[3] */
   CMM_API_VERSION, /**< int32_t module_api[3] */
@@ -960,7 +960,7 @@ oyCMMapi9_s_  oicc_api9 = {
   oiccConversion_Correct,
 
   /** const char * pattern; a pattern supported by oiccConversion_Correct */
-  "//" OY_TYPE_STD "/icc.color",
+  "//" OY_TYPE_STD "/icc_color",
 
   /** oyCMMGetFallback_f oyCMMGetFallback; get pattern specific module fallback */
   oiccCMMGetFallback,

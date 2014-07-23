@@ -2645,7 +2645,7 @@ oyCMMapi7_s_ lcms_api7_cmm = {
   lcmsCMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc.color._" CMM_NICK "._CPU._ACCEL",
+  "icc_color._" CMM_NICK "._CPU._ACCEL",
 
   CMM_VERSION,
   CMM_API_VERSION,                  /**< int32_t module_api[3] */
@@ -2749,7 +2749,7 @@ oyCMMapi4_s_ lcms_api4_cmm = {
   lcmsCMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc.color._" CMM_NICK "._CPU._NOACCEL",
+  "icc_color._" CMM_NICK "._CPU._NOACCEL",
 
   CMM_VERSION,
   CMM_API_VERSION,                  /**< int32_t module_api[3] */
