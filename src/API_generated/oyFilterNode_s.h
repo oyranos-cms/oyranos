@@ -185,6 +185,11 @@ OYAPI oyFilterNode_s *  OYEXPORT
                 oyFilterNode_Create  ( const char        * registration,
                                        oyFilterCore_s    * filter,
                                        oyObject_s          object );
+OYAPI oyFilterNode_s *  OYEXPORT oyFilterNode_FromOptions (
+                                       const char        * db_base_key,
+                                       const char        * base_pattern,
+                                       oyOptions_s       * options,
+                                       oyObject_s          object );
 OYAPI oyStruct_s *  OYEXPORT
                 oyFilterNode_GetData ( oyFilterNode_s    * node,
                                        int                 socket_pos );
