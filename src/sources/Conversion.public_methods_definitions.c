@@ -90,60 +90,6 @@ int                oyConversion_Correct (
   return 0;
 }
 
-char *   oyCMMPatternFromOptions_    ( oyOptions_s       * options,
-                                       int                 select_core )
-{
-  char * icc_module = NULL;
-  const char * module = NULL;
-  oyCMM_e type = oyCMM_RENDERER;
-  const char * key = OY_DEFAULT_CMM_RENDERER;
-
-  if(select_core)
-  {
-    type = oyCMM_CONTEXT;
-    key = OY_DEFAULT_CMM_CONTEXT;
-  }
-
-  module = oyOptions_FindString( options, key, NULL );
-
-  if(!module)
-    icc_module = oyGetCMMPattern( type, 0, oyAllocateFunc_ );
-  else if(strchr(module, '/'))
-    oyStringAddPrintf( &icc_module, oyAllocateFunc_, oyDeAllocateFunc_,
-                       "//" OY_TYPE_STD "/%s", module );
-  else
-    icc_module = oyStringCopy( module, oyAllocateFunc_ );
-
-  return icc_module;
-}
-
-oyFilterNode_s *   oyFilterNode_CMMFromOptions (
-                                       oyOptions_s       * options )
-{
-  oyFilterCore_s * core = NULL;
-  oyFilterNode_s * node = NULL;
-  char * pattern = NULL;
-
-  pattern = oyCMMPatternFromOptions_( options, 1 );
-  core = (oyFilterCore_s_*)oyFilterCore_NewWith( pattern, options,
-                                                 NULL );
-  if(!core)
-    oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*) node,
-                       OY_DBG_FORMAT_ "could not create new core: %s",
-                       OY_DBG_ARGS_,
-                       pattern);
-
-  oyFree_m_( pattern );
-
-  pattern = oyCMMPatternFromOptions_( options, 0 );
-  node = oyFilterNode_Create( pattern, core, NULL );
-
-  oyFree_m_( pattern );
-  oyFilterCore_Release( &core );
-
-  return node;
-}
-
 /** Function  oyConversion_CreateBasicPixels
  *  @memberof oyConversion_s
  *  @brief    Allocate initialise a basic oyConversion_s object
@@ -194,7 +140,7 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
       error = oyFilterNode_SetData( in, (oyStruct_s*)input, 0, 0 );
 
     if(error <= 0)
-      out = oyFilterNode_CMMFromOptions( options );
+      out = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", options, object );
     if(error <= 0)
       error = oyFilterNode_SetData( out, (oyStruct_s*)output, 0, 0 );
     if(error <= 0)
@@ -408,7 +354,7 @@ oyConversion_s * oyConversion_CreateFromImage (
   /* apply policies */
   /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
                                  "true", OY_CREATE_NEW );*/
-  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc", flags,
+  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc_color", flags,
                         options );
   oyOptions_Release( &options );
   oyFree_m_( icc_module );
