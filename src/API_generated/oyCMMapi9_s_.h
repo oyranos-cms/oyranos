@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/07/01
+ *  @date     2014/07/07
  */
 
 
@@ -131,6 +131,27 @@ typedef char * (*oyCMMRegistrationToName_f) (
                                        int                 select_core,
                                        oyAlloc_f           allocate_func );
 
+/** typedef  oyCMMGetDafaultPattern_f
+ *  @brief   get module default
+ *  @ingroup module_api
+ *  @memberof oyCMMapi9_s
+ *
+ *  @param[in]     pattern             the basic pattern
+ *  @param[in]     flags               unused
+ *  @param[in]     select_core         apply to api4 core else to api7
+ *  @param[in]     allocate_func       user supplied memory allocator
+ *  @return                            the default pattern string
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/07/21
+ *  @since   2014/07/21 (Oyranos: 0.9.6)
+ */
+typedef char * (*oyCMMGetDefaultPattern_f) (
+                                       const char        * base_pattern,
+                                       uint32_t            flags,
+                                       int                 select_core,
+                                       oyAlloc_f           allocate_func );
+
 
 /* } Include "CMMapi9.private.h" */
 
@@ -214,6 +235,9 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
   /** get name from module registration */
   oyCMMRegistrationToName_f oyCMMRegistrationToName;
+
+  /** get the default pattern for a module group */
+  oyCMMGetDefaultPattern_f oyCMMGetDefaultPattern;
 
 /* } Include "CMMapi9.members.h" */
 
