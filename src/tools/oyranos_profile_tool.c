@@ -83,7 +83,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("List included ICC tags:"));
   fprintf( stderr, "      %s -l %s\n",        argv[0], _("ICC_FILE_NAME"));
-  fprintf( stderr, "      -p %s\t%s\n",  _("NUMMER"), _("select tag"));
+  fprintf( stderr, "      -p %s\t%s\n",  _("NUMBER"), _("select tag"));
   fprintf( stderr, "      -n %s\t%s\n",  _("NAME"), _("select tag"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Dump Device Infos to OpenICC device JSON:"));

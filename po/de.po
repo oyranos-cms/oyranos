@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2014-06-25 11:24+0200\n"
+"POT-Creation-Date: 2014-07-30 12:02+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -249,8 +249,8 @@ msgid ""
 "speed or resource overhead."
 msgstr ""
 "Ein Farbübertragungsmodul (CMM) berechnet Übertragungsfunktionen und Farben. "
-"Es kann alternative Eigenschaften anbieten bezüglich "
-"Farbanmutung, Sicherheit, Geschwiundigkeit oder Resourcenverbrauch."
+"Es kann alternative Eigenschaften anbieten bezüglich Farbanmutung, "
+"Sicherheit, Geschwiundigkeit oder Resourcenverbrauch."
 
 #: tools/oyranos_profiles.c:190
 msgid "A single path option is required"
@@ -557,9 +557,17 @@ msgstr "CMM"
 msgid "CMM Core"
 msgstr "CMM Kern"
 
+#: liboyranos_config/oyranos_texts.c:576
+msgid "CMM Core Fallback"
+msgstr "CMM Kern Notbehelf"
+
 #: liboyranos_config/oyranos_texts.c:566
 msgid "CMM Renderer"
 msgstr "CMM Rechner"
+
+#: liboyranos_config/oyranos_texts.c:586
+msgid "CMM Renderer Fallback"
+msgstr "CMM Rechner Notbehelf"
 
 #: liboyranos_config/oyranos_icc.c:458
 msgid "Calibration date"
@@ -849,7 +857,7 @@ msgid "Copyright (c) 1998-2013 Marti Maria Saguer; MIT"
 msgstr ""
 
 #: modules/oyranos/oyranos_cmm_oyIM.c:144
-#: modules/color/modules/oyranos_cmm_oicc.c:960
+#: modules/color/modules/oyranos_cmm_oicc.c:1016
 msgid "Copyright (c) 2005-2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
@@ -1289,7 +1297,7 @@ msgstr "DATEINAME"
 
 #: tools/oyranos_convert.c:78
 msgid "FORMAT"
-msgstr ""
+msgstr "FORMAT"
 
 #: API_generated/oyranos_profile.c:64
 msgid "File Magic"
@@ -1492,11 +1500,11 @@ msgstr "ICC Klasse"
 msgid "ICC Version"
 msgstr "ICC Version"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:435
+#: modules/color/modules/oyranos_cmm_oicc.c:452
 msgid "ICC color profile for color transformations"
 msgstr "ICC Farbprofil zur Farbraumtransformation."
 
-#: modules/color/modules/oyranos_cmm_oicc.c:475
+#: modules/color/modules/oyranos_cmm_oicc.c:492
 msgid "ICC color profiles for color transformations"
 msgstr "ICC Farbprofile zur Farbraumumwandlung"
 
@@ -1504,7 +1512,7 @@ msgstr "ICC Farbprofile zur Farbraumumwandlung"
 msgid "ICC header Attributes"
 msgstr "ICC Dateiattribute"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:433
+#: modules/color/modules/oyranos_cmm_oicc.c:450
 msgid "ICC profile"
 msgstr "ICC Profil"
 
@@ -1516,7 +1524,7 @@ msgstr "ICC Profil ID geschrieben"
 msgid "ICC profile search paths"
 msgstr "ICC Profilesuchpfade"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:473 tools/oyranos_profiles.c:284
+#: modules/color/modules/oyranos_cmm_oicc.c:490 tools/oyranos_profiles.c:284
 msgid "ICC profiles"
 msgstr "ICC Profile"
 
@@ -1902,7 +1910,7 @@ msgstr "Luv"
 #: API_generated/oyName_s_.c:48 API_generated/oyName_s_.c:56
 #: API_generated/oyCMMapi_s_.c:157 API_generated/oyArray2d_s_.c:167
 #: API_generated/oyCMMapis_s_.c:157 API_generated/oyOption_s_.c:180
-#: API_generated/oyConversion_s_.c:158 API_generated/oyranos_devices.c:3089
+#: API_generated/oyConversion_s_.c:158 API_generated/oyranos_devices.c:3366
 #: API_generated/oyFilterNodes_s_.c:157 API_generated/oyCMMapi9_s_.c:164
 #: API_generated/oyProfile_s_.c:242 API_generated/oyFilterCore_s_.c:170
 #: API_generated/oyPixelAccess_s_.c:187 API_generated/oyCMMobjectType_s_.c:154
@@ -2088,14 +2096,10 @@ msgstr "NAME"
 
 #: tools/oyranos_profile_graph.c:215 tools/oyranos_profile_graph.c:226
 #: tools/oyranos_profile_graph.c:237 tools/oyranos_profile_graph.c:240
-#: tools/oyranos_convert.c:88 examples/devices/test_device.c:53
-#: examples/devices/test_device.c:82
+#: tools/oyranos_profile_tool.c:86 tools/oyranos_convert.c:88
+#: examples/devices/test_device.c:53 examples/devices/test_device.c:82
 msgid "NUMBER"
 msgstr "NUMMER"
-
-#: tools/oyranos_profile_tool.c:86
-msgid "NUMMER"
-msgstr ""
 
 #: API_generated/oyranos_module.c:1423
 #: modules/oyranos/oyranos_cmm_oyIM_profile.c:2232
@@ -2206,11 +2210,11 @@ msgstr "Filterobjekt eines Ausgangsbildes"
 msgid "Oyranos CUPS"
 msgstr "Oyranos CUPS"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:944
+#: modules/color/modules/oyranos_cmm_oicc.c:1000
 msgid "Oyranos ICC policy"
 msgstr "Oyranos ICC Richtlinie"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:946
+#: modules/color/modules/oyranos_cmm_oicc.c:1002
 msgid "Oyranos ICC policy module"
 msgstr "Oyranos ICC Richtlinien Modul"
 
@@ -2284,7 +2288,7 @@ msgid "Oyranos modules"
 msgstr "Oyranos Module"
 
 #: liboyranos/oyranos_cmm.c:154 modules/oyranos/oyranos_cmm_oyIM.c:138
-#: modules/color/modules/oyranos_cmm_oicc.c:954
+#: modules/color/modules/oyranos_cmm_oicc.c:1010
 #: modules/color/modules/oyranos_cmm_oyra.c:139
 #: modules/color/modules/oyranos_cmm_oydi.c:1140
 #: modules/color/modules/devices/oyranos_cmm_oyX1.c:1302
@@ -2753,11 +2757,11 @@ msgstr ""
 msgid "Select active policy:"
 msgstr "Wählen der Richtlinie:"
 
-#: liboyranos_config/oyranos_texts.c:557
+#: liboyranos_config/oyranos_texts.c:557 liboyranos_config/oyranos_texts.c:577
 msgid "Select the core CMM"
 msgstr "Wähle die Kern CMM"
 
-#: liboyranos_config/oyranos_texts.c:567
+#: liboyranos_config/oyranos_texts.c:567 liboyranos_config/oyranos_texts.c:587
 msgid "Select the processing CMM"
 msgstr "Wähle die Rechner CMM"
 
@@ -2811,7 +2815,7 @@ msgstr "Zeige Profil ID:"
 
 #: API_generated/oyObserver_s.c:349 API_generated/oyObserver_s.c:360
 #: API_generated/oyObserver_s.c:559 API_generated/oyObserver_s.c:637
-#: API_generated/oyObserver_s_.c:54 API_generated/oyFilterNode_s_.c:916
+#: API_generated/oyObserver_s_.c:54 API_generated/oyFilterNode_s_.c:1083
 msgid "Signal"
 msgstr "Signal"
 
@@ -3006,16 +3010,16 @@ msgstr ""
 "Farbtabellen allen Übertragungsarten,  ausser die der Farbmetrischen, werden "
 "von den Profilerstellern gestaltet."
 
-#: liboyranos_config/oyranos_texts.c:558
+#: liboyranos_config/oyranos_texts.c:558 liboyranos_config/oyranos_texts.c:578
 msgid ""
 "The core Color Matching Module (CMM) takes individual profiles and options "
 "and backes a device link. It can provide alternative features regarding "
 "appearance, security, speed or resource overhead."
 msgstr ""
 "Das Kernfarbübertragungsmodul (CMM) nimmt einzelne Farbprofile und Optionen "
-"und erzeugt eine Geräteverknüpfung. "
-"Es kann alternative Eigenschaften anbieten bezüglich "
-"Farbanmutung, Sicherheit, Geschwiundigkeit oder Resourcenverbrauch."
+"und erzeugt eine Geräteverknüpfung. Es kann alternative Eigenschaften "
+"anbieten bezüglich Farbanmutung, Sicherheit, Geschwiundigkeit oder "
+"Resourcenverbrauch."
 
 #: modules/color/modules/oyranos_cmm_oyra_image.c:1477
 msgid ""
@@ -3088,7 +3092,7 @@ msgstr "Der Filter erhält Bilder von libraw."
 msgid "The filter provides a generic image source."
 msgstr "Der Filter bietet eine allgemeine Bildquelle."
 
-#: modules/color/modules/oyranos_cmm_oicc.c:968
+#: modules/color/modules/oyranos_cmm_oicc.c:1024
 msgid ""
 "The filter provides policy settings. These settings can be applied to a "
 "graph through the user function oyConversion_Correct()."
@@ -3180,7 +3184,6 @@ msgid ""
 msgstr ""
 "Die Art der Farbübertragung für verschieden große Farbräume nach ICC Standard"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3458
 #: modules/color/modules/oyranos_cmm_lcms.c:2809
 msgid ""
 "The lcms \"color.icc\" filter is a one dimensional color conversion filter. "
@@ -3190,6 +3193,20 @@ msgid ""
 "is ICC device link based, to the internal lcms format."
 msgstr ""
 "Das lcms \"color.icc\" Modul kann eindimensional Farben übertragen. Die CMM, "
+"Farbübertragungsmodul, berechnet die Farbübertragungsdaten vor und kann "
+"Farben mit deren Hilfe auch übertragen. Es gibt einen Anpassungsteil im "
+"Modul, welcher die interne lcms Farbübertragungsdaten an das Oyranos' Format "
+"anpasst, welches auf ICC Geräteverknüpfungen, engl. device links, beruht."
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3458
+msgid ""
+"The lcms \"color_icc\" filter is a one dimensional color conversion filter. "
+"It can both create a color conversion context, some precalculated for "
+"processing speed up, and the color conversion with the help of that context. "
+"The adaption part of this filter transforms the Oyranos color context, which "
+"is ICC device link based, to the internal lcms format."
+msgstr ""
+"Das lcms \"color_icc\" Modul kann eindimensional Farben übertragen. Die CMM, "
 "Farbübertragungsmodul, berechnet die Farbübertragungsdaten vor und kann "
 "Farben mit deren Hilfe auch übertragen. Es gibt einen Anpassungsteil im "
 "Modul, welcher die interne lcms Farbübertragungsdaten an das Oyranos' Format "
@@ -3300,7 +3317,7 @@ msgstr ""
 "Erstellung eines abstrakten ICC Farbprofiles von einem Gerätefarbprofil. "
 "Siehe auch den \"proofing_effect\" Info Eintrag. "
 
-#: modules/color/modules/oyranos_cmm_oicc.c:970
+#: modules/color/modules/oyranos_cmm_oicc.c:1026
 msgid ""
 "The module is responsible for many settings in the Oyranos color management "
 "settings panel. If applied the module care about rendering intents, "
@@ -3352,16 +3369,15 @@ msgstr "Der bevorzugte Rgb Editierfarbraum sollte wohlgeformt sein."
 msgid "The preferred XYZ Editing Color Space shall describe CIE*XYZ."
 msgstr "Der bevorzugter XYZ Editierfarbraum soll CIE*XYZ definieren."
 
-#: liboyranos_config/oyranos_texts.c:568
+#: liboyranos_config/oyranos_texts.c:568 liboyranos_config/oyranos_texts.c:588
 msgid ""
 "The processing Color Matching Module (CMM) takes one device link as "
 "argument. It can provide alternative features regarding security, speed or "
 "resource overhead."
 msgstr ""
 "Das Rechnende Farbübertragungsmodul (CMM) nimmt eine Geräteverknüpfung als "
-"Argument. "
-"Es kann alternative Eigenschaften anbieten bezüglich "
-"Sicherheit, Geschwiundigkeit oder Resourcenverbrauch."
+"Argument. Es kann alternative Eigenschaften anbieten bezüglich Sicherheit, "
+"Geschwiundigkeit oder Resourcenverbrauch."
 
 #: liboyranos_config/oyranos_texts.c:193
 msgid ""
@@ -3663,7 +3679,8 @@ msgstr ""
 "kann ein Dateiname, interner Name, ICC Profil ID oder ein Namenkürzel sein "
 "\"rgb\", \"cmyk\", \"gray\", \"lab\", \"xyz\", \"web\", \"rgbi\", \"cmyki\", "
 "\"grayi\", \"labi\", \"xyzi\". Kürzel endend auf \"i\" sind vermutete "
-"Profile. \"web\" ist ein sRGB Profile. Die anderen Kürzel sind Editierprofile."
+"Profile. \"web\" ist ein sRGB Profile. Die anderen Kürzel sind "
+"Editierprofile."
 
 #: modules/color/modules/oyranos_cmm_lcm2.c:3115
 #: modules/color/modules/oyranos_cmm_lcm2.c:3188
@@ -3742,8 +3759,9 @@ msgstr "bette Geräte-und Treiberinformationen in ICC meta Block ein"
 msgid "enable simple defaults"
 msgstr "benutze einfache Grundeinstellungen"
 
-#: API_generated/oyranos_devices.c:2541 API_generated/oyConversion_s.c:188
-#: API_generated/oyranos_module.c:2039
+#: API_generated/oyranos_devices.c:2555 API_generated/oyranos_devices.c:3060
+#: API_generated/oyConversion_s.c:188 API_generated/oyranos_module.c:2039
+#: API_generated/oyFilterNode_s_.c:519
 msgid "error in module:"
 msgstr "Fehler in Modul:"
 
@@ -3791,7 +3809,7 @@ msgstr "f(X)=c*X+f für (X<d)"
 msgid "failed!"
 msgstr "daneben!"
 
-#: API_generated/oyranos_devices.c:2458 API_generated/oyranos_devices.c:2469
+#: API_generated/oyranos_devices.c:2455 API_generated/oyranos_devices.c:2466
 #: modules/oyranos/oyranos_cmm_oyIM_profile.c:3011
 #: modules/color/modules/oyranos_cmm_lcm2.c:3018
 #: modules/color/modules/oyranos_cmm_lcms.c:2362
@@ -3994,7 +4012,7 @@ msgid "named color class"
 msgstr "Einzelfarben 2"
 
 #: liboyranos/oyranos_cmm.c:162 modules/oyranos/oyranos_cmm_oyIM.c:146
-#: modules/color/modules/oyranos_cmm_oicc.c:962
+#: modules/color/modules/oyranos_cmm_oicc.c:1018
 #: modules/color/modules/oyranos_cmm_oyra.c:147
 #: modules/color/modules/oyranos_cmm_oydi.c:1148
 #: modules/color/modules/devices/oyranos_cmm_oyX1.c:1310
