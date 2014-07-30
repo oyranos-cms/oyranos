@@ -98,7 +98,7 @@ int main (int argc, char ** argv)
   if(status) return 1;
 
   /* select profiles matching actual capabilities */
-  node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", NULL, 0 );
+  node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", NULL, NULL );
   reg = oyFilterNode_GetRegistration( node );
   icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
   oyFilterNode_Release( &node );
@@ -161,7 +161,7 @@ int main (int argc, char ** argv)
     to_output = oyConversion_CreateBasicPixels( in, out, options, 0 );
 
     /* tell Oyranos to apply defaults */
-    oyConversion_Correct( to_output, "//" OY_TYPE_STD "/icc",
+    oyConversion_Correct( to_output, "//" OY_TYPE_STD "/icc_color",
                           oyOPTIONATTRIBUTE_ADVANCED, 0 );
 
     /* transform colors */
