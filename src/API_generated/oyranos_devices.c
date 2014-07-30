@@ -3070,10 +3070,9 @@ char *       oyGetFilterNodeDefaultPatternFromPolicy (
   return name;
 }
 
-
-
-/** Function oyFilterNode_FromOptions
- *  @brief   Create a FilterNode from options and fallbacks
+/** Function  oyFilterNode_FromOptions
+ *  @brief    Create a FilterNode from options and fallbacks
+ *  @memberof oyFilterNode_s
  *
  *  The returned object will be created from the found registration pattern strings.
  *  The first pattern will be searched in the options argument. If that fails
@@ -3083,7 +3082,7 @@ char *       oyGetFilterNodeDefaultPatternFromPolicy (
  *
  *  @param         db_base_key         the Oyranos DB basic key, which will appended by "context" and "renderer"; optional
  *  @param         base_pattern        the basic pattern to search in the options and to be used as fallback
- *  @param         options             the options to search in for the base_pattern and get "context" and "renderer" keys
+ *  @param         options             the options to search in for the base_pattern and get "context" and "renderer" keys; optional
  *  @param         object              the optional object
  *  @return                            a registration pattern to match a CMM registration string
  *
@@ -3146,6 +3145,43 @@ oyFilterNode_s *   oyFilterNode_FromOptions (
 
   return node;
 }
+
+/** \addtogroup cmm_handling
+ *  @{ */
+
+/** Function  oyICCProfileSelectionFlagsFromOptions
+ *  @brief    Get valid profile selection flags from node options and fallbacks
+ *
+ *  A convenience function for oyFilterNode_FromOptions() .
+ *
+ *  @param         db_base_key         the Oyranos DB basic key, which will appended by "context" and "renderer"; optional
+ *  @param         base_pattern        the basic pattern to search in the options and to be used as fallback
+ *  @param         options             the options to search in for the base_pattern and get "context" and "renderer" keys; optional
+ *  @param         select_core         0 - select node, 1 - select core
+ *  @return                            a registration string
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/07/30
+ *  @since   2014/07/30 (Oyranos: 0.9.6)
+ */
+uint32_t     oyICCProfileSelectionFlagsFromOptions (
+                                       const char        * db_base_key,
+                                       const char        * base_pattern,
+                                       oyOptions_s       * options,
+                                       int                 select_core )
+{
+  oyFilterNode_s * node = NULL;
+  const char * reg = NULL;
+  uint32_t icc_profile_flags = 0;
+
+  node = oyFilterNode_FromOptions( db_base_key, base_pattern, options, NULL );
+  reg = oyFilterNode_GetRegistration( node );
+  icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+  oyFilterNode_Release( &node );
+
+  return icc_profile_flags;
+}
+/**  @} */
 
 
 

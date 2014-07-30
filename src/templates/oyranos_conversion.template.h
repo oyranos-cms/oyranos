@@ -7,6 +7,7 @@
 {% include "cpp_begin.h" %}
 
 #include "oyranos_types.h"
+#include "oyOptions_s.h"
 
 /** \addtogroup objects_conversion DAG and Image processing API
  *  @brief Directed Acyclic Graph handling, caching and data processing
@@ -15,6 +16,12 @@
  */
 
 /** @} *//* objects_conversion */ 
+
+uint32_t     oyICCProfileSelectionFlagsFromOptions (
+                                       const char        * db_base_key,
+                                       const char        * base_pattern,
+                                       oyOptions_s       * options,
+                                       int                 select_core );
 
 {% include "cpp_end.h" %}
 
