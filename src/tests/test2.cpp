@@ -1523,7 +1523,7 @@ oyTESTRESULT_e testDeviceLinkProfile ()
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
   double buf[24];
-  oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", NULL, 0 );
+  oyFilterNode_s * node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", NULL, NULL );;
   const char * reg = oyFilterNode_GetRegistration( node );
   uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
   oyProfile_s * prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 ), *dl = 0;
@@ -1532,7 +1532,7 @@ oyTESTRESULT_e testDeviceLinkProfile ()
                                               0,0, 12,12,
                                               icc_profile_flags, 0 );
   oyOptions_s * options = NULL;
-  oyOptions_SetFromText( &options, "////context", "lcm2", OY_CREATE_NEW );
+  oyOptions_SetFromText( &options, OY_CMM_STD"/context", "lcm2", OY_CREATE_NEW );
   oyConversion_s *cc = oyConversion_CreateBasicPixels( in, out, options, 0 );
   oyFilterGraph_s * graph = NULL;
   oyBlob_s * blob = NULL;
@@ -1619,8 +1619,8 @@ oyTESTRESULT_e testRegistrationMatch ()
 
   fprintf(stdout, "\n" );
 
-  if( oyFilterRegistrationMatch(OY_INTERNAL "/icc.lcms",
-                                "//" OY_TYPE_STD "/icc",
+  if( oyFilterRegistrationMatch(OY_INTERNAL "/icc_color.lcms",
+                                "//" OY_TYPE_STD "/icc_color",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "simple CMM selection                  " );
@@ -1629,8 +1629,8 @@ oyTESTRESULT_e testRegistrationMatch ()
     "simple CMM selection                  " );
   }
 
-  if(!oyFilterRegistrationMatch(OY_INTERNAL "/icc.lcms",
-                                "//" OY_TYPE_STD "/icc.octl",
+  if(!oyFilterRegistrationMatch(OY_INTERNAL "/icc_color.lcms",
+                                "//" OY_TYPE_STD "/icc_color.octl",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "simple CMM selection no match         " );
@@ -1639,8 +1639,8 @@ oyTESTRESULT_e testRegistrationMatch ()
     "simple CMM selection no match         " );
   }
 
-  if( oyFilterRegistrationMatch(OY_INTERNAL "/icc.lcms",
-                                "//" OY_TYPE_STD "/icc.4+lcms",
+  if( oyFilterRegistrationMatch(OY_INTERNAL "/icc_color.lcms",
+                                "//" OY_TYPE_STD "/icc_color.4+lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "special CMM selection                 " );
@@ -1649,8 +1649,8 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM selection                 " );
   }
 
-  if(!oyFilterRegistrationMatch(OY_INTERNAL "/icc.lcms",
-                                "//" OY_TYPE_STD "/icc.4-lcms",
+  if(!oyFilterRegistrationMatch(OY_INTERNAL "/icc_color.lcms",
+                                "//" OY_TYPE_STD "/icc_color.4-lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "special CMM avoiding                  " );
@@ -1659,8 +1659,8 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM avoiding                  " );
   }
 
-  if( oyFilterRegistrationMatch(OY_INTERNAL "/icc.lcms",
-                                "//" OY_TYPE_STD "/icc.7-lcms",
+  if( oyFilterRegistrationMatch(OY_INTERNAL "/icc_color.lcms",
+                                "//" OY_TYPE_STD "/icc_color.7-lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "special CMM avoiding, other API       " );
@@ -3318,7 +3318,7 @@ oyTESTRESULT_e testCMMnmRun ()
          * buf_out = &d[3];
   oyDATATYPE_e buf_type_in = oyDOUBLE,
                buf_type_out = oyDOUBLE;
-  oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", NULL, 0 );
+  oyFilterNode_s * node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", options, NULL );;
   const char * reg = oyFilterNode_GetRegistration( node );
   uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
   oyProfile_s * p_in = prof,
@@ -3355,7 +3355,7 @@ oyTESTRESULT_e testCMMnmRun ()
       error = oyFilterNode_SetData( in, (oyStruct_s*)input, 0, 0 );
 
     if(error <= 0)
-      out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", options, 0 );
+      out = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", options, NULL );;
     if(error <= 0)
       error = oyFilterNode_SetData( out, (oyStruct_s*)output, 0, 0 );
     if(error <= 0)
@@ -3764,7 +3764,7 @@ oyTESTRESULT_e testNcl2()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
   int i, error = 0;
-  oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", NULL, 0 );
+  oyFilterNode_s * node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", NULL, NULL );;
   const char * reg = oyFilterNode_GetRegistration( node );
   uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
   oyProfile_s * p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, icc_profile_flags, NULL );
@@ -3818,7 +3818,7 @@ oyTESTRESULT_e testNcl2()
 oyTESTRESULT_e testImagePixel()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
-  oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", NULL, 0 );
+  oyFilterNode_s * node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", NULL, NULL );;
   const char * reg = oyFilterNode_GetRegistration( node );
   uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
   oyProfile_s * p_lab = oyProfile_FromStd( oyEDITING_LAB, icc_profile_flags, NULL );
@@ -4172,7 +4172,7 @@ oyTESTRESULT_e testImagePixel()
 oyTESTRESULT_e testConversion()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
-  oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", NULL, 0 );
+  oyFilterNode_s * node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", NULL, NULL );;
   const char * reg = oyFilterNode_GetRegistration( node );
   uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
   oyProfile_s * p_lab = oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, NULL );
@@ -4225,14 +4225,15 @@ oyTESTRESULT_e testConversion()
   oyOptions_SetFromText( &options, "////context", "lcm2", OY_CREATE_NEW );
   cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
   cc_graph = oyConversion_GetGraph( cc );
-  icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc", 0 );
+  icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+  reg = oyFilterNode_GetRegistration( icc );
   
-  if(strstr(oyFilterNode_GetRegistration( icc ), "lcm2"))
+  if(reg && strstr(reg, "lcm2"))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyConversion_CreateBasicPixels( \"context\"=\"lcm2\" )" );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyConversion_CreateBasicPixels( \"context\"=\"lcm2\" ) %s", oyFilterNode_GetRegistration( icc ) );
+    "oyConversion_CreateBasicPixels( \"context\"=\"lcm2\" ) %s", oyNoEmptyString_m_(reg) );
   }
 
   blob = oyFilterNode_ToBlob( icc, NULL );

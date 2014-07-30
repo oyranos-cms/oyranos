@@ -825,8 +825,8 @@ oyTESTRESULT_e testRegistrationMatch ()
 
   fprintf(stderr, "\n" );
 
-  if( oyFilterRegistrationMatch(OY_INTERNAL "/icc.lcms",
-                                "//" OY_TYPE_STD "/icc",
+  if( oyFilterRegistrationMatch(OY_INTERNAL "/icc_color.lcms",
+                                "//" OY_TYPE_STD "/icc_color",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "simple CMM selection                  " );
@@ -835,8 +835,8 @@ oyTESTRESULT_e testRegistrationMatch ()
     "simple CMM selection                  " );
   }
 
-  if(!oyFilterRegistrationMatch( OY_INTERNAL "/icc.lcms",
-                                "//" OY_TYPE_STD "/icc.octl",
+  if(!oyFilterRegistrationMatch( OY_INTERNAL "/icc_color.lcms",
+                                "//" OY_TYPE_STD "/icc_color.octl",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "simple CMM selection no match         " );
@@ -845,8 +845,8 @@ oyTESTRESULT_e testRegistrationMatch ()
     "simple CMM selection no match         " );
   }
 
-  if( oyFilterRegistrationMatch( OY_INTERNAL "/icc.lcms",
-                                "//" OY_TYPE_STD "/icc.4+lcms",
+  if( oyFilterRegistrationMatch( OY_INTERNAL "/icc_color.lcms",
+                                "//" OY_TYPE_STD "/icc_color.4+lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "special CMM selection                 " );
@@ -855,8 +855,8 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM selection                 " );
   }
 
-  if(!oyFilterRegistrationMatch( OY_INTERNAL "/icc.lcms",
-                                "//" OY_TYPE_STD "/icc.4-lcms",
+  if(!oyFilterRegistrationMatch( OY_INTERNAL "/icc_color.lcms",
+                                "//" OY_TYPE_STD "/icc_color.4-lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "special CMM avoiding                  " );
@@ -865,8 +865,8 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM avoiding                  " );
   }
 
-  if( oyFilterRegistrationMatch( OY_INTERNAL "/icc.lcms",
-                                "//" OY_TYPE_STD "/icc.7-lcms",
+  if( oyFilterRegistrationMatch( OY_INTERNAL "/icc_color.lcms",
+                                "//" OY_TYPE_STD "/icc_color.7-lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "special CMM avoiding, other API       " );
@@ -875,7 +875,7 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM avoiding, other API       " );
   }
 
-  if( oyFilterRegistrationMatch( OY_INTERNAL "/icc.lcms",
+  if( oyFilterRegistrationMatch( OY_INTERNAL "/icc_color.lcms",
                                 "lcms", 0 ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "select by keyname                     " );
@@ -967,7 +967,7 @@ oyTESTRESULT_e testObserver ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
   oyOption_s * o = oyOption_FromRegistration( "a/b/c/d/my_key", 0 );
-  oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", 0, 0 );
+  oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc_color", 0, 0 );
 
   fprintf(stderr, "\n" );
 
