@@ -66,12 +66,12 @@ public:
   }
   virtual oyPixelAccess_s * ticket() { return pixel_access; }
 
-  oyFilterNode_s * setImageType( const char * file_name, oyDATATYPE_e data_type, const char * cc_name, oyOptions_s * cc_options )
+  oyFilterNode_s * setImageType( const char * file_name, oyDATATYPE_e data_type, oyOptions_s * cc_options )
   {
     oyFilterNode_s * icc = 0;
     oyConversion_s * c = oyConversion_FromImageFileNameForDisplay( 
                              file_name, &icc, oyOPTIONATTRIBUTE_ADVANCED,
-                             data_type, cc_name, cc_options, 0 );
+                             data_type, cc_options, 0 );
 
     conversion( c );
 
@@ -79,12 +79,12 @@ public:
 
     return icc;
   }
-  oyFilterNode_s * setImageType( oyImage_s * image, oyImage_s * display_image, oyDATATYPE_e data_type, const char * cc_name, oyOptions_s * cc_options )
+  oyFilterNode_s * setImageType( oyImage_s * image, oyImage_s * display_image, oyDATATYPE_e data_type, oyOptions_s * cc_options )
   {
     oyFilterNode_s * icc = 0;
     oyConversion_s * c = oyConversion_FromImageForDisplay( 
                              image, display_image, &icc, oyOPTIONATTRIBUTE_ADVANCED,
-                             data_type, cc_name, cc_options, 0 );
+                             data_type, cc_options, 0 );
 
     conversion( c );
 

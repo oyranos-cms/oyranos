@@ -2,7 +2,7 @@
  *  Oyranos is an open source Color Management System 
  * 
  *  @par Copyright:
- *            2009-2013 (C) Kai-Uwe Behrmann
+ *            2009-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -82,9 +82,10 @@ main(int argc, char** argv)
 
   int gl_box = 0x01;
   int logo = 0x02;
-  const char * module_name = 0;
+  const char * icc_color_context = 0;
   const char * clut_name = 0;
   int i;
+  oyOptions_s * module_options = NULL;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -114,9 +115,11 @@ main(int argc, char** argv)
       gl_box = 0;
       ++file_pos;
     }
-    if(argc > 2 && strcmp(argv[i], "--module") == 0)
+    if(argc > 2 && strcmp(argv[i], "--icc-color-context") == 0)
     {
-      module_name = argv[i+1];
+      icc_color_context = argv[i+1];
+      oyOptions_SetFromText( &module_options, OY_DEFAULT_CMM_CONTEXT,
+                             icc_color_context, OY_CREATE_NEW );
       ++file_pos;
       ++file_pos;
     }
@@ -133,7 +136,7 @@ main(int argc, char** argv)
       printf("Usage: image_display [options] <image_file>\n"
              "\t--use-no-gl\tuse normal pixel copy\n"
              "\t--no-logo\tskip Oyranos logo\n"
-             "\t--module <name>\tselect a Oyranos wrapped CMM\n"
+             "\t--icc-color-context <name>\tselect a Oyranos wrapped context CMM\n"
              "\t--shader <file>\tset a CLUT from PPM image for color transform\n"
              "\t-v\t\tprint verbosely\n"
              "\t--help\t\tprint this help text\n"
@@ -160,7 +163,7 @@ main(int argc, char** argv)
       if(gl_box & 0x04)
       {
         oy_shader_box = dynamic_cast<Oy_Fl_Shader_Box*> (oy_widget);
-        error = oy_shader_box->setImage( file_name, module_name, NULL, clut_name );
+        error = oy_shader_box->setImage( file_name, module_options, clut_name );
         if(!error)
           fprintf(stderr, "setImage fine\n");
         else
@@ -168,12 +171,12 @@ main(int argc, char** argv)
       } else
       {
         oy_gl_box = dynamic_cast<Oy_Fl_GL_Box*> (oy_widget);
-        icc = oy_gl_box->setImage( file_name, module_name, NULL );
+        icc = oy_gl_box->setImage( file_name, module_options );
       }
     } else
     {
       oy_box = dynamic_cast<Oy_Fl_Image_Box*> (oy_widget);
-      icc = oy_box->setImage( file_name, module_name, NULL );
+      icc = oy_box->setImage( file_name, module_options );
     }
   }
   if(icc || (gl_box & 0x04 && !error))

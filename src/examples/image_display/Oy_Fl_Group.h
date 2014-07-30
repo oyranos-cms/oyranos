@@ -253,7 +253,7 @@ public:
     oyFilterNode_Release( &icc );
     context = oyConversion_FromImageForDisplay( 
                              image, image_display, &icc,
-                             oyOPTIONATTRIBUTE_ADVANCED, oyUINT8, 0,0, 0 );
+                             oyOPTIONATTRIBUTE_ADVANCED, oyUINT8, 0, 0 );
     if(oy_debug > 2)
       printf("%s:%d context:%s\n",
               strrchr(__FILE__,'/')+1, __LINE__,
@@ -268,7 +268,7 @@ public:
       editing = oyProfile_Copy( p, NULL );
     else
     {
-      oyFilterNode_s * node = icc ? icc : oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", NULL, 0 );
+      oyFilterNode_s * node = icc ? icc : oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", NULL, NULL );
       const char * reg = oyFilterNode_GetRegistration( node );
       uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
       editing = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL );

@@ -31,7 +31,6 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
                                        oyFilterNode_s   ** cc_node,
                                        uint32_t            flags,
                                        oyDATATYPE_e        data_type,
-                                       const char        * cc_name,
                                        oyOptions_s       * cc_options,
                                        oyObject_s          obj )
 {
@@ -39,7 +38,6 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
   int error = 0;
   oyConversion_s * conversion = 0;
   oyOptions_s * options = 0;
-  const char * icc_module = cc_name;
 
   if(!image_in || !image_out)
     return NULL;
@@ -71,21 +69,14 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
 
 
   /* create a new filter node */
-  if(!icc_module)
-    icc_module = "//" OY_TYPE_STD "/icc";
   {
-    icc = out = oyFilterNode_NewWith( icc_module, cc_options, obj );
-    if(cc_name)
-    {
-      oyFilterCore_s * core = oyFilterNode_GetCore( out );
-      oyObject_SetName( core->oy_, cc_name, oyNAME_DESCRIPTION );
-      oyFilterCore_Release( &core );
-    }
+    icc = out = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                     cc_options, NULL );
     /* append the new to the previous one */
     error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                   out, "//" OY_TYPE_STD "/data", 0 );
     if(error > 0)
-      fprintf( stderr, "could not add  filter: %s\n", icc_module );
+      fprintf( stderr, "could not add  filter: %s\n", OY_CMM_STD );
 
     /* Set the image to the first/only socket of the filter node.
      * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
@@ -137,9 +128,8 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
   /* apply policies */
   /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
                                  "true", OY_CREATE_NEW );*/
-  if(icc_module && icc_module[0])
-    oyConversion_Correct( conversion, icc_module, flags,
-                          options );
+  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc_color", flags,
+                        options );
   oyOptions_Release( &options );
 
   if(cc_node)
@@ -173,13 +163,12 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
                                        oyFilterNode_s   ** cc_node,
                                        uint32_t            flags,
                                        oyDATATYPE_e        data_type,
-                                       const char        * cc_name,
                                        oyOptions_s       * cc_options,
                                        oyObject_s          obj )
 {
   oyConversion_s * conversion =
      oyConversion_FromImageForDisplay_( image_in, image_out, cc_node, flags,
-                                        data_type, cc_name, cc_options, obj );
+                                        data_type, cc_options, obj );
 
   return conversion;
 }
@@ -188,7 +177,6 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay_ (
                                        oyFilterNode_s   ** cc_node,
                                        uint32_t            flags,
                                        oyDATATYPE_e        data_type,
-                                       const char        * cc_name,
                                        oyOptions_s       * cc_options,
                                        oyObject_s          obj )
 {
@@ -197,7 +185,6 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay_ (
   oyConversion_s * conversion = 0;
   oyOptions_s * options = 0;
   oyImage_s * image_in = 0;
-  const char * icc_module = cc_name;
 
   if(!file_name)
     return NULL;
@@ -220,20 +207,13 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay_ (
   oyOptions_Release( &options );
 
   /* create a new filter node */
-  if(!icc_module)
-    icc_module = "//" OY_TYPE_STD "/icc";
-  icc = out = oyFilterNode_NewWith( icc_module, cc_options, obj );
-  if(cc_name)
-  {
-    oyFilterCore_s * core = oyFilterNode_GetCore( out );
-    oyObject_SetName( core->oy_, cc_name, oyNAME_DESCRIPTION );
-    oyFilterCore_Release( &core );
-  }
+  icc = out = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                        cc_options, obj );
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
   if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", icc_module );
+    fprintf( stderr, "could not add  filter: %s\n", OY_CMM_STD );
 
   /* Set the image to the first/only socket of the filter node.
    * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
@@ -295,9 +275,8 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay_ (
   /* apply policies */
   /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
                                  "true", OY_CREATE_NEW );*/
-  if(icc_module && icc_module[0])
-    oyConversion_Correct( conversion, icc_module, flags,
-                          options );
+  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc_color", flags,
+                        options );
   oyOptions_Release( &options );
 
 
@@ -329,13 +308,12 @@ oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
                                        oyFilterNode_s   ** cc_node,
                                        uint32_t            flags,
                                        oyDATATYPE_e        data_type,
-                                       const char        * cc_name,
                                        oyOptions_s       * cc_options,
                                        oyObject_s          obj )
 {
   oyConversion_s * conversion =
      oyConversion_FromImageFileNameForDisplay_( file_name, cc_node, flags,
-                                        data_type, cc_name, cc_options, obj );
+                                        data_type, cc_options, obj );
 
   return conversion;
 }

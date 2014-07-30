@@ -51,7 +51,7 @@ int      conversionObserve           ( oyObserver_s      * observer,
                     oyObject_GetId(   obs->observer->oy_) );
 
     oyConversion_Correct( (oyConversion_s*)obs->observer,
-                          "//" OY_TYPE_STD "/icc", oyOPTIONATTRIBUTE_ADVANCED,
+                          "//" OY_TYPE_STD "/icc_color", oyOPTIONATTRIBUTE_ADVANCED,
                           0 );
 
     Oy_Fl_Image_Widget * oy_widget = (Oy_Fl_Image_Widget*) oyPointer_GetPointer(

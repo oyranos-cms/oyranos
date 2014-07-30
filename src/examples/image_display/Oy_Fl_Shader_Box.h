@@ -230,7 +230,7 @@ private:
         w_,h_, oyDataTypeToText(data_type));
 
     cc = oyConversion_FromImageForDisplay( image, display_image,
-                         0, oyOPTIONATTRIBUTE_ADVANCED, data_type, "", 0, 0 );
+                         0, oyOPTIONATTRIBUTE_ADVANCED, data_type, 0, 0 );
     conversion( cc );
 
     glGenTextures (1, &img_texture);
@@ -464,7 +464,6 @@ private:
 
 public:
   int              setImage          ( const char        * file_name,
-                                       const char        * cc_name,
                                        oyOptions_s       * cc_options,
                                        const char        * clut_name )
   {
