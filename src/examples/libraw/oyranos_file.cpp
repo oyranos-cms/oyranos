@@ -255,12 +255,8 @@ int main(int argc, char ** argv)
   oyOption_s * opt = NULL;
   icHeader * header;
 
-  oyFilterNode_s * node;
-  const char * reg;
-
-  node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", NULL, 0 );
-  reg = oyFilterNode_GetRegistration( node );
-  icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+  icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                            "//" OY_TYPE_STD "/icc_color", NULL, 0 );
 
   if(format &&
      (strcmp(format,"icc") == 0 ||

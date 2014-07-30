@@ -1523,9 +1523,8 @@ oyTESTRESULT_e testDeviceLinkProfile ()
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
   double buf[24];
-  oyFilterNode_s * node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", NULL, NULL );;
-  const char * reg = oyFilterNode_GetRegistration( node );
-  uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyProfile_s * prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 ), *dl = 0;
   oyImage_s * in = oyImage_Create( 2, 2, buf, OY_TYPE_123_DBL, prof, 0 );
   oyImage_s * out = oyImage_CreateForDisplay( 2, 2, buf, OY_TYPE_123_DBL, 0,
@@ -1535,6 +1534,7 @@ oyTESTRESULT_e testDeviceLinkProfile ()
   oyOptions_SetFromText( &options, OY_CMM_STD"/context", "lcm2", OY_CREATE_NEW );
   oyConversion_s *cc = oyConversion_CreateBasicPixels( in, out, options, 0 );
   oyFilterGraph_s * graph = NULL;
+  oyFilterNode_s * node = NULL;
   oyBlob_s * blob = NULL;
   int error = 0;
   const char * fn = NULL,
@@ -1547,7 +1547,6 @@ oyTESTRESULT_e testDeviceLinkProfile ()
 
   memset( buf, 0, sizeof(double)*24);
 
-  oyFilterNode_Release( &node );
   /*oyConversion_RunPixels( cc, 0 );*/
 
   if(cc)
@@ -3318,13 +3317,11 @@ oyTESTRESULT_e testCMMnmRun ()
          * buf_out = &d[3];
   oyDATATYPE_e buf_type_in = oyDOUBLE,
                buf_type_out = oyDOUBLE;
-  oyFilterNode_s * node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", options, NULL );;
-  const char * reg = oyFilterNode_GetRegistration( node );
-  uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyProfile_s * p_in = prof,
               * p_out = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
 
-  oyFilterNode_Release( &node );
 
   for(i = 0; i < n*100; ++i)
   if(error <= 0)
@@ -3355,7 +3352,7 @@ oyTESTRESULT_e testCMMnmRun ()
       error = oyFilterNode_SetData( in, (oyStruct_s*)input, 0, 0 );
 
     if(error <= 0)
-      out = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", options, NULL );;
+      out = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", options, NULL );
     if(error <= 0)
       error = oyFilterNode_SetData( out, (oyStruct_s*)output, 0, 0 );
     if(error <= 0)
@@ -3764,14 +3761,11 @@ oyTESTRESULT_e testNcl2()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
   int i, error = 0;
-  oyFilterNode_s * node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", NULL, NULL );;
-  const char * reg = oyFilterNode_GetRegistration( node );
-  uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyProfile_s * p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, icc_profile_flags, NULL );
   oyNamedColor_s * ncl = 0;
   oyNamedColors_s * colors = oyNamedColors_New(0);
-
-  oyFilterNode_Release( &node );
 
   oyNamedColors_SetPrefix( colors, "test" );
   oyNamedColors_SetSuffix( colors, "color" );
@@ -3818,9 +3812,8 @@ oyTESTRESULT_e testNcl2()
 oyTESTRESULT_e testImagePixel()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
-  oyFilterNode_s * node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", NULL, NULL );;
-  const char * reg = oyFilterNode_GetRegistration( node );
-  uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyProfile_s * p_lab = oyProfile_FromStd( oyEDITING_LAB, icc_profile_flags, NULL );
   oyProfile_s * p_web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL );
   oyProfile_s /** p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),*/
@@ -3837,8 +3830,6 @@ oyTESTRESULT_e testImagePixel()
   oyImage_s *input, *output;
 
   fprintf(stdout, "\n" );
-
-  oyFilterNode_Release( &node );
 
   double clck = oyClock();
   p_in = p_web;
@@ -4172,9 +4163,8 @@ oyTESTRESULT_e testImagePixel()
 oyTESTRESULT_e testConversion()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
-  oyFilterNode_s * node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", NULL, NULL );;
-  const char * reg = oyFilterNode_GetRegistration( node );
-  uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyProfile_s * p_lab = oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, NULL );
   oyProfile_s * p_web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL );
   oyProfile_s /** p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),*/
@@ -4226,7 +4216,7 @@ oyTESTRESULT_e testConversion()
   cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
   cc_graph = oyConversion_GetGraph( cc );
   icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
-  reg = oyFilterNode_GetRegistration( icc );
+  const char * reg = oyFilterNode_GetRegistration( icc );
   
   if(reg && strstr(reg, "lcm2"))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,

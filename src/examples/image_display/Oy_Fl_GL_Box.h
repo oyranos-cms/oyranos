@@ -225,15 +225,11 @@ public:
                                        oyOptions_s       * cc_options )
   {
     int icc_profile_flags = 0;
-    oyFilterNode_s * node;
-    const char * reg;
     oyImage_s * image = 0;
     oyJob_s * job = (oyJob_s*) calloc(sizeof(oyJob_s),1);
 
-    node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
-                                     cc_options, NULL );
-    reg = oyFilterNode_GetRegistration( node );
-    icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
+    icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                "//" OY_TYPE_STD "/icc_color", cc_options, 0 );
 
     job->work = loadImageName;
     job->finish = finishImageName;

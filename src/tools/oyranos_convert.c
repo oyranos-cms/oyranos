@@ -347,21 +347,12 @@ int main( int argc , char** argv )
   }
 #endif
 
-  {
-    oyFilterNode_s * node;
-    const char * reg;
+  if(node_name)
+    oyOptions_SetFromText( &module_options, OY_DEFAULT_CMM_CONTEXT,
+                           node_name, OY_CREATE_NEW );
 
-    if(node_name)
-      oyOptions_SetFromText( &module_options, OY_DEFAULT_CMM_CONTEXT,
-                             node_name, OY_CREATE_NEW );
-
-    node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", module_options, NULL );
-    reg = oyFilterNode_GetRegistration( node );
-
-    icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
-
-    oyFilterNode_Release( &node );
-  }
+  icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                            "//" OY_TYPE_STD "/icc_color", module_options, 0 );
 
   if(output_profile || device_link)
   {

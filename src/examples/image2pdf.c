@@ -58,8 +58,6 @@ int main (int argc, char ** argv)
   oyProfile_s * monitor, * print, * output;
   oyConversion_s * to_output = 0;
   oyConfig_s * device = 0;
-  oyFilterNode_s * node;
-  const char * reg;
   uint32_t icc_profile_flags;
 
   if(argc < 2)
@@ -98,10 +96,8 @@ int main (int argc, char ** argv)
   if(status) return 1;
 
   /* select profiles matching actual capabilities */
-  node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", NULL, NULL );
-  reg = oyFilterNode_GetRegistration( node );
-  icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
-  oyFilterNode_Release( &node );
+  icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                            "//" OY_TYPE_STD "/icc_color", NULL, 0 );
 
   /*  The monitor profile is located in the Xserver. For details see:
    *  http://www.freedesktop.org/wiki/Specifications/icc_profiles_in_x_spec
