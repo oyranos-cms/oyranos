@@ -2015,6 +2015,9 @@ uint32_t oyICCProfileSelectionFlagsFromRegistration (
 {
   uint32_t profile_flags = 0;
 
+  if(!registration)
+    return profile_flags;
+
   if(strstr( registration, "icc_version_2") != NULL)
     profile_flags = OY_ICC_VERSION_2;
   if(strstr( registration, "icc_version_4") != NULL)
