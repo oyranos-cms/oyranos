@@ -2886,6 +2886,269 @@ OYAPI char * OYEXPORT
   return text;
 }
 
+char *       oyGetFilterNodeKey      ( const char        * base_key,
+                                       int                 select_core )
+{
+  char * key_name = NULL;
+  const char * key = "renderer";
+
+  if(base_key)
+  {
+    if(select_core)
+      key = "context";
+
+    oyStringAddPrintf( &key_name, oyAllocateFunc_, oyDeAllocateFunc_,
+                       "%s" OY_SLASH "%s", base_key, key );
+  }
+
+  return key_name;
+}
+
+/** Function oyGetFilterNodeRegFromDB
+ *  @brief   Get a default FilterNode from DB
+ *  @internal
+ *
+ *  The stored value will contain a registration pattern string.
+ *
+ *  @param         db_base_key         the CMM node to look up
+ *  @param         select_core         select core oyCMMapi4_s
+ *  @param         flags               oySOURCE_DATA for persistent DB only settings, oySOURCE_FILTER for Oyranos inbuild default
+ *  @param         allocate_func       user allocator
+ *  @return                            a registration pattern to match a CMM registration string
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/07/17
+ *  @since   2014/07/17 (Oyranos: 0.9.6)
+ */
+char *       oyGetFilterNodeRegFromDB( const char        * db_base_key,
+                                       int                 select_core,
+                                       uint32_t            flags,
+                                       oyAlloc_f           allocate_func )
+{
+  char* key_name = oyGetFilterNodeKey( db_base_key, select_core );
+  char * name = NULL;
+
+  DBG_PROG_START
+
+  DBG_PROG3_S( "params db_base_key = %s select_core = %d flags = %d", oyNoEmptyString_m_(db_base_key), select_core, flags )
+
+  if(db_base_key)
+  {
+    if(key_name &&
+       (!flags || flags & oySOURCE_DATA))
+    {
+      name = oyGetKeyString_( key_name, allocate_func );
+    }
+
+  } else
+      WARNc_S( "db_base_key arg missed" );
+
+  oyFree_m_( key_name );
+
+  DBG_PROG_ENDE
+  return name;
+}
+
+/** Function oyGetFilterNodeRegFromOptions
+ *  @brief   Get a default FilterNode registration from options
+ *  @internal
+ *
+ *  The returned value will contain a registration pattern string.
+ *
+ *  @param         base_pattern        the basic pattern to search in the options
+ *  @param         select_core         select core 1 - oyCMMapi4_s else 0 - oyCMMapi7_s
+ *  @param         options             the options to search in
+ *  @param         allocate_func       user allocator
+ *  @return                            a registration pattern to match a CMM registration string
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/07/17
+ *  @since   2014/07/17 (Oyranos: 0.9.6)
+ */
+char *       oyGetFilterNodeRegFromOptions(
+                                       const char        * base_pattern,
+                                       int                 select_core,
+                                       oyOptions_s       * options,
+                                       oyAlloc_f           allocate_func )
+{
+  char * name = NULL;
+  const char * module = NULL;
+  char * key_name = oyGetFilterNodeKey( base_pattern, select_core );
+
+  if(!base_pattern)
+  {
+    WARNc_S( "base_pattern arg is missed" );
+    return NULL;
+  }
+
+  module = oyOptions_FindString( options, key_name, NULL );
+
+  if(!module)
+    return NULL;
+  else if(strchr(module, '/'))
+  {
+    char * t = NULL;
+    oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                       "//" OY_TYPE_STD "/%s", module );
+    name = oyStringCopy( t, allocate_func );
+    oyFree_m_(t);
+
+  } else
+    name = oyStringCopy( module, allocate_func );
+
+  oyFree_m_( key_name );
+
+  return name;
+}
+
+/** Function oyGetFilterNodeDefaultPatternFromPolicy
+ *  @brief   Get a default FilterNode registration from a node type module
+ *  @internal
+ *
+ *  The returned value will contain a registration pattern string.
+ *
+ *  @param         base_pattern        the basic pattern to search in the options
+ *  @param         select_core         select core 1 - oyCMMapi4_s else 0 - oyCMMapi7_s
+ *  @param         options             the options to search in
+ *  @param         allocate_func       user allocator
+ *  @return                            a registration pattern to match a CMM registration string
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/07/17
+ *  @since   2014/07/17 (Oyranos: 0.9.6)
+ */
+char *       oyGetFilterNodeDefaultPatternFromPolicy (
+                                       const char        * base_pattern,
+                                       int                 select_core,
+                                       oyAlloc_f           allocate_func )
+{
+  char * name = NULL;
+  char * key_name = oyGetFilterNodeKey( base_pattern, select_core ),
+       * pattern = key_name;
+
+  if(!base_pattern)
+  {
+    WARNc_S( "base_pattern arg is missed" );
+    return NULL;
+  }
+
+  oyCMMapiFilters_s * apis;
+  int apis_n = 0, i;
+  oyCMMapi9_s_ * cmm_api9_ = 0;
+  char * class_name, * api_reg;
+
+  class_name = oyFilterRegistrationToText( pattern, oyFILTER_REG_APPLICATION,0);
+  api_reg = oyStringCopy_("///", oyAllocateFunc_ );
+  STRING_ADD( api_reg, class_name );
+  oyFree_m_( class_name );
+
+  apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S,
+                               oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
+                               0,0 );
+  oyFree_m_( api_reg );
+  apis_n = oyCMMapiFilters_Count( apis );
+  for(i = 0; i < apis_n; ++i)
+  {
+    cmm_api9_ = (oyCMMapi9_s_*) oyCMMapiFilters_Get( apis, i );
+
+    if(oyFilterRegistrationMatch( cmm_api9_->pattern, pattern, 0 ))
+    {
+      if(cmm_api9_->oyCMMGetDefaultPattern)
+        name = cmm_api9_->oyCMMGetDefaultPattern( base_pattern, 0,
+                                                  select_core, oyAllocateFunc_ );
+      if(!name)
+        WARNc2_S( "%s %s",_("error in module:"), cmm_api9_->registration );
+    }
+
+    if(cmm_api9_->release)
+      cmm_api9_->release( (oyStruct_s**)&cmm_api9_ );
+  }
+  oyCMMapiFilters_Release( &apis );
+
+  oyFree_m_( key_name );
+
+  return name;
+}
+
+
+
+/** Function oyFilterNode_FromOptions
+ *  @brief   Create a FilterNode from options and fallbacks
+ *
+ *  The returned object will be created from the found registration pattern strings.
+ *  The first pattern will be searched in the options argument. If that fails
+ *  the db_base_key will be used to ask the Oyranos DB for context and 
+ *  renderer patterns. In case that fails a policy module will be asked for
+ *  a default through the base_pattern.
+ *
+ *  @param         db_base_key         the Oyranos DB basic key, which will appended by "context" and "renderer"; optional
+ *  @param         base_pattern        the basic pattern to search in the options and to be used as fallback
+ *  @param         options             the options to search in for the base_pattern and get "context" and "renderer" keys
+ *  @param         object              the optional object
+ *  @return                            a registration pattern to match a CMM registration string
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/07/17
+ *  @since   2014/07/17 (Oyranos: 0.9.6)
+ */
+oyFilterNode_s *   oyFilterNode_FromOptions (
+                                       const char        * db_base_key,
+                                       const char        * base_pattern,
+                                       oyOptions_s       * options,
+                                       oyObject_s          object )
+{
+  oyFilterCore_s * core = NULL;
+  oyFilterNode_s * node = NULL;
+  char * pattern = NULL;
+  int select_core = 1;
+
+  pattern = oyGetFilterNodeRegFromOptions( base_pattern, select_core, options,
+                                           oyAllocateFunc_ );
+  if(!pattern && db_base_key)
+  {
+    pattern = oyGetFilterNodeRegFromDB( db_base_key, select_core,
+                                        0, oyAllocateFunc_ );
+    if(pattern && !pattern[0])
+      oyFree_m_(pattern);
+  }
+  if(!pattern)
+    pattern = oyGetFilterNodeDefaultPatternFromPolicy ( base_pattern,
+                                                        select_core,
+                                                        oyAllocateFunc_ );
+  core = oyFilterCore_NewWith( pattern, options, object );
+  if(!core)
+    oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*) node,
+                     OY_DBG_FORMAT_ "could not create new core: %s %s",
+                     OY_DBG_ARGS_,
+                     oyNoEmptyString_m_(pattern),
+                     oyNoEmptyString_m_(base_pattern) );
+
+  oyFree_m_( pattern );
+
+  select_core = 0;
+  pattern = oyGetFilterNodeRegFromOptions( base_pattern, select_core, options,
+                                           oyAllocateFunc_ );
+  if(!pattern && db_base_key)
+  {
+    pattern = oyGetFilterNodeRegFromDB( db_base_key, select_core,
+                                        0, oyAllocateFunc_ );
+    if(pattern && !pattern[0])
+      oyFree_m_(pattern);
+  }
+  if(!pattern)
+    pattern = oyGetFilterNodeDefaultPatternFromPolicy ( base_pattern,
+                                                        select_core,
+                                                        oyAllocateFunc_ );
+  node = oyFilterNode_Create( pattern, core, object );
+
+  oyFree_m_( pattern );
+  oyFilterCore_Release( &core );
+
+  return node;
+}
+
+
+
 /** \addtogroup misc Miscellaneous
 
  *  @{
