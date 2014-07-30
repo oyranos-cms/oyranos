@@ -350,20 +350,12 @@ int main( int argc , char** argv )
   {
     oyFilterNode_s * node;
     const char * reg;
-    char * t = NULL;
 
     if(node_name)
       oyOptions_SetFromText( &module_options, OY_DEFAULT_CMM_CONTEXT,
                              node_name, OY_CREATE_NEW );
 
-    if(!(node_name && strchr(node_name, '/')))
-    {
-      oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_,
-                         "//" OY_TYPE_STD "/%s", node_name ? node_name : "icc" );
-      node_name = t; t = NULL;
-    }
-
-    node = oyFilterNode_NewWith( node_name, NULL, 0 );
+    node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", module_options, NULL );
     reg = oyFilterNode_GetRegistration( node );
 
     icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
