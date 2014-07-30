@@ -1073,7 +1073,7 @@ oyOptions_s* lcm2Filter_CmmIccValidateOptions
 
   if(!error)
     error = oyFilterRegistrationMatch(oyFilterCore_GetRegistration(filter),
-                                      "//"OY_TYPE_STD"/icc",
+                                      "//"OY_TYPE_STD"/icc_color",
                                       oyOBJECT_CMM_API4_S);
 
   *result = error;
@@ -2179,7 +2179,7 @@ char * lcm2FilterNode_GetText        ( oyFilterNode_s    * node,
 
     /* pick inbuild defaults */
     opts_tmp2 = oyOptions_FromText( lcm2_extra_options, 0, NULL );
-    opts_tmp = oyOptions_ForFilter( "//" OY_TYPE_STD "/icc", 0,
+    opts_tmp = oyOptions_ForFilter( "//" OY_TYPE_STD "/icc_color", 0,
                                 oyOPTIONSOURCE_FILTER | OY_SELECT_COMMON , 0 );
     options = oyOptions_FromBoolean( opts_tmp, opts_tmp2, oyBOOLEAN_UNION,NULL);
     oyOptions_Release( &opts_tmp );
@@ -2802,12 +2802,12 @@ char lcm2_extra_options[] = {
   <" OY_TOP_SHARED ">\n\
    <" OY_DOMAIN_INTERNAL ">\n\
     <" OY_TYPE_STD ">\n\
-     <" "icc" ">\n\
+     <" "icc_color" ">\n\
       <cmyk_cmyk_black_preservation.advanced>0</cmyk_cmyk_black_preservation.advanced>\n\
       <precalculation.advanced>0</precalculation.advanced>\n\
       <precalculation_curves.advanced>0</precalculation_curves.advanced>\n\
       <adaption_state.advanced>1.0</adaption_state.advanced>\n\
-     </" "icc" ">\n\
+     </" "icc_color" ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
   </" OY_TOP_SHARED ">\n"
@@ -2841,7 +2841,7 @@ int lcm2GetOptionsUI                 ( oyCMMapiFilter_s   * module,
   A(       _("Extended Options"));
   A(                         ":</xf:label>\n");
   A("\
-     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc/cmyk_cmyk_black_preservation\">\n\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc_color/cmyk_cmyk_black_preservation\">\n\
       <xf:label>" );
   A(          _("Black Preservation"));
   A(                              "</xf:label>\n\
@@ -2867,7 +2867,7 @@ int lcm2GetOptionsUI                 ( oyCMMapiFilter_s   * module,
       </xf:choices>\n\
      </xf:select1>\n");
   A("\
-     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc/precalculation\">\n\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc_color/precalculation\">\n\
       <xf:label>" );
   A(          _("Optimization"));
   A(                              "</xf:label>\n\
@@ -2897,7 +2897,7 @@ int lcm2GetOptionsUI                 ( oyCMMapiFilter_s   * module,
       </xf:choices>\n\
      </xf:select1>\n");
   A("\
-     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc/precalculation_curves\">\n\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc_color/precalculation_curves\">\n\
       <xf:label>" );
   A(          _("Curves for Optimization"));
   A(                              "</xf:label>\n\
@@ -2919,7 +2919,7 @@ int lcm2GetOptionsUI                 ( oyCMMapiFilter_s   * module,
       </xf:choices>\n\
      </xf:select1>\n");
   A("\
-     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc/adaption_state\">\n\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc_color/adaption_state\">\n\
       <xf:label>" );
   A(          _("Adaptation State"));
   A(                              "</xf:label>\n\
@@ -3261,7 +3261,7 @@ oyCMMapi6_s_ lcm2_api6_cmm = {
   lcm2CMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc._" CMM_NICK "._CPU." oyCOLOR_ICC_DEVICE_LINK "_" lcm2TRANSFORM,
+  "icc_color._" CMM_NICK "._CPU." oyCOLOR_ICC_DEVICE_LINK "_" lcm2TRANSFORM,
 
   CMM_VERSION,
   CMM_API_VERSION,                  /**< int32_t module_api[3] */
@@ -3455,7 +3455,7 @@ const char * lcm2InfoGetText         ( const char        * select,
          if(type == oyNAME_NICK)
       return "help";
     else if(type == oyNAME_NAME)
-      return _("The lcms \"color.icc\" filter is a one dimensional color conversion filter. It can both create a color conversion context, some precalculated for processing speed up, and the color conversion with the help of that context. The adaption part of this filter transforms the Oyranos color context, which is ICC device link based, to the internal lcms format.");
+      return _("The lcms \"color_icc\" filter is a one dimensional color conversion filter. It can both create a color conversion context, some precalculated for processing speed up, and the color conversion with the help of that context. The adaption part of this filter transforms the Oyranos color context, which is ICC device link based, to the internal lcms format.");
     else
       return _("The following options are available to create color contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract color profiles.\n The following Oyranos options are supported: \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], \"precalculation\": [0 - normal; 1 - cmsFLAGS_NOOPTIMIZE; 2 - cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], \"precalculation_curves\": [0 - none; 1 - cmsFLAGS_CLUT_POST_LINEARIZATION + cmsFLAGS_CLUT_PRE_LINEARIZATION] and \"adaption_state\": [0.0 - not adapted to screen, 1.0 - full adapted to screen]." );
   }

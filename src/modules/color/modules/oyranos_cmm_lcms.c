@@ -875,7 +875,7 @@ oyOptions_s* lcmsFilter_CmmIccValidateOptions
 
   if(!error)
     error = oyFilterRegistrationMatch(oyFilterCore_GetRegistration(filter),
-                                      "//"OY_TYPE_STD"/icc",
+                                      "//"OY_TYPE_STD"/icc_color",
                                       oyOBJECT_CMM_API4_S);
 
   *result = error;
@@ -1736,7 +1736,7 @@ char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
 
     /* pick inbuild defaults */
     opts_tmp2 = oyOptions_FromText( lcms_extra_options, 0, NULL );
-    opts_tmp = oyOptions_ForFilter( "//" OY_TYPE_STD "/icc", 0,
+    opts_tmp = oyOptions_ForFilter( "//" OY_TYPE_STD "/icc_color", 0,
                                 oyOPTIONSOURCE_FILTER | OY_SELECT_COMMON , 0 );
     options = oyOptions_FromBoolean( opts_tmp, opts_tmp2, oyBOOLEAN_UNION,NULL);
     oyOptions_Release( &opts_tmp );
@@ -2198,10 +2198,10 @@ char lcms_extra_options[] = {
   <" OY_TOP_SHARED ">\n\
    <" OY_DOMAIN_INTERNAL ">\n\
     <" OY_TYPE_STD ">\n\
-     <" "icc" ">\n\
+     <" "icc_color" ">\n\
       <cmyk_cmyk_black_preservation.advanced>0</cmyk_cmyk_black_preservation.advanced>\n\
       <precalculation.advanced>0</precalculation.advanced>\n\
-     </" "icc" ">\n\
+     </" "icc_color" ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
   </" OY_TOP_SHARED ">\n"
@@ -2235,7 +2235,7 @@ int lcmsGetOptionsUI                 ( oyCMMapiFilter_s   * module,
   A(       _("Extended Options"));
   A(                         ":</xf:label>\n");
   A("\
-     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc/cmyk_cmyk_black_preservation\">\n\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc_color/cmyk_cmyk_black_preservation\">\n\
       <xf:label>" );
   A(          _("Black Preservation"));
   A(                              "</xf:label>\n\
@@ -2261,7 +2261,7 @@ int lcmsGetOptionsUI                 ( oyCMMapiFilter_s   * module,
       </xf:choices>\n\
      </xf:select1>\n");
   A("\
-     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc/precalculation\">\n\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc_color/precalculation\">\n\
       <xf:label>" );
   A(          _("Optimization"));
   A(                              "</xf:label>\n\
@@ -2612,7 +2612,7 @@ oyCMMapi6_s_ lcms_api6_cmm = {
   lcmsCMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc._" CMM_NICK "._CPU." oyCOLOR_ICC_DEVICE_LINK "_" lcmsTRANSFORM,
+  "icc_color._" CMM_NICK "._CPU." oyCOLOR_ICC_DEVICE_LINK "_" lcmsTRANSFORM,
 
   CMM_VERSION,
   CMM_API_VERSION,                  /**< int32_t module_api[3] */

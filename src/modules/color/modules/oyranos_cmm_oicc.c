@@ -145,10 +145,10 @@ char oicc_default_color_icc_options[] = {
       <rendering_intent_proof.advanced>0</rendering_intent_proof.advanced>\n\
       <rendering_gamut_warning.advanced>0</rendering_gamut_warning.advanced>\n\
      </behaviour>\n\
-     <cmm>\n\
+     <icc_color>\n\
       <context.advanced>///lcm2</context.advanced>\n\
       <renderer.advanced>///lcm2</renderer.advanced>\n\
-     </cmm>\n\
+     </icc_color>\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_STD ">\n\
   </" OY_TOP_SHARED ">\n"
@@ -668,7 +668,7 @@ void     oiccFilterGraph_CountNodes  ( oyFilterGraph_s   * g,
   {
     node = oyFilterGraph_GetNode( g, i, "", NULL );
     if(oyFilterRegistrationMatch( oyFilterNode_GetRegistration(node),
-                                  "//" OY_TYPE_STD "/icc", 0 ))
+                                  "//" OY_TYPE_STD "/icc_color", 0 ))
     {
       if(verbose)
         oicc_msg( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
@@ -813,7 +813,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
           {
             /* stop at the first hit if "icc" */
             if( oyFilterRegistrationMatch( oyFilterNode_GetRegistration( node ),
-                                           "//" OY_TYPE_STD "/icc", 0))
+                                           "//" OY_TYPE_STD "/icc_color", 0))
             {
               const char * reg = oyFilterNode_GetRegistration( node );
               uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
@@ -855,7 +855,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                 val = oyProfile_GetText( proof, oyNAME_NAME );
                 oyProfiles_MoveIn( proofs, &proof, -1 );
                 oyOptions_MoveInStruct( &f_options,
-                                    OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD "/icc/profiles_simulation",
+                                    OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD "/icc_color/profiles_simulation",
                                         (oyStruct_s**)& proofs,
                                         OY_CREATE_NEW );
                 if(verbose)
@@ -916,6 +916,14 @@ char * oiccCMMRegistrationToName     ( const char        * registration,
     return oyCMMRegistrationToName( registration, oyCMM_RENDERER, name_type, flags, allocate_func );
 }
 
+char * oiccCMMGetDefaultPattern      ( const char        * base_pattern,
+                                       uint32_t            flags,
+                                       int                 select_core,
+                                       oyAlloc_f           allocate_func )
+{
+  return oyStringCopy( "//" OY_TYPE_STD "/icc_color.lcm2", allocate_func );
+}
+
 /** @instance oicc_api9
  *  @brief    oicc oyCMMapi9_s implementation
  *
@@ -966,7 +974,10 @@ oyCMMapi9_s_  oicc_api9 = {
   oiccCMMGetFallback,
 
   /** oyCMMRegistrationToName_f oyCMMRegistrationToName; get pattern from registration */
-  oiccCMMRegistrationToName
+  oiccCMMRegistrationToName,
+
+  /** oyCMMGetDefaultPattern_f oyCMMGetDefaultPattern; get the default pattern for a module group */
+  oiccCMMGetDefaultPattern
 };
 
 

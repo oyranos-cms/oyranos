@@ -406,7 +406,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
       {
         oyFilterPlug_s * input_node_plug = oyFilterNode_GetPlug( input_node, 0);
         /*if(oyFilterRegistrationMatch( input_node->core->registration_,
-                                      "//" OY_TYPE_STD "/icc", 0 ))*/
+                                      "//" OY_TYPE_STD "/icc_color", 0 ))*/
         if(input_node_plug)
         {
           oyOptions_s * src_node_tags;
@@ -641,7 +641,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
     /* set as well the ICC node previous in the DAG */
     if(oyFilterRegistrationMatch( oyFilterNode_GetRegistration(input_node),
-                                      "//" OY_TYPE_STD "/icc", 0 ))
+                                      "//" OY_TYPE_STD "/icc_color", 0 ))
       oyFilterNode_SetData( input_node, (oyStruct_s*)image, 0, 0 );
 
     oyImage_Release( &image );
