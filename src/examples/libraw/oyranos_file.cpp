@@ -258,7 +258,7 @@ int main(int argc, char ** argv)
   oyFilterNode_s * node;
   const char * reg;
 
-  node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc", NULL, 0 );
+  node = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   reg = oyFilterNode_GetRegistration( node );
   icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
 
