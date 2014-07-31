@@ -158,6 +158,15 @@ OYAPI oyProfile_s * OYEXPORT
  *
  *  @see oyProfile_FromFile() and oyProfile_FromMD5()
  *
+ *  \verbatim
+    // get editing "rgb" profile for selected / configured CMM
+    oyOptions_s * options = NULL; // the selection options can come from command line
+    uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                                                        "//" OY_TYPE_STD "/icc_color",
+                                                                        options, 0 );
+    oyProfile_s * p = oyProfile_FromName( "rgb", icc_profile_flags, NULL );
+    \endverbatim
+ *
  *  @version Oyranos: 0.9.6
  *  @since   2014/05/06 (Oyranos: 0.9.6)
  *  @date    2014/05/06

@@ -285,8 +285,6 @@ oyConversion_s * oyConversion_CreateFromImage (
   int error = 0;
   oyConversion_s * conversion = 0;
   oyOptions_s * options = 0;
-  const char * module = oyOptions_FindString( module_options, OY_DEFAULT_CMM_CONTEXT, NULL );
-  char * icc_module = 0;
   oyImage_s * image_out = 0;
   int layout_out = 0;
   oyProfile_s * profile_in;
@@ -305,21 +303,13 @@ oyConversion_s * oyConversion_CreateFromImage (
   /* set the image buffer */
   oyFilterNode_SetData( in, (oyStruct_s*)image_in, 0, 0 );
 
-  if(!module)
-    icc_module = oyGetCMMPattern( oyCMM_CONTEXT, 0, oyAllocateFunc_ );
-  else if(strchr(module, '/'))
-    oyStringAddPrintf( &icc_module, oyAllocateFunc_, oyDeAllocateFunc_,
-                       "//" OY_TYPE_STD "/%s", module );
-  else
-    icc_module = oyStringCopy( module, oyAllocateFunc_ );
-
   /* create a new CMM filter node */
-  out = oyFilterNode_NewWith( icc_module, module_options, obj );
+  out = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", module_options, obj );
   /* append the new to the previous one */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
   if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", icc_module );
+    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/icc_color" );
 
   layout_out = oyDataType_m(buf_type_out);
   profile_in = oyImage_GetProfile( image_in );
@@ -357,7 +347,6 @@ oyConversion_s * oyConversion_CreateFromImage (
   oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc_color", flags,
                         options );
   oyOptions_Release( &options );
-  oyFree_m_( icc_module );
 
   return conversion;
 }

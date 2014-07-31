@@ -174,8 +174,6 @@ int          oyFilterNode_SetFromPattern_ (
     {
       oyFilterCore_Release( (oyFilterCore_s**) &node->core );
 
-      oyObject_SetName( core->oy_, pattern, oyNAME_DESCRIPTION );
-
       node->core = core;
       return 0;
     }
@@ -261,7 +259,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
           if(error <= 0)
           {
             const char * pattern = oyOptions_FindString( node->core->options_,
-                                                   "///cmm/context", NULL );
+                                                         "////context", NULL );
             if(pattern &&
                !oyFilterRegistrationMatch( core_->registration_, pattern, 0 ))
             {
@@ -327,11 +325,11 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
 
                 if(!ptr || !size)
                 {
-                  const char * ct = oyObject_GetName( core_->oy_,
-                                                      oyNAME_DESCRIPTION );
+                  oyOption_s * ct = oyOptions_Find( core_->options_,
+                                                    "////context" );
                   oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*) node,
                     OY_DBG_FORMAT_ "device link creation failed", OY_DBG_ARGS_);
-                  if(!ct)
+                  if(!(oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT))
                   {
                     char * pattern = oyFilterNode_GetFallback_( node, 1 );
 

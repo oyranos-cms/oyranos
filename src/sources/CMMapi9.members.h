@@ -26,3 +26,6 @@
 
   /** get name from module registration */
   oyCMMRegistrationToName_f oyCMMRegistrationToName;
+
+  /** get the default pattern for a module group */
+  oyCMMGetDefaultPattern_f oyCMMGetDefaultPattern;

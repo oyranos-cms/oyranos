@@ -25,15 +25,17 @@ int oyLowerStrcmpWrap (const void * a_, const void * b_)
  *  @verbatim
     // Put all ICC Display Class profiles in "profiles"
     icSignature profile_class = icSigDisplayClass;
-    int flags = 0;
     oyProfile_s * pattern = 0;
     oyProfiles_s * patterns = oyProfiles_New( 0 ),
                  * profiles = 0;
+    uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
+                                      OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                                                     NULL, 0 );
 
     pattern = oyProfile_FromSignature( profile_class, oySIGNATURE_CLASS, 0 );
     oyProfiles_MoveIn( patterns, &pattern, -1 );
     
-    profiles = oyProfiles_Create( patterns, flags, 0 );
+    profiles = oyProfiles_Create( patterns, icc_profile_flags, 0 );
     oyProfiles_Release( &patterns );@endverbatim
  *
  *  @version Oyranos: 0.9.6
@@ -172,8 +174,11 @@ OYAPI oyProfiles_s * OYEXPORT
         size, i;
     oyProfile_s * temp_prof = 0;
     oyProfiles_s * iccs = 0;
-
-    iccs = oyProfiles_ForStd( type, &current, 0 );
+    uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
+                                      OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                                                     NULL, 0 );
+ 
+    iccs = oyProfiles_ForStd( type, icc_profile_flags, &current, 0 );
 
     size = oyProfiles_Count(iccs);
     for( i = 0; i < size; ++i)
@@ -402,7 +407,11 @@ OYAPI oyProfiles_s * OYEXPORT
  *
  *  @verbatim
     // Get all ICC profiles, which can be used as assumed RGB profile
-    oyProfiles_s * p_list = oyProfiles_ForStd( oyASSUMED_RGB, 0,0 );
+    uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
+                                      OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                                                     NULL, 0 );
+    oyProfiles_s * p_list = oyProfiles_ForStd( oyASSUMED_RGB,
+                                               icc_profile_flags, 0,0 );
     int32_t * rank_list = (int32_t*) malloc( oyProfiles_Count(p_list) *
                                              sizeof(int32_t) );
     // Sort the profiles according to eaches match to a given device

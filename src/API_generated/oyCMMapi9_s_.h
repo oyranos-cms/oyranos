@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/07/07
+ *  @date     2014/07/31
  */
 
 
@@ -151,7 +151,6 @@ typedef char * (*oyCMMGetDefaultPattern_f) (
                                        uint32_t            flags,
                                        int                 select_core,
                                        oyAlloc_f           allocate_func );
-
 
 /* } Include "CMMapi9.private.h" */
 

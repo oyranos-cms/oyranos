@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/04/08
+ *  @date     2014/07/31
  */
 
 
@@ -462,7 +462,7 @@ OYAPI oyProfiles_s * OYEXPORT
     uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
                                       OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
                                                                      NULL, 0 );
-
+ 
     iccs = oyProfiles_ForStd( type, icc_profile_flags, &current, 0 );
 
     size = oyProfiles_Count(iccs);
