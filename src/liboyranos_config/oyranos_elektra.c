@@ -741,14 +741,19 @@ oyGetKeyString_ ( const char       *key_name,
   Key * key = 0;
   int success = 0;
 #if KDB_VERSION_NUM >= 800
-  Key * error_key = keyNew(KEY_END);
-  KDB * oy_handle_ = kdbOpen(error_key);
+  Key * error_key;
+  KDB * oy_handle_;
 #endif
 
   if( !key_name || strlen( key_name ) > MAX_PATH-1 )
   { WARNc_S("wrong string format given");
     goto clean3;
   }
+
+#if KDB_VERSION_NUM >= 800
+  error_key = keyNew(KEY_END);
+  oy_handle_ = kdbOpen(error_key);
+#endif
 
   name = (char*) oyAllocateWrapFunc_( MAX_PATH, allocate_func );
   full_key_name = (char*) oyAllocateFunc_ (MAX_PATH);
