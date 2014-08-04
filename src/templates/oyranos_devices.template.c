@@ -756,13 +756,17 @@ OYAPI int  OYEXPORT
  *  oyDeviceAskProfile2() instead.
  *
  *  @param         device              the device
- *  @param         options             options passed to the backend
+ *  @param         options             
+ *                                     - options passed to the backend
+ *                                     - "///icc_profile_flags" with a int 
+ *                                       containing ::OY_ICC_VERSION_2 or
+ *                                       ::OY_ICC_VERSION_4
  *  @param         profile             the device's ICC profile
  *  @return                            error
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
  *  @since   2009/02/08 (Oyranos: 0.1.10)
- *  @date    2009/02/09
+ *  @date    2014/08/04
  */
 OYAPI int  OYEXPORT
            oyDeviceGetProfile        ( oyConfig_s        * device,
@@ -789,7 +793,10 @@ OYAPI int  OYEXPORT
   /** As a last means oyASSUMED_WEB is delivered. */
   if(!*profile)
   {
-    *profile = oyProfile_FromStd( oyASSUMED_WEB, 0, 0 );
+    int32_t icc_profile_flags = 0;
+
+    oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags );
+    *profile = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
     if(error == 0)
       error = -1;
   }
