@@ -281,6 +281,29 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
               hash7 = oyFilterNode_GetHash_(node, 7);
             }
 
+            pattern = oyOptions_FindString( node->core->options_,
+                                                         "////renderer", NULL );
+            if(pattern &&
+               !oyFilterRegistrationMatch( node->api7_->registration, pattern, 0 ))
+            {
+              oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*) node,
+                               OY_DBG_FORMAT_ "create node from pattern: %s",
+                               OY_DBG_ARGS_,
+                     oyFilterNode_GetText( (oyFilterNode_s*)node,oyNAME_NICK) );
+
+              error = oyFilterNode_SetFromPattern_( node, 0, pattern );
+
+              if(error)
+              {
+                error = 1;
+                goto clean;
+              } else
+                core_ = node->core;
+
+              oyHash_Release( &hash7 );
+              hash7 = oyFilterNode_GetHash_(node, 7);
+            }
+
             /* 3. check and 3.a take*/
             cmm_ptr7 = (oyPointer_s*) oyHash_GetPointer( hash7,
                                                          oyOBJECT_POINTER_S);
