@@ -86,6 +86,7 @@ const char * Api8UiGetText           ( const char        * select,
                                        oyStruct_s        * context );
 int          tunePPDSettings_        ( const char        * profile_string, 
                                        const char        * printer_id, 
+                                       uint32_t            icc_profile_flags,
                                        ppd_file_t        * ppd);
 oyConfig_s*  getOyConfigPrinter_     ( const char        * printer_id );
 int          resetPPDChoices_        ( ppd_file_t        * ppd,
@@ -497,6 +498,9 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
                * setup_request = 0;
   static char * num = 0;
   const char * tmp = 0, * printer_name = 0;
+  int32_t icc_profile_flags = 0;
+
+  oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags );
 
   /* Initialize the CUPS server. */
   oyGetCUPSConnection();
@@ -535,7 +539,7 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
           if(!p)
           {
             tmp = oyConfig_FindString( device, "profile_name", 0 );
-            p = oyProfile_FromFile( tmp, 0, 0 );
+            p = oyProfile_FromFile( tmp, icc_profile_flags, 0 );
             tmp = 0;
           }
           if( p )
@@ -1064,6 +1068,9 @@ int CUPSgetProfiles                  ( const char        * device_name,
     oyProfile_s * p = 0;
     oyConfig_s * device = 0;
     oyRankMap * rank_map = 0;
+    int32_t icc_profile_flags = 0;
+
+    oyOptions_FindInt( user_options, "icc_profile_flags", 0, &icc_profile_flags );
 
     if(!ppd_file)
     {
@@ -1191,7 +1198,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
           /* Check to see if profile is a custom one.
              If Oyranos knows the profile, simply use the buffer. */
           if(profile_name)
-              p = oyProfile_FromFile(profile_name, 0, 0);
+              p = oyProfile_FromFile(profile_name, icc_profile_flags, 0);
 
           if( p == NULL && profile_name )
           {
@@ -1318,6 +1325,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
 int
 tunePPDSettings_(const char* profile_string, 
                  const char* printer_id, 
+                 uint32_t    icc_profile_flags,
                  ppd_file_t* ppd)
 {
     
@@ -1326,7 +1334,7 @@ tunePPDSettings_(const char* profile_string,
     const char* all_text = "";
     
     oyConfig_s* printer = getOyConfigPrinter_(printer_id);        
-    oyProfile_s* profile = oyProfile_FromFile(profile_string, 0, 0);
+    oyProfile_s* profile = oyProfile_FromFile(profile_string, icc_profile_flags, 0);
     oyProfileTag_s* tag;
 
     if(!profile)      
