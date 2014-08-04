@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/07/07
+ *  @date     2014/08/04
  */
 
 
@@ -268,6 +268,9 @@ OYAPI oyFilterCore_s *  OYEXPORT
                  oyFilterNode_GetCore( oyFilterNode_s     * node );
 OYAPI const char *  OYEXPORT
                  oyFilterNode_GetRegistration
+                                     ( oyFilterNode_s     * node );
+OYAPI const char *  OYEXPORT
+                 oyFilterNode_GetRendererRegistration
                                      ( oyFilterNode_s     * node );
 OYAPI const char *  OYEXPORT
                  oyFilterNode_GetRelatives

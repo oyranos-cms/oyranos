@@ -98,6 +98,9 @@ OYAPI const char *  OYEXPORT
                  oyFilterNode_GetRegistration
                                      ( oyFilterNode_s     * node );
 OYAPI const char *  OYEXPORT
+                 oyFilterNode_GetRendererRegistration
+                                     ( oyFilterNode_s     * node );
+OYAPI const char *  OYEXPORT
                  oyFilterNode_GetRelatives
                                      ( oyFilterNode_s     * node );
 OYAPI const char *  OYEXPORT

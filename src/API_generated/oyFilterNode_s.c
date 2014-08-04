@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/07/07
+ *  @date     2014/08/04
  */
 
 
@@ -1205,6 +1205,30 @@ OYAPI const char *  OYEXPORT
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
 
   return ((oyFilterCore_s_*)s->core)->registration_;
+}
+/** Function  oyFilterNode_GetRendererRegistration
+ *  @memberof oyFilterNode_s
+ *  @brief    Get filters registration
+ *
+ *  @param[in,out] node                filter object
+ *  @return                            the registration string
+ *
+ *  @version  Oyranos: 0.9.6
+ *  @date     2014/08/04
+ *  @since    2014/08/04 (Oyranos: 0.9.6)
+ */
+OYAPI const char *  OYEXPORT
+                 oyFilterNode_GetRendererRegistration
+                                     ( oyFilterNode_s     * node )
+{
+  oyFilterNode_s_ * s = (oyFilterNode_s_*)node;
+
+  if(!node)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
+
+  return s->api7_->registration;
 }
 /** Function  oyFilterNode_GetRelatives
  *  @memberof oyFilterNode_s
