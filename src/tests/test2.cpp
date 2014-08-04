@@ -4235,6 +4235,51 @@ oyTESTRESULT_e testConversion()
     "oyFilterNode_ToBlob( \"lcm2\" )                 " );
   }
 
+  oyBlob_Release( &blob );
+  oyOptions_Release( &options );
+
+  oyOptions_SetFromText( &options, "////renderer", "lcms", OY_CREATE_NEW );
+  oyOptions_SetFromText( &options, "////context", "lcm2", OY_CREATE_NEW );
+  cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
+  cc_graph = oyConversion_GetGraph( cc );
+  icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+  reg = oyFilterNode_GetRendererRegistration( icc );
+  
+  if(reg && strstr(reg, "lcms"))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyConversion_CreateBasicPixels( \"renderer\"=\"lcms\" )" );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyConversion_CreateBasicPixels( \"renderer\"=\"lcms\" ) %s", oyNoEmptyString_m_(reg) );
+  }
+
+  oyOptions_Release( &options );
+
+  options = oyFilterNode_GetOptions( icc, oyOPTIONATTRIBUTE_ADVANCED );
+  oyOptions_SetFromText( &options, "////renderer", "lcm2", OY_CREATE_NEW );
+  oyOptions_SetFromText( &options, "////context", "lcms", OY_CREATE_NEW );
+  blob = oyFilterNode_ToBlob( icc, NULL );
+  oyBlob_Release( &blob );
+
+  reg = oyFilterNode_GetRegistration( icc );
+  if(reg && strstr(reg, "lcms"))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyFilterNode_SetContext_( \"context\"=\"lcms\" )  " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyFilterNode_SetContext_( \"context\"=\"lcms\" ) %s  ", oyNoEmptyString_m_(reg) );
+  }
+
+  reg = oyFilterNode_GetRendererRegistration( icc );
+  if(reg && strstr(reg, "lcm2"))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyFilterNode_SetContext_( \"renderer\"=\"lcm2\" )" );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyFilterNode_SetContext_( \"renderer\"=\"lcm2\" ) %s", oyNoEmptyString_m_(reg) );
+  }
+
+  oyOptions_Release( &options );
 
   oyImage_Release( &input );
   oyImage_Release( &output );
