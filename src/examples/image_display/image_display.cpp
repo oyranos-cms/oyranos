@@ -510,6 +510,48 @@ event_handler(int e)
         found = 1;
         scale_changer -= (scale_changer-1.0)*.2;
         break;
+      case 'h':
+        opts = findOpts( "//" OY_TYPE_STD "/scale" );
+        {
+          oyConversion_s * cc = oy_widget->conversion();
+          oyImage_s * image = oyConversion_GetImage( cc, OY_INPUT );
+          double widget_height = oy_widget->h(),
+                 image_height = oyImage_GetHeight( image ),
+                 old_scale = scale;
+          oyOptions_FindDouble( opts, "//" OY_TYPE_STD "/scale/scale", 0, &old_scale );
+          scale = widget_height/image_height;
+          /* reset position to zero */
+          oy_widget->px = int((double)oy_widget->px / old_scale * scale);
+          oy_widget->py = 0;
+        }
+        found = 1;
+        fprintf(stderr, "event_handler +\n" );
+        oyOptions_SetFromDouble( &opts,
+                                   "//" OY_TYPE_STD "/scale/scale",
+                                   scale, 0, OY_CREATE_NEW );
+        oyOptions_Release( &opts );
+        break;
+      case 'w':
+        opts = findOpts( "//" OY_TYPE_STD "/scale" );
+        {
+          oyConversion_s * cc = oy_widget->conversion();
+          oyImage_s * image = oyConversion_GetImage( cc, OY_INPUT );
+          double widget_width = oy_widget->w(),
+                 image_width = oyImage_GetWidth( image ),
+                 old_scale = scale;
+          oyOptions_FindDouble( opts, "//" OY_TYPE_STD "/scale/scale", 0, &old_scale );
+          scale = widget_width/image_width;
+          /* reset position to zero */
+          oy_widget->px = int((double)oy_widget->px / old_scale * scale);
+          oy_widget->py = 0;
+        }
+        found = 1;
+        fprintf(stderr, "event_handler +\n" );
+        oyOptions_SetFromDouble( &opts,
+                                   "//" OY_TYPE_STD "/scale/scale",
+                                   scale, 0, OY_CREATE_NEW );
+        oyOptions_Release( &opts );
+        break;
       case '0':
         {
           oyConversion_s * cc = oy_widget->conversion();
