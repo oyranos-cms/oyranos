@@ -90,6 +90,57 @@ void draw_illuminant( cairo_t * cr,
                       int color,
                       uint32_t icc_profile_flags );
 
+void  printfHelp (int argc, char** argv)
+{
+  int i;
+  fprintf( stderr, "\n");
+  for(i = 0; i < argc; ++i)
+    fprintf( stderr, "%s ", argv[i]);
+  fprintf( stderr, "\n");
+  fprintf( stderr, "%s v%d.%d.%d %s\n", argv[0],
+                        OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
+                                _("is a ICC color profile grapher"));
+  fprintf( stderr, "%s:\n",               _("Usage"));
+  fprintf( stderr, "  %s\n",              _("2D Graph from profiles:"));
+  fprintf( stderr, "      %s [-o %s] [-x [-c]] [-s] [-vbowt] %s\n", argv[0],
+                          _("FILE"),_("PROFILENAMES") );
+  fprintf( stderr, "      -x \t%s\n",     _("use CIE*xyY *x*y plane for saturation line projection"));
+  fprintf( stderr, "      \t-c\t%s\n",    _("omit white line of lambert light emitters"));
+  fprintf( stderr, "      -s \t%s\n",     _("omit the spectral line"));
+  fprintf( stderr, "      -d %s\t%s\n",   _("NUMBER"), _("specify incemental increase of the thickness of the graph lines"));
+  fprintf( stderr, "\n");
+  fprintf( stderr,  "  %s\n",             _("Standard Observer 1931 2° Graph:"));
+  fprintf( stderr,  "      %s --standard-observer [-vbowt]\n", argv[0]);
+  fprintf( stderr, "      \t--no-color\t%s\n",    _("draw gray"));
+  fprintf( stderr, "\n");
+  fprintf( stderr,  "  %s\n",             _("1964 10° Observer Graph:"));
+  fprintf( stderr,  "      %s --standard-observer-64 [-vbowt]\n", argv[0]);
+  fprintf( stderr, "      \t--no-color\t%s\n",    _("draw gray"));
+  fprintf( stderr, "\n");
+  fprintf( stderr,  "  %s\n",             _("Blackbody Radiator Spectrum Graph:"));
+  fprintf( stderr,  "      %s --kelvin %s [-vbowt]\n", argv[0], _("NUMBER"));
+  fprintf( stderr, "      \t--no-color\t%s\n",    _("draw gray"));
+  fprintf( stderr, "\n");
+  fprintf( stderr,  "  %s\n",             _("Illuminant Spectrum Graph:"));
+  fprintf( stderr,  "      %s --illuminant A|D65 [-vbowt]\n", argv[0]);
+  fprintf( stderr, "      --illuminant A\t%s\n",   _("CIE A spectral power distribution"));
+  fprintf( stderr, "      --illuminant D65\t%s\n", _("CIE D65 spectral power distribution"));
+  fprintf( stderr, "      \t--no-color\t%s\n",    _("draw gray"));
+  fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",              _("General options:"));
+  fprintf( stderr, "      -v \t%s\n",     _("verbose"));
+  fprintf( stderr, "      -w %s\t%s\n",   _("NUMBER"), _("specify output image width in pixel"));
+  fprintf( stderr, "      -o %s\t%s\n",   _("FILE"),   _("specify output file name, default is output.png"));
+  fprintf( stderr, "      -b \t%s\n",     _("omit border"));
+  fprintf( stderr, "      -t %s\t%s\n",   _("NUMBER"), _("specify increase of the thickness of the graph lines"));
+  fprintf( stderr, "      -2 \t%s\n",     _("select a ICC v2 profile"));
+  fprintf( stderr, "      -4 \t%s\n",     _("select a ICC v4 profile"));
+  fprintf( stderr, "\n");
+  fprintf( stderr, _("For more informations read the man page:"));
+  fprintf( stderr, "\n");
+  fprintf( stderr, "      man oyranos-profile-graph\n");
+}
+
 int main( int argc , char** argv )
 {
   /* the functional switches */
@@ -198,52 +249,7 @@ int main( int argc , char** argv )
                         { oy_debug += 1; i=100; break;}
                         }
               default:
-                        printf("\n");
-                        for(i = 0; i < argc; ++i)
-                          printf("%s ", argv[i]);
-                        printf("\n");
-                        printf("%s v%d.%d.%d %s\n", argv[0],
-                        OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
-                                _("is a ICC color profile grapher"));
-                        printf("%s:\n",               _("Usage"));
-                        printf("  %s\n",              _("2D Graph from profiles:"));
-                        printf("      %s [-o %s] [-x [-c]] [-s] [-vbowt] %s\n", argv[0],
-                                                      _("FILE"),_("PROFILENAMES") );
-                        printf("      -x \t%s\n",     _("use CIE*xyY *x*y plane for saturation line projection"));
-                        printf("      \t-c\t%s\n",    _("omit white line of lambert light emitters"));
-                        printf("      -s \t%s\n",     _("omit the spectral line"));
-                        printf("      -d %s\t%s\n",   _("NUMBER"), _("specify incemental increase of the thickness of the graph lines"));
-                        printf("\n");
-                        printf( "  %s\n",             _("Standard Observer 1931 2° Graph:"));
-                        printf( "      %s --standard-observer [-vbowt]\n", argv[0]);
-                        printf("      \t--no-color\t%s\n",    _("draw gray"));
-                        printf("\n");
-                        printf( "  %s\n",             _("1964 10° Observer Graph:"));
-                        printf( "      %s --standard-observer-64 [-vbowt]\n", argv[0]);
-                        printf("      \t--no-color\t%s\n",    _("draw gray"));
-                        printf("\n");
-                        printf( "  %s\n",             _("Blackbody Radiator Spectrum Graph:"));
-                        printf( "      %s --kelvin %s [-vbowt]\n", argv[0], _("NUMBER"));
-                        printf("      \t--no-color\t%s\n",    _("draw gray"));
-                        printf("\n");
-                        printf( "  %s\n",             _("Illuminant Spectrum Graph:"));
-                        printf( "      %s --illuminant A|D65 [-vbowt]\n", argv[0]);
-                        printf("      --illuminant A\t%s\n",   _("CIE A spectral power distribution"));
-                        printf("      --illuminant D65\t%s\n", _("CIE D65 spectral power distribution"));
-                        printf("      \t--no-color\t%s\n",    _("draw gray"));
-                        printf("\n");
-                        printf("  %s\n",              _("General options:"));
-                        printf("      -v \t%s\n",     _("verbose"));
-                        printf("      -w %s\t%s\n",   _("NUMBER"), _("specify output image width in pixel"));
-                        printf("      -o %s\t%s\n",   _("FILE"),   _("specify output file name, default is output.png"));
-                        printf("      -b \t%s\n",     _("omit border"));
-                        printf("      -t %s\t%s\n",   _("NUMBER"), _("specify increase of the thickness of the graph lines"));
-                        printf("      -2 \t%s\n",     _("select a ICC v2 profile"));
-                        printf("      -4 \t%s\n",     _("select a ICC v4 profile"));
-                        printf("\n");
-                        printf(_("For more informations read the man page:"));
-                        printf("\n");
-                        printf("      man oyranos-profile-graph\n");
+                        printfHelp(argc, argv);
                         exit (0);
                         break;
             }
@@ -252,12 +258,18 @@ int main( int argc , char** argv )
       }
       if( wrong_arg )
       {
-        printf("%s %s\n", _("wrong argument to option:"), wrong_arg);
+        fprintf( stderr, "%s %s\n", _("wrong argument to option:"), wrong_arg);
+        printfHelp(argc, argv);
         exit(1);
       }
       ++pos;
     }
-    if(oy_debug) printf( "%s\n", argv[1] );
+    if(oy_debug) fprintf( stderr,  "%s\n", argv[1] );
+  }
+  else
+  {
+                        printfHelp(argc, argv);
+                        exit (0);
   }
 
   if(oy_debug)
@@ -560,7 +572,7 @@ int main( int argc , char** argv )
   status = cairo_surface_write_to_png( surface, output?output:"output.png" );
   if(status != CAIRO_STATUS_SUCCESS)
   {
-    printf("%s\n", cairo_status_to_string( status ));
+    fprintf( stderr, "%s\n", cairo_status_to_string( status ));
     return 1;
   }
 
