@@ -748,7 +748,7 @@ double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, o
         return NULL;
 
       sprintf(num,"%d", intent);
-      oyOptions_SetFromText( &options, OY_BEHAVIOUR_STD "rendering_intent",
+      oyOptions_SetFromText( &options, OY_BEHAVIOUR_STD OY_SLASH "rendering_intent",
                             num, OY_CREATE_NEW);
 
       oyColorConvert_( profile, outspace, block, lab_block,
