@@ -868,13 +868,17 @@ oyResolveDirFileName_ (const char* name)
     if (newName[0] != OY_SLASH_C)
     {
       char* cn = 0;
-      const char * pw = getenv("PWD");
+      const char * pw = getenv("PWD"),
+                 * t = name;
 
       len += strlen(pw) + 10;
 
       STRING_ADD(cn, pw);
       STRING_ADD(cn, OY_SLASH);
-      STRING_ADD(cn, name);
+      if(name[0] == '.' &&
+         name[1] == '/')
+        t = &name[2];
+      STRING_ADD(cn, t);
       DBG_MEM1_S("canonoical %s ", cn)
       oyFree_m_(newName);
       STRING_ADD(newName, cn);
