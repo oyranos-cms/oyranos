@@ -292,7 +292,7 @@ char *   oyFindProfile_              ( const char        * fileName,
       FILE * fp = fopen( fileName, "rb" );
       if(fp)
       {
-        path_name = oyStringCopy_( "./", oyAllocateFunc_ );
+        path_name = oyStringCopy_( ".", oyAllocateFunc_ );
         fclose(fp); fp = 0;
       }
     }
@@ -305,8 +305,15 @@ char *   oyFindProfile_              ( const char        * fileName,
       if(strrchr(fileName,OY_SLASH_C) == NULL)
         oySprintf_(fullFileName, "%s%s%s", path_name, OY_SLASH, fileName);
       else
-        oySprintf_( fullFileName, "%s%s%s", path_name, OY_SLASH,
-                    strrchr( fileName, OY_SLASH_C ) + 1 );
+      {
+        if(path_name && strlen(path_name) &&
+           path_name[strlen(path_name)-1] == OY_SLASH_C)
+          oySprintf_( fullFileName, "%s%s", path_name,
+                      strrchr( fileName, OY_SLASH_C ) + 1 );
+        else
+          oySprintf_( fullFileName, "%s%s%s", path_name, OY_SLASH,
+                      strrchr( fileName, OY_SLASH_C ) + 1 );
+      }
     } else
     {
       DBG_PROG_ENDE
