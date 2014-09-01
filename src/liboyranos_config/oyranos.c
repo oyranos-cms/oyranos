@@ -315,7 +315,7 @@ int         oyOptionChoicesGet         (oyWIDGET_e          option,
  *  @brief see oyOptionChoicesGet()
  *
  *  flags can come from oyICCProfileSelectionFlagsFromRegistration() 
- *  and is for oyProfile_FromFile() . Possible values for name_type come
+ *  and is for oyProfiles_Create() . Possible values for name_type come
  *  from oyNAME_e.
  *
  *  @version Oyranos: 0.9.6
