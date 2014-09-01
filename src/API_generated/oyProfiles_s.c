@@ -303,7 +303,10 @@ int oyLowerStrcmpWrap (const void * a_, const void * b_)
  *  @param[in]     patterns            a list properties, e.g. classes;
  *                                     Only matching profiles are selected.
  *                                     If NULL, all profiles are accepted.
- *  @param         flags               see oyProfile_FromFile()
+ *  @param         flags               
+ *                                     - see oyProfile_FromFile()
+ *                                     - ::OY_ALLOW_DUPLICATES - do not filter
+ *                                     duplicate profile ID's
  *  @param         object              the optional object
  *  @return                            the found and selected profiles
  *
@@ -319,12 +322,12 @@ int oyLowerStrcmpWrap (const void * a_, const void * b_)
 
     pattern = oyProfile_FromSignature( profile_class, oySIGNATURE_CLASS, 0 );
     oyProfiles_MoveIn( patterns, &pattern, -1 );
-    
+
     profiles = oyProfiles_Create( patterns, icc_profile_flags, 0 );
     oyProfiles_Release( &patterns );@endverbatim
  *
  *  @version Oyranos: 0.9.6
- *  @date    2014/04/04
+ *  @date    2014/08/31
  *  @since   2008/06/20 (Oyranos: 0.1.8)
  */
 OYAPI oyProfiles_s * OYEXPORT
@@ -351,6 +354,9 @@ OYAPI oyProfiles_s * OYEXPORT
   if(error <= 0)
   {
     names = oyProfileListGet_ ( NULL, flags, &names_n );
+
+    if(!(flags & OY_ALLOW_DUPLICATES))
+      flags |= OY_COMPUTE;
 
     if(oyProfiles_Count( oy_profile_list_cache_ ) != names_n)
     {
@@ -402,30 +408,43 @@ OYAPI oyProfiles_s * OYEXPORT
 
     for(i = 0; i < n; ++i)
     {
+        int good = 1;
+
         tmp = oyProfiles_Get( oy_profile_list_cache_, i );
 
         if(patterns_n > 0)
         {
+          good = 0;
           for(j = 0; j < patterns_n; ++j)
           {
             if(tmp)
               pattern = oyProfiles_Get(patterns, j);
 
             if(oyProfile_Match_( (oyProfile_s_*)pattern, (oyProfile_s_*)tmp ))
-            {
-              oyProfiles_MoveIn( s, (oyProfile_s**)&tmp, -1);
-              error = !s;
-              break;
-            }
+              good = 1;
 
             oyProfile_Release( &pattern );
+
+            if(good) break;
           }
-
-        } else {
-
-          oyProfiles_MoveIn( s, (oyProfile_s**)&tmp, -1);
-          error = !s;
         }
+
+        if(good &&
+           !(flags & OY_ALLOW_DUPLICATES))
+        {
+          int count = oyProfiles_Count( s ),
+              j;
+          for(j = 0; j < count; ++j)
+          {
+            oyProfile_s * b = oyProfiles_Get( s, j );
+            if(oyProfile_Equal(b, tmp))
+              good = 0;
+            oyProfile_Release( &b );
+          }
+        }
+
+        if(good)
+          oyProfiles_MoveIn( s, (oyProfile_s**)&tmp, -1);
 
         oyProfile_Release( &tmp );
     }
@@ -446,7 +465,7 @@ OYAPI oyProfiles_s * OYEXPORT
  *  available in the file paths.
  *
  *  @param[in]     std_profile_class  standard profile class, e.g. oyEDITING_RGB
- *  @param         flags               see oyProfile_FromFile()
+ *  @param         flags               see oyProfiles_Create()
  *  @param[out]    current             get the color_space profile position
  *  @param         object              a optional object
  *  @return                            the profile list
