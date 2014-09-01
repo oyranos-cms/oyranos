@@ -44,7 +44,10 @@ typedef struct oyProfiles_s oyProfiles_s;
 
 
 /* Include "Profiles.public.h" { */
-
+/** \addtogroup objects_profile
+ *  @{ */
+#define OY_ALLOW_DUPLICATES 0x100               /**< show as well duplicate profile ID's */
+/** @} *//* objects_profile */
 /* } Include "Profiles.public.h" */
 
 
