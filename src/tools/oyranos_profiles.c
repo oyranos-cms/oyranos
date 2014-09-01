@@ -62,7 +62,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("List available ICC profiles:"));
-  fprintf( stderr, "      %s -l [-f] [-e] [-acdknot] \n",        argv[0]);
+  fprintf( stderr, "      %s -l [-f] [-e] [-acdknoi] [-24] [--duplicates] \n",        argv[0]);
   fprintf( stderr, "      -f  %s\n",       _("full path and file name"));
   fprintf( stderr, "      -e  %s\n",       _("internal name"));
   fprintf( stderr, "      -a  %s\n",       _("abstract class"));
@@ -74,6 +74,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -i  %s\n",       _("input class"));
   fprintf( stderr, "      -2  %s\n",       _("select ICC v2 profiles"));
   fprintf( stderr, "      -4  %s\n",       _("select ICC v4 profiles"));
+  fprintf( stderr, "      --duplicates  %s\n",_("show profiles with duplicate profile ID"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("List search paths:"));
   fprintf( stderr, "      %s -p [-usym]\n",        argv[0]);
@@ -169,8 +170,8 @@ int main( int argc , char** argv )
               case 'v': oy_debug += 1; break;
               case 'h':
               case '-':
-                        if(i == 1)
-                        {
+                       if(i == 1)
+                       {
                              if(OY_IS_ARG("install"))
                         {
                           if(pos+1 < argc)
@@ -212,7 +213,10 @@ int main( int argc , char** argv )
                         }
                         else if(OY_IS_ARG("taxi"))
                         { OY_PARSE_STRING_ARG2(taxi_id, "taxi"); break; }
-                        }
+                        else if(OY_IS_ARG("duplicates"))
+                        { flags |= OY_ALLOW_DUPLICATES; i=100; break; }
+
+                       }
               default:
                         printfHelp(argc, argv);
                         exit (0);
