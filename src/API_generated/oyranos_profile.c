@@ -23,6 +23,13 @@
  *  @{
  */
 
+/** Function oyProfileSignatureName
+ *  @brief   provide UI name for oySIGNATURE_TYPE_e
+ *
+ *  @version Oyranos: 0.9.4
+ *  @date    2013/01/14
+ *  @since   2013/01/14 (Oyranos: 0.9.4)
+ */
 const char   * oyProfileSignatureName( oySIGNATURE_TYPE_e  type )
 {
   switch(type) {
@@ -51,6 +58,13 @@ const char   * oyProfileSignatureName( oySIGNATURE_TYPE_e  type )
   }
 }
 
+/** Function oyProfileSignatureDescription
+ *  @brief   provide UI description for oySIGNATURE_TYPE_e
+ *
+ *  @version Oyranos: 0.9.4
+ *  @date    2013/01/14
+ *  @since   2013/01/14 (Oyranos: 0.9.4)
+ */
 const char   * oyProfileSignatureDescription (
                                        oySIGNATURE_TYPE_e  type )
 {
