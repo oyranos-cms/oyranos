@@ -237,6 +237,8 @@ typedef enum  {
   oyWIDGET_GROUP_CMM,                     /**< Color Matching Modules */
   oyWIDGET_GROUP_ALL,                     /**< just for easen Gui design */
   oyWIDGET_GROUP_DEVICES,                 /**< just for easen Gui design */
+  oyWIDGET_GROUP_DEVICES_PROFILES_TAXI,   /**< just for easen Gui design */
+  oyWIDGET_GROUP_DEVICES_PROFILES,        /**< just for easen Gui design */
   oyWIDGET_GROUP_INFORMATION,             /**< just for easen Gui design */
   oyWIDGET_GROUP_EXTERN = 200,      /**< start of groups in a extern module */
 
@@ -273,6 +275,10 @@ typedef enum  {
 
   oyWIDGET_PROFILE_PROOF = 120,/**< standard proofing profile */
   oyWIDGET_DEFAULT_PROFILE_END,/**< just for easen Gui design */
+
+  oyWIDGET_DEVICES_RELATED = 200,      /**< select only device related profiles [checkbox] */
+  oyWIDGET_POLICY_ACTIVE,              /**< active policy [choice] */
+  oyWIDGET_TAXI_PROFILE_INSTALL,       /**< Install selected profile [button] */
 
   oyWIDGET_CMM_START = 300,            /**< CMM options */
   oyWIDGET_CMM_CONTEXT,                /**< CMM core selection */

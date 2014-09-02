@@ -285,6 +285,42 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_ALL", 0,0)
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEVICES_PROFILES_TAXI, 0,
+      0, 0, 0,
+      _("Taxi DB Profiles"),
+      _("Available Device Profiles from Taxi DB"),
+      _("Show available Device Profiles from remote Taxi DB for a selected device. The metadata from Taxi DB and from the device must fit."),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      NULL,
+      "oyGROUP_ALL", 0,0)
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_TAXI_PROFILE_INSTALL, 0,
+      0, 0, 0,
+      _("Install profile"),
+      _("Install selected profile"),
+      _("Install the selected profile."),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      NULL,
+      "oyGROUP_ALL", 0,0)
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEVICES_PROFILES, 0,
+      0, 0, 0,
+      _("Available Device Profiles:"),
+      _("Available Device Profiles:"),
+      _("Available Device Profiles:"),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      NULL,
+      "oyGROUP_ALL", 0,0)
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_DEVICES_RELATED, 0,
+      0, 0, 0,
+      _("Device Related"),
+      _("Show only device related ICC profiles"),
+      _("Show only ICC profiles, which have metadata matching a given device."),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      NULL,
+      "oyGROUP_ALL", 0,0)
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_INFORMATION, 0,
       0, 0, 0,
       _("Information"),
@@ -306,6 +342,16 @@ oyOptionStringsTranslate_ ()
       NULL,
       "oyWIDGET_POLICY", 0,0)
     oy_option_[oyWIDGET_POLICY].flags = OY_LAYOUT_MIDDLE;
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_POLICY_ACTIVE, 0,
+      0, 0, 0,
+      _("Active Policy:"),
+      _("Active Policy:"),
+      _("Show which policy matches by combining all involved settings."),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      NULL,
+      "oyGROUP_ALL", 0,0)
+
 
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_LIST, oyWIDGET_PATHS, 1,
