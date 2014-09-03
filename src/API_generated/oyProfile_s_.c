@@ -940,7 +940,7 @@ char *       oyProfile_GetFileName_r ( oyProfile_s_      * profile,
       name = s->file_name_;
     } else {
 
-      names = /*(const char**)*/ oyProfileListGet_ ( NULL, flags, &count );
+      names = oyProfileListGet_ ( NULL, flags, &count );
 
       for(i = 0; i < count; ++i)
       {

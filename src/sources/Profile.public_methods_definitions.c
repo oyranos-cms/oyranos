@@ -401,7 +401,7 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromMD5(
 
   if(error <= 0)
   {
-    names = /*(const char**)*/ oyProfileListGet_ ( NULL, 0, &count );
+    names = oyProfileListGet_ ( NULL, 0, &count );
 
     for(i = 0; i < count; ++i)
     {
@@ -595,7 +595,7 @@ OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
   }
 
   /** 2. check if file or description name exists */
-  names = /*(const char**)*/ oyProfileListGet_ ( NULL, 0, &count );
+  names = oyProfileListGet_ ( NULL, 0, &count );
   for(i = 0; i < (int)count; ++i)
   {
     p = oyProfile_FromFile(names[i], 0,0);
@@ -1749,7 +1749,7 @@ OYAPI const char * OYEXPORT oyProfile_GetFileName (
       name = s->file_name_;
     } else
     {
-      names = /*(const char**)*/ oyProfileListGet_ ( NULL, 0, &count );
+      names = oyProfileListGet_ ( NULL, 0, &count );
 
       for(i = 0; i < count; ++i)
       {

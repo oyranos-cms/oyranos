@@ -292,7 +292,7 @@ int main( int argc , char** argv )
            named_color || device_link || flags & OY_ICC_VERSION_2 ||
            flags & OY_ICC_VERSION_4))
       {
-      names = /*(const char**)*/ oyProfileListGet_ ( NULL, flags, &count );
+      names = oyProfileListGet_ ( NULL, flags, &count );
       for(i = 0; i < (int)count; ++i)
         {
           const char * sfn = names[i];
