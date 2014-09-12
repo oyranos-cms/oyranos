@@ -486,10 +486,10 @@ int    installProfile                ( oyProfile_s       * ip,
                                        char              * show_text,
                                        int                 show_gui )
 {
-  int error = 0;
+  int error = 0,
+      severity = 0;
       {
         const char * in = oyProfile_GetText( ip, oyNAME_DESCRIPTION );
-        char * txt = 0;
         oyOptions_s * opts = 0;
 
         oyOptions_SetFromText( &opts, "////path", path, OY_CREATE_NEW );
@@ -508,6 +508,7 @@ int    installProfile                ( oyProfile_s       * ip,
           if(in)
             STRING_ADD( show_text, in );
           STRING_ADD( show_text, "\'" );
+          severity = oyMSG_ERROR;
         } else if(error == oyERROR_DATA_WRITE)
         {
           if(!show_text)
@@ -519,6 +520,7 @@ int    installProfile                ( oyProfile_s       * ip,
           if(path)
             STRING_ADD( show_text, path );
           STRING_ADD( show_text, "\'" );
+          severity = oyMSG_ERROR;
         } else if(error == oyCORRUPTED)
         {
           if(!show_text)
@@ -530,53 +532,12 @@ int    installProfile                ( oyProfile_s       * ip,
           if(in)
             STRING_ADD( show_text, in );
           STRING_ADD( show_text, "\'" );
+          severity = oyMSG_ERROR;
         } else if(error > 0 && !show_text)
           oyStringAddPrintf_( &show_text, oyAllocateFunc_, oyDeAllocateFunc_,
                               "%s - %d",_("Internal Error"), error );
 
-        if(show_text)
-        {
-          if(show_gui)
-          {
-            char * app = 0;
-            if(getenv("KDE_FULL_SESSION") && (app = oyFindApplication( "kdialog" )) != NULL)
-            {
-              STRING_ADD( txt, "kdialog --sorry \"");
-              STRING_ADD( txt, show_text );
-              STRING_ADD( txt, "\"" );
-            } else
-            {
-              if(!app && (app = oyFindApplication( "zenity" )) != NULL)
-              {
-                STRING_ADD( txt, "zenity --warning --text \"");
-                STRING_ADD( txt, show_text );
-                STRING_ADD( txt, "\"" );
-                printf("%s\n", txt );
-              }
-              if(!app && (app = oyFindApplication( "dialog" )) != NULL)
-              {
-                STRING_ADD( txt, "xterm -e sh -c \"dialog --msgbox \\\"");
-                STRING_ADD( txt, show_text );
-                STRING_ADD( txt, "\\\" 5 70\"" );
-                printf("%s\n", txt );
-              }
-              if(!app && (app = oyFindApplication( "xterm" )) != NULL)
-              {
-                STRING_ADD( txt, "xterm -e sh -c \"echo \\\"");
-                STRING_ADD( txt, show_text );
-                STRING_ADD( txt, "\\\"; sleep 10\"" );
-                printf("%s\n", txt );
-              }
-            }
-            system(txt);
-            oyFree_m_( txt );
-            oyFree_m_( app );
-          }
-
-          fprintf(stderr, "%s\n", show_text );
-          oyFree_m_(show_text);
-        }
- 
+        oyShowMessage( severity, show_text, show_gui ); 
       }
 
   return error;
