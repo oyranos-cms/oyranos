@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2014-09-02 11:29+0200\n"
+"POT-Creation-Date: 2014-09-11 21:00+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -28,7 +28,7 @@ msgstr "!!! Fehler"
 msgid "(device) link class"
 msgstr "(Geräte) Farbraumverknüpfung"
 
-#: API_generated/oyranos_profile.c:49 API_generated/oyranos_profile.c:78
+#: API_generated/oyranos_profile.c:56 API_generated/oyranos_profile.c:92
 #: API_generated/oyNamedColor_s.c:603 liboyranos_config/oyranos_icc.c:516
 #: modules/color/modules/oyranos_cmm_oicc.c:221
 msgid "----"
@@ -235,7 +235,7 @@ msgstr "?? Nichts hinzuzufügen ??"
 #. case icMaxStdObs: return _("---"); break;
 #. case icMaxGeometry: return _("---");
 #. case icMaxFlare: return _("---");
-#: API_generated/oyranos_profile.c:50 API_generated/oyranos_profile.c:79
+#: API_generated/oyranos_profile.c:57 API_generated/oyranos_profile.c:93
 #: liboyranos_config/oyranos_icc.c:793 liboyranos_config/oyranos_icc.c:818
 #: liboyranos_config/oyranos_icc.c:836 liboyranos_config/oyranos_icc.c:855
 #: liboyranos_config/oyranos_icc.c:872
@@ -393,7 +393,7 @@ msgstr "Vermutete Web Quelle"
 msgid "Assumed XYZ source"
 msgstr "Vermutete XYZ Quelle"
 
-#: API_generated/oyranos_profile.c:37
+#: API_generated/oyranos_profile.c:44
 msgid "Attributes"
 msgstr "Attribute"
 
@@ -560,7 +560,7 @@ msgstr ""
 "clut"
 
 #. CMM: abbreviation for Color Matching Module
-#: API_generated/oyranos_profile.c:32 liboyranos_config/oyranos_texts.c:263
+#: API_generated/oyranos_profile.c:39 liboyranos_config/oyranos_texts.c:263
 #: modules/color/modules/oyranos_cmm_lcm2.c:3341
 #: modules/color/modules/oyranos_cmm_lcms.c:2692
 msgid "CMM"
@@ -594,7 +594,7 @@ msgstr "Kamerarohdaten"
 msgid "CameraRaw image"
 msgstr "Kamera Rohdaten"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:443
+#: modules/color/modules/devices/oyranos_monitor_x11.c:444
 msgid "Can not read hardware information from device."
 msgstr "Kann Geräteinformation nicht auslesen."
 
@@ -602,7 +602,7 @@ msgstr "Kann Geräteinformation nicht auslesen."
 msgid "Can not write profile"
 msgstr "Kann Profildatei nicht schreiben"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:310
+#: modules/color/modules/devices/oyranos_monitor_x11.c:311
 #: modules/color/modules/devices/oyranos_monitor_cs.c:631
 #: modules/color/modules/devices/oyranos_monitor_cs.c:637
 #: modules/color/modules/devices/oyranos_monitor_cs.c:648
@@ -638,7 +638,7 @@ msgstr "Prüfe ob dieses Modul ein bestimmtes Kommando behandeln kann."
 msgid "Chromaticity"
 msgstr "Primärfarben"
 
-#: API_generated/oyranos_profile.c:34
+#: API_generated/oyranos_profile.c:41
 msgid "Class"
 msgstr "Klasse"
 
@@ -697,7 +697,7 @@ msgid "Color Managed Devices"
 msgstr "farbverbindlich eingestellte Geräte"
 
 #. spac
-#: API_generated/oyranos_profile.c:29 API_generated/oyranos_profile.c:58
+#: API_generated/oyranos_profile.c:36 API_generated/oyranos_profile.c:72
 #: liboyranos_config/oyranos_icc.c:626
 msgid "Color Space"
 msgstr "Farbraum"
@@ -1000,13 +1000,13 @@ msgstr "Erstelle ein ICC Simulationsprofile"
 msgid "Creation Date:   "
 msgstr "Datum:           "
 
-#: API_generated/oyranos_profile.c:72 API_generated/oyranos_profile.c:73
-#: API_generated/oyranos_profile.c:74 API_generated/oyranos_profile.c:75
-#: API_generated/oyranos_profile.c:76 API_generated/oyranos_profile.c:77
+#: API_generated/oyranos_profile.c:86 API_generated/oyranos_profile.c:87
+#: API_generated/oyranos_profile.c:88 API_generated/oyranos_profile.c:89
+#: API_generated/oyranos_profile.c:90 API_generated/oyranos_profile.c:91
 msgid "Creation Time in UTC"
 msgstr "Erstelldatum in UTC"
 
-#: API_generated/oyranos_profile.c:41
+#: API_generated/oyranos_profile.c:48
 msgid "Creator"
 msgstr "Ersteller"
 
@@ -1053,9 +1053,9 @@ msgstr "Farbraum:        "
 msgid "Data:"
 msgstr "Daten:"
 
-#: API_generated/oyranos_profile.c:43 API_generated/oyranos_profile.c:44
-#: API_generated/oyranos_profile.c:45 API_generated/oyranos_profile.c:46
-#: API_generated/oyranos_profile.c:47 API_generated/oyranos_profile.c:48
+#: API_generated/oyranos_profile.c:50 API_generated/oyranos_profile.c:51
+#: API_generated/oyranos_profile.c:52 API_generated/oyranos_profile.c:53
+#: API_generated/oyranos_profile.c:54 API_generated/oyranos_profile.c:55
 msgid "Date"
 msgstr "Datum"
 
@@ -1106,11 +1106,11 @@ msgstr "Gerät"
 msgid "Device Colors"
 msgstr "Gerätefarben"
 
-#: API_generated/oyranos_profile.c:67
+#: API_generated/oyranos_profile.c:81
 msgid "Device Manufacturer"
 msgstr "Geräte Hersteller"
 
-#: API_generated/oyranos_profile.c:68
+#: API_generated/oyranos_profile.c:82
 msgid "Device Model"
 msgstr "Geräte Model"
 
@@ -1260,7 +1260,7 @@ msgstr "Melde Profil ab:"
 msgid "Error"
 msgstr "Fehler"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:956
+#: modules/color/modules/devices/oyranos_monitor_x11.c:964
 msgid "Error getting atom"
 msgstr "Fehler beim Suchen des Xatoms"
 
@@ -1268,12 +1268,12 @@ msgstr "Fehler beim Suchen des Xatoms"
 msgid "Error in ICC profile tag found!"
 msgstr "Fehler in ICC Profilbaustein gefunden!"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:839
+#: modules/color/modules/devices/oyranos_monitor_x11.c:847
 msgid "Error obtaining profile"
 msgstr "Fehler beim Erhalten des Profiles"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:850
-#: modules/color/modules/devices/oyranos_monitor_x11.c:852
+#: modules/color/modules/devices/oyranos_monitor_x11.c:858
+#: modules/color/modules/devices/oyranos_monitor_x11.c:860
 msgid "Error setting up atom"
 msgstr "Fehler beim Setzen eines Xatoms"
 
@@ -1316,7 +1316,7 @@ msgstr "DATEINAME"
 msgid "FORMAT"
 msgstr "FORMAT"
 
-#: API_generated/oyranos_profile.c:64
+#: API_generated/oyranos_profile.c:78
 msgid "File Magic"
 msgstr "Dateisignatur"
 
@@ -1509,11 +1509,11 @@ msgstr "Hsv"
 msgid "Hue"
 msgstr "Farbton"
 
-#: API_generated/oyranos_profile.c:63
+#: API_generated/oyranos_profile.c:77
 msgid "ICC Class"
 msgstr "ICC Klasse"
 
-#: API_generated/oyranos_profile.c:62
+#: API_generated/oyranos_profile.c:76
 msgid "ICC Version"
 msgstr "ICC Version"
 
@@ -1525,7 +1525,7 @@ msgstr "ICC Farbprofil zur Farbraumtransformation."
 msgid "ICC color profiles for color transformations"
 msgstr "ICC Farbprofile zur Farbraumumwandlung"
 
-#: API_generated/oyranos_profile.c:66
+#: API_generated/oyranos_profile.c:80
 msgid "ICC header Attributes"
 msgstr "ICC Dateiattribute"
 
@@ -1600,7 +1600,7 @@ msgstr "ITU-R BT.709"
 msgid "Idendity"
 msgstr "Idendität"
 
-#: API_generated/oyranos_profile.c:42
+#: API_generated/oyranos_profile.c:49
 msgid "Illuminant"
 msgstr "Beleuchtung"
 
@@ -1769,15 +1769,15 @@ msgstr "Installiere ICC Profil"
 msgid "Install the selected profile."
 msgstr "Installiere das ausgewählte ICC Profil."
 
-#: API_generated/oyranos_profile.c:40
+#: API_generated/oyranos_profile.c:47
 msgid "Intent"
 msgstr "Übertragung"
 
-#: tools/oyranos_profiles.c:535
+#: tools/oyranos_profiles.c:538
 msgid "Internal Error"
 msgstr "Interner Fehler"
 
-#: API_generated/oyranos_profile.c:60
+#: API_generated/oyranos_profile.c:74
 msgid "Internal stored Size"
 msgstr "Interne Größe"
 
@@ -1984,7 +1984,7 @@ msgstr "Macintosh"
 msgid "Magenta"
 msgstr "Magenta"
 
-#: API_generated/oyranos_profile.c:35
+#: API_generated/oyranos_profile.c:42
 msgid "Magic"
 msgstr "Signatur"
 
@@ -1993,7 +1993,7 @@ msgstr "Signatur"
 msgid "Magic:           "
 msgstr "Signatur:        "
 
-#: API_generated/oyranos_profile.c:38 API_generated/oyranos_module.c:1424
+#: API_generated/oyranos_profile.c:45 API_generated/oyranos_module.c:1424
 msgid "Manufacturer"
 msgstr "Hersteller"
 
@@ -2061,7 +2061,7 @@ msgstr ""
 "Problemen führen. Die Einstellung bietet die Möglichkeit den Farbraum zu "
 "vereinheitlichen."
 
-#: API_generated/oyranos_profile.c:39
+#: API_generated/oyranos_profile.c:46
 msgid "Model"
 msgstr "Modell"
 
@@ -2163,7 +2163,7 @@ msgid "No Image profile"
 msgstr "Kein Profil am Bild"
 
 #. hack
-#: modules/color/modules/devices/oyranos_monitor_x11.c:797
+#: modules/color/modules/devices/oyranos_monitor_x11.c:805
 msgid "No monitor gamma curves by profile:"
 msgstr "Keine Grafikkartengammakurven im Profil:"
 
@@ -2188,7 +2188,7 @@ msgstr "Bei Cmyk Ungleichheit"
 msgid "On Rgb Mismatch"
 msgstr "Bei Rgb Ungleichheit"
 
-#: API_generated/oyranos_profile.c:65
+#: API_generated/oyranos_profile.c:79
 msgid "Operating System"
 msgstr "Betriebssystem"
 
@@ -2352,7 +2352,7 @@ msgstr "Oyranos mitgelieferte Module"
 msgid "P22"
 msgstr "P22"
 
-#: API_generated/oyranos_profile.c:30
+#: API_generated/oyranos_profile.c:37
 msgid "PCS"
 msgstr "PCS"
 
@@ -2370,7 +2370,7 @@ msgstr "PROFILNAMEN"
 msgid "Passive matrix monitor"
 msgstr "Passivmatrixmonitor"
 
-#: tools/oyranos_profiles.c:515
+#: tools/oyranos_profiles.c:516
 msgid "Path can not be written"
 msgstr "Verzeichnis kann nicht beschrieben werden."
 
@@ -2402,7 +2402,7 @@ msgstr "Fotofilmbelichter"
 msgid "Photographic paper printer"
 msgstr "Photographischer Papierdrucker"
 
-#: API_generated/oyranos_profile.c:36
+#: API_generated/oyranos_profile.c:43
 msgid "Platform"
 msgstr "Plattform"
 
@@ -2462,7 +2462,7 @@ msgstr "Postscript 2 Übertragungsart"
 msgid "Postscript CRD Information"
 msgstr "Postscript CRD Information"
 
-#: API_generated/oyranos_profile.c:61
+#: API_generated/oyranos_profile.c:75
 msgid "Prefered CMM"
 msgstr "Bevorzugte CMM"
 
@@ -2525,11 +2525,11 @@ msgstr "Drucker, die durch das CUPS Drucksystem erreichbar sind."
 msgid "Priority:"
 msgstr "Priorität:"
 
-#: API_generated/oyranos_profile.c:59
+#: API_generated/oyranos_profile.c:73
 msgid "Profile Connection Space"
 msgstr "Profileverbindungsfarbraum"
 
-#: API_generated/oyranos_profile.c:70
+#: API_generated/oyranos_profile.c:84
 msgid "Profile Creator ID"
 msgstr "Profilerzeuger"
 
@@ -2538,7 +2538,7 @@ msgstr "Profilerzeuger"
 msgid "Profile ID:      "
 msgstr "Profil ID:       "
 
-#: API_generated/oyranos_profile.c:71
+#: API_generated/oyranos_profile.c:85
 msgid "Profile Illuminant"
 msgstr "Profile Beleuchtung"
 
@@ -2572,7 +2572,7 @@ msgstr "Profilbeschreibung mehrsprachig"
 msgid "Profile exists already"
 msgstr "Profil ist bereits installiert"
 
-#: tools/oyranos_profiles.c:526
+#: tools/oyranos_profiles.c:528
 msgid "Profile not useable"
 msgstr "Profil nicht benutzbar"
 
@@ -2766,7 +2766,7 @@ msgstr "Rasterung Beschreibung"
 msgid "Segmented Curve"
 msgstr "Stückweise Kurve"
 
-#: API_generated/oyranos_profile.c:69
+#: API_generated/oyranos_profile.c:83
 msgid "Seldom used Profile claimed Intent"
 msgstr "Selten benutzte profilbestimmte Übertragungsart"
 
@@ -2882,7 +2882,7 @@ msgstr "Bilde einen Ausdruck auf dem Bildschirm nach"
 msgid "Simulation/Proof Color Space"
 msgstr "Simulationsfarbraum"
 
-#: API_generated/oyranos_profile.c:31
+#: API_generated/oyranos_profile.c:38
 msgid "Size"
 msgstr "Größe"
 
@@ -3591,7 +3591,7 @@ msgstr "Benutze Schwarzpunktkompensation (BPC)"
 msgid "Value"
 msgstr "Wert"
 
-#: API_generated/oyranos_profile.c:33
+#: API_generated/oyranos_profile.c:40
 msgid "Version"
 msgstr "Version"
 
@@ -3664,7 +3664,7 @@ msgstr "Schreibe ICC Profil:"
 msgid "Wrong ICC profile id detected"
 msgstr "Fehler in ICC Profil ID gefunden!"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1191
+#: modules/color/modules/devices/oyranos_monitor_x11.c:1199
 msgid "XRandR CrtcInfo request failed"
 msgstr "XRandR CrtcInfo Anfrage daneben"
 
@@ -3672,8 +3672,8 @@ msgstr "XRandR CrtcInfo Anfrage daneben"
 msgid "XYZ"
 msgstr "XYZ"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1209
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1214
+#: modules/color/modules/devices/oyranos_monitor_x11.c:1217
+#: modules/color/modules/devices/oyranos_monitor_x11.c:1222
 msgid "Xinerama request failed"
 msgstr "Xineramaanfrage daneben"
 
@@ -3710,7 +3710,7 @@ msgstr "Abstrakter Farbraum"
 msgid "add prefix"
 msgstr "füge Vorsilbe hinzu"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1300
+#: modules/color/modules/devices/oyranos_monitor_x11.c:1308
 msgid "allocation failed"
 msgstr "kein Speicher"
 
@@ -3872,13 +3872,13 @@ msgstr "daneben!"
 #: modules/color/modules/oyranos_cmm_oyra_image.c:932
 #: modules/color/modules/oyranos_cmm_oyra_image.c:947
 #: modules/color/modules/oyranos_cmm_oyra_image_scale.c:92
-#: modules/color/modules/devices/oyranos_monitor_x11.c:163
-#: modules/color/modules/devices/oyranos_monitor_x11.c:193
-#: modules/color/modules/devices/oyranos_monitor_x11.c:319
-#: modules/color/modules/devices/oyranos_monitor_x11.c:857
-#: modules/color/modules/devices/oyranos_monitor_x11.c:876
-#: modules/color/modules/devices/oyranos_monitor_x11.c:885
-#: modules/color/modules/devices/oyranos_monitor_x11.c:983
+#: modules/color/modules/devices/oyranos_monitor_x11.c:164
+#: modules/color/modules/devices/oyranos_monitor_x11.c:194
+#: modules/color/modules/devices/oyranos_monitor_x11.c:320
+#: modules/color/modules/devices/oyranos_monitor_x11.c:865
+#: modules/color/modules/devices/oyranos_monitor_x11.c:884
+#: modules/color/modules/devices/oyranos_monitor_x11.c:893
+#: modules/color/modules/devices/oyranos_monitor_x11.c:991
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:978
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:984
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:996
@@ -3994,7 +3994,7 @@ msgstr "ist ein Richtlinienverwaltungswerkzeug"
 msgid "key/value pairs found:"
 msgstr "Schlüssel/Wertepaare gefunden:"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1488
+#: modules/color/modules/devices/oyranos_monitor_x11.c:1496
 msgid "less Xinerama monitors than XRandR ones"
 msgstr "weniger Xinerama als XRandR Monitore"
 
@@ -4081,15 +4081,15 @@ msgstr "Neue BSD Lizenz: http://www.opensource.org/licenses/bsd-license.php"
 msgid "no EDID available from"
 msgstr "kein EDID verfügbari von"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:453
+#: modules/color/modules/devices/oyranos_monitor_x11.c:454
 msgid "no EDID available from X properties"
 msgstr "kein EDID von X Atomen verfügbar"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1318
+#: modules/color/modules/devices/oyranos_monitor_x11.c:1326
 msgid "no Screen found"
 msgstr "keine Anzeige gefunden"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1522
+#: modules/color/modules/devices/oyranos_monitor_x11.c:1530
 msgid "no oyX1Monitor_s created"
 msgstr "kein oyX1Monitor_s erzeugt"
 
@@ -4121,14 +4121,14 @@ msgstr "lasse Spektrallinie fort"
 msgid "omit white line of lambert light emitters"
 msgstr "lasse Weißlinie von Lambertstrahlern fort"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:771
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1307
+#: modules/color/modules/devices/oyranos_monitor_x11.c:772
+#: modules/color/modules/devices/oyranos_monitor_x11.c:1315
 #: modules/color/modules/devices/oyranos_monitor_cs.c:131
 #: modules/color/modules/devices/oyranos_monitor_cs.c:256
 msgid "open X Display failed"
 msgstr "Öffnen des X Displays daneben"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1230
+#: modules/color/modules/devices/oyranos_monitor_x11.c:1238
 msgid "open X Screen failed"
 msgstr "Öffnen des X Screens daneben"
 
@@ -4144,16 +4144,16 @@ msgstr "Oyranos Installationspfad"
 msgid "parametric function type"
 msgstr "Parametrischer Funktionstyp"
 
-#: liboyranos_core/oyranos_io_core.c:1074
+#: liboyranos_core/oyranos_io_core.c:1073
 msgid "path is a link: ignored"
 msgstr "Pfad ist eine Verknüpfung: ignoriert"
 
-#: liboyranos_core/oyranos_io_core.c:1069
+#: liboyranos_core/oyranos_io_core.c:1068
 msgid "path is not a directory"
 msgstr "Pfad ist kein Verzeichnis"
 
-#: liboyranos_core/oyranos_io_core.c:1080
-#: liboyranos_core/oyranos_io_core.c:1583
+#: liboyranos_core/oyranos_io_core.c:1079
+#: liboyranos_core/oyranos_io_core.c:1582
 msgid "path is not readable"
 msgstr "Pfad ist nicht lesbar"
 
@@ -4192,6 +4192,10 @@ msgstr "Profil nicht im Profilepfad gefunden:"
 #: liboyranos_config/oyranos_io.c:209
 msgid "profile not found:"
 msgstr "Farbprofil nicht gefunden:"
+
+#: modules/color/modules/devices/oyranos_monitor_x11.c:800
+msgid "program is not properly installed or missed"
+msgstr "Das Programm ist nicht korrekt installiert oder nicht vorhanden."
 
 #: tools/oyranos_convert.c:64
 msgid "read from file"
@@ -4266,11 +4270,11 @@ msgstr "gib Ausgabebildbreite in Pixel an"
 msgid "system path"
 msgstr "Systempfad"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:307
+#: modules/color/modules/devices/oyranos_monitor_x11.c:308
 msgid "unexpected EDID lenght"
 msgstr "unerwartetet EDID Größe"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:255
+#: modules/color/modules/devices/oyranos_monitor_x11.c:256
 msgid "unexpected user_data type"
 msgstr "Unerwarteter user_data Typ"
 
