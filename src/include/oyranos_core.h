@@ -46,6 +46,10 @@ int            oyMessageFunc         ( int                 code,
                                        const oyPointer     context_object,
                                        const char        * format,
                                                            ... );
+int            oyGuiMessageFunc      ( int                 code,
+                                       const oyPointer     c,
+                                       const char        * format,
+                                                           ... );
 int            oyMessageFuncSet      ( oyMessage_f         message_func );
 extern         oyMessage_f             oyMessageFunc_p;
 
