@@ -85,12 +85,12 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Install ICC profile:"));
   fprintf( stderr, "      %s [--gui] --install -u|-s|-y|-m [-d] %s\n", argv[0], _("ICC_FILE_NAME"));
-  fprintf( stderr, "      %s --taxi=ID [--gui] --install -u|-s|-y|-m [-d]\n", argv[0]);
+  fprintf( stderr, "      %s --taxi=ID [--gui] [-d] --install -u|-s|-y|-m\n", argv[0]);
+  fprintf( stderr, "      -d  %s\n",       _("use device sub path"));
   fprintf( stderr, "      -u  %s\n",       _("user path"));
   fprintf( stderr, "      -s  %s\n",       _("system path"));
   fprintf( stderr, "      -y  %s\n",       _("oyranos install path"));
   fprintf( stderr, "      -m  %s\n",       _("machine specific path"));
-  fprintf( stderr, "      -d  %s\n",       _("use device sub path"));
   fprintf( stderr, "      --gui %s\n",     _("show hints and question GUI"));
   fprintf( stderr, "      --taxi=ID %s\n", _("download ID from Taxi data base"));
   fprintf( stderr, "\n");

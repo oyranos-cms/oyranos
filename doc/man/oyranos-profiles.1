@@ -1,4 +1,4 @@
-.TH oyranos-profiles 1 "January 08, 2012" "User Commands"
+.TH oyranos-profiles 1 "September 12, 2014" "User Commands"
 .SH NAME
 oyranos-profiles \- Oyranos CMS ICC profiles tool
 .SH SYNOPSIS
@@ -7,6 +7,8 @@ oyranos-profiles \- Oyranos CMS ICC profiles tool
 \fBoyranos-profiles\fR -p [-usym]
 .fi
 \fBoyranos-profiles\fR --install [-u|-s|-y|-m] \fIPROFILENAME\fR
+.fi
+\fBoyranos-profiles\fR --taxi=ID [--gui] [-d] --install -u|-s|-y|-m
 .fi
 \fBoyranos-profiles\fR [ |-h ]
 .SH DESCRIPTION
@@ -75,6 +77,10 @@ The following options must be specified before the \fB--install\fR option.
 .sp
 .br
 \fB\-\-taxi\fR \fITAXI_ID\fR Taxi profile ID to download
+.sp
+.br
+\fB-d\fR use device sub path
+.sp
 .SH GENERAL OPTIONS
 .TP
 .B \-v, \-\-verbose
@@ -108,12 +114,12 @@ Install a profile for the actual user and show error messages in a GUI:
 .PP
 .TP
 Install a profile for the actual user and show error messages in a GUI:
-.B oyranos-profiles --taxi=taxi_id/0 --gui --install -u
+.B oyranos-profiles --taxi=taxi_id/0 --gui -d --install -u
 .PP
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH COPYRIGHT
-(c) 2010-2012, Kai-Uwe Behrmann and others
+(c) 2010-2014, Kai-Uwe Behrmann and others
 .fi
 License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
 .SH "SEE ALSO"
