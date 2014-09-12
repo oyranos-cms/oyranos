@@ -38,6 +38,7 @@
 
 #include "oyranos.h"
 #include "oyranos_internal.h"
+#include "oyranos_io.h"
 #include "oyranos_monitor.h"
 #include "oyranos_monitor_internal_x11.h"
 #include "oyranos_monitor_internal.h"
@@ -790,7 +791,14 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
 
       /* Check for incapabilities of X gamma table access */
       if(can_gamma || oyX1Monitor_screen_( disp ) == 0 || oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
-        error = system(text);
+      {
+        char * xcalib = oyFindApplication( "xcalib" );
+        if(xcalib)
+          error = system(text);
+        else
+          oyMessageFunc_p( oyMSG_ERROR, NULL,"xcalib (calibration loader): %s",
+            _("program is not properly installed or missed") );
+      }
       if(error &&
          error != 65280)
       { /* hack */
