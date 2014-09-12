@@ -392,6 +392,146 @@ int oyMessageFunc( int code, const oyPointer context_object, const char * format
 
 oyMessage_f     oyMessageFunc_p = oyMessageFunc;
 
+void oyShowMessage(int type, const char * show_text, int show_gui)
+{
+        if(show_text)
+        {
+          if(show_gui)
+          {
+            char * app = NULL,
+                 * txt = NULL;
+            if(!app && (app = oyFindApplication( "notify-send" )) != NULL)
+            {
+              STRING_ADD( txt, "notify-send -i 'dialog-information' 'Oyranos' \"");
+              STRING_ADD( txt, show_text );
+              STRING_ADD( txt, "\"" );
+              printf("%s\n", txt );
+            }
+            if(!app && getenv("KDE_FULL_SESSION") && (app = oyFindApplication( "kdialog" )) != NULL)
+            {
+              STRING_ADD( txt, "kdialog --passivepopup \"");
+              STRING_ADD( txt, show_text );
+              STRING_ADD( txt, "\" 5" );
+            }
+            if(!app && (app = oyFindApplication( "zenity" )) != NULL)
+            {
+              STRING_ADD( txt, "zenity --warning --text \"");
+              STRING_ADD( txt, show_text );
+              STRING_ADD( txt, "\"" );
+              printf("%s\n", txt );
+            }
+            if(!app && (app = oyFindApplication( "dialog" )) != NULL)
+            {
+              STRING_ADD( txt, "xterm -e sh -c \"dialog --msgbox \\\"");
+              STRING_ADD( txt, show_text );
+              STRING_ADD( txt, "\\\" 5 70\"" );
+              printf("%s\n", txt );
+            }
+            if(!app && (app = oyFindApplication( "xterm" )) != NULL)
+            {
+              STRING_ADD( txt, "xterm -e sh -c \"echo \\\"");
+              STRING_ADD( txt, show_text );
+              STRING_ADD( txt, "\\\"; sleep 10\"" );
+              printf("%s\n", txt );
+            }
+            system(txt);
+            oyFree_m_( txt );
+            oyFree_m_( app );
+          }
+
+          fprintf(stderr, "%s\n", show_text );
+        }
+}
+
+int oy_level_prog = 0;
+
+int oyGuiMessageFunc( int code, const oyPointer c, const char * format, ... )
+{
+  oyStruct_s * context = (oyStruct_s*) c;
+  char* text = 0, *pos = 0;
+  va_list list;
+  const char * type_name = "";
+  int id = -1, i;
+  int pid = 0;
+  FILE * fp = 0;
+
+  if(code == oyMSG_DBG && !oy_debug)
+    return 0;
+
+
+  if(context && oyOBJECT_NONE < context->type_)
+  {
+    type_name = oyStructTypeToText( context->type_ );
+    id = oyObject_GetId( context->oy_ );
+  }
+
+  text = (char*)calloc(sizeof(char), 4096);
+  text[0] = 0;
+
+  if(format && strlen(format) > 6)
+  {
+    if(strncasecmp("Start:", format, 6 ) == 0)
+      ++oy_level_prog;
+    if(strncasecmp("  End:", format, 6 ) == 0)
+      --oy_level_prog;
+  }
+
+# define MAX_LEVEL 20
+  if(oy_level_prog < 0)
+    oy_level_prog = 0;
+  if(oy_level_prog > MAX_LEVEL)
+    oy_level_prog = MAX_LEVEL;
+  for (i = 0; i < oy_level_prog; i++)
+    sprintf( &text[strlen(text)], " ");
+
+
+  if(type_name && type_name[0])
+    snprintf( &text[strlen(text)], 4096 - strlen(text), " %03f %s[%d] ", 
+              (double)clock()/(double)CLOCKS_PER_SEC, type_name,id );
+  else
+    snprintf( &text[strlen(text)], 4096 - strlen(text), " " );
+
+  va_start( list, format);
+  vsnprintf( &text[strlen(text)], 4096 - strlen(text), format, list);
+  va_end  ( list );
+
+
+  pos = &text[strlen(text)];
+  *pos = '\n';
+  pos++;
+  *pos = 0;
+
+  if(code == oyMSG_ERROR)
+    oyShowMessage(code,text,1);
+  /* for debugging it is better to see messages on the console rather than
+     getting lost during a crash */
+  fprintf( stderr, "%d %s", code, text );
+
+  if(text) free( text );
+
+  if(oy_debug && !getenv("OY_SKIP_GDB"))
+  {
+    pid = (int)getpid();
+    fp = fopen( TMP_FILE, "w" );
+
+    if(fp)
+    {
+      fprintf(fp, "attach %d\n", pid);
+      fprintf(fp, "thread 1\nbacktrace\nthread 2\nbacktrace\nthread 3\nbacktrace\ndetach" );
+      fclose(fp);
+      if(code != oyMSG_DBG)
+      {
+        fprintf( stderr, "GDB output:" );
+        int r = system("gdb -batch -x " TMP_FILE);
+        if(r) r = 0; // just to disable compiler warnings
+      }
+    } else
+      fprintf( stderr, "could not open %s", TMP_FILE );
+  }
+
+  return 0;
+}
+
 /** @func    oyMessageFuncSet
  *  @brief
  *

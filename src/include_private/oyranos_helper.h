@@ -55,6 +55,10 @@ extern const char * oy_backtrace;
 
 /* --- string helpers --- */
 
+void     oyShowMessage               ( int                 type,
+                                       const char        * show_text,
+                                       int                 show_gui );
+
 
 /* --- file i/o helpers --- */
 
