@@ -28,14 +28,6 @@ typedef struct oyCMM_s oyCMM_s;
   
 
 
-/**
- *  typedef   oyCMMinfoInit_f
- *  @brief    optional module init function
- *  @ingroup  module_api
- *  @memberof oyCMM_s
- */
-typedef int      (*oyCMMinfoInit_f)  ( oyStruct_s        * library );
-
 /** @struct   oyCMM_s
  *  @brief    The CMM API resources struct to implement and set by a CMM
  *  @ingroup  module_api
@@ -64,7 +56,7 @@ struct oyCMM_s {
 
   oyIcon_s       * icon;               /*!< module icon */
 
-  oyCMMinfoInit_f  init;      /**< should be called before any access to members of oyCMMinfo_s */
+  int (*init)(oyStruct_s * library);   /**< should be called before any access to members of oyCMMinfo_s */
 
 };
 
