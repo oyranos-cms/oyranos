@@ -198,8 +198,10 @@ int main( int argc , char** argv )
         fprintf(stdout, "%s\n", names[i]);
 
     if(current_policy)
-      fprintf( stdout, "%s \"%s\"\n",
-               _("Currently active policy:"), current>=0?names[current]:"---");
+    {
+      fprintf( stderr, "%s\n", _("Currently active policy:"));
+      fprintf( stdout, "%s\n", current>=0?names[current]:"---");
+    }
 
     if(list_paths)
     {
