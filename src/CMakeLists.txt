@@ -80,7 +80,7 @@ IF( HAVE_LCMS2 )
   LINK_DIRECTORIES( ${LCMS2_LIBRARY_DIRS} )
 ENDIF()
 
-IF(NOT( LCMS_FOUND OR LCMS2_FOUND ))
+IF(NOT LCMS_FOUND AND NOT LCMS2_FOUND )
   MESSAGE( SEND_ERROR "Need at least one little CMS installation. lcms2 is prefered; Download http://www.littlecms.com" )
 ENDIF()
 

@@ -39,9 +39,9 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
-SET( MSGMERGE_OPTS --quiet )
+#SET( MSGMERGE_OPTS --quiet )
 #IF( CMAKE_VERBOSE_MAKEFILE )
-  UNSET( MSGMERGE_OPTS )
+  #UNSET( MSGMERGE_OPTS )
   SET( MSGFMT_OPTS --statistics )
 #ENDIF()
 
@@ -57,7 +57,7 @@ IF(GETTEXT_MSGMERGE_EXECUTABLE)
    IF (gettext_version MATCHES "^msgmerge \\(.*\\) [0-9]")
       STRING(REGEX REPLACE "^msgmerge \\([^\\)]*\\) ([0-9\\.]+[^ \n]*).*" "\\1" GETTEXT_VERSION_STRING "${gettext_version}")
    ENDIF()
-   UNSET(gettext_version)
+   #UNSET(gettext_version)
 ENDIF(GETTEXT_MSGMERGE_EXECUTABLE)
 
 INCLUDE(FindPackageHandleStandardArgs)
