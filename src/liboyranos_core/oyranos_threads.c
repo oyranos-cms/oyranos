@@ -52,7 +52,7 @@ int oyThreadCreate                   ( void             *(*func) (void * ptr),
   if(!error)
   {
 #if defined(WIN32) && !defined(__GNU__)
-    *thread = (oyThread_t) _beginthread( func, 0, data );
+    *thread = (oyThread_t) _beginthread( (void(*)(void*)) func, 0, data );
     if(!(*thread))
       error = 1;
 #else
