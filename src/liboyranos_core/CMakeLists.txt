@@ -25,4 +25,5 @@ TARGET_LINK_LIBRARIES ( oyranos_core ${EXTRA_LIBS_CORE} )
 ADD_LIBRARY( oyranos_core-static STATIC ${CFILES_CORE})
 TARGET_LINK_LIBRARIES ( oyranos_core-static ${EXTRA_LIBS_CORE} )
 
-INSTALL( TARGETS oyranos_core oyranos_core-static DESTINATION lib${LIB_SUFFIX} )
+INSTALL( TARGETS oyranos_core oyranos_core-static
+         DESTINATION lib${LIB_SUFFIX} )
