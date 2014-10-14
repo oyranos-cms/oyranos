@@ -97,9 +97,15 @@ double       oyLinInterpolateRampF64 ( double            * ramp,
   return result;
 }
 
+#ifdef HAVE_POSIX
 #define MANIPULATION_FUNCTION( type, operator, name ) \
 inline type name( type val1, type val2 ) \
 { return val1 operator val2; }
+#else
+#define MANIPULATION_FUNCTION( type, operator, name ) \
+type name( type val1, type val2 ) \
+{ return val1 operator val2; }
+#endif
 MANIPULATION_FUNCTION( uint16_t, +, oyAddU16 )
 MANIPULATION_FUNCTION( uint16_t, -, oySubstU16 )
 MANIPULATION_FUNCTION( uint16_t, *, oyMultU16 )
