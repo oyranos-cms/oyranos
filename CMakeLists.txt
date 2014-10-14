@@ -44,6 +44,8 @@ IF( CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]" )
   SET( DEBUG 1 )
 ENDIF()
 
+FIND_PROGRAM(CMAKE_AR_TMP NAMES ar)
+
 # detect top level projects
 FIND_PACKAGE( Yajl )
 IF( HAVE_YAJL )
@@ -57,14 +59,15 @@ IF( HAVE_YAJL )
   ENDIF( NOT HAVE_YAJL_VERSION_H )
 ELSE( HAVE_YAJL )
   IF(CMAKE_VERSION VERSION_GREATER 2.8.0)
-    include(ExternalProject)
-    ExternalProject_Add( yajl
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/yajl
-    CONFIGURE_COMMAND cmake ${CMAKE_CURRENT_SOURCE_DIR}/yajl
-    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/yajl
-    BUILD_COMMAND ${MAKE}
+    #include(ExternalProject)
+    #ExternalProject_Add( yajl
+    #SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/yajl
+    #CONFIGURE_COMMAND cmake ${CMAKE_CURRENT_SOURCE_DIR}/yajl
+    #BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/yajl
+    #BUILD_COMMAND ${MAKE}
     # skip installation
-    INSTALL_COMMAND echo )
+    #INSTALL_COMMAND echo )
+    ADD_SUBDIRECTORY( yajl )
     INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/yajl )
     LINK_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR}/yajl )
     SET( YAJL_LIBRARIES yajl-static )
