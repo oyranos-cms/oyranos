@@ -17,7 +17,6 @@
 
 #include <lcms2.h>
 #include <stdarg.h>
-#include <dlfcn.h> /* dlopen() */
 
 #include "oyCMM_s.h"
 #include "oyCMMapi4_s.h"
