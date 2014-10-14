@@ -13,7 +13,7 @@
 
 # Copyright (c) 2008, Adrian Page, <adrian@pagenet.plus.com>
 # Copyright (c) 2009, Cyrille Berger, <cberger@cberger.net>
-# Copyright (c) 2012, Kai-Uwe Behrmann, <ku.b@gmx.de>
+# Copyright (c) 2012-2014, Kai-Uwe Behrmann, <ku.b@gmx.de>
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
@@ -22,22 +22,25 @@
 # use pkg-config to get the directories and then use these values
 # in the FIND_PATH() and FIND_LIBRARY() calls
 find_package(PkgConfig)
-pkg_check_modules(PC_LCMS2 lcms2)
-set(LCMS2_DEFINITIONS ${PC_LCMS2_CFLAGS_OTHER})
+pkg_check_modules(LCMS2 lcms2)
+set(LCMS2_DEFINITIONS ${LCMS2_CFLAGS_OTHER})
+
 
 find_path(LCMS2_INCLUDE_DIR lcms2.h
    HINTS
-   ${PC_LCMS2_INCLUDEDIR}
-   ${PC_LCMS2_INCLUDE_DIRS}
+   ${LCMS2_INCLUDEDIR}
+   ${LCMS2_INCLUDE_DIRS}
    PATH_SUFFIXES lcms2 liblcms2
 )
 
-find_library(LCMS2_LIBRARIES NAMES lcms2 liblcms2 lcms-2 liblcms-2
+if(NOT LCMS2_FOUND)
+  find_library(LCMS2_LIBRARIES NAMES lcms2 liblcms2 liblcms2-2 lcms-2 liblcms-2
    HINTS
-   ${PC_LCMS2_LIBDIR}
-   ${PC_LCMS2_LIBRARY_DIRS}
-   PATH_SUFFIXES lcms2
-)
+   ${LCMS2_LIBDIR}
+   ${LCMS2_LIBRARY_DIRS}
+   #PATH_SUFFIXES lcms2
+  )
+endif(NOT LCMS2_FOUND)
 
 # Store the LCMS2 version number in the cache, so we don't have to search everytime again
 if(LCMS2_INCLUDE_DIR  AND NOT  LCMS2_VERSION)
