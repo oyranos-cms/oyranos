@@ -37,6 +37,8 @@
 #cmakedefine HAVE_LIBPNG
 #cmakedefine USE_GETTEXT
 #cmakedefine HAVE_LOCALE_H
+#cmakedefine HAVE_INTTYPES_H
+#cmakedefine HAVE_STDINT_H
 #ifndef DEBUG 
 #cmakedefine01 DEBUG
 #endif
