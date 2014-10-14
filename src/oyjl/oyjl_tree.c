@@ -30,7 +30,7 @@
 #include "oyjl_tree.h"
 #define YA_FREE(afs, ptr) (afs)->free((afs)->ctx, (ptr))
 
-#if defined(_WIN32) || defined(WIN32)
+#if defined(_MSC_VER) 
 #define snprintf sprintf_s
 #endif
 
