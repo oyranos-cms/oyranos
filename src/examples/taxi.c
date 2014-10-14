@@ -363,7 +363,13 @@ int main( int argc, char ** argv )
                 oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                             "\n"OPENICC_DEVICE_JSON_FOOTER_BASE );
 
-                mkdir(mnft, S_IRWXU | S_IRWXG | S_IRWXO);
+                mkdir(mnft,
+#ifdef HAVE_POSIX
+                      S_IRWXU | S_IRWXG | S_IRWXO
+#else
+                      0
+#endif
+                     );
                 if(val)
                 {
                   oyWriteMemToFile_(fn, t, strlen(t+1) );
