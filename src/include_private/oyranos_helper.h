@@ -186,6 +186,20 @@ int                oyMiscBlobGetHash_( void              * buffer,
                                        uint32_t            flags,
                                        unsigned char     * md5_return );
 
+#ifdef HAVE_DL
+#include <dlfcn.h> /* dlopen() */
+#elif defined(HAVE_LTDL)
+#include <ltdl.h>
+#define dlopen(a,b)  lt_dlopen(a)
+#define dlsym   lt_dlsym
+#define dlerror lt_dlerror
+#define dlclose lt_dlclose
+#define RTLD_LAZY 1
+#else
+#error "need dlfcn.h or ltdl to open modules. STOP"
+#endif
+
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */
