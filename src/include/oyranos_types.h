@@ -18,12 +18,14 @@
 
 #include <stdlib.h> /* for size_t */
 
-#if !defined(WIN32) || (defined(WIN32) && (defined(__CYGWIN__) || defined(__MINGW) || defined(__MINGW32) || defined(__MINGW64__)))
+#if (!defined(WIN32) && !defined(_MSC_VER)) || (defined(WIN32) && (defined(__CYGWIN__) || defined(__MINGW) || defined(__MINGW32) || defined(__MINGW64__)))
 #define HAVE_POSIX 1
 #include <inttypes.h> /* uint32_t */
 #else
-#include <stdint.h>
-#if 0
+ #if !defined(_MSC_VER)
+  #include <stdint.h>
+ #endif
+
 #define uint32_t unsigned __int32
 #define uint16_t unsigned __int16
 #define uint8_t unsigned char
@@ -31,7 +33,7 @@
 #define int16_t __int16
 #define intptr_t long int
 #define uintptr_t unsigned long int
-#endif
+
 #define uid_t int
 #define gid_t int
 #ifndef INT32_MAX
