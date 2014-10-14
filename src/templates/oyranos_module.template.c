@@ -23,7 +23,7 @@
 #include "oyOptions_s_.h"
 #include "oyStructList_s_.h"
 
-#ifdef HAVE_POSIX
+#ifdef HAVE_DL
 #include <dlfcn.h>
 #else
 #include <ltdl.h>
@@ -31,6 +31,7 @@
 #define dlsym   lt_dlsym
 #define dlerror lt_dlerror
 #define dlclose lt_dlclose
+#define RTLD_LAZY 1
 #endif
 
 oyStructList_s * oy_cmm_handles_ = 0;
