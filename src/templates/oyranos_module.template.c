@@ -23,17 +23,6 @@
 #include "oyOptions_s_.h"
 #include "oyStructList_s_.h"
 
-#ifdef HAVE_DL
-#include <dlfcn.h>
-#else
-#include <ltdl.h>
-#define dlopen  lt_dlopen
-#define dlsym   lt_dlsym
-#define dlerror lt_dlerror
-#define dlclose lt_dlclose
-#define RTLD_LAZY 1
-#endif
-
 oyStructList_s * oy_cmm_handles_ = 0;
 /* defined in sources/Struct.public_methods_definitions.c */
 /** @internal
@@ -882,7 +871,6 @@ oyPointer    oyCMMdsoGet_            ( const char        * cmm,
   if(!lib_name)
     return 0;
 
-#ifdef HAVE_POSIX
   found = oyCMMdsoSearch_(lib_name);
 
   if(found >= 0)
@@ -913,7 +901,6 @@ oyPointer    oyCMMdsoGet_            ( const char        * cmm,
     oyCMMdsoReference_( lib_name, dso_handle );
 
   return dso_handle;
-#endif
 }
 
 /** @internal
@@ -1102,12 +1089,7 @@ char **          oyCMMsGetNames_     ( uint32_t          * n,
 char **          oyCMMsGetLibNames_  ( uint32_t          * n,
                                        const char        * required_cmm )
 {
-#ifdef HAVE_POSIX
   return oyCMMsGetNames_(n, OY_METASUBPATH, 0, required_cmm, oyPATH_MODULE);
-#else
-  *n = 0;
-  return 0;
-#endif
 }
 
 /** @internal
