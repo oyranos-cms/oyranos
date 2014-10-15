@@ -88,7 +88,7 @@ void oyI18NInit_()
         WARNc2_S("bindtextdomain( %s, %s )", oy_domain, oy_domain_codeset );
       bind_textdomain_codeset(oy_domain, oy_domain_codeset);
     }
-    DBG_NUM2_S("oy_domain_codeset %s %s", oy_domain, oy_domain_codeset)
+    DBG_NUM2_S("oy_domain_codeset %s %s", oy_domain, oyNoEmptyString_m(oy_domain_codeset))
 
     /* we use the posix setlocale interface;
      * the environmental LANG variable is flacky */
