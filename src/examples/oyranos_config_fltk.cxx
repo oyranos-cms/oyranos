@@ -693,7 +693,7 @@ static void refreshOptions() {
                     for(j = 0; j < count; ++j)
                       choice->add( names[j] );
   
-                    if(current >= 0 && names[current])
+                    if(current >= 0 && names && names[current])
                       choice->value( choice->find_item( names[current] ) );
                     else
                       choice->value( -1 );
