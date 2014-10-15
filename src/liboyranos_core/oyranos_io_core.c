@@ -1083,7 +1083,7 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
 
     while(run)
     {
-      char name[256];
+      char * name = NULL;
       int k;
 
       if(l>=64) WARNc_S("max path depth reached: 64");
@@ -1103,16 +1103,16 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
         goto cont;
       }
 
-      oySprintf_(name, "%s",path);
+      STRING_ADD( name, path );
       for (k=0; k <= l; ++k) {
-        int len = strlen(name);
-        assert(entry[k] && entry[k]->d_name);
-        if(len+strlen(entry[k]->d_name) < 256)
-          oySprintf_(&name[strlen(name)],"/%s", entry[k]->d_name);
-        else {
-          DBG_MEM3_S("%d. %s/%s ignored", l, name, entry[k]->d_name)
+
+        if(!(entry[k] && entry[k]->d_name))
           goto cont;
-        }
+
+        assert(entry[k] && entry[k]->d_name);
+
+        oyStringAddPrintf( &name, AD, "/%s", entry[k]->d_name );
+        DBG_MEM4_S("%d. %s %s/%s", l, oyNoEmptyString_m(name), path, entry[k]->d_name)
       }
 
       if ((strcmp (entry[l]->d_name, "..") == 0) ||
@@ -1124,12 +1124,7 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
         DBG_MEM2_S("%d. %s does not exist", l, name)
         goto cont;
       }
-#ifdef HAVE_POSIX
-      if (!S_ISLNK(statbuf.st_mode)){/*((statbuf.st_mode & S_IFMT) & S_IFLNK))  */
-        DBG_MEM5_S("%d. %s is a link: ignored %d %d %d", l, name, (int)statbuf.st_mode , S_IFLNK, 0120000);
-        /*goto cont; */
-      }
-#endif
+
       if (S_ISDIR (statbuf.st_mode) &&
           l < MAX_DEPTH ) {
 
@@ -1138,6 +1133,7 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
         DBG_MEM2_S("%d. %s directory", l, name);
         goto cont;
       }
+
       if(!S_ISREG (statbuf.st_mode)) {
         DBG_MEM2_S("%d. %s is a non regular file", l, name);
         goto cont;
@@ -1155,6 +1151,9 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
 
       cont:
         ;
+
+      if(name)
+        oyFree_m_( name );
     }
 
     for( j = 0; j < MAX_DEPTH; ++j ) { if(dir[j]) closedir(dir[j]); dir[j] = NULL; }
