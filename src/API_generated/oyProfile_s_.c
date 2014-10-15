@@ -1401,7 +1401,7 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s_      * profile,
 #endif
 #if defined(__APPLE__)
       oySprintf_( h, "APPL" );
-#elif defined(WIN32)
+#elif defined(_WIN32)
       oySprintf_( h, "MSFT" );
 #else
       oySprintf_( h, "*nix" );

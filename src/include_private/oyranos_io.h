@@ -34,7 +34,7 @@
 #include "oyranos_helper.h"
 #include "oyranos_debug.h"
 
-#if defined(WIN32)
+#if defined(_WIN32)
 # define oyPOPEN_m    _popen
 # define oyPCLOSE_m   _pclose
 #else

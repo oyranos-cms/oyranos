@@ -22,7 +22,7 @@
 #include "oyranos_monitor.h" /* TODO */
 #include "oyranos_sentinel.h"
 #include "oyranos_texts.h"
-#if !defined(WIN32)
+#if !defined(_WIN32)
 #include <dlfcn.h>
 #endif
 #include <math.h>

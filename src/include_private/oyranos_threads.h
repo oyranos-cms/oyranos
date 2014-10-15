@@ -24,7 +24,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#if defined(WIN32) && !defined(__GNU__)
+#if defined(_WIN32) && !defined(__GNU__)
 # include <process.h>
 typedef unsigned long oyThread_t;
 # define oyThreadSelf  GetCurrentThreadId

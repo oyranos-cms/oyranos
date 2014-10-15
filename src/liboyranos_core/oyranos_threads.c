@@ -51,7 +51,7 @@ int oyThreadCreate                   ( void             *(*func) (void * ptr),
 
   if(!error)
   {
-#if defined(WIN32) && !defined(__GNU__)
+#if defined(_WIN32) && !defined(__GNU__)
     *thread = (oyThread_t) _beginthread( (void(*)(void*)) func, 0, data );
     if(!(*thread))
       error = 1;
@@ -78,7 +78,7 @@ oyPointer  oyStruct_LockCreate_        ( oyStruct_s      * obj )
 {
   oyMutex_s * ms = (oyMutex_s*) calloc(sizeof(oyMutex_s),1);
 
-#if defined(WIN32) && !defined(__GNU__)
+#if defined(_WIN32) && !defined(__GNU__)
   int mattr = 0;
 #else
   pthread_mutexattr_t mattr_local;
@@ -244,7 +244,7 @@ int                oyJob_Add         ( oyJob_s           * job,
   if(error)
     WARNc2_S("error=%d %d", error, finished);
 
-#if defined(WIN32) && !defined(__GNU__)
+#if defined(_WIN32) && !defined(__GNU__)
 #else
   if(finished == 0)
   {
@@ -287,7 +287,7 @@ int                oyJob_Get         ( oyJob_s          ** job,
     }
     oyBlob_Release( &blob );
   }
-#if defined(WIN32) && !defined(__GNU__)
+#if defined(_WIN32) && !defined(__GNU__)
 #else
   else if(finished == 0)
   {

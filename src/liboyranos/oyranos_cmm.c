@@ -29,7 +29,7 @@
 #include "oyConnectorImaging_s.h"
 #include "oyRectangle_s_.h"
 
-#if !defined(WIN32)
+#if !defined(_WIN32)
 #include <dlfcn.h>
 #endif
 #include <math.h>
