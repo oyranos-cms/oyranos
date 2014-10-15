@@ -1,5 +1,9 @@
 CHECK_INCLUDE_FILE(dirent.h HAVE_DIRENT_H)
 
+IF(NOT HAVE_DIRENT_H)
+  SET( DIRENT_C dirent.c )
+ENDIF(NOT HAVE_DIRENT_H)
+
 SET( CFILES_CORE_PUBLIC
 	${PACKAGE_NAME}_core.c
 	${PACKAGE_NAME}_debug.c
@@ -13,6 +17,7 @@ SET( CFILES_CORE
 	${PACKAGE_NAME}_misc.c
 	${PACKAGE_NAME}_sentinel_core.c
 	${PACKAGE_NAME}_string.c
+        ${DIRENT_C}
 	md5.c
 	lookup3.c
    )

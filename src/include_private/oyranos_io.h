@@ -21,7 +21,7 @@
 #include "oyranos_types.h" /* define HAVE_POSIX */
 
 #include <sys/stat.h>
-#ifdef HAVE_POSIX
+#ifdef HAVE_DIRENT_H
 #include <dirent.h>
 #else
 #include "dirent_custom.h"  /* Posix API must be provided */
