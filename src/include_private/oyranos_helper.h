@@ -189,7 +189,15 @@ int                oyMiscBlobGetHash_( void              * buffer,
 
 #ifdef HAVE_DL
 #include <dlfcn.h> /* dlopen() */
-#define dlinit();
+#define dlinit() 0
+#elif defined(_WIN32)
+#include <windows.h>
+#define dlinit() 0
+#define dlopen(a,b)  LoadLibrary(a)
+#define dlsym   GetProcAddress
+#define dlerror() "----"
+#define dlclose FreeLibrary
+#define RTLD_LAZY 1
 #elif defined(HAVE_LTDL)
 #include <ltdl.h>
 #define dlinit  lt_dlinit
