@@ -900,7 +900,10 @@ oyPointer    oyCMMdsoGet_            ( const char        * cmm,
 
   if(!dso_handle)
   {
-    dlinit();
+    int err = dlinit();
+    if(err)
+      WARNc1_S("dlinit() returned: %d", err);
+
     dso_handle = dlopen( lib_name, RTLD_LAZY );
 
     if(!dso_handle)
