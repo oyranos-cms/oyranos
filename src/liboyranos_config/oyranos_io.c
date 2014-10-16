@@ -292,7 +292,9 @@ char *   oyFindProfile_              ( const char        * fileName,
       FILE * fp = fopen( fileName, "rb" );
       if(fp)
       {
-        path_name = oyStringCopy_( ".", oyAllocateFunc_ );
+        path_name = oyMakeFullFileDirName_(NULL);
+        if(path_name && path_name[strlen(path_name)-1] == OY_SLASH_C)
+          path_name[strlen(path_name)-1] = '\000';
         fclose(fp); fp = 0;
       }
     }
