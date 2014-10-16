@@ -68,6 +68,7 @@ char*   oyMakeFullFileDirName_     (const char* name);
 char*   oyResolveDirFileName_      (const char* name);
 char*   oyExtractPathFromFileName_ (const char* name);
 char*   oyGetHomeDir_              ();
+char*   oyGetCurrentDir_           ();
 char*   oyGetParent_               (const char* name);
 struct oyFileList_s {
   oyOBJECT_e type;                  /* oyOBJECT_FILE_LIST_S_ */
@@ -188,8 +189,10 @@ int                oyMiscBlobGetHash_( void              * buffer,
 
 #ifdef HAVE_DL
 #include <dlfcn.h> /* dlopen() */
+#define dlinit();
 #elif defined(HAVE_LTDL)
 #include <ltdl.h>
+#define dlinit  lt_dlinit
 #define dlopen(a,b)  lt_dlopen(a)
 #define dlsym   lt_dlsym
 #define dlerror lt_dlerror
