@@ -986,8 +986,7 @@ oyExtractPathFromFileName_ (const char* file_name)
   return path_name;
 }
 
-char*
-oyMakeFullFileDirName_ (const char* name)
+char* oyMakeFullFileDirName_ (const char* name)
 {
   char *newName = 0;
   char *dirName = 0;
@@ -1003,12 +1002,10 @@ oyMakeFullFileDirName_ (const char* name)
   } else
   { DBG_MEM
     /* create directory name */
-    oyAllocString_m_( newName, MAX_PATH,
-                      oyAllocateFunc_, return 0 );
     dirName = oyGetCurrentDir_();
-    oySprintf_ (newName, "%s%s", dirName, OY_SLASH);
+    oyStringAddPrintf( &newName, AD, "%s%s", dirName, OY_SLASH );
     if (name)
-      oySprintf_ (strrchr(newName,OY_SLASH_C)+1, "%s", name);
+      oyStringAddPrintf( &newName, AD, "%s", name);
     DBG_MEM1_S("newName = %s", newName)
     oyFree_m_(dirName);
   }
