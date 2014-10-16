@@ -884,6 +884,7 @@ oyPointer    oyCMMdsoGet_            ( const char        * cmm,
 
   if(!dso_handle)
   {
+    dlinit();
     dso_handle = dlopen( lib_name, RTLD_LAZY );
 
     if(!dso_handle)
