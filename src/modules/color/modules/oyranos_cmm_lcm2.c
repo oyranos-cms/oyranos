@@ -320,13 +320,12 @@ int                lcm2CMMInit       ( oyStruct_s        * filter )
   {
     char * fn = oyLibNameCreate_( "lcms2", 2 );
     lcms_handle = dlopen(fn, RTLD_LAZY);
-    oyFree_m_( fn );
 
     if(!lcms_handle)
     {
       lcm2_msg( oyMSG_ERROR,0, OY_DBG_FORMAT_" "
-               "init failed: %s",
-                OY_DBG_ARGS_, dlerror() );
+               "init \"%s\" failed: %s",
+                OY_DBG_ARGS_, fn, dlerror() );
       error = 1;
       lcms_initialised = -1;
     } else
@@ -396,6 +395,8 @@ int                lcm2CMMInit       ( oyStruct_s        * filter )
       else
         lcms_initialised = 1;
     }
+    oyFree_m_( fn );
+
   } else if(lcms_initialised == -1)
     error = 1;
   return error;
@@ -2834,7 +2835,7 @@ int lcm2GetOptionsUI                 ( oyCMMapiFilter_s   * module,
     return 0;
 
   tmp = oyStringCopy_( "\
-  <xf:group type=\"h3\">\
+  <xf:group type=\"frame\">\
     <xf:label>little CMS 2 ", oyAllocateFunc_ );
 
   A(       _("Extended Options"));
