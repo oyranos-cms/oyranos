@@ -1238,7 +1238,7 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
 int oyFileListCb_ ( oyFileList_s * data,
                     const char * full_name, const char * filename)
 {
-  oyFileList_s *l = (oyFileList_s*)data;
+  oyFileList_s *l = data;
 
   if(l->type != oyOBJECT_FILE_LIST_S_)
     WARNc_S("Could not find a oyFileList_s objetc.");
@@ -1265,6 +1265,29 @@ int oyFileListCb_ ( oyFileList_s * data,
   return 0;
 }
 
+int oyLibListCb_ ( oyFileList_s * data,
+                    const char * full_name, const char * filename)
+{
+  if(filename)
+  {
+    int len = strlen(filename);
+    /* filter out object and static libraries, as we do not support them 
+     * and they emit warnings */
+    if(len >= 2 &&
+       !(filename[len-2] == '.' &&
+         (filename[len-1] == 'a' ||
+          filename[len-1] == 'o')
+        ))
+      return oyFileListCb_(data, full_name, filename);
+    else
+      DBG_MEM3_S( "skipped full_name: \"%s\" filename: \"%s\" %d",
+                  full_name, filename, len);
+  } else
+    WARNc2_S( "argument wrong full_name: \"%s\" filename: \"%s\"",
+              full_name, filename);
+
+  return 0;
+}
 
 /** @internal
  *  @brief query valid XDG paths
@@ -1518,7 +1541,7 @@ oyFileListGet_                  (const char * subpath,
                                  int          data,
                                  int          owner)
 {
-  oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 0, 128, 0, 0};
+  oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 0, 128, 0, NULL};
   int count = 0;
   char ** path_names = NULL;
  
@@ -1702,7 +1725,7 @@ oyLibListGet_                   (const char * subpath,
                                  int        * size,
                                  int          owner)
 {
-  struct oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 0, 128, 0, 0};
+  oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 0, 128, 0, NULL};
   int count = 0;
   char ** path_names = NULL;
  
@@ -1719,7 +1742,7 @@ oyLibListGet_                   (const char * subpath,
 
   oyAllocHelper_m_(l.names, char*, l.mem_count, oyAllocateFunc_, return 0);
 
-  oyRecursivePaths_(oyFileListCb_, &l, (const char**)path_names, count);
+  oyRecursivePaths_(oyLibListCb_, &l, (const char**)path_names, count);
 
   oyStringListRelease_(&path_names, count, oyDeAllocateFunc_);
 
