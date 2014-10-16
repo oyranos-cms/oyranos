@@ -21,6 +21,14 @@
 #include <string.h>
 #include <math.h>
 
+#if defined(_WIN32)
+#include <windows.h>
+#include <shlobj.h>
+#include <io.h>
+#else
+#include <sys/stat.h> /* mkdir() */
+#endif
+
 #include "oyranos_config_internal.h"
 #include "oyranos.h"
 #include "oyranos_check.h"
@@ -618,14 +626,79 @@ int  oyWriteMemToFile2_              ( const char        * name,
   return error;
 }
 
-char*
-oyGetHomeDir_ ()
+char * oyGetCurrentDir_ ()
 {
-# if (__WINDOWS__)
+# if defined(_WIN32)
+  char * path = NULL;
+  DWORD len = 0;
+
   DBG_PROG_START
+
+  len = GetCurrentDirectory(0,NULL);
+
+  if(len)
+    oyAllocString_m_( path, len+1,
+                      oyAllocateFunc_, return NULL );
+    
+  if(len && path)
+  {
+    int i;
+
+    len = GetCurrentDirectory( len+1, path );
+
+    for(i=0; i < len; ++i)
+      if(path[i] == '\\')
+        path[i] = '/';
+  } else
+    WARNc_S("Could not get \"PWD\" directory name");
+
+  DBG_PROG2_S("PWD[%d]=%s", len, oyNoEmptyString_m_(path));
+
   DBG_PROG_ENDE
-  WARNc_S("OS not supported yet");
-  return 0;
+  return path;
+# else
+  char * name = oyStringCopy( getenv("PWD"), oyAllocateFunc_ );
+
+  DBG_PROG_START
+
+  if(!name)
+    WARNc_S("Could not get \"PWD\" directory name");
+
+  DBG_PROG_ENDE
+  return name;
+# endif
+}
+
+char * oyGetHomeDir_ ()
+{
+# if defined(_WIN32)
+  static CHAR path[MAX_PATH];
+  static int init = 0;
+
+  DBG_PROG_START
+
+  if(init)
+  {
+    DBG_PROG_ENDE
+    return path;
+  }
+
+  init = 1;
+
+  if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, 0, &path[0])))
+  {
+    int len = strlen(path), i;
+    for(i=0; i < len; ++i)
+      if(path[i] == '\\')
+        path[i] = '/';
+  }
+  else
+    WARNc_S("Could not get \"HOME\" directory name");
+
+  DBG_PROG2_S("HOME[%d]=%s", MAX_PATH, path);
+
+  DBG_PROG_ENDE
+  return path;
 # else
   char* name = (char*) getenv("HOME");
 
@@ -839,59 +912,54 @@ int  oyRemoveFile_                   ( const char        * full_file_name )
   return remove( full_file_name );
 }
 
-char*
-oyResolveDirFileName_ (const char* name)
+char * oyResolveDirFileName_ (const char* name)
 {
   char * newName = NULL,
        * home = NULL;
-  int len = 0;
 
   DBG_MEM_START
 
-  DBG_MEM_S(name)
+  if(!name)
+  {
+    WARNc1_S ("name %s", oyNoEmptyString_m_(name));
+    return NULL;
+  }
 
   /* user directory */
   if (name[0] == '~')
   {
     home = oyGetHomeDir_();
-    len = strlen(name) + strlen(home) + 1;
-    oyAllocHelper_m_( newName, char, len + 2, oyAllocateFunc_, fprintf(stderr,"oyranos_io.c:367 oyResolveDirFileName_() Could not allocate enough memory.\n"); return 0 );
+    DBG_MEM1_S ("home %s", oyNoEmptyString_m_(home));
+    oyStringAddPrintf( &newName, AD, "%s%s", home, &name[0]+1 );
 
-    oySprintf_ (newName, "%s%s", home, &name[0]+1);
-
-  } else {
-    len = strlen(name)+1;
-    oyAllocHelper_m_( newName, char, len, oyAllocateFunc_, fprintf(stderr,"oyranos_io.c:554 oyResolveDirFileName_() Could not allocate enough memory.\n"); return 0 );
-    oySprintf_ (newName, "%s", name);
-
+  } else
+  {
     /* relative names - where the first sign is no directory separator */
-    if (newName[0] != OY_SLASH_C)
+    if (name[0] != OY_SLASH_C
+ #ifdef _WIN32
+    /* ... and no windows drive */
+        && name[1] != ':'
+ #endif
+       )
     {
-      char* cn = 0;
-      const char * pw = getenv("PWD"),
-                 * t = name;
+      char * pw = oyGetCurrentDir_();
+      const char * t = name;
 
-      len += strlen(pw) + 10;
-
-      STRING_ADD(cn, pw);
-      STRING_ADD(cn, OY_SLASH);
+      oyStringAddPrintf( &newName, AD, "%s%s", pw, OY_SLASH );
       if(name[0] == '.' &&
          name[1] == '/')
         t = &name[2];
-      STRING_ADD(cn, t);
-      DBG_MEM1_S("canonoical %s ", cn)
-      oyFree_m_(newName);
-      STRING_ADD(newName, cn);
-      oyFree_m_(cn);
-    }
+      STRING_ADD(newName, t);
+      DBG_MEM1_S("canonoical %s ", newName)
+      DBG_MEM1_S ("pwd %s", oyNoEmptyString_m_(pw));
+      oyFree_m_(pw);
+    } else
+      /* nothing to do - just copy */
+      newName = oyStringCopy( name, oyAllocateFunc_ );
   }
 
-  if(name)
-    DBG_MEM1_S ("name %s", name);
-  if(home)
-    DBG_MEM1_S ("home %s", home);
-  if(newName)
-    DBG_MEM1_S ("newName = %s", newName);
+  DBG_MEM1_S ("name = %s", oyNoEmptyString_m_(name));
+  DBG_MEM1_S ("newName = %s", oyNoEmptyString_m_(newName));
 
   DBG_MEM_ENDE
   return newName;
@@ -937,11 +1005,12 @@ oyMakeFullFileDirName_ (const char* name)
     /* create directory name */
     oyAllocString_m_( newName, MAX_PATH,
                       oyAllocateFunc_, return 0 );
-    dirName = (char*) getenv("PWD");
+    dirName = oyGetCurrentDir_();
     oySprintf_ (newName, "%s%s", dirName, OY_SLASH);
     if (name)
       oySprintf_ (strrchr(newName,OY_SLASH_C)+1, "%s", name);
     DBG_MEM1_S("newName = %s", newName)
+    oyFree_m_(dirName);
   }
 
   DBG_MEM1_S("newName = %s", newName)
@@ -1086,7 +1155,7 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
       char * name = NULL;
       int k;
 
-      if(l>=64) WARNc_S("max path depth reached: 64");
+      if(l>=MAX_DEPTH) WARNc1_S("max path depth reached: %d", MAX_DEPTH);
       if(dir[l] == NULL)
       {
         WARNc_S("NULL");
@@ -1107,7 +1176,10 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
       for (k=0; k <= l; ++k) {
 
         if(!(entry[k] && entry[k]->d_name))
+	{
+          DBG_MEM3_S("%d. skip empty entry[%d]->d_name in %s", l, k, path)
           goto cont;
+	}
 
         assert(entry[k] && entry[k]->d_name);
 
@@ -1579,7 +1651,10 @@ char**  oyLibPathsGet_( int             * count,
             if(!oyStringListHas_((const char**)paths,n,fp))
             {
               if(!oyIsDir_(fp))
-                WARNc4_S("%s %s:\"%s\"/\"%s\"",_("path is not readable"), vars[i], full_name, subdir );
+                WARNc4_S("%s %s:\"%s\"/\"%s\"",_("path is not readable"),
+                         oyNoEmptyString_m_(vars[i]),
+                         oyNoEmptyString_m_(full_name),
+                         oyNoEmptyString_m_(subdir) );
               full_paths[full_paths_n++] = fp; fp = NULL;
             } else
               oyFree_m_( fp );
