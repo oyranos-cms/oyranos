@@ -1765,6 +1765,9 @@ char*   oyLibNameCreate_                 ( const char * lib_base_name,
 #ifdef __APPLE__
     oyStringAddPrintf_( &fn, oyAllocateFunc_, oyDeAllocateFunc_,
                         "%s%s.%d%s", OY_LIB_PREFIX, lib_base_name, version, OY_LIB_SUFFIX );
+#elif defined(_WIN32)
+    oyStringAddPrintf_( &fn, oyAllocateFunc_, oyDeAllocateFunc_,
+                        "%s%s-%d%s", OY_LIB_PREFIX, lib_base_name, version, OY_LIB_SUFFIX );
 #else
     oyStringAddPrintf_( &fn, oyAllocateFunc_, oyDeAllocateFunc_,
                         "%s%s%s.%d", OY_LIB_PREFIX, lib_base_name, OY_LIB_SUFFIX, version );
