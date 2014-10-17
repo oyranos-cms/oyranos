@@ -463,6 +463,13 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
         /* convert the image data */
         oyConversion_RunPixels( context, ticket );
 
+        if(oy_debug)
+        {
+          oyImage_s * out = oyConversion_GetImage( context, OY_OUTPUT );
+          oyImage_WritePPM( out, "debug_image_out.ppm", "image_display output image");
+          oyImage_Release( &out );
+        }
+
         /* remember the old rectangle */
         oyRectangle_SetByRectangle( old_display_rectangle, disp_rectangle );
         oyRectangle_SetByRectangle( old_roi_rectangle, ticket_roi );
