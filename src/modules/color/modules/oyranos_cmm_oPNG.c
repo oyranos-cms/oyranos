@@ -753,7 +753,13 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
 
 
   if(filename)
-    fp = fopen( filename, "rmb" );
+    fp = fopen( filename,
+#ifdef _WIN32
+                "rb"
+#else
+                "rmb"
+#endif
+              );
 
   if(!fp)
   {
