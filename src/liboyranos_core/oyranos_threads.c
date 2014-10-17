@@ -122,7 +122,8 @@ void       oyLock_                     ( oyPointer         lock,
   oyThread_t t = oyThreadSelf();
 
   {
-    DBG_PROG4_S("%s %d thread[%d] ref:%d", marker, line, oyGetThreadID( t ), ms->ref );
+    if(oy_debug < 5)
+      DBG_PROG4_S("%s %d thread[%d] ref:%d", marker, line, oyGetThreadID( t ), ms->ref );
     /* Get the resource, and probably wait for it. */
     oyMutexLock_m( &ms->m );
     /* As soon as we are able to lock, the mutex is owned by us. */
@@ -139,7 +140,8 @@ void       oyUnLock_                   ( oyPointer         lock,
   oyMutex_s * ms = (oyMutex_s*)lock;
 
   {
-    DBG_PROG4_S("%s %d thread[%d] ref:%d", marker, line, oyGetThreadID( oyThreadSelf()), ms->ref );
+    if(oy_debug < 5)
+      DBG_PROG4_S("%s %d thread[%d] ref:%d", marker, line, oyGetThreadID( oyThreadSelf()), ms->ref );
     /* Lessen the reference counter one level. */
     ms->ref--;
     oyMutexUnLock_m( &ms->m );
