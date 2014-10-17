@@ -15,7 +15,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/08/04
+ *  @date     2014/10/17
  */
 
 
@@ -804,6 +804,19 @@ OYAPI int  OYEXPORT
     return -1;
 
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 1 )
+
+  if(oy_debug)
+  {
+    const char * tags = oyOptions_GetText( s->tags, oyNAME_NICK )/*,
+               * opts = oyOptions_GetText( s->api7_->options, oyNAME_NICK )*/;
+    DBG_NUM6_S( "\"%s::%s\" %d[%d]\n\t\"%s\"\n\t\"%s\"",
+                 oyFilterNode_GetRegistration(node),
+                 oyFilterNode_GetRendererRegistration(node),
+                 s->api7_->sockets_n, oyFilterNode_CountSocketNodes(node, 0, OY_FILTEREDGE_CONNECTED),
+                 oyFilterNode_GetRelatives(node),
+                 tags ? tags : "----"
+               );
+  }
 
   error = oyCMMapi7_Run( (oyCMMapi7_s*) s->api7_, plug, ticket );
 
