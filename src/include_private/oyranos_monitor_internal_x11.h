@@ -21,6 +21,8 @@
 #include "oyranos.h"
 #include "oyranos_internal.h"
 #include "oyranos_monitor.h"
+#include "oyranos_monitor_internal.h"
+#include "oyCMMapi10_s_.h"
 
 #include "oyRectangle_s.h"
 
@@ -38,6 +40,47 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
+
+#define CMM_NICK "oyX1"
+
+extern oyMonitorDeviceHooks_s * oyX1MonitorHooks;
+oyCMMapi10_s_      oyX1_api10_set_xcm_region_handler;
+extern             oyRankMap oyX1_rank_map[];
+
+#define CMMInit                 catCMMfunc( oyX1, CMMInit )
+#define CMMMessageFuncSet       catCMMfunc( oyX1, CMMMessageFuncSet )
+#define _msg                    catCMMfunc( oyX1, _msg )
+#define _api8                   catCMMfunc( oyX1, _api8 )
+#define _rank_map               catCMMfunc( oyX1, _rank_map )
+#define DeviceFromName_         catCMMfunc( oyX1, DeviceFromName_ )
+#define Configs_Modify          catCMMfunc( oyX1, Configs_Modify )
+#define GetText                 catCMMfunc( oyX1, GetText )
+#define Api8UiGetText           catCMMfunc( oyX1, Api8UiGetText )
+#define hooks                   catCMMfunc( oyX1, MonitorHooks )
+#define _help_list              catCMMfunc( oyX1, _help_list )
+#define _help_properties        catCMMfunc( oyX1, _help_properties )
+#define _help_system_specific   catCMMstruct( oyX1, help_system_specific )
+#define _help_setup             catCMMfunc( oyX1, _help_setup )
+#define _help_unset             catCMMfunc( oyX1, _help_unset )
+#define _help_add_edid_to_icc   catCMMfunc( oyX1, _help_add_edid_to_icc )
+#define _help                   catCMMfunc( oyX1, _help )
+#define ConfigsUsage            catCMMfunc( oyX1, ConfigsUsage )
+#define Configs_FromPattern     catCMMfunc( oyX1, Configs_FromPattern )
+#define Config_Rank             catCMMfunc( oyX1, Config_Rank )
+#define _api8_ui_texts          catCMMfunc( oyX1, _api8_ui_texts )
+#define _api8_ui                catCMMfunc( oyX1, _api8_ui )
+#define _api8_icon              catCMMfunc( oyX1, _api8_icon )
+#define _cmm_module             catCMMfunc( oyX1, _cmm_module )
+#define _texts                  catCMMfunc( oyX1, _texts )
+#define GetMonitorInfo_lib      catCMMstruct( oyX1, getInfo )
+#define GetAllScreenNames       catCMMstruct( oyX1, getAllScreenNames )
+#define MonitorProfileSetup     catCMMstruct( oyX1, setupProfile )
+#define MonitorProfileUnset     catCMMstruct( oyX1, unsetProfile )
+#define GetRectangleFromDevice    catCMMstruct( oyX1, getRectangle )
+#define GetMonitorProfile       catCMMstruct( oyX1, getProfile )
+
+int                CMMInit           ( );
+int                CMMMessageFuncSet ( oyMessage_f         message_func );
 
 
 typedef enum {
@@ -115,11 +158,11 @@ int      oyX1GetAllScreenNames       ( const char        * display_name,
                                        oyAlloc_f           allocateFunc );
 
 
-int   oyX1GetMonitorInfo_lib      (const char* display,
-                                   char**      manufacturer,
+int      oyX1GetMonitorInfo_lib      ( const char        * display,
+                                       char             ** manufacturer,
                                        char             ** mnft,
-                                   char**      model,
-                                   char**      serial,
+                                       char             ** model,
+                                       char             ** serial,
                                        char             ** vendor,
                                        char             ** display_geometry,
                                        char             ** system_port,
@@ -130,7 +173,7 @@ int   oyX1GetMonitorInfo_lib      (const char* display,
                                        uint32_t          * model_id,
                                        double            * colors,
                                        oyBlob_s         ** edid,
-                                   oyAlloc_f     allocate_func,
+                                       oyAlloc_f           allocate_func,
                                        oyStruct_s        * user_data );
 
 
