@@ -151,13 +151,13 @@ const char * oyCMMgetText             ( const char        * select,
     else if(type == oyNAME_NAME)
       return "Kai-Uwe Behrmann";
     else
-      return _("Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download");
+      return _("Oyranos project; www: http://www.oyranos.org; support/email: ku.b@gmx.de; sources: http://www.oyranos.org/downloads/");
   } else if(strcmp(select, "copyright")==0)
   {
          if(type == oyNAME_NICK)
       return "newBSD";
     else if(type == oyNAME_NAME)
-      return _("Copyright (c) 2005-2013 Kai-Uwe Behrmann; newBSD");
+      return _("Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD");
     else
       return _("new BSD license: http://www.opensource.org/licenses/bsd-license.php");
   }
