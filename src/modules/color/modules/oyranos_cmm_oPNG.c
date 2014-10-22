@@ -41,7 +41,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <png.h>
+#include LIBPNG_INCLUDE
 
 #define CMM_NICK "oPNG"
 #define CMM_VERSION {0,1,0}
