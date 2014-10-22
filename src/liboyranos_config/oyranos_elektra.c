@@ -103,6 +103,8 @@ char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", r
 #define STATIC_IF_NDEBUG
 #endif
 
+#define AD oyAllocateFunc_, oyDeAllocateFunc_
+
 /* --- static variables   --- */
 
 STATIC_IF_NDEBUG int oyranos_init = 0;
@@ -137,7 +139,7 @@ void oyOpen_ (void)
 	  DBG_EL1_S ("v%d _________\n", KDB_VERSION_NUM);
 #if KDB_VERSION_NUM >= 800
 #else
-    oy_config_ = ksNew(0);
+    oy_config_ = ksNew(0,NULL);
     oy_handle_ = kdbOpen( /*&oy_handle_*/ );
 	  DBG_EL1_S ( "______________ %p\n", oy_handle_);
     DBG_EL1_S("oy_handle_ = kdbOpen() == %s", oy_handle_ ? "good":"NULL");
@@ -196,7 +198,7 @@ int  oyGetKey                        ( Key               * key )
   int rc;
   Key * error_key = keyNew(KEY_END);
   KDB * oy_handle_ = kdbOpen(error_key);
-  KeySet * oy_config_ = ksNew(0);
+  KeySet * oy_config_ = ksNew(0,NULL);
 
   DBG_EL1_S( "xxxxxxxxxxxx Try to get %s\n", keyName(key));
 
@@ -232,7 +234,7 @@ int  oySetKey                        ( Key               * key )
   int rc;
   Key * error_key = keyNew(KEY_END);
   KDB * oy_handle_ = kdbOpen(error_key);
-  KeySet * oy_config_ = ksNew(0);
+  KeySet * oy_config_ = ksNew(0,NULL);
   const char * key_name = keyName(key);
   Key * parent_key = keyNew( key_name, KEY_END );
 
@@ -269,7 +271,7 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc_ptr)
       rc = 0;
   KeySet*list_user = 0;
   KeySet*list_sys = 0;
-  KeySet*list = ksNew(0);
+  KeySet*list = ksNew(0,NULL);
   char  *list_name_user = NULL;
   char  *list_name_sys = NULL;
 #if KDB_VERSION_NUM >= 800
@@ -279,12 +281,9 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc_ptr)
 
   DBG_PROG_START
 
-  oyAllocHelper_m_(list_name_user, char, MAX_PATH, 0,; )
-  oyAllocHelper_m_(list_name_sys, char, MAX_PATH, 0,; )
-
   if( user_sys == oyUSER_SYS || user_sys == oyUSER ) {
-    list_user = ksNew(0);
-    sprintf(           list_name_user, "%s%s", OY_USER, keyParentName);
+    list_user = ksNew(0,NULL);
+    oyStringAddPrintf( &list_name_user, AD, "%s%s", OY_USER, keyParentName );
     if(!oy_handle_)
     {
       *rc_ptr = 1;
@@ -297,8 +296,8 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc_ptr)
       DBG_NUM1_S("kdbGetChildKeys returned with %d", rc);
   }
   if( user_sys == oyUSER_SYS || user_sys == oySYS ) {
-    list_sys = ksNew(0);
-    sprintf(           list_name_sys, "%s%s", OY_SYS, keyParentName);
+    list_sys = ksNew(0,NULL);
+    oyStringAddPrintf( &list_name_sys, AD, "%s%s", OY_SYS, keyParentName );
     if(!oy_handle_)
     {
       *rc_ptr = 1;
@@ -345,16 +344,10 @@ char* oySearchEmptyKeyname_ (const char* key_parent_name)
 
   DBG_PROG_START
 
-  oyAllocHelper_m_(name, char, MAX_PATH, 0, return 0 )
-  sprintf(name, "%s%s", key_base_name, key_parent_name);
-
-  oyAllocHelper_m_( new_key_name, char,
-                    oyStrlen_(name) + strlen(key_base_name) + 24, 0,; )
-
   /* search for empty keyname */
   while (!nth)
   {
-    sprintf (new_key_name, "%s" OY_SLASH "%d", name, i);
+    oyStringAddPrintf( &new_key_name, AD, "%s" OY_SLASH "%d", name, i );
 
     if(!oy_handle_)
       return 0;
@@ -369,10 +362,12 @@ char* oySearchEmptyKeyname_ (const char* key_parent_name)
     i++;
   }
 
-  oyFree_m_( name )
+  if(name)
+    oyFree_m_( name )
 
   name = oyStringCopy_( new_key_name, oyAllocateFunc_ );
-  sprintf (new_key_name, "%s", &name[oyStrlen_(key_base_name)]);
+  oyFree_m_( new_key_name )
+  oyStringAddPrintf( &new_key_name, AD, "%s", &name[oyStrlen_(key_base_name)] );
   oyFree_m_( name )
 #if KDB_VERSION_NUM >= 800
   kdbClose( oy_handle_,error_key ); oyERR(error_key)
@@ -457,11 +452,10 @@ oyAddKey_valueComment_ (const char* key_name,
 
   DBG_PROG_START
 
-  oyAllocHelper_m_(name, char, MAX_PATH, 0,; )
   oyAllocHelper_m_(value_utf8, char, MAX_PATH, 0,; )
   oyAllocHelper_m_(comment_utf8, char, MAX_PATH, 0,; )
 
-  sprintf(name, "%s%s", oySelectUserSys_(), key_name);
+  oyStringAddPrintf( &name, AD, "%s%s", oySelectUserSys_(), key_name );
   if(value && oyStrlen_(value))
   {
     max_len = strlen(value) < MAX_PATH ? strlen(value) : MAX_PATH;
@@ -628,8 +622,7 @@ oyGetBehaviour_      (oyBEHAVIOUR_e type)
 
 
 
-int
-oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
+int oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
 {
   int r = 1;
   const char *fileName = 0, *com = comment;
@@ -662,9 +655,9 @@ oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
       {
         int len = strlen(OY_REGISTRED_PROFILES)
                   + strlen(fileName);
-        char* key_name = (char*) calloc (len +10, sizeof(char)); DBG_PROG
-        sprintf (key_name, "%s%s", OY_REGISTRED_PROFILES OY_SLASH, fileName); DBG_PROG
-        r = oyAddKey_valueComment_ (key_name, com, 0); DBG_PROG
+        char* key_name = NULL;
+        oyStringAddPrintf( &key_name, AD, "%s%s", OY_REGISTRED_PROFILES OY_SLASH, fileName );
+        r = oyAddKey_valueComment_ (key_name, com, 0);
         DBG_PROG2_S( "%s %d", key_name, len )
         oyFree_m_ (key_name)
       }
@@ -736,7 +729,7 @@ oyGetKeyString_ ( const char       *key_name,
                  oyAlloc_f         allocate_func )
 {
   char* name = 0;
-  char* full_key_name = 0;
+  char* full_key_name = NULL;
   int rc = 0;
   Key * key = 0;
   int success = 0;
@@ -756,12 +749,11 @@ oyGetKeyString_ ( const char       *key_name,
 #endif
 
   name = (char*) oyAllocateWrapFunc_( MAX_PATH, allocate_func );
-  full_key_name = (char*) oyAllocateFunc_ (MAX_PATH);
 
-  if( !name || !full_key_name )
+  if( !name )
     goto clean3;
 
-  sprintf( full_key_name, "%s%s", OY_USER, key_name );
+  oyStringAddPrintf( &full_key_name, AD, "%s%s", OY_USER, key_name );
 
   name[0] = 0;
   if(!oy_handle_)
@@ -779,7 +771,8 @@ oyGetKeyString_ ( const char       *key_name,
   /** Fallback to system key otherwise */
   if( rc || !strlen( name ))
   {
-    sprintf( full_key_name, "%s%s", OY_SYS, key_name );
+    oyFree_m_( full_key_name );
+    oyStringAddPrintf( &full_key_name, AD, "%s%s", OY_SYS, key_name );
     key = keyNew( full_key_name, KEY_END );
     rc=kdbGetKey( oy_handle_, key ); oyERR(key)
     success = keyIsString(key);
@@ -789,7 +782,7 @@ oyGetKeyString_ ( const char       *key_name,
   }
 
 
-  oyDeAllocateFunc_( full_key_name );
+  oyFree_m_( full_key_name );
 #if KDB_VERSION_NUM >= 800
   kdbClose( oy_handle_,error_key ); oyERR(error_key)
   keyDel(error_key);
@@ -802,8 +795,6 @@ oyGetKeyString_ ( const char       *key_name,
   clean3:
   if(name)
     oyDeAllocateFunc_(name);
-  if(full_key_name)
-    oyDeAllocateFunc_( full_key_name );
   return 0;
 }
 
@@ -826,7 +817,7 @@ int                oyEraseKey_       ( const char        * key_name )
 
   keySetName( top, name );
 
-  ks = ksNew(0);
+  ks = ksNew(0,NULL);
   rc = kdbGet(kdb_handle, ks, top);
   keySetName( top, name );
   cut = ksCut(ks, top);
