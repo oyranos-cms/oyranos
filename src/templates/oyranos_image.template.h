@@ -216,7 +216,7 @@ typedef enum {
 /** Get byte swapping for integers larger than 8 byte in @ref oyPixel_t */
 #define oyToByteswap_m(x)           (((x) >> 23)&1)
 
-/** } *//* objects_image */
+/** @} *//* objects_image */
 
 {% include "cpp_end.h" %}
 
