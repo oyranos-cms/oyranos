@@ -9,6 +9,11 @@ CONFIGURE_FILE(
                 @ONLY
        )
 CONFIGURE_FILE(
+                "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.files.alpha.in"
+                "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.files.alpha"
+                @ONLY
+       )
+CONFIGURE_FILE(
                 "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile_alpha.in"
                 "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile_alpha"
                 @ONLY
@@ -37,7 +42,7 @@ FIND_PACKAGE( Doxygen )
 IF( DOXYGEN_FOUND )
 
   ADD_CUSTOM_COMMAND( OUTPUT html
-    COMMAND cat ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.files | sed 's%\;${CMAKE_SOURCE_DIR}/src/API_generated/% %g \; s%\;% %g' >> Doxyfile \; doxygen Doxyfile \; cp ${CMAKE_SOURCE_DIR}/extras/icons/${PACKAGE_NAME}_logo.png html/ \; cp ${CMAKE_CURRENT_SOURCE_DIR}/doxygen.css html/ \; cat ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.files | sed 's%\;${CMAKE_SOURCE_DIR}/src/API_generated/% %g \; s%\;% %g' >> Doxyfile_alpha \; doxygen ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile_alpha \; cp ${CMAKE_SOURCE_DIR}/extras/icons/${PACKAGE_NAME}_logo.png doc_alpha/html/
+    COMMAND cat ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.files | sed 's%\;${CMAKE_SOURCE_DIR}/src/API_generated/% %g \; s%\;% %g' >> Doxyfile \; doxygen Doxyfile \; cp ${CMAKE_SOURCE_DIR}/extras/icons/${PACKAGE_NAME}_logo.png html/ \; cp ${CMAKE_CURRENT_SOURCE_DIR}/doxygen.css html/ \; cat ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.files.alpha | sed 's%\;${CMAKE_SOURCE_DIR}/src/API_generated/% %g \; s%\;% %g' >> Doxyfile_alpha \; doxygen ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile_alpha \; cp ${CMAKE_SOURCE_DIR}/extras/icons/${PACKAGE_NAME}_logo.png doc_alpha/html/
                     )
 
   ADD_CUSTOM_TARGET( docu ALL
