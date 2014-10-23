@@ -1,1 +1,1 @@
-                         @DOC_SOURCES@
+FILE_PATTERNS          = doxymentation @DOC_SOURCES@
