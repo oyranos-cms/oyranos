@@ -76,7 +76,7 @@ typedef char * (*oyCMMRegistrationToName_f) (
                                        int                 select_core,
                                        oyAlloc_f           allocate_func );
 
-/** typedef  oyCMMGetDafaultPattern_f
+/** typedef  oyCMMGetDefaultPattern_f
  *  @brief   get module default
  *  @ingroup module_api
  *  @memberof oyCMMapi9_s
