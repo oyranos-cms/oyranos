@@ -2034,10 +2034,12 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
   oyOptions_s * s = 0,
               * opts_tmp = 0,
               * opts_tmp2 = 0;
-  oyOption_s * o = 0;
+  oyOption_s * o = 0, * c, * r;
   int error = !core || !core->api4_;
   char * type_txt = oyFilterRegistrationToText( core->registration_,
                                                 oyFILTER_REG_TYPE, 0 );
+  char * renderer = NULL,
+       * context = NULL;
   oyCMMapi5_s * api5 = 0;
   int i,n;
 
@@ -2108,7 +2110,6 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
                                  oyNAME_PATTERN, 0, select_core, oyAllocateFunc_ );
           oyOption_SetFromText( o, api_pattern, 0 );
           oyFree_m_( api_pattern );
-          oyOption_SetFlags( o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT) );
           oyOptions_MoveIn( opts_tmp, &o, -1 );
 
           select_core = 0;
@@ -2129,8 +2130,6 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
           }
           oyOption_SetFromText( o, api_pattern, 0 );
           oyFree_m_( api_pattern );
-          if(node)
-            oyOption_SetFlags( o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT) );
           oyOptions_MoveIn( opts_tmp, &o, -1 );
 
           oyOptions_AppendOpts( s, opts_tmp );
@@ -2159,17 +2158,24 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
     n = oyOptions_Count( s );
     for(i = 0; i < n && error <= 0; ++i)
     {
-      char * r;
       o = oyOptions_Get( s, i );
-      r = oyOption_GetRegistration(o);
-
-      if(strstr(r,"context") == NULL &&
-         strstr(r,"renderer") == NULL)
-        oyOption_SetSource( o, oyOPTIONSOURCE_FILTER );
-
+      oyOption_SetSource( o, oyOPTIONSOURCE_FILTER );
       oyOption_Release( &o );
     }
+
+    c = oyOptions_Find( s, "////context" );
+    context = oyStringCopy( oyOption_GetValueString( c, 0 ),
+                            oyAllocateFunc_ );
+    r = oyOptions_Find( s, "////renderer" );
+    renderer= oyStringCopy( oyOption_GetValueString( r, 0 ),
+                            oyAllocateFunc_ );
+
     error = oyOptions_DoFilter ( s, flags, type_txt );
+
+    oyOption_SetFromText( c, context, 0 );
+    oyOption_SetFromText( r, renderer, 0 );
+    oyFree_m_( context );
+    oyFree_m_( renderer );
   }
 
   if(type_txt)
