@@ -38,7 +38,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#if !defined(WIN32)
+#if !defined(_WIN32)
 #include <dlfcn.h>
 #endif
 
@@ -237,7 +237,7 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module,
                 section_group[0] = 0;
               }
               A("\
- <xf:group type=\"h3\">\n");
+ <xf:group type=\"frame\">\n");
               A("\
   <xf:label>Oyranos " );
               A(section_names[0]);
@@ -262,7 +262,7 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module,
                 section_group[1] = 0;
               }
               A("\
-  <xf:group type=\"h4\">\n");
+  <xf:group type=\"frame\">\n");
    /*<h4>");
               A(section_names[1]);
               A(              "</h4>\n");*/
@@ -969,6 +969,9 @@ oyCMMapi9_s_  oicc_api9 = {
 
   /** const char * pattern; a pattern supported by oiccConversion_Correct */
   "//" OY_TYPE_STD "/icc_color",
+
+  /** const char * key_base; a key base used in oicc_default_color_icc_options */
+  OY_CMM_STD,
 
   /** oyCMMGetFallback_f oyCMMGetFallback; get pattern specific module fallback */
   oiccCMMGetFallback,
