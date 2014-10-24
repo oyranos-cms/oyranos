@@ -46,6 +46,8 @@
  *  @{
  */
 
+char *       oyGetFilterNodeKey      ( const char        * base_key,
+                                       int                 select_core );
 
 
 /** Function oyDevicesGet
@@ -1969,7 +1971,7 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
   if(error <= 0)
     error = oyFilterCore_SetCMMapi4_( filter, cmm_api4 );
 
-  s = oyOptions_ForFilter_( filter, flags, object);
+  s = oyOptions_ForFilter_( filter, NULL, flags, object);
 
   oyFilterCore_Release( (oyFilterCore_s**)&filter );
 
@@ -1994,7 +1996,8 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
             oyOPTIONATTRIBUTE_FRONT |
             OY_SELECT_COMMON @endverbatim
  *
- *  @param[in]     filter              the filter
+ *  @param[in]     core                the filter core
+ *  @param[in]     node                the filter node; optional
  *  @param[in]     flags               for inbuild defaults |
  *                                     oyOPTIONSOURCE_FILTER;
  *                                     for options marked as advanced |
@@ -2004,11 +2007,12 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
  *  @param         object              the optional object
  *  @return                            the options
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/10/24
  *  @since   2008/12/08 (Oyranos: 0.1.9)
- *  @date    2009/07/27
  */
-oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
+oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
+                                       oyFilterNode_s_   * node,
                                        uint32_t            flags,
                                        oyObject_s          object )
 {
@@ -2016,8 +2020,8 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
               * opts_tmp = 0,
               * opts_tmp2 = 0;
   oyOption_s * o = 0;
-  int error = !filter || !filter->api4_;
-  char * type_txt = oyFilterRegistrationToText( filter->registration_,
+  int error = !core || !core->api4_;
+  char * type_txt = oyFilterRegistrationToText( core->registration_,
                                                 oyFILTER_REG_TYPE, 0 );
   oyCMMapi5_s * api5 = 0;
   int i,n;
@@ -2041,7 +2045,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
     /*  1. get filter */
 
     /*  2. get implementation for filter type */
-    api5 = (oyCMMapi5_s*)filter->api4_->api5_;
+    api5 = (oyCMMapi5_s*)core->api4_->api5_;
 
     /*  3. parse static common options from a policy module */
     if(api5 && flags & OY_SELECT_COMMON)
@@ -2051,7 +2055,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
       oyCMMapi9_s_ * cmm_api9_ = 0;
       char * klass, * api_reg;
 
-      klass = oyFilterRegistrationToText( filter->registration_,
+      klass = oyFilterRegistrationToText( core->registration_,
                                           oyFILTER_REG_TYPE, 0 );
       api_reg = oyStringCopy_("//", oyAllocateFunc_ );
       STRING_ADD( api_reg, klass );
@@ -2067,10 +2071,53 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
       for(i = 0; i < apis_n; ++i)
       {
         cmm_api9_ = (oyCMMapi9_s_*) oyCMMapiFilters_Get( apis, i );
-        if(oyFilterRegistrationMatch( filter->registration_, cmm_api9_->pattern,
+        if(oyFilterRegistrationMatch( core->registration_, cmm_api9_->pattern,
                                       oyOBJECT_NONE ))
         {
+          char * api_pattern = NULL,
+               * key_name = NULL;
+          int select_core = 1;
+
           opts_tmp = oyOptions_FromText( cmm_api9_->options, 0, object );
+
+          /*  3.1. set the "context" and "renderer" options */
+          key_name = oyGetFilterNodeKey( cmm_api9_->key_base, select_core );
+          o = oyOptions_Find( opts_tmp, key_name );
+          if(!o)
+          {
+            o = oyOption_New( NULL );
+            oyOption_SetRegistration( o, OY_DEFAULT_CMM_RENDERER );
+          }
+          api_pattern = cmm_api9_->oyCMMRegistrationToName(
+                                 core->api4_->registration,
+                                 oyNAME_PATTERN, 0, select_core, oyAllocateFunc_ );
+          oyOption_SetFromText( o, api_pattern, 0 );
+          oyFree_m_( api_pattern );
+          oyOption_SetFlags( o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT) );
+          oyOptions_MoveIn( opts_tmp, &o, -1 );
+
+          select_core = 0;
+          if(node)
+            api_pattern = cmm_api9_->oyCMMRegistrationToName(
+                                 node->api7_->registration,
+                                 oyNAME_PATTERN, 0, select_core, oyAllocateFunc_ );
+          else
+            if(cmm_api9_->oyCMMGetDefaultPattern)
+              api_pattern = cmm_api9_->oyCMMGetDefaultPattern( cmm_api9_->pattern, 0, select_core,
+                                                       oyAllocateFunc_ );
+          key_name = oyGetFilterNodeKey( cmm_api9_->key_base, select_core );
+          o = oyOptions_Find( opts_tmp, key_name );
+          if(!o)
+          {
+            o = oyOption_New( NULL );
+            oyOption_SetRegistration( o, OY_DEFAULT_CMM_CONTEXT );
+          }
+          oyOption_SetFromText( o, api_pattern, 0 );
+          oyFree_m_( api_pattern );
+          if(node)
+            oyOption_SetFlags( o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT) );
+          oyOptions_MoveIn( opts_tmp, &o, -1 );
+
           oyOptions_AppendOpts( s, opts_tmp );
           oyOptions_Release( &opts_tmp );
         }
@@ -2085,7 +2132,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
 
     /*  4. parse static options from filter */
     if(flags & OY_SELECT_FILTER)
-      opts_tmp2 = oyOptions_FromText( filter->api4_->ui->options, 0, object );
+      opts_tmp2 = oyOptions_FromText( core->api4_->ui->options, 0, object );
 
     /*  5. merge */
     s = oyOptions_FromBoolean( opts_tmp, opts_tmp2, oyBOOLEAN_UNION, object );
@@ -2097,8 +2144,14 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
     n = oyOptions_Count( s );
     for(i = 0; i < n && error <= 0; ++i)
     {
+      char * r;
       o = oyOptions_Get( s, i );
-      oyOption_SetSource( o, oyOPTIONSOURCE_FILTER );
+      r = oyOption_GetRegistration(o);
+
+      if(strstr(r,"context") == NULL &&
+         strstr(r,"renderer") == NULL)
+        oyOption_SetSource( o, oyOPTIONSOURCE_FILTER );
+
       oyOption_Release( &o );
     }
     error = oyOptions_DoFilter ( s, flags, type_txt );
@@ -2305,6 +2358,8 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
  *                                     oyOPTIONATTRIBUTE_ADVANCED;
  *                                     for front end options |
  *                                     oyOPTIONATTRIBUTE_FRONT
+ *                                     for already edited options |
+ *                                     oyOPTIONATTRIBUTE_EDIT
  *  @param         filter_type         the type level from a registration
  *  @return                            options
  *
@@ -2374,8 +2429,14 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
       /* Elektra settings, modify value */
       if(!skip && !(flags & oyOPTIONSOURCE_FILTER))
       {
-        text = oyGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
-                                oyAllocateFunc_ );
+        if((flags & oyOPTIONATTRIBUTE_EDIT) ||
+           /* skip already edited options by default */
+           !(oyOption_GetFlags(o) & oyOPTIONATTRIBUTE_EDIT))
+          /* ask the DB */
+          text = oyGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
+                                  oyAllocateFunc_ );
+        else
+          text = NULL;
         if(text && text[0])
         {
           error = oyOption_SetFromText( o, text, 0 );
@@ -2427,29 +2488,29 @@ oyOptions_s* oyFilterNode_GetOptions ( oyFilterNode_s    * node,
   oyFilterNode_s * s = node;
   int error = 0;
 
-  oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
+  oyFilterNode_s_ * node_ = (oyFilterNode_s_*)node;
 
   if(!node)
     return 0;
 
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
 
-  if(flags || !(*node_)->core->options_)
+  if(flags || !node_->core->options_)
   {
-    options = oyOptions_ForFilter_( (*node_)->core, flags, (*node_)->core->oy_ );
-    if(!(*node_)->core->options_)
-      (*node_)->core->options_ = oyOptions_Copy( options, 0 );
+    options = oyOptions_ForFilter_( node_->core, node_, flags, node_->core->oy_ );
+    if(!node_->core->options_)
+      node_->core->options_ = oyOptions_Copy( options, 0 );
     else
-      error = oyOptions_Filter( &(*node_)->core->options_, 0, 0,
+      error = oyOptions_Filter( &node_->core->options_, 0, 0,
                                 oyBOOLEAN_UNION,
                                 0, options );
     if(error)
       WARNc2_S("%s %d", _("found issues"),error);
-    if(!(*node_)->core->options_)
-      (*node_)->core->options_ = oyOptions_New( 0 );
+    if(!node_->core->options_)
+      node_->core->options_ = oyOptions_New( 0 );
   }
 
-  options = oyOptions_Copy( (*node_)->core->options_, 0 );
+  options = oyOptions_Copy( node_->core->options_, 0 );
 
   /** Observe exported options for changes and propagate to a existing graph. */
   error = oyOptions_ObserverAdd( options, (oyStruct_s*)node,
@@ -2522,23 +2583,6 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
 
       if(oyFilterRegistrationMatch( reg, (*cmm_api9_)->pattern, 0 ))
       {
-        char * api_pattern = NULL;
-        if((*cmm_api9_)->oyCMMRegistrationToName)
-        {
-          api_pattern = (*cmm_api9_)->oyCMMRegistrationToName(
-                                 (*node_)->api7_->registration,
-                                 oyNAME_PATTERN, 0, 0, oyAllocateFunc_ );
-          oyOptions_SetFromText( &options, OY_DEFAULT_CMM_RENDERER,
-                                 api_pattern, OY_CREATE_NEW );
-          oyFree_m_( api_pattern );
-
-          api_pattern = (*cmm_api9_)->oyCMMRegistrationToName(
-                                 (*node_)->core->registration_,
-                                 oyNAME_PATTERN, 0, 1, oyAllocateFunc_ );
-          oyOptions_SetFromText( &options, OY_DEFAULT_CMM_CONTEXT,
-                                 api_pattern, OY_CREATE_NEW );
-        }
-
         if((*cmm_api9_)->oyCMMuiGet)
           error = (*cmm_api9_)->oyCMMuiGet( (oyCMMapiFilter_s*) cmm_api9_, options, &tmp, oyAllocateFunc_ );
 
@@ -3095,42 +3139,89 @@ oyFilterNode_s *   oyFilterNode_FromOptions (
 
   pattern = oyGetFilterNodeRegFromOptions( base_pattern, select_core, options,
                                            oyAllocateFunc_ );
-  if(!pattern && db_base_key)
+  if(pattern)
+  {
+    if(!pattern[0])
+    {
+      oyFree_m_(pattern);
+    } else
+      core = oyFilterCore_NewWith( pattern, options, object );
+  }
+  if(!core && db_base_key)
   {
     pattern = oyGetFilterNodeRegFromDB( db_base_key, select_core,
                                         0, oyAllocateFunc_ );
-    if(pattern && !pattern[0])
-      oyFree_m_(pattern);
+    if(pattern)
+    {
+      if(!pattern[0])
+      {
+        oyFree_m_(pattern);
+      } else
+        core = oyFilterCore_NewWith( pattern, options, object );
+    }
   }
-  if(!pattern)
+  if(!core)
+  {
+    if(pattern)
+      oyFree_m_(pattern);
     pattern = oyGetFilterNodeDefaultPatternFromPolicy ( base_pattern,
                                                         select_core,
                                                         oyAllocateFunc_ );
-  core = oyFilterCore_NewWith( pattern, options, object );
+    core = oyFilterCore_NewWith( pattern, options, object );
+  }
   if(!core)
     oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*) node,
-                     OY_DBG_FORMAT_ "could not create new core: %s %s",
+                     OY_DBG_FORMAT_ "could not create new core: %s",
                      OY_DBG_ARGS_,
                      oyNoEmptyString_m_(pattern),
                      oyNoEmptyString_m_(base_pattern) );
 
   oyFree_m_( pattern );
 
+  /* now the same again like above, just for node creation and 
+   * with the above created core */
   select_core = 0;
   pattern = oyGetFilterNodeRegFromOptions( base_pattern, select_core, options,
                                            oyAllocateFunc_ );
-  if(!pattern && db_base_key)
+  if(pattern)
+  {
+    if(!pattern[0])
+    {
+      oyFree_m_(pattern);
+    } else
+      node = oyFilterNode_Create( pattern, core, object );
+  }
+  if(!node && db_base_key)
   {
     pattern = oyGetFilterNodeRegFromDB( db_base_key, select_core,
                                         0, oyAllocateFunc_ );
-    if(pattern && !pattern[0])
-      oyFree_m_(pattern);
+    if(pattern)
+    {
+      if(!pattern[0])
+      {
+        oyFree_m_(pattern);
+      } else
+        node = oyFilterNode_Create( pattern, core, object );
+    }
   }
-  if(!pattern)
+  if(!node)
+  {
+    if(pattern)
+      oyFree_m_(pattern);
     pattern = oyGetFilterNodeDefaultPatternFromPolicy ( base_pattern,
                                                         select_core,
                                                         oyAllocateFunc_ );
-  node = oyFilterNode_Create( pattern, core, object );
+    node = oyFilterNode_Create( pattern, core, object );
+  }
+  if(!node)
+  {
+    oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*) node,
+                     OY_DBG_FORMAT_ "could not create new node: %s %s",
+                     OY_DBG_ARGS_,
+                     oyNoEmptyString_m_(pattern),
+                     oyNoEmptyString_m_(base_pattern) );
+    node = oyFilterNode_Create( base_pattern, core, object );
+  }
 
   oyFree_m_( pattern );
   oyFilterCore_Release( &core );
