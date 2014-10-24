@@ -344,6 +344,8 @@ char* oySearchEmptyKeyname_ (const char* key_parent_name)
 
   DBG_PROG_START
 
+  oyStringAddPrintf( &new_key_name, AD, "%s%s", key_base_name, key_parent_name );
+
   /* search for empty keyname */
   while (!nth)
   {
