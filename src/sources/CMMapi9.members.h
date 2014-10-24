@@ -21,6 +21,13 @@
    */
   const char     * pattern;
 
+  /** basic key which is used in the Oyranos DB together with "context",
+   *  "renderer", "context_fallback" and "renderer_fallback" \n
+   *
+   *  e.g. for CMMs this could be OY_CMM_STD
+   */
+  const char     * key_base;
+
   /** get registration of fallback module for this pattern */
   oyCMMGetFallback_f oyCMMGetFallback;
 

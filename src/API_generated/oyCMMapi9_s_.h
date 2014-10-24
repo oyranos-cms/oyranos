@@ -131,7 +131,7 @@ typedef char * (*oyCMMRegistrationToName_f) (
                                        int                 select_core,
                                        oyAlloc_f           allocate_func );
 
-/** typedef  oyCMMGetDafaultPattern_f
+/** typedef  oyCMMGetDefaultPattern_f
  *  @brief   get module default
  *  @ingroup module_api
  *  @memberof oyCMMapi9_s
@@ -228,6 +228,13 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
    *  e.g. for imaging this could be "//imaging"
    */
   const char     * pattern;
+
+  /** basic key which is used in the Oyranos DB together with "context",
+   *  "renderer", "context_fallback" and "renderer_fallback" \n
+   *
+   *  e.g. for CMMs this could be OY_CMM_STD
+   */
+  const char     * key_base;
 
   /** get registration of fallback module for this pattern */
   oyCMMGetFallback_f oyCMMGetFallback;
