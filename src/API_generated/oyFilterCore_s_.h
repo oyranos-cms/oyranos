@@ -41,7 +41,9 @@ typedef struct oyFilterCore_s_ oyFilterCore_s_;
 #include "oyFilterCore_s.h"
 
 /* Include "FilterCore.private.h" { */
+#ifndef OY_FILTER_NODE_S__H
 typedef struct oyFilterNode_s_ oyFilterNode_s_;
+#endif
 
 /* } Include "FilterCore.private.h" */
 
