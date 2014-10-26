@@ -349,7 +349,7 @@ char* oySearchEmptyKeyname_ (const char* key_parent_name)
   /* search for empty keyname */
   while (!nth)
   {
-    oyStringAddPrintf( &new_key_name, AD, "%s" OY_SLASH "%d", name, i );
+    oyStringAddPrintf( &new_key_name, AD, OY_SLASH "%d", i );
 
     if(!oy_handle_)
       return 0;
