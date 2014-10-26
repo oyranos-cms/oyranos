@@ -20,8 +20,8 @@
 #include "oyCMMapi6_s.h"
 #include "oyCMMapiFilters_s.h"
 #include "oyCMMapi9_s_.h"
-#include "oyFilterCore_s_.h"
 #include "oyFilterNode_s_.h"
+#include "oyFilterCore_s_.h"
 #include "oyFilterNodes_s.h"
 
 #include "oyranos_helper.h"
