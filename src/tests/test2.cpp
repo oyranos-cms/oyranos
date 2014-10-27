@@ -967,7 +967,7 @@ oyTESTRESULT_e testSettings ()
     if(size > 1)
     {
       PRINT_SUB( oyTESTRESULT_FAIL, 
-      "oyOptions_FindString() returned doubled options %d",
+      "oyOptions_FindString() returned doubled options %u",
                        size );
     } else
       PRINT_SUB( oyTESTRESULT_SUCCESS, 
@@ -1017,7 +1017,7 @@ oyTESTRESULT_e testSettings ()
     char * t;
     o = oyOptions_Get( opts, i );
     t = oyStringCopy_(oyOption_GetText(o, oyNAME_DESCRIPTION), oyAllocateFunc_);
-    fprintf(zout,"%d: \"%s\": \"%s\" %s %d\n", i, 
+    fprintf(zout,"%d: \"%s\": \"%s\" %s %u\n", i, 
            t, oyOption_GetValueText( o, malloc ),
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                        oyFILTER_REG_OPTION, 0 ),
@@ -1059,7 +1059,7 @@ oyTESTRESULT_e testSettings ()
     char * t;
     o = oyOptions_Get( opts, i );
     t = oyStringCopy_(oyOption_GetText(o, oyNAME_DESCRIPTION), oyAllocateFunc_);
-    fprintf(zout,"%d: \"%s\": \"%s\" %s %d\n", i, 
+    fprintf(zout,"%d: \"%s\": \"%s\" %s %u\n", i, 
            t, oyOption_GetValueText( o, malloc ),
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                        oyFILTER_REG_OPTION, 0 ),
@@ -1336,22 +1336,22 @@ oyTESTRESULT_e testProfiles ()
   } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "profiles found for oyProfileListGet:        %d", size );
+    "profiles found for oyProfileListGet:        %u", size );
   }
   oyStringListRelease_( &texts, size, oyDeAllocateFunc_ );
 
   if((int)size < count)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyProfileListGet() returned less than oyDEFAULT_PROFILE_START %d|%d", size, count );
+    "oyProfileListGet() returned less than oyDEFAULT_PROFILE_START %d|%u", size, count );
   } else if(count)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyProfileListGet and oyDEFAULT_PROFILE_START ok %d|%d", size, count );
+    "oyProfileListGet and oyDEFAULT_PROFILE_START ok %d|%u", size, count );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyProfileListGet and/or oyDEFAULT_PROFILE_START are wrong %d|%d", size, count );
+    "oyProfileListGet and/or oyDEFAULT_PROFILE_START are wrong %d|%u", size, count );
   }
 
   /* compare the default profile spaces with the total of profiles */
@@ -1381,11 +1381,11 @@ oyTESTRESULT_e testProfiles ()
   if((int)size < countB)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyProfileListGet() returned less than oyPROFILE_e %d|%d", size, count );
+    "oyProfileListGet() returned less than oyPROFILE_e %d|%u", size, count );
   } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyProfileListGet and oyPROFILE_e ok %d|%d", size, countB );
+    "oyProfileListGet and oyPROFILE_e ok %d|%u", size, countB );
   }
 
 
@@ -1428,7 +1428,7 @@ oyTESTRESULT_e testProfileLists ()
     if(count != ref_count)
     {
       PRINT_SUB( oyTESTRESULT_FAIL, 
-      ": wrong profile count: %d/%d", count, ref_count );
+      ": wrong profile count: %u/%u", count, ref_count );
     }
     for(j = 0; j < (int)count; ++j)
     {
@@ -1889,7 +1889,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
   for( i = 0; i < (int)count; ++i)
   {
     const char * registration_domain = texts[i];
-    fprintf(zout,"%d[rank %d]: %s\n", i, rank_list[i], registration_domain);
+    fprintf(zout,"%d[rank %u]: %s\n", i, rank_list[i], registration_domain);
 
     error = oyConfigs_FromDomain( registration_domain,
                                   options_list, &configs, 0 );
@@ -2050,7 +2050,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   for( i = 0; i < (int)count; ++i)
   {
     const char * registration_domain = texts[i];
-    fprintf(zout,"%d[rank %d]: %s\n", i, rank_list[i], registration_domain);
+    fprintf(zout,"%d[rank %u]: %s\n", i, rank_list[i], registration_domain);
 
     /* set a general request */
     error = oyOptions_SetFromText( &options,
@@ -2915,10 +2915,10 @@ oyTESTRESULT_e testCMMsShow ()
 
   if( count )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyCMMsGetLibNames_( ) found %d                     ", count );
+    "oyCMMsGetLibNames_( ) found %u                     ", count );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyCMMsGetLibNames_( ) found %d                     ", count );
+    "oyCMMsGetLibNames_( ) found %u                     ", count );
   }
 
   oyDeAllocateFunc_( text_tmp );
