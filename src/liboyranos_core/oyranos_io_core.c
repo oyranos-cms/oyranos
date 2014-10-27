@@ -27,6 +27,7 @@
 #include <io.h>
 #else
 #include <sys/stat.h> /* mkdir() */
+#define stat _stat
 #endif
 
 #include "oyranos_config_internal.h"
@@ -43,6 +44,7 @@
 /* --- Helpers  --- */
 
 #define AD oyAllocateFunc_, oyDeAllocateFunc_
+
 
 /* --- static variables   --- */
 
@@ -460,21 +462,20 @@ oyWriteMemToFile_(const char* name, const void* mem, size_t size)
       else
         WARNc1_S("no data to write into: \"%s\"", filename );
 
-    if(r)
+    if(r && oy_debug > 1)
     {
       switch (errno)
       {
         case EACCES:       WARNc1_S("Permission denied: %s", filename); break;
         case EIO:          WARNc1_S("EIO : %s", filename); break;
-#ifdef HAVE_POSIX
-        case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the path: %s", filename); break;
-#endif
         case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG : %s", filename); break;
         case ENOENT:       WARNc1_S("A component of the path/file_name does not exist, or the file_name is an empty string: \"%s\"", filename); break;
         case ENOTDIR:      WARNc1_S("ENOTDIR : %s", filename); break;
 #ifdef HAVE_POSIX
+        case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the path: %s", filename); break;
         case EOVERFLOW:    WARNc1_S("EOVERFLOW : %s", filename); break;
 #endif
+        default:           WARNc2_S("%s : %s", strerror(errno), filename);break;
       }
     }
 
@@ -752,24 +753,22 @@ int oyIsDirFull_ (const char* name)
 
   DBG_MEM_START
 
-  status.st_mode = 0;
+  memset(&status,0,sizeof(struct stat));
   r = stat (name, &status);
-  if(r && oy_debug)
-    WARNc2_S("stat( %s ) = %d", name, r);
 
-  switch (r)
+  if(r != 0 && oy_debug > 1)
+  switch (errno)
   {
-    case EACCES:       WARNc1_S("EACCES = %d\n",r); break;
-    case EIO:          WARNc1_S("EIO = %d\n",r); break;
+    case EACCES:       WARNc1_S("Permission denied: %s", name); break;
+    case EIO:          WARNc1_S("EIO : %s", name); break;
+    case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG : %s", name); break;
+    case ENOENT:       WARNc1_S("A component of the name/file_name does not exist, or the file_name is an empty string: \"%s\"", name); break;
+    case ENOTDIR:      WARNc1_S("ENOTDIR : %s", name); break;
 #ifdef HAVE_POSIX
-    case ELOOP:        WARNc1_S("ELOOP = %d\n",r); break;
+    case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the name: %s", path); break;
+    case EOVERFLOW:    WARNc1_S("EOVERFLOW : %s", name); break;
 #endif
-    case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG = %d\n",r); break;
-    case ENOENT:       WARNc1_S("ENOENT = %d\n",r); break;
-    case ENOTDIR:      WARNc1_S("ENOTDIR = %d\n",r); break;
-#ifdef HAVE_POSIX
-    case EOVERFLOW:    WARNc1_S("EOVERFLOW = %d\n",r); break;
-#endif
+    default:           WARNc2_S("%s : %s", strerror(errno), name); break;
   }
   DBG_MEM1_S("status.st_mode = %d", (int)(status.st_mode&S_IFMT)&S_IFDIR)
   DBG_MEM1_S("status.st_mode = %d", (int)status.st_mode)
@@ -806,28 +805,26 @@ oyIsFileFull_ (const char* fullFileName, const char * read_mode)
   DBG_MEM_START
 
   DBG_MEM1_S("fullFileName = \"%s\"", fullFileName)
-  status.st_mode = 0;
+  memset(&status,0,sizeof(struct stat));
   r = stat (name, &status);
-  if(r && oy_debug)
-    WARNc2_S("stat( %s ) = %d", name, r);
 
   DBG_MEM1_S("status.st_mode = %d", (int)(status.st_mode&S_IFMT)&S_IFDIR)
   DBG_MEM1_S("status.st_mode = %d", (int)status.st_mode)
   DBG_MEM1_S("name = %s", name)
   DBG_MEM_V( r )
-  switch (r)
+  if(r != 0 && oy_debug > 1)
+  switch (errno)
   {
-    case EACCES:       WARNc1_S("EACCES = %d\n",r); break;
-    case EIO:          WARNc1_S("EIO = %d\n",r); break;
+    case EACCES:       WARNc1_S("Permission denied: %s", name); break;
+    case EIO:          WARNc1_S("EIO : %s", name); break;
+    case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG : %s", name); break;
+    case ENOENT:       WARNc1_S("A component of the name/file_name does not exist, or the file_name is an empty string: \"%s\"", name); break;
+    case ENOTDIR:      WARNc1_S("ENOTDIR : %s", name); break;
 #ifdef HAVE_POSIX
-    case ELOOP:        WARNc1_S("ELOOP = %d\n",r); break;
+    case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the name: %s", path); break;
+    case EOVERFLOW:    WARNc1_S("EOVERFLOW : %s", name); break;
 #endif
-    case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG = %d\n",r); break;
-    case ENOENT:       WARNc1_S("ENOENT = %d\n",r); break;
-    case ENOTDIR:      WARNc1_S("ENOTDIR = %d\n",r); break;
-#ifdef HAVE_POSIX
-    case EOVERFLOW:    WARNc1_S("EOVERFLOW = %d\n",r); break;
-#endif
+    default:           WARNc2_S("%s : %s", strerror(errno), name); break;
   }
 
   r = !r &&
@@ -900,20 +897,19 @@ int oyMakeDir_ (const char* path)
                             , mode
 #endif
                                   );
-      if(rc)
+      if(rc && oy_debug > 1)
       switch (errno)
       {
         case EACCES:       WARNc1_S("Permission denied: %s", path); break;
         case EIO:          WARNc1_S("EIO : %s", path); break;
-#ifdef HAVE_POSIX
-        case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the path: %s", path); break;
-#endif
         case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG : %s", path); break;
         case ENOENT:       WARNc1_S("A component of the path/file_name does not exist, or the file_name is an empty string: \"%s\"", path); break;
         case ENOTDIR:      WARNc1_S("ENOTDIR : %s", path); break;
 #ifdef HAVE_POSIX
+        case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the path: %s", path); break;
         case EOVERFLOW:    WARNc1_S("EOVERFLOW : %s", path); break;
 #endif
+        default:           WARNc2_S("%s : %s", strerror(errno), path); break;
       }
     }
     oyDeAllocateFunc_( path_name );;
@@ -1132,20 +1128,20 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
     if( path_is_double )
       continue;
 
+    memset(&statbuf,0,sizeof(struct stat));
     if ((stat (path, &statbuf)) != 0) {
       switch (errno)
       {
         case EACCES:       WARNc2_S("Permission denied: %s %d", path, i); break;
         case EIO:          WARNc2_S("EIO : %s %d", path, i); break;
-#ifdef HAVE_POSIX
-        case ELOOP:        WARNc2_S("Too many symbolic links encountered while traversing the path: %s %d", path, i); break;
-#endif
         case ENAMETOOLONG: WARNc2_S("ENAMETOOLONG : %s %d", path, i); break;
         case ENOENT:       DBG_MEM2_S("A component of the path file_name does not exist, or the path is an empty string: \"%s\" %d", path, i); break;
         case ENOTDIR:      WARNc2_S("ENOTDIR : %s %d", path, i); break;
 #ifdef HAVE_POSIX
+        case ELOOP:        WARNc2_S("Too many symbolic links encountered while traversing the path: %s %d", path, i); break;
         case EOVERFLOW:    WARNc2_S("EOVERFLOW : %s %d", path, i); break;
 #endif
+        default:           WARNc3_S("%s : %s %d", strerror(errno), path, i); break;
       }
       continue;
     }
@@ -1207,6 +1203,7 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
         DBG_MEM2_S("%d. %s ignored", l, name)
         goto cont;
       }
+      memset(&statbuf,0,sizeof(struct stat));
       if ((stat (name, &statbuf)) != 0) {
         DBG_MEM2_S("%d. %s does not exist", l, name)
         goto cont;
