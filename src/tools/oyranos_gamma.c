@@ -250,7 +250,7 @@ int main( int argc , char** argv )
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
                                 _("is a color profile administration tool for monitors"));
 
-#ifndef __APPLE__
+#if !defined(__APPLE__) && !defined(_WIN32)
   if(!display_name)
   {
     WARNc_S( _("DISPLAY variable not set: giving up.") );
