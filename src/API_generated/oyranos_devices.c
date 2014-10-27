@@ -1366,7 +1366,7 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
   t = oyAllocateFunc_(256);
   json = oyjl_tree_parse( json_text, t, 256 );
   if(t[0])
-    WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
+    WARNc3_S( "%s: %s\n%s", _("found issues parsing JSON"), t, json_text );
   oyFree_m_(t);
 
   error = oyOptions_FindInt( options, "pos", 0, &pos );
@@ -1374,12 +1374,12 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
                           xpath, pos );
 
   json_class = oyjl_tree_get_value( json, "org/freedesktop/openicc/device" );
-  if(json_class->type == oyjl_t_object)
+  if(json_class && json_class->type == oyjl_t_object)
     device_class = json_class->u.object.keys[0];
   if(device_class)
     oyConfig_AddDBData( device_, "device_class", device_class, OY_CREATE_NEW );
   else
-    WARNc1_S( "%s\n", _("idevice_class not found:") );
+    WARNc1_S( "%s\n", _("device_class not found:") );
 
   json_device = oyjl_tree_get_value( json, t );
 
