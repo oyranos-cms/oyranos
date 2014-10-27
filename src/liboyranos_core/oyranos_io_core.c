@@ -754,6 +754,9 @@ int oyIsDirFull_ (const char* name)
 
   status.st_mode = 0;
   r = stat (name, &status);
+  if(r && oy_debug)
+    WARNc2_S("stat( %s ) = %d", name, r);
+
   switch (r)
   {
     case EACCES:       WARNc1_S("EACCES = %d\n",r); break;
@@ -805,6 +808,8 @@ oyIsFileFull_ (const char* fullFileName, const char * read_mode)
   DBG_MEM1_S("fullFileName = \"%s\"", fullFileName)
   status.st_mode = 0;
   r = stat (name, &status);
+  if(r && oy_debug)
+    WARNc2_S("stat( %s ) = %d", name, r);
 
   DBG_MEM1_S("status.st_mode = %d", (int)(status.st_mode&S_IFMT)&S_IFDIR)
   DBG_MEM1_S("status.st_mode = %d", (int)status.st_mode)
