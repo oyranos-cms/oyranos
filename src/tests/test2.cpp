@@ -929,7 +929,7 @@ oyTESTRESULT_e testSettings ()
   fprintf(zout, "\n" );
 
   /* we check for out standard CMM */
-  opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcms",
+  opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcm2",
                                             oyOPTIONATTRIBUTE_ADVANCED /* |
                                             oyOPTIONATTRIBUTE_FRONT |
                                             OY_SELECT_COMMON */, 0 );
@@ -940,7 +940,7 @@ oyTESTRESULT_e testSettings ()
   if(!count)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "No options found for lcms" );
+    "No options found for lcm2" );
   } else
   {
     for(i = 0; i < count; ++i)
@@ -1048,7 +1048,7 @@ oyTESTRESULT_e testSettings ()
 
   oyOptions_Release( &opts );
 
-  opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcms",
+  opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcm2",
                                             oyOPTIONATTRIBUTE_ADVANCED  |
                                             oyOPTIONATTRIBUTE_FRONT |
                                             OY_SELECT_COMMON, 0 );
