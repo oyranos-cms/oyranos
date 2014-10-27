@@ -754,6 +754,20 @@ int oyIsDirFull_ (const char* name)
 
   status.st_mode = 0;
   r = stat (name, &status);
+  switch (r)
+  {
+    case EACCES:       WARNc1_S("EACCES = %d\n",r); break;
+    case EIO:          WARNc1_S("EIO = %d\n",r); break;
+#ifdef HAVE_POSIX
+    case ELOOP:        WARNc1_S("ELOOP = %d\n",r); break;
+#endif
+    case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG = %d\n",r); break;
+    case ENOENT:       WARNc1_S("ENOENT = %d\n",r); break;
+    case ENOTDIR:      WARNc1_S("ENOTDIR = %d\n",r); break;
+#ifdef HAVE_POSIX
+    case EOVERFLOW:    WARNc1_S("EOVERFLOW = %d\n",r); break;
+#endif
+  }
   DBG_MEM1_S("status.st_mode = %d", (int)(status.st_mode&S_IFMT)&S_IFDIR)
   DBG_MEM1_S("status.st_mode = %d", (int)status.st_mode)
   DBG_MEM1_S("name = %s ", name)
@@ -849,8 +863,7 @@ oyIsFile_ (const char* fileName)
   return r;
 }
 
-int
-oyMakeDir_ (const char* path)
+int oyMakeDir_ (const char* path)
 {
   char * full_name = oyResolveDirFileName_ (path),
        * path_parent = 0,
