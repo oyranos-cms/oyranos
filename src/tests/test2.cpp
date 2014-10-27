@@ -1246,7 +1246,7 @@ oyTESTRESULT_e testProfile ()
     "oyOptions_Handle( \"create_profile.icc_profile.color_matrix\")       " );
   }
 
-  FILE * fp = fopen( ICC_TEST_NAME".icc", "r" );
+  FILE * fp = fopen( ICC_TEST_NAME".icc", "rb" );
   if(fp)
   {
     fclose(fp); fp = 0;
