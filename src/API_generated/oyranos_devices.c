@@ -2164,18 +2164,24 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
     }
 
     c = oyOptions_Find( s, "////context" );
-    context = oyStringCopy( oyOption_GetValueString( c, 0 ),
-                            oyAllocateFunc_ );
+    if(c)
+      context = oyStringCopy( oyOption_GetValueString( c, 0 ),
+                              oyAllocateFunc_ );
     r = oyOptions_Find( s, "////renderer" );
-    renderer= oyStringCopy( oyOption_GetValueString( r, 0 ),
-                            oyAllocateFunc_ );
+    if(r)
+      renderer= oyStringCopy( oyOption_GetValueString( r, 0 ),
+                              oyAllocateFunc_ );
 
     error = oyOptions_DoFilter ( s, flags, type_txt );
 
-    oyOption_SetFromText( c, context, 0 );
-    oyOption_SetFromText( r, renderer, 0 );
-    oyFree_m_( context );
-    oyFree_m_( renderer );
+    if(c && context)
+      oyOption_SetFromText( c, context, 0 );
+    if(r && renderer)
+      oyOption_SetFromText( r, renderer, 0 );
+    if(context)
+      oyFree_m_( context );
+    if(renderer)
+      oyFree_m_( renderer );
   }
 
   if(type_txt)
