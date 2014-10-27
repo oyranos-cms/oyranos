@@ -1343,15 +1343,15 @@ oyTESTRESULT_e testProfiles ()
   if((int)size < count)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyProfileListGet() returned less than oyDEFAULT_PROFILE_START %d|%u", size, count );
+    "oyProfileListGet() returned less than oyDEFAULT_PROFILE_START %u|%d", size, count );
   } else if(count)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyProfileListGet and oyDEFAULT_PROFILE_START ok %d|%u", size, count );
+    "oyProfileListGet and oyDEFAULT_PROFILE_START ok %u|%d", size, count );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyProfileListGet and/or oyDEFAULT_PROFILE_START are wrong %d|%u", size, count );
+    "oyProfileListGet and/or oyDEFAULT_PROFILE_START are wrong %u|%d", size, count );
   }
 
   /* compare the default profile spaces with the total of profiles */
