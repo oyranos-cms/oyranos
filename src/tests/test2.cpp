@@ -2256,7 +2256,7 @@ oyTESTRESULT_e testCMMRankMap ()
     if(json_text) free( json_text ); json_text = 0;
     oyDeviceToJSON( device, 0, &json_text, malloc );
 
-    if( strlen(json_text) )
+    if( json_text && strlen(json_text) )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "json from device [%d]         %d    ", i, (int)strlen(json_text) );
     } else
