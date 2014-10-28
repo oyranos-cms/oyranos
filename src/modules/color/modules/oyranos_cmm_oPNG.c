@@ -287,7 +287,8 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
 
   /* set ICC profile */
   pmem = oyProfile_GetMem( prof, &psize, 0,0 );
-  png_set_iCCP( png_ptr, info_ptr, (char*)colorspacename, 0, pmem, psize);
+  png_set_iCCP( png_ptr, info_ptr, (char*)colorspacename, 0,
+                (png_const_bytep)pmem, psize);
   oyDeAllocateFunc_( pmem ); pmem = 0;
 
   /* set time stamp */
