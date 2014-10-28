@@ -128,7 +128,7 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
       WARNc2_S( "%s %d", _("Option not supported type:"), type)
       return NULL;
     } else
-      name = oyGetKeyString_( t->config_string, allocate_func );
+      name = oyDBGetKeyString_( t->config_string, allocate_func );
   }
 #ifdef __APPLE__
   if(!(name && name[0]))

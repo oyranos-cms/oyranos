@@ -2254,7 +2254,7 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
-    key_base_name = oySearchEmptyKeyname_( registration );
+    key_base_name = oyDBSearchEmptyKeyname_( registration );
     error = !key_base_name;
     if(error <= 0)
     {
@@ -2272,7 +2272,7 @@ OYAPI int  OYEXPORT
       STRING_ADD( key_name, key_base_name );
       STRING_ADD( key_name, key_top );
       if(oyOption_GetValueString(o,0))
-        error = oyAddKey_valueComment_( key_name, oyOption_GetValueString(o,0),
+        error = oyDBAddKey_( key_name, oyOption_GetValueString(o,0),
                                         0 );
 # if 0
       else if(o->value_type == oyVAL_STRUCT &&
@@ -2326,7 +2326,7 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
   oyExportStart_(EXPORT_SETTING);
 
   if(error <= 0)
-    text = oyGetKeyString_( oyOption_GetText( option, oyNAME_DESCRIPTION),
+    text = oyDBGetKeyString_( oyOption_GetText( option, oyNAME_DESCRIPTION),
                             oyAllocateFunc_ );
 
   if(error <= 0)
@@ -2339,7 +2339,7 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
     }
     else
     {
-      ptr = oyGetKeyString_( oyOption_GetRegistration(s), oyAllocateFunc_ );
+      ptr = oyDBGetKeyString_( oyOption_GetRegistration(s), oyAllocateFunc_ );
       if(ptr)
       {
         oyOption_SetFromData( option, ptr, strlen(ptr) );
@@ -2460,7 +2460,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
            /* skip already edited options by default */
            !(oyOption_GetFlags(o) & oyOPTIONATTRIBUTE_EDIT))
           /* ask the DB */
-          text = oyGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
+          text = oyDBGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                   oyAllocateFunc_ );
         else
           text = NULL;
@@ -3000,7 +3000,7 @@ char *       oyGetFilterNodeRegFromDB( const char        * db_base_key,
     if(key_name &&
        (!flags || flags & oySOURCE_DATA))
     {
-      name = oyGetKeyString_( key_name, allocate_func );
+      name = oyDBGetKeyString_( key_name, allocate_func );
     }
 
   } else

@@ -26,9 +26,13 @@
 
 /* C++ includes and definitions */
 #ifdef __cplusplus
-void* myAllocFunc(size_t size) { return new char [size]; }
 #include <fstream>
 #include <iostream>
+#define USE_NEW
+#endif
+
+#ifdef USE_NEW
+void* myAllocFunc(size_t size) { return new char [size]; }
 #else
 void* myAllocFunc(size_t size) { return calloc(size,1); }
 #endif
@@ -189,17 +193,17 @@ oyTESTRESULT_e testElektra()
 
   fprintf(stdout, "\n" );
 
-  error = oyAddKey_valueComment_(TEST_DOMAIN "/test_key",
+  error = oyDBAddKey_(TEST_DOMAIN "/test_key",
                                  "NULLTestValue", "NULLTestComment" );
-  start = oyGetKeyString_(TEST_DOMAIN "/test_key", 0);
+  start = oyDBGetKeyString_(TEST_DOMAIN "/test_key", 0);
   printf ("start is %s\n", start);
   if(!start)
   {
     oyExportStart_(EXPORT_CHECK_NO);
     oyExportEnd_();
-    error = oyAddKey_valueComment_(TEST_DOMAIN "/test_key",
+    error = oyDBAddKey_(TEST_DOMAIN "/test_key",
                                  "NULLTestValue", "NULLTestComment" );
-    start = oyGetKeyString_(TEST_DOMAIN "/test_key", 0);
+    start = oyDBGetKeyString_(TEST_DOMAIN "/test_key", 0);
     printf ("start is %s\n", start);
     
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL,
@@ -209,9 +213,9 @@ oyTESTRESULT_e testElektra()
   {
     oyExportStart_(EXPORT_SETTING);
     oyExportEnd_();
-    error = oyAddKey_valueComment_(TEST_DOMAIN "/test_key",
+    error = oyDBAddKey_(TEST_DOMAIN "/test_key",
                                  "NULLTestValue", "NULLTestComment" );
-    start = oyGetKeyString_(TEST_DOMAIN "/test_key", 0);
+    start = oyDBGetKeyString_(TEST_DOMAIN "/test_key", 0);
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL, 
     "Elektra not initialised? try oyExportStart_(EXPORT_SETTING)" );
   }
@@ -220,9 +224,9 @@ oyTESTRESULT_e testElektra()
   else
     fprintf(zout, "could not initialise\n" );
 
-  error = oyAddKey_valueComment_(TEST_DOMAIN "/test_key",
+  error = oyDBAddKey_(TEST_DOMAIN "/test_key",
                                  "myTestValue", "myTestComment" );
-  value = oyGetKeyString_(TEST_DOMAIN "/test_key", 0);
+  value = oyDBGetKeyString_(TEST_DOMAIN "/test_key", 0);
   if(value)
     fprintf(zout, "result key value: %s\n", value );
 
@@ -260,8 +264,8 @@ oyTESTRESULT_e testElektra()
   } else
     result = oyTESTRESULT_SUCCESS;
 
-  error = oyEraseKey_( TEST_DOMAIN "/test_key" );
-  value = oyGetKeyString_(TEST_DOMAIN "/test_key", 0);
+  error = oyDBEraseKey_( TEST_DOMAIN "/test_key" );
+  value = oyDBGetKeyString_(TEST_DOMAIN "/test_key", 0);
   if(value && strlen(value))
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
@@ -968,7 +972,7 @@ oyTESTRESULT_e testSettings ()
     {
       PRINT_SUB( oyTESTRESULT_FAIL, 
       "oyOptions_FindString() returned doubled options %u",
-                       size );
+                       (unsigned int)size );
     } else
       PRINT_SUB( oyTESTRESULT_SUCCESS, 
       "oyOptions_FindString() returned one option" );
@@ -1021,7 +1025,7 @@ oyTESTRESULT_e testSettings ()
            t, oyOption_GetValueText( o, malloc ),
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                        oyFILTER_REG_OPTION, 0 ),
-           ((oyOption_s_*)o)->flags );
+           (unsigned int)((oyOption_s_*)o)->flags );
 
     oyOption_Release( &o );
   }
@@ -1063,7 +1067,7 @@ oyTESTRESULT_e testSettings ()
            t, oyOption_GetValueText( o, malloc ),
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
                                        oyFILTER_REG_OPTION, 0 ),
-           ((oyOption_s_*)o)->flags );
+           (unsigned int)((oyOption_s_*)o)->flags );
 
     oyOption_Release( &o );
   }
@@ -1336,22 +1340,22 @@ oyTESTRESULT_e testProfiles ()
   } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "profiles found for oyProfileListGet:        %u", size );
+    "profiles found for oyProfileListGet:        %u",(unsigned int) size );
   }
   oyStringListRelease_( &texts, size, oyDeAllocateFunc_ );
 
   if((int)size < count)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyProfileListGet() returned less than oyDEFAULT_PROFILE_START %u|%d", size, count );
+    "oyProfileListGet() returned less than oyDEFAULT_PROFILE_START %u|%d", (unsigned int)size, count );
   } else if(count)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyProfileListGet and oyDEFAULT_PROFILE_START ok %u|%d", size, count );
+    "oyProfileListGet and oyDEFAULT_PROFILE_START ok %u|%d", (unsigned int)size, count );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyProfileListGet and/or oyDEFAULT_PROFILE_START are wrong %u|%d", size, count );
+    "oyProfileListGet and/or oyDEFAULT_PROFILE_START are wrong %u|%d", (unsigned int)size, count );
   }
 
   /* compare the default profile spaces with the total of profiles */
@@ -1381,11 +1385,11 @@ oyTESTRESULT_e testProfiles ()
   if((int)size < countB)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyProfileListGet() returned less than oyPROFILE_e %d|%u", size, count );
+    "oyProfileListGet() returned less than oyPROFILE_e %u|%d", (unsigned int)size, count );
   } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyProfileListGet and oyPROFILE_e ok %d|%u", size, countB );
+    "oyProfileListGet and oyPROFILE_e ok %u|%d", (unsigned int)size, countB );
   }
 
 
@@ -1396,6 +1400,11 @@ oyTESTRESULT_e testProfiles ()
 oyTESTRESULT_e testProfileLists ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+#ifdef _WIN32
+  int repeat = 100;
+#else
+  int repeat = 1000;
+#endif
 
   fprintf(stdout, "\n" );
 
@@ -1421,14 +1430,14 @@ oyTESTRESULT_e testProfileLists ()
   }
 
   int i,j;
-  for(i = 0; i < 1000; ++i)
+  for(i = 0; i < repeat; ++i)
   {
     uint32_t count = 0;
     char ** names = oyProfileListGet(0, &count, myAllocFunc);
     if(count != ref_count)
     {
       PRINT_SUB( oyTESTRESULT_FAIL, 
-      ": wrong profile count: %u/%u", count, ref_count );
+      ": wrong profile count: %u/%u", (unsigned int)count, (unsigned int)ref_count );
     }
     for(j = 0; j < (int)count; ++j)
     {
@@ -1439,13 +1448,13 @@ oyTESTRESULT_e testProfileLists ()
         "\n no profile name found: run %d profile #%d", i , j );
       }
       if( names[j] )
-#ifdef __cplusplus
+#ifdef USE_NEW
         delete [] names[j];
 #else
         free(names[j]);
 #endif
     }
-#ifdef __cplusplus
+#ifdef USE_NEW
     if( names ) delete [] names;
     std::cout << "." << std::flush;
 #else
@@ -1459,11 +1468,11 @@ oyTESTRESULT_e testProfileLists ()
 
 #ifdef __cplusplus
   std::cout << std::endl;
-  std::cout << "1000 + 1 calls to oyProfileListGet() took: "<< end - start_time
+  std::cout << repeat << " + 1 calls to oyProfileListGet() took: "<< end - start_time
             << " seconds" << std::endl;
 #else
-  fprintf(zout, "\n1000 + 1 calls to oyProfileListGet() took: %.03f seconds\n",
-                  end - start_time );
+  fprintf(zout, "\n%d + 1 calls to oyProfileListGet() took: %.03f seconds\n",
+                repeat,   end - start_time );
 #endif
 
   return result;
@@ -1797,7 +1806,7 @@ oyTESTRESULT_e testPolicy ()
       "Policy rereading                      " );
     }
 
-#ifdef __cplusplus
+#ifdef USE_NEW
     delete [] xml;
     delete [] data;
 #else
@@ -1889,7 +1898,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
   for( i = 0; i < (int)count; ++i)
   {
     const char * registration_domain = texts[i];
-    fprintf(zout,"%d[rank %u]: %s\n", i, rank_list[i], registration_domain);
+    fprintf(zout,"%d[rank %u]: %s\n", i, (unsigned int)rank_list[i], registration_domain);
 
     error = oyConfigs_FromDomain( registration_domain,
                                   options_list, &configs, 0 );
@@ -2050,7 +2059,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   for( i = 0; i < (int)count; ++i)
   {
     const char * registration_domain = texts[i];
-    fprintf(zout,"%d[rank %u]: %s\n", i, rank_list[i], registration_domain);
+    fprintf(zout,"%d[rank %u]: %s\n", i, (unsigned int)rank_list[i], registration_domain);
 
     /* set a general request */
     error = oyOptions_SetFromText( &options,
@@ -2578,7 +2587,7 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   }
   if(device && rank > 0)
   {
-    fprintf(zout,"rank: %d\n", rank);
+    fprintf(zout,"rank: %d\n", (int)rank);
     k_n = oyConfig_Count( device );
     for( k = 0; k < k_n; ++k )
     {
@@ -2915,10 +2924,10 @@ oyTESTRESULT_e testCMMsShow ()
 
   if( count )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyCMMsGetLibNames_( ) found %u                     ", count );
+    "oyCMMsGetLibNames_( ) found %u                     ", (unsigned int)count );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyCMMsGetLibNames_( ) found %u                     ", count );
+    "oyCMMsGetLibNames_( ) found %u                     ", (unsigned int)count );
   }
 
   oyDeAllocateFunc_( text_tmp );
@@ -3052,7 +3061,7 @@ oyTESTRESULT_e testCMMnmRun ()
   oyExportStart_(EXPORT_SETTING);
 
   if(error <= 0)
-    text = oyGetKeyString_( oyOption_GetRegistration(option), oyAllocateFunc_ );
+    text = oyDBGetKeyString_( oyOption_GetRegistration(option), oyAllocateFunc_ );
 
   if(error <= 0)
   {
@@ -3060,7 +3069,7 @@ oyTESTRESULT_e testCMMnmRun ()
       oyOption_SetFromText( option, text, 0 );
     else
     {
-      ptr = oyGetKeyString_( oyOption_GetRegistration(option), oyAllocateFunc_ );
+      ptr = oyDBGetKeyString_( oyOption_GetRegistration(option), oyAllocateFunc_ );
       if(ptr)
       {
         oyOption_SetFromData( option, ptr, strlen(ptr) );

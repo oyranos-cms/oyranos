@@ -151,8 +151,8 @@ void oyOpen_ (void)
 }
 void oyClose_() { /*kdbClose( &oy_handle_ );*/ }
 /* @todo make oyOpen unnecessary */
-void oyOpen  (void) { oyOpen_(); }
-void oyClose (void) { oyClose_(); }
+void oyDBOpen  (void) { oyOpen_(); }
+void oyDBClose (void) { oyClose_(); }
 void oyCloseReal__() {
 #if KDB_VERSION_NUM >= 800
 #else
@@ -330,7 +330,7 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc_ptr)
   return list;
 }
 
-char* oySearchEmptyKeyname_ (const char* key_parent_name)
+char* oyDBSearchEmptyKeyname_ (const char* key_parent_name)
 {
   const char * key_base_name = oySelectUserSys_();
   char* new_key_name = NULL;
@@ -381,7 +381,7 @@ char* oySearchEmptyKeyname_ (const char* key_parent_name)
 } 
 
 /** @brief The function returns keys found just one level under the arguments one. */
-char **            oyKeySetGetNames_ ( const char        * key_parent_name,
+char **            oyDBKeySetGetNames_ ( const char        * key_parent_name,
                                        int               * n )
 {
   int error = !key_parent_name || !n;
@@ -437,7 +437,7 @@ char **            oyKeySetGetNames_ ( const char        * key_parent_name,
 
 
 int
-oyAddKey_valueComment_ (const char* key_name,
+oyDBAddKey_ (const char* key_name,
                         const char* value,
                         const char* comment)
 {
@@ -573,7 +573,7 @@ oySetBehaviour_      (oyBEHAVIOUR_e type, int choice)
         const char *com =
             oyOptionGet_((oyWIDGET_e)type)-> choice_list[ choice ];
         snprintf(val, 12, "%d", choice);
-        r = oyAddKey_valueComment_ (key_name, val, com);
+        r = oyDBAddKey_ (key_name, val, com);
         DBG_PROG4_S( "%s %d %s %s", key_name, type, val, com?com:"" )
       }
       else
@@ -601,7 +601,7 @@ oyGetBehaviour_      (oyBEHAVIOUR_e type)
 
     if(key_name)
     {
-      name = oyGetKeyString_( key_name, oyAllocateFunc_ );
+      name = oyDBGetKeyString_( key_name, oyAllocateFunc_ );
     }
     else
       WARNc1_S( "type %d behaviour not possible", type);
@@ -659,7 +659,7 @@ int oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
                   + strlen(fileName);
         char* key_name = NULL;
         oyStringAddPrintf( &key_name, AD, "%s%s", OY_REGISTRED_PROFILES OY_SLASH, fileName );
-        r = oyAddKey_valueComment_ (key_name, com, 0);
+        r = oyDBAddKey_ (key_name, com, 0);
         DBG_PROG2_S( "%s %d", key_name, len )
         oyFree_m_ (key_name)
       }
@@ -670,7 +670,7 @@ int oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
     if(config_name)
     {
       if(name) {
-        r = oyAddKey_valueComment_ (config_name, fileName, com);
+        r = oyDBAddKey_ (config_name, fileName, com);
         DBG_PROG3_S( "%s %s %s",config_name,fileName,com?com:"" )
       } else {
         KeySet* list;
@@ -727,7 +727,7 @@ int oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
  *  2. if user has no setting ask system
  */
 char*
-oyGetKeyString_ ( const char       *key_name,
+oyDBGetKeyString_ ( const char       *key_name,
                  oyAlloc_f         allocate_func )
 {
   char* name = 0;
@@ -800,7 +800,7 @@ oyGetKeyString_ ( const char       *key_name,
   return 0;
 }
 
-int                oyEraseKey_       ( const char        * key_name )
+int                oyDBEraseKey_       ( const char        * key_name )
 {
   int error = !key_name,
       rc = 0;

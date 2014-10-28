@@ -1987,7 +1987,7 @@ char *       oyGetCMMPattern         ( oyCMM_e             type,
 
     if(key_name &&
        (!flags || flags & oySOURCE_DATA))
-      name = oyGetKeyString_( key_name, allocate_func );
+      name = oyDBGetKeyString_( key_name, allocate_func );
     else if(!key_name)
       WARNc1_S( "type %d not supported", type);
 
@@ -2033,7 +2033,7 @@ int          oySetCMMPattern         ( oyCMM_e             type,
     key_name = oyOptionGet_((oyWIDGET_e)type)-> config_string;
 
     if(key_name)
-      r = oyAddKey_valueComment_ (key_name, pattern, NULL);
+      r = oyDBAddKey_ (key_name, pattern, NULL);
     else
       WARNc1_S( "type %d setting CMM not possible", type);
   } else

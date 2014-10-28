@@ -257,7 +257,8 @@ OYAPI int  OYEXPORT
                                        int32_t           * rank_value )
 {
   int error = !device;
-  int rank = 0, max_rank = 0, i, n;
+  int32_t rank = 0, max_rank = 0;
+  int i, n;
   oyConfig_s * config = 0, * max_config = 0;
   oyConfig_s_ * s = (oyConfig_s_*)device;
 
@@ -402,7 +403,7 @@ OYAPI int  OYEXPORT
     else
       text = s->registration;
 
-    error = oyEraseKey_( text );
+    error = oyDBEraseKey_( text );
 
     if(tmp)
       oyFree_m_( tmp );

@@ -360,13 +360,13 @@ OYAPI int OYEXPORT
     for(i = 0; i < count; ++i)
     {
       /** 2. obtain the directory structure for configurations */
-      key_set_names = oyKeySetGetNames_( texts[i], &n );
+      key_set_names = oyDBKeySetGetNames_( texts[i], &n );
 
       if(error <= 0)
       for(j = 0; j < n; ++j)
       {
         /** 3. obtain all keys from one configuration directory */
-        config_key_names = oyKeySetGetNames_( key_set_names[j], &k_n );
+        config_key_names = oyDBKeySetGetNames_( key_set_names[j], &k_n );
 
         config = (oyConfig_s_*)oyConfig_FromRegistration( texts[i], object );
         error = !config;

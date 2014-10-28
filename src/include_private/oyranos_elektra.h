@@ -26,8 +26,8 @@ extern "C" {
 /* --- internal API definition --- */
 
 /* separate from the external functions */
-void oyOpen  (void);
-void oyClose (void);
+void oyDBOpen  (void);
+void oyDBClose (void);
 /* better use oyExportReset_(EXPORT_SETTING) */
 void oyCloseReal__(void);
 
@@ -36,14 +36,14 @@ int     oySetBehaviour_        (oyBEHAVIOUR_e type,
                                 int         behaviour);
 
 /* elektra key wrappers */
-char*   oyGetKeyString_        (const char       *key_name,
+char*   oyDBGetKeyString_        (const char       *key_name,
                                 oyAlloc_f         allocFunc );
-int     oyAddKey_valueComment_ (const char* keyName,
+int     oyDBAddKey_ (const char* keyName,
                                 const char* value, const char* comment);
-char*   oySearchEmptyKeyname_        ( const char        * keyParentName );
-char **            oyKeySetGetNames_ ( const char        * key_parent_name,
-                                       int               * n );
-int                oyEraseKey_       ( const char        * key_name );
+char*   oyDBSearchEmptyKeyname_        ( const char        * keyParentName );
+char ** oyDBKeySetGetNames_              ( const char        * key_parent_name,
+                                         int               * n );
+int     oyDBEraseKey_                    ( const char        * key_name );
 
 
 #ifdef __cplusplus

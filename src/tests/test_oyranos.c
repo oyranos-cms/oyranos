@@ -188,16 +188,16 @@ oyTESTRESULT_e testElektra()
 
   fprintf(stderr, "\n" );
 
-  error = oyAddKey_valueComment_("sw/Oyranos/Tests/test_key",
+  error = oyDBAddKey_("sw/Oyranos/Tests/test_key",
                                  "NULLTestValue", "NULLTestComment" );
-  start = oyGetKeyString_("sw/Oyranos/Tests/test_key", 0);
+  start = oyDBGetKeyString_("sw/Oyranos/Tests/test_key", 0);
   if(!start || !start[0])
   {
     oyExportStart_(EXPORT_CHECK_NO);
     oyExportEnd_();
-    error = oyAddKey_valueComment_("sw/Oyranos/Tests/test_key",
+    error = oyDBAddKey_("sw/Oyranos/Tests/test_key",
                                  "NULLTestValue", "NULLTestComment" );
-    start = oyGetKeyString_("sw/Oyranos/Tests/test_key", 0);
+    start = oyDBGetKeyString_("sw/Oyranos/Tests/test_key", 0);
     
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL,
     "Elektra not initialised? try oyExportStart_(EXPORT_CHECK_NO)" );
@@ -206,9 +206,9 @@ oyTESTRESULT_e testElektra()
   {
     oyExportStart_(EXPORT_SETTING);
     oyExportEnd_();
-    error = oyAddKey_valueComment_("sw/Oyranos/Tests/test_key",
+    error = oyDBAddKey_("sw/Oyranos/Tests/test_key",
                                  "NULLTestValue", "NULLTestComment" );
-    start = oyGetKeyString_("sw/Oyranos/Tests/test_key", 0);
+    start = oyDBGetKeyString_("sw/Oyranos/Tests/test_key", 0);
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL, 
     "Elektra not initialised? try oyExportStart_(EXPORT_SETTING)" );
   }
@@ -217,9 +217,9 @@ oyTESTRESULT_e testElektra()
   else
     fprintf(zout, "could not initialise\n" );
 
-  error = oyAddKey_valueComment_("sw/Oyranos/Tests/test_key",
+  error = oyDBAddKey_("sw/Oyranos/Tests/test_key",
                                  "myTestValue", "myTestComment" );
-  value = oyGetKeyString_("sw/Oyranos/Tests/test_key", 0);
+  value = oyDBGetKeyString_("sw/Oyranos/Tests/test_key", 0);
   if(value)
     fprintf(zout, "result key value: %s\n", value );
 
@@ -391,8 +391,8 @@ oyTESTRESULT_e testSettings ()
     if(size > 1)
     {
       PRINT_SUB( oyTESTRESULT_FAIL, 
-      "oyOptions_FindString() returned doubled options %d",
-                       size );
+      "oyOptions_FindString() returned doubled options %u",
+                       (unsigned int)size );
     } else
       PRINT_SUB( oyTESTRESULT_SUCCESS, 
       "oyOptions_FindString() returned one option" );
@@ -517,22 +517,22 @@ oyTESTRESULT_e testProfiles ()
   } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "profiles found for oyProfileListGet:        %d", size );
+    "profiles found for oyProfileListGet:        %u", (unsigned int)size );
   }
   oyStringListRelease_( &texts, size, oyDeAllocateFunc_ );
 
   if(size < count)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyProfileListGet() returned less than oyDEFAULT_PROFILE_START %d|%d", size, count );
+    "oyProfileListGet() returned less than oyDEFAULT_PROFILE_START %u|%d", (unsigned int)size, count );
   } else if(count)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyProfileListGet and oyDEFAULT_PROFILE_START ok %d|%d", size, count );
+    "oyProfileListGet and oyDEFAULT_PROFILE_START ok %u|%d", (unsigned int)size, count );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyProfileListGet and/or oyDEFAULT_PROFILE_START are wrong %d|%d", size, count );
+    "oyProfileListGet and/or oyDEFAULT_PROFILE_START are wrong %u|%d", (unsigned int)size, count );
   }
 
   /* compare the default profile spaces with the total of profiles */
@@ -560,11 +560,11 @@ oyTESTRESULT_e testProfiles ()
   if(size < countB)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyProfileListGet() returned less than oyPROFILE_e %d|%d", size, count );
+    "oyProfileListGet() returned less than oyPROFILE_e %u|%d", (unsigned int)size, count );
   } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyProfileListGet and oyPROFILE_e ok %d|%d", size, countB );
+    "oyProfileListGet and oyPROFILE_e ok %u|%d", (unsigned int)size, countB );
   }
 
 
