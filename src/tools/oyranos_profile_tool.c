@@ -385,7 +385,7 @@ int main( int argc , char** argv )
       char * v = (char*)&vs;
       const char   ** names = NULL;
       int count;
-      int text_n;
+      int32_t text_n;
       char** tag_text = 0;
       const char * fn;
       oyProfileTag_s * tag;

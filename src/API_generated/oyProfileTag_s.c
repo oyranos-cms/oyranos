@@ -450,7 +450,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
   oyBlob_s * blob = 0;
   size_t size = 0;
   int values_n = 0, i = 0, k;
-  int32_t texts_n = 0;
+  int texts_n = 0;
 
   *n = 0;
 

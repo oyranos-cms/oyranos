@@ -461,7 +461,8 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
 {
   int error = !list || !device || !rank_list;
   oyProfiles_s_ * s = (oyProfiles_s_*)list;
-  int i,n,rank;
+  int i,n;
+  int32_t rank;
   oyProfile_s * p = 0;
   oyConfig_s * p_device = 0;
   oyConfig_s_ * d = (oyConfig_s_*)device;

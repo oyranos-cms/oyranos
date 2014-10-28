@@ -423,7 +423,7 @@ char **  oyProfileListGet_           ( const char        * colorsig,
                                        uint32_t          * size )
 {
   oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 0, 128, 0, 0};
-  int32_t count = 0;
+  int count = 0;
   char ** path_names = NULL;
 
   path_names = oyProfilePathsGet_( &count, oyAllocateFunc_ );

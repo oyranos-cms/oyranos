@@ -948,7 +948,7 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
                                                         oyNAME_DESCRIPTION );
       char * vs = oyVersionString(1,malloc);
       uint8_t * out_values = 0;
-      const uint8_t * u8;
+      const uint8_t * u8 = NULL;
       double * dbls;
       float flt;
 
