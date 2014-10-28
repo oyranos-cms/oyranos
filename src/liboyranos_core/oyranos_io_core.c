@@ -15,7 +15,7 @@
 
 #include <assert.h>
 #include <errno.h>
-#include <sys/stat.h>
+#include <sys/stat.h> /* mkdir() */
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -25,9 +25,6 @@
 #include <windows.h>
 #include <shlobj.h>
 #include <io.h>
-#else
-#include <sys/stat.h> /* mkdir() */
-#define stat _stat
 #endif
 
 #include "oyranos_config_internal.h"
@@ -765,7 +762,7 @@ int oyIsDirFull_ (const char* name)
     case ENOENT:       WARNc1_S("A component of the name/file_name does not exist, or the file_name is an empty string: \"%s\"", name); break;
     case ENOTDIR:      WARNc1_S("ENOTDIR : %s", name); break;
 #ifdef HAVE_POSIX
-    case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the name: %s", path); break;
+    case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the name: %s", name); break;
     case EOVERFLOW:    WARNc1_S("EOVERFLOW : %s", name); break;
 #endif
     default:           WARNc2_S("%s : %s", strerror(errno), name); break;
@@ -820,8 +817,8 @@ oyIsFileFull_ (const char* fullFileName, const char * read_mode)
     case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG : %s", name); break;
     case ENOENT:       WARNc1_S("A component of the name/file_name does not exist, or the file_name is an empty string: \"%s\"", name); break;
     case ENOTDIR:      WARNc1_S("ENOTDIR : %s", name); break;
-#ifdef HAVE_POSIX
-    case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the name: %s", path); break;
+#ifdef AVE_POSIX
+    case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the name: %s", name); break;
     case EOVERFLOW:    WARNc1_S("EOVERFLOW : %s", name); break;
 #endif
     default:           WARNc2_S("%s : %s", strerror(errno), name); break;
