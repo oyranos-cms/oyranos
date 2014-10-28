@@ -51,10 +51,11 @@ int main( int argc, char ** argv )
   {
     if(show_short)
       printf( "%08x%08x%08x%08x\n",
-            i[0],i[1],i[2],i[3] );
+            (unsigned int)i[0],(unsigned int)i[1],(unsigned int)i[2],(unsigned int)i[3] );
     else
       printf( "%08x%08x%08x%08x[%08x%08x%08x%08x] %s\n",
-            i[0],i[1],i[2],i[3], id[0],id[1],id[2],id[3], argv[profile_pos] );
+             (unsigned int)i[0],(unsigned int)i[1],(unsigned int)i[2],(unsigned int)i[3],
+             (unsigned int)id[0],(unsigned int)id[1],(unsigned int)id[2],(unsigned int)id[3], argv[profile_pos] );
   } else
     fprintf(stderr, "not found: %s\n", argv[profile_pos] );
 
