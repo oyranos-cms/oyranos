@@ -258,7 +258,7 @@ int  oySetKey                        ( Key               * key )
 
 int  oyRemoveFromDB                  ( const char        * name )
 {
-  return oyEraseKey_(name);
+  return oyDBEraseKey_(name);
 }
 #endif /* KDB_VERSION_NUM >= 800 */
 
