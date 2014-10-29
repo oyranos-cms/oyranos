@@ -813,9 +813,7 @@ int                oyDBEraseKey_       ( const char        * key_name )
   Key * top =  keyNew(KEY_END);
   KeySet * cut;
 
-  oyAllocHelper_m_( name, char, MAX_PATH, 0, return 1 )
-
-  oySprintf_( name, "%s%s", oySelectUserSys_(), key_name );
+  oyStringAddPrintf( &name, AD, "%s%s", oySelectUserSys_(), key_name );
 
   keySetName( top, name );
 
@@ -843,9 +841,7 @@ int                oyDBEraseKey_       ( const char        * key_name )
   if(!oy_handle_)
     return 1;
 
-  oyAllocHelper_m_( name, char, MAX_PATH, 0, return 1 )
-
-  oySprintf_( name, "%s%s", oySelectUserSys_(), key_name );
+  oyStringAddPrintf( &name, AD, "%s%s", oySelectUserSys_(), key_name );
 
   if(!error)
   {
