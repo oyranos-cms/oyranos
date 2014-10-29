@@ -1497,6 +1497,9 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
 
           if(value && count > j)
           {
+            if(j)
+              oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                                  ",\n" );
             if(value[0] == '<')
                oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                "              \"%s\": \"%s\"",
@@ -1530,9 +1533,6 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
               oyStringListRelease_( &vals, vals_n, free );
             }
           }
-          if(value && j < count - 1)
-            oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
-                                ",\n" );
           oyOption_Release( &opt );
           if(key)
             oyFree_m_( key );
