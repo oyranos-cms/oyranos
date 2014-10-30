@@ -306,6 +306,17 @@ oyTESTRESULT_e testElektra()
     "Elektra key erased                      " );
   }
 
+  value = oyDBSearchEmptyKeyname_(TEST_DOMAIN TEST_KEY);
+  if(value && strlen(value))
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyDBSearchEmptyKeyname_()=%s", value );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyDBSearchEmptyKeyname_(%s)", TEST_DOMAIN TEST_KEY );
+  }
+
   return result;
 }
 
