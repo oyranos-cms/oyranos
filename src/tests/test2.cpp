@@ -195,8 +195,28 @@ oyTESTRESULT_e testElektra()
 
   error = oyDBAddKey_(TEST_DOMAIN "/test_key",
                                  "NULLTestValue", "NULLTestComment" );
+  if(error)
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyDBAddKey_(%s)", TEST_DOMAIN "/test_key" );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyDBAddKey_(%s)", TEST_DOMAIN "/test_key" );
+  }
+
   start = oyDBGetKeyString_(TEST_DOMAIN "/test_key", 0);
-  printf ("start is %s\n", start);
+  if(start && start[0])
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyDBGetKeyString_(%s)", TEST_DOMAIN "/test_key" );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_XFAIL,
+    "oyDBGetKeyString_(%s)", TEST_DOMAIN "/test_key" );
+  }
+
+  printf ("start is %s\n", oyNoEmptyString_m_(start));
   if(!start)
   {
     oyExportStart_(EXPORT_CHECK_NO);
@@ -265,15 +285,24 @@ oyTESTRESULT_e testElektra()
     result = oyTESTRESULT_SUCCESS;
 
   error = oyDBEraseKey_( TEST_DOMAIN "/test_key" );
+  if(error)
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyDBEraseKey_(%s)", TEST_DOMAIN "/test_key" );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyDBEraseKey_(%s)", TEST_DOMAIN "/test_key" );
+  }
   value = oyDBGetKeyString_(TEST_DOMAIN "/test_key", 0);
   if(value && strlen(value))
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "Elektra key not erased" );
+    "Elektra key not erased                  " );
   } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "Elektra key erased" );
+    "Elektra key erased                      " );
   }
 
   return result;
