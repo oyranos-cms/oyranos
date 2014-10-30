@@ -180,6 +180,7 @@ oyTESTRESULT_e testI18N()
 }
 
 #define TEST_DOMAIN "sw/Oyranos/Tests"
+#define TEST_KEY "/test_key"
 
 #include "oyranos_elektra.h"
 oyTESTRESULT_e testElektra()
@@ -193,27 +194,27 @@ oyTESTRESULT_e testElektra()
 
   fprintf(stdout, "\n" );
 
-  error = oyDBAddKey_(TEST_DOMAIN "/test_key",
+  error = oyDBAddKey_(TEST_DOMAIN TEST_KEY,
                                  "NULLTestValue", "NULLTestComment" );
   if(error)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyDBAddKey_(%s)", TEST_DOMAIN "/test_key" );
+    "oyDBAddKey_(%s)", TEST_DOMAIN TEST_KEY );
   } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyDBAddKey_(%s)", TEST_DOMAIN "/test_key" );
+    "oyDBAddKey_(%s)", TEST_DOMAIN TEST_KEY );
   }
 
-  start = oyDBGetKeyString_(TEST_DOMAIN "/test_key", 0);
+  start = oyDBGetKeyString_(TEST_DOMAIN TEST_KEY, 0);
   if(start && start[0])
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyDBGetKeyString_(%s)", TEST_DOMAIN "/test_key" );
+    "oyDBGetKeyString_(%s)", TEST_DOMAIN TEST_KEY );
   } else
   {
     PRINT_SUB( oyTESTRESULT_XFAIL,
-    "oyDBGetKeyString_(%s)", TEST_DOMAIN "/test_key" );
+    "oyDBGetKeyString_(%s)", TEST_DOMAIN TEST_KEY );
   }
 
   printf ("start is %s\n", oyNoEmptyString_m_(start));
@@ -221,9 +222,9 @@ oyTESTRESULT_e testElektra()
   {
     oyExportStart_(EXPORT_CHECK_NO);
     oyExportEnd_();
-    error = oyDBAddKey_(TEST_DOMAIN "/test_key",
+    error = oyDBAddKey_(TEST_DOMAIN TEST_KEY,
                                  "NULLTestValue", "NULLTestComment" );
-    start = oyDBGetKeyString_(TEST_DOMAIN "/test_key", 0);
+    start = oyDBGetKeyString_(TEST_DOMAIN TEST_KEY, 0);
     printf ("start is %s\n", start);
     
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL,
@@ -233,9 +234,9 @@ oyTESTRESULT_e testElektra()
   {
     oyExportStart_(EXPORT_SETTING);
     oyExportEnd_();
-    error = oyDBAddKey_(TEST_DOMAIN "/test_key",
+    error = oyDBAddKey_(TEST_DOMAIN TEST_KEY,
                                  "NULLTestValue", "NULLTestComment" );
-    start = oyDBGetKeyString_(TEST_DOMAIN "/test_key", 0);
+    start = oyDBGetKeyString_(TEST_DOMAIN TEST_KEY, 0);
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL, 
     "Elektra not initialised? try oyExportStart_(EXPORT_SETTING)" );
   }
@@ -244,9 +245,9 @@ oyTESTRESULT_e testElektra()
   else
     fprintf(zout, "could not initialise\n" );
 
-  error = oyDBAddKey_(TEST_DOMAIN "/test_key",
+  error = oyDBAddKey_(TEST_DOMAIN TEST_KEY,
                                  "myTestValue", "myTestComment" );
-  value = oyDBGetKeyString_(TEST_DOMAIN "/test_key", 0);
+  value = oyDBGetKeyString_(TEST_DOMAIN TEST_KEY, 0);
   if(value)
     fprintf(zout, "result key value: %s\n", value );
 
@@ -284,17 +285,17 @@ oyTESTRESULT_e testElektra()
   } else
     result = oyTESTRESULT_SUCCESS;
 
-  error = oyDBEraseKey_( TEST_DOMAIN "/test_key" );
+  error = oyDBEraseKey_( TEST_DOMAIN TEST_KEY );
   if(error)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyDBEraseKey_(%s)", TEST_DOMAIN "/test_key" );
+    "oyDBEraseKey_(%s)", TEST_DOMAIN TEST_KEY );
   } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyDBEraseKey_(%s)", TEST_DOMAIN "/test_key" );
+    "oyDBEraseKey_(%s)", TEST_DOMAIN TEST_KEY );
   }
-  value = oyDBGetKeyString_(TEST_DOMAIN "/test_key", 0);
+  value = oyDBGetKeyString_(TEST_DOMAIN TEST_KEY, 0);
   if(value && strlen(value))
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
