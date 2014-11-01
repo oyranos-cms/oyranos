@@ -234,7 +234,7 @@ int  oySetKey                        ( Key               * key )
   int rc;
   Key * error_key = keyNew(KEY_END);
   KDB * oy_handle_ = kdbOpen(error_key);
-  KeySet * oy_config_ = ksNew(0,NULL);
+  KeySet * oy_config_ = ksNew(0, KS_END);
   const char * key_name = keyName(key);
   Key * parent_key = keyNew( key_name, KEY_END );
 
@@ -436,8 +436,7 @@ char **            oyDBKeySetGetNames_ ( const char        * key_parent_name,
 }
 
 
-int
-oyDBAddKey_ (const char* key_name,
+int oyDBAddKey_ (const char* key_name,
                         const char* value,
                         const char* comment)
 {
@@ -487,14 +486,6 @@ oyDBAddKey_ (const char* key_name,
 
   if(!oy_handle_)
     goto clean;
-  rc=kdbGetKey( oy_handle_, key ); oyERR(key)
-  DBG_EL1_S( "rc = kdbGetKey( oy_handle, key ) == %d", rc );
-  if(rc < 0 && oy_debug)
-    oyMessageFunc_p( oyMSG_WARN, 0, OY_DBG_FORMAT_"key new? code:%d %s name:%s",
-                     OY_DBG_ARGS_, rc, kdbStrError(rc), name);
-
-  keySetName( key, name );
-  DBG_EL1_S( "keySetName( key, \"%s\" )", name );
 
   if(value)
   {
@@ -537,8 +528,7 @@ oyDBAddKey_ (const char* key_name,
   return rc;
 }
 
-const char*
-oySelectUserSys_()
+const char* oySelectUserSys_()
 {
   /* enable system wide keys for user root */
 #ifdef HAVE_POSIX
@@ -552,8 +542,7 @@ oySelectUserSys_()
 }
 
 
-int
-oySetBehaviour_      (oyBEHAVIOUR_e type, int choice)
+int oySetBehaviour_      (oyBEHAVIOUR_e type, int choice)
 {
   int r = 1;
 
@@ -584,8 +573,7 @@ oySetBehaviour_      (oyBEHAVIOUR_e type, int choice)
   return r;
 }
 
-int
-oyGetBehaviour_      (oyBEHAVIOUR_e type)
+int oyGetBehaviour_      (oyBEHAVIOUR_e type)
 {
   char* name = 0;
   const char* key_name = 0;
@@ -726,8 +714,7 @@ int oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
  *  1. ask user
  *  2. if user has no setting ask system
  */
-char*
-oyDBGetKeyString_ ( const char       *key_name,
+char* oyDBGetKeyString_ ( const char       *key_name,
                  oyAlloc_f         allocate_func )
 {
   char* name = 0;
