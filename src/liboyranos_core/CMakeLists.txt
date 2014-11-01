@@ -31,4 +31,6 @@ ADD_LIBRARY( oyranos_core-static STATIC ${CFILES_CORE})
 TARGET_LINK_LIBRARIES ( oyranos_core-static ${EXTRA_LIBS_CORE} )
 
 INSTALL( TARGETS oyranos_core oyranos_core-static
-         DESTINATION lib${LIB_SUFFIX} )
+         RUNTIME DESTINATION bin
+         LIBRARY DESTINATION lib${LIB_SUFFIX}
+         ARCHIVE DESTINATION lib${LIB_SUFFIX} )

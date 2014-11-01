@@ -63,7 +63,10 @@ TARGET_LINK_LIBRARIES (
    oyranos-static
    oyranos_config-static oyranos_modules-static oyranos_object-static oyranos_core-static ${EXTRA_LIBS} )
 
-INSTALL (TARGETS oyranos oyranos-static DESTINATION lib${LIB_SUFFIX})
+INSTALL( TARGETS oyranos oyranos-static
+         RUNTIME DESTINATION bin
+         LIBRARY DESTINATION lib${LIB_SUFFIX}
+         ARCHIVE DESTINATION lib${LIB_SUFFIX} )
 INSTALL (FILES ${CHEADERS_OBJECT_IMAGING_PUBLIC} DESTINATION include/${PACKAGE_NAME})
 
 
