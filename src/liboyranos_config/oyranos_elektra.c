@@ -80,6 +80,15 @@ char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", r
 #endif
 
 #if KDB_VERSION_NUM >= 800
+#define oyERRopen(k) { const Key *meta = NULL; keyRewindMeta(k); \
+                   if(!oy_handle_) { \
+                     while((meta = keyNextMeta(k)) != 0) { \
+                       if(oy_debug || strstr(oyNoEmptyString_m_( keyName(meta) ),"warnings") == 0) \
+                         WARNc2_S( "%s:\t%s", \
+                                   oyNoEmptyString_m_( keyName(meta) ), \
+                                   oyNoEmptyString_m_( keyString(meta) ) ); \
+                     } \
+                 } }
 #define oyERR(k) { const Key *meta = NULL; keyRewindMeta(k); \
                    if(rc < 0) { \
                      while((meta = keyNextMeta(k)) != 0) { \
@@ -180,13 +189,13 @@ void oyCloseReal__() {
 int oyGetByName(KeySet * ks, const char * key_name)
 {
   Key * error_key = keyNew(KEY_END);
-  KDB * kdb_handle = kdbOpen(error_key);
+  KDB * oy_handle_ = kdbOpen(error_key); oyERRopen(error_key)
   Key * top =  keyNew(key_name, KEY_END);
 
-  int rc = kdbGet(kdb_handle, ks, top); oyERR(top)
+  int rc = kdbGet(oy_handle_, ks, top); oyERR(top)
 
   keyDel(top);
-  kdbClose(kdb_handle, error_key);
+  kdbClose(oy_handle_, error_key);
   keyDel(error_key);
 
   return rc;
@@ -197,7 +206,7 @@ int  oyGetKey                        ( Key               * key )
   Key * result;
   int rc;
   Key * error_key = keyNew(KEY_END);
-  KDB * oy_handle_ = kdbOpen(error_key);
+  KDB * oy_handle_ = kdbOpen(error_key); oyERRopen(error_key)
   KeySet * oy_config_ = ksNew(0,NULL);
 
   DBG_EL1_S( "xxxxxxxxxxxx Try to get %s\n", keyName(key));
@@ -233,7 +242,7 @@ int  oySetKey                        ( Key               * key )
 {
   int rc;
   Key * error_key = keyNew(KEY_END);
-  KDB * oy_handle_ = kdbOpen(error_key);
+  KDB * oy_handle_ = kdbOpen(error_key); oyERRopen(error_key)
   KeySet * oy_config_ = ksNew(0, KS_END);
   const char * key_name = keyName(key);
   Key * parent_key = keyNew( key_name, KEY_END );
@@ -276,7 +285,7 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc_ptr)
   char  *list_name_sys = NULL;
 #if KDB_VERSION_NUM >= 800
   Key * error_key = keyNew(KEY_END);
-  KDB * oy_handle_ = kdbOpen(error_key);
+  KDB * oy_handle_ = kdbOpen(error_key); oyERRopen(error_key)
 #endif
 
   DBG_PROG_START
@@ -339,7 +348,7 @@ char* oyDBSearchEmptyKeyname_ (const char* key_parent_name)
   char *name = NULL;
 #if KDB_VERSION_NUM >= 800
   Key * error_key = keyNew(KEY_END);
-  KDB * oy_handle_ = kdbOpen(error_key);
+  KDB * oy_handle_ = kdbOpen(error_key); oyERRopen(error_key)
 #endif
 
   DBG_PROG_START
@@ -442,7 +451,7 @@ int oyDBAddKey_ (const char* key_name,
 {
 #if KDB_VERSION_NUM >= 800
   Key * error_key = keyNew(KEY_END);
-  KDB * oy_handle_ = kdbOpen(error_key);
+  KDB * oy_handle_ = kdbOpen(error_key); oyERRopen(error_key)
 #endif
   int rc=0,
       max_len;
@@ -734,7 +743,7 @@ char* oyDBGetKeyString_ ( const char       *key_name,
 
 #if KDB_VERSION_NUM >= 800
   error_key = keyNew(KEY_END);
-  oy_handle_ = kdbOpen(error_key);
+  oy_handle_ = kdbOpen(error_key); oyERRopen(error_key)
 #endif
 
   name = (char*) oyAllocateWrapFunc_( MAX_PATH, allocate_func );
@@ -796,7 +805,7 @@ int                oyDBEraseKey_       ( const char        * key_name )
 
 #if KDB_VERSION_NUM >= 800
   Key * error_key = keyNew(KEY_END);
-  KDB * kdb_handle = kdbOpen(error_key);
+  KDB * oy_handle_ = kdbOpen(error_key); oyERRopen(error_key)
   Key * top =  keyNew(KEY_END);
   KeySet * cut;
 
@@ -805,15 +814,15 @@ int                oyDBEraseKey_       ( const char        * key_name )
   keySetName( top, name );
 
   ks = ksNew(0,NULL);
-  rc = kdbGet(kdb_handle, ks, top);
+  rc = kdbGet(oy_handle_, ks, top);
   keySetName( top, name );
   cut = ksCut(ks, top);
-  rc = kdbSet(kdb_handle, ks, top); oyERR( top )
+  rc = kdbSet(oy_handle_, ks, top); oyERR( top )
 
   ksDel(ks);
   ksDel(cut);
   keyDel(top);
-  kdbClose(kdb_handle, error_key);
+  kdbClose(oy_handle_, error_key);
   keyDel(error_key);
   oyFree_m_( name );
 
