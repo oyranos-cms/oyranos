@@ -238,7 +238,7 @@ int main( int argc , char** argv )
   if(json_name && !profile_name)
   {
     fprintf(stderr, "%s %s\n", _("missed -w option to write a ICC profile"), _("Exit!"));
-    printfHelp(argc, argv);
+                        printfHelp(argc, argv);
     exit(1);
   }
 
@@ -256,8 +256,14 @@ int main( int argc , char** argv )
       exit(1);
     }
     oyFree_m_( data );
-  } else
+  } else if(file_name)
     p = oyProfile_FromName( file_name, (verbose?OY_COMPUTE:0) | flags, 0 );
+  else
+  {
+    fprintf(stderr, "%s %s\n", _("Need a ICC profile argument."), _("Exit!"));
+                        printfHelp(argc, argv);
+    exit(1);
+  }
 
   if(p)
   {
