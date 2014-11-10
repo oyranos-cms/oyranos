@@ -24,14 +24,14 @@
 #define OY_LIBDIR         "@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@"	/**< install variable */
 #define OY_CMMSUBPATH     "@OY_CMMSUBPATH@"	/**< install variable */
 #define OY_METASUBPATH    "@OY_METASUBPATH@"	/**< install variable */
-#define OY_CMMDIR         OY_LIBDIR"/"OY_CMMSUBPATH	/**< install variable */
-#define OY_SYSCOLORDIR    OY_DATADIR"/color"	/**< install variable */
+#define OY_CMMDIR         OY_LIBDIR "/" OY_CMMSUBPATH	/**< install variable */
+#define OY_SYSCOLORDIR    OY_DATADIR "/color"	/**< install variable */
 #define OY_USERCOLORDIR   "~/.config/color"	/**< install variable */
 #define OY_USERCOLORDATA  "~/.local/share/color"	/**< install variable */
 #define OY_ICCDIRNAME     "icc"	/**< install variable */
 #define OY_SETTINGSDIRNAME "settings"	/**< install variable */
 #define OY_TARGETDIRNAME  "target"	/**< install variable */
-#define OY_LOCALEDIR      OY_DATADIR"/locale"	/**< install variable */
+#define OY_LOCALEDIR      OY_DATADIR "/locale"	/**< install variable */
 
 
 #endif /*OYRANOS_VERSION_H*/
