@@ -253,7 +253,7 @@ int  oySetKey                        ( Key               * key )
   if(rc >= 0)
   {
     Key * dup = keyDup (key);
-    keyNeedSync(dup);
+    //keyNeedSync(dup);
     ksAppendKey(oy_config_, dup);
     rc = kdbSet( oy_handle_, oy_config_, parent_key ); oyERR(key)
     DBG_EL1_S( "kdbSet( oy_handle_, oy_config_, key ) = %d", rc );
