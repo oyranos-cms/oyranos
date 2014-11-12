@@ -38,6 +38,7 @@
 #define LIBPNG_INCLUDE "@LIBPNG_INCLUDE@"
 #cmakedefine USE_GETTEXT
 #cmakedefine HAVE_DIRENT_H
+#cmakedefine HAVE_LANGINFO_H
 #cmakedefine HAVE_LOCALE_H
 #cmakedefine HAVE_INTTYPES_H
 #cmakedefine HAVE_STDINT_H

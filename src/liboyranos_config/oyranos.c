@@ -18,7 +18,6 @@
 #include <sys/stat.h>
 #ifdef HAVE_POSIX
 #include <unistd.h>
-#include <langinfo.h>
 #endif
 #include <stdarg.h>
 #include <stdlib.h>

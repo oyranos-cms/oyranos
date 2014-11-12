@@ -18,14 +18,18 @@
 #include <sys/stat.h>
 #ifdef HAVE_POSIX
 #include <unistd.h>
+#endif
+
+#include "oyranos_config_internal.h" /* define HAVE_LANGINFO_H */
+#if defined(HAVE_LANGINFO_H)
 #include <langinfo.h>
 #endif
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "oyranos_config_internal.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
@@ -712,13 +716,13 @@ char *       oyVersionString         ( int                 type,
 
   if(type == 4)
   {
-#ifdef HAVE_POSIX
+#ifdef HAVE_LANGINFO_H
     oyStringAdd_( &text, nl_langinfo(MON_1-1+oyVersion(1)),
                                             oyAllocateFunc_, oyDeAllocateFunc_);
 #endif
     oySprintf_( temp, " %d - ", oyVersion(2) );
     oyStringAdd_( &text, temp, oyAllocateFunc_, oyDeAllocateFunc_);
-#ifdef HAVE_POSIX
+#ifdef HAVE_LANGINFO_H
     oyStringAdd_( &text, nl_langinfo(MON_1-1+oyVersion(3)),
                                             oyAllocateFunc_, oyDeAllocateFunc_);
 #endif
@@ -730,11 +734,7 @@ char *       oyVersionString         ( int                 type,
     return tmp;
   }
 
-#ifdef HAVE_POSIX
   return oyStringCopy_("----", allocateFunc);
-#else
-  return oyStringCopy_("----", allocateFunc);
-#endif
 }
 
 int                oyBigEndian       ( void )
