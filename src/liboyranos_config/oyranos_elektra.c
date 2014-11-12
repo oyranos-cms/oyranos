@@ -13,12 +13,6 @@
  *  @since    2004/11/25
  */
 
-#include "oyranos_types.h"
-
-#ifdef HAVE_POSIX
-#include <unistd.h> /* geteuid() */
-#endif
-
 #include <errno.h>
 #include <sys/stat.h>
 #include <stdlib.h>
@@ -36,6 +30,7 @@
 #include "oyranos_internal.h"
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
+#include "oyranos_types.h"
 #include "oyranos_xml.h"
 
 #define DBG_EL1_S DBG_MEM1_S
@@ -540,14 +535,10 @@ int oyDBAddKey_ (const char* key_name,
 const char* oySelectUserSys_()
 {
   /* enable system wide keys for user root */
-#ifdef HAVE_POSIX
-  if(geteuid() == 0)
-#endif
+  if(oyIsAdmin_())
     return OY_SYS;
-#ifdef HAVE_POSIX
   else
     return OY_USER;
-#endif
 }
 
 
