@@ -18,7 +18,7 @@
 
 #include <stdlib.h> /* for size_t */
 
-#if (defined(__APPLE__) && defined(__MACH__)) || defined(__unix__) || (!defined(_WIN32) && !defined(_MSC_VER)) || (defined(_WIN32) && defined(__CYGWIN__)) || defined(__MINGW32__) || defined(__MINGW32)
+#if (defined(__APPLE__) && defined(__MACH__)) || defined(__unix__) || (!defined(_MSC_VER) && (defined(__CYGWIN__) || defined(__MINGW32__) || defined(__MINGW32)))
 #define HAVE_POSIX 1
 #include <inttypes.h> /* uint32_t */
 #else
