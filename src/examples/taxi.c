@@ -364,7 +364,7 @@ int main( int argc, char ** argv )
                             "\n"OPENICC_DEVICE_JSON_FOOTER_BASE );
 
                 mkdir(mnft,
-#ifdef HAVE_POSIX
+#if !defined(_WIN32)
                       S_IRWXU | S_IRWXG | S_IRWXO
 #else
                       0
