@@ -32,6 +32,12 @@
 #ifndef EOVERFLOW
 #define EOVERFLOW 75 /* from asm-generic/errno.h */
 #endif
+#ifndef S_IFLNK
+#define S_IFLNK 0120000
+#endif
+#ifndef S_ISLNK
+#define S_ISLNK(x) 0
+#endif
 #endif
 
 #include "oyranos_config_internal.h"
@@ -827,9 +833,7 @@ oyIsFileFull_ (const char* fullFileName, const char * read_mode)
 
   r = !r &&
        (   ((status.st_mode & S_IFMT) & S_IFREG)
-#ifdef HAVE_POSIX
         || ((status.st_mode & S_IFMT) & S_IFLNK)
-#endif
                                                 );
 
   DBG_MEM_V( r )
@@ -870,7 +874,7 @@ int oyMakeDir_ (const char* path)
        * path_name = 0;
   int rc = !full_name;
 
-#ifdef HAVE_POSIX
+#if !defined(_WIN32)
   mode_t mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH; /* 0755 */
 #endif
 
@@ -891,7 +895,7 @@ int oyMakeDir_ (const char* path)
       }
 
       rc = mkdir (path_name
-#ifdef HAVE_POSIX
+#if !defined(_WIN32)
                             , mode
 #endif
                                   );
@@ -1143,12 +1147,10 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
       WARNc3_S("%d. \"%s\" %s", i, path, _("path is not a directory"));
       continue;
     }
-#ifdef HAVE_POSIX
     if (S_ISLNK (statbuf.st_mode)) {
       WARNc3_S("%d. \"%s\" %s", i, path, _("path is a link: ignored"));
       continue;
     }
-#endif
     dir[l] = opendir (path);
     if (!dir[l]) {
       WARNc3_S("%d. \"%s\" %s", i, path, _("path is not readable"));
