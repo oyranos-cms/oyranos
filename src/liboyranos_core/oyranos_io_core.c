@@ -25,6 +25,13 @@
 #include <windows.h>
 #include <shlobj.h>
 #include <io.h>
+/* windows misses some unix specific defines even with __unix__ */
+#ifndef ELOOP
+#define ELOOP 40 /* from asm-generic/errno.h */
+#endif
+#ifndef EOVERFLOW
+#define EOVERFLOW 75 /* from asm-generic/errno.h */
+#endif
 #endif
 
 #include "oyranos_config_internal.h"
@@ -468,10 +475,8 @@ oyWriteMemToFile_(const char* name, const void* mem, size_t size)
         case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG : %s", filename); break;
         case ENOENT:       WARNc1_S("A component of the path/file_name does not exist, or the file_name is an empty string: \"%s\"", filename); break;
         case ENOTDIR:      WARNc1_S("ENOTDIR : %s", filename); break;
-#ifdef HAVE_POSIX
         case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the path: %s", filename); break;
         case EOVERFLOW:    WARNc1_S("EOVERFLOW : %s", filename); break;
-#endif
         default:           WARNc2_S("%s : %s", strerror(errno), filename);break;
       }
     }
@@ -761,10 +766,8 @@ int oyIsDirFull_ (const char* name)
     case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG : %s", name); break;
     case ENOENT:       WARNc1_S("A component of the name/file_name does not exist, or the file_name is an empty string: \"%s\"", name); break;
     case ENOTDIR:      WARNc1_S("ENOTDIR : %s", name); break;
-#ifdef HAVE_POSIX
     case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the name: %s", name); break;
     case EOVERFLOW:    WARNc1_S("EOVERFLOW : %s", name); break;
-#endif
     default:           WARNc2_S("%s : %s", strerror(errno), name); break;
   }
   DBG_MEM1_S("status.st_mode = %d", (int)(status.st_mode&S_IFMT)&S_IFDIR)
@@ -817,10 +820,8 @@ oyIsFileFull_ (const char* fullFileName, const char * read_mode)
     case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG : %s", name); break;
     case ENOENT:       WARNc1_S("A component of the name/file_name does not exist, or the file_name is an empty string: \"%s\"", name); break;
     case ENOTDIR:      WARNc1_S("ENOTDIR : %s", name); break;
-#ifdef AVE_POSIX
     case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the name: %s", name); break;
     case EOVERFLOW:    WARNc1_S("EOVERFLOW : %s", name); break;
-#endif
     default:           WARNc2_S("%s : %s", strerror(errno), name); break;
   }
 
@@ -902,10 +903,8 @@ int oyMakeDir_ (const char* path)
         case ENAMETOOLONG: WARNc1_S("ENAMETOOLONG : %s", path); break;
         case ENOENT:       WARNc1_S("A component of the path/file_name does not exist, or the file_name is an empty string: \"%s\"", path); break;
         case ENOTDIR:      WARNc1_S("ENOTDIR : %s", path); break;
-#ifdef HAVE_POSIX
         case ELOOP:        WARNc1_S("Too many symbolic links encountered while traversing the path: %s", path); break;
         case EOVERFLOW:    WARNc1_S("EOVERFLOW : %s", path); break;
-#endif
         default:           WARNc2_S("%s : %s", strerror(errno), path); break;
       }
     }
@@ -1134,10 +1133,8 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
         case ENAMETOOLONG: WARNc2_S("ENAMETOOLONG : %s %d", path, i); break;
         case ENOENT:       DBG_MEM2_S("A component of the path file_name does not exist, or the path is an empty string: \"%s\" %d", path, i); break;
         case ENOTDIR:      WARNc2_S("ENOTDIR : %s %d", path, i); break;
-#ifdef HAVE_POSIX
         case ELOOP:        WARNc2_S("Too many symbolic links encountered while traversing the path: %s %d", path, i); break;
         case EOVERFLOW:    WARNc2_S("EOVERFLOW : %s %d", path, i); break;
-#endif
         default:           WARNc3_S("%s : %s %d", strerror(errno), path, i); break;
       }
       continue;
