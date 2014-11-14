@@ -44,6 +44,14 @@ typedef enum  {
   oyGROUP_EXTERN = 200             /**< start of groups in a extern module */
 } oyGROUP_e;
 
+/** @brief Select Scope for Installation or Configurations
+ */
+typedef enum {
+  oySCOPE_USER_SYS = 0,            /**< use both */
+  oySCOPE_USER,                    /**< use only user settings */
+  oySCOPE_SYSTEM                   /**< use only system settings */
+} oySCOPE;
+
 
 /* --- behaviour --- */
 

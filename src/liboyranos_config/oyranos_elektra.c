@@ -271,7 +271,7 @@ int  oyRemoveFromDB                  ( const char        * name )
 KeySet*
 oyReturnChildrenList_ (const char* keyParentName, int* rc_ptr)
 {
-  int user_sys = oyUSER_SYS,
+  int user_sys = oySCOPE_USER_SYS,
       rc = 0;
   KeySet*list_user = 0;
   KeySet*list_sys = 0;
@@ -285,7 +285,7 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc_ptr)
 
   DBG_PROG_START
 
-  if( user_sys == oyUSER_SYS || user_sys == oyUSER ) {
+  if( user_sys == oySCOPE_USER_SYS || user_sys == oySCOPE_USER ) {
     list_user = ksNew(0,NULL);
     oyStringAddPrintf( &list_name_user, AD, "%s%s", OY_USER, keyParentName );
     if(!oy_handle_)
@@ -299,7 +299,7 @@ oyReturnChildrenList_ (const char* keyParentName, int* rc_ptr)
     if(rc > 0)
       DBG_NUM1_S("kdbGetChildKeys returned with %d", rc);
   }
-  if( user_sys == oyUSER_SYS || user_sys == oySYS ) {
+  if( user_sys == oySCOPE_USER_SYS || user_sys == oySCOPE_SYSTEM ) {
     list_sys = ksNew(0,NULL);
     oyStringAddPrintf( &list_name_sys, AD, "%s%s", OY_SYS, keyParentName );
     if(!oy_handle_)

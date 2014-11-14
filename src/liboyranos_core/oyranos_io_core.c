@@ -1368,7 +1368,7 @@ int oyLibListCb_ ( oyFileList_s * data,
  *
  *  @param[out]    count       number of paths found
  *  @param[in]     data        oyYES/oyNO/oyALL for data or config text
- *  @param[in]     owner       oyUSER/oySYS/oyUSER_SYS
+ *  @param[in]     owner       oySCOPE_USER/oySCOPE_SYSTEM/oySCOPE_USER_SYS
  *  @return                    a array to write the found paths into
  *
  *  @since Oyranos: version 0.1.8
@@ -1388,8 +1388,8 @@ char**  oyXDGPathsGet_( int             * count,
 
   for(i = 0; i < vars_n; ++i)
   {
-    if( (i >= 2 && (owner != oyUSER)) ||
-        (i < 2 && (owner != oySYS)))
+    if( (i >= 2 && (owner != oySCOPE_USER)) ||
+        (i < 2 && (owner != oySCOPE_SYSTEM)))
       if( ((i == 0 || i == 2) && data != oyNO) ||
           ((i == 1 || i == 3) && data != oyYES) )
     {
@@ -1504,7 +1504,7 @@ char * oyPathContructAndTest_(char * path_, const char * subdir)
  *  @param[in]     subdir      the data directories sub path, a string 
  *                             containing one path, e.g. "color/icc""
  *  @param[in]     data        oyYES/oyNO/oyALL data or config text
- *  @param[in]     owner       oyUSER/oySYS/oyUSER_SYS
+ *  @param[in]     owner       oySCOPE_USER/oySCOPE_SYSTEM/oySCOPE_USER_SYS
  *
  *  @version Oyranos: 0.1.11
  *  @date    2010/08/18
@@ -1618,7 +1618,7 @@ oyFileListGet_                  (const char * subpath,
  
   DBG_PROG_START
  
-  path_names = oyDataPathsGet_( &count, subpath, oyALL, oyUSER_SYS,
+  path_names = oyDataPathsGet_( &count, subpath, oyALL, oySCOPE_USER_SYS,
                                 oyAllocateFunc_ );
 
   oy_warn_ = 0;
@@ -1655,7 +1655,7 @@ oyFileListGet_                  (const char * subpath,
  *
  *  @param[out]    count       number of paths found
  *  @param[in]     subdir      sub path; use "" to skip, otherwise OY_METASUBPATH is assumed; optional
- *  @param[in]     owner       oyUSER/oySYS/oyUSER_SYS
+ *  @param[in]     owner       oySCOPE_USER/oySCOPE_SYSTEM/oySCOPE_USER_SYS
  *  @param[in]     allocateFunc  user specified allocator
  *  @return                    a array to write the found paths into
  *
@@ -1719,8 +1719,8 @@ char**  oyLibPathsGet_( int             * count,
 
   for(i = 0; i < vars_n; ++i)
   {
-    if( (i >= 2 && (owner != oyUSER)) ||
-        (i < 2 && (owner != oySYS)))
+    if( (i >= 2 && (owner != oySCOPE_USER)) ||
+        (i < 2 && (owner != oySCOPE_SYSTEM)))
     {
       const char * var = getenv(vars[i]);
       if(var)
@@ -1802,7 +1802,7 @@ oyLibListGet_                   (const char * subpath,
  
   DBG_PROG_START
  
-  path_names = oyLibPathsGet_( &count, subpath, oyUSER_SYS,
+  path_names = oyLibPathsGet_( &count, subpath, oySCOPE_USER_SYS,
                                   oyAllocateFunc_ );
 
   oy_warn_ = 0;

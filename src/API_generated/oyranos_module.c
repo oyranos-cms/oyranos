@@ -1077,10 +1077,10 @@ char **          oyCMMsGetNames_     ( uint32_t          * n,
       if(!files)
       {
         if(path_type == oyPATH_MODULE)
-          files = oyLibFilesGet_( &files_n, sub_paths[i], oyUSER_SYS,
+          files = oyLibFilesGet_( &files_n, sub_paths[i], oySCOPE_USER_SYS,
                                   0, lib_string, 0, oyAllocateFunc_ );
         else if(path_type == oyPATH_SCRIPT)
-          files = oyDataFilesGet_( &files_n, sub_paths[i], oyYES, oyUSER_SYS,
+          files = oyDataFilesGet_( &files_n, sub_paths[i], oyYES, oySCOPE_USER_SYS,
                                    0, lib_string, ext, oyAllocateFunc_ );
       }
     }

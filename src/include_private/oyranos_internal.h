@@ -63,12 +63,6 @@ int   oySetProfile_             (const char      * name,
 
 /* separate from the external functions */
 
-enum {
-  oyUSER_SYS = 0,
-  oyUSER,
-  oySYS
-};
-
 
 #ifdef __cplusplus
 } /* extern "C" */

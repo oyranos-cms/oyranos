@@ -237,7 +237,7 @@ oyProfilePathsGet_    (int             * count,
   char ** tmp = NULL;
   int tmp_n = -1;
 
-  path_names = oyDataPathsGet_( count, "color/icc", oyALL, oyUSER_SYS,
+  path_names = oyDataPathsGet_( count, "color/icc", oyALL, oySCOPE_USER_SYS,
                                           oyAllocateFunc_ );
 # if defined(__APPLE__)
 # define TestAndSetDefaultPATH( path ) \
@@ -460,7 +460,7 @@ oyPolicyListGet_                  (int * size)
   char ** path_names = NULL;
   DBG_PROG_START
  
-  path_names = oyDataPathsGet_( &count, "color/settings", oyALL, oyUSER_SYS,
+  path_names = oyDataPathsGet_( &count, "color/settings", oyALL, oySCOPE_USER_SYS,
                                 oyAllocateFunc_ );
 
   oy_warn_ = 0;
