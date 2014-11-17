@@ -447,6 +447,7 @@ int main( int argc , char** argv )
       oyBlob_s * blob = NULL;
       int error = 0;
       int n=0;
+      const char* node_name = "///icc_color";
 
       if(input)
       {
@@ -475,7 +476,7 @@ int main( int argc , char** argv )
       if(cc)
         graph = oyConversion_GetGraph( cc );
       if(graph)
-        icc = oyFilterGraph_GetNode( graph, -1, "///icc_color", NULL );
+        icc = oyFilterGraph_GetNode( graph, -1, node_name, NULL );
       if(icc)
       {
         blob = oyFilterNode_ToBlob( icc, 0 );
@@ -498,7 +499,8 @@ int main( int argc , char** argv )
         }
         oyBlob_Release( &blob );
         oyFilterNode_Release( &icc );
-      }
+      } else
+        WARNc1_S("Could not open node: %s", node_name);
       oyFilterGraph_Release( &graph );
 
     } else
