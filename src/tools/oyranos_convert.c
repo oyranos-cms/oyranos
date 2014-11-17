@@ -378,7 +378,6 @@ int main( int argc , char** argv )
   {
     uint32_t flags = 0;
     oyPixel_t pixel_layout;
-    oyDATATYPE_e data_type = oyUINT8;
     oyConversion_s * cc;
 
     if(!output)
