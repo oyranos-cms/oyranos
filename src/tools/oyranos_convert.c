@@ -79,7 +79,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      %s\n", _("CLUT is a levels x levels*levels sized PPM, --levels defaults for clut to 64"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Generate Device Link Profile:"));
-  fprintf( stderr, "      %s -p %s -f icc [-o %s] [-n %s]  [-i %s]\n", argv[0], _("ICC_FILE_NAME"), _("ICC_FILE_NAME"), _("MODULE_NAME"), _("ICC_FILE_NAME"));
+  fprintf( stderr, "      %s -f icc -p %s -i %s [-o %s] [-n %s]\n", argv[0], _("ICC_FILE_NAME"), _("ICC_FILE_NAME"), _("ICC_FILE_NAME"), _("MODULE_NAME"));
   fprintf( stderr, "      -f %s\t%s\n", _("FORMAT"), _("select format, currently only icc"));
   fprintf( stderr, "      --uint8\t%s\n", _("select unsigned integer 8-bit precision data format"));
   fprintf( stderr, "      --uint16\t%s\n", _("select unsigned integer 16-bit precision data format"));
