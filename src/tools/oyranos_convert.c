@@ -131,6 +131,7 @@ int main( int argc , char** argv )
   int help = 0;
   int verbose = 0;
   int icc_defaults_simple = 0;
+  oyDATATYPE_e data_type = oyUINT16;
   char * output_profile = 0;
   char * simulation_profile = 0;
   char * effect_profile = 0;
@@ -193,6 +194,14 @@ int main( int argc , char** argv )
                         { OY_PARSE_STRING_ARG2(output, "output"); break; }
                         else if(OY_IS_ARG("device-link"))
                         { OY_PARSE_STRING_ARG2(device_link, "device-link"); break; }
+                        else if(OY_IS_ARG("uint8"))
+                        { data_type = oyUINT8; i=100; break; }
+                        else if(OY_IS_ARG("uint16"))
+                        { data_type = oyUINT16; i=100; break; }
+                        else if(OY_IS_ARG("float"))
+                        { data_type = oyFLOAT; i=100; break; }
+                        else if(OY_IS_ARG("double"))
+                        { data_type = oyDOUBLE; i=100; break; }
                         else if(strcmp(&argv[pos][2],"verbose") == 0)
                         { oy_debug += 1; i=100; break;
                         } else if(argv[pos][2])
@@ -460,7 +469,7 @@ int main( int argc , char** argv )
       } else
         p = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
       n = oyProfile_GetChannelsCount(p);
-      pixel_layout = oyChannels_m(n) | oyDataType_m(oyUINT16);
+      pixel_layout = oyChannels_m(n) | oyDataType_m(data_type);
       in = oyImage_Create( 2, 2, buf, pixel_layout, p, 0 );
       oyProfile_Release( &p );
 
@@ -468,7 +477,7 @@ int main( int argc , char** argv )
 
       cc = oyConversion_CreateFromImage (
                                 in, module_options, 
-                                p, oyUINT16, 0, 0 );
+                                p, data_type, 0, 0 );
       oyProfile_Release( &p );
 
       memset( buf, 0, sizeof(double)*24);
