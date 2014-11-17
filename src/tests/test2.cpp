@@ -4250,7 +4250,7 @@ oyTESTRESULT_e testConversion()
   oyOptions_SetFromText( &options, "////cached", "1", OY_CREATE_NEW );
   oyConversion_s * cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
   oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
-  oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc", 0 );
+  oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
   oyBlob_s * blob = oyFilterNode_ToBlob( icc, NULL );
   if(blob)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,

@@ -475,7 +475,7 @@ int main( int argc , char** argv )
       if(cc)
         graph = oyConversion_GetGraph( cc );
       if(graph)
-        icc = oyFilterGraph_GetNode( graph, -1, "///icc", NULL );
+        icc = oyFilterGraph_GetNode( graph, -1, "///icc_color", NULL );
       if(icc)
       {
         blob = oyFilterNode_ToBlob( icc, 0 );
