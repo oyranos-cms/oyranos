@@ -47,6 +47,10 @@ uint16_t oyGetTableUInt16_           ( const char        * mem,
                                        int                 pos );
 oyStructList_s *   oyStringsFrommluc ( const char        * mem,
                                        uint32_t            size );
+int                oySizeOfMluc      ( const char        * mem,
+                                       uint32_t            max_tag_size );
+int                oySizeOfDesc      ( const char        * mem,
+                                       uint32_t            max_tag_size );
 oyStructList_s *   oyCurveFromTag    ( char              * data,
                                        size_t              size );
 oyStructList_s *   oyCurvesFromTag   ( char              * data,
@@ -1963,6 +1967,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
              const char * tech = 0;
              oyStructList_s * mfg_tmp = 0, * model_tmp = 0;
              int32_t size = -1;
+             int mluc_size;
 
              count = *(icUInt32Number*)(mem+off);
              count = oyValueUInt32( count );
@@ -2009,9 +2014,10 @@ oyStructList_s * oyIMProfileTag_GetValues(
                error = !memcpy(tmp, &mem[off], oyProfileTag_GetSize(tag) - off);
                tag_sig = *(icUInt32Number*)(tmp);
                tag_sig = oyValueUInt32( tag_sig );
+               mluc_size = oySizeOfMluc(tmp, oyProfileTag_GetSize(tag) - off);
                oyProfileTag_Set( tmptag, icSigDeviceMfgDescTag,
                                          tag_sig, oyOK,
-                                         oyProfileTag_GetSize(tag) - off, tmp );
+                                         mluc_size, tmp );
                mfg_tmp = oyIMProfileTag_GetValues( tmptag );
                if(oyStructList_Count( mfg_tmp ) )
                {
@@ -2034,9 +2040,10 @@ oyStructList_s * oyIMProfileTag_GetValues(
                error = !memcpy(tmp, &mem[off], oyProfileTag_GetSize(tag) - off);
                tag_sig = *(icUInt32Number*)(tmp);
                tag_sig = oyValueUInt32( tag_sig );
+               mluc_size = oySizeOfMluc(tmp, oyProfileTag_GetSize(tag) - off);
                oyProfileTag_Set( tmptag, icSigDeviceModelDescTag,
                                          tag_sig, oyOK,
-                                         oyProfileTag_GetSize(tag) - off, tmp );
+                                         mluc_size, tmp );
                model_tmp = oyIMProfileTag_GetValues( tmptag );
                if(oyStructList_Count( model_tmp ) )
                {
@@ -3020,7 +3027,123 @@ oyStructList_s *   oyStringsFrommluc ( const char        * mem,
 
   return desc;
 }
- 
+
+int                oySizeOfMluc      ( const char        * mem,
+                                       uint32_t            max_tag_size )
+{
+  int size_ = 0;
+             int count = oyValueUInt32( *(icUInt32Number*)&mem[8] );
+             int size = oyValueUInt32( *(icUInt32Number*)&mem[12] ); /* 12 */
+             int i;
+             int len = 0;
+
+             int error = max_tag_size < 24 + count * size;
+
+  icTagTypeSignature tag_sig = (icTagSignature)0;
+  tag_sig = *(icUInt32Number*)(mem);
+  tag_sig = oyValueUInt32( tag_sig );
+
+  if(tag_sig == icSigTextDescriptionType)
+    return oySizeOfDesc( mem, max_tag_size );
+
+  if(!error)
+             for (i = 0; i < count; i++)
+             {
+               int  g = 0,
+                    offset = 0;
+
+               error = max_tag_size < 20 + i * size;
+               if(!error)
+                 g = oyValueUInt32( *(icUInt32Number*)&mem[20+ i*size] );
+
+               {
+                 error = max_tag_size < 20 + i * size + g + 4;
+                 if(!error)
+                 {
+                   len = (g > 1) ? g : 8;
+                 }
+
+                 if(!error)
+                   error = (24 + i*size + 4) > max_tag_size;
+
+                 if(!error)
+                   offset = oyValueUInt32( *(icUInt32Number*)&mem
+                                                  [24+ i*size] );
+
+                 if(!error)
+                   error = offset + len > max_tag_size;
+               }
+
+               if(i == count-1 && !error)
+               {
+                 if(!error)
+                   error = (24 + i*size + 4) > max_tag_size;
+
+                 offset = oyValueUInt32( *(icUInt32Number*)&mem
+                                                  [24+ i*size] );
+                 size_ = offset + g;
+               }
+             }
+
+  return size_;
+}
+
+int                oySizeOfDesc      ( const char        * mem,
+                                       uint32_t            max_tag_size )
+{
+  int size_ = 0;
+  int len;
+  uint32_t off = 0, n_ascii = 0, n_uni16 = 0;
+
+
+  int count = *(icUInt32Number*)(mem+8);
+  count = oyValueUInt32( count );
+
+  if((int)count > max_tag_size - 20)
+  {
+    oyIM_msg( oyMSG_WARN,0, OY_DBG_FORMAT_
+              "can't detect size of desc type tag",
+              OY_DBG_ARGS_ );
+  } else
+  {
+
+               /* 'desc' type */
+               off += 8;
+
+               /* ascii in 'desc' */
+               if(off < max_tag_size)
+               {
+                 len = *(uint32_t*)&mem[off];
+                 n_ascii = oyValueUInt32( len );
+
+                 off += 4;
+                 off += n_ascii;
+                 /*off += (off%4 ? 4 - off%4 : 0);*/
+               }
+
+               /* unicode section in 'desc' */
+               if(off < max_tag_size)
+               {
+                 off += 4;
+
+                 len = *(icUInt32Number*)&mem[off];
+                 n_uni16 = oyValueUInt32( len );
+                 off += 4 + n_uni16*2 - 1;
+               }
+               /* script in 'desc' */
+               if(off < max_tag_size)
+               {
+                 len = *(icUInt32Number*)&mem[off];
+                 len = oyValueUInt32( len );
+                 off += 4 + 67;
+               }
+  }
+
+  size_ = off;
+
+  return size_;
+}
+
 oyStructList_s *   oyCurveFromTag    ( char              * mem,
                                        size_t              size )
 {
