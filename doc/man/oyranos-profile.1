@@ -1,10 +1,12 @@
-.TH oyranos-profile 1 "March 03, 2013" "User Commands"
+.TH oyranos-profile 1 "November 25, 2014" "User Commands"
 .SH NAME
 oyranos-profile \- Oyranos CMS ICC profile tool
 .SH SYNOPSIS
 \fBoyranos-profile\fR \fIPROFILENAME\fR
 .fi
 \fBoyranos-profile\fR -l \fIPROFILENAME\fR
+.fi
+\fBoyranos-profile\fR -r \fINUMBER\fR \fIPROFILENAME\fR
 .fi
 \fBoyranos-profile\fR -m [-w \fIFILENAME\fR] \fIPROFILENAME\fR
 .fi
@@ -26,6 +28,10 @@ list contained tags additional to overview and header.
 \fB-p\fR \fINUMBER\fR select tag
 .br
 \fB-n\fR \fINAME\fR select tag
+.sp
+.TP
+.B \-r \fINUMBER\fR \fIFILENAME\fR
+remove selected tag number.
 .sp
 .TP
 .B \-m
@@ -104,7 +110,7 @@ Add calibration data to meta tag of a device profile:
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH COPYRIGHT
-(c) 2011-2013, Kai-Uwe Behrmann and others
+(c) 2011-2014, Kai-Uwe Behrmann and others
 .fi
 License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
 .SH "SEE ALSO"

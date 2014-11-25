@@ -86,6 +86,9 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -p %s\t%s\n",  _("NUMBER"), _("select tag"));
   fprintf( stderr, "      -n %s\t%s\n",  _("NAME"), _("select tag"));
   fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",               _("Remove included ICC tag:"));
+  fprintf( stderr, "      %s -r %s %s\n",     argv[0], _("NUMBER"), _("ICC_FILE_NAME"));
+  fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Dump Device Infos to OpenICC device JSON:"));
   fprintf( stderr, "      %s -o %s\n",        argv[0], _("ICC_FILE_NAME"));
   fprintf( stderr, "      -c NAME       %s scanner, monitor, printer, camera ...\n",  _("use device class") );
@@ -142,6 +145,7 @@ int main( int argc , char** argv )
       list_tags = 0,
       list_hash = 0,
       tag_pos = -1,
+      remove_tag = 0,
       dump_openicc_json = 0,
       dump_chromaticities = 0,
       verbose = 0;
@@ -187,6 +191,7 @@ int main( int argc , char** argv )
               case 'n': OY_PARSE_STRING_ARG(tag_name); break;
               case 'o': dump_openicc_json = 1; break;
               case 'p': OY_PARSE_INT_ARG( tag_pos ); break;
+              case 'r': OY_PARSE_INT_ARG( tag_pos ); remove_tag = 1; break;
               case 's': OY_PARSE_STRING_ARG(name_space);
                         if(name_space)
                         {
@@ -284,13 +289,22 @@ int main( int argc , char** argv )
   {
     oyConfig_s * device;
     oyOptions_s * opts = NULL;
-    char * json_text;
+    char * json_text = NULL;
     char * data = 0;
     size_t size = 0;
     char * pn = 0;
     char * ext = 0;
     const char * t = strrchr(profile_name, '.');
     int i;
+
+    if(remove_tag)
+    {
+      uint32_t id[4];
+      printf("tags: %d\n", oyProfile_GetTagCount( p ));
+      error = oyProfile_TagReleaseAt( p, tag_pos );
+      printf("tags: %d\n", oyProfile_GetTagCount( p ));
+      oyProfile_GetMD5( p, OY_COMPUTE, id );
+    }
 
     if(error <= 0 && list_hash)
     {
@@ -340,16 +354,19 @@ int main( int argc , char** argv )
 
     error = oyProfile_AddTagText( p, icSigProfileDescriptionTag, profile_name );
 
+    if(json_name)
     {
       size_t json_size = 0;
       json_text = oyReadFileToMem_( json_name, &json_size, oyAllocateFunc_ );
       oyDeviceFromJSON( json_text, NULL, &device );
+      error = oyOptions_SetFromText( &opts, "///set_device_attributes",
+                                     "true", OY_CREATE_NEW );
+      oyProfile_AddDevice( p, device, opts );
+      oyOptions_Release( &opts );
+      oyConfig_Release( &device );
+      oyDeAllocateFunc_(json_text);
     }
       
-    error = oyOptions_SetFromText( &opts, "///set_device_attributes",
-                                   "true", OY_CREATE_NEW );
-    oyProfile_AddDevice( p, device, opts );
-    oyOptions_Release( &opts );
     data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
 
     if(data && size)
@@ -363,10 +380,7 @@ int main( int argc , char** argv )
       oyFree_m_( pn );
     }
 
-    oyDeAllocateFunc_(json_text);
-
     oyProfile_Release( &p );
-    oyConfig_Release( &device );
 
   } else
   if(p)
@@ -737,7 +751,10 @@ int main( int argc , char** argv )
         oyProfileTag_Release( &tags[i] );
       }
       fprintf( stdout, "\n" );
-    }
+    } else
+    if(remove_tag)
+      oyProfile_TagReleaseAt( p, tag_pos );
+
 
     if(error <= 0 && list_hash)
     {
