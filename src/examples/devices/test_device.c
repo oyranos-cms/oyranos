@@ -45,9 +45,10 @@ void displayHelp(char ** argv)
   printf("      %s -u -c class -d number\n", argv[0]);
   printf("\n");
   printf("  %s\n",               _("List device classes:"));
-  printf("      %s -l [-v | --short]\n", argv[0]);
+  printf("      %s -l [-v | --short | --class]\n", argv[0]);
   printf("         -v      \t%s\n", _("print the full module name"));
   printf("         --short \t%s\n", _("print the module ID"));
+  printf("         --class \t%s\n", _("print the modules device class"));
   printf("\n");
   printf("  %s\n",               _("List devices:"));
   printf("      %s -l -c class [-d %s | --device-name %s] [-v | --short] [-r]\n", argv[0], _("NUMBER"), _("NAME"));
@@ -202,6 +203,8 @@ int main(int argc, char *argv[])
                         { list_taxi_profiles = 1; i=100; break; }
                         else if(OY_IS_ARG("show-non-device-related"))
                         { show_non_device_related = 1; i=100; break; }
+                        else if(OY_IS_ARG("class"))
+                        { simple = 2; i=100; break;}
                         else if(OY_IS_ARG("short"))
                         { simple = 1; i=100; break;}
                         else if(OY_IS_ARG("verbose"))
@@ -471,7 +474,15 @@ int main(int argc, char *argv[])
         else
           separator = '/';
 
-        if(strrchr(texts[i],separator))
+        if(simple == 2 && strrchr(texts[i],separator))
+        {
+          oyConfDomain_s * domain = oyConfDomain_FromReg( texts[i], 0 );
+          const char * device_class = oyConfDomain_GetText( domain, "device_class", oyNAME_NICK );
+          oyConfDomain_Release( &domain );
+		
+          fprintf( stdout, "%s\n", device_class );
+        }
+        else if(strrchr(texts[i],separator))
           fprintf( stdout, "%s\n", strrchr(texts[i],separator) + 1);
         else
           fprintf( stdout, "%s\n", texts[i]);

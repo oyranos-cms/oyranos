@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2014-11-25 15:38+0100\n"
+"POT-Creation-Date: 2014-11-25 15:55+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -411,9 +411,9 @@ msgstr "Verfügbare Geräteprofile von Taxi DB"
 msgid "Available Device Profiles:"
 msgstr "Verfügbare Geräteprofile:"
 
-#: tools/oyranos_gamma.c:311 examples/devices/test_device.c:264
-#: examples/devices/test_device.c:279 examples/devices/test_device.c:293
-#: examples/devices/test_device.c:616 examples/devices/test_device.c:840
+#: tools/oyranos_gamma.c:311 examples/devices/test_device.c:267
+#: examples/devices/test_device.c:282 examples/devices/test_device.c:296
+#: examples/devices/test_device.c:627 examples/devices/test_device.c:851
 msgid "Available devices"
 msgstr "Verfügbare Geräte"
 
@@ -538,7 +538,7 @@ msgstr "CIE y"
 msgid "CIE*Lab"
 msgstr "CIE*Lab"
 
-#: examples/devices/test_device.c:81
+#: examples/devices/test_device.c:82
 msgid "CLASS"
 msgstr "KLASSE"
 
@@ -953,16 +953,16 @@ msgstr "Konnte nicht öffnen: "
 msgid "Could not resolve device"
 msgstr "Konnte Gerät nicht auflösen"
 
-#: examples/devices/test_device.c:262 examples/devices/test_device.c:277
-#: examples/devices/test_device.c:614 examples/devices/test_device.c:838
+#: examples/devices/test_device.c:265 examples/devices/test_device.c:280
+#: examples/devices/test_device.c:625 examples/devices/test_device.c:849
 msgid "Could not resolve device."
 msgstr "Konnte Gerät nicht auflösen."
 
-#: examples/devices/test_device.c:305
+#: examples/devices/test_device.c:308
 msgid "Could not resolve device_json"
 msgstr "Konnte device_json nicht auflösen"
 
-#: examples/devices/test_device.c:291
+#: examples/devices/test_device.c:294
 msgid "Could not resolve device_name"
 msgstr "Konnte device_name nicht auflösen"
 
@@ -1173,7 +1173,7 @@ msgstr "Schreibe Geräteinformationen nach OpenICC JSON:"
 msgid "Dump data:"
 msgstr "Schreibe Daten:"
 
-#: examples/devices/test_device.c:64
+#: examples/devices/test_device.c:65
 msgid "Dump device color state:"
 msgstr "Schreibe Farbeinstellungen:"
 
@@ -1299,8 +1299,8 @@ msgid "Extract ICC profile:"
 msgstr "Extrahiere ICC Profil:"
 
 #: tools/oyranos_profile_graph.c:106 tools/oyranos_profile_graph.c:133
-#: examples/devices/test_device.c:36 examples/devices/test_device.c:72
-#: examples/devices/test_device.c:73 examples/libraw/oyranos_file.cpp:66
+#: examples/devices/test_device.c:36 examples/devices/test_device.c:73
+#: examples/devices/test_device.c:74 examples/libraw/oyranos_file.cpp:66
 #: examples/libraw/oyranos_file.cpp:67
 msgid "FILE"
 msgstr "DATEI"
@@ -1369,7 +1369,7 @@ msgid "For Screen"
 msgstr "Bildschirm"
 
 #: tools/oyranos_gamma.c:226 tools/oyranos_profile_graph.c:139
-#: tools/oyranos_profile_tool.c:130 examples/devices/test_device.c:88
+#: tools/oyranos_profile_tool.c:130 examples/devices/test_device.c:89
 #: examples/libraw/oyranos_file.cpp:77
 #, c-format
 msgid "For more informations read the man page:"
@@ -1389,7 +1389,7 @@ msgstr "Farbumfangswarnung"
 
 #: tools/oyranos_gamma.c:221 tools/oyranos_profile_graph.c:130
 #: tools/oyranos_profile_tool.c:113 tools/oyranos_convert.c:102
-#: tools/oyranos_profiles.c:100 examples/devices/test_device.c:79
+#: tools/oyranos_profiles.c:100 examples/devices/test_device.c:80
 #: examples/libraw/oyranos_file.cpp:65
 msgid "General options:"
 msgstr "Allgemeine Optionen:"
@@ -1399,9 +1399,8 @@ msgid "Generate CLUT Image:"
 msgstr "Erzeuge 3D Interpolationstabelle:"
 
 #: tools/oyranos_convert.c:81
-#, fuzzy
 msgid "Generate Device Link Profile:"
-msgstr "Verfügbare Geräteprofile:"
+msgstr "Erzeuge Verknüpfungsprofil:"
 
 #: tools/oyranos_convert.c:94
 msgid "Generate Image:"
@@ -1805,7 +1804,7 @@ msgstr "Helligkeit"
 msgid "Link"
 msgstr "Verknüpfung"
 
-#: tools/oyranos_gamma.c:212 examples/devices/test_device.c:60
+#: tools/oyranos_gamma.c:212 examples/devices/test_device.c:61
 msgid "List Taxi DB profiles for selected device:"
 msgstr "Liste Profile von Taxi für gewähltes Gerät:"
 
@@ -1821,7 +1820,7 @@ msgstr "Liste der verfügbaren Richtlinien:"
 msgid "List device classes:"
 msgstr "Zeige Geräteklassen:"
 
-#: tools/oyranos_gamma.c:208 examples/devices/test_device.c:52
+#: tools/oyranos_gamma.c:208 examples/devices/test_device.c:53
 msgid "List devices:"
 msgstr "Geräteliste:"
 
@@ -1829,7 +1828,7 @@ msgstr "Geräteliste:"
 msgid "List included ICC tags:"
 msgstr "Liste der enthaltenen ICC Elemente:"
 
-#: examples/devices/test_device.c:56
+#: examples/devices/test_device.c:57
 msgid "List local DB profiles for selected device:"
 msgstr "Liste lokale DB Profile für gewähltes Gerät:"
 
@@ -2127,15 +2126,15 @@ msgstr "Meine Filter Einführung."
 
 #: tools/oyranos_profile_tool.c:87 tools/oyranos_profile_tool.c:105
 #: tools/oyranos_profile_tool.c:106 tools/oyranos_profile_tool.c:108
-#: examples/devices/test_device.c:53 examples/devices/test_device.c:83
+#: examples/devices/test_device.c:54 examples/devices/test_device.c:84
 msgid "NAME"
 msgstr "NAME"
 
 #: tools/oyranos_profile_graph.c:110 tools/oyranos_profile_graph.c:121
 #: tools/oyranos_profile_graph.c:132 tools/oyranos_profile_graph.c:135
 #: tools/oyranos_profile_tool.c:86 tools/oyranos_profile_tool.c:90
-#: tools/oyranos_convert.c:97 examples/devices/test_device.c:53
-#: examples/devices/test_device.c:82
+#: tools/oyranos_convert.c:97 examples/devices/test_device.c:54
+#: examples/devices/test_device.c:83
 msgid "NUMBER"
 msgstr "NUMMER"
 
@@ -2154,9 +2153,8 @@ msgid "Named Color 2"
 msgstr "Einzelfarben 2"
 
 #: tools/oyranos_profile_tool.c:268
-#, fuzzy
 msgid "Need a ICC profile argument."
-msgstr "Benötige ein ICC Profil zum Verändern."
+msgstr "Benötige ein ICC Profil Argument."
 
 #: tools/oyranos_profile_tool.c:283
 msgid "Need a ICC profile to modify."
@@ -2250,9 +2248,8 @@ msgid "Output Image Filter Object"
 msgstr "Filterobjekt eines Ausgangsbildes"
 
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1223
-#, fuzzy
 msgid "Oyranos "
-msgstr "Oyranos X11"
+msgstr "Oyranos "
 
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:981
 msgid "Oyranos CUPS"
@@ -2352,13 +2349,12 @@ msgstr ""
 "Quellen: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
 
 #: liboyranos/oyranos_cmm.c:154
-#, fuzzy
 msgid ""
 "Oyranos project; www: http://www.oyranos.org; support/email: ku.b@gmx.de; "
 "sources: http://www.oyranos.org/downloads/"
 msgstr ""
-"Oyranos Projekt: www: http://www.oyranos.com; Support/email: ku.b@gmx.de; "
-"Quellen: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
+"Oyranos Projekt: www: http://www.oyranos.org; Support/email: ku.b@gmx.de; "
+"Quellen: http://www.oyranos.org/downloads/"
 
 #. tooltip
 #: liboyranos_config/oyranos_texts.c:157
@@ -2865,7 +2861,7 @@ msgstr "Initialisiere Gerät:"
 msgid "Show CIE*xy chromaticities:"
 msgstr "Zeige CIE*xy Primärfarben"
 
-#: examples/devices/test_device.c:76 examples/libraw/oyranos_file.cpp:62
+#: examples/devices/test_device.c:77 examples/libraw/oyranos_file.cpp:62
 msgid "Show Help:"
 msgstr "Zeige Hilfe:"
 
@@ -3745,7 +3741,7 @@ msgstr "füge Vorsilbe hinzu"
 msgid "allocation failed"
 msgstr "kein Speicher"
 
-#: examples/devices/test_device.c:83
+#: examples/devices/test_device.c:84
 msgid "alternatively specify the name of a device"
 msgstr "geben Sie alternativ den Namen des Gerätes an"
 
@@ -3779,19 +3775,19 @@ msgstr "prüfe"
 msgid "color space class"
 msgstr "Farbraum"
 
-#: examples/devices/test_device.c:69
+#: examples/devices/test_device.c:70
 msgid "create OpenICC device color state JSON"
 msgstr "erzeuge OpenICC Gerätefarbeinstellungs JSON"
 
-#: examples/devices/test_device.c:68
+#: examples/devices/test_device.c:69
 msgid "create OpenICC device color state JSON including the rank map"
 msgstr "erzeuge OpenICC Gerätefarbeinstellungs JSON mit Wichtungstabelle"
 
-#: examples/devices/test_device.c:71
+#: examples/devices/test_device.c:72
 msgid "create OpenICC device color state rank map JSON"
 msgstr "erzeuge OpenICC Wichtungstabelle JSON zu Gerätefarbeinstellungen"
 
-#: examples/devices/test_device.c:67 examples/libraw/oyranos_file.cpp:51
+#: examples/devices/test_device.c:68 examples/libraw/oyranos_file.cpp:51
 msgid "create fallback ICC profile"
 msgstr "erzeuge alternatives ICC Profil"
 
@@ -3804,16 +3800,15 @@ msgstr "Standard Profiltyp existiert nicht:"
 msgid "description"
 msgstr "Beschreibung"
 
-#: examples/devices/test_device.c:81
+#: examples/devices/test_device.c:82
 msgid "device class"
 msgstr "Geräteklasse"
 
-#: examples/devices/test_device.c:82
+#: examples/devices/test_device.c:83
 msgid "device position start from zero"
 msgstr "Geräteposition started von Null"
 
 #: API_generated/oyranos_devices.c:1382
-#, fuzzy
 msgid "device_class not found:"
 msgstr "Geräteklasse nicht gefunden:"
 
@@ -3839,7 +3834,7 @@ msgstr "erzeuge OpenICC Wichtungstabelle JSON zu Gerätefarbeinstellungen"
 msgid "embed OpenICC device JSON from file"
 msgstr "bette OpenICC JSON Gerät von Datei ein"
 
-#: examples/devices/test_device.c:74 examples/libraw/oyranos_file.cpp:59
+#: examples/devices/test_device.c:75 examples/libraw/oyranos_file.cpp:59
 msgid "embedd device and driver information into ICC meta tag"
 msgstr "bette Geräte-und Treiberinformationen in ICC meta Block ein"
 
@@ -3928,7 +3923,7 @@ msgstr "fand Probleme"
 
 #: API_generated/oyranos_devices.c:1369 API_generated/oyranos_devices.c:1730
 #: API_generated/oyranos_devices.c:1814 API_generated/oyConfig_s.c:1163
-#: examples/devices/test_device.c:874 examples/devices/test_device.c:900
+#: examples/devices/test_device.c:885 examples/devices/test_device.c:911
 msgid "found issues parsing JSON"
 msgstr "Fand Probleme beim Lesen des JSON"
 
@@ -4195,7 +4190,7 @@ msgstr "Richtlinienname"
 msgid "policy or filename"
 msgstr "Richtlinie oder Dateiname"
 
-#: examples/devices/test_device.c:54
+#: examples/devices/test_device.c:55
 msgid "print only the profile name"
 msgstr "zeige nur den Profilnamen"
 
@@ -4206,6 +4201,10 @@ msgstr "zeige den vollständigen Modulnamen"
 #: examples/devices/test_device.c:50
 msgid "print the module ID"
 msgstr "zeige die Modulsignatur"
+
+#: examples/devices/test_device.c:51
+msgid "print the modules device class"
+msgstr "zeige die Geräteklasse des Modules"
 
 #: examples/devices/test_device.c:36
 msgid "profile file name"
@@ -4240,11 +4239,11 @@ msgstr "lese Daten von Eingangsstrom"
 msgid "running new ticket failed"
 msgstr "neue Ausführung schlug fehl"
 
-#: tools/oyranos_profiles.c:75 examples/devices/test_device.c:85
+#: tools/oyranos_profiles.c:75 examples/devices/test_device.c:86
 msgid "select ICC v2 profiles"
 msgstr "wähle ICC V2 Profile"
 
-#: tools/oyranos_profiles.c:76 examples/devices/test_device.c:86
+#: tools/oyranos_profiles.c:76 examples/devices/test_device.c:87
 msgid "select ICC v4 profiles"
 msgstr "wähle ICC V4 Profile"
 
@@ -4273,9 +4272,8 @@ msgid "select format, currently only clut"
 msgstr "wähle Format, z.Z. nur clut möglich"
 
 #: tools/oyranos_convert.c:83
-#, fuzzy
 msgid "select format, currently only icc"
-msgstr "wähle Format, z.Z. nur clut möglich"
+msgstr "wähle Format, z.Z. nur icc möglich"
 
 #: tools/oyranos_profile_tool.c:86 tools/oyranos_profile_tool.c:87
 msgid "select tag"
@@ -4289,7 +4287,7 @@ msgstr ""
 msgid "select unsigned integer 8-bit precision data format"
 msgstr ""
 
-#: examples/devices/test_device.c:58 examples/devices/test_device.c:62
+#: examples/devices/test_device.c:59 examples/devices/test_device.c:63
 msgid "show as well non matching profiles"
 msgstr "zeige auch nicht passende Profile"
 
@@ -4301,7 +4299,7 @@ msgstr "zeigt Hinweise und Fragen Benutzeroberfläche"
 msgid "show profiles with duplicate profile ID"
 msgstr "zeige Profile mit gleicher ICC Profil ID"
 
-#: examples/devices/test_device.c:84
+#: examples/devices/test_device.c:85
 msgid "skip X Color Management device profile"
 msgstr "ignoriere X Color Management Geräteprofil"
 
@@ -4352,7 +4350,7 @@ msgstr "benutze CIE*xyY *x*y Ebene für Projektion"
 msgid "use IccXML format"
 msgstr "benutze IccXML Format"
 
-#: examples/devices/test_device.c:73
+#: examples/devices/test_device.c:74
 msgid "use device JSON alternatively to -c and -d options"
 msgstr "benutze Geräte JSON alternativ zu den -c und -d Optionen"
 
@@ -4368,7 +4366,7 @@ msgstr "benutze Geräteunterpfad"
 msgid "use new name"
 msgstr "nutze neuen Namen"
 
-#: examples/devices/test_device.c:70 examples/libraw/oyranos_file.cpp:55
+#: examples/devices/test_device.c:71 examples/libraw/oyranos_file.cpp:55
 msgid "use only DB keys for -f=openicc"
 msgstr "benutze nur DB Schlüssel/Wertepaare für -f=openicc"
 
@@ -4378,7 +4376,7 @@ msgstr "Benutzerpfad"
 
 #: tools/oyranos_profile_graph.c:131 tools/oyranos_profile_tool.c:117
 #: tools/oyranos_convert.c:103 tools/oyranos_profiles.c:101
-#: examples/devices/test_device.c:80 examples/libraw/oyranos_file.cpp:68
+#: examples/devices/test_device.c:81 examples/libraw/oyranos_file.cpp:68
 msgid "verbose"
 msgstr "plaudernd"
 
@@ -4391,7 +4389,7 @@ msgstr "werde Richtliniendatei überschreiben"
 msgid "with '.' is not allowed"
 msgstr "mit '.' ist nicht erlaubt"
 
-#: examples/devices/test_device.c:66
+#: examples/devices/test_device.c:67
 msgid "write assigned ICC profile"
 msgstr "Schreibe zugewiesenes ICC Profil"
 
@@ -4411,7 +4409,7 @@ msgstr "schreibe zu einer Datei, derzeit nur im Format PPM und PNG"
 msgid "write to file, currently only PPM format"
 msgstr "schreibe zu einer Datei, derzeit nur im Format PPM"
 
-#: examples/devices/test_device.c:72 examples/libraw/oyranos_file.cpp:60
+#: examples/devices/test_device.c:73 examples/libraw/oyranos_file.cpp:60
 #: examples/libraw/oyranos_file.cpp:67
 msgid "write to specified file"
 msgstr "schreibe nach Datei"
@@ -4419,7 +4417,7 @@ msgstr "schreibe nach Datei"
 #: API_generated/oyOptions_s.c:1282 tools/oyranos_gamma.c:240
 #: tools/oyranos_profile_graph.c:261 tools/oyranos_profile_tool.c:227
 #: tools/oyranos_convert.c:264 tools/oyranos_profiles.c:233
-#: tools/oyranos_policy.c:137 examples/devices/test_device.c:222
+#: tools/oyranos_policy.c:137 examples/devices/test_device.c:225
 #: examples/libraw/oyranos_file.cpp:235
 msgid "wrong argument to option:"
 msgstr "Falsches Argument für Option:"
