@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/04/08
+ *  @date     2014/11/26
  */
 
 
@@ -48,6 +48,7 @@ typedef struct oyProfiles_s oyProfiles_s;
  *  @{ */
 #define OY_ALLOW_DUPLICATES 0x100               /**< show as well duplicate profile ID's */
 /** @} *//* objects_profile */
+
 /* } Include "Profiles.public.h" */
 
 

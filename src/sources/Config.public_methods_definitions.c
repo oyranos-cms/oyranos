@@ -208,7 +208,8 @@ OYAPI int  OYEXPORT
   int error = !config;
   oyOptions_s * opts = 0;
   oyConfig_s_ * s = (oyConfig_s_*)config;
-  char * new_reg = 0;
+  char * new_reg = NULL,
+       * key = NULL;
   oyConfig_s_ * config_ = (oyConfig_s_*)config;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
@@ -224,9 +225,12 @@ OYAPI int  OYEXPORT
     error = oyOptions_SaveToDB( opts, config_->registration, &new_reg, 0 );
 
     /* add information about the data's origin */
-    oyConfig_AddDBData( config, "key_set_name", new_reg, OY_CREATE_NEW );
+    oyStringAddPrintf( &key, oyAllocateFunc_, oyDeAllocateFunc_, "%s/key_set_name",
+                       oyConfig_GetRegistration( config ) );
+    error = oyOptions_SetFromText( &config_->data, "key_set_name", new_reg, OY_CREATE_NEW );
 
     oyFree_m_( new_reg );
+    oyFree_m_( key );
     oyOptions_Release( &opts );
   }
 

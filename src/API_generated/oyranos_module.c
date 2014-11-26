@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/03/19
+ *  @date     2014/11/26
  */
 
 
@@ -37,7 +37,6 @@
 #include "oyCMMapis_s.h"
 #include "oyOptions_s_.h"
 #include "oyStructList_s_.h"
-
 
 oyStructList_s * oy_cmm_handles_ = 0;
 /* defined in sources/Struct.public_methods_definitions.c */

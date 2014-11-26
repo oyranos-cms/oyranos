@@ -12,12 +12,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2013 (C) Kai-Uwe Behrmann
+ *            2004-2014 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2013/04/24
+ *  @date     2014/11/26
  */
 
 
@@ -647,6 +647,7 @@ OYAPI int OYEXPORT
 
     for(i = 0; i < count; ++i)
     {
+      char * key = NULL;
       /** 2. obtain the directory structure for configurations */
       key_set_names = oyDBKeySetGetNames_( texts[i], &n );
 
@@ -677,8 +678,10 @@ OYAPI int OYEXPORT
         }
 
         /* add information about the data's origin */
-        oyConfig_AddDBData( (oyConfig_s*)config, "key_set_name", key_set_names[j],
-                            OY_CREATE_NEW );
+        oyStringAddPrintf( &key, oyAllocateFunc_, oyDeAllocateFunc_, "%s/key_set_name",
+                           oyConfig_GetRegistration( (oyConfig_s*) config ) );
+        error = oyOptions_SetFromText( &config->data, key,
+                                       key_set_names[j], OY_CREATE_NEW );
 
         /* add a rank map to allow for comparisions */
         if(cmm_api8)
@@ -686,6 +689,8 @@ OYAPI int OYEXPORT
                                             config->oy_->allocateFunc_ );
 
         oyConfigs_MoveIn( s, (oyConfig_s**)&config, -1 );
+
+        oyFree_m_( key );
       }
     }
 

@@ -1128,7 +1128,7 @@ OYAPI const char *  OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
 
-  return s->api7_->registration_;
+  return s->api7_->registration;
 }
 /** Function  oyFilterNode_GetRelatives
  *  @memberof oyFilterNode_s

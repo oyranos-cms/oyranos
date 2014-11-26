@@ -13,7 +13,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2014/11/26
  */
 
 
@@ -44,6 +44,7 @@ typedef struct oyFilterCore_s_ oyFilterCore_s_;
 #ifndef OY_FILTER_NODE_S__H
 typedef struct oyFilterNode_s_ oyFilterNode_s_;
 #endif
+
 
 /* } Include "FilterCore.private.h" */
 
@@ -91,7 +92,7 @@ int
 
 
 /* Include "FilterCore.private_methods_declarations.h" { */
-oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
+oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
                                        oyFilterNode_s_   * node,
                                        uint32_t            flags,
                                        oyObject_s          object );

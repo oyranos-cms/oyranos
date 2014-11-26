@@ -17,7 +17,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/07/31
+ *  @date     2014/11/26
  */
 
 
@@ -465,7 +465,7 @@ OYAPI oyProfiles_s * OYEXPORT
  *  available in the file paths.
  *
  *  @param[in]     std_profile_class  standard profile class, e.g. oyEDITING_RGB
- *  @param         flags               see oyProfiles_Create()
+ *  @param         flags               see oyProfile_FromFile()
  *  @param[out]    current             get the color_space profile position
  *  @param         object              a optional object
  *  @return                            the profile list
