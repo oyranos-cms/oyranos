@@ -337,7 +337,7 @@ OYAPI int  OYEXPORT
     /* add information about the data's origin */
     oyStringAddPrintf( &key, oyAllocateFunc_, oyDeAllocateFunc_, "%s/key_set_name",
                        oyConfig_GetRegistration( config ) );
-    error = oyOptions_SetFromText( &config_->data, "key_set_name", new_reg, OY_CREATE_NEW );
+    error = oyOptions_SetFromText( &config_->data, key, new_reg, OY_CREATE_NEW );
 
     oyFree_m_( new_reg );
     oyFree_m_( key );
