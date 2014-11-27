@@ -13,13 +13,13 @@ model=$2
 
 manufacturers_db="`curl http://icc.opensuse.org/manufacturers`"
 echo "$manufacturers_db" > tmp.json
-count=`oyjl/oyjl tmp.json -c tmp.json`
+count=`src/oyjl/oyjl tmp.json -c tmp.json`
 
 echo count of manufacturers in DB: $count
 found_manufacturer=-1
 i=0
 while [ $i -lt $count ]; do
-  manufacturer="`oyjl/oyjl tmp.json -x [$i] | grep short_name | sed 's/short_name: //'`"
+  manufacturer="`src/oyjl/oyjl tmp.json -x [$i] | grep short_name | sed 's/short_name: //'`"
   let i=i+1
   if [ `echo $manufacturer | grep "$short_name" | wc -l` -ne 0 ]; then
     found_manufacturer=$i
@@ -29,14 +29,14 @@ while [ $i -lt $count ]; do
 done
 
 echo "$devices_db" > tmp.json
-count=`oyjl/oyjl tmp.json -c tmp.json`
+count=`src/oyjl/oyjl tmp.json -c tmp.json`
 i=0
 while [ $i -lt $count ]; do
-  device="`oyjl/oyjl tmp.json -x [$i] | grep model | sed 's/model: //'`"
+  device="`src/oyjl/oyjl tmp.json -x [$i] | grep model | sed 's/model: //'`"
   if [ `echo $device | grep "$model" | wc -l` -ne 0 ]; then
     found_device=$i
     devices_db="`curl -s http://icc.opensuse.org/devices/$short_name`"
-    profile="`oyjl/oyjl tmp.json -x [$i]/_id | sed 's/\$oid: //'`"
+    profile="`src/oyjl/oyjl tmp.json -x [$i]/_id | sed 's/\$oid: //'`"
     break
   fi
   let i=i+1
