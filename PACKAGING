@@ -14,7 +14,8 @@ splitting it out into separate packages. E.g.
 packaging liboyranos_CUPS_cmm_module.so 
 separately from liboyranos_SANE_cmm_module.so or liboyranos_oyX1_cmm_module.so 
 is appreciated for some special cases like headless print servers.
-Some modules contain essential functionality. These are:
+
+Essential modules are:
 liboyranos_oyIM_cmm_module.so
 liboyranos_oicc_cmm_module.so
 liboyranos_oyra_cmm_module.so
@@ -27,11 +28,10 @@ liboyranos_oydi_cmm_module.so
 For more actual details see the provided oyranos.spec file inside the source 
 tree.
 
-System libraries can be used instead of the shipped libXNVCtrl, elektra or yail 
-versions.
+System libraries can be used instead of the shipped elektra or yail versions.
 
 Do not try to install the included Elektra. It is modified for Oyranos and not 
-for placing in public places.
+for useful for installing.
 
 
 GUI
@@ -41,8 +41,7 @@ will only appear if the according modules are installed (oyX1,CUPS,SANE,oyRE)
 
 
 Tools
-oyranos-monitor, oyranos-monitor-daemon and oyranos-monitor-nvidia
-depends on X11 modules (oydi+oyX1)
+oyranos-monitor and oyranos-monitor-daemon depend on X11 modules (oydi+oyX1)
 oyranos-profile-graph depends on lCC modules (oicc+lcm[s,2])
 
 
@@ -52,7 +51,7 @@ stage. These are In fact all installed files under $(prefix)/include/oyranos/alp
 
 
 Licenses
-Oyranos covers pices with different licenses.
+Oyranos tar ball includes pices with different licenses.
 Read the first part of the COPYING file carefully. 
 
 
