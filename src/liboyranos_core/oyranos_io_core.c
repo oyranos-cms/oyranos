@@ -451,6 +451,8 @@ oyWriteMemToFile_(const char* name, const void* mem, size_t size)
   {
     full_name = oyResolveDirFileName_( filename );
     path = oyExtractPathFromFileName_( full_name );
+    /* oyMakeDir_() needs a ending slash '/' */
+    STRING_ADD( path, OY_SLASH );
     r = oyMakeDir_( path );
   }
 
