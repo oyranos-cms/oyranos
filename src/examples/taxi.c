@@ -277,7 +277,10 @@ int main( int argc, char ** argv )
                             TAXI_URL "/devices/%s", mnft ),
          * t = 0;
     char * fn = 0;
+    const char * device_class = "dummy";
 
+    if(strstr(device_db, "EDID_") != NULL)
+      device_class = "monitor";
 
     if(oy_debug)
       fprintf( stderr, "%s\n", device_db );
@@ -285,7 +288,7 @@ int main( int argc, char ** argv )
         /* put a cloak around the bare meta data, so it behaves like OpenICC
          * JSON */
         oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
-                            OPENICC_DEVICE_JSON_HEADER_BASE, "dummy" );
+                            OPENICC_DEVICE_JSON_HEADER_BASE, device_class );
 
         oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                             device_db );
