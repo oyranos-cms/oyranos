@@ -499,6 +499,10 @@ int main( int argc , char** argv )
                                         OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.device.icc_profile.monitor" OY_SLASH
                                        "OPENICC_automatic_generated",
                                        "1", OY_CREATE_NEW );
+                error = oyOptions_SetFromText( oyConfig_GetOptions( c,"backend_core" ),
+                                        OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.device.icc_profile.monitor" OY_SLASH
+                                       "prefix",
+                                       "EDID_.OPENICC_", OY_CREATE_NEW );
                 oyProfile_AddDevice( prof, c, opts );
                 oyOptions_Release( &opts );
               }
