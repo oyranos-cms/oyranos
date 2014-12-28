@@ -1168,14 +1168,14 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
                 error = oyOptions_SetFromText( oyConfig_GetOptions(device_new,"backend_core"),
                                        CMM_BASE_REG OY_SLASH
-                                       "OYRANOS_automatic_generated",
+                                       "OPENICC_automatic_generated",
                                        "1", OY_CREATE_NEW );
 
                 /* embed meta tag */
                 error = oyOptions_SetFromText( &opts, "///set_device_attributes",
                                                "true", OY_CREATE_NEW );
                 error = oyOptions_SetFromText( &opts, "///key_prefix_required",
-                                               PRFX_EXIF "." PRFX_LRAW ".OYRANOS_",
+                                               PRFX_EXIF "." PRFX_LRAW ".OPENICC_",
                                                OY_CREATE_NEW );
                 oyProfile_AddDevice( p, device_new, opts );
                 oyOptions_Release( &opts );
