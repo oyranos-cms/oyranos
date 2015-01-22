@@ -385,7 +385,7 @@ char* oyDBSearchEmptyKeyname_ (const char* key_parent_name)
 } 
 
 /** @brief The function returns keys found just one level under the arguments one. */
-char **            oyDBKeySetGetNames_ ( const char        * key_parent_name,
+char **          oyDBKeySetGetNames_ ( const char        * key_parent_name,
                                        int               * n )
 {
   int error = !key_parent_name || !n;
@@ -395,6 +395,7 @@ char **            oyDBKeySetGetNames_ ( const char        * key_parent_name,
   Key * current = 0;
   const char *name = NULL;
   char ** texts = 0;
+  int name_len;
 
   DBG_PROG_START
 
@@ -408,6 +409,8 @@ char **            oyDBKeySetGetNames_ ( const char        * key_parent_name,
 
   if(my_key_set)
   {
+    name_len = strlen(name);
+
     FOR_EACH_IN_KDBKEYSET( current, my_key_set )
     {
       keyGetName(current, current_name, MAX_PATH);
@@ -416,6 +419,7 @@ char **            oyDBKeySetGetNames_ ( const char        * key_parent_name,
       {
         const char * t = oyStrstr_(current_name, name);
         char * txt = NULL, * tmp;
+        /** Cut after one level behind key_parent_name. */
         if( oyStrrchr_( &t[oyStrlen_(name)+1], OY_SLASH_C ) )
         {
           txt = oyStringCopy_( t, oyAllocateFunc_ );
@@ -425,9 +429,12 @@ char **            oyDBKeySetGetNames_ ( const char        * key_parent_name,
             tmp[0] = '\000';
           t = txt;
         }
-        if(!oyStringListHas_( (const char **)texts, *n, t ) )
+
+        if(strlen(t) > name_len &&
+           !oyStringListHas_( (const char **)texts, *n, t ) )
           oyStringListAddStaticString_( &texts, n, t,
                                         oyAllocateFunc_, oyDeAllocateFunc_);
+
         if(txt) oyFree_m_(txt);
       }
     }
