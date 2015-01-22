@@ -18,6 +18,9 @@
  *  Function oyDeviceRegistrationCreate_
  *  @brief   combine a device registration
  *
+ *  The base is OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD, followed by slash
+ *  device_type, slash, "device", slash, device_class, slash and key.
+ *
  *  @param[in]     device_type         the device type ::oyFILTER_REG_TYPE,
  *                                     defaults to OY_TYPE_STD (optional)
  *  @param[in]     device_class        the device class, e.g. "monitor",
@@ -26,9 +29,9 @@
  *  @param[in]     old_text            string to reuse
  *  @return                            the new registration
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/12/28
  *  @since   2009/01/30 (Oyranos: 0.1.10)
- *  @date    2009/01/30
  */
 char * oyDeviceRegistrationCreate_   ( const char        * device_type,
                                        const char        * device_class,
@@ -41,17 +44,18 @@ char * oyDeviceRegistrationCreate_   ( const char        * device_type,
   if(!device_type_)
     device_type_ = OY_TYPE_STD;
 
-  STRING_ADD( text, "//" );
+  STRING_ADD( text, OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD );
+  STRING_ADD( text, OY_SLASH );
   STRING_ADD( text, device_type_ );
-  STRING_ADD( text, "/config" );
+  STRING_ADD( text, OY_SLASH "device" );
   if(device_class)
   {
-    STRING_ADD( text, "." );
+    STRING_ADD( text, OY_SLASH );
     STRING_ADD( text, device_class );
   }
   if(key)
   {
-    STRING_ADD( text, "/" );
+    STRING_ADD( text, OY_SLASH );
     STRING_ADD( text, key );
   }
 
