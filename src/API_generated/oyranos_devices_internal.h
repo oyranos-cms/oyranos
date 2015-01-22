@@ -37,7 +37,8 @@ int    oyOptions_SetRegistrationTextKey_(
                                        const char        * registration,
                                        const char        * key,
                                        const char        * value );
-oyOption_s *   oyOption_FromDB       ( const char        * registration,
+OYAPI int  OYEXPORT  oyOption_FromDB ( const char        * registration,
+                                       oyOption_s       ** option,
                                        oyObject_s          object );
 OYAPI int  OYEXPORT
                oyOptions_SaveToDB    ( oyOptions_s       * options,
