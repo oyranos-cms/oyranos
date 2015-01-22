@@ -11,7 +11,7 @@
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/08/04
+ *  @date     2014/12/28
  */
 
 
@@ -1065,7 +1065,15 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
 
   /** 5.2 save the configuration to DB (Elektra) */
   if(error <= 0)
-    error = oyConfig_SaveToDB( device );
+  {
+    char * json_text = NULL;
+    oyConfig_s * json_device = NULL;
+    error = oyDeviceToJSON( device, 0, &json_text, oyAllocateFunc_ );
+    error = oyDeviceFromJSON( json_text, NULL, &json_device );
+    error = oyConfig_SaveToDB( json_device );
+    oyFree_m_( json_text );
+    oyConfig_Release( &json_device );
+  }
   /** 5.3 reload the DB part */
   if(error <= 0)
     error = oyConfig_GetDB( device, 0 );
@@ -1354,7 +1362,7 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
            json_device,
            json_class;
   char * val, * key = NULL, * t = NULL;
-  const char * xpath = "org/freedesktop/openicc/device/[0]/[%d]";
+  const char * xpath = "org/freedesktop/openicc/device/%s/[%d]";
   int count, i;
   int32_t pos = 0;
   const char * underline_key_suffix = oyOptions_FindString( options,
@@ -1362,7 +1370,6 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
   const char * device_class = 0;
   oyjl_val v;
 
-  device_ = oyConfig_FromRegistration( "//" OY_TYPE_STD "/config", 0 );
   t = oyAllocateFunc_(256);
   json = oyjl_tree_parse( json_text, t, 256 );
   if(t[0])
@@ -1370,15 +1377,20 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
   oyFree_m_(t);
 
   error = oyOptions_FindInt( options, "pos", 0, &pos );
-  oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
-                          xpath, pos );
 
   json_class = oyjl_tree_get_value( json, "org/freedesktop/openicc/device" );
   if(json_class && json_class->type == oyjl_t_object)
     device_class = json_class->u.object.keys[0];
+
   if(device_class)
+  /* set the registration string */
+  {
+    oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                        xpath,
+                        device_class, pos );
+    device_ = oyConfig_FromRegistration( t, 0 );
     oyConfig_AddDBData( device_, "device_class", device_class, OY_CREATE_NEW );
-  else
+  } else
     WARNc1_S( "%s\n", _("device_class not found:") );
 
   json_device = oyjl_tree_get_value( json, t );
@@ -1388,6 +1400,7 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
   oyFree_m_( t );
       
   count = oyjl_value_count(json_device);
+  if(device_)
   for(i = 0; i < count; ++i)
   {
     if(json_device->type == oyjl_t_object)
@@ -2195,18 +2208,20 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
  *  @brief   new option with registration and value filled from DB if available
  *
  *  @param         registration        no or full qualified registration
+ *  @param[out[    option              the result
  *  @param         object              the optional object
- *  @return                            the option
+ *  @return                            0 - good, 1 >= error, -1 <= issue(s)
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/12/28
  *  @since   2009/01/24 (Oyranos: 0.1.10)
- *  @date    2009/01/24
  */
-oyOption_s *   oyOption_FromDB       ( const char        * registration,
+OYAPI int  OYEXPORT  oyOption_FromDB ( const char        * registration,
+                                       oyOption_s       ** option,
                                        oyObject_s          object )
 {
-  int error = !registration;
-  oyOption_s * o = 0;
+  int error = !registration || !option;
+  oyOption_s * o = NULL;
 
   if(error <= 0)
   {
@@ -2215,10 +2230,15 @@ oyOption_s *   oyOption_FromDB       ( const char        * registration,
     o = oyOption_FromRegistration( registration, object );
     error = oyOption_SetFromText( o, 0, 0 );
     error = oyOption_SetValueFromDB( o );
-    oyOption_SetSource( o, oyOPTIONSOURCE_DATA );
+    if(error)
+      oyOption_Release( &o );
+    else
+      oyOption_SetSource( o, oyOPTIONSOURCE_DATA );
+
+    *option = o;
   }
 
-  return o;
+  return o != NULL ? 0 : -1;
 }
 
 
@@ -2314,8 +2334,7 @@ OYAPI int  OYEXPORT
 int            oyOption_SetValueFromDB  ( oyOption_s        * option )
 {
   int error = !option || !oyOption_GetRegistration(option);
-  char * text = 0,
-       * ptr = 0;
+  char * text = 0;
   oyOption_s * s = option;
 
   if(error)
@@ -2336,17 +2355,8 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
     {
       oyOption_SetFromText( option, text, 0 );
       oyOption_SetSource( s, oyOPTIONSOURCE_DATA );
-    }
-    else
-    {
-      ptr = oyDBGetKeyString_( oyOption_GetRegistration(s), oyAllocateFunc_ );
-      if(ptr)
-      {
-        oyOption_SetFromData( option, ptr, strlen(ptr) );
-        oyOption_SetSource( s, oyOPTIONSOURCE_DATA );
-        oyFree_m_( ptr );
-      }
-    }
+    } else
+      error = -1;
   }
 
   if(text)
