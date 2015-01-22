@@ -292,9 +292,9 @@ OYAPI int  OYEXPORT
  *  @memberof oyConfigs_s
  *  @brief    Send a request to a configuration module
  *
- *  The convention an empty options argument should be send an Warning message
- *  containing intructions on how to talk with the module as a fallback for
- *  programmers. Otherwise the calls are pure convention and depend on the usage
+ *  A empty options argument should send out an warning message, which
+ *  contains intructions on how to talk with the module.
+ *  Otherwise the calls are pure convention and depend on the usage
  *  and agreement of the partners.
  *
  *  For the convention to call to color devices
@@ -466,6 +466,12 @@ OYAPI int  OYEXPORT
     for( j = 0; j < j_n; ++j )
     {
       device = oyConfigs_Get( configs, j );
+
+      oyFree_m_(device_class_registration);
+      device_class_registration = oyDeviceRegistrationCreate_(
+                                          device_type, device_class,
+                                          NULL, NULL );
+      oyConfigPriv_m(device)->registration = device_class_registration;
 
       if(device_name)
       {
@@ -664,11 +670,12 @@ OYAPI int OYEXPORT
         {
           /** 4. create a oyOption_s for each Elektra DB key/value pair */
           if(error <= 0)
-            o = oyOption_FromDB( config_key_names[k], object );
-          error = !o;
+            error = oyOption_FromDB( config_key_names[k], &o, object );
+          if(error < 0)
+            continue;
           if(error <= 0)
             error = oyOptions_Add( config->db, o, -1, 0 );
-          else
+          else if(error > 0)
           {
             WARNcc1_S( (oyStruct_s*) object, "Could not generate key %s",
                        config_key_names[k] );
