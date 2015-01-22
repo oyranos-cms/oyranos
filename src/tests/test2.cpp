@@ -1890,7 +1890,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
 #endif
 
   /* get all configuration filters */
-  oyConfigDomainList( "//"OY_TYPE_STD"/config.device.icc_profile",
+  oyConfigDomainList( "//"OY_TYPE_STD"/device/config.icc_profile",
                       &texts, &count, &rank_list ,0 );
 
   if( count )
@@ -2084,7 +2084,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
 #endif
 
   /* get all configuration filters */
-  oyConfigDomainList( "//"OY_TYPE_STD"/config.device.icc_profile",
+  oyConfigDomainList( "//"OY_TYPE_STD"/device/config.icc_profile",
                       &texts, &count, &rank_list ,0 );
 
   if( count )
@@ -4467,9 +4467,9 @@ oyTESTRESULT_e testConfDomain ()
   fprintf(stdout, "\n" );
 
 #ifdef __APPLE__
-  a = oyConfDomain_FromReg( OY_STD"/config.device.icc_profile.monitor.qarz", 0 );
+  a = oyConfDomain_FromReg( OY_STD"/device/config.icc_profile.monitor.qarz", 0 );
 #else
-  a = oyConfDomain_FromReg( OY_STD"/config.device.icc_profile.monitor.oyX1", 0 );
+  a = oyConfDomain_FromReg( OY_STD"/device/config.icc_profile.monitor.oyX1", 0 );
 #endif
   error = !a;
 

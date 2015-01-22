@@ -145,7 +145,7 @@
     command name the device module shall act upon. \n
     \n
     The oyCMMapi8_s::registration string needs in its oyFILTER_REG_APPLICATION
-    section a starting "config.device.icc_profile." followed by the
+    section a starting "config.icc_profile." followed by the
     device class name and separated by point '.' the the module nick. This
     convention shall enshure a proper mechanism is available to select the
     desired config domains from several ones. \n
@@ -178,7 +178,7 @@
     /* Ask Oyranos to lookup its DB for a matching profile. It is only useful
      * if a profile is already set for the devices keys. The set devices can be
      * viewed at the command line with:
-     * ls -d ~/.kdb/user/org/freedesktop/openicc/config.device.icc_profile.*
+     * ls -d ~/.kdb/user/org/freedesktop/openicc/device/config.icc_profile.*
      */
     error = oyDeviceAskProfile( device, &profile );
     @endverbatim

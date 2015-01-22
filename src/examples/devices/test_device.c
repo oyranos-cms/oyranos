@@ -867,11 +867,15 @@ int main(int argc, char *argv[])
         error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/options/source",
                                    "db", OY_CREATE_NEW );  
         error = oyDeviceToJSON( c, options, &json, oyAllocFunc );
-        oyOptions_Release( &options );
 
         /* it is possible that no DB keys are available; use all others */
         if(!json && !only_db)
-          error = oyDeviceToJSON( c, NULL, &json, oyAllocFunc );
+        {
+          error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/options/source",
+                                         "backend_core", OY_CREATE_NEW );
+          error = oyDeviceToJSON( c, options, &json, oyAllocFunc );
+        }
+        oyOptions_Release( &options );
 
         if(!json)
         {

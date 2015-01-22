@@ -47,7 +47,7 @@ int            qarzCMMMessageFuncSet ( oyMessage_f         message_func );
 
 /* QARZ_MONITOR_REGISTRATION -------------------------------------------------*/
 
-#define QARZ_MONITOR_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "config.device.icc_profile.monitor." CMM_NICK
+#define QARZ_MONITOR_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "device" OY_SLASH "config.icc_profile.monitor." CMM_NICK
 
 oyMessage_f message = 0;
 

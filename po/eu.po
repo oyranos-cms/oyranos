@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2014-11-25 15:55+0100\n"
+"POT-Creation-Date: 2015-01-22 18:52+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -867,7 +867,7 @@ msgstr ""
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1413 liboyranos_config/oyranos_icc.c:460
+#: API_generated/oyranos_module.c:1412 liboyranos_config/oyranos_icc.c:460
 msgid "Copyright"
 msgstr "Copyright-a"
 
@@ -919,7 +919,7 @@ msgstr ""
 msgid "Copyright:       "
 msgstr "Copyright-a"
 
-#: API_generated/oyranos_module.c:2035
+#: API_generated/oyranos_module.c:2034
 #, fuzzy
 msgid "Could not allocate memory for:"
 msgstr "Ezin izan da letra-tipoa ireki:"
@@ -928,7 +928,7 @@ msgstr "Ezin izan da letra-tipoa ireki:"
 msgid "Could not download from WWW. Please install curl or wget."
 msgstr ""
 
-#: API_generated/oyranos_module.c:794
+#: API_generated/oyranos_module.c:793
 msgid ""
 "Could not find any meta module. Did you set the OY_MODULE_PATH variable, to "
 "point to a Oyranos module loader library?"
@@ -950,7 +950,7 @@ msgstr "Ezin izan da letra-tipoa ireki:"
 msgid "Could not open device"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: API_generated/oyranos_module.c:186
+#: API_generated/oyranos_module.c:185
 #, fuzzy
 msgid "Could not open meta module API"
 msgstr "Ezin izan da letra-tipoa ireki:"
@@ -1369,7 +1369,7 @@ msgstr ""
 msgid "File Magic"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:551 liboyranos_core/oyranos_io_core.c:596
+#: liboyranos_core/oyranos_io_core.c:553 liboyranos_core/oyranos_io_core.c:598
 #, fuzzy
 msgid "File exists"
 msgstr "Fitxategi-sistema"
@@ -2005,7 +2005,7 @@ msgstr "Luv"
 #: API_generated/oyName_s_.c:48 API_generated/oyName_s_.c:56
 #: API_generated/oyCMMapi_s_.c:157 API_generated/oyArray2d_s_.c:167
 #: API_generated/oyCMMapis_s_.c:157 API_generated/oyOption_s_.c:180
-#: API_generated/oyConversion_s_.c:158 API_generated/oyranos_devices.c:3512
+#: API_generated/oyConversion_s_.c:158 API_generated/oyranos_devices.c:3522
 #: API_generated/oyFilterNodes_s_.c:157 API_generated/oyCMMapi9_s_.c:164
 #: API_generated/oyProfile_s_.c:242 API_generated/oyFilterCore_s_.c:170
 #: API_generated/oyPixelAccess_s_.c:187 API_generated/oyCMMobjectType_s_.c:154
@@ -2020,7 +2020,7 @@ msgstr "Luv"
 #: API_generated/oyCMMapi4_s.c:224 API_generated/oyConfigs_s_.c:157
 #: API_generated/oyFilterPlug_s_.c:164 API_generated/oyOptions_s_.c:158
 #: API_generated/oyNamedColor_s_.c:183 API_generated/oyCMMapiFilter_s_.c:161
-#: API_generated/oyranos_module.c:1575 API_generated/oyNamedColors_s_.c:148
+#: API_generated/oyranos_module.c:1574 API_generated/oyNamedColors_s_.c:148
 #: API_generated/oyCMMapi7_s_.c:164 API_generated/oyCMMapi5_s_.c:151
 #: API_generated/oyCMMapi8_s_.c:164 API_generated/oyProfiles_s_.c:157
 #: API_generated/oyFilterGraph_s_.c:163 API_generated/oyCMMapi6_s_.c:164
@@ -2061,7 +2061,7 @@ msgstr ""
 msgid "Magic:           "
 msgstr "Magikoa:        "
 
-#: API_generated/oyranos_profile.c:45 API_generated/oyranos_module.c:1412
+#: API_generated/oyranos_profile.c:45 API_generated/oyranos_module.c:1411
 #, fuzzy
 msgid "Manufacturer"
 msgstr "Hornitzailea:   "
@@ -2204,7 +2204,7 @@ msgstr ""
 msgid "NUMBER"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1411
+#: API_generated/oyranos_module.c:1410
 #: modules/oyranos/oyranos_cmm_oyIM_profile.c:2239
 msgid "Name"
 msgstr "Izena"
@@ -3748,8 +3748,8 @@ msgstr "Gailuaren koloreak"
 msgid "create fallback ICC profile"
 msgstr "Zein ICC profila?"
 
-#: liboyranos_config/oyranos_elektra.c:637
-#: liboyranos_config/oyranos_elektra.c:655
+#: liboyranos_config/oyranos_elektra.c:644
+#: liboyranos_config/oyranos_elektra.c:662
 msgid "default profile type does not exist:"
 msgstr ""
 
@@ -3767,7 +3767,7 @@ msgstr "Gailuaren koloreak"
 msgid "device position start from zero"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:1382
+#: API_generated/oyranos_devices.c:1394
 #, fuzzy
 msgid "device_class not found:"
 msgstr "Profila-kolorea"
@@ -3805,8 +3805,8 @@ msgstr ""
 msgid "enable simple defaults"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:2618 API_generated/oyranos_devices.c:3123
-#: API_generated/oyConversion_s.c:188 API_generated/oyranos_module.c:2027
+#: API_generated/oyranos_devices.c:2628 API_generated/oyranos_devices.c:3133
+#: API_generated/oyConversion_s.c:188 API_generated/oyranos_module.c:2026
 #: API_generated/oyFilterNode_s_.c:519
 msgid "error in module:"
 msgstr ""
@@ -3856,7 +3856,7 @@ msgstr ""
 msgid "failed!"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:2535 API_generated/oyranos_devices.c:2546
+#: API_generated/oyranos_devices.c:2545 API_generated/oyranos_devices.c:2556
 #: modules/oyranos/oyranos_cmm_oyIM_profile.c:3018
 #: modules/color/modules/oyranos_cmm_lcm2.c:3018
 #: modules/color/modules/oyranos_cmm_lcms.c:2362
@@ -3875,19 +3875,19 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:978
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:984
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:996
-#: tools/oyranos_gamma.c:567 tools/oyranos_gamma.c:745
-#: tools/oyranos_gamma.c:855 tools/oyranos_gamma.c:874
-#: tools/oyranos_gamma.c:885 tools/oyranos_gamma.c:889
-#: tools/oyranos_gamma.c:891 tools/oyranos_gamma.c:905
-#: tools/oyranos_gamma.c:912 tools/oyranos_gamma.c:916
-#: tools/oyranos_gamma.c:1023 tools/oyranos_gamma.c:1026
-#: tools/oyranos_gamma.c:1028 tools/oyranos_gamma.c:1041
+#: tools/oyranos_gamma.c:575 tools/oyranos_gamma.c:753
+#: tools/oyranos_gamma.c:863 tools/oyranos_gamma.c:882
+#: tools/oyranos_gamma.c:893 tools/oyranos_gamma.c:897
+#: tools/oyranos_gamma.c:899 tools/oyranos_gamma.c:913
+#: tools/oyranos_gamma.c:920 tools/oyranos_gamma.c:924
+#: tools/oyranos_gamma.c:1031 tools/oyranos_gamma.c:1034
+#: tools/oyranos_gamma.c:1036 tools/oyranos_gamma.c:1049
 msgid "found issues"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:1369 API_generated/oyranos_devices.c:1730
-#: API_generated/oyranos_devices.c:1814 API_generated/oyConfig_s.c:1163
-#: examples/devices/test_device.c:885 examples/devices/test_device.c:911
+#: API_generated/oyranos_devices.c:1376 API_generated/oyranos_devices.c:1743
+#: API_generated/oyranos_devices.c:1827 API_generated/oyConfig_s.c:1167
+#: examples/devices/test_device.c:889 examples/devices/test_device.c:915
 msgid "found issues parsing JSON"
 msgstr ""
 
@@ -4103,7 +4103,7 @@ msgstr ""
 msgid "not a profile:"
 msgstr "profilik ez"
 
-#: API_generated/oyranos_devices.c:1387 liboyranos_config/oyranos_check.c:76
+#: API_generated/oyranos_devices.c:1399 liboyranos_config/oyranos_check.c:76
 #, fuzzy
 msgid "not found:"
 msgstr "Biratu inguruan"
@@ -4150,16 +4150,16 @@ msgstr ""
 msgid "parametric function type"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:1211
+#: liboyranos_core/oyranos_io_core.c:1213
 msgid "path is a link: ignored"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:1207
+#: liboyranos_core/oyranos_io_core.c:1209
 msgid "path is not a directory"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:1216
-#: liboyranos_core/oyranos_io_core.c:1745
+#: liboyranos_core/oyranos_io_core.c:1218
+#: liboyranos_core/oyranos_io_core.c:1747
 msgid "path is not readable"
 msgstr ""
 

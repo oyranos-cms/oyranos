@@ -12,7 +12,7 @@ int main( int argc, char ** argv)
 #endif
 
   /* get all configuration filters */
-  error = oyConfigDomainList( "//"OY_TYPE_STD"/config.device.icc_profile",
+  error = oyConfigDomainList( "//"OY_TYPE_STD"/device/config.icc_profile",
                       &texts, &count, &rank_list ,0 );
   
 
