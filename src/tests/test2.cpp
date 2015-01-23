@@ -1718,6 +1718,46 @@ oyTESTRESULT_e testRegistrationMatch ()
     "special CMM avoiding, other API       " );
   }
 
+  if( oyFilterRegistrationMatch("org/freedesktop/openicc/device/monitor/manufacturer",
+                                "org/freedesktop/openicc/device/monitor/model",
+                                oyOBJECT_NONE ) == 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "device key mismatch                   " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "device key mismatch                   " );
+  }
+
+  if( oyFilterRegistrationMatch("org/freedesktop/openicc/device/monitor/manufacturer",
+                                "org/freedesktop/openicc/device/monitor/manufacturer",
+                                oyOBJECT_NONE ))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "device key match                      " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "device key match                      " );
+  }
+
+  if( oyFilterRegistrationMatch("org/freedesktop/openicc/device/monitor/manufacturer/short",
+                                "org/freedesktop/openicc/device/monitor/manufacturer/full",
+                                oyOBJECT_NONE ) == 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "long device key mismatch              " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "long device key mismatch              " );
+  }
+
+  if( oyFilterRegistrationMatch("org/freedesktop/openicc/device/monitor/manufacturer/short",
+                                "org/freedesktop/openicc/device/monitor/manufacturer/short",
+                                oyOBJECT_NONE ))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "long device key match                 " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "long device key match                 " );
+  }
+
   return result;
 }
 
