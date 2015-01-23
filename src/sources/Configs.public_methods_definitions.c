@@ -112,8 +112,7 @@ OYAPI int  OYEXPORT
  *  @since   2009/01/28 (Oyranos: 0.1.10)
  *  @date    2009/01/30
  */
-OYAPI int  OYEXPORT
-             oyConfigs_FromDeviceClass (
+OYAPI int  OYEXPORT oyConfigs_FromDeviceClass (
                                        const char        * device_type,
                                        const char        * device_class,
                                        oyOptions_s       * options,
@@ -159,6 +158,8 @@ OYAPI int  OYEXPORT
     error = oyConfigDomainList  ( device_class_registration, &texts, &count,
                                   &rank_list, 0 );
 
+  oyFree_m_(device_class_registration);
+
   if(devices && !*devices)
     *devices = oyConfigs_New( object );
 
@@ -177,13 +178,16 @@ OYAPI int  OYEXPORT
       j_n = 0;
     for( j = 0; j < j_n; ++j )
     {
+      
       device = oyConfigs_Get( configs, j );
 
-      oyFree_m_(device_class_registration);
       device_class_registration = oyDeviceRegistrationCreate_(
                                           device_type, device_class,
                                           NULL, NULL );
+      if(oyConfigPriv_m(device)->registration)
+        oyStruct_GetDeAllocator((oyStruct_s*)device)(oyConfigPriv_m(device)->registration);
       oyConfigPriv_m(device)->registration = device_class_registration;
+      device_class_registration = NULL;
 
       if(device_name)
       {
