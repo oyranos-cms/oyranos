@@ -56,8 +56,8 @@ typedef enum {
   oySIGNAL_INCOMPATIBLE_DATA,          /**< can not process image */
   oySIGNAL_INCOMPATIBLE_OPTION,        /**< can not handle option */
   oySIGNAL_INCOMPATIBLE_CONTEXT,       /**< can not handle profile */
-  oySIGNAL_USER1, 
-  oySIGNAL_USER2, 
+  oySIGNAL_USER1,                      /**< user signal type */
+  oySIGNAL_USER2,                      /**< user signal type */
   oySIGNAL_USER3                       /**< more signal types are possible */
 } oySIGNAL_e;
 
@@ -65,6 +65,17 @@ const char *       oySignalToString  ( oySIGNAL_e          signal_type );
 
 typedef struct oyObserver_s oyObserver_s;
 
+/** @brief   signal handler type
+ *
+ *  @param[in]     observer            the actual observer
+ *  @param[in]     signal_type         the sent signal type
+ *  @param[in,out] signal_data         the sent signal data to analyse or manipulate
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @date    2009/10/26
+ *  @since   2009/10/26 (Oyranos: 0.1.10)
+ */
 typedef  int      (*oyObserver_Signal_f) (
                                        oyObserver_s      * observer,
                                        oySIGNAL_e          signal_type,
