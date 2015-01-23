@@ -369,7 +369,7 @@ char *         oyFilterRegistrationToText (
 
       if(texts_n > 5 && fields & oyFILTER_REG_MAX)
       {
-        tmp = oyFilterRegistrationToText( registration, oyFILTER_REG_OPTION, 0);
+        tmp = oyFilterRegistrationToText( registration, oyFILTER_REG_MAX, 0);
         STRING_ADD( text, tmp );
         oyFree_m_(tmp);
       }
@@ -723,12 +723,12 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration_a,
     oyFree_m_(tmp1);
     oyFree_m_(tmp2);
     tmp1 = oyFilterRegistrationToText( registration_a,
-                                       oyFILTER_REG_OPTION, 0 );
+                                       oyFILTER_REG_MAX, 0 );
     tmp = oyStrchr_( tmp1, '.' );
     if(tmp)
       tmp[0] = 0;
     tmp2 = oyFilterRegistrationToText( registration_b,
-                                       oyFILTER_REG_OPTION, 0 );
+                                       oyFILTER_REG_MAX, 0 );
     tmp = oyStrchr_( tmp2, '.' );
     if(tmp)
       tmp[0] = 0;
