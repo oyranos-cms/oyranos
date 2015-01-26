@@ -900,21 +900,29 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
           if( o )
           {
             prof = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
-            tmp = oyProfile_GetFileName( prof, 0 );
+            /*  oyProfile_GetFileName is very expensive. The function iterates
+             *  over all on disk profiles until it finds the searched one. As 
+             *  a alternative the internal description oyNAME_DESCRIPTION 
+             *  (as done below, or the more technical profile ID can be printed.
+             *  oyProfile_GetFileName( prof, 0 ); */
+            tmp = oyProfile_GetText( prof, oyNAME_DESCRIPTION );
 
-            STRING_ADD( text, "  " );
+            STRING_ADD( text, "  \"" );
             if(tmp)
             {
-              if(oyStrrchr_( tmp, OY_SLASH_C ))
-                STRING_ADD( text, oyStrrchr_( tmp, OY_SLASH_C ) + 1 );
-              else
-                STRING_ADD( text, tmp );
+              STRING_ADD( text, tmp );
             } else
             {
-              tmp = oyProfile_GetText( prof, oyNAME_DESCRIPTION );
+              tmp = oyProfile_GetFileName( prof, 0 );
               if(tmp)
-                STRING_ADD( text, tmp );
+              {
+                if(oyStrrchr_( tmp, OY_SLASH_C ))
+                  STRING_ADD( text, oyStrrchr_( tmp, OY_SLASH_C ) + 1 );
+                else
+                  STRING_ADD( text, tmp );
+              }
             }
+            STRING_ADD( text, "\"" );
 
             oyProfile_Release( &prof );
           }
