@@ -6,8 +6,8 @@ SET (OYRANOS_VERSION_MAJOR 0)
 SET (OYRANOS_VERSION_MINOR 9)
 SET (OYRANOS_VERSION_MICRO 6)
 
-SET (OYRANOS_DEVEL_MONTH 10)
-SET (OYRANOS_DEVEL_YEAR 2014)
+SET (OYRANOS_DEVEL_MONTH 01)
+SET (OYRANOS_DEVEL_YEAR 2015)
 
 SET (PACKAGE_NAME "oyranos")
 SET (PACKAGE_DESCRIPTION "Oyranos is a Color Management System (CMS) on operating system level. It allows to match predictably input device colors to output device colors across supporting applications. One goal is to make color management useful for all users in a automated fashion and regardless of any technical knowledge.")
