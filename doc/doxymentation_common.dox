@@ -340,10 +340,10 @@ digraph G {
     label="Oyranos Filter Graph";
     color=gray;
 
-    a:socket -> b:plug [arrowhead=none, arrowtail=normal];
-    b:socket -> d:plug [arrowhead=none, arrowtail=normal];
-    a:socket -> c:plug [arrowhead=none, arrowtail=normal];
-    c:socket -> d:plug [arrowhead=none, arrowtail=normal];
+    a:socket -> b:plug;
+    b:socket -> d:plug;
+    a:socket -> c:plug;
+    c:socket -> d:plug;
   }
 }
  \enddot
