@@ -76,7 +76,7 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
       oyCMMapi9_s * cmm_api9 = 0;
       char * api_reg = 0;
 
-      apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S,
+      apis = oyCMMsGetFilterApis_( api_reg, oyOBJECT_CMM_API9_S,
                                    oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                    0, 0);
       apis_n = oyCMMapiFilters_Count( apis );

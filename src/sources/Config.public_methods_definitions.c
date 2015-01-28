@@ -526,7 +526,7 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
-    apis = oyCMMsGetFilterApis_( 0,0, oyConfigPriv_m(config)->registration,
+    apis = oyCMMsGetFilterApis_( oyConfigPriv_m(config)->registration,
                                  oyOBJECT_CMM_API8_S,
                                  oyFILTER_REG_MODE_NONE,
                                  &rank_list, &apis_n);

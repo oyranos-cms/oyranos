@@ -1957,7 +1957,6 @@ OYAPI int  OYEXPORT
  *  @see OY_SELECT_FILTER OY_SELECT_COMMON oyOPTIONATTRIBUTE_e
  *
  *  @param[in]     registration        the filter registration to search for
- *  @param[in]     cmm                 a CMM to match
  *  @param[in]     flags               for inbuild defaults |
  *                                     oyOPTIONSOURCE_FILTER;
  *                                     for options marked as advanced |
@@ -1967,12 +1966,11 @@ OYAPI int  OYEXPORT
  *  @param         object              the optional object
  *  @return                            the options
  *
- *  @version Oyranos: 0.3.0
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/01/26
  *  @since   2008/10/08 (Oyranos: 0.1.8)
- *  @date    2011/01/29
  */
 oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
-                                       const char        * cmm,
                                        uint32_t            flags,
                                        oyObject_s          object )
 {
@@ -1988,7 +1986,7 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
   error = !filter;
 
   if(error <= 0)
-    cmm_api4 = (oyCMMapi4_s_*) oyCMMsGetFilterApi_( cmm, registration,
+    cmm_api4 = (oyCMMapi4_s_*) oyCMMsGetFilterApi_( registration,
                                                     oyOBJECT_CMM_API4_S );
 
   if(cmm_api4)
@@ -2093,7 +2091,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
 
       s = oyOptions_New( 0 );
 
-      apis = oyCMMsGetFilterApis_( 0,0, api_reg,
+      apis = oyCMMsGetFilterApis_( api_reg,
                                    oyOBJECT_CMM_API9_S,
                                    oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                    0,0);
@@ -2610,7 +2608,7 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
     STRING_ADD( api_reg, class_name );
     oyFree_m_( class_name );
 
-    apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S,
+    apis = oyCMMsGetFilterApis_( api_reg, oyOBJECT_CMM_API9_S,
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                  0,0 );
     apis_n = oyCMMapiFilters_Count( apis );
@@ -3115,7 +3113,7 @@ char *       oyGetFilterNodeDefaultPatternFromPolicy (
   STRING_ADD( api_reg, class_name );
   oyFree_m_( class_name );
 
-  apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S,
+  apis = oyCMMsGetFilterApis_( api_reg, oyOBJECT_CMM_API9_S,
                                oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                0,0 );
   oyFree_m_( api_reg );
@@ -3552,7 +3550,7 @@ oyConfDomain_s_ * oyConfDomain_FromReg_(
 
   if(error <= 0)
   {
-    cmm_api8 = (oyCMMapi8_s*) oyCMMsGetFilterApi_( 0, registration,
+    cmm_api8 = (oyCMMapi8_s*) oyCMMsGetFilterApi_( registration,
                                                    oyOBJECT_CMM_API8_S );
     error = !cmm_api8;
   }

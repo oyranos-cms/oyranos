@@ -14,26 +14,23 @@
  *  @param[in]     list                a list of arguments
  *  @param[in]     tag_type            type to create
  *  @param[in]     version             version as supported
- *  @param[in,out] required_cmm        in: CMM to create the tag; out: used CMM
  *  @param[in]     object              the user object for the tag creation
  *  @return                            a profile tag
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/01/26
  *  @since   2008/01/08 (Oyranos: 0.1.8)
- *  @date    2008/01/08
  */
 OYAPI oyProfileTag_s * OYEXPORT
                oyProfileTag_Create   ( oyStructList_s    * list,
                                        icTagSignature      tag_use,
                                        icTagTypeSignature  tag_type,
                                        uint32_t            version,
-                                       const char        * required_cmm,
                                        oyObject_s          object)
 {
   oyProfileTag_s * s = 0, * tag = 0;
   int error = !list;
   oyCMMProfileTag_Create_f funcP = 0;
-  char cmm[] = {0,0,0,0,0};
   oyCMMapiQuery_s query = {oyQUERY_PROFILE_TAG_TYPE_WRITE, 0, oyREQUEST_HARD};
   oyCMMapiQuery_s *query_[2] = {0,0};
   oyCMMapiQueries_s queries = {1,0};
@@ -46,16 +43,11 @@ OYAPI oyProfileTag_s * OYEXPORT
     query.value = tag_type;
     query_[0] = &query;
     queries.queries = query_;
-    if(required_cmm)
-      error = !memcpy( queries.prefered_cmm, required_cmm, 4 ); 
-
-    if(error <= 0 && required_cmm)
-      error = !memcpy( cmm, required_cmm, 4 );
   }
 
   if(error <= 0)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API3_S, cmm, 0,
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API3_S, 0,
                                       (oyCMMapi_Check_f)oyCMMapi3_Query_, &queries );
     if(api)
     {
@@ -72,9 +64,6 @@ OYAPI oyProfileTag_s * OYEXPORT
     
     if(error <= 0)
       error = funcP( tag, list, tag_type, version );
-
-    if(error <= 0)
-      error = !memcpy( oyProfileTagPriv_m(tag)->last_cmm_, cmm, 4 );
 
     if(error <= 0)
       oyProfileTagPriv_m(tag)->use = tag_use;
@@ -129,8 +118,7 @@ OYAPI oyProfileTag_s * OYEXPORT
 
   if(error <= 0)
   {
-    tag = oyProfileTag_Create( list, tag_usage, tag_type, 0,
-                               OY_MODULE_NICK, object);
+    tag = oyProfileTag_Create( list, tag_usage, tag_type, 0, object);
     error = !tag;
   }
 
@@ -241,9 +229,6 @@ OYAPI int  OYEXPORT
 /** Function oyProfileTag_Get
  *  @memberof oyProfileTag_s
  *
- *  Hint: to select a certain module use the oyProfileTag_s::required_cmm
- *  element from the tag parameter.
- *
  *  @param[in]     tag                 the tag to read
  *  @return                            a list of strings
  *
@@ -273,14 +258,11 @@ oyStructList_s*oyProfileTag_Get      ( oyProfileTag_s    * tag )
     query_[0] = &query;
     queries.queries = query_;
     error = !memcpy( queries.prefered_cmm, s->profile_cmm_, 4 );
-
-    if(error <= 0)
-      error = !memcpy( cmm, s->required_cmm, 4 );
   }
 
   if(error <= 0)
   {
-    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API3_S, cmm, 0,
+    oyCMMapi_s * api = oyCMMsGetApi_( oyOBJECT_CMM_API3_S, 0,
                                       (oyCMMapi_Check_f)oyCMMapi3_Query_, &queries );
     if(api)
     {
@@ -307,9 +289,6 @@ oyStructList_s*oyProfileTag_Get      ( oyProfileTag_s    * tag )
  *
  *  For the effect of the parameters look at the appropriate module.
  *  @see oyIMProfileTag_GetValues
- *
- *  Hint: to select a certain module use the oyProfileTag_s::required_cmm
- *  element from the tag parameter.
  *
  *  For localised strings, e.g. icSigMultiLocalizedUnicodeType: \n
  *    - zero language and country args: all localisation strings are returned 
@@ -918,3 +897,4 @@ OYAPI void  OYEXPORT
 
   s->size_check_ = size_check;
 }
+

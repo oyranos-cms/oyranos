@@ -6,12 +6,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2014 (C) Kai-Uwe Behrmann
+ *            2004-2015 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/11/26
+ *  @date     2015/01/26
  */
 
 
@@ -74,11 +74,6 @@ extern const char * (*oyStruct_GetTextFromModule_p) (
  *  The modules are filtered for double occurencies. The highest rank or
  *  version is selected.
  *
- *  @param[in]   cmm_meta              the selected meta API will be used,
- *                                     can be Zero or at least 4 bytes long,
- *                                     e.g. "oyIM" for the library module loader
- *  @param[in]   cmm_required          if present take this or fail, the arg
- *                                     simplifies and speeds up the search
  *  @param[in]   registration          point'.' separated list of identifiers
  *  @param[in]   type                  CMM API
  *  @param[in]   flags                 supported is
@@ -90,13 +85,11 @@ extern const char * (*oyStruct_GetTextFromModule_p) (
  *  @param[out]  count                 count of returned modules
  *  @return                            a zero terminated list of modules
  *
- *  @version  Oyranos: 0.9.5
- *  @date     2014/01/01
+ *  @version  Oyranos: 0.9.6
+ *  @date     2015/01/26
  *  @since    2008/12/19 (Oyranos: 0.1.10)
  */
-oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
-                                         const char        * cmm_required,
-                                         const char        * registration,
+oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
                                          oyOBJECT_e          type,
                                          uint32_t            flags,
                                          uint32_t         ** rank_list,
@@ -119,9 +112,7 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
 
     /* query cache */
     oyStringAddPrintf_( &hash_text, oyAllocateFunc_,oyDeAllocateFunc_,
-                "oyCMMapiFilters_s:meta:%s;required:%s;reg:%s;type:%u;flags:%u",
-                        oyNoEmptyString_m_( cmm_meta ),
-                        oyNoEmptyString_m_( cmm_required ),
+                "oyCMMapiFilters_s;reg:%s;type:%u;flags:%u",
                         oyNoEmptyString_m_( registration ),
                         type,
                         flags );
@@ -157,7 +148,7 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
   if(error <= 0)
   {
     oyCMMapi5_s_ * api5 = 0;
-    oyCMMapis_s * meta_apis = oyCMMGetMetaApis_( cmm_meta );
+    oyCMMapis_s * meta_apis = oyCMMGetMetaApis_( );
     int meta_apis_n = 0;
     char ** files = 0;
     uint32_t  files_n = 0;
@@ -178,7 +169,6 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
 
       if(error <= 0)
         files = oyCMMsGetNames_(&files_n, api5->sub_paths, api5->ext,
-                                cmm_required,
                                 api5->data_type == 0 ? oyPATH_MODULE :
                                                        oyPATH_SCRIPT);
       else
@@ -373,17 +363,14 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
  *
  *  This function allowes to obtain a API for a matching modul/CMM.
  *
- *  @param[in]   cmm_required          if present take this or fail, the arg
- *                                     simplifies and speeds up the search
  *  @param[in]   registration          point'.' separated list of identifiers
  *  @param[in]   type                  CMM API
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/01/26
  *  @since   2008/12/15 (Oyranos: 0.1.9)
- *  @date    2008/06/02
  */
-oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
-                                       const char        * registration,
+oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * registration,
                                        oyOBJECT_e          type )
 {
   oyCMMapiFilter_s * api = 0;
@@ -405,7 +392,7 @@ oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
   }
 #endif
 
-  apis = oyCMMsGetFilterApis_( 0,cmm_required, registration, type, 
+  apis = oyCMMsGetFilterApis_( registration, type, 
                                oyFILTER_REG_MODE_NONE, 0,0 );
 
   if(apis)
@@ -517,18 +504,15 @@ oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
  *  oyCMMapi4_s is excluded.
  *
  *  @param[in]   type                  the API type to return
- *  @param[in]   cmm_required          if present take this or fail, the arg
- *                                     simplifies and speeds up the search
  *  @param[out]  lib_used              inform about the selected CMM
  *  @param[in]   apiCheck              custom API selector
  *  @param[in]   check_pointer         data to pass to apiCheck
  *
- *  @version Oyranos: 0.1.9
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/01/26
  *  @since   2007/12/12 (Oyranos: 0.1.9)
- *  @date    2008/12/16
  */
 oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
-                                       const char        * cmm_required,
                                        char             ** lib_used,
                                        oyCMMapi_Check_f    apiCheck,
                                        oyPointer           check_pointer )
@@ -552,7 +536,7 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
              max_rank = 0;
     int max_pos = -1;
 
-    files = oyCMMsGetLibNames_(&files_n, cmm_required);
+    files = oyCMMsGetLibNames_(&files_n);
 
     /* open the modules */
     for( i = 0; i < files_n; ++i)
@@ -733,29 +717,25 @@ char * oyCMMCacheListPrint_()
  *
  *  This function searches for a meta modul API.
  *
- *  @param[in]   cmm                   the four byte module ID, optional
- *
- *  @version Oyranos: 0.1.11
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/01/26
  *  @since   2008/12/28 (Oyranos: 0.1.10)
- *  @date    2010/09/14
  */
-oyCMMapis_s * oyCMMGetMetaApis_     ( const char        * cmm )
+oyCMMapis_s * oyCMMGetMetaApis_     ( )
 {
   oyCMMapis_s * meta_apis = 0;
-  meta_apis = oyCMMsGetMetaApis_( cmm );
+  meta_apis = oyCMMsGetMetaApis_( );
   return meta_apis;
 }
 
 /** @internal
  *  @brief    Get oyranos modules
  *
- *  @param[in]   cmm                  the selected module, optional
- *
- *  @version  Oyranos: 0.9.0
- *  @date     2012/10/25
+ *  @version  Oyranos: 0.9.6
+ *  @date     2015/01/26
  *  @since    2010/06/25 (Oyranos: 0.1.10)
  */
-oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm )
+oyCMMapis_s *    oyCMMsGetMetaApis_  ( )
 {
   int error = 0;
   oyCMMapis_s * apis = 0;
@@ -766,7 +746,6 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm )
 
   /* query cache */
   STRING_ADD( hash_text, "oyCMMapis_s:" );
-  STRING_ADD( hash_text, oyNoEmptyString_m_( cmm ) );
   entry = oyCMMCacheListGetEntry_( hash_text );
   /* release hash string */
   oyDeAllocateFunc_( hash_text ); hash_text = 0;
@@ -784,7 +763,7 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm )
     uint32_t  files_n = 0;
     int i = 0;
 
-    files = oyCMMsGetLibNames_(&files_n, cmm);
+    files = oyCMMsGetLibNames_(&files_n);
 
     if(!files_n)
     {
@@ -842,8 +821,8 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm )
  *  use in pair in oyCMMdsoReference_
  *
  *  @version Oyranos: 0.1.8
- *  @since   2007/11/00 (Oyranos: 0.1.8)
  *  @date    2008/12/08
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
  */
 int          oyCMMdsoRelease_      ( const char        * lib_name )
 {
@@ -874,11 +853,11 @@ int          oyCMMdsoRelease_      ( const char        * lib_name )
  *  Search the cache for a handle and return it. Or dlopen the library and 
  *  store and reference the handle in the cache.
  *
- *  @since Oyranos: version 0.1.8
- *  @date  23 november 2007 (API 0.1.8)
+ *  @version  Oyranos: 0.9.6
+ *  @date     2015/01/26
+ *  @since    2007/11/23 (API 0.1.8)
  */
-oyPointer    oyCMMdsoGet_            ( const char        * cmm,
-                                       const char        * lib_name )
+oyPointer    oyCMMdsoGet_            ( const char        * lib_name )
 {
   int found = -1;
   oyPointer dso_handle = 0;
@@ -914,10 +893,12 @@ oyPointer    oyCMMdsoGet_            ( const char        * cmm,
     /* initialise module type lookup */
     if(!oyStruct_GetTextFromModule_p)
       oyStruct_GetTextFromModule_p = oyStruct_GetTextFromModule;
-  }
 
-  if(dso_handle)
-    oyCMMdsoReference_( lib_name, dso_handle );
+    if(dso_handle)
+      oyCMMdsoReference_( lib_name, dso_handle );
+
+    DBG_NUM1_S("dlopen(ed) %s", lib_name);
+  }
 
   return dso_handle;
 }
@@ -1030,14 +1011,13 @@ int              oyCMMlibMatchesCMM  ( const char        * lib_name,
 /** @internal
  *  @brief get all CMM/module/script names
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/01/26
  *  @since   2008/12/16 (Oyranos: 0.1.9)
- *  @date    2010/06/28
  */
 char **          oyCMMsGetNames_     ( uint32_t          * n,
                                        const char        * sub_path,
                                        const char        * ext,
-                                       const char        * required_cmm,
                                        oyPATH_TYPE_e       path_type )
 {
   int error = !n;
@@ -1049,24 +1029,9 @@ char **          oyCMMsGetNames_     ( uint32_t          * n,
   {
     int  files_n = 0, i;
     char * lib_string = oyAllocateFunc_(24);
-    const char * cmm = 0;
 
     lib_string[0] = 0;
-    if(required_cmm)
-    {
-      /* assuming a library file can not be smaller than the signature + 
-         OY_MODULE_NAME + file extension */
-      if(oyStrlen_(required_cmm) < 5)
-        cmm = required_cmm;
-
-      if(cmm)
-        oySprintf_( lib_string, "%s%s", cmm, OY_MODULE_NAME );
-      else
-        oyStringListAddStaticString_( &files, &files_n, required_cmm,
-                                       oyAllocateFunc_, oyDeAllocateFunc_ );
-
-    } else
-      oySprintf_( lib_string, "%s", OY_MODULE_NAME );
+    oySprintf_( lib_string, "%s", OY_MODULE_NAME );
 
     sub_paths = oyStringSplit_( sub_path, ':', &sub_paths_n, 0 );
 
@@ -1102,13 +1067,12 @@ char **          oyCMMsGetNames_     ( uint32_t          * n,
  *  @brief get all module names
  *
  *  @version Oyranos: 0.1.9
+ *  @date    2015/01/26
  *  @since   2007/12/12 (Oyranos: 0.1.8)
- *  @date    2008/12/16
  */
-char **          oyCMMsGetLibNames_  ( uint32_t          * n,
-                                       const char        * required_cmm )
+char **          oyCMMsGetLibNames_  ( uint32_t          * n )
 {
-  return oyCMMsGetNames_(n, OY_METASUBPATH, 0, required_cmm, oyPATH_MODULE);
+  return oyCMMsGetNames_(n, OY_METASUBPATH, 0, oyPATH_MODULE);
 }
 
 /** @internal
@@ -1133,7 +1097,7 @@ oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name )
     if(error <= 0)
     {
       if(lib_name)
-        dso_handle = oyCMMdsoGet_(cmm, lib_name);
+        dso_handle = oyCMMdsoGet_(lib_name);
 
       error = !dso_handle;
 
@@ -1480,7 +1444,7 @@ const char * oyStruct_GetTextFromModule (
       oyCMMapi9_s * cmm_api9 = 0;
       char * api_reg = 0;
 
-      apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S,
+      apis = oyCMMsGetFilterApis_( api_reg, oyOBJECT_CMM_API9_S,
                                    oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                    0, 0);
       apis_n = oyCMMapiFilters_Count( apis );
@@ -2004,7 +1968,7 @@ int             oyOptions_Handle     ( const char        * registration,
     if(command && command[0])
       STRING_ADD( test, command );
 
-    apis = oyCMMsGetFilterApis_( 0,0, registration, oyOBJECT_CMM_API10_S,
+    apis = oyCMMsGetFilterApis_( registration, oyOBJECT_CMM_API10_S,
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                  0,0 );
 
@@ -2078,7 +2042,7 @@ int          oyPointer_ConvertData   ( oyPointer_s       * cmm_ptr,
     STRING_ADD( reg, "_" );
     STRING_ADD( reg, oyPointer_GetResourceName( cmm_ptr_out ) );
 
-    api6 = (oyCMMapi6_s*) oyCMMsGetFilterApi_( 0, reg, oyOBJECT_CMM_API6_S );
+    api6 = (oyCMMapi6_s*) oyCMMsGetFilterApi_( reg, oyOBJECT_CMM_API6_S );
 
     error = !api6;
   }

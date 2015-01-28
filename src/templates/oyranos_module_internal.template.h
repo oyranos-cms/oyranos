@@ -202,9 +202,7 @@ int              oyCMMhandle_Set_    ( oyCMMhandle_s     * handle,
                                        oyPointer           dso_handle,
                                        const char        * lib_name );
 
-oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * cmm_meta,
-                                         const char        * cmm_required,
-                                         const char        * registration,
+oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
                                          oyOBJECT_e          type,
                                          uint32_t            flags,
                                          uint32_t         ** rank_list,
@@ -226,7 +224,6 @@ oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
                                        oyPointer           check_pointer,
                                        int                 num );
 oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
-                                       const char        * cmm_required,
                                        char             ** lib_used,
                                        oyCMMapi_Check_f    apiCheck,
                                        oyPointer           check_pointer );
@@ -238,7 +235,6 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm );
 char **          oyCMMsGetNames_     ( uint32_t          * n,
                                        const char        * sub_path,
                                        const char        * ext,
-                                       const char        * required_cmm,
                                        oyPATH_TYPE_e       path_type );
 int          oyCMMdsoReference_      ( const char        * lib_name,
                                        oyPointer           ptr );
@@ -278,10 +274,8 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
 
 char   oyCMMapiNumberToChar          ( oyOBJECT_e          api_number );
 oyCMMinfo_s *    oyCMMinfoFromLibName_(const char        * lib_name );
-char **          oyCMMsGetLibNames_  ( uint32_t          * n,
-                                       const char        * required_cmm );
-oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * cmm_required,
-                                       const char        * registration,
+char **          oyCMMsGetLibNames_  ( uint32_t          * n );
+oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * registration,
                                        oyOBJECT_e          type );
 
 

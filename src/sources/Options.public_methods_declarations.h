@@ -129,7 +129,6 @@ OYAPI int  OYEXPORT
 /* needs modules */
 OYAPI oyOptions_s *  OYEXPORT
                 oyOptions_ForFilter  ( const char        * registration,
-                                       const char        * cmm,
                                        uint32_t            flags,
                                        oyObject_s          object );
 OYAPI int  OYEXPORT

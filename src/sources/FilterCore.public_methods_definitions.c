@@ -130,7 +130,7 @@ oyFilterCore_s * oyFilterCore_NewWith( const char        * registration,
 
   if(error <= 0)
   {
-    api4_ = (oyCMMapi4_s_*) oyCMMsGetFilterApi_( 0,
+    api4_ = (oyCMMapi4_s_*) oyCMMsGetFilterApi_(
                                             registration, oyOBJECT_CMM_API4_S );
     error = !api4_;
   }

@@ -240,7 +240,7 @@ int main (int argc, char ** argv)
     {
       uint32_t * rank_list = 0;
       uint32_t apis_n = 0;
-      oyCMMapiFilters_s * apis = oyCMMsGetFilterApis_( 0,0, "//",
+      oyCMMapiFilters_s * apis = oyCMMsGetFilterApis_( "//",
                                                        (oyOBJECT_e)j, 0,
                                                        &rank_list, &apis_n );
       int n = oyCMMapiFilters_Count( apis ), i;

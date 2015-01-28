@@ -1678,7 +1678,7 @@ OYAPI int OYEXPORT
 
   if(!error)
   {
-    tag = oyProfileTag_Create( list, signature, tt, 0,OY_MODULE_NICK, 0);
+    tag = oyProfileTag_Create( list, signature, tt, OY_MODULE_NICK, 0);
     error = !tag;
   }
 
@@ -2058,7 +2058,7 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
         {
           pddt = (oyProfileTag_s_*)oyProfileTag_Create( list, icSigProfileDetailDescriptionTag_,
                                                         icSigProfileDetailDescriptionTag_,
-                                                        0, OY_MODULE_NICK, 0);
+                                                        OY_MODULE_NICK, 0);
           error = !pddt;
         }
 

@@ -501,7 +501,7 @@ char *             oyFilterNode_GetFallback_(
   STRING_ADD( api_reg, class_name );
   oyFree_m_( class_name );
 
-  apis = oyCMMsGetFilterApis_( 0,0, api_reg, oyOBJECT_CMM_API9_S,
+  apis = oyCMMsGetFilterApis_( api_reg, oyOBJECT_CMM_API9_S,
                                oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                0,0 );
   oyFree_m_( api_reg );

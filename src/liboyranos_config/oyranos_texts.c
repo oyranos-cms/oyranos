@@ -1185,7 +1185,7 @@ char **            oyGetCMMs         ( oyCMM_e             type,
   {
     uint32_t * rank_list = 0;
     uint32_t apis_n = 0;
-    oyCMMapiFilters_s * apis = oyCMMsGetFilterApis_( 0,0, "///icc_color",
+    oyCMMapiFilters_s * apis = oyCMMsGetFilterApis_( "///icc_color",
                                                      otype, 0,
                                                      &rank_list, &apis_n );
     int n = oyCMMapiFilters_Count( apis ), i;
@@ -1815,7 +1815,7 @@ oyCMMapiFilter_s * oyGetCMM_         ( oyCMM_e             type,
   else
     otype = oyOBJECT_CMM_API7_S;
 
-  apis = oyCMMsGetFilterApis_( 0,0, "///icc_color", otype, 0,
+  apis = oyCMMsGetFilterApis_( "///icc_color", otype, 0,
                                &rank_list, &apis_n );
   n = oyCMMapiFilters_Count( apis ), i;
   for(i = 0; i < n; ++i)

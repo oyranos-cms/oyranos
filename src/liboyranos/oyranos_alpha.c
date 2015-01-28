@@ -73,10 +73,8 @@
 char **          oyCMMsGetNames_     ( uint32_t          * n,
                                        const char        * sub_path,
                                        const char        * ext,
-                                       const char        * required_cmm,
                                        oyPATH_TYPE_e       path_type );
-char **          oyCMMsGetLibNames_  ( uint32_t          * n,
-                                       const char        * required_cmm );
+char **          oyCMMsGetLibNames_  ( uint32_t          * n );
 
 /** \addtogroup alpha Alpha API's
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2015-01-22 18:52+0100\n"
+"POT-Creation-Date: 2015-01-28 16:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,7 +24,7 @@ msgstr ""
 #: API_generated/oyName_s_.c:48 API_generated/oyName_s_.c:56
 #: API_generated/oyCMMapi_s_.c:157 API_generated/oyArray2d_s_.c:167
 #: API_generated/oyCMMapis_s_.c:157 API_generated/oyOption_s_.c:180
-#: API_generated/oyConversion_s_.c:158 API_generated/oyranos_devices.c:3522
+#: API_generated/oyConversion_s_.c:158 API_generated/oyranos_devices.c:3520
 #: API_generated/oyFilterNodes_s_.c:157 API_generated/oyCMMapi9_s_.c:164
 #: API_generated/oyProfile_s_.c:242 API_generated/oyFilterCore_s_.c:170
 #: API_generated/oyPixelAccess_s_.c:187 API_generated/oyCMMobjectType_s_.c:154
@@ -39,12 +39,12 @@ msgstr ""
 #: API_generated/oyCMMapi4_s.c:224 API_generated/oyConfigs_s_.c:157
 #: API_generated/oyFilterPlug_s_.c:164 API_generated/oyOptions_s_.c:158
 #: API_generated/oyNamedColor_s_.c:183 API_generated/oyCMMapiFilter_s_.c:161
-#: API_generated/oyranos_module.c:1574 API_generated/oyNamedColors_s_.c:148
+#: API_generated/oyranos_module.c:1545 API_generated/oyNamedColors_s_.c:148
 #: API_generated/oyCMMapi7_s_.c:164 API_generated/oyCMMapi5_s_.c:151
 #: API_generated/oyCMMapi8_s_.c:164 API_generated/oyProfiles_s_.c:157
 #: API_generated/oyFilterGraph_s_.c:163 API_generated/oyCMMapi6_s_.c:164
 #: API_generated/oyFilterNode_s_.c:189 API_generated/oyCMMinfo_s_.c:164
-#: liboyranos/oyranos_alpha.c:286 liboyranos_modules/oyranos_forms.c:57
+#: liboyranos/oyranos_alpha.c:284 liboyranos_modules/oyranos_forms.c:57
 msgid "MEM Error."
 msgstr ""
 
@@ -89,7 +89,7 @@ msgstr ""
 msgid "Attributes"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:45 API_generated/oyranos_module.c:1411
+#: API_generated/oyranos_profile.c:45 API_generated/oyranos_module.c:1382
 msgid "Manufacturer"
 msgstr ""
 
@@ -199,7 +199,7 @@ msgid "wrong argument to option:"
 msgstr ""
 
 #: API_generated/oyranos_devices.c:234 API_generated/oyranos_devices.c:995
-#: liboyranos/oyranos_alpha.c:831 liboyranos/oyranos_alpha.c:914
+#: liboyranos/oyranos_alpha.c:829 liboyranos/oyranos_alpha.c:912
 msgid "Could not open device"
 msgstr ""
 
@@ -235,7 +235,7 @@ msgstr ""
 msgid "not found:"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:2545 API_generated/oyranos_devices.c:2556
+#: API_generated/oyranos_devices.c:2543 API_generated/oyranos_devices.c:2554
 #: modules/oyranos/oyranos_cmm_oyIM_profile.c:3018
 #: modules/color/modules/oyranos_cmm_lcm2.c:3018
 #: modules/color/modules/oyranos_cmm_lcms.c:2362
@@ -264,8 +264,8 @@ msgstr ""
 msgid "found issues"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:2628 API_generated/oyranos_devices.c:3133
-#: API_generated/oyConversion_s.c:188 API_generated/oyranos_module.c:2026
+#: API_generated/oyranos_devices.c:2626 API_generated/oyranos_devices.c:3131
+#: API_generated/oyConversion_s.c:188 API_generated/oyranos_module.c:1997
 #: API_generated/oyFilterNode_s_.c:519
 msgid "error in module:"
 msgstr ""
@@ -323,26 +323,26 @@ msgstr ""
 msgid "Found no node in conversion. give up"
 msgstr ""
 
-#: API_generated/oyranos_module.c:185
+#: API_generated/oyranos_module.c:175
 msgid "Could not open meta module API"
 msgstr ""
 
-#: API_generated/oyranos_module.c:793
+#: API_generated/oyranos_module.c:772
 msgid ""
 "Could not find any meta module. Did you set the OY_MODULE_PATH variable, to "
 "point to a Oyranos module loader library?"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1410
+#: API_generated/oyranos_module.c:1381
 #: modules/oyranos/oyranos_cmm_oyIM_profile.c:2239
 msgid "Name"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1412 liboyranos_config/oyranos_icc.c:460
+#: API_generated/oyranos_module.c:1383 liboyranos_config/oyranos_icc.c:460
 msgid "Copyright"
 msgstr ""
 
-#: API_generated/oyranos_module.c:2034
+#: API_generated/oyranos_module.c:2005
 msgid "Could not allocate memory for:"
 msgstr ""
 
@@ -405,7 +405,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oicc.c:1021
 #: modules/color/modules/oyranos_cmm_oyra.c:147
 #: modules/color/modules/oyranos_cmm_oydi.c:1148
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1264
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1272
 #: modules/color/modules/devices/oyranos_cmm_qarz.c:1225
 #: modules/color/modules/oyranos_cmm_lraw.cpp:239
 msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
@@ -2009,7 +2009,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oicc.c:1013
 #: modules/color/modules/oyranos_cmm_oyra.c:139
 #: modules/color/modules/oyranos_cmm_oydi.c:1140
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1256
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1264
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:969
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:992
 #: modules/color/modules/devices/oyranos_cmm_qarz.c:1217
@@ -2418,7 +2418,7 @@ msgstr ""
 #. The following strings must match the categories for a menu entry.
 #: modules/color/modules/oyranos_cmm_lcm2.c:3338
 #: modules/color/modules/oyranos_cmm_lcms.c:2689
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1118
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1126
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:836
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:883
 #: modules/color/modules/devices/oyranos_cmm_qarz.c:1085
@@ -2434,8 +2434,8 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_lcms.c:2693
 #: modules/color/modules/oyranos_cmm_oPNG.c:553
 #: modules/color/modules/oyranos_cmm_oPNG.c:1168
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1119
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1122
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1127
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1130
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:884
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:887
 #: modules/color/modules/devices/oyranos_cmm_qarz.c:1086
@@ -2828,7 +2828,7 @@ msgid "Image/Simple Image[scale]"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oyra.c:145
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1262
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1270
 #: modules/color/modules/devices/oyranos_cmm_qarz.c:1223
 msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgstr ""
@@ -2877,14 +2877,14 @@ msgid ""
 "allocated output image. "
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1102
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1123
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1110
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1131
 #: modules/color/modules/devices/oyranos_cmm_qarz.c:1069
 #: modules/color/modules/devices/oyranos_cmm_qarz.c:1090
 msgid "Monitor"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1104
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1112
 #: modules/color/modules/devices/oyranos_cmm_qarz.c:1071
 msgid ""
 "Monitors, which can be detected through the video card driver and windowing "
@@ -2892,7 +2892,7 @@ msgid ""
 msgstr ""
 
 #. CMM: abbreviation for Color Matching Module
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1121
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1129
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:837
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:886
 #: modules/color/modules/devices/oyranos_cmm_qarz.c:1088
@@ -2900,16 +2900,16 @@ msgstr ""
 msgid "Device"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1223
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1231
 msgid "Oyranos "
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1225
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1233
 #: modules/color/modules/devices/oyranos_cmm_qarz.c:1188
 msgid "The window support module of Oyranos."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1232
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1240
 msgid "The "
 msgstr ""
 

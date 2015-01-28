@@ -819,7 +819,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
 
               /* apply the found policy settings */
-              db_options = oyOptions_ForFilter( reg, 0, flags, 0 );
+              db_options = oyOptions_ForFilter( reg, flags, 0 );
               f_options = oyFilterNode_GetOptions( node, flags );
 
               if(oy_debug > 2 || verbose)

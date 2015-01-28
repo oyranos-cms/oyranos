@@ -335,7 +335,7 @@ OYAPI int  OYEXPORT
    */
   if(error <= 0)
   {
-    cmm_api8 = (oyCMMapi8_s_*) oyCMMsGetFilterApi_( 0, registration_domain,
+    cmm_api8 = (oyCMMapi8_s_*) oyCMMsGetFilterApi_( registration_domain,
                                                    oyOBJECT_CMM_API8_S );
     error = !cmm_api8;
   }
@@ -652,7 +652,7 @@ OYAPI int OYEXPORT
       s = oyConfigs_New( 0 );
 
     if(error <= 0 && count && texts)
-      cmm_api8 = (oyCMMapi8_s_*) oyCMMsGetFilterApi_( 0, texts[0],
+      cmm_api8 = (oyCMMapi8_s_*) oyCMMsGetFilterApi_( texts[0],
                                                      oyOBJECT_CMM_API8_S );
 
     for(i = 0; i < count; ++i)
@@ -781,7 +781,7 @@ OYAPI int  OYEXPORT
 
     if(error <= 0)
     {
-      cmm_api8 = (oyCMMapi8_s_*) oyCMMsGetFilterApi_( 0, registration_domain,
+      cmm_api8 = (oyCMMapi8_s_*) oyCMMsGetFilterApi_( registration_domain,
                                                      oyOBJECT_CMM_API8_S );
       error = !cmm_api8;
     }
@@ -876,7 +876,7 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
-    apis = oyCMMsGetFilterApis_( 0,0, registration_pattern,
+    apis = oyCMMsGetFilterApis_( registration_pattern,
                                  oyOBJECT_CMM_API8_S,
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                  rank_list, &apis_n);

@@ -1963,7 +1963,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
           oyStructList_MoveIn( list, (oyStruct_s**) &p, -1, 0 );
         }
         psid = oyProfileTag_Create( list, icSigProfileSequenceIdentifierTag,
-                     icSigProfileSequenceIdentifierType, 0, OY_MODULE_NICK, 0 );
+                     icSigProfileSequenceIdentifierType, OY_MODULE_NICK, 0 );
         if(psid)
           error = oyProfile_TagMoveIn ( prof, &psid, -1 );
 
@@ -1992,7 +1992,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
         if(!error)
         {
           info = oyProfileTag_Create( list, (icTagSignature)oyValueUInt32(*hi),
-                                      icSigTextType, 0,OY_MODULE_NICK, 0);
+                                      icSigTextType, OY_MODULE_NICK, 0);
           error = !info;
         }
 
@@ -2020,7 +2020,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
         if(!error)
         {
           cprt = oyProfileTag_Create( list, icSigCopyrightTag,
-                                      icSigTextType, 0,OY_MODULE_NICK, 0);
+                                      icSigTextType, OY_MODULE_NICK, 0);
           error = !cprt;
         }
 
@@ -2179,7 +2179,7 @@ char * lcm2FilterNode_GetText        ( oyFilterNode_s    * node,
 
     /* pick inbuild defaults */
     opts_tmp2 = oyOptions_FromText( lcm2_extra_options, 0, NULL );
-    opts_tmp = oyOptions_ForFilter( "//" OY_TYPE_STD "/icc_color", 0,
+    opts_tmp = oyOptions_ForFilter( "//" OY_TYPE_STD "/icc_color",
                                 oyOPTIONSOURCE_FILTER | OY_SELECT_COMMON , 0 );
     options = oyOptions_FromBoolean( opts_tmp, opts_tmp2, oyBOOLEAN_UNION,NULL);
     oyOptions_Release( &opts_tmp );

@@ -353,7 +353,7 @@ oyTESTRESULT_e testSettings ()
   fprintf(stderr, "\n" );
 
   /* we check for out standard CMM */
-  opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcm2",
+  opts = oyOptions_ForFilter( "//" OY_TYPE_STD "/lcm2",
                                             oyOPTIONATTRIBUTE_ADVANCED /* |
                                             oyOPTIONATTRIBUTE_FRONT |
                                             OY_OPTIONSOURCE_META */, 0 );

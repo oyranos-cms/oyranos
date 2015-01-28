@@ -137,7 +137,7 @@ int      oyraFilterPlug_ImageWriteRun (
       while(file_ext && file_ext[i]) { file_ext[i]=tolower(file_ext[i]); ++i; }
     }
 
-    apis = oyCMMsGetFilterApis_( 0,0, "//" OY_TYPE_STD "/file_write", 
+    apis = oyCMMsGetFilterApis_( "//" OY_TYPE_STD "/file_write", 
                                  oyOBJECT_CMM_API7_S,
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                  &rank_list,0 );
@@ -505,7 +505,7 @@ int      oyraFilterPlug_ImageLoadRun (
       while(file_ext && file_ext[i]) { file_ext[i]=tolower(file_ext[i]); ++i; }
     }
 
-    apis = oyCMMsGetFilterApis_( 0,0, "//" OY_TYPE_STD "/file_read", 
+    apis = oyCMMsGetFilterApis_( "//" OY_TYPE_STD "/file_read", 
                                  oyOBJECT_CMM_API7_S,
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                  &rank_list,0 );

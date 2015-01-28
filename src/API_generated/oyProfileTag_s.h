@@ -86,7 +86,6 @@ OYAPI oyProfileTag_s * OYEXPORT
                                        icTagSignature      tag_use,
                                        icTagTypeSignature  tag_type,
                                        uint32_t            version,
-                                       const char        * required_cmm,
                                        oyObject_s          object );
 OYAPI oyProfileTag_s * OYEXPORT
                oyProfileTag_CreateFromText (

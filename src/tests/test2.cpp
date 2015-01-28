@@ -973,8 +973,8 @@ oyTESTRESULT_e testSettings ()
 
   fprintf(zout, "\n" );
 
-  /* we check for out standard CMM */
-  opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcm2",
+  /* we check for our standard CMM */
+  opts = oyOptions_ForFilter( "//" OY_TYPE_STD "/lcm2",
                                             oyOPTIONATTRIBUTE_ADVANCED /* |
                                             oyOPTIONATTRIBUTE_FRONT |
                                             OY_SELECT_COMMON */, 0 );
@@ -1093,7 +1093,7 @@ oyTESTRESULT_e testSettings ()
 
   oyOptions_Release( &opts );
 
-  opts = oyOptions_ForFilter( "//" OY_TYPE_STD, "lcm2",
+  opts = oyOptions_ForFilter( "//" OY_TYPE_STD "/lcm2",
                                             oyOPTIONATTRIBUTE_ADVANCED  |
                                             oyOPTIONATTRIBUTE_FRONT |
                                             OY_SELECT_COMMON, 0 );
@@ -1904,8 +1904,7 @@ oyTESTRESULT_e testPolicy ()
 #ifdef __cplusplus
 extern "C" {
 #endif
-char ** oyCMMsGetLibNames_           ( uint32_t          * n,
-                                       const char        * required_cmm );
+char ** oyCMMsGetLibNames_           ( uint32_t          * n );
 #ifdef __cplusplus
 }
 #endif
@@ -2736,7 +2735,7 @@ oyTESTRESULT_e testCMMsShow ()
 
   fprintf(zout, "\n" );
 
-  texts = oyCMMsGetLibNames_( &count, 0 );
+  texts = oyCMMsGetLibNames_( &count );
 
   /* Create a oforms style xhtml to present in a XFORMS viewer like
    * oyranos-xforms-fltk or FF with XFORMS plug-in.
@@ -2817,7 +2816,6 @@ oyTESTRESULT_e testCMMsShow ()
               uint32_t * rank_list = 0;
               uint32_t apis_n = 0;
               char * classe = 0;
-              const char * nick = cmm_info->cmm;
 
               classe = oyFilterRegistrationToText( cmm_filter->registration,
                                                    oyFILTER_REG_TYPE, 0 );
@@ -2832,7 +2830,7 @@ oyTESTRESULT_e testCMMsShow ()
 
               for(j = oyOBJECT_CMM_API4_S; j <= (int)oyOBJECT_CMM_API10_S; j++)
               {
-                apis = oyCMMsGetFilterApis_( nick, 0, api_reg, (oyOBJECT_e)j,
+                apis = oyCMMsGetFilterApis_( api_reg, (oyOBJECT_e)j,
                                              oyFILTER_REG_MODE_NONE,
                                              &rank_list, &apis_n );
 
@@ -3184,7 +3182,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if(error <= 0)
   {
-    api4 = (oyCMMapi4_s_*) oyCMMsGetFilterApi_( 0,
+    api4 = (oyCMMapi4_s_*) oyCMMsGetFilterApi_(
                                 "//" OY_TYPE_STD "/root", oyOBJECT_CMM_API4_S );
     error = !api4;
   }
@@ -3239,7 +3237,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
       s = oyOptions_New( 0 );
 
-      apis = oyCMMsGetFilterApis_( 0,0, api_reg,
+      apis = oyCMMsGetFilterApis_( api_reg,
                                    oyOBJECT_CMM_API9_S,
                                    oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                    0,0);
@@ -3316,7 +3314,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if(error <= 0)
   {
-    api4 = (oyCMMapi4_s_*) oyCMMsGetFilterApi_( 0,
+    api4 = (oyCMMapi4_s_*) oyCMMsGetFilterApi_(
                                 "//" OY_TYPE_STD "/root", oyOBJECT_CMM_API4_S );
     error = !api4;
   }
@@ -3380,7 +3378,7 @@ oyTESTRESULT_e testCMMnmRun ()
   for(i = 0; i < n*3*10000; ++i)
   {
     oyCMMapi4_s_ * api4 = 0;
-    api4 = (oyCMMapi4_s_*) oyCMMsGetFilterApi_( 0,
+    api4 = (oyCMMapi4_s_*) oyCMMsGetFilterApi_(
                                             registration, oyOBJECT_CMM_API4_S );
     error = !api4;
     if(!(i%30000)) fprintf(zout, "." ); fflush(zout);

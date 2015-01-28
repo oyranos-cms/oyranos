@@ -205,7 +205,7 @@ oyFilterNode_s *   oyFilterNode_Create(const char        * registration,
     }
 
     if(error <= 0)
-      s->api7_ = (oyCMMapi7_s_*) oyCMMsGetFilterApi_( 0,
+      s->api7_ = (oyCMMapi7_s_*) oyCMMsGetFilterApi_(
                                            registration, oyOBJECT_CMM_API7_S );
     if(error <= 0 && !s->api7_)
     {
