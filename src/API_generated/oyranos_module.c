@@ -1366,9 +1366,16 @@ int          oyCMMdsoSearch_         ( const char        * lib_name )
     error = !s;
 
     if(error <= 0)
-    if( oyPointer_GetLibName(s) && lib_name &&
-        !oyStrcmp_( oyPointer_GetLibName(s), lib_name ) )
-      pos = i;
+    {
+      const char * plib_name = oyPointer_GetLibName(s);
+      if( plib_name && lib_name &&
+          !oyStrcmp_( plib_name, lib_name ) )
+      {
+        pos = i;
+        DBG_NUM2_S("[%d] (p)lib_name = %s", pos, plib_name);
+        break;
+      }
+    }
   }
 
   return pos;
