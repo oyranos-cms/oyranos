@@ -745,7 +745,7 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( )
   char * hash_text = 0;
 
   /* query cache */
-  STRING_ADD( hash_text, "oyCMMapis_s:" );
+  STRING_ADD( hash_text, "oyCMMapis_s:meta" );
   entry = oyCMMCacheListGetEntry_( hash_text );
   /* release hash string */
   oyDeAllocateFunc_( hash_text ); hash_text = 0;
@@ -940,13 +940,8 @@ oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name )
   {
     oyCMMhandle_s * cmmh = (oyCMMhandle_s*) oyStructList_GetType_((oyStructList_s_*)oy_cmm_infos_,
                                                 i, oyOBJECT_CMM_HANDLE_S );
-    oyCMMinfo_s * s = 0;
 
-    if(cmmh)
-      s = (oyCMMinfo_s*) cmmh->info;
-
-    if( s && s->type_ == oyOBJECT_CMM_INFO_S &&
-        !oyStrcmp_( cmmh->lib_name, lib_name ) )
+    if( !oyStrcmp_( cmmh->lib_name, lib_name ) )
     {
       cmm_handle = oyCMMhandle_Copy_( cmmh, 0 );
       error = oyStructList_ReferenceAt_( (oyStructList_s_*)oy_cmm_infos_, i );
@@ -1113,7 +1108,6 @@ oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name )
     if(error <= 0)
     {
       char * info_sym = oyAllocateFunc_(24);
-      int api_found = 0;
 
       oySprintf_( info_sym, "%s%s", cmm, OY_MODULE_NAME );
 
@@ -1141,32 +1135,38 @@ oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name )
       if(info_sym)
         oyFree_m_(info_sym);
 
+      cmm_handle = oyCMMhandle_New_(0);
+
       if(error <= 0)
-        if(oyCMMapi_Check_( oyCMMinfo_GetApi( cmm_info ) ))
+      {
+        oyOBJECT_e type = oyCMMapi_Check_( oyCMMinfo_GetApi( cmm_info ) );
+        if(type != oyOBJECT_NONE)
+        {
           api = oyCMMinfo_GetApi( cmm_info );
+        } else
+        {
+          cmm_info = NULL;
+          DBG_NUM1_S("api check failed: %s", lib_name);
+        }
+      }
 
       if(error <= 0 && api)
       {
         error = oyCMMapi_GetMessageFuncSetF(api)( oyMessageFunc_p );
 
-        cmm_handle = oyCMMhandle_New_(0);
-
         /* init */
         if(error <= 0)
         error = oyCMMapi_GetInitF(api)( (oyStruct_s*) api );
-        if(error <= 0)
-        {
-          error = oyCMMhandle_Set_( cmm_handle, cmm_info, dso_handle, lib_name);
-          api_found = 1;
-        } else
+        if(error > 0)
         {
           cmm_info = NULL;
-          oyCMMhandle_Release_( &cmm_handle );
+          DBG_NUM1_S("init failed: %s", lib_name);
         }
       }
 
-      /* store */
-      if(error <= 0 && api_found)
+      /* store always */
+      error = oyCMMhandle_Set_( cmm_handle, cmm_info, dso_handle, lib_name);
+      if(error <= 0)
         oyStructList_MoveIn(oy_cmm_infos_, (oyStruct_s**)&cmm_handle, -1, 0);
     }
 
@@ -1196,14 +1196,14 @@ oyCMMinfo_s *    oyCMMinfoFromLibName_(const char        * lib_name )
   if(error <= 0)
   {
     cmm_handle = oyCMMFromCache_( lib_name );
-    if(cmm_handle && oyCMMinfo_GetApi( cmm_handle->info ))
+    if(cmm_handle && cmm_handle->info && oyCMMinfo_GetApi( cmm_handle->info ))
     {
       cmm_info = cmm_handle->info;
       found = 1;
     }
   }
 
-  if(error <= 0 && !found)
+  if(error <= 0 && !cmm_handle)
   {
     cmm_info = oyCMMOpen_(lib_name);
   }
@@ -1302,8 +1302,9 @@ int          oyCMMdsoReference_    ( const char        * lib_name,
 /** @internal
  *  @brief search a dlopen handle for a Oyranos CMM
  *
- *  @since Oyranos: version 0.1.8
- *  @date  23 november 2007 (API 0.1.8)
+ *  @version  Oyranos: 0.9.6
+ *  @date     2015/01/26
+ *  @since    2007/11/23 (API 0.1.8)
  */
 int          oyCMMdsoSearch_         ( const char        * lib_name )
 {
@@ -1312,7 +1313,7 @@ int          oyCMMdsoSearch_         ( const char        * lib_name )
   int error = 0;
 
   if(!oy_cmm_handles_)
-    return 1;
+    return pos;
 
   if(oy_cmm_handles_->type_ != oyOBJECT_STRUCT_LIST_S)
     error = 1;
@@ -1333,10 +1334,10 @@ int          oyCMMdsoSearch_         ( const char        * lib_name )
     {
       const char * plib_name = oyPointer_GetLibName(s);
       if( plib_name && lib_name &&
-          !oyStrcmp_( plib_name, lib_name ) )
+          strcmp( plib_name, lib_name ) == 0 )
       {
         pos = i;
-        DBG_NUM2_S("[%d] (p)lib_name = %s", pos, plib_name);
+        DBG_NUM2_S("[%d] lib_name = %s", pos, plib_name);
         break;
       }
     }
@@ -1653,7 +1654,7 @@ int              oyCMMhandle_Set_    ( oyCMMhandle_s     * handle,
 {
   int error = 0;
 
-  if(!handle || !info || !dso_handle)
+  if(!handle)
     error = 1;
 
   if(error <= 0)
@@ -1666,10 +1667,6 @@ int              oyCMMhandle_Set_    ( oyCMMhandle_s     * handle,
 
   return error;
 }
-
-oyStructList_s * oy_meta_module_cache_ = 0;
-oyStructList_s * oy_cmm_filter_cache_ = 0;
-
 
 
 /** @internal

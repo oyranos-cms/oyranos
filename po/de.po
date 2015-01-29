@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2015-01-28 16:01+0100\n"
+"POT-Creation-Date: 2015-01-29 11:49+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -852,7 +852,7 @@ msgstr "Umwandeln für's WWW (sRGB)"
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr "Wandle in unspezifziertes Cmyk, erhalte Cmyk Zahlen"
 
-#: API_generated/oyranos_module.c:1383 liboyranos_config/oyranos_icc.c:460
+#: API_generated/oyranos_module.c:1384 liboyranos_config/oyranos_icc.c:460
 msgid "Copyright"
 msgstr "Kopierrecht"
 
@@ -902,7 +902,7 @@ msgstr ""
 msgid "Copyright:       "
 msgstr "Kopierrecht:     "
 
-#: API_generated/oyranos_module.c:2005
+#: API_generated/oyranos_module.c:2002
 msgid "Could not allocate memory for:"
 msgstr "Kann nicht reservieren für:"
 
@@ -1960,7 +1960,7 @@ msgstr "Luv"
 #: API_generated/oyCMMapi4_s.c:224 API_generated/oyConfigs_s_.c:157
 #: API_generated/oyFilterPlug_s_.c:164 API_generated/oyOptions_s_.c:158
 #: API_generated/oyNamedColor_s_.c:183 API_generated/oyCMMapiFilter_s_.c:161
-#: API_generated/oyranos_module.c:1545 API_generated/oyNamedColors_s_.c:148
+#: API_generated/oyranos_module.c:1546 API_generated/oyNamedColors_s_.c:148
 #: API_generated/oyCMMapi7_s_.c:164 API_generated/oyCMMapi5_s_.c:151
 #: API_generated/oyCMMapi8_s_.c:164 API_generated/oyProfiles_s_.c:157
 #: API_generated/oyFilterGraph_s_.c:163 API_generated/oyCMMapi6_s_.c:164
@@ -2000,7 +2000,7 @@ msgstr "Signatur"
 msgid "Magic:           "
 msgstr "Signatur:        "
 
-#: API_generated/oyranos_profile.c:45 API_generated/oyranos_module.c:1382
+#: API_generated/oyranos_profile.c:45 API_generated/oyranos_module.c:1383
 msgid "Manufacturer"
 msgstr "Hersteller"
 
@@ -2138,7 +2138,7 @@ msgstr "NAME"
 msgid "NUMBER"
 msgstr "NUMMER"
 
-#: API_generated/oyranos_module.c:1381
+#: API_generated/oyranos_module.c:1382
 #: modules/oyranos/oyranos_cmm_oyIM_profile.c:2239
 msgid "Name"
 msgstr "Name"
@@ -3843,7 +3843,7 @@ msgid "enable simple defaults"
 msgstr "benutze einfache Grundeinstellungen"
 
 #: API_generated/oyranos_devices.c:2626 API_generated/oyranos_devices.c:3131
-#: API_generated/oyConversion_s.c:188 API_generated/oyranos_module.c:1997
+#: API_generated/oyConversion_s.c:188 API_generated/oyranos_module.c:1994
 #: API_generated/oyFilterNode_s_.c:519
 msgid "error in module:"
 msgstr "Fehler in Modul:"
