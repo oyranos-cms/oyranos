@@ -171,15 +171,13 @@ int          oyIMFilterScan          ( oyPointer           data,
 
       error = !cmm_info;
 
+#if DLOPEN
       if(error)
       {
-#if DLOPEN
         char * errstr = dlerror();
-#else
-        const char * errstr = "----";
-#endif
         WARNc2_S("\n  %s:\n  \"%s\"", lib_name, oyNoEmptyString_m_( errstr ) );
       }
+#endif
 
       if(!error)
         if(oyCMMapi_Check_( cmm_info->api ))
