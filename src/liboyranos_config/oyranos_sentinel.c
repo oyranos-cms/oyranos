@@ -99,7 +99,8 @@ void     oyFinish_                   ( int                 unused )
 
 extern oyStructList_s_ * oy_profile_s_file_cache_;
 extern oyStructList_s * oy_cmm_cache_;
-extern oyStructList_s * oy_meta_module_cache_;
+extern oyStructList_s * oy_cmm_infos_;
+extern oyStructList_s * oy_cmm_handles_;
 extern oyProfiles_s * oy_profile_list_cache_;
 
 /** @internal
@@ -111,7 +112,56 @@ extern oyProfiles_s * oy_profile_list_cache_;
 void     oyAlphaFinish_              ( int                 unused )
 {
   oyProfiles_Release( &oy_profile_list_cache_ );
-  oyStructList_Release( &oy_meta_module_cache_ );
   oyStructList_Release( &oy_cmm_cache_ );
+  oyStructList_Release( &oy_cmm_infos_ );
+  oyStructList_Release( &oy_cmm_handles_ );
   oyStructList_Release_( &oy_profile_s_file_cache_ );
+}
+
+#include "oyranos_string.h"
+#include "oyranos_module_internal.h"
+#include "oyCMMinfo_s.h"
+/** @internal
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/01/28
+ *  @since   2015/01/28 (Oyranos: 0.9.6)
+ */
+char *     oyAlphaPrint_             ( int                 verbose )
+{
+  char * text = NULL;
+  oyStringAddPrintf_( &text, oyAllocateFunc_, oyDeAllocateFunc_,
+                      "oy_profile_list_cache_: %d\noy_cmm_cache_: %d\noy_cmm_infos_: %d\noy_cmm_handles_: %d\noy_profile_s_file_cache_: %d",
+  oyProfiles_Count( oy_profile_list_cache_ ),
+  oyStructList_Count( oy_cmm_cache_ ), /* oyHash_s */
+  oyStructList_Count( oy_cmm_infos_ ), /* oyCMMhandle_s */
+  oyStructList_Count( oy_cmm_handles_ ), /* oyPointer_s */
+  oyStructList_Count( (oyStructList_s*) oy_profile_s_file_cache_ ) );
+  printf("%s\n", text);
+  if(verbose)
+  {
+    int n,i;
+    printf("oy_cmm_cache_ (oyHash_s): %s\n", oyCMMCacheListPrint_() );
+    n = oyStructList_Count(oy_cmm_infos_);
+    printf("oy_cmm_infos_ (oyCMMhandle_s): %d\n",  oyStructList_Count( oy_cmm_infos_ ) );
+    for(i = 0; i < n; ++i)
+    {
+      oyCMMinfo_s * s = 0;
+      oyCMMhandle_s * cmmh = (oyCMMhandle_s *) oyStructList_GetType_(
+                                               (oyStructList_s_*)oy_cmm_infos_,
+                                               i,
+                                               oyOBJECT_CMM_HANDLE_S );
+
+      if(cmmh)
+        s = (oyCMMinfo_s*) cmmh->info;
+
+      if( s && s->type_ == oyOBJECT_CMM_INFO_S &&
+          *((uint32_t*)oyCMMinfo_GetCMM(s)) )
+      {
+        printf("[%d] CMM_INFO: %s\n",i, cmmh->lib_name);
+      } else
+        printf("[%d]           %s\n",i, cmmh->lib_name);
+    }
+  }
+  return text;
 }
