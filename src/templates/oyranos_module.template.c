@@ -97,7 +97,7 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
 
     /* query cache */
     oyStringAddPrintf_( &hash_text, oyAllocateFunc_,oyDeAllocateFunc_,
-                "oyCMMapiFilters_s;reg:%s;type:%u;flags:%u",
+                        "%s;%u;%u",
                         oyNoEmptyString_m_( registration ),
                         type,
                         flags );
