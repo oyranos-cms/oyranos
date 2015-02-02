@@ -49,6 +49,7 @@ int  oyColorConvert_ ( oyProfile_s       * p_in,
 
 
 void     oyAlphaFinish_              ( int                 unused );
+char *     oyAlphaPrint_             ( int                 verbose );
 
 
 /** \addtogroup misc Miscellaneous
