@@ -19,6 +19,7 @@
 
 #include "oyranos_config_internal.h" /* I18N */
 #include "oyranos_i18n.h"
+#include "oyranos_sentinel.h" /* oyInit_() */
 
 #include <oyranos.h>
 #include <oyranos_cmm.h>   /* for hacking into module API */
@@ -90,7 +91,7 @@ main(int argc, char** argv)
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
 #endif
-  oyI18NInit_();
+  oyInit_();
 
 /* workaround to initialise OpenMP in order to get code compiled under osX 10.6.8 */
 #pragma omp parallel for private(i)
