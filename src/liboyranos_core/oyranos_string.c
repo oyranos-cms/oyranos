@@ -314,7 +314,10 @@ int                oyStringAddPrintf ( char             ** string,
       deallocFunc(*string);
     *string = text_copy;
 
-    deallocFunc(text);
+    if(deallocFunc)
+      deallocFunc(text);
+    else
+      oyDeAllocateFunc_(text);
 
   } else
     *string = text;
