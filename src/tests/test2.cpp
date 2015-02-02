@@ -1449,13 +1449,7 @@ oyTESTRESULT_e testProfileLists ()
 
   fprintf(stdout, "\n" );
 
-  double start_time = DBG_UHR_;
-
-#ifdef __cplusplus
-  std::cout << "Start: " << start_time << std::endl;
-#else
-  fprintf(zout, "Start %.3f\n", start_time );
-#endif
+  double clck = oyClock();
 
   uint32_t ref_count = 0;
   char ** reference = oyProfileListGet(0, &ref_count, myAllocFunc);
@@ -1505,15 +1499,16 @@ oyTESTRESULT_e testProfileLists ()
 
   }
 
-  double end = DBG_UHR_;
+  clck = oyClock() - clck;
 
 #ifdef __cplusplus
   std::cout << std::endl;
-  std::cout << repeat << " + 1 calls to oyProfileListGet() took: "<< end - start_time
-            << " seconds" << std::endl;
+  std::cout << repeat << " + 1 calls to oyProfileListGet() "
+            << oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "calls")
+            << std::endl;
 #else
-  fprintf(zout, "\n%d + 1 calls to oyProfileListGet() took: %.03f seconds\n",
-                repeat,   end - start_time );
+  fprintf(zout, "\n%d + 1 calls to oyProfileListGet() %s\n",
+                repeat,  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "calls") );
 #endif
 
   return result;
@@ -1900,7 +1895,7 @@ oyTESTRESULT_e testPolicy ()
   return result;
 }
 
-/* forward declaration for oyranos_alpha.c */
+/* forward declaration */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -4487,7 +4482,202 @@ oyTESTRESULT_e testCMMlists()
   return result;
 }
 
-#include "oyranos_alpha.h"
+oyStructList_s * oy_test_cache_ = 0;
+
+#include "oyranos_generic_internal.h"
+oyHash_s *   oyTestCacheListGetEntry_ ( const char        * hash_text)
+{
+  if(!oy_test_cache_)
+    oy_test_cache_ = oyStructList_New( 0 );
+
+  return oyCacheListGetEntry_(oy_test_cache_, 0, hash_text);
+}
+void         oyTestCacheListClear_     ( )
+{
+  oyStructList_Release( &oy_test_cache_ );
+}
+
+#include "oyranos_alpha_internal.h"
+oyTESTRESULT_e testCache()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  int verbose = 0;
+  char * text = oyAlphaPrint_( verbose );
+  if(text)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "Cache content: %s             ", text );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyAlphaPrint_( ) failed                               " );
+  }
+
+  const char * hash_texts[] = {
+    "A", "B", "AB", "ABC", "abc", "ABCDEF",
+    "org/freedesktop/openicc/foo/bar/long/item",
+    "org/freedesktop/openicc/foo/bar/sjsjsjsjsjsjsjsjsjsjsjsjsjsjsjsjsjsjsj------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------",
+    "///not/so/long", "//an/other/not/so/long"
+  };
+
+  int repeat = 20;
+  int count = 1000;
+  fprintf(zout, "%d:\n", count );
+  double clck = oyClock();
+  int i;
+  for(int j = 0; j < repeat; ++j)
+  for(i = 0; i < count; ++i)
+  {
+    char * hash_text = NULL;
+    oyStringAddPrintf_( &hash_text, 0,0,//oyAllocateFunc_, oyDeAllocateFunc_,
+                        "%s%d", hash_texts[6], i );
+    oyHash_s * hash = oyTestCacheListGetEntry_( hash_text );
+    oyHash_Release( &hash );
+    oyFree_m_(hash_text);
+  }
+  clck = oyClock() - clck;
+
+  if( i == count )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyCacheListGetEntry_(unique long entry) %s",
+                          oyProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyCacheListGetEntry_(unique long entry)  " );
+  }
+
+  oyTestCacheListClear_();
+  count = 100;
+  fprintf(zout, "%d:\n", count );
+  clck = oyClock();
+  for(int j = 0; j < repeat; ++j)
+  for(i = 0; i < count; ++i)
+  {
+    char * hash_text = NULL;
+    oyStringAddPrintf_( &hash_text, 0,0,//oyAllocateFunc_, oyDeAllocateFunc_,
+                        "%s%d", hash_texts[6], i );
+    oyHash_s * hash = oyTestCacheListGetEntry_( hash_text );
+    oyHash_Release( &hash );
+    oyFree_m_(hash_text);
+  }
+  clck = oyClock() - clck;
+
+  if( i == count )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyCacheListGetEntry_(unique long entry) %s",
+                          oyProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyCacheListGetEntry_(unique long entry)  " );
+  }
+
+
+  oyTestCacheListClear_();
+  count = 1000;
+  fprintf(zout, "%d:\n", count );
+  clck = oyClock();
+  for(int j = 0; j < repeat; ++j)
+  for(i = 0; i < count; ++i)
+  {
+    char * hash_text = NULL;
+    oyStringAddPrintf_( &hash_text, 0,0,//oyAllocateFunc_, oyDeAllocateFunc_,
+                        "%s%d", hash_texts[7], i );
+    oyHash_s * hash = oyTestCacheListGetEntry_( hash_text );
+    oyHash_Release( &hash );
+    oyFree_m_(hash_text);
+  }
+  clck = oyClock() - clck;
+
+  if( i == count )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyCacheListGetEntry_(unique vlong entry) %s",
+                          oyProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyCacheListGetEntry_(unique vlong entry)  " );
+  }
+
+  oyTestCacheListClear_();
+  count = 100;
+  fprintf(zout, "%d:\n", count );
+  clck = oyClock();
+  for(int j = 0; j < repeat; ++j)
+  for(i = 0; i < count; ++i)
+  {
+    char * hash_text = NULL;
+    oyStringAddPrintf_( &hash_text, 0,0,//oyAllocateFunc_, oyDeAllocateFunc_,
+                        "%s%d", hash_texts[7], i );
+    oyHash_s * hash = oyTestCacheListGetEntry_( hash_text );
+    oyHash_Release( &hash );
+    oyFree_m_(hash_text);
+  }
+  clck = oyClock() - clck;
+
+  if( i == count )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyCacheListGetEntry_(unique vlong entry) %s",
+                          oyProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyCacheListGetEntry_(unique vlong entry)  " );
+  }
+
+
+  oyTestCacheListClear_();
+  count = 1000;
+  fprintf(zout, "%d:\n", count );
+  clck = oyClock();
+  for(int j = 0; j < repeat; ++j)
+  for(i = 0; i < count; ++i)
+  {
+    char * hash_text = NULL;
+    oyStringAddPrintf_( &hash_text, 0,0,//oyAllocateFunc_, oyDeAllocateFunc_,
+                        "%s%d", hash_texts[3], i );
+    oyHash_s * hash = oyTestCacheListGetEntry_( hash_text );
+    oyHash_Release( &hash );
+    oyFree_m_(hash_text);
+  }
+  clck = oyClock() - clck;
+
+  if( i == count )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyCacheListGetEntry_(unique short entry) %s",
+                          oyProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyCacheListGetEntry_(unique short entry) " );
+  }
+
+  oyTestCacheListClear_();
+  count = 100;
+  fprintf(zout, "%d:\n", count );
+  clck = oyClock();
+  for(int j = 0; j < repeat; ++j)
+  for(i = 0; i < count; ++i)
+  {
+    char * hash_text = NULL;
+    oyStringAddPrintf_( &hash_text, 0,0,//oyAllocateFunc_, oyDeAllocateFunc_,
+                        "%s%d", hash_texts[3], i );
+    oyHash_s * hash = oyTestCacheListGetEntry_( hash_text );
+    oyHash_Release( &hash );
+    oyFree_m_(hash_text);
+  }
+  clck = oyClock() - clck;
+
+  if( i == count )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyCacheListGetEntry_(unique short entry) %s",
+                          oyProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyCacheListGetEntry_(unique short entry) " );
+  }
+
+
+  return result;
+}
+
 
 oyTESTRESULT_e testConfDomain ()
 {
@@ -4737,6 +4927,7 @@ int main(int argc, char** argv)
   TEST_RUN( testImagePixel, "CMM Image Pixel run" );
   TEST_RUN( testConversion, "CMM selection" );
   TEST_RUN( testCMMlists, "CMMs listing" );
+  TEST_RUN( testCache, "Cache" );
 
   /* give a summary */
   if(!list)
