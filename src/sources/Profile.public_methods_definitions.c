@@ -1678,7 +1678,7 @@ OYAPI int OYEXPORT
 
   if(!error)
   {
-    tag = oyProfileTag_Create( list, signature, tt, OY_MODULE_NICK, 0);
+    tag = oyProfileTag_Create( list, signature, tt, 0, 0);
     error = !tag;
   }
 

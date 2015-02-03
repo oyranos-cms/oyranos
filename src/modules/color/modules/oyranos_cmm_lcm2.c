@@ -1963,7 +1963,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
           oyStructList_MoveIn( list, (oyStruct_s**) &p, -1, 0 );
         }
         psid = oyProfileTag_Create( list, icSigProfileSequenceIdentifierTag,
-                     icSigProfileSequenceIdentifierType, OY_MODULE_NICK, 0 );
+                                 icSigProfileSequenceIdentifierType, 0, 0 );
         if(psid)
           error = oyProfile_TagMoveIn ( prof, &psid, -1 );
 
@@ -1992,7 +1992,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
         if(!error)
         {
           info = oyProfileTag_Create( list, (icTagSignature)oyValueUInt32(*hi),
-                                      icSigTextType, OY_MODULE_NICK, 0);
+                                      icSigTextType, 0, 0);
           error = !info;
         }
 
@@ -2020,7 +2020,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
         if(!error)
         {
           cprt = oyProfileTag_Create( list, icSigCopyrightTag,
-                                      icSigTextType, OY_MODULE_NICK, 0);
+                                      icSigTextType, 0, 0);
           error = !cprt;
         }
 
