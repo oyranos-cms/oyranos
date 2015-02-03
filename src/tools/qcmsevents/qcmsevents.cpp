@@ -204,7 +204,7 @@ void * fromMD5                       ( const void        * md5_hash,
                                        void              *(allocate_func)(size_t) )
 {
   void * data = 0;
-  oyProfile_s * p = oyProfile_FromMD5( (uint32_t*)md5_hash, 0 );
+  oyProfile_s * p = oyProfile_FromMD5( (uint32_t*)md5_hash, 0, 0 );
   data = oyProfile_GetMem( p, size, 0, allocate_func );
   oyProfile_Release( &p );
   return data;

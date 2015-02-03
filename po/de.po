@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2015-01-29 11:49+0100\n"
+"POT-Creation-Date: 2015-02-03 16:57+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <ku.b@gmx.de>\n"
@@ -598,7 +598,7 @@ msgstr "Kamera Rohdaten"
 msgid "Can not read hardware information from device."
 msgstr "Kann Geräteinformation nicht auslesen."
 
-#: API_generated/oyProfile_s.c:746
+#: API_generated/oyProfile_s.c:755
 msgid "Can not write profile"
 msgstr "Kann Profildatei nicht schreiben"
 
@@ -940,7 +940,7 @@ msgstr "Konnte Meta Schnittstelle nicht öffnen"
 msgid "Could not open or invalid data: "
 msgstr "Konnte nicht öffnen oder ungültige Daten: "
 
-#: API_generated/oyranos_devices.c:1006 API_generated/oyProfile_s.c:757
+#: API_generated/oyranos_devices.c:1006 API_generated/oyProfile_s.c:766
 #: liboyranos_core/oyranos_io_core.c:100 liboyranos_core/oyranos_io_core.c:245
 msgid "Could not open profile"
 msgstr "Konnte Profil nicht laden"
@@ -1538,7 +1538,7 @@ msgstr "ICC Dateiattribute"
 msgid "ICC profile"
 msgstr "ICC Profil"
 
-#: API_generated/oyProfile_s_.c:703
+#: API_generated/oyProfile_s_.c:702
 msgid "ICC profile id written"
 msgstr "ICC Profil ID geschrieben"
 
@@ -2166,7 +2166,7 @@ msgstr "Benötige ein ICC Profil zum Verändern."
 msgid "No"
 msgstr "Nein"
 
-#: API_generated/oyProfile_s_.c:691
+#: API_generated/oyProfile_s_.c:690
 msgid "No ICC profile id detected"
 msgstr "kein ICC Profil ID gefunden"
 
@@ -2573,12 +2573,12 @@ msgstr "Profilinformation"
 msgid "Profile Tags"
 msgstr "Profilbausteine"
 
-#: API_generated/oyProfile_s.c:711 API_generated/oyProfile_s.c:717
+#: API_generated/oyProfile_s.c:720 API_generated/oyProfile_s.c:726
 #: tools/oyranos_profiles.c:504
 msgid "Profile already installed"
 msgstr "Profil ist bereits installiert"
 
-#: API_generated/oyProfile_s.c:698
+#: API_generated/oyProfile_s.c:707
 msgid "Profile contains no description"
 msgstr "Profilbeschreibung vermisst"
 
@@ -2591,7 +2591,7 @@ msgstr "Profilbeschreibung"
 msgid "Profile description, multilingual"
 msgstr "Profilbeschreibung mehrsprachig"
 
-#: API_generated/oyProfile_s.c:733 tools/oyranos_profile_tool.c:346
+#: API_generated/oyProfile_s.c:742 tools/oyranos_profile_tool.c:346
 msgid "Profile exists already"
 msgstr "Profil ist bereits installiert"
 
@@ -3687,7 +3687,7 @@ msgstr "Filterobjekt zum Schreiben eines PPM Bildes"
 msgid "Write to ICC profile:"
 msgstr "Schreibe ICC Profil:"
 
-#: API_generated/oyProfile_s_.c:681
+#: API_generated/oyProfile_s_.c:680
 msgid "Wrong ICC profile id detected"
 msgstr "Fehler in ICC Profil ID gefunden!"
 

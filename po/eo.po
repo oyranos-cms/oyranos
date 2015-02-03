@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2015-01-29 11:49+0100\n"
+"POT-Creation-Date: 2015-02-03 16:57+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -609,7 +609,7 @@ msgstr ""
 msgid "Can not read hardware information from device."
 msgstr ""
 
-#: API_generated/oyProfile_s.c:746
+#: API_generated/oyProfile_s.c:755
 msgid "Can not write profile"
 msgstr ""
 
@@ -930,7 +930,7 @@ msgstr ""
 msgid "Could not open or invalid data: "
 msgstr ""
 
-#: API_generated/oyranos_devices.c:1006 API_generated/oyProfile_s.c:757
+#: API_generated/oyranos_devices.c:1006 API_generated/oyProfile_s.c:766
 #: liboyranos_core/oyranos_io_core.c:100 liboyranos_core/oyranos_io_core.c:245
 msgid "Could not open profile"
 msgstr ""
@@ -1523,7 +1523,7 @@ msgstr ""
 msgid "ICC profile"
 msgstr ""
 
-#: API_generated/oyProfile_s_.c:703
+#: API_generated/oyProfile_s_.c:702
 msgid "ICC profile id written"
 msgstr ""
 
@@ -2133,7 +2133,7 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: API_generated/oyProfile_s_.c:691
+#: API_generated/oyProfile_s_.c:690
 msgid "No ICC profile id detected"
 msgstr ""
 
@@ -2529,12 +2529,12 @@ msgstr "kolora"
 msgid "Profile Tags"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:711 API_generated/oyProfile_s.c:717
+#: API_generated/oyProfile_s.c:720 API_generated/oyProfile_s.c:726
 #: tools/oyranos_profiles.c:504
 msgid "Profile already installed"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:698
+#: API_generated/oyProfile_s.c:707
 msgid "Profile contains no description"
 msgstr ""
 
@@ -2547,7 +2547,7 @@ msgstr ""
 msgid "Profile description, multilingual"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:733 tools/oyranos_profile_tool.c:346
+#: API_generated/oyProfile_s.c:742 tools/oyranos_profile_tool.c:346
 msgid "Profile exists already"
 msgstr ""
 
@@ -3464,7 +3464,7 @@ msgstr ""
 msgid "Write to ICC profile:"
 msgstr ""
 
-#: API_generated/oyProfile_s_.c:681
+#: API_generated/oyProfile_s_.c:680
 msgid "Wrong ICC profile id detected"
 msgstr ""
 

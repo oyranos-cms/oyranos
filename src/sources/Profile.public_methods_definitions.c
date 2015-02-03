@@ -189,7 +189,7 @@ oyProfile_FromName            ( const char      * name,
   if(!s && name && strlen(name) == 32)
   {
     sscanf(name, "%08x%08x%08x%08x", &md5[0],&md5[1],&md5[2],&md5[3] );
-    s = oyProfile_FromMD5( md5, object );
+    s = oyProfile_FromMD5( md5, flags, object );
   }
 
   /* try wildcard */
@@ -299,7 +299,7 @@ oyProfile_FromFile            ( const char      * name,
   if(fn) oyFree_m_(fn);
 
   if(flags & OY_COMPUTE)
-    oyProfile_GetHash_( s, OY_COMPUTE );
+    oyProfile_GetHash_( s, flags );
 
   oyProfile_GetID( (oyProfile_s*)s );
 
@@ -379,15 +379,24 @@ OYAPI oyProfile_s * OYEXPORT
  *  @brief    Look up a profile from it's md5 hash sum
  *
  *  @param[in]    md5            hash sum
+ *  @param[in]    flags          flags are OY_NO_CACHE_READ, OY_NO_CACHE_WRITE, OY_COMPUTE
+ *  - ::OY_NO_CACHE_READ and ::OY_NO_CACHE_WRITE to disable cache
+ *  reading and writing. The cache flags are useful for one time profiles or
+ *  scanning large numbers of profiles.
+ *  - ::OY_COMPUTE lets newly compute ID
+ *  - ::OY_ICC_VERSION_2 and ::OY_ICC_VERSION_4 let select version 2 and 4 profiles separately.
+ *  - ::OY_NO_REPAIR skip automatic adding a ID hash if missed, useful for pure analysis
+ *  - ::OY_SKIP_NON_DEFAULT_PATH ignore profiles outside of default paths
  *  @param[in]    object         the optional base
  *  @return                      a profile
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/01/03
  *  @since   2009/03/20 (Oyranos: 0.1.10)
- *  @date    2009/03/20
  */
 OYAPI oyProfile_s * OYEXPORT oyProfile_FromMD5(
                                        uint32_t          * md5,
+                                       uint32_t            flags,
                                        oyObject_s          object )
 {
   oyProfile_s * s = 0, * tmp = 0;
@@ -409,7 +418,7 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromMD5(
       {
         if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
           /* ICC ID's are not relyable so we recompute it here */
-          tmp = oyProfile_FromFile( names[i], OY_COMPUTE, 0 );
+          tmp = oyProfile_FromFile( names[i], flags, 0 );
 
         if(tmp->oy_->hash_ptr_)
           equal = memcmp( md5, tmp->oy_->hash_ptr_, OY_HASH_SIZE );
@@ -1350,7 +1359,7 @@ OYAPI oyPointer OYEXPORT
     }
 
     /* get actual ICC profile ID */
-    oyProfile_GetMD5( profile, OY_COMPUTE, md5 );
+    oyProfile_GetMD5( profile, flag, md5 );
 
     /* Write ICC profile ID into memory */
     for(i = 0; i < 4; ++i)
@@ -1788,7 +1797,7 @@ OYAPI const char * OYEXPORT oyProfile_GetFileName (
       {
         uint32_t md5[4];
         sscanf(hash, "%08x%08x%08x%08x", &md5[0],&md5[1],&md5[2],&md5[3] );
-        tmp = oyProfile_FromMD5( md5, NULL );
+        tmp = oyProfile_FromMD5( md5, 0, NULL );
         name = oyStringCopy_( oyProfile_GetFileName(tmp, -1), s->oy_->allocateFunc_ );
         oyProfile_Release( &tmp );
       }
@@ -1972,10 +1981,13 @@ int                oyProfile_GetMD5  ( oyProfile_s       * profile,
 
   oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
 
+  if(s->tags_modified_)
+    flags |= OY_COMPUTE;
+
   if(!oyProfile_Hashed_(s) ||
      flags & OY_COMPUTE ||
      s->tags_modified_)
-    error = oyProfile_GetHash_( s, OY_COMPUTE );
+    error = oyProfile_GetHash_( s, flags );
 
   if(oyProfile_Hashed_(s))
   {

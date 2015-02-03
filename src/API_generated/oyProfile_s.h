@@ -138,6 +138,7 @@ OYAPI oyProfile_s * OYEXPORT
                                        oyObject_s          object );
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromMD5(  uint32_t          * md5,
+                                       uint32_t            flags,
                                        oyObject_s          object );
 OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromTaxiDB (
