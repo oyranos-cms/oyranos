@@ -62,7 +62,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("List available ICC profiles:"));
-  fprintf( stderr, "      %s -l [-f] [-e] [-acdknoi] [-24] [--duplicates] \n",        argv[0]);
+  fprintf( stderr, "      %s -l [-f] [-e] [-acdknoi] [-24] [--duplicates|--no-repair] \n",        argv[0]);
   fprintf( stderr, "      -f  %s\n",       _("full path and file name"));
   fprintf( stderr, "      -e  %s\n",       _("internal name"));
   fprintf( stderr, "      -a  %s\n",       _("abstract class"));
@@ -75,6 +75,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -2  %s\n",       _("select ICC v2 profiles"));
   fprintf( stderr, "      -4  %s\n",       _("select ICC v4 profiles"));
   fprintf( stderr, "      --duplicates  %s\n",_("show profiles with duplicate profile ID"));
+  fprintf( stderr, "      --no-repair   %s\n",_("skip repair of profile ID"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("List search paths:"));
   fprintf( stderr, "      %s -p [-usym]\n",        argv[0]);
@@ -213,6 +214,10 @@ int main( int argc , char** argv )
                         }
                         else if(OY_IS_ARG("taxi"))
                         { OY_PARSE_STRING_ARG2(taxi_id, "taxi"); break; }
+                        else if(OY_IS_ARG("no-repair"))
+                        { flags |= OY_NO_REPAIR;
+                          i=100; break;
+                        }
                         else if(OY_IS_ARG("duplicates"))
                         { flags |= OY_ALLOW_DUPLICATES; i=100; break; }
 
