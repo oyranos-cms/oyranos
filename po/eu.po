@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2015-02-03 16:57+0100\n"
+"POT-Creation-Date: 2015-02-03 18:36+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -269,7 +269,7 @@ msgid ""
 "speed or resource overhead."
 msgstr ""
 
-#: tools/oyranos_profiles.c:191
+#: tools/oyranos_profiles.c:192
 msgid "A single path option is required"
 msgstr ""
 
@@ -955,7 +955,7 @@ msgstr "Ezin izan da letra-tipoa ireki:"
 msgid "Could not open meta module API"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: tools/oyranos_profiles.c:466
+#: tools/oyranos_profiles.c:471
 #, fuzzy
 msgid "Could not open or invalid data: "
 msgstr "Ezin izan da letra-tipoa ireki:"
@@ -966,7 +966,7 @@ msgstr "Ezin izan da letra-tipoa ireki:"
 msgid "Could not open profile"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: tools/oyranos_profiles.c:429
+#: tools/oyranos_profiles.c:434
 #, fuzzy
 msgid "Could not open: "
 msgstr "Ezin izan da letra-tipoa ireki:"
@@ -1324,7 +1324,7 @@ msgid "Error setting up atom"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:122 tools/oyranos_convert.c:107
-#: tools/oyranos_profiles.c:103 examples/libraw/oyranos_file.cpp:70
+#: tools/oyranos_profiles.c:104 examples/libraw/oyranos_file.cpp:70
 msgid "Example"
 msgstr ""
 
@@ -1374,7 +1374,7 @@ msgstr ""
 msgid "File exists"
 msgstr "Fitxategi-sistema"
 
-#: tools/oyranos_profiles.c:204
+#: tools/oyranos_profiles.c:205
 #, fuzzy
 msgid "File name is missed"
 msgstr "Fitxategi-sistema"
@@ -1446,7 +1446,7 @@ msgstr "Kolore-gamaren abisua"
 
 #: tools/oyranos_gamma.c:221 tools/oyranos_profile_graph.c:130
 #: tools/oyranos_profile_tool.c:113 tools/oyranos_convert.c:102
-#: tools/oyranos_profiles.c:100 examples/devices/test_device.c:80
+#: tools/oyranos_profiles.c:101 examples/devices/test_device.c:80
 #: examples/libraw/oyranos_file.cpp:65
 #, fuzzy
 msgid "General options:"
@@ -1592,17 +1592,17 @@ msgstr "Aukeratu atribututa"
 msgid "ICC profile"
 msgstr "Zein ICC profila?"
 
-#: API_generated/oyProfile_s_.c:702
+#: API_generated/oyProfile_s_.c:705
 #, fuzzy
 msgid "ICC profile id written"
 msgstr "ICC profilaren goiburua"
 
-#: tools/oyranos_profiles.c:398
+#: tools/oyranos_profiles.c:403
 #, fuzzy
 msgid "ICC profile search paths"
 msgstr "ICC profilaren goiburua"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:490 tools/oyranos_profiles.c:288
+#: modules/color/modules/oyranos_cmm_oicc.c:490 tools/oyranos_profiles.c:293
 #, fuzzy
 msgid "ICC profiles"
 msgstr "Zein ICC profila?"
@@ -1639,7 +1639,7 @@ msgstr ""
 #: tools/oyranos_convert.c:73 tools/oyranos_convert.c:74
 #: tools/oyranos_convert.c:75 tools/oyranos_convert.c:76
 #: tools/oyranos_convert.c:82 tools/oyranos_convert.c:91
-#: tools/oyranos_convert.c:92 tools/oyranos_profiles.c:87
+#: tools/oyranos_convert.c:92 tools/oyranos_profiles.c:88
 #: examples/libraw/oyranos_file.cpp:59 examples/libraw/oyranos_file.cpp:60
 msgid "ICC_FILE_NAME"
 msgstr ""
@@ -1806,7 +1806,7 @@ msgstr ""
 msgid "Input libraw Image Filter Object"
 msgstr ""
 
-#: tools/oyranos_profiles.c:86
+#: tools/oyranos_profiles.c:87
 #, fuzzy
 msgid "Install ICC profile:"
 msgstr "Zein ICC profila?"
@@ -1831,7 +1831,7 @@ msgstr "Zein ICC profila?"
 msgid "Intent"
 msgstr "Helburua:"
 
-#: tools/oyranos_profiles.c:538
+#: tools/oyranos_profiles.c:543
 msgid "Internal Error"
 msgstr ""
 
@@ -1892,7 +1892,7 @@ msgstr ""
 msgid "List modules:"
 msgstr "Oyranos-en ezarpenak"
 
-#: tools/oyranos_profiles.c:79 tools/oyranos_policy.c:64
+#: tools/oyranos_profiles.c:80 tools/oyranos_policy.c:64
 #, fuzzy
 msgid "List search paths:"
 msgstr "ICC profilaren goiburua"
@@ -2461,7 +2461,7 @@ msgstr ""
 msgid "Passive matrix monitor"
 msgstr "Matrize pasibozko monitorea"
 
-#: tools/oyranos_profiles.c:516
+#: tools/oyranos_profiles.c:521
 #, fuzzy
 msgid "Path can not be written"
 msgstr "Profila ez da idatzi."
@@ -2610,7 +2610,7 @@ msgid "Preview, saturated"
 msgstr "Aurrebista, saturatua"
 
 #: tools/oyranos_profile_tool.c:110 tools/oyranos_convert.c:99
-#: tools/oyranos_profiles.c:97 tools/oyranos_policy.c:68
+#: tools/oyranos_profiles.c:98 tools/oyranos_policy.c:68
 msgid "Print a help text:"
 msgstr ""
 
@@ -2663,7 +2663,7 @@ msgid "Profile Tags"
 msgstr "Fitxategi-izena"
 
 #: API_generated/oyProfile_s.c:720 API_generated/oyProfile_s.c:726
-#: tools/oyranos_profiles.c:504
+#: tools/oyranos_profiles.c:509
 msgid "Profile already installed"
 msgstr ""
 
@@ -2687,7 +2687,7 @@ msgstr "Profilaren azalpena, hizkuntza anitzetan"
 msgid "Profile exists already"
 msgstr "Profila kapsulatuta dago eta "
 
-#: tools/oyranos_profiles.c:528
+#: tools/oyranos_profiles.c:533
 #, fuzzy
 msgid "Profile not useable"
 msgstr "Profila-kolorea"
@@ -3641,7 +3641,7 @@ msgstr ""
 msgid "Write to ICC profile:"
 msgstr "Zein ICC profila?"
 
-#: API_generated/oyProfile_s_.c:680
+#: API_generated/oyProfile_s_.c:682
 #, fuzzy
 msgid "Wrong ICC profile id detected"
 msgstr "Errorea aurkitu da ICC profilako etiketan."
@@ -3777,7 +3777,7 @@ msgstr "Profila-kolorea"
 msgid "display class"
 msgstr "Pantaila"
 
-#: tools/oyranos_profiles.c:95
+#: tools/oyranos_profiles.c:96
 msgid "download ID from Taxi data base"
 msgstr ""
 
@@ -4009,7 +4009,7 @@ msgstr ""
 msgid "libraw input filter"
 msgstr ""
 
-#: tools/oyranos_profiles.c:82
+#: tools/oyranos_profiles.c:83
 msgid "linux system path"
 msgstr ""
 
@@ -4032,7 +4032,7 @@ msgid ""
 "Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project"
 msgstr ""
 
-#: tools/oyranos_profiles.c:84 tools/oyranos_profiles.c:93
+#: tools/oyranos_profiles.c:85 tools/oyranos_profiles.c:94
 msgid "machine specific path"
 msgstr ""
 
@@ -4142,7 +4142,7 @@ msgstr "huts egin du X pantaila irekitzean"
 msgid "output class"
 msgstr "Abstraktua"
 
-#: tools/oyranos_profiles.c:83 tools/oyranos_profiles.c:92
+#: tools/oyranos_profiles.c:84 tools/oyranos_profiles.c:93
 msgid "oyranos install path"
 msgstr ""
 
@@ -4287,7 +4287,7 @@ msgstr ""
 msgid "show as well non matching profiles"
 msgstr "Irudiaren profila..."
 
-#: tools/oyranos_profiles.c:94
+#: tools/oyranos_profiles.c:95
 msgid "show hints and question GUI"
 msgstr ""
 
@@ -4297,6 +4297,10 @@ msgstr ""
 
 #: examples/devices/test_device.c:85
 msgid "skip X Color Management device profile"
+msgstr ""
+
+#: tools/oyranos_profiles.c:78
+msgid "skip repair of profile ID"
 msgstr ""
 
 #: tools/oyranos_profile_graph.c:110
@@ -4315,7 +4319,7 @@ msgstr ""
 msgid "specify output image width in pixel"
 msgstr ""
 
-#: tools/oyranos_profiles.c:91
+#: tools/oyranos_profiles.c:92
 msgid "system path"
 msgstr ""
 
@@ -4355,7 +4359,7 @@ msgstr ""
 msgid "use device class"
 msgstr "Gailuaren koloreak"
 
-#: tools/oyranos_profiles.c:89
+#: tools/oyranos_profiles.c:90
 #, fuzzy
 msgid "use device sub path"
 msgstr "Gailuaren koloreak"
@@ -4369,12 +4373,12 @@ msgstr "Fitxategi-izena"
 msgid "use only DB keys for -f=openicc"
 msgstr ""
 
-#: tools/oyranos_profiles.c:81 tools/oyranos_profiles.c:90
+#: tools/oyranos_profiles.c:82 tools/oyranos_profiles.c:91
 msgid "user path"
 msgstr ""
 
 #: tools/oyranos_profile_graph.c:131 tools/oyranos_profile_tool.c:117
-#: tools/oyranos_convert.c:103 tools/oyranos_profiles.c:101
+#: tools/oyranos_convert.c:103 tools/oyranos_profiles.c:102
 #: examples/devices/test_device.c:81 examples/libraw/oyranos_file.cpp:68
 msgid "verbose"
 msgstr ""
@@ -4419,7 +4423,7 @@ msgstr "Ezin izan da letra-tipoa ireki:"
 
 #: API_generated/oyOptions_s.c:1282 tools/oyranos_gamma.c:240
 #: tools/oyranos_profile_graph.c:261 tools/oyranos_profile_tool.c:227
-#: tools/oyranos_convert.c:264 tools/oyranos_profiles.c:233
+#: tools/oyranos_convert.c:264 tools/oyranos_profiles.c:238
 #: tools/oyranos_policy.c:137 examples/devices/test_device.c:225
 #: examples/libraw/oyranos_file.cpp:235
 msgid "wrong argument to option:"

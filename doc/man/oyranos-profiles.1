@@ -1,8 +1,8 @@
-.TH oyranos-profiles 1 "September 12, 2014" "User Commands"
+.TH oyranos-profiles 1 "January 03, 2015" "User Commands"
 .SH NAME
 oyranos-profiles \- Oyranos CMS ICC profiles tool
 .SH SYNOPSIS
-\fBoyranos-profiles\fR -l [-f] [-e] [-acdknot]
+\fBoyranos-profiles\fR -l [-f] [-e] [-acdknoi] [-24] [--duplicates|--no-repair]
 .fi
 \fBoyranos-profiles\fR -p [-usym]
 .fi
@@ -20,9 +20,16 @@ list installed profiles.
 .sp
 .br
 \fB-f\fR show full filename including path.
-.sp
 .br
 \fB-e\fR show internal name. The text string comes from the 'desc' tag.
+.br
+\fB--duplicates\fR show profiles with duplicate profile ID
+.br
+\fB--no-repair\fR skip repair of profile ID
+.br
+\fB-2\fR select ICC v2 profiles
+.br
+\fB-4\fR select ICC v4 profiles
 .sp
 Following options are filters and can be added to each other.
 .br
@@ -42,16 +49,12 @@ Following options are filters and can be added to each other.
 .TP
 \fB\-p\fR
 show search paths according to the OS color management system and to the actual OpenICC profile search paths.
-.sp
 .br
 \fB-u\fR user path
-.sp
 .br
 \fB-s\fR Linux system path
-.sp
 .br
 \fB-y\fR Oyranos path
-.sp
 .br
 \fB-m\fR machine specific path
 .TP
@@ -61,23 +64,18 @@ install a ICC profile into one of the following OpenICC paths.
 One of the following options is a required arument to the \fB--install\fR option.
 .br
 \fB-u\fR user path
-.sp
 .br
 \fB-s\fR Linux system path
-.sp
 .br
 \fB-y\fR Oyranos path
-.sp
 .br
 \fB-m\fR machine specific path
 .sp
 The following options must be specified before the \fB--install\fR option.
 .br
 \fB\-\-gui\fR use a graphical X user interface for error messages
-.sp
 .br
 \fB\-\-taxi\fR \fITAXI_ID\fR Taxi profile ID to download
-.sp
 .br
 \fB-d\fR use device sub path
 .sp
@@ -119,7 +117,7 @@ Install a profile for the actual user and show error messages in a GUI:
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH COPYRIGHT
-(c) 2010-2014, Kai-Uwe Behrmann and others
+(c) 2010-2015, Kai-Uwe Behrmann and others
 .fi
 License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
 .SH "SEE ALSO"
