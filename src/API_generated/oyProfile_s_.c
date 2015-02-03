@@ -543,7 +543,7 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
    */
 
   if(error <= 0)
-    error = oyProfile_GetHash_( s, 0 );
+    error = oyProfile_GetHash_( s, flags );
 
   if(error != 0)
   {
@@ -568,7 +568,6 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
   if(error <= 0)
   {
     s->names_chan_ = 0;
-    s->channels_n_ = 0;
     s->channels_n_ = oyProfile_GetChannelsCount( (oyProfile_s*)s );
     error = (s->channels_n_ <= 0);
   }
@@ -667,40 +666,43 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
 
   if(error <= 0)
   {
-    s = oyProfile_FromMemMove_( size, &block, 0, &error, object );
+    int repair = 0;
+    const char * t = file_name;
+    uint32_t md5[4];
+
+    s = oyProfile_FromMemMove_( size, &block, flags, &error, object );
 
     if(!s)
       error = 1;
 
     if(error < -1)
     {
-      const char * t = file_name;
       oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
                        OY_DBG_FORMAT_"\n\t%s: \"%s\"", OY_DBG_ARGS_,
                 _("Wrong ICC profile id detected"), t?t:OY_PROFILE_NONE );
+      repair = 1;
     } else
     if(error == -1)
     {
-      const char * t = file_name;
-      uint32_t md5[4];
-
       if(oy_debug == 1)
         oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
                        OY_DBG_FORMAT_"\n\t%s: \"%s\"", OY_DBG_ARGS_,
                 _("No ICC profile id detected"), t?t:OY_PROFILE_NONE );
+      repair = 1;
 
-      /* set ICC profile ID */
-      if(!(flags & OY_NO_REPAIR))
+    }
+
+    /* set ICC profile ID */
+    if(repair && !(flags & OY_NO_REPAIR))
+    {
+      error = oyProfile_GetMD5( (oyProfile_s*)s, OY_COMPUTE, md5 );
+      if(oyIsFileFull_( file_name, "wb" ))
       {
-        error = oyProfile_GetMD5( (oyProfile_s*)s, OY_COMPUTE, md5 );
-        if(oyIsFileFull_( file_name, "wb" ))
-        {
-          error = oyProfile_ToFile_( s, file_name );
-          if(!error)
-            oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
+        error = oyProfile_ToFile_( s, file_name );
+        if(!error)
+          oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
                        OY_DBG_FORMAT_"\n\t%s: \"%s\"", OY_DBG_ARGS_,
                 _("ICC profile id written"), t?t:OY_PROFILE_NONE );
-        }
       }
     }
 
@@ -810,7 +812,7 @@ oyPointer    oyProfile_TagsToMem_    ( oyProfile_s_      * profile,
 }
 
 /** @internal
- *  Function  oyProfile_FromMemMove_
+ *  Function  oyProfile_ToFile_
  *  @brief    Save from in memory profile to file
  *  @memberof oyProfile_s
  *
