@@ -427,8 +427,7 @@ int oyProfile_HasID_          ( oyProfile_s_      * s )
   if(s->block_ && s->size_ >= 132 )
   {
     char * data = s->block_;
-    uint32_t id[4];
-    memcpy( id, &data[84], 16 );
+    uint32_t * id = (uint32_t*)&data[84];
 
     if(id[0] || id[1] || id[2] || id[3])
       has_id = 1;
