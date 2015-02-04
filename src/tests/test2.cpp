@@ -4284,6 +4284,25 @@ oyTESTRESULT_e testConversion()
   oyConversion_s * cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
   oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
   oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+  oyOptions_s * node_opts = oyFilterNode_GetOptions( icc, 0 );
+  oyOption_s * ct = oyOptions_Find( node_opts, "////context" );
+  oyOptions_Release( &node_opts );
+  if(!ct)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyOptions_Find( node_opts, \"////context\" )    " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_Find( node_opts, \"////context\" )    " );
+  }
+  if(oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "\"////context\" is not touched oyOPTIONATTRIBUTE_EDIT" );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "\"////context\" is not touched oyOPTIONATTRIBUTE_EDIT" );
+  }
+  oyOption_Release( &ct );
+
   oyBlob_s * blob = oyFilterNode_ToBlob( icc, NULL );
   if(blob)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
