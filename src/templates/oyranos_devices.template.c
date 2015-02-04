@@ -2156,6 +2156,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
     {
       o = oyOptions_Get( s, i );
       oyOption_SetSource( o, oyOPTIONSOURCE_FILTER );
+      oyOption_SetFlags(o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
       oyOption_Release( &o );
     }
 
