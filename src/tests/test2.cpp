@@ -4295,7 +4295,7 @@ oyTESTRESULT_e testConversion()
     "oyOptions_Find( node_opts, \"////context\" )    " );
   }
   if(ct) {
-  if(oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT)
+  if((oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) == 0)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "\"////context\" is not touched oyOPTIONATTRIBUTE_EDIT" );
   } else
@@ -4325,7 +4325,7 @@ oyTESTRESULT_e testConversion()
     "oyOptions_Find( node_opts, \"////context\" )    " );
   }
   if(ct) {
-  if(oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT)
+  if((oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) == 0)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "\"////context\" is not touched oyOPTIONATTRIBUTE_EDIT" );
   } else
