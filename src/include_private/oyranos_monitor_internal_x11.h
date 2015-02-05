@@ -30,6 +30,12 @@
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
 # include <X11/Xcm/XcmEdidParse.h>
+#if defined(HAVE_XCM)
+# include <X11/Xcm/Xcm.h>
+# if defined(XCM_HAVE_X11)
+#  include <X11/Xcm/XcmEvents.h>
+# endif
+#endif
 #if defined(HAVE_XRANDR)
 # include <X11/extensions/Xrandr.h>
 #endif
