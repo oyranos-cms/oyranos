@@ -249,6 +249,9 @@ int main(int argc, char *argv[])
     else
       error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                      "list", OY_CREATE_NEW );
+    error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    flags, 0, OY_CREATE_NEW );
 
     if(device_name)
       error = oyDeviceGet( OY_TYPE_STD, device_class, device_name, options, &c );
@@ -323,6 +326,9 @@ int main(int argc, char *argv[])
       error = oyOptions_SetFromText( &options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes",
                                      OY_CREATE_NEW );
+    error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    flags, 0, OY_CREATE_NEW );
     n = oyConfigs_Count( devices );
     if(error <= 0)
     {
@@ -502,7 +508,11 @@ int main(int argc, char *argv[])
     oyProfile_s * profile = 0;
     const char * tmp = 0;
 
-    error = oyDeviceAskProfile2( c, 0, &profile );
+    error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    flags, 0, OY_CREATE_NEW );
+    error = oyDeviceAskProfile2( c, options, &profile );
+    oyOptions_Release( &options );
 
     if(profile)
       tmp = oyProfile_GetFileName( profile, -1 );
@@ -526,6 +536,9 @@ int main(int argc, char *argv[])
                          "yes", OY_CREATE_NEW );
           error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                    "properties", OY_CREATE_NEW );  
+          error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    flags, 0, OY_CREATE_NEW );
           error = oyDeviceGet( 0, device_class, device_name, options, &dt );
           if(dt)
           {
@@ -548,6 +561,9 @@ int main(int argc, char *argv[])
                          "yes", OY_CREATE_NEW );
           error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                    "properties", OY_CREATE_NEW );  
+          error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    flags, 0, OY_CREATE_NEW );
           error = oyDeviceGet( 0, device_class, device_name, options, &dt );
           if(dt)
           {
@@ -564,7 +580,10 @@ int main(int argc, char *argv[])
         error = oyDeviceUnset( c );
       }
 
-      error = oyDeviceSetup( c );
+      error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    flags, 0, OY_CREATE_NEW );
+      error = oyDeviceSetup( c, options );
     }
     else if(assign)
     {
@@ -576,7 +595,7 @@ int main(int argc, char *argv[])
       oyDeviceUnset( c );
 
     if(setup)
-      oyDeviceSetup( c );
+      oyDeviceSetup( c, options );
 
     if(erase)
       oyConfig_EraseFromDB( c );
@@ -617,6 +636,9 @@ int main(int argc, char *argv[])
                          "yes", OY_CREATE_NEW );
       error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );  
+      error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    flags, 0, OY_CREATE_NEW );
       error = oyDeviceGet( 0, device_class, device_name, options, &c );
       oyOptions_Release( &options );
     }
@@ -633,6 +655,9 @@ int main(int argc, char *argv[])
     oyOptions_SetFromText( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                          "yes", OY_CREATE_NEW );
+    error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    flags, 0, OY_CREATE_NEW );
 
     error = oyDeviceGetProfile( c, options, &profile );
 
@@ -743,6 +768,9 @@ int main(int argc, char *argv[])
     oyOptions_SetFromText( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                          "yes", OY_CREATE_NEW );
+    error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    flags, 0, OY_CREATE_NEW );
 
     {
       oyConfDomain_s * d = oyConfDomain_FromReg( device_class, 0 );
@@ -834,6 +862,9 @@ int main(int argc, char *argv[])
         oyOptions_SetFromText( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                          "yes", OY_CREATE_NEW );
+      error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    flags, 0, OY_CREATE_NEW );
       error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );  
       error = oyDeviceGet( 0, device_class, device_name, options, &dt );
@@ -987,6 +1018,9 @@ int main(int argc, char *argv[])
         oyOptions_SetFromText( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                          "yes", OY_CREATE_NEW );
+      error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    flags, 0, OY_CREATE_NEW );
       error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );  
       error = oyDeviceGet( 0, device_class, device_name, options, &dt );

@@ -971,7 +971,7 @@ int      oyActivateMonitorProfiles   ( const char        * display_name )
     for(i = 0; i < n; ++i)
     {
       device = oyConfigs_Get( devices, i );
-      oyDeviceSetup( device );
+      oyDeviceSetup( device, options );
       oyConfig_Release( &device );
     }
 

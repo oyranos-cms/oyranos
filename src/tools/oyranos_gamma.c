@@ -42,6 +42,7 @@
 #include "oyranos_icc.h"
 #include "oyranos_internal.h"
 #include "oyranos_config.h"
+#include "oyranos_conversion.h"
 #include "oyranos_version.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
@@ -107,6 +108,7 @@ int main( int argc , char** argv )
   char * data = 0;
   uint32_t n = 0;
   int i;
+  uint32_t icc_profile_flags;
 
   if(getenv(OY_DEBUG))
   {
@@ -137,6 +139,8 @@ int main( int argc , char** argv )
             for(i = 1; i < strlen(argv[pos]); ++i)
             switch (argv[pos][i])
             {
+              case '2': icc_profile_flags |= OY_ICC_VERSION_2; break;
+              case '4': icc_profile_flags |= OY_ICC_VERSION_4; break;
               case 'e': erase = 1; monitor_profile = 0; break;
               case 'c': x_color_region_target = 1; monitor_profile = 0; break;
               case 'd': server = 1; OY_PARSE_INT_ARG( device_pos ); break;
@@ -259,6 +263,12 @@ int main( int argc , char** argv )
   }
 #endif
 
+  /* implicite selection for the most common default case */
+  if(!icc_profile_flags)
+    icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
+                                  OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                                                 NULL, 0 );
+
   /* cut off the screen information */
   if(display_name &&
      (ptr = strchr(display_name,':')) != 0)
@@ -297,6 +307,9 @@ int main( int argc , char** argv )
         error = oyOptions_SetFromText( &options,
                                        "//"OY_TYPE_STD"/config/display_name",
                                        display_name, OY_CREATE_NEW );
+      error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    icc_profile_flags, 0, OY_CREATE_NEW );
 
       error = oyDevicesGet( 0, device_class, options, &devices );
 
@@ -449,6 +462,9 @@ int main( int argc , char** argv )
         error = oyOptions_SetFromText( &options,
                                        "//"OY_TYPE_STD"/config/display_name",
                                        display_name, OY_CREATE_NEW );
+      error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    icc_profile_flags, 0, OY_CREATE_NEW );
 
       error = oyDevicesGet( 0, device_class, options, &devices );
 
@@ -587,7 +603,7 @@ int main( int argc , char** argv )
       data = oyReadFileToMem_( edid_fn, &size, oyAllocateFunc_ );
       oyBlob_SetFromData( edid, data, size, "edid" );
       oyFree_m_(data);
-      prof = oyProfile_FromName( prof_name, OY_NO_CACHE_READ, 0 );
+      prof = oyProfile_FromName( prof_name, OY_NO_CACHE_READ | icc_profile_flags, 0 );
       device = 0;
       oyOptions_Release( &options );
       error = oyOptions_SetFromText( &options,
@@ -604,7 +620,7 @@ int main( int argc , char** argv )
       {
         /* We need a newly opened profile, otherwise we obtaine cached
            modifications. */
-        oyProfile_s * p = oyProfile_FromName( prof_name, OY_NO_CACHE_READ, 0 );
+        oyProfile_s * p = oyProfile_FromName( prof_name, OY_NO_CACHE_READ | icc_profile_flags, 0 );
         oyConfig_s * p_device = oyConfig_FromRegistration( 
                                        oyConfig_GetRegistration( device ), 0 );
         int32_t rank = 0;
@@ -788,7 +804,7 @@ int main( int argc , char** argv )
       {
         if(verbose)
           fprintf( stdout, "oyDeviceSetup()\n" );
-        oyDeviceSetup( device );
+        oyDeviceSetup( device, options );
       }
 
       oyConfig_Release( &device );
@@ -816,7 +832,7 @@ int main( int argc , char** argv )
           if(erase)
             oyConfig_EraseFromDB( device );
           if(setup)
-            oyDeviceSetup( device );
+            oyDeviceSetup( device, options );
 
           oyConfig_Release( &device );
         }
@@ -940,6 +956,9 @@ int            getDeviceProfile      ( Display           * display,
   const char * device_name = 0;
   char num[12];
   int error = 0, t_err = 0;
+  uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
+                                  OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                                                 NULL, 0 );
 
   snprintf( num, 12, "%d", (int)screen );
 
@@ -980,6 +999,9 @@ int            getDeviceProfile      ( Display           * display,
       oyOptions_SetFromText( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                                        "yes", OY_CREATE_NEW );*/
+      error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    icc_profile_flags, 0, OY_CREATE_NEW );
       t_err = oyDeviceGetProfile( device, options, &dst_profile );
       oyOptions_Release( &options );
     }
@@ -989,7 +1011,7 @@ int            getDeviceProfile      ( Display           * display,
       /* check that no sRGB is delivered */
       if(t_err)
       {
-        oyProfile_s * web = oyProfile_FromStd( oyASSUMED_WEB, 0, 0 );
+        oyProfile_s * web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
         if(oyProfile_Equal( web, dst_profile ))
         {
           oyMessageFunc_p( oyMSG_WARN, 0,
