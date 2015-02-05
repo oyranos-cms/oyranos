@@ -318,29 +318,33 @@ icProfileClassSignature oyDeviceSigGet(oyConfig_s        * device )
  *  @brief   activate the device using the stored configuration
  *
  *  @param[in]     device              the device
+ *  @param[in]     options             additional options
  *  @return                            error
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/02/04
  *  @since   2009/01/30 (Oyranos: 0.1.10)
- *  @date    2009/02/07
  */
 OYAPI int  OYEXPORT
-         oyDeviceSetup               ( oyConfig_s        * device )
+         oyDeviceSetup               ( oyConfig_s        * device,
+                                       oyOptions_s       * options )
 {
   int error = !device;
-  oyOptions_s * options = 0;
   oyProfile_s * p = 0;
   char * profile_name = 0,
        * profile_name_temp = 0;
   const char * device_name = 0;
   oyConfig_s * s = device;
   oyOption_s * o;
+  int32_t icc_profile_flags = 0;
+
+  oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags );
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
   {
     /* 1. ask for the profile the device is setup with */
-    error = oyDeviceAskProfile2( device, 0, &p );
+    error = oyDeviceAskProfile2( device, options, &p );
     if(p)
     {
       oyProfile_Release( &p );
@@ -366,7 +370,7 @@ OYAPI int  OYEXPORT
       oyProfiles_MoveIn( patterns, &profile, -1 );
 
       clck = oyClock();
-      iccs = oyProfiles_Create( patterns, 0, 0 );
+      iccs = oyProfiles_Create( patterns, icc_profile_flags, 0 );
       clck = oyClock() - clck;
       DBG_NUM1_S("oyProfiles_Create(): %g", clck/1000000.0 );
       oyProfiles_Release( &patterns );
@@ -413,13 +417,11 @@ OYAPI int  OYEXPORT
 
     if(!profile_name)
     {
-      oyOptions_s * fallback = oyOptions_New( 0 );
-      error = oyOptions_SetRegistrationTextKey_( oyOptionsPriv_m(fallback),
+      error = oyOptions_SetRegistrationTextKey_( oyOptionsPriv_m(options),
                                                  oyConfigPriv_m(device)->registration,
                                                  "icc_profile.fallback","true");
       /* 2.2.1 try fallback for rescue */
-      error = oyDeviceAskProfile2( device, fallback, &p );
-      oyOptions_Release( &fallback );
+      error = oyDeviceAskProfile2( device, options, &p );
       if(p)
       {
         profile_name = oyStringCopy_( oyProfile_GetFileName(p, -1),
@@ -478,7 +480,7 @@ OYAPI int  OYEXPORT
 #define OY_DOMAIN OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD
       o = oyOption_FromRegistration( OY_DOMAIN OY_SLASH "icc_profile", 0 );
 
-      p = oyProfile_FromFile( profile_name, 0,0 );
+      p = oyProfile_FromFile( profile_name, icc_profile_flags, 0 );
 
       if(p)
       {
@@ -503,7 +505,6 @@ OYAPI int  OYEXPORT
     if(profile_name_temp)
       oyRemoveFile_( profile_name_temp );
     profile_name_temp = 0;
-    oyOptions_Release( &options );
     if(profile_name)
       oyFree_m_( profile_name );
   }
@@ -802,7 +803,7 @@ OYAPI int  OYEXPORT
   /** This function does a device setup in case no profile is delivered
    *  by the according module. */
   if(error != 0 && !*profile)
-    error = oyDeviceSetup( device );
+    error = oyDeviceSetup( device, options );
 
   if(error <= 0) 
     l_error = oyDeviceAskProfile2( device, options, profile ); OY_ERR
@@ -1671,13 +1672,14 @@ int   oyCompareRanks_                ( const void       * rank1,
           else
           {
             const char * filename = oyProfile_GetFileName( ip, -1 );
+
             printf( "installed -> %s\n", filename );
             // store new settings in the Oyranos data base
             oyDeviceSetProfile( device, strrchr( filename, OY_SLASH_C ) + 1 );
             // remove any device entries
             oyDeviceUnset( device );
             // update the device from the newly added Oyranos data base settings
-            oyDeviceSetup( device );
+            oyDeviceSetup( device, options );
             printf( "assigned -> %s\n", strrchr( filename, OY_SLASH_C ) + 1 );
           }
         }

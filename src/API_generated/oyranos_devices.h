@@ -43,7 +43,8 @@ OYAPI int  OYEXPORT
                                        oyOptions_s       * options,
                                        oyConfig_s       ** device );
 OYAPI int  OYEXPORT
-           oyDeviceSetup             ( oyConfig_s        * device );
+           oyDeviceSetup             ( oyConfig_s        * device,
+                                       oyOptions_s       * options );
 OYAPI int  OYEXPORT
            oyDeviceUnset             ( oyConfig_s        * device );
 OYAPI int  OYEXPORT
