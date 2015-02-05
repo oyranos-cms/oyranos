@@ -353,7 +353,7 @@ OYAPI oyProfiles_s * OYEXPORT
 
   if(error <= 0)
   {
-    names = oyProfileListGet_ ( NULL, 0, &names_n );
+    names = oyProfileListGet_ ( NULL, flags, &names_n );
 
     if(!(flags & OY_ALLOW_DUPLICATES))
       flags |= OY_COMPUTE;

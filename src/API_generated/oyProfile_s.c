@@ -345,7 +345,7 @@ oyProfile_FromName            ( const char      * name,
     {
       for(i = 0; i < (int)count; ++i)
       {
-        p = oyProfile_FromFile( names[i], 0,0 );
+        p = oyProfile_FromFile( names[i], flags, 0 );
 
         t = oyProfile_GetText(p, oyNAME_DESCRIPTION);
         if(t && strcmp(t,name) == 0)
