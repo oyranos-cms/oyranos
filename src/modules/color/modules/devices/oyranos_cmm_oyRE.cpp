@@ -433,7 +433,8 @@ const char * oyCIExyYTriple_Show( oyCIExyYTriple * triple )
 oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
                                          int32_t      icc_profile_flags,
                                          const char * manufacturer,
-                                         const char * model )
+                                         const char * model,
+                                         int        * is_existing )
 {
   static oyProfile_s * p = NULL;
 
@@ -530,23 +531,9 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
     }
     oyOption_SetFromDouble( matrix, 1.0, 8, 0);
 
-    oyOptions_s * opts = oyOptions_New(0),
-                * result = 0;
-
-    oyOptions_SetFromInt( &opts, "///icc_profile_flags", icc_profile_flags, 0, OY_CREATE_NEW );
+    char * name = NULL;
+    oyOptions_s * opts = oyOptions_New(0);
     oyOptions_MoveIn( opts, &matrix, -1 );
-    const char * reg = "//"OY_TYPE_STD"/create_profile.color_matrix.icc";
-    oyOptions_Handle( reg, opts, "create_profile.icc_profile.color_matrix",
-                      &result );
-
-    p = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
-                                               oyOBJECT_PROFILE_S );
-    oyOptions_Release( &result );
-    if(!p)
-      oyRE_msg(oyMSG_DBG, (oyStruct_s*)0,
-          OY_DBG_FORMAT_ " profile creation failed by \"%s\"",
-          OY_DBG_ARGS_, reg);
-
     if(!fail)
     {
       matrix = oyOptions_Find( opts, "color_matrix" );
@@ -554,7 +541,6 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
       oyOption_Release( &matrix );
       ts = strstr( ts, "color_matrix:" ) + strlen("color_matrix:");
       char * t = oyStringReplace_( ts, ",", " ", oyAllocateFunc_ );
-      char * name = NULL;
       const char * mnf = NULL;
       if(manufacturer && model)
         mnf = strstr(model, manufacturer);
@@ -567,14 +553,33 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
           OY_DBG_FORMAT_ " name: \"%s\"",
           OY_DBG_ARGS_, name);
 
-      oyProfile_AddTagText( p, icSigProfileDescriptionTag, name);
 
       oyProfile_SetSignature( p, icSigInputClass, oySIGNATURE_CLASS);
 
-      oyFree_m_( name );
     } else
-      oyProfile_AddTagText( p, icSigProfileDescriptionTag,
-                                            "ICC Examin ROMM gamma 1.0" );
+      name = oyStringCopy("ICC Examin ROMM gamma 1.0", oyAllocateFunc_ );
+
+    p = oyProfile_FromName( name, icc_profile_flags, 0 );
+    if(!p)
+    {
+      oyOptions_s * result = 0;
+
+      oyOptions_SetFromInt( &opts, "///icc_profile_flags", icc_profile_flags, 0, OY_CREATE_NEW );
+      const char * reg = "//"OY_TYPE_STD"/create_profile.color_matrix.icc";
+      oyOptions_Handle( reg, opts, "create_profile.icc_profile.color_matrix",
+                        &result );
+
+      p = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
+                                               oyOBJECT_PROFILE_S );
+      oyOptions_Release( &result );
+      if(!p)
+        oyRE_msg(oyMSG_DBG, (oyStruct_s*)0,
+          OY_DBG_FORMAT_ " profile creation failed by \"%s\"",
+          OY_DBG_ARGS_, reg);
+
+      oyProfile_AddTagText( p, icSigProfileDescriptionTag, name);
+    }
+    oyFree_m_( name );
 
     oyOptions_Release( &opts );
 
@@ -1015,9 +1020,9 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
       int error = 0;
       for (int i = 0; i < num_devices; ++i) {
          oyConfig_s *device = oyConfigs_Get(devices, i);
-         oyConfig_s *device_new = oyConfig_FromRegistration(CMM_BASE_REG, 0);
          oyProfile_s * p = 0;
          int32_t icc_profile_flags = 0;
+         int is_existing = 0;
 
          const char * t = NULL,
                     * device_name = oyConfig_FindString(device, "device_name", 0);
@@ -1037,7 +1042,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
           * the old to new device */
 
          /*Get the "device_handle" from old device
-          * and populate device_new with H/W options [OUT]*/
+          * and populate device with H/W options [OUT]*/
          oyOption_s *handle_opt_dev = oyConfig_Find(device, "device_handle");
          if(!handle_opt_dev)
          {
@@ -1046,16 +1051,15 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          }
 
          if (handle_opt_dev) {
-            DeviceFromHandle_opt(device_new, handle_opt_dev);
+            DeviceFromHandle_opt(device, handle_opt_dev);
             oyOption_s *tmp = oyOption_Copy(handle_opt_dev, 0);
-            oyOptions_MoveIn(*oyConfig_GetOptions(device_new,"data"), &tmp, -1);
+            oyOptions_MoveIn(*oyConfig_GetOptions(device,"data"), &tmp, -1);
             oyOption_Release(&handle_opt_dev);
          } else { /*Ignore device without a "device_handle"*/
            if(oyOptions_Count( *oyConfig_GetOptions(device,"backend_core") ) < 2)
              oyRE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
                      _DBG_ARGS_, "The \"device_handle\" is missing from config object!");
             oyConfig_Release(&device);
-            oyConfig_Release(&device_new);
             continue;
          }
 
@@ -1063,13 +1067,13 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyOption_s *version_opt_dev = oyConfig_Find(device, "driver_version");
          if (version_opt_dev) {
             oyOption_s *tmp = oyOption_Copy(version_opt_dev, 0);
-            oyOptions_MoveIn(*oyConfig_GetOptions(device_new,"backend_core"), &tmp, -1);
+            oyOptions_MoveIn(*oyConfig_GetOptions(device,"backend_core"), &tmp, -1);
             oyOption_Release(&version_opt_dev);
          }
 
          /*Handle "device_name" option [OUT] */
          if (device_name) {
-            oyOptions_SetFromText(oyConfig_GetOptions(device_new,"backend_core"), CMM_BASE_REG OY_SLASH "device_name", device_name, OY_CREATE_NEW);
+            oyOptions_SetFromText(oyConfig_GetOptions(device,"backend_core"), CMM_BASE_REG OY_SLASH "device_name", device_name, OY_CREATE_NEW);
          }
 
 
@@ -1088,18 +1092,19 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
             oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags );
 
-            DeviceFromContext(&device_new, device_context);
+            DeviceFromContext(&device, device_context);
             if(oyOptions_FindString( options, "icc_profile.fallback", 0 ))
               /* fallback: try to get color matrix to build a profile */
               p = createMatrixProfile( rip.imgdata.color, icc_profile_flags,
-                                       oyConfig_FindString( device_new, PRFX_EXIF "manufacturer", 0 ),
-                                       oyConfig_FindString( device_new, PRFX_EXIF "model", 0 ) );
+                                       oyConfig_FindString( device, PRFX_EXIF "manufacturer", 0 ),
+                                       oyConfig_FindString( device, PRFX_EXIF "model", 0 ),
+                                       &is_existing );
 
             if(context_opt_dev)
               free(device_context);
 
             oyOption_s *tmp = oyOption_Copy(context_opt_dev, 0);
-            oyOptions_MoveIn(*oyConfig_GetOptions(device_new,"data"), &tmp, -1);
+            oyOptions_MoveIn(*oyConfig_GetOptions(device,"data"), &tmp, -1);
             oyOption_Release(&context_opt_dev);
          }
 
@@ -1119,11 +1124,11 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
            error = oyOptions_SetFromText( &options, "///key_prefix_required",
                                        PRFX_EXIF "." PRFX_LRAW ".prefix",
                                        OY_CREATE_NEW );
-           oyProfile_AddDevice( p, device_new, options );
+           oyProfile_AddDevice( p, device, options );
 
            oyProfile_Release( &profile );
            oyOptions_Release( &options );
-           oyOptions_MoveInStruct( oyConfig_GetOptions(device_new,"data"),
+           oyOptions_MoveInStruct( oyConfig_GetOptions(device,"data"),
                                 CMM_BASE_REG OY_SLASH "icc_profile.add_meta",
                                 (oyStruct_s**)&p, OY_CREATE_NEW );
          }
@@ -1139,7 +1144,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                        * o_tmp = NULL;
 
             has = 0;
-            o = oyConfig_Find( device_new, "icc_profile" );
+            o = oyConfig_Find( device, "icc_profile" );
             if(o)
             {
               /* the device might have assigned a dummy icc_profile, to show 
@@ -1156,17 +1161,17 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
             if(oyOptions_FindString( options, "icc_profile.fallback", 0 ))
             {
               /* tried to build profile p from rip.imgdata.color above */
-              if(p)
+              if(p && !is_existing)
               {
                 const char * t = 0;
                 oyOptions_s * opts = NULL;
 
-                if((t = oyConfig_FindString( device_new, PRFX_EXIF "manufacturer", 0 )) != 0)
+                if((t = oyConfig_FindString( device, PRFX_EXIF "manufacturer", 0 )) != 0)
                   error = oyProfile_AddTagText( p, icSigDeviceMfgDescTag, t);
-                if((t = oyConfig_FindString( device_new, PRFX_EXIF "model", 0 )) != 0)
+                if((t = oyConfig_FindString( device, PRFX_EXIF "model", 0 )) != 0)
                   error = oyProfile_AddTagText( p, icSigDeviceModelDescTag, t);
 
-                error = oyOptions_SetFromText( oyConfig_GetOptions(device_new,"backend_core"),
+                error = oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
                                        CMM_BASE_REG OY_SLASH
                                        "OPENICC_automatic_generated",
                                        "1", OY_CREATE_NEW );
@@ -1177,18 +1182,28 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                 error = oyOptions_SetFromText( &opts, "///key_prefix_required",
                                                PRFX_EXIF "." PRFX_LRAW ".OPENICC_",
                                                OY_CREATE_NEW );
-                oyProfile_AddDevice( p, device_new, opts );
+                oyProfile_AddDevice( p, device, opts );
                 oyOptions_Release( &opts );
 
                 /* install here as images are not permanent devices */
-                error = oyOptions_SetFromText( &opts, "////device", "1", OY_CREATE_NEW );
-                error = oyProfile_Install( p, opts );
-                oyOptions_Release( &opts);
+                {
+                  const char * desc = oyProfile_GetText( p, oyNAME_DESCRIPTION );
+                  oyProfile_s * tmpp = oyProfile_FromName( desc, icc_profile_flags, 0 );
+                  if(!tmpp)
+                  {
+                    error = oyOptions_SetFromText( &opts, "////device", "1", OY_CREATE_NEW );
+                    error = oyProfile_Install( p, opts );
+                    oyOptions_Release( &opts);
+                  } else
+                    oyProfile_Release( &tmpp );
+                }
 
                 data = (char*) oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
               }
               oyOption_Release( &o_tmp );
-              oyProfile_Release( &p );
+              if(!is_existing)
+                oyProfile_Release( &p );
+              if(!is_existing)
               if(data && size)
               {
                 p = oyProfile_FromMem( size, data, 0, 0 );
@@ -1220,17 +1235,14 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
             }
 
             if(!has)
-              oyOptions_Set( *oyConfig_GetOptions(device_new,"data"), o, -1, 0 );
+              oyOptions_Set( *oyConfig_GetOptions(device,"data"), o, -1, 0 );
          }
 
          /*Copy the rank map*/
-         oyConfig_SetRankMap( device_new, _rank_map );
+         oyConfig_SetRankMap( device, _rank_map );
 
          /*Cleanup*/
-         /* Remove old, add new device */
          oyConfig_Release(&device);
-         oyConfigs_ReleaseAt(devices, i);
-         oyConfigs_MoveIn(devices, &device_new, -1);
       }
    }
 
