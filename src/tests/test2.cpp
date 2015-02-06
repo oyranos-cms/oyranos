@@ -112,6 +112,7 @@ const char  *  oyProfilingToString   ( int                 integer,
 
 FILE * zout = stdout;  /* printed inbetween results */
 
+int oy_test_sub_count = 0;
 #define PRINT_SUB( result_, ... ) { \
   if(result == oyTESTRESULT_XFAIL || \
      result == oyTESTRESULT_SUCCESS || \
@@ -122,6 +123,7 @@ FILE * zout = stdout;  /* printed inbetween results */
   if(result_ && result_ != oyTESTRESULT_XFAIL) \
     fprintf(stdout, " !!! ERROR !!!" ); \
   fprintf(stdout, "\n" ); \
+  ++oy_test_sub_count; \
 }
 
 
@@ -5035,6 +5037,7 @@ int main(int argc, char** argv)
     fprintf( stdout, "\n################################################################\n" );
     fprintf( stdout, "#                                                              #\n" );
     fprintf( stdout, "#                     Results                                  #\n" );
+    fprintf( stdout, "    Total of Sub Tests:         %d\n", oy_test_sub_count );
     for(i = 0; i <= oyTESTRESULT_UNKNOWN; ++i)
       fprintf( stdout, "    Tests with status %s:\t%d\n",
                        oyTestResultToString( (oyTESTRESULT_e)i ), results[i] );
