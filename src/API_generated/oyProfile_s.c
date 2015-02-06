@@ -2255,7 +2255,7 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
     char * reg = 0;
     o = oyConfig_Get( d, i );
     r = oyOption_GetRegistration(o);
-    reg = oyFilterRegistrationToText( r, oyFILTER_REG_OPTION, oyAllocateFunc_ );
+    reg = oyFilterRegistrationToText( r, oyFILTER_REG_MAX, oyAllocateFunc_ );
     val = oyOption_GetValueText( o, oyAllocateFunc_ );
     if(val)
     {
@@ -2310,7 +2310,7 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
   {
     o = oyConfig_Get( d, i );
     r = oyOption_GetRegistration(o);
-    key = oyFilterRegistrationToText( r, oyFILTER_REG_OPTION,
+    key = oyFilterRegistrationToText( r, oyFILTER_REG_MAX,
                                              oyAllocateFunc_ );
     val = oyOption_GetValueText( o, oyAllocateFunc_ );
     if(val)
@@ -2336,7 +2336,7 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
       {
         keys[pos] = key;
         values[pos] = oyStringCopy_(val,oyAllocateFunc_);
-        DBG_PROG2_S("%s: %s", key, val );
+        DBG_PROG3_S("%s: %s (%s)", key, val, r );
         len = strlen( key ) * 2;
         len = len + (len%4 ? 4 - len%4 : 0);
         block_size += len;
