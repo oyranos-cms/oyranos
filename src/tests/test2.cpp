@@ -2431,6 +2431,63 @@ oyTESTRESULT_e testCMMMonitorJSON ()
       "oyDeviceFromJSON() %d             ", oyConfig_Count(config) );
     }
 
+    oyProfile_s * p = NULL;
+    oyOptions_SetFromText( &options,
+                  "//" OY_TYPE_STD "/config/command",
+                           "properties", OY_CREATE_NEW );
+    oyOptions_SetFromText( &options,
+                   "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
+                          "yes", OY_CREATE_NEW );
+    error = oyDeviceGetProfile( config, options, &p );
+
+    if( p )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyDeviceGetProfile() %s", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+      "oyDeviceGetProfile()              " );
+    }
+
+    oyProfile_Release( &p );
+
+    oyOptions_SetFromText( &options,
+                   "//"OY_TYPE_STD"/config/icc_profile.fallback",
+                          "yes", OY_CREATE_NEW );
+    error = oyDeviceGetProfile( config, options, &p );
+
+    if( p )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyDeviceGetProfile() %s", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+      "oyDeviceGetProfile()              " );
+    }
+
+    oyProfileTag_s * tag = oyProfile_GetTagById( p, (icTagSignature)icSigMetaDataTag );
+    if( tag )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyProfile_GetTagById(icSigMetaDataTag)" );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+      "oyProfile_GetTagById(icSigMetaDataTag)" );
+    }
+
+    int32_t texts_n = 0, tag_size = 0;
+    char ** texts = oyProfileTag_GetText( tag, &texts_n, NULL, NULL,
+                                          &tag_size, oyAllocateFunc_ );
+    if( texts_n > 2 && tag_size )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyProfileTag_GetText(meta) texts: %d tag size: %d", texts_n, tag_size );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+      "oyProfileTag_GetText(meta) texts: %d tag size: %d", texts_n, tag_size );
+    }
+
+    for(int j = 0; j < texts_n; ++j)
+      fprintf( zout, "%s\n", texts[j] );
+
+    oyConfig_Release( &config );
+    oyOptions_Release( &options );
     oyFree_m_( json_text );
   }
 
