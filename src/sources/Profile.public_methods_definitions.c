@@ -2227,6 +2227,16 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
         }
       }
 
+      /* reject duplicate keys */
+      for(j = 0; j < (pos-1); ++j)
+        if(strcmp(keys[j],key) == 0)
+        {
+          if(strcmp(values[j],val) != 0)
+            WARNc3_S( "duplicate key[%s] found with different values: \"%s\"/\"%s\"",
+                      r, values[j],val );
+          pass = 0;
+        }
+
       if(pass)
       {
         keys[pos] = key;
@@ -2244,9 +2254,10 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
       }
     }
     if(key) oyDeAllocateFunc_( key ); key = 0;
-    if(val) oyDeAllocateFunc_(val);
+    if(val) oyDeAllocateFunc_(val); val = 0;
   }
 
+  count = pos;
   dict = calloc(sizeof(char), block_size);
   dict->sig = oyValueUInt32( icSigDictType );
   dict->number = oyValueUInt32( count );
