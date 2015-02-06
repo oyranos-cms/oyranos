@@ -2485,8 +2485,23 @@ oyTESTRESULT_e testCMMMonitorJSON ()
       "oyProfileTag_GetText(meta) texts: %d tag size: %d", texts_n, tag_size );
     }
 
+    int edid_mnft_count = 0;
     for(int j = 0; j < texts_n; ++j)
-      fprintf( zout, "%s\n", texts[j] );
+    {
+      //fprintf( zout, "%s\n", texts[j] );
+      if(strstr(texts[j],"EDID_serial") != NULL)
+        ++edid_mnft_count;
+    }
+    // one single key is needed
+    // otherwise the monitor is defect or
+    // there is key duplication
+    if( edid_mnft_count == 1 )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "Found EDID_serial keys in meta tag: %d", edid_mnft_count );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+      "Found EDID_serial keys in meta tag: %d", edid_mnft_count );
+    }
 
     oyConfig_Release( &config );
     oyOptions_Release( &options );
