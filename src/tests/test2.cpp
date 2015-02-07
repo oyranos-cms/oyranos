@@ -196,27 +196,27 @@ oyTESTRESULT_e testElektra()
 
   fprintf(stdout, "\n" );
 
-  error = oyDBAddKey_(TEST_DOMAIN TEST_KEY,
+  error = oySetPersistentString(TEST_DOMAIN TEST_KEY,
                                  "NULLTestValue", "NULLTestComment" );
   if(error)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyDBAddKey_(%s)", TEST_DOMAIN TEST_KEY );
+    "oySetPersistentString(%s)", TEST_DOMAIN TEST_KEY );
   } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyDBAddKey_(%s)", TEST_DOMAIN TEST_KEY );
+    "oySetPersistentString(%s)", TEST_DOMAIN TEST_KEY );
   }
 
-  start = oyDBGetKeyString_(TEST_DOMAIN TEST_KEY, 0);
+  start = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, 0);
   if(start && start[0])
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyDBGetKeyString_(%s)", TEST_DOMAIN TEST_KEY );
+    "oyGetPersistentString(%s)", TEST_DOMAIN TEST_KEY );
   } else
   {
     PRINT_SUB( oyTESTRESULT_XFAIL,
-    "oyDBGetKeyString_(%s)", TEST_DOMAIN TEST_KEY );
+    "oyGetPersistentString(%s)", TEST_DOMAIN TEST_KEY );
   }
 
   printf ("start is %s\n", oyNoEmptyString_m_(start));
@@ -224,9 +224,9 @@ oyTESTRESULT_e testElektra()
   {
     oyExportStart_(EXPORT_CHECK_NO);
     oyExportEnd_();
-    error = oyDBAddKey_(TEST_DOMAIN TEST_KEY,
+    error = oySetPersistentString(TEST_DOMAIN TEST_KEY,
                                  "NULLTestValue", "NULLTestComment" );
-    start = oyDBGetKeyString_(TEST_DOMAIN TEST_KEY, 0);
+    start = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, 0);
     printf ("start is %s\n", start);
     
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL,
@@ -236,9 +236,9 @@ oyTESTRESULT_e testElektra()
   {
     oyExportStart_(EXPORT_SETTING);
     oyExportEnd_();
-    error = oyDBAddKey_(TEST_DOMAIN TEST_KEY,
+    error = oySetPersistentString(TEST_DOMAIN TEST_KEY,
                                  "NULLTestValue", "NULLTestComment" );
-    start = oyDBGetKeyString_(TEST_DOMAIN TEST_KEY, 0);
+    start = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, 0);
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL, 
     "Elektra not initialised? try oyExportStart_(EXPORT_SETTING)" );
   }
@@ -247,9 +247,9 @@ oyTESTRESULT_e testElektra()
   else
     fprintf(zout, "could not initialise\n" );
 
-  error = oyDBAddKey_(TEST_DOMAIN TEST_KEY,
+  error = oySetPersistentString(TEST_DOMAIN TEST_KEY,
                                  "myTestValue", "myTestComment" );
-  value = oyDBGetKeyString_(TEST_DOMAIN TEST_KEY, 0);
+  value = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, 0);
   if(value)
     fprintf(zout, "result key value: %s\n", value );
 
@@ -297,7 +297,7 @@ oyTESTRESULT_e testElektra()
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyDBEraseKey_(%s)", TEST_DOMAIN TEST_KEY );
   }
-  value = oyDBGetKeyString_(TEST_DOMAIN TEST_KEY, 0);
+  value = oyDBGetString_(TEST_DOMAIN TEST_KEY, 0);
   if(value && strlen(value))
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
@@ -3116,17 +3116,23 @@ extern "C" {int oyGetKey(ckdb Key*);}
 
 #include "oyFilterCore_s_.h"
 #include "oyNamedColor_s.h"
+#include "oyranos_alpha_internal.h"
 
 oyTESTRESULT_e testCMMnmRun ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
   oyNamedColor_s * c = 0;
-  oyProfile_s * prof = oyProfile_FromStd( oyEDITING_XYZ, 0, NULL );
+  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
+  oyProfile_s * prof = oyProfile_FromStd( oyEDITING_XYZ, icc_profile_flags, NULL );
   int error = 0, l_error = 0,
       i,n = 10;
 
   fprintf(stdout, "\n" );
-#if 1
+
+  fprintf(zout, "clearing caches\n" );
+  oyAlphaFinish_(0);
+
   double clck = oyClock();
   for(i = 0; i < n*10000; ++i)
   {
@@ -3147,283 +3153,108 @@ oyTESTRESULT_e testCMMnmRun ()
 
 
   const char * key_name = OY_STD"/behaviour/rendering_bpc";
-  oyAlloc_f allocate_func = oyAllocateFunc_;
-
-  char* name = 0;
-  char* full_key_name = 0;
-  name = (char*) oyAllocateWrapFunc_( MAX_PATH, allocate_func );
-  full_key_name = (char*) oyAllocateFunc_ (MAX_PATH);
   clck = oyClock();
-
-  for(i = 0; i < n*3*17; ++i)
+  for(i = 0; i < n*3; ++i)
   {
-  int rc = 0;
-  ckdb Key * key = 0;
-  int success = 0;
-
-  sprintf( full_key_name, "%s%s", OY_USER, key_name );
-
-  /** check if the key is a binary one */
-  key = ckdb keyNew( full_key_name, KEY_END );
-  rc= dbGetKey( oy_handle_, key );
-  success = ckdb keyIsString(key);
-
-  if(success)
-    rc = ckdb keyGetString ( key, name, MAX_PATH );
-  ckdb keyDel( key ); key = 0;
-
-  if( rc || !strlen( name ))
-  {
-    sprintf( full_key_name, "%s%s", OY_SYS, key_name );
-    key = ckdb keyNew( full_key_name, KEY_END );
-    if(success)
-      rc = ckdb keyGetString( key, name, MAX_PATH );
-    ckdb keyDel( key ); key = 0;
+    char * value = oyDBGetString_(key_name, 0);
+    oyFree_m_(value);
   }
-
-  }
-  oyDeAllocateFunc_( full_key_name );
-  oyDeAllocateFunc_( name );
   clck = oyClock() - clck;
 
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyGetKeyString_()                   %s",
-                  oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC, "Filter"));
+    "oyDBGetString_()                   %s",
+                  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "key"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyGetKeyString_()                                  " );
+    "oyDBGetString_()                                  " );
   }
 
+
+  clck = oyClock();
+  for(i = 0; i < n*3; ++i)
+  {
+    char * t = oyGetPersistentString( key_name, 0,0 );
+    if(!t)
+      break;
+  }
+  clck = oyClock() - clck;
+
+  if( i>n )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyGetPersistentString()             %s",
+                  oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC, "key"));
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyGetPersistentString()                            " );
+  }
 
 
   clck = oyClock();
   oyOption_s * option = oyOption_FromRegistration(OY_STD"/behaviour/rendering_bpc", 0);
+  oyOption_SetFromText(option, "-1", 0);
 
   for(i = 0; i < n*3*17; ++i)
   {
-  int error = !option || !oyOption_GetRegistration(option);
-  char * text = 0,
-       * ptr = 0;
-
-  oyExportStart_(EXPORT_SETTING);
-
-  if(error <= 0)
-    text = oyDBGetKeyString_( oyOption_GetRegistration(option), oyAllocateFunc_ );
-
-  if(error <= 0)
-  {
-    if(text)
-      oyOption_SetFromText( option, text, 0 );
-    else
-    {
-      ptr = oyDBGetKeyString_( oyOption_GetRegistration(option), oyAllocateFunc_ );
-      if(ptr)
-      {
-        oyOption_SetFromData( option, ptr, strlen(ptr) );
-        oyFree_m_( ptr );
-      }
-    }
-  }
-
-  if(text)
-    oyFree_m_( text );
-
-  oyExportEnd_();
+    int error = !option || !oyOption_GetRegistration(option);
+    error = oyOption_SetValueFromDB( option );
   }
   clck = oyClock() - clck;
 
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyOption_SetValueFromDB()           %s",
-                  oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC, "Filter"));
+                  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Opt."));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyOption_SetValueFromDB()                          " );
   }
 
   clck = oyClock();
-  for(i = 0; i < n*3; ++i)
+  for(i = 0; i < 1; ++i)
   {
-  oyFilterCore_s_ * filter = oyFilterCore_New_( 0 );
-  oyCMMapi4_s_ * api4 = 0;
-  oyObject_s object = 0;
-
-  if(error <= 0)
-  {
-    api4 = (oyCMMapi4_s_*) oyCMMsGetFilterApi_(
-                                "//" OY_TYPE_STD "/root", oyOBJECT_CMM_API4_S );
-    error = !api4;
-  }
-
-  if(error <= 0)
-    error = oyFilterCore_SetCMMapi4_( filter, api4 );
-
-  oyOptions_s * s = 0,
-              * opts_tmp = 0,
-              * opts_tmp2 = 0;
-  oyOption_s * o = 0;
-  char * type_txt = oyFilterRegistrationToText( filter->registration_,
-                                                oyFILTER_REG_TYPE, 0 );
-  oyCMMapi5_s_ * api5 = 0;
-  int i,n, flags = 0;
-  int error = !filter || !filter->api4_;
-
-  /* by default we parse both sources */
-  if(!(flags & OY_SELECT_FILTER) && !(flags & OY_SELECT_COMMON))
-    flags |= OY_SELECT_FILTER | OY_SELECT_COMMON;
-
-  if(!error)
-  {
-    /*
-        Programm:
-        1. get filter and its type
-        2. get implementation for filter type
-        3. parse static common options from meta module
-        4. parse static options from filter 
-        5. merge both
-        6. get stored values from disk
-     */
-
-    /*  1. get filter */
-
-    /*  2. get implementation for filter type */
-    api5 = filter->api4_->api5_;
-
-    /*  3. parse static common options from meta module */
-    if(api5 && flags & OY_SELECT_COMMON)
-    {
-      oyCMMapiFilters_s * apis;
-      int apis_n = 0;
-      oyCMMapi9_s_ * cmm_api9 = 0;
-      char * klass, * api_reg;
-
-      klass = oyFilterRegistrationToText( filter->registration_,
-                                          oyFILTER_REG_TYPE, 0 );
-      api_reg = oyStringCopy_("//", oyAllocateFunc_ );
-      STRING_ADD( api_reg, klass );
-      oyFree_m_( klass );
-
-      s = oyOptions_New( 0 );
-
-      apis = oyCMMsGetFilterApis_( api_reg,
-                                   oyOBJECT_CMM_API9_S,
-                                   oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
-                                   0,0);
-      apis_n = oyCMMapiFilters_Count( apis );
-      for(i = 0; i < apis_n; ++i)
-      {
-        cmm_api9 = (oyCMMapi9_s_*) oyCMMapiFilters_Get( apis, i );
-        if(oyFilterRegistrationMatch( filter->registration_, cmm_api9->pattern,
-                                      oyOBJECT_NONE ))
-        {
-          opts_tmp = oyOptions_FromText( cmm_api9->options, 0, object );
-          oyOptions_AppendOpts( s, opts_tmp );
-          oyOptions_Release( &opts_tmp );
-        }
-        if(cmm_api9->release)
-          cmm_api9->release( (oyStruct_s**)&cmm_api9 );
-      }
-      oyCMMapiFilters_Release( &apis );
-      oyFree_m_( api_reg );
-      opts_tmp = s; s = 0;
-    }
-    /* requires step 2 */
-
-    /*  4. parse static options from filter */
-    if(flags & OY_SELECT_FILTER)
-      opts_tmp2 = oyOptions_FromText( filter->api4_->ui->options, 0, object );
-
-    /*  5. merge */
-    s = oyOptions_FromBoolean( opts_tmp, opts_tmp2, oyBOOLEAN_UNION, object );
-
-    oyOptions_Release( &opts_tmp );
-    oyOptions_Release( &opts_tmp2 );
-
-    /*  6. get stored values */
-    n = oyOptions_Count( s );
-    for(i = 0; i < n && error <= 0; ++i)
-    {
-      o = oyOptions_Get( s, i );
-      oyOption_SetSource( o, oyOPTIONSOURCE_FILTER );
-      /* ask Elektra */
-      if(!(flags & oyOPTIONSOURCE_FILTER))
-        error = oyOption_SetValueFromDB( o );
-      oyOption_Release( &o );
-    }
-#if 0
-    error = oyOptions_DoFilter ( s, flags, type_txt );
-#else
-    error = 1;
-#endif
-  }
-
-  if(type_txt)
-    oyDeAllocateFunc_( type_txt );
-
+    oyOptions_s * options = oyOptions_ForFilter( "//" OY_TYPE_STD "/lcm2",
+                                            oyOPTIONATTRIBUTE_ADVANCED  |
+                                            oyOPTIONATTRIBUTE_FRONT |
+                                            OY_SELECT_COMMON, 0 );
+    oyOptions_Release( &options );
   }
   clck = oyClock() - clck;
 
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyOptions_ForFilter_()              %s",
-                  oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC, "Filter"));
+    "oyOptions_ForFilter() first        %s",
+                  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Filter"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyOptions_ForFilter_()                             " );
+    "oyOptions_ForFilter() first                       " );
   }
 
   clck = oyClock();
+  for(i = 0; i < n; ++i)
   {
-  oyFilterCore_s_ * s = oyFilterCore_New_( 0 );
-  int error = !s;
-  uint32_t ret = 0;
-  oyOptions_s * opts_tmp = 0, * options = 0;
-  oyCMMapi4_s_ * api4 = 0;
-
-  if(error <= 0)
-  {
-    api4 = (oyCMMapi4_s_*) oyCMMsGetFilterApi_(
-                                "//" OY_TYPE_STD "/root", oyOBJECT_CMM_API4_S );
-    error = !api4;
-  }
-
-  if(error <= 0)
-    error = oyFilterCore_SetCMMapi4_( s, api4 );
-
-  if(error <= 0)
-  {
-    for(i = 0; i < n*3; ++i)
-      opts_tmp = oyOptions_ForFilter_( s, NULL, 0, s->oy_);
-#if 0
-    s->options_ = api4->oyCMMFilter_ValidateOptions( s, options, 0, &ret );
-#endif
-    error = ret;
-    
-    /* @todo test oyBOOLEAN_SUBSTRACTION for correctness */
-    s->options_ = oyOptions_FromBoolean( opts_tmp, options,
-                                         oyBOOLEAN_SUBSTRACTION, s->oy_ );
-    oyOptions_Release( &opts_tmp );
-  }
-
-    oyFilterCore_Release( (oyFilterCore_s**)&s );
+    oyOptions_s * options = oyOptions_ForFilter( "//" OY_TYPE_STD "/lcm2",
+                                            oyOPTIONATTRIBUTE_ADVANCED  |
+                                            oyOPTIONATTRIBUTE_FRONT |
+                                            OY_SELECT_COMMON, 0 );
+    oyOptions_Release( &options );
   }
   clck = oyClock() - clck;
 
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyOptions_ForFilter_()              %s",
-                  oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC, "Filter"));
+    "oyOptions_ForFilter()              %s",
+                  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Filter"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyOptions_ForFilter_()                             " );
+    "oyOptions_ForFilter()                             " );
   }
 
 
 
   oyOptions_s * options = oyOptions_New(0);
   clck = oyClock();
-  for(i = 0; i < n*3*10000; ++i)
+  for(i = 0; i < n*10000; ++i)
   {
     oyFilterCore_s * core = oyFilterCore_NewWith( "//" OY_TYPE_STD "/root",
                                                   options,0 );
@@ -3435,7 +3266,7 @@ oyTESTRESULT_e testCMMnmRun ()
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyFilterCore_New()                  %s",
-                 oyProfilingToString(i/3,clck/(double)CLOCKS_PER_SEC, "Cores"));
+                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Cores"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyFilterCore_New()                                 " );
@@ -3444,7 +3275,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   clck = oyClock();
   const char * registration = "//" OY_TYPE_STD "/root";
-  for(i = 0; i < n*3*10000; ++i)
+  for(i = 0; i < n*10000; ++i)
   {
     oyCMMapi4_s_ * api4 = 0;
     api4 = (oyCMMapi4_s_*) oyCMMsGetFilterApi_(
@@ -3458,84 +3289,52 @@ oyTESTRESULT_e testCMMnmRun ()
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyFilterCore_New() oyCMMapi4_s      %s",
-                 oyProfilingToString(i/3,clck/(double)CLOCKS_PER_SEC, "Cores"));
+                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Cores"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyFilterCore_New() oyCMMapi4_s                     " );
   }
 
 
-  clck = oyClock();
   oyConversion_s * s = 0;
-  oyFilterNode_s * in = 0, * out = 0;
+  oyFilterNode_s * out = 0;
   oyImage_s * input  = NULL,
             * output = NULL;
   double * buf_in = &d[0],
          * buf_out = &d[3];
   oyDATATYPE_e buf_type_in = oyDOUBLE,
                buf_type_out = oyDOUBLE;
-  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
-                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyProfile_s * p_in = prof,
               * p_out = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
 
-
-  for(i = 0; i < n*100; ++i)
-  if(error <= 0)
-  {
-    input =oyImage_Create( 1,1, 
+  input =oyImage_Create( 1,1, 
                          buf_in ,
                          oyChannels_m(oyProfile_GetChannelsCount(p_in)) |
                           oyDataType_m(buf_type_in),
                          p_in,
                          0 );
-    output=oyImage_Create( 1,1, 
+  output=oyImage_Create( 1,1, 
                          buf_out ,
                          oyChannels_m(oyProfile_GetChannelsCount(p_out)) |
                           oyDataType_m(buf_type_out),
                          p_out,
                          0 );
-    error = !input || !output;
+  error = !input || !output;
 
 
-    s = oyConversion_New ( 0 );
-    error = !s;    
-
-    if(error <= 0)
-      in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", options, 0 );
-    if(error <= 0)
-      error = oyConversion_Set( s, in, 0 );
-    if(error <= 0)
-      error = oyFilterNode_SetData( in, (oyStruct_s*)input, 0, 0 );
-
-    if(error <= 0)
-      out = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", options, NULL );
-    if(error <= 0)
-      error = oyFilterNode_SetData( out, (oyStruct_s*)output, 0, 0 );
-    if(error <= 0)
-      error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                    out, "//" OY_TYPE_STD "/data", 0 );
-
-    in = out; out = 0;
-
-    if(error <= 0)
-      out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", options, 0 );
-    if(error <= 0)
-    {
-      error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                    out, "//" OY_TYPE_STD "/data", 0 );
-      if(error)
-        WARNc1_S( "could not add  filter: %s\n", "//" OY_TYPE_STD "/output" );
-    }
-    if(error <= 0)
-      error = oyConversion_Set( s, 0, out );
+  clck = oyClock();
+  for(i = 0; i < n; ++i)
+  if(error <= 0)
+  {
+    s = oyConversion_CreateBasicPixels( input, output, options, NULL );
     oyConversion_Release( &s );
-    oyImage_Release( &input );
-    oyImage_Release( &output );
-    if(!(i%1000)) fprintf(zout, "." ); fflush(stdout);
+    //if(!(i%10)) fprintf(zout, "." ); fflush(stdout);
   }
-  fprintf(zout,"\n");
   clck = oyClock() - clck;
+
+  //fprintf(zout,"\n");
+  oyImage_Release( &input );
+  oyImage_Release( &output );
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -3545,19 +3344,6 @@ oyTESTRESULT_e testCMMnmRun ()
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyConversion_CreateBasicPixels()                   " );
   }
-#else
-  oyConversion_s * s = 0;
-  oyFilterNode_s * in = 0, * out = 0;
-  oyImage_s * input  = NULL,
-            * output = NULL;
-  double * buf_in = &d[0],
-         * buf_out = &d[3];
-  oyDATATYPE_e buf_type_in = oyDOUBLE,
-               buf_type_out = oyDOUBLE;
-  oyProfile_s * p_in = prof,
-              * p_out = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
-  double clck;
-#endif
 
   input =oyImage_Create( 1,1, 
                          buf_in ,
@@ -3589,101 +3375,7 @@ oyTESTRESULT_e testCMMnmRun ()
   clck = oyClock();
   for(i = 0; i < n*1000; ++i)
   if(error <= 0)
-  {
-#if 1
     error  = oyConversion_RunPixels( s, pixel_access );
-#else
-
-  oyConversion_s * conversion = s;
-  oyFilterPlug_s * plug = 0;
-  oyFilterCore_s * filter = 0;
-  oyImage_s * image = 0, * image_input = 0;
-  int error = 0, result, l_error = 0, i,n, dirty = 0, tmp_ticket = 0;
-
-  /* conversion->out_ has to be linear, so we access only the first plug */
-  plug = oyFilterNode_GetPlug( out, 0 );
-  if(!out || !plug)
-  {
-    WARNc1_S("graph incomplete [%d]", s ? oyObject_GetId( s->oy_ ) : -1)
-    break;
-  }                                    
-                                       
-  if(!pixel_access)
-  {
-    /* create a very simple pixel iterator as job ticket */
-    if(plug)
-      pixel_access = oyPixelAccess_Create( 0,0, plug,
-                                           oyPIXEL_ACCESS_IMAGE, 0 );
-    tmp_ticket = 1;
-  } 
-
-  /* should be the same as conversion->out_->filter */
-  filter = oyFilterNode_GetCore( out );
-  image = oyConversion_GetImage( conversion, OY_OUTPUT );
-  oyFilterNode_Release (&out );
-
-  if(pixel_access)
-    result = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
-                                &pixel_access->array, 0, 0 );
-  error = ( result != 0 );
-
-  if(error <= 0)
-    error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug, pixel_access );
-
-  if(error != 0)
-  {
-    dirty = oyOptions_FindString( pixel_access->graph->options, "dirty", "true")
-            ? 1 : 0;
-
-    /* refresh the graph representation */
-    oyFilterGraph_SetFromNode( pixel_access->graph, conversion->input, 0, 0 );
-
-    /* resolve missing data */
-    image_input = oyFilterPlug_ResolveImage( plug, plug->remote_socket_,
-                                             pixel_access );
-    oyImage_Release( &image_input );
-
-    n = oyFilterNodes_Count( pixel_access->graph->nodes );
-    for(i = 0; i < n; ++i)
-    {
-      l_error = oyArray2d_Release( &pixel_access->array ); OY_ERR
-      l_error = oyImage_FillArray( image, pixel_access->output_image_roi, 0,
-                                   &pixel_access->array, 0, 0 ); OY_ERR
-
-      if(error != 0 &&
-         dirty)
-      {
-        if(pixel_access->start_xy[0] != pixel_access->start_xy_old[0] ||
-           pixel_access->start_xy[1] != pixel_access->start_xy_old[1])
-        {
-          /* set back to previous values, at least for the simplest case */
-          pixel_access->start_xy[0] = pixel_access->start_xy_old[0];
-          pixel_access->start_xy[1] = pixel_access->start_xy_old[1];
-        }
-
-        oyFilterGraph_PrepareContexts( pixel_access->graph, 1 );
-        error = conversion->out_->api7_->oyCMMFilterPlug_Run( plug,
-                                                              pixel_access);
-      }
-
-      if(error == 0)
-        break;
-    }
-  }
-
-  if(tmp_ticket)
-  {
-    /* write the data to the output image */
-    if(image != pixel_access->output_image)
-      result = oyImage_ReadArray( image, pixel_access->output_image_roi,
-                                         pixel_access->array, 0 );
-    oyPixelAccess_Release( &pixel_access );
-  }
-
-  oyImage_Release( &image );
-
-#endif
-  }
   clck = oyClock() - clck;
 
   oyConversion_Release ( &s );
@@ -3699,32 +3391,32 @@ oyTESTRESULT_e testCMMnmRun ()
   }
 
 
+  s = oyConversion_CreateBasicPixels( input,output, options, 0 );
   clck = oyClock();
-  for(i = 0; i < 20*n; ++i)
+  for(i = 0; i < n; ++i)
   if(error <= 0)
   {
-    s = oyConversion_CreateBasicPixels( input,output, options, 0 );
     error  = oyConversion_RunPixels( s, 0 );
-    oyConversion_Release ( &s );
-    if(!(i%100)) fprintf(zout, "." ); fflush(zout);
+    //if(!(i%10)) fprintf(zout, "." ); fflush(zout);
   }
-  fprintf(zout, "\n" );
-
+  //printf(zout, "\n" );
   clck = oyClock() - clck;
+  oyConversion_Release ( &s );
+
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "+ oyConversion_RunPixels()          %s",
+    "oyConversion_RunPixels()          %s",
                           oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "+ oyConversion_RunPixels()                         " );
+    "oyConversion_RunPixels()                         " );
   }
 
 
 
   clck = oyClock();
 
-  for(i = 0; i < n*10 && error <= 0; ++i)
+  for(i = 0; i < n && error <= 0; ++i)
   {
     l_error = oyNamedColor_SetColorStd ( c, oyASSUMED_WEB,
                                            (oyPointer)d, oyDOUBLE, 0, options );
@@ -3746,7 +3438,7 @@ oyTESTRESULT_e testCMMnmRun ()
   p_out = oyProfile_FromStd ( oyEDITING_XYZ, icc_profile_flags, NULL );
 
   clck = oyClock();
-  for(i = 0; i < n*20; ++i)
+  for(i = 0; i < n; ++i)
   {
 
   oyImage_s * in  = NULL,
@@ -3799,8 +3491,6 @@ oyTESTRESULT_e testCMMnmRun ()
                           oyDataType_m(buf_type_out),
                          p_out,
                          0 );
-  //oyFilterPlug_s * plug = 0;
-  //oyPixelAccess_s   * pixel_access = 0;
   oyConversion_s * conv   = oyConversion_CreateBasicPixels( input,output, 0,0 );
 
   out = oyConversion_GetNode( conv, OY_OUTPUT );
@@ -4613,7 +4303,6 @@ void         oyTestCacheListClear_     ( )
   oyStructList_Release( &oy_test_cache_ );
 }
 
-#include "oyranos_alpha_internal.h"
 oyTESTRESULT_e testCache()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
