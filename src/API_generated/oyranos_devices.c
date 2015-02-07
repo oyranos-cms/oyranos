@@ -26,6 +26,7 @@
 
 #include "oyranos_helper.h"
 #include "oyranos_icc.h"
+#include "oyranos_texts.h"
 
 #include "oyranos_devices.h"
 #include "oyranos_devices_internal.h"
@@ -2293,8 +2294,8 @@ OYAPI int  OYEXPORT
       STRING_ADD( key_name, key_base_name );
       STRING_ADD( key_name, key_top );
       if(oyOption_GetValueString(o,0))
-        error = oyDBAddKey_( key_name, oyOption_GetValueString(o,0),
-                                        0 );
+        error = oySetPersistentString( key_name, oyOption_GetValueString(o,0),
+                                       0 );
 # if 0
       else if(o->value_type == oyVAL_STRUCT &&
               o->value && o->value->oy_struct->type_ == oyOBJECT_BLOB_S)
@@ -2346,8 +2347,8 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
   oyExportStart_(EXPORT_SETTING);
 
   if(error <= 0)
-    text = oyDBGetKeyString_( oyOption_GetText( option, oyNAME_DESCRIPTION),
-                            oyAllocateFunc_ );
+    text = oyGetPersistentString( oyOption_GetText( option, oyNAME_DESCRIPTION),
+                            0, 0 );
 
   if(error <= 0)
   {
@@ -2471,8 +2472,8 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
            /* skip already edited options by default */
            !(oyOption_GetFlags(o) & oyOPTIONATTRIBUTE_EDIT))
           /* ask the DB */
-          text = oyDBGetKeyString_( oyOption_GetText( o, oyNAME_DESCRIPTION),
-                                  oyAllocateFunc_ );
+          text = oyGetPersistentString( oyOption_GetText( o, oyNAME_DESCRIPTION),
+                                                      0, oyAllocateFunc_ );
         else
           text = NULL;
         if(text && text[0])
@@ -3011,7 +3012,7 @@ char *       oyGetFilterNodeRegFromDB( const char        * db_base_key,
     if(key_name &&
        (!flags || flags & oySOURCE_DATA))
     {
-      name = oyDBGetKeyString_( key_name, allocate_func );
+      name = oyGetPersistentString( key_name, flags, allocate_func );
     }
 
   } else
