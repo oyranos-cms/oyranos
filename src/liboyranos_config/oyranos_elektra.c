@@ -447,7 +447,7 @@ char **          oyDBKeySetGetNames_ ( const char        * key_parent_name,
 }
 
 
-int oyDBAddKey_ (const char* key_name,
+int oyDBSetString_ (const char* key_name,
                         const char* value,
                         const char* comment)
 {
@@ -569,7 +569,7 @@ int oySetBehaviour_      (oyBEHAVIOUR_e type, int choice)
         const char *com =
             oyOptionGet_((oyWIDGET_e)type)-> choice_list[ choice ];
         snprintf(val, 12, "%d", choice);
-        r = oyDBAddKey_ (key_name, val, com);
+        r = oySetPersistentString (key_name, val, com);
         DBG_PROG4_S( "%s %d %s %s", key_name, type, val, com?com:"" )
       }
       else
@@ -595,9 +595,7 @@ int oyGetBehaviour_      (oyBEHAVIOUR_e type)
     key_name = oyOptionGet_((oyWIDGET_e)type)-> config_string;
 
     if(key_name)
-    {
-      name = oyDBGetKeyString_( key_name, oyAllocateFunc_ );
-    }
+      name = oyGetPersistentString( key_name, 0, oyAllocateFunc_ );
     else
       WARNc1_S( "type %d behaviour not possible", type);
   }
@@ -607,7 +605,7 @@ int oyGetBehaviour_      (oyBEHAVIOUR_e type)
   if(name)
   {
     c = atoi(name);
-    oyFree_m_( name )
+    oyFree_m_( name );
   }
 
   if(c < 0)
@@ -654,7 +652,7 @@ int oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
                   + strlen(fileName);
         char* key_name = NULL;
         oyStringAddPrintf( &key_name, AD, "%s%s", OY_REGISTRED_PROFILES OY_SLASH, fileName );
-        r = oyDBAddKey_ (key_name, com, 0);
+        r = oySetPersistentString (key_name, com, 0);
         DBG_PROG2_S( "%s %d", key_name, len )
         oyFree_m_ (key_name)
       }
@@ -665,7 +663,7 @@ int oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
     if(config_name)
     {
       if(name) {
-        r = oyDBAddKey_ (config_name, fileName, com);
+        r = oySetPersistentString (config_name, fileName, com);
         DBG_PROG3_S( "%s %s %s",config_name,fileName,com?com:"" )
       } else {
         KeySet* list;
@@ -721,7 +719,7 @@ int oySetProfile_      (const char* name, oyPROFILE_e type, const char* comment)
  *  1. ask user
  *  2. if user has no setting ask system
  */
-char* oyDBGetKeyString_ ( const char       *key_name,
+char* oyDBGetString_ ( const char       *key_name,
                  oyAlloc_f         allocate_func )
 {
   char* name = 0;

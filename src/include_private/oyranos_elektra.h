@@ -36,10 +36,10 @@ int     oySetBehaviour_        (oyBEHAVIOUR_e type,
                                 int         behaviour);
 
 /* elektra key wrappers */
-char*   oyDBGetKeyString_        (const char       *key_name,
-                                oyAlloc_f         allocFunc );
-int     oyDBAddKey_ (const char* keyName,
-                                const char* value, const char* comment);
+char*   oyDBGetString_               ( const char        * key_name,
+                                       oyAlloc_f           allocFunc );
+int     oyDBSetString_               ( const char        * keyName,
+                                       const char* value, const char* comment);
 char*   oyDBSearchEmptyKeyname_        ( const char        * keyParentName );
 char ** oyDBKeySetGetNames_              ( const char        * key_parent_name,
                                          int               * n );
