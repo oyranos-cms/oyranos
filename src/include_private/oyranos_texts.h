@@ -96,6 +96,12 @@ oyGROUP_e       oyGroupAdd_              (const char *id, const char *cmm,
 int           oyGroupRemove_           (oyGROUP_e     id);
 
 
+char *       oyGetPersistentString   ( const char        * key_name,
+                                       uint32_t            flags,
+                                       oyAlloc_f           alloc_func );
+int          oySetPersistentString   ( const char        * key_name,
+                                       const char        * value,
+                                       const char        * comment );
 
 int         oySetDefaultProfile_       (oyPROFILE_e       type,
                                         const char*       file_name);

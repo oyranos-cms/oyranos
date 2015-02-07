@@ -1987,7 +1987,7 @@ char *       oyGetCMMPattern         ( oyCMM_e             type,
 
     if(key_name &&
        (!flags || flags & oySOURCE_DATA))
-      name = oyDBGetKeyString_( key_name, allocate_func );
+      name = oyGetPersistentString( key_name, flags, allocate_func );
     else if(!key_name)
       WARNc1_S( "type %d not supported", type);
 
@@ -2033,7 +2033,7 @@ int          oySetCMMPattern         ( oyCMM_e             type,
     key_name = oyOptionGet_((oyWIDGET_e)type)-> config_string;
 
     if(key_name)
-      r = oyDBAddKey_ (key_name, pattern, NULL);
+      r = oySetPersistentString (key_name, pattern, NULL);
     else
       WARNc1_S( "type %d setting CMM not possible", type);
   } else
@@ -2041,6 +2041,71 @@ int          oySetCMMPattern         ( oyCMM_e             type,
 
   DBG_PROG_ENDE
   return r;
+}
+
+oyOptions_s * oy_db_cache_ = NULL;
+
+/** Function oyGetPersistentString
+ *  @brief   get a cached string from DB
+ *
+ *  @param         key_name            the DB key name
+ *  @param         flags               - 0 for cached string or
+ *                                     - oySOURCE_DATA for a likely expensive DB lookup
+ *  @param         alloc_func          the user allocator
+ *  @return                            the cached value
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/02/06
+ *  @since   2015/02/06 (Oyranos: 0.9.6)
+ */
+char *       oyGetPersistentString   ( const char        * key_name,
+                                       uint32_t            flags,
+                                       oyAlloc_f           alloc_func )
+{
+  char * value = NULL;
+  const char * return_value = NULL;
+
+  if(flags & oySOURCE_DATA)
+  {
+    value = oyDBGetString_( key_name, alloc_func );
+    oyOptions_SetFromText( &oy_db_cache_, key_name,
+    /* cache the searched for value,
+     * or mark with empty string if nothing was found */
+                           value ? value : "",
+                           OY_CREATE_NEW );
+  } else
+  {
+    return_value = oyOptions_FindString( oy_db_cache_, key_name, NULL );
+    if(!return_value)
+      value = oyGetPersistentString( key_name, oySOURCE_DATA, alloc_func );
+    else
+      value = oyStringCopy( return_value, alloc_func );
+  }
+
+  return value;
+}
+
+/** Function oySetPersistentString
+ *  @brief   set a cached string from DB
+ *
+ *  @param         key_name            the DB key name
+ *  @param         value               the value string
+ *  @param         comment             the comment string
+ *  @return                            DB specific return code
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/02/06
+ *  @since   2015/02/06 (Oyranos: 0.9.6)
+ */
+int          oySetPersistentString   ( const char        * key_name,
+                                       const char        * value,
+                                       const char        * comment )
+{
+  int rc = oyDBSetString_( key_name, value, comment );
+
+  oyOptions_SetFromText( &oy_db_cache_, key_name, value, OY_CREATE_NEW );
+
+  return rc;
 }
 
 /**

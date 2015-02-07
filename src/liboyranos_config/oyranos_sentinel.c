@@ -102,6 +102,7 @@ extern oyStructList_s * oy_cmm_cache_;
 extern oyStructList_s * oy_cmm_infos_;
 extern oyStructList_s * oy_cmm_handles_;
 extern oyProfiles_s * oy_profile_list_cache_;
+extern oyOptions_s * oy_db_cache_;
 
 /** @internal
  *
@@ -116,6 +117,7 @@ void     oyAlphaFinish_              ( int                 unused )
   oyStructList_Release( &oy_cmm_infos_ );
   oyStructList_Release( &oy_cmm_handles_ );
   oyStructList_Release_( &oy_profile_s_file_cache_ );
+  oyOptions_Release( &oy_db_cache_ );
 }
 
 #include "oyranos_alpha.h"
