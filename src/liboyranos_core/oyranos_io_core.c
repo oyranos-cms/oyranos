@@ -729,60 +729,6 @@ char * oyGetHomeDir_ ()
 }
 
 
-int oyIsAdmin_ ()
-{
-# if defined(_WIN32)
-  static int init = 0,
-             is_admin = 0;
-  CHAR * path = NULL;
-
-  DBG_PROG_START
-
-  if(init)
-  {
-    DBG_PROG_ENDE
-    return is_admin;
-  }
-
-  init = 1;
-  path = malloc(MAX_PATH);
-
-  if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_WINDOWS, NULL, 0, &path[0])))
-  {
-    char * fname = NULL;
-    FILE * fp;
-
-    oyStringAddPrintf( &fname, AD, "%s/oy_test.txt", (char*)path );
-
-    fp = fopen(fname, "w");
-    if(fp)
-    {
-      is_admin = 1;
-      fclose(fp);
-    }
-
-    oyFree_m_(fname);
-  }
-  else
-    WARNc_S("Could not get CSIDL_WINDOWS directory name");
-
-  oyFree_m_(path);
-
-  DBG_PROG_ENDE
-  return is_admin;
-# else
-  int is_admin = 0;
-  DBG_PROG_START
-
-  if(geteuid() == 0)
-    is_admin = 1;
-
-  DBG_PROG_ENDE
-  return is_admin;
-# endif
-}
-
-
 char*
 oyPathGetParent_ (const char* name)
 {

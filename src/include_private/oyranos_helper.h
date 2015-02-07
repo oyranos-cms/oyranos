@@ -187,7 +187,6 @@ int                oyMiscBlobGetHash_( void              * buffer,
                                        uint32_t            flags,
                                        unsigned char     * md5_return );
 
-int                oyIsAdmin_        ( );
 
 #ifdef HAVE_DL
 #include <dlfcn.h> /* dlopen() */
