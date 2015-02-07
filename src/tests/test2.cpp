@@ -3519,11 +3519,11 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyColorConvert_() sans oyPixelAcce.%s",
+    "oyColorConvert_() with oyPixelAcce.%s",
                           oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyColorConvert_() sans oyPixelAccess_Create()     " );
+    "oyColorConvert_() with oyPixelAccess_Create()     " );
   }
 
   clck = oyClock();
