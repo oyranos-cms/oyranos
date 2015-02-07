@@ -2141,6 +2141,74 @@ uint32_t oyICCProfileSelectionFlagsFromRegistration (
 /** @} *//* cmm_handling */
 /** @} *//* defaults_apis */
 
+int oySetBehaviour_      (oyBEHAVIOUR_e type, int choice)
+{
+  int r = 1;
+
+  DBG_PROG_START
+
+  DBG_PROG2_S( "type = %d behaviour %d", type, choice )
+
+  if ( (r=oyTestInsideBehaviourOptions_(type, choice)) == 1 )
+  {
+    const char *key_name = 0;
+
+    key_name = oyOptionGet_((oyWIDGET_e)type)-> config_string;
+
+      if(key_name)
+      {
+        char val[12];
+        const char *com =
+            oyOptionGet_((oyWIDGET_e)type)-> choice_list[ choice ];
+        snprintf(val, 12, "%d", choice);
+        r = oySetPersistentString (key_name, val, com);
+        DBG_PROG4_S( "%s %d %s %s", key_name, type, val, com?com:"" )
+      }
+      else
+        WARNc1_S( "type %d behaviour not possible", type);
+  }
+
+  DBG_PROG_ENDE
+  return r;
+}
+
+int oyGetBehaviour_      (oyBEHAVIOUR_e type)
+{
+  char* name = 0;
+  const char* key_name = 0;
+  int c = -1;
+
+  DBG_PROG_START
+
+  DBG_PROG1_S( "type = %d behaviour", type )
+
+  if( oyTestInsideBehaviourOptions_(type, 0) )
+  {
+    key_name = oyOptionGet_((oyWIDGET_e)type)-> config_string;
+
+    if(key_name)
+      name = oyGetPersistentString( key_name, 0, oyAllocateFunc_ );
+    else
+      WARNc1_S( "type %d behaviour not possible", type);
+  }
+  else
+    WARNc1_S( "type %d behaviour not possible", type);
+
+  if(name)
+  {
+    c = atoi(name);
+    oyFree_m_( name );
+  }
+
+  if(c < 0)
+    c = oyOptionGet_((oyWIDGET_e)type)-> default_value;
+
+  DBG_PROG_ENDE
+  return c;
+}
+
+
+
 /* not  */
 void
 oyI18NSet_             ( int active,
