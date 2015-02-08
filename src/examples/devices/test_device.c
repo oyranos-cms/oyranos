@@ -32,11 +32,11 @@ void displayHelp(char ** argv)
          _("is a color profile administration tool for color devices"));
   printf("%s:\n",                 _("Usage"));
   printf("  %s\n",               _("Assign profile to device:"));
-  printf("      %s -a -c class -d number -p file.icc\n", argv[0]);
+  printf("      %s -a -c class -d number [--system-wide] -p file.icc\n", argv[0]);
   printf("         -p %s\t%s\n",    _("FILE"),   _("profile file name"));
   printf("\n");
   printf("  %s\n",               _("Unassign profile from device:"));
-  printf("      %s -e -c class -d number\n", argv[0]);
+  printf("      %s -e -c class -d number [--system-wide]\n", argv[0]);
   printf("\n");
   printf("  %s\n",               _("Setup device:"));
   printf("      %s -s -c class -d number\n", argv[0]);
@@ -129,6 +129,7 @@ int main(int argc, char *argv[])
   uint32_t n = 0;
   int i;
   uint32_t flags = 0;
+  oySCOPE_e scope = oySCOPE_USER;
 
   if(getenv(OY_DEBUG))
   {
@@ -209,6 +210,8 @@ int main(int argc, char *argv[])
                         { simple = 1; i=100; break;}
                         else if(OY_IS_ARG("verbose"))
                         { if(verbose) oy_debug += 1; verbose = 1; i=100; break;}
+                        else if(OY_IS_ARG("system-wide"))
+                        { scope = oySCOPE_SYSTEM; i=100; break; }
                         }
               default:
                         displayHelp(argv);
@@ -548,9 +551,9 @@ int main(int argc, char *argv[])
           oyOptions_Release( &options );
         }
 
-        /*error = oyDeviceSetProfile( c, NULL ); no profile name not supported*/
+        /*error = oyDeviceSetProfile( c, scope, NULL ); no profile name not supported*/
         error = oyDeviceUnset( c );
-        error = oyConfig_EraseFromDB( c );
+        error = oyConfig_EraseFromDB( c, scope );
 
         if(!device_json)
         {
@@ -574,7 +577,7 @@ int main(int argc, char *argv[])
         }
       } else
       {
-        error = oyDeviceSetProfile( c, prof_name );
+        error = oyDeviceSetProfile( c, scope, prof_name );
         if(error)
           fprintf( stdout, "profile assignment failed\n" );
         error = oyDeviceUnset( c );
@@ -598,7 +601,7 @@ int main(int argc, char *argv[])
       oyDeviceSetup( c, options );
 
     if(erase)
-      oyConfig_EraseFromDB( c );
+      oyConfig_EraseFromDB( c, scope );
 
     oyConfig_Release( &c );
     exit(0);

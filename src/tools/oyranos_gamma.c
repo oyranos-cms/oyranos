@@ -109,6 +109,7 @@ int main( int argc , char** argv )
   uint32_t n = 0;
   int i;
   uint32_t icc_profile_flags;
+  oySCOPE_e scope = oySCOPE_USER;
 
   if(getenv(OY_DEBUG))
   {
@@ -192,6 +193,8 @@ int main( int argc , char** argv )
                         { simple = 1; i=100; break;}
                         else if(OY_IS_ARG("verbose"))
                         { if(verbose) oy_debug += 1; verbose = 1; i=100; break;}
+                        else if(OY_IS_ARG("system-wide"))
+                        { scope = oySCOPE_SYSTEM; i=100; break; }
                         }
               default:
                         printf("\n");
@@ -200,11 +203,11 @@ int main( int argc , char** argv )
                                 _("is a color profile administration tool for monitors"));
                         printf("%s:\n",                 _("Usage"));
                         printf("  %s\n",               _("Set new profile:"));
-                        printf("      %s [-x pos -y pos | -d number] %s\n", argv[0],
+                        printf("      %s [-x pos -y pos | -d number] [--system-wide] %s\n", argv[0],
                                                        _("profile name"));
                         printf("\n");
                         printf("  %s\n",               _("Erase profile:"));
-                        printf("      %s -e [-x pos -y pos | -d number]\n", argv[0]);
+                        printf("      %s -e [-x pos -y pos | -d number] [--system-wide]\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("Activate profiles:"));
                         printf("      %s [-x pos -y pos | -d number]\n", argv[0]);
@@ -782,7 +785,7 @@ int main( int argc , char** argv )
       {
         if(verbose)
           fprintf( stdout, "oyDeviceSetProfile()\n" );
-        oyDeviceSetProfile( device, monitor_profile );
+        oyDeviceSetProfile( device, scope, monitor_profile );
         if(verbose)
           fprintf( stdout, "oyDeviceUnset()\n" );
         oyDeviceUnset( device );
@@ -797,7 +800,7 @@ int main( int argc , char** argv )
       {
         if(verbose)
           fprintf( stdout, "oyConfig_EraseFromDB()\n" );
-        oyConfig_EraseFromDB( device );
+        oyConfig_EraseFromDB( device, scope );
       }
 
       if(setup)
@@ -830,7 +833,7 @@ int main( int argc , char** argv )
           if(erase || unset)
             oyDeviceUnset( device );
           if(erase)
-            oyConfig_EraseFromDB( device );
+            oyConfig_EraseFromDB( device, scope );
           if(setup)
             oyDeviceSetup( device, options );
 
