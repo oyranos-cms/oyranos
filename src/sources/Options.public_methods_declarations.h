@@ -120,13 +120,13 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                oyOptions_ObserversEnable (
                                        oyOptions_s       * object );
-/* needs modules */
+/* needs modules from oyranos_modules */
 OYAPI int  OYEXPORT
                  oyOptions_Handle     ( const char        * registration,
                                        oyOptions_s       * options,
                                        const char        * command,
                                        oyOptions_s      ** result );
-/* needs modules */
+/* needs modules from oyranos_modules */
 OYAPI oyOptions_s *  OYEXPORT
                 oyOptions_ForFilter  ( const char        * registration,
                                        uint32_t            flags,
@@ -137,3 +137,9 @@ OYAPI int  OYEXPORT
                                        const char        * driver_context_type,
                                        size_t              driver_context_size,
                                        oyObject_s          object );
+/* needs DB from oyranos_config */
+OYAPI int  OYEXPORT oyOptions_SaveToDB(oyOptions_s       * options,
+                                       oySCOPE_e           scope,
+                                       const char        * registration,
+                                       char             ** new_reg,
+                                       oyAlloc_f           allocateFunc );

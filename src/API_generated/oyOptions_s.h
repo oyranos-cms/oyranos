@@ -12,12 +12,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2014 (C) Kai-Uwe Behrmann
+ *            2004-2015 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2015/02/07
  */
 
 
@@ -43,6 +43,7 @@ typedef struct oyOptions_s oyOptions_s;
 
 #include "oyOption_s.h"
 
+#include "oyranos.h"
 #include "oyObserver_s.h"
 
 
@@ -235,13 +236,13 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                oyOptions_ObserversEnable (
                                        oyOptions_s       * object );
-/* needs modules */
+/* needs modules from oyranos_modules */
 OYAPI int  OYEXPORT
                  oyOptions_Handle     ( const char        * registration,
                                        oyOptions_s       * options,
                                        const char        * command,
                                        oyOptions_s      ** result );
-/* needs modules */
+/* needs modules from oyranos_modules */
 OYAPI oyOptions_s *  OYEXPORT
                 oyOptions_ForFilter  ( const char        * registration,
                                        uint32_t            flags,
@@ -252,6 +253,12 @@ OYAPI int  OYEXPORT
                                        const char        * driver_context_type,
                                        size_t              driver_context_size,
                                        oyObject_s          object );
+/* needs DB from oyranos_config */
+OYAPI int  OYEXPORT oyOptions_SaveToDB(oyOptions_s       * options,
+                                       oySCOPE_e           scope,
+                                       const char        * registration,
+                                       char             ** new_reg,
+                                       oyAlloc_f           allocateFunc );
 
 /* } Include "Options.public_methods_declarations.h" */
 
