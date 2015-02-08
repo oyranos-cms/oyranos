@@ -50,7 +50,7 @@ typedef enum {
   oySCOPE_USER_SYS = 0,            /**< use both */
   oySCOPE_USER,                    /**< use only user settings */
   oySCOPE_SYSTEM                   /**< use only system settings */
-} oySCOPE;
+} oySCOPE_e;
 
 
 /* --- behaviour --- */
@@ -84,8 +84,9 @@ enum  {
 #define oyALL oyASK
 
 int         oyGetBehaviour             (oyBEHAVIOUR_e     type);
-int         oySetBehaviour             (oyBEHAVIOUR_e     type,
-                                        int               choice);
+int          oySetBehaviour          ( oyBEHAVIOUR_e       type,
+                                       oySCOPE_e           scope,
+                                       int                 choice);
 
 /* --- CMM --- */
 
@@ -105,6 +106,7 @@ char *       oyGetCMMPattern         ( oyCMM_e             type,
                                        oyAlloc_f           allocate_func );
 int          oySetCMMPattern         ( oyCMM_e             type,
                                        uint32_t            flags,
+                                       oySCOPE_e           scope,
                                        const char        * name );
 /** \addtogroup cmm_handling
  *  @{ */
@@ -199,8 +201,9 @@ typedef enum  {
 # define oyDEFAULT_PROFILE oyPROFILE_e
 #endif
 
-int         oySetDefaultProfile        (oyPROFILE_e       type,
-                                        const char*       file_name);
+int      oySetDefaultProfile         ( oyPROFILE_e         type,
+                                       oySCOPE_e           scope,
+                                       const char        * file_name );
 char*       oyGetDefaultProfileName    (oyPROFILE_e       type,
                                         oyAlloc_f         alloc_func);
 
