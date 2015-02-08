@@ -39,6 +39,7 @@ OYAPI int  OYEXPORT
                                        oyOptions_s       * options );
 OYAPI int  OYEXPORT
            oyDeviceSetProfile        ( oyConfig_s        * device,
+                                       oySCOPE_e           scope,
                                        const char        * profile_name );
 OYAPI int  OYEXPORT
            oyDeviceGetProfile        ( oyConfig_s        * device,
