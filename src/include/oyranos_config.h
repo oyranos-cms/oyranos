@@ -26,14 +26,8 @@ extern "C" {
 
 /* --- behaviour / policies --- */
 
-int         oySetBehaviour             (oyBEHAVIOUR_e       type,
-                                        int               choice);
-
 
 /* --- default profiles --- */
-
-int         oySetDefaultProfile        (oyPROFILE_e       type,
-                                        const char*       file_name);
 
 
 /* --- profile lists --- */
