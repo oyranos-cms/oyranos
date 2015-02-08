@@ -10,12 +10,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2014 (C) Kai-Uwe Behrmann
+ *            2004-2015 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2015/02/07
  */
 
 
@@ -38,6 +38,7 @@ typedef struct oyConfig_s oyConfig_s;
 
 #include "oyStruct_s.h"
 
+#include "oyranos.h"
 #include "oyBlob_s.h"
 #include "oyConfigs_s.h"
 #include "oyOption_s.h"
@@ -104,13 +105,15 @@ OYAPI int  OYEXPORT
                oyConfig_GetDB        ( oyConfig_s        * device,
                                        int32_t           * rank_value );
 OYAPI int  OYEXPORT
-               oyConfig_SaveToDB     ( oyConfig_s        * config );
+               oyConfig_SaveToDB     ( oyConfig_s        * config,
+                                       oySCOPE_e           scope );
 OYAPI int  OYEXPORT
                oyConfig_GetFromDB    ( oyConfig_s        * device,
                                        oyConfigs_s       * configs,
                                        int32_t           * rank_value );
 OYAPI int  OYEXPORT
-               oyConfig_EraseFromDB  ( oyConfig_s        * config );
+               oyConfig_EraseFromDB  ( oyConfig_s        * config,
+                                       oySCOPE_e           scope );
 OYAPI int  OYEXPORT
                oyConfig_Compare      ( oyConfig_s        * device,
                                        oyConfig_s        * pattern,

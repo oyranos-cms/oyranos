@@ -18,13 +18,15 @@ OYAPI int  OYEXPORT
                oyConfig_GetDB        ( oyConfig_s        * device,
                                        int32_t           * rank_value );
 OYAPI int  OYEXPORT
-               oyConfig_SaveToDB     ( oyConfig_s        * config );
+               oyConfig_SaveToDB     ( oyConfig_s        * config,
+                                       oySCOPE_e           scope );
 OYAPI int  OYEXPORT
                oyConfig_GetFromDB    ( oyConfig_s        * device,
                                        oyConfigs_s       * configs,
                                        int32_t           * rank_value );
 OYAPI int  OYEXPORT
-               oyConfig_EraseFromDB  ( oyConfig_s        * config );
+               oyConfig_EraseFromDB  ( oyConfig_s        * config,
+                                       oySCOPE_e           scope );
 OYAPI int  OYEXPORT
                oyConfig_Compare      ( oyConfig_s        * device,
                                        oyConfig_s        * pattern,
