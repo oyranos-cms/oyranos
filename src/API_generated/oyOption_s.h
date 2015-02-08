@@ -10,12 +10,12 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2014 (C) Kai-Uwe Behrmann
+ *            2004-2015 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/01/11
+ *  @date     2015/02/07
  */
 
 
@@ -54,7 +54,7 @@ typedef enum {
   oyOPTIONSOURCE_NONE = 0,             /**< not clear */
   oyOPTIONSOURCE_FILTER = 2,           /**< internal defaults, e.g. module */
   oyOPTIONSOURCE_DATA = 4,             /**< external defaults, e.g. policy, DB*/
-  oyOPTIONSOURCE_USER = 8              /**< user settings, e.g. elektra */
+  oyOPTIONSOURCE_USER = 8              /**< user settings, e.g. GUI */
 } oyOPTIONSOURCE_e;
 
 /* Value Definitions { */

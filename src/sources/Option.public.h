@@ -13,7 +13,7 @@ typedef enum {
   oyOPTIONSOURCE_NONE = 0,             /**< not clear */
   oyOPTIONSOURCE_FILTER = 2,           /**< internal defaults, e.g. module */
   oyOPTIONSOURCE_DATA = 4,             /**< external defaults, e.g. policy, DB*/
-  oyOPTIONSOURCE_USER = 8              /**< user settings, e.g. elektra */
+  oyOPTIONSOURCE_USER = 8              /**< user settings, e.g. GUI */
 } oyOPTIONSOURCE_e;
 
 /* Value Definitions { */
