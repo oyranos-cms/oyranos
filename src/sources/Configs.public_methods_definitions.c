@@ -24,8 +24,8 @@
  *  @since   2009/01/16 (Oyranos: 0.1.10)
  *  @date    2009/01/19
  */
-OYAPI int  OYEXPORT
-               oyConfigs_FromDomain  ( const char        * registration_domain,
+OYAPI int OYEXPORT oyConfigs_FromDomain (
+                                       const char        * registration_domain,
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** configs,
                                        oyObject_s          object )
@@ -261,8 +261,7 @@ OYAPI int  OYEXPORT oyConfigs_FromDeviceClass (
  *  @since   2009/02/26 (Oyranos: 0.1.10)
  *  @date    2009/02/26
  */
-OYAPI int  OYEXPORT
-                 oyConfigs_SelectSimilars (
+OYAPI int OYEXPORT oyConfigs_SelectSimilars (
                                        oyConfigs_s       * list,
                                        const char        * pattern[][2],
                                        oyConfigs_s      ** filtered )
@@ -336,8 +335,7 @@ OYAPI int  OYEXPORT
  *  @since   2009/01/23 (Oyranos: 0.1.10)
  *  @date    2010/02/25
  */
-OYAPI int OYEXPORT
-                 oyConfigs_FromDB    ( const char        * registration,
+OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
                                        oyConfigs_s      ** configs,
                                        oyObject_s          object )
 {
@@ -371,13 +369,14 @@ OYAPI int OYEXPORT
     {
       char * key = NULL;
       /** 2. obtain the directory structure for configurations */
-      key_set_names = oyDBKeySetGetNames_( texts[i], &n );
+      key_set_names = oyDBKeySetGetNames_( texts[i], oySCOPE_USER_SYS, &n );
 
       if(error <= 0)
       for(j = 0; j < n; ++j)
       {
         /** 3. obtain all keys from one configuration directory */
-        config_key_names = oyDBKeySetGetNames_( key_set_names[j], &k_n );
+        config_key_names = oyDBKeySetGetNames_( key_set_names[j],
+                                                oySCOPE_USER_SYS, &k_n );
 
         config = (oyConfig_s_*)oyConfig_FromRegistration( texts[i], object );
         error = !config;
@@ -450,8 +449,7 @@ OYAPI int OYEXPORT
  *  @since   2009/08/21 (Oyranos: 0.1.10)
  *  @date    2009/08/25
  */
-OYAPI int  OYEXPORT
-                 oyConfigs_Modify    ( oyConfigs_s       * configs,
+OYAPI int OYEXPORT oyConfigs_Modify  ( oyConfigs_s       * configs,
                                        oyOptions_s       * options )
 {
   int error = !oyConfigs_Count( configs );
@@ -569,8 +567,7 @@ OYAPI int  OYEXPORT
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/01/19
  */
-OYAPI int  OYEXPORT
-                 oyConfigDomainList  ( const char        * registration_pattern,
+OYAPI int OYEXPORT oyConfigDomainList( const char        * registration_pattern,
                                        char            *** list,
                                        uint32_t          * count,
                                        uint32_t         ** rank_list,
@@ -630,3 +627,4 @@ OYAPI int  OYEXPORT
   oyExportEnd_();
   return error;
 }
+

@@ -1,12 +1,12 @@
-.TH oyranos-monitor 1 "July 29, 2012" "User Commands"
+.TH oyranos-monitor 1 "January 07, 2015" "User Commands"
 .SH NAME
 oyranos-monitor \- Oyranos CMS monitor configuration
 .SH SYNOPSIS
 \fBoyranos-monitor\fR |-s [[-x num] [-y num]|-d \fINUMBER\fR] [-v]
 .fi
-\fBoyranos-monitor\fR \fIPROFILENAME\fR [[-x num] [-y num]|-d \fINUMBER\fR] [-v]
+\fBoyranos-monitor\fR \fIPROFILENAME\fR [[-x num] [-y num]|-d \fINUMBER\fR] [--system-wide] [-v]
 .fi
-\fBoyranos-monitor\fR -e [[-x num] [-y num]|-d \fINUMBER\fR] [-v]
+\fBoyranos-monitor\fR -e [[-x num] [-y num]|-d \fINUMBER\fR] [--system-wide] [-v]
 .fi
 \fBoyranos-monitor\fR -l [[-x num] [-y num]|-d \fINUMBER\fR] [-v]
                 [ --module \fIMODULENAME\fR ]
@@ -48,6 +48,9 @@ select the screen at the x position.
 .br
 \fB\-y\fR \fIPOSITION\fR , \-y\fR=\fIPOSITION\fR
 select the screen at the y position.
+.br
+\fB\--system-wide\fR
+do system wide, might need admin or root privileges
 .TP
 .B \-e, \-\-erase \fR release a ICC profile from a monitor device
 Reset the hardware gamma table to the defaults and erase from the Oyranos DB
@@ -61,6 +64,9 @@ select the screen at the x position.
 .br
 \fB\-y\fR \fIPOSITION\fR , \-y\fR=\fIPOSITION\fR
 select the screen at the y position.
+.br
+\fB\--system-wide\fR
+do system wide, might need admin or root privileges
 .TP
 .B \-l, \-\-list\fR list devices
 .br

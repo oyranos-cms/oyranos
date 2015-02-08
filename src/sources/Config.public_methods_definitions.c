@@ -196,6 +196,7 @@ OYAPI int  OYEXPORT
  *  The new key set name is stored inside the key "key_set_name".
  *
  *  @param[in]     config              the configuration
+ *  @param         scope               oySCOPE_USER and oySCOPE_SYS are possible
  *  @return                            0 - good, 1 >= error
  *
  *  @version Oyranos: 0.1.10
@@ -203,7 +204,8 @@ OYAPI int  OYEXPORT
  *  @date    2011/01/29
  */
 OYAPI int  OYEXPORT
-               oyConfig_SaveToDB     ( oyConfig_s        * config )
+               oyConfig_SaveToDB     ( oyConfig_s        * config,
+                                       oySCOPE_e           scope )
 {
   int error = !config;
   oyOptions_s * opts = 0;
@@ -222,7 +224,7 @@ OYAPI int  OYEXPORT
     oyOptions_AppendOpts( opts, config_->db );
     oyOptions_AppendOpts( opts, config_->backend_core );
 
-    error = oyOptions_SaveToDB( opts, config_->registration, &new_reg, 0 );
+    error = oyOptions_SaveToDB( opts, scope, config_->registration, &new_reg,0);
 
     /* add information about the data's origin */
     oyStringAddPrintf( &key, oyAllocateFunc_, oyDeAllocateFunc_, "%s/key_set_name",
@@ -243,14 +245,16 @@ OYAPI int  OYEXPORT
  *  @brief    Remove a oyConfig_s from DB
  *
  *  @param[in]     config              the configuration
+ *  @param         scope               oySCOPE_USER and oySCOPE_SYS are possible
  *  @return                            0 - good, 1 >= error
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/03/07
  *  @since   2009/01/27 (Oyranos: 0.1.10)
- *  @date    2009/01/27
  */
-OYAPI int  OYEXPORT
-               oyConfig_EraseFromDB  ( oyConfig_s        * config )
+OYAPI int  OYEXPORT oyConfig_EraseFromDB (
+                                       oyConfig_s        * config,
+                                       oySCOPE_e           scope )
 {
   int error = !config;
   oyOption_s * o = 0;
@@ -297,7 +301,7 @@ OYAPI int  OYEXPORT
     else
       text = s->registration;
 
-    error = oyDBEraseKey_( text );
+    error = oyDBEraseKey_( text, scope );
 
     if(tmp)
       oyFree_m_( tmp );
@@ -1295,3 +1299,4 @@ OYAPI const char *  OYEXPORT
 
   return s->registration;
 }
+

@@ -196,7 +196,7 @@ oyTESTRESULT_e testElektra()
 
   fprintf(stdout, "\n" );
 
-  error = oySetPersistentString(TEST_DOMAIN TEST_KEY,
+  error = oySetPersistentString( TEST_DOMAIN TEST_KEY, oySCOPE_USER,
                                  "NULLTestValue", "NULLTestComment" );
   if(error)
   {
@@ -208,7 +208,7 @@ oyTESTRESULT_e testElektra()
     "oySetPersistentString(%s)", TEST_DOMAIN TEST_KEY );
   }
 
-  start = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, 0);
+  start = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, oySCOPE_USER_SYS, 0);
   if(start && start[0])
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
@@ -224,9 +224,9 @@ oyTESTRESULT_e testElektra()
   {
     oyExportStart_(EXPORT_CHECK_NO);
     oyExportEnd_();
-    error = oySetPersistentString(TEST_DOMAIN TEST_KEY,
+    error = oySetPersistentString(TEST_DOMAIN TEST_KEY, oySCOPE_USER,
                                  "NULLTestValue", "NULLTestComment" );
-    start = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, 0);
+    start = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, oySCOPE_USER_SYS, 0);
     printf ("start is %s\n", start);
     
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL,
@@ -236,9 +236,9 @@ oyTESTRESULT_e testElektra()
   {
     oyExportStart_(EXPORT_SETTING);
     oyExportEnd_();
-    error = oySetPersistentString(TEST_DOMAIN TEST_KEY,
+    error = oySetPersistentString(TEST_DOMAIN TEST_KEY, oySCOPE_USER,
                                  "NULLTestValue", "NULLTestComment" );
-    start = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, 0);
+    start = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, oySCOPE_USER_SYS, 0);
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL, 
     "Elektra not initialised? try oyExportStart_(EXPORT_SETTING)" );
   }
@@ -247,9 +247,9 @@ oyTESTRESULT_e testElektra()
   else
     fprintf(zout, "could not initialise\n" );
 
-  error = oySetPersistentString(TEST_DOMAIN TEST_KEY,
+  error = oySetPersistentString(TEST_DOMAIN TEST_KEY, oySCOPE_USER,
                                  "myTestValue", "myTestComment" );
-  value = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, 0);
+  value = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, oySCOPE_USER_SYS, 0);
   if(value)
     fprintf(zout, "result key value: %s\n", value );
 
@@ -287,7 +287,7 @@ oyTESTRESULT_e testElektra()
   } else
     result = oyTESTRESULT_SUCCESS;
 
-  error = oyDBEraseKey_( TEST_DOMAIN TEST_KEY );
+  error = oyDBEraseKey_( TEST_DOMAIN TEST_KEY, oySCOPE_USER );
   if(error)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
@@ -297,7 +297,7 @@ oyTESTRESULT_e testElektra()
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyDBEraseKey_(%s)", TEST_DOMAIN TEST_KEY );
   }
-  value = oyDBGetString_(TEST_DOMAIN TEST_KEY, 0);
+  value = oyDBGetString_(TEST_DOMAIN TEST_KEY, oySCOPE_USER_SYS, 0);
   if(value && strlen(value))
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
@@ -308,7 +308,7 @@ oyTESTRESULT_e testElektra()
     "Elektra key erased                      " );
   }
 
-  value = oyDBSearchEmptyKeyname_(TEST_DOMAIN TEST_KEY);
+  value = oyDBSearchEmptyKeyname_(TEST_DOMAIN TEST_KEY, oySCOPE_USER);
   if(value && strlen(value))
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
@@ -2205,7 +2205,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   if(config)
     registration = oyStringCopy_( oyConfig_GetRegistration( config ),
                                   oyAllocateFunc_ );
-  error = oyConfig_SaveToDB( config );
+  error = oyConfig_SaveToDB( config, oySCOPE_USER );
 
   error = oyConfigs_FromDB( registration, &configs, 0 );
   count = oyConfigs_Count( configs );
@@ -2232,7 +2232,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   oyOption_Release( &o );
   if(key)
     oyDeAllocateFunc_( key ); key = 0;
-  error = oyConfig_EraseFromDB( config );
+  error = oyConfig_EraseFromDB( config, oySCOPE_USER );
   /* The following is equal to oyConfig_EraseFromDB() but more simple.
   error = oyRegistrationEraseFromDB( key_set_name );
    */
@@ -3156,7 +3156,7 @@ oyTESTRESULT_e testCMMnmRun ()
   clck = oyClock();
   for(i = 0; i < n*3; ++i)
   {
-    char * value = oyDBGetString_(key_name, 0);
+    char * value = oyDBGetString_(key_name, oySCOPE_USER_SYS, 0);
     oyFree_m_(value);
   }
   clck = oyClock() - clck;
@@ -3174,7 +3174,7 @@ oyTESTRESULT_e testCMMnmRun ()
   clck = oyClock();
   for(i = 0; i < n*3; ++i)
   {
-    char * t = oyGetPersistentString( key_name, 0,0 );
+    char * t = oyGetPersistentString( key_name, 0, oySCOPE_USER_SYS,0 );
     if(!t)
       break;
   }
@@ -3198,10 +3198,11 @@ oyTESTRESULT_e testCMMnmRun ()
   {
     int error = !option || !oyOption_GetRegistration(option);
     error = oyOption_SetValueFromDB( option );
+    if(error) break;
   }
   clck = oyClock() - clck;
 
-  if( i )
+  if( i > 1 )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyOption_SetValueFromDB()           %s",
                   oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Opt."));

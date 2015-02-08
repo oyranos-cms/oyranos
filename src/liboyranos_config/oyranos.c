@@ -78,9 +78,9 @@
 /* path names API */
 
 /* default profiles API */
-int
-oySetDefaultProfile_       (oyPROFILE_e       type,
-                            const char*       file_name)
+int      oySetDefaultProfile_        ( oyPROFILE_e         type,
+                                       oySCOPE_e           scope,
+                                       const char        * file_name )
 {
   int r = 0;
 
@@ -92,7 +92,7 @@ oySetDefaultProfile_       (oyPROFILE_e       type,
     WARNc_S(_("wrong profile for static web color space selected, need sRGB"))
     return 1;
   }
-  r = oySetProfile_ (file_name, type, 0);
+  r = oySetProfile_ (file_name, scope, type, 0);
   DBG_PROG_ENDE
   return r;
 }
@@ -103,8 +103,7 @@ oyGroupSetGet            (oyGROUP_e group, int * count )
   return 0;
 }*/
 
-char*
-oyGetDefaultProfileName_   (oyPROFILE_e       type,
+char* oyGetDefaultProfileName_   (oyPROFILE_e       type,
                             oyAlloc_f         allocate_func)
 {
   char* name = 0;
@@ -127,7 +126,8 @@ oyGetDefaultProfileName_   (oyPROFILE_e       type,
       WARNc2_S( "%s %d", _("Option not supported type:"), type)
       return NULL;
     } else
-      name = oyGetPersistentString( t->config_string, 0, allocate_func );
+      name = oyGetPersistentString( t->config_string, 0,
+                                    oySCOPE_USER_SYS, allocate_func );
   }
 #ifdef __APPLE__
   if(!(name && name[0]))
@@ -380,12 +380,13 @@ oyOptionChoicesFree                  (oyWIDGET_e        option,
 /** Set a special behaviour. Usual in control panel in Oyranos.\n 
  *
  *  @param  type      the type of behaviour
+ *  @param         scope               oySCOPE_USER and oySCOPE_SYS are possible
  *  @param  choice    the selected option
  *  @return error
  */
-int
-oySetBehaviour         (oyBEHAVIOUR_e       type,
-                        int               choice)
+int      oySetBehaviour              ( oyBEHAVIOUR_e       type,
+                                       oySCOPE_e           scope,
+                                       int                 choice )
 {
   int error = 0;
 
@@ -393,7 +394,7 @@ oySetBehaviour         (oyBEHAVIOUR_e       type,
   oyExportStart_(EXPORT_SETTING);
   oyTextsCheck_ ();
 
-  error = oySetBehaviour_(type, choice);
+  error = oySetBehaviour_(type, scope, choice);
 
   oyExportEnd_();
   DBG_PROG_ENDE
@@ -638,9 +639,9 @@ oyPolicySet                (const char      * policy_file,
  *                    specified profile type
  *  @return success
  */
-int
-oySetDefaultProfile        (oyPROFILE_e       type,
-                            const char*       file_name)
+int      oySetDefaultProfile         ( oyPROFILE_e         type,
+                                       oySCOPE_e           scope,
+                                       const char        * file_name )
 {
   int n = 0;
 
@@ -648,7 +649,7 @@ oySetDefaultProfile        (oyPROFILE_e       type,
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
   oyTextsCheck_ ();
 
-  n = oySetDefaultProfile_ (type, file_name);
+  n = oySetDefaultProfile_ (type, scope, file_name);
 
   oyExportEnd_();
   DBG_PROG_ENDE

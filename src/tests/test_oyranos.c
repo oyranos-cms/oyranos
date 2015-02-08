@@ -189,16 +189,18 @@ oyTESTRESULT_e testElektra()
 
   fprintf(stderr, "\n" );
 
-  error = oySetPersistentString("sw/Oyranos/Tests/test_key",
+  error = oySetPersistentString("sw/Oyranos/Tests/test_key", oySCOPE_USER,
                                  "NULLTestValue", "NULLTestComment" );
-  start = oyGetPersistentString("sw/Oyranos/Tests/test_key", 0, 0);
+  start = oyGetPersistentString("sw/Oyranos/Tests/test_key", 0,
+                                oySCOPE_USER_SYS, 0);
   if(!start || !start[0])
   {
     oyExportStart_(EXPORT_CHECK_NO);
     oyExportEnd_();
-    error = oySetPersistentString("sw/Oyranos/Tests/test_key",
+    error = oySetPersistentString("sw/Oyranos/Tests/test_key", oySCOPE_USER,
                                  "NULLTestValue", "NULLTestComment" );
-    start = oyGetPersistentString("sw/Oyranos/Tests/test_key", 0, 0);
+    start = oyGetPersistentString("sw/Oyranos/Tests/test_key", 0,
+                                  oySCOPE_USER_SYS, 0);
     
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL,
     "Elektra not initialised? try oyExportStart_(EXPORT_CHECK_NO)" );
@@ -207,9 +209,10 @@ oyTESTRESULT_e testElektra()
   {
     oyExportStart_(EXPORT_SETTING);
     oyExportEnd_();
-    error = oySetPersistentString("sw/Oyranos/Tests/test_key",
+    error = oySetPersistentString("sw/Oyranos/Tests/test_key", oySCOPE_USER,
                                  "NULLTestValue", "NULLTestComment" );
-    start = oyGetPersistentString("sw/Oyranos/Tests/test_key", 0, 0);
+    start = oyGetPersistentString("sw/Oyranos/Tests/test_key", 0,
+                                  oySCOPE_USER_SYS, 0);
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL, 
     "Elektra not initialised? try oyExportStart_(EXPORT_SETTING)" );
   }
@@ -218,9 +221,10 @@ oyTESTRESULT_e testElektra()
   else
     fprintf(zout, "could not initialise\n" );
 
-  error = oySetPersistentString("sw/Oyranos/Tests/test_key",
+  error = oySetPersistentString("sw/Oyranos/Tests/test_key", oySCOPE_USER,
                                  "myTestValue", "myTestComment" );
-  value = oyGetPersistentString("sw/Oyranos/Tests/test_key", 0, 0);
+  value = oyGetPersistentString("sw/Oyranos/Tests/test_key", 0,
+                                 oySCOPE_USER_SYS, 0);
   if(value)
     fprintf(zout, "result key value: %s\n", value );
 

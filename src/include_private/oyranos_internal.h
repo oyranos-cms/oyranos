@@ -57,9 +57,10 @@ void    oyDestroyCompList_ (oyComp_t_* list);
 char*   printComp          (oyComp_t_* entry);
 
 
-int   oySetProfile_             (const char      * name,
-                                 oyPROFILE_e       type,
-                                 const char      * comment);
+int      oySetProfile_               ( const char        * name,
+                                       oySCOPE_e           scope,
+                                       oyPROFILE_e         type,
+                                       const char        * comment );
 
 /* separate from the external functions */
 

@@ -98,13 +98,21 @@ int           oyGroupRemove_           (oyGROUP_e     id);
 
 char *       oyGetPersistentString   ( const char        * key_name,
                                        uint32_t            flags,
+                                       oySCOPE_e           scope,
                                        oyAlloc_f           alloc_func );
 int          oySetPersistentString   ( const char        * key_name,
+                                       oySCOPE_e           scope,
                                        const char        * value,
                                        const char        * comment );
 
-int         oySetDefaultProfile_       (oyPROFILE_e       type,
-                                        const char*       file_name);
+int     oyGetBehaviour_        (oyBEHAVIOUR_e type);
+int      oySetBehaviour_             ( oyBEHAVIOUR_e       type,
+                                       oySCOPE_e           scope,
+                                       int                 choice);
+
+int      oySetDefaultProfile_        ( oyPROFILE_e         type,
+                                       oySCOPE_e           scope,
+                                       const char        * file_name );
 char*       oyGetDefaultProfileName_   (oyPROFILE_e       type,
                                        oyAlloc_f           alloc_func);
 

@@ -1987,7 +1987,8 @@ char *       oyGetCMMPattern         ( oyCMM_e             type,
 
     if(key_name &&
        (!flags || flags & oySOURCE_DATA))
-      name = oyGetPersistentString( key_name, flags, allocate_func );
+      name = oyGetPersistentString( key_name, flags, oySCOPE_USER_SYS,
+                                    allocate_func );
     else if(!key_name)
       WARNc1_S( "type %d not supported", type);
 
@@ -2011,6 +2012,7 @@ char *       oyGetCMMPattern         ( oyCMM_e             type,
  *
  *  @param         type                the CMM type to set
  *  @param         flags               unused
+ *  @param         scope               oySCOPE_USER and oySCOPE_SYS are possible
  *  @param         pattern             a registration pattern to match a installed CMM registration
  *  @return                            -1 in case of an issue, 0 for proper operation, 1 for error
  *
@@ -2020,6 +2022,7 @@ char *       oyGetCMMPattern         ( oyCMM_e             type,
  */
 int          oySetCMMPattern         ( oyCMM_e             type,
                                        uint32_t            flags,
+                                       oySCOPE_e           scope,
                                        const char        * pattern )
 {
   int r = 1;
@@ -2033,7 +2036,7 @@ int          oySetCMMPattern         ( oyCMM_e             type,
     key_name = oyOptionGet_((oyWIDGET_e)type)-> config_string;
 
     if(key_name)
-      r = oySetPersistentString (key_name, pattern, NULL);
+      r = oySetPersistentString (key_name, scope, pattern, NULL);
     else
       WARNc1_S( "type %d setting CMM not possible", type);
   } else
@@ -2049,8 +2052,11 @@ oyOptions_s * oy_db_cache_ = NULL;
  *  @brief   get a cached string from DB
  *
  *  @param         key_name            the DB key name
- *  @param         flags               - 0 for cached string or
+ *  @param         flags               
+ *                                     - 0 for cached string or
  *                                     - oySOURCE_DATA for a likely expensive DB lookup
+ *  @param         scope               user/system or both, works together with
+ *                                     flags |= oySOURCE_DATA
  *  @param         alloc_func          the user allocator
  *  @return                            the cached value
  *
@@ -2060,6 +2066,7 @@ oyOptions_s * oy_db_cache_ = NULL;
  */
 char *       oyGetPersistentString   ( const char        * key_name,
                                        uint32_t            flags,
+                                       oySCOPE_e           scope,
                                        oyAlloc_f           alloc_func )
 {
   char * value = NULL;
@@ -2067,7 +2074,7 @@ char *       oyGetPersistentString   ( const char        * key_name,
 
   if(flags & oySOURCE_DATA)
   {
-    value = oyDBGetString_( key_name, alloc_func );
+    value = oyDBGetString_( key_name, scope, alloc_func );
     oyOptions_SetFromText( &oy_db_cache_, key_name,
     /* cache the searched for value,
      * or mark with empty string if nothing was found */
@@ -2077,7 +2084,7 @@ char *       oyGetPersistentString   ( const char        * key_name,
   {
     return_value = oyOptions_FindString( oy_db_cache_, key_name, NULL );
     if(!return_value)
-      value = oyGetPersistentString( key_name, oySOURCE_DATA, alloc_func );
+      value = oyGetPersistentString( key_name, oySOURCE_DATA,scope, alloc_func);
     else
       value = oyStringCopy( return_value, alloc_func );
   }
@@ -2089,6 +2096,7 @@ char *       oyGetPersistentString   ( const char        * key_name,
  *  @brief   set a cached string from DB
  *
  *  @param         key_name            the DB key name
+ *  @param         scope               oySCOPE_USER and oySCOPE_SYS are possible
  *  @param         value               the value string
  *  @param         comment             the comment string
  *  @return                            DB specific return code
@@ -2098,10 +2106,11 @@ char *       oyGetPersistentString   ( const char        * key_name,
  *  @since   2015/02/06 (Oyranos: 0.9.6)
  */
 int          oySetPersistentString   ( const char        * key_name,
+                                       oySCOPE_e           scope,
                                        const char        * value,
                                        const char        * comment )
 {
-  int rc = oyDBSetString_( key_name, value, comment );
+  int rc = oyDBSetString_( key_name, scope, value, comment );
 
   oyOptions_SetFromText( &oy_db_cache_, key_name, value, OY_CREATE_NEW );
 
@@ -2141,7 +2150,9 @@ uint32_t oyICCProfileSelectionFlagsFromRegistration (
 /** @} *//* cmm_handling */
 /** @} *//* defaults_apis */
 
-int oySetBehaviour_      (oyBEHAVIOUR_e type, int choice)
+int      oySetBehaviour_             ( oyBEHAVIOUR_e       type,
+                                       oySCOPE_e           scope,
+                                       int                 choice)
 {
   int r = 1;
 
@@ -2161,7 +2172,7 @@ int oySetBehaviour_      (oyBEHAVIOUR_e type, int choice)
         const char *com =
             oyOptionGet_((oyWIDGET_e)type)-> choice_list[ choice ];
         snprintf(val, 12, "%d", choice);
-        r = oySetPersistentString (key_name, val, com);
+        r = oySetPersistentString (key_name, scope, val, com);
         DBG_PROG4_S( "%s %d %s %s", key_name, type, val, com?com:"" )
       }
       else
@@ -2187,7 +2198,8 @@ int oyGetBehaviour_      (oyBEHAVIOUR_e type)
     key_name = oyOptionGet_((oyWIDGET_e)type)-> config_string;
 
     if(key_name)
-      name = oyGetPersistentString( key_name, 0, oyAllocateFunc_ );
+      name = oyGetPersistentString( key_name, 0, oySCOPE_USER_SYS,
+                                    oyAllocateFunc_ );
     else
       WARNc1_S( "type %d behaviour not possible", type);
   }

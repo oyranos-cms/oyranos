@@ -917,15 +917,17 @@ OYAPI int  OYEXPORT
     @endverbatim
  *
  *  @param         device              the device
+ *  @param         scope               oySCOPE_USER and oySCOPE_SYS are possible
  *  @param         profile_name        the device's ICC profile or zero to
  *                                     unset
  *  @return                            error
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/02/07
  *  @since   2009/02/07 (Oyranos: 0.1.10)
- *  @date    2009/02/12
  */
 int      oyDeviceSetProfile          ( oyConfig_s        * device,
+                                       oySCOPE_e           scope,
                                        const char        * profile_name )
 {
   int error = !device || !profile_name || !profile_name[0];
@@ -1033,7 +1035,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
 
       /** 4.1.2 if the 4.1.1 condition is true remove the configuration */
       if(equal == j_n)
-        oyConfig_EraseFromDB( config );
+        oyConfig_EraseFromDB( config, scope );
 
       oyConfig_Release( &config );
     }
@@ -1056,7 +1058,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
     oyConfig_s * json_device = NULL;
     error = oyDeviceToJSON( device, 0, &json_text, oyAllocateFunc_ );
     error = oyDeviceFromJSON( json_text, NULL, &json_device );
-    error = oyConfig_SaveToDB( json_device );
+    error = oyConfig_SaveToDB( json_device, scope );
     oyFree_m_( json_text );
     oyConfig_Release( &json_device );
   }
@@ -2233,17 +2235,18 @@ OYAPI int  OYEXPORT  oyOption_FromDB ( const char        * registration,
  *  @brief   store a oyOptions_s in DB
  *
  *  @param[in]     options             the options
+ *  @param         scope               oySCOPE_USER and oySCOPE_SYS are possible
  *  @param[in]     registration        the registration
  *  @param[out]    new_reg             the new registration; optional
  *  @param[in]     alloc               the user allocator for new_reg; optional
  *  @return                            0 - good, 1 >= error
  *
- *  @version Oyranos: 0.3.0
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/02/07
  *  @since   2009/02/08 (Oyranos: 0.1.10)
- *  @date    2011/01/29
  */
-OYAPI int  OYEXPORT
-               oyOptions_SaveToDB    ( oyOptions_s       * options,
+OYAPI int OYEXPORT oyOptions_SaveToDB( oyOptions_s       * options,
+                                       oySCOPE_e           scope,
                                        const char        * registration,
                                        char             ** new_reg,
                                        oyAlloc_f           allocateFunc )
@@ -2260,7 +2263,7 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
-    key_base_name = oyDBSearchEmptyKeyname_( registration );
+    key_base_name = oyDBSearchEmptyKeyname_( registration, scope );
     error = !key_base_name;
     if(error <= 0)
     {
@@ -2278,8 +2281,8 @@ OYAPI int  OYEXPORT
       STRING_ADD( key_name, key_base_name );
       STRING_ADD( key_name, key_top );
       if(oyOption_GetValueString(o,0))
-        error = oySetPersistentString( key_name, oyOption_GetValueString(o,0),
-                                       0 );
+        error = oySetPersistentString( key_name, scope,
+                                       oyOption_GetValueString(o,0), 0 );
 # if 0
       else if(o->value_type == oyVAL_STRUCT &&
               o->value && o->value->oy_struct->type_ == oyOBJECT_BLOB_S)
@@ -2314,8 +2317,8 @@ OYAPI int  OYEXPORT
  *  @return                            error
  *
  *  @version Oyranos: 0.1.10
- *  @since   2009/01/24 (Oyranos: 0.1.10)
  *  @date    2009/05/25
+ *  @since   2009/01/24 (Oyranos: 0.1.10)
  */
 int            oyOption_SetValueFromDB  ( oyOption_s        * option )
 {
@@ -2332,7 +2335,7 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
 
   if(error <= 0)
     text = oyGetPersistentString( oyOption_GetText( option, oyNAME_DESCRIPTION),
-                            0, 0 );
+                                  0, oySCOPE_USER_SYS, 0 );
 
   if(error <= 0)
   {
@@ -2456,8 +2459,9 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
            /* skip already edited options by default */
            !(oyOption_GetFlags(o) & oyOPTIONATTRIBUTE_EDIT))
           /* ask the DB */
-          text = oyGetPersistentString( oyOption_GetText( o, oyNAME_DESCRIPTION),
-                                                      0, oyAllocateFunc_ );
+          text = oyGetPersistentString( oyOption_GetText( o,oyNAME_DESCRIPTION),
+                                                          0, oySCOPE_USER_SYS,
+                                                          oyAllocateFunc_ );
         else
           text = NULL;
         if(text && text[0])
@@ -2996,7 +3000,8 @@ char *       oyGetFilterNodeRegFromDB( const char        * db_base_key,
     if(key_name &&
        (!flags || flags & oySOURCE_DATA))
     {
-      name = oyGetPersistentString( key_name, flags, allocate_func );
+      name = oyGetPersistentString( key_name, flags, oySCOPE_USER_SYS,
+                                    allocate_func );
     }
 
   } else
@@ -3737,4 +3742,3 @@ const char **oyConfDomain_GetTexts_  ( oyConfDomain_s_   * obj )
  */
 
 /** @} *//* misc */
-

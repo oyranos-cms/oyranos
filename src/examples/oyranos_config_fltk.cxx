@@ -15,9 +15,9 @@ void selectDefaultProfile_callback( Fl_Widget* w, void* ) {
         std::cout << c->value() << c->text() << std::endl;
         int error = 0;
         if(strcmp(c->text(),_("[none]")) == 0)
-          error = oySetDefaultProfile( (oyPROFILE_e)op->option,0);
+          error = oySetDefaultProfile( (oyPROFILE_e)op->option, oySCOPE_USER, 0);
         else
-          error = oySetDefaultProfile( (oyPROFILE_e)op->option, c->text());
+          error = oySetDefaultProfile( (oyPROFILE_e)op->option, oySCOPE_USER, c->text());
         if(error) {
           fl_alert( "%s %s", _("setting"), _("failed!") );
         } else
@@ -72,11 +72,11 @@ void selectBehaviourCallback( Fl_Widget* w, void* x ) {
                                               oyNAME_NAME, 0, malloc ),
                * pattern = oyCMMRegistrationToName( t, (oyCMM_e)op->option,
                                               oyNAME_PATTERN, 0, malloc );
-          error = oySetCMMPattern( (oyCMM_e)op->option, 0, pattern );
+          error = oySetCMMPattern( (oyCMM_e)op->option, 0, oySCOPE_USER, pattern );
           if(t); free(t);
           if(pattern); free(pattern);
         } else
-          error = oySetBehaviour( (oyBEHAVIOUR_e)op->option, c->value());
+          error = oySetBehaviour( (oyBEHAVIOUR_e)op->option, oySCOPE_USER, c->value());
   
         if(error) {
           fl_alert( "%s %s %s", _("setting"), _("failed!"), c->text() );

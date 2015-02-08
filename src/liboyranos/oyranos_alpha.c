@@ -914,7 +914,7 @@ int      oySetMonitorProfile         ( const char        * display_name,
   }
 
   if(profile_name)
-    error = oyDeviceSetProfile( device, profile_name );
+    error = oyDeviceSetProfile( device, oySCOPE_USER, profile_name );
   else
     error = oyDeviceUnset( device );
 

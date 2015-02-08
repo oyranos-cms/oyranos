@@ -597,8 +597,7 @@ oyPolicyToXML_  (oyGROUP_e           group,
 }
 
 
-int
-oyReadXMLPolicy_(oyGROUP_e           group,
+int oyReadXMLPolicy_(oyGROUP_e           group,
                  const char      * xml)
 {
   /* allocate memory */
@@ -608,6 +607,7 @@ oyReadXMLPolicy_(oyGROUP_e           group,
   int   err = 0;
   int n = 0;
   oyWIDGET_e * list = NULL;
+  oySCOPE_e scope = oySCOPE_USER;
 
   DBG_PROG_START
 
@@ -628,7 +628,7 @@ oyReadXMLPolicy_(oyGROUP_e           group,
       /* set the key */
       if(value && strlen(value))
       {
-        err = oySetDefaultProfile_( (oyPROFILE_e)oywid, value);
+        err = oySetDefaultProfile_( (oyPROFILE_e)oywid, scope, value);
         if(err)
         {
           WARNc2_S( "Could not set default profile %s:%s", t->name ,
@@ -652,7 +652,7 @@ oyReadXMLPolicy_(oyGROUP_e           group,
 
       /* set the key */
       if( val != -1 && value )
-        err = oySetBehaviour_((oyBEHAVIOUR_e)oywid, val);
+        err = oySetBehaviour_((oyBEHAVIOUR_e)oywid, scope, val);
 
       if(err)
         {
