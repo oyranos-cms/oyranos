@@ -753,7 +753,8 @@ char* oyDBGetString_ ( const char       *key_name,
  *  1. ask user
  *  2. if user has no setting ask system
  */
-oyOptions_s *  oyDBGetStrings_       ( const char       ** key_names,
+int      oyDBGetStrings_             ( oyOptions_s      ** options,
+                                       const char       ** key_names,
                                        int                 key_names_n,
                                        oySCOPE_e           scope )
 {
@@ -761,7 +762,6 @@ oyOptions_s *  oyDBGetStrings_       ( const char       ** key_names,
   const char * key;
   int rc = 0;
   int i;
-  oyOptions_s * options = NULL;
 #if KDB_VERSION_NUM >= 800
   Key * error_key;
   KDB * oy_handle_;
@@ -782,7 +782,9 @@ oyOptions_s *  oyDBGetStrings_       ( const char       ** key_names,
         oyOption_SetFromText(o, value, 0);
         oyOption_SetFlags(o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
         oyOption_SetSource( o, oyOPTIONSOURCE_DATA );
-        oyOptions_MoveIn( options, &o, -1 );
+        if(!*options)
+          *options = oyOptions_New(NULL);
+        oyOptions_MoveIn( *options, &o, -1 );
       }
       oyFree_m_(value);
     }
@@ -795,7 +797,7 @@ oyOptions_s *  oyDBGetStrings_       ( const char       ** key_names,
 
   DBG_PROG_ENDE
 
-  return options;
+  return 0;
 }
 
 int      oyDBEraseKey_               ( const char        * key_name,

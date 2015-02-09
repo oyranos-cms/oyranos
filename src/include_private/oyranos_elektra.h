@@ -17,6 +17,7 @@
 #define OYRANOS_ELEKTRA_H
 
 #include "oyranos.h"
+#include "oyOptions_s.h"
 
 
 #ifdef __cplusplus
@@ -44,6 +45,10 @@ char*    oyDBSearchEmptyKeyname_     ( const char        * keyParentName,
 char **  oyDBKeySetGetNames_         ( const char        * key_parent_name,
                                        oySCOPE_e           scope,
                                        int               * n );
+int      oyDBGetStrings_             ( oyOptions_s      ** options,
+                                       const char       ** key_names,
+                                       int                 key_names_n,
+                                       oySCOPE_e           scope );
 int      oyDBEraseKey_               ( const char        * key_name,
                                        oySCOPE_e           scope );
 
