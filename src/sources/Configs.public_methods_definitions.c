@@ -341,14 +341,13 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
 {
   oyConfigs_s * s = 0;
   oyConfig_s_ * config = 0;
-  oyOption_s * o = 0;
   char ** texts = 0,
        ** key_set_names = 0,
        ** config_key_names = 0;
   uint32_t count = 0,
          * d_rank_list = 0;
   int error = !registration;
-  int i, j, k, n = 0, k_n = 0;
+  int i, j, n = 0, k_n = 0;
   oyCMMapi8_s_ * cmm_api8 = 0;
 
   /** 0. setup Elektra */
@@ -381,23 +380,7 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
         config = (oyConfig_s_*)oyConfig_FromRegistration( texts[i], object );
         error = !config;
 
-        for(k = 0; k < k_n; ++k)
-        {
-          /** 4. create a oyOption_s for each Elektra DB key/value pair */
-          if(error <= 0)
-            error = oyOption_FromDB( config_key_names[k], &o, object );
-          if(error < 0)
-            continue;
-          if(error <= 0)
-            error = oyOptions_Add( config->db, o, -1, 0 );
-          else if(error > 0)
-          {
-            WARNcc1_S( (oyStruct_s*) object, "Could not generate key %s",
-                       config_key_names[k] );
-            break;
-          }
-          oyOption_Release( &o );
-        }
+        oyDBGetStrings_( &config->db, (const char**)config_key_names, k_n, oySCOPE_USER_SYS );
 
         /* add information about the data's origin */
         oyStringAddPrintf( &key, oyAllocateFunc_, oyDeAllocateFunc_, "%s/key_set_name",

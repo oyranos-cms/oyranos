@@ -2334,7 +2334,7 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
   oyExportStart_(EXPORT_SETTING);
 
   if(error <= 0)
-    text = oyGetPersistentString( oyOption_GetText( option, oyNAME_DESCRIPTION),
+    text = oyGetPersistentString( oyOption_GetRegistration( option ),
                                   0, oySCOPE_USER_SYS, 0 );
 
   if(error <= 0)
@@ -2397,11 +2397,15 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
                                        uint32_t            flags,
                                        const char        * filter_type )
 {
-  oyOptions_s * opts_tmp = 0;
-  oyOption_s * o = 0;
+  oyOptions_s * opts_tmp = 0,
+              * db_opts = 0;
+  oyOption_s * o = 0, * db_opt = 0;
   int error = !opts;
   char * text;
   int i,n;
+  char ** db_keys = NULL;
+  int db_keys_n = 0;
+  const char * t;
 
   oyExportStart_(EXPORT_SETTING);
   oyExportEnd_();
@@ -2411,6 +2415,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
     /*  6. get stored values */
     n = oyOptions_Count( opts );
     opts_tmp = oyOptions_New(0);
+    db_opts = oyOptions_New(0);
     for(i = 0; i < n; ++i)
     {
       int skip = 0;
@@ -2458,19 +2463,12 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
         if((flags & oyOPTIONATTRIBUTE_EDIT) ||
            /* skip already edited options by default */
            !(oyOption_GetFlags(o) & oyOPTIONATTRIBUTE_EDIT))
-          /* ask the DB */
-          text = oyGetPersistentString( oyOption_GetText( o,oyNAME_DESCRIPTION),
-                                                          0, oySCOPE_USER_SYS,
-                                                          oyAllocateFunc_ );
-        else
-          text = NULL;
-        if(text && text[0])
-        {
-          error = oyOption_SetFromText( o, text, 0 );
-          oyOption_SetFlags(o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
-          oyOption_SetSource( o, oyOPTIONSOURCE_USER );
-          oyFree_m_( text );
-        }
+          /* remember the DB requests */
+          oyStringListAddStaticString_ ( &db_keys,
+                                         &db_keys_n,
+                                         oyOption_GetText( o,oyNAME_DESCRIPTION),
+                                         oyAllocateFunc_,
+                                         oyDeAllocateFunc_ );
       }
 
       if(!skip)
@@ -2487,6 +2485,23 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
       error = oyOptions_MoveIn( opts, &o, -1 );
     }
     oyOptions_Release( &opts_tmp );
+
+          /* ask the DB */
+    oyDBGetStrings_( &db_opts, (const char**)db_keys, db_keys_n,
+                     oySCOPE_USER_SYS );
+    n = oyOptions_Count(db_opts);
+    for( i = 0; i < n && !error; ++i )
+    {
+      db_opt = oyOptions_Get( db_opts, i ); 
+      o = oyOptions_Find( opts, oyOption_GetText( db_opt, oyNAME_DESCRIPTION ));
+      oyOption_SetFlags(o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
+      oyOption_SetSource( o, oyOPTIONSOURCE_DATA );
+      oyOption_SetFromText( o, oyOption_GetValueString( db_opt,0 ), 0 );
+      oyOption_Release( &o );
+      oyOption_Release( &db_opt );
+    }
+    oyOptions_Release( &db_opts );
+    oyStringListRelease_( &db_keys, db_keys_n, oyDeAllocateFunc_ );
   }
 
   return error;
