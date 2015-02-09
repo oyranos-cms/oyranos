@@ -79,7 +79,7 @@ digraph G {
 </table>>
   ]
 
-  b:p->a:s [arrowtail=crow, arrowhead=box, constraint=false];
+  b:p->a:s [constraint=false, dir=forward];
 
   subgraph cluster_0 {
     color=gray;
@@ -115,8 +115,8 @@ digraph G {
   c [ label="{<plug> | Filter Node 3 |<socket>}"];
   d [ label="{<plug> 2| Filter Node 4 |<socket>}"];
 
-  b:socket -> d:plug [arrowtail=normal, arrowhead=none];
-  c:socket -> d:plug [arrowtail=normal, arrowhead=none];
+  b:socket -> d:plug [dir=back];
+  c:socket -> d:plug [dir=back];
 }
  \enddot
  *
@@ -135,10 +135,10 @@ digraph G {
   d [ label="{<plug> 1| Filter Node 4 |<socket>}"];
   e [ label="{<plug> 1| Filter Node 5 |<socket>}"];
 
-  a:socket -> b:plug [arrowtail=normal, arrowhead=none];
-  a:socket -> c:plug [arrowtail=normal, arrowhead=none];
-  a:socket -> d:plug [arrowtail=normal, arrowhead=none];
-  a:socket -> e:plug [arrowtail=normal, arrowhead=none];
+  a:socket -> b:plug [dir=back];
+  a:socket -> c:plug [dir=back];
+  a:socket -> d:plug [dir=back];
+  a:socket -> e:plug [dir=back];
 }
  \enddot
  *
