@@ -2229,7 +2229,7 @@ int lcmsGetOptionsUI                 ( oyCMMapiFilter_s   * module,
     return 0;
 
   tmp = oyStringCopy_( "\
-  <xf:group type=\"h3\">\
+  <xf:group type=\"frame\">\
     <xf:label>little CMS ", oyAllocateFunc_ );
 
   A(       _("Extended Options"));

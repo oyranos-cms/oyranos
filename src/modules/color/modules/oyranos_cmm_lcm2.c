@@ -1027,7 +1027,7 @@ oyPointer  lcm2CMMColorConversion_ToMem_ (
   if(!error)
   {
     cmsHPROFILE dl= lcmsTransform2DeviceLink( xform,4.3,
-                                             flags | cmsFLAGS_KEEP_SEQUENCE );
+                                              flags | cmsFLAGS_KEEP_SEQUENCE );
 
     *size = 0;
 
