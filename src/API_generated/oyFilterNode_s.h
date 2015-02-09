@@ -10,12 +10,11 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2014 (C) Kai-Uwe Behrmann
+ *            2004-2015 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/08/04
  */
 
 
@@ -146,6 +145,7 @@ digraph G {
  *  @since   2008/07/08 (Oyranos: 0.1.8)
  *  @date    2008/12/16
  */
+
 
 /* } Include "FilterNode.dox" */
 

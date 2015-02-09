@@ -10,12 +10,11 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2014 (C) Kai-Uwe Behrmann
+ *            2004-2015 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
- *  @date     2014/06/25
  */
 
 
@@ -345,7 +344,7 @@ oyProfile_FromName            ( const char      * name,
     {
       for(i = 0; i < (int)count; ++i)
       {
-        p = oyProfile_FromFile( names[i], flags, 0 );
+        p = oyProfile_FromFile( names[i], flags ,0 );
 
         t = oyProfile_GetText(p, oyNAME_DESCRIPTION);
         if(t && strcmp(t,name) == 0)

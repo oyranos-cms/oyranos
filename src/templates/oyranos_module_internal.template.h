@@ -228,10 +228,10 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        oyCMMapi_Check_f    apiCheck,
                                        oyPointer           check_pointer );
 oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text );
-oyCMMapis_s *  oyCMMGetMetaApis_     ( const char        * cmm );
+oyCMMapis_s *  oyCMMGetMetaApis_     ( );
 int              oyCMMCanHandle_    ( oyCMMapi3_s        * api,
                                       oyCMMapiQueries_s  * queries );
-oyCMMapis_s *    oyCMMsGetMetaApis_  ( const char        * cmm );
+oyCMMapis_s *    oyCMMsGetMetaApis_  ( );
 char **          oyCMMsGetNames_     ( uint32_t          * n,
                                        const char        * sub_path,
                                        const char        * ext,
@@ -240,8 +240,7 @@ int          oyCMMdsoReference_      ( const char        * lib_name,
                                        oyPointer           ptr );
 int          oyCMMdsoRelease_        ( const char        * lib_name );
 int          oyCMMdsoSearch_         ( const char        * lib_name );
-oyPointer    oyCMMdsoGet_            ( const char        * cmm,
-                                       const char        * lib_name );
+oyPointer    oyCMMdsoGet_            ( const char        * lib_name );
 
 char **     oyDataFilesGet_          ( int             * count,
                                        const char      * subdir,
