@@ -44,14 +44,6 @@ typedef enum  {
   oyGROUP_EXTERN = 200             /**< start of groups in a extern module */
 } oyGROUP_e;
 
-/** @brief Select Scope for Installation or Configurations
- */
-typedef enum {
-  oySCOPE_USER_SYS = 0,            /**< use both */
-  oySCOPE_USER,                    /**< use only user settings */
-  oySCOPE_SYSTEM                   /**< use only system settings */
-} oySCOPE_e;
-
 
 /* --- behaviour --- */
 
@@ -90,6 +82,8 @@ int          oySetBehaviour          ( oyBEHAVIOUR_e       type,
 
 /* --- CMM --- */
 
+/** \addtogroup cmm_handling
+ *  @{ */
 /** @brief CMM Types
  */
 typedef enum {
@@ -100,6 +94,7 @@ typedef enum {
   oyCMM_RENDERER_FALLBACK,             /**< take a device link and color convert */
   oyCMM_END                            /**< just for easen Gui design */
 } oyCMM_e;
+/** @} */ /* cmm_handling */
 
 char *       oyGetCMMPattern         ( oyCMM_e             type,
                                        uint32_t            flags,
@@ -120,7 +115,7 @@ int          oySetCMMPattern         ( oyCMM_e             type,
 #define oySOURCE_FILTER 0x02
 /** @brief use persistenly stored DB values */
 #define oySOURCE_DATA 0x04
-/** @} */
+/** @} */ /* cmm_handling */
 char **      oyGetCMMs               ( oyCMM_e             type,
                                        int                 name_type,
                                        uint32_t            flags,
@@ -152,21 +147,38 @@ int        oyPolicyFileNameGet       ( const char        * policy_name,
                                        oyAlloc_f           allocateFunc );
 
 
-/* path names */
-
+/** \addtogroup path_names Path Names
+ *  @brief   Access to data path names for Installation
+ *
+ *  The obtained informations can be used outside Oyranos, to do system
+ *  specific operations, which do not easily fit into the library.
+ *  @{ */
+/**
+ *  @brief   data type selectors
+ */
 typedef enum {
-  oyPATH_NON_SPECIFIC = 0x00,
-  oyPATH_ICC       = 0x01,
-  oyPATH_POLICY    = 0x02,
-  oyPATH_MODULE    = 0x04,
+  oyPATH_NON_SPECIFIC = 0x00,          /**< */
+  oyPATH_ICC       = 0x01,             /**< ICC profile path */
+  oyPATH_POLICY    = 0x02,             /**< policy data */
+  oyPATH_MODULE    = 0x04,             /**< module data */
   oyPATH_SCRIPT    = 0x08
 } oyPATH_TYPE_e;
 
-#if 0
-int   oyPathsCount                     (void);
-char* oyPathName                       (int         number,
-                                        oyAlloc_f    );
-#endif
+/** @brief Select Scope for Installation or Configurations
+ */
+typedef enum {
+  oySCOPE_ALL = 0x0,                   /**< do not limit search to one scope */
+  oySCOPE_USER = 0x01,                 /**< use user data scope */
+  oySCOPE_SYSTEM = 0x02,               /**< use system data scope */
+  oySCOPE_OYRANOS = 0x04,              /**< use Oyranos installation data scope */
+  oySCOPE_MACHINE = 0x08               /**< use machine data scope */
+} oySCOPE_e;
+
+char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
+                                       oySCOPE_e           scope,
+                                       oyAllocateFunc      allocFunc );
+/** @} */ /* path_names */
+
 char* oyGetPathFromProfileName         (const char* profile_name,
                                         oyAlloc_f    );
 

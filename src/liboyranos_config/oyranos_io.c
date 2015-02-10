@@ -228,9 +228,8 @@ char *   oyGetPathFromProfileName_   ( const char        * fileName,
 }
 
 
-char **
-oyProfilePathsGet_    (int             * count,
-                       oyAlloc_f         allocateFunc)
+char **  oyProfilePathsGet_          ( int               * count,
+                                       oyAlloc_f           allocateFunc)
 {
   char ** path_names = NULL;
 #if 1

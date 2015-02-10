@@ -688,6 +688,20 @@ oyGetDefaultProfileName    (oyPROFILE_e       type,
  *  @{
  */
 
+/**
+ *  @brief get Search Path names for ICC Profiles 
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/02/08
+ *  @since   2015/02/08 (Oyranos: 0.9.6)
+ */
+char **  oyProfilePathsGet           ( int               * size,
+                                       oyAlloc_f           allocateFunc )
+{
+  return oyProfilePathsGet_(size, allocateFunc);
+}
+
+
 /** \addtogroup profile_lists Profile Lists API
  *  @brief Fast profile name lists
 
@@ -732,7 +746,7 @@ char **  oyProfileListGet            ( const char        * colorsig,
   return names;
 }
 
-/** @} */
+/** @} *//* profile_lists */
 
 
 /** \addtogroup profile_handling Profile Handling API
@@ -939,6 +953,13 @@ void oyI18NSet         ( int active,
 
 /** @} */ /* i18n */
 
+
+/** \addtogroup path_names
+ *  @{
+ */
+
+
+/*  @} *//* path_names */
 
 
 
