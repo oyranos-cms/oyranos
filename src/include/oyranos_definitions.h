@@ -120,7 +120,9 @@
 #define OY_PROFILE_STD           OY_STD OY_SLASH "profile"
 /** Type path for standard settings */
 #define OY_BEHAVIOUR_STD         OY_STD OY_SLASH "behaviour"
-/** Type path for standard settings */
+/** Type path for standard settings 
+ *  @since 0.9.6
+ */
 #define OY_CMM_STD               OY_STD OY_SLASH "icc_color"
 
 /** Oyranos default profiles key path in the data base */
@@ -190,13 +192,21 @@
 /** key name for hard proofing by default */
 #define OY_DEFAULT_PROOF_HARD          OY_BEHAVIOUR_STD OY_SLASH "proof_hard"
 
-/** key name for context CMM */
+/** key name for context CMM
+ *  @since 0.9.6
+ */
 #define OY_DEFAULT_CMM_CONTEXT         OY_CMM_STD OY_SLASH "context"
-/** key name for renderer CMM */
+/** key name for renderer CMM 
+ *  @since 0.9.6
+ */
 #define OY_DEFAULT_CMM_RENDERER        OY_CMM_STD OY_SLASH "renderer"
-/** key name for context CMM fallback */
+/** key name for context CMM fallback 
+ *  @since 0.9.6
+ */
 #define OY_DEFAULT_CMM_CONTEXT_FALLBACK  OY_CMM_STD OY_SLASH "context_fallback"
-/** key name for renderer CMM fallback */
+/** key name for renderer CMM fallback 
+ *  @since 0.9.6
+ */
 #define OY_DEFAULT_CMM_RENDERER_FALLBACK OY_CMM_STD OY_SLASH "renderer_fallback"
 
 
