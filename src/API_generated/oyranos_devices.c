@@ -1350,9 +1350,9 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
  *  @param[out]   config               the device
  *  @return                            error
  *
- *  @version Oyranos: 0.3.3
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/02/10
  *  @since   2011/08/21 (Oyranos: 0.3.2)
- *  @date    2012/01/06
  */
 OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
                                        oyOptions_s       * options,
@@ -1364,7 +1364,7 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
            json_device,
            json_class;
   char * val, * key = NULL, * t = NULL;
-  const char * xpath = "org/freedesktop/openicc/device/%s/[%d]";
+  const char * xpath = OY_STD "/device/%s/[%d]";
   int count, i;
   int32_t pos = 0;
   const char * underline_key_suffix = oyOptions_FindString( options,
@@ -1388,13 +1388,16 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
   /* set the registration string */
   {
     oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
-                        xpath,
-                        device_class, pos );
+                        OY_STD "/device/%s", device_class );
     device_ = oyConfig_FromRegistration( t, 0 );
     oyConfig_AddDBData( device_, "device_class", device_class, OY_CREATE_NEW );
   } else
     WARNc1_S( "%s\n", _("device_class not found:") );
 
+  if(t) oyFree_m_(t);
+
+  oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                      xpath, device_class, pos );
   json_device = oyjl_tree_get_value( json, t );
 
   if(!json_device)
