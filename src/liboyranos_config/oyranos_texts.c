@@ -2046,6 +2046,41 @@ int          oySetCMMPattern         ( oyCMM_e             type,
   return r;
 }
 
+/**
+ *  @brief Get flags for oyProfile_FromFile() and friends
+ *
+ *  supported are "icc_version_2" - OY_ICC_VERSION_2 and
+ *  "icc_version_4" - OY_ICC_VERSION_4 .
+ *
+ *  @param       registration    plain module registration; oyNAME_REGISTRATION
+ *  @return                      profile selection flags
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2014/04/08
+ *  @since   2014/04/08 (Oyranos: 0.9.6)
+ */
+uint32_t oyICCProfileSelectionFlagsFromRegistration (
+                                       const char        * registration )
+{
+  uint32_t profile_flags = 0;
+
+  if(!registration)
+    return profile_flags;
+
+  if(strstr( registration, "icc_version_2") != NULL)
+    profile_flags = OY_ICC_VERSION_2;
+  if(strstr( registration, "icc_version_4") != NULL)
+    profile_flags = OY_ICC_VERSION_4;
+
+  return profile_flags;
+}
+
+
+/** @} *//* cmm_handling */
+/** @} *//* defaults_apis */
+
+/** \addtogroup objects_value
+ *  @{ */
 oyOptions_s * oy_db_cache_ = NULL;
 
 /** Function oyGetPersistentString
@@ -2093,7 +2128,7 @@ char *       oyGetPersistentString   ( const char        * key_name,
 }
 
 /** Function oySetPersistentString
- *  @brief   set a cached string from DB
+ *  @brief   set string into DB and cache
  *
  *  @param         key_name            the DB key name
  *  @param         scope               oySCOPE_USER and oySCOPE_SYS are possible
@@ -2117,38 +2152,8 @@ int          oySetPersistentString   ( const char        * key_name,
   return rc;
 }
 
-/**
- *  @brief Get flags for oyProfile_FromFile() and friends
- *
- *  supported are "icc_version_2" - OY_ICC_VERSION_2 and
- *  "icc_version_4" - OY_ICC_VERSION_4 .
- *
- *  @param       registration    plain module registration; oyNAME_REGISTRATION
- *  @return                      profile selection flags
- *
- *  @version Oyranos: 0.9.6
- *  @date    2014/04/08
- *  @since   2014/04/08 (Oyranos: 0.9.6)
- */
-uint32_t oyICCProfileSelectionFlagsFromRegistration (
-                                       const char        * registration )
-{
-  uint32_t profile_flags = 0;
+/** @} *//* objects_value */
 
-  if(!registration)
-    return profile_flags;
-
-  if(strstr( registration, "icc_version_2") != NULL)
-    profile_flags = OY_ICC_VERSION_2;
-  if(strstr( registration, "icc_version_4") != NULL)
-    profile_flags = OY_ICC_VERSION_4;
-
-  return profile_flags;
-}
-
-
-/** @} *//* cmm_handling */
-/** @} *//* defaults_apis */
 
 int      oySetBehaviour_             ( oyBEHAVIOUR_e       type,
                                        oySCOPE_e           scope,
