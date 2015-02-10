@@ -961,6 +961,13 @@ void oyI18NSet         ( int active,
 /**
  *  @brief get Path Name for Installation 
  *
+ *  Note: Not all combinations return a path name. Some make no sense.
+ *  So be careful and test the result.
+ *
+ *  oyPATH_MODULE + oySCOPE_USER and oyPATH_MODULE + oySCOPE_OYRANOS are
+ *  supported.
+ *  oyPATH_SCRIPT gives no result at all.
+ *
  *  @version Oyranos: 0.9.6
  *  @date    2015/02/08
  *  @since   2015/02/08 (Oyranos: 0.9.6)
