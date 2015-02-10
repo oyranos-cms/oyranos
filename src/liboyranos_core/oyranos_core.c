@@ -561,8 +561,8 @@ int            oyMessageFuncSet      ( oyMessage_f         message_func )
  *  @{
  */
 
-/** \addtogroup i18n Internationalisation
- *  @brief      helpers for translating UI texts
+/** \addtogroup i18n i18n
+ *  @brief      Internationalisation helpers for translating UI texts
 
     Internationalisation is handled for Oyranos by a external library. 
     To sync locale settings with the Oyranos use the 

@@ -3331,7 +3331,7 @@ uint32_t     oyICCProfileSelectionFlagsFromOptions (
  */
 
 
-/** \addtogroup objects_generic Generic object system
+/** \addtogroup objects_generic Generic Objects 
  *  @brief Basic objects to make all higher level object types happy
 
  *  @{
