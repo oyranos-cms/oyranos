@@ -225,6 +225,8 @@ char*       oyGetDefaultProfileName    (oyPROFILE_e       type,
 char **  oyProfileListGet            ( const char        * colorsig,
                                        uint32_t          * size,
                                        oyAlloc_f           allocateFunc );
+char **  oyProfilePathsGet           ( int               * size,
+                                       oyAlloc_f           allocateFunc );
 
 
 /* --- profile checking --- */
