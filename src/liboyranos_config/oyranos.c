@@ -910,14 +910,6 @@ oyProfileGetMD5        ( void       *buffer,
 /** @} */
 /** @} *//* objects_profile  */
 
-/**
- *  @internal
- *  \addtogroup cmm_handling CMM Handling API
- *
- *  @{
- */
-
-/** @} */
 
 /** \addtogroup misc Miscellaneous
  *  @brief Miscellaneous stuff
@@ -933,8 +925,7 @@ oyProfileGetMD5        ( void       *buffer,
  *  @param  active         bool
  *  @param  reserved       for future use
  */
-void 
-oyI18NSet              ( int active,
+void oyI18NSet         ( int active,
                          int reserved )
 {
   DBG_PROG_START
@@ -947,6 +938,9 @@ oyI18NSet              ( int active,
 }
 
 /** @} */ /* i18n */
+
+
+
 
 /** @} */
 
