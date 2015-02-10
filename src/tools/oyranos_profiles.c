@@ -262,30 +262,18 @@ int main( int argc , char** argv )
     uint32_t count = 0, i;
     int accept;
     const char * t = 0;
-    const char * path = 0;
+    char * path = 0;
 
     if(user_path || oyranos_path || system_path || machine_path)
     {
         if(user_path)
-#if defined(__APPLE__)
-          path = CSUserPATH;
-#else
-          path = OY_USERCOLORDATA OY_SLASH OY_ICCDIRNAME;
-#endif
+          path = oyGetInstallPath( oyPATH_ICC, oySCOPE_USER, oyAllocateFunc_ );
         if(system_path)
-#if defined(__APPLE__)
-          path = CSGlobalInstallPATH;
-#else
-          path = "/usr/share/color/" OY_ICCDIRNAME;
-#endif
+          path = oyGetInstallPath( oyPATH_ICC, oySCOPE_SYSTEM, oyAllocateFunc_ );
         if(oyranos_path)
-          path = OY_SYSCOLORDIR OY_SLASH OY_ICCDIRNAME;
+          path = oyGetInstallPath( oyPATH_ICC, oySCOPE_OYRANOS, oyAllocateFunc_ );
         if(machine_path)
-#if defined(__APPLE__)
-          path = CSSystemPATH;
-#else
-          path = "/var/lib/color/" OY_ICCDIRNAME;
-#endif
+          path = oyGetInstallPath( oyPATH_ICC, oySCOPE_MACHINE, oyAllocateFunc_ );
     }
 
     if(list_profiles)
