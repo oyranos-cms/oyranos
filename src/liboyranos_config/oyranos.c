@@ -958,6 +958,98 @@ void oyI18NSet         ( int active,
  *  @{
  */
 
+/**
+ *  @brief get Path Name for Installation 
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/02/08
+ *  @since   2015/02/08 (Oyranos: 0.9.6)
+ */
+char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
+                                       oySCOPE_e           scope,
+                                       oyAlloc_f           allocFunc )
+{
+  char * path = NULL;
+#define C(p) oyStringCopy(p,allocFunc);
+  switch (type)
+  {
+    case oyPATH_ICC:
+      switch((int)scope)
+      {
+        case oySCOPE_USER:
+#if defined(__APPLE__)
+          path = C( CSUserPATH );
+#else
+          path = C( OY_USERCOLORDATA OY_SLASH OY_ICCDIRNAME );
+#endif
+          break;
+        case oySCOPE_SYSTEM:
+#if defined(__APPLE__)
+          path = C( CSGlobalInstallPATH) ;
+#else
+          path = C( "/usr/share/color/" OY_ICCDIRNAME );
+#endif
+          break;
+        case oySCOPE_OYRANOS:
+          path = C( OY_SYSCOLORDIR OY_SLASH OY_ICCDIRNAME );
+          break;
+        case oySCOPE_MACHINE:
+#if defined(__APPLE__)
+          path = C( CSSystemPATH );
+#else
+          path = C( "/var/lib/color/" OY_ICCDIRNAME );
+#endif
+        break;
+        default:
+          path = NULL;
+      }
+      break;
+    case oyPATH_POLICY:
+    {
+      switch((int)scope)
+      {
+        case oySCOPE_USER:
+          path = C( OY_USERCOLORDIR OY_SLASH OY_SETTINGSDIRNAME );
+          break;
+        case oySCOPE_SYSTEM:
+          path = C( "/usr/share/color/" OY_SETTINGSDIRNAME );
+          break;
+        case oySCOPE_OYRANOS:
+          path = C( OY_SYSCOLORDIR OY_SLASH OY_SETTINGSDIRNAME);
+          break;
+        case oySCOPE_MACHINE:
+          path = C( "/var/lib/color/" OY_SETTINGSDIRNAME );
+        break;
+      }
+      break;
+    }
+    case oyPATH_MODULE:
+    {
+      switch((int)scope)
+      {
+        case oySCOPE_USER:
+        {
+          char * t = NULL;
+          oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                             "~/.local/lib%s/" OY_CMMSUBPATH, strstr(OY_LIBDIR, "lib64") ? "64":"");
+          path = C( t );
+          oyFree_m_(t);
+          break;
+        }
+        case oySCOPE_OYRANOS:
+          path = C( OY_CMMDIR );
+          break;
+        default:
+          path = NULL;
+      }
+      break;
+    }
+    default:
+      path = NULL;
+  }
+
+  return path;
+}
 
 /*  @} *//* path_names */
 
