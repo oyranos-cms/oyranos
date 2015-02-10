@@ -70,12 +70,6 @@
 
 /* internal declarations */
 
-char **          oyCMMsGetNames_     ( uint32_t          * n,
-                                       const char        * sub_path,
-                                       const char        * ext,
-                                       oyPATH_TYPE_e       path_type );
-char **          oyCMMsGetLibNames_  ( uint32_t          * n );
-
 /** \addtogroup alpha Alpha API's
 
  *  @{
