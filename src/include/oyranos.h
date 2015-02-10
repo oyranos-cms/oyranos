@@ -24,6 +24,40 @@ extern "C" {
 #endif /* __cplusplus */
 
 
+/** \addtogroup path_names Path Names
+ *  @brief   Access to data path names for Installation
+ *
+ *  The obtained informations can be used outside Oyranos, to do system
+ *  specific operations, which do not easily fit into the library.
+ *  @{ */
+/**
+ *  @brief   data type selectors
+ */
+typedef enum {
+  oyPATH_NONE      = 0x00,             /**< */
+  oyPATH_ICC       = 0x01,             /**< ICC profile path */
+  oyPATH_POLICY    = 0x02,             /**< policy data */
+  oyPATH_MODULE    = 0x04,             /**< module data */
+  oyPATH_SCRIPT    = 0x08
+} oyPATH_TYPE_e;
+
+/** @brief Select Scope for Installation or Configurations
+ */
+typedef enum {
+  oySCOPE_USER_SYS = 0x0,              /**< do not limit search to one scope */
+  oySCOPE_USER = 0x01,                 /**< use user data scope */
+  oySCOPE_SYSTEM = 0x02                /**< use system data scope */
+} oySCOPE_e;
+/** use Oyranos installation data scope */
+#define oySCOPE_OYRANOS  0x04
+/** use machine data scope */
+#define oySCOPE_MACHINE  0x08
+
+char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
+                                       oySCOPE_e           scope,
+                                       oyAlloc_f           allocFunc );
+/** @} */ /* path_names */
+
 /** @brief Widget Groups 
  */
 typedef enum  {
@@ -145,39 +179,6 @@ int         oyPolicySet                (const char      * policy,
 int        oyPolicyFileNameGet       ( const char        * policy_name,
                                        char             ** full_name,
                                        oyAlloc_f           allocateFunc );
-
-
-/** \addtogroup path_names Path Names
- *  @brief   Access to data path names for Installation
- *
- *  The obtained informations can be used outside Oyranos, to do system
- *  specific operations, which do not easily fit into the library.
- *  @{ */
-/**
- *  @brief   data type selectors
- */
-typedef enum {
-  oyPATH_NON_SPECIFIC = 0x00,          /**< */
-  oyPATH_ICC       = 0x01,             /**< ICC profile path */
-  oyPATH_POLICY    = 0x02,             /**< policy data */
-  oyPATH_MODULE    = 0x04,             /**< module data */
-  oyPATH_SCRIPT    = 0x08
-} oyPATH_TYPE_e;
-
-/** @brief Select Scope for Installation or Configurations
- */
-typedef enum {
-  oySCOPE_ALL = 0x0,                   /**< do not limit search to one scope */
-  oySCOPE_USER = 0x01,                 /**< use user data scope */
-  oySCOPE_SYSTEM = 0x02,               /**< use system data scope */
-  oySCOPE_OYRANOS = 0x04,              /**< use Oyranos installation data scope */
-  oySCOPE_MACHINE = 0x08               /**< use machine data scope */
-} oySCOPE_e;
-
-char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
-                                       oySCOPE_e           scope,
-                                       oyAllocateFunc      allocFunc );
-/** @} */ /* path_names */
 
 char* oyGetPathFromProfileName         (const char* profile_name,
                                         oyAlloc_f    );
