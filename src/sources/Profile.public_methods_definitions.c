@@ -501,7 +501,7 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromTaxiDB (
  *  @brief   Install a ICC profile
  *
  *  Without options, the ICC profile will be installed into the users 
- *  ICC profile path.
+ *  ICC profile path. For obtaining a useful path name see @ref path_names.
  *
  *  @param[in]     profile             the profile
  *  @param[in]     options
