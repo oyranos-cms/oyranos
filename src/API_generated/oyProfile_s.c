@@ -608,7 +608,8 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromTaxiDB (
  *  ICC profile path.
  *
  *  @param[in]     profile             the profile
- *  @param[in]     options             - "path" can provide a string
+ *  @param[in]     options
+ *                                     - "path" can provide a string
  *                                       for manual path selection
  *                                     - "device" = "1" - write to device paths
  *  @return                            error
