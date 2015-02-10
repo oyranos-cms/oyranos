@@ -4484,6 +4484,44 @@ oyTESTRESULT_e testCache()
   return result;
 }
 
+oyTESTRESULT_e testPaths()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  const char * type_names[] = {
+    "oyPATH_NONE", "oyPATH_ICC", "oyPATH_POLICY", "oyPATH_MODULE", "oyPATH_SCRIPT"
+  };
+  oyPATH_TYPE_e types[] = {
+    oyPATH_NONE, oyPATH_ICC, oyPATH_POLICY, oyPATH_MODULE, oyPATH_SCRIPT
+  };
+  const char * scope_names[] = {
+    "oySCOPE_USER_SYS", "oySCOPE_USER", "oySCOPE_SYSTEM", "oySCOPE_OYRANOS", "oySCOPE_MACHINE"
+  };
+  oySCOPE_e scopes[] = {
+    oySCOPE_USER_SYS, oySCOPE_USER, oySCOPE_SYSTEM, (oySCOPE_e)oySCOPE_OYRANOS, (oySCOPE_e)oySCOPE_MACHINE
+  };
+
+  for(int i = 1; i <= 4; ++i)
+  for(int j = 1; j <= 4; ++j)
+  {
+  char * text = oyGetInstallPath( types[i], scopes[j], oyAllocateFunc_ );
+  if(text)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyGetInstallPath( %s, %s ): %s", type_names[i],scope_names[j],
+                                                oyNoEmptyString_m_(text) );
+  } else
+  { PRINT_SUB( oyTESTRESULT_XFAIL,
+    "oyGetInstallPath( %s, %s ): %s", type_names[i],scope_names[j],
+                                                oyNoEmptyString_m_(text) );
+  }
+  }
+
+
+  return result;
+}
+
 
 oyTESTRESULT_e testConfDomain ()
 {
@@ -4734,6 +4772,7 @@ int main(int argc, char** argv)
   TEST_RUN( testConversion, "CMM selection" );
   TEST_RUN( testCMMlists, "CMMs listing" );
   TEST_RUN( testCache, "Cache" );
+  TEST_RUN( testPaths, "Paths" );
 
   /* give a summary */
   if(!list)
