@@ -335,11 +335,13 @@ KeySet* oyReturnChildrenList_ (const char* keyParentName, oySCOPE_e scope, int* 
 char*    oyDBSearchEmptyKeyname_       ( const char      * key_parent_name,
                                          oySCOPE_e         scope )
 {
-  const char * key_base_name = oyGetScopeString_(scope);
-  char* new_key_name = NULL;
-  int nth = 0, i = 1, rc=0;
+  char * key_base_name = oyStringCopy( oyGetScopeString_(scope), oyAllocateFunc_ );
+  char * new_key_name = NULL;
+  int nth = -1, i = 0, rc=0;
   Key *key = 0;
-  char *name = NULL;
+  KeySet * ks = ksNew(0,NULL),
+         * cut;
+  size_t count;
 #if KDB_VERSION_NUM >= 800
   Key * error_key = keyNew(KEY_END);
   KDB * oy_handle_ = kdbOpen(error_key); oyERRopen(error_key)
@@ -347,33 +349,38 @@ char*    oyDBSearchEmptyKeyname_       ( const char      * key_parent_name,
 
   DBG_PROG_START
 
-  oyStringAddPrintf( &new_key_name, AD, "%s%s", key_base_name, key_parent_name );
+  oyStringAddPrintf( &key_base_name, AD, "%s", key_parent_name );
 
-  /* search for empty keyname */
-  while (!nth)
+  if(!oy_handle_)
+    return 0;
+
+  key = keyNew( key_base_name, KEY_END );
+  rc = kdbGet( oy_handle_, ks, key ); oyERR(key)
+
+  ksRewind( ks );
+
+  keyDel( key );
+
+  /* search for empty keyname in array */
+  while (nth == -1)
   {
-    oyStringAddPrintf( &new_key_name, AD, OY_SLASH "%d", i );
+    if(new_key_name) oyFree_m_( new_key_name );
+    oyStringAddPrintf( &new_key_name, AD, "%s/#%d", key_base_name, i );
 
-    if(!oy_handle_)
-      return 0;
-
+    ksRewind( ks );
     key = keyNew( new_key_name, KEY_END );
-
-    rc=kdbGetKey( oy_handle_, key ); oyERR(key)
-    if( rc <= 0 &&
-        !keyIsDir( key ) )
+    cut = ksCut( ks, key );
+    count = ksGetSize( cut );
+    if(!cut || !count)
       nth = i;
     keyDel( key );
+    DBG_PROG3_S("search key = \"%s\" %s %d\n", new_key_name, cut?"found":"not found", (int)ksGetSize(cut) );
+
     i++;
   }
 
-  if(name)
-    oyFree_m_( name )
 
-  name = oyStringCopy_( new_key_name, oyAllocateFunc_ );
-  oyFree_m_( new_key_name )
-  oyStringAddPrintf( &new_key_name, AD, "%s", &name[oyStrlen_(key_base_name)] );
-  oyFree_m_( name )
+  ksDel( ks );
 #if KDB_VERSION_NUM >= 800
   kdbClose( oy_handle_,error_key ); oyERR(error_key)
   keyDel(error_key);
