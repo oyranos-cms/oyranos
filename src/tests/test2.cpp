@@ -308,15 +308,65 @@ oyTESTRESULT_e testElektra()
     "Elektra key erased                      " );
   }
 
-  value = oyDBSearchEmptyKeyname_(TEST_DOMAIN TEST_KEY, oySCOPE_USER);
-  if(value && strlen(value))
+
+  error = oySetPersistentString( OY_STD "/device" TEST_KEY "/#0/key-01", oySCOPE_USER,
+                                 "SomeValue", "SomeComment" );
+  error = oySetPersistentString( OY_STD "/device" TEST_KEY "/#0/key-02", oySCOPE_USER,
+                                 "SomeValue", "SomeComment" );
+  error = oySetPersistentString( OY_STD "/device" TEST_KEY "/#1/key-01", oySCOPE_USER,
+                                 "SomeValue", "SomeComment" );
+  error = oySetPersistentString( OY_STD "/device" TEST_KEY "/#1/key-02", oySCOPE_USER,
+                                 "SomeValue", "SomeComment" );
+  value = oyDBSearchEmptyKeyname_(OY_STD "/device" TEST_KEY, oySCOPE_USER);
+  if(value && strcmp( "user/" OY_STD "/device" TEST_KEY "/#2",value) == 0 )
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyDBSearchEmptyKeyname_()=%s", value );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyDBSearchEmptyKeyname_(%s)", TEST_DOMAIN TEST_KEY );
+    "oyDBSearchEmptyKeyname_(%s)", OY_STD "/device" TEST_KEY );
+  }
+  error = oyDBEraseKey_( OY_STD "/device" TEST_KEY, oySCOPE_USER );
+  value = oyDBSearchEmptyKeyname_(OY_STD "/device" TEST_KEY, oySCOPE_USER);
+  if(value && strcmp( "user/" OY_STD "/device" TEST_KEY "/#0",value) == 0 )
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyDBSearchEmptyKeyname_()=%s", value );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyDBSearchEmptyKeyname_(%s)", OY_STD "/device" TEST_KEY );
+  }
+
+  error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/#0/key-01", oySCOPE_USER,
+                                 "SomeValue", "SomeComment" );
+  error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/#0/key-02", oySCOPE_USER,
+                                 "SomeValue", "SomeComment" );
+  error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/#1/key-01", oySCOPE_USER,
+                                 "SomeValue", "SomeComment" );
+  error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/#1/key-02", oySCOPE_USER,
+                                 "SomeValue", "SomeComment" );
+  value = oyDBSearchEmptyKeyname_(TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER);
+  if(value && strcmp( "user/" TEST_DOMAIN "/device" TEST_KEY "/#2",value) == 0 )
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyDBSearchEmptyKeyname_()=%s", value );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyDBSearchEmptyKeyname_()=%s", value );
+  }
+  error = oyDBEraseKey_( TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER );
+  value = oyDBSearchEmptyKeyname_(TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER);
+  if(value && strcmp( "user/" TEST_DOMAIN "/device" TEST_KEY "/#0",value) == 0 )
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyDBSearchEmptyKeyname_()=%s", value );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyDBSearchEmptyKeyname_()=%s", TEST_DOMAIN "/device" TEST_KEY );
   }
 
   return result;
