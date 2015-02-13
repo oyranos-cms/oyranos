@@ -1,20 +1,20 @@
-.TH "oyranos-policy" 1 "May 21, 2009" "User Commands"
+.TH "oyranos-policy" 1 "February 13, 2015" "User Commands"
 .SH NAME
 oyranos-policy \- Oyranos CMS policy tool
 .SH SYNOPSIS
-\fBoyranos-policy\fR [ [-c] [-v] ]
+\fBoyranos-policy\fR -c [-v]
 .fi
-\fBoyranos-policy\fR [ [-d] [-v] ]
+\fBoyranos-policy\fR -d [-v]
 .fi
-\fBoyranos-policy\fR [ [-i \fIFILENAME\fR] [-v] ]
+\fBoyranos-policy\fR -i \fIFILENAME\fR [-v]
 .fi
-\fBoyranos-policy\fR [ [-l] [-v] ]
+\fBoyranos-policy\fR -l [-v]
 .fi
-\fBoyranos-policy\fR [ [-p] [-v] ]
+\fBoyranos-policy\fR -p [-v]
 .fi
-\fBoyranos-policy\fR [ [-s \fIFILENAME\fR] [-v] ]
+\fBoyranos-policy\fR -s \fIFILENAME\fR [--system-wide] [-v]
 .fi
-\fBoyranos-policy\fR [-h]
+\fBoyranos-policy\fR -h
 .SH DESCRIPTION
 The tool dumps out / read a configuration of the Oyranos color management system (CMS).
 .SH OPTIONS
@@ -38,6 +38,9 @@ list search paths
 .B \-s \fIFILENAME\fR
 Save and install to a new policy;
 FILENAME must be in Oyranos' own xml-ish text format
+.br
+\fB\--system-wide\fR
+do system wide, might need admin or root privileges
 .TP
 .B \-h
 help text
@@ -74,7 +77,7 @@ Print a help text:
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH COPYRIGHT
-(c) 2005-2009, Kai-Uwe Behrmann
+(c) 2005-2015, Kai-Uwe Behrmann
 .fi
 License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
 .SH "SEE ALSO"
@@ -82,4 +85,4 @@ oyranos-config(3) oyranos-monitor(1) oyranos(3)
 .fi
 http://www.oyranos.org
 .SH "BUGS"
-at: http://sourceforge.net/tracker/?group_id=177017&atid=879553
+at: http://sourceforge.net/p/oyranos/bugs/

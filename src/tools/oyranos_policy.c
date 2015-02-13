@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2006-2009 (C) Kai-Uwe Behrmann
+ *            2006-2015 (C) Kai-Uwe Behrmann
  *
  *  @brief    policy loader - for usage during installation and on commandline
  *  @internal
@@ -64,7 +64,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "  %s\n",               _("List search paths:"));
   fprintf( stderr, "      %s -p\n",        argv[0]);
   fprintf( stderr, "  %s\n",               _("Save to a new policy:"));
-  fprintf( stderr, "      %s -s %s\n",     argv[0], _("policy name"));
+  fprintf( stderr, "      %s -s %s [--system-wide]\n",     argv[0], _("policy name"));
   fprintf( stderr, "  %s\n",               _("Print a help text:"));
   fprintf( stderr, "      %s -h\n",        argv[0]);
   fprintf( stderr, "\n");
@@ -81,6 +81,7 @@ int main( int argc , char** argv )
   int error = 0;
   const char* save_policy = NULL,
             * import_policy = NULL;
+  oySCOPE_e scope = oySCOPE_USER;
   size_t size = 0;
   char *xml = NULL;
   char * import_policy_fn = NULL;
@@ -119,6 +120,8 @@ int main( int argc , char** argv )
                         {
                              if(OY_IS_ARG("help"))
                         { long_help = 1; i=100; break; }
+                        else if(OY_IS_ARG("system-wide"))
+                        { scope = oySCOPE_SYSTEM; i=100; break; }
                         }
               case 'h':
               default:
@@ -178,7 +181,7 @@ int main( int argc , char** argv )
 
   if(save_policy)
   {
-    error = oyPolicySaveActual( oyGROUP_ALL, save_policy );
+    error = oyPolicySaveActual( oyGROUP_ALL, scope, save_policy );
     if(!error)
       fprintf( stdout, "%s \"%s\"\n",
                _("installed new policy"), save_policy);
