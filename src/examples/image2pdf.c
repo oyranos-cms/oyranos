@@ -58,7 +58,7 @@ int main (int argc, char ** argv)
   oyProfile_s * monitor, * print, * output;
   oyConversion_s * to_output = 0;
   oyConfig_s * device = 0;
-  uint32_t icc_profile_flags;
+  uint32_t icc_profile_flags = 0;
 
   if(argc < 2)
   {

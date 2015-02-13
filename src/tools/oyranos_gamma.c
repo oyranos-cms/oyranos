@@ -108,7 +108,7 @@ int main( int argc , char** argv )
   char * data = 0;
   uint32_t n = 0;
   int i;
-  uint32_t icc_profile_flags;
+  uint32_t icc_profile_flags = 0;
   oySCOPE_e scope = oySCOPE_USER;
 
   if(getenv(OY_DEBUG))
