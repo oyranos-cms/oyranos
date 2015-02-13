@@ -380,7 +380,7 @@ oyOptionChoicesFree                  (oyWIDGET_e        option,
 /** Set a special behaviour. Usual in control panel in Oyranos.\n 
  *
  *  @param  type      the type of behaviour
- *  @param         scope               oySCOPE_USER and oySCOPE_SYS are possible
+ *  @param         scope               oySCOPE_USER and oySCOPE_SYSTEM are possible
  *  @param  choice    the selected option
  *  @return error
  */
@@ -460,15 +460,19 @@ oyGetBehaviour         (oyBEHAVIOUR_e       type)
  *  A convenience function.
  *
  *  @param         group               use oyGROUP_ALL for a typical snapshot
+ *  @param         scope               supported are:
+ *                                     - oySCOPE_USER for HOME install
+ *                                     - oySCOPE_SYSTEM for system wide install
  *  @param         name                the name will become part of a filename
  *  @return                            error
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/02/13
  *  @since   2008/07/23 (Oyranos: 0.1.8)
- *  @date    2008/07/23
  */
-int         oyPolicySaveActual        ( oyGROUP_e         group,
-                                        const char      * name )
+int          oyPolicySaveActual      ( oyGROUP_e           group,
+                                       oySCOPE_e           scope,
+                                       const char        * name )
 {
   int error = !name;
   char * text = 0;
@@ -488,19 +492,32 @@ int         oyPolicySaveActual        ( oyGROUP_e         group,
 
   if(!error)
   {
-    if(xdg_home_dir)
+    if(scope == oySCOPE_USER)
     {
-      path = oyStringCopy_( xdg_home_dir, oyAllocateFunc_ );
-      ptr = oyStrchr_( path, ':' );
-      if(ptr)
-        *ptr = '\000';
-      oyStringAdd_( &filename, path, oyAllocateFunc_, oyDeAllocateFunc_ );
-    } else
-      oyStringAdd_( &filename, "~/.config", oyAllocateFunc_, oyDeAllocateFunc_ );
+      if(xdg_home_dir)
+      {
+        path = oyStringCopy_( xdg_home_dir, oyAllocateFunc_ );
+        ptr = oyStrchr_( path, ':' );
+        if(ptr)
+          *ptr = '\000';
+        oyStringAdd_( &filename, path, oyAllocateFunc_, oyDeAllocateFunc_ );
+      } else
+        oyStringAdd_( &filename, "~/.config", oyAllocateFunc_, oyDeAllocateFunc_ );
 
-    oyStringAdd_( &filename, "/color/settings/", oyAllocateFunc_, oyDeAllocateFunc_ );
-    oyStringAdd_( &filename, name, oyAllocateFunc_, oyDeAllocateFunc_ );
-    oyStringAdd_( &filename, ".xml", oyAllocateFunc_, oyDeAllocateFunc_ );
+      oyStringAdd_( &filename, "/color/settings/", oyAllocateFunc_, oyDeAllocateFunc_ );
+      oyStringAdd_( &filename, name, oyAllocateFunc_, oyDeAllocateFunc_ );
+      oyStringAdd_( &filename, ".xml", oyAllocateFunc_, oyDeAllocateFunc_ );
+    } else
+    if(scope == oySCOPE_SYSTEM)
+    {
+      char * path = oyGetInstallPath( oyPATH_POLICY, scope, oyAllocateFunc_ );
+      oyStringAddPrintf( &filename, oyAllocateFunc_, oyDeAllocateFunc_,
+                         "%s/%s.xml", path, name );
+    } else
+    {
+      WARNc1_S( "scope not supported: %d", scope );
+      error = 1;
+    }
     if(oyIsFile_(filename))
       WARNc2_S("%s %s",_("will overwrite policy file"), filename);
     error = oyWriteMemToFile_( filename, text, oyStrlen_(text)+1 );
@@ -520,8 +537,7 @@ int         oyPolicySaveActual        ( oyGROUP_e         group,
  *  @param allocate_func user provided function for allocating the strings memory
  *  @return           the configuration as XML to save to file
  */
-char*
-oyPolicyToXML          (oyGROUP_e           group,
+char * oyPolicyToXML   (oyGROUP_e           group,
                         int               add_header,
                         oyAlloc_f         allocate_func)
 {

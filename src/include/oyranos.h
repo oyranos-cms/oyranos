@@ -167,8 +167,9 @@ char *       oyCMMNameToRegistration ( const char        * name,
 
 /* --- policies --- */
 
-int         oyPolicySaveActual        ( oyGROUP_e         group,
-                                        const char      * name );
+int          oyPolicySaveActual      ( oyGROUP_e           group,
+                                       oySCOPE_e           scope,
+                                       const char        * name );
 char*       oyPolicyToXML              (oyGROUP_e         group,
                                         int               add_header,
                                         oyAlloc_f         alloc_func);
