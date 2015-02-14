@@ -1090,7 +1090,7 @@ oyTESTRESULT_e testSettings ()
   /*ptr = xmlSaveToBuffer( buf, 0, 0 );*/
 
 
-  text = oyStringCopy_(oyOptions_GetText( opts, oyNAME_NAME ), oyAllocateFunc_);
+  text = oyStringCopy(oyOptions_GetText( opts, oyNAME_NAME ), oyAllocateFunc_);
 
   {
     if(!text || !strlen(text))
@@ -1129,7 +1129,7 @@ oyTESTRESULT_e testSettings ()
   {
     char * t;
     o = oyOptions_Get( opts, i );
-    t = oyStringCopy_(oyOption_GetText(o, oyNAME_DESCRIPTION), oyAllocateFunc_);
+    t = oyStringCopy(oyOption_GetText(o, oyNAME_DESCRIPTION), oyAllocateFunc_);
     fprintf(zout,"%d: \"%s\": \"%s\" %s %u\n", i, 
            t, oyOption_GetValueText( o, malloc ),
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
@@ -1171,7 +1171,7 @@ oyTESTRESULT_e testSettings ()
   {
     char * t;
     o = oyOptions_Get( opts, i );
-    t = oyStringCopy_(oyOption_GetText(o, oyNAME_DESCRIPTION), oyAllocateFunc_);
+    t = oyStringCopy(oyOption_GetText(o, oyNAME_DESCRIPTION), oyAllocateFunc_);
     fprintf(zout,"%d: \"%s\": \"%s\" %s %u\n", i, 
            t, oyOption_GetValueText( o, malloc ),
            oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
@@ -2269,7 +2269,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
 
   char * registration = 0;
   if(config)
-    registration = oyStringCopy_( oyConfig_GetRegistration( config ),
+    registration = oyStringCopy( oyConfig_GetRegistration( config ),
                                   oyAllocateFunc_ );
   error = oyConfig_SaveToDB( config, oySCOPE_USER );
 
@@ -2621,7 +2621,7 @@ oyTESTRESULT_e testCMMMonitorListing ()
     fprintf(zout, "  %d oyConfig_FindString(..\"device_name\"..): %s\n", i,
             oyConfig_FindString( config, "device_name",0 ) );
     if(i==0)
-      device_name = oyStringCopy_(oyConfig_FindString( config, "device_name",0),
+      device_name = oyStringCopy(oyConfig_FindString( config, "device_name",0),
                                   oyAllocateFunc_ );
 
     clck = oyClock();
@@ -2771,7 +2771,18 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   oyOption_s * o = 0;
   char * val = 0;
   double clck = 0;
-  const char * device_name = NULL; /* getenv("DISPLAY") + ".0"; */
+  char * device_name = NULL;
+
+  /* X11 */
+  if(getenv("DISPLAY"))
+  {
+    device_name = oyStringCopy( getenv("DISPLAY"), oyAllocateFunc_ );
+    if(strchr(device_name, '.') == NULL)
+      oyStringAddPrintf( &device_name, oyAllocateFunc_, oyDeAllocateFunc_,
+                         ".0" );
+  }
+  if(!device_name)
+    device_name = oyStringCopy( "0", oyAllocateFunc_ );
 
   fprintf( zout, "load a device ...\n");
   clck = oyClock();
@@ -2954,7 +2965,7 @@ oyTESTRESULT_e testCMMsShow ()
 
               classe = oyFilterRegistrationToText( cmm_filter->registration,
                                                    oyFILTER_REG_TYPE, 0 );
-              api_reg = oyStringCopy_("//", oyAllocateFunc_ );
+              api_reg = oyStringCopy("//", oyAllocateFunc_ );
               STRING_ADD( api_reg, classe );
               if(classe)
               oyFree_m_( classe );
