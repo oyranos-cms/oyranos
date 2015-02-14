@@ -369,6 +369,22 @@ oyTESTRESULT_e testElektra()
     "oyDBSearchEmptyKeyname_()=%s", TEST_DOMAIN "/device" TEST_KEY );
   }
 
+  char * key = 0;
+  oyStringAddPrintf( &key, oyAllocateFunc_, oyDeAllocateFunc_,
+                     "%s/array_key", value );
+  error = oySetPersistentString( key, oySCOPE_USER_SYS,
+                                 "ArrayValue", "ArrayComment" );
+  value = oyGetPersistentString(strchr(key,'/')+1, 0, oySCOPE_USER_SYS, 0);
+  if(value && strcmp(value, "ArrayValue") == 0)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oySetPersistentString(%s, oySCOPE_USER_SYS)", key );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oySetPersistentString(%s, oySCOPE_USER_SYS)", key );
+  }
+
   return result;
 }
 
@@ -2448,19 +2464,19 @@ oyTESTRESULT_e testCMMMonitorJSON ()
   {
     char * json_text = 0;
     config = oyConfigs_Get( configs, i );
-    oyDeviceToJSON( config, 0, &json_text, malloc );
+    error = oyDeviceToJSON( config, 0, &json_text, malloc );
     fprintf(zout, "  %d oyDeviceToJSON():\n%s\n", i,
             json_text?json_text:"---" );
 
     oyConfig_Release( &config );
-    if( json_text )
+    if( !error && json_text )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
       "oyDeviceToJSON() \"monitor\"       " );
       if(i == 0)
         first_json = strdup(json_text);
     } else
     { PRINT_SUB( oyTESTRESULT_FAIL,
-      "oyDeviceToJSON() \"monitor\"       " );
+      "oyDeviceToJSON() \"monitor\"      %d", error );
     }
 
     if(i == 1)
@@ -2474,13 +2490,13 @@ oyTESTRESULT_e testCMMMonitorJSON ()
       }
     }
 
-    oyDeviceFromJSON( json_text, 0, &config );
-    if( config )
+    error = oyDeviceFromJSON( json_text, 0, &config );
+    if( !error && config )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
       "oyDeviceFromJSON() %d             ", oyConfig_Count(config) );
     } else
     { PRINT_SUB( oyTESTRESULT_FAIL,
-      "oyDeviceFromJSON() %d             ", oyConfig_Count(config) );
+      "oyDeviceFromJSON() %d %d           ", oyConfig_Count(config), error );
     }
 
     oyProfile_s * p = NULL;
@@ -2492,12 +2508,12 @@ oyTESTRESULT_e testCMMMonitorJSON ()
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
 
-    if( p )
+    if( !error && p )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
       "oyDeviceGetProfile() %s", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
     } else
     { PRINT_SUB( oyTESTRESULT_FAIL,
-      "oyDeviceGetProfile()              " );
+      "oyDeviceGetProfile()             %d", error );
     }
 
     oyProfile_Release( &p );
