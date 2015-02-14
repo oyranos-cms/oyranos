@@ -2830,6 +2830,23 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
     //error = oyConfig_EraseFromDB( config );
   }
 
+  char * system_port = oyGetPersistentString( OY_STD "/device/monitor/#0/system_port", 0, oySCOPE_USER_SYS, 0);
+  if(system_port)
+    fprintf(zout, "using existing DB monitor: \"%s\"\n", system_port );
+  else
+    oySetPersistentString( OY_STD "/device/monitor/#0/system_port", oySCOPE_USER, "TEST-port", "TESTcomment" );
+  const char * reg = oyConfig_GetRegistration( device );
+  oyConfigs_s * configs = NULL;
+  oyConfigs_FromDB( reg, &configs, 0 );
+  int count = oyConfigs_Count( configs );
+
+  if(count)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyConfigs_FromDB( %s )", reg);
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyConfigs_FromDB( %s )", reg);
+  }
 
   return result;
 }
