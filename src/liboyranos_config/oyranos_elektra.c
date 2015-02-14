@@ -552,6 +552,8 @@ const char * oyGetScopeString_       ( oySCOPE_e           scope )
   /* enable system wide keys for privileged users */
   if(scope == oySCOPE_SYSTEM)
     return OY_SYS;
+  else if(scope == oySCOPE_USER_SYS)
+    return "";
   else
     return OY_USER;
 }

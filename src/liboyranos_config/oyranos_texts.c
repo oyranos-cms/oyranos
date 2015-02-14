@@ -2131,7 +2131,10 @@ char *       oyGetPersistentString   ( const char        * key_name,
  *  @brief   set string into DB and cache
  *
  *  @param         key_name            the DB key name
- *  @param         scope               oySCOPE_USER and oySCOPE_SYS are possible
+ *  @param         scope               possible values are:
+ *                                     - oySCOPE_USER
+ *                                     - oySCOPE_SYS
+ *                                     - oySCOPE_USER_SYS means, you are your own with prefixing
  *  @param         value               the value string
  *  @param         comment             the comment string
  *  @return                            DB specific return code
@@ -2146,8 +2149,14 @@ int          oySetPersistentString   ( const char        * key_name,
                                        const char        * comment )
 {
   int rc = oyDBSetString_( key_name, scope, value, comment );
+  const char * key = key_name;
 
-  oyOptions_SetFromText( &oy_db_cache_, key_name, value, OY_CREATE_NEW );
+  if(scope == oySCOPE_USER_SYS)
+  {
+    if(strchr( key_name, '/' ))
+      key = strchr( key_name, '/' ) + 1;
+  }
+  oyOptions_SetFromText( &oy_db_cache_, key, value, OY_CREATE_NEW );
 
   return rc;
 }
