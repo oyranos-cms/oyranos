@@ -2791,7 +2791,7 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   k_n = oyConfig_Count( device );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyDeviceGet(..\"monitor\" \"%s\".. &device ) %d     %s", device_name, k_n,
+    "oyDeviceGet(..\"monitor\" \"%s\".. &device) %d %s", device_name, k_n,
                    oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
@@ -2804,11 +2804,11 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   clck = oyClock() - clck;
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConfig_GetDB( device )                         %s",
+    "oyConfig_GetDB( device )                    %s",
                    oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyConfig_GetDB( device )                         %s",
+    "oyConfig_GetDB( device )                    %s",
                    oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
   }
   if(device && rank > 0)
@@ -2831,10 +2831,15 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   }
 
   char * system_port = oyGetPersistentString( OY_STD "/device/monitor/#0/system_port", 0, oySCOPE_USER_SYS, 0);
-  if(system_port)
+  int temp = 0;
+  if(system_port && system_port[0])
     fprintf(zout, "using existing DB monitor: \"%s\"\n", system_port );
   else
+  {
     oySetPersistentString( OY_STD "/device/monitor/#0/system_port", oySCOPE_USER, "TEST-port", "TESTcomment" );
+    fprintf(zout, "creating DB monitor: \"%s\"\n", OY_STD "/device/monitor/#0/system_port: TEST-port" );
+    temp = 1;
+  }
   const char * reg = oyConfig_GetRegistration( device );
   oyConfigs_s * configs = NULL;
   oyConfigs_FromDB( reg, &configs, 0 );
@@ -2842,11 +2847,14 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
 
   if(count)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConfigs_FromDB( %s )", reg);
+    "oyConfigs_FromDB( %s )  ", reg);
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyConfigs_FromDB( %s )", reg);
+    "oyConfigs_FromDB( %s )  ", reg);
   }
+
+  if(temp)
+    error = oyDBEraseKey_( OY_STD "/device/monitor", oySCOPE_USER );
 
   return result;
 }
