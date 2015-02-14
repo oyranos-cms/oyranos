@@ -1378,7 +1378,7 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
     WARNc3_S( "%s: %s\n%s", _("found issues parsing JSON"), t, json_text );
   oyFree_m_(t);
 
-  error = oyOptions_FindInt( options, "pos", 0, &pos );
+  oyOptions_FindInt( options, "pos", 0, &pos );
 
   json_class = oyjl_tree_get_value( json, "org/freedesktop/openicc/device" );
   if(json_class && json_class->type == oyjl_t_object)
@@ -2422,7 +2422,6 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
   int i,n;
   char ** db_keys = NULL;
   int db_keys_n = 0;
-  const char * t;
 
   oyExportStart_(EXPORT_SETTING);
   oyExportEnd_();
