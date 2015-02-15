@@ -49,7 +49,8 @@ IF( FLTK_FOUND )
   TARGET_LINK_LIBRARIES ( oyranos-image-display oyranos ${EXTRA_LIBS}
                  ${FLTK_LIBRARIES} )
   INSTALL (TARGETS oyranos-image-display DESTINATION bin)
-  INSTALL( FILES oyranos-image-display.desktop DESTINATION share/applications )
+  INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/image_display/oyranos-image-display.desktop DESTINATION share/applications )
+  INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/image_display/oyranos-image-display.1 DESTINATION share/man/man1 )
 
   ADD_EXECUTABLE( oyranos-config-fltk
                   oyranos_config_fltk.cxx
