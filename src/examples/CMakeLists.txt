@@ -17,7 +17,6 @@ TARGET_LINK_LIBRARIES ( ${OY_MODULE_LIB} oyranos ${EXTRA_LIBS} )
 # ICC profile hash calculation
 ADD_EXECUTABLE( oymd5icc oymd5icc.c )
 TARGET_LINK_LIBRARIES( oymd5icc oyranos ${EXTRA_LIBS} )
-#INSTALL (TARGETS oymd5icc DESTINATION bin)
 
 # Device listing
 ADD_EXECUTABLE( oyranos-test-device "${CMAKE_CURRENT_SOURCE_DIR}/devices/test_device.c" )
@@ -39,18 +38,17 @@ IF( CAIRO_FOUND )
   ADD_EXECUTABLE( image2pdf image2pdf.c )
   TARGET_LINK_LIBRARIES ( image2pdf oyranos ${EXTRA_LIBS}
                  ${CAIRO_LIBRARIES} )
-  #INSTALL (TARGETS oyranos-profile-graph DESTINATION bin)
 ENDIF()
 
 # simple image viewer
 IF( FLTK_FOUND )
-  ADD_EXECUTABLE( image-display 
+  ADD_EXECUTABLE( oyranos-image-display 
                   "${CMAKE_CURRENT_SOURCE_DIR}/image_display/image_display.cpp"
                   "${CMAKE_CURRENT_SOURCE_DIR}/image_display/GLee.c"
                 )
-  TARGET_LINK_LIBRARIES ( image-display oyranos ${EXTRA_LIBS}
+  TARGET_LINK_LIBRARIES ( oyranos-image-display oyranos ${EXTRA_LIBS}
                  ${FLTK_LIBRARIES} )
-  #INSTALL (TARGETS image-display DESTINATION bin)
+  INSTALL (TARGETS oyranos-image-display DESTINATION bin)
   ADD_EXECUTABLE( oyranos-config-fltk
                   oyranos_config_fltk.cxx
                   ../../FL/Flmm_Tabs.cxx
@@ -67,7 +65,7 @@ ADD_SUBDIRECTORY( oforms )
 ADD_EXECUTABLE( oyranos-xforms oforms/oyranos_xforms.c )
 TARGET_LINK_LIBRARIES( oyranos-xforms
                   ${OY_OFORMS_LIB} oyranos ${EXTRA_LIBS} )
-#INSTALL (TARGETS oyranos-xforms DESTINATION bin)
+INSTALL (TARGETS oyranos-xforms DESTINATION bin)
 
 # oFORMS for a Oyranos FLTK renderer and parser
 IF( FLTK_FOUND )
@@ -78,7 +76,7 @@ IF( FLTK_FOUND )
                 )
   TARGET_LINK_LIBRARIES ( oyranos-xforms-fltk oyranos ${EXTRA_LIBS}
                   ${OY_OFORMS_LIB} ${FLTK_LIBRARIES} )
-  #INSTALL (TARGETS oyranos-xforms-fltk DESTINATION bin)
+  INSTALL (TARGETS oyranos-xforms-fltk DESTINATION bin)
 ENDIF()
 
 # oFORMS for a Oyranos module generation
