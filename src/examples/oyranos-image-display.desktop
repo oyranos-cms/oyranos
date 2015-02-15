@@ -1,0 +1,15 @@
+[Desktop Entry]
+Categories=Graphics;Viewer;
+Exec=oyranos-image-display --no-logo %u
+TryExec=oyranos-image-display
+Comment=Oyranos Image Viewer
+MimeType=image/png;image/ppm;image/x-dcraw;image/x-portable-pixmap;image/tiff;image/jpeg;image/cr2;
+GenericName=Image Viewer
+GenericName[de]=Bildbetrachter
+Name=Oyranos Image Display
+Name[de]=Oyranos Bildbetrachter
+Icon=oyranos_logo
+StartupNotify=false
+Terminal=false
+Type=Application
+NoDisplay=true

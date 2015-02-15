@@ -49,6 +49,8 @@ IF( FLTK_FOUND )
   TARGET_LINK_LIBRARIES ( oyranos-image-display oyranos ${EXTRA_LIBS}
                  ${FLTK_LIBRARIES} )
   INSTALL (TARGETS oyranos-image-display DESTINATION bin)
+  INSTALL( FILES oyranos-image-display.desktop DESTINATION share/applications )
+
   ADD_EXECUTABLE( oyranos-config-fltk
                   oyranos_config_fltk.cxx
                   ../../FL/Flmm_Tabs.cxx
