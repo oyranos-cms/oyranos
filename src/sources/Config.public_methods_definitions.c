@@ -120,29 +120,32 @@ OYAPI int  OYEXPORT
   if(error <= 0)
     error = oyConfigs_FromDB( s->registration, &configs, 0 );
   if(error <= 0)
-    error = oyConfig_GetFromDB( device, configs, rank_value );
+    error = oyConfig_SelectDB( device, configs, rank_value );
   oyConfigs_Release( &configs );
 
   return error;
 }
 
-/** Function  oyConfig_GetFromDB
- *  @brief    search a configuration in the DB for a configuration from module
+/** Function  oyConfig_SelectDB
+ *  @brief    select a db configuration
  *  @memberof oyConfig_s
  *
- *  @param[in]     device              the to be checked configuration from
+ *  This function is useful to fill the best matching config into the db options set.
+ *
+ *  @param[in,out] device              the to be checked configuration from
  *                                     oyConfigs_FromPattern_f
+ *  @param[in]     configs             the possible configs to select the best db match from
  *  @param[out]    rank_value          the number of matches between config and
  *                                     pattern, -1 means invalid
  *  @return                            0 - good, >= 1 - error + a message should
  *                                     be sent
  *
- *  @version Oyranos: 0.3.2
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/02/15
  *  @since   2009/01/26 (Oyranos: 0.3.2)
- *  @date    2011/09/14
  */
 OYAPI int  OYEXPORT
-               oyConfig_GetFromDB    ( oyConfig_s        * device,
+               oyConfig_SelectDB     ( oyConfig_s        * device,
                                        oyConfigs_s       * configs,
                                        int32_t           * rank_value )
 {
@@ -158,12 +161,15 @@ OYAPI int  OYEXPORT
   {
     n = oyConfigs_Count( configs );
 
+    /** 1. iterate over all configs */
     for( i = 0; i < n; ++i )
     {
       config = oyConfigs_Get( configs, i );
 
+      /** 2. oyConfig_Compare() with the provided device */
       error = oyConfig_Compare( device, config, &rank );
       DBG_PROG1_S("rank: %d\n", rank);
+      /** 3. store the biggest rank_value */
       if(max_rank < rank)
       {
         max_rank = rank;
@@ -178,6 +184,9 @@ OYAPI int  OYEXPORT
   if(error <= 0 && rank_value)
     *rank_value = max_rank;
 
+  /** 4. copy the config::db from configs with the biggest rank_value into
+   *     the device::db
+   */
   if(error <= 0 && max_config)
   {
     oyOptions_Release( &s->db );
@@ -1269,7 +1278,7 @@ OYAPI int  OYEXPORT
     oyOptions_Release( &options );
   }
   if(error <= 0)
-    error = oyConfig_GetFromDB( device, configs, rank_value );
+    error = oyConfig_SelectDB( device, configs, rank_value );
   oyConfigs_Release( &configs );
 
   return error;

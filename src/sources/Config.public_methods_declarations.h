@@ -21,7 +21,7 @@ OYAPI int  OYEXPORT
                oyConfig_SaveToDB     ( oyConfig_s        * config,
                                        oySCOPE_e           scope );
 OYAPI int  OYEXPORT
-               oyConfig_GetFromDB    ( oyConfig_s        * device,
+               oyConfig_SelectDB     ( oyConfig_s        * device,
                                        oyConfigs_s       * configs,
                                        int32_t           * rank_value );
 OYAPI int  OYEXPORT
