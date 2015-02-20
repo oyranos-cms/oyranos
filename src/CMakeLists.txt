@@ -330,7 +330,7 @@ IF( GETTEXT_FOUND )
     COMMENT "Extract translatable messages to ${_potFile}"
   )
 
-  SET( LINGUAS ../po/cs.po ../po/de.po ../po/eo.po ../po/eu.po  ../po/fr.po )
+  SET( LINGUAS ../po/cs.po ../po/de.po ../po/eo.po ../po/eu.po  ../po/fr.po ../po/ru.po )
   # compile translations always to have them ready for installation
   GETTEXT_CREATE_TRANSLATIONS( ${_potFile} ALL ${LINGUAS} )
 ENDIF()
