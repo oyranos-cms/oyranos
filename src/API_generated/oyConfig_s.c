@@ -207,6 +207,9 @@ OYAPI int  OYEXPORT
  *
  *  @param[in]     device              the to be checked configuration from
  *                                     oyConfigs_FromPattern_f
+ *  @param[in]     options             supported is "module" containing a 
+ *                                     registration string to select a module,
+ *                                     see as well oyConfigs_FromDB()
  *  @param[out]    rank_value          the number of matches between config and
  *                                     pattern, -1 means invalid
  *  @return                            0 - good, >= 1 - error + a message should
@@ -218,6 +221,7 @@ OYAPI int  OYEXPORT
  */
 OYAPI int  OYEXPORT
                oyConfig_GetDB        ( oyConfig_s        * device,
+                                       oyOptions_s       * options,
                                        int32_t           * rank_value )
 {
   int error = !device;
@@ -227,7 +231,7 @@ OYAPI int  OYEXPORT
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
   if(error <= 0)
-    error = oyConfigs_FromDB( s->registration, &configs, 0 );
+    error = oyConfigs_FromDB( s->registration, options, &configs, 0 );
   if(error <= 0)
     error = oyConfig_SelectDB( device, configs, rank_value );
   oyConfigs_Release( &configs );

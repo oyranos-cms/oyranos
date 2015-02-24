@@ -2071,7 +2071,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
         oyProfile_Release( &p );
       }
 
-      error = oyConfigs_FromDB( oyConfig_GetRegistration( config ), &heap, 0 );
+      error = oyConfigs_FromDB( oyConfig_GetRegistration( config ), NULL, &heap, 0 );
 
       error = oyDeviceSelectSimiliar( config, heap, 0, &dbs );
       precise_count = oyConfigs_Count( dbs );
@@ -2273,7 +2273,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
                                   oyAllocateFunc_ );
   error = oyConfig_SaveToDB( config, oySCOPE_USER );
 
-  error = oyConfigs_FromDB( registration, &configs, 0 );
+  error = oyConfigs_FromDB( registration, NULL, &configs, 0 );
   count = oyConfigs_Count( configs );
   oyConfigs_Release( &configs );
 
@@ -2287,7 +2287,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
 
 
   int32_t rank = 0;
-  error = oyConfig_GetDB( config, &rank );
+  error = oyConfig_GetDB( config, NULL, &rank );
   const char * key_set_name = oyConfig_FindString( config, "key_set_name", 0 );
   char * key = 0;
   STRING_ADD( key, key_set_name );
@@ -2304,7 +2304,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
    */
   oyConfig_Release( &config );
 
-  error = oyConfigs_FromDB( registration, &configs, 0 );
+  error = oyConfigs_FromDB( registration, NULL, &configs, 0 );
   i = oyConfigs_Count( configs );
   oyConfigs_Release( &configs );
 
@@ -2691,7 +2691,7 @@ oyTESTRESULT_e testCMMDBListing ()
   oyOption_s * o = 0;
   char * val = 0;
 
-  error = oyConfigs_FromDB( "//" OY_TYPE_STD "", &configs, 0 );
+  error = oyConfigs_FromDB( "//" OY_TYPE_STD "", NULL, &configs, 0 );
   j_n = oyConfigs_Count( configs );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -2800,11 +2800,11 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
 
   fprintf( zout, "... and search for the devices DB entry ...\n");
   clck = oyClock();
-  error = oyConfig_GetDB( device, &rank );
+  error = oyConfig_GetDB( device, NULL, &rank );
   clck = oyClock() - clck;
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConfig_GetDB( device )                    %s",
+    "oyConfig_GetDB( device )                  %d %s", (int)rank,
                    oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
@@ -2837,17 +2837,41 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   else
   {
     oySetPersistentString( OY_STD "/device/monitor/#0/system_port", oySCOPE_USER, "TEST-port", "TESTcomment" );
-    fprintf(zout, "creating DB monitor: \"%s\"\n", OY_STD "/device/monitor/#0/system_port: TEST-port" );
+    oySetPersistentString( OY_STD "/device/monitor/#0/model", oySCOPE_USER, "TEST-model", "TESTcomment" );
+    oySetPersistentString( OY_STD "/device/monitor/#1/system_port", oySCOPE_USER, "TEST-port2", "TESTcomment2" );
+    oySetPersistentString( OY_STD "/device/monitor/#1/model", oySCOPE_USER, "TEST-model2", "TESTcomment2" );
+    fprintf(zout, "creating DB monitors: \"%s\"\n", OY_STD "/device/monitor/#[0,1]/system_port: TEST-port/1" );
     temp = 1;
   }
   const char * reg = oyConfig_GetRegistration( device );
   oyConfigs_s * configs = NULL;
-  oyConfigs_FromDB( reg, &configs, 0 );
+  error = oyConfigs_FromDB( reg, NULL, &configs, 0 );
   int count = oyConfigs_Count( configs );
+  oyConfig_Release( &device );
+
+  for(k = 0; k < count; ++k)
+  {
+    oyOptions_s * db;
+    device = oyConfigs_Get( configs, k );
+    db = *oyConfig_GetOptions(device,"db");
+    fprintf(zout, "  d::%d %d: \"%s\"\n", k, oyConfig_Count( device ),
+                  oyOptions_GetText( db, oyNAME_NICK ));
+    if(temp)
+    {
+      int k_n = oyOptions_Count(db);
+      if(k_n == 2)
+      { PRINT_SUB( oyTESTRESULT_SUCCESS,
+        "oyConfig_s[%d] = %d                                           ", k, k_n);
+      } else
+      { PRINT_SUB( oyTESTRESULT_FAIL,
+        "oyConfig_s[%d] = %d                                           ", k, k_n);
+      }
+    }
+  }
 
   if(count)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConfigs_FromDB( %s )  ", reg);
+    "oyConfigs_FromDB( %s ) %d", reg, count);
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyConfigs_FromDB( %s )  ", reg);

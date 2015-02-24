@@ -532,7 +532,7 @@ OYAPI int  OYEXPORT oyConfigs_FromDeviceClass (
                                  {"serial",0},
                                  {0,0}};
     oyConfigs_s * devices = 0, * filtered = 0;
-    int error = oyConfigs_FromDB( registration, &devices, 0 );
+    int error = oyConfigs_FromDB( registration, NULL, &devices, 0 );
     error = oyConfigs_SelectSimilars( devices, pattern, &filtered )
  *  @endverbatim
  *
@@ -613,16 +613,19 @@ OYAPI int OYEXPORT oyConfigs_SelectSimilars (
  *  @memberof oyConfigs_s
  *  @brief    Get all oyConfigs_s from DB
  *
- *  @param[in]     registration        the filter
+ *  @param[in]     registration        the key path
+ *  @param[in]     options             supported is "module" containing a 
+ *                                     registration string to select a module
  *  @param[out]    configs             the found configuration list
  *  @param[in]     object              a optional user object
  *  @return                            error
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/02/15
  *  @since   2009/01/23 (Oyranos: 0.1.10)
- *  @date    2010/02/25
  */
 OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
+                                       oyOptions_s       * options,
                                        oyConfigs_s      ** configs,
                                        oyObject_s          object )
 {
@@ -634,8 +637,13 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
   uint32_t count = 0,
          * d_rank_list = 0;
   int error = !registration;
-  int i, j, n = 0, k_n = 0;
+  int j, n = 0, k_n = 0;
   oyCMMapi8_s_ * cmm_api8 = 0;
+  const char * module_reg = NULL;
+
+  module_reg = oyOptions_FindString( options, "module", 0 );
+  if(!module_reg)
+    module_reg = registration;
 
   /** 0. setup Elektra */
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
@@ -643,7 +651,7 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
   if(error <= 0)
   {
     /** 1. get all module names for the registration pattern */
-    error = oyConfigDomainList( registration, &texts, &count, &d_rank_list, 0 );
+    error = oyConfigDomainList( module_reg, &texts, &count, &d_rank_list, 0 );
     if(count)
       s = oyConfigs_New( 0 );
 
@@ -651,11 +659,10 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
       cmm_api8 = (oyCMMapi8_s_*) oyCMMsGetFilterApi_( texts[0],
                                                      oyOBJECT_CMM_API8_S );
 
-    for(i = 0; i < count; ++i)
     {
       char * key = NULL;
       /** 2. obtain the directory structure for configurations */
-      key_set_names = oyDBKeySetGetNames_( texts[i], oySCOPE_USER_SYS, &n );
+      key_set_names = oyDBKeySetGetNames_( registration, oySCOPE_USER_SYS, &n );
 
       if(error <= 0)
       for(j = 0; j < n; ++j)
@@ -664,7 +671,7 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
         config_key_names = oyDBKeySetGetNames_( key_set_names[j],
                                                 oySCOPE_USER_SYS, &k_n );
 
-        config = (oyConfig_s_*)oyConfig_FromRegistration( texts[i], object );
+        config = (oyConfig_s_*)oyConfig_FromRegistration( registration, object );
         error = !config;
 
         oyDBGetStrings_( &config->db, (const char**)config_key_names, k_n, oySCOPE_USER_SYS );

@@ -984,7 +984,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
     goto cleanup;
   }
 
-  /** 3 load profile from file name argument */
+  /** 3. load profile from file name argument */
   p = oyProfile_FromFile( profile_name, 0, 0 );
 
   /** 3.1 check for success of profile loading */
@@ -1000,7 +1000,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   if(error <= 0)
   {
     /** 4.1 get stored DB's configurations */
-    error = oyConfigs_FromDB( oyConfigPriv_m(device)->registration, &configs, 0 );
+    error = oyConfigs_FromDB( oyConfigPriv_m(device)->registration, NULL, &configs, 0 );
 
     n = oyConfigs_Count( configs );
     for( i = 0; i < n; ++i )
@@ -1064,7 +1064,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   }
   /** 5.3 reload the DB part */
   if(error <= 0)
-    error = oyConfig_GetDB( device, 0 );
+    error = oyConfig_GetDB( device, NULL, 0 );
 
   cleanup:
   oyConfig_Release( &device_tmp );
@@ -1137,7 +1137,7 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
 
     if(!o)
     {
-      error = oyConfig_GetDB( device, &rank_value );
+      error = oyConfig_GetDB( device, NULL, &rank_value );
       o = oyConfig_Find( device, "profile_name" );
     }
 
