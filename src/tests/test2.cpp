@@ -2830,24 +2830,25 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
     //error = oyConfig_EraseFromDB( config );
   }
 
-  char * system_port = oyGetPersistentString( OY_STD "/device/monitor/#0/system_port", 0, oySCOPE_USER_SYS, 0);
-  int temp = 0;
-  if(system_port && system_port[0])
-    fprintf(zout, "using existing DB monitor: \"%s\"\n", system_port );
-  else
-  {
-    oySetPersistentString( OY_STD "/device/monitor/#0/system_port", oySCOPE_USER, "TEST-port", "TESTcomment" );
-    oySetPersistentString( OY_STD "/device/monitor/#0/model", oySCOPE_USER, "TEST-model", "TESTcomment" );
-    oySetPersistentString( OY_STD "/device/monitor/#1/system_port", oySCOPE_USER, "TEST-port2", "TESTcomment2" );
-    oySetPersistentString( OY_STD "/device/monitor/#1/model", oySCOPE_USER, "TEST-model2", "TESTcomment2" );
-    fprintf(zout, "creating DB monitors: \"%s\"\n", OY_STD "/device/monitor/#[0,1]/system_port: TEST-port/1" );
-    temp = 1;
-  }
-  const char * reg = oyConfig_GetRegistration( device );
+  oySetPersistentString( OY_STD "/device/test/#0/system_port", oySCOPE_USER, "TEST-port", "TESTcomment" );
+  oySetPersistentString( OY_STD "/device/test/#0/model", oySCOPE_USER, "TEST-model", "TESTcomment" );
+  oySetPersistentString( OY_STD "/device/test/#1/system_port", oySCOPE_USER, "TEST-port2", "TESTcomment2" );
+  oySetPersistentString( OY_STD "/device/test/#1/model", oySCOPE_USER, "TEST-model2", "TESTcomment2" );
+  fprintf(zout, "creating DB device class: \"%s\"\n", OY_STD "/device/test/#[0,1]/system_port: TEST-port/1" );
+
+  const char * reg = OY_STD "/device/test";
   oyConfigs_s * configs = NULL;
   error = oyConfigs_FromDB( reg, NULL, &configs, 0 );
   int count = oyConfigs_Count( configs );
   oyConfig_Release( &device );
+
+  if(count == 2)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyConfigs_FromDB( %s ) %d", reg, count);
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyConfigs_FromDB( %s )  ", reg);
+  }
 
   for(k = 0; k < count; ++k)
   {
@@ -2856,29 +2857,17 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
     db = *oyConfig_GetOptions(device,"db");
     fprintf(zout, "  d::%d %d: \"%s\"\n", k, oyConfig_Count( device ),
                   oyOptions_GetText( db, oyNAME_NICK ));
-    if(temp)
-    {
-      int k_n = oyOptions_Count(db);
-      if(k_n == 2)
-      { PRINT_SUB( oyTESTRESULT_SUCCESS,
-        "oyConfig_s[%d] = %d                                           ", k, k_n);
-      } else
-      { PRINT_SUB( oyTESTRESULT_FAIL,
-        "oyConfig_s[%d] = %d                                           ", k, k_n);
-      }
+    int k_n = oyOptions_Count(db);
+    if(k_n == 2)
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyConfig_s[%d] = %d                                           ", k, k_n);
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+      "oyConfig_s[%d] = %d                                           ", k, k_n);
     }
   }
 
-  if(count)
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConfigs_FromDB( %s ) %d", reg, count);
-  } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyConfigs_FromDB( %s )  ", reg);
-  }
-
-  if(temp)
-    error = oyDBEraseKey_( OY_STD "/device/monitor", oySCOPE_USER );
+  error = oyDBEraseKey_( reg, oySCOPE_USER );
 
   return result;
 }
