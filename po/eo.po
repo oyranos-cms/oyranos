@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2015-02-15 14:46+0100\n"
+"POT-Creation-Date: 2015-02-25 09:55+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -1915,7 +1915,7 @@ msgstr ""
 #: API_generated/oyName_s_.c:47 API_generated/oyName_s_.c:55
 #: API_generated/oyCMMapi_s_.c:156 API_generated/oyArray2d_s_.c:166
 #: API_generated/oyCMMapis_s_.c:156 API_generated/oyOption_s_.c:179
-#: API_generated/oyConversion_s_.c:157 API_generated/oyranos_devices.c:3547
+#: API_generated/oyConversion_s_.c:157 API_generated/oyranos_devices.c:3549
 #: API_generated/oyFilterNodes_s_.c:156 API_generated/oyCMMapi9_s_.c:163
 #: API_generated/oyProfile_s_.c:241 API_generated/oyFilterCore_s_.c:169
 #: API_generated/oyPixelAccess_s_.c:186 API_generated/oyCMMobjectType_s_.c:153
@@ -3569,8 +3569,8 @@ msgstr "kolora"
 msgid "create fallback ICC profile"
 msgstr ""
 
-#: liboyranos_config/oyranos_elektra.c:588
-#: liboyranos_config/oyranos_elektra.c:606
+#: liboyranos_config/oyranos_elektra.c:738
+#: liboyranos_config/oyranos_elektra.c:756
 msgid "default profile type does not exist:"
 msgstr ""
 
@@ -3625,7 +3625,7 @@ msgstr ""
 msgid "enable simple defaults"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:2652 API_generated/oyranos_devices.c:3158
+#: API_generated/oyranos_devices.c:2654 API_generated/oyranos_devices.c:3160
 #: API_generated/oyConversion_s.c:187 API_generated/oyranos_module.c:1993
 #: API_generated/oyFilterNode_s_.c:518
 msgid "error in module:"
@@ -3675,7 +3675,7 @@ msgstr ""
 msgid "failed!"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:2569 API_generated/oyranos_devices.c:2580
+#: API_generated/oyranos_devices.c:2571 API_generated/oyranos_devices.c:2582
 #: modules/oyranos/oyranos_cmm_oyIM_profile.c:3018
 #: modules/color/modules/oyranos_cmm_lcm2.c:3018
 #: modules/color/modules/oyranos_cmm_lcms.c:2362

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2015-02-20 16:47+0100\n"
+"POT-Creation-Date: 2015-02-25 09:55+0100\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -17,7 +17,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.5.4\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Language: ru_RU\n"
 
 #: liboyranos_core/oyranos_core.c:303 tools/qcmsevents/qcmsevents.cpp:172
@@ -434,8 +435,8 @@ msgstr ""
 msgid ""
 "Behaviour of color space transformation for proofing. Most people want a "
 "preview on screen only. The Relative Colorimetric intent is right for that. "
-"The Absolute Colorimetric intent needs a very careful profiling and "
-"non-trivial setup, but allows for side-by-side comparisons."
+"The Absolute Colorimetric intent needs a very careful profiling and non-"
+"trivial setup, but allows for side-by-side comparisons."
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lraw.cpp:772
@@ -658,11 +659,11 @@ msgstr ""
 msgid ""
 "Cmyk to Cmyk transforms can provide various strategies to preserve the black "
 "only channel. None means, black might change to Cmy and thus text prints not "
-"very well. LittleCMS has added two different modes to deal with that: "
-"Black-ink-only preservation and black-plane preservation. The first is "
-"simple and effective: do all the colorimetric transforms but keep only K "
-"(preserving L*) where the source image is only black. The second mode is "
-"fair more complex and tries to preserve the WHOLE K plane."
+"very well. LittleCMS has added two different modes to deal with that: Black-"
+"ink-only preservation and black-plane preservation. The first is simple and "
+"effective: do all the colorimetric transforms but keep only K (preserving "
+"L*) where the source image is only black. The second mode is fair more "
+"complex and tries to preserve the WHOLE K plane."
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:210 liboyranos_config/oyranos_texts.c:338
@@ -1499,8 +1500,8 @@ msgid ""
 "ICC profiles reside in known paths. They are defined by OpenICC and can be "
 "used by every complying system or application. XDG_DATA_HOME and "
 "XDG_DATA_DIRS environment variables route Oyranos to top directories "
-"containing resources. The derived paths for ICC profiles have a "
-"\"color/icc\" appended."
+"containing resources. The derived paths for ICC profiles have a \"color/icc"
+"\" appended."
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:166
@@ -1795,11 +1796,11 @@ msgstr ""
 msgid ""
 "LittleCMS 2 is a CMM, a color management engine; it implements fast "
 "transforms between ICC profiles. \"Little\" stands for its small overhead. "
-"With a typical footprint of about 100K including C runtime, you can "
-"color-enable your application without the pain of ActiveX, OCX, "
-"redistributables or binaries of any kind. We are using little cms in several "
-"commercial projects, however, we are offering lcms library free for anybody "
-"under an extremely liberal open source license."
+"With a typical footprint of about 100K including C runtime, you can color-"
+"enable your application without the pain of ActiveX, OCX, redistributables "
+"or binaries of any kind. We are using little cms in several commercial "
+"projects, however, we are offering lcms library free for anybody under an "
+"extremely liberal open source license."
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lcms.c:2787
@@ -1865,14 +1866,15 @@ msgstr ""
 #: API_generated/oyName_s_.c:47 API_generated/oyName_s_.c:55
 #: API_generated/oyCMMapi_s_.c:156 API_generated/oyArray2d_s_.c:166
 #: API_generated/oyCMMapis_s_.c:156 API_generated/oyOption_s_.c:179
-#: API_generated/oyConversion_s_.c:157 API_generated/oyranos_devices.c:3547
+#: API_generated/oyConversion_s_.c:157 API_generated/oyranos_devices.c:3549
 #: API_generated/oyFilterNodes_s_.c:156 API_generated/oyCMMapi9_s_.c:163
 #: API_generated/oyProfile_s_.c:241 API_generated/oyFilterCore_s_.c:169
 #: API_generated/oyPixelAccess_s_.c:186 API_generated/oyCMMobjectType_s_.c:153
 #: API_generated/oyProfileTag_s_.c:132 API_generated/oyFilterSocket_s_.c:179
 #: API_generated/oyCMMapi3_s_.c:150 API_generated/oyLis_s_.c:148
 #: API_generated/oyList_s_.c:126 API_generated/oyCMMui_s_.c:159
-#: API_generated/oyConnector_s_.c:162 API_generated/oyConnectorImaging_s_.c:218
+#: API_generated/oyConnector_s_.c:162
+#: API_generated/oyConnectorImaging_s_.c:218
 #: API_generated/oyRectangle_s_.c:148 API_generated/oyFilterPlugs_s_.c:156
 #: API_generated/oyCMMapi4_s_.c:161 API_generated/oyPointer_s_.c:185
 #: API_generated/oyObserver_s.c:50 API_generated/oyBlob_s_.c:171
@@ -2954,8 +2956,8 @@ msgid ""
 "The filter is a libraw image reader. The option \"device\" with value \"1\" "
 "requestests a oyConfig_s object containing typical device informations about "
 "the cameraRAW file. The option \"render\" with value \"0\" will skip some of "
-"the data processing. The resulting image will be tagged with "
-"\"filename\"=string and \"gamma_linear\"=\"1\"."
+"the data processing. The resulting image will be tagged with \"filename"
+"\"=string and \"gamma_linear\"=\"1\"."
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oyra_image.c:1475
@@ -3026,8 +3028,8 @@ msgid ""
 " The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 "
 "- none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], "
 "\"precalculation\": [0 - normal; 1 - cmsFLAGS_NOOPTIMIZE; 2 - "
-"cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], "
-"\"precalculation_curves\": [0 - none; 1 - cmsFLAGS_CLUT_POST_LINEARIZATION + "
+"cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], \"precalculation_curves"
+"\": [0 - none; 1 - cmsFLAGS_CLUT_POST_LINEARIZATION + "
 "cmsFLAGS_CLUT_PRE_LINEARIZATION] and \"adaption_state\": [0.0 - not adapted "
 "to screen, 1.0 - full adapted to screen]."
 msgstr ""
@@ -3042,8 +3044,8 @@ msgid ""
 " The following Oyranos options are supported: \"rendering_gamut_warning\", "
 "\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
 "\"proof_soft\" and \"proof_hard\".\n"
-" The additional lcms options are supported \"cmyk_cmyk_black_preservation\" "
-"[0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE] and "
+" The additional lcms options are supported \"cmyk_cmyk_black_preservation"
+"\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE] and "
 "\"precalculation\"."
 msgstr ""
 
@@ -3075,31 +3077,31 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_lcms.c:2557
 msgid ""
 "The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
-"profiles from some given colorimetric coordinates. See the "
-"\"create_profile\" info item."
+"profiles from some given colorimetric coordinates. See the \"create_profile"
+"\" info item."
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lcm2.c:3198
 msgid ""
 "The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
 "profiles from some given colorimetric coordinates. The filter expects a "
-"oyOption_s object with name "
-"\"color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" "
-"containing 9 floats in the order of CIE*x for red, CIE*y for red, CIE*x for "
-"green, CIE*y for green, CIE*x for blue, CIE*y for blue, CIE*x for white, "
-"CIE*y for white and a gamma value."
+"oyOption_s object with name \"color_matrix."
+"redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 "
+"floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, CIE*y "
+"for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y for white "
+"and a gamma value."
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lcms.c:2549
 msgid ""
 "The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
 "profiles from some given colorimetric coordinates. The filter expects a "
-"oyOption_s object with name "
-"\"color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" "
-"containing 9 floats in the order of CIE*x for red, CIE*y for red, CIE*x for "
-"green, CIE*y for green, CIE*x for blue, CIE*y for blue, CIE*x for white, "
-"CIE*y for white and a gamma value. The result will appear in \"icc_profile\" "
-"with the additional attributes \"create_profile.color_matrix\"."
+"oyOption_s object with name \"color_matrix."
+"redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 "
+"floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, CIE*y "
+"for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y for white "
+"and a gamma value. The result will appear in \"icc_profile\" with the "
+"additional attributes \"create_profile.color_matrix\"."
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lcms.c:2476
@@ -3110,8 +3112,8 @@ msgid ""
 "as value. The options \"rendering_intent\", \"rendering_intent_proof\", "
 "\"rendering_bpc\", \"rendering_gamut_warning\", \"precalculation\" and "
 "\"cmyk_cmyk_black_preservation\" are honoured. The result will appear in "
-"\"icc_profile\" with the additional attributes "
-"\"create_profile.proofing_effect\" as a oyProfile_s object."
+"\"icc_profile\" with the additional attributes \"create_profile."
+"proofing_effect\" as a oyProfile_s object."
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lcm2.c:3125
@@ -3490,8 +3492,8 @@ msgstr ""
 msgid "create fallback ICC profile"
 msgstr ""
 
-#: liboyranos_config/oyranos_elektra.c:588
-#: liboyranos_config/oyranos_elektra.c:606
+#: liboyranos_config/oyranos_elektra.c:738
+#: liboyranos_config/oyranos_elektra.c:756
 msgid "default profile type does not exist:"
 msgstr ""
 
@@ -3541,7 +3543,7 @@ msgstr ""
 msgid "enable simple defaults"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:2652 API_generated/oyranos_devices.c:3158
+#: API_generated/oyranos_devices.c:2654 API_generated/oyranos_devices.c:3160
 #: API_generated/oyConversion_s.c:187 API_generated/oyranos_module.c:1993
 #: API_generated/oyFilterNode_s_.c:518
 msgid "error in module:"
@@ -3591,7 +3593,7 @@ msgstr ""
 msgid "failed!"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:2569 API_generated/oyranos_devices.c:2580
+#: API_generated/oyranos_devices.c:2571 API_generated/oyranos_devices.c:2582
 #: modules/oyranos/oyranos_cmm_oyIM_profile.c:3018
 #: modules/color/modules/oyranos_cmm_lcm2.c:3018
 #: modules/color/modules/oyranos_cmm_lcms.c:2362
@@ -3876,7 +3878,8 @@ msgstr ""
 msgid "path is not a directory"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:1164 liboyranos_core/oyranos_io_core.c:1693
+#: liboyranos_core/oyranos_io_core.c:1164
+#: liboyranos_core/oyranos_io_core.c:1693
 msgid "path is not readable"
 msgstr ""
 

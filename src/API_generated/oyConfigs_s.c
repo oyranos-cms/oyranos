@@ -615,6 +615,7 @@ oyRankMap * oyGetRankMapFromDB       ( const char        * registration )
   char ** regs = oyStringSplit( registration, '/', &regs_n, oyAllocateFunc_ ),
        * new_reg = NULL,
        ** key_names;
+  oyDB_s * db;
 
   for(i = 0; i < regs_n; ++i)
   {
@@ -633,8 +634,8 @@ oyRankMap * oyGetRankMapFromDB       ( const char        * registration )
 
   oyStringListRelease_( &regs, regs_n, oyDeAllocateFunc_ );
 
-  key_names = oyDBKeySetGetNames_( new_reg, oySCOPE_USER_SYS,
-                                   &key_names_n );
+  db = oyDB_newFrom( new_reg, oySCOPE_USER_SYS, oyAllocateFunc_ );
+  key_names = oyDB_getKeyNames( db, new_reg, &key_names_n );
 
   DBG_PROG2_S("%s %d", new_reg, key_names_n);
 
@@ -647,7 +648,7 @@ oyRankMap * oyGetRankMapFromDB       ( const char        * registration )
     {
       oyStringAddPrintf( &key, oyAllocateFunc_, oyDeAllocateFunc_,
                         "%s/#%d", key_names[i], j );
-      val = oyDBGetString_( key, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      val = oyDB_getString( db, key );
       oyFree_m_( key );
 
       if(val)
@@ -666,6 +667,7 @@ oyRankMap * oyGetRankMapFromDB       ( const char        * registration )
                        oyAllocateFunc_, oyDeAllocateFunc_ );
   }
   oyStringListRelease_( &key_names, key_names_n, oyDeAllocateFunc_ );
+  oyDB_release( &db );
 
   return map;
 }
@@ -701,6 +703,7 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
   int j, n = 0, k_n = 0;
   oyCMMapi8_s_ * cmm_api8 = 0;
   const char * module_reg = NULL;
+  oyDB_s * db;
 
   module_reg = oyOptions_FindString( options, "module", 0 );
   if(!module_reg)
@@ -719,23 +722,24 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
                                                      oyOBJECT_CMM_API8_S );
     error *= -1;
 
+    db = oyDB_newFrom( registration, oySCOPE_USER_SYS, oyAllocateFunc_ );
+
     {
       char * key = NULL;
       /** 3.) obtain the directory structure for configurations */
-      key_set_names = oyDBKeySetGetNames_( registration, oySCOPE_USER_SYS, &n );
+      key_set_names = oyDB_getKeyNames( db, registration, &n );
 
       if(error <= 0)
       for(j = 0; j < n; ++j)
       {
         /** 4.) obtain all keys from one configuration directory */
-        config_key_names = oyDBKeySetGetNames_( key_set_names[j],
-                                                oySCOPE_USER_SYS, &k_n );
+        config_key_names = oyDB_getKeyNames( db, key_set_names[j], &k_n );
 
         config = (oyConfig_s_*)oyConfig_FromRegistration( registration, object );
         error = !config;
 
         if(!error)
-          oyDBGetStrings_( &config->db, (const char**)config_key_names, k_n, oySCOPE_USER_SYS );
+          oyDB_getStrings( db, &config->db, (const char**)config_key_names, k_n );
 
         /** 4.1.) add information about the data's origin */
         oyStringAddPrintf( &key, oyAllocateFunc_, oyDeAllocateFunc_, "%s/key_set_name",
@@ -766,6 +770,7 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
       }
     }
 
+    oyDB_release( &db );
     oyStringListRelease_( &texts, count, oyDeAllocateFunc_ );
   }
 

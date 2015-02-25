@@ -2411,6 +2411,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
   int i,n;
   char ** db_keys = NULL;
   int db_keys_n = 0;
+  oyDB_s * db;
 
   oyExportStart_(EXPORT_SETTING);
   oyExportEnd_();
@@ -2492,8 +2493,9 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
     oyOptions_Release( &opts_tmp );
 
           /* ask the DB */
-    oyDBGetStrings_( &db_opts, (const char**)db_keys, db_keys_n,
-                     oySCOPE_USER_SYS );
+    db = oyDB_newFrom( "do/not/know", oySCOPE_USER_SYS, oyAllocateFunc_ );
+    oyDB_getStrings( db, &db_opts, (const char**)db_keys, db_keys_n );
+    oyDB_release( &db );
     n = oyOptions_Count(db_opts);
     for( i = 0; i < n && !error; ++i )
     {
