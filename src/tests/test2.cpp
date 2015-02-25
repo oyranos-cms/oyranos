@@ -3272,6 +3272,8 @@ oyTESTRESULT_e testCMMnmRun ()
   for(i = 0; i < n*3; ++i)
   {
     char * value = oyDBGetString_(key_name, oySCOPE_USER_SYS, 0);
+    if(!value)
+      break;
     oyFree_m_(value);
   }
   clck = oyClock() - clck;
@@ -3282,7 +3284,7 @@ oyTESTRESULT_e testCMMnmRun ()
                   oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "key"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyDBGetString_()                                  " );
+    "oyDBGetString_(%s)", key_name );
   }
 
 
@@ -3301,7 +3303,7 @@ oyTESTRESULT_e testCMMnmRun ()
                   oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC, "key"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyGetPersistentString()                            " );
+    "oyGetPersistentString(%s)", key_name );
   }
 
 
@@ -3323,7 +3325,7 @@ oyTESTRESULT_e testCMMnmRun ()
                   oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Opt."));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyOption_SetValueFromDB()                          " );
+    "oyOption_SetValueFromDB(%s)", oyOption_GetText(option, oyNAME_NICK) );
   }
 
   clck = oyClock();
