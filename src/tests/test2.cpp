@@ -297,7 +297,9 @@ oyTESTRESULT_e testElektra()
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyDBEraseKey_(%s)", TEST_DOMAIN TEST_KEY );
   }
-  value = oyDBGetString_(TEST_DOMAIN TEST_KEY, oySCOPE_USER_SYS, 0);
+  oyDB_s * db = oyDB_newFrom( TEST_DOMAIN, oySCOPE_USER_SYS, oyAllocateFunc_ );
+  value = oyDB_getString(db, TEST_DOMAIN TEST_KEY);
+  oyDB_release( &db );
   if(value && strlen(value))
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
@@ -307,6 +309,7 @@ oyTESTRESULT_e testElektra()
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "Elektra key erased                      " );
   }
+  oyFree_m_(value);
 
 
   error = oySetPersistentString( OY_STD "/device" TEST_KEY "/#0/key-01", oySCOPE_USER,
@@ -3271,25 +3274,50 @@ oyTESTRESULT_e testCMMnmRun ()
   clck = oyClock();
   for(i = 0; i < n*3; ++i)
   {
-    char * value = oyDBGetString_(key_name, oySCOPE_USER_SYS, 0);
+    oyDB_s * db = oyDB_newFrom( key_name, oySCOPE_USER_SYS, oyAllocateFunc_ );
+    char * value = oyDB_getString(db, key_name);
     if(!value)
       break;
     oyFree_m_(value);
+    oyDB_release( &db );
   }
   clck = oyClock() - clck;
 
   if( i )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyDBGetString_()                   %s",
+    "oyDB_getString()                   %s",
                   oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "key"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyDBGetString_(%s)", key_name );
+    "oyDB_getString_(%s)", key_name );
+  }
+
+  clck = oyClock();
+  oyDB_s * db = oyDB_newFrom( key_name, oySCOPE_USER_SYS, oyAllocateFunc_ );
+  for(i = 0; i < n*3; ++i)
+  {
+    char * value = oyDB_getString(db, key_name);
+    if(!value)
+      break;
+    oyFree_m_(value);
+  }
+  oyDB_release( &db );
+  clck = oyClock() - clck;
+
+  if( i )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyDB_getString() shared            %s",
+                  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "key"));
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyDB_getString_(%s)", key_name );
   }
 
 
+  char * value = oyGetPersistentString( key_name, 0, oySCOPE_USER_SYS,0 );
+  oyFree_m_(value);
   clck = oyClock();
-  for(i = 0; i < n*3; ++i)
+  for(i = 0; i < n*3*17; ++i)
   {
     char * t = oyGetPersistentString( key_name, 0, oySCOPE_USER_SYS,0 );
     if(!t)
@@ -3299,8 +3327,8 @@ oyTESTRESULT_e testCMMnmRun ()
 
   if( i>n )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyGetPersistentString()             %s",
-                  oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC, "key"));
+    "oyGetPersistentString() cached     %s",
+                  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "key"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyGetPersistentString(%s)", key_name );
@@ -3313,13 +3341,12 @@ oyTESTRESULT_e testCMMnmRun ()
 
   for(i = 0; i < n*3*17; ++i)
   {
-    int error = !option || !oyOption_GetRegistration(option);
     error = oyOption_SetValueFromDB( option );
     if(error) break;
   }
   clck = oyClock() - clck;
 
-  if( i > 1 )
+  if( i > 1 && !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyOption_SetValueFromDB()           %s",
                   oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Opt."));
