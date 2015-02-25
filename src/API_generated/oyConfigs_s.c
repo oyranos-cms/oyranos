@@ -423,14 +423,14 @@ OYAPI int  OYEXPORT oyConfigs_FromDeviceClass (
     return 0;
   }
 
-  /** 1. obtain detailed and expensive device informations */
+  /** 1.) obtain detailed and expensive device informations */
   if(options)
   {
     options = oyOptions_Copy( options, 0 );
     device_name = oyOptions_FindString( options, "device_name", 0 );
   }
 
-  /** 1.2.1 build a device class registration string */
+  /** 1.1.) build a device class registration string */
   if(error <= 0)
   {
     device_class_registration = oyDeviceRegistrationCreate_(
@@ -440,7 +440,7 @@ OYAPI int  OYEXPORT oyConfigs_FromDeviceClass (
     error = !device_class_registration;
   }
 
-  /** 1.2.2 get all device class module names */
+  /** 1.2.) get all device class module names */
   if(error <= 0)
     error = oyConfigDomainList  ( device_class_registration, &texts, &count,
                                   &rank_list, 0 );
@@ -450,12 +450,12 @@ OYAPI int  OYEXPORT oyConfigs_FromDeviceClass (
   if(devices && !*devices)
     *devices = oyConfigs_New( object );
 
-  /** 1.3 ask each module */
+  /** 1.3.) ask each module */
   for( i = 0; i < count; ++i )
   {
     const char * registration_domain = texts[i];
 
-    /** 1.3.1 call into module */
+    /** 1.3.1.) call into module */
     error = oyConfigs_FromDomain( registration_domain, options, &configs,
                                   object);
 
@@ -478,13 +478,13 @@ OYAPI int  OYEXPORT oyConfigs_FromDeviceClass (
 
       if(device_name)
       {
-        /** 1.3.1.1 Compare the device_name with the device_name option
-         *          and collect the matching devices. */
+        /** 1.3.1.1.) Compare the device_name with the device_name option
+         *            and collect the matching devices. */
         tmp = oyConfig_FindString( device, "device_name", 0 );
         if(tmp && oyStrcmp_( tmp, device_name ) == 0)
           oyConfigs_MoveIn( *devices, &device, -1 );
       } else
-        /** 1.3.1.2 ... or collect all device configurations */
+        /** 1.3.1.2.) ... or collect all device configurations */
         oyConfigs_MoveIn( *devices, &device, -1 );
 
       oyConfig_Release( &device );
@@ -566,7 +566,6 @@ OYAPI int OYEXPORT oyConfigs_SelectSimilars (
   if(s)
     oyCheckType__m( oyOBJECT_CONFIGS_S, return 0 )
 
-  /** 0. setup Elektra */
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
   result = oyConfigs_New(0);
@@ -609,6 +608,68 @@ OYAPI int OYEXPORT oyConfigs_SelectSimilars (
   return error;
 }
 
+oyRankMap * oyGetRankMapFromDB       ( const char        * registration )
+{
+  oyRankMap * map = NULL;
+  int regs_n = 0, i, key_names_n;
+  char ** regs = oyStringSplit( registration, '/', &regs_n, oyAllocateFunc_ ),
+       * new_reg = NULL,
+       ** key_names;
+
+  for(i = 0; i < regs_n; ++i)
+  {
+    
+    if(i == regs_n - 2)
+    oyStringAddPrintf( &new_reg, oyAllocateFunc_, oyDeAllocateFunc_,
+                       "rank_map" );
+    else
+    oyStringAddPrintf( &new_reg, oyAllocateFunc_, oyDeAllocateFunc_,
+                       "%s", regs[i] );
+    oyStringAddPrintf( &new_reg, oyAllocateFunc_, oyDeAllocateFunc_,
+                       "/" );
+  }
+  oyStringAddPrintf( &new_reg, oyAllocateFunc_, oyDeAllocateFunc_,
+                     "#0" );
+
+  oyStringListRelease_( &regs, regs_n, oyDeAllocateFunc_ );
+
+  key_names = oyDBKeySetGetNames_( new_reg, oySCOPE_USER_SYS,
+                                   &key_names_n );
+
+  DBG_PROG2_S("%s %d", new_reg, key_names_n);
+
+  for(i = 0; i < key_names_n; ++i)
+  {
+    char * key = 0,
+         * val = 0;
+    int j, vals[3];
+    for(j = 0; j < 3; ++j)
+    {
+      oyStringAddPrintf( &key, oyAllocateFunc_, oyDeAllocateFunc_,
+                        "%s/#%d", key_names[i], j );
+      val = oyDBGetString_( key, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      oyFree_m_( key );
+
+      if(val)
+        vals[j] = atoi( val );
+      else
+        vals[j] = 0;
+      oyFree_m_( val );
+    }
+
+    DBG_PROG5_S( "{%d] %s %d,%d,%d", i, key_names[i], vals[0],vals[1],vals[2] );
+
+    key = strrchr(key_names[i],'/');
+    if(key)
+      oyRankMapAppend( &map, ++key,
+                       vals[0], vals[1], vals[2],
+                       oyAllocateFunc_, oyDeAllocateFunc_ );
+  }
+  oyStringListRelease_( &key_names, key_names_n, oyDeAllocateFunc_ );
+
+  return map;
+}
+
 /** Function  oyConfigs_FromDB
  *  @memberof oyConfigs_s
  *  @brief    Get all oyConfigs_s from DB
@@ -621,7 +682,7 @@ OYAPI int OYEXPORT oyConfigs_SelectSimilars (
  *  @return                            error
  *
  *  @version Oyranos: 0.9.6
- *  @date    2015/02/15
+ *  @date    2015/02/24
  *  @since   2009/01/23 (Oyranos: 0.1.10)
  */
 OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
@@ -645,49 +706,61 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
   if(!module_reg)
     module_reg = registration;
 
-  /** 0. setup Elektra */
+  /** 1.) setup Elektra */
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
 
   if(error <= 0)
   {
-    /** 1. get all module names for the registration pattern */
+    /** 2.) get all module names for the module pattern */
     error = oyConfigDomainList( module_reg, &texts, &count, &d_rank_list, 0 );
-    if(count)
-      s = oyConfigs_New( 0 );
 
     if(error <= 0 && count && texts)
       cmm_api8 = (oyCMMapi8_s_*) oyCMMsGetFilterApi_( texts[0],
                                                      oyOBJECT_CMM_API8_S );
+    error *= -1;
 
     {
       char * key = NULL;
-      /** 2. obtain the directory structure for configurations */
+      /** 3.) obtain the directory structure for configurations */
       key_set_names = oyDBKeySetGetNames_( registration, oySCOPE_USER_SYS, &n );
 
       if(error <= 0)
       for(j = 0; j < n; ++j)
       {
-        /** 3. obtain all keys from one configuration directory */
+        /** 4.) obtain all keys from one configuration directory */
         config_key_names = oyDBKeySetGetNames_( key_set_names[j],
                                                 oySCOPE_USER_SYS, &k_n );
 
         config = (oyConfig_s_*)oyConfig_FromRegistration( registration, object );
         error = !config;
 
-        oyDBGetStrings_( &config->db, (const char**)config_key_names, k_n, oySCOPE_USER_SYS );
+        if(!error)
+          oyDBGetStrings_( &config->db, (const char**)config_key_names, k_n, oySCOPE_USER_SYS );
 
-        /* add information about the data's origin */
+        /** 4.1.) add information about the data's origin */
         oyStringAddPrintf( &key, oyAllocateFunc_, oyDeAllocateFunc_, "%s/key_set_name",
                            oyConfig_GetRegistration( (oyConfig_s*) config ) );
-        error = oyOptions_SetFromText( &config->data, key,
-                                       key_set_names[j], OY_CREATE_NEW );
+        if(!error)
+          error = oyOptions_SetFromText( &config->data, key,
+                                         key_set_names[j], OY_CREATE_NEW );
 
-        /* add a rank map to allow for comparisions */
+        /** 5.) add a rank map to each object to allow for comparisions */
+        /** 5.1.) try the rank map from module */
         if(cmm_api8)
           config->rank_map = oyRankMapCopy( cmm_api8->rank_map,
                                             config->oy_->allocateFunc_ );
 
-        oyConfigs_MoveIn( s, (oyConfig_s**)&config, -1 );
+        /** 5.2.) search a rank map from DB
+            @todo implement JSON DB rank map
+         */
+        if(!error && !config->rank_map)
+          config->rank_map = oyGetRankMapFromDB( registration );
+
+        /** 6.) move the object into the list */
+        if(!s && config)
+          s = oyConfigs_New( 0 );
+        if(config)
+          oyConfigs_MoveIn( s, (oyConfig_s**)&config, -1 );
 
         oyFree_m_( key );
       }
@@ -751,17 +824,17 @@ OYAPI int OYEXPORT oyConfigs_Modify  ( oyConfigs_s       * configs,
 
   if(error <= 0)
   {
-    /** 1.  pick the first device to select a registration */
+    /** 1.)  pick the first device to select a registration */
     config = (oyConfig_s_*)oyConfigs_Get( configs, 0 );
-    /** 1.2 get all device class module names from the firsts oyConfig_s
-      *     registration */
+    /** 1.2.) get all device class module names from the firsts oyConfig_s
+      *       registration */
     error = oyConfigDomainList  ( config->registration, &texts, &count,
                                   &rank_list, 0 );
     oyConfig_Release( (oyConfig_s**)&config );
   }
 
 
-  /** 2. call each modules oyCMMapi8_s::oyConfigs_Modify */
+  /** 2.) call each modules oyCMMapi8_s::oyConfigs_Modify */
   for( i = 0; i < count; ++i )
   {
     registration_domain = texts[i];
