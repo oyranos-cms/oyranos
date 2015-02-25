@@ -44,6 +44,7 @@ int      oyDB_getStrings             ( oyDB_s            * db,
                                        const char       ** key_names,
                                        int                 key_names_n );
 char **  oyDB_getKeyNames            ( oyDB_s            * db,
+                                       const char        * key_name,
                                        int               * n );
 
 /* elektra key wrappers */

@@ -307,6 +307,11 @@ int      oyDB_GetChildren            ( oyDB_s            * db )
 
   DBG_PROG_START
 
+  if(db->ks)
+    WARNc_S("please use only one call to oyDB_GetChildren")
+  else
+    db->ks = ksNew(0,NULL);
+
   if( db->scope == oySCOPE_USER_SYS || db->scope == oySCOPE_USER )
   {
     list_user = ksNew(0,NULL);
@@ -364,7 +369,7 @@ oyDB_s * oyDB_newFrom                ( const char        * top_key_name,
     db->h = kdbOpen(db->error);
     if(!db->h) oyDB_printWarn( db );
     db->top_key_name = oyStringCopy( top_key_name, oyAllocateFunc_ );
-    db->ks = ksNew( 0, NULL );
+    db->ks = NULL;
     db->alloc = allocFunc;
     db->scope = scope;
   }
@@ -385,7 +390,8 @@ void     oyDB_release                ( oyDB_s           ** db )
   s->error = NULL;
   if(s->top_key_name)
     oyFree_m_( s->top_key_name );
-  ksDel( s->ks );
+  if(s->ks)
+    ksDel( s->ks );
   s->ks = NULL;
   s->alloc = 0;
   oyDeAllocateFunc_( s );
@@ -524,23 +530,26 @@ char*    oyDBSearchEmptyKeyname_       ( const char      * key_parent_name,
 
 /** @brief The function returns keys found just one level under the arguments one. */
 char **  oyDB_getKeyNames            ( oyDB_s            * db,
+                                       const char        * key_name,
                                        int               * n )
 {
   int error = !db || !n;
   char* current_name = (char*) calloc (sizeof(char), MAX_PATH);
-  KeySet * my_key_set = 0;
-  Key * current = 0;
+  KeySet * my_key_set = NULL;
+  Key * current = NULL;
   const char *name = NULL;
-  char ** texts = 0;
+  char ** texts = NULL;
   int name_len;
 
   DBG_PROG_START
 
-  name = db->top_key_name;
   if(!error)
+    name = key_name;
+  if(n)
     *n = 0;
 
-  oyDB_GetChildren( db );
+  if(!db->ks)
+    oyDB_GetChildren( db );
 
   if(!error)
     my_key_set = db->ks;
@@ -588,7 +597,7 @@ char **          oyDBKeySetGetNames_ ( const char        * key_parent_name,
 {
   char ** texts = 0;
   oyDB_s * db = oyDB_newFrom( key_parent_name, scope, oyAllocateFunc_ );
-  texts = oyDB_getKeyNames( db, n );
+  texts = oyDB_getKeyNames( db, key_parent_name, n );
   oyDB_release( &db );
 
   return texts;
