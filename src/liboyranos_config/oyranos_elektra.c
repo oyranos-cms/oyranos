@@ -401,7 +401,46 @@ void     oyDB_release                ( oyDB_s           ** db )
 char *   oyDB_getString              ( oyDB_s            * db,
                                        const char        * key_name )
 {
-  char * value = oyDBGetStringFast_( db->h, key_name, db->scope, db->alloc );
+  int error = !db;
+  const char * current_name;
+  KeySet * my_key_set = NULL;
+  Key * current = NULL;
+  const char *name = NULL;
+  char * value = NULL;
+
+  DBG_PROG_START
+
+  if(!error)
+    name = key_name;
+
+  if(!db->ks)
+    oyDB_GetChildren( db );
+
+  if(!error)
+    my_key_set = db->ks;
+
+  if(my_key_set)
+  {
+    FOR_EACH_IN_KDBKEYSET( current, my_key_set )
+    {
+      current_name = keyName(current);
+      if(current_name &&
+         oyStrstr_(current_name, name) )
+      {
+        const char * t = oyStrstr_(current_name, name);
+
+        if(t && strcmp(t,name) == 0)
+        {
+          t = keyString( current );
+          if(t)
+            value = oyStringCopy( t, db->alloc );
+          break;
+        }
+      }
+    }
+  }
+
+  DBG_PROG_ENDE
   return value;
 }
 
