@@ -909,6 +909,7 @@ int      oyDB_getStrings             ( oyDB_s            * db,
   char* value = 0;
   const char * key;
   int i;
+  int error = 0;
 
   for(i = 0; i < key_names_n; ++i)
   {
@@ -925,14 +926,16 @@ int      oyDB_getStrings             ( oyDB_s            * db,
         if(!*options)
           *options = oyOptions_New(NULL);
         oyOptions_MoveIn( *options, &o, -1 );
-      }
+      } else
+        ++error;
       oyFree_m_(value);
-    }
+    } else
+      ++error;
   }
 
   DBG_PROG_ENDE
 
-  return 0;
+  return error;
 }
 
 int      oyDBEraseKey_               ( const char        * key_name,

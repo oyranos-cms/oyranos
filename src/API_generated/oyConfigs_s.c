@@ -739,12 +739,16 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
         error = !config;
 
         if(!error)
-          oyDB_getStrings( db, &config->db, (const char**)config_key_names, k_n );
+        {
+          error = oyDB_getStrings( db, &config->db, (const char**)config_key_names, k_n );
+          if(error)
+            WARNc2_S("obtained not all keys %d/%d", k_n-error, k_n)
+        }
 
         /** 4.1.) add information about the data's origin */
         oyStringAddPrintf( &key, oyAllocateFunc_, oyDeAllocateFunc_, "%s/key_set_name",
                            oyConfig_GetRegistration( (oyConfig_s*) config ) );
-        if(!error)
+        if(config)
           error = oyOptions_SetFromText( &config->data, key,
                                          key_set_names[j], OY_CREATE_NEW );
 
