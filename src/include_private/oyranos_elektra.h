@@ -32,6 +32,20 @@ void oyDBClose (void);
 /* better use oyExportReset_(EXPORT_SETTING) */
 void oyCloseReal__(void);
 
+typedef struct oyDB_s oyDB_s;
+oyDB_s * oyDB_newFrom                ( const char        * top_key_name,
+                                       oySCOPE_e           scope,
+                                       oyAlloc_f           allocFunc );
+void     oyDB_release                ( oyDB_s           ** db );
+char *   oyDB_getString              ( oyDB_s            * db,
+                                       const char        * key_name );
+int      oyDB_getStrings             ( oyDB_s            * db,
+                                       oyOptions_s      ** options,
+                                       const char       ** key_names,
+                                       int                 key_names_n );
+char **  oyDB_getKeyNames            ( oyDB_s            * db,
+                                       int               * n );
+
 /* elektra key wrappers */
 char *   oyDBGetString_              ( const char        * key_name,
                                        oySCOPE_e           scope,

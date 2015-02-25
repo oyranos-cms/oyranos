@@ -127,6 +127,10 @@ STATIC_IF_NDEBUG KDB * oy_handle_ = 0;
 
 const char * oyGetScopeString_       ( oySCOPE_e           scope );
 
+char *   oyDBGetStringFast_          ( KDB               * oy_handle_,
+                                       const char        * key_name,
+                                       oySCOPE_e           scope,
+                                       oyAlloc_f           allocate_func );
 
 /* elektra key list handling */
 KeySet* oyReturnChildrenList_ (const char* keyParentName, oySCOPE_e scope, int* rc_ptr);
@@ -268,6 +272,134 @@ int      oyRemoveFromDB              ( const char        * name,
 
 /* --- function definitions --- */
 
+
+typedef struct oyDB_s {
+  KDB      * h;
+  Key      * error;
+  KeySet   * ks;
+  char     * top_key_name;
+  oyAlloc_f  alloc;
+  oySCOPE_e  scope;
+} oyDB_s;
+
+void     oyDB_printWarn              ( oyDB_s            * db )
+{
+  const Key * meta = NULL;
+  Key * k = db->error;
+
+  keyRewindMeta(k);
+  while((meta = keyNextMeta(k)) != 0)
+  {
+    if(oy_debug || strstr(oyNoEmptyString_m_( keyName(meta) ),"warnings") == 0)
+      WARNc2_S( "%s:\t%s",
+                oyNoEmptyString_m_( keyName(meta) ),
+                oyNoEmptyString_m_( keyString(meta) ) );
+  }
+}
+
+int      oyDB_GetChildren            ( oyDB_s            * db )
+{
+  int rc = 0;
+  KeySet*list_user = NULL;
+  KeySet*list_sys = NULL;
+  char  *list_name_user = NULL;
+  char  *list_name_sys = NULL;
+
+  DBG_PROG_START
+
+  if( db->scope == oySCOPE_USER_SYS || db->scope == oySCOPE_USER )
+  {
+    list_user = ksNew(0,NULL);
+    oyStringAddPrintf( &list_name_user, AD, "%s%s", OY_USER, db->top_key_name );
+    if(!db->h)
+      return 0;
+
+    rc =
+      kdbGetChildKeys( db->h, list_name_user, list_user, KDB_O_SORT);
+    if(rc < 0)
+      oyDB_printWarn(db);
+
+    if(rc > 0)
+      DBG_NUM1_S("kdbGetChildKeys returned with %d", rc);
+  }
+
+  if( db->scope == oySCOPE_USER_SYS || db->scope == oySCOPE_SYSTEM )
+  {
+    list_sys = ksNew(0,NULL);
+    oyStringAddPrintf( &list_name_sys, AD, "%s%s", OY_SYS, db->top_key_name );
+    if(!db->h)
+      return 0;
+
+    rc =
+      kdbGetChildKeys( db->h, list_name_sys, list_sys, KDB_O_SORT);
+    if(rc < 0)
+      oyDB_printWarn(db);
+
+    if(rc > 0)
+      DBG_NUM1_S("kdbGetChildKeys returned with %d", rc);
+  }
+
+  if(list_user)
+    ksAppendKeys( db->ks, list_user );
+  if(list_sys)
+    ksAppendKeys( db->ks, list_sys );
+
+  oyFree_m_( list_name_user )
+  oyFree_m_( list_name_sys )
+
+  DBG_PROG_ENDE
+  return rc;
+}
+
+
+oyDB_s * oyDB_newFrom                ( const char        * top_key_name,
+                                       oySCOPE_e           scope,
+                                       oyAlloc_f           allocFunc )
+{
+  oyDB_s * db = calloc( sizeof(oyDB_s), 1 );
+
+  if(db)
+  {
+    db->error = keyNew(KEY_END);
+    db->h = kdbOpen(db->error);
+    if(!db->h) oyDB_printWarn( db );
+    db->top_key_name = oyStringCopy( top_key_name, oyAllocateFunc_ );
+    db->ks = ksNew( 0, NULL );
+    db->alloc = allocFunc;
+    db->scope = scope;
+  }
+
+  return db;
+}
+
+void     oyDB_release                ( oyDB_s           ** db )
+{
+  oyDB_s * s = *db;
+
+  if(!s)
+    return;
+
+  kdbClose( s->h, s->error );
+  s->h = NULL;
+  keyDel(s->error);
+  s->error = NULL;
+  if(s->top_key_name)
+    oyFree_m_( s->top_key_name );
+  ksDel( s->ks );
+  s->ks = NULL;
+  s->alloc = 0;
+  oyDeAllocateFunc_( s );
+  *db = NULL;
+}
+
+char *   oyDB_getString              ( oyDB_s            * db,
+                                       const char        * key_name )
+{
+  char * value = oyDBGetStringFast_( db->h, key_name, db->scope, db->alloc );
+  return value;
+}
+
+
 KeySet* oyReturnChildrenList_ (const char* keyParentName, oySCOPE_e scope, int* rc_ptr)
 {
   int rc = 0;
@@ -391,12 +523,10 @@ char*    oyDBSearchEmptyKeyname_       ( const char      * key_parent_name,
 } 
 
 /** @brief The function returns keys found just one level under the arguments one. */
-char **          oyDBKeySetGetNames_ ( const char        * key_parent_name,
-                                       oySCOPE_e           scope,
+char **  oyDB_getKeyNames            ( oyDB_s            * db,
                                        int               * n )
 {
-  int error = !key_parent_name || !n;
-  int rc=0;
+  int error = !db || !n;
   char* current_name = (char*) calloc (sizeof(char), MAX_PATH);
   KeySet * my_key_set = 0;
   Key * current = 0;
@@ -406,13 +536,14 @@ char **          oyDBKeySetGetNames_ ( const char        * key_parent_name,
 
   DBG_PROG_START
 
-  name = key_parent_name;
-
+  name = db->top_key_name;
   if(!error)
     *n = 0;
 
+  oyDB_GetChildren( db );
+
   if(!error)
-    my_key_set = oyReturnChildrenList_( name, scope, &rc );
+    my_key_set = db->ks;
 
   if(my_key_set)
   {
@@ -446,10 +577,20 @@ char **          oyDBKeySetGetNames_ ( const char        * key_parent_name,
       }
     }
   }
-  ksDel (my_key_set);
-  oyClose_();
 
   DBG_PROG_ENDE
+  return texts;
+}
+
+char **          oyDBKeySetGetNames_ ( const char        * key_parent_name,
+                                       oySCOPE_e           scope,
+                                       int               * n )
+{
+  char ** texts = 0;
+  oyDB_s * db = oyDB_newFrom( key_parent_name, scope, oyAllocateFunc_ );
+  texts = oyDB_getKeyNames( db, n );
+  oyDB_release( &db );
+
   return texts;
 }
 
@@ -724,37 +865,10 @@ char* oyDBGetString_ ( const char       *key_name,
                  oyAlloc_f         allocate_func )
 {
   char* name = 0;
-  int rc = 0;
-#if KDB_VERSION_NUM >= 800
-  Key * error_key;
-  KDB * oy_handle_;
-#endif
-
-  if( !key_name || strlen( key_name ) > MAX_PATH-1 )
-  { WARNc_S("wrong string format given");
-    goto clean3;
-  }
-
-#if KDB_VERSION_NUM >= 800
-  error_key = keyNew(KEY_END);
-  oy_handle_ = kdbOpen(error_key); oyERRopen(error_key)
-#endif
-
-  name = oyDBGetStringFast_( oy_handle_, key_name, scope, allocate_func );
-
-#if KDB_VERSION_NUM >= 800
-  kdbClose( oy_handle_,error_key ); oyERR(error_key)
-  keyDel(error_key);
-#endif
-
-  DBG_PROG_S((name))
-  DBG_PROG_ENDE
+  oyDB_s * db = oyDB_newFrom( key_name, scope, allocate_func );
+  name = oyDB_getString( db, key_name );
+  oyDB_release( &db );
   return name;
-
-  clean3:
-  if(name)
-    oyDeAllocateFunc_(name);
-  return 0;
 }
 
 /**@brief read Key values
@@ -767,22 +881,30 @@ int      oyDBGetStrings_             ( oyOptions_s      ** options,
                                        int                 key_names_n,
                                        oySCOPE_e           scope )
 {
+  oyDB_s * db;
+
+  if(key_names)
+    db = oyDB_newFrom( key_names[0], scope, oyAllocateFunc_ ); 
+  else
+    return 1;
+  oyDB_getStrings( db, options, key_names, key_names_n );
+  oyDB_release( &db );
+  return 0;
+}
+
+int      oyDB_getStrings             ( oyDB_s            * db,
+                                       oyOptions_s      ** options,
+                                       const char       ** key_names,
+                                       int                 key_names_n )
+{
   char* value = 0;
   const char * key;
-  int rc = 0;
   int i;
-#if KDB_VERSION_NUM >= 800
-  Key * error_key;
-  KDB * oy_handle_;
-
-  error_key = keyNew(KEY_END);
-  oy_handle_ = kdbOpen(error_key); oyERRopen(error_key)
-#endif
 
   for(i = 0; i < key_names_n; ++i)
   {
     key = key_names[i];
-    value = oyDBGetStringFast_( oy_handle_, key, scope, oyAllocateFunc_ );
+    value = oyDB_getString( db, key );
     if(value)
     {
       if(value[0])
@@ -798,11 +920,6 @@ int      oyDBGetStrings_             ( oyOptions_s      ** options,
       oyFree_m_(value);
     }
   }
-
-#if KDB_VERSION_NUM >= 800
-  kdbClose( oy_handle_,error_key ); oyERR(error_key)
-  keyDel(error_key);
-#endif
 
   DBG_PROG_ENDE
 
