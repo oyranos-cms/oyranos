@@ -630,18 +630,6 @@ char **  oyDB_getKeyNames            ( oyDB_s            * db,
   return texts;
 }
 
-char **          oyDBKeySetGetNames_ ( const char        * key_parent_name,
-                                       oySCOPE_e           scope,
-                                       int               * n )
-{
-  char ** texts = 0;
-  oyDB_s * db = oyDB_newFrom( key_parent_name, scope, oyAllocateFunc_ );
-  texts = oyDB_getKeyNames( db, key_parent_name, n );
-  oyDB_release( &db );
-
-  return texts;
-}
-
 
 int oyDBSetString_ (const char* key_name,
                                        oySCOPE_e           scope,
@@ -908,37 +896,6 @@ char *   oyDBGetStringFast_          ( KDB               * oy_handle_,
   return name;
 }
 
-char* oyDBGetString_ ( const char       *key_name,
-                                       oySCOPE_e           scope,
-                 oyAlloc_f         allocate_func )
-{
-  char* name = 0;
-  oyDB_s * db = oyDB_newFrom( key_name, scope, allocate_func );
-  name = oyDB_getString( db, key_name );
-  oyDB_release( &db );
-  return name;
-}
-
-/**@brief read Key values
- *
- *  1. ask user
- *  2. if user has no setting ask system
- */
-int      oyDBGetStrings_             ( oyOptions_s      ** options,
-                                       const char       ** key_names,
-                                       int                 key_names_n,
-                                       oySCOPE_e           scope )
-{
-  oyDB_s * db;
-
-  if(key_names)
-    db = oyDB_newFrom( key_names[0], scope, oyAllocateFunc_ ); 
-  else
-    return 1;
-  oyDB_getStrings( db, options, key_names, key_names_n );
-  oyDB_release( &db );
-  return 0;
-}
 
 int      oyDB_getStrings             ( oyDB_s            * db,
                                        oyOptions_s      ** options,

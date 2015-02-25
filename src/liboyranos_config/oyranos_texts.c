@@ -2109,7 +2109,9 @@ char *       oyGetPersistentString   ( const char        * key_name,
 
   if(flags & oySOURCE_DATA)
   {
-    value = oyDBGetString_( key_name, scope, alloc_func );
+    oyDB_s * db = oyDB_newFrom( key_name, scope, alloc_func );
+    value = oyDB_getString(db, key_name);
+    oyDB_release( &db );
     oyOptions_SetFromText( &oy_db_cache_, key_name,
     /* cache the searched for value,
      * or mark with empty string if nothing was found */

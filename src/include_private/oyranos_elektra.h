@@ -48,21 +48,11 @@ char **  oyDB_getKeyNames            ( oyDB_s            * db,
                                        int               * n );
 
 /* elektra key wrappers */
-char *   oyDBGetString_              ( const char        * key_name,
-                                       oySCOPE_e           scope,
-                                       oyAlloc_f           allocFunc );
 int      oyDBSetString_              ( const char        * keyName,
                                        oySCOPE_e           scope,
                                        const char        * value,
                                        const char        * comment );
 char*    oyDBSearchEmptyKeyname_     ( const char        * keyParentName,
-                                       oySCOPE_e           scope );
-char **  oyDBKeySetGetNames_         ( const char        * key_parent_name,
-                                       oySCOPE_e           scope,
-                                       int               * n );
-int      oyDBGetStrings_             ( oyOptions_s      ** options,
-                                       const char       ** key_names,
-                                       int                 key_names_n,
                                        oySCOPE_e           scope );
 int      oyDBEraseKey_               ( const char        * key_name,
                                        oySCOPE_e           scope );
