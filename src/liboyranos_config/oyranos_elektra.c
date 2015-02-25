@@ -573,7 +573,7 @@ char **  oyDB_getKeyNames            ( oyDB_s            * db,
                                        int               * n )
 {
   int error = !db || !n;
-  char* current_name = (char*) calloc (sizeof(char), MAX_PATH);
+  const char * current_name = NULL;
   KeySet * my_key_set = NULL;
   Key * current = NULL;
   const char *name = NULL;
@@ -599,7 +599,7 @@ char **  oyDB_getKeyNames            ( oyDB_s            * db,
 
     FOR_EACH_IN_KDBKEYSET( current, my_key_set )
     {
-      keyGetName(current, current_name, MAX_PATH);
+      current_name = keyName(current);
       if(current_name &&
          oyStrstr_(current_name, name) )
       {
