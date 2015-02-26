@@ -104,6 +104,9 @@ int          oySetPersistentString   ( const char        * key_name,
                                        oySCOPE_e           scope,
                                        const char        * value,
                                        const char        * comment );
+int          oyGetPersistentStrings  ( const char        * top_key_name,
+                                       const char       ** key_names,
+                                       int                 key_names_n );
 
 int     oyGetBehaviour_        (oyBEHAVIOUR_e type);
 int      oySetBehaviour_             ( oyBEHAVIOUR_e       type,

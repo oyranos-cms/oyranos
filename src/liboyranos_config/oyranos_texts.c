@@ -2129,6 +2129,55 @@ char *       oyGetPersistentString   ( const char        * key_name,
   return value;
 }
 
+/** Function oyGetPersistentStrings
+ *  @brief   cache strings from DB
+ *
+ *  @param[in]     top_key_name        the DB root key
+ *  @param[in]     key_names           the DB key names, must reside below top_key_name
+ *  @param[in]     key_names_n         key_names count
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/02/26
+ *  @since   2015/02/26 (Oyranos: 0.9.6)
+ */
+int          oyGetPersistentStrings  ( const char        * top_key_name,
+                                       const char       ** key_names,
+                                       int                 key_names_n )
+{
+  char * value = NULL;
+  oyDB_s * db = NULL;
+  int i;
+  char ** tmp = NULL;
+  int error = !top_key_name;
+
+  db = oyDB_newFrom( top_key_name, oySCOPE_USER_SYS, oyAllocateFunc_ );
+
+  if(key_names_n == 0)
+  {
+    tmp = oyDB_getKeyNames( db, top_key_name, &key_names_n );
+    key_names = (const char **)tmp;
+  }
+
+  for(i = 0; i < key_names_n; ++i)
+  {
+    value = oyDB_getString(db, key_names[i]);
+    oyOptions_SetFromText( &oy_db_cache_, key_names[i],
+    /* cache the searched for value,
+     * or mark with empty string if nothing was found */
+                           value ? value : "",
+                           OY_CREATE_NEW );
+    if(value)
+      oyFree_m_( value );
+  }
+
+  oyDB_release( &db );
+  if(tmp)
+    oyStringListRelease_( &tmp, key_names_n, oyDeAllocateFunc_ );
+
+  return error;
+}
+
 /** Function oySetPersistentString
  *  @brief   set string into DB and cache
  *
