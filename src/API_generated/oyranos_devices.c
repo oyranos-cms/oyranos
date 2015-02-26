@@ -2417,15 +2417,13 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
                                        uint32_t            flags,
                                        const char        * filter_type )
 {
-  oyOptions_s * opts_tmp = 0,
-              * db_opts = 0;
+  oyOptions_s * opts_tmp = 0;
   oyOption_s * o = 0, * db_opt = 0;
   int error = !opts;
   char * text;
   int i,n;
   char ** db_keys = NULL;
   int db_keys_n = 0;
-  oyDB_s * db;
 
   oyExportStart_(EXPORT_SETTING);
   oyExportEnd_();
@@ -2435,7 +2433,6 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
     /*  6. get stored values */
     n = oyOptions_Count( opts );
     opts_tmp = oyOptions_New(0);
-    db_opts = oyOptions_New(0);
     for(i = 0; i < n; ++i)
     {
       int skip = 0;
@@ -2507,13 +2504,18 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
     oyOptions_Release( &opts_tmp );
 
           /* ask the DB */
-    db = oyDB_newFrom( "do/not/know", oySCOPE_USER_SYS, oyAllocateFunc_ );
-    oyDB_getStrings( db, &db_opts, (const char**)db_keys, db_keys_n );
-    oyDB_release( &db );
-    n = oyOptions_Count(db_opts);
-    for( i = 0; i < n && !error; ++i )
     {
-      db_opt = oyOptions_Get( db_opts, i ); 
+      static int cache_init = 0;
+      if(db_keys_n && cache_init == 0)
+      {
+        /* cache in one go */
+        oyGetPersistentStrings( OY_STD, (const char **)db_keys, db_keys_n );
+        cache_init = 1;
+      }
+    }
+    for( i = 0; i < db_keys_n && !error; ++i )
+    {
+      oyOption_FromDB( db_keys[i], &db_opt, NULL );
       o = oyOptions_Find( opts, oyOption_GetText( db_opt, oyNAME_DESCRIPTION ));
       oyOption_SetFlags(o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
       oyOption_SetSource( o, oyOPTIONSOURCE_DATA );
@@ -2521,7 +2523,6 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
       oyOption_Release( &o );
       oyOption_Release( &db_opt );
     }
-    oyOptions_Release( &db_opts );
     oyStringListRelease_( &db_keys, db_keys_n, oyDeAllocateFunc_ );
   }
 
