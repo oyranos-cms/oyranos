@@ -2502,7 +2502,51 @@ oyTESTRESULT_e testCMMMonitorJSON ()
       "oyDeviceFromJSON() %d %d           ", oyConfig_Count(config), error );
     }
 
+ 
+#   ifdef HAVE_X11
+    if(i == 0)
+      system("xprop -remove _ICC_PROFILE -root; xprop -remove _ICC_DEVICE_PROFILE -root");
+#   endif
     oyProfile_s * p = NULL;
+    oyOptions_SetFromText( &options,
+                  "//" OY_TYPE_STD "/config/command",
+                           "list", OY_CREATE_NEW );
+    oyOptions_SetFromText( &options,
+                   "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
+                          "yes", OY_CREATE_NEW );
+    error = oyDeviceGetProfile( config, options, &p );
+    if( !error && p )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyDeviceGetProfile(\"list\") \"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+      "oyDeviceGetProfile(\"list\")  %d", error );
+    }
+    oyProfile_s * list_profile = p; p = NULL;
+
+#   ifdef HAVE_X11
+    if(i == 0)
+      system("xprop -root -len 4 | grep _ICC");
+#   endif
+
+    oyOptions_SetFromText( &options,
+                   "//"OY_TYPE_STD"/config/icc_profile.fallback",
+                          "yes", OY_CREATE_NEW );
+    error = oyDeviceGetProfile( config, options, &p );
+    if( p )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyDeviceGetProfile(\"fallback\") \"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+      "oyDeviceGetProfile(\"fallback\")    " );
+    }
+    oyProfile_Release( &p );
+    oyConfig_Release( &config );
+    oyOptions_Release( &options );
+
+
+
+    error = oyDeviceFromJSON( json_text, 0, &config );
     oyOptions_SetFromText( &options,
                   "//" OY_TYPE_STD "/config/command",
                            "properties", OY_CREATE_NEW );
@@ -2510,29 +2554,38 @@ oyTESTRESULT_e testCMMMonitorJSON ()
                    "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
-
     if( !error && p )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
-      "oyDeviceGetProfile() %s", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
+      "oyDeviceGetProfile(\"properties\") \"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
     } else
     { PRINT_SUB( oyTESTRESULT_FAIL,
-      "oyDeviceGetProfile()             %d", error );
+      "oyDeviceGetProfile(\"properties\")  %d", error );
     }
 
+
+    if(oyProfile_Equal(p,list_profile))
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "\"list\" == \"properties\" profile" );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+      "\"list\" == \"properties\" profile" );
+    }
     oyProfile_Release( &p );
+    oyProfile_Release( &list_profile );
+
 
     oyOptions_SetFromText( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.fallback",
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
-
     if( p )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
-      "oyDeviceGetProfile() %s", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
+      "oyDeviceGetProfile(\"fallback\") \"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
     } else
     { PRINT_SUB( oyTESTRESULT_FAIL,
-      "oyDeviceGetProfile()              " );
+      "oyDeviceGetProfile(\"fallback\")    " );
     }
+
 
     oyProfileTag_s * tag = oyProfile_GetTagById( p, (icTagSignature)icSigMetaDataTag );
     if( tag )
