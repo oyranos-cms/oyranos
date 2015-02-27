@@ -607,7 +607,9 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
                                        oyOptions_s       * db_options,
                                        const char        * key,
                                        oyConversion_s    * cc,
-                                       int                 verbose )
+                                       int                 verbose,
+                                       int                 flags,
+                                       int                 type )
 {
   oyOption_s * o, * db_o;
   const char * tmp = 0;
@@ -642,8 +644,12 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
                               OY_DBG_FORMAT_"set %s: %s", OY_DBG_ARGS_, key,
                               oyOptions_FindString(f_options,
                                                   key, 0) );
-                } else
+
+                } else if((flags & oyOPTIONATTRIBUTE_ADVANCED &&
+                           type & oyOPTIONATTRIBUTE_ADVANCED) ||
+                          !(type & oyOPTIONATTRIBUTE_ADVANCED))
                   WARNc1_S("no in filter defaults \"%s\" found.", key);
+
               } else if(oy_debug > 2)
               {
                 tmp = oyOptions_FindString(f_options, key, 0);
@@ -826,17 +832,17 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                 oiccFilterNode_OptionsPrint( node, f_options, db_options );
 
               oiccChangeNodeOption( f_options, db_options,
-                                    "proof_soft", s, verbose);
+                                    "proof_soft", s, verbose, flags, oyOPTIONATTRIBUTE_ADVANCED );
               oiccChangeNodeOption( f_options, db_options,
-                                    "proof_hard", s, verbose);
+                                    "proof_hard", s, verbose, flags, oyOPTIONATTRIBUTE_ADVANCED);
               oiccChangeNodeOption( f_options, db_options,
-                                    "rendering_intent", s, verbose);
+                                    "rendering_intent", s, verbose, flags, 0);
               oiccChangeNodeOption( f_options, db_options,
-                                    "rendering_bpc", s, verbose);
+                                    "rendering_bpc", s, verbose, flags, 0);
               oiccChangeNodeOption( f_options, db_options,
-                                    "rendering_intent_proof", s, verbose);
+                                    "rendering_intent_proof", s, verbose, flags, oyOPTIONATTRIBUTE_ADVANCED);
               oiccChangeNodeOption( f_options, db_options,
-                                    "rendering_gamut_warning", s, verbose);
+                                    "rendering_gamut_warning", s, verbose, flags, oyOPTIONATTRIBUTE_ADVANCED);
               if(display_mode)
                 proofing = oyOptions_FindString( f_options, "proof_soft", "1" )
                            ? 1 : 0;
