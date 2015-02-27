@@ -1985,30 +1985,35 @@ oyTESTRESULT_e testClut ()
     oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, NULL ), /* the monitor profile or none */
     oyStringCopy( "*TEST*", oyAllocateFunc_ ), /* the intented output device */
   };
+  double clck = oyClock();
   setupColourTable( &pc, 0 );
+  clck = oyClock() - clck;
   uint16_t c[3] = {pc.clut[12][12][12][0],pc.clut[12][12][12][1],pc.clut[12][12][12][2]};
   fprintf(zout, "compatibleWithAdobeRGB1998.icc %d,%d,%d\n", pc.clut[12][12][12][0],pc.clut[12][12][12][1],pc.clut[12][12][12][2]);
 
   int count = oyStructList_Count( oy_test_cache_ );
   if( count )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "clut cached                         %d", count);
+    "clut cached            %d %s", count,
+                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Tex"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "clut cache empty                      " );
   }
-
   oyProfile_Release( &pc.dst_profile );
+
+
   pc.dst_profile = oyProfile_FromFile( "LStar-RGB.icc", icc_profile_flags, NULL );
   setupColourTable( &pc, 0 );
   fprintf(zout, "LStar-RGB.icc %d,%d,%d\n", pc.clut[12][12][12][0],pc.clut[12][12][12][1],pc.clut[12][12][12][2]);
-
-  if( !(c[0] == pc.clut[12][12][12][0] || c[1] == pc.clut[12][12][12][1] || c[2] == pc.clut[12][12][12][2]) )
+  count = oyStructList_Count( oy_test_cache_ );
+  if( !(c[0] == pc.clut[12][12][12][0] || c[1] == pc.clut[12][12][12][1] || c[2] == pc.clut[12][12][12][2]) &&
+      count > 1)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "cache difference fine                 " );
+    "cache difference                    %d", count );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "no cache difference                   " );
+    "cache difference                    %d", count );
   }
 
   return result;
