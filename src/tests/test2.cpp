@@ -2515,7 +2515,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
                    "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
-    if( !error && p )
+    if( p )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
       "oyDeviceGetProfile(\"list\") \"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
     } else
