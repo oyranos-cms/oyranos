@@ -264,7 +264,7 @@ typedef enum {
   oyFILTER_REG_TYPE = 0x04,            /**< e.g. "imaging" filter group */
   oyFILTER_REG_APPLICATION = 0x08,     /**< e.g. "scale" filter name */
   oyFILTER_REG_OPTION = 0x10,          /**< e.g. "x" filter option */
-  oyFILTER_REG_MAX = 0x20
+  oyFILTER_REG_MAX = 0x20              /**< always the key name */
 } oyFILTER_REG_e;
 
 char * oyFilterRegistrationToText    ( const char        * registration,

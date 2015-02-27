@@ -832,8 +832,8 @@ int            oyOptions_CountType   ( oyOptions_s       * options,
  *  @return                            a matching options
  *
  *  @version Oyranos: 0.1.9
- *  @since   2008/11/05 (Oyranos: 0.1.9)
  *  @date    2009/04/13
+ *  @since   2008/11/05 (Oyranos: 0.1.9)
  */
 oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
                                        const char        * registration )
