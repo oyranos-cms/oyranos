@@ -519,7 +519,7 @@ size_t         oyProfileTag_GetOffset( oyProfileTag_s    * tag )
  *  @memberof oyProfileTag_s
  *  @brief    Set the offset of the tag in the profile.
  *
- *  @param[in/out  tag                 the tag to read
+ *  @param[in,out] tag                 the tag to read
  *  @param[in]     offset              new offset
  *  @return                            0 - success, >= 1 - error
  *
@@ -567,7 +567,7 @@ oySTATUS_e     oyProfileTag_GetStatus( oyProfileTag_s    * tag )
  *  @memberof oyProfileTag_s
  *  @brief    Set the status.
  *
- *  @param[in/out  tag                 the tag to read
+ *  @param[in,out] tag                 the tag to read
  *  @param[in]     status              new status
  *  @return                            0 - success, >= 1 - error
  *
@@ -594,7 +594,7 @@ int            oyProfileTag_SetStatus( oyProfileTag_s    * tag,
  *  @memberof oyProfileTag_s
  *  @brief    Get the profile cmm of the tag.
  *
- *  @param[in/out  tag                 the tag to read
+ *  @param[in,out] tag                 the tag to read
  *  @return                            cmm string
  *
  *  @version Oyranos: 0.5.0
@@ -617,7 +617,7 @@ OYAPI const char *  OYEXPORT
  *  @memberof oyProfileTag_s
  *  @brief    Set the profile CMM in the tag.
  *
- *  @param[in/out  tag                 the tag to read
+ *  @param[in,out] tag                 the tag to read
  *  @param[in]     profile_cmm         new cmm, 4 bytes
  *  @return                            0 - success, >= 1 - error
  *
@@ -646,7 +646,7 @@ OYAPI int  OYEXPORT
  *  @memberof oyProfileTag_s
  *  @brief    Get the last processing cmm of the tag.
  *
- *  @param[in/out  tag                 the tag to read
+ *  @param[in,out] tag                 the tag to read
  *  @return                            cmm string
  *
  *  @version Oyranos: 0.5.0
@@ -669,7 +669,7 @@ OYAPI const char *  OYEXPORT
  *  @memberof oyProfileTag_s
  *  @brief    Set the last processing CMM.
  *
- *  @param[in/out  tag                 the tag to read
+ *  @param[in,out] tag                 the tag to read
  *  @param[in]     cmm                 CMM, 4 bytes
  *  @return                            0 - success, >= 1 - error
  *
@@ -698,7 +698,7 @@ OYAPI int  OYEXPORT
  *  @memberof oyProfileTag_s
  *  @brief    Get the certainly selected CMM.
  *
- *  @param[in/out  tag                 the tag to read
+ *  @param[in,out] tag                 the tag to read
  *  @return                            cmm string
  *
  *  @version Oyranos: 0.5.0
@@ -722,7 +722,7 @@ OYAPI const char *  OYEXPORT
  *  @memberof oyProfileTag_s
  *  @brief    Require a certain CMM.
  *
- *  @param[in/out  tag                 the tag to read
+ *  @param[in,out] tag                 the tag to read
  *  @param[in]     cmm                 CMM, 4 bytes
  *  @return                            0 - success, >= 1 - error
  *
@@ -752,7 +752,7 @@ OYAPI int  OYEXPORT
  *  @memberof oyProfileTag_s
  *  @brief    Get the usage signature.
  *
- *  @param[in/out  tag                 the tag to read
+ *  @param[in,out] tag                 the tag to read
  *  @return                            use signature
  *
  *  @version Oyranos: 0.5.0
@@ -776,7 +776,7 @@ OYAPI icTagSignature  OYEXPORT
  *  @memberof oyProfileTag_s
  *  @brief    Set the usage signature.
  *
- *  @param[in/out  tag                 the tag to read
+ *  @param[in,out] tag                 the tag to read
  *  @param[in]     use                 usage signature
  *  @return                            0 - success, >= 1 - error
  *
@@ -806,7 +806,7 @@ OYAPI int  OYEXPORT
  *  @memberof oyProfileTag_s
  *  @brief    Get the type signature.
  *
- *  @param[in/out  tag                 the tag to read
+ *  @param[in,out] tag                 the tag to read
  *  @return                            type signature
  *
  *  @version Oyranos: 0.5.0
