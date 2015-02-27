@@ -1728,6 +1728,293 @@ oyTESTRESULT_e testDeviceLinkProfile ()
   return result;
 }
 
+
+/* make plain external project code happy */
+#define GLushort uint16_t
+#define GLuint uint32_t
+#define GLfloat float
+#define cicc_free oyFree_m_
+#define cdCreateTexture( ignore_opengl )
+
+#define CompLogLevelDebug oyMSG_WARN
+#define CompLogLevelWarn oyMSG_WARN
+#define CompLogLevelInfo oyMSG_DBG
+#define DBG_STRING OY_DBG_FORMAT_
+#define DBG_ARGS OY_DBG_ARGS_
+#define oyCompLogMessage(ignore, prog, level, format, ... ) \
+        oyMessageFunc_p( level,0, format, __VA_ARGS__)
+static oyStructList_s * oy_test_cache_ = NULL;
+oyStructList_s *   pluginGetPrivatesCache ( )
+{
+  if(!oy_test_cache_)
+    oy_test_cache_ = oyStructList_New( 0 );
+
+  return oy_test_cache_;
+}
+void         oyTestCacheListClear_     ( )
+{
+  oyStructList_Release( &oy_test_cache_ );
+}
+
+/* taken from compicc.c f268e681e3b73004376e8d3ea9db4ae3e669fad8 20150227 */
+#define GRIDPOINTS 64
+typedef struct {
+  oyProfile_s * src_profile;         /* the data profile or device link */
+  oyProfile_s * dst_profile;         /* the monitor profile or none */
+  char * output_name;                /* the intented output device */
+  GLushort clut[GRIDPOINTS][GRIDPOINTS][GRIDPOINTS][3]; /* lookup table */
+  GLuint glTexture;                  /* texture reference */
+  GLfloat scale, offset;             /* texture parameters */
+  int ref;                           /* reference counter */
+} PrivColorContext;
+
+static void    setupColourTable      ( PrivColorContext  * ccontext,
+                                       int                 advanced )
+{
+  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
+  oyConversion_s * cc;
+  int error = 0;
+  oyProfile_s * dst_profile = ccontext->dst_profile, * web = 0;
+
+    if(!ccontext->dst_profile)
+      dst_profile = web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
+
+
+    {
+      int flags = 0;
+      int ** ptr;
+
+      oyProfile_s * src_profile = ccontext->src_profile;
+      oyOptions_s * options = 0;
+
+      oyPixel_t pixel_layout = OY_TYPE_123_16;
+      oyCompLogMessage(NULL, "compicc", CompLogLevelDebug,
+             DBG_STRING "%s -> %s",
+             DBG_ARGS, oyProfile_GetText( src_profile, oyNAME_DESCRIPTION ),
+                       oyProfile_GetText( dst_profile, oyNAME_DESCRIPTION ) );
+
+      /* skip web to web conversion */
+      if(oyProfile_Equal( src_profile, web ))
+      {
+        oyCompLogMessage(NULL, "compicc", CompLogLevelDebug,
+             DBG_STRING "src_profile == web",
+             DBG_ARGS );
+        goto clean_setupColourTable;
+      }
+
+      if(!src_profile)
+        src_profile = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
+
+      if(!src_profile)
+        oyCompLogMessage(NULL, "compicc", CompLogLevelWarn,
+             DBG_STRING "Output %s: no oyASSUMED_WEB src_profile",
+             DBG_ARGS, ccontext->output_name );
+
+      /* optionally set advanced options from Oyranos */
+      if(advanced)
+        flags = oyOPTIONATTRIBUTE_ADVANCED;
+
+      oyCompLogMessage( NULL, "compicc", CompLogLevelDebug,
+                      DBG_STRING "oyConversion_Correct(///icc_color,%d,0) %s %s",
+                      DBG_ARGS, flags, ccontext->output_name,
+                      advanced?"advanced":"");
+      oyImage_s * image_in = oyImage_Create( GRIDPOINTS,GRIDPOINTS*GRIDPOINTS,
+                                             ccontext->clut,
+                                             pixel_layout, src_profile, 0 );
+      oyImage_s * image_out= oyImage_Create( GRIDPOINTS,GRIDPOINTS*GRIDPOINTS,
+                                             ccontext->clut,
+                                             pixel_layout, dst_profile, 0 );
+
+      oyProfile_Release( &src_profile );
+
+      oyOptions_SetFromText( &options, "//cmm/any/cached", "1", OY_CREATE_NEW );
+      cc = oyConversion_CreateBasicPixels( image_in, image_out, options, 0 );
+      if (cc == NULL)
+      {
+        oyCompLogMessage( NULL, "compicc", CompLogLevelWarn,
+                      DBG_STRING "no conversion created for %s",
+                      DBG_ARGS, ccontext->output_name);
+        goto clean_setupColourTable;
+      }
+      oyOptions_Release( &options );
+
+      oyCompLogMessage( NULL, "compicc", CompLogLevelDebug,
+                      DBG_STRING "marker", DBG_ARGS);
+      error = oyOptions_SetFromText( &options,
+                                     "//"OY_TYPE_STD"/config/display_mode", "1",
+                                     OY_CREATE_NEW );
+      error = oyConversion_Correct(cc, "//" OY_TYPE_STD "/icc_color", flags, options);
+      if(error)
+      {
+        oyCompLogMessage( NULL, "compicc", CompLogLevelWarn,
+                      DBG_STRING "oyConversion_Correct(///icc_color,%d,0) failed %s",
+                      DBG_ARGS, flags, ccontext->output_name);
+        goto clean_setupColourTable;
+      }
+      oyOptions_Release( &options );
+
+      oyCompLogMessage( NULL, "compicc", CompLogLevelDebug,
+                      DBG_STRING "marker", DBG_ARGS);
+      oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
+      oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+      oyBlob_s * blob = oyFilterNode_ToBlob( icc, NULL );
+
+      if(!blob)
+      {
+        oyConversion_Release( &cc );
+        oyFilterNode_Release( &icc );
+
+        oyOptions_SetFromText( &options, "////icc_module", "lcm2", OY_CREATE_NEW );
+        cc = oyConversion_CreateBasicPixels( image_in, image_out, options, 0 );
+        if (cc == NULL)
+        {
+          oyCompLogMessage( NULL, "compicc", CompLogLevelWarn,
+                      DBG_STRING "no conversion created for %s",
+                      DBG_ARGS, ccontext->output_name);
+          goto clean_setupColourTable;
+        }
+        oyOptions_Release( &options );
+        error = oyOptions_SetFromText( &options,
+                                     "//"OY_TYPE_STD"/config/display_mode", "1",
+                                     OY_CREATE_NEW );
+        error = oyConversion_Correct(cc, "//" OY_TYPE_STD "/icc_color", flags, options);
+      }
+
+      uint32_t exact_hash_size = 0;
+      char * hash_text = 0;
+      const char * t = 0;
+      {
+        t = oyFilterNode_GetText( icc, oyNAME_NAME );
+        if(t)
+          hash_text = strdup(t);
+      }
+      oyHash_s * entry;
+      oyArray2d_s * clut = NULL;
+      oyStructList_s * cache = pluginGetPrivatesCache();
+      entry = oyStructList_GetHash( cache, exact_hash_size, hash_text );
+      clut = (oyArray2d_s*) oyHash_GetPointer( entry, oyOBJECT_ARRAY2D_S);
+      oyFilterNode_Release( &icc );
+      oyFilterGraph_Release( &cc_graph );
+
+      oyCompLogMessage( NULL, "compicc", CompLogLevelDebug,
+                      DBG_STRING "clut from cache %s %s",
+                      DBG_ARGS, clut?"obtained":"", hash_text );
+      if(clut)
+      {
+        ptr = (int**)oyArray2d_GetData(clut);
+        memcpy( ccontext->clut, ptr[0], 
+                sizeof(GLushort) * GRIDPOINTS*GRIDPOINTS*GRIDPOINTS * 3 );
+      } else
+      {
+        uint16_t in[3];
+        for (int r = 0; r < GRIDPOINTS; ++r)
+        {
+          in[0] = floor((double) r / (GRIDPOINTS - 1) * 65535.0 + 0.5);
+          for (int g = 0; g < GRIDPOINTS; ++g) {
+            in[1] = floor((double) g / (GRIDPOINTS - 1) * 65535.0 + 0.5);
+            for (int b = 0; b < GRIDPOINTS; ++b)
+            {
+              in[2] = floor((double) b / (GRIDPOINTS - 1) * 65535.0 + 0.5);
+              for(int j = 0; j < 3; ++j)
+                /* BGR */
+                ccontext->clut[b][g][r][j] = in[j];
+            }
+          }
+        }
+
+        clut = oyArray2d_Create( NULL, GRIDPOINTS*3, GRIDPOINTS*GRIDPOINTS,
+                                 oyUINT16, NULL );
+
+        error = oyConversion_RunPixels( cc, 0 );
+
+        if(error)
+        {
+          oyCompLogMessage( NULL, "compicc", CompLogLevelWarn,
+                      DBG_STRING "oyConversion_RunPixels() error: %d %s",
+                      DBG_ARGS, error, ccontext->output_name);
+          goto clean_setupColourTable;
+        }
+
+        ptr = (int**)oyArray2d_GetData(clut);
+        memcpy( ptr[0], ccontext->clut,
+                sizeof(GLushort) * GRIDPOINTS*GRIDPOINTS*GRIDPOINTS * 3 );
+
+        oyHash_SetPointer( entry, (oyStruct_s*) clut );
+      }
+
+      if(hash_text)
+      {
+        cicc_free(hash_text); hash_text = 0;
+      }
+
+
+      oyOptions_Release( &options );
+      oyImage_Release( &image_in );
+      oyImage_Release( &image_out );
+      oyConversion_Release( &cc );
+
+      cdCreateTexture( ccontext );
+
+    }
+
+    if(!ccontext->dst_profile)
+    {
+      oyCompLogMessage( NULL, "compicc", CompLogLevelInfo,
+                      DBG_STRING "Output \"%s\": no profile",
+                      DBG_ARGS, ccontext->output_name);
+    }
+
+    clean_setupColourTable:
+    if(web)
+      oyProfile_Release( &web );
+}
+
+oyTESTRESULT_e testClut ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  oyTestCacheListClear_();
+
+  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
+  PrivColorContext pc = {
+    oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL ), /* the data profile or device link */
+    oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, NULL ), /* the monitor profile or none */
+    oyStringCopy( "*TEST*", oyAllocateFunc_ ), /* the intented output device */
+  };
+  setupColourTable( &pc, 0 );
+  uint16_t c[3] = {pc.clut[12][12][12][0],pc.clut[12][12][12][1],pc.clut[12][12][12][2]};
+  fprintf(zout, "compatibleWithAdobeRGB1998.icc %d,%d,%d\n", pc.clut[12][12][12][0],pc.clut[12][12][12][1],pc.clut[12][12][12][2]);
+
+  int count = oyStructList_Count( oy_test_cache_ );
+  if( count )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "clut cached                         %d", count);
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "clut cache empty                      " );
+  }
+
+  oyProfile_Release( &pc.dst_profile );
+  pc.dst_profile = oyProfile_FromFile( "LStar-RGB.icc", icc_profile_flags, NULL );
+  setupColourTable( &pc, 0 );
+  fprintf(zout, "LStar-RGB.icc %d,%d,%d\n", pc.clut[12][12][12][0],pc.clut[12][12][12][1],pc.clut[12][12][12][2]);
+
+  if( !(c[0] == pc.clut[12][12][12][0] || c[1] == pc.clut[12][12][12][1] || c[2] == pc.clut[12][12][12][2]) )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "cache difference fine                 " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "no cache difference                   " );
+  }
+
+  return result;
+}
+
+
 oyTESTRESULT_e testRegistrationMatch ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
@@ -4486,7 +4773,6 @@ oyTESTRESULT_e testCMMlists()
   return result;
 }
 
-oyStructList_s * oy_test_cache_ = 0;
 
 #include "oyranos_generic_internal.h"
 oyHash_s *   oyTestCacheListGetEntry_ ( const char        * hash_text)
@@ -4495,10 +4781,6 @@ oyHash_s *   oyTestCacheListGetEntry_ ( const char        * hash_text)
     oy_test_cache_ = oyStructList_New( 0 );
 
   return oyCacheListGetEntry_(oy_test_cache_, 0, hash_text);
-}
-void         oyTestCacheListClear_     ( )
-{
-  oyStructList_Release( &oy_test_cache_ );
 }
 
 oyTESTRESULT_e testCache()
@@ -4523,6 +4805,8 @@ oyTESTRESULT_e testCache()
     "org/freedesktop/openicc/foo/bar/sjsjsjsjsjsjsjsjsjsjsjsjsjsjsjsjsjsjsj------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------",
     "///not/so/long", "//an/other/not/so/long"
   };
+
+  oyTestCacheListClear_();
 
   int repeat = 20;
   int count = 1000;
@@ -4677,6 +4961,7 @@ oyTESTRESULT_e testCache()
     "oyCacheListGetEntry_(unique short entry) " );
   }
 
+  oyTestCacheListClear_();
 
   return result;
 }
@@ -4949,6 +5234,7 @@ int main(int argc, char** argv)
   TEST_RUN( testProfileLists, "Profile lists" );
   TEST_RUN( testProofingEffect, "proofing_effect" );
   TEST_RUN( testDeviceLinkProfile, "CMM deviceLink" );
+  TEST_RUN( testClut, "CMM clut" );
   //TEST_RUN( testMonitor,  "Monitor profiles" );
   //TEST_RUN( testDevices,  "Devices listing" );
   TEST_RUN( testRegistrationMatch,  "Registration matching" );
