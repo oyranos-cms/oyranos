@@ -117,16 +117,44 @@ int    oyOptions_SetRegistrationTextKey_(
                                        const char        * key,
                                        const char        * value )
 {
-  char * text = 0;
+  char * text = NULL,
+       * reg = NULL,
+       * old_val = NULL;
+  const char * t;
   int error = 0;
+  oyOption_s * o = oyOptions_Find( (oyOptions_s*) options, key );
+
+  if(o)
+  {
+    
+    reg = oyStringCopy( oyOption_GetRegistration(o), oyAllocateFunc_ );
+    text = strrchr( reg, OY_SLASH_C );
+    if(text)
+    {
+      text[0] = '\000';
+      text = NULL;
+    }
+    registration = reg;
+    t = oyOption_GetValueString( o, 0 );
+    if(t)
+      old_val = oyStringCopy( t, oyAllocateFunc_ );
+  }
 
   STRING_ADD( text, registration );
   STRING_ADD( text, "/" );
   STRING_ADD( text, key );
 
+  if(old_val)
+    DBG_PROG4_S( "%s=%s%s%s", text, old_val?old_val:"", old_val?" -> ": "", value );
+
   error = oyOptions_SetFromText( (oyOptions_s**)&options, text, value, OY_CREATE_NEW );
 
   oyFree_m_( text );
+  if(reg)
+    oyFree_m_( reg );
+  if(old_val)
+    oyFree_m_( old_val );
+  oyOption_Release( &o );
 
   return error;
 }
