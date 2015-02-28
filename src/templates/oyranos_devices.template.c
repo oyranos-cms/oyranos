@@ -444,12 +444,15 @@ OYAPI int  OYEXPORT
     device_name = oyConfig_FindString( device, "device_name", 0);
 
     /* 3. setup the device through the module */
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
-                                   "setup", OY_CREATE_NEW );
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
-                                   device_name, OY_CREATE_NEW );
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/profile_name",
-                                   profile_name, OY_CREATE_NEW );
+    error = oyOptions_SetRegistrationTextKey_( &options,
+                                               oyConfigPriv_m(device)->registration,
+                                               "command", "setup" );
+    error = oyOptions_SetRegistrationTextKey_( &options,
+                                               oyConfigPriv_m(device)->registration,
+                                               "device_name", device_name );
+    error = oyOptions_SetRegistrationTextKey_( &options,
+                                               oyConfigPriv_m(device)->registration,
+                                               "profile_name", profile_name );
     /* 3.1 send the query to a module */
     error = oyDeviceBackendCall( device, options );
 
@@ -525,10 +528,12 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
 
     /* 2. unset the device through the module */
     /** 2.1 set a general request */
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
-                                   "unset", OY_CREATE_NEW );
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
-                                   device_name, OY_CREATE_NEW );
+    error = oyOptions_SetRegistrationTextKey_( &options,
+                                               oyConfigPriv_m(device)->registration,
+                                               "command", "unset" );
+    error = oyOptions_SetRegistrationTextKey_( &options,
+                                               oyConfigPriv_m(device)->registration,
+                                               "device_name", device_name );
 
     /** 2.2 send the query to a module */
     error = oyConfigs_FromDomain( oyConfigPriv_m(device)->registration, options, 0, 0 );
@@ -656,8 +661,9 @@ OYAPI int  OYEXPORT
     /* get expensive infos */
     if(oyOptions_Count( device_->backend_core ) < 2)
     {
-      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
-                                     "properties", OY_CREATE_NEW );
+      error = oyOptions_SetRegistrationTextKey_( &options,
+                                               oyConfigPriv_m(device)->registration,
+                                               "command", "properties" );
 
       if(error <= 0)
         error = oyDeviceBackendCall( device, options );
@@ -1105,10 +1111,12 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
         !oyConfig_FindString(s,"model",0) )
     { 
       /* 1.1 add "properties" call to module arguments */
-      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
-                                     "properties", OY_CREATE_NEW );
-      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
-                                     device_name, OY_CREATE_NEW );
+      error = oyOptions_SetRegistrationTextKey_( &options,
+                                          oyConfigPriv_m(device)->registration,
+                                          "command", "properties" );
+      error = oyOptions_SetRegistrationTextKey_( &options,
+                                          oyConfigPriv_m(device)->registration,
+                                          "device_name", device_name );
 
       device_name = 0;
 
