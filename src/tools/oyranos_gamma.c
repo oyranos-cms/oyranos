@@ -780,6 +780,9 @@ int main( int argc , char** argv )
     {
       error = oyDeviceGet( OY_TYPE_STD, device_class, oy_display_name, 0,
                            &device );
+      error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    icc_profile_flags, 0, OY_CREATE_NEW );
 
       if(monitor_profile)
       {
@@ -820,6 +823,9 @@ int main( int argc , char** argv )
       error = oyOptions_SetFromText( &options,
                                      "//"OY_TYPE_STD"/config/display_name",
                                      display_name, OY_CREATE_NEW );
+      error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    icc_profile_flags, 0, OY_CREATE_NEW );
 
       error = oyDevicesGet( 0, device_class, options, &devices );
 
