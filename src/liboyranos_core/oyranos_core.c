@@ -513,24 +513,23 @@ int oyGuiMessageFunc( int code, const oyPointer c, const char * format, ... )
 
   if(text) free( text );
 
-  if(oy_debug && !getenv("OY_SKIP_GDB"))
+  if(oy_backtrace)
   {
+#   define TMP_FILE "/tmp/oyranos_gdb_temp." OYRANOS_VERSION_NAME "txt"
+#ifdef HAVE_POSIX
     pid = (int)getpid();
+#endif
     fp = fopen( TMP_FILE, "w" );
 
     if(fp)
     {
       fprintf(fp, "attach %d\n", pid);
-      fprintf(fp, "thread 1\nbacktrace\nthread 2\nbacktrace\nthread 3\nbacktrace\ndetach" );
+      fprintf(fp, "thread 1\nbacktrace\n"/*thread 2\nbacktrace\nthread 3\nbacktrace\n*/"detach" );
       fclose(fp);
-      if(code != oyMSG_DBG)
-      {
-        fprintf( stderr, "GDB output:" );
-        int r = system("gdb -batch -x " TMP_FILE);
-        if(r) r = 0; // just to disable compiler warnings
-      }
+      fprintf( stderr, "GDB output:\n" );
+      system("gdb -batch -x " TMP_FILE);
     } else
-      fprintf( stderr, "could not open %s", TMP_FILE );
+      fprintf( stderr, "could not open " TMP_FILE "\n" );
   }
 
   return 0;
