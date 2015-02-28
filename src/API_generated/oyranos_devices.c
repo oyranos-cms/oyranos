@@ -131,9 +131,8 @@ OYAPI int  OYEXPORT
 
   if(!options)
   {
-    options = oyOptions_New( 0 );
     /** 1.1 add "list" call to module arguments */
-    error = oyOptions_SetDeviceTextKey_( (oyOptions_s_*)options, device_type,
+    error = oyOptions_SetDeviceTextKey_( &options, device_type,
                                              device_class,
                                              "command", "list" );
   }
@@ -203,18 +202,16 @@ OYAPI int  OYEXPORT
 
   if(!options)
   {
-    options = oyOptions_New( 0 );
-    error = !options;
     /** 1.1 add "list" call to module arguments */
     if(error <= 0)
-    error = oyOptions_SetDeviceTextKey_( (oyOptions_s_*)options, device_type,
+    error = oyOptions_SetDeviceTextKey_( &options, device_type,
                                              device_class,
                                              "command", "list" );
   }
 
   /** 1.1.2 set device filter */
   if(error <= 0)
-    error = oyOptions_SetDeviceTextKey_( (oyOptions_s_*)options, device_type,
+    error = oyOptions_SetDeviceTextKey_( &options, device_type,
                                              device_class,
                                              "device_name",device_name);
 
@@ -267,11 +264,9 @@ OYAPI int  OYEXPORT
   {
     /** 1. obtain detailed and expensive device informations for a
      *     zero options argument through the "properties" command. */
-    options = oyOptions_New( 0 );
-    l_error = !options; OY_ERR
     /** 1.1 add "properties" call to module arguments */
     if(error <= 0)
-    l_error = oyOptions_SetRegistrationTextKey_( oyOptionsPriv_m(options),
+    l_error = oyOptions_SetRegistrationTextKey_( &options,
                                                  oyConfigPriv_m(device)->registration,
                                                  "command", "properties" ); OY_ERR
     new_options = 1;
@@ -416,7 +411,7 @@ OYAPI int  OYEXPORT
 
     if(!profile_name)
     {
-      error = oyOptions_SetRegistrationTextKey_( oyOptionsPriv_m(options),
+      error = oyOptions_SetRegistrationTextKey_( &options,
                                                  oyConfigPriv_m(device)->registration,
                                                  "icc_profile.fallback","true");
       /* 2.2.1 try fallback for rescue */
@@ -712,17 +707,10 @@ OYAPI int  OYEXPORT
   if(!num)
     oyAllocHelper_m_( num, char, 80, 0, error = 1; return error );
 
-  if(!options)
-  {
-    options = oyOptions_New( 0 );
-
-    error = !options;
-  }
-
   if(error <= 0)
   {
     /* add "list" call to module arguments */
-    error = oyOptions_SetRegistrationTextKey_( (oyOptions_s_*)options,
+    error = oyOptions_SetRegistrationTextKey_( &options,
                                                device_->registration,
                                                "command", "list" );
   }
@@ -730,7 +718,7 @@ OYAPI int  OYEXPORT
   if(error <= 0)
   {
     if(type == oyNAME_NAME)
-    error = oyOptions_SetRegistrationTextKey_( (oyOptions_s_*)options,
+    error = oyOptions_SetRegistrationTextKey_( &options,
                                                device_->registration,
                                                "oyNAME_NAME", "true" );
   }
@@ -867,14 +855,14 @@ OYAPI int  OYEXPORT
   if(error <= 0)
   {
     /* add "list" call to module arguments */
-    error = oyOptions_SetRegistrationTextKey_( (oyOptions_s_*)options,
+    error = oyOptions_SetRegistrationTextKey_( &options,
                                                oyConfigPriv_m(device)->registration,
                                                "command", "list" );
   }
 
   if(error <= 0)
   {
-    error = oyOptions_SetRegistrationTextKey_( (oyOptions_s_*)options,
+    error = oyOptions_SetRegistrationTextKey_( &options,
                                                  oyConfigPriv_m(device)->registration,
                                                  "icc_profile", "true" );
   }
@@ -972,8 +960,9 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   if(oyOptions_Count( oyConfigPriv_m(device)->backend_core ) < 2)
   { 
     /** 1.1 add "properties" call to module arguments */
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
-                                   "properties", OY_CREATE_NEW );
+    error = oyOptions_SetRegistrationTextKey_( &options,
+                                               oyConfigPriv_m(device)->registration,
+                                               "command", "properties" );
 
     /** 1.2 call the device module */
     if(error <= 0)

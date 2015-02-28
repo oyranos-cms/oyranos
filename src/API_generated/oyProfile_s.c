@@ -1989,8 +1989,7 @@ OYAPI int OYEXPORT
         if(strcmp(texts[i+0],"manufacturer") == 0) dmnd_found = 1;
         if(strcmp(texts[i+0],"serial") == 0) serial_found = 1;
 
-        error = oyOptions_SetRegistrationTextKey_(
-                                           (oyOptions_s_*)device_->backend_core,
+        error = oyOptions_SetRegistrationTextKey_( &device_->backend_core,
                                                    device_->registration,
                                                    texts[i+0], texts[i+1] );
       }
@@ -2011,8 +2010,7 @@ OYAPI int OYEXPORT
           if(key_len > s_len &&
              strcmp(&texts[i+0][key_len-s_len-1],"_serial") == 0)
           {
-            error = oyOptions_SetRegistrationTextKey_(
-                                           (oyOptions_s_*)device_->backend_core,
+            error = oyOptions_SetRegistrationTextKey_( &device_->backend_core,
                                                  device_->registration,
                                                  "serial", texts[i+1] );
             DBG_NUM1_S("added serial: %s", texts[i+1]);
@@ -2028,8 +2026,7 @@ OYAPI int OYEXPORT
     tag = oyProfile_GetTagById( (oyProfile_s*)s, icSigDeviceModelDescTag );
     texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
     if(texts && texts[0] && texts[0][0] && texts_n == 1 && !dmdd_found)
-      error = oyOptions_SetRegistrationTextKey_(
-                                           (oyOptions_s_*)device_->backend_core,
+      error = oyOptions_SetRegistrationTextKey_( &device_->backend_core,
                                                  device_->registration,
                                                  "model", texts[0] );
     if(texts_n && texts)
@@ -2041,8 +2038,7 @@ OYAPI int OYEXPORT
     tag = oyProfile_GetTagById( (oyProfile_s*)s, icSigDeviceMfgDescTag );
     texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
     if(texts && texts[0] && texts[0][0] && texts_n == 1 && !dmnd_found)
-      error = oyOptions_SetRegistrationTextKey_(
-                                           (oyOptions_s_*)device_->backend_core,
+      error = oyOptions_SetRegistrationTextKey_( &device_->backend_core,
                                                  device_->registration,
                                                  "manufacturer", texts[0] );
     if(texts_n && texts)

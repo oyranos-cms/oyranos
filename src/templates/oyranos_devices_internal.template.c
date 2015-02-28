@@ -75,11 +75,11 @@ char * oyDeviceRegistrationCreate_   ( const char        * device_type,
  *  @param[in]     value               value of type ::oyVAL_STRING
  *  @return                            the new registration
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/02/28
  *  @since   2009/01/30 (Oyranos: 0.1.10)
- *  @date    2009/01/30
  */
-int    oyOptions_SetDeviceTextKey_   ( oyOptions_s_      * options,
+int    oyOptions_SetDeviceTextKey_   ( oyOptions_s      ** options,
                                        const char        * device_type,
                                        const char        * device_class,
                                        const char        * key,
@@ -90,7 +90,7 @@ int    oyOptions_SetDeviceTextKey_   ( oyOptions_s_      * options,
 
   text = oyDeviceRegistrationCreate_( device_type, device_class,
                                           key, text );
-  error = oyOptions_SetFromText( (oyOptions_s**)&options, text, value, OY_CREATE_NEW );
+  error = oyOptions_SetFromText( options, text, value, OY_CREATE_NEW );
 
   oyFree_m_( text );
 
@@ -107,12 +107,12 @@ int    oyOptions_SetDeviceTextKey_   ( oyOptions_s_      * options,
  *  @param[in]     value               value of type ::oyVAL_STRING
  *  @return                            the new registration
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/02/28
  *  @since   2009/02/09 (Oyranos: 0.1.10)
- *  @date    2009/02/09
  */
 int    oyOptions_SetRegistrationTextKey_(
-                                       oyOptions_s_      * options,
+                                       oyOptions_s      ** options,
                                        const char        * registration,
                                        const char        * key,
                                        const char        * value )
@@ -122,7 +122,7 @@ int    oyOptions_SetRegistrationTextKey_(
        * old_val = NULL;
   const char * t;
   int error = 0;
-  oyOption_s * o = oyOptions_Find( (oyOptions_s*) options, key );
+  oyOption_s * o = oyOptions_Find( *options, key );
 
   if(o)
   {
@@ -147,7 +147,7 @@ int    oyOptions_SetRegistrationTextKey_(
   if(old_val)
     DBG_PROG4_S( "%s=%s%s%s", text, old_val?old_val:"", old_val?" -> ": "", value );
 
-  error = oyOptions_SetFromText( (oyOptions_s**)&options, text, value, OY_CREATE_NEW );
+  error = oyOptions_SetFromText( options, text, value, OY_CREATE_NEW );
 
   oyFree_m_( text );
   if(reg)
