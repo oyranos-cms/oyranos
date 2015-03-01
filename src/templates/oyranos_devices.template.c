@@ -3046,7 +3046,7 @@ char *       oyGetFilterNodeRegFromDB( const char        * db_base_key,
  *  @return                            a registration pattern to match a CMM registration string
  *
  *  @version Oyranos: 0.9.6
- *  @date    2014/07/17
+ *  @date    2015/02/29
  *  @since   2014/07/17 (Oyranos: 0.9.6)
  */
 char *       oyGetFilterNodeRegFromOptions(
@@ -3069,7 +3069,7 @@ char *       oyGetFilterNodeRegFromOptions(
 
   if(!module)
     return NULL;
-  else if(strchr(module, '/'))
+  else if(strchr(module, '/') == NULL)
   {
     char * t = NULL;
     oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_,

@@ -3083,7 +3083,7 @@ char *       oyGetFilterNodeRegFromOptions(
 
   if(!module)
     return NULL;
-  else if(strchr(module, '/'))
+  else if(strchr(module, '/') == NULL)
   {
     char * t = NULL;
     oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_,
