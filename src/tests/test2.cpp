@@ -3579,6 +3579,7 @@ extern "C" {int oyGetKey(ckdb Key*);}
 
 #include "oyFilterCore_s_.h"
 #include "oyNamedColor_s.h"
+#include "oyNamedColors_s.h"
 #include "oyranos_alpha_internal.h"
 
 oyTESTRESULT_e testCMMnmRun ()
@@ -4090,16 +4091,8 @@ oyTESTRESULT_e testCMMnmRun ()
                                         0, 1 );
   oyConversion_Release( &conv );
 
-  return result;
-}
 
-#include "oyNamedColors_s.h"
-oyTESTRESULT_e testNcl2()
-{
-  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
-  int i, error = 0;
-  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
-                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
+
   oyProfile_s * p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, icc_profile_flags, NULL );
   oyNamedColor_s * ncl = 0;
   oyNamedColors_s * colors = oyNamedColors_New(0);
@@ -4107,9 +4100,7 @@ oyTESTRESULT_e testNcl2()
   oyNamedColors_SetPrefix( colors, "test" );
   oyNamedColors_SetSuffix( colors, "color" );
 
-  fprintf(stdout, "\n" );
-
-  double clck = oyClock();
+  clck = oyClock();
   for( i = 0; i < 10*100; ++i )
   {
     char name[12];
@@ -4140,7 +4131,6 @@ oyTESTRESULT_e testNcl2()
   }
 
   
-
   return result;
 }
 
@@ -5255,7 +5245,6 @@ int main(int argc, char** argv)
   TEST_RUN( testCMMmonitorDBmatch, "CMM monitor DB match" );
   TEST_RUN( testCMMsShow, "CMMs show" );
   TEST_RUN( testCMMnmRun, "CMM named color run" );
-  TEST_RUN( testNcl2, "named color serialisation" );
   TEST_RUN( testImagePixel, "CMM Image Pixel run" );
   TEST_RUN( testConversion, "CMM selection" );
   TEST_RUN( testCMMlists, "CMMs listing" );
