@@ -191,7 +191,11 @@ int          qarzGetMonitorProfile   ( const char        * device_name,
 
   } else if(version >= 100600)
   {
-    oyProfile_s * prof = oyProfile_FromStd( oyASSUMED_WEB, NULL );
+    oyOptions_s * options = NULL;
+    uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                                                        "//" OY_TYPE_STD "/icc_color",
+                                                                        options, 0 );
+    oyProfile_s * prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL );
     moni_profile = oyProfile_GetMem( prof, size, 0, oyAllocateFunc_ );
   }
 

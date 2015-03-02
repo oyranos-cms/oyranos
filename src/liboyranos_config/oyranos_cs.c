@@ -275,7 +275,7 @@ char * oyGetDefaultProfileNameOSX_   ( oyPROFILE_e         type )
       case oyPROFILE_PROOF:          /**< standard proofing profile */
                 t = oyOptionGet_((oyWIDGET_e)type);
                 if(t && t->config_string)
-                  name = oyGetKeyString_( t->config_string, oyAllocateFunc_ );
+                  name = oyGetPersistentString( t->config_string, 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
                 break;
       case oyDEFAULT_PROFILE_START:
       case oyDEFAULT_PROFILE_END:
