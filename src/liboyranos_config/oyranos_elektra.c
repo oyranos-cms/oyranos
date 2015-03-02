@@ -273,14 +273,14 @@ int      oyRemoveFromDB              ( const char        * name,
 /* --- function definitions --- */
 
 
-typedef struct oyDB_s {
+struct oyDB_s {
   KDB      * h;
   Key      * error;
   KeySet   * ks;
   char     * top_key_name;
   oyAlloc_f  alloc;
   oySCOPE_e  scope;
-} oyDB_s;
+};
 
 void     oyDB_printWarn              ( oyDB_s            * db )
 {
