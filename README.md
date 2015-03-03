@@ -4,7 +4,7 @@ The Color Management System (CMS) Oyranos allows the coordination of
 device specific Informations (ICC profiles) und system wide settings.
 
 
-###Internet
+###Links
 * [About](http://www.oyranos.org/about)
 * [Features](http://www.oyranos.org/features)
 * [Support](http://www.oyranos.org/support)

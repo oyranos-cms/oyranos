@@ -1,22 +1,22 @@
 ####Main Author:
-        Kai-Uwe Behrmann
+* Kai-Uwe Behrmann
 ####Code Generator, oyRE, lraw, SANE:
-        Yiannis Belias
+* Yiannis Belias
 ####CUPS:
-        Joseph Simon
+* Joseph Simon
 ####Contributors:
-        Jean-Sebastien Pedron
-        Andreas Sturmlechner
-        kwizart
-        Stephen Kelly
-        Adrian Page
-        Boris Manojlovic
-        Boris Samorodov
-        Markus Raab
-        Nicolas Chauvet
-        Peter Sarva
-        Pino Toscano
-        Soren Sandmann
+* Jean-Sebastien Pedron
+* Andreas Sturmlechner
+* kwizart
+* Stephen Kelly
+* Adrian Page
+* Boris Manojlovic
+* Boris Samorodov
+* Markus Raab
+* Nicolas Chauvet
+* Peter Sarva
+* Pino Toscano
+* Soren Sandmann
  
 
 ####Additional Sources:
@@ -31,11 +31,11 @@
 * fr:            Pascal LACROIX <lacroixpascal at vfemail.net>, 2006
 
 ####Special Thanks:
-        Marti Maria
-        Graeme Gill
-        Gerhard Fürnkranz
-        Jan-Peter Homann
-        Hal Van Engel
-        Boudewijn Rempt
-        Tomas Carnecky
-        Kare Saers
+* Marti Maria
+* Graeme Gill
+* Gerhard Fürnkranz
+* Jan-Peter Homann
+* Hal Van Engel
+* Boudewijn Rempt
+* Tomas Carnecky
+* Kare Saers
