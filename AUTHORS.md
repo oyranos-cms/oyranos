@@ -1,9 +1,12 @@
 ####Main Author:
 * Kai-Uwe Behrmann
+
 ####Code Generator, oyRE, lraw, SANE:
 * Yiannis Belias
+
 ####CUPS:
 * Joseph Simon
+
 ####Contributors:
 * Jean-Sebastien Pedron
 * Andreas Sturmlechner
