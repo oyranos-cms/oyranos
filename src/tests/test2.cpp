@@ -4768,6 +4768,170 @@ oyTESTRESULT_e testCMMlists()
   return result;
 }
 
+#define u16EQUALx(a,b,c,x) (a-x <= b && b <= a+x && a-x <= c && c <= a+x)
+double u16Equal(uint16_t a, uint16_t b, uint16_t c)
+{
+  uint16_t delta = 0;
+  while(!u16EQUALx(a,b,c,delta))
+    ++delta;
+  return (double)delta/65535.0;
+}
+
+oyTESTRESULT_e testICCsCheck()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  char ** list = oyGetCMMs( oyCMM_CONTEXT, oyNAME_NAME, 0, malloc );
+  int i = 0;
+
+  while(list && list[i])
+  {
+    char * reg = oyCMMNameToRegistration( list[i], oyCMM_CONTEXT, oyNAME_NAME, 0, malloc );
+    char * reg_pattern = oyCMMRegistrationToName( reg, oyCMM_CONTEXT, oyNAME_PATTERN, 0, malloc );
+    fprintf(zout, "Testing ICC CMM[%d]: \"%s\"\n", i, list[i] );
+
+    if(reg)
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyGetCMMs(oyCMM_CONTEXT) fine %s", reg_pattern );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+      "oyGetCMMs(oyCMM_CONTEXT) failed   " );
+    }
+
+
+    uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
+    oyProfile_s * p_lab = oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, NULL );
+    oyProfile_s * p_web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL );
+    oyProfile_s /** p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),*/
+              * p_in, * p_out;
+    uint16_t buf_16in2x2[12] = {
+    20000,20000,20000, 10000,10000,10000,
+    0,0,0,             65535,65535,65535
+    };
+    uint16_t buf_16out2x2[12];
+    oyDATATYPE_e buf_type_in = oyUINT16,
+                 buf_type_out = oyUINT16;
+    oyImage_s *input, *output;
+
+    //fprintf(stdout, "\n" );
+
+    p_in = p_web;
+    p_out = p_lab;
+    input =oyImage_Create( 2,2, 
+                         buf_16in2x2,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_in)) |
+                          oyDataType_m(buf_type_in),
+                         p_in,
+                         0 );
+    output=oyImage_Create( 2,2, 
+                         buf_16out2x2,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_out)) |
+                          oyDataType_m(buf_type_out),
+                         p_out,
+                         0 );
+    oyOptions_s * options = NULL;
+    oyOptions_SetFromText( &options, "////context", reg_pattern, OY_CREATE_NEW );
+    oyOptions_SetFromText( &options, "////rendering_intent", "2", OY_CREATE_NEW );
+    oyConversion_s * cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
+    oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
+    oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+    const char * node_reg = oyFilterNode_GetRegistration( icc );
+    char * reg_nick = oyCMMRegistrationToName( reg, oyCMM_CONTEXT, oyNAME_NICK, 0, malloc );
+
+    if(node_reg && strstr(node_reg, reg_nick))
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "\"context\"=\"%s\"                                   ", oyNoEmptyString_m_(reg_nick) );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+      "\"context\"=\"%s\"                                   ", oyNoEmptyString_m_(node_reg) );
+    }
+
+    int error = oyConversion_RunPixels( cc, NULL );
+    double delta = 0.01,
+           da = u16Equal(buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2]),
+           db = u16Equal(buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5]),
+           dc = u16Equal(buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8]),
+           dd = u16Equal(buf_16out2x2[9], buf_16out2x2[10], buf_16out2x2[11]);
+    if(!error &&
+       /* assuming that a proper working space gives equal results along the gray axis */
+       da < delta && db < delta && dc < delta && dd < delta )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "relative colorimetric intent, equal      %3.5f %% ", OY_MAX(da,OY_MAX(db,OY_MAX(dc,dd)))*100.0 );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+      "relative colorimetric intent, equal %3.5f [%g] %% ", OY_MAX(da,OY_MAX(db,OY_MAX(dc,dd)))*100.0, delta*100.0 );
+      fprintf( zout, "%d %d %d   %d %d %d\n%d %d %d   %d %d %d\n",
+               buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
+               buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
+               buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
+               buf_16out2x2[9], buf_16out2x2[10], buf_16out2x2[11]);
+    }
+
+
+    oyImage_Release( &input );
+    oyImage_Release( &output );
+    oyConversion_Release( &cc );
+
+    float buf_f32in2x2[12],
+          buf_f32out2x2[12];
+    int j;
+    for(j = 0; j < 12; ++j) buf_f32in2x2[j] = buf_16in2x2[j]/65535.0f;
+    buf_type_in = oyFLOAT;
+    buf_type_out = oyFLOAT;
+    cc = oyConversion_CreateBasicPixelsFromBuffers(
+                              p_in, buf_f32in2x2, oyDataType_m(buf_type_in),
+                              p_out, buf_f32out2x2, oyDataType_m(buf_type_out),
+                                                    options, 4 );
+    error = oyConversion_RunPixels( cc, NULL );
+    int equal = 1;
+    for(j = 0; j < 12; ++j)
+      if(buf_16out2x2[j] != (int)(buf_f32out2x2[j]*65535.0f))
+        equal = 0;
+    /* Is the float conversion equal to the integer math? */
+    if(!error && equal)
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "relative colorimetric intent, integer equal float  " );
+    } else
+    { PRINT_SUB( oyTESTRESULT_XFAIL,
+      "relative colorimetric intent, integer equal float  " );
+      fprintf( zout, "%d %d %d   %d %d %d\n%d %d %d   %d %d %d\n",
+               buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
+               buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
+               buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
+               buf_16out2x2[9], buf_16out2x2[10], buf_16out2x2[11]);
+      fprintf( zout, "%g %g %g   %g %g %g\n%g %g %g   %g %g %g\n",
+               buf_f32out2x2[0]*65535, buf_f32out2x2[1]*65535, buf_f32out2x2[2]*65535,
+               buf_f32out2x2[3]*65535, buf_f32out2x2[4]*65535, buf_f32out2x2[5]*65535,
+               buf_f32out2x2[6]*65535, buf_f32out2x2[7]*65535, buf_f32out2x2[8]*65535,
+               buf_f32out2x2[9]*65535, buf_f32out2x2[10]*65535, buf_f32out2x2[11]*65535);
+    }
+
+    oyOptions_Release( &options );
+    oyConversion_Release( &cc );
+    oyProfile_Release( &p_lab );
+    oyProfile_Release( &p_web );
+
+
+    ++i;
+
+    oyFree_m_( reg_pattern );
+    oyFree_m_( reg_nick );
+    oyFree_m_( reg );
+    oyFilterNode_Release( &icc );
+    oyFilterGraph_Release( &cc_graph );
+  }
+
+  i = 0;
+  while(list[i])
+    free(list[i++]);
+  free(list);
+
+  return result;
+}
+
 
 #include "oyranos_generic_internal.h"
 oyHash_s *   oyTestCacheListGetEntry_ ( const char        * hash_text)
@@ -5248,6 +5412,7 @@ int main(int argc, char** argv)
   TEST_RUN( testImagePixel, "CMM Image Pixel run" );
   TEST_RUN( testConversion, "CMM selection" );
   TEST_RUN( testCMMlists, "CMMs listing" );
+  TEST_RUN( testICCsCheck, "CMMs ICC conversion check" );
   TEST_RUN( testCache, "Cache" );
   TEST_RUN( testPaths, "Paths" );
 
