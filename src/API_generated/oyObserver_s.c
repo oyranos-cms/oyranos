@@ -325,8 +325,8 @@ OYAPI int  OYEXPORT
     return 0;
 
   if(!error)
-    o = oyOptions_Find( model->oy_->handles_,
-                        OY_SIGNAL_OBSERVERS );
+    o = oyOptions_Find( model->oy_->handles_, OY_SIGNAL_OBSERVERS,
+                        oyNAME_REGISTRATION );
 
   if(!o)
     return 0;
@@ -408,7 +408,8 @@ OYAPI int  OYEXPORT
   int n,i;
 
   if(!error)
-    o = oyOptions_Find( model->oy_->handles_, OY_SIGNAL_OBSERVERS );
+    o = oyOptions_Find( model->oy_->handles_, OY_SIGNAL_OBSERVERS,
+                        oyNAME_REGISTRATION );
 
   if(!o)
     return 0;
@@ -451,7 +452,8 @@ OYAPI int  OYEXPORT
   int n,i;
 
   if(!error)
-    o = oyOptions_Find( model->oy_->handles_, OY_SIGNAL_OBSERVERS );
+    o = oyOptions_Find( model->oy_->handles_, OY_SIGNAL_OBSERVERS,
+                        oyNAME_REGISTRATION );
 
   if(!o)
     return 0;

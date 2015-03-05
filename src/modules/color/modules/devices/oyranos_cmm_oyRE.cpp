@@ -536,7 +536,7 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
     oyOptions_MoveIn( opts, &matrix, -1 );
     if(!fail)
     {
-      matrix = oyOptions_Find( opts, "color_matrix" );
+      matrix = oyOptions_Find( opts, "color_matrix", oyNAME_PATTERN );
       const char * ts = oyStringCopy_(oyOption_GetText( matrix, oyNAME_NICK ), oyAllocateFunc_ );
       oyOption_Release( &matrix );
       ts = strstr( ts, "color_matrix:" ) + strlen("color_matrix:");
@@ -756,9 +756,9 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    command_list = oyOptions_FindString(options, "command", "list");
    command_properties = oyOptions_FindString(options, "command", "properties");
 
-   context_opt = oyOptions_Find(options, "device_context");
-   handle_opt = oyOptions_Find(options, "device_handle");
-   version_opt = oyOptions_Find(options, "driver_version");
+   context_opt = oyOptions_Find(options, "device_context", oyNAME_PATTERN);
+   handle_opt = oyOptions_Find(options, "device_handle", oyNAME_PATTERN);
+   version_opt = oyOptions_Find(options, "driver_version", oyNAME_PATTERN);
 
    oyConfig_s *device = NULL;
    device = oyConfig_FromRegistration(CMM_BASE_REG, 0);
@@ -952,9 +952,9 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
    const char *command_list = oyOptions_FindString(options, "command", "list");
    const char *command_properties = oyOptions_FindString(options, "command", "properties");
 
-   oyOption_s *context_opt = oyOptions_Find(options, "device_context");
-   oyOption_s *handle_opt = oyOptions_Find(options, "device_handle");
-   oyOption_s *version_opt = oyOptions_Find(options, "driver_version");
+   oyOption_s *context_opt = oyOptions_Find(options, "device_context", oyNAME_PATTERN);
+   oyOption_s *handle_opt = oyOptions_Find(options, "device_handle", oyNAME_PATTERN);
+   oyOption_s *version_opt = oyOptions_Find(options, "driver_version", oyNAME_PATTERN);
 
    int num_devices = oyConfigs_Count(devices);
    if (command_list) {
@@ -1482,7 +1482,7 @@ if (i==n-1) { \
    oyOption_SetFromDouble(opt, params->name[i], i, 0); \
    oyOptions_MoveIn(*oyConfig_GetOptions(*config,"backend_core"), &opt, -1); \
 } else { \
-   oyOption_s *opt = oyOptions_Find(*oyConfig_GetOptions(*config,"backend_core"), #name); \
+   oyOption_s *opt = oyOptions_Find(*oyConfig_GetOptions(*config,"backend_core"), #name, oyNAME_PATTERN); \
    oyOption_SetFromDouble(opt, params->name[i], i, 0); \
 } }
 #define DFC_OPT_ADD_FLOAT(name) if(!error) { \

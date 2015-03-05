@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2005-2012 (C) Kai-Uwe Behrmann
+ *            2005-2015 (C) Kai-Uwe Behrmann
  *
  *  @brief    monitor device detection
  *  @internal
@@ -1744,7 +1744,7 @@ int          oyX1MOptions_Handle     ( oyOptions_s       * options,
   {
     if(oyFilterRegistrationMatch(command,"set_xcm_region", 0))
     {
-      o = oyOptions_Find( options, "window_rectangle" );
+      o = oyOptions_Find( options, "window_rectangle", oyNAME_PATTERN );
       if(!o)
       {
         _msg( oyMSG_WARN, (oyStruct_s*)options,
@@ -1752,7 +1752,7 @@ int          oyX1MOptions_Handle     ( oyOptions_s       * options,
         error = 1;
       }
       oyOption_Release( &o );
-      o = oyOptions_Find( options, "window_id" );
+      o = oyOptions_Find( options, "window_id", oyNAME_PATTERN );
       if(!o)
       {
         _msg( oyMSG_WARN, (oyStruct_s*)options,
@@ -1760,7 +1760,7 @@ int          oyX1MOptions_Handle     ( oyOptions_s       * options,
         error = 1;
       }
       oyOption_Release( &o );
-      o = oyOptions_Find( options, "display_id" );
+      o = oyOptions_Find( options, "display_id", oyNAME_PATTERN );
       if(!o)
       {
         _msg( oyMSG_WARN, (oyStruct_s*)options,
@@ -1809,7 +1809,7 @@ int          oyX1MOptions_Handle     ( oyOptions_s       * options,
                                           oyOBJECT_RECTANGLE_S );
     old_rect = (oyRectangle_s*) oyOptions_GetType( options, -1,
                                  "old_window_rectangle", oyOBJECT_RECTANGLE_S );
-    o = oyOptions_Find( options, "icc_profile" );
+    o = oyOptions_Find( options, "icc_profile", oyNAME_PATTERN );
     p = (oyProfile_s*) oyOptions_GetType( options, -1, "icc_profile",
                                           oyOBJECT_PROFILE_S );
     if(!win || !dpy)

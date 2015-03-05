@@ -829,6 +829,9 @@ int            oyOptions_CountType   ( oyOptions_s       * options,
  *
  *  @param         options             set of options
  *  @param         registration        registration or key
+ *  @param         type                allowed are:
+ *                                     - oyNAME_PATTERN for a pattern match, that is what most users prefer
+ *                                     - oyNAME_REGISTRATION for a exact comparision
  *  @return                            a matching options
  *
  *  @version Oyranos: 0.1.9
@@ -836,12 +839,20 @@ int            oyOptions_CountType   ( oyOptions_s       * options,
  *  @since   2008/11/05 (Oyranos: 0.1.9)
  */
 oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
-                                       const char        * registration )
+                                       const char        * registration,
+                                       uint32_t            type )
 {
   int error = !options || !registration;
   oyOption_s * o = 0,
              * option = 0;
   int found;
+
+  if(type != oyNAME_REGISTRATION &&
+     type != oyNAME_PATTERN)
+  {
+    WARNc1_S("unrecognised type argument: %d\nallowed are oyNAME_REGISTRATION or oyNAME_PATTERN", type);
+    return option;
+  }
 
   if(error <= 0 && options && options->type_ == oyOBJECT_OPTIONS_S)
   {
@@ -853,9 +864,15 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
       o = oyOptions_Get( options, i );
       found = 1;
 
-      if(found && registration &&
-         !oyFilterRegistrationMatch( oyOptionPriv_m(o)->registration, registration, 0 ))
+      if(found && registration)
+      {
+         if(type == oyNAME_REGISTRATION &&
+            strcmp(oyOptionPriv_m(o)->registration, registration) != 0)
           found = 0;
+         else if(type == oyNAME_PATTERN &&
+            !oyFilterRegistrationMatch( oyOptionPriv_m(o)->registration, registration, 0 ))
+          found = 0;
+      }
 
       if(found)
       {
@@ -898,7 +915,8 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
 
   if(error <= 0)
   {
-    o = (oyOption_s_*)oyOptions_Find( options, registration );
+    o = (oyOption_s_*)oyOptions_Find( options, registration,
+                                      oyNAME_PATTERN );
 
     if(o && o->type_ == oyOBJECT_OPTION_S)
     {
@@ -971,7 +989,7 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
     if(!*obj)
       *obj = oyOptions_New( 0 );
 
-    o = oyOptions_Find( *obj, registration );
+    o = oyOptions_Find( *obj, registration, oyNAME_PATTERN );
 
     /** Add a new option if the OY_CREATE_NEW flag is present.
      */
@@ -1033,7 +1051,7 @@ int            oyOptions_FindInt     ( oyOptions_s       * options,
 
   if(error <= 0)
   {
-    o = oyOptions_Find( options, registration );
+    o = oyOptions_Find( options, registration, oyNAME_PATTERN );
 
     if(o && o->type_ == oyOBJECT_OPTION_S &&
        (oyOptionPriv_m(o)->value_type == oyVAL_INT ||
@@ -1087,7 +1105,7 @@ int            oyOptions_SetFromInt  ( oyOptions_s      ** obj,
     if(!*obj)
       *obj = oyOptions_New( 0 );
 
-    o = oyOptions_Find( *obj, registration );
+    o = oyOptions_Find( *obj, registration, oyNAME_PATTERN );
 
     /** Add a new option if the OY_CREATE_NEW flag is present.
      */
@@ -1144,7 +1162,8 @@ int            oyOptions_FindDouble  ( oyOptions_s       * options,
 
   if(error <= 0)
   {
-    o = (oyOption_s_*)oyOptions_Find( options, registration );
+    o = (oyOption_s_*)oyOptions_Find( options, registration,
+                                      oyNAME_PATTERN );
 
     if(o && o->type_ == oyOBJECT_OPTION_S &&
        (o->value_type == oyVAL_DOUBLE ||
@@ -1201,7 +1220,7 @@ int            oyOptions_SetFromDouble(oyOptions_s      ** obj,
     if(!*obj)
       *obj = oyOptions_New( 0 );
 
-    o = oyOptions_Find( *obj, registration );
+    o = oyOptions_Find( *obj, registration, oyNAME_PATTERN );
 
     /** Add a new option if the OY_CREATE_NEW flag is present.
      */
@@ -1313,7 +1332,7 @@ int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
     if(!*obj)
       *obj = oyOptions_New( 0 );
 
-    o = oyOptions_Find( *obj, registration );
+    o = oyOptions_Find( *obj, registration, oyNAME_PATTERN );
 
     /** Add a new option if the OY_CREATE_NEW flag is present.
      */
@@ -1375,7 +1394,7 @@ int            oyOptions_SetFromData ( oyOptions_s      ** options,
     if(!*options)
       *options = oyOptions_New( 0 );
 
-    o = oyOptions_Find( *options, registration );
+    o = oyOptions_Find( *options, registration, oyNAME_PATTERN );
 
     /** Add a new option if the OY_CREATE_NEW flag is present.
      */
@@ -1437,7 +1456,8 @@ int            oyOptions_FindData    ( oyOptions_s       * options,
 
   if(error <= 0)
   {
-    o = oyOptions_Find( options, registration );
+    o = oyOptions_Find( options, registration,
+                                      oyNAME_PATTERN );
 
     if(o && o->type_ == oyOBJECT_OPTION_S &&
        oyOptionPriv_m(o)->value_type == oyVAL_STRUCT)

@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2009-2014 (C) Kai-Uwe Behrmann
+ *            2009-2015 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyranos X11 module for Oyranos
  *  @internal
@@ -373,12 +373,12 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
   error = oyOptions_SetFromText( &options,
                                  "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
-  o = oyOptions_Find( image_tags, "display_name" );
+  o = oyOptions_Find( image_tags, "display_name", oyNAME_PATTERN );
   oyOptions_MoveIn( options, &o, -1 );
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   oyOptions_Release( &options );
   n = oyConfigs_Count( devices );
-  o = oyOptions_Find( node_options, "devices" );
+  o = oyOptions_Find( node_options, "devices", oyNAME_PATTERN );
   /* cache the devices scan result; currently is no updating implemented */
   if(!o)
   {
@@ -745,7 +745,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
       /* get display rectangle to project into */
       image_tags = oyImage_GetTags( image );
-      o = oyOptions_Find( image_tags, "display_rectangle" );
+      o = oyOptions_Find( image_tags, "display_rectangle", oyNAME_PATTERN );
       display_rectangle = (oyRectangle_s *) oyOption_GetStruct( o, oyOBJECT_RECTANGLE_S );
       oyOption_Release( &o );
 

@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2012-2014 (C) Kai-Uwe Behrmann
+ *            2012-2015 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC conversion - on the command line
  *  @internal
@@ -333,7 +333,7 @@ int main( int argc , char** argv )
 
         } else
         {
-          o = oyOptions_Find( opts, other_args[i] );
+          o = oyOptions_Find( opts, other_args[i], oyNAME_PATTERN );
           if(i + 1 < other_args_n)
           {
             ct = oyOption_GetText( o, oyNAME_NICK );

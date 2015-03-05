@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2004-2014  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2015  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -4529,7 +4529,7 @@ oyTESTRESULT_e testConversion()
   oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
   oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
   oyOptions_s * node_opts = oyFilterNode_GetOptions( icc, oyOPTIONATTRIBUTE_ADVANCED );
-  oyOption_s * ct = oyOptions_Find( node_opts, "////context" );
+  oyOption_s * ct = oyOptions_Find( node_opts, "////context", oyNAME_PATTERN );
   oyOptions_Release( &node_opts );
   if(ct)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -4559,7 +4559,7 @@ oyTESTRESULT_e testConversion()
   }
 
   node_opts = oyFilterNode_GetOptions( icc, 0 );
-  ct = oyOptions_Find( node_opts, "////context" );
+  ct = oyOptions_Find( node_opts, "////context", oyNAME_PATTERN );
   oyOptions_Release( &node_opts );
   if(ct)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,

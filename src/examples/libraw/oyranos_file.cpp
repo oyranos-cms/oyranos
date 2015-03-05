@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2011-2013 (C) Kai-Uwe Behrmann
+ *            2011-2015 (C) Kai-Uwe Behrmann
  *
  *  @brief    image file handler
  *  @internal
@@ -279,7 +279,8 @@ int main(int argc, char ** argv)
                                   icc_profile_flags, 0, OY_CREATE_NEW );
     error = oyDeviceGet( 0, "raw-image", image_name, options, &device );
 
-    oyOption_s * o = oyOptions_Find( *oyConfig_GetOptions(device, "data"), "icc_profile" );
+    oyOption_s * o = oyOptions_Find( *oyConfig_GetOptions(device, "data"),
+                                     "icc_profile", oyNAME_PATTERN );
     if( o )
     {
       profile = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );

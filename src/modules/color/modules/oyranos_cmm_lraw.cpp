@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2009-2014 (C) Kai-Uwe Behrmann
+ *            2009-2015 (C) Kai-Uwe Behrmann
  *
  *  @brief    libraw filter for Oyranos
  *  @internal
@@ -605,7 +605,8 @@ int      lrawFilterPlug_ImageInputRAWRun (
 
       error = oyDeviceGet( 0, "raw-image", filename, options, &device );
 
-      o = oyOptions_Find( *oyConfig_GetOptions(device, "data"), "icc_profile.fallback" );
+      o = oyOptions_Find( *oyConfig_GetOptions(device, "data"),
+                          "icc_profile.fallback", oyNAME_PATTERN );
       if( o )
       {
         prof = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );

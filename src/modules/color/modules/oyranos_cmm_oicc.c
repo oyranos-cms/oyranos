@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2008-2014 (C) Kai-Uwe Behrmann
+ *            2008-2015 (C) Kai-Uwe Behrmann
  *
  *  @brief    color management policy module for Oyranos
  *  @internal
@@ -615,7 +615,7 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
   const char * tmp = 0;
   char * text = 0;
 
-  o = oyOptions_Find( f_options, key );
+  o = oyOptions_Find( f_options, key, oyNAME_PATTERN );
   /** Set missing options and overwrite filter inbuild fallbacks.
    *  Do not touch edits. */
               if((o &&
@@ -623,7 +623,7 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
                   !(oyOption_GetFlags(o) & oyOPTIONATTRIBUTE_EDIT)) ||
                  !o)
               {
-                db_o = oyOptions_Find( db_options, key );
+                db_o = oyOptions_Find( db_options, key, oyNAME_PATTERN );
                 if(db_o)
                 {
                   if(!o)
@@ -853,7 +853,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                         "rendering_gamut_warning", "1" ) ? 1:0;
 
               /* TODO @todo add proofing profile */
-              o = oyOptions_Find( f_options, "profiles_simulation" );
+              o = oyOptions_Find( f_options, "profiles_simulation", oyNAME_PATTERN );
               if(!o && (proofing || rendering_gamut_warning))
               {
                 proof = oyProfile_FromStd( oyPROFILE_PROOF, icc_profile_flags, 0 );

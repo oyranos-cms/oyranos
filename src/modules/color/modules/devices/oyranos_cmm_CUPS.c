@@ -275,7 +275,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
     oyOption_s * o = 0;
     int error = !device;
  
-    oyOption_s * value3 = oyOptions_Find( options, "device_context" );
+    oyOption_s * value3 = oyOptions_Find( options, "device_context", oyNAME_PATTERN );
     const char * device_name = oyConfig_FindString( device, "device_name", 0 );
 
     if(!error)
@@ -533,7 +533,8 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         { 
           text = 0;
-          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "icc_profile" );
+          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"),
+                              "icc_profile", oyNAME_PATTERN );
           if( o )
             p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
           if(!p)
@@ -723,7 +724,8 @@ int            Configs_FromPattern (
       texts_n = GetDevices( http, &texts, allocateFunc );
 
       /* search for a device_context instead of a device_name */
-      o = oyOptions_Find( options, "device_context.PPD.ppd_file_t" );
+      o = oyOptions_Find( options, "device_context.PPD.ppd_file_t",
+                          oyNAME_PATTERN );
       if(o)
       {
         size_t size = 0;
@@ -764,7 +766,8 @@ int            Configs_FromPattern (
         { 
           char * text = 0;
           oyProfile_s * p = 0;
-          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "icc_profile" );
+          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"),
+                              "icc_profile", oyNAME_PATTERN );
           if( o )
             p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
           if( p )

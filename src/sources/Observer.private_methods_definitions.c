@@ -99,7 +99,7 @@ oyStructList_s * oyStruct_ObserverListGet_(
   int error = 0;
   oyStructList_s * list = 0;
 
-  o = oyOptions_Find( obj->oy_->handles_, reg );
+  o = oyOptions_Find( obj->oy_->handles_, reg, oyNAME_PATTERN );
 
   if(!o)
   {
@@ -111,7 +111,7 @@ oyStructList_s * oyStruct_ObserverListGet_(
       if(!obj->oy_->handles_)
         obj->oy_->handles_ = oyOptions_New( 0 );
       error = oyOptions_MoveIn( obj->oy_->handles_, &o, -1);
-      o = oyOptions_Find( obj->oy_->handles_, reg );
+      o = oyOptions_Find( obj->oy_->handles_, reg, oyNAME_PATTERN );
     }
   }
 

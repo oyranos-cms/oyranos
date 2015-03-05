@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2009-2014 (C) Kai-Uwe Behrmann
+ *            2009-2015 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyranos dummy device module for Oyranos
  *  @internal
@@ -388,7 +388,8 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
         {
           text = calloc( 4096, sizeof(char) );
 
-          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "icc_profile" );
+          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"),
+                              "icc_profile", oyNAME_PATTERN );
 
           p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
           if( p )

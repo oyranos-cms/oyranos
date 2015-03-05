@@ -3,7 +3,7 @@
  *  a filter for Oyranos 
  *
  *  @par Copyright:
- *            2014 (C) My name
+ *            2014-2015 (C) My name
  *
  *  @brief    my filter for Oyranos
  *  @internal
@@ -553,7 +553,7 @@ int          dFilMOptions_Handle     ( oyOptions_s       * options,
   {
     if(oyFilterRegistrationMatch(command,"my_handler", 0))
     {
-      o = oyOptions_Find( options, "print" );
+      o = oyOptions_Find( options, "print", oyNAME_PATTERN );
       if(!o)
       {
         dFil_msg( oyMSG_WARN, (oyStruct_s*)options,
@@ -569,7 +569,7 @@ int          dFilMOptions_Handle     ( oyOptions_s       * options,
   }
   else if(oyFilterRegistrationMatch(command,"my_handler", 0))
   {
-    o = oyOptions_Find( options, "print" );
+    o = oyOptions_Find( options, "print", oyNAME_PATTERN );
     if(o)
     {
       /* now handle the options */

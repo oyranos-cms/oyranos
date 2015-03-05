@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2007-2014 (C) Kai-Uwe Behrmann
+ *            2007-2015 (C) Kai-Uwe Behrmann
  *
  *  @brief    littleCMS CMM module for Oyranos
  *  @internal
@@ -1385,7 +1385,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   oyProfiles_MoveIn( profs, &p, -1 );
 
   /* effect profiles */
-  o = oyOptions_Find( node_options, "profiles_effect" );
+  o = oyOptions_Find( node_options, "profiles_effect", oyNAME_PATTERN );
   if(o)
   {
     profiles = (oyProfiles_s*) oyOption_GetStruct( o, oyOBJECT_PROFILES_S );
@@ -1411,7 +1411,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   }
 
   /* simulation profile */
-  o = oyOptions_Find( node_options, "profiles_simulation" );
+  o = oyOptions_Find( node_options, "profiles_simulation", oyNAME_PATTERN );
   o_txt = oyOptions_FindString  ( node_options, "proof_soft", 0 );
   if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigDisplayClass*/)
     proof = atoi( o_txt );
@@ -2385,7 +2385,9 @@ int          lcmsMOptions_Handle     ( oyOptions_s       * options,
   {
     if(oyFilterRegistrationMatch(command,"create_profile", 0))
     {
-      o = oyOptions_Find( options, "color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma" );
+      o = oyOptions_Find( options,
+        "color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
+                          oyNAME_PATTERN );
       error = oyOptions_FindDouble( options,
         "color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
                             8, &val );
@@ -2410,7 +2412,9 @@ int          lcmsMOptions_Handle     ( oyOptions_s       * options,
   }
   else if(oyFilterRegistrationMatch(command,"create_profile", 0))
   {
-    o = oyOptions_Find( options, "color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma" );
+    o = oyOptions_Find( options,
+         "color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
+                        oyNAME_PATTERN );
     if(o)
     {
       error = oyOptions_FindDouble( options,

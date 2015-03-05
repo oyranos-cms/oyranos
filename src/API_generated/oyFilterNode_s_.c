@@ -730,7 +730,8 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                 if(!ptr || !size)
                 {
                   oyOption_s * ct = oyOptions_Find( core_->options_,
-                                                    "////context" );
+                                                    "////context",
+                                                    oyNAME_PATTERN );
                   oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*) node,
                     OY_DBG_FORMAT_ "device link creation failed", OY_DBG_ARGS_);
                   if(!(oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT))

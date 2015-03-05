@@ -639,11 +639,11 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
-  o = oyOptions_Find( s->data, key );
+  o = oyOptions_Find( s->data, key, oyNAME_PATTERN );
   if(!o)
-    o = oyOptions_Find( s->backend_core, key );
+    o = oyOptions_Find( s->backend_core, key, oyNAME_PATTERN );
   if(!o)
-    o = oyOptions_Find( s->db, key );
+    o = oyOptions_Find( s->db, key, oyNAME_PATTERN );
 
   if(o)
     has_option = 1;
@@ -676,11 +676,11 @@ OYAPI oyOption_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
 
-  o = oyOptions_Find( s->data, key );
+  o = oyOptions_Find( s->data, key, oyNAME_PATTERN );
   if(!o)
-    o = oyOptions_Find( s->backend_core, key );
+    o = oyOptions_Find( s->backend_core, key, oyNAME_PATTERN );
   if(!o)
-    o = oyOptions_Find( s->db, key );
+    o = oyOptions_Find( s->db, key, oyNAME_PATTERN );
 
   return o;
 }

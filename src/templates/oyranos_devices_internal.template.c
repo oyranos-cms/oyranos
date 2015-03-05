@@ -122,7 +122,7 @@ int    oyOptions_SetRegistrationTextKey_(
        * old_val = NULL;
   const char * t;
   int error = 0;
-  oyOption_s * o = oyOptions_Find( *options, key );
+  oyOption_s * o = oyOptions_Find( *options, key, oyNAME_PATTERN );
 
   if(o)
   {

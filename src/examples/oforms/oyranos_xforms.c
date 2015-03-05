@@ -1,3 +1,18 @@
+/** @file oyranos_xforms.c
+ *
+ *  Oyranos is an open source Color Management System 
+ *
+ *  @par Copyright:
+ *            2012-2015 (C) Kai-Uwe Behrmann
+ *
+ *  @brief    module options tool
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @par License:
+ *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @since    2012/12/11
+ *
+ */
 /* gcc -Wall -g `pkg-config oyranos libxml-2.0 --libs --cflags` oy_filter_node.c -o oy_filter_node */
 #include <oyranos_helper.h>
 #include <oyranos_i18n.h>
@@ -188,7 +203,7 @@ int main (int argc, char ** argv)
 
         } else
         {
-          o = oyOptions_Find( opts, other_args[i] );
+          o = oyOptions_Find( opts, other_args[i], oyNAME_PATTERN );
           if(i + 1 < other_args_n)
           {
             ct = oyOption_GetText( o, oyNAME_NICK );

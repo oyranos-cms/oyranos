@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2007-2014 (C) Kai-Uwe Behrmann
+ *            2007-2015 (C) Kai-Uwe Behrmann
  *
  *  @brief    littleCMS CMM module for Oyranos
  *  @internal
@@ -1763,7 +1763,8 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   image_input_tags = oyImage_GetTags( image_input );
   if(oyOptions_FindString( image_input_tags, "gamma_linear", "1" ))
   {
-    oyOption_s * opt =  oyOptions_Find( node_options, "precalculation_curves" );
+    oyOption_s * opt =  oyOptions_Find( node_options, "precalculation_curves",
+                                        oyNAME_PATTERN );
     oyOPTIONSOURCE_e precalculation_curves_source = oyOption_GetSource( opt );
     lcm2_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_
           "gamma_linear: %s precalculation_curves: %s source: %d", OY_DBG_ARGS_,
@@ -1795,7 +1796,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   error = oyProfiles_MoveIn( profs, &p, -1 );
 
   /* effect profiles */
-  o = oyOptions_Find( node_options, "profiles_effect" );
+  o = oyOptions_Find( node_options, "profiles_effect", oyNAME_PATTERN );
   if(o)
   {
     profiles = (oyProfiles_s*) oyOption_GetStruct( o, oyOBJECT_PROFILES_S );
@@ -1821,7 +1822,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   }
 
   /* simulation profile */
-  o = oyOptions_Find( node_options, "profiles_simulation" );
+  o = oyOptions_Find( node_options, "profiles_simulation", oyNAME_PATTERN );
   o_txt = oyOptions_FindString  ( node_options, "proof_soft", 0 );
   if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigDisplayClass*/)
     proof = atoi( o_txt );
@@ -3041,7 +3042,9 @@ int          lcm2MOptions_Handle     ( oyOptions_s       * options,
     if(oyFilterRegistrationMatch(command,"create_profile", 0))
     {
       double val = 0.0;
-      o = oyOptions_Find( options, "color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma" );
+      o = oyOptions_Find( options,
+        "color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
+                          oyNAME_PATTERN );
       error = oyOptions_FindDouble( options,
         "color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
                             8, &val );
@@ -3069,7 +3072,9 @@ int          lcm2MOptions_Handle     ( oyOptions_s       * options,
   }
   else if(oyFilterRegistrationMatch(command,"create_profile", 0))
   {
-    o = oyOptions_Find( options, "color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma" );
+    o = oyOptions_Find( options,
+         "color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
+                        oyNAME_PATTERN );
     if(o)
     {
       int32_t icc_profile_flags = 0;
