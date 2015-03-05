@@ -818,6 +818,60 @@ oyTESTRESULT_e testOptionsSet ()
     "oyOptions_GetText()                           failed" );
   }
 
+
+  /* In the following code snippet every unique key shall be stored.
+   * That is usually not desired for keeping the key set matchable.
+   * Group keys shall be avoided. However for caching group keys are
+   * useful.
+   */
+  oyOption_s * o;
+  int found = 0;
+  o = oyOptions_Find( setA, OY_STD "/filter", oyNAME_REGISTRATION );
+  if(o)
+    found = 1;
+  else
+    o = oyOption_FromRegistration( OY_STD "/filter", NULL );
+  oyOption_SetFromText( o, "", 0 );
+  if(found)
+    oyOption_Release( &o );
+  else
+    oyOptions_MoveIn( setA, &o, -1 );
+
+  found = 0;
+  o = oyOptions_Find( setA, OY_STD "/filter/level_one", oyNAME_REGISTRATION );
+  if(o)
+    found = 1;
+  else
+    o = oyOption_FromRegistration( OY_STD "/filter/level_one", NULL );
+  oyOption_SetFromText( o, "", 0 );
+  if(found)
+    oyOption_Release( &o );
+  else
+    oyOptions_MoveIn( setA, &o, -1 );
+
+  found = 0;
+  o = oyOptions_Find( setA, OY_STD "/filter/level_one/level_two", oyNAME_REGISTRATION );
+  if(o)
+    found = 1;
+  else
+    o = oyOption_FromRegistration( OY_STD "/filter/level_one/level_two", NULL );
+  oyOption_SetFromText( o, "1", 0 );
+  if(found)
+    oyOption_Release( &o );
+  else
+    oyOptions_MoveIn( setA, &o, -1 );
+
+  t = oyOptions_GetText( setA, oyNAME_NICK );
+  if(t && t[0] && oyOptions_Count( setA ) == 7)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOptions_GetText() hierarchical                good" );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_GetText() hierarchical              failed" );
+  }
+  fprintf( zout, "%s\n", t );
+
   oyOptions_Release( &setA );
 
   return result;
@@ -1839,8 +1893,6 @@ static void    setupColourTable      ( PrivColorContext  * ccontext,
       }
       oyOptions_Release( &options );
 
-      oyCompLogMessage( NULL, "compicc", CompLogLevelDebug,
-                      DBG_STRING "marker", DBG_ARGS);
       error = oyOptions_SetFromText( &options,
                                      "//"OY_TYPE_STD"/config/display_mode", "1",
                                      OY_CREATE_NEW );
@@ -1854,8 +1906,6 @@ static void    setupColourTable      ( PrivColorContext  * ccontext,
       }
       oyOptions_Release( &options );
 
-      oyCompLogMessage( NULL, "compicc", CompLogLevelDebug,
-                      DBG_STRING "marker", DBG_ARGS);
       oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
       oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
       oyBlob_s * blob = oyFilterNode_ToBlob( icc, NULL );
@@ -3638,6 +3688,7 @@ oyTESTRESULT_e testCMMnmRun ()
     "oyDB_getString_(%s)", key_name );
   }
 
+
   clck = oyClock();
   oyDB_s * db = oyDB_newFrom( key_name, oySCOPE_USER_SYS, oyAllocateFunc_ );
   for(i = 0; i < n*3; ++i)
@@ -3647,6 +3698,7 @@ oyTESTRESULT_e testCMMnmRun ()
       break;
     oyFree_m_(value);
   }
+  char * value_db = oyDB_getString(db, key_name);
   oyDB_release( &db );
   clck = oyClock() - clck;
 
@@ -3661,6 +3713,14 @@ oyTESTRESULT_e testCMMnmRun ()
 
 
   char * value = oyGetPersistentString( key_name, 0, oySCOPE_USER_SYS,0 );
+  if( (!value && !value_db) ||
+      (value && value_db && strcmp(value,value_db) == 0))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "DB and cached values are equal        ");
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "DB and cached values are equal: \"%s\"/\"%s\"", value, value_db );
+  }
   oyFree_m_(value);
   clck = oyClock();
   for(i = 0; i < n*3*17; ++i)
@@ -3688,11 +3748,11 @@ oyTESTRESULT_e testCMMnmRun ()
   for(i = 0; i < n*3*17; ++i)
   {
     error = oyOption_SetValueFromDB( option );
-    if(error) break;
+    if(error > 0) break;
   }
   clck = oyClock() - clck;
 
-  if( i > 1 && !error )
+  if( i > 1 && error <= 0 )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyOption_SetValueFromDB()           %s",
                   oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Opt."));
