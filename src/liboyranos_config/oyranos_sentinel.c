@@ -103,6 +103,7 @@ extern oyStructList_s * oy_cmm_infos_;
 extern oyStructList_s * oy_cmm_handles_;
 extern oyProfiles_s * oy_profile_list_cache_;
 extern oyOptions_s * oy_db_cache_;
+extern int * get_oy_db_cache_init_();
 
 /** @internal
  *
@@ -118,6 +119,7 @@ void     oyAlphaFinish_              ( int                 unused )
   oyStructList_Release( &oy_cmm_handles_ );
   oyStructList_Release_( &oy_profile_s_file_cache_ );
   oyOptions_Release( &oy_db_cache_ );
+  *get_oy_db_cache_init_() = 0;
 }
 
 #include "oyranos_alpha.h"
@@ -133,6 +135,7 @@ void     oyAlphaFinish_              ( int                 unused )
 char *     oyAlphaPrint_             ( int                 verbose )
 {
   char * text = NULL;
+  const char * t;
   oyStringAddPrintf_( &text, 0,0,
                       "oy_profile_list_cache_: %d\noy_cmm_cache_: %d\noy_cmm_infos_: %d\noy_cmm_handles_: %d\noy_profile_s_file_cache_: %d\noy_db_cache_: %d\n",
   oyProfiles_Count( oy_profile_list_cache_ ),
@@ -144,6 +147,8 @@ char *     oyAlphaPrint_             ( int                 verbose )
   if(verbose)
   {
     int n,i;
+    t = oyOptions_GetText( oy_db_cache_, oyNAME_NICK );
+    oyStringAddPrintf_( &text, 0,0, "%s\n", t );
     oyStringAddPrintf_( &text, 0,0, "oy_cmm_cache_ (oyHash_s): %s\n", oyCMMCacheListPrint_() );
     n = oyStructList_Count(oy_cmm_infos_);
     oyStringAddPrintf_( &text, 0,0, "oy_cmm_infos_ (oyCMMhandle_s): %d\n",  oyStructList_Count( oy_cmm_infos_ ) );
