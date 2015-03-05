@@ -1283,7 +1283,7 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
         if(oyStrcmp_(od_key,"profile_name") == 0)
           continue;
 
-        odh = oyOptions_Find( oyConfigPriv_m(dh)->db, od_key );
+        odh = oyOptions_Find( oyConfigPriv_m(dh)->db, od_key, oyNAME_PATTERN );
 
         odh_val = oyOption_GetValueString( odh, 0 );
         if( !odh_val )
@@ -2099,7 +2099,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
 
           /*  3.1. set the "context" and "renderer" options */
           key_name = oyGetFilterNodeKey( cmm_api9_->key_base, select_core );
-          o = oyOptions_Find( opts_tmp, key_name );
+          o = oyOptions_Find( opts_tmp, key_name, oyNAME_PATTERN );
           if(!o)
           {
             o = oyOption_New( NULL );
@@ -2122,7 +2122,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
               api_pattern = cmm_api9_->oyCMMGetDefaultPattern( cmm_api9_->pattern, 0, select_core,
                                                        oyAllocateFunc_ );
           key_name = oyGetFilterNodeKey( cmm_api9_->key_base, select_core );
-          o = oyOptions_Find( opts_tmp, key_name );
+          o = oyOptions_Find( opts_tmp, key_name, oyNAME_PATTERN );
           if(!o)
           {
             o = oyOption_New( NULL );
@@ -2164,11 +2164,11 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
       oyOption_Release( &o );
     }
 
-    c = oyOptions_Find( s, "////context" );
+    c = oyOptions_Find( s, "////context", oyNAME_PATTERN );
     if(c)
       context = oyStringCopy( oyOption_GetValueString( c, 0 ),
                               oyAllocateFunc_ );
-    r = oyOptions_Find( s, "////renderer" );
+    r = oyOptions_Find( s, "////renderer", oyNAME_PATTERN );
     if(r)
       renderer= oyStringCopy( oyOption_GetValueString( r, 0 ),
                               oyAllocateFunc_ );
@@ -2487,19 +2487,11 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
     oyOptions_Release( &opts_tmp );
 
           /* ask the DB */
-    {
-      static int cache_init = 0;
-      if(db_keys_n && cache_init == 0)
-      {
-        /* cache in one go */
-        oyGetPersistentStrings( OY_STD, (const char **)db_keys, db_keys_n );
-        cache_init = 1;
-      }
-    }
     for( i = 0; i < db_keys_n && !error; ++i )
     {
       oyOption_FromDB( db_keys[i], &db_opt, NULL );
-      o = oyOptions_Find( opts, oyOption_GetText( db_opt, oyNAME_DESCRIPTION ));
+      o = oyOptions_Find( opts, oyOption_GetText( db_opt, oyNAME_DESCRIPTION ),
+                          oyNAME_PATTERN);
       oyOption_SetFlags(o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
       oyOption_SetSource( o, oyOPTIONSOURCE_DATA );
       oyOption_SetFromText( o, oyOption_GetValueString( db_opt,0 ), 0 );
