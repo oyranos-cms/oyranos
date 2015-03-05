@@ -2083,6 +2083,86 @@ uint32_t oyICCProfileSelectionFlagsFromRegistration (
  *  @{ */
 oyOptions_s * oy_db_cache_ = NULL;
 
+int      oyOptions_SetRegFromText    ( oyOptions_s      ** options,
+                                       const char        * registration,
+                                       const char        * value,
+                                       uint32_t            flags )
+{
+  oyOption_s * o;
+  int found = 0;
+  int error = 0;
+
+  if(!*options)
+    *options = oyOptions_New( NULL );
+
+  o = oyOptions_Find( *options, registration, oyNAME_REGISTRATION );
+  if(o)
+  {
+    found = 1;
+    DBG_PROG2_S("key found in cache: %s -> %s", registration, value ? value : "");
+  } else
+    o = oyOption_FromRegistration( registration, NULL );
+
+  error = oyOption_SetFromText( o,
+    /* cache the searched for value,
+     * or mark with empty string if nothing was found */
+                          value ? value : "",
+                          0 );
+  if(found)
+    oyOption_Release( &o );
+  else
+    oyOptions_MoveIn( *options, &o, -1 );
+
+  return error;
+}
+
+static int oy_db_cache_init_ = 0;
+int * get_oy_db_cache_init_() { return &oy_db_cache_init_; };
+/** Function oyGetPersistentStrings
+ *  @internal
+ *  @brief   cache strings from DB
+ *
+ *  @param[in]     top_key_name        the DB root key
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/03/05
+ *  @since   2015/02/26 (Oyranos: 0.9.6)
+ */
+int          oyGetPersistentStrings  ( const char        * top_key_name )
+{
+  char * value = NULL;
+  oyDB_s * db = NULL;
+  int i;
+  int error = !top_key_name;
+  char ** key_names = NULL;
+  int     key_names_n = 0;
+
+  db = oyDB_newFrom( top_key_name, oySCOPE_USER_SYS, oyAllocateFunc_ );
+
+  key_names = oyDB_getKeyNames( db, top_key_name, &key_names_n );
+
+  for(i = 0; i < key_names_n; ++i)
+  {
+    value = oyDB_getString(db, key_names[i]);
+
+    error = oyOptions_SetRegFromText( &oy_db_cache_,
+                                      key_names[i],
+    /* cache the searched for value,
+     * or mark with empty string if nothing was found */
+                                      value ? value : "",
+                                      OY_CREATE_NEW );
+
+    if(value)
+      oyFree_m_( value );
+  }
+
+  oyDB_release( &db );
+  oyStringListRelease_( &key_names, key_names_n, oyDeAllocateFunc_ );
+
+  return error;
+}
+
 /** Function oyGetPersistentString
  *  @brief   get a cached string from DB
  *
@@ -2109,73 +2189,40 @@ char *       oyGetPersistentString   ( const char        * key_name,
 
   if(flags & oySOURCE_DATA)
   {
-    oyDB_s * db = oyDB_newFrom( key_name, scope, alloc_func );
-    value = oyDB_getString(db, key_name);
-    oyDB_release( &db );
-    oyOptions_SetFromText( &oy_db_cache_, key_name,
-    /* cache the searched for value,
-     * or mark with empty string if nothing was found */
-                           value ? value : "",
-                           OY_CREATE_NEW );
+    if(oy_db_cache_init_ == 0)
+    {
+      oy_db_cache_init_ = 1;
+      /* cache in one go */
+      oyGetPersistentStrings( OY_STD );
+      value = oyGetPersistentString( key_name, 0, scope, alloc_func );
+    } else
+      /* fallback */
+    {
+      oyDB_s * db = oyDB_newFrom( key_name, scope, alloc_func );
+      value = oyDB_getString(db, key_name);
+      oyDB_release( &db );
+      oyOptions_SetRegFromText( &oy_db_cache_, key_name,
+      /* cache the searched for value,
+       * or mark with empty string if nothing was found */
+                             value ? value : "",
+                             OY_CREATE_NEW );
+      DBG_PROG2_S("single DB request to key_name %s (cached:%d)", key_name, oyOptions_Count(oy_db_cache_));
+    }
   } else
   {
-    return_value = oyOptions_FindString( oy_db_cache_, key_name, NULL );
+    oyOption_s * o = oyOptions_Find( oy_db_cache_, key_name, oyNAME_REGISTRATION );
+    return_value = oyOption_GetValueString( o, 0 );
     if(!return_value)
+    {
+      DBG_PROG1_S("no value for key_name %s", key_name);
       value = oyGetPersistentString( key_name, oySOURCE_DATA,scope, alloc_func);
-    else
+    } else
       value = oyStringCopy( return_value, alloc_func );
+
+    oyOption_Release( &o );
   }
 
   return value;
-}
-
-/** Function oyGetPersistentStrings
- *  @brief   cache strings from DB
- *
- *  @param[in]     top_key_name        the DB root key
- *  @param[in]     key_names           the DB key names, must reside below top_key_name
- *  @param[in]     key_names_n         key_names count
- *  @return                            error
- *
- *  @version Oyranos: 0.9.6
- *  @date    2015/02/26
- *  @since   2015/02/26 (Oyranos: 0.9.6)
- */
-int          oyGetPersistentStrings  ( const char        * top_key_name,
-                                       const char       ** key_names,
-                                       int                 key_names_n )
-{
-  char * value = NULL;
-  oyDB_s * db = NULL;
-  int i;
-  char ** tmp = NULL;
-  int error = !top_key_name;
-
-  db = oyDB_newFrom( top_key_name, oySCOPE_USER_SYS, oyAllocateFunc_ );
-
-  if(key_names_n == 0)
-  {
-    tmp = oyDB_getKeyNames( db, top_key_name, &key_names_n );
-    key_names = (const char **)tmp;
-  }
-
-  for(i = 0; i < key_names_n; ++i)
-  {
-    value = oyDB_getString(db, key_names[i]);
-    oyOptions_SetFromText( &oy_db_cache_, key_names[i],
-    /* cache the searched for value,
-     * or mark with empty string if nothing was found */
-                           value ? value : "",
-                           OY_CREATE_NEW );
-    if(value)
-      oyFree_m_( value );
-  }
-
-  oyDB_release( &db );
-  if(tmp)
-    oyStringListRelease_( &tmp, key_names_n, oyDeAllocateFunc_ );
-
-  return error;
 }
 
 /** Function oySetPersistentString
@@ -2201,13 +2248,17 @@ int          oySetPersistentString   ( const char        * key_name,
 {
   int rc = oyDBSetString_( key_name, scope, value, comment );
   const char * key = key_name;
+  int error = 0;
 
   if(scope == oySCOPE_USER_SYS)
   {
     if(strchr( key_name, '/' ))
       key = strchr( key_name, '/' ) + 1;
   }
-  oyOptions_SetFromText( &oy_db_cache_, key, value, OY_CREATE_NEW );
+  error = oyOptions_SetRegFromText( &oy_db_cache_, key, value, OY_ADD_ALWAYS );
+  if(error)
+    WARNc3_S( "Could not set key: %d %s -> %s",
+              error, key_name, value ? value : "" ); 
 
   return rc;
 }
