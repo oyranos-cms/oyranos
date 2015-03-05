@@ -924,10 +924,9 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
       {
         text = o->value->string;
 
-        if(text && text[0])
-          if(!value ||
-             (value && oyStrstr_(value, text)))
-            found = 1;
+        if(!value ||
+           (value && text && text[0] && oyStrstr_(value, text)))
+          found = 1;
       } else if(o->value_type == oyVAL_STRING_LIST)
       {
         j = 0;
