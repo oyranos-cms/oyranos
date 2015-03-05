@@ -635,7 +635,7 @@ oyRankMap * oyGetRankMapFromDB       ( const char        * registration )
   oyStringListRelease_( &regs, regs_n, oyDeAllocateFunc_ );
 
   db = oyDB_newFrom( new_reg, oySCOPE_USER_SYS, oyAllocateFunc_ );
-  key_names = oyDB_getKeyNames( db, new_reg, &key_names_n );
+  key_names = oyDB_getKeyNamesOneLevel( db, new_reg, &key_names_n );
 
   DBG_PROG2_S("%s %d", new_reg, key_names_n);
 
@@ -727,13 +727,13 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
     {
       char * key = NULL;
       /** 3.) obtain the directory structure for configurations */
-      key_set_names = oyDB_getKeyNames( db, registration, &n );
+      key_set_names = oyDB_getKeyNamesOneLevel( db, registration, &n );
 
       if(error <= 0)
       for(j = 0; j < n; ++j)
       {
         /** 4.) obtain all keys from one configuration directory */
-        config_key_names = oyDB_getKeyNames( db, key_set_names[j], &k_n );
+        config_key_names = oyDB_getKeyNamesOneLevel( db, key_set_names[j], &k_n );
 
         config = (oyConfig_s_*)oyConfig_FromRegistration( registration, object );
         error = !config;

@@ -345,9 +345,15 @@ int      oyDB_GetChildren            ( oyDB_s            * db )
   }
 
   if(list_user)
+  {
     ksAppendKeys( db->ks, list_user );
+    ksDel( list_user );
+  }
   if(list_sys)
+  {
     ksAppendKeys( db->ks, list_sys );
+    ksDel( list_sys );
+  }
 
   oyFree_m_( list_name_user )
   oyFree_m_( list_name_sys )
@@ -567,8 +573,58 @@ char*    oyDBSearchEmptyKeyname_       ( const char      * key_parent_name,
   return new_key_name;
 } 
 
-/** @brief The function returns keys found just one level under the arguments one. */
+/** @brief The function returns all keys found under the arguments one. */
 char **  oyDB_getKeyNames            ( oyDB_s            * db,
+                                       const char        * key_name,
+                                       int               * n )
+{
+  int error = !db || !n;
+  const char * current_name = NULL;
+  KeySet * my_key_set = NULL;
+  Key * current = NULL;
+  const char *name = NULL;
+  char ** texts = NULL;
+  int name_len;
+
+  DBG_PROG_START
+
+  if(!error)
+    name = key_name;
+  if(n)
+    *n = 0;
+
+  if(!db->ks)
+    oyDB_GetChildren( db );
+
+  if(!error)
+    my_key_set = db->ks;
+
+  if(my_key_set)
+  {
+    name_len = strlen(name);
+
+    FOR_EACH_IN_KDBKEYSET( current, my_key_set )
+    {
+      current_name = keyName(current);
+      if(current_name &&
+         oyStrstr_(current_name, name) )
+      {
+        const char * t = oyStrstr_(current_name, name);
+
+        if(strlen(t) > name_len &&
+           !oyStringListHas_( (const char **)texts, *n, t ) )
+          oyStringListAddStaticString_( &texts, n, t,
+                                        oyAllocateFunc_, oyDeAllocateFunc_);
+      }
+    }
+  }
+
+  DBG_PROG_ENDE
+  return texts;
+}
+
+/** @brief The function returns keys found just one level under the arguments one. */
+char **  oyDB_getKeyNamesOneLevel    ( oyDB_s            * db,
                                        const char        * key_name,
                                        int               * n )
 {
