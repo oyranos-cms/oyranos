@@ -134,12 +134,13 @@ char *     oyAlphaPrint_             ( int                 verbose )
 {
   char * text = NULL;
   oyStringAddPrintf_( &text, 0,0,
-                      "oy_profile_list_cache_: %d\noy_cmm_cache_: %d\noy_cmm_infos_: %d\noy_cmm_handles_: %d\noy_profile_s_file_cache_: %d",
+                      "oy_profile_list_cache_: %d\noy_cmm_cache_: %d\noy_cmm_infos_: %d\noy_cmm_handles_: %d\noy_profile_s_file_cache_: %d\noy_db_cache_: %d\n",
   oyProfiles_Count( oy_profile_list_cache_ ),
   oyStructList_Count( oy_cmm_cache_ ), /* oyHash_s */
   oyStructList_Count( oy_cmm_infos_ ), /* oyCMMhandle_s */
   oyStructList_Count( oy_cmm_handles_ ), /* oyPointer_s */
-  oyStructList_Count( (oyStructList_s*) oy_profile_s_file_cache_ ) );
+  oyStructList_Count( (oyStructList_s*) oy_profile_s_file_cache_ ),
+  oyOptions_Count( oy_db_cache_ ) );
   if(verbose)
   {
     int n,i;
