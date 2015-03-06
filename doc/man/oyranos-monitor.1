@@ -73,6 +73,8 @@ do system wide, might need admin or root privileges
 \fB-v\fR increase verbosity
 .br
 \fB--short\fR show only the ICC profiles file name
+.br
+\fB--path\fR show the full ICC profile path and file name
 .TP
 .B \-\-modules
 list monitor modules
@@ -172,6 +174,10 @@ List all Oyranos monitor devices:
 .TP
 Show the first Oyranos monitor device verbosely:
 .B oyranos-monitor -l -v -d 0
+.PP
+.TP
+Pass the monitor profile to a external tool:
+.B iccDumpProfile -v """`oyranos-monitor -l -d 0 -c --path`"""
 .PP
 .TP
 List all monitor devices through the oyX1 module:
