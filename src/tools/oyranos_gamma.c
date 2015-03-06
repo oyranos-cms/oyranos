@@ -189,6 +189,8 @@ int main( int argc , char** argv )
                         { list = 1; monitor_profile = 0; i=100; break; }
                         else if(OY_IS_ARG("list-taxi"))
                         { list_taxi = 1; i=100; break; }
+                        else if(OY_IS_ARG("path"))
+                        { simple = 2; i=100; break;}
                         else if(OY_IS_ARG("short"))
                         { simple = 1; i=100; break;}
                         else if(OY_IS_ARG("verbose"))
@@ -213,8 +215,9 @@ int main( int argc , char** argv )
                         printf("      %s [-x pos -y pos | -d number]\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("List devices:"));
-                        printf("      %s -l [-x pos -y pos | -d number] --short\n", argv[0]);
+                        printf("      %s -l [-x pos -y pos | -d number] [--short|--path]\n", argv[0]);
                         printf("      %s\n",           _("--short print only the file name"));
+                        printf("      %s\n",           _("--path print the full file name"));
                         printf("\n");
                         printf("  %s\n",               _("List Taxi DB profiles for selected device:"));
                         printf("      %s --list-taxi [-x pos -y pos | -d number]\n", argv[0]);
@@ -726,7 +729,7 @@ int main( int argc , char** argv )
               oyDeAllocFunc( data );
             filename = oyProfile_GetFileName( prof, -1 );
             oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
-                                "%s%s", filename ? (strrchr(filename,OY_SLASH_C) ? strrchr(filename,OY_SLASH_C)+1:filename) : OY_PROFILE_NONE,
+                                "%s%s", filename ? (simple == 1)?(strrchr(filename,OY_SLASH_C) ? strrchr(filename,OY_SLASH_C)+1:filename):filename : OY_PROFILE_NONE,
                                 (i+1 == n) || device_pos != -1 ? "" : "\n" );
           }
           if(verbose)
