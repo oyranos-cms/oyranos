@@ -118,6 +118,8 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -i %s\n",        _("read input stream"));
   fprintf( stderr, "      -2 %s\n",        _("select a ICC v2 profile"));
   fprintf( stderr, "      -4 %s\n",        _("select a ICC v4 profile"));
+  fprintf( stderr, "      --short %s\n",   _("print only the file name"));
+  fprintf( stderr, "      --path %s\n",    _("print the full file name"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s:\n",               _("Example"));
   fprintf( stderr, "      oyranos-profile -lv -p=1 sRGB.icc\n");
@@ -161,6 +163,7 @@ int main( int argc , char** argv )
   int read_stdin = 0;
   oyProfile_s * p;
   oyProfileTag_s * tag;
+  int simple = 0;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -211,6 +214,10 @@ int main( int argc , char** argv )
                         {
                              if(OY_IS_ARG("ppmcie"))
                         { dump_chromaticities = 1; i=100; break; }
+                        else if(OY_IS_ARG("path"))
+                        { simple = 2; i=100; break;}
+                        else if(OY_IS_ARG("short"))
+                        { simple = 1; i=100; break;}
                         }
               default:
                         printfHelp(argc, argv);
@@ -388,9 +395,14 @@ int main( int argc , char** argv )
     char ** texts = NULL;
     int32_t texts_n = 0, i,j,k, count;
 
-    if(!p)
+    if(simple)
     {
-      error = 1;
+      const char * filename = oyProfile_GetFileName( p, -1 );
+      char * report = NULL;
+      oyStringAddPrintf( &report, 0,0,
+                         "%s", filename ? (simple == 1)?(strrchr(filename,OY_SLASH_C) ? strrchr(filename,OY_SLASH_C)+1:filename):filename : OY_PROFILE_NONE );
+      fprintf( stdout, "%s\n", report );
+      exit(0);
     }
 
     /* print header infos */
@@ -774,7 +786,10 @@ int main( int argc , char** argv )
     }
 
     oyProfile_Release( &p );
-  }
+  } else
+  if(!p)
+    error = 1;
+
 
 
   return error;
