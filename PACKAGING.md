@@ -44,13 +44,12 @@ oyranos-profile-graph depends on lCC modules (oicc+lcm[s,2])
 
 
 ##Sources
-Some files contain non stable API's. E.g. oyranos_alpha.h is marked as in alpha 
-stage. These are In fact all installed files under $(prefix)/include/oyranos/alpha.
+Online source are on https://github.com/oyranos-cms/oyranos
 
 
 ##Licenses
 Oyranos tar ball includes pices with different licenses.
-Read the first part of the COPYING file carefully. 
+Read the first part of the [COPYING](COPYING.md) file carefully. 
 
 
 ##Documentation
@@ -58,5 +57,5 @@ The Doxyfile_intern is for Oyranos developers, not for public installation.
 
 
 ##Dependencies
-Can be found in README.
+Can be found in [README](README.md).
 
