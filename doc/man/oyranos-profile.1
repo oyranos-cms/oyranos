@@ -1,4 +1,4 @@
-.TH oyranos-profile 1 "November 25, 2014" "User Commands"
+.TH oyranos-profile 1 "March 06, 2015" "User Commands"
 .SH NAME
 oyranos-profile \- Oyranos CMS ICC profile tool
 .SH SYNOPSIS
@@ -75,6 +75,10 @@ are editing profiles.
 .B \-v, \-\-verbose
 increase verbosity
 .TP
+\fB--short\fR show only the ICC profiles file name
+.TP
+\fB--path\fR show the full ICC profile path and file name
+.TP
 .TP
 .B \-h, \-\-help
 print a help text
@@ -106,11 +110,14 @@ Show the RGB primaries of a matrix profile inside a CIE*xy diagram:
 .TP
 Add calibration data to meta tag of a device profile:
 .B oyranos-profile -w my_profile -j my_device.json my_profile.icc
+.TP
+Pass the profile to a external tool:
+.B iccdump """`oyranos-profile --path cmyk`"""
 .PP
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH COPYRIGHT
-(c) 2011-2014, Kai-Uwe Behrmann and others
+(c) 2011-2015, Kai-Uwe Behrmann and others
 .fi
 License: new BSD <http://www.opensource.org/licenses/bsd-license.php>
 .SH "SEE ALSO"
