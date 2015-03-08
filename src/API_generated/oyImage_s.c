@@ -890,8 +890,8 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
 
 /**
  *  @func    oyImage_WritePPM
- *  @memberof oyArray2d_s
- *  @brief   implement oyCMMFilter_GetNext_f()
+ *  @memberof oyImage_s
+ *  @brief   write buffer to portable pix map format
  *
  *  @param[in]     image               the image
  *  @param[in]     file_name           a writeable file name, The file can 
@@ -899,8 +899,8 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
  *  @param[in]     free_text           A text to include as comment.
  *
  *  @version Oyranos: 0.3.1
- *  @since   2008/10/07 (Oyranos: 0.1.8)
  *  @date    2011/05/12
+ *  @since   2008/10/07 (Oyranos: 0.1.8)
  */
 int          oyImage_WritePPM        ( oyImage_s         * image,
                                        const char        * file_name,
@@ -957,6 +957,14 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
             fputc( '7', fp );
       else
       {
+        if(byteps == 2 &&
+           data_type == oyHALF)
+        {
+          if(channels == 1)
+            fputc( 'h', fp ); /* PFM gray */
+          else
+            fputc( 'H', fp ); /* PFM rgb */
+        } else
         if(byteps == 1 ||
            byteps == 2)
         {
@@ -1009,19 +1017,20 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       len = strlen( text );
       do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
 
-      if(byteps == 1)
-        snprintf( bytes, 48, "255" );
-      else
-      if(byteps == 2)
-        snprintf( bytes, 48, "65535" );
-      else
-      if (byteps == 4 || byteps == 8) 
+      if (byteps == 4 || byteps == 8 ||
+          (byteps == 2 && data_type == oyHALF))
       {
         if(oyBigEndian())
           snprintf( bytes, 48, "1.0" );
         else
           snprintf( bytes, 48, "-1.0" );
       }
+      else
+      if(byteps == 1)
+        snprintf( bytes, 48, "255" );
+      else
+      if(byteps == 2)
+        snprintf( bytes, 48, "65535" );
       else
         oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)image,
              OY_DBG_FORMAT_ " byteps: %d",
