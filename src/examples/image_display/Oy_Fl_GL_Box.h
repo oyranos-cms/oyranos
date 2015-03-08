@@ -146,6 +146,9 @@ private:
       else if(data_type == oyFLOAT)
         glDrawPixels( frame_width, frame_height, gl_type,
                       GL_FLOAT, frame_data );
+      else if(data_type == oyHALF)
+        glDrawPixels( frame_width, frame_height, gl_type,
+                      GL_HALF_FLOAT, frame_data );
 
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
 
