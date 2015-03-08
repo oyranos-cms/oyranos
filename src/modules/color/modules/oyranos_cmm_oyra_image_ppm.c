@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2008-2014 (C) Kai-Uwe Behrmann
+ *            2008-2015 (C) Kai-Uwe Behrmann
  *
  *  @brief    modules for Oyranos
  *  @internal
@@ -39,6 +39,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+typedef uint16_t half;
 
 int wread ( unsigned char   *data,    /* read a word */
             size_t  pos,
@@ -171,7 +173,7 @@ int  oyraPPMwriteUiGet               ( oyCMMapiFilter_s   * module,
 }
 
 
-oyDATATYPE_e oyra_image_ppm_data_types[5] = {oyUINT8, oyUINT16,
+oyDATATYPE_e oyra_image_ppm_data_types[6] = {oyUINT8, oyUINT16, oyHALF,
                                              oyFLOAT, oyDOUBLE, 0};
 
 oyConnectorImaging_s_ oyra_imageOutputPPM_connector_out = {
@@ -565,6 +567,10 @@ int      oyraFilterPlug_ImageInputPPMRun (
         type = -6;
       else if (data[fpos] == 'f') /* PFM gray */
         type = -5;
+      else if(data[fpos] == 'H') /* PFM Half rgb */
+        type = -9;
+      else if (data[fpos] == 'h') /* PFM Half gray */
+        type = -8;
       else
         info_good = 0;
     }
@@ -758,6 +764,16 @@ int      oyraFilterPlug_ImageInputPPMRun (
            spp = 3;
            data_type = oyFLOAT;
            break;
+      case -8:
+           data_type = oyHALF;
+           byteps = 2;
+           spp = 1;
+           break;
+      case -9:
+           byteps = 2;
+           spp = 3;
+           data_type = oyHALF;
+           break;
       case 7: /* pam */
            if (maxval == 1.0 || maxval == -1.0)
            {
@@ -802,7 +818,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
 
   /* check if the file can hold the expected data (for raw only) */
   mem_n = width*height*byteps*spp;
-  if(type == 5 || type == 6 || type == -5 || type == -6 || type == 7)
+  if(type == 5 || type == 6 || type == -5 || type == -6 || type == -8 || type == -9 || type == 7)
   {
     if (mem_n > fsize-fpos)
     {
@@ -841,6 +857,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
     unsigned char *src = &data[fpos];
 
     uint16_t *d_16;
+    half   *d_f16;
     float  *d_f;
 
     if(oyBigEndian())
@@ -864,6 +881,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
 
         d_8  = buf;
         d_16 = (uint16_t*)buf;
+        d_f16= (half*)buf;
         d_f  = (float*)buf;
 
         /*  TODO 1 bit raw and ascii */
@@ -876,12 +894,13 @@ int      oyraFilterPlug_ImageInputPPMRun (
         /*  raw and floats */
         } else if (type == 5 || type == 6 ||
                    type == -5 || type == -6 ||
+                   type == -8 || type == -9 ||
                    type == 7 )
         {
           if(byteps == 1) {
             d_8 = &src[ h * width * spp * byteps ];
           } else if(byteps == 2) {
-            d_16 = (uint16_t*)& src[ h * width * spp * byteps ];
+            d_f16 = d_16 = (uint16_t*)& src[ h * width * spp * byteps ];
           } else if(byteps == 4) {
             d_f = (float*)&src[ h * width * spp * byteps ];
           }
@@ -921,7 +940,13 @@ int      oyraFilterPlug_ImageInputPPMRun (
 #pragma omp parallel for
           for (p = 0; p < n_samples; ++p)
             d_8[p] = (d_8[p] * 255) / maxval;
-        } else if (byteps == 2 && maxval < 65535) {/* 16 bit */
+        } else if (byteps == 2 && maxval != 1.0 &&
+                   (type == -8 || type == -9)) {  /* half float */
+#pragma omp parallel for
+          for (p = 0; p < n_samples; ++p)
+            d_f16[p] = d_f16[p] * maxval;
+        } else if (byteps == 2 && maxval < 65535 &&
+                   type != -8 && type != -9) {/* 16 bit */
 #pragma omp parallel for
           for (p = 0; p < n_samples; ++p)
             d_16 [p] = (d_16[p] * 65535) / maxval;
