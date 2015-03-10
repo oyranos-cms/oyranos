@@ -296,10 +296,10 @@ oyConfig_s * oyREgetColorInfo        ( const char        * filename,
    //2.  Get the relevant color information from Oyranos
    //    This is the "command" -> "properties" call
    //Request the properties call
-   oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "command", "properties", OY_CREATE_NEW);
-   oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "device_name", filename, OY_CREATE_NEW);
+   oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "command", "properties", OY_CREATE_NEW | OY_MATCH_KEY);
+   oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "device_name", filename, OY_CREATE_NEW | OY_MATCH_KEY);
    //Pass in the filename
-   oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "device_handle", filename, OY_CREATE_NEW);
+   oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "device_handle", filename, OY_CREATE_NEW | OY_MATCH_KEY);
    //Pass in the libraw object with the raw image rendering options
    oyOption_s *context_opt = oyOption_FromRegistration(
                            OY_LIBRAW_REGISTRATION OY_SLASH "device_context", 0);
@@ -584,7 +584,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
   error = oyOptions_Filter( &options, &n, 0,
                       oyBOOLEAN_INTERSECTION, "///config",node_options);
   if(icc_profile_flags)
-    oyOptions_SetFromInt( &options, "///icc_profile_flags", icc_profile_flags, 0, OY_CREATE_NEW );
+    oyOptions_SetFromInt( &options, "///icc_profile_flags", icc_profile_flags, 0, OY_CREATE_NEW | OY_MATCH_KEY );
   device = oyREgetColorInfo( filename, params, options );
   error = oyDeviceGetProfile( device, options, &prof );
   if(!prof || error != 0)
@@ -599,9 +599,9 @@ int      lrawFilterPlug_ImageInputRAWRun (
 
       error = oyOptions_SetFromText( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.fallback",
-                         "yes", OY_CREATE_NEW );
+                         "yes", OY_CREATE_NEW | OY_MATCH_KEY );
       error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
-                                     "properties", OY_CREATE_NEW );  
+                                     "properties", OY_CREATE_NEW | OY_MATCH_KEY );  
 
       error = oyDeviceGet( 0, "raw-image", filename, options, &device );
 
@@ -633,7 +633,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
   {
     oyOptions_MoveInStruct( &image_in_tags,
                             "//" OY_TYPE_STD OY_SLASH CMM_NICK "/device",
-                            (oyStruct_s**)&device, OY_CREATE_NEW );
+                            (oyStruct_s**)&device, OY_CREATE_NEW | OY_MATCH_KEY );
   }
   oyConfig_Release( &device );
 
@@ -658,12 +658,12 @@ int      lrawFilterPlug_ImageInputRAWRun (
   
   error = oyOptions_SetFromText( &image_in_tags,
                               "//" OY_TYPE_STD OY_SLASH CMM_NICK "/filename",
-                                 filename, OY_CREATE_NEW );
+                                 filename, OY_CREATE_NEW | OY_MATCH_KEY);
   if(params->gamm[0] == 1.0 || params->gamm[1] == 1.0)
     /* tell others that images are almost always linear */
     error = oyOptions_SetFromText( &image_in_tags,
                             "//" OY_TYPE_STD OY_SLASH CMM_NICK "/gamma_linear",
-                                   "1", OY_CREATE_NEW );
+                                   "1", OY_CREATE_NEW | OY_MATCH_KEY );
 
   if(error <= 0)
   {
