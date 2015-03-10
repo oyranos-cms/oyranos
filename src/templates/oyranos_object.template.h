@@ -276,6 +276,7 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
 int    oyFilterRegistrationMatchKey  ( const char        * registration1,
                                        const char        * registration2,
                                        oyOBJECT_e          api_number );
+const char * oyGetKeyFromRegistration( const char        * registration );
 
 
 /** @internal

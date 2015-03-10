@@ -389,6 +389,30 @@ char *         oyFilterRegistrationToText (
   return text;
 }
 
+/** Function oyGetKeyFromRegistration
+ *  @brief   get oyFILTER_REG_MAX from registration string
+ *
+ *  This function is similar to oyFilterRegistrationToText() .
+ *
+ *  @param         registration        registration string to analyse
+ *  @return                            the key name
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/03/09
+ *  @since   2015/03/09 (Oyranos: 0.9.6)
+ */
+const char * oyGetKeyFromRegistration( const char        * registration )
+{
+  const char * key = strrchr( registration, OY_SLASH_C );
+
+  if(key)
+    ++key;
+  else
+    key = registration;
+        
+  return key;
+}
+
 
 #if USE_OLD_STRING_API
 /** Function oyFilterRegistrationMatch
