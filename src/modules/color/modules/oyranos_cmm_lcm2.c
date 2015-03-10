@@ -754,7 +754,7 @@ uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
   int bpc = 0,
       gamut_warning = 0,
       precalculation = 0,
-      precalculation_curves = 0,
+      precalculation_curves = 1,
       flags = 0;
   const char * o_txt = 0;
 
@@ -1758,30 +1758,6 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   len = sizeof(cmsHPROFILE) * (15 + 2 + 1);
   lps = oyAllocateFunc_( len );
   memset( lps, 0, len );
-
-  /* optimise for linear gamma */
-  image_input_tags = oyImage_GetTags( image_input );
-  if(oyOptions_FindString( image_input_tags, "gamma_linear", "1" ))
-  {
-    oyOption_s * opt =  oyOptions_Find( node_options, "precalculation_curves",
-                                        oyNAME_PATTERN );
-    oyOPTIONSOURCE_e precalculation_curves_source = oyOption_GetSource( opt );
-    lcm2_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_
-          "gamma_linear: %s precalculation_curves: %s source: %d", OY_DBG_ARGS_,
-             oyOptions_FindString( image_input_tags, "gamma_linear", "1" ),
-             oyOptions_FindString( node_options, "precalculation_curves", 0 ),
-             precalculation_curves_source );
-    if((precalculation_curves_source == oyOPTIONSOURCE_FILTER ||
-        precalculation_curves_source == oyOPTIONSOURCE_NONE) &&
-       !oyOptions_FindString( node_options, "precalculation_curves", "1" ))
-    {
-      oyOptions_SetFromText( &node_options, "precalculation_curves", "1", OY_CREATE_NEW );
-      lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
-      "set precalculation_curves: 1", OY_DBG_ARGS_);
-    }
-    oyOption_Release( &opt );
-  }
-  oyOptions_Release( &image_input_tags );
 
   /* input profile */
   lps[ profiles_n++ ] = lcm2AddProfile( image_input_profile );
@@ -2806,7 +2782,7 @@ char lcm2_extra_options[] = {
      <" "icc_color" ">\n\
       <cmyk_cmyk_black_preservation.advanced>0</cmyk_cmyk_black_preservation.advanced>\n\
       <precalculation.advanced>0</precalculation.advanced>\n\
-      <precalculation_curves.advanced>0</precalculation_curves.advanced>\n\
+      <precalculation_curves.advanced>1</precalculation_curves.advanced>\n\
       <adaption_state.advanced>1.0</adaption_state.advanced>\n\
      </" "icc_color" ">\n\
     </" OY_TYPE_STD ">\n\
