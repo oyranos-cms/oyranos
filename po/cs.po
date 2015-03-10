@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2015-03-06 10:57+0100\n"
+"POT-Creation-Date: 2015-03-09 12:47+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -44,8 +44,8 @@ msgstr "-v upovídaný výstup"
 
 #: modules/color/modules/oyranos_cmm_lcm2.c:3344
 #: modules/color/modules/oyranos_cmm_lcm2.c:3347
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:266
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1072
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:268
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1097
 #: modules/color/modules/oyranos_cmm_lcms.c:2694
 #: modules/color/modules/oyranos_cmm_lcms.c:2697
 #: modules/color/modules/oyranos_cmm_oPNG.c:553
@@ -1363,8 +1363,8 @@ msgstr "Chybí soubor"
 msgid "File:            "
 msgstr "Velikost:    "
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:265
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1071
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:267
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1096
 #: modules/color/modules/oyranos_cmm_oPNG.c:552
 #: modules/color/modules/oyranos_cmm_oPNG.c:1167
 msgid "Files"
@@ -1730,7 +1730,7 @@ msgstr "Image[lraw]"
 msgid "Image[input_png]"
 msgstr "Image[input_png]"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1063
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1088
 #, fuzzy
 msgid "Image[input_ppm]"
 msgstr "Image[input_ppm]"
@@ -1755,7 +1755,7 @@ msgstr "Image[lraw]"
 msgid "Image[write_png]"
 msgstr "Image[write_png]"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:257
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:259
 #, fuzzy
 msgid "Image[write_ppm]"
 msgstr "Image[write_ppm]"
@@ -1802,7 +1802,7 @@ msgstr "Výstupní barvový prostor"
 msgid "Input PNG Image Filter Object"
 msgstr "Input PNG Image Filter Object"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1065
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1090
 #, fuzzy
 msgid "Input PPM Image Filter Object"
 msgstr "Input PPM Image Filter Object"
@@ -2303,7 +2303,7 @@ msgstr "Optimalizace"
 msgid "Option"
 msgstr "Volba"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:281
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:283
 #: modules/color/modules/oyranos_cmm_oPNG.c:568
 msgid "Option \"filename\", a valid filename"
 msgstr "Volba \"filename\", platné jméno souboru"
@@ -2312,7 +2312,7 @@ msgstr "Volba \"filename\", platné jméno souboru"
 msgid "Option \"filename\", a valid filename of a existing PNG image"
 msgstr "Volba \"filename\", platný název souboru existujícího PNG obrázku"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1087
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1112
 msgid "Option \"filename\", a valid filename of a existing PPM image"
 msgstr "Volba \"soubor\", platné jméno souboru existujícího obrázku PPM"
 
@@ -2780,7 +2780,7 @@ msgstr "RawCamera"
 msgid "Read PNG"
 msgstr "Číst PNG"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1073
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1098
 msgid "Read PPM"
 msgstr "Načíst PPM"
 
@@ -3158,7 +3158,7 @@ msgstr ""
 "iCCP chunk je prohledán pro oyASSUMED_WEB/oyASSUMED_GRAY. Profil ICC bude "
 "připojen k výslednému obrázku. Vložený záměr transformace bude ignorován."
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1089
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1114
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the ppm data "
 "from. If the file does not exist, a error will occure.\n"
@@ -3176,7 +3176,7 @@ msgstr ""
 "Volba \"filename\" by měla obsahovat platný název souboru pro zápis dat PNG. "
 "Existující soubor bude bez upozornění přepsán."
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:283
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:285
 msgid ""
 "The Option \"filename\" should contain a valid filename to write the ppm "
 "data into. A existing file will be overwritten without notice."
@@ -3823,11 +3823,11 @@ msgstr "Zapsat PNG"
 msgid "Write PNG Image Filter Object"
 msgstr "Write PNG Image Filter Object"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:267
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:269
 msgid "Write PPM"
 msgstr "Zapsat PPM"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:259
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:261
 #, fuzzy
 msgid "Write PPM Image Filter Object"
 msgstr "Write PPM Image Filter Object"
@@ -4609,7 +4609,7 @@ msgstr "zapsat do souboru, v současnosti pouze ve formátu PPM"
 msgid "write to specified file"
 msgstr "zapsat do souboru"
 
-#: API_generated/oyOptions_s.c:1298 tools/oyranos_gamma.c:252
+#: API_generated/oyOptions_s.c:1303 tools/oyranos_gamma.c:252
 #: tools/oyranos_profile_graph.c:261 tools/oyranos_profile_tool.c:234
 #: tools/oyranos_convert.c:264 tools/oyranos_profiles.c:238
 #: tools/oyranos_policy.c:140 examples/devices/test_device.c:243

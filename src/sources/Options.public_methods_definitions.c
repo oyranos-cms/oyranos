@@ -967,7 +967,7 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
  *                                     "org/my_org/openicc/my_app/my_opt"
  *  @param         value               the value to set
  *  @param         flags               can be OY_CREATE_NEW for a new option,
- *                                     OY_STRING_LIST or OY_ADD_ALWAYS
+ *                                     OY_STRING_LIST, OY_ADD_ALWAYS, OY_MATCH_KEY
  *
  *  @version Oyranos: 0.3.0
  *  @since   2008/11/27 (Oyranos: 0.1.9)
@@ -981,14 +981,19 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
   int error = (obj && *obj && (*obj)->type_ != oyOBJECT_OPTIONS_S) ||
               !registration ||
               !value;
-  oyOption_s * o = 0;
+  oyOption_s * o = NULL;
 
   if(error <= 0)
   {
     if(!*obj)
       *obj = oyOptions_New( 0 );
 
-    o = oyOptions_Find( *obj, registration, oyNAME_PATTERN );
+    if(flags & OY_MATCH_KEY)
+    {
+      const char * key = oyGetKeyFromRegistration( registration );
+      o = oyOptions_Find( *obj, key, oyNAME_PATTERN );
+    } else
+      o = oyOptions_Find( *obj, registration, oyNAME_PATTERN );
 
     /** Add a new option if the OY_CREATE_NEW flag is present.
      */
@@ -1079,7 +1084,7 @@ int            oyOptions_FindInt     ( oyOptions_s       * options,
  *  @param         value               the value to set
  *  @param         pos                 the position in a value list
  *  @param         flags               can be OY_CREATE_NEW for a new option,
- *                                     OY_STRING_LIST or OY_ADD_ALWAYS
+ *                                     OY_MATCH_KEY, OY_ADD_ALWAYS
  *  @return                            0 - success; 1 - error
  *
  *  @version Oyranos: 0.1.10
@@ -1104,7 +1109,12 @@ int            oyOptions_SetFromInt  ( oyOptions_s      ** obj,
     if(!*obj)
       *obj = oyOptions_New( 0 );
 
-    o = oyOptions_Find( *obj, registration, oyNAME_PATTERN );
+    if(flags & OY_MATCH_KEY)
+    {
+      const char * key = oyGetKeyFromRegistration( registration );
+      o = oyOptions_Find( *obj, key, oyNAME_PATTERN );
+    } else
+      o = oyOptions_Find( *obj, registration, oyNAME_PATTERN );
 
     /** Add a new option if the OY_CREATE_NEW flag is present.
      */
@@ -1194,7 +1204,7 @@ int            oyOptions_FindDouble  ( oyOptions_s       * options,
  *  @param         value               the value to set
  *  @param         pos                 the position in a value list
  *  @param         flags               can be OY_CREATE_NEW for a new option,
- *                                     OY_STRING_LIST or OY_ADD_ALWAYS
+ *                                     OY_ADD_ALWAYS, OY_MATCH_KEY
  *  @return                            0 - success; 1 - error
  *
  *  @version Oyranos: 0.1.10
@@ -1219,7 +1229,12 @@ int            oyOptions_SetFromDouble(oyOptions_s      ** obj,
     if(!*obj)
       *obj = oyOptions_New( 0 );
 
-    o = oyOptions_Find( *obj, registration, oyNAME_PATTERN );
+    if(flags & OY_MATCH_KEY)
+    {
+      const char * key = oyGetKeyFromRegistration( registration );
+      o = oyOptions_Find( *obj, key, oyNAME_PATTERN );
+    } else
+      o = oyOptions_Find( *obj, registration, oyNAME_PATTERN );
 
     /** Add a new option if the OY_CREATE_NEW flag is present.
      */
@@ -1310,7 +1325,7 @@ oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
  *                                     "org/my_org/openicc/my_app/my_opt"
  *  @param         oy_struct           the Oyranos style object to move in
  *  @param         flags               can be OY_CREATE_NEW for a new option,
- *                                     or OY_ADD_ALWAYS
+ *                                     OY_ADD_ALWAYS, OY_MATCH_KEY
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/03/05 (Oyranos: 0.1.10)
@@ -1331,7 +1346,12 @@ int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
     if(!*obj)
       *obj = oyOptions_New( 0 );
 
-    o = oyOptions_Find( *obj, registration, oyNAME_PATTERN );
+    if(flags & OY_MATCH_KEY)
+    {
+      const char * key = oyGetKeyFromRegistration( registration );
+      o = oyOptions_Find( *obj, key, oyNAME_PATTERN );
+    } else
+      o = oyOptions_Find( *obj, registration, oyNAME_PATTERN );
 
     /** Add a new option if the OY_CREATE_NEW flag is present.
      */
@@ -1368,7 +1388,7 @@ int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
  *  @param         ptr                 the pointer
  *  @param         size                the pointer size
  *  @param         flags               can be OY_CREATE_NEW for a new option,
- *                                     or OY_ADD_ALWAYS
+ *                                     OY_ADD_ALWAYS, OY_MATCH_KEY
  *  @return                            0 - success; 1 - error
  *
  *  @version Oyranos: 0.1.10
@@ -1393,7 +1413,12 @@ int            oyOptions_SetFromData ( oyOptions_s      ** options,
     if(!*options)
       *options = oyOptions_New( 0 );
 
-    o = oyOptions_Find( *options, registration, oyNAME_PATTERN );
+    if(flags & OY_MATCH_KEY)
+    {
+      const char * key = oyGetKeyFromRegistration( registration );
+      o = oyOptions_Find( *options, key, oyNAME_PATTERN );
+    } else
+      o = oyOptions_Find( *options, registration, oyNAME_PATTERN );
 
     /** Add a new option if the OY_CREATE_NEW flag is present.
      */

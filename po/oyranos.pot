@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2015-03-06 10:57+0100\n"
+"POT-Creation-Date: 2015-03-10 12:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -190,7 +190,7 @@ msgstr ""
 msgid "Creation Time in UTC"
 msgstr ""
 
-#: API_generated/oyOptions_s.c:1298 tools/oyranos_gamma.c:252
+#: API_generated/oyOptions_s.c:1303 tools/oyranos_gamma.c:252
 #: tools/oyranos_profile_graph.c:261 tools/oyranos_profile_tool.c:234
 #: tools/oyranos_convert.c:264 tools/oyranos_profiles.c:238
 #: tools/oyranos_policy.c:140 examples/devices/test_device.c:243
@@ -2429,8 +2429,8 @@ msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lcm2.c:3344
 #: modules/color/modules/oyranos_cmm_lcm2.c:3347
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:266
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1072
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:268
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1097
 #: modules/color/modules/oyranos_cmm_lcms.c:2694
 #: modules/color/modules/oyranos_cmm_lcms.c:2697
 #: modules/color/modules/oyranos_cmm_oPNG.c:553
@@ -2548,53 +2548,53 @@ msgid ""
 "simulation, mixed color documents and default profiles."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:257
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:259
 msgid "Image[write_ppm]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:259
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:261
 msgid "Write PPM Image Filter Object"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:265
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1071
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:267
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1096
 #: modules/color/modules/oyranos_cmm_oPNG.c:552
 #: modules/color/modules/oyranos_cmm_oPNG.c:1167
 msgid "Files"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:267
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:269
 msgid "Write PPM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:281
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:283
 #: modules/color/modules/oyranos_cmm_oPNG.c:568
 msgid "Option \"filename\", a valid filename"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:283
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:285
 msgid ""
 "The Option \"filename\" should contain a valid filename to write the ppm "
 "data into. A existing file will be overwritten without notice."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1063
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1088
 msgid "Image[input_ppm]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1065
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1090
 msgid "Input PPM Image Filter Object"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1073
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1098
 msgid "Read PPM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1087
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1112
 msgid "Option \"filename\", a valid filename of a existing PPM image"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1089
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1114
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the ppm data "
 "from. If the file does not exist, a error will occure.\n"
