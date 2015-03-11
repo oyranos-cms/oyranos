@@ -114,7 +114,7 @@ FILE * zout = stdout;  /* printed inbetween results */
 
 int oy_test_sub_count = 0;
 #define PRINT_SUB( result_, ... ) { \
-  if(result == oyTESTRESULT_XFAIL || \
+  if((result == oyTESTRESULT_XFAIL && result_ != oyTESTRESULT_SUCCESS) || \
      result == oyTESTRESULT_SUCCESS || \
      result == oyTESTRESULT_UNKNOWN ) \
     result = result_; \
