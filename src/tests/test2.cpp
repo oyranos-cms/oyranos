@@ -4910,7 +4910,7 @@ oyTESTRESULT_e testICCsCheck()
     }
 
     int error = oyConversion_RunPixels( cc, NULL );
-    double delta = 0.01,
+    double delta = 0.001,
            da = u16Equal(buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2]),
            db = u16Equal(buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5]),
            dc = u16Equal(buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8]),
@@ -4919,10 +4919,10 @@ oyTESTRESULT_e testICCsCheck()
        /* assuming that a proper working space gives equal results along the gray axis */
        da < delta && db < delta && dc < delta && dd < delta )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
-      "relative colorimetric intent, equal      %3.5f %% ", OY_MAX(da,OY_MAX(db,OY_MAX(dc,dd)))*100.0 );
+      "relative colorimetric intent, equal %3.5f[%g] %%", OY_MAX(da,OY_MAX(db,OY_MAX(dc,dd)))*100.0, delta*100.0 );
     } else
     { PRINT_SUB( oyTESTRESULT_FAIL,
-      "relative colorimetric intent, equal %3.5f [%g] %% ", OY_MAX(da,OY_MAX(db,OY_MAX(dc,dd)))*100.0, delta*100.0 );
+      "relative colorimetric intent, equal %3.5f[%g] %%", OY_MAX(da,OY_MAX(db,OY_MAX(dc,dd)))*100.0, delta*100.0 );
       fprintf( zout, "%d %d %d   %d %d %d\n%d %d %d   %d %d %d\n",
                buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
                buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
@@ -4967,6 +4967,19 @@ oyTESTRESULT_e testICCsCheck()
                buf_f32out2x2[3]*65535, buf_f32out2x2[4]*65535, buf_f32out2x2[5]*65535,
                buf_f32out2x2[6]*65535, buf_f32out2x2[7]*65535, buf_f32out2x2[8]*65535,
                buf_f32out2x2[9]*65535, buf_f32out2x2[10]*65535, buf_f32out2x2[11]*65535);
+
+      oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
+      oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+      oyBlob_s * blob = oyFilterNode_ToBlob( icc, NULL );
+      char * name = NULL;
+      oyStringAddPrintf( &name, 0,0,
+                         "test-dl-%s-%d-id-%d.icc", reg_nick, i, oyObject_GetId(icc->oy_) );
+      oyWriteMemToFile_( name, oyBlob_GetPointer( blob ), oyBlob_GetSize( blob) );
+      fprintf( zout, "wrote Device Link for inspection to %s\n", name );
+      oyFilterGraph_Release( &cc_graph );
+      oyFilterNode_Release( &icc );
+      oyBlob_Release( &blob );
+      fprintf( zout, "options where: %s\n", oyOptions_GetText( options, oyNAME_NICK ) );
     }
 
     oyOptions_Release( &options );
