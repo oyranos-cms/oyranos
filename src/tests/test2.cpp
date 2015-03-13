@@ -43,10 +43,10 @@ void* myAllocFunc(size_t size) { return calloc(size,1); }
 /* --- general test routines --- */
 
 typedef enum {
-  oyTESTRESULT_SUCCESS,
+  oyTESTRESULT_SYSERROR,
   oyTESTRESULT_FAIL,
   oyTESTRESULT_XFAIL,
-  oyTESTRESULT_SYSERROR,
+  oyTESTRESULT_SUCCESS,
   oyTESTRESULT_UNKNOWN
 } oyTESTRESULT_e;
 
@@ -56,12 +56,12 @@ const char * oyTestResultToString    ( oyTESTRESULT_e      error )
   const char * text = "";
   switch(error)
   {
-    case oyTESTRESULT_SUCCESS: text = "SUCCESS"; break;
+    case oyTESTRESULT_SYSERROR:text = "SYSERROR"; break;
     case oyTESTRESULT_FAIL:    text = "FAIL"; break;
     case oyTESTRESULT_XFAIL:   text = "XFAIL"; break;
-    case oyTESTRESULT_SYSERROR:text = "SYSERROR"; break;
+    case oyTESTRESULT_SUCCESS: text = "SUCCESS"; break;
     case oyTESTRESULT_UNKNOWN: text = "UNKNOWN"; break;
-    default:                   text = "Huuch, whats that?"; break;
+    default:                   text = "Huuch, what's that?"; break;
   }
   return text;
 }
@@ -114,13 +114,11 @@ FILE * zout = stdout;  /* printed inbetween results */
 
 int oy_test_sub_count = 0;
 #define PRINT_SUB( result_, ... ) { \
-  if((result == oyTESTRESULT_XFAIL && result_ != oyTESTRESULT_SUCCESS) || \
-     result == oyTESTRESULT_SUCCESS || \
-     result == oyTESTRESULT_UNKNOWN ) \
+  if(result_ < result) \
     result = result_; \
   fprintf(stdout, ## __VA_ARGS__ ); \
   fprintf(stdout, " ..\t%s", oyTestResultToString(result_)); \
-  if(result_ && result_ != oyTESTRESULT_XFAIL) \
+  if(result_ <= oyTESTRESULT_FAIL) \
     fprintf(stdout, " !!! ERROR !!!" ); \
   fprintf(stdout, "\n" ); \
   ++oy_test_sub_count; \
@@ -5513,7 +5511,7 @@ oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
   results[error] += 1;
 
   /* print */
-  if(error && error != oyTESTRESULT_XFAIL)
+  if(error <= oyTESTRESULT_FAIL)
     fprintf(stdout, " !!! ERROR !!!" );
   fprintf(stdout, "\n" );
 
