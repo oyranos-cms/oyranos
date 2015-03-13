@@ -4547,6 +4547,103 @@ oyTESTRESULT_e testImagePixel()
   return result;
 }
 
+oyTESTRESULT_e testFilterNode()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
+  oyProfile_s * p_lab = oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, NULL );
+  oyProfile_s * p_web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL );
+  oyProfile_s /** p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),*/
+              * p_in, * p_out;
+  uint16_t buf_16in2x2[12] = {
+  20000,20000,20000, 10000,10000,10000,
+  0,0,0,             65535,65535,65535
+  };
+  uint16_t buf_16out2x2[12];
+  oyDATATYPE_e buf_type_in = oyUINT16,
+               buf_type_out = oyUINT16;
+
+  fprintf(stdout, "\n" );
+
+  p_in = p_web;
+  p_out = p_lab;
+
+  oyOptions_s * options = NULL;
+  oyOptions_SetFromText( &options, "////rendering_intent", "3", OY_CREATE_NEW );
+
+  oyConversion_s * cc = oyConversion_CreateBasicPixelsFromBuffers(
+                              p_in, buf_16in2x2, oyDataType_m(buf_type_in),
+                              p_out, buf_16out2x2, oyDataType_m(buf_type_out),
+                                                    options, 4 );
+
+  oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
+  oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+  oyOptions_s * node_opts = oyFilterNode_GetOptions( icc, oyOPTIONATTRIBUTE_ADVANCED );
+  oyOption_s * o = oyOptions_Find( node_opts, "rendering_intent", oyNAME_PATTERN );
+  oyOptions_Release( &node_opts );
+  if(o)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyOptions_Find( node_opts )  %s", oyOption_GetText(o, oyNAME_NICK) );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_Find( node_opts )  %s", oyOption_GetText(o, oyNAME_NICK) );
+  }
+  oyOption_Release( &o );
+
+  oyBlob_s * blob = oyFilterNode_ToBlob( icc, NULL );
+  oyBlob_Release( &blob );
+
+  node_opts = oyFilterNode_GetOptions( icc, 0 );
+  o = oyOptions_Find( node_opts, "rendering_intent", oyNAME_PATTERN );
+  if(o)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyOptions_Find( node_opts ) after DL %s", oyOption_GetText(o, oyNAME_NICK) );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_Find( node_opts ) after DL %s", oyOption_GetText(o, oyNAME_NICK) );
+  }
+  oyOption_Release( &o );
+
+  int count = oyOptions_Count( node_opts );
+  int n = 0;
+  for(int i = 0; i < count; ++i)
+  {
+    o = oyOptions_Get( node_opts, i );
+    const char * reg = oyOption_GetRegistration( o );
+    if(strstr(reg, "rendering_intent") != NULL &&
+       strstr(reg, "rendering_intent_proof") == NULL)
+    {
+      fprintf( zout, "found: %s\n", reg );
+      ++n;
+    }
+    oyOption_Release( &o );
+  }
+  if(n == 1)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyOptions_Find( node_opts ) unique rendering_intent" );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_Find( node_opts ) unique rendering_intent" );
+  }
+
+  o = oyOptions_Find( node_opts, "rendering_bpc", oyNAME_PATTERN );
+  if(o)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyOptions_Find( node_opts ) other default %s", oyOption_GetText(o, oyNAME_NICK) );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_Find( node_opts ) other default %s", oyOption_GetText(o, oyNAME_NICK) );
+  }
+  oyOption_Release( &o );
+
+  oyOptions_Release( &options );
+  oyOptions_Release( &node_opts );
+  oyConversion_Release( &cc );
+
+  return result;
+}
+
 oyTESTRESULT_e testConversion()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
@@ -5492,6 +5589,7 @@ int main(int argc, char** argv)
   TEST_RUN( testCMMsShow, "CMMs show" );
   TEST_RUN( testCMMnmRun, "CMM named color run" );
   TEST_RUN( testImagePixel, "CMM Image Pixel run" );
+  TEST_RUN( testFilterNode, "FilterNode Options" );
   TEST_RUN( testConversion, "CMM selection" );
   TEST_RUN( testCMMlists, "CMMs listing" );
   TEST_RUN( testICCsCheck, "CMMs ICC conversion check" );
