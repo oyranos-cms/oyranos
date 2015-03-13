@@ -4828,11 +4828,20 @@ oyTESTRESULT_e testCMMlists()
   return result;
 }
 
-#define u16EQUALx(a,b,c,x) (a-x <= b && b <= a+x && a-x <= c && c <= a+x)
-double u16Equal(uint16_t a, uint16_t b, uint16_t c)
+#define u16EQUALx(a,b,x) (a-x <= b && b <= a+x)
+double u16Equal(uint16_t a, uint16_t b)
 {
   uint16_t delta = 0;
-  while(!u16EQUALx(a,b,c,delta))
+  while(!u16EQUALx(a,b,delta))
+    ++delta;
+  return (double)delta/65535.0;
+}
+
+#define u16TripleEQUALx(a,b,c,x) (a-x <= b && b <= a+x && a-x <= c && c <= a+x)
+double u16TripleEqual(uint16_t a, uint16_t b, uint16_t c)
+{
+  uint16_t delta = 0;
+  while(!u16TripleEQUALx(a,b,c,delta))
     ++delta;
   return (double)delta/65535.0;
 }
@@ -4911,18 +4920,18 @@ oyTESTRESULT_e testICCsCheck()
 
     int error = oyConversion_RunPixels( cc, NULL );
     double delta = 0.001,
-           da = u16Equal(buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2]),
-           db = u16Equal(buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5]),
-           dc = u16Equal(buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8]),
-           dd = u16Equal(buf_16out2x2[9], buf_16out2x2[10], buf_16out2x2[11]);
+           da = u16TripleEqual(buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2]),
+           db = u16TripleEqual(buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5]),
+           dc = u16TripleEqual(buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8]),
+           dd = u16TripleEqual(buf_16out2x2[9], buf_16out2x2[10], buf_16out2x2[11]);
     if(!error &&
        /* assuming that a proper working space gives equal results along the gray axis */
        da < delta && db < delta && dc < delta && dd < delta )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
-      "relative colorimetric intent, equal %3.5f[%g] %%", OY_MAX(da,OY_MAX(db,OY_MAX(dc,dd)))*100.0, delta*100.0 );
+      "relative colorimetric intent, equal channels      %3.5f[%g] %%", OY_MAX(da,OY_MAX(db,OY_MAX(dc,dd)))*100.0, delta*100.0 );
     } else
     { PRINT_SUB( oyTESTRESULT_FAIL,
-      "relative colorimetric intent, equal %3.5f[%g] %%", OY_MAX(da,OY_MAX(db,OY_MAX(dc,dd)))*100.0, delta*100.0 );
+      "relative colorimetric intent, equal channels      %3.5f[%g] %%", OY_MAX(da,OY_MAX(db,OY_MAX(dc,dd)))*100.0, delta*100.0 );
       fprintf( zout, "%d %d %d   %d %d %d\n%d %d %d   %d %d %d\n",
                buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
                buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
@@ -4936,7 +4945,7 @@ oyTESTRESULT_e testICCsCheck()
     oyConversion_Release( &cc );
 
     float buf_f32in2x2[12],
-          buf_f32out2x2[12];
+          buf_f32out2x2[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
     int j;
     for(j = 0; j < 12; ++j) buf_f32in2x2[j] = buf_16in2x2[j]/65535.0f;
     buf_type_in = oyFLOAT;
@@ -4946,17 +4955,17 @@ oyTESTRESULT_e testICCsCheck()
                               p_out, buf_f32out2x2, oyDataType_m(buf_type_out),
                                                     options, 4 );
     error = oyConversion_RunPixels( cc, NULL );
-    int equal = 1;
+    double equal = 0, max = 0;
     for(j = 0; j < 12; ++j)
-      if(buf_16out2x2[j] != (int)(buf_f32out2x2[j]*65535.0f))
-        equal = 0;
-    /* Is the float conversion equal to the integer math? */
-    if(!error && equal)
+      if((equal = u16Equal((int)(buf_f32out2x2[j]*65535.0f), buf_16out2x2[j])) > max)
+        max = equal;
+    /* Is the float conversion ~ equal to the integer math? */
+    if(!error && (max <= delta))
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
-      "relative colorimetric intent, integer equal float  " );
+      "relative colorimetric intent, integer equal float %3.5f[%g] %%", max*100.0, delta*100.0 );
     } else
     { PRINT_SUB( oyTESTRESULT_XFAIL,
-      "relative colorimetric intent, integer equal float  " );
+      "relative colorimetric intent, integer equal float %3.5f[%g] %%", max*100.0, delta*100.0 );
       fprintf( zout, "%d %d %d   %d %d %d\n%d %d %d   %d %d %d\n",
                buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
                buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
