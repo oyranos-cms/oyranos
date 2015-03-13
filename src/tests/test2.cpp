@@ -4545,9 +4545,10 @@ oyTESTRESULT_e testImagePixel()
   return result;
 }
 
-oyTESTRESULT_e testFilterNode()
+oyTESTRESULT_e testFilterNodeCMM( oyTESTRESULT_e result_,
+                                  const char * reg_pattern )
 {
-  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  oyTESTRESULT_e result = result_;
   uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyProfile_s * p_lab = oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, NULL );
@@ -4561,14 +4562,15 @@ oyTESTRESULT_e testFilterNode()
   uint16_t buf_16out2x2[12];
   oyDATATYPE_e buf_type_in = oyUINT16,
                buf_type_out = oyUINT16;
+  int i;
 
-  fprintf(stdout, "\n" );
 
   p_in = p_web;
   p_out = p_lab;
 
   oyOptions_s * options = NULL;
   oyOptions_SetFromText( &options, "////rendering_intent", "3", OY_CREATE_NEW );
+  oyOptions_SetFromText( &options, "////context", reg_pattern, OY_CREATE_NEW );
 
   oyConversion_s * cc = oyConversion_CreateBasicPixelsFromBuffers(
                               p_in, buf_16in2x2, oyDataType_m(buf_type_in),
@@ -4578,19 +4580,109 @@ oyTESTRESULT_e testFilterNode()
   oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
   oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
   oyOptions_s * node_opts = oyFilterNode_GetOptions( icc, oyOPTIONATTRIBUTE_ADVANCED );
+  int count = oyOptions_Count( node_opts );
   oyOption_s * o = oyOptions_Find( node_opts, "rendering_intent", oyNAME_PATTERN );
   oyOptions_Release( &node_opts );
   if(o)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyOptions_Find( node_opts )  %s", oyOption_GetText(o, oyNAME_NICK) );
+    "oyOptions_Find( node_opts )  %s(%d)", oyOption_GetText(o, oyNAME_NICK), count );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyOptions_Find( node_opts )  %s", oyOption_GetText(o, oyNAME_NICK) );
+    "oyOptions_Find( node_opts )  %s(%d)", oyOption_GetText(o, oyNAME_NICK), count );
   }
-  oyOption_Release( &o );
 
   oyBlob_s * blob = oyFilterNode_ToBlob( icc, NULL );
+  oyProfile_s * p = oyProfile_FromMem( oyBlob_GetSize( blob ),
+                                       oyBlob_GetPointer( blob ), 0,0 );
   oyBlob_Release( &blob );
+  char sig[] = "Info";
+  oyProfileTag_s * tag = oyProfile_GetTagById( p, oyValueTagSig((icTagSignature)*(uint32_t*)sig) );
+  if(!tag)
+  {
+    memcpy(sig, "Hash", 4);
+    tag = oyProfile_GetTagById( p, oyValueTagSig((icTagSignature)*(uint32_t*)sig) );
+  }
+  int32_t tag_size = 0,
+          texts_n = 0;
+  char ** texts = oyProfileTag_GetText( tag, &texts_n, NULL, NULL,
+                                        &tag_size, oyAllocateFunc_ );
+  if(texts_n == 1)
+  {
+    int n = 0;
+    char ** ts = oyStringSplit_( texts[0], '\n', &n, oyAllocateFunc_ );
+    oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+    texts_n = n;
+    texts = ts;
+  }
+
+  for(i = 0; i < texts_n; ++i)
+    if(strstr(texts[i], "rendering_intent") != NULL &&
+       strstr(texts[i], "rendering_intent_proof") == NULL)
+    {
+      fprintf( zout, "found: %s\n", texts[i] );
+
+      char * t = NULL;
+
+      if(strcmp(sig,"Info") == 0)
+      {
+        const char * r = texts[i];
+        oyStringAddPrintf( &t, 0,0, "<org><freedesktop><openicc><behaviour>%s</behaviour></openicc></freedesktop></org>",
+                           r );
+        oyOptions_s * opts = oyOptions_FromText( t, 0, 0 );
+        oyFree_m_(t);
+
+        oyOption_s * o_ = oyOptions_Find( opts, "rendering_intent", oyNAME_PATTERN );
+
+        if(o_ == NULL)
+        { PRINT_SUB( oyTESTRESULT_SYSERROR,
+          "Could not obtain \"%s\"", "rendering_intent" );
+          return result;
+        }
+
+        t = oyStringCopy( strrchr( oyOption_GetText( o_, oyNAME_NICK ), OY_SLASH_C ) + 1, oyAllocateFunc_ );
+
+        oyOption_Release( &o_ );
+        oyOptions_Release( &opts );
+
+      } else
+      if(strcmp(sig, "Hash") == 0)
+      {
+
+        if(strrchr(texts[i], OY_SLASH_C) != NULL)
+          t = oyStringCopy( strrchr( texts[i], OY_SLASH_C ) + 1, oyAllocateFunc_ );
+        else
+          t = oyStringCopy( texts[i], oyAllocateFunc_ );
+
+        int pos = -1, wt = 0;
+        while(t[++pos])
+        {
+          if(t[pos] == ' ')
+            ++wt;
+          t[pos] = t[pos+wt];
+        }
+
+      }
+
+      const char * ot = oyOption_GetText(o, oyNAME_NICK);
+      if(ot)
+        ot = strrchr( ot, OY_SLASH_C ) + 1;
+
+      if(t && ot)
+      {
+        if(strcmp(t,ot) == 0)
+        { PRINT_SUB( oyTESTRESULT_SUCCESS,
+          "DL's\"%s\" equals node %s %s", sig, t, ot );
+        } else
+        { PRINT_SUB( oyTESTRESULT_FAIL,
+          "DL's\"%s\" equals node %s %s", sig, t, ot );
+        }
+      }
+    }
+
+  oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+  oyProfileTag_Release( &tag );
+  oyProfile_Release( &p );
+  oyOption_Release( &o );
 
   node_opts = oyFilterNode_GetOptions( icc, 0 );
   o = oyOptions_Find( node_opts, "rendering_intent", oyNAME_PATTERN );
@@ -4603,7 +4695,7 @@ oyTESTRESULT_e testFilterNode()
   }
   oyOption_Release( &o );
 
-  int count = oyOptions_Count( node_opts );
+  count = oyOptions_Count( node_opts );
   int n = 0;
   for(int i = 0; i < count; ++i)
   {
@@ -4612,7 +4704,7 @@ oyTESTRESULT_e testFilterNode()
     if(strstr(reg, "rendering_intent") != NULL &&
        strstr(reg, "rendering_intent_proof") == NULL)
     {
-      fprintf( zout, "found: %s\n", reg );
+      fprintf( zout, "found: %d[%d] %s\n", i, count, reg );
       ++n;
     }
     oyOption_Release( &o );
@@ -4638,6 +4730,32 @@ oyTESTRESULT_e testFilterNode()
   oyOptions_Release( &options );
   oyOptions_Release( &node_opts );
   oyConversion_Release( &cc );
+
+  return result;
+}
+
+oyTESTRESULT_e testFilterNode()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  char ** list = oyGetCMMs( oyCMM_CONTEXT, oyNAME_NAME, 0, malloc );
+  int i = 0;
+
+  while(list && list[i])
+  {
+    char * reg = oyCMMNameToRegistration( list[i], oyCMM_CONTEXT, oyNAME_NAME, 0, malloc );
+    char * reg_pattern = oyCMMRegistrationToName( reg, oyCMM_CONTEXT, oyNAME_PATTERN, 0, malloc );
+    fprintf(zout, "Testing ICC CMM[%d]: \"%s\"\n", i, list[i] );
+
+    oyTESTRESULT_e result_ = testFilterNodeCMM( result, reg_pattern );
+    if(result_ < result)
+      result = result_;
+
+    fprintf(stdout, "\n" );
+    ++i;
+  }
 
   return result;
 }
