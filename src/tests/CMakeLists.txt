@@ -5,8 +5,8 @@ ADD_EXECUTABLE( test_core-static "${CMAKE_CURRENT_SOURCE_DIR}/test_core.c" )
 TARGET_LINK_LIBRARIES( test_core oyranos_core )
 TARGET_LINK_LIBRARIES( test_core-static oyranos_core-static )
 ADD_CUSTOM_TARGET(test-core
-	COMMAND "./test_core"
-	COMMAND "./test_core-static"
+	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_core"
+	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_core-static"
         DEPENDS test_core test_core-static
         COMMENT "Test basic linking against liboyranos_core." VERBATIM )
 
@@ -16,8 +16,8 @@ TARGET_LINK_LIBRARIES( test_object oyranos_object )
 ADD_EXECUTABLE( test_object-static "${CMAKE_CURRENT_SOURCE_DIR}/test_object.c" )
 TARGET_LINK_LIBRARIES( test_object-static oyranos_object-static )
 ADD_CUSTOM_TARGET(test-object
-	COMMAND "./test_object"
-	COMMAND "./test_object-static"
+	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_object"
+	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_object-static"
         DEPENDS test_object test_object-static test-core
         COMMENT "Test basic linking against liboyranos_object." VERBATIM )
 
@@ -27,8 +27,8 @@ TARGET_LINK_LIBRARIES( test_modules-static oyranos_modules-static )
 ADD_EXECUTABLE( test_modules "${CMAKE_CURRENT_SOURCE_DIR}/test_modules.c" )
 TARGET_LINK_LIBRARIES( test_modules oyranos_modules )
 ADD_CUSTOM_TARGET(test-modules
-	COMMAND "./test_modules"
-	COMMAND "./test_modules-static"
+	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_modules"
+	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_modules-static"
         DEPENDS test_modules test_modules-static test-object
         COMMENT "Test basic linking against liboyranos_modules." VERBATIM )
 
@@ -38,8 +38,8 @@ TARGET_LINK_LIBRARIES( test_config oyranos_config )
 ADD_EXECUTABLE( test_config-static "${CMAKE_CURRENT_SOURCE_DIR}/test_config.c" )
 TARGET_LINK_LIBRARIES( test_config-static oyranos_config-static )
 ADD_CUSTOM_TARGET(test-config
-	COMMAND "./test_config"
-	COMMAND "./test_config-static"
+	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_config"
+	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_config-static"
         DEPENDS test_config test-modules
         COMMENT "Test basic linking against liboyranos_config." VERBATIM )
 
