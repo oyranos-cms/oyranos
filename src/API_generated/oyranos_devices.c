@@ -3221,11 +3221,15 @@ oyFilterNode_s *   oyFilterNode_FromOptions (
     pattern = oyGetFilterNodeDefaultPatternFromPolicy ( base_pattern,
                                                         select_core,
                                                         oyAllocateFunc_ );
-    core = oyFilterCore_NewWith( pattern, options, object );
+    if(!pattern)
+    {
+      WARNc1_S("no pattern from policy module for base_pattern obtained: \"%s\"", oyNoEmptyString_m_(base_pattern) );
+    } else
+      core = oyFilterCore_NewWith( pattern, options, object );
   }
   if(!core)
     oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*) node,
-                     OY_DBG_FORMAT_ "could not create new core: %s",
+                     OY_DBG_FORMAT_ "could not create new core: \"%s\" \"%s\"",
                      OY_DBG_ARGS_,
                      oyNoEmptyString_m_(pattern),
                      oyNoEmptyString_m_(base_pattern) );
