@@ -37,7 +37,6 @@
 
 /* --- internal definitions --- */
 
-#define CMM_NICK "qarz"
 #define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 
 /* QARZ_MONITOR_REGISTRATION */
@@ -821,7 +820,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
         /** 3.1.5 construct a oyNAME_NAME string */
         if(oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
-          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "device_rectangle" );
+          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "device_rectangle", oyNAME_PATTERN );
           r = (oyRectangle_s*) oyOption_GetStruct( o, oyOBJECT_RECTANGLE_S );
 
           text = 0; tmp = 0;
@@ -830,7 +829,7 @@ int            qarzConfigs_Modify    ( oyConfigs_s       * devices,
           STRING_ADD( text, tmp );
           oyOption_Release( &o );
 
-          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "icc_profile" );
+          o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "icc_profile", oyNAME_PATTERN );
 
           if( o )
           {

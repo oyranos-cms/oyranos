@@ -30,6 +30,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#define CMM_NICK "qarz"
+
 /** @internal
  *  platformdependent */
 typedef struct {
