@@ -1749,14 +1749,14 @@ oyTESTRESULT_e testDeviceLinkProfile ()
   }
 
   fn = oyProfile_GetFileName( dl, 0 );
-  if(strcmp(fn,prof_fn) == 0)
+  if(fn && prof_fn && strcmp(fn,prof_fn) == 0)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyProfile_GetFileName(dl, 0): %s", fn );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyProfile_GetFileName(dl, 0): %s  %s", oyNoEmptyString_m_(fn), prof_fn );
+    "oyProfile_GetFileName(dl, 0): %s  %s", oyNoEmptyString_m_(fn), oyNoEmptyString_m_(prof_fn) );
   }
 
   fn = oyProfile_GetFileName( dl, 1 );
@@ -5220,9 +5220,12 @@ oyTESTRESULT_e testICCsCheck()
   }
 
   i = 0;
-  while(list[i])
-    free(list[i++]);
-  free(list);
+  if(list)
+  {
+    while(list[i])
+      free(list[i++]);
+    free(list);
+  }
 
   return result;
 }
