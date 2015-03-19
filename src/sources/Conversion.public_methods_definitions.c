@@ -367,8 +367,11 @@ oyConversion_s * oyConversion_CreateFromImage (
 oyFilterGraph_s  * oyConversion_GetGraph (
                                        oyConversion_s    * conversion )
 {
-  return oyFilterGraph_FromNode(
+  if(conversion)
+    return oyFilterGraph_FromNode(
                   (oyFilterNode_s*)(((oyConversion_s_*)conversion)->input), 0 );
+  else
+    return NULL;
 }
 
 /** Function  oyConversion_GetImage
