@@ -1270,7 +1270,13 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
   oyX1Monitor_s * disp = 0;
 
   DBG_PROG_START
-
+	
+  if(display_name && isdigit(display_name[0]))
+  {
+      DBG_PROG_ENDE
+      return disp;
+  }
+	  
   disp = oyAllocateFunc_( sizeof(oyX1Monitor_s) );
   error = !disp;
   if(error <= 0)
