@@ -798,9 +798,12 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
         char * xcalib = oyFindApplication( "xcalib" );
         if(xcalib)
           error = system(text);
+      /* OS X handles VGCT fine, no need for xcalib */
+#if !defined(__APPLE__)
         else
           oyMessageFunc_p( oyMSG_ERROR, NULL,"xcalib (calibration loader): %s",
             _("program is not properly installed or missed") );
+#endif
       }
       if(error &&
          error != 65280)
