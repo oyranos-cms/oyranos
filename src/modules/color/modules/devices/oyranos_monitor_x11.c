@@ -1271,7 +1271,8 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
 
   DBG_PROG_START
 	
-  if(display_name && isdigit(display_name[0]))
+  if(display_name && 
+     (isdigit(display_name[0]) || strchr(display_name, ':') == NULL))
   {
       DBG_PROG_ENDE
       return disp;
