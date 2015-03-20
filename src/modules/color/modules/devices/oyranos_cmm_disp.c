@@ -25,6 +25,9 @@
 #ifdef oyX1
 # include "oyranos_monitor_internal_x11.h"
 #endif
+#ifdef qarz
+# include "oyranos_monitor_internal_cs.h"
+#endif
 #include "oyranos_monitor_internal.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
@@ -674,7 +677,11 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
                      XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE :
                      XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE,
 #else
+# ifdef qarz
+                     "ColorSync" : "Base",
+# else
                      "no XCM_X11 device":"no XCM_X11",
+# endif
 #endif
                      device_name );
             flags |= 0x01;
@@ -867,7 +874,11 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
                      XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE :
                      XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE,
 #else
+# ifdef qarz
+                     "ColorSync" : "Base",
+# else
                      "no XCM_X11 device":"no XCM_X11",
+# endif
 #endif
                      device_name );
 
