@@ -262,28 +262,27 @@ int main( int argc , char** argv )
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
                                 _("is a color profile administration tool for monitors"));
 
-#if !defined(__APPLE__) && !defined(_WIN32)
+#if defined(oyX1)
   if(!display_name)
   {
     WARNc_S( _("DISPLAY variable not set: giving up.") );
     error = 1;
     return error;
   }
-#endif
-
-  /* implicite selection for the most common default case */
-  if(!icc_profile_flags)
-    icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
-                                  OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
-                                                                 NULL, 0 );
 
   /* cut off the screen information */
   if(display_name &&
      (ptr = strchr(display_name,':')) != 0)
     if( (ptr = strchr(ptr, '.')) != 0 )
       ptr[0] = '\000';
+#endif
 
-
+  /* implicite selection for the most common default case */
+  if(!icc_profile_flags)
+    icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
+                                                              OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                                              NULL, 0 );  
+  
   {
     if(!erase && !unset && !list && !setup && !format &&
        !add_meta && !list_modules && !list_taxi)
@@ -307,6 +306,7 @@ int main( int argc , char** argv )
                                      "properties", OY_CREATE_NEW );
       error = oyOptions_SetFromText( &options, "//"OY_TYPE_STD"/config/edid",
                                        "1", OY_CREATE_NEW );
+#if defined(oyX1)
       if(server)
         error = oyOptions_SetFromText( &options,
                                        "//"OY_TYPE_STD"/config/device_name",
@@ -315,6 +315,7 @@ int main( int argc , char** argv )
         error = oyOptions_SetFromText( &options,
                                        "//"OY_TYPE_STD"/config/display_name",
                                        display_name, OY_CREATE_NEW );
+#endif
       error = oyOptions_SetFromInt( &options,
                                     "//" OY_TYPE_STD "/icc_profile_flags",
                                     icc_profile_flags, 0, OY_CREATE_NEW );
@@ -466,10 +467,12 @@ int main( int argc , char** argv )
         error = oyOptions_SetFromText( &options,
                                        "//"OY_TYPE_STD"/config/device_name",
                                        oy_display_name, OY_CREATE_NEW );
+#if defined(oyX1)
       else
         error = oyOptions_SetFromText( &options,
                                        "//"OY_TYPE_STD"/config/display_name",
                                        display_name, OY_CREATE_NEW );
+#endif
       error = oyOptions_SetFromInt( &options,
                                     "//" OY_TYPE_STD "/icc_profile_flags",
                                     icc_profile_flags, 0, OY_CREATE_NEW );
@@ -828,9 +831,11 @@ int main( int argc , char** argv )
       error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "list", OY_CREATE_NEW );
+#if defined(oyX1)
       error = oyOptions_SetFromText( &options,
                                      "//"OY_TYPE_STD"/config/display_name",
                                      display_name, OY_CREATE_NEW );
+#endif
       error = oyOptions_SetFromInt( &options,
                                     "//" OY_TYPE_STD "/icc_profile_flags",
                                     icc_profile_flags, 0, OY_CREATE_NEW );
