@@ -320,6 +320,26 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
           api->release( (oyStruct_s**)&api );
       }
 
+      /* sort by highest rank value first */
+      {
+        int32_t * ranks = NULL, i;
+        oyAllocHelper_m_( ranks, int32_t, rank_list_n+1, 0, goto clean );
+        for(i = 0; i < rank_list_n; ++i)
+        {
+          int32_t r = rank_list2_[i];
+          ranks[i] = r;
+        }
+
+        oyCMMapiFilters_Sort( apis2, ranks );
+
+        for(i = 0; i < rank_list_n; ++i)
+        {
+          uint32_t r = ranks[i];
+          rank_list2_[i] = r;
+        }
+        oyFree_m_( ranks );
+      }
+
       if(rank_list)
         *rank_list = rank_list2_;
       if(rank_list_)
