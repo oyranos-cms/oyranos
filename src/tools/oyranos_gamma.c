@@ -123,7 +123,7 @@ int main( int argc , char** argv )
 #endif
   oyI18NInit_();
 
-  STRING_ADD( device_class, "monitor" );
+  STRING_ADD( device_class, "monitor._native" );
 
   if(getenv("DISPLAY"))
     display_name = strdup(getenv("DISPLAY"));
