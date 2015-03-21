@@ -44,7 +44,12 @@
 
 /* MONITOR_REGISTRATION -------------------------------------------------*/
 
-#define MONITOR_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "device" OY_SLASH "config.icc_profile.monitor." CMM_NICK
+#define MONITOR_REGISTRATION_BASE OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "device" OY_SLASH "config.icc_profile.monitor."
+#if defined(qarz) || defined(wcsD)
+#define MONITOR_REGISTRATION MONITOR_REGISTRATION_BASE "native." CMM_NICK
+#else
+#define MONITOR_REGISTRATION MONITOR_REGISTRATION_BASE CMM_NICK
+#endif
 
 oyMessage_f _msg = 0;
 
