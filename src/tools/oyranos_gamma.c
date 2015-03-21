@@ -494,6 +494,9 @@ int main( int argc , char** argv )
                           * result = 0;
 
               error = oyOptions_MoveIn( opts, &o, -1 );
+              error = oyOptions_SetFromInt( &opts,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    icc_profile_flags, 0, OY_CREATE_NEW );
               oyOptions_Handle( "///create_profile.icc",
                                 opts,"create_profile.icc_profile.color_matrix",
                                 &result );
