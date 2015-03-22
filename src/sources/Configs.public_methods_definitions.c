@@ -417,6 +417,7 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
   oyCMMapi8_s_ * cmm_api8 = 0;
   const char * module_reg = NULL;
   oyDB_s * db;
+  char * db_registration = NULL;
 
   module_reg = oyOptions_FindString( options, "module", 0 );
   if(!module_reg)
@@ -435,12 +436,19 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
                                                      oyOBJECT_CMM_API8_S );
     error *= -1;
 
-    db = oyDB_newFrom( registration, oySCOPE_USER_SYS, oyAllocateFunc_ );
+    db_registration = oyStringCopy( registration, oyAllocateFunc_ );
+    if(strrchr( db_registration, '.' ))
+    {
+      char * t = strchr( db_registration, '.' );
+      t[0] = 0;
+    }
+      
+    db = oyDB_newFrom( db_registration, oySCOPE_USER_SYS, oyAllocateFunc_ );
 
     {
       char * key = NULL;
       /** 3.) obtain the directory structure for configurations */
-      key_set_names = oyDB_getKeyNamesOneLevel( db, registration, &n );
+      key_set_names = oyDB_getKeyNamesOneLevel( db, db_registration, &n );
 
       if(error <= 0)
       for(j = 0; j < n; ++j)
@@ -489,6 +497,8 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
 
     oyDB_release( &db );
     oyStringListRelease_( &texts, count, oyDeAllocateFunc_ );
+    if(db_registration)
+      oyFree_m_( db_registration );
   }
 
   if(configs)
