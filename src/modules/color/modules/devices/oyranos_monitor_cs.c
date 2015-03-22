@@ -378,6 +378,12 @@ int      qarzMonitorProfileSetup     ( const char        * display_name,
 
       if( screenID && !err )
         err = CMSetProfileByAVID ( (CMDisplayIDType)screenID, prof );
+      
+      if(err)
+      {
+        WARNc3_S("Could not set profile for monitor: \"%s\" %s %d", display_name, profile_fullname, (int)err );
+        error = err;
+      }
 
       CMCloseProfile( prof );
     }
