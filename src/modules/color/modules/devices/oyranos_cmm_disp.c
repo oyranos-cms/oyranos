@@ -839,7 +839,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
               o = oyOption_FromRegistration( MONITOR_REGISTRATION OY_SLASH
                                 "icc_profile.fallback", 0 );
             error = -1;
-          } else
+          } else if(!has)
           {
             data = GetMonitorProfile( device_name, flags, &size,
                                           allocateFunc );
@@ -868,7 +868,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
             if(t_err > 0)
               error = t_err;
           }
-          else
+          else if(!has)
           /** Warn and return issue on not found profile. */
           {
             _msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
