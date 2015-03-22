@@ -312,7 +312,8 @@ icProfileClassSignature oyDeviceSigGet(oyConfig_s        * device )
  *  @brief   activate the device using the stored configuration
  *
  *  @param[in]     device              the device
- *  @param[in]     options             additional options
+ *  @param[in]     options             additional options,
+ *                                     - "skip_ask_for_profile == "yes" - skips oyDeviceAskProfile2() call; useful for systems, where no empty profile is possible like CS
  *  @return                            error
  *
  *  @version Oyranos: 0.9.6
@@ -338,7 +339,8 @@ OYAPI int  OYEXPORT
 
   {
     /* 1. ask for the profile the device is setup with */
-    error = oyDeviceAskProfile2( device, options, &p );
+    if(!oyOptions_FindString( options, "skip_ask_for_profile", "yes" ))
+      error = oyDeviceAskProfile2( device, options, &p );
     if(p)
     {
       oyProfile_Release( &p );
