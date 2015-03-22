@@ -819,6 +819,9 @@ int main( int argc , char** argv )
 
       if(setup)
       {
+        if(monitor_profile)
+          error = oyOptions_SetFromText( &options,
+                                      "//"OY_TYPE_STD"/config/skip_ask_for_profile", "yes", OY_CREATE_NEW );
         if(verbose)
           fprintf( stdout, "oyDeviceSetup()\n" );
         oyDeviceSetup( device, options );
