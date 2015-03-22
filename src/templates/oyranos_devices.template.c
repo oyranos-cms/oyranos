@@ -539,10 +539,6 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
     error = oyConfigs_FromDomain( oyConfigPriv_m(device)->registration, options, 0, 0 );
 
     oyOptions_Release( &options );
-    /* 3.1 send the query to a module */
-    error = oyDeviceBackendCall( device, options );
-
-    oyOptions_Release( &options );
     if(profile_name)
       oyFree_m_( profile_name );
   }
