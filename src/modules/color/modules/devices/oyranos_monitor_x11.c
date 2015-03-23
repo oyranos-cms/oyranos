@@ -567,6 +567,9 @@ oyX1GetAllScreenNames_          (const char *display_name,
   disp = oyX1Monitor_newFrom_( display_name, 0 );
   if(!disp)
   {
+#ifdef __APPLE__
+    if(oy_debug)
+#endif
     oyX1_msg( oyMSG_WARN, NULL, OY_DBG_FORMAT_
               "No disp object", OY_DBG_ARGS_ );
     return 0;

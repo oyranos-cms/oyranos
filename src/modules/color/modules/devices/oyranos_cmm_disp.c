@@ -644,6 +644,9 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
           rect = GetRectangleFromDevice( device_name );
           if(!rect)
           {
+#if defined(__APPLE__) && !defined(qarz)
+            if(oy_debug)
+#endif
             WARNc1_S( "Could not obtain rectangle information for %s",
                       device_name );
           } else
