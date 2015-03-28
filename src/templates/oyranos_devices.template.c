@@ -3213,7 +3213,7 @@ oyFilterNode_s *   oyFilterNode_FromOptions (
   }
   if(!core)
     oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*) node,
-                     OY_DBG_FORMAT_ "could not create new core: %s",
+                     OY_DBG_FORMAT_ "could not create new core: \"%s\" \"%s\"",
                      OY_DBG_ARGS_,
                      oyNoEmptyString_m_(pattern),
                      oyNoEmptyString_m_(base_pattern) );
