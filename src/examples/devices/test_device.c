@@ -601,6 +601,8 @@ int main(int argc, char *argv[])
       error = oyOptions_SetFromInt( &options,
                                     "//" OY_TYPE_STD "/icc_profile_flags",
                                     flags, 0, OY_CREATE_NEW );
+      error = oyOptions_SetFromText( &options,
+                                      "//"OY_TYPE_STD"/config/skip_ask_for_profile", "yes", OY_CREATE_NEW );
       error = oyDeviceSetup( c, options );
     }
     else if(assign)
@@ -613,7 +615,14 @@ int main(int argc, char *argv[])
       oyDeviceUnset( c );
 
     if(setup)
+    {
+      error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    flags, 0, OY_CREATE_NEW );
+      error = oyOptions_SetFromText( &options,
+                                      "//"OY_TYPE_STD"/config/skip_ask_for_profile", "yes", OY_CREATE_NEW );
       oyDeviceSetup( c, options );
+    }
 
     if(erase)
       oyConfig_EraseFromDB( c, scope );
