@@ -262,19 +262,24 @@ int main( int argc , char** argv )
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
                                 _("is a color profile administration tool for monitors"));
 
-#if defined(oyX1)
-  if(!display_name)
+#ifdef HAVE_X11
+  if(module_name && strstr(module_name, "oyX1"))
   {
-    WARNc_S( _("DISPLAY variable not set: giving up.") );
-    error = 1;
-    return error;
-  }
+#endif
+    if(!display_name)
+    {
+      WARNc_S( _("DISPLAY variable not set: giving up.") );
+      error = 1;
+      return error;
+    }
 
-  /* cut off the screen information */
-  if(display_name &&
-     (ptr = strchr(display_name,':')) != 0)
-    if( (ptr = strchr(ptr, '.')) != 0 )
-      ptr[0] = '\000';
+    /* cut off the screen information */
+    if(display_name &&
+       (ptr = strchr(display_name,':')) != 0)
+      if( (ptr = strchr(ptr, '.')) != 0 )
+        ptr[0] = '\000';
+#ifdef HAVE_X11
+  }
 #endif
 
   /* implicite selection for the most common default case */
@@ -306,7 +311,10 @@ int main( int argc , char** argv )
                                      "properties", OY_CREATE_NEW );
       error = oyOptions_SetFromText( &options, "//"OY_TYPE_STD"/config/edid",
                                        "1", OY_CREATE_NEW );
-#if defined(oyX1)
+#ifdef HAVE_X11
+      if(module_name && strstr(module_name, "oyX1"))
+      {
+#endif
       if(server)
         error = oyOptions_SetFromText( &options,
                                        "//"OY_TYPE_STD"/config/device_name",
@@ -315,6 +323,8 @@ int main( int argc , char** argv )
         error = oyOptions_SetFromText( &options,
                                        "//"OY_TYPE_STD"/config/display_name",
                                        display_name, OY_CREATE_NEW );
+#ifdef HAVE_X11
+      }
 #endif
       error = oyOptions_SetFromInt( &options,
                                     "//" OY_TYPE_STD "/icc_profile_flags",
@@ -467,12 +477,14 @@ int main( int argc , char** argv )
         error = oyOptions_SetFromText( &options,
                                        "//"OY_TYPE_STD"/config/device_name",
                                        oy_display_name, OY_CREATE_NEW );
-#if defined(oyX1)
+#ifdef HAVE_X11
       else
+      if(module_name && strstr(module_name, "oyX1"))
+#endif
         error = oyOptions_SetFromText( &options,
                                        "//"OY_TYPE_STD"/config/display_name",
                                        display_name, OY_CREATE_NEW );
-#endif
+
       error = oyOptions_SetFromInt( &options,
                                     "//" OY_TYPE_STD "/icc_profile_flags",
                                     icc_profile_flags, 0, OY_CREATE_NEW );
@@ -834,11 +846,13 @@ int main( int argc , char** argv )
       error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "list", OY_CREATE_NEW );
-#if defined(oyX1)
-      error = oyOptions_SetFromText( &options,
+#ifdef HAVE_X11
+      if(module_name && strstr(module_name, "oyX1"))
+#endif
+        error = oyOptions_SetFromText( &options,
                                      "//"OY_TYPE_STD"/config/display_name",
                                      display_name, OY_CREATE_NEW );
-#endif
+
       error = oyOptions_SetFromInt( &options,
                                     "//" OY_TYPE_STD "/icc_profile_flags",
                                     icc_profile_flags, 0, OY_CREATE_NEW );
