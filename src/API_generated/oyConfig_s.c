@@ -410,7 +410,7 @@ OYAPI int  OYEXPORT oyConfig_EraseFromDB (
         while( (text = oyStrchr_(++text, OY_SLASH_C)) != 0)
           ++i;
 
-      /* A key has one slash more. Cut the last slash off.  */
+      /** If a key has one slash more than 4. Cut the last slash off.  */
       if(i == 5)
       {
         tmp = oyStringCopy_( oyOption_GetRegistration( o ), oyAllocateFunc_ );
@@ -422,6 +422,13 @@ OYAPI int  OYEXPORT oyConfig_EraseFromDB (
     }
     else
       text = s->registration;
+
+    /** Cut off any attributes to the config::registration. */
+    if(!tmp)
+      text = tmp = oyStringCopy( text, oyAllocateFunc_ );
+    t = oyStrrchr_(tmp, '.');
+    if(t)
+      t[0] = 0;
 
     error = oyDBEraseKey_( text, scope );
 
