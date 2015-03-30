@@ -487,6 +487,8 @@ int oyProfile_GetHash_        ( oyProfile_s_      * s,
 }
 /* } Static helper functions */
 
+#include "oyranos_check.h"
+
 /** @internal
  *  Function  oyProfile_FromMemMove_
  *  @memberof oyProfile_s
@@ -494,7 +496,7 @@ int oyProfile_GetHash_        ( oyProfile_s_      * s,
  *
  *  @param[in]    size           buffer size
  *  @param[in]    block          pointer to memory containing a profile
- *  @param[in]    flags          for future use
+ *  @param[in]    flags          pass through
  *  @param[out]   error_return   error codes
  *  @param[in]    object         the optional base
  *
@@ -512,6 +514,20 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
 
   if(block  && *block && size)
   {
+    if(size > 128)
+    {
+      int r = oyCheckProfileMem_( *block, 128, 0, flags );
+      if(r)
+      {
+        DBG_PROG1_S( "check failed %d", r )
+        return 0;
+      }
+    } else
+    {
+      WARNc1_S( "too small for a ICC profile %d", size )
+      return 0;
+    }    
+
     s->block_ = *block;
     *block = 0;
     if(!s->block_)
