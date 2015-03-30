@@ -1678,6 +1678,11 @@ int   oyCompareRanks_                ( const void       * rank1,
             // remove any device entries
             oyDeviceUnset( device );
             // update the device from the newly added Oyranos data base settings
+            error = oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    flags, 0, OY_CREATE_NEW );
+            error = oyOptions_SetFromText( &options,
+                                      "//"OY_TYPE_STD"/config/skip_ask_for_profile", "yes", OY_CREATE_NEW );
             oyDeviceSetup( device, options );
             printf( "assigned -> %s\n", strrchr( filename, OY_SLASH_C ) + 1 );
           }
