@@ -470,7 +470,7 @@ int main(int argc, char *argv[])
     char separator;
 
     /* get all configuration filters */
-    oyConfigDomainList("//"OY_TYPE_STD"/config", &texts, &count,&rank_list ,0 );
+    oyConfigDomainList("//"OY_TYPE_STD"/device", &texts, &count,&rank_list ,0 );
     for( i = 0; i < count; ++i )
     {
       attributes_n = 0;
