@@ -1309,6 +1309,7 @@ oyTESTRESULT_e testInterpolation ()
 }
 
 #include "oyProfile_s.h"
+#include "oyranos_icc.h"
 
 oyTESTRESULT_e testProfile ()
 {
@@ -1318,6 +1319,7 @@ oyTESTRESULT_e testProfile ()
   oyPointer data;
   oyProfile_s * p_a,
               * p_b;
+  uint32_t icc_profile_flags = OY_ICC_VERSION_2;
 
   oyExportReset_(EXPORT_SETTING);
 
@@ -1387,7 +1389,7 @@ oyTESTRESULT_e testProfile ()
   oyOptions_s * opts = oyOptions_New(0),
               * r = 0;
 
-  //oyOptions_SetFromInt( &opts, "///icc_profile_flags", icc_profile_flags, 0, OY_CREATE_NEW );
+  oyOptions_SetFromInt( &opts, "///icc_profile_flags", icc_profile_flags, 0, OY_CREATE_NEW );
   oyOptions_MoveIn( opts, &matrix, -1 );
   const char * reg = "//"OY_TYPE_STD"/create_profile.color_matrix.icc";
   oyOptions_Handle( reg, opts, "create_profile.icc_profile.color_matrix",
@@ -1412,6 +1414,18 @@ oyTESTRESULT_e testProfile ()
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyOptions_Handle( \"create_profile.icc_profile.color_matrix\")       " );
+  }
+
+  icSignature vs = (icUInt32Number) oyValueUInt32( (icUInt32Number) oyProfile_GetSignature( p, oySIGNATURE_VERSION ) );
+  char * v = (char*)&vs;
+  if( v[0] == 2 )
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyOptions_Handle( \"create_profile.icc_profile.color_matrix\") version: %d.%d.%d", (int)v[0], (int)v[1]/16, (int)v[1]%16 );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_Handle( \"create_profile.icc_profile.color_matrix\") version: %d.%d.%d", (int)v[0], (int)v[1]/16, (int)v[1]%16 );
   }
 
   FILE * fp = fopen( ICC_TEST_NAME".icc", "rb" );
@@ -1456,8 +1470,31 @@ oyTESTRESULT_e testProfile ()
     PRINT_SUB( oyTESTRESULT_FAIL,
     "oyProfile_FromFile( OY_SKIP_NON_DEFAULT_PATH ) failed" );
   }
+  oyProfile_Release( &p );
 
-  
+  const char * names[] = {"sRGB.icc",
+                          "sRGB",
+                          "7fb30d688bf82d32a0e748daf3dba95d",
+                          "web" };
+  for(int i = 0; i < 4; ++i)
+  {
+    p = oyProfile_FromName( names[i], icc_profile_flags, NULL );
+
+    icSignature vs = (icUInt32Number) oyValueUInt32( (icUInt32Number) oyProfile_GetSignature( p, oySIGNATURE_VERSION ) );
+    char * v = (char*)&vs;
+
+    if( p && v[0] == 2 )
+    {
+      PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyProfile_FromName( \"%s\") version: %d.%d.%d", names[i], (int)v[0], (int)v[1]/16, (int)v[1]%16 );
+    } else
+    {
+      PRINT_SUB( oyTESTRESULT_FAIL,
+      "oyProfile_FromName( \"%s\") version: %d.%d.%d", names[i], (int)v[0], (int)v[1]/16, (int)v[1]%16 );
+    }
+
+    oyProfile_Release( &p );
+  }
 
   return result;
 }
