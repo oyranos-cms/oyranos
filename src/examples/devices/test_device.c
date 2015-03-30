@@ -66,8 +66,11 @@ void displayHelp(char ** argv)
   printf("         --class \t%s\n", _("print the modules device class"));
   printf("\n");
   printf("  %s\n",               _("List devices:"));
-  printf("      %s -l -c class [-d %s | --device-name %s] [-v | --short] [-r]\n", argv[0], _("NUMBER"), _("NAME"));
+  printf("      %s -l -c class [-d %s | --device-name %s] [-v | --short | --path] [-r]\n", argv[0], _("NUMBER"), _("NAME"));
+                        /* --short argument */
   printf("         --short \t%s\n", _("print only the profile name"));
+                        /* --path argument */
+  printf("         --path  \t%s\n", _("print the full file name"));
   printf("\n");
   printf("  %s\n",               _("List local DB profiles for selected device:"));
   printf("      %s --list-profiles -c class -d number [--show-non-device-related]\n", argv[0]);
@@ -220,6 +223,8 @@ int main(int argc, char *argv[])
                         else if(OY_IS_ARG("show-non-device-related"))
                         { show_non_device_related = 1; i=100; break; }
                         else if(OY_IS_ARG("class"))
+                        { simple = 2; i=100; break;}
+                        else if(OY_IS_ARG("path"))
                         { simple = 2; i=100; break;}
                         else if(OY_IS_ARG("short"))
                         { simple = 1; i=100; break;}
@@ -387,7 +392,7 @@ int main(int argc, char *argv[])
           data = 0;
           filename = oyProfile_GetFileName( prof, -1 );
           oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
-                              "%s%s", filename ? (strrchr(filename,OY_SLASH_C) ? strrchr(filename,OY_SLASH_C)+1:filename) : OY_PROFILE_NONE,
+                              "%s%s", filename ? (simple == 1)?(strrchr(filename,OY_SLASH_C) ? strrchr(filename,OY_SLASH_C)+1:filename):filename : OY_PROFILE_NONE,
                               (i+1 == n) || device_pos != -1 ? "" : "\n" );
         }
         if(verbose)
