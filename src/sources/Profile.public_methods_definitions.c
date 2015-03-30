@@ -168,19 +168,22 @@ OYAPI oyProfile_s * OYEXPORT
     \endverbatim
  *
  *  @version Oyranos: 0.9.6
- *  @since   2014/05/06 (Oyranos: 0.9.6)
  *  @date    2014/05/06
+ *  @since   2014/05/06 (Oyranos: 0.9.6)
  */
-OYAPI oyProfile_s * OYEXPORT
-oyProfile_FromName            ( const char      * name,
+OYAPI oyProfile_s * OYEXPORT oyProfile_FromName (
+                                const char      * name,
                                 uint32_t          flags,
                                 oyObject_s        object)
 {
   oyProfile_s * s = NULL;
   uint32_t md5[4];
+  int old_oy_warn_ = oy_warn_;
 
   /* try file name */
+  oy_warn_ = 0;
   s = oyProfile_FromFile( name, flags, object );
+  oy_warn_ = old_oy_warn_;
 
   if(s)
     return s;
@@ -256,6 +259,9 @@ oyProfile_FromName            ( const char      * name,
       oyDeAllocateFunc_(names); names = 0;
     }
   }
+
+  if(!s)
+    WARNc2_S("%s \"%s\"", _("profile not found:"), name );
 
   return s;
 }
@@ -419,6 +425,9 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromMD5(
         if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
           /* ICC ID's are not relyable so we recompute it here */
           tmp = oyProfile_FromFile( names[i], flags, 0 );
+
+        if(!tmp)
+          continue;
 
         if(tmp->oy_->hash_ptr_)
           equal = memcmp( md5, tmp->oy_->hash_ptr_, OY_HASH_SIZE );
