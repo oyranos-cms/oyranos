@@ -894,7 +894,7 @@ OYAPI int OYEXPORT oyConfigs_Modify  ( oyConfigs_s       * configs,
     int i,j, attributes_n;
 
     // get all configuration filters
-    oyConfigDomainList("//"OY_TYPE_STD"/config", &texts, &count,&rank_list ,0 );
+    oyConfigDomainList("//"OY_TYPE_STD, &texts, &count,&rank_list ,0 );
     for( i = 0; i < count; ++i )
     {
       attributes_n = 0;
