@@ -42,10 +42,26 @@ ENDIF()
 
 # simple image viewer
 IF( FLTK_FOUND )
+  # OS X: fltk-1.3.3 with Cocoa is assumed
+  # Remove incompatible settings.
+  IF(${CMAKE_CXX_FLAGS} MATCHES "-arch i386")
+    STRING(REGEX REPLACE
+      "-arch i386(.+)" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}"
+    )
+  ENDIF()
+
+  IF(${CMAKE_EXE_LINKER_FLAGS} MATCHES "-arch i386")
+    STRING(REGEX REPLACE
+      "-arch i386(.+)" "" CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}"
+    )
+  ENDIF()
+
   ADD_EXECUTABLE( oyranos-image-display 
                   "${CMAKE_CURRENT_SOURCE_DIR}/image_display/image_display.cpp"
                   "${CMAKE_CURRENT_SOURCE_DIR}/image_display/GLee.c"
                 )
+  SET_PROPERTY(TARGET oyranos-image-display PROPERTY OSX_ARCHITECTURES x86_64)
+  SET_PROPERTY(TARGET oyranos-image-display PROPERTY OSX_ARCHITECTURES_DEBUG x86_64)
   TARGET_LINK_LIBRARIES ( oyranos-image-display oyranos ${EXTRA_LIBS}
                  ${FLTK_LIBRARIES} )
   INSTALL (TARGETS oyranos-image-display DESTINATION bin)
@@ -56,6 +72,8 @@ IF( FLTK_FOUND )
                   oyranos_config_fltk.cxx
                   ../../FL/Flmm_Tabs.cxx
                 )
+  SET_PROPERTY(TARGET oyranos-config-fltk PROPERTY OSX_ARCHITECTURES x86_64)
+  SET_PROPERTY(TARGET oyranos-config-fltk PROPERTY OSX_ARCHITECTURES_DEBUG x86_64)
   TARGET_LINK_LIBRARIES ( oyranos-config-fltk oyranos ${EXTRA_LIBS}
                  ${FLTK_LIBRARIES} )
   INSTALL (TARGETS oyranos-config-fltk DESTINATION bin)
