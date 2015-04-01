@@ -1216,7 +1216,10 @@ OYAPI const oyChar* OYEXPORT
        type == oyNAME_DESCRIPTION)
     {
       {
-        tag = oyProfile_GetTagById( (oyProfile_s*)s, icSigProfileDescriptionTag );
+        union { icTagSignature sig; char c[4]; } mluc_desc_v2 = { .c={'d','s','c','m'} };
+        tag = oyProfile_GetTagById( (oyProfile_s*)s, oyValueUInt32( mluc_desc_v2.sig ) );
+        if(!tag)
+          tag = oyProfile_GetTagById( (oyProfile_s*)s, icSigProfileDescriptionTag );
         texts = oyProfileTag_GetText( tag, &texts_n, "", 0,0,0);
 
         if(texts_n && texts[0] && texts[0][0])
