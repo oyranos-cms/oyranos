@@ -47,6 +47,7 @@ const char   * oyICCTagDescription   ( icTagSignature      sig );
 const char   * oyICCTagName          ( icTagSignature      sig );
 const char   * oyICCDeviceClassDescription ( icProfileClassSignature sig );
 const char   * oyICCPlatformDescription ( icPlatformSignature platform );
+const char   * oyICCCmmDescription   ( icSignature         sig );
 const char   * oyICCTagTypeName      ( icTagTypeSignature  sig );
 const char   * oyICCTechnologyDescription ( icTechnologySignature sig );
 const char   * oyICCChromaticityColorantDescription ( icSignature sig );

@@ -446,10 +446,10 @@ int main( int argc , char** argv )
       /* keep total number of chars equal to original for cli print */
       fprintf( stdout, "%s %u bytes\n",_("Size:            "), (unsigned)sig );
 
-      sig = oyValueUInt32(oyProfile_GetSignature(p,oySIGNATURE_CMM));
+      sig = oyProfile_GetSignature(p,oySIGNATURE_CMM);
       /* keep total number of chars equal to original for cli print */
-      fprintf( stdout, "%s %c%c%c%c\n",_("Cmm:             "),
-               f[0],f[1],f[2],f[3]);
+      fprintf( stdout, "%s %s\n",_("Cmm:             "),
+               oyICCCmmDescription(sig));
 
       /* keep total number of chars equal to original for cli print */
       fprintf( stdout, "%s %d.%d.%d\n",_("Version:         "),
