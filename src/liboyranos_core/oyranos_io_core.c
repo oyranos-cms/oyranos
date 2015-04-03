@@ -1690,7 +1690,7 @@ char**  oyLibPathsGet_( int             * count,
             if(!oyStringListHas_((const char**)paths,n,fp))
             {
               if(!oyIsDir_(fp))
-                WARNc4_S("%s %s:\"%s\"/\"%s\"",_("path is not readable"),
+                DBG_PROG4_S("%s %s:\"%s\"/\"%s\"",_("path is not readable"),
                          oyNoEmptyString_m_(vars[i]),
                          oyNoEmptyString_m_(full_name),
                          oyNoEmptyString_m_(subdir) );
