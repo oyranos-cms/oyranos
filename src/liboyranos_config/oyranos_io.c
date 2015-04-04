@@ -241,8 +241,12 @@ char **  oyProfilePathsGet_          ( int               * count,
 # if defined(__APPLE__)
 # define TestAndSetDefaultPATH( path ) \
   if(oyIsDir_( path )) \
-    oyStringListAddStaticString_ ( &path_names, count, path, oyAllocateFunc_, \
-                                   oyDeAllocateFunc_ );
+  { \
+    char * path_full = oyResolveDirFileName_(path); \
+    oyStringListAddStaticString_ ( &path_names, count, path_full, oyAllocateFunc_, \
+                                   oyDeAllocateFunc_ ); \
+    oyFree_m_(path_full); \
+  }
 
   TestAndSetDefaultPATH( CSSystemPATH );
   TestAndSetDefaultPATH( CSGlobalInstallPATH );
@@ -430,7 +434,7 @@ char **  oyProfileListGet_           ( const char        * colorsig,
   l.colorsig = colorsig;
 
   DBG_PROG_START
- 
+
   oy_warn_ = 0;
 
   l.names = 0;
