@@ -404,6 +404,15 @@ void oyShowMessage(int type, const char * show_text, int show_gui)
           {
             char * app = NULL,
                  * txt = NULL;
+#if defined(__APPLE__)
+            {
+              /* use a simple apple script dialog */
+              oyStringAddPrintf( &txt, 0,0,
+                "echo 'display dialog \"%s\"' > $TMPDIR/a.scpt ; osacompile -o $TMPDIR/a.app $TMPDIR/a.scpt ; open $TMPDIR/a.app; sleep 1; #rm -rv $TMPDIR/a.app $TMPDIR/a.scpt", show_text );
+              printf("%s\n", txt );
+              app = oyStringCopy("osacompile", 0);
+            }
+#endif
             if(!app && (app = oyFindApplication( "notify-send" )) != NULL)
             {
               STRING_ADD( txt, "notify-send -i 'dialog-information' 'Oyranos' \"");
