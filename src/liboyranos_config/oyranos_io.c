@@ -435,6 +435,16 @@ char **  oyProfileListGet_           ( const char        * colorsig,
 
   DBG_PROG_START
 
+  if(oy_debug)
+  {
+    int i;
+    DBG_PROG_S("searching in following paths:");
+    for(i = 0; i < count; ++i)
+    {
+      oyMessageFunc_p( oyMSG_DBG, 0, "  %d: %s", i, path_names[i] );
+    }
+  }
+ 
   oy_warn_ = 0;
 
   l.names = 0;
