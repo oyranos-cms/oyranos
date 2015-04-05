@@ -479,7 +479,7 @@ OYAPI int  OYEXPORT
 #define OY_DOMAIN OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD
       o = oyOption_FromRegistration( OY_DOMAIN OY_SLASH "icc_profile", 0 );
 
-      p = oyProfile_FromFile( profile_name, icc_profile_flags, 0 );
+      p = oyProfile_FromName( profile_name, icc_profile_flags, 0 );
 
       if(p)
       {
@@ -893,7 +893,10 @@ OYAPI int  OYEXPORT
     oyDeviceProfileFromDB( device, &profile_name, 0 );
     if(profile_name)
     {
-      *profile = oyProfile_FromFile( profile_name, 0,0 );
+      int32_t icc_profile_flags = 0;
+
+      oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags );
+      *profile = oyProfile_FromName( profile_name, icc_profile_flags, 0 );
       oyDeAllocateFunc_( profile_name );
     }
   }
@@ -992,7 +995,7 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   }
 
   /** 3. load profile from file name argument */
-  p = oyProfile_FromFile( profile_name, 0, 0 );
+  p = oyProfile_FromName( profile_name, 0, 0 );
 
   /** 3.1 check for success of profile loading */
   error = !p;
