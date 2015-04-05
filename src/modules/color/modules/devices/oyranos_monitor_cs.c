@@ -347,7 +347,7 @@ int      qarzMonitorProfileSetup     ( const char        * display_name,
   if(profil_name)
   {
     DBG_PROG1_S( "profil_name = %s", profil_name );
-    prof = oyProfile_FromFile( profil_name, 0, 0 );
+    prof = oyProfile_FromName( profil_name, 0, 0 );
     profile_fullname = oyProfile_GetFileName( prof, -1 );
   }
 
@@ -404,8 +404,6 @@ int      qarzMonitorProfileUnset     ( const char        * display_name )
 
 
     {
-      CMError err = 0;
-      CMProfileRef prof=NULL;
       CGDirectDisplayID screenID = 0;
 
 
@@ -414,6 +412,8 @@ int      qarzMonitorProfileUnset     ( const char        * display_name )
       if(oy_debug)
         DBG2_S("Unset profile for monitor makes usually no sense: \"%s\" %d", display_name, (int)screenID );
 #ifdef QARZ_UNSET_MAKES_SENSE
+      CMError err = 0;
+      CMProfileRef prof=NULL;
       if( screenID && !err )
         err = CMSetProfileByAVID ( (CMDisplayIDType)screenID, prof );
 #endif

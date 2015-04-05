@@ -540,7 +540,7 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
           if(!p)
           {
             tmp = oyConfig_FindString( device, "profile_name", 0 );
-            p = oyProfile_FromFile( tmp, icc_profile_flags, 0 );
+            p = oyProfile_FromName( tmp, icc_profile_flags, 0 );
             tmp = 0;
           }
           if( p )
