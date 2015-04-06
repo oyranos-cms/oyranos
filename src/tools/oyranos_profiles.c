@@ -488,7 +488,7 @@ int    installProfile                ( oyProfile_s       * ip,
         oyOptions_SetFromText( &opts, "////path", path, OY_CREATE_NEW );
         if(is_device_profile)
           oyOptions_SetFromText( &opts, "////device", "1", OY_CREATE_NEW );
-        error = oyProfile_Install( ip, opts );
+        error = oyProfile_Install( ip, oySCOPE_USER, opts );
 
         if(error == oyERROR_DATA_AMBIGUITY)
         {
