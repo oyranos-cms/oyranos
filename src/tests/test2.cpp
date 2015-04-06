@@ -5467,10 +5467,10 @@ oyTESTRESULT_e testPaths()
   fprintf(stdout, "\n" );
 
   const char * type_names[] = {
-    "oyPATH_NONE", "oyPATH_ICC", "oyPATH_POLICY", "oyPATH_MODULE", "oyPATH_SCRIPT"
+    "oyPATH_NONE", "oyPATH_ICC", "oyPATH_POLICY", "oyPATH_MODULE", "oyPATH_SCRIPT", "oyPATH_CACHE"
   };
   oyPATH_TYPE_e types[] = {
-    oyPATH_NONE, oyPATH_ICC, oyPATH_POLICY, oyPATH_MODULE, oyPATH_SCRIPT
+    oyPATH_NONE, oyPATH_ICC, oyPATH_POLICY, oyPATH_MODULE, oyPATH_SCRIPT, oyPATH_CACHE
   };
   const char * scope_names[] = {
     "oySCOPE_USER_SYS", "oySCOPE_USER", "oySCOPE_SYSTEM", "oySCOPE_OYRANOS", "oySCOPE_MACHINE"
@@ -5479,7 +5479,7 @@ oyTESTRESULT_e testPaths()
     oySCOPE_USER_SYS, oySCOPE_USER, oySCOPE_SYSTEM, (oySCOPE_e)oySCOPE_OYRANOS, (oySCOPE_e)oySCOPE_MACHINE
   };
 
-  for(int i = 1; i <= 4; ++i)
+  for(int i = 1; i <= 5; ++i)
   for(int j = 1; j <= 4; ++j)
   {
   char * text = oyGetInstallPath( types[i], scopes[j], oyAllocateFunc_ );
