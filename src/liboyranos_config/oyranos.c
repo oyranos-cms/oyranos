@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2004-2011 (C) Kai-Uwe Behrmann
+ *            2004-2015 (C) Kai-Uwe Behrmann
  *
  *  @brief    public Oyranos API's
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -1063,6 +1063,34 @@ char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
         case oySCOPE_OYRANOS:
           path = C( OY_CMMDIR );
           break;
+        default:
+          path = NULL;
+      }
+      break;
+    }
+#define OY_CACHE_DIR "cache/color/openicc/device_link/"
+    case oyPATH_CACHE:
+    {
+      switch((int)scope)
+      {
+        case oySCOPE_USER:
+        {
+          char * t = NULL;
+          oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                             "~/." OY_CACHE_DIR );
+          path = C( t );
+          oyFree_m_(t);
+          break;
+        }
+        case oySCOPE_SYSTEM:
+        {
+          char * t = NULL;
+          oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                             "/var/" OY_CACHE_DIR );
+          path = C( t );
+          oyFree_m_(t);
+          break;
+        }
         default:
           path = NULL;
       }
