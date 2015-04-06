@@ -457,7 +457,12 @@ int                Configs_FromPattern (
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
       else
+      {
+        _msg(oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+                  "command: setup on device_name: %s \"%s\" ",
+                  OY_DBG_ARGS_, odevice_name, oprofile_name );
         error = MonitorProfileSetup( odevice_name, oprofile_name );
+      }
 
       goto cleanup;
 
@@ -474,7 +479,12 @@ int                Configs_FromPattern (
                 OY_DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
                 );
       else
+      {
+        _msg(oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+                  "command: unset on device_name: \"%s\"",
+                  OY_DBG_ARGS_, odevice_name );
         error = MonitorProfileUnset( odevice_name );
+      }
 
       goto cleanup;
     }
@@ -1008,8 +1018,12 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
                   oyOptions_GetText( options, oyNAME_NICK )
                   );
         else
+        {
+          _msg(oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+                  "command: setup on device_name: %s \"%s\" ",
+                  OY_DBG_ARGS_, device_name, oprofile_name );
           error = MonitorProfileSetup( device_name, oprofile_name );
-
+        }
         oyConfig_Release( &device );
       }
 
@@ -1049,7 +1063,12 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
                   oyOptions_GetText( options, oyNAME_NICK )
                   );
         else
+        {
+          _msg(oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+                  "command: unset on device_name: \"%s\"",
+                  OY_DBG_ARGS_, device_name );
           error = MonitorProfileUnset( device_name );
+        }
 
         oyConfig_Release( &device );
       }

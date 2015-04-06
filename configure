@@ -508,10 +508,11 @@ fi
 
 if [ "$debug" = "1" ]; then
   export CFLAGS="-Wall -g -DDEBUG=1 $CFLAGS"
+  export cmake_build_type="-DCMAKE_BUILD_TYPE=Debug"
   debug_flags=CFLAGS="\"$CFLAGS\""
 fi
 
 echo "$debug_flags cmake -DCMAKE_INSTALL_PREFIX=$prefix -DXDG_CONFIG_DIR=$xdgsysdir -DLIB_SUFFIX=$BARCH $ROOT_DIR"
-cmake -DCMAKE_INSTALL_PREFIX=$prefix -DXDG_CONFIG_DIR=$xdgsysdir -DLIB_SUFFIX=$BARCH $ROOT_DIR
+cmake -DCMAKE_INSTALL_PREFIX=$prefix -DXDG_CONFIG_DIR=$xdgsysdir -DLIB_SUFFIX=$BARCH $cmake_build_type  $ROOT_DIR
 
 exit 0

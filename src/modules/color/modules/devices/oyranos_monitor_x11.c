@@ -726,7 +726,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
   if(profil_name)
   {
     DBG_PROG1_S( "profil_name = %s", profil_name );
-    prof = oyProfile_FromFile( profil_name, 0, 0 );
+    prof = oyProfile_FromName( profil_name, 0, 0 );
     profile_fullname = oyProfile_GetFileName( prof, -1 );
   }
 

@@ -350,7 +350,7 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
 
           /* In case the devices do not support network transparent ICC profile
            * setup, then Oyranos uses the DB stored profile, e.g.
-           * @see oyDeviceProfileFromDB() + oyProfile_FromFile()
+           * @see oyDeviceProfileFromDB() + oyProfile_FromName()
            * Then the module will only report about color related options to
            * guide Oyranos core in selecting the correct profiles, matching
            * to the device and its driver settings.
