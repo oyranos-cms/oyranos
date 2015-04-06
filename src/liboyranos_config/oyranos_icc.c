@@ -669,27 +669,27 @@ const char *   oyICCCmmDescription ( icSignature sig )
 {
   switch ((unsigned int)sig)
   {
-    case 0x41444245: return _("Adobe CMM"); /* ADBE */
-    case 0x41434D53: return _("Agfa CMM"); /* ACMS */
-    case 0x6170706c: return _("Apple CMM"); /* appl */
-    case 0x43434D53: return _("ColorGear CMM"); /* CCMS */
-    case 0x5543434D: return _("ColorGear CMM Lite"); /* UCCM */
-    case 0x55434D53: return _("ColorGear CMM C"); /* UCMS */
-    case 0x45464920: return _("EFI CMM"); /* EFI  */
-    case 0x46462020: return _("Fuji Film CMM"); /* FF   */
-    case 0x48434d4d: return _("Harlequin RIP CMM"); /* HCMM */
-    case 0x6172676C: return _("Argyll CMS CMM"); /* argl */
-    case 0x44676f53: return _("LogoSync CMM"); /* LgoS */
-    case 0x48444d20: return _("Heidelberg CMM"); /* HDM  */
-    case 0x6C636d73: return _("Little CMS CMM"); /* lcms */
-    case 0x4b434d53: return _("Kodak CMS"); /* KCMS */
-    case 0x4d434d44: return _("Konica Minolta CMM"); /* MCML */
-    case 0x5349474E: return _("Mutho CMM"); /* SIGN */
-    case 0x52474d53: return _("DeviceLink CMM"); /* RGMS / Rolf Gierling Multitools */
-    case 0x53494343: return _("SampleICC CMM"); /* SICC */
-    case 0x33324254: return _("the imaging factory CMM"); /* 32BT */
-    case 0x57544720: return _("Ware To Go CMM"); /* WTG  */
-    case 0x7a633030: return _("Zoran CMM"); /* zc00 */
+    case 0x41444245: /* ADBE */ return _("Adobe CMM");
+    case 0x41434D53: /* ACMS */ return _("Agfa CMM");
+    case 0x6170706c: /* appl */ return _("Apple CMM");
+    case 0x43434D53: /* CCMS */ return _("ColorGear CMM");
+    case 0x5543434D: /* UCCM */ return _("ColorGear CMM Lite");
+    case 0x55434D53: /* UCMS */ return _("ColorGear CMM C");
+    case 0x45464920: /* EFI  */ return _("EFI CMM");
+    case 0x46462020: /* FF   */ return _("Fuji Film CMM");
+    case 0x48434d4d: /* HCMM */ return _("Harlequin RIP CMM");
+    case 0x6172676C: /* argl */ return _("Argyll CMS CMM");
+    case 0x44676f53: /* LgoS */ return _("LogoSync CMM");
+    case 0x48444d20: /* HDM  */ return _("Heidelberg CMM");
+    case 0x6C636d73: /* lcms */ return _("Little CMS CMM");
+    case 0x4b434d53: /* KCMS */ return _("Kodak CMS");
+    case 0x4d434d44: /* MCML */ return _("Konica Minolta CMM");
+    case 0x5349474E: /* SIGN */ return _("Mutho CMM");
+    case 0x52474d53: /* RGMS / Rolf Gierling Multitools */ return _("DeviceLink CMM");
+    case 0x53494343: /* SICC */ return _("SampleICC CMM");
+    case 0x33324254: /* 32BT */ return _("the imaging factory CMM");
+    case 0x57544720: /* WTG  */ return _("Ware To Go CMM");
+    case 0x7a633030: /* zc00 */ return _("Zoran CMM");
     default: { icUInt32Number i = oyValueUInt32(sig);
                static oyChar t[5];
                memcpy (t,(char*)&i, 4);
