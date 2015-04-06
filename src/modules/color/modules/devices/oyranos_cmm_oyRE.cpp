@@ -1192,7 +1192,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                   if(!tmpp)
                   {
                     error = oyOptions_SetFromText( &opts, "////device", "1", OY_CREATE_NEW );
-                    error = oyProfile_Install( p, opts );
+                    error = oyProfile_Install( p, oySCOPE_USER, opts );
                     oyOptions_Release( &opts);
                   } else
                     oyProfile_Release( &tmpp );

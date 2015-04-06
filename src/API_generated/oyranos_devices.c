@@ -426,7 +426,7 @@ OYAPI int  OYEXPORT
         {
           oyOptions_s * opts = 0;
           oyOptions_SetFromText( &opts, "////device", "1", OY_CREATE_NEW );
-          error = oyProfile_Install( p, opts );
+          error = oyProfile_Install( p, oySCOPE_USER, opts );
           oyOptions_Release( &opts );
           if(!error)
             profile_name = oyStringCopy_( oyProfile_GetFileName(p, -1),
@@ -1622,6 +1622,7 @@ int   oyCompareRanks_                ( const void       * rank1,
     // get all Taxi DB entries for a device
     oyConfigs_s * taxi_devices = 0;
     int error;
+    oySCOPE_e scope = oySCOPE_USER;
 
     error = oyDevicesFromTaxiDB( device, 0, &taxi_devices, 0 );
 
@@ -1656,7 +1657,7 @@ int   oyCompareRanks_                ( const void       * rank1,
           error = oyOptions_SetFromText( &options,
                                          "////device", "1",
                                          OY_CREATE_NEW );
-          error = oyProfile_Install( ip, options );
+          error = oyProfile_Install( ip, scope, options );
           oyOptions_Release( &options );
           if(!ip)
             printf( "No valid Profile obtained: %s\n", id );

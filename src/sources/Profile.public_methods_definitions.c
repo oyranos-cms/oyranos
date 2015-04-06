@@ -513,6 +513,8 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromTaxiDB (
  *  ICC profile path. For obtaining a useful path name see @ref path_names.
  *
  *  @param[in]     profile             the profile
+ *  @param[in]     scope               the scope to install to; default is 
+ *                                     oySCOPE_USER
  *  @param[in]     options
  *                                     - "path" can provide a string
  *                                       for manual path selection
@@ -533,6 +535,7 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromTaxiDB (
  *  @since   2012/01/13 (Oyranos: 0.9.1)
  */
 OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
+                                       oySCOPE_e           scope,
                                        oyOptions_s       * options )
 {
   int error = !profile ? oyERROR_USER : 0;
@@ -575,7 +578,11 @@ OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
       STRING_ADD( fn, oyOptions_FindString( options, "path", 0 ) );
       STRING_ADD( fn, OY_SLASH );
     } else
-      STRING_ADD( fn, OY_USERCOLORDATA OY_SLASH OY_ICCDIRNAME OY_SLASH );
+    {
+      fn = oyGetInstallPath( oyPATH_ICC, scope, oyAllocateFunc_ );
+      if(fn && fn[ strlen(fn) - 1 ] != OY_SLASH_C)
+        STRING_ADD( fn, OY_SLASH );
+    }
 
     /** 1.2 for "device" = "1" option add 
      *      xxx/devices/device_class_description_xxx/ */

@@ -29,6 +29,7 @@ OYAPI oyProfile_s * OYEXPORT
                                        oyOptions_s       * options,
                                        oyObject_s          object );
 OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
+                                       oySCOPE_e           scope,
                                        oyOptions_s       * options );
 OYAPI int OYEXPORT
          oyProfile_GetChannelsCount ( oyProfile_s * color );
