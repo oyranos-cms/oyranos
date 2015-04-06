@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2004-2010 (C) Kai-Uwe Behrmann
+ *            2004-2015 (C) Kai-Uwe Behrmann
  *
  *  @brief    public Oyranos API's
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -38,7 +38,8 @@ typedef enum {
   oyPATH_ICC       = 0x01,             /**< ICC profile path */
   oyPATH_POLICY    = 0x02,             /**< policy data */
   oyPATH_MODULE    = 0x04,             /**< module data */
-  oyPATH_SCRIPT    = 0x08
+  oyPATH_SCRIPT    = 0x08,
+  oyPATH_CACHE     = 0xf0
 } oyPATH_TYPE_e;
 
 /** @brief Select Scope for Installation or Configurations
