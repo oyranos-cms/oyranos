@@ -49,6 +49,6 @@ CONFIGURE_FILE (
 
 INSTALL ( FILES
 		"${CMAKE_CURRENT_BINARY_DIR}/OyranosConfig.cmake"
-		DESTINATION lib${LIB_SUFFIX}/oyranos/cmake COMPONENT dev
+		DESTINATION lib${LIB_SUFFIX}/cmake/oyranos COMPONENT dev
 	)
 
