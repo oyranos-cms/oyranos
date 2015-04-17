@@ -9,5 +9,5 @@ ADD_SUBDIRECTORY( color/modules )
 
 # --- meta modules ---
 
-ADD_SUBDIRECTORY( oyranos )
+ADD_SUBDIRECTORY( oyranos-meta )
 
