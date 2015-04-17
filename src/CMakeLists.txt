@@ -278,7 +278,7 @@ ADD_SUBDIRECTORY( examples )
 
 
 # versions for libraries
-SET_TARGET_PROPERTIES( oyranos_core oyranos_object oyranos_modules oyranos_config oyranos
+SET_TARGET_PROPERTIES( oyranos_core oyranos_object oyranos_modules oyranos_config ${PROJECT_NAME}
     PROPERTIES VERSION   ${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR}.${OYRANOS_VERSION_MICRO}
                SOVERSION ${OYRANOS_VERSION_MAJOR}
                      )
