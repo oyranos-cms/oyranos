@@ -1,11 +1,11 @@
 prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}/bin
-libdir=${prefix}/lib@LIB_SUFFIX@
+libdir=${prefix}/@LIB_DIR@
 includedir=${prefix}/include/@TARGET_INCLUDE_FOLDER@
 
 Name: @PACKAGE_NAME@
 Description: @PACKAGE_DESCRIPTION@
 Version: @OYRANOS_VERSION@
-Libs: -L${libdir} -l@PACKAGE_NAME@ -l@PACKAGE_NAME@_config -l@PACKAGE_NAME@_modules -l@PACKAGE_NAME@_object -l@PACKAGE_NAME@_core
-Cflags: -I${includedir}
+Libs: @GCC_LINK_PATH_FLAG@${libdir} @GCC_LINK_LIB_FLAG@@PROJECT_NAME@ @GCC_LINK_LIB_FLAG@@PROJECT_NAME@Config @GCC_LINK_LIB_FLAG@@PROJECT_NAME@Modules @GCC_LINK_LIB_FLAG@@PROJECT_NAME@Object @GCC_LINK_LIB_FLAG@@PROJECT_NAME@Core
+Cflags: @OYRANOS_INCLUDE_FLAGS@
 Libs.private: @PKG_CONFIG_PRIVATE_ELEKTRA@ @ELEKTRA_PC_LDFLAGS@
