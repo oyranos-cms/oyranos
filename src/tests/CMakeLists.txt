@@ -2,7 +2,7 @@
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_core/" )
 ADD_EXECUTABLE( test_core "${CMAKE_CURRENT_SOURCE_DIR}/test_core.c" )
 ADD_EXECUTABLE( test_core-static "${CMAKE_CURRENT_SOURCE_DIR}/test_core.c" )
-TARGET_LINK_LIBRARIES( test_core oyranos_core )
+TARGET_LINK_LIBRARIES( test_core OyranosCore )
 TARGET_LINK_LIBRARIES( test_core-static oyranos_core-static )
 ADD_CUSTOM_TARGET(test-core
 	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_core"
@@ -12,7 +12,7 @@ ADD_CUSTOM_TARGET(test-core
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_object/" )
 ADD_EXECUTABLE( test_object "${CMAKE_CURRENT_SOURCE_DIR}/test_object.c" )
-TARGET_LINK_LIBRARIES( test_object oyranos_object )
+TARGET_LINK_LIBRARIES( test_object OyranosObject )
 ADD_EXECUTABLE( test_object-static "${CMAKE_CURRENT_SOURCE_DIR}/test_object.c" )
 TARGET_LINK_LIBRARIES( test_object-static oyranos_object-static )
 ADD_CUSTOM_TARGET(test-object
@@ -25,7 +25,7 @@ LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_module
 ADD_EXECUTABLE( test_modules-static "${CMAKE_CURRENT_SOURCE_DIR}/test_modules.c" )
 TARGET_LINK_LIBRARIES( test_modules-static oyranos_modules-static )
 ADD_EXECUTABLE( test_modules "${CMAKE_CURRENT_SOURCE_DIR}/test_modules.c" )
-TARGET_LINK_LIBRARIES( test_modules oyranos_modules )
+TARGET_LINK_LIBRARIES( test_modules OyranosModules )
 ADD_CUSTOM_TARGET(test-modules
 	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_modules"
 	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_modules-static"
@@ -34,7 +34,7 @@ ADD_CUSTOM_TARGET(test-modules
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_config/" ${ELEKTRA_LIBRARY_DIRS} )
 ADD_EXECUTABLE( test_config "${CMAKE_CURRENT_SOURCE_DIR}/test_config.c" )
-TARGET_LINK_LIBRARIES( test_config oyranos_config )
+TARGET_LINK_LIBRARIES( test_config OyranosConfig )
 ADD_EXECUTABLE( test_config-static "${CMAKE_CURRENT_SOURCE_DIR}/test_config.c" )
 TARGET_LINK_LIBRARIES( test_config-static oyranos_config-static )
 ADD_CUSTOM_TARGET(test-config
@@ -45,7 +45,7 @@ ADD_CUSTOM_TARGET(test-config
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" ${ELEKTRA_LIBRARY_DIRS} )
 ADD_EXECUTABLE( test2 "${CMAKE_CURRENT_SOURCE_DIR}/test2.cpp" )
-TARGET_LINK_LIBRARIES( test2 oyranos )
+TARGET_LINK_LIBRARIES( test2 Oyranos )
 ADD_EXECUTABLE( test2-static "${CMAKE_CURRENT_SOURCE_DIR}/test2.cpp" )
 TARGET_LINK_LIBRARIES( test2-static oyranos-static )
 ADD_CUSTOM_TARGET(test-2
@@ -58,7 +58,7 @@ ADD_CUSTOM_COMMAND( OUTPUT test-oyranos2
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" ${ELEKTRA_LIBRARY_DIRS} )
 ADD_EXECUTABLE( test_oyranos "${CMAKE_CURRENT_SOURCE_DIR}/test_oyranos.c" )
-TARGET_LINK_LIBRARIES( test_oyranos oyranos )
+TARGET_LINK_LIBRARIES( test_oyranos Oyranos )
 ADD_EXECUTABLE( test_oyranos-static "${CMAKE_CURRENT_SOURCE_DIR}/test_oyranos.c" )
 TARGET_LINK_LIBRARIES( test_oyranos-static oyranos-static )
 ADD_CUSTOM_TARGET(test
