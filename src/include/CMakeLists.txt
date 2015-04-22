@@ -4,29 +4,3 @@ CONFIGURE_FILE (
 		@ONLY
 	)
 
-SET( CHEADERS_PUBLIC
-        icc34.h
-	oyranos.h
-	oyranos_color.h
-	oyranos_config.h
-	oyranos_core.h
-	oyranos_definitions.h
-	oyranos_icc.h
-	oyranos_types.h
-        oyranos_version.h
-        oyCMM_s.h
-        PARENT_SCOPE
-   )
-
-INSTALL( FILES
-        icc34.h
-	oyranos.h
-	oyranos_color.h
-	oyranos_config.h
-	oyranos_core.h
-	oyranos_definitions.h
-	oyranos_icc.h
-	oyranos_types.h
-        "${CMAKE_BINARY_DIR}/src/include/oyranos_version.h"
-        oyCMM_s.h
-	DESTINATION include/${PACKAGE_NAME})
