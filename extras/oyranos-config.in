@@ -15,6 +15,7 @@ prefix="@CMAKE_INSTALL_PREFIX@"
 exec_prefix="$prefix"
 bindir="@CMAKE_INSTALL_PREFIX@/bin"
 libdir="@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@"
+framedir="@CMAKE_INSTALL_PREFIX@/@FRAMEWORK_DIR@"
 cmmsubpath=@OY_CMMSUBPATH@
 metasubpath=@OY_METASUBPATH@
 cmmdir="$libdir/$cmmsubpath"
@@ -151,14 +152,18 @@ if [ -z "$elektra" ]; then
 fi
 
 if [ "$echo_cflags" = "yes" ]; then
-  echo "-I$includedir"
+  echo "@OYRANOS_INCLUDE_FLAGS@"
 fi
 
 if [ "$echo_ldflags" = "yes" ]; then
-  if [ -f liboyranos.so ]; then
-    echo "-L. -loyranos -loyranos_config -loyranos_modules -loyranos_object -loyranos_core"
+  if [ -f libOyranos.so ]; then
+    echo "-L. -lOyranos -lOyranosConfig -lOyranosModules -lOyranosObject -lOyranosCore"
   else
-    echo "-L$libdir -loyranos -loyranos_config -loyranos_modules -loyranos_object -loyranos_core"
+    if [ -d $framedir/Oyranos.framework ]; then
+      echo "@GCC_LINK_PATH_FLAG@$framedir @GCC_LINK_LIB_FLAG@Oyranos @GCC_LINK_LIB_FLAG@OyranosConfig @GCC_LINK_LIB_FLAG@OyranosModules @GCC_LINK_LIB_FLAG@OyranosObject @GCC_LINK_LIB_FLAG@OyranosCore"
+    else
+      echo "@GCC_LINK_PATH_FLAG@$libdir @GCC_LINK_LIB_FLAG@Oyranos @GCC_LINK_LIB_FLAG@OyranosConfig @GCC_LINK_LIB_FLAG@OyranosModules @GCC_LINK_LIB_FLAG@OyranosObject @GCC_LINK_LIB_FLAG@OyranosCore"
+    fi
   fi
 fi
 
