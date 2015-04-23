@@ -14,6 +14,7 @@ SET (PACKAGE_DESCRIPTION "Oyranos is a Color Management System (CMS) on operatin
 
 SET( OY_CMMSUBPATH     "color/modules" )
 SET( OY_METASUBPATH    "${PACKAGE_NAME}-meta" )
+SET( OY_ICC_DIR        "${CMAKE_INSTALL_PREFIX}/share/color/icc" )
 
 #additional cmake modules for loading libraries
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -127,10 +128,10 @@ ELSE(HAVE_ELEKTRA)
 ENDIF(HAVE_ELEKTRA)
 
 #now add all directories
+ADD_SUBDIRECTORY( settings )
 ADD_SUBDIRECTORY( src )
 ADD_SUBDIRECTORY( cmake )
 ADD_SUBDIRECTORY( extras )
-ADD_SUBDIRECTORY( settings )
 ADD_SUBDIRECTORY( doc )
 
 CONFIGURE_FILE(
