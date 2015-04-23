@@ -11,6 +11,24 @@
 #  OYRANOS_VERSION_MINOR - The minor version of oyranos (y)
 #  OYRANOS_VERSION_MICRO - The patch version of oyranos (z)
 #
+#  OYRANOS_CMM_SUBDIR    - usually "color/modules"
+#  OYRANOS_META_SUBDIR   - usually "oyranos-meta"
+#  OYRANOS_CMM_DIR       - Oyranos install prefix / lib+LIBSUFFIX / OYRANOS_CMM_SUBDIR
+#  OYRANOS_META_DIR      - similar to the above for meta module(s)
+#  OYRANOS_ICC_DIR       - similar to the above for ICC profiles
+#  OYRANOS_SETTINGS_DIR  - similar to the above for policy files
+#  OYRANOS_FRAMEWORK_LOCALE_DIR - Oyranos locale path inside OyranosCore.framework/Resources/
+#  OYRANOS_FRAMEWORK_LOCALE     - OyranosCore.framework  OS X framework containing translations
+#  OYRANOS_FRAMEWORK_ICC        - Oyranos.framework      OS X framework containing ICC profiles
+#  OYRANOS_LINGUAS       - Oyranos translation languages
+#
+#  OYRANOS_INCLUDE_DIR         - Include of of the Oyranos.framework Headers path
+#  OYRANOS_CONFIG_INCLUDE_DIR  - Include of of the OyranosConfig.framework Headers path
+#  OYRANOS_MODULES_INCLUDE_DIR - Include of of the OyranosModules.framework Headers path
+#  OYRANOS_OBJECT_INCLUDE_DIR  - Include of of the OyranosObject.framework Headers path
+#  OYRANOS_CORE_INCLUDE_DIR    - Include of of the OyranosCore.framework Headers path
+#
+#  HAVE_OYRANOS          - TRUE
 
 
 
@@ -84,7 +102,7 @@ FIND_LIBRARY(OYRANOS_LIBRARY
 	PATHS @CMAKE_INSTALL_PREFIX@/@LIB_DIR@
 	NO_DEFAULT_PATH
 )
-SET( OYRANOS_LIBRARIES  ${OYRANOS_LIBRARY} ${OYRANOS_CONFIG_LIBRARIES} )
+SET( OYRANOS_LIBRARIES ${OYRANOS_LIBRARY} ${OYRANOS_CONFIG_LIBRARIES} )
 MARK_AS_ADVANCED(OYRANOS_LIBRARIES)
 
 # handle the QUIETLY and REQUIRED arguments and set OYRANOS_FOUND to TRUE if
@@ -96,9 +114,18 @@ if (OYRANOS_FOUND)
         SET( OYRANOS_VERSION_MAJOR @OYRANOS_VERSION_MAJOR@ )
         SET( OYRANOS_VERSION_MINOR @OYRANOS_VERSION_MINOR@ )
         SET( OYRANOS_VERSION_MICRO @OYRANOS_VERSION_MICRO@ )
-        SET( OYRANOS_VERSION @OYRANOS_VERSION@ )
-        SET( OYRANOS_CMMSUBPATH @OY_CMMSUBPATH@ )
-        SET( HAVE_OYRANOS TRUE )
+        SET( OYRANOS_VERSION       @OYRANOS_VERSION@ )
+        SET( OYRANOS_CMM_SUBDIR    @OY_CMMSUBPATH@ )
+        SET( OYRANOS_META_SUBDIR   @OY_METASUBPATH@ )
+        SET( OYRANOS_CMM_DIR       @CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@/@OY_CMMSUBPATH@ )
+        SET( OYRANOS_META_DIR      @CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@/@OY_METASUBPATH@ )
+        SET( OYRANOS_ICC_DIR       @OY_ICC_DIR@ )
+        SET( OYRANOS_SETTINGS_DIR  @CMAKE_INSTALL_PREFIX@/share/color/settings )
+        SET( OYRANOS_FRAMEWORK_LOCALE_DIR locale )
+        SET( OYRANOS_FRAMEWORK_LOCALE     OyranosCore.framework )
+        SET( OYRANOS_FRAMEWORK_ICC        Oyranos.framework )
+        SET( OYRANOS_LINGUAS       @OY_LINGUAS@ )
+        SET( HAVE_OYRANOS          TRUE )
 	SET( OYRANOS_INCLUDE_DIRS
              ${OYRANOS_INCLUDE_DIR}
              ${OYRANOS_CONFIG_INCLUDE_DIR}
