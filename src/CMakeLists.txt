@@ -248,6 +248,25 @@ FIND_PACKAGE( GetText )
 MESSAGE( "GetText: ${GETTEXT_FOUND}" )
 IF( GETTEXT_FOUND )
   SET( USE_GETTEXT TRUE )
+  SET( USE_GETTEXT ${USE_GETTEXT} PARENT_SCOPE )
+
+  SET( LINGUAS ${CMAKE_SOURCE_DIR}/po/cs.po
+               ${CMAKE_SOURCE_DIR}/po/de.po
+               ${CMAKE_SOURCE_DIR}/po/eo.po
+               ${CMAKE_SOURCE_DIR}/po/eu.po
+               ${CMAKE_SOURCE_DIR}/po/fr.po
+               ${CMAKE_SOURCE_DIR}/po/ru.po
+     )
+  FOREACH( oy_lang ${LINGUAS} )
+    GET_FILENAME_COMPONENT(_absFile ${oy_lang} ABSOLUTE)
+    GET_FILENAME_COMPONENT(_abs_PATH ${_absFile} PATH)
+    GET_FILENAME_COMPONENT(_lang ${_absFile} NAME_WE)
+    SET( OY_LINGUAS ${OY_LINGUAS} ${_lang} )
+    SET( OY_LINGUAS_GMO_FILES ${OY_LINGUAS_GMO_FILES} " ${CMAKE_BINARY_DIR}/src/${_lang}.gmo" )
+  ENDFOREACH( oy_lang )
+  SET( OY_LINGUAS ${OY_LINGUAS} PARENT_SCOPE )
+  SET( OY_LINGUAS_PO_FILES ${LINGUAS} PARENT_SCOPE )
+  SET( OY_LINGUAS_GMO_FILES ${OY_LINGUAS_GMO_FILES} PARENT_SCOPE )
 ENDIF()
 
 # debug
@@ -352,7 +371,6 @@ IF( GETTEXT_FOUND )
     COMMENT "Extract translatable messages to ${_potFile}"
   )
 
-  SET( LINGUAS ../po/cs.po ../po/de.po ../po/eo.po ../po/eu.po  ../po/fr.po ../po/ru.po )
   # compile translations always to have them ready for installation
   GETTEXT_CREATE_TRANSLATIONS( ${_potFile} ALL ${LINGUAS} )
 ENDIF()
