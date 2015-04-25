@@ -942,7 +942,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
     error = oyProfileTag_GetBlock( tag, (oyPointer*)&mem, 0, oyAllocateFunc_);
     sig = oyProfileTag_GetType(tag);
 
-    error = !mem || !oyProfileTag_GetSize(tag) > 12;
+    error = (!mem) || (oyProfileTag_GetSize(tag) <= 12);
 
     if(!error)
     switch( (uint32_t)sig )
