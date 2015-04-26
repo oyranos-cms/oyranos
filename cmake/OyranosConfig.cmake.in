@@ -28,6 +28,8 @@
 #  OYRANOS_OBJECT_INCLUDE_DIR  - Include of of the OyranosObject.framework Headers path
 #  OYRANOS_CORE_INCLUDE_DIR    - Include of of the OyranosCore.framework Headers path
 #
+#  OYRANOS_MODULE_LIBRARIES    - Additional framework install libraries
+#
 #  HAVE_OYRANOS          - TRUE
 
 
@@ -124,6 +126,7 @@ if (OYRANOS_FOUND)
         SET( OYRANOS_FRAMEWORK_LOCALE_DIR locale )
         SET( OYRANOS_FRAMEWORK_LOCALE     OyranosCore.framework )
         SET( OYRANOS_FRAMEWORK_ICC        Oyranos.framework )
+        SET( OYRANOS_MODULE_LIBRARIES     @OY_MODULE_LIBRARIES@ )
         SET( OYRANOS_LINGUAS       @OY_LINGUAS@ )
         SET( HAVE_OYRANOS          TRUE )
 	SET( OYRANOS_INCLUDE_DIRS
