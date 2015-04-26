@@ -284,6 +284,13 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromName (
   uint32_t md5[4];
   int old_oy_warn_ = oy_warn_;
 
+  if(!name)
+  {
+    oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)NULL,
+                     OY_DBG_FORMAT_"\"name\" arg missed", OY_DBG_ARGS_ );
+    return NULL;
+  }
+
   /* try file name */
   oy_warn_ = 0;
   s = oyProfile_FromFile( name, flags, object );
