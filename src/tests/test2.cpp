@@ -1070,6 +1070,7 @@ oyTESTRESULT_e testBlob ()
 
   oyBlob_Release( &a );
   oyBlob_Release( &b );
+  oyObject_Release( &object );
   free(ptr);
 
   return result;
