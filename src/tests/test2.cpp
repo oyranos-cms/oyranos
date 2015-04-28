@@ -613,6 +613,7 @@ oyTESTRESULT_e testOption ()
   }
 
   oyOption_Release( &o );
+  oyFree_m_(ptr);
 
   return result;
 }
