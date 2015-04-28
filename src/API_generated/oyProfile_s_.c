@@ -593,11 +593,12 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
 
     h = (icHeader*) s->block_;
 
-    sig = oyValueCSpaceSig( h->colorSpace );
+    if(h)
+      sig = oyValueCSpaceSig( h->colorSpace );
 
     WARNc4_S("Channels <= 0 %d %s %s err:%d", s->channels_n_,
              oyICCColorSpaceGetName(sig),
-             oyICCColorSpaceGetName(h->colorSpace),
+             h?oyICCColorSpaceGetName(h->colorSpace):"",
              error)
 
     oyProfile_Release( (oyProfile_s**)&s );
