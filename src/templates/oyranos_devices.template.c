@@ -2130,6 +2130,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
                                                        oyAllocateFunc_ );
           key_name = oyGetFilterNodeKey( cmm_api9_->key_base, select_core );
           o = oyOptions_Find( opts_tmp, key_name, oyNAME_PATTERN );
+          oyFree_m_( key_name );
           if(!o)
           {
             o = oyOption_New( NULL );
