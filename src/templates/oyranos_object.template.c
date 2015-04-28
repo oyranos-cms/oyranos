@@ -727,7 +727,7 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration_a,
     tmp2 = oyStringCopy_( registration_b, oyAllocateFunc_ );
 
   if(!tmp1 || !tmp2)
-    return match;
+    goto clean_oyFilterRegistrationMatchKey;
 
   if(tmp1)
   {
@@ -761,11 +761,11 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration_a,
       ++match;
     else
       match = 0;
-
-    oyFree_m_(tmp1);
-    oyFree_m_(tmp2);
   }
 
+  clean_oyFilterRegistrationMatchKey:
+    oyFree_m_(tmp1);
+    oyFree_m_(tmp2);
   return match;
 }
 
