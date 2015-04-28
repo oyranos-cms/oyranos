@@ -514,34 +514,38 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
 
   if(block  && *block && size)
   {
+    s->block_ = *block;
+    *block = 0;
+
     if(size > 128)
     {
-      int r = oyCheckProfileMem_( *block, 128, 0, flags );
+      int r = oyCheckProfileMem_( s->block_, 128, 0, flags );
       if(r)
       {
         DBG_PROG1_S( "check failed %d", r )
-        return 0;
+        error = r;
+
+        oyProfile_Release( (oyProfile_s**)&s );
+
+        if(error_return) *error_return = error;
+        return NULL;
       }
     } else
     {
       WARNc1_S( "too small for a ICC profile %d", size )
-      return 0;
+      error = 1;
     }    
 
-    s->block_ = *block;
-    *block = 0;
     if(!s->block_)
       error = 1;
     else
       s->size_ = size;
   }
 
-  if(error_return) *error_return = error;
-
   if (!s->block_)
   {
     WARNc1_S( "%s", "no data" )
-    return 0;
+    error = 1;
   }
 
   /* Comparision strategies
@@ -558,26 +562,21 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
    */
 
   if(error <= 0)
-    error = oyProfile_GetHash_( s, flags );
-
-  if(error != 0)
   {
-    if(error > 0 || error < -1)
-      WARNc1_S( "hash error %d", error )
-    if(error_return) *error_return = error;
-
-    if(error > 0)
-      return NULL;
+    error = oyProfile_GetHash_( s, flags );
+    if(error != 0)
+    {
+      if(error > 0 || error < -1)
+        WARNc1_S( "hash error %d", error )
+    }
   }
 
   if(error <= 0)
+  {
     error = !oyProfile_GetSignature ( (oyProfile_s*)s, oySIGNATURE_COLOR_SPACE );
 
-  if(error)
-  {
-    if(error_return) *error_return = error;
-    WARNc1_S( "signature error %d", error )
-    return 0;
+    if(error)
+      WARNc1_S( "signature error %d", error )
   }
 
   if(error <= 0)
@@ -596,10 +595,12 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
 
     sig = oyValueCSpaceSig( h->colorSpace );
 
-    WARNc3_S("Channels <= 0 %d %s %s", s->channels_n_,
+    WARNc4_S("Channels <= 0 %d %s %s err:%d", s->channels_n_,
              oyICCColorSpaceGetName(sig),
-             oyICCColorSpaceGetName(h->colorSpace))
+             oyICCColorSpaceGetName(h->colorSpace),
+             error)
 
+    oyProfile_Release( (oyProfile_s**)&s );
     if(error_return) *error_return = error;
   }
 
@@ -686,9 +687,6 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
     uint32_t md5[4];
 
     s = oyProfile_FromMemMove_( size, &block, flags, &error, object );
-
-    if(!s)
-      error = 1;
 
     if(error < -1)
     {
