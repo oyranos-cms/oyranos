@@ -532,10 +532,10 @@ char*    oyDBSearchEmptyKeyname_       ( const char      * key_parent_name,
 
   DBG_PROG_START
 
-  oyStringAddPrintf( &key_base_name, AD, "%s", key_parent_name );
-
   if(!oy_handle_)
     return 0;
+
+  oyStringAddPrintf( &key_base_name, AD, "%s", key_parent_name );
 
   key = keyNew( key_base_name, KEY_END );
   rc = kdbGet( oy_handle_, ks, key ); oyERR(key)
@@ -558,11 +558,13 @@ char*    oyDBSearchEmptyKeyname_       ( const char      * key_parent_name,
       nth = i;
     keyDel( key );
     DBG_PROG3_S("search key = \"%s\" %s %d\n", new_key_name, cut?"found":"not found", (int)ksGetSize(cut) );
+    ksDel( cut );
 
     i++;
   }
 
 
+  oyFree_m_( key_base_name );
   ksDel( ks );
 #if KDB_VERSION_NUM >= 800
   kdbClose( oy_handle_,error_key ); oyERR(error_key)
