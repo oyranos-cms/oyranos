@@ -284,6 +284,8 @@ oyTESTRESULT_e testElektra()
     }
   } else
     result = oyTESTRESULT_SUCCESS;
+  oyFree_m_( start );
+  oyFree_m_( value );
 
   error = oyDBEraseKey_( TEST_DOMAIN TEST_KEY, oySCOPE_USER );
   if(error)
@@ -328,6 +330,8 @@ oyTESTRESULT_e testElektra()
     PRINT_SUB( oyTESTRESULT_FAIL,
     "oyDBSearchEmptyKeyname_(%s)", OY_STD "/device" TEST_KEY );
   }
+  oyFree_m_( value );
+
   error = oyDBEraseKey_( OY_STD "/device" TEST_KEY, oySCOPE_USER );
   value = oyDBSearchEmptyKeyname_(OY_STD "/device" TEST_KEY, oySCOPE_USER);
   if(value && strcmp( "user/" OY_STD "/device" TEST_KEY "/#0",value) == 0 )
@@ -339,6 +343,7 @@ oyTESTRESULT_e testElektra()
     PRINT_SUB( oyTESTRESULT_FAIL,
     "oyDBSearchEmptyKeyname_(%s)", OY_STD "/device" TEST_KEY );
   }
+  oyFree_m_( value );
 
   error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/#0/key-01", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
@@ -358,6 +363,8 @@ oyTESTRESULT_e testElektra()
     PRINT_SUB( oyTESTRESULT_FAIL,
     "oyDBSearchEmptyKeyname_()=%s", value );
   }
+  oyFree_m_( value );
+
   error = oyDBEraseKey_( TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER );
   value = oyDBSearchEmptyKeyname_(TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER);
   if(value && strcmp( "user/" TEST_DOMAIN "/device" TEST_KEY "/#0",value) == 0 )
@@ -375,6 +382,7 @@ oyTESTRESULT_e testElektra()
                      "%s/array_key", value );
   error = oySetPersistentString( key, oySCOPE_USER_SYS,
                                  "ArrayValue", "ArrayComment" );
+  oyFree_m_( value );
   value = oyGetPersistentString(strchr(key,'/')+1, 0, oySCOPE_USER_SYS, 0);
   if(value && strcmp(value, "ArrayValue") == 0)
   {
@@ -385,6 +393,8 @@ oyTESTRESULT_e testElektra()
     PRINT_SUB( oyTESTRESULT_FAIL,
     "oySetPersistentString(%s, oySCOPE_USER_SYS)", key );
   }
+  oyFree_m_( key );
+  oyFree_m_( value );
 
   return result;
 }
