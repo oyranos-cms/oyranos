@@ -2666,7 +2666,16 @@ oyTESTRESULT_e testCMMDevicesDetails ()
 
 
   if(texts && texts[0])
-    config = oyConfig_FromRegistration( texts[0], 0 );
+  {
+    oyConfDomain_s * domain = oyConfDomain_FromReg( texts[0], 0 );
+    const char * device_class = oyConfDomain_GetText( domain, "device_class", oyNAME_NICK );
+    char * class_key = NULL;
+    oyStringAddPrintf( &class_key, oyAllocateFunc_, oyDeAllocateFunc_,
+                       OY_STD"/device/%s", device_class );
+    config = oyConfig_FromRegistration( class_key, 0 );
+    oyFree_m_( class_key );
+    oyConfDomain_Release( &domain );
+  }
   error = oyConfig_AddDBData( config, "k1", "bla1", OY_CREATE_NEW );
   error = oyConfig_AddDBData( config, "k2", "bla2", OY_CREATE_NEW );
   error = oyConfig_AddDBData( config, "k3", "bla3", OY_CREATE_NEW );
