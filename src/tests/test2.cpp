@@ -806,11 +806,14 @@ oyTESTRESULT_e testOptionsSet ()
     fprintf( zout, "%s\n", t );
     opt = oyOptions_Get( setA, 3 );
     fprintf( zout, "fourth option\n" );
-    fprintf( zout, "ValueText: %s\n", oyOption_GetValueText(opt, malloc ) );
+    char * t = oyOption_GetValueText(opt, malloc );
+    fprintf( zout, "ValueText: %s\n", t );
+    if(t) free(t);
     fprintf( zout, "NICK: %s\n", oyOption_GetText(opt, oyNAME_NICK) );
     fprintf( zout, "NAME: %s\n", oyOption_GetText(opt, oyNAME_NAME) );
     fprintf( zout, "DESCRIPTION: %s\n", oyOption_GetText(opt, oyNAME_DESCRIPTION) );
-    
+    oyOption_Release( &opt );
+
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL, 
     "oyOptions_GetText()                           failed" );
