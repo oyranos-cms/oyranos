@@ -495,7 +495,10 @@ oyTESTRESULT_e testStringRun ()
 
   clck = oyClock();
   for(i = 0; i < 1000000; ++i)
+  {
     test_sub = oyFilterRegistrationToText( test, oyFILTER_REG_OPTION, 0 );
+    oyFree_m_(test_sub);
+  }
   clck = oyClock() - clck;
 
   if( !error )
