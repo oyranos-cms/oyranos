@@ -1200,19 +1200,25 @@ oyTESTRESULT_e testSettings ()
   
   for( i = 0; i < countB; ++i)
   {
-    char * t;
+    char * t, *t2, *t3;
     o = oyOptions_Get( opts, i );
     t = oyStringCopy(oyOption_GetText(o, oyNAME_DESCRIPTION), oyAllocateFunc_);
+    t2 = oyOption_GetValueText( o, malloc );
+    t3 = oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
+                                     oyFILTER_REG_OPTION, 0 );
     fprintf(zout,"%d: \"%s\": \"%s\" %s %u\n", i, 
-           t, oyOption_GetValueText( o, malloc ),
-           oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
-                                       oyFILTER_REG_OPTION, 0 ),
+           t, t2, t3,
            (unsigned int)((oyOption_s_*)o)->flags );
 
     oyOption_Release( &o );
+    oyFree_m_( t );
+    oyFree_m_( t2 );
+    oyFree_m_( t3 );
   }
 
-  text = oyStringAppend_( "<a>\n", text, 0 );
+  char * t = text;
+  text = oyStringAppend_( "<a>\n", t, 0 );
+  oyFree_m_( t );
   oyStringAdd_( &text, "</a>", 0, 0 );
 
   doc = xmlParseMemory( text, oyStrlen_( text ) );
@@ -1228,8 +1234,12 @@ oyTESTRESULT_e testSettings ()
       "libxml2 returned document                        " );
     }
   }
+  oyFree_m_( text );
 
   xmlDocDumpFormatMemory( doc, (xmlChar**)&text, &i, 1 );
+  fprintf(zout,"xmlDocDump: %s\n", text);
+  xmlFreeDoc( doc );
+  free(text);
   /*xmlSaveDoc( ptr, doc );*/
 
   oyOptions_Release( &opts );
@@ -1242,15 +1252,19 @@ oyTESTRESULT_e testSettings ()
   countB = oyOptions_Count( opts );
   for( i = 0; i < countB; ++i)
   {
-    char * t;
+    char * t, *t2, *t3;
     o = oyOptions_Get( opts, i );
     t = oyStringCopy(oyOption_GetText(o, oyNAME_DESCRIPTION), oyAllocateFunc_);
+    t2 = oyOption_GetValueText( o, malloc );
+    t3 = oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
+                                     oyFILTER_REG_OPTION, 0 ),
     fprintf(zout,"%d: \"%s\": \"%s\" %s %u\n", i, 
-           t, oyOption_GetValueText( o, malloc ),
-           oyFilterRegistrationToText( oyOption_GetText( o, oyNAME_DESCRIPTION),
-                                       oyFILTER_REG_OPTION, 0 ),
+           t, t2, t3,
            (unsigned int)((oyOption_s_*)o)->flags );
 
+    oyFree_m_( t );
+    oyFree_m_( t2 );
+    oyFree_m_( t3 );
     oyOption_Release( &o );
   }
   oyOptions_Release( &opts );
