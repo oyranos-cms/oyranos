@@ -350,25 +350,21 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromName (
 
     names = /*(const char**)*/ oyProfileListGet ( NULL, &count, oyAllocateFunc_ );
 
-    if(name)
+    for(i = 0; i < (int)count; ++i)
     {
-      for(i = 0; i < (int)count; ++i)
+      p = oyProfile_FromFile( names[i], flags ,0 );
+
+      t = oyProfile_GetText(p, oyNAME_DESCRIPTION);
+      if(t && strcmp(t,name) == 0)
       {
-        p = oyProfile_FromFile( names[i], flags ,0 );
-
-        t = oyProfile_GetText(p, oyNAME_DESCRIPTION);
-        if(t && strcmp(t,name) == 0)
-        {
-          oyDeAllocateFunc_(names[i]);
-          s = p;
-          break;
-        }
-        oyDeAllocateFunc_(names[i]);
-
-        oyProfile_Release( &p );
+        s = p;
+        break;
       }
-      oyDeAllocateFunc_(names); names = 0;
+      oyProfile_Release( &p );
     }
+
+    oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
+    oyDeAllocateFunc_(names); names = 0;
   }
 
   if(!s)
