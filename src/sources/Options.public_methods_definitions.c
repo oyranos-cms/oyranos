@@ -771,6 +771,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
 
     if(text)
       oyFree_m_( text );
+    oyFree_m_( sort );
   }
 
   if(error <= 0)
