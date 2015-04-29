@@ -457,7 +457,8 @@ int            oyOptions_Add         ( oyOptions_s       * options,
                                        int                 pos,
                                        oyObject_s          object )
 {
-  oyOption_s *tmp = 0;
+  oyOption_s_ * tmp = NULL,
+              * o = (oyOption_s_ *) option;
   int error = !options || !option;
   int n, i, skip = 0;
   char * o_opt,
@@ -468,35 +469,35 @@ int            oyOptions_Add         ( oyOptions_s       * options,
 
   if(error <= 0)
   {
-    o_opt = oyFilterRegistrationToText( oyOptionPriv_m(option)->registration,
+    o_opt = oyFilterRegistrationToText( o->registration,
                                         oyFILTER_REG_MAX, 0 );
     if(strrchr(o_opt, '.' ))
     {
       t = strrchr(o_opt, '.' );
       *t = 0;
     }
-    o_top = oyFilterRegistrationToText( oyOptionPriv_m(option)->registration,
+    o_top = oyFilterRegistrationToText( o->registration,
                                         oyFILTER_REG_TOP, 0 );
     n = oyOptions_Count( options );
 
     for(i = 0; i < n; ++i)
     {
       tmp = oyOptions_Get( options, i );
-      l_opt = oyFilterRegistrationToText( oyOptionPriv_m(tmp)->registration,
+      l_opt = oyFilterRegistrationToText( tmp->registration,
                                           oyFILTER_REG_MAX, 0 );
       if(strrchr(l_opt, '.' ))
       {
         t = strrchr(l_opt, '.' );
         *t = 0;
       }
-      l_top = oyFilterRegistrationToText( oyOptionPriv_m(tmp)->registration,
+      l_top = oyFilterRegistrationToText( tmp->registration,
                                           oyFILTER_REG_TOP, 0 );
       if(oyStrcmp_(l_opt, o_opt) == 0)
         skip = 2;
 
       oyFree_m_( l_opt );
       oyFree_m_( l_top );
-      oyOption_Release( &tmp );
+      oyOption_Release( (oyOption_s**)&tmp );
     }
 
     if(skip == 0)
@@ -835,10 +836,12 @@ int            oyOptions_Filter      ( oyOptions_s      ** add_list,
       int found = 1;
       const char * o_registration;
       oyOPTIONSOURCE_e o_source;
+      uint32_t o_flags;
 
       o = oyOptions_Get( s, i );
       o_registration = oyOptionPriv_m(o)->registration;
       o_source = oyOptionPriv_m(o)->source;
+      o_flags = oyOptionPriv_m(o)->flags;
 
       if(found && registration &&
          !oyFilterRegistrationMatch( o_registration, registration, 0 ))
