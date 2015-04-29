@@ -541,17 +541,21 @@ int            oyOptions_Filter      ( oyOptions_s      ** add_list,
     for(i = 0; i < n; ++i)
     {
       int found = 1;
+      const char * o_registration;
+      oyOPTIONSOURCE_e o_source;
 
       o = oyOptions_Get( s, i );
+      o_registration = oyOptionPriv_m(o)->registration;
+      o_source = oyOptionPriv_m(o)->source;
 
       if(found && registration &&
-         !oyFilterRegistrationMatch( oyOptionPriv_m(o)->registration, registration, 0 ))
+         !oyFilterRegistrationMatch( o_registration, registration, 0 ))
           found = 0;
 
       options_source = flags & oyOPTIONSOURCE_FILTER ? oyOPTIONSOURCE_FILTER :0;
       options_source |= flags & oyOPTIONSOURCE_DATA ? oyOPTIONSOURCE_DATA : 0;
       options_source |= flags & oyOPTIONSOURCE_USER ? oyOPTIONSOURCE_USER : 0;
-      if(found && options_source && !(oyOptionPriv_m(o)->source & options_source))
+      if(found && options_source && !(o_source & options_source))
         found = 0;
 
       if(type == oyBOOLEAN_UNION ||
