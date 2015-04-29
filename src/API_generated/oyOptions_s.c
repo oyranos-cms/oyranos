@@ -837,7 +837,8 @@ int            oyOptions_Filter      ( oyOptions_s      ** add_list,
                                        const char        * registration,
                                        oyOptions_s       * src_list )
 {
-  int error = !src_list || !add_list || *add_list == src_list;
+  int error = !src_list || !add_list || *add_list == src_list,
+      l_error = 0;
   oyOptions_s * s = src_list;
   oyOption_s * o = 0;
   int n, i;
@@ -881,7 +882,9 @@ int            oyOptions_Filter      ( oyOptions_s      ** add_list,
          (type == oyBOOLEAN_DIFFERENZ && !found)
         )
       {
-        oyOptions_Add( *add_list, o, -1, 0 );
+        l_error = oyOptions_Add( *add_list, o, -1, 0 );
+        if(l_error && error <= 0)
+          error = l_error;
         ++c;
       }
 
