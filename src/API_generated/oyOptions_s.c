@@ -455,6 +455,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
  *  @return                            status
  *                                     - 0 on success
  *                                     - 1 error
+ *                                     - -2 skipped adding
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/17 (Oyranos: 0.1.9)
@@ -501,7 +502,10 @@ int            oyOptions_Add         ( oyOptions_s       * options,
       l_top = oyFilterRegistrationToText( tmp->registration,
                                           oyFILTER_REG_TOP, 0 );
       if(oyStrcmp_(l_opt, o_opt) == 0)
+      {
         skip = 2;
+        error = -skip;
+      }
 
       oyFree_m_( l_opt );
       oyFree_m_( l_top );
