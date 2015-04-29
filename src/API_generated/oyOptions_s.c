@@ -448,9 +448,17 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
  *     tmp = oyOption_Copy( option, object );
  *     oyOptions_MoveIn( options, &tmp, -1 ); @endverbatim
  *
+ *  @param[in,out] options             options to manipulate
+ *  @param[in]     option              the option to eventually add
+ *  @param[in]     pos                 the position where to add; use -1 for append
+ *  @param[in]     object              the optional object
+ *  @return                            status
+ *                                     - 0 on success
+ *                                     - 1 error
+ *
  *  @version Oyranos: 0.1.9
  *  @since   2008/11/17 (Oyranos: 0.1.9)
- *  @date    2010/11/27
+ *  @date    2015/04/29
  */
 int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyOption_s        * option,
