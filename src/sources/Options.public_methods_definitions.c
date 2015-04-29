@@ -156,61 +156,87 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
  *     tmp = oyOption_Copy( option, object );
  *     oyOptions_MoveIn( options, &tmp, -1 ); @endverbatim
  *
- *  @version Oyranos: 0.1.9
+ *  @param[in,out] options             options to manipulate
+ *  @param[in]     option              the option to eventually add
+ *  @param[in]     pos                 the position where to add; use -1 for append
+ *  @param[in]     object              the optional object
+ *  @return                            status
+ *                                     - 0 on success
+ *                                     - 1 error
+ *                                     - -2 skipped adding
+ *
+ *  @version Oyranos: 0.9.6
  *  @since   2008/11/17 (Oyranos: 0.1.9)
- *  @date    2010/11/27
+ *  @date    2015/04/29
  */
 int            oyOptions_Add         ( oyOptions_s       * options,
                                        oyOption_s        * option,
                                        int                 pos,
                                        oyObject_s          object )
 {
-  oyOption_s *tmp = 0;
+  oyOption_s_ * tmp = NULL,
+              * o = (oyOption_s_ *) option;
   int error = !options || !option;
   int n, i, skip = 0;
-  char * o_opt,
-       * o_top,
+  char * o_opt,  /* option right key name part */
+       * o_top,  /* option top key name part */
        * l_opt,  /* l - list */
        * l_top,
        * t;
 
   if(error <= 0)
   {
-    o_opt = oyFilterRegistrationToText( oyOptionPriv_m(option)->registration,
+    o_opt = oyFilterRegistrationToText( o->registration,
                                         oyFILTER_REG_MAX, 0 );
     if(strrchr(o_opt, '.' ))
     {
       t = strrchr(o_opt, '.' );
       *t = 0;
     }
-    o_top = oyFilterRegistrationToText( oyOptionPriv_m(option)->registration,
+    o_top = oyFilterRegistrationToText( o->registration,
                                         oyFILTER_REG_TOP, 0 );
     n = oyOptions_Count( options );
 
     for(i = 0; i < n; ++i)
     {
-      tmp = oyOptions_Get( options, i );
-      l_opt = oyFilterRegistrationToText( oyOptionPriv_m(tmp)->registration,
+      tmp = (oyOption_s_ *) oyOptions_Get( options, i );
+      l_opt = oyFilterRegistrationToText( tmp->registration,
                                           oyFILTER_REG_MAX, 0 );
       if(strrchr(l_opt, '.' ))
       {
         t = strrchr(l_opt, '.' );
         *t = 0;
       }
-      l_top = oyFilterRegistrationToText( oyOptionPriv_m(tmp)->registration,
+      l_top = oyFilterRegistrationToText( tmp->registration,
                                           oyFILTER_REG_TOP, 0 );
       if(oyStrcmp_(l_opt, o_opt) == 0)
+      {
         skip = 2;
+        error = -skip;
+      }
 
       oyFree_m_( l_opt );
       oyFree_m_( l_top );
-      oyOption_Release( &tmp );
+      oyOption_Release( (oyOption_s**)&tmp );
     }
 
     if(skip == 0)
     {
-      tmp = oyOption_Copy( option, object );
-      oyOptions_MoveIn( options, &tmp, -1 );
+      tmp = (oyOption_s_*) oyOption_Copy( option, object );
+      oyOptions_MoveIn( options, (oyOption_s**)&tmp, -1 );
+
+    } else if(skip == 2)
+    {
+      tmp = (oyOption_s_*) oyOptions_Find( options, o_opt, oyNAME_PATTERN );
+
+      if(o->flags & oyOPTIONATTRIBUTE_EDIT &&
+         !(tmp->flags & oyOPTIONATTRIBUTE_EDIT))
+      {
+        oyOption_Copy__Members( tmp, o );
+        error = 0;
+      }
+
+      oyOption_Release( (oyOption_s**)&tmp );
     }
 
     oyFree_m_( o_opt );
