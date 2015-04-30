@@ -3248,6 +3248,7 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   char * device_name = NULL;
 
   /* X11 */
+#if !defined(__APPLE__)
   if(getenv("DISPLAY"))
   {
     device_name = oyStringCopy( getenv("DISPLAY"), oyAllocateFunc_ );
@@ -3255,6 +3256,7 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
       oyStringAddPrintf( &device_name, oyAllocateFunc_, oyDeAllocateFunc_,
                          ".0" );
   }
+#endif
   if(!device_name)
     device_name = oyStringCopy( "0", oyAllocateFunc_ );
 
