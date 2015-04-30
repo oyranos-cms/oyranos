@@ -1422,7 +1422,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
 
       cmsHTRANSFORM ptr[2] = {0,0},
                 ptr16[2] = {0,0};
-      int r = 0, i;
+      int r = 0, i, done = 0, done_16 = 0;
       cmsMLU * mlu[2] = {0,0};
       cmsCurveSegment seg[2];
 
@@ -1487,6 +1487,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
                           "cmsStageSampleCLutFloat() failed", OY_DBG_ARGS_);
                  error = 1; }
       }
+      done = 1;
 
     } else
     {
@@ -1521,10 +1522,18 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
                           "cmsStageSampleCLut16bit() failed", OY_DBG_ARGS_);
                    error = 1; }
       }
+      done_16 = 1;
     }
   }
 
-      if(!gmt_lut || !gmt_lut16) goto clean;
+      if(!gmt_lut || !gmt_lut16 || !done || !done_16)
+      {
+        lcm2_msg( oyMSG_WARN, (oyStruct_s*)proof, OY_DBG_FORMAT_ " "
+                 "failed to build: %s %s %s %s",
+                 OY_DBG_ARGS_, gmt_lut?"lut":"", gmt_lut16?"lut16":"",
+                 done?"done":"not ready", done_16?"done":"not ready" );
+        goto clean;
+      }
 
       gmt = lcmsCreateProfilePlaceholder( tc ); if(!gmt) goto clean;
       lcmsSetProfileVersion( gmt, 4.2 );
