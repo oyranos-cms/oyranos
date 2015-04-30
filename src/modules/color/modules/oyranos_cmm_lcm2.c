@@ -288,6 +288,8 @@ static void* (*lcmsGetContextUserData)(cmsContext ContextID) = NULL;
 static void* dummyGetContextUserData(cmsContext ContextID) {return NULL;}
 static cmsContext (*lcmsGetProfileContextID)(cmsHPROFILE hProfile) = NULL;
 static cmsContext (*lcmsGetTransformContextID)(cmsHPROFILE hProfile) = NULL;
+static int (*lcmsGetEncodedCMMversion)(void) = NULL;
+static int dummyGetEncodedCMMversion() {return LCMS_VERSION;}
 
 #define LOAD_FUNC( func, fallback_func ) l##func = dlsym(lcms_handle, #func ); \
                if(!l##func) \
@@ -386,10 +388,14 @@ int                lcm2CMMInit       ( oyStruct_s        * filter )
 #endif
       LOAD_FUNC( cmsGetProfileContextID, NULL );
       LOAD_FUNC( cmsGetTransformContextID, NULL );
-
+      LOAD_FUNC( cmsGetEncodedCMMversion, dummyGetEncodedCMMversion );
       if(lcmsSetLogErrorHandler)
         lcmsSetLogErrorHandler( lcm2ErrorHandlerFunction );
-
+      if(lcmsGetEncodedCMMversion() != LCMS_VERSION)
+          lcm2_msg( oyMSG_WARN, (oyStruct_s*)NULL,
+                    OY_DBG_FORMAT_" compile and run time version differ %d %d",
+                    OY_DBG_ARGS_, lcmsGetEncodedCMMversion, LCMS_VERSION );
+          
       if(error)
         lcms_initialised = -1;
       else
