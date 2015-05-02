@@ -1001,28 +1001,16 @@ char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
       switch((int)scope)
       {
         case oySCOPE_USER:
-#if defined(__APPLE__)
-          path = C( CSUserPATH );
-#else
-          path = C( OY_USERCOLORDATA OY_SLASH OY_ICCDIRNAME );
-#endif
+          path = C( OS_ICC_USER_DIR );
           break;
         case oySCOPE_SYSTEM:
-#if defined(__APPLE__)
-          path = C( CSGlobalInstallPATH) ;
-#else
-          path = C( "/usr/share/color/" OY_ICCDIRNAME );
-#endif
+          path = C( OS_ICC_SYSTEM_DIR ) ;
           break;
         case oySCOPE_OYRANOS:
           path = C( OY_SYSCOLORDIR OY_SLASH OY_ICCDIRNAME );
           break;
         case oySCOPE_MACHINE:
-#if defined(__APPLE__)
-          path = C( CSSystemPATH );
-#else
-          path = C( "/var/lib/color/" OY_ICCDIRNAME );
-#endif
+          path = C( OS_ICC_MACHINE_DIR );
         break;
         default:
           path = NULL;
@@ -1033,16 +1021,16 @@ char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
       switch((int)scope)
       {
         case oySCOPE_USER:
-          path = C( OY_USERCOLORDIR OY_SLASH OY_SETTINGSDIRNAME );
+          path = C( OS_SETTINGS_USER_DIR );
           break;
         case oySCOPE_SYSTEM:
-          path = C( "/usr/share/color/" OY_SETTINGSDIRNAME );
+          path = C( OS_SETTINGS_SYSTEM_DIR );
           break;
         case oySCOPE_OYRANOS:
           path = C( OY_SYSCOLORDIR OY_SLASH OY_SETTINGSDIRNAME);
           break;
         case oySCOPE_MACHINE:
-          path = C( "/var/lib/color/" OY_SETTINGSDIRNAME );
+          path = C( OS_SETTINGS_MACHINE_DIR );
         break;
       }
       break;
@@ -1068,29 +1056,16 @@ char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
       }
       break;
     }
-#define OY_CACHE_DIR "cache/color/openicc/device_link/"
     case oyPATH_CACHE:
     {
       switch((int)scope)
       {
         case oySCOPE_USER:
-        {
-          char * t = NULL;
-          oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_,
-                             "~/." OY_CACHE_DIR );
-          path = C( t );
-          oyFree_m_(t);
+          path = C( OS_DL_CACHE_USER_DIR );
           break;
-        }
         case oySCOPE_SYSTEM:
-        {
-          char * t = NULL;
-          oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_,
-                             "/var/" OY_CACHE_DIR );
-          path = C( t );
-          oyFree_m_(t);
+          path = C( OS_DL_CACHE_SYSTEM_DIR );
           break;
-        }
         default:
           path = NULL;
       }
