@@ -238,7 +238,7 @@ char **  oyProfilePathsGet_          ( int               * count,
 
   path_names = oyDataPathsGet_( count, "color/icc", oyALL, oySCOPE_USER_SYS,
                                           oyAllocateFunc_ );
-# define TestAndSetDefaultPATH( path ) \
+#define TestAndSetDefaultPATH( path ) \
   if(oyIsDir_( path )) \
   { \
     char * path_full = oyResolveDirFileName_(path); \
@@ -250,9 +250,11 @@ char **  oyProfilePathsGet_          ( int               * count,
   TestAndSetDefaultPATH( OS_ICC_SYSTEM_DIR );
   TestAndSetDefaultPATH( OS_ICC_MACHINE_DIR );
   TestAndSetDefaultPATH( OS_ICC_USER_DIR );
+#ifdef __APPLE__
   TestAndSetDefaultPATH( CSNetworkPath );
+#endif
 
-# undef TestAndSetDefaultPATH
+#undef TestAndSetDefaultPATH
 
   tmp = oyStringListAppend_( 0, 0, (const char**)path_names, *count,
                              &tmp_n, allocateFunc );
