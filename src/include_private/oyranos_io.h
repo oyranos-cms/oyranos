@@ -51,7 +51,7 @@ extern "C" {
 /* --- static variables   --- */
 
 #define OY_WEB_RGB "sRGB.icc"
-#define OY_COLOR_DL_CACHE_DIR "icc_device_link"
+#define OY_COLOR_DL_CACHE_PATH "openicc/device_link"
 
 #if defined(__APPLE__)
   /* Apples ColorSync default paths */
@@ -66,7 +66,7 @@ extern "C" {
 # define OS_ICC_MACHINE_DIR            OS_MACHINE_DIR      OS_ICC_PATH
 # define CSNetworkPath                 "/Network/Library"  OS_ICC_PATH
 
-# define OS_CACHE_PATH       "/Caches/org.freedesktop.openicc/" OY_COLOR_DL_CACHE_DIR
+# define OS_CACHE_PATH       "/Caches/org.freedesktop." OY_COLOR_DL_CACHE_PATH
 # define OS_SETTING_PATH     "/Preferences/org.freedesktop.openicc/" OY_SETTINGSDIRNAME
 # define OS_SETTINGS_USER_DIR          OS_USER_DIR           OS_SETTING_PATH
 # define OS_SETTINGS_SYSTEM_DIR        OS_GLOBAL_DIR         OS_SETTING_PATH
@@ -79,18 +79,16 @@ extern "C" {
 # define OS_MACHINE_DIR "/var/"
 
 # define OS_ICC_PATH         "color/" OY_ICCDIRNAME
-# define OS_ICC_USER_DIR               OS_USER_DIR "local/"  OS_CACHE_PATH
-# define OS_ICC_SYSTEM_DIR             OS_MACHINE_DIR        OS_CACHE_PATH
-# define OS_ICC_MACHINE_DIR            OS_MACHINE_DIR "lib/" OS_CACHE_PATH
+# define OS_ICC_USER_DIR               OS_USER_DIR "local/share/" OS_ICC_PATH
+# define OS_ICC_SYSTEM_DIR             OS_GLOBAL_DIR         OS_ICC_PATH
+# define OS_ICC_MACHINE_DIR            OS_MACHINE_DIR "lib/" OS_ICC_PATH
 
-# define OS_CACHE_PATH       "cache/" OY_COLOR_DL_CACHE_DIR
+# define OS_CACHE_PATH       "cache/color/" OY_COLOR_DL_CACHE_PATH
 # define OS_SETTING_PATH     "color/" OY_SETTINGSDIRNAME
 # define OS_SETTINGS_USER_DIR          OS_USER_DIR "config/" OS_SETTING_PATH
 # define OS_SETTINGS_SYSTEM_DIR        OS_GLOBAL_DIR         OS_SETTING_PATH
 # define OS_SETTINGS_MACHINE_DIR       OS_MACHINE_DIR "lib/" OS_SETTING_PATH
 #endif
-
-# define OS_ICC_USER_DIR               OS_USER_DIR           OS_ICC_PATH
 
 # define OS_DL_CACHE_USER_DIR          OS_USER_DIR           OS_CACHE_PATH
 # define OS_DL_CACHE_SYSTEM_DIR        OS_MACHINE_DIR        OS_CACHE_PATH
