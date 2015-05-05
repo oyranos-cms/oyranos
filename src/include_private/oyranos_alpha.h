@@ -77,12 +77,6 @@ OYAPI int  OYEXPORT
 
 
 
-int          oyName_boolean          ( oyName_s          * name_a,
-                                       oyName_s          * name_b,
-                                       oyNAME_e            name_type,
-                                       oyBOOLEAN_e         type );
-
-
 /* --- color conversion --- */
 
 
