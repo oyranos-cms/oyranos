@@ -104,21 +104,6 @@ typedef struct oyUiHandler_s oyUiHandler_s;
 
 
 
-#define OY_FILTER_SET_TEST             0x01        /** only test */
-#define OY_FILTER_GET_DEFAULT          0x01        /** defaults */
-/* decode */
-#define oyToFilterSetTest_m(r)         ((r)&1)
-#define oyToFilterGetDefaults_m(r)     ((r)&1)
-oyOptions_s* oyFilterCore_OptionsSet ( oyFilterCore_s    * filter,
-                                       oyOptions_s       * options,
-                                       int                 flags );
-const char * oyFilterCore_WidgetsSet ( oyFilterCore_s    * filter,
-                                       const char        * widgets,
-                                       int                 flags );
-const char * oyFilterCore_WidgetsGet ( oyFilterCore_s    * filter,
-                                       int                 flags );
-
-
 
 /* --- CMM API --- */
 
