@@ -96,13 +96,6 @@ char   *     oyCMMCacheListPrint_    ( void );
 
 
 
-OYAPI int  OYEXPORT
-               oyConfig_Set          ( oyConfig_s        * config,
-                                       const char        * registration_domain,
-                                       oyOptions_s       * options,
-                                       oyBlob_s          * data );
-
-
 
 
 #if 0
