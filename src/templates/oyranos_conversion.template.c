@@ -388,14 +388,3 @@ OYAPI oyImage_s * OYEXPORT
   return (oyImage_s*)image_input_;
 }
 
-const char *   oyModuleGetActual     ( const char        * type )
-{
-  oyExportStart_(EXPORT_CMMS);
-  oyExportEnd_();
-
-  if(oyFilterRegistrationMatch( type, "//" OY_TYPE_STD, oyOBJECT_CMM_API4_S ))
-  return "lcms";
-  else
-  return OY_PROFILE_NONE;
-}
-

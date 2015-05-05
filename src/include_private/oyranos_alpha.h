@@ -107,20 +107,6 @@ typedef struct oyUiHandler_s oyUiHandler_s;
 
 /* --- CMM API --- */
 
-/** obtain 4 char CMM identifiers and count of CMM's */
-char **        oyModulsGetNames      ( int               * count,
-                                       oyAlloc_f           allocateFunc );
-/** Query for available options for a cmm
-
-    @param[in]     cmm                 the 4 char CMM ID or zero for the current CMM
-    @param[in]     object              the optional base
-    @return                            available options
- */
-const char *   oyModulGetOptions     ( const char        * cmm,
-                                       oyObject_s          object);
-const char *   oyModuleGetActual     ( const char        * type );
-
-
 /* --- Image Color Profile API --- */
 /* needs extra libraries liboyranos_png liboyranos_tiff ... */
 #ifdef OY_HAVE_PNG_
