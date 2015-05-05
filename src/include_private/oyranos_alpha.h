@@ -83,8 +83,6 @@ int          oyName_boolean          ( oyName_s          * name_a,
                                        oyBOOLEAN_e         type );
 
 
-#define OY_HASH_SIZE 16
-
 #define OY_OBSERVE_AS_WELL 0x01
 
 oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text );
