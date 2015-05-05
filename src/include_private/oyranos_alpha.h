@@ -148,10 +148,6 @@ typedef enum oyDATALAYOUT_e {
   oyDATALAYOUT_MAX                    /**< */
 } oyDATALAYOUT_e;
 
-int      oySizeofDatatype            ( oyDATATYPE_e        t );
-
-
-
 
 
 
