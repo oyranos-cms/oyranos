@@ -184,10 +184,10 @@ int main (int argc, char ** argv)
                                     oyOPTIONATTRIBUTE_ADVANCED;
     if(front)
       attributes |= oyOPTIONATTRIBUTE_FRONT;
-    opts = oyFilterNode_OptionsGet( node, attributes );
+    opts = oyFilterNode_GetOptions( node, attributes );
 
     /* ... then get the UI for this filters options. */
-    error = oyFilterNode_UiGet( node, &ui_text, &namespaces, malloc );
+    error = oyFilterNode_GetUi( node, &ui_text, &namespaces, malloc );
     oyFilterNode_Release( &node );
 
     data = oyOptions_GetText( opts, oyNAME_NAME );

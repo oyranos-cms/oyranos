@@ -603,7 +603,7 @@ int main( int argc , char** argv )
     char * data = 0;
     fprintf(stderr, "%s\n", input);
     error = oyImage_FromFile( input, icc_profile_flags, &image, NULL );
-    prof = oyImage_ProfileGet( image );
+    prof = oyImage_GetProfile( image );
     data = oyProfile_GetMem( prof, &size, 0, oyAllocateFunc_);
     if(size)
     {

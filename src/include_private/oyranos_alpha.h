@@ -251,13 +251,6 @@ int      oyGetMonitorInfo            ( const char        * display,
                                        char             ** system_port,
                                        oyBlob_s         ** edit,
                                        oyAlloc_f           allocate_func );
-#if 1
-#define oyImage_PixelLayoutGet         oyImage_GetPixelLayout
-#define oyImage_ProfileGet             oyImage_GetProfile
-#define oyImage_TagsGet                oyImage_GetTags
-#define oyFilterNode_OptionsGet        oyFilterNode_GetOptions
-#define oyFilterNode_UiGet             oyFilterNode_GetUi
-#endif
 
 #ifdef __cplusplus
 } /* extern "C" */
