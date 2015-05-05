@@ -107,39 +107,6 @@ typedef struct oyUiHandler_s oyUiHandler_s;
 
 /* --- CMM API --- */
 
-/* --- Image Color Profile API --- */
-/* needs extra libraries liboyranos_png liboyranos_tiff ... */
-#ifdef OY_HAVE_PNG_
-#include <png.h>
-#define OY_PNG_s    png_infop
-oyProfile_s *  oyImagePNGgetICC      ( OY_PNG_s            info,
-                                       int                 flags );
-#endif
-#ifdef OY_HAVE_TIFF_
-#include <tiffio.h>
-#define OY_TIFF_s   TIFF*
-oyProfile_s *  oyImageTIFFgetICC     ( OY_TIFF_s           dir,
-                                       int                 flags );
-int            oyImageTIFFsetICC     ( OY_TIFF_s           dir,
-                                      oyProfile_s        * profile,
-                                      int                  flags);
-#endif
-#ifdef OY_HAVE_EXR_
-#include <OpenEXR/OpenEXR.h>
-#define OY_EXR_s    ImfHeader
-oyProfile_s *  oyImageEXRgetICC      ( OY_EXR_s            header,
-                                       int                 flags );
-#ifdef __cplusplus
-#define OY_EXRpp_s  Imf::Header*
-oyProfile_s *  oyImageEXRgetICC      ( OY_EXRpp_s          header,
-                                       int                 flags );
-#endif
-#endif
-/*
-with flags something like:
-oyIMAGE_EMBED_ICC_MINIMAL  ...
-oyIMAGE_EMBED_ICC_FULL (while for OpenEXR this would not make sense) */
-
 
 char   *       oyDumpColorToCGATS   ( const double      * channels,
                                        size_t              n,
