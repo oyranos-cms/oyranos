@@ -43,10 +43,6 @@ extern "C" {
 
 
 
-#define oyNAME_ID oyNAME_NICK
-
-
-
 /** @struct  oyCallback_s
  *  @brief   a Callback object
  *  @extends oyStruct_s
