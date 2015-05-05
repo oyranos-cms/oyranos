@@ -56,6 +56,19 @@ ADD_CUSTOM_COMMAND( OUTPUT test-oyranos2
                     DEPENDS test2
                     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/RunTest2.cmake )
 
+IF(USE_GCOV)
+  MESSAGE("testing coverage using gcc's gcov; try target: coverage")
+  INCLUDE(CodeCoverage)
+  SETUP_TARGET_FOR_COVERAGE(
+				coverage  # Name for custom target.
+				test2         # Name of the test driver executable that runs the tests.
+									# NOTE! This should always have a ZERO as exit code
+									# otherwise the coverage generation will not complete.
+				coverage            # Name of output directory.
+			)
+ENDIF(USE_GCOV)
+
+
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" ${ELEKTRA_LIBRARY_DIRS} )
 ADD_EXECUTABLE( test_oyranos "${CMAKE_CURRENT_SOURCE_DIR}/test_oyranos.c" )
 TARGET_LINK_LIBRARIES( test_oyranos Oyranos )
