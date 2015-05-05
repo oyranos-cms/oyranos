@@ -83,11 +83,6 @@ int          oyName_boolean          ( oyName_s          * name_a,
                                        oyBOOLEAN_e         type );
 
 
-oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text );
-oyStructList_s** oyCMMCacheList_     ( void );
-char   *     oyCMMCacheListPrint_    ( void );
-
-
 /* --- color conversion --- */
 
 

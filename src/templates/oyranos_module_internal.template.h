@@ -228,6 +228,8 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
                                        oyCMMapi_Check_f    apiCheck,
                                        oyPointer           check_pointer );
 oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text );
+oyStructList_s** oyCMMCacheList_     ( void );
+char   *     oyCMMCacheListPrint_    ( void );
 oyCMMapis_s *  oyCMMGetMetaApis_     ( );
 int              oyCMMCanHandle_    ( oyCMMapi3_s        * api,
                                       oyCMMapiQueries_s  * queries );
