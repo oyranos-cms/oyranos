@@ -243,8 +243,6 @@ int          oyXFORMsRenderUi        ( const char        * xforms,
 /* --- deprecated definitions --- */
 
 /** @deprecated */
-int            oyModulRegisterXML    ( oyGROUP_e           group,
-                                       const char        * xml );
 int      oyGetMonitorInfo            ( const char        * display,
                                        char             ** manufacturer,
                                        char             ** model,
