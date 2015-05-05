@@ -96,10 +96,6 @@ char   *     oyCMMCacheListPrint_    ( void );
 
 
 
-int          oyRegistrationEraseFromDB(const char        * registration );
-
-
-
 OYAPI int  OYEXPORT
                oyConfig_Set          ( oyConfig_s        * config,
                                        const char        * registration_domain,
