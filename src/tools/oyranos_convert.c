@@ -69,7 +69,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -o %s\t%s\n", _("FILE_NAME"), _("write to file, currently only PPM and PNG formats"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Generate CLUT Image:"));
-  fprintf( stderr, "      %s -p %s -f clut [-o %s] [-n %s]  [-i %s]\n", argv[0], _("ICC_FILE_NAME"), _("FILE_NAME"), _("MODULE_NAME"), _("ICC_FILE_NAME"));
+  fprintf( stderr, "      %s -f clut -p %s [-i %s] [-o %s] [-n %s]\n", argv[0], _("ICC_FILE_NAME"), _("ICC_FILE_NAME"), _("FILE_NAME"), _("MODULE_NAME"));
   fprintf( stderr, "      -i %s\t%s\n", _("ICC_FILE_NAME"), _("Input Color Space"));
   fprintf( stderr, "      -p %s\t%s\n", _("ICC_FILE_NAME"), _("Output Color Space"));
   fprintf( stderr, "      -s %s\t%s\n", _("ICC_FILE_NAME"), _("Simulation/Proof Color Space"));
