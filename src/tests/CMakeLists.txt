@@ -74,7 +74,7 @@ ADD_EXECUTABLE( test_oyranos "${CMAKE_CURRENT_SOURCE_DIR}/test_oyranos.c" )
 TARGET_LINK_LIBRARIES( test_oyranos Oyranos )
 ADD_EXECUTABLE( test_oyranos-static "${CMAKE_CURRENT_SOURCE_DIR}/test_oyranos.c" )
 TARGET_LINK_LIBRARIES( test_oyranos-static oyranos-static )
-ADD_CUSTOM_TARGET(test
+ADD_CUSTOM_TARGET(check
 	"echo"
         DEPENDS test-oyranos test2 test2-static
         COMMENT "Test liboyranos." VERBATIM )
