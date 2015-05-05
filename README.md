@@ -129,11 +129,11 @@ device specific Informations (ICC profiles) und system wide settings.
     $ make install
 
 ####Build Flags
-... are typical cmake flags like CMAKE_C_FLAGS to tune compilation.
+... are typical cmake flags like CMAKE\_C\_FLAGS to tune compilation.
 
-* CMAKE_INSTALL_PREFIX to install into paths and so on. Use on the command 
-  line through -DCMAKE_INSTALL_PREFIX=/my/path .
-* LIB_SUFFIX - allows to append a architecture specific suffix like 
-  LIB_SUFFIX=64 for 64bit non debian style Linux systems.
-* XDG_CONFIG_DIR - path to install oyranos-monitor-setup.desktop; defaults to /etc/xdg/autostart/
-
+* CMAKE\_INSTALL\_PREFIX to install into paths and so on. Use on the command 
+  line through -DCMAKE\_INSTALL\_PREFIX=/my/path .
+* LIB\_SUFFIX - allows to append a architecture specific suffix like 
+  LIB\_SUFFIX=64 for 64bit RedHat style Linux systems.
+* XDG\_CONFIG\_DIR - path to install oyranos-monitor-setup.desktop; defaults to /etc/xdg/autostart/
+* USE\_GCOV - enable gcov/lcov compiler flags on the Unix platform and the coverage target
