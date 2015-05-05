@@ -96,16 +96,6 @@ char   *     oyCMMCacheListPrint_    ( void );
 
 
 
-
-
-#if 0
-OYAPI oyPointer OYEXPORT
-                   oyProfile_Align   ( oyProfile_s     * profile,
-                                       size_t          * size,
-                                       oyAlloc_f         allocateFunc );
-#endif
-
-
 /** @enum    oyDATALAYOUT_e
  *  @brief   ideas for basic data arrangements
  *
