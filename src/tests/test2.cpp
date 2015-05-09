@@ -5064,31 +5064,34 @@ oyTESTRESULT_e testCMMlists()
     "oyGetCMMs(oyCMM_CONTEXT, oyNAME_NICK,) failed         " );
   }
 
-  int current = -1;
-  oyOptionChoicesGet2( oyWIDGET_CMM_CONTEXT, 0, oyNAME_NAME, &i,
-                       (const char***)&list, &current );
-
-  if(current != -1)
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyOptionChoicesGet2( 0, current == %s [%d])      ", list[current],
-                                                              current );
-  } else
-  { PRINT_SUB( oyTESTRESULT_XFAIL,
-    "oyOptionChoicesGet2( current == ???? ) missed         " );
-  }
-
-  oyOptionChoicesFree( oyWIDGET_CMM_CONTEXT, &list, i );
-
-
   char * default_cmm = oyGetCMMPattern( oyCMM_CONTEXT, oySOURCE_DATA, malloc );
+  if(default_cmm && default_cmm[0])
+  { fprintf( zout,
+    "oyGetCMMPattern( oySOURCE_DATA ) == %s         \n", default_cmm );
+  } else
+  { fprintf( zout,
+    "oyGetCMMPattern( oySOURCE_DATA ) not set              \n" );
+  }
 
   if(default_cmm && default_cmm[0])
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyGetCMMPattern( oySOURCE_DATA ) == %s         ", default_cmm );
-  } else
-  { PRINT_SUB( oyTESTRESULT_XFAIL,
-    "oyGetCMMPattern( oySOURCE_DATA ) not set              " );
+  {
+    int current = -1;
+    oyOptionChoicesGet2( oyWIDGET_CMM_CONTEXT, 0, oyNAME_NAME, &i,
+                         (const char***)&list, &current );
+
+    if(current != -1)
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      " oyOptionChoicesGet2( 0, current == %s [%d])      ", list[current],
+                                                              current );
+    } else
+    { PRINT_SUB( oyTESTRESULT_XFAIL,
+      "oyOptionChoicesGet2( current == ???? ) missed         " );
+    }
+
+    oyOptionChoicesFree( oyWIDGET_CMM_CONTEXT, &list, i );
   }
+
+
   if(default_cmm) free(default_cmm);
 
 
