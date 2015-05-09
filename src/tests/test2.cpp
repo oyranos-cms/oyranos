@@ -5001,6 +5001,53 @@ oyTESTRESULT_e testConversion()
 
   oyOptions_Release( &options );
 
+
+
+  config_cmm = oyGetPersistentString( OY_DEFAULT_CMM_CONTEXT, 0, oySCOPE_USER_SYS, 0 );
+  int error = oySetPersistentString( OY_DEFAULT_CMM_CONTEXT, oySCOPE_USER,
+                                     "///icc_color/notX", "non existent CMM" );
+  char * test_config_cmm = oyGetPersistentString( OY_DEFAULT_CMM_CONTEXT, 0, oySCOPE_USER_SYS, 0 );
+  if(strcmp(test_config_cmm,"///icc_color/notX") == 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "set intermediate global context = %s", oyNoEmptyString_m_(test_config_cmm) );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "set intermediate global context = %s", oyNoEmptyString_m_(test_config_cmm) );
+  }
+  cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
+  cc_graph = oyConversion_GetGraph( cc );
+  icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+  reg = oyFilterNode_GetRegistration( icc );
+  blob = oyFilterNode_ToBlob( icc, NULL );
+  if(blob)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "%s", oyNoEmptyString_m_(reg) );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "%s", oyNoEmptyString_m_(reg) );
+  }
+  error  = oyConversion_RunPixels( cc, NULL );
+  if(error == 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "fallback rendering                            " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "fallback rendering                            " );
+  }
+  if(config_cmm)
+    error = oySetPersistentString( OY_DEFAULT_CMM_CONTEXT, oySCOPE_USER,
+                                   config_cmm, "non existent CMM" );
+  else
+    error = oySetPersistentString( OY_DEFAULT_CMM_CONTEXT, oySCOPE_USER,
+                                   NULL, NULL );
+
+  oyFree_m_( config_cmm );
+  oyFree_m_( test_config_cmm );
+  oyBlob_Release( &blob );
+  oyConversion_Release( &cc );
+  oyFilterGraph_Release( &cc_graph );
+  oyFilterNode_Release( &icc );
+
   oyImage_Release( &input );
   oyImage_Release( &output );
 
