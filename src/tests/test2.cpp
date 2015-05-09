@@ -4878,6 +4878,9 @@ oyTESTRESULT_e testConversion()
   oyConversion_s * cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
   oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
   oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+  char * config_cmm = oyGetPersistentString( OY_DEFAULT_CMM_CONTEXT, 0, oySCOPE_USER_SYS, 0 );
+  const char * reg = oyFilterNode_GetRegistration( icc );
+  int fallback = !oyFilterRegistrationMatch( reg, config_cmm, oyOBJECT_CMM_API4_S );
   oyOptions_s * node_opts = oyFilterNode_GetOptions( icc, oyOPTIONATTRIBUTE_ADVANCED );
   oyOption_s * ct = oyOptions_Find( node_opts, "////context", oyNAME_PATTERN );
   oyOptions_Release( &node_opts );
@@ -4889,12 +4892,15 @@ oyTESTRESULT_e testConversion()
     "oyOptions_Find( node_opts, \"////context\" )    " );
   }
   if(ct) {
-  if((oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) == 0)
+  if(((oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) != 0 &&
+      fallback) ||
+     ((oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) == 0 &&
+      !fallback))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "\"////context\" is not touched oyOPTIONATTRIBUTE_EDIT" );
+    "\"////context\" is %stouched oyOPTIONATTRIBUTE_EDIT", fallback?"":"not " );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "\"////context\" is not touched oyOPTIONATTRIBUTE_EDIT" );
+    "\"////context\" is %stouched oyOPTIONATTRIBUTE_EDIT", fallback?"":"not " );
   }
   }
   oyOption_Release( &ct );
@@ -4919,12 +4925,15 @@ oyTESTRESULT_e testConversion()
     "oyOptions_Find( node_opts, \"////context\" )    " );
   }
   if(ct) {
-  if((oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) == 0)
+  if(((oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) != 0 &&
+      fallback) ||
+     ((oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) == 0 &&
+      !fallback))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "\"////context\" is not touched oyOPTIONATTRIBUTE_EDIT" );
+    "\"////context\" is %stouched oyOPTIONATTRIBUTE_EDIT", fallback?"":"not " );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "\"////context\" is not touched oyOPTIONATTRIBUTE_EDIT" );
+    "\"////context\" is %stouched oyOPTIONATTRIBUTE_EDIT", fallback?"":"not " );
   }
   }
   oyOption_Release( &ct );
@@ -4935,7 +4944,7 @@ oyTESTRESULT_e testConversion()
   cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
   cc_graph = oyConversion_GetGraph( cc );
   icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
-  const char * reg = oyFilterNode_GetRegistration( icc );
+  reg = oyFilterNode_GetRegistration( icc );
   
   if(reg && strstr(reg, "lcm2"))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
