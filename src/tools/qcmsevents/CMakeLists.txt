@@ -12,7 +12,7 @@ IF( QT_FOUND AND UNIX AND NOT APPLE )
   QT4_WRAP_CPP( qcmsevents_SRCS ${qcmsevents_MOC_HEADERS} )
 
   ADD_EXECUTABLE( qcmsevents ${qcmsevents_SRCS} ${qcmsevents_RCC_SRCS} )
-  TARGET_LINK_LIBRARIES ( qcmsevents oyranos ${EXTRA_LIBS}
+  TARGET_LINK_LIBRARIES ( qcmsevents Oyranos ${EXTRA_LIBS}
                  ${QT_LIBRARIES} ${XCM_LIBRARIES} )
   INSTALL( TARGETS qcmsevents DESTINATION bin )
   INSTALL( FILES qcmsevents-applet.desktop DESTINATION share/applications )
