@@ -13,10 +13,13 @@
 #define QCMSEVENTS_H
 
 #include <QtGui>
+#include <QApplication>
 #include <QSystemTrayIcon>
 #include <QDialog>
 #include <QDesktopWidget>
 #include <QWidget>
+#include <QListWidget>
+#include <QComboBox>
 #include <QX11Info>
 
 #include <cstdlib>
@@ -70,9 +73,14 @@ class Qcmse : public QApplication
     void setup()
     {
       const char * display_name = getenv("DISPLAY");
+#if QT_VERSION < 0x050000
       QDesktopWidget * d = this->desktop();
       QX11Info i = d->x11Info();
       XcmeContext_DisplaySet( c, i.display() );
+#else
+      if(QX11Info::isPlatformX11())
+        XcmeContext_DisplaySet( c, QX11Info::display() );
+#endif
       XcmeContext_WindowSet( c, dialog->winId() );
       XcmeContext_Setup( c, display_name );
     };

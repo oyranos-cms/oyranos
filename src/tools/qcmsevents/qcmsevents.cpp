@@ -16,6 +16,10 @@
 
 #include <X11/Xcm/Xcm.h>
 
+#include <QAction>
+#include <QVBoxLayout>
+#include <QMenu>
+
 QcmseDialog * dialog = 0;
 
 QcmseDialog::QcmseDialog()
