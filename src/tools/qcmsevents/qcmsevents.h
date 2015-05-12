@@ -18,7 +18,7 @@
 #include <QWidget>
 #include <QListWidget>
 #include <QComboBox>
-
+#include <QX11Info>
 
 #include <cstdlib>
 #include <cstring>
@@ -59,7 +59,6 @@ extern QcmseDialog * dialog;
 
 
 #if QT_VERSION >= 0x050000
-#include <QX11Info>
 class Qcmse : public QApplication, QAbstractNativeEventFilter
 {
   XcmeContext_s * c;
