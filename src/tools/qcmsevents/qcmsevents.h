@@ -3,10 +3,8 @@
  *  A small X11 color management event observer.
  *
  *  License: newBSD
- *  Copyright: (c)2009-2010 - Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  Copyright: (c)2009-2015 - Kai-Uwe Behrmann <ku.b@gmx.de>
  *
- *  c++: ar cru liboyranosedid.a ../../modules/devices/oyranos_edid_parse.o ../../modules/devices/oyranos_monitor.o
- *  c++: prefix=/opt/local; g++ -Wall -g -o qcmsevents qcmsevents.cpp `PKG_CONFIG_PATH=$prefix/lib/pkgconfig pkg-config --cflags --libs x11 xmu xfixes xinerama xrandr xxf86vm oyranos QtGui` -DHAVE_X11 -DTARGET=\"xcmsevents\" -I$prefix/include -I../.. -L$prefix/lib -lXcolor -L./ -loyranosedid
  */
 
 #ifndef QCMSEVENTS_H
@@ -20,7 +18,7 @@
 #include <QWidget>
 #include <QListWidget>
 #include <QComboBox>
-#include <QX11Info>
+
 
 #include <cstdlib>
 #include <cstring>
@@ -58,6 +56,44 @@ class QcmseDialog : public QDialog
 
 extern QcmseDialog * dialog;
 
+
+
+#if QT_VERSION >= 0x050000
+#include <QX11Info>
+class Qcmse : public QApplication, QAbstractNativeEventFilter
+{
+  XcmeContext_s * c;
+  public:
+    Qcmse(int & argc, char ** argv) : QApplication(argc,argv)
+    {
+      c = NULL;
+      QCoreApplication::eventDispatcher()->installNativeEventFilter( this );
+    };
+    ~Qcmse()
+    {
+      XcmeContext_Release( &c );
+    };
+    void setup()
+    {
+      const char * display_name = getenv("DISPLAY");
+      if(QX11Info::isPlatformX11())
+        c = XcmeContext_Create( display_name );
+    };
+    // ask Qt for new arriving events
+    virtual bool nativeEventFilter(const QByteArray &, void *, long *) Q_DECL_OVERRIDE
+    {
+      // use Xlib for Xcm's stand alone X11 context 
+      while(XPending(XcmeContext_DisplayGet( c )))
+      {
+        XEvent event;
+        XNextEvent( XcmeContext_DisplayGet( c ), &event);
+        XcmeContext_InLoop( c, &event );
+      }
+
+      return false;
+    };
+};
+#else /* QT_VERSION >= 0x050000 */
 class Qcmse : public QApplication
 {
   XcmeContext_s * c;
@@ -73,14 +109,9 @@ class Qcmse : public QApplication
     void setup()
     {
       const char * display_name = getenv("DISPLAY");
-#if QT_VERSION < 0x050000
       QDesktopWidget * d = this->desktop();
       QX11Info i = d->x11Info();
       XcmeContext_DisplaySet( c, i.display() );
-#else
-      if(QX11Info::isPlatformX11())
-        XcmeContext_DisplaySet( c, QX11Info::display() );
-#endif
       XcmeContext_WindowSet( c, dialog->winId() );
       XcmeContext_Setup( c, display_name );
     };
@@ -93,7 +124,7 @@ class Qcmse : public QApplication
       return false; 
     };
 };
-
+#endif /* QT_VERSION >= 0x050000 */
 
 #endif /* QCMSEVENTS_H */
 
