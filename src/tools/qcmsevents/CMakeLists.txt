@@ -24,8 +24,12 @@ IF( HAVE_QT AND UNIX AND NOT APPLE )
   TARGET_LINK_LIBRARIES ( qcmsevents Oyranos ${EXTRA_LIBS}
                  ${QT_LIBRARIES} ${XCM_LIBRARIES} )
   IF(Qt5Widgets_FOUND)
+    FIND_PACKAGE(PkgConfig)
+    PKG_CHECK_MODULES(X11 x11)
     TARGET_LINK_LIBRARIES ( qcmsevents Oyranos ${EXTRA_LIBS}
-                 Qt5::Widgets Qt5::X11Extras ${XCM_LIBRARIES} )
+                 Qt5::Widgets Qt5::X11Extras
+                 ${XCM_LIBRARIES}
+                 ${X11_LIBRARIES} )
   ENDIF()
   INSTALL( TARGETS qcmsevents
            RUNTIME DESTINATION bin )
