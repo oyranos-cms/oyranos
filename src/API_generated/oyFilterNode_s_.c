@@ -639,8 +639,11 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
 
           if(error <= 0)
           {
-            const char * pattern = oyOptions_FindString( node->core->options_,
-                                                         "////context", NULL );
+            /* select the module by option */
+            oyOption_s * ct = oyOptions_Find( node->core->options_,
+                                                       "////context",
+                                                       oyNAME_PATTERN );
+            const char * pattern = oyOption_GetValueString( ct, 0 );
             if(pattern &&
                !oyFilterRegistrationMatch( core_->registration_, pattern, 0 ))
             {
@@ -653,17 +656,28 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
 
               if(error)
               {
-                error = 1;
-                goto clean;
+                if(oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT)
+                {
+                  oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*) node,
+                               OY_DBG_FORMAT_ "edited pattern not available: %d %s",
+                               OY_DBG_ARGS_, oyObject_GetId(ct->oy_),
+                                   pattern );
+                  error = 1;
+                  goto clean;
+                } else
+                  error = 0;
               } else
                 core_ = node->core;
 
               oyHash_Release( &hash7 );
               hash7 = oyFilterNode_GetHash_(node, 7);
             }
+            oyOption_Release( &ct );
 
-            pattern = oyOptions_FindString( node->core->options_,
-                                                         "////renderer", NULL );
+            ct = oyOptions_Find( node->core->options_,
+                                                       "////renderer",
+                                                       oyNAME_PATTERN );
+            pattern = oyOption_GetValueString( ct, 0 );
             if(pattern &&
                !oyFilterRegistrationMatch( node->api7_->registration, pattern, 0 ))
             {
@@ -676,8 +690,12 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
 
               if(error)
               {
-                error = 1;
-                goto clean;
+                if(oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT)
+                {
+                  error = 1;
+                  goto clean;
+                } else
+                  error = 0;
               } else
                 core_ = node->core;
 
