@@ -2184,9 +2184,18 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
     error = oyOptions_DoFilter ( s, flags, type_txt );
 
     if(c && context)
+    {
       oyOption_SetFromText( c, context, 0 );
+      oyOption_SetFlags(c, oyOption_GetFlags(c) & (~oyOPTIONATTRIBUTE_EDIT));
+      oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)c,
+                       OY_DBG_FORMAT_ "set context to %s %d", OY_DBG_ARGS_, context, oyObject_GetId(c->oy_) );
+    }
     if(r && renderer)
+    {
       oyOption_SetFromText( r, renderer, 0 );
+      oyOption_SetFlags(r, oyOption_GetFlags(r) & (~oyOPTIONATTRIBUTE_EDIT));
+    }
+
     if(context)
       oyFree_m_( context );
     if(renderer)
@@ -2497,12 +2506,15 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
           /* ask the DB */
     for( i = 0; i < db_keys_n && !error; ++i )
     {
+      uint32_t flags;
       oyOption_FromDB( db_keys[i], &db_opt, NULL );
       o = oyOptions_Find( opts, oyOption_GetText( db_opt, oyNAME_DESCRIPTION ),
                           oyNAME_PATTERN);
-      oyOption_SetFlags(o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
       oyOption_SetSource( o, oyOPTIONSOURCE_DATA );
+      flags = oyOption_GetFlags(o);
       oyOption_SetFromText( o, oyOption_GetValueString( db_opt,0 ), 0 );
+      if(!(flags & oyOPTIONATTRIBUTE_EDIT))
+        oyOption_SetFlags(o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
       oyOption_Release( &o );
       oyOption_Release( &db_opt );
     }
@@ -3194,6 +3206,16 @@ oyFilterNode_s *   oyFilterNode_FromOptions (
       oyFree_m_(pattern);
     } else
       core = oyFilterCore_NewWith( pattern, options, object );
+  }
+  if(!core)
+  {
+    oyOption_s * ct = oyOptions_Find( options, "////context", oyNAME_PATTERN );
+    if(ct)
+      if(oyOption_GetFlags(ct) & oyOPTIONATTRIBUTE_EDIT)
+      {
+        WARNc1_S("no explicite context node possible: \"%s\"", oyNoEmptyString_m_(pattern) );
+        return node;
+      }
   }
   if(!core && db_base_key)
   {
