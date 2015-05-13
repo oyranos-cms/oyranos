@@ -202,7 +202,7 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
  *
  *  @param         obj                 the option
  *  @param         text                the text to set
- *  @param         flags               possible is OY_STRING_LIST
+ *  @param         flags               possible is ::OY_STRING_LIST
  *  @return                            0 - success, 1 - error
  *
  *  @version Oyranos: 0.2.1
@@ -311,13 +311,18 @@ int            oyOption_SetFromInt   ( oyOption_s        * obj,
                                        int                 pos,
                                        uint32_t            flags )
 {
+  int error = 0;
   oyOption_s_ * s = (oyOption_s_*)obj;
   if(!s)
     return -1;
 
   oyCheckType__m( oyOBJECT_OPTION_S, return -1 )
 
-  return oyOption_SetFromInt_( s, integer, pos, flags);
+  error = oyOption_SetFromInt_( s, integer, pos, flags);
+  if(!error)
+    oyOption_UpdateFlags_(s);
+
+  return error;
 }
 
 /** Function oyOption_GetValueInt
@@ -453,6 +458,8 @@ int            oyOption_SetFromDouble( oyOption_s        * obj,
 
     s->flags |= oyOPTIONATTRIBUTE_EDIT;
     oyStruct_ObserverSignal( (oyStruct_s*)s, oySIGNAL_DATA_CHANGED, 0 );
+
+    oyOption_UpdateFlags_(s);
   }
 
   return error;
@@ -595,7 +602,10 @@ int            oyOption_SetFromData  ( oyOption_s        * option,
     error = oyBlob_SetFromData( (oyBlob_s*) s->value->oy_struct,
                                 ptr, size, 0 );
     oyStruct_ObserverSignal( (oyStruct_s*)s, oySIGNAL_DATA_CHANGED, 0 );
+
+    oyOption_UpdateFlags_(s);
   }
+
 
   return error;
 }
@@ -1181,6 +1191,8 @@ const char *   oyValueTypeText       ( oyVALUETYPE_e       type )
   }
   return 0;
 }
+
+
 
 
 
