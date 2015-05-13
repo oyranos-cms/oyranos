@@ -3171,8 +3171,9 @@ char *       oyGetFilterNodeDefaultPatternFromPolicy (
  *  @memberof oyFilterNode_s
  *
  *  The returned object will be created from the found registration pattern strings.
- *  The first pattern will be searched in the options argument. If that fails
- *  the db_base_key will be used to ask the Oyranos DB for context and 
+ *  The first pattern will be searched in the options argument. If a option is found
+ *  and that fails, then NULL will be returned.
+ *  Else the db_base_key will be used to ask the Oyranos DB for context and 
  *  renderer patterns. In case that fails a policy module will be asked for
  *  a default through the base_pattern.
  *
@@ -3180,10 +3181,10 @@ char *       oyGetFilterNodeDefaultPatternFromPolicy (
  *  @param         base_pattern        the basic pattern to search in the options and to be used as fallback
  *  @param         options             the options to search in for the base_pattern and get "context" and "renderer" keys; optional
  *  @param         object              the optional object
- *  @return                            a registration pattern to match a CMM registration string
+ *  @return                            a registration pattern to match a CMM registration string or NULL
  *
  *  @version Oyranos: 0.9.6
- *  @date    2014/07/17
+ *  @date    2015/05/13
  *  @since   2014/07/17 (Oyranos: 0.9.6)
  */
 oyFilterNode_s *   oyFilterNode_FromOptions (
@@ -3213,6 +3214,7 @@ oyFilterNode_s *   oyFilterNode_FromOptions (
     if(ct)
       if(oyOption_GetFlags(ct) & oyOPTIONATTRIBUTE_EDIT)
       {
+        oyOption_Release( &ct );
         WARNc1_S("no explicite context node possible: \"%s\"", oyNoEmptyString_m_(pattern) );
         return node;
       }
@@ -3264,6 +3266,18 @@ oyFilterNode_s *   oyFilterNode_FromOptions (
       oyFree_m_(pattern);
     } else
       node = oyFilterNode_Create( pattern, core, object );
+  }
+  if(!node)
+  {
+    oyOption_s * ct = oyOptions_Find( options, "////renderer", oyNAME_PATTERN );
+    if(ct)
+      if(oyOption_GetFlags(ct) & oyOPTIONATTRIBUTE_EDIT)
+      {
+        oyOption_Release( &ct );
+        oyFilterCore_Release( &core );
+        WARNc1_S("no explicite renderer node possible: \"%s\"", oyNoEmptyString_m_(pattern) );
+        return node;
+      }
   }
   if(!node && db_base_key)
   {
