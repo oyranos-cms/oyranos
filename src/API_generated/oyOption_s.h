@@ -38,7 +38,7 @@ typedef struct oyOption_s oyOption_s;
 
 
 /* Include "Option.public.h" { */
-#define OY_STRING_LIST                 0x01 /** create a oyVAL_STRING_LIST */
+#define OY_STRING_LIST                 0x01 /**< create a oyVAL_STRING_LIST */
 /* decode */
 #define oyToStringList_m(r)            ((r)&1)
 
