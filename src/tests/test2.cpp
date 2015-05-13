@@ -5153,6 +5153,56 @@ oyTESTRESULT_e testConversion()
   oyFilterNode_Release( &icc );
   oyOptions_Release( &node_opts );
 
+  oyOptions_SetFromText( &options, "////renderer", test_config_cmm, OY_CREATE_NEW );
+  cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
+  cc_graph = oyConversion_GetGraph( cc );
+  icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+  node_opts = oyFilterNode_GetOptions( icc, oyOPTIONATTRIBUTE_ADVANCED );
+  ct = oyOptions_Find( node_opts, "////renderer", oyNAME_PATTERN );
+  if(!icc || (oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) != 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "\"////renderer\" is touched oyOPTIONATTRIBUTE_EDIT %s", reg );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "\"////renderer\" is touched oyOPTIONATTRIBUTE_EDIT %s", reg );
+  }
+  oyOption_Release( &ct );
+  oyOptions_Release( &options );
+
+  for(i = 0; i < 12; ++i) buf_16out2x2[i] = 0;
+  cc_error = oyConversion_RunPixels( cc, NULL );
+  const char * renderer = oyOptions_FindString( node_opts, "////renderer", NULL );
+  error = 0;
+  if(buf_16out2x2[0] != 0 || buf_16out2x2[3] != 0)
+    error = 1;
+  reg = oyFilterNode_GetRegistration( icc );
+  if(reg && (reg = strrchr( reg, '/')) != NULL) ++reg;
+  if(error == 0 &&
+     cc_error > 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "explicite no fallback rendering %s %s", oyNoEmptyString_m_(renderer), oyNoEmptyString_m_(reg) );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "explicite no fallback rendering %s %s", oyNoEmptyString_m_(renderer), oyNoEmptyString_m_(reg) );
+  }
+
+  ct = oyOptions_Find( node_opts, "////renderer", oyNAME_PATTERN );
+  reg = oyOption_GetValueString( ct, 0 );
+  if(reg && (reg = strrchr( reg, '/')) != NULL) ++reg;
+  if(!reg || (oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) != 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "\"////renderer\" is touched oyOPTIONATTRIBUTE_EDIT %s", oyNoEmptyString_m_(reg) );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "\"////renderer\" is touched oyOPTIONATTRIBUTE_EDIT %s", oyNoEmptyString_m_(reg) );
+  }
+  oyOption_Release( &ct );
+
+  oyConversion_Release( &cc );
+  oyFilterGraph_Release( &cc_graph );
+  oyFilterNode_Release( &icc );
+  oyOptions_Release( &node_opts );
+
   if(config_cmm)
     error = oySetPersistentString( OY_DEFAULT_CMM_CONTEXT, oySCOPE_USER,
                                    config_cmm, NULL );
