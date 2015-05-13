@@ -1292,8 +1292,8 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
  *  @param         registration        the options registration name, e.g.
  *                                     "org/my_org/openicc/my_app/my_opt"
  *  @param         value               the value to set
- *  @param         flags               can be OY_CREATE_NEW for a new option,
- *                                     OY_STRING_LIST, OY_ADD_ALWAYS, OY_MATCH_KEY
+ *  @param         flags               can be ::OY_CREATE_NEW for a new option,
+ *                                     ::OY_STRING_LIST, ::OY_ADD_ALWAYS, ::OY_MATCH_KEY
  *
  *  @version Oyranos: 0.3.0
  *  @since   2008/11/27 (Oyranos: 0.1.9)
@@ -1332,7 +1332,7 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
       if(error <= 0)
       {
         /** Flags are passed on to oyOption_SetFromText, e.g. OY_STRING_LIST. */
-        error = oyOption_SetFromText( o, value, flags & 1 );
+        error = oyOption_SetFromText( o, value, flags & OY_STRING_LIST );
       } else
         WARNc3_S( "%s %s=%s",_("wrong argument to option:"),
                   oyNoEmptyString_m_(registration), oyNoEmptyString_m_(value) );
