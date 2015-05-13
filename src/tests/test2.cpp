@@ -4839,13 +4839,13 @@ oyTESTRESULT_e testFilterNode()
 
 oyTESTRESULT_e testConversion()
 {
+  fprintf(stdout, "\n" );
+
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
   uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
-  oyProfile_s * p_lab = oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, NULL );
-  oyProfile_s * p_web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL );
-  oyProfile_s /** p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),*/
-              * p_in, * p_out;
+  oyProfile_s * p_in = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL );
+  oyProfile_s * p_out = oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, NULL );
   uint16_t buf_16in2x2[12] = {
   20000,20000,20000, 10000,10000,10000,
   0,0,0,             65535,65535,65535
@@ -4855,10 +4855,7 @@ oyTESTRESULT_e testConversion()
                buf_type_out = oyUINT16;
   oyImage_s *input, *output;
 
-  fprintf(stdout, "\n" );
 
-  p_in = p_web;
-  p_out = p_lab;
   input =oyImage_Create( 2,2, 
                          buf_16in2x2,
                          oyChannels_m(oyProfile_GetChannelsCount(p_in)) |
@@ -4871,6 +4868,8 @@ oyTESTRESULT_e testConversion()
                           oyDataType_m(buf_type_out),
                          p_out,
                          0 );
+  oyProfile_Release( &p_in );
+  oyProfile_Release( &p_out );
 
   oyOptions_s * options = NULL;
 
@@ -4880,28 +4879,20 @@ oyTESTRESULT_e testConversion()
   oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
   char * config_cmm = oyGetPersistentString( OY_DEFAULT_CMM_CONTEXT, 0, oySCOPE_USER_SYS, 0 );
   const char * reg = oyFilterNode_GetRegistration( icc );
-  int fallback = !oyFilterRegistrationMatch( reg, config_cmm, oyOBJECT_CMM_API4_S );
   oyOptions_s * node_opts = oyFilterNode_GetOptions( icc, oyOPTIONATTRIBUTE_ADVANCED );
   oyOption_s * ct = oyOptions_Find( node_opts, "////context", oyNAME_PATTERN );
   oyOptions_Release( &node_opts );
+  fprintf( zout, "context global: %s\ncontext node: %s\n", config_cmm, strrchr( reg, '/')+1 );
+  reg = oyOption_GetValueString( ct, 0 );
+  if((reg = strrchr( reg, '/')) != NULL) ++reg;
+  fprintf( zout, "context option: %s\n", oyNoEmptyString_m_(reg) );
+
   if(ct)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyOptions_Find( node_opts, \"////context\" )    " );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyOptions_Find( node_opts, \"////context\" )    " );
-  }
-  if(ct) {
-  if(((oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) != 0 &&
-      fallback) ||
-     ((oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) == 0 &&
-      !fallback))
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "\"////context\" is %stouched oyOPTIONATTRIBUTE_EDIT", fallback?"":"not " );
-  } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
-    "\"////context\" is %stouched oyOPTIONATTRIBUTE_EDIT", fallback?"":"not " );
-  }
   }
   oyOption_Release( &ct );
 
@@ -4913,6 +4904,7 @@ oyTESTRESULT_e testConversion()
   { PRINT_SUB( oyTESTRESULT_XFAIL,
     "oyConversion_CreateBasicPixels( \"cached\"=\"1\" )" );
   }
+  oyBlob_Release( &blob );
 
   node_opts = oyFilterNode_GetOptions( icc, 0 );
   ct = oyOptions_Find( node_opts, "////context", oyNAME_PATTERN );
@@ -4924,28 +4916,41 @@ oyTESTRESULT_e testConversion()
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyOptions_Find( node_opts, \"////context\" )    " );
   }
-  if(ct) {
-  if(((oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) != 0 &&
-      fallback) ||
-     ((oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) == 0 &&
-      !fallback))
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "\"////context\" is %stouched oyOPTIONATTRIBUTE_EDIT", fallback?"":"not " );
-  } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
-    "\"////context\" is %stouched oyOPTIONATTRIBUTE_EDIT", fallback?"":"not " );
-  }
-  }
   oyOption_Release( &ct );
 
   oyOptions_Release( &options );
+  oyConversion_Release( &cc );
+  oyFilterGraph_Release( &cc_graph );
+  oyFilterNode_Release( &icc );
 
   oyOptions_SetFromText( &options, "////context", "lcm2", OY_CREATE_NEW );
   cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
   cc_graph = oyConversion_GetGraph( cc );
   icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
   reg = oyFilterNode_GetRegistration( icc );
+  const char * node_reg = reg;
+
+  node_opts = oyFilterNode_GetOptions( icc, 0 );
+  ct = oyOptions_Find( node_opts, "////context", oyNAME_PATTERN );
+  reg = oyOption_GetValueString( ct, 0 );
+  oyOption_Release( &ct );
+  oyOptions_Release( &node_opts );
+  int match = 0;
+  if(reg && strrchr( reg, '/')) reg = strrchr( reg, '/') + 1;
+  if(node_reg && strrchr( node_reg, '/')) node_reg = strrchr( node_reg, '/') + 1;
+  if( reg &&
+      oyFilterRegistrationMatch( node_reg,
+                                 reg, oyOBJECT_NONE ))
+    match = 1;
+  if(match)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "node = option : %s ~ %s", node_reg, oyNoEmptyString_m_(reg) );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "node = option : %s ~ %s", node_reg, oyNoEmptyString_m_(reg) );
+  }
   
+  reg = oyFilterNode_GetRegistration( icc );
   if(reg && strstr(reg, "lcm2"))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyConversion_CreateBasicPixels( \"context\"=\"lcm2\" )" );
@@ -4957,17 +4962,20 @@ oyTESTRESULT_e testConversion()
   blob = oyFilterNode_ToBlob( icc, NULL );
   if(blob)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyFilterNode_ToBlob( \"lcm2\" )                 " );
+    "oyFilterNode_ToBlob( \"lcm2\" )           %d  ", (int)oyBlob_GetSize(blob) );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyFilterNode_ToBlob( \"lcm2\" )                 " );
+    "oyFilterNode_ToBlob( \"lcm2\" )           %d  ", (int)oyBlob_GetSize(blob) );
   }
 
   oyBlob_Release( &blob );
   oyOptions_Release( &options );
+  oyConversion_Release( &cc );
+  oyFilterGraph_Release( &cc_graph );
+  oyFilterNode_Release( &icc );
 
   oyOptions_SetFromText( &options, "////renderer", "lcms", OY_CREATE_NEW );
-  oyOptions_SetFromText( &options, "////context", "lcm2", OY_CREATE_NEW );
+  oyOptions_SetFromText( &options, "////context",  "lcm2", OY_CREATE_NEW );
   cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
   cc_graph = oyConversion_GetGraph( cc );
   icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
@@ -4988,16 +4996,16 @@ oyTESTRESULT_e testConversion()
   oyOptions_SetFromText( &options, "////renderer", "lcm2", OY_CREATE_NEW );
   oyOptions_SetFromText( &options, "////context", "lcms", OY_CREATE_NEW );
   blob = oyFilterNode_ToBlob( icc, NULL );
-  oyBlob_Release( &blob );
 
   reg = oyFilterNode_GetRegistration( icc );
   if(reg && strstr(reg, "lcms"))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyFilterNode_SetContext_( \"context\"=\"lcms\" )  " );
+    "oyFilterNode_SetContext_( \"context\"=\"lcms\" ) %d", (int)oyBlob_GetSize(blob) );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyFilterNode_SetContext_( \"context\"=\"lcms\" ) %s  ", oyNoEmptyString_m_(reg) );
   }
+  oyBlob_Release( &blob );
 
   reg = oyFilterNode_GetRendererRegistration( icc );
   if(reg && strstr(reg, "lcm2"))
@@ -5009,14 +5017,16 @@ oyTESTRESULT_e testConversion()
   }
 
   oyOptions_Release( &options );
-
+  oyConversion_Release( &cc );
+  oyFilterGraph_Release( &cc_graph );
+  oyFilterNode_Release( &icc );
 
 
   config_cmm = oyGetPersistentString( OY_DEFAULT_CMM_CONTEXT, 0, oySCOPE_USER_SYS, 0 );
   int error = oySetPersistentString( OY_DEFAULT_CMM_CONTEXT, oySCOPE_USER,
-                                     "///icc_color/notX", "non existent CMM" );
+                                     "///icc_color.notX", "non existent CMM" );
   char * test_config_cmm = oyGetPersistentString( OY_DEFAULT_CMM_CONTEXT, 0, oySCOPE_USER_SYS, 0 );
-  if(strcmp(test_config_cmm,"///icc_color/notX") == 0)
+  if(strcmp(test_config_cmm,"///icc_color.notX") == 0)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "set intermediate global context = %s", oyNoEmptyString_m_(test_config_cmm) );
   } else
@@ -5030,32 +5040,127 @@ oyTESTRESULT_e testConversion()
   blob = oyFilterNode_ToBlob( icc, NULL );
   if(blob)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "%s", oyNoEmptyString_m_(reg) );
+    "f: %s", oyNoEmptyString_m_(reg) );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "%s", oyNoEmptyString_m_(reg) );
+    "f: %s", oyNoEmptyString_m_(reg) );
   }
   error  = oyConversion_RunPixels( cc, NULL );
   if(error == 0)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "fallback rendering                            " );
+    "fallback rendering with blob %d               ", (int)oyBlob_GetSize(blob) );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "fallback rendering                            " );
+    "fallback rendering with blob %d               ", (int)oyBlob_GetSize(blob) );
   }
-  if(config_cmm)
-    error = oySetPersistentString( OY_DEFAULT_CMM_CONTEXT, oySCOPE_USER,
-                                   config_cmm, "non existent CMM" );
-  else
-    error = oySetPersistentString( OY_DEFAULT_CMM_CONTEXT, oySCOPE_USER,
-                                   NULL, NULL );
 
-  oyFree_m_( config_cmm );
-  oyFree_m_( test_config_cmm );
   oyBlob_Release( &blob );
   oyConversion_Release( &cc );
   oyFilterGraph_Release( &cc_graph );
   oyFilterNode_Release( &icc );
+
+  int i;
+  for(i = 0; i < 12; ++i) buf_16out2x2[i] = 0;
+  cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
+  cc_graph = oyConversion_GetGraph( cc );
+  icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+  node_opts = oyFilterNode_GetOptions( icc, oyOPTIONATTRIBUTE_ADVANCED );
+  const char * context = oyOptions_FindString( node_opts, "////context", NULL );
+  error  = oyConversion_RunPixels( cc, NULL );
+  reg = oyFilterNode_GetRegistration( icc );
+  if(!error)
+    if(buf_16out2x2[0] == 0 && buf_16out2x2[3] == 0)
+      error = 1;
+  if(error == 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "fallback rendering %s %s", context, strrchr(reg,'/')+1 );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "fallback rendering %s %s", context, strrchr(reg,'/')+1 );
+  }
+
+  ct = oyOptions_Find( node_opts, "////context", oyNAME_PATTERN );
+  reg = oyOption_GetValueString( ct, 0 );
+  if((reg = strrchr( reg, '/')) != NULL) ++reg;
+  if(ct)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyOptions_Find( node_opts, \"////context\" ) %s", oyNoEmptyString_m_(reg) );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_Find( node_opts, \"////context\" )    " );
+  }
+
+  if((oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) == 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "\"////context\" is not touched oyOPTIONATTRIBUTE_EDIT" );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "\"////context\" is not touched oyOPTIONATTRIBUTE_EDIT" );
+  }
+  oyOption_Release( &ct );
+  oyConversion_Release( &cc );
+  oyFilterGraph_Release( &cc_graph );
+  oyFilterNode_Release( &icc );
+  oyOptions_Release( &node_opts );
+
+  oyOptions_SetFromText( &options, "////context", test_config_cmm, OY_CREATE_NEW );
+  cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
+  cc_graph = oyConversion_GetGraph( cc );
+  icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+  node_opts = oyFilterNode_GetOptions( icc, oyOPTIONATTRIBUTE_ADVANCED );
+  ct = oyOptions_Find( node_opts, "////context", oyNAME_PATTERN );
+  if(!icc || (oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) != 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "\"////context\" is touched oyOPTIONATTRIBUTE_EDIT %s", reg );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "\"////context\" is touched oyOPTIONATTRIBUTE_EDIT %s", reg );
+  }
+  oyOption_Release( &ct );
+  oyOptions_Release( &options );
+
+  for(i = 0; i < 12; ++i) buf_16out2x2[i] = 0;
+  int cc_error = oyConversion_RunPixels( cc, NULL );
+  context = oyOptions_FindString( node_opts, "////context", NULL );
+  error = 0;
+  if(buf_16out2x2[0] != 0 || buf_16out2x2[3] != 0)
+    error = 1;
+  reg = oyFilterNode_GetRegistration( icc );
+  if(reg && (reg = strrchr( reg, '/')) != NULL) ++reg;
+  if(error == 0 &&
+     cc_error > 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "explicite no fallback rendering %s %s", oyNoEmptyString_m_(context), oyNoEmptyString_m_(reg) );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "explicite no fallback rendering %s %s", oyNoEmptyString_m_(context), oyNoEmptyString_m_(reg) );
+  }
+
+  ct = oyOptions_Find( node_opts, "////context", oyNAME_PATTERN );
+  reg = oyOption_GetValueString( ct, 0 );
+  if(reg && (reg = strrchr( reg, '/')) != NULL) ++reg;
+  if(!reg || (oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) != 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "\"////context\" is touched oyOPTIONATTRIBUTE_EDIT %s", oyNoEmptyString_m_(reg) );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "\"////context\" is touched oyOPTIONATTRIBUTE_EDIT %s", oyNoEmptyString_m_(reg) );
+  }
+  oyOption_Release( &ct );
+
+  oyConversion_Release( &cc );
+  oyFilterGraph_Release( &cc_graph );
+  oyFilterNode_Release( &icc );
+  oyOptions_Release( &node_opts );
+
+  if(config_cmm)
+    error = oySetPersistentString( OY_DEFAULT_CMM_CONTEXT, oySCOPE_USER,
+                                   config_cmm, NULL );
+  else
+    error = oySetPersistentString( OY_DEFAULT_CMM_CONTEXT, oySCOPE_USER,
+                                   NULL, NULL );
+  oyFree_m_( config_cmm );
+  oyFree_m_( test_config_cmm );
 
   oyImage_Release( &input );
   oyImage_Release( &output );
