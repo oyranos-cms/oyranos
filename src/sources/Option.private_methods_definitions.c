@@ -43,13 +43,13 @@ int            oyOption_Match_       ( oyOption_s_        * option_a,
  *  @memberof oyOption_s
  *  @brief   set the ::flags member
  *
- *  @version Oyranos: 0.1.9
+ *  @date    2015/05/13
+ *  @version Oyranos: 0.9.6
  *  @since   2008/11/27 (Oyranos: 0.1.9)
- *  @date    2008/11/27
  */
 void         oyOption_UpdateFlags_   ( oyOption_s_        * o )
 {
-  char * tmp = 0;
+  const char * tmp = 0;
 
   if(o && o->registration && oyStrrchr_( o->registration, '/' ))
   {
@@ -59,6 +59,8 @@ void         oyOption_UpdateFlags_   ( oyOption_s_        * o )
       if(oyStrstr_( tmp, "advanced" ))
          o->flags |= oyOPTIONATTRIBUTE_ADVANCED;
       tmp = 0;
+
+      o->flags |= oyOPTIONATTRIBUTE_EDIT;
   }
 }
 
