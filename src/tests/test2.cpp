@@ -5902,6 +5902,7 @@ static int test_number = 0;
 
 int results[oyTESTRESULT_UNKNOWN+1];
 char * tests_failed[64];
+char * tests_xfailed[64];
 
 oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
                                        const char        * test_name,
@@ -5918,6 +5919,8 @@ oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
 
   if(error == oyTESTRESULT_FAIL)
     tests_failed[results[error]] = (char*)test_name;
+  if(error == oyTESTRESULT_XFAIL)
+    tests_xfailed[results[error]] = (char*)test_name;
   results[error] += 1;
 
   /* print */
@@ -6021,6 +6024,9 @@ int main(int argc, char** argv)
              results[oyTESTRESULT_UNKNOWN]
             );
 
+    for(i = 0; i < results[oyTESTRESULT_XFAIL]; ++i)
+      fprintf( stdout, "    %s: \"%s\"\n",
+               oyTestResultToString( oyTESTRESULT_XFAIL), tests_xfailed[i] );
     for(i = 0; i < results[oyTESTRESULT_FAIL]; ++i)
       fprintf( stdout, "    %s: \"%s\"\n",
                oyTestResultToString( oyTESTRESULT_FAIL), tests_failed[i] );
