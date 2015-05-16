@@ -46,7 +46,6 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  cairo-devel
 BuildRequires:  cups-devel
 BuildRequires:  doxygen
-BuildRequires:  fltk
 BuildRequires:  fltk-devel
 BuildRequires:  gcc-c++
 BuildRequires:  gettext
@@ -72,7 +71,6 @@ BuildRequires:  xorg-x11-Mesa-devel
 BuildRequires:  Mesa
 BuildRequires:  Mesa-devel
 BuildRequires:  doxygen
-BuildRequires:  fltk
 BuildRequires:  fltk-devel
 BuildRequires:  gcc-c++
 BuildRequires:  gettext
@@ -103,7 +101,6 @@ BuildRequires:  xorg-x11-libXmu
 BuildRequires:  xorg-x11-libXmu-devel
 BuildRequires:  xorg-x11-libXp
 BuildRequires:  xorg-x11-libXp-devel
-BuildRequires:  xorg-x11-libXpm
 BuildRequires:  xorg-x11-libXpm-devel
 BuildRequires:  xorg-x11-libXprintUtil
 BuildRequires:  xorg-x11-libXprintUtil-devel
@@ -118,7 +115,6 @@ BuildRequires:  xorg-x11-libfontenc-devel
 BuildRequires:  xorg-x11-libs
 BuildRequires:  xorg-x11-libxkbfile
 BuildRequires:  xorg-x11-libxkbfile-devel
-BuildRequires:  xorg-x11-proto-devel
 BuildRequires:  xorg-x11-util-devel
 BuildRequires:  xorg-x11-xtrans-devel
 %endif
@@ -136,6 +132,13 @@ BuildRequires:  libltdl-devel
 
 %if 0%{?suse_version} > 1210
 BuildRequires:  Mesa-libGLU-devel
+%endif
+
+%if 0%{?suse_version} > 1310
+BuildRequires:  libXpm-tools
+%else
+BuildRequires:  xorg-x11-libXpm
+BuildRequires:  xorg-x11-proto-devel
 %endif
 
 %if 0%{?mandriva_version} > 0
