@@ -22,17 +22,18 @@ device specific Informations (ICC profiles) und system wide settings.
 #####Mandatory
 * [icc-profiles-openicc and icc-profiles-basiccolor](http://sourceforge.net/projects/openicc/files/) - default ICC profiles
 * [libXinerama, libXrandr, libXfixes and libXxf86vm](http:/www.x.org) - for X11 support
-* [libXcm >= 0.5.3] (http://www.oyranos.org/libxcm) - for X11 and Quarz monitor support
+* [libXcm >= 0.5.3] (http://www.oyranos.org/libxcm) - for monitor support
+* [Xcalib](http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/) - a vcgt/calibration loader, required on X11/Windows 
 * [lcms and/or lcms2](http://www.littlecms.com) - CMM for color conversion
 * [libxml2](http://www.xmlsoft.org/) - for XML parsing
 * [Yajl](http://lloyd.github.com/yajl) - for JSON parsing
+* [Elektra](http://www.libelektra.org) - DB API
 
 #####Optional
-* [Elektra](http://www.libelektra.org)
 * [FLTK](http://www.fltk.org) - (--enable-threads) is needed for the example Gui
-* [Xcalib](http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/) - a vcgt/calibration loader 
 * For the documentation use doxygen, graphviz and graphviz-gd packages.
   * [Doxygen v1.5.8 or higher is recommended](http://www.doxygen.org)
+* [LCOV](http://ltp.sourceforge.net/coverage/lcov.php) - coverage docu
 * [Qt](http://www.qt.io) - for a nice observer utility
 * [CUPS](http://www.cups.org) - for CUPS ICC configuration support
 * [libraw](http://www.libraw.org) - for cameraRAW decoding
