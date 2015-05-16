@@ -571,61 +571,61 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 - rename static libraries by prefixing
 - remove non needed smp build flags
 
-* Fri Nov 16 2012 Kai-Uwe Behrmann
+* Fri Nov 16 2012 - Kai-Uwe Behrmann
 - add oyranos-icc
 
-* Tue Jun 14 2012 Kai-Uwe Behrmann
+* Thu Jun 14 2012 - Kai-Uwe Behrmann
 - add oyranos-profile-graph
 
-* Fri Oct 29 2011 Kai-Uwe Behrmann
+* Sat Oct 29 2011 - Kai-Uwe Behrmann
 - add oyranos-monitor-daemon
 
-* Wed Jul 01 2011 Kai-Uwe Behrmann
+* Fri Jul 01 2011 - Kai-Uwe Behrmann
 - add liboyranos_modules
 
-* Mon Jun 01 2011 Kai-Uwe Behrmann
+* Wed Jun 01 2011 - Kai-Uwe Behrmann
 - rename module packages from liboyranos-xxx to oyranos-libs-xxx
 - remove comments with macros 
 
-* Mon Feb 13 2011 Kai-Uwe Behrmann
+* Sun Feb 13 2011 - Kai-Uwe Behrmann
 - split liboyranos_object from liboyranos
 
-* Mon Jan 03 2011 Kai-Uwe Behrmann
+* Mon Jan 03 2011 - Kai-Uwe Behrmann
 - split liboyranos_core from liboyranos
 
-* Mon Jan 03 2011 Kai-Uwe Behrmann
+* Mon Jan 03 2011 - Kai-Uwe Behrmann
 - add forms and forms-fltk
 
-* Thu Nov 16 2010 Kai-Uwe Behrmann
+* Tue Nov 16 2010 - Kai-Uwe Behrmann
 - add oyranos_types.h
 
-* Mon Aug 30 2010 Kai-Uwe Behrmann
+* Mon Aug 30 2010 - Kai-Uwe Behrmann
 - add SANE
 
-* Fri Oct 16 2009 Kai-Uwe Behrmann
+* Fri Oct 16 2009 - Kai-Uwe Behrmann
 - add oyranos-forms-fltk-devel
 
-* Sun Aug 02 2009 Kai-Uwe Behrmann
+* Sun Aug 02 2009 - Kai-Uwe Behrmann
 - add oicc module
 - add CUPS module from Joe Simon and create new RPM from it
 
-* Wed Apr 15 2009 Kai-Uwe Behrmann
+* Wed Apr 15 2009 - Kai-Uwe Behrmann
 - add oydi module
 
-* Thu Oct 02 2008 Kai-Uwe Behrmann
+* Thu Oct 02 2008 - Kai-Uwe Behrmann
 - split display into monitor and monitor-nvidia
 - rename panel to ui-fltk
 
-* Fri Jan 25 2008 Kai-Uwe Behrmann
+* Fri Jan 25 2008 - Kai-Uwe Behrmann
 - remove old kdb and cmm registration stuff
 
-* Sat Sep 16 2006 Kai-Uwe Behrmann
+* Sat Sep 16 2006 - Kai-Uwe Behrmann
 - set default policy if no settings are found
 
 * Sat May 28 2005 - Kai-Uwe Behrmann
 - packaging
 
-* Tue Apr 21 2005 Kai-Uwe Behrmann
+* Thu Apr 21 2005 - Kai-Uwe Behrmann
 - first release
 
 
