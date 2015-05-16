@@ -436,7 +436,7 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 
 %files -f %{name}.lang
 %defattr(-, root, root)
-%doc AUTHORS COPYING ChangeLog README
+%doc AUTHORS.md COPYING.md ChangeLog.md README.md
 %{_bindir}/%{name}-icc
 %{_bindir}/%{name}-policy
 %{_bindir}/%{name}-profile
