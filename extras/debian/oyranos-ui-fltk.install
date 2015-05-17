@@ -1,2 +1,5 @@
 usr/bin/oyranos-config-fltk
+usr/bin/oyranos-image-display
 usr/share/man/man1/oyranos-config-fltk.1*
+usr/share/man/man1/oyranos-image-display.1*
+usr/share/applications/oyranos-image-display.desktop

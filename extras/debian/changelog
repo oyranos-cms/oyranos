@@ -1,3 +1,13 @@
+oyranos (0.9.6-1) unstable; urgency=low
+
+  * add oy-image-display
+  * rename libs
+  * require libelektra
+  * i/o to OpenICC DB with mounted JSON DB file by elektra-0.8.x
+  * support Qt5
+
+ -- Kai-Uwe Behrmann (oy) <oy@oyranos.org>  Sun, 17 May 2015 12:00:00 +0100
+
 oyranos (0.9.5-1) unstable; urgency=low
 
   * improve image comment in oy-icc

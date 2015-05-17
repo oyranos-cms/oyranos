@@ -7,6 +7,7 @@ usr/bin/oyranos-profile
 usr/bin/oyranos-profiles
 usr/bin/oyranos-profile-graph
 usr/bin/oyranos-profile-install
+usr/bin/oyranos-xforms
 usr/bin/oyranos-xforms-modules
 usr/share/man/man1/oyranos-monitor.1*
 usr/share/man/man1/oyranos-monitor-daemon.1*
@@ -15,6 +16,7 @@ usr/share/man/man1/oyranos-profile.1*
 usr/share/man/man1/oyranos-profiles.1*
 usr/share/man/man1/oyranos-profile-graph.1*
 usr/share/man/man1/oyranos-profile-install.1*
+usr/share/man/man1/oyranos-xforms.1*
 usr/share/man/man1/oyranos-xforms-modules.1*
 usr/share/pixmaps/oyranos_logo.*
 usr/share/pixmaps/lcms_logo2.png
