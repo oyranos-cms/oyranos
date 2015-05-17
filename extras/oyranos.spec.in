@@ -323,7 +323,7 @@ Group:          Development/Libraries/Other
 %endif
 
 %package      ui-fltk
-Summary:        Example Configuration Panel
+Summary:        Example Configuration Panel + Image Viewer
 Group:          System/GUI/Other
 Requires:       fltk
 
@@ -408,7 +408,7 @@ Oyranos color management system.
 %endif
 
 %description  ui-fltk
-The example configuration GUI.
+A example configuration GUI and a image viewer.
 Oyranos is a color management system.
 
 %description  qcmsevents
@@ -427,10 +427,13 @@ the system tray.
 rm -fr %{buildroot}/%{_datadir}/doc/%{name}
 cp -av src/tools/qcmsevents/qcmsevents-applet.desktop .
 cp -av extras/%{name}-profile-install.desktop .
+cp -av src/examples/image_display/%{name}-image-display.desktop .
 echo 'X-SuSE-translate=true' >> qcmsevents-applet.desktop
 echo 'X-SuSE-translate=true' >> %{name}-profile-install.desktop
+echo 'X-SuSE-translate=true' >> %{name}-image-display.desktop
 desktop-file-install --dir=%{buildroot}/%{desktopdir} qcmsevents-applet.desktop
 desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.desktop
+desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-image-display.desktop
 %find_lang %{name}       # generate a special file list
 
 %post -n lib%{name}0 -p /sbin/ldconfig
@@ -445,11 +448,13 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 %{_bindir}/%{name}-profile
 %{_bindir}/%{name}-profiles
 %{_bindir}/%{name}-profile-install
+%{_bindir}/%{name}-xforms
 %{_bindir}/%{name}-xforms-modules
 %{_mandir}/man1/%{name}-policy*
 %{_mandir}/man1/%{name}-profile.1*
 %{_mandir}/man1/%{name}-profiles.1*
 %{_mandir}/man1/%{name}-profile-install.1*
+%{_mandir}/man1/%{name}-xforms.1*
 %{_mandir}/man1/%{name}-xforms-modules.1*
 %{pixmapdir}/oyranos_logo.*
 %{pixmapdir}/lcms_logo2.png
@@ -459,12 +464,12 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 
 %files -n lib%{name}0
 %defattr(-, root, root)
-%doc AUTHORS COPYING ChangeLog README
-%{_libdir}/lib%{name}_core.so.*
-%{_libdir}/lib%{name}_object.so.*
-%{_libdir}/lib%{name}_modules.so.*
-%{_libdir}/lib%{name}_config.so.*
-%{_libdir}/lib%{name}.so.*
+%doc AUTHORS.md COPYING.md ChangeLog.md README.md
+%{_libdir}/libOyranosCore.so.*
+%{_libdir}/libOyranosObject.so.*
+%{_libdir}/libOyranosModules.so.*
+%{_libdir}/libOyranosConfig.so.*
+%{_libdir}/libOyranos.so.*
 %dir %{_libdir}/color/
 %dir %{_libdir}/%{cmmsubpath}/
 %dir %{_libdir}/%{metasubpath}/
@@ -476,19 +481,19 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 
 %files -n lib%{name}-devel
 %defattr(-, root, root)
-%doc AUTHORS COPYING ChangeLog README
+%doc AUTHORS.md COPYING.md ChangeLog.md README.md
 %{_bindir}/%{name}-config
-%{_libdir}/lib%{name}_core.so
-%{_libdir}/lib%{name}_object.so
-%{_libdir}/lib%{name}_modules.so
-%{_libdir}/lib%{name}_config.so
-%{_libdir}/lib%{name}.so
+%{_libdir}/libOyranosCore.so
+%{_libdir}/libOyranosObject.so
+%{_libdir}/libOyranosModules.so
+%{_libdir}/libOyranosConfig.so
+%{_libdir}/libOyranos.so
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/icc34.h
 %{_includedir}/%{name}/oy*.h
 %{_libdir}/pkgconfig/*
-%dir %{_libdir}/oyranos/cmake
-%{_libdir}/oyranos/cmake/*.cmake
+%dir %{_libdir}/cmake/oyranos
+%{_libdir}/cmake/oyranos/*.cmake
 %{_libdir}/lib%{name}_core-static.a
 %{_libdir}/lib%{name}_object-static.a
 %{_libdir}/lib%{name}_modules-static.a
@@ -500,7 +505,7 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 
 %files -n lib%{name}-alpha-devel
 %defattr(-, root, root)
-%doc AUTHORS COPYING ChangeLog README
+%doc AUTHORS.md COPYING.md ChangeLog.md README.md
 %dir %{_includedir}/%{name}/alpha
 %{_includedir}/%{name}/alpha/%{name}_alpha.h
 
@@ -510,7 +515,7 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 
 %files monitor
 %defattr(-, root, root)
-%doc AUTHORS COPYING ChangeLog README
+%doc AUTHORS.md COPYING.md ChangeLog.md README.md
 %{_bindir}/%{name}-monitor
 %{_bindir}/%{name}-monitor-daemon
 %{_mandir}/man1/%{name}-monitor.1*
@@ -519,7 +524,7 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 
 %files -n lib%{name}0-monitor
 %defattr(-, root, root)
-%doc AUTHORS COPYING ChangeLog README
+%doc AUTHORS.md COPYING.md ChangeLog.md README.md
 %dir %{_libdir}/color/
 %dir %{_libdir}/%{cmmsubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_oyX1_cmm_module*
@@ -527,7 +532,7 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 
 %files -n lib%{name}0-cups
 %defattr(-, root, root)
-%doc AUTHORS COPYING ChangeLog README
+%doc AUTHORS.md COPYING.md ChangeLog.md README.md
 %dir %{_libdir}/color/
 %dir %{_libdir}/%{cmmsubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_CUPS_cmm_module*
@@ -535,7 +540,7 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 %if 0%{?suse_version} > 1130 || 0%{?fedora_version} > 0
 %files -n lib%{name}0-lraw
 %defattr(-, root, root)
-%doc AUTHORS COPYING ChangeLog README
+%doc AUTHORS.md COPYING.md ChangeLog.md README.md
 %dir %{_libdir}/color/
 %dir %{_libdir}/%{cmmsubpath}/
 %{_libdir}/%{cmmsubpath}/lib%{name}_lraw_cmm_module*
@@ -544,13 +549,18 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 
 %files ui-fltk
 %defattr(-, root, root)
-%doc AUTHORS COPYING ChangeLog README
+%doc AUTHORS.md COPYING.md ChangeLog.md README.md
 %{_bindir}/%{name}-config-fl*
+%{_bindir}/%{name}-image-display
+%{_bindir}/%{name}-xforms-fltk
 %{_mandir}/man1/%{name}-config-fltk.1*
+%{_mandir}/man1/%{name}-image-display.1*
+%{_mandir}/man1/%{name}-xforms-fltk.1*
+%{desktopdir}/%{name}-image-display.desktop
 
 %files qcmsevents
 %defattr(-, root, root)
-%doc AUTHORS COPYING ChangeLog README
+%doc AUTHORS.md COPYING.md ChangeLog.md README.md
 %{_bindir}/qcmsevents
 %{_mandir}/man1/qcmsevents.1*
 %{pixmapdir}/qcmsevents.*
@@ -558,7 +568,7 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-profile-install.de
 
 %files profile-graph
 %defattr(-, root, root)
-%doc AUTHORS COPYING ChangeLog README
+%doc AUTHORS.md COPYING.md ChangeLog.md README.md
 %{_bindir}/%{name}-profile-graph
 %{_mandir}/man1/%{name}-profile-graph.1*
 
