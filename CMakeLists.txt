@@ -190,7 +190,7 @@ ADD_CUSTOM_TARGET( debsrc
 		VERBATIM
 		)
 ADD_CUSTOM_TARGET( debian
-		COMMAND cd ${PACKAGE_NAME}-${OYRANOS_VERSION}/ && debuild
+		COMMAND cd ${PACKAGE_NAME}-${OYRANOS_VERSION}/ && debuild -d
                 DEPENDS debsrc
 		COMMENT Make a oyranos DEB package
 		VERBATIM
