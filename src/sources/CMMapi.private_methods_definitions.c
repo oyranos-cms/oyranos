@@ -85,7 +85,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
                             + s->ui->module_api[1]*100
                             + s->ui->module_api[2];
 
-        if(ui_module_api < 110 ||  /* last API break */
+        if(ui_module_api < 906 ||  /* last API break */
           OYRANOS_VERSION < ui_module_api)
         {
           error = 1;
@@ -146,7 +146,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
             ) )
       {
         int module_api = 10000*s->module_api[0] + 100*s->module_api[1] + 1*s->module_api[2];
-        if(module_api < 110) /* last API break */
+        if(module_api < 906) /* last API break */
           error = 1;
       }
     } break;
@@ -175,7 +175,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
             ) )
       {
         int module_api = 10000*s->module_api[0] + 100*s->module_api[1] + 1*s->module_api[2];
-        if(module_api < 110) /* last API break */
+        if(module_api < 906) /* last API break */
           error = 1;
       }
     } break;
@@ -210,7 +210,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
             ) )
       {
         int module_api = 10000*s->module_api[0] + 100*s->module_api[1] + 1*s->module_api[2];
-        if(module_api < 110) /* last API break */
+        if(module_api < 906) /* last API break */
           error = 1;
       }
     } break;
