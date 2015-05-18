@@ -38,7 +38,7 @@
 
 /** The CMM_NICK consists of four bytes, which appear as well in the library name. This is important for Oyranos to identify the required filter struct name. */
 #define CMM_NICK "oJPG"
-#define OY_OIIO_FILTER_REGISTRATION OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_loader"
+#define OY_oJPG_FILTER_REGISTRATION OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_loader"
 
 /** The message function pointer to use for messaging. */
 oyMessage_f ojpg_msg = oyMessageFunc;
@@ -195,9 +195,9 @@ oyCMM_s oJPG_cmm_module = {
 };
 
 
-/* OY_OIIO_FILTER_REGISTRATION ----------------------------------------------*/
+/* OY_oJPG_FILTER_REGISTRATION ----------------------------------------------*/
 
-#define OY_OIIO_FILTER_REGISTRATION_BASE OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+#define OY_oJPG_FILTER_REGISTRATION_BASE OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
 
 const char *icc_file_formats[5] = {"jpeg","tiff","png",0,0};
 
@@ -247,7 +247,7 @@ oyCMMapi_s * ojpgApi7CmmCreate       ( const char        * format,
   char * registration = NULL;
 
   oyStringAddPrintf( &registration, AD,
-                     OY_OIIO_FILTER_REGISTRATION_BASE"file_read.input_%s._%s._CPU._ACCEL", format, CMM_NICK );
+                     OY_oJPG_FILTER_REGISTRATION_BASE"file_read.input_%s._%s._CPU._ACCEL", format, CMM_NICK );
 
   if(oy_debug >= 2) ojpg_msg(oyMSG_DBG, NULL, _DBG_FORMAT_ "registration:%s ojpg %s", _DBG_ARGS_,
                              registration,
@@ -342,7 +342,7 @@ oyCMMapi_s * ojpgApi4CmmCreate       ( const char        * format )
                  "char*", deAllocData );
 
   oyStringAddPrintf( &registration, AD,
-                     OY_OIIO_FILTER_REGISTRATION_BASE"file_read.input_%s._ojpg._CPU._ACCEL", format );
+                     OY_oJPG_FILTER_REGISTRATION_BASE"file_read.input_%s._" CMM_NICK "._CPU._ACCEL", format );
 
   oyCMMapi4_s * cmm4 = oyCMMapi4_Create( ojpgCMMInit, ojpgCMMMessageFuncSet,
                                        registration,
@@ -872,7 +872,7 @@ const char * ojpgApi4UiGetText       ( const char        * select,
 }
 const char * ojpg_api4_ui_texts[] = {"name", "category", "help", NULL};
 
-/* OY_OIIO_FILTER_REGISTRATION ----------------------------------------------*/
+/* OY_oJPG_FILTER_REGISTRATION ----------------------------------------------*/
 
 extern oyCMM_s oJPG_cmm_module;
 int  ojpgInit                        ( oyStruct_s        * module_info )
