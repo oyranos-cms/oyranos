@@ -476,6 +476,7 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-image-display.desk
 %{_libdir}/%{cmmsubpath}/lib%{name}_lcm*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oyra_cmm_module*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oicc_cmm_module*
+%{_libdir}/%{cmmsubpath}/lib%{name}_oJPG_cmm_module*
 %{_libdir}/%{cmmsubpath}/lib%{name}_oPNG_cmm_module*
 %{_libdir}/%{metasubpath}/lib%{name}_oyIM_cmm_module*
 
