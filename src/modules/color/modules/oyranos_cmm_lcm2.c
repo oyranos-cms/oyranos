@@ -894,7 +894,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
 #endif
         xform = lcmsCreateTransform( lps[0], lcm2_pixel_layout_in,
                                     0, lcm2_pixel_layout_out,
-                                    intent, flags );
+                                    intent, flags | cmsFLAGS_KEEP_SEQUENCE );
     }
     else if(profiles_n == 2 && (!proof_n || (!proof && !gamut_warning)))
     {
@@ -908,7 +908,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
       xform = lcmsCreateExtendedTransform( 0, profiles_n, lps, bpc,
                                           intents, adaption_states, NULL, 0,
                                           lcm2_pixel_layout_in,
-                                          lcm2_pixel_layout_out, flags );
+                                          lcm2_pixel_layout_out, flags | cmsFLAGS_KEEP_SEQUENCE );
     }
     else
     {
@@ -959,7 +959,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
       xform = lcmsCreateExtendedTransform( 0, multi_profiles_n, lps, bpc,
                                           intents, adaption_states, NULL, 0,
                                           lcm2_pixel_layout_in,
-                                          lcm2_pixel_layout_out, flags );
+                                          lcm2_pixel_layout_out, flags | cmsFLAGS_KEEP_SEQUENCE );
 
 
       oyFree_m_( intents );
