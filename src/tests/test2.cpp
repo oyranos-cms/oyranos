@@ -2375,6 +2375,73 @@ oyTESTRESULT_e testPolicy ()
   return result;
 }
 
+oyTESTRESULT_e testWidgets ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  const char * name = NULL,
+             * tooltip = NULL;
+  int          flags = 0;
+  const oyGROUP_e * categories = NULL;
+
+  oyWIDGET_e option = oyWIDGET_RENDERING_INTENT;
+  oyWIDGET_TYPE_e type = oyWidgetTitleGet( option, 
+                                           &categories, &name, &tooltip,
+                                           &flags );
+
+  if( name && tooltip )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyWidgetTitleGet \"%s\" %d\n\t%s %d", name, type, tooltip, flags );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyWidgetTitleGet                      " );
+  }
+
+  int choices = 0;
+  const char ** choices_string_list = NULL;
+  int current = -1;
+  int error = oyOptionChoicesGet2( option, 0, oyNAME_NAME,
+                                   &choices, &choices_string_list,
+                                   &current );
+
+  if( !error && choices && choices_string_list && current != -1 )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyOptionChoicesGet2 %d [%d]: %s", choices, current, choices_string_list[current] );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptionChoicesGet2                   " );
+  }
+  const char * description = NULL;
+  int choice = current;
+  type = oyWidgetDescriptionGet( option, &description, choice );
+  if( type == oyWIDGETTYPE_BEHAVIOUR && description )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyWidgetDescriptionGet  %s", description );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyWidgetDescriptionGet                " );
+  }
+
+  oyOptionChoicesFree( option, &choices_string_list, choices );
+
+  option = oyWIDGET_ASSUMED_WEB;
+  type = oyWidgetTitleGet( option, &categories, &name, &tooltip, &flags );
+  if( name && tooltip && (flags & OY_LAYOUT_NO_CHOICES) &&
+      type == oyWIDGETTYPE_DEFAULT_PROFILE )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyWidgetTitleGet \"%s\"\n\t%s %d", name, tooltip, flags );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyWidgetTitleGet                      " );
+  }
+
+  fprintf( zout, "\n");
+
+  return result;
+}
+
 /* forward declaration */
 #ifdef __cplusplus
 extern "C" {
@@ -5288,7 +5355,7 @@ oyTESTRESULT_e testCMMlists()
   {
     int current = -1;
     oyOptionChoicesGet2( oyWIDGET_CMM_CONTEXT, 0, oyNAME_NAME, &i,
-                         (const char***)&list, &current );
+                         (const char ***)&list, &current );
 
     if(current != -1)
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -5299,7 +5366,7 @@ oyTESTRESULT_e testCMMlists()
       "oyOptionChoicesGet2( current == ???? ) missed         " );
     }
 
-    oyOptionChoicesFree( oyWIDGET_CMM_CONTEXT, &list, i );
+    oyOptionChoicesFree( oyWIDGET_CMM_CONTEXT, (const char ***)&list, i );
   }
 
 
@@ -5989,6 +6056,7 @@ int main(int argc, char** argv)
   TEST_RUN( testRegistrationMatch,  "Registration matching" );
   TEST_RUN( test_oyTextIccDictMatch,  "IccDict matching" );
   TEST_RUN( testPolicy, "Policy handling" );
+  TEST_RUN( testWidgets, "Widgets" );
   TEST_RUN( testCMMDevicesListing, "CMM devices listing" );
   TEST_RUN( testCMMDevicesDetails, "CMM devices details" );
   TEST_RUN( testCMMRankMap, "rank map handling" );
