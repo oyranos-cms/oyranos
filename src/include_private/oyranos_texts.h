@@ -86,7 +86,7 @@ int           oyOptionChoicesGet_    ( oyWIDGET_e          option,
                                        const char      *** choices_string_list,
                                        int               * current);
 void          oyOptionChoicesFree_     (oyWIDGET_e        option,
-                                        char          *** list,
+                                        const char    *** list,
                                         int               size);
 
 /*/int           oyGroupGet_              (oyGROUP_e          type,

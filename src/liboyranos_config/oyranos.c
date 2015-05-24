@@ -317,6 +317,10 @@ int         oyOptionChoicesGet         (oyWIDGET_e          option,
  *  and is for oyProfiles_Create() . Possible values for name_type come
  *  from oyNAME_e.
  *
+ *  The flags argument relates to the option arg. 
+ *  For profile options see oyICCProfileSelectionFlagsFromRegistration().
+ *  The name_type argument can be a ::oyNAME_e .
+ *
  *  @version Oyranos: 0.9.6
  *  @date    2014/06/13
  *  @since   2014/04/08 (Oyranos: 0.9.6)
@@ -348,7 +352,7 @@ int          oyOptionChoicesGet2     ( oyWIDGET_e          option,
  */
 void
 oyOptionChoicesFree                  (oyWIDGET_e        option,
-                                      char          *** list,
+                                      const char    *** list,
                                       int               size)
 { DBG_PROG_START
   oyExportStart_(EXPORT_CHECK_NO);
