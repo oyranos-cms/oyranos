@@ -330,7 +330,8 @@ oyTESTRESULT_e testElektra()
     PRINT_SUB( oyTESTRESULT_FAIL,
     "oyDBSearchEmptyKeyname_(%s)", OY_STD "/device" TEST_KEY );
   }
-  oyFree_m_( value );
+  if(value)
+    oyFree_m_( value );
 
   error = oyDBEraseKey_( OY_STD "/device" TEST_KEY, oySCOPE_USER );
   value = oyDBSearchEmptyKeyname_(OY_STD "/device" TEST_KEY, oySCOPE_USER);
