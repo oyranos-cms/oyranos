@@ -3809,11 +3809,12 @@ oyTESTRESULT_e testCMMnmRun ()
   }
 
 
+  const char * key_domain = OY_STD"/behaviour";
   const char * key_name = OY_STD"/behaviour/rendering_bpc";
   clck = oyClock();
   for(i = 0; i < n*3; ++i)
   {
-    oyDB_s * db = oyDB_newFrom( key_name, oySCOPE_USER_SYS, oyAllocateFunc_ );
+    oyDB_s * db = oyDB_newFrom( key_domain, oySCOPE_USER_SYS, oyAllocateFunc_ );
     char * value = oyDB_getString(db, key_name);
     if(!value)
       break;
@@ -3833,7 +3834,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
 
   clck = oyClock();
-  oyDB_s * db = oyDB_newFrom( key_name, oySCOPE_USER_SYS, oyAllocateFunc_ );
+  oyDB_s * db = oyDB_newFrom( key_domain, oySCOPE_USER_SYS, oyAllocateFunc_ );
   for(i = 0; i < n*3; ++i)
   {
     char * value = oyDB_getString(db, key_name);
