@@ -19,7 +19,7 @@ CONFIGURE_FILE(
                 @ONLY
        )
 
-IF( FLTK_FOUND )
+IF( HAVE_FLTK )
   SET( MAN_FLTK
      man/oyranos-config-fltk.1
      )
