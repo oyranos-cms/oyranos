@@ -19,8 +19,14 @@ CONFIGURE_FILE(
                 @ONLY
        )
 
-SET( MAN1_PAGES
+IF( FLTK_FOUND )
+  SET( MAN_FLTK
      man/oyranos-config-fltk.1
+     )
+ENDIF()
+
+SET( MAN1_PAGES
+     ${MAN_FLTK}
      man/oyranos-monitor.1
      man/oyranos-monitor-daemon.1
      man/oyranos-policy.1
