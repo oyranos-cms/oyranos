@@ -9,7 +9,7 @@
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
- *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *            new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
  *  @since    2008/10/07
  */
 #include "oyCMMapi4_s.h"

@@ -2,7 +2,7 @@
 # German translations for icc_examin
 # Copyright (C) 2005-2012 Kai-Uwe Behrmann
 # Kai-Uwe Behrmann <ku.b@gmx.de>, 2005-2012.
-# This file is distributed under the BSD licence (http://www.opensource.org/licenses/bsd-license.php)
+# This file is distributed under the BSD licence (http://www.opensource.org/licenses/BSD-3-Clause)
 #
 msgid ""
 msgstr ""
@@ -3931,8 +3931,8 @@ msgstr "Einzelfarben 2"
 #: modules/color/modules/oyranos_cmm_oyra.c:147
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1312
 #: modules/color/modules/oyranos_cmm_lraw.cpp:239
-msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
-msgstr "Neue BSD Lizenz: http://www.opensource.org/licenses/bsd-license.php"
+msgid "new BSD license: http://www.opensource.org/licenses/BSD-3-Clause"
+msgstr "Neue BSD Lizenz: http://www.opensource.org/licenses/BSD-3-Clause"
 
 #: modules/color/modules/devices/oyranos_monitor_cs.c:635
 #: modules/color/modules/devices/oyranos_monitor_cs.c:641

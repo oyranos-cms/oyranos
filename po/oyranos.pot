@@ -406,7 +406,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oyra.c:147
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1312
 #: modules/color/modules/oyranos_cmm_lraw.cpp:239
-msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
+msgid "new BSD license: http://www.opensource.org/licenses/BSD-3-Clause"
 msgstr ""
 
 #: liboyranos/oyranos_cmm.c:183 liboyranos/oyranos_cmm.c:207

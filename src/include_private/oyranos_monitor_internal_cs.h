@@ -10,7 +10,7 @@
 /**
  *  @brief    monitor device detection
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @license: new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *  @license: new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
  *  @since    2005/02/01
  */
 
