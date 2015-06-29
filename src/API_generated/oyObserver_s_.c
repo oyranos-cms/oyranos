@@ -10,7 +10,7 @@
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
- *            new BSD - see: http://www.opensource.org/licenses/bsd-license.php
+ *            new BSD - see: http://www.opensource.org/licenses/BSD-3-Clause
  */
 
 

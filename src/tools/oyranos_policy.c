@@ -9,7 +9,7 @@
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
- *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *            new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
  *  @since    2006/09/14
  *
  *  The program takes a policy XML file as argument and sets the behaviour 

@@ -9,7 +9,7 @@
  *  @internal
  *  @author   Kai-Uwe Behrmann <oy@oyranos.org>
  *  @par License:
- *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *            new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
  *  @since    2014/03/21
  */
 
@@ -148,7 +148,7 @@ const char * ojpgGetText             ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("Copyright (c) 2014 Kai-Uwe Behrmann; newBSD");
     else
-      return _("new BSD license: http://www.opensource.org/licenses/bsd-license.php");
+      return _("new BSD license: http://www.opensource.org/licenses/BSD-3-Clause");
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)

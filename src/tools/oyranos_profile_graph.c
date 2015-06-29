@@ -11,7 +11,7 @@
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de> and others
  *  @par License:
- *            BSD-3-Clause <http://www.opensource.org/licenses/bsd-license.php>
+ *            BSD-3-Clause <http://www.opensource.org/licenses/BSD-3-Clause>
  *  @since    2012/06/12
  *
  *  A tool to generate a 2D graph of ICC profiles for fast visualising.

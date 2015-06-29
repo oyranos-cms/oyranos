@@ -8,7 +8,7 @@
  *  @brief    CMM core APIs
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
- *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *            new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
  *  @since    2009/04/28
  *
  *  basic and / or common functions for modules
@@ -159,7 +159,7 @@ const char * oyCMMgetText             ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD");
     else
-      return _("new BSD license: http://www.opensource.org/licenses/bsd-license.php");
+      return _("new BSD license: http://www.opensource.org/licenses/BSD-3-Clause");
   }
   return 0;
 }

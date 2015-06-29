@@ -2,7 +2,7 @@ This file is valid to at least all files prefixed with "oyranos" in the top leve
 public domain license are released under the new BSD license only in case if
 actual jurisdiction requires that.
 
-License download: http://www.opensource.org/licenses/bsd-license.php
+License download: http://www.opensource.org/licenses/BSD-3-Clause
 --------------------------------------------------------------------------------
 Copyright (c) 2004-2015, Kai-Uwe Behrmann
 All rights reserved.
