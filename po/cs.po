@@ -1,6 +1,6 @@
 # Czech translation of icc_examin
 # Copyright (c) 2008 Milan Knizek
-# This file is distributed under the BSD licence (http://www.opensource.org/licenses/bsd-license.php)
+# This file is distributed under the BSD licence (http://www.opensource.org/licenses/BSD-3-Clause)
 # First translator Milan Knizek <knizek@volny.cz>, 2008
 msgid ""
 msgstr ""
@@ -4091,8 +4091,8 @@ msgstr "třída pojmenovaných barev"
 #: modules/color/modules/oyranos_cmm_oyra.c:147
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1312
 #: modules/color/modules/oyranos_cmm_lraw.cpp:239
-msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
-msgstr "Licence new BSD: http://www.opensource.org/licenses/bsd-license.php"
+msgid "new BSD license: http://www.opensource.org/licenses/BSD-3-Clause"
+msgstr "Licence new BSD: http://www.opensource.org/licenses/BSD-3-Clause"
 
 #: modules/color/modules/devices/oyranos_monitor_cs.c:635
 #: modules/color/modules/devices/oyranos_monitor_cs.c:641

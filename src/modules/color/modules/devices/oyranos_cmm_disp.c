@@ -9,7 +9,7 @@
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
- *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *            new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
  *  @since    2007/12/12
  */
 #include "oyCMM_s.h"
@@ -1309,7 +1309,7 @@ const char * GetText                 ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD");
     else
-      return _("new BSD license: http://www.opensource.org/licenses/bsd-license.php");
+      return _("new BSD license: http://www.opensource.org/licenses/BSD-3-Clause");
   }
   return 0;
 }

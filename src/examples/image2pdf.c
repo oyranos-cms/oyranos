@@ -11,7 +11,7 @@
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
- *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *            new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
  *  @since    2008/09/26
  *
  *  A sample application on how to compose a set of camera raw files into a pdf,

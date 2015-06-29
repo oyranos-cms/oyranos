@@ -9,7 +9,7 @@
  *  @internal
  *  @author   My Name <web@adress.com>
  *  @par License:
- *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *            new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
  *  @since    2009/06/14
  */
 
@@ -161,7 +161,7 @@ const char * dFilGetText             ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("Copyright (c) 2009 My Name; newBSD");
     else
-      return _("new BSD license: http://www.opensource.org/licenses/bsd-license.php");
+      return _("new BSD license: http://www.opensource.org/licenses/BSD-3-Clause");
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)

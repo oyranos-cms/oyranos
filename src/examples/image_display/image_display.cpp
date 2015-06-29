@@ -6,7 +6,7 @@
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
- *            new BSD <http://www.opensource.org/licenses/bsd-license.php>
+ *            new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
  *  @since    2009/02/19
  *
  *  The given example displays a 8/16-bit PPM or float PFM files on screen.
