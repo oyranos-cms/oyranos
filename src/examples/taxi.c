@@ -154,7 +154,8 @@ int main( int argc, char ** argv )
 
   size_t size = 0;
   char * short_name = NULL,
-       * long_name = NULL;
+       * long_name = NULL,
+       * count_name = NULL;
   oyjl_val root = 0;
   char * val = NULL;
   oyjl_val v = 0, tv = 0;
@@ -181,7 +182,7 @@ int main( int argc, char ** argv )
               case 'l': list_manufacturers = 1; break;
               case 'm': OY_PARSE_STRING_ARG(mnft); break;
               case 'p': list_urls = 1; break;
-              case 'v': if(verbose == 0) verbose = 1; else oy_debug += 1; break;
+              case 'v': if(verbose == 0) oy_debug += 1; ++verbose; break;
               case 'h':
               case '-':
                         if(OY_IS_ARG("taxi"))
@@ -232,7 +233,7 @@ int main( int argc, char ** argv )
     if(root)
     {
       int count = oyjl_value_count(root);
-      const char ** sort = calloc( sizeof(char**), 2*count + 2 );
+      const char ** sort = calloc( sizeof(char**), 3*count + 3 );
 
       for(i = 0; i < count; ++i)
       {
@@ -243,22 +244,27 @@ int main( int argc, char ** argv )
         v = oyjl_tree_get_valuef( root, 
                               "[%d]/long_name", i );
         long_name = oyjl_value_text( v, oyAllocateFunc_ );
-        sort[i*2+0] = short_name;
-        sort[i*2+1] = long_name;
+        v = oyjl_tree_get_valuef( root, 
+                              "[%d]/count", i );
+        count_name = oyjl_value_text( v, oyAllocateFunc_ );
+        sort[i*3+0] = short_name;
+        sort[i*3+1] = long_name;
+        sort[i*3+2] = count_name;
       }
-      qsort( sort, count, sizeof(char**)*2, oyLowerStrcmpWrap );
+      qsort( sort, count, sizeof(char**)*3, oyLowerStrcmpWrap );
 
       for(i = 0; i < count; ++i)
       {
-        if(((!i || (i && oyStrCmp( sort[2*i+1], sort[2*(i-1)+0] ) != 0)) &&
-                         oyStrCmp( sort[2*i+1], sort[2*(i+1)+0] ) != 0) ||
-            verbose)
+        if(!i || (i && oyStrCmp( sort[3*i+0], sort[3*(i-1)+0] ) != 0) ||
+           verbose)
         {
           if(verbose)
             printf("[%d] ",i);
-          printf("%s", oyNoEmptyString_m_(sort[2*i+0]));
+          printf("%s", oyNoEmptyString_m_(sort[3*i+0]));
           if(verbose)
-            printf(" %s", oyNoEmptyString_m_(sort[2*i+1]));
+            printf(" %s", oyNoEmptyString_m_(sort[3*i+1]));
+          if(verbose >= 2)
+            printf(" (%s)", oyNoEmptyString_m_(sort[3*i+2]));
           printf("\n");
         }
       }
