@@ -606,7 +606,7 @@ int main( int argc , char** argv )
           if(texts[j] && strcmp(texts[j],"prefix") == 0)
             has_prefix = 1;
 
-        if(size == 2)
+        if(size == 2 && strcmp(device_class,"unknown") == 0)
         for(j = 2; j < texts_n; j += 2)
         {
           int len = texts[j] ? strlen( texts[j] ) : 0;
