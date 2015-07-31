@@ -284,7 +284,7 @@ int main (int argc, char ** argv)
       fprintf(stderr, "%s\n", text);
   }
   else
-    printf("%s\n", text);
+    printf("%s\n", oyNoEmptyString_m_(text));
 
 
   if(text) free(text); text = 0;
