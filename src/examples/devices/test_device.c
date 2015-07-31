@@ -701,7 +701,7 @@ int main(int argc, char *argv[])
                device_class, device_name, error?"":"good",
                tmp?"\nassigned profile: ":"", tmp?tmp:"" );
 
-    oyProfile_Release( &profile );                                                
+    oyProfile_Release( &profile );
 
     {
     int size, i, current = -1, current_tmp = 0, pos = 0;
@@ -720,6 +720,9 @@ int main(int argc, char *argv[])
  
  
     size = oyProfiles_Count(iccs);
+    if(verbose)
+      fprintf( stderr, "%s %s: %d\n",
+               _("found profiles for device class"), device_class, size );
     rank_list = (int32_t*) malloc( size * sizeof(int32_t) );
     oyProfiles_DeviceRank( iccs, c, rank_list );
  
@@ -829,6 +832,9 @@ int main(int argc, char *argv[])
     if(!oy_device)
       exit(1);
 
+    if(verbose)
+      fprintf( stderr, "%s [%s] \"%s\"\n", _("Taxi ID"),
+               _("match value"), _("description") );
     {
     int size, i, current = -1, current_tmp = 0, pos = 0;
     oyProfile_s * profile = 0;
