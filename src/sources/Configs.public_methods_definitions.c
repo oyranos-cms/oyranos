@@ -20,9 +20,9 @@
  *  @return                                                0 - good, 1 <= error, -1 >= issues,
  *                                                         look for messages
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/08/03
  *  @since   2009/01/16 (Oyranos: 0.1.10)
- *  @date    2009/01/19
  */
 OYAPI int OYEXPORT oyConfigs_FromDomain (
                                        const char        * registration_domain,
@@ -48,29 +48,31 @@ OYAPI int OYEXPORT oyConfigs_FromDomain (
   if(error <= 0)
   {
     cmm_api8 = (oyCMMapi8_s_*) oyCMMsGetFilterApi_( registration_domain,
-                                                   oyOBJECT_CMM_API8_S );
-    error = !cmm_api8;
+                                                    oyOBJECT_CMM_API8_S );
+    error = (!cmm_api8) * -1;
   }
 
-  if(error <= 0)
+  if(error == 0 && cmm_api8)
+  {
     error = !cmm_api8->oyConfigs_FromPattern;
 
-  if(error <= 0)
-    error = cmm_api8->oyConfigs_FromPattern( registration_domain, options, &s );
+    if(error == 0)
+      error = cmm_api8->oyConfigs_FromPattern( registration_domain, options, &s );
 
-  if(error <= 0)
-  {
-    n = oyConfigs_Count( s );
-    for(i = 0; i < n && error <= 0; ++i)
+    if(error <= 0)
     {
-      config = oyConfigs_Get( s, i );
+      n = oyConfigs_Count( s );
+      for(i = 0; i < n && error <= 0; ++i)
+      {
+        config = oyConfigs_Get( s, i );
 
-      l_error = oyOptions_SetSource( oyConfigPriv_m(config)->backend_core,
-                                     oyOPTIONSOURCE_FILTER); OY_ERR
-      l_error = oyOptions_SetSource( oyConfigPriv_m(config)->data,
-                                     oyOPTIONSOURCE_FILTER ); OY_ERR
+        l_error = oyOptions_SetSource( oyConfigPriv_m(config)->backend_core,
+                                       oyOPTIONSOURCE_FILTER); OY_ERR
+        l_error = oyOptions_SetSource( oyConfigPriv_m(config)->data,
+                                       oyOPTIONSOURCE_FILTER ); OY_ERR
 
-      oyConfig_Release( &config );
+        oyConfig_Release( &config );
+      }
     }
   }
 
@@ -527,9 +529,9 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
  *                                     the usage instructions are requested.
  *  @return                            0 - good, >= 1 - error, issue <= -1 
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/08/03
  *  @since   2009/08/21 (Oyranos: 0.1.10)
- *  @date    2009/08/25
  */
 OYAPI int OYEXPORT oyConfigs_Modify  ( oyConfigs_s       * configs,
                                        oyOptions_s       * options )
@@ -562,6 +564,8 @@ OYAPI int OYEXPORT oyConfigs_Modify  ( oyConfigs_s       * configs,
       *       registration */
     error = oyConfigDomainList  ( config->registration, &texts, &count,
                                   &rank_list, 0 );
+    if(error >= 1)
+      error *= -1;
     oyConfig_Release( (oyConfig_s**)&config );
   }
 
@@ -574,7 +578,7 @@ OYAPI int OYEXPORT oyConfigs_Modify  ( oyConfigs_s       * configs,
     if(error <= 0)
     {
       cmm_api8 = (oyCMMapi8_s_*) oyCMMsGetFilterApi_( registration_domain,
-                                                     oyOBJECT_CMM_API8_S );
+                                                      oyOBJECT_CMM_API8_S );
       error = !cmm_api8;
     }
 
