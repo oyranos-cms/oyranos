@@ -131,7 +131,8 @@ int main(int argc, char *argv[])
   char * prof_name = 0,
        * new_profile_name = 0;
   const char * device_class = 0,
-             * device_json = 0;
+             * device_json = 0,
+             * rank_json = NULL;
   int verbose = 0;
   int simple = 0;
 
@@ -179,6 +180,7 @@ int main(int argc, char *argv[])
               case 'c': OY_PARSE_STRING_ARG(device_class); break;
               case 'd': OY_PARSE_INT_ARG( device_pos ); break;
               case 'j': OY_PARSE_STRING_ARG( device_json ); break;
+              case 'k': OY_PARSE_STRING_ARG( rank_json ); break;
               case 'f': OY_PARSE_STRING_ARG(format); break;
               case 'l': list = 1; break;
               case 'm': device_meta_tag = 1; break;
@@ -288,7 +290,7 @@ int main(int argc, char *argv[])
         (device_pos >= n || device_pos < -1) )
     {
       device_name = 0;
-      fprintf( stderr, "%s\n  device_class: \"%s\" device_pos: \"%d\"  %s: %d\n", _("Could not resolve device."),
+      fprintf( stderr, "%s %s\n  device_class: \"%s\" device_pos: \"%d\"  %s: %d\n", _("!!! ERROR"), _("Could not resolve device."),
                device_class?device_class:"????", device_pos,
                _("Available devices"), n);
       exit(1);
@@ -303,7 +305,7 @@ int main(int argc, char *argv[])
     c = oyConfigs_Get( devices, device_pos );
     if(!c)
     {
-      fprintf( stderr, "%s\n  device_class: \"%s\" device_pos: \"%d\"  %s: %d\n", _("Could not resolve device."),
+      fprintf( stderr, "%s %s\n  device_class: \"%s\" device_pos: \"%d\"  %s: %d\n", _("!!! ERROR"), _("Could not resolve device."),
                device_class?device_class:"????", device_pos,
                _("Available devices"), n);
       exit(1);
@@ -317,7 +319,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-      fprintf( stderr, "%s: %s %d. %s: %d\n", _("Could not resolve device_name"),
+      fprintf( stderr, "%s %s: %s %d. %s: %d\n", _("!!! ERROR"), _("Could not resolve device_name"),
                device_class?device_class:"????", device_pos,
                _("Available devices"), n);
       exit(1);
@@ -328,15 +330,49 @@ int main(int argc, char *argv[])
   {
     size_t json_size = 0;
     char * json_text = oyReadFileToMem_( device_json, &json_size, oyAllocateFunc_ );
-    error = oyDeviceFromJSON( json_text, 0, &c );
+    if(json_text)
+    {
+      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/underline_key_suffix",
+                                     "xxx", OY_CREATE_NEW );
+      error = oyDeviceFromJSON( json_text, options, &c );
+      oyDeAllocateFunc_( json_text );
+      oyOptions_Release( &options );
+    }
     if(!c)
     {
-      fprintf( stderr, "%s: %s\n", _("Could not resolve device_json"),
-               device_json);
+      fprintf( stderr, "%s %s: %s  %d\n", _("!!! ERROR"), _("Could not resolve device_json"),
+               device_json, error);
       exit(1);
     }
+    device_class = oyStringCopy_( oyConfig_FindString( c, "device_class", 0 ), NULL );
+    if(!device_class)
+      device_class = oyStringCopy_( oyConfig_FindString( c, "device_type", 0 ), NULL );
     device_name = oyConfig_FindString( c, "device_name", 0 );
-    device_class = oyConfig_FindString( c, "device_class", 0 );
+    if(!device_name)
+      device_name = device_json;
+
+    if(rank_json)
+    {
+      oyRankMap * rank_map = NULL;
+      json_text = oyReadFileToMem_( rank_json, &json_size, oyAllocateFunc_ );
+      error = oyRankMapFromJSON ( json_text, NULL, &rank_map, oyAllocateFunc_ );
+      if(!rank_map || error || !rank_map[0].key)
+        fprintf( stderr, "%s: %s: %s  %d\n", _("WARNING"), _("Creation of rank_map filed from"), rank_json, error );
+      else
+        oyConfig_SetRankMap( c, rank_map );
+    } else if( list_profiles || list_taxi_profiles )
+    {
+      fprintf( stderr, "%s: %s  %d\n", _("!!! ERROR"),
+               _("Could not resolve rank_json"), error );
+      displayHelp(argv);
+      exit(1);
+    }
+
+    if(verbose)
+    {
+      fprintf( stderr, "%s: %s %s\n", _("Using JSON"), device_class, device_name );
+      fprintf( stderr, "%s\n", oyOptions_GetText( *oyConfig_GetOptions( c, "db"), oyNAME_NAME ) );
+    }
   }
 
   if(list && device_class)
@@ -636,7 +672,7 @@ int main(int argc, char *argv[])
     exit(0);
 
   } else
-  if(list_profiles && device_class && device_name)
+  if(list_profiles && (c || (device_class && device_name)))
   {
     oyProfile_s * profile = 0;
     const char * tmp = 0;
@@ -653,12 +689,21 @@ int main(int argc, char *argv[])
         profile_class = icSigOutputClass;
       else if(icc_profile_class && strcmp(icc_profile_class,"input") == 0)
         profile_class = icSigInputClass;
+      else if(strcmp(device_class,"monitor") == 0)
+        profile_class = icSigDisplayClass;
+      else if(strcmp(device_class,"printer") == 0)
+        profile_class = icSigOutputClass;
+      else if(strcmp(device_class,"camera") == 0)
+        profile_class = icSigInputClass;
+      else if(strcmp(device_class,"scanner") == 0)
+        profile_class = icSigInputClass;
 
       if(verbose)
-        fprintf( stderr, "icc_profile_class: %s\n", icc_profile_class );
+        fprintf( stderr, "icc_profile_class: %s\n", icc_profile_class ? icc_profile_class : device_class );
       oyConfDomain_Release( &d );
     }
 
+    if(!device_json)
     {
       /* get all device informations from the module */
       oyConfig_Release( &c );
@@ -676,7 +721,7 @@ int main(int argc, char *argv[])
     }
     if(!c)
     {
-      fprintf( stderr, "%s\n  device_class: \"%s\" device_name: \"%s\"  %s: %d\n", _("Could not resolve device."),
+      fprintf( stderr, "%s %s\n  device_class: \"%s\" device_name: \"%s\"  %s: %d\n", _("!!! ERROR"), _("Could not resolve device."),
                device_class?device_class:"????", device_name,
                _("Available devices"), n);
       
@@ -830,7 +875,10 @@ int main(int argc, char *argv[])
               tmp?"\nassigned profile: ":"", tmp?tmp:"" );
 
     if(!oy_device)
+    {
+      fprintf( stderr, "%s no oy_device\n", _("!!! ERROR") );
       exit(1);
+    }
 
     if(verbose)
       fprintf( stderr, "%s [%s] \"%s\"\n", _("Taxi ID"),
@@ -915,7 +963,7 @@ int main(int argc, char *argv[])
     }
     if(!c)
     {
-      fprintf( stderr, "%s\n  device_class: \"%s\" device_name: \"%s\"  %s: %d\n", _("Could not resolve device."),
+      fprintf( stderr, "%s %s\n  device_class: \"%s\" device_name: \"%s\"  %s: %d\n", _("!!! ERROR"), _("Could not resolve device."),
                device_class?device_class:"????", device_name,
                _("Available devices"), n);
       
@@ -1136,7 +1184,7 @@ int main(int argc, char *argv[])
       oyOptions_Release( &options );
 
     } else {
-      fprintf( stderr, "unsupported format: %s\n", format );
+      fprintf( stderr, "%s unsupported format: %s\n", _("!!! ERROR"), format );
       exit (1);
     }
 
