@@ -98,7 +98,8 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
                                        oyObject_s          object)
 {
   oyProfile_s_ * s = oyProfile_New_( object );
-  int error = 0;
+  int error = 0,
+      l_error = 0;
 
   if(block  && *block && size)
   {
@@ -151,30 +152,36 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
 
   if(error <= 0)
   {
-    error = oyProfile_GetHash_( s, flags );
-    if(error != 0)
+    l_error = oyProfile_GetHash_( s, flags );
+    if(l_error != 0)
     {
-      if(error > 0 || error < -1)
-        WARNc1_S( "hash error %d", error )
+      if(l_error > 0 || l_error < -1)
+        WARNc1_S( "hash error %d", l_error )
+      if(error <= 0 && l_error != 0)
+        error = l_error;
     }
   }
 
   if(error <= 0)
   {
-    error = !oyProfile_GetSignature ( (oyProfile_s*)s, oySIGNATURE_COLOR_SPACE );
+    l_error = !oyProfile_GetSignature ( (oyProfile_s*)s, oySIGNATURE_COLOR_SPACE );
 
-    if(error)
+    if(l_error)
       WARNc1_S( "signature error %d", error )
+    if(error <= 0 && l_error != 0)
+      error = l_error;
   }
 
   if(error <= 0)
   {
     s->names_chan_ = 0;
     s->channels_n_ = oyProfile_GetChannelsCount( (oyProfile_s*)s );
-    error = (s->channels_n_ <= 0);
+    l_error = (s->channels_n_ <= 0);
+    if(error <= 0 && l_error != 0)
+      error = l_error;
   }
 
-  if(error)
+  if(error  >= 1)
   {
     icHeader *h = 0;
     icSignature sig = 0;
@@ -190,8 +197,9 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
              error)
 
     oyProfile_Release( (oyProfile_s**)&s );
-    if(error_return) *error_return = error;
   }
+
+  if(error_return) *error_return = error;
 
   return s;
 }
