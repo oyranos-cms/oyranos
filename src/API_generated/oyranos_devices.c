@@ -932,7 +932,7 @@ OYAPI int  OYEXPORT
  *  @return                            error
  *
  *  @version Oyranos: 0.9.6
- *  @date    2015/02/07
+ *  @date    2015/08/03
  *  @since   2009/02/07 (Oyranos: 0.1.10)
  */
 int      oyDeviceSetProfile          ( oyConfig_s        * device,
@@ -979,16 +979,16 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
   }
 
   if(error <= 0)
-    error = !oyOptions_Count( oyConfigPriv_m(device)->backend_core );
+    error = (!oyOptions_Count( oyConfigPriv_m(device)->backend_core )) * -1;
 
   if(error <= 0)
   {
     device_name = oyConfig_FindString( device, "device_name", 0);
-    error = !device_name;
+    error = (!device_name) * -1;
   }
 
   /** 2. check for success of device detection */
-  if(error)
+  if(error >= 1)
   {
     WARNc2_S( "%s: \"%s\"", _("Could not open device"), device_name );
     goto cleanup;
@@ -1020,9 +1020,18 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
       equal = 0;
 
       j_n = oyOptions_Count( oyConfigPriv_m(device)->backend_core );
+      if(j_n)
+        options = oyConfigPriv_m(device)->backend_core;
+      else
+      {
+        j_n = oyOptions_Count( oyConfigPriv_m(device)->db );
+        if(j_n)
+          options = oyConfigPriv_m(device)->db;
+      }
+
       for(j = 0; j < j_n; ++j)
       {
-        od = oyOptions_Get( oyConfigPriv_m(device)->backend_core, j );
+        od = oyOptions_Get( options, j );
         d_opt = oyFilterRegistrationToText( oyOption_GetRegistration(od),
                                             oyFILTER_REG_MAX, 0 );
         d_val = oyConfig_FindString( device, d_opt, 0 );
@@ -1056,7 +1065,9 @@ int      oyDeviceSetProfile          ( oyConfig_s        * device,
    *  5.1 add the profile simply to the device configuration */
   if(error <= 0)
   {
-    error = oyConfig_ClearDBData( device );
+    if( oyOptions_Count( *oyConfig_GetOptions( device, "data" ) ) ||
+        oyOptions_Count( *oyConfig_GetOptions( device, "backend_core" ) ) )
+      error = oyConfig_ClearDBData( device );
     error = oyConfig_AddDBData( device, "profile_name", profile_name,
                                 OY_CREATE_NEW );
   }
