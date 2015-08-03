@@ -456,9 +456,9 @@ OYAPI int  OYEXPORT oyConfig_EraseFromDB (
  *  @return                            0 - good, >= 1 - error + a message should
  *                                     be sent
  *
- *  @version Oyranos: 0.1.13
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/08/03
  *  @since   2009/01/26 (Oyranos: 0.1.10)
- *  @date    2010/11/21
  */
 int            oyConfig_Compare      ( oyConfig_s        * module_device,
                                        oyConfig_s        * db_pattern,
@@ -467,7 +467,6 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
   int error = !module_device || !db_pattern;
   int domain_n, pattern_n, i, j, k, l,
       rank = 0,
-      d_rank = 0,
       has_opt;
   oyOption_s * d = 0,
              * p = 0,
@@ -532,8 +531,7 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
         oyFree_m_( check_opt );
       }
 
-      d_rank = oyConfig_DomainRank( (oyConfig_s*)device );
-      if(d_rank > 0 && d_val && d_opt)
+      if(d_val && d_opt)
       for( j = 0; j < pattern_n; ++j )
       {
         p = oyOptions_Get( pattern->db, j );

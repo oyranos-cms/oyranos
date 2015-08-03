@@ -500,8 +500,9 @@ int oyProfile_GetHash_        ( oyProfile_s_      * s,
  *  @param[out]   error_return   error codes
  *  @param[in]    object         the optional base
  *
- *  @since Oyranos: version 0.3.0
- *  @date  november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/08/03
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
  */
 oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
                                        oyPointer         * block,
