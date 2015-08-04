@@ -237,7 +237,7 @@ char **  oyProfilePathsGet_          ( int               * count,
   int tmp_n = -1;
 
   path_names = oyDataPathsGet_( count, "color/icc", oyALL, oySCOPE_USER_SYS,
-                                          oyAllocateFunc_ );
+                                oyAllocateFunc_ );
 #define TestAndSetDefaultPATH( path ) \
   if(oyIsDir_( path )) \
   { \
@@ -255,6 +255,8 @@ char **  oyProfilePathsGet_          ( int               * count,
 #endif
 
 #undef TestAndSetDefaultPATH
+
+  oyStringListFreeDoubles_( path_names, count, oyDeAllocateFunc_ );
 
   tmp = oyStringListAppend_( 0, 0, (const char**)path_names, *count,
                              &tmp_n, allocateFunc );
