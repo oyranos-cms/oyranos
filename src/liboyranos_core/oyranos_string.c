@@ -833,6 +833,42 @@ char**             oyStringListFilter_(const char   ** list,
   return nl;
 }
 
+/** @internal
+ *  @brief filter doubles out
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/08/04
+ *  @since   2015/08/04 (Oyranos: 0.9.6)
+ */
+void oyStringListFreeDoubles_        ( char         ** list,
+                                       int           * list_n,
+                                       oyDeAlloc_f     deallocateFunc )
+{
+  int n = *list_n,
+      i,
+      pos = 1;
+
+  for(i = pos; i < n; ++i)
+  {
+    int k, found = 0;
+    for( k = 0; k < i; ++k )
+      if(strcmp(list[i], list[k]) == 0)
+      {
+        deallocateFunc( list[i] );
+        found = 1;
+        continue;
+      }
+
+    if(found == 0)
+    {
+      list[pos] = list[i];
+      ++pos;
+    }
+  }
+
+  *list_n = pos;
+}
+
 void          oyStringListRelease_    ( char          *** l,
                                         int               size,
                                         oyDeAlloc_f       deallocFunc )

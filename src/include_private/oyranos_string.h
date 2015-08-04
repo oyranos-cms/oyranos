@@ -125,6 +125,9 @@ char**             oyStringListFilter_(const char       ** list,
                                        const char        * suffix,
                                        int               * count,
                                        oyAlloc_f           allocateFunc );
+void     oyStringListFreeDoubles_    ( char         ** list,
+                                       int           * list_n,
+                                       oyDeAlloc_f     deallocateFunc );
 
 int                oyIconv           ( const char        * input,
                                        size_t              len_in,
