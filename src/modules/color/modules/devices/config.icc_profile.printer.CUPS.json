@@ -1,0 +1,20 @@
+{
+  "org": {
+    "freedesktop": {
+      "openicc": {
+        "rank_map": {
+          "printer": [{
+              "device_name": [2, -1, 0],
+              "profile_name": [0, 0, 0],
+              "manufacturer": [1, -1, 0],
+              "model": [5, -5, 0],
+              "serial": [10, -2, 0],
+              "host": [1, 0, 0],
+              "system_port": [2, 0, 0]
+            }
+          ]
+        }
+      }
+    }
+  }
+}

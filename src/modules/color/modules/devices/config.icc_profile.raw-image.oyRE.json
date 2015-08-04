@@ -1,0 +1,68 @@
+{
+  "org": {
+    "freedesktop": {
+      "openicc": {
+        "rank_map": {
+          "camera": [{
+              "device_name": [0, 0, 0],
+              "LRAW_driver_version": [2, -1, 0],
+              "profile_name": [0, 0, 0],
+              "EXIF_manufacturer": [2, -20, 0],
+              "EXIF_model": [2, -22, 0],
+              "EXIF_serial": [1, 0, 0],
+              "EXIF_Photo_ISOSpeedRatings": [3, 0, 0],
+              "EXIF_Photo_ExposureProgram": [1, 0, 0],
+              "EXIF_Photo_Flash": [1, 0, 0],
+              "EXIF_Canon_SerialNumber": [1, 0, 0],
+              "EXIF_Fujifilm_SerialNumber": [1, 0, 0],
+              "EXIF_Nikon3_SerialNumber": [1, 0, 0],
+              "EXIF_Nikon3_SerialNO": [1, 0, 0],
+              "EXIF_Olympus_SerialNumber": [1, 0, 0],
+              "EXIF_Olympus_SerialNumber2": [1, 0, 0],
+              "EXIF_OlympusEq_SerialNumber": [1, 0, 0],
+              "EXIF_OlympusEq_InternalSerialNumber": [1, 0, 0],
+              "EXIF_Sigma_SerialNumber": [1, 0, 0],
+              "EXIF_CanonCs_LensType": [1, 0, 0],
+              "EXIF_CanonCs_Lens": [1, 0, 0],
+              "EXIF_Minolta_LensID": [1, 0, 0],
+              "EXIF_Nikon1_AuxiliaryLens": [1, 0, 0],
+              "EXIF_Nikon2_AuxiliaryLens": [1, 0, 0],
+              "EXIF_Nikon3_AuxiliaryLens": [1, 0, 0],
+              "EXIF_Nikon3_LensType": [1, 0, 0],
+              "EXIF_Nikon3_Lens": [1, 0, 0],
+              "EXIF_OlympusEq_LensType": [1, 0, 0],
+              "EXIF_OlympusEq_LensSerialNumber": [1, 0, 0],
+              "EXIF_OlympusEq_LensFirmwareVersion": [1, 0, 0],
+              "EXIF_Pentax_LensType": [1, 0, 0],
+              "EXIF_Pentax_LensInfo": [1, 0, 0],
+              "EXIF_Sigma_LensRange": [1, 0, 0],
+              "LRAW_use_camera_wb": [1, -1, 0],
+              "LRAW_use_camera_matrix": [1, -1, 0],
+              "LRAW_half_size": [1, -1, 0],
+              "LRAW_filtering_mode": [1, -1, 0],
+              "LRAW_threshold": [1, -1, 0],
+              "LRAW_aber": [1, -1, 0],
+              "LRAW_greybox": [1, -1, 0],
+              "LRAW_gamm": [1, -1, 0],
+              "LRAW_user_mul": [1, -1, 0],
+              "LRAW_bright": [1, -1, 0],
+              "LRAW_four_color_rgb": [1, -1, 0],
+              "LRAW_highlight": [1, -1, 0],
+              "LRAW_use_auto_wb": [1, -1, 0],
+              "LRAW_output_color": [1, -1, 0],
+              "LRAW_camera_profile": [1, -1, 0],
+              "LRAW_output_bps": [1, -1, 0],
+              "LRAW_user_qual": [1, -1, 0],
+              "LRAW_user_black": [1, -1, 0],
+              "LRAW_user_sat": [1, -1, 0],
+              "LRAW_med_passes": [1, -1, 0],
+              "LRAW_auto_bright_thr": [1, -1, 0],
+              "LRAW_no_auto_bright": [1, -1, 0],
+              "LRAW_illumination_source": [1, -1, 0]
+            }
+          ]
+        }
+      }
+    }
+  }
+}
