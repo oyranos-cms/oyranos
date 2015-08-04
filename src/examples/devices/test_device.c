@@ -27,7 +27,9 @@
 #include "oyranos_helper_macros_cli.h"
 #include "oyranos_i18n.h"
 #include "oyranos_icc.h"
+#include "oyranos_module_internal.h"
 #include "oyranos_string.h"
+#include "oyranos_texts.h"
 #include "oyranos_config_internal.h"
 #include "oyProfiles_s.h"
 
@@ -120,6 +122,7 @@ int main(int argc, char *argv[])
   int list = 0;
   int list_profiles = 0;
   int list_taxi_profiles = 0;
+  int list_rank_paths = 0;
   int show_non_device_related = 0;
   int setup = 0;
   int device_pos = -1;
@@ -227,7 +230,7 @@ int main(int argc, char *argv[])
                         else if(OY_IS_ARG("class"))
                         { simple = 2; i=100; break;}
                         else if(OY_IS_ARG("path"))
-                        { simple = 2; i=100; break;}
+                        { simple = 2; list_rank_paths = 1; i=100; break;}
                         else if(OY_IS_ARG("short"))
                         { simple = 1; i=100; break;}
                         else if(OY_IS_ARG("verbose"))
@@ -258,6 +261,77 @@ int main(int argc, char *argv[])
   {
                         displayHelp(argv);
                         exit (0);
+  }
+
+#define TEST_CAT_FILE( string, fn ) {\
+  size_t size = 0; \
+  char * text = oyReadFileToMem_( fn, &size, oyAllocateFunc_ ); \
+  if( !string || (text && strstr(text, string) != NULL)) \
+  { \
+    if(text) \
+      fprintf( stdout, "%s \n", text ); \
+    else \
+      fprintf( stderr, "%s %s\n", _("File not loaded!"), fn ); \
+    done = 1; \
+  } \
+  oyFree_m_( text ); \
+  }
+
+  if(format && strcmp(format, "openicc-rank-map") == 0 && 
+     (device_class || list_rank_paths))
+  {
+     int files_n = 0, i, done = 0;
+     const char * subdir = "color/rank-map";
+     int data = oyYES,
+         owner = oySCOPE_USER_SYS;
+     const char * dir_string = NULL,
+                * string = "config.icc_profile",
+                * suffix = "json";
+
+     char ** files = oyDataFilesGet_( &files_n, subdir, data, owner,
+                                      dir_string, string, suffix,
+                                      oyAllocateFunc_ );
+     if(list_rank_paths)
+     {
+       int path_names_n = 0;
+       char ** path_names = oyDataPathsGet_( &path_names_n, subdir, oyALL,
+                                             owner, oyAllocateFunc_ );
+       for( i = 0; i < path_names_n; ++i )
+         fprintf(stdout, "%s\n", path_names[i] );
+
+       oyStringListRelease_( &path_names, path_names_n, free );
+       exit( 0 );
+     }
+
+     if(verbose)
+       fprintf(stderr, "found rank maps: %d\n", files_n);
+     for( i = 0; i < files_n; ++i )
+     {
+       const char * file = files[i];
+
+       if(verbose)
+         fprintf(stderr, "%d: %s\n", i, files[i]);
+
+       if(strstr(file, device_class) != NULL)
+       {
+         char * no = NULL;
+         TEST_CAT_FILE( no, file )
+         done = 1;
+         break;
+       }
+     }
+
+     if(!done)
+     for( i = 0; i < files_n; ++i )
+     {
+       const char * file = files[i];
+       {
+         TEST_CAT_FILE( device_class, file )
+         if(done)
+           break;
+       }
+     }
+     exit(0);
   }
 
   /* resolve device_class */
