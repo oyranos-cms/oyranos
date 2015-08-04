@@ -1454,12 +1454,11 @@ char * oyPathContructAndTest_(char * path_, const char * subdir)
  *  @param[in]     data        oyYES/oyNO/oyALL data or config text
  *  @param[in]     owner       oySCOPE_USER/oySCOPE_SYSTEM/oySCOPE_USER_SYS
  *
- *  @version Oyranos: 0.1.11
- *  @date    2010/08/18
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/08/04
  *  @since   2007/11/00 (Oyranos: 0.1.x)
  */
-char**
-oyDataPathsGet_       (int             * count,
+char** oyDataPathsGet_(int             * count,
                        const char      * subdir,
                        int               data,
                        int               owner,
@@ -1543,6 +1542,8 @@ oyDataPathsGet_       (int             * count,
     oyStringListRelease_(&xdg_paths, xdg_n, oyDeAllocateFunc_);
 
   }
+
+  oyStringListFreeDoubles_( paths, &ndp, oyDeAllocateFunc_ );
 
   *count = ndp;
 
