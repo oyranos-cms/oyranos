@@ -120,6 +120,8 @@ int main( int argc , char** argv )
                         {
                              if(OY_IS_ARG("help"))
                         { long_help = 1; i=100; break; }
+                        else if(OY_IS_ARG("path"))
+                        { list_paths = 1; i=100; break; }
                         else if(OY_IS_ARG("system-wide"))
                         { scope = oySCOPE_SYSTEM; i=100; break; }
                         }

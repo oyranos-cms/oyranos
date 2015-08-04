@@ -218,6 +218,8 @@ int main( int argc , char** argv )
                         { flags |= OY_NO_REPAIR;
                           i=100; break;
                         }
+                        else if(OY_IS_ARG("path"))
+                        { list_paths = 1; i=100; break; }
                         else if(OY_IS_ARG("duplicates"))
                         { flags |= OY_ALLOW_DUPLICATES; i=100; break; }
 
