@@ -16,6 +16,7 @@
 #include "oyCMMapi8_s_.h"
 #include "oyCMMui_s_.h"
 
+#include "oyConfig_s.h"
 #include "oyranos_cmm.h"
 #include "oyranos_debug.h"
 #include "oyranos_devices.h"
@@ -54,6 +55,7 @@
 oyMessage_f _msg = 0;
 
 extern oyCMMapi8_s_  _api8;
+static int _initialised = 0;
 
 int                DeviceFromName_   ( const char        * device_name,
                                        oyOptions_s       * options,
@@ -72,6 +74,42 @@ const char * Api8UiGetText           ( const char        * select,
 int                CMMInit           ( oyStruct_s        * filter )
 {
   int error = 0;
+  char ** rank_name = NULL;
+  const char * rfilter = "config.icc_profile.monitor.oyX1.qarz";
+  oyCMMapi8_s_ * s = (oyCMMapi8_s_*) filter;
+
+  if(!_initialised)
+  {
+    error = oyRankMapList( rfilter, NULL, &rank_name, oyAllocateFunc_ );
+    if(error > 0 || !rank_name || !rank_name[0])
+    {
+      WARNc2_S("Problems loading rank map: %s %d", rfilter, error);
+
+    } else
+    {
+      oyRankMap * rank_map = NULL;
+      char * json_text = NULL;
+      size_t json_size = 0;
+
+      json_text = oyReadFileToMem_( rank_name[0], &json_size, oyAllocateFunc_ );
+      if(!json_text || !json_text[0])
+        _msg( oyMSG_WARN, filter, "%s() %s: %s", __func__,
+              _("File not loaded!"), rank_name[0] );
+
+      error = oyRankMapFromJSON ( json_text, NULL, &rank_map, oyAllocateFunc_ );
+
+      if(!rank_map || error || !rank_map[0].key)
+        _msg( oyMSG_WARN, filter, "%s() %s: %s  %d", __func__,
+              _("Creation of rank_map filed from"), rank_name[0], error );
+      else
+        s->rank_map = rank_map;
+
+      if(json_text) oyFree_m_( json_text );
+    }
+
+    if(rank_name) oyStringListRelease_( &rank_name, 1, oyDeAllocateFunc_ );
+  }
+
   return error;
 }
 
@@ -546,7 +584,7 @@ int                Configs_FromPattern (
                                        "device_name",
                                        device_name, OY_CREATE_NEW );
         if(error <= 0 && !oyConfig_GetRankMap(device))
-          oyConfig_SetRankMap(device, _rank_map );
+          oyConfig_SetRankMap(device, _api8.rank_map );
         oyConfigs_MoveIn( devices, &device, -1 );
         if(error <= 0)
           *s = devices;
@@ -977,7 +1015,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
 
         /** 3.1.6 add the rank scheme to combine properties */
         if(error <= 0 && !oyConfig_GetRankMap(device))
-          oyConfig_SetRankMap(device, _rank_map );
+          oyConfig_SetRankMap(device, _api8.rank_map );
 
         oyConfig_Release( &device );
       }
@@ -1246,7 +1284,7 @@ oyCMMapi8_s_ _api8 = {
   (oyCMMui_s*)&_api8_ui,     /**< device class UI name and help */
   &_api8_icon,               /**< device icon */
 
-  _rank_map                  /**< oyRankMap ** rank_map */
+  NULL                       /**< oyRankMap ** rank_map */
 };
 
 /* MONITOR_REGISTRATION -------------------------------------------------*/
