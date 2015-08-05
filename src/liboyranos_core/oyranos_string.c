@@ -855,6 +855,7 @@ void oyStringListFreeDoubles_        ( char         ** list,
       if(strcmp(list[i], list[k]) == 0)
       {
         deallocateFunc( list[i] );
+        list[i] = NULL;
         found = 1;
         continue;
       }
