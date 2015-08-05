@@ -4,27 +4,27 @@
       "openicc": {
         "rank_map": {
           "monitor": [{
-              "device_name": [2, -1, 0],
-              "profile_name": [0, 0, 0],
-              "host": [1, 0, 0],
-              "system_port": [2, 0, 0],
-              "display_geometry": [3, -1, 0],
-              "manufacturer": [0, 0, 0],
-              "EDID_mnft": [0, 0, 0],
-              "EDID_mnft_id": [1, -1, 0],
-              "model": [0, 0, 0],
-              "EDID_model_id": [1, 0, 0],
-              "EDID_date": [2, 0, 0],
-              "serial": [10, -2, 0],
-              "EDID_red_x": [2, -5, 0],
-              "EDID_red_y": [2, -5, 0],
-              "EDID_green_x": [2, -5, 0],
-              "EDID_green_y": [2, -5, 0],
-              "EDID_blue_x": [2, -5, 0],
-              "EDID_blue_y": [2, -5, 0],
-              "EDID_white_x": [2, -5, 0],
-              "EDID_white_y": [2, -5, 0],
-              "EDID_gamma": [2, -5, 0]
+              "device_name": [2, -1, 0, "is good"],
+              "profile_name": [0, 0, 0, "non relevant for device properties"],
+              "host": [1, 0, 0, "nice to match"],
+              "system_port": [2, 0, 0, "nice to match"],
+              "display_geometry": [3, -1, 0, "important to match, as fallback"],
+              "manufacturer": [0, 0, 0, "is nice, covered by mnft_id"],
+              "EDID_mnft": [0, 0, 0, "is nice, covered by mnft_id"],
+              "EDID_mnft_id": [1, -1, 0, "is nice"],
+              "model": [0, 0, 0, "important, covered by model_id"],
+              "EDID_model_id": [1, 0, 0, "important, but fails sometimes"],
+              "EDID_date": [2, 0, 0, "good to match"],
+              "serial": [10, -2, 0, "important, could slightly fail"],
+              "EDID_red_x": [2, -5, 0, "is nice, should not fail"],
+              "EDID_red_y": [2, -5, 0, "is nice, should not fail"],
+              "EDID_green_x": [2, -5, 0, "is nice, should not fail"],
+              "EDID_green_y": [2, -5, 0, "is nice, should not fail"],
+              "EDID_blue_x": [2, -5, 0, "is nice, should not fail"],
+              "EDID_blue_y": [2, -5, 0, "is nice, should not fail"],
+              "EDID_white_x": [2, -5, 0, "is nice, should not fail"],
+              "EDID_white_y": [2, -5, 0, "is nice, should not fail"],
+              "EDID_gamma": [2, -5, 0, "is nice, should not fail"]
             }
           ]
         }
