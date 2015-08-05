@@ -4,13 +4,13 @@
       "openicc": {
         "rank_map": {
           "printer": [{
-              "device_name": [2, -1, 0],
-              "profile_name": [0, 0, 0],
-              "manufacturer": [1, -1, 0],
-              "model": [5, -5, 0],
-              "serial": [10, -2, 0],
-              "host": [1, 0, 0],
-              "system_port": [2, 0, 0]
+              "device_name": [2, -1, 0, "is good"],
+              "profile_name": [0, 0, 0, "non relevant for device properties"],
+              "manufacturer": [1, -1, 0, "is nice"],
+              "model": [5, -5, 0, "important, should not fail"],
+              "serial": [10, -2, 0, "important, could slightly fail"],
+              "host": [1, 0, 0, "nice to match"],
+              "system_port": [2, 0, 0, "good to match"]
             }
           ]
         }
