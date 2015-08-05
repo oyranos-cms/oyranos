@@ -468,8 +468,7 @@ char **  oyProfileListGet_           ( const char        * colorsig,
   return l.names;
 }
 
-char**
-oyPolicyListGet_                  (int * size)
+char **  oyPolicyListGet_            ( int               * size )
 {
   oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 0, 128, 0, 0};
   int count = 0;
