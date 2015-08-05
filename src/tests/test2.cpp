@@ -2906,6 +2906,44 @@ oyTESTRESULT_e testCMMRankMap ()
     fprintf( zout, "\n");
   }
 
+  char ** list = NULL;
+  error = oyRankMapList( NULL, NULL, &list, oyAllocateFunc_ );
+  count = 0;
+  while( list && list[count]) ++count;
+  if( count >= 3 )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "found rank maps                 %d    ", count );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "found too few rank maps         %d    ", count );
+  }
+
+  for( i = 0; i < count; ++i )
+  {
+    fprintf( zout, "%d: %s\n", i, list[i] );
+  }
+
+  oyStringListRelease_( &list, count, oyDeAllocateFunc_ );
+
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/path",
+                                   "1", OY_CREATE_NEW );  
+  error = oyRankMapList( NULL, options, &list, oyAllocateFunc_ );
+  count = 0;
+  while( list && list[count]) ++count;
+  if( count >= 1 )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "found rank map paths            %d    ", count );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "found too few rank map paths    %d    ", count );
+  }
+
+  for( i = 0; i < count; ++i )
+  {
+    fprintf( zout, "%d: %s\n", i, list[i] );
+  }
+
+
   fprintf( zout, "\n");
 
   return result;
