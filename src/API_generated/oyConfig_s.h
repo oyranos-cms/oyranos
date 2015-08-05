@@ -171,6 +171,10 @@ OYAPI int OYEXPORT oyRankMapToJSON   ( const oyRankMap   * rank_map,
                                        oyOptions_s       * options,
                                        char             ** json_text,
                                        oyAlloc_f           allocateFunc );
+OYAPI int OYEXPORT oyRankMapList     ( const char        * filter,
+                                       oyOptions_s       * options,
+                                       char            *** rank_map_file_names,
+                                       oyAlloc_f           allocateFunc );
 
 /* } Include "Config.public_methods_declarations.h" */
 

@@ -7,6 +7,7 @@
 {% block LocalIncludeFiles %}
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
+#include "oyranos_texts.h"
 {{ block.super }}
 #include "oyConfigs_s.h"
 #include "oyOptions_s.h"

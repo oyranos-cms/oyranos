@@ -1228,6 +1228,76 @@ OYAPI int OYEXPORT oyRankMapToJSON   ( const oyRankMap   * rank_map,
   return error;
 }
 
+/** Function  oyRankMapList
+ *  @memberof oyConfig_s
+ *  @brief    List installed Rank Map Files
+ *
+ *  Load the file content with oyRankMapFromJSON().
+ *
+ *  @param[in]     filter              a string to prefilter file names; optional
+ *  @param[in]     options             - "path" - show paths instead of files
+ *  @param[out]    rank_map_file_names zero terminated list of rank map JSON
+ *                                     files
+ *  @param[in]     allocateFunc        the memory allocate function
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent, < 0 - an issue
+ *
+ *  @version  Oyranos: 0.9.6
+ *  @date     2015/08/04
+ *  @since    2015/08/04 (Oyranos: 0.9.6)
+ */
+OYAPI int OYEXPORT oyRankMapList     ( const char        * filter,
+                                       oyOptions_s       * options,
+                                       char            *** rank_map_file_names,
+                                       oyAlloc_f           allocateFunc )
+{
+  int error = !rank_map_file_names;
+  int n = 0, i = 0;
+  int list_rank_paths = oyOptions_FindString( options, "path", 0 ) ? 1 : 0;
+
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
+
+  if(error <= 0)
+  {
+    const char * subdir = "color/rank-map";
+    int data = oyYES,
+        owner = oySCOPE_USER_SYS;
+    const char * dir_string = NULL,
+               * suffix = "json";
+
+    if(error <= 0 && list_rank_paths)
+    {
+      int path_names_n = 0;
+
+      *rank_map_file_names = oyDataPathsGet_( &n, subdir, oyALL,
+                                              owner, allocateFunc );
+      if(oy_debug)
+        for( i = 0; i < path_names_n; ++i )
+          DBG_NUM1_S( "%s\n", rank_map_file_names[i] );
+
+      return error;
+    }
+
+    if(error <= 0)
+      *rank_map_file_names = oyDataFilesGet_( &n, subdir, data, owner,
+                                      dir_string, filter, suffix,
+                                      allocateFunc );
+    if(oy_debug)
+      DBG_NUM1_S( "found rank maps: %d", n );
+    for( i = 0; i < n; ++i )
+    {
+      const char * file = (*rank_map_file_names)[i];
+
+      if(oy_debug)
+        DBG_NUM2_S( "%d: %s\n", i, file );
+    }
+  }
+
+  return error;
+}
+
+
 /** Function  oyConfig_FromRegistration
  *  @memberof oyConfig_s
  *  @brief    New config with registration
