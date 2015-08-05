@@ -74,41 +74,10 @@ const char * Api8UiGetText           ( const char        * select,
 int                CMMInit           ( oyStruct_s        * filter )
 {
   int error = 0;
-  char ** rank_name = NULL;
   const char * rfilter = "config.icc_profile.monitor.oyX1.qarz";
-  oyCMMapi8_s_ * s = (oyCMMapi8_s_*) filter;
 
   if(!_initialised)
-  {
-    error = oyRankMapList( rfilter, NULL, &rank_name, oyAllocateFunc_ );
-    if(error > 0 || !rank_name || !rank_name[0])
-    {
-      WARNc2_S("Problems loading rank map: %s %d", rfilter, error);
-
-    } else
-    {
-      oyRankMap * rank_map = NULL;
-      char * json_text = NULL;
-      size_t json_size = 0;
-
-      json_text = oyReadFileToMem_( rank_name[0], &json_size, oyAllocateFunc_ );
-      if(!json_text || !json_text[0])
-        _msg( oyMSG_WARN, filter, "%s() %s: %s", __func__,
-              _("File not loaded!"), rank_name[0] );
-
-      error = oyRankMapFromJSON ( json_text, NULL, &rank_map, oyAllocateFunc_ );
-
-      if(!rank_map || error || !rank_map[0].key)
-        _msg( oyMSG_WARN, filter, "%s() %s: %s  %d", __func__,
-              _("Creation of rank_map filed from"), rank_name[0], error );
-      else
-        s->rank_map = rank_map;
-
-      if(json_text) oyFree_m_( json_text );
-    }
-
-    if(rank_name) oyStringListRelease_( &rank_name, 1, oyDeAllocateFunc_ );
-  }
+    error = oyDeviceCMMInit( filter, rfilter );
 
   return error;
 }
