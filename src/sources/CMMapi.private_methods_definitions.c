@@ -188,8 +188,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
            (s->version[0] || s->version[1] || s->version[2]) &&
            s->oyConfigs_FromPattern &&
            s->oyConfigs_Modify &&
-           s->oyConfig_Rank &&
-           s->rank_map
+           s->oyConfig_Rank
             ) )
         error = 1;
     } break;
