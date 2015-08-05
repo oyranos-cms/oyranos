@@ -4,7 +4,7 @@
  *  Oyranos is an open source Color Management System 
  * 
  *  @par Copyright:
- *            2007-2009 (C) Kai-Uwe Behrmann
+ *            2007-2015 (C) Kai-Uwe Behrmann
  *
  *  @brief external CMM module API
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -55,6 +55,8 @@ typedef icSignature (*oyCMMProfile_GetSignature_f) (
 
 int              oyCMMlibMatchesCMM  ( const char        * lib_name,
                                        const char        * cmm );
+int oyDeviceCMMInit                  ( oyStruct_s        * filter,
+                                       const char        * rank_file_pattern );
 
 /*oyPointer          oyCMMallocateFunc ( size_t              size );
 void               oyCMMdeallocateFunc(oyPointer           mem );*/
