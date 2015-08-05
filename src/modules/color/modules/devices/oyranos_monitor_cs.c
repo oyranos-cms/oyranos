@@ -766,37 +766,6 @@ char * printCFDictionary( CFDictionaryRef dict )
   return text;
 }
 
-/** @instance qarz_rank_map
- *  @brief    oyRankMap map for mapping device to configuration informations
- *
- *  @version Oyranos: 0.1.10
- *  @date    2009/01/27
- *  @since   2009/01/27 (Oyranos: 0.1.10)
- */
-oyRankMap qarz_rank_map[] = {
-  {"device_name", 2, -1, 0},           /**< is good */
-  {"profile_name", 0, 0, 0},           /**< non relevant for device properties*/
-  {"host", 1, 0, 0},                   /**< nice to match */
-  {"system_port", 2, 0, 0},            /**< good to match */
-  {"display_geometry", 3, -1, 0},      /**< important to match, as fallback */
-  {"manufacturer", 0, 0, 0},           /**< is nice, covered by mnft_id */
-  {"EDID_mnft", 0, 0, 0},              /**< is nice, covered by mnft_id */
-  {"EDID_mnft_id", 1, -1, 0},          /**< is nice */
-  {"model", 0, 0, 0},                  /**< important, covered by model_id */
-  {"EDID_model_id", 5, -5, 0},         /**< important, should not fail */
-  {"EDID_date", 2, 0, 0},              /**< good to match */
-  {"serial", 10, -2, 0},               /**< important, could slightly fail */
-  {"EDID_red_x", 1, -5, 0},    /**< is nice, should not fail */
-  {"EDID_red_y", 1, -5, 0},    /**< is nice, should not fail */
-  {"EDID_green_x", 1, -5, 0},  /**< is nice, should not fail */
-  {"EDID_green_y", 1, -5, 0},  /**< is nice, should not fail */
-  {"EDID_blue_x", 1, -5, 0},   /**< is nice, should not fail */
-  {"EDID_blue_y", 1, -5, 0},   /**< is nice, should not fail */
-  {"EDID_white_x", 1, -5, 0},  /**< is nice, should not fail */
-  {"EDID_white_y", 1, -5, 0},  /**< is nice, should not fail */
-  {"EDID_gamma", 1, -5, 0},            /**< is nice, should not fail */
-  {0,0,0,0}                            /**< end of list */
-};
 
 #define qarz_help_system_specific \
       " One option \"device_name\" will select the according Quarz display.\n" \
@@ -807,7 +776,7 @@ oyRankMap qarz_rank_map[] = {
 
 oyMonitorDeviceHooks_s qarzMonitorHooks_ = {
   qarz_help_system_specific,
-  qarz_rank_map,
+  NULL,
   (oyCMMapi_s*) NULL,
   qarzMonitorProfileSetup,
   qarzMonitorProfileUnset,

@@ -51,13 +51,12 @@ extern "C" {
 
 extern oyMonitorDeviceHooks_s * oyX1MonitorHooks;
 oyCMMapi10_s_      oyX1_api10_set_xcm_region_handler;
-extern             oyRankMap oyX1_rank_map[];
 
 #define CMMInit                 catCMMfunc( oyX1, CMMInit )
+#define _initialised            catCMMfunc( oyX1, _initialised )
 #define CMMMessageFuncSet       catCMMfunc( oyX1, CMMMessageFuncSet )
 #define _msg                    catCMMfunc( oyX1, _msg )
 #define _api8                   catCMMfunc( oyX1, _api8 )
-#define _rank_map               catCMMfunc( oyX1, _rank_map )
 #define DeviceFromName_         catCMMfunc( oyX1, DeviceFromName_ )
 #define Configs_Modify          catCMMfunc( oyX1, Configs_Modify )
 #define GetText                 catCMMfunc( oyX1, GetText )

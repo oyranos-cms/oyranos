@@ -1662,38 +1662,6 @@ oyX1GetMonitorInfo_lib            (const char* display_name,
 
 
 
-/** @instance oyX1_rank_map
- *  @brief    oyRankMap map for mapping device to configuration informations
- *
- *  @version Oyranos: 0.1.10
- *  @date    2009/01/27
- *  @since   2009/01/27 (Oyranos: 0.1.10)
- */
-oyRankMap oyX1_rank_map[] = {
-  {"device_name", 2, -1, 0},           /**< is good */
-  {"profile_name", 0, 0, 0},           /**< non relevant for device properties*/
-  {"host", 1, 0, 0},                   /**< nice to match */
-  {"system_port", 2, 0, 0},            /**< good to match */
-  {"display_geometry", 3, -1, 0},      /**< important to match, as fallback */
-  {"manufacturer", 0, 0, 0},           /**< is nice, covered by mnft_id */
-  {"EDID_mnft", 0, 0, 0},              /**< is nice, covered by mnft_id */
-  {"EDID_mnft_id", 1, -1, 0},          /**< is nice */
-  {"model", 0, 0, 0},                  /**< important, covered by model_id */
-  {"EDID_model_id", 1, 0, 0},          /**< important, but fails sometimes */
-  {"EDID_date", 2, 0, 0},              /**< good to match */
-  {"serial", 10, -2, 0},               /**< important, could slightly fail */
-  {"EDID_red_x", 2, -5, 0},    /**< is nice, should not fail */
-  {"EDID_red_y", 2, -5, 0},    /**< is nice, should not fail */
-  {"EDID_green_x", 2, -5, 0},  /**< is nice, should not fail */
-  {"EDID_green_y", 2, -5, 0},  /**< is nice, should not fail */
-  {"EDID_blue_x", 2, -5, 0},   /**< is nice, should not fail */
-  {"EDID_blue_y", 2, -5, 0},   /**< is nice, should not fail */
-  {"EDID_white_x", 2, -5, 0},  /**< is nice, should not fail */
-  {"EDID_white_y", 2, -5, 0},  /**< is nice, should not fail */
-  {"EDID_gamma", 2, -5, 0},            /**< is nice, should not fail */
-  {0,0,0,0}                            /**< end of list */
-};
-
 #if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
 int XcolorRegionFind(XcolorRegion * old_regions, unsigned long old_regions_n, Display * dpy, Window win, XRectangle * rectangle)
 {   
@@ -2017,7 +1985,7 @@ oyCMMapi10_s_    oyX1_api10_set_xcm_region_handler = {
 
 oyMonitorDeviceHooks_s oyX1MonitorHooks_ = {
   oyX1_help_system_specific,
-  oyX1_rank_map,
+  NULL,
   (oyCMMapi_s*) &oyX1_api10_set_xcm_region_handler,
   oyX1MonitorProfileSetup,
   oyX1MonitorProfileUnset,

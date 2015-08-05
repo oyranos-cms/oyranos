@@ -34,13 +34,12 @@ extern "C" {
 #define CMM_NICK "qarz"
 
 extern oyMonitorDeviceHooks_s * qarzMonitorHooks;
-extern             oyRankMap qarz_rank_map[];
 
 #define CMMInit                 catCMMfunc( qarz, CMMInit )
+#define _initialised            catCMMfunc( qarz, _initialised )
 #define CMMMessageFuncSet       catCMMfunc( qarz, CMMMessageFuncSet )
 #define _msg                    catCMMfunc( qarz, _msg )
 #define _api8                   catCMMfunc( qarz, _api8 )
-#define _rank_map               catCMMfunc( qarz, _rank_map )
 #define DeviceFromName_         catCMMfunc( qarz, DeviceFromName_ )
 #define Configs_Modify          catCMMfunc( qarz, Configs_Modify )
 #define GetText                 catCMMfunc( qarz, GetText )
