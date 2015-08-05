@@ -62,7 +62,6 @@ using namespace std;
 #define DeviceFromName_         catCMMfunc( oyRE , DeviceFromName_ )
 #define GetDevices              catCMMfunc( oyRE , GetDevices )
 #define _api8                   catCMMfunc( oyRE , _api8 )
-#define _rank_map               catCMMfunc( oyRE , _rank_map )
 #define Configs_FromPattern     catCMMfunc( oyRE , Configs_FromPattern )
 #define Config_Rank             catCMMfunc( oyRE , Config_Rank )
 #define GetText                 catCMMfunc( oyRE , GetText )
@@ -135,96 +134,9 @@ const char * oyMat43show ( const float a[4][3] );
 const char * oyCIExyYTriple_Show( oyCIExyYTriple * triple );
 
 
-
-
-/** @instance _rank_map
- *  @brief    oyRankMap map for mapping device to configuration informations
- *
- *  @version Oyranos: 0.3.0
- *  @since   2009/01/27 (Oyranos: 0.1.10)
- *  @date    2011/04/07
- *
- *  \todo { Pick better rank fields }
- */
-oyRankMap _rank_map[] = {
-   {const_cast < char *>("device_name"), 0, 0, 0},                   /**< Unused?*/
-   {const_cast < char *>(PRFX_LRAW "driver_version"), 2, -1, 0},               /**< is good */
-   {const_cast < char *>("profile_name"), 0, 0, 0},                  /**< non relevant for device properties*/
-       /* EXIF Fields */
-   {const_cast < char *>(PRFX_EXIF "manufacturer"), 2, -20, 0},           /**< important, should not fail */
-   {const_cast < char *>(PRFX_EXIF "model"), 2, -22, 0},                  /**< important, should not fail */
-   {const_cast < char *>(PRFX_EXIF "serial"), 1, 0, 0},                   /**< is nice */
-   {const_cast < char *>(PRFX_EXIF "Photo_ISOSpeedRatings"), 3, 0, 0},    /**< is nice */
-   {const_cast < char *>(PRFX_EXIF "Photo_ExposureProgram"), 1, 0, 0},    /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "Photo_Flash"), 1, 0, 0},              /**< nice to match */
-
-      /*Makernote Fields - no 1-1 mapping with exif tags */
-      /* Makernote Tags: Serial Number */
-   {const_cast < char *>(PRFX_EXIF "Canon_SerialNumber"), 1, 0, 0},        /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "Fujifilm_SerialNumber"), 1, 0, 0},     /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "Nikon3_SerialNumber"), 1, 0, 0},       /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "Nikon3_SerialNO"), 1, 0, 0},           /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "Olympus_SerialNumber"), 1, 0, 0},      /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "Olympus_SerialNumber2"), 1, 0, 0},     /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "OlympusEq_SerialNumber"), 1, 0, 0},    /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "OlympusEq_InternalSerialNumber"), 1, 0, 0},/**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "Sigma_SerialNumber"), 1, 0, 0},        /**< nice to match */
-
-      /* Makernote Tags: Lens */
-   {const_cast < char *>(PRFX_EXIF "CanonCs_LensType"), 1, 0, 0},          /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "CanonCs_Lens"), 1, 0, 0},              /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "Minolta_LensID"), 1, 0, 0},            /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "Nikon1_AuxiliaryLens"), 1, 0, 0},      /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "Nikon2_AuxiliaryLens"), 1, 0, 0},      /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "Nikon3_AuxiliaryLens"), 1, 0, 0},      /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "Nikon3_LensType"), 1, 0, 0},           /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "Nikon3_Lens"), 1, 0, 0},               /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "OlympusEq_LensType"), 1, 0, 0},        /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "OlympusEq_LensSerialNumber"), 1, 0, 0},/**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "OlympusEq_LensFirmwareVersion"), 1, 0, 0},/**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "Pentax_LensType"), 1, 0, 0},           /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "Pentax_LensInfo"), 1, 0, 0},           /**< nice to match */
-   {const_cast < char *>(PRFX_EXIF "Sigma_LensRange"), 1, 0, 0},           /**< nice to match */
-
-       /* Possibly not relevant options are marked with: O->Output R->Repair */
-       /* LibRaw Options affecting open_file() */                     
-       /* LibRaw Options affecting unpack() */                        
-   {const_cast < char *>(PRFX_LRAW "use_camera_wb"), 1, -1, 0},                /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "use_camera_matrix"), 1, -1, 0},            /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "half_size"), 1, -1, 0},                    /**< is nice */
-   {const_cast<char*>(PRFX_LRAW "filtering_mode"), 1, -1, 0},                   /**< is nice */
-//This is a bit-field. Out of all the possible flags, only LIBRAW_FILTERING_NORAWCURVE
-//seems to be relevant to color [From LibRaw API docs]:               
-//This bit turns off tone curve processing (for tone curves read from file metadata or
-//calculated from constants). This setting is supported only for bayer-pattern cameras
-//with tone curve;                                                    
-   {const_cast < char *>(PRFX_LRAW "threshold"), 1, -1, 0},                    /**< is nice */ /*R*/
-   {const_cast < char *>(PRFX_LRAW "aber"), 1, -1, 0},                         /**< is nice */ /*R*/
-       /* LibRaw Options affecting dcraw_process() */                 
-   {const_cast < char *>(PRFX_LRAW "greybox"), 1, -1, 0},                      /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "gamm"), 1, -1, 0},                         /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "user_mul"), 1, -1, 0},                     /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "bright"), 1, -1, 0},                       /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "four_color_rgb"), 1, -1, 0},               /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "highlight"), 1, -1, 0},                    /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "use_auto_wb"), 1, -1, 0},                  /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "output_color"), 1, -1, 0},                 /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "camera_profile"), 1, -1, 0},               /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "output_bps"), 1, -1, 0},                   /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "user_qual"), 1, -1, 0},                    /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "user_black"), 1, -1, 0},                   /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "user_sat"), 1, -1, 0},                     /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "med_passes"), 1, -1, 0},                   /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "auto_bright_thr"), 1, -1, 0},              /**< is nice */
-   {const_cast < char *>(PRFX_LRAW "no_auto_bright"), 1, -1, 0},               /**< is nice */
-       /* Extra options (user supplied) */                            
-   {const_cast < char *>(PRFX_LRAW "illumination_source"), 1, -1, 0},          /**< is nice */
-   {0, 0, 0, 0}                                                      /**< end of list */
-};
-
-
 oyMessage_f oyRE_msg = 0;
 
+static int _initialised = 0;
 extern oyCMMapi8_s_ _api8;
 
 
@@ -236,8 +148,13 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *option);
 
 int CMMInit( oyStruct_s * filter )
 {
-   int error = 0;
-   return error;
+  int error = 0;
+  const char * rfilter = "config.icc_profile.raw-image.oyRE";
+
+  if(!_initialised)
+    error = oyDeviceCMMInit( filter, rfilter );
+
+  return error;
 }
 
 oyPointer CMMallocateFunc(size_t size)
@@ -805,7 +722,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
           devices = oyConfigs_New(0);
 
         /*Copy the rank map*/
-        oyConfig_SetRankMap( device, _rank_map );
+        oyConfig_SetRankMap( device, _api8.rank_map );
         oyConfigs_MoveIn( devices, &device, -1 );
         Configs_Modify( devices, options );
 
@@ -867,7 +784,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       }
 
       /*Copy the rank map*/
-      oyConfig_SetRankMap( device, _rank_map );
+      oyConfig_SetRankMap( device, _api8.rank_map );
 
    } else if (command_properties) {
       /* "properties" call section */
@@ -889,7 +806,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
         devices = oyConfigs_New(0);
 
       /*Copy the rank map*/
-      oyConfig_SetRankMap( device, _rank_map );
+      oyConfig_SetRankMap( device, _api8.rank_map );
       oyConfigs_MoveIn( devices, &device, -1 );
       Configs_Modify( devices, options );
 
@@ -1007,7 +924,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          /*Create static rank_map, if not already there*/
          if (!oyConfig_GetRankMap(device))
-            oyConfig_SetRankMap( device, _rank_map );
+            oyConfig_SetRankMap( device, _api8.rank_map );
 
          /*Cleanup*/
          oyConfig_Release(&device);
@@ -1239,7 +1156,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          }
 
          /*Copy the rank map*/
-         oyConfig_SetRankMap( device, _rank_map );
+         oyConfig_SetRankMap( device, _api8.rank_map );
 
          /*Cleanup*/
          oyConfig_Release(&device);
@@ -1384,7 +1301,7 @@ oyCMMapi8_s_ _api8 = {
   (oyCMMui_s*)&_api8_ui,                                              /**< device class UI name and help */
   &_api8_icon,                                                        /**< device icon */
 
-   _rank_map                                                          /**< oyRankMap ** rank_map */
+   NULL                                                               /**< oyRankMap ** rank_map */
 };
 
 /**
