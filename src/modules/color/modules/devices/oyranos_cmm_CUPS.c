@@ -53,7 +53,6 @@
 #define DeviceAttributes_       catCMMfunc( CUPS, DeviceAttributes_ )
 #define GetDevices              catCMMfunc( CUPS, GetDevices )
 #define _api8                   catCMMfunc( CUPS, _api8 )
-#define _rank_map               catCMMfunc( CUPS, _rank_map )
 #define Configs_Modify          catCMMfunc( CUPS, Configs_Modify )
 #define Configs_FromPattern     catCMMfunc( CUPS, Configs_FromPattern )
 #define Config_Check            catCMMfunc( CUPS, Config_Check )
@@ -74,6 +73,7 @@
 #define _DBG_FORMAT_ "%s:%d %s()"
 #define _DBG_ARGS_ (strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__),__LINE__,__func__
 
+static int _initialised = 0;
 int CUPSgetProfiles                  ( const char        * device_name,
                                        ppd_file_t        * ppd_file,
                                        oyConfigs_s       * devices,
@@ -104,12 +104,16 @@ int          LoadDevice              ( oyConfig_s        * device,
 oyMessage_f message = 0;
 
 extern oyCMMapi8_s_ _api8;
-extern oyRankMap _rank_map[];
 
 int CMMInit                          ( oyStruct_s        * filter )
 {
-    int error = 0;
-    return error;
+  int error = 0;
+  const char * rfilter = "config.icc_profile.printer.CUPS";
+
+  if(!_initialised)
+    error = oyDeviceCMMInit( filter, rfilter );
+
+  return error;
 }
 
 oyPointer CMMallocateFunc ( size_t size )
@@ -330,7 +334,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
 
         oyRankMap * rank_map = oyRankMapCopy( oyConfig_GetRankMap( device ), oyAllocateFunc_ );
         if(!rank_map)
-          rank_map = oyRankMapCopy( _rank_map, oyAllocateFunc_ );
+          rank_map = oyRankMapCopy( _api8.rank_map, oyAllocateFunc_ );
 
         OPTIONS_ADD( oyConfig_GetOptions(d,"backend_core"), manufacturer )
         OPTIONS_ADD( oyConfig_GetOptions(d,"backend_core"), model )
@@ -562,7 +566,7 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
         }
 
         if(error <= 0 && !oyConfig_GetRankMap(device))
-          oyConfig_SetRankMap(device, _rank_map );
+          oyConfig_SetRankMap(device, _api8.rank_map );
 
         oyConfig_Release( &device );
       }
@@ -806,24 +810,6 @@ int            Configs_FromPattern (
   return error;
 }
 
-/** @instance dDev_rank_map
- *  @brief    oyRankMap map for mapping device to configuration informations
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/27 (Oyranos: 0.1.10)
- *  @date    2009/02/09
- */
-oyRankMap _rank_map[] = { 
-  {"device_name", 2, -1, 0},       /**< is good */
-  {"profile_name", 0, 0, 0},           /**< non relevant for device properties*/
-  {"manufacturer", 1, -1, 0},          /**< is nice */
-  {"model", 5, -5, 0},                 /**< important, should not fail */
-  {"serial", 10, -2, 0},               /**< important, could slightly fail */
-  {"host", 1, 0, 0},                   /**< nice to match */
-  {"system_port", 2, 0, 0},            /**< good to match */
-  {0,0,0,0}                            /**< end of list */
-};
-
 /** Function Config_Check
  *  @brief    oyCMMapi8_s device check
  *
@@ -961,7 +947,7 @@ oyCMMapi8_s_ _api8 = {
   (oyCMMui_s*)&_api8_ui,             /**< device class UI name and help */
   &_api8_icon,           /**< device icon */
 
-  _rank_map              /**< oyRankMap ** rank_map */
+  NULL                   /**< oyRankMap ** rank_map */
 };
 
 /**
@@ -1160,7 +1146,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
 
       rank_map = oyRankMapCopy( oyConfig_GetRankMap( device ), oyAllocateFunc_ );
       if(!rank_map)
-        rank_map = oyRankMapCopy( _rank_map, oyAllocateFunc_ );
+        rank_map = oyRankMapCopy( _api8.rank_map, oyAllocateFunc_ );
 
       if(selectorA && texts[0] && texts[0][0])
       {
