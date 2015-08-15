@@ -21,7 +21,7 @@
 #include "oyCMMui_s_.h"
 
 #include <sane/sane.h>
-#ifdef HAVE_LCMS
+#ifdef HAVE_LCMS_never
 #include <lcms.h>
 #endif
 
@@ -1009,16 +1009,19 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
       return -1;
    }
 
+   oyOptions_SetFromText(options, CMM_BASE_REG OY_SLASH "prefix", "SANE_", OY_CREATE_NEW);
+
    value_str = malloc(sizeof(char)*value_size);
 
    for (opt_num = 1; opt_num < num_options; opt_num++) {
       opt = sane_get_option_descriptor(device_handle, opt_num);
       /*if ((opt->cap & SANE_CAP_COLOUR))*/ /*&& !(opt->cap & SANE_CAP_INACTIVE)*/
+      if(opt->name)
       {
          void *value = malloc(opt->size);
-         char *registration = malloc(sizeof(cmm_base_reg)+strlen(opt->name)+1);
+         char *registration = malloc(sizeof(cmm_base_reg) + 6 + strlen(opt->name)+1);
 
-         sprintf(registration, "%s%s", cmm_base_reg, opt->name);
+         sprintf(registration, "%sSANE_%s", cmm_base_reg, opt->name);
 
          sane_control_option(device_handle, opt_num, SANE_ACTION_GET_VALUE, value, 0);
          switch (opt->type) {
@@ -1036,7 +1039,7 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
                 if (strstr(opt->name, "gamma-table")) {
                   /* If the option contains a gamma table, calculate the gamma value
                    * as a float and save that instead */
-#ifdef HAVE_LCMS
+#ifdef HAVE_LCMS_never
                    LPGAMMATABLE lt = cmsAllocGamma(count);
                    float norm = 65535.0/(count-1);
 
