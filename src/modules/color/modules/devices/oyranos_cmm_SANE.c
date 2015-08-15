@@ -560,8 +560,10 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          device = oyConfigs_Get(devices, i);
 
-         printf(PRFX "Backend core:\n%s", oyOptions_GetText(*oyConfig_GetOptions(device,"backend_core"), oyNAME_NICK));
-         printf(PRFX "Data:\n%s", oyOptions_GetText(*oyConfig_GetOptions(device,"data"), oyNAME_NICK));
+         if(oyOptions_Count(*oyConfig_GetOptions(device,"backend_core")))
+           printf(PRFX "Backend core:\n%s", oyOptions_GetText(*oyConfig_GetOptions(device,"backend_core"), oyNAME_NICK));
+         if(oyOptions_Count(*oyConfig_GetOptions(device,"data")))
+           printf(PRFX "Data:\n%s", oyOptions_GetText(*oyConfig_GetOptions(device,"data"), oyNAME_NICK));
 
          /*Ignore device without a device_name*/
          if (!oyOptions_FindString(*oyConfig_GetOptions(device,"backend_core"), "device_name", NULL)) {
