@@ -199,8 +199,6 @@ oyCMM_s oJPG_cmm_module = {
 
 #define OY_oJPG_FILTER_REGISTRATION_BASE OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
 
-const char *icc_file_formats[5] = {"jpeg","tiff","png",0,0};
-
 /** @instance ojpg_api7
  *  @brief    ojpg oyCMMapi7_s implementation
  *
@@ -222,25 +220,15 @@ oyCMMapi_s * ojpgApi7CmmCreate       ( const char        * format,
   static oyConnectorImaging_s * plugs[2] = {0,0},
                               * sockets[2] = {0,0};
   
-  char * ext_ = NULL;
   const char * properties[] =
   {
     "file=read",    /* file read|write */
     "image=pixel",  /* image type, pixel/vector/font */
     "layers=1",     /* layer count, one for plain images */
-    "icc=0",        /* image type ICC profile support */
-    "ext=", /* supported extensions */
+    "icc=1",        /* image type ICC profile support */
+    "ext=jpg,jpeg", /* supported extensions */
     0
   };
-  oyStringAddPrintf( &ext_, oyAllocateFunc_, oyDeAllocateFunc_, "ext=%s", ext+1 );
-  if(strcmp(format,"tiff") == 0)
-    oyStringAddPrintf( &ext_, oyAllocateFunc_, oyDeAllocateFunc_, ",sti" );
-  properties[4] = ext_;
-
-  int pos = 0;
-  while(icc_file_formats[pos])
-    if(strcmp(icc_file_formats[pos++],format))
-      properties[3] = "icc=1"; /* image type ICC profile support */
 
   plugs[0] = plug;
   sockets[0] = socket;
@@ -251,26 +239,8 @@ oyCMMapi_s * ojpgApi7CmmCreate       ( const char        * format,
 
   if(oy_debug >= 2) ojpg_msg(oyMSG_DBG, NULL, _DBG_FORMAT_ "registration:%s ojpg %s", _DBG_ARGS_,
                              registration,
-                             ext_ );
+                             ext );
 
-#if 0
-  oyConnectorImaging_SetDataTypes( plug, data_types, 6 );
-  oyConnectorImaging_SetReg( plug, "//" OY_TYPE_STD "/image.data" );
-  oyConnectorImaging_SetMatch( plug, oyFilterSocket_MatchImagingPlug );
-  oyConnectorImaging_SetTexts( plug, oyCMMgetImageConnectorPlugText,
-                               oy_image_connector_texts );
-  oyConnectorImaging_SetIsPlug( plug, 1 );
-  oyConnectorImaging_SetCapability( plug, oyCONNECTOR_IMAGING_CAP_MAX_COLOR_OFFSET, -1 );
-  oyConnectorImaging_SetCapability( plug, oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT, 1 );
-  oyConnectorImaging_SetCapability( plug, oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT, 16 );
-  oyConnectorImaging_SetCapability( plug, oyCONNECTOR_IMAGING_CAP_MIN_COLOR_COUNT, 1 );
-  oyConnectorImaging_SetCapability( plug, oyCONNECTOR_IMAGING_CAP_MAX_COLOR_COUNT, 16 );
-  oyConnectorImaging_SetCapability( plug, oyCONNECTOR_IMAGING_CAP_CAN_INTERWOVEN, 1 );
-  oyConnectorImaging_SetCapability( plug, oyCONNECTOR_IMAGING_CAP_CAN_PREMULTIPLIED_ALPHA, 1 );
-  oyConnectorImaging_SetCapability( plug, oyCONNECTOR_IMAGING_CAP_CAN_NONPREMULTIPLIED_ALPHA, 1 );
-  oyConnectorImaging_SetCapability( plug, oyCONNECTOR_IMAGING_CAP_ID, 1 );
-#endif
-                               
 
   oyConnectorImaging_SetDataTypes( socket, data_types, 6 );
   oyConnectorImaging_SetReg( socket, "//" OY_TYPE_STD "/image.data" );
@@ -581,7 +551,6 @@ int      ojpgFilter_CmmRun           ( oyFilterPlug_s    * requestor_plug,
   uint8_t * buf = 0;
   size_t  mem_n = 0;   /* needed memory in bytes */
   int width,height,nchannels;
-  int info_good = 1;
   int32_t icc_profile_flags = 0;
   const char * format = "jpeg";
 
