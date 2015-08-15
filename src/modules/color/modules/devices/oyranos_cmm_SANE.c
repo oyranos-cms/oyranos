@@ -25,6 +25,7 @@
 #include <lcms.h>
 #endif
 
+#include <locale.h>   /* LC_NUMERIC */
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -1067,6 +1068,9 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
                }
                break;
             case SANE_TYPE_FIXED:
+              {
+               char * save_locale = oyStringCopy( setlocale(LC_NUMERIC, 0 ), malloc );
+               setlocale(LC_NUMERIC, "C");
                if (opt->size == (SANE_Int)sizeof(SANE_Word)) {
                   snprintf(value_str, value_size, "%f", SANE_UNFIX(*(SANE_Fixed *) value));
                   oyOptions_SetFromText(options, registration, value_str, OY_CREATE_NEW);
@@ -1086,6 +1090,9 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
                   }
                   oyOptions_SetFromText(options, registration, value_str, OY_CREATE_NEW);
                }
+               setlocale(LC_NUMERIC, save_locale);
+               free( save_locale );
+              }
                break;
             case SANE_TYPE_STRING:
                oyOptions_SetFromText(options, registration, (const char *)value, OY_CREATE_NEW);
