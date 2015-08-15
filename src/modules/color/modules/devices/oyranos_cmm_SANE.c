@@ -53,7 +53,6 @@
 #define DeviceInfoFromContext_  catCMMfunc( SANE , DeviceInfoFromContext_ )
 #define GetDevices              catCMMfunc( SANE , GetDevices )
 #define _api8                   catCMMfunc( SANE , _api8 )
-#define _rank_map               catCMMfunc( SANE , _rank_map )
 #define Configs_FromPattern     catCMMfunc( SANE , Configs_FromPattern )
 #define Configs_Modify          catCMMfunc( SANE , Configs_Modify )
 #define Config_Rank             catCMMfunc( SANE , Config_Rank )
@@ -68,6 +67,7 @@
 #define _DBG_FORMAT_ "%s:%d %s()"
 #define _DBG_ARGS_ __FILE__,__LINE__,__func__
 
+static int _initialised = 0;
 const char * GetText                 ( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context );
@@ -78,10 +78,8 @@ const char * Api8UiGetText           ( const char        * select,
 oyMessage_f message = 0;
 
 extern oyCMMapi8_s_ _api8;
-oyRankMap _rank_map[];
 
 int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options);
-int CreateRankMap_(SANE_Handle device_handle, oyRankMap ** rank_map);
 int sane_release_handle(oyPointer * handle_ptr);
 int check_driver_version(oyOptions_s *options, oyOption_s **version_opt_p, int *call_sane_exit);
 
@@ -89,8 +87,13 @@ int check_driver_version(oyOptions_s *options, oyOption_s **version_opt_p, int *
 
 int CMMInit( oyStruct_s * filter )
 {
-   int error = 0;
-   return error;
+  int error = 0;
+  const char * rfilter = "config.icc_profile.scanner.SANE";
+
+  if(!_initialised)
+    error = oyDeviceCMMInit( filter, rfilter );
+
+  return error;
 }
 
 oyPointer CMMallocateFunc(size_t size)
@@ -228,7 +231,6 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
               *handle_opt = NULL,
               *version_opt = NULL,
               *name_opt = NULL;
-   oyRankMap *dynamic_rank_map = NULL;
    int i, num_devices, g_error = 0, status, call_sane_exit = 0;
    const char *device_name = 0, *command_list = 0, *command_properties = 0;
    const SANE_Device **device_list = NULL;
@@ -277,9 +279,9 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       return 0;
    }
 
-   context_opt = oyOptions_Find(options, "device_context");
-   handle_opt = oyOptions_Find(options, "device_handle");
-   name_opt = oyOptions_Find(options, "oyNAME_NAME");
+   context_opt = oyOptions_Find(options, "device_context", oyNAME_PATTERN);
+   handle_opt = oyOptions_Find(options, "device_handle", oyNAME_PATTERN);
+   name_opt = oyOptions_Find(options, "oyNAME_NAME", oyNAME_PATTERN);
 
    /*Handle "driver_version" option [IN] */
    check_driver_version(options, &version_opt, &call_sane_exit);
@@ -371,7 +373,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
                printf(PRFX "Unable to open sane device \"%s\": %s\n", sane_name, sane_strstatus(status));
          }
 
-         oyConfig_SetRankMap( device, _rank_map );
+         oyConfig_SetRankMap( device, _api8.rank_map );
 
          error = oyConfigs_MoveIn(devices, &device, -1);
 
@@ -446,15 +448,12 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          /*2b. Use the "device_handle"*/
          ColorInfoFromHandle(device_handle, oyConfig_GetOptions(device,"backend_core"));
 
-         /*3. Create the rank map*/
-         error = CreateRankMap_(device_handle, &dynamic_rank_map);
-         if (!error)
-           oyConfig_SetRankMap( device, dynamic_rank_map );
+         /*3. Set the rank map*/
+         oyConfig_SetRankMap( device, _api8.rank_map );
       }
       oyConfigs_MoveIn(devices, &device, -1);
 
       /*Cleanup*/
-      free(dynamic_rank_map);
       free(aux_context);
 
       *s = devices;
@@ -598,7 +597,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          /*Handle "oyNAME_NAME" option */
          name_opt_dev = oyConfig_Find(device, "oyNAME_NAME");
-         if (!error && !name_opt_dev && oyOptions_Find(options, "oyNAME_NAME"))
+         if (!error && !name_opt_dev && oyOptions_Find(options, "oyNAME_NAME", oyNAME_PATTERN))
             oyOptions_SetFromText(oyConfig_GetOptions(device,"backend_core"),
                                   CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                   sane_model,
@@ -627,7 +626,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          /*Create static rank_map, if not already there*/
          if (!oyConfig_GetRankMap( device))
-           oyConfig_SetRankMap( device, _rank_map );
+           oyConfig_SetRankMap( device, _api8.rank_map );
 
          /*Cleanup*/
          oyConfig_Release(&device);
@@ -651,7 +650,6 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                     *handle_opt_dev = NULL,
                     *context_opt_dev = NULL;
          oyConfig_s *device_new = NULL;
-         oyRankMap *dynamic_rank_map = NULL;
          char *device_name = NULL;
 
          /* All previous device properties are considered obsolete
@@ -731,11 +729,8 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
             /* Use the device_handle to get the device color options */
             ColorInfoFromHandle(device_handle, oyConfig_GetOptions(device_new,"backend_core"));
 
-            /*5. Create the rank map*/
-            if (CreateRankMap_(device_handle, &dynamic_rank_map))
-              oyConfig_SetRankMap( device_new, dynamic_rank_map );
-            else
-               g_error++;
+            /*5. Set the rank map*/
+            oyConfig_SetRankMap( device_new, _api8.rank_map );
          }
 
          /*Cleanup*/
@@ -750,7 +745,6 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
             sane_close(device_handle);
          }
 
-         free(dynamic_rank_map);
          free(device_context);
          free(device_name);
       }
@@ -886,32 +880,6 @@ oyIcon_s _api8_icon = {
   oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"
 };
 
-/** @instance _rank_map
- *  @brief    oyRankMap map for mapping device to configuration informations
- *
- *  This is the static part for the well known options. The final array will
- *  be created by the oyCreateRankMap_() function.
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/01/27 (Oyranos: 0.1.10)
- *  @date    2009/02/09
- */
-oyRankMap _rank_map[] = {
-   /* Scanner H/W information */
-   {"device_name", 2, -1, 0},                     /**< is good */
-   {"profile_name", 0, 0, 0},                     /**< non relevant for device properties*/
-   {"manufacturer", 1, -1, 0},                    /**< is nice */
-   {"model", 5, -5, 0},                           /**< important, should not fail */
-   {"serial", 10, 0, 0},                          /**< currently not avaliable */
-   {"host", 1, 0, 0},                             /**< currently only local or remote */
-   {"system_port", 2, 0, 0},                      /**< good to match */
-   {"driver_version", 2, 0, 0},                   /**< good to match */
-                                                                      
-                                                  /* User supplied information */
-   {"media", 1, -1, 0},                           /**< type of paper/film/slide/... */
-   {0, 0, 0, 0}                                   /**< end of list */
-};
-
 /** @instance _api8
  *  @brief    CMM_NICK oyCMMapi8_s implementations
  *
@@ -936,7 +904,7 @@ oyCMMapi8_s_ _api8 = {
    Config_Rank,                                                       /**< oyConfig_Rank_f oyConfig_Rank */
    (oyCMMui_s*)&_api8_ui,                                             /**< device class UI name and help */
    &_api8_icon,                                                       /**< device icon */
-   _rank_map                                                          /**< oyRankMap ** rank_map */
+   NULL                                                               /**< oyRankMap ** rank_map */
 };
 
 /**
@@ -1045,7 +1013,8 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
 
    for (opt_num = 1; opt_num < num_options; opt_num++) {
       opt = sane_get_option_descriptor(device_handle, opt_num);
-      if ((opt->cap & SANE_CAP_COLOR) /*&& !(opt->cap & SANE_CAP_INACTIVE)*/) {
+      /*if ((opt->cap & SANE_CAP_COLOUR))*/ /*&& !(opt->cap & SANE_CAP_INACTIVE)*/
+      {
          void *value = malloc(opt->size);
          char *registration = malloc(sizeof(cmm_base_reg)+strlen(opt->name)+1);
 
@@ -1130,57 +1099,6 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
 }
 
 /** @internal
- * @brief Create a rank map from a scanner handle
- *
- * @param[in]	device_handle				SANE_Handle
- * @param[out]	rank_map						All scanner options affecting color as a rank map
- *
- * \todo { Untested }
- */
-int CreateRankMap_(SANE_Handle device_handle, oyRankMap ** rank_map)
-{
-   oyRankMap *rm = NULL;
-
-   const SANE_Option_Descriptor *opt = NULL;
-   SANE_Int num_options = 0;
-   SANE_Status status;
-
-   unsigned int opt_num = 0, i = 0;
-
-   /* Get the nuber of scanner options */
-   status = sane_control_option(device_handle, 0, SANE_ACTION_GET_VALUE, &num_options, 0);
-   if (status != SANE_STATUS_GOOD) {
-      message(oyMSG_WARN, 0,
-              "%s()\n Unable to determine option count: %s\n",
-              __func__, sane_strstatus(status));
-      return -1;
-   }
-
-   /* we allocate enough memmory to hold all options */
-   rm = calloc(num_options, sizeof(oyRankMap));
-   memset(rm, 0, sizeof(oyRankMap) * num_options);
-
-   for (opt_num = 1; opt_num < num_options; opt_num++) {
-      opt = sane_get_option_descriptor(device_handle, opt_num);
-      if (opt->cap & SANE_CAP_COLOR) {
-         rm[i].key = (char *)malloc(strlen(opt->name) + 1);
-         strcpy(rm[i].key, opt->name);
-         rm[i].match_value = 5;
-         rm[i].none_match_value = -5;
-         i++;
-      }
-   }
-
-   num_options = i + sizeof(_rank_map) / sizeof(oyRankMap); /* color options + static options */
-   /* resize rm array to hold only needed options */
-   *rank_map = realloc(rm, num_options * sizeof(oyRankMap));
-   /* copy static options at end of new rank map */
-   memcpy(*rank_map + i, _rank_map, sizeof(_rank_map));
-
-   return 0;
-}
-
-/** @internal
  * @brief Release the SANE_Handle.
  *
  * This function is a oyPointer_release_f and is used in the
@@ -1218,12 +1136,12 @@ int sane_release_handle(oyPointer *handle_ptr)
 int check_driver_version(oyOptions_s *options, oyOption_s **version_opt_p, int *call_sane_exit)
 {
    int driver_version = 0, status;
-   oyOption_s *context_opt = oyOptions_Find(options, "device_context");
-   oyOption_s *handle_opt = oyOptions_Find(options, "device_handle");
+   oyOption_s *context_opt = oyOptions_Find(options, "device_context", oyNAME_PATTERN);
+   oyOption_s *handle_opt = oyOptions_Find(options, "device_handle", oyNAME_PATTERN);
    int error = oyOptions_FindInt(options, "driver_version", 0, &driver_version);
 
    if (!error && driver_version > 0) /*driver_version is provided*/
-      *version_opt_p = oyOptions_Find(options, "driver_version");
+      *version_opt_p = oyOptions_Find(options, "driver_version", oyNAME_PATTERN);
    else { /*we have to call sane_init()*/
       status = sane_init(&driver_version, NULL);
       if (status == SANE_STATUS_GOOD) {
