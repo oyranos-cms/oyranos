@@ -258,9 +258,14 @@ char **  oyProfilePathsGet_          ( int               * count,
 
   oyStringListFreeDoubles_( path_names, count, oyDeAllocateFunc_ );
 
-  tmp = oyStringListAppend_( 0, 0, (const char**)path_names, *count,
+  if(path_names)
+  {
+    tmp = oyStringListAppend_( 0, 0, (const char**)path_names, *count,
                              &tmp_n, allocateFunc );
-  oyStringListRelease_( &path_names, *count,  oyDeAllocateFunc_ );
+    oyStringListRelease_( &path_names, *count,  oyDeAllocateFunc_ );
+  }
+  else
+    tmp_n = 0;
   path_names = tmp; tmp = 0;
   *count = tmp_n;
 
