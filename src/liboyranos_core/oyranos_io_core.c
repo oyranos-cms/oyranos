@@ -50,7 +50,6 @@
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_types.h"
-#include "oyranos_xml.h"
 
 #ifdef HAVE_POSIX
 #include <unistd.h> /* geteuid() */
