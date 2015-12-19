@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2012-2014  Kai-Uwe Behrmann
+ *  Copyright (C) 2012-2015  Kai-Uwe Behrmann
  *
  */
 
@@ -25,6 +25,7 @@
 #include <math.h>
 #include <string.h>
 #include <cairo.h>                /* Cairo headers */
+#include <cairo-svg.h>            /* Cairo SVG headers */
 
 #include "oyConversion_s.h"
 #include "oyProfile_s.h"
@@ -131,6 +132,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -v \t%s\n",     _("verbose"));
   fprintf( stderr, "      -w %s\t%s\n",   _("NUMBER"), _("specify output image width in pixel"));
   fprintf( stderr, "      -o %s\t%s\n",   _("FILE"),   _("specify output file name, default is output.png"));
+  fprintf( stderr, "      -f %s\t%s\n",   _("FORMAT"),   _("specify output file format png or svg, default is png"));
   fprintf( stderr, "      -b \t%s\n",     _("omit border"));
   fprintf( stderr, "      -t %s\t%s\n",   _("NUMBER"), _("specify increase of the thickness of the graph lines"));
   fprintf( stderr, "      -2 \t%s\n",     _("select a ICC v2 profile"));
@@ -281,7 +283,11 @@ int main( int argc , char** argv )
   thickness *= pixel_w/128.0;
 
   /* create a surface to place our images on */
-  surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, pixel_w,pixel_h);
+  if(format == NULL || strcmp(format, "png") == 0)
+    surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, pixel_w,pixel_h);
+  else if(strcmp(format, "svg") == 0)
+    surface = cairo_svg_surface_create( output?output:"output.svg",
+                                        (double)pixel_w, (double)pixel_h);
 
   status = cairo_surface_status( surface );
   if(status) return 1;
@@ -569,7 +575,8 @@ int main( int argc , char** argv )
 
   cairo_restore( cr );
 
-  status = cairo_surface_write_to_png( surface, output?output:"output.png" );
+  if(format == NULL || strcmp(format, "png") == 0)
+    status = cairo_surface_write_to_png( surface, output?output:"output.png" );
   if(status != CAIRO_STATUS_SUCCESS)
   {
     fprintf( stderr, "%s\n", cairo_status_to_string( status ));
