@@ -1471,6 +1471,8 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
                                                  oyAllocateFunc_ );
             disp->rr_version = major_versionp*100 + minor_versionp;
             disp->rr_screen = xrand_screen;
+            disp->mm_width = disp->output_info->mm_width;
+            disp->mm_height = disp->output_info->mm_height;
           }
 
           ++ monitors;

@@ -110,6 +110,8 @@ typedef struct {
   int                  active_outputs; /**< outputs with crtc and gamma size */
   int                  rr_version;     /**< XRandR version */
   int                  rr_screen;      /**< nth XRandR output */
+  int                  mm_width;       /**< screen's milli meter dimension */
+  int                  mm_height;      /**< screen's milli meter dimension */
 # endif
   char               * system_port;    /**< the operating systems port name */
   oyBlob_s           * edid;           /**< edid for the device */
