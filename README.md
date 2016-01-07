@@ -116,11 +116,11 @@ device specific Informations (ICC profiles) und system wide settings.
   (a) replace '_gitroot' variable,
   (b) replace the branch name in line 44.
 
-#### openSUSE-13.2
+#### openSUSE Leap 42.1
     zypper install cmake gcc-c++ git autoconf libtool make patch pkgconfig desktop-file-utils xdg-utils update-desktop-files Mesa-devel cups-devel libxml2-devel libyajl-devel liblcms-devel liblcms2-devel libjpeg-devel libpng-devel libtiff-devel libraw-devel libexiv2-devel xorg-x11-libXfixes-devel xorg-x11-libXmu-devel xorg-x11-libXpm-devel libXinerama-devel libXrandr-devel fltk-devel libXft-devel ftgl-devel gettext gettext-tools cairo-devel netpbm
     # oyranos-0.9.0 can now be installed successfully.
-    zypper install qt-devel                                         # Synnefo
-    zypper install libkde4-devel                                    # KolorManager
+    zypper install libqt4-devel libqt5-qtbase-common-devel          # Synnefo
+    zypper install patterns-openSUSE-devel_kde_frameworks           # KolorManager
     zypper install gtk2-devel libopenexr-devel gutenprint-devel     # CinePaint
     zypper install doxygen graphviz                                 # for documentation
 
