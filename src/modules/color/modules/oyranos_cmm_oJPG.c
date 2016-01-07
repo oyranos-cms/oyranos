@@ -21,6 +21,7 @@
 #include "oyConnectorImaging_s.h"
 #include "oyProfiles_s.h"
 
+#include "oyranos_cmm.h"
 #include "oyranos_config.h"
 #include "oyranos_definitions.h"
 #include "oyranos_helper.h"
@@ -125,42 +126,12 @@ const char * ojpgGetText             ( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context )
 {
-         if(strcmp(select, "name")==0)
-  {
-         if(type == oyNAME_NICK)
+  if(strcmp(select, "name")==0)
+    if(type == oyNAME_NICK)
       return _(CMM_NICK);
-    else if(type == oyNAME_NAME)
-      return _("CMM loader");
-    else
-      return _("CMM loader filter");
-  } else if(strcmp(select, "manufacturer")==0)
-  {
-         if(type == oyNAME_NICK)
-      return _("oy");
-    else if(type == oyNAME_NAME)
-      return _("Kai-Uwe Behrmann");
-    else
-      return _("Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/downloads");
-  } else if(strcmp(select, "copyright")==0)
-  {
-         if(type == oyNAME_NICK)
-      return _("newBSD");
-    else if(type == oyNAME_NAME)
-      return _("Copyright (c) 2014 Kai-Uwe Behrmann; newBSD");
-    else
-      return _("new BSD license: http://www.opensource.org/licenses/BSD-3-Clause");
-  } else if(strcmp(select, "help")==0)
-  {
-         if(type == oyNAME_NICK)
-      return _("help");
-    else if(type == oyNAME_NAME)
-      return _("The module generates a series of file format reader filters.");
-    else
-      return _("The module generates a series of file format reader filters. The OpenImageIO library is used to perform the actual reading. This module performs for several formats ICC profile detection, generation and fallback generation.");
-  }
-  return 0;
+
+  return oyCMMgetText( select, type, context );
 }
-const char *ojpg_texts[5] = {"name","copyright","manufacturer","help",0};
 oyIcon_s ojpg_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
 /** @instance oJPG_cmm_module
@@ -183,7 +154,7 @@ oyCMM_s oJPG_cmm_module = {
   CMM_NICK,            /**< ::cmm; the four char filter id */
   (char*)"0.9.6",      /**< ::backend_version */
   ojpgGetText,         /**< ::getText; UI texts */
-  (char**)ojpg_texts,  /**< ::texts; list of arguments to getText */
+  (char**)oyCMM_texts, /**< ::texts; list of arguments to getText */
   OYRANOS_VERSION,     /**< ::oy_compatibility; last supported Oyranos CMM API*/
 
   /** ::api; The first filter api structure. */
