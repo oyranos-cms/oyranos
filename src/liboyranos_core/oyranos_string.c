@@ -845,7 +845,7 @@ void oyStringListFreeDoubles_        ( char         ** list,
 {
   int n = *list_n,
       i,
-      pos = 1;
+      pos = n ? 1 : 0;
 
   for(i = pos; i < n; ++i)
   {
