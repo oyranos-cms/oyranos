@@ -63,7 +63,7 @@ IF( FLTK_FOUND )
   SET_PROPERTY(TARGET oyranos-image-display PROPERTY OSX_ARCHITECTURES x86_64)
   SET_PROPERTY(TARGET oyranos-image-display PROPERTY OSX_ARCHITECTURES_DEBUG x86_64)
   TARGET_LINK_LIBRARIES ( oyranos-image-display ${PROJECT_NAME} ${EXTRA_LIBS}
-                 ${FLTK_LIBRARIES} )
+                 ${FLTK_LIBRARIES} ${XRANDR_LIBRARIES} )
   INSTALL (TARGETS oyranos-image-display DESTINATION bin)
   INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/image_display/oyranos-image-display.desktop DESTINATION share/applications )
   INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/image_display/oyranos-image-display.1 DESTINATION share/man/man1 )
@@ -75,7 +75,7 @@ IF( FLTK_FOUND )
   SET_PROPERTY(TARGET oyranos-config-fltk PROPERTY OSX_ARCHITECTURES x86_64)
   SET_PROPERTY(TARGET oyranos-config-fltk PROPERTY OSX_ARCHITECTURES_DEBUG x86_64)
   TARGET_LINK_LIBRARIES ( oyranos-config-fltk ${PROJECT_NAME} ${EXTRA_LIBS}
-                 ${FLTK_LIBRARIES} )
+                 ${FLTK_LIBRARIES} ${XRANDR_LIBRARIES} )
   INSTALL (TARGETS oyranos-config-fltk DESTINATION bin)
 ENDIF()
 
@@ -96,7 +96,7 @@ IF( FLTK_FOUND )
                   oforms/oyranos_xforms_fltk.cxx
                 )
   TARGET_LINK_LIBRARIES ( oyranos-xforms-fltk ${PROJECT_NAME} ${EXTRA_LIBS}
-                  ${OY_OFORMS_LIB} ${FLTK_LIBRARIES} )
+                  ${OY_OFORMS_LIB} ${FLTK_LIBRARIES} ${XRANDR_LIBRARIES} )
   INSTALL (TARGETS oyranos-xforms-fltk DESTINATION bin)
 ENDIF()
 
