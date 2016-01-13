@@ -453,8 +453,8 @@ void info_cb ( Fl_Widget* w, void* daten )
 
     html = oyStringReplace_( text, "\n", "<br>", oyAllocateFunc_ );
     oyFree_m_(text); text = html;
-    html = oyStringReplace_( text, " ", "&nbsp;", oyAllocateFunc_ );
-    oyFree_m_(text); text = html;
+    //html = oyStringReplace_( text, " ", "&nbsp;", oyAllocateFunc_ );
+    //oyFree_m_(text); text = html;
     html = oyStringCopy( "<html><body bgcolor=\"#cccccc\">", oyAllocateFunc_ );
     oyStringAdd_( &html, text, oyAllocateFunc_, oyDeAllocateFunc_ );
     oyStringAdd_( &html, "</body></html>", oyAllocateFunc_, oyDeAllocateFunc_ );
