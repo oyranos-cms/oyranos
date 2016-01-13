@@ -380,7 +380,7 @@ void dbg_cb ( Fl_Widget* w, void* daten )
   }
 }
 Oy_Fl_Double_Window *help_window=(Oy_Fl_Double_Window *)0;
-Fl_Help_View *help_browser=(Fl_Help_View *)0;
+Fl_Text_Display *help_browser=(Fl_Text_Display *)0;
 Oy_Fl_Double_Window* make_help(const char * text)
 {
   { help_window = new Oy_Fl_Double_Window(505, 410, _("Information:"));
@@ -393,23 +393,27 @@ Oy_Fl_Double_Window* make_help(const char * text)
     help_window->labelcolor(FL_FOREGROUND_COLOR);
     help_window->align(Fl_Align(FL_ALIGN_TOP));
     help_window->when(FL_WHEN_RELEASE);
-    { help_browser = new Fl_Help_View(0, 0, 505, 410);
-      help_browser->box(FL_THIN_UP_BOX);
-      help_browser->color((Fl_Color)16);
-      Fl_Group::current()->resizable(help_browser);
-    } // Fl_Help_View* help_browser
+    { Fl_Text_Display* o = help_browser = new Fl_Text_Display(0, 0, 505, 410);
+      Fl_Text_Buffer * buffer = new Fl_Text_Buffer(0);
+      o->buffer( buffer );
+      //o->textfont( FL_COURIER );
+      o->box(FL_THIN_UP_BOX);
+      //o->box( FL_FLAT_BOX );
+      o->color(FL_BACKGROUND_COLOR);
+      Fl_Group::current()->resizable(o);
+    }
     help_window->end();
   } // Oy_Fl_Double_Window* help_window
   help_window->show();
   if(text)
-    help_browser->value( text );
+    help_browser->buffer()->text( text );
   else
   {
       const char * opts[] = {"add_html_header","1",
                              "add_oyranos_title","1",
                              "add_oyranos_copyright","1",
                              NULL};
-    help_browser->value( oyDescriptionToHTML(oyGROUP_ALL, opts,0) );
+    help_browser->buffer()->text( oyDescriptionToHTML(oyGROUP_ALL, opts,0) );
   }
   return help_window;
 }
@@ -435,7 +439,7 @@ void info_cb ( Fl_Widget* w, void* daten )
     oyFilterNode_s * in = oyConversion_GetNode( cc, OY_INPUT);
     oyOptions_s * opts =  oyFilterNode_GetOptions( in, 0 );
     const char * fn =     oyOptions_FindString( opts, "//" OY_TYPE_STD "/file_read/filename", 0 );
-    char * text = NULL, * html = NULL;
+    char * text = NULL;
     size_t size = 0;
 
     if(!fn)
@@ -451,16 +455,7 @@ void info_cb ( Fl_Widget* w, void* daten )
     oyFilterNode_Release( &in );
     oyOptions_Release( &opts );
 
-    html = oyStringReplace_( text, "\n", "<br>", oyAllocateFunc_ );
-    oyFree_m_(text); text = html;
-    //html = oyStringReplace_( text, " ", "&nbsp;", oyAllocateFunc_ );
-    //oyFree_m_(text); text = html;
-    html = oyStringCopy( "<html><body bgcolor=\"#cccccc\">", oyAllocateFunc_ );
-    oyStringAdd_( &html, text, oyAllocateFunc_, oyDeAllocateFunc_ );
-    oyStringAdd_( &html, "</body></html>", oyAllocateFunc_, oyDeAllocateFunc_ );
-    make_help(html);
-    puts(html);
-    oyFree_m_(text);
+    make_help(text);
   }
   else
     printf("could not find a suitable program structure\n");
