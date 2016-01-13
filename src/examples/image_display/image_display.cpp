@@ -379,6 +379,92 @@ void dbg_cb ( Fl_Widget* w, void* daten )
     oyImage_Release( &image );
   }
 }
+Oy_Fl_Double_Window *help_window=(Oy_Fl_Double_Window *)0;
+Fl_Help_View *help_browser=(Fl_Help_View *)0;
+Oy_Fl_Double_Window* make_help(const char * text)
+{
+  { help_window = new Oy_Fl_Double_Window(505, 410, _("Information:"));
+    help_window->box(FL_FLAT_BOX);
+    help_window->color(FL_BACKGROUND_COLOR);
+    help_window->selection_color(FL_BACKGROUND_COLOR);
+    help_window->labeltype(FL_NO_LABEL);
+    help_window->labelfont(0);
+    help_window->labelsize(14);
+    help_window->labelcolor(FL_FOREGROUND_COLOR);
+    help_window->align(Fl_Align(FL_ALIGN_TOP));
+    help_window->when(FL_WHEN_RELEASE);
+    { help_browser = new Fl_Help_View(0, 0, 505, 410);
+      help_browser->box(FL_THIN_UP_BOX);
+      help_browser->color((Fl_Color)16);
+      Fl_Group::current()->resizable(help_browser);
+    } // Fl_Help_View* help_browser
+    help_window->end();
+  } // Oy_Fl_Double_Window* help_window
+  help_window->show();
+  if(text)
+    help_browser->value( text );
+  else
+  {
+      const char * opts[] = {"add_html_header","1",
+                             "add_oyranos_title","1",
+                             "add_oyranos_copyright","1",
+                             NULL};
+    help_browser->value( oyDescriptionToHTML(oyGROUP_ALL, opts,0) );
+  }
+  return help_window;
+}
+void help_cb ( Fl_Widget*, void* )
+{
+  make_help(NULL);
+}
+
+void info_cb ( Fl_Widget* w, void* daten )
+{
+  struct box_n_opts * arg = (box_n_opts*) daten;
+  oyStruct_s * object = (oyStruct_s*) arg->node;
+
+  if(!w->parent())
+    printf("Could not find parents.\n");
+  else
+  if(!object)
+    printf("Oyranos argument missed.\n");
+  else
+  if(object && object->type_ == oyOBJECT_FILTER_NODE_S)
+  {
+    oyConversion_s * cc = arg->box->conversion();
+    oyFilterNode_s * in = oyConversion_GetNode( cc, OY_INPUT);
+    oyOptions_s * opts =  oyFilterNode_GetOptions( in, 0 );
+    const char * fn =     oyOptions_FindString( opts, "//" OY_TYPE_STD "/file_read/filename", 0 );
+    char * text = NULL, * html = NULL;
+    size_t size = 0;
+
+    if(!fn)
+    {
+      oyImage_s * image = oyConversion_GetImage( cc, OY_INPUT );
+      opts = oyImage_GetTags(image);
+      fn =   oyOptions_FindString( opts, "//" OY_TYPE_STD "/file_read/filename", 0 );
+      oyImage_Release( &image );
+    }
+
+    text = oyReadCmdToMemf_( &size, "r", malloc, "tiffinfo \"%s\"", fn );
+
+    oyFilterNode_Release( &in );
+    oyOptions_Release( &opts );
+
+    html = oyStringReplace_( text, "\n", "<br>", oyAllocateFunc_ );
+    oyFree_m_(text); text = html;
+    html = oyStringReplace_( text, " ", "&nbsp;", oyAllocateFunc_ );
+    oyFree_m_(text); text = html;
+    html = oyStringCopy( "<html><body bgcolor=\"#cccccc\">", oyAllocateFunc_ );
+    oyStringAdd_( &html, text, oyAllocateFunc_, oyDeAllocateFunc_ );
+    oyStringAdd_( &html, "</body></html>", oyAllocateFunc_, oyDeAllocateFunc_ );
+    make_help(html);
+    puts(html);
+    oyFree_m_(text);
+  }
+  else
+    printf("could not find a suitable program structure\n");
+}
 
 void exit_cb ( Fl_Widget* w, void* daten ) {exit(0);}
 
@@ -628,7 +714,11 @@ void setWindowMenue                  ( Oy_Fl_Double_Window * win,
                    FL_CTRL + 'i', view_cb, (void*)arg, 0 );
         menue_->add( _("Debug"),
                    FL_CTRL + 'd', dbg_cb, (void*)arg, 0 );
+        menue_->add( _("Show Infos"),
+                   FL_CTRL + 'f', info_cb, (void*)arg, 0 );
       }
+      menue_->add( _("Help"),
+                   FL_F + 1, help_cb, (void*)arg, 0 );
       menue_->add( _("Quit"),
                    FL_CTRL + 'q', exit_cb, (void*)arg, 0 );
       menue_button_->copy(menue_->menu());
