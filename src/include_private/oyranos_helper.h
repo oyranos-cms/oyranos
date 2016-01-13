@@ -126,6 +126,15 @@ char * oyReadUrlToMemf_              ( size_t            * size,
                                        oyAlloc_f           allocate_func,
                                        const char        * format,
                                                            ... );
+char * oyReadCmdToMem_               ( const char        * command,
+                                       size_t            * size,
+                                       const char        * mode,
+                                       oyAlloc_f           allocate_func );
+char * oyReadCmdToMemf_              ( size_t            * size,
+                                       const char        * mode,
+                                       oyAlloc_f           allocate_func,
+                                       const char        * format,
+                                                           ... );
 
 
 /* --- mathematical helpers --- */

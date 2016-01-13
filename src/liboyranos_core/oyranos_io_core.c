@@ -397,6 +397,127 @@ char * oyReadUrlToMem_               ( const char        * url,
 /** @internal
  *  Read a file stream without knowing its size in advance.
  */
+char * oyReadCmdToMem_               ( const char        * command,
+                                       size_t            * size,
+                                       const char        * mode,
+                                       oyAlloc_f           allocate_func )
+{
+  char * text = 0;
+  FILE * fp = 0;
+
+  if(command && strlen(command) && size )
+  {
+    {
+      if(oy_debug)
+        oyMessageFunc_p( oyMSG_DBG, 0, OY_DBG_FORMAT_"%s",OY_DBG_ARGS_, command );
+      fp = oyPOPEN_m( command, mode );
+    }
+    if(fp)
+    {
+      size_t mem_size = 0;
+      char* mem = NULL;
+
+      text = oyReadFileSToMem_(fp, size, allocate_func );
+
+      if(!feof(fp))
+      {
+        if(text) oyFree_m_(text);
+        *size = 0;
+        mem_size = 1024;
+        mem = malloc(mem_size);
+        pclose(fp);
+        fp = oyPOPEN_m( command, mode );
+      }
+      if(fp)
+      while(!feof(fp))
+      {
+        if(*size >= mem_size)
+        {
+          mem_size *= 10;
+          mem = realloc( mem, mem_size );
+        }
+        *size += fread( &mem[*size], sizeof(char), mem_size-*size, fp );
+      }
+      if(fp && mem)
+      {
+          /* copy to external allocator */
+          char* temp = mem;
+          mem = oyAllocateWrapFunc_( *size+1, allocate_func );
+          if(mem) {
+            memcpy( mem, temp, *size );
+            oyFree_m_ (temp)
+            mem[*size] = 0;
+          } else {
+            oyFree_m_ (mem)
+            *size = 0;
+          }
+        text = mem;
+      }
+      if(fp)
+        pclose(fp);
+      fp = 0;
+
+      if(*size == 0)
+      {
+        char * t = strdup(command);
+        char * end = strstr( t?t:"", " " ), * app;
+        if(end)
+          end[0] = '\000';
+        if((app = oyFindApplication( t )) == NULL)
+        {
+          char * show_text = NULL;
+          oyMessageFunc_p( oyMSG_ERROR,0, OY_DBG_FORMAT_ "%s: \"%s\"",
+                           OY_DBG_ARGS_, _("Program not found"), t?t:"");
+          oyStringAddPrintf( &show_text, oyAllocateFunc_, oyDeAllocateFunc_, 
+                             "%s: \"%s\"", _("Program not found"), t?t:"" );
+          oyShowMessage( oyMSG_ERROR, show_text, 1 ); 
+        }
+        if(t) free(t);
+        if(app) oyFree_m_(app);
+      }
+    }
+  }
+
+  return text;
+}
+
+/** @internal
+ *  Read a file stream without knowing its size in advance.
+ */
+char * oyReadCmdToMemf_              ( size_t            * size,
+                                       const char        * mode,
+                                       oyAlloc_f           allocate_func,
+                                       const char        * format,
+                                                           ... )
+{
+  char * result = NULL;
+  char * text = 0;
+  va_list list;
+  int len;
+  size_t sz = 0;
+
+  va_start( list, format);
+  len = vsnprintf( text, sz, format, list );
+  va_end  ( list );
+
+  if (len >= sz)
+  {
+    oyAllocHelper_m_(text, char, len + 1, oyAllocateFunc_, return NULL);
+    va_start( list, format);
+    len = vsnprintf( text, len+1, format, list );
+    va_end  ( list );
+  }
+
+  result = oyReadCmdToMem_( text, size, mode, allocate_func );
+
+  oyDeAllocateFunc_(text);
+
+  return result;
+}
+
+/** @internal
+ *  Read a file stream without knowing its size in advance.
+ */
 char * oyReadUrlToMemf_              ( size_t            * size,
                                        const char        * mode,
                                        oyAlloc_f           allocate_func,
