@@ -29,6 +29,8 @@
 #include "oyranos_forms.h"
 #include "oyranos_config_internal.h"
 
+#include "Oy_Fl_Double_Window.h"
+
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Double_Window.H>
@@ -248,7 +250,7 @@ int main (int argc, char ** argv)
   if(oy_debug)
     fprintf(stderr, "%s\n", text);
 
-  Fl_Double_Window * w = new Fl_Double_Window(400,475,_("XFORMS in FLTK"));
+  Oy_Fl_Double_Window * w = new Oy_Fl_Double_Window(400,475,_("XFORMS in FLTK"));
     oyCallback_s callback = {oyOBJECT_CALLBACK_S, 0,0,0,
                                   (void(*)())callback_help_view,0};
     Fl_Group* o = new Fl_Group(0, 340, 400, 100);

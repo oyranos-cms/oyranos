@@ -1,38 +1,38 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0110 
+version 1.0302 
 i18n_type 1 
 i18n_include <libintl.h> 
 i18n_function _ 
 header_name {.h} 
 code_name {.cxx}
-decl {\#include <FL/Fl_Choice.H>} {public
+decl {\#include <FL/Fl_Choice.H>} {public local
 } 
 
-decl {\#include <FL/Fl_Box.H>} {public
+decl {\#include <FL/Fl_Box.H>} {public local
 } 
 
-decl {\#include <FL/Fl_Button.H>} {public
+decl {\#include <FL/Fl_Button.H>} {public local
 } 
 
-decl {\#include <FL/Fl_File_Chooser.H>} {public
+decl {\#include <FL/Fl_File_Chooser.H>} {public local
 } 
 
-decl {\#include <FL/Fl_Output.H>} {public
+decl {\#include <FL/Fl_Output.H>} {public local
 } 
 
-decl {\#include <FL/Fl_Pack.H>} {public
+decl {\#include <FL/Fl_Pack.H>} {public local
 } 
 
-decl {\#include <FL/Fl_Scroll.H>} {public
+decl {\#include <FL/Fl_Scroll.H>} {public local
 } 
 
-decl {\#include <FL/Flmm_Tabs.H>} {public
+decl {\#include <FL/Flmm_Tabs.H>} {public local
 } 
 
-decl {\#include <FL/fl_ask.H>} {public
+decl {\#include <FL/fl_ask.H>} {public local
 } 
 
-decl {\#include <FL/fl_draw.H>} {public
+decl {\#include <FL/fl_draw.H>} {public local
 } 
 
 decl {\#include "oyranos_config_internal.h"
@@ -45,29 +45,29 @@ decl {\#include "oyranos_config_internal.h"
 \#include "oyranos_i18n.h"
 \#include "oyranos_sentinel.h"
 \#include "oyranos_texts.h"
-} {public
+\#include "Oy_Fl_Double_Window.h"} {public local
 } 
 
-decl {\#include <iostream>} {public
+decl {\#include <iostream>} {public local
 } 
 
-decl {\#include <fstream>} {public
+decl {\#include <fstream>} {public local
 } 
 
-decl {\#include <cstdio>} {public
+decl {\#include <cstdio>} {public local
 } 
 
-decl {\#define H_SPACING 10} {public
+decl {\#define H_SPACING 10} {public local
 } 
 
-decl {\#define V_SPACING 3} {public
+decl {\#define V_SPACING 3} {public local
 } 
 
-decl {\#define BUTTON_HEIGHT 25} {public
+decl {\#define BUTTON_HEIGHT 25} {public local
 } 
 
 decl {\#define BOX_WIDTH 250
-\#define SELECT_WIDTH 176} {public
+\#define SELECT_WIDTH 176} {public local
 } 
 
 Function {myAllocFunc(size_t size)} {private return_type {void*}
@@ -83,9 +83,9 @@ Function {selectDefaultProfile_callback( Fl_Widget* w, void* )} {} {
       std::cout << c->value() << c->text() << std::endl;
       int error = 0;
       if(strcmp(c->text(),_("[none]")) == 0)
-        error = oySetDefaultProfile( (oyPROFILE_e)op->option,0);
+        error = oySetDefaultProfile( (oyPROFILE_e)op->option, oySCOPE_USER, 0);
       else
-        error = oySetDefaultProfile( (oyPROFILE_e)op->option, c->text());
+        error = oySetDefaultProfile( (oyPROFILE_e)op->option, oySCOPE_USER, c->text());
       if(error) {
         fl_alert( "%s %s", _("setting"), _("failed!") );
       } else
@@ -133,8 +133,18 @@ Function {selectBehaviourCallback( Fl_Widget* w, void* x )} {} {
       if(op->option == oyWIDGET_POLICY)
       {
         error = oyPolicySet( c->text(), NULL );
+      } else if(oyWIDGET_CMM_START < op->option &&
+                op->option < oyWIDGET_CMM_END)
+      {
+        char * t = oyCMMNameToRegistration( c->text(), (oyCMM_e)op->option,
+                                            oyNAME_NAME, 0, malloc ),
+             * pattern = oyCMMRegistrationToName( t, (oyCMM_e)op->option,
+                                            oyNAME_PATTERN, 0, malloc );
+        error = oySetCMMPattern( (oyCMM_e)op->option, 0, oySCOPE_USER, pattern );
+        if(t); free(t);
+        if(pattern); free(pattern);
       } else
-        error = oySetBehaviour( (oyBEHAVIOUR_e)op->option, c->value());
+        error = oySetBehaviour( (oyBEHAVIOUR_e)op->option, oySCOPE_USER, c->value());
 
       if(error) {
         fl_alert( "%s %s %s", _("setting"), _("failed!"), c->text() );
@@ -308,7 +318,8 @@ static const char trailingBytesForUTF8[256] = {
 \#endif
   Fl_Box::draw();} {}
   }
-  decl {char *label_orig;} {}
+  decl {char *label_orig;} {private local
+  }
   Function {label()} {return_type {const char *}
   } {
     code {return label_orig;} {}
@@ -334,7 +345,7 @@ class Option {: {public OyFl_Pack} private
 
   oyWIDGET_e option;
   oyWIDGET_TYPE_e type;
-  int       i;} {public
+  int       i;} {public local
   }
   Function {Option( int x, int y, int w, int h, const char *name,
   oyWIDGET_e option_,
@@ -504,7 +515,7 @@ class ListEntry {open : {public OyFl_Pack} private
 } {
   decl {Fl_Box   *box;
   Fl_Button*button_add, *button_remove;
-  int flags;} {public
+  int flags;} {public local
   }
   Function {ListEntry( int x, int y, int w, int h, const char * name, int flags )
     : OyFl_Pack(x, y, w, h)} {open
@@ -719,7 +730,7 @@ Function {refreshOptions()} {private
         {
           Fl_Group *w = addTab( top_tabs, groups );
 
-          oyOptionChoicesGet( oywid, &count, &names, &current );
+          oyOptionChoicesGet2( oywid, 0, oyNAME_NAME, &count, &names, &current );
           /*for(int en = 0; en < count; ++en)
             printf("%s\\n", names[en]);*/
 
@@ -842,7 +853,8 @@ Function {} {open C
   Fl::add_handler( event_handler );} {}
   Fl_Window top_group {
     label {Oyranos Configuration} open
-    xywh {564 361 505 410} type Double resizable size_range {305 255 0 0} visible
+    xywh {564 361 505 410} type Double resizable
+    class Oy_Fl_Double_Window size_range {305 255 0 0} visible
   } {
     Fl_Pack {} {open
       xywh {0 0 480 70} type HORIZONTAL
@@ -947,10 +959,11 @@ Function {event_handler( int e )} {open return_type int
 Function {make_help()} {open
 } {
   Fl_Window help_window {
-    label {Oyranos Help} open
-    xywh {719 186 505 410} type Double resizable visible
+    label {Oyranos Help} open selected
+    xywh {1192 298 505 410} type Double resizable
+    class Oy_Fl_Double_Window visible
   } {
-    Fl_Help_View help_browser {selected
+    Fl_Help_View help_browser {
       xywh {0 0 505 410} box THIN_UP_BOX color 16 resizable
     }
   }
