@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-01-13 21:27+0100\n"
+"POT-Creation-Date: 2016-01-14 09:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -94,6 +94,7 @@ msgstr ""
 #: API_generated/oyFilterNode_s_.c:1124 API_generated/oyObserver_s.c:348
 #: API_generated/oyObserver_s.c:359 API_generated/oyObserver_s.c:560
 #: API_generated/oyObserver_s.c:638 API_generated/oyObserver_s_.c:53
+#: examples/image_display/oyranos_display_helper_classes_fltk.cpp:46
 msgid "Signal"
 msgstr ""
 
@@ -120,8 +121,8 @@ msgstr ""
 #: API_generated/oyOptions_s.c:1337 tools/oyranos_profile_tool.c:234
 #: tools/oyranos_profile_graph.c:263 tools/oyranos_convert.c:264
 #: tools/oyranos_policy.c:142 tools/oyranos_profiles.c:240
-#: tools/oyranos_gamma.c:252 examples/devices/test_device.c:253
-#: examples/libraw/oyranos_file.cpp:235
+#: tools/oyranos_gamma.c:252 examples/taxi.c:207
+#: examples/devices/test_device.c:253 examples/libraw/oyranos_file.cpp:235
 msgid "wrong argument to option:"
 msgstr ""
 
@@ -148,7 +149,8 @@ msgstr ""
 
 #: API_generated/oyConfig_s.c:1189 API_generated/oyranos_devices.c:1387
 #: API_generated/oyranos_devices.c:1764 API_generated/oyranos_devices.c:1848
-#: examples/devices/test_device.c:1080 examples/devices/test_device.c:1106
+#: examples/taxi.c:230 examples/taxi.c:320 examples/devices/test_device.c:1080
+#: examples/devices/test_device.c:1106
 msgid "found issues parsing JSON"
 msgstr ""
 
@@ -411,8 +413,9 @@ msgstr ""
 #: liboyranos/oyranos_cmm.c:205 modules/color/modules/oyranos_cmm_oyra.c:147
 #: modules/color/modules/oyranos_cmm_oydi.c:1148
 #: modules/color/modules/oyranos_cmm_oicc.c:1027
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1319
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1320
 #: modules/color/modules/oyranos_cmm_lraw.cpp:239
+#: examples/oyranos_cmm_dFil.c:164
 msgid "new BSD license: http://www.opensource.org/licenses/BSD-3-Clause"
 msgstr ""
 
@@ -2300,6 +2303,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_lcms.c:2470
 #: modules/color/modules/oyranos_cmm_lcms.c:2543
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1910
+#: examples/oyranos_cmm_dFil.c:610
 msgid "check"
 msgstr ""
 
@@ -2374,6 +2378,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:872
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1173
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1227
+#: examples/oyranos_cmm_dFil.c:411 examples/oyranos_cmm_dDev.c:714
 msgid "Color"
 msgstr ""
 
@@ -2428,6 +2433,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:947
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:990
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1341
+#: examples/oyranos_cmm_dDev.c:836
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr ""
 
@@ -2549,16 +2555,17 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oicc.c:1019
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:940
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:981
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1311
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1312
 #: modules/color/modules/oyranos_cmm_lraw.cpp:231
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1334
+#: examples/oyranos_cmm_dDev.c:828
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
 "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oyra.c:145
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1317
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1318
 msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
@@ -2781,6 +2788,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:875
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1176
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1227
+#: examples/oyranos_cmm_dDev.c:714
 msgid "Device"
 msgstr ""
 
@@ -2794,16 +2802,19 @@ msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:945
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1339
+#: examples/oyranos_cmm_dDev.c:834
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:952
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1346
+#: examples/oyranos_cmm_dFil.c:170 examples/oyranos_cmm_dDev.c:842
 msgid "My filter introduction."
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:954
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1348
+#: examples/oyranos_cmm_dFil.c:172 examples/oyranos_cmm_dDev.c:844
 msgid "All the small details for using this module."
 msgstr ""
 
@@ -2854,7 +2865,8 @@ msgstr ""
 msgid "The window support module of Oyranos."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1287
+#. "The " CMM_NICK " module supports the generic device protocol."
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1288
 msgid "The "
 msgstr ""
 
@@ -2941,6 +2953,7 @@ msgid "no oyX1Monitor_s created"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1912
+#: examples/oyranos_cmm_dFil.c:612
 msgid "Check if this module can handle a certain command."
 msgstr ""
 
@@ -2962,10 +2975,13 @@ msgid ""
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1934
+#: examples/oyranos_cmm_dFil.c:168 examples/oyranos_cmm_dFil.c:624
+#: examples/oyranos_cmm_dDev.c:840
 msgid "help"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1936
+#: examples/image_display/image_display.cpp:731
 msgid "Help"
 msgstr ""
 
@@ -2988,6 +3004,7 @@ msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lraw.cpp:221
 #: modules/color/modules/oyranos_cmm_lraw.cpp:223
+#: examples/oyranos_cmm_dFil.c:146 examples/oyranos_cmm_dFil.c:148
 msgid "libraw input filter"
 msgstr ""
 
@@ -3059,14 +3076,14 @@ msgid "is a ICC profile information tool"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:81 tools/oyranos_convert.c:59
-#: tools/oyranos_policy.c:53 tools/oyranos_profiles.c:61
+#: tools/oyranos_policy.c:53 tools/oyranos_profiles.c:61 examples/taxi.c:48
 msgid ""
 "Hint: search paths are influenced by the XDG_CONFIG_HOME shell variable."
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:83 tools/oyranos_profile_graph.c:104
 #: tools/oyranos_convert.c:61 tools/oyranos_policy.c:55
-#: tools/oyranos_profiles.c:63 tools/oyranos_gamma.c:206
+#: tools/oyranos_profiles.c:63 tools/oyranos_gamma.c:206 examples/taxi.c:50
 #: examples/devices/test_device.c:50 examples/libraw/oyranos_file.cpp:44
 msgid "Usage"
 msgstr ""
@@ -3161,14 +3178,14 @@ msgid "add prefix"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:110 tools/oyranos_convert.c:99
-#: tools/oyranos_policy.c:68 tools/oyranos_profiles.c:98
+#: tools/oyranos_policy.c:68 tools/oyranos_profiles.c:98 examples/taxi.c:64
 msgid "Print a help text:"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:113 tools/oyranos_profile_graph.c:131
 #: tools/oyranos_convert.c:102 tools/oyranos_profiles.c:101
-#: tools/oyranos_gamma.c:233 examples/devices/test_device.c:100
-#: examples/libraw/oyranos_file.cpp:65
+#: tools/oyranos_gamma.c:233 examples/taxi.c:67
+#: examples/devices/test_device.c:100 examples/libraw/oyranos_file.cpp:65
 msgid "General options:"
 msgstr ""
 
@@ -3212,7 +3229,9 @@ msgid "print the full file name"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:124 tools/oyranos_convert.c:107
-#: tools/oyranos_profiles.c:104 examples/libraw/oyranos_file.cpp:70
+#: tools/oyranos_profiles.c:104 examples/taxi.c:70
+#: examples/oyranos_cmm_dDev.c:703 examples/oyranos_cmm_dDev.c:714
+#: examples/libraw/oyranos_file.cpp:70
 msgid "Example"
 msgstr ""
 
@@ -3795,7 +3814,7 @@ msgstr ""
 msgid "Dump data:"
 msgstr ""
 
-#: tools/oyranos_gamma.c:234
+#: tools/oyranos_gamma.c:234 examples/taxi.c:68
 msgid "-v verbose"
 msgstr ""
 
@@ -3843,6 +3862,116 @@ msgstr ""
 
 #: tools/oyranos_gamma.c:437 examples/devices/test_device.c:959
 msgid "description"
+msgstr ""
+
+#: examples/taxi.c:40
+msgid "is a Taxi DB tool"
+msgstr ""
+
+#: examples/taxi.c:51
+msgid "List available device manufacturers:"
+msgstr ""
+
+#: examples/taxi.c:54
+msgid "List search URL:"
+msgstr ""
+
+#: examples/taxi.c:57
+msgid "List ICC Profiles:"
+msgstr ""
+
+#: examples/taxi.c:60
+msgid "Get ICC Profile:"
+msgstr ""
+
+#: examples/taxi.c:409
+msgid "Did you specify a 3 letter manufacturer code?"
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:152
+msgid "Me"
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:154
+msgid "My Name"
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:156
+msgid ""
+"My project; www: http://www.my-adress.com; support/email: my@adress.com; "
+"sources: http://www.my-adress.com/download"
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:160
+msgid "newBSD"
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:162
+msgid "Copyright (c) 2009 My Name; newBSD"
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:393
+msgid "Image[my_filter]"
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:395
+msgid "My Filter Object"
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:402
+msgid "Some help for My example filter."
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:404
+msgid "More indepth help  for My example filter."
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:411
+msgid "My Filter"
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:618
+msgid "So something with options."
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:620
+msgid "The my_handler takes a option with key name \"print\" and prints it."
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:626
+msgid "Handle options."
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:628
+msgid "This example module \"my_handler\" lets you print a option."
+msgstr ""
+
+#: examples/oyranos_cmm_dDev.c:705
+msgid "Example Device"
+msgstr ""
+
+#: examples/oyranos_cmm_dDev.c:707
+msgid "Example Devices, for testing and learning purposes only."
+msgstr ""
+
+#: examples/oyranos_cmm_dDev.c:818
+msgid "Oyranos Dummy"
+msgstr ""
+
+#: examples/oyranos_cmm_dDev.c:820
+msgid "The dummy useless module of Oyranos."
+msgstr ""
+
+#: examples/oyranos_cmm_dDev.c:824
+msgid "Kai-Uwe"
+msgstr ""
+
+#: examples/oyranos_cmm_dDev.c:826
+msgid "Kai-Uwe Behrmann"
+msgstr ""
+
+#: examples/oyranos_cmm_dDev.c:832
+msgid "MIT"
 msgstr ""
 
 #: examples/devices/test_device.c:49
@@ -4019,4 +4148,36 @@ msgstr ""
 
 #: examples/libraw/oyranos_file.cpp:71
 msgid "Embedd device meta tag from image device into given device profile"
+msgstr ""
+
+#: examples/image_display/image_display.cpp:389
+msgid "Information:"
+msgstr ""
+
+#: examples/image_display/image_display.cpp:434
+msgid "Oyranos Help"
+msgstr ""
+
+#: examples/image_display/image_display.cpp:474
+msgid "Oyranos Image Display Info"
+msgstr ""
+
+#: examples/image_display/image_display.cpp:722
+msgid "Edit Options ..."
+msgstr ""
+
+#: examples/image_display/image_display.cpp:724
+msgid "Examine ICC Profile ..."
+msgstr ""
+
+#: examples/image_display/image_display.cpp:726
+msgid "Debug"
+msgstr ""
+
+#: examples/image_display/image_display.cpp:728
+msgid "Show Infos"
+msgstr ""
+
+#: examples/image_display/image_display.cpp:733
+msgid "Quit"
 msgstr ""

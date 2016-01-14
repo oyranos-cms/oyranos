@@ -381,7 +381,8 @@ IF( GETTEXT_FOUND )
         modules/color/modules/*.cpp
         modules/color/modules/devices/*.cpp
         tools/*.c tools/qcmsevents/*.cpp tools/qcmsevents/*.cxx
-        examples/devices/*.c examples/libraw/*.cpp
+        examples/*.c examples/devices/*.c examples/libraw/*.cpp
+        examples/image_display/*.c* examples/image_display/*.h
       )
 
   ADD_CUSTOM_COMMAND(OUTPUT ${_potFile}

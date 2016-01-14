@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-01-13 16:35+0100\n"
+"POT-Creation-Date: 2016-01-14 09:30+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -47,7 +47,7 @@ msgstr ""
 msgid "-d device_position_start_from_zero"
 msgstr ""
 
-#: tools/oyranos_gamma.c:234
+#: tools/oyranos_gamma.c:234 examples/taxi.c:68
 msgid "-v verbose"
 msgstr ""
 
@@ -319,6 +319,7 @@ msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:954
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1348
+#: examples/oyranos_cmm_dFil.c:172 examples/oyranos_cmm_dDev.c:844
 msgid "All the small details for using this module."
 msgstr ""
 
@@ -630,6 +631,7 @@ msgid "Check if LittleCMS can handle a certain command."
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1912
+#: examples/oyranos_cmm_dFil.c:612
 msgid "Check if this module can handle a certain command."
 msgstr ""
 
@@ -688,6 +690,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:872
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1173
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1227
+#: examples/oyranos_cmm_dFil.c:411 examples/oyranos_cmm_dDev.c:714
 msgid "Color"
 msgstr "kolora"
 
@@ -870,7 +873,7 @@ msgid "Copyright (c) 2005-2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oyra.c:145
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1317
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1318
 msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
@@ -884,12 +887,17 @@ msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:945
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1339
+#: examples/oyranos_cmm_dDev.c:834
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oydi.c:1146
 #: modules/color/modules/oyranos_cmm_lraw.cpp:237
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:162
+msgid "Copyright (c) 2009 My Name; newBSD"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:438
@@ -1037,6 +1045,10 @@ msgstr "kolora"
 msgid "Date"
 msgstr ""
 
+#: examples/image_display/image_display.cpp:726
+msgid "Debug"
+msgstr ""
+
 #: modules/color/modules/oyranos_cmm_lcm2.c:2841
 #: modules/color/modules/oyranos_cmm_lcms.c:2243
 msgid "Decide how to preserve the black channel for Cmyk to Cmyk transforms"
@@ -1066,6 +1078,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:875
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1176
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1227
+#: examples/oyranos_cmm_dDev.c:714
 #, fuzzy
 msgid "Device"
 msgstr "kolora"
@@ -1114,6 +1127,10 @@ msgstr "kolora"
 msgid "Devices"
 msgstr "kolora"
 
+#: examples/taxi.c:409
+msgid "Did you specify a 3 letter manufacturer code?"
+msgstr ""
+
 #. dcam
 #: liboyranos_config/oyranos_icc.c:764
 msgid "Digital camera"
@@ -1153,6 +1170,10 @@ msgstr ""
 #. EFI
 #: liboyranos_config/oyranos_icc.c:678
 msgid "EFI CMM"
+msgstr ""
+
+#: examples/image_display/image_display.cpp:722
+msgid "Edit Options ..."
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:380
@@ -1232,9 +1253,24 @@ msgstr ""
 msgid "Error setting up atom"
 msgstr ""
 
+#: examples/image_display/image_display.cpp:724
+msgid "Examine ICC Profile ..."
+msgstr ""
+
 #: tools/oyranos_profile_tool.c:124 tools/oyranos_convert.c:107
-#: tools/oyranos_profiles.c:104 examples/libraw/oyranos_file.cpp:70
+#: tools/oyranos_profiles.c:104 examples/taxi.c:70
+#: examples/oyranos_cmm_dDev.c:703 examples/oyranos_cmm_dDev.c:714
+#: examples/libraw/oyranos_file.cpp:70
 msgid "Example"
+msgstr ""
+
+#: examples/oyranos_cmm_dDev.c:705
+#, fuzzy
+msgid "Example Device"
+msgstr "kolora"
+
+#: examples/oyranos_cmm_dDev.c:707
+msgid "Example Devices, for testing and learning purposes only."
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:252 tools/oyranos_profile_tool.c:267
@@ -1354,8 +1390,8 @@ msgstr ""
 
 #: tools/oyranos_profile_tool.c:113 tools/oyranos_profile_graph.c:131
 #: tools/oyranos_convert.c:102 tools/oyranos_profiles.c:101
-#: tools/oyranos_gamma.c:233 examples/devices/test_device.c:100
-#: examples/libraw/oyranos_file.cpp:65
+#: tools/oyranos_gamma.c:233 examples/taxi.c:67
+#: examples/devices/test_device.c:100 examples/libraw/oyranos_file.cpp:65
 msgid "General options:"
 msgstr ""
 
@@ -1373,6 +1409,10 @@ msgstr ""
 
 #: tools/oyranos_convert.c:117
 msgid "Get Conversion"
+msgstr ""
+
+#: examples/taxi.c:60
+msgid "Get ICC Profile:"
 msgstr ""
 
 #: tools/oyranos_convert.c:108
@@ -1425,6 +1465,10 @@ msgid ""
 "conversion to sRGB helps in easy data exchange and is what most users want."
 msgstr ""
 
+#: examples/oyranos_cmm_dFil.c:626
+msgid "Handle options."
+msgstr ""
+
 #: liboyranos_config/oyranos_texts.c:237
 msgid "Handling of Mixed Color Spaces inside one single Document"
 msgstr ""
@@ -1448,11 +1492,12 @@ msgid "Heidelberg CMM"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1936
+#: examples/image_display/image_display.cpp:731
 msgid "Help"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:81 tools/oyranos_convert.c:59
-#: tools/oyranos_policy.c:53 tools/oyranos_profiles.c:61
+#: tools/oyranos_policy.c:53 tools/oyranos_profiles.c:61 examples/taxi.c:48
 msgid ""
 "Hint: search paths are influenced by the XDG_CONFIG_HOME shell variable."
 msgstr ""
@@ -1635,6 +1680,10 @@ msgstr ""
 msgid "Image[lraw]"
 msgstr ""
 
+#: examples/oyranos_cmm_dFil.c:393
+msgid "Image[my_filter]"
+msgstr ""
+
 #: modules/color/modules/oyranos_cmm_oyra_image.c:1467
 msgid "Image[out]"
 msgstr ""
@@ -1666,6 +1715,11 @@ msgstr ""
 #: liboyranos_config/oyranos_texts.c:326
 msgid "Information"
 msgstr ""
+
+#: examples/image_display/image_display.cpp:389
+#, fuzzy
+msgid "Information:"
+msgstr "kolora"
 
 #. ijet
 #: liboyranos_config/oyranos_icc.c:770
@@ -1726,6 +1780,14 @@ msgstr ""
 msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 msgstr ""
 
+#: examples/oyranos_cmm_dDev.c:824
+msgid "Kai-Uwe"
+msgstr ""
+
+#: examples/oyranos_cmm_dDev.c:826
+msgid "Kai-Uwe Behrmann"
+msgstr ""
+
 #. KCMS
 #: liboyranos_config/oyranos_icc.c:685
 msgid "Kodak CMS"
@@ -1749,6 +1811,10 @@ msgstr ""
 msgid "Link"
 msgstr ""
 
+#: examples/taxi.c:57
+msgid "List ICC Profiles:"
+msgstr ""
+
 #: tools/oyranos_gamma.c:224 examples/devices/test_device.c:81
 msgid "List Taxi DB profiles for selected device:"
 msgstr ""
@@ -1756,6 +1822,11 @@ msgstr ""
 #: tools/oyranos_profiles.c:64
 msgid "List available ICC profiles:"
 msgstr ""
+
+#: examples/taxi.c:51
+#, fuzzy
+msgid "List available device manufacturers:"
+msgstr "kolora"
 
 #: tools/oyranos_policy.c:60
 msgid "List available policies:"
@@ -1779,6 +1850,10 @@ msgstr ""
 
 #: tools/oyranos_gamma.c:227
 msgid "List modules:"
+msgstr ""
+
+#: examples/taxi.c:54
+msgid "List search URL:"
 msgstr ""
 
 #: tools/oyranos_policy.c:64 tools/oyranos_profiles.c:80
@@ -1921,11 +1996,16 @@ msgstr ""
 msgid "MEM Error."
 msgstr ""
 
+#: examples/oyranos_cmm_dDev.c:832
+msgid "MIT"
+msgstr ""
+
 #: modules/color/modules/oyranos_cmm_lcm2.c:3448
 #: modules/color/modules/oyranos_cmm_lcms.c:2807
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:947
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:990
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1341
+#: examples/oyranos_cmm_dDev.c:836
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr ""
 
@@ -1964,6 +2044,10 @@ msgstr "kolora"
 
 #: liboyranos_config/oyranos_texts.c:593
 msgid "Mark Out Of Gamut colors"
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:152
+msgid "Me"
 msgstr ""
 
 #. CIED
@@ -2035,6 +2119,10 @@ msgstr ""
 msgid "More bits mean more precission for processing and more size."
 msgstr ""
 
+#: examples/oyranos_cmm_dFil.c:404
+msgid "More indepth help  for My example filter."
+msgstr ""
+
 #: liboyranos_config/oyranos_texts.c:594
 msgid ""
 "Most users want a simple display of colors and will not check if colors "
@@ -2046,9 +2134,29 @@ msgstr ""
 msgid "Mutho CMM"
 msgstr ""
 
+#: examples/oyranos_cmm_dFil.c:411
+msgid "My Filter"
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:395
+msgid "My Filter Object"
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:154
+#, fuzzy
+msgid "My Name"
+msgstr "nomo"
+
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:952
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1346
+#: examples/oyranos_cmm_dFil.c:170 examples/oyranos_cmm_dDev.c:842
 msgid "My filter introduction."
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:156
+msgid ""
+"My project; www: http://www.my-adress.com; support/email: my@adress.com; "
+"sources: http://www.my-adress.com/download"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:87 tools/oyranos_profile_tool.c:105
@@ -2180,12 +2288,24 @@ msgstr ""
 msgid "Oyranos CUPS"
 msgstr ""
 
+#: examples/oyranos_cmm_dDev.c:818
+msgid "Oyranos Dummy"
+msgstr ""
+
+#: examples/image_display/image_display.cpp:434
+msgid "Oyranos Help"
+msgstr ""
+
 #: modules/color/modules/oyranos_cmm_oicc.c:1009
 msgid "Oyranos ICC policy"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oicc.c:1011
 msgid "Oyranos ICC policy module"
+msgstr ""
+
+#: examples/image_display/image_display.cpp:474
+msgid "Oyranos Image Display Info"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1323
@@ -2246,9 +2366,10 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oicc.c:1019
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:940
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:981
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1311
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1312
 #: modules/color/modules/oyranos_cmm_lraw.cpp:231
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1334
+#: examples/oyranos_cmm_dDev.c:828
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
 "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
@@ -2432,7 +2553,7 @@ msgid "Preview, saturated"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:110 tools/oyranos_convert.c:99
-#: tools/oyranos_policy.c:68 tools/oyranos_profiles.c:98
+#: tools/oyranos_policy.c:68 tools/oyranos_profiles.c:98 examples/taxi.c:64
 msgid "Print a help text:"
 msgstr ""
 
@@ -2550,6 +2671,10 @@ msgstr ""
 #: liboyranos_config/oyranos_texts.c:256
 msgid ""
 "Proofing Settings allows one to decide about the simulation color space."
+msgstr ""
+
+#: examples/image_display/image_display.cpp:733
+msgid "Quit"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:728
@@ -2760,6 +2885,10 @@ msgstr ""
 msgid "Show Help:"
 msgstr ""
 
+#: examples/image_display/image_display.cpp:728
+msgid "Show Infos"
+msgstr ""
+
 #: tools/oyranos_profile_tool.c:97
 msgid "Show Profile ID:"
 msgstr ""
@@ -2785,6 +2914,7 @@ msgstr ""
 #: API_generated/oyFilterNode_s_.c:1124 API_generated/oyObserver_s.c:348
 #: API_generated/oyObserver_s.c:359 API_generated/oyObserver_s.c:560
 #: API_generated/oyObserver_s.c:638 API_generated/oyObserver_s_.c:53
+#: examples/image_display/oyranos_display_helper_classes_fltk.cpp:46
 msgid "Signal"
 msgstr ""
 
@@ -2812,12 +2942,20 @@ msgstr ""
 msgid "Size:            "
 msgstr ""
 
+#: examples/oyranos_cmm_dFil.c:618
+msgid "So something with options."
+msgstr ""
+
 #: liboyranos_config/oyranos_texts.c:572
 msgid "SoftProof"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:650
 msgid "Solaris"
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:402
+msgid "Some help for My example filter."
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:165
@@ -2853,7 +2991,8 @@ msgstr ""
 msgid "Technologie"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1287
+#. "The " CMM_NICK " module supports the generic device protocol."
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1288
 msgid "The "
 msgstr ""
 
@@ -2950,6 +3089,10 @@ msgid ""
 "The core Color Matching Module (CMM) takes individual profiles and options "
 "and backes a device link. It can provide alternative features regarding "
 "appearance, security, speed or resource overhead."
+msgstr ""
+
+#: examples/oyranos_cmm_dDev.c:820
+msgid "The dummy useless module of Oyranos."
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oyra_image.c:1477
@@ -3151,6 +3294,10 @@ msgid ""
 "simulation, mixed color documents and default profiles."
 msgstr ""
 
+#: examples/oyranos_cmm_dFil.c:620
+msgid "The my_handler takes a option with key name \"print\" and prints it."
+msgstr ""
+
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1938
 msgid ""
 "The oyX1 modules \"set_xcm_region\" handler lets you set X Color Management "
@@ -3262,6 +3409,10 @@ msgstr ""
 msgid "Thermal wax printer"
 msgstr ""
 
+#: examples/oyranos_cmm_dFil.c:628
+msgid "This example module \"my_handler\" lets you print a option."
+msgstr ""
+
 #: liboyranos_config/oyranos_texts.c:494
 msgid ""
 "This setting decides what to do in the case that colors have no color space "
@@ -3297,7 +3448,7 @@ msgstr ""
 
 #: tools/oyranos_profile_tool.c:83 tools/oyranos_profile_graph.c:104
 #: tools/oyranos_convert.c:61 tools/oyranos_policy.c:55
-#: tools/oyranos_profiles.c:63 tools/oyranos_gamma.c:206
+#: tools/oyranos_profiles.c:63 tools/oyranos_gamma.c:206 examples/taxi.c:50
 #: examples/devices/test_device.c:50 examples/libraw/oyranos_file.cpp:44
 msgid "Usage"
 msgstr ""
@@ -3466,6 +3617,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_lcms.c:2470
 #: modules/color/modules/oyranos_cmm_lcms.c:2543
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1910
+#: examples/oyranos_cmm_dFil.c:610
 msgid "check"
 msgstr ""
 
@@ -3593,7 +3745,8 @@ msgstr ""
 
 #: API_generated/oyConfig_s.c:1189 API_generated/oyranos_devices.c:1387
 #: API_generated/oyranos_devices.c:1764 API_generated/oyranos_devices.c:1848
-#: examples/devices/test_device.c:1080 examples/devices/test_device.c:1106
+#: examples/taxi.c:230 examples/taxi.c:320 examples/devices/test_device.c:1080
+#: examples/devices/test_device.c:1106
 msgid "found issues parsing JSON"
 msgstr ""
 
@@ -3628,6 +3781,8 @@ msgid "generate OpenICC device color reproduction JSON"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1934
+#: examples/oyranos_cmm_dFil.c:168 examples/oyranos_cmm_dFil.c:624
+#: examples/oyranos_cmm_dDev.c:840
 msgid "help"
 msgstr ""
 
@@ -3669,6 +3824,10 @@ msgstr ""
 msgid "is a ICC profile information tool"
 msgstr ""
 
+#: examples/taxi.c:40
+msgid "is a Taxi DB tool"
+msgstr ""
+
 #: examples/devices/test_device.c:49
 msgid "is a color profile administration tool for color devices"
 msgstr ""
@@ -3691,6 +3850,7 @@ msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lraw.cpp:221
 #: modules/color/modules/oyranos_cmm_lraw.cpp:223
+#: examples/oyranos_cmm_dFil.c:146 examples/oyranos_cmm_dFil.c:148
 msgid "libraw input filter"
 msgstr ""
 
@@ -3745,9 +3905,14 @@ msgstr "kolora"
 #: liboyranos/oyranos_cmm.c:205 modules/color/modules/oyranos_cmm_oyra.c:147
 #: modules/color/modules/oyranos_cmm_oydi.c:1148
 #: modules/color/modules/oyranos_cmm_oicc.c:1027
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1319
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1320
 #: modules/color/modules/oyranos_cmm_lraw.cpp:239
+#: examples/oyranos_cmm_dFil.c:164
 msgid "new BSD license: http://www.opensource.org/licenses/BSD-3-Clause"
+msgstr ""
+
+#: examples/oyranos_cmm_dFil.c:160
+msgid "newBSD"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_cs.c:635
@@ -4096,8 +4261,8 @@ msgstr ""
 #: API_generated/oyOptions_s.c:1337 tools/oyranos_profile_tool.c:234
 #: tools/oyranos_profile_graph.c:263 tools/oyranos_convert.c:264
 #: tools/oyranos_policy.c:142 tools/oyranos_profiles.c:240
-#: tools/oyranos_gamma.c:252 examples/devices/test_device.c:253
-#: examples/libraw/oyranos_file.cpp:235
+#: tools/oyranos_gamma.c:252 examples/taxi.c:207
+#: examples/devices/test_device.c:253 examples/libraw/oyranos_file.cpp:235
 msgid "wrong argument to option:"
 msgstr ""
 
@@ -4152,10 +4317,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Hints"
 #~ msgstr "punktoj"
-
-#, fuzzy
-#~ msgid "My Name"
-#~ msgstr "nomo"
 
 #~ msgid "Number of colors:"
 #~ msgstr "nombro koloroj:"
