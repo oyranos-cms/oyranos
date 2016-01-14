@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-01-14 09:30+0100\n"
+"POT-Creation-Date: 2016-01-14 11:48+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -1076,7 +1076,7 @@ msgstr "Espace color:"
 msgid "Date"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:726
+#: examples/image_display/image_display.cpp:731
 msgid "Debug"
 msgstr ""
 
@@ -1207,7 +1207,7 @@ msgstr ""
 msgid "EFI CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:722
+#: examples/image_display/image_display.cpp:727
 #, fuzzy
 msgid "Edit Options ..."
 msgstr "Options"
@@ -1291,7 +1291,7 @@ msgstr "ICC Profils"
 msgid "Error setting up atom"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:724
+#: examples/image_display/image_display.cpp:729
 #, fuzzy
 msgid "Examine ICC Profile ..."
 msgstr "ICC Profils"
@@ -1543,7 +1543,7 @@ msgid "Heidelberg CMM"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1936
-#: examples/image_display/image_display.cpp:731
+#: examples/image_display/image_display.cpp:736
 msgid "Help"
 msgstr ""
 
@@ -2402,7 +2402,7 @@ msgstr "Oyranos Préférences"
 msgid "Oyranos ICC policy module"
 msgstr "Oyranos Préférences"
 
-#: examples/image_display/image_display.cpp:474
+#: examples/image_display/image_display.cpp:479
 #, fuzzy
 msgid "Oyranos Image Display Info"
 msgstr "Oyranos Préférences"
@@ -2797,7 +2797,7 @@ msgid ""
 "Proofing Settings allows one to decide about the simulation color space."
 msgstr ""
 
-#: examples/image_display/image_display.cpp:733
+#: examples/image_display/image_display.cpp:738
 msgid "Quit"
 msgstr "Quitter"
 
@@ -3017,7 +3017,7 @@ msgstr ""
 msgid "Show Help:"
 msgstr "Model:"
 
-#: examples/image_display/image_display.cpp:728
+#: examples/image_display/image_display.cpp:733
 msgid "Show Infos"
 msgstr ""
 

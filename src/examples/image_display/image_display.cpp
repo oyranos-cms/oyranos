@@ -452,6 +452,7 @@ void info_cb ( Fl_Widget* w, void* daten )
     oyOptions_s * opts =  oyFilterNode_GetOptions( in, 0 );
     const char * fn =     oyOptions_FindString( opts, "//" OY_TYPE_STD "/file_read/filename", 0 );
     char * text = NULL;
+    const char * image_text = NULL;
     size_t size = 0;
 
     if(!fn)
@@ -459,13 +460,17 @@ void info_cb ( Fl_Widget* w, void* daten )
       oyImage_s * image = oyConversion_GetImage( cc, OY_INPUT );
       opts = oyImage_GetTags(image);
       fn =   oyOptions_FindString( opts, "//" OY_TYPE_STD "/file_read/filename", 0 );
+      image_text = oyObject_GetName( image->oy_, oyNAME_NICK );
       oyImage_Release( &image );
     }
 
     if(oyFindApplication("tiffinfo"))
       text = oyReadCmdToMemf_( &size, "r", malloc, "tiffinfo \"%s\"", fn );
-    if(!text && oyFindApplication("file"))
+    if((!text || text[0] == 0) && oyFindApplication("file"))
       text = oyReadCmdToMemf_( &size, "r", malloc, "file \"%s\"", fn );
+ 
+    oyStringAdd_( &text, "\n", oyAllocateFunc_, oyDeAllocateFunc_ );
+    oyStringAdd_( &text, image_text, oyAllocateFunc_, oyDeAllocateFunc_ );
 
 
     oyFilterNode_Release( &in );

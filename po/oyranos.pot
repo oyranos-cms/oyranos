@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-01-14 09:35+0100\n"
+"POT-Creation-Date: 2016-01-14 11:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2981,7 +2981,7 @@ msgid "help"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1936
-#: examples/image_display/image_display.cpp:731
+#: examples/image_display/image_display.cpp:736
 msgid "Help"
 msgstr ""
 
@@ -4158,26 +4158,26 @@ msgstr ""
 msgid "Oyranos Help"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:474
+#: examples/image_display/image_display.cpp:479
 msgid "Oyranos Image Display Info"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:722
+#: examples/image_display/image_display.cpp:727
 msgid "Edit Options ..."
 msgstr ""
 
-#: examples/image_display/image_display.cpp:724
+#: examples/image_display/image_display.cpp:729
 msgid "Examine ICC Profile ..."
 msgstr ""
 
-#: examples/image_display/image_display.cpp:726
+#: examples/image_display/image_display.cpp:731
 msgid "Debug"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:728
+#: examples/image_display/image_display.cpp:733
 msgid "Show Infos"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:733
+#: examples/image_display/image_display.cpp:738
 msgid "Quit"
 msgstr ""

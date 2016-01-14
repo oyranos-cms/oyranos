@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-01-14 09:30+0100\n"
+"POT-Creation-Date: 2016-01-14 11:48+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -1056,7 +1056,7 @@ msgstr "Farbraum:        "
 msgid "Date"
 msgstr "Datum"
 
-#: examples/image_display/image_display.cpp:726
+#: examples/image_display/image_display.cpp:731
 msgid "Debug"
 msgstr "Fehlersuche"
 
@@ -1181,7 +1181,7 @@ msgstr "EBU Tech.3213-E"
 msgid "EFI CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:722
+#: examples/image_display/image_display.cpp:727
 msgid "Edit Options ..."
 msgstr "Editiere Optionen ..."
 
@@ -1264,7 +1264,7 @@ msgstr "Fehler beim Erhalten des Profiles"
 msgid "Error setting up atom"
 msgstr "Fehler beim Setzen eines Xatoms"
 
-#: examples/image_display/image_display.cpp:724
+#: examples/image_display/image_display.cpp:729
 msgid "Examine ICC Profile ..."
 msgstr "Untersuche ICC Profil ..."
 
@@ -1510,7 +1510,7 @@ msgid "Heidelberg CMM"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1936
-#: examples/image_display/image_display.cpp:731
+#: examples/image_display/image_display.cpp:736
 msgid "Help"
 msgstr "Hilfe"
 
@@ -2342,7 +2342,7 @@ msgstr "Oyranos ICC Richtlinie"
 msgid "Oyranos ICC policy module"
 msgstr "Oyranos ICC Richtlinien Modul"
 
-#: examples/image_display/image_display.cpp:474
+#: examples/image_display/image_display.cpp:479
 msgid "Oyranos Image Display Info"
 msgstr "Oyranos Bildanzeige Info"
 
@@ -2722,7 +2722,7 @@ msgstr ""
 "Simulationseinstellungen erlauben die Simulation eines zusätzlichen "
 "Farbraumes."
 
-#: examples/image_display/image_display.cpp:733
+#: examples/image_display/image_display.cpp:738
 msgid "Quit"
 msgstr "Beenden"
 
@@ -2938,7 +2938,7 @@ msgstr "Zeige CIE*xy Primärfarben"
 msgid "Show Help:"
 msgstr "Zeige Hilfe:"
 
-#: examples/image_display/image_display.cpp:728
+#: examples/image_display/image_display.cpp:733
 msgid "Show Infos"
 msgstr "Zeige Infos"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-01-14 09:30+0100\n"
+"POT-Creation-Date: 2016-01-14 11:48+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -1088,7 +1088,7 @@ msgstr "Kolore-espazioa:"
 msgid "Date"
 msgstr "Data"
 
-#: examples/image_display/image_display.cpp:726
+#: examples/image_display/image_display.cpp:731
 msgid "Debug"
 msgstr ""
 
@@ -1218,7 +1218,7 @@ msgstr "EBU Tech.3213-E"
 msgid "EFI CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:722
+#: examples/image_display/image_display.cpp:727
 #, fuzzy
 msgid "Edit Options ..."
 msgstr "Bereizketa"
@@ -1302,7 +1302,7 @@ msgstr "okerreko etiketa-tamaina profilan "
 msgid "Error setting up atom"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:724
+#: examples/image_display/image_display.cpp:729
 #, fuzzy
 msgid "Examine ICC Profile ..."
 msgstr "Zein ICC profila?"
@@ -1556,7 +1556,7 @@ msgid "Heidelberg CMM"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1936
-#: examples/image_display/image_display.cpp:731
+#: examples/image_display/image_display.cpp:736
 msgid "Help"
 msgstr ""
 
@@ -2415,7 +2415,7 @@ msgstr "Oyranos-en ezarpenak"
 msgid "Oyranos ICC policy module"
 msgstr "Oyranos-en ezarpenak"
 
-#: examples/image_display/image_display.cpp:474
+#: examples/image_display/image_display.cpp:479
 #, fuzzy
 msgid "Oyranos Image Display Info"
 msgstr "huts egin du X pantaila irekitzean"
@@ -2818,7 +2818,7 @@ msgid ""
 "Proofing Settings allows one to decide about the simulation color space."
 msgstr ""
 
-#: examples/image_display/image_display.cpp:733
+#: examples/image_display/image_display.cpp:738
 msgid "Quit"
 msgstr "Irten"
 
@@ -3042,7 +3042,7 @@ msgstr ""
 msgid "Show Help:"
 msgstr "Modeloa:"
 
-#: examples/image_display/image_display.cpp:728
+#: examples/image_display/image_display.cpp:733
 msgid "Show Infos"
 msgstr ""
 
