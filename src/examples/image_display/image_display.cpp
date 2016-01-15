@@ -23,6 +23,7 @@
 
 #include <oyranos.h>
 #include <oyranos_cmm.h>   /* for hacking into module API */
+#include <oyranos_io.h>    /* oyFindApplication() */
 
 #include <oyConversion_s.h>
 
@@ -91,7 +92,8 @@ main(int argc, char** argv)
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
 #endif
-  oyInit_();
+  oyExportStart_(EXPORT_CHECK_NO);
+
 
 /* workaround to initialise OpenMP in order to get code compiled under osX 10.6.8 */
 #pragma omp parallel for private(i)
@@ -379,11 +381,12 @@ void dbg_cb ( Fl_Widget* w, void* daten )
     oyImage_Release( &image );
   }
 }
-Oy_Fl_Double_Window *help_window=(Oy_Fl_Double_Window *)0;
-Fl_Text_Display *help_browser=(Fl_Text_Display *)0;
-Oy_Fl_Double_Window* make_help(const char * text)
+Oy_Fl_Double_Window * make_help(const char * title, const char * text, int is_html)
 {
-  { help_window = new Oy_Fl_Double_Window(505, 410, _("Information:"));
+  Oy_Fl_Double_Window * help_window=(Oy_Fl_Double_Window *)0;
+  Fl_Text_Display     * text_display=(Fl_Text_Display *)0;
+  Fl_Help_View        * help_browser=(Fl_Help_View *)0;
+  { help_window = new Oy_Fl_Double_Window(505, 410, title?title:_("Information:"));
     help_window->box(FL_FLAT_BOX);
     help_window->color(FL_BACKGROUND_COLOR);
     help_window->selection_color(FL_BACKGROUND_COLOR);
@@ -393,7 +396,14 @@ Oy_Fl_Double_Window* make_help(const char * text)
     help_window->labelcolor(FL_FOREGROUND_COLOR);
     help_window->align(Fl_Align(FL_ALIGN_TOP));
     help_window->when(FL_WHEN_RELEASE);
-    { Fl_Text_Display* o = help_browser = new Fl_Text_Display(0, 0, 505, 410);
+    if(is_html)
+    { help_browser = new Fl_Help_View(0, 0, 505, 410);
+      help_browser->box(FL_THIN_UP_BOX);
+      help_browser->color((Fl_Color)16);
+      Fl_Group::current()->resizable(help_browser);
+    } // Fl_Help_View* help_browser
+    else
+    { Fl_Text_Display* o = text_display = new Fl_Text_Display(0, 0, 505, 410);
       Fl_Text_Buffer * buffer = new Fl_Text_Buffer(0);
       o->buffer( buffer );
       //o->textfont( FL_COURIER );
@@ -406,20 +416,22 @@ Oy_Fl_Double_Window* make_help(const char * text)
   } // Oy_Fl_Double_Window* help_window
   help_window->show();
   if(text)
-    help_browser->buffer()->text( text );
-  else
   {
-      const char * opts[] = {"add_html_header","1",
-                             "add_oyranos_title","1",
-                             "add_oyranos_copyright","1",
-                             NULL};
-    help_browser->buffer()->text( oyDescriptionToHTML(oyGROUP_ALL, opts,0) );
+    if(is_html)
+      help_browser->value( text );
+    else
+      text_display->buffer()->text( text );
   }
   return help_window;
 }
 void help_cb ( Fl_Widget*, void* )
 {
-  make_help(NULL);
+  const char * opts[] = {"add_html_header","1",
+                         "add_oyranos_title","1",
+                         "add_oyranos_copyright","1",
+                          NULL};
+  int is_html = 1;
+  make_help( _("Oyranos Help"), oyDescriptionToHTML(oyGROUP_ALL, opts,0), is_html );
 }
 
 void info_cb ( Fl_Widget* w, void* daten )
@@ -440,6 +452,7 @@ void info_cb ( Fl_Widget* w, void* daten )
     oyOptions_s * opts =  oyFilterNode_GetOptions( in, 0 );
     const char * fn =     oyOptions_FindString( opts, "//" OY_TYPE_STD "/file_read/filename", 0 );
     char * text = NULL;
+    const char * image_text = NULL;
     size_t size = 0;
 
     if(!fn)
@@ -447,15 +460,23 @@ void info_cb ( Fl_Widget* w, void* daten )
       oyImage_s * image = oyConversion_GetImage( cc, OY_INPUT );
       opts = oyImage_GetTags(image);
       fn =   oyOptions_FindString( opts, "//" OY_TYPE_STD "/file_read/filename", 0 );
+      image_text = oyObject_GetName( image->oy_, oyNAME_NICK );
       oyImage_Release( &image );
     }
 
-    text = oyReadCmdToMemf_( &size, "r", malloc, "tiffinfo \"%s\"", fn );
+    if(oyFindApplication("tiffinfo"))
+      text = oyReadCmdToMemf_( &size, "r", malloc, "tiffinfo \"%s\"", fn );
+    if((!text || text[0] == 0) && oyFindApplication("file"))
+      text = oyReadCmdToMemf_( &size, "r", malloc, "file \"%s\"", fn );
+ 
+    oyStringAdd_( &text, "\n", oyAllocateFunc_, oyDeAllocateFunc_ );
+    oyStringAdd_( &text, image_text, oyAllocateFunc_, oyDeAllocateFunc_ );
+
 
     oyFilterNode_Release( &in );
     oyOptions_Release( &opts );
 
-    make_help(text);
+    make_help( _("Oyranos Image Display Info"), text, 0 );
   }
   else
     printf("could not find a suitable program structure\n");

@@ -1284,6 +1284,7 @@ const char * GetText                 ( const char        * select,
          if(type == oyNAME_NICK)
       return "help";
     else if(type == oyNAME_NAME)
+            /* "The " CMM_NICK " module supports the generic device protocol." */
       return _("The " CMM_NICK " module supports the generic device protocol.");
     else
     {
