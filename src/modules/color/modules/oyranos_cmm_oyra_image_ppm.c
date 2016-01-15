@@ -483,6 +483,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
   int height = 0;
   int spp = 0;         /* samples per pixel */
   int byteps = 1;      /* byte per sample */
+  int bitps = 0;       /* bits per sample, not standard and in case it is needed */
   double maxval = 0; 
     
   size_t start, end;
@@ -713,12 +714,37 @@ int      oyraFilterPlug_ImageInputPPMRun (
 
   if(strstr(strrchr(filename, '.')+1, "raw"))
   {
+    const char * t;
     info_good = 1;
-    width = atoi(getenv("RAW_WIDTH"));
-    height = atoi(getenv("RAW_HEIGHT"));
-    type = atoi(getenv("RAW_TYPE"));
+    t = getenv("RAW_WIDTH");
+    if(t)
+      width = atoi(t);
+    else
+      info_good = 0;
+
+    t = getenv("RAW_HEIGHT");
+    if(t)
+      height = atoi(t);
+    else
+      info_good = 0;
+
+    t = getenv("RAW_TYPE");
+    if(t)
+      type = atoi(t);
+    else
+      info_good = 0;
+
     fpos = 0;
-    maxval = atoi(getenv("RAW_MAXVAL"));
+    t = getenv("RAW_MAXVAL");
+    if(t)
+      maxval = atoi(t);
+    else
+      info_good = 0;
+
+    if(info_good == 0)
+      oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ "need RAW_WIDTH, RAW_HEIGHT, RAW_TYPE and RAW_MAXVAL environment variables",
+             OY_DBG_ARGS_ );
   }
 
 
@@ -1187,7 +1213,7 @@ char * oyra_api7_image_input_ppm_properties[] =
   "image=pixel",  /* image type, pixel/vector/font */
   "layers=1",     /* layer count, one for plain images */
   "icc=1",        /* image type ICC profile support */
-  "ext=ppm,pnm,pbm,pgm,pfm", /* supported extensions */
+  "ext=pam,ppm,pnm,pbm,pgm,pfm,raw", /* supported extensions */
   0
 };
 
