@@ -647,6 +647,16 @@ int      oyraFilterPlug_ImageInputPPMRun (
         }
       }
 
+      if(!prof && getenv("COLORSPACE"))
+      {
+        const char * t = getenv("COLORSPACE");
+        prof = oyProfile_FromName(t, icc_profile_flags, NULL);
+        if(!prof)
+          oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ "could not find \"COLORSPACE\" from environment variable: %s",
+             OY_DBG_ARGS_, oyNoEmptyString_m_( t ) );
+      }
+
       /* parse line */
       while(info_good &&
             v_read < v_need &&
