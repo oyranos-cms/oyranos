@@ -64,7 +64,8 @@ class Oy_Fl_Window_Base
 
       Fl_Group *g = dynamic_cast<Fl_Group*> (win);
       oywin->scaleWidgets( g );
-      printf("x: %d y: %d\n",wx,wy);
+      if(oy_debug)
+        fprintf(stderr, "x: %d y: %d\n",wx,wy);
 
       win->redraw();
     }
@@ -141,39 +142,46 @@ private:
             Fl_Hold_Browser * h;
             Fl_Menu_ * m;
             Fl_Text_Display * t;
-            printf("Fl_Widget %d %s\n", i, w->label()? w->label():"");
+            if(oy_debug)
+              fprintf(stderr, "Fl_Widget %d %s\n", i, w->label()? w->label():"");
             if((sub = dynamic_cast<Fl_Group*> (w)) != NULL)
             {
               sub->labelsize( FL_NORMAL_SIZE );
-              printf("Fl_Group\n");
+              if(oy_debug)
+                fprintf(stderr, "Fl_Group\n");
               scaleWidgets( sub );
             }
             else if((m = dynamic_cast<Fl_Menu_*> (w)) != NULL)
             {
               m->textsize( FL_NORMAL_SIZE );
-              printf("Fl_Menu_\n");
+              if(oy_debug)
+                fprintf(stderr,"Fl_Menu_\n");
               updateMenuSize(const_cast<Fl_Menu_Item*>(m->menu()));
             }
 
             if((b = dynamic_cast<Fl_Browser_*> (w)) != NULL)
             {
               b->textsize( FL_NORMAL_SIZE );
-              printf("Fl_Browser_\n");
+              if(oy_debug)
+                fprintf(stderr,"Fl_Browser_\n");
             }
             if((h = dynamic_cast<Fl_Hold_Browser*> (w)) != NULL)
             {
               h->textsize( FL_NORMAL_SIZE );
-              printf("Fl_Hold_Browser\n");
+              if(oy_debug)
+                fprintf(stderr,"Fl_Hold_Browser\n");
             }
             if((hv = dynamic_cast<Fl_Help_View*> (w)) != NULL)
             {
               hv->textsize( FL_NORMAL_SIZE );
-              printf("Fl_Help_View\n");
+              if(oy_debug)
+                fprintf(stderr,"Fl_Help_View\n");
             }
             if((t = dynamic_cast<Fl_Text_Display*> (w)) != NULL)
             {
               t->textsize( FL_NORMAL_SIZE );
-              printf("Fl_Text_Display\n");
+              if(oy_debug)
+                fprintf(stderr,"Fl_Text_Display\n");
             }
           }
   }
@@ -223,7 +231,8 @@ private:
           if(crtc_info->x <= center_x && center_x <= (int)(crtc_info->x + crtc_info->width) &&
              crtc_info->y <= center_y && center_y <= (int)(crtc_info->y + crtc_info->height))
             inside = 1;
-          printf( "%s[%d] %upx x %upx  Dimensions: %limm x %limm  DPI: %.02f x %.02f\n",
+          if(oy_debug)
+            fprintf( stderr, "%s[%d] %upx x %upx  Dimensions: %limm x %limm  DPI: %.02f x %.02f\n",
                   inside ? "*":" ", i, pixel_width, pixel_height,
                   output_info->mm_width, output_info->mm_height,
                   xdpi, ydpi );
