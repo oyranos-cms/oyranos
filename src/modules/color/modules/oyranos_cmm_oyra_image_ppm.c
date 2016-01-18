@@ -588,6 +588,8 @@ int      oyraFilterPlug_ImageInputPPMRun (
     int l_end = 0;   /* line end position */
     int l_pos = 0;   /* line position */
     int l_rdg = 1;   /* line reading */
+    char * tupltype = NULL; /* ICC profile internal color space */
+    int tupl = 0;
 
     if(type == 1 || type == 4)
            v_need = 2;
@@ -689,6 +691,11 @@ int      oyraFilterPlug_ImageInputPPMRun (
               spp = (int)var;
             if(maxval == -0.5)
               maxval = var;
+            if(tupl == -1)
+            {
+              tupl = 1;
+              tupltype = oyStringCopy(var_s, oyAllocateFunc_);
+            }
 
             if(strcmp(var_s, "HEIGHT") == 0)
               height = -1; /* expecting the next token is the val */
@@ -699,7 +706,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
             if(strcmp(var_s, "MAXVAL") == 0)
               maxval = -0.5;
             if(strcmp(var_s, "TUPLTYPE") == 0)
-              ; /* ?? */
+              tupl = -1;
             if(strcmp(var_s, "ENDHDR") == 0)
               v_need = v_read;
           }
@@ -716,9 +723,28 @@ int      oyraFilterPlug_ImageInputPPMRun (
           }
 
           ++v_read;
-
         }
       }
+    }
+
+    if(tupltype && !prof)
+    {
+      const char * colorspace = "rgbi";
+      if(strcmp(tupltype, "GRAY") == 0 ||
+         strcmp(tupltype, "GRAY_ALPHA") == 0)
+        colorspace = "grayi";
+      if(strcmp(tupltype, "RGB") == 0 ||
+         strcmp(tupltype, "RGB_ALPHA") == 0)
+        colorspace = "rgbi";
+      if(strcmp(tupltype, "CMYK") == 0 ||
+         strcmp(tupltype, "CMYK_ALPHA") == 0)
+        colorspace = "cmyki";
+      prof = oyProfile_FromName( colorspace, icc_profile_flags, NULL );
+      if(!prof)
+        oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ "could not find \"COLORSPACE\" from environment variable: %s",
+             OY_DBG_ARGS_, oyNoEmptyString_m_( tupltype ) );
+      oyFree_m_(tupltype)
     }
   }
 
