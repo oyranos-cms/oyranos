@@ -1042,8 +1042,17 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       {
         const char *tupl = "RGB_ALPHA";
 
-        if(channels == 2)
+        if(channels == 1 && alpha)
           tupl = "GRAYSCALE_ALPHA";
+        else if(channels == 1)
+          tupl = "GRAYSCALE_ALPHA";
+        else if(channels == 3 && !alpha)
+          tupl = "RGB";
+        else if(channels == 4)
+          tupl = "CMYK";
+        else if(channels >= 5)
+          tupl = "DEVN";
+
         snprintf( text, 128, "WIDTH %d\nHEIGHT %d\nDEPTH %d\nMAXVAL "
                   "%s\nTUPLTYPE %s\nENDHDR\n",
                   s->width, s->height,
