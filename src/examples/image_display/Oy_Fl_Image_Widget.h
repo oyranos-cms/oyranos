@@ -19,7 +19,18 @@ void               oyShowConversion_ ( oyConversion_s    * conversion,
                                        uint32_t            flags );
 }
 
-//#define DEBUG_MOVE DEBUG
+oyOptions_s * findOpts( oyFilterNode_s * node, const char * filter_name )
+{
+  oyFilterGraph_s * g = oyFilterGraph_FromNode( node, 0 );
+  oyFilterNode_s * n = oyFilterGraph_GetNode( g, -1, filter_name, NULL );
+  oyOptions_s * opts = oyFilterNode_GetOptions( n, 0 );
+  oyFilterGraph_Release( &g );
+  oyFilterNode_Release( &n );
+
+  return opts;
+}
+
+#define DEBUG_MOVE DEBUG
 
 class Oy_Fl_Image_Widget : public Fl_Widget, public Oy_Widget
 {
@@ -86,6 +97,13 @@ public:
       int width;
       int height;
 
+      double scale = 1.0;
+      oyOptions_s * opts = findOpts( node_out, "//" OY_TYPE_STD "/scale" );
+
+      oyOptions_FindDouble( opts, "scale",
+                                   0, &scale );
+      oyOptions_Release( &opts );
+
 #if defined(XCM_HAVE_X11)
       /* add X11 window and display identifiers to output image */
       display = fl_display;
@@ -94,8 +112,8 @@ public:
 
       /* Get the source dimensions */
       image = oyConversion_GetImage( conversion(), OY_INPUT );
-      width = oyImage_GetWidth( image );
-      height = oyImage_GetHeight( image );
+      width = oyImage_GetWidth( image ) * scale;
+      height = oyImage_GetHeight( image ) * scale;
       oyImage_Release( &image );
 
       /* Load the image before creating the oyPicelAccess_s object. */
