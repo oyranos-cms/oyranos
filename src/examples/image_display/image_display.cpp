@@ -587,6 +587,9 @@ event_handler(int e)
                                    "scale",
                                    0, &scale );
         scale /= scale_changer;
+        // scale relative to the middle of the image
+        oy_widget->px = int((double)(oy_widget->px - oy_widget->w()/2) / scale_changer) + oy_widget->w()/2;
+        oy_widget->py = int((double)(oy_widget->py - oy_widget->h()/2) / scale_changer) + oy_widget->h()/2;
         oyOptions_SetFromDouble( &opts,
                                    "//" OY_TYPE_STD "/scale/scale",
                                    scale, 0, OY_CREATE_NEW );
@@ -600,6 +603,9 @@ event_handler(int e)
                                    "scale",
                                    0, &scale );
         scale *= scale_changer;
+        // scale relative to the middle of the image
+        oy_widget->px = int((double)(oy_widget->px - oy_widget->w()/2) * scale_changer) + oy_widget->w()/2;
+        oy_widget->py = int((double)(oy_widget->py - oy_widget->h()/2) * scale_changer) + oy_widget->h()/2;
         oyOptions_SetFromDouble( &opts,
                                    "//" OY_TYPE_STD "/scale/scale",
                                    scale, 0, OY_CREATE_NEW );
