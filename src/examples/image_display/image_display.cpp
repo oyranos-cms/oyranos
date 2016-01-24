@@ -556,7 +556,7 @@ event_handler(int e)
 {
   int found = 0;
   oyOptions_s * opts;
-  static double scale_changer = 2.0;
+  static double scale_changer = 1.2;
 
   switch (e)
   {
