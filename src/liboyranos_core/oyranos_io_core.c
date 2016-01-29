@@ -111,7 +111,7 @@ char *       oyReadFileSToMem_       ( FILE              * fp,
                                        oyAlloc_f           allocate_func)
 {
   size_t mem_size = 256;
-  char* mem = malloc(mem_size),
+  char* mem = (char*) malloc(mem_size),
         c;
 
   DBG_MEM_START
@@ -127,7 +127,7 @@ char *       oyReadFileSToMem_       ( FILE              * fp,
       if(*size >= mem_size)
       {
         mem_size *= 2;
-        mem = realloc( mem, mem_size );
+        mem = (char*) realloc( mem, mem_size );
       }
       mem[(*size)++] = c;
     } while(!feof(fp));
