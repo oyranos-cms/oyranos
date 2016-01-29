@@ -82,7 +82,6 @@ public:
 
             oyOptions_FindDouble( opts, "scale",
                                    0, &scale );
-            printf(_DBG_FORMAT_"e: %d x: %d y:%d %dx%d\n",_DBG_ARGS_,e, Fl::event_dx(),Fl::event_dy(), px,py );
             if(Fl::event_dy() > 0)
             {
               scale *= wheel_scale_changer;
@@ -101,7 +100,6 @@ public:
                                    "//" OY_TYPE_STD "/scale/scale",
                                    scale, 0, OY_CREATE_NEW );
             oyOptions_Release( &opts );
-            printf(_DBG_FORMAT_"e: %d x: %d y:%d %dx%d\n",_DBG_ARGS_,e, Fl::event_dx(),Fl::event_dy(), px,py );
             redraw();
             return (1);
           }
