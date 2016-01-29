@@ -36,23 +36,28 @@ class Oy_Fl_Image_Widget : public Fl_Widget, public Oy_Widget
 {
   int e, ox, oy;
 public:
-  int px, py;
+  double scale_changer;
+  int px, py, mx, my;
   int handle(int event)
   {
+      int mouse_button = Fl::event_state();
       e = event;
-      switch(e) {
+      mx = Fl::event_x();
+      my = Fl::event_y();
+      switch(e)
+      {
         case FL_PUSH:
           ox = x() - Fl::event_x();
           oy = y() - Fl::event_y();
           fl_cursor( FL_CURSOR_MOVE, FL_BLACK, FL_WHITE );
 #if DEBUG_MOVE
-      if(oy_debug) printf(_DBG_FORMAT_"e: %d ox:%d px:%d\n",_DBG_ARGS_,e,ox,px);
+          if(oy_debug) printf(_DBG_FORMAT_"e: %d ox:%d px:%d\n",_DBG_ARGS_,e,ox,px);
 #endif
           return (1);
         case FL_RELEASE:
           fl_cursor( FL_CURSOR_DEFAULT, FL_BLACK, FL_WHITE );
 #if DEBUG_MOVE
-      if(oy_debug) printf(_DBG_FORMAT_"e: %d ox:%d px:%d\n",_DBG_ARGS_,e,ox,px);
+          if(oy_debug) printf(_DBG_FORMAT_"e: %d ox:%d px:%d\n",_DBG_ARGS_,e,ox,px);
 #endif
           return (1);
         case FL_DRAG:
@@ -61,12 +66,49 @@ public:
           ox = x() - Fl::event_x();
           oy = y() - Fl::event_y();
 #if DEBUG_MOVE
-      if(oy_debug)
-        printf(_DBG_FORMAT_"e: %d ox:%d px:%d oy: %d py:%d\n",_DBG_ARGS_,e, ox, px,oy,py);
+          if(oy_debug)
+            printf(_DBG_FORMAT_"e: %d ox:%d px:%d oy: %d py:%d\n",_DBG_ARGS_,e, ox, px,oy,py);
 #endif
           redraw();
           return (1);
+        case FL_MOUSEWHEEL:
+          if(Fl::event_dy())
+          {
+            oyFilterNode_s * node_out = oyConversion_GetNode( conversion(),OY_OUTPUT);
+
+            double scale = 1.0;
+            double wheel_scale_changer = (scale_changer-1.0)/10.0+1.0;
+            oyOptions_s * opts = findOpts( node_out, "//" OY_TYPE_STD "/scale" );
+
+            oyOptions_FindDouble( opts, "scale",
+                                   0, &scale );
+            printf(_DBG_FORMAT_"e: %d x: %d y:%d %dx%d\n",_DBG_ARGS_,e, Fl::event_dx(),Fl::event_dy(), px,py );
+            if(Fl::event_dy() > 0)
+            {
+              scale *= wheel_scale_changer;
+              // scale relative to the middle of the image
+              px = int((double)(px - mx) * wheel_scale_changer) + mx;
+              py = int((double)(py - my) * wheel_scale_changer) + my;
+            }
+            else
+            if(Fl::event_dy() < 0)
+            {
+              scale /= wheel_scale_changer;
+              px = int((double)(px - mx) / wheel_scale_changer) + mx;
+              py = int((double)(py - my) / wheel_scale_changer) + my;
+            }
+            oyOptions_SetFromDouble( &opts,
+                                   "//" OY_TYPE_STD "/scale/scale",
+                                   scale, 0, OY_CREATE_NEW );
+            oyOptions_Release( &opts );
+            printf(_DBG_FORMAT_"e: %d x: %d y:%d %dx%d\n",_DBG_ARGS_,e, Fl::event_dx(),Fl::event_dy(), px,py );
+            redraw();
+            return (1);
+          }
       }
+
+      if(oy_debug)
+        printf(_DBG_FORMAT_"e: %d x: %d y:%d %dx%d\n",_DBG_ARGS_,e, Fl::event_x(),Fl::event_y(), px, py );
       int ret = Fl_Widget::handle(e);
       return ret;
   }
@@ -249,6 +291,7 @@ public:
   Oy_Fl_Image_Widget(int x, int y, int w, int h) : Fl_Widget(x,y,w,h)
   {
     px=py=ox=oy=0;
+    scale_changer = 1.2;
   };
 
   ~Oy_Fl_Image_Widget(void)
