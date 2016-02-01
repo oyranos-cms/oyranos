@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-01-14 11:48+0100\n"
+"POT-Creation-Date: 2016-02-01 13:44+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -58,7 +58,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oPNG.c:553
 #: modules/color/modules/oyranos_cmm_oPNG.c:1168
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:268
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1097
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1195
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:873
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:876
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1174
@@ -1045,7 +1045,7 @@ msgstr "kolora"
 msgid "Date"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:731
+#: examples/image_display/image_display.cpp:736
 msgid "Debug"
 msgstr ""
 
@@ -1172,7 +1172,7 @@ msgstr ""
 msgid "EFI CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:727
+#: examples/image_display/image_display.cpp:732
 msgid "Edit Options ..."
 msgstr ""
 
@@ -1253,7 +1253,7 @@ msgstr ""
 msgid "Error setting up atom"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:729
+#: examples/image_display/image_display.cpp:734
 msgid "Examine ICC Profile ..."
 msgstr ""
 
@@ -1334,7 +1334,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oPNG.c:552
 #: modules/color/modules/oyranos_cmm_oPNG.c:1167
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:267
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1096
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1194
 msgid "Files"
 msgstr ""
 
@@ -1492,7 +1492,7 @@ msgid "Heidelberg CMM"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1936
-#: examples/image_display/image_display.cpp:736
+#: examples/image_display/image_display.cpp:741
 msgid "Help"
 msgstr ""
 
@@ -1672,7 +1672,7 @@ msgstr ""
 msgid "Image[input_png]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1088
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1186
 msgid "Image[input_ppm]"
 msgstr ""
 
@@ -1740,7 +1740,7 @@ msgstr "kolora"
 msgid "Input PNG Image Filter Object"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1090
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1188
 msgid "Input PPM Image Filter Object"
 msgstr ""
 
@@ -2254,7 +2254,7 @@ msgstr ""
 msgid "Option \"filename\", a valid filename of a existing PNG image"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1112
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1210
 msgid "Option \"filename\", a valid filename of a existing PPM image"
 msgstr ""
 
@@ -2673,7 +2673,7 @@ msgid ""
 "Proofing Settings allows one to decide about the simulation color space."
 msgstr ""
 
-#: examples/image_display/image_display.cpp:738
+#: examples/image_display/image_display.cpp:743
 msgid "Quit"
 msgstr ""
 
@@ -2699,7 +2699,7 @@ msgstr ""
 msgid "Read PNG"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1098
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1196
 msgid "Read PPM"
 msgstr ""
 
@@ -2885,7 +2885,7 @@ msgstr ""
 msgid "Show Help:"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:733
+#: examples/image_display/image_display.cpp:738
 msgid "Show Infos"
 msgstr ""
 
@@ -3038,7 +3038,7 @@ msgid ""
 "ignored."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1114
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1212
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the ppm data "
 "from. If the file does not exist, a error will occure.\n"
