@@ -18,7 +18,6 @@
 
     @n@n
     @section intro Introduction
-  
     Oyranos is intended as a entry point for color savy applications.
     In its current stage it configures profile paths, sets default profiles, 
     maps devices to profiles, sets a monitor profile in X and uploads a vcgt
@@ -127,7 +126,8 @@ int main( int argc, char ** argv ) {
            rgb_in[3*i+0],rgb_in[3*i+1],rgb_in[3*i+2], rgb_moni[3*i+0],rgb_moni[3*i+1],rgb_moni[3*i+2]);
 
   return 0;
-} @endverbatim
+}
+  @endverbatim
 
     Writing of filters and modules for Oyranos is covered in the @ref
     extending_oyranos page.
