@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-02-01 13:44+0100\n"
+"POT-Creation-Date: 2016-02-02 19:29+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -58,7 +58,7 @@ msgstr "-v plauders"
 #: modules/color/modules/oyranos_cmm_oPNG.c:553
 #: modules/color/modules/oyranos_cmm_oPNG.c:1168
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:268
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1195
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1159
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:873
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:876
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1174
@@ -1344,7 +1344,7 @@ msgstr "Datei:           "
 #: modules/color/modules/oyranos_cmm_oPNG.c:552
 #: modules/color/modules/oyranos_cmm_oPNG.c:1167
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:267
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1194
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1158
 msgid "Files"
 msgstr "Dateien"
 
@@ -1704,7 +1704,7 @@ msgstr "Bild/Einfaches Bild[Skalierung]"
 msgid "Image[input_png]"
 msgstr "Bild[input_png]"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1186
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1150
 msgid "Image[input_ppm]"
 msgstr "Bild[input_ppm]"
 
@@ -1773,7 +1773,7 @@ msgstr "Eingabefarbraum"
 msgid "Input PNG Image Filter Object"
 msgstr "Filterobjekt eines zu lesendes PNG Bildes"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1188
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1152
 msgid "Input PPM Image Filter Object"
 msgstr "Filterobjekt eines zu lesendes PPM Bildes"
 
@@ -2292,7 +2292,7 @@ msgid "Option \"filename\", a valid filename of a existing PNG image"
 msgstr ""
 "Option \"filename\", ein gültiger Dateiname eines existierenden PNG Bildes"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1210
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1174
 msgid "Option \"filename\", a valid filename of a existing PPM image"
 msgstr ""
 "Option \"filename\", ein gültiger Dateiname eines existierenden PPM Bildes"
@@ -2750,7 +2750,7 @@ msgstr "Lese"
 msgid "Read PNG"
 msgstr "Lese PNG"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1196
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1160
 msgid "Read PPM"
 msgstr "Lese PPM"
 
@@ -3110,7 +3110,7 @@ msgstr ""
 "kann, wird ein oyASSUMED_WEB/oyASSUMED_GRAY ICC Farbprofil an das erzeugte "
 "Bild angehangen. Eine interne Farbübertragungsart wird ignoriert."
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1212
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1176
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the ppm data "
 "from. If the file does not exist, a error will occure.\n"

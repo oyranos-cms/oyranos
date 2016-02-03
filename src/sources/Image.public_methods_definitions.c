@@ -664,6 +664,9 @@ int            oyImage_FillArray     ( oyImage_s         * image,
       line_data = s->getLine( image, image_roi_pix.y + i, &height, -1,
                              &is_allocated );
 
+      if(!line_data)
+        error = 1;
+      else
       for( j = 0; j < height; ++j )
       {
         if( i + j >= array_roi_pix.height )

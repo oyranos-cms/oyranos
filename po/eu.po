@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-02-01 13:44+0100\n"
+"POT-Creation-Date: 2016-02-02 19:29+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -60,7 +60,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oPNG.c:553
 #: modules/color/modules/oyranos_cmm_oPNG.c:1168
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:268
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1195
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1159
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:873
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:876
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1174
@@ -1389,7 +1389,7 @@ msgstr "Tamaina:        "
 #: modules/color/modules/oyranos_cmm_oPNG.c:552
 #: modules/color/modules/oyranos_cmm_oPNG.c:1167
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:267
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1194
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1158
 #, fuzzy
 msgid "Files"
 msgstr "Fitxategia"
@@ -1745,7 +1745,7 @@ msgstr ""
 msgid "Image[input_png]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1186
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1150
 msgid "Image[input_ppm]"
 msgstr ""
 
@@ -1814,7 +1814,7 @@ msgstr "Kolore-espazioa"
 msgid "Input PNG Image Filter Object"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1188
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1152
 msgid "Input PPM Image Filter Object"
 msgstr ""
 
@@ -2359,7 +2359,7 @@ msgstr ""
 msgid "Option \"filename\", a valid filename of a existing PNG image"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1210
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1174
 msgid "Option \"filename\", a valid filename of a existing PPM image"
 msgstr ""
 
@@ -2847,7 +2847,7 @@ msgstr "Prest"
 msgid "Read PNG"
 msgstr "Prest"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1196
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1160
 #, fuzzy
 msgid "Read PPM"
 msgstr "Prest"
@@ -3200,7 +3200,7 @@ msgid ""
 "ignored."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1212
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1176
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the ppm data "
 "from. If the file does not exist, a error will occure.\n"
