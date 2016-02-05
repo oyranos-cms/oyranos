@@ -31,7 +31,7 @@ class Oy_Fl_Window_Base
   int pos_x;
   int pos_y;
 
-  Oy_Fl_Window_Base()  {init = 0;}
+  Oy_Fl_Window_Base()  {init = 0; pos_x = pos_y = -1;}
   ~Oy_Fl_Window_Base() {};
 
   static void handle (Fl_Window * win, int e)
