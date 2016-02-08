@@ -2419,8 +2419,15 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     a = oyPixelAccess_GetArray( new_ticket );
     new_ticket_roi = oyPixelAccess_GetOutputROI( new_ticket );
     oyPixelAccess_SetOutputImage( new_ticket, image_input );
-    error = oyImage_FillArray( image_input, new_ticket_roi, 1,
-                               &a, 0, 0 );
+    if(!a)
+    {
+      oyRectangle_s * r = oyRectangle_NewFrom( new_ticket_roi, 0 );
+      oyRectangle_Scale( r, oyImage_GetWidth(image_input) );
+      int w = OY_ROUND( oyRectangle_GetGeo1( r, 2 ) );
+      int h = OY_ROUND( oyRectangle_GetGeo1( r, 3 ) );
+      a = oyArray2d_Create( NULL, w,h, oyImage_GetPixelLayout( image_input, oyLAYOUT ), ticket->oy_ );
+      oyRectangle_Release( &r );
+    }
     oyPixelAccess_SetArray( new_ticket, a );
     oyArray2d_Release( &a );
     oyRectangle_Release( & new_ticket_roi );
