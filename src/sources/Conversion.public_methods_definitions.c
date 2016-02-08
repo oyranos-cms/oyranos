@@ -542,9 +542,8 @@ int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
 
       if(is_allocated)
         free( image_data );
-    }
-@endverbatim
- *
+    } @endverbatim
+ 
  *  @param[in,out] conversion          conversion object
  *  @param[in,out] pixel_access        optional pixel iterator configuration
  *  @return                            0 on success, else error
