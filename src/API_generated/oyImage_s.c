@@ -315,12 +315,12 @@ oyPointer oyImage_GetArray2dLinePlanar ( oyImage_s       * image,
 /** @brief   collect infos about a image
  *  @memberof oyImage_s
  *
- *  Create a image description and access object. The passed channels pointer
+ *  Create a image description and access object. The passed pixels pointer
  *  remains in the responsibility of the user. The image is a in memory blob.
  *
     @param[in]    width        image width
     @param[in]    height       image height
-    @param[in]    channels     pointer to the data buffer
+    @param[in]    pixels       pointer to the data buffer
     @param[in]    pixel_layout i.e. oyTYPE_123_16 for 16-bit RGB data
     @param[in]    profile      color space description
     @param[in]    object       the optional base
@@ -331,7 +331,7 @@ oyPointer oyImage_GetArray2dLinePlanar ( oyImage_s       * image,
  */
 oyImage_s *    oyImage_Create         ( int               width,
                                         int               height, 
-                                        oyPointer         channels,
+                                        oyPointer         pixels,
                                         oyPixel_t         pixel_layout,
                                         oyProfile_s     * profile,
                                         oyObject_s        object)
@@ -377,7 +377,7 @@ oyImage_s *    oyImage_Create         ( int               width,
   s->height = height;
   {
     int channels_n = oyToChannels_m(pixel_layout);
-    oyArray2d_s * a = oyArray2d_Create( channels,
+    oyArray2d_s * a = oyArray2d_Create( pixels,
                                         s->width * channels_n,
                                         s->height,
                                         oyToDataType_m(pixel_layout),

@@ -123,7 +123,7 @@ typedef int       (*oyImage_SetTile_f) ( oyImage_s       * image,
  *  @extends oyStruct_s
  *  @brief   A reference struct to gather information for image transformation
  *
- *  as we dont target a complete imaging solution, only raster is supported
+ *  as we don't target a complete imaging solution, only raster is supported
  *
  *  Resolution is in pixel per centimeter.
  *
@@ -135,7 +135,9 @@ typedef int       (*oyImage_SetTile_f) ( oyImage_s       * image,
  *  - display rectangle information and
  *  - a reference to the data for conversion
  *
- *  To set a image data module use oyImage_DataSet().
+ *  Create a basic image with the pixel owned by the caller use oyImage_Create().
+ *
+ *  To set a image data module use oyImage_SetData().
  *  \dot
  digraph oyImage_s {
   bgcolor="transparent";
