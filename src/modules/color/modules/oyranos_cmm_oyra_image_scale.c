@@ -173,6 +173,9 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         nh = oyArray2d_GetHeight( array_in );
 
         /* do the scaling while copying the channels */
+#if defined(USE_OPENMP)
+#pragma omp parallel for private(x)
+#endif
         for(y = 0; y < h; ++y)
         {
           if(y/scale >= nh) break;
