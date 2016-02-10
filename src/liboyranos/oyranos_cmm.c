@@ -108,9 +108,9 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                         oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,2) * correct,
                         oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,3) * correct );
     STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&image_roi ) );
-    DBGs_PROG4_S( ticket, "%s[%d] %s %s", "Fill ticket->array from image",
+    DBGs_PROG4_S( ticket, "%s[%d] image_roi: %s output_image_roi%s", "Fill ticket->array from image",
                  oyStruct_GetId( (oyStruct_s*)image ),
-                 oyRectangle_Show( output_image_roi ),
+                 oyRectangle_Show( (oyRectangle_s*)output_image_roi ),
                  t );
     oyRectangle_Scale( (oyRectangle_s*)&output_image_roi_, correct );
     error = oyImage_FillArray( image, (oyRectangle_s*)&image_roi, 1,
