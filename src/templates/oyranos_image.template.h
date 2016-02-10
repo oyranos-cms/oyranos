@@ -126,7 +126,7 @@ typedef enum {
 /** Set min is white in @ref oyPixel_t */
 #define oyFlavor_m(p)               ((f) << 22)
 /** Set byte swapping for integers larger than 8 byte in @ref oyPixel_t */
-#define oyByteSwap_m(x)             ((x) << 23)
+#define oyByteswap_m(x)             ((x) << 23)
 
 /* define some common types */
 /** 8-bit RGB/YUV/XYZ/... */
