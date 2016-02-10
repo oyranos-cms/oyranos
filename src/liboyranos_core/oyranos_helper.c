@@ -193,8 +193,8 @@ void* oyAllocateFunc_           (size_t        size)
   if(ptr == 0)
 #endif
   {
-    if(oy_debug_memory != 0)
-      printf( OY_DBG_FORMAT_"allocate %d %lu + %lu byte in", OY_DBG_ARGS_,
+    if(oy_debug_memory != 0 || size == 0)
+      printf( OY_DBG_FORMAT_"allocate %d %lu + %lu byte in\n", OY_DBG_ARGS_,
               oy_allocs_count_, (unsigned long) size, (unsigned long) 2*sizeof(long));
 
     /* sizeof(long) is for better alignment and less valgrind positives 
