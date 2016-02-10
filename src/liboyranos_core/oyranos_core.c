@@ -211,6 +211,13 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_LIST_S: text = "(oyList_s)"; break;
     case oyOBJECT_LIS_S: text = "(oyLis_s)"; break;
     case oyOBJECT_MAX: text = "MAX - not defined"; break;
+    default: { icUInt32Number i = oyValueUInt32(type);
+               static char t[8];
+               memcpy (t,(char*)&i, 4);
+               t[4] = 0;
+               text = &t[0];
+               break;
+             }
   }
   return text;
 }
