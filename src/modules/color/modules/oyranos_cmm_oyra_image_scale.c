@@ -139,7 +139,7 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
 
       if(oyRectangle_CountPoints(  new_ticket_roi ) > 0)
       {
-        int nw,nh,w,h,x,y;
+        int nw,nh,w,h,x,y,xs,ys;
         oyArray2d_s * array_in,
                     * array_out;
         uint8_t ** array_in_data,
@@ -172,18 +172,29 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         nw = oyArray2d_GetWidth( array_in )/channels;
         nh = oyArray2d_GetHeight( array_in );
 
+        if(OY_ROUND(w/scale) > nw + 1 )
+          oyra_msg( oyMSG_ERROR, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_
+                     "node [%d] scale: %.02f %s -> %s/%s array %dx%d -> (%d) %dx%d",OY_DBG_ARGS_,
+                     oyStruct_GetId( (oyStruct_s*)node ), scale,
+                     oyRectangle_Show( new_ticket_roi ),
+                     oyRectangle_Show( ticket_roi ),
+                     oyRectangle_Show( roi_pix ),
+                     w,h, OY_ROUND(w/scale), nw,nh );
+
         /* do the scaling while copying the channels */
 #if defined(USE_OPENMP)
-#pragma omp parallel for private(x)
+#pragma omp parallel for private(x,xs,ys)
 #endif
         for(y = 0; y < h; ++y)
         {
-          if(y/scale >= nh) break;
+          ys = y/scale;
+          if(ys >= nh) break;
           for(x = 0; x < w; ++x)
           {
-            if(x/scale >= nw) continue;
+            xs = x/scale;
+            if(xs >= nw) continue;
             memcpy( &array_out_data[y][x*channels*bps_in],
-                    &array_in_data [(int)(y/scale)][(int)(x/scale)*channels*bps_in], channels*bps_in );
+                    &array_in_data [ys][xs*channels*bps_in], channels*bps_in );
           }
         }
 
