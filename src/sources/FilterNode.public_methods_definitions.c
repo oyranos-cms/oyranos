@@ -731,7 +731,7 @@ OYAPI oyFilterSocket_s * OYEXPORT
   oyFilterNode_s_ * node_ = (oyFilterNode_s_*)node;
 
   if(node_ && node_->type_ == oyOBJECT_FILTER_NODE_S &&
-     pos < oyFilterNode_EdgeCount( (oyFilterNode_s*)node_, 0, 0 ))
+     pos == 0 || (pos < oyFilterNode_EdgeCount( (oyFilterNode_s*)node_, 0, 0 )))
   {
     oyAlloc_f allocateFunc_ = node_->oy_->allocateFunc_;
 
