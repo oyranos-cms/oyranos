@@ -2429,12 +2429,13 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
       oyRectangle_Release( &r );
     }
     oyPixelAccess_SetArray( new_ticket, a );
+    if(oy_debug > 2)
+      lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s %d %dx%d",
+                OY_DBG_ARGS_, "Fill new_ticket->array from image_input",
+                oyStruct_GetId( (oyStruct_s*)image_input ),
+                oyArray2d_GetWidth(a), oyArray2d_GetHeight(a) );
     oyArray2d_Release( &a );
     oyRectangle_Release( & new_ticket_roi );
-    if(oy_debug > 2)
-      lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s %d",
-                OY_DBG_ARGS_, "Fill new_ticket->array from image_input",
-                oyStruct_GetId( (oyStruct_s*)image_input ) );
   }
 
   /* We let the input filter do its processing first. */
@@ -2450,14 +2451,14 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   array_in = oyPixelAccess_GetArray( new_ticket );
   array_out = oyPixelAccess_GetArray( ticket );
   if(oy_debug > 2)
-    lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s %d (%s %d)",
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s %d %dx%d (%s %d)",
               OY_DBG_ARGS_,"Read from new_ticket->array",
-              oyStruct_GetId( (oyStruct_s*)array_in ),
+              oyStruct_GetId( (oyStruct_s*)array_in ), oyArray2d_GetWidth(array_in), oyArray2d_GetHeight(array_in),
               _("Image"), oyStruct_GetId( (oyStruct_s*)image_input ) );
   if(oy_debug > 2)
-    lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"%s %d (%s %d)",
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"%s %d %dx%d (%s %d)",
               OY_DBG_ARGS_,"Write to ticket->array",
-              oyStruct_GetId( (oyStruct_s*)array_out ),
+              oyStruct_GetId( (oyStruct_s*)array_out ), oyArray2d_GetWidth(array_out), oyArray2d_GetHeight(array_out),
               _("Image"), oyStruct_GetId( (oyStruct_s*)image_input ) );
 
   data_type_in = oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) );
