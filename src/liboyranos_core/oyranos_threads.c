@@ -122,7 +122,7 @@ void       oyLock_                     ( oyPointer         lock,
   oyThread_t t = oyThreadSelf();
 
   {
-    if(oy_debug < 5)
+    if(oy_debug > 5)
       DBG_PROG4_S("%s %d thread[%d] ref:%d", marker, line, oyGetThreadID( t ), ms->ref );
     /* Get the resource, and probably wait for it. */
     oyMutexLock_m( &ms->m );
@@ -140,7 +140,7 @@ void       oyUnLock_                   ( oyPointer         lock,
   oyMutex_s * ms = (oyMutex_s*)lock;
 
   {
-    if(oy_debug < 5)
+    if(oy_debug > 5)
       DBG_PROG4_S("%s %d thread[%d] ref:%d", marker, line, oyGetThreadID( oyThreadSelf()), ms->ref );
     /* Lessen the reference counter one level. */
     ms->ref--;
