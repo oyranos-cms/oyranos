@@ -555,6 +555,16 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   array_width = array_roi_pix.x + array_roi_pix.width;
   array_height = array_roi_pix.y + array_roi_pix.height;
 
+  if(oy_debug > 2)
+  {
+    char * t = NULL;
+    STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&array_roi_pix ) );
+    DBGs_PROG4_S( image, "image_roi_pix: %s array_roi_pix: %s array_width: %d array_height: %d",
+                 oyRectangle_Show( (oyRectangle_s*)&image_roi_pix ),
+                 t, array_width, array_height );
+    oyFree_m_(t);
+  }
+
   if(!error &&
      (!a ||
       (a && ( array_width > oyRectanglePriv_m(&a->data_area)->width ||
@@ -657,6 +667,16 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
     wlen = image_roi_pix.width * data_size;
 
+    if(oy_debug > 2)
+    {
+      char * t = NULL;
+      STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&array_roi_pix ) );
+      DBGs_PROG4_S( image, "image_roi_pix: %s array_roi_pix: %s wlen(size_t): %lu image-hook:\"%s\"",
+                 oyRectangle_Show( (oyRectangle_s*)&image_roi_pix ),
+                 t, wlen, oyStructTypeToText( s->pixel_data->type_ ) );
+      oyFree_m_(t);
+    }
+
     if(allocate_method != 2)
     for( i = 0; i < image_roi_pix.height; )
     {
@@ -700,6 +720,8 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     error = 1;
   }
   }
+
+  DBGs_PROG1_S( image, "error: %d", error );
 
   if(error)
     oyArray2d_Release( (oyArray2d_s**)&a );
