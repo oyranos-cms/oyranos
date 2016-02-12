@@ -551,12 +551,34 @@ int      oyraFilterPlug_ImageLoadRun (
         if(file_read && image_pixel && found)
         {
           DBGs_PROG2_S( ticket, "%s={%s}", "Run ticket through api7",
-                       api7->registration );
-          result = api7->oyCMMFilterPlug_Run( requestor_plug, ticket );
+                        api7->registration );
+
+          oyOptions_s * opts = oyFilterNode_GetOptions( node, 0 );
+          oyFilterNode_s * format = oyFilterNode_NewWith( api7->registration, opts, 0 );
+          oyOptions_Release( &opts );
+
+          /* set the proper plug->socket, for detecting the calling node inside the filter's _Run method */
+          error = oyFilterNode_Connect( format, "//" OY_TYPE_STD "/data",
+                                        node, "//" OY_TYPE_STD "/data", 0 );
+          if(error)
+            WARNc1_S( "could not add  filter: %s\n", api7->registration );
+          oyFilterPlug_s * plug = oyFilterNode_GetPlug( node, 0 );
+          result = api7->oyCMMFilterPlug_Run( plug, ticket );
+
+          /* move the image to the old requestor_plug, as it is expected there */
+          oyFilterSocket_s * sock = oyFilterPlug_GetSocket( plug );
+          image = (oyImage_s*) oyFilterSocket_GetData( sock );
+          if(image)
+            oyFilterSocket_SetData( socket, (oyStruct_s*)image );
+
+          oyFilterNode_Release( &format );
+          oyFilterPlug_Release( &plug );
+          oyFilterSocket_Release( &sock );
+          oyImage_Release( &image );
           i = n;
         } else
           DBG_PROG2_S( "%s={%s}", "api7 not fitting",
-                      api7->registration );
+                       api7->registration );
 
         if(api->release)
           api->release( (oyStruct_s**)&api );

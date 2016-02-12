@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-02-10 17:10+0100\n"
+"POT-Creation-Date: 2016-02-11 20:00+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -342,7 +342,7 @@ msgstr "Oyranos Préférences"
 msgid "Apple CMM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1076
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1098
 msgid "Apply regions of interesst in form of simple rectangles."
 msgstr ""
 
@@ -1745,7 +1745,7 @@ msgstr ""
 msgid "Image[my_filter]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1467
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1489
 msgid "Image[out]"
 msgstr ""
 
@@ -1988,12 +1988,12 @@ msgid ""
 "extremely liberal open source license."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:708
+#: modules/color/modules/oyranos_cmm_oyra_image.c:730
 msgid "Load"
 msgstr "Ouvrir"
 
 #: modules/color/modules/oyranos_cmm_oyra_image.c:333
-#: modules/color/modules/oyranos_cmm_oyra_image.c:710
+#: modules/color/modules/oyranos_cmm_oyra_image.c:732
 #: modules/color/modules/oyranos_cmm_oJPG.c:758
 msgid "Load Image File Object"
 msgstr ""
@@ -2368,7 +2368,7 @@ msgstr "Sortie"
 msgid "Output Color Space"
 msgstr "Espace colorimétrique"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1469
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1491
 msgid "Output Image Filter Object"
 msgstr ""
 
@@ -2827,11 +2827,11 @@ msgstr ""
 msgid "Read PPM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1068
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1090
 msgid "Rectangles"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1070
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1092
 msgid "Rectangles Splitter Object"
 msgstr ""
 
@@ -2890,11 +2890,11 @@ msgstr ""
 msgid "Rgb"
 msgstr "Rvb"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1276
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1298
 msgid "Root Image"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1278
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1300
 msgid "Root Image Filter Object"
 msgstr ""
 
@@ -3231,7 +3231,7 @@ msgstr ""
 msgid "The dummy useless module of Oyranos."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1477
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1499
 msgid ""
 "The filter can query pixels from its successors in a graph. The results are "
 "stored in the internal buffer."
@@ -3246,7 +3246,7 @@ msgid ""
 "\"=string."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1475
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1497
 msgid "The filter is a possible pixel target in a graph."
 msgstr ""
 
@@ -3279,7 +3279,7 @@ msgstr ""
 msgid "The filter obtains a image from libraw."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1284
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1306
 msgid "The filter provides a generic image source."
 msgstr ""
 
@@ -3289,7 +3289,7 @@ msgid ""
 "graph through the user function oyConversion_Correct()."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1078
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1100
 msgid ""
 "The filter will expect a \"rectangle\" option and will create, fill and "
 "process a according rectangle with a new job ticket."
@@ -3490,7 +3490,7 @@ msgstr ""
 msgid "The raw image backend of Oyranos."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1286
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1308
 msgid "The root image filter can hold pixel data for processing in a graph."
 msgstr ""
 
@@ -3869,9 +3869,9 @@ msgstr ""
 
 #: API_generated/oyranos_devices.c:2592 API_generated/oyranos_devices.c:2603
 #: modules/color/modules/oyranos_cmm_oyra_image_scale.c:92
-#: modules/color/modules/oyranos_cmm_oyra_image.c:924
-#: modules/color/modules/oyranos_cmm_oyra_image.c:932
-#: modules/color/modules/oyranos_cmm_oyra_image.c:947
+#: modules/color/modules/oyranos_cmm_oyra_image.c:946
+#: modules/color/modules/oyranos_cmm_oyra_image.c:954
+#: modules/color/modules/oyranos_cmm_oyra_image.c:969
 #: modules/color/modules/oyranos_cmm_lcm2.c:3019
 #: modules/color/modules/oyranos_cmm_lcms.c:2362
 #: modules/color/modules/oyranos_cmm_oPNG.c:946
@@ -4355,8 +4355,8 @@ msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oyra_image.c:339
 #: modules/color/modules/oyranos_cmm_oyra_image.c:341
-#: modules/color/modules/oyranos_cmm_oyra_image.c:716
-#: modules/color/modules/oyranos_cmm_oyra_image.c:718
+#: modules/color/modules/oyranos_cmm_oyra_image.c:738
+#: modules/color/modules/oyranos_cmm_oyra_image.c:740
 msgid "unfinished"
 msgstr ""
 

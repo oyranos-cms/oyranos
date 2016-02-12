@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-02-10 17:10+0100\n"
+"POT-Creation-Date: 2016-02-11 20:00+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -327,7 +327,7 @@ msgstr "Details zu ICC Profilen in Ihrem System"
 msgid "Apple CMM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1076
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1098
 msgid "Apply regions of interesst in form of simple rectangles."
 msgstr "Wende Regionen an in Form von einfachen Rechtecken."
 
@@ -1716,7 +1716,7 @@ msgstr "Bild[lraw]"
 msgid "Image[my_filter]"
 msgstr "Bild[my_filter]"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1467
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1489
 msgid "Image[out]"
 msgstr "Bild[Ausgang]"
 
@@ -1950,12 +1950,12 @@ msgid ""
 "extremely liberal open source license."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:708
+#: modules/color/modules/oyranos_cmm_oyra_image.c:730
 msgid "Load"
 msgstr "Lade"
 
 #: modules/color/modules/oyranos_cmm_oyra_image.c:333
-#: modules/color/modules/oyranos_cmm_oyra_image.c:710
+#: modules/color/modules/oyranos_cmm_oyra_image.c:732
 #: modules/color/modules/oyranos_cmm_oJPG.c:758
 msgid "Load Image File Object"
 msgstr "Lade Bilddateiobjekt"
@@ -2314,7 +2314,7 @@ msgstr "Ausgabe"
 msgid "Output Color Space"
 msgstr "Ausgabefarbraum"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1469
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1491
 msgid "Output Image Filter Object"
 msgstr "Filterobjekt eines Ausgangsbildes"
 
@@ -2754,11 +2754,11 @@ msgstr "Lese PNG"
 msgid "Read PPM"
 msgstr "Lese PPM"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1068
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1090
 msgid "Rectangles"
 msgstr "Rechtecke"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1070
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1092
 msgid "Rectangles Splitter Object"
 msgstr "Rechteck Regionen Objekt"
 
@@ -2815,11 +2815,11 @@ msgstr "Übertragungsart für Farbtransformationen."
 msgid "Rgb"
 msgstr "Rgb"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1276
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1298
 msgid "Root Image"
 msgstr "Quellbild"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1278
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1300
 msgid "Root Image Filter Object"
 msgstr "iFilterObjekt eines Quellbildes"
 
@@ -3194,7 +3194,7 @@ msgstr ""
 msgid "The dummy useless module of Oyranos."
 msgstr "Das Beispielmodul für Oyranos"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1477
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1499
 msgid ""
 "The filter can query pixels from its successors in a graph. The results are "
 "stored in the internal buffer."
@@ -3211,7 +3211,7 @@ msgid ""
 "\"=string."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1475
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1497
 msgid "The filter is a possible pixel target in a graph."
 msgstr "Der Filter ist ein mögliches Rasterbildziel in einem Graphen."
 
@@ -3261,7 +3261,7 @@ msgstr ""
 msgid "The filter obtains a image from libraw."
 msgstr "Der Filter erhält Bilder von libraw."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1284
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1306
 msgid "The filter provides a generic image source."
 msgstr "Der Filter bietet eine allgemeine Bildquelle."
 
@@ -3274,7 +3274,7 @@ msgstr ""
 "mit Hilfe der oyConversion_Correct() Funktion auf einen Grafen angewendet "
 "werden."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1078
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1100
 msgid ""
 "The filter will expect a \"rectangle\" option and will create, fill and "
 "process a according rectangle with a new job ticket."
@@ -3570,7 +3570,7 @@ msgstr ""
 msgid "The raw image backend of Oyranos."
 msgstr "Das KameraRAW Bild Modul für Oyranos."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1286
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1308
 msgid "The root image filter can hold pixel data for processing in a graph."
 msgstr ""
 "Der Quellbildfilter kann Rasterdaten zur Bearbeitung in einen Graphen "
@@ -3948,9 +3948,9 @@ msgstr "daneben!"
 
 #: API_generated/oyranos_devices.c:2592 API_generated/oyranos_devices.c:2603
 #: modules/color/modules/oyranos_cmm_oyra_image_scale.c:92
-#: modules/color/modules/oyranos_cmm_oyra_image.c:924
-#: modules/color/modules/oyranos_cmm_oyra_image.c:932
-#: modules/color/modules/oyranos_cmm_oyra_image.c:947
+#: modules/color/modules/oyranos_cmm_oyra_image.c:946
+#: modules/color/modules/oyranos_cmm_oyra_image.c:954
+#: modules/color/modules/oyranos_cmm_oyra_image.c:969
 #: modules/color/modules/oyranos_cmm_lcm2.c:3019
 #: modules/color/modules/oyranos_cmm_lcms.c:2362
 #: modules/color/modules/oyranos_cmm_oPNG.c:946
@@ -4408,8 +4408,8 @@ msgstr "Unerwarteter user_data Typ"
 
 #: modules/color/modules/oyranos_cmm_oyra_image.c:339
 #: modules/color/modules/oyranos_cmm_oyra_image.c:341
-#: modules/color/modules/oyranos_cmm_oyra_image.c:716
-#: modules/color/modules/oyranos_cmm_oyra_image.c:718
+#: modules/color/modules/oyranos_cmm_oyra_image.c:738
+#: modules/color/modules/oyranos_cmm_oyra_image.c:740
 msgid "unfinished"
 msgstr "unvollendet"
 
