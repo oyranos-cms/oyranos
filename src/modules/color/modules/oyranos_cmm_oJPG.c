@@ -582,8 +582,6 @@ int      ojpgFilter_CmmRun           ( oyFilterPlug_s    * requestor_plug,
              OY_DBG_ARGS_, fsize );
 
 
-  pixel_type = oyChannels_m(3) | oyDataType_m(data_type); 
-
 
   /* get ICC Profile */
   {
@@ -687,6 +685,7 @@ int      ojpgFilter_CmmRun           ( oyFilterPlug_s    * requestor_plug,
              format, oyDataTypeToText(data_type), nchannels );
 
   /* create a Oyranos image */
+  pixel_type = oyChannels_m(nchannels) | oyDataType_m(data_type); 
   image_in = oyImage_Create( width, height, buf, pixel_type, prof, 0 );
 
   if (!image_in)
