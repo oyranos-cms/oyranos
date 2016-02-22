@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-02-11 20:00+0100\n"
+"POT-Creation-Date: 2016-02-14 11:18+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -1375,7 +1375,7 @@ msgid "File:            "
 msgstr "Velikost:    "
 
 #. The following strings must match the categories for a menu entry.
-#: modules/color/modules/oyranos_cmm_oJPG.c:773
+#: modules/color/modules/oyranos_cmm_oJPG.c:772
 #: modules/color/modules/oyranos_cmm_oPNG.c:552
 #: modules/color/modules/oyranos_cmm_oPNG.c:1167
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:267
@@ -2049,7 +2049,7 @@ msgstr "Načíst"
 
 #: modules/color/modules/oyranos_cmm_oyra_image.c:333
 #: modules/color/modules/oyranos_cmm_oyra_image.c:732
-#: modules/color/modules/oyranos_cmm_oJPG.c:758
+#: modules/color/modules/oyranos_cmm_oJPG.c:757
 msgid "Load Image File Object"
 msgstr "Načíst objekt obrázkového souboru"
 
@@ -2396,7 +2396,7 @@ msgstr "Volba \"filename\", platný název souboru existujícího PNG obrázku"
 msgid "Option \"filename\", a valid filename of a existing PPM image"
 msgstr "Volba \"soubor\", platné jméno souboru existujícího obrázku PPM"
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:764
+#: modules/color/modules/oyranos_cmm_oJPG.c:763
 #, fuzzy
 msgid "Option \"filename\", a valid filename of a existing image"
 msgstr "Volba \"filename\", platný název souboru existujícího PNG obrázku"
@@ -2870,7 +2870,7 @@ msgstr ""
 msgid "RawCamera"
 msgstr "RawCamera"
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:773
+#: modules/color/modules/oyranos_cmm_oJPG.c:772
 #, fuzzy
 msgid "Read"
 msgstr "Číst PNG"
@@ -3236,7 +3236,7 @@ msgstr ""
 "neutrální šedá. Poznámka: barvový prostor pro editaci je totéž co pracovní "
 "prostor."
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:766
+#: modules/color/modules/oyranos_cmm_oJPG.c:765
 #, fuzzy
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the image "
@@ -4461,7 +4461,7 @@ msgstr "profil nenalezen:"
 msgid "program is not properly installed or missed"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:756
+#: modules/color/modules/oyranos_cmm_oJPG.c:755
 msgid "read"
 msgstr ""
 

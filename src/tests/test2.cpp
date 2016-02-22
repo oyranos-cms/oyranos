@@ -3132,7 +3132,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
     for(int j = 0; j < texts_n; ++j)
     {
       //fprintf( zout, "%s\n", texts[j] );
-      if(strstr(texts[j],"EDID_serial") != NULL)
+      if(strstr(texts[j],"EDID_mnft_id") != NULL)
         ++edid_mnft_count;
     }
     // one single key is needed
@@ -3140,10 +3140,10 @@ oyTESTRESULT_e testCMMMonitorJSON ()
     // there is key duplication
     if( edid_mnft_count == 1 )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
-      "Found EDID_serial keys in meta tag: %d", edid_mnft_count );
+      "Found EDID_mnft_id keys in meta tag: %d", edid_mnft_count );
     } else
     { PRINT_SUB( oyTESTRESULT_FAIL,
-      "Found EDID_serial keys in meta tag: %d", edid_mnft_count );
+      "Found EDID_mnft_id keys in meta tag: %d", edid_mnft_count );
     }
 
     oyConfig_Release( &config );

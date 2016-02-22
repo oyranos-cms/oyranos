@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-02-11 20:00+0100\n"
+"POT-Creation-Date: 2016-02-14 11:18+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -1330,7 +1330,7 @@ msgid "File:            "
 msgstr ""
 
 #. The following strings must match the categories for a menu entry.
-#: modules/color/modules/oyranos_cmm_oJPG.c:773
+#: modules/color/modules/oyranos_cmm_oJPG.c:772
 #: modules/color/modules/oyranos_cmm_oPNG.c:552
 #: modules/color/modules/oyranos_cmm_oPNG.c:1167
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:267
@@ -1921,7 +1921,7 @@ msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oyra_image.c:333
 #: modules/color/modules/oyranos_cmm_oyra_image.c:732
-#: modules/color/modules/oyranos_cmm_oJPG.c:758
+#: modules/color/modules/oyranos_cmm_oJPG.c:757
 msgid "Load Image File Object"
 msgstr ""
 
@@ -2258,7 +2258,7 @@ msgstr ""
 msgid "Option \"filename\", a valid filename of a existing PPM image"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:764
+#: modules/color/modules/oyranos_cmm_oJPG.c:763
 msgid "Option \"filename\", a valid filename of a existing image"
 msgstr ""
 
@@ -2691,7 +2691,7 @@ msgstr ""
 msgid "RawCamera"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:773
+#: modules/color/modules/oyranos_cmm_oJPG.c:772
 msgid "Read"
 msgstr ""
 
@@ -3023,7 +3023,7 @@ msgid ""
 "called a working space."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:766
+#: modules/color/modules/oyranos_cmm_oJPG.c:765
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the image "
 "data from. If the file does not exist, a error will occure."
@@ -4052,7 +4052,7 @@ msgstr ""
 msgid "program is not properly installed or missed"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:756
+#: modules/color/modules/oyranos_cmm_oJPG.c:755
 msgid "read"
 msgstr ""
 
