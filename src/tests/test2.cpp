@@ -5481,8 +5481,10 @@ oyTESTRESULT_e testICCsCheck()
     }
 
 
-    uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
-                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
+    oyOptions_s * options = NULL;
+    oyOptions_SetFromText( &options, "////context", reg_pattern, OY_CREATE_NEW );
+    uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", options, 0 );
     oyProfile_s /** p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),*/
                 * p_in = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL ),
                 * p_out = oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, NULL );
@@ -5509,7 +5511,7 @@ oyTESTRESULT_e testICCsCheck()
                           oyDataType_m(buf_type_out),
                          p_out,
                          0 );
-    oyOptions_s * options = NULL;
+    oyOptions_Release( &options );
     oyOptions_SetFromText( &options, "////context", reg_pattern, OY_CREATE_NEW );
     oyOptions_SetFromText( &options, "////rendering_intent", "1", OY_CREATE_NEW );
     oyConversion_s * cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
