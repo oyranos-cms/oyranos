@@ -5570,6 +5570,7 @@ oyTESTRESULT_e testICCsCheck()
     for(j = 0; j < 12; ++j)
       if((equal = u16Equal((int)(buf_f32out2x2[j]*65535.0f), buf_16out2x2[j])) > max)
         max = equal;
+    int show_details = 0;
     /* Is the float conversion ~ equal to the integer math? */
     if(!error && (max <= delta))
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -5577,6 +5578,11 @@ oyTESTRESULT_e testICCsCheck()
     } else
     { PRINT_SUB( oyTESTRESULT_XFAIL,
       "relative colorimetric intent, integer equal float %3.5f[%g] %%", max*100.0, delta*100.0 );
+      show_details = 1;
+    }
+
+    if(show_details)
+    {
       fprintf( zout, "buf_f32in  %g %g %g   %g %g %g\n           %g %g %g   %g %g %g\n",
                buf_f32in2x2[0], buf_f32in2x2[1], buf_f32in2x2[2],
                buf_f32in2x2[3], buf_f32in2x2[4], buf_f32in2x2[5],
