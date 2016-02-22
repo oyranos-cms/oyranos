@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-02-14 11:18+0100\n"
+"POT-Creation-Date: 2016-02-22 12:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -167,28 +167,28 @@ msgstr ""
 msgid "install in the OpenIccDirectory icc path"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:371 liboyranos_config/oyranos_io.c:209
+#: API_generated/oyProfile_s.c:370 liboyranos_config/oyranos_io.c:209
 msgid "profile not found:"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:726
+#: API_generated/oyProfile_s.c:725
 msgid "Profile contains no description"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:739 API_generated/oyProfile_s.c:745
+#: API_generated/oyProfile_s.c:738 API_generated/oyProfile_s.c:744
 #: tools/oyranos_profiles.c:499
 msgid "Profile already installed"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:761 tools/oyranos_profile_tool.c:353
+#: API_generated/oyProfile_s.c:760 tools/oyranos_profile_tool.c:353
 msgid "Profile exists already"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:774
+#: API_generated/oyProfile_s.c:773
 msgid "Can not write profile"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:785 API_generated/oyranos_devices.c:1004
+#: API_generated/oyProfile_s.c:784 API_generated/oyranos_devices.c:1004
 #: liboyranos_core/oyranos_io_core.c:99 liboyranos_core/oyranos_io_core.c:244
 msgid "Could not open profile"
 msgstr ""

@@ -260,7 +260,6 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromName (
     }
 
     oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
-    oyDeAllocateFunc_(names); names = 0;
   }
 
   if(!s)
