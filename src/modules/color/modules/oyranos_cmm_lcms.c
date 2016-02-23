@@ -1331,7 +1331,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
                  * info = 0,
                  * cprt = 0;
   int profiles_n = 0,
-      profiles_proof_n = 0,
+      profiles_simulation_n = 0,
       proof = 0;
   int verbose = oyOptions_FindString( node_tags, "verbose", "true" ) ? 1 : 0;
   const char * o_txt = 0;
@@ -1451,7 +1451,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
                  OY_DBG_ARGS_, p?oyProfile_GetFileName( p,-1 ):"????");
 
         oyProfiles_MoveIn( profs, &p, -1 );
-        ++profiles_proof_n;
+        ++profiles_simulation_n;
 
         oyProfile_Release( &p );
       }
@@ -1477,7 +1477,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
 
   /* create the context */
   xform = lcmsCMMConversionContextCreate_( lps, profiles_n,
-                                           profiles, profiles_proof_n, proof,
+                                           profiles, profiles_simulation_n, proof,
                                 oyImage_GetPixelLayout( image_input, oyLAYOUT ),
                                 oyImage_GetPixelLayout( image_output, oyLAYOUT ),
                                            node_options, 0, 0);

@@ -1734,7 +1734,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
                  * info = 0,
                  * cprt = 0;
   int profiles_n = 0,
-      profiles_proof_n = 0,
+      profiles_simulation_n = 0,
       proof = 0;
   int verbose = oyOptions_FindString( node_tags, "verbose", "true" ) ? 1 : 0;
   const char * o_txt = 0;
@@ -1853,7 +1853,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
                  OY_DBG_ARGS_, p?oyProfile_GetFileName( p,-1 ):"????");
 
         error = oyProfiles_MoveIn( profs, &p, -1 );
-        ++profiles_proof_n;
+        ++profiles_simulation_n;
 
         oyProfile_Release( &p );
       }
@@ -1879,7 +1879,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
 
   /* create the context */
   xform = lcm2CMMConversionContextCreate_( node, lps, profiles_n,
-                                           profiles, profiles_proof_n, proof,
+                                           profiles, profiles_simulation_n, proof,
                                 oyImage_GetPixelLayout( image_input, oyLAYOUT ),
                                 oyImage_GetPixelLayout( image_output, oyLAYOUT ),
                                            node_options, 0, 0);
@@ -1902,9 +1902,9 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   } else
   {
     lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_"\n"
-              "loading failed profiles_n:%d profiles_proof_n:%d profiles:%d",
+              "loading failed profiles_n:%d profiles_simulation_n:%d profiles:%d",
               OY_DBG_ARGS_,
-              profiles_n, profiles_proof_n, oyProfiles_Count(profiles) );
+              profiles_n, profiles_simulation_n, oyProfiles_Count(profiles) );
     lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_"\n"
               "  input profile: \"%s\" %s %s->%s %s\n  %s",
               OY_DBG_ARGS_,
