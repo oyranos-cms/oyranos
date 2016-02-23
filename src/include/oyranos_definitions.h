@@ -210,4 +210,14 @@
 #define OY_DEFAULT_CMM_RENDERER_FALLBACK OY_CMM_STD OY_SLASH "renderer_fallback"
 
 
+/** key name for simulation profiles in a filter node; like for proofing
+ *  @since 0.9.6
+ */
+#define OY_PROFILES_SIMULATION               OY_PROFILE_STD OY_SLASH "profiles_simulation"
+/** key name for effect profiles in a filter node; like for sepia or b/w etc.
+ *  @since 0.9.6
+ */
+#define OY_PROFILES_EFFECT                   OY_PROFILE_STD OY_SLASH "profiles_effect"
+
+
 #endif /* OYRANOS_DEFINITIONS_H */
