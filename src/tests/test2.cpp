@@ -5482,7 +5482,7 @@ oyTESTRESULT_e testICCsCheck()
 
 
     oyOptions_s * options = NULL;
-    oyOptions_SetFromText( &options, "////context", reg_pattern, OY_CREATE_NEW );
+    oyOptions_SetFromText( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
     uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                        "//" OY_TYPE_STD "/icc_color", options, 0 );
     oyProfile_s /** p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),*/
@@ -5512,8 +5512,8 @@ oyTESTRESULT_e testICCsCheck()
                          p_out,
                          0 );
     oyOptions_Release( &options );
-    oyOptions_SetFromText( &options, "////context", reg_pattern, OY_CREATE_NEW );
-    oyOptions_SetFromText( &options, "////rendering_intent", "1", OY_CREATE_NEW );
+    oyOptions_SetFromText( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
+    oyOptions_SetFromText( &options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
     oyConversion_s * cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
     oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
     oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
