@@ -386,12 +386,12 @@ int main( int argc , char** argv )
       flags |= oyOPTIONATTRIBUTE_ADVANCED;
     if(oyProfiles_Count(effects))
       error = oyOptions_MoveInStruct( &module_options,
-                                     "//" OY_TYPE_STD "/config/profiles_effect",
+                                      OY_PROFILES_EFFECT,
                                        (oyStruct_s**) &effects,
                                        OY_CREATE_NEW );
     if(oyProfiles_Count(proofing))
       error = oyOptions_MoveInStruct( &module_options,
-                                      "//" OY_TYPE_STD "/config/profiles_proof",
+                                      OY_PROFILES_SIMULATION,
                                        (oyStruct_s**) &proofing,
                                        OY_CREATE_NEW );
 
