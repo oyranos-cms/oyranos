@@ -5457,6 +5457,22 @@ double u16TripleEqual(uint16_t a, uint16_t b, uint16_t c)
   return (double)delta/65535.0;
 }
 
+oyBlob_s * writeDL( oyConversion_s * cc, const char * reg_nick, int i )
+{
+  oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
+  oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+  oyBlob_s * blob = oyFilterNode_ToBlob( icc, NULL );
+  char * name = NULL;
+  oyStringAddPrintf( &name, 0,0,
+                         "test-dl-%s-%d-id-%d.icc", reg_nick, i, oyObject_GetId(icc->oy_) );
+  oyWriteMemToFile_( name, oyBlob_GetPointer( blob ), oyBlob_GetSize( blob) );
+  fprintf( zout, "wrote Device Link for inspection to %s\n", name );
+  oyFilterGraph_Release( &cc_graph );
+  oyFilterNode_Release( &icc );
+
+  return blob;
+}
+
 oyTESTRESULT_e testICCsCheck()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
@@ -5550,7 +5566,7 @@ oyTESTRESULT_e testICCsCheck()
     }
 
 
-    oyImage_Release( &input );
+    /*oyImage_Release( &input );*/
     oyImage_Release( &output );
     oyConversion_Release( &cc );
 
@@ -5594,17 +5610,9 @@ oyTESTRESULT_e testICCsCheck()
                buf_f32out2x2[6], buf_f32out2x2[7], buf_f32out2x2[8],
                buf_f32out2x2[9], buf_f32out2x2[10], buf_f32out2x2[11]);
 
-      oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
-      oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
-      oyBlob_s * blob = oyFilterNode_ToBlob( icc, NULL );
-      char * name = NULL;
-      oyStringAddPrintf( &name, 0,0,
-                         "test-dl-%s-%d-id-%d.icc", reg_nick, i, oyObject_GetId(icc->oy_) );
-      oyWriteMemToFile_( name, oyBlob_GetPointer( blob ), oyBlob_GetSize( blob) );
-      fprintf( zout, "wrote Device Link for inspection to %s\n", name );
-      oyFilterGraph_Release( &cc_graph );
-      oyFilterNode_Release( &icc );
-      oyBlob_Release( &blob );
+      oyBlob_s * b = writeDL( cc, reg_nick, i );
+      oyBlob_Release( &b );
+
       fprintf( zout, "options where: %s\n", oyOptions_GetText( options, oyNAME_NICK ) );
     }
 
@@ -5654,6 +5662,42 @@ oyTESTRESULT_e testICCsCheck()
     oyOptions_Release( &options );
     oyConversion_Release( &cc );
 
+
+    /* test multi profile transforms */
+    oyOptions_SetFromText( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
+    oyOptions_SetFromText( &options, OY_DEFAULT_RENDERING_INTENT, "0", OY_CREATE_NEW );
+    oyOptions_SetFromText( &options, OY_DEFAULT_PROOF_SOFT, "1", OY_CREATE_NEW );
+    oyProfile_s * p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, icc_profile_flags, NULL );
+    oyProfiles_s * proofing = oyProfiles_New(NULL);
+    oyProfiles_MoveIn( proofing, &p_cmyk, -1 );
+    error = oyOptions_MoveInStruct ( &options,
+                                     OY_PROFILES_SIMULATION,
+                                     (oyStruct_s**) &proofing,
+                                     OY_CREATE_NEW );
+    cc = oyConversion_CreateFromImage (
+                                input, options,
+                                p_out, oyUINT16, 0, 0 );
+    oyBlob_s * blob = writeDL( cc, reg_nick, i );
+    oyProfile_s * dl;
+    dl = oyProfile_FromMem( oyBlob_GetSize( blob ),
+                            oyBlob_GetPointer( blob ), 0,0 );
+    const char * fn;
+    j = 0;
+    while((fn = oyProfile_GetFileName( dl, j )) != NULL)
+      fprintf( zout, " -> \"%s\"[%d]", oyNoEmptyString_m_(fn), j++ );
+    fprintf( zout, "\n" );
+    oyBlob_Release( &blob );
+
+    if(!error && j == 3)
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "device link contains 2 profiles + simulation == %d", j );
+    } else
+    { PRINT_SUB( oyTESTRESULT_XFAIL,
+      "device link contains 2 profiles + simulation == %d", j );
+    }
+
+    oyOptions_Release( &options );
+    oyConversion_Release( &cc );
 
     oyProfile_Release( &p_in );
     oyProfile_Release( &p_out );
