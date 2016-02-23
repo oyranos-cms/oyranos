@@ -5608,8 +5608,53 @@ oyTESTRESULT_e testICCsCheck()
       fprintf( zout, "options where: %s\n", oyOptions_GetText( options, oyNAME_NICK ) );
     }
 
+    buf_f32in2x2[0] = 0.0;
+    buf_f32in2x2[1] = 0.0;
+    buf_f32in2x2[2] = 1.0;
+    error = oyConversion_RunPixels( cc, NULL );
+    float blue[3] = { buf_f32out2x2[0], buf_f32out2x2[1], buf_f32out2x2[2] };
     oyOptions_Release( &options );
     oyConversion_Release( &cc );
+
+
+    oyOptions_SetFromText( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
+    oyOptions_SetFromText( &options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
+    oyOptions_SetFromText( &options, OY_DEFAULT_PROOF_SOFT, "1", OY_CREATE_NEW );
+    cc = oyConversion_CreateBasicPixelsFromBuffers(
+                              p_in, buf_f32in2x2, oyDataType_m(buf_type_in),
+                              p_out, buf_f32out2x2, oyDataType_m(buf_type_out),
+                                                    options, 4 );
+    error = oyOptions_SetFromText( &options,
+                                     "//"OY_TYPE_STD"/config/display_mode", "1",
+                                     OY_CREATE_NEW );
+    /* activate policy */
+    error = oyConversion_Correct( cc, "//" OY_TYPE_STD "/icc_color", oyOPTIONATTRIBUTE_ADVANCED, options);
+    error = oyConversion_RunPixels( cc, NULL );
+    /* Is the float conversion ~ equal to the integer math? */
+    if(!error && (blue[0] != buf_f32out2x2[0] ||
+                  blue[1] != buf_f32out2x2[1] ||
+                  blue[2] != buf_f32out2x2[2]    ))
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "relative colorimetric intent, simulation blue  %g %g", blue[0], buf_f32out2x2[0] );
+    } else
+    { PRINT_SUB( oyTESTRESULT_XFAIL,
+      "relative colorimetric intent, simulation blue  %g %g", blue[0], buf_f32out2x2[0] );
+      show_details = 1;
+    }
+
+    if(show_details)
+    {
+      fprintf( zout, "buf_f32in  %g %g %g\n",
+               buf_f32in2x2[0], buf_f32in2x2[1], buf_f32in2x2[2]);
+      fprintf( zout, "previous   %g %g %g\n",
+               blue[0], blue[1], blue[2]);
+      fprintf( zout, "simulation %g %g %g\n",
+               buf_f32out2x2[0], buf_f32out2x2[1], buf_f32out2x2[2]);
+    }
+    oyOptions_Release( &options );
+    oyConversion_Release( &cc );
+
+
     oyProfile_Release( &p_in );
     oyProfile_Release( &p_out );
 
