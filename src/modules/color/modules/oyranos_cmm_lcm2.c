@@ -1064,7 +1064,8 @@ oyPointer  lcm2CMMColorConversion_ToMem_ (
       lcmsSaveProfileToMem( dl, data, &size_ );
     } else
       lcm2_msg( oyMSG_WARN, (oyStruct_s*)opts,
-             OY_DBG_FORMAT_"can not convert CMM profile to memory" );
+                OY_DBG_FORMAT_"can not convert CMM profile to memory",
+                OY_DBG_ARGS_ );
     *size = size_;
   }
 

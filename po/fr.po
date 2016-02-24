@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-02-24 10:11+0100\n"
+"POT-Creation-Date: 2016-02-24 10:27+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -49,8 +49,8 @@ msgstr ""
 msgid "-v verbose"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3362
-#: modules/color/modules/oyranos_cmm_lcm2.c:3365
+#: modules/color/modules/oyranos_cmm_lcm2.c:3363
+#: modules/color/modules/oyranos_cmm_lcm2.c:3366
 #: modules/color/modules/oyranos_cmm_lcms.c:2694
 #: modules/color/modules/oyranos_cmm_lcms.c:2697
 #: modules/color/modules/oyranos_cmm_oPNG.c:553
@@ -300,11 +300,11 @@ msgstr "Ouvrir Profil"
 msgid "Active matrix monitor"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2939
+#: modules/color/modules/oyranos_cmm_lcm2.c:2940
 msgid "Adaptation State"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2942
+#: modules/color/modules/oyranos_cmm_lcm2.c:2943
 msgid "Adaptation state for absolute colorimetric intent"
 msgstr ""
 
@@ -497,7 +497,7 @@ msgstr ""
 msgid "Black"
 msgstr "Noir"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2861
+#: modules/color/modules/oyranos_cmm_lcm2.c:2862
 #: modules/color/modules/oyranos_cmm_lcms.c:2240
 msgid "Black Preservation"
 msgstr ""
@@ -577,7 +577,7 @@ msgstr ""
 
 #. CMM: abbreviation for Color Matching Module
 #: API_generated/oyranos_profile.c:38 liboyranos_config/oyranos_texts.c:263
-#: modules/color/modules/oyranos_cmm_lcm2.c:3364
+#: modules/color/modules/oyranos_cmm_lcm2.c:3365
 #: modules/color/modules/oyranos_cmm_lcms.c:2696
 msgid "CMM"
 msgstr ""
@@ -632,8 +632,8 @@ msgstr ""
 msgid "Cathode ray tube display"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3140
-#: modules/color/modules/oyranos_cmm_lcm2.c:3213
+#: modules/color/modules/oyranos_cmm_lcm2.c:3141
+#: modules/color/modules/oyranos_cmm_lcm2.c:3214
 #: modules/color/modules/oyranos_cmm_lcms.c:2472
 #: modules/color/modules/oyranos_cmm_lcms.c:2545
 msgid "Check if LittleCMS can handle a certain command."
@@ -667,7 +667,7 @@ msgstr "Cmy"
 msgid "Cmyk"
 msgstr "Cmyk"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2867
+#: modules/color/modules/oyranos_cmm_lcm2.c:2868
 msgid ""
 "Cmyk to Cmyk transforms can provide various strategies to preserve the black "
 "only channel. None means, black might change to Cmy and thus text prints not "
@@ -694,7 +694,7 @@ msgid "Collections of settings in Oyranos"
 msgstr ""
 
 #. The following strings must match the categories for a menu entry.
-#: modules/color/modules/oyranos_cmm_lcm2.c:3361
+#: modules/color/modules/oyranos_cmm_lcm2.c:3362
 #: modules/color/modules/oyranos_cmm_lcms.c:2693
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:833
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:872
@@ -718,11 +718,11 @@ msgstr "Espace colorimétrique"
 msgid "Color Space for Simulating real devices"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2920
+#: modules/color/modules/oyranos_cmm_lcm2.c:2921
 msgid "Color Transform CLUT's can additionally use curves for special cases"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2890
+#: modules/color/modules/oyranos_cmm_lcm2.c:2891
 #: modules/color/modules/oyranos_cmm_lcms.c:2269
 msgid "Color Transforms can be differently stored internally"
 msgstr ""
@@ -877,7 +877,7 @@ msgstr "Copyright"
 msgid "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3473
+#: modules/color/modules/oyranos_cmm_lcm2.c:3474
 msgid "Copyright (c) 1998-2013 Marti Maria Saguer; MIT"
 msgstr ""
 
@@ -1009,20 +1009,20 @@ msgstr ""
 msgid "Create 3D CLUT"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3146
+#: modules/color/modules/oyranos_cmm_lcm2.c:3147
 #: modules/color/modules/oyranos_cmm_lcms.c:2478
 msgid "Create a ICC abstract proofing profile."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3219
-#: modules/color/modules/oyranos_cmm_lcm2.c:3227
+#: modules/color/modules/oyranos_cmm_lcm2.c:3220
+#: modules/color/modules/oyranos_cmm_lcm2.c:3228
 #: modules/color/modules/oyranos_cmm_lcms.c:2551
 #: modules/color/modules/oyranos_cmm_lcms.c:2559
 #, fuzzy
 msgid "Create a ICC matrix profile."
 msgstr "ICC Profils"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3154
+#: modules/color/modules/oyranos_cmm_lcm2.c:3155
 #: modules/color/modules/oyranos_cmm_lcms.c:2486
 #, fuzzy
 msgid "Create a ICC proofing profile."
@@ -1051,7 +1051,7 @@ msgstr ""
 msgid "Currently active policy:"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2917
+#: modules/color/modules/oyranos_cmm_lcm2.c:2918
 #, fuzzy
 msgid "Curves for Optimization"
 msgstr "Options"
@@ -1080,7 +1080,7 @@ msgstr ""
 msgid "Debug"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2864
+#: modules/color/modules/oyranos_cmm_lcm2.c:2865
 #: modules/color/modules/oyranos_cmm_lcms.c:2243
 msgid "Decide how to preserve the black channel for Cmyk to Cmyk transforms"
 msgstr ""
@@ -1320,7 +1320,7 @@ msgstr ""
 msgid "Exit!"
 msgstr "Édition"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2856
+#: modules/color/modules/oyranos_cmm_lcm2.c:2857
 #: modules/color/modules/oyranos_cmm_lcms.c:2235
 #, fuzzy
 msgid "Extended Options"
@@ -1702,8 +1702,8 @@ msgid "Illuminant:      "
 msgstr "Luminance Y"
 
 #: liboyranos/oyranos_cmm.c:228 liboyranos/oyranos_cmm.c:252
-#: modules/color/modules/oyranos_cmm_lcm2.c:2472
-#: modules/color/modules/oyranos_cmm_lcm2.c:2477
+#: modules/color/modules/oyranos_cmm_lcm2.c:2473
+#: modules/color/modules/oyranos_cmm_lcm2.c:2478
 #: modules/color/modules/oyranos_cmm_oPNG.c:1101
 msgid "Image"
 msgstr ""
@@ -1937,7 +1937,7 @@ msgstr "ICC Profils"
 msgid "Little CMS"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3457
+#: modules/color/modules/oyranos_cmm_lcm2.c:3458
 msgid "Little CMS 2"
 msgstr ""
 
@@ -1946,14 +1946,14 @@ msgstr ""
 msgid "Little CMS CMM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2923
+#: modules/color/modules/oyranos_cmm_lcm2.c:2924
 msgid ""
 "Little CMS can use curves before and after CLUT's for special cases like "
 "gamma encoded values to and from linear gamma values. Performance will "
 "suffer."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2893
+#: modules/color/modules/oyranos_cmm_lcm2.c:2894
 #: modules/color/modules/oyranos_cmm_lcms.c:2272
 msgid ""
 "Little CMS tries to optimize profile chains whatever possible. There are "
@@ -1966,7 +1966,7 @@ msgid ""
 "discussion of the flags."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3459
+#: modules/color/modules/oyranos_cmm_lcm2.c:3460
 msgid ""
 "LittleCMS 2 is a CMM, a color management engine; it implements fast "
 "transforms between ICC profiles. \"Little\" stands for its small overhead. "
@@ -2079,7 +2079,7 @@ msgstr ""
 msgid "MIT"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3475
+#: modules/color/modules/oyranos_cmm_lcm2.c:3476
 #: modules/color/modules/oyranos_cmm_lcms.c:2807
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:947
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:990
@@ -2326,7 +2326,7 @@ msgstr ""
 msgid "Operating System"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2887
+#: modules/color/modules/oyranos_cmm_lcm2.c:2888
 #: modules/color/modules/oyranos_cmm_lcms.c:2266
 #, fuzzy
 msgid "Optimization"
@@ -3193,7 +3193,7 @@ msgid ""
 "data into. A existing file will be overwritten without notice."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2945
+#: modules/color/modules/oyranos_cmm_lcm2.c:2946
 msgid ""
 "The adaption state should be between 0 and 1.0 and will apply to the "
 "absolute colorimetric intent."
@@ -3301,7 +3301,7 @@ msgid ""
 "a according data version with a new job ticket."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3483
+#: modules/color/modules/oyranos_cmm_lcm2.c:3484
 msgid ""
 "The following options are available to create color contexts:\n"
 " \"profiles_simulation\", a option of type oyProfiles_s, can contain device "
@@ -3350,7 +3350,7 @@ msgid ""
 "is ICC device link based, to the internal lcms format."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3481
+#: modules/color/modules/oyranos_cmm_lcm2.c:3482
 msgid ""
 "The lcms \"color_icc\" filter is a one dimensional color conversion filter. "
 "It can both create a color conversion context, some precalculated for "
@@ -3359,7 +3359,7 @@ msgid ""
 "is ICC device link based, to the internal lcms format."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3229
+#: modules/color/modules/oyranos_cmm_lcm2.c:3230
 #: modules/color/modules/oyranos_cmm_lcms.c:2561
 msgid ""
 "The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
@@ -3367,7 +3367,7 @@ msgid ""
 "\" info item."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3221
+#: modules/color/modules/oyranos_cmm_lcm2.c:3222
 msgid ""
 "The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
 "profiles from some given colorimetric coordinates. The filter expects a "
@@ -3402,7 +3402,7 @@ msgid ""
 "proofing_effect\" as a oyProfile_s object."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3148
+#: modules/color/modules/oyranos_cmm_lcm2.c:3149
 msgid ""
 "The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
 "abstract profiles from a given ICC profile for proofing. The filter expects "
@@ -3415,7 +3415,7 @@ msgid ""
 "oyProfile_s object."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3156
+#: modules/color/modules/oyranos_cmm_lcm2.c:3157
 #: modules/color/modules/oyranos_cmm_lcms.c:2488
 msgid ""
 "The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
@@ -3761,8 +3761,8 @@ msgid ""
 "profiles."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3138
-#: modules/color/modules/oyranos_cmm_lcm2.c:3211
+#: modules/color/modules/oyranos_cmm_lcm2.c:3139
+#: modules/color/modules/oyranos_cmm_lcm2.c:3212
 #: modules/color/modules/oyranos_cmm_lcms.c:2470
 #: modules/color/modules/oyranos_cmm_lcms.c:2543
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1910
@@ -3872,7 +3872,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oyra_image.c:946
 #: modules/color/modules/oyranos_cmm_oyra_image.c:954
 #: modules/color/modules/oyranos_cmm_oyra_image.c:969
-#: modules/color/modules/oyranos_cmm_lcm2.c:3037
+#: modules/color/modules/oyranos_cmm_lcm2.c:3038
 #: modules/color/modules/oyranos_cmm_lcms.c:2362
 #: modules/color/modules/oyranos_cmm_oPNG.c:946
 #: modules/color/modules/devices/oyranos_monitor_x11.c:167
@@ -4022,12 +4022,12 @@ msgstr ""
 msgid "linux system path"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3366
+#: modules/color/modules/oyranos_cmm_lcm2.c:3367
 #: modules/color/modules/oyranos_cmm_lcms.c:2698
 msgid "littleCMS"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3467
+#: modules/color/modules/oyranos_cmm_lcm2.c:3468
 msgid ""
 "littleCMS 2 project; www: http://www.littlecms.com; support/email: "
 "support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "
@@ -4239,7 +4239,7 @@ msgstr "Ouvrir Profil"
 msgid "read input stream"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2461
+#: modules/color/modules/oyranos_cmm_lcm2.c:2462
 msgid "running new ticket failed"
 msgstr ""
 
