@@ -1942,10 +1942,8 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
         return NULL;
 
       prof = oyProfile_FromMem( size_, block, 0, 0 );
-      psid = oyProfile_GetTagById( prof, icSigProfileSequenceIdentifierTag );
 
       /* icSigProfileSequenceIdentifierType */
-      if(!psid)
       {
         oyStructList_s * list = oyStructList_New(0);
         int i, n = oyProfiles_Count( profs );
