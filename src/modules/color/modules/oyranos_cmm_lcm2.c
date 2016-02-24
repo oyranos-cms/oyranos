@@ -1062,7 +1062,9 @@ oyPointer  lcm2CMMColorConversion_ToMem_ (
     {
       data = allocateFunc( size_ );
       lcmsSaveProfileToMem( dl, data, &size_ );
-    }
+    } else
+      lcm2_msg( oyMSG_WARN, (oyStruct_s*)opts,
+             OY_DBG_FORMAT_"can not convert CMM profile to memory" );
     *size = size_;
   }
 
@@ -1228,7 +1230,10 @@ cmsHPROFILE  lcm2AddProofProfile     ( oyProfile_s       * proof,
     if(hp)
     {
       /* save to memory */
-      lcmsSaveProfileToMem( hp, 0, &size );
+      if(!lcmsSaveProfileToMem( hp, 0, &size ))
+        lcm2_msg( oyMSG_WARN, (oyStruct_s*)proof,
+             OY_DBG_FORMAT_"lcmsSaveProfileToMem failed for \"%s\" %s",
+             OY_DBG_ARGS_, hash_text, oyProfile_GetFileName( proof, -1 ) );
       block = oyAllocateFunc_( size );
       lcmsSaveProfileToMem( hp, block, &size );
       lcmsCloseProfile( hp ); hp = 0;
@@ -1573,6 +1578,13 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       seg[0].Params[4] = 0;
 
       t[0] = t[1] = t[2] = lcmsBuildSegmentedToneCurve(tc, 1, seg);
+      if(!t[0])
+      {
+        lcm2_msg( oyMSG_WARN, (oyStruct_s*)proof, OY_DBG_FORMAT_ " "
+                 "failure in cmsBuildSegmentedToneCurve,  used version:%d",
+                 OY_DBG_ARGS_, lcmsGetEncodedCMMversion() );
+        goto clean;
+      }
       /* float */
       /* cmsPipeline owns the cmsStage memory */
       lcmsPipelineInsertStage( gmt_pl, cmsAT_BEGIN,
@@ -1672,6 +1684,10 @@ int          lcm2MOptions_Handle2    ( oyOptions_s       * options,
       if(hp)
       {
         lcmsSaveProfileToMem( hp, 0, &size );
+        if(!size)
+          lcm2_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
+             "lcmsSaveProfileToMem failed with command: %s",
+             OY_DBG_ARGS_, command );
         block = oyAllocateFunc_( size );
         lcmsSaveProfileToMem( hp, block, &size );
         lcmsCloseProfile( hp ); hp = 0;
@@ -3004,6 +3020,10 @@ oyProfile_s *      lcm2CreateICCMatrixProfile (
     lcmsSetProfileVersion(lp, 2.1);
 
   lcmsSaveProfileToMem( lp, 0, &size );
+  if(!size)
+    lcm2_msg( oyMSG_WARN,0, OY_DBG_FORMAT_
+             "lcmsSaveProfileToMem failed for: red: %g %g %g green: %g %g %g blue: %g %g %g white: %g %g gamma: %g",
+             OY_DBG_ARGS_, rx,ry,p.Red.Y, gx,gy,p.Green.Y,bx,by,p.Blue.Y,wx,wy,gamma );
   data = oyAllocateFunc_( size );
   lcmsSaveProfileToMem( lp, data, &size );
   lcmsCloseProfile( lp );
