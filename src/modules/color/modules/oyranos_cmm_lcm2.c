@@ -262,9 +262,14 @@ static cmsToneCurve* (*lcmsBuildGamma)(cmsContext ContextID, cmsFloat64Number Ga
 static cmsToneCurve*(*lcmsBuildSegmentedToneCurve)(cmsContext ContextID, cmsInt32Number nSegments, const cmsCurveSegment Segments[]) = NULL;
 static cmsToneCurve*(*lcmsBuildParametricToneCurve)(cmsContext ContextID, cmsInt32Number Type, const cmsFloat64Number Parameters[]) = NULL;
 static void (*lcmsFreeToneCurve)(cmsToneCurve* Curve) = NULL;
-static cmsPipeline*(*lcmsPipelineAlloc)(cmsContext ContextID, cmsUInt32Number InputChannels, cmsUInt32Number OutputChannels) = NULL;
-static int (*lcmsPipelineInsertStage)(cmsPipeline* lut, cmsStageLoc loc, cmsStage* mpe) = NULL;
-static void (*lcmsPipelineFree)(cmsPipeline* lut) = NULL;
+static cmsPipeline*      (*lcmsPipelineAlloc)              (cmsContext ContextID, cmsUInt32Number InputChannels, cmsUInt32Number OutputChannels) = NULL;
+static int               (*lcmsPipelineInsertStage)        (cmsPipeline* lut, cmsStageLoc loc, cmsStage* mpe) = NULL;
+static void              (*lcmsPipelineFree)               (cmsPipeline* lut) = NULL;
+static cmsStage*         (*lcmsPipelineGetPtrToFirstStage) (cmsPipeline* lut ) = NULL;
+static cmsStageSignature (*lcmsStageType) (cmsStage* stage) = NULL;
+static cmsStage*         (*lcmsStageNext) (cmsStage* next ) = NULL;
+static int               (*lcmsStageInputChannels)         (cmsStage* stage) = NULL;
+static int               (*lcmsStageOutputChannels)        (cmsStage* stage) = NULL;
 static cmsStage*(*lcmsStageAllocCLut16bit)(cmsContext ContextID, cmsUInt32Number nGridPoints, cmsUInt32Number inputChan, cmsUInt32Number outputChan, const cmsUInt16Number* Table) = NULL;
 static cmsStage*(*lcmsStageAllocCLutFloat)(cmsContext ContextID, cmsUInt32Number nGridPoints, cmsUInt32Number inputChan, cmsUInt32Number outputChan, const cmsFloat32Number* Table) = NULL;
 static cmsBool (*lcmsStageSampleCLut16bit)(cmsStage* mpe,    cmsSAMPLER16 Sampler, void* Cargo, cmsUInt32Number dwFlags) = NULL;
@@ -369,6 +374,11 @@ int                lcm2CMMInit       ( oyStruct_s        * filter )
       LOAD_FUNC( cmsPipelineAlloc, NULL );
       LOAD_FUNC( cmsPipelineFree, NULL );
       LOAD_FUNC( cmsPipelineInsertStage, NULL );
+      LOAD_FUNC( cmsPipelineGetPtrToFirstStage, NULL );
+      LOAD_FUNC( cmsStageType, NULL );
+      LOAD_FUNC( cmsStageNext, NULL );
+      LOAD_FUNC( cmsStageInputChannels, NULL );
+      LOAD_FUNC( cmsStageOutputChannels, NULL );
       LOAD_FUNC( cmsStageAllocCLut16bit, NULL );
       LOAD_FUNC( cmsStageAllocCLutFloat, NULL );
       LOAD_FUNC( cmsStageSampleCLut16bit, NULL );
@@ -1403,6 +1413,54 @@ int  gamutCheckSamplerFloat          ( const cmsFloat32Number In[],
   return TRUE;
 }
 
+const char *       oyICCMpeDescription(cmsStageSignature sig, int type )
+{
+  switch ((unsigned int)sig)
+  {
+    // Multi process elements types
+    case cmsSigCurveSetElemType: return type ? "cvst" : _("Curve Set");
+    case cmsSigMatrixElemType:   return type ? "matf" : _("Matrix");
+    case cmsSigCLutElemType:     return type ? "clut" : _("Look Up Table");
+
+    case cmsSigBAcsElemType:     return type ? "bACS" : _("BAcs");
+    case cmsSigEAcsElemType:     return type ? "eACS" : _("EAcs");
+
+    // Custom from here, not in the ICC Spec
+    case cmsSigXYZ2LabElemType:  return type ? "l2x " : _("XYZ2Lab");
+    case cmsSigLab2XYZElemType:  return type ? "x2l " : _("Lab2XYZ");
+    case cmsSigNamedColorElemType: return type ? "ncl " : _("Named Color");
+    case cmsSigLabV2toV4:          return type ? "2 4 " : _("V2toV4");
+    case cmsSigLabV4toV2:          return type ? "4 2 " : _("V4toV2");
+  
+    // Identities
+    case cmsSigIdentityElemType:   return type ? "idn " : _("Identity");
+
+    // Float to floatPCS
+    case cmsSigLab2FloatPCS:       return type ? "d2l '" : _("Lab2FloatPCS");
+    case cmsSigFloatPCS2Lab:       return type ? "l2d '" : _("FloatPCS2Lab");
+    case cmsSigXYZ2FloatPCS:       return type ? "d2x '" : _("XYZ2FloatPCS");
+    case cmsSigFloatPCS2XYZ:       return type ? "x2d '" : _("FloatPCS2XYZ");
+    case cmsSigClipNegativesElemType: return type ? "clp '" : _("Clip Negatives");
+
+    case 0: return _("----");
+    default: { static union { char c[8]; cmsStageSignature sig; } stage_sig = { .c[4] = 0 };
+               stage_sig.sig = (cmsStageSignature)oyValueUInt32( sig );
+               return stage_sig.c;
+             }
+  }
+}
+
+void printPipeline( cmsPipeline * lut )
+{
+  cmsStage * first = lcmsPipelineGetPtrToFirstStage(lut),
+           * next = first;
+  int i = 0;
+  do {
+    fprintf(stderr, "stage[%d] %s %d -> %d\n", i, oyICCMpeDescription(lcmsStageType(next),oyNAME_NAME), lcmsStageInputChannels(next), lcmsStageOutputChannels(next) );
+    ++i;
+  } while ((next = lcmsStageNext( next )) != NULL);
+   
+}
 
 /** Function lcm2GamutCheckAbstract
  *  @brief   convert a proofing profile into a abstract one
@@ -1620,6 +1678,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       lcmsPipelineInsertStage( gmt_pl, cmsAT_END,
                               lcmsStageAllocToneCurves( tc, 3, t ) );
       r = lcmsWriteTag( gmt, cmsSigDToB0Tag, gmt_pl ); E
+      if(oy_debug) printPipeline(gmt_pl);
 
       /* 16-bit int */
       g[0] = g[1] = g[2] = lcmsBuildGamma(tc, 1.0);
@@ -1629,6 +1688,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       lcmsPipelineInsertStage( gmt_pl16, cmsAT_END,
                               lcmsStageAllocToneCurves( tc, 3, g ) );
       r = lcmsWriteTag( gmt, cmsSigAToB0Tag, gmt_pl16 ); E
+      if(oy_debug) printPipeline(gmt_pl16);
 #undef E
 
   if(oy_debug)
