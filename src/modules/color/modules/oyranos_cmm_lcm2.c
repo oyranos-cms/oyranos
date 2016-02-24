@@ -194,6 +194,8 @@ static int lcms_initialised = 0; /* 0 - need init; 1 - successful init; -1 - err
 static void * lcms_handle = NULL;
 
 static void (*lcmsSetLogErrorHandler)(cmsLogErrorHandlerFunction Fn) = NULL;
+static void (*lcmsSetLogErrorHandlerTHR)(      cmsContext ContextID,
+                                               cmsLogErrorHandlerFunction Fn) = NULL;
 static icColorSpaceSignature (*lcmsGetColorSpace)(cmsHPROFILE hProfile) = NULL;
 static icColorSpaceSignature (*lcmsGetPCS)(cmsHPROFILE hProfile) = NULL;
 static icProfileClassSignature (*lcmsGetDeviceClass)(cmsHPROFILE hProfile) = NULL;
@@ -258,6 +260,7 @@ static void (*lcmsSetColorSpace)(cmsHPROFILE hProfile, icColorSpaceSignature sig
 static void (*lcmsSetPCS)(cmsHPROFILE hProfile, icColorSpaceSignature pcs) = NULL;
 static cmsToneCurve* (*lcmsBuildGamma)(cmsContext ContextID, cmsFloat64Number Gamma) = NULL;
 static cmsToneCurve*(*lcmsBuildSegmentedToneCurve)(cmsContext ContextID, cmsInt32Number nSegments, const cmsCurveSegment Segments[]) = NULL;
+static cmsToneCurve*(*lcmsBuildParametricToneCurve)(cmsContext ContextID, cmsInt32Number Type, const cmsFloat64Number Parameters[]) = NULL;
 static void (*lcmsFreeToneCurve)(cmsToneCurve* Curve) = NULL;
 static cmsPipeline*(*lcmsPipelineAlloc)(cmsContext ContextID, cmsUInt32Number InputChannels, cmsUInt32Number OutputChannels) = NULL;
 static int (*lcmsPipelineInsertStage)(cmsPipeline* lut, cmsStageLoc loc, cmsStage* mpe) = NULL;
@@ -333,6 +336,7 @@ int                lcm2CMMInit       ( oyStruct_s        * filter )
     } else
     {
       LOAD_FUNC( cmsSetLogErrorHandler, NULL );
+      LOAD_FUNC( cmsSetLogErrorHandlerTHR, NULL );
       LOAD_FUNC( cmsGetColorSpace, NULL );
       LOAD_FUNC( cmsGetPCS, NULL );
       LOAD_FUNC( cmsGetDeviceClass, NULL );
@@ -360,6 +364,7 @@ int                lcm2CMMInit       ( oyStruct_s        * filter )
       LOAD_FUNC( cmsSetPCS, NULL );
       LOAD_FUNC( cmsBuildGamma, NULL );
       LOAD_FUNC( cmsBuildSegmentedToneCurve, NULL );
+      LOAD_FUNC( cmsBuildParametricToneCurve, NULL );
       LOAD_FUNC( cmsFreeToneCurve, NULL );
       LOAD_FUNC( cmsPipelineAlloc, NULL );
       LOAD_FUNC( cmsPipelineFree, NULL );
@@ -391,6 +396,10 @@ int                lcm2CMMInit       ( oyStruct_s        * filter )
       LOAD_FUNC( cmsGetEncodedCMMversion, dummyGetEncodedCMMversion );
       if(lcmsSetLogErrorHandler)
         lcmsSetLogErrorHandler( lcm2ErrorHandlerFunction );
+      else
+          lcm2_msg( oyMSG_WARN, (oyStruct_s*)NULL,
+                    OY_DBG_FORMAT_"can not set error handler %d %d",
+                    OY_DBG_ARGS_, lcmsGetEncodedCMMversion, LCMS_VERSION );
       if(lcmsGetEncodedCMMversion() != LCMS_VERSION)
           lcm2_msg( oyMSG_WARN, (oyStruct_s*)NULL,
                     OY_DBG_FORMAT_" compile and run time version differ %d %d",
@@ -547,6 +556,7 @@ int          lcm2CMMData_Open        ( oyStruct_s        * data,
 #else
     {
       cmsContext tc = lcmsCreateContext( NULL, oyProfile_Copy( p, NULL ) ); /* threading context */
+      lcmsSetLogErrorHandlerTHR( tc, lcm2ErrorHandlerFunction );
       s->lcm2 = CMMProfileOpen_M( tc, block, size );
     }
 #endif
@@ -1250,6 +1260,7 @@ cmsHPROFILE  lcm2AddProofProfile     ( oyProfile_s       * proof,
 #else
     {
       cmsContext tc = lcmsCreateContext( NULL, oyProfile_Copy( proof, NULL ) ); /* threading context */
+      lcmsSetLogErrorHandlerTHR( tc, lcm2ErrorHandlerFunction );
       s->lcm2 = CMMProfileOpen_M( tc, block, size );
     }
 #endif
@@ -1416,6 +1427,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
   cmsUInt16Number OldAlarm[cmsMAXCHANNELS];
 #if LCMS_VERSION >= 2060
       cmsContext tc = lcmsCreateContext( NULL, NULL ); /* threading context */
+      lcmsSetLogErrorHandlerTHR( tc, lcm2ErrorHandlerFunction );
 #else
       void * tc = NULL;
 #endif
@@ -1471,6 +1483,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
     {
 #if LCMS_VERSION >= 2060
       cmsContext tc = lcmsCreateContext( NULL, NULL ); /* threading context */
+      lcmsSetLogErrorHandlerTHR( tc, lcm2ErrorHandlerFunction );
 #else
       void * tc = NULL;
 #endif
@@ -1505,6 +1518,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
     {
 #if LCMS_VERSION >= 2060
       cmsContext tc = lcmsCreateContext( NULL, NULL ); /* threading context */
+      lcmsSetLogErrorHandlerTHR( tc, lcm2ErrorHandlerFunction );
 #else
       void * tc = NULL;
 #endif
@@ -2312,6 +2326,7 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
 #else
     {
       cmsContext tc = lcmsCreateContext( NULL, oyFilterNode_Copy( node, NULL ) ); /* threading context */
+      lcmsSetLogErrorHandlerTHR( tc, lcm2ErrorHandlerFunction );
       lps[0] = CMMProfileOpen_M( tc, oyPointer_GetPointer(cmm_ptr_in),
                                  oyPointer_GetSize( cmm_ptr_in) );
     }
