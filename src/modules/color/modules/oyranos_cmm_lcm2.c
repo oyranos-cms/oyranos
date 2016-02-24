@@ -998,9 +998,9 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
       lcm2_msg( level,(oyStruct_s*)node, OY_DBG_FORMAT_"\n"
              "  ColorSpace:%s->PCS:%s DeviceClass:%s",
              OY_DBG_ARGS_,
-             oyICCColorSpaceGetName(lcmsGetColorSpace( lps[0])),
-             oyICCColorSpaceGetName(lcmsGetPCS( lps[i] )),
-             oyICCDeviceClassDescription(lcmsGetDeviceClass(lps[i])) );
+             lps[0]?oyICCColorSpaceGetName(lcmsGetColorSpace( lps[0])):"----",
+             lps[i]?oyICCColorSpaceGetName(lcmsGetPCS( lps[i] )):"----",
+             lps[i]?oyICCDeviceClassDescription(lcmsGetDeviceClass(lps[i])):"----" );
   }
 
   if(!error && ltw && oy)
