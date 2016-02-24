@@ -1448,7 +1448,8 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
                 ptr16[2] = {0,0};
       int r = 0, i, done = 0, done_16 = 0;
       cmsMLU * mlu[2] = {0,0};
-      cmsCurveSegment seg[2];
+      cmsFloat64Number params[4] = {0.0, 0.0, 0.0, 0.0};
+
 
       lcm2_msg( oyMSG_DBG, (oyStruct_s*)proof, OY_DBG_FORMAT_
                 "softproofing %d gamutcheck %d intent %d intent_proof %d", OY_DBG_ARGS_,
@@ -1578,8 +1579,11 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       r = lcmsWriteTag( gmt, icSigCopyrightTag, mlu[1]); E
       r = lcmsWriteTag( gmt, icSigMediaWhitePointTag, lcmsD50_XYZ() ); E
 
+      /* set parametric unbound curve, type 6: (aX + b) ^ y + c */
+#if 0
       /* Initialize segmented curve
          Segment 0: from minus infinite */
+      cmsCurveSegment seg[2];
       size =  sizeof(seg);
       memset( seg, 0, size );
       seg[0].x0 = -1.0;
@@ -1593,6 +1597,14 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       seg[0].Params[4] = 0;
 
       t[0] = t[1] = t[2] = lcmsBuildSegmentedToneCurve(tc, 1, seg);
+#else
+      params[0] = 1.0; /* y - gamma */
+      params[1] = 1.0; /* a */
+      params[2] = 0.0; /* b */
+      params[3] = 0.0; /* c */
+
+      t[0] = t[1] = t[2] = lcmsBuildParametricToneCurve(tc, 6, params);
+#endif
       if(!t[0])
       {
         lcm2_msg( oyMSG_WARN, (oyStruct_s*)proof, OY_DBG_FORMAT_ " "
