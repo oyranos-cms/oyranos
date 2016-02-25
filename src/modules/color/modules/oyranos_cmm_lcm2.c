@@ -828,6 +828,8 @@ uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
   return flags;
 }
 
+uint16_t in[4] = {32000,32000,32000,0}, out[4] = {65535,65535,65535,65535};
+
 /** Function lcm2CMMConversionContextCreate_
  *  @brief   create a CMM transform
  *
@@ -981,6 +983,12 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
                                           lcm2_pixel_layout_in,
                                           lcm2_pixel_layout_out, flags | cmsFLAGS_KEEP_SEQUENCE );
 
+#ifdef ENABLE_MPE
+      unsigned char in[3] = {128,128,128};
+      unsigned short o[3];
+      lcmsDoTransform( xform, in, o, 1 );
+      printf("%d %d %d\n", o[0],o[1],o[2]);
+#endif /* ENABLE_MPE */
 
       oyFree_m_( intents );
       oyFree_m_( bpc );
@@ -1450,13 +1458,24 @@ const char *       oyICCMpeDescription(cmsStageSignature sig, int type )
   }
 }
 
+// A single stage
+struct _cmsStage_struct {
+
+    cmsContext          ContextID;
+
+    cmsStageSignature   Type;           // Identifies the stage
+    cmsStageSignature   Implements;     // Identifies the *function* of the stage (for optimizations)
+};
+
 void printPipeline( cmsPipeline * lut )
 {
   cmsStage * first = lcmsPipelineGetPtrToFirstStage(lut),
            * next = first;
   int i = 0;
   do {
-    fprintf(stderr, "stage[%d] %s %d -> %d\n", i, oyICCMpeDescription(lcmsStageType(next),oyNAME_NAME), lcmsStageInputChannels(next), lcmsStageOutputChannels(next) );
+    fprintf(stderr, "stage[%d] %s:%s-%s %d -> %d\n", i, oyICCMpeDescription(lcmsStageType(next),oyNAME_NICK),
+            oyICCMpeDescription(next->Implements,oyNAME_NAME),
+            oyICCMpeDescription(lcmsStageType(next),oyNAME_NAME), lcmsStageInputChannels(next), lcmsStageOutputChannels(next) );
     ++i;
   } while ((next = lcmsStageNext( next )) != NULL);
    
@@ -1502,12 +1521,16 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       cmsToneCurve * t[3] = {0,0,0},
                    * g[3] = {0,0,0};
 
-      cmsHTRANSFORM ptr[2] = {0,0},
-                ptr16[2] = {0,0};
+      cmsHTRANSFORM
+#ifdef ENABLE_MPE
+                   ptr[2] = {0,0},
+#endif /* ENABLE_MPE */
+                 ptr16[2] = {0,0};
       int r = 0, i, done = 0, done_16 = 0;
       cmsMLU * mlu[2] = {0,0};
+#ifdef ENABLE_MPE
       cmsFloat64Number params[4] = {0.0, 0.0, 0.0, 0.0};
-
+#endif /* ENABLE_MPE */
 
       lcm2_msg( oyMSG_DBG, (oyStruct_s*)proof, OY_DBG_FORMAT_
                 "softproofing %d gamutcheck %d intent %d intent_proof %d", OY_DBG_ARGS_,
@@ -1540,6 +1563,8 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
   {
     if(i)
     {
+      /* disable float mpe as the tag appears buggy in Oyranos or lcms */
+#ifdef ENABLE_MPE
 #if LCMS_VERSION >= 2060
       cmsContext tc = lcmsCreateContext( NULL, NULL ); /* threading context */
       lcmsSetLogErrorHandlerTHR( tc, lcm2ErrorHandlerFunction );
@@ -1572,6 +1597,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
                  error = 1; }
       }
       done = 1;
+#endif /* ENABLE_MPE */
 
     } else
     {
@@ -1611,7 +1637,11 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
     }
   }
 
-      if(!gmt_lut || !gmt_lut16 || !done || !done_16)
+      if(
+#ifdef ENABLE_MPE
+         /*!gmt_lut || !done || */
+#endif /* ENABLE_MPE */
+         !gmt_lut16 || !done_16)
       {
         lcm2_msg( oyMSG_WARN, (oyStruct_s*)proof, OY_DBG_FORMAT_ " "
                  "failed to build: %s %s %s %s",
@@ -1637,6 +1667,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       r = lcmsWriteTag( gmt, icSigCopyrightTag, mlu[1]); E
       r = lcmsWriteTag( gmt, icSigMediaWhitePointTag, lcmsD50_XYZ() ); E
 
+#if ENABLE_MPE
       /* set parametric unbound curve, type 6: (aX + b) ^ y + c */
 #if 0
       /* Initialize segmented curve
@@ -1679,6 +1710,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
                               lcmsStageAllocToneCurves( tc, 3, t ) );
       r = lcmsWriteTag( gmt, cmsSigDToB0Tag, gmt_pl ); E
       if(oy_debug) printPipeline(gmt_pl);
+#endif /* ENABLE_MPE */
 
       /* 16-bit int */
       g[0] = g[1] = g[2] = lcmsBuildGamma(tc, 1.0);
