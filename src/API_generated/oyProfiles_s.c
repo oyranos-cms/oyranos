@@ -463,7 +463,9 @@ OYAPI oyProfiles_s * OYEXPORT
  *  oyASSUMED_WEB will result in exactly one profile added as long as it is
  *  available in the file paths.
  *
- *  @param[in]     std_profile_class  standard profile class, e.g. oyEDITING_RGB
+ *  @param[in]     std_profile_class   standard profile class,
+ *                                     see ::oyPROFILE_e ;
+ *                                     e.g. oyEDITING_RGB
  *  @param         flags               see oyProfile_FromFile()
  *  @param[out]    current             get the color_space profile position
  *  @param         object              a optional object
@@ -495,11 +497,11 @@ OYAPI oyProfiles_s * OYEXPORT
     } @endverbatim
  *
  *  @version Oyranos: 0.9.6
- *  @date    2014/04/04
+ *  @date    2016/02/25
  *  @since   2008/07/25 (Oyranos: 0.1.8)
  */
-OYAPI oyProfiles_s * OYEXPORT
-                 oyProfiles_ForStd   ( oyPROFILE_e         std_profile_class,
+OYAPI oyProfiles_s * OYEXPORT oyProfiles_ForStd 
+                                     ( oyPROFILE_e         std_profile_class,
                                        uint32_t            flags,
                                        int               * current,
                                        oyObject_s          object)
@@ -539,6 +541,7 @@ OYAPI oyProfiles_s * OYEXPORT
        type == oyEDITING_CMYK ||
        type == oyASSUMED_CMYK ||
        type == oyPROFILE_PROOF ||
+       type == oyPROFILE_EFFECT ||
        type == oyEDITING_GRAY ||
        type == oyASSUMED_GRAY)
       default_p = oyGetDefaultProfileName( (oyPROFILE_e)type, oyAllocateFunc_);
@@ -628,6 +631,21 @@ OYAPI oyProfiles_s * OYEXPORT
 
       profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
       oyProfile_SetSignature( profile, icSigColorSpaceClass, oySIGNATURE_CLASS);
+      oyProfiles_MoveIn( patterns, &profile, -1 );
+    }
+    /* support abtract profiles */
+    if(type == oyPROFILE_EFFECT)
+    {
+      csp = icSigLabData;
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigAbstractClass, oySIGNATURE_CLASS);
+      oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      csp = icSigXYZData;
+
+      profile = oyProfile_FromSignature( csp, oySIGNATURE_COLOR_SPACE, 0 );
+      oyProfile_SetSignature( profile, icSigAbstractClass, oySIGNATURE_CLASS);
       oyProfiles_MoveIn( patterns, &profile, -1 );
     }
     if(type == oyEDITING_GRAY ||
