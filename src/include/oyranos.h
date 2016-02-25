@@ -68,7 +68,6 @@ typedef enum  {
   oyGROUP_DEFAULT_PROFILES,        /**< Default Profiles */
   oyGROUP_DEFAULT_PROFILES_EDIT,   /**< Default Editing Profiles */
   oyGROUP_DEFAULT_PROFILES_ASSUMED,/**< Default Assumed Profiles */
-  oyGROUP_DEFAULT_PROFILES_PROOF,  /**< Default Proofing Profiles */
   oyGROUP_BEHAVIOUR,               /**< Behaviour */
   oyGROUP_BEHAVIOUR_RENDERING,            /**< Rendering Behaviour */
   oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, /**< PDF Generation Options */
@@ -256,7 +255,6 @@ typedef enum  {
   oyWIDGET_GROUP_DEFAULT_PROFILES,        /**< Default Profiles */
   oyWIDGET_GROUP_DEFAULT_PROFILES_EDIT,   /**< Default Editing Profiles */
   oyWIDGET_GROUP_DEFAULT_PROFILES_ASSUMED,/**< Default Assumed Profiles */
-  oyWIDGET_GROUP_DEFAULT_PROFILES_PROOF,  /**< Default Proofing Profiles */
   oyWIDGET_GROUP_BEHAVIOUR,               /**< Behaviour */
   oyWIDGET_GROUP_BEHAVIOUR_RENDERING,      /**< Rendering Behaviour */
   oyWIDGET_GROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, /**< PDF Generation Options*/

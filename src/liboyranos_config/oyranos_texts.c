@@ -186,15 +186,6 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_DEFAULT_PROFILES_ASSUMED", 0,0)
-    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_DEFAULT_PROFILES_PROOF, 0,
-      0, 0, 0,
-      _("Proofing Color Space"),
-      _("Color Space for Simulating real devices"),
-      _("The proofing color space represents a real color device for simulation. Possible use cases are to simulate a print machine, a viewing environment in a theater or a expected small monitor gamut."),
-      0, /* choices */
-      NULL, NULL, NULL, NULL,
-      NULL,
-      "oyGROUP_DEFAULT_PROFILES_PROOF", 0,0)
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_PATHS, 0,
       0, 0, 0,
       _("Paths"),
@@ -1444,18 +1435,6 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
             w[pos++] = oyWIDGET_GROUP_DEFAULT_PROFILES_ASSUMED;
             for ( oywid = (oyWIDGET_e)oyASSUMED_XYZ;
                     oywid <= (oyWIDGET_e)oyASSUMED_GRAY; ++oywid )
-              w[pos++] = oywid;
-
-           *count = pos;
-          }
-          break;
-     case oyGROUP_DEFAULT_PROFILES_PROOF:
-          {
-            oyAllocHelper_m_( w, oyWIDGET_e , 1 + 1,
-                              allocate_func, return NULL);
-            w[pos++] = oyWIDGET_GROUP_DEFAULT_PROFILES_PROOF;
-            for ( oywid = (oyWIDGET_e)oyPROFILE_PROOF;
-                    oywid <= (oyWIDGET_e)oyPROFILE_PROOF; ++oywid )
               w[pos++] = oywid;
 
            *count = pos;
