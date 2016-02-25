@@ -249,6 +249,15 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_PROOF", 0,0)
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_EFFECT, 1,
+      oyGROUP_BEHAVIOUR, 0, 0,
+      _("Effect"),
+      _("Effect Settings"),
+      _("Effect Settings allows one to decide about a abstract effect color space."),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      NULL,
+      "oyGROUP_BEHAVIOUR_EFFECT", 0,0)
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_CMM, 0,
       0, 0, 0,
       _("CMM"),
@@ -477,6 +486,16 @@ oyOptionStringsTranslate_ ()
       OY_DEFAULT_PROOF_PROFILE,
       "oyPROFILE_PROOF" , 0,"ISOcoated_v2_bas.ICC")
 
+    oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_PROFILE_EFFECT, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_EFFECT, 0,
+      _("Effect"),
+      _("Color space for showing a effect"),
+      _("Select a color profile for adding a effect."),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      OY_DEFAULT_EFFECT_PROFILE,
+      "oyPROFILE_EFFECT" , 0,0)
+
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_ACTION_UNTAGGED_ASSIGN, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_MISSMATCH, 0,
@@ -587,6 +606,16 @@ oyOptionStringsTranslate_ ()
       _("No"),_("Yes"),NULL,NULL,
       OY_DEFAULT_RENDERING_GAMUT_WARNING,
       "oyBEHAVIOUR_RENDERING_GAMUT_WARNING", 1,0)
+
+    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_EFFECT, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_EFFECT, 0,
+      _("Use Effect"),
+      _("Enable effect profile"),
+      _("Switch for enabling the effect profile."),
+      2, /* choices */
+      _("No"),_("Yes"),NULL,NULL,
+      OY_DEFAULT_EFFECT,
+      "oyBEHAVIOUR_EFFECT", 0,0)
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_CHOICE, oyWIDGET_CMM_CONTEXT, 1,
       oyGROUP_CMM, 0, 0,
@@ -731,6 +760,10 @@ oyPolicyWidgetListGet_( oyGROUP_e       group,
          break;
     case oyGROUP_BEHAVIOUR_PROOF:
            list = oyWidgetListGet_( oyGROUP_BEHAVIOUR_PROOF, &n,
+                                             oyAllocateFunc_ );
+         break;
+    case oyGROUP_BEHAVIOUR_EFFECT:
+           list = oyWidgetListGet_( oyGROUP_BEHAVIOUR_EFFECT, &n,
                                              oyAllocateFunc_ );
          break;
     case oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS:
@@ -1367,11 +1400,12 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
 #define oyGROUP_DEFAULT_PROFILES_LEN oyWIDGET_DEFAULT_PROFILE_END - oyWIDGET_DEFAULT_PROFILE_START + 1
 #define oyGROUP_BEHAVIOUR_RENDERING_LEN 4+1
 #define oyGROUP_BEHAVIOUR_PROOF_LEN 4+1
+#define oyGROUP_BEHAVIOUR_EFFECT_LEN 1+1
 #define oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS_LEN 6+1
 #define oyGROUP_BEHAVIOUR_MISSMATCH_LEN 6+1
 #define oyGROUP_CMM_LEN 2+1
 
-#define oyGROUP_BEHAVIOUR_LEN oyGROUP_BEHAVIOUR_RENDERING_LEN + oyGROUP_BEHAVIOUR_PROOF_LEN + oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS_LEN + oyGROUP_BEHAVIOUR_MISSMATCH_LEN + 1
+#define oyGROUP_BEHAVIOUR_LEN oyGROUP_BEHAVIOUR_RENDERING_LEN + oyGROUP_BEHAVIOUR_PROOF_LEN + oyGROUP_BEHAVIOUR_EFFECT_LEN + oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS_LEN + oyGROUP_BEHAVIOUR_MISSMATCH_LEN + 1
 
 #define oyGROUP_ALL_LEN oyGROUP_DEFAULT_PROFILES_LEN + oyGROUP_BEHAVIOUR_LEN + oyGROUP_CMM_LEN
 
@@ -1489,6 +1523,19 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
            w = lw;
          }
          break;
+    case oyGROUP_BEHAVIOUR_EFFECT:
+         {
+           oyAllocHelper_m_( lw, oyWIDGET_e , oyGROUP_BEHAVIOUR_EFFECT_LEN,
+                             allocate_func, return NULL);
+
+           lw[pos++] = oyWIDGET_GROUP_BEHAVIOUR_EFFECT;
+           lw[pos++] = oyWIDGET_PROFILE_EFFECT;
+           lw[pos++] = oyWIDGET_EFFECT;
+
+           *count = pos;
+           w = lw;
+         }
+         break;
     case oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS:
          {
            oyAllocHelper_m_( lw, oyWIDGET_e ,oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS_LEN,
@@ -1532,6 +1579,11 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
              lw[pos++] = tmp[i];
            oyFree_m_( tmp );
            tmp = oyWidgetListGet_( oyGROUP_BEHAVIOUR_PROOF, &n,
+                                   oyAllocateFunc_);
+           for(i = 0; i < n; ++i)
+             lw[pos++] = tmp[i];
+           oyFree_m_( tmp );
+           tmp = oyWidgetListGet_( oyGROUP_BEHAVIOUR_EFFECT, &n,
                                    oyAllocateFunc_);
            for(i = 0; i < n; ++i)
              lw[pos++] = tmp[i];

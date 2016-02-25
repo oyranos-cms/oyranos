@@ -195,6 +195,8 @@
 #define OY_DEFAULT_PROOF_SOFT          OY_BEHAVIOUR_STD OY_SLASH "proof_soft"
 /** key name for hard proofing by default */
 #define OY_DEFAULT_PROOF_HARD          OY_BEHAVIOUR_STD OY_SLASH "proof_hard"
+/** key name for effect profile by default */
+#define OY_DEFAULT_EFFECT              OY_BEHAVIOUR_STD OY_SLASH "effect"
 
 /** key name for context CMM
  *  @since 0.9.6
