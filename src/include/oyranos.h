@@ -73,6 +73,7 @@ typedef enum  {
   oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, /**< PDF Generation Options */
   oyGROUP_BEHAVIOUR_MISSMATCH,            /**< Profile Missmatch Behaviour */
   oyGROUP_BEHAVIOUR_PROOF,                /**< Profile Missmatch Behaviour */
+  oyGROUP_BEHAVIOUR_EFFECT,               /**< Effect Behaviour */
   oyGROUP_CMM,                     /**< CMM selection */
   oyGROUP_ALL,                     /**< just for easen Gui design */
   oyGROUP_EXTERN = 200             /**< start of groups in a extern module */
@@ -204,6 +205,7 @@ typedef enum  {
   oyASSUMED_GRAY,           /**< standard Gray assumed source Profile */
 
   oyPROFILE_PROOF = 120,    /**< standard proofing profile */
+  oyPROFILE_EFFECT,         /**< effect profile */
   oyDEFAULT_PROFILE_END     /**< just for easen Gui design */
 } oyPROFILE_e;
 
@@ -259,7 +261,8 @@ typedef enum  {
   oyWIDGET_GROUP_BEHAVIOUR_RENDERING,      /**< Rendering Behaviour */
   oyWIDGET_GROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS, /**< PDF Generation Options*/
   oyWIDGET_GROUP_BEHAVIOUR_MISSMATCH,     /**< Profile Missmatch Behaviour */
-  oyWIDGET_GROUP_BEHAVIOUR_PROOF,         /**< Profile Missmatch Behaviour */
+  oyWIDGET_GROUP_BEHAVIOUR_PROOF,         /**< Profile Proof Behaviour */
+  oyWIDGET_GROUP_BEHAVIOUR_EFFECT,        /**< Profile Effect Behaviour */
   oyWIDGET_GROUP_CMM,                     /**< Color Matching Modules */
   oyWIDGET_GROUP_ALL,                     /**< just for easen Gui design */
   oyWIDGET_GROUP_DEVICES,                 /**< just for easen Gui design */
@@ -300,6 +303,7 @@ typedef enum  {
   oyWIDGET_ASSUMED_GRAY,       /**< standard Gray assumed source profile */
 
   oyWIDGET_PROFILE_PROOF = 120,/**< standard proofing profile */
+  oyWIDGET_PROFILE_EFFECT,     /**< effect profile */
   oyWIDGET_DEFAULT_PROFILE_END,/**< just for easen Gui design */
 
   oyWIDGET_DEVICES_RELATED = 200,      /**< select only device related profiles [checkbox] */

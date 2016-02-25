@@ -165,6 +165,10 @@
 #define OY_DEFAULT_ASSUMED_GRAY_PROFILE      OY_PROFILE_STD OY_SLASH "assumed_gray"
 /** key name for a standard proofing profile */
 #define OY_DEFAULT_PROOF_PROFILE             OY_PROFILE_STD OY_SLASH "proof"
+/** key name for a standard proofing profile
+ *  @since 0.9.6
+ */
+#define OY_DEFAULT_EFFECT_PROFILE            OY_PROFILE_STD OY_SLASH "effect"
 
 
 /* --- settings --- */
