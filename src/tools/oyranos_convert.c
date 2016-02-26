@@ -191,7 +191,13 @@ int main( int argc , char** argv )
                         oyProfiles_MoveIn( effects, &p, -1 );
                         break;
               case 'i': OY_PARSE_STRING_ARG(input); break;
-              case 'n': OY_PARSE_STRING_ARG(node_name); break;
+              case 'n': OY_PARSE_STRING_ARG(node_name);
+                        oyOptions_SetFromText( &module_options, OY_DEFAULT_CMM_CONTEXT,
+                                               node_name, OY_CREATE_NEW );
+
+                        icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                            "//" OY_TYPE_STD "/icc_color", module_options, 0 );
+                        break;
               case 'v': if(verbose) oy_debug += 1; verbose = 1; break;
               case 'h': help = 1; break;
               case '-':
@@ -367,9 +373,6 @@ int main( int argc , char** argv )
   }
 #endif
 
-  if(node_name)
-    oyOptions_SetFromText( &module_options, OY_DEFAULT_CMM_CONTEXT,
-                           node_name, OY_CREATE_NEW );
 
   icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                             "//" OY_TYPE_STD "/icc_color", module_options, 0 );
