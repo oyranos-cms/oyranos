@@ -1332,7 +1332,8 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
                  * cprt = 0;
   int profiles_n = 0,
       profiles_simulation_n = 0,
-      proof = 0;
+      proof = 0,
+      effect_switch = 0;
   int verbose = oyOptions_FindString( node_tags, "verbose", "true" ) ? 1 : 0;
   const char * o_txt = 0;
 
@@ -1384,11 +1385,21 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   profs = oyProfiles_New( 0 );
   oyProfiles_MoveIn( profs, &p, -1 );
 
+  o_txt = oyOptions_FindString  ( node_options, "effect_switch", 0 );
+  if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigDisplayClass*/)
+    effect_switch = atoi( o_txt );
   /* effect profiles */
-  o = oyOptions_Find( node_options, "profiles_effect", oyNAME_PATTERN );
+  if(effect_switch || oy_debug || verbose)
+    o = oyOptions_Find( node_options, "profiles_effect", oyNAME_PATTERN );
   if(o)
   {
     profiles = (oyProfiles_s*) oyOption_GetStruct( o, oyOBJECT_PROFILES_S );
+    if(!effect_switch && (oy_debug || verbose))
+    {
+      lcms_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
+               " found \"profiles_effect\" %d  \"effect_switch\" %d",
+               OY_DBG_ARGS_, oyProfiles_Count( profiles ), effect_switch );
+    } else
     if( !profiles )
     {
       oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
@@ -1408,6 +1419,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
       }
     }
     oyOption_Release( &o );
+    oyProfiles_Release( &profiles );
   }
 
   /* simulation profile */
