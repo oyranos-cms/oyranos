@@ -989,7 +989,7 @@ oyCMMapi9_s_  oicc_api9 = {
   /* registration */
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_color." CMM_NICK,
 
-  {0,1,0}, /* int32_t version[3] */
+  {0,9,6}, /* int32_t version[3] */
   CMM_API_VERSION, /**< int32_t module_api[3] */
   0,   /* id_; keep empty */
   0,   /* oyCMMapi5_s    * api5_; keep empty */
@@ -1089,7 +1089,7 @@ oyCMM_s oicc_cmm_module = {
   oyOBJECT_CMM_INFO_S,
   0,0,0,
   CMM_NICK,
-  "0.1.10",
+  "0.9.6",
   oiccInfoGetText,                     /**< oyCMMGetText_f getText */
   (char**)oicc_texts,                  /**<texts; list of arguments to getText*/
   OYRANOS_VERSION,
