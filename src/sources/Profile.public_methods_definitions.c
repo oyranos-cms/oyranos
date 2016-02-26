@@ -146,6 +146,8 @@ OYAPI oyProfile_s * OYEXPORT
  *  - "grayi" for default assumed Gray profile
  *  - "labi" for default assumed CIE*Lab profile
  *  - "xyzi" for default assumed CIE*XYZ profile
+ *  - "proof" for default simulation profile
+ *  - "effect" for default effect profile
  *  @param[in]    flags          flags are OY_NO_CACHE_READ, OY_NO_CACHE_WRITE, OY_COMPUTE
  *  - ::OY_NO_CACHE_READ and ::OY_NO_CACHE_WRITE to disable cache
  *  reading and writing. The cache flags are useful for one time profiles or
@@ -228,6 +230,10 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromName (
       fn = oyGetDefaultProfileName( oyASSUMED_LAB, oyAllocateFunc_ );
     else if(strcmp(name,"xyzi") == 0)
       fn = oyGetDefaultProfileName( oyASSUMED_XYZ, oyAllocateFunc_ );
+    else if(strcmp(name,"proof") == 0)
+      fn = oyGetDefaultProfileName( oyPROFILE_PROOF, oyAllocateFunc_ );
+    else if(strcmp(name,"effect") == 0)
+      fn = oyGetDefaultProfileName( oyPROFILE_EFFECT, oyAllocateFunc_ );
 
     if(fn)
     {
