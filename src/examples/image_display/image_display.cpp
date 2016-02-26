@@ -26,6 +26,7 @@
 #include <oyranos_io.h>    /* oyFindApplication() */
 
 #include <oyConversion_s.h>
+#include <oyProfiles_s.h>
 
 #ifdef DEBUG
 #undef DEBUG
@@ -88,6 +89,7 @@ main(int argc, char** argv)
   const char * clut_name = 0;
   int i;
   oyOptions_s * module_options = NULL;
+  uint32_t icc_profile_flags = 0;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -123,6 +125,23 @@ main(int argc, char** argv)
       icc_color_context = argv[i+1];
       oyOptions_SetFromText( &module_options, OY_DEFAULT_CMM_CONTEXT,
                              icc_color_context, OY_CREATE_NEW );
+      icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( icc_color_context );
+      ++file_pos;
+      ++file_pos;
+    }
+    if(argc > 2 && strcmp(argv[i], "--effect") == 0)
+    {
+      oyOptions_SetFromText( &module_options, OY_DEFAULT_EFFECT,
+                             "1", OY_CREATE_NEW );
+      oyProfiles_s * effects = oyProfiles_New(0);
+      oyProfile_s * p = oyProfile_FromName( argv[i+1], icc_profile_flags, 0 );
+                        oyProfiles_MoveIn( effects, &p, -1 );
+      oyOptions_MoveInStruct( &module_options,
+                                      OY_PROFILES_EFFECT,
+                                       (oyStruct_s**) &effects,
+                                       OY_CREATE_NEW );
+      /*oyOptions_SetFromText( &module_options, OY_DEFAULT_EFFECT_PROFILE,
+                             argv[i+1], OY_CREATE_NEW );*/
       ++file_pos;
       ++file_pos;
     }
@@ -140,6 +159,7 @@ main(int argc, char** argv)
              "\t--use-pixel\tuse normal pixel copy\n"
              "\t--no-logo\tskip Oyranos logo\n"
              "\t--icc-color-context <name>\tselect a Oyranos wrapped context CMM\n"
+             "\t--effect <name>\tselect a effect profile\n"
              "\t--shader <file>\tset a CLUT from PPM image for color transform\n"
              "\t-v\t\tprint verbosely\n"
              "\t--help\t\tprint this help text\n"
@@ -147,6 +167,11 @@ main(int argc, char** argv)
       exit(0);
     }
   }
+
+  if(oy_debug)
+  for(i = 0; i < argc; ++i)
+    fprintf(stderr, "argv[%d] = %s\n", i, argv[i] );
+
   if(argc > file_pos && argv[file_pos])
     file_name = argv[file_pos];
   else
