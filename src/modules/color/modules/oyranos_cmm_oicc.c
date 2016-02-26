@@ -131,6 +131,7 @@ char oicc_default_color_icc_options[] = {
       <assumed_web.front>sRGB.icc</assumed_web.front>\n\
       <assumed_xyz.front>LCMSXYZI.ICM</assumed_xyz.front>\n\
       <proof.advanced.front>0</proof.advanced.front>\n\
+      <effect.advanced.front>0</effect.advanced.front>\n\
      </profile>\n\
      <behaviour>\n\
       <action_untagged_assign.front>1</action_untagged_assign.front>\n\
@@ -140,6 +141,7 @@ char oicc_default_color_icc_options[] = {
       <mixed_color_spaces_screen_doc_convert.front>2</mixed_color_spaces_screen_doc_convert.front>\n\
       <proof_hard.advanced>0</proof_hard.advanced>\n\
       <proof_soft.advanced>0</proof_soft.advanced>\n\
+      <effect_switch.advanced>0</effect_switch.advanced>\n\
       <rendering_intent>0</rendering_intent>\n\
       <rendering_bpc>1</rendering_bpc>\n\
       <rendering_intent_proof.advanced>0</rendering_intent_proof.advanced>\n\
@@ -759,13 +761,16 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
   oyFilterNode_s * node = 0;
   oyFilterPlug_s * edge = 0;
   oyConversion_s * s = conversion;
-  oyProfiles_s * proofs =  0;
-  oyProfile_s * proof =  0;
+  oyProfiles_s * proofs =  0,
+               * effps = 0;
+  oyProfile_s * proof =  0,
+              * effp = 0;
   oyOptions_s * db_options = 0,
               * f_options = 0;
   oyOption_s * o = 0;
   const char * val = 0;
   int32_t proofing = 0,
+          effect_switch = 0,
           display_mode = 0,
           rendering_gamut_warning = 0;
 
@@ -843,6 +848,8 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                     "rendering_intent_proof", s, verbose, flags, oyOPTIONATTRIBUTE_ADVANCED);
               oiccChangeNodeOption( f_options, db_options,
                                     "rendering_gamut_warning", s, verbose, flags, oyOPTIONATTRIBUTE_ADVANCED);
+              oiccChangeNodeOption( f_options, db_options,
+                                    "effect_switch", s, verbose, flags, oyOPTIONATTRIBUTE_ADVANCED );
               if(display_mode)
                 proofing = oyOptions_FindString( f_options, "proof_soft", "1" )
                            ? 1 : 0;
@@ -851,6 +858,8 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                            ? 1 : 0;
               rendering_gamut_warning = oyOptions_FindString( f_options,
                                         "rendering_gamut_warning", "1" ) ? 1:0;
+              effect_switch = oyOptions_FindString( f_options,
+                                        "effect_switch", "1" ) ? 1:0;
 
               /* TODO @todo add proofing profile */
               o = oyOptions_Find( f_options, "profiles_simulation", oyNAME_PATTERN );
@@ -861,7 +870,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                 val = oyProfile_GetText( proof, oyNAME_NAME );
                 oyProfiles_MoveIn( proofs, &proof, -1 );
                 oyOptions_MoveInStruct( &f_options,
-                                    OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD "/icc_color/profiles_simulation",
+                                        OY_PROFILES_SIMULATION,
                                         (oyStruct_s**)& proofs,
                                         OY_CREATE_NEW );
                 if(verbose)
@@ -880,6 +889,34 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                  strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
                          o ? "is already set" : "no profile",
                          proofing ? "proofing is set" :"proofing is not set" );
+
+              o = oyOptions_Find( f_options, "profiles_effect", oyNAME_PATTERN );
+              if(!o && (effect_switch))
+              {
+                effp = oyProfile_FromStd( oyPROFILE_EFFECT, icc_profile_flags, 0 );
+                effps = oyProfiles_New(0);
+                val = oyProfile_GetText( effp, oyNAME_NAME );
+                oyProfiles_MoveIn( effps, &effp, -1 );
+                oyOptions_MoveInStruct( &f_options,
+                                        OY_PROFILES_EFFECT,
+                                        (oyStruct_s**)& effps,
+                                        OY_CREATE_NEW );
+                if(verbose)
+                  oicc_msg( oyMSG_DBG,(oyStruct_s*)node,
+                           "%s:%d set \"profiles_effect\": %s %s in %s[%d]",
+                           strrchr(__FILE__,'/') ?
+                                 strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
+                           val?val:"empty profile text", 
+                           display_mode ? "for displaying" : "for hard copy",
+                           oyStruct_GetInfo( (oyStruct_s*)f_options, 0 ),
+                           oyObject_GetId( f_options->oy_ ));
+              } else if(verbose)
+                oicc_msg( oyMSG_DBG,(oyStruct_s*)node,
+                         "%s:%d \"profiles_effect\" %s, %s",
+                         strrchr(__FILE__,'/') ?
+                                 strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
+                         o ? "is already set" : "no profile",
+                         effect_switch ? "effect_switch is set" :"effect_switch is not set" );
 
               oyOption_Release( &o );
               oyOptions_Release( &db_options );
