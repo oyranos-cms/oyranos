@@ -2889,7 +2889,7 @@ OYAPI char * OYEXPORT
     t2 = oyStringReplace_( t, ">", "*", oyAllocateFunc_ );
     if(t) oyFree_m_(t);
     oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)node,
-                     OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, oyNoEmptyString_m_(t2) );
+                     OY_DBG_FORMAT_ "%s\n%s", OY_DBG_ARGS_, oyNoEmptyString_m_(t2), oyNoEmptyString_m_(tc) );
     sprintf( temp,   "  %d [ label=\"{<plug> %d| Filter Node %d\\n"
                      " Category: \\\"%s\\\"\\n CMM: \\\"%s\\\"\\n"
                      " Type: \\\"%s\\\"\\n"
