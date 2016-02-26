@@ -541,6 +541,16 @@ oyPolicyToXML_  (oyGROUP_e           group,
                                     oyWIDGET_BEHAVIOUR_END - 1,
                                     &text, 2 );
          break;
+    case oyGROUP_BEHAVIOUR_EFFECT:
+         oyWriteOptionToXML_( group,
+                                    oyWIDGET_DEFAULT_PROFILE_START + 1,
+                                    oyWIDGET_DEFAULT_PROFILE_END - 1,
+                                    &text, 1 );
+         oyWriteOptionToXML_( group,
+                                    oyWIDGET_RENDERING_INTENT_PROOF,
+                                    oyWIDGET_BEHAVIOUR_END - 1,
+                                    &text, 2 );
+         break;
     case oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS:
          oyWriteOptionToXML_( group,
                                     oyWIDGET_MIXED_MOD_DOCUMENTS_PRINT,
@@ -927,6 +937,21 @@ char * oyDescriptionToHTML           ( int                 group,
                                     &html );
          break;
     case oyGROUP_BEHAVIOUR_PROOF:
+         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
+                                            "        <h3>%s</h3>\n"
+                                            "          %s\n",
+                             opt->name,
+                             opt->description );
+         oyWriteOptionToHTML_( group,
+                                    oyWIDGET_DEFAULT_PROFILE_START + 1,
+                                    oyWIDGET_DEFAULT_PROFILE_END - 1,
+                                    &html );
+         oyWriteOptionToHTML_( group,
+                                    oyWIDGET_RENDERING_INTENT_PROOF,
+                                    oyWIDGET_BEHAVIOUR_END - 1,
+                                    &html );
+         break;
+    case oyGROUP_BEHAVIOUR_EFFECT:
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
                                             "        <h3>%s</h3>\n"
                                             "          %s\n",
