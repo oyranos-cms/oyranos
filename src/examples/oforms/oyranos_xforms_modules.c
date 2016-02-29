@@ -18,6 +18,12 @@
 #include "oyranos_config_internal.h"
 #include "oyCMMapiFilters_s.h"
 #include "oyCMMapiFilter_s_.h"
+#include "oyCMMapi4_s_.h"
+#include "oyCMMapi6_s_.h"
+#include "oyCMMapi7_s_.h"
+#include "oyCMMapi8_s_.h"
+#include "oyCMMapi9_s_.h"
+#include "oyCMMapi10_s_.h"
 #include "oyranos_module_internal.h"
 #include <oyranos.h>
 #include <oyranos_debug.h>
@@ -51,6 +57,12 @@ void usage(int argc, char ** argv)
   fprintf( stderr, "  %s\n",               _("Get XFORMS:"));
   fprintf( stderr, "      %s -n \"module_name\" -x \"xhtml_file\"\n", argv[0]);
   fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",               _("Get Information List:"));
+  fprintf( stderr, "      %s -n \"module_name\" -t \"\"\n", argv[0]);
+  fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",               _("Get Informations:"));
+  fprintf( stderr, "      %s -n \"module_name\" --short -t \"name\"\n", argv[0]);
+  fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("List Modules:"));
   fprintf( stderr, "      %s -l\n", argv[0]);
   fprintf( stderr, "\n");
@@ -62,11 +74,14 @@ void usage(int argc, char ** argv)
   fprintf( stderr, "      man oyranos-xforms-modules\n");
 }
 
+void printUi( oyCMMui_s_ * ui, const char * text_info, oyNAME_e type );
 
 
 int main (int argc, char ** argv)
 {
-  const char * node_name = 0;
+  const char * node_name = 0,
+             * text_info = 0;
+  oyNAME_e type = oyNAME_DESCRIPTION;
   const char * output_xml_file = 0;
   oyFilterNode_s * node = 0;
   char * ui_text = 0,
@@ -103,6 +118,7 @@ int main (int argc, char ** argv)
             switch (argv[pos][i])
             {
               case 'n': OY_PARSE_STRING_ARG( node_name ); break;
+              case 't': OY_PARSE_STRING_ARG( text_info ); break;
               case 'f': front = 1; break;
               case 'l': list = 1; break;
               case 'x': OY_PARSE_STRING_ARG( output_xml_file ); break;
@@ -110,6 +126,9 @@ int main (int argc, char ** argv)
               case '-':
                         if(strcmp(&argv[pos][2],"verbose") == 0)
                         { if(verbose) oy_debug += 1; verbose = 1; i=100; break;
+                        }
+                        if(strcmp(&argv[pos][2],"short") == 0)
+                        { if(type == oyNAME_NAME) type = oyNAME_NICK; else type = oyNAME_NAME; i=100; break;
                         }
                         STRING_ADD( t, &argv[pos][2] );
                         text = oyStrrchr_(t, '=');
@@ -166,6 +185,96 @@ int main (int argc, char ** argv)
   if(node_name)
   {
     int attributes = 0;
+
+    int j;
+    if(text_info)
+    {
+      for(j = oyOBJECT_CMM_API4_S; j <= (int)oyOBJECT_CMM_API10_S; j++)
+      {
+        uint32_t * rank_list = 0;
+        uint32_t apis_n = 0;
+        oyCMMapiFilters_s * apis = oyCMMsGetFilterApis_( "//",
+                                                         (oyOBJECT_e)j, 0,
+                                                         &rank_list, &apis_n );
+        int n = oyCMMapiFilters_Count( apis ), i;
+        for(i = 0; i < n; ++i)
+        {
+          oyCMMapiFilter_s_ * f = (oyCMMapiFilter_s_*) oyCMMapiFilters_Get( apis, i );
+          if(f && oyFilterRegistrationMatch(f->registration, node_name, j))
+          {
+            int l = 0;
+
+            fprintf( stdout,  "[%s]:\t\"%s\"\t%s\n",
+                              oyStructTypeToText(f->type_),
+                              f->registration,
+                              f->id_ );
+            oyCMMapi4_s_ * s4 = (oyCMMapi4_s_*)f;
+            oyCMMapi6_s_ * s6 = (oyCMMapi6_s_*)f;
+            oyCMMapi7_s_ * s7 = (oyCMMapi7_s_*)f;
+            oyCMMapi8_s_ * s8 = (oyCMMapi8_s_*)f;
+            oyCMMapi9_s_ * s9 = (oyCMMapi9_s_*)f;
+            oyCMMapi10_s_ * s10 = (oyCMMapi10_s_*)f;
+            switch((int)f->type_)
+            {
+            case oyOBJECT_CMM_API4_S:
+              fprintf( stdout,  "context_type: %s\n", oyNoEmptyString_m_(s4->context_type) );
+              printUi( s4->ui, text_info, type );
+              break;
+            case oyOBJECT_CMM_API6_S:
+              fprintf( stdout,  "%s -> %s\n", oyNoEmptyString_m_(s6->data_type_in), oyNoEmptyString_m_(s6->data_type_out) );
+              break;
+            case oyOBJECT_CMM_API7_S:
+              fprintf( stdout,  "context_type: %s\n", oyNoEmptyString_m_(s7->context_type) );
+              {
+                while(s7->properties && s7->properties[l])
+                {
+                  fprintf(stdout, "\t%s\n", oyNoEmptyString_m_(s7->properties[l]) );
+                  ++l;
+                }
+              }
+              break;
+            case oyOBJECT_CMM_API8_S:
+              printUi( (oyCMMui_s_*) s8->ui, text_info, type );
+              break;
+            case oyOBJECT_CMM_API9_S:
+              if(s9->getText)
+              {
+                if(text_info[0])
+                  fprintf( stdout,  "%s\n", oyNoEmptyString_m_(s9->getText( text_info, type, (oyStruct_s*)s9)) );
+                else
+                {
+                  fprintf( stdout,  "%s\n", _("Info Types:") );
+                  while(s9->texts[l])
+                  {
+                    fprintf(stdout, "\t%s\n", oyNoEmptyString_m_(s9->texts[l]) );
+                    ++l;
+                  }
+                }
+              }
+              break;
+            case oyOBJECT_CMM_API10_S:
+              if(s10->getText)
+              {
+                if(text_info[0])
+                  fprintf( stdout,  "%s\n", oyNoEmptyString_m_(s10->getText( text_info, type, (oyStruct_s*)s10)) );
+                else
+                {
+                  fprintf( stdout,  "%s\n", _("Info Types:") );
+                  while(s10->texts[l])
+                  {
+                    fprintf(stdout, "\t%s\n", oyNoEmptyString_m_(s10->texts[l]) );
+                    ++l;
+                  }
+                }
+              }
+              break;
+            }
+          }
+        }
+        oyCMMapiFilters_Release( &apis );
+      }
+      return 0;
+    }
 
     node = oyFilterNode_NewWith( node_name, 0,0 );
     if(!node)
@@ -292,4 +401,21 @@ int main (int argc, char ** argv)
   return error;
 }
 
-
+void printUi( oyCMMui_s_ * ui, const char * text_info, oyNAME_e type )
+{
+  int l = 0;
+  if(ui && ui->getText)
+  {
+    if(text_info[0])
+      fprintf( stdout,  "%s\n", oyNoEmptyString_m_(ui->getText( text_info, type, (oyStruct_s*)ui) ) );
+    else
+    {
+      fprintf( stdout,  "%s\n", _("Info Types:") );
+      while(ui->texts[l])
+      {
+        fprintf(stdout, "\t%s\n", oyNoEmptyString_m_(ui->texts[l]) );
+        ++l;
+      }
+    }
+  }
+}

@@ -2,7 +2,9 @@
 .SH NAME
 oyranos-xforms-modules \- Oyranos command line option forms dumping tool
 .SH SYNOPSIS
-\fBoyranos-xforms-modules\fR [ [-n \fINAME\fR] [-x \fIFILENAME\fR] [-v] ]
+\fBoyranos-xforms-modules\fR [ [-n \fIREGISTRATION\fR] [-x \fIFILENAME\fR] [-v] ]
+.fi
+\fBoyranos-xforms-modules\fR [ [-n \fIREGISTRATION\fR -t \fITYPE\fR] [--short [--short]] [-v] ]
 .fi
 \fBoyranos-xforms-modules\fR [-l]
 .fi
@@ -11,13 +13,24 @@ oyranos-xforms-modules \- Oyranos command line option forms dumping tool
 The tool dumps out Oyranos option forms from a given module.
 .SH OPTIONS
 .TP
-.B \-n \fImodule registration\fR
+.B \-n \fImodule_registration\fR
 Get option forms from module.
 
 \fB-f\fR include policy options
 
 \fB-x\fR \fIFILENAME\fR
 Write to a option forms document.
+.TP
+.B \-n \fImodule_registration\fR \-t \fItype\fR
+Get informations from module.
+
+\fB-t\fR  \fI""\fR list information types
+
+\fB-t\fR  \fIname\fR get informations of type "name"
+
+\fB--short\fR make information shorter,
+
+\fB--short --short\fR gives a nick length information
 .TP
 .B \-l list modules registrations
 .TP
@@ -48,6 +61,9 @@ Get default options forms for module and write to a file:
 .TP
 Pipe in forms, show and write to file:
 .B oyranos-xforms-modules -n lcm2 | oyranos-xforms-fltk -o lcm2.xhtml
+.TP
+Get help text for module:
+.B oyranos-xforms-modules -n 4_scale -t help
 .TP
 Print a help text:
 .B oyranos-xforms-modules -?
