@@ -18,10 +18,10 @@ Get option forms from module.
 
 \fB-x\fR \fIFILENAME\fR
 Write to a option forms document.
-
-\fB-l\fR list modules
-
-\fB-v\fR be verbose
+.TP
+.B \-l list modules
+.TP
+.B \-v be verbose
 .TP
 .B \-?
 help text
@@ -51,6 +51,44 @@ Pipe in forms, show and write to file:
 .TP
 Print a help text:
 .B oyranos-xforms-modules -?
+.PP
+.SH MODULE SELECTION
+.TP
+The -n module / filter selection happens as string called a registration. Fro instance "org/oyranos/openicc/icc_color._lcm2._CPU._NOACCEL"
+This is how Oyranos identifies filters. The string is separated into sections by a slash'/'.
+The sections can be subdivided by point'.' for additional attributes as needed.
+.TP
+The sections meaning are as follows:
+
+.B  top
+e.g. org
+
+.B  vendor
+e.g. oyranos
+
+.B  filter type
+e.g. openicc
+
+.B  filter name
+e.g. "icc_color._lcm2._NOACCEL._CPU"
+.TP
+Registration search pattern:
+To explicitely select a different processor and context creator the according registration attribute must have a number and prefix, e.g. "4_lcms" "7_octl". A search pattern can add keywords.
+
+a number followed by underscore, plus or minus signs the according API. The feature of interesst must then be appended, e.g. "7_GPU" preferes a GPU interpolator. This is useful to select a certain API of a module.
+            underscore '_' means preference
+            minus '-' means must skip
+            plus '+' means must have
+        "4[_,+,-]" - context+UI oyCMMapi4_s
+        "6[_,+,-]" - context convertor oyCMMapi6_s
+        "7[_,+,-]" - processor oyCMMapi7_s
+By default all attributes in a search pattern are considered mandatory. A level can be omitted, "//", or a attribute can be tagged by a '_' underscore in front for making it optional, or a '-' to indicate a attibute must not match.
+
+Example - a complete registration search pattern:
+
+"//openicc/4+icc_color.7+ACCEL.7_GPU.7_HLSL.7-GLSL" selects a accelerated CMM interpolator with prefered GPU and HLSL but no GLSL support together with a ICC compliant context generator and options.
+
+"//openicc/4_lcms.7_lcm2" selects the "lcms" options filter together with a "lcm2" data processor
 .PP
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
