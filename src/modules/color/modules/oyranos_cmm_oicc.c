@@ -141,7 +141,7 @@ char oicc_default_color_icc_options[] = {
       <mixed_color_spaces_screen_doc_convert.front>2</mixed_color_spaces_screen_doc_convert.front>\n\
       <proof_hard.advanced>0</proof_hard.advanced>\n\
       <proof_soft.advanced>0</proof_soft.advanced>\n\
-      <effect_switch.advanced>0</effect_switch.advanced>\n\
+      <effect_switch>0</effect_switch>\n\
       <rendering_intent>0</rendering_intent>\n\
       <rendering_bpc>1</rendering_bpc>\n\
       <rendering_intent_proof.advanced>0</rendering_intent_proof.advanced>\n\
