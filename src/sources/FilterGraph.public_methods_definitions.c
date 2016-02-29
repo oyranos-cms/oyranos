@@ -40,6 +40,8 @@ OYAPI oyFilterGraph_s * OYEXPORT
  *  @param[in]     mark                marking string to use as a selector
  *  @return                            the filter node
  *
+ *  @see @ref registration
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2009/03/04 (Oyranos: 0.1.10)
  *  @date    2009/03/01
@@ -91,6 +93,8 @@ OYAPI oyFilterNode_s * OYEXPORT
                                        or zero for no criterium
  *  @param[in]     mark                marking string to use as a selector
  *  @return                            the nodes count
+ *
+ *  @see @ref registration
  *
  *  @version  Oyranos: 0.5.0
  *  @date     2012/09/24

@@ -2,8 +2,8 @@
  *  @memberof oyConversion_s
  *  @brief    Check for correctly adhering to policies
  *
- *  Without any options the module selected with the registration argument shall
- *  perform graph analysis and correct the graph.
+ *  Without any options the module selected with the @ref registration 
+ *  policy filter shall perform graph analysis and correct the graph.
  *
  *  @par Typical Options:
  *  - "command"-"help" - a string option issuing a help text as message

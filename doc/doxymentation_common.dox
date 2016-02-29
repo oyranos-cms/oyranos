@@ -101,7 +101,7 @@
     In the OY_DUMMY_FILTER_REGISTRATION macro the "my_filter" name should be
     changed to something appropriate for the new module. Oyranos users will use
     primarily this name to select the module. A description on how a module 
-    registration string is to be build and how it works can be found at the end
+    @ref registration string is to be build and how it works can be found at the end
     of the Detailed Description section on @ref module_api. All occurences
     of "my_filter" in the file should be substituted accordingly. \n
     \n
@@ -675,7 +675,7 @@ digraph Modules {
  *  The oyCMMapi4_s structure contains as well the GUI. oyCMMapi4_s is 
  *  mandatory because of its GUI parts.
  *  A oyCMMapi4_s without a oyCMMapi7_s is useless.
- *  oyCMMapi4_s must contain the same basic registration string like the 
+ *  oyCMMapi4_s must contain the same basic @ref registration string like the 
  *  according oyCMMapi7_s except some keywords in the application section. This
  *  is explained more below in detail.
  *  It is assumed that a generated context is worth to be cached. If Oyranos 

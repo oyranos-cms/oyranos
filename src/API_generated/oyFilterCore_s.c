@@ -211,7 +211,7 @@ const char * oyFilterCore_GetText    ( oyFilterCore_s    * filter,
  *  - the user knows, which kind of filter is requested -> registration, e.g. "//color"
  *  - the user probably knows, which special CMM to use (e.g. lcms, icc, shiva)
  *
- *  @param[in]     registration        the filter registration pattern
+ *  @param[in]     registration        the filter @ref registration pattern
  *  @param[in]     options             the supplied filter options
  *  @param[in]     object              the optional object
  *  @return                            a filter core
@@ -262,7 +262,7 @@ oyFilterCore_s * oyFilterCore_NewWith( const char        * registration,
  *  @brief    Get registration text
  *
  *  @param[in]     filter              filter object
- *  @return                            registration string
+ *  @return                            @ref registration string
  *
  *  @version  Oyranos: 0.5.0
  *  @date     2012/10/04

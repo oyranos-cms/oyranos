@@ -141,6 +141,9 @@ digraph G {
 }
  \enddot
  *
+ *  oyFilterNode_s types are contained inside libraries called modules. 
+ *  The filter types are identified by @ref registration strings.
+ *
  *  @version Oyranos: 0.1.9
  *  @since   2008/07/08 (Oyranos: 0.1.8)
  *  @date    2008/12/16

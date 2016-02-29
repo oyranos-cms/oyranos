@@ -4,7 +4,7 @@
  *  @brief   A basic filter to manipulate data
  *  
  *  This is the Oyranos filter object. Filters are categorised into basic
- *  classes of filters described in the registration_ (//xxx) member.
+ *  classes of filters described in the @ref registration (//xxx) member.
  *  Filters implement a container for data and options.
  *  Filters can be manipulated by changing their options or data set.
  *
@@ -17,7 +17,7 @@
  *  instance a one in one out filter can not be connected to two sources at 
  *  once.
  *
- *  The registration_ describes different basic types of filters (//xxx).
+ *  The @ref registration describes different basic types of filters (//xxx).
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/08 (Oyranos: 0.1.8)

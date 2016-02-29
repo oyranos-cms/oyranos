@@ -281,7 +281,7 @@ OYAPI int  OYEXPORT
  *  @memberof oyFilterNode_s
  *  @brief    Initialise a new filter node object properly
  *
- *  @param         registration        the processing filter registration string
+ *  @param         registration        the processing filter @ref registration string
  *  @param         filter              the context filter
  *  @param         object              the optional object
  *
@@ -1085,7 +1085,7 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
  *  @memberof oyFilterNode_s
  *  @brief    Initialise a new filter node object properly
  *
- *  @param         registration        a registration string, @see module_api
+ *  @param         registration        a @ref registration string, @see module_api
  *  @param         options             options for the filter
  *  @param         object              the optional object
  *
@@ -1200,7 +1200,7 @@ OYAPI oyFilterCore_s *  OYEXPORT
  *  @brief    Get filter core registration
  *
  *  @param[in,out] node                filter object
- *  @return                            the registration string
+ *  @return                            the @ref registration string
  *
  *  @version  Oyranos: 0.5.0
  *  @date     2012/09/15
@@ -1223,7 +1223,7 @@ OYAPI const char *  OYEXPORT
  *  @brief    Get filters registration
  *
  *  @param[in,out] node                filter object
- *  @return                            the registration string
+ *  @return                            the @ref registration string
  *
  *  @version  Oyranos: 0.9.6
  *  @date     2014/08/04
