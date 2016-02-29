@@ -293,7 +293,7 @@ const char * oyraApi4UiImageScaleGetText (
                                        oyNAME_e            type,
                                        oyStruct_s        * context )
 {
-  if(strcmp(select,"name"))
+  if(strcmp(select,"name") == 0)
   {
     if(type == oyNAME_NICK)
       return "image_scale";
@@ -301,7 +301,7 @@ const char * oyraApi4UiImageScaleGetText (
       return _("Image[scale]");
     else if(type == oyNAME_DESCRIPTION)
       return _("Scale Image Filter Object");
-  } else if(strcmp(select,"help"))
+  } else if(strcmp(select,"help") == 0)
   {
     if(type == oyNAME_NICK)
       return "help";
@@ -309,7 +309,7 @@ const char * oyraApi4UiImageScaleGetText (
       return _("The filter is used to reduce pixels.");
     else if(type == oyNAME_DESCRIPTION)
       return _("The filter will expect a \"scale\" option and will create, fill and process a according data version with a new job ticket.");
-  } else if(strcmp(select,"category"))
+  } else if(strcmp(select,"category") == 0)
   {
     if(type == oyNAME_NICK)
       return "category";

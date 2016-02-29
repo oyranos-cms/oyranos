@@ -251,7 +251,7 @@ const char * oyraApi4ImageWriteUiGetText (
                                        oyStruct_s        * context )
 {
   static char * category = 0;
-  if(strcmp(select,"name"))
+  if(strcmp(select,"name") == 0)
   {
          if(type == oyNAME_NICK)
       return "write_ppm";
@@ -260,7 +260,7 @@ const char * oyraApi4ImageWriteUiGetText (
     else
       return _("Write PPM Image Filter Object");
   }
-  else if(strcmp(select,"category"))
+  else if(strcmp(select,"category") == 0)
   {
     if(!category)
     {
@@ -275,7 +275,7 @@ const char * oyraApi4ImageWriteUiGetText (
     else
       return category;
   }
-  else if(strcmp(select,"help"))
+  else if(strcmp(select,"help") == 0)
   {
          if(type == oyNAME_NICK)
       return "help";
@@ -1142,7 +1142,7 @@ const char * oyraApi4ImageInputUiGetText (
                                        oyStruct_s        * context )
 {
   static char * category = 0;
-  if(strcmp(select,"name"))
+  if(strcmp(select,"name") == 0)
   {
          if(type == oyNAME_NICK)
       return "input_ppm";
@@ -1151,7 +1151,7 @@ const char * oyraApi4ImageInputUiGetText (
     else
       return _("Input PPM Image Filter Object");
   }
-  else if(strcmp(select,"category"))
+  else if(strcmp(select,"category") == 0)
   {
     if(!category)
     {
@@ -1166,7 +1166,7 @@ const char * oyraApi4ImageInputUiGetText (
     else
       return category;
   }
-  else if(strcmp(select,"help"))
+  else if(strcmp(select,"help") == 0)
   {
          if(type == oyNAME_NICK)
       return "help";

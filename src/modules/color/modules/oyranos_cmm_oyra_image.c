@@ -323,7 +323,7 @@ const char * oyraApi4UiImageWriteGetText (
                                        oyNAME_e            type,
                                        oyStruct_s        * context )
 {
-  if(strcmp(select,"name"))
+  if(strcmp(select,"name") == 0)
   {
     if(type == oyNAME_NICK)
       return "write";
@@ -331,7 +331,7 @@ const char * oyraApi4UiImageWriteGetText (
       return _("Write");
     else if(type == oyNAME_DESCRIPTION)
       return _("Load Image File Object");
-  } else if(strcmp(select,"help"))
+  } else if(strcmp(select,"help") == 0)
   {
     if(type == oyNAME_NICK)
       return "help";
@@ -1082,7 +1082,7 @@ const char * oyraApi4UiImageRectanglesGetText (
                                        oyNAME_e            type,
                                        oyStruct_s        * context )
 {
-  if(strcmp(select,"name"))
+  if(strcmp(select,"name") == 0)
   {
     if(type == oyNAME_NICK)
       return "rectangles";
@@ -1090,7 +1090,7 @@ const char * oyraApi4UiImageRectanglesGetText (
       return _("Rectangles");
     else if(type == oyNAME_DESCRIPTION)
       return _("Rectangles Splitter Object");
-  } else if(strcmp(select,"help"))
+  } else if(strcmp(select,"help") == 0)
   {
     if(type == oyNAME_NICK)
       return "help";
@@ -1290,7 +1290,7 @@ const char * oyraApi4UiImageRootGetText (
                                        oyNAME_e            type,
                                        oyStruct_s        * context )
 {
-  if(strcmp(select,"name"))
+  if(strcmp(select,"name") == 0)
   {
     if(type == oyNAME_NICK)
       return "image_root";
@@ -1298,7 +1298,7 @@ const char * oyraApi4UiImageRootGetText (
       return _("Root Image");
     else if(type == oyNAME_DESCRIPTION)
       return _("Root Image Filter Object");
-  } else if(strcmp(select,"help"))
+  } else if(strcmp(select,"help") == 0)
   {
     if(type == oyNAME_NICK)
       return "help";
@@ -1481,7 +1481,7 @@ const char * oyraApi4UiImageOutputGetText (
                                        oyNAME_e            type,
                                        oyStruct_s        * context )
 {
-  if(strcmp(select,"name"))
+  if(strcmp(select,"name") == 0)
   {
     if(type == oyNAME_NICK)
       return "image_out";
@@ -1489,7 +1489,7 @@ const char * oyraApi4UiImageOutputGetText (
       return _("Image[out]");
     else if(type == oyNAME_DESCRIPTION)
       return _("Output Image Filter Object");
-  } else if(strcmp(select,"help"))
+  } else if(strcmp(select,"help") == 0)
   {
     if(type == oyNAME_NICK)
       return "help";
