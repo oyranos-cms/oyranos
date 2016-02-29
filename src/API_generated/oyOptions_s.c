@@ -934,6 +934,8 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
   if(error <= 0)
   {
     n = oyOptions_Count( options );
+    if(!n)
+      return 0;
     sort = oyAllocateFunc_( n * sizeof(int) );
     for( i = 0; i < n; ++i )
       sort[i]=i;
