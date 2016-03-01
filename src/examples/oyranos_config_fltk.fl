@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0302 
+version 1.0303 
 i18n_type 1 
 i18n_include <libintl.h> 
 i18n_function _ 
@@ -57,13 +57,13 @@ decl {\#include <fstream>} {public local
 decl {\#include <cstdio>} {public local
 } 
 
-decl {\#define H_SPACING 10} {public local
+decl {int h_spacing=10;} {private global
 } 
 
-decl {\#define V_SPACING 3} {public local
+decl {int v_spacing=3;} {private global
 } 
 
-decl {\#define BUTTON_HEIGHT 25} {public local
+decl {int button_height=25;} {selected private global
 } 
 
 decl {\#define BOX_WIDTH 250
@@ -357,14 +357,14 @@ class Option {: {public OyFl_Pack} private
   int flags) : OyFl_Pack(x, y, w, h)} {open
   } {
     code {Fl_Pack::type( FL_HORIZONTAL );
-  Fl_Pack::spacing(H_SPACING);
+  Fl_Pack::spacing(h_spacing);
 
   option = option_;
   type = type_;
 
   debug_me();
 
-  /*int weigth = BOX_WIDTH + SELECT_WIDTH + 4 * H_SPACING + BUTTON_HEIGHT;
+  /*int weigth = BOX_WIDTH + SELECT_WIDTH + 4 * h_spacing + button_height;
   if(w < weigth)
     Fl_Pack::size( weigth, Fl_Pack::h() );
   w = Fl_Pack::w();*/
@@ -377,7 +377,7 @@ class Option {: {public OyFl_Pack} private
   {
     // Profile name box
     box = new OyFl_Box( x, y,
-                      OyFl_Pack::w() - SELECT_WIDTH - BUTTON_HEIGHT - 4*H_SPACING, BUTTON_HEIGHT,
+                      OyFl_Pack::w() - SELECT_WIDTH - button_height - 4*h_spacing, button_height,
                       name );
     box->tooltip( tooltip );
     box->align(FL_ALIGN_LEFT | FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
@@ -392,8 +392,8 @@ class Option {: {public OyFl_Pack} private
       } else
         default_p = "";
       if(default_p) {
-        box = new OyFl_Box( w - BOX_WIDTH - SELECT_WIDTH - BUTTON_HEIGHT - 3*H_SPACING, y,
-                          190, BUTTON_HEIGHT, default_p );
+        box = new OyFl_Box( w - BOX_WIDTH - SELECT_WIDTH - button_height - 3*h_spacing, y,
+                          190, button_height, default_p );
         box->align( FL_ALIGN_LEFT | FL_ALIGN_CLIP | FL_ALIGN_INSIDE );
 
         // identify
@@ -413,8 +413,8 @@ class Option {: {public OyFl_Pack} private
     DBG_PROG_V((choice->size()))
 
     // Profile viewer
-    Fl_Button *button = new Fl_Button( w - BUTTON_HEIGHT - H_SPACING, y,
-                                       BUTTON_HEIGHT, BUTTON_HEIGHT, "@-3DnArrow" );
+    Fl_Button *button = new Fl_Button( w - button_height - h_spacing, y,
+                                       button_height, button_height, "@-3DnArrow" );
     button->callback( showDefaultProfile_callback );
     button->tooltip(_("Show in external Viewer"));
 
@@ -429,7 +429,7 @@ class Option {: {public OyFl_Pack} private
   {
     // name box
     box = new OyFl_Box( x, y,
-                      w - SELECT_WIDTH - BUTTON_HEIGHT - 4*H_SPACING, BUTTON_HEIGHT,
+                      w - SELECT_WIDTH - button_height - 4*h_spacing, button_height,
                       name );
     box->tooltip( tooltip );
     box->align(FL_ALIGN_LEFT | FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
@@ -444,8 +444,8 @@ class Option {: {public OyFl_Pack} private
       } else
         default_p = "";
       if(default_p) {
-        box = new OyFl_Box( w - BOX_WIDTH - SELECT_WIDTH - BUTTON_HEIGHT - 3*H_SPACING, y,
-                          190, BUTTON_HEIGHT, default_p );
+        box = new OyFl_Box( w - BOX_WIDTH - SELECT_WIDTH - button_height - 3*h_spacing, y,
+                          190, button_height, default_p );
         box->align( FL_ALIGN_LEFT | FL_ALIGN_CLIP | FL_ALIGN_INSIDE );
 
         // identify
@@ -458,8 +458,8 @@ class Option {: {public OyFl_Pack} private
     }
 
     // Choice
-    choice = new Fl_Choice( w - SELECT_WIDTH - H_SPACING, y,
-                            SELECT_WIDTH + BUTTON_HEIGHT + H_SPACING, h );
+    choice = new Fl_Choice( w - SELECT_WIDTH - h_spacing, y,
+                            SELECT_WIDTH + button_height + h_spacing, h );
     choice->callback( selectBehaviourCallback );
     choice->tooltip( tooltip );
 
@@ -483,7 +483,7 @@ class Option {: {public OyFl_Pack} private
 
     ListEntry *pp = 0;
     int width = 0;
-    new Fl_Box(0,0,10, H_SPACING);
+    new Fl_Box(0,0,10, h_spacing);
 
     //parent()->box(FL_ENGRAVED_FRAME);
 
@@ -495,7 +495,7 @@ class Option {: {public OyFl_Pack} private
         scrollb_w = scroll->scrollbar.w();
       }
       pp = new ListEntry( Fl_Group::current()->x(), Fl_Group::current()->y(),
-                          w - scrollb_w - spacing(), BUTTON_HEIGHT,
+                          w - scrollb_w - spacing(), button_height,
                           choices[i], flags );
       if( width < pp->w() )
         width = pp->w();
@@ -521,24 +521,24 @@ class ListEntry {open : {public OyFl_Pack} private
     : OyFl_Pack(x, y, w, h)} {open
   } {
     code {Fl_Pack::type( FL_HORIZONTAL );
-    Fl_Pack::spacing(H_SPACING);
+    Fl_Pack::spacing(h_spacing);
     Fl_Group::resizable(0);
 
-    box = new Fl_Box( 0, 0, w-BUTTON_HEIGHT-spacing(), BUTTON_HEIGHT, name );
+    box = new Fl_Box( 0, 0, w-button_height-spacing(), button_height, name );
     box->align(FL_ALIGN_LEFT | FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
 
-    new Fl_Box( 0, 0, BUTTON_HEIGHT, BUTTON_HEIGHT );
+    new Fl_Box( 0, 0, button_height, button_height );
 
     int width=0, height=0;
 
     box->measure_label(width, height);
 
-    /*int scroll_w = 50; //default_profiles_pack->w() - 3*H_SPACING - BUTTON_HEIGHT;
+    /*int scroll_w = 50; //default_profiles_pack->w() - 3*h_spacing - button_height;
     int b_w = scroll_w;
     if(width > scroll_w)
       b_w = width;
 
-    box->size( b_w + H_SPACING, 25 ); */
+    box->size( b_w + h_spacing, 25 ); */
 
     Fl_Pack::resizable(box);
     //Fl_Pack::size( parent()->w(), Fl_Pack::h() );
@@ -586,10 +586,10 @@ Function {addTab( Flmm_Tabs* tabs, const oyGROUP_e *groups )} {private return_ty
         Fl_Widget *wid = (Fl_Widget*)parent->user_data();
         if( !wid ) wid = parent;
 
-        int x = parent->x() + Fl::box_dx( wid->box() ) + V_SPACING,
-            y = parent->y() + Fl::box_dy( wid->box() ) + BUTTON_HEIGHT,// + V_SPACING,
-            w = parent->w() - Fl::box_dw( wid->box() ) - 2*V_SPACING,
-            h = parent->h() - Fl::box_dh( wid->box() ) - BUTTON_HEIGHT - 2*V_SPACING;
+        int x = parent->x() + Fl::box_dx( wid->box() ) + v_spacing,
+            y = parent->y() + Fl::box_dy( wid->box() ) + button_height,// + v_spacing,
+            w = parent->w() - Fl::box_dw( wid->box() ) - 2*v_spacing,
+            h = parent->h() - Fl::box_dh( wid->box() ) - button_height - 2*v_spacing;
         printf("%d+%d,%dx%d\\n", x,y,w,h);
         if( k < groups[0] )
         {
@@ -602,12 +602,12 @@ Function {addTab( Flmm_Tabs* tabs, const oyGROUP_e *groups )} {private return_ty
           tab = new Fl_Scroll( x,y,w,h, title );
           tab->tooltip( tooltip );
           tab->box( FL_NO_BOX ); //FL_THIN_UP_BOX );
-          { OyFl_Pack* o = new OyFl_Pack( x + Fl::box_dx( tab->box() ) + V_SPACING,
-                                      y + Fl::box_dy( tab->box() ) + V_SPACING,// + BUTTON_HEIGHT,
-                                      w - Fl::box_dw(parent->box()) - 2*V_SPACING,
-                                      h - Fl::box_dh( parent->box() ) - BUTTON_HEIGHT );
+          { OyFl_Pack* o = new OyFl_Pack( x + Fl::box_dx( tab->box() ) + v_spacing,
+                                      y + Fl::box_dy( tab->box() ) + v_spacing,// + button_height,
+                                      w - Fl::box_dw(parent->box()) - 2*v_spacing,
+                                      h - Fl::box_dh( parent->box() ) - button_height );
             o->box( FL_NO_BOX );
-            o->spacing( V_SPACING );
+            o->spacing( v_spacing );
             o->end();
             tab->user_data( o );
             tab->resizable( o );
@@ -699,7 +699,11 @@ Function {getTab( Flmm_Tabs* tabs, oyGROUP_e group, Fl_Group **container )} {pri
 
 Function {refreshOptions()} {private
 } {
-  code {top_tabs->damage( FL_DAMAGE_ALL );
+  code {double scale = top_group->scale();
+  button_height = OY_ROUND(scale * 25);
+  v_spacing = OY_ROUND(scale * 3);
+  h_spacing = OY_ROUND(scale * 10);
+  top_tabs->damage( FL_DAMAGE_ALL );
   top_tabs->redraw();
 
 
@@ -744,7 +748,7 @@ Function {refreshOptions()} {private
 
           if(w)
           {
-            int bh = BUTTON_HEIGHT;
+            int bh = button_height;
             int by = w->y();
 
             Fl_Widget *wid = getWidget( top_tabs, oywid );
@@ -826,8 +830,8 @@ Function {refreshOptions()} {private
 Function {createUI()} {open
 } {
   code {top_tabs->clear();
-  refreshOptions();} {}
-} 
+  } {}
+}
 
 Function {updateUI()} {} {
   code {//! internal@todo start refreshing when the UI has finished
@@ -898,7 +902,8 @@ Function {} {open C
       }
     }
   }
-  code {createUI();} {}
+  code {createUI();
+  updateUI();} {}
 } 
 
 Function {listWindow( Fl_Widget *w )} {} {
@@ -959,7 +964,7 @@ Function {event_handler( int e )} {open return_type int
 Function {make_help()} {open
 } {
   Fl_Window help_window {
-    label {Oyranos Help} open selected
+    label {Oyranos Help} open
     xywh {1192 298 505 410} type Double resizable
     class Oy_Fl_Double_Window visible
   } {
