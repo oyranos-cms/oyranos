@@ -2105,9 +2105,10 @@ oyTESTRESULT_e testClut ()
   };
   double clck = oyClock();
   setupColourTable( &pc, 0 );
+  int r=12,g=12,b=2;
   clck = oyClock() - clck;
-  uint16_t c[3] = {pc.clut[12][12][12][0],pc.clut[12][12][12][1],pc.clut[12][12][12][2]};
-  fprintf(zout, "compatibleWithAdobeRGB1998.icc %d,%d,%d\n", pc.clut[12][12][12][0],pc.clut[12][12][12][1],pc.clut[12][12][12][2]);
+  uint16_t c[3] = {pc.clut[r][g][b][0],pc.clut[r][g][b][1],pc.clut[r][g][b][2]};
+  fprintf(zout, "compatibleWithAdobeRGB1998.icc %d,%d,%d\n", pc.clut[r][g][b][0],pc.clut[r][g][b][1],pc.clut[r][g][b][2]);
 
   int count = oyStructList_Count( oy_test_cache_ );
   if( count )
@@ -2123,9 +2124,9 @@ oyTESTRESULT_e testClut ()
 
   pc.dst_profile = oyProfile_FromFile( "LStar-RGB.icc", icc_profile_flags, NULL );
   setupColourTable( &pc, 0 );
-  fprintf(zout, "LStar-RGB.icc %d,%d,%d\n", pc.clut[12][12][12][0],pc.clut[12][12][12][1],pc.clut[12][12][12][2]);
+  fprintf(zout, "LStar-RGB.icc %d,%d,%d\n", pc.clut[r][g][b][0],pc.clut[r][g][b][1],pc.clut[r][g][b][2]);
   count = oyStructList_Count( oy_test_cache_ );
-  if( !(c[0] == pc.clut[12][12][12][0] || c[1] == pc.clut[12][12][12][1] || c[2] == pc.clut[12][12][12][2]) &&
+  if( !(c[0] == pc.clut[r][g][b][0] || c[1] == pc.clut[r][g][b][1] || c[2] == pc.clut[r][g][b][2]) &&
       count > 1)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "cache difference                    %d", count );
