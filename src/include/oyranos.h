@@ -379,6 +379,7 @@ int           oyOptionFloatIntRangeGet (oyWIDGET_e        option,
                                         float           * current);
 # endif
 
+int          oyGetPersistentStrings  ( const char        * top_key_name );
 
 
 int    oyProfileGetMD5               ( void       *buffer,
