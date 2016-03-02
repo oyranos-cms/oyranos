@@ -1831,6 +1831,37 @@ int          lcm2MOptions_Handle2    ( oyOptions_s       * options,
   return 0;
 }
 
+oyProfiles_s * lcm2ProfilesFromOptions( oyFilterNode_s * node, oyFilterPlug_s * plug,
+                                        oyOptions_s * node_options,
+                                        const char * key, int profiles_switch, int verbose )
+{
+  oyProfiles_s * profiles = NULL;
+  oyOption_s * o = NULL;
+  
+  if(profiles_switch || oy_debug || verbose)
+    o = oyOptions_Find( node_options, key, oyNAME_PATTERN );
+  if(o)
+  {
+    profiles = (oyProfiles_s*) oyOption_GetStruct( o, oyOBJECT_PROFILES_S );
+    if(!profiles_switch && (oy_debug || verbose))
+    {
+      lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
+               " found \"%s\" %d  switch %d",
+               OY_DBG_ARGS_, key, oyProfiles_Count( profiles ), profiles_switch );
+    } else
+    if( !profiles )
+    {
+      oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
+      lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
+               " incompatible \"%s\"", OY_DBG_ARGS_, key );
+      
+    }
+    oyOption_Release( &o );
+  }
+
+  return profiles;
+}
+
 /** Function lcm2FilterNode_CmmIccContextToMem
  *  @brief   implement oyCMMFilterNode_CreateContext_f()
  *
@@ -1846,17 +1877,14 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   oyPointer block = 0;
   int error = 0;
   int n,i,len;
-  oyDATATYPE_e data_type = 0;
   size_t size_ = 0;
   oyFilterPlug_s * plug = oyFilterNode_GetPlug( node, 0 );
   oyFilterSocket_s * socket = oyFilterNode_GetSocket( node, 0 ),
                    * remote_socket = oyFilterPlug_GetSocket( plug );
   oyImage_s * image_input = 0,
             * image_output = 0;
-  oyOptions_s * image_input_tags = 0;
   cmsHPROFILE * lps = 0;
   cmsHTRANSFORM xform = 0;
-  oyOption_s * o = 0;
   oyOptions_s * node_tags = oyFilterNode_GetTags( node ),
               * node_options = oyFilterNode_GetOptions( node, 0 );
   oyProfile_s * p = 0,
@@ -1873,7 +1901,6 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
       proof = 0,
       effect_switch = 0;
   int verbose = oyOptions_FindString( node_tags, "verbose", "true" ) ? 1 : 0;
-  const char * o_txt = 0;
 
   image_input = (oyImage_s*)oyFilterSocket_GetData( remote_socket );
   image_output = (oyImage_s*)oyFilterSocket_GetData( socket );
@@ -1897,9 +1924,10 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
              OY_DBG_FORMAT_" missed output image %d", OY_DBG_ARGS_, image_output?image_output->type_:0 );
   }
 
+  /*oyDATATYPE_e data_type = 0;
   data_type = oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) );
 
-  /*if(data_type == oyHALF)
+  if(data_type == oyHALF)
   {
     oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_DATA );
     lcm2_msg( oyMSG_WARN, (oyStruct_s*)node,
@@ -1922,93 +1950,54 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   profs = oyProfiles_New( 0 );
   error = oyProfiles_MoveIn( profs, &p, -1 );
 
-  o_txt = oyOptions_FindString  ( node_options, "effect_switch", 0 );
-  if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigDisplayClass*/)
-    effect_switch = atoi( o_txt );
   /* effect profiles */
-  if(effect_switch || oy_debug || verbose)
-    o = oyOptions_Find( node_options, "profiles_effect", oyNAME_PATTERN );
-  if(o)
-  {
-    profiles = (oyProfiles_s*) oyOption_GetStruct( o, oyOBJECT_PROFILES_S );
-    if(!effect_switch && (oy_debug || verbose))
+  effect_switch = oyOptions_FindString  ( node_options, "effect_switch", "1" ) ? 1 : 0;
+  profiles = lcm2ProfilesFromOptions( node, plug, node_options,
+                                      "profiles_effect", effect_switch, verbose );
+  n = oyProfiles_Count( profiles );
+  if(n)
+    for(i = 0; i < n; ++i)
     {
-      lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
-               " found \"profiles_effect\" %d  \"effect_switch\" %d",
-               OY_DBG_ARGS_, oyProfiles_Count( profiles ), effect_switch );
-    } else
-    if( !profiles )
-    {
-      oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
-      lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
-               " incompatible \"profiles_effect\"", OY_DBG_ARGS_ );
-      
-    } else
-    {
-      n = oyProfiles_Count( profiles );
-      for(i = 0; i < n; ++i)
-      {
         p = oyProfiles_Get( profiles, i );
 
         /* Look in the Oyranos cache for a CMM internal representation */
         lps[ profiles_n++ ] = lcm2AddProfile( p );
         error = oyProfiles_MoveIn( profs, &p, -1 );
-      }
     }
-    oyOption_Release( &o );
-    oyProfiles_Release( &profiles );
-  }
+  oyProfiles_Release( &profiles );
+
 
   /* simulation profile */
-  o = oyOptions_Find( node_options, "profiles_simulation", oyNAME_PATTERN );
-  o_txt = oyOptions_FindString  ( node_options, "proof_soft", 0 );
-  if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigDisplayClass*/)
-    proof = atoi( o_txt );
-
-  o_txt = oyOptions_FindString  ( node_options, "proof_hard", 0 );
-  if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigOutputClass*/)
-    proof = atoi( o_txt ) ? atoi(o_txt) : proof;
+  proof = oyOptions_FindString  ( node_options, "proof_soft", "1" ) ? 1 : 0;
+  proof += oyOptions_FindString  ( node_options, "proof_hard", "1" ) ? 1 : 0;
 
   if(oy_debug  > 2 && proof)
       lcm2_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_
                " proof requested",OY_DBG_ARGS_);
 
-  if(o)
-  {
-    profiles = (oyProfiles_s*) oyOption_GetStruct( o, oyOBJECT_PROFILES_S );
-    if( !profiles )
+  profiles = lcm2ProfilesFromOptions( node, plug, node_options,
+                                      "profiles_simulation", proof, verbose );
+  n = oyProfiles_Count( profiles );
+  if(n)
+    for(i = 0; i < n; ++i)
     {
-      oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
-      lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
-               " incompatible \"profiles_simulation\"",OY_DBG_ARGS_);
-      
-    } else
-    {
-      n = oyProfiles_Count( profiles );
+      p = oyProfiles_Get( profiles, i );
 
-      lcm2_msg( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
-               " %d simulation profile(s) found \"%s\"",
-               OY_DBG_ARGS_, n,
-               profiles?oyStruct_TypeToText((oyStruct_s*)profiles):"????");
-
-      for(i = 0; i < n; ++i)
-      {
-        p = oyProfiles_Get( profiles, i );
-
+      if(oy_debug)
         lcm2_msg( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
-                 " found profile: %s",
-                 OY_DBG_ARGS_, p?oyProfile_GetFileName( p,-1 ):"????");
+                  " found profile: %s",
+                  OY_DBG_ARGS_, p?oyProfile_GetFileName( p,-1 ):"????");
 
-        error = oyProfiles_MoveIn( profs, &p, -1 );
-        ++profiles_simulation_n;
+      error = oyProfiles_MoveIn( profs, &p, -1 );
+      ++profiles_simulation_n;
 
-        oyProfile_Release( &p );
-      }
+      oyProfile_Release( &p );
     }
-    oyOption_Release( &o );
-  } else if(verbose || oy_debug > 2)
-    lcm2_msg( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
-             " no simulation profile found", OY_DBG_ARGS_);
+  else
+    if(verbose || oy_debug > 2)
+      lcm2_msg( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
+                " no simulation profile found", OY_DBG_ARGS_);
+  oyProfiles_Release( &profiles );
 
 
   /* output profile */
