@@ -521,7 +521,16 @@ int            oyOptions_Add         ( oyOptions_s       * options,
     {
       tmp = (oyOption_s_*) oyOptions_Find( options, o_opt, oyNAME_PATTERN );
 
+      /* preserve manual / on the fly settings */
       if(o->flags & oyOPTIONATTRIBUTE_EDIT &&
+         !(tmp->flags & oyOPTIONATTRIBUTE_EDIT))
+      {
+        oyOption_Copy__Members( tmp, o );
+        error = 0;
+      } else
+      /* preserve automatic / DB settings */
+      if(o->flags & oyOPTIONATTRIBUTE_AUTOMATIC &&
+         !(tmp->flags & oyOPTIONATTRIBUTE_AUTOMATIC) &&
          !(tmp->flags & oyOPTIONATTRIBUTE_EDIT))
       {
         oyOption_Copy__Members( tmp, o );
