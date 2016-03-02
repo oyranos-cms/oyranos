@@ -849,7 +849,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               oiccChangeNodeOption( f_options, db_options,
                                     "rendering_gamut_warning", s, verbose, flags, oyOPTIONATTRIBUTE_ADVANCED);
               oiccChangeNodeOption( f_options, db_options,
-                                    "effect_switch", s, verbose, flags, oyOPTIONATTRIBUTE_ADVANCED );
+                                    "effect_switch", s, verbose, flags, 0 );
               if(display_mode)
                 proofing = oyOptions_FindString( f_options, "proof_soft", "1" )
                            ? 1 : 0;
