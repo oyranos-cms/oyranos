@@ -1211,8 +1211,9 @@ cmsHPROFILE  lcm2AddProofProfile     ( oyProfile_s       * proof,
 
   if(!proof || proof->type_ != oyOBJECT_PROFILE_S)
   {
-    lcm2_msg( oyMSG_WARN, (oyStruct_s*)proof, OY_DBG_FORMAT_" "
-             "no profile provided", OY_DBG_ARGS_ );
+    lcm2_msg( oyMSG_WARN, (oyStruct_s*)proof, OY_DBG_FORMAT_
+              "no profile provided %s", OY_DBG_ARGS_,
+              proof ? oyStruct_GetId( (oyStruct_s*) proof->type_ ) : "" );
     return 0;
   }
 
@@ -1997,7 +1998,6 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
     if(verbose || oy_debug > 2)
       lcm2_msg( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
                 " no simulation profile found", OY_DBG_ARGS_);
-  oyProfiles_Release( &profiles );
 
 
   /* output profile */
@@ -2175,6 +2175,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   oyProfile_Release( &image_input_profile );
   oyProfile_Release( &image_output_profile );
   oyOptions_Release( &node_options );
+  oyProfiles_Release( &profiles );
 
   return block;
 }
@@ -2267,13 +2268,16 @@ char * lcm2FilterNode_GetText        ( oyFilterNode_s    * node,
   oyImage_s * in_image = 0,
             * out_image = 0;
   int verbose;
-  oyOptions_s * opts = oyFilterNode_GetOptions( node, 0 );
+  oyOptions_s * node_opts = oyFilterNode_GetOptions( node, 0 );
   oyOptions_s * node_tags = oyFilterNode_GetTags( node ),
               * opts_tmp, * opts_tmp2, * options;
   oyFilterCore_s * node_core = oyFilterNode_GetCore( node );
   oyFilterPlug_s * plug = oyFilterNode_GetPlug( node, 0 );
   oyFilterSocket_s * socket = oyFilterNode_GetSocket( node, 0 ),
                    * remote_socket = oyFilterPlug_GetSocket( plug );
+  oyProfiles_s * profiles;
+  oyProfile_s * p;
+  int effect_switch, proof, i,n;
 
   /* pick all sockets (output) data */
   out_image = (oyImage_s*)oyFilterSocket_GetData( remote_socket );
@@ -2312,7 +2316,7 @@ char * lcm2FilterNode_GetText        ( oyFilterNode_s    * node,
     oyOptions_Release( &opts_tmp2 );
     opts_tmp = options;
     /* add existing custom options */
-    options = oyOptions_FromBoolean( opts_tmp, opts, oyBOOLEAN_UNION,NULL);
+    options = oyOptions_FromBoolean( opts_tmp, node_opts, oyBOOLEAN_UNION,NULL);
     oyOptions_Release( &opts_tmp );
 
     /* options -> xforms */
@@ -2321,6 +2325,29 @@ char * lcm2FilterNode_GetText        ( oyFilterNode_s    * node,
     hashTextAdd_m( model );
     hashTextAdd_m( "\n </oyOptions_s>\n" );
     oyOptions_Release( &options );
+
+    /* abstract profiles */
+    proof = oyOptions_FindString  ( node_opts, "proof_soft", "1" ) ? 1 : 0;
+    proof += oyOptions_FindString  ( node_opts, "proof_hard", "1" ) ? 1 : 0;
+    effect_switch = oyOptions_FindString  ( node_opts, "effect_switch", "1" ) ? 1 : 0;
+    if(proof || effect_switch)
+    hashTextAdd_m(   " <oyProfiles_s>" );
+    profiles = lcm2ProfilesFromOptions( node, plug, node_opts, "profiles_effect", effect_switch, verbose );
+    n = oyProfiles_Count( profiles );
+    if(n)
+    {
+      for(i = 0; i < n; ++i)
+      {
+        p = oyProfiles_Get( profiles, i );
+        model = oyProfile_GetText( p, oyNAME_NAME );
+    hashTextAdd_m( "\n  " );
+    hashTextAdd_m( model );
+        oyProfile_Release( &p );
+      }
+    }
+    oyProfiles_Release( &profiles );
+    if(proof || effect_switch)
+    hashTextAdd_m( "\n </oyProfiles_s>\n" );
 
     /* output data */
     hashTextAdd_m(   " <data_out>\n" );
@@ -2336,7 +2363,7 @@ char * lcm2FilterNode_GetText        ( oyFilterNode_s    * node,
 
   hashTextAdd_m(   "</oyFilterNode_s>\n" );
 
-  oyOptions_Release( &opts );
+  oyOptions_Release( &node_opts );
   oyOptions_Release( &node_tags );
   oyFilterCore_Release( &node_core );
   oyFilterPlug_Release( &plug );
