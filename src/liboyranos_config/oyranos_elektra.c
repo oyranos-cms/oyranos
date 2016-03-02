@@ -745,10 +745,10 @@ char **  oyDB_getKeyNamesOneLevel    ( oyDB_s            * db,
 }
 
 
-int oyDBSetString_ (const char* key_name,
+int oyDBSetString_                   ( const char        * key_name,
                                        oySCOPE_e           scope,
-                        const char* value,
-                        const char* comment)
+                                       const char        * value,
+                                       const char        * comment)
 {
 #if KDB_VERSION_NUM >= 800
   Key * error_key = keyNew(KEY_END);

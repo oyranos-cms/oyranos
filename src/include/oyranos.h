@@ -111,7 +111,7 @@ enum  {
 
 #define oyALL oyASK
 
-int         oyGetBehaviour             (oyBEHAVIOUR_e     type);
+int          oyGetBehaviour          ( oyBEHAVIOUR_e       type);
 int          oySetBehaviour          ( oyBEHAVIOUR_e       type,
                                        oySCOPE_e           scope,
                                        int                 choice);
