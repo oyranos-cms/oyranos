@@ -2149,15 +2149,16 @@ int      oyOptions_SetRegFromText    ( oyOptions_s      ** options,
 
 static int oy_db_cache_init_ = 0;
 int * get_oy_db_cache_init_() { return &oy_db_cache_init_; };
+
 /** Function oyGetPersistentStrings
- *  @internal
  *  @brief   cache strings from DB
  *
- *  @param[in]     top_key_name        the DB root key
+ *  @param[in]     top_key_name        the DB root key, zero clears the 
+ *                                     DB cache; use for example OY_STD
  *  @return                            error
  *
  *  @version Oyranos: 0.9.6
- *  @date    2015/03/05
+ *  @date    2016/03/02
  *  @since   2015/02/26 (Oyranos: 0.9.6)
  */
 int          oyGetPersistentStrings  ( const char        * top_key_name )
@@ -2165,31 +2166,39 @@ int          oyGetPersistentStrings  ( const char        * top_key_name )
   char * value = NULL;
   oyDB_s * db = NULL;
   int i;
-  int error = !top_key_name;
+  int error = 0;
   char ** key_names = NULL;
   int     key_names_n = 0;
 
-  db = oyDB_newFrom( top_key_name, oySCOPE_USER_SYS, oyAllocateFunc_ );
-
-  key_names = oyDB_getKeyNames( db, top_key_name, &key_names_n );
-
-  for(i = 0; i < key_names_n; ++i)
+  if(!top_key_name)
   {
-    value = oyDB_getString(db, key_names[i]);
-
-    error = oyOptions_SetRegFromText( &oy_db_cache_,
-                                      key_names[i],
-    /* cache the searched for value,
-     * or mark with empty string if nothing was found */
-                                      value ? value : "",
-                                      OY_CREATE_NEW );
-
-    if(value)
-      oyFree_m_( value );
+    oyOptions_Release( &oy_db_cache_ );
+    oy_db_cache_init_ = 0;
   }
+  else
+  {
+    db = oyDB_newFrom( top_key_name, oySCOPE_USER_SYS, oyAllocateFunc_ );
 
-  oyDB_release( &db );
-  oyStringListRelease_( &key_names, key_names_n, oyDeAllocateFunc_ );
+    key_names = oyDB_getKeyNames( db, top_key_name, &key_names_n );
+
+    for(i = 0; i < key_names_n; ++i)
+    {
+      value = oyDB_getString(db, key_names[i]);
+
+      error = oyOptions_SetRegFromText( &oy_db_cache_,
+                                        key_names[i],
+      /* cache the searched for value,
+       * or mark with empty string if nothing was found */
+                                        value ? value : "",
+                                        OY_CREATE_NEW );
+
+      if(value)
+        oyFree_m_( value );
+    }
+
+    oyDB_release( &db );
+    oyStringListRelease_( &key_names, key_names_n, oyDeAllocateFunc_ );
+  }
 
   return error;
 }
