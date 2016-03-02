@@ -400,7 +400,7 @@ oyTESTRESULT_e testElektra()
   // testing outside editing
   int old_effect_switch = oyGetBehaviour( oyBEHAVIOUR_EFFECT );
   oyStringAddPrintf( &value, oyAllocateFunc_, oyDeAllocateFunc_,
-                     "%d", ~old_effect_switch );
+                     "%d", old_effect_switch >= 1 ? 0 : 1 );
   oyDBSetString_( OY_DEFAULT_EFFECT, oySCOPE_USER, value,
                   "testing");
   /* clear the DB cache */
@@ -409,11 +409,11 @@ oyTESTRESULT_e testElektra()
   if(old_effect_switch != effect_switch)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyGetBehaviour() detected value change     " );
+    "oyGetBehaviour() detected value change %d %s %d", old_effect_switch, value, effect_switch );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyGetBehaviour() detected value change     " );
+    "oyGetBehaviour() detected value change %d %s %d", old_effect_switch, value, effect_switch );
   }
   oyFree_m_( value );
   // reset to old value
@@ -2174,7 +2174,7 @@ oyTESTRESULT_e testClut ()
   int old_effect_switch = oyGetBehaviour( oyBEHAVIOUR_EFFECT );
   char * value = NULL;
   oyStringAddPrintf( &value, oyAllocateFunc_, oyDeAllocateFunc_,
-                     "%d", old_effect_switch ? 0 : old_effect_switch );
+                     "%d", old_effect_switch >= 1 ? 0 : 1 );
   oyDBSetString_( OY_DEFAULT_EFFECT, oySCOPE_USER, value,
                   "testing");
   /* clear the DB cache */
