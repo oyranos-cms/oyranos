@@ -24,6 +24,9 @@
 #include "oyranos_sentinel.h"
 #include "oyranos_texts.h"
 #include "Oy_Fl_Double_Window.h"
+#ifdef HAVE_X11
+# include <X11/Xcm/XcmEvents.h>
+#endif /* HAVE_X11 */
 #include <iostream>
 #include <fstream>
 #include <cstdio>
