@@ -1912,9 +1912,11 @@ typedef struct {
   int ref;                           /* reference counter */
 } PrivColorContext;
 
-static void    setupColourTable      ( PrivColorContext  * ccontext,
+static int     setupColourTable      ( PrivColorContext  * ccontext,
                                        int                 advanced )
 {
+  int dl_count = 0;
+
   uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyConversion_s * cc;
@@ -1972,7 +1974,7 @@ static void    setupColourTable      ( PrivColorContext  * ccontext,
 
       oyProfile_Release( &src_profile );
 
-      oyOptions_SetFromText( &options, "//cmm/any/cached", "1", OY_CREATE_NEW );
+      oyOptions_SetFromText( &options, "org/oyranos/cmm/any/cached", "1", OY_CREATE_NEW );
       cc = oyConversion_CreateBasicPixels( image_in, image_out, options, 0 );
       if (cc == NULL)
       {
@@ -2019,6 +2021,25 @@ static void    setupColourTable      ( PrivColorContext  * ccontext,
                                      "//"OY_TYPE_STD"/config/display_mode", "1",
                                      OY_CREATE_NEW );
         error = oyConversion_Correct(cc, "//" OY_TYPE_STD "/icc_color", flags, options);
+        icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+        blob = oyFilterNode_ToBlob( icc, NULL );
+      }
+
+      {
+        oyOptions_s * node_opts = oyFilterNode_GetOptions( icc, 0 );
+        oyProfile_s * dl;
+        dl = oyProfile_FromMem( oyBlob_GetSize( blob ),
+                                oyBlob_GetPointer( blob ), 0,0 );
+        const char * fn;
+        int j = 0;
+        while((fn = oyProfile_GetFileName( dl, j )) != NULL)
+        {
+          fprintf( zout, " -> \"%s\"[%d]", fn?fn:"----", j );
+          ++j;
+        }
+        dl_count = j;
+        fprintf( zout, " %d\n", dl_count );
+        if(oy_debug) fprintf( zout, "%s\n", oyOptions_GetText( node_opts, oyNAME_NAME ) );
       }
 
       uint32_t exact_hash_size = 0;
@@ -2028,6 +2049,8 @@ static void    setupColourTable      ( PrivColorContext  * ccontext,
         t = oyFilterNode_GetText( icc, oyNAME_NAME );
         if(t)
           hash_text = strdup(t);
+        if(oy_debug)
+          fprintf( zout, " hash_text = %s", oyNoEmptyString_m_(t) );
       }
       oyHash_s * entry;
       oyArray2d_s * clut = NULL;
@@ -2037,6 +2060,7 @@ static void    setupColourTable      ( PrivColorContext  * ccontext,
       oyFilterNode_Release( &icc );
       oyFilterGraph_Release( &cc_graph );
 
+      if(oy_debug)
       oyCompLogMessage( NULL, "compicc", CompLogLevelDebug,
                       DBG_STRING "clut from cache %s %s",
                       DBG_ARGS, clut?"obtained":"", oyNoEmptyString_m_(hash_text) );
@@ -2108,6 +2132,8 @@ static void    setupColourTable      ( PrivColorContext  * ccontext,
     clean_setupColourTable:
     if(web)
       oyProfile_Release( &web );
+
+  return dl_count;
 }
 
 oyTESTRESULT_e testClut ()
@@ -2126,7 +2152,7 @@ oyTESTRESULT_e testClut ()
     oyStringCopy( "*TEST*", oyAllocateFunc_ ), /* the intented output device */
   };
   double clck = oyClock();
-  setupColourTable( &pc, 0 );
+  int dl_count = setupColourTable( &pc, 0 );
   int r=12,g=12,b=2;
   clck = oyClock() - clck;
   uint16_t c[3] = {pc.clut[r][g][b][0],pc.clut[r][g][b][1],pc.clut[r][g][b][2]};
@@ -2144,19 +2170,36 @@ oyTESTRESULT_e testClut ()
   oyProfile_Release( &pc.dst_profile );
 
 
+  // test outside DB change
+  int old_effect_switch = oyGetBehaviour( oyBEHAVIOUR_EFFECT );
+  char * value = NULL;
+  oyStringAddPrintf( &value, oyAllocateFunc_, oyDeAllocateFunc_,
+                     "%d", old_effect_switch ? 0 : old_effect_switch );
+  oyDBSetString_( OY_DEFAULT_EFFECT, oySCOPE_USER, value,
+                  "testing");
+  /* clear the DB cache */
+  oyGetPersistentStrings( NULL );
+  int effect_switch = oyGetBehaviour( oyBEHAVIOUR_EFFECT );
+  fprintf(zout, "old_value: %d -> setting oyBEHAVIOUR_EFFECT: %s  check %d\n", old_effect_switch, value, effect_switch );
+  oyFree_m_( value );
+
+
   pc.dst_profile = oyProfile_FromFile( "LStar-RGB.icc", icc_profile_flags, NULL );
-  setupColourTable( &pc, 0 );
+  int dl_count2 = setupColourTable( &pc, 0 ); 
   fprintf(zout, "LStar-RGB.icc %d,%d,%d\n", pc.clut[r][g][b][0],pc.clut[r][g][b][1],pc.clut[r][g][b][2]);
   count = oyStructList_Count( oy_test_cache_ );
   if( !(c[0] == pc.clut[r][g][b][0] || c[1] == pc.clut[r][g][b][1] || c[2] == pc.clut[r][g][b][2]) &&
-      count > 1)
+      count > 1 && dl_count != dl_count2)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "cache difference                    %d", count );
+    "cache difference                %d %d!=%d", count, dl_count, dl_count2 );
   } else
   { PRINT_SUB( oyTESTRESULT_XFAIL,
-    "cache difference                    %d", count );
+    "cache difference                %d %d!=%d", count, dl_count, dl_count2 );
   }
 
+
+  // reset to old value
+  oySetBehaviour( oyBEHAVIOUR_EFFECT, oySCOPE_USER, old_effect_switch );
   return result;
 }
 
