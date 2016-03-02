@@ -397,6 +397,28 @@ oyTESTRESULT_e testElektra()
   oyFree_m_( key );
   oyFree_m_( value );
 
+  // testing outside editing
+  int old_effect_switch = oyGetBehaviour( oyBEHAVIOUR_EFFECT );
+  oyStringAddPrintf( &value, oyAllocateFunc_, oyDeAllocateFunc_,
+                     "%d", ~old_effect_switch );
+  oyDBSetString_( OY_DEFAULT_EFFECT, oySCOPE_USER, value,
+                  "testing");
+  /* clear the DB cache */
+  oyGetPersistentStrings( NULL );
+  int effect_switch = oyGetBehaviour( oyBEHAVIOUR_EFFECT );
+  if(old_effect_switch != effect_switch)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyGetBehaviour() detected value change     " );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyGetBehaviour() detected value change     " );
+  }
+  oyFree_m_( value );
+  // reset to old value
+  oySetBehaviour( oyBEHAVIOUR_EFFECT, oySCOPE_USER, old_effect_switch );
+  
   return result;
 }
 
