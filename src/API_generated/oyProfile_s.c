@@ -1215,8 +1215,11 @@ OYAPI const oyChar* OYEXPORT
 
     oyAllocHelper_m_( temp, oyChar, 1024, 0, error = 1 );
 
+#if 0
     /* A short number represents a default profile,
      * The length should not exceed OY_HASH_SIZE.
+     *
+     * Default profiles can change. Thus this kind of ID is not unique.
      */
     if(s->use_default_ && !found && error <= 0)
     {
@@ -1224,6 +1227,7 @@ OYAPI const oyChar* OYEXPORT
       if(oyStrlen_(temp) < OY_HASH_SIZE)
         found = 1;
     }
+#endif
 
     /* Do we have a file_name_? */
     if(s->file_name_ && !found && error <= 0)
