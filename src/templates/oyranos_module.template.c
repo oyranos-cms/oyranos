@@ -1839,6 +1839,8 @@ oyPointer_s  * oyPointer_LookUpFromObject (
     const char * tmp = 0;
     tmp = oyObject_GetName( s->oy_, oyNAME_NICK );
     cmm_ptr = oyPointer_LookUpFromText( tmp, data_type );
+    if(oy_debug >= 2)
+      DBGs3_S( data, "oyObject_GetName %s data_type %s cmm_ptr %d", tmp, data_type, oyStruct_GetId((oyStruct_s*)cmm_ptr) );
   }
 
   return cmm_ptr;
