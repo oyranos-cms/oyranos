@@ -1,6 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
-   <file>qcmsevents.svg</file>
-   <file>plugin-compicc_gray.svg</file>
+   <file>qcmsevents.png</file>
+   <file>plugin-compicc_gray.png</file>
 </qresource>
 </RCC>

@@ -32,8 +32,9 @@ QcmseDialog::QcmseDialog()
   icon = 0;
   init = 1;
   icons = new QComboBox;
-  icons->addItem(QIcon(":/plugin-compicc_gray.svg"), tr("none"));
-  icons->addItem(QIcon(":/qcmsevents.svg"), tr("active"));
+  icons->addItem(QIcon(":/plugin-compicc_gray.png"), tr("none"));
+  icons->addItem(QIcon(":/qcmsevents.png"), tr("active"));
+  connect( icons, SIGNAL(currentIndexChanged(int)), this, SLOT(setIcon(int)));
  
 
   log_list = new QListWidget(this);
@@ -43,6 +44,7 @@ QcmseDialog::QcmseDialog()
   setLayout( vertical_layout );
 
   setWindowTitle( tr(TARGET) );
+  createIcon();
 
   resize(400, 250);
 }
@@ -54,10 +56,21 @@ void QcmseDialog::createIcon()
   iconMenu->addAction( quitA );
 
   /* set a first icon */
-  QIcon ic(":/plugin-compicc_gray.svg");
-  icon = new QSystemTrayIcon( ic, this );
+  QIcon ic(":/plugin-compicc_gray.png");
+  icon = new QSystemTrayIcon( this );
+  icon->setIcon(ic);
   icon->setContextMenu( iconMenu );
   icon->show();
+  icons->setCurrentIndex(0);
+}
+
+void QcmseDialog::setIcon(int index)
+{
+  QIcon ic = icons->itemIcon(index);
+  icon->setIcon(ic);
+  setWindowIcon(ic);
+
+  icon->setToolTip(icons->itemText(index));
 }
 
 void QcmseDialog::log( const char * text, int code )
@@ -130,6 +143,7 @@ void QcmseDialog::log( const char * text, int code )
     {
       color.setHsvF( 0.6, 0.4, 0.9 );
       icon->setIcon( icons->itemIcon(0) );
+      setWindowIcon( icons->itemIcon(0) );
     } else
     /*  base color server should support opt-out (ICR)
      *  through _ICC_COLOR_MANAGEMENT - ICM in _ICC_COLOR_DESKTOP
@@ -138,6 +152,7 @@ void QcmseDialog::log( const char * text, int code )
     {
       color.setHsvF( 0.41, 0.5, 0.9 );
       icon->setIcon( icons->itemIcon(1) );
+      setWindowIcon( icons->itemIcon(1) );
     }
   }
   item->setText( text );

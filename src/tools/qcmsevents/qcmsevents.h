@@ -18,8 +18,11 @@
 #include <QWidget>
 #include <QListWidget>
 #include <QComboBox>
-#include <QX11Info>
-
+#if QT_VERSION >= 0x050000
+#include <QtX11Extras/QX11Info>
+#else
+#include <QtGui/QX11Info>
+#endif
 #include <cstdlib>
 #include <cstring>
 
@@ -38,6 +41,7 @@ class QcmseDialog : public QDialog
 
   public slots:
     void quit() { exit(0); }
+    void setIcon(int index);
 
   public:
     QSystemTrayIcon * icon;

@@ -1,7 +1,7 @@
 # X Color Management event observer
 ADD_SUBDIRECTORY( qt4 )
 
-FIND_PACKAGE(Qt5 COMPONENTS Widgets X11Extras)
+FIND_PACKAGE(Qt5 COMPONENTS Widgets X11Extras Xml Svg)
 IF(QT_FOUND OR Qt5Widgets_FOUND)
   SET( HAVE_QT 1 )
   INCLUDE_DIRECTORIES( ${QT_INCLUDE_DIRS} )
