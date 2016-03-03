@@ -287,7 +287,19 @@ int main( int argc , char** argv )
     icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
                                                               OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
                                                               NULL, 0 );  
-  
+
+#ifdef XCM_HAVE_X11
+  if(daemon)
+  {
+    Display * display = XOpenDisplay( display_name );
+    if(XcmColorServerCapabilities( display ) & XCM_COLOR_SERVER_MANAGEMENT)
+      daemon = 2;
+    XCloseDisplay( display );
+  }
+
+  /* we rely on any color server doing X11 setup by its own and do not want to interfere */
+  if(daemon != 2)
+#endif
   {
     if(!erase && !unset && !list && !setup && !format &&
        !add_meta && !list_modules && !list_taxi)
@@ -1120,12 +1132,8 @@ int  runDaemon                       ( const char        * display_name )
 {
   Display * display;
   Window root;
-  Atom net_desktop_geometry, icc_color_desktop;
+  Atom net_desktop_geometry;
   int rr_event_base = 0, rr_error_base = 0;
-  Atom actual;
-  int format;
-  unsigned long left, n;
-  unsigned char * data = 0;
   XcmeContext_s * c = XcmeContext_New( );
 
   XcmeContext_Setup2( c, display_name, 0 );
@@ -1143,20 +1151,15 @@ int  runDaemon                       ( const char        * display_name )
 
   net_desktop_geometry = XInternAtom( display,
                                       "_NET_DESKTOP_GEOMETRY", False );
-  icc_color_desktop = XInternAtom( display,
-                                      XCM_COLOR_DESKTOP, False );
 
 
   for(;;)
   {
     XEvent event;
     XNextEvent( display, &event);
-    XGetWindowProperty( display, RootWindow(display,0),
-                        icc_color_desktop, 0, ~0, False, XA_STRING,
-                        &actual,&format, &n, &left, &data );
-    n += left;
+
     /* we rely on any color server doing X11 setup by its own */
-    if(n && data)
+    if(XcmColorServerCapabilities( display ) & XCM_COLOR_SERVER_MANAGEMENT)
       continue;
 
 #ifdef HAVE_XRANDR
