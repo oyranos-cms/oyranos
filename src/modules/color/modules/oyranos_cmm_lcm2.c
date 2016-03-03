@@ -105,6 +105,7 @@ typedef struct lcm2ProfileWrap_s_ {
   oyPointer    block;                  /**< Oyranos raw profile pointer. Dont free! */
   oyPointer    lcm2;                   /**< cmsHPROFILE struct */
   icColorSpaceSignature sig;           /**< ICC profile signature */
+  oyProfile_s *dbg_profile;            /**< only for debugging */
 } lcm2ProfileWrap_s;
 
 /** @struct  lcm2TransformWrap_s
@@ -450,6 +451,14 @@ lcm2ProfileWrap_s * lcm2CMMProfile_GetWrap_( oyPointer_s* cmm_ptr )
   if(s && s->type != type)
     s = 0;
 
+  if(oy_debug >= 2)
+  {
+    lcm2_msg( oyMSG_WARN, (oyStruct_s*)cmm_ptr,
+              OY_DBG_FORMAT_" profile size: %d %s cmm_ptr: %d",
+              OY_DBG_ARGS_, s->size, s->dbg_profile?oyProfile_GetFileName( s->dbg_profile,-1 ):"????",
+              oyStruct_GetId((oyStruct_s*)cmm_ptr) );
+  }
+
   return s;
 }
 
@@ -514,6 +523,7 @@ int lcm2CMMProfileReleaseWrap(oyPointer *p)
     oyProfile_Release ( &p );
 #endif
     CMMProfileRelease_M (s->lcm2);
+    oyProfile_Release( &s->dbg_profile );
 
     s->lcm2 = 0;
     s->type = 0;
@@ -560,6 +570,13 @@ int          lcm2CMMData_Open        ( oyStruct_s        * data,
     s->type = type;
     s->size = size;
     s->block = block;
+    if(oy_debug >= 2)
+    {
+      s->dbg_profile = oyProfile_Copy( p, 0 );
+      lcm2_msg( oyMSG_DBG, data,
+                OY_DBG_FORMAT_" going to open %s", OY_DBG_ARGS_,
+                p?oyProfile_GetFileName( p,-1 ):"????" );
+    }
 
 #if LCMS_VERSION < 2060
     s->lcm2 = CMMProfileOpen_M( data, block, size );
@@ -733,6 +750,11 @@ lcm2TransformWrap_s * lcm2TransformWrap_Set_ (
     ltw->oy_pixel_layout_in  = oy_pixel_layout_in;
     ltw->oy_pixel_layout_out = oy_pixel_layout_out;
     s = ltw;
+    if(oy_debug >= 2)
+      lcm2_msg( oyMSG_DBG, NULL, OY_DBG_FORMAT_
+             " xform: "OY_PRINT_POINTER
+             " ltw: "OY_PRINT_POINTER,
+             OY_DBG_ARGS_, ltw->lcm2, ltw );
   }
 
   if(!error)
@@ -982,6 +1004,26 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
                                           intents, adaption_states, NULL, 0,
                                           lcm2_pixel_layout_in,
                                           lcm2_pixel_layout_out, flags | cmsFLAGS_KEEP_SEQUENCE );
+      if(oy_debug >= 2)
+      {
+        int i;
+        lcm2_msg( oyMSG_DBG, (oyStruct_s*)opts,
+                OY_DBG_FORMAT_"lcmsCreateExtendedTransform(multi_profiles_n %d)"
+                " xform: "OY_PRINT_POINTER,
+                OY_DBG_ARGS_, multi_profiles_n, xform, ltw );
+#if LCMS_VERSION >= 2060
+        for(i = 0; i < multi_profiles_n; ++i)
+        {
+          oyProfile_s * p = lcmsGetContextUserData( lcmsGetProfileContextID( lps[i] ) );
+          const char * fn = oyProfile_GetFileName( p, -1 );
+          size_t size = 0;
+          char * block = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
+          oyFree_m_(block);
+          fprintf( stdout, " -> \"%s\"[%lu]", fn?fn:"----", size );
+        }
+        fprintf(stdout, "\n");
+#endif
+      }
 
 #ifdef ENABLE_MPE
       unsigned char in[3] = {128,128,128};
@@ -1213,7 +1255,7 @@ cmsHPROFILE  lcm2AddProofProfile     ( oyProfile_s       * proof,
   {
     lcm2_msg( oyMSG_WARN, (oyStruct_s*)proof, OY_DBG_FORMAT_
               "no profile provided %s", OY_DBG_ARGS_,
-              proof ? oyStruct_GetId( (oyStruct_s*) proof->type_ ) : "" );
+              (proof != NULL) ? oyStruct_GetText( (oyStruct_s*) proof->type_, oyNAME_NAME, 0 ) : "" );
     return 0;
   }
 
@@ -1332,6 +1374,12 @@ cmsHPROFILE  lcm2AddProfile          ( oyProfile_s       * p )
   }
 
   cmm_ptr = oyPointer_LookUpFromObject( (oyStruct_s*)p, lcm2PROFILE );
+  if(oy_debug >= 2)
+  {
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)p,
+              OY_DBG_FORMAT_" going to open %s cmm_ptr: %d", OY_DBG_ARGS_,
+              p?oyProfile_GetFileName( p,-1 ):"????", oyStruct_GetId((oyStruct_s*)cmm_ptr) );
+  }
 
   if(!cmm_ptr)
   {
@@ -2649,6 +2697,12 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
     /* get transform */
     error = lcm2CMMTransform_GetWrap_( backend_data, &ltw );
+    if(oy_debug >= 2 && ltw)
+      lcm2_msg( oyMSG_DBG, NULL, OY_DBG_FORMAT_
+             " xform: "OY_PRINT_POINTER
+             " ltw: "OY_PRINT_POINTER
+             " backend_data: %d",
+             OY_DBG_ARGS_, ltw->lcm2, ltw, oyStruct_GetId((oyStruct_s*)backend_data) );
 
     if(oy_debug > 4)
     /* verify context */
@@ -2694,7 +2748,6 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
       if(oy_debug > 4 && error < 1)
         lcm2_msg( msg_type, (oyStruct_s*)ticket, OY_DBG_FORMAT_
                   "%s", OY_DBG_ARGS_, hash_text );
-
 
       oyFree_m_(hash_text);
       oyFree_m_(t);
