@@ -608,6 +608,7 @@ static void refreshOptions() {
     top_tabs->damage( FL_DAMAGE_ALL );
     top_tabs->redraw();
   
+    oyGetPersistentStrings( NULL );
   
     Option *op = 0;
   
