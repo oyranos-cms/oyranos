@@ -1662,7 +1662,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
            count = oyValueUInt32( count );
 
            if(oy_debug >= 3)
-             oyIM_msg( oyMSG_WARN, tag, OY_DBG_FORMAT_"\n"
+             oyIM_msg( oyMSG_DBG, tag, OY_DBG_FORMAT_"\n"
                        "icSigTextDescriptionType count: %d",
                             OY_DBG_ARGS_, count );
            if((int)count > oyProfileTag_GetSize(tag)- 20)
@@ -1698,10 +1698,15 @@ oyStructList_s * oyIMProfileTag_GetValues(
              memset(tmp, 0, count + 1);
              error = !memcpy(tmp, mem+12, count);
              tmp[count] = 0;
-             if(oy_debug >= 3)
+             if(tmp && strlen(tmp) != count)
                oyIM_msg( oyMSG_WARN, tag, OY_DBG_FORMAT_"\n"
+                         "icSigTextDescriptionType count does not match text length: %d==%d",
+                         OY_DBG_ARGS_, count, strlen(tmp) );
+             else
+             if(oy_debug >= 3)
+               oyIM_msg( oyMSG_DBG, tag, OY_DBG_FORMAT_"\n"
                          "icSigTextDescriptionType len: %d",
-                            OY_DBG_ARGS_, strlen(tmp) );
+                         OY_DBG_ARGS_, strlen(tmp) );
              oyStructList_MoveInName( texts, &tmp, -1 );
            }
 
