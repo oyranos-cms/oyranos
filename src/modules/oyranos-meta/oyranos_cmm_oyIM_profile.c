@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2008-2013 (C) Kai-Uwe Behrmann
+ *            2008-2016 (C) Kai-Uwe Behrmann
  *
  *  @brief    modules for Oyranos
  *  @internal
@@ -1661,6 +1661,10 @@ oyStructList_s * oyIMProfileTag_GetValues(
            count = *(icUInt32Number*)(mem+8);
            count = oyValueUInt32( count );
 
+           if(oy_debug >= 3)
+             oyIM_msg( oyMSG_WARN, tag, OY_DBG_FORMAT_"\n"
+                       "icSigTextDescriptionType count: %d",
+                            OY_DBG_ARGS_, count );
            if((int)count > oyProfileTag_GetSize(tag)- 20)
            {
              int diff = count - oyProfileTag_GetSize(tag) - 20;
@@ -1694,6 +1698,10 @@ oyStructList_s * oyIMProfileTag_GetValues(
              memset(tmp, 0, count + 1);
              error = !memcpy(tmp, mem+12, count);
              tmp[count] = 0;
+             if(oy_debug >= 3)
+               oyIM_msg( oyMSG_WARN, tag, OY_DBG_FORMAT_"\n"
+                         "icSigTextDescriptionType len: %d",
+                            OY_DBG_ARGS_, strlen(tmp) );
              oyStructList_MoveInName( texts, &tmp, -1 );
            }
 
