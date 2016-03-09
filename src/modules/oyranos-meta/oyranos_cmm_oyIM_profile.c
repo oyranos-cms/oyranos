@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <wchar.h>
 
 #define CMM_BASE_REG OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc."
 
@@ -1661,10 +1662,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
            count = *(icUInt32Number*)(mem+8);
            count = oyValueUInt32( count );
 
-           if(oy_debug >= 3)
-             oyIM_msg( oyMSG_DBG, tag, OY_DBG_FORMAT_"\n"
-                       "icSigTextDescriptionType count: %d",
-                            OY_DBG_ARGS_, count );
            if((int)count > oyProfileTag_GetSize(tag)- 20)
            {
              int diff = count - oyProfileTag_GetSize(tag) - 20;
@@ -1698,51 +1695,114 @@ oyStructList_s * oyIMProfileTag_GetValues(
              memset(tmp, 0, count + 1);
              error = !memcpy(tmp, mem+12, count);
              tmp[count] = 0;
-             if(tmp && strlen(tmp) != count)
+             while(len < count && tmp[len++]); /* strnlen() + 1 */
+             /* count of characters + null terminator */
+             if(tmp && (len+(len%4)) != count &&
+                len != count)
                oyIM_msg( oyMSG_WARN, tag, OY_DBG_FORMAT_"\n"
-                         "icSigTextDescriptionType count does not match text length: %d==%d",
-                         OY_DBG_ARGS_, count, strlen(tmp) );
-             else
-             if(oy_debug >= 3)
-               oyIM_msg( oyMSG_DBG, tag, OY_DBG_FORMAT_"\n"
-                         "icSigTextDescriptionType len: %d",
-                         OY_DBG_ARGS_, strlen(tmp) );
+                         "icSigTextDescriptionType count does not match text length or aligned length. count:%d text:%d aligned:%d",
+                         OY_DBG_ARGS_, count, len, len+(len%4) );
              oyStructList_MoveInName( texts, &tmp, -1 );
            }
 
+           /* compute just length, for pseq tag decoding */
            {
-             uint32_t off = 0, n_ascii = 0, n_uni16 = 0;
+             uint32_t off = 0;
+             int l[3][3] = {{-1,-1,0}, {-1,-1,-1}, {-1,-1,-1}}; /* ascii {code,count,strlen}, unicode, script */
+             #define ERR_ASCII  0x0010
+             #define ERR_UNI    0x0020
+             #define ERR_SCRIPT 0x0040
+             #define ERR_COUNT  0x0080
+             #define ERR_STRLEN 0x0100
+             #define ERR_TAGSIZE 0x0200
 
                /* 'desc' type */
                off += 8;
 
                /* ascii in 'desc' */
-               if(off < oyProfileTag_GetSize(tag))
+               if(off+8 < oyProfileTag_GetSize(tag))
                {
                  len = *(uint32_t*)&mem[off];
-                 n_ascii = oyValueUInt32( len );
+                 l[0][1] = count = oyValueUInt32( len );
 
-                 off += 4;
-                 off += n_ascii;
+                 if(off+count < oyProfileTag_GetSize(tag))
+                   off += 4;
+                 else error |= ERR_ASCII | ERR_COUNT;
+                 if(off+count < oyProfileTag_GetSize(tag))
+                 {
+                   tmp = &mem[off];
+                   len = 0; while(len < count && tmp[len++]); /* strnlen() + 1 */
+                   l[0][2] = len;
+                 }
+                 else error |= ERR_ASCII | ERR_TAGSIZE;
+
+                 if(off+l[0][1] < oyProfileTag_GetSize(tag))
+                   off += l[0][1];
+                 else error |= ERR_ASCII | ERR_STRLEN;
                  /*off += (off%4 ? 4 - off%4 : 0);*/
                }
+                 else error |= ERR_ASCII | ERR_TAGSIZE;
 
                /* unicode section in 'desc' */
-               if(off < oyProfileTag_GetSize(tag))
+               if(off+8 < oyProfileTag_GetSize(tag))
                {
-                 off += 4;
+                 /* lang code */
+                 len = *(icUInt32Number*)&mem[off];
+                 l[1][0] = oyValueUInt32( len );
 
+                 /* count */
+                 if((off+4) < oyProfileTag_GetSize(tag))
+                   off += 4;
+                 else error |= ERR_UNI | ERR_TAGSIZE;
                  len = *(icUInt32Number*)&mem[off];
-                 n_uni16 = oyValueUInt32( len );
-                 off += 4 + n_uni16*2 - 1;
+                 l[1][1] = count = oyValueUInt32( len );
+
+                 if((off+4) < oyProfileTag_GetSize(tag))
+                   off += 4;
+                 else error |= ERR_UNI | ERR_TAGSIZE;
+                 /* wchar_t unicode */
+                 if((off+count) < oyProfileTag_GetSize(tag))
+                 {
+                   tmp = &mem[off];
+                   len = 0; while(len < count && tmp[len*2+1]) ++len; /* wcsnlen() */
+                   l[1][2] = len?len+1:0;
+                 }
+                 else error |= ERR_UNI | ERR_COUNT;
+
+                 if((off+l[1][1]*2) < oyProfileTag_GetSize(tag))
+                   off += l[1][1]*2;
+                 else error |= ERR_UNI | ERR_STRLEN;
                }
+                 else error |= ERR_UNI | ERR_TAGSIZE;
+
                /* script in 'desc' */
-               if(off < oyProfileTag_GetSize(tag))
+               if((off+2+1+66) < oyProfileTag_GetSize(tag))
                {
-                 len = *(icUInt32Number*)&mem[off];
-                 len = oyValueUInt32( len );
-                 off += 4 + 67;
+                 len = *(icUInt16Number*)&mem[off];
+                 l[2][0] = oyValueUInt16( len );
+
+                 if((off+2) < oyProfileTag_GetSize(tag))
+                   off += 2;
+                 else error |= ERR_SCRIPT | ERR_TAGSIZE;
+                 len = *(icUInt8Number*)&mem[off];
+                 l[2][1] = count = len;
+                 if(count > 67)
+                   error |= ERR_SCRIPT | ERR_COUNT;
+
+                 if((off+67) < oyProfileTag_GetSize(tag))
+                   off += 67; /* last byte of tag */
+                 else error |= ERR_SCRIPT | ERR_TAGSIZE;
                }
+                 else error |= ERR_SCRIPT | ERR_TAGSIZE;
+
+             if(oy_debug >= 2 || error)
+               oyIM_msg( error?oyMSG_WARN:oyMSG_DBG, tag, OY_DBG_FORMAT_"\n"
+                         "icSigTextDescriptionType (code,count,len) ascii(%d,%d,%d) unicode(%d,%d,%d) script(%d,%d,%d) %s%s%s%s%s%s%s offset:%d|tag-size:%d",
+                         OY_DBG_ARGS_, l[0][0], l[0][1], l[0][2], l[1][0], l[1][1], l[1][2], l[2][0], l[2][1], l[2][2],
+                         error?"error: ":"", (error & ERR_ASCII)?" ascii":"", (error & ERR_UNI)?" unicode":"", (error & ERR_SCRIPT)?" script":"",
+                         (error & ERR_COUNT)?" count":"", (error & ERR_STRLEN)?" strlen":"", (error & ERR_TAGSIZE)?" tag-size":"",
+                         off,oyProfileTag_GetSize(tag));
+
              oyProfileTag_SetSizeCheck(tag, off);
            }
            break;
@@ -2035,7 +2095,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                                          tag_sig, oyOK,
                                          mluc_size, tmp );
                  mfg_tmp = oyIMProfileTag_GetValues( tmptag );
-               } else
+               } else if(mluc_size)
                  oyIM_msg( oyMSG_WARN, tag, OY_DBG_FORMAT_"\n"
                            "stored tag size is unexpected: %d  space: %d  offset: %d",
                            OY_DBG_ARGS_, mluc_size, max_tag_size, off );
@@ -2069,7 +2129,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                                          tag_sig, oyOK,
                                          mluc_size, tmp );
                  model_tmp = oyIMProfileTag_GetValues( tmptag );
-               } else
+               } else if(mluc_size)
                  oyIM_msg( oyMSG_WARN, tag, OY_DBG_FORMAT_"\n"
                            "stored tag size is unexpected: %d  space: %d  offset: %d",
                            OY_DBG_ARGS_, mluc_size, max_tag_size, off );
