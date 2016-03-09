@@ -1980,7 +1980,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
              const char * tech = 0;
              oyStructList_s * mfg_tmp = 0, * model_tmp = 0;
              int32_t size = -1;
-             int mluc_size;
+             int mluc_size, max_tag_size;
 
              count = *(icUInt32Number*)(mem+off);
              count = oyValueUInt32( count );
@@ -2027,11 +2027,18 @@ oyStructList_s * oyIMProfileTag_GetValues(
                error = !memcpy(tmp, &mem[off], oyProfileTag_GetSize(tag) - off);
                tag_sig = *(icUInt32Number*)(tmp);
                tag_sig = oyValueUInt32( tag_sig );
-               mluc_size = oySizeOfMluc(tmp, oyProfileTag_GetSize(tag) - off);
-               oyProfileTag_Set( tmptag, icSigDeviceMfgDescTag,
+               max_tag_size = oyProfileTag_GetSize(tag) - off;
+               mluc_size = oySizeOfMluc(tmp, max_tag_size);
+               if(0 < mluc_size && mluc_size <= max_tag_size)
+               {
+                 oyProfileTag_Set( tmptag, icSigDeviceMfgDescTag,
                                          tag_sig, oyOK,
                                          mluc_size, tmp );
-               mfg_tmp = oyIMProfileTag_GetValues( tmptag );
+                 mfg_tmp = oyIMProfileTag_GetValues( tmptag );
+               } else
+                 oyIM_msg( oyMSG_WARN, tag, OY_DBG_FORMAT_"\n"
+                           "stored tag size is unexpected: %d  space: %d  offset: %d",
+                           OY_DBG_ARGS_, mluc_size, max_tag_size, off );
                if(oyStructList_Count( mfg_tmp ) )
                {
                  name = 0;
@@ -2039,7 +2046,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
                                                    0, oyOBJECT_NAME_S );
                  if(name &&  name->name && name->name[0] )
                    mfg = name->name;
-               }
+               } else
+                 mfg = "----";
                size = oyProfileTag_GetSizeCheck(tmptag);
                oyProfileTag_Release( &tmptag );
                tmp = 0;
@@ -2053,11 +2061,18 @@ oyStructList_s * oyIMProfileTag_GetValues(
                error = !memcpy(tmp, &mem[off], oyProfileTag_GetSize(tag) - off);
                tag_sig = *(icUInt32Number*)(tmp);
                tag_sig = oyValueUInt32( tag_sig );
-               mluc_size = oySizeOfMluc(tmp, oyProfileTag_GetSize(tag) - off);
-               oyProfileTag_Set( tmptag, icSigDeviceModelDescTag,
+               max_tag_size = oyProfileTag_GetSize(tag) - off;
+               mluc_size = oySizeOfMluc(tmp, max_tag_size);
+               if(0 < mluc_size && mluc_size <= max_tag_size)
+               {
+                 oyProfileTag_Set( tmptag, icSigDeviceModelDescTag,
                                          tag_sig, oyOK,
                                          mluc_size, tmp );
-               model_tmp = oyIMProfileTag_GetValues( tmptag );
+                 model_tmp = oyIMProfileTag_GetValues( tmptag );
+               } else
+                 oyIM_msg( oyMSG_WARN, tag, OY_DBG_FORMAT_"\n"
+                           "stored tag size is unexpected: %d  space: %d  offset: %d",
+                           OY_DBG_ARGS_, mluc_size, max_tag_size, off );
                if(oyStructList_Count( model_tmp ) )
                {
                  name = 0;
@@ -2065,7 +2080,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
                                                    0, oyOBJECT_NAME_S );
                  if(name &&  name->name && name->name[0] )
                    model = name->name;
-               }
+               } else
+                 model = "----";
                size = oyProfileTag_GetSizeCheck(tmptag);
                oyProfileTag_Release( &tmptag );
                tmp = 0;
@@ -3045,19 +3061,22 @@ int                oySizeOfMluc      ( const char        * mem,
                                        uint32_t            max_tag_size )
 {
   int size_ = 0;
-             int count = oyValueUInt32( *(icUInt32Number*)&mem[8] );
-             int size = oyValueUInt32( *(icUInt32Number*)&mem[12] ); /* 12 */
-             int i;
-             int len = 0;
+  int count = oyValueUInt32( *(icUInt32Number*)&mem[8] );
+  int size = oyValueUInt32( *(icUInt32Number*)&mem[12] ); /* 12 */
+  int i;
+  int len = 0;
 
-             int error = max_tag_size < 24 + count * size;
+  int error = max_tag_size < 24 + count * size;
 
   icTagTypeSignature tag_sig = (icTagSignature)0;
   tag_sig = *(icUInt32Number*)(mem);
   tag_sig = oyValueUInt32( tag_sig );
 
   if(tag_sig == icSigTextDescriptionType)
-    return oySizeOfDesc( mem, max_tag_size );
+  {
+    size = oySizeOfDesc( mem, max_tag_size );
+    return size;
+  }
 
   if(!error)
              for (i = 0; i < count; i++)
