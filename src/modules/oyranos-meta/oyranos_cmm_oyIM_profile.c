@@ -645,7 +645,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
   oyProfileTag_s * tmptag = 0;
 
 
-
   /* provide information about the function */
   if(!tag)
   {
@@ -940,16 +939,18 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
   if(!error && oyProfileTag_GetStatus( (oyProfileTag_s*)tag ) == oyOK)
   {
+    int tag_size = oyProfileTag_GetSize(tag);
+
     error = oyProfileTag_GetBlock( tag, (oyPointer*)&mem, 0, oyAllocateFunc_);
     sig = oyProfileTag_GetType(tag);
 
-    error = (!mem) || (oyProfileTag_GetSize(tag) <= 12);
+    error = (!mem) || (tag_size <= 12);
 
     if(!error)
     switch( (uint32_t)sig )
     {
       case icSigColorantOrderType:
-           if (oyProfileTag_GetSize(tag) <= 12)
+           if (tag_size <= 12)
            { return texts; }
            else
            {
@@ -961,7 +962,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
              size_ = 12 + count;
 
-             error = oyProfileTag_GetSize(tag) < size_;
+             error = tag_size < size_;
            }
 
            if(error <= 0)
@@ -977,7 +978,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
            break;
       case icSigCurveType:
 
-           if (oyProfileTag_GetSize(tag) <= 12)
+           if (tag_size <= 12)
            { return texts; }
            else
            {
@@ -986,7 +987,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
              size_ = 12 + count * 4;
 
-             error = oyProfileTag_GetSize(tag) < size_;
+             error = tag_size < size_;
            }
 
            if(error <= 0)
@@ -1023,7 +1024,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
            break;
       case icSigColorantTableType:
-           if (oyProfileTag_GetSize(tag) <= 12)
+           if (tag_size <= 12)
            { return texts; }
            else
            {
@@ -1035,7 +1036,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
              size_ = 12 + count * 38;
 
-             error = oyProfileTag_GetSize(tag) < size_;
+             error = tag_size < size_;
            }
 
            if(error <= 0)
@@ -1059,7 +1060,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
            break;
       case icSigDictType:
-           error = oyProfileTag_GetSize(tag) < 16;
+           error = tag_size < 16;
            if(error)
              oyStructList_AddName( texts, "unrecoverable parameters found", -1);
 
@@ -1098,7 +1099,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                       key_ui_offset = 0, key_ui_size = 0,
                       value_ui_offset = 0, value_ui_size = 0;
 
-             for(i = 0; i < count && oyProfileTag_GetSize(tag) >= i * entry_size; ++i)
+             for(i = 0; i < count && tag_size >= i * entry_size; ++i)
              {
                key_offset = oyGetTableUInt32_( &mem[16], entry_size, i, 0 );
                key_size = oyGetTableUInt32_( &mem[16], entry_size, i, 1 );
@@ -1107,7 +1108,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
                /* add key */
                if( key_offset && key_offset >= 16+entry_size*count-1 &&
-                   key_offset + key_size < oyProfileTag_GetSize(tag) )
+                   key_offset + key_size < tag_size )
                {
                  tmp = oyAllocateFunc_( key_size * 2 + 2 );
                  error = oyIMIconv( &mem[key_offset], key_size, tmp,
@@ -1118,7 +1119,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
                 /* add value */
                if( value_offset && value_offset >= 16+entry_size*count-1 &&
-                   value_offset + value_size < oyProfileTag_GetSize(tag) )
+                   value_offset + value_size < tag_size )
                {
                  tmp = oyAllocateFunc_( value_size * 2 + 2 );
                  error = oyIMIconv( &mem[value_offset], value_size, tmp,
@@ -1153,7 +1154,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
            break;
       case icSigDescriptiveNameValueMuArrayType_:
-           error = oyProfileTag_GetSize(tag) < 12;
+           error = tag_size < 12;
            count = *(icUInt32Number*)(mem+8);
            count = oyValueUInt32( count );
 
@@ -1171,7 +1172,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
              uint32_t i = 0;
              char text[68];
 
-             for(i = 0; i < count && oyProfileTag_GetSize(tag) >= i * 144; ++i)
+             for(i = 0; i < count && tag_size >= i * 144; ++i)
              {
                memcpy( text, &mem[12 + i*144 + 0], 64);
                text[64] = 0;
@@ -1182,12 +1183,12 @@ oyStructList_s * oyIMProfileTag_GetValues(
              }
            }
 
-           if(oyProfileTag_GetSize(tag) < count * 144)
+           if(tag_size < count * 144)
              oyStructList_AddName( texts, "unrecoverable parameters found", -1);
 
            break;
       case icSigLutAtoBType:
-           error = oyProfileTag_GetSize(tag) < 32;
+           error = tag_size < 32;
            count = *(icUInt8Number*)(mem+8);
            
            if(error <= 0)
@@ -1280,7 +1281,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                                                     offset_mcurve,
                                                     offset_clut,
                                                     offset_acurve,
-                                                    oyProfileTag_GetSize(tag) );
+                                                    tag_size );
 
            }
            else
@@ -1288,7 +1289,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
            break;
       case icSigLutBtoAType:
-           error = oyProfileTag_GetSize(tag) < 32;
+           error = tag_size < 32;
            count = *(icUInt8Number*)(mem+8);
            
            if(error <= 0)
@@ -1381,7 +1382,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                                                     offset_mcurve,
                                                     offset_clut,
                                                     offset_acurve,
-                                                    oyProfileTag_GetSize(tag) );
+                                                    tag_size );
 
            }
            else
@@ -1390,9 +1391,9 @@ oyStructList_s * oyIMProfileTag_GetValues(
            break;
       case icSigDeviceSettingsTag:
 
-           len = oyProfileTag_GetSize(tag) * sizeof(char);
+           len = tag_size * sizeof(char);
            tmp = oyAllocateFunc_( len );
-           error = oyProfileTag_GetSize(tag) < 80 || !memcpy( tmp, &mem[8], len - 8 );
+           error = tag_size < 80 || !memcpy( tmp, &mem[8], len - 8 );
            /*  - icSigDeviceSettingsType:
             *    - since Oyranos 0.1.10 (API 0.1.10)
             *    - returns */
@@ -1486,7 +1487,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
            break;
       case icSigTextType:
 
-           len = oyProfileTag_GetSize(tag) * sizeof(char);
+           len = tag_size * sizeof(char);
            tmp = oyAllocateFunc_( len );
            if(oy_debug_memory)
              DBG3_S( "%d "OY_PRINT_POINTER" "OY_PRINT_POINTER,
@@ -1513,7 +1514,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
            break;
       case icSigParametricCurveType:
 
-           if (oyProfileTag_GetSize(tag) < 12)
+           if (tag_size < 12)
            { return texts; }
 
            if(error <= 0)
@@ -1527,31 +1528,31 @@ oyStructList_s * oyIMProfileTag_GetValues(
              opt = oyOption_FromRegistration( "////icParametricCurveType", 0 );
              if(type == 0) /* gamma */
              {
-               if(oyProfileTag_GetSize(tag) < 16) return texts;
+               if(tag_size < 16) return texts;
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
                params_n = 1;
              } else if(type == 1)
              {
-               if(oyProfileTag_GetSize(tag) < 24) return texts;
+               if(tag_size < 24) return texts;
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
                params_n = 3;
              } else if(type == 2)
              {
-               if(oyProfileTag_GetSize(tag) < 28) return texts;
+               if(tag_size < 28) return texts;
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
                params_n = 4;
              } else if(type == 3)
              {
-               if(oyProfileTag_GetSize(tag) < 32) return texts;
+               if(tag_size < 32) return texts;
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
                params_n = 5;
              } else if(type == 4)
              {
-               if(oyProfileTag_GetSize(tag) < 40) return texts;
+               if(tag_size < 40) return texts;
 
                oyOption_SetFromDouble( opt, type, 0, 0 );
                params_n = 7;
@@ -1619,7 +1620,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
            break;
       case icSigWCSProfileTag:
-           len = oyProfileTag_GetSize(tag) * sizeof(char);
+           len = tag_size * sizeof(char);
            tmp = oyAllocateFunc_( len*2 + 1 );
 
            {
@@ -1662,11 +1663,11 @@ oyStructList_s * oyIMProfileTag_GetValues(
            count = *(icUInt32Number*)(mem+8);
            count = oyValueUInt32( count );
 
-           if((int)count > oyProfileTag_GetSize(tag)- 20)
+           if((int)count > tag_size- 20)
            {
-             int diff = count - oyProfileTag_GetSize(tag) - 20;
+             int diff = count - tag_size - 20;
              char nt[128];
-             char * txt = oyAllocateFunc_( oyProfileTag_GetSize(tag) );
+             char * txt = oyAllocateFunc_( tag_size );
              snprintf( nt, 128, "%d", diff );
 
              oyStructList_AddName( texts,
@@ -1684,8 +1685,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
                                    -1 );
              
              STRING_ADD( tmp, "  " );
-             error = !memcpy (txt, &mem[12], oyProfileTag_GetSize(tag) - 12);
-             txt[ oyProfileTag_GetSize(tag) - 12 ] = 0;
+             error = !memcpy (txt, &mem[12], tag_size - 12);
+             txt[ tag_size - 12 ] = 0;
              STRING_ADD( tmp, txt );
              oyStructList_MoveInName( texts, &tmp, -1 );
            }
@@ -1695,13 +1696,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
              memset(tmp, 0, count + 1);
              error = !memcpy(tmp, mem+12, count);
              tmp[count] = 0;
-             while(len < count && tmp[len++]); /* strnlen() + 1 */
-             /* count of characters + null terminator */
-             if(tmp && (len+(len%4)) != count &&
-                len != count)
-               oyIM_msg( oyMSG_WARN, tag, OY_DBG_FORMAT_"\n"
-                         "icSigTextDescriptionType count does not match text length or aligned length. count:%d text:%d aligned:%d",
-                         OY_DBG_ARGS_, count, len, len+(len%4) );
              oyStructList_MoveInName( texts, &tmp, -1 );
            }
 
@@ -1715,53 +1709,61 @@ oyStructList_s * oyIMProfileTag_GetValues(
              #define ERR_COUNT  0x0080
              #define ERR_STRLEN 0x0100
              #define ERR_TAGSIZE 0x0200
+             #define ERR_MATCH  0x0400
+             #define ERR_WARN   0x0800
 
                /* 'desc' type */
                off += 8;
 
                /* ascii in 'desc' */
-               if(off+8 < oyProfileTag_GetSize(tag))
+               if(off+8 <= tag_size)
                {
                  len = *(uint32_t*)&mem[off];
                  l[0][1] = count = oyValueUInt32( len );
 
-                 if(off+count < oyProfileTag_GetSize(tag))
+                 if(off+count <= tag_size)
                    off += 4;
                  else error |= ERR_ASCII | ERR_COUNT;
-                 if(off+count < oyProfileTag_GetSize(tag))
+                 if(off+count <= tag_size)
                  {
                    tmp = &mem[off];
-                   len = 0; while(len < count && tmp[len++]); /* strnlen() + 1 */
+                   len = 0;
+                   while(len < count && tmp[len++])
+                     if(len == count && tmp[len] != 0)
+                       error |= ERR_ASCII | ERR_TAGSIZE;
+                   /* strnlen() + 1 */
                    l[0][2] = len;
                  }
                  else error |= ERR_ASCII | ERR_TAGSIZE;
 
-                 if(off+l[0][1] < oyProfileTag_GetSize(tag))
+                 if(off+l[0][1] <= tag_size)
                    off += l[0][1];
                  else error |= ERR_ASCII | ERR_STRLEN;
-                 /*off += (off%4 ? 4 - off%4 : 0);*/
+
+                 if(l[0][1] != l[0][2])
+                   error |= ERR_ASCII | ERR_MATCH | ERR_WARN;
                }
                  else error |= ERR_ASCII | ERR_TAGSIZE;
 
                /* unicode section in 'desc' */
-               if(off+8 < oyProfileTag_GetSize(tag))
+               if(off+8 <= tag_size)
                {
                  /* lang code */
                  len = *(icUInt32Number*)&mem[off];
                  l[1][0] = oyValueUInt32( len );
 
                  /* count */
-                 if((off+4) < oyProfileTag_GetSize(tag))
+                 if((off+4) < tag_size)
                    off += 4;
                  else error |= ERR_UNI | ERR_TAGSIZE;
                  len = *(icUInt32Number*)&mem[off];
                  l[1][1] = count = oyValueUInt32( len );
 
-                 if((off+4) < oyProfileTag_GetSize(tag))
+                 if((off+4) < tag_size)
                    off += 4;
                  else error |= ERR_UNI | ERR_TAGSIZE;
                  /* wchar_t unicode */
-                 if((off+count) < oyProfileTag_GetSize(tag))
+                 if((off+count) <= tag_size)
                  {
                    tmp = &mem[off];
                    len = 0; while(len < count && tmp[len*2+1]) ++len; /* wcsnlen() */
@@ -1769,39 +1771,50 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  }
                  else error |= ERR_UNI | ERR_COUNT;
 
-                 if((off+l[1][1]*2) < oyProfileTag_GetSize(tag))
+                 if((off+l[1][1]*2) <= tag_size)
                    off += l[1][1]*2;
                  else error |= ERR_UNI | ERR_STRLEN;
+
+                 if(l[1][1] != l[1][2])
+                   error |= ERR_UNI | ERR_MATCH | ERR_WARN;
                }
                  else error |= ERR_UNI | ERR_TAGSIZE;
 
                /* script in 'desc' */
-               if((off+2+1+66) < oyProfileTag_GetSize(tag))
+               if((off+2+1) <= tag_size)
                {
                  len = *(icUInt16Number*)&mem[off];
                  l[2][0] = oyValueUInt16( len );
 
-                 if((off+2) < oyProfileTag_GetSize(tag))
-                   off += 2;
-                 else error |= ERR_SCRIPT | ERR_TAGSIZE;
+                 count = 0;
+                 off += 2;
                  len = *(icUInt8Number*)&mem[off];
                  l[2][1] = count = len;
                  if(count > 67)
                    error |= ERR_SCRIPT | ERR_COUNT;
 
-                 if((off+67) < oyProfileTag_GetSize(tag))
-                   off += 67; /* last byte of tag */
-                 else error |= ERR_SCRIPT | ERR_TAGSIZE;
+                 if((off+1+67) <= tag_size)
+                   off += 1+67; /* last byte of tag */
+                 else
+                 {
+                   error |= ERR_SCRIPT | ERR_TAGSIZE;
+                   if((off+1+count) <= tag_size)
+                   {
+                     off += 1+count;
+                     error |= ERR_WARN;
+                   }
+                 }
                }
                  else error |= ERR_SCRIPT | ERR_TAGSIZE;
 
-             if(oy_debug >= 2 || error)
-               oyIM_msg( error?oyMSG_WARN:oyMSG_DBG, tag, OY_DBG_FORMAT_"\n"
-                         "icSigTextDescriptionType (code,count,len) ascii(%d,%d,%d) unicode(%d,%d,%d) script(%d,%d,%d) %s%s%s%s%s%s%s offset:%d|tag-size:%d",
+             if(oy_debug >= 2 || (error && oy_debug >= 1))
+               oyIM_msg( error?(error&ERR_WARN?oyMSG_WARN:oyMSG_ERROR):oyMSG_DBG, tag, OY_DBG_FORMAT_"\n"
+                         "icSigTextDescriptionType (code,count,strlen) ascii(%d,%d==%d) unicode(%d,%d==%d) script(%d,%d,%d) offset:%d|tag-size:%d %s%s%s%s%s%s%s%s%s",
                          OY_DBG_ARGS_, l[0][0], l[0][1], l[0][2], l[1][0], l[1][1], l[1][2], l[2][0], l[2][1], l[2][2],
-                         error?"error: ":"", (error & ERR_ASCII)?" ascii":"", (error & ERR_UNI)?" unicode":"", (error & ERR_SCRIPT)?" script":"",
-                         (error & ERR_COUNT)?" count":"", (error & ERR_STRLEN)?" strlen":"", (error & ERR_TAGSIZE)?" tag-size":"",
-                         off,oyProfileTag_GetSize(tag));
+                         off,tag_size,
+                         error?((error & ERR_WARN)?" WARN:":" ERROR:"):"", (error & ERR_ASCII)?" ascii":"", (error & ERR_UNI)?" unicode":"", (error & ERR_SCRIPT)?" script":"",
+                         error?":":"",
+                         (error & ERR_COUNT)?" count":"", (error & ERR_STRLEN)?" strlen":"", (error & ERR_TAGSIZE)?" tag-size":"", (error & ERR_MATCH)?" count!=strlen":"");
 
              oyProfileTag_SetSizeCheck(tag, off);
            }
@@ -1813,7 +1826,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
              int i;
              int all = 1;
 
-             error = oyProfileTag_GetSize(tag) < 24 + count * size;
+             error = tag_size < 24 + count * size;
 
              if(!error)
              for (i = 0; i < count; i++)
@@ -1822,7 +1835,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                int  g = 0,
                     offset = 0;
 
-               error = oyProfileTag_GetSize(tag) < 20 + i * size;
+               error = tag_size < 20 + i * size;
                if(!error)
                  g = oyValueUInt32( *(icUInt32Number*)&mem[20+ i*size] );
 
@@ -1834,7 +1847,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  oyStruct_s * oy_struct = 0;
                  char * t = 0;
 
-                 error = oyProfileTag_GetSize(tag) < 20 + i * size + g + 4;
+                 error = tag_size < 20 + i * size + g + 4;
                  if(!error)
                  {
                    len = (g > 1) ? g : 8;
@@ -1853,14 +1866,14 @@ oyStructList_s * oyIMProfileTag_GetValues(
                    t[0] = 0;
 
                  if(!error)
-                   error = (24 + i*size + 4) > oyProfileTag_GetSize(tag);
+                   error = (24 + i*size + 4) > tag_size;
 
                  if(!error)
                    offset = oyValueUInt32( *(icUInt32Number*)&mem
                                                   [24+ i*size] );
 
                  if(!error)
-                   error = offset + len > oyProfileTag_GetSize(tag);
+                   error = offset + len > tag_size;
 
                  if(!error)
                  {
@@ -1882,7 +1895,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                if(i == count-1 && !error)
                {
                  if(!error)
-                   error = (24 + i*size + 4) > oyProfileTag_GetSize(tag);
+                   error = (24 + i*size + 4) > tag_size;
 
                  offset = oyValueUInt32( *(icUInt32Number*)&mem
                                                   [24+ i*size] );
@@ -1897,7 +1910,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                char * t = 0;
                int n_;
 
-               error = oyProfileTag_GetSize(tag) < offset + g;
+               error = tag_size < offset + g;
 
                if(!error)
                  t = (char*) oyAllocateFunc_( g + 1 );
@@ -1917,7 +1930,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
            break;
       case icSigSignatureType:
-           if (oyProfileTag_GetSize(tag) < 12)
+           if (tag_size < 12)
            { return texts; }
            else
            {
@@ -1939,7 +1952,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
            }
            break;
       case icSigMakeAndModelType:
-           if(oyProfileTag_GetSize(tag) < 40)
+           if(tag_size < 40)
            { return texts; }
            else
            {
@@ -1963,7 +1976,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
            }
            break;
       case icSigNativeDisplayInfoType:
-           if(oyProfileTag_GetSize(tag) < 56)
+           if(tag_size < 56)
            { return texts; }
            else
            {
@@ -2028,7 +2041,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
            }
            break;
       case icSigProfileSequenceDescType:
-           if(oyProfileTag_GetSize(tag) > 12 + 20 + sizeof(icTextDescription)*2)
+           if(tag_size > 12 + 20 + sizeof(icTextDescription)*2)
            {
              int off = 8;
              uint32_t i=0;
@@ -2058,11 +2071,11 @@ oyStructList_s * oyIMProfileTag_GetValues(
              if(count > 256) count = 256;
              for(i = 0; i < count; ++i)
              {
-               if(oyProfileTag_GetSize(tag) > off + sizeof(icDescStruct))
+               if(tag_size > off + sizeof(icDescStruct))
                  desc = (icDescStruct*) &mem[off];
 
                off += 4+4+2*4+4;
-               if(off < oyProfileTag_GetSize(tag))
+               if(off < tag_size)
                {
 
                  oySprintf_(num, "%d", i);
@@ -2083,11 +2096,11 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
                /* first mnf */
                tmptag = oyProfileTag_New(0);
-               tmp = oyAllocateFunc_(oyProfileTag_GetSize(tag) - off);
-               error = !memcpy(tmp, &mem[off], oyProfileTag_GetSize(tag) - off);
+               tmp = oyAllocateFunc_(tag_size - off);
+               error = !memcpy(tmp, &mem[off], tag_size - off);
                tag_sig = *(icUInt32Number*)(tmp);
                tag_sig = oyValueUInt32( tag_sig );
-               max_tag_size = oyProfileTag_GetSize(tag) - off;
+               max_tag_size = tag_size - off;
                mluc_size = oySizeOfMluc(tmp, max_tag_size);
                if(0 < mluc_size && mluc_size <= max_tag_size)
                {
@@ -2117,11 +2130,11 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
                /* next model */
                tmptag = oyProfileTag_New(0);
-               tmp = oyAllocateFunc_(oyProfileTag_GetSize(tag) - off);
-               error = !memcpy(tmp, &mem[off], oyProfileTag_GetSize(tag) - off);
+               tmp = oyAllocateFunc_(tag_size - off);
+               error = !memcpy(tmp, &mem[off], tag_size - off);
                tag_sig = *(icUInt32Number*)(tmp);
                tag_sig = oyValueUInt32( tag_sig );
-               max_tag_size = oyProfileTag_GetSize(tag) - off;
+               max_tag_size = tag_size - off;
                mluc_size = oySizeOfMluc(tmp, max_tag_size);
                if(0 < mluc_size && mluc_size <= max_tag_size)
                {
@@ -2181,7 +2194,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 		Date: November 27, 2006
 		Proposal Version: 1.0
             */
-           if(oyProfileTag_GetSize(tag) > 12)
+           if(tag_size > 12)
            {
              int32_t off = 0;
              int i, j;
@@ -2213,7 +2226,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                STRING_ADD( tmp, "]:" );
                oyStructList_MoveInName( texts, &tmp, -1 );
 
-               if(!error && 12 + i*8 + 8 < oyProfileTag_GetSize(tag))
+               if(!error && 12 + i*8 + 8 < tag_size)
                {
                  /* implicite offset and size */
                  len = *(icUInt32Number*)&mem[12 + i*8 + 0];
@@ -2225,7 +2238,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                if(!error)
                  error = offset + size < old_offset + 16 + mluc_size;
 
-               if(!error && offset + size <= oyProfileTag_GetSize(tag))
+               if(!error && offset + size <= tag_size)
                {
                  hash = (uint32_t*)&mem[offset];
                  for(j = 0; j < 4; ++j)
@@ -2250,11 +2263,11 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  else
                  {
                    tmptag = oyProfileTag_New(0);
-                   tmp = oyAllocateFunc_(oyProfileTag_GetSize(tag) - offset);
-                   error = !memcpy(tmp, &mem[offset], oyProfileTag_GetSize(tag) - offset);
+                   tmp = oyAllocateFunc_(tag_size - offset);
+                   error = !memcpy(tmp, &mem[offset], tag_size - offset);
                    oyProfileTag_Set( tmptag, icSigProfileDescriptionTag,
                                            icSigMultiLocalizedUnicodeType, oyOK,
-                                           oyProfileTag_GetSize(tag) - offset, tmp );
+                                           tag_size - offset, tmp );
                    tmp = 0;
                    desc_tmp = oyIMProfileTag_GetValues( tmptag );
                    if(oyStructList_Count( desc_tmp ) )
@@ -2286,7 +2299,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
            }
            break;
       case icSigNamedColor2Type:
-           if (oyProfileTag_GetSize(tag) < 76)
+           if (tag_size < 76)
            { return texts; }
 
            if(error <= 0)
@@ -2383,7 +2396,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
            break;
       case icSigXYZType:
 
-           if (oyProfileTag_GetSize(tag) < 20)
+           if (tag_size < 20)
            { return texts; }
 
            if(error <= 0)
