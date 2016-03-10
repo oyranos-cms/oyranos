@@ -738,29 +738,15 @@ void updateUI() {
   //! internal@todo start refreshing when the UI has finished
     // ping X11 observers about option change
     // ... by setting a known property again to its old value
-  #ifdef HAVE_X11
-    Atom atom = XInternAtom(fl_display, XCM_COLOUR_DESKTOP_ADVANCED, False); // "_ICC_COLOR_DISPLAY_ADVANCED"
-    Window root = RootWindow( fl_display, 0 );
-  
-    XFlush( fl_display );
-  
-    Atom actual;
-    int format;
-    int advanced = -1;
-    unsigned long left;
-    unsigned long size;
-    unsigned char *data;
-    int result = XGetWindowProperty( fl_display, root, atom, 0, ~0, 0, XA_STRING, &actual,
-                                     &format, &size, &left, &data );
-    if(data && size && atoi((const char*)data) > 0)
-      advanced = atoi((const char*)data);
-    //printf("desktop uses advanced settings: %d\n", advanced );
-    XChangeProperty( fl_display, root,
-                       atom, XA_STRING, 8, PropModeReplace,
-                       data, size );
-    if(result == Success && data)
-      XFree( data ); data = 0;
-  #endif
+    oyOptions_s * opts = oyOptions_New(NULL), * results = 0;
+    int error = oyOptions_Handle( "//"OY_TYPE_STD"/send_native_update_event",
+                      opts,"send_native_update_event",
+                      &results );
+    oyOptions_Release( &opts );
+
+    if(error)
+      printf("send_native_update_event failed");
+
     Fl::add_idle(updateUIIdle);
 }
 
