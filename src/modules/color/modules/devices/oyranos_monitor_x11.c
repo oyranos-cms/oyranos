@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2005-2015 (C) Kai-Uwe Behrmann
+ *            2005-2016 (C) Kai-Uwe Behrmann
  *
  *  @brief    monitor device detection
  *  @internal
@@ -1712,6 +1712,136 @@ int XcolorRegionFind(XcolorRegion * old_regions, unsigned long old_regions_n, Di
 /**
  *  This function implements oyMOptions_Handle_f.
  *
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/03/10 (Oyranos: 0.9.6)
+ *  @date    2016/03/10
+ */
+int          oyX1UpdateOptions_Handle( oyOptions_s       * options,
+                                       const char        * command,
+                                       oyOptions_s      ** result )
+{
+  if(oyFilterRegistrationMatch(command,"can_handle", 0))
+  {
+    if(oyFilterRegistrationMatch(command,"send_native_update_event", 0))
+    {
+    }
+    else
+      return 1;
+  }
+  else if(oyFilterRegistrationMatch(command,"send_native_update_event", 0))
+  {
+    // ping X11 observers about option change
+    // ... by setting a known property again to its old value
+    Display * display = XOpenDisplay(NULL);
+    Atom atom = XInternAtom(display, XCM_COLOUR_DESKTOP_ADVANCED, False); // "_ICC_COLOR_DISPLAY_ADVANCED"
+    Window root = RootWindow( display, 0 );
+  
+    XFlush( display );
+  
+    Atom actual;
+    int format;
+    int advanced = -1;
+    unsigned long left;
+    unsigned long size;
+    unsigned char *data;
+    int result = XGetWindowProperty( display, root, atom, 0, ~0, 0, XA_STRING, &actual,
+                                     &format, &size, &left, &data );
+    if(data && size && atoi((const char*)data) > 0)
+      advanced = atoi((const char*)data);
+    _msg( oyMSG_DBG, (oyStruct_s*)options,
+          OY_DBG_FORMAT_ "desktop uses advanced settings: %d\n", OY_DBG_ARGS_,
+          advanced );
+    XChangeProperty( display, root,
+                       atom, XA_STRING, 8, PropModeReplace,
+                       data, size );
+    if(result == Success && data)
+      XFree( data ); data = 0;
+    if(display)
+      XCloseDisplay(display);
+  }
+
+  return 0;
+}
+
+/**
+ *  This function implements oyCMMinfoGetText_f.
+ *
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/03/10 (Oyranos: 0.9.6)
+ *  @date    2016/03/10
+ */
+const char * oyX1InfoGetTextMyHandlerU(const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
+{
+         if(strcmp(select, "can_handle")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "check";
+    else if(type == oyNAME_NAME)
+      return _("check");
+    else
+      return _("Check if this module can handle a certain command.");
+  } else if(strcmp(select, "send_native_update_event")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "send_native_update_event";
+    else if(type == oyNAME_NAME)
+      return _("Set a X Color Management update toggle.");
+    else
+      return _("Ping the XCM_COLOUR_DESKTOP_ADVANCED X11 atom.");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("help");
+    else if(type == oyNAME_NAME)
+      return _("Help");
+    else
+      return _("The oyX1 modules \"send_native_update_event\" handler lets you ping "
+               "X Color Management advanced X11 atom. "
+               "The implementation uses Xlib.");
+  }
+  return 0;
+}
+const char *oyX1_texts_send_native_update_event[4] = {"can_handle","send_native_update_event","help",0};
+
+/** @instance oyX1_api10_send_native_update_event_handler
+ *  @brief    oyX1 oyCMMapi10_s implementation
+ *
+ *  X Color Management desktop advanced toogle
+ *
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/03/10 (Oyranos: 0.9.6)
+ *  @date    2016/03/10
+ */
+oyCMMapi10_s_    oyX1_api10_send_native_update_event_handler = {
+
+  oyOBJECT_CMM_API10_S,
+  0,0,0,
+  (oyCMMapi_s*) NULL,
+
+  CMMInit,
+  CMMMessageFuncSet,
+
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+  "send_native_update_event._" CMM_NICK,
+
+  {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
+  CMM_API_VERSION,                     /**< int32_t module_api[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+  0,                         /**< oyPointer_s * runtime_context */
+ 
+  oyX1InfoGetTextMyHandlerU,             /**< getText */
+  (char**)oyX1_texts_send_native_update_event, /**<texts; list of arguments to getText*/
+ 
+  oyX1UpdateOptions_Handle               /**< oyMOptions_Handle_f oyMOptions_Handle */
+};
+
+
+/**
+ *  This function implements oyMOptions_Handle_f.
+ *
  *  @version Oyranos: 0.4.0
  *  @since   2012/01/11 (Oyranos: 0.4.0)
  *  @date    2012/01/11
@@ -1946,7 +2076,7 @@ const char *oyX1_texts_set_xcm_region[4] = {"can_handle","set_xcm_region","help"
 /** @instance oyX1_api10_set_xcm_region_handler
  *  @brief    oyX1 oyCMMapi10_s implementation
  *
- *  X Color Manageent server side regions setup
+ *  X Color Management server side regions setup
  *
  *  @version Oyranos: 0.4.0
  *  @since   2012/01/11 (Oyranos: 0.4.0)
@@ -1956,7 +2086,7 @@ oyCMMapi10_s_    oyX1_api10_set_xcm_region_handler = {
 
   oyOBJECT_CMM_API10_S,
   0,0,0,
-  (oyCMMapi_s*) NULL,
+  (oyCMMapi_s*) &oyX1_api10_send_native_update_event_handler,
 
   CMMInit,
   CMMMessageFuncSet,
