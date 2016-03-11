@@ -160,6 +160,23 @@
 </oyGROUP_BEHAVIOUR_PROOF>
 
 
+<oyGROUP_BEHAVIOUR_EFFECT>
+<!-- Effect 
+     Effect Settings -->
+
+    <!-- Effect
+         Color space for showing a effect -->
+    <oyPROFILE_EFFECT>Grayer_oyra.icc</oyPROFILE_EFFECT>
+
+    <!-- Use Effect
+         Enable effect profile
+     0 No
+     1 Yes -->
+    <oyBEHAVIOUR_EFFECT>0</oyBEHAVIOUR_EFFECT>
+
+</oyGROUP_BEHAVIOUR_EFFECT>
+
+
 
 </body>
 
