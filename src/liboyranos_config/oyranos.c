@@ -150,7 +150,10 @@ char* oyGetDefaultProfileName_   (oyPROFILE_e       type,
     {
       name = oyStringCopy_( t->default_string, allocate_func );
     } else {
-      WARNc2_S( "%s %d", _("Option not supported type:"), type)
+      if(t && t->id)
+        name = oyStringCopy_( "", allocate_func );
+      else
+        WARNc2_S( "%s %d", _("Option not supported type:"), type)
     }
   }
 
