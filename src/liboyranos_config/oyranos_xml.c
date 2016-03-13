@@ -449,7 +449,7 @@ void         oyWriteOptionToXML_     ( oyGROUP_e           group,
              if(opt_type == oyWIDGETTYPE_DEFAULT_PROFILE)
              {
                value = oyGetDefaultProfileName_( wt, oyAllocateFunc_ );
-               if( value && strlen( value ) )
+               if( value )
                {
                  key = t->config_string_xml;
                  /* end the coment */
