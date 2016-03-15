@@ -80,6 +80,7 @@ void  oyDeAllocateFunc_         (void *        data);
  *  marking, but at the prise of lost speed and increased memory consumption.
  *  53 is the grid size used internally in lcm2' gamut marking code. */
 #define lcm2PROOF_LUT_GRID_RASTER 53
+/*#define ENABLE_MPE 1*/
 
 #define CMM_VERSION {0,1,0}
 
@@ -803,6 +804,7 @@ uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
       gamut_warning = 0,
       precalculation = 0,
       precalculation_curves = 1,
+      no_white_on_white_fixup = 1,
       flags = 0;
   const char * o_txt = 0;
 
@@ -822,11 +824,18 @@ uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
       if(o_txt && oyStrlen_(o_txt))
         precalculation_curves = atoi( o_txt );
 
+      o_txt = oyOptions_FindString  ( opts, "no_white_on_white_fixup", 0 );
+      if(o_txt && oyStrlen_(o_txt))
+        no_white_on_white_fixup = atoi( o_txt );
+
       /* this should be moved to the CMM and not be handled here in Oyranos */
       flags = bpc ?           flags | cmsFLAGS_BLACKPOINTCOMPENSATION :
                               flags & (~cmsFLAGS_BLACKPOINTCOMPENSATION);
       flags = gamut_warning ? flags | cmsFLAGS_GAMUTCHECK :
                               flags & (~cmsFLAGS_GAMUTCHECK);
+      flags = no_white_on_white_fixup ?
+                              flags | cmsFLAGS_NOWHITEONWHITEFIXUP :
+                              flags & (~cmsFLAGS_NOWHITEONWHITEFIXUP);
       switch(precalculation)
       {
       case 0: flags |= 0; break;
@@ -843,9 +852,7 @@ uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
 
   if(oy_debug > 2)
     lcm2_msg( oyMSG_DBG, (oyStruct_s*)opts, OY_DBG_FORMAT_"\n"
-             "  bpc: %d  gamut_warning: %d  precalculation: %d precalculation_curves: %d\n",
-             OY_DBG_ARGS_,
-                bpc,     gamut_warning,     precalculation,    precalculation_curves );
+              "%s\n", OY_DBG_ARGS_, lcm2FlagsToText(flags) );
 
   return flags;
 }
@@ -1734,7 +1741,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       seg[0].Params[3] = 0;
       seg[0].Params[4] = 0;
 
-      t[0] = t[1] = t[2] = lcmsBuildSegmentedToneCurve(tc, 1, seg);
+      t[0] = t[1] = t[2] = lcmsBuildSegmentedToneCurve(tc, 2, seg);
 #else
       params[0] = 1.0; /* y - gamma */
       params[1] = 1.0; /* a */
@@ -3023,6 +3030,7 @@ char lcm2_extra_options[] = {
       <precalculation.advanced>0</precalculation.advanced>\n\
       <precalculation_curves.advanced>1</precalculation_curves.advanced>\n\
       <adaption_state.advanced>1.0</adaption_state.advanced>\n\
+      <no_white_on_white_fixup.advanced>1</no_white_on_white_fixup.advanced>\n\
      </" "icc_color" ">\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_INTERNAL ">\n\
@@ -3155,8 +3163,31 @@ int lcm2GetOptionsUI                 ( oyCMMapiFilter_s   * module,
         <xf:label>1.0</xf:label>\n\
        </xf:item>\n\
       </xf:choices>\n\
+     </xf:select1>\n");
+  A("\
+     <xf:select1 ref=\"/" OY_TOP_SHARED "/" OY_DOMAIN_INTERNAL "/" OY_TYPE_STD "/" "icc_color/no_white_on_white_fixup\">\n\
+      <xf:label>" );
+  A(          _("No White on White Fix"));
+  A(                              "</xf:label>\n\
+      <xf:hint>" );
+  A(          _("Skip White Point on White point alignment"));
+  A(                              "</xf:hint>\n\
+      <xf:help>" );
+  A(          _("Avoid force of White on White mapping. Default for absolute rendering intent."));
+  A(                              "</xf:help>\n\
+      <xf:choices>\n\
+       <xf:item>\n\
+        <xf:value>0</xf:value>\n\
+        <xf:label>none</xf:label>\n\
+       </xf:item>\n\
+       <xf:item>\n\
+        <xf:value>1</xf:value>\n\
+        <xf:label>yes</xf:label>\n\
+       </xf:item>\n\
+      </xf:choices>\n\
      </xf:select1>\n\
-   </xf:group>\n");
+   </xf:group>\n"
+   );
 
   if(allocateFunc && tmp)
   {
@@ -3346,7 +3377,7 @@ const char * lcm2InfoGetTextProfileC2( const char        * select,
     else if(type == oyNAME_NAME)
       return _("Create a ICC abstract proofing profile.");
     else
-      return _("The littleCMS \"create_profile.proofing_effect\" command lets you create ICC abstract profiles from a given ICC profile for proofing. The filter expects a oyOption_s object with name \"proofing_profile\" containing a oyProfile_s as value. The options \"rendering_intent\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_gamut_warning\", \"precalculation\", \"precalculation_curves\", \"cmyk_cmyk_black_preservation\" and \"adaption_state\" are honoured. The result will appear in \"icc_profile\" with the additional attributes \"create_profile.proofing_effect\" as a oyProfile_s object.");
+      return _("The littleCMS \"create_profile.proofing_effect\" command lets you create ICC abstract profiles from a given ICC profile for proofing. The filter expects a oyOption_s object with name \"proofing_profile\" containing a oyProfile_s as value. The options \"rendering_intent\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_gamut_warning\", \"precalculation\", \"precalculation_curves\", \"cmyk_cmyk_black_preservation\", \"adaption_state\"  and \"no_white_on_white_fixup\" are honoured. The result will appear in \"icc_profile\" with the additional attributes \"create_profile.proofing_effect\" as a oyProfile_s object.");
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)
@@ -3681,7 +3712,7 @@ const char * lcm2InfoGetText         ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("The lcms \"color_icc\" filter is a one dimensional color conversion filter. It can both create a color conversion context, some precalculated for processing speed up, and the color conversion with the help of that context. The adaption part of this filter transforms the Oyranos color context, which is ICC device link based, to the internal lcms format.");
     else
-      return _("The following options are available to create color contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract color profiles.\n The following Oyranos options are supported: \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], \"precalculation\": [0 - normal; 1 - cmsFLAGS_NOOPTIMIZE; 2 - cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], \"precalculation_curves\": [0 - none; 1 - cmsFLAGS_CLUT_POST_LINEARIZATION + cmsFLAGS_CLUT_PRE_LINEARIZATION] and \"adaption_state\": [0.0 - not adapted to screen, 1.0 - full adapted to screen]." );
+      return _("The following options are available to create color contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract color profiles.\n The following Oyranos options are supported: \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], \"precalculation\": [0 - normal; 1 - cmsFLAGS_NOOPTIMIZE; 2 - cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], \"precalculation_curves\": [0 - none; 1 - cmsFLAGS_CLUT_POST_LINEARIZATION + cmsFLAGS_CLUT_PRE_LINEARIZATION], \"adaption_state\": [0.0 - not adapted to screen, 1.0 - full adapted to screen] and \"no_white_on_white_fixup\": [0 - force white on white, 1 - keep as is]." );
   }
   return 0;
 }
