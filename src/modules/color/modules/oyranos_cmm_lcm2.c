@@ -3078,7 +3078,9 @@ int lcm2GetOptionsUI                 ( oyCMMapiFilter_s   * module,
       <xf:choices>\n\
        <xf:item>\n\
         <xf:value>0</xf:value>\n\
-        <xf:label>none</xf:label>\n\
+        <xf:label>");
+  A(            _("[none]"));
+  A(                 "</xf:label>\n\
        </xf:item>\n\
        <xf:item>\n\
         <xf:value>1</xf:value>\n\
@@ -3134,7 +3136,9 @@ int lcm2GetOptionsUI                 ( oyCMMapiFilter_s   * module,
       <xf:choices>\n\
        <xf:item>\n\
         <xf:value>0</xf:value>\n\
-        <xf:label>none</xf:label>\n\
+        <xf:label>");
+  A(            _("[none]"));
+  A(                 "</xf:label>\n\
        </xf:item>\n\
        <xf:item>\n\
         <xf:value>1</xf:value>\n\
@@ -3178,11 +3182,15 @@ int lcm2GetOptionsUI                 ( oyCMMapiFilter_s   * module,
       <xf:choices>\n\
        <xf:item>\n\
         <xf:value>0</xf:value>\n\
-        <xf:label>none</xf:label>\n\
+        <xf:label>");
+  A(            _("No"));
+  A(                 "</xf:label>\n\
        </xf:item>\n\
        <xf:item>\n\
         <xf:value>1</xf:value>\n\
-        <xf:label>yes</xf:label>\n\
+        <xf:label>");
+  A(            _("Yes"));
+  A(                  "</xf:label>\n\
        </xf:item>\n\
       </xf:choices>\n\
      </xf:select1>\n\
