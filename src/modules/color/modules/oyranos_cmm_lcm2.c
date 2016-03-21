@@ -2793,7 +2793,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
         w_out = (int)(oyArray2d_GetWidth(array_out)+0.5);
     int stride_in = w_in * bps_in;
 
-    n = w_out / channels;
+    n = OY_MIN(w_in, w_out) / channels;
 
     if(oy_debug > 2)
       lcm2_msg( oyMSG_DBG,(oyStruct_s*)ticket, OY_DBG_FORMAT_
@@ -2837,13 +2837,15 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
       const double xyz_factor = 1.0 + 32767.0/32768.0;
       const int use_xyz_scale = 1;
       int index = 0;
-      int array_out_height = oyArray2d_GetHeight(array_out);
-      if(array_out_height > threads_n * 10)
+      int array_in_height = oyArray2d_GetHeight(array_in),
+          array_out_height = oyArray2d_GetHeight(array_out),
+          lines = OY_MIN(array_in_height, array_out_height);
+      if(lines > threads_n * 10)
       {
 #if defined(USE_OPENMP)
 #pragma omp parallel for private(index,j,array_in_tmp_flt,array_in_tmp_dbl,array_out_tmp_flt,array_out_tmp_dbl)
 #endif
-        for( k = 0; k < array_out_height; ++k)
+        for( k = 0; k < lines; ++k)
         {
           if(array_in_tmp && use_xyz_scale)
           {
@@ -2890,7 +2892,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
           }
         }
       } else
-        for( k = 0; k < array_out_height; ++k)
+        for( k = 0; k < lines; ++k)
         {
           if(array_in_tmp && use_xyz_scale)
           {
