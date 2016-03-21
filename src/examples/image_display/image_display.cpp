@@ -605,7 +605,6 @@ event_handler(int e)
       {
       case '-':
         found = 1;
-        fprintf(stderr, "event_handler -\n" );
         opts = findOpts( "//" OY_TYPE_STD "/scale" );
         oyOptions_FindDouble( opts,
                                    "scale",
@@ -621,7 +620,6 @@ event_handler(int e)
         break;
       case '+': // 43
         found = 1;
-        fprintf(stderr, "event_handler +\n" );
         opts = findOpts( "//" OY_TYPE_STD "/scale" );
         oyOptions_FindDouble( opts,
                                    "scale",
@@ -658,7 +656,6 @@ event_handler(int e)
           oy_widget->py = 0;
         }
         found = 1;
-        fprintf(stderr, "event_handler +\n" );
         oyOptions_SetFromDouble( &opts,
                                    "//" OY_TYPE_STD "/scale/scale",
                                    scale, 0, OY_CREATE_NEW );
@@ -679,7 +676,6 @@ event_handler(int e)
           oy_widget->py = 0;
         }
         found = 1;
-        fprintf(stderr, "event_handler +\n" );
         oyOptions_SetFromDouble( &opts,
                                    "//" OY_TYPE_STD "/scale/scale",
                                    scale, 0, OY_CREATE_NEW );
@@ -702,7 +698,6 @@ event_handler(int e)
           oy_widget->py = 0;
         }
         found = 1;
-        fprintf(stderr, "event_handler +\n" );
         opts = findOpts( "//" OY_TYPE_STD "/scale" );
         oyOptions_SetFromDouble( &opts,
                                    "//" OY_TYPE_STD "/scale/scale",
@@ -712,7 +707,6 @@ event_handler(int e)
       case '1':
         scale = 1.0;
         found = 1;
-        fprintf(stderr, "event_handler +\n" );
         opts = findOpts( "//" OY_TYPE_STD "/scale" );
         oyOptions_FindDouble( opts,
                                    "scale",
