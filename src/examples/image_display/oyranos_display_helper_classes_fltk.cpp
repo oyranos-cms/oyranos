@@ -40,9 +40,9 @@ int      conversionObserve           ( oyObserver_s      * observer,
   if(observer && observer->model &&
      observer->model->type_ == oyOBJECT_FILTER_NODE_S)
   {
-    /*if(oy_debug_signals)*/
-    if(oy_debug)
-      fprintf(stderr, "%s:%d INFO: \n\t%s %s: %s[%d]->%s[%d]\n",
+    if(oy_debug || oy_debug_signals)
+      fprintf( stderr, "INFO: %s:%d \n\t%s %s: %s[%d]->%s[%d]"
+               "\n\tCALLING: oyConversion_Correct() + oy_widget->damage()\n",
                     strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
                     __LINE__, _("Signal"),
                     oySignalToString(signal_type),
@@ -52,8 +52,8 @@ int      conversionObserve           ( oyObserver_s      * observer,
                     oyObject_GetId(   obs->observer->oy_) );
 
     oyConversion_Correct( (oyConversion_s*)obs->observer,
-                          "//" OY_TYPE_STD "/icc_color", oyOPTIONATTRIBUTE_ADVANCED,
-                          0 );
+                          "//" OY_TYPE_STD "/icc_color",
+                          oyOPTIONATTRIBUTE_ADVANCED, 0 );
 
     Oy_Fl_Image_Widget * oy_widget = (Oy_Fl_Image_Widget*) oyPointer_GetPointer(
                                              (oyPointer_s*)observer->user_data);
