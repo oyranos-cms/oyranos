@@ -987,37 +987,37 @@ void oyI18NSet         ( int active,
  *  @brief get Path Name for Installation 
  *
  *  Note: Not all combinations return a path name. Some make no sense.
- *  So be careful and test the result.
+ *  So be careful and test the result. The returned paths are absolute.
  *
  *  ::oyPATH_MODULE + ::oySCOPE_USER and ::oyPATH_MODULE + ::oySCOPE_OYRANOS are
  *  supported. ::oyPATH_SCRIPT gives no result at all.
  *
  *  @version Oyranos: 0.9.6
- *  @date    2015/02/08
+ *  @date    2016/03/16
  *  @since   2015/02/08 (Oyranos: 0.9.6)
  */
 char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
                                        oySCOPE_e           scope,
                                        oyAlloc_f           allocFunc )
 {
-  char * path = NULL;
-#define C(p) oyStringCopy(p,allocFunc);
+  char * path = NULL, * full_name = NULL;
+#define F(p) full_name = oyResolveDirFileName_( p );
   switch (type)
   {
     case oyPATH_ICC:
       switch((int)scope)
       {
         case oySCOPE_USER:
-          path = C( OS_ICC_USER_DIR );
+          F( OS_ICC_USER_DIR );
           break;
         case oySCOPE_SYSTEM:
-          path = C( OS_ICC_SYSTEM_DIR ) ;
+          F( OS_ICC_SYSTEM_DIR ) ;
           break;
         case oySCOPE_OYRANOS:
-          path = C( OY_SYSCOLORDIR OY_SLASH OY_ICCDIRNAME );
+          F( OY_SYSCOLORDIR OY_SLASH OY_ICCDIRNAME );
           break;
         case oySCOPE_MACHINE:
-          path = C( OS_ICC_MACHINE_DIR );
+          F( OS_ICC_MACHINE_DIR );
         break;
         default:
           path = NULL;
@@ -1028,16 +1028,16 @@ char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
       switch((int)scope)
       {
         case oySCOPE_USER:
-          path = C( OS_SETTINGS_USER_DIR );
+          F( OS_SETTINGS_USER_DIR );
           break;
         case oySCOPE_SYSTEM:
-          path = C( OS_SETTINGS_SYSTEM_DIR );
+          F( OS_SETTINGS_SYSTEM_DIR );
           break;
         case oySCOPE_OYRANOS:
-          path = C( OY_SYSCOLORDIR OY_SLASH OY_SETTINGSDIRNAME);
+          F( OY_SYSCOLORDIR OY_SLASH OY_SETTINGSDIRNAME);
           break;
         case oySCOPE_MACHINE:
-          path = C( OS_SETTINGS_MACHINE_DIR );
+          F( OS_SETTINGS_MACHINE_DIR );
         break;
       }
       break;
@@ -1051,12 +1051,12 @@ char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
           char * t = NULL;
           oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                              "~/.local/lib%s/" OY_CMMSUBPATH, strstr(OY_LIBDIR, "lib64") ? "64":"");
-          path = C( t );
+          F( t );
           oyFree_m_(t);
           break;
         }
         case oySCOPE_OYRANOS:
-          path = C( OY_CMMDIR );
+          F( OY_CMMDIR );
           break;
         default:
           path = NULL;
@@ -1068,10 +1068,10 @@ char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
       switch((int)scope)
       {
         case oySCOPE_USER:
-          path = C( OS_DL_CACHE_USER_DIR );
+          F( OS_DL_CACHE_USER_DIR );
           break;
         case oySCOPE_SYSTEM:
-          path = C( OS_DL_CACHE_SYSTEM_DIR );
+          F( OS_DL_CACHE_SYSTEM_DIR );
           break;
         default:
           path = NULL;
@@ -1080,6 +1080,17 @@ char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
     }
     default:
       path = NULL;
+  }
+
+  if(full_name)
+  {
+    if(allocFunc)
+    {
+      path = oyStringCopy( full_name, allocFunc );
+      oyFree_m_( full_name );
+    }
+    else
+      path = full_name;
   }
 
   return path;
