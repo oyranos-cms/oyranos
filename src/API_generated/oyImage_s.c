@@ -157,7 +157,7 @@ oyPointer oyImage_GetArray2dLineContinous (
   if(height) *height = 1;
   if(is_allocated) *is_allocated = 0;
   if(point_y >= a->height)
-    WARNc2_S("point_y < a->height failed(%d/%d)", point_y, a->height)
+    WARNcc2_S(image, "point_y < a->height failed(%d/%d)", point_y, a->height)
   return &array2d[ point_y ][ 0 ]; 
 }
 
@@ -265,7 +265,7 @@ oyPointer oyImage_GetArray2dPointPlanar( oyImage_s       * image,
                                          int               channel,
                                          int             * is_allocated )
 {
-  WARNc_S("planar pixel access not implemented")
+  WARNcc_S(image, "planar pixel access not implemented")
   return 0;
 #if 0
   oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
@@ -297,7 +297,7 @@ oyPointer oyImage_GetArray2dLinePlanar ( oyImage_s       * image,
                                          int             * is_allocated )
 {
   if(height) *height = 1;
-  WARNc_S("planar pixel access not implemented")
+  WARNcc_S(image, "planar pixel access not implemented")
   return 0;
 #if 0 /* SunC: warning: statement not reached */
   oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
@@ -628,7 +628,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
   if( allocate_method < 0 || allocate_method > 2 )
   {
-    WARNc1_S("allocate_method not allowed: %d", allocate_method )
+    WARNcc1_S(image, "allocate_method not allowed: %d", allocate_method )
     error = 1;
   }
 
@@ -736,7 +736,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   /* a array should have been created */
   if( !a && array_roi_pix.width && array_roi_pix.height )
   {
-    WARNc_S("Could not create array.")
+    WARNcc_S(image, "Could not create array.")
     if(error <= 0) error = -1;
   }
 
@@ -809,11 +809,11 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   } else
   if(s->getPoint)
   {
-    WARNc_S("image->getPoint  not yet supported")
+    WARNcc_S(image, "image->getPoint  not yet supported")
   } else
   if(s->getTile)
   {
-    WARNc_S("image->getTile  not yet supported")
+    WARNcc_S(image, "image->getTile  not yet supported")
     error = 1;
   }
   }
@@ -867,7 +867,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   if(oyRectanglePriv_m(&array_->data_area)->width < image_roi_pix.width ||
      oyRectanglePriv_m(&array_->data_area)->height < image_roi_pix.height)
   {
-    WARNc3_S( "array (%dx%d) is too small for rectangle %s",
+    WARNcc3_S( image, "array (%dx%d) is too small for rectangle %s",
                (int)array_->width, (int)array_->height,
                oyRectangle_Show( (oyRectangle_s*)&image_roi_pix ) );
     error = 1;
@@ -875,7 +875,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
 
   if(!error & !s->setLine)
   {
-    WARNc1_S( "only the setLine() interface is yet supported; image[%d]",
+    WARNcc1_S( image, "only the setLine() interface is yet supported; image[%d]",
               oyObject_GetId( image->oy_ ) );
     error = 1;
   }
