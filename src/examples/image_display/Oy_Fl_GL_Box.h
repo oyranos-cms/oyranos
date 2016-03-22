@@ -101,7 +101,7 @@ private:
         if(!need_redraw)
         {
           oyImage_Release( &draw_image );
-          if(oy_debug)
+          if(oy_debug >= 4)
             fprintf(stderr, "%s:%d %s() return after result:%d ======  %lu ==========================\n0x%tx\n", 
                   strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
                   __LINE__, __func__,result, (long unsigned)draw_image,
@@ -159,7 +159,7 @@ private:
                     frame_width,frame_height,W,H);
 
       oyImage_Release( &draw_image );
-      if(oy_debug)
+      if(oy_debug )
           fprintf(stderr, "%s:%d %s() ========== finished ========== result:%d valid:%d dirty:%d\n", 
                   strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
                   __LINE__, __func__, result, valid(), dirty);

@@ -484,7 +484,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
       oyRectangle_Release( &ticket_roi );
     }
 
-  if(oy_debug)
+  if(oy_debug >= 4)
     fprintf( stderr, "%s:%d %s() result: %d\n", strrchr(__FILE__,'/'),__LINE__,__func__, result );
   return result;
 }

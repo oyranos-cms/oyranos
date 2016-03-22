@@ -66,7 +66,7 @@ public:
           ox = x() - Fl::event_x();
           oy = y() - Fl::event_y();
 #if DEBUG_MOVE
-          if(oy_debug)
+          if(oy_debug >= 4)
             printf(_DBG_FORMAT_"e: %d ox:%d px:%d oy: %d py:%d\n",_DBG_ARGS_,e, ox, px,oy,py);
 #endif
           redraw();
@@ -105,7 +105,7 @@ public:
           }
       }
 
-      if(oy_debug)
+      if(oy_debug > 3)
         printf(_DBG_FORMAT_"e: %d x: %d y:%d %dx%d\n",_DBG_ARGS_,e, Fl::event_x(),Fl::event_y(), px, py );
       int ret = Fl_Widget::handle(e);
       return ret;
@@ -186,7 +186,7 @@ public:
       }
 
 #if DEBUG_MOVE
-      if(oy_debug)
+      if(oy_debug >= 4)
       printf( _DBG_FORMAT_"new display rectangle: %s +%d+%d +%d+%d\n",
               _DBG_ARGS_,
               oyRectangle_Show(display_rectangle), x(), y(), px, py );
