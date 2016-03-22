@@ -798,7 +798,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
   oiccFilterGraph_CountNodes( g, &display_mode, &icc_nodes_n, verbose );
 
   /* How far is this ICC node from the output node? */
-  if(verbose)
+  if(verbose && oy_debug == 5)
   {
     node = oyConversion_GetNode( s, OY_INPUT );
     oyShowGraph_( node, 0 );
