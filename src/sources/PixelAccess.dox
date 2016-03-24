@@ -121,22 +121,28 @@
  *  @verbatim
     Relation of positional parameters:
 
-                start_xy         output_image_roi
-                   |                /
-             +-----|---------------/--------------+
-    original |     |              /               |
-    image ---+     |             /                |
-             |  ---+------------/----------+      |
-             |     |           /           +---------- output_image
-             |     |   +------+--------+   |      |
-             |     |   |               |   |      |
-             |     |   |               |   |      |
+                start_xy relative to original image width
+                   |
+             +-----|------------------------------+
+    original |     |                              |
+    image ---+     |                              |
+             |  ---+-----------------------+      |
+             |     |                       +---------- output_image
              |     |   +---------------+   |      |
-             |     |                       |      |
-             |     +-----------------------+      |
-             |                                    |
-             +------------------------------------+
+             |     |   |               |   |      |
+             |     |   |               |   |      |
+             |     |   +------+--------+   |      |
+             |     |           \           |      |
+             |     +------------\----------+      |
+             |                   \                |
+             +--------------------\---------------+
+                                output_image_roi relative to output image width
     @endverbatim
+ *
+ *  Rectangles are passed in relative units.
+ *  start_xy and output_image_roi are of type oyRectangle_s and are defined in
+ *  relative units to the enclosing images width. start_xy::x 0.1 means
+ *  0.1 x original_image::width .
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/07/04 (Oyranos: 0.1.8)
