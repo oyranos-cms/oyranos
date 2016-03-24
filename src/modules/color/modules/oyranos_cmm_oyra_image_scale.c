@@ -58,6 +58,7 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
                  * node;
   oyFilterPlug_s * plug;
   oyImage_s * image;
+  int image_width;
 
   int dirty = 0;
 
@@ -68,9 +69,10 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
   if(!image)
     return 1;
 
+  image_width = oyImage_GetWidth(image);
+
   {
     oyRectangle_s * ticket_roi = oyPixelAccess_GetOutputROI( ticket );
-    oyArray2d_s * ticket_array = oyPixelAccess_GetArray( ticket );
     double  scale = 1.0;
     oyOptions_s * node_opts = oyFilterNode_GetOptions( node, 0 );
 
@@ -93,11 +95,18 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
 
     oyOptions_Release( &node_opts );
 
+    if(oy_debug > 2)
+      oyra_msg( oyMSG_WARN, (oyStruct_s*)0, OY_DBG_FORMAT_
+                "ticket_roi: %s w: %d start_x: %.02f",OY_DBG_ARGS_,
+                oyRectangle_Show(ticket_roi), image_width,
+                oyPixelAccess_GetStart( ticket, 0 )*image_width );
+
     if(scale != 1.0)
     {
-      int image_width = oyImage_GetWidth(image);
-      oyRectangle_s * new_ticket_roi,
-                    * roi_pix = oyRectangle_NewWith( 0,0,+
+      oyImage_s * new_output_image;
+      int new_output_image_width;
+      oyRectangle_s * new_ticket_output_roi,
+                    * image_pix = oyRectangle_NewWith( 0,0,+
                                      oyImage_GetWidth(image),
                                      oyImage_GetHeight(image), 0);
       oyPixelAccess_s * new_ticket = 0;
@@ -105,7 +114,10 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
       new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
       oyPixelAccess_SetArray( new_ticket, 0 );
 
-      new_ticket_roi = oyPixelAccess_GetOutputROI( new_ticket );
+      new_output_image = oyPixelAccess_GetOutputImage( new_ticket );
+      new_output_image_width = oyImage_GetWidth( new_output_image );
+
+      new_ticket_output_roi = oyPixelAccess_GetOutputROI( new_ticket );
 
       /* adapt the access start */
       oyPixelAccess_ChangeRectangle( new_ticket,
@@ -113,31 +125,67 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
                           oyPixelAccess_GetStart( ticket, 1 ) / scale, 0 );
 
       /* use the available source image area */
-      oyRectangle_Scale( new_ticket_roi, 1.0/scale );
+      oyRectangle_Scale( new_ticket_output_roi, 1.0/scale );
 
       if(oy_debug > 2)
       {
-        oyRectangle_Scale( new_ticket_roi, image_width );
+        char * troi;
+        oyRectangle_Scale( ticket_roi, new_output_image_width );
+        oyRectangle_Scale( new_ticket_output_roi, new_output_image_width );
+        troi = strdup( oyRectangle_Show(ticket_roi) );
+        oyra_msg( oyMSG_WARN, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_
+                  "ticket_roi: %s  %s %f  new_ticket_output_roi: %s",OY_DBG_ARGS_,
+                  troi, "scale factor:", scale,
+                  oyRectangle_Show(new_ticket_output_roi) );
+        oyRectangle_Scale( ticket_roi, 1.0/new_output_image_width );
+        oyRectangle_Scale( new_ticket_output_roi, 1.0/new_output_image_width );
+        if(troi) free(troi);
+
         oyra_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_
-                  "%s %f  new_ticket_roi: %s",OY_DBG_ARGS_, "scale factor:", scale, oyRectangle_Show(new_ticket_roi) );
-        oyRectangle_Scale( new_ticket_roi, 1.0/image_width );
+                  "image_pix: %s start_x:%g start_y:%g",OY_DBG_ARGS_,
+                  oyRectangle_Show(image_pix),
+                  oyPixelAccess_GetStart( new_ticket, 0 )*image_width,
+                  oyPixelAccess_GetStart( new_ticket, 1 )*image_width );
       }
-      if(oy_debug > 2)
-        oyra_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_
-                  "roi_pix: %s start_x:%g start_y:%g",OY_DBG_ARGS_,
-                  oyRectangle_Show(roi_pix), oyPixelAccess_GetStart( new_ticket, 0 )*image_width, oyPixelAccess_GetStart( new_ticket, 1 )*image_width );
 
-      /* prevent exceeding the the source image area , while moving the target roi */
-      oyRectangle_Scale( roi_pix, 1.0/image_width );
-      *oyRectangle_SetGeo1( roi_pix, 2 ) -= oyPixelAccess_GetStart( new_ticket, 0 ) - oyRectangle_GetGeo1( new_ticket_roi, 0 );
-      *oyRectangle_SetGeo1( roi_pix, 3 ) -= oyPixelAccess_GetStart( new_ticket, 1 ) - oyRectangle_GetGeo1( new_ticket_roi, 1 );
-      oyRectangle_Trim( new_ticket_roi, roi_pix );
-      oyRectangle_Scale( roi_pix, image_width );
+      /* prevent exceeding the source image area, while moving the target roi */
+      oyRectangle_Scale( new_ticket_output_roi, new_output_image_width );
       if(oy_debug > 2)
+      {
+        oyra_msg( oyMSG_WARN, (oyStruct_s*)0, OY_DBG_FORMAT_
+                  "image_pix: %s w: %d start_x: %.02f",OY_DBG_ARGS_,
+                  oyRectangle_Show(image_pix),
+                  image_width, oyPixelAccess_GetStart( ticket, 0 )*image_width );
+        oyRectangle_Scale( ticket_roi, new_output_image_width );
+        oyra_msg( oyMSG_WARN, (oyStruct_s*)0, OY_DBG_FORMAT_
+                  "ticket_roi: %s",OY_DBG_ARGS_, oyRectangle_Show(ticket_roi) );
+        oyRectangle_Scale( ticket_roi, 1.0/new_output_image_width );
+        oyra_msg( oyMSG_WARN, (oyStruct_s*)0, OY_DBG_FORMAT_
+                  "scale: %f  new_ticket_output_roi: %s",OY_DBG_ARGS_, scale,
+                  oyRectangle_Show(new_ticket_output_roi) );
+      }
+      *oyRectangle_SetGeo1( new_ticket_output_roi, 0 ) +=
+                            oyPixelAccess_GetStart( ticket, 0 ) * image_width;
+      *oyRectangle_SetGeo1( new_ticket_output_roi, 1 ) +=
+                            oyPixelAccess_GetStart( ticket, 1 ) * image_width;
+      oyRectangle_Trim( new_ticket_output_roi, image_pix );
+      if(oy_debug > 2)
+      {
+        oyra_msg( oyMSG_WARN, (oyStruct_s*)0, OY_DBG_FORMAT_
+                  "scale: %f  new_ticket_output_roi: %s",OY_DBG_ARGS_, scale,
+                  oyRectangle_Show(new_ticket_output_roi) );
+      }
+      *oyRectangle_SetGeo1( new_ticket_output_roi, 0 ) -=
+                            oyPixelAccess_GetStart( ticket, 0 ) * image_width;
+      *oyRectangle_SetGeo1( new_ticket_output_roi, 1 ) -=
+                            oyPixelAccess_GetStart( ticket, 1 ) * image_width;
+      oyRectangle_Scale( new_ticket_output_roi, 1.0/new_output_image_width );
+      if(oy_debug)
         oyra_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_
-                  "roi_pix: %s",OY_DBG_ARGS_, oyRectangle_Show(roi_pix) );
+                  "image_pix: %s",OY_DBG_ARGS_, oyRectangle_Show(image_pix) );
 
-      if(oyRectangle_CountPoints(  new_ticket_roi ) > 0)
+
+      if(oyRectangle_CountPoints(  new_ticket_output_roi ) > 0)
       {
         int nw,nh,w,h,x,y,xs,ys;
         oyArray2d_s * array_in,
@@ -152,13 +200,13 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         /* get the source pixels */
         if(oy_debug > 2)
         {
-          oyRectangle_Scale( new_ticket_roi, image_width );
+          oyRectangle_Scale( new_ticket_output_roi, image_width );
           oyra_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_
                      "%s[%d] %s",OY_DBG_ARGS_,
                      "Run new_ticket through filter in node",
                      oyStruct_GetId( (oyStruct_s*)node ),
-                     oyRectangle_Show( new_ticket_roi ) );
-          oyRectangle_Scale( new_ticket_roi, 1.0/image_width );
+                     oyRectangle_Show( new_ticket_output_roi ) );
+          oyRectangle_Scale( new_ticket_output_roi, 1.0/image_width );
         }
         result = oyFilterNode_Run( input_node, plug, new_ticket );
 
@@ -172,13 +220,13 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         nw = oyArray2d_GetWidth( array_in )/channels;
         nh = oyArray2d_GetHeight( array_in );
 
-        if(OY_ROUND(w/scale) > nw + 1 )
-          oyra_msg( oyMSG_ERROR, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_
-                     "node [%d] scale: %.02f %s -> %s/%s array %dx%d -> (%d) %dx%d",OY_DBG_ARGS_,
+        if(OY_ROUND(w/scale) > nw + 1 || oy_debug)
+          oyra_msg( oy_debug?oyMSG_DBG:oyMSG_ERROR, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_
+                     "node [%d] scale: %.02f %s -> %s/%s array %dx%d -> (out array width / scale %d) %dx%d",OY_DBG_ARGS_,
                      oyStruct_GetId( (oyStruct_s*)node ), scale,
-                     oyRectangle_Show( new_ticket_roi ),
+                     oyRectangle_Show( new_ticket_output_roi ),
                      oyRectangle_Show( ticket_roi ),
-                     oyRectangle_Show( roi_pix ),
+                     oyRectangle_Show( image_pix ),
                      w,h, OY_ROUND(w/scale), nw,nh );
 
         /* do the scaling while copying the channels */
@@ -201,7 +249,7 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         oyPixelAccess_Release( &new_ticket );
         oyArray2d_Release( &array_in );
         oyArray2d_Release( &array_out );
-        oyRectangle_Release( &new_ticket_roi );
+        oyRectangle_Release( &new_ticket_output_roi );
       }
 
     } else /* scale == 1.0 */
@@ -211,7 +259,6 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
     oyFilterPlug_Release( &plug );
 
     oyRectangle_Release( &ticket_roi );
-    oyArray2d_Release( &ticket_array );
     oyFilterNode_Release( &input_node );
   }
 
@@ -308,7 +355,36 @@ const char * oyraApi4UiImageScaleGetText (
     else if(type == oyNAME_NAME)
       return _("The filter is used to reduce pixels.");
     else if(type == oyNAME_DESCRIPTION)
-      return _("The filter will expect a \"scale\" option and will create, fill and process a according data version with a new job ticket.");
+    {
+      static char * help_desc = NULL;
+      if(!help_desc)
+        oyStringAddPrintf( &help_desc, 0,0, "%s\n"
+"    %s \n"
+" \n"
+"                start_xy          %s \n"
+"                   |                / \n"
+"             +-----|---------------/--------------+ \n"
+"             |     |              /               | \n"
+"             |     |             /                +--- %s \n"
+"             |  ---+------------/----------+      | \n"
+"             |     |           /           +---------- %s \n"
+"             |     |   +------+--------+   |      | \n"
+"             |     |   |               |   |      | \n"
+"             |     |   |               |   |      | \n"
+"             |     |   +---------------+   |      | \n"
+"             |     |                       |      | \n"
+"             |     +-----------------------+      | \n"
+"             |                                    | \n"
+"             +------------------------------------+ \n"
+        "",
+        _("The filter will expect a \"scale\" double option and will create, fill and process a according data version with a new job ticket. The new job tickets image, array and output_image_roi will be divided by the supplied \"scale\" factor. It's plug will request the divided image sizes from the source socket."),
+        _("Relation of positional parameters:"),
+        /* output image region of interesst */
+        _("output_image_roi"),
+        _("source image"),
+        _("output image") );
+      return help_desc;
+    }
   } else if(strcmp(select,"category") == 0)
   {
     if(type == oyNAME_NICK)
