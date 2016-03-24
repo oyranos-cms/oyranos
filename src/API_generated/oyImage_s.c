@@ -156,7 +156,7 @@ oyPointer oyImage_GetArray2dLineContinous (
   unsigned char ** array2d = a->array2d;
   if(height) *height = 1;
   if(is_allocated) *is_allocated = 0;
-  if(point_y >= a->height)
+  if(oy_debug && point_y >= a->height)
     WARNcc2_S(image, "point_y < a->height failed(%d/%d)", point_y, a->height)
   return &array2d[ point_y ][ 0 ]; 
 }
@@ -517,8 +517,21 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
 {
   oyImage_s_ * s = (oyImage_s_*)image;
   int error = !s;
+  int need_new_array = 0;
 
   oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
+
+  if(oy_debug)
+  {
+    char * pl = oyPixelPrint( pixel_layout, oyAllocateFunc_ );
+    const char * pt = oyProfile_GetText(profile,oyNAME_NAME),
+               * tt = oyOptions_GetText( tags, oyNAME_NAME );
+    DBGs_NUM6_S( image, "pixel_layout: %d=(\"%s\") profile = %s tags = %s\t%dx%d",
+                 pixel_layout, pixel_layout?pl:oyNoEmptyString_m_( NULL ),
+                 oyNoEmptyString_m_( pt ), oyNoEmptyString_m_( tt ),
+                 width, height );
+    oyFree_m_(pl);
+  }
 
   if(profile)
   {
@@ -550,6 +563,16 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
      (!s->setPoint || !s->getPoint) &&
      s->width && s->height)
   {
+    need_new_array = 1;
+    oyImage_SetData( (oyImage_s*)s,     NULL,
+                           oyImage_GetArray2dPointContinous,
+                           oyImage_GetArray2dLineContinous, 0,
+                           oyImage_SetArray2dPointContinous,
+                           oyImage_SetArray2dLineContinous, 0 );
+  }
+
+  if(width >= 0 || height >= 0 || need_new_array)
+  {
     oyPixel_t pixel_layout = s->layout_[oyLAYOUT];
     oyPointer channels = 0;
 
@@ -558,12 +581,8 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
                                         s->height,
                                         oyToDataType_m(pixel_layout),
                                         s->oy_ );
-      
-    oyImage_SetData( (oyImage_s*)s,    (oyStruct_s**) &a,
-                           oyImage_GetArray2dPointContinous,
-                           oyImage_GetArray2dLineContinous, 0,
-                           oyImage_SetArray2dPointContinous,
-                           oyImage_SetArray2dLineContinous, 0 );
+
+    oyImage_SetData( (oyImage_s*)s,    (oyStruct_s**) &a, 0,0,0, 0,0,0 );
   }
 
   return error;
@@ -864,8 +883,8 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   error = oyImage_PixelsToSamples( image, image_rectangle,
                                    (oyRectangle_s*)&image_roi_pix );
   /* We want to check if the array is big enough to hold the pixels */
-  if(oyRectanglePriv_m(&array_->data_area)->width < image_roi_pix.width ||
-     oyRectanglePriv_m(&array_->data_area)->height < image_roi_pix.height)
+  if(array_->data_area.width < image_roi_pix.width ||
+     array_->data_area.height < image_roi_pix.height)
   {
     WARNcc3_S( image, "array (%dx%d) is too small for rectangle %s",
                (int)array_->width, (int)array_->height,
@@ -893,6 +912,17 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
       oyRectangle_SetGeo( (oyRectangle_s*)&array_rect_pix, 
                           0,0, array_->width, array_->height );
     }
+  }
+
+  if(!error &&
+     (array_rect_pix.width != image_roi_pix.width ||
+      array_rect_pix.height != image_roi_pix.height))
+  {
+    WARNcc4_S( image, "array %dx%d does not fit image rectangle %dx%d",
+               (int)array_rect_pix.width, (int)array_rect_pix.height,
+               (int)image_roi_pix.width, (int)image_roi_pix.height
+                );
+    error = 1;
   }
 
   if(!error)
