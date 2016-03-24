@@ -196,6 +196,7 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         oyDATATYPE_e data_type_in = oyToDataType_m( oyImage_GetPixelLayout( image, oyLAYOUT ) );
         int bps_in = oyDataTypeGetSize( data_type_in );
         int channels = oyToChannels_m( oyImage_GetPixelLayout( image, oyLAYOUT ) );
+        int issue = 0;
 
         /* get the source pixels */
         if(oy_debug > 2)
@@ -220,15 +221,6 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         nw = oyArray2d_GetWidth( array_in )/channels;
         nh = oyArray2d_GetHeight( array_in );
 
-        if(OY_ROUND(w/scale) > nw + 1 || oy_debug)
-          oyra_msg( oy_debug?oyMSG_DBG:oyMSG_ERROR, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_
-                     "node [%d] scale: %.02f %s -> %s/%s array %dx%d -> (out array width / scale %d) %dx%d",OY_DBG_ARGS_,
-                     oyStruct_GetId( (oyStruct_s*)node ), scale,
-                     oyRectangle_Show( new_ticket_output_roi ),
-                     oyRectangle_Show( ticket_roi ),
-                     oyRectangle_Show( image_pix ),
-                     w,h, OY_ROUND(w/scale), nw,nh );
-
         /* do the scaling while copying the channels */
 #if defined(USE_OPENMP)
 #pragma omp parallel for private(x,xs,ys)
@@ -236,14 +228,38 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         for(y = 0; y < h; ++y)
         {
           ys = y/scale;
-          if(ys >= nh) break;
+          if(ys >= nh) { issue |= 2; break; }
           for(x = 0; x < w; ++x)
           {
             xs = x/scale;
-            if(xs >= nw) continue;
+            if(xs >= nw) { issue |= 1; continue; }
             memcpy( &array_out_data[y][x*channels*bps_in],
                     &array_in_data [ys][xs*channels*bps_in], channels*bps_in );
           }
+        }
+
+        if((int)(w/scale) != nw) issue |= 1;
+        if((int)(h/scale) != nh) issue |= 2;
+        if(issue || oy_debug)
+        {
+          oyImage_s * output_image = oyPixelAccess_GetOutputImage( new_ticket );
+          int output_image_width = oyImage_GetWidth( output_image );
+          char *a,*b,*c;
+          oyRectangle_Scale( new_ticket_output_roi, output_image_width );
+          oyRectangle_Scale( ticket_roi, image_width );
+          a = strdup(oyRectangle_Show( ticket_roi ));
+          b = strdup(oyRectangle_Show( image_pix ));
+          c = strdup(oyRectangle_Show( new_ticket_output_roi ));
+          oyra_msg( issue?oyMSG_ERROR:oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_
+                     "node [%d] scale: %.02f old roi %s/%s(image) -> new roi %s array %dx%d -> (out array widthxheight / scale %dx%d) %dx%d%s%s%s",OY_DBG_ARGS_,
+                     oyStruct_GetId( (oyStruct_s*)node ), scale,
+                     a,b,c, nw,nh, OY_ROUND(w/scale), OY_ROUND(h/scale), w,h,
+                     issue?" found issue(s): too":"", issue & 1 ? " wide":"",
+                     issue & 2 ? " heigh":""  );
+          if(a) free(a); if(b) free(b); if(c) free(c);
+          oyRectangle_Scale( ticket_roi, 1.0/image_width );
+          oyRectangle_Scale( new_ticket_output_roi, 1.0/output_image_width );
+          oyImage_Release( &output_image );
         }
 
         oyPixelAccess_Release( &new_ticket );
