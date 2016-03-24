@@ -19,8 +19,9 @@
 #include <oyranos_image.h>
 
 #ifndef _DBG_FORMAT_
-#define _DBG_FORMAT_ "%s:%d %s() "
-#define _DBG_ARGS_ (strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__),__LINE__,__func__
+#define _DBG_UHR_ (double)clock()/(double)CLOCKS_PER_SEC
+#define _DBG_FORMAT_ " %f %s:%d %s() "
+#define _DBG_ARGS_ _DBG_UHR_,(strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__),__LINE__,__func__
 #endif
 int oy_display_verbose = 0;
 extern "C" { int oyWriteMemToFile_(const char* name, const void* mem, size_t size); }
