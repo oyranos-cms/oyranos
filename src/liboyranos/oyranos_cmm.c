@@ -86,7 +86,7 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                          oyImage_GetWidth(image), oyImage_GetHeight(image) );
   }
 
-  width = oyImage_GetWidth(output_image);
+  width = oyImage_GetWidth(image);
 
   x_pix = oyPixelAccess_GetStart(ticket,0) * width;
   y_pix = oyPixelAccess_GetStart(ticket,1) * width;
