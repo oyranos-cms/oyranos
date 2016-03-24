@@ -1,5 +1,5 @@
 /** Function  oyPixelAccess_ChangeRectangle
- *  @memberof oyConversion_s
+ *  @memberof oyPixelAccess_s
  *  @brief    Change the ticket for a conversion graph
  *
  *  @param[in,out] pixel_access        optional pixel iterator configuration
@@ -12,7 +12,7 @@
  *
  *  @version Oyranos: 0.3.0
  *  @since   2011/04/17 (Oyranos: 0.3.0)
- *  @date    2011/05/ß5
+ *  @date    2011/05/05
  */
 int                oyPixelAccess_ChangeRectangle (
                                        oyPixelAccess_s   * pixel_access,
