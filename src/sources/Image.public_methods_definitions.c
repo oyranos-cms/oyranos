@@ -429,7 +429,7 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
     char * pl = oyPixelPrint( pixel_layout, oyAllocateFunc_ );
     const char * pt = oyProfile_GetText(profile,oyNAME_NAME),
                * tt = oyOptions_GetText( tags, oyNAME_NAME );
-    DBGs_NUM6_S( image, "pixel_layout: %d=(\"%s\") profile = %s tags = %s\t%dx%d",
+    DBGs6_S( image, "pixel_layout: %d=(\"%s\") profile = %s tags = %s\t%dx%d",
                  pixel_layout, pixel_layout?pl:oyNoEmptyString_m_( NULL ),
                  oyNoEmptyString_m_( pt ), oyNoEmptyString_m_( tt ),
                  width, height );
