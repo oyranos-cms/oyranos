@@ -2627,33 +2627,24 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   if(oyImage_GetPixelLayout( image_input, oyLAYOUT ) != 
      oyImage_GetPixelLayout( image_output, oyLAYOUT ))
   {
-    /* adapt the region of interesst to the new image dimensions */
     /* create a new ticket to avoid pixel layout conflicts */
-    oyRectangle_s * new_ticket_roi;
-    oyArray2d_s * a = 0;
+    /* keep old ticket array dimensions */
+    oyArray2d_s * a,
+                * old_a = oyPixelAccess_GetArray( new_ticket );
     new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
+    /* remove old array as it's layout does not fit */
     oyPixelAccess_SetArray( new_ticket, 0 );
+    /* should be empty */
     a = oyPixelAccess_GetArray( new_ticket );
-    new_ticket_roi = oyPixelAccess_GetOutputROI( new_ticket );
-    oyPixelAccess_SetOutputImage( new_ticket, image_input );
     if(!a)
     {
-      int channels = oyToChannels_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) );
-      oyRectangle_s * r = oyRectangle_NewFrom( new_ticket_roi, 0 );
-      oyRectangle_Scale( r, oyImage_GetWidth(image_input) );
-      int w = OY_ROUND( oyRectangle_GetGeo1( r, 2 ) ) * channels;
-      int h = OY_ROUND( oyRectangle_GetGeo1( r, 3 ) );
+      int w = oyArray2d_GetWidth( old_a );
+      int h = oyArray2d_GetHeight( old_a );
       a = oyArray2d_Create( NULL, w,h, oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) ), ticket->oy_ );
-      oyRectangle_Release( &r );
     }
+    oyArray2d_Release( &old_a );
     oyPixelAccess_SetArray( new_ticket, a );
-    if(oy_debug > 2)
-      lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s %d %dx%d",
-                OY_DBG_ARGS_, "Fill new_ticket->array from image_input",
-                oyStruct_GetId( (oyStruct_s*)image_input ),
-                oyArray2d_GetWidth(a), oyArray2d_GetHeight(a) );
     oyArray2d_Release( &a );
-    oyRectangle_Release( & new_ticket_roi );
   }
 
   /* We let the input filter do its processing first. */
