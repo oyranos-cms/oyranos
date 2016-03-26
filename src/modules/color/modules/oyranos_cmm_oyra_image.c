@@ -859,7 +859,7 @@ int      oyraFilterPlug_ImageRectanglesRun (
     return 1;
 
   {
-    oyRectangle_s * ticket_roi = oyPixelAccess_GetOutputROI( ticket );
+    oyRectangle_s * ticket_roi = oyPixelAccess_GetArrayROI( ticket );
     oyArray2d_s * ticket_array = oyPixelAccess_GetArray( ticket );
 
     node_opts = oyFilterNode_GetOptions( node, 0 );
@@ -889,7 +889,7 @@ int      oyraFilterPlug_ImageRectanglesRun (
                    oyStruct_GetId( (oyStruct_s*)new_ticket ),
                    oyRectangle_Show( r ) );
 
-      new_ticket_roi = oyPixelAccess_GetOutputROI( new_ticket );
+      new_ticket_roi = oyPixelAccess_GetArrayROI( new_ticket );
       if(r)
         oyRectangle_SetByRectangle( new_ticket_roi, r );
 

@@ -603,14 +603,14 @@ int                oyConversion_RunPixels (
 
   if(error <= 0)
     oyRectangle_SetByRectangle( (oyRectangle_s*)&roi,
-                                (oyRectangle_s*)pixel_access_->output_image_roi );
+                                (oyRectangle_s*)pixel_access_->output_array_roi );
 
   if(error <= 0 && !pixel_access_->array)
   {
     clck = oyClock();
     result = oyImage_FillArray( image_out, (oyRectangle_s*)&roi, 0,
                                 &pixel_access_->array,
-                                (oyRectangle_s*)pixel_access_->output_image_roi, 0 );
+                                (oyRectangle_s*)pixel_access_->output_array_roi, 0 );
     clck = oyClock() - clck;
     DBGs_PROG1_S( pixel_access_,"oyImage_FillArray(): %g", clck/1000000.0 );
     error = ( result != 0 );
@@ -657,7 +657,7 @@ int                oyConversion_RunPixels (
       l_error = oyArray2d_Release( &(*pixel_access_)->array ); OY_ERR
       l_error = oyImage_FillArray( image_out, &roi, 0,
                                    &(*pixel_access_)->array,
-                                   (*pixel_access_)->output_image_roi, 0 ); OY_ERR
+                                   (*pixel_access_)->output_array_roi, 0 ); OY_ERR
       clck = oyClock() - clck;
       DBG_PROG1_S("oyImage_FillArray(): %g", clck/1000000.0 );
 #endif

@@ -28,12 +28,12 @@ int                oyPixelAccess_ChangeRectangle (
     error = 1;
 
   if(error <= 0 && output_rectangle)
-    oyRectangle_SetByRectangle( (oyRectangle_s*)(*pixel_access_)->output_image_roi,
+    oyRectangle_SetByRectangle( (oyRectangle_s*)(*pixel_access_)->output_array_roi,
                                 output_rectangle );
 
   if(error <= 0)
   {
-    oyRectangle_SetByRectangle( (oyRectangle_s*)roi, (oyRectangle_s*)(*pixel_access_)->output_image_roi );
+    oyRectangle_SetByRectangle( (oyRectangle_s*)roi, (oyRectangle_s*)(*pixel_access_)->output_array_roi );
     (*pixel_access_)->start_xy[0] = roi->x = start_x;
     (*pixel_access_)->start_xy[1] = roi->y = start_y;
   }
@@ -95,9 +95,9 @@ oyPixelAccess_s *  oyPixelAccess_Create (
     /** The filters have no obligation to pass end to end informations.
         The ticket must hold all pices of interesst.
      */
-    s->output_image_roi->width = 1.0;
+    s->output_array_roi->width = 1.0;
     if(image)
-      s->output_image_roi->height = oyImage_GetHeight( image ) / (double)oyImage_GetWidth( image );
+      s->output_array_roi->height = oyImage_GetHeight( image ) / (double)oyImage_GetWidth( image );
     s->output_image = oyImage_Copy( image, 0 );
     s->graph = (oyFilterGraph_s_*)oyFilterGraph_FromNode( (oyFilterNode_s*)sock->node, 0 );
 
@@ -183,15 +183,17 @@ int                oyPixelAccess_SetOutputImage (
 
   return 0;
 }
-/** Function  oyPixelAccess_GetOutputROI
+/** Function  oyPixelAccess_GetArrayROI
  *  @memberof oyPixelAccess_s
- *  @brief    Access oyPixelAccess_s::output_image_roi
+ *  @brief    Access oyPixelAccess_s::output_array_roi
  *
- *  @version  Oyranos: 0.5.0
- *  @date     2012/09/06
+ *  The rectangle unit is normalised to array::width/channels.
+ *
+ *  @version  Oyranos: 0.9.6
+ *  @date     2016/03/26
  *  @since    2012/09/06 (Oyranos: 0.5.0)
  */
-oyRectangle_s *    oyPixelAccess_GetOutputROI (
+oyRectangle_s *    oyPixelAccess_GetArrayROI (
                                        oyPixelAccess_s   * pixel_access )
 {
   oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
@@ -201,7 +203,7 @@ oyRectangle_s *    oyPixelAccess_GetOutputROI (
 
   oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
 
-  return oyRectangle_Copy( (oyRectangle_s*)s->output_image_roi, 0 );
+  return oyRectangle_Copy( (oyRectangle_s*)s->output_array_roi, 0 );
 }
 /** Function  oyPixelAccess_GetGraph
  *  @memberof oyPixelAccess_s

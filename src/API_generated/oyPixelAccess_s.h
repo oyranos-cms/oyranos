@@ -190,11 +190,11 @@ typedef struct oyPixelAccess_s oyPixelAccess_s;
              |     +------------\----------+      |
              |                   \                |
              +--------------------\---------------+
-                                output_image_roi relative to output image width
+                                output_array_roi relative to output image width
     @endverbatim
  *
  *  Rectangles are passed in relative units.
- *  start_xy and output_image_roi are of type oyRectangle_s and are defined in
+ *  start_xy and output_array_roi are of type oyRectangle_s and are defined in
  *  relative units to the enclosing images width. start_xy::x 0.1 means
  *  0.1 x original_image::width .
  *
@@ -242,8 +242,6 @@ oyImage_s *        oyPixelAccess_GetOutputImage (
 int                oyPixelAccess_SetOutputImage (
                                        oyPixelAccess_s   * pixel_access,
                                        oyImage_s         * image );
-oyRectangle_s *    oyPixelAccess_GetOutputROI (
-                                       oyPixelAccess_s   * pixel_access );
 oyFilterGraph_s *  oyPixelAccess_GetGraph (
                                        oyPixelAccess_s   * pixel_access );
 oyOptions_s *      oyPixelAccess_GetRequestQueue (
@@ -253,6 +251,8 @@ oyArray2d_s *      oyPixelAccess_GetArray (
 int                oyPixelAccess_SetArray (
                                        oyPixelAccess_s   * pixel_access,
                                        oyArray2d_s       * array );
+oyRectangle_s *    oyPixelAccess_GetArrayROI (
+                                       oyPixelAccess_s   * pixel_access );
 oyStruct_s *       oyPixelAccess_GetUserData (
                                        oyPixelAccess_s   * pixel_access );
 int                oyPixelAccess_SetUserData (

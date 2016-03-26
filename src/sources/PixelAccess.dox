@@ -136,11 +136,11 @@
              |     +------------\----------+      |
              |                   \                |
              +--------------------\---------------+
-                                output_image_roi relative to output image width
+                                output_array_roi relative to output image width
     @endverbatim
  *
  *  Rectangles are passed in relative units.
- *  start_xy and output_image_roi are of type oyRectangle_s and are defined in
+ *  start_xy and output_array_roi are of type oyRectangle_s and are defined in
  *  relative units to the enclosing images width. start_xy::x 0.1 means
  *  0.1 x original_image::width .
  *

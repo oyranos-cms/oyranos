@@ -72,7 +72,7 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
   image_width = oyImage_GetWidth(image);
 
   {
-    oyRectangle_s * ticket_roi = oyPixelAccess_GetOutputROI( ticket );
+    oyRectangle_s * ticket_roi = oyPixelAccess_GetArrayROI( ticket );
     double  scale = 1.0;
     oyOptions_s * node_opts = oyFilterNode_GetOptions( node, 0 );
 
@@ -117,7 +117,7 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
       new_output_image = oyPixelAccess_GetOutputImage( new_ticket );
       new_output_image_width = oyImage_GetWidth( new_output_image );
 
-      new_ticket_output_roi = oyPixelAccess_GetOutputROI( new_ticket );
+      new_ticket_output_roi = oyPixelAccess_GetArrayROI( new_ticket );
 
       /* adapt the access start */
       oyPixelAccess_ChangeRectangle( new_ticket,
@@ -393,10 +393,10 @@ const char * oyraApi4UiImageScaleGetText (
 "             |                                    | \n"
 "             +------------------------------------+ \n"
         "",
-        _("The filter will expect a \"scale\" double option and will create, fill and process a according data version with a new job ticket. The new job tickets image, array and output_image_roi will be divided by the supplied \"scale\" factor. It's plug will request the divided image sizes from the source socket."),
+        _("The filter will expect a \"scale\" double option and will create, fill and process a according data version with a new job ticket. The new job tickets image, array and output_array_roi will be divided by the supplied \"scale\" factor. It's plug will request the divided image sizes from the source socket."),
         _("Relation of positional parameters:"),
         /* output image region of interesst */
-        _("output_image_roi"),
+        _("output_array_roi"),
         _("source image"),
         _("output image") );
       return help_desc;

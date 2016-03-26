@@ -441,7 +441,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
 
 
       node_out = oyConversion_GetNode( context, OY_OUTPUT );
-      ticket_roi = oyPixelAccess_GetOutputROI( ticket );
+      ticket_roi = oyPixelAccess_GetArrayROI( ticket );
       /* decide wether to refresh the cached rectangle of our static image */
       if( node_out &&
           /* Did the window area move? */

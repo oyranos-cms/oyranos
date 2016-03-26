@@ -1900,18 +1900,24 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   if(oyImage_GetPixelLayout( image_input, oyLAYOUT ) != 
      oyImage_GetPixelLayout( image_output, oyLAYOUT ))
   {
-    /* adapt the region of interesst to the new image dimensions */
     /* create a new ticket to avoid pixel layout conflicts */
-    oyRectangle_s * new_roi = oyPixelAccess_GetOutputROI( new_ticket );
-    oyArray2d_s * a = 0;
+    /* keep old ticket array dimensions */
+    oyArray2d_s * a,
+                * old_a = oyPixelAccess_GetArray( new_ticket );
     new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
+    /* remove old array as it's layout does not fit */
     oyPixelAccess_SetArray( new_ticket, 0 );
-    oyPixelAccess_SetOutputImage( new_ticket, image_input );
-    error = oyImage_FillArray( image_input, new_roi, 1,
-                               &a, 0, 0 );
+    /* should be empty */
+    a = oyPixelAccess_GetArray( new_ticket );
+    if(!a)
+    {
+      int w = oyArray2d_GetWidth( old_a );
+      int h = oyArray2d_GetHeight( old_a );
+      a = oyArray2d_Create( NULL, w,h, oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) ), ticket->oy_ );
+    }
+    oyArray2d_Release( &old_a );
     oyPixelAccess_SetArray( new_ticket, a );
     oyArray2d_Release( &a );
-    oyRectangle_Release( & new_roi );
   }
 
   /* We let the input filter do its processing first. */

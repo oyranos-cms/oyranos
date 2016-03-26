@@ -14,8 +14,6 @@ oyImage_s *        oyPixelAccess_GetOutputImage (
 int                oyPixelAccess_SetOutputImage (
                                        oyPixelAccess_s   * pixel_access,
                                        oyImage_s         * image );
-oyRectangle_s *    oyPixelAccess_GetOutputROI (
-                                       oyPixelAccess_s   * pixel_access );
 oyFilterGraph_s *  oyPixelAccess_GetGraph (
                                        oyPixelAccess_s   * pixel_access );
 oyOptions_s *      oyPixelAccess_GetRequestQueue (
@@ -25,6 +23,8 @@ oyArray2d_s *      oyPixelAccess_GetArray (
 int                oyPixelAccess_SetArray (
                                        oyPixelAccess_s   * pixel_access,
                                        oyArray2d_s       * array );
+oyRectangle_s *    oyPixelAccess_GetArrayROI (
+                                       oyPixelAccess_s   * pixel_access );
 oyStruct_s *       oyPixelAccess_GetUserData (
                                        oyPixelAccess_s   * pixel_access );
 int                oyPixelAccess_SetUserData (

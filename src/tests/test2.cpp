@@ -4544,7 +4544,7 @@ oyTESTRESULT_e testImagePixel()
   /* use the lower left source pixel */
   if(pixel_access)
   {
-    oyRectangle_s * r = oyPixelAccess_GetOutputROI( pixel_access );
+    oyRectangle_s * r = oyPixelAccess_GetArrayROI( pixel_access );
     (*oyRectangle_SetGeo1(r,2)) *= 0.5;
     (*oyRectangle_SetGeo1(r,3)) *= 0.5;
     oyPixelAccess_ChangeRectangle( pixel_access, 0.5,0.5, r );
@@ -4597,7 +4597,7 @@ oyTESTRESULT_e testImagePixel()
   memset( buf_16out2x2, 0, sizeof(uint16_t)*12 );
   if(pixel_access)
   {
-    oyRectangle_s * r = oyPixelAccess_GetOutputROI( pixel_access );
+    oyRectangle_s * r = oyPixelAccess_GetArrayROI( pixel_access );
     oyRectangle_SetGeo(r, 0.5,0.5, 0.5,0.5);
     oyPixelAccess_ChangeRectangle( pixel_access, 0.5,0.5, r );
   }

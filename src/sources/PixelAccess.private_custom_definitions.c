@@ -21,7 +21,7 @@ void oyPixelAccess_Release__Members( oyPixelAccess_s_ * pixelaccess )
    * E.g: oyXXX_Release( &pixelaccess->member );
    */
   oyArray2d_Release( &pixelaccess->array );
-  oyRectangle_Release( (oyRectangle_s**)&pixelaccess->output_image_roi );
+  oyRectangle_Release( (oyRectangle_s**)&pixelaccess->output_array_roi );
   oyImage_Release( &pixelaccess->output_image );
   oyFilterGraph_Release( (oyFilterGraph_s**)&pixelaccess->graph );
 
@@ -57,7 +57,7 @@ void oyPixelAccess_Release__Members( oyPixelAccess_s_ * pixelaccess )
  */
 int oyPixelAccess_Init__Members( oyPixelAccess_s_ * pixelaccess )
 {
-  pixelaccess->output_image_roi = (oyRectangle_s_*)oyRectangle_NewFrom( 0, 0 );
+  pixelaccess->output_array_roi = (oyRectangle_s_*)oyRectangle_NewFrom( 0, 0 );
 
   return 0;
 }
@@ -110,7 +110,7 @@ int oyPixelAccess_Copy__Members( oyPixelAccess_s_ * dst, oyPixelAccess_s_ * src)
   dst->index = 0;
   dst->pixels_n = src->pixels_n;
   dst->workspace_id = src->workspace_id;
-  dst->output_image_roi = (oyRectangle_s_*)oyRectangle_Copy( (oyRectangle_s*)src->output_image_roi, dst->oy_ );
+  dst->output_array_roi = (oyRectangle_s_*)oyRectangle_Copy( (oyRectangle_s*)src->output_array_roi, dst->oy_ );
   dst->output_image = oyImage_Copy( src->output_image, 0 );
   dst->array = oyArray2d_Copy( src->array, 0 );
   if(src->user_data && src->user_data->copy)
