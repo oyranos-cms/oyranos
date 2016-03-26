@@ -127,7 +127,7 @@
     original |     |                              |
     image ---+     |                              |
              |  ---+-----------------------+      |
-             |     |                       +---------- output_image
+             |     |                       +---------- output_array
              |     |   +---------------+   |      |
              |     |   |               |   |      |
              |     |   |               |   |      |
@@ -136,12 +136,12 @@
              |     +------------\----------+      |
              |                   \                |
              +--------------------\---------------+
-                                output_array_roi relative to output image width
+                                output_array_roi relative to array width/channels
     @endverbatim
  *
  *  Rectangles are passed in relative units.
  *  start_xy and output_array_roi are of type oyRectangle_s and are defined in
- *  relative units to the enclosing images width. start_xy::x 0.1 means
+ *  relative units to the enclosing images/array width. start_xy::x 0.1 means
  *  0.1 x original_image::width .
  *
  *  @version Oyranos: 0.1.10
