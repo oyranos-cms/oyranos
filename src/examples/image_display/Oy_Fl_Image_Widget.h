@@ -40,7 +40,6 @@ public:
   int px, py, mx, my;
   int handle(int event)
   {
-      int mouse_button = Fl::event_state();
       e = event;
       mx = Fl::event_x();
       my = Fl::event_y();
