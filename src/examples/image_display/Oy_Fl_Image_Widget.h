@@ -128,13 +128,13 @@ public:
       int channels = 0;
       oyPixel_t pt;
       oyDATATYPE_e data_type;
-      oyImage_s * image = 0;
+      oyImage_s * image_input = 0, * image_output = 0;
       oyRectangle_s * display_rectangle = 0;
       oyFilterNode_s * node_out = oyConversion_GetNode( conversion(),OY_OUTPUT);
       void * display = 0,
            * window = 0;
-      int width;
-      int height;
+      int width_input, width_output, width_scale, width_roi;
+      int height_input, height_output, height_scale, height_roi;
 
       double scale = 1.0;
       oyOptions_s * opts = findOpts( node_out, "//" OY_TYPE_STD "/scale" );
@@ -150,25 +150,53 @@ public:
 #endif
 
       /* Get the source dimensions */
-      image = oyConversion_GetImage( conversion(), OY_INPUT );
-      width = oyImage_GetWidth( image ) * scale;
-      height = oyImage_GetHeight( image ) * scale;
-      oyImage_Release( &image );
+      image_input = oyConversion_GetImage( conversion(), OY_INPUT );
+      width_input = oyImage_GetWidth( image_input );
+      height_input = oyImage_GetHeight( image_input );
+
+      width_scale = width_roi = width_input * scale;
+      height_scale = height_roi = height_input * scale;
+      if(width_roi > W)
+        width_roi = W;
+      if(height_roi > H)
+        height_roi = H;
 
       /* Load the image before creating the oyPicelAccess_s object. */
-      image = oyConversion_GetImage( conversion(), OY_OUTPUT );
+      image_output = oyConversion_GetImage( conversion(), OY_OUTPUT );
+      width_output = oyImage_GetWidth( image_output );
+      height_output = oyImage_GetHeight( image_output );
 
-      if(image && !ticket())
+      if(image_output && !ticket())
       {
         oyFilterPlug_s * plug = oyFilterNode_GetPlug( node_out, 0 );
         ticket( oyPixelAccess_Create( 0,0, plug, oyPIXEL_ACCESS_IMAGE, 0 ) );
       }
 
-      if(image)
+
+      /* update output image dimensions to fit scale */
+      if(image_output &&
+         (width_output != width_roi ||
+          height_output != height_roi))
+      {
+        if(oy_debug > 2)
+          printf(_DBG_FORMAT_"image_input [%d](%d) update image_output [%d](%d)",_DBG_ARGS_, oyStruct_GetId((oyStruct_s*)image_input),oyImage_GetWidth(image_input), oyStruct_GetId((oyStruct_s*)image_output),oyImage_GetWidth(image_output) );
+        if(ticket())
+        {
+          oyImage_s * output_image = oyPixelAccess_GetOutputImage( ticket() );
+          oyImage_SetCritical( output_image, 0, NULL, NULL, width_roi, height_roi );
+          if(oy_debug > 2)
+            printf(" output_image [%d](%d)", oyStruct_GetId((oyStruct_s*)output_image),oyImage_GetWidth(output_image) );
+          oyImage_Release( &output_image );
+          oyPixelAccess_SetArray( ticket(), NULL );
+        }
+        if(oy_debug > 2) printf("\n");
+      }
+
+      if(image_output)
       {
         /* take care to not go over the borders */
-        if(px < W - width) px = W - width;
-        if(py < H - height) py = H - height;
+        if(px < W - width_scale) px = W - width_scale;
+        if(py < H - height_scale) py = H - height_scale;
         if(px > 0) px = 0;
         if(py > 0) py = 0;
 
@@ -176,10 +204,10 @@ public:
         int offset_x = 0, offset_y = 0;
         if(center_aligned)
         {
-          if(W > width)
-            offset_x = (W - width) / 2;
-          if(H > height)
-            offset_y = (H - height) / 2;
+          if(W > width_scale)
+            offset_x = (W - width_scale) / 2;
+          if(H > height_scale)
+            offset_y = (H - height_scale) / 2;
         }
         display_rectangle = oyRectangle_NewWith( X+offset_x,Y+offset_y,W,H, 0 );
       }
@@ -193,36 +221,13 @@ public:
 
       if(ticket())
       {
-        int dst_width = oyImage_GetWidth( image ),
-            dst_height = oyImage_GetHeight( image );
-        oyRectangle_s * output_rectangle = oyRectangle_New( 0 );
-        oyImage_PixelsToSamples( image, 0, output_rectangle );
-        *oyRectangle_SetGeo1(output_rectangle,2) = OY_MIN( OY_MIN( W, dst_width ), width );
-        *oyRectangle_SetGeo1(output_rectangle,3) = OY_MIN( OY_MIN( H, dst_height ), height );
-        oyRectangle_Scale( output_rectangle, 1.0/dst_width );
-#if DEBUG_MOVE
-        static int old_px = 0;
-        if(px != old_px && oy_debug)
-        {
-          old_px = px;
-          oyRectangle_s * r = oyRectangle_New(0);
-          oyRectangle_SetByRectangle( r, output_rectangle );
-          oyRectangle_Scale( r, dst_width );
-          printf( _DBG_FORMAT_"output rectangle: %s start_xy:%.04g %.04g\n",
-                _DBG_ARGS_,
-                oyRectangle_Show(r),
-                oyPixelAccess_GetStart(ticket(),0)*dst_width,
-                oyPixelAccess_GetStart(ticket(),1)*dst_width );
-          oyRectangle_Release( &r );
-        }
-#endif
+        oyRectangle_s * output_rectangle = oyRectangle_NewWith(0,0, width_roi,height_roi, 0);
+        oyRectangle_Scale( output_rectangle, 1.0/width_roi );
+
         oyPixelAccess_ChangeRectangle( ticket(),
-                                       -px/(double)dst_width,
-                                       -py/(double)dst_width,
+                                       -px/(double)width_roi,
+                                       -py/(double)width_roi,
                                        output_rectangle );
-        if(oy_display_verbose)
-          printf( _DBG_FORMAT_"output rectangle: %s\n", _DBG_ARGS_,
-                  oyRectangle_Show(output_rectangle));
 
         oyRectangle_Release( &output_rectangle );
       }
@@ -230,17 +235,17 @@ public:
       /* limit a too big display texture */
       if(display_rectangle)
       {
-        *oyRectangle_SetGeo1(display_rectangle,2) = OY_MIN( oyRectangle_GetGeo1(display_rectangle,2), width );
-        *oyRectangle_SetGeo1(display_rectangle,3) = OY_MIN( oyRectangle_GetGeo1(display_rectangle,3), height );
+        *oyRectangle_SetGeo1(display_rectangle,2) = OY_MIN( oyRectangle_GetGeo1(display_rectangle,2), width_roi );
+        *oyRectangle_SetGeo1(display_rectangle,3) = OY_MIN( oyRectangle_GetGeo1(display_rectangle,3), height_roi );
       }
 
-      if(image)
+      if(image_output)
         dirty = oyDrawScreenImage(conversion(), ticket(), display_rectangle,
                                 old_display_rectangle,
                                 old_roi_rectangle, "X11",
                                 data_type_request,
                                 display, window, dirty,
-                                image );
+                                image_output );
 
       oyRectangle_Release( &display_rectangle );
 
@@ -258,20 +263,22 @@ public:
       }
 
       /* some error checks */
-      pt = oyImage_GetPixelLayout( image, oyLAYOUT );
+      pt = oyImage_GetPixelLayout( image_output, oyLAYOUT );
       data_type = oyToDataType_m( pt );
       channels = oyToChannels_m( pt );
       if(pt != 0 &&
          ((channels != 4 && channels != 3) || data_type != data_type_request))
       {
-        printf( _DBG_FORMAT_"WARNING: wrong image data format: %s\n"
+        printf( _DBG_FORMAT_"WARNING: wrong image_output data format: %s\n"
                 "need 4 or 3 channels with %s\n",_DBG_ARGS_,
-                image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "",
+                image_output ? oyObject_GetName( image_output->oy_, oyNAME_NICK ) : "",
                 oyDataTypeToText( data_type_request ) );
         return 1;
       }
 
-      *draw_image = image;
+      *draw_image = image_output;
+
+      oyImage_Release( &image_input );
     }
 
     return dirty;
