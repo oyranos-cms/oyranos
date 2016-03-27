@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-03-26 20:04+0100\n"
+"POT-Creation-Date: 2016-03-27 09:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -362,7 +362,7 @@ msgid "not found:"
 msgstr ""
 
 #: API_generated/oyranos_devices.c:2592 API_generated/oyranos_devices.c:2603
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:95
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:97
 #: modules/color/modules/oyranos_cmm_oyra_image.c:946
 #: modules/color/modules/oyranos_cmm_oyra_image.c:954
 #: modules/color/modules/oyranos_cmm_oyra_image.c:969
@@ -2158,20 +2158,20 @@ msgstr ""
 msgid "will overwrite policy file"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:381
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:337
 msgid "Image[scale]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:383
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:339
 msgid "Scale Image Filter Object"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:389
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:428
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:345
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:384
 msgid "The filter is used to reduce pixels."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:413
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:369
 msgid ""
 "The filter will expect a \"scale\" double option and will create, fill and "
 "process a according data version with a new job ticket. The new job tickets "
@@ -2180,24 +2180,24 @@ msgid ""
 "socket."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:414
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:370
 msgid "Relation of positional parameters:"
 msgstr ""
 
 #. output image region of interesst
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:416
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:372
 msgid "output_array_roi"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:417
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:373
 msgid "source image"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:418
-msgid "output array"
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:374
+msgid "output image"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:426
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:382
 msgid "Image/Simple Image[scale]"
 msgstr ""
 

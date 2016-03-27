@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-03-26 20:02+0100\n"
+"POT-Creation-Date: 2016-03-27 09:42+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -1805,7 +1805,7 @@ msgid ""
 msgstr ""
 "Obrázek nemá vložený barvový prostor. Jaká výchozí akce má být provedena?"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:426
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:382
 #, fuzzy
 msgid "Image/Simple Image[scale]"
 msgstr "Image[lraw]"
@@ -1835,7 +1835,7 @@ msgstr "Image[my_filter]"
 msgid "Image[out]"
 msgstr "Image[out]"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:381
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:337
 #, fuzzy
 msgid "Image[scale]"
 msgstr "Image[lraw]"
@@ -2997,7 +2997,7 @@ msgstr "Křivka reprodukce červených tónů"
 msgid "Reflective scanner"
 msgstr "Odrazný skener"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:414
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:370
 msgid "Relation of positional parameters:"
 msgstr ""
 
@@ -3077,7 +3077,7 @@ msgstr "Uložit dokumenty se smíšenými barvovými prostory"
 msgid "Save to a new policy:"
 msgstr "Uložit jako novou politiku:"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:383
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:339
 #, fuzzy
 msgid "Scale Image Filter Object"
 msgstr "Root Image Filter Object"
@@ -3474,8 +3474,8 @@ msgstr ""
 msgid "The filter is a possible pixel target in a graph."
 msgstr "The filter is a possible pixel target in a graph."
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:389
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:428
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:345
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:384
 msgid "The filter is used to reduce pixels."
 msgstr ""
 
@@ -3543,7 +3543,7 @@ msgstr ""
 "The filter will expect a \"rectangle\" option and will create, fill and "
 "process a according rectangle with a new job ticket."
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:413
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:369
 msgid ""
 "The filter will expect a \"scale\" double option and will create, fill and "
 "process a according data version with a new job ticket. The new job tickets "
@@ -4262,7 +4262,7 @@ msgid "failed!"
 msgstr "selhalo!"
 
 #: API_generated/oyranos_devices.c:2592 API_generated/oyranos_devices.c:2603
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:95
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:97
 #: modules/color/modules/oyranos_cmm_oyra_image.c:946
 #: modules/color/modules/oyranos_cmm_oyra_image.c:954
 #: modules/color/modules/oyranos_cmm_oyra_image.c:969
@@ -4527,17 +4527,17 @@ msgstr "selhalo otevření X displeje"
 msgid "open X Screen failed"
 msgstr "selhalo otevření X obrazovky"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:418
-#, fuzzy
-msgid "output array"
-msgstr "třída výstupu"
-
 #: tools/oyranos_profiles.c:73
 msgid "output class"
 msgstr "třída výstupu"
 
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:374
+#, fuzzy
+msgid "output image"
+msgstr "třída výstupu"
+
 #. output image region of interesst
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:416
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:372
 msgid "output_array_roi"
 msgstr ""
 
@@ -4711,7 +4711,7 @@ msgstr ""
 msgid "skip repair of profile ID"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:417
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:373
 msgid "source image"
 msgstr ""
 
@@ -5968,7 +5968,7 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgstr "orionas"
 
 #, fuzzy
-#~ msgid "output image"
+#~ msgid "output array"
 #~ msgstr "třída výstupu"
 
 #~ msgid "parametric function type"

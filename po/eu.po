@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-03-26 20:02+0100\n"
+"POT-Creation-Date: 2016-03-27 09:42+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -1795,7 +1795,7 @@ msgid ""
 "Image has no color space embedded. What default action shall be performed?"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:426
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:382
 msgid "Image/Simple Image[scale]"
 msgstr ""
 
@@ -1819,7 +1819,7 @@ msgstr ""
 msgid "Image[out]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:381
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:337
 msgid "Image[scale]"
 msgstr ""
 
@@ -2960,7 +2960,7 @@ msgstr "Tonu gorriaren erreprodukzio-kurba"
 msgid "Reflective scanner"
 msgstr "Eskaner islatzailea"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:414
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:370
 msgid "Relation of positional parameters:"
 msgstr ""
 
@@ -3036,7 +3036,7 @@ msgstr ""
 msgid "Save to a new policy:"
 msgstr "profilik ez"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:383
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:339
 msgid "Scale Image Filter Object"
 msgstr ""
 
@@ -3380,8 +3380,8 @@ msgstr ""
 msgid "The filter is a possible pixel target in a graph."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:389
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:428
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:345
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:384
 msgid "The filter is used to reduce pixels."
 msgstr ""
 
@@ -3425,7 +3425,7 @@ msgid ""
 "process a according rectangle with a new job ticket."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:413
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:369
 msgid ""
 "The filter will expect a \"scale\" double option and will create, fill and "
 "process a according data version with a new job ticket. The new job tickets "
@@ -4043,7 +4043,7 @@ msgid "failed!"
 msgstr ""
 
 #: API_generated/oyranos_devices.c:2592 API_generated/oyranos_devices.c:2603
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:95
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:97
 #: modules/color/modules/oyranos_cmm_oyra_image.c:946
 #: modules/color/modules/oyranos_cmm_oyra_image.c:954
 #: modules/color/modules/oyranos_cmm_oyra_image.c:969
@@ -4321,18 +4321,18 @@ msgstr "huts egin du X pantaila irekitzean"
 msgid "open X Screen failed"
 msgstr "huts egin du X pantaila irekitzean"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:418
-#, fuzzy
-msgid "output array"
-msgstr "Abstraktua"
-
 #: tools/oyranos_profiles.c:73
 #, fuzzy
 msgid "output class"
 msgstr "Abstraktua"
 
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:374
+#, fuzzy
+msgid "output image"
+msgstr "Abstraktua"
+
 #. output image region of interesst
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:416
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:372
 msgid "output_array_roi"
 msgstr ""
 
@@ -4511,7 +4511,7 @@ msgstr ""
 msgid "skip repair of profile ID"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:417
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:373
 msgid "source image"
 msgstr ""
 
@@ -5561,7 +5561,7 @@ msgstr ""
 #~ msgstr "puntuan"
 
 #, fuzzy
-#~ msgid "output image"
+#~ msgid "output array"
 #~ msgstr "Abstraktua"
 
 #~ msgid "points length per side"
