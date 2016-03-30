@@ -99,13 +99,13 @@ int oyStruct_RegisterStaticMessageFunc (
  *  creation.
  *
  *  @param[in]     context_object      the object to get informations about
- *  @param[in]     flags               currently not used
+ *  @param[in]     flags               0x01 - skip trivial struct type name
  *  @return                            a string or NULL; The pointer might
  *                                     become invalid after further using the
  *                                     object pointed to by context.
- *  @version Oyranos: 0.2.1
- *  @since   2011/01/15
- *  @date    2011/01/15
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/03/30
+ *  @since   2011/01/15 (Oyranos: 0.2.1)
  */
 const char *   oyStruct_GetInfo      ( oyPointer           context_object,
                                        int                 flags )
@@ -124,7 +124,7 @@ const char *   oyStruct_GetInfo      ( oyPointer           context_object,
       text = f( c, 0 );
   }
 
-  if(text == NULL)
+  if(text == NULL && !(flags & 0x01) )
     text = oyStructTypeToText( c->type_ );
 
   return text;
@@ -281,7 +281,7 @@ int                oyMessageFormat   ( char             ** message_text,
   {
     type_name = oyStructTypeToText( c->type_ );
     id = oyObject_GetId( c->oy_ );
-    id_text = oyStruct_GetInfo( (oyStruct_s*)c, 0 );
+    id_text = oyStruct_GetInfo( (oyStruct_s*)c, 0x01 );
     if(id_text)
       id_text_tmp = strdup(id_text);
     id_text = id_text_tmp;
