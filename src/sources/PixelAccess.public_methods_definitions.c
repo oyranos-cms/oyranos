@@ -183,6 +183,100 @@ int                oyPixelAccess_SetOutputImage (
 
   return 0;
 }
+/** Function  oyPixelAccess_SynchroniseROI
+ *  @memberof oyPixelAccess_s
+ *  @brief    Set a new ticket according to old ticket geometries
+ *
+ *  After a new ticket is generated, the old geometries might become invalid,
+ *  as channel counts change or the array sizes becomes different. This
+ *  function convinently changes the ROI and start_xy dimensions after such
+ *  critical changes.
+ *
+ *  @param[in,out] pixel_access_new    tp be modified pixel iterator configuration
+ *  @param[in]     pixel_access_src    pixel iterator configuration pattern
+ *  @return                            0 on success, else error
+ *
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/03/29 (Oyranos: 0.9.6)
+ *  @date    2016/03/29
+ */
+int                oyPixelAccess_SynchroniseROI (
+                                       oyPixelAccess_s   * pixel_access_new,
+                                       oyPixelAccess_s   * pixel_access_dst )
+{
+  int error = 0;
+
+  if(!pixel_access_dst || !pixel_access_new)
+    error = 1;
+
+  if(!error)
+  {
+    oyPixelAccess_s * ticket = pixel_access_dst,
+                    * new_ticket = pixel_access_new;
+    oyImage_s * image_src = oyPixelAccess_GetOutputImage( new_ticket ),
+              * image_dst = oyPixelAccess_GetOutputImage( ticket );
+    int image_width_src = oyImage_GetWidth( image_src ),
+        image_width_dst = oyImage_GetWidth( image_dst );
+    oyRectangle_s * ticket_array_roi_src = oyPixelAccess_GetArrayROI( new_ticket ),
+                  * ticket_array_roi_dst = oyPixelAccess_GetArrayROI( ticket );
+    oyArray2d_s * a_dst = oyPixelAccess_GetArray( ticket ),
+                * a_src = oyPixelAccess_GetArray( new_ticket );
+
+    /* start_xy is defined relative to the tickets output image width */
+    double start_x_dst_pixel = oyPixelAccess_GetStart( ticket, 0 ) * image_width_dst,
+           start_y_dst_pixel = oyPixelAccess_GetStart( ticket, 1 ) * image_width_dst;
+    int layout_src = oyImage_GetPixelLayout( image_src, oyLAYOUT ),
+        layout_dst = oyImage_GetPixelLayout( image_dst, oyLAYOUT );
+    int channels_src = oyToChannels_m( layout_src );
+    int channels_dst = oyToChannels_m( layout_dst );
+    int a_width_dst = oyArray2d_GetWidth( a_dst ) / channels_dst,
+        a_width_src = oyArray2d_GetWidth( a_src ) / channels_src;
+
+    /** 1. Ignore any changes from previous edits of the new pixel access ticket. */
+    oyRectangle_SetByRectangle( ticket_array_roi_src, ticket_array_roi_dst );
+
+    /** 2. Adapt the access start and write relative to new tickets image width. */
+    oyPixelAccess_ChangeRectangle( new_ticket,
+                          start_x_dst_pixel / image_width_src,
+                          start_y_dst_pixel / image_width_src, 0 );
+
+    /** 3. And use the available source image area */
+      /** 3.1. Convert ROI to old array pixel. */
+    oyRectangle_Scale( ticket_array_roi_src, a_width_dst );
+
+    if(oy_debug)
+    {
+      oyRectangle_s_  r = {oyOBJECT_RECTANGLE_S, 0,0,0, 0,0,0,0};
+      oyRectangle_s * roi = (oyRectangle_s*)&r;
+      char * t;
+      oyRectangle_SetByRectangle( roi, ticket_array_roi_dst );
+      oyRectangle_Scale( roi, a_width_dst );
+      t = oyStringCopy( oyRectangle_Show( roi ), oyAllocateFunc_ );
+      oyMessageFunc_p( oy_debug?oyMSG_DBG:oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
+              "start_xy %f|%f ROI: image[%d](%s)%dc a[%d](%dx%d) <- [%d](%s)%dc a[%d](%dx%d)\n",OY_DBG_ARGS_,
+                   start_x_dst_pixel, start_y_dst_pixel,
+                   oyStruct_GetId((oyStruct_s*)image_dst),t,channels_dst,
+                   oyStruct_GetId((oyStruct_s*)a_dst),oyArray2d_GetWidth(a_dst),oyArray2d_GetHeight(a_dst),
+                   oyStruct_GetId((oyStruct_s*)image_src),
+                   oyRectangle_Show(roi),channels_src,
+                   oyStruct_GetId((oyStruct_s*)a_src),oyArray2d_GetWidth(a_src),oyArray2d_GetHeight(a_src) );
+      oyFree_m_(t);
+    }
+
+      /** 3.2. Divide ROI by new array size. */
+    oyRectangle_Scale( ticket_array_roi_src, 1.0/a_width_src );
+
+    oyImage_Release( &image_src );
+    oyImage_Release( &image_dst );
+    oyArray2d_Release( &a_src );
+    oyArray2d_Release( &a_dst );
+    oyRectangle_Release( &ticket_array_roi_dst );
+    oyRectangle_Release( &ticket_array_roi_src );
+  }
+
+  return error;
+}
+
 /** Function  oyPixelAccess_GetArrayROI
  *  @memberof oyPixelAccess_s
  *  @brief    Access oyPixelAccess_s::output_array_roi

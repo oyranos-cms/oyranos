@@ -226,6 +226,9 @@ OYAPI int OYEXPORT
 
 
 /* Include "PixelAccess.public_methods_declarations.h" { */
+int                oyPixelAccess_SynchroniseROI (
+                                       oyPixelAccess_s   * pixel_access_new,
+                                       oyPixelAccess_s   * pixel_access_dst );
 int                oyPixelAccess_ChangeRectangle (
                                        oyPixelAccess_s   * pixel_access,
                                        double              start_x,
