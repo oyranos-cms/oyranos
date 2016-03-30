@@ -825,7 +825,6 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
                (int)array_rect_pix.width, (int)array_rect_pix.height,
                (int)image_roi_pix.width, (int)image_roi_pix.height
                 );
-    error = 1;
   }
 
   if(!error)
@@ -833,7 +832,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
     offset = image_roi_pix.x / channel_n * bps;
     width = OY_MIN(image_roi_pix.width, array_rect_pix.width);
     width /= channel_n;
-    height = array_rect_pix.y + array_rect_pix.height;
+    height = OY_MIN( array_rect_pix.y + array_rect_pix.height, image_roi_pix.height );
 
     for(i = array_rect_pix.y; i < height; ++i)
     {
