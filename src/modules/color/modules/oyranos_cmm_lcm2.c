@@ -2597,13 +2597,12 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 {
   int j, k, n;
   int error = 0;
-  int channels = 0;
   oyDATATYPE_e data_type_in = 0,
                data_type_out = 0;
+  int channels_out, channels_in;
   int bps_in;
-#if defined(DEBUG)
-  oyPixel_t pixel_layout_in;
-#endif
+  oyPixel_t pixel_layout_in,
+            layout_out;
 
   oyFilterSocket_s * socket = oyFilterPlug_GetSocket( requestor_plug );
   oyFilterPlug_s * plug = 0;
@@ -2618,11 +2617,12 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   input_node = oyFilterNode_GetPlugNode( node, 0 );
 
   image_input = oyFilterPlug_ResolveImage( plug, socket, ticket );
-#if defined(DEBUG)
   pixel_layout_in = oyImage_GetPixelLayout( image_input, oyLAYOUT );
-#endif
+  channels_in = oyToChannels_m( pixel_layout_in );
 
   image_output = oyPixelAccess_GetOutputImage( ticket );
+  layout_out = oyImage_GetPixelLayout( image_output, oyLAYOUT );
+  channels_out = oyToChannels_m( layout_out );
 
   if(oyImage_GetPixelLayout( image_input, oyLAYOUT ) != 
      oyImage_GetPixelLayout( image_output, oyLAYOUT ))
@@ -2632,19 +2632,29 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     oyArray2d_s * a,
                 * old_a = oyPixelAccess_GetArray( new_ticket );
     new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
+    oyPixelAccess_SetOutputImage( new_ticket, image_input );
+
     /* remove old array as it's layout does not fit */
     oyPixelAccess_SetArray( new_ticket, 0 );
     /* should be empty */
     a = oyPixelAccess_GetArray( new_ticket );
     if(!a)
     {
-      int w = oyArray2d_GetWidth( old_a );
+      int w = oyArray2d_GetWidth( old_a ) / channels_out;
       int h = oyArray2d_GetHeight( old_a );
-      a = oyArray2d_Create( NULL, w,h, oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) ), ticket->oy_ );
+      a = oyArray2d_Create( NULL, w * channels_in,h, oyToDataType_m( pixel_layout_in ), ticket->oy_ );
+      if(oy_debug)
+      {
+        lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"layout_out(%d) != layout_in(%d) created array[%d](%dx%d)%dc",
+                OY_DBG_ARGS_, layout_out, pixel_layout_in,
+                oyStruct_GetId( (oyStruct_s*)a ), w * channels_in, h, channels_in );
+      }
     }
     oyArray2d_Release( &old_a );
     oyPixelAccess_SetArray( new_ticket, a );
     oyArray2d_Release( &a );
+
+    oyPixelAccess_SynchroniseROI( new_ticket, ticket );
   }
 
   /* We let the input filter do its processing first. */
@@ -2668,7 +2678,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"%s %d %dx%d (%s %d)",
               OY_DBG_ARGS_,"Write to ticket->array",
               oyStruct_GetId( (oyStruct_s*)array_out ), oyArray2d_GetWidth(array_out), oyArray2d_GetHeight(array_out),
-              _("Image"), oyStruct_GetId( (oyStruct_s*)image_input ) );
+              _("Image"), oyStruct_GetId( (oyStruct_s*)image_output ) );
 
   data_type_in = oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) );
   bps_in = oyDataTypeGetSize( data_type_in );
@@ -2691,7 +2701,6 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   {
     oyPointer_s * backend_data = oyFilterNode_GetContext( node );
     data_type_out = oyToDataType_m( oyImage_GetPixelLayout( image_output, oyLAYOUT ) );
-    channels = oyToChannels_m( oyImage_GetPixelLayout( image_output, oyLAYOUT ) );
 
     /* get transform */
     error = lcm2CMMTransform_GetWrap_( backend_data, &ltw );
@@ -2753,8 +2762,9 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     oyPointer_Release( &backend_data );
   }
 
-  DBGs_PROG2_S( ticket, "channels in/out: %d->%d",
-               oyToChannels_m( pixel_layout_in ), channels );
+  DBGs_PROG4_S( ticket, "channels in/out: %d[%d]->%d[%d]",
+                channels_in, oyStruct_GetId((oyStruct_s*)image_input),
+                channels_out, oyStruct_GetId((oyStruct_s*)image_output) );
 
   if(ltw && !array_out)
   {
@@ -2784,13 +2794,13 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
         w_out = (int)(oyArray2d_GetWidth(array_out)+0.5);
     int stride_in = w_in * bps_in;
 
-    n = OY_MIN(w_in, w_out) / channels;
+    n = OY_MIN(w_in/channels_in, w_out/channels_out);
 
     if(oy_debug > 2)
       lcm2_msg( oyMSG_DBG,(oyStruct_s*)ticket, OY_DBG_FORMAT_
              " threads_n: %d array_in_data: "OY_PRINT_POINTER
-             " array_out_data: "OY_PRINT_POINTER,
-             OY_DBG_ARGS_, threads_n, array_in_data, array_out_data );
+             " array_out_data: "OY_PRINT_POINTER" convert pixel: %d",
+             OY_DBG_ARGS_, threads_n, array_in_data, array_out_data,n );
 
     if(!(data_type_in == oyUINT8 ||
          data_type_in == oyUINT16 ||
