@@ -100,7 +100,19 @@ OYAPI int OYEXPORT
     return error;
   }
 
+  if(oy_debug)
+  {
+    DBGs_NUM2_S( ticket,"calling %s[%s]->oyCMMFilterPlug_Run()",
+                 oyNoEmptyString_m_(s->id_),s->registration );
+  }
+
   error = s->oyCMMFilterPlug_Run( plug, ticket );
+
+  if(oy_debug)
+  {
+    DBGs_NUM2_S( ticket,"done %s[%s]->oyCMMFilterPlug_Run()",
+                 oyNoEmptyString_m_(s->id_),s->registration );
+  }
 
   return error;
 }
